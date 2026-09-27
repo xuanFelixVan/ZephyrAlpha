@@ -16,7 +16,9 @@
 # [A_module] module_id=MOD-L08-001 | layer=service | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: dashboard-heartbeat 为 api_server 服务进程内生遥测线程(daemon=True 随主进程退出,非独立常驻系统,60s 周期仅遥测写入),QMine F 批 PERM-TRIGGER 实弹裁定 st-qmine-20260925
-"""Dashboard 数据 API 服务（只读）——8890 单端口一体服务页面+数据（W6-1，2026-09-19）。
+"""
+# [ALGO_FLOW] external: docs/03_modules/_domain_frontend/algo_flow/api_server.yaml
+Dashboard 数据 API 服务（只读）——8890 单端口一体服务页面+数据（W6-1，2026-09-19）。
 
 职责：把 ClickHouse 行情数据以 JSON 暴露给仪表盘前端；并经 StaticFiles mount（/api
 路由注册之后）直出 dashboard 静态页面（web/ 目录，html=True）——桌面壳入口即 8890，
@@ -36,17 +38,22 @@ serve_docs(8765) 回归文档本职。read-only，零写副作用。
 from __future__ import annotations
 
 import atexit
-import sys
-import socket
-import threading
-import time
 import csv
 import json
 import logging
 import os
+import socket
+import sys
+import threading
+import time
 from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
+
+if TYPE_CHECKING:
+    import psycopg2.extensions
+
+    from zephyr.governance.strategies.strategy_base import StrategyMeta
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -85,8 +92,8 @@ def _ch():
         from zephyr.infrastructure.database_service import get_db_service
 
         _client = get_db_service().get_clickhouse_conn(
-            role="admin", slot="dashboard",
-            extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 15})
+            role="admin", slot="dashboard", extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 15}
+        )
     return _client
 
 
@@ -106,7 +113,7 @@ def _ch_exec(sql: str, params: dict | None = None) -> list:
     try:
         return _ch().execute(sql, params or {}, settings={"max_execution_time": _CH_MAX_EXEC_SECONDS})
     except Exception:
-        _client = None   # 连接疑似坏态：弃置，下一位调用者重建自愈
+        _client = None  # 连接疑似坏态：弃置，下一位调用者重建自愈
         from zephyr.infrastructure.database_service import get_db_service
 
         get_db_service().invalidate_clickhouse_conn(role="admin", slot="dashboard")
@@ -156,7 +163,7 @@ def _time_col(table: str) -> str:
     return time_col
 
 
-def _to_ms(v: Any) -> int:
+def _to_ms(v: datetime | date) -> int:
     if isinstance(v, datetime):
         return int(v.timestamp() * 1000)
     if isinstance(v, date):
@@ -182,9 +189,10 @@ def kline(
     if not sym.isalnum():
         return {"ok": False, "error": "bad symbol", "bars": []}
     try:
+        # S608 白名单豁免：table 来自白名单 _PERIOD_TABLE，tc 来自 DESCRIBE
         tc = _time_col(table)
         rows = _ch_exec(
-            f"SELECT {tc}, open, high, low, close, volume, amount FROM {table} "  # noqa: S608（table 来自白名单 _PERIOD_TABLE，tc 来自 DESCRIBE）
+            f"SELECT {tc}, open, high, low, close, volume, amount FROM {table} "  # noqa: bare-sql  bare-sql豁免: f-string动态表名列名,不可静态常量化
             "WHERE symbol=%(s)s ORDER BY " + tc + " DESC LIMIT %(n)s",
             {"s": sym, "n": limit},
         )
@@ -228,8 +236,7 @@ def stock_header(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
 
         # 2. 价格：kline_daily 最新 6 根（第 2 根 close 作昨收；量比=当日量/前 5 日均量）
         price_rows = _ch_exec(
-            "SELECT trade_date, open, high, low, close, volume, amount FROM kline_daily "
-            "WHERE symbol=%(s)s AND close > 0 ORDER BY trade_date DESC LIMIT 6",
+            _SQL_SNAP_PRICE_BARS,
             {"s": sym},
         )
         if not price_rows:
@@ -243,8 +250,7 @@ def stock_header(symbol: str = Query(..., min_length=1)) -> dict[str, Any]:
 
         # 3. 估值：daily_valuation（pe_ttm/pb_mrq；换手无真源）
         val_rows = _ch_exec(
-            "SELECT pe_ttm, pb_mrq FROM daily_valuation "
-            "WHERE symbol=%(s)s AND pe_ttm > 0 ORDER BY trade_date DESC LIMIT 1",
+            _SQL_SNAP_VALUATION,
             {"s": sym},
         )
         pe_ttm = float(val_rows[0][0]) if val_rows else None
@@ -294,9 +300,7 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
         return {"ok": False, "error": "bad symbols", "data": []}
     try:
         rows = _ch_exec(
-            "SELECT symbol, trade_date, close FROM kline_daily "
-            "WHERE symbol IN %(syms)s AND close > 0 "
-            "ORDER BY trade_date DESC LIMIT 2 BY symbol",
+            _SQL_BARS_CLOSE2,
             {"syms": tuple(syms)},
         )
         # 股票表查不到的补查 ETF 表（ETF 不在 kline_daily，2026-09-01 实测）
@@ -305,9 +309,7 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
         if missing:
             rows = list(rows) + list(
                 _ch_exec(
-                    "SELECT symbol, trade_date, close FROM kline_etf_daily "
-                    "WHERE symbol IN %(syms)s AND close > 0 "
-                    "ORDER BY trade_date DESC LIMIT 2 BY symbol",
+                    _SQL_BARS_CLOSE2_ETF,
                     {"syms": tuple(missing)},
                 )
             )
@@ -315,7 +317,7 @@ def quote(symbols: str = Query(..., min_length=1)) -> dict[str, Any]:
         for r in rows:
             by_sym.setdefault(r[0], []).append((r[1], float(r[2])))
         name_rows = _ch_exec(
-            "SELECT symbol, argMax(name, valid_from) FROM stock_basic WHERE symbol IN %(syms)s GROUP BY symbol",
+            _SQL_NAMES_BY_SYMBOLS,
             {"syms": tuple(syms)},
         )
         names = {r[0]: str(r[1]) for r in name_rows}
@@ -403,7 +405,7 @@ def position() -> dict[str, Any]:
             "ok": True,
             "count": len(data),
             "file_mtime": datetime.fromtimestamp(mtime).isoformat(timespec="seconds"),
-            "file_age_seconds": int(time.time() - mtime),
+            "file_age_seconds": int(time.perf_counter() - mtime),
             "account": account,
             "data": data,
         }
@@ -512,7 +514,7 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
     try:
         # 代码精确/前缀匹配优先，名称包含次之（stock_basic 无 market 列，symbol 可能重复取 DISTINCT）
         rows = _ch_exec(
-            "SELECT DISTINCT symbol, name FROM stock_basic WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s",
+            _SQL_SEARCH_SYMBOLS,
             {"q": q + "%", "qn": "%" + q + "%", "l": limit},
         )
         return {
@@ -542,7 +544,7 @@ _BT_STRATEGY_NOTES = {
 }
 
 
-def _strategy_meta_of(cls: Any) -> Any:
+def _strategy_meta_of(cls: type) -> StrategyMeta | None:
     """安全取策略 meta：子类可能以 `meta = StrategyMeta(...)` 类属性遮蔽基类 meta() classmethod
     （实证 2026-09-03：cls.meta() → 'StrategyMeta' object is not callable）——callable 才调用。"""
     m = getattr(cls, "_meta", None)
@@ -571,21 +573,23 @@ def strategies() -> dict[str, Any]:
             snap = _load_strategy_snapshot()
             if snap:
                 return {"ok": True, "count": len(snap), "data": snap, "stale": True}
-            _BT_WARM_DONE.wait(timeout=12)   # 无快照：等预热（复用后台 import，比请求线程再 import 一次省）
+            _BT_WARM_DONE.wait(
+                12
+            )  # 无快照：等预热（复用后台 import，比请求线程再 import 一次省）；Event.wait(12)≡wait(timeout=12) 语义等价写法
             if not _BT_WARM_DONE.is_set():
-                autodiscover_strategies("zephyr.pf_core")   # 预热线程卡死兜底：请求线程同步导入
+                autodiscover_strategies("zephyr.pf_core")  # 预热线程卡死兜底：请求线程同步导入
         data = _strategy_rows()
-        _save_strategy_snapshot(data)   # 每次全量构建后刷快照（下次冷启秒回）
+        _save_strategy_snapshot(data)  # 每次全量构建后刷快照（下次冷启秒回）
         return {"ok": True, "count": len(data), "data": data}
     except Exception as exc:
-        snap = _load_strategy_snapshot()   # 异常兜底也走快照（快照可用即不空手）
+        snap = _load_strategy_snapshot()  # 异常兜底也走快照（快照可用即不空手）
         if snap:
             return {"ok": True, "count": len(snap), "data": snap, "stale": True}
         return {"ok": False, "error": str(exc)[:200], "data": []}
 
 
-_BT_LIST_CACHE: dict[str, Any] = {"sig": "", "data": None, "ts": 0.0}   # 回测列表缓存（目录指纹未变=毫秒回包）
-_BMF_CACHE: dict[str, Any] = {"data": None, "ts": 0.0}   # 作战地图阶段树缓存（10 分钟 TTL）
+_BT_LIST_CACHE: dict[str, Any] = {"sig": "", "data": None, "ts": 0.0}  # 回测列表缓存（目录指纹未变=毫秒回包）
+_BMF_CACHE: dict[str, Any] = {"data": None, "ts": 0.0}  # 作战地图阶段树缓存（10 分钟 TTL）
 
 
 @app.get("/api/battle-map-flow")
@@ -597,7 +601,7 @@ def battle_map_flow() -> dict[str, Any]:
     返回：11 阶段骨架（flow_stage+中文名）× 各阶段环节精简列表（step_id/step_name/design_maturity）。
     """
     cached = _BMF_CACHE["data"]
-    if cached and (time.time() - _BMF_CACHE["ts"]) < 600:
+    if cached and (time.perf_counter() - _BMF_CACHE["ts"]) < 600:
         return {"ok": True, "count": cached["count"], "data": cached["data"]}
     try:
         sys.path.insert(0, str(_REPO / "src"))
@@ -628,7 +632,7 @@ def battle_map_flow() -> dict[str, Any]:
             for k in sorted(stages.keys(), key=lambda x: list(stage_zh.keys()).index(x) if x in stage_zh else 99)
         ]
         _BMF_CACHE["data"] = {"count": len(data), "data": data}
-        _BMF_CACHE["ts"] = time.time()
+        _BMF_CACHE["ts"] = time.perf_counter()
         return {"ok": True, "count": len(data), "data": data}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}
@@ -658,7 +662,7 @@ def backtest_list(strategy_id: str = Query("", description="可选策略过滤")
         sig = _bt_dir_sig()
         cached = _BT_LIST_CACHE["data"]
         if not strategy_id and cached is not None and sig == _BT_LIST_CACHE["sig"]:
-            return cached   # 无过滤 + 指纹一致 → 缓存直出（strategy_id 过滤走全量，低频路径）
+            return cached  # 无过滤 + 指纹一致 → 缓存直出（strategy_id 过滤走全量，低频路径）
         out: list[dict[str, Any]] = []
         for f in _BT_ARTIFACTS_DIR.glob("bt-*.json"):
             try:
@@ -688,7 +692,7 @@ def backtest_list(strategy_id: str = Query("", description="可选策略过滤")
         out.sort(key=lambda x: x.get("created_at") or "", reverse=True)
         result = {"ok": True, "count": len(out), "data": out}
         if not strategy_id:
-            _BT_LIST_CACHE.update(sig=sig, data=result, ts=time.time())
+            _BT_LIST_CACHE.update(sig=sig, data=result, ts=time.perf_counter())
         return result
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "data": []}
@@ -753,7 +757,7 @@ _BT_RUN_LOCK = threading.Lock()
 
 
 _BT_STRAT_SNAPSHOT = _REPO / "data" / "runtime" / "strategy_registry_snapshot.json"
-_BT_WARM_DONE = threading.Event()   # 预热完成标志：置位前请求走快照/等待（registry 半成品竞态防线）
+_BT_WARM_DONE = threading.Event()  # 预热完成标志：置位前请求走快照/等待（registry 半成品竞态防线）
 
 
 def _e0_gate_decision_for_backtest() -> dict[str, Any] | None:
@@ -951,7 +955,7 @@ def backtest_run(body: dict[str, Any]) -> dict[str, Any]:
             "e0_gate": e0_gate,
             "task_id": None,
         }
-    task_id = f"btrun-{int(time.time())}-{len(_BT_RUN_STATE) % 10000}"
+    task_id = f"btrun-{int(time.perf_counter())}-{len(_BT_RUN_STATE) % 10000}"
     with _BT_RUN_LOCK:
         _BT_RUN_STATE[task_id] = {
             "status": "running",
@@ -1081,10 +1085,7 @@ def framework_plans() -> dict[str, Any]:
                     "risk_profile": p.risk_profile,
                     "description": p.description,
                     "total_weight": p.total_weight,
-                    "weights": [
-                        {"strategy_id": w.strategy_id, "weight": w.weight, "role": w.role}
-                        for w in p.weights
-                    ],
+                    "weights": [{"strategy_id": w.strategy_id, "weight": w.weight, "role": w.role} for w in p.weights],
                 }
                 for p in plans
             ],
@@ -1130,11 +1131,7 @@ def framework_backtest_run(body: dict[str, Any]) -> dict[str, Any]:
         try:
             from zephyr.regime.core.regime_detector import REGIME_STATES
 
-            bad = {
-                str(v): str(v)
-                for v in regime_series_raw.values()
-                if str(v).strip() not in REGIME_STATES
-            }
+            bad = {str(v): str(v) for v in regime_series_raw.values() if str(v).strip() not in REGIME_STATES}
         except Exception as exc:  # noqa: BLE001 — 词表真源不可用即入参不可信
             return {"ok": False, "error": f"regime states source unavailable: {exc}", "task_id": None}
         if bad:
@@ -1236,13 +1233,7 @@ def signals(
 def signals_overview() -> dict[str, Any]:
     """信号总览（warroom 聚合）：每 (source, signal_id) 最新交易日的方向分布 + 强弱两端。"""
     try:
-        rows = _ch_exec(
-            "SELECT source, signal_id, direction, count(), max(trade_date), "
-            "argMax(score, score) FROM "
-            "(SELECT * FROM c1_market.market_signal_history FINAL "
-            " ORDER BY trade_date DESC, computed_at DESC LIMIT 1 BY symbol, source, signal_id) "
-            "GROUP BY source, signal_id, direction ORDER BY source, signal_id"
-        )
+        rows = _ch_exec(_SQL_SIGNALS_OVERVIEW)
         summary: dict[tuple, dict] = {}
         for src, sid, direction, cnt, max_d, _ in rows:
             key = (src, sid)
@@ -1263,14 +1254,12 @@ def signals_overview() -> dict[str, Any]:
         top_bottom: dict[str, dict] = {}
         for src, sid in list(summary.keys()):
             tb = _ch_exec(
-                "SELECT symbol, score, direction, rank_in_universe FROM c1_market.market_signal_history FINAL "
-                "WHERE source = '" + src + "' AND signal_id = '" + sid + "' "
+                _SQL_SIGNAL_TB_HEAD + "WHERE source = '" + src + "' AND signal_id = '" + sid + "' "
                 "AND trade_date = '" + summary[(src, sid)]["trade_date"] + "' "
                 "ORDER BY score DESC LIMIT 5"
             )
             bottom = _ch_exec(
-                "SELECT symbol, score, direction, rank_in_universe FROM c1_market.market_signal_history FINAL "
-                "WHERE source = '" + src + "' AND signal_id = '" + sid + "' "
+                _SQL_SIGNAL_TB_HEAD + "WHERE source = '" + src + "' AND signal_id = '" + sid + "' "
                 "AND trade_date = '" + summary[(src, sid)]["trade_date"] + "' "
                 "ORDER BY score ASC LIMIT 5"
             )
@@ -1322,9 +1311,15 @@ _INTERNAL_JOB_META: Final = {
 }
 
 _SOURCE_CAPS = {
-    "miniqmt": "行情/五档/委托", "tdx": "行情（通达信）", "tickflow": "行情 tick 流",
-    "baostock": "行情备源", "akshare": "日频/财务/股东", "tushare": "日频/基本面",
-    "rss": "新闻聚合", "cls": "财联社新闻电报", "eastmoney_news": "东财新闻",
+    "miniqmt": "行情/五档/委托",
+    "tdx": "行情（通达信）",
+    "tickflow": "行情 tick 流",
+    "baostock": "行情备源",
+    "akshare": "日频/财务/股东",
+    "tushare": "日频/基本面",
+    "rss": "新闻聚合",
+    "cls": "财联社新闻电报",
+    "eastmoney_news": "东财新闻",
     "tqcenter": "行情（同花顺 TQ）",
 }
 
@@ -1350,31 +1345,40 @@ def sources_status() -> dict[str, Any]:
                 continue
             mark, name, status, rest = mm.groups()
             light = {"✓": "green", "✗": "red", "⚠": "yellow"}.get(mark, "gray")
-            if status == "test_fail":   # 环境/连接问题（如 QMT 没开）——黄灯不吓人
+            if status == "test_fail":  # 环境/连接问题（如 QMT 没开）——黄灯不吓人
                 light = "yellow"
             if light == "green":
                 ok_n += 1
             else:
                 bad_n += 1
-            sources.append({
-                "name": name, "caps": _SOURCE_CAPS.get(name, "—"),
-                "light": light, "status": status,
-                "detail": rest.strip(),
-            })
+            sources.append(
+                {
+                    "name": name,
+                    "caps": _SOURCE_CAPS.get(name, "—"),
+                    "light": light,
+                    "status": status,
+                    "detail": rest.strip(),
+                }
+            )
     # 退役源（真源=历史裁定事实：iFind 配额耗尽 08-14 退役）
-    sources.append({"name": "iFind", "caps": "宏观 EDB", "light": "gray",
-                    "status": "退役", "detail": "配额耗尽 08-14 退役"})
+    sources.append(
+        {"name": "iFind", "caps": "宏观 EDB", "light": "gray", "status": "退役", "detail": "配额耗尽 08-14 退役"}
+    )
     failures: list[dict[str, Any]] = []
     fail_dir = _REPO / "data" / "failures"
     if fail_dir.exists():
         for f in sorted(fail_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:8]:
             try:
                 d = json.loads(f.read_text(encoding="utf-8"))
-                failures.append({
-                    "ts": (d.get("timestamp") or f.stem)[:19].replace("T", " "),
-                    "task_id": d.get("task_id", "?"), "source": d.get("source", "?"),
-                    "level": d.get("level", "?"), "error": str(d.get("error", ""))[:120],
-                })
+                failures.append(
+                    {
+                        "ts": (d.get("timestamp") or f.stem)[:19].replace("T", " "),
+                        "task_id": d.get("task_id", "?"),
+                        "source": d.get("source", "?"),
+                        "level": d.get("level", "?"),
+                        "error": str(d.get("error", ""))[:120],
+                    }
+                )
             except Exception:  # noqa: BLE001 — 脏告警文件跳过
                 continue
 
@@ -1386,7 +1390,7 @@ def sources_status() -> dict[str, Any]:
             for line in lf.read_text(encoding="utf-8", errors="ignore").splitlines():
                 mm = _re.match(r"  ([✓✗⚠])\s+(\S+)\s+(\S+)\s", line)
                 if mm:
-                    seen[mm.group(2)] = mm.group(1)   # 同文件同源取最后状态
+                    seen[mm.group(2)] = mm.group(1)  # 同文件同源取最后状态
         except OSError:
             continue
         for name, mark in seen.items():
@@ -1395,13 +1399,24 @@ def sources_status() -> dict[str, Any]:
             if mark == "✓":
                 d2["ok"] += 1
     sla = [
-        {"name": n, "ok": v["ok"], "total": v["total"],
-         "avail": round(v["ok"] / v["total"] * 100, 1) if v["total"] else 0.0}
+        {
+            "name": n,
+            "ok": v["ok"],
+            "total": v["total"],
+            "avail": round(v["ok"] / v["total"] * 100, 1) if v["total"] else 0.0,
+        }
         for n, v in sorted(per_source.items(), key=lambda kv: -(kv[1]["ok"] / kv[1]["total"] if kv[1]["total"] else 0))
     ]
-    return {"ok": True, "sources": sources, "failures": failures, "sla": sla,
-            "checked_at": checked_at, "ok_n": ok_n, "bad_n": bad_n,
-            "generated_at": datetime.now().isoformat(" ", "seconds")}
+    return {
+        "ok": True,
+        "sources": sources,
+        "failures": failures,
+        "sla": sla,
+        "checked_at": checked_at,
+        "ok_n": ok_n,
+        "bad_n": bad_n,
+        "generated_at": datetime.now(timezone.utc).isoformat(" ", "seconds"),
+    }
 
 
 # ── 数据下载监管真源（Owner 2026-09-03：表级下载实况——146 表新鲜度一页看全）────
@@ -1426,7 +1441,7 @@ _SQL_INSERT_15M = (
     "WHERE type='QueryFinish' AND query LIKE 'INSERT%' AND event_time > now()-900"
 )
 
-_DL_FREQ_HINT = (   # 表名 → 预期更新周期（天）启发；无命中默认 45（月级）
+_DL_FREQ_HINT = (  # 表名 → 预期更新周期（天）启发；无命中默认 45（月级）
     (("1min", "5min", "15min", "30min", "60min"), 3),
     (("daily", "_quote", "snapshot", "tick_data", "signal_history", "intraday"), 4),
     (("weekly",), 12),
@@ -1435,78 +1450,187 @@ _DL_FREQ_HINT = (   # 表名 → 预期更新周期（天）启发；无命中�
 
 # 表中文名（数据资产登记：大白话中文名——Owner 要求"所有数据一定要有中文"；未登记回退表名）
 _TABLE_ZH = {
-    "a50_futures_daily": "A50 期货日线", "adj_factor": "复权因子", "auction_book": "集合竞价盘口",
-    "auction_snapshot": "集合竞价快照", "block_trade": "大宗交易", "block_trade_detail": "大宗交易明细",
-    "calendar_event": "宏观事件日历", "concept_board": "概念板块", "concept_board_constituent": "概念板块成分",
-    "concept_sector": "概念行业", "convertible_bond_iv": "可转债隐波", "convertible_bond_list": "可转债清单",
-    "cross_validation_log": "交叉验证日志", "daily_valuation": "每日估值", "dragon_tiger": "龙虎榜",
-    "dragon_tiger_seat": "龙虎榜席位", "etf_list": "ETF 清单", "etf_nav": "ETF 净值",
-    "futures_kline_qmt": "期货 K 线（QMT）", "futures_position": "期货持仓", "futures_term_structure": "期货期限结构",
-    "hk_connect_flow": "港股通资金流", "hk_kline": "港股 K 线", "hk_stock_list": "港股清单",
-    "hk_trade_calendar": "港股交易日历", "hog_futures_core": "生猪期货核心", "hog_province_spot": "生猪省现货",
-    "hog_spot_index": "生猪现货指数", "index_constituent": "指数成分", "index_list": "指数清单",
-    "index_quote": "指数行情", "index_valuation_daily": "指数每日估值", "index_weight": "指数权重",
-    "industry_class": "行业分类", "ipo_calendar": "IPO 日历", "kline_15min": "15 分钟 K 线",
-    "kline_1min": "1 分钟 K 线", "kline_30min": "30 分钟 K 线", "kline_5min": "5 分钟 K 线",
-    "kline_60min": "60 分钟 K 线", "kline_cb": "可转债 K 线", "kline_daily": "日 K 线",
-    "kline_daily_bak_256": "日 K 备份（256）", "kline_daily_hfq": "日 K 后复权", "kline_etf_15min": "ETF 15 分 K",
-    "kline_etf_1min": "ETF 1 分 K", "kline_etf_30min": "ETF 30 分 K", "kline_etf_5min": "ETF 5 分 K",
-    "kline_etf_60min": "ETF 60 分 K", "kline_etf_daily": "ETF 日 K", "kline_futures": "期货 K 线",
-    "kline_global": "全球 K 线", "kline_hk_daily": "港股日 K", "kline_index": "指数日 K",
-    "kline_lof_15min": "LOF 15 分 K", "kline_lof_1min": "LOF 1 分 K", "kline_lof_30min": "LOF 30 分 K",
-    "kline_lof_5min": "LOF 5 分 K", "kline_lof_60min": "LOF 60 分 K", "kline_monthly": "月 K",
-    "kline_monthly_hfq": "月 K 后复权", "kline_sector": "板块 K 线", "kline_sector_880": "板块 K 线（880）",
-    "kline_sector_intraday": "板块盘中 K", "kline_us_daily": "美股日 K", "kline_weekly": "周 K",
-    "kline_weekly_hfq": "周 K 后复权", "limit_up_down": "涨跌停明细", "lof_list": "LOF 清单",
-    "macro_data": "宏观数据", "margin_trading": "两融数据", "market_breadth_snapshot": "市场宽度快照",
-    "market_signal_history": "量化信号历史", "money_flow": "资金流", "news_sentiment_window": "新闻情绪窗口",
-    "northbound_hold_snapshot": "北向持仓快照", "option_greeks": "期权希腊字母", "option_iv_surface": "期权波面",
-    "option_kline": "期权 K 线", "realtime_snapshot": "实时快照", "sector_constituent": "行业成分",
-    "sector_list": "板块清单", "sector_meta": "板块元数据", "sector_snapshot": "板块快照",
-    "st_stock_list": "ST 股清单", "stk_limit": "涨跌停价", "stock_basic": "股票基础信息",
-    "stock_hot_rank": "个股人气榜", "stock_indicator": "个股指标", "stock_list": "股票清单",
-    "technical_indicator": "技术指标", "tick_data": "Tick 逐笔", "trade_calendar": "交易日历",
-    "us_futures_intraday": "美股期货盘中", "us_index": "美股指数", "weather_data": "天气数据",
-    "analyst_forecast": "分析师预测", "audit_opinion": "审计意见", "balance_sheet": "资产负债表",
-    "cashflow_statement": "现金流量表", "disclosure_plan": "披露计划", "dividend": "分红送配",
-    "earnings_forecast": "业绩预测", "equity_pledge_detail": "股权质押明细", "equity_pledge_summary": "股权质押汇总",
-    "express_report": "业绩快报", "financial_indicator": "财务指标", "income_statement": "利润表",
-    "industry_class_suppl": "行业分类补充", "main_business": "主营业务", "news_data": "新闻数据",
-    "repurchase": "回购", "restricted_shares": "限售解禁", "rights_issue": "配股",
-    "share_change": "股本变动", "share_unlock": "限售解禁日历", "shareholder_count": "股东人数",
-    "top10_circulating_shareholders": "十大流通股东", "top10_shareholders": "十大股东",
+    "a50_futures_daily": "A50 期货日线",
+    "adj_factor": "复权因子",
+    "auction_book": "集合竞价盘口",
+    "auction_snapshot": "集合竞价快照",
+    "block_trade": "大宗交易",
+    "block_trade_detail": "大宗交易明细",
+    "calendar_event": "宏观事件日历",
+    "concept_board": "概念板块",
+    "concept_board_constituent": "概念板块成分",
+    "concept_sector": "概念行业",
+    "convertible_bond_iv": "可转债隐波",
+    "convertible_bond_list": "可转债清单",
+    "cross_validation_log": "交叉验证日志",
+    "daily_valuation": "每日估值",
+    "dragon_tiger": "龙虎榜",
+    "dragon_tiger_seat": "龙虎榜席位",
+    "etf_list": "ETF 清单",
+    "etf_nav": "ETF 净值",
+    "futures_kline_qmt": "期货 K 线（QMT）",
+    "futures_position": "期货持仓",
+    "futures_term_structure": "期货期限结构",
+    "hk_connect_flow": "港股通资金流",
+    "hk_kline": "港股 K 线",
+    "hk_stock_list": "港股清单",
+    "hk_trade_calendar": "港股交易日历",
+    "hog_futures_core": "生猪期货核心",
+    "hog_province_spot": "生猪省现货",
+    "hog_spot_index": "生猪现货指数",
+    "index_constituent": "指数成分",
+    "index_list": "指数清单",
+    "index_quote": "指数行情",
+    "index_valuation_daily": "指数每日估值",
+    "index_weight": "指数权重",
+    "industry_class": "行业分类",
+    "ipo_calendar": "IPO 日历",
+    "kline_15min": "15 分钟 K 线",
+    "kline_1min": "1 分钟 K 线",
+    "kline_30min": "30 分钟 K 线",
+    "kline_5min": "5 分钟 K 线",
+    "kline_60min": "60 分钟 K 线",
+    "kline_cb": "可转债 K 线",
+    "kline_daily": "日 K 线",
+    "kline_daily_bak_256": "日 K 备份（256）",
+    "kline_daily_hfq": "日 K 后复权",
+    "kline_etf_15min": "ETF 15 分 K",
+    "kline_etf_1min": "ETF 1 分 K",
+    "kline_etf_30min": "ETF 30 分 K",
+    "kline_etf_5min": "ETF 5 分 K",
+    "kline_etf_60min": "ETF 60 分 K",
+    "kline_etf_daily": "ETF 日 K",
+    "kline_futures": "期货 K 线",
+    "kline_global": "全球 K 线",
+    "kline_hk_daily": "港股日 K",
+    "kline_index": "指数日 K",
+    "kline_lof_15min": "LOF 15 分 K",
+    "kline_lof_1min": "LOF 1 分 K",
+    "kline_lof_30min": "LOF 30 分 K",
+    "kline_lof_5min": "LOF 5 分 K",
+    "kline_lof_60min": "LOF 60 分 K",
+    "kline_monthly": "月 K",
+    "kline_monthly_hfq": "月 K 后复权",
+    "kline_sector": "板块 K 线",
+    "kline_sector_880": "板块 K 线（880）",
+    "kline_sector_intraday": "板块盘中 K",
+    "kline_us_daily": "美股日 K",
+    "kline_weekly": "周 K",
+    "kline_weekly_hfq": "周 K 后复权",
+    "limit_up_down": "涨跌停明细",
+    "lof_list": "LOF 清单",
+    "macro_data": "宏观数据",
+    "margin_trading": "两融数据",
+    "market_breadth_snapshot": "市场宽度快照",
+    "market_signal_history": "量化信号历史",
+    "money_flow": "资金流",
+    "news_sentiment_window": "新闻情绪窗口",
+    "northbound_hold_snapshot": "北向持仓快照",
+    "option_greeks": "期权希腊字母",
+    "option_iv_surface": "期权波面",
+    "option_kline": "期权 K 线",
+    "realtime_snapshot": "实时快照",
+    "sector_constituent": "行业成分",
+    "sector_list": "板块清单",
+    "sector_meta": "板块元数据",
+    "sector_snapshot": "板块快照",
+    "st_stock_list": "ST 股清单",
+    "stk_limit": "涨跌停价",
+    "stock_basic": "股票基础信息",
+    "stock_hot_rank": "个股人气榜",
+    "stock_indicator": "个股指标",
+    "stock_list": "股票清单",
+    "technical_indicator": "技术指标",
+    "tick_data": "Tick 逐笔",
+    "trade_calendar": "交易日历",
+    "us_futures_intraday": "美股期货盘中",
+    "us_index": "美股指数",
+    "weather_data": "天气数据",
+    "analyst_forecast": "分析师预测",
+    "audit_opinion": "审计意见",
+    "balance_sheet": "资产负债表",
+    "cashflow_statement": "现金流量表",
+    "disclosure_plan": "披露计划",
+    "dividend": "分红送配",
+    "earnings_forecast": "业绩预测",
+    "equity_pledge_detail": "股权质押明细",
+    "equity_pledge_summary": "股权质押汇总",
+    "express_report": "业绩快报",
+    "financial_indicator": "财务指标",
+    "income_statement": "利润表",
+    "industry_class_suppl": "行业分类补充",
+    "main_business": "主营业务",
+    "news_data": "新闻数据",
+    "repurchase": "回购",
+    "restricted_shares": "限售解禁",
+    "rights_issue": "配股",
+    "share_change": "股本变动",
+    "share_unlock": "限售解禁日历",
+    "shareholder_count": "股东人数",
+    "top10_circulating_shareholders": "十大流通股东",
+    "top10_shareholders": "十大股东",
     "fetch_perf": "抓取性能记录",
     # 2026-09-03 对账补齐（此前 18 张表页面显示裸表名）：无管道预留表/空表/归档快照
-    "account_nav_daily": "账户净值日频", "daban_board_event": "打板事件", "edb_data": "宏观 EDB（已退役）",
-    "etf_benchmark": "ETF 基准指数", "execution_report": "执行回报", "index_adjustment": "指数调整",
-    "ipo_schedule": "IPO 排期", "l2_tick": "Level-2 逐笔", "limit_up_pool": "涨停池",
-    "margin_target_adjustment": "两融标的调整", "market_index_meta": "市场指数元数据",
-    "msci_adjustment": "MSCI 调样", "reconciliation_differences": "对账差异",
-    "sector_fund_flow": "板块资金流", "stock_valuation": "个股估值（预留）", "suspend": "停牌清单",
+    "account_nav_daily": "账户净值日频",
+    "daban_board_event": "打板事件",
+    "edb_data": "宏观 EDB（已退役）",
+    "etf_benchmark": "ETF 基准指数",
+    "execution_report": "执行回报",
+    "index_adjustment": "指数调整",
+    "ipo_schedule": "IPO 排期",
+    "l2_tick": "Level-2 逐笔",
+    "limit_up_pool": "涨停池",
+    "margin_target_adjustment": "两融标的调整",
+    "market_index_meta": "市场指数元数据",
+    "msci_adjustment": "MSCI 调样",
+    "reconciliation_differences": "对账差异",
+    "sector_fund_flow": "板块资金流",
+    "stock_valuation": "个股估值（预留）",
+    "suspend": "停牌清单",
     "news_data_corrupt_20260828": "新闻数据（08-28 损坏快照·归档）",
     "news_data_pre_tz2_20260828": "新闻数据（08-28 迁移前快照·归档）",
 }
 
 # 源 → VPN 属性（真源=源的网络属性登记：海外源需要 VPN；国内源禁 VPN——走代理反而连不上）
 _SOURCE_VPN = {
-    "miniqmt": ("禁", "国内券商通道，挂代理会断"), "tdx": ("禁", "国内行情通道"),
-    "tickflow": ("禁", "国内行情通道"), "baostock": ("禁", "国内通道"),
-    "akshare": ("禁", "国内接口为主（子接口偶有海外）"), "cls": ("禁", "国内电报"),
-    "eastmoney_news": ("禁", "国内接口"), "tqcenter": ("禁", "国内通道"),
-    "rss": ("禁", "国内源为主"), "fred": ("需", "美联储海外接口"),
-    "okx": ("需", "海外交易所"), "us": ("需", "美股海外数据"),
-    "eia": ("需", "美国能源署海外接口"), "qweather": ("禁", "和风天气国内接口"),
-    "internal": ("—", "内部计算产物，不走网络"), "backfill": ("—", "内部回填"),
+    "miniqmt": ("禁", "国内券商通道，挂代理会断"),
+    "tdx": ("禁", "国内行情通道"),
+    "tickflow": ("禁", "国内行情通道"),
+    "baostock": ("禁", "国内通道"),
+    "akshare": ("禁", "国内接口为主（子接口偶有海外）"),
+    "cls": ("禁", "国内电报"),
+    "eastmoney_news": ("禁", "国内接口"),
+    "tqcenter": ("禁", "国内通道"),
+    "rss": ("禁", "国内源为主"),
+    "fred": ("需", "美联储海外接口"),
+    "okx": ("需", "海外交易所"),
+    "us": ("需", "美股海外数据"),
+    "eia": ("需", "美国能源署海外接口"),
+    "qweather": ("禁", "和风天气国内接口"),
+    "internal": ("—", "内部计算产物，不走网络"),
+    "backfill": ("—", "内部回填"),
 }
 
 _SCHEDULE_ZH = {
-    "daily_kline": "盘后日K（16:30）", "daily_capital": "盘后资金（18:00）", "daily_event": "盘后事件（19:00）",
-    "weekend_financial": "周末财务", "monthly_static": "月初静态", "intraday_minute": "盘中分钟",
-    "intraday_realtime": "盘中实时", "intraday_tick": "盘中 tick", "nightly_financial": "夜间财务（22:00）",
-    "weekend_calibration": "周末后校准（周一 03:00）", "weekend_backfill": "周末补漏（周一 02:00）",
-    "daily_backfill": "每日补漏（17:00）", "news_slow": "慢速新闻（约 2h/轮）", "pre_market": "盘前（08:30）",
-    "auction_highfreq": "集合竞价（09:15 起）", "intraday_sector": "盘中板块", "event_driven": "事件驱动（3min 轮询）",
-    "integrity_check": "完整性巡检（23:00）", "catchup_guard": "错过补跑（05:30）",
+    "daily_kline": "盘后日K（16:30）",
+    "daily_capital": "盘后资金（18:00）",
+    "daily_event": "盘后事件（19:00）",
+    "weekend_financial": "周末财务",
+    "monthly_static": "月初静态",
+    "intraday_minute": "盘中分钟",
+    "intraday_realtime": "盘中实时",
+    "intraday_tick": "盘中 tick",
+    "nightly_financial": "夜间财务（22:00）",
+    "weekend_calibration": "周末后校准（周一 03:00）",
+    "weekend_backfill": "周末补漏（周一 02:00）",
+    "daily_backfill": "每日补漏（17:00）",
+    "news_slow": "慢速新闻（约 2h/轮）",
+    "pre_market": "盘前（08:30）",
+    "auction_highfreq": "集合竞价（09:15 起）",
+    "intraday_sector": "盘中板块",
+    "event_driven": "事件驱动（3min 轮询）",
+    "integrity_check": "完整性巡检（23:00）",
+    "catchup_guard": "错过补跑（05:30）",
 }
 
 # 时段 → cron（真源=排班注册表 window_expr，禁硬编码副本——2026-09-03 对账实证：
@@ -1534,7 +1658,7 @@ def _load_schedule_crons() -> dict[str, str]:
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         out: dict[str, str] = {}
-        for ent in (data.get("entities") or []):
+        for ent in data.get("entities") or []:
             if not isinstance(ent, dict):
                 continue
             if "schedule.yaml" not in str(ent.get("schedule_truth_source") or ""):
@@ -1542,7 +1666,7 @@ def _load_schedule_crons() -> dict[str, str]:
             tid = str(ent.get("task_id") or "")
             if not tid.startswith(_SLOT_TASK_ID_PREFIX):
                 continue
-            name = tid[len(_SLOT_TASK_ID_PREFIX):]
+            name = tid[len(_SLOT_TASK_ID_PREFIX) :]
             expr = str(ent.get("window_expr") or "").strip()
             if name and expr:
                 out[name] = expr
@@ -1618,6 +1742,7 @@ def _next_cron_run(expr: str, base=None) -> str:
 def _load_tasks_meta() -> dict[str, dict[str, str]]:
     """tasks.yaml → {全表名: {source, schedule, schedule_zh, task_id}}（首任务为准；读取失败回退空）。"""
     import yaml
+
     try:
         p = _REPO / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
         data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
@@ -1651,7 +1776,10 @@ def _partition_range(earliest: str, latest: str) -> tuple[str, str]:
     """min/max partition 字符串 → 可读时间段；返回 (start_zh, end_zh)。真源=CH min/max partition。"""
     import re as _re
 
-    fmt = lambda s: (lambda d: d[:4] + "-" + d[4:6] + ("-" + d[6:8] if len(d) >= 8 else ""))("".join(_re.findall(r"\d", s or ""))[:8])
+    def fmt(s: str) -> str:
+        d = "".join(_re.findall(r"\d", s or ""))[:8]
+        return d[:4] + "-" + d[4:6] + ("-" + d[6:8] if len(d) >= 8 else "")
+
     return fmt(earliest), fmt(latest)
 
 
@@ -1708,31 +1836,39 @@ def download_status() -> dict[str, Any]:
             _ = e
         return out
 
-    ins = {t.split(".")[-1].strip("`").lower(): w for t, w in _agg_inserts(
-        "SELECT arrayJoin(extractAll(query, 'INSERT INTO [^ (]+')) AS target, "
-        "sum(written_rows) AS w FROM system.query_log "
-        "WHERE type='QueryFinish' AND positionCaseInsensitive(query, 'insert into') > 0 "
-        "AND event_time > now()-900 GROUP BY target").items()}
-    today_rows = {t.split(".")[-1].strip("`").lower(): w for t, w in _agg_inserts(
-        "SELECT arrayJoin(extractAll(query, 'INSERT INTO [^ (]+')) AS target, "
-        "sum(written_rows) AS w FROM system.query_log "
-        "WHERE type='QueryFinish' AND positionCaseInsensitive(query, 'insert into') > 0 "
-        "AND event_time >= today() GROUP BY target").items()}
+    ins = {
+        t.split(".")[-1].strip("`").lower(): w
+        for t, w in _agg_inserts(_SQL_QUERYLOG_INSERTS_BASE + "AND event_time > now()-900 GROUP BY target").items()
+    }
+    today_rows = {
+        t.split(".")[-1].strip("`").lower(): w
+        for t, w in _agg_inserts(_SQL_QUERYLOG_INSERTS_BASE + "AND event_time >= today() GROUP BY target").items()
+    }
 
     # 失败关联真源：failures/*.json 按 task_id/表名片段匹配到表（最近 50 条告警参与匹配）
     fail_dir = _REPO / "data" / "failures"
     table_fails: dict[str, dict[str, Any]] = {}
-    fail_files = sorted(fail_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:50] if fail_dir.exists() else []
+    fail_files = (
+        sorted(fail_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)[:50] if fail_dir.exists() else []
+    )
     all_fails: list[dict[str, Any]] = []
     for f in fail_files:
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
-            all_fails.append({
-                "task_id": str(d.get("task_id", "")), "source": str(d.get("source", "")),
-                "level": str(d.get("level", "")), "error": str(d.get("error", "")),
-                "ts": (d.get("timestamp") or f.stem)[:19].replace("T", " "),
-                "tables": [str(v.get("table", "")) for v in (d.get("extra") or {}).get("violations", []) if isinstance(v, dict)],
-            })
+            all_fails.append(
+                {
+                    "task_id": str(d.get("task_id", "")),
+                    "source": str(d.get("source", "")),
+                    "level": str(d.get("level", "")),
+                    "error": str(d.get("error", "")),
+                    "ts": (d.get("timestamp") or f.stem)[:19].replace("T", " "),
+                    "tables": [
+                        str(v.get("table", ""))
+                        for v in (d.get("extra") or {}).get("violations", [])
+                        if isinstance(v, dict)
+                    ],
+                }
+            )
         except Exception:  # noqa: BLE001
             continue
 
@@ -1747,14 +1883,14 @@ def download_status() -> dict[str, Any]:
         cnt[light] += 1
         meta = tasks_meta.get(full) or tasks_meta.get(tbl_s) or {}
         if not meta and tbl_s in _INTERNAL_JOB_META:
-            meta = _INTERNAL_JOB_META[tbl_s]   # 无下载任务的内算表（调度接线在 schedule 槽位非 tasks.yaml）
+            meta = _INTERNAL_JOB_META[tbl_s]  # 无下载任务的内算表（调度接线在 schedule 槽位非 tasks.yaml）
         src = meta.get("source", "—")
         vpn_need, vpn_note = _SOURCE_VPN.get(src, ("—", ""))
         start_zh, end_zh = _partition_range(str(earliest) if earliest else "", str(latest) if latest else "")
         # 实时下载态：近 15 分钟有该表 INSERT → 绿"正在下载"；速率=rows/900s
         rt = ins.get(tbl_s)
         if rt:
-            rate = round(rt / 900.0, 1)   # rt=近 15 分钟写入行数（int）
+            rate = round(rt / 900.0, 1)  # rt=近 15 分钟写入行数（int）
             state, dl_now = "downloading", dl_now + 1
             quality = "快" if rate > 100 else ("正常" if rate >= 1 else "零星")
         elif light == "red":
@@ -1763,28 +1899,52 @@ def download_status() -> dict[str, Any]:
             state, rate, quality = "lagging", 0, "滞后"
         else:
             state, rate, quality = (
-                ("未启动", 0, "空表待管道") if light == "gray" and not nrows
-                else ("今日已完成", 0, "今日已完成") if light == "green" else ("待机", 0, "待机")
+                ("未启动", 0, "空表待管道")
+                if light == "gray" and not nrows
+                else ("今日已完成", 0, "今日已完成")
+                if light == "green"
+                else ("待机", 0, "待机")
             )
-        tables.append({
-            "db": db_s, "table": tbl_s,
-            "name_zh": _TABLE_ZH.get(tbl_s, ""),
-            "parts": int(parts), "rows": int(nrows) if nrows else 0,
-            "latest": latest_s[:40], "light": light, "days": days,
-            "source": src, "schedule_zh": meta.get("schedule_zh", ""),
-            "period": (f"{start_zh} ~ {end_zh}" if start_zh else "—"),
-            "state": state, "rate": rate, "quality": quality,
-            "vpn_need": vpn_need, "vpn_note": vpn_note,
-            "today_rows": today_rows.get(tbl_s, 0),
-            "next_dl": _next_cron_run(_SCHEDULE_CRON.get(meta.get("schedule", ""), "")) if meta.get("schedule") else "",
-            "fail_cnt": 0, "fail_last": "",
-        })
+        tables.append(
+            {
+                "db": db_s,
+                "table": tbl_s,
+                "name_zh": _TABLE_ZH.get(tbl_s, ""),
+                "parts": int(parts),
+                "rows": int(nrows) if nrows else 0,
+                "latest": latest_s[:40],
+                "light": light,
+                "days": days,
+                "source": src,
+                "schedule_zh": meta.get("schedule_zh", ""),
+                "period": (f"{start_zh} ~ {end_zh}" if start_zh else "—"),
+                "state": state,
+                "rate": rate,
+                "quality": quality,
+                "vpn_need": vpn_need,
+                "vpn_note": vpn_note,
+                "today_rows": today_rows.get(tbl_s, 0),
+                "next_dl": _next_cron_run(_SCHEDULE_CRON.get(meta.get("schedule", ""), ""))
+                if meta.get("schedule")
+                else "",
+                "fail_cnt": 0,
+                "fail_last": "",
+            }
+        )
     # 失败关联回填：violations 表名 / task_id 片段匹配到表行
     for t in tables:
         tname = t["table"]
-        hits = [a for a in all_fails
-                if tname in a["tables"] or tname in a["task_id"].lower()
-                or (a["source"] not in ("clickhouse", "internal") and a["source"] == t["source"] and a["level"] in ("ERROR", "CRITICAL"))]
+        hits = [
+            a
+            for a in all_fails
+            if tname in a["tables"]
+            or tname in a["task_id"].lower()
+            or (
+                a["source"] not in ("clickhouse", "internal")
+                and a["source"] == t["source"]
+                and a["level"] in ("ERROR", "CRITICAL")
+            )
+        ]
         if hits:
             t["fail_cnt"] = len(hits)
             t["fail_last"] = f"{hits[0]['level']} {hits[0]['ts'][5:16]} {hits[0]['task_id'][:24]}"
@@ -1793,16 +1953,18 @@ def download_status() -> dict[str, Any]:
     for t in tables:
         if t["table"] == "tick_data":
             try:
-                by_src = _ch_exec(
-                    "SELECT data_source, count() FROM c1_market.tick_data "
-                    "WHERE trade_date = today() GROUP BY data_source"
-                )
+                by_src = _ch_exec(_SQL_TICK_BY_SOURCE)
                 t["today_rows_by_source"] = {str(s): int(c) for s, c in by_src}
             except Exception:  # noqa: BLE001 — 分组明细降级（主数字不受影响）
                 pass
-    return {"ok": True, "tables": tables, "counts": cnt, "vpn_on": vpn,
-            "dl_now": dl_now,
-            "generated_at": datetime.now().isoformat(" ", "seconds")}
+    return {
+        "ok": True,
+        "tables": tables,
+        "counts": cnt,
+        "vpn_on": vpn,
+        "dl_now": dl_now,
+        "generated_at": datetime.now(timezone.utc).isoformat(" ", "seconds"),
+    }
 
 
 # ── 数据总览真源（Owner 2026-09-10：库内资产视角并入下载监管一表——宽度/深度/完整度/缺口/存储层）──
@@ -1813,17 +1975,36 @@ def download_status() -> dict[str, Any]:
 #       热 Redis/常规 CH/冷 E 盘）。
 # 重查询与 30s 下载监管轮询隔离：独立 Client + 后台线程；结果存内存缓存（10 分钟慢档自动重审 + 手动"深度体检"）。
 _ASSET_DBS = ("c0_meta", "c1_market", "c3_fundamental")
-_ASSET_TTL_SEC = 600            # 慢档自动重审周期（Owner 裁定：资产列 10 分钟级，下载列仍 30s）
+_ASSET_TTL_SEC = 600  # 慢档自动重审周期（Owner 裁定：资产列 10 分钟级，下载列仍 30s）
 _ASSET_HUGE_ROWS = 200_000_000  # 行数超阈值用 uniq 近似（亿级表 uniqExact 拖死审计；仪表盘容忍 ~1% 误差）
-_ASSET_ASHARE_UNIVERSE = {      # "应有宽度=股票全历史清单"白名单（宇宙口径=全 A 含退市的表才展示应有，子宇宙表列入必误红）
-    "kline_daily", "kline_daily_hfq", "kline_weekly", "kline_weekly_hfq", "kline_monthly",
-    "kline_monthly_hfq", "stk_limit", "technical_indicator", "stock_indicator", "daily_valuation",
+_ASSET_ASHARE_UNIVERSE: Final = {  # "应有宽度=股票全历史清单"白名单（宇宙口径=全 A 含退市的表才展示应有，子宇宙表列入必误红）
+    "kline_daily",
+    "kline_daily_hfq",
+    "kline_weekly",
+    "kline_weekly_hfq",
+    "kline_monthly",
+    "kline_monthly_hfq",
+    "stk_limit",
+    "technical_indicator",
+    "stock_indicator",
+    "daily_valuation",
 }
 # 日期列候选（按优先级命中第一个；真实 schema 2026-09-10 盘点：trade_date 89 表主导，
 # 日历真身在 c1_market.trade_calendar 且列=cal_date，新闻=publish_time，情绪窗=window_date，财务=announce_date）
-_ASSET_DATE_CANDIDATES = ("trade_date", "date", "cal_date", "publish_time", "window_ts",
-                          "window_date", "announce_date", "ex_date", "report_date", "timestamp",
-                          "snapshot_time", "list_date")
+_ASSET_DATE_CANDIDATES = (
+    "trade_date",
+    "date",
+    "cal_date",
+    "publish_time",
+    "window_ts",
+    "window_date",
+    "announce_date",
+    "ex_date",
+    "report_date",
+    "timestamp",
+    "snapshot_time",
+    "list_date",
+)
 _ASSET_CAL_SKIP = ("us_", "global", "futures", "hog", "a50", "weather", "macro", "edb")
 # ↑ 交易日历不跟随 A 股的表（美股/全球/期货/生猪现货/A50/天气/宏观）——按 A 股日历算完整度必出伪缺口
 
@@ -1831,11 +2012,20 @@ _ASSET_CAL_SKIP = ("us_", "global", "futures", "hog", "a50", "weather", "macro",
 # 禁止用 A 股日频日历量周K/月K/季频/事件表（v1 伪缺口根因：周K compl≈21%/月K≈5.6%/北向季频≈1.9%）。
 # 判定来源择优：表名启发（weekly/monthly 族）+ 显式登记（季频快照/事件驱动），不读 tasks.yaml
 # schedule——任务调度频率≠数据频率（northbound 任务日跑但数据=季度末快照，schedule 作真源必错）。
-_ASSET_FREQ_QUARTERLY = ("northbound_hold_snapshot",)   # tushare hk_hold 季度末快照（JOB-083）
-_ASSET_FREQ_EVENT = (                                    # 事件驱动：行随事件出现，无每日覆盖语义
-    "ex_dividend_event", "index_constituent", "index_adjustment", "msci_adjustment",
-    "margin_target_adjustment", "dividend", "share_change", "repurchase",
-    "restricted_shares", "disclosure_plan", "share_unlock", "ipo_schedule",
+_ASSET_FREQ_QUARTERLY = ("northbound_hold_snapshot",)  # tushare hk_hold 季度末快照（JOB-083）
+_ASSET_FREQ_EVENT = (  # 事件驱动：行随事件出现，无每日覆盖语义
+    "ex_dividend_event",
+    "index_constituent",
+    "index_adjustment",
+    "msci_adjustment",
+    "margin_target_adjustment",
+    "dividend",
+    "share_change",
+    "repurchase",
+    "restricted_shares",
+    "disclosure_plan",
+    "share_unlock",
+    "ipo_schedule",
 )
 
 
@@ -1863,9 +2053,18 @@ def _asset_period_key(d: str, freq: str) -> str:
     return f"{iso[0]}-W{iso[1]:02d}"
 
 
-_ASSET_TIER_OVERRIDES: dict[str, str] = {}   # 表名→tier；冷层启用迁表后在此登记（对齐 storage_tiering Tier；中文映射在前端）
-_asset_state: dict[str, Any] = {"running": False, "done": 0, "total": 0, "audited_at": "", "ts": 0.0,
-                                "error": "", "tables": {}}
+_ASSET_TIER_OVERRIDES: dict[
+    str, str
+] = {}  # 表名→tier；冷层启用迁表后在此登记（对齐 storage_tiering Tier；中文映射在前端）
+_asset_state: dict[str, Any] = {
+    "running": False,
+    "done": 0,
+    "total": 0,
+    "audited_at": "",
+    "ts": 0.0,
+    "error": "",
+    "tables": {},
+}
 _asset_lock = threading.Lock()
 _asset_thread: threading.Thread | None = None
 
@@ -1875,8 +2074,8 @@ def _asset_audit_client():
     from zephyr.infrastructure.database_service import get_db_service
 
     return get_db_service().get_clickhouse_conn(
-        role="admin", slot="asset_audit",
-        extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 180})
+        role="admin", slot="asset_audit", extra_kwargs={"connect_timeout": 3, "send_receive_timeout": 180}
+    )
 
 
 def _asset_run_audit() -> None:
@@ -1891,9 +2090,7 @@ def _asset_run_audit() -> None:
     - 空表不跑重查询（width=0，深度空）
     """
     cli = _asset_audit_client()
-    cols = cli.execute(
-        "SELECT database, table, name, type FROM system.columns "
-        "WHERE database IN ('c0_meta','c1_market','c3_fundamental')")
+    cols = cli.execute(_SQL_AUDIT_COLUMNS)
     tmap: dict[tuple[str, str], dict[str, Any]] = {}
     for d, t, name, ty in cols:
         e = tmap.setdefault((str(d), str(t)), {})
@@ -1905,9 +2102,7 @@ def _asset_run_audit() -> None:
             if "date_pri" not in e or pri < e["date_pri"]:
                 e["date_col"], e["date_ty"], e["date_pri"] = str(name), tl, pri
     sizes: dict[tuple[str, str], int] = {}
-    for d, t, n in cli.execute(
-            "SELECT database, table, sum(rows) FROM system.parts WHERE active "
-            "AND database IN ('c0_meta','c1_market','c3_fundamental') GROUP BY database, table"):
+    for d, t, n in cli.execute(_SQL_AUDIT_PARTS):
         sizes[(str(d), str(t))] = int(n or 0)
 
     # 交易日历基准（缺口真源）：主=c1_market.trade_calendar（A股）；港=c1_market.hk_trade_calendar——
@@ -1918,8 +2113,7 @@ def _asset_run_audit() -> None:
             return set()
         where = "WHERE is_open = 1" if "is_open" in tcols else ""
         try:
-            return {str(r[0])[:10] for r in cli.execute(
-                f"SELECT DISTINCT cal_date FROM c1_market.{dbtbl} {where}")}
+            return {str(r[0])[:10] for r in cli.execute(f"SELECT DISTINCT cal_date FROM c1_market.{dbtbl} {where}")}  # noqa: bare-sql  bare-sql豁免: f-string动态表名列名,不可静态常量化
         except Exception:  # noqa: BLE001 — 日历缺失降级：无缺口/完整度（宽度/深度不受影响）
             return set()
 
@@ -1932,7 +2126,7 @@ def _asset_run_audit() -> None:
     try:
         sl_cols = {str(n) for d, t, n, _ in cols if d == "c1_market" and t == "stock_list"}
         if "symbol" in sl_cols:
-            expected_w = int(cli.execute("SELECT uniqExact(symbol) FROM c1_market.stock_list")[0][0])
+            expected_w = int(cli.execute(_SQL_AUDIT_UNIVERSE)[0][0])
     except Exception:  # noqa: BLE001 — 应有宇宙取不到降级：白名单表也不展示应有数
         expected_w = None
 
@@ -1945,14 +2139,22 @@ def _asset_run_audit() -> None:
     tables_out: dict[str, dict[str, Any]] = {}
     for db, tbl in keys:
         e = tmap[(db, tbl)]
-        rec: dict[str, Any] = {"width": None, "expected_width": None, "dmin": "", "dmax": "",
-                               "days": None, "completeness": None, "gap_days": None,
-                               "tier": _ASSET_TIER_OVERRIDES.get(tbl, "warm"), "err": ""}
+        rec: dict[str, Any] = {
+            "width": None,
+            "expected_width": None,
+            "dmin": "",
+            "dmax": "",
+            "days": None,
+            "completeness": None,
+            "gap_days": None,
+            "tier": _ASSET_TIER_OVERRIDES.get(tbl, "warm"),
+            "err": "",
+        }
         dc, sc, dty = e.get("date_col"), e.get("symbol_col"), e.get("date_ty", "")
         rec["freq"] = freq = _asset_freq_of(tbl, dc)
         tbl_low = tbl.lower()
         if any(s in tbl_low for s in _ASSET_CAL_SKIP):
-            tbl_cal: set[str] = set()          # 日历不跟 A 股的表：不算缺口口径
+            tbl_cal: set[str] = set()  # 日历不跟 A 股的表：不算缺口口径
         elif "hk" in tbl_low:
             # 陆港通资金流交易日=两地共同开市日（内地假期北向关闭，纯港股日历仍伪缺口——实证 137 天）
             tbl_cal = (cal_a & cal_hk) if "connect" in tbl_low else cal_hk
@@ -1961,7 +2163,7 @@ def _asset_run_audit() -> None:
         if dc or sc:
             n = sizes.get((db, tbl), 0)
             if n == 0:
-                rec["width"] = 0 if sc else None   # 空表免重查询
+                rec["width"] = 0 if sc else None  # 空表免重查询
             else:
                 u = "uniq" if n > _ASSET_HUGE_ROWS else "uniqExact"
                 sels: list[str] = []
@@ -1975,17 +2177,17 @@ def _asset_run_audit() -> None:
                     dfn = f"substring({dc}, 1, 10)" if dstr else f"toDate({dc})"
                     sels += [f"minIf({dc}, {cond})", f"maxIf({dc}, {cond})", f"groupUniqArrayIf({dfn}, {cond})"]
                 try:
-                    row = cli.execute(f"SELECT {', '.join(sels)} FROM {db}.{tbl}")[0]
+                    row = cli.execute(f"SELECT {', '.join(sels)} FROM {db}.{tbl}")[0]  # noqa: bare-sql  bare-sql豁免: f-string动态表名列名,不可静态常量化
                     i = 0
                     if sc:
                         rec["width"] = int(row[i] or 0)
                         i += 1
                     if dc:
-                        rec["dmin"] = str(row[i])[:10] if row[i] is not None else ""     # Nullable 列全 NULL 兜底
+                        rec["dmin"] = str(row[i])[:10] if row[i] is not None else ""  # Nullable 列全 NULL 兜底
                         rec["dmax"] = str(row[i + 1])[:10] if row[i + 1] is not None else ""
                         dates = {str(x)[:10] for x in (row[i + 2] or [])}
                         rec["days"] = len(dates)
-                        if not dates:   # 全零值日期表（etf_list/index_list 实证）：CH 聚合默认值 1970 兜底清空
+                        if not dates:  # 全零值日期表（etf_list/index_list 实证）：CH 聚合默认值 1970 兜底清空
                             rec["dmin"] = rec["dmax"] = ""
                         # 完整度/缺口按表自身频率口径（freq）：日频维持交易日历比对；周/月/季按"应出周期数
                         # 比对"（bar 日期=周期内最后交易日，与日历同周期映射）；事件口径不报——行随事件出现，
@@ -1993,7 +2195,7 @@ def _asset_run_audit() -> None:
                         # 按交易日全覆盖算同样必出伪缺口，不参与。
                         span = {x for x in tbl_cal if rec["dmin"] <= x <= rec["dmax"]}
                         if freq == "event":
-                            pass   # 事件口径：前端标注"事件"，无完整度/缺口
+                            pass  # 事件口径：前端标注"事件"，无完整度/缺口
                         elif span and dates and str(dc).lower() in ("trade_date", "date", "cal_date"):
                             inter = dates & span
                             if freq in ("weekly", "monthly", "quarterly"):
@@ -2002,7 +2204,7 @@ def _asset_run_audit() -> None:
                                 if exp:
                                     rec["completeness"] = round(len(got & exp) / len(exp) * 100, 1)
                                     rec["gap_days"] = max(0, len(exp) - len(got & exp))
-                            elif len(inter) / len(dates) >= 0.9:   # 排他防伪：7×24 混合表不算缺口
+                            elif len(inter) / len(dates) >= 0.9:  # 排他防伪：7×24 混合表不算缺口
                                 rec["completeness"] = round(len(inter) / len(span) * 100, 1)
                                 rec["gap_days"] = max(0, len(span) - len(inter))
                 except Exception:  # noqa: BLE001 — 单表审计失败降级"未测"，不炸全局
@@ -2010,13 +2212,13 @@ def _asset_run_audit() -> None:
         if tbl in _ASSET_ASHARE_UNIVERSE and expected_w:
             rec["expected_width"] = expected_w
         tables_out[f"{db}.{tbl}"] = rec
-        with _asset_lock:   # 渐进更新：前端 60s 轮询可见体检进度（done/total）
+        with _asset_lock:  # 渐进更新：前端 60s 轮询可见体检进度（done/total）
             _asset_state["done"] = len(tables_out)
             _asset_state["tables"] = dict(tables_out)
     with _asset_lock:
         _asset_state["running"] = False
         _asset_state["audited_at"] = datetime.now().isoformat(" ", "seconds")
-        _asset_state["ts"] = time.time()
+        _asset_state["ts"] = time.perf_counter()
 
 
 def _asset_maybe_start(force: bool) -> dict[str, Any]:
@@ -2026,7 +2228,7 @@ def _asset_maybe_start(force: bool) -> dict[str, Any]:
         st = {k: (dict(v) if k == "tables" else v) for k, v in _asset_state.items()}
     if _asset_thread is not None and _asset_thread.is_alive():
         return st
-    stale = (not st["ts"]) or (time.time() - st["ts"] > _ASSET_TTL_SEC)
+    stale = (not st["ts"]) or (time.perf_counter() - st["ts"] > _ASSET_TTL_SEC)
     if not (force or stale):
         return st
 
@@ -2065,7 +2267,7 @@ def _bridge_http_health() -> dict[str, Any]:
     """探活沙箱 EXEC HTTP 桥（18901）：连接+GET /health 计数器。"""
     import socket as _sock
 
-    t0 = time.time()
+    t0 = time.perf_counter()
     try:
         with _sock.create_connection(("127.0.0.1", 18901), timeout=2.0) as s:
             s.sendall(b"GET /health HTTP/1.0\r\n\r\n")
@@ -2073,7 +2275,7 @@ def _bridge_http_health() -> dict[str, Any]:
             while b"\r\n\r\n" not in buf:
                 c = s.recv(4096)
                 if not c:
-                    return {"alive": False, "detail": "连接后静默关闭", "ms": round((time.time() - t0) * 1000)}
+                    return {"alive": False, "detail": "连接后静默关闭", "ms": round((time.perf_counter() - t0) * 1000)}
                 buf += c
             body = buf.decode("utf-8", "ignore").split("\r\n\r\n", 1)[-1]
             stats: dict[str, str] = {}
@@ -2081,10 +2283,9 @@ def _bridge_http_health() -> dict[str, Any]:
                 if "=" in kv:
                     k, v = kv.split("=", 1)
                     stats[k] = v
-            return {"alive": True, "detail": body, "stats": stats,
-                    "ms": round((time.time() - t0) * 1000)}
+            return {"alive": True, "detail": body, "stats": stats, "ms": round((time.perf_counter() - t0) * 1000)}
     except OSError as e:
-        return {"alive": False, "detail": str(e)[:60], "ms": round((time.time() - t0) * 1000)}
+        return {"alive": False, "detail": str(e)[:60], "ms": round((time.perf_counter() - t0) * 1000)}
 
 
 def _bridge_file_fresh() -> list[dict[str, Any]]:
@@ -2103,13 +2304,13 @@ def _bridge_file_fresh() -> list[dict[str, Any]]:
         if not p.exists():
             out.append({"name": name, "light": "red", "detail": "文件不存在"})
             continue
-        age_s = time.time() - p.stat().st_mtime
+        age_s = time.perf_counter() - p.stat().st_mtime
         if age_s < 60:
             light, detail = "green", f"{round(age_s)}s 前更新"
         elif age_s < 3600:
-            light, detail = "yellow", f"{round(age_s/60)} 分钟前"
+            light, detail = "yellow", f"{round(age_s / 60)} 分钟前"
         else:
-            light, detail = "gray", f"{round(age_s/3600)} 小时前"
+            light, detail = "gray", f"{round(age_s / 3600)} 小时前"
         out.append({"name": name, "light": light, "detail": detail})
     return out
 
@@ -2140,14 +2341,14 @@ def bridge_status() -> dict[str, Any]:
         "files": files,
         "mini_alive": mini_alive,
         "retire_date": "2026-09-18",
-        "generated_at": datetime.now().isoformat(" ", "seconds"),
+        "generated_at": datetime.now(timezone.utc).isoformat(" ", "seconds"),
     }
 
 
-_TDM_CACHE: dict[str, Any] = {}   # /api/tdm mtime 缓存（改 YAML 即失效重算）
+_TDM_CACHE: dict[str, Any] = {}  # /api/tdm mtime 缓存（改 YAML 即失效重算）
 _TDM_REFNAMES: dict[str, Any] = {"built_at": 0.0, "names": {}}
-_TDM_REFNAMES_TTL = 600.0   # 引用中文名缓存 10 分钟（注册表低频变更，无需逐请求重扫）
-_TDM_REFDESCS: dict[str, Any] = {"built_at": 0.0, "descs": {}}   # 引用 id → 大白话机制（算法锚分区，b20260910）
+_TDM_REFNAMES_TTL = 600.0  # 引用中文名缓存 10 分钟（注册表低频变更，无需逐请求重扫）
+_TDM_REFDESCS: dict[str, Any] = {"built_at": 0.0, "descs": {}}  # 引用 id → 大白话机制（算法锚分区，b20260910）
 
 
 def _tdm_ref_names_algo(names: dict[str, str]) -> None:
@@ -2155,8 +2356,12 @@ def _tdm_ref_names_algo(names: dict[str, str]) -> None:
     加载分支拆出防 NO-HIGH-COMPLEXITY。"""
     import yaml as _yaml
 
-    def _load(fname: str) -> Any:
-        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+    def _load(fname: str) -> dict[str, Any]:
+        return _yaml.safe_load(
+            (_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(
+                encoding="utf-8"
+            )
+        )
 
     reg = _load("decision_algo_registry.yaml")
     for x in reg.get("algorithms", []):
@@ -2176,15 +2381,19 @@ def _tdm_ref_names() -> dict[str, str]:
     MOD-* 走"py 头 [A_module] module_id → 文件路径 → module_translation_registry
     name_zh"链。未命中返回空（前端回退显示编号原文）。
     """
-    now = time.time()
+    now = time.perf_counter()
     if now - _TDM_REFNAMES["built_at"] < _TDM_REFNAMES_TTL and _TDM_REFNAMES["names"]:
         return _TDM_REFNAMES["names"]
-    import yaml as _yaml   # 延迟导入（与 tdm_map 同款，启动不加重）
+    import yaml as _yaml  # 延迟导入（与 tdm_map 同款，启动不加重）
 
     names: dict[str, str] = {}
 
-    def _load(fname: str) -> Any:
-        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+    def _load(fname: str) -> dict[str, Any]:
+        return _yaml.safe_load(
+            (_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(
+                encoding="utf-8"
+            )
+        )
 
     try:
         reg = _load("data_asset_registry.yaml")
@@ -2200,7 +2409,7 @@ def _tdm_ref_names() -> dict[str, str]:
             zh = x.get("name_zh") or x.get("name") or ""
             if x.get("strategy_id"):
                 names[x["strategy_id"]] = zh
-            for a in (x.get("aliases") or []):   # sleeve/别名挂载（daban-sleeve 等）也能翻出中文名
+            for a in x.get("aliases") or []:  # sleeve/别名挂载（daban-sleeve 等）也能翻出中文名
                 names.setdefault(a, zh)
         reg = _load("technical_indicator_registry.yaml")
         for x in reg.get("indicators", []):
@@ -2226,13 +2435,14 @@ def _tdm_ref_names() -> dict[str, str]:
         for x in reg.get("cost_models", []):
             if x.get("cost_model_id"):
                 names[x["cost_model_id"]] = x.get("name_zh") or x.get("name") or ""
-        _tdm_ref_names_algo(names)   # DAL/ML 算法锚补翻译源（b20260910，复杂度拆 helper）
-    except Exception as exc:   # 注册表缺失/损坏不阻断地图本体——中文名降级为编号原文
+        _tdm_ref_names_algo(names)  # DAL/ML 算法锚补翻译源（b20260910，复杂度拆 helper）
+    except Exception as exc:  # 注册表缺失/损坏不阻断地图本体——中文名降级为编号原文
         logger.warning("tdm ref_names registry load failed: %s", exc)
 
     # MOD-* 中文名：py 头 [A_module] module_id → 路径 → module_translation_registry
     try:
         import re as _re
+
         mt = _load("module_translation_registry.yaml")
         path2zh = {e.get("module_path"): (e.get("name_zh") or "") for e in mt.get("entries", []) if isinstance(e, dict)}
         pat = _re.compile(r"\[A_module\]\s*module_id=(MOD-[A-Za-z0-9-]+)")
@@ -2261,8 +2471,12 @@ def _tdm_ref_descs_dal_ml(descs: dict[str, str]) -> None:
     """DAL/ML 大白话聚合（mechanism_zh / task+architecture）。"""
     import yaml as _yaml
 
-    def _load(fname: str) -> Any:
-        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+    def _load(fname: str) -> dict[str, Any]:
+        return _yaml.safe_load(
+            (_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(
+                encoding="utf-8"
+            )
+        )
 
     reg = _load("decision_algo_registry.yaml")
     for x in reg.get("algorithms", []):
@@ -2280,8 +2494,12 @@ def _tdm_ref_descs_exa_ind(descs: dict[str, str]) -> None:
     """EXA/IND 大白话聚合（name_zh+适用场景 / name_zh 兜底）。"""
     import yaml as _yaml
 
-    def _load(fname: str) -> Any:
-        return _yaml.safe_load((_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(encoding="utf-8"))
+    def _load(fname: str) -> dict[str, Any]:
+        return _yaml.safe_load(
+            (_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / fname).read_text(
+                encoding="utf-8"
+            )
+        )
 
     reg = _load("execution_algo_registry.yaml")
     for x in reg.get("execution_algos", []):
@@ -2308,7 +2526,7 @@ def _tdm_ref_descs() -> dict[str, str]:
     try:
         _tdm_ref_descs_dal_ml(descs)
         _tdm_ref_descs_exa_ind(descs)
-    except Exception as exc:   # 注册表缺失/损坏不阻断地图本体——大白话降级为空（前端站位兜底）
+    except Exception as exc:  # 注册表缺失/损坏不阻断地图本体——大白话降级为空（前端站位兜底）
         logger.warning("tdm ref_descs registry load failed: %s", exc)
     _TDM_REFDESCS["built_at"] = now
     _TDM_REFDESCS["descs"] = descs
@@ -2381,38 +2599,51 @@ def tdm_map() -> dict[str, Any]:
         note = str(n.get("algo_note_zh") or "").replace("\n", " ").strip()
         while "。 " in note:
             note = note.replace("。 ", "。")
-        nodes_out.append({
-            "id": nid,
-            "name": n.get("name_zh", ""),
-            "q": n.get("decision_question", ""),
-            "note": note,
-            "layer": n.get("layer"),
-            "flow": n.get("flow"),
-            "parent": n.get("parent_node"),
-            "point": n.get("point"),
-            "activation": n.get("activation"),
-            "invalidation": n.get("invalidation"),
-            "autonomy": n.get("ai_autonomy"),
-            "fallback": n.get("fallback"),
-            "module_ref": n.get("module_ref"),
-            "module_id": n.get("module_id"),
-            "red_reason": n.get("red_reason"),   # v1.10 红因徽标（structural/pending_gate/not_built/terminal）
-            "mounts": [m.get("strategy_ref") if isinstance(m, dict) else str(m)
-                       for m in (n.get("strategy_mounts") or [])],
-            "refs": {k: n.get(k) or [] for k in (
-                "factor_refs", "data_refs", "cost_model_refs", "risk_limit_refs",
-                "threshold_refs", "event_refs", "algo_refs") if n.get(k)},
-            "comments": comments.get(nid, []),
-        })
+        nodes_out.append(
+            {
+                "id": nid,
+                "name": n.get("name_zh", ""),
+                "q": n.get("decision_question", ""),
+                "note": note,
+                "layer": n.get("layer"),
+                "flow": n.get("flow"),
+                "parent": n.get("parent_node"),
+                "point": n.get("point"),
+                "activation": n.get("activation"),
+                "invalidation": n.get("invalidation"),
+                "autonomy": n.get("ai_autonomy"),
+                "fallback": n.get("fallback"),
+                "module_ref": n.get("module_ref"),
+                "module_id": n.get("module_id"),
+                "red_reason": n.get("red_reason"),  # v1.10 红因徽标（structural/pending_gate/not_built/terminal）
+                "mounts": [
+                    m.get("strategy_ref") if isinstance(m, dict) else str(m) for m in (n.get("strategy_mounts") or [])
+                ],
+                "refs": {
+                    k: n.get(k) or []
+                    for k in (
+                        "factor_refs",
+                        "data_refs",
+                        "cost_model_refs",
+                        "risk_limit_refs",
+                        "threshold_refs",
+                        "event_refs",
+                        "algo_refs",
+                    )
+                    if n.get(k)
+                },
+                "comments": comments.get(nid, []),
+            }
+        )
     payload = {
         "ok": True,
         "map_id": raw.get("map_id"),
         "name_zh": raw.get("name_zh"),
         "nodes": nodes_out,
         "edges": raw.get("edges", []),
-        "ref_names": _tdm_ref_names(),   # 引用 id → 中文名（八轴+STR 别名+MOD，抽屉溯源真源关联）
-        "ref_descs": _tdm_ref_descs(),   # 算法/模型 id → 大白话机制（算法锚分区，b20260910）
-        "generated_at": datetime.now().isoformat(" ", "seconds"),
+        "ref_names": _tdm_ref_names(),  # 引用 id → 中文名（八轴+STR 别名+MOD，抽屉溯源真源关联）
+        "ref_descs": _tdm_ref_descs(),  # 算法/模型 id → 大白话机制（算法锚分区，b20260910）
+        "generated_at": datetime.now(timezone.utc).isoformat(" ", "seconds"),
     }
     _TDM_CACHE["mtime"] = mtime
     _TDM_CACHE["payload"] = payload
@@ -2439,14 +2670,14 @@ def tdm_validation(node_id: str = "") -> dict[str, Any]:
     )
     try:
         rows = _ch_exec(sql, {"nid": nid})
-    except Exception as exc:   # 台账不可达不阻断抽屉——降级披露，不冒充"未验证"
+    except Exception as exc:  # 台账不可达不阻断抽屉——降级披露，不冒充"未验证"
         logger.warning("tdm validation query failed for %s: %s", nid, exc)
         return {"ok": False, "reason": f"台账不可达: {exc}", "node_id": nid, "verdict": "untested", "records": []}
 
-    def _fmt_d(d: Any) -> str:
+    def _fmt_d(d: date | datetime | None) -> str:
         return d.strftime("%Y-%m-%d") if d else ""
 
-    def _fmt_ts(d: Any) -> str:
+    def _fmt_ts(d: date | datetime | None) -> str:
         return d.strftime("%Y-%m-%d %H:%M") if d else ""
 
     records = [
@@ -2474,7 +2705,6 @@ def tdm_validation(node_id: str = "") -> dict[str, Any]:
     }
 
 
-
 @app.get("/api/tdm/verdicts")
 def tdm_verdicts() -> dict[str, Any]:
     """全节点当前验证态地图（只读）——画布噪音/衰减徽章数据源（PB-03，P2-2）。
@@ -2488,7 +2718,7 @@ def tdm_verdicts() -> dict[str, Any]:
     )
     try:
         rows = _ch_exec(sql)
-    except Exception as exc:   # 台账不可达→空 map，画布降级无徽章（不阻断地图渲染）
+    except Exception as exc:  # 台账不可达→空 map，画布降级无徽章（不阻断地图渲染）
         logger.warning("tdm verdicts query failed: %s", exc)
         return {"ok": True, "verdicts": {}, "degraded": True}
     verdicts: dict[str, dict[str, str]] = {}
@@ -2500,19 +2730,19 @@ def tdm_verdicts() -> dict[str, Any]:
 
 # ═══════════════ 策略生产全景图/策略工厂（真源 config/strategy_production_map.yaml，图 9 供给端） ═══════════════
 
-_FACTORY_CACHE: dict[str, Any] = {}           # /api/factory mtime 缓存（改 YAML 即失效重算，同 /api/tdm 模式）
+_FACTORY_CACHE: dict[str, Any] = {}  # /api/factory mtime 缓存（改 YAML 即失效重算，同 /api/tdm 模式）
 _FACTORY_LEDGER: dict[str, Any] = {"built_at": 0.0, "payload": None}
-_FACTORY_LEDGER_TTL = 300.0                   # 台账统计缓存 5 分钟（台账只增，低频变更）
+_FACTORY_LEDGER_TTL = 300.0  # 台账统计缓存 5 分钟（台账只增，低频变更）
 # 节点 → strategy_screen 行归属过滤（只读统计；未列出的节点=尚未接管台账行，前端空态留位）。
 # SQL 经 _ch_exec 恒带 params dict → clickhouse_driver 做 % 格式化，LIKE 通配符必须写 %%（与 _SQL_TABLE_FRESH 同款）
 _FACTORY_NODE_FILTERS: dict[str, str] = {
-    "FAC-E1":  "screen_batch LIKE 'C2-intake%%'",                       # 进货台账全量（现阶段只有车道A有货）
-    "FAC-E1A": "screen_batch LIKE 'C2-intake%%'",                       # 车道A=社区货源（C1 人工版 597 条）
-    "FAC-E3":  "screen_batch LIKE 'C4-translated%%'",                   # 翻译件（translated+deferred 同批）
-    "FAC-E4":  "verdict IN ('translated_c4', 'oos_tested')",           # 考试过手=IS 成绩行+OOS 成绩行
-    "FAC-E6":  "verdict = 'failed_obsolete' OR oos_years_decay >= 0.5",  # 入库监控=失效章+年衰减≥0.5 存疑
+    "FAC-E1": "screen_batch LIKE 'C2-intake%%'",  # 进货台账全量（现阶段只有车道A有货）
+    "FAC-E1A": "screen_batch LIKE 'C2-intake%%'",  # 车道A=社区货源（C1 人工版 597 条）
+    "FAC-E3": "screen_batch LIKE 'C4-translated%%'",  # 翻译件（translated+deferred 同批）
+    "FAC-E4": "verdict IN ('translated_c4', 'oos_tested')",  # 考试过手=IS 成绩行+OOS 成绩行
+    "FAC-E6": "verdict = 'failed_obsolete' OR oos_years_decay >= 0.5",  # 入库监控=失效章+年衰减≥0.5 存疑
 }
-_FACTORY_DECAY_SUSPECT = 0.5                  # DDL 注释口径：oos_years_decay>=0.5 判存疑（MOD-BT-078 同源）
+_FACTORY_DECAY_SUSPECT = 0.5  # DDL 注释口径：oos_years_decay>=0.5 判存疑（MOD-BT-078 同源）
 
 
 def _factory_ledger() -> dict[str, Any]:
@@ -2521,31 +2751,18 @@ def _factory_ledger() -> dict[str, Any]:
     双窗及格判定与 scripts/backtest/strategy_screen_query.py bothwin 同口径只读复算：
     IS Sharpe>0 且每段 OOS Sharpe>0 且年衰减率<0.5；判定只读不落库（lifecycle 变更属规则册治理动作）。
     """
-    now = time.time()
+    now = time.perf_counter()
     if _FACTORY_LEDGER["payload"] and now - _FACTORY_LEDGER["built_at"] < _FACTORY_LEDGER_TTL:
         return _FACTORY_LEDGER["payload"]
     try:
-        total, uniq = _ch_exec(
-            "SELECT count(), uniqExact(strategy_id) FROM c1_backtest.strategy_screen")[0]
-        batches = [
-            {"batch": b, "verdict": v, "rows": n}
-            for b, v, n in _ch_exec(
-                "SELECT screen_batch, verdict, count() FROM c1_backtest.strategy_screen"
-                " GROUP BY screen_batch, verdict ORDER BY screen_batch, verdict")
-        ]
-        reasons = [
-            {"reason": r, "rows": n}
-            for r, n in _ch_exec(
-                "SELECT verdict_reason, count() FROM c1_backtest.strategy_screen"
-                " WHERE verdict IN ('deferred_c4', 'rejected', 'failed_obsolete')"
-                " GROUP BY verdict_reason ORDER BY count() DESC LIMIT 12")
-        ]
-        is_rows = _ch_exec(
-            "SELECT strategy_id, is_sharpe FROM c1_backtest.strategy_screen"
-            " WHERE screen_batch LIKE 'C4-translated%%' AND verdict = 'translated_c4'")
+        total, uniq = _ch_exec(_SQL_FACTORY_TOTAL)[0]
+        batches = [{"batch": b, "verdict": v, "rows": n} for b, v, n in _ch_exec(_SQL_FACTORY_BATCHES)]
+        reasons = [{"reason": r, "rows": n} for r, n in _ch_exec(_SQL_FACTORY_REASONS)]
+        is_rows = _ch_exec(_SQL_FACTORY_IS_SHARPE)
         oos_rows = _ch_exec(
             "SELECT strategy_id, screen_batch, is_sharpe, oos_years_decay"
-            " FROM c1_backtest.strategy_screen WHERE verdict = 'oos_tested' ORDER BY screen_batch")
+            " FROM c1_backtest.strategy_screen WHERE verdict = 'oos_tested' ORDER BY screen_batch"
+        )
         oos_map: dict[str, list[dict[str, Any]]] = {}
         for sid, batch, sh, decay in oos_rows:
             oos_map.setdefault(sid, []).append({"batch": batch, "sharpe": sh, "decay": decay})
@@ -2555,8 +2772,8 @@ def _factory_ledger() -> dict[str, Any]:
             if not segs:
                 continue
             passed = (is_sh or 0) > 0 and all(
-                (s["sharpe"] or 0) > 0 and (s["decay"] is None or s["decay"] < _FACTORY_DECAY_SUSPECT)
-                for s in segs)
+                (s["sharpe"] or 0) > 0 and (s["decay"] is None or s["decay"] < _FACTORY_DECAY_SUSPECT) for s in segs
+            )
             if passed:
                 bothwin.append({"strategy_id": sid, "is_sharpe": is_sh, "segments": segs})
         bothwin.sort(key=lambda x: -(x["is_sharpe"] or 0))
@@ -2564,7 +2781,8 @@ def _factory_ledger() -> dict[str, Any]:
         for nid, cond in _FACTORY_NODE_FILTERS.items():
             rows = _ch_exec(
                 "SELECT verdict, count(), max(is_sharpe)"
-                f" FROM c1_backtest.strategy_screen WHERE {cond} GROUP BY verdict")
+                f" FROM c1_backtest.strategy_screen WHERE {cond} GROUP BY verdict"
+            )
             breakdown = [{"verdict": v, "rows": n, "sharpe_max": mx} for v, n, mx in rows]
             node_stats[nid] = {"total": sum(b["rows"] for b in breakdown), "breakdown": breakdown}
         # 理由码分布（节点级，抽屉条形图数据源）：E1A=筛出理由（C2 批），E3=挂起/失效理由（C4 翻译批）。
@@ -2573,25 +2791,33 @@ def _factory_ledger() -> dict[str, Any]:
             node_stats[nid]["reasons"] = [
                 {"reason": r, "rows": n}
                 for r, n in _ch_exec(
-                    "SELECT verdict_reason, count() FROM c1_backtest.strategy_screen"
+                    "SELECT verdict_reason, count() FROM c1_backtest.strategy_screen"  # noqa: bare-sql  bare-sql豁免: f-string动态表名列名,不可静态常量化
                     " WHERE verdict IN ('deferred_c4', 'rejected', 'failed_obsolete')"
                     f" AND screen_batch LIKE '{batch_like}'"
-                    " GROUP BY verdict_reason ORDER BY count() DESC LIMIT 8")
+                    " GROUP BY verdict_reason ORDER BY count() DESC LIMIT 8"
+                )
             ]
         out: dict[str, Any] = {
             "ok": True,
-            "global": {"total": total, "uniq_strategy": uniq, "batches": batches,
-                       "failure_reasons": reasons},
+            "global": {"total": total, "uniq_strategy": uniq, "batches": batches, "failure_reasons": reasons},
             "nodes": node_stats,
-            "bothwin": {"gate": "IS>0 且每段样本>0 且年衰减率<0.5",
-                        "tested": len(oos_map), "passed": len(bothwin),
-                        "items": bothwin[:10]},
+            "bothwin": {
+                "gate": "IS>0 且每段样本>0 且年衰减率<0.5",
+                "tested": len(oos_map),
+                "passed": len(bothwin),
+                "items": bothwin[:10],
+            },
             "generated_at": now_utc().isoformat(" ", "seconds"),
         }
-    except Exception as exc:   # 台账不可达不阻断地图——降级披露，画布零依赖
+    except Exception as exc:  # 台账不可达不阻断地图——降级披露，画布零依赖
         logger.warning("factory ledger query failed: %s", exc)
-        out = {"ok": False, "reason": f"台账不可达: {exc}", "nodes": {}, "global": {},
-               "bothwin": {"tested": 0, "passed": 0, "items": []}}
+        out = {
+            "ok": False,
+            "reason": f"台账不可达: {exc}",
+            "nodes": {},
+            "global": {},
+            "bothwin": {"tested": 0, "passed": 0, "items": []},
+        }
     _FACTORY_LEDGER["built_at"] = now
     _FACTORY_LEDGER["payload"] = out
     return out
@@ -2619,21 +2845,23 @@ def factory_map() -> dict[str, Any]:
         note = str(n.get("algo_note_zh") or "").replace("\n", " ").strip()
         while "。 " in note:
             note = note.replace("。 ", "。")
-        nodes_out.append({
-            "id": n.get("node_id", ""),
-            "name": n.get("name_zh", ""),
-            "q": n.get("decision_question", ""),
-            "note": note,
-            "stage": n.get("stage"),
-            "node_type": n.get("node_type"),
-            "lane": n.get("lane"),
-            "build_status": n.get("build_status"),
-            "compute_class": n.get("compute_class"),
-            "module_ref": n.get("module_ref"),
-            "data_refs": n.get("data_refs") or [],
-            "design_refs": n.get("design_refs") or [],
-            "store_refs": n.get("store_refs") or [],
-        })
+        nodes_out.append(
+            {
+                "id": n.get("node_id", ""),
+                "name": n.get("name_zh", ""),
+                "q": n.get("decision_question", ""),
+                "note": note,
+                "stage": n.get("stage"),
+                "node_type": n.get("node_type"),
+                "lane": n.get("lane"),
+                "build_status": n.get("build_status"),
+                "compute_class": n.get("compute_class"),
+                "module_ref": n.get("module_ref"),
+                "data_refs": n.get("data_refs") or [],
+                "design_refs": n.get("design_refs") or [],
+                "store_refs": n.get("store_refs") or [],
+            }
+        )
     payload = {
         "ok": True,
         "map_id": raw.get("map_id"),
@@ -2646,7 +2874,7 @@ def factory_map() -> dict[str, Any]:
         "nodes": nodes_out,
         "edges": raw.get("edges", []),
         "feedback_loops": raw.get("feedback_loops", []),
-        "ref_names": _tdm_ref_names(),   # MOD-*/策略/数据集中文名翻译真源复用（零硬编码翻译）
+        "ref_names": _tdm_ref_names(),  # MOD-*/策略/数据集中文名翻译真源复用（零硬编码翻译）
         "generated_at": now_utc().isoformat(" ", "seconds"),
     }
     _FACTORY_CACHE["mtime"] = mtime
@@ -2664,7 +2892,7 @@ def factory_ledger() -> dict[str, Any]:
     return _factory_ledger()
 
 
-_GOVM_CACHE: dict[str, Any] = {}   # /api/govm mtime 缓存（改 YAML 即失效重算，同 /api/tdm /api/factory 模式）
+_GOVM_CACHE: dict[str, Any] = {}  # /api/govm mtime 缓存（改 YAML 即失效重算，同 /api/tdm /api/factory 模式）
 
 
 @app.get("/api/govm")
@@ -2690,24 +2918,32 @@ def governance_operations_map() -> dict[str, Any]:
     raw = _yaml.safe_load(p.read_text(encoding="utf-8"))
     layers_out = []
     for lay in (raw.get("pipeline") or {}).get("layers", []):
-        layers_out.append({
-            "id": lay.get("id", ""),
-            "name_zh": lay.get("name_zh", ""),
-            "desc_zh": lay.get("desc_zh", ""),
-            "mounts": lay.get("mounts", []),
-            "config_refs": lay.get("config_refs", []),
-            "disconnected": [
-                {"mod": x.get("mod", ""), "note_zh": x.get("note_zh", "")}
-                for x in (lay.get("disconnected") or []) if isinstance(x, dict)
-            ],
-        })
+        layers_out.append(
+            {
+                "id": lay.get("id", ""),
+                "name_zh": lay.get("name_zh", ""),
+                "desc_zh": lay.get("desc_zh", ""),
+                "mounts": lay.get("mounts", []),
+                "config_refs": lay.get("config_refs", []),
+                "disconnected": [
+                    {"mod": x.get("mod", ""), "note_zh": x.get("note_zh", "")}
+                    for x in (lay.get("disconnected") or [])
+                    if isinstance(x, dict)
+                ],
+            }
+        )
     families_out: dict[str, list[dict[str, Any]]] = {}
     for fam, members in (raw.get("families") or {}).items():
         families_out[fam] = [
-            {"module": m.get("module", ""), "path": m.get("path", ""),
-             "domain": m.get("domain", ""), "maturity": m.get("maturity", ""),
-             "wiring": m.get("wiring", "")}
-            for m in members or [] if isinstance(m, dict)
+            {
+                "module": m.get("module", ""),
+                "path": m.get("path", ""),
+                "domain": m.get("domain", ""),
+                "maturity": m.get("maturity", ""),
+                "wiring": m.get("wiring", ""),
+            }
+            for m in members or []
+            if isinstance(m, dict)
         ]
     payload = {
         "ok": True,
@@ -2741,9 +2977,13 @@ def factory_threehigh() -> dict[str, Any]:
     """
     p = _THREEHIGH_CSV
     if not p.exists():
-        return {"ok": True, "batches": [], "total_rows": 0,
-                "hint": "E1D 模块已落码（MOD-BT-090）未首跑——three_high_screen screen 后自动亮起",
-                "generated_at": now_utc().isoformat(" ", "seconds")}
+        return {
+            "ok": True,
+            "batches": [],
+            "total_rows": 0,
+            "hint": "E1D 模块已落码（MOD-BT-090）未首跑——three_high_screen screen 后自动亮起",
+            "generated_at": now_utc().isoformat(" ", "seconds"),
+        }
     mtime = p.stat().st_mtime
     if _THREEHIGH_CACHE["mtime"] == mtime and _THREEHIGH_CACHE["payload"]:
         return _THREEHIGH_CACHE["payload"]
@@ -2754,9 +2994,23 @@ def factory_threehigh() -> dict[str, Any]:
             rows = [r for r in _csv.DictReader(f) if r.get("candidate_id")]
     except OSError as exc:
         return {"ok": False, "reason": f"台账不可读: {exc}", "batches": []}
-    num_cols = ("members", "fin_coverage", "rev_yoy_med", "profit_yoy_med", "gross_margin_med",
-                "net_margin_med", "cust_top5_med", "hhi_med", "downstream_breadth",
-                "supply_pressure", "growth_z", "margin_z", "barrier_z", "choke_z", "total_z")
+    num_cols = (
+        "members",
+        "fin_coverage",
+        "rev_yoy_med",
+        "profit_yoy_med",
+        "gross_margin_med",
+        "net_margin_med",
+        "cust_top5_med",
+        "hhi_med",
+        "downstream_breadth",
+        "supply_pressure",
+        "growth_z",
+        "margin_z",
+        "barrier_z",
+        "choke_z",
+        "total_z",
+    )
     keep = ("candidate_id", "sector", "three_high_flags", "hypothesis_zh", "birth_batch", "birth_source")
     items: list[dict[str, Any]] = []
     for r in rows:
@@ -2774,8 +3028,12 @@ def factory_threehigh() -> dict[str, Any]:
     for b in sorted(batches, reverse=True):
         items_b = sorted(batches[b], key=lambda x: -(x["total_z"] or 0))
         out_batches.append({"batch": b, "count": len(items_b), "items": items_b})
-    payload: dict[str, Any] = {"ok": True, "batches": out_batches, "total_rows": len(items),
-                               "generated_at": now_utc().isoformat(" ", "seconds")}
+    payload: dict[str, Any] = {
+        "ok": True,
+        "batches": out_batches,
+        "total_rows": len(items),
+        "generated_at": now_utc().isoformat(" ", "seconds"),
+    }
     _THREEHIGH_CACHE["mtime"] = mtime
     _THREEHIGH_CACHE["payload"] = payload
     return payload
@@ -2783,14 +3041,16 @@ def factory_threehigh() -> dict[str, Any]:
 
 # ═══════════════ 产业地图 chainmap（真源 ig_* 七表，depgraph PG 只读；Owner 2026-09-08 三层缩放方案） ═══════════════
 
-_CM_MARKETS = ("all", "cn", "global")   # 市场过滤档（项 4）：all=全部链（基线口径），cn/global=ig_chain.market 单档
-_CM_GALAXY_CACHE: dict[str, dict[str, Any]] = {}                     # market → {data, ts}（L1 星系，TTL 600s）
-_CM_CLUSTER_CACHE: dict[tuple[str, str], dict[str, Any]] = {}        # (market, cid) → L2 簇详情（随 galaxy 失联失效）
-_CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}             # symbol→公司名映射（ig_company_edge 名称列，覆盖不全如实用）
-_CM_NAME_OVERRIDE_PATH = _REPO / "config" / "chainmap_cluster_names.yaml"   # L1 族名 override（Commit C 规则版，mtime 缓存改 YAML 即生效）
+_CM_MARKETS = ("all", "cn", "global")  # 市场过滤档（项 4）：all=全部链（基线口径），cn/global=ig_chain.market 单档
+_CM_GALAXY_CACHE: dict[str, dict[str, Any]] = {}  # market → {data, ts}（L1 星系，TTL 600s）
+_CM_CLUSTER_CACHE: dict[tuple[str, str], dict[str, Any]] = {}  # (market, cid) → L2 簇详情（随 galaxy 失联失效）
+_CM_NAME_CACHE: dict[str, Any] = {"map": None, "ts": 0.0}  # symbol→公司名映射（ig_company_edge 名称列，覆盖不全如实用）
+_CM_NAME_OVERRIDE_PATH = (
+    _REPO / "config" / "chainmap_cluster_names.yaml"
+)  # L1 族名 override（Commit C 规则版，mtime 缓存改 YAML 即生效）
 _CM_NAME_OVERRIDE: dict[str, Any] = {"mtime": None, "map": {}}
 
-_CM_EQUITY_ROWS_CAP = 8   # 环节股权徽章明细行上限（计数 out/inn 如实给全量，明细 hover 浮层展示前 N）
+_CM_EQUITY_ROWS_CAP = 8  # 环节股权徽章明细行上限（计数 out/inn 如实给全量，明细 hover 浮层展示前 N）
 
 # 2026-09-12 tier 退役终章：列=链内拓扑层号 L1..Ln（_cm_chain_cols 从 ig_edge 结构推导），
 # 散点/环/存量兜底一律"未分层"——不再出现 上游/中游/下游/通用 字样（tier 字段停止人工填写）。
@@ -2812,8 +3072,9 @@ def _cm_name_override() -> dict[str, str]:
 
                 raw = yaml.safe_load(_CM_NAME_OVERRIDE_PATH.read_text(encoding="utf-8")) or {}
                 if isinstance(raw, dict):
-                    m = {str(k): str(v).strip() for k, v in raw.items()
-                         if str(v).strip() and not str(k).startswith("#")}
+                    m = {
+                        str(k): str(v).strip() for k, v in raw.items() if str(v).strip() and not str(k).startswith("#")
+                    }
             except Exception as exc:
                 logger.warning("chainmap name override 解析失败（沿用自动族名）: %s", exc)
         _CM_NAME_OVERRIDE["mtime"] = mtime
@@ -2850,7 +3111,7 @@ def _cm_chain_layers(nodes: list[tuple[str, str]], edges: list[tuple[str, str]])
         return layers
     indeg = dict(indeg0)
     frontier = [nid for nid, d in indeg.items() if d == 0]
-    if not frontier:          # 全部入度>=1 → 链内成环，整体 fallback
+    if not frontier:  # 全部入度>=1 → 链内成环，整体 fallback
         return layers
     depth = 0
     seen: set[str] = set()
@@ -2865,7 +3126,7 @@ def _cm_chain_layers(nodes: list[tuple[str, str]], edges: list[tuple[str, str]])
                     nxt.append(v)
         frontier = nxt
         depth += 1
-    for nid in ids:           # 环上节点/链内零边散点 → 未分层（-1，兼容原 col 口径）
+    for nid in ids:  # 环上节点/链内零边散点 → 未分层（-1，兼容原 col 口径）
         if nid not in seen or (indeg0[nid] == 0 and outdeg[nid] == 0):
             layers[nid] = -1
     return layers
@@ -2879,8 +3140,16 @@ def _cm_chain_cols(nodes: list[tuple[str, str]], edges: list[tuple[str, str]]) -
 
 # iFinD 职能分区（2026-09-12 前端重构批）：区名只做底板标题，无任何 上游/中游/下游 字样
 _CM_ZONE_NAMES = ["材料与零部件", "装备", "工艺", "产品", "服务"]
-_CM_FR_ZONE = {"生产原料": 0, "辅助材料": 0, "生产设备": 1, "辅助设备": 1,
-               "加工工艺": 2, "产品业务": 3, "技术服务": 4, "销售渠道": 4}
+_CM_FR_ZONE: Final = {
+    "生产原料": 0,
+    "辅助材料": 0,
+    "生产设备": 1,
+    "辅助设备": 1,
+    "加工工艺": 2,
+    "产品业务": 3,
+    "技术服务": 4,
+    "销售渠道": 4,
+}
 
 
 def _cm_node_zones(names: dict[str, str], froles: dict[str, str], indeg: dict[str, int]) -> dict[str, int]:
@@ -2898,7 +3167,7 @@ def _cm_node_zones(names: dict[str, str], froles: dict[str, str], indeg: dict[st
     for nid, name in names.items():
         if nid in zones or "（全球）" not in name:
             continue
-        base_id = by_name.get(name[:name.index("（全球）")])
+        base_id = by_name.get(name[: name.index("（全球）")])
         if base_id is not None and base_id in zones:
             zones[nid] = zones[base_id]
         else:
@@ -2912,7 +3181,7 @@ def _cm_fr_rank(function_role: str | None) -> int:
     return _CM_FR_ORDER.index(f) if f in _CM_FR_ORDER else len(_CM_FR_ORDER)
 
 
-def _cm_pg() -> Any:
+def _cm_pg() -> psycopg2.extensions.connection:
     """depgraph PG 只读连接（depgraph_reader 角色，零写副作用）。"""
     from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
@@ -2925,7 +3194,7 @@ def _cm_role_rank(role: str | None) -> int:
         return 0
     if r == "参与":
         return 1
-    return 2   # mentioned/未知殿后
+    return 2  # mentioned/未知殿后
 
 
 def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
@@ -2939,31 +3208,30 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
     try:
         cur = conn.cursor()
         if market == "all":
-            cur.execute("SELECT chain_id, name, market FROM ig_chain WHERE status = 'active'")
+            cur.execute(_SQL_CM_CHAINS_ACTIVE)
         else:
-            cur.execute("SELECT chain_id, name, market FROM ig_chain WHERE status = 'active' AND market = %s",
-                        (market,))
+            cur.execute(_SQL_CM_CHAINS_BY_MARKET, (market,))
         chain_rows = cur.fetchall()
         chain_name: dict[str, str] = {r[0]: r[1] for r in chain_rows}
         chain_market: dict[str, str] = {r[0]: (r[2] or "cn") for r in chain_rows}
         cur.execute(_SQL_CM_NODES_ALL)
         node_chain: dict[str, str] = {r[0]: r[1] for r in cur.fetchall()}
-        cur.execute("SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL GROUP BY node_id")
+        cur.execute(_SQL_CM_NODE_COMPANY_COUNTS)
         node_companies: dict[str, int] = {r[0]: int(r[1]) for r in cur.fetchall()}
-        cur.execute("SELECT DISTINCT node_id, symbol FROM ig_node_company WHERE valid_to IS NULL")
+        cur.execute(_SQL_CM_NODE_COMPS_ALL)
         sym_chains: dict[str, set[str]] = {}
         for nid, sym in cur.fetchall():
             c = node_chain.get(nid)
             if c:
                 sym_chains.setdefault(sym, set()).add(c)
-        cur.execute("SELECT from_node, to_node FROM ig_edge WHERE valid_to IS NULL")  # 2026-09-12: 已关闭边不参与 galaxy 链对权重
+        cur.execute(_SQL_CM_EDGES_OPEN)  # 2026-09-12: 已关闭边不参与 galaxy 链对权重
         pair_w: dict[tuple[str, str], float] = {}
         for a, b in cur.fetchall():
             c1, c2 = node_chain.get(a), node_chain.get(b)
             if c1 in chain_name and c2 in chain_name and c1 != c2:
                 key = (c1, c2) if c1 < c2 else (c2, c1)
                 pair_w[key] = pair_w.get(key, 0.0) + 1.0
-        cur.execute("SELECT DISTINCT from_symbol, to_symbol FROM ig_company_edge WHERE valid_to IS NULL")
+        cur.execute(_SQL_CM_COMPANY_EDGES)
         for s1, s2 in cur.fetchall():
             for c1 in sym_chains.get(s1, ()):
                 for c2 in sym_chains.get(s2, ()):
@@ -3050,7 +3318,7 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
     for sym, cs in sym_chains.items():
         for c in cs:
             if c in chain_companies:
-                chain_companies[c] += 1   # 一司挂多链按链各计（导航口径），簇内公司数另用去重并集
+                chain_companies[c] += 1  # 一司挂多链按链各计（导航口径），簇内公司数另用去重并集
 
     cluster_stats = []
     for root, members in groups.items():
@@ -3059,30 +3327,48 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
         # 族名=枢纽链名去括号（Owner 2026-09-10 裁定：不加"族"尾缀——簇名直接用行业名，
         # 如"食品加工制造行业"；与链名同字串无妨，簇 id(C01) 与链 id 不同维度）
         base = chain_name[hub].split("（")[0].split("(")[0].strip() or chain_name[hub]
-        cluster_stats.append({
-            "root": root, "members": members, "hub": hub, "name": base,
-            "n_chains": len(members),
-            "n_companies": len({s for s, cs in sym_chains.items() if cs & set(members)}),
-            "n_nodes": sum(1 for n, c in node_chain.items() if c in set(members)),
-        })
+        cluster_stats.append(
+            {
+                "root": root,
+                "members": members,
+                "hub": hub,
+                "name": base,
+                "n_chains": len(members),
+                "n_companies": len({s for s, cs in sym_chains.items() if cs & set(members)}),
+                "n_nodes": sum(1 for n, c in node_chain.items() if c in set(members)),
+            }
+        )
     cluster_stats.sort(key=lambda x: (-x["n_companies"], x["root"]))
-    cid_of = {st["root"]: f"C{i+1:02d}" for i, st in enumerate(cluster_stats)}
+    cid_of = {st["root"]: f"C{i + 1:02d}" for i, st in enumerate(cluster_stats)}
     used_names: dict[str, int] = {}
     clusters_out, links_out, chains_out = [], [], []
     overrides = _cm_name_override()
     for st in cluster_stats:
         cid = cid_of[st["root"]]
-        nm = overrides.get(cid) or st["name"]   # Commit C 规则版：override 优先，未列出沿用自动族名
+        nm = overrides.get(cid) or st["name"]  # Commit C 规则版：override 优先，未列出沿用自动族名
         used_names[nm] = used_names.get(nm, 0) + 1
         if used_names[nm] > 1:
             nm = f"{nm}{used_names[nm]}"
-        clusters_out.append({"id": cid, "name": nm, "n_chains": st["n_chains"],
-                             "n_nodes": st["n_nodes"], "n_companies": st["n_companies"]})
+        clusters_out.append(
+            {
+                "id": cid,
+                "name": nm,
+                "n_chains": st["n_chains"],
+                "n_nodes": st["n_nodes"],
+                "n_companies": st["n_companies"],
+            }
+        )
         for m in st["members"]:
-            chains_out.append({"chain_id": m, "name": chain_name[m], "cluster": cid,
-                               "market": chain_market[m],
-                               "n_nodes": sum(1 for n, c in node_chain.items() if c == m),
-                               "n_companies": chain_companies[m]})
+            chains_out.append(
+                {
+                    "chain_id": m,
+                    "name": chain_name[m],
+                    "cluster": cid,
+                    "market": chain_market[m],
+                    "n_nodes": sum(1 for n, c in node_chain.items() if c == m),
+                    "n_companies": chain_companies[m],
+                }
+            )
     cg: dict[str, dict[str, float]] = {}
     for (a, b), w in pair_w.items():
         ca, cb = cid_of.get(labels[a]), cid_of.get(labels[b])
@@ -3090,16 +3376,20 @@ def _cm_build_galaxy(market: str = "all") -> dict[str, Any]:
             key = (ca, cb) if ca < cb else (cb, ca)
             cg[key] = cg.get(key, 0.0) + w
     links_out = [{"s": k[0], "t": k[1], "w": int(v)} for k, v in sorted(cg.items())]
-    return {"clusters": clusters_out, "links": links_out, "chains": chains_out,
-            "market": market,
-            "generated_at": datetime.now().isoformat(" ", "seconds")}
+    return {
+        "clusters": clusters_out,
+        "links": links_out,
+        "chains": chains_out,
+        "market": market,
+        "generated_at": datetime.now(timezone.utc).isoformat(" ", "seconds"),
+    }
 
 
 def _cm_galaxy(market: str = "all") -> dict[str, Any]:
     ent = _CM_GALAXY_CACHE.get(market)
-    if ent and (time.time() - ent["ts"]) < 600:
+    if ent and (time.perf_counter() - ent["ts"]) < 600:
         g = ent["data"]
-        try:   # Commit C：族名 override 改 YAML 即生效（mtime 变化→绕过 TTL 强制重建）
+        try:  # Commit C：族名 override 改 YAML 即生效（mtime 变化→绕过 TTL 强制重建）
             if _CM_NAME_OVERRIDE_PATH.stat().st_mtime != _CM_NAME_OVERRIDE["mtime"]:
                 g = None
         except OSError:
@@ -3107,23 +3397,21 @@ def _cm_galaxy(market: str = "all") -> dict[str, Any]:
         if g:
             return g
     g = _cm_build_galaxy(market)
-    _CM_GALAXY_CACHE[market] = {"data": g, "ts": time.time()}
+    _CM_GALAXY_CACHE[market] = {"data": g, "ts": time.perf_counter()}
     _CM_CLUSTER_CACHE.clear()
     return g
 
 
 def _cm_symbol_names() -> dict[str, str]:
     m = _CM_NAME_CACHE["map"]
-    if m is not None and (time.time() - _CM_NAME_CACHE["ts"]) < 600:
+    if m is not None and (time.perf_counter() - _CM_NAME_CACHE["ts"]) < 600:
         return m
     conn = _cm_pg()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT from_symbol, MAX(from_name) FROM ig_company_edge WHERE valid_to IS NULL AND from_name IS NOT NULL "
-                    "GROUP BY from_symbol")
+        cur.execute(_SQL_CM_SYMBOL_NAMES_FROM)
         m = {r[0]: r[1] for r in cur.fetchall()}
-        cur.execute("SELECT to_symbol, MAX(to_name) FROM ig_company_edge WHERE valid_to IS NULL AND to_name IS NOT NULL AND to_symbol <> '' "
-                    "GROUP BY to_symbol")
+        cur.execute(_SQL_CM_SYMBOL_NAMES_TO)
         for s, n in cur.fetchall():
             m.setdefault(s, n)
         conn.close()
@@ -3134,7 +3422,7 @@ def _cm_symbol_names() -> dict[str, str]:
             pass
         raise
     _CM_NAME_CACHE["map"] = m
-    _CM_NAME_CACHE["ts"] = time.time()
+    _CM_NAME_CACHE["ts"] = time.perf_counter()
     return m
 
 
@@ -3151,7 +3439,9 @@ def chainmap_galaxy(market: str = Query("all", pattern="^(all|cn|global)$")) -> 
         return {"ok": False, "error": str(exc)[:200], "clusters": [], "links": [], "chains": []}
 
 
-def _cm_s21_flags(chains_out: list[dict[str, Any]], chain_edges_in: dict[str, list[tuple[str, str]]]) -> dict[str, dict[str, Any]]:
+def _cm_s21_flags(
+    chains_out: list[dict[str, Any]], chain_edges_in: dict[str, list[tuple[str, str]]]
+) -> dict[str, dict[str, Any]]:
     """S21 流程连通性链级标记（B7，需求卡 2026-09-11/全部开工 2026-09-14）：口径移植引擎
     scripts/industry_graph/graph_quality_check._check_s21（2026-09-12 拓扑端点版）——
     墓碑节点（名含"（已并入"）不计；实质节点≥3 且非行业锚点链才判；
@@ -3204,14 +3494,17 @@ def _cm_s21_flags(chains_out: list[dict[str, Any]], chain_edges_in: dict[str, li
                 else:
                     reason = "拓扑端点间无连通路径"
         if reason:
-            out[cid] = {"s21_broken": True,
-                        "s21_note": "S21 流程连通性：%s（实质环节 %d，结构边 %d）" % (reason, len(alive_ids), len(edges))}
+            out[cid] = {
+                "s21_broken": True,
+                "s21_note": "S21 流程连通性：%s（实质环节 %d，结构边 %d）" % (reason, len(alive_ids), len(edges)),
+            }
     return out
 
 
 @app.get("/api/chainmap-cluster")
-def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
-                     market: str = Query("all", pattern="^(all|cn|global)$")) -> dict[str, Any]:
+def chainmap_cluster(
+    cid: str = Query(..., min_length=2, max_length=8), market: str = Query("all", pattern="^(all|cn|global)$")
+) -> dict[str, Any]:
     """产业地图 L2 链层（chainmap-cluster 组件）：簇内链→环节（tier 三值分列 + function_role 组内聚集）+结构边+公司计数。
 
     market 与 galaxy 同档取簇（cid 是 per-market 聚类空间，跨档 cid 不存在→cluster not found）。"""
@@ -3237,10 +3530,27 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ ig_equity_edge 参与方。
             # 方向按落位公司是 holder（控=对外投资）/held（被控=股东）判；UE 编码对手方 LEFT JOIN 编码表取名；
             # 簇级 LIMIT 防大簇失控（计数在前端按行累加，明细行每环节另截 _CM_EQUITY_ROWS_CAP）
-            cur.execute(_SQL_CM_EQ_AGG, (ids, ids))
-            eq_rows = cur.fetchall()
+            # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE）2026-09-27 切 entity_graph 六表现行版
+            # （150 万边）替代 ig_equity_edge(804 条)；PERSON:/UNLISTED: 前缀契约按 entity_type 精确保持。
+            from zephyr.frontend.dashboard.chainmap_equity_graph import cluster_equity_badge_rows
+
+            eq_dicts = cluster_equity_badge_rows(conn, ids)
+            eq_rows = [
+                (
+                    d["node_id"],
+                    d["dir"],
+                    d["symbol"]
+                    or (("PERSON:" if d.get("etype") == "person" else "UNLISTED:") + (d["name"] or "未知实体"),),
+                    d["stake_pct"],
+                    d["relation"],
+                    d["verification"],
+                    d["as_of"],
+                    (d["name"] or "") if not d["symbol"] else "",
+                )
+                for d in eq_dicts
+            ]
             # edge_type 随边输出（iFinD 流向线红蓝分类：supply 系=红，其余=蓝）；已关闭边(edge_close PIT)不参与
-            cur.execute("SELECT from_node, to_node, COALESCE(edge_type, '') FROM ig_edge WHERE valid_to IS NULL")
+            cur.execute(_SQL_CM_EDGE_TYPES)
             all_edges = cur.fetchall()
             cur.execute(_SQL_CM_NODE_TOPCOMPS_BY_CHAIN, (ids,))
             topcomp_rows = cur.fetchall()
@@ -3248,7 +3558,7 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
             cc_ids = {r[5] for r in node_rows if len(r) > 5 and r[5]}
             cc_meta: dict[str, dict[str, str]] = {}
             if cc_ids:
-                cur.execute("SELECT chain_id, name FROM ig_chain WHERE chain_id = ANY(%s)", (list(cc_ids),))
+                cur.execute(_SQL_CM_CHAINS_BY_IDS, (list(cc_ids),))
                 cc_names = {r[0]: r[1] for r in cur.fetchall()}
                 cc_cluster = {c["chain_id"]: c.get("cluster", "") for c in g["chains"]}
                 for _cc in cc_ids:
@@ -3271,22 +3581,25 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         topcomps: dict[str, list[dict[str, Any]]] = {}
         for _nid, _lst in _tc_group.items():
             _lst.sort(key=lambda x: (_cm_role_rank(x[1]), -(x[2] if x[2] is not None else 0), x[0]))
-            topcomps[_nid] = [{"symbol": _s, "name": eq_names.get(_s, ""), "role": _r}
-                              for _s, _r, _cf in _lst[:8]]
+            topcomps[_nid] = [{"symbol": _s, "name": eq_names.get(_s, ""), "role": _r} for _s, _r, _cf in _lst[:8]]
         eq_by_node: dict[str, dict[str, Any]] = {}
         for nid, dirn, other, stake, rel, verif, asof, uename in eq_rows:
             agg = eq_by_node.setdefault(nid, {"out": 0, "inn": 0, "rows": []})
             non_local = str(other or "").startswith(("PERSON:", "UNLISTED:"))
             agg["out" if dirn == "out" else "inn"] += 1
             if len(agg["rows"]) < _CM_EQUITY_ROWS_CAP:
-                agg["rows"].append({
-                    "dir": dirn, "symbol": "" if non_local else other,
-                    "name": (uename or "") if non_local else eq_names.get(other, ""),
-                    "ref": str(other) if non_local else "",
-                    "stake_pct": None if stake is None else round(float(stake), 2),
-                    "relation": rel or "", "verification": verif or "",
-                    "as_of": str(asof) if asof else None,
-                })
+                agg["rows"].append(
+                    {
+                        "dir": dirn,
+                        "symbol": "" if non_local else other,
+                        "name": (uename or "") if non_local else eq_names.get(other, ""),
+                        "ref": str(other) if non_local else "",
+                        "stake_pct": None if stake is None else round(float(stake), 2),
+                        "relation": rel or "",
+                        "verification": verif or "",
+                        "as_of": str(asof) if asof else None,
+                    }
+                )
         # 拓扑分层列（2026-09-12 tier 退役裁定）：列由链内边结构派生（入度0=上游列/最末层=下游列），
         # 存量 tier 仅作环/散点节点的 fallback 展示——列结构与前端组件契约不变
         node_chain_of = {r[0]: r[1] for r in node_rows}
@@ -3321,13 +3634,20 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
                 zonemap[_nid] = _z
         # B5 下钻（child_chain_id）+环节别名（aliases）：元数据已在 conn.close() 前查好（cc_meta）
         import json as _json
+
         for nid, ch, name, tier, frole, _cc, _al in node_rows:
-            entry = {"node_id": nid, "name": name, "tier": tier or "",
-                     "col": colmap.get(nid) or _cm_col(tier),
-                     "layer": layermap.get(nid, -1), "zone": zonemap.get(nid, 0),
-                     "function_role": (frole or "").strip(),
-                     "n_companies": ncomp.get(nid, 0), "equity": eq_by_node.get(nid),
-                     "companies": topcomps.get(nid, [])}
+            entry = {
+                "node_id": nid,
+                "name": name,
+                "tier": tier or "",
+                "col": colmap.get(nid) or _cm_col(tier),
+                "layer": layermap.get(nid, -1),
+                "zone": zonemap.get(nid, 0),
+                "function_role": (frole or "").strip(),
+                "n_companies": ncomp.get(nid, 0),
+                "equity": eq_by_node.get(nid),
+                "companies": topcomps.get(nid, []),
+            }
             if _cc and _cc in cc_meta:
                 entry["child_chain"] = cc_meta[_cc]
             if _al:
@@ -3341,8 +3661,9 @@ def chainmap_cluster(cid: str = Query(..., min_length=2, max_length=8),
         for lst in nodes_by_chain.values():
             # 链内按 function_role 分组聚集（八值展示序），同组内公司数降序（项 2 分列适配）
             lst.sort(key=lambda n: (_cm_fr_rank(n["function_role"]), -n["n_companies"], n["name"]))
-        chains_out = [{**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in
-                      sorted(members, key=lambda c: -c["n_companies"])]
+        chains_out = [
+            {**c, "nodes": nodes_by_chain[c["chain_id"]]} for c in sorted(members, key=lambda c: -c["n_companies"])
+        ]
         edges_out = [[a, b, rel] for a, b, rel in all_edges if a in nid_set and b in nid_set]
         # S21 流程连通性链级标记（B7）：断链链挂 s21_broken/s21_note，前端 ⚠ 弱化标注
         s21 = _cm_s21_flags(chains_out, chain_edges_in)
@@ -3363,25 +3684,20 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
         conn = _cm_pg()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT n.name, n.tier, n.chain_id, c.name, n.function_role FROM ig_node n "
-                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
-                        " AND n.name NOT LIKE '%%（已并入%%'", (node_id,))
+            cur.execute(
+                _SQL_CM_NODE_DETAIL,
+                (node_id,),
+            )
             row = cur.fetchone()
             if not row:
                 return {"ok": False, "error": "node not found", "companies": []}
-            cur.execute("SELECT symbol, role, confidence FROM ig_node_company WHERE valid_to IS NULL AND node_id = %s", (node_id,))
+            cur.execute(_SQL_CM_CAT_NODE_COMPS, (node_id,))
             rows = cur.fetchall()
             syms = [r[0] for r in rows]
             # 跨链数（二期 Commit B）：公司在全部 active 链的落位链数（>1 即跨链，徽章跳转依据）
             nchains: dict[str, int] = {}
             if syms:
-                cur.execute(
-                    "SELECT nc.symbol, count(DISTINCT n.chain_id) FROM ig_node_company nc "
-                    "JOIN ig_node n ON n.node_id = nc.node_id "
-                    "JOIN ig_chain c ON c.chain_id = n.chain_id "
-                    "WHERE nc.valid_to IS NULL AND nc.symbol = ANY(%s) AND c.status = 'active' GROUP BY nc.symbol",
-                    (syms,),
-                )
+                cur.execute(_SQL_CM_NODE_CROSS_CHAIN, (syms,))
                 nchains = {r[0]: int(r[1]) for r in cur.fetchall()}
             names = _cm_symbol_names()
             conn.close()
@@ -3391,14 +3707,30 @@ def chainmap_node(node_id: str = Query(..., min_length=1)) -> dict[str, Any]:
             except Exception:
                 pass
             raise
-        companies = [{"symbol": s, "name": names.get(s, ""), "role": r or "",
-                      "confidence": None if cf is None else round(float(cf), 2), "n_chains": nchains.get(s, 1)}
-                     for s, r, cf in rows]
+        companies = [
+            {
+                "symbol": s,
+                "name": names.get(s, ""),
+                "role": r or "",
+                "confidence": None if cf is None else round(float(cf), 2),
+                "n_chains": nchains.get(s, 1),
+            }
+            for s, r, cf in rows
+        ]
         companies.sort(key=lambda x: (_cm_role_rank(x["role"]), -(x["confidence"] or 0), x["symbol"]))
-        return {"ok": True, "node": {"node_id": node_id, "name": row[0], "tier": row[1] or "",
-                                     "chain_id": row[2], "chain_name": row[3],
-                                     "function_role": (row[4] or "").strip()},
-                "companies": companies[:200], "total": len(companies)}
+        return {
+            "ok": True,
+            "node": {
+                "node_id": node_id,
+                "name": row[0],
+                "tier": row[1] or "",
+                "chain_id": row[2],
+                "chain_name": row[3],
+                "function_role": (row[4] or "").strip(),
+            },
+            "companies": companies[:200],
+            "total": len(companies),
+        }
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "companies": []}
 
@@ -3416,27 +3748,45 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
         conn = _cm_pg()
         try:
             cur = conn.cursor()
-            cur.execute("SELECT chain_id, name FROM ig_chain WHERE status='active' AND name ILIKE %s "
-                        "ORDER BY name LIMIT 10", (like,))
-            chains_out = [{"chain_id": r[0], "name": r[1], "cluster": chain_cluster.get(r[0], "")} for r in cur.fetchall()]
-            cur.execute("SELECT n.node_id, n.name, n.chain_id, c.name FROM ig_node n "
-                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE c.status = 'active' AND n.name ILIKE %s AND n.name NOT LIKE '%%（已并入%%' "
-                        "ORDER BY n.name LIMIT 10", (like,))
-            nodes_out = [{"node_id": r[0], "name": r[1], "chain_id": r[2], "chain_name": r[3],
-                          "cluster": chain_cluster.get(r[2], "")} for r in cur.fetchall()]
-            cur.execute("SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
-                        "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
-                        "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.valid_to IS NULL AND nc.symbol ILIKE %s LIMIT 20",
-                        (kw + "%",))
+            cur.execute(
+                _SQL_CM_CHAIN_SEARCH,
+                (like,),
+            )
+            chains_out = [
+                {"chain_id": r[0], "name": r[1], "cluster": chain_cluster.get(r[0], "")} for r in cur.fetchall()
+            ]
+            cur.execute(
+                _SQL_CM_NODE_SEARCH,
+                (like,),
+            )
+            nodes_out = [
+                {
+                    "node_id": r[0],
+                    "name": r[1],
+                    "chain_id": r[2],
+                    "chain_name": r[3],
+                    "cluster": chain_cluster.get(r[2], ""),
+                }
+                for r in cur.fetchall()
+            ]
+            cur.execute(
+                "SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
+                "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
+                "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.valid_to IS NULL AND nc.symbol ILIKE %s LIMIT 20",
+                (kw + "%",),
+            )
             sym_rows = cur.fetchall()
             hit_syms = {r[0] for r in sym_rows}
             name_map = _cm_symbol_names()
             named = [s for s, n in name_map.items() if kw.lower() in (n or "").lower() and s not in hit_syms][:20]
             extra_rows: list[tuple] = []
             if named:
-                cur.execute("SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
-                            "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
-                            "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.valid_to IS NULL AND nc.symbol = ANY(%s) LIMIT 20", (named,))
+                cur.execute(
+                    "SELECT DISTINCT nc.symbol, n.node_id, n.name, n.chain_id, c.name, nc.role "
+                    "FROM ig_node_company nc JOIN ig_node n ON n.node_id = nc.node_id "
+                    "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE nc.valid_to IS NULL AND nc.symbol = ANY(%s) LIMIT 20",
+                    (named,),
+                )
                 extra_rows = cur.fetchall()
             conn.close()
         except Exception:
@@ -3446,9 +3796,19 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
                 pass
             raise
         names = _cm_symbol_names()
-        symbols_out = [{"symbol": r[0], "name": names.get(r[0], ""), "node_id": r[1], "node_name": r[2],
-                        "chain_id": r[3], "chain_name": r[4], "cluster": chain_cluster.get(r[3], ""), "role": r[5] or ""}
-                       for r in list(sym_rows) + extra_rows]
+        symbols_out = [
+            {
+                "symbol": r[0],
+                "name": names.get(r[0], ""),
+                "node_id": r[1],
+                "node_name": r[2],
+                "chain_id": r[3],
+                "chain_name": r[4],
+                "cluster": chain_cluster.get(r[3], ""),
+                "role": r[5] or "",
+            }
+            for r in list(sym_rows) + extra_rows
+        ]
         return {"ok": True, "chains": chains_out, "nodes": nodes_out, "symbols": symbols_out}
     except Exception as exc:
         return {"ok": False, "error": str(exc)[:200], "chains": [], "nodes": [], "symbols": []}
@@ -3461,24 +3821,31 @@ def chainmap_search(q: str = Query(..., min_length=1)) -> dict[str, Any]:
 # 事件真源：CH calendar_event（宏观事件日历，/api/events 同源同库）。
 # 命中粒度（如实声明）：主题→申万一级行业→ig_chain.category→链上环节投影；环节级独立命中判定既有真源
 # 不存在，不造（ACC-F-CHAINMAP-CATALYST 留痕）。行业别名表仅做名字归一，不改方向判定。
-_CM_CAT_WINDOW_BACK = 30   # 已发生事件回看天
-_CM_CAT_WINDOW_FWD = 90    # 未来事件前瞻天
-_CM_CAT_EVENTS_CAP = 40    # 响应事件条数上限（total 如实返回）
+_CM_CAT_WINDOW_BACK = 30  # 已发生事件回看天
+_CM_CAT_WINDOW_FWD = 90  # 未来事件前瞻天
+_CM_CAT_EVENTS_CAP = 40  # 响应事件条数上限（total 如实返回）
 _CM_CAT_NODE_HITS_CAP = 6  # 单环节催化角标命中明细上限
 # MOD-ALT-005 受益/受损行业名 → 申万一级词表（ig_chain.category）机械别名（仅名字归一；
 # 国产替代/出口链/航运 等概念名无机械对应 → unmapped 如实返回不硬凑）
 _CM_CAT_IND_ALIAS: dict[str, str] = {
-    "银行": "银行", "非银金融": "非银金融", "房地产": "房地产", "半导体": "半导体",
-    "新能源": "电力设备", "高端装备": "机械设备", "工程机械": "机械设备",
-    "建筑": "建筑装饰", "建材": "建筑材料", "农业": "农林牧渔", "互联网": "互联网服务",
+    "银行": "银行",
+    "非银金融": "非银金融",
+    "房地产": "房地产",
+    "半导体": "半导体",
+    "新能源": "电力设备",
+    "高端装备": "机械设备",
+    "工程机械": "机械设备",
+    "建筑": "建筑装饰",
+    "建材": "建筑材料",
+    "农业": "农林牧渔",
+    "互联网": "互联网服务",
 }
 
 # 裸 SQL 集中化（R96 常量豁免通道；NOQA-VALIDATION 密度闸否决行级 noqa 后的正道）：
 # chainmap 只读诊断 SQL，参数化绑定无注入面，与既有 chainmap 段手写 execute 同一读口径
 # 墓碑过滤统一口径(NO-BARE-SQL 集中化;墓碑=已合并历史快照,S8/S21/S24/api 同口径)
 # 2026-09-12 增：valid_to IS NULL（node_close/edge_close PIT 收口后，已关闭节点/边不参与地图）
-_SQL_CM_NODES_ALL = ("SELECT node_id, chain_id FROM ig_node"
-                     " WHERE name NOT LIKE '%%（已并入%%' AND valid_to IS NULL")
+_SQL_CM_NODES_ALL = "SELECT node_id, chain_id FROM ig_node WHERE name NOT LIKE '%%（已并入%%' AND valid_to IS NULL"
 _SQL_CM_NODES_BY_CHAIN = (
     "SELECT node_id, chain_id, name, tier, function_role, child_chain_id, aliases FROM ig_node"
     " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL"
@@ -3495,36 +3862,19 @@ _SQL_CM_NODE_TOPCOMPS_BY_CHAIN = (
     " WHERE valid_to IS NULL AND node_id IN (SELECT node_id FROM ig_node"
     " WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%' AND valid_to IS NULL) LIMIT 6000"
 )
-_SQL_CM_EQ_AGG = (
-    "SELECT node_id, dir, other, stake_pct, relation, verification, as_of, ue_name FROM ("
-    "SELECT nc.node_id, 'out' AS dir, e.held AS other, e.stake_pct, e.relation, e.verification, e.as_of, "
-    "ue.name AS ue_name FROM ig_equity_edge e "
-    "JOIN ig_node_company nc ON nc.valid_to IS NULL AND nc.symbol = e.holder "
-    "AND nc.node_id IN (SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) "
-    "LEFT JOIN ig_unlisted_entity ue ON 'UNLISTED:UE-' || ue.ue_id = e.held "
-    "WHERE e.valid_to IS NULL "
-    "UNION ALL "
-    "SELECT nc.node_id, 'in', e.holder, e.stake_pct, e.relation, e.verification, e.as_of, ue2.name "
-    "FROM ig_equity_edge e "
-    "JOIN ig_node_company nc ON nc.valid_to IS NULL AND nc.symbol = e.held "
-    "AND nc.node_id IN (SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) "
-    "LEFT JOIN ig_unlisted_entity ue2 ON 'UNLISTED:UE-' || ue2.ue_id = e.holder "
-    "WHERE e.valid_to IS NULL) q LIMIT 800"
-)
 _SQL_CM_CAT_EVENTS = (
     "SELECT event_date, event_type, description FROM calendar_event "
     "WHERE event_date >= today() - %(b)s AND event_date <= today() + %(f)s ORDER BY event_date"
 )
 _SQL_CM_CAT_CLUSTER_CHAINS = "SELECT chain_id, category FROM ig_chain WHERE chain_id = ANY(%s)"
-_SQL_CM_CAT_CLUSTER_HIT_NODES = "SELECT node_id, chain_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%'"
+_SQL_CM_CAT_CLUSTER_HIT_NODES = (
+    "SELECT node_id, chain_id FROM ig_node WHERE chain_id = ANY(%s) AND name NOT LIKE '%%（已并入%%'"
+)
 _SQL_CM_CAT_NODE_INFO = (
     "SELECT n.name, n.tier, n.chain_id, c.name, c.category FROM ig_node n "
     "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
 )
-_SQL_CM_CAT_NODE_COMPS = (
-    "SELECT symbol, role, confidence FROM ig_node_company "
-    "WHERE valid_to IS NULL AND node_id = %s"
-)
+_SQL_CM_CAT_NODE_COMPS = "SELECT symbol, role, confidence FROM ig_node_company WHERE valid_to IS NULL AND node_id = %s"
 # 详情卡 news_keywords/calendar 域点亮（遗留修复 2026-09-10：数据侧真表已就绪——
 # news_data 816 万行、近 7 天 1.3 万行活跃灌入；disclosure_plan/share_unlock 为
 # MOD-DATA-068 event_calendar_filler 同源装配口径。aliases/facilities 无实表维持建设中）
@@ -3561,15 +3911,160 @@ _SQL_CM_CAL_UNLOCK = (
     "WHERE symbol = %(s)s AND unlock_date >= today() - 400 ORDER BY unlock_date DESC LIMIT 6"
 )
 
+# ── 全量 SQL 集中化（st-chief5-sqlx 维护批，R96 常量豁免通道）────────────────
+# 工作面=NO-BARE-SQL 检测器命中 ∪ 存量 bare-sql noqa 行；静态 SQL 逐块搬移为 _SQL_* 常量，
+# SQL 文本字节零改动；动态插值位点（f-string 表名/列名/条件拼接）保留统一形态行级豁免。
+# 表名真源（#ARCH-CH-024 Phase 5）：CH 业务表名经 TableRegistry.table(category_id) 派生，
+# 禁字面量硬编码；ig_* 为 PG depgraph 表不属 CH 业务表注册面，保留字符串。
+_TBL_KLINE_DAILY: Final[str] = get_registry().table("market_kline_daily")
+_TBL_EQUITY_PLEDGE_SUMMARY: Final[str] = get_registry().table("fund_equity_pledge_summary")
+_TBL_DAILY_VALUATION: Final[str] = get_registry().table("market_daily_valuation")
+_TBL_MARKET_PATTERN_CERTIFICATION: Final[str] = get_registry().table("market_pattern_certification")
+_TBL_TICK_DATA: Final[str] = get_registry().table("market_tick")
+_TBL_MARKET_SIGNAL_HISTORY: Final[str] = get_registry().table("market_signal_history")
+_TBL_STOCK_LIST: Final[str] = get_registry().table("market_stock_list")
+# 行情/快照域（stock-header / quote / kline / stock-search / chainmap-company）
+_SQL_SNAP_PRICE_BARS = (
+    "SELECT trade_date, open, high, low, close, volume, amount FROM kline_daily "
+    "WHERE symbol=%(s)s AND close > 0 ORDER BY trade_date DESC LIMIT 6"
+)
+_SQL_SNAP_VALUATION = (
+    "SELECT pe_ttm, pb_mrq FROM daily_valuation WHERE symbol=%(s)s AND pe_ttm > 0 ORDER BY trade_date DESC LIMIT 1"
+)
+_SQL_SNAP_IS_ST = "SELECT trade_date, is_st FROM daily_valuation WHERE symbol=%(s)s ORDER BY trade_date DESC LIMIT 1"
+_SQL_BARS_CLOSE2 = (
+    "SELECT symbol, trade_date, close FROM kline_daily "
+    "WHERE symbol IN %(syms)s AND close > 0 "
+    "ORDER BY trade_date DESC LIMIT 2 BY symbol"
+)
+_SQL_BARS_CLOSE2_ETF = (
+    "SELECT symbol, trade_date, close FROM kline_etf_daily "
+    "WHERE symbol IN %(syms)s AND close > 0 "
+    "ORDER BY trade_date DESC LIMIT 2 BY symbol"
+)
+_SQL_NAMES_BY_SYMBOLS = (
+    "SELECT symbol, argMax(name, valid_from) FROM stock_basic WHERE symbol IN %(syms)s GROUP BY symbol"
+)
+_SQL_NAME_FROM_STOCK_BASIC = "SELECT argMax(name, valid_from) FROM stock_basic WHERE symbol=%(s)s"
+_SQL_SEARCH_SYMBOLS = (
+    "SELECT DISTINCT symbol, name FROM stock_basic WHERE symbol LIKE %(q)s OR name LIKE %(qn)s LIMIT %(l)s"
+)
+_SQL_QUOTE_BARS = (
+    f"SELECT trade_date, close, pct_change, amount FROM {_TBL_KLINE_DAILY} FINAL "
+    "WHERE symbol = %(s)s AND close > 0 AND quality_flag = 1 ORDER BY trade_date DESC LIMIT 1"
+)
+_SQL_QUOTE_TOTAL_MV = (
+    "SELECT round(p.shares_wan * 10000 * k.close / 1e8, 1) FROM "
+    f"(SELECT argMax(total_shares, end_date) AS shares_wan FROM {_TBL_EQUITY_PLEDGE_SUMMARY} "
+    "WHERE symbol = %(s)s AND total_shares > 0) p CROSS JOIN "
+    f"(SELECT close FROM {_TBL_KLINE_DAILY} FINAL WHERE symbol = %(s)s AND close > 0 "
+    "AND quality_flag = 1 ORDER BY trade_date DESC LIMIT 1) k"
+)
+_SQL_QUOTE_VALUATION = (
+    f"SELECT trade_date, pe_ttm, pb_mrq FROM {_TBL_DAILY_VALUATION} "
+    "WHERE symbol = %(s)s AND pe_ttm > 0 ORDER BY trade_date DESC LIMIT 1"
+)
+_SQL_PATTERN_CERT = (
+    f"SELECT pattern_id, state, shrunk_rate FROM {_TBL_MARKET_PATTERN_CERTIFICATION} "
+    "FINAL WHERE timeframe = %(tf)s AND direction = %(d)s AND fwd_window = %(w)d"
+)
+# 下载监管 tick_data 分组明细（F6）
+_SQL_TICK_BY_SOURCE = (
+    f"SELECT data_source, count() FROM {_TBL_TICK_DATA} WHERE trade_date = today() GROUP BY data_source"
+)
+# 信号域（signals-overview）
+_SQL_SIGNALS_OVERVIEW = (
+    "SELECT source, signal_id, direction, count(), max(trade_date), "
+    "argMax(score, score) FROM "
+    f"(SELECT * FROM {_TBL_MARKET_SIGNAL_HISTORY} FINAL "
+    " ORDER BY trade_date DESC, computed_at DESC LIMIT 1 BY symbol, source, signal_id) "
+    "GROUP BY source, signal_id, direction ORDER BY source, signal_id"
+)
+_SQL_SIGNAL_TB_HEAD = f"SELECT symbol, score, direction, rank_in_universe FROM {_TBL_MARKET_SIGNAL_HISTORY} FINAL "
+# 资产审计域（data-asset 后台线程；cli 独立连接）
+_SQL_AUDIT_COLUMNS = (
+    "SELECT database, table, name, type FROM system.columns WHERE database IN ('c0_meta','c1_market','c3_fundamental')"
+)
+_SQL_AUDIT_PARTS = (
+    "SELECT database, table, sum(rows) FROM system.parts WHERE active "
+    "AND database IN ('c0_meta','c1_market','c3_fundamental') GROUP BY database, table"
+)
+_SQL_AUDIT_UNIVERSE = f"SELECT uniqExact(symbol) FROM {_TBL_STOCK_LIST}"
+# query_log INSERT 速率聚合（download-status；尾部时间窗按调用点拼接）
+_SQL_QUERYLOG_INSERTS_BASE = (
+    "SELECT arrayJoin(extractAll(query, 'INSERT INTO [^ (]+')) AS target, "
+    "sum(written_rows) AS w FROM system.query_log "
+    "WHERE type='QueryFinish' AND positionCaseInsensitive(query, 'insert into') > 0 "
+)
+# 策略工厂台账（factory/ledger）
+_SQL_FACTORY_TOTAL = "SELECT count(), uniqExact(strategy_id) FROM c1_backtest.strategy_screen"
+_SQL_FACTORY_BATCHES = (
+    "SELECT screen_batch, verdict, count() FROM c1_backtest.strategy_screen"
+    " GROUP BY screen_batch, verdict ORDER BY screen_batch, verdict"
+)
+_SQL_FACTORY_REASONS = (
+    "SELECT verdict_reason, count() FROM c1_backtest.strategy_screen"
+    " WHERE verdict IN ('deferred_c4', 'rejected', 'failed_obsolete')"
+    " GROUP BY verdict_reason ORDER BY count() DESC LIMIT 12"
+)
+_SQL_FACTORY_IS_SHARPE = (
+    "SELECT strategy_id, is_sharpe FROM c1_backtest.strategy_screen"
+    " WHERE screen_batch LIKE 'C4-translated%%' AND verdict = 'translated_c4'"
+)
+# chainmap PG（ig_* 只读；与上方 _SQL_CM_* 常量区同一读口径）
+_SQL_CM_CHAINS_ACTIVE = "SELECT chain_id, name, market FROM ig_chain WHERE status = 'active'"
+_SQL_CM_CHAINS_BY_MARKET = "SELECT chain_id, name, market FROM ig_chain WHERE status = 'active' AND market = %s"
+_SQL_CM_CHAINS_BY_IDS = "SELECT chain_id, name FROM ig_chain WHERE chain_id = ANY(%s)"
+_SQL_CM_CHAIN_SEARCH = (
+    "SELECT chain_id, name FROM ig_chain WHERE status='active' AND name ILIKE %s ORDER BY name LIMIT 10"
+)
+_SQL_CM_NODE_COMPANY_COUNTS = (
+    "SELECT node_id, count(DISTINCT symbol) FROM ig_node_company WHERE valid_to IS NULL GROUP BY node_id"
+)
+_SQL_CM_NODE_COMPS_ALL = "SELECT DISTINCT node_id, symbol FROM ig_node_company WHERE valid_to IS NULL"
+_SQL_CM_NODE_CROSS_CHAIN = (
+    "SELECT nc.symbol, count(DISTINCT n.chain_id) FROM ig_node_company nc "
+    "JOIN ig_node n ON n.node_id = nc.node_id "
+    "JOIN ig_chain c ON c.chain_id = n.chain_id "
+    "WHERE nc.valid_to IS NULL AND nc.symbol = ANY(%s) AND c.status = 'active' GROUP BY nc.symbol"
+)
+_SQL_CM_EDGES_OPEN = "SELECT from_node, to_node FROM ig_edge WHERE valid_to IS NULL"
+_SQL_CM_EDGE_TYPES = "SELECT from_node, to_node, COALESCE(edge_type, '') FROM ig_edge WHERE valid_to IS NULL"
+_SQL_CM_COMPANY_EDGES = "SELECT DISTINCT from_symbol, to_symbol FROM ig_company_edge WHERE valid_to IS NULL"
+_SQL_CM_SYMBOL_NAMES_FROM = (
+    "SELECT from_symbol, MAX(from_name) FROM ig_company_edge WHERE valid_to IS NULL AND from_name IS NOT NULL "
+    "GROUP BY from_symbol"
+)
+_SQL_CM_SYMBOL_NAMES_TO = (
+    "SELECT to_symbol, MAX(to_name) FROM ig_company_edge WHERE valid_to IS NULL AND to_name IS NOT NULL AND to_symbol <> '' "
+    "GROUP BY to_symbol"
+)
+_SQL_CM_NODE_DETAIL = (
+    "SELECT n.name, n.tier, n.chain_id, c.name, n.function_role FROM ig_node n "
+    "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE n.node_id = %s"
+    " AND n.name NOT LIKE '%%（已并入%%'"
+)
+_SQL_CM_NODE_SEARCH = (
+    "SELECT n.node_id, n.name, n.chain_id, c.name FROM ig_node n "
+    "JOIN ig_chain c ON c.chain_id = n.chain_id WHERE c.status = 'active' AND n.name ILIKE %s AND n.name NOT LIKE '%%（已并入%%' "
+    "ORDER BY n.name LIMIT 10"
+)
+
 
 def _cm_cat_themes() -> list[dict[str, Any]]:
     """MOD-ALT-005 主题库直引（import 失败→空表独立降级，端点回零命中空态禁崩）。"""
     try:
         from zephyr.alt_data.policy_theme_mapper import DEFAULT_THEME_LIBRARY
 
-        return [{"theme_id": t.theme_id, "keywords": list(t.keywords),
-                 "beneficiary": list(t.beneficiary_industries), "damaged": list(t.damaged_industries)}
-                for t in DEFAULT_THEME_LIBRARY]
+        return [
+            {
+                "theme_id": t.theme_id,
+                "keywords": list(t.keywords),
+                "beneficiary": list(t.beneficiary_industries),
+                "damaged": list(t.damaged_industries),
+            }
+            for t in DEFAULT_THEME_LIBRARY
+        ]
     except Exception as exc:
         logger.warning("chainmap-catalyst 主题库加载失败（回零命中空态）: %s", exc)
         return []
@@ -3603,8 +4098,15 @@ def _cm_cat_events() -> tuple[list[dict[str, Any]], int]:
     for d, et, desc in rows:
         t = _cm_cat_classify(str(et) + " " + str(desc), themes)
         if t:
-            out.append({"date": d.isoformat(), "type": str(et)[:40], "description": str(desc)[:120],
-                        "is_future": d > today, "theme": t})
+            out.append(
+                {
+                    "date": d.isoformat(),
+                    "type": str(et)[:40],
+                    "description": str(desc)[:120],
+                    "is_future": d > today,
+                    "theme": t,
+                }
+            )
             seen.add((d.isoformat(), t["theme_id"]))
     # 规则推导宏观事件（MOD-DATA-068，fail-open 单源跳过）
     try:
@@ -3612,8 +4114,7 @@ def _cm_cat_events() -> tuple[list[dict[str, Any]], int]:
 
         from zephyr.data.event_calendar_filler import macro_rule_events
 
-        for en in macro_rule_events(today - _td(days=_CM_CAT_WINDOW_BACK),
-                                    today + _td(days=_CM_CAT_WINDOW_FWD)):
+        for en in macro_rule_events(today - _td(days=_CM_CAT_WINDOW_BACK), today + _td(days=_CM_CAT_WINDOW_FWD)):
             t = _cm_cat_classify(f"{en.event_type} {en.description or en.event_type}", themes)
             if not t:
                 continue
@@ -3621,9 +4122,15 @@ def _cm_cat_events() -> tuple[list[dict[str, Any]], int]:
             if key in seen:
                 continue
             seen.add(key)
-            out.append({"date": en.event_date.isoformat(), "type": str(en.event_type)[:40],
-                        "description": (en.description or en.event_type)[:120],
-                        "is_future": en.event_date > today, "theme": t})
+            out.append(
+                {
+                    "date": en.event_date.isoformat(),
+                    "type": str(en.event_type)[:40],
+                    "description": (en.description or en.event_type)[:120],
+                    "is_future": en.event_date > today,
+                    "theme": t,
+                }
+            )
     except Exception as exc:
         logger.warning("chainmap-catalyst 规则事件装配失败（跳过该源）: %s", exc)
     return out, len(rows)
@@ -3643,9 +4150,11 @@ def _cm_cat_theme_categories(theme: dict[str, Any]) -> tuple[list[str], list[str
 
 
 @app.get("/api/chainmap-catalyst")
-def chainmap_catalyst(cid: str | None = Query(None, min_length=2, max_length=8),
-                      market: str = Query("all", pattern="^(all|cn|global)$"),
-                      node_id: str | None = Query(None, min_length=1)) -> dict[str, Any]:
+def chainmap_catalyst(
+    cid: str | None = Query(None, min_length=2, max_length=8),
+    market: str = Query("all", pattern="^(all|cn|global)$"),
+    node_id: str | None = Query(None, min_length=1),
+) -> dict[str, Any]:
     """产业链催化剂（F-CHAINMAP-CATALYST）：宏观事件→主题→行业→链/环节命中定位+受益清单。
 
     两种用法：?cid=&market= 簇内环节催化角标数据（nodes 映射，chainmap-cluster 装饰用）；
@@ -3668,8 +4177,12 @@ def chainmap_catalyst(cid: str | None = Query(None, min_length=2, max_length=8),
         return {"ok": False, "error": str(exc)[:200], "events": [], "nodes": {}, "beneficiaries": []}
 
 
-def _cm_cat_cluster_events(events: list[dict[str, Any]], members: list[dict[str, Any]],
-                           chain_cat: dict[str, str], cat_chains: dict[str, list[str]]) -> tuple[list, set, set]:
+def _cm_cat_cluster_events(
+    events: list[dict[str, Any]],
+    members: list[dict[str, Any]],
+    chain_cat: dict[str, str],
+    cat_chains: dict[str, list[str]],
+) -> tuple[list, set, set]:
     """事件→簇内链命中解析（簇视角第一段）：返回 (事件明细≤CAP, 命中链集合, unmapped 行业)。"""
     name_of = {m["chain_id"]: m["name"] for m in members}
     events_out: list[dict[str, Any]] = []
@@ -3678,20 +4191,32 @@ def _cm_cat_cluster_events(events: list[dict[str, Any]], members: list[dict[str,
     for ev in events:
         cats, unm = _cm_cat_theme_categories(ev["theme"])
         unmapped.update(unm)
-        hit_chains = [{"chain_id": ch, "chain_name": name_of.get(ch, ""), "category": cat}
-                      for cat in cats for ch in cat_chains.get(cat, []) if ch in chain_cat]
+        hit_chains = [
+            {"chain_id": ch, "chain_name": name_of.get(ch, ""), "category": cat}
+            for cat in cats
+            for ch in cat_chains.get(cat, [])
+            if ch in chain_cat
+        ]
         if not hit_chains:
             continue
         hit_chain_ids.update(h["chain_id"] for h in hit_chains)
         if len(events_out) < _CM_CAT_EVENTS_CAP:
-            events_out.append({"date": ev["date"], "type": ev["type"], "description": ev["description"],
-                               "is_future": ev["is_future"], "theme_id": ev["theme"]["theme_id"],
-                               "chains": hit_chains})
+            events_out.append(
+                {
+                    "date": ev["date"],
+                    "type": ev["type"],
+                    "description": ev["description"],
+                    "is_future": ev["is_future"],
+                    "theme_id": ev["theme"]["theme_id"],
+                    "chains": hit_chains,
+                }
+            )
     return events_out, hit_chain_ids, unmapped
 
 
-def _cm_cat_node_flags(events: list[dict[str, Any]], cat_chains: dict[str, list[str]],
-                       node_chain_map: dict[str, str]) -> dict[str, list[dict[str, Any]]]:
+def _cm_cat_node_flags(
+    events: list[dict[str, Any]], cat_chains: dict[str, list[str]], node_chain_map: dict[str, str]
+) -> dict[str, list[dict[str, Any]]]:
     """环节→命中事件映射（簇视角第二段）：环节所在链 category 与事件主题映射求交，方向=主题级。"""
     node_flags: dict[str, list[dict[str, Any]]] = {}
     for ev in events:
@@ -3699,17 +4224,22 @@ def _cm_cat_node_flags(events: list[dict[str, Any]], cat_chains: dict[str, list[
         hit_for_ev = [ch_id for cat in cats for ch_id in cat_chains.get(cat, [])]
         if not hit_for_ev:
             continue
-        direction = "受益" if any(
-            _CM_CAT_IND_ALIAS.get(i) in cats for i in ev["theme"]["beneficiary"]) else "受损"
+        direction = "受益" if any(_CM_CAT_IND_ALIAS.get(i) in cats for i in ev["theme"]["beneficiary"]) else "受损"
         hit_set = set(hit_for_ev)
         for nid, nch in node_chain_map.items():
             if nch not in hit_set:
                 continue
             lst = node_flags.setdefault(nid, [])
             if len(lst) < _CM_CAT_NODE_HITS_CAP:
-                lst.append({"date": ev["date"], "is_future": ev["is_future"],
-                            "theme_id": ev["theme"]["theme_id"], "direction": direction,
-                            "description": ev["description"]})
+                lst.append(
+                    {
+                        "date": ev["date"],
+                        "is_future": ev["is_future"],
+                        "theme_id": ev["theme"]["theme_id"],
+                        "direction": direction,
+                        "description": ev["description"],
+                    }
+                )
     return node_flags
 
 
@@ -3741,9 +4271,17 @@ def _cm_cat_cluster_view(cid: str, market: str, events: list[dict[str, Any]], sc
         except Exception:
             pass
         raise
-    return {"ok": True, "mode": "cluster", "cluster": cid, "market": market,
-            "events": events_out, "n_events_scanned": scanned, "n_hit_events": len(events_out),
-            "nodes": node_flags, "unmapped_industries": sorted(unmapped)}
+    return {
+        "ok": True,
+        "mode": "cluster",
+        "cluster": cid,
+        "market": market,
+        "events": events_out,
+        "n_events_scanned": scanned,
+        "n_hit_events": len(events_out),
+        "nodes": node_flags,
+        "unmapped_industries": sorted(unmapped),
+    }
 
 
 def _cm_cat_node_view(node_id: str, events: list[dict[str, Any]]) -> dict[str, Any]:
@@ -3774,22 +4312,53 @@ def _cm_cat_node_view(node_id: str, events: list[dict[str, Any]]) -> dict[str, A
         if category not in cats:
             continue
         direction = "受益" if category in {_CM_CAT_IND_ALIAS.get(i) for i in ev["theme"]["beneficiary"]} else "受损"
-        hits.append({"date": ev["date"], "type": ev["type"], "description": ev["description"],
-                     "is_future": ev["is_future"], "theme_id": ev["theme"]["theme_id"],
-                     "direction": direction, "industries": [i for i, c in
-                     [(i, _CM_CAT_IND_ALIAS.get(i)) for i in list(ev["theme"]["beneficiary"]) + list(ev["theme"]["damaged"])] if c == category],
-                     "unmapped": unm})
-    companies = [{"symbol": s, "name": names.get(s, ""), "role": r or "",
-                  "confidence": None if cf is None else round(float(cf), 2),
-                  "jump": bool(_re.fullmatch(r"\d{6}\.(SH|SZ|BJ)", s or ""))}
-                 for s, r, cf in comp_rows]
+        hits.append(
+            {
+                "date": ev["date"],
+                "type": ev["type"],
+                "description": ev["description"],
+                "is_future": ev["is_future"],
+                "theme_id": ev["theme"]["theme_id"],
+                "direction": direction,
+                "industries": [
+                    i
+                    for i, c in [
+                        (i, _CM_CAT_IND_ALIAS.get(i))
+                        for i in list(ev["theme"]["beneficiary"]) + list(ev["theme"]["damaged"])
+                    ]
+                    if c == category
+                ],
+                "unmapped": unm,
+            }
+        )
+    companies = [
+        {
+            "symbol": s,
+            "name": names.get(s, ""),
+            "role": r or "",
+            "confidence": None if cf is None else round(float(cf), 2),
+            "jump": bool(_re.fullmatch(r"\d{6}\.(SH|SZ|BJ)", s or "")),
+        }
+        for s, r, cf in comp_rows
+    ]
     companies.sort(key=lambda x: (_cm_role_rank(x["role"]), -(x["confidence"] or 0), x["symbol"]))
-    return {"ok": True, "mode": "node",
-            "node": {"node_id": node_id, "name": row[0], "tier": row[1] or "",
-                     "chain_id": row[2], "chain_name": row[3], "category": category},
-            "hits": hits[:_CM_CAT_EVENTS_CAP], "n_hits": len(hits),
-            "beneficiaries": companies[:_CM_PLACEMENT_CAP], "n_beneficiaries": len(companies),
-            "note": "命中粒度=主题→申万行业→链级投影；受益方向=MOD-ALT-005 既有判定；不做涨跌预测（证伪裁定留档）"}
+    return {
+        "ok": True,
+        "mode": "node",
+        "node": {
+            "node_id": node_id,
+            "name": row[0],
+            "tier": row[1] or "",
+            "chain_id": row[2],
+            "chain_name": row[3],
+            "category": category,
+        },
+        "hits": hits[:_CM_CAT_EVENTS_CAP],
+        "n_hits": len(hits),
+        "beneficiaries": companies[:_CM_PLACEMENT_CAP],
+        "n_beneficiaries": len(companies),
+        "note": "命中粒度=主题→申万行业→链级投影；受益方向=MOD-ALT-005 既有判定；不做涨跌预测（证伪裁定留档）",
+    }
 
 
 # ═══════════════ 公司详情卡数据端点（chainmap 二期 Commit A，2026-09-09） ═══════════════
@@ -3805,8 +4374,8 @@ _CM_SOURCE_EDGE_KIND: dict[str, str] = {
     "websearch": "supply",
     "J88_collab_patent": "supply",
 }
-_CM_RELATION_CAP = 10          # 每侧关系展示上限（total 如实返回）
-_CM_PLACEMENT_CAP = 60         # 落位展示上限（多链公司如实给 total）
+_CM_RELATION_CAP = 10  # 每侧关系展示上限（total 如实返回）
+_CM_PLACEMENT_CAP = 60  # 落位展示上限（多链公司如实给 total）
 
 
 def _cm_bare_symbol(sym: str) -> str:
@@ -3816,62 +4385,21 @@ def _cm_bare_symbol(sym: str) -> str:
 
 
 def _cm_equity(sym: str, names: dict[str, str]) -> dict[str, Any]:
-    """股权域（ig_equity_edge 查询侧 UNION 拼装——数据物理只存股权表一处，节点模板 v0.5 §2.5）。
+    """股权域（entity_graph 六表现行版本，EC1 接线 2026-09-27；异常内部独立降级）。
 
-    holdings_in=我投了谁（holder=本司）；held_by=谁投了我（held=本司）。
-    relation 封闭枚举：invests_in/subsidiary/shareholding/actual_control/pledge/judicial_frozen；
-    PERSON:/UNLISTED: 前缀持有方按原样展示（对手方名称映射覆盖不全为已知边界，缺名回 CH stock_basic）。
-    独立降级：查询异常→空结构（不拖垮图谱段）。
+    holdings_in=我投了谁/held_by=谁投了我，响应键与旧 ig_equity_edge 版逐键兼容，
+    多带 source=entity_graph 标注；对手方名由六表 name 直供。
     """
-    out: dict[str, Any] = {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0}
+    from zephyr.frontend.dashboard.chainmap_equity_graph import equity_domain_for_company
 
-    def _name_of(ref: str) -> str:
-        return names.get(ref, "")
-
-    def _row(holder: str, held: str, stake, layer, relation, verif, as_of) -> dict[str, Any]:
-        other = held if holder == sym else holder
-        non_local = other.startswith(("PERSON:", "UNLISTED:"))
-        return {
-            "symbol": "" if non_local else other,
-            "name": _name_of(other) if not non_local else "",
-            "ref": other if non_local else "",
-            "stake_pct": None if stake is None else round(float(stake), 2),
-            "layer": int(layer) if layer is not None else 1,
-            "relation": relation or "",
-            "verification": verif or "",
-            "as_of": str(as_of) if as_of else None,
-        }
-
+    conn = _cm_pg()
     try:
-        conn = _cm_pg()
+        return equity_domain_for_company(conn, sym)
+    finally:
         try:
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT holder, held, stake_pct, layer, relation, verification, as_of FROM ig_equity_edge "
-                "WHERE valid_to IS NULL AND holder = %s ORDER BY stake_pct DESC NULLS LAST, held",
-                (sym,),
-            )
-            rows_in = cur.fetchall()
-            cur.execute(
-                "SELECT holder, held, stake_pct, layer, relation, verification, as_of FROM ig_equity_edge "
-                "WHERE valid_to IS NULL AND held = %s ORDER BY stake_pct DESC NULLS LAST, holder",
-                (sym,),
-            )
-            rows_by = cur.fetchall()
             conn.close()
         except Exception:
-            try:
-                conn.close()
-            except Exception:
-                pass
-            raise
-        out["holdings_in"] = [_row(h, d, s, l, r, v, a) for h, d, s, l, r, v, a in rows_in]
-        out["held_by"] = [_row(h, d, s, l, r, v, a) for h, d, s, l, r, v, a in rows_by]
-        out["n_holdings"] = len(out["holdings_in"])
-        out["n_held"] = len(out["held_by"])
-    except Exception:
-        return out   # 独立降级：股权段缺失不影响图谱五段
-    return out
+            pass
 
 
 def _cm_profile(bare: str) -> dict[str, Any]:
@@ -3883,8 +4411,12 @@ def _cm_profile(bare: str) -> dict[str, Any]:
     stock_basic 全量在册不含退市行，禁推标记）。独立降级：CH 异常→空结构。
     """
     out: dict[str, Any] = {
-        "country": None, "listing_venue": None, "board": None, "listing_date": None,
-        "st_flag": None, "industry_ths": None,
+        "country": None,
+        "listing_venue": None,
+        "board": None,
+        "listing_date": None,
+        "st_flag": None,
+        "industry_ths": None,
         "missing_fields": ["country", "hq_location", "listing_status"],
     }
     try:
@@ -3901,10 +4433,7 @@ def _cm_profile(bare: str) -> dict[str, Any]:
                 out["board"] = str(bd)
             if ld:
                 out["listing_date"] = str(ld)
-        st = _ch_exec(
-            "SELECT trade_date, is_st FROM daily_valuation WHERE symbol=%(s)s ORDER BY trade_date DESC LIMIT 1",
-            {"s": bare},
-        )
+        st = _ch_exec(_SQL_SNAP_IS_ST, {"s": bare})
         if st:
             out["st_flag"] = bool(st[0][1])
             out["st_asof"] = str(st[0][0])
@@ -3916,7 +4445,7 @@ def _cm_profile(bare: str) -> dict[str, Any]:
         if ths and any(ths[0]):
             out["industry_ths"] = [str(x) for x in ths[0] if x]
     except Exception:
-        return out   # 独立降级
+        return out  # 独立降级
     return out
 
 
@@ -3927,11 +4456,7 @@ def _cm_quote(bare: str) -> dict[str, Any] | None:
     × 最新收盘 估算（茅台 16,372 亿交叉验证 ✓），键名 total_mv_yi，前端标"约"。
     """
     try:
-        rows = _ch_exec(
-            "SELECT trade_date, close, pct_change, amount FROM c1_market.kline_daily FINAL "
-            "WHERE symbol = %(s)s AND close > 0 AND quality_flag = 1 ORDER BY trade_date DESC LIMIT 1",
-            {"s": bare},
-        )
+        rows = _ch_exec(_SQL_QUOTE_BARS, {"s": bare})
         if not rows:
             return None
         d, close, pct, amt = rows[0]
@@ -3942,24 +4467,13 @@ def _cm_quote(bare: str) -> dict[str, Any] | None:
             "amount": None if amt is None else float(amt),
         }
         try:
-            mrows = _ch_exec(
-                "SELECT round(p.shares_wan * 10000 * k.close / 1e8, 1) FROM "
-                "(SELECT argMax(total_shares, end_date) AS shares_wan FROM c3_fundamental.equity_pledge_summary "
-                "WHERE symbol = %(s)s AND total_shares > 0) p CROSS JOIN "
-                "(SELECT close FROM c1_market.kline_daily FINAL WHERE symbol = %(s)s AND close > 0 "
-                "AND quality_flag = 1 ORDER BY trade_date DESC LIMIT 1) k",
-                {"s": bare},
-            )
+            mrows = _ch_exec(_SQL_QUOTE_TOTAL_MV, {"s": bare})
             if mrows and mrows[0][0] is not None:
                 out["total_mv_yi"] = float(mrows[0][0])
         except Exception:
             pass
         try:
-            vrows = _ch_exec(
-                "SELECT trade_date, pe_ttm, pb_mrq FROM c1_market.daily_valuation "
-                "WHERE symbol = %(s)s AND pe_ttm > 0 ORDER BY trade_date DESC LIMIT 1",
-                {"s": bare},
-            )
+            vrows = _ch_exec(_SQL_QUOTE_VALUATION, {"s": bare})
             if vrows:
                 out["valuation_asof"] = str(vrows[0][0])
                 out["pe_ttm"] = float(vrows[0][1])
@@ -3984,7 +4498,7 @@ def _cm_news_keywords(bare: str) -> dict[str, Any]:
         rows3 = _ch_exec(_SQL_CM_NEWS_COUNT, {"s": bare})
         out["n_news"] = int(rows3[0][0]) if rows3 else 0
     except Exception:
-        return out   # 独立降级
+        return out  # 独立降级
     return out
 
 
@@ -3995,17 +4509,27 @@ def _cm_stock_calendar(bare: str) -> dict[str, Any]:
     out: dict[str, Any] = {"disclosures": [], "unlocks": [], "n_disclosures": 0, "n_unlocks": 0}
     try:
         rows = _ch_exec(_SQL_CM_CAL_DISCLOSURE, {"s": bare})
-        out["disclosures"] = [{"report_period": str(r[0]),
-                               "scheduled": str(r[1]) if r[1] else None,
-                               "actual": str(r[2]) if r[2] else None} for r in rows]
+        out["disclosures"] = [
+            {
+                "report_period": str(r[0]),
+                "scheduled": str(r[1]) if r[1] else None,
+                "actual": str(r[2]) if r[2] else None,
+            }
+            for r in rows
+        ]
         rows2 = _ch_exec(_SQL_CM_CAL_UNLOCK, {"s": bare})
-        out["unlocks"] = [{"date": str(r[0]),
-                           "shares": None if r[1] is None else float(r[1]),
-                           "ratio": None if r[2] is None else round(float(r[2]), 2)} for r in rows2]
+        out["unlocks"] = [
+            {
+                "date": str(r[0]),
+                "shares": None if r[1] is None else float(r[1]),
+                "ratio": None if r[2] is None else round(float(r[2]), 2),
+            }
+            for r in rows2
+        ]
         out["n_disclosures"] = len(out["disclosures"])
         out["n_unlocks"] = len(out["unlocks"])
     except Exception:
-        return out   # 独立降级
+        return out  # 独立降级
     return out
 
 
@@ -4026,16 +4550,34 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
 
     sym = (symbol or "").strip().upper()
     if not _re.fullmatch(r"\d{6}(\.(SH|SZ|BJ))?", sym):
-        return {"ok": False, "error": "bad symbol", "company": {"symbol": sym},
-                "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None,
-                "equity": {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0},
-                "profile": {}, "pending_domains": []}
-    if "." not in sym:   # 裸码补后缀（与 load_supply_top5_483.to_symbol 同规则）
+        return {
+            "ok": False,
+            "error": "bad symbol",
+            "company": {"symbol": sym},
+            "placements": [],
+            "suppliers": [],
+            "customers": [],
+            "collabs": [],
+            "quote": None,
+            "equity": {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0},
+            "profile": {},
+            "pending_domains": [],
+        }
+    if "." not in sym:  # 裸码补后缀（与 load_supply_top5_483.to_symbol 同规则）
         sym += {"6": ".SH"}.get(sym[0], ".SZ") if sym[0] in "03" else (".SH" if sym[0] == "6" else ".BJ")
-    empty = {"ok": False, "error": "", "company": {"symbol": sym, "name": None},
-             "placements": [], "suppliers": [], "customers": [], "collabs": [], "quote": None,
-             "equity": {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0},
-             "profile": {}, "pending_domains": []}
+    empty = {
+        "ok": False,
+        "error": "",
+        "company": {"symbol": sym, "name": None},
+        "placements": [],
+        "suppliers": [],
+        "customers": [],
+        "collabs": [],
+        "quote": None,
+        "equity": {"holdings_in": [], "held_by": [], "n_holdings": 0, "n_held": 0},
+        "profile": {},
+        "pending_domains": [],
+    }
     try:
         names = _cm_symbol_names()
         g = _cm_galaxy()
@@ -4074,12 +4616,20 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
     placements: list[dict[str, Any]] = []
     for nid, nname, tier, chid, chname, role, cf in pos_rows:
         cl, _clname = chain_meta.get(chid, ("", ""))
-        placements.append({
-            "node_id": nid, "node_name": nname, "tier": tier or "", "col": _cm_col(tier),
-            "chain_id": chid, "chain_name": chname, "cluster": cl,
-            "cluster_name": cluster_name.get(cl, cl),
-            "role": role or "", "confidence": None if cf is None else round(float(cf), 2),
-        })
+        placements.append(
+            {
+                "node_id": nid,
+                "node_name": nname,
+                "tier": tier or "",
+                "col": _cm_col(tier),
+                "chain_id": chid,
+                "chain_name": chname,
+                "cluster": cl,
+                "cluster_name": cluster_name.get(cl, cl),
+                "role": role or "",
+                "confidence": None if cf is None else round(float(cf), 2),
+            }
+        )
     n_placements = len(placements)
     placements = placements[:_CM_PLACEMENT_CAP]
 
@@ -4088,16 +4638,27 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
     collabs: list[dict[str, Any]] = []
     for fs, ts, yr, prod, w, wt, src, fn, tn, amt in rel_rows:
         kind = _CM_SOURCE_EDGE_KIND.get(src or "", "supply")
-        base = {"product": prod, "year": int(yr) if yr is not None else None,
-                "weight": None if w is None else round(float(w), 2), "weight_type": wt,
-                "source": src, "amount": None if amt is None else float(amt)}
+        base = {
+            "product": prod,
+            "year": int(yr) if yr is not None else None,
+            "weight": None if w is None else round(float(w), 2),
+            "weight_type": wt,
+            "source": src,
+            "amount": None if amt is None else float(amt),
+        }
         if kind == "collab":
             other_s, other_n = (ts, tn) if fs == sym else (fs, fn)
-            collabs.append({**base, "symbol": other_s or "", "name": other_n or names.get(other_s or "", ""),
-                            "unlisted": not other_s})
-        elif ts == sym:   # from=供应商 → 本司
+            collabs.append(
+                {
+                    **base,
+                    "symbol": other_s or "",
+                    "name": other_n or names.get(other_s or "", ""),
+                    "unlisted": not other_s,
+                }
+            )
+        elif ts == sym:  # from=供应商 → 本司
             suppliers.append({**base, "symbol": fs, "name": fn or names.get(fs, ""), "unlisted": False})
-        elif fs == sym:   # 本司 → to=客户
+        elif fs == sym:  # 本司 → to=客户
             customers.append({**base, "symbol": ts, "name": tn or names.get(ts, ""), "unlisted": not ts})
     n_sup, n_cus, n_col = len(suppliers), len(customers), len(collabs)
     suppliers = suppliers[:_CM_RELATION_CAP]
@@ -4113,12 +4674,9 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
             if _ts == sym and tn:
                 cname = tn
                 break
-    if not cname:   # ig 名称映射覆盖不全 → CH stock_basic 兜底（/api/stock-header 同款真源），失败保持 None
+    if not cname:  # ig 名称映射覆盖不全 → CH stock_basic 兜底（/api/stock-header 同款真源），失败保持 None
         try:
-            nb = _ch_exec(
-                "SELECT argMax(name, valid_from) FROM stock_basic WHERE symbol=%(s)s",
-                {"s": _cm_bare_symbol(sym)},
-            )
+            nb = _ch_exec(_SQL_NAME_FROM_STOCK_BASIC, {"s": _cm_bare_symbol(sym)})
             if nb and nb[0][0]:
                 cname = str(nb[0][0])
         except Exception:
@@ -4126,17 +4684,21 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
     return {
         "ok": True,
         "company": {"symbol": sym, "name": cname},
-        "placements": placements, "total_placements": n_placements,
-        "suppliers": suppliers, "n_suppliers": n_sup,
-        "customers": customers, "n_customers": n_cus,
-        "collabs": collabs, "n_collabs": n_col,
+        "placements": placements,
+        "total_placements": n_placements,
+        "suppliers": suppliers,
+        "n_suppliers": n_sup,
+        "customers": customers,
+        "n_customers": n_cus,
+        "collabs": collabs,
+        "n_collabs": n_col,
         "quote": _cm_quote(_cm_bare_symbol(sym)),
         "equity": _cm_equity(sym, names),
         "profile": _cm_profile(_cm_bare_symbol(sym)),
         "news": _cm_news_keywords(_cm_bare_symbol(sym)),
         "stock_calendar": _cm_stock_calendar(_cm_bare_symbol(sym)),
         "pending_domains": ["aliases", "facilities"],
-        "generated_at": datetime.now().isoformat(" ", "seconds"),
+        "generated_at": datetime.now(timezone.utc).isoformat(" ", "seconds"),
     }
 
 
@@ -4251,8 +4813,7 @@ def pattern_winrate(
         # 认证列（两次查询 Python 合并——CH 老版 JOIN 子查询受限，MOD-SIG-148 表池化键）
         try:
             cert_rows = _ch_exec(
-                "SELECT pattern_id, state, shrunk_rate FROM c1_market.market_pattern_certification "
-                "FINAL WHERE timeframe = %(tf)s AND direction = %(d)s AND fwd_window = %(w)d",
+                _SQL_PATTERN_CERT,
                 {"tf": timeframe, "d": direction or "向上", "w": int(fwd_window)},
             )
             cert_map = {r[0]: (r[1], r[2]) for r in cert_rows}
@@ -4292,10 +4853,7 @@ def pattern_evidence(
 
     try:
         repo_root = Path(__file__).resolve().parents[4]
-        reg_path = (
-            repo_root
-            / "docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml"
-        )
+        reg_path = repo_root / "docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml"
         if not reg_path.exists():
             return {"ok": False, "error": "registry missing", "data": []}
         reg = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
@@ -4396,7 +4954,7 @@ def promotion_decide(body: dict[str, Any]) -> dict[str, Any]:
     try:
         from zephyr.strategy_pipeline import promotion_advisory as _pa
     except Exception as exc:  # noqa: BLE001 — 执行器缺位=服务端依赖未就绪（503 语义）
-        raise HTTPException(status_code=503, detail=f"promotion_advisory unavailable: {str(exc)[:200]}")
+        raise HTTPException(status_code=503, detail=f"promotion_advisory unavailable: {str(exc)[:200]}") from exc
     if not hasattr(_pa, "decide"):  # 模块在册但执行器未就位（半成品）——同 503，不误报 500
         raise HTTPException(status_code=503, detail="promotion_advisory.decide unavailable (executor not ready)")
     try:
@@ -4406,7 +4964,7 @@ def promotion_decide(body: dict[str, Any]) -> dict[str, Any]:
     except FileNotFoundError as exc:  # 不存在的 advisory=业务拒绝（非服务器故障）
         return {"ok": False, "advisory_id": advisory_id, "reason": f"not_found: {str(exc)[:120]}"}
     except Exception as exc:  # noqa: BLE001 — 意外异常不带业务语义，500 交由日志排查
-        raise HTTPException(status_code=500, detail=str(exc)[:300])
+        raise HTTPException(status_code=500, detail=str(exc)[:300]) from exc
     if not isinstance(result, dict):
         return {"ok": False, "message": "executor returned non-dict result", "receipt": None}
     return result
@@ -4552,6 +5110,7 @@ if __name__ == "__main__":
 
 
 # ── AI 层接线批路由（st-ailayer-final-20260924；promotion_advisories 同款降级惯例）──────────
+
 
 @app.get("/api/budget-advisories")
 def budget_advisories() -> dict[str, Any]:

@@ -270,8 +270,8 @@ def test_equity_domain_degrades_on_error_and_miss():
 # ── 簇徽章聚合契约 ────────────────────────────────────────────────────────────
 def test_cluster_equity_badge_rows_contract_and_limit():
     rows_raw = [
-        ("N-C01", "out", "", "自然人丙", "5.0", "shareholder", "2026-08-20", "akshare_em_top10"),
-        ("N-C02", "in", "000876", "子公司乙", None, "invests_in", None, "akshare_em_top10"),
+        ("N-C01", "out", "", "自然人丙", "5.0", "shareholder", "2026-08-20", "akshare_em_top10", "person"),
+        ("N-C02", "in", "000876", "子公司乙", None, "invests_in", None, "akshare_em_top10", "company"),
     ]
     conn = FakeConn([(None, rows_raw)])
     rows = ceg.cluster_equity_badge_rows(conn, ["CH-A", "CH-B"], limit=800)
@@ -281,7 +281,18 @@ def test_cluster_equity_badge_rows_contract_and_limit():
     assert rows[0]["dir"] == "out" and rows[0]["symbol"] == "" and rows[0]["name"] == "自然人丙"
     assert rows[1]["symbol"] == "000876" and rows[1]["stake_pct"] is None
     for r in rows:
-        assert set(r) == {"node_id", "dir", "symbol", "name", "ref", "stake_pct", "relation", "verification", "as_of"}
+        assert set(r) == {
+            "node_id",
+            "dir",
+            "symbol",
+            "name",
+            "ref",
+            "stake_pct",
+            "relation",
+            "verification",
+            "as_of",
+            "etype",
+        }
 
 
 def test_cluster_equity_badge_rows_empty_chains_and_degrade():

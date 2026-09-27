@@ -132,7 +132,7 @@ _SQL_PENETRATE_FN = (
 # 上市对手方带 symbol，person/非上市对手方 symbol='' 靠 name 展示（ACC item1 口径）
 _SQL_CLUSTER_BADGES = (
     "SELECT nc.node_id, 'out' AS dir, peer.symbol, peer.name, e.stake_pct, e.role, "
-    "COALESCE(e.announce_date, e.valid_from) AS as_of, e.source "
+    "COALESCE(e.announce_date, e.valid_from) AS as_of, e.source, peer.entity_type AS etype "
     "FROM edge_holding e "
     "JOIN node_entity me ON me.entity_id = e.from_entity AND me.symbol IS NOT NULL "
     "JOIN ig_node_company nc ON nc.valid_to IS NULL AND nc.symbol = me.symbol "
@@ -141,7 +141,7 @@ _SQL_CLUSTER_BADGES = (
     "AND nc.node_id IN (SELECT node_id FROM ig_node WHERE chain_id = ANY(%s)) "
     "UNION ALL "
     "SELECT nc.node_id, 'in' AS dir, peer.symbol, peer.name, e.stake_pct, e.role, "
-    "COALESCE(e.announce_date, e.valid_from) AS as_of, e.source "
+    "COALESCE(e.announce_date, e.valid_from) AS as_of, e.source, peer.entity_type AS etype "
     "FROM edge_holding e "
     "JOIN node_entity me ON me.entity_id = e.to_entity AND me.symbol IS NOT NULL "
     "JOIN ig_node_company nc ON nc.valid_to IS NULL AND nc.symbol = me.symbol "
@@ -475,7 +475,7 @@ def cluster_equity_badge_rows(
     try:
         with conn.cursor() as cur:
             cur.execute(_SQL_CLUSTER_BADGES, (list(chain_ids), list(chain_ids), int(limit)))
-            for nid, dirn, sym, name, stake, role, asof, source in cur.fetchall():
+            for nid, dirn, sym, name, stake, role, asof, source, etype in cur.fetchall():
                 rows.append(
                     {
                         "node_id": nid,
@@ -486,6 +486,7 @@ def cluster_equity_badge_rows(
                         "stake_pct": None if stake is None else round(float(stake), 2),
                         "relation": role or "",
                         "verification": source or "",
+                        "etype": etype or "",
                         "as_of": str(asof) if asof else None,
                     }
                 )
