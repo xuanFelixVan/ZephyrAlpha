@@ -1,0 +1,81 @@
+# ALGO_FLOW 外部真源——chart_condition_package（_domain_backtest 域，真源 src/zephyr/backtest/regime_validation/chart_condition_package.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.regime_validation.chart_condition_package
+source_of_truth: src/zephyr/backtest/regime_validation/chart_condition_package.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name_zh: 蜡烛形态事件表（83 条目录 PAT-CANDLE-001..083 已在库）
+    #   fields: trade_date, symbol, pattern_id, pattern_class, direction
+    #   code: load_market_pattern_events 经 zephyr.data.table_registry 解析事件表名，DatabaseService reader 角色有界窗口读（禁 ch_reader.query 下标直取）
+    # - id: I2
+    #   name_zh: condition_package 两轴（情绪灰度档 × 大盘状态档，轴复用不重建）
+    #   fields: trade_date, grey_band, state
+    #   code: build_chart_condition_pack 直接 import condition_package 的 _BAND_LABELS/_CELL_FLOOR_DAYS/ConditionPack/save_pack
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 图形日状态四值（chart_bull/chart_bear/chart_mixed/chart_none）
+    #   name_en: chart_daily_state
+    #   intro: 逐标的逐日事件压成市场级广度比，边界冻结 ±0.2 双侧含入；当日该族 0 事件=chart_none 非弱空
+    #   formula: ratio = (n_up - n_down) / (n_up + n_down); state = bull if ratio>=0.2 / bear if ratio<=-0.2 / mixed else none
+    #   code: chart_state_from_breadth / build_chart_daily_state
+    #   registry: factor_registry: 不适用（考试条件轴输入包，非选股因子）
+    #   is_break: false
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 有界窗口读图形事件（会抛错的读通道）
+    #   name_en: load_market_pattern_events
+    #   intro: DatabaseService reader 角色读 market_pattern_event 有界窗口，空结果 RuntimeError（fail-closed）
+    #   inputs: I1
+    #   outputs: events 框（trade_date/symbol/pattern_id/direction）
+    # - id: A2
+    #   name_zh: 逐日逐族广度状态化
+    #   name_en: build_chart_daily_state
+    #   intro: 事件框 → 市场级图形状态轴（横截面广度，同日向上/向下事件去重标的计数比）
+    #   inputs: A1 F1
+    #   outputs: 逐日 chart_state 轴
+    # - id: A3
+    #   name_zh: 三轴交叉成条件胞
+    #   name_en: build_chart_condition_pack
+    #   intro: 图形档 × 情绪灰度档 × 大盘状态档 交叉，复用 condition_package 30 日地板；地板不达 cell_id=None 下沉 conditional-free
+    #   inputs: A2 I2
+    #   outputs: ChartConditionPack
+    # - id: A4
+    #   name_zh: PIT 多周期对齐口径件
+    #   name_en: align_backward
+    #   intro: merge_asof(direction="backward")+allow_exact_matches=False 唯一合法姿势，高周期值仅收盘后可见（G-C.1 前视红证）
+    #   inputs: A3
+    #   outputs: 对齐后序列
+    # - id: A5
+    #   name_zh: 胞级命中率桥
+    #   name_en: cell_win_rate
+    #   intro: 事件×前视收益（1/5/10/20 窗）→ 胞级命中率，样本不足返回 None 不返回 0，并产 __baseline__ 对照行
+    #   inputs: A4
+    #   outputs: 胞级命中率表
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 图形条件包落盘产物
+    #   name_en: ChartConditionPack_saved
+    #   intro: 与 condition_package.save_pack 同构文件名 condition_pack_*.csv.gz/.csv/.json
+    #   downstream: scripts/backtest/condition_attribution.py load_pack 消费面（零改动归因）; tests/backtest/test_chart_condition_package.py
+    # - id: O2
+    #   name_zh: 胞级命中率结果
+    #   name_en: CellWinRateResult
+    #   intro: 逐胞命中率（None=无统计非 0），供 G-A.3 判读端与 market_pattern_win_rate 同键对照
+    #   downstream: scripts/backtest/condition_attribution.py 判读端
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> F1
+    # F1 --> A2
+    # I2 --> A3
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> O1
+    # A5 --> O2

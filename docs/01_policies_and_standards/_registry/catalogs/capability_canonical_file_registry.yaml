@@ -54949,4 +54949,9 @@ creation_tokens:
   created_by: st-fms-tc-20260927
   capability: library_ledger_cache
   merge_evaluation: "净零声明：本件是同名 .py 的 ALGO_FLOW 机生视图（externalize_algo_flow 产出，同域各件各有一份 algo_flow/*.yaml），非第二真源、零新增视图类型，无同域条目可并"
+- file: docs/03_modules/_domain_backtest/algo_flow/chart_condition_package.yaml
+  token: chart-condition-package-chart-condition-package-20260927
+  created_by: st-c7-resc-20260927
+  capability: chart_condition_package
+  merge_evaluation: "P2-1 外置机器块唯一归档位（与 condition_package.yaml 同格式同族），非第二真源：docstring 只留 external 锚"
 di_seam_exemptions: []
