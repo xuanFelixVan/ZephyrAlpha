@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SCRIPT-start_paper_session | scripts/start_paper_session.py | §
 # [MODULE] scripts.start_paper_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）；zephyr.ex_core.pre_execution_checker（MOD-EX-024 执行前四级闸门，经 TradingSession.attach_pre_execution_gate 挂载）；zephyr.compliance.discipline_prohibition_checker（C-004 纪律闸补仓腿 + KillSwitchLite 策略级熔断，F62 诚实起点批）；zephyr.compliance.compliance_log（合规证据日志注入点，测试用 tmp_path）；zephyr.shared.contracts.position（补仓腿现价派生读 PositionSnapshot）
+# [DEPENDENCIES] stdlib；zephyr.compliance.compliance_report_registry+manipulation_realtime_monitor（F62 C-002 三门装配批：先报告后交易 + 盘中操纵冻结）；zephyr.ex_core.cancel_rate_guard（日申报计数器，OrderManager 与 TradingSession 同实例双注入）；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）；zephyr.ex_core.pre_execution_checker（MOD-EX-024 执行前四级闸门，经 TradingSession.attach_pre_execution_gate 挂载）；zephyr.compliance.discipline_prohibition_checker（C-004 纪律闸补仓腿 + KillSwitchLite 策略级熔断，F62 诚实起点批）；zephyr.compliance.compliance_log（合规证据日志注入点，测试用 tmp_path）；zephyr.shared.contracts.position（补仓腿现价派生读 PositionSnapshot）
 # [CONSUMERS] 57 号文 §2 盘中模拟盘——交易日 09:25 前人工拉起；--service=LiveStrategyAdapter 常驻服务模式（GAP-2 残余① CLI 接线已落）；挂计划任务/调度=Owner 窗口
 # [STARTUP] manual
 # [MATURITY] testing
@@ -95,12 +95,17 @@ if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
 from zephyr.compliance.compliance_log import ComplianceLogger  # noqa: E402
+from zephyr.compliance.compliance_report_registry import ReportGate  # noqa: E402
 from zephyr.compliance.discipline_prohibition_checker import (  # noqa: E402
     DisciplineContext,
     DisciplineGuard,
     KillSwitchLite,
 )
+from zephyr.compliance.manipulation_realtime_monitor import (  # noqa: E402
+    ManipulationRealtimeMonitor,
+)
 from zephyr.ex_core.async_fill_dispatcher import AsyncFillDispatcher  # noqa: E402
+from zephyr.ex_core.cancel_rate_guard import CancelRateGuard  # noqa: E402
 from zephyr.ex_core.live_strategy_adapter import LiveStrategyAdapter, StrategySlot  # noqa: E402
 from zephyr.ex_core.order_manager import OrderManager  # noqa: E402
 from zephyr.ex_core.position_reconciler import PositionReconciler  # noqa: E402
@@ -652,12 +657,32 @@ def assemble_session(
     三腿盘上无真源，**明示未装**（逐腿状态打印 + 机生 JSON 行 + DISCIPLINE_LEG_ARMING
     常量三处同源，测试可断）。guard 与 ctx_provider 必须成对注入（会话装配期 fail-fast）。
 
+    F62 装配批（2026-09-27）：本函数 MUST 注入 C-002 三道订单级合规闸
+    （``report_gate``/``declaration_guard``/``manipulation_monitor``）并把同一
+    ``CancelRateGuard`` 实例透传 ``cancel_rate_guard=``——三门代码与测试全绿但
+    生产零注入=闸装了没通水；计数实例分裂会让日申报 1 万笔阻断线假激活
+    （TradingSession 同实例防护直接 raise，43 号 §7.4/§8/§10）。
+
     Args:
         state_dir: 风控状态外部化根目录（None=生产路径，测试 MUST 注入 tmp_path）。
         compliance_log_path: 合规证据日志落点（None=生产 data/compliance_log；
             测试 MUST 注入 tmp_path——根宪法 §9 第 6 条禁测试写生产 data/）。
     """
-    order_manager = OrderManager()
+    # C-002 三道订单级合规闸（F62 装配批，43 号 §7.4/§8/§7.3）：注入即生效，
+    # 未注入=该闸跳过——故本正门 MUST 全三门齐装。
+    # 同实例硬约束：CancelRateGuard 一个对象同时给 OrderManager（record_submit/
+    # record_cancel 计数）与 TradingSession（阻断线读数），分裂双实例会让 1 万笔
+    # 日申报防线计数失明（trading_session.py 同实例防护直接 raise）。
+    declaration_guard = CancelRateGuard()
+    report_gate = ReportGate()
+    manipulation_monitor = ManipulationRealtimeMonitor()
+    order_manager = OrderManager(
+        report_gate=report_gate,
+        declaration_guard=declaration_guard,
+        manipulation_monitor=manipulation_monitor,
+    )
+    # 冻结集合只由报单/撤单/成交事件喂入，不 attach 就等于没接这道闸（43 号 §10 被动观察边界）
+    manipulation_monitor.attach_order_manager(order_manager)
     order_manager.register_broker(_BROKER_ID, broker)
     state_store = JsonStateStore(state_dir or _RISK_STATE_DIR)
     validator = DefaultRiskValidator(state_store=state_store)
@@ -743,6 +768,7 @@ def assemble_session(
         price_provider=price_provider,
         order_manager=order_manager,
         config=config,
+        cancel_rate_guard=declaration_guard,
         risk_layer=risk_layer,
         kill_switch=kill_switch_lite,
         discipline_guard=discipline_guard,
@@ -753,6 +779,11 @@ def assemble_session(
         "[DISCIPLINE] 未装清单（本批明示）：清单闸 ChecklistCompletionChecker / 交易合规检测 "
         "TradingComplianceDetector / ProgrammaticTradingGuard 均未注入本正门——"
         "清单三项 INTRADAY key 全仓零生产写侧，接上即每轮整批拒单（那是另一种假闸）"
+    )
+    print(
+        "[COMPLIANCE] C-002 三道订单级合规闸已注入：先报告后交易(ReportGate) + "
+        "日申报 5000 预警/1 万阻断(同一 CancelRateGuard 实例双注入) + "
+        "盘中操纵冻结(ManipulationRealtimeMonitor，已 attach_order_manager 喂事件流)"
     )
     session.attach_pre_execution_gate(kill_switch_probe=lambda: validator.kill_switch_active)
     print(

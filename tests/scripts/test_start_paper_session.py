@@ -701,9 +701,14 @@ class TestAsyncFillDispatch:
         """
         session = sps.assemble_session(sps.parse_args([]), _RiskBroker(), state_dir=tmp_path)
         callbacks = session._order_manager.fill_callbacks
-        assert len(callbacks) == 1
-        assert callbacks[0].__self__ is session.fill_dispatcher
-        assert callbacks[0].__name__ == "enqueue"
+        # F62 C-002 装配批：盘中操纵监测器以被动观察者身份同幅挂 fill 回调（43 号 §10），
+        # 本测定理不变=入账不在回调线程、派发器是唯一落账入口
+        monitor = session._order_manager.manipulation_monitor
+        assert monitor is not None
+        assert set(callbacks) == {session.fill_dispatcher.enqueue, monitor._on_fill}
+        enqueue_cbs = [cb for cb in callbacks if cb.__name__ == "enqueue"]
+        assert len(enqueue_cbs) == 1
+        assert enqueue_cbs[0].__self__ is session.fill_dispatcher
         assert session.fill_dispatcher.is_running is True  # 装配完即有消费者，不留悬空队列
 
     def test_accounting_runs_off_the_pushing_thread(self, tmp_path, monkeypatch):

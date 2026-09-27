@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.qmt_trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_integration; zephyr.ex_core.order_manager; zephyr.governance.strategies.strategy_base; zephyr.shared.contracts.position
+# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_integration; zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry; zephyr.compliance.manipulation_realtime_monitor; zephyr.governance.strategies.strategy_base; zephyr.shared.contracts.position
 # [CONSUMERS] scripts.construction.test_qmt_file_bridge_full; tests/ex_core/test_qmt_trading_session.py
 # [STARTUP] manual
 # [MATURITY] draft
-# [INVARIANTS] env 校验先行(ValueError); start 才连接; 策略层只面对 Session 不面对 Broker
+# [INVARIANTS] env 校验先行(ValueError); start 才连接; 策略层只面对 Session 不面对 Broker; C-002 三门构造期必装(real/sim 同口径)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -20,6 +20,7 @@ QMT Trading Session——QMT 文件桥交易会话（一键装配）
 职责:
   - 策略层无感知入口：env + universe + strategy + 两个 provider 即可起跑
   - 内部装配 OrderManager + QmtFileBridgeAssembly（broker + 可选算法队列）
+  - 构造期注入 C-002 三道订单级合规闸（43 号 §7.4/§8/§7.3，real/sim 同口径）
   - 生命周期：start() 连接全部通道，stop() 全部断开
 
 约束:
@@ -38,7 +39,10 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
 
+from zephyr.compliance.compliance_report_registry import ReportGate
+from zephyr.compliance.manipulation_realtime_monitor import ManipulationRealtimeMonitor
 from zephyr.ex_core.adapters.qmt_file_bridge_integration import QmtFileBridgeAssembly
+from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
 from zephyr.ex_core.order_manager import OrderManager
 from zephyr.governance.adapters.risk_validation_bridge import RiskValidationPort
 from zephyr.governance.strategies.strategy_base import StrategyBase
@@ -112,7 +116,17 @@ class QmtTradingSession:
         self._signal_provider = signal_provider
         self._price_provider = price_provider
 
-        self._order_manager = OrderManager()
+        # C-002 三道订单级合规闸（F62 装配批，43 号 §7.4/§8/§7.3）：real/sim 双通道
+        # 同口径装闸——env 只决定连哪个账户，不决定合规是否生效。
+        declaration_guard = CancelRateGuard()
+        manipulation_monitor = ManipulationRealtimeMonitor()
+        self._order_manager = OrderManager(
+            report_gate=ReportGate(),
+            declaration_guard=declaration_guard,
+            manipulation_monitor=manipulation_monitor,
+        )
+        # 冻结集合只由报单/撤单/成交事件喂入，不 attach 等于没接这道闸（43 号 §10 被动观察边界）
+        manipulation_monitor.attach_order_manager(self._order_manager)
         self._assembly = QmtFileBridgeAssembly(
             self._order_manager,
             enable_real=(env == "real"),
