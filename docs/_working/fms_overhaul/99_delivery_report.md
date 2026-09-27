@@ -225,3 +225,16 @@ git status --porcelain -- docs/01_policies_and_standards/_registry/catalogs/rege
 
 **你只要回这几种话**：①"O-x 批"=照上表已备好的处方执行；②"O-x 否/不动"=继续挂着不动；
 ③"T-x 按你建议改"=我把替代判据落册；④"全部先不动，只把 O-5 排个窗"=我只等停机窗点名。
+
+## 十六、主区磁盘滞后 dev 的可见后果（后波必读，勿误判为代码缺陷）
+
+`tests/governance/test_commit_queue_revalidate_mergeable_pred.py` 在主区直接跑会 **4 红**
+（同套在干净 dev 面复跑 5 passed [亲验 12:5x]，袋 `82308924d7` 的落地自证即是）。
+原因：该测试 import 的是**主区磁盘**的 `scripts/commit_queue.py`，而磁盘仍是他道
+未落地的 +148 行旧两参版；dev 已是三参版。⇒ **不是代码坏，是主区工作副本落后于 dev**。
+
+处置边界：①不强行覆盖主区磁盘（那是别人的未落地字节，覆盖=归属篡改）；
+②该道落地或主区 `git merge dev` 后 4 红自动转绿；
+③后波若在 main 跑全量并见到这 4 红，按本条判读，**不要**去改判据或删测试。
+另注意：主区全量测试面还残留 `tests/library/test_potential_consumers_guard.py` 等
+他道未落地删除位（§十一），同读法。
