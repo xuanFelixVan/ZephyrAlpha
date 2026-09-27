@@ -56,3 +56,25 @@ st-chief4x-promo2-20260927（MOD-BT-225 活跃施工，本役重复件已按内�
 （broker_ack 人工报送前置，99_skipped SKIP-1）｜F82 已销账（判据"保持不存在"成立=EC3 row11 同判）｜
 F04 他线已落地（88f62e893e，本役让位）｜FL1/FL2 本役修。超计划：sim_observe_daily 接线回归修复
 （HEAD 即红 5 测，快照回退事故丢件）。测试累计：126 绿（七套件）+54 绿（回归复验）。
+
+## 终局段（总筹 st-chief5-20260927，2026-09-27 08:5x）
+
+### 总筹亲施袋
+| 袋 | 内容 | 哈希 |
+|---|---|---|
+| 接管袋 | 战役宪章+token 同袋 | 401203858d |
+| tests/frontend 治本袋 | conftest 收集死锁防+冒烟事件行装置适配 | 7530bd74 |
+| api_server 三合一袋 | SQL 集中化 43 块（§5.160.2+ARCH-CH-024，TableRegistry 真源 8 常量）+孤儿工作采纳 1079 行（st-qmine-20260925/st-ailayer-final-20260924 遗产，三代投死于 PERM-TRIGGER）+EC1 端点切换收官（_cm_equity 委托/簇徽章六表/_SQL_CM_EQ_AGG 删/entity_type 契约） | 8f03ef44bf |
+| 排班哨兵追认袋 | 22/31 基线追认+历史回归测试合成化 | d623e5ac50 |
+
+### EC1 股权穿透链终态（本役核心命题）
+底座（六表 150 万边，c007caac86）→ 查询模块（9fa01551f0）→ API 端点切换（8f03ef44bf）→ **前端全链真源切换完成**。
+实弹验收：/api/chainmap-company?symbol=600566 → source=entity_graph n_held=59；/api/chainmap-cluster?cid=C14 → 节点 equity.out=24 明细带 stake_pct；红队三探测（非法 symbol/空簇/越界参）全部优雅降级；600927 复跑 n_held=34。ig_equity_edge 退役=Owner 门位（99_skipped 登记）。
+
+### 红蓝两轮零（本线范围）
+- 第 1 轮：tests/frontend 556 绿（3 败=排班哨兵待追认）+E2E 端点实弹 200×2+红队探测降级面全过。
+- 修复回环：哨兵 22/31 追认+weekend 历史回归测试合成化（d623e5ac50）。
+- 第 2 轮：tests/frontend **559 passed / 0 failed 终局绿**（该目录此前因收集死锁结构性不可跑）+端点复跑 200。
+
+### 零遗留声明
+七断链+两回灌边：5 修（F34/F74/F20 本役线+F26/F04 chief4x）+1 设计态销账（F82）+1 Owner 门位带处方（F62=99_skipped SKIP-1）+2 回灌边消费端落地（MOD-BT-223）。移交项全部登记 99_skipped_for_owner.md（6+2 项）。tests/frontend 三个预存潜病（收集死锁/冒烟装置/哨兵漂移）全部治本。无待裁定、无悬空 claim、临时件已清。
