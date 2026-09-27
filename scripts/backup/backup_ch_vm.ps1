@@ -58,6 +58,24 @@ function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 
+# -- AutoCheck decision (pure function; consumer = the -AutoCheck branch below) --
+# Fail-CLOSED by design (2026-09-27 cure of the 09-26 incident): an unknown VM
+# state must never be interpreted as "changed, therefore copy 599 GB".
+# Returns one of: skip | proceed | blocked_unprobeable | blocked_unparsable
+function Get-AutoCheckDecision {
+    param(
+        [bool]$ProbeOk,
+        [string]$Version,
+        [string]$Hash,
+        [string]$LastVersion,
+        [string]$LastHash
+    )
+    if (-not $ProbeOk) { return "blocked_unprobeable" }
+    if (-not $Version -or -not $Hash) { return "blocked_unparsable" }
+    if ($Version -eq $LastVersion -and $Hash -eq $LastHash) { return "skip" }
+    return "proceed"
+}
+
 # -- Helper: read a single field from backup_state.json (top-level) --
 function Get-StateField($name) {
     if (-not (Test-Path $StateFile)) { return $null }
@@ -166,8 +184,12 @@ if ($RegisterTask) {
 # Unchanged -> exit 0 (zero downtime). Changed -> fall through to full backup.
 if ($AutoCheck) {
     Write-Stage "AutoCheck: probing CH version + config hash via SSH"
+    $probeOk = $false
+    $version = ""
+    $hash = ""
+    $blockReason = ""
     if (-not (Test-Path "$ProjectRoot\config\.env.ch_backup")) {
-        Write-Warn "config/.env.ch_backup not found -- cannot AutoCheck, forcing full backup"
+        $blockReason = "config/.env.ch_backup missing -- cannot decide"
     } else {
         # Single SSH round-trip: CH version + sha256 of config files + fstab
         $probeCmd = "sudo sh -c '" +
@@ -176,42 +198,72 @@ if ($AutoCheck) {
             "'"
         $probe = & python $ChSshHelper --cmd $probeCmd --sudo --json 2>&1 | ConvertFrom-Json
         if ($probe.exit_code -ne 0) {
-            Write-Warn "AutoCheck SSH probe failed (exit $($probe.exit_code)) -- forcing full backup. stderr: $($probe.stderr)"
+            $blockReason = "SSH probe failed (exit $($probe.exit_code)): $($probe.stderr)"
         } else {
+            $probeOk = $true
             $out = $probe.stdout
-            $version = ""
-            $hash = ""
             if ($out -match '=V=\s*(.*)') { $version = $matches[1].Trim() }
             if ($out -match '=H=\s*([0-9a-f]{64})') { $hash = $matches[1].Trim() }
-            $lastVersion = Get-StateField "last_ch_vm_version"
-            $lastHash     = Get-StateField "last_ch_vm_config_hash"
-
-            Write-Host "  Current version: $version" -ForegroundColor White
-            Write-Host "  Current hash:    $hash" -ForegroundColor White
-            Write-Host "  Last version:    $lastVersion" -ForegroundColor White
-            Write-Host "  Last hash:       $lastHash" -ForegroundColor White
-
-            if ($version -and $hash -and $version -eq $lastVersion -and $hash -eq $lastHash) {
-                Write-OK "AutoCheck: CH version + config unchanged since last VM backup. SKIP (zero downtime)."
-                # Record the skip so scheduled-task history shows it
-                Set-StateField "last_ch_vm_autocheck_time" (Get-Date).ToString("o")
-                Set-StateField "last_ch_vm_autocheck_result" "skipped_unchanged"
-                $report = @{
-                    timestamp = (Get-Date).ToString("o")
-                    mode = "autocheck"
-                    result = "skipped_unchanged"
-                    version = $version; config_hash = $hash
-                }
-                New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
-                $report | ConvertTo-Json -Depth 3 | Out-File $LogFile -Encoding utf8
-                Write-Host "  Log: $LogFile" -ForegroundColor White
-                exit 0
-            } else {
-                $reason = if ($version -ne $lastVersion) { "version changed ($lastVersion -> $version)" } else { "config hash changed" }
-                Write-Warn "AutoCheck: $reason -- proceeding to full backup"
-            }
         }
     }
+    $lastVersion = Get-StateField "last_ch_vm_version"
+    $lastHash     = Get-StateField "last_ch_vm_config_hash"
+    $decision = Get-AutoCheckDecision -ProbeOk $probeOk -Version $version -Hash $hash `
+        -LastVersion ([string]$lastVersion) -LastHash ([string]$lastHash)
+
+    Write-Host "  Probe ok:   $probeOk" -ForegroundColor White
+    Write-Host "  Current version: $version" -ForegroundColor White
+    Write-Host "  Current hash:    $hash" -ForegroundColor White
+    Write-Host "  Last version:    $lastVersion" -ForegroundColor White
+    Write-Host "  Last hash:       $lastHash" -ForegroundColor White
+    Write-Host "  Decision:        $decision" -ForegroundColor White
+
+    $nowIso = (Get-Date).ToString("o")
+    if ($decision -eq "skip") {
+        Write-OK "AutoCheck: CH version + config unchanged since last VM backup. SKIP (zero downtime)."
+        # Record the skip so scheduled-task history shows it
+        Set-StateField "last_ch_vm_autocheck_time" $nowIso
+        Set-StateField "last_ch_vm_autocheck_result" "skipped_unchanged"
+        $report = @{
+            timestamp = $nowIso
+            mode = "autocheck"
+            result = "skipped_unchanged"
+            version = $version; config_hash = $hash
+        }
+        New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
+        $report | ConvertTo-Json -Depth 3 | Out-File $LogFile -Encoding utf8
+        Write-Host "  Log: $LogFile" -ForegroundColor White
+        exit 0
+    }
+    if ($decision -like "blocked*") {
+        # 09-26 incident cure: previously every one of these paths fell through to a
+        # full 599 GB copy (fail-open). Unknown state now stops loudly instead -- the
+        # daily CH incremental chain is untouched, so nothing is lost by abstaining.
+        if (-not $blockReason) {
+            $blockReason = "probe returned but version/config hash unparsable (empty =V= or =H=)"
+        }
+        Write-Err "AutoCheck: $decision -- REFUSING full backup on unknown VM state. $blockReason"
+        Write-Err "  Why refusing: an unprobeable VM must not be read as 'config changed'."
+        Write-Err "  2026-09-26 this path copied data.vhdx (599 GiB) onto F: and broke the"
+        Write-Err "  F>=700 GiB cold-store red line (see LEDGER_final.md prescription P-6)."
+        Write-Err "  Next: fix SSH probe / .env.ch_backup, then re-run -AutoCheck or -Force."
+        Set-StateField "last_ch_vm_autocheck_time" $nowIso
+        Set-StateField "last_ch_vm_autocheck_result" $decision
+        $report = @{
+            timestamp = $nowIso
+            mode = "autocheck"
+            result = $decision
+            reason = $blockReason
+            probe_ok = $probeOk
+            version = $version; config_hash = $hash
+        }
+        New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
+        $report | ConvertTo-Json -Depth 3 | Out-File $LogFile -Encoding utf8
+        Write-Host "  Log: $LogFile" -ForegroundColor White
+        exit 3
+    }
+    $reason = if ($version -ne $lastVersion) { "version changed ($lastVersion -> $version)" } else { "config hash changed" }
+    Write-Warn "AutoCheck: $reason -- proceeding to full backup"
     # Fall through to full backup below (AutoCheck decided a backup is needed).
     $Force = $true  # AutoCheck runs unattended via scheduled task -- no interactive prompt
 }
