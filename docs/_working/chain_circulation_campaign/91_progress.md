@@ -84,3 +84,8 @@ F04 他线已落地（88f62e893e，本役让位）｜FL1/FL2 本役修。超计�
 - **F74 q-0021（v9 袋，5 文件）**在队列 pending，内容门全过待 drain——EC2 车道自收尾中。
 - ⚠️ **死袋禁 requeue 清单**（内容均被取代，requeue=回退事故）：q-20260927-st-ec2-p0-0002/0006/0010/0011/0014/0017/0019/0020。
 - 超计划修复：promotion_combo_gate F821 潜伏 bug（_safe_id 未定义）治本；sim_observe_daily 5 长红测复绿。
+
+### 审计更正二（09-27 09:4x，Owner 令全面复审后）
+- **q-0021（F74 v9 袋）死因=cascade_stale（fms q-0043 推移基底）→ 改判禁 requeue**：MOD-AUTO-L2 线已并行落地 F74 本体（`40ca90eb88` 组合门打分器+一页式建议书 + `383c0af8e1` import 修复，28 测绿且其循环检查在岗）。重投 q-0021=覆盖他线在养实现。**禁 requeue 清单扩至九袋**：+q-0021。
+- **F74 双实现收敛（日班任务）**：已落地版缺两增量=①combo v2 frozen 尺 STD-SIM-ACCESS-002（裁定#337：dsr≥0.5+ρ̄≤0.7+换手≤12× 腿）②combo 事件入口（advisory due 执行体尾传动渲染）。EC2 v9 最终内容完整保存于 q-0021 bag blobs（.runtime/commit_queue/blobs/：3978a77f770fd991…/babf24b62199680f…），日班择优并入或裁定取舍——blob 一旦 gc 即消失，宜先捞。
+- **孤儿测试收编**：tests/frontend/test_api_server_heartbeat.py（QMine 06 09-25 未跟踪件，套件依赖且 559 绿含之）保护性入 HEAD，零内容改动。
