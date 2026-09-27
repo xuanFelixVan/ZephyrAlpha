@@ -1129,3 +1129,135 @@ class TestSystemicProviderTypeGuard:
         snap2 = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=1))
         assert snap2.systemic_level == 2
         assert snap2.systemic_cap == pytest.approx(0.70)
+
+
+# ---------------------------------------------------------------------
+# R1-02 清算守卫接线实证（F60/zc-lane-k-20260927：guard 判了必须有人执行）
+# ---------------------------------------------------------------------
+
+
+class TestLiquidationGuardWiring:
+    """drawdown_liquidation_guard 消费方非零断言：撤单率预检+全清超时守卫。
+
+    此前 guard（209 行）全仓零消费="判了没人执行"（F60/F47 卷缺口）。
+    本组测试实证仲裁点 `_engage_kill_switch` 真实消费 guard 双函数：
+      - check_cancel_rate：≥15% blocked → 撤单腿降级 scope→position（§3.5.1）；
+      - check_liquidation_timeout：超时未清零 → 告警人工介入挂入仲裁报告；
+      - provider 未注入 = fail-open 既有行为零变化。
+    """
+
+    @staticmethod
+    def _engage(broker: FakeBroker, *, order_stats, config: RiskLayerConfig | None = None) -> dict:
+        open_orders = {"bk-open-1": {"symbol": "600000.SH"}}
+        orch = RiskLayerOrchestrator(
+            drawdown_controller=DrawdownController(),
+            drawdown_tracker=DrawdownTracker(initial_net_value=1_000_000.0),
+            var_calculator=VaRCalculator(),
+            tail_risk_monitor=TailRiskMonitor(),
+            broker=broker,
+            open_orders_provider=lambda: dict(open_orders),
+            order_stats_provider=order_stats,
+            config=config,
+        )
+        result = orch._engage_kill_switch("R1-02 清算守卫演练")
+        assert result is not None
+        return result
+
+    def test_cancel_rate_blocked_downgrades_cancel_leg(self) -> None:
+        """撤单率 16% ≥15% 红线 → blocked → 撤单腿降级（挂单不撤留自然到期），平仓腿照常。"""
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000")},
+        )
+        result = self._engage(broker, order_stats=lambda: (16, 100))
+        precheck = result["cancel_rate_precheck"]
+        assert precheck["blocked"] is True
+        assert precheck["scope_downgraded"] is True
+        assert precheck["cancel_rate"] == pytest.approx(0.16)
+        # 撤单腿被降级：挂单未撤；平仓腿不受阻：持仓市价单已发
+        assert broker.cancelled == []
+        assert len(broker.submitted) == 1
+        report = result["report"]
+        assert report["all_success"] is True
+        assert report["liquidation_orders"] == ["600000.SH"]
+
+    def test_cancel_rate_warning_keeps_full_scope(self) -> None:
+        """撤单率 13%（≥12% 预警 <15% 红线）→ 放行撤单腿但预检留痕（warning=True）。"""
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000")},
+        )
+        result = self._engage(broker, order_stats=lambda: (13, 100))
+        precheck = result["cancel_rate_precheck"]
+        assert precheck["blocked"] is False
+        assert precheck["warning"] is True
+        assert precheck["scope_downgraded"] is False
+        assert broker.cancelled == ["bk-open-1"]  # 撤单腿照常执行
+        assert len(broker.submitted) == 1
+
+    def test_timeout_alert_attached_when_positions_remain(self, monkeypatch) -> None:
+        """假钟 +60s + 券商残余持仓非空 → 全清超时告警挂入仲裁报告（人工介入信号）。
+
+        Windows time.monotonic 粒度粗（相邻读数差可为 0），改用编排器命名空间
+        假钟（每次读数推进 60s）跨过默认 30s 阈值，确定性触发 §6.14② 告警。
+        """
+        import zephyr.ex_core.risk_layer_orchestrator as rlo
+
+        class _FakeClockModule:
+            _now = 100.0
+
+            @staticmethod
+            def monotonic() -> float:
+                _FakeClockModule._now += 60.0
+                return _FakeClockModule._now
+
+        monkeypatch.setattr(rlo, "time", _FakeClockModule)
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000")},
+        )
+        result = self._engage(broker, order_stats=None)
+        # FakeBroker 平仓单不削减 holdings → 残余非空 + elapsed=60s>30s → 告警必挂
+        assert "liquidation_timeout_alert" in result
+        assert "人工介入" in result["liquidation_timeout_alert"]
+        # provider 未注入 → 无预检键（fail-open 面不带守卫痕迹）
+        assert "cancel_rate_precheck" not in result
+
+    def test_provider_absent_keeps_legacy_behavior(self) -> None:
+        """provider 未注入 → 零预检键、撤单腿照常（既有行为零变化）。"""
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000")},
+        )
+        result = self._engage(broker, order_stats=None)
+        assert "cancel_rate_precheck" not in result
+        assert broker.cancelled == ["bk-open-1"]
+        assert len(broker.submitted) == 1
+
+    def test_provider_failure_fails_open(self) -> None:
+        """provider 抛错 → 预检失效 fail-open：撤单腿放行、清算不被阻断。"""
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000")},
+        )
+
+        def _boom() -> tuple[int, int]:
+            raise RuntimeError("stats source down")
+
+        result = self._engage(broker, order_stats=_boom)
+        assert "cancel_rate_precheck" not in result
+        assert broker.cancelled == ["bk-open-1"]
+        report = result["report"]
+        assert report["all_success"] is True
+
+    def test_zero_orders_provider_means_no_constraint(self) -> None:
+        """provider 报 (0,0)（无委托）→ guard 判"无撤单率约束"，撤单腿放行。"""
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000")},
+        )
+        result = self._engage(broker, order_stats=lambda: (0, 0))
+        precheck = result["cancel_rate_precheck"]
+        assert precheck["blocked"] is False
+        assert precheck["warning"] is False
+        assert broker.cancelled == ["bk-open-1"]

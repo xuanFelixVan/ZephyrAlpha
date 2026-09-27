@@ -120,6 +120,7 @@ from zephyr.shared.contracts.order import Order
 from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
+from zephyr.trading.trading_contracts.risk import kill_switch_state_store
 
 _logger = logging.getLogger(__name__)
 
@@ -389,6 +390,15 @@ class TradingSession:
         # （原依赖"每个交易日开始手动调用 reset_daily_circuit_breaker"的君子协定
         # 全仓零生产接线，跨日残留计数会误触发全账户 50 笔/日熔断——2.4A 信号③治本）
         self.reset_daily_circuit_breaker()
+        # F61 重启失忆窗关闭（zc-lane-k-20260927）：五级交易熔断磁盘影子启动重臂。
+        # rebuild 纯加闸不加放（store INVARIANTS）：影子缺失/损坏=零重臂不阻断启动；
+        # 重臂后 DAILY_LOSS 等非自恢复级跨重启维持（任何新单被逐单闸拒）。
+        rearmed_levels = kill_switch_state_store.rebuild_from_disk()
+        if rearmed_levels:
+            _logger.critical(
+                "KILL_SWITCH_REBUILD_AT_START 重臂=%s（重启失忆窗关闭，熔断跨重启维持拒单）",
+                rearmed_levels,
+            )
         self._broker.connect()
         self._broker.register_fill_callback(self._on_fill)
         if self._risk_layer is not None:
@@ -655,8 +665,9 @@ class TradingSession:
         orders: list[Order] = []
         for symbol, weight in target_weights.items():
             open_buy, open_sell = inflight.get(symbol, (Decimal("0"), Decimal("0")))
-            order = self._make_delta_order(symbol, weight, total_asset, positions, prices,
-                                           open_buy=open_buy, open_sell=open_sell)
+            order = self._make_delta_order(
+                symbol, weight, total_asset, positions, prices, open_buy=open_buy, open_sell=open_sell
+            )
             if order:
                 orders.append(order)
 
@@ -1218,18 +1229,18 @@ class TradingSession:
 
 TOPIC_REBALANCE_REQUESTED: Final[str] = "ex_core.rebalance.requested"
 
-_active_sessions: "list[TradingSession]" = []
+_active_sessions: list[TradingSession] = []
 _active_sessions_lock = threading.Lock()
 _subscribed = False
 
 
-def _register_active_session(session: "TradingSession") -> None:
+def _register_active_session(session: TradingSession) -> None:
     with _active_sessions_lock:
         if session not in _active_sessions:
             _active_sessions.append(session)
 
 
-def _unregister_active_session(session: "TradingSession") -> None:
+def _unregister_active_session(session: TradingSession) -> None:
     with _active_sessions_lock:
         if session in _active_sessions:
             _active_sessions.remove(session)

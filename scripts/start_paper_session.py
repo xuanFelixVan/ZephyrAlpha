@@ -468,6 +468,18 @@ def assemble_risk_layer(
     def _open_orders_provider() -> dict[str, dict]:
         return {o.broker_order_id: {} for o in order_manager.get_open_orders() if o.broker_order_id}
 
+    def _order_stats_provider() -> tuple[int, int]:
+        """R1-02 撤单率预检进料（drawdown_liquidation_guard §6.14①，zc-lane-k-20260927）。
+
+        数据源=OrderManager.declaration_guard（CancelRateGuard 滚动窗口
+        total_cancels/total_resolved）；未注入 guard=(0,0) → guard 判
+        "当日无委托，无撤单率约束"，不阻断清算腿（fail-open）。
+        """
+        guard = order_manager.declaration_guard
+        if guard is None:
+            return (0, 0)
+        return (guard.total_cancels, guard.total_resolved)
+
     return RiskLayerOrchestrator(
         drawdown_controller=DrawdownController(),
         drawdown_tracker=DrawdownTracker(initial_net_value=nav_baseline),
@@ -482,6 +494,7 @@ def assemble_risk_layer(
             on_drift=_log_position_drift,
         ),
         open_orders_provider=_open_orders_provider,
+        order_stats_provider=_order_stats_provider,
         config=RiskLayerConfig(today_fills_probe="query_trades_today"),
         state_store=state_store,
     ), dispatcher

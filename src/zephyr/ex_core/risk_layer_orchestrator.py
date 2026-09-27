@@ -130,6 +130,7 @@ from __future__ import annotations
 import logging
 import math
 import threading
+import time
 import uuid
 from collections import deque
 from collections.abc import Callable, Mapping
@@ -147,6 +148,8 @@ from zephyr.governance.lifecycle_governance.rollback_state_machine import (
     evaluate_rollback,
     load_persisted_state,
     persist_state,
+)
+from zephyr.governance.lifecycle_governance.rollback_state_machine import (
     recover as _rollback_fsm_recover,
 )
 from zephyr.position.core.drawdown_controller import (
@@ -166,6 +169,11 @@ from zephyr.risk.core.drawdown_bankruptcy_floor import (
     BankruptcyFloorConfig,
     InvalidBankruptcyFloorInputError,
     check_bankruptcy_floor,
+)
+from zephyr.risk.core.drawdown_liquidation_guard import (
+    CancelRatePrecheck,
+    check_cancel_rate,
+    check_liquidation_timeout,
 )
 from zephyr.risk.core.drawdown_tracker import (
     DrawdownAlertedEvent,
@@ -244,6 +252,8 @@ class RiskLayerConfig:
     min_samples_for_var: int = 30
     liquidation_scope: str = "all"
     max_orders_per_second: int = 15
+    # R1-02 全清超时阈值（drawdown_liquidation_guard §6.14②：默认 30s 未清零告警人工介入）
+    liquidation_timeout_seconds: float = 30.0
     today_fills_probe: str = "get_today_fills"
     systemic_spread_recovery_ratio: float = 0.5
     systemic_sell_pressure_recovery: float = 0.50
@@ -502,6 +512,7 @@ class RiskLayerOrchestrator:
         kill_switch_owner: KillSwitchStateOwner | None = None,
         reconciler: PositionReconciler | None = None,
         open_orders_provider: Callable[[], dict[str, dict]] | None = None,
+        order_stats_provider: Callable[[], tuple[int, int]] | None = None,
         systemic_detector: AshareSystemicRiskDetector | None = None,
         systemic_input_provider: Callable[[], Mapping[str, Any] | None] | None = None,
         rollback_metrics_provider: Callable[[], Mapping[str, Any] | None] | None = None,
@@ -522,6 +533,11 @@ class RiskLayerOrchestrator:
         self._kill_switch_owner = kill_switch_owner
         self._reconciler = reconciler
         self._open_orders_provider = open_orders_provider
+        # R1-02 清算守卫进料（drawdown_liquidation_guard §6.14① 接线，
+        # zc-lane-k-20260927）：返回 (当日已撤笔数, 当日总委托笔数)。
+        # None=未进料（fail-open，撤单腿不预检——既有行为）；
+        # 生产装配点=start_paper_session.assemble_risk_layer（数据源=CancelRateGuard 计数）
+        self._order_stats_provider = order_stats_provider
         self._systemic_detector = systemic_detector
         self._systemic_input_provider = systemic_input_provider
         self._rollback_metrics_provider = rollback_metrics_provider
@@ -1755,13 +1771,31 @@ class RiskLayerOrchestrator:
             except Exception:  # noqa: BLE001 — 挂单查询失效降级为仅平仓
                 _logger.exception("open_orders_provider 失效（降级为仅平仓）")
 
+        # R1-02 撤单率预检（drawdown_liquidation_guard.check_cancel_rate §6.14①，
+        # zc-lane-k-20260927 接线——此前 guard 判了没人执行）：撤挂单前查当日撤单率，
+        # ≥12% 预警留 3% buffer；≥15% 红线 blocked → 撤单腿降级（scope→position，
+        # 小额挂单留自然到期，§3.5.1 处方）。provider 未注入/失效=fail-open 维持
+        # 既有行为；预检只减撤单不加发单，paper/sim 面先行。
+        cancel_precheck: CancelRatePrecheck | None = None
+        effective_scope = self._config.liquidation_scope
+        if self._order_stats_provider is not None and effective_scope in ("all", "order") and open_orders:
+            try:
+                cancelled_count, total_order_count = self._order_stats_provider()
+                cancel_precheck = check_cancel_rate(cancelled_count, total_order_count)
+            except Exception:  # noqa: BLE001 — 预检失效不阻断清算（熔断主保护在手）
+                _logger.exception("撤单率预检失效（fail-open 放行撤单腿）")
+                cancel_precheck = None
+            if cancel_precheck is not None and cancel_precheck.blocked:
+                effective_scope = "position"
+
+        liquidation_started_monotonic = time.monotonic()
         adapter = _LiquidationBrokerAdapter(self._broker)
         try:
             report = execute_kill_switch_liquidation(
                 adapter,
                 positions,
                 open_orders,
-                scope=self._config.liquidation_scope,
+                scope=effective_scope,
                 max_orders_per_second=self._config.max_orders_per_second,
                 event_id=event.get("event_id"),
                 state_store=self._state_store,
@@ -1770,6 +1804,36 @@ class RiskLayerOrchestrator:
             _logger.critical("清算执行异常（熔断状态保持，新单已禁）", exc_info=True)
             report = {"status": "liquidation_error", "reason": "execute_kill_switch_liquidation exception"}
         result: dict[str, object] = {"event": event, "report": report, "reason": reason}
+        if cancel_precheck is not None:
+            result["cancel_rate_precheck"] = {
+                "cancel_rate": cancel_precheck.cancel_rate,
+                "warning": cancel_precheck.warning,
+                "blocked": cancel_precheck.blocked,
+                "remaining_cancel_budget": cancel_precheck.remaining_cancel_budget,
+                "reason": cancel_precheck.reason,
+                "scope_downgraded": effective_scope != self._config.liquidation_scope,
+            }
+
+        # R1-02 全清超时守卫（drawdown_liquidation_guard.check_liquidation_timeout
+        # §6.14②）：清算后以券商实时持仓复点残余，超时未清零 → CRITICAL 告警
+        # 人工介入（不自动强平，A 股 T+1）。守卫失效不改写清算结论。
+        try:
+            positions_after = self._broker.get_positions()
+            remaining_after = {
+                symbol: float(qty)
+                for symbol, qty in positions_after.holdings.items()
+                if qty != 0 and math.isfinite(float(qty))
+            }
+            timeout_alert = check_liquidation_timeout(
+                started_monotonic=liquidation_started_monotonic,
+                now_monotonic=time.monotonic(),
+                remaining_positions=remaining_after,
+                timeout_seconds=self._config.liquidation_timeout_seconds,
+            )
+            if timeout_alert is not None:
+                result["liquidation_timeout_alert"] = timeout_alert.reason
+        except Exception:  # noqa: BLE001 — 超时守卫失效仅留痕，人工核查残余持仓
+            _logger.exception("全清超时守卫失效（请人工核查残余持仓）")
         with self._lock:
             self._kill_switch_report = result
         return result
