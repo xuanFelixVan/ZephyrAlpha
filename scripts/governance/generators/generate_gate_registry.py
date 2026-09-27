@@ -28,6 +28,7 @@ Usage:
     python scripts/governance/generators/generate_gate_registry.py
     python scripts/governance/generators/generate_gate_registry.py --check
     python scripts/governance/generators/generate_gate_registry.py --output path/to/output.yaml
+    python scripts/governance/generators/generate_gate_registry.py --diff
 """
 
 from __future__ import annotations
@@ -41,7 +42,7 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from _shared.constants import EXIT_FINDINGS, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 from _shared.file_utils import (
     atomic_write_if_changed,  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
@@ -54,6 +55,7 @@ priority: P1
 timeout_seconds: 10
 args:
   - {flag: --check, type: bool, description: "仅检测漂移，不写文件"}
+  - {flag: --diff, type: bool, description: "三账对账（F98 G1），纯只读，差集即红"}
   - {flag: --output, type: str, description: "输出路径"}
 warn_only: false
 description: >
@@ -63,6 +65,11 @@ description: >
 
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
 DEFAULT_OUTPUT = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "gate_registry.yaml"
+# 三账对账第二账（F98 G1 / M3 03 G1 治本 2026-09-27）：in_process 册路径提为模块常量，
+# 供 _roster_triggers 与 three_account_diff 共用（消除内联重复构造，行为不变）。
+IN_PROCESS_REGISTRY_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "in_process_gate_registry.yaml"
+)
 
 CATEGORY_MAP = {
     "01": "architecture_reachability",
@@ -110,9 +117,7 @@ _RE_DOCSTRING_FIRST_LINE = re.compile(r'^"""[^\n]*?—\s*(.+?)$', re.MULTILINE)
 
 def _roster_triggers() -> dict:
     """in_process 名册的 files_trigger 字段（P5 条件触发真源），供统一册贯通。"""
-    roster_path = (
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "in_process_gate_registry.yaml"
-    )
+    roster_path = IN_PROCESS_REGISTRY_PATH
     try:
         import yaml as _yaml  # noqa: PLC0415
 
@@ -714,6 +719,147 @@ def extract_gates(config: dict) -> list[dict]:
     return gates
 
 
+def _account_gate_id_sets(reg_gates: list[dict], ip_gates: list[dict], pcc: dict) -> tuple[set, set, set, set]:
+    """抽取三账 gate_id 集合（拆分自 three_account_diff，控圈复杂度）。
+
+    Returns:
+        (reg_active, ip_enabled, ip_disabled, hooks) 四个集合。
+    """
+    reg_active = {g["gate_id"] for g in reg_gates if g.get("status") == "active" and g.get("gate_id")}
+    ip_enabled = {g["gate_id"] for g in ip_gates if g.get("enabled") is True and g.get("gate_id")}
+    ip_disabled = {g["gate_id"] for g in ip_gates if g.get("enabled") is not True and g.get("gate_id")}
+    hooks = {g["gate_id"] for g in extract_gates(pcc)}
+    return reg_active, ip_enabled, ip_disabled, hooks
+
+
+def _pairwise_account_diffs(reg_set: set, ip_en_set: set, ip_disabled: set, hook_set: set) -> dict:
+    """两账差集 + 分类镜头（虚报/悬空/三账交集），全部排序保确定性。"""
+    ip_all = ip_en_set | ip_disabled
+    return {
+        "registry_active_minus_inprocess_enabled": sorted(reg_set - ip_en_set),
+        "inprocess_enabled_minus_registry_active": sorted(ip_en_set - reg_set),
+        "registry_active_minus_precommit_hooks": sorted(reg_set - hook_set),
+        "precommit_hooks_minus_registry_active": sorted(hook_set - reg_set),
+        "inprocess_enabled_minus_precommit_hooks": sorted(ip_en_set - hook_set),
+        "precommit_hooks_minus_inprocess_enabled": sorted(hook_set - ip_en_set),
+        # 分类镜头（对位 F98 缺口清单 G2/G3，供周审计替换动作直接取用）：
+        "virtual_claim_active_but_disabled": sorted(reg_set & ip_disabled),
+        "dangling_no_mount": sorted(g for g in reg_set if g not in ip_all and g not in hook_set),
+        "triple_agreement": sorted(reg_set & ip_en_set & hook_set),
+    }
+
+
+def _total_gates_self_check(reg: dict, ip: dict, reg_gates: list, ip_gates: list) -> dict:
+    """两册 total_gates 字段与条目实数自洽检查（F98 卷缺口 G5 对位）。"""
+    return {
+        "gate_registry": {
+            "total_gates_field": reg.get("total_gates"),
+            "actual": len(reg_gates),
+            "ok": reg.get("total_gates") == len(reg_gates),
+        },
+        "in_process_registry": {
+            "total_gates_field": ip.get("total_gates"),
+            "actual": len(ip_gates),
+            "ok": ip.get("total_gates") == len(ip_gates),
+        },
+    }
+
+
+def three_account_diff(
+    registry_path: Path | None = None,
+    in_process_path: Path | None = None,
+    precommit_path: Path | None = None,
+) -> dict:
+    """三账对账（F98 缺口 G1 / M3 03 §四 G1 治本，2026-09-27 并入本生成器）。
+
+    三账口径（对位人工周审计动作，净零声明：不新增脚本、不新增门）：
+      账1 = gate_registry.yaml 中 status=active 的 gate_id（统一册活跃面）
+      账2 = in_process_gate_registry.yaml 中 enabled=true 的 gate_id（运行时注册面）
+      账3 = .pre-commit-config.yaml 的 GATE-* hooks（pre-commit 拦截面）
+
+    任一两账差集非空，或任一册 total_gates 字段与条目实数不自洽，即判红（red=True）。
+    本函数纯只读；红只代表"存在待审计差异"，修册归名册 owner 域，本工具不代修。
+
+    Args:
+        registry_path: 统一册路径（默认仓库真源，测试可注入 tmp_path）。
+        in_process_path: in_process 册路径（默认仓库真源）。
+        precommit_path: pre-commit 配置路径（默认仓库真源）。
+
+    Returns:
+        含 counts/diffs/field_self_check/red 的对账 dict；所有 gate_id 列表排序保证确定性。
+    """
+    registry_path = registry_path or DEFAULT_OUTPUT
+    in_process_path = in_process_path or IN_PROCESS_REGISTRY_PATH
+    precommit_path = precommit_path or PRE_COMMIT_PATH
+
+    reg = load_yaml(registry_path)
+    ip = load_yaml(in_process_path)
+    pcc = load_yaml(precommit_path)
+
+    reg_gates = reg.get("gates", []) or []
+    ip_gates = ip.get("gates", []) or []
+    reg_set, ip_en_set, ip_disabled, hook_set = _account_gate_id_sets(reg_gates, ip_gates, pcc)
+
+    diffs = _pairwise_account_diffs(reg_set, ip_en_set, ip_disabled, hook_set)
+    field_self_check = _total_gates_self_check(reg, ip, reg_gates, ip_gates)
+    red = any(v for k, v in diffs.items() if k != "triple_agreement") or not all(
+        c["ok"] for c in field_self_check.values()
+    )
+    return {
+        "counts": {
+            "registry_active": len(reg_set),
+            "in_process_enabled": len(ip_en_set),
+            "precommit_hooks": len(hook_set),
+        },
+        "diffs": diffs,
+        "field_self_check": field_self_check,
+        "red": red,
+    }
+
+
+def format_three_account_report(diff: dict) -> str:
+    """将 three_account_diff 结果渲染为人类可读对账报告（周审计替换动作的输出形态）。"""
+    lines = [
+        "=== 三账对账（F98 G1 / M3 03）：gate_registry.active ↔ in_process.enabled ↔ pre-commit hooks ===",
+        f"账1 gate_registry.active      : {diff['counts']['registry_active']}",
+        f"账2 in_process.enabled        : {diff['counts']['in_process_enabled']}",
+        f"账3 pre-commit hooks          : {diff['counts']['precommit_hooks']}",
+        f"三账交集（三账一致面）        : {len(diff['diffs']['triple_agreement'])}",
+        "差集:",
+    ]
+    label_map = {
+        "registry_active_minus_inprocess_enabled": "账1 − 账2",
+        "inprocess_enabled_minus_registry_active": "账2 − 账1",
+        "registry_active_minus_precommit_hooks": "账1 − 账3",
+        "precommit_hooks_minus_registry_active": "账3 − 账1",
+        "inprocess_enabled_minus_precommit_hooks": "账2 − 账3",
+        "precommit_hooks_minus_inprocess_enabled": "账3 − 账2",
+    }
+    for key, label in label_map.items():
+        items = diff["diffs"][key]
+        lines.append(f"  {label}: {len(items)} 项" + (f"  [{', '.join(items)}]" if items else ""))
+    lines.append("分类镜头:")
+    vc = diff["diffs"]["virtual_claim_active_but_disabled"]
+    lines.append(f"  虚报（账1 active 但账2 enabled=false）: {len(vc)} 项" + (f"  [{', '.join(vc)}]" if vc else ""))
+    dn = diff["diffs"]["dangling_no_mount"]
+    lines.append(f"  悬空（账1 有名但账2/账3 均无挂载）  : {len(dn)} 项" + (f"  [{', '.join(dn)}]" if dn else ""))
+    lines.append("字段自洽:")
+    for name, c in diff["field_self_check"].items():
+        lines.append(
+            f"  {name}: total_gates 字段={c['total_gates_field']} 条目实数={c['actual']} -> "
+            + ("OK" if c["ok"] else "MISMATCH（红）")
+        )
+    lines.append(
+        "判定: "
+        + (
+            "RED（差集非空或字段不自洽）——差集清单即审计待办；修册归名册 owner 域"
+            if diff["red"]
+            else "GREEN（三账一致且字段自洽）"
+        )
+    )
+    return "\n".join(lines)
+
+
 def generate(entry_count: int | None = None) -> dict:
     """generate implementation."""
     pcc = load_yaml(PRE_COMMIT_PATH)
@@ -772,8 +918,19 @@ def main() -> None:
     ensure_utf8_stdout()
     parser = argparse.ArgumentParser(description="自动生成 gate_registry.yaml")
     parser.add_argument("--check", action="store_true", help="仅检测漂移，不写文件")
+    parser.add_argument(
+        "--diff",
+        action="store_true",
+        help="三账对账（F98 G1）：gate_registry.active ↔ in_process.enabled ↔ pre-commit hooks；纯只读，差集即红",
+    )
     parser.add_argument("--output", type=str, default=str(DEFAULT_OUTPUT), help="输出路径")
     args = parser.parse_args()
+
+    if args.diff:
+        # 三账对账段（F98 G1 治本 2026-09-27）：替代人工周审计动作；纯只读不写任何册。
+        diff = three_account_diff()
+        print(format_three_account_report(diff))
+        sys.exit(EXIT_FINDINGS if diff["red"] else EXIT_PASS)
 
     output = generate()
 

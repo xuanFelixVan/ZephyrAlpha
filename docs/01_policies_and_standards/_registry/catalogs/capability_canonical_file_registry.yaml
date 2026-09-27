@@ -54774,4 +54774,39 @@ creation_tokens:
   created_by: zc-lane-v-20260927
   capability: architecture_view
   merge_evaluation: "战役V线施工台账，task_bound 随归档退役，无第二真源（与91_progress互链不重复记账）"
+- file: docs/_working/fullconnect_campaign/lane_t_notes.md
+  token: campaign-lane-notes-lane-t-notes-20260927
+  created_by: zc-lane-t-20260927
+  capability: campaign_lane_notes
+  merge_evaluation: "全流通战役 T 线施工日志：三件交易面接线进展/测试读数/落地哈希台账"
+- file: scripts/governance/next_ruling_id.py
+  token: ruling-id-dispenser-next-ruling-id-20260927
+  created_by: st-chief4x-govtool-20260927
+  capability: ruling_id_dispenser
+  merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
+- file: scripts/governance/generate_gate_face_reconciliation.py
+  token: gate-face-reconciliation-generate-gate-face-reconciliation-20260927
+  created_by: st-chief4x-govtool-20260927
+  capability: gate_face_reconciliation
+  merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
+- file: tests/governance/test_next_ruling_id.py
+  token: ruling-id-dispenser-tests-test-next-ruling-id-20260927
+  created_by: st-chief4x-govtool-20260927
+  capability: ruling_id_dispenser_tests
+  merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
+- file: tests/governance/test_generate_gate_face_reconciliation.py
+  token: gate-face-reconciliation-tests-test-generate-gate-face-reconciliation-20260927
+  created_by: st-chief4x-govtool-20260927
+  capability: gate_face_reconciliation_tests
+  merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
+- file: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  token: gate-face-reconciliation-report-md-gate-face-reconciliation-20260927
+  created_by: st-chief4x-govtool-20260927
+  capability: gate_face_reconciliation_report_md
+  merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
+- file: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  token: gate-face-reconciliation-report-yaml-gate-face-reconciliation-20260927
+  created_by: st-chief4x-govtool-20260927
+  capability: gate_face_reconciliation_report_yaml
+  merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
 di_seam_exemptions: []
