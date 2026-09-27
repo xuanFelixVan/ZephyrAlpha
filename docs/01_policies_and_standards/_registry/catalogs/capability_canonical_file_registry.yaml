@@ -54904,4 +54904,34 @@ creation_tokens:
   created_by: st-final-build-20260926
   capability: docs_working_total_command_closeout_wave
   merge_evaluation: "唯一归档位：本役波次案卷与生成器，不替代也不合并既有册条目（既有宿主无此观测面）"
+- file: docs/_working/fms_overhaul/X2_gate_wiring_prescription.md
+  token: fms-overhaul-x2-gate-wiring-prescription-20260927
+  created_by: st-fms-tc-20260927
+  capability: fms_overhaul
+  merge_evaluation: "读侧门挂接处方（实测成本定档），零既有条目可合并"
+- file: src/zephyr/library/collectors/store_collector.py
+  token: library-ledger-cache-store-collector-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "净零接入：不新增馆/kind/册/gate，复用既空置的 backup+infra 两 kind 与基建与备份馆谓词，从三本既有真源派生资产；六路采集器零产出该两 kind 故无同域重复簇，既不可并也不退役"
+- file: src/zephyr/library/snapshot_store.py
+  token: library-ledger-cache-snapshot-store-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "净零：新增单件快照层替代'PG down 即查无可查'的人工兜底（零替代旧件、零新表、零新计划任务——刷新搭既有 ZephyrAlpha_LibraryLedgerBackup 尾步）；与 S2 内存世代缓存层不并（不同平面：进程物化视图 vs 跨进程磁盘镜像）"
+- file: src/zephyr/library/ledger_fingerprint.py
+  token: library-ledger-cache-ledger-fingerprint-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "S1案B指纹读出的唯一实现：现状账本级指纹零覆盖（S1 §3.6 判两案皆零替代，非重复建设），S2 世代缓存与 S3 快照层一律 import 本常量，禁分头写指纹 SQL（单写者公理）"
+- file: src/zephyr/library/ledger_cache.py
+  token: library-ledger-cache-ledger-cache-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "读侧世代缓存非重复建设：现状无任何进程内账本缓存（lookup_assets 每查询现开现关，S2 §2.1），且不替代 S3 磁盘快照（内存代=进程物化视图、磁盘快照=跨进程资产，真源不同平面→跨域不同对象不并，S2 §3.6）；封度=代码常量两代≈200MB"
+- file: docs/03_modules/_domain_library/algo_flow/collectors/store_collector.yaml
+  token: library-ledger-cache-store-collector-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "净零：本件是 store_collector.py 的 ALGO_FLOW 机器块外部真源（同族六路采集器各有一份 collectors/*.yaml），非新册非新视图类型，无同域条目可并"
 di_seam_exemptions: []
