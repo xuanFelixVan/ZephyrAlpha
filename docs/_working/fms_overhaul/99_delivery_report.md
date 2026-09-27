@@ -114,3 +114,52 @@ token 同批合法/队列读 HEAD/嵌套 AGENTS 触 N-16 须单件批/REFERENCE-
 ### 10.6 本文件归属声明（防张冠李戴）
 
 §一–§八=前任总筹 st-fms-chief-20260927（原滞留暂存区未落地，由本班随收尾批落地）；§九=Owner 追加核查令原文（同批落地，逐字未改）；§十=本班 st-fms-tc-20260927。另：本班把本文件行尾由 CRLF 归一为 LF（内容零改动，与仓 `eol=lf` 口径一致）。
+
+
+## 十一、跨车道暂存删除事件登记（st-fms-tc-20260927，O-6 呈报）
+
+## 一、事实（全部 [亲验]，命令与读数同批留档）
+
+`git diff --cached --diff-filter=D --name-only HEAD | wc -l` = **171 枚已入库件被暂存删除**（工作树文件仍在盘上，仅 index 标删）。
+清单里含 **FMS 战役自家 7 枚**（其中 5 枚系本战役 B3/B4 于 09-27 07:33 与 09:54 刚落地，距今不足 4 小时）：
+
+| 自家件 | 落地凭据 | 属哪根支柱 |
+|---|---|---|
+| `docs/01_policies_and_standards/_registry/catalogs/regen_clean_baseline.yaml` | `3f9b600d21`（本班 C3，09:54） | 生成闭环棘轮基线（只减不增的"存量豁免"本体） |
+| `scripts/governance/generators/check_library_tri_consistency.py` | `q-0040`（前任 B3） | 真源层完整性三层对账 |
+| `scripts/governance/migrations/add_library_successor_of.py` | `q-0040` | 墓碑去向（successor_of 加列迁移） |
+| `tests/library/test_tri_consistency.py` | `q-0040` | 上件的红样 |
+| `tests/library/test_successor_of_migration.py` | `q-0040` | 上件的红样 |
+| `tests/library/test_library_page_counts.py` | `q-0040` | 馆页计数一致性 |
+| `tests/library/test_lookup_tombstone.py` | `q-0040` | 墓碑读侧行为 |
+
+即：**"真源层完整性"与"生成闭环"两根支柱的执法面 + 全部红样同时在待删位**。若被任一带这些 index 状态的袋子落地，战役交付报告 §一.6 的 10/10 声明当场作废。
+
+## 二、本班处置（只做自家，不代裁他役）
+
+1. **自家 7 枚已从 index 撤出删除位**：`git restore --staged --source=HEAD -- <7 路径>`（工作树零改动，盘上文件本就一直在）；
+   撤出后待删数 171→**164**。选 `--staged` 而非 checkout，避免覆盖任何他道在盘上的在途内容。
+2. **他役 164 枚一律未动**：注册表/文档净删属根宪法 §5 高域门位（注册表净删=Owner），
+   且本仓既有判例"新废表只登记不删""他役净删属 Owner 门位不代裁"。
+3. **线索登记**（不作定论）：暂存区里与本次删除同时出现的**新增**件
+   `docs/_working/ultimate_library/TRI_CONSISTENCY.md` 提示这是"图书馆重构 campaign 的搬迁"而非误删；
+   该目录册页署名 `session: st-ulib-20260921`（[亲验] grep 命中）。
+   但**搬迁与删除未成对**：7 枚自家件里有 4 枚是测试与迁移件，看不到对应新家；
+   按五支柱"墓碑去向"公理，搬迁必须留 `successor_of` 指针，删而不立=去向丢失。
+
+## 三、呈 Owner（并入 §10.4 门位清单，编号 O-6）
+
+- **O-6 跨车道暂存删除 164 枚的三分诊**：
+  (a) 属"搬迁"的 → 要求对方在同批补 `successor_of` 去向，否则视为净删；
+  (b) 属"清理"的 → 走逐表批制（在册→双证→批一张删一张）；
+  (c) 属"误删"的 → `git restore --staged` 即可，工作树未损，零抢救成本。
+- 窗口提醒：主区 index 是多会话混合池，**拖得越久越可能被别人的袋子顺带落地**（归属篡改同型）；
+  本班已把自家 7 枚撤出，其余 164 枚待你三分诊。
+
+## 四、复验命令（Owner 或后续班可直接跑）
+
+```
+git diff --cached --diff-filter=D --name-only HEAD | wc -l          # 现应=164
+git diff --cached --diff-filter=D --name-only HEAD | grep -E "regen_clean_baseline|check_library_tri|successor_of|test_tri_consistency|test_lookup_tombstone|test_library_page_counts"   # 现应零命中=自家已撤
+git status --porcelain -- docs/01_policies_and_standards/_registry/catalogs/regen_clean_baseline.yaml                        # 现应无 D
+```
