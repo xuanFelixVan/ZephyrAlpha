@@ -61613,6 +61613,39 @@ entries:
   plain_zh: "为claim_gate_r所在波次产出可复算机读证据：把本窗实测口径固化成一条命令，人工命令行调用而非驻留调度"
   responsibility_layer: governance
 
+- module_path: src/zephyr/library/snapshot_store.py
+  domain_id: D_GOVERNANCE
+  name_zh: "图书馆账本本地快照层"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 PG 总账导成带版本号的本地快照文件，磁盘只留两份，断库时按快照降级读数并显式标注非真源"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/ledger_cache.py
+  domain_id: D_GOVERNANCE
+  name_zh: "总账世代缓存"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把整本账本一次性读进内存做成世代快照，版本号没变就一直复用，变了才后台加载新一代并原子替换，最多同时留两代"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/ledger_fingerprint.py
+  domain_id: D_GOVERNANCE
+  name_zh: "总账世代指纹读出件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用一行 SQL 量出账本当前是哪一代，供缓存判断该不该换新，全项目只有这一处写这个查询"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/store_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "冷储与备份基建采集器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "图书馆原先没有一路采集器会产出 backup 和 infra 两种类型，所以基建与备份馆永远是零本书。这个采集器去翻三本已有的登记册——存储族条目、仓外资产清单、备份配置——把冷储盘和备份落点逐条抄成可查的索引卡，卡片上写明出自哪本册子第几行；顺手只摸一下盘在不在：在册而盘上没有就明标幽灵登记，盘整块拔掉了就明标盘不可达而绝不说成丢了，任何情况都不抛异常拖垮整馆。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
