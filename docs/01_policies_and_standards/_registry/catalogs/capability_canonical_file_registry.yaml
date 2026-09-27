@@ -54834,4 +54834,14 @@ creation_tokens:
   created_by: st-chief4-20260927
   capability: chief4_wave_done_audit
   merge_evaluation: "内收对价=九波完成度审计报告从24hTTL暂存区转正入战役目录，替代口头交接"
+- file: docs/_working/fms_overhaul/99_delivery_report.md
+  token: fms-overhaul-99-delivery-report-20260927
+  created_by: st-fms-tc-20260927
+  capability: fms_overhaul
+  merge_evaluation: "FMS 战役唯一交付报告（前任 §一-§八 + Owner 追加令 §九 + 收尾班 §十），零既有条目可合并"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260927.md
+  token: disk-reorg-campaign-vhdx-precheck-20260927-20260927
+  created_by: st-fms-tc-20260927
+  capability: disk_reorg_campaign
+  merge_evaluation: "vhdx 季度压缩预检单每日生成物（沿 20260920..26 同型在册件），零既有条目可合并"
 di_seam_exemptions: []

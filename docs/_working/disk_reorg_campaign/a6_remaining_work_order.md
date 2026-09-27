@@ -75,3 +75,67 @@ capability_canonical_file_registry 登记关键词（冷库/冷储/备份/backup
 ## §7 断点续班
 
 进度全落 a1_ledger.md；本令+a1 即可接手。全部完成后：终局交付报告（终极目标逐条对账+五盘容量前后对照表+等待项归零表）+本目录随战役归档（a3/a4/a5/a6 按归档门禁办卡）。
+
+---
+
+## §E+ 压缩备料完工登记（st-fms-tc-20260927，2026-09-27 10:2x，Owner 睡眠窗内不执行停机）
+
+Owner 09-27 晨口头令"先压缩"，但停机压缩=全场唯一需 Owner **点名排窗**的动作（裁定#380④/#381：
+"vhdx 压缩不自动执行不停机…实际停机等 Owner 点名"），且本动作触发**全局冻结**（停 CH VM，甲丙两线
+全停）。Owner 睡眠期间不得由施工班自行停机，故本班把**全部前置备料做完**，点名后即可开跑。
+
+### 1 预检单已刷（[亲验] 10:21:08 实跑 `rolling_archive_reconciler.py --precheck`）
+
+`vhdx_precheck_20260927.md`：due=true / days_since_last_compaction=null（从未压缩过）/
+vm_internal_free_gb=160.2（df 口径）/ vhdx_size_gb=599.0 / backup_fresh=`last_ch_backup_status=skipped`。
+
+### 2 ⚠ 新发现：预检"内部空闲"与 CH 自视口径差 11 GiB，且红绿判读相反
+
+| 读数源 | 总量 | 空闲 | 对 150G 红线 |
+|---|---:|---:|---|
+| 预检单（VM 内 df 根文件系统）[亲验] | 631.9 | 160.2 | 🟢 绿 |
+| `system.disks WHERE name='default'`（CH 数据盘）[亲验] | 588.5 | **149.2** | 🔴 破线 |
+
+同分钟两次实测，差值稳定 ~11 GiB。含义：红线判据"VM 内部空闲 ≥150G"到底量哪个面**未定版**——
+按 df 面还绿，按 CH 数据盘面已破线。本班**不改判据不择一**（择一=替 Owner 定红线口径），
+只登记：压缩前应由 Owner/维护班把红线锚定到 `system.disks.default`（CH 真正会写爆的那个面），
+锚定后当前态=已破线，属"该压"侧证据增强。同型先例＝"判矛盾先验量纲"。
+
+### 3 回收量估算（两口径都给，保守取小）
+
+- 宿主实测：`Get-VHD` FileSize=599.0 GiB，Size（虚拟上限）=600.0 GiB，Dynamic，`FragmentationPercentage=6`。
+- 理论上限=CH 数据盘空闲 149.2 GiB；乐观=df 空闲 160.2 GiB。
+- 判定：**回收 140～150 GiB 属现实区间**，压缩后 vhdx 约 449～460 GiB（旧验收线"≤450G"按 CH 面可达）。
+- 唯一真值只有停机跑 Full 模式后才知道；本班未动 VM，故此为估算 [推断]，依据=上述三读数。
+
+### 4 压缩前基线已留（24～48h 后对照用，[亲验]）
+
+探针件=`.runtime/tmp/vhdx_baseline_probe.json`（24h TTL，故关键值抄录于此）：
+
+| 探针 | 压缩前基线（p50） |
+|---|---:|
+| tick 近一月 count（427,987,322 行） | 145.6 ms |
+| technical_indicator 1min 近月 count（19,105,695 行） | 44.5 ms |
+| kline_daily 近两月 count（216,454 行） | 9.7 ms |
+| CH default 盘空闲 | 149.2 GiB |
+| vhdx FileSize / D 盘剩余 | 599.0 GiB / 18.8 GiB |
+
+写入速率基线**未采到**：`system.metric_log` 的 `argMax-argMin(InsertedRows)` 查询报 ServerException
+（该表列名/类型与本探针不匹配，属探针缺陷非 CH 缺陷）。压缩后对照若需要写速维，先修探针再测，
+不得拿"缺该维"当"无劣化"结论——登记为后波小件。
+
+### 5 执行序（Owner 点名后照执，勿改序）
+
+1. 声明板登记全局冻结窗（`docs/_working/unified_campaign/t_timing_window_board.md`），确认 SessionRegistry 无活跃会话、甲丙挂起；
+2. 备份新鲜度复核（今日 06:00 轮 + `system.backup_log` 26h 窗），**不用 §1 的旧 skipped 读数**；
+3. 管理员 `Stop-VM zephyr-ch` → `Optimize-VHD -Path D:\HyperV\VMs\zephyr-ch\data.vhdx -Mode Full`（60～120 min）；
+4. `Start-VM` → CH 复活探针（version/uptime/表数/tick 抽查一条）+ dashboard 全绿；
+5. 当日备份补跑 ok + 回写 `last_vhdx_compaction`（当前 null=从未记录，这是预检恒 due 的原因）；
+6. 24～48h 后跑 §4 同探针对照：三项 p50 劣化>20% 才考虑 `defrag D:`，否则结案。
+
+### 6 停机期间的外部风险（Owner 决策时须知）
+
+F 盘当前 free **167.6 GiB**（09-26 无主 599 GiB 复活件所致，见 FMS 战役 §10.4 O-1）——停机压缩
+本身不写 F，不受其影响；但若同窗触发 WeeklyVMBackup/手动 VM 全量，`backup_ch_vm.ps1` 的
+`$BackupRoot` 仍指 F（P-6 之②未改家，属 Owner 门位），有再灌 599 GiB 风险。本班已把
+"探测未知态→拒绝全量"的 fail-open 治好（AutoCheck 四态），但**改家与 F 上无主件删除仍需 Owner**。
