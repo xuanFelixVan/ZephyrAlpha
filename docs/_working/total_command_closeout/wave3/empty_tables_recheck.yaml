@@ -1,0 +1,163 @@
+# 本件由 scripts/governance/wave3/recheck_empty_tables.py 产出后转 YAML 交付。
+# 原 .json 版已废弃（DIRECTORY-CONTRACT DCR-005/008 禁 docs/_working/ 下 .json），下游若按旧路径引用请改指本件。
+# 复跑命令见 scripts/governance/wave3/recheck_empty_tables.py 头部 usage。
+probe_ts_utc: '2026-09-26T18:06:37.546+00:00'
+ch_reachable: true
+counts:
+  has_data: 1
+  vacuum_confirmed: 13
+rows:
+- table: c1_market.suspend
+  strict_rows: 36
+  transport: tcp:9000
+  elapsed_ms: 15.62949997605756
+  ts_utc: '2026-09-26T18:06:37.892+00:00'
+  verdict: has_data
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.suspend FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.account_nav_daily
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 16.71380002517253
+  ts_utc: '2026-09-26T18:06:37.909+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.account_nav_daily FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.etf_benchmark
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 36.84320001048036
+  ts_utc: '2026-09-26T18:06:37.945+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.etf_benchmark FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.l2_tick
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 17.85780000500381
+  ts_utc: '2026-09-26T18:06:37.963+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.l2_tick FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.edb_data
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 14.336399995954707
+  ts_utc: '2026-09-26T18:06:37.978+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.edb_data FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.realtime_snapshot
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 19.243499991716817
+  ts_utc: '2026-09-26T18:06:37.997+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.realtime_snapshot FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.index_valuation_daily_v2
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 19.778999994741753
+  ts_utc: '2026-09-26T18:06:38.016+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.index_valuation_daily_v2 FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.ipo_schedule
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 24.002899997867644
+  ts_utc: '2026-09-26T18:06:38.041+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.ipo_schedule FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.margin_target_adjustment
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 14.832699991529807
+  ts_utc: '2026-09-26T18:06:38.056+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.margin_target_adjustment FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.market_index_meta
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 21.158299990929663
+  ts_utc: '2026-09-26T18:06:38.077+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.market_index_meta FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.msci_adjustment
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 20.656200009398162
+  ts_utc: '2026-09-26T18:06:38.097+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.msci_adjustment FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.reconciliation_differences
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 21.213899977738038
+  ts_utc: '2026-09-26T18:06:38.118+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.reconciliation_differences FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.stock_candidate_pool
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 41.58980000647716
+  ts_utc: '2026-09-26T18:06:38.161+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.stock_candidate_pool FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）
+- table: c1_market.stock_valuation
+  strict_rows: 0
+  transport: tcp:9000
+  elapsed_ms: 18.627700017532334
+  ts_utc: '2026-09-26T18:06:38.179+00:00'
+  verdict: vacuum_confirmed
+  sub_cause: ''
+  table_in_system_tables: true
+  sql_count: SELECT count() FROM c1_market.stock_valuation FINAL
+  error_detail: ''
+  old_claim: 在册旧判=空壳（count() 通道）

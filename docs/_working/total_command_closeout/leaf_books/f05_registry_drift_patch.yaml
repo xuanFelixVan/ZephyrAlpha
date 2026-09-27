@@ -1,0 +1,212 @@
+# ttl: task_bound
+# f05_registry_drift_patch.yaml — 族 5（治理册与净零）机读补丁规格（纯元数据，未应用）
+# 生成者: 族 5 mining lane (st-final-build-20260926)
+# 时间窗: 2026-09-27T03:53+08:00 (本机时钟)
+# 落地面真源: git show HEAD:<path> 字节；本文件不施加任何写操作。
+# schema:
+#   patches[]: {id, work_item, file, line, anchor, current_bytes, proposed_value,
+#               derivation_source, surface: derived|manual, evidence_grade: A|B|C,
+#               owner_gated: true|false, notes}
+#   evidence_grade: A=生成器/脚本机械实测可复现；B=解析读取（yaml.safe_load）人工核过；
+#                   C=仅由文本 grep 推出（不可作回填依据）
+ttl: task_bound
+status: not_applied
+family: "族 5 治理册与净零"
+work_items: [W-52, W-53, W-54, W-55, W-56, W-57, W-58, W-59]
+measurement_lock:
+  dev_tip_sha: "514698ba6213df406ae435fa42b2f898c0afc17b"
+  lane_head_sha: "401203858d3e95c1138eac91e40e74ab24ec854d"
+  note_head_is_moving: "03:53:00 读到 edca5445b7，03:53:21 已是 514698ba62；应用前必须复跑取数命令，sha 变了就重取"
+  roor_bytes: 52972
+  roor_bytes_identical_across_surfaces: true
+
+hot_file_volatility:
+  warning: "两本热册在本 lane 取数窗口内被另一进程实时重写（mtime 04:03 / 04:13），行号与计数随时会漂"
+  capability_canonical_file_registry_yaml:
+    creation_tokens_observed: {dev_bytes: 11581, lane_worktree_first_read: 11598, recheck_at_04_19: 11604}
+    capabilities_observed: 388
+    implication: "P52-11 / P52-12 的 proposed_value 只是快照；应用方必须现量现填，并优先走 CR-007 行级手术工具"
+  module_translation_registry_yaml:
+    anchor_recheck: "P54 的三条锚点行号（60894/60902/60910）与活户口行号（60403/60411/60419）在 04:19 复核仍逐字成立"
+    rule: "热册一律以 anchor 字符串再定位，行号仅作快路径；对不上就停，不猜"
+
+reconcile_summary:
+  cr007_rows_walked: 77
+  lane_worktree: {MATCH: 45, STALE: 19, MANUAL: 11, NO_COUNT: 1, UNSPECIFIED: 1}
+  dev_bytes: {MATCH: 44, STALE: 19, NO_COUNT: 1, UNSPECIFIED: 1, GLOB_UNMEASURABLE: 1}
+  set_difference_method: "以 registry_id 为键，对两面各算 verdict 集合，取对称差；STALE 集差=空集；值差仅 2 行（REG-SCRIPT-002 dev=450/lane=516、REG-GEN-001 dev=11581/lane=11598）"
+  previous_pass_claims: {stale_rows: 19, summary_scalars: 4, prose_counts: 53, domain_mismatches: 10, needing_adjudication: 8}
+  reproduced: {stale_rows: 19, summary_scalars: 4, domain_mismatches: 10}
+  not_reproduced:
+    prose_counts: "本册库存判据得 76 处（55 行）、硬撞车判据得 26 处（24 行）；53 无法复现且其判据未在任何真源钉过，两数并列不覆写"
+    needing_adjudication: "本册把尺假阴性 1 条与既记设计项 1 条移出需裁定，得 5/5 分流"
+
+# ── W-52 · ROOR entry_count 行级值（19 STALE + 1 UNSPECIFIED）──────────────────
+# sanctioned_landing_tool: python scripts/governance/d3_metadata/check_registry_consistency.py --update-entry-counts
+#   （行级手术保注释；本册只给值，不施加。逐行手改仅在该工具不适用时作fallback）
+patches:
+  - {id: P52-01, work_item: W-52, file: docs/registry_of_registries.yaml, line: 45, anchor: REG-SCRIPT-001, current_bytes: "        entry_count: 991", proposed_value: 1037, derivation_source: "yaml.safe_load(scripts/script-manifest.yaml).scripts 长度（dev 字节面）", surface: manual_in_roor_derived_in_tool, evidence_grade: A, owner_gated: false}
+  - {id: P52-02, work_item: W-52, file: docs/registry_of_registries.yaml, line: 55, anchor: REG-SCRIPT-002, current_bytes: "        entry_count: 434", proposed_value: 450, proposed_value_lane_worktree: 516, derivation_source: "scripts/governance/script_manifest.yaml scripts 长度", surface: manual_in_roor_derived_in_tool, evidence_grade: A, owner_gated: false, notes: "两面值不同——lane 有未提交新脚本；以应用时刻实测为准"}
+  - {id: P52-03, work_item: W-52, file: docs/registry_of_registries.yaml, line: 138, anchor: REG-RESCHED-001, current_bytes: "        entry_count: 74", proposed_value: 81, derivation_source: "config/resource_profile_registry.yaml entities 长度", surface: derived, evidence_grade: A, owner_gated: false}
+  - {id: P52-04, work_item: W-52, file: docs/registry_of_registries.yaml, line: 154, anchor: REG-CATALOG-001, current_bytes: "        entry_count: 55", proposed_value: 58, derivation_source: "registry_master_index.yaml registries 长度；该册本身=generate_registry_master_index.py 产出", surface: derived, evidence_grade: A, owner_gated: false, notes: "正解是先复跑生成器（index 落后），再让 ROOR 追平"}
+  - {id: P52-05, work_item: W-52, file: docs/registry_of_registries.yaml, line: 257, anchor: REG-STATE-VOCAB-001, current_bytes: "        entry_count: 29", proposed_value: 63, alternative_value_if_subset_rule: 29, derivation_source: "state_vocabulary_registry.yaml vocabularies 长度=63；其中 status=production 27 + testing 2 = 29", surface: manual, evidence_grade: A, owner_gated: true, notes: "口径争点（全量 vs 带 status 子集），两个数都在册级证据内，禁止机械回填；同时第 260 行散文 28 套 与四轴分解 10/12/5/1 亦与实测（63 与 10/13/5/1+34 新轴键）不符"}
+  - {id: P52-06, work_item: W-52, file: docs/registry_of_registries.yaml, line: 276, anchor: REG-DOC-001, current_bytes: "        entry_count: 256", proposed_value: 294, derivation_source: "rule_catalog_registry.yaml files 长度", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-07, work_item: W-52, file: docs/registry_of_registries.yaml, line: 286, anchor: REG-GATE-CAT-001, current_bytes: "        entry_count: 169", proposed_value: 181, derivation_source: "gate_registry.yaml gates 长度", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-08, work_item: W-52, file: docs/registry_of_registries.yaml, line: 296, anchor: REG-INFRA-001, current_bytes: "        entry_count: 16", proposed_value: 17, derivation_source: "infrastructure_registry.yaml infrastructure 长度", surface: manual, evidence_grade: A, owner_gated: false, notes: "该条无 counting_rule（第 296 行后直接是 status 第 297 行），口径仅活在代码表 ENTRY_SPECS——派生面缺失，建议随值一并补 counting_rule: infrastructure 数组条目数"}
+  - {id: P52-09, work_item: W-52, file: docs/registry_of_registries.yaml, line: 366, anchor: REG-FUNC-DOMAIN-001, current_bytes: "        entry_count: 83", proposed_value: 94, derivation_source: "functional_domain_registry.yaml entries 长度", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-10, work_item: W-52, file: docs/registry_of_registries.yaml, line: 428, anchor: REG-ARCH-ISSUE-001, current_bytes: "        entry_count: 761  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）", proposed_value: "entry_count: 805  # 保留原行内注释", derivation_source: "architecture_issue_registry.yaml entries 长度", surface: manual, evidence_grade: A, owner_gated: false, notes: "此行带行内注释——CR-007 行级手术能否保注释未实测（本 lane 禁跑写路径），应用方需先验证"}
+  - {id: P52-11, work_item: W-52, file: docs/registry_of_registries.yaml, line: 441, anchor: REG-CAPCAN-001, current_bytes: "        entry_count: 378", proposed_value: 388, derivation_source: "capability_canonical_file_registry.yaml capabilities 长度", surface: manual, evidence_grade: A, owner_gated: false, notes: "目标文件是热册（另进程在写），本条只登记不施加"}
+  - {id: P52-12, work_item: W-52, file: docs/registry_of_registries.yaml, line: 455, anchor: REG-GEN-001, current_bytes: "        entry_count: 5520", proposed_value: 11581, proposed_value_lane_worktree: 11598, derivation_source: "capability_canonical_file_registry.yaml creation_tokens 长度", surface: manual, evidence_grade: A, owner_gated: false, notes: "声明值近乎减半漂移（+6061/+6078），且其 counting_rule 文本不可机读（见 P52-RULE-01）；热册同禁施加"}
+  - {id: P52-13, work_item: W-52, file: docs/registry_of_registries.yaml, line: 524, anchor: REG-ARCH-001, current_bytes: "        entry_count: 75", proposed_value: 74, derivation_source: "architecture_model/index.yaml domains 长度", surface: manual, evidence_grade: A, owner_gated: false, notes: "向下修正（净删未同步）——数减少属注册表净删邻域，回填前请确认净删本身已被追认"}
+  - {id: P52-14, work_item: W-52, file: docs/registry_of_registries.yaml, line: 642, anchor: REG-TECHNICAL-INDICATOR-001, current_bytes: "        entry_count: 102", proposed_value: 143, derivation_source: "technical_indicator_registry.yaml indicators 长度", surface: derived, evidence_grade: A, owner_gated: false}
+  - {id: P52-15, work_item: W-52, file: docs/registry_of_registries.yaml, line: 653, anchor: REG-PAT-001, current_bytes: "        entry_count: 297", proposed_value: 287, derivation_source: "chart_pattern_registry.yaml chart_patterns 长度", surface: manual, evidence_grade: A, owner_gated: false, notes: "向下修正，同 P52-13 注意事项"}
+  - {id: P52-16, work_item: W-52, file: docs/registry_of_registries.yaml, line: 674, anchor: REG-DATAFLOW-001, current_bytes: "        entry_count: 342", proposed_value: 294, derivation_source: "data_asset_registry.yaml datasets 长度（含 deprecated 全量）", surface: manual, evidence_grade: A, owner_gated: false, notes: "向下修正 -48；历史上该口径已 264→342 走过一次，再降到 294 需确认不是数据丢失（RULE-DATA-OPS 三步验证）"}
+  - {id: P52-17, work_item: W-52, file: docs/registry_of_registries.yaml, line: 717, anchor: REG-DAL-001, current_bytes: "        entry_count: 27", proposed_value: 32, derivation_source: "decision_algo_registry.yaml algorithms 长度", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-18, work_item: W-52, file: docs/registry_of_registries.yaml, line: 738, anchor: REG-BTB-001, current_bytes: "        entry_count: 137", proposed_value: 142, derivation_source: "backtest_backlog.yaml objects 长度", surface: derived, evidence_grade: A, owner_gated: false}
+  - {id: P52-19, work_item: W-52, file: docs/registry_of_registries.yaml, line: 827, anchor: REG-ATH-001, current_bytes: "        entry_count: 38", proposed_value: 49, derivation_source: "alert_threshold_registry.yaml thresholds 长度", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-20, work_item: W-52, file: docs/registry_of_registries.yaml, line: 838, anchor: REG-METAQ-001, current_bytes: "        entry_count: 0", proposed_value: "不可机读（口径=meta_question 主表行数（快照头部 row_count 字段），parse_counting_rule 返回 None）", derivation_source: "CR-007 verdict=UNSPECIFIED", surface: manual, evidence_grade: A, owner_gated: true, notes: "physical_path 指向 docs/_working/…/snapshots/registry_latest.yaml（task_bound 快照区）却在永久册挂 active，触宪法 §9 第 4 条；三选一（退役/迁永久区/改口径）需 Owner"}
+
+  # ── W-52 派生面前置件：7 条 counting_rule 文本规范化（先改文本，后才有真源可派生）──
+  - {id: P52-RULE-01, work_item: W-52, file: docs/registry_of_registries.yaml, line: 442, anchor: REG-CAPCAN-001, current_bytes: "        counting_rule: capability 条目数（2026-09-06 实测回填，全部 alive；creation_tokens/di_seam_exemptions 为独立数组不入本表计数）", proposed_value: "        counting_rule: capabilities 数组条目数（2026-09-06 实测回填，全部 alive；creation_tokens/di_seam_exemptions 为独立数组不入本表计数）", derivation_source: "parse_counting_rule 现解析出键 capability（差一，真键=capabilities）", surface: manual, evidence_grade: A, owner_gated: false, notes: "属口径文本规范化，不改数值语义；若瘦 ENTRY_SPECS 则此行决定派生成败"}
+  - {id: P52-RULE-02, work_item: W-52, file: docs/registry_of_registries.yaml, line: 588, anchor: REG-BMK-001, current_bytes: "        counting_rule: 含 deprecated 全量（物理 yaml 条目数，2026-09-06 实测）", proposed_value: "        counting_rule: benchmarks 数组条目数（含 deprecated 全量，2026-09-06 实测）", derivation_source: "现解析成 (yaml_sum, deprecated+yaml) 垃圾键", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-RULE-03, work_item: W-52, file: docs/registry_of_registries.yaml, line: 610, anchor: REG-FCT-001, current_bytes: "        counting_rule: 含 deprecated 全量（物理 yaml 条目数，2026-09-06 实测）", proposed_value: "        counting_rule: factors 数组条目数（含 deprecated 全量，2026-09-06 实测）", derivation_source: "同上", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-RULE-04, work_item: W-52, file: docs/registry_of_registries.yaml, line: 632, anchor: REG-RLM-001, current_bytes: "        counting_rule: 含 deprecated 全量（物理 yaml 条目数，2026-09-06 实测）", proposed_value: "        counting_rule: risk_limits 数组条目数（含 deprecated 全量，2026-09-06 实测）", derivation_source: "同上", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-RULE-05, work_item: W-52, file: docs/registry_of_registries.yaml, line: 675, anchor: REG-DATAFLOW-001, current_bytes: "        counting_rule: 含 deprecated 全量（物理 yaml 条目数=datasets 数组，2026-09-21 实测；A14 生成器口径批 264→342）", proposed_value: "        counting_rule: datasets 数组条目数（含 deprecated 全量；历史口径批次 264→342）", derivation_source: "同上", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-RULE-06, work_item: W-52, file: docs/registry_of_registries.yaml, line: 828, anchor: REG-ATH-001, current_bytes: "        counting_rule: 含 deprecated 全量（物理 yaml 条目数=thresholds 数组，2026-09-06 实测）", proposed_value: "        counting_rule: thresholds 数组条目数（含 deprecated 全量，2026-09-06 实测）", derivation_source: "同上", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-RULE-07, work_item: W-52, file: docs/registry_of_registries.yaml, line: 535, anchor: REG-FREEZE-001, current_bytes: "        counting_rule: 六组 *_contracts 数组条目数合计（已冻结跨层契约全量）", proposed_value: "        counting_rule: p0_critical_contracts + cross_cutting_contracts + backpressure_contracts + p1_blueprint_contracts + extension_contracts + external_contracts 条目数合计（已冻结跨层契约全量）", derivation_source: "现解析成 (yaml_list, _contracts) 断裂键；手工表里才是真正的六段和", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P52-RULE-08, work_item: W-52, file: docs/registry_of_registries.yaml, line: "39 行缺 counting_rule（清单见 derived_faces）", anchor: "多行", current_bytes: "(无)", proposed_value: "逐条补 counting_rule", derivation_source: "ROOR 77 行中仅 38 行带口径；其余 39 行的 entry_count 只能靠代码手工表 ENTRY_SPECS（66 键，含 3 死键）或 ENTRY_MANUAL（13 键，含 2 死键）", surface: manual, evidence_grade: A, owner_gated: false, notes: "这是 W-52 终局（瘦身手工表）的硬前置：现在删表会让 33 行退 UNSPECIFIED、7 行退错键"}
+
+  # ── W-52 ROOR summary 段（派生面字段，动作=复跑再生器，非手改）──
+  - {id: P52-SUM-01, work_item: W-52, file: docs/registry_of_registries.yaml, line: 881, anchor: summary.total_registries, current_bytes: "  total_registries: 76", proposed_value: 77, derivation_source: "compute_roor_summary()（CR-007c 同源）", surface: derived, evidence_grade: A, owner_gated: false, apply_tool: "check_registry_consistency.py --refresh-summary"}
+  - {id: P52-SUM-02, work_item: W-52, file: docs/registry_of_registries.yaml, line: 885, anchor: summary.by_tier.tier_2, current_bytes: "    tier_2: 34", proposed_value: 35, derivation_source: "同上", surface: derived, evidence_grade: A, owner_gated: false, apply_tool: "同上"}
+  - {id: P52-SUM-03, work_item: W-52, file: docs/registry_of_registries.yaml, line: 889, anchor: summary.by_status.active, current_bytes: "    active: 66", proposed_value: 67, derivation_source: "同上", surface: derived, evidence_grade: A, owner_gated: false, apply_tool: "同上"}
+  - {id: P52-SUM-04, work_item: W-52, file: docs/registry_of_registries.yaml, line: 895, anchor: summary.by_medium.ok, current_bytes: "    ok: 74", proposed_value: 75, derivation_source: "同上", surface: derived, evidence_grade: A, owner_gated: false, apply_tool: "同上"}
+
+  # ── W-53 功能域册 ssot_path ↔ covers（10 行）──
+  - {id: P53-01, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 87, anchor: "D_GOV_DRIFT/drift_detection（subdomain 行 87，ssot_path 同行域内）", current_bytes: "  ssot_path: src/zephyr/gov_drift/", proposed_value: "保持不变；改 covers 内符号锚点 CascadeDetector→cascade_detector、CanaryController→canary_controller", derivation_source: "目录存在（75 个 .py）；同名类不存在，实类=CanaryComparison/CanaryResult/CanaryRun/CanaryConfig/CascadeEventRecord", surface: manual, evidence_grade: A, owner_gated: false, notes: "覆盖面实质为真（文件在），错的是符号拼写"}
+  - {id: P53-02, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 232, anchor: "D_SECURITY_LLM/llm_defense", current_bytes: "  ssot_path: src/zephyr/security/llm_defense/", proposed_value: "需 Owner——HITL 在该真源树内 0 命中，其出现地=src/zephyr/integration/pipeline_orchestrator.py 与 src/zephyr/intelligence/human_trust_model.py", derivation_source: "CR-008 COVERS_UNFOUND + 全仓词边界检索", surface: manual, evidence_grade: B, owner_gated: true}
+  - {id: P53-03, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 324, anchor: "D_AUTONOMY_CORE/agent_communication", current_bytes: "  ssot_path: src/zephyr/autonomy_core/", proposed_value: "需 Owner（或按 depgraph 追改）——三符真身=src/zephyr/shared/protocols/a2a/a2a_schemas.py 与 src/zephyr/infrastructure/a2a_protocol/layer3_coordination/", derivation_source: "CR-008 COVERS_UNFOUND(A2AMessage/Arbitrator/ConflictDetector) + 逐个定位", surface: manual, evidence_grade: A, owner_gated: false, notes: "重构后路径未跟改；但改 ssot_path=改域边界声明，落地面需 depgraph 侧同步（Q-53c）"}
+  - {id: P53-04, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 428, anchor: "D_AUTONOMY_PERM/budget_enforcement", current_bytes: "  ssot_path: src/zephyr/autonomy_perm/", proposed_value: "需 Owner——目录全盘不存在；covers 各件真身散在 governance/ops_governance、governance/intelligence_governance、governance/security_governance、gov_drift，无单一真源", derivation_source: "os.path 不存在 + 逐文件名检索", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P53-05, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 451, anchor: "D_AUTONOMY_PERM/escalation", current_bytes: "  ssot_path: src/zephyr/autonomy_perm/", proposed_value: "需 Owner（同 P53-04，拆域或改声明）", derivation_source: "同上", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P53-06, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 605, anchor: "D_INFRA_RUNTIME/persistence", current_bytes: "  ssot_path: src/zephyr/data/persistence/", proposed_value: "需 Owner——目录不存在；真身跨 governance/persistence/task_repo.py 与 data_security/data_masking_engine.py", derivation_source: "同上", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P53-07, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 698, anchor: "D_SHARED/shared_services", current_bytes: "  ssot_path: src/zephyr/shared/shared_services/", proposed_value: "候选 src/zephyr/shared/（待人工确认无域冲突）", derivation_source: "event_bus.py 在 shared/，lazy_loader.py 在 shared/lifecycle/，同一父目录", surface: manual, evidence_grade: A, owner_gated: false}
+  - {id: P53-08, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 776, anchor: "D_INTEGRATION_GATEWAY/mcp_servers", current_bytes: "  ssot_path: src/zephyr/integration/mcp/", proposed_value: "路径保持；需 Owner 判两件事——死符号 KnowledgeBaseServer 全仓无定义，以及 covers 散文 11 个MCP服务端 + 1 Gateway 与实测 13 个 *server*.py（=10 服务端+2 基类+1 网关）差 1", derivation_source: "CR-008 + ls 计数", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P53-09, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 1188, anchor: "D_DATA/data_source_integrator", current_bytes: "  ssot_path: src/zephyr/data/", proposed_value: "不改册——属尺的大小写假阴性（CLS/EastMoney 以大小写不敏感形态存在于 data/config/policies.yaml 与 implementations/akshare_provider.py）", derivation_source: "grep -i 命中；_symbol_in_scope 用词边界大小写敏感正则", surface: manual, evidence_grade: B, owner_gated: true, notes: "若改尺=改门禁语义（Q-53a），本册不动尺"}
+  - {id: P53-10, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: 1877, anchor: "D_TEST/test_domain_placeholder", current_bytes: "  ssot_path: '(depgraph domains.ssot_path 为空)'", proposed_value: "维持现状（条目 note 已自陈空壳域、净删属 Owner 门位）；建议 CR-008 为其加显式豁免态以免每次计入漂移账", derivation_source: "CR-008 PATH_UNDECLARED + 条目 note 原文", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P53-11, work_item: W-53, file: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml, line: "整册", anchor: "entries 段规模", current_bytes: "(94 条实测)", proposed_value: "与 ROOR 第 366 行 entry_count 83→94 同步", derivation_source: "yaml.safe_load entries 长度", surface: derived, evidence_grade: A, owner_gated: false}
+
+  # ── W-54 翻译册三条死路径重复户口（Owner-gated，本册不施加，且本 lane 禁写该热册）──
+  - {id: P54-01, work_item: W-54, file: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml, line: "60894-60901", anchor: "scripts/governance/meta_question/wo001_003/generate_source_line_register.py", current_bytes: "整块 8 行（module_path/domain_id/name_zh/name_en/desc_zh/desc_en/plain_zh/responsibility_layer）", proposed_value: "删除整块", derivation_source: "盘/HEAD/dev 三面均无该文件；活户口=同册第 60403 行 wo_intake_reconcile/ 同名条目", surface: manual, evidence_grade: A, owner_gated: true, notes: "净删=high 门位；删之不致 TRANSLATION-COVERAGE 缺口（等价性已证）"}
+  - {id: P54-02, work_item: W-54, file: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml, line: "60902-60909", anchor: "…/wo001_003/intake_batch.py", current_bytes: "整块 8 行", proposed_value: "删除整块", derivation_source: "同上；活户口第 60411 行（另有 tests/governance/meta_question/wo_intake_reconcile/test_intake_batch.py）", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P54-03, work_item: W-54, file: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml, line: "60910-60917", anchor: "…/wo001_003/replay_audit_to_jsonl.py", current_bytes: "整块 8 行", proposed_value: "删除整块", derivation_source: "同上；活户口第 60419 行（另有同目录测试件）", surface: manual, evidence_grade: A, owner_gated: true}
+
+  # ── W-55 / W-56 取号与悬空号（无行级补丁，登记事实与提案）──
+  - {id: P55-FACT, work_item: W-55, file: scripts/governance/next_ruling_id.py, line: "整件", anchor: "取号器", current_bytes: "lane 工作树 31264 B（未提交）", proposed_value: "不在本册施加落地动作", derivation_source: "git cat-file -e {HEAD,dev} 在 lane 与主区四处组合全部 ABSENT", surface: manual, evidence_grade: A, owner_gated: true, notes: "净零义务：入库须声明替代 lane_construction_discipline_policy.md §5 的手工 git show 复算规程"}
+  - {id: P55-DEFECT, work_item: W-55, file: scripts/governance/next_ruling_id.py, line: "96-98", anchor: "DEFAULT_QUEUE_REL / DEFAULT_RESERVATIONS_REL", current_bytes: "DEFAULT_QUEUE_REL = \".runtime/commit_queue\" 与 DEFAULT_RESERVATIONS_REL = \"data/runtime/ruling_id_reservations\"", proposed_value: "两源改按 git common dir 层解析（跨 worktree 唯一），或至少在 REPO_ROOT≠common-dir 父目录时硬失败", derivation_source: "实跑对比：lane 默认口 在途=0→建议 414（WARN 已打印，不静默）；改指主区队列（570 对象、扫袋 750、快照面最大 415）→建议 416", surface: manual, evidence_grade: A, owner_gated: true, notes: "默认口建议号 414 与 W-56 实扫的在途自赋号正面相撞，即记录在案失败模式的再现路径"}
+  - {id: P56-01, work_item: W-56, file: .aidrafts/st-mapbuild-20260924/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml, line: 5728, anchor: "号干 414（在册面 dev 查无）", current_bytes: "ruling_id 行，值为裁定前缀+号干 414 的连写形态（本册刻意不复述连写，防案卷自身触发 RULING-REFERENCE 门）", proposed_value: "不动他人 lane 文件——仅供总筹判归属", derivation_source: "全 .aidrafts 扫 276,576 文件，引用集−在册集对称差=4 号干/49 处；414 共 9 处 3 文件", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P56-02, work_item: W-56, file: .aidrafts/st-mapbuild-20260924/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml, line: 5762, anchor: "号干 415（在册面 dev 查无；同时是队列快照面最大在途号）", current_bytes: "ruling_id 行，值为裁定前缀+号干 415 连写形态（同上刻意不复述）", proposed_value: "同上", derivation_source: "8 处 4 文件；本 lane 的 docs/_working/map_build/fig16_ruling/91_wordlist_and_roor_proposal.md 第 26 行亦为引用方（自报）", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P56-03, work_item: W-56, file: "(多件历史文档)", line: "n/a", anchor: "号干 34（落在 193 空洞号段内）", current_bytes: "29 处引用，集中在 .aidrafts/ff_j_control/docs/_working/commit_speedup_campaign/60_deep_dive/r1_data/*.yaml 等", proposed_value: "分流待裁：重编号 vs 加作废注记", derivation_source: "同上集合差", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P56-04, work_item: W-56, file: "(临时区探针噪声)", line: "n/a", anchor: "号干 999999", current_bytes: "3 处，全部位于 .runtime/tmp/（他会话红队探针）", proposed_value: "宣布临时区引用不计入悬空面（本册即按此口径出数并留痕）", derivation_source: "宪法 §9 第 4 条：临时区永不作引用源", surface: manual, evidence_grade: A, owner_gated: true}
+
+  # ── W-57 宪法 §7 速查表三处（行号=lane 与主区同字节面）──
+  - {id: P57-01, work_item: W-57, file: AGENTS.md, line: 109, anchor: "§7 数据集成器行", current_bytes: "| 数据集成器 | `python -m zephyr.data`（7 子命令） |", proposed_value: "| 数据集成器 | `python -m zephyr.data`（8 子命令） |", derivation_source: "src/zephyr/data/cli.py 内 add_parser 计数=8（status/list/run/rerun-failed/pause/resume/start/speed-test）", surface: manual, evidence_grade: A, owner_gated: false, post_action: "提交后由 gateway_post_commit_ritual 触发 validate_rules_integrity --register，禁手改 rules_integrity_db.json"}
+  - {id: P57-02, work_item: W-57, file: AGENTS.md, line: 104, anchor: "§7 提交队列行", current_bytes: "| 提交队列 | `scripts/commit_queue.py`（enqueue/status/drain/requeue；drain=真落地） |", proposed_value: "| 提交队列 | `scripts/commit_queue.py`（enqueue/status/drain/requeue/cleanup 等 6 子命令；drain=真落地） |", derivation_source: "scripts/commit_queue.py add_parser 计数=6", surface: manual, evidence_grade: A, owner_gated: false, notes: "更正的解=该行不写数，改指生成器（Q-57b）"}
+  - {id: P57-03, work_item: W-57, file: AGENTS.md, line: 110, anchor: "§7 仪表盘行", current_bytes: "| 仪表盘 | `src/zephyr/frontend/dashboard/app_panel.py` |", proposed_value: "需 Owner——本册实测两文件都在（app_panel.py 23741 B / api_server.py 233227 B），故非断链；在册批文 #ARCH-AGENTS-SSOT-DRIFT-001（议题册第 22528 行，status=in_progress）主张真源=api_server，属语义争点", derivation_source: "os 存在性 + 议题册原文", surface: manual, evidence_grade: A, owner_gated: true}
+  - {id: P57-04, work_item: W-57, file: scripts/governance/meta/rules_integrity_db.json, line: 1, anchor: "AGENTS.md golden hash", current_bytes: "hash=5198a4bbda3d7593（DB==lane 工作树==主区 HEAD，三面全等）", proposed_value: "不手改；随 P57-01/02 落地后由后置步骤自动重基线", derivation_source: "sha256(_normalize_eol(bytes))[:16] 三方比对", surface: derived, evidence_grade: A, owner_gated: false, notes: "关键判读：金哈希只防篡改、不判内容对错，且 post-commit 自动 --register 会把错文吸收为基线——所以它不能充当 W-57 的发现器"}
+
+  # ── W-58 议题册 severity 22 条（两规则并列，未择一前禁机械回填）──
+  - {id: P58-BLOCK, work_item: W-58, file: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml, line: "见 severity_lines 清单", anchor: "severity 变体归一", current_bytes: "22 条非正取值（8 种变体）", proposed_value: "先钉词表真源（现唯一声明=该册第 41 行 schema 注释），再择规则 A（字母权威）或 B（中文词权威）", derivation_source: "yaml.safe_load + Counter(severity)；无 gate、无消费方（grep 全仓）", surface: manual, evidence_grade: B, owner_gated: true}
+
+  # ── W-59 散件（无补丁）──
+  - {id: P59-FACT, work_item: W-59, file: docs/02_enterprise_architecture/02_domain_architecture_docs/10_d_data.md, line: "整件", anchor: "归属", current_bytes: "1,743,761 B / 19,180 LF 行；主区工作树在盘、不在库", proposed_value: "既不入库也不删——它被 .gitignore 第 541 行显式排除，理由写在第 534-540 行注释（派生产物离库，防生成器非确定性→auto-commit 永续循环）", derivation_source: "git check-ignore -v 命中；git status 对该目录返回 0 行", surface: derived, evidence_grade: A, owner_gated: true, notes: "骨架的 19,037 行与本册 19,180 行并列上报，不覆写任何一方；另有第二副本 .aidrafts/st-mapbuild-20260924/…/10_d_data.md（1,631,952 B / 17,810 行，sha16 cb6128aa285ab662 ≠ 主区 b1b176f02c8eef67）——真问题是两棵树派生分叉"}
+
+# W-58 逐行清单（现值+两规则各自建议值，供择一后机读回填）
+# 注：此处 issue 值均系本册从 architecture_issue_registry.yaml 实读所得（在册可 grep 命中），
+#     与案卷自律条款中"禁写未验证的悬空短号"不冲突；W-56 的悬空裁定号一律不带前缀连写。
+severity_lines:
+  - {line: 10277, issue: "#ARCH-QMT-ENV-DISAMBIG-001", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 10305, issue: "#ARCH-RSS-INVESTING-403-001", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 11011, issue: "#ARCH-DR-CH-RESTART-001", current: "P0高", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P1高"}
+  - {line: 11324, issue: "#ARCH-RECONCILER-TOCTOU-CLOBBER-001", current: "P0紧急", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P0致命"}
+  - {line: 11497, issue: "#ARCH-GIT-CLEAN-GUARD-FIX", current: "P0紧急", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P0致命"}
+  - {line: 11590, issue: "#ARCH-SECRETS-GOV-001", current: "medium", rule_A_letter_authoritative: "无法定档（无字母）", rule_B_word_authoritative: "P2中"}
+  - {line: 12706, issue: "#ARCH-REGIME-S2-ALGORITHM-001", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 12767, issue: "#ARCH-OPTION-AKSHARE-FALLBACK", current: "P2低", rule_A_letter_authoritative: "P2中", rule_B_word_authoritative: "P3低"}
+  - {line: 12786, issue: "#ARCH-PARALLEL-MONEY-FLOW", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 12802, issue: "#ARCH-PARALLEL-STOCK-INDICATOR", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 13713, issue: "#ARCH-DATA-UTIL", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 15831, issue: "#ARCH-GAP-007", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 15849, issue: "#ARCH-GAP-008", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 15867, issue: "#ARCH-GAP-009", current: "P1中", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P2中"}
+  - {line: 17022, issue: "#ARCH-087", current: "P0紧急", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P0致命"}
+  - {line: 17145, issue: "#ARCH-100", current: "P0高", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P1高"}
+  - {line: 17973, issue: "#ARCH-136", current: "P1严重", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P0致命"}
+  - {line: 21819, issue: "#ARCH-323", current: "P0阻断", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P0致命"}
+  - {line: 21847, issue: "#ARCH-324", current: "P1严重", rule_A_letter_authoritative: "P1高", rule_B_word_authoritative: "P0致命"}
+  - {line: 22150, issue: "#ARCH-331", current: "P4低", rule_A_letter_authoritative: "词表外档位，需补档或降档判定", rule_B_word_authoritative: "P3低"}
+  - {line: 22214, issue: "#ARCH-340", current: "P0高", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P1高"}
+  - {line: 22227, issue: "#ARCH-341", current: "P0高", rule_A_letter_authoritative: "P0致命", rule_B_word_authoritative: "P1高"}
+
+# W-52 散文撞车面（展示面 advisory，非机读补丁；勿据此批量改文）
+prose_advisory_meta:
+  inventory_rule: "ROOR 的 description/name/title 文本中 数字+量词（个|条|张|套|项|种|级|篇|款|组|处|步|层）出现处"
+  inventory_count: 76
+  rows_touched: 55
+  naive_collision_rule: "散文数 ≠ 本行派生实测即算撞"
+  naive_collision_result: "约 50 处 / 40+ 行——过度捕获（把不同对象如 sources 15 个 与 datasets 294 条误判为撞车），判为不可用作机读依据"
+  curated_hard_collisions: 26
+  curated_rows: 24
+  previous_pass_number: 53
+  reconciliation: "上一报的 53 判据未在任何工具/真源钉过，本册不复现也不改写，两数并列"
+prose_advisories:
+  - {line: 37, rid: REG-GATE-001, prose: "43 个门禁", field_value: 91, derived: 91, verdict: "字段对、散文错", grade: B}
+  - {line: 48, rid: REG-SCRIPT-001, prose: "755 个 .py 脚本", field_value: 991, derived: 1037, verdict: "两者皆落后", grade: A}
+  - {line: 157, rid: REG-CATALOG-001, prose: "16 个治理登记表", field_value: 55, derived: 58, verdict: "两者皆落后", grade: A}
+  - {line: 260, rid: REG-STATE-VOCAB-001, prose: "28 套 + 四轴 10/12/5/1", field_value: 29, derived: 63, verdict: "口径争点（见 P52-05），且轴分解实测为 10/13/5/1=29 加新一代轴键 34", grade: A}
+  - {line: 269, rid: REG-DIR-001, prose: "88 个目录", field_value: 87, derived: 87, verdict: "字段对、散文错", grade: A}
+  - {line: 279, rid: REG-DOC-001, prose: "153 个文档", field_value: 256, derived: 294, verdict: "两者皆落后", grade: A}
+  - {line: 289, rid: REG-GATE-CAT-001, prose: "25 个门禁 / REG-GATE-001 的 20 个", field_value: 169, derived: 181, verdict: "两处散文皆落后（对照表实测 91）", grade: A}
+  - {line: 298, rid: REG-INFRA-001, prose: "9 个基础设施组件", field_value: 16, derived: 17, verdict: "两者皆落后", grade: A}
+  - {line: 336, rid: REG-FRONTMATTER-001, prose: "40 个 Frontmatter 字段", field_value: 58, derived: 58, verdict: "字段对、散文错", grade: A}
+  - {line: 475, rid: REG-ERRCODE-001, prose: "212 个业务异常", field_value: 788, derived: 788, verdict: "字段对、散文错", grade: A}
+  - {line: 508, rid: REG-TEMPLATE-001, prose: "13 个文档模板", field_value: 11, derived: 11, verdict: "字段对、散文错", grade: A}
+  - {line: 546, rid: REG-RB-001, prose: "24 个红白对抗场景", field_value: 53, derived: 53, verdict: "字段对、散文错", grade: A}
+  - {line: 579, rid: REG-UNI-001, prose: "6 条", field_value: 7, derived: 7, verdict: "字段对、散文错", grade: A}
+  - {line: 601, rid: REG-CST-001, prose: "5 条", field_value: 6, derived: 6, verdict: "字段对、散文错", grade: A}
+  - {line: 623, rid: REG-STR-001, prose: "5 类 146 条", field_value: 161, derived: 161, verdict: "字段对、散文错", grade: A}
+  - {line: 645, rid: REG-TECHNICAL-INDICATOR-001, prose: "40 条 58 输出列", field_value: 102, derived: 143, verdict: "两者皆落后", grade: A}
+  - {line: 656, rid: REG-PAT-001, prose: "8 大类 254 条", field_value: 297, derived: 287, verdict: "两者皆落后（且为向下修正）", grade: A}
+  - {line: 666, rid: REG-EXA-001, prose: "6 种", field_value: 7, derived: 7, verdict: "字段对、散文错", grade: A}
+  - {line: 688, rid: REG-FLD-001, prose: "257 条", field_value: 262, derived: 262, verdict: "字段对、散文错", grade: A}
+  - {line: 720, rid: REG-DAL-001, prose: "15 条", field_value: 27, derived: 32, verdict: "两者皆落后", grade: A}
+  - {line: 761, rid: REG-CYCLE-001, prose: "12 条", field_value: 13, derived: 13, verdict: "字段对、散文错", grade: A}
+  - {line: 791, rid: REG-MAC-001, prose: "15 条", field_value: 16, derived: 16, verdict: "字段对、散文错", grade: A}
+  - {line: 801, rid: REG-PFM-001, prose: "8 条", field_value: 11, derived: 11, verdict: "字段对、散文错", grade: A}
+  - {line: 830, rid: REG-ATH-001, prose: "11 类 / 35 条 / 36 条", field_value: 38, derived: 49, verdict: "两者皆落后", grade: A}
+
+# 工具侧死键（净零：本族自用工具的自账，非生产册）
+tool_debt:
+  ENTRY_SPECS_keys: 66
+  ENTRY_SPECS_dead: 3
+  ENTRY_MANUAL_keys: 13
+  ENTRY_MANUAL_dead: 2
+  roor_rows: 77
+  rows_with_counting_rule: 38
+  rows_without_counting_rule: 39
+  parser_agrees_with_manual: 23
+  parser_blind_no_rule_text: 33
+  parser_derives_different_key: 7
+  conclusion: "W-52 的'派生面化'终局须先做 P52-RULE-*，否则瘦身手工表会让 33 行退 UNSPECIFIED、7 行退错键"
+
+owner_gated_items:
+  - {item: W-54, what: "翻译册 3 条死路径净删", why: "注册表净删=high 门位（宪法 §5 第 2 条）"}
+  - {item: W-59, what: "派生件 10_d_data.md 两副本分叉与是否入册", why: "Owner-gated by 骨架；本册实测否定了'未跟踪'前提，两个候选动作都不该做"}
+  - {item: W-52-Q-a, what: "REG-STATE-VOCAB-001 口径取全量 63 还是带 status 子集 29", why: "改口径=改别人断言的计数规则，禁静默"}
+  - {item: W-52-Q-c, what: "REG-METAQ-001 永久册条目指向 task_bound 快照", why: "涉宪法 §9 第 4 条，三选一"}
+  - {item: W-53-Q-a, what: "CR-008 尺的大小写/词边界口径", why: "改尺=改门禁语义"}
+  - {item: W-53-Q-b, what: "D_AUTONOMY_PERM 两子域无单一真源（P53-04/05）+ persistence 跨包（P53-06）+ HITL 覆盖改判（P53-02）+ mcp 死符号（P53-08）+ 空壳域豁免（P53-10）", why: "域结构/覆盖面变更属注册表结构动作"}
+  - {item: W-55, what: "取号器落地 + 公共仲裁锚选址", why: "新增脚本触发全资产净零申报；仲裁锚落 .runtime / data/runtime / git common dir 三选一副作用不同"}
+  - {item: W-56, what: "号干 414/415 归属让号、号干 34 的 29 处历史引用处置、临时区引用是否计入悬空面", why: "改他人文档或改口径"}
+  - {item: W-57-Q-a, what: "§7 仪表盘真源指针", why: "在册批文主张与本册实测不冲突但语义不同"}
+  - {item: W-58, what: "severity 词表真源与规则 A/B 择一", why: "两规则对 10 条给出不同结果，机械归一=制造第二套手工断言"}
+

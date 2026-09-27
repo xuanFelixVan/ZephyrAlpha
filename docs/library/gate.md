@@ -112,13 +112,10 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py | module | active | src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py |
 | MOD:src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py | module | active | src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/__init__.py | module | active | src/zephyr/gov_enforcement/commit_gates/__init__.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py | module | active | src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py | module | active | src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py | module | active | src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/_tree_view.py | module | active | src/zephyr/gov_enforcement/commit_gates/_tree_view.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/approval_resolver.py | module | active | src/zephyr/gov_enforcement/commit_gates/approval_resolver.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py |
@@ -142,6 +139,7 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/create_guard.py | module | active | src/zephyr/gov_enforcement/commit_gates/create_guard.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py |
@@ -176,9 +174,9 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py |
@@ -219,9 +217,11 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/state_vocab_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/state_vocab_registry_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py |

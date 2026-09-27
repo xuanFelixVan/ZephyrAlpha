@@ -54899,4 +54899,9 @@ creation_tokens:
   created_by: st-fms-tc-20260927
   capability: library_ledger_cache
   merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/total_command_closeout/wave7/landing_surface_reds_20260927.md
+  token: docs-working-total-command-closeout-wave-landing-surface-reds-20260927-20260927
+  created_by: st-final-build-20260926
+  capability: docs_working_total_command_closeout_wave
+  merge_evaluation: "唯一归档位：本役波次案卷与生成器，不替代也不合并既有册条目（既有宿主无此观测面）"
 di_seam_exemptions: []

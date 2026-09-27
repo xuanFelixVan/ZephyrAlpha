@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 管线馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：89｜馆内总数：89
+- 条目数（本页列出）：83｜馆内总数：83
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -57,7 +57,6 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha-WeeklyVMBackup | task | active | schtasks:\ZephyrAlpha-WeeklyVMBackup |
 | TASK:schtasks:/ZephyrAlpha_AltFxECB | task | active | schtasks:\ZephyrAlpha_AltFxECB |
 | TASK:schtasks:/ZephyrAlpha_BdpanTickWatch | task | active | schtasks:\ZephyrAlpha_BdpanTickWatch |
-| TASK:schtasks:/ZephyrAlpha_BeltDaemon | task | active | schtasks:\ZephyrAlpha_BeltDaemon |
 | TASK:schtasks:/ZephyrAlpha_BoardIndexRealtime | task | active | schtasks:\ZephyrAlpha_BoardIndexRealtime |
 | TASK:schtasks:/ZephyrAlpha_C4Exam | task | active | schtasks:\ZephyrAlpha_C4Exam |
 | TASK:schtasks:/ZephyrAlpha_C4Exam_Full0916 | task | active | schtasks:\ZephyrAlpha_C4Exam_Full0916 |
@@ -66,8 +65,6 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_ConfigCheck | task | active | schtasks:\ZephyrAlpha_ConfigCheck |
 | TASK:schtasks:/ZephyrAlpha_DataScheduler | task | active | schtasks:\ZephyrAlpha_DataScheduler |
 | TASK:schtasks:/ZephyrAlpha_DeadmanSwitch | task | active | schtasks:\ZephyrAlpha_DeadmanSwitch |
-| TASK:schtasks:/ZephyrAlpha_DecisionChainSentinel | task | active | schtasks:\ZephyrAlpha_DecisionChainSentinel |
-| TASK:schtasks:/ZephyrAlpha_EvaporationBlackbox | task | active | schtasks:\ZephyrAlpha_EvaporationBlackbox |
 | TASK:schtasks:/ZephyrAlpha_F06Grid | task | active | schtasks:\ZephyrAlpha_F06Grid |
 | TASK:schtasks:/ZephyrAlpha_FactoryLaneC | task | active | schtasks:\ZephyrAlpha_FactoryLaneC |
 | TASK:schtasks:/ZephyrAlpha_FactoryLaneC_Full0916 | task | active | schtasks:\ZephyrAlpha_FactoryLaneC_Full0916 |
@@ -75,8 +72,6 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_GateFullTreeAudit | task | active | schtasks:\ZephyrAlpha_GateFullTreeAudit |
 | TASK:schtasks:/ZephyrAlpha_IndexMinuteEOD | task | active | schtasks:\ZephyrAlpha_IndexMinuteEOD |
 | TASK:schtasks:/ZephyrAlpha_IntradayFundFlow | task | active | schtasks:\ZephyrAlpha_IntradayFundFlow |
-| TASK:schtasks:/ZephyrAlpha_LibraryLedgerBackup | task | active | schtasks:\ZephyrAlpha_LibraryLedgerBackup |
-| TASK:schtasks:/ZephyrAlpha_LibraryLedgerDrill | task | active | schtasks:\ZephyrAlpha_LibraryLedgerDrill |
 | TASK:schtasks:/ZephyrAlpha_MeasureCalibration | task | active | schtasks:\ZephyrAlpha_MeasureCalibration |
 | TASK:schtasks:/ZephyrAlpha_NightlySentiment | task | active | schtasks:\ZephyrAlpha_NightlySentiment |
 | TASK:schtasks:/ZephyrAlpha_OllamaServe | task | active | schtasks:\ZephyrAlpha_OllamaServe |
@@ -92,7 +87,6 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_ResourceSamplerWriteback | task | active | schtasks:\ZephyrAlpha_ResourceSamplerWriteback |
 | TASK:schtasks:/ZephyrAlpha_ResourceViewPublish | task | active | schtasks:\ZephyrAlpha_ResourceViewPublish |
 | TASK:schtasks:/ZephyrAlpha_SectorSnapshot | task | active | schtasks:\ZephyrAlpha_SectorSnapshot |
-| TASK:schtasks:/ZephyrAlpha_SimBridgeExecute | task | active | schtasks:\ZephyrAlpha_SimBridgeExecute |
 | TASK:schtasks:/ZephyrAlpha_TTLRejudgeDaily | task | active | schtasks:\ZephyrAlpha_TTLRejudgeDaily |
 | TASK:schtasks:/ZephyrAlpha_TickSubscriber | task | active | schtasks:\ZephyrAlpha_TickSubscriber |
 | TASK:schtasks:/ZephyrAlpha_TradingWatchdog | task | active | schtasks:\ZephyrAlpha_TradingWatchdog |

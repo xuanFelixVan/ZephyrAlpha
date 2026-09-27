@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 文档馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：5452｜馆内总数：5452
+- 条目数（本页列出）：5387｜馆内总数：5387
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -47,11 +47,6 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/language_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/language_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/maturity_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/maturity_vocabulary.yaml |
-| DOC:docs/01_policies_and_standards/_registry/vocabularies/meta_question_frequencies_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/meta_question_frequencies_vocabulary.yaml |
-| DOC:docs/01_policies_and_standards/_registry/vocabularies/meta_question_layers_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/meta_question_layers_vocabulary.yaml |
-| DOC:docs/01_policies_and_standards/_registry/vocabularies/meta_question_origins_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/meta_question_origins_vocabulary.yaml |
-| DOC:docs/01_policies_and_standards/_registry/vocabularies/meta_question_outcomes_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/meta_question_outcomes_vocabulary.yaml |
-| DOC:docs/01_policies_and_standards/_registry/vocabularies/meta_question_statuses_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/meta_question_statuses_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/node_type_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/node_type_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/provenance_audit_chain_verdict_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/provenance_audit_chain_verdict_vocabulary.yaml |
@@ -166,8 +161,6 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml | doc | active | docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml |
 | DOC:docs/01_policies_and_standards/sop/README.md | doc | active | docs/01_policies_and_standards/sop/README.md |
 | DOC:docs/01_policies_and_standards/sop/audit_prompts_20_ai.md | doc | active | docs/01_policies_and_standards/sop/audit_prompts_20_ai.md |
-| DOC:docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md | doc | active | docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md |
-| DOC:docs/01_policies_and_standards/sop/automation_sop/index.md | doc | active | docs/01_policies_and_standards/sop/automation_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/backtest_system_sop/README.md | doc | active | docs/01_policies_and_standards/sop/backtest_system_sop/README.md |
 | DOC:docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md | doc | active | docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md |
 | DOC:docs/01_policies_and_standards/sop/backtest_system_sop/index.md | doc | active | docs/01_policies_and_standards/sop/backtest_system_sop/index.md |
@@ -188,16 +181,11 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md |
-| DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml |
-| DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml |
-| DOC:docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml |
-| DOC:docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/index.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/index.md | doc | active | docs/01_policies_and_standards/sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md | doc | active | docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md |
-| DOC:docs/01_policies_and_standards/sop/library_sop/index.md | doc | active | docs/01_policies_and_standards/sop/library_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/index.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md |
@@ -311,3 +299,15 @@ doc_type: "index"
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/73_d_infrastructure.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/73_d_infrastructure.md |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/74_d_research.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/74_d_research.md |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/README.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/README.md |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/01_d_contracts.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/01_d_contracts.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/02_d_infra_a2a.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/02_d_infra_a2a.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/03_d_infra_ops.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/03_d_infra_ops.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/04_d_infra_recovery.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/04_d_infra_recovery.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/05_d_infra_runtime.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/05_d_infra_runtime.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/06_d_infra_telemetry.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/06_d_infra_telemetry.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/07_d_shared.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/07_d_shared.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/08_d_alt_data.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/08_d_alt_data.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/09_d_autonomy_core.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/09_d_autonomy_core.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/10_d_data.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/10_d_data.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/11_d_data_eng.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/11_d_data_eng.html |
+| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/12_d_data_gov.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/12_d_data_gov.html |
