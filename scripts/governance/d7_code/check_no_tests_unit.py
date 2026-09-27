@@ -79,6 +79,10 @@ _EXEMPT_PATH_PATTERNS = [
     # 同类自咬：gate_registry.yaml 由生成器逐字收录本 gate 的 name/description（含 tests/unit/ 字面量），
     # 非旧路径引用（2026-08-17 AI-00 merge 全文扫描实证）
     re.compile(r"^docs/01_policies_and_standards/_registry/catalogs/gate_registry\.yaml$"),
+    # 同类自咬：FMS 死引用棘轮基线册逐字收录全仓 docs 扫描到的死引用 token
+    # （含 `tests/unit`/`tests/unit/` E3 类存量条目=棘轮收缩库存，非旧路径重引入；
+    # 2026-09-27 st-fms-chief-20260927 C2 批落地实测误报）
+    re.compile(r"^docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline\.yaml$"),
     # 检测器自身必须字面含检测模式（正则/docstring/报错文案），自豁免
     re.compile(r"^scripts/governance/d7_code/check_no_tests_unit\.py$"),
 ]
