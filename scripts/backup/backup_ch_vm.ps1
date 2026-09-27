@@ -37,6 +37,10 @@
       preconditions -> stop VM -> copy fresh image to G -> verify image length ->
       Optimize-VHD -Mode Full -> start VM -> CH health probe -> state writeback ->
       only then retire the stale F copy (recycle bin, never a bare rm).
+    Preconditions refuse (exit 6) unless ALL of these measure clean: Hyper-V cmdlets can
+    open the disk, ClickHouse holds no running query / merge / mutation / unfinished
+    backup, no other session's commit bag is pending or processing, the VM's own last
+    backup is a success no older than 30 days, and $ImageHome fits one more full image.
     Refusals are exit 6 (preconditions) / exit 7 (image not verified; VM restarted).
 .PARAMETER Force
     Skip the "VM is running" confirmation prompt (full backup mode).
@@ -57,9 +61,9 @@
     reported failed, and the same command re-run from an elevated PowerShell is the
     only remaining action.
 .PARAMETER SelfSession
-    With -CompactWindow: session id to exclude from the "is any lane running?"
-    precondition. Empty (default) counts every active session, so an operator who is
-    also a registered session must pass their own sid here or be refused.
+    Session id treated as "me" and excluded from the concurrency preconditions: other
+    sessions' queue bags are blocking, my own are not. Empty (default) counts every
+    bag, so an operator whose own session also enqueues must pass their sid here.
 .EXAMPLE
     .\backup_ch_vm.ps1                  # interactive full backup
     .\backup_ch_vm.ps1 -Force           # full backup, no prompt
@@ -186,7 +190,10 @@ if ($RegisterTask) {
         -RestartCount 1 `
         -RestartInterval (New-TimeSpan -Minutes 30)
 
-    # RunLevel Highest: Hyper-V Stop-VM/Start-VM require admin.
+    # RunLevel Highest is belt-and-braces for Stop-VM/Start-VM. Note the 09-26 incident
+    # run proved a Limited task token can already stop the VM and copy 599 GiB on this
+    # host (the account is in BUILTIN\Hyper-V Administrators), so elevation is not what
+    # gates the stop path -- the -CompactWindow precondition gate probes the capability.
     # AutoCheck skips (zero downtime) when CH unchanged -- the common path.
     # Full backup (Stop/robocopy/Start) runs only when CH version/config changes.
     $principal = New-ScheduledTaskPrincipal `
@@ -213,14 +220,67 @@ if ($RegisterTask) {
 }
 
 # ==================== -CompactWindow: ordered stop/refresh/compact window ====================
-# Pure decision helper (unit-testable, no side effects).
+# -- CH in-flight probe parser (pure): unfinished backups + merges + mutations + queries. --
+# The TSV row is (unfinished_backups, merges, mutations, processes); "processes" counts
+# this very probe, so it is subtracted. Anything unparsable returns -1 = unknown, and
+# unknown is NEVER treated as idle.
+function Get-ChInFlightTotal {
+    param([string]$Line)
+    if ([string]::IsNullOrWhiteSpace($Line)) { return -1 }
+    $parts = @($Line -split "`t")
+    if ($parts.Count -lt 4) { return -1 }
+    $nums = @()
+    foreach ($p in $parts) {
+        $t = $p.Trim()
+        if ($t -notmatch '^\d+$') { return -1 }
+        $nums += [int]$t
+    }
+    $q = $nums[3] - 1   # drop this probe's own SELECT
+    if ($q -lt 0) { $q = 0 }
+    return $nums[0] + $nums[1] + $nums[2] + $q
+}
+
+# -- Bags about to land that are not mine (pure, testable against a temp queue root). --
+# A bag landing while the VM is down is not itself harmed, but a queue item whose gates
+# read ClickHouse would die and re-queue; more importantly this is the one honest signal
+# that another writer is still working, unlike a heartbeat which an orphaned daemon keeps
+# beating for hours after its session is gone.
+function Get-PendingBagCount {
+    param([string]$QueueRoot, [string]$SelfSession)
+    if (-not (Test-Path $QueueRoot)) { return -1 }
+    $n = 0
+    foreach ($st in @('pending', 'processing')) {
+        $d = Join-Path $QueueRoot $st
+        if (-not (Test-Path $d)) { continue }
+        foreach ($bf in @(Get-ChildItem -Path $d -Filter '*.json' -ErrorAction SilentlyContinue)) {
+            try { $j = Get-Content $bf.FullName -Raw -Encoding UTF8 | ConvertFrom-Json } catch { return -1 }
+            if ([string]$j.session_id -ne [string]$SelfSession) { $n += 1 }
+        }
+    }
+    return $n
+}
+
+# -- ClickHouse HTTP endpoint, read from config/.env.clickhouse (CH is at 172.24.30.100). --
+function Get-ChBaseUrl {
+    param([string]$EnvFile)
+    $h = "localhost"; $p = 8123
+    if (Test-Path $EnvFile) {
+        foreach ($line in (Get-Content $EnvFile -Encoding UTF8)) {
+            if ($line -match '^CLICKHOUSE_HOST=(.+)$')      { $h = $matches[1].Trim() }
+            if ($line -match '^CLICKHOUSE_HTTP_PORT=(.+)$') { $p = [int]$matches[1].Trim() }
+        }
+    }
+    return "http://${h}:${p}/"
+}
+
 function Get-CompactionPrereqDecision {
     param(
         [bool]$HyperVUsable,
         [bool]$VmFound,
+        [int]$ChInFlight,
+        [int]$PendingBags,
         [double]$ImageFreeGB,
         [double]$ImageNeedGB,
-        [int]$ActiveSessions,
         [bool]$BackupFresh
     )
     # Gate on the capability actually needed (Hyper-V cmdlets can open the disk),
@@ -232,11 +292,13 @@ function Get-CompactionPrereqDecision {
     # reports permission_denied distinctly and the VM is restarted.
     if (-not $HyperVUsable) { return "blocked_not_hyperv_usable" }
     if (-not $VmFound) { return "blocked_vm_missing" }
-    # A negative count means the session registry could not be read at all. Unknown
-    # must never be read as "nobody is running" -- that is the same fail-open shape
-    # that cost 599 GiB on 2026-09-26.
-    if ($ActiveSessions -lt 0) { return "blocked_sessions_unreadable" }
-    if ($ActiveSessions -gt 0) { return "blocked_lanes_active" }
+    # What a VM stop actually breaks: a ClickHouse consumer mid-query, and a queue bag
+    # mid-landing. Both are measured. "Unknown" (-1) blocks -- reading no data is not
+    # the same as reading idle, which is the exact fail-open that cost 599 GiB on 09-26.
+    if ($ChInFlight -lt 0) { return "blocked_ch_unreadable" }
+    if ($ChInFlight -gt 0) { return "blocked_ch_busy" }
+    if ($PendingBags -lt 0) { return "blocked_queue_unreadable" }
+    if ($PendingBags -gt 0) { return "blocked_bags_landing" }
     if (-not $BackupFresh) { return "blocked_backup_stale" }
     if ($ImageFreeGB -lt $ImageNeedGB) { return "blocked_image_space" }
     return "proceed"
@@ -261,37 +323,72 @@ function Get-RetireDecision {
     return "retire"
 }
 
+# -- Is there a recent, self-reported-successful VM backup? (pure, unit-testable) --
+# Reads the VM's OWN state keys. last_backup_status in the same file belongs to the CH
+# logical backup (backup_ch.ps1) -- reading it here would let an unrelated subsystem
+# certify VM recoverability.
+function Get-BackupFresh {
+    param(
+        [bool]$Success,
+        [string]$WhenIso,
+        [datetime]$Now,
+        [double]$MaxAgeDays
+    )
+    if (-not $Success) { return $false }
+    if ([string]::IsNullOrWhiteSpace($WhenIso)) { return $false }
+    try { $then = [datetime]::Parse($WhenIso) } catch { return $false }
+    $ageDays = ($Now - $then).TotalDays
+    if ($ageDays -lt 0) { return $false }        # clock skew / bogus timestamp = unknown
+    return ($ageDays -le $MaxAgeDays)
+}
+
 if ($CompactWindow) {
     Write-Stage "Compaction window: precondition gate (stop -> refresh G image -> Optimize-VHD -> start)"
-    $hvPath = Join-Path $VmRoot "data.vhdx"
+    $dataVhdx = Join-Path $VmRoot "data.vhdx"
     $hvUsable = $false
     try {
-        $hvProbe = Get-VHD -Path $hvPath -ErrorAction Stop
+        $hvProbe = Get-VHD -Path $dataVhdx -ErrorAction Stop
         $hvUsable = [bool]($hvProbe -and $hvProbe.FileSize -gt 0)
     } catch { $hvUsable = $false }
     $vmObj = Get-VM -Name $VmName -ErrorAction SilentlyContinue
-    $sess = 0
+
+    # What is actually at risk during the downtime, measured rather than inferred:
+    $chUrl = Get-ChBaseUrl -EnvFile "$ProjectRoot\config\.env.clickhouse"
+    $chSql = "SELECT (SELECT count() FROM system.backups WHERE end_time = toDateTime64('1970-01-01 00:00:00', 6)) b, " +
+             "(SELECT count() FROM system.merges) m, " +
+             "(SELECT count() FROM system.mutations WHERE NOT is_done) mu, " +
+             "(SELECT count() FROM system.processes) p FORMAT TabSeparated"
+    $chLine = ""
+    try { $chLine = (& curl.exe -s --max-time 8 $chUrl --data-binary $chSql 2>$null) -join "`t" } catch { $chLine = "" }
+    $chInFlight = Get-ChInFlightTotal -Line $chLine
+
+    $pendingBags = Get-PendingBagCount -QueueRoot (Join-Path $ProjectRoot ".runtime\commit_queue") -SelfSession $SelfSession
+
+    # Advisory only: a registration proves a heartbeat daemon is alive, not that a
+    # session is still working (09-27 measured lanes beating while their last file write
+    # was 9h old). Held claims are printed so the operator can judge.
+    $sessLine = "unreadable"
     try {
-        $sess = (& python -c "import sys;sys.path.insert(0,r'$ProjectRoot\src');from zephyr.gov_enforcement.rule_bridge.session_worktree import SessionRegistry as R;print(len([s for s in R().list_active() if s.session_id != '$SelfSession']))") -join ''
-    } catch { $sess = -1 }
-    if ($sess -notmatch '^-?\d+$') { $sess = -1 }
+        $sessLine = (& python -c "import sys;sys.path.insert(0,r'$ProjectRoot\src');from zephyr.gov_enforcement.rule_bridge.session_worktree import SessionRegistry as R;rs=[s for s in R().list_active() if s.session_id != '$SelfSession'];print('n=%d held=%d ' % (len(rs), sum(len(getattr(s,'held_files',[]) or []) for s in rs)) + ','.join(s.session_id for s in rs))") -join ''
+    } catch { $sessLine = "unreadable" }
+
     $st = $null
     try { $st = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $st = $null }
-    $backupFresh = [bool]($st -and $st.last_backup_status -eq 'ok')
+    $backupFresh = Get-BackupFresh -Success ([bool]($st -and $st.last_ch_vm_backup_success)) -WhenIso ([string]$st.last_ch_vm_backup_time) -Now (Get-Date) -MaxAgeDays 30.0
     $imgVol = Get-Volume -DriveLetter (Split-Path -Qualifier $ImageHome).TrimEnd(':') -ErrorAction SilentlyContinue
     $imgFreeGB = if ($imgVol) { [math]::Round($imgVol.SizeRemaining / 1GB, 1) } else { 0 }
-    $dataVhdx = Join-Path $VmRoot "data.vhdx"
     $dataGB = if (Test-Path $dataVhdx) { [math]::Round((Get-Item $dataVhdx).Length / 1GB, 1) } else { 0 }
     $imgNeedGB = $dataGB + 20
-    $decision = Get-CompactionPrereqDecision -HyperVUsable $hvUsable -VmFound ([bool]$vmObj) -ImageFreeGB $imgFreeGB -ImageNeedGB $imgNeedGB -ActiveSessions ([int]$sess) -BackupFresh $backupFresh
-    Write-Host "  hyperv_usable=$hvUsable vm=$([bool]$vmObj) active_lanes=$sess backup_fresh=$backupFresh image_free=$imgFreeGB GB image_need=$imgNeedGB GB" -ForegroundColor White
+    $decision = Get-CompactionPrereqDecision -HyperVUsable $hvUsable -VmFound ([bool]$vmObj) -ChInFlight ([int]$chInFlight) -PendingBags ([int]$pendingBags) -ImageFreeGB $imgFreeGB -ImageNeedGB $imgNeedGB -BackupFresh $backupFresh
+    Write-Host "  hyperv_usable=$hvUsable vm=$([bool]$vmObj) ch_in_flight=$chInFlight other_bags=$pendingBags backup_fresh=$backupFresh image_free=$imgFreeGB GB image_need=$imgNeedGB GB" -ForegroundColor White
+    Write-Host "  other sessions (advisory): $sessLine" -ForegroundColor White
     Write-Host "  decision: $decision" -ForegroundColor White
     if ($decision -ne "proceed") {
         Write-Err "Compaction window refused ($decision). Nothing was stopped and nothing was copied."
-        Write-Err "  Meaning: the stop-the-VM step needs working Hyper-V cmdlets, an empty session registry, a fresh full backup and room on $ImageHome for one more full image."
+        Write-Err "  To open the window: Hyper-V cmdlets must work, ClickHouse must hold no running query/merge/mutation/backup, no other session's bag may be landing, the last VM backup must be a success within 30 days, and $ImageHome must fit one more full image."
         exit 6
     }
-    Write-OK "Preconditions green: VM will be stopped; every ClickHouse consumer must already be idle."
+    Write-OK "Preconditions green: VM will be stopped; ClickHouse is idle and no other bag is landing."
     $Force = $true
     $script:DoCompact = $true
 }
@@ -632,16 +729,9 @@ if ($vmState -ne 'Running') {
 }
 
 # -- Step 5: Wait for ClickHouse to be reachable --
-# Read CH host from .env.clickhouse (CH runs inside VM at 172.24.30.100, NOT localhost)
-$chHttpHost = "localhost"; $chHttpPort = 8123
-$chEnvFile = "$ProjectRoot\config\.env.clickhouse"
-if (Test-Path $chEnvFile) {
-    foreach ($line in (Get-Content $chEnvFile -Encoding UTF8)) {
-        if ($line -match '^CLICKHOUSE_HOST=(.+)$')      { $chHttpHost = $matches[1].Trim() }
-        if ($line -match '^CLICKHOUSE_HTTP_PORT=(.+)$') { $chHttpPort = [int]$matches[1].Trim() }
-    }
-}
-$chBaseUrl = "http://${chHttpHost}:${chHttpPort}/"
+# Same endpoint reader as the precondition gate -- two calibers here once let the gate
+# probe one host while the health check probed another.
+$chBaseUrl = Get-ChBaseUrl -EnvFile "$ProjectRoot\config\.env.clickhouse"
 Write-Stage "Step 5: Waiting for ClickHouse HTTP ($chBaseUrl)..."
 $chOk = $false
 for ($i = 0; $i -lt 60; $i++) {  # 5 min

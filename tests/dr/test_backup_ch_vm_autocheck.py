@@ -304,10 +304,13 @@ def _run_ps(tmp: Path, body: str) -> str:
 
 
 class TestCompactionPreconditions:
-    """停机压缩前置闸：五态拒绝必须优先于任何"停机"动作，未知态一律 blocked。"""
+    """停机压缩前置闸：任何一条测量面不清（或读不到）都必须拒绝，且拒绝在停机之前。"""
 
     _F = "Get-CompactionPrereqDecision"
-    _OK = "-HyperVUsable $true -VmFound $true -ImageFreeGB 900 -ImageNeedGB 620 -ActiveSessions 0 -BackupFresh $true"
+    _OK = (
+        "-HyperVUsable $true -VmFound $true -ChInFlight 0 -PendingBags 0 "
+        "-ImageFreeGB 900 -ImageNeedGB 620 -BackupFresh $true"
+    )
 
     def _decide(self, tmp: Path, args: str) -> str:
         return _run_ps(tmp, _extract_named_function(self._F) + f'\n$d = {self._F} {args}\nWrite-Output "RESULT=$d"\n')
@@ -338,17 +341,24 @@ class TestCompactionPreconditions:
         assert "Get-VHD" in branch, "前置闸未实探 Hyper-V 能力（只看了声明）"
         assert "$hvUsable" in branch, "探测结果未接入判定"
 
-    def test_active_lane_blocks(self, tmp_path: Path) -> None:
-        """还有别的会话在跑＝CH 可能正在被写，停机即打断别人施工。"""
-        assert (
-            self._decide(tmp_path, self._OK.replace("-ActiveSessions 0", "-ActiveSessions 1")) == "blocked_lanes_active"
-        )
+    def test_ch_busy_blocks(self, tmp_path: Path) -> None:
+        """CH 有活体查询＝停机即掐别人的读写字面，必须拒绝。"""
+        assert self._decide(tmp_path, self._OK.replace("-ChInFlight 0", "-ChInFlight 2")) == "blocked_ch_busy"
 
-    def test_unreadable_session_count_blocks(self, tmp_path: Path) -> None:
-        """会话计数读不到（-1）不得当成 0 放行——未知＝不安全，与 09-26 同型病根。"""
+    def test_ch_unreadable_blocks(self, tmp_path: Path) -> None:
+        """CH 探针取不到数（-1）不得当成"空闲"放行——未知＝不安全，与 09-26 同型病根。
+
+        09-26 那次是"探测无读数仍判变更=复制"；本例的反面是"探测无读数判空闲=停机"。
+        两条都是把未知当成已知，方向相反、病灶相同。
+        """
+        assert self._decide(tmp_path, self._OK.replace("-ChInFlight 0", "-ChInFlight -1")) == "blocked_ch_unreadable"
+
+    def test_other_bag_landing_blocks(self, tmp_path: Path) -> None:
+        assert self._decide(tmp_path, self._OK.replace("-PendingBags 0", "-PendingBags 1")) == "blocked_bags_landing"
+
+    def test_unreadable_queue_blocks(self, tmp_path: Path) -> None:
         assert (
-            self._decide(tmp_path, self._OK.replace("-ActiveSessions 0", "-ActiveSessions -1"))
-            == "blocked_sessions_unreadable"
+            self._decide(tmp_path, self._OK.replace("-PendingBags 0", "-PendingBags -1")) == "blocked_queue_unreadable"
         )
 
     def test_stale_backup_blocks(self, tmp_path: Path) -> None:
@@ -382,6 +392,125 @@ class TestCompactionPreconditions:
         assert text.count("DoCompact = $true") == 1, "置位点不止一处=普通备份可能夹带压缩"
         m = re.search(r"^if \(\$CompactWindow\) \{(?P<body>.*?)^\}\s*$", text, re.M | re.S)
         assert m and "DoCompact = $true" in m.group("body"), "唯一置位点不在 -CompactWindow 分支内"
+
+
+class TestProbeParsersAreHonest:
+    """前置闸的三路探针各自"读成什么数"必须可测——判据再对，取数错就等于没判据。"""
+
+    def _many(self, tmp: Path, fname: str, calls: list[tuple[str, str]]) -> dict[str, str]:
+        lines = ["$ErrorActionPreference='Stop'", _extract_named_function(fname)]
+        for label, args in calls:
+            lines.append(f'Write-Output ("{label}=" + ({fname} {args}))')
+        ps = tmp / "many.ps1"
+        ps.write_text("\n".join(lines) + "\n", encoding="ascii")
+        r = subprocess.run(  # noqa: bare-subprocess  同族：ps1 语义须真跑 PowerShell
+            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(ps)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+        )
+        assert r.returncode == 0, f"{r.stdout}\n{r.stderr}"
+        out = {}
+        for line in r.stdout.splitlines():
+            if "=" in line:
+                k, _, v = line.strip().partition("=")
+                out[k] = v
+        return out
+
+    def test_in_flight_total_counts_only_real_consumers(self, tmp_path: Path) -> None:
+        TAB = "\t"
+        cases = [
+            ("only_probe", f'-Line "0{TAB}0{TAB}0{TAB}1"'),  # 探针自己那条要减掉
+            ("probe_plus_two", f'-Line "0{TAB}0{TAB}0{TAB}3"'),
+            ("unfinished_backup", f'-Line "1{TAB}0{TAB}0{TAB}1"'),
+            ("merges_and_mutations", f'-Line "0{TAB}2{TAB}1{TAB}1"'),
+            ("blank", '-Line ""'),
+            ("garbage", '-Line "Code: 60. DB::Exception"'),
+            ("too_few_columns", f'-Line "0{TAB}0{TAB}0"'),
+            ("non_numeric", f'-Line "0{TAB}0{TAB}0{TAB}x"'),
+        ]
+        got = self._many(tmp_path, "Get-ChInFlightTotal", cases)
+        assert got["only_probe"] == "0", got
+        assert got["probe_plus_two"] == "2", got
+        assert got["unfinished_backup"] == "1", got
+        assert got["merges_and_mutations"] == "3", got
+        for k in ("blank", "garbage", "too_few_columns", "non_numeric"):
+            assert got[k] == "-1", f"{k} 未归为未知(-1)：{got}"
+
+    def test_backup_fresh_needs_a_success_within_the_bound(self, tmp_path: Path) -> None:
+        cases = [
+            (
+                "recent_ok",
+                '-Success $true -WhenIso "2026-09-27T06:00:00" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30',
+            ),
+            (
+                "too_old",
+                '-Success $true -WhenIso "2026-08-01T06:00:00" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30',
+            ),
+            (
+                "boundary_30d",
+                '-Success $true -WhenIso "2026-08-28T19:00:00" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30',
+            ),
+            (
+                "last_run_failed",
+                '-Success $false -WhenIso "2026-09-27T06:00:00" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30',
+            ),
+            ("no_timestamp", '-Success $true -WhenIso "" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30'),
+            (
+                "bogus_timestamp",
+                '-Success $true -WhenIso "yesterday-ish" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30',
+            ),
+            (
+                "from_the_future",
+                '-Success $true -WhenIso "2026-10-05T00:00:00" -Now (Get-Date "2026-09-27T19:00:00") -MaxAgeDays 30',
+            ),
+        ]
+        got = self._many(tmp_path, "Get-BackupFresh", cases)
+        assert got["recent_ok"] == "True", got
+        assert got["boundary_30d"] == "True", got
+        for k in ("too_old", "last_run_failed", "no_timestamp", "bogus_timestamp", "from_the_future"):
+            assert got[k] == "False", f"{k} 被判为新鲜：{got}"
+
+    def test_pending_bag_count_scopes_to_other_sessions(self, tmp_path: Path) -> None:
+        root = tmp_path / "q"
+        (root / "pending").mkdir(parents=True)
+        (root / "processing").mkdir(parents=True)
+        (root / "pending" / "bag.json").write_text('{"session_id":"a"}', encoding="ascii")
+        (root / "processing" / "bag.json").write_text('{"session_id":"b"}', encoding="ascii")
+
+        def _count(path: Path, self_sid: str) -> str:
+            return _run_ps(
+                tmp_path,
+                _extract_named_function("Get-PendingBagCount")
+                + f"\n$d = Get-PendingBagCount -QueueRoot '{str(path).replace(chr(39), chr(39) * 2)}' -SelfSession '{self_sid}'\n"
+                + 'Write-Output "RESULT=$d"\n',
+            )
+
+        assert _count(root, "") == "2", "两会话各一袋应计 2"
+        assert _count(root, "a") == "1", "自己的袋须排除"
+        assert _count(root, "zz") == "2"
+        (root / "pending" / "bag.json").write_text("{}", encoding="ascii")
+        (root / "processing" / "bag.json").unlink()
+        assert _count(root, "a") == "1", "无 session_id 的袋不得算成自己的"
+        (root / "pending" / "bag.json").write_text("{ not json", encoding="ascii")
+        assert _count(root, "") == "-1", "袋体读不得必须报未知，不得当 0 放行"
+        assert _count(tmp_path / "nope", "") == "-1", "队列根不存在=未知"
+
+    def test_freshness_reads_the_vms_own_keys_not_the_logical_backup(self) -> None:
+        """backup_state.json 里 last_backup_status 属于 CH 逻辑备份（backup_ch.ps1）。
+
+        前置闸若读它，就等于让另一个子系统来给"VM 可灾备"背书——它 ok 不代表
+        data.vhdx 有过一次成功的整机复制。本尺锁这条键名。
+        """
+        text = _script_text()
+        m = re.search(r"^if \(\$CompactWindow\) \{(?P<body>.*?)^\}\s*$", text, re.M | re.S)
+        assert m, "-CompactWindow 分支结构漂移，本尺失去落点"
+        branch = m.group("body")
+        assert "last_ch_vm_backup_success" in branch, "未读 VM 自己的成功位"
+        assert "last_ch_vm_backup_time" in branch, "未读 VM 自己的时间戳"
+        assert re.search(r"\$st\.last_backup_status\b", branch) is None, "串读了 CH 逻辑备份的键=张冠李戴"
 
 
 class TestOrderedWindowSafety:
