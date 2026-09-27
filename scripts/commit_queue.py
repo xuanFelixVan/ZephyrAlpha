@@ -1541,9 +1541,11 @@ def _revalidate_stale_base(
     **确已比对出与 HEAD 不一致**且谓词判真时，不再在队列层判 cascade_stale 退袋，改交
     本仓落地模块的条目级三向合并仲裁（W2 2026-09-22 上线；真冲突仍由合并器死信并携带
     双方条目全文，绝不静默放行）。放行路径经 `_note_rebased_registry` 留痕。
-    两条不得放宽的边界：
+    两条边界：
     ① 缺省 None ⇒ 判定与历史**逐字节一致**（drain 直连口等既有调用方口径不变）；
-    ② head_reader 缺失＝根本没比对出"不一致"，不属本形参管辖，保险丝照旧判不适用。
+    ② head_reader 缺失时对**非 mergeable** 路径保险丝照旧判不适用；对 mergeable 路径
+       交落地侧条目级合并仲裁——该仲裁在基底不可知时自会 raise 死信（安全不降级），
+       队列层抢先判死只会把可救的袋变成人工重投（2026-09-27 裁定，见下方代码注释）。
     """
     mismatched: list[str] = []
     rebased: list[str] = []
@@ -1553,6 +1555,16 @@ def _revalidate_stale_base(
             continue
         path = f.get("path", "?")
         if head_reader is None:
+            # 语义分叉裁定（2026-09-27）：本形参落地时红证 D 与边界②相互冲突——证尺要求
+            # "mergeable + reader 缺失"交合并，代码却一律判死。裁定取证尺，理由是一条
+            # 方向性判据：注册表族"基底是否仍等于 HEAD"本来就不是队列层的仲裁点，落地侧
+            # _merge_registry_file 在 base_head 与 base_blob 皆不可知时 raise RuntimeError
+            # 死信回人工（commit_queue_landing.py:1769，判据取向=绝不猜基底）。在此判死
+            # 不增加任何安全，只把一只本可被条目级合并救活的袋子变成人工重投（09-27 实测
+            # 该形态当日误杀 33 只）。非 mergeable 路径没有这个下游仲裁者，保险丝照旧。
+            if mergeable_pred is not None and mergeable_pred(path):
+                rebased.append(path)
+                continue
             mismatched.append(f"{path}(head_reader 缺失无法重校验)")
             continue
         if head_reader(path) == base_blob:

@@ -3051,9 +3051,15 @@ def _stale_revalidate_counted(item: dict, head_reader) -> tuple[bool, list[str]]
     原样上抛会绕过 _pool_process_item 的 LandingEnvironmentError 计数分支（M3 线
     移交实测 38 笔环境失败逃逸），项滞留 processing 无限重放。此处统一转专类：
     调用方既有 env 分支计数 + 耗尽升级死信，与 landing 内部环境失败同闸同语义。
+
+    注册表族 re-base 不死袋（卷宗 §10 Tier-2 条目 6，2026-09-27 治本）：注入
+    mergeable_pred=is_registry_mergeable——该族 base_blob 漂移交本模块条目级三向
+    合并仲裁（W2 2026-09-22 上线，真冲突仍死信带双方条目全文），不再在队列层判
+    cascade_stale 退袋；非 mergeable 路径判定逐字节不变。放行路径留痕
+    item.meta.rebased_registry（审计可见）。
     """
     try:
-        return cq._revalidate_stale_base(item, head_reader)
+        return cq._revalidate_stale_base(item, head_reader, mergeable_pred=is_registry_mergeable)
     except cq.LandingEnvironmentError:
         raise
     except Exception as exc:  # noqa: BLE001 — git/OS 瞬态统一转环境专类
