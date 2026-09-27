@@ -105,6 +105,9 @@ class IncubationRecord:
     exited_at: float | None = None
     exit_code: int | None = None
     reaped: bool = False
+    # 登记时子进程 create_time 快照（wave7.3 缺陷②）：收割端据此复核 PID 复用，
+    # 0.0 = 快照失败/旧格式（收割端 fail-open 不判，不误杀）。
+    child_create_time: float = 0.0
 
     def expires_at(self) -> float:
         return self.spawned_at + self.expected_lifetime_s
@@ -316,6 +319,15 @@ class ProcessIncubator:
         if gate:
             self._gate.check_or_wait()
         proc = spawn_python_hidden(cmd, **spawn_kwargs)
+        # 身份快照（wave7.3 缺陷②）：登记子进程出生时间，收割端据此识别 PID 复用。
+        child_create_time = 0.0
+        try:
+            import psutil
+
+            if proc.pid:
+                child_create_time = float(psutil.Process(proc.pid).create_time())
+        except Exception:  # noqa: BLE001 — 快照失败降级 0.0（收割端 fail-open 不判）
+            child_create_time = 0.0
         chain, root = _ancestor_chain()
         record = IncubationRecord(
             record_id=uuid.uuid4().hex[:12],
@@ -327,6 +339,7 @@ class ProcessIncubator:
             cmd=" ".join(str(x) for x in cmd)[:300],
             spawned_at=time.time(),
             expected_lifetime_s=expected_lifetime_s,
+            child_create_time=child_create_time,
             owner=owner,
         )
         try:

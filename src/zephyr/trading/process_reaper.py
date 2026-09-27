@@ -923,6 +923,10 @@ def _reap_derived_orphans(all_procs: dict[int, dict], dry_run: bool, report: Rea
 # tests/trading/test_process_reaper_incubation.py 双端契约测试钉住。
 _INCUBATOR_LEDGER_REL = Path(".runtime") / "process_incubator" / "ledger.jsonl"
 
+# PID 复用身份复核容差（秒）：同一进程两次枚举 create_time 恒等；复用者与被复用者
+# 出生时间差实测远大于 1s。快照缺失（旧格式登记）= 不判（fail-open，与收割闭环同源）。
+_PID_REUSE_TOLERANCE_S = 1.0
+
 
 def _load_incubation_ledger() -> list[dict[str, Any]]:
     """读孵化登记表（stdlib jsonl；缺席/损坏行降级跳过，fail-safe 不阻断主流程）。"""
@@ -988,7 +992,8 @@ def _reap_incubated_expired(
 ) -> None:
     """收割孵化登记表中超预期寿命且仍存活的进程（M3：登记替代 cmdline 猜测）。
 
-    判定：登记未退出未收割 + pid 仍活 + now > spawned_at + expected_lifetime_s。
+    判定：登记未退出未收割 + pid 仍活 + now > spawned_at + expected_lifetime_s
+    + 身份复核（child_create_time 快照与活体一致——PID 复用疑似则跳过不杀）。
     兜底防线：whitelist/keep 命中永不杀（与孤儿矩阵同源 fail-safe）。
     """
     records = _load_incubation_ledger()
@@ -1006,6 +1011,23 @@ def _reap_incubated_expired(
         lifetime = float(rec.get("expected_lifetime_s", 0) or 0)
         spawned = float(rec.get("spawned_at", 0) or 0)
         if now <= spawned + lifetime:
+            continue
+        # ── PID 复用身份复核（wave7.3 缺陷②，st-zc8-lane-rb2）────────────────
+        # 登记时快照的 child_create_time 与活体不符 = 原 pid 已退出、系统把同一
+        # 编号发给了无关进程——收割即误杀无辜第三进程。跳过 + reported 留痕。
+        rec_ct = float(rec.get("child_create_time", 0) or 0)
+        live_ct = float(all_procs.get(pid, {}).get("create_time", 0) or 0)
+        if rec_ct > 0 and live_ct > 0 and abs(rec_ct - live_ct) > _PID_REUSE_TOLERANCE_S:
+            live_cmd = str(all_procs.get(pid, {}).get("cmdline", "") or "")
+            report.reported.append(
+                {"pid": pid, "reason": "incubation_expired_pid_reuse_skip", "cmdline": live_cmd[:120]}
+            )
+            logger.warning(
+                "incubation skip: PID=%d 身份复核不符（登记 create_time=%.3f != 活体 %.3f）——PID 复用疑似，不收割",
+                pid,
+                rec_ct,
+                live_ct,
+            )
             continue
         cmdline = str(rec.get("cmd", ""))
         if whitelist_res is not None and keep_subs is not None and _is_whitelisted(cmdline, whitelist_res, keep_subs):
