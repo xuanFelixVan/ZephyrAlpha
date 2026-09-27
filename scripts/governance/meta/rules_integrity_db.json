@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "7b74c38129f8ef83",
+      "hash": "c8898f35807f3501",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -86,6 +86,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-09-27T20:27:59.659363+00:00",
+  "registered_at": "2026-09-27T22:09:21.057756+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }

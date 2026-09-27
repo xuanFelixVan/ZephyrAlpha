@@ -102,7 +102,7 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 | AutoRuntime Core | `python -m zephyr.trading` |
 | GitCommitGateway | `zephyr.gov_enforcement.rule_bridge.git_commit_gateway`（唯一合法 commit 入口） |
 | 提交队列 | `scripts/commit_queue.py`（enqueue/status/drain/requeue；drain=真落地） |
-| DatabaseService | `zephyr.infrastructure.database_service`（唯一真源，禁裸 duckdb）；存储分工：冷库=F:/zephyr_cold、备份总仓=G:/backup、CH 备份双链（F 主/G 二）——地图=INFRA-STORE-003 |
+| DatabaseService | `zephyr.infrastructure.database_service`（唯一真源，禁裸 duckdb）；存储分工一盘一责（2026-09-28 Owner 终裁定）：冷库=F:/zephyr_cold（唯一冷储）、备份总仓=G:/backup（唯一备份=D 项目+F 冷库夜镜像+CH 单链+VM 镜像）、E=纯软件；CH 双链废止过渡期后单链归 G——地图=INFRA-STORE-003 |
 | LSG | `zephyr.security.llm_defense.llm_security.gateway`（所有 LLM 调用必经） |
 | CapabilityLookup | `zephyr.governance.capability_lookup` |
 | KillSwitch | `zephyr.security.access_control.kill_switch` |
