@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "5198a4bbda3d7593",
+      "hash": "7b74c38129f8ef83",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -11,7 +11,7 @@
       "desc": "AI Session 冷启动卡片"
     },
     "scripts/governance/_shared/thresholds.yaml": {
-      "hash": "b4b822fc51bd7c65",
+      "hash": "aa4988d42dfbc4f7",
       "critical": true,
       "desc": "关键阈值 SSoT"
     },
@@ -41,7 +41,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "21809dba9f7d44b9",
+      "hash": "6ea9b67bf57128c3",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -56,12 +56,12 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "fe3a9ec9d6ccfa5e",
+      "hash": "b19d995337dfec0e",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
-      "hash": "57f705291751fd6d",
+      "hash": "6b28f77ee96ff038",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },
@@ -86,6 +86,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-09-25T06:19:32.551257+00:00",
+  "registered_at": "2026-09-27T20:27:59.659363+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
