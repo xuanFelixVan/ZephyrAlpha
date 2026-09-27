@@ -55499,4 +55499,14 @@ creation_tokens:
   created_by: st-chiefzc-micro-20260928
   capability: hmac_proposal
   merge_evaluation: "W-152 立项新册：波9.4 排产点名件（非实施），无同真源可派生亦无重复簇（dossier_H H-105 实测 80_hmac_proposal=0）"
+- file: docs/03_modules/_domain_portfolio_core/algo_flow/shadow_portfolio.yaml
+  token: algo-flow-shadow-portfolio-20260927
+  created_by: st-zc8-lane-e89-20260928
+  capability: algo-flow
+  merge_evaluation: "ALGO_FLOW 算法地图锚文档与所属模块一对一，不并"
+- file: docs/03_modules/_domain_portfolio_alloc/algo_flow/rebalance_check_runner.yaml
+  token: algo-flow-rebalance-check-runner-20260927
+  created_by: st-zc8-lane-e89-20260928
+  capability: algo-flow
+  merge_evaluation: "ALGO_FLOW 算法地图锚文档与所属模块一对一，不并"
 di_seam_exemptions: []
