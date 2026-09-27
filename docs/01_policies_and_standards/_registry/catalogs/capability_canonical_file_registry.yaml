@@ -55474,4 +55474,24 @@ creation_tokens:
   created_by: chiefzc-surgeon-20260928
   capability: surge_rescue
   merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: scripts/governance/d3_metadata/inventory_blanked_canonical_fields.py
+  token: governance-root-split-inventory-blanked-canonical-fields-20260927
+  created_by: st-zcloseout-20260928
+  capability: governance_root_split
+  merge_evaluation: "closeout D3：两册空白字段/撞车只读盘点尺，替代失败子代理任务；无既有同域消费方可合并"
+- file: docs/_working/three_piece_infra/blanked_debt/inventory_blanked_canonical_fields_report.yaml
+  token: governance-root-split-inventory-blanked-canonical-fields-report-20260927
+  created_by: st-zcloseout-20260928
+  capability: governance_root_split
+  merge_evaluation: "D3 盘点尺机生报告（固定路径重生成式，非第二真源）：blanked/dup/keydiff 债务账面"
+- file: src/zephyr/ex_core/bridge_instruction_kernel.py
+  token: f56-bridge-instruction-kernel-bridge-instruction-kernel-20260927
+  created_by: st-zchief8-20260928
+  capability: f56_bridge_instruction_kernel
+  merge_evaluation: "净零：F56 断腿治本的内核新件，唯一实现无同真源重复"
+- file: src/zephyr/backtest/core/batch_window_preflight.py
+  token: batch-window-preflight-batch-window-preflight-20260927
+  created_by: st-zcloseout-20260928
+  capability: batch_window_preflight
+  merge_evaluation: "波13 统一跑批窗口点火前检接管袋：点火前逐条核实五前置并拒绝对外开跑，净零"
 di_seam_exemptions: []

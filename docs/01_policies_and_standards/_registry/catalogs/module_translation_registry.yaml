@@ -61801,6 +61801,39 @@ entries:
   plain_zh: "统一规定哪些文件算真的用了某个资产，免得各处各算一套得出两个互相矛盾的认领结论"
   responsibility_layer: governance
 
+- module_path: scripts/governance/d3_metadata/inventory_blanked_canonical_fields.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "两册空白字段与撞车只读盘点尺"
+  name_en: "blanked canonical fields inventory ruler"
+  desc_zh: "对 module_translation_registry 与 capability_canonical_file_registry 两册逐 root section 盘点：空白必填字段按注册条目身份集计数、身份键撞车（567 撞车同型面）、HEAD 与磁盘键集双向差；报告 YAML 落 blanked_debt 目录，--check 有债退出 1 可挂预检。"
+  desc_en: "Read-only inventory ruler over module_translation_registry and capability_canonical_file_registry: per-root-section blank required fields (identity-set counts), duplicate identity keys, and HEAD-vs-disk key-set diff; writes a YAML report under blanked_debt; --check exits 1 on debt."
+  plain_zh: "给两本登记册做体检的只读尺子：查有多少条目必填项空着、有多少条目用同一个名字重复登记、本子里的名单和仓库里真正落地的名单对不对得上；只出体检报告不动账，加检查模式后发现问题就报错，能挂到提交门禁上当哨兵。"
+  responsibility_layer: governance
+- module_path: src/zephyr/ex_core/bridge_instruction_kernel.py
+  domain_id: D_EX_CORE
+  name_zh: "QMT桥接指令内核"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把给券商下道的指令文件当邮差包逐封核对：正常签收就记账，发现幽灵单（从未见过却自称已成交）就按超时作废拒认，保证桥两端账本最终一致"
+  responsibility_layer: business
+- module_path: src/zephyr/governance/audit/library_new_module_reconciler.py
+  domain_id: D_GOVERNANCE
+  name_zh: "图书馆新模块自动入编对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新写的代码一落地，图书馆就自动给它登记一条户口，并当场查一遍到底有没有人用它；没人用就如实记零并点名"
+  responsibility_layer: governance
+- module_path: src/zephyr/backtest/core/batch_window_preflight.py
+  domain_id: D_BACKTEST
+  name_zh: "统一跑批窗口点火前检"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在正式点火前逐条核实五个前置条件是否真的达标，取不到数的就报未知并拒绝对外开跑，不再靠人记住散文里的规矩"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
