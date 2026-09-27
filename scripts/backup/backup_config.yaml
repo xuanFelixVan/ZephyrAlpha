@@ -108,3 +108,17 @@ offrepo_backup:
   # 2026-09-14 Owner 裁定：data_download（E:\数据下载）不备份，已从目标移除——
   # 源数据当日 52.66→118.38GB 持续膨胀，/MIR 镜像同量吃掉 F 盘空间（当日 +66GB，
   # 是 F 盘告急头号推手）；F:\offrepo_backup\data_download 旧副本已删（源在 E 盘可随时重镜像）
+
+# ============================================================
+# 写侧容量硬闸（四盘容量红线的唯一机读真源）
+# 判据出处=F:/zephyr_cold/AUDIT_SOP.md §一.1「F≥700G、G≥500G、D≥50G、E≥50G free」
+# ——该 SOP 活在盘上且无任何代码读者，故 2026-09-26 一次 599GiB VM 全量复制
+#    可以"合法地"把 F 从 766→167GiB 击穿红线而无人拦（LEDGER_final.md 处方 P-6）。
+# 唯一读者=scripts/backup/backup_ch_vm.ps1 的 Get-CapacityGuardDecision（缺键时
+# 该脚本回退内置常量 700 并响亮标 source=fallback，绝不静默归零=绝不自动放行）。
+# 语义：复制完成后，目标盘剩余 free 不得低于本表值。
+# ============================================================
+capacity_guard:
+  min_free_gb:
+    F: 700
+    G: 500

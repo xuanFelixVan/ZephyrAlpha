@@ -268,6 +268,25 @@ if ($AutoCheck) {
     $Force = $true  # AutoCheck runs unattended via scheduled task -- no interactive prompt
 }
 
+# -- Capacity guard decision (pure function; consumer = pre-check block below) --
+# The four-drive red lines (F>=700 / G>=500 free GB) lived ONLY in the off-repo audit
+# SOP prose -- no code reader, so a 599 GB full copy could legally blow through them
+# (2026-09-26 incident). Numbers now come from scripts/backup/backup_config.yaml
+# (capacity_guard.min_free_gb), and a missing/unreadable key falls back to the
+# constant below instead of silently disabling the guard.
+$MinFreeFallbackGB = 700
+
+function Get-CapacityGuardDecision {
+    param(
+        [double]$FreeGB,
+        [double]$NeedGB,
+        [double]$MinFreeGB
+    )
+    if ($FreeGB -lt $NeedGB) { return "refuse_too_small" }
+    if (($FreeGB - $NeedGB) -lt $MinFreeGB) { return "refuse_below_red_line" }
+    return "proceed"
+}
+
 # -- Pre-checks --
 Write-Stage "Pre-check"
 if (-not (Get-Command Get-VM -ErrorAction SilentlyContinue)) {
@@ -287,16 +306,46 @@ foreach ($f in @($bootVhdx, $dataVhdx, $configDir)) {
 $dataSizeGB = [math]::Round((Get-Item $dataVhdx).Length / 1GB, 2)
 Write-OK "VM '$VmName' found. data.vhdx = $dataSizeGB GB"
 
-# F: drive free space check (need ~data.vhdx size + buffer)
-$fVol = Get-Volume F -ErrorAction SilentlyContinue
-if (-not $fVol) { Write-Err "F: drive not online"; exit 1 }
-$freeGB = [math]::Round($fVol.SizeRemaining / 1GB, 1)
+# Target volume free space check: need ~data.vhdx size + buffer, AND the residual
+# free must stay above the registered four-drive red line (see Get-CapacityGuardDecision).
+$TargetDrive = (Split-Path -Qualifier $BackupRoot).TrimEnd(':')
+$tVol = Get-Volume -DriveLetter $TargetDrive -ErrorAction SilentlyContinue
+if (-not $tVol) { Write-Err "Drive $TargetDrive`: not online (BackupRoot=$BackupRoot)"; exit 1 }
+$freeGB = [math]::Round($tVol.SizeRemaining / 1GB, 1)
 $needGB = $dataSizeGB + 20  # data + boot + config + buffer
-if ($freeGB -lt $needGB) {
-    Write-Err "F: free space ${freeGB}GB < needed ${needGB}GB. Free space on F: before VM backup."
-    exit 1
+
+# Red line source: backup_config.yaml capacity_guard.min_free_gb.<drive>;
+# unreadable/missing => fallback constant + loud source marker (never 0 = never off).
+$guardSource = "config"
+$minFreeGB = 0.0
+try {
+    $cfgText = Get-Content "$ProjectRoot\scripts\backup\backup_config.yaml" -Raw -Encoding UTF8 -ErrorAction Stop
+    $cfg = ($cfgText | & python -c "import sys,yaml;d=yaml.safe_load(sys.stdin.read()) or {};print((d.get('capacity_guard') or {}).get('min_free_gb',{}).get('$TargetDrive',''))") -join ''
+    if ($cfg -match '^[0-9]+(\.[0-9]+)?$') { $minFreeGB = [double]$cfg } else { $guardSource = "fallback" }
+} catch { $guardSource = "fallback" }
+if ($guardSource -eq "fallback") {
+    $minFreeGB = $MinFreeFallbackGB
+    Write-Warn "capacity_guard.min_free_gb.$TargetDrive`: not readable from backup_config.yaml -- using built-in fallback ${minFreeGB}GB (guard stays ON)"
 }
-Write-OK "F: drive free = ${freeGB}GB (need ~${needGB}GB)"
+
+$guardDecision = Get-CapacityGuardDecision -FreeGB $freeGB -NeedGB $needGB -MinFreeGB $minFreeGB
+if ($guardDecision -ne "proceed") {
+    Write-Err "Capacity guard [$guardDecision] on $TargetDrive`: free=${freeGB}GB need=${needGB}GB red_line=${minFreeGB}GB (source=$guardSource)"
+    Write-Err "  Refusing to copy $dataSizeGB GB: a full VM image here would breach the registered drive red line."
+    Write-Err "  See docs/_working/disk_reorg_campaign/LEDGER_final.md prescription P-6 and the 2026-09-26 F-drive incident."
+    $report = @{
+        timestamp = (Get-Date).ToString("o")
+        mode = "capacity_guard"
+        result = $guardDecision
+        drive = $TargetDrive
+        free_gb = $freeGB; need_gb = $needGB; min_free_gb = $minFreeGB
+        guard_source = $guardSource
+    }
+    New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
+    $report | ConvertTo-Json -Depth 3 | Out-File $LogFile -Encoding utf8
+    exit 4
+}
+Write-OK "$TargetDrive`: drive free = ${freeGB}GB (need ~${needGB}GB, red line ${minFreeGB}GB, source=$guardSource)"
 
 # Confirm if VM is running (downtime warning)
 if ($vm.State -eq 'Running' -and -not $Force) {

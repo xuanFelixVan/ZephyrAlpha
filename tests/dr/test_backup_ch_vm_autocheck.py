@@ -183,12 +183,14 @@ class TestWiringNotDecorative:
 
 @pytest.mark.skipif(sys.platform != "win32", reason="需要 PowerShell（Windows 宿主）")
 def test_script_parses_without_syntax_errors(tmp_path: Path) -> None:
-    """语法自检：改完必须 ParseErrors=0（PS 解析器实跑，非肉眼）。"""
+    """语法自检：改完必须 ParseErrors 数=0（PS 语言解析器实跑，非肉眼、非只数 token）。"""
     probe = tmp_path / "parse.ps1"
     probe.write_text(
-        "$t=[System.Management.Automation.PSParser]::Tokenize("
-        "(Get-Content -Raw -LiteralPath '" + str(SCRIPT).replace("'", "''") + "'),"
-        '[ref]$null)\nWrite-Output "TOKENS=$($t.Count)"\n',
+        "$errs=$null\n$toks=$null\n"
+        "[void][System.Management.Automation.Language.Parser]::ParseFile("
+        "(Convert-Path '" + str(SCRIPT).replace("'", "''") + "'),[ref]$toks,[ref]$errs)\n"
+        'Write-Output "PARSE_ERRORS=$($errs.Count)"\n'
+        'foreach($e in $errs){ Write-Output "ERR_LINE=$($e.Extent.StartLineNumber)" }\n',
         encoding="ascii",
     )
     r = subprocess.run(  # noqa: bare-subprocess  同上：ps1 语法只能由 PowerShell 自己裁
@@ -200,5 +202,76 @@ def test_script_parses_without_syntax_errors(tmp_path: Path) -> None:
         timeout=120,
     )
     assert r.returncode == 0, r.stdout + r.stderr
-    m = re.search(r"TOKENS=(\d+)", r.stdout)
-    assert m and int(m.group(1)) > 1000, f"token 数异常（解析可能失败）：{r.stdout}"
+    m = re.search(r"PARSE_ERRORS=(\d+)", r.stdout)
+    assert m, f"解析器未回报错误数：{r.stdout}"
+    assert int(m.group(1)) == 0, f"backup_ch_vm.ps1 存在语法错：{r.stdout}"
+
+
+class TestCapacityGuard:
+    """写侧容量硬闸：四盘红线必须有代码读者，且缺配置不得静默归零变成"永远放行"。"""
+
+    _GUARD_FUNC = "Get-CapacityGuardDecision"
+
+    def _guard_body(self) -> str:
+        text = _script_text()
+        m = re.search(rf"^function {self._GUARD_FUNC}\s*\{{(?P<body>.*?)^\}}\s*$", text, re.M | re.S)
+        if not m:
+            pytest.fail(f"{self._GUARD_FUNC} 不在 ps1 中（容量硬闸被删/改名）")
+        return f"function {self._GUARD_FUNC} {{{m.group('body')}\n}}"
+
+    def _decide(self, tmp: Path, free: float, need: float, minfree: float) -> str:
+        ps = tmp / "guard.ps1"
+        ps.write_text(
+            "$ErrorActionPreference='Stop'\n"
+            + self._guard_body()
+            + f"\n$d = {self._GUARD_FUNC} -FreeGB {free} -NeedGB {need} -MinFreeGB {minfree}\n"
+            + 'Write-Output "RESULT=$d"\n',
+            encoding="ascii",
+        )
+        r = subprocess.run(  # noqa: bare-subprocess  同族：ps1 语义须真跑 PowerShell
+            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(ps)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+        assert r.returncode == 0, r.stdout + r.stderr
+        m = re.search(r"RESULT=(\S+)", r.stdout)
+        assert m, r.stdout
+        return m.group(1).strip()
+
+    def test_0926_incident_shape_refused(self, tmp_path: Path) -> None:
+        """09-26 实况形态：free 766.7、需 619 → 余 147.7 < 红线 700 ⇒ 必拒（旧代码此处放行）。"""
+        assert self._decide(tmp_path, 766.7, 619.0, 700.0) == "refuse_below_red_line"
+
+    def test_healthy_shape_proceeds(self, tmp_path: Path) -> None:
+        assert self._decide(tmp_path, 1500.0, 619.0, 700.0) == "proceed"
+
+    def test_too_small_still_refused(self, tmp_path: Path) -> None:
+        assert self._decide(tmp_path, 300.0, 619.0, 700.0) == "refuse_too_small"
+
+    def test_guard_is_called_and_exits_loudly(self) -> None:
+        """防装饰件：判定必须在预检段被调用，且非 proceed 分支以非零退出报警+落报告。"""
+        text = _script_text()
+        call_idx = text.find(f"{self._GUARD_FUNC} -FreeGB")
+        assert call_idx > 0, "容量判定未在预检段被调用=护栏是摆设"
+        tail = text[call_idx:]
+        assert "exit 4" in tail[:1800], "拒绝分支未以非零退出报警"
+        assert "capacity_guard" in tail[:1800], "拒绝分支未落机读报告"
+
+    def test_missing_config_never_means_zero_floor(self) -> None:
+        """读不到配置必须回退内置常量并标 source=fallback，绝不允许 min=0=永久放行。"""
+        text = _script_text()
+        assert "$MinFreeFallbackGB" in text, "缺兜底常量：配置一坏护栏即失效"
+        fb_idx = text.find('guardSource -eq "fallback"')
+        assert fb_idx > 0, "无 fallback 处置分支"
+        assert "$minFreeGB = $MinFreeFallbackGB" in text[fb_idx : fb_idx + 400], "fallback 未赋值=0"
+
+    def test_red_line_now_has_machine_readable_source(self) -> None:
+        """红线数落机读真源（原先只活在 F 盘上的 SOP 散文里，无任何代码读者）。"""
+        import yaml
+
+        cfg = REPO_ROOT / "scripts" / "backup" / "backup_config.yaml"
+        mins = yaml.safe_load(cfg.read_text(encoding="utf-8"))["capacity_guard"]["min_free_gb"]
+        assert mins["F"] == 700 and mins["G"] == 500, mins
