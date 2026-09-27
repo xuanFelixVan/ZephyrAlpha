@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+
+> **〔2026-09-28 盘位勘正·裁定#414〕本文写于 G 库时代（09-17）。现行定版：F:\zephyr_cold=唯一冷储主库（抽屉结构/入库四步/三红线照本文执行，盘位以 infrastructure_registry INFRA-STORE-003 为准）；G:\zephyr_cold0_mirror=F 主库的每夜备份；G:\zephyr_cold 原抽屉库已于 09-28 删除（manifest 归档在 00_manifest_archive_pre20260928）。**
 # 10 G 盘冷库 SOP — 结构、入库/出库流程与命名规范
 
 > 定位：G:\zephyr_cold（3.7T）的整套运营规程。哲学沿用 2026-09-17 冷盘讨论：**冷库只存原文与原料，不存回测用清洗数据**。
