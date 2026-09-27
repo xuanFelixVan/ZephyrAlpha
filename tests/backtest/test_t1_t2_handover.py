@@ -1,0 +1,416 @@
+# [BLUEPRINT] MOD-BT-T1T2-HANDOVER | docs/03_modules/_domain_backtest/blueprint.md（被测件挂靠）
+# [MODULE] tests.backtest.test_t1_t2_handover
+# [DOMAIN] D_BACKTEST
+# [DEPENDENCIES] scripts.backtest.t1_t2_handover
+# [CONSUMERS] pytest
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] 全程 tmp_path 合成仓面（测试隔离铁律：禁写生产 data/）；不真发车（launcher/e0/gpu/proc
+#   全注入）；四证尺=①全过→选层≤cap 且确定性 ②完成率红→必红且不发车 ③claim 在场→拒发车
+#   ④进程在+manifest 缺→WAITING 不误判死；每条证尺的红证（缺陷注入即失败）登记于案卷
+#   AUTO_t1_t2_handover.md §六
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] pytest assert
+# [TESTS] self
+# [TTL] permanent
+"""test_t1_t2_handover.py — T1→T2 守望交接件单元测试（合成数据，零生产面写入，零真发车）。"""
+
+from __future__ import annotations
+
+import importlib.util
+import itertools
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+import yaml
+
+_REPO = Path(__file__).resolve().parents[2]
+_spec = importlib.util.spec_from_file_location("t1_t2_handover", _REPO / "scripts" / "backtest" / "t1_t2_handover.py")
+mod = importlib.util.module_from_spec(_spec)
+sys.modules[_spec.name] = mod
+_spec.loader.exec_module(mod)
+
+TIER1 = 60
+TIER2 = 8
+
+# 维面：3 主效应维（各 2 层）× 3 参数弱维（各 2 层）→ 全组合 8 种…实际 2^6=64 组合取 60
+DIMS = {
+    "G_universe": ["hs300", "zz500"],
+    "A1_factor_normalize": ["zscore", "rank"],
+    "A2_combine_weight": ["equal", "ic_mean"],
+    "C_sizing": ["equal_weight", "inv_vol"],
+    "D1_rebalance_freq": ["weekly", "monthly"],
+    "E_single_cap": ["cap5", "cap20"],
+}
+STRONG = ["G_universe", "A1_factor_normalize", "A2_combine_weight"]
+WEAK = ["C_sizing", "D1_rebalance_freq", "E_single_cap"]
+
+
+def _fake_importance(vals_df, score, dims):
+    importance = {d: (0.9 - 0.1 * i) for i, d in enumerate(dims)}
+    prunable = [d for d in dims if d in WEAK]
+    return importance, set(prunable)
+
+
+def _mk_manifest_df(n: int, seed: int = 11) -> pd.DataFrame:
+    rng = np.random.default_rng(seed)
+    combos = list(itertools.product(*[DIMS[k] for k in DIMS]))
+    rows = []
+    for i in range(n):
+        vals = {k: v for k, v in zip(DIMS, combos[i % len(combos)], strict=False)}
+        vals["I_cost_tier"] = "frozen_l0"  # 常量维：S1 应剔除
+        rid = f"r{i:04d}"
+        rows.append(
+            {
+                "recipe_id": rid,
+                "prefix_key": "x",
+                "degraded_dimensions": "()",
+                "sharpe": round(float(rng.uniform(0.05, 0.6)), 4),  # 全部 <2：好得可疑线零命中
+                "ann_return": 0.05,
+                "max_drawdown": -0.3,
+                "avg_turnover": 0.03,
+                "net_days": 1600,
+                "values_json": json.dumps(vals, sort_keys=True),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _write_run(repo: Path, n_manifest: int = TIER1, n_sampled: int = TIER1, neg_extra_rows: int = 0) -> Path:
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    run.mkdir(parents=True, exist_ok=True)
+    mf = _mk_manifest_df(n_manifest)
+    mf.to_csv(run / "manifest.csv", index=False)
+    neg_cols = ["recipe_id", "death_layer", "death_reason", "values", "degraded_dimensions", "detail"]
+    neg = pd.DataFrame(
+        [
+            {
+                "recipe_id": f"n{i}",
+                "death_layer": "eval",
+                "death_reason": "synthetic",
+                "values": "{}",
+                "degraded_dimensions": "",
+                "detail": "",
+            }
+            for i in range(neg_extra_rows)
+        ],
+        columns=neg_cols,
+    )
+    neg.to_csv(run / "negatives.csv", index=False)
+    (run / "summary.json").write_text(
+        json.dumps(
+            {
+                "run_ts": "20260925-111219",
+                "mode": "batch_a_census",
+                "n_sampled": n_sampled,
+                "evaluated": n_manifest,
+                "eval_dead": 0,
+                "backtest_dead": 0,
+                "gate_dead": 0,
+                "degraded_recipes": 0,
+                "window": ["2019-01-04", "2025-09-09"],
+                "seed": 20260915,
+                "n_trials_effective": 12,
+                "net_returns_file": None,
+            }
+        ),
+        encoding="utf-8",
+    )
+    return run
+
+
+@pytest.fixture()
+def repo(tmp_path: Path) -> Path:
+    (tmp_path / "config").mkdir(parents=True)
+    (tmp_path / "config" / "search_space_prereg.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "budget_caps": {
+                    "tier1_points": TIER1,
+                    "tier2_points": TIER2,
+                    "cost_gate_in_every_tier": True,
+                    "per_point_seconds_measured": 35.33,
+                    "vram": {"concurrency": 1},
+                },
+                "tracks": {"f06_grid": {"condition_stratification": {"search_window": ["2019-01-04", "2025-09-09"]}}},
+            },
+            allow_unicode=True,
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "config" / "exam_scale_cost_gate.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "cost_gate": {"tiers_bp": [0, 5, 10, 20, 40], "survival_floor": 0.0, "monotonic_tol": 1e-09},
+            },
+            allow_unicode=True,
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "data" / "runtime").mkdir(parents=True)
+    (tmp_path / "data" / "runtime" / "process_reaper_keep.txt").write_text("", encoding="utf-8")
+    (tmp_path / ".runtime" / "logs").mkdir(parents=True)
+    (tmp_path / ".runtime" / "logs" / "grid_t1_restart9_20260925.log").write_text(
+        "line1\nline2\nboom\n", encoding="utf-8"
+    )
+    return tmp_path
+
+
+class _FakeProc:
+    def __init__(self, rc=None):
+        self._rc = rc
+        self.pid = 424242
+
+    def poll(self):
+        return self._rc
+
+
+class _Recorder:
+    def __init__(self, rc=None):
+        self.calls = []
+        self._rc = rc
+
+    def __call__(self, cmd, cwd, log_path):
+        self.calls.append((list(cmd), Path(cwd), Path(log_path)))
+        return _FakeProc(self._rc)
+
+
+def _replay_ok(run_dir, cells, tiers):
+    return {rid: {float(b): 0.5 - 0.01 * i for i, b in enumerate(sorted(tiers))} for rid, _ in cells}
+
+
+def _procs_nothing():
+    return []
+
+
+def _gpu_free():
+    return []
+
+
+def _e0_ok(_repo_root=None):
+    return True, "injected_ok"
+
+
+# ------------------------------------------------------------------ 证尺① 全过→选层正确且确定
+def test_full_pass_builds_subspace_and_launches_once(repo: Path):
+    run = _write_run(repo)
+    rec = _Recorder()
+    status, code = mod.run_handover(
+        repo,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=rec,
+        e0_gate=_e0_ok,
+        observe_seconds=0.0,
+    )
+    assert status == "LAUNCHED" and code == 0
+
+    verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
+    assert verdict["all_green"] is True
+    assert verdict["garbage_hits"] == []
+    assert {k: v["pass"] for k, v in verdict["criteria"].items()} == {k: True for k in verdict["criteria"]}
+
+    sub = json.loads((run / "t2_subspace.json").read_text(encoding="utf-8"))
+    # 弱维参数展开（全层保留）；主效应维裁到 ≤ceil(0.2*n 层)；常量维 I_cost_tier 不入册
+    assert "I_cost_tier" not in sub
+    for d in WEAK:
+        assert sorted(sub[d]) == sorted(DIMS[d])
+    for d in STRONG:
+        assert len(sub[d]) <= max(1, int(np.ceil(0.2 * len(DIMS[d]))))
+    pts = 1
+    for vs in sub.values():
+        pts *= len(vs)
+    assert pts <= TIER2  # 穷尽点数 ≤tier2_points（cap 内）
+
+    # 确定性：同 manifest 重建必产出同字节 JSON
+    b1 = (run / "t2_subspace.json").read_bytes()
+
+    # cap 剪枝腿单测：全维弱（不裁层）→ 原生积 2^6=64 超 cap=8 → 剪枝必把穷尽点数压回 ≤cap
+    caps = mod.load_prereg_caps(repo / "config" / "search_space_prereg.yaml")
+    probe = mod.build_t2_subspace(run, caps, importance_fn=lambda v, s, d: ({x: 0.5 for x in d}, set(d)))
+    pts_probe = 1
+    for vs in probe["subspace"].values():
+        pts_probe *= len(vs)
+    assert probe["meta"]["pruned_levels"], "超 cap 必触发确定性剪层"
+    assert pts_probe <= TIER2 and probe["expected_points"] <= TIER2
+    mod.build_t2_subspace(run, caps, importance_fn=_fake_importance)
+    assert (run / "t2_subspace.json").read_bytes() == b1
+
+    # 发车命令沿用既有 CLI 语义
+    cmd = rec.calls[0][0]
+    assert "--stage" in cmd and cmd[cmd.index("--stage") + 1] == "t2"
+    assert "--subspace-json" in cmd and cmd[cmd.index("--subspace-json") + 1].endswith("t2_subspace.json")
+    assert cmd[cmd.index("--start") + 1] == "2019-01-04"
+    # 认领标记 + reaper keep 登记
+    claim = yaml.safe_load((run / "t2_handover_claim.yaml").read_text(encoding="utf-8"))
+    assert claim["launched"] is True
+    keep = (repo / "data" / "runtime" / "process_reaper_keep.txt").read_text(encoding="utf-8")
+    assert "factory_grid_executor" in keep
+
+    # 再巡一轮：ALREADY_CLAIMED，不双发
+    status2, code2 = mod.run_handover(
+        repo,
+        proc_scan=lambda: [(1, "python x/factory_grid_executor.py --stage t2")],
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=rec,
+        e0_gate=_e0_ok,
+        observe_seconds=0.0,
+    )
+    assert status2 == "ALREADY_CLAIMED" and code2 == 0
+    assert len(rec.calls) == 1
+    # 五档重放只发生一次（verdict 缓存按 manifest sha256）
+    calls_before = len(rec.calls)
+    assert calls_before == 1
+
+
+# ------------------------------------------------------------------ 证尺② 完成率红→必红且不发车
+def test_completion_shortfall_verdict_red_and_no_launch(repo: Path):
+    run = _write_run(repo, n_manifest=TIER1 - 5, n_sampled=TIER1)  # 55/60≈91.7%<95%
+    rec = _Recorder()
+    status, code = mod.run_handover(
+        repo,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=rec,
+        e0_gate=_e0_ok,
+        observe_seconds=0.0,
+    )
+    assert status == "VERDICT_RED" and code == 1
+    assert rec.calls == []  # 红=绝不发车
+    assert not (run / "t2_handover_claim.yaml").exists()  # 红=绝不认领
+    verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
+    assert verdict["all_green"] is False
+    assert "manifest_points" in verdict["blocking_criteria"]
+    g = verdict["garbage_lines"]["completion_rate"]
+    assert g["hit"] is True and abs(g["measured"] - 55 / 60) < 1e-6
+
+
+# ------------------------------------------------------------------ 证尺③ claim 在场→拒发车
+def test_existing_claim_blocks_second_launch(repo: Path):
+    run = _write_run(repo)
+    (run / "t2_handover_claim.yaml").write_text(
+        yaml.safe_dump({"pid": 999999, "launched": False, "note": "另一守望器先手"}), encoding="utf-8"
+    )
+    rec = _Recorder()
+    status, code = mod.run_handover(
+        repo,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=rec,
+        e0_gate=_e0_ok,
+        observe_seconds=0.0,
+    )
+    assert status == "ALREADY_CLAIMED" and code == 0
+    assert rec.calls == []
+    assert not (run / "handover_verdict.yaml").exists()  # 认领在场连验收都不重做（防双写）
+
+
+# ------------------------------------------------------------------ 证尺④ T1 在跑无 manifest→WAITING
+def test_running_t1_without_manifest_waits(repo: Path):
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    run.mkdir(parents=True)
+    procs = [(3584, "python scripts/backtest/factory_grid_executor.py --stage t1 --start 2019-01-04 --end 2025-09-09")]
+    status, code = mod.run_handover(
+        repo,
+        proc_scan=lambda: procs,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=_Recorder(),
+        e0_gate=_e0_ok,
+    )
+    assert status == "WAITING" and code == 0
+    assert not (run / "handover_verdict.yaml").exists()  # WAITING 不误判死也不误验收
+
+    # 进程亡且无 manifest → T1_DIED（附日志尾部指针，不自动重启）
+    status2, code2 = mod.run_handover(
+        repo,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=_Recorder(),
+        e0_gate=_e0_ok,
+    )
+    assert status2 == "T1_DIED" and code2 == 1
+    assert status2 == "T1_DIED"
+
+
+# ------------------------------------------------------------------ 附加护栏（非四证尺）
+def test_gpu_busy_defers_and_releases_claim(repo: Path):
+    _write_run(repo)
+    rec = _Recorder()
+    busy = [(777, "python scripts/backtest/factory_grid_executor.py --stage t1")]
+    status, code = mod.run_handover(
+        repo,
+        proc_scan=lambda: busy,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=rec,
+        e0_gate=_e0_ok,
+        observe_seconds=0.0,
+    )
+    assert status.startswith("DEFERRED") and code == 0
+    assert rec.calls == []
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    assert not (run / "t2_handover_claim.yaml").exists()  # DEFERRED 不留僵尸认领
+
+
+def test_instant_death_launch_releases_claim(repo: Path):
+    _write_run(repo)
+    rec = _Recorder(rc=3)  # 秒败（如 E0 拒）
+    status, code = mod.run_handover(
+        repo,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=rec,
+        e0_gate=_e0_ok,
+        observe_seconds=3.0,
+    )
+    assert status == "LAUNCH_FAILED" and code == 1
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    assert not (run / "t2_handover_claim.yaml").exists()  # 撤认领供下轮重试
+
+
+def test_spot_below_monotonic_fails_verdict(repo: Path):
+    run = _write_run(repo)
+
+    def _replay_violate(run_dir, cells, tiers):
+        out = _replay_ok(run_dir, cells, tiers)
+        k = next(iter(out))
+        rows = out[k]
+        rows[max(rows)] = rows[min(rows)] + 1.0  # 40bp 档反超 0bp=非单调+穿地板
+        return out
+
+    status, code = mod.run_handover(
+        repo,
+        allow_launch=False,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_violate,
+        importance_fn=_fake_importance,
+        launcher=_Recorder(),
+        e0_gate=_e0_ok,
+    )
+    assert status == "VERDICT_RED" and code == 1
+    verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
+    assert verdict["criteria"]["cost_gate_spot"]["pass"] is False
+    assert "cost_gate_spot" in verdict["blocking_criteria"]
