@@ -1,0 +1,94 @@
+# 波 5.1（W-52/W-53）施工队 · 本批新建件登记需求（总包据此集中登记）
+# [TTL] task_bound
+# 说明：本文件**不是**登记本身（施工队不登记、不碰热册），只把登记所需字段一次交齐。
+# 判据：CREATE-GUARD（新建 .md/.yaml 须 creation_token，tests/ 豁免）+ TRANSLATION-COVERAGE
+#       （新 .py 须大白话 plain-zh ≥8 字）+ DEPGRAPH（先登记后施工）。
+generated_by: 波 5.1 派生计数施工队（车道 .aidrafts/st-final-build-20260926，分支 session/st-final-build-20260926）
+turn_budget: 60
+verified:
+  - 新建件清单与本会话 Write 落盘记录 + `git status --untracked-files=all` 双向核对（三件，全部在车道内）
+  - creation_token / 翻译册 / depgraph 三项均**未**由本施工队登记（按分工交总包集中写）
+  - 三个生产侧文件均为**修改既有件**，无净新增脚本（全资产净零面：本包 .py 生产件净增 0）
+assumed:
+  - capability_id 前缀沿用各域既有册内风格，未逐一核可注册性
+  - 新测试件的 module_id 是否需入 module_translation_registry 由总包按 TRANSLATION-COVERAGE 口径定
+evidence_ref: docs/_working/total_command_closeout/wave5/registry_derivation_report.md
+
+new_artifacts:
+  - file: tests/governance/test_registry_derivation_canary.py
+    kind: test_py
+    create_guard_exempt: true          # tests/ 豁免
+    creation_token_capability_id_suggested: null
+    translation:
+      name-zh: 派生计数尺反事实红证集
+      plain-zh: 故意删掉一条登记项或改一个在册数字，看管计数的尺会不会报红；报红才算尺有效，喂一致数据必须放绿
+    depgraph:
+      module_id: TEST-GOV-REGISTRY-DERIVATION-CANARY
+      domain: D_GOV_SCRIPTS
+      layer: test
+    tests_for: scripts/governance/d3_metadata/check_registry_consistency.py
+    algo_note_sync_same_bag_required: false
+    algo_note_reason: 纯测试件，不新增算法判据；判据本体在被测的三件既有生成器里
+    clone_risk:
+      declared_merge_or_replace: 与既有 tests/governance/test_registry_entry_counts.py 分工不重叠——
+        那张盯 CR-007 判定矩阵与回填手术（手工 ENTRY_SPECS 口径），本张盯"口径由 ROOR counting_rule 派生"、
+        CR-007c summary 标量、CR-008 ssot↔covers 三把新尺的红绿双向证明
+      notes: 若判为同域可合并，请把用例并入既有张，勿双写
+
+  - file: docs/_working/total_command_closeout/wave5/registry_derivation_report.md
+    kind: doc_md
+    creation_token_capability_id_suggested: CAP-GOV-REGISTRY-DERIVATION-DOSSIER
+    translation:
+      name-zh: 波 5.1 派生计数案卷
+      plain-zh: 记录哪些登记表的数字与实际条目不符、差多少、怎么改成机器数出来的，以及要总包落地的补丁原文
+    depgraph:
+      module_id: DOC-WAVE5-REGISTRY-DERIVATION
+      domain: D_GOV_DOCS
+      layer: working_doc
+    algo_note_sync_same_bag_required: false
+    algo_note_reason: 案卷文本，无算法判据
+
+  - file: docs/_working/total_command_closeout/wave5/registration_needs.yaml
+    kind: doc_yaml
+    creation_token_capability_id_suggested: CAP-GOV-WAVE5-REGISTRATION-NEEDS
+    translation:
+      name-zh: 波 5.1 登记需求单
+      plain-zh: 把这批新建文件登记要用的字段（令牌建议、大白话简介、依赖图编号）一次列齐，交给总包统一入册
+    depgraph:
+      module_id: DOC-WAVE5-REGISTRATION-NEEDS
+      domain: D_GOV_DOCS
+      layer: working_doc
+    algo_note_sync_same_bag_required: false
+    algo_note_reason: 登记需求清单，无算法判据
+
+modified_existing_artifacts_no_token_needed:
+  - file: scripts/governance/_shared/registry_entry_count.py
+    change_summary: 新增 parse_counting_rule / declared_count_spec / count_by_spec / _walk_key / _sum_lists；
+      count_primary_registry_entries 与 primary_count_entry_key 加声明口径优先路（手工键白名单降为兜底）
+    header_module_id: MOD-INF-005      # 在册，未改 module_id
+    consumers_same_bag:
+      - scripts/governance/generators/generate_registry_master_index.py
+      - scripts/governance/d3_metadata/validate_registry_master_index.py
+      - scripts/governance/generators/refresh_master_entries.py
+      - scripts/governance/d3_metadata/check_registry_consistency.py
+    note: 四个消费者同仓共存，本包只改前两个的调用点；后两个用默认参数未受影响（向后兼容）
+
+  - file: scripts/governance/d3_metadata/check_registry_consistency.py
+    change_summary: CR-007 口径三级解析 + _undeterminable_verdict 防谎报 MISSING + 回填改读 row['rule']；
+      新增 CR-007c verify_roor_summary、CR-008 verify_domain_ssot（含 --check-domain-covers）
+    header_module_id: MOD-INF-005
+    algo_note_sync_same_bag_required: false
+    algo_note_reason: 判据是"在册数字 ↔ 目标册条目实长"的结构对账，无阈值/算法新增（未改任何既有阈值）
+
+  - file: scripts/governance/generators/generate_registry_master_index.py
+    change_summary: 新增 _roor_counting_rules()，scan_catalogs/extract_registry_info 带口径参数 ⇒ 主索引
+      entry_count 由 ROOR 本条 counting_rule 派生（18 行数值变化，10 行从恒 0 变实数）
+    header_module_id: MOD-INF-005
+
+pending_landing_by_master_package:
+  - 热册 ROOR 19 行 entry_count + summary 4 标量（案卷 §5.1/§5.2；机械路径
+    `check_registry_consistency.py --update-entry-counts --refresh-summary`）
+  - ROOR REG-STATE-VOCAB-001 description 去写死计数（案卷 §5.3）
+  - functional_domain_registry 10 条 ssot_path↔covers（案卷 §5.4，其中 8 条须裁定）
+  - ROOR REG-METAQ-001 counting_rule 文本改成可机械解析形态（案卷 §5.5）
+  - registry_master_index.yaml 机生再生（案卷 §5.6）

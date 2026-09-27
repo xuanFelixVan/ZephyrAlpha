@@ -1,0 +1,145 @@
+# 波 1B 施工队 · 本批新建件登记需求（机生：由施工队逐件自查盘面产出，总包据此集中登记）
+# [TTL] task_bound
+# 说明：本文件**不是**登记本身（施工队不登记），只把登记所需的字段一次交齐。
+# 判据：CREATE-GUARD（新建件须 creation_token，tests/ 豁免）+ TRANSLATION-COVERAGE
+#       （新 .py 须大白话简介 plain-zh ≥8 字）+ DEPGRAPH（先登记后施工）。
+generated_by: 波 1B 提交链解毒施工队（车道 .aidrafts/st-final-build-20260926）
+turn_budget: 34
+verified:
+  - 逐件新建清单由本会话 Write 落盘记录与 `git status --untracked-files=all` 双向核对
+  - creation_token/翻译/depgraph 三项均**未**由本施工队登记（按分工交总包）
+assumed:
+  - capability_id 命名前缀沿用各域既有册内风格（未逐一核可注册性）
+evidence_ref: docs/_working/total_command_closeout/wave1b/chain_detox_report.md
+
+new_artifacts:
+  - file: src/zephyr/gov_enforcement/rule_bridge/union_priority_ruler.py
+    kind: src_py
+    creation_token_capability_id_suggested: CAP-GOV-UNION-PRIORITY-RULER
+    translation:
+      name-zh: 聚合台优先号码同号断言尺
+      plain-zh: 检查合并后的门禁和它吸收掉的老门禁，有没有在真正装载的那一层占了同一个执行序号；占了就点名两台报错
+    depgraph:
+      module_id: MOD-GOV-UNIONPRI-001
+      domain: D_GOVERNANCE
+      layer: script
+    algo_note_sync_same_bag_required: false
+    algo_note_reason: 纯结构断言尺，无算法判据新增（priority 真源仍是 GateSpec，本件只读）
+    clone_risk:
+      declared_merge_or_replace: 无替代条目（新补断言尺，波 1B 1.3 点名要求）
+      notes: 与 commit_gate_registry.CommitGateRegistry.register 的同 priority 阻断不同对象：
+        那个管"注册时任意两台撞号"，本件专盯"聚合台↔其吸收台"这一设计内关系并承载白名单注因；
+        可被 review 判为部分重叠，登记时请在 capability 卡里写明分工。
+
+  - file: src/zephyr/shared/foundation/flag_read_state.py
+    kind: src_py
+    creation_token_capability_id_suggested: CAP-SHARED-FLAG-TRI-STATE-READ
+    translation:
+      name-zh: 旗标三态读取尺
+      plain-zh: 读功能开关时分清三种结果：读到开、读到关、根本读不到；读不到必须报红说清是哪个开关，绝不当成关默默走下去
+    depgraph:
+      module_id: MOD-GOV-FLAGTRI-001
+      domain: D_SHARED
+      layer: foundation
+    algo_note_sync_same_bag_required: true
+    algo_note_reason: 提交链旗标读取唯一点（git_commit_gateway 三处）改道本件，属判定链输入源变更；
+      若 TDM/algo_flow 有 git_commit_gateway 说明件须同批同步
+    clone_risk:
+      declared_merge_or_replace: 吸收 git_commit_gateway 内三处自写 try/except→bool 的两态降级读法
+        （_immutable_tree_enabled / _commit_queue_serializer_enabled / _precommit_run_enabled）
+      notes: 不取代 zephyr/shared/foundation/flags.py（那仍是旗标值真源与注册表本体），
+        本件只是其上的读取结局分类器；两态读法在调用点已被删除，无第二实现面残留。
+
+  - file: tests/gov_enforcement/test_union_priority_canary.py
+    kind: test_py
+    creation_token_capability_id_suggested: null
+    translation:
+      name-zh: 同号断言尺红证
+      plain-zh: 故意让聚合台和它吸收的老台占同一个号，验证那把尺一定会红并点名两台
+    depgraph:
+      module_id: null
+      domain: D_GOVERNANCE
+      layer: test
+    algo_note_sync_same_bag_required: false
+    clone_risk:
+      declared_merge_or_replace: null
+      notes: tests/ 豁免 CREATE-GUARD；仍须过 TRANSLATION-COVERAGE 与三行头注口径自查（如需登记请一并）
+
+  - file: tests/gov_enforcement/test_flag_tri_state_canary.py
+    kind: test_py
+    creation_token_capability_id_suggested: null
+    translation:
+      name-zh: 旗标三态红证
+      plain-zh: 在临时副本里把开关册改坏，验证系统报红点名旗标，而不是当成关闭悄悄走下去
+    depgraph: {module_id: null, domain: D_GOVERNANCE, layer: test}
+    algo_note_sync_same_bag_required: false
+    clone_risk: {declared_merge_or_replace: null, notes: tests/ 豁免 CREATE-GUARD}
+
+  - file: tests/governance/test_enqueue_preflight_bypass_canary.py
+    kind: test_py
+    creation_token_capability_id_suggested: null
+    translation:
+      name-zh: 入队预检旁路红证
+      plain-zh: 从后门直接往提交队列里塞注定要被拦的件，验证三条入口现在都会先被同一道预检挡住
+    depgraph: {module_id: null, domain: D_GOVERNANCE, layer: test}
+    algo_note_sync_same_bag_required: false
+    clone_risk:
+      declared_merge_or_replace: null
+      notes: 与既有 tests/governance/test_enqueue_preflight.py 同域不同对象（那件测预检模块本身，本件测三条入队通道的覆盖性）
+
+  - file: tests/governance/test_dead_letter_eviction_canary.py
+    kind: test_py
+    creation_token_capability_id_suggested: null
+    translation:
+      name-zh: 失败袋摘除红证
+      plain-zh: 沙盘里造一个必死的队列袋，验证它死掉之后后面的袋子还能各自往前走，而不是整条链停住
+    depgraph: {module_id: null, domain: D_GOVERNANCE, layer: test}
+    algo_note_sync_same_bag_required: false
+    clone_risk: {declared_merge_or_replace: null, notes: tests/ 豁免 CREATE-GUARD}
+
+  - file: tests/governance/test_dead_letter_ownership_canary.py
+    kind: test_py
+    creation_token_capability_id_suggested: null
+    translation:
+      name-zh: 死信属主红证
+      plain-zh: 验证每封死信当场能查到是谁的袋子、第一次死在什么时候、归因签名是什么，同一种死法三次后就禁止再盲投
+    depgraph: {module_id: null, domain: D_GOVERNANCE, layer: test}
+    algo_note_sync_same_bag_required: false
+    clone_risk: {declared_merge_or_replace: null, notes: tests/ 豁免 CREATE-GUARD}
+
+  - file: docs/_working/total_command_closeout/wave1b/chain_detox_report.md
+    kind: doc_md
+    creation_token_capability_id_suggested: CAP-GOV-WAVE1B-CHAIN-DETOX-CASEFILE
+    translation:
+      name-zh: 波 1B 提交链解毒案卷
+      plain-zh: 记下这一波改了提交链哪五处、为什么改、每处的红证命令与实测读数
+    depgraph: {module_id: null, domain: D_GOVERNANCE, layer: doc}
+    algo_note_sync_same_bag_required: false
+    clone_risk:
+      declared_merge_or_replace: null
+      notes: frontmatter 仅 ttl/completes_when 两字段；与 wave1a/ 同目录族不同战役，无内容重叠
+
+  - file: docs/_working/total_command_closeout/wave1b/registration_needs.yaml
+    kind: config_yaml
+    creation_token_capability_id_suggested: CAP-GOV-WAVE1B-REGISTRATION-NEEDS
+    translation:
+      name-zh: 波 1B 新建件登记需求册
+      plain-zh: 列出这一批新文件的建号需求，交总包一次性集中登记，施工队自己不去登记
+    depgraph: {module_id: null, domain: D_GOVERNANCE, layer: doc}
+    algo_note_sync_same_bag_required: false
+    clone_risk:
+      declared_merge_or_replace: null
+      notes: 机生（本批逐件自查产出），禁手工二次维护；总包登记后本件随案卷归档
+
+# ── 施工队无法自处置的残留（须总包动作）────────────────────────────────────
+stray_artifacts:
+  - file: tests/governance/test_enqueue_preflight_bypass_canary.py.tmp
+    reason: 本会话一次 Write 被中断留下的半截占位文件（内容已改写为纯注释占位，不含代码）；
+      施工队按硬约束"禁任何删除动作"未删，交总包 git clean 侧处置
+    action_needed: 删除或忽略（勿 git add）
+
+modified_existing_files:
+  - scripts/commit_queue.py        # 1.7（预检唯一漏斗）+ 1.7b（摘除/重建）+ 1.7c（封袋/熔断）
+  - scripts/git_commit.py          # 1.7 交互正门 --enqueue 直调补预检根
+  - scripts/governance/commit_queue_landing.py  # 1.7 reroute 通道显式 skip（已自跑预检）
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py  # 1.6 三处旗标读取点改三态读

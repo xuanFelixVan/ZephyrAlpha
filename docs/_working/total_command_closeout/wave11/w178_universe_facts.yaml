@@ -1,0 +1,2796 @@
+artifact: w178_universe_facts.yaml
+generated_by: scripts/governance/wave11/w178_universe_facts_gen.py
+command: set -a; . /d/ZephyrAlpha/config/.env.clickhouse; set +a; PYTHONPATH=$PWD/src python scripts/governance/wave11/w178_universe_facts_gen.py
+generated_at_utc: '2026-09-26T18:05:53+00:00'
+lane_python: 3.12.8
+channels:
+  channel_1: scripts/governance/data_supply/ch_probe.py --file (W-180.4 标准探针, query_strict)
+  channel_1_jsonl: D:\ZephyrAlpha\.aidrafts\st-final-build-20260926\docs\_working\total_command_closeout\wave11\probe\ch_probe_20260926T180553Z.jsonl
+  channel_2: zephyr.data.ch_reader.query_rows() 直读（同一传输层、另一调用点）
+  config_note: 车道无 config/.env.clickhouse，读数侧以 os.environ override（ch_config 在册允许）
+  read_only: 全部为 SELECT；未对 CH/PG 做任何写操作
+readings:
+  sc_880_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent WHERE sector_code LIKE '880%'
+    value: 467
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.567+00:00'
+      first_row_sample:
+      - 467
+      elapsed_ms: 328.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:53+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_880_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.sector_constituent WHERE sector_code LIKE '880%'
+    value: 89586
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.888+00:00'
+      first_row_sample:
+      - 89586
+      elapsed_ms: 16.0
+      sql_executed: SELECT count() FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_881_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent WHERE sector_code LIKE '881%'
+    value: 128
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.911+00:00'
+      first_row_sample:
+      - 128
+      elapsed_ms: 16.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '881%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_881_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.sector_constituent WHERE sector_code LIKE '881%'
+    value: 5538
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.917+00:00'
+      first_row_sample:
+      - 5538
+      elapsed_ms: 0.0
+      sql_executed: SELECT count() FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '881%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_all_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent
+    value: 595
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.923+00:00'
+      first_row_sample:
+      - 595
+      elapsed_ms: 31.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_all_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.sector_constituent
+    value: 95124
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.953+00:00'
+      first_row_sample:
+      - 95124
+      elapsed_ms: 47.0
+      sql_executed: SELECT count() FROM c1_market.sector_constituent FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  kl880_distinct_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.kline_sector_880
+    value: 729
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:50.994+00:00'
+      first_row_sample:
+      - 729
+      elapsed_ms: 187.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.kline_sector_880 FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  kl880_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.kline_sector_880
+    value: 761018
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.185+00:00'
+      first_row_sample:
+      - 761018
+      elapsed_ms: 172.0
+      sql_executed: SELECT count() FROM c1_market.kline_sector_880 FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cb_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.concept_board
+    value: 375
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.363+00:00'
+      first_row_sample:
+      - 375
+      elapsed_ms: 16.0
+      sql_executed: SELECT count() FROM c1_market.concept_board FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cb_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT board_code) FROM c1_market.concept_board
+    value: 375
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.372+00:00'
+      first_row_sample:
+      - 375
+      elapsed_ms: 0.0
+      sql_executed: SELECT count(DISTINCT board_code) FROM c1_market.concept_board FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cbc_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.concept_board_constituent
+    value: 32659
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.377+00:00'
+      first_row_sample:
+      - 32659
+      elapsed_ms: 47.0
+      sql_executed: SELECT count() FROM c1_market.concept_board_constituent FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cbc_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT board_code) FROM c1_market.concept_board_constituent
+    value: 375
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.424+00:00'
+      first_row_sample:
+      - 375
+      elapsed_ms: 15.0
+      sql_executed: SELECT count(DISTINCT board_code) FROM c1_market.concept_board_constituent FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sl_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.sector_list
+    value: 5217
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.430+00:00'
+      first_row_sample:
+      - 5217
+      elapsed_ms: 0.0
+      sql_executed: SELECT count() FROM c1_market.sector_list FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sl_sector_names:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_name) FROM c1_market.sector_list
+    value: 1
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.440+00:00'
+      first_row_sample:
+      - 1
+      elapsed_ms: 16.0
+      sql_executed: SELECT count(DISTINCT sector_name) FROM c1_market.sector_list FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sl_symbols:
+    kind: scalar
+    sql: SELECT count(DISTINCT symbol_canonical) FROM c1_market.sector_list
+    value: 5217
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.451+00:00'
+      first_row_sample:
+      - 5217
+      elapsed_ms: 0.0
+      sql_executed: SELECT count(DISTINCT symbol_canonical) FROM c1_market.sector_list FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  gap_sql_880:
+    kind: scalar
+    sql: SELECT count() FROM (SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 WHERE sector_code LIKE '880%') WHERE
+      sector_code NOT IN (SELECT DISTINCT sector_code FROM c1_market.sector_constituent WHERE sector_code LIKE '880%')
+    value: 134
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.456+00:00'
+      first_row_sample:
+      - 134
+      elapsed_ms: 187.0
+      sql_executed: SELECT count() FROM (SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 FINAL WHERE sector_code
+        LIKE '880%') WHERE sector_code NOT IN (SELECT DISTINCT sector_code FROM c1_market.sector_constituent FINAL WHERE sector_code
+        LIKE '880%')
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  gap_sql_881:
+    kind: scalar
+    sql: SELECT count() FROM (SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 WHERE sector_code LIKE '881%') WHERE
+      sector_code NOT IN (SELECT DISTINCT sector_code FROM c1_market.sector_constituent WHERE sector_code LIKE '881%')
+    value: 0
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.640+00:00'
+      first_row_sample:
+      - 0
+      elapsed_ms: 94.0
+      sql_executed: SELECT count() FROM (SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 FINAL WHERE sector_code
+        LIKE '881%') WHERE sector_code NOT IN (SELECT DISTINCT sector_code FROM c1_market.sector_constituent FINAL WHERE sector_code
+        LIKE '881%')
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc880_named_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent WHERE sector_code LIKE '880%' AND sector_name
+      <> '' AND sector_name NOT LIKE '880%'
+    value: 0
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.736+00:00'
+      first_row_sample:
+      - 0
+      elapsed_ms: 31.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%'
+        AND sector_name <> '' AND sector_name NOT LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sl_names:
+    kind: set
+    sql: SELECT DISTINCT sector_name FROM c1_market.sector_list ORDER BY sector_name
+    value: <1 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.764+00:00'
+      first_row_sample:
+      - 沪深A股
+      elapsed_ms: 32.0
+      sql_executed: SELECT DISTINCT sector_name FROM c1_market.sector_list FINAL ORDER BY sector_name
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: null
+    agree_rows: true
+  sl_profile:
+    kind: agg
+    sql: SELECT exchange, data_source, count(DISTINCT symbol_canonical), count() FROM c1_market.sector_list GROUP BY exchange,
+      data_source ORDER BY exchange, data_source
+    value:
+    - - SH
+      - miniqmt
+      - '2316'
+      - '2316'
+    - - SZ
+      - miniqmt
+      - '2901'
+      - '2901'
+    channel_1:
+      outcome: ok
+      rows_returned: 2
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.792+00:00'
+      first_row_sample:
+      - SH
+      - miniqmt
+      - 2316
+      - 2316
+      elapsed_ms: 0.0
+      sql_executed: SELECT exchange, data_source, count(DISTINCT symbol_canonical), count() FROM c1_market.sector_list FINAL
+        GROUP BY exchange, data_source ORDER BY exchange, data_source
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 2
+    agree: null
+    agree_rows: true
+  sc_880_fresh:
+    kind: onerow
+    sql: SELECT toString(max(update_date)), toString(max(valid_from)), toString(max(valid_to)), toString(max(fetched_at)),
+      toString(max(ingest_ts)) FROM c1_market.sector_constituent WHERE sector_code LIKE '880%'
+    value:
+    - '2026-09-03'
+    - '2026-09-03'
+    - None
+    - '2026-07-28 17:03:08.000'
+    - '2026-09-03 11:39:26.000'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.799+00:00'
+      first_row_sample:
+      - '2026-09-03'
+      - '2026-09-03'
+      - null
+      - '2026-07-28 17:03:08.000'
+      - '2026-09-03 11:39:26.000'
+      elapsed_ms: 31.0
+      sql_executed: SELECT toString(max(update_date)), toString(max(valid_from)), toString(max(valid_to)), toString(max(fetched_at)),
+        toString(max(ingest_ts)) FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:54+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_881_fresh:
+    kind: onerow
+    sql: SELECT toString(max(update_date)), toString(max(valid_from)), toString(max(valid_to)) FROM c1_market.sector_constituent
+      WHERE sector_code LIKE '881%'
+    value:
+    - '2026-07-22'
+    - '2026-07-23'
+    - None
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.832+00:00'
+      first_row_sample:
+      - '2026-07-22'
+      - '2026-07-23'
+      - null
+      elapsed_ms: 15.0
+      sql_executed: SELECT toString(max(update_date)), toString(max(valid_from)), toString(max(valid_to)) FROM c1_market.sector_constituent
+        FINAL WHERE sector_code LIKE '881%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  kl880_fresh:
+    kind: onerow
+    sql: SELECT toString(max(trade_date)), count(DISTINCT period), any(period) FROM c1_market.kline_sector_880
+    value:
+    - '2026-09-24'
+    - '1'
+    - 1d
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:51.838+00:00'
+      first_row_sample:
+      - '2026-09-24'
+      - 1
+      - 1d
+      elapsed_ms: 204.0
+      sql_executed: SELECT toString(max(trade_date)), count(DISTINCT period), any(period) FROM c1_market.kline_sector_880
+        FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cb_fresh:
+    kind: onerow
+    sql: SELECT toString(max(valid_from)), toString(max(valid_to)), toString(max(updated_at)) FROM c1_market.concept_board
+    value:
+    - '2026-09-24'
+    - None
+    - '2026-09-24 10:22:21.000'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.051+00:00'
+      first_row_sample:
+      - '2026-09-24'
+      - null
+      - '2026-09-24 10:22:21.000'
+      elapsed_ms: 15.0
+      sql_executed: SELECT toString(max(valid_from)), toString(max(valid_to)), toString(max(updated_at)) FROM c1_market.concept_board
+        FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cbc_fresh:
+    kind: onerow
+    sql: SELECT toString(max(valid_from)), toString(max(valid_to)), toString(max(updated_at)) FROM c1_market.concept_board_constituent
+    value:
+    - '2026-09-24'
+    - None
+    - '2026-09-24 10:22:21.000'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.059+00:00'
+      first_row_sample:
+      - '2026-09-24'
+      - null
+      - '2026-09-24 10:22:21.000'
+      elapsed_ms: 16.0
+      sql_executed: SELECT toString(max(valid_from)), toString(max(valid_to)), toString(max(updated_at)) FROM c1_market.concept_board_constituent
+        FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sl_fresh:
+    kind: onerow
+    sql: SELECT toString(max(trade_date)), toString(max(updated_at)) FROM c1_market.sector_list
+    value:
+    - '2026-09-03'
+    - '2026-09-02 17:02:43.000'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.072+00:00'
+      first_row_sample:
+      - '2026-09-03'
+      - '2026-09-02 17:02:43.000'
+      elapsed_ms: 0.0
+      sql_executed: SELECT toString(max(trade_date)), toString(max(updated_at)) FROM c1_market.sector_list FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  kl880_prefix:
+    kind: agg
+    sql: SELECT substring(sector_code,1,3) AS p, count(DISTINCT sector_code), count() FROM c1_market.kline_sector_880 GROUP
+      BY p ORDER BY p
+    value: &id001
+    - - '880'
+      - '601'
+      - '602204'
+    - - '881'
+      - '128'
+      - '158814'
+    channel_1:
+      outcome: ok
+      rows_returned: 2
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.078+00:00'
+      first_row_sample:
+      - '880'
+      - 601
+      - 602204
+      elapsed_ms: 234.0
+      sql_executed: SELECT substring(sector_code,1,3) AS p, count(DISTINCT sector_code), count() FROM c1_market.kline_sector_880
+        FINAL GROUP BY p ORDER BY p
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 2
+    agree: null
+    agree_rows: true
+  sc_prefix:
+    kind: agg
+    sql: SELECT substring(sector_code,1,3) AS p, count(DISTINCT sector_code), count() FROM c1_market.sector_constituent GROUP
+      BY p ORDER BY p
+    value: &id002
+    - - '880'
+      - '467'
+      - '89586'
+    - - '881'
+      - '128'
+      - '5538'
+    channel_1:
+      outcome: ok
+      rows_returned: 2
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.312+00:00'
+      first_row_sample:
+      - '880'
+      - 467
+      - 89586
+      elapsed_ms: 47.0
+      sql_executed: SELECT substring(sector_code,1,3) AS p, count(DISTINCT sector_code), count() FROM c1_market.sector_constituent
+        FINAL GROUP BY p ORDER BY p
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 2
+    agree: null
+    agree_rows: true
+  sc_880_source:
+    kind: agg
+    sql: SELECT data_source, count(DISTINCT sector_code), count() FROM c1_market.sector_constituent WHERE sector_code LIKE
+      '880%' GROUP BY data_source ORDER BY data_source
+    value:
+    - - tqcenter
+      - '467'
+      - '89586'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.358+00:00'
+      first_row_sample:
+      - tqcenter
+      - 467
+      - 89586
+      elapsed_ms: 31.0
+      sql_executed: SELECT data_source, count(DISTINCT sector_code), count() FROM c1_market.sector_constituent FINAL WHERE
+        sector_code LIKE '880%' GROUP BY data_source ORDER BY data_source
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: null
+    agree_rows: true
+  cb_source:
+    kind: agg
+    sql: SELECT data_source, count(DISTINCT board_code), count() FROM c1_market.concept_board GROUP BY data_source ORDER BY
+      data_source
+    value:
+    - - akshare
+      - '375'
+      - '375'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.392+00:00'
+      first_row_sample:
+      - akshare
+      - 375
+      - 375
+      elapsed_ms: 0.0
+      sql_executed: SELECT data_source, count(DISTINCT board_code), count() FROM c1_market.concept_board FINAL GROUP BY data_source
+        ORDER BY data_source
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: null
+    agree_rows: true
+  cbc_source:
+    kind: agg
+    sql: SELECT data_source, count(DISTINCT board_code), count() FROM c1_market.concept_board_constituent GROUP BY data_source
+      ORDER BY data_source
+    value:
+    - - akshare_ths
+      - '375'
+      - '32659'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.397+00:00'
+      first_row_sample:
+      - akshare_ths
+      - 375
+      - 32659
+      elapsed_ms: 16.0
+      sql_executed: SELECT data_source, count(DISTINCT board_code), count() FROM c1_market.concept_board_constituent FINAL
+        GROUP BY data_source ORDER BY data_source
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: null
+    agree_rows: true
+  sc_880_avg_size:
+    kind: onerow
+    sql: SELECT toString(avg(c)) FROM (SELECT count() AS c FROM c1_market.sector_constituent WHERE sector_code LIKE '880%'
+      GROUP BY sector_code)
+    value:
+    - '191.83297644539616'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.404+00:00'
+      first_row_sample:
+      - '191.83297644539616'
+      elapsed_ms: 31.0
+      sql_executed: SELECT toString(avg(c)) FROM (SELECT count() AS c FROM c1_market.sector_constituent FINAL WHERE sector_code
+        LIKE '880%' GROUP BY sector_code)
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cbc_avg_size:
+    kind: onerow
+    sql: SELECT toString(avg(c)) FROM (SELECT count() AS c FROM c1_market.concept_board_constituent GROUP BY board_code)
+    value:
+    - '87.09066666666666'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.435+00:00'
+      first_row_sample:
+      - '87.09066666666666'
+      elapsed_ms: 0.0
+      sql_executed: SELECT toString(avg(c)) FROM (SELECT count() AS c FROM c1_market.concept_board_constituent FINAL GROUP
+        BY board_code)
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  sc_880_stock_universe:
+    kind: scalar
+    sql: SELECT count(DISTINCT stock_code) FROM c1_market.sector_constituent WHERE sector_code LIKE '880%'
+    value: 6179
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.441+00:00'
+      first_row_sample:
+      - 6179
+      elapsed_ms: 31.0
+      sql_executed: SELECT count(DISTINCT stock_code) FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  cbc_stock_universe:
+    kind: scalar
+    sql: SELECT count(DISTINCT symbol_canonical) FROM c1_market.concept_board_constituent
+    value: 4865
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.471+00:00'
+      first_row_sample:
+      - 4865
+      elapsed_ms: 16.0
+      sql_executed: SELECT count(DISTINCT symbol_canonical) FROM c1_market.concept_board_constituent FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  scsnap_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.sector_constituent_snapshot
+    value: 570744
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.478+00:00'
+      first_row_sample:
+      - 570744
+      elapsed_ms: 0.0
+      sql_executed: SELECT count() FROM c1_market.sector_constituent_snapshot FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  scsnap_880_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent_snapshot WHERE sector_code LIKE '880%'
+    value: 467
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.488+00:00'
+      first_row_sample:
+      - 467
+      elapsed_ms: 31.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.sector_constituent_snapshot FINAL WHERE sector_code
+        LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  scsnap_fresh:
+    kind: onerow
+    sql: SELECT toString(max(snapshot_date)), toString(min(snapshot_date)), count(DISTINCT snapshot_date) FROM c1_market.sector_constituent_snapshot
+    value:
+    - '2026-09-26'
+    - '2026-09-14'
+    - '6'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.510+00:00'
+      first_row_sample:
+      - '2026-09-26'
+      - '2026-09-14'
+      - 6
+      elapsed_ms: 0.0
+      sql_executed: SELECT toString(max(snapshot_date)), toString(min(snapshot_date)), count(DISTINCT snapshot_date) FROM
+        c1_market.sector_constituent_snapshot FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  name_map_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.sector_code_name_map
+    value: 729
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.520+00:00'
+      first_row_sample:
+      - 729
+      elapsed_ms: 16.0
+      sql_executed: SELECT count() FROM c1_market.sector_code_name_map FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  name_map_880_boards:
+    kind: scalar
+    sql: SELECT count(DISTINCT sector_code) FROM c1_market.sector_code_name_map WHERE sector_code LIKE '880%'
+    value: 601
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.530+00:00'
+      first_row_sample:
+      - 601
+      elapsed_ms: 0.0
+      sql_executed: SELECT count(DISTINCT sector_code) FROM c1_market.sector_code_name_map FINAL WHERE sector_code LIKE '880%'
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  name_map_fresh:
+    kind: onerow
+    sql: SELECT toString(max(ingest_ts)), toString(min(ingest_ts)) FROM c1_market.sector_code_name_map
+    value:
+    - '2026-09-24 19:21:30.532'
+    - '2026-09-24 19:21:30.532'
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.536+00:00'
+      first_row_sample:
+      - '2026-09-24 19:21:30.532'
+      - '2026-09-24 19:21:30.532'
+      elapsed_ms: 94.0
+      sql_executed: SELECT toString(max(ingest_ts)), toString(min(ingest_ts)) FROM c1_market.sector_code_name_map FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  concept_sector_rows:
+    kind: scalar
+    sql: SELECT count() FROM c1_market.concept_sector
+    value: 375
+    channel_1:
+      outcome: ok
+      rows_returned: 1
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.625+00:00'
+      first_row_sample:
+      - 375
+      elapsed_ms: 15.0
+      sql_executed: SELECT count() FROM c1_market.concept_sector FINAL
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 1
+    agree: true
+    agree_rows: true
+  SET_scsnap880:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.sector_constituent_snapshot WHERE sector_code LIKE '880%' ORDER BY sector_code
+    value: <467 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 467
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.642+00:00'
+      first_row_sample:
+      - 880001.SH
+      elapsed_ms: 16.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.sector_constituent_snapshot FINAL WHERE sector_code LIKE '880%'
+        ORDER BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 467
+    agree: null
+    agree_rows: true
+  SET_namemap880:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.sector_code_name_map WHERE sector_code LIKE '880%' ORDER BY sector_code
+    value: <601 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 601
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.654+00:00'
+      first_row_sample:
+      - 880001.SH
+      elapsed_ms: 0.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.sector_code_name_map FINAL WHERE sector_code LIKE '880%' ORDER
+        BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 601
+    agree: null
+    agree_rows: true
+  SET_concept_sector:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.concept_sector ORDER BY sector_code
+    value: <375 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 375
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.660+00:00'
+      first_row_sample:
+      - '300008'
+      elapsed_ms: 0.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.concept_sector FINAL ORDER BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 375
+    agree: null
+    agree_rows: true
+  SET_kl880:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 WHERE sector_code LIKE '880%' ORDER BY sector_code
+    value: <601 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 601
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.664+00:00'
+      first_row_sample:
+      - 880001.SH
+      elapsed_ms: 187.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 FINAL WHERE sector_code LIKE '880%' ORDER
+        BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:55+00:00'
+      rows_returned: 601
+    agree: null
+    agree_rows: true
+  SET_kl881:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 WHERE sector_code LIKE '881%' ORDER BY sector_code
+    value: <128 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 128
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.844+00:00'
+      first_row_sample:
+      - 881002.SH
+      elapsed_ms: 94.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.kline_sector_880 FINAL WHERE sector_code LIKE '881%' ORDER
+        BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 128
+    agree: null
+    agree_rows: true
+  SET_sc880:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.sector_constituent WHERE sector_code LIKE '880%' ORDER BY sector_code
+    value: <467 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 467
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.937+00:00'
+      first_row_sample:
+      - 880001.SH
+      elapsed_ms: 31.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%' ORDER
+        BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 467
+    agree: null
+    agree_rows: true
+  SET_sc881:
+    kind: set
+    sql: SELECT DISTINCT sector_code FROM c1_market.sector_constituent WHERE sector_code LIKE '881%' ORDER BY sector_code
+    value: <128 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 128
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.967+00:00'
+      first_row_sample:
+      - 881002.SH
+      elapsed_ms: 0.0
+      sql_executed: SELECT DISTINCT sector_code FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '881%' ORDER
+        BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 128
+    agree: null
+    agree_rows: true
+  SET_cb:
+    kind: set
+    sql: SELECT DISTINCT board_code FROM c1_market.concept_board ORDER BY board_code
+    value: <375 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 375
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.974+00:00'
+      first_row_sample:
+      - '300008'
+      elapsed_ms: 16.0
+      sql_executed: SELECT DISTINCT board_code FROM c1_market.concept_board FINAL ORDER BY board_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 375
+    agree: null
+    agree_rows: true
+  SET_cbc:
+    kind: set
+    sql: SELECT DISTINCT board_code FROM c1_market.concept_board_constituent ORDER BY board_code
+    value: <375 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 375
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.979+00:00'
+      first_row_sample:
+      - '300008'
+      elapsed_ms: 0.0
+      sql_executed: SELECT DISTINCT board_code FROM c1_market.concept_board_constituent FINAL ORDER BY board_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 375
+    agree: null
+    agree_rows: true
+  SET_sc880_stocks:
+    kind: set
+    sql: SELECT DISTINCT stock_code FROM c1_market.sector_constituent WHERE sector_code LIKE '880%' ORDER BY stock_code
+    value: <6179 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 6179
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:52.992+00:00'
+      first_row_sample:
+      - 000001.SZ
+      elapsed_ms: 47.0
+      sql_executed: SELECT DISTINCT stock_code FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%' ORDER
+        BY stock_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 6179
+    agree: null
+    agree_rows: true
+  SET_cbc_stocks:
+    kind: set
+    sql: SELECT DISTINCT symbol_canonical FROM c1_market.concept_board_constituent ORDER BY symbol_canonical
+    value: <4865 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 4865
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:53.029+00:00'
+      first_row_sample:
+      - 000002.SZ
+      elapsed_ms: 0.0
+      sql_executed: SELECT DISTINCT symbol_canonical FROM c1_market.concept_board_constituent FINAL ORDER BY symbol_canonical
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 4865
+    agree: null
+    agree_rows: true
+  NAME_sc880:
+    kind: set
+    sql: SELECT DISTINCT sector_name FROM c1_market.sector_constituent WHERE sector_code LIKE '880%' ORDER BY sector_name
+    value: <96 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 96
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:53.037+00:00'
+      first_row_sample:
+      - ''
+      elapsed_ms: 31.0
+      sql_executed: SELECT DISTINCT sector_name FROM c1_market.sector_constituent FINAL WHERE sector_code LIKE '880%' ORDER
+        BY sector_name
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 96
+    agree: null
+    agree_rows: true
+  NAME_cb:
+    kind: set
+    sql: SELECT DISTINCT board_name FROM c1_market.concept_board ORDER BY board_name
+    value: <375 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 375
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:53.056+00:00'
+      first_row_sample:
+      - 2026一季报预增
+      elapsed_ms: 0.0
+      sql_executed: SELECT DISTINCT board_name FROM c1_market.concept_board FINAL ORDER BY board_name
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 375
+    agree: null
+    agree_rows: true
+  ROSTER_kl880:
+    kind: set
+    sql: SELECT DISTINCT concat(sector_code,'|',sector_name) FROM c1_market.kline_sector_880 WHERE sector_code LIKE '880%'
+      ORDER BY sector_code
+    value: <601 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 601
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:53.061+00:00'
+      first_row_sample:
+      - 880001.SH|
+      elapsed_ms: 203.0
+      sql_executed: SELECT DISTINCT concat(sector_code,'|',sector_name) FROM c1_market.kline_sector_880 FINAL WHERE sector_code
+        LIKE '880%' ORDER BY sector_code
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 601
+    agree: null
+    agree_rows: true
+  TBL_sector:
+    kind: set
+    sql: SELECT name FROM system.tables WHERE database = 'c1_market' AND (name LIKE '%sector%' OR name LIKE '%board%' OR name
+      LIKE '%concept%') ORDER BY name
+    value: <19 rows>
+    channel_1:
+      outcome: ok
+      rows_returned: 19
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:53.273+00:00'
+      first_row_sample:
+      - board_index_tick
+      elapsed_ms: 16.0
+      sql_executed: SELECT name FROM system.tables WHERE database = 'c1_market' AND (name LIKE '%sector%' OR name LIKE '%board%'
+        OR name LIKE '%concept%') ORDER BY name
+    channel_2:
+      transport: tcp
+      ts_utc: '2026-09-26T18:05:56+00:00'
+      rows_returned: 19
+    agree: null
+    agree_rows: true
+sets:
+  SET_kl880:
+    size: 601
+    sample:
+    - 880001.SH
+    - 880002.SH
+    - 880003.SH
+    - 880004.SH
+    - 880005.SH
+    - 880006.SH
+    - 880007.SH
+    - 880008.SH
+    - 880009.SH
+    - 880081.SH
+    - 880082.SH
+    - 880201.SH
+    - 880202.SH
+    - 880203.SH
+    - 880204.SH
+    - 880205.SH
+    - 880206.SH
+    - 880207.SH
+    - 880208.SH
+    - 880209.SH
+    - 880210.SH
+    - 880211.SH
+    - 880212.SH
+    - 880213.SH
+    - 880214.SH
+    - 880215.SH
+    - 880216.SH
+    - 880217.SH
+    - 880218.SH
+    - 880219.SH
+    - 880220.SH
+    - 880221.SH
+    - 880222.SH
+    - 880223.SH
+    - 880224.SH
+    - 880225.SH
+    - 880226.SH
+    - 880227.SH
+    - 880228.SH
+    - 880229.SH
+    - 880230.SH
+    - 880231.SH
+    - 880232.SH
+    - 880301.SH
+    - 880302.SH
+    - 880303.SH
+    - 880305.SH
+    - 880306.SH
+    - 880307.SH
+    - 880308.SH
+    - 880310.SH
+    - 880311.SH
+    - 880312.SH
+    - 880313.SH
+    - 880318.SH
+    - 880319.SH
+    - 880320.SH
+    - 880321.SH
+    - 880324.SH
+    - 880325.SH
+    - 880326.SH
+    - 880327.SH
+    - 880328.SH
+    - 880329.SH
+    - 880330.SH
+    - 880335.SH
+    - 880336.SH
+    - 880337.SH
+    - 880338.SH
+    - 880339.SH
+    - 880340.SH
+    - 880344.SH
+    - 880345.SH
+    - 880346.SH
+    - 880347.SH
+    - 880348.SH
+    - 880350.SH
+    - 880351.SH
+    - 880355.SH
+    - 880360.SH
+  SET_sc880:
+    size: 467
+    sample:
+    - 880001.SH
+    - 880002.SH
+    - 880003.SH
+    - 880004.SH
+    - 880005.SH
+    - 880006.SH
+    - 880007.SH
+    - 880008.SH
+    - 880009.SH
+    - 880081.SH
+    - 880082.SH
+    - 880201.SH
+    - 880202.SH
+    - 880203.SH
+    - 880204.SH
+    - 880205.SH
+    - 880206.SH
+    - 880207.SH
+    - 880208.SH
+    - 880209.SH
+    - 880210.SH
+    - 880211.SH
+    - 880212.SH
+    - 880213.SH
+    - 880214.SH
+    - 880215.SH
+    - 880216.SH
+    - 880217.SH
+    - 880218.SH
+    - 880219.SH
+    - 880220.SH
+    - 880221.SH
+    - 880222.SH
+    - 880223.SH
+    - 880224.SH
+    - 880225.SH
+    - 880226.SH
+    - 880227.SH
+    - 880228.SH
+    - 880229.SH
+    - 880230.SH
+    - 880231.SH
+    - 880232.SH
+    - 880501.SH
+    - 880502.SH
+    - 880505.SH
+    - 880506.SH
+    - 880507.SH
+    - 880513.SH
+    - 880515.SH
+    - 880516.SH
+    - 880519.SH
+    - 880520.SH
+    - 880521.SH
+    - 880522.SH
+    - 880523.SH
+    - 880524.SH
+    - 880525.SH
+    - 880526.SH
+    - 880527.SH
+    - 880528.SH
+    - 880529.SH
+    - 880530.SH
+    - 880531.SH
+    - 880532.SH
+    - 880533.SH
+    - 880534.SH
+    - 880535.SH
+    - 880536.SH
+    - 880537.SH
+    - 880538.SH
+    - 880539.SH
+    - 880540.SH
+    - 880541.SH
+    - 880542.SH
+    - 880543.SH
+    - 880544.SH
+    - 880545.SH
+    - 880546.SH
+    - 880547.SH
+  SET_sc881:
+    size: 128
+    sample:
+    - 881002.SH
+    - 881005.SH
+    - 881007.SH
+    - 881008.SH
+    - 881011.SH
+    - 881016.SH
+    - 881019.SH
+    - 881026.SH
+    - 881034.SH
+    - 881044.SH
+    - 881051.SH
+    - 881055.SH
+    - 881062.SH
+    - 881065.SH
+    - 881069.SH
+    - 881071.SH
+    - 881075.SH
+    - 881078.SH
+    - 881082.SH
+    - 881087.SH
+    - 881091.SH
+    - 881094.SH
+    - 881097.SH
+    - 881104.SH
+    - 881106.SH
+    - 881111.SH
+    - 881115.SH
+    - 881116.SH
+    - 881119.SH
+    - 881123.SH
+    - 881127.SH
+    - 881130.SH
+    - 881136.SH
+    - 881139.SH
+    - 881140.SH
+    - 881144.SH
+    - 881151.SH
+    - 881157.SH
+    - 881162.SH
+    - 881167.SH
+    - 881171.SH
+    - 881177.SH
+    - 881180.SH
+    - 881184.SH
+    - 881187.SH
+    - 881190.SH
+    - 881194.SH
+    - 881198.SH
+    - 881200.SH
+    - 881204.SH
+    - 881205.SH
+    - 881206.SH
+    - 881207.SH
+    - 881212.SH
+    - 881215.SH
+    - 881218.SH
+    - 881224.SH
+    - 881227.SH
+    - 881231.SH
+    - 881234.SH
+    - 881241.SH
+    - 881247.SH
+    - 881252.SH
+    - 881256.SH
+    - 881257.SH
+    - 881261.SH
+    - 881262.SH
+    - 881268.SH
+    - 881275.SH
+    - 881282.SH
+    - 881285.SH
+    - 881287.SH
+    - 881288.SH
+    - 881289.SH
+    - 881290.SH
+    - 881291.SH
+    - 881293.SH
+    - 881294.SH
+    - 881303.SH
+    - 881310.SH
+  SET_cb:
+    size: 375
+    sample:
+    - '300008'
+    - '300013'
+    - '300018'
+    - '300019'
+    - '300023'
+    - '300037'
+    - '300038'
+    - '300061'
+    - '300066'
+    - '300075'
+    - '300082'
+    - '300084'
+    - '300085'
+    - '300087'
+    - '300098'
+    - '300100'
+    - '300105'
+    - '300106'
+    - '300127'
+    - '300134'
+    - '300157'
+    - '300163'
+    - '300168'
+    - '300180'
+    - '300188'
+    - '300200'
+    - '300220'
+    - '300221'
+    - '300223'
+    - '300236'
+    - '300238'
+    - '300248'
+    - '300261'
+    - '300269'
+    - '300277'
+    - '300309'
+    - '300316'
+    - '300337'
+    - '300345'
+    - '300351'
+    - '300352'
+    - '300353'
+    - '300358'
+    - '300374'
+    - '300378'
+    - '300382'
+    - '300386'
+    - '300402'
+    - '300419'
+    - '300435'
+    - '300451'
+    - '300642'
+    - '300682'
+    - '300704'
+    - '300722'
+    - '300723'
+    - '300733'
+    - '300756'
+    - '300786'
+    - '300795'
+    - '300800'
+    - '300806'
+    - '300809'
+    - '300814'
+    - '300816'
+    - '300830'
+    - '300836'
+    - '300841'
+    - '300843'
+    - '300845'
+    - '300858'
+    - '300862'
+    - '300870'
+    - '300889'
+    - '300890'
+    - '300891'
+    - '300900'
+    - '300917'
+    - '300920'
+    - '300923'
+  SET_cbc:
+    size: 375
+    sample:
+    - '300008'
+    - '300013'
+    - '300018'
+    - '300019'
+    - '300023'
+    - '300037'
+    - '300038'
+    - '300061'
+    - '300066'
+    - '300075'
+    - '300082'
+    - '300084'
+    - '300085'
+    - '300087'
+    - '300098'
+    - '300100'
+    - '300105'
+    - '300106'
+    - '300127'
+    - '300134'
+    - '300157'
+    - '300163'
+    - '300168'
+    - '300180'
+    - '300188'
+    - '300200'
+    - '300220'
+    - '300221'
+    - '300223'
+    - '300236'
+    - '300238'
+    - '300248'
+    - '300261'
+    - '300269'
+    - '300277'
+    - '300309'
+    - '300316'
+    - '300337'
+    - '300345'
+    - '300351'
+    - '300352'
+    - '300353'
+    - '300358'
+    - '300374'
+    - '300378'
+    - '300382'
+    - '300386'
+    - '300402'
+    - '300419'
+    - '300435'
+    - '300451'
+    - '300642'
+    - '300682'
+    - '300704'
+    - '300722'
+    - '300723'
+    - '300733'
+    - '300756'
+    - '300786'
+    - '300795'
+    - '300800'
+    - '300806'
+    - '300809'
+    - '300814'
+    - '300816'
+    - '300830'
+    - '300836'
+    - '300841'
+    - '300843'
+    - '300845'
+    - '300858'
+    - '300862'
+    - '300870'
+    - '300889'
+    - '300890'
+    - '300891'
+    - '300900'
+    - '300917'
+    - '300920'
+    - '300923'
+  SET_sc880_stocks:
+    size: 6179
+    sample:
+    - 000001.SZ
+    - 000002.SZ
+    - 000006.SZ
+    - 000007.SZ
+    - 000008.SZ
+    - 000009.SZ
+    - 000010.SZ
+    - 000011.SZ
+    - 000012.SZ
+    - 000014.SZ
+    - 000016.SZ
+    - 000017.SZ
+    - 000019.SZ
+    - 000020.SZ
+    - 000021.SZ
+    - 000025.SZ
+    - 000026.SZ
+    - 000027.SZ
+    - 000028.SZ
+    - 000029.SZ
+    - 000030.SZ
+    - 000031.SZ
+    - 000032.SZ
+    - 000034.SZ
+    - 000035.SZ
+    - 000036.SZ
+    - 000037.SZ
+    - 000039.SZ
+    - 000042.SZ
+    - 000045.SZ
+    - 000048.SZ
+    - 000049.SZ
+    - 000050.SZ
+    - 000055.SZ
+    - 000056.SZ
+    - 000058.SZ
+    - 000059.SZ
+    - 000060.SZ
+    - 000061.SZ
+    - 000062.SZ
+    - 000063.SZ
+    - 000065.SZ
+    - 000066.SZ
+    - 000068.SZ
+    - 000069.SZ
+    - 000070.SZ
+    - 000078.SZ
+    - 000088.SZ
+    - 000089.SZ
+    - 000090.SZ
+    - 000096.SZ
+    - 000099.SZ
+    - 000100.SZ
+    - 000151.SZ
+    - 000153.SZ
+    - 000155.SZ
+    - 000156.SZ
+    - 000157.SZ
+    - 000158.SZ
+    - 000159.SZ
+    - 000166.SZ
+    - 000301.SZ
+    - 000333.SZ
+    - 000338.SZ
+    - 000400.SZ
+    - 000401.SZ
+    - 000402.SZ
+    - 000403.SZ
+    - 000404.SZ
+    - 000407.SZ
+    - 000408.SZ
+    - 000409.SZ
+    - 000410.SZ
+    - 000411.SZ
+    - 000415.SZ
+    - 000417.SZ
+    - 000419.SZ
+    - 000420.SZ
+    - 000421.SZ
+    - 000422.SZ
+  SET_cbc_stocks:
+    size: 4865
+    sample:
+    - 000002.SZ
+    - 000006.SZ
+    - 000007.SZ
+    - 000009.SZ
+    - 000010.SZ
+    - 000011.SZ
+    - 000012.SZ
+    - 000014.SZ
+    - 000016.SZ
+    - 000017.SZ
+    - 000019.SZ
+    - 000020.SZ
+    - 000021.SZ
+    - 000025.SZ
+    - 000026.SZ
+    - 000027.SZ
+    - 000028.SZ
+    - 000029.SZ
+    - 000030.SZ
+    - 000031.SZ
+    - 000032.SZ
+    - 000034.SZ
+    - 000035.SZ
+    - 000036.SZ
+    - 000037.SZ
+    - 000039.SZ
+    - 000045.SZ
+    - 000048.SZ
+    - 000049.SZ
+    - 000050.SZ
+    - 000055.SZ
+    - 000056.SZ
+    - 000058.SZ
+    - 000059.SZ
+    - 000060.SZ
+    - 000061.SZ
+    - 000062.SZ
+    - 000063.SZ
+    - 000065.SZ
+    - 000066.SZ
+    - 000069.SZ
+    - 000070.SZ
+    - 000078.SZ
+    - 000088.SZ
+    - 000089.SZ
+    - 000090.SZ
+    - 000096.SZ
+    - 000099.SZ
+    - 000100.SZ
+    - 000151.SZ
+    - 000153.SZ
+    - 000155.SZ
+    - 000156.SZ
+    - 000157.SZ
+    - 000158.SZ
+    - 000159.SZ
+    - 000166.SZ
+    - 000301.SZ
+    - 000333.SZ
+    - 000338.SZ
+    - 000400.SZ
+    - 000401.SZ
+    - 000402.SZ
+    - 000404.SZ
+    - 000407.SZ
+    - 000408.SZ
+    - 000409.SZ
+    - 000410.SZ
+    - 000411.SZ
+    - 000415.SZ
+    - 000417.SZ
+    - 000419.SZ
+    - 000420.SZ
+    - 000421.SZ
+    - 000422.SZ
+    - 000423.SZ
+    - 000425.SZ
+    - 000426.SZ
+    - 000428.SZ
+    - 000429.SZ
+  NAME_sc880:
+    size: 96
+    sample:
+    - ''
+    - 880082.SH
+    - 880516.SH
+    - 880524.SH
+    - 880527.SH
+    - 880529.SH
+    - 880531.SH
+    - 880536.SH
+    - 880539.SH
+    - 880576.SH
+    - 880581.SH
+    - 880595.SH
+    - 880619.SH
+    - 880622.SH
+    - 880640.SH
+    - 880641.SH
+    - 880665.SH
+    - 880676.SH
+    - 880677.SH
+    - 880679.SH
+    - 880680.SH
+    - 880687.SH
+    - 880690.SH
+    - 880691.SH
+    - 880694.SH
+    - 880699.SH
+    - 880712.SH
+    - 880723.SH
+    - 880751.SH
+    - 880752.SH
+    - 880756.SH
+    - 880770.SH
+    - 880774.SH
+    - 880779.SH
+    - 880780.SH
+    - 880781.SH
+    - 880784.SH
+    - 880785.SH
+    - 880789.SH
+    - 880807.SH
+    - 880808.SH
+    - 880812.SH
+    - 880813.SH
+    - 880814.SH
+    - 880815.SH
+    - 880816.SH
+    - 880817.SH
+    - 880818.SH
+    - 880821.SH
+    - 880822.SH
+    - 880823.SH
+    - 880824.SH
+    - 880825.SH
+    - 880826.SH
+    - 880827.SH
+    - 880829.SH
+    - 880837.SH
+    - 880842.SH
+    - 880844.SH
+    - 880845.SH
+    - 880846.SH
+    - 880849.SH
+    - 880850.SH
+    - 880856.SH
+    - 880857.SH
+    - 880859.SH
+    - 880861.SH
+    - 880863.SH
+    - 880864.SH
+    - 880865.SH
+    - 880866.SH
+    - 880867.SH
+    - 880868.SH
+    - 880869.SH
+    - 880870.SH
+    - 880872.SH
+    - 880873.SH
+    - 880874.SH
+    - 880876.SH
+    - 880877.SH
+  NAME_cb:
+    size: 375
+    sample:
+    - 2026一季报预增
+    - 2026中报预增
+    - 3D打印
+    - 5G
+    - 6G概念
+    - AI PC
+    - AI应用
+    - AI手机
+    - AI智能体
+    - AI眼镜
+    - AI视频
+    - AI语料
+    - BC电池
+    - DeepSeek概念
+    - EDR概念
+    - ERP概念
+    - ETC
+    - F5G概念
+    - IP经济(谷子经济)
+    - MCU芯片
+    - MLCC概念
+    - MiniLED
+    - NFT概念
+    - OLED
+    - PCB概念
+    - PEEK材料
+    - PET铜箔
+    - PM2.5
+    - POE胶膜
+    - PPP概念
+    - ST板块
+    - TOPCON电池
+    - WiFi 6
+    - 一体化压铸
+    - 一带一路
+    - 三胎概念
+    - 上海国企改革
+    - 上海自贸区
+    - 专精特新
+    - 丙烯酸
+    - 东数西算(算力)
+    - 两轮车
+    - 中俄贸易概念
+    - 中国AI 50
+    - 中字头股票
+    - 中船系
+    - 中芯国际概念
+    - 中韩自贸区
+    - 举牌
+    - 乡村振兴
+    - 乳业
+    - 云办公
+    - 云游戏
+    - 云计算
+    - 互联网保险
+    - 互联网金融
+    - 京津冀一体化
+    - 人工智能
+    - 人形机器人
+    - 人脸识别
+    - 人造肉
+    - 代糖概念
+    - 仿制药一致性评价
+    - 传感器
+    - 低空经济
+    - 体育产业
+    - 供销社
+    - 俄乌冲突概念
+    - 信创
+    - 信托概念
+    - 储能
+    - 元宇宙
+    - 充电桩
+    - 先进封装
+    - 光伏概念
+    - 光刻机
+    - 光刻胶
+    - 光热发电
+    - 光纤概念
+    - 免税店
+  ROSTER_kl880:
+    size: 601
+    sample:
+    - 880001.SH|
+    - 880002.SH|
+    - 880003.SH|
+    - 880004.SH|
+    - 880005.SH|
+    - 880006.SH|
+    - 880007.SH|
+    - 880008.SH|
+    - 880009.SH|
+    - 880081.SH|
+    - 880082.SH|
+    - 880201.SH|
+    - 880202.SH|
+    - 880203.SH|
+    - 880204.SH|
+    - 880205.SH|
+    - 880206.SH|
+    - 880207.SH|
+    - 880208.SH|
+    - 880209.SH|
+    - 880210.SH|
+    - 880211.SH|
+    - 880212.SH|
+    - 880213.SH|
+    - 880214.SH|
+    - 880215.SH|
+    - 880216.SH|
+    - 880217.SH|
+    - 880218.SH|
+    - 880219.SH|
+    - 880220.SH|
+    - 880221.SH|
+    - 880222.SH|
+    - 880223.SH|
+    - 880224.SH|
+    - 880225.SH|
+    - 880226.SH|
+    - 880227.SH|
+    - 880228.SH|
+    - 880229.SH|
+    - 880230.SH|
+    - 880231.SH|
+    - 880232.SH|
+    - 880301.SH|
+    - 880302.SH|
+    - 880303.SH|
+    - 880305.SH|
+    - 880306.SH|
+    - 880307.SH|
+    - 880308.SH|
+    - 880310.SH|
+    - 880311.SH|
+    - 880312.SH|
+    - 880313.SH|
+    - 880318.SH|
+    - 880319.SH|
+    - 880320.SH|
+    - 880321.SH|
+    - 880324.SH|
+    - 880325.SH|
+    - 880326.SH|
+    - 880327.SH|
+    - 880328.SH|
+    - 880329.SH|
+    - 880330.SH|
+    - 880335.SH|
+    - 880336.SH|
+    - 880337.SH|
+    - 880338.SH|
+    - 880339.SH|
+    - 880340.SH|
+    - 880344.SH|
+    - 880345.SH|
+    - 880346.SH|
+    - 880347.SH|
+    - 880348.SH|
+    - 880350.SH|
+    - 880351.SH|
+    - 880355.SH|
+    - 880360.SH|
+  SET_scsnap880:
+    size: 467
+    sample:
+    - 880001.SH
+    - 880002.SH
+    - 880003.SH
+    - 880004.SH
+    - 880005.SH
+    - 880006.SH
+    - 880007.SH
+    - 880008.SH
+    - 880009.SH
+    - 880081.SH
+    - 880082.SH
+    - 880201.SH
+    - 880202.SH
+    - 880203.SH
+    - 880204.SH
+    - 880205.SH
+    - 880206.SH
+    - 880207.SH
+    - 880208.SH
+    - 880209.SH
+    - 880210.SH
+    - 880211.SH
+    - 880212.SH
+    - 880213.SH
+    - 880214.SH
+    - 880215.SH
+    - 880216.SH
+    - 880217.SH
+    - 880218.SH
+    - 880219.SH
+    - 880220.SH
+    - 880221.SH
+    - 880222.SH
+    - 880223.SH
+    - 880224.SH
+    - 880225.SH
+    - 880226.SH
+    - 880227.SH
+    - 880228.SH
+    - 880229.SH
+    - 880230.SH
+    - 880231.SH
+    - 880232.SH
+    - 880501.SH
+    - 880502.SH
+    - 880505.SH
+    - 880506.SH
+    - 880507.SH
+    - 880513.SH
+    - 880515.SH
+    - 880516.SH
+    - 880519.SH
+    - 880520.SH
+    - 880521.SH
+    - 880522.SH
+    - 880523.SH
+    - 880524.SH
+    - 880525.SH
+    - 880526.SH
+    - 880527.SH
+    - 880528.SH
+    - 880529.SH
+    - 880530.SH
+    - 880531.SH
+    - 880532.SH
+    - 880533.SH
+    - 880534.SH
+    - 880535.SH
+    - 880536.SH
+    - 880537.SH
+    - 880538.SH
+    - 880539.SH
+    - 880540.SH
+    - 880541.SH
+    - 880542.SH
+    - 880543.SH
+    - 880544.SH
+    - 880545.SH
+    - 880546.SH
+    - 880547.SH
+  SET_namemap880:
+    size: 601
+    sample:
+    - 880001.SH
+    - 880002.SH
+    - 880003.SH
+    - 880004.SH
+    - 880005.SH
+    - 880006.SH
+    - 880007.SH
+    - 880008.SH
+    - 880009.SH
+    - 880081.SH
+    - 880082.SH
+    - 880201.SH
+    - 880202.SH
+    - 880203.SH
+    - 880204.SH
+    - 880205.SH
+    - 880206.SH
+    - 880207.SH
+    - 880208.SH
+    - 880209.SH
+    - 880210.SH
+    - 880211.SH
+    - 880212.SH
+    - 880213.SH
+    - 880214.SH
+    - 880215.SH
+    - 880216.SH
+    - 880217.SH
+    - 880218.SH
+    - 880219.SH
+    - 880220.SH
+    - 880221.SH
+    - 880222.SH
+    - 880223.SH
+    - 880224.SH
+    - 880225.SH
+    - 880226.SH
+    - 880227.SH
+    - 880228.SH
+    - 880229.SH
+    - 880230.SH
+    - 880231.SH
+    - 880232.SH
+    - 880301.SH
+    - 880302.SH
+    - 880303.SH
+    - 880305.SH
+    - 880306.SH
+    - 880307.SH
+    - 880308.SH
+    - 880310.SH
+    - 880311.SH
+    - 880312.SH
+    - 880313.SH
+    - 880318.SH
+    - 880319.SH
+    - 880320.SH
+    - 880321.SH
+    - 880324.SH
+    - 880325.SH
+    - 880326.SH
+    - 880327.SH
+    - 880328.SH
+    - 880329.SH
+    - 880330.SH
+    - 880335.SH
+    - 880336.SH
+    - 880337.SH
+    - 880338.SH
+    - 880339.SH
+    - 880340.SH
+    - 880344.SH
+    - 880345.SH
+    - 880346.SH
+    - 880347.SH
+    - 880348.SH
+    - 880350.SH
+    - 880351.SH
+    - 880355.SH
+    - 880360.SH
+  SET_concept_sector:
+    size: 375
+    sample:
+    - '300008'
+    - '300013'
+    - '300018'
+    - '300019'
+    - '300023'
+    - '300037'
+    - '300038'
+    - '300061'
+    - '300066'
+    - '300075'
+    - '300082'
+    - '300084'
+    - '300085'
+    - '300087'
+    - '300098'
+    - '300100'
+    - '300105'
+    - '300106'
+    - '300127'
+    - '300134'
+    - '300157'
+    - '300163'
+    - '300168'
+    - '300180'
+    - '300188'
+    - '300200'
+    - '300220'
+    - '300221'
+    - '300223'
+    - '300236'
+    - '300238'
+    - '300248'
+    - '300261'
+    - '300269'
+    - '300277'
+    - '300309'
+    - '300316'
+    - '300337'
+    - '300345'
+    - '300351'
+    - '300352'
+    - '300353'
+    - '300358'
+    - '300374'
+    - '300378'
+    - '300382'
+    - '300386'
+    - '300402'
+    - '300419'
+    - '300435'
+    - '300451'
+    - '300642'
+    - '300682'
+    - '300704'
+    - '300722'
+    - '300723'
+    - '300733'
+    - '300756'
+    - '300786'
+    - '300795'
+    - '300800'
+    - '300806'
+    - '300809'
+    - '300814'
+    - '300816'
+    - '300830'
+    - '300836'
+    - '300841'
+    - '300843'
+    - '300845'
+    - '300858'
+    - '300862'
+    - '300870'
+    - '300889'
+    - '300890'
+    - '300891'
+    - '300900'
+    - '300917'
+    - '300920'
+    - '300923'
+  SET_kl881:
+    size: 128
+    sample:
+    - 881002.SH
+    - 881005.SH
+    - 881007.SH
+    - 881008.SH
+    - 881011.SH
+    - 881016.SH
+    - 881019.SH
+    - 881026.SH
+    - 881034.SH
+    - 881044.SH
+    - 881051.SH
+    - 881055.SH
+    - 881062.SH
+    - 881065.SH
+    - 881069.SH
+    - 881071.SH
+    - 881075.SH
+    - 881078.SH
+    - 881082.SH
+    - 881087.SH
+    - 881091.SH
+    - 881094.SH
+    - 881097.SH
+    - 881104.SH
+    - 881106.SH
+    - 881111.SH
+    - 881115.SH
+    - 881116.SH
+    - 881119.SH
+    - 881123.SH
+    - 881127.SH
+    - 881130.SH
+    - 881136.SH
+    - 881139.SH
+    - 881140.SH
+    - 881144.SH
+    - 881151.SH
+    - 881157.SH
+    - 881162.SH
+    - 881167.SH
+    - 881171.SH
+    - 881177.SH
+    - 881180.SH
+    - 881184.SH
+    - 881187.SH
+    - 881190.SH
+    - 881194.SH
+    - 881198.SH
+    - 881200.SH
+    - 881204.SH
+    - 881205.SH
+    - 881206.SH
+    - 881207.SH
+    - 881212.SH
+    - 881215.SH
+    - 881218.SH
+    - 881224.SH
+    - 881227.SH
+    - 881231.SH
+    - 881234.SH
+    - 881241.SH
+    - 881247.SH
+    - 881252.SH
+    - 881256.SH
+    - 881257.SH
+    - 881261.SH
+    - 881262.SH
+    - 881268.SH
+    - 881275.SH
+    - 881282.SH
+    - 881285.SH
+    - 881287.SH
+    - 881288.SH
+    - 881289.SH
+    - 881290.SH
+    - 881291.SH
+    - 881293.SH
+    - 881294.SH
+    - 881303.SH
+    - 881310.SH
+derived:
+  gap_880_no_constituent:
+    value_sql_channel1: 134
+    value_python_setdiff: 134
+    agree: true
+    members_full:
+    - 880301.SH|
+    - 880302.SH|
+    - 880303.SH|
+    - 880305.SH|
+    - 880306.SH|
+    - 880307.SH|
+    - 880308.SH|
+    - 880310.SH|
+    - 880311.SH|
+    - 880312.SH|
+    - 880313.SH|
+    - 880318.SH|
+    - 880319.SH|
+    - 880320.SH|
+    - 880321.SH|
+    - 880324.SH|
+    - 880325.SH|
+    - 880326.SH|
+    - 880327.SH|
+    - 880328.SH|
+    - 880329.SH|
+    - 880330.SH|
+    - 880335.SH|
+    - 880336.SH|
+    - 880337.SH|
+    - 880338.SH|
+    - 880339.SH|
+    - 880340.SH|
+    - 880344.SH|
+    - 880345.SH|
+    - 880346.SH|
+    - 880347.SH|
+    - 880348.SH|
+    - 880350.SH|
+    - 880351.SH|
+    - 880355.SH|
+    - 880360.SH|
+    - 880361.SH|
+    - 880362.SH|
+    - 880363.SH|
+    - 880364.SH|
+    - 880366.SH|
+    - 880367.SH|
+    - 880368.SH|
+    - 880369.SH|
+    - 880372.SH|
+    - 880373.SH|
+    - 880374.SH|
+    - 880375.SH|
+    - 880380.SH|
+    - 880381.SH|
+    - 880382.SH|
+    - 880383.SH|
+    - 880387.SH|
+    - 880390.SH|
+    - 880391.SH|
+    - 880392.SH|
+    - 880393.SH|
+    - 880394.SH|
+    - 880398.SH|
+    - 880399.SH|
+    - 880400.SH|
+    - 880401.SH|
+    - 880402.SH|
+    - 880403.SH|
+    - 880406.SH|
+    - 880407.SH|
+    - 880408.SH|
+    - 880409.SH|
+    - 880410.SH|
+    - 880411.SH|
+    - 880412.SH|
+    - 880413.SH|
+    - 880414.SH|
+    - 880418.SH|
+    - 880419.SH|
+    - 880420.SH|
+    - 880421.SH|
+    - 880422.SH|
+    - 880423.SH|
+    - 880424.SH|
+    - 880425.SH|
+    - 880426.SH|
+    - 880430.SH|
+    - 880431.SH|
+    - 880432.SH|
+    - 880437.SH|
+    - 880438.SH|
+    - 880439.SH|
+    - 880440.SH|
+    - 880441.SH|
+    - 880442.SH|
+    - 880443.SH|
+    - 880444.SH|
+    - 880445.SH|
+    - 880446.SH|
+    - 880447.SH|
+    - 880448.SH|
+    - 880452.SH|
+    - 880453.SH|
+    - 880454.SH|
+    - 880455.SH|
+    - 880456.SH|
+    - 880459.SH|
+    - 880460.SH|
+    - 880461.SH|
+    - 880462.SH|
+    - 880463.SH|
+    - 880464.SH|
+    - 880465.SH|
+    - 880466.SH|
+    - 880467.SH|
+    - 880468.SH|
+    - 880471.SH|
+    - 880472.SH|
+    - 880473.SH|
+    - 880474.SH|
+    - 880476.SH|
+    - 880477.SH|
+    - 880478.SH|
+    - 880482.SH|
+    - 880483.SH|
+    - 880484.SH|
+    - 880485.SH|
+    - 880486.SH|
+    - 880489.SH|
+    - 880490.SH|
+    - 880491.SH|
+    - 880492.SH|
+    - 880493.SH|
+    - 880494.SH|
+    - 880497.SH|
+    - 880851.SH|
+    - 880890.SH|
+  gap_881_no_constituent:
+    value_sql_channel1: 0
+    value_python_setdiff: 0
+    agree: true
+    members_full: []
+  gap_880_prefix_split:
+    definition: gap 134 按 4 位前缀拆解（与 du881 案卷 §E '8803(61)+8804(71)+8808(2)' 对拍）
+    split:
+      '8804': 71
+      '8803': 61
+      '8808': 2
+    total: 134
+    ssot_note: 该族名单在册真源=zephyr/data/implementations/sector_code_bridge.py::TDX_INDUSTRY_BOARDS（本卷未导入核数）
+  gap_880_after_snapshot_union:
+    definition: SET_kl880 − (SET_sc880 ∪ SET_scsnap880)：把 Phase 2 快照表也算作成分源后剩余 gap
+    value_python_setdiff: 134
+    snapshot_880_boards: 467
+    snapshot_adds: 0
+    members_full:
+    - 880301.SH
+    - 880302.SH
+    - 880303.SH
+    - 880305.SH
+    - 880306.SH
+    - 880307.SH
+    - 880308.SH
+    - 880310.SH
+    - 880311.SH
+    - 880312.SH
+    - 880313.SH
+    - 880318.SH
+    - 880319.SH
+    - 880320.SH
+    - 880321.SH
+    - 880324.SH
+    - 880325.SH
+    - 880326.SH
+    - 880327.SH
+    - 880328.SH
+    - 880329.SH
+    - 880330.SH
+    - 880335.SH
+    - 880336.SH
+    - 880337.SH
+    - 880338.SH
+    - 880339.SH
+    - 880340.SH
+    - 880344.SH
+    - 880345.SH
+    - 880346.SH
+    - 880347.SH
+    - 880348.SH
+    - 880350.SH
+    - 880351.SH
+    - 880355.SH
+    - 880360.SH
+    - 880361.SH
+    - 880362.SH
+    - 880363.SH
+    - 880364.SH
+    - 880366.SH
+    - 880367.SH
+    - 880368.SH
+    - 880369.SH
+    - 880372.SH
+    - 880373.SH
+    - 880374.SH
+    - 880375.SH
+    - 880380.SH
+    - 880381.SH
+    - 880382.SH
+    - 880383.SH
+    - 880387.SH
+    - 880390.SH
+    - 880391.SH
+    - 880392.SH
+    - 880393.SH
+    - 880394.SH
+    - 880398.SH
+    - 880399.SH
+    - 880400.SH
+    - 880401.SH
+    - 880402.SH
+    - 880403.SH
+    - 880406.SH
+    - 880407.SH
+    - 880408.SH
+    - 880409.SH
+    - 880410.SH
+    - 880411.SH
+    - 880412.SH
+    - 880413.SH
+    - 880414.SH
+    - 880418.SH
+    - 880419.SH
+    - 880420.SH
+    - 880421.SH
+    - 880422.SH
+    - 880423.SH
+    - 880424.SH
+    - 880425.SH
+    - 880426.SH
+    - 880430.SH
+    - 880431.SH
+    - 880432.SH
+    - 880437.SH
+    - 880438.SH
+    - 880439.SH
+    - 880440.SH
+    - 880441.SH
+    - 880442.SH
+    - 880443.SH
+    - 880444.SH
+    - 880445.SH
+    - 880446.SH
+    - 880447.SH
+    - 880448.SH
+    - 880452.SH
+    - 880453.SH
+    - 880454.SH
+    - 880455.SH
+    - 880456.SH
+    - 880459.SH
+    - 880460.SH
+    - 880461.SH
+    - 880462.SH
+    - 880463.SH
+    - 880464.SH
+    - 880465.SH
+    - 880466.SH
+    - 880467.SH
+    - 880468.SH
+    - 880471.SH
+    - 880472.SH
+    - 880473.SH
+    - 880474.SH
+    - 880476.SH
+    - 880477.SH
+    - 880478.SH
+    - 880482.SH
+    - 880483.SH
+    - 880484.SH
+    - 880485.SH
+    - 880486.SH
+    - 880489.SH
+    - 880490.SH
+    - 880491.SH
+    - 880492.SH
+    - 880493.SH
+    - 880494.SH
+    - 880497.SH
+    - 880851.SH
+    - 880890.SH
+  name_resolution_880:
+    definition: 880 段板块名的可解析度（sector_code_name_map 是名册真源）
+    kline_880_boards: 601
+    namemap_880_boards: 601
+    kline_880_named_by_map: 601
+    kline_880_unnamed: 0
+    sc880_boards_with_usable_name_in_constituent: 0
+  third_concept_roster:
+    concept_sector_boards: 375
+    overlap_with_concept_board_code: 375
+    overlap_with_sc880_code: 0
+    only_in_concept_sector: []
+  sc880_vs_concept_board:
+    code_overlap: 0
+    only_in_sc880: 467
+    only_in_concept_board: 375
+    name_overlap: 0
+    only_name_in_sc880:
+    - ''
+    - 880082.SH
+    - 880516.SH
+    - 880524.SH
+    - 880527.SH
+    - 880529.SH
+    - 880531.SH
+    - 880536.SH
+    - 880539.SH
+    - 880576.SH
+    - 880581.SH
+    - 880595.SH
+    - 880619.SH
+    - 880622.SH
+    - 880640.SH
+    - 880641.SH
+    - 880665.SH
+    - 880676.SH
+    - 880677.SH
+    - 880679.SH
+    - 880680.SH
+    - 880687.SH
+    - 880690.SH
+    - 880691.SH
+    - 880694.SH
+    - 880699.SH
+    - 880712.SH
+    - 880723.SH
+    - 880751.SH
+    - 880752.SH
+    - 880756.SH
+    - 880770.SH
+    - 880774.SH
+    - 880779.SH
+    - 880780.SH
+    - 880781.SH
+    - 880784.SH
+    - 880785.SH
+    - 880789.SH
+    - 880807.SH
+    only_name_in_concept_board:
+    - 2026一季报预增
+    - 2026中报预增
+    - 3D打印
+    - 5G
+    - 6G概念
+    - AI PC
+    - AI应用
+    - AI手机
+    - AI智能体
+    - AI眼镜
+    - AI视频
+    - AI语料
+    - BC电池
+    - DeepSeek概念
+    - EDR概念
+    - ERP概念
+    - ETC
+    - F5G概念
+    - IP经济(谷子经济)
+    - MCU芯片
+    - MLCC概念
+    - MiniLED
+    - NFT概念
+    - OLED
+    - PCB概念
+    - PEEK材料
+    - PET铜箔
+    - PM2.5
+    - POE胶膜
+    - PPP概念
+    - ST板块
+    - TOPCON电池
+    - WiFi 6
+    - 一体化压铸
+    - 一带一路
+    - 三胎概念
+    - 上海国企改革
+    - 上海自贸区
+    - 专精特新
+    - 丙烯酸
+    stock_overlap: 4864
+    only_in_sc880_stocks: 1315
+    only_in_concept_stocks: 1
+  cb_vs_cbc:
+    boards_in_cb_not_in_cbc: 0
+    boards_in_cbc_not_in_cb: 0
+  universe_axis_candidates:
+    boards_with_quote_880: 601
+    boards_mapped_sc880: 467
+    boards_mapped_concept: 375
+    stock_pool_sc880: 6179
+    stock_pool_concept: 4865
+    stock_pool_union_two_calibers: 6180
+    note: 两套口径 board_code 命名空间不相交（tqcenter '880xxx.SH' vs akshare '300xxx'），只能按成分股集合对齐，不能按板块码/板块名对齐
+  sector_code_prefix_profile:
+    kline_sector_880: *id001
+    sector_constituent: *id002
+failures: []

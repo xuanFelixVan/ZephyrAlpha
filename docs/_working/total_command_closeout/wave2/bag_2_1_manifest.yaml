@@ -1,0 +1,943 @@
+ttl: task_bound
+completes_when: 本清单逐件与源车道字节等值(除本班加行件)、且总包据本表完成 token/翻译/depgraph 登记并入袋
+# 波 2.1 六图役 装袋清单（本班=抢救搬运执行队，只搬运+补齐登记前件+出装袋清单，不定真源、不自赋裁定号）
+# 三态/袋序列口径以同目录 lane_inventory.yaml 为准；HOTREG 与 policy/挂轴件在 docs/01_policies_and_standards/** 属本班硬禁写入面，不入本清单(交总包 R-1 处理)。
+# 本清单=六图役自有施工/案卷面(OTHER/SCRIPTS/SRC/TEST/DOCSWORK 五域)的待投件。
+site: st-mapbuild-20260924
+carry_root: .aidrafts/st-final-build-20260926
+counts:
+  total_pending: 83
+  B_in_head_updated: 4
+  C_new: 79
+  new_py: 27
+  this_shift_annotated: 14
+  equal_in_head_no_carry: 1  # docs/_working/map_build/02_skeleton_writeback.md(源盘==dev HEAD 等值,免投,见案卷)
+conflict_groups_touching_six_maps: 2  # §四-1 capability_canonical / §四-2 in_process_gate_registry,均属 HOTREG(本班禁写),与本 83 件零路径重叠
+files:
+  - file: docs/_working/map_build/00_campaign_brief.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 5ca1908c0220e4d11a88fffaac59bf519191943f6365d82e2b1b20f6e4615eb5
+    target_sha256_raw: 5ca1908c0220e4d11a88fffaac59bf519191943f6365d82e2b1b20f6e4615eb5
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/01_lane_workplan.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 968e9a85dc264199a5edab0ce477f36f6c84e1d761dc62c5be917b17a446fa97
+    target_sha256_raw: 968e9a85dc264199a5edab0ce477f36f6c84e1d761dc62c5be917b17a446fa97
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/03_final_blueprint_and_schema.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 9d33e5c4e1a9391557740eeb096ee6baeb185b4bfc504c9c45afe8917b361d16
+    target_sha256_raw: 9d33e5c4e1a9391557740eeb096ee6baeb185b4bfc504c9c45afe8917b361d16
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/99_pending_owner.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: ac38d999621f11857fed7d835272b25b9e661c667da59e5971e48aa3780b63bc
+    target_sha256_raw: ac38d999621f11857fed7d835272b25b9e661c667da59e5971e48aa3780b63bc
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/00_skeleton.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: a6c85eeedbae4709de2f75ca9aad3a327e27b85476b0fa9ea696f52da723eb05
+    target_sha256_raw: a6c85eeedbae4709de2f75ca9aad3a327e27b85476b0fa9ea696f52da723eb05
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: c0785240addc6ab0e35dfa226d2d8e46278722a82626e58ec49aa24adb0176b8
+    target_sha256_raw: c0785240addc6ab0e35dfa226d2d8e46278722a82626e58ec49aa24adb0176b8
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 0897cb9124e99ea3dbba663cf530d8cca8a3f2af5230eb09349c6a0c7d5dff06
+    target_sha256_raw: 0897cb9124e99ea3dbba663cf530d8cca8a3f2af5230eb09349c6a0c7d5dff06
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: e7526cb188804120c778826897655454ddef6b7a224c2769620e77ba63ff16f6
+    target_sha256_raw: e7526cb188804120c778826897655454ddef6b7a224c2769620e77ba63ff16f6
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 7861bc201120a919ac30a5e96f8d6c17648f06784637a50e8152d4f06cadc49c
+    target_sha256_raw: 7861bc201120a919ac30a5e96f8d6c17648f06784637a50e8152d4f06cadc49c
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 9d90ab442c54a36c7e834350b06fffc96e09f241391638d261232a540b1eb1d2
+    target_sha256_raw: 9d90ab442c54a36c7e834350b06fffc96e09f241391638d261232a540b1eb1d2
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: ed8727f37f21c9777e34171329f2e2e765b404fb81a36fccec74bb0ac343cc78
+    target_sha256_raw: ed8727f37f21c9777e34171329f2e2e765b404fb81a36fccec74bb0ac343cc78
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 08c7b978b3ff079b949f80147551e612f492d0352ca1b3982420c10f8d3f9b1f
+    target_sha256_raw: 08c7b978b3ff079b949f80147551e612f492d0352ca1b3982420c10f8d3f9b1f
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig11_delivery/08_死信全链.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 79c38d981e0b9f4d2afed0ca1f40a403c446efd7da8fb14ba62e7038587ced48
+    target_sha256_raw: 79c38d981e0b9f4d2afed0ca1f40a403c446efd7da8fb14ba62e7038587ced48
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/00_skeleton.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 424eaa19d888b58ebcefbc488fc2c13340ac0fa3f1460f066a9e2cf77300dc16
+    target_sha256_raw: 424eaa19d888b58ebcefbc488fc2c13340ac0fa3f1460f066a9e2cf77300dc16
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: aed65f3c70afd500d70a5f9374c2373bf38b51849dd992cb034b0b237327f1d3
+    target_sha256_raw: aed65f3c70afd500d70a5f9374c2373bf38b51849dd992cb034b0b237327f1d3
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 9541c41b1d5a35e4eda309b50a26508e9c1a59e0feb686c87c2a087d332142f1
+    target_sha256_raw: 9541c41b1d5a35e4eda309b50a26508e9c1a59e0feb686c87c2a087d332142f1
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 995d95863aa9aa83e48dcec30ae233c4717d4ff6b3838b349523dee4b6ae4ced
+    target_sha256_raw: 995d95863aa9aa83e48dcec30ae233c4717d4ff6b3838b349523dee4b6ae4ced
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: d9b5cb96fdc8e8e34fdad3957b60420f7c891ce8d4cb5c82827ff92faa732bc9
+    target_sha256_raw: d9b5cb96fdc8e8e34fdad3957b60420f7c891ce8d4cb5c82827ff92faa732bc9
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/05_对账修复六环.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: c16276d0756bad7a037c72136d0128916a99164d8f57ba6570c2720b55fe1eac
+    target_sha256_raw: c16276d0756bad7a037c72136d0128916a99164d8f57ba6570c2720b55fe1eac
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: a5acb3c8eeb0efb18f4354b54cb8138e13f9fe7dc3ecb023eb67655601a055b7
+    target_sha256_raw: a5acb3c8eeb0efb18f4354b54cb8138e13f9fe7dc3ecb023eb67655601a055b7
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/12_扩行提案与封顶重宣.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 51c50dd36e0a064a76cec0ebe72cedad2eb441875cac771b13a37ee5ee92cea7
+    target_sha256_raw: 51c50dd36e0a064a76cec0ebe72cedad2eb441875cac771b13a37ee5ee92cea7
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig12_datachain/90_writeback_inventory.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 7623b30bdb123da34a073802cd2f23f6db713250eee3933308bf43df7d069cbf
+    target_sha256_raw: 7623b30bdb123da34a073802cd2f23f6db713250eee3933308bf43df7d069cbf
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/00_skeleton.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 16035abb2849241519c05c014adea1be1b2016c6a7f2b4c7e90f7e3b226463bc
+    target_sha256_raw: 16035abb2849241519c05c014adea1be1b2016c6a7f2b4c7e90f7e3b226463bc
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/01_盘前就绪链.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 5a84a171c44f0439aa081a21735373de5e079dd6014de4b11cfd3d9374871aba
+    target_sha256_raw: 5a84a171c44f0439aa081a21735373de5e079dd6014de4b11cfd3d9374871aba
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: a9fe6de3ecff942529132fde0c1ea87e154ab68de8a29bc2869d8264f7a7ffb2
+    target_sha256_raw: a9fe6de3ecff942529132fde0c1ea87e154ab68de8a29bc2869d8264f7a7ffb2
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 8f7c835dc6e3d297279b4221ac971e5e0ed682850fefe86012f7fecfe986c0ac
+    target_sha256_raw: 8f7c835dc6e3d297279b4221ac971e5e0ed682850fefe86012f7fecfe986c0ac
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 0b980a1f567f09ddc6e68f6bc16448aaf7b8820c0abf6f28221ef8608b39214b
+    target_sha256_raw: 0b980a1f567f09ddc6e68f6bc16448aaf7b8820c0abf6f28221ef8608b39214b
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 1a1718b86103db136cd15637b05a1dda1d45bac563568260a1e3b0ae0b45187d
+    target_sha256_raw: 1a1718b86103db136cd15637b05a1dda1d45bac563568260a1e3b0ae0b45187d
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: f465fa9d16ea6a37854d8f68af866629b4ebcb41593d1241b3f8eb866e5ab28d
+    target_sha256_raw: f465fa9d16ea6a37854d8f68af866629b4ebcb41593d1241b3f8eb866e5ab28d
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/07_dloop十六段解剖.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 424468d08dbb08dfefbe914cd5599cc05a977b49ac807b179454943c2217e729
+    target_sha256_raw: 424468d08dbb08dfefbe914cd5599cc05a977b49ac807b179454943c2217e729
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/08_盘后批次与当日回测.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: a8b88a14fce228a5e57e5509c69517370f03e188f3ade0f429e6fc623d6d4643
+    target_sha256_raw: a8b88a14fce228a5e57e5509c69517370f03e188f3ade0f429e6fc623d6d4643
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 882e5979c2aff8b5d4f86af3cedd6f848498159136842fb0be58f3ac311574c4
+    target_sha256_raw: 882e5979c2aff8b5d4f86af3cedd6f848498159136842fb0be58f3ac311574c4
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: f43ab0da13b77fa5fdd976f96fad2f69c44ee4fdae3f3acb775e65aba44781b8
+    target_sha256_raw: f43ab0da13b77fa5fdd976f96fad2f69c44ee4fdae3f3acb775e65aba44781b8
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig14_construction/00_skeleton.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 4ace6f6812f61c7f17b23e6f86629d447bed72f6e3ec46a341ffcf9a7813b352
+    target_sha256_raw: 4ace6f6812f61c7f17b23e6f86629d447bed72f6e3ec46a341ffcf9a7813b352
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig14_construction/01_冷启动与设计段.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 96180ae5b4ea0fb9acf50859274c8e0ebeafddbc3051e801facea940a01f0800
+    target_sha256_raw: 96180ae5b4ea0fb9acf50859274c8e0ebeafddbc3051e801facea940a01f0800
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig14_construction/02_施工与门禁段.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 0f2dc9791aa0434fff01cc8057709fdfcad455006f04669871fd80fc8d8c1d46
+    target_sha256_raw: 0f2dc9791aa0434fff01cc8057709fdfcad455006f04669871fd80fc8d8c1d46
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig14_construction/03_验收与收尾段.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 914572e82b26d71eea421973732310c57ae717a716887afcabeceed18ab81d35
+    target_sha256_raw: 914572e82b26d71eea421973732310c57ae717a716887afcabeceed18ab81d35
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig14_construction/90_step_anchor_validator_spec.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-07
+    src_sha256_raw: 13e6b7a1fb1526582aed3cbfb268b4172999a936a87074d6ecbdebe467a5e13c
+    target_sha256_raw: 13e6b7a1fb1526582aed3cbfb268b4172999a936a87074d6ecbdebe467a5e13c
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: f6283fb8276cf12ffb29fb36e6949af89f61eda4e2341e20c0944feda89deb7c
+    target_sha256_raw: f6283fb8276cf12ffb29fb36e6949af89f61eda4e2341e20c0944feda89deb7c
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig15_cardlife/00_skeleton.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: 0eb17f807408f17bbd85007a52d19807deea18612bdb67f9987bc0ef1b614e0b
+    target_sha256_raw: 0eb17f807408f17bbd85007a52d19807deea18612bdb67f9987bc0ef1b614e0b
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig15_cardlife/01_状态族前段.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: 7f8226165a23c50c309ece53eba887232780c31c7729223104720c347b155ab8
+    target_sha256_raw: 7f8226165a23c50c309ece53eba887232780c31c7729223104720c347b155ab8
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig15_cardlife/02_状态族后段与迁移.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: 6e3e6175396f421069e03128cc676150b9d1ffe0eb380e0ed46db694569eca2b
+    target_sha256_raw: 6e3e6175396f421069e03128cc676150b9d1ffe0eb380e0ed46db694569eca2b
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: c820008bc5e4be655216801acaacfd6ce427b75ef396ecd41a1d55c4fc0ee393
+    target_sha256_raw: c820008bc5e4be655216801acaacfd6ce427b75ef396ecd41a1d55c4fc0ee393
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig15_cardlife/90_card_state_registry_spec.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: 1db98e516c72f934c3861e02b71f7fd565501a9cc0186e7e94a71c78d5f1e4f4
+    target_sha256_raw: 1db98e516c72f934c3861e02b71f7fd565501a9cc0186e7e94a71c78d5f1e4f4
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: 51220b126afc8c7dd242cf44aee618e24ef02342bb8427349a27e39e526479eb
+    target_sha256_raw: 51220b126afc8c7dd242cf44aee618e24ef02342bb8427349a27e39e526479eb
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig16_ruling/00_skeleton.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: 7e6216d6c9b5cd747bfbda8730e79d68add030f6218cd6e65b0bdcd8eeb0b2c1
+    target_sha256_raw: 7e6216d6c9b5cd747bfbda8730e79d68add030f6218cd6e65b0bdcd8eeb0b2c1
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: docs/_working/map_build/fig16_ruling/91_wordlist_and_roor_proposal.md
+    state: C
+    is_new: true
+    bag: 2.1-DOCSWORK-08
+    src_sha256_raw: e0ccf7913594689008aa53e4f80c4130f0786e239f542dddad68a9f83a06d036
+    target_sha256_raw: e0ccf7913594689008aa53e4f80c4130f0786e239f542dddad68a9f83a06d036
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: config/construction_workflow_map.yaml
+    state: C
+    is_new: true
+    bag: 2.1-OTHER-09
+    src_sha256_raw: 254732370135ad20e8050ae4e45e0f4fb9947b39ddbdd2472c7a195ee178c383
+    target_sha256_raw: 254732370135ad20e8050ae4e45e0f4fb9947b39ddbdd2472c7a195ee178c383
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: config/data_supply_chain_map.yaml
+    state: C
+    is_new: true
+    bag: 2.1-OTHER-09
+    src_sha256_raw: f578b25653162dfd6b4dadc5ad061dc8bbc5d339c433d38669106ea1892f2674
+    target_sha256_raw: f578b25653162dfd6b4dadc5ad061dc8bbc5d339c433d38669106ea1892f2674
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: config/dev_delivery_map.yaml
+    state: C
+    is_new: true
+    bag: 2.1-OTHER-09
+    src_sha256_raw: 78488f7066dc0de4e4e82b7fd872797934b4f84473ce2f4a85ba874bb1cbf6af
+    target_sha256_raw: 78488f7066dc0de4e4e82b7fd872797934b4f84473ce2f4a85ba874bb1cbf6af
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: config/governance_operations_map.yaml
+    state: B
+    is_new: false
+    bag: 2.1-OTHER-09
+    src_sha256_raw: bf139a2bb17f3834c937fb7b3a5220104551b2a5ec19eb7cb67e5ccd5fa48f99
+    target_sha256_raw: bf139a2bb17f3834c937fb7b3a5220104551b2a5ec19eb7cb67e5ccd5fa48f99
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: config/strategy_card_lifecycle_map.yaml
+    state: C
+    is_new: true
+    bag: 2.1-OTHER-09
+    src_sha256_raw: 3297a22f83934c81260f8b74224a7463ede2208b854f761f7805f188004d3359
+    target_sha256_raw: 3297a22f83934c81260f8b74224a7463ede2208b854f761f7805f188004d3359
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: config/trading_day_cycle_map.yaml
+    state: C
+    is_new: true
+    bag: 2.1-OTHER-09
+    src_sha256_raw: ea38ea777bc8c47e528c0dd53114d27eb811b60c41e25895c723d169636a0286
+    target_sha256_raw: ea38ea777bc8c47e528c0dd53114d27eb811b60c41e25895c723d169636a0286
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d3_metadata/check_registry_consistency.py
+    state: B
+    is_new: false
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: a8c78f804efb3ff1092e9cf05fa1ddaf36cf3288316c16099551721ef97f441b
+    target_sha256_raw: a8c78f804efb3ff1092e9cf05fa1ddaf36cf3288316c16099551721ef97f441b
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/generators/align_all.py
+    state: B
+    is_new: false
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 0f120c233962212787eee8dee00ccaec64f02d8f27508daca30605872d1c0255
+    target_sha256_raw: 0f120c233962212787eee8dee00ccaec64f02d8f27508daca30605872d1c0255
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: c09fa7f6e472097de99fc97205b5a886bb22d019957d763132e2dc8adb113919
+    target_sha256_raw: bad9de0e52c46d9a58ed2d7e8691b3d43378a4d67072aa4e29650ca9a42a7905
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图14 施工流生成器
+      plain_zh: 读取环节锚块按单一真源派生图14 施工流地图配置
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 271536683a7c88d576e35e5934baf14b9357c05aa239990d957ed6453b313c86
+    target_sha256_raw: da183f3d114b46fcb3dfb1ba39bfb0b9d28d7dfebdc46544ea5d666dd2cfe71f
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图12 供数链生成器
+      plain_zh: 读取环节锚块按单一真源派生图12 供数链地图配置
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 7f788e53217fc359f6336b810385a14241f67ec2df8613c6b3ed85f5387c5580
+    target_sha256_raw: 5bffcaec0ee93948522cf94253d5ccc196e82b13e22cef554637404c8d5b23e3
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图11 dev交付生成器
+      plain_zh: 读取环节锚块按单一真源派生图11 dev交付地图配置
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 6138fb7104c49474b739247361145d93a45a491fc29c2a51b410ffa27c019307
+    target_sha256_raw: 53929d50a3f776527e5172e7cf5911b6ec92070244ef2265f6747b9ecd92a70a
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图15 卡片生命周期生成器
+      plain_zh: 读取环节锚块按单一真源派生图15 卡片生命周期地图配置
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 14ab9671c4e2c9acf8abd7378e04615f471cf6c70492a5ec9eb45e633efae834
+    target_sha256_raw: ef4b98f998300a9376b90e09a5132608144f617af9ef51061f65dbf209c6213b
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图13 日循环生成器
+      plain_zh: 读取环节锚块按单一真源派生图13 日循环地图配置
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/validators/validate_construction_steps.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 26c2782b12e38a82a871d9c401b9864fdfc95028483deff70b8b8ab51785db6c
+    target_sha256_raw: dffa6c01a3ff4c3ea9e11bf93f43d71f9a08cafacb71f8164023b5bf0893717c
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图14施工步骤校验器
+      plain_zh: 校验图十四施工步骤锚块与政策一致性
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 8d283f5e03517ac7387057ecff50518e959f1bbcff4348b83e7fa729c87b7ddd
+    target_sha256_raw: 7a5c3112260a8f81e0d49e92067e819226c3be42cba1e96b18e732fdb941dfbd
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图12 供数链校验器
+      plain_zh: 校验图12 供数链地图结构是否合规并输出红点
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: c6f4b783d58e886ef89742a3210a3b2482e2640e216f6af081c0abb25b5eddae
+    target_sha256_raw: 79383fdc585579869d64e19848194289f0b3cbb33b9f5dd7e5b8d0016d8738b9
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图11 dev交付校验器
+      plain_zh: 校验图11 dev交付地图结构是否合规并输出红点
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 22c5f5e8511f88d16297f9c0dd98728f1bf056d9d9178b49b59ccdda9af2803f
+    target_sha256_raw: 6a9a1978ff791740c094b582fd0bf8a18aedea4329b19f769913201454efe7a6
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图15 卡片生命周期校验器
+      plain_zh: 校验图15 卡片生命周期地图结构是否合规并输出红点
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: 4b83d6d536be139326885279e78bd3ff60b0d56da43ac0d8e3a50af865640067
+    target_sha256_raw: fa4da5fe0502d270fa03d4fdf6c03a09c90df2ab3b2d5dab3412f41221eece4e
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图13 日循环校验器
+      plain_zh: 校验图13 日循环地图结构是否合规并输出红点
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: scripts/governance/next_ruling_id.py
+    state: C
+    is_new: true
+    bag: 2.1-SCRIPTS-governance-10
+    src_sha256_raw: afeb4069c24d385881f8e9f4486cc2e0d8ba07081270ead434c683ce4a711dee
+    target_sha256_raw: e50a24f5fe5c6894053aea9cd179f42c55a2e1cd4ff1791e0e804c020b709642
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 裁定取号器
+      plain_zh: 扫描裁定册给出下一个可用裁定编号的工具
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: src/zephyr/gov_enforcement/commit_gates/construction_workflow_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-SRC-gov_enforcement-11
+    src_sha256_raw: c064678aeefc97858c92433433445b39a6304d0a7f162a8b19292db68676becb
+    target_sha256_raw: 157301eae66016fd36017eef053c75d7ffa37ba7911ae9e48508d631802ab5e1
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图14 施工流提交门禁
+      plain_zh: 提交触及图14 施工流真源时跑结构硬阻断门禁
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-SRC-gov_enforcement-11
+    src_sha256_raw: 2f274c1fd76c941c1524a4fb2ffa0f4fbcabd3923ae600269577b55057756685
+    target_sha256_raw: 2f274c1fd76c941c1524a4fb2ffa0f4fbcabd3923ae600269577b55057756685
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图12 供数链提交门禁
+      plain_zh: 提交触及图12 供数链真源时跑结构硬阻断门禁
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: src/zephyr/gov_enforcement/commit_gates/dev_delivery_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-SRC-gov_enforcement-11
+    src_sha256_raw: c8047fc0a3f994a2c15f641080ddc551e1fd7bbf3c3e2201df70c3f817f961c4
+    target_sha256_raw: c8047fc0a3f994a2c15f641080ddc551e1fd7bbf3c3e2201df70c3f817f961c4
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图11 dev交付提交门禁
+      plain_zh: 提交触及图11 dev交付真源时跑结构硬阻断门禁
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py
+    state: B
+    is_new: false
+    bag: 2.1-SRC-gov_enforcement-11
+    src_sha256_raw: 850a473a6bda0219b8460fecea4d56b2c67f2de0403ef839b3bc6108b4dca01b
+    target_sha256_raw: 850a473a6bda0219b8460fecea4d56b2c67f2de0403ef839b3bc6108b4dca01b
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    algo_note_sync_same_batch: true
+    conflict_relevant: false
+  - file: src/zephyr/gov_enforcement/commit_gates/strategy_card_lifecycle_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-SRC-gov_enforcement-11
+    src_sha256_raw: 8b2e28d387479e2d64334b1095b1c8091e13cce66980c2c4186712db35e59224
+    target_sha256_raw: 61ff842455204e2910bcadecd42c2ac4223dc6834a72e3fc1aeb26fc131b58cf
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图15 卡片生命周期提交门禁
+      plain_zh: 提交触及图15 卡片生命周期真源时跑结构硬阻断门禁
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: src/zephyr/gov_enforcement/commit_gates/trading_day_cycle_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-SRC-gov_enforcement-11
+    src_sha256_raw: 3b26a6a8210a9250bb4b1c1582a5fce9cc067a8438997c1d17bb44237aafba13
+    target_sha256_raw: 493b801df4cef6c28d101d7f08a9ec480cfe0fca143bc16b119a182b47872cfe
+    this_shift_added_line: true
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图13 日循环提交门禁
+      plain_zh: 提交触及图13 日循环真源时跑结构硬阻断门禁
+    depgraph: {needed: true, note: 总包在主仓跑 apply_depgraph --add-design-node}
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/commit_gates/test_construction_workflow_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: df313a0968acf7f3e516a32679d7f89995f4295aff8cd3ee2c05b54fecd922d5
+    target_sha256_raw: df313a0968acf7f3e516a32679d7f89995f4295aff8cd3ee2c05b54fecd922d5
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图14 施工流门禁测试
+      plain_zh: 验证图14 施工流提交门禁能红能绿的配套测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/commit_gates/test_data_supply_chain_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: ff376e01d53789940fb64ea30e0106f738b3b6d44a90b3e1a5f11bd82896257a
+    target_sha256_raw: ff376e01d53789940fb64ea30e0106f738b3b6d44a90b3e1a5f11bd82896257a
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图12 供数链门禁测试
+      plain_zh: 验证图12 供数链提交门禁能红能绿的配套测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/commit_gates/test_dev_delivery_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: 9238fc52672cb39d123939f0ab37a433036d4fe943ca43ea96769ced106dbf1d
+    target_sha256_raw: 9238fc52672cb39d123939f0ab37a433036d4fe943ca43ea96769ced106dbf1d
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图11 dev交付门禁测试
+      plain_zh: 验证图11 dev交付提交门禁能红能绿的配套测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: b48623b2b7f331db24570c277f0cd824537a9e6257fa761b0f5c1f6fbb6a6a56
+    target_sha256_raw: b48623b2b7f331db24570c277f0cd824537a9e6257fa761b0f5c1f6fbb6a6a56
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图15 卡片生命周期门禁测试
+      plain_zh: 验证图15 卡片生命周期提交门禁能红能绿的配套测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/commit_gates/test_trading_day_cycle_map_gate.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: 70ffe280a7747cd68dd789b93a165daefe98f064c236701b42d946b41677b0aa
+    target_sha256_raw: 70ffe280a7747cd68dd789b93a165daefe98f064c236701b42d946b41677b0aa
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图13 日循环门禁测试
+      plain_zh: 验证图13 日循环提交门禁能红能绿的配套测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/d5_architecture/test_construction_workflow_map_adversarial.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: 3605b23462ddc770c341526d4f12cbe7505aa86b2fd906c2eea5f7fc3942cbc5
+    target_sha256_raw: 3605b23462ddc770c341526d4f12cbe7505aa86b2fd906c2eea5f7fc3942cbc5
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图14 施工流对抗测试
+      plain_zh: 对图14 施工流校验器发起对抗样本的红蓝测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/d5_architecture/test_data_supply_chain_map_adversarial.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: c7e0408666bdddcabb060396cc3280e88f2cb2b41fc49717f3aedc8ab72ab501
+    target_sha256_raw: c7e0408666bdddcabb060396cc3280e88f2cb2b41fc49717f3aedc8ab72ab501
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图12 供数链对抗测试
+      plain_zh: 对图12 供数链校验器发起对抗样本的红蓝测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/d5_architecture/test_dev_delivery_map_adversarial.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: f85c4f47149b39a491cf7aabd5745519a0223d54551718b4d813ffc70eabce0b
+    target_sha256_raw: f85c4f47149b39a491cf7aabd5745519a0223d54551718b4d813ffc70eabce0b
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图11 dev交付对抗测试
+      plain_zh: 对图11 dev交付校验器发起对抗样本的红蓝测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/d5_architecture/test_strategy_card_lifecycle_map_adversarial.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: 3daa7c5be0ca6ff5076d224a00abfefdb66a981f05f4880c03497240594bb5d1
+    target_sha256_raw: 3daa7c5be0ca6ff5076d224a00abfefdb66a981f05f4880c03497240594bb5d1
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图15 卡片生命周期对抗测试
+      plain_zh: 对图15 卡片生命周期校验器发起对抗样本的红蓝测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/d5_architecture/test_trading_day_cycle_map_adversarial.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: fc2b011738faa27378063adde44cc02d8529c1bcd4c88a0056b3b16fe7800b5f
+    target_sha256_raw: fc2b011738faa27378063adde44cc02d8529c1bcd4c88a0056b3b16fe7800b5f
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 图13 日循环对抗测试
+      plain_zh: 对图13 日循环校验器发起对抗样本的红蓝测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false
+  - file: tests/governance/test_next_ruling_id.py
+    state: C
+    is_new: true
+    bag: 2.1-TEST-12
+    src_sha256_raw: 373ae262ffd337f85aee3228a7f78db41c30162633c830418480346096fe6eaa
+    target_sha256_raw: 373ae262ffd337f85aee3228a7f78db41c30162633c830418480346096fe6eaa
+    this_shift_added_line: false
+    creation_token_capability: map_build
+    translation:
+      name_zh: 裁定取号器测试
+      plain_zh: 验证裁定取号器取号与查缺的配套测试
+    algo_note_sync_same_batch: false
+    conflict_relevant: false

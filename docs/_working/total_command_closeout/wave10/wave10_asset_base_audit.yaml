@@ -1,0 +1,1588 @@
+generated_by: scripts/governance/wave10/wave10_asset_base_audit.py
+branch: session/st-final-build-20260926
+prod_roots:
+- zephyr.trading
+- zephyr.data
+- zephyr.frontend
+- zephyr.orchestrator
+- zephyr.runtime
+prod_root_scripts:
+- scripts.backtest.factory_grid_executor
+- scripts.backtest.f06_e4_wfa_exam
+- scripts.compute_signals
+prod_closure_module_count: 1308
+scanned_module_count: 4908
+judgment_rule: 装饰性接线（仅 TYPE_CHECKING / 仅脚本 / 仅非生产 src / 仅测试）一律判未接；CONNECTED_PROD 才算接
+clusters:
+  signal_ashare_graph_core_excl_strategy_signal:
+    file_count: 135
+    in_head_count: 135
+    connected_prod_count: 21
+    verdict_tally:
+      CONNECTED_PROD: 21
+      NOT_CONSUMED_off_prod_path: 46
+      NOT_CONSUMED_orphan: 68
+    modules:
+    - module: zephyr.signal_ashare
+      path: src/zephyr/signal_ashare/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare._extensions
+      path: src/zephyr/signal_ashare/_extensions/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.adjustment_cycle_tracker
+      path: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.api
+      path: src/zephyr/signal_ashare/api/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.auction_microstructure_analyzer
+      path: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.banker_pattern_simulator
+      path: src/zephyr/signal_ashare/banker_pattern_simulator.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.bottom_confirmation_entry
+      path: src/zephyr/signal_ashare/bottom_confirmation_entry.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.calendar_effects_model
+      path: src/zephyr/signal_ashare/calendar_effects_model.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.capital_behavior_orchestrator
+      path: src/zephyr/signal_ashare/capital_behavior_orchestrator.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.capital_flow_pattern_analyzer
+      path: src/zephyr/signal_ashare/capital_flow_pattern_analyzer.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.chanlun_structure
+      path: src/zephyr/signal_ashare/chanlun_structure.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.unified_pattern_engine
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core
+      path: src/zephyr/signal_ashare/core/__init__.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.strategy_pipeline.daily_gate_snapshot
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.analysis_utils
+      path: src/zephyr/signal_ashare/core/analysis_utils.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 8
+      prod_consumers:
+      - zephyr.signal_ashare.mainline_candidates
+      - zephyr.signal_ashare.ml_forecast.next_day_8state_forecast
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.adjustment_cycle_tracker
+      - zephyr.signal_ashare.mainline_probability
+      - zephyr.signal_ashare.ml_forecast.regime_change_detector
+      - zephyr.signal_ashare.position_sector_context
+      - zephyr.signal_ashare.sector.sector_divergence
+      - zephyr.signal_ashare.sector.sector_leader
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.candidate_pool_aggregator
+      path: src/zephyr/signal_ashare/core/candidate_pool_aggregator.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.daily_condition_sensor
+      path: src/zephyr/signal_ashare/core/daily_condition_sensor.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.environment_switch
+      path: src/zephyr/signal_ashare/core/environment_switch.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 4
+      prod_consumers:
+      - zephyr.pf_core.strategy_engine.framework_composer
+      - zephyr.strategy_pipeline.daily_gate_snapshot
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers:
+      - scripts.backtest.auto_mount
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.pool_tier_maintenance
+      path: src/zephyr/signal_ashare/core/pool_tier_maintenance.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.sector_conduction
+      path: src/zephyr/signal_ashare/core/sector_conduction.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.sector_ecology_judge
+      path: src/zephyr/signal_ashare/core/sector_ecology_judge.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - zephyr.signal_ashare.core.sector_strength_wiring
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.sector_strength_aggregator
+      path: src/zephyr/signal_ashare/core/sector_strength_aggregator.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - zephyr.signal_ashare.core.sector_strength_wiring
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.core.sector_strength_wiring
+      path: src/zephyr/signal_ashare/core/sector_strength_wiring.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.signal_ashare.core
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.counter_trend_board
+      path: src/zephyr/signal_ashare/counter_trend_board.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.cross_asset_ratio_monitor
+      path: src/zephyr/signal_ashare/cross_asset_ratio_monitor.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.cross_market_conduction_sensor
+      path: src/zephyr/signal_ashare/cross_market_conduction_sensor.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.crowd_game_simulator
+      path: src/zephyr/signal_ashare/crowd_game_simulator.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.event_causal_reasoner
+      path: src/zephyr/signal_ashare/event_causal_reasoner.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.factor_result_bridge
+      path: src/zephyr/signal_ashare/factor_result_bridge.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.false_breakout_trap_detector
+      path: src/zephyr/signal_ashare/false_breakout_trap_detector.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.fine_scoring_engine
+      path: src/zephyr/signal_ashare/fine_scoring_engine.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.screening.screening_funnel_report
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.foreign_impact_judge
+      path: src/zephyr/signal_ashare/foreign_impact_judge.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.futures_basis_monitor
+      path: src/zephyr/signal_ashare/futures_basis_monitor.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.index_contribution_decomposer
+      path: src/zephyr/signal_ashare/index_contribution_decomposer.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.counter_trend_board
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.index_resonance_scorer
+      path: src/zephyr/signal_ashare/index_resonance_scorer.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.industry_chain_graph
+      path: src/zephyr/signal_ashare/industry_chain_graph.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.infrastructure
+      path: src/zephyr/signal_ashare/infrastructure/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.institutional_behavior_analyzer
+      path: src/zephyr/signal_ashare/institutional_behavior_analyzer.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.capital_behavior_orchestrator
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0
+      path: src/zephyr/signal_ashare/intraday_t0/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.day_trade_pnl_estimator
+      path: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.intraday_buy_sell_point_analyzer
+      path: src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - zephyr.frontend.services.dashboard_feeds
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.intraday_t0.t0_point_analyzer
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.intraday_size_style
+      path: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.intraday_volume_orderflow
+      path: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.overnight_conduction_model
+      path: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.overnight_return_expectancy
+      path: src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.t0_point_analyzer
+      path: src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.intraday_t0.t0_trading_pipeline
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.intraday_t0.t0_trading_pipeline
+      path: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up
+      path: src/zephyr/signal_ashare/limit_up/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.lhb_premium_analyzer
+      path: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.limit_up_ecosystem_leadership
+      path: src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.limit_up_followthrough
+      path: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.limit_up_potential_scorer
+      path: src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.limit_up_reason_attribution
+      path: src/zephyr/signal_ashare/limit_up/limit_up_reason_attribution.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.seat_pattern_analyzer
+      path: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.war_pool_generator
+      path: src/zephyr/signal_ashare/limit_up/war_pool_generator.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.limit_up.youzi_relay_emotion_engine
+      path: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.pf_core.strategies.daban_sleeve_strategy
+      - zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.mainline_candidates
+      path: src/zephyr/signal_ashare/mainline_candidates.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 3
+      prod_consumers:
+      - zephyr.data.sector_report_builder
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.limit_up.war_pool_generator
+      - zephyr.signal_ashare.mainline_probability
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.mainline_probability
+      path: src/zephyr/signal_ashare/mainline_probability.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.limit_up.war_pool_generator
+      - zephyr.signal_ashare.position_sector_context
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.market_breadth_history_store
+      path: src/zephyr/signal_ashare/market_breadth_history_store.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.market_cap_tier
+      path: src/zephyr/signal_ashare/market_cap_tier.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.market_lifecycle_phase
+      path: src/zephyr/signal_ashare/market_lifecycle_phase.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.market_state_sensor
+      path: src/zephyr/signal_ashare/market_state_sensor.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast
+      path: src/zephyr/signal_ashare/ml_forecast/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.adaptive_conformal_tcp_rm_ddci
+      path: src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.causal_factor_validator
+      path: src/zephyr/signal_ashare/ml_forecast/causal_factor_validator.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.causal_inference_engine
+      path: src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.ml_forecast.causal_factor_validator
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.causal_ml_engine
+      path: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.conditional_density_predictor
+      path: src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.risk.core.adaptive_risk_forecast
+      - zephyr.signal_ashare.strategy_signal.signal_factory
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.conformal_predictor
+      path: src/zephyr/signal_ashare/ml_forecast/conformal_predictor.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.risk.core.adaptive_risk_forecast
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.event_conditional_density
+      path: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.fake_move_distribution
+      path: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.gap_fill_model
+      path: src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.kronos_tsfm_predictor
+      path: src/zephyr/signal_ashare/ml_forecast/kronos_tsfm_predictor.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.mamba_ssm_temporal_enhancer
+      path: src/zephyr/signal_ashare/ml_forecast/mamba_ssm_temporal_enhancer.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.mc_path_simulator
+      path: src/zephyr/signal_ashare/ml_forecast/mc_path_simulator.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.next_day_8state_forecast
+      path: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 5
+      prod_consumers:
+      - zephyr.frontend.dashboard.components.warroom
+      src_consumers_off_prod_path:
+      - zephyr.plan_engine.intraday_tomorrow_forecast
+      - zephyr.plan_engine.scenario_probability_model
+      - zephyr.regime.index_market_brief
+      - zephyr.regime.market_forecast_fusion
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.next_day_probability_gate
+      path: src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.regime_change_detector
+      path: src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.similar_day_inference
+      path: src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.plan_engine.similar_day_evaluator
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.survival_time_predictor
+      path: src/zephyr/signal_ashare/ml_forecast/survival_time_predictor.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.tcp_rm_conformal
+      path: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.ml_forecast.xlstm_long_memory
+      path: src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.models
+      path: src/zephyr/signal_ashare/models/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.multi_factor_timing_overlay
+      path: src/zephyr/signal_ashare/multi_factor_timing_overlay.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.multi_indicator_divergence
+      path: src/zephyr/signal_ashare/multi_indicator_divergence.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.orderflow_network_panic
+      path: src/zephyr/signal_ashare/orderflow_network_panic.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.position_sector_context
+      path: src/zephyr/signal_ashare/position_sector_context.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.quant_short_term_strength_engine
+      path: src/zephyr/signal_ashare/quant_short_term_strength_engine.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.pf_core.strategies.daban_sleeve_strategy
+      - zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.risk_event_consumer
+      path: src/zephyr/signal_ashare/risk_event_consumer.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening
+      path: src/zephyr/signal_ashare/screening/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.coarse_screening_funnel
+      path: src/zephyr/signal_ashare/screening/coarse_screening_funnel.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.screening.screening_funnel_report
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.event_driven_screener
+      path: src/zephyr/signal_ashare/screening/event_driven_screener.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.screening.screening_funnel_report
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.relative_strength_screener
+      path: src/zephyr/signal_ashare/screening/relative_strength_screener.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.screening_funnel_report
+      path: src/zephyr/signal_ashare/screening/screening_funnel_report.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.selection_funnel_skeleton
+      path: src/zephyr/signal_ashare/screening/selection_funnel_skeleton.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.screening.tiered_screening_filter
+      - zephyr.signal_fundamental.selection_funnel
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.short_term_stock_selector
+      path: src/zephyr/signal_ashare/screening/short_term_stock_selector.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.pf_core.strategies.daban_sleeve_strategy
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.screening.tiered_screening_filter
+      path: src/zephyr/signal_ashare/screening/tiered_screening_filter.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.screening.screening_funnel_report
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector
+      path: src/zephyr/signal_ashare/sector/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_adjustment
+      path: src/zephyr/signal_ashare/sector/sector_adjustment.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.adjustment_cycle_tracker
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_analyzer
+      path: src/zephyr/signal_ashare/sector/sector_analyzer.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.data.sector_report_builder
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_attribute_rules
+      path: src/zephyr/signal_ashare/sector/sector_attribute_rules.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_breadth
+      path: src/zephyr/signal_ashare/sector/sector_breadth.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - zephyr.data.sector_report_builder
+      - zephyr.signal_ashare.sector.sector_state_aggregator
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_crowding_launch
+      path: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_detail_enricher
+      path: src/zephyr/signal_ashare/sector/sector_detail_enricher.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_divergence
+      path: src/zephyr/signal_ashare/sector/sector_divergence.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_gate
+      path: src/zephyr/signal_ashare/sector/sector_gate.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.strategy_pipeline.daily_gate_snapshot
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_leader
+      path: src/zephyr/signal_ashare/sector/sector_leader.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 3
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.limit_up.war_pool_generator
+      - zephyr.signal_ashare.mainline_probability
+      - zephyr.signal_ashare.position_sector_context
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_momentum
+      path: src/zephyr/signal_ashare/sector/sector_momentum.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 3
+      prod_consumers:
+      - zephyr.data.sector_report_builder
+      - zephyr.signal_ashare.mainline_candidates
+      - zephyr.signal_ashare.sector.sector_state_aggregator
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_momentum_persistence
+      path: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_pullback
+      path: src/zephyr/signal_ashare/sector/sector_pullback.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_rotation_state
+      path: src/zephyr/signal_ashare/sector/sector_rotation_state.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 3
+      prod_consumers:
+      - zephyr.signal_ashare.mainline_candidates
+      - zephyr.signal_ashare.sector.sector_state_aggregator
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.sector.sector_divergence
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_rrg
+      path: src/zephyr/signal_ashare/sector/sector_rrg.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 3
+      prod_consumers:
+      - zephyr.signal_ashare.mainline_candidates
+      - zephyr.signal_ashare.sector.sector_state_aggregator
+      src_consumers_off_prod_path:
+      - zephyr.signal_fundamental.sector_rotation_score_mapping
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_siphon
+      path: src/zephyr/signal_ashare/sector/sector_siphon.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - zephyr.data.sector_report_builder
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.sector.sector_divergence
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_state_aggregator
+      path: src/zephyr/signal_ashare/sector/sector_state_aggregator.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - zephyr.data.sector_state_pipeline
+      src_consumers_off_prod_path: []
+      script_consumers:
+      - scripts.backtest.sector_prereg_exam_runner
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sector.sector_volume_anomaly
+      path: src/zephyr/signal_ashare/sector/sector_volume_anomaly.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment
+      path: src/zephyr/signal_ashare/sentiment/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.extreme_sentiment_reversal_detector
+      path: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.market_sentiment_analyzer
+      path: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.data.intraday_sentiment_loop
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.option_sentiment
+      path: src/zephyr/signal_ashare/sentiment/option_sentiment.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.sell_news_overdraft_detector
+      path: src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.sentiment_cycle
+      path: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 5
+      prod_consumers:
+      - zephyr.signal_ashare.ml_forecast.similar_day_inference
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.sentiment.sentiment_cycle_evaluator
+      script_consumers:
+      - scripts.construction.g07_sentiment_validation
+      - scripts.research.verify_g07_sentiment_stratified_correlation
+      - scripts.verify_sentiment_hidden_driver
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.sentiment_cycle_evaluator
+      path: src/zephyr/signal_ashare/sentiment/sentiment_cycle_evaluator.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.sentiment.sentiment_price_divergence
+      path: src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.services
+      path: src/zephyr/signal_ashare/services/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.shared_kernel_sync
+      path: src/zephyr/signal_ashare/shared_kernel_sync.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.signal_history_writer
+      path: src/zephyr/signal_ashare/signal_history_writer.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 2
+      prod_consumers:
+      - scripts.compute_signals
+      src_consumers_off_prod_path: []
+      script_consumers:
+      - scripts.run_backtest
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.stock_relation_gnn
+      path: src/zephyr/signal_ashare/stock_relation_gnn.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.stock_signal_strength
+      path: src/zephyr/signal_ashare/stock_signal_strength.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strength_ic_data_assembler
+      path: src/zephyr/signal_ashare/strength_ic_data_assembler.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strength_ic_weight_calibrator
+      path: src/zephyr/signal_ashare/strength_ic_weight_calibrator.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.intelligence.model_profiling.dual_run
+      - zephyr.signal_ashare.strength_ic_data_assembler
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.supply_chain_gnn
+      path: src/zephyr/signal_ashare/supply_chain_gnn.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.supply_chain_momentum
+      path: src/zephyr/signal_ashare/supply_chain_momentum.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.tradability_preflight
+      path: src/zephyr/signal_ashare/tradability_preflight.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.trendline_sr_detector
+      path: src/zephyr/signal_ashare/trendline_sr_detector.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.unified_pattern_engine
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.volume_regime_adaptive
+      path: src/zephyr/signal_ashare/volume_regime_adaptive.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.strategy_matrix_3d
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.wyckoff_accumulation_signal
+      path: src/zephyr/signal_ashare/wyckoff_accumulation_signal.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.wyckoff_secondary_test
+      path: src/zephyr/signal_ashare/wyckoff_secondary_test.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+  strategy_signal_pattern_chain:
+    file_count: 19
+    in_head_count: 19
+    connected_prod_count: 2
+    verdict_tally:
+      CONNECTED_PROD: 2
+      NOT_CONSUMED_off_prod_path: 13
+      NOT_CONSUMED_orphan: 4
+    modules:
+    - module: zephyr.signal_ashare.strategy_signal
+      path: src/zephyr/signal_ashare/strategy_signal/__init__.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.candlestick_scanner
+      path: src/zephyr/signal_ashare/strategy_signal/candlestick_scanner.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.dual_engine_fusion_decision_engine
+      path: src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.pf_core.strategies.daban_sleeve_strategy
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_event_job
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_event_job.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.data.implementations.internal_compute_provider
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_event_store
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_event_store.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_evidence_certifier.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.pattern_lifecycle
+      - zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_lifecycle
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_lifecycle.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_match_strategy_library
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_signal_runtime.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.pattern_win_rate_provider
+      path: src/zephyr/signal_ashare/strategy_signal/pattern_win_rate_provider.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 3
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal
+      - zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier
+      - zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.series_transform
+      path: src/zephyr/signal_ashare/strategy_signal/series_transform.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.signal_factory
+      path: src/zephyr/signal_ashare/strategy_signal/signal_factory.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 2
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      - zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.signal_weight_adjuster
+      path: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.strategy_cross_vote_funnel
+      path: src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.strategy_decay_certifier
+      path: src/zephyr/signal_ashare/strategy_signal/strategy_decay_certifier.py
+      verdict: CONNECTED_PROD
+      runtime_consumer_count: 1
+      prod_consumers:
+      - zephyr.data.implementations.internal_compute_provider
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.strategy_matrix_3d
+      path: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.strategy_vote_integrator
+      path: src/zephyr/signal_ashare/strategy_signal/strategy_vote_integrator.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 1
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+    - module: zephyr.signal_ashare.strategy_signal.unified_pattern_engine
+      path: src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py
+      verdict: NOT_CONSUMED_off_prod_path
+      runtime_consumer_count: 3
+      prod_consumers: []
+      src_consumers_off_prod_path:
+      - zephyr.signal_ashare
+      - zephyr.signal_ashare.strategy_signal.pattern_signal_runtime
+      - zephyr.signal_ashare.strategy_signal.pattern_to_signal_mapper
+      script_consumers: []
+      test_consumers: []
+      in_head: true
+  wave10_new_parts:
+    file_count: 2
+    in_head_count: 0
+    connected_prod_count: 0
+    verdict_tally:
+      NOT_CONSUMED_orphan: 2
+    modules:
+    - module: scripts.governance.wave10.wave10_asset_base_audit
+      path: scripts/governance/wave10/wave10_asset_base_audit.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: false
+    - module: scripts.signals.chart_condition_package
+      path: scripts/signals/chart_condition_package.py
+      verdict: NOT_CONSUMED_orphan
+      runtime_consumer_count: 0
+      prod_consumers: []
+      src_consumers_off_prod_path: []
+      script_consumers: []
+      test_consumers: []
+      in_head: false
+candle_catalog:
+  registry_rows_by_pattern_id: 83
+  registry_distinct_ids: 83
+  scanner_static_id_literals: 23
+  registry_ids_with_static_literal: 23
+  static_literal_occurrences: 23
+  talib_cdl_functions: 61
+  hook_missing_note: TA-Lib CDL 类 id 由运行时 dir(talib) 枚举生成，源码无常驻字面量属预期非缺陷
+  script_manifest_candle_lines:
+  - 'description: candlestick_scanner.py 已实现 CDL 61 + extras 16（共 77 条 PAT-CANDLE 目录）。'
+frozen_files_diff:
+  config/search_space_prereg.yaml: clean_diff_zero
+  config/exam_scale_cost_gate.yaml: clean_diff_zero
+  config/flags.yaml: clean_diff_zero

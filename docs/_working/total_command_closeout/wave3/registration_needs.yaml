@@ -1,0 +1,151 @@
+generated_by: scripts/governance/data_supply/gen_registration_needs.py
+generated_at_utc: '2026-09-26T13:01:25.278742+00:00'
+note_zh: 本清单由生成器现读现出（AGENTS §9.5）；重跑即与盘面同步，禁手工增删条目。
+total_new_files: 14
+total_pending_mounts: 8
+new_files:
+- path: scripts/governance/data_supply/__init__.py
+  module: scripts.governance.data_supply
+  module_id: MOD-GOV-DS-PKG
+  startup: imported
+  ttl: permanent
+  consumers:
+  - scripts.governance.data_supply.check_wave3_rulers
+  - .github/workflows/governance.yml（待登记，见 wave3/registration_needs.yaml）
+  anchor_complete: true
+- path: scripts/governance/data_supply/check_wave3_rulers.py
+  module: scripts.governance.data_supply.check_wave3_rulers
+  module_id: MOD-GOV-DS-CLI
+  startup: manual
+  ttl: permanent
+  consumers:
+  - '[待登记] .github/workflows/governance.yml 新增一步（见 registration_needs.yaml）'
+  - 人工 CLI
+  - pytest tests/governance/data_supply/*
+  anchor_complete: true
+- path: scripts/governance/data_supply/false_green_crosscheck.py
+  module: scripts.governance.data_supply.false_green_crosscheck
+  module_id: MOD-GOV-DS-FG
+  startup: imported
+  ttl: permanent
+  consumers:
+  - scripts.governance.data_supply.check_false_green_ledger
+  - scripts.governance.data_supply.check_wave3_rulers
+  anchor_complete: true
+- path: scripts/governance/data_supply/gen_registration_needs.py
+  module: scripts.governance.data_supply.gen_registration_needs
+  module_id: MOD-GOV-DS-REGEN
+  startup: manual
+  ttl: task_bound
+  consumers:
+  - 人工/CI 重跑出 docs/_working/total_command_closeout/wave3/registration_needs.yaml
+  - 无生产消费方
+  anchor_complete: true
+- path: scripts/governance/data_supply/no_cache_endorsement.py
+  module: scripts.governance.data_supply.no_cache_endorsement
+  module_id: MOD-GOV-DS-NOCACHE
+  startup: imported
+  ttl: permanent
+  consumers:
+  - scripts.governance.data_supply.check_wave3_rulers
+  - '[待登记] run_all.py / phase_manager.py 的 gate 缓存面（见 registration_needs.yaml）'
+  anchor_complete: true
+- path: scripts/governance/data_supply/strict_truth_reader.py
+  module: scripts.governance.data_supply.strict_truth_reader
+  module_id: MOD-GOV-DS-TRUTH
+  startup: imported
+  ttl: permanent
+  consumers:
+  - scripts.governance.data_supply.false_green_crosscheck
+  - scripts.governance.data_supply.supply_conservation
+  - scripts.governance.data_supply.no_cache_endorsement
+  anchor_complete: true
+- path: scripts/governance/data_supply/supply_conservation.py
+  module: scripts.governance.data_supply.supply_conservation
+  module_id: MOD-GOV-DS-CONS
+  startup: imported
+  ttl: permanent
+  consumers:
+  - scripts.governance.data_supply.check_supply_conservation
+  - scripts.governance.data_supply.check_wave3_rulers
+  anchor_complete: true
+- path: scripts/governance/data_supply/supply_sources.py
+  module: scripts.governance.data_supply.supply_sources
+  module_id: MOD-GOV-DS-SOURCES
+  startup: imported
+  ttl: permanent
+  consumers:
+  - scripts.governance.data_supply.false_green_crosscheck
+  - scripts.governance.data_supply.supply_conservation
+  - scripts.governance.data_supply.check_wave3_rulers
+  anchor_complete: true
+- path: tests/governance/data_supply/__init__.py
+  module: tests.governance.data_supply
+  module_id: TST-GOV-DS-PKG
+  startup: test_collected
+  ttl: task_bound
+  consumers:
+  - pytest（波 3 案卷 §4-D 红证入口）
+  anchor_complete: true
+- path: tests/governance/data_supply/test_false_green_crosscheck.py
+  module: tests.governance.data_supply.test_false_green_crosscheck
+  module_id: TST-GOV-DS-FG
+  startup: test_collected
+  ttl: task_bound
+  consumers:
+  - pytest（波 3.2 假绿灯交叉尺红证；CI 侧由 check_wave3_rulers.py --counterfactual 同判据把守）
+  anchor_complete: true
+- path: tests/governance/data_supply/test_no_cache_and_cli_rc.py
+  module: tests.governance.data_supply.test_no_cache_and_cli_rc
+  module_id: TST-GOV-DS-NCC
+  startup: test_collected
+  ttl: task_bound
+  consumers:
+  - pytest（W-102 第 1 把尺"禁缓存背书"红证 + 三把尺 CI rc 语义）
+  anchor_complete: true
+- path: tests/governance/data_supply/test_supply_conservation.py
+  module: tests.governance.data_supply.test_supply_conservation
+  module_id: TST-GOV-DS-CONS
+  startup: test_collected
+  ttl: task_bound
+  consumers:
+  - pytest（波 3.3 供数守恒断言红证；CI 侧由 check_wave3_rulers.py --counterfactual 同判据把守）
+  anchor_complete: true
+anchor_incomplete: []
+pending_mounts:
+- target: .github/workflows/governance.yml
+  action: 新增一步 `python scripts/governance/data_supply/check_wave3_rulers.py --counterfactual`（rc 非 0 即断链）
+  why: W-102 三把尺常设化；控制组点不红＝尺已退化为装饰件，须 CI 硬拦
+  owner_gate: 非门位（工作流文件在本施工包写权之外）
+- target: .github/workflows/governance.yml
+  action: 新增一步 `... check_wave3_rulers.py --check --offline`（有 CH 的槽位再补 `--check`）
+  why: 禁缓存背书尺的常设绿面
+  owner_gate: 非门位
+- target: src/zephyr/data/integrity_checker.py::_reconcile_task_runs
+  action: 把 false_green_crosscheck.evaluate() 接为该函数的真值腿；同批改掉它自陈的'失败返回 {}'fail-silent
+  why: 3.2（W-31/Z-16）：该宿主只对账台账、不回读目标表，正是假绿宿主
+  owner_gate: 需 Owner/域主批准（改生产数据域代码）
+- target: src/zephyr/data/supply_sentinel.py（scheduler L238 data_supply_sentinel 槽位）
+  action: 把 supply_conservation.evaluate() 作为该哨兵的新维度（守恒腿），阈值仍读 data_supply_sentinel.yaml
+  why: 3.3（W-32/G-22）内收：扩既有宿主，不建第二套对账面
+  owner_gate: 需 Owner/域主批准
+- target: gate_registry.yaml / 新尺准入面
+  action: 准入条件加一条：新增判据尺必须声明其反事实控制组入口
+  why: Z-16 尾列硬要求；热册，本包未动
+  owner_gate: Owner（注册表净增/热册）
+- target: src/zephyr/intelligence/observability/（包归属）
+  action: 定包归属后再决定是否把两把尺的子件迁入；本包未建该包任何件
+  why: 许可是「不撞前提下新建子件」，而该目录实测不存在＝建包即撞车面
+  owner_gate: Owner/车道协调
+- target: add_module_translation.py / TRANSLATION-COVERAGE gate
+  action: 为本包 9 个新 .py 登记大白话简介
+  why: 新建 .py 登记义务（本包无权写热册）
+  owner_gate: 非门位
+- target: CREATE-GUARD creation_token
+  action: 为本包 12 个新文件（9 .py + tests/__init__.py + 2 案卷件）登记 creation_token
+  why: CREATE-GUARD 要求新建 .py/.yaml/.md 登记；tests/ 部分豁免以落地侧判定为准
+  owner_gate: 非门位
+not_registered_here_zh:
+- '裁定号：本包未自赋任何 #NNN（RULE-RULING 走 ruling_registry 正式通道）'
+- 阈值/断言/skip/xfail：零改动
+- docs/01_policies_and_standards/**、config/flags.yaml、热册：零改动

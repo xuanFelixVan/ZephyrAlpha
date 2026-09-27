@@ -1,0 +1,2066 @@
+_meta:
+  generated_by: dead_letter_census.py（机生禁手改，可重跑）
+  denominator_note: census 分母=dead/ 顶层 *.json；归档子目录单列披露
+  status_read:
+    pending: 0
+    processing: 0
+    done: 729
+    dead: 700
+  dir_counts:
+    dead_top_json: 700
+    dead_archive_subdirs_json: 14
+    ls_dead_wc_l_pitfall: ls dead 会 +1（含子目录名），以 status/顶层计数互证
+  parse_fail: []
+  cross_check:
+    status_dead_equals_dir_dead_top: true
+  disclosures:
+    skipped_dirty_in_dead_reason_bags: 0
+    note: R-3 在册：skipped_dirty 与袋死亡相关性 0/134，勿当死因（在册改判）
+    qid_prefix_contains_session: true
+clusters:
+- cluster: GATE:GATE-PRECOMMIT-RUN
+  bags: 85
+  first_dead_at: '2026-09-23T02:33:47+08:00'
+  last_dead_at: '2026-09-26T08:30:08+08:00'
+  domains:
+  - AGENTS.md
+  - config/ai_search_veins.yaml
+  - config/ai_source_registry.yaml
+  - config/cleaning_policy.yaml
+  - config/comparison_policy.yaml
+  - config/dual_run_criteria.yaml
+  - config/evolution_schedule_seeds.yaml
+  - config/exam_scale_cost_gate.yaml
+  - config/governance
+  - config/heritage_policy.yaml
+  - config/model_intel_sources.yaml
+  - config/model_scoring_policy.yaml
+  - config/obj_s_degradation.yaml
+  - config/pf_alloc.yaml
+  - config/schedule_gate_policy.yaml
+  - config/search_space_prereg.yaml
+  - config/strategy_production_map.yaml
+  - config/switch_criteria.yaml
+  - config/tool_exam_policy.yaml
+  - config/tool_inventory.yaml
+  - config/tool_model_pairing_policy.yaml
+  - config/trading_decision_map.yaml
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - echo-guard.yml
+  - schemas/categories
+  - scripts/ai_layer
+  - scripts/audit
+  - scripts/backtest
+  - scripts/backup
+  - scripts/ch
+  - scripts/commit_queue.py
+  - scripts/construction
+  - scripts/deadman_switch.ps1
+  - scripts/git_commit.py
+  - scripts/governance
+  - scripts/register_budget_report_task.ps1
+  - scripts/register_model_exam_task.ps1
+  - scripts/register_model_intel_scan_task.ps1
+  - scripts/register_sim_bridge_execute_task.ps1
+  - scripts/run_sim_bridge_execute_daily.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/alt_data
+  - src/zephyr/backtest
+  - src/zephyr/data
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/infrastructure
+  - src/zephyr/intelligence
+  - src/zephyr/pf_alloc
+  - src/zephyr/plan_engine
+  - src/zephyr/shared
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - src/zephyr/trading
+  - tests/ai_layer
+  - tests/audit
+  - tests/backtest
+  - tests/backup
+  - tests/capability
+  - tests/data
+  - tests/frontend
+  - tests/git
+  - tests/governance
+  - tests/infrastructure
+  - tests/intelligence
+  - tests/pf_alloc
+  - tests/scripts
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  - tests/test_batch_creation_tokens_anchor.py
+  - tests/trading
+  - tests/zephyr
+  prescription: R-3 行4：先跑 R-2 步骤 4 门禁预跑
+  top_sessions:
+  - - st-sweep-tail-20260923
+    - 16
+  - - st-commitspeed-tbl-20260924
+    - 16
+  - - st-qcure-20260925
+    - 6
+- cluster: 注册表三向合并失败(家族)
+  bags: 71
+  first_dead_at: '2026-09-23T02:54:34+08:00'
+  last_dead_at: '2026-09-26T07:06:16+08:00'
+  domains:
+  - config/exam_scale_cost_gate.yaml
+  - config/pf_alloc.yaml
+  - config/schedule_gate_policy.yaml
+  - config/search_space_prereg.yaml
+  - data/strategy_intake
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - scripts/audit
+  - scripts/audit_news_publish_time.py
+  - scripts/audit_technical_indicator_columns.py
+  - scripts/backtest
+  - scripts/backup
+  - scripts/data
+  - scripts/git_commit.py
+  - scripts/governance
+  - scripts/register_library_ledger_backup_task.ps1
+  - scripts/script-manifest.yaml
+  - src/zephyr/backtest
+  - src/zephyr/data
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/library
+  - src/zephyr/pf_alloc
+  - src/zephyr/shared
+  - tests/audit
+  - tests/backtest
+  - tests/governance
+  - tests/pf_alloc
+  - tests/scripts
+  prescription: R-3 行1：走 R-1 修基底+该册变更单独成袋，勿 requeue 硬闯
+  top_sessions:
+  - - st-library-final-20260924
+    - 10
+  - - st-align-dirty-20260924
+    - 7
+  - - st-k4-20260923
+    - 6
+- cluster: GATE:CREATE-GUARD
+  bags: 67
+  first_dead_at: '2026-09-23T14:58:53+08:00'
+  last_dead_at: '2026-09-26T03:45:32+08:00'
+  domains:
+  - config/ai_search_veins.yaml
+  - config/ai_source_registry.yaml
+  - config/cleaning_policy.yaml
+  - config/comparison_policy.yaml
+  - config/dual_run_criteria.yaml
+  - config/evolution_schedule_seeds.yaml
+  - config/exam_scale_cost_gate.yaml
+  - config/flags.yaml
+  - config/governance
+  - config/heritage_policy.yaml
+  - config/model_intel_sources.yaml
+  - config/model_scoring_policy.yaml
+  - config/obj_s_degradation.yaml
+  - config/schedule_gate_policy.yaml
+  - config/search_space_prereg.yaml
+  - config/switch_criteria.yaml
+  - config/tool_exam_policy.yaml
+  - config/tool_inventory.yaml
+  - config/tool_model_pairing_policy.yaml
+  - data/registers
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/ai_layer
+  - scripts/backtest
+  - scripts/ch
+  - scripts/git_commit.py
+  - scripts/governance
+  - scripts/register_budget_report_task.ps1
+  - scripts/register_decision_chain_sentinel_task.ps1
+  - scripts/register_model_exam_task.ps1
+  - scripts/register_model_intel_scan_task.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/alt_data
+  - src/zephyr/backtest
+  - src/zephyr/data
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/infrastructure
+  - src/zephyr/intelligence
+  - src/zephyr/shared
+  - tests/ai_layer
+  - tests/alt_data
+  - tests/backtest
+  - tests/governance
+  - tests/intelligence
+  prescription: R-3 行3：R-2 步骤 2；token 与件同袋
+  top_sessions:
+  - - st-cmd-20260924
+    - 16
+  - - st-commitspeed-tbl-20260924
+    - 10
+  - - st-mapbuild-20260924
+    - 8
+- cluster: GATE:TRANSLATION-COVERAGE
+  bags: 47
+  first_dead_at: '2026-09-22T22:17:53+08:00'
+  last_dead_at: '2026-09-26T04:30:38+08:00'
+  domains:
+  - config/construction_workflow_map.yaml
+  - config/data_supply_chain_map.yaml
+  - config/dev_delivery_map.yaml
+  - config/exam_scale_cost_gate.yaml
+  - config/factor_mining_whitelist.yaml
+  - config/governance
+  - config/governance_operations_map.yaml
+  - config/search_space_prereg.yaml
+  - config/strategy_card_lifecycle_map.yaml
+  - config/trading_day_cycle_map.yaml
+  - config/trading_decision_map.yaml
+  - data/strategy_intake
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/audit
+  - scripts/backfill_option_daily_stats.py
+  - scripts/backtest
+  - scripts/ch
+  - scripts/construction
+  - scripts/governance
+  - scripts/patrol
+  - scripts/register_decision_chain_sentinel_task.ps1
+  - scripts/register_sim_bridge_execute_task.ps1
+  - scripts/run_sim_bridge_execute_daily.ps1
+  - scripts/sector_line
+  - src/zephyr/alt_data
+  - src/zephyr/backtest
+  - src/zephyr/data
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/infrastructure
+  - src/zephyr/shared
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/alt_data
+  - tests/audit
+  - tests/backtest
+  - tests/data
+  - tests/governance
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: 'R-3 行2：add_module_translation 在主仓跑，plain-zh≥8 字且落 entries: 段'
+  top_sessions:
+  - - st-mapbuild-20260924
+    - 11
+  - - st-commitspeed-tbl-20260924
+    - 7
+  - - st-sweep-tail-20260923
+    - 5
+- cluster: LandingEnvironmentError(landing 环境不可用)
+  bags: 38
+  first_dead_at: '2026-09-23T03:07:48+08:00'
+  last_dead_at: '2026-09-26T12:18:32+08:00'
+  domains:
+  - config/factor_mining_whitelist.yaml
+  - config/pf_alloc.yaml
+  - data/registers
+  - data/strategy_intake
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - echo-guard.yml
+  - schemas/categories
+  - scripts/audit
+  - scripts/backfill_option_daily_stats.py
+  - scripts/backtest
+  - scripts/ch
+  - scripts/commit_queue.py
+  - scripts/governance
+  - scripts/patrol
+  - src/zephyr/alt_data
+  - src/zephyr/backtest
+  - src/zephyr/data
+  - src/zephyr/gov_enforcement
+  - src/zephyr/intelligence
+  - src/zephyr/pf_alloc
+  - src/zephyr/plan_engine
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/alt_data
+  - tests/backtest
+  - tests/data
+  - tests/git
+  - tests/governance
+  - tests/pf_alloc
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  - tests/zephyr
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 13
+  - - st-commitspeed-tbl-20260924
+    - 10
+  - - st-combine-20260923
+    - 8
+- cluster: GATE:TTL-METADATA
+  bags: 33
+  first_dead_at: '2026-09-23T16:33:22+08:00'
+  last_dead_at: '2026-09-26T03:40:38+08:00'
+  domains:
+  - .importlinter
+  - config/cleaning_rules.yaml
+  - config/trading_decision_map.yaml
+  - data/strategy_intake
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/audit
+  - scripts/backtest
+  - scripts/commit_queue.py
+  - scripts/git_commit.py
+  - scripts/governance
+  - src/zephyr/data
+  - src/zephyr/ex_core
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - tests/audit
+  - tests/backtest
+  - tests/git
+  - tests/governance
+  - tests/strategy_pipeline
+  - tests/zephyr
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 21
+  - - st-audit-fix-20260924
+    - 2
+  - - st-commitspeed-tbl-20260924
+    - 2
+- cluster: NOTHING_TO_COMMIT 但快照未真应用(blob 与 old_dev 不符)
+  bags: 31
+  first_dead_at: '2026-09-24T01:13:07+08:00'
+  last_dead_at: '2026-09-24T18:30:25+08:00'
+  domains:
+  - AGENTS.md
+  - config/governance
+  - docs/_working
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-stress-20260923
+    - 29
+  - - st-chainpile-20260922
+    - 1
+  - - st-sweep-tail-20260923
+    - 1
+- cluster: GATE:GATE-VOCAB
+  bags: 24
+  first_dead_at: '2026-09-23T22:06:06+08:00'
+  last_dead_at: '2026-09-25T20:35:40+08:00'
+  domains:
+  - config/ai_search_veins.yaml
+  - config/ai_source_registry.yaml
+  - config/cleaning_policy.yaml
+  - config/comparison_policy.yaml
+  - config/dual_run_criteria.yaml
+  - config/evolution_schedule_seeds.yaml
+  - config/governance
+  - config/heritage_policy.yaml
+  - config/model_intel_sources.yaml
+  - config/model_scoring_policy.yaml
+  - config/obj_s_degradation.yaml
+  - config/schedule_gate_policy.yaml
+  - config/switch_criteria.yaml
+  - config/tool_exam_policy.yaml
+  - config/tool_inventory.yaml
+  - config/tool_model_pairing_policy.yaml
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/ai_layer
+  - scripts/governance
+  - scripts/register_budget_report_task.ps1
+  - scripts/register_decision_chain_sentinel_task.ps1
+  - scripts/register_model_exam_task.ps1
+  - scripts/register_model_intel_scan_task.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/intelligence
+  - tests/ai_layer
+  - tests/governance
+  - tests/intelligence
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-chainpile-20260922
+    - 8
+  - - st-ailayer-final-20260924
+    - 5
+  - - st-pipeline-final-20260924
+    - 4
+- cluster: GATE:COMPLEXITY-GUARD
+  bags: 22
+  first_dead_at: '2026-09-23T18:04:45+08:00'
+  last_dead_at: '2026-09-26T06:27:04+08:00'
+  domains:
+  - config/governance
+  - config/trading_decision_map.yaml
+  - data/registers
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/audit
+  - scripts/backtest
+  - scripts/backup
+  - scripts/ch
+  - scripts/commit_queue.py
+  - scripts/construction
+  - scripts/governance
+  - scripts/register_sim_bridge_execute_task.ps1
+  - scripts/run_sim_bridge_execute_daily.ps1
+  - src/zephyr/data
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/security
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/audit
+  - tests/backtest
+  - tests/governance
+  - tests/scripts
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: R-3 行11：拆模块级 helper（参数≤7），禁调阈值
+  top_sessions:
+  - - st-cmd-20260924
+    - 9
+  - - st-metaq-20260923
+    - 3
+  - - st-qcure-20260925
+    - 2
+- cluster: cascade_stale(基底重校验不适用)
+  bags: 21
+  first_dead_at: '2026-09-24T16:05:00+08:00'
+  last_dead_at: '2026-09-26T05:56:20+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - scripts/backtest
+  - scripts/commit_queue.py
+  - scripts/git_commit.py
+  - scripts/governance
+  - src/zephyr/data
+  - src/zephyr/gov_enforcement
+  - src/zephyr/pf_alloc
+  - src/zephyr/shared
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/backtest
+  - tests/data
+  - tests/git
+  - tests/governance
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-fix-20260924
+    - 8
+  - - st-cmd-20260924
+    - 4
+  - - st-commitspeed-tbl-20260924
+    - 4
+- cluster: GATE:R5-DIGIT-SUFFIX
+  bags: 16
+  first_dead_at: '2026-09-23T05:58:43+08:00'
+  last_dead_at: '2026-09-26T13:38:58+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/backtest
+  - src/zephyr/shared
+  - tests/backtest
+  prescription: R-3 行8：目录/文件名禁以数字结尾，已入库历史违规跳过
+  top_sessions:
+  - - st-cmd-20260924
+    - 7
+  - - st-qmine-20260925
+    - 3
+  - - st-deepclean-20260923
+    - 1
+- cluster: GATE:IMPORT-INTEGRITY
+  bags: 15
+  first_dead_at: '2026-09-23T18:30:02+08:00'
+  last_dead_at: '2026-09-25T20:19:08+08:00'
+  domains:
+  - config/flags.yaml
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/library
+  - scripts/backtest
+  - scripts/governance
+  - src/zephyr/data
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/library
+  - src/zephyr/shared
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/data
+  - tests/git
+  - tests/gov_enforcement
+  - tests/governance
+  - tests/library
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 8
+  - - st-wm1-wave0-20260924
+    - 3
+  - - st-k4-20260923
+    - 1
+- cluster: GATE:DEPGRAPH-ENFORCEMENT
+  bags: 12
+  first_dead_at: '2026-09-24T22:38:40+08:00'
+  last_dead_at: '2026-09-26T01:35:30+08:00'
+  domains:
+  - config/trading_decision_map.yaml
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - scripts/construction
+  - scripts/governance
+  - scripts/register_sim_bridge_execute_task.ps1
+  - scripts/run_sim_bridge_execute_daily.ps1
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/infrastructure
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/backtest
+  - tests/governance
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: R-3 行10：apply_depgraph --add-design-node；改名后 --force 重建
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 5
+  - - st-cmd-20260924
+    - 3
+  - - st-commitspeed-pkg8-20260925
+    - 2
+- cluster: GATE:PERMANENT-SYSTEM-TRIGGER
+  bags: 11
+  first_dead_at: '2026-09-23T17:25:49+08:00'
+  last_dead_at: '2026-09-26T01:07:57+08:00'
+  domains:
+  - config/ai_search_veins.yaml
+  - config/ai_source_registry.yaml
+  - config/cleaning_policy.yaml
+  - config/comparison_policy.yaml
+  - config/dual_run_criteria.yaml
+  - config/evolution_schedule_seeds.yaml
+  - config/governance
+  - config/heritage_policy.yaml
+  - config/model_intel_sources.yaml
+  - config/model_scoring_policy.yaml
+  - config/obj_s_degradation.yaml
+  - config/schedule_gate_policy.yaml
+  - config/switch_criteria.yaml
+  - config/tool_exam_policy.yaml
+  - config/tool_inventory.yaml
+  - config/tool_model_pairing_policy.yaml
+  - docs/_working
+  - schemas/categories
+  - scripts/ai_layer
+  - scripts/backup
+  - scripts/deadman_switch.ps1
+  - scripts/governance
+  - scripts/register_budget_report_task.ps1
+  - scripts/register_decision_chain_sentinel_task.ps1
+  - scripts/register_model_exam_task.ps1
+  - scripts/register_model_intel_scan_task.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/intelligence
+  - tests/ai_layer
+  - tests/frontend
+  - tests/governance
+  - tests/intelligence
+  - tests/scripts
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-qmine-20260925
+    - 3
+  - - st-cmd-20260924
+    - 2
+  - - st-wm1-wave0-20260924
+    - 2
+- cluster: 'OTHER:网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''s'
+  bags: 11
+  first_dead_at: '2026-09-24T03:00:07+08:00'
+  last_dead_at: '2026-09-26T08:01:46+08:00'
+  domains:
+  - config/dev_delivery_map.yaml
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/backtest
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/backtest
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-ddup-20260925
+    - 3
+  - - st-align-dirty-20260924
+    - 2
+  - - st-stress-20260923
+    - 1
+- cluster: GATE:BLUEPRINT-FORMAT
+  bags: 10
+  first_dead_at: '2026-09-23T21:50:48+08:00'
+  last_dead_at: '2026-09-25T16:36:01+08:00'
+  domains:
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/ch
+  - scripts/governance
+  - scripts/register_decision_chain_sentinel_task.ps1
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/git
+  - tests/governance
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 4
+  - - st-chainpile-20260922
+    - 2
+  - - st-wm1-wave0-20260924
+    - 2
+- cluster: GATE:ORPHAN-MODULE
+  bags: 10
+  first_dead_at: '2026-09-23T17:30:03+08:00'
+  last_dead_at: '2026-09-26T04:30:00+08:00'
+  domains:
+  - config/exam_scale_cost_gate.yaml
+  - config/search_space_prereg.yaml
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - docs/library
+  - scripts/backtest
+  - scripts/governance
+  - src/zephyr/backtest
+  - src/zephyr/gov_enforcement
+  - src/zephyr/infrastructure
+  - src/zephyr/library
+  - src/zephyr/shared
+  - tests/backtest
+  - tests/gov_enforcement
+  - tests/governance
+  - tests/library
+  prescription: R-3 行9：零消费者新件必与接线同袋
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 4
+  - - st-ulib3c-20260923
+    - 2
+  - - st-e2e-20260924
+    - 1
+- cluster: GATE:TEST-SOURCE-CONSISTENCY
+  bags: 9
+  first_dead_at: '2026-09-23T06:03:10+08:00'
+  last_dead_at: '2026-09-26T00:52:08+08:00'
+  domains:
+  - config/pf_alloc.yaml
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - scripts/governance
+  - src/zephyr/data
+  - src/zephyr/gov_enforcement
+  - src/zephyr/pf_alloc
+  - src/zephyr/signal_ashare
+  - tests/data
+  - tests/governance
+  - tests/infrastructure
+  - tests/pf_alloc
+  - tests/signal_ashare
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-sweep-tail-20260923
+    - 3
+  - - st-commitspeed-pkg8-20260925
+    - 3
+  - - st-combine-20260923
+    - 2
+- cluster: GATE:DIRECTORY-CONTRACT
+  bags: 9
+  first_dead_at: '2026-09-23T20:21:49+08:00'
+  last_dead_at: '2026-09-25T19:49:30+08:00'
+  domains:
+  - config/ai_search_veins.yaml
+  - config/ai_source_registry.yaml
+  - config/cleaning_policy.yaml
+  - config/comparison_policy.yaml
+  - config/dual_run_criteria.yaml
+  - config/evolution_schedule_seeds.yaml
+  - config/heritage_policy.yaml
+  - config/model_intel_sources.yaml
+  - config/model_scoring_policy.yaml
+  - config/obj_s_degradation.yaml
+  - config/schedule_gate_policy.yaml
+  - config/switch_criteria.yaml
+  - config/tool_exam_policy.yaml
+  - config/tool_inventory.yaml
+  - config/tool_model_pairing_policy.yaml
+  - data/strategy_intake
+  - docs/01_policies_and_standards
+  - docs/_working
+  - schemas/categories
+  - scripts/ai_layer
+  - scripts/backtest
+  - scripts/ch
+  - scripts/register_budget_report_task.ps1
+  - scripts/register_model_exam_task.ps1
+  - scripts/register_model_intel_scan_task.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/alt_data
+  - src/zephyr/backtest
+  - src/zephyr/frontend
+  - src/zephyr/governance
+  - src/zephyr/intelligence
+  - tests/ai_layer
+  - tests/alt_data
+  - tests/backtest
+  - tests/governance
+  - tests/intelligence
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 5
+  - - st-pipeline-final-20260924
+    - 2
+  - - st-emoreplay-20260923
+    - 1
+- cluster: GATE:PROTECTED-PATHS
+  bags: 9
+  first_dead_at: '2026-09-23T22:19:02+08:00'
+  last_dead_at: '2026-09-24T21:50:27+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-ulib3c-20260923
+    - 6
+  - - st-cmd-20260924
+    - 3
+- cluster: GATE:REFERENCE-INTEGRITY(RULING-REFERENCE)
+  bags: 9
+  first_dead_at: '2026-09-24T04:42:22+08:00'
+  last_dead_at: '2026-09-26T03:01:58+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  prescription: R-3 行6：禁引用未登记裁定号，改文字描述后经取号器补登
+  top_sessions:
+  - - st-audit-all-20260924
+    - 3
+  - - st-commitspeed-tbl-20260924
+    - 2
+  - - st-mapbuild-20260924
+    - 2
+- cluster: GATE:MAP-ALIGNMENT
+  bags: 9
+  first_dead_at: '2026-09-24T01:02:31+08:00'
+  last_dead_at: '2026-09-24T08:34:44+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/02_enterprise_architecture
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - scripts/governance
+  - scripts/script-manifest.yaml
+  - src/zephyr/data
+  - src/zephyr/risk
+  - src/zephyr/signal_ashare
+  - src/zephyr/signal_fundamental
+  - tests/data
+  - tests/signal_ashare
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-all-20260924
+    - 2
+  - - st-library-final-20260924
+    - 2
+  - - st-mapcensus-20260924
+    - 2
+- cluster: GATE:ALGO-NOTE-SYNC
+  bags: 9
+  first_dead_at: '2026-09-24T22:31:04+08:00'
+  last_dead_at: '2026-09-26T03:55:54+08:00'
+  domains:
+  - config/comparison_policy.yaml
+  - config/trading_decision_map.yaml
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/backtest
+  - scripts/construction
+  - scripts/register_sim_bridge_execute_task.ps1
+  - scripts/run_sim_bridge_execute_daily.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/ex_core
+  - src/zephyr/ex_sor
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/intelligence
+  - src/zephyr/strategy_pipeline
+  - tests/ai_layer
+  - tests/backtest
+  - tests/ex_core
+  - tests/ex_sor
+  - tests/intelligence
+  - tests/strategy_pipeline
+  - tests/trading
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 6
+  - - st-sim-launch-20260923
+    - 1
+  - - st-qmine-20260925
+    - 1
+- cluster: GATE:CAPABILITY-OVERLAP
+  bags: 8
+  first_dead_at: '2026-09-23T06:16:09+08:00'
+  last_dead_at: '2026-09-25T20:36:41+08:00'
+  domains:
+  - config/pf_alloc.yaml
+  - docs/01_policies_and_standards
+  - docs/_working
+  - echo-guard.yml
+  - scripts/audit
+  - scripts/backtest
+  - scripts/governance
+  - scripts/register_decision_chain_sentinel_task.ps1
+  - src/zephyr/gov_enforcement
+  - src/zephyr/pf_alloc
+  - tests/audit
+  - tests/governance
+  - tests/pf_alloc
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitsys-20260924
+    - 3
+  - - st-combine-20260923
+    - 2
+  - - st-t0-matrix-20260924
+    - 1
+- cluster: GATE:SSOT-REDEFINITION
+  bags: 8
+  first_dead_at: '2026-09-24T06:07:43+08:00'
+  last_dead_at: '2026-09-25T23:31:51+08:00'
+  domains:
+  - docs/_working
+  - scripts/audit
+  - scripts/backtest
+  - scripts/governance
+  - tests/audit
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-metaq-20260923
+    - 4
+  - - st-t0-matrix-20260924
+    - 1
+  - - st-wm1-wave0-20260924
+    - 1
+- cluster: GATE:ALGO-FLOW-LINK
+  bags: 7
+  first_dead_at: '2026-09-24T00:15:52+08:00'
+  last_dead_at: '2026-09-25T20:55:57+08:00'
+  domains:
+  - config/ai_search_veins.yaml
+  - config/ai_source_registry.yaml
+  - config/cleaning_policy.yaml
+  - config/comparison_policy.yaml
+  - config/dual_run_criteria.yaml
+  - config/evolution_schedule_seeds.yaml
+  - config/exam_scale_cost_gate.yaml
+  - config/governance
+  - config/heritage_policy.yaml
+  - config/model_intel_sources.yaml
+  - config/model_scoring_policy.yaml
+  - config/obj_s_degradation.yaml
+  - config/schedule_gate_policy.yaml
+  - config/switch_criteria.yaml
+  - config/tool_exam_policy.yaml
+  - config/tool_inventory.yaml
+  - config/tool_model_pairing_policy.yaml
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/ai_layer
+  - scripts/backtest
+  - scripts/register_budget_report_task.ps1
+  - scripts/register_model_exam_task.ps1
+  - scripts/register_model_intel_scan_task.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/backtest
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - src/zephyr/infrastructure
+  - src/zephyr/intelligence
+  - tests/ai_layer
+  - tests/backtest
+  - tests/governance
+  - tests/intelligence
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-qcure-20260925
+    - 3
+  - - st-gpu-final-20260924
+    - 1
+  - - st-pipeline-final-20260924
+    - 1
+- cluster: 基底不可知(注册表项 base_head)
+  bags: 7
+  first_dead_at: '2026-09-24T21:47:09+08:00'
+  last_dead_at: '2026-09-26T03:01:42+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/governance
+  prescription: R-3 行5：enqueue --base-head $(git rev-parse dev)
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 2
+  - - st-mapbuild-20260924
+    - 2
+  - - st-metaq-20260923
+    - 1
+- cluster: GATE:REFERENCE-INTEGRITY
+  bags: 6
+  first_dead_at: '2026-09-24T04:31:18+08:00'
+  last_dead_at: '2026-09-26T00:56:56+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/governance
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitsys-20260924
+    - 2
+  - - st-qmine-20260925
+    - 2
+  - - st-audit-all-20260924
+    - 1
+- cluster: 'OTHER:gate 册条目坏，fresh import 亦败（M5.2 确定性判别），修册后重投:'
+  bags: 6
+  first_dead_at: '2026-09-26T04:14:30+08:00'
+  last_dead_at: '2026-09-26T07:39:26+08:00'
+  domains:
+  - docs/03_modules
+  - docs/_working
+  - scripts/commit_queue.py
+  - src/zephyr/frontend
+  - src/zephyr/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 3
+  - - st-ddup-20260925
+    - 2
+  - - st-qmine-20260925
+    - 1
+- cluster: GATE:CAPABILITY-LOOKUP-REQUIRED
+  bags: 5
+  first_dead_at: '2026-09-23T17:30:30+08:00'
+  last_dead_at: '2026-09-24T22:26:00+08:00'
+  domains:
+  - AGENTS.md
+  - docs/01_policies_and_standards
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - src/zephyr/library
+  - tests/library
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-sweep-tail-20260923
+    - 2
+  - - st-ulib3c-20260923
+    - 1
+  - - st-cmd-20260924
+    - 1
+- cluster: GATE:NO-BARE-SQL
+  bags: 5
+  first_dead_at: '2026-09-24T05:38:43+08:00'
+  last_dead_at: '2026-09-25T07:30:55+08:00'
+  domains:
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/audit
+  - scripts/backtest
+  - scripts/ch
+  - src/zephyr/data
+  - src/zephyr/governance
+  - src/zephyr/signal_ashare
+  - tests/audit
+  - tests/data
+  - tests/governance
+  - tests/signal_ashare
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-sweep-tail-20260923
+    - 2
+  - - st-t0-matrix-20260924
+    - 2
+  - - st-wm1-wave0-20260924
+    - 1
+- cluster: GATE:CH-FINAL-GATE
+  bags: 4
+  first_dead_at: '2026-09-23T17:32:13+08:00'
+  last_dead_at: '2026-09-26T01:55:39+08:00'
+  domains:
+  - config/pf_alloc.yaml
+  - data/strategy_intake
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - docs/_working
+  - echo-guard.yml
+  - scripts/sector_line
+  - src/zephyr/data
+  - src/zephyr/gov_enforcement
+  - src/zephyr/pf_alloc
+  - tests/governance
+  - tests/pf_alloc
+  - tests/zephyr
+  prescription: R-3 行13：先换会抛错 reader 再投
+  top_sessions:
+  - - st-pipeline-final-20260924
+    - 2
+  - - st-combine-20260923
+    - 1
+  - - st-ff-chfail-20260926
+    - 1
+- cluster: GATE:MUTABLE-CONST-WITHOUT-FINAL
+  bags: 4
+  first_dead_at: '2026-09-23T19:30:56+08:00'
+  last_dead_at: '2026-09-26T02:01:54+08:00'
+  domains:
+  - config/exam_scale_cost_gate.yaml
+  - config/search_space_prereg.yaml
+  - docs/01_policies_and_standards
+  - scripts/backtest
+  - scripts/governance
+  - src/zephyr/backtest
+  - src/zephyr/gov_enforcement
+  - tests/backtest
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-pkg8-20260925
+    - 2
+  - - st-e2e-20260924
+    - 1
+  - - st-k4-20260923
+    - 1
+- cluster: GATE:TABLE-NAME-REGISTRY
+  bags: 4
+  first_dead_at: '2026-09-24T06:04:02+08:00'
+  last_dead_at: '2026-09-25T21:52:51+08:00'
+  domains:
+  - data/registers
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/audit
+  - scripts/backtest
+  - scripts/ch
+  - scripts/governance
+  - src/zephyr/data
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/audit
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  - tests/zephyr
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 2
+  - - st-t0-matrix-20260924
+    - 1
+  - - st-qmine-20260925
+    - 1
+- cluster: GATE:NOQA-VALIDATION
+  bags: 3
+  first_dead_at: '2026-09-23T22:35:25+08:00'
+  last_dead_at: '2026-09-23T23:57:41+08:00'
+  domains:
+  - config/governance
+  - docs/03_modules
+  - docs/_working
+  - scripts/governance
+  - src/zephyr/governance
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-chainpile-20260922
+    - 3
+- cluster: GATE:REGISTRY-MASS-DELETION
+  bags: 3
+  first_dead_at: '2026-09-23T17:28:26+08:00'
+  last_dead_at: '2026-09-24T07:08:34+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - scripts/governance
+  prescription: R-3 行14：按 R-1 分诊 B 型/A 型
+  top_sessions:
+  - - st-ulib3c-20260923
+    - 1
+  - - st-backup-cold-20260924
+    - 1
+  - - st-library-final-20260924
+    - 1
+- cluster: GATE:REAL-KEY-REFERENCE-SCAN
+  bags: 3
+  first_dead_at: '2026-09-24T04:45:04+08:00'
+  last_dead_at: '2026-09-24T07:16:56+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-align-dirty-20260924
+    - 1
+  - - st-commitsys-20260924
+    - 1
+  - - st-oddjobs-final-20260924
+    - 1
+- cluster: 'OTHER:landing 异常: TimeoutExpired: Command ''[''git'','
+  bags: 3
+  first_dead_at: '2026-09-24T01:58:46+08:00'
+  last_dead_at: '2026-09-25T03:16:26+08:00'
+  domains:
+  - docs/02_enterprise_architecture
+  - docs/_working
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-all-20260924
+    - 1
+  - - st-pipeline-final-20260924
+    - 1
+  - - st-cmd-20260924
+    - 1
+- cluster: GATE:FILE-PLACEMENT-TTL
+  bags: 3
+  first_dead_at: '2026-09-24T09:13:36+08:00'
+  last_dead_at: '2026-09-25T02:19:34+08:00'
+  domains:
+  - docs/_working
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-metaq-20260923
+    - 1
+  - - st-wm1-wave0-20260924
+    - 1
+  - - st-cmd-20260924
+    - 1
+- cluster: OTHER:冲突：快照基底 77129e94b190（与 dev 的共同祖先 77129e94b19
+  bags: 2
+  first_dead_at: '2026-09-25T08:17:03+08:00'
+  last_dead_at: '2026-09-25T21:06:49+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/commit_queue.py
+  - scripts/git_commit.py
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - src/zephyr/shared
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-fix-20260924
+    - 2
+- cluster: OTHER:冲突：快照基底 613dcc4f9cf8（与 dev 的共同祖先 613dcc4f9cf
+  bags: 2
+  first_dead_at: '2026-09-25T14:25:19+08:00'
+  last_dead_at: '2026-09-25T14:27:36+08:00'
+  domains:
+  - docs/03_modules
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - src/zephyr/data
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/data
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 2
+- cluster: GATE:DATETIME-NOW-FORBIDDEN
+  bags: 2
+  first_dead_at: '2026-09-26T03:55:11+08:00'
+  last_dead_at: '2026-09-26T04:11:47+08:00'
+  domains:
+  - docs/03_modules
+  - src/zephyr/frontend
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-qmine-20260925
+    - 2
+- cluster: GATE:NO-HIGH-COMPLEXITY
+  bags: 1
+  first_dead_at: '2026-09-23T05:56:58+08:00'
+  last_dead_at: '2026-09-23T05:56:58+08:00'
+  domains:
+  - config/pf_alloc.yaml
+  - docs/01_policies_and_standards
+  - docs/_working
+  - src/zephyr/pf_alloc
+  - tests/pf_alloc
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-combine-20260923
+    - 1
+- cluster: 'OTHER:landing 异常: RuntimeError: prestage 拒绝：以下快照路径'
+  bags: 1
+  first_dead_at: '2026-09-23T18:04:55+08:00'
+  last_dead_at: '2026-09-23T18:04:55+08:00'
+  domains:
+  - docs/_working
+  - scripts/data
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-nightdata-20260923
+    - 1
+- cluster: GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT
+  bags: 1
+  first_dead_at: '2026-09-23T04:53:17+08:00'
+  last_dead_at: '2026-09-23T04:53:17+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - src/zephyr/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-nightfix-20260923
+    - 1
+- cluster: OTHER:冲突：入队基底 66e6b31346ca 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-23T15:04:06+08:00'
+  last_dead_at: '2026-09-23T15:04:06+08:00'
+  domains:
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-regfix-lane0b-20260923
+    - 1
+- cluster: GATE:FILE-COPY
+  bags: 1
+  first_dead_at: '2026-09-23T15:50:13+08:00'
+  last_dead_at: '2026-09-23T15:50:13+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - src/zephyr/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-regfix-lane0b-20260923
+    - 1
+- cluster: GATE:HOT-FILE-BASE-FRESHNESS
+  bags: 1
+  first_dead_at: '2026-09-24T03:25:34+08:00'
+  last_dead_at: '2026-09-24T03:25:34+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  prescription: R-3 行14：同上
+  top_sessions:
+  - - st-align-dirty-20260924
+    - 1
+- cluster: OTHER:冲突：dev CAS 竞态（池化）——9ff96cc5c393..b906e95496e
+  bags: 1
+  first_dead_at: '2026-09-24T03:55:31+08:00'
+  last_dead_at: '2026-09-24T03:55:31+08:00'
+  domains:
+  - config/strategy_production_map.yaml
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-align-dirty-20260924
+    - 1
+- cluster: OTHER:冲突：dev CAS 竞态——293415130d63..b906e95496e9 间同
+  bags: 1
+  first_dead_at: '2026-09-24T03:55:13+08:00'
+  last_dead_at: '2026-09-24T03:55:13+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-align-dirty-20260924
+    - 1
+- cluster: GATE:FORGED-GW-MARKER
+  bags: 1
+  first_dead_at: '2026-09-24T07:41:45+08:00'
+  last_dead_at: '2026-09-24T07:41:45+08:00'
+  domains:
+  - docs/_working
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-all-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 f53316c6f9d6 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-24T16:05:13+08:00'
+  last_dead_at: '2026-09-24T16:05:13+08:00'
+  domains:
+  - .importlinter
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/commit_queue.py
+  - scripts/git_commit.py
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - src/zephyr/governance
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-fix-20260924
+    - 1
+- cluster: OTHER:本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_que
+  bags: 1
+  first_dead_at: '2026-09-24T22:22:26+08:00'
+  last_dead_at: '2026-09-24T22:22:26+08:00'
+  domains:
+  - docs/_working
+  - scripts/governance
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-fix-20260924
+    - 1
+- cluster: OTHER:冲突：快照基底 27449507e1c4（与 dev 的共同祖先 27449507e1c
+  bags: 1
+  first_dead_at: '2026-09-24T23:17:23+08:00'
+  last_dead_at: '2026-09-24T23:17:23+08:00'
+  domains:
+  - docs/_working
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-audit-fix-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-24T20:59:18+08:00'
+  last_dead_at: '2026-09-24T20:59:18+08:00'
+  domains:
+  - scripts/commit_queue.py
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 1
+- cluster: OTHER:冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac9
+  bags: 1
+  first_dead_at: '2026-09-24T04:42:10+08:00'
+  last_dead_at: '2026-09-24T04:42:10+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/git_commit.py
+  - scripts/governance
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitsys-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 0f08f7a06c4f 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-24T01:26:08+08:00'
+  last_dead_at: '2026-09-24T01:26:08+08:00'
+  domains:
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-gpu-final-20260924
+    - 1
+- cluster: 'OTHER:网关落盘失败（COMMIT_FAILED）: git commit failed: On'
+  bags: 1
+  first_dead_at: '2026-09-24T01:24:01+08:00'
+  last_dead_at: '2026-09-24T01:24:01+08:00'
+  domains:
+  - src/zephyr/gov_enforcement
+  - tests/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-library-final-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 0fe090715ff0 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-24T07:41:16+08:00'
+  last_dead_at: '2026-09-24T07:41:16+08:00'
+  domains:
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-library-final-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 5471d43a52b6 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-24T11:43:56+08:00'
+  last_dead_at: '2026-09-24T11:43:56+08:00'
+  domains:
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-library-final-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['docs
+  bags: 1
+  first_dead_at: '2026-09-24T13:09:37+08:00'
+  last_dead_at: '2026-09-24T13:09:37+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - docs/03_modules
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-library-final-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['scri
+  bags: 1
+  first_dead_at: '2026-09-24T13:10:02+08:00'
+  last_dead_at: '2026-09-24T13:10:02+08:00'
+  domains:
+  - scripts/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-library-final-20260924
+    - 1
+- cluster: OTHER:冲突：快照基底 cb6b4bfc0e12（与 dev 的共同祖先 cb6b4bfc0e1
+  bags: 1
+  first_dead_at: '2026-09-24T23:34:11+08:00'
+  last_dead_at: '2026-09-24T23:34:11+08:00'
+  domains:
+  - config/data_supply_chain_map.yaml
+  - config/dev_delivery_map.yaml
+  - config/trading_day_cycle_map.yaml
+  - docs/01_policies_and_standards
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-mapbuild-20260924
+    - 1
+- cluster: OTHER:冲突：入队基底 1cba19a9de52 之后 dev 已推进且触及同路径 ['src/
+  bags: 1
+  first_dead_at: '2026-09-24T01:02:46+08:00'
+  last_dead_at: '2026-09-24T01:02:46+08:00'
+  domains:
+  - src/zephyr/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-pipeline-final-20260924
+    - 1
+- cluster: OTHER:冲突：dev CAS 竞态（池化）——84ec1ce85e5c..3ec72b6d0b7
+  bags: 1
+  first_dead_at: '2026-09-24T04:18:29+08:00'
+  last_dead_at: '2026-09-24T04:18:29+08:00'
+  domains:
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-pipeline-final-20260924
+    - 1
+- cluster: GATE:MSG-EXPOSURE
+  bags: 1
+  first_dead_at: '2026-09-25T18:00:35+08:00'
+  last_dead_at: '2026-09-25T18:00:35+08:00'
+  domains:
+  - config/trading_decision_map.yaml
+  - docs/03_modules
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/backtest
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 1
+- cluster: GATE:MODULE-ID-CONSISTENCY
+  bags: 1
+  first_dead_at: '2026-09-25T18:14:09+08:00'
+  last_dead_at: '2026-09-25T18:14:09+08:00'
+  domains:
+  - config/trading_decision_map.yaml
+  - docs/03_modules
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/backtest
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 1
+- cluster: OTHER:冲突：快照基底 0b3724ed148d（与 dev 的共同祖先 0b3724ed148
+  bags: 1
+  first_dead_at: '2026-09-25T18:49:51+08:00'
+  last_dead_at: '2026-09-25T18:49:51+08:00'
+  domains:
+  - config/trading_decision_map.yaml
+  - docs/03_modules
+  - docs/_working
+  - schemas/categories
+  - scripts/backtest
+  - scripts/ch
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/signal_ashare
+  - src/zephyr/strategy_pipeline
+  - tests/backtest
+  - tests/signal_ashare
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-cmd-20260924
+    - 1
+- cluster: GATE:MSG-STYLE
+  bags: 1
+  first_dead_at: '2026-09-25T09:12:26+08:00'
+  last_dead_at: '2026-09-25T09:12:26+08:00'
+  domains:
+  - src/zephyr/infrastructure
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 1
+- cluster: OTHER:dev CAS 冲突重试耗尽（6 次，池化重放）——死信回退人工
+  bags: 1
+  first_dead_at: '2026-09-25T19:14:13+08:00'
+  last_dead_at: '2026-09-25T19:14:13+08:00'
+  domains:
+  - src/zephyr/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 1
+- cluster: GATE:RELATIVE-PATH-LITERAL
+  bags: 1
+  first_dead_at: '2026-09-25T08:05:06+08:00'
+  last_dead_at: '2026-09-25T08:05:06+08:00'
+  domains:
+  - docs/01_policies_and_standards
+  - scripts/governance
+  - src/zephyr/gov_enforcement
+  - tests/governance
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-qcure-20260925
+    - 1
+- cluster: GATE:EXEMPT-ZONE-FM
+  bags: 1
+  first_dead_at: '2026-09-25T21:25:30+08:00'
+  last_dead_at: '2026-09-25T21:25:30+08:00'
+  domains:
+  - docs/_working
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-qmine-20260925
+    - 1
+- cluster: GATE:UNDEFINED-NAME
+  bags: 1
+  first_dead_at: '2026-09-25T21:54:31+08:00'
+  last_dead_at: '2026-09-25T21:54:31+08:00'
+  domains:
+  - config/trading_decision_map.yaml
+  - docs/03_modules
+  - scripts/backtest
+  - src/zephyr/ex_core
+  - src/zephyr/frontend
+  - src/zephyr/strategy_pipeline
+  - tests/backtest
+  - tests/strategy_pipeline
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-qmine-20260925
+    - 1
+- cluster: OTHER:冲突：快照基底 b3c52ff68ca2（与 dev 的共同祖先 03019f119b6
+  bags: 1
+  first_dead_at: '2026-09-25T01:47:10+08:00'
+  last_dead_at: '2026-09-25T01:47:10+08:00'
+  domains:
+  - docs/_working
+  - scripts/audit
+  - scripts/backtest
+  - tests/audit
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-t0-matrix-20260924
+    - 1
+- cluster: OTHER:冲突：dev CAS 竞态（池化）——3f912437fcf7..6b72dfdce39
+  bags: 1
+  first_dead_at: '2026-09-25T09:12:19+08:00'
+  last_dead_at: '2026-09-25T09:12:19+08:00'
+  domains:
+  - src/zephyr/gov_enforcement
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-wm1-wave0-20260924
+    - 1
+- cluster: GATE:ENCODING-SAFETY
+  bags: 1
+  first_dead_at: '2026-09-26T03:17:12+08:00'
+  last_dead_at: '2026-09-26T03:17:12+08:00'
+  domains:
+  - config/model_routing_policy.yaml
+  - config/model_scoring_policy.yaml
+  - config/schedule_gate_policy.yaml
+  - docs/01_policies_and_standards
+  - docs/_working
+  - scripts/ai_layer
+  - scripts/register_ai_l1_scan_task.ps1
+  - src/zephyr/ai_layer
+  - src/zephyr/shared
+  - src/zephyr/trading
+  - tests/ai_layer
+  - tests/shared
+  prescription: R-3 行12：禁回填门禁取样字面量；写盘 newline='\n'
+  top_sessions:
+  - - st-ailayer-final-20260924
+    - 1
+- cluster: OTHER:冲突：dev CAS 竞态（池化）——714981aa5594..bce9d7a80af
+  bags: 1
+  first_dead_at: '2026-09-26T01:50:13+08:00'
+  last_dead_at: '2026-09-26T01:50:13+08:00'
+  domains:
+  - src/zephyr/trading
+  - tests/zephyr
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-backup-cold-20260925-audit
+    - 1
+- cluster: OTHER:冲突：快照基底 9120a7aafc6f（与 dev 的共同祖先 9120a7aafc6
+  bags: 1
+  first_dead_at: '2026-09-26T07:44:45+08:00'
+  last_dead_at: '2026-09-26T07:44:45+08:00'
+  domains:
+  - scripts/commit_queue.py
+  prescription: （无在册处方——新签名，待立案）
+  top_sessions:
+  - - st-commitspeed-tbl-20260924
+    - 1
+- cluster: WorktreePunchThroughError(EV-02 reset 打穿主仓)
+  bags: 1
+  first_dead_at: '2026-09-26T01:04:47+08:00'
+  last_dead_at: '2026-09-26T01:04:47+08:00'
+  domains:
+  - config/construction_workflow_map.yaml
+  - config/data_supply_chain_map.yaml
+  - config/dev_delivery_map.yaml
+  - config/governance_operations_map.yaml
+  - config/strategy_card_lifecycle_map.yaml
+  - config/trading_day_cycle_map.yaml
+  - scripts/governance
+  prescription: R-3 行7：非内容病，见 W-16 回退哨兵，重投前核主仓 HEAD
+  top_sessions:
+  - - st-mapbuild-20260924
+    - 1
+owner_recurrence:
+  top_pairs:
+  - &id001
+    owner_session: st-stress-20260923
+    cluster: NOTHING_TO_COMMIT 但快照未真应用(blob 与 old_dev 不符)
+    recurrence: 29
+    first_dead_at: '2026-09-23T17:28:14+08:00'
+    circuit_break_ge3: true
+  - &id002
+    owner_session: st-cmd-20260924
+    cluster: GATE:TTL-METADATA
+    recurrence: 21
+    first_dead_at: '2026-09-24T19:16:29+08:00'
+    circuit_break_ge3: true
+  - &id003
+    owner_session: st-sweep-tail-20260923
+    cluster: GATE:GATE-PRECOMMIT-RUN
+    recurrence: 16
+    first_dead_at: '2026-09-23T18:27:35+08:00'
+    circuit_break_ge3: true
+  - &id004
+    owner_session: st-cmd-20260924
+    cluster: GATE:CREATE-GUARD
+    recurrence: 16
+    first_dead_at: '2026-09-24T19:16:29+08:00'
+    circuit_break_ge3: true
+  - &id005
+    owner_session: st-commitspeed-tbl-20260924
+    cluster: GATE:GATE-PRECOMMIT-RUN
+    recurrence: 16
+    first_dead_at: '2026-09-24T20:20:34+08:00'
+    circuit_break_ge3: true
+  - &id006
+    owner_session: st-cmd-20260924
+    cluster: LandingEnvironmentError(landing 环境不可用)
+    recurrence: 13
+    first_dead_at: '2026-09-24T19:16:29+08:00'
+    circuit_break_ge3: true
+  - &id007
+    owner_session: st-mapbuild-20260924
+    cluster: GATE:TRANSLATION-COVERAGE
+    recurrence: 11
+    first_dead_at: '2026-09-24T20:59:19+08:00'
+    circuit_break_ge3: true
+  - &id008
+    owner_session: st-library-final-20260924
+    cluster: 注册表三向合并失败(家族)
+    recurrence: 10
+    first_dead_at: '2026-09-23T23:48:12+08:00'
+    circuit_break_ge3: true
+  - &id009
+    owner_session: st-commitspeed-tbl-20260924
+    cluster: GATE:CREATE-GUARD
+    recurrence: 10
+    first_dead_at: '2026-09-24T20:20:34+08:00'
+    circuit_break_ge3: true
+  - &id010
+    owner_session: st-commitspeed-tbl-20260924
+    cluster: LandingEnvironmentError(landing 环境不可用)
+    recurrence: 10
+    first_dead_at: '2026-09-24T20:20:34+08:00'
+    circuit_break_ge3: true
+  - &id011
+    owner_session: st-cmd-20260924
+    cluster: GATE:COMPLEXITY-GUARD
+    recurrence: 9
+    first_dead_at: '2026-09-24T19:16:29+08:00'
+    circuit_break_ge3: true
+  - &id012
+    owner_session: st-chainpile-20260922
+    cluster: GATE:GATE-VOCAB
+    recurrence: 8
+    first_dead_at: '2026-09-22T22:17:53+08:00'
+    circuit_break_ge3: true
+  - &id013
+    owner_session: st-combine-20260923
+    cluster: LandingEnvironmentError(landing 环境不可用)
+    recurrence: 8
+    first_dead_at: '2026-09-23T05:14:24+08:00'
+    circuit_break_ge3: true
+  - &id014
+    owner_session: st-audit-fix-20260924
+    cluster: cascade_stale(基底重校验不适用)
+    recurrence: 8
+    first_dead_at: '2026-09-24T15:29:20+08:00'
+    circuit_break_ge3: true
+  - &id015
+    owner_session: st-commitspeed-tbl-20260924
+    cluster: GATE:IMPORT-INTEGRITY
+    recurrence: 8
+    first_dead_at: '2026-09-24T20:20:34+08:00'
+    circuit_break_ge3: true
+  - &id016
+    owner_session: st-mapbuild-20260924
+    cluster: GATE:CREATE-GUARD
+    recurrence: 8
+    first_dead_at: '2026-09-24T20:59:19+08:00'
+    circuit_break_ge3: true
+  - &id017
+    owner_session: st-align-dirty-20260924
+    cluster: 注册表三向合并失败(家族)
+    recurrence: 7
+    first_dead_at: '2026-09-24T02:17:11+08:00'
+    circuit_break_ge3: true
+  - &id018
+    owner_session: st-commitspeed-tbl-20260924
+    cluster: GATE:TRANSLATION-COVERAGE
+    recurrence: 7
+    first_dead_at: '2026-09-24T20:20:34+08:00'
+    circuit_break_ge3: true
+  - &id019
+    owner_session: st-cmd-20260924
+    cluster: GATE:R5-DIGIT-SUFFIX
+    recurrence: 7
+    first_dead_at: '2026-09-24T19:16:29+08:00'
+    circuit_break_ge3: true
+  - &id020
+    owner_session: st-k4-20260923
+    cluster: 注册表三向合并失败(家族)
+    recurrence: 6
+    first_dead_at: '2026-09-23T17:25:49+08:00'
+    circuit_break_ge3: true
+  - &id021
+    owner_session: st-ulib3c-20260923
+    cluster: GATE:PROTECTED-PATHS
+    recurrence: 6
+    first_dead_at: '2026-09-23T17:28:26+08:00'
+    circuit_break_ge3: true
+  - &id022
+    owner_session: st-cmd-20260924
+    cluster: GATE:ALGO-NOTE-SYNC
+    recurrence: 6
+    first_dead_at: '2026-09-24T19:16:29+08:00'
+    circuit_break_ge3: true
+  - &id023
+    owner_session: st-qcure-20260925
+    cluster: GATE:GATE-PRECOMMIT-RUN
+    recurrence: 6
+    first_dead_at: '2026-09-25T05:19:21+08:00'
+    circuit_break_ge3: true
+  - &id024
+    owner_session: st-chainpile-20260922
+    cluster: GATE:CREATE-GUARD
+    recurrence: 5
+    first_dead_at: '2026-09-22T22:17:53+08:00'
+    circuit_break_ge3: true
+  - &id025
+    owner_session: st-sweep-tail-20260923
+    cluster: GATE:TRANSLATION-COVERAGE
+    recurrence: 5
+    first_dead_at: '2026-09-23T18:27:35+08:00'
+    circuit_break_ge3: true
+  pairs_ge3_count: 70
+  pairs_ge3:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - *id025
+  sessions_total: 51
+named_object_four_state:
+  test_redblue_governance.py:
+    doc_literal_name: test_redblue_governance.py
+    resolved_paths:
+    - path: tests/governance/test_redblue_governance.py
+      case_note: null
+      state1_head_blob_sha1: null
+      state2_branch_commits: 0
+      state3_blob_hits:
+      - qid: q-20260926-st-commitspeed-tbl-20260924-0132
+        state: dead
+        ts: '2026-09-26T01:10:39+08:00'
+        blob_sha256: 6274af18042e1fb7caac84e79a38f140f2683997b6d7c4e80bc2004991d82bd2
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: 6274af18042e1fb7caac84e79a38f140f2683997b6d7c4e80bc2004991d82bd2
+        action: modify
+      - qid: q-20260926-st-commitspeed-tbl-20260924-0133
+        state: dead
+        ts: '2026-09-26T03:26:11+08:00'
+        blob_sha256: 6274af18042e1fb7caac84e79a38f140f2683997b6d7c4e80bc2004991d82bd2
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: 6274af18042e1fb7caac84e79a38f140f2683997b6d7c4e80bc2004991d82bd2
+        action: modify
+      - qid: q-20260926-st-commitspeed-tbl-20260924-0135
+        state: dead
+        ts: '2026-09-26T03:52:33+08:00'
+        blob_sha256: 89f8311555f907b1ecdf7cfa06730fc97dfe15ade4557eb4f6fb4a0e8bf1f09f
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: 89f8311555f907b1ecdf7cfa06730fc97dfe15ade4557eb4f6fb4a0e8bf1f09f
+        action: modify
+      - qid: q-20260926-st-commitspeed-tbl-20260924-0166
+        state: dead
+        ts: '2026-09-26T12:18:32+08:00'
+        blob_sha256: f8b182c4fbdff6d8d13f8d150299a0df9fe489800acfe9b164e087e7535e9256
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: f8b182c4fbdff6d8d13f8d150299a0df9fe489800acfe9b164e087e7535e9256
+        action: modify
+      state3_distinct_blob_versions:
+      - 6274af18042e1fb7caac84e79a38f140f2683997b6d7c4e80bc2004991d82bd2
+      - 89f8311555f907b1ecdf7cfa06730fc97dfe15ade4557eb4f6fb4a0e8bf1f09f
+      - f8b182c4fbdff6d8d13f8d150299a0df9fe489800acfe9b164e087e7535e9256
+      state4_worktree_exists: false
+      extra_survivors_runtime_tmp: []
+    verdict: 从未入库；盘外唯一存活=队列 blobs ⇒ 捞回对象
+  test_redblue_robust.py:
+    doc_literal_name: test_redblue_robust.py
+    resolved_paths:
+    - path: tests/governance/test_redblue_robust.py
+      case_note: null
+      state1_head_blob_sha1: null
+      state2_branch_commits: 0
+      state3_blob_hits: []
+      state3_distinct_blob_versions: []
+      state4_worktree_exists: false
+      extra_survivors_runtime_tmp:
+      - .runtime\tmp\total_command_closeout\lane_rescue\.worktrees__csx-s1\untracked\tests\governance\test_redblue_robust.py
+    verdict: 从未入库；不在 blobs，存活于工作树/.runtime_tmp ⇒ 捞回对象（快照源）
+  dead_triage.yaml:
+    doc_literal_name: dead_triage.yaml
+    resolved_paths:
+    - path: docs/_working/commit_speedup_campaign/60_deep_dive/dead_triage.yaml
+      case_note: null
+      state1_head_blob_sha1: ed25a52af8dbb6a9647486fdaad3ed33089b1423
+      state2_branch_commits: 1
+      state3_blob_hits:
+      - qid: q-20260925-st-commitspeed-tbl-20260924-0126
+        state: dead
+        ts: '2026-09-25T23:37:31+08:00'
+        blob_sha256: 3540a415055d8aa3e99a96d5b065b32162a5ebf9601892aff9cf0cb8ddedc6fd
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: 3540a415055d8aa3e99a96d5b065b32162a5ebf9601892aff9cf0cb8ddedc6fd
+        action: modify
+      - qid: q-20260925-st-commitspeed-tbl-20260924-0129
+        state: dead
+        ts: '2026-09-25T23:44:20+08:00'
+        blob_sha256: 3540a415055d8aa3e99a96d5b065b32162a5ebf9601892aff9cf0cb8ddedc6fd
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: 3540a415055d8aa3e99a96d5b065b32162a5ebf9601892aff9cf0cb8ddedc6fd
+        action: modify
+      state3_distinct_blob_versions:
+      - 3540a415055d8aa3e99a96d5b065b32162a5ebf9601892aff9cf0cb8ddedc6fd
+      state4_worktree_exists: true
+      state4_disk_vs_head_eol_norm_equal: true
+      extra_survivors_runtime_tmp: []
+    verdict: 已入库（HEAD/分支命中）——非捞回对象
+  dead_triage_r2.yaml:
+    doc_literal_name: dead_triage_r2.yaml
+    resolved_paths:
+    - path: docs/_working/commit_speedup_campaign/60_deep_dive/dead_triage_r2.yaml
+      case_note: null
+      state1_head_blob_sha1: de5afe985e770bc46c78f6ffae9233ee23bd40cd
+      state2_branch_commits: 1
+      state3_blob_hits: []
+      state3_distinct_blob_versions: []
+      state4_worktree_exists: true
+      state4_disk_vs_head_eol_norm_equal: true
+      extra_survivors_runtime_tmp: []
+    verdict: 已入库（HEAD/分支命中）——非捞回对象
+  DEEP_DIVE_R1.md:
+    doc_literal_name: DEEP_DIVE_R1.md
+    resolved_paths:
+    - path: docs/_working/commit_speedup_campaign/60_deep_dive/deep_dive_r1.md
+      case_note: 在册字面 DEEP_DIVE_R1.md 与盘/HEAD 真身 deep_dive_r1.md 大小写不同（X-16 陷阱）
+      state1_head_blob_sha1: 0e6215557259f5b8352781c8d59feeb61c4246fe
+      state2_branch_commits: 1
+      state3_blob_hits:
+      - qid: q-20260925-st-commitspeed-tbl-20260924-0126
+        state: dead
+        ts: '2026-09-25T23:37:31+08:00'
+        blob_sha256: fe33308abf27ad527cc80cdd205586a9f53cd46309c99dd10bdab4e1ddfa2375
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: fe33308abf27ad527cc80cdd205586a9f53cd46309c99dd10bdab4e1ddfa2375
+        action: modify
+      - qid: q-20260925-st-commitspeed-tbl-20260924-0129
+        state: dead
+        ts: '2026-09-25T23:44:20+08:00'
+        blob_sha256: fe33308abf27ad527cc80cdd205586a9f53cd46309c99dd10bdab4e1ddfa2375
+        blob_file_exists: true
+        integrity_raw_sha==recorded: true
+        norm_sha256: fe33308abf27ad527cc80cdd205586a9f53cd46309c99dd10bdab4e1ddfa2375
+        action: modify
+      state3_distinct_blob_versions:
+      - fe33308abf27ad527cc80cdd205586a9f53cd46309c99dd10bdab4e1ddfa2375
+      state4_worktree_exists: true
+      state4_disk_vs_head_eol_norm_equal: true
+      extra_survivors_runtime_tmp: []
+    verdict: 已入库（HEAD/分支命中）——非捞回对象
+rescue_manifest:
+- saved: versions/test_redblue_governance.py.6274af18042e
+  source: queue blobs
+  sha256: 6274af18042e1fb7caac84e79a38f140f2683997b6d7c4e80bc2004991d82bd2
+  for: tests/governance/test_redblue_governance.py
+- saved: versions/test_redblue_governance.py.89f8311555f9
+  source: queue blobs
+  sha256: 89f8311555f907b1ecdf7cfa06730fc97dfe15ade4557eb4f6fb4a0e8bf1f09f
+  for: tests/governance/test_redblue_governance.py
+- saved: tests/governance/test_redblue_governance.py
+  source: queue blobs (latest qid ts 2026-09-26T12:18:32+08:00)
+  sha256: f8b182c4fbdff6d8d13f8d150299a0df9fe489800acfe9b164e087e7535e9256
+  for: tests/governance/test_redblue_governance.py
+- saved: tests/governance/test_redblue_robust.py
+  source: .runtime\tmp\total_command_closeout\lane_rescue\.worktrees__csx-s1\untracked\tests\governance\test_redblue_robust.py
+  sha256: e6fe1b305a1fe45fc769cfd4c9abdd1cef6510751de1033b3f54bd783a9ebb7f
+  for: tests/governance/test_redblue_robust.py

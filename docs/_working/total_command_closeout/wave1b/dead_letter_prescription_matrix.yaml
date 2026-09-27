@@ -1,0 +1,3446 @@
+clusters:
+- cluster: GATE:GATE-PRECOMMIT-RUN
+  census_clusters:
+  - GATE:GATE-PRECOMMIT-RUN
+  dead_letters: 85
+  first_dead_at: '2026-09-23T02:33:47+08:00'
+  last_dead_at: '2026-09-26T08:30:08+08:00'
+  top_sessions:
+  - session_id: st-sweep-tail-20260923
+    letters: 16
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 16
+  - session_id: st-qcure-20260925
+    letters: 6
+  file_type_dist:
+    py: 352
+    md: 149
+    yaml: 62
+    sh: 7
+    ps1: 6
+    csv: 5
+  sub_facets:
+    INNER_FAIL:LINT: 27
+    INNER_FAIL:HOOK-GATE-PROTECTED-PATHS: 17
+    INNER_FAIL:HOOK-RUFF-FORMAT: 16
+    INNER_FAIL:HOOK-GATE-NAMING: 9
+    INNER_FAIL:HOOK-GATE-ANY-ABUSE: 3
+    '-': 2
+  gate_id_observed: GATE-PRECOMMIT-RUN
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 4
+  r3_book_bags_claimed: '2'
+  r3_book_prescription: 落地侧门禁账缺失 ⇒ 先跑 R-2 步骤 4
+  prescription_source: 在册 R-3#4
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: 落地侧 pre-commit run 面复算（读 reason 尾行的 Failed 步名）：python scripts/governance/meta/gate_prerun.py
+      --session <SID> --files "<逗号清单>" --message-file .runtime/tmp/<SID>/msg_<批名>.md
+    copy_ready_fix: 此门是 runner 不是判据——**真死因在 reason 尾行点名的内层失败步**（现读分布：lint / gate-protected-paths / ruff-format /
+      gate-naming / 未解决冲突标记）：①受保护路径（docs/01_policies_and_standards/rules/*.yaml 等）→ 摘出本袋另起小袋，或带 [ARCH-APPROVAL:<已登记
+      issue>] / 命中 ruling_registry.yaml approved_paths；②lint/format/naming → 在车道内跑与门同源的格式化/naming 通道改到 0 再投；③冲突标记
+      → 逐件 `grep -n '<<<<<<<' <file>` 解冲后重投（enqueue_preflight.py 已带冲突标记检测器，锁外可先验）。
+    forbidden_actions: 禁 --no-verify 或改 .pre-commit-config/hook 配置绕开；禁改门阈值；禁对同 payload 双 requeue 硬闯。
+    enqueue_preventable: false
+    note: GATE-PRECOMMIT-RUN 不在 gate_registry.yaml 的 gate_id 集内（落地侧 runner，非注册门）⇒ 预检白名单结构性收不到它；治本面是把其内层判定并入预检面（protected-paths/naming/format
+      本身已在别处成门）。
+  evidence:
+    qid: q-20260926-st-qmine-20260925-0040
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341
+      方案②，hook=[''ruff'', ''ruff-format'']) 检测未解决的合并冲突标记（local 替代 external #ARCH-PRECOMMIT-OFFLINE-001）...........................................Passed
+      检测意外提交的私钥（local 替代 external #ARCH-PRECOMMIT-OFFLINE-001）.................................................Passed
+      GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）.....................................Skipped
+      检测危险 git 命令（65 号 §7.13，ABS-26/27/28）........................................................................Passed
+      检测危险'
+    file: q-20260926-st-qmine-20260925-0040.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-qmine-20260925-0040
+- cluster: FAM:注册表三向合并
+  census_clusters:
+  - 注册表三向合并失败(家族)
+  dead_letters: 72
+  first_dead_at: '2026-09-23T02:54:34+08:00'
+  last_dead_at: '2026-09-26T22:46:08+08:00'
+  top_sessions:
+  - session_id: st-library-final-20260924
+    letters: 10
+  - session_id: st-align-dirty-20260924
+    letters: 7
+  - session_id: st-k4-20260923
+    letters: 6
+  file_type_dist:
+    md: 290
+    yaml: 176
+    py: 149
+    csv: 8
+    ps1: 3
+  sub_facets:
+    OURS-UNIDENTIFIABLE-ENTRY: 36
+    OURS-DUP-IDENTITY: 32
+    MERGE-OURS-OTHER: 2
+    '-': 1
+    NO-PLAINZH: 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 1
+  r3_book_bags_claimed: 71（其中全文指名身份键 7）
+  r3_book_prescription: 走 R-1 修基底 + 该册变更单独成袋；勿 requeue 硬闯
+  prescription_source: 在册 R-3#1
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: '按 reason 点名的册路径现读身份键重复度：grep -c ''<身份键>: <值>'' <册>（现读两子型 OURS-DUP-IDENTITY / OURS-UNIDENTIFIABLE-ENTRY）'
+    copy_ready_fix: 先分型（三型处方不同，前两型病灶都在**袋内该册自身**，不是基底）：①OURS-DUP-IDENTITY=同一身份键两条 ⇒ 保留真源条目删重复，热文件必用 safe_write_text（src/zephyr/shared/io/file_utils.py），件+册同袋重投；②OURS-UNIDENTIFIABLE-ENTRY=条目被压成非
+      dict（字符串/空段）⇒ 恢复映射结构，并核顶格根键唯一性（重复根键会被解析层静默忽略，REGISTRY-YAML-PARSE 坑）；③reason 明写双改/基底冲突才走 R-1 修基底 + 该册变更单独成袋。
+    forbidden_actions: 禁 requeue 硬闯（同字节必同结果）；禁整档覆盖热册（=第二次蒸发）；禁为摘他人条目回退基底。
+    enqueue_preventable: false
+    note: ★与在册 R-3#1 冲突：册把整族判为'基底病'（走 R-1），现读 ours 侧子型占绝对多数（facet 计数见 §5 该行证据）⇒ 建议该行拆三型，①②给可照抄修法。
+  evidence:
+    qid: q-20260926-st-qmine-20260925-0044
+    reason: 'landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml:
+      ours 同侧身份键重复且内容冲突（同键异容，仓库态缺陷）: decl|id=CAND-GOVTEST-005——死信回人工；处方: 跑 registry 去重对账器核对存量，勿手拼 YAML --- 在册先条
+      (first) --- id: CAND-GOVTEST-005 name: commit queue P1 级联+P2 监控（66号②③，随 MVP 验收后） aliases: - commit queue 扩展
+      domain: D_GOVERNANCE domain_status: active sub_layer: git 安全治理 problem: P1 级联标记+死信重入队+done TTL+worktree 强制升硬联动；P2
+      监控接入+temp-index+多分支评估。 proposal: 触发=CAND-GOVTEST-004 MVP 验收通过。 status: promoted promoted_to: commit_queue.py
+      P1 三件套（级联/死信 requeue/TTL 清'
+    file: q-20260926-st-qmine-20260925-0044.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-qmine-20260925-0044
+- cluster: GATE:CREATE-GUARD
+  census_clusters:
+  - GATE:CREATE-GUARD
+  dead_letters: 68
+  first_dead_at: '2026-09-23T14:58:53+08:00'
+  last_dead_at: '2026-09-27T01:58:17+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 16
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 10
+  - session_id: st-mapbuild-20260924
+    letters: 8
+  file_type_dist:
+    py: 448
+    md: 403
+    yaml: 130
+    csv: 15
+    ps1: 5
+    js: 2
+  sub_facets:
+    NO-CREATION-TOKEN: 49
+    MISSING-HEADER-FIELDS: 10
+    '-': 6
+    CLASS-NAME-CONFLICT: 3
+  gate_id_observed: CREATE-GUARD
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: true
+  r3_book_row: 3
+  r3_book_bags_claimed: 8（六图役）+ 全局多封
+  r3_book_prescription: R-2 步骤 2；token 与件同袋
+  prescription_source: 在册 R-3#3
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "from zephyr.gov_enforcement.commit_gates import create_guard" 后 python scripts/governance/meta/gate_prerun.py
+      --session <SID> --files "<逗号清单>" --message-file .runtime/tmp/<SID>/msg_<批名>.md
+    copy_ready_fix: 子型 MISSING-HEADER-FIELDS（ARCH-031）= 前 30 行补齐 15 字段头（BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS/TTL）；子型
+      NO-CREATION-TOKEN = python scripts/governance/batch_creation_tokens.py 批量登记且 **token 与件同袋**；子型 CLASS-NAME-CONFLICT（ARCH-034
+      类名跨模块）= 改类名或复用既有类，禁并行同名。
+    forbidden_actions: 禁抄别人 token 或 --created-by 填他会话；禁把 token 放后继袋（token 册先行=本袋永无 token）；禁删门判据。
+    enqueue_preventable: true
+    note: CREATE-GUARD 已在 _INLINE_PREFLIGHT_CHECKS 内联面仍大量死 ⇒ 两个候选解释：预检 degraded fail-open（设施异常放行）或'车道盘面≠袋内 blob
+      字节'；本包未实测预检真跑率（见案卷头部 assumed）。
+  evidence:
+    qid: q-20260927-st-final-build-20260926-0015
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: [''scripts/governance/wave1a/verified_promotion_check.py'',
+      ''scripts/governance/wave1b/dead_letter_census.py'', ''scripts/governance/wave2/lane_inventory.py'', ''scripts/signals/chart_condition_package.py'',
+      ''src/zephyr/data/date_normalize.py'', ''src/zephyr/data/dual_source_guard.py'', ''src/zephyr/data/miniqmt_caliber_sentinel.py'',
+      ''src/zephyr/gov_enforcement/rule_bridge/union_priority_ruler.py'', ''src/zephyr/shared/foundation/flag_read_state.py''].
+      commit 新建 .py 文件前 MUST 在 capability_canonical_file_registry.yaml 的 creation'
+    file: q-20260927-st-final-build-20260926-0015.json
+    requeued_to: null
+  sample_qids:
+  - q-20260927-st-final-build-20260926-0015
+- cluster: GATE:TRANSLATION-COVERAGE
+  census_clusters:
+  - GATE:TRANSLATION-COVERAGE
+  dead_letters: 55
+  first_dead_at: '2026-09-22T22:17:53+08:00'
+  last_dead_at: '2026-09-27T01:42:41+08:00'
+  top_sessions:
+  - session_id: st-mapbuild-20260924
+    letters: 11
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 7
+  - session_id: st-sweep-tail-20260923
+    letters: 5
+  file_type_dist:
+    py: 296
+    yaml: 111
+    md: 99
+    csv: 15
+    ps1: 6
+    npy: 4
+  sub_facets:
+    NO-PLAINZH: 55
+  gate_id_observed: TRANSLATION-COVERAGE
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: true
+  r3_book_row: 2
+  r3_book_bags_claimed: 11（六图役）
+  r3_book_prescription: '`add_module_translation.py` **在主仓**跑，plain-zh ≥8 字，且必须落 `entries:` 段'
+  prescription_source: 在册 R-3#2
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md（同一清单同 message 复算）
+    copy_ready_fix: python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*>
+      --name-zh <中> --plain-zh <大白话≥8字> **必须在主区跑**（worktree 里跑出的条目落不进 HEAD 册，同批必再判'无 plain_zh'）；写后核 `grep -c '^entries:'
+      册` 与根键唯一性，再件+册同袋重投。
+    forbidden_actions: 禁在车道内改翻译册后指望落地；禁把门禁报错里的取样字面量回填进 YAML；禁调 plain_zh 长度判据。
+    enqueue_preventable: true
+    note: 在册 R-3#2 只说'在主仓跑'，未量化 55 封里 worktree 跑占多少——本包按 facet 现读补齐。
+  evidence:
+    qid: q-20260926-st-mapbuild-20260924-0037
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 5 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格
+      plain_zh 大白话简介。修复：python scripts/governance/d3_metadata/add_module_translation.py --path <file_path> --domain
+      <D_*> --name-zh <中文名> --plain-zh <大白话简介>。详情: 无 plain_zh 简介[src/zephyr/gov_enforcement/commit_gates/construction_workflow_map_gate.py,
+      src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py, src/zephyr/gov_enforcement/commit_gates/dev_delivery_map_gate.py,
+      src/zephyr/gov_enforcement/commit_gates/strategy_card_lifecycle_map_gate.py, src/zephyr/gov'
+    file: q-20260926-st-mapbuild-20260924-0037.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-mapbuild-20260924-0037
+- cluster: FAM:LandingEnvironmentError
+  census_clusters:
+  - LandingEnvironmentError(landing 环境不可用)
+  dead_letters: 38
+  first_dead_at: '2026-09-23T03:07:48+08:00'
+  last_dead_at: '2026-09-26T12:18:32+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 13
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 10
+  - session_id: st-combine-20260923
+    letters: 8
+  file_type_dist:
+    py: 124
+    md: 109
+    yaml: 68
+    csv: 8
+    yml: 4
+    sh: 2
+  sub_facets:
+    GATE-MODULE-IMPORT-FAIL: 38
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: ENV
+    root_cause_zh: 环境或依赖
+    minimal_repro: python -c "import importlib;[importlib.import_module(m) for m in ['zephyr.gov_enforcement.commit_gates.<reason
+      点名模块>']]"
+    copy_ready_fix: 落地侧主区 gate 模块 import 失败（ModuleNotFoundError / gate 册条目坏）⇒ 属主会话把门本体+它读的册同袋落主区；本袋只等环境修好后 requeue
+      --adopt-prior-work。子型 PRIORITY-CONFLICT 走'后到者让位'改 priority（先例：ORPHAN-MODULE 86->89）。
+    forbidden_actions: 不是内容病：禁改本袋内容自证；禁删/注释自家 gate 注册；禁在本袋里顺手造别人的门模块。
+    enqueue_preventable: false
+    note: 38 封＝全队列第一大非内容簇；根因在主区依赖态，入队预检无从判（预检在车道里跑）。
+  evidence:
+    qid: q-20260926-st-commitspeed-tbl-20260924-0166
+    reason: 'landing 异常: LandingEnvironmentError: landing 环境不可用: gate 装载失败但 fresh 子进程通过（本进程纪元陈旧/瞬态 IO）: gate auto-registration
+      fail-closed (裁定#351): 4/103 gate(s) failed to load: REAL-KEY-REFERENCE-SCAN: import failed: ModuleNotFoundError:
+      No module named ''zephyr.ai_layer.redline''; TASK-ORDER-DOCS-LOCK: import failed: ModuleNotFoundError: No
+      module named ''zephyr.ai_layer.redline''; CONSTITUTION-LINE-LIMIT: import failed: ModuleNotFoundError: No
+      module named ''zephyr.ai_layer.redline''; DOC-HEADER-SUITE: factory function not found: make_doc_header_suite_gate
+      in zephyr.gov_enforcement.commit_gates.blueprint_for'
+    file: q-20260926-st-commitspeed-tbl-20260924-0166.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-commitspeed-tbl-20260924-0166
+- cluster: GATE:TTL-METADATA
+  census_clusters:
+  - GATE:TTL-METADATA
+  dead_letters: 33
+  first_dead_at: '2026-09-23T16:33:22+08:00'
+  last_dead_at: '2026-09-26T03:40:38+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 21
+  - session_id: st-audit-fix-20260924
+    letters: 2
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 2
+  file_type_dist:
+    md: 288
+    py: 77
+    yaml: 39
+    csv: 33
+    importlinter: 1
+  sub_facets:
+    NO-FRONTMATTER: 18
+    MISSING-TTL-FIELD: 6
+    CHECKER-EXEC-FAILED: 3
+    '-': 3
+    MISSING-DOC-TYPE: 2
+    BAD-FM-VALUE: 1
+  gate_id_observed: TTL-METADATA
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/d3_metadata/check_frontmatter_metadata.py --files "<清单>"（与本包 reason
+      同判据的独立尺；不可用时退 python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md）
+    copy_ready_fix: '按现读四子型各一条：①NO-FRONTMATTER=新建 .md 完全没有题记 ⇒ 补 `ttl: task_bound` + `completes_when:` 两键（本包产物头部即合规写法）；②MISSING-TTL-FIELD=有题记但缺
+      ttl 键 ⇒ 只补 ttl 不动别的键；③MISSING-DOC-TYPE=缺 doc_type ⇒ 按该目录用途补 doc_type（FILE-PLACEMENT-TTL 会接力判 ttl 与区域相配）；④CHECKER-EXEC-FAILED=门的取样脚本自身在落地快照路径里跑挂
+      ⇒ **不是内容病**，属主会话先核 check_frontmatter_metadata.py 在本袋可执行，再 requeue --adopt-prior-work。⚠已实证坑：`completes_when:`
+      值里带裸冒号会被 YAML 解析成嵌套，门反读为''缺 ttl''——值加引号或改空格分隔；py 头部 `# [TTL] task_bound` 值须裸词。'
+    forbidden_actions: '禁给临时区件写 ttl: permanent（FILE-PLACEMENT-TTL 接力拦）；禁删题记/删 doc_type 绕过；禁改门允许的键集或放宽必填判据。'
+    enqueue_preventable: true
+    note: reason 里的路径是 .runtime\commit_queue\worktree(s)\w<N>\... ⇒ 门读落地快照盘面而非车道盘面：只改车道不够，必须确认袋内 blob 字节（与 §4 degraded
+      结论同源）。
+  evidence:
+    qid: q-20260926-st-audit-fix-20260924-0042
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\commit_queue\worktrees\w1\docs\_working\chain_fullflow_20260926\mine_pipe_blockage_substages.md
+      invalid ttl=''90d'' (valid: [''permanent'', ''task_bound'']...) FAIL: .runtime\commit_queue\worktrees\w1\docs\_working\chain_fullflow_20260926\mine_pipe_false_green_census.md
+      invalid ttl=''90d'' (valid: [''permanent'', ''task_bound'']...) FAIL: .runtime\commit_queue\worktrees\w1\docs\_working\chain_fullflow_20260926\mine_queue_liveness_and_trigger_mass.md
+      invalid ttl=''2026-12-26'' (valid: [''permanent'', ''task_bound'']...) FAIL: .runtime\commit_queue\worktre'
+    file: q-20260926-st-audit-fix-20260924-0042.json
+    requeued_to: q-20260926-st-audit-fix-20260924-0044
+  sample_qids:
+  - q-20260926-st-audit-fix-20260924-0042
+- cluster: FAM:NOTHING_TO_COMMIT
+  census_clusters:
+  - NOTHING_TO_COMMIT 但快照未真应用(blob 与 old_dev 不符)
+  dead_letters: 31
+  first_dead_at: '2026-09-24T01:13:07+08:00'
+  last_dead_at: '2026-09-24T18:30:25+08:00'
+  top_sessions:
+  - session_id: st-stress-20260923
+    letters: 29
+  - session_id: st-chainpile-20260922
+    letters: 1
+  - session_id: st-sweep-tail-20260923
+    letters: 1
+  file_type_dist:
+    md: 31
+    yaml: 2
+    py: 1
+  sub_facets:
+    BLOB-OLD-DEV-MISMATCH: 31
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: python scripts/commit_queue.py status && git cat-file -e <blob_ref>（只读核 blob 是否仍与 dev 同字节）
+    copy_ready_fix: 防线语义='快照 blob 与 old_dev 不符，应用静默丢失' ⇒ 车道同步后重新入队取新字节；若盘面已等 dev ⇒ 本袋确无事可提交，走 dead_reason 属主会话复核（不删件）。
+    forbidden_actions: 禁 `git apply`/update-index 手工塞（§9.8 plumbing 红线）；禁删 dead 袋；禁把这条防线判成'门的错'去改它。
+    enqueue_preventable: false
+    note: 31 封：防线在 2026-09-15 q-0003 假落地事故后加的，代价是竞态期高频死信——治本面是入队口核 blob 与 dev 差集。
+  evidence:
+    qid: q-20260924-st-chainpile-20260922-0075
+    reason: 'NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: [''config/governance/noqa_exempt_registry.yaml'', ''docs/_working/chain_piling_campaign/04_construction_map.md'',
+      ''docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml'', ''scripts/governance/check_meta_question_batch.py''])——应用静默丢失，死信回退重新入队（2026-09-15
+      q-0003 假落地事故防线）'
+    file: q-20260924-st-chainpile-20260922-0075.json
+    requeued_to: q-20260924-st-chainpile-20260922-0077
+  sample_qids:
+  - q-20260924-st-chainpile-20260922-0075
+- cluster: GATE:GATE-VOCAB
+  census_clusters:
+  - GATE:GATE-VOCAB
+  dead_letters: 24
+  first_dead_at: '2026-09-23T22:06:06+08:00'
+  last_dead_at: '2026-09-25T20:35:40+08:00'
+  top_sessions:
+  - session_id: st-chainpile-20260922
+    letters: 8
+  - session_id: st-ailayer-final-20260924
+    letters: 5
+  - session_id: st-pipeline-final-20260924
+    letters: 4
+  file_type_dist:
+    py: 852
+    yaml: 120
+    md: 63
+    ps1: 16
+    html: 5
+  sub_facets:
+    VOCAB-HARDCODE: 22
+    '-': 2
+  gate_id_observed: GATE-VOCAB
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn 'layer_vocabulary\|status_vocabulary' src/zephyr scripts | head
+    copy_ready_fix: 把 VALID_LAYERS/VALID_STATUSES 这类硬编码合法值改成从 docs/01_policies_and_standards/_registry/**/*_vocabulary.yaml
+      动态加载（复用既有 vocabulary loader，勿造第二个 loader）；新增合法值走词表册同袋。
+    forbidden_actions: '禁往词表塞值来迁就硬编码（＝造第二真源）；禁裸 `# noqa: gate-vocab`（NOQA-VALIDATION 会拦无理由豁免）。'
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-wm1-wave0-20260924-0018
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-CHAIN] 新增 .py 文件含 SSoT 路径硬编码（应通过 capability_canonical_file_registry
+      反查发现，非硬编码）: src/zephyr/governance/registry_ledger/baseline.py: "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml";
+      src/zephyr/governance/registry_ledger/baseline.py: "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml";
+      src/zephyr/governance/registry_ledger/baseline.py: "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml";
+      src/zephyr/governance/registry_ledger/baseline.py: "docs/01_'
+    file: q-20260925-st-wm1-wave0-20260924-0018.json
+    requeued_to: q-20260925-st-wm1-wave0-20260924-0027
+  sample_qids:
+  - q-20260925-st-wm1-wave0-20260924-0018
+- cluster: FAM:cascade_stale
+  census_clusters:
+  - cascade_stale(基底重校验不适用)
+  dead_letters: 24
+  first_dead_at: '2026-09-24T16:05:00+08:00'
+  last_dead_at: '2026-09-27T00:20:40+08:00'
+  top_sessions:
+  - session_id: st-audit-fix-20260924
+    letters: 8
+  - session_id: st-cmd-20260924
+    letters: 4
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 4
+  file_type_dist:
+    md: 53
+    py: 48
+    yaml: 28
+  sub_facets:
+    STALE-BY-QID: 24
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: python scripts/commit_queue.py status | grep <stale_by 点名 qid>
+    copy_ready_fix: 前置袋已落地使基底重校验不适用 ⇒ 车道同步到当前 dev → requeue <qid> --adopt-prior-work（取工作树现字节）；同 payload 禁双 requeue。
+    forbidden_actions: 禁删 dead json（未落地字节唯一存活处）；禁手工把 blob 塞 index。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-cmd-20260924-0061
+    reason: 'cascade_stale: 基底重校验不适用 [''src/zephyr/strategy_pipeline/daily_gate_snapshot.py'', ''src/zephyr/strategy_pipeline/daily_decision_orchestrator.py'',
+      ''src/zephyr/data/sector_state_pipeline.py'', ''src/zephyr/signal_ashare/sector/sector_state_aggregator.py'',
+      ''scripts/backtest/sector_prereg_exam_runner.py'', ''tests/strategy_pipeline/test_decision_orchestrator.py'',
+      ''tests/signal_ashare/sector/test_sector_state_aggregator.py'', ''tests/data/test_sector_state_pipeline.py'']（stale_by=q-20260925-st-cmd-20260924-0059）'
+    file: q-20260925-st-cmd-20260924-0061.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-cmd-20260924-0061
+- cluster: GATE:COMPLEXITY-GUARD
+  census_clusters:
+  - GATE:COMPLEXITY-GUARD
+  dead_letters: 22
+  first_dead_at: '2026-09-23T18:04:45+08:00'
+  last_dead_at: '2026-09-26T06:27:04+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 9
+  - session_id: st-metaq-20260923
+    letters: 3
+  - session_id: st-qcure-20260925
+    letters: 2
+  file_type_dist:
+    py: 110
+    yaml: 43
+    md: 20
+    csv: 10
+    ps1: 2
+  sub_facets:
+    HIGH-COMPLEXITY: 18
+    '-': 4
+  gate_id_observed: COMPLEXITY-GUARD
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 11
+  r3_book_bags_claimed: —
+  r3_book_prescription: 拆模块级 helper（参数 ≤7）；**禁调阈值**；用门禁自家 `_cyclomatic_complexity` 复算，别用第三方读数
+  prescription_source: 在册 R-3#11
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "from zephyr.gov_enforcement.commit_gates.complexity_guard import _cyclomatic_complexity"
+      （门禁自家尺复算）
+    copy_ready_fix: 拆模块级 helper（参数 ≤7）或查表法/策略模式；reason 点名行号即起点（实测 top：commit_queue_landing.py:_land_item complexity=42）。
+    forbidden_actions: 禁调阈值；禁第三方复杂度读数自证；禁 noqa 裸豁免。
+    enqueue_preventable: false
+    note: 与在册 R-3#11 同向，本包补 top 病灶点名。
+  evidence:
+    qid: q-20260926-st-ddup-20260925-0028
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-HIGH-COMPLEXITY] NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），
+      违反 §5.158 循环复杂度反模式。 scripts/backtest/t1_t2_handover.py:357: run_acceptance(complexity=52 > 15) scripts/backtest/t1_t2_handover.py:629:
+      build_t2_subspace(complexity=16 > 15) scripts/backtest/t1_t2_handover.py:827: run_handover(complexity=31 >
+      15) -> 考虑拆分为短函数/策略模式/查表法 [NO-LONG-PARAM-LIST] NO-LONG-PARAM-LIST：检测到长参数列表（>7参数）， 违反 §5.150 Long Parameter
+      List 反模式。 scripts/backtest/t1_t2_handover.py:827: run_handover(13 params > 7) -> 考虑引入参数对象/Builder模式/dataclass
+      封装参数'
+    file: q-20260926-st-ddup-20260925-0028.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-ddup-20260925-0028
+- cluster: GATE:REFERENCE-INTEGRITY
+  census_clusters:
+  - GATE:REFERENCE-INTEGRITY
+  - GATE:REFERENCE-INTEGRITY(RULING-REFERENCE)
+  dead_letters: 18
+  first_dead_at: '2026-09-24T04:31:18+08:00'
+  last_dead_at: '2026-09-27T02:57:02+08:00'
+  top_sessions:
+  - session_id: st-audit-all-20260924
+    letters: 4
+  - session_id: st-mapbuild-20260924
+    letters: 3
+  - session_id: st-final-build-20260926
+    letters: 3
+  file_type_dist:
+    md: 140
+    yaml: 38
+    py: 3
+  sub_facets:
+    RULING-DANGLING: 10
+    '-': 6
+    AGENTS-SECTION-DANGLING: 2
+  gate_id_observed: REFERENCE-INTEGRITY
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: true
+  r3_book_row: 6
+  r3_book_bags_claimed: '2'
+  r3_book_prescription: '**禁引用未登记裁定号**（工作树自赋 #414/#415 是悬空号）：改成文字描述，落地后经取号器正式补登'
+  prescription_source: 在册 R-3#6
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: 'grep -n ''^## \|^### '' AGENTS.md（拿真章节号）+ grep -c ''id: *<裁定号>'' docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml'
+    copy_ready_fix: 两子码两套修法（本包现读把两者并成同门 id，在册旧行只写了后者）：①子码 RULING-DANGLING=引用未登记裁定号 ⇒ 改文字描述，落地后经取号器正式补登（RULE-RULING
+      同 commit 原子）；②子码 AGENTS-SECTION-DANGLING=引用 AGENTS.md 不存在的 § ⇒ 以现读章节号改写引用或删该句（引用落笔前先 grep 命中，本案卷自犯教训在册）。
+    forbidden_actions: 禁自赋裁定号；禁改 AGENTS.md 章节号迁就引用；禁给 -D/-B 之类后缀猜号在册。
+    enqueue_preventable: true
+    note: RULING-REFERENCE 在预检白名单内仍死 ⇒ 同 degraded 面；在册 R-3#6 用子码当门名，现读门 id 是 REFERENCE-INTEGRITY。
+  evidence:
+    qid: q-20260925-st-commitspeed-tbl-20260924-0130
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [ARCH-REFERENCE] 新增 ARCH-NNN（该议题号未登记于 architecture_issue_registry，非在册引用） 悬空引用（ARCH_REFERENCE_VIOLATION）——以下文件引用了
+      architecture_issue_registry.yaml 中未登记的编号： - docs/_working/commit_speedup_campaign/90_verification/CAMPAIGN_STATE_SNAPSHOT.md:
+      ARCH-CROSS-COMMIT-ATOMICITY（该议题号未登记于 architecture_issue_registry，非在册引用） 修复：在 architecture_issue_registry.yaml 中补登对应条目，或移除/修正引用。（注：本门禁只检测新增引用，历史悬空引用不阻断。）
+      [RULING-REFERENCE] 新增 裁定#NNN 悬空引用（RULING_REFERENCE_VIOLATION）——以下文件引用了 ruling_registry.yaml 中未登记的编号： - docs/_working/commit_speedup_campaign/60_deep_dive/r1_data/d_dead_letter_lineage.yaml:
+      裁定#341 修复：在 ruling_registry.yaml 中补登对应条目，或移除/修正引用。（注：本门'
+    file: q-20260925-st-commitspeed-tbl-20260924-0130.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-commitspeed-tbl-20260924-0130
+- cluster: GATE:R5-DIGIT-SUFFIX
+  census_clusters:
+  - GATE:R5-DIGIT-SUFFIX
+  dead_letters: 16
+  first_dead_at: '2026-09-23T05:58:43+08:00'
+  last_dead_at: '2026-09-26T13:38:58+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 7
+  - session_id: st-qmine-20260925
+    letters: 3
+  - session_id: st-deepclean-20260923
+    letters: 1
+  file_type_dist:
+    md: 105
+    yaml: 11
+    py: 4
+  sub_facets:
+    '-': 16
+  gate_id_observed: R5-DIGIT-SUFFIX
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 8
+  r3_book_bags_claimed: 多袋（一次违规拖死整袋）
+  r3_book_prescription: 目录/文件名禁以数字结尾（判定式 `r"_\d+$"`，无白名单无逃生标）；已入库的历史违规按"已存在即跳过"
+  prescription_source: 在册 R-3#8
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "import re;print(bool(re.search(r'_\d+$','registry_incident_20260922')))"
+    copy_ready_fix: 目录/文件改名去 `_NN` 语义后缀（改用语义名，版本靠 message 不靠路径）；`git mv` 后 MUST python scripts/governance/generate_project_depgraph.py
+      --force，并同步册内引用。
+    forbidden_actions: 此门无白名单无逃生标 ⇒ 禁试图加豁免或改判据；禁 git mv 后不重建 depgraph（RENAME-DEPGRAPH-SYNC 硬拦）。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-qmine-20260925-0008
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/
+      -> gov_doc_003_directory_semantics R5 禁止 _NN 数字后缀（暗示多真源，违反 SSoT 原则）。如需区分版本请用语义不同的目录名。'
+    file: q-20260925-st-qmine-20260925-0008.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-qmine-20260925-0008
+- cluster: GATE:IMPORT-INTEGRITY
+  census_clusters:
+  - GATE:IMPORT-INTEGRITY
+  dead_letters: 15
+  first_dead_at: '2026-09-23T18:30:02+08:00'
+  last_dead_at: '2026-09-25T20:19:08+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 8
+  - session_id: st-wm1-wave0-20260924
+    letters: 3
+  - session_id: st-k4-20260923
+    letters: 1
+  file_type_dist:
+    py: 43
+    yaml: 6
+    md: 2
+  sub_facets:
+    DANGLING-IMPORT: 15
+  gate_id_observed: IMPORT-INTEGRITY
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: python -c "import importlib;importlib.import_module('<reason 点名模块>')"
+    copy_ready_fix: 悬空 import 的目标模块未落地时：①与目标文件同袋；②目标在别的在途袋 ⇒ 等属主袋落地后 requeue；③外部库 ⇒ 先补 requirements 再投。
+    forbidden_actions: 禁注释掉 import '假修'（测试面会红）；禁自己造占位模块（CREATE-GUARD+ORPHAN-MODULE 双拦）。
+    enqueue_preventable: false
+    note: 在册 R-3 无此行——本包新拟。跨袋原子性实证（本包自有证据）：门本体未落地时，读它的袋在 landing 侧整批崩，即 FAM:LandingEnvironmentError 的 ModuleNotFoundError
+      子型。
+  evidence:
+    qid: q-20260925-st-commitspeed-tbl-20260924-0084
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 IMPORT-INTEGRITY 阻断: IMPORT-INTEGRITY: 悬空 import（目标模块不可解析，#ARCH-CROSS-COMMIT-ATOMICITY-001
+      治本） 病根：commit 引入了对不存在模块的 import——跨 commit 原子性违规 （import 语句先行于目标文件创建，多 session 并发无协调）。 修复：①将 import 与目标文件放同
+      commit； ②若目标文件已存在于其他分支，先 merge 再 import； ③若为外部库，先 pip install 并更新 requirements。 scripts/governance/commit_queue_landing.py:1756:
+      dangling import ''zephyr.gov_enforcement.derived_dirty_ledger'' (project module not resolvable in staged files
+      or main HEAD) scripts/governance/commit_queue_landing.py:1743: dangling import ''zephyr.gov_enforcement.derived_dirty_ledger''
+      (project modu'
+    file: q-20260925-st-commitspeed-tbl-20260924-0084.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-commitspeed-tbl-20260924-0084
+- cluster: FAM:CLAIM_REQUIRED_VIOLATION
+  census_clusters:
+  - 'OTHER:网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''s'
+  dead_letters: 14
+  first_dead_at: '2026-09-24T03:00:07+08:00'
+  last_dead_at: '2026-09-27T01:34:56+08:00'
+  top_sessions:
+  - session_id: st-ddup-20260925
+    letters: 3
+  - session_id: st-final-build-20260926
+    letters: 3
+  - session_id: st-align-dirty-20260924
+    letters: 2
+  file_type_dist:
+    py: 39
+    yaml: 16
+    md: 14
+  sub_facets:
+    '-': 14
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: python scripts/governance/lock_files.py status | grep <sid>
+    copy_ready_fix: 落地侧按队列项 session 校 claim ⇒ python scripts/governance/lock_files.py acquire <file> <sid> 后 requeue；死会话
+      stale claim 挡道走 gateway.release_files('<死sid>', files) 再 claim。★本族 reason 里的路径是 .runtime\commit_queue\worktrees\w<N>\...
+      ⇒ 队列自家 worktree 路径被判成目标文件，属队列工具自伤面，勿按车道文件去找 claim。
+    forbidden_actions: 禁改 ENQUEUE_SKIP_GATES（SESSION/CLAIM 的入队豁免是立法面）；禁给别的 session 名义 claim。
+    enqueue_preventable: false
+    note: CLAIM-REQUIRED 被入队预检显式跳过（假红风暴实证 379 次）⇒ 这 14 封属'设计上的不可拦'，只能靠属主 claim 前移。
+  evidence:
+    qid: q-20260927-st-final-build-20260926-0014
+    reason: '网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''st-final-build-20260926'' 已注册但目标文件未 claim（claim 前移协议，宪法
+      RULE-WORKTREE「并发与提交」）: [''D:\\ZephyrAlpha\\.runtime\\commit_queue\\worktrees\\w1\\docs\\01_policies_and_standards\\_registry\\catalogs\\capability_canonical_file_registry.yaml'',
+      ''D:\\ZephyrAlpha\\.runtime\\commit_queue\\worktrees\\w1\\docs\\01_policies_and_standards\\_registry\\catalogs\\module_translation_registry.yaml'',
+      ''D:\\ZephyrAlpha\\.runtime\\commit_queue\\worktrees\\w1\\docs\\_working\\total_command_closeout\\wave10\\wave10_asset_base_audit.yaml'',
+      ''D:\\ZephyrAlpha\\.runtime\\commit_queue\\w'
+    file: q-20260927-st-final-build-20260926-0014.json
+    requeued_to: null
+  sample_qids:
+  - q-20260927-st-final-build-20260926-0014
+- cluster: GATE:DEPGRAPH-ENFORCEMENT
+  census_clusters:
+  - GATE:DEPGRAPH-ENFORCEMENT
+  dead_letters: 12
+  first_dead_at: '2026-09-24T22:38:40+08:00'
+  last_dead_at: '2026-09-26T01:35:30+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 5
+  - session_id: st-cmd-20260924
+    letters: 3
+  - session_id: st-commitspeed-pkg8-20260925
+    letters: 2
+  file_type_dist:
+    py: 69
+    md: 38
+    yaml: 12
+    ps1: 2
+    patch: 1
+  sub_facets:
+    '-': 12
+  gate_id_observed: DEPGRAPH-ENFORCEMENT
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 10
+  r3_book_bags_claimed: —
+  r3_book_prescription: '`apply_depgraph.py --add-design-node`；重命名后 `generate_project_depgraph.py --force`'
+  prescription_source: 在册 R-3#10
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/apply_depgraph.py --add-design-node <path> <MOD-XX-NNN> <D_域> --granularity
+      file --dry-run 类只读校（无 --dry-run 则读 PG nodes 计数）
+    copy_ready_fix: 二选一：①先登记设计态 apply_depgraph.py --add-design-node；②施工完全量重扫 generate_project_depgraph.py --force（design
+      预登记节点自动转 producti…）。须在能连 depgraph PG 的主区跑。
+    forbidden_actions: 禁直写 PG nodes 表（RULE-SSOT：架构数据必经 apply_*.py）；禁造空壳模块凑登记。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-wm1-wave0-20260924-0031
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 DEPGRAPH-ENFORCEMENT 阻断: [DEPGRAPH-WRITE-PATH] DEPGRAPH-WRITE-PATH：检测到 depgraph
+      写入权限参数 (read-only disabled / superuser / edge-delete enabled)， 但文件不在白名单中。裁定ARCH-DEPGRAPH（该议题号未登记于 architecture_issue_registry，非在册引用）_ACCESS_CONTROL 规定
+      仅以下文件可使用写入权限： - scripts/governance/apply_depgraph.py - scripts/governance/generate_project_depgraph.py - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+      - scripts/governance/_shared/constants.py - scripts/governance/sync_panorama_module.py - scripts/governance/generate_project_path_tree.py
+      - scripts/governance/apply_battle_map.py (battle_map_* 表写入器) - scripts/governance/migra'
+    file: q-20260925-st-wm1-wave0-20260924-0031.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-wm1-wave0-20260924-0031
+- cluster: GATE:TEST-SOURCE-CONSISTENCY
+  census_clusters:
+  - GATE:TEST-SOURCE-CONSISTENCY
+  dead_letters: 11
+  first_dead_at: '2026-09-23T06:03:10+08:00'
+  last_dead_at: '2026-09-27T01:26:12+08:00'
+  top_sessions:
+  - session_id: st-sweep-tail-20260923
+    letters: 3
+  - session_id: st-commitspeed-pkg8-20260925
+    letters: 3
+  - session_id: st-combine-20260923
+    letters: 2
+  file_type_dist:
+    py: 72
+    yaml: 22
+    md: 16
+    json: 1
+    csv: 1
+  sub_facets:
+    '-': 11
+  gate_id_observed: TEST-SOURCE-CONSISTENCY
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md
+    copy_ready_fix: 测试 import 的符号在源码不存在 ⇒ 要么把源码符号改名同步进测试，要么删除该测试引用；符号确属另一在途袋新增 ⇒ 与那袋同批或等其落地。
+    forbidden_actions: 禁加 `# noqa` 式假修；禁删测试换绿。
+    enqueue_preventable: true
+    note: TEST-SOURCE-CONSISTENCY 在预检白名单内仍死 ⇒ 与 degraded fail-open/口径分歧两个候选解释一致（未实测真跑率）。
+  evidence:
+    qid: q-20260925-st-commitspeed-tbl-20260924-0045
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 TEST-SOURCE-CONSISTENCY 阻断: TEST-SOURCE-CONSISTENCY (§5.178)：检测到测试-源码符号漂移
+      测试文件 import 的符号在源码中不存在（名称漂移）。 tests/infrastructure/test_duckdb_runtime_gate.py:37: from zephyr.infrastructure.duckdb_runtime_gate
+      import BareDuckDBConnectError -> 模块不存在（已删除/迁移？） tests/infrastructure/test_duckdb_runtime_gate.py:37: from
+      zephyr.infrastructure.duckdb_runtime_gate import install -> 模块不存在（已删除/迁移？） tests/infrastructure/test_duckdb_runtime_gate.py:37:
+      from zephyr.infrastructure.duckdb_runtime_gate import is_installed -> 模块不存在（已删除/迁移？） tests/infrastructure/test_duckdb_runtime_gate.py:37'
+    file: q-20260925-st-commitspeed-tbl-20260924-0045.json
+    requeued_to: q-20260925-st-commitspeed-tbl-20260924-0060
+  sample_qids:
+  - q-20260925-st-commitspeed-tbl-20260924-0045
+- cluster: GATE:PERMANENT-SYSTEM-TRIGGER
+  census_clusters:
+  - GATE:PERMANENT-SYSTEM-TRIGGER
+  dead_letters: 11
+  first_dead_at: '2026-09-23T17:25:49+08:00'
+  last_dead_at: '2026-09-26T01:07:57+08:00'
+  top_sessions:
+  - session_id: st-qmine-20260925
+    letters: 3
+  - session_id: st-cmd-20260924
+    letters: 2
+  - session_id: st-wm1-wave0-20260924
+    letters: 2
+  file_type_dist:
+    py: 177
+    yaml: 22
+    md: 11
+    ps1: 10
+    html: 1
+  sub_facets:
+    '-': 11
+  gate_id_observed: PERMANENT-SYSTEM-TRIGGER
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n 'PERM-TRIGGER\|PERMANENT-SYSTEM-TRIGGER' docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+    copy_ready_fix: 永久系统脚本禁时间触发：改事件订阅注册（先例见 reason 点名脚本的同类实现），删 cron/Timer/sleep-loop。
+    forbidden_actions: 禁加'仅测试用'cron；禁改门判据；禁靠 noqa。
+    enqueue_preventable: false
+    note: ★名实不符实证：PREFLIGHT_GATES 白名单写的是 'PERM-TRIGGER'，死信门名是 'PERMANENT-SYSTEM-TRIGGER'（两者在 gate_registry 各自成 id）⇒
+      预检面收不到真杀手的 id。
+  evidence:
+    qid: q-20260925-st-wm1-wave0-20260924-0026
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 PERMANENT-SYSTEM-TRIGGER 阻断: [MANUAL-ONLY-PERMANENT] 永久系统脚本使用 manual 触发模式（argparse/input/__main__+argv）但未注册事件订阅/自动触发（违反''永久系统必须全自动事件触发''铁律）:
+      scripts/governance/registry_projection/registry_projection_generator.py'
+    file: q-20260925-st-wm1-wave0-20260924-0026.json
+    requeued_to: q-20260925-st-wm1-wave0-20260924-0030
+  sample_qids:
+  - q-20260925-st-wm1-wave0-20260924-0026
+- cluster: FAM:BASE-快照基底共祖冲突
+  census_clusters:
+  - OTHER:冲突：快照基底 0b3724ed148d（与 dev 的共同祖先 0b3724ed148
+  - OTHER:冲突：快照基底 27449507e1c4（与 dev 的共同祖先 27449507e1c
+  - OTHER:冲突：快照基底 461b25d0e8fc（与 dev 的共同祖先 461b25d0e8f
+  - OTHER:冲突：快照基底 613dcc4f9cf8（与 dev 的共同祖先 613dcc4f9cf
+  - OTHER:冲突：快照基底 77129e94b190（与 dev 的共同祖先 77129e94b19
+  - OTHER:冲突：快照基底 9120a7aafc6f（与 dev 的共同祖先 9120a7aafc6
+  - OTHER:冲突：快照基底 b3c52ff68ca2（与 dev 的共同祖先 03019f119b6
+  - OTHER:冲突：快照基底 cb6b4bfc0e12（与 dev 的共同祖先 cb6b4bfc0e1
+  dead_letters: 11
+  first_dead_at: '2026-09-24T23:17:23+08:00'
+  last_dead_at: '2026-09-26T23:35:07+08:00'
+  top_sessions:
+  - session_id: st-audit-fix-20260924
+    letters: 3
+  - session_id: st-cmd-20260924
+    letters: 3
+  - session_id: st-chief3-20260926
+    letters: 2
+  file_type_dist:
+    md: 85
+    py: 84
+    yaml: 31
+    csv: 7
+    patch: 2
+  sub_facets:
+    '-': 11
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: python scripts/commit_queue.py status（读该袋 base_head 与 dev 现 HEAD）
+    copy_ready_fix: reason 自带解法：同步工作区后重新入队（66 号 §6.4/§9.1）；重投带 --adopt-prior-work。
+    forbidden_actions: 禁改 base_head 字段硬过；禁手 git apply 到主区 index。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-t0-matrix-20260924-0035
+    reason: 冲突：快照基底 b3c52ff68ca2（与 dev 的共同祖先 03019f119b66）之后 dev 已推进且触及同路径 ['docs/_working/t0_matrix/FINAL_REPORT_t0_matrix_reexam.md',
+      'docs/_working/t0_matrix/REDEVID_mutation_probe_matrix.md', 'docs/_working/t0_matrix/T0_SCHEME_MATRIX.md',
+      'docs/_working/t0_matrix/reconcile_pack_v1_summary.csv', 'docs/_working/t0_matrix/t0_ceiling_daily.csv', 'docs/_working/t0_matrix/t0_ceiling_result.yaml',
+      'docs/_working/t0_matrix/t0_ceiling_verdict.md', 'scripts/audit/t0_ceiling_capacity_exam.py', 'scripts/audit/t0_conditional_e4_exam.py',
+      'scripts/audit/t0_gpu_condition_pack.py', 'tests/audit/test_t0_ceiling_capaci
+    file: q-20260925-st-t0-matrix-20260924-0035.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-t0-matrix-20260924-0035
+- cluster: GATE:BLUEPRINT-FORMAT
+  census_clusters:
+  - GATE:BLUEPRINT-FORMAT
+  dead_letters: 10
+  first_dead_at: '2026-09-23T21:50:48+08:00'
+  last_dead_at: '2026-09-25T16:36:01+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 4
+  - session_id: st-chainpile-20260922
+    letters: 2
+  - session_id: st-wm1-wave0-20260924
+    letters: 2
+  file_type_dist:
+    py: 45
+    yaml: 4
+    md: 2
+    ps1: 1
+  sub_facets:
+    '-': 10
+  gate_id_observed: BLUEPRINT-FORMAT
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "import re;print(re.match(r'# \\[BLUEPRINT\\] (MOD-|SH-)', open('<file>',encoding='utf-8').readline()))"
+    copy_ready_fix: 头部合规式：`# [BLUEPRINT] MOD-XXX | docs/03_modules/.../blueprint.md | §N.N`（tests/ 里也须有）；module_id
+      必 MOD-/SH- 前缀。
+    forbidden_actions: 禁空头部/SRC-XXX/DOM-XXX/路径当 module_id；禁自赋 MOD 号（号由 depgraph/取号面给）。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-cmd-20260924-0103
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式不合规（裁定#214
+      Phase 0 防蔓延） 合规格式: # [BLUEPRINT] MOD-XXX | docs/03_modules/.../blueprint.md 禁止格式: 空头部 / (migrated...) / SRC-XXX
+      / DOM-XXX / 路径作 module_id schemas/categories/market/market_stock_candidate_pool.py:1: [BLUEPRINT] header invalid
+      module_id ''L04-C01'': module_id 必须以 MOD-/SH- 开头 tests/signal_ashare/test_candidate_pool_snapshot.py:1: [BLUEPRINT]
+      header invalid module_id ''L04-C01'': module_id 必须以 MOD-/SH- 开头 tests/strategy_pipeline/test_daily_gate_snapshot_pool.py:1:
+      [BLUEPRINT] header invalid module_id'
+    file: q-20260925-st-cmd-20260924-0103.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-cmd-20260924-0103
+- cluster: GATE:ORPHAN-MODULE
+  census_clusters:
+  - GATE:ORPHAN-MODULE
+  dead_letters: 10
+  first_dead_at: '2026-09-23T17:30:03+08:00'
+  last_dead_at: '2026-09-26T04:30:00+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 4
+  - session_id: st-ulib3c-20260923
+    letters: 2
+  - session_id: st-e2e-20260924
+    letters: 1
+  file_type_dist:
+    py: 45
+    yaml: 6
+    md: 4
+  sub_facets:
+    '-': 10
+  gate_id_observed: ORPHAN-MODULE
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 9
+  r3_book_bags_claimed: —
+  r3_book_prescription: 零消费者新件必与接线同袋（`git grep` 只认 `src/**/*.py`，scripts/ 的 import 不算引用）
+  prescription_source: 在册 R-3#9
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: git grep -n '<new_module_dotted_path>' -- 'src/**/*.py'
+    copy_ready_fix: 零消费者新件必须与接线件同袋（git grep 只认 src/**/*.py，scripts/ 里的 import 不算引用面）。
+    forbidden_actions: 禁写假 import 占消费者（IMPORT-INTEGRITY/UNDEFINED-NAME 接力）；禁改判据——此门无 noqa 逃生面。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260923-st-k4-20260923-0007
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/gov_enforcement/commit_gates/registry_family/registry_mass_deletion_gate.py'
+    file: q-20260923-st-k4-20260923-0007.json
+    requeued_to: null
+  sample_qids:
+  - q-20260923-st-k4-20260923-0007
+- cluster: GATE:DIRECTORY-CONTRACT
+  census_clusters:
+  - GATE:DIRECTORY-CONTRACT
+  dead_letters: 9
+  first_dead_at: '2026-09-23T20:21:49+08:00'
+  last_dead_at: '2026-09-25T19:49:30+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 5
+  - session_id: st-pipeline-final-20260924
+    letters: 2
+  - session_id: st-emoreplay-20260923
+    letters: 1
+  file_type_dist:
+    py: 161
+    md: 56
+    yaml: 24
+    csv: 14
+    txt: 5
+    npy: 4
+  sub_facets:
+    '-': 9
+  gate_id_observed: DIRECTORY-CONTRACT
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/check_directory_contract.py --files "<清单>"（或 python scripts/governance/meta/gate_prerun.py
+      --session <SID> --files "<逗号清单>" --message-file .runtime/tmp/<SID>/msg_<批名>.md）
+    copy_ready_fix: DCR-005/DCR-008：docs/_working/ 只收 .md/.csv/.yaml/.html —— .json/.py 产物移到其注册用途目录（生成器产物走 data/
+      或 docs/library/），改完同袋重投。
+    forbidden_actions: 禁往 allowed 清单塞扩展名（那是改判据）；禁把产物写进 .runtime 根。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260924-st-pipeline-final-20260924-0023
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 5 个发现（5 errors, 0 warnings）:
+      [error] DCR-005 docs/_working/sector_line/statreplay/baseline_manifest_v0.json 扩展名 .json 不在 docs/_working/
+      的 allowed 清单 [''.csv'', ''.html'', ''.md'', ''.yaml''] 内 [error] DCR-008 docs/_working/sector_line/statreplay/baseline_manifest_v0.json
+      文件扩展名 .json 不匹配目录用途 task_document（purpose_allowed_extensions=[''.md'', ''.csv'', ''.yaml'', ''.html'']），目录
+      docs/_working/ [error] DCR-005 docs/_working/sector_line/statreplay/freeze_baseline.py 扩展名 .py 不在 docs/_working/
+      的 allowed 清单 [''.csv'', ''.html'', ''.md'', ''.yaml''] 内 '
+    file: q-20260924-st-pipeline-final-20260924-0023.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-pipeline-final-20260924-0023
+- cluster: FAM:BASE-入队基底后dev推进同路径
+  census_clusters:
+  - OTHER:冲突：入队基底 0f08f7a06c4f 之后 dev 已推进且触及同路径 ['scri
+  - OTHER:冲突：入队基底 0fe090715ff0 之后 dev 已推进且触及同路径 ['scri
+  - OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['docs
+  - OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['scri
+  - OTHER:冲突：入队基底 1cba19a9de52 之后 dev 已推进且触及同路径 ['src/
+  - OTHER:冲突：入队基底 5471d43a52b6 之后 dev 已推进且触及同路径 ['scri
+  - OTHER:冲突：入队基底 66e6b31346ca 之后 dev 已推进且触及同路径 ['scri
+  - OTHER:冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scri
+  - OTHER:冲突：入队基底 f53316c6f9d6 之后 dev 已推进且触及同路径 ['scri
+  dead_letters: 9
+  first_dead_at: '2026-09-23T15:04:06+08:00'
+  last_dead_at: '2026-09-24T20:59:18+08:00'
+  top_sessions:
+  - session_id: st-library-final-20260924
+    letters: 4
+  - session_id: st-regfix-lane0b-20260923
+    letters: 1
+  - session_id: st-audit-fix-20260924
+    letters: 1
+  file_type_dist:
+    md: 227
+    py: 19
+    yaml: 8
+    json: 4
+    importlinter: 1
+  sub_facets:
+    '-': 9
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: git log --oneline <入队基底>..HEAD -- <reason 点名路径>
+    copy_ready_fix: 同路径被上游推进 ⇒ 车道同步（读上游新字节）→ 重做增量编辑 → 重新入队；热册（rules_integrity_db.json/script_manifest.yaml 等）变更须单独成袋。
+    forbidden_actions: 禁拿旧快照字节强推（=回退上游）；禁与上游会话互相'代修'。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-commitspeed-tbl-20260924-0007
+    reason: 冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scripts/commit_queue.py', 'scripts/governance/commit_queue_landing.py',
+      'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py', 'tests/governance/test_commit_chain_campaign_20260922.py',
+      'tests/governance/test_commit_queue.py', 'tests/governance/test_commit_queue_landing.py', 'tests/governance/test_commit_queue_pool.py']——逐文件快进判定失败，死信回退属主会话（66
+      号 §6.4/§9.1）
+    file: q-20260924-st-commitspeed-tbl-20260924-0007.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-commitspeed-tbl-20260924-0007
+- cluster: GATE:PROTECTED-PATHS
+  census_clusters:
+  - GATE:PROTECTED-PATHS
+  dead_letters: 9
+  first_dead_at: '2026-09-23T22:19:02+08:00'
+  last_dead_at: '2026-09-24T21:50:27+08:00'
+  top_sessions:
+  - session_id: st-ulib3c-20260923
+    letters: 6
+  - session_id: st-cmd-20260924
+    letters: 3
+  file_type_dist:
+    yaml: 258
+  sub_facets:
+    '-': 9
+  gate_id_observed: PROTECTED-PATHS
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md；受保护面真源=gate_registry 该门 entry + docs/01_policies_and_standards/rules/ glob
+    copy_ready_fix: rules/*.yaml 重大修改属 Owner 门位：要么摘出本袋（另起小袋只含该册+依赖件），要么带 [ARCH-APPROVAL:<已登记 issue>] 或命中 ruling_registry.yaml
+      approved_paths。
+    forbidden_actions: 禁自造 [ARCH-APPROVAL] 号；禁把 rules 改动混进代码袋连坐。
+    enqueue_preventable: true
+    note: ★实测连坐面：本族 9 封 + GATE-PRECOMMIT-RUN 内层 top 病灶同为 protected-paths ⇒ 同判据两处杀，处方应统一。
+  evidence:
+    qid: q-20260924-st-ulib3c-20260923-0018
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths
+      (22 hit(s)): D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w0\docs\01_policies_and_standards\rules\trae_065_capability_lookup_required.yaml
+      (重大修改须 Owner 审批（rules/ 下所有 .yaml）); D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w0\docs\01_policies_and_standards\rules\trae_066_rule_seventeen_runcommand_purity.yaml
+      (重大修改须 Owner 审批（rules/ 下所有 .yaml）); D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w0\docs\01_policies_and_standards\rules\trae_067_window_flash_discipline.yaml
+      (重大修改须 Owner 审批（rules/ 下所有 .'
+    file: q-20260924-st-ulib3c-20260923-0018.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-ulib3c-20260923-0018
+- cluster: GATE:MAP-ALIGNMENT
+  census_clusters:
+  - GATE:MAP-ALIGNMENT
+  dead_letters: 9
+  first_dead_at: '2026-09-24T01:02:31+08:00'
+  last_dead_at: '2026-09-24T08:34:44+08:00'
+  top_sessions:
+  - session_id: st-audit-all-20260924
+    letters: 2
+  - session_id: st-library-final-20260924
+    letters: 2
+  - session_id: st-mapcensus-20260924
+    letters: 2
+  file_type_dist:
+    md: 274
+    py: 18
+    yaml: 13
+  sub_facets:
+    '-': 9
+  gate_id_observed: MAP-ALIGNMENT
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/d5_architecture/generators/align_all.py --check（只读校验口径）
+    copy_ready_fix: 'frontend_map.yaml 的 module: 引用必存在于 depgraph：先 apply_depgraph.py --add-design-node 登记被引 MOD，再改图；backend_ref
+      五前缀类型化，id 禁重复。'
+    forbidden_actions: 禁手改 depgraph 行；禁把不存在的 MOD 号写进图凑对齐。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-audit-all-20260924-0007
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共
+      361 功能点） - R1 F-BUDGET-PAGE: backend_ref 列表含非类型化元素: {''none:后端模块MOD-INF-037未入depgraph前端模块集（st-gpu-final-20260924代
+      - R1 F-SCHEDULEGATE-PAGE: backend_ref 列表含非类型化元素: {''none:后端模块MOD-INF-037未入depgraph前端模块集（st-gpu-final-20260924代
+      -> 修复 src/zephyr/frontend/dashboard/web/frontend_map.yaml 后重提（backend_ref 五前缀类型化：module:/registry:/table:/api:/none:；id
+      禁重复）'
+    file: q-20260924-st-audit-all-20260924-0007.json
+    requeued_to: q-20260924-st-audit-all-20260924-0016
+  sample_qids:
+  - q-20260924-st-audit-all-20260924-0007
+- cluster: GATE:SSOT-REDEFINITION
+  census_clusters:
+  - GATE:SSOT-REDEFINITION
+  dead_letters: 9
+  first_dead_at: '2026-09-24T06:07:43+08:00'
+  last_dead_at: '2026-09-26T23:33:38+08:00'
+  top_sessions:
+  - session_id: st-metaq-20260923
+    letters: 4
+  - session_id: st-t0-matrix-20260924
+    letters: 1
+  - session_id: st-wm1-wave0-20260924
+    letters: 1
+  file_type_dist:
+    py: 22
+    md: 15
+    yaml: 8
+    csv: 5
+  sub_facets:
+    '-': 9
+  gate_id_observed: SSOT-REDEFINITION
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn 'REPO_ROOT' capability_canonical_file_registry.yaml src/zephyr/shared/io/paths.py
+    copy_ready_fix: canonical 符号（REPO_ROOT 等）禁在别处重定义：扩展现有 canonical 文件并 import；查 capability_canonical_file_registry.yaml
+      找 canonical 落点。
+    forbidden_actions: 禁在 scripts/ 复制一份 paths.py 逻辑；禁'合理重复'口头豁免（要走 resolve_finding 标 acknowledged）。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-t0-matrix-20260924-0015
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSOT-REDEFINITION gate fail-closed: capability registry
+      解析失败(ParserError: while parsing a block mapping in "<unicode string>", line 1, column 1: schema_version: 1.1.0
+      ^ expected <block end>, but found ''-'' in "<unicode string>", line 46943, column 1: - file: docs/01_policies_and_sta
+      ... ^)。修复 registry YAML 语法（由持有该文件的会话提交修复后自动恢复）后重试。'
+    file: q-20260924-st-t0-matrix-20260924-0015.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-t0-matrix-20260924-0015
+- cluster: GATE:ALGO-NOTE-SYNC
+  census_clusters:
+  - GATE:ALGO-NOTE-SYNC
+  dead_letters: 9
+  first_dead_at: '2026-09-24T22:31:04+08:00'
+  last_dead_at: '2026-09-26T03:55:54+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 6
+  - session_id: st-sim-launch-20260923
+    letters: 1
+  - session_id: st-qmine-20260925
+    letters: 1
+  file_type_dist:
+    py: 71
+    md: 4
+    yaml: 4
+    ps1: 2
+  sub_facets:
+    NO-PLAINZH: 9
+  gate_id_observed: ALGO-NOTE-SYNC
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n 'algo_note_zh' docs/03_modules/_domain_*/algo_flow/*.yaml | head
+    copy_ready_fix: '实现代码被触碰 ⇒ 同袋改对应节点 algo_note_zh，或写 `note_confirmed: <YYYY-MM-DD>`（确认语义仅在说明未变时合法）。'
+    forbidden_actions: 禁用 note_confirmed 掩盖真实算法变更；禁只改代码不改说明。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-cmd-20260924-0069
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 ALGO-NOTE-SYNC 阻断: ALGO-NOTE-SYNC：1 个节点的实现代码在本 commit 被触碰，但其大白话算法说明未同步——算法改了大白话必须跟着改（Owner
+      2026-09-09）。TDM-E-L4-06（module_ref=src/zephyr/ex_sor/core/algo_execution_selector.py）——实现代码被触碰，algo_note_zh
+      未同 commit 修订（改写该节点 algo_note_zh，或加 note_confirmed: 2026-09-25）'
+    file: q-20260925-st-cmd-20260924-0069.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-cmd-20260924-0069
+- cluster: GATE:CAPABILITY-OVERLAP
+  census_clusters:
+  - GATE:CAPABILITY-OVERLAP
+  dead_letters: 8
+  first_dead_at: '2026-09-23T06:16:09+08:00'
+  last_dead_at: '2026-09-25T20:36:41+08:00'
+  top_sessions:
+  - session_id: st-commitsys-20260924
+    letters: 3
+  - session_id: st-combine-20260923
+    letters: 2
+  - session_id: st-t0-matrix-20260924
+    letters: 1
+  file_type_dist:
+    py: 35
+    md: 14
+    yaml: 9
+    csv: 7
+    yml: 1
+    ps1: 1
+  sub_facets:
+    '-': 8
+  gate_id_observed: CAPABILITY-OVERLAP
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "from zephyr.governance import clone_guard;print(clone_guard.check_before_write('<path>','<SID>'))"
+    copy_ready_fix: extract 级克隆无逃生：扩展既有函数（reason 已给 import_suggestion）或改用 import 复用，而非新建平行实现。
+    forbidden_actions: 禁走'合理重复'豁免（extract 级不适用）；禁改相似度阈值。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-commitspeed-tbl-20260924-0120
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建: - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:__init__
+      与 src/zephyr/governance/persistence/task_repo.py:484 的 __init__ 相似度 100%（extract 级, exact） - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:__init__
+      与 src/zephyr/infrastructure/duckdb_runtime_gate.py:130 的 __init__ 相似度 100%（extract 级, exact） 修复: 扩展现有函数而非新建，或使用
+      import_suggestion'
+    file: q-20260925-st-commitspeed-tbl-20260924-0120.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-commitspeed-tbl-20260924-0120
+- cluster: GATE:ALGO-FLOW-LINK
+  census_clusters:
+  - GATE:ALGO-FLOW-LINK
+  dead_letters: 7
+  first_dead_at: '2026-09-24T00:15:52+08:00'
+  last_dead_at: '2026-09-25T20:55:57+08:00'
+  top_sessions:
+  - session_id: st-qcure-20260925
+    letters: 3
+  - session_id: st-gpu-final-20260924
+    letters: 1
+  - session_id: st-pipeline-final-20260924
+    letters: 1
+  file_type_dist:
+    py: 176
+    yaml: 25
+    md: 10
+    ps1: 3
+    html: 1
+  sub_facets:
+    '-': 7
+  gate_id_observed: ALGO-FLOW-LINK
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: 'python -c "import yaml;yaml.safe_load(open(''<reason 点名 yaml>'',encoding=''utf-8''))" 并查 边:
+      段'
+    copy_ready_fix: external 锚指向的 algo_flow yaml 必须存在且含可解析 `边:` 段：补推导图边定义或删悬空锚；生成器重扫后再投。
+    forbidden_actions: 禁手搓占位 yaml（无边=仍红）；禁改锚指向未落地文件。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-ailayer-final-20260924-0011
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 ALGO-FLOW-LINK 阻断: ALGO-FLOW-LINK：8 处 ALGO_FLOW 锚/卡片链接断裂——external 锚指向的 yaml
+      必须存在且可解析，yaml 的 source_of_truth 必须实存（Owner 批7 认可，2026-09-16）。src/zephyr/ai_layer/comparator/venue_replay.py
+      external 锚指向不存在的 yaml: docs/03_modules/_domain_ai_layer/algo_flow/venue_replay.yaml；src/zephyr/ai_layer/comparator/venue_tool_bench.py
+      external 锚指向不存在的 yaml: docs/03_modules/_domain_ai_layer/algo_flow/venue_tool_bench.yaml；src/zephyr/ai_layer/redline/__init__.py
+      external 锚指向不存在的 yaml: docs/03_modules/_domain_ai_layer/algo_flow/redline_pkg.yaml；src/zephyr/ai_layer/redline/negative_list_g'
+    file: q-20260925-st-ailayer-final-20260924-0011.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-ailayer-final-20260924-0011
+- cluster: FAM:基底不可知
+  census_clusters:
+  - 基底不可知(注册表项 base_head)
+  dead_letters: 7
+  first_dead_at: '2026-09-24T21:47:09+08:00'
+  last_dead_at: '2026-09-26T03:01:42+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 2
+  - session_id: st-mapbuild-20260924
+    letters: 2
+  - session_id: st-metaq-20260923
+    letters: 1
+  file_type_dist:
+    yaml: 22
+    py: 8
+    md: 4
+  sub_facets:
+    '-': 7
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 5
+  r3_book_bags_claimed: '2'
+  r3_book_prescription: '`commit_queue.py enqueue --base-head $(git rev-parse dev)`'
+  prescription_source: 在册 R-3#5
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: python -c "import json;print(json.load(open('<dead json>'))['base_head'])"
+    copy_ready_fix: base_head 与 base_blob 皆无 ⇒ python scripts/commit_queue.py enqueue --base-head $(git rev-parse
+      dev)（重投即带新基底）；禁给 git_commit.py 加 --base-head（它没这旗）。
+    forbidden_actions: 禁让门'猜基底'（^ 猜合=热册被吃病根）；禁手填旧 hash。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-commitspeed-tbl-20260924-0017
+    reason: 'landing 异常: RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 9de51e673f7d^ 猜基底做合并（09-24
+      热册被吃病根）。修复通道：python scripts/commit_queue.py requeue <qid> --worktree-root <会话工作区>（重投即带新基底，66 号 §6.4 死信闭环）'
+    file: q-20260924-st-commitspeed-tbl-20260924-0017.json
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0020
+  sample_qids:
+  - q-20260924-st-commitspeed-tbl-20260924-0017
+- cluster: FAM:BASE-dev-CAS竞态同路径
+  census_clusters:
+  - OTHER:冲突：dev CAS 竞态——293415130d63..b906e95496e9 间同
+  - OTHER:冲突：dev CAS 竞态（池化）——3f912437fcf7..6b72dfdce39
+  - OTHER:冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac9
+  - OTHER:冲突：dev CAS 竞态（池化）——714981aa5594..bce9d7a80af
+  - OTHER:冲突：dev CAS 竞态（池化）——84ec1ce85e5c..3ec72b6d0b7
+  - OTHER:冲突：dev CAS 竞态（池化）——9ff96cc5c393..b906e95496e
+  dead_letters: 6
+  first_dead_at: '2026-09-24T03:55:13+08:00'
+  last_dead_at: '2026-09-26T01:50:13+08:00'
+  top_sessions:
+  - session_id: st-align-dirty-20260924
+    letters: 2
+  - session_id: st-commitsys-20260924
+    letters: 1
+  - session_id: st-pipeline-final-20260924
+    letters: 1
+  file_type_dist:
+    py: 14
+    yaml: 5
+    md: 5
+  sub_facets:
+    '-': 6
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: python scripts/commit_queue.py status（看同路径是否被并发落地工推进）
+    copy_ready_fix: CAS 竞态＝多袋抢同一路径：让路（等对方 done）后 requeue --adopt-prior-work；同路径热件（commit_queue_landing.py 等）一次只允许一袋在途。
+    forbidden_actions: 禁反复 requeue 抢锁；禁改 CAS 判据。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-commitsys-20260924-0008
+    reason: 冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac95 间同路径 ['docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml',
+      'docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml',
+      'docs/_working/commit_system_opt/03_gate_health_audit.md', 'docs/_working/commit_system_opt/04_deadletter_cost_analysis.md',
+      'docs/_working/commit_system_opt/05_staging_blackhand_forensics.md', 'docs/_working/flash_speedup/F5_registry_debt/LEDGER_flash_speedup_F5.md',
+      'scripts/git_commit.py', 'scripts/governance/d3_metadata/batch_creatio
+    file: q-20260924-st-commitsys-20260924-0008.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-commitsys-20260924-0008
+- cluster: FAM:gate册条目坏-fresh-import亦败
+  census_clusters:
+  - 'OTHER:gate 册条目坏，fresh import 亦败（M5.2 确定性判别），修册后重投:'
+  dead_letters: 6
+  first_dead_at: '2026-09-26T04:14:30+08:00'
+  last_dead_at: '2026-09-26T07:39:26+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 3
+  - session_id: st-ddup-20260925
+    letters: 2
+  - session_id: st-qmine-20260925
+    letters: 1
+  file_type_dist:
+    md: 15
+    py: 7
+    yaml: 1
+  sub_facets:
+    GATE-MODULE-IMPORT-FAIL: 3
+    '-': 3
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: ENV
+    root_cause_zh: 环境或依赖
+    minimal_repro: python -c "from zephyr.gov_enforcement.commit_gates import <点名门>"
+    copy_ready_fix: gate 自动注册 fail-closed：先修 gate_registry.yaml 条目坏点或让号（后到者让位），修册后重投。
+    forbidden_actions: 禁放宽 fail-closed（裁定#351 语义）；禁双门同 priority 并存。
+    enqueue_preventable: false
+    note: 与 FAM:LandingEnvironmentError 同根（3/117 gate failed to load 是其外层表现）⇒ 建议 R-3 并为一行两型。
+  evidence:
+    qid: q-20260926-st-ddup-20260925-0025
+    reason: 'gate 册条目坏，fresh import 亦败（M5.2 确定性判别），修册后重投: gate auto-registration fail-closed (裁定#351): 1/103 gate(s)
+      failed to load: DOC-HEADER-SUITE: register failed: GateRegistrationError: priority=77 冲突——gate ''DOC-HEADER-SUITE''
+      与已注册的 ''BLUEPRINT-FORMAT'' 同 priority. 执行顺序依赖注册顺序（非显式），违反''显式优于隐式''原则. 请分配唯一 priority. 历史先例（后到者让位）：DATA-TASK
+      78->41 / RENAME-DEPGRAPH-SYNC 36->39 / ORPHAN-MODULE 86->89 / DOC-REF-BROKEN 88->91 / RULING-COMMIT-VERIFIED
+      77->109｜fresh 子进程: rc=1: gate_auto_registrar FAIL-CLOSED: 1/103 gates failed: DOC-HEADER-SUITE: register failed:
+      GateRegistrationError: priority=77 冲突——gate ''DOC-HEADER'
+    file: q-20260926-st-ddup-20260925-0025.json
+    requeued_to: q-20260926-st-ddup-20260925-0027
+  sample_qids:
+  - q-20260926-st-ddup-20260925-0025
+- cluster: GATE:CAPABILITY-LOOKUP-REQUIRED
+  census_clusters:
+  - GATE:CAPABILITY-LOOKUP-REQUIRED
+  dead_letters: 5
+  first_dead_at: '2026-09-23T17:30:30+08:00'
+  last_dead_at: '2026-09-24T22:26:00+08:00'
+  top_sessions:
+  - session_id: st-sweep-tail-20260923
+    letters: 2
+  - session_id: st-ulib3c-20260923
+    letters: 1
+  - session_id: st-cmd-20260924
+    letters: 1
+  file_type_dist:
+    py: 7
+    yaml: 5
+    md: 2
+  sub_facets:
+    '-': 5
+  gate_id_observed: CAPABILITY-LOOKUP-REQUIRED
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "from zephyr.governance.capability_lookup import find;print(find('<kw>', session_id='<SID>'))"
+    copy_ready_fix: 施工前能力反查留审计即可过；带 [no-lookup:] 时 reason 必须命中 capability_lookup_bypass_policy.py 白名单词（gate-fix/test-fix/continuation/investigated/mechanical/sync）。
+    forbidden_actions: 禁 ZEPHYR_BYPASS_LOOKUP=1 当常规通道（仅紧急逃生）；禁编造白名单外 reason。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260924-st-mapbuild-20260924-0011
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-LOOKUP-REQUIRED 阻断: CAPABILITY-LOOKUP-REQUIRED: session ''st-mapbuild-20260924''
+      未调用 rule_discovery.discover_applicable_rules 或 capability_lookup.find。AI MUST 在施工前（写第一行业务代码前）调用 MCP 工具查询适用规则。示例：rule_discovery.discover_applicable_rules(operation=''file_write'')。逃生通道：commit
+      msg 含 [no-lookup:<白名单 reason>] 标记（如 gate-fix/test-fix/continuation）或设 ZEPHYR_BYPASS_LOOKUP=1。白名单见 trae_077
+      YAML。'
+    file: q-20260924-st-mapbuild-20260924-0011.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-mapbuild-20260924-0011
+- cluster: GATE:NO-BARE-SQL
+  census_clusters:
+  - GATE:NO-BARE-SQL
+  dead_letters: 5
+  first_dead_at: '2026-09-24T05:38:43+08:00'
+  last_dead_at: '2026-09-25T07:30:55+08:00'
+  top_sessions:
+  - session_id: st-sweep-tail-20260923
+    letters: 2
+  - session_id: st-t0-matrix-20260924
+    letters: 2
+  - session_id: st-wm1-wave0-20260924
+    letters: 1
+  file_type_dist:
+    py: 51
+    md: 28
+    yaml: 19
+    csv: 9
+  sub_facets:
+    '-': 5
+  gate_id_observed: NO-BARE-SQL
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn 'SELECT ' src/zephyr/data/<reason 点名文件> | head
+    copy_ready_fix: 裸 SQL 字面量移到集中 SQL 模块（§5.160.2 真源），经 DatabaseService 执行；模板变量保持 {占位} 风格。
+    forbidden_actions: 禁行内 noqa 无理由（NOQA-VALIDATION 接力）；禁直连 duckdb/CH 绕 DatabaseService。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260924-st-sweep-tail-20260923-0064
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 NO-BARE-SQL 阻断: NO-BARE-SQL：检测到裸 SQL 字面量， 违反 §5.160.2 SQL 集中化原则。 src/zephyr/data/sector_state_pipeline.py:71:
+      "SELECT max(trade_date) FROM {kline880} WHERE trade_date <= toDate(''{asof}'')" src/zephyr/data/sector_state_pipeline.py:74:
+      "SELECT max(trade_date) FROM {kline880}" src/zephyr/data/sector_state_pipeline.py:94: "SELECT symbol_canonical,
+      consec_limit FROM {limit_up} FINAL" src/zephyr/data/sector_state_pipeline.py:98: "SELECT symbol, toFloat64(main_net_inflow)
+      FROM {money_flow} FINAL WHERE trade_date = toDate(''{trade_date}'')" src/zephyr/data/sector_state_pipeline.'
+    file: q-20260924-st-sweep-tail-20260923-0064.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-sweep-tail-20260923-0064
+- cluster: GATE:CH-FINAL-GATE
+  census_clusters:
+  - GATE:CH-FINAL-GATE
+  dead_letters: 4
+  first_dead_at: '2026-09-23T17:32:13+08:00'
+  last_dead_at: '2026-09-26T01:55:39+08:00'
+  top_sessions:
+  - session_id: st-pipeline-final-20260924
+    letters: 2
+  - session_id: st-combine-20260923
+    letters: 1
+  - session_id: st-ff-chfail-20260926
+    letters: 1
+  file_type_dist:
+    py: 14
+    md: 10
+    npy: 8
+    yaml: 6
+    json: 4
+    yml: 1
+  sub_facets:
+    '-': 4
+  gate_id_observed: CH-FINAL-GATE
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 13
+  r3_book_bags_claimed: —
+  r3_book_prescription: 该门会拦自家裸 `ch_writer.query` ⇒ 先换会抛错 reader（`DatabaseService.get_clickhouse_conn(role='reader')`
+    + `.execute(sql, params)`）再投
+  prescription_source: 在册 R-3#13
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n 'ch_writer.query\|FROM c1_' src/zephyr/<reason 点名文件>
+    copy_ready_fix: '直调 ch_writer.query() 改 DatabaseService.get_clickhouse_conn(role=''reader'')+execute(sql, params)，或
+      FROM 后加 FINAL；确需豁免用行内 `# noqa: ch-final  <≥10字理由>`。'
+    forbidden_actions: 禁把裸读改成聚合数自证无重复；禁无理由 noqa。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-pipeline-final-20260924-0025
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 CH-FINAL-GATE 阻断: ClickHouse 读取未强制去重（裁定 #ARCH-CH-007）：直调 ch_writer.query()
+      应改 ch_reader.query()，硬编码 FROM <db>.<tbl> 直读 ReplacingMergeTree 须带 FINAL 或走 ch_reader（可加行内注释 noqa: ch-final
+      两空格+理由 逐行豁免）: scripts/sector_line/build_gpu_input_pack.py:L52 (FROM c1_market.kline_sector_880 无 FINAL 且未走
+      ch_reader); scripts/sector_line/build_gpu_input_pack.py:L54 (FROM c1_market.sector_state 无 FINAL 且未走 ch_reader);
+      scripts/sector_line/build_gpu_input_pack.py:L133 (FROM c1_market.sector_state 无 FINAL 且未走 ch_reader); scripts/sector_line/build_gpu_input_pack.py:L135
+      (FROM c1_market.secto'
+    file: q-20260924-st-pipeline-final-20260924-0025.json
+    requeued_to: q-20260924-st-pipeline-final-20260924-0027
+  sample_qids:
+  - q-20260924-st-pipeline-final-20260924-0025
+- cluster: GATE:MUTABLE-CONST-WITHOUT-FINAL
+  census_clusters:
+  - GATE:MUTABLE-CONST-WITHOUT-FINAL
+  dead_letters: 4
+  first_dead_at: '2026-09-23T19:30:56+08:00'
+  last_dead_at: '2026-09-26T02:01:54+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-pkg8-20260925
+    letters: 2
+  - session_id: st-e2e-20260924
+    letters: 1
+  - session_id: st-k4-20260923
+    letters: 1
+  file_type_dist:
+    py: 26
+    yaml: 4
+  sub_facets:
+    '-': 4
+  gate_id_observed: MUTABLE-CONST-WITHOUT-FINAL
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n '^__all__ = \[' src/zephyr/**/*.py
+    copy_ready_fix: '模块级可变常量加 Final：`X: Final = [...]`（AnnAssign+Final）。'
+    forbidden_actions: '禁运行时改注册表却不带 `# noqa: n114-final <理由>`；禁把 Final 判据改成注释式假标。'
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260926-st-commitspeed-pkg8-20260925-0010
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 MUTABLE-CONST-WITHOUT-FINAL 阻断: MUTABLE-CONST-WITHOUT-FINAL：检测到模块级可变常量缺 Final
+      标注（5.114 Final/@final 强制防复发）， src/zephyr/ 全量禁止模块级可变容器赋值（X = [...]）无 Final 标注。 src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py:55:
+      模块级可变常量缺 Final 标注（__all__ = <可变容器>）-> __all__ = ["parse_capability_registry_cached", "reset_parse_cache",
+      "cache_key_of"] 应改: __all__: Final = ...（AnnAssign + Final 注解） -> 改用 X: Final = [...]（AnnAssign + Final 注解）；合法场景（需运行时修改的注册表）用
+      # noqa: n114-final 豁免并附理由说明文本。'
+    file: q-20260926-st-commitspeed-pkg8-20260925-0010.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-commitspeed-pkg8-20260925-0010
+- cluster: FAM:landing-TimeoutExpired
+  census_clusters:
+  - GATE:CREATE-GUARD
+  - 'OTHER:landing 异常: TimeoutExpired: Command ''[''git'','
+  dead_letters: 4
+  first_dead_at: '2026-09-24T01:58:46+08:00'
+  last_dead_at: '2026-09-25T03:16:26+08:00'
+  top_sessions:
+  - session_id: st-audit-all-20260924
+    letters: 1
+  - session_id: st-pipeline-final-20260924
+    letters: 1
+  - session_id: st-ailayer-final-20260924
+    letters: 1
+  file_type_dist:
+    py: 160
+    yaml: 21
+    md: 12
+    ps1: 3
+    html: 1
+  sub_facets:
+    '-': 4
+  gate_id_observed: CREATE-GUARD
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: ENV
+    root_cause_zh: 环境或依赖
+    minimal_repro: python -m zephyr.trading.process_reaper --status（是否有 git 锁竞争/长批进程）
+    copy_ready_fix: git commit 60s 超时＝主区 index/锁竞争窗：等静窗重投（requeue --adopt-prior-work）；大袋拆小（袋 ≤38 件）。
+    forbidden_actions: 禁调大超时当治本；禁在 reaper 未存活时补投。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-ailayer-final-20260924-0008
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: CREATE-GUARD CLASS-UNIQUENESS fail-closed: git grep 异常(TimeoutExpired:
+      Command ''[''git'', ''grep'', ''-l'', ''^class EnvScreenVerdict\\b'', ''--'', ''src/zephyr/'']'' timed out
+      after 30.0 seconds)，无法检测 class ''EnvScreenVerdict'' 跨模块冲突。禁止放行——检测器失效时漏放同名 class（AI 开发幻觉温床）。修复：检查 git 状态（git
+      status）确认仓库可用后重试。'
+    file: q-20260925-st-ailayer-final-20260924-0008.json
+    requeued_to: q-20260925-st-ailayer-final-20260924-0009
+  sample_qids:
+  - q-20260925-st-ailayer-final-20260924-0008
+- cluster: GATE:TABLE-NAME-REGISTRY
+  census_clusters:
+  - GATE:TABLE-NAME-REGISTRY
+  dead_letters: 4
+  first_dead_at: '2026-09-24T06:04:02+08:00'
+  last_dead_at: '2026-09-25T21:52:51+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 2
+  - session_id: st-t0-matrix-20260924
+    letters: 1
+  - session_id: st-qmine-20260925
+    letters: 1
+  file_type_dist:
+    py: 23
+    md: 12
+    yaml: 8
+    csv: 6
+  sub_facets:
+    '-': 4
+  gate_id_observed: TABLE-NAME-REGISTRY
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn "'c1_[a-z]*\." scripts src | head
+    copy_ready_fix: 硬编码表名换 TableRegistry.table(category_id)（真源 business_data_categories.yaml）。
+    forbidden_actions: 禁在 TableRegistry 里塞未注册表名；禁字符串拼接库表名。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260924-st-t0-matrix-20260924-0014
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 TABLE-NAME-REGISTRY 阻断: TABLE-NAME-REGISTRY (block)：检测到硬编码表名绕过 TableRegistry
+      真源（#ARCH-CH-024 Phase 5 治本） 病根：SSoT 真源强制闭环被绕过——代码硬编码表名字符串绕过 business_data_categories.yaml 真源。 修复：将硬编码表名替换为
+      TableRegistry.table(category_id) 常量引用。 scripts/audit/t0_gpu_condition_pack.py:376: 字符串含硬编码表名 {''c1_market.emotion_index''}
+      -> use TableRegistry.table() scripts/audit/t0_gpu_condition_pack.py:377: 硬编码表名 ''c1_backtest.regime_state_anchored''
+      -> use TableRegistry.table() scripts/audit/t0_gpu_condition_pack.py:459: 字符串含硬编码表名 {''c1_backtest.regime_state_anchored''}
+      -> use TableRegistry.table() scri'
+    file: q-20260924-st-t0-matrix-20260924-0014.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-t0-matrix-20260924-0014
+- cluster: GATE:NOQA-VALIDATION
+  census_clusters:
+  - GATE:NOQA-VALIDATION
+  dead_letters: 3
+  first_dead_at: '2026-09-23T22:35:25+08:00'
+  last_dead_at: '2026-09-23T23:57:41+08:00'
+  top_sessions:
+  - session_id: st-chainpile-20260922
+    letters: 3
+  file_type_dist:
+    py: 11
+    yaml: 5
+    md: 3
+  sub_facets:
+    '-': 3
+  gate_id_observed: NOQA-VALIDATION
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n 'noqa' <reason 点名文件>
+    copy_ready_fix: '自定义 noqa 须 `# noqa: <marker>  <≥10 字符理由>` 且 marker 在治理在册面。'
+    forbidden_actions: 禁裸豁免；禁为过此门删理由文本。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260923-st-chainpile-20260922-0067
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 NOQA-VALIDATION 阻断: NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记（ARCH-NOQA-GOV-001）：
+      D:/ZephyrAlpha/.runtime/commit_queue/worktrees/w0\scripts\governance\apply_meta_question_ddl.py:L62 noqa ''gate-vocab''
+      缺少理由（marker 后需附>=10字符理由，阻断裸豁免） D:/ZephyrAlpha/.runtime/commit_queue/worktrees/w0\scripts\governance\apply_meta_question_ddl.py:L63
+      noqa ''gate-vocab'' 缺少理由（marker 后需附>=10字符理由，阻断裸豁免） D:/ZephyrAlpha/.runtime/commit_queue/worktrees/w0\src\zephyr\governance\meta_question\registry.py:L126
+      noqa ''gate-vocab'' 缺少理由（marker 后需附>=10字符理由，阻断裸豁免） D:/ZephyrAlpha/.runtime/commit'
+    file: q-20260923-st-chainpile-20260922-0067.json
+    requeued_to: q-20260923-st-chainpile-20260922-0070
+  sample_qids:
+  - q-20260923-st-chainpile-20260922-0067
+- cluster: GATE:REGISTRY-MASS-DELETION
+  census_clusters:
+  - GATE:REGISTRY-MASS-DELETION
+  dead_letters: 3
+  first_dead_at: '2026-09-23T17:28:26+08:00'
+  last_dead_at: '2026-09-24T07:08:34+08:00'
+  top_sessions:
+  - session_id: st-ulib3c-20260923
+    letters: 1
+  - session_id: st-backup-cold-20260924
+    letters: 1
+  - session_id: st-library-final-20260924
+    letters: 1
+  file_type_dist:
+    yaml: 7
+  sub_facets:
+    '-': 3
+  gate_id_observed: REGISTRY-MASS-DELETION
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: true
+  r3_book_row: 14
+  r3_book_bags_claimed: —
+  r3_book_prescription: 先按 R-1 分诊 B 型/A 型，两型处方相反
+  prescription_source: 在册 R-3#14
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: git diff --numstat -- <册路径>（净删行=deleted>added）
+    copy_ready_fix: 登记表只应增长：批量补登走 python scripts/governance/registry_batch_edit.py（纯插入工具）；确属合法重排/退役 ⇒ commit message
+      带 [allow-mass-deletion:<理由≥10字>]。
+    forbidden_actions: 禁正则批量编辑把插入变删除；禁手抄旧册整档覆盖（＝蒸发 4703 行病根）。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260924-st-backup-cold-20260924-0010
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 REGISTRY-MASS-DELETION 阻断: REGISTRY-MASS-DELETION: 登记表净删行/条目数减少（2026-09-09
+      4703 行蒸发治本） 病根：批量编辑正则失配把插入变删除；登记表条目只应增长（历史裁定 #ARCH-BP-REGISTRY-DELETION-001 同向）。 修复：①批量补登走 scripts/governance/registry_batch_edit.py
+      纯插入工具； ②确属合法重排（整文件重生成/历史清理）：commit message 加标记 [allow-mass-deletion:<reason≥10字>]（随 message 永久留痕+审计）。 docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml:
+      净删行 deleted=108 added=0'
+    file: q-20260924-st-backup-cold-20260924-0010.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-backup-cold-20260924-0010
+- cluster: GATE:REAL-KEY-REFERENCE-SCAN
+  census_clusters:
+  - GATE:REAL-KEY-REFERENCE-SCAN
+  dead_letters: 3
+  first_dead_at: '2026-09-24T04:45:04+08:00'
+  last_dead_at: '2026-09-24T07:16:56+08:00'
+  top_sessions:
+  - session_id: st-align-dirty-20260924
+    letters: 1
+  - session_id: st-commitsys-20260924
+    letters: 1
+  - session_id: st-oddjobs-final-20260924
+    letters: 1
+  file_type_dist:
+    md: 5
+    yaml: 2
+    py: 1
+  sub_facets:
+    '-': 3
+  gate_id_observed: REAL-KEY-REFERENCE-SCAN
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn 'QMT'"_REAL" docs src scripts | head
+    copy_ready_fix: 案卷/文档不得出现实盘密钥键名：改成描述性引用（指向 secret_registry.yaml 而不写键名）；白名单仅 secret_registry.yaml 本体与 SECRETS.md。
+    forbidden_actions: 禁引号/拆分绕过扫描；禁改白名单。
+    enqueue_preventable: false
+    note: 此 id 不在 gate_registry.yaml 的 gate_id 集内（现读 181 id 无此名）⇒ 执法面在别处，预检白名单无从准入；须先定位真源再谈可拦性。
+  evidence:
+    qid: q-20260924-st-commitsys-20260924-0011
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 REAL-KEY-REFERENCE-SCAN 阻断: REAL-KEY-REFERENCE-SCAN: own-diff 出现实盘密钥键名引用（NL-2
+      判据②，硬阻断无逃生） AI 会话源码/脚本/配置/文档禁出现该连续字面量（`QMT`+`_REAL`）字样（拆写说明：本门把文档也算 own-diff，故本册一律写作 `QMT`+`_REAL`）；白名单仅 secret_registry.yaml 本体与 SECRETS.md 文档行。 docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+      docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md'
+    file: q-20260924-st-commitsys-20260924-0011.json
+    requeued_to: q-20260924-st-commitsys-20260924-0012
+  sample_qids:
+  - q-20260924-st-commitsys-20260924-0011
+- cluster: GATE:FILE-PLACEMENT-TTL
+  census_clusters:
+  - GATE:FILE-PLACEMENT-TTL
+  dead_letters: 3
+  first_dead_at: '2026-09-24T09:13:36+08:00'
+  last_dead_at: '2026-09-25T02:19:34+08:00'
+  top_sessions:
+  - session_id: st-metaq-20260923
+    letters: 1
+  - session_id: st-wm1-wave0-20260924
+    letters: 1
+  - session_id: st-cmd-20260924
+    letters: 1
+  file_type_dist:
+    md: 40
+    yaml: 2
+  sub_facets:
+    '-': 3
+  gate_id_observed: FILE-PLACEMENT-TTL
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md
+    copy_ready_fix: 临时区（docs/_working/ 等）件 ttl 必 task_bound；确属永久 ⇒ 迁移到永久区（docs/01…/docs/library）且 creation_token
+      在册。
+    forbidden_actions: '禁为过门写 ttl: permanent 留在临时区；禁 --allow-promote 无 token 硬闯。'
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260925-st-cmd-20260924-0029
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 FILE-PLACEMENT-TTL 阻断: FILE-PLACEMENT-TTL: docs/_working/quant_methodology/01_caliber_law.md
+      frontmatter.ttl=permanent 但在临时区，应迁移到永久区或改 ttl=task_bound FILE-PLACEMENT-TTL: docs/_working/quant_methodology/02_overfitting_defense.md
+      frontmatter.ttl=permanent 但在临时区，应迁移到永久区或改 ttl=task_bound FILE-PLACEMENT-TTL: docs/_working/quant_methodology/03_conditional_stats_spec.md
+      frontmatter.ttl=permanent 但在临时区，应迁移到永久区或改 ttl=task_bound FILE-PLACEMENT-TTL: docs/_working/quant_methodology/04_switch_friction.md
+      frontmatter.ttl=permanent 但在临时区，应迁移到永久区或改 ttl=task_bound FILE-PLACEMENT-TTL: '
+    file: q-20260925-st-cmd-20260924-0029.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-cmd-20260924-0029
+- cluster: GATE:SESSION-REQUIRED
+  census_clusters:
+  - GATE:SESSION-REQUIRED
+  dead_letters: 2
+  first_dead_at: '2026-09-26T22:16:39+08:00'
+  last_dead_at: '2026-09-27T02:49:52+08:00'
+  top_sessions:
+  - session_id: st-final-build-20260926
+    letters: 1
+  - session_id: st-zmaster2-20260926
+    letters: 1
+  file_type_dist:
+    py: 22
+    md: 9
+    yaml: 7
+    csv: 1
+  sub_facets:
+    SESSION-UNREGISTERED: 2
+  gate_id_observed: SESSION-REQUIRED
+  in_preflight_whitelist: true
+  skipped_at_enqueue: true
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: python scripts/lock_files.py status | grep <sid>（只读核会话在册态）
+    copy_ready_fix: 会话未注册：AI 对话启动第一步 session_worktree_start(session_id='<SID>') 注册后再投（reason 原文指此通道，此处仅作数据引用）。
+    forbidden_actions: 禁拿别的已注册 sid 冒名提交；禁走 allow_overlap 当常规逃生（那是重叠面通道非注册通道）。
+    enqueue_preventable: false
+    note: SESSION-REQUIRED 在 PREFLIGHT_GATES 内却被 ENQUEUE_SKIP_GATES 显式跳过（入队面假红风暴 379 次实证）⇒ 属'设计上的不可拦'，代价在落地侧。
+  evidence:
+    qid: q-20260926-st-final-build-20260926-0003
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 SESSION-REQUIRED 阻断: session ''st-final-build-20260926'' 未注册。AI 对话启动第一步：MUST
+      调 session_worktree_start(session_id=''st-final-build-20260926'') 注册 session。逃生通道：commit(allow_overlap=True)。'
+    file: q-20260926-st-final-build-20260926-0003.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-final-build-20260926-0003
+- cluster: GATE:DATETIME-NOW-FORBIDDEN
+  census_clusters:
+  - GATE:DATETIME-NOW-FORBIDDEN
+  dead_letters: 2
+  first_dead_at: '2026-09-26T03:55:11+08:00'
+  last_dead_at: '2026-09-26T04:11:47+08:00'
+  top_sessions:
+  - session_id: st-qmine-20260925
+    letters: 2
+  file_type_dist:
+    py: 2
+    yaml: 2
+  sub_facets:
+    '-': 2
+  gate_id_observed: DATETIME-NOW-FORBIDDEN
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn 'datetime.now()\|time.time()' src/zephyr scripts
+    copy_ready_fix: 改 datetime.now(UTC)/now_utc()；生成器禁本机时钟，时间戳来自输入参数（RULE-SCHEMA-TZ）。
+    forbidden_actions: 禁把判据改成'允许 naive'；禁塞假 UTC 常量凑时区。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260926-st-qmine-20260925-0035
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 DATETIME-NOW-FORBIDDEN 阻断: DATETIME-NOW-FORBIDDEN：检测到时间戳误用（5.46 时区处理防复发 +
+      宪法 L0 硬规则10 SCHEMA-TZ）， 生成器代码禁止 datetime.now() 任何形式；src/zephyr/ 全量禁止 time.time() 和 datetime.now() 无参数。 src/zephyr/frontend/dashboard/api_server.py:1432:
+      datetime.now() naive（应改 datetime.now(UTC) 或 now_utc()）-> "generated_at": datetime.now().isoformat(" ", "seconds"),
+      src/zephyr/frontend/dashboard/api_server.py:1993: datetime.now() naive（应改 datetime.now(UTC) 或 now_utc()）->
+      "generated_at": datetime.now().isoformat(" ", "seconds"), src/zephyr/frontend/dashboard/api_server.py:2319:
+      time.time() 调用（应改'
+    file: q-20260926-st-qmine-20260925-0035.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-qmine-20260925-0035
+- cluster: GATE:NO-HIGH-COMPLEXITY
+  census_clusters:
+  - GATE:NO-HIGH-COMPLEXITY
+  dead_letters: 1
+  first_dead_at: '2026-09-23T05:56:58+08:00'
+  last_dead_at: '2026-09-23T05:56:58+08:00'
+  top_sessions:
+  - session_id: st-combine-20260923
+    letters: 1
+  file_type_dist:
+    py: 5
+    yaml: 2
+    md: 1
+  sub_facets:
+    HIGH-COMPLEXITY: 1
+  gate_id_observed: NO-HIGH-COMPLEXITY
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 11
+  r3_book_bags_claimed: —
+  r3_book_prescription: 拆模块级 helper（参数 ≤7）；**禁调阈值**；用门禁自家 `_cyclomatic_complexity` 复算，别用第三方读数
+  prescription_source: 在册 R-3#11
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: 同上（同一尺两个门名，病灶同面）
+    copy_ready_fix: 同 COMPLEXITY-GUARD：拆短函数/查表法。
+    forbidden_actions: 禁调阈值；禁以'另一门也叫这判据'为由重复豁免。
+    enqueue_preventable: false
+    note: COMPLEXITY-GUARD 与 NO-HIGH-COMPLEXITY 在 gate_registry 各自成条，死信文案同判据 ⇒ 建议并入同处方族（净零 §4.2）。
+  evidence:
+    qid: q-20260923-st-combine-20260923-0008
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 NO-HIGH-COMPLEXITY 阻断: NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15）， 违反 §5.158 循环复杂度反模式。
+      src/zephyr/pf_alloc/allocation_inputs.py:209: load_pp001_sleeves(complexity=20 > 15) -> 考虑拆分为短函数/策略模式/查表法'
+    file: q-20260923-st-combine-20260923-0008.json
+    requeued_to: null
+  sample_qids:
+  - q-20260923-st-combine-20260923-0008
+- cluster: FAM:prestage拒绝-gitignore快照路径
+  census_clusters:
+  - 'OTHER:landing 异常: RuntimeError: prestage 拒绝：以下快照路径'
+  dead_letters: 1
+  first_dead_at: '2026-09-23T18:04:55+08:00'
+  last_dead_at: '2026-09-23T18:04:55+08:00'
+  top_sessions:
+  - session_id: st-nightdata-20260923
+    letters: 1
+  file_type_dist:
+    py: 1
+    md: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: git check-ignore -v <reason 点名路径>
+    copy_ready_fix: 被 .gitignore 忽略的路径禁入袋：把件移到非忽略目录（scripts/data/ 代码移 scripts/），或确应入库时按 sz_open_data 先例修 .gitignore
+      精确豁免后重投。
+    forbidden_actions: 禁 -f 强加；禁把再生产物写进 tracked 区。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260923-st-nightdata-20260923-0001
+    reason: 'landing 异常: RuntimeError: prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）： - scripts/data/backfill_etf60min_depth.py
+      修复：①把文件移到非忽略目录（如 scripts/data/ 下代码应移 scripts/）后重新入队；②或确认该路径应入库，修 .gitignore 精确豁免（对齐 sz_open_data 先例）后重新入队'
+    file: q-20260923-st-nightdata-20260923-0001.json
+    requeued_to: null
+  sample_qids:
+  - q-20260923-st-nightdata-20260923-0001
+- cluster: GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT
+  census_clusters:
+  - GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT
+  dead_letters: 1
+  first_dead_at: '2026-09-23T04:53:17+08:00'
+  last_dead_at: '2026-09-23T04:53:17+08:00'
+  top_sessions:
+  - session_id: st-nightfix-20260923
+    letters: 1
+  file_type_dist:
+    py: 4
+    yaml: 3
+  sub_facets:
+    '-': 1
+  gate_id_observed: NEW-FILE-DEPGRAPH-ENFORCEMENT
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 10
+  r3_book_bags_claimed: —
+  r3_book_prescription: '`apply_depgraph.py --add-design-node`；重命名后 `generate_project_depgraph.py --force`'
+  prescription_source: 在册 R-3#10
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: 同 DEPGRAPH-ENFORCEMENT
+    copy_ready_fix: 同 DEPGRAPH-ENFORCEMENT（两门名同一判据）。
+    forbidden_actions: 同上。
+    enqueue_preventable: false
+    note: 与 GATE:DEPGRAPH-ENFORCEMENT 处方完全同真源 ⇒ 建议 R-3 并为一行。
+  evidence:
+    qid: q-20260923-st-nightfix-20260923-0001
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 NEW-FILE-DEPGRAPH-ENFORCEMENT 阻断: NEW-FILE-DEPGRAPH-ENFORCEMENT: 3 个新建 .py
+      文件在 depgraph (PostgreSQL) nodes 表无记录。L1 铁律（依赖关系先行）从君子协定升级为技术强制（#ARCH-DEP-001 第三期）。修复（二选一）：① 先登记设计态再施工——python
+      scripts/governance/apply_depgraph.py --add-design-node <file_path> <module_id> <domain_id> --granularity file；②
+      施工完毕直接全量重扫登记运营态——python scripts/governance/generate_project_depgraph.py --output-db depgraph --force（#ARCH-70
+      起：同 path design 预登记节点由重扫自动同身份 UPDATE 转 production，无需手工 transition）。详情: src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py,
+      src/zephyr/gov_enfo'
+    file: q-20260923-st-nightfix-20260923-0001.json
+    requeued_to: q-20260923-st-nightfix-20260923-0002
+  sample_qids:
+  - q-20260923-st-nightfix-20260923-0001
+- cluster: GATE:FILE-COPY
+  census_clusters:
+  - GATE:FILE-COPY
+  dead_letters: 1
+  first_dead_at: '2026-09-23T15:50:13+08:00'
+  last_dead_at: '2026-09-23T15:50:13+08:00'
+  top_sessions:
+  - session_id: st-regfix-lane0b-20260923
+    letters: 1
+  file_type_dist:
+    py: 3
+    yaml: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: FILE-COPY
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "import ast,sys;print(len(open(sys.argv[1]).read()))" <新件> 与 reason 点名的同名件对照
+    copy_ready_fix: 新增 .py 与既有同名文件 AST 相似度 >70%：删掉新件改为复用既有模块；确需新件则实质差异化（不同职责/不同签名）并在 creation_token 里写清替代关系。
+    forbidden_actions: 禁改相似度阈值；禁把 copy 改名充数（SSOT-REDEFINITION/FUNCTION-DUP 接力）。
+    enqueue_preventable: false
+    note: 实测样例的比对基准含 `.runtime\commit_queue\worktree\...` 自身路径 ⇒ 门在落地快照面比对，车道内自证'不相似'无效。
+  evidence:
+    qid: q-20260923-st-regfix-lane0b-20260923-0015
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 FILE-COPY 阻断: 新增 .py 文件与已有同名文件 AST 相似度>70%: D:\ZephyrAlpha\.runtime\commit_queue\worktree\src\zephyr\gov_enforcement\commit_gates\registry_family\__init__.py
+      D:\ZephyrAlpha\scripts\__init__.py 100.0%; D:\ZephyrAlpha\.runtime\commit_queue\worktree\src\zephyr\gov_enforcement\commit_gates\registry_family\__init__.py
+      D:\ZephyrAlpha\scripts\governance\__init__.py 100.0%; D:\ZephyrAlpha\.runtime\commit_queue\worktree\src\zephyr\gov_enforcement\commit_gates\registry_family\__init__.py
+      D:\ZephyrAlpha\scripts\governance\d11_compliance\__init__.py 100.0%; D:\ZephyrAlpha\.runtim'
+    file: q-20260923-st-regfix-lane0b-20260923-0015.json
+    requeued_to: null
+  sample_qids:
+  - q-20260923-st-regfix-lane0b-20260923-0015
+- cluster: GATE:HOT-FILE-BASE-FRESHNESS
+  census_clusters:
+  - GATE:HOT-FILE-BASE-FRESHNESS
+  dead_letters: 1
+  first_dead_at: '2026-09-24T03:25:34+08:00'
+  last_dead_at: '2026-09-24T03:25:34+08:00'
+  top_sessions:
+  - session_id: st-align-dirty-20260924
+    letters: 1
+  file_type_dist:
+    yaml: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: HOT-FILE-BASE-FRESHNESS
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 14
+  r3_book_bags_claimed: —
+  r3_book_prescription: 先按 R-1 分诊 B 型/A 型，两型处方相反
+  prescription_source: 在册 R-3#14
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: git log -p <claim_head>..HEAD -- <热文件>
+    copy_ready_fix: claim 后上游推进：确认工作区已含上游变更 → release 后重新 claim（锁锚到新 HEAD）→ 再投；确属可并则 --allow-overlap 逃生并留痕。
+    forbidden_actions: 禁基于陈旧 base 强推整档（=覆写上游）；禁不 release 直接二次 claim。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-align-dirty-20260924-0015
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 HOT-FILE-BASE-FRESHNESS 阻断: 目标热文件在 claim 后被上游 commit 修改（STALE_BASE_VIOLATION）:
+      [''docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml'']. claim_head=53cdc66e0620
+      已推进到 HEAD=6473b6ddc0fa，本 session 的编辑基于陈旧 base，commit 会覆写上游已提交变更。处置：确认工作区文件已包含上游修改（git log -p 53cdc66e0620..HEAD
+      -- <file> 核对）→ release_files 后重新 claim（锚点刷新到新 HEAD）→ 再 commit；或确认无误后用 commit(allow_overlap=True) / CLI --allow-overlap
+      逃生通道。'
+    file: q-20260924-st-align-dirty-20260924-0015.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-align-dirty-20260924-0015
+- cluster: GATE:FORGED-GW-MARKER
+  census_clusters:
+  - GATE:FORGED-GW-MARKER
+  dead_letters: 1
+  first_dead_at: '2026-09-24T07:41:45+08:00'
+  last_dead_at: '2026-09-24T07:41:45+08:00'
+  top_sessions:
+  - session_id: st-audit-all-20260924
+    letters: 1
+  file_type_dist:
+    md: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: FORGED-GW-MARKER
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: git log -1 --format=%s | grep -o '\[GW:[^]]*\]'
+    copy_ready_fix: '`[GW:]` 标记由网关生成，不可手写：走 scripts/git_commit.py 让其自带尾标；若为吸收他会话尾标所致，重投前先核归属。'
+    forbidden_actions: 禁手写/复制 [GW:] 标记（POST-COMMIT-GUARD 会 reset 回滚）；禁 emergency_commit 顶替常规通道；禁 plumbing 命令绕。
+    enqueue_preventable: false
+    note: 在册 R-3 无此行（§9.8 已列红线但未入表）。
+  evidence:
+    qid: q-20260924-st-audit-all-20260924-0028
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 FORGED-GW-MARKER 阻断: FORGED-GW-MARKER: commit message 含非本 session 的 [GW:
+      标记 [''sid'']（本 session=st-audit-all-20260924）。GW 标记由 GitCommitGateway/session_worktree 按旗标自动追加（allow_overlap/multi-domain/tracked-drift
+      等留痕），用户 message 中出现非自身标记即伪造/嫁祸（红蓝 v3 c224e15d63 实证：伪造 [GW:xt3-fake-session:multi-domain] 经 sess- 前缀盲区畅通入库）。修复：从
+      message 移除 [GW:...] 片段后重提；留痕标记由网关自动追加，无需手写。'
+    file: q-20260924-st-audit-all-20260924-0028.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-audit-all-20260924-0028
+- cluster: FAM:本包自撤
+  census_clusters:
+  - OTHER:本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_que
+  dead_letters: 1
+  first_dead_at: '2026-09-24T22:22:26+08:00'
+  last_dead_at: '2026-09-24T22:22:26+08:00'
+  top_sessions:
+  - session_id: st-audit-fix-20260924
+    letters: 1
+  file_type_dist:
+    py: 2
+    md: 2
+  sub_facets:
+    '-': 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: python scripts/commit_queue.py status
+    copy_ready_fix: 自撤类死信（实效自证）不需处方：属主确认后归档即可，勿 requeue。
+    forbidden_actions: 禁把自撤袋当失败重投（会再吃一次门禁账）。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-audit-fix-20260924-0026
+    reason: 本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_queue_landing.py 派生自 7d8271c128，而 dev 已被 79ee5286c5（D4 幽灵 pending
+      治本）推进同文件 23+/1- ⇒ 落它会拿陈旧快照整覆他人已落地内容＝本包正在修的病形本身。正解＝在 dev 尖上重跑锚定补丁后重投；袋内 blob 全留，requeue --from-bag 可取回。
+    file: q-20260924-st-audit-fix-20260924-0026.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-audit-fix-20260924-0026
+- cluster: FAM:COMMIT_FAILED-nothing-to-commit
+  census_clusters:
+  - 'OTHER:网关落盘失败（COMMIT_FAILED）: git commit failed: On'
+  dead_letters: 1
+  first_dead_at: '2026-09-24T01:24:01+08:00'
+  last_dead_at: '2026-09-24T01:24:01+08:00'
+  top_sessions:
+  - session_id: st-library-final-20260924
+    letters: 1
+  file_type_dist:
+    py: 2
+  sub_facets:
+    '-': 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: python scripts/commit_queue.py status
+    copy_ready_fix: serializer 工作树 nothing to commit（working tree clean）＝袋内容已被他会话落地或快照未应用 ⇒ 核归属（git log -1 --name-only
+      / git show dev:<path>）后判废该袋，勿重复投。
+    forbidden_actions: 禁在 serializer 工作树手工写文件；禁删 dead 件。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260924-st-library-final-20260924-0008
+    reason: '网关落盘失败（COMMIT_FAILED）: git commit failed: On branch serializer/commit-queue-w0 nothing to commit, working
+      tree clean'
+    file: q-20260924-st-library-final-20260924-0008.json
+    requeued_to: null
+  sample_qids:
+  - q-20260924-st-library-final-20260924-0008
+- cluster: GATE:MSG-EXPOSURE
+  census_clusters:
+  - GATE:MSG-EXPOSURE
+  dead_letters: 1
+  first_dead_at: '2026-09-25T18:00:35+08:00'
+  last_dead_at: '2026-09-25T18:00:35+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 1
+  file_type_dist:
+    py: 15
+    yaml: 3
+  sub_facets:
+    '-': 1
+  gate_id_observed: MSG-EXPOSURE
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n 'raise .*(f"' src/zephyr/<reason 点名文件>
+    copy_ready_fix: 错误消息文本禁带路径/tx_id/凭据/连接串——移入 details 字段（门 reason 已点到行号与敏感变量名）。
+    forbidden_actions: 禁 str.replace 打码式假修；禁把敏感值留在 message 只挪一半。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-cmd-20260924-0141
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 MSG-EXPOSURE 阻断: 错误消息暴露敏感信息（路径/tx_id/凭据/连接串等应放入 details 字段而非消息文本，5.99.20
+      治本）: src/zephyr/signal_ashare/core/candidate_pool_snapshot.py:241 raise TypeError(f"...{source}...") [sensitive:
+      source]'
+    file: q-20260925-st-cmd-20260924-0141.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-cmd-20260924-0141
+- cluster: GATE:MODULE-ID-CONSISTENCY
+  census_clusters:
+  - GATE:MODULE-ID-CONSISTENCY
+  dead_letters: 1
+  first_dead_at: '2026-09-25T18:14:09+08:00'
+  last_dead_at: '2026-09-25T18:14:09+08:00'
+  top_sessions:
+  - session_id: st-cmd-20260924
+    letters: 1
+  file_type_dist:
+    py: 15
+    yaml: 3
+  sub_facets:
+    '-': 1
+  gate_id_observed: MODULE-ID-CONSISTENCY
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn 'MOD-BT-213' src tests docs | head
+    copy_ready_fix: module_id 一物一号：reason 点名的撞号文件之一改用未占用号（经取号面/depgraph 给号，禁自赋）或与真主件同袋合并声明面。
+    forbidden_actions: 禁两个模块共享同一 MOD 号；禁改别人的号（＝抢号）。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-cmd-20260924-0143
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 MODULE-ID-CONSISTENCY 阻断: MODULE-ID-CONSISTENCY: 2 violation(s): - tests/signal_ashare/test_candidate_pool_snapshot.py:
+      module_id_collision ''MOD-BT-213'' also declared in: src/zephyr/strategy_pipeline/daily_gate_snapshot.py,
+      tests/strategy_pipeline/test_daily_gate_snapshot_l2.py, tests/strategy_pipeline/test_daily_gate_snapshot_pool.py
+      - tests/strategy_pipeline/test_daily_gate_snapshot_pool.py: module_id_collision ''MOD-BT-213'' also declared
+      in: tests/signal_ashare/test_candidate_pool_snapshot.py'
+    file: q-20260925-st-cmd-20260924-0143.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-cmd-20260924-0143
+- cluster: GATE:MSG-STYLE
+  census_clusters:
+  - GATE:MSG-STYLE
+  dead_letters: 1
+  first_dead_at: '2026-09-25T09:12:26+08:00'
+  last_dead_at: '2026-09-25T09:12:26+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 1
+  file_type_dist:
+    py: 2
+  sub_facets:
+    '-': 1
+  gate_id_observed: MSG-STYLE
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -n '。' src/zephyr/<reason 点名文件>
+    copy_ready_fix: 异常 message 统一 ASCII `->` 且不以中文句号结尾；描述文本改英文或去尾标点（5.99.22）。
+    forbidden_actions: 禁把门判据放宽；禁在 message 里塞全角箭头。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-commitspeed-tbl-20260924-0053
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 MSG-STYLE 阻断: 错误消息标点/箭头风格违规（统一 ASCII -> + 无句号结尾，5.99.22 治本防复发）: src/zephyr/infrastructure/duckdb_runtime_gate.py:208
+      raise BareDuckDBConnectError(...) [cn_period_end: 中文句号 。 结尾]'
+    file: q-20260925-st-commitspeed-tbl-20260924-0053.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-commitspeed-tbl-20260924-0053
+- cluster: FAM:BASE-dev-CAS重试耗尽
+  census_clusters:
+  - OTHER:dev CAS 冲突重试耗尽（6 次，池化重放）——死信回退人工
+  dead_letters: 1
+  first_dead_at: '2026-09-25T19:14:13+08:00'
+  last_dead_at: '2026-09-25T19:14:13+08:00'
+  top_sessions:
+  - session_id: st-commitspeed-tbl-20260924
+    letters: 1
+  file_type_dist:
+    py: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: BASE
+    root_cause_zh: 基底或竞态
+    minimal_repro: python scripts/commit_queue.py status
+    copy_ready_fix: 6 次重试耗尽＝该路径处于热争抢窗：改在静窗（队列 pending=0）单袋重投，或拆小袋减少同路径面积。
+    forbidden_actions: 禁调大重试次数（那是改基础设施判据）；禁塞进大袋连坐。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-commitspeed-tbl-20260924-0099
+    reason: dev CAS 冲突重试耗尽（6 次，池化重放）——死信回退人工
+    file: q-20260925-st-commitspeed-tbl-20260924-0099.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-commitspeed-tbl-20260924-0099
+- cluster: GATE:RELATIVE-PATH-LITERAL
+  census_clusters:
+  - GATE:RELATIVE-PATH-LITERAL
+  dead_letters: 1
+  first_dead_at: '2026-09-25T08:05:06+08:00'
+  last_dead_at: '2026-09-25T08:05:06+08:00'
+  top_sessions:
+  - session_id: st-qcure-20260925
+    letters: 1
+  file_type_dist:
+    py: 5
+    yaml: 2
+  sub_facets:
+    '-': 1
+  gate_id_observed: RELATIVE-PATH-LITERAL
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: grep -rn '"docs/\|\047scripts/' <reason 点名文件> | head
+    copy_ready_fix: 相对路径字面量换成基于 paths.REPO_ROOT 的拼接（canonical 面）。
+    forbidden_actions: 禁自己定义第二套 REPO_ROOT（SSOT-REDEFINITION 接力）。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-qcure-20260925-0007
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 RELATIVE-PATH-LITERAL 阻断: RELATIVE-PATH-LITERAL：检测到代码内相对路径字面量， 违反 AGENTS.md
+      硬约束''所有路径必须使用绝对路径''。 src/zephyr/gov_enforcement/commit_gates/approval_resolver.py:154: if normalized.startswith("./"):
+      -> 改用 REPO_ROOT / Path(__file__).resolve().parent 拼接绝对路径'
+    file: q-20260925-st-qcure-20260925-0007.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-qcure-20260925-0007
+- cluster: GATE:EXEMPT-ZONE-FM
+  census_clusters:
+  - GATE:EXEMPT-ZONE-FM
+  dead_letters: 1
+  first_dead_at: '2026-09-25T21:25:30+08:00'
+  last_dead_at: '2026-09-25T21:25:30+08:00'
+  top_sessions:
+  - session_id: st-qmine-20260925
+    letters: 1
+  file_type_dist:
+    md: 9
+  sub_facets:
+    '-': 1
+  gate_id_observed: EXEMPT-ZONE-FM
+  in_preflight_whitelist: true
+  skipped_at_enqueue: false
+  enqueue_preventable: true
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md
+    copy_ready_fix: 豁免区件须带合规 frontmatter（ttl/completes_when + 该区要求的键）。
+    forbidden_actions: 禁把件挪进豁免区来躲其它门。
+    enqueue_preventable: true
+    note: ''
+  evidence:
+    qid: q-20260925-st-qmine-20260925-0001
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 EXEMPT-ZONE-FM 阻断: EXEMPT-ZONE-FM: 1 exempt-zone file(s) with frontmatter
+      doc_type (should be in formal directory): docs/_working/decision_map_campaign_20260924/12_data_universe_census.md
+      (doc_type=census, zone=docs/_working/)'
+    file: q-20260925-st-qmine-20260925-0001.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-qmine-20260925-0001
+- cluster: GATE:UNDEFINED-NAME
+  census_clusters:
+  - GATE:UNDEFINED-NAME
+  dead_letters: 1
+  first_dead_at: '2026-09-25T21:54:31+08:00'
+  last_dead_at: '2026-09-25T21:54:31+08:00'
+  top_sessions:
+  - session_id: st-qmine-20260925
+    letters: 1
+  file_type_dist:
+    py: 9
+    yaml: 2
+  sub_facets:
+    '-': 1
+  gate_id_observed: UNDEFINED-NAME
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -m pyflakes <reason 点名文件>
+    copy_ready_fix: 补 import 或删死引用；跨袋符号须与目标件同袋（同 IMPORT-INTEGRITY 面）。
+    forbidden_actions: 禁 try/except ImportError 掩盖；禁加 glob import。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260925-st-qmine-20260925-0005
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 UNDEFINED-NAME 阻断: UNDEFINED-NAME: 使用了未定义的符号（F821，GATE-DEPGRAPH-OPS 治本 Phase
+      1） 病根：符号未 import 也未本地定义，运行时才抛 NameError—— AI 提交路径 --no-verify 绕过外部 pre-commit，ruff F821 零防护。 修复：补 import /
+      修正拼写 / 补本地定义后重新 commit。 src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py:1046: undefined name ''MARK_FAIL''
+      (not imported, not defined locally)'
+    file: q-20260925-st-qmine-20260925-0005.json
+    requeued_to: null
+  sample_qids:
+  - q-20260925-st-qmine-20260925-0005
+- cluster: GATE:ENCODING-SAFETY
+  census_clusters:
+  - GATE:ENCODING-SAFETY
+  dead_letters: 1
+  first_dead_at: '2026-09-26T03:17:12+08:00'
+  last_dead_at: '2026-09-26T03:17:12+08:00'
+  top_sessions:
+  - session_id: st-ailayer-final-20260924
+    letters: 1
+  file_type_dist:
+    py: 16
+    md: 7
+    yaml: 7
+    ps1: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: ENCODING-SAFETY
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 12
+  r3_book_bags_claimed: —
+  r3_book_prescription: 禁把门禁报错里的取样字面量回填进 YAML；禁 CRLF（写盘一律 `newline='\n'`）
+  prescription_source: 在册 R-3#12
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "print(open('<file>','rb').read(4))"（查 BOM/CRLF）
+    copy_ready_fix: 写盘 newline='\n'、UTF-8 无 BOM；.ps1 纯 ASCII。
+    forbidden_actions: 禁把门禁报错里的取样字面量回填进 YAML；禁 CRLF 入库。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260926-st-ailayer-final-20260924-0016
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 ENCODING-SAFETY 阻断: INJ-007 FAIL: file ''docs/_working/ai_layer_vision/OBJ_R_rules_standards/s3_threshold_externalization_proposal_v0.yaml''
+      contains GBK-as-UTF-8 mojibake — double-encoded garbled text detected INJ-007 WARNING: file ''docs/_working/ai_layer_vision/closure_wave2/l6_tombstone_ttl_cleanup_proposal.yaml''
+      has 42 CRLF line endings — should use LF INJ-007 WARNING: file ''docs/_working/ai_layer_vision/OBJ_R_rules_standards/s3_threshold_externalization_proposal_v0.yaml''
+      has 8359 CRLF line endings — should use LF'
+    file: q-20260926-st-ailayer-final-20260924-0016.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-ailayer-final-20260924-0016
+- cluster: GATE:FUNCTION-DUP
+  census_clusters:
+  - GATE:FUNCTION-DUP
+  dead_letters: 1
+  first_dead_at: '2026-09-26T23:45:27+08:00'
+  last_dead_at: '2026-09-26T23:45:27+08:00'
+  top_sessions:
+  - session_id: st-final-build-20260926
+    letters: 1
+  file_type_dist:
+    py: 8
+    md: 7
+    yaml: 5
+  sub_facets:
+    '-': 1
+  gate_id_observed: FUNCTION-DUP
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python -c "import ast,collections;print([n.name for n in ast.walk(ast.parse(open('<file>',encoding='utf-8').read()))
+      if isinstance(n,ast.FunctionDef)][:20])"
+    copy_ready_fix: 同名同实现（reason 给出相同 hash）：抽到共用模块并由双方 import；共用面落点先查 capability_canonical_file_registry.yaml 防造第二真源。
+    forbidden_actions: 禁两份并存各自演化；禁以'只是小工具'为由豁免。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260926-st-final-build-20260926-0010
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 FUNCTION-DUP 阻断: 重复函数 default_db_path 在 scripts/governance/wave1a/verified_promotion_check.py
+      已存在相同实现（hash=ecb1e37d8f5054c0，新文件 scripts/governance/wave1a/cross_session_view.py）; 重复函数 default_db_path 在
+      scripts/governance/wave1a/cross_session_view.py 已存在相同实现（hash=ecb1e37d8f5054c0，新文件 scripts/governance/wave1a/verified_promotion_check.py）'
+    file: q-20260926-st-final-build-20260926-0010.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-final-build-20260926-0010
+- cluster: FAM:WorktreePunchThroughError
+  census_clusters:
+  - WorktreePunchThroughError(EV-02 reset 打穿主仓)
+  dead_letters: 1
+  first_dead_at: '2026-09-26T01:04:47+08:00'
+  last_dead_at: '2026-09-26T01:04:47+08:00'
+  top_sessions:
+  - session_id: st-mapbuild-20260924
+    letters: 1
+  file_type_dist:
+    py: 11
+    yaml: 6
+  sub_facets:
+    '-': 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 7
+  r3_book_bags_claimed: ≥1
+  r3_book_prescription: 不是内容病：落地侧 worktree reset 越界 ⇒ 见 W-16 回退哨兵；重投前先确认主仓 HEAD 未被打穿
+  prescription_source: 在册 R-3#7
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: git rev-parse HEAD（主区）与 reason 点名的 reset 目标比对（只读）
+    copy_ready_fix: EV-02 reset 打穿主仓＝落地工具越界，非内容病：见 W-16 回退哨兵；先确认主区 HEAD 未被打穿，再决定重投。
+    forbidden_actions: 禁在主区手工 reset 补救；禁继续用同一越界通道重投。
+    enqueue_preventable: false
+    note: ''
+  evidence:
+    qid: q-20260926-st-mapbuild-20260924-0029
+    reason: 'landing 异常: WorktreePunchThroughError: [landing] EV-02 打穿复核拦截：worktree 破坏性操作 `reset` 疑似打穿主仓——主仓 HEAD
+      93e55f2f46 → 16d58a652d（worktree=D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w0，审计 .runtime/audit/landing_guard.jsonl）'
+    file: q-20260926-st-mapbuild-20260924-0029.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-mapbuild-20260924-0029
+- cluster: GATE:DOC-HEADER-SUITE
+  census_clusters:
+  - GATE:DOC-HEADER-SUITE
+  dead_letters: 1
+  first_dead_at: '2026-09-26T21:39:37+08:00'
+  last_dead_at: '2026-09-26T21:39:37+08:00'
+  top_sessions:
+  - session_id: st-p1b-libr
+    letters: 1
+  file_type_dist:
+    py: 4
+    md: 2
+    yaml: 2
+  sub_facets:
+    '-': 1
+  gate_id_observed: DOC-HEADER-SUITE
+  in_preflight_whitelist: false
+  skipped_at_enqueue: false
+  enqueue_preventable: false
+  covered_by_r3: false
+  r3_book_row: null
+  r3_book_bags_claimed: null
+  r3_book_prescription: null
+  prescription_source: 本包新拟
+  prescription:
+    root_cause_class: CONTENT
+    root_cause_zh: 内容违规
+    minimal_repro: python scripts/governance/meta/gate_prerun.py --session <SID> --files "<逗号清单>" --message-file
+      .runtime/tmp/<SID>/msg_<批名>.md（头部套件是多判据聚合门，reason 尾行才点名真子判据）
+    copy_ready_fix: 实测样例的真病灶在尾行 `[MODULE-ID-CONSISTENCY] module_id_collision`：一个 MOD 号只能一物一号，改撞号件之一用未占用号（经取号/depgraph
+      面给号），并把头部 `# [BLUEPRINT]` 与 module_translation 登记同批。
+    forbidden_actions: 禁两个文件共享同一 MOD 号；禁抢他人号；禁只改头部注释不改号。
+    enqueue_preventable: false
+    note: 此门 reason 具误导性（门名≠判据名）：照抄修法必须以 reason 尾行点名的内层判据为准。
+  evidence:
+    qid: q-20260926-st-p1b-libr-0001
+    reason: '网关落盘失败（COMMIT_FAILED）: 门禁 DOC-HEADER-SUITE 阻断: [MODULE-ID-CONSISTENCY] MODULE-ID-CONSISTENCY: 2 violation(s):
+      - src/zephyr/governance/audit/library_new_module_reconciler.py: module_id_collision ''MOD-GOV_LIB_NEW_MODULE_RECONCILER''
+      also declared in: tests/governance/test_library_reconcilers_red_blue.py - tests/governance/test_library_reconcilers_red_blue.py:
+      module_id_collision ''MOD-GOV_LIB_NEW_MODULE_RECONCILER'' also declared in: src/zephyr/governance/audit/library_new_module_reconciler.py'
+    file: q-20260926-st-p1b-libr-0001.json
+    requeued_to: null
+  sample_qids:
+  - q-20260926-st-p1b-libr-0001
+- cluster: FAM:landing-git-reset硬复位超时
+  census_clusters:
+  - 'OTHER:landing 异常: RuntimeError: git reset` + `--hard（拆写，同上） r'
+  dead_letters: 1
+  first_dead_at: '2026-09-27T00:35:11+08:00'
+  last_dead_at: '2026-09-27T00:35:11+08:00'
+  top_sessions:
+  - session_id: st-final-build-20260926
+    letters: 1
+  file_type_dist:
+    yaml: 3
+    py: 2
+    md: 1
+    ps1: 1
+  sub_facets:
+    '-': 1
+  gate_id_observed: null
+  in_preflight_whitelist: null
+  skipped_at_enqueue: null
+  enqueue_preventable: false
+  covered_by_r3: true
+  r3_book_row: 7
+  r3_book_bags_claimed: ≥1
+  r3_book_prescription: 不是内容病：落地侧 worktree reset 越界 ⇒ 见 W-16 回退哨兵；重投前先确认主仓 HEAD 未被打穿
+  prescription_source: 在册 R-3#7
+  prescription:
+    root_cause_class: TOOL
+    root_cause_zh: 工具自伤
+    minimal_repro: python scripts/commit_queue.py status（看落地侧是否卡在复位阶段；主区 HEAD 只读核对 git rev-parse dev）
+    copy_ready_fix: 落地工把 `git reset` + `--hard（拆写，同上） refs/heads/dev` 作为复位步且 120s 被 kill ⇒ 属在册 R-3#7（EV-02 reset 打穿主仓）同族的基础设施病，不是袋内容病。处置顺序（全程零手工
+      git 写）：①先确认主区 HEAD 未被打穿（`git log -1 --oneline`）；②确认无并发落地工占锁；③静窗单袋 requeue <qid> --adopt-prior-work。
+    forbidden_actions: 禁自己在主区跑该复位命令补救（RULE-GIT-SAFE 危险清单）；禁在锁竞争窗反复重投；禁改复位超时当治本。
+    enqueue_preventable: false
+    note: ★与在册 R-3#7 的关系：册面只记 WorktreePunchThroughError 异常名，现读同一病灶改以 'git reset` + `--hard（拆写，同上） … timeout (killed)' 文本出现
+      ⇒ 建议在册行的匹配串加此变体，否则同类死信会被判'无处方'。
+  evidence:
+    qid: q-20260927-st-final-build-20260926-0013
+    reason: 'landing 异常: RuntimeError: git reset` + `--hard（拆写，同上） refs/heads/dev -> timeout after 120s (killed)'
+    file: q-20260927-st-final-build-20260926-0013.json
+    requeued_to: null
+  sample_qids:
+  - q-20260927-st-final-build-20260926-0013
+letters_in_whitelisted_gates: 214
+clusters_in_whitelisted_gates:
+- - GATE:CREATE-GUARD
+  - 68
+- - GATE:TRANSLATION-COVERAGE
+  - 55
+- - GATE:TTL-METADATA
+  - 33
+- - GATE:TEST-SOURCE-CONSISTENCY
+  - 11
+- - GATE:DIRECTORY-CONTRACT
+  - 9
+- - GATE:PROTECTED-PATHS
+  - 9
+- - GATE:CAPABILITY-LOOKUP-REQUIRED
+  - 5
+- - GATE:NO-BARE-SQL
+  - 5
+- - FAM:landing-TimeoutExpired
+  - 4
+- - GATE:TABLE-NAME-REGISTRY
+  - 4
+- - GATE:REGISTRY-MASS-DELETION
+  - 3
+- - GATE:FILE-PLACEMENT-TTL
+  - 3
+- - GATE:SESSION-REQUIRED
+  - 2
+- - GATE:DATETIME-NOW-FORBIDDEN
+  - 2
+- - GATE:EXEMPT-ZONE-FM
+  - 1
+whitelist_gate_count: 15
+r3_rows:
+- idx: 1
+  signature: 注册表三向合并失败（家族）
+  bags_claimed: 71（其中全文指名身份键 7）
+  prescription: 走 R-1 修基底 + 该册变更单独成袋；勿 requeue 硬闯
+- idx: 2
+  signature: TRANSLATION-COVERAGE
+  bags_claimed: 11（六图役）
+  prescription: '`add_module_translation.py` **在主仓**跑，plain-zh ≥8 字，且必须落 `entries:` 段'
+- idx: 3
+  signature: CREATE-GUARD
+  bags_claimed: 8（六图役）+ 全局多封
+  prescription: R-2 步骤 2；token 与件同袋
+- idx: 4
+  signature: GATE-PRECOMMIT-RUN
+  bags_claimed: '2'
+  prescription: 落地侧门禁账缺失 ⇒ 先跑 R-2 步骤 4
+- idx: 5
+  signature: 基底不可知
+  bags_claimed: '2'
+  prescription: '`commit_queue.py enqueue --base-head $(git rev-parse dev)`'
+- idx: 6
+  signature: RULING-REFERENCE
+  bags_claimed: '2'
+  prescription: '**禁引用未登记裁定号**（工作树自赋 #414/#415 是悬空号）：改成文字描述，落地后经取号器正式补登'
+- idx: 7
+  signature: '`WorktreePunchThroughError`（EV-02 reset 打穿主仓）'
+  bags_claimed: ≥1
+  prescription: 不是内容病：落地侧 worktree reset 越界 ⇒ 见 W-16 回退哨兵；重投前先确认主仓 HEAD 未被打穿
+- idx: 8
+  signature: R5-DIGIT-SUFFIX
+  bags_claimed: 多袋（一次违规拖死整袋）
+  prescription: 目录/文件名禁以数字结尾（判定式 `r"_\d+$"`，无白名单无逃生标）；已入库的历史违规按"已存在即跳过"
+- idx: 9
+  signature: ORPHAN-MODULE
+  bags_claimed: —
+  prescription: 零消费者新件必与接线同袋（`git grep` 只认 `src/**/*.py`，scripts/ 的 import 不算引用）
+- idx: 10
+  signature: NEW-FILE-DEPGRAPH / DEPGRAPH-ENFORCEMENT
+  bags_claimed: —
+  prescription: '`apply_depgraph.py --add-design-node`；重命名后 `generate_project_depgraph.py --force`'
+- idx: 11
+  signature: COMPLEXITY >15
+  bags_claimed: —
+  prescription: 拆模块级 helper（参数 ≤7）；**禁调阈值**；用门禁自家 `_cyclomatic_complexity` 复算，别用第三方读数
+- idx: 12
+  signature: ENCODING-SAFETY
+  bags_claimed: —
+  prescription: 禁把门禁报错里的取样字面量回填进 YAML；禁 CRLF（写盘一律 `newline='\n'`）
+- idx: 13
+  signature: CH-FINAL-GATE
+  bags_claimed: —
+  prescription: 该门会拦自家裸 `ch_writer.query` ⇒ 先换会抛错 reader（`DatabaseService.get_clickhouse_conn(role='reader')` +
+    `.execute(sql, params)`）再投
+- idx: 14
+  signature: REGISTRY-MASS-DELETION / HOT-FILE-BASE-FRESHNESS
+  bags_claimed: —
+  prescription: 先按 R-1 分诊 B 型/A 型，两型处方相反
+- idx: 15
+  signature: '`skipped_dirty` 类信号'
+  bags_claimed: 1802/1805
+  prescription: '**与袋死亡相关性 0/134，勿当死因**（在册改判）'
+preflight_gates:
+- ARCH-REFERENCE
+- CAPABILITY-LOOKUP-REQUIRED
+- CLAIM-REQUIRED
+- COMMIT-SCOPE
+- CREATE-GUARD
+- DATETIME-NOW-FORBIDDEN
+- DIRECTORY-CONTRACT
+- EXEMPT-ZONE-FM
+- FILE-PLACEMENT-TTL
+- FOLDER-CAPACITY-HARD-LIMIT
+- MANUAL-ONLY-PERMANENT
+- NO-BARE-SQL
+- PERM-TRIGGER
+- PROTECTED-PATHS
+- REGISTRY-MASS-DELETION
+- RULING-REFERENCE
+- SESSION-REQUIRED
+- TABLE-NAME-REGISTRY
+- TEST-SOURCE-CONSISTENCY
+- TRANSLATION-COVERAGE
+- TTL-METADATA
+- WORKTREE-REQUIRED
+enqueue_skipped_gates:
+- CLAIM-REQUIRED
+- SESSION-REQUIRED
+census_universe:
+- GATE:ALGO-FLOW-LINK
+- GATE:ALGO-NOTE-SYNC
+- GATE:BLUEPRINT-FORMAT
+- GATE:CAPABILITY-LOOKUP-REQUIRED
+- GATE:CAPABILITY-OVERLAP
+- GATE:CH-FINAL-GATE
+- GATE:COMPLEXITY-GUARD
+- GATE:CREATE-GUARD
+- GATE:DATETIME-NOW-FORBIDDEN
+- GATE:DEPGRAPH-ENFORCEMENT
+- GATE:DIRECTORY-CONTRACT
+- GATE:DOC-HEADER-SUITE
+- GATE:ENCODING-SAFETY
+- GATE:EXEMPT-ZONE-FM
+- GATE:FILE-COPY
+- GATE:FILE-PLACEMENT-TTL
+- GATE:FORGED-GW-MARKER
+- GATE:FUNCTION-DUP
+- GATE:GATE-PRECOMMIT-RUN
+- GATE:GATE-VOCAB
+- GATE:HOT-FILE-BASE-FRESHNESS
+- GATE:IMPORT-INTEGRITY
+- GATE:MAP-ALIGNMENT
+- GATE:MODULE-ID-CONSISTENCY
+- GATE:MSG-EXPOSURE
+- GATE:MSG-STYLE
+- GATE:MUTABLE-CONST-WITHOUT-FINAL
+- GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT
+- GATE:NO-BARE-SQL
+- GATE:NO-HIGH-COMPLEXITY
+- GATE:NOQA-VALIDATION
+- GATE:ORPHAN-MODULE
+- GATE:PERMANENT-SYSTEM-TRIGGER
+- GATE:PROTECTED-PATHS
+- GATE:R5-DIGIT-SUFFIX
+- GATE:REAL-KEY-REFERENCE-SCAN
+- GATE:REFERENCE-INTEGRITY
+- GATE:REFERENCE-INTEGRITY(RULING-REFERENCE)
+- GATE:REGISTRY-MASS-DELETION
+- GATE:RELATIVE-PATH-LITERAL
+- GATE:SESSION-REQUIRED
+- GATE:SSOT-REDEFINITION
+- GATE:TABLE-NAME-REGISTRY
+- GATE:TEST-SOURCE-CONSISTENCY
+- GATE:TRANSLATION-COVERAGE
+- GATE:TTL-METADATA
+- GATE:UNDEFINED-NAME
+- LandingEnvironmentError(landing 环境不可用)
+- NOTHING_TO_COMMIT 但快照未真应用(blob 与 old_dev 不符)
+- OTHER:dev CAS 冲突重试耗尽（6 次，池化重放）——死信回退人工
+- 'OTHER:gate 册条目坏，fresh import 亦败（M5.2 确定性判别），修册后重投:'
+- 'OTHER:landing 异常: RuntimeError: git reset` + `--hard（拆写，同上） r'
+- 'OTHER:landing 异常: RuntimeError: prestage 拒绝：以下快照路径'
+- 'OTHER:landing 异常: TimeoutExpired: Command ''[''git'','
+- OTHER:冲突：dev CAS 竞态——293415130d63..b906e95496e9 间同
+- OTHER:冲突：dev CAS 竞态（池化）——3f912437fcf7..6b72dfdce39
+- OTHER:冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac9
+- OTHER:冲突：dev CAS 竞态（池化）——714981aa5594..bce9d7a80af
+- OTHER:冲突：dev CAS 竞态（池化）——84ec1ce85e5c..3ec72b6d0b7
+- OTHER:冲突：dev CAS 竞态（池化）——9ff96cc5c393..b906e95496e
+- OTHER:冲突：入队基底 0f08f7a06c4f 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：入队基底 0fe090715ff0 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['docs
+- OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：入队基底 1cba19a9de52 之后 dev 已推进且触及同路径 ['src/
+- OTHER:冲突：入队基底 5471d43a52b6 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：入队基底 66e6b31346ca 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：入队基底 f53316c6f9d6 之后 dev 已推进且触及同路径 ['scri
+- OTHER:冲突：快照基底 0b3724ed148d（与 dev 的共同祖先 0b3724ed148
+- OTHER:冲突：快照基底 27449507e1c4（与 dev 的共同祖先 27449507e1c
+- OTHER:冲突：快照基底 461b25d0e8fc（与 dev 的共同祖先 461b25d0e8f
+- OTHER:冲突：快照基底 613dcc4f9cf8（与 dev 的共同祖先 613dcc4f9cf
+- OTHER:冲突：快照基底 77129e94b190（与 dev 的共同祖先 77129e94b19
+- OTHER:冲突：快照基底 9120a7aafc6f（与 dev 的共同祖先 9120a7aafc6
+- OTHER:冲突：快照基底 b3c52ff68ca2（与 dev 的共同祖先 03019f119b6
+- OTHER:冲突：快照基底 cb6b4bfc0e12（与 dev 的共同祖先 cb6b4bfc0e1
+- OTHER:本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_que
+- 'OTHER:网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''s'
+- 'OTHER:网关落盘失败（COMMIT_FAILED）: git commit failed: On'
+- WorktreePunchThroughError(EV-02 reset 打穿主仓)
+- cascade_stale(基底重校验不适用)
+- 基底不可知(注册表项 base_head)
+- 注册表三向合并失败(家族)
+census_universe_count: 84
+census_names_family_coverage:
+  GATE:TRANSLATION-COVERAGE: GATE:TRANSLATION-COVERAGE
+  GATE:CREATE-GUARD: GATE:CREATE-GUARD
+  GATE:GATE-PRECOMMIT-RUN: GATE:GATE-PRECOMMIT-RUN
+  注册表三向合并失败(家族): FAM:注册表三向合并
+  GATE:BLUEPRINT-FORMAT: GATE:BLUEPRINT-FORMAT
+  GATE:GATE-VOCAB: GATE:GATE-VOCAB
+  GATE:NOQA-VALIDATION: GATE:NOQA-VALIDATION
+  LandingEnvironmentError(landing 环境不可用): FAM:LandingEnvironmentError
+  GATE:NO-HIGH-COMPLEXITY: GATE:NO-HIGH-COMPLEXITY
+  GATE:TEST-SOURCE-CONSISTENCY: GATE:TEST-SOURCE-CONSISTENCY
+  GATE:CAPABILITY-OVERLAP: GATE:CAPABILITY-OVERLAP
+  GATE:CH-FINAL-GATE: GATE:CH-FINAL-GATE
+  GATE:R5-DIGIT-SUFFIX: GATE:R5-DIGIT-SUFFIX
+  GATE:ORPHAN-MODULE: GATE:ORPHAN-MODULE
+  GATE:MUTABLE-CONST-WITHOUT-FINAL: GATE:MUTABLE-CONST-WITHOUT-FINAL
+  GATE:DIRECTORY-CONTRACT: GATE:DIRECTORY-CONTRACT
+  GATE:ALGO-FLOW-LINK: GATE:ALGO-FLOW-LINK
+  GATE:PERMANENT-SYSTEM-TRIGGER: GATE:PERMANENT-SYSTEM-TRIGGER
+  GATE:COMPLEXITY-GUARD: GATE:COMPLEXITY-GUARD
+  GATE:IMPORT-INTEGRITY: GATE:IMPORT-INTEGRITY
+  'OTHER:landing 异常: RuntimeError: prestage 拒绝：以下快照路径': FAM:prestage拒绝-gitignore快照路径
+  GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT: GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT
+  OTHER:冲突：入队基底 66e6b31346ca 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  GATE:FILE-COPY: GATE:FILE-COPY
+  NOTHING_TO_COMMIT 但快照未真应用(blob 与 old_dev 不符): FAM:NOTHING_TO_COMMIT
+  'OTHER:网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''s': FAM:CLAIM_REQUIRED_VIOLATION
+  GATE:CAPABILITY-LOOKUP-REQUIRED: GATE:CAPABILITY-LOOKUP-REQUIRED
+  GATE:REGISTRY-MASS-DELETION: GATE:REGISTRY-MASS-DELETION
+  GATE:PROTECTED-PATHS: GATE:PROTECTED-PATHS
+  GATE:TTL-METADATA: GATE:TTL-METADATA
+  GATE:HOT-FILE-BASE-FRESHNESS: GATE:HOT-FILE-BASE-FRESHNESS
+  OTHER:冲突：dev CAS 竞态（池化）——9ff96cc5c393..b906e95496e: FAM:BASE-dev-CAS竞态同路径
+  OTHER:冲突：dev CAS 竞态——293415130d63..b906e95496e9 间同: FAM:BASE-dev-CAS竞态同路径
+  GATE:REFERENCE-INTEGRITY(RULING-REFERENCE): GATE:REFERENCE-INTEGRITY
+  GATE:REAL-KEY-REFERENCE-SCAN: GATE:REAL-KEY-REFERENCE-SCAN
+  GATE:MAP-ALIGNMENT: GATE:MAP-ALIGNMENT
+  'OTHER:landing 异常: TimeoutExpired: Command ''[''git'',': FAM:landing-TimeoutExpired
+  GATE:FORGED-GW-MARKER: GATE:FORGED-GW-MARKER
+  GATE:REFERENCE-INTEGRITY: GATE:REFERENCE-INTEGRITY
+  cascade_stale(基底重校验不适用): FAM:cascade_stale
+  OTHER:冲突：入队基底 f53316c6f9d6 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  OTHER:本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_que: FAM:本包自撤
+  OTHER:冲突：快照基底 27449507e1c4（与 dev 的共同祖先 27449507e1c: FAM:BASE-快照基底共祖冲突
+  OTHER:冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  基底不可知(注册表项 base_head): FAM:基底不可知
+  OTHER:冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac9: FAM:BASE-dev-CAS竞态同路径
+  OTHER:冲突：入队基底 0f08f7a06c4f 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  'OTHER:网关落盘失败（COMMIT_FAILED）: git commit failed: On': FAM:COMMIT_FAILED-nothing-to-commit
+  OTHER:冲突：入队基底 0fe090715ff0 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  OTHER:冲突：入队基底 5471d43a52b6 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['docs: FAM:BASE-入队基底后dev推进同路径
+  OTHER:冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['scri: FAM:BASE-入队基底后dev推进同路径
+  OTHER:冲突：快照基底 cb6b4bfc0e12（与 dev 的共同祖先 cb6b4bfc0e1: FAM:BASE-快照基底共祖冲突
+  GATE:FILE-PLACEMENT-TTL: GATE:FILE-PLACEMENT-TTL
+  GATE:SSOT-REDEFINITION: GATE:SSOT-REDEFINITION
+  OTHER:冲突：入队基底 1cba19a9de52 之后 dev 已推进且触及同路径 ['src/: FAM:BASE-入队基底后dev推进同路径
+  OTHER:冲突：dev CAS 竞态（池化）——84ec1ce85e5c..3ec72b6d0b7: FAM:BASE-dev-CAS竞态同路径
+  GATE:ALGO-NOTE-SYNC: GATE:ALGO-NOTE-SYNC
+  GATE:DEPGRAPH-ENFORCEMENT: GATE:DEPGRAPH-ENFORCEMENT
+  GATE:NO-BARE-SQL: GATE:NO-BARE-SQL
+  GATE:TABLE-NAME-REGISTRY: GATE:TABLE-NAME-REGISTRY
+  OTHER:冲突：快照基底 77129e94b190（与 dev 的共同祖先 77129e94b19: FAM:BASE-快照基底共祖冲突
+  OTHER:冲突：快照基底 613dcc4f9cf8（与 dev 的共同祖先 613dcc4f9cf: FAM:BASE-快照基底共祖冲突
+  GATE:MSG-EXPOSURE: GATE:MSG-EXPOSURE
+  GATE:MODULE-ID-CONSISTENCY: GATE:MODULE-ID-CONSISTENCY
+  OTHER:冲突：快照基底 0b3724ed148d（与 dev 的共同祖先 0b3724ed148: FAM:BASE-快照基底共祖冲突
+  GATE:MSG-STYLE: GATE:MSG-STYLE
+  OTHER:dev CAS 冲突重试耗尽（6 次，池化重放）——死信回退人工: FAM:BASE-dev-CAS重试耗尽
+  GATE:RELATIVE-PATH-LITERAL: GATE:RELATIVE-PATH-LITERAL
+  GATE:EXEMPT-ZONE-FM: GATE:EXEMPT-ZONE-FM
+  GATE:UNDEFINED-NAME: GATE:UNDEFINED-NAME
+  OTHER:冲突：快照基底 b3c52ff68ca2（与 dev 的共同祖先 03019f119b6: FAM:BASE-快照基底共祖冲突
+  OTHER:冲突：dev CAS 竞态（池化）——3f912437fcf7..6b72dfdce39: FAM:BASE-dev-CAS竞态同路径
+  GATE:ENCODING-SAFETY: GATE:ENCODING-SAFETY
+  OTHER:冲突：dev CAS 竞态（池化）——714981aa5594..bce9d7a80af: FAM:BASE-dev-CAS竞态同路径
+  OTHER:冲突：快照基底 461b25d0e8fc（与 dev 的共同祖先 461b25d0e8f: FAM:BASE-快照基底共祖冲突
+  'OTHER:gate 册条目坏，fresh import 亦败（M5.2 确定性判别），修册后重投:': FAM:gate册条目坏-fresh-import亦败
+  OTHER:冲突：快照基底 9120a7aafc6f（与 dev 的共同祖先 9120a7aafc6: FAM:BASE-快照基底共祖冲突
+  GATE:SESSION-REQUIRED: GATE:SESSION-REQUIRED
+  GATE:FUNCTION-DUP: GATE:FUNCTION-DUP
+  WorktreePunchThroughError(EV-02 reset 打穿主仓): FAM:WorktreePunchThroughError
+  GATE:DOC-HEADER-SUITE: GATE:DOC-HEADER-SUITE
+  GATE:DATETIME-NOW-FORBIDDEN: GATE:DATETIME-NOW-FORBIDDEN
+  'OTHER:landing 异常: RuntimeError: git reset` + `--hard（拆写，同上） r': FAM:landing-git-reset硬复位超时
+census_without_specific_prescription: []
+gates_in_dead_not_in_preflight_whitelist: &id001
+- ALGO-FLOW-LINK
+- ALGO-NOTE-SYNC
+- BLUEPRINT-FORMAT
+- CAPABILITY-OVERLAP
+- CH-FINAL-GATE
+- COMPLEXITY-GUARD
+- DEPGRAPH-ENFORCEMENT
+- DOC-HEADER-SUITE
+- ENCODING-SAFETY
+- FILE-COPY
+- FORGED-GW-MARKER
+- FUNCTION-DUP
+- GATE-PRECOMMIT-RUN
+- GATE-VOCAB
+- HOT-FILE-BASE-FRESHNESS
+- IMPORT-INTEGRITY
+- MAP-ALIGNMENT
+- MODULE-ID-CONSISTENCY
+- MSG-EXPOSURE
+- MSG-STYLE
+- MUTABLE-CONST-WITHOUT-FINAL
+- NEW-FILE-DEPGRAPH-ENFORCEMENT
+- NO-HIGH-COMPLEXITY
+- NOQA-VALIDATION
+- ORPHAN-MODULE
+- PERMANENT-SYSTEM-TRIGGER
+- R5-DIGIT-SUFFIX
+- REAL-KEY-REFERENCE-SCAN
+- REFERENCE-INTEGRITY
+- RELATIVE-PATH-LITERAL
+- SSOT-REDEFINITION
+- UNDEFINED-NAME
+total_dead_letters: 730
+parse_fail: []
+tool_paths:
+  checked: 20
+  missing: []
+dead_dir: D:\ZephyrAlpha\.runtime\commit_queue\dead
+generated_from: D:\ZephyrAlpha\.runtime\commit_queue\dead（现读 730 封 / 63 处方簇 / census 分身 84 簇）
+r3_rows_hit:
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+- 10
+- 11
+- 12
+- 13
+- 14
+r3_rows_unhit: &id002
+- 15
+r3_diff:
+- idx: 1
+  signature: 注册表三向合并失败（家族）
+  bags_claimed: 71（其中全文指名身份键 7）
+  letters_now: 72
+  clusters:
+  - FAM:注册表三向合并
+  verdict: 冲突
+  evidence: 在册把整族判为'基底病'（走 R-1 修基底），现读 70/72 封（97%）子型全在 **ours 侧**：同侧身份键重复 32 + 存在身份判不了的条目 38 ⇒ 病灶是袋内该册条目自身（重复键/非
+    dict 条目），修基底不解决；该行应拆两型并各给处方
+- idx: 2
+  signature: TRANSLATION-COVERAGE
+  bags_claimed: 11（六图役）
+  letters_now: 55
+  clusters:
+  - GATE:TRANSLATION-COVERAGE
+  verdict: 修订
+  evidence: 在册袋数 11（六图役） vs 现读 55（差 +44）
+- idx: 3
+  signature: CREATE-GUARD
+  bags_claimed: 8（六图役）+ 全局多封
+  letters_now: 68
+  clusters:
+  - GATE:CREATE-GUARD
+  verdict: 修订
+  evidence: 在册袋数 8（六图役）+ 全局多封 vs 现读 68（差 +60）
+- idx: 4
+  signature: GATE-PRECOMMIT-RUN
+  bags_claimed: '2'
+  letters_now: 85
+  clusters:
+  - GATE:GATE-PRECOMMIT-RUN
+  verdict: 冲突
+  evidence: '在册处方=''落地侧门禁账缺失 ⇒ 先跑预跑''；现读 85 封中 72 封的 reason 尾行点名具体内层失败步 {''INNER_FAIL:LINT'': 27, ''INNER_FAIL:HOOK-GATE-PROTECTED-PATHS'':
+    17, ''INNER_FAIL:HOOK-RUFF-FORMAT'': 16} ⇒ 真病灶是被该 runner 聚合的内层门（protected-paths/lint/naming/conflict-marker），处方须指向''读尾行点名的内层门''而非''补门禁账''；且在册袋数
+    2 vs 现读 85'
+- idx: 5
+  signature: 基底不可知
+  bags_claimed: '2'
+  letters_now: 7
+  clusters:
+  - FAM:基底不可知
+  verdict: 修订
+  evidence: 在册袋数 2 vs 现读 7（差 +5）
+- idx: 6
+  signature: RULING-REFERENCE
+  bags_claimed: '2'
+  letters_now: 18
+  clusters:
+  - GATE:REFERENCE-INTEGRITY
+  verdict: 冲突
+  evidence: 在册签名把子码当门名（'RULING-REFERENCE'），现读门 id='REFERENCE-INTEGRITY'；该门现读两子码并存：裁定号悬空 10 封 + 宪法 §号悬空 2
+    封，两者处方不同 ⇒ 该行应改写为'REFERENCE-INTEGRITY#RULING-DANGLING' 并新增一行 '#AGENTS-SECTION-DANGLING'
+- idx: 7
+  signature: '`WorktreePunchThroughError`（EV-02 reset 打穿主仓）'
+  bags_claimed: ≥1
+  letters_now: 2
+  clusters:
+  - FAM:WorktreePunchThroughError
+  - FAM:landing-git-reset硬复位超时
+  verdict: 修订
+  evidence: 一个在册行覆盖现读多门 id ['FAM:WorktreePunchThroughError', 'FAM:landing-git-reset硬复位超时']（建议拆行或注明同判据）
+- idx: 8
+  signature: R5-DIGIT-SUFFIX
+  bags_claimed: 多袋（一次违规拖死整袋）
+  letters_now: 16
+  clusters:
+  - GATE:R5-DIGIT-SUFFIX
+  verdict: 一致
+  evidence: ''
+- idx: 9
+  signature: ORPHAN-MODULE
+  bags_claimed: —
+  letters_now: 10
+  clusters:
+  - GATE:ORPHAN-MODULE
+  verdict: 一致
+  evidence: ''
+- idx: 10
+  signature: NEW-FILE-DEPGRAPH / DEPGRAPH-ENFORCEMENT
+  bags_claimed: —
+  letters_now: 13
+  clusters:
+  - GATE:DEPGRAPH-ENFORCEMENT
+  - GATE:NEW-FILE-DEPGRAPH-ENFORCEMENT
+  verdict: 修订
+  evidence: 一个在册行覆盖现读多门 id ['DEPGRAPH-ENFORCEMENT', 'NEW-FILE-DEPGRAPH-ENFORCEMENT']（建议拆行或注明同判据）
+- idx: 11
+  signature: COMPLEXITY >15
+  bags_claimed: —
+  letters_now: 23
+  clusters:
+  - GATE:COMPLEXITY-GUARD
+  - GATE:NO-HIGH-COMPLEXITY
+  verdict: 修订
+  evidence: 一个在册行覆盖现读多门 id ['COMPLEXITY-GUARD', 'NO-HIGH-COMPLEXITY']（建议拆行或注明同判据）
+- idx: 12
+  signature: ENCODING-SAFETY
+  bags_claimed: —
+  letters_now: 1
+  clusters:
+  - GATE:ENCODING-SAFETY
+  verdict: 一致
+  evidence: ''
+- idx: 13
+  signature: CH-FINAL-GATE
+  bags_claimed: —
+  letters_now: 4
+  clusters:
+  - GATE:CH-FINAL-GATE
+  verdict: 一致
+  evidence: ''
+- idx: 14
+  signature: REGISTRY-MASS-DELETION / HOT-FILE-BASE-FRESHNESS
+  bags_claimed: —
+  letters_now: 4
+  clusters:
+  - GATE:REGISTRY-MASS-DELETION
+  - GATE:HOT-FILE-BASE-FRESHNESS
+  verdict: 修订
+  evidence: 一个在册行覆盖现读多门 id ['REGISTRY-MASS-DELETION', 'HOT-FILE-BASE-FRESHNESS']（建议拆行或注明同判据）
+- idx: 15
+  signature: '`skipped_dirty` 类信号'
+  bags_claimed: 1802/1805
+  letters_now: 0
+  clusters: []
+  verdict: 本窗零命中
+  evidence: 现读 dead/ 无任何袋命中原签名（在册行仍留，勿据本窗删）
+r3_revise_count: 7
+r3_conflict_count: 3
+r3_zero_hit_count: 1
+r3_consistent_count: 4
+summary:
+  total_clusters: 63
+  r3_covered_clusters: 18
+  new_prescription_clusters: 45
+  new_prescription_letters: 352
+  census_universe_count: 84
+  census_clusters_mapped_to_family: 84
+  letters_with_specific_prescription: 730
+  families_with_specific_prescription: 63
+  census_families_without_specific_prescription: []
+  gates_in_dead_not_in_preflight_whitelist: *id001
+  r3_diff_counts:
+    在册行: 15
+    命中行: 14
+    零命中行: *id002
+    新增: 45
+    修订: 7
+    冲突: 3
+    一致: 4
+  top5:
+  - - GATE:GATE-PRECOMMIT-RUN
+    - 85
+  - - FAM:注册表三向合并
+    - 72
+  - - GATE:CREATE-GUARD
+    - 68
+  - - GATE:TRANSLATION-COVERAGE
+    - 55
+  - - FAM:LandingEnvironmentError
+    - 38

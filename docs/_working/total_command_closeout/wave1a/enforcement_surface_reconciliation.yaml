@@ -1,0 +1,2005 @@
+meta:
+  generator: scripts/governance/meta/enforcement_surface_reconcile.py
+  roster_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  catalog_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  code_corpus_dirs:
+  - src/zephyr/gov_enforcement
+  - scripts
+  catalog_corpus_dirs:
+  - docs/01_policies_and_standards/_registry
+  data_as_of_head_commit_time: '2026-09-26T22:53:10+08:00'
+  roster_declared_total_gates: 103
+  roster_entry_count: 103
+  enabled_false_count: 4
+  in_process_loaded_count: 99
+  in_process_load_note: ok
+  head_tracked_file_count: 17982
+table1_trigger_surface:
+  red_list:
+  - gate_id: NO-BARE-GETENV
+    reason: &id001
+    - 死触发：files_trigger 子模式 ['api_key', 'password'] 在 HEAD 全树零命中（疑路径子串误用）
+  - gate_id: BARE-SUBPROCESS
+    reason: &id002
+    - 死触发：files_trigger 子模式 ['api_key', 'password'] 在 HEAD 全树零命中（疑路径子串误用）
+  - gate_id: NO-SECRET-HARDCODE
+    reason: &id003
+    - 死触发：files_trigger 子模式 ['api_key', 'password'] 在 HEAD 全树零命中（疑路径子串误用）
+  red_count: 3
+  rows:
+  - gate_id: HELD-OVERLAP
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: FORGED-GW-MARKER
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: FOREIGN-CHANGE-DETECTION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DERIVED-FILE-DELETION-PROTECTION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: COMMIT-SCOPE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: SESSION-REQUIRED
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CLAIM-REQUIRED
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CAPABILITY-OVERLAP
+    roster_enabled: false
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: false
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DIRECTORY-CONTRACT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: TTL-METADATA
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: FILE-PLACEMENT-TTL
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CREATE-GUARD
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: RULE-EXECUTION-PAIRING
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - docs/01_policies_and_standards/rules/
+    - rule_
+    catalog_files_trigger_raw:
+    - docs/01_policies_and_standards/rules/
+    - rule_
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 460
+    trigger_hit_by_pattern:
+      docs/01_policies_and_standards/rules/: 87
+      rule_: 377
+  - gate_id: REFERENCE-INTEGRITY
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - docs/
+    catalog_files_trigger_raw:
+    - docs/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8146
+    trigger_hit_by_pattern:
+      docs/: 8146
+  - gate_id: RULE-FOUR-WAY-ALIGN
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - docs/01_policies_and_standards/rules/
+    - rule_
+    catalog_files_trigger_raw:
+    - docs/01_policies_and_standards/rules/
+    - rule_
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 460
+    trigger_hit_by_pattern:
+      docs/01_policies_and_standards/rules/: 87
+      rule_: 377
+  - gate_id: RULING-COMMIT-VERIFIED
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: R5-DIGIT-SUFFIX
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - docs/
+    - scripts/
+    - src/
+    - data/
+    catalog_files_trigger_raw:
+    - docs/
+    - scripts/
+    - src/
+    - data/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 13932
+    trigger_hit_by_pattern:
+      docs/: 8146
+      scripts/: 1342
+      src/: 4020
+      data/: 962
+  - gate_id: TRANSLATION-COVERAGE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: ENCODING-SAFETY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: SSOT-REDEFINITION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: UNSAFE-DICT-SPREAD
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: PURE-SHIM
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: PURE-ASSERTION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: NOQA-VALIDATION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DATETIME-NOW-FORBIDDEN
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: GATE-VOCAB
+    roster_enabled: false
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ^(src/zephyr/.*\.py|scripts/.*\.py|docs/01_policies_and_standards/_registry/vocabularies/.*\.yaml)$
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: false
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: SNAPSHOT-DRIFT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: FILE-COPY
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: ID-UNIQUENESS
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .pre-commit-config.yaml
+    catalog_files_trigger_raw:
+    - .pre-commit-config.yaml
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 1
+    trigger_hit_by_pattern:
+      .pre-commit-config.yaml: 1
+  - gate_id: EXEMPT-ZONE-FM
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: MODULE-ID-CONSISTENCY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: PERMANENT-SYSTEM-TRIGGER
+    roster_enabled: false
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: false
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: MSG-EXPOSURE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: EMPTY-HANDLER
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: ORPHAN-MODULE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DOC-REF-BROKEN
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: FUNCTION-DUP
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: NO-BARE-GETENV
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .env
+    - secret
+    - credential
+    - token
+    - password
+    - api_key
+    - private_key
+    catalog_files_trigger_raw:
+    - .env
+    - secret
+    - credential
+    - token
+    - password
+    - api_key
+    - private_key
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 58
+    trigger_hit_by_pattern:
+      .env: 1
+      secret: 34
+      credential: 6
+      token: 16
+      password: 0
+      api_key: 0
+      private_key: 1
+    red_reason: *id001
+  - gate_id: MSG-STYLE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: NO-UPWARD-IMPORT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: NO-HARDCODED-URL
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: MAP-ALIGNMENT
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - docs/02_enterprise_architecture/
+    - docs/03_modules/
+    - alignment_checklist
+    catalog_files_trigger_raw:
+    - docs/02_enterprise_architecture/
+    - docs/03_modules/
+    - alignment_checklist
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 4844
+    trigger_hit_by_pattern:
+      docs/02_enterprise_architecture/: 53
+      docs/03_modules/: 4790
+      alignment_checklist: 1
+  - gate_id: NO-BARE-SQL
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CH-BATCH-SIZE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CH-FINAL-GATE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CH-VERSION-COL
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - schema
+    - ddl
+    catalog_files_trigger_raw:
+    - schema
+    - ddl
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 379
+    trigger_hit_by_pattern:
+      schema: 343
+      ddl: 36
+  - gate_id: COMPLEXITY-GUARD
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: ALGO-NOTE-SYNC
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: ALGO-FLOW-LINK
+    roster_enabled: false
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: false
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: META-TESTS-COVERAGE
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - tests/
+    catalog_files_trigger_raw:
+    - tests/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 3873
+    trigger_hit_by_pattern:
+      tests/: 3873
+  - gate_id: TEST-SOURCE-CONSISTENCY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: BLUEPRINT-FORMAT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: GATE-DOMAIN-FK
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: BLUEPRINT-HEADER
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CAP-CONSISTENCY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: NO-IMPORT-SIDE-EFFECT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DEPGRAPH-FRESHNESS
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - src/
+    - scripts/
+    - depgraph
+    catalog_files_trigger_raw:
+    - src/
+    - scripts/
+    - depgraph
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 5389
+    trigger_hit_by_pattern:
+      src/: 4020
+      scripts/: 1342
+      depgraph: 45
+  - gate_id: RECONCILER-HEALTH
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - governance
+    catalog_files_trigger_raw:
+    - governance
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 2525
+    trigger_hit_by_pattern:
+      governance: 2525
+  - gate_id: SCRIPTS-IMPORT-INTEGRITY
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - scripts/
+    catalog_files_trigger_raw:
+    - scripts/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 1342
+    trigger_hit_by_pattern:
+      scripts/: 1342
+  - gate_id: GIT-CALL-BUDGET
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: BARE-SUBPROCESS
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .env
+    - secret
+    - credential
+    - token
+    - password
+    - api_key
+    - private_key
+    catalog_files_trigger_raw:
+    - .env
+    - secret
+    - credential
+    - token
+    - password
+    - api_key
+    - private_key
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 58
+    trigger_hit_by_pattern:
+      .env: 1
+      secret: 34
+      credential: 6
+      token: 16
+      password: 0
+      api_key: 0
+      private_key: 1
+    red_reason: *id002
+  - gate_id: UNDEFINED-NAME
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: IMPORT-INTEGRITY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CAPABILITY-LOOKUP-REQUIRED
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: GATE-PRECOMMIT-OFFLINE
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .pre-commit-config.yaml
+    catalog_files_trigger_raw:
+    - .pre-commit-config.yaml
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 1
+    trigger_hit_by_pattern:
+      .pre-commit-config.yaml: 1
+  - gate_id: FOLDER-CAPACITY-HARD-LIMIT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DEPGRAPH-ENFORCEMENT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DERIVATION-ANNOTATION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: RELATIVE-PATH-LITERAL
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CONSUMERS-ACCURACY
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - capability_canonical
+    catalog_files_trigger_raw:
+    - capability_canonical
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 1
+    trigger_hit_by_pattern:
+      capability_canonical: 1
+  - gate_id: SCHEMA-FILE-EXISTS
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - schema
+    catalog_files_trigger_raw:
+    - schema
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 343
+    trigger_hit_by_pattern:
+      schema: 343
+  - gate_id: ASYNCIO-RUN-IN-CONTEXT
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: MUTABLE-CONST-WITHOUT-FINAL
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: OPEN-WITHOUT-WITH
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: MCP-VERSION-FIELD
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: PROTECTED-PATHS
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: BLUEPRINT-NODE-ID-HARDCODE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: WORKTREE-REQUIRED
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: TEST-RESIDUE-SSOT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: SECRET-REGISTRY-CONSISTENCY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: NO-SECRET-HARDCODE
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .env
+    - secret
+    - credential
+    - token
+    - password
+    - api_key
+    - private_key
+    catalog_files_trigger_raw:
+    - .env
+    - secret
+    - credential
+    - token
+    - password
+    - api_key
+    - private_key
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 58
+    trigger_hit_by_pattern:
+      .env: 1
+      secret: 34
+      credential: 6
+      token: 16
+      password: 0
+      api_key: 0
+      private_key: 1
+    red_reason: *id003
+  - gate_id: RECONCILER-FILE-OPS
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - governance
+    catalog_files_trigger_raw:
+    - governance
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 2525
+    trigger_hit_by_pattern:
+      governance: 2525
+  - gate_id: REGISTRY-CODE-ANCHOR
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: STASH-ACCUMULATION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: TABLE-NAME-REGISTRY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: GATE-ERRCODE-CONSISTENCY
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - architecture_model/contracts/
+    catalog_files_trigger_raw:
+    - architecture_model/contracts/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 3
+    trigger_hit_by_pattern:
+      architecture_model/contracts/: 3
+  - gate_id: HOT-FILE-BASE-FRESHNESS
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: STATE-VOCAB-REGISTRY
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - src/
+    - .py
+    catalog_files_trigger_raw:
+    - src/
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 9163
+    trigger_hit_by_pattern:
+      src/: 4020
+      .py: 8892
+  - gate_id: TAG-VOCAB
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - library
+    - catalogs/
+    catalog_files_trigger_raw:
+    - library
+    - catalogs/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 190
+    trigger_hit_by_pattern:
+      library: 107
+      catalogs/: 84
+  - gate_id: BLOOD-FLESH
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - .py
+    catalog_files_trigger_raw:
+    - .py
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 8892
+    trigger_hit_by_pattern:
+      .py: 8892
+  - gate_id: FRONTEND-TRUTH-SOURCE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: BUSINESS-REGISTRY
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: REGISTRY-MASS-DELETION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: REGISTRY-YAML-PARSE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: SPLIT-COORDINATION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: SYNTAX-VALIDATION
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: RESOURCE-SCHEDULE
+    roster_enabled: true
+    roster_files_trigger_raw:
+    - tasks.yaml
+    - config/
+    catalog_files_trigger_raw:
+    - tasks.yaml
+    - config/
+    catalog_always_run: false
+    always_fire: false
+    in_process_loaded: true
+    trigger_hit_count: 121
+    trigger_hit_by_pattern:
+      tasks.yaml: 1
+      config/: 121
+  - gate_id: REAL-KEY-REFERENCE-SCAN
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: null
+    catalog_always_run: null
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: TASK-ORDER-DOCS-LOCK
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: null
+    catalog_always_run: null
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: CONSTITUTION-LINE-LIMIT
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: null
+    catalog_always_run: null
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+  - gate_id: DOC-HEADER-SUITE
+    roster_enabled: true
+    roster_files_trigger_raw: null
+    catalog_files_trigger_raw: ''
+    catalog_always_run: false
+    always_fire: true
+    in_process_loaded: true
+    trigger_hit_count: null
+    trigger_hit_by_pattern: {}
+table2_rule_enforcement:
+  stats:
+    rules_total: 86
+    rules_enforced_in_code: 37
+    rules_code_zero_match: 49
+    coverage_pct_enforced_in_code: 43.0
+    rules_mentioned_in_catalog: 86
+    rules_mentioned_not_enforced: 49
+    corpus_note: 主覆盖率口径=真执法面(门禁代码+checker脚本 py)；被提及面=注册册 yaml 描述。二者分列，勿与散文册的 80/86 混用。
+  zero_match:
+  - &id004
+    rule_no: '002'
+    rule_file: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id005
+    rule_no: '003'
+    rule_file: docs/01_policies_and_standards/rules/trae_003_task_granularity_threshold.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id006
+    rule_no: '004'
+    rule_file: docs/01_policies_and_standards/rules/trae_004_parallel_atomic_transaction.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id007
+    rule_no: '005'
+    rule_file: docs/01_policies_and_standards/rules/trae_005_modification_governance.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id008
+    rule_no: '006'
+    rule_file: docs/01_policies_and_standards/rules/trae_006_anti_hallucination_structure.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 8
+  - &id009
+    rule_no: '007'
+    rule_file: docs/01_policies_and_standards/rules/trae_007_anti_hallucination_behavior.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id010
+    rule_no: 008
+    rule_file: docs/01_policies_and_standards/rules/trae_008_anti_hallucination_output.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id011
+    rule_no: '010'
+    rule_file: docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 7
+  - &id012
+    rule_no: '015'
+    rule_file: docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id013
+    rule_no: '016'
+    rule_file: docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id014
+    rule_no: '017'
+    rule_file: docs/01_policies_and_standards/rules/trae_017_arch_governance_order.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 7
+  - &id015
+    rule_no: 018
+    rule_file: docs/01_policies_and_standards/rules/trae_018_behavior_code_prohibition.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id016
+    rule_no: 019
+    rule_file: docs/01_policies_and_standards/rules/trae_019_behavior_security_prohibition.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id017
+    rule_no: '020'
+    rule_file: docs/01_policies_and_standards/rules/trae_020_behavior_governance_prohibition.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id018
+    rule_no: '021'
+    rule_file: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id019
+    rule_no: '022'
+    rule_file: docs/01_policies_and_standards/rules/trae_022_behavior_conditional_code.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id020
+    rule_no: '023'
+    rule_file: docs/01_policies_and_standards/rules/trae_023_behavior_conditional_governance.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id021
+    rule_no: '024'
+    rule_file: docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id022
+    rule_no: '025'
+    rule_file: docs/01_policies_and_standards/rules/trae_025_methodology_decision.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id023
+    rule_no: '026'
+    rule_file: docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id024
+    rule_no: '027'
+    rule_file: docs/01_policies_and_standards/rules/trae_027_methodology_collaboration.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id025
+    rule_no: 029
+    rule_file: docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id026
+    rule_no: '031'
+    rule_file: docs/01_policies_and_standards/rules/trae_031_security_key_access.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id027
+    rule_no: '032'
+    rule_file: docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id028
+    rule_no: '033'
+    rule_file: docs/01_policies_and_standards/rules/trae_033_module_registration_sync.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id029
+    rule_no: '035'
+    rule_file: docs/01_policies_and_standards/rules/trae_035_task_construction_verification.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id030
+    rule_no: '036'
+    rule_file: docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id031
+    rule_no: '037'
+    rule_file: docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id032
+    rule_no: 038
+    rule_file: docs/01_policies_and_standards/rules/trae_038_arch_ctr_injection.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id033
+    rule_no: 039
+    rule_file: docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id034
+    rule_no: '040'
+    rule_file: docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id035
+    rule_no: '041'
+    rule_file: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id036
+    rule_no: '042'
+    rule_file: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id037
+    rule_no: '043'
+    rule_file: docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 7
+  - &id038
+    rule_no: '044'
+    rule_file: docs/01_policies_and_standards/rules/trae_044_compliance_audit.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id039
+    rule_no: '045'
+    rule_file: docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id040
+    rule_no: '046'
+    rule_file: docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id041
+    rule_no: 049
+    rule_file: docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id042
+    rule_no: '050'
+    rule_file: docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id043
+    rule_no: '051'
+    rule_file: docs/01_policies_and_standards/rules/trae_051_domain_policy_risk_backtest.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id044
+    rule_no: '052'
+    rule_file: docs/01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - &id045
+    rule_no: 058
+    rule_file: docs/01_policies_and_standards/rules/trae_058_depgraph_scan_exclusions.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 2
+  - &id046
+    rule_no: '066'
+    rule_file: docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - &id047
+    rule_no: '070'
+    rule_file: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - &id048
+    rule_no: '074'
+    rule_file: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - &id049
+    rule_no: '076'
+    rule_file: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - &id050
+    rule_no: 078
+    rule_file: docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - &id051
+    rule_no: 081
+    rule_file: docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 2
+  - &id052
+    rule_no: 083
+    rule_file: docs/01_policies_and_standards/rules/trae_083_design_intent_source_discipline.yaml
+    enforced_in_code: false
+    code_ref_files: []
+    code_ref_count: 0
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  rows:
+  - rule_no: '001'
+    rule_file: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/_shared/frontmatter.py
+    - scripts/governance/generate_project_depgraph.py
+    - scripts/governance/meta/_concurrency.py
+    - scripts/lock_files.py
+    - scripts/ops_guard.py
+    - scripts/scaffold.py
+    - src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py
+    code_ref_count: 7
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - *id004
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  - *id009
+  - *id010
+  - rule_no: 009
+    rule_file: docs/01_policies_and_standards/rules/trae_009_anti_hallucination_safety.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 8
+  - *id011
+  - rule_no: '011'
+    rule_file: docs/01_policies_and_standards/rules/trae_011_code_type_import.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/_archive/governance/create_depgraph_task_cards.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - rule_no: '012'
+    rule_file: docs/01_policies_and_standards/rules/trae_012_code_test_security.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d8_doc_sync/sync_rule_registry.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 8
+  - rule_no: '013'
+    rule_file: docs/01_policies_and_standards/rules/trae_013_arch_cross_package_dep.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - rule_no: '014'
+    rule_file: docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - *id012
+  - *id013
+  - *id014
+  - *id015
+  - *id016
+  - *id017
+  - *id018
+  - *id019
+  - *id020
+  - *id021
+  - *id022
+  - *id023
+  - *id024
+  - rule_no: 028
+    rule_file: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/apply_depgraph.py
+    - scripts/governance/d2_links/audit_broken_links.py
+    - scripts/governance/d3_metadata/check_naming_convention.py
+    - scripts/governance/d3_metadata/validate_module_id_naming.py
+    - scripts/governance/d3_metadata/validate_rule_frontmatter.py
+    - scripts/governance/d5_architecture/validators/validate_directory_structure.py
+    - scripts/governance/d5_architecture/validators/validate_ssot.py
+    - scripts/governance/d7_code/check_encoding.py
+    - scripts/governance/generate_project_depgraph.py
+    - scripts/scaffold.py
+    - src/zephyr/gov_enforcement/commit_gates/create_guard.py
+    - src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py
+    - src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py
+    code_ref_count: 13
+    mentioned_in_catalog: true
+    catalog_ref_count: 11
+  - *id025
+  - rule_no: '030'
+    rule_file: docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/rule_enforcement/invariants/post_doc_review_check.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - *id026
+  - *id027
+  - *id028
+  - rule_no: '034'
+    rule_file: docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/_archive/governance/create_depgraph_task_cards.py
+    - scripts/governance/wave1a/build_delivery_cards.py
+    - scripts/governance/wave1a/store_liveness_probe.py
+    code_ref_count: 3
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - *id029
+  - *id030
+  - *id031
+  - *id032
+  - *id033
+  - *id034
+  - *id035
+  - *id036
+  - *id037
+  - *id038
+  - *id039
+  - *id040
+  - rule_no: '047'
+    rule_file: docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/_archive/one_off/oneoff_commit_audit02.py
+    - scripts/governance/_shared/frontmatter.py
+    - scripts/governance/d1_structure/check_directory_contract.py
+    - scripts/governance/d5_architecture/checkers/check_vms_ssot.py
+    - scripts/governance/d5_architecture/generators/generate_contracts.py
+    - scripts/governance/d7_code/check_yaml_anchor_consistency.py
+    - scripts/governance/d7_code/detect_forward_reference.py
+    - scripts/governance/generate_project_depgraph.py
+    - scripts/governance/generators/generate_registry_master_index.py
+    - scripts/ops/verify_header_completeness.py
+    - src/zephyr/gov_enforcement/commit_gates/create_guard.py
+    code_ref_count: 11
+    mentioned_in_catalog: true
+    catalog_ref_count: 14
+  - rule_no: 048
+    rule_file: docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d3_metadata/check_registry_consistency.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - *id041
+  - *id042
+  - *id043
+  - *id044
+  - rule_no: '053'
+    rule_file: docs/01_policies_and_standards/rules/trae_053_automation_dual_track.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/construction/local_layer_daemon.py
+    - scripts/governance/d11_compliance/verify_schema_health.py
+    code_ref_count: 2
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - rule_no: '054'
+    rule_file: docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/apply_battle_map.py
+    - scripts/governance/apply_dataflowgraph.py
+    - scripts/governance/apply_decisiongraph.py
+    - scripts/governance/apply_depgraph.py
+    - scripts/governance/fix_depgraph_module_id.py
+    - scripts/governance/generate_project_depgraph.py
+    - scripts/governance/meta/backup_runtime_state.py
+    - scripts/governance/migrations/add_acquisition_fields.py
+    - scripts/governance/test_remediation_progress_smoke.py
+    code_ref_count: 9
+    mentioned_in_catalog: true
+    catalog_ref_count: 7
+  - rule_no: '055'
+    rule_file: docs/01_policies_and_standards/rules/trae_055_arch_domain_capacity.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/_archive/prototype/audit_domain_nodes.py
+    - scripts/governance/d5_architecture/detect_constraint_violations.py
+    - scripts/governance/extract_depgraph.py
+    code_ref_count: 3
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - rule_no: '056'
+    rule_file: docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/apply_depgraph.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - rule_no: '057'
+    rule_file: docs/01_policies_and_standards/rules/trae_057_ai_consumer_first.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/wave1a/build_delivery_cards.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - *id045
+  - rule_no: 059
+    rule_file: docs/01_policies_and_standards/rules/trae_059_schema_version_write_protection.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d3_metadata/check_schema_version_writes.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - rule_no: '060'
+    rule_file: docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/apply_depgraph.py
+    - scripts/governance/architecture_health_dashboard.py
+    - scripts/governance/d3_metadata/check_naming_convention.py
+    - scripts/governance/d3_metadata/check_vocab_hardcode.py
+    - scripts/governance/d8_doc_sync/validate_document_ttl.py
+    - scripts/governance/meta/detect_config_deviation.py
+    - scripts/governance/meta/enforcement_surface_reconcile.py
+    - scripts/governance/wave1a/build_delivery_cards.py
+    - scripts/start_paper_session.py
+    - src/zephyr/gov_enforcement/commit_gates/create_guard.py
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+    code_ref_count: 12
+    mentioned_in_catalog: true
+    catalog_ref_count: 8
+  - rule_no: '061'
+    rule_file: docs/01_policies_and_standards/rules/trae_061_decisiongraph_access_protocol.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d5_architecture/generators/generate_decision_diagram.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - rule_no: '062'
+    rule_file: docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/_shared/module_translation_loader.py
+    - scripts/governance/_shared/terminology_loader.py
+    - scripts/governance/align_battle_map.py
+    - scripts/governance/apply_depgraph.py
+    - scripts/governance/d3_metadata/add_module_translation.py
+    - scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py
+    - scripts/governance/d5_architecture/generators/generate_candidate_module_report.py
+    - scripts/governance/d5_architecture/validators/validate_three_way_consistency.py
+    - scripts/governance/decision_node_plain_zh_backfill.py
+    - scripts/governance/harvest_candidates_from_drafts.py
+    - scripts/governance/migrate_sqlite_to_pg/migrate_data.py
+    - scripts/governance/migrate_sqlite_to_pg/seed_from_yaml.py
+    - scripts/governance/reconcile_generators.py
+    - scripts/ops/cleanup_runtime_tmp_residue.py
+    - src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py
+    - src/zephyr/gov_enforcement/commit_gates/commit_scope_gate.py
+    - src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py
+    - src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py
+    - src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
+    - src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py
+    code_ref_count: 20
+    mentioned_in_catalog: true
+    catalog_ref_count: 11
+  - rule_no: '063'
+    rule_file: docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/data/repair_kline_degraded_pull.py
+    - scripts/governance/data_quality/check_tick_duplication.py
+    code_ref_count: 2
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - rule_no: '064'
+    rule_file: docs/01_policies_and_standards/rules/trae_064_git_call_budget.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - rule_no: '065'
+    rule_file: docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d11_compliance/check_generator_no_realtime_time.py
+    - scripts/governance/d5_architecture/generators/_common.py
+    code_ref_count: 2
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - *id046
+  - rule_no: '067'
+    rule_file: docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/_shared/staged_files.py
+    - scripts/governance/_shared/walk.py
+    - scripts/governance/d5_architecture/generators/align_all.py
+    - scripts/governance/d8_doc_sync/algo_flow_reverse_orphan_reconciler.py
+    - scripts/lock_files.py
+    - scripts/ops_guard.py
+    - src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py
+    - src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py
+    - src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+    code_ref_count: 10
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - rule_no: 068
+    rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - rule_no: 069
+    rule_file: docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - *id047
+  - rule_no: '071'
+    rule_file: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d3_metadata/check_frontmatter_metadata.py
+    - scripts/ops/cleanup_runtime_tmp_residue.py
+    - src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
+    code_ref_count: 3
+    mentioned_in_catalog: true
+    catalog_ref_count: 7
+  - rule_no: '072'
+    rule_file: docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+    code_ref_count: 2
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - rule_no: '073'
+    rule_file: docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - *id048
+  - rule_no: '075'
+    rule_file: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - *id049
+  - rule_no: '077'
+    rule_file: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/d5_architecture/detectors/analyze_same_name_module_relations.py
+    - scripts/governance/d5_architecture/detectors/detect_duplicate_module_names.py
+    - src/zephyr/gov_enforcement/commit_gates/capability_lookup_bypass_policy.py
+    - src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py
+    code_ref_count: 4
+    mentioned_in_catalog: true
+    catalog_ref_count: 5
+  - *id050
+  - rule_no: 079
+    rule_file: docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/generators/generate_gate_registry.py
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+    code_ref_count: 3
+    mentioned_in_catalog: true
+    catalog_ref_count: 6
+  - rule_no: 080
+    rule_file: docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py
+    - src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py
+    code_ref_count: 2
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - *id051
+  - rule_no: 082
+    rule_file: docs/01_policies_and_standards/rules/trae_082_symbol_convention.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/ch/apply_exchange_columns.py
+    - scripts/ch/lint_symbol_convention.py
+    - scripts/ch/verify_exchange_coverage.py
+    - scripts/ch/verify_schema_truth.py
+    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+    - scripts/governance/meta/validate_rules_integrity.py
+    code_ref_count: 6
+    mentioned_in_catalog: true
+    catalog_ref_count: 7
+  - *id052
+  - rule_no: 084
+    rule_file: docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - scripts/governance/audit_precommit_incremental_baseline.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+  - rule_no: 085
+    rule_file: docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    code_ref_count: 1
+    mentioned_in_catalog: true
+    catalog_ref_count: 3
+  - rule_no: 086
+    rule_file: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
+    enforced_in_code: true
+    code_ref_files:
+    - src/zephyr/gov_enforcement/commit_gates/__init__.py
+    - src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py
+    code_ref_count: 2
+    mentioned_in_catalog: true
+    catalog_ref_count: 4
+disabled_gates_facts:
+- gate_id: CAPABILITY-OVERLAP
+  roster_source: in_process
+  catalog_status: active
+  catalog_files_trigger_raw: ''
+  in_process_loaded: false
+- gate_id: GATE-VOCAB
+  roster_source: in_process
+  catalog_status: active
+  catalog_files_trigger_raw: ^(src/zephyr/.*\.py|scripts/.*\.py|docs/01_policies_and_standards/_registry/vocabularies/.*\.yaml)$
+  in_process_loaded: false
+- gate_id: PERMANENT-SYSTEM-TRIGGER
+  roster_source: in_process
+  catalog_status: active
+  catalog_files_trigger_raw: ''
+  in_process_loaded: false
+- gate_id: ALGO-FLOW-LINK
+  roster_source: in_process
+  catalog_status: active
+  catalog_files_trigger_raw: ''
+  in_process_loaded: false

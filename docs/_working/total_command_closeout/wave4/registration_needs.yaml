@@ -1,0 +1,124 @@
+# 波 4 · 灾备与冷存链 —— 待登记需求清单（施工队出单，不代表已批）
+# 真源方向：本件 = 派生需求台账（SSOT：规则/YAML 侧待办），登记动作由治理腿执行
+ttl: task_bound
+completes_when: "wave4 四包产出的登记需求被逐项吸收或明确否决"
+package: wave4_dr_chain
+lane: .aidrafts/st-final-build-20260926
+author: construction_crew
+status_note: "本件只列需求，未自赋裁定号；引用裁定前先查 ruling_registry 可查性（本包零引用）"
+
+needs:
+  - id: W4-R1
+    priority: P1
+    kind: depgraph_node
+    title: "为 process_reaper 新增件登记设计节点（RULE-DEPGRAPH：先登记后施工补票）"
+    objects:
+      - src/zephyr/trading/process_reaper.py::identity_mismatch_reason
+      - src/zephyr/trading/process_reaper.py::_born_mismatch
+      - src/zephyr/trading/process_reaper.py::_image_mismatch
+      - src/zephyr/trading/process_reaper.py::_cmd_mismatch
+      - src/zephyr/trading/process_reaper.py::_incubation_prekill_skip_reason
+      - src/zephyr/trading/process_reaper.py::_spare_incubated_mismatch
+    anchor: "MOD-RESOURCE_OPTIMIZATION_ENGINE §P-28（沿用既有 module_id，本包未新建模块）"
+    command: "python scripts/governance/apply_depgraph.py --add-design-node ..."
+    why: "宪法 §0.5 要求施工前登记；本包在车道内改码，登记面属热册不可自写"
+
+  - id: W4-R2
+    priority: P1
+    kind: module_translation_registry
+    title: "两个新建测试件登记大白话简介（TRANSLATION-COVERAGE gate 面）"
+    objects:
+      - tests/infrastructure/test_process_reaper_identity_recheck.py
+      - tests/backup/test_stage3_vault_mtime_and_verdict.py
+    command: "python scripts/governance/add_module_translation.py <module_id>"
+    note: "tests/ 豁免 CREATE-GUARD，但不豁免翻译覆盖册；两者 module_id 未照抄兄弟件"
+
+  - id: W4-R3
+    priority: P1
+    kind: registry_field
+    title: 'backup_state.json 新增四键需入键名真源册（防"键名漂移"复发）'
+    keys:
+      - last_backup_partial_items
+      - last_code_backup_status
+      - last_code_backup_snapshot_mode
+      - last_code_backup_hardlinked
+    background: "案卷 X-07 病根＝引用方背的键名与盘上真键名不符；新键必须先登记再被读"
+    consumer_to_update: scripts/backup/backup_reconciler.py（现仅读 last_backup_status/last_backup_log_verified）
+
+  - id: W4-R4
+    priority: P1
+    kind: audit_criteria
+    title: "备份审计判据改读 Mode A 轮的 hardlinked，禁按任意轮定生死"
+    rationale: "X-17 定论：Mode B（prev==day）建链分支结构不可达 ⇒ hardlinked 恒 0 不是病；
+      实测 Mode A 轮（20260925 06:00）hardlinked=234,299"
+    proposed_rule: "近 N 个 snapshot_mode=A_seed_from_prev_day 轮中至少一轮 hardlinked>0，否则红"
+    gate_owner: disaster_recovery / MOD-INF-043
+    do_not: "禁把该判据写成'每轮 hardlinked>0'（会必红且诱导假修）"
+
+  - id: W4-R5
+    priority: P2
+    kind: complexity_debt
+    title: "_reap_incubated_expired 圈复杂度 22→24（改前已 >15，属既有债）"
+    measured: "用门禁自家 high_complexity_gate._cyclomatic_complexity 复算，未调阈值"
+    ask: "由该函数 owner 拆成本体（本包只加 recheck 形参与一次闸门调用，+2）"
+
+  - id: W4-R6
+    priority: P2
+    kind: ledger_semantics
+    title: "identity_mismatch 是否回写 incubation ledger（免噪音）"
+    current: "赦免后不回写 reaped：登记项仍由孵化方按 pid_exists 收敛（方向保守，零误杀）"
+    risk: "PID 复用且登记子进程已死的记录会每轮重复 WARN（可观测但会累积）"
+    ask: "Owner 定：① 保持现状 ② 增加 reaped_reason=identity_dead 通道（需同步 process_incubator）"
+
+  - id: W4-R7
+    priority: P2
+    kind: fact_disclosure
+    title: "P-26 分组事实表喂 ⚑-3（本包未改排除清单，生产流转面）"
+    facts:
+      worktrees_share_of_in_scope_files: "94.31% (676784/717647)"
+      worktrees_share_of_tree_files: "48.71% (677208/1390160)"
+      counterfactual_in_scope_files_if_excluded: 40863
+      counterfactual_gib_saved: "27.3%（27.608→20.084 GiB）"
+      dir_count_two_calibers: ".worktrees 一级目录 62（磁盘）vs git worktree list 84（注册）"
+    ban_restated: "排除清单改动＝生产流转面，需 Owner 门位；本包只出表"
+
+  - id: W4-R8
+    priority: P2
+    kind: follow_up_measurement
+    title: "06:00 轮 copied=336678 与 .worktrees 在备件 676784 是否同一集合（未逐件比对）"
+    ask: "需一次 Mode B 空 day 目录取证或 prev/day 清单 diff 采样，禁在本包窗口做（超预算）"
+
+  - id: W4-R9
+    priority: P1
+    kind: quarantine_decision
+    title: "源侧只读件 audit_prompts_20_ai.md 的只读位处置（三段式，未动手）"
+    measured: "源件只读位 True；本包仅在沙箱复现清位效果（SOURCE_STILL_READONLY=True）"
+    steps_proposed:
+      - "标记：Owner 裁定是否清位（热区文件，本包禁写）"
+      - "物理隔离：清位前先建只读检疫副本"
+      - "等批文：批文后备份腿自动只解冻快照副本"
+
+evidence_index:
+  - "docs/_working/total_command_closeout/wave4/dr_chain_report.md §4.1/§4.2/§4.3/§4.4"
+  - ".runtime/tmp/dr_p28_probe.py + dr_p28_probe_out.txt（三例红蓝对撞，零真杀）"
+  - ".runtime/tmp/dr_stage3_sandbox.ps1 + dr_stage3_sandbox_out.txt（P-27 before/after、真值表、HARDLINK_COUNT=2）"
+  - ".runtime/tmp/dr_hardlink_probe.ps1（PS5.1 建链可用 + fsutil 计数=3）"
+  - ".runtime/tmp/dr_x17_census.py（370 份报告普查，只读）"
+  - ".runtime/tmp/dr_p26_census.py + dr_p26_out.txt（分组事实表，只读）"
+
+touched_files:
+  code:
+    - src/zephyr/trading/process_reaper.py
+    - scripts/backup/backup.ps1
+  tests_new:
+    - tests/infrastructure/test_process_reaper_identity_recheck.py
+    - tests/backup/test_stage3_vault_mtime_and_verdict.py
+  docs:
+    - docs/_working/total_command_closeout/wave4/dr_chain_report.md
+    - docs/_working/total_command_closeout/wave4/registration_needs.yaml
+  not_touched:
+    - config/flags.yaml
+    - config/dr_policy.yaml
+    - scripts/backup/backup_config.yaml
+    - docs/01_policies_and_standards/**
+    - "F:/ G: 真实备份盘（零写、仅盘符可达性只读探测）"
