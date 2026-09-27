@@ -1648,6 +1648,16 @@ def drain_queue(
     """
     root = resolve_queue_root(queue_root)
     _ensure_dirs(root)
+    if head_reader is None:
+        # 半接线治本（2026-09-27 实证）：head_reader 形参只有池路径 _pool_process_item 注入，
+        # try_bootstrap_drain（签名里连该形参都没有）/_cmd_drain/reconciler 经 landing 转发
+        # 这三条生产道一律 None ⇒ _revalidate_stale_base 走 fail-closed 分支，**不经落地**
+        # 就把被标 stale 的在途袋判死（文案指纹 "(head_reader 缺失无法重校验)"）。此处按
+        # duck-typing 从 landing 自带读口补齐：一处必经点覆盖全部排空入口，不改调用点签名、
+        # 不引循环 import；无读口时保持 None 交下游 fail-closed（判据不放松）。
+        _hr_getter = getattr(landing, "head_reader", None)
+        if callable(_hr_getter):
+            head_reader = _hr_getter()
     landing_fn = landing if landing is not None else default_landing_stub
     stats = {
         "skipped": False,

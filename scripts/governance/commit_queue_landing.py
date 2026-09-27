@@ -1268,6 +1268,11 @@ class WorktreeLanding:
         """_dev_head implementation."""
         return self._git_repo("rev-parse", f"refs/heads/{self.target_branch}").stdout.strip()
 
+    def head_reader(self):
+        """stale 基底重校验的 HEAD blob 读口（公开口，供各排空通道注入；薄封装 _pool_head_reader，
+        不另写第二份读口实现）。"""
+        return _pool_head_reader(self)
+
     # ------------------------------------------------------------------
     # 专用 worktree 生命周期（66 号 §6.3 MVP 形态）
     # ------------------------------------------------------------------

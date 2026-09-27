@@ -660,3 +660,83 @@ def test_same_session_prior_landing_is_not_a_conflict(cql, cq, repo: Path, tmp_p
     other = _commit(repo, "docs/x.md", "x2 others\n", "[GW:other-sid:q-2] other landing")
     reason = landing._conflict_reason(item, other)
     assert reason and "快进判定失败" in reason, "混入他会话漂移必须判红（本尺不得恒绿）"
+
+
+# ---------------------------------------------------------------------------
+# ⑨ 半接线治本判别尺（2026-09-27 st-chief6-20260927）：非池排空道必须拿得到 head_reader
+# ---------------------------------------------------------------------------
+
+
+class _ReaderBearingLanding:
+    """带 head_reader 的 landing（真 WorktreeLanding 形态），__call__ 抛哨兵便于识别走到落地段。"""
+
+    def __init__(self, blob_of) -> None:
+        self._blob_of = blob_of
+
+    def head_reader(self):
+        return self._blob_of
+
+    def __call__(self, item, queue_root):
+        raise AssertionError("REACHED_LANDING")
+
+
+def _mk_stale_item(cq, repo: Path, qroot: Path) -> str:
+    """入一袋然后把项标 stale（复现"同 base_head 被他人落地标记"的在途态）。"""
+    qroot.mkdir(parents=True, exist_ok=True)
+    _commit(repo, "docs/notes.md", "v1 owner draft", "seed")
+    item = _item(cq, repo, qroot, "docs/notes.md", b"v2 bag snapshot body")
+    pend = qroot / "pending" / f"{item['qid']}.json"
+    data = json.loads(pend.read_text(encoding="utf-8"))
+    data.setdefault("meta", {})["stale"] = True
+    data["meta"]["stale_by"] = "q-other-lane"
+    pend.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return item["qid"]
+
+
+def test_drain_derives_head_reader_from_landing(cq, repo: Path, tmp_path: Path, monkeypatch) -> None:
+    """治本正面尺：drain_queue 从 landing 自带读口 duck-typing 推导后传给 _revalidate_stale_base。
+
+    病形实证（本会话三袋 + 忙时结构性不可交付）：head_reader 形参 09-24 就有，但只有池路径
+    _pool_process_item 注入；try_bootstrap_drain（签名里连该形参都没有）/_cmd_drain/reconciler
+    经 landing 转发这三条生产道一律 None ⇒ _revalidate_stale_base 走 fail-closed 分支，
+    **不经落地**就把被标 stale 的在途袋判死（文案指纹 "(head_reader 缺失无法重校验)"）。
+    """
+    seen: list[object] = []
+
+    def _spy(item, head_reader, mergeable_pred=None):
+        seen.append(head_reader)
+        return True, []
+
+    monkeypatch.setattr(cq, "_revalidate_stale_base", _spy)
+    qroot = tmp_path / "queue-derive"
+    _mk_stale_item(cq, repo, qroot)
+    blob_of = lambda rel: _git(repo, "rev-parse", f"refs/heads/dev:{rel}") or None  # noqa: E731
+    cq.drain_queue(str(qroot), landing=_ReaderBearingLanding(blob_of))
+    assert seen, "stale 项没走重校验＝本尺失去意义（可能 stale 标记位置变了）"
+    assert all(callable(x) for x in seen), f"landing 带读口却仍收到 None：推导没接上 {seen}"
+    got = seen[0]("docs/notes.md")
+    assert isinstance(got, str) and len(got) == 40 and all(c in "0123456789abcdef" for c in got), (
+        f"推导出的读口必须真取到当前 HEAD 的 git blob id，实得 {got!r}"
+    )
+
+
+def test_drain_without_reader_stays_fail_closed(cq, repo: Path, tmp_path: Path, monkeypatch) -> None:
+    """阴性对照：landing 不带读口时**仍**传 None——治本不放松既有的 fail-closed 口径。
+
+    没有这条，上一条只能证明"它注入了什么"，证不出"它只在有证据时注入"。
+    """
+    seen: list[object] = []
+
+    def _spy(item, head_reader, mergeable_pred=None):
+        seen.append(head_reader)
+        return True, []
+
+    monkeypatch.setattr(cq, "_revalidate_stale_base", _spy)
+    qroot = tmp_path / "queue-plain"
+    _mk_stale_item(cq, repo, qroot)
+
+    def _plain_landing(item, queue_root):
+        raise AssertionError("REACHED_LANDING")
+
+    cq.drain_queue(str(qroot), landing=_plain_landing)
+    assert seen and seen[0] is None, f"无读口时应保持 None 交下游 fail-closed，实得 {seen[0]!r}"
