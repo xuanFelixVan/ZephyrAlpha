@@ -1152,8 +1152,10 @@ class ConfirmGate:
     def decide_from_payload(self, payload: Mapping[str, Any] | None) -> dict[str, Any]:
         """api 直通口：body {order_id, decision, reason?, allow_amend?} → 回执形状。
 
-        待接线一行（api_server 属禁触热件，本车道不改）：
-            return ConfirmGate().decide_from_payload(payload)
+        **本方法不是仪表盘接线口**（2026-09-27 接线落地时判定）：它把 ``actor``/
+        ``allow_amend`` 取自 body，而仪表盘是免鉴权本地面——照搬即任何客户端可自称
+        审计主体并自开改判闸。真接线见 ``api_server.schedulegate_confirm``：直调
+        :meth:`decide`，``actor`` 由服务端钉死、``allow_amend`` 恒 False。
 
         **接线前置三件（未齐不得接，见头注 [CONSUMERS] 与车道记录册 §二）**：
         ①会话鉴权真源——``actor``/``allow_amend`` 不得取自 body（现零鉴权＝谁都能自称

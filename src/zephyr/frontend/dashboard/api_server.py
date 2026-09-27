@@ -5162,18 +5162,36 @@ def schedulegate_skeletons() -> dict[str, Any]:
         return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": []}
 
 
+# 审计主体由服务端钉死：仪表盘是免鉴权本地面，actor/allow_amend 一律不取自 body
+# （confirm_gate「接线前置①」原判定；照搬 body 即任何客户端可自称审计主体并绕过改判闸）。
+_SCHEDULEGATE_UI_ACTOR = "schedulegate_ui"
+
+
 @app.post("/api/schedulegate-confirm")
 def schedulegate_confirm(payload: dict[str, Any] | None = None) -> dict[str, Any]:
-    """骨架级一键确认（本页唯一写路由）。
+    """骨架级一键确认（本页唯一写路由）；C9 确认态落点=confirm_gate 三落点账。
 
-    C9 判定落点（确认态写何处：seeds 状态机回写 or 审批事件账）无 DESIGN 定稿前，
-    本路由诚实拒执行（ok:false），不做假持久化；落点批文后单批接通。
+    回执形状 ``{ok, message, receipt?, error?}`` 由 ``ConfirmGate.decide`` 给出（前端
+    schedulegate.js 按 ok 渲染回执卡）。半写如实报 ok:false 并带 stage：意图账留盘，
+    同单下次调用或 ``reconcile`` 自愈后复用同一枚回执。改判（相反 decision）不经本路由，
+    须走带 ``allow_amend=True`` 的显式调用面。
     """
-    body = payload or {}
-    return {
-        "ok": False,
-        "error": (
-            "schedulegate_confirm_not_wired: C9 确认态判定落点待批文"
-            f"（received order_id={str(body.get('order_id'))[:64]!r}），确认请求未生效"
-        ),
-    }
+    body = dict(payload or {})
+    from zephyr.ai_layer.scheduling.confirm_gate import ConfirmGate, ConfirmPersistError
+
+    try:
+        return ConfirmGate().decide(
+            str(body.get("order_id") or ""),
+            str(body.get("decision") or ""),
+            reason=str(body.get("reason") or ""),
+            actor=_SCHEDULEGATE_UI_ACTOR,
+            allow_amend=False,
+        )
+    except ConfirmPersistError as exc:
+        return {
+            "ok": False,
+            "error": f"confirm_persist_failed(stage={exc.stage}): {str(exc)[:180]}",
+            "receipt": exc.receipt_id,
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": f"confirm unavailable: {str(exc)[:180]}"}

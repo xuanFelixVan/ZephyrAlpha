@@ -98,7 +98,7 @@ ZK.api = (function(){
     fetchSchedulegateSkeletons: function(){   /* 骨架级提案包（owner_gate 提案不占自动派工队列，只读）；响应 {ok,count,data}，降级=ok:false+data:[] */
       return fetchJson('/api/schedulegate-skeletons', 10000);
     },
-    postSchedulegateConfirm: function(orderId, decision){   /* 骨架级一键确认 confirm/reject（本页唯一写路由；C9 确认态落点批文前后端诚实拒执行 ok:false，前端渲染拒因不假持久化） */
+    postSchedulegateConfirm: function(orderId, decision){   /* 骨架级一键确认 confirm/reject（本页唯一写路由；后端=ConfirmGate.decide 三落点账，actor/allow_amend 不经 body 故改判不走本路由；拒因渲染 ok:false 不假持久化） */
       return fetchJson('/api/schedulegate-confirm', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({order_id:orderId, decision:decision})});
     },
     fetchSourcesStatus: function(){   /* 数据源监管真源（健康探针日志解析+alerter 告警流水） */
