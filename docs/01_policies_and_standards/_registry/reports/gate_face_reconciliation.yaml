@@ -1,0 +1,1191 @@
+module_id: RPT-GATE-FACE-RECONCILIATION
+doc_type: register
+ttl: permanent
+title: 门禁触发面三列对账表（波 1A.3）
+generated_by: scripts/governance/generate_gate_face_reconciliation.py
+generated_at: '2026-09-27T06:15:33+00:00'
+head_commit: 5306c714c3d97a4a83d981419d6b8722a0b00ad2
+roster: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+red_criteria:
+- R1-declared-but-not-loaded
+- R2-trigger-empty-always-run
+- R3-trigger-dead-zero-hit
+- R0-loaded-but-not-declared
+summary:
+  roster_entries: 104
+  roster_declared_total_gates: 104
+  enabled_count: 100
+  disabled_count: 4
+  loaded_count: 100
+  load_aggregate_error: ''
+  trigger_conditional_count: 29
+  trigger_always_run_count: 71
+  dead_trigger_count: 0
+  red_count: 71
+red_list:
+- gate_id: HELD-OVERLAP
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: FORGED-GW-MARKER
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: FOREIGN-CHANGE-DETECTION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DERIVED-FILE-DELETION-PROTECTION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: COMMIT-SCOPE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: SESSION-REQUIRED
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CLAIM-REQUIRED
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DIRECTORY-CONTRACT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TTL-METADATA
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: FILE-PLACEMENT-TTL
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CREATE-GUARD
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: RULING-COMMIT-VERIFIED
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TRANSLATION-COVERAGE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: ENCODING-SAFETY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: SSOT-REDEFINITION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: PURE-SHIM
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: PURE-ASSERTION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: NOQA-VALIDATION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DATETIME-NOW-FORBIDDEN
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: SNAPSHOT-DRIFT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: EXEMPT-ZONE-FM
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: MODULE-ID-CONSISTENCY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: MSG-EXPOSURE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: EMPTY-HANDLER
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: ORPHAN-MODULE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DOC-REF-BROKEN
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: MSG-STYLE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: NO-UPWARD-IMPORT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: NO-HARDCODED-URL
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: NO-BARE-SQL
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CH-BATCH-SIZE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CH-FINAL-GATE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: ALGO-NOTE-SYNC
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TEST-SOURCE-CONSISTENCY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: BLUEPRINT-FORMAT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: BLUEPRINT-HEADER
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CAP-CONSISTENCY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: NO-IMPORT-SIDE-EFFECT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: GIT-CALL-BUDGET
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: UNDEFINED-NAME
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: IMPORT-INTEGRITY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CAPABILITY-LOOKUP-REQUIRED
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: FOLDER-CAPACITY-HARD-LIMIT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DEPGRAPH-ENFORCEMENT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DERIVATION-ANNOTATION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: RELATIVE-PATH-LITERAL
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: OPEN-WITHOUT-WITH
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: MCP-VERSION-FIELD
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: PROTECTED-PATHS
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: WORKTREE-REQUIRED
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TEST-RESIDUE-SSOT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: SECRET-REGISTRY-CONSISTENCY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: REGISTRY-CODE-ANCHOR
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: STASH-ACCUMULATION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TABLE-NAME-REGISTRY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: HOT-FILE-BASE-FRESHNESS
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: FRONTEND-TRUTH-SOURCE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: BUSINESS-REGISTRY
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: REGISTRY-MASS-DELETION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: REGISTRY-YAML-PARSE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: SPLIT-COORDINATION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: SYNTAX-VALIDATION
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: REAL-KEY-REFERENCE-SCAN
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TASK-ORDER-DOCS-LOCK
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: CONSTITUTION-LINE-LIMIT
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: DOC-HEADER-SUITE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: FMS-HYGIENE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+rows:
+- gate_id: HELD-OVERLAP
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: FORGED-GW-MARKER
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: FOREIGN-CHANGE-DETECTION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DERIVED-FILE-DELETION-PROTECTION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: COMMIT-SCOPE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: SESSION-REQUIRED
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CLAIM-REQUIRED
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CAPABILITY-OVERLAP
+  enabled: false
+  loaded_in_process: false
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DIRECTORY-CONTRACT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: TTL-METADATA
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: FILE-PLACEMENT-TTL
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CREATE-GUARD
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: RULE-EXECUTION-PAIRING
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - docs/01_policies_and_standards/rules/
+  - rule_
+  trigger_mode: conditional
+  head_hit_files: 460
+  per_pattern_hits:
+    docs/01_policies_and_standards/rules/: 87
+    rule_: 377
+  dead_trigger: false
+- gate_id: REFERENCE-INTEGRITY
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - docs/
+  trigger_mode: conditional
+  head_hit_files: 8286
+  per_pattern_hits:
+    docs/: 8286
+  dead_trigger: false
+- gate_id: RULE-FOUR-WAY-ALIGN
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - docs/01_policies_and_standards/rules/
+  - rule_
+  trigger_mode: conditional
+  head_hit_files: 460
+  per_pattern_hits:
+    docs/01_policies_and_standards/rules/: 87
+    rule_: 377
+  dead_trigger: false
+- gate_id: RULING-COMMIT-VERIFIED
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: R5-DIGIT-SUFFIX
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - docs/
+  - scripts/
+  - src/
+  - data/
+  trigger_mode: conditional
+  head_hit_files: 14101
+  per_pattern_hits:
+    docs/: 8286
+    scripts/: 1354
+    src/: 4033
+    data/: 976
+  dead_trigger: false
+- gate_id: TRANSLATION-COVERAGE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: ENCODING-SAFETY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: SSOT-REDEFINITION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: UNSAFE-DICT-SPREAD
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: PURE-SHIM
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: PURE-ASSERTION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: NOQA-VALIDATION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DATETIME-NOW-FORBIDDEN
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: GATE-VOCAB
+  enabled: false
+  loaded_in_process: false
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: SNAPSHOT-DRIFT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: FILE-COPY
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: ID-UNIQUENESS
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .pre-commit-config.yaml
+  trigger_mode: conditional
+  head_hit_files: 1
+  per_pattern_hits:
+    .pre-commit-config.yaml: 1
+  dead_trigger: false
+- gate_id: EXEMPT-ZONE-FM
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: MODULE-ID-CONSISTENCY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: PERMANENT-SYSTEM-TRIGGER
+  enabled: false
+  loaded_in_process: false
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: MSG-EXPOSURE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: EMPTY-HANDLER
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: ORPHAN-MODULE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DOC-REF-BROKEN
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: FUNCTION-DUP
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: NO-BARE-GETENV
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .env
+  - secret
+  - credential
+  - token
+  - password
+  - api_key
+  - private_key
+  trigger_mode: conditional
+  head_hit_files: 60
+  per_pattern_hits:
+    .env: 1
+    secret: 36
+    credential: 6
+    token: 16
+    password: 0
+    api_key: 0
+    private_key: 1
+  dead_trigger: false
+- gate_id: MSG-STYLE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: NO-UPWARD-IMPORT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: NO-HARDCODED-URL
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: MAP-ALIGNMENT
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - docs/02_enterprise_architecture/
+  - docs/03_modules/
+  - alignment_checklist
+  trigger_mode: conditional
+  head_hit_files: 4851
+  per_pattern_hits:
+    docs/02_enterprise_architecture/: 53
+    docs/03_modules/: 4797
+    alignment_checklist: 1
+  dead_trigger: false
+- gate_id: NO-BARE-SQL
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CH-BATCH-SIZE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CH-FINAL-GATE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CH-VERSION-COL
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - schema
+  - ddl
+  trigger_mode: conditional
+  head_hit_files: 382
+  per_pattern_hits:
+    schema: 345
+    ddl: 37
+  dead_trigger: false
+- gate_id: COMPLEXITY-GUARD
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: ALGO-NOTE-SYNC
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: ALGO-FLOW-LINK
+  enabled: false
+  loaded_in_process: false
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: META-TESTS-COVERAGE
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - tests/
+  trigger_mode: conditional
+  head_hit_files: 3901
+  per_pattern_hits:
+    tests/: 3901
+  dead_trigger: false
+- gate_id: TEST-SOURCE-CONSISTENCY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: BLUEPRINT-FORMAT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: GATE-DOMAIN-FK
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: BLUEPRINT-HEADER
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CAP-CONSISTENCY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: NO-IMPORT-SIDE-EFFECT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DEPGRAPH-FRESHNESS
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - src/
+  - scripts/
+  - depgraph
+  trigger_mode: conditional
+  head_hit_files: 5414
+  per_pattern_hits:
+    src/: 4033
+    scripts/: 1354
+    depgraph: 45
+  dead_trigger: false
+- gate_id: RECONCILER-HEALTH
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - governance
+  trigger_mode: conditional
+  head_hit_files: 2543
+  per_pattern_hits:
+    governance: 2543
+  dead_trigger: false
+- gate_id: SCRIPTS-IMPORT-INTEGRITY
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - scripts/
+  trigger_mode: conditional
+  head_hit_files: 1354
+  per_pattern_hits:
+    scripts/: 1354
+  dead_trigger: false
+- gate_id: GIT-CALL-BUDGET
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: BARE-SUBPROCESS
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .env
+  - secret
+  - credential
+  - token
+  - password
+  - api_key
+  - private_key
+  trigger_mode: conditional
+  head_hit_files: 60
+  per_pattern_hits:
+    .env: 1
+    secret: 36
+    credential: 6
+    token: 16
+    password: 0
+    api_key: 0
+    private_key: 1
+  dead_trigger: false
+- gate_id: UNDEFINED-NAME
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: IMPORT-INTEGRITY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CAPABILITY-LOOKUP-REQUIRED
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: GATE-PRECOMMIT-OFFLINE
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .pre-commit-config.yaml
+  trigger_mode: conditional
+  head_hit_files: 1
+  per_pattern_hits:
+    .pre-commit-config.yaml: 1
+  dead_trigger: false
+- gate_id: FOLDER-CAPACITY-HARD-LIMIT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DEPGRAPH-ENFORCEMENT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DERIVATION-ANNOTATION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: RELATIVE-PATH-LITERAL
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CONSUMERS-ACCURACY
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - capability_canonical
+  trigger_mode: conditional
+  head_hit_files: 1
+  per_pattern_hits:
+    capability_canonical: 1
+  dead_trigger: false
+- gate_id: SCHEMA-FILE-EXISTS
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - schema
+  trigger_mode: conditional
+  head_hit_files: 345
+  per_pattern_hits:
+    schema: 345
+  dead_trigger: false
+- gate_id: ASYNCIO-RUN-IN-CONTEXT
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: OPEN-WITHOUT-WITH
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: MCP-VERSION-FIELD
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: PROTECTED-PATHS
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: WORKTREE-REQUIRED
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: TEST-RESIDUE-SSOT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: SECRET-REGISTRY-CONSISTENCY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: NO-SECRET-HARDCODE
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .env
+  - secret
+  - credential
+  - token
+  - password
+  - api_key
+  - private_key
+  trigger_mode: conditional
+  head_hit_files: 60
+  per_pattern_hits:
+    .env: 1
+    secret: 36
+    credential: 6
+    token: 16
+    password: 0
+    api_key: 0
+    private_key: 1
+  dead_trigger: false
+- gate_id: RECONCILER-FILE-OPS
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - governance
+  trigger_mode: conditional
+  head_hit_files: 2543
+  per_pattern_hits:
+    governance: 2543
+  dead_trigger: false
+- gate_id: REGISTRY-CODE-ANCHOR
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: STASH-ACCUMULATION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: TABLE-NAME-REGISTRY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: GATE-ERRCODE-CONSISTENCY
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - architecture_model/contracts/
+  trigger_mode: conditional
+  head_hit_files: 3
+  per_pattern_hits:
+    architecture_model/contracts/: 3
+  dead_trigger: false
+- gate_id: HOT-FILE-BASE-FRESHNESS
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: STATE-VOCAB-REGISTRY
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - src/
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 9215
+  per_pattern_hits:
+    src/: 4033
+    .py: 8943
+  dead_trigger: false
+- gate_id: TAG-VOCAB
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - library
+  - catalogs/
+  trigger_mode: conditional
+  head_hit_files: 204
+  per_pattern_hits:
+    library: 119
+    catalogs/: 86
+  dead_trigger: false
+- gate_id: BLOOD-FLESH
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - .py
+  trigger_mode: conditional
+  head_hit_files: 8943
+  per_pattern_hits:
+    .py: 8943
+  dead_trigger: false
+- gate_id: FRONTEND-TRUTH-SOURCE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: BUSINESS-REGISTRY
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: REGISTRY-MASS-DELETION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: REGISTRY-YAML-PARSE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: SPLIT-COORDINATION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: SYNTAX-VALIDATION
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: RESOURCE-SCHEDULE
+  enabled: true
+  loaded_in_process: true
+  files_trigger:
+  - tasks.yaml
+  - config/
+  trigger_mode: conditional
+  head_hit_files: 124
+  per_pattern_hits:
+    tasks.yaml: 1
+    config/: 124
+  dead_trigger: false
+- gate_id: REAL-KEY-REFERENCE-SCAN
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: TASK-ORDER-DOCS-LOCK
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: CONSTITUTION-LINE-LIMIT
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: DOC-HEADER-SUITE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: FMS-HYGIENE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false

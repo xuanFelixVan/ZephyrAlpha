@@ -61646,6 +61646,39 @@ entries:
   plain_zh: "图书馆原先没有一路采集器会产出 backup 和 infra 两种类型，所以基建与备份馆永远是零本书。这个采集器去翻三本已有的登记册——存储族条目、仓外资产清单、备份配置——把冷储盘和备份落点逐条抄成可查的索引卡，卡片上写明出自哪本册子第几行；顺手只摸一下盘在不在：在册而盘上没有就明标幽灵登记，盘整块拔掉了就明标盘不可达而绝不说成丢了，任何情况都不抛异常拖垮整馆。"
   responsibility_layer: governance
 
+- module_path: src/zephyr/pf_core/core/shadow_portfolio.py
+  domain_id: D_PF_CORE
+  name_zh: "影子组合重建器"
+  name_en: ""
+  desc_zh: "按目标权重在纸面重放组合，给实盘归因提供对照基线（不触资金路径）"
+  desc_en: ""
+  plain_zh: "把本该长什么样的组合先在纸上摆出来：读目标权重和当日行情，逐标的重放建仓，得到影子净值与真实净值的差，用来回答漂移来自执行还是来自市场——它只算不发单，实盘资金路径零触达。"
+  responsibility_layer: business
+- module_path: src/zephyr/pf_alloc/rebalance_check_runner.py
+  domain_id: D_PF_ALLOC
+  name_zh: "再平衡巡检执行器"
+  name_en: ""
+  desc_zh: "预算目标面与钱包当前面逐标的对账，产漂移决策读数与告警"
+  desc_en: ""
+  plain_zh: "每天早上把计划该持有多少和实际持有多少两张表逐标的比一遍，超过漂移阈值就喊一声并给出该买该卖的清单；它自己不动仓位，只出读数，执行仍走分配链事件正门。"
+  responsibility_layer: business
+- module_path: scripts/governance/next_ruling_id.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "裁定编号取号器"
+  name_en: ""
+  desc_zh: "按在册最大号分配唯一下一号裁定编号，支持认领/释放/悬空号体检"
+  desc_en: ""
+  plain_zh: "给治理裁定发号：想知道下一个可用编号、认领一个号、或查哪些文档引用了册子上查无的悬空号，都走这一个入口，避免多条车道同时抢同一个号。"
+  responsibility_layer: governance
+- module_path: scripts/governance/generate_gate_face_reconciliation.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "门禁三面对账表生成器"
+  name_en: ""
+  desc_zh: "合成名册声明/进程内实载/触发面命中三列表并点名红名单"
+  desc_en: ""
+  plain_zh: "把名册说有、装载面没有、触发面打不到三件事摆成一张表：一台门声明了却从没被任何文件路径触发，就会被点名进红名单，取代人工周审计的抽查。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
