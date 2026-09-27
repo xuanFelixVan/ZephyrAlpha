@@ -558,6 +558,33 @@ def test_landing_pairs_agree_with_gate21_selfcheck(cql) -> None:
     )
 
 
+INPROC_BOOK_REL = "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml"
+
+
+@pytest.mark.parametrize("book_rel", [GATE_BOOK_REL, INPROC_BOOK_REL])
+def test_every_rostered_book_actually_heals(cql, repo: Path, tmp_path: Path, book_rel: str) -> None:
+    """名册里在册的每一本都必须真能自愈——配对表不是装饰，缺实现会让该册标量静默进不了 HEAD。
+
+    病形（2026-09-27 生产实证，两投皆中）：in_process 门禁名册有 `total_gates`+`gates` 对子却
+    不在 `_DERIVED_TOTAL_PAIRS` ⇒ 合并对标量恒取 ours(dev 103)，merged 与 dev 逐字节相同 ⇒
+    落地判 noop ⇒ 袋记 done 而 `git log dev -- <该册>` 零提交（FMS 38168467d1"条目+计数同批"
+    落盘仍 103 同机制）。故本测既验"标量被刷正"，也验"结果不等于 dev 字节"（反 noop 假成功）。
+    """
+    base = _commit(repo, book_rel, _book_declared(["A", "B", "C"], 3), "C0 标量与条数一致")
+    # dev 侧被吞后的失真态：条目 3 条，标量钉在旧值 2
+    dev = _commit(repo, book_rel, _book_declared(["A", "B", "C"], 2), "C1 dev 标量失真")
+    landing = _landing(cql, repo, tmp_path, f"queue-{abs(hash(book_rel))}")
+    item = {"qid": "q-roster", "base_head": base, "files": [{"path": book_rel}]}
+    theirs = _book_declared(["A", "B", "C", "D"], 4).encode("utf-8")
+    out = landing._merge_registry_file(item, book_rel, theirs, dev).decode("utf-8")
+    assert "gate_id: D" in out, "条目腿本就可合并（本案失真只发生在标量腿）"
+    assert out.splitlines()[0] == "total_gates: 4", f"标量须按实际条数重算，首行={out.splitlines()[0]!r}"
+    dev_bytes = subprocess.run(
+        ["git", "-C", str(repo), "show", f"{dev}:{book_rel}"], capture_output=True, check=True
+    ).stdout
+    assert out.encode("utf-8") != dev_bytes, "结果等于 dev 字节＝noop 假成功，正是 done 而盘上零变化的形态"
+
+
 # ---------------------------------------------------------------------------
 # ⑧ 红蓝对抗批（2026-09-24 晚，独立子代理红队）：三条 P0/P1 补硬＋判别控制组
 # ---------------------------------------------------------------------------

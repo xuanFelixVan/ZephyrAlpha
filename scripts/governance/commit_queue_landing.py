@@ -151,6 +151,9 @@ _GW_OWNER_RE = re.compile(r"\[GW:([^:\]\s]+)")
 _DERIVED_TOTAL_PAIRS: dict[str, dict[str, str]] = {
     "gate_registry.yaml": {"total_gates": "gates"},
     "rule_catalog_registry.yaml": {"total_files": "files"},
+    # 2026-09-27 st-chief6-20260927 补：in_process 门禁名册漏在册 ⇒ 该册标量走不了队列（两投皆
+    # merged==ours→noop→记 done 而盘上零变化，同型先例 FMS 38168467d1"条目+计数同批"落盘仍 103）。
+    "in_process_gate_registry.yaml": {"total_gates": "gates"},
 }
 
 

@@ -140,6 +140,20 @@ CHECKS = [
         },
         "fix": [sys.executable, str(_SCRIPT_DIR), "--heal-derived-totals"],
     },
+    # 2026-09-27 st-chief6-20260927：in_process 门禁名册点名入检（与落地侧配对表同源，
+    # 由 test_landing_pairs_agree_with_gate21_selfcheck 强制相等）。上面"本轮不扩面"的决定
+    # 针对的是"扫全 catalogs"，本条是个案定点：该册正被每条加门车道频繁追加条目，而它的
+    # 标量两投皆零效果（dev 实测 declared 103 vs gates 实长 104，FMS 38168467d1 同型），
+    # 不点名=常驻盲区。代价已知：本袋与后续册修复袋之间数分钟内，触发本台的提交会见到该册红，
+    # 由紧随的册触碰袋经自愈消解。
+    {
+        "name": "in_process_gate_registry.yaml (declared total == section length)",
+        "selfcheck": {
+            "path": "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml",
+            "pairs": {"total_gates": "gates"},
+        },
+        "fix": [sys.executable, str(_SCRIPT_DIR), "--heal-derived-totals"],
+    },
 ]
 
 
