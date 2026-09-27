@@ -5,7 +5,7 @@
 # [CONSUMERS] AI 新建/更新模块时调用以合规写入大白话简介；TRANSLATION-COVERAGE gate 修复指引引用
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 按 module_path 唯一键 upsert；写入前 MUST 通过 is_generic_plain_zh/is_generic_plain_suffix 校验（拒模板化简介，治本）；强制双引号转义；写后 YAML 解析校验；写入后失效 module_translation_loader 缓存；module_path 正斜杠归一化；responsibility_layer 只准从 domain_responsibility_layer_mapping.yaml 按 domain_id 推导（裁定#335 结论⑥，禁从 layer_id/目录名直推），映射缺域=WARNING 留空不阻断，派生字段永不从旧块/重复块继承
+# [INVARIANTS] 按 module_path 唯一键 upsert；写入前 MUST 通过 is_generic_plain_zh/is_generic_plain_suffix 校验（拒模板化简介，治本）；强制双引号转义；写后 YAML 解析校验；写入后失效 module_translation_loader 缓存；module_path 正斜杠归一化；responsibility_layer 只准从 domain_responsibility_layer_mapping.yaml 按 domain_id 推导（裁定#335 结论⑥，禁从 layer_id/目录名直推），映射缺域=WARNING 留空不阻断，派生字段永不从旧块/重复块继承；重登记同一 module_path 时规范字段的在册非空值**永不因调用方缺省而被清空**（只填缺省不覆盖实值，清空唯一途径＝调用方另给非空替代值；治本 2026-09-27 字段级蒸发）
 # [MODIFY-GUARD] scripts/governance/d3_metadata/add_module_translation.py
 # [STABILITY] evolving
 # [SAFETY] L
@@ -355,10 +355,7 @@ def _entries_body_regions(entries_body: str) -> list[tuple[int, int]]:
     替换保人工段字节，禁整文件重序列化"套路）。
     """
     starts = [m.start() for m in re.finditer(r"(?m)^- module_path:", entries_body)]
-    return [
-        (s, starts[i + 1] if i + 1 < len(starts) else len(entries_body))
-        for i, s in enumerate(starts)
-    ]
+    return [(s, starts[i + 1] if i + 1 < len(starts) else len(entries_body)) for i, s in enumerate(starts)]
 
 
 def _apply_body_edits(entries_body: str, edits: list[tuple[int, int, str]]) -> str:
@@ -404,22 +401,26 @@ def _upsert_entry(yaml_text: str, entry: dict) -> tuple[str, bool]:
 
     if matches:
         new_entry = dict(entry)
-        # 合并全部命中块的扩展字段（非空优先，先到先得不覆盖已有非空值）
-        # 派生字段（_DERIVED_KEYS）除外：它只由映射真源重算，继承旧块会让"映射已删域"
-        # 的陈旧层值在 upsert 时复活，破坏 --sync-layer 的收敛语义。
-        for s, e in matches:
-            parsed = _parse_block_entry(entries_body[s:e]) or {}
-            for k, v in parsed.items():
-                if k in _CANONICAL_KEYS or k in _DERIVED_KEYS:
-                    continue
-                if _is_empty_value(new_entry.get(k)) and not _is_empty_value(v):
-                    new_entry[k] = v
+        # 旧块先按 --dedupe 的同一份仲裁语义合成一份"在册最优视图"（不另发明第二套合并）。
+        old_parsed = [p for p in (_parse_block_entry(entries_body[s:e]) or {} for s, e in matches) if p]
+        old_merged = _merge_duplicate_blocks(old_parsed) if old_parsed else {}
+        # 合并范围＝**全部字段（含规范 7 字段）**，非空优先、调用方给值不覆盖。
+        # 治本（2026-09-27 字段级蒸发）：旧版在此处 `continue` 掉 _CANONICAL_KEYS，
+        # 而 _format_entry_block 对规范字段用 entry.get(k, '')，于是"只改大白话句"的
+        # 常规重登记会把在册 name_en/desc_zh/desc_en 静默清空成 ""（已复现，见案卷）。
+        # 仍不继承的两类：_DERIVED_KEYS（只认 --sync-layer 重算，继承会让"映射已删域"
+        # 的陈旧层值复活，破坏收敛语义）与 module_path（身份键，取调用方归一值）。
+        for k, v in old_merged.items():
+            if k in _DERIVED_KEYS or k == "module_path":
+                continue
+            if _is_empty_value(new_entry.get(k)) and not _is_empty_value(v):
+                new_entry[k] = v
         new_block = _format_entry_block(new_entry)
         edits: list[tuple[int, int, str]] = []
         for rank, (s, e) in enumerate(matches):
             if rank == 0:
                 orig = entries_body[s:e]
-                trail = orig[len(orig.rstrip("\n")):] or "\n"  # 保留原块后的分隔空白
+                trail = orig[len(orig.rstrip("\n")) :] or "\n"  # 保留原块后的分隔空白
                 edits.append((s, e, new_block + trail))
             else:
                 edits.append((s, e, ""))  # 重复块整体删除（含分隔换行）
@@ -513,8 +514,7 @@ def add_translation(entry: dict, *, dry_run: bool = False) -> tuple[int, str]:
         layer_map: dict[str, str] | None = _read_layer_map()
     except Exception as e:  # noqa: BLE001 — 层真源故障不阻断翻译写入
         print(
-            f"[add_module_translation] WARNING: {_LAYER_KEY} 映射真源不可用"
-            f"（{type(e).__name__}: {e}），本次不填该字段",
+            f"[add_module_translation] WARNING: {_LAYER_KEY} 映射真源不可用（{type(e).__name__}: {e}），本次不填该字段",
             file=sys.stderr,
         )
         layer_map = None
@@ -587,15 +587,13 @@ def _merge_duplicate_blocks(parsed: list[dict]) -> dict:
     return merged
 
 
-def _dedupe_group_edits(
-    entries_body: str, rs: list[tuple[int, int]], new_block: str
-) -> list[tuple[int, int, str]]:
+def _dedupe_group_edits(entries_body: str, rs: list[tuple[int, int]], new_block: str) -> list[tuple[int, int, str]]:
     """单组区间编辑：胜出块落在该组首个出现位置（未触碰字节原样），后续重复块整块删除。"""
     edits: list[tuple[int, int, str]] = []
     for rank, (s, e) in enumerate(rs):
         if rank == 0:
             orig = entries_body[s:e]
-            trail = orig[len(orig.rstrip("\n")):] or "\n"
+            trail = orig[len(orig.rstrip("\n")) :] or "\n"
             edits.append((s, e, new_block + trail))
         else:
             edits.append((s, e, ""))
@@ -915,7 +913,14 @@ def main(argv: list[str] | None = None) -> int:
         return EXIT_VALIDATION
 
     if args.dedupe:
-        if any(((args.path or "").strip(), (args.domain or "").strip(), (args.name_zh or "").strip(), (args.plain_zh or "").strip())):
+        if any(
+            (
+                (args.path or "").strip(),
+                (args.domain or "").strip(),
+                (args.name_zh or "").strip(),
+                (args.plain_zh or "").strip(),
+            )
+        ):
             print("--dedupe 与 upsert 参数互斥（去重是整表操作，不接受单条目字段）")
             return EXIT_VALIDATION
         code, msg = dedupe_registry(dry_run=args.dry_run)
@@ -923,7 +928,14 @@ def main(argv: list[str] | None = None) -> int:
         return code
 
     if args.sync_layer:
-        if any(((args.path or "").strip(), (args.domain or "").strip(), (args.name_zh or "").strip(), (args.plain_zh or "").strip())):
+        if any(
+            (
+                (args.path or "").strip(),
+                (args.domain or "").strip(),
+                (args.name_zh or "").strip(),
+                (args.plain_zh or "").strip(),
+            )
+        ):
             print("--sync-layer 与 upsert 参数互斥（层同步是整表操作，不接受单条目字段）")
             return EXIT_VALIDATION
         code, msg = sync_layer_registry(dry_run=args.dry_run)

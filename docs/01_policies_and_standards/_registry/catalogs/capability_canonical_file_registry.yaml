@@ -55279,4 +55279,19 @@ creation_tokens:
   created_by: st-chief7w-20260927
   capability: fullconnect_campaign_mining
   merge_evaluation: "净零：已入册案卷的落地载体，不新增真源"
+- file: docs/_working/three_piece_infra/gate_fix/CASE.md
+  token: wave13-coordinator-integration-case-20260927
+  created_by: st-zcloseout-20260928
+  capability: wave13_coordinator_integration
+  merge_evaluation: "st-zmaster2 遗产 dd60ae13 接管袋：门禁两案卷落档，同袋带 token，零既有条目可合并"
+- file: docs/_working/three_piece_infra/gate_fix/register_manifest.md
+  token: wave13-coordinator-integration-register-manifest-20260927
+  created_by: st-zcloseout-20260928
+  capability: wave13_coordinator_integration
+  merge_evaluation: "st-zmaster2 遗产 dd60ae13 接管袋：门禁两案卷落档，同袋带 token，零既有条目可合并"
+- file: docs/_working/three_piece_infra/writer_fix/CASE.md
+  token: wave13-coordinator-integration-case-20260927
+  created_by: st-zcloseout-20260928
+  capability: wave13_coordinator_integration
+  merge_evaluation: "st-zmaster2 遗产 dd60ae13 接管袋：写手字段级蒸发治本案卷落档，同袋带 token，零既有条目可合并"
 di_seam_exemptions: []

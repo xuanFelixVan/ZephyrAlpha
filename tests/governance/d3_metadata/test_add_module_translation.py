@@ -378,7 +378,77 @@ class TestUpsertSelfHealDuplicates:
   plain_zh: "旁观者的大白话简介内容"
 """
         assert other_block in new_text
-        assert new_text.endswith("  name_zh: \"x\"\n")
+        assert new_text.endswith('  name_zh: "x"\n')
+
+
+class TestUpsertCanonicalPreservation:
+    """重登记同一 module_path 时规范字段的在册非空值不被调用方缺省清空（2026-09-27 字段级蒸发治本）。
+
+    旧实现把 `_CANONICAL_KEYS` 整族排除在合并之外，而 `_format_entry_block` 对规范字段
+    用 `entry.get(k, '')` ⇒ 任何"只改大白话句"的常规重登记都把 name_en/desc_zh/desc_en
+    静默写成 ""。本类钉死四问：缺省要保留、显式改写要生效、派生字段不得复活、
+    重复块仍收敛为一条。
+    """
+
+    _RICH_YAML = """# header
+entries:
+- module_path: src/zephyr/demo/mod.py
+  domain_id: D_GOVERNANCE
+  name_zh: "演示模块"
+  name_en: "Demo Mod"
+  desc_zh: "在册的高信息量中文描述"
+  desc_en: "an existing informative description"
+  plain_zh: "原来的大白话简介够八个字"
+  module_id: MOD-DEMO-001
+  build_status: active
+  responsibility_layer: governance
+
+battle_map_steps:
+  - step: keep_me
+"""
+
+    def test_empty_canonicals_never_blank_registered_values(self) -> None:
+        """调用方只给 name_zh/plain_zh（其余规范字段缺省）⇒ 在册 name_en/desc_* 原样保留。"""
+        entry = _entry("src/zephyr/demo/mod.py", "演示模块改", "新的白话简介也够八个字")
+        new_text, is_new = _upsert_entry(self._RICH_YAML, entry)
+        assert is_new is False
+        parsed = yaml.safe_load(new_text)["entries"][0]
+        assert parsed["name_zh"] == "演示模块改"
+        assert parsed["plain_zh"] == "新的白话简介也够八个字"
+        assert parsed["name_en"] == "Demo Mod"
+        assert parsed["desc_zh"] == "在册的高信息量中文描述"
+        assert parsed["desc_en"] == "an existing informative description"
+        assert 'desc_zh: ""' not in new_text  # 红证：旧实现正是产出这一行
+
+    def test_explicit_replacement_still_wins(self) -> None:
+        """调用方给出非空替代值 ⇒ 覆盖在册值（本修复不得变成"永远改不动"）。"""
+        entry = _entry(
+            "src/zephyr/demo/mod.py",
+            "名",
+            "大白话简介内容测试用",
+            desc_zh="调用方主动改写的新描述",
+        )
+        new_text, _ = _upsert_entry(self._RICH_YAML, entry)
+        parsed = yaml.safe_load(new_text)["entries"][0]
+        assert parsed["desc_zh"] == "调用方主动改写的新描述"
+        assert parsed["desc_en"] == "an existing informative description"
+
+    def test_derived_layer_not_resurrected_from_old_block(self) -> None:
+        """派生字段（responsibility_layer）永不继承：调用方缺省 ⇒ 结果里不得有旧层值。"""
+        entry = _entry("src/zephyr/demo/mod.py", "名", "大白话简介内容测试用")
+        assert "responsibility_layer" not in entry
+        new_text, _ = _upsert_entry(self._RICH_YAML, entry)
+        parsed = yaml.safe_load(new_text)["entries"][0]
+        assert "responsibility_layer" not in parsed
+
+    def test_extension_and_tail_survive(self) -> None:
+        """扩展字段与 entries 之外的顶层段落零损失（合并扩面不伤既有不变量）。"""
+        new_text, _ = _upsert_entry(self._RICH_YAML, _entry("src/zephyr/demo/mod.py", "名", "大白话简介内容测试用"))
+        parsed = yaml.safe_load(new_text)
+        assert parsed["entries"][0]["module_id"] == "MOD-DEMO-001"
+        assert parsed["entries"][0]["build_status"] == "active"
+        assert parsed["battle_map_steps"] == [{"step": "keep_me"}]
+        assert new_text.startswith("# header\nentries:\n")
 
 
 # ---------------------------------------------------------------------------
@@ -396,9 +466,9 @@ class TestCASWrite:
 
     def test_stale_base_refused(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """base 与磁盘不符（他会话已推进）→ StaleWriteRefused 拒写不落盘。"""
-        from zephyr.shared.io.file_utils import StaleWriteRefused
-
         import add_module_translation as mod
+
+        from zephyr.shared.io.file_utils import StaleWriteRefused
 
         f = self._mini(tmp_path)
         monkeypatch.setattr(mod, "REGISTRY_YAML", f)
@@ -407,9 +477,7 @@ class TestCASWrite:
         # 拒写后文件未被部分写入
         assert f.read_text(encoding="utf-8") == _EXT_YAML
 
-    def test_add_translation_writes_lf_bytes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_add_translation_writes_lf_bytes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """正常写盘走 CAS 且保 LF 行尾（.gitattributes eol=lf 约定，写手不再翻转 CRLF）。"""
         import add_module_translation as mod
 
@@ -425,9 +493,7 @@ class TestCASWrite:
         hit = [e for e in data["entries"] if e["module_path"] == "src/zephyr/with_extras.py"]
         assert len(hit) == 1 and hit[0]["module_id"] == "MOD-TEST"
 
-    def test_concurrent_modification_maps_to_exit_io(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_concurrent_modification_maps_to_exit_io(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """读到写之间磁盘被推进 → add_translation 返回 EXIT_IO（不吞并发改）。"""
         import add_module_translation as mod
 
@@ -476,9 +542,7 @@ class TestDedupeRegistry:
         assert "1 组" in msg and "dry-run" in msg
         assert f.read_bytes() == before  # 零写盘
 
-    def test_dedupe_keeps_richest_and_merges_extras(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_dedupe_keeps_richest_and_merges_extras(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         f = self._patch(tmp_path, monkeypatch, self._DUP_YAML)
         code, msg = dedupe_registry()
         assert code == EXIT_SUCCESS, msg
@@ -678,9 +742,7 @@ class TestUpsertAutoFillLayer:
         assert _entry_by_path(reg, "src/zephyr/lying.py")["responsibility_layer"] == "governance"
         assert "真源" in capsys.readouterr().err
 
-    def test_stale_layer_not_resurrected_from_old_block(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_stale_layer_not_resurrected_from_old_block(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """映射删行后 upsert 旧条目：扩展字段合并通道不得继承旧块的陈旧层（派生字段例外）。"""
         reg = _w4b_env(tmp_path, monkeypatch, _LAYERED_YAML, map_text=_FAKE_MAP_WITHOUT_D_TEST)
         assert _entry_by_path(reg, "src/zephyr/layered.py")["responsibility_layer"] == "governance"
@@ -696,9 +758,7 @@ class TestUpsertAutoFillLayer:
 class TestSyncLayerRegistry:
     """--sync-layer：整表按 domain_id 重算/覆盖，幂等 + dry-run 零写 + 删行移除。"""
 
-    def test_writes_every_mapped_entry_and_is_idempotent(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_writes_every_mapped_entry_and_is_idempotent(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         reg = _w4b_env(tmp_path, monkeypatch, _BARE_YAML)
         code, msg = sync_layer_registry()
         assert code == EXIT_SUCCESS, msg
@@ -720,9 +780,7 @@ class TestSyncLayerRegistry:
         assert "dry-run" in msg and "拟改 2 块" in msg
         assert reg.read_bytes() == before  # 零写盘
 
-    def test_mapping_row_deleted_removes_field(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_mapping_row_deleted_removes_field(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """条目已写层但映射已删该域 → 移除字段；他域条目照常重算。"""
         reg = _w4b_env(tmp_path, monkeypatch, _LAYERED_YAML, map_text=_FAKE_MAP_WITHOUT_D_TEST)
         code, msg = sync_layer_registry()
@@ -733,17 +791,13 @@ class TestSyncLayerRegistry:
         assert hit["module_id"] == "MOD-LAYERED"  # 移除的是单行，扩展字段未受累
         assert _entry_by_path(reg, "src/zephyr/other_domain.py")["responsibility_layer"] == "business"
 
-    def test_entry_without_domain_is_skipped_not_cleared(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_entry_without_domain_is_skipped_not_cleared(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """domain 为 None/空 → 该条目不写此字段（也不误删既有值，等补域后再放量）。"""
         reg = _w4b_env(tmp_path, monkeypatch, _BARE_YAML)
         assert sync_layer_registry()[0] == EXIT_SUCCESS
         assert _entry_by_path(reg, "src/zephyr/no_domain.py")["responsibility_layer"] == "governance"
 
-    def test_refuses_when_mapping_source_unavailable(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refuses_when_mapping_source_unavailable(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """映射真源读不到 → EXIT_IO 拒跑（空映射放行会把全表字段抹成未派生）。"""
         reg = _w4b_env(tmp_path, monkeypatch, _BARE_YAML, map_text=None)
         before = reg.read_bytes()
@@ -752,9 +806,7 @@ class TestSyncLayerRegistry:
         assert "映射真源不可用" in msg
         assert reg.read_bytes() == before
 
-    def test_surgical_edit_preserves_other_bytes(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_surgical_edit_preserves_other_bytes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """行级编辑：裸写文本字段不加引号、既有扩展字段不重排、尾随顶层段字节不动。"""
         reg = _w4b_env(tmp_path, monkeypatch, _BARE_YAML)
         code, msg = sync_layer_registry()
@@ -806,9 +858,7 @@ entries:
 class TestLayerMapLoaderFailFast:
     """映射真源结构异常：同步拒跑（禁按坏映射抹表），单条写入只降级不填。"""
 
-    def test_sync_refuses_bad_controlled_value(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_sync_refuses_bad_controlled_value(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         reg = _w4b_env(tmp_path, monkeypatch, _BARE_YAML, map_text=_FAKE_MAP_BAD_VALUE)
         before = reg.read_bytes()
         code, msg = sync_layer_registry()
