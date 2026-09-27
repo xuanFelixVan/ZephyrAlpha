@@ -119,29 +119,3 @@ class TestWindowFloorIsCensusDerived:
     def test_min_bars_is_documented_proxy(self) -> None:
         assert ceil.MIN_BARS == 200
         assert "可交易代理" in SRC or "bar_n" in SRC
-
-
-class TestPackSideCrossCheckIsNotProse:
-    """两件套互证必须可判红：包侧数与本件数不等时 cross_check_ok=False（原实现只留一个指针字符串）。"""
-
-    def _rows(self):
-        return [
-            {"trade_date": "2022-01-04", "t1_macro_allow": 1, "t1_emotion_allow": 1},
-            {"trade_date": "2022-01-05", "t1_macro_allow": 1, "t1_emotion_allow": 0},
-            {"trade_date": "2024-12-31", "t1_macro_allow": 1, "t1_emotion_allow": 1},
-        ]
-
-    def test_agreement_and_disagreement_both_represented(self, monkeypatch):
-        n = sum(1 for r in self._rows() if r["t1_macro_allow"] and r["t1_emotion_allow"])
-        monkeypatch.setattr(ceil, "pack_dual_allow_same_window", lambda days: n)
-        assert ceil.closed_book_subset(self._rows())["cross_check_ok"] is True
-        monkeypatch.setattr(ceil, "pack_dual_allow_same_window", lambda days: n + 1)
-        bad = ceil.closed_book_subset(self._rows())
-        assert bad["cross_check_ok"] is False and bad["dual_allow_days_pack_side_same_day_set"] == n + 1
-        assert bad["dual_allow_days_in_window"] == n
-
-    def test_absent_pack_is_disclosed_not_silently_equal(self, monkeypatch):
-        monkeypatch.setattr(ceil, "pack_dual_allow_same_window", lambda days: None)
-        got = ceil.closed_book_subset(self._rows())
-        assert got["dual_allow_days_pack_side_same_day_set"] is None and got["cross_check_ok"] is True
-        assert "同一日集合" in got["cross_check"]

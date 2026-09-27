@@ -11,7 +11,7 @@ evidence_grade: A（卡先行+判线全继承 CST-T0-001+frozen 卡+除零回归
 # 一句话：**容量不是瓶颈，次序与预测才是**
 
 全窗 2021-09-01→2026-09-23（1,227 交易日、
-universe 6,145,008 股票-日、其中先低后高可做多 T 的 3,079,430 个）。
+universe 6,145,008 股票-日、其中先低后高可做多 T 的 3,079,423 个）。
 
 **判读规则是单向的**（卡 §0）：上界<成本 ⇒ 该族整族判死；上界≥成本 ⇒ **什么都不证明**。
 本次结果全部落在后者 ⇒ **没有任何一族被本卡判死，也没有任何一族被本卡放行**。
@@ -32,12 +32,12 @@ universe 6,145,008 股票-日、其中先低后高可做多 T 的 3,079,430 个�
 
 | 组 | 交易日 | 可做多T 股票-日 | share≥L1 | share≥L2 | verdict |
 |---|---|---|---|---|---|
-| accumulation | 102 | 250,654 | 1.0 | 0.999 | `CEILING_OK_NOT_A_PROOF` |
-| unrouted | 569 | 1,402,093 | 0.9999 | 0.9984 | `CEILING_OK_NOT_A_PROOF` |
+| accumulation | 102 | 250,651 | 1.0 | 0.999 | `CEILING_OK_NOT_A_PROOF` |
+| unrouted | 569 | 1,402,092 | 0.9999 | 0.9984 | `CEILING_OK_NOT_A_PROOF` |
 | euphoria | 26 | 67,431 | 0.9999 | 0.9985 | `CEILING_OK_NOT_A_PROOF` |
-| distribution | 148 | 363,723 | 0.9999 | 0.9993 | `CEILING_OK_NOT_A_PROOF` |
-| expansion | 244 | 605,276 | 0.9999 | 0.9987 | `CEILING_OK_NOT_A_PROOF` |
-| capitulation | 137 | 388,631 | 0.9999 | 0.9997 | `CEILING_OK_NOT_A_PROOF` |
+| distribution | 148 | 363,722 | 0.9999 | 0.9993 | `CEILING_OK_NOT_A_PROOF` |
+| expansion | 244 | 605,274 | 0.9999 | 0.9987 | `CEILING_OK_NOT_A_PROOF` |
+| capitulation | 137 | 388,630 | 0.9999 | 0.9997 | `CEILING_OK_NOT_A_PROOF` |
 | ignition | 1 | 1,623 | 0.9994 | 0.9994 | `CEILING_OK_NOT_A_PROOF` |
 
 波动桶（L/M/H 按 frozen 边界 0.328/0.700）与双门分组同样**全部 CEILING_OK_NOT_A_PROOF**，
@@ -48,7 +48,7 @@ universe 6,145,008 股票-日、其中先低后高可做多 T 的 3,079,430 个�
 本包 `METHOD_MINING_t0.md` 卷首曾写"**成本闸门是这一族的第一杀手**"。
 本卡实测**否证了这句话的因果权重**：市场给出的日内价差上界是成本的 10 倍以上，
 成本闸在容量层面根本不咬人；真正杀做T 的是
-**①极值次序五五开**（无信息时期望≈0）**②极值不可预知**（实现只有天花板的 1.3%＝4.3/330.5）。
+**①极值次序五五开**（无信息时期望≈0）**②极值不可预知**（实现只有天花板的 1.1%）。
 ⇒ 已在 `T0_SCHEME_MATRIX.md` §三 改写为实测口径，原句在矿册中标注为**已被本卡否证**。
 
 战略后果（供 R1③ 排序用）：
@@ -64,9 +64,6 @@ universe 6,145,008 股票-日、其中先低后高可做多 T 的 3,079,430 个�
   要么（更糟）被 if 静默吃成 0 价差而稀释统计。本件已把除法收进 `if(lo>0 ...)`
   并在 `t0_ceiling_daily.csv` 带出 `zero_lo_sd` 计数；契约测试
   `TestDivisionByZeroRegression` 钉住该回归。
-- 交叉核对已机算化：`t0_ceiling_result.yaml:closed_book_subset` 现带
-  `dual_allow_days_pack_side_same_day_set`（由 GPU 包体同日子集合独立重算）与 `cross_check_ok`，
-  实测 **107 = 107**；两件套互证不再依赖散文指针。
 - 该表是 ReplacingMergeTree，未 FINAL 时同分钟可多版 ⇒ 本件的 bar 计数用
   `uniqExact(trade_time)` 而非 `count()`（用 count() 会虚增约 1.7 倍，把不可交易日误判为可交易）。
 

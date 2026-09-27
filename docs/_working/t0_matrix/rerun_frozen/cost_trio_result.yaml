@@ -1,0 +1,28 @@
+criteria:
+  pair_gate: 30
+  rt_cost_bp_cst_t0_001: 31.2
+  edge_precondition_bp: 30.0
+  window: '>2026-09-09'
+  pairing_rule: symbol×day 双边配对，全侧 VWAP 近似（重建版预注册披露见脚本 docstring）
+  rebuild_provenance:
+  - docs/_working/archive/2026-09/flash_biz/biz2_t0_pairs_disclosure.md
+  - docs/_working/archive/2026-09/kimi_audit/lane_reports/P6.md
+measured:
+  n_fills_after_d: 1467
+  n_bt_files: 60
+  days:
+  - '2026-09-14'
+  - '2026-09-15'
+  n_symbol_day_pairs: 24
+  net_positive: 0
+  edge_ge_30bp: 0
+  gross_mean_bp: -9.2
+  gross_p50_bp: -5.13
+  net_mean_bp: -40.4
+  net_p50_bp: -36.33
+  realized_comm_mean_bp: 40.52
+verdict:
+  status: INSUFFICIENT_SAMPLES
+  conclusion: 配对数 24 < 30（REG-VALM-001 轻量土规），禁硬出方向性结论；四数仅观察披露
+generated_at: '2026-09-23T17:39:29+00:00'
+material_parse_skips: []

@@ -1,0 +1,156 @@
+card: docs/_working/t0_matrix/t0_conditional_v3_prereg_card.md (frozen)
+supersedes: T0-CONDITIONAL-V2（作废，卡 §0.2；其产物标 VOID 原样保留）
+mode: dual_gate_within_run
+verdict_wording_note: 五态判定件 _verdict_for 的 STATE_GATE_NEVER_TRIGGERED 结论文案沿用 v1 单门语境（'宏观门在材料窗零命中'）。双门口径下主集为空的**真因见
+  gate_diagnostics**——本班不改继承件文案（改=动判据件），改以诊断块如实纠偏，禁让读者按字面理解。
+gate_diagnostics:
+  n_pairs_by_set:
+    primary: 0
+    secondary: 0
+    control: 26
+  macro_gate_allow_pairs: 20
+  macro_allow_but_emotion_deny: 20
+  macro_allow_but_emotion_unevaluable: 0
+  six_phase_among_macro_allow:
+    capitulation: 18
+    distribution: 2
+  pair_days:
+  - '2026-06-05'
+  - '2026-06-12'
+  - '2026-06-18'
+  - '2026-06-26'
+  - '2026-07-03'
+  - '2026-07-10'
+  - '2026-07-17'
+  - '2026-07-24'
+  - '2026-07-31'
+  - '2026-08-07'
+  - '2026-08-14'
+  - '2026-08-21'
+  - '2026-08-28'
+  - '2026-08-31'
+  - '2026-09-01'
+  t1_dominant_domain_in_material:
+  - r1
+  - r2
+  - r4
+  reading: 主集为零的真因不是宏观门未触发，而是**两门在考窗内互斥**：宏观门放行靠 vol_pct>0.700 分支，而高波动日恰落在 r4(=R2SIX
+    accumulation) 与 capitulation/distribution 等情绪禁做段；情绪门放行（expansion）的那几日常态 vol_pct
+    仅 0.48–0.51 不过宏观门。
+  structural_findings_for_gpu_matrix:
+    state_domain_of_macro_source:
+    - r1
+    - r2
+    - r3
+    - r4
+    r12_branch_reachable: false
+    macro_branch_disjointness:
+      days_vol_gt_h: 768
+      days_dominant_in_trend_set: 659
+      days_both_branches: 0
+    emotion_allow_days_in_state_source: 0
+    note: 以上计数全部机算自本次取数的两份真源（regime_state_anchored 与六段物化件），禁把手写散文数字当结论；结构性解读见交付报告与
+      GPU 包 meta.caveats.dual_gate_anatomy
+material_qualification:
+  M1_intraday_granularity: timestamp 长度>10 且日≥考窗起点
+  M2_round_trip_within_one_run: 逐 run 单独 build_pairs（治跨组合假往返）
+  M3_trade_log_dedup: sha256(trade_log) 指纹，同指纹只取首个代表件
+  M4_price_limit_feasibility: abs(gross_bp) ≤ 该板 (1+lim)/(1−lim)−1 推论上限
+emotion_gate:
+  available: true
+  truth_source: docs\_working\t0_matrix\six_phase_history_v1.csv
+  allow_set:
+  - euphoria
+  - expansion
+  - ignition
+  pit: T-1 交易日，asof 容差 7 自然日（与宏观门同构）
+material_audit:
+  keep_files:
+  - bt-1bd66583.json
+  - bt-2e42a507.json
+  - bt-2e78adc5.json
+  - bt-790d8a95.json
+  - bt-8607ffc2.json
+  files_total: 60
+  fills_total: 107218
+  fills_excluded_m1_daily_bar: 103332
+  files_empty_log: 4
+  fills_in_sample: 2591
+  files_deduped_away: 25
+  fills_deduped_away: 23780
+  fills_excluded_m1_pre_exam_window: 1295
+measured:
+  n_fills_in_sample: 2591
+  n_pairs: 26
+  runs_with_pairs: 2
+  pair_days:
+  - '2026-06-05'
+  - '2026-06-12'
+  - '2026-06-18'
+  - '2026-06-26'
+  - '2026-07-03'
+  - '2026-07-10'
+  - '2026-07-17'
+  - '2026-07-24'
+  - '2026-07-31'
+  - '2026-08-07'
+  - '2026-08-14'
+  - '2026-08-21'
+  - '2026-08-28'
+  - '2026-08-31'
+  - '2026-09-01'
+  gate_tally:
+    emotion_deny: 20
+    emotion_deny_within_macro_allow: 20
+    emotion_allow: 6
+    primary: 0
+    secondary: 0
+    control: 26
+    runs_with_pairs: 2
+    pairs_gross: 26
+    pairs_entering_gates: 26
+  whole_material:
+    n_pairs: 26
+    net_positive: 6
+    edge_ge_30bp: 6
+    gross_mean_bp: -5.06
+    gross_p50_bp: 4.3
+    net_mean_bp: -36.26
+    net_p50_bp: -26.89
+    edge_precondition_hit_rate: 0.2308
+  primary:
+    n_pairs: 0
+    net_positive: 0
+    edge_ge_30bp: 0
+    gross_mean_bp: null
+    net_mean_bp: null
+    gross_p50_bp: null
+    net_p50_bp: null
+    edge_precondition_hit_rate: null
+  secondary_single_macro:
+    n_pairs: 0
+    net_positive: 0
+    edge_ge_30bp: 0
+    gross_mean_bp: null
+    net_mean_bp: null
+    gross_p50_bp: null
+    net_p50_bp: null
+    edge_precondition_hit_rate: null
+  control:
+    n_pairs: 26
+    net_positive: 6
+    edge_ge_30bp: 6
+    gross_mean_bp: -5.06
+    gross_p50_bp: 4.3
+    net_mean_bp: -36.26
+    net_p50_bp: -26.89
+    edge_precondition_hit_rate: 0.2308
+verdict:
+  status: STATE_GATE_NEVER_TRIGGERED
+  conclusion: 宏观门在材料窗零命中（门规则与窗不相容），如实披露
+criteria_provenance:
+  pairing: cost_trio_exam.build_pairs（import 复用，逐 run 施加）
+  macro_gate: t0_conditional_e4_exam.{MACRO_VOL_H,MACRO_TREND_STATES,ASOF_TOLERANCE_DAYS,t1_state,load_regime_states}
+  emotion_gate: six_phase_history_v1.csv ← auto_mount.{R2SIX,phase_overlay,resolve_six_phase}
+  five_state_verdict: t0_conditional_e4_exam._verdict_for
+  cost_basis: CST-T0-001 rt=31.2bp / 前置 30bp / 前置率 0.30 / 土规 30 对

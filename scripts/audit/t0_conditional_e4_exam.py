@@ -26,6 +26,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import statistics
 import sys
 from datetime import date, timedelta
@@ -65,8 +66,29 @@ def t1_state(states: dict[date, tuple], day: date) -> tuple[str | None, float | 
 
 
 def emotion_gate_availability() -> tuple[bool, str]:
-    """核查丁线六段历史标签是否存在（禁顶替）。存在返回 (True, 来源)；否则 (False, 原因)。"""
+    """核查丁线六段历史标签是否存在（禁顶替）。存在返回 (True, 来源)；否则 (False, 原因)。
+
+    对接面修订（st-t0-matrix-20260924，卡 §2.2 "前瞻接线义务"授权，非判据改动）：
+    原探针只查 sentiment_panel.metric，而该表经注册表定性=**币圈宏观情绪面板**
+    （market_sentiment_panel / data_source=crypto_sentiment_panel，实测 29 行 2 metric），
+    首考据此判 unevaluable 属**读错表**；且六段标签历史已由
+    scripts/audit/t0_six_phase_materialize.py 物化落仓。本函数改为同时核查两处，
+    命中六段真源即返回 True ⇒ 触发本脚本下方双门取数守卫（按卡纪律作废重开）。
+    本改动只影响"可得性"，效果是 fail-closed（拒出 verdict），不可能放宽任何判据。
+    """
     from zephyr.infrastructure.database_service import DatabaseService
+
+    # 锚定仓根（红蓝⑥：原为 CWD 相对路径，非仓根 cwd 下静默失查=fail-open，
+    # 会让 v1 在"情绪门已可评"时又出单门 verdict，正是本守卫要防的事）
+    six_phase_truth = Path(__file__).resolve().parents[2] / "docs/_working/t0_matrix/six_phase_history_v1.csv"
+    if six_phase_truth.exists():
+        with six_phase_truth.open(encoding="utf-8") as fh:
+            routed = sum(1 for r in csv.DictReader(fh) if r.get("routed") == "1")
+        if routed:
+            return True, (
+                f"六段相位历史真源={six_phase_truth}（routed 日 {routed}，映射真源="
+                "scripts/backtest/auto_mount.py R2SIX+phase_overlay+resolve_six_phase）"
+            )
 
     conn = DatabaseService().get_clickhouse_conn()
     from zephyr.data.table_registry import get_registry
@@ -80,8 +102,9 @@ def emotion_gate_availability() -> tuple[bool, str]:
     if hit:
         return True, ",".join(hit)
     return False, (
-        f"sentiment_panel metrics={metrics} 无丁线情绪六段历史标签（fear_greed_index 为异轴指标，"
-        "卡 §2.2 禁顶替）；六段持久化为前瞻接线义务"
+        f"六段相位真源不存在或零路由（查 {six_phase_truth}）；且 sentiment_panel metrics={metrics} "
+        "无丁线情绪六段历史标签（该表注册定性=币圈宏观情绪面板，fear_greed_index 为异轴指标，"
+        "卡 §2.2 禁顶替）"
     )
 
 

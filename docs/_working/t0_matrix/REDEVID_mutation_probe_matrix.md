@@ -37,7 +37,7 @@ python -m pytest tests/audit/test_t0_conditional_e4_v3_exam.py \
   tests/audit/test_t0_gpu_condition_pack.py \
   tests/audit/test_t0_six_phase_materialize.py \
   tests/backtest/test_auto_mount.py tests/backtest/test_auto_mount_sle3.py -q
-# 期望：179 passed（其中 76 项是 auto_mount 既有回归，证明本包修复零破坏）
+# 期望：139 passed（其中 62 项是 auto_mount 既有回归，证明本包修复零破坏）
 ```
 
 变异探针本身是**临时件**（字节级写回 + 还原 + 哈希断言），不在仓内留脚本，

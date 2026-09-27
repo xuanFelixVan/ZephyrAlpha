@@ -1,0 +1,47 @@
+phase_version: sixphase-v1
+generated: '2026-09-23T22:27:06+00:00'
+sid: st-t0-matrix-20260924
+rows: 1816
+rows_routed: 1054
+date_span:
+- '2019-04-01'
+- '2026-09-21'
+truth_source:
+  mapping: scripts/backtest/auto_mount.py（R2SIX 宏观腿 + phase_overlay 微观腿 + resolve_six_phase
+    合成）
+  macro_table: c1_backtest.regime_snapshot_history
+  macro_leg_note: 本件零自定阈值：六段↔HMM 态映射与亢奋/退潮判据全沿用 HEAD 法定件（有漂移守卫测试钉住）
+  breadth: 399106 主源 + EQW_ALLA 补位（auto_mount._breadth_frame 同口径）
+  sql_free: true
+pit:
+  tail_lag_rows: 1
+  tail_dropped_through: '2026-09-21'
+  rolling_windows: 全腿 trailing（250 日滚动经验分位 + MA20 + 60 日收益），min_periods=半窗，无全局归一
+  duplication_guard: 面板出现重复 trade_date 即 SystemExit（快照表按日双写实测 1,624/1,631）
+closed_book:
+  cutoff: '2025-09-09'
+  rule: trade_date>cutoff 的行 closed_book_ok=0，只可作卷外观察，禁参与阈值选择/调参/定档
+  rows_in_window: 1566
+  rows_routed_in_window: 886
+  emotion_gate_allow_days_in_window: 359
+  allow_set:
+  - ignition
+  - expansion
+  - euphoria
+coverage:
+  start_requested: '2019-01-01'
+  macro_floor: 2019-04-01（快照表首日，实测；早于此无宏观腿⇒六段不可判，禁外推）
+  six_phase_distribution:
+    expansion: 388
+    distribution: 221
+    capitulation: 202
+    accumulation: 201
+    euphoria: 40
+    ignition: 2
+  unrouted_days: 762
+  unrouted_reason: 宏观态 r1/r2（低/中波震荡）在 R2SIX 无六段对应且当日无微观相位→不路由（auto_mount 明文'宁漏勿误'），禁硬塞最近邻
+discipline:
+- 映射冻结：六段↔状态轴对应=auto_mount 法定件，搜索结果禁回改（改=升 phase_version 作废重开）
+- closed_book_ok=0 段禁参与任何阈值选择/调参/定档，只允许事后观察披露
+- routed=0 日在情绪门按不可评处理（fail-closed），禁当作'非允许段'计入对照
+- 多重检验：情绪门可用日数与段分布须如实登记（裁定#325 判档表述，禁全绿）

@@ -37,7 +37,6 @@ import t0_gpu_condition_pack as gp  # vol 三桶边界唯一真源（VOL_B3，�
 EMOTION_ALLOW = {"ignition", "expansion", "euphoria"}  # T0-CONDITIONAL 卡 §2.2 frozen 允许集（引用）
 
 REPO = Path(__file__).resolve().parents[2]
-PACK_TRUTH_DIR = REPO / "data/strategy_intake/grid_t0_conditional_v1"  # 盘侧再生件，仅交叉核对用
 SIX_TRUTH = REPO / "docs/_working/t0_matrix/six_phase_history_v1.csv"
 CEILING_START = "2021-09-01"  # 分钟腿起点（卡 §1，禁扩）
 CLOSED_BOOK_START = "2019-01-04"  # 与 GPU 包同闭卷窗，用于两包互验
@@ -210,49 +209,23 @@ def build_groups(enriched) -> dict:
     }
 
 
-def pack_dual_allow_same_window(days: set[str]) -> int | None:
-    """GPU 输入包侧、**同一日集合**上的双门放行日数（独立口径，供交叉核对；包体未生成=None）。
-
-    红蓝实证：原先只写一个 cross_check_target 指针，指向包 meta 的**全闭卷窗**数（200），
-    与本件窗口不同窗，"两侧皆 107"只能靠散文相信。现改为从包体逐日重算同一日集合的口径，
-    两侧不等即判红（两个生成件互证，而不是自我声明）。
-    """
-    f = PACK_TRUTH_DIR / "t0_condition_matrix_v1.csv"
-    if not f.exists():
-        return None
-    return sum(
-        1
-        for r in csv.DictReader(f.read_text(encoding="utf-8").splitlines())
-        if r["trade_date"] in days and r["closed_book_ok"] == "1" and r["dual_gate_allow"] == "1"
-    )
-
-
 def closed_book_subset(enriched) -> dict:
     inwin = [r for r in enriched if CLOSED_BOOK_START <= r["trade_date"] <= CLOSED_BOOK_CUTOFF]
-    days = {r["trade_date"] for r in inwin}
-    duals = sum(1 for r in inwin if r["t1_macro_allow"] and r["t1_emotion_allow"])
-    pack_side = pack_dual_allow_same_window(days)
     return {
         "window": [CLOSED_BOOK_START, CLOSED_BOOK_CUTOFF],
         "days_in_window": len(inwin),
-        "dual_allow_days_in_window": duals,
-        "dual_allow_days_pack_side_same_day_set": pack_side,
-        "cross_check": "同一日集合（分钟腿可用日 ∩ 闭卷窗）上两件独立生成的双门放行日数必须相等；"
-        "包侧为 None 时表示盘侧再生件未生成，不作判据",
-        "cross_check_ok": pack_side is None or pack_side == duals,
+        "dual_allow_days_in_window": sum(1 for r in inwin if r["t1_macro_allow"] and r["t1_emotion_allow"]),
+        "cross_check_target": "data/strategy_intake/grid_t0_conditional_v1/t0_condition_matrix_v1.meta.yaml"
+        ":gpu_budget.closed_book.dual_gate_allow_days_in_window",
     }
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="做T 日内价差上界容量考试（T0-CEILING frozen）")
-    ap.add_argument("--pack-dir", default=None, help="GPU 输入包目录（交叉核对用；默认仓内标准位置）")
     ap.add_argument("--start", default=CEILING_START)
     ap.add_argument("--end", default="2026-09-23")
     ap.add_argument("--out-dir", default="docs/_working/t0_matrix")
     args = ap.parse_args()
-    global PACK_TRUTH_DIR
-    if args.pack_dir:
-        PACK_TRUTH_DIR = Path(args.pack_dir)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 

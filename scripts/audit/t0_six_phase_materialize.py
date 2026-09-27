@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_conditional_v3_prereg_card.md | §2 状态选择门（情绪门六段接线原为 V2 §2.2，V2 作废后由 V3 §2 逐字继承）
+# [BLUEPRINT] SH-SCRIPT-001 | docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md | §2.2 情绪门数据源真源物化件
 # [MODULE] t0_six_phase_materialize（scripts 判据轴物化件，非 src 包模块）
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] scripts/backtest/auto_mount.py（load_phase_panel/R2SIX/PHASE_PREEMPT，唯一相位真源，只导入禁复制）；c1_backtest.regime_snapshot_history（宏观腿，经 auto_mount._snapshot_rows 只读）；广度指数 399106 + EQW_ALLA 补位（微观腿，经 auto_mount._breadth_frame 只读）

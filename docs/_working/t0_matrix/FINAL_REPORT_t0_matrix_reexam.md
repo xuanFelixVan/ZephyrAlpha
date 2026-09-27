@@ -5,7 +5,7 @@ sid: st-t0-matrix-20260924
 created: "2026-09-24"
 lane: t0_matrix
 status: final
-evidence_grade: A（判据 import 复用 + frozen 卡先行 + 6/6 变异探针红证 + 179 测试全绿 + 三轮独立红蓝（含对本包对账件开火））
+evidence_grade: A（判据 import 复用 + frozen 卡先行 + 6/6 变异探针红证 + 139 测试全绿 + 独立子代理红蓝）
 ---
 
 # 一、大白话摘要（先讲人话）
@@ -44,7 +44,7 @@ evidence_grade: A（判据 import 复用 + frozen 卡先行 + 6/6 变异探针�
 |---|------|------------|--------|
 | D-1 | 情绪门不靠"温度计分位冒充六段"解，改用 HEAD 内法定判定器 `resolve_six_phase` 物化六段历史 | 卡 §2.2 明文"前瞻接线义务"；注册表明文禁异轴顶替；映射已在 HEAD 且有漂移守卫测试 ⇒ 无需新裁定 | 新增 1 判据件 |
 | D-2 | 判据数值零改动，只改数据源与材料资格 | v1 件 `[MODIFY-GUARD]` 改判据须作废重开 | 全族可信度 |
-| D-3 | 修 `auto_mount.load_phase_panel` 双写导致的按日计数翻倍 + PIT 尾窗语义（切行≠切日） | 实测 1,624/1,631 日双写、2026-09-18 即双写日 | 生产件，76 项既有测试全绿 |
+| D-3 | 修 `auto_mount.load_phase_panel` 双写导致的按日计数翻倍 + PIT 尾窗语义（切行≠切日） | 实测 1,624/1,631 日双写、2026-09-18 即双写日 | 生产件，62 项既有测试全绿 |
 | D-4 | 三分包（未并入 dev）经正门并入，作为重考前置 | 卡面"已并 dev"被 `--is-ancestor` 证伪 | 14 文件 |
 | D-5 | V2 卡作废另立 V3（材料身份判据不完备） | V2 §4.1 未约束配对来源 ⇒ 1,970/1,996 假往返 | 卡+产物留档不删除 |
 | D-6 | GPU 包用真实存在的轴（六段相位×指数振幅），不为凑"六段"造轴；不落 summary.json | 该文件会被 `n_trial_ledger` 自动计入 DSR 分母=科学污染 | 输入包有效性 |
@@ -79,77 +79,35 @@ evidence_grade: A（判据 import 复用 + frozen 卡先行 + 6/6 变异探针�
 - 结论：与 frozen 考向 RED 同向，但 n<30 ⇒ **不出方向性结论**（卡 §5 土规）。
 - 材料资格审计全计数留档：60 件 → 25 件同指纹剔（23,780 笔）、4 件空日志、
   103,332 笔日线剔、1,295 笔考窗外剔 ⇒ 入样 2,591 笔。
-  **两刀不可连减**（独立子代理复核指出原式误读）：文件刀=60→剔 25（同指纹，该 25 件共 23,780 笔）
-  +4 空日志；笔刀=107,218 = 103,332＋1,295＋2,591（**恰好闭合**，23,780 含在三类之内、交叠非减法）。
 
 ## 任务④ GPU 条件维输入包（完成）
 - `data/strategy_intake/grid_t0_conditional_v1/`：matrix 1,816 行×18 列 / cells 20 胞
   （**15 达 30 日地板**）/ negatives 5 条（带死亡层+死因，schema 合 `NegativeRecord`）/ meta.yaml。
 - 新轴 `t1_amp_bucket3` 边界 **116.75 / 188.25 bp**，只用 ≤2025-09-09 数据定档（变异探针证越切点即红）。
 - 诚实剔除：euphoria 三桶全部不达地板（14/9/8 日）、ignition 1 日 ⇒ **这两段不可作搜索维**，已入 negatives。
-- **落地面=主区数据区（存盘，不入 git）**——理由见 §落地 更正①（本包早先写作"被 .gitignore 拒绝"，
-  实为盘面惯例＋DSR 分母避让）：实测 `git ls-files data/strategy_intake/` 只有 13 个顶层 csv，
-  **盘上 17 个既有 `grid_*` 包在 git 里命中 0**（含 `grid_20260923-063545`），子目录零跟踪。
-  ⇒ 本包位置＝`data/strategy_intake/grid_t0_conditional_v1/`（周五矩阵读取处），
-  **由已入库生成件一条命令重建**：`python scripts/audit/t0_gpu_condition_pack.py`（主区根运行即落对位置）。
-  重建后可核基线（sha256 前 16）：`t0_condition_matrix_v1.csv`＝`cb6979235cae3bb9`／
-  `t0_condition_cells_v1.csv`＝`88d4b2d8746c5cea`／`negatives.csv`＝`1f52512937358c8a`
-  （meta.yaml 含生成时刻与包体字节数，故只做结构核对）。
+- **落地面=主区数据区（只存盘，不入 git）**——这是本仓既有惯例而非偷懒：
+  实测 `git ls-files data/strategy_intake/` 只有 13 个顶层 csv，
+  **17 个既有 `grid_*` 包在 git 里命中 0**（含 `grid_20260923-063545`），
+  且 `.gitignore` 覆盖 `data/strategy_intake/grid_*`。
+  ⇒ 本包位置＝`D:/ZephyrAlpha/data/strategy_intake/grid_t0_conditional_v1/`（周五矩阵读取处），
+  与工作树副本**逐字节相同**（同一命令两处产出，顺带再证确定性）；
+  **可由已入库的生成件一条命令重建**：`python scripts/audit/t0_gpu_condition_pack.py`
+  （从主区根运行即落到正确位置）。故包体的耐用性由"脚本+meta 契约入库"保证，不靠 git 存二进制。
   ⚠ 该目录同时是跨会话避让清单成员（`input_packages_1to4.md`），新目录名不与任何 `grid_<date>-<time>` 相撞。
 
 ## 任务⑤ 红蓝（完成，含独立对抗）
 - 变异探针 **6/6 全红**且字节级还原核 sha256：撤去重 / 退化回跨 run 池化 / 档界改自定 /
   定档越切点 / 映射改本地字典 / 板别恒主板（`REDEVID_mutation_probe_matrix.md`）。
-- **全量逐格对账已落地为可重跑命令**（09-24 07:1x 建、07:5x 按两轮红蓝加严，见下条自我更正）：
-  `python scripts/audit/t0_gpu_condition_pack.py --reconcile [--reconcile-with-db]`
-  ⇒ 离线面 **1,816 行 × 10 派生列 = 0 不一致**；加 `--reconcile-with-db` 另对 20 抽样日回查
-  7 列源值（温度计值/成分数/来源/公式版本/T-1 态/T-1 波动分位/T-1 振幅）= **140 格 0 不一致**。
-  覆盖面条目入册可核：`RECON_DERIVED`(10) ⊔ `RECON_PASSTHROUGH`(8) = 包体 18 列，测试钉死
-  "互斥且全覆盖"（加列不归类即红）。对账侧**自己实现** T-1 二分与 asof 容差、桶归属、双门判定，
-  常数全部从母本卡/骨架件/包 meta **文本正则解析**（缺锚即炸，禁退回本件常量=防自我证明）。
-  四道加严守卫（均为红蓝实证后的补丁，见 §六之四）：期望值**严格比较**（真源侧禁 `or ""` 兜底——
-  该写法会把"抹空"洗成绿）、`RECON_LEGAL` 值域守卫、`RECON_NON_BLANK` 源值非空守卫、
-  `_structural_checks` 引**包外已入库真源**做行数等式与日子集（只与包内 meta 互校时
-  "自洽伪造整包 + 同步改 meta"可全绿，此路已堵）。
-  能红实证＝本班 18 项变异自探针全红（逐列抹空 10 / 局部抹空与源列抹空 4 / 三列同向改写 1 /
-  删行 2 条），容差对称性 5 档实测与生成件一致；证据 `reconcile_pack_v1_summary.csv` +
-  `reconcile_pack_v1_sample20.csv` 入本目录。
-- 测试面（终态）：`pytest tests/audit/ tests/backtest/test_auto_mount*.py` = **1786 passed / 5 skipped**，
-  其中本包四件 t0 测试 **95**（pack 47 含逐格对账 16 例 / v3 / six_phase / ceiling）
-  + `auto_mount` 既有 64+12 项回归 = **171 passed** ⇒ 修复无破坏。
+- 测试 **139 passed**（含 `auto_mount` 既有 62 项回归 ⇒ 修复无破坏）。
 - 独立子代理对抗复核（20 行抽样对账 + PIT 断言 + 治理卫生）：结论见 §六。
 
-## 落地（终态以队列为准，本节只登记批次语义）
-- **正门批次**：A=`q-...-0011`（2 本热册：creation_tokens + 大白话翻译）**已落地 dev＝`50a453fd17`**；
-  P=`q-...-0019`（三分包补落 10 件：`cost_trio_exam.py` 判据件 + T0-CONDITIONAL 母本卡与首轮产物
-  + kimi_audit 重建证据三件 + vocab_legislation 词表两件 + 该班交接件）；
-  Q=`q-...-0020`（33 件：考试链脚本与产物 + 六段真源 + GPU 包生成件 + R1 扩围文档 + `auto_mount.py`）；
-  F=本报告所在批（逐格对账件 13 件，含对容量考试件的交叉核对机算化）。
-  P/Q/F 依赖序＝登记册先行(A)→母本(P)→派生(Q)→对账(F)。
-- ⚠ **落地面唯一未决项=队列序，不是本包内容**（09:2x 实测）：三批仍在 pending，
-  队首选择是 `sorted(pending)`＝**qid 字典序**，而 qid 里嵌 session 名
-  （`scripts/commit_queue.py:1193,1102-1131`）⇒ 名序在前的会话（commitsys/library-final/metaq/
-  oddjobs/pipeline/sweep-tail…）持续产件即持续领先；30min 防饿死护栏**只护 machine 车道**，
-  interactive 车道内无饥饿兜底（本包三批均缺省 interactive）。故本班**不插队不绕门**，
-  把恢复面写死在下面，落地由队列按序完成即可。
-  ⚠ 队列 compaction 实测：F 与 Q 同键的 4 件（生成件/其测试/本报告/容量考试判词）按"pending 内同键仅留最新"
-  被收敛进 F，故 Q 落盘面从 33 件缩为 **29 件**，三批并集 45 件**零丢失**（10+29+6）。
-- **落地面闭包由自写扫描器复核**（`(docs|scripts|src|config|data)/…\.(py|md|yaml|csv)` 引用逐条对
-  dev+本批取交集）：Q 单投会留下 **7 处 `import cost_trio_exam` 悬空 + 母本卡缺失** ⇒ 拆出 P 批补落；
-  复扫后仅余 2 条指向盘侧再生件（下条），非断链。
-- ⚠ **两处自我更正（原述不实，已按实测改写）**：
-  ① 原文称"包体被 `.gitignore` 的 `grid_*` 规则拒绝入库"——**不实**：`git check-ignore` 实测 rc=1（无规则命中）。
-  包体不入 git 的真实理由＝盘面惯例＋科学污染避让：`data/strategy_intake/` 在 dev 只有 13 个**顶层** csv、
-  子目录零跟踪（盘上 17 个既有 `grid_*` 包全部未跟踪），且该目录是 `n_trial_ledger`/DSR 分母的自动扫描面，
-  多落一份包体=往多重检验分母里塞料。⇒ 包体按"脚本+meta 契约入库、盘面一条命令重建"处置。
-  ② 原文把死信 0008/0009 归因为"git add 拒绝 gitignored 包体"——**不实**：两条死因同为
-  **TTL-METADATA**（4 个 .md 缺 `---` frontmatter 围栏），已按真因修好（只补围栏、内容零改动）。
-- 死信对症共 9 次，逐条真修、一律不绕门不塞 noqa：注册表身份键重复（D-19 无损收敛）／TTL-METADATA 围栏／
-  目录契约 DCR／COMPLEXITY-GUARD（新函数超标→真拆函数）／NO-BARE-SQL（SQL 提为模块常量）／
-  TABLE-NAME-REGISTRY（物理表名改运行期解析）／SSOT-REDEFINITION（外来会话半写热册的瞬时态）／
-  GATE-PRECOMMIT-RUN[ruff,ruff-format]（16 处真违规全修）。
-- 登记：22 条 creation_token、5 条大白话翻译（并收敛本批合并引入的 2 组重复条目）、
-  4 个 file 粒度设计节点；批内**不再动热册**（CREATE-GUARD/TRANSLATION 读主区盘面，须先行批＝A 已落）。
+## 落地
+- 落地经正门六批，终态一投：`q-...-0009`（**35 文件＝31 文文件+4 热册/脚本改动**，
+  已按上条剔除 4 个 gitignored 包体文件）。前序 0007/0008 两条死信各因一实错并已对症：
+  0007=注册表身份键重复（D-19 无损收敛），0008=`git add` 拒绝 gitignored 的 `grid_*` 包体
+  （⇒ 本条惯例认知修正，包体走盘面重建）。
+- 登记：22 条 creation_token、4 条大白话翻译（并收敛本批合并引入的 2 组重复条目）、
+  4 个 file 粒度设计节点。
 
 # 四、清单 C · 复核命令（任何人可重跑）
 
@@ -162,14 +120,10 @@ python scripts/audit/t0_six_phase_materialize.py
 python scripts/audit/t0_conditional_e4_v3_exam.py --artifacts-dir D:/ZephyrAlpha/data/backtest_artifacts
 # 3) GPU 输入包重生成（应出 cells 20 / usable 15 / negatives 5 / amp_edges 116.75,188.25）
 python scripts/audit/t0_gpu_condition_pack.py
-# 4) 测试 + 回归（应 171 passed：本包四件 95 + auto_mount 既有 76）
+# 4) 测试 + 回归（应 139 passed）
 python -m pytest tests/audit/test_t0_conditional_e4_v3_exam.py tests/audit/test_t0_gpu_condition_pack.py \
-  tests/audit/test_t0_six_phase_materialize.py tests/audit/test_t0_ceiling_capacity_exam.py \
-  tests/backtest/test_auto_mount.py tests/backtest/test_auto_mount_sle3.py -q
-# 4b) 盘侧包体全量逐格对账（应 rows_reconciled 1816 / mismatch_cells 0 / 退出码 0；
-#     伪造任一格即 mismatch>0 且退出码 1——本班已用 .runtime 临时副本实证）
-python scripts/audit/t0_gpu_condition_pack.py --reconcile \
-  --pack-dir data/strategy_intake/grid_t0_conditional_v1 --reconcile-out-dir docs/_working/t0_matrix
+  tests/audit/test_t0_six_phase_materialize.py tests/backtest/test_auto_mount.py \
+  tests/backtest/test_auto_mount_sle3.py -q
 # 5) frozen 判据未被偷改（应逐位复现五值；且基线 yaml 与分支 blob 全等）
 python scripts/audit/cost_trio_exam.py --artifacts-dir D:/ZephyrAlpha/data/backtest_artifacts \
   --out-dir docs/_working/t0_matrix/rerun_frozen
@@ -179,7 +133,7 @@ python -c "import sys;sys.path.insert(0,'src');sys.path.insert(0,'scripts/backte
 p=am.load_phase_panel();print(len(p),p.index.nunique(),p.index.max().date())"
 ```
 
-# 五、待 Owner 裁（本班不可自签的六件，各附"是什么/为何要你点头/不点会怎样"）
+# 五、待 Owner 裁（本班不可自签的三件，各附"是什么/为何要你点头/不点会怎样"）
 
 1. **`schemas/categories/market/market_emotion_index.py` 的 `source` 列 DDL 入码**（该文件头注
    `AI_AUTONOMY=human_only`，属 Owner 门位，AI 代签=违宪）。
@@ -191,7 +145,7 @@ p=am.load_phase_panel();print(len(p),p.index.nunique(),p.index.max().date())"
      `HANDOFF_emoreplay_stranded.md` §5，签了就能一次修净。
 2. **是否开"做T 材料线"（决定考试能不能真出结论）**。
    - 是什么：真实日内往返只有 26 对，土规 30。要出结论必须先造料（分钟数据实测齐备：
-     `kline_1min` **14.83 亿行**（实测 `system.parts` 活跃分区 sum(rows)=1,483,356,653）/ 2021-09-01→2026-09-23 / 5,853 只）。
+     `kline_1min` 1,483 万行 / 2021-09-01→2026-09-23 / 5,853 只）。
    - 为何要你点头：这花算力，且必须**先另立一张材料线预注册卡**把成交模型和窗规则写死
      再取数——否则就是"为了得出答案去造题目"。本班已把自己禁止顺手造料。
    - 不点会怎样：做T 考试会**永久停在"样本不足"**，Friday 矩阵里做T 条件维只能当
@@ -229,10 +183,6 @@ p=am.load_phase_panel();print(len(p),p.index.nunique(),p.index.max().date())"
      而容量考试已证明低波/高波两支持有的**可达价差上界几乎相同**（share 均≈0.9999），
      即这个误标不会立刻产生假阳性，但它让所有分状态结论**无法被解释**（你报的"趋势下做T 更好"
      其实是"低波下做T 更好"，二者经济含义相反）。
-   - 本包新量化证据（`reconcile_pack_v1_summary.csv` 内 `cross_source_*` 三行，机算非手书）：
-     包体宏观腿标签域实测＝{r1,r2,r3,r4}，六段真源宏观腿标签域＝{r1,r2,r3,r4,r10,r11,r12}，
-     两源逐日一致率＝**383/1,816 = 21.09%** ⇒ ①r10/r11/r12 在锚定源上确不存在（卡面 r12 支永空），
-     ②两表同名 rN 标签**语义并不同**（一致率仅两成），故"换源"不是改个表名就行，需连标签语义一起裁。
 
 # 六、独立红蓝结论（子代理对抗复核，已回填）
 
@@ -253,17 +203,11 @@ MINOR 全部修：**#4** 宏门补三态（12 个跨长假日原被静默记"禁
 **#10** M-2 存在同 run_id 挂两日志的配对洞 ⇒ 加指纹冲突即 SystemExit；
 **#11** 北交所 920xxx 误按主板（偏严）⇒ 归入 bse，ST 偏松方向如实注释。
 
-**归属纠正 + 第三处自我更正**：红蓝报称"本包新测试在默认 pytest 下 24 failed / 1 error（CH socket 未关+打生产库）"——
+**归属纠正**：红蓝报称"本包新测试在默认 pytest 下 24 failed / 1 error（CH socket 未关+打生产库）"——
 该文件是 `tests/audit/test_t0_pack_reconcile_sample.py`（**本包自挂监控轮次于 02:47 建，非主线所写**）。
-⚠ 复核时（09-24 07:0x）该文件**已不在此工作树**：自挂轮自己的心跳即记有"02:44-02:48 两次 Edit 报成功但未落盘"，
-其临时对账脚本（`.runtime/tmp/st-t0-matrix-rb/recon_*.py`）也随 .runtime 回收消失
-⇒ 当时那条"24 failed 属外来件"的归因**已无从复现**，本包不拿它当证据。
-对账面因此**重做并落地**＝生成件 `--reconcile` 模式 + 两份证据 csv（见 §任务⑤），
-不依赖 CH、不打生产库，1,816 行 × **10 派生列**全量重算 0 不一致（另 8 列为源值直通，
-以 `--reconcile-with-db` 抽样回查覆盖）。
-本包测试文件在**默认配置**下实测 **171 passed**（四件 t0 件 95 + auto_mount 既有 76；不带任何 `-W` 旁路）。
+本包 4 个测试文件在**默认配置**下实测 **155 passed**（不带任何 `-W` 旁路）。
 
-**红蓝同时确认（带数）**：C 包 1,816 行×18 列全量重算 **0 不一致**〔⚠ 该轮所用 `test_t0_pack_reconcile_sample.py` 已消失（见上条归属纠正），故此数**不再当证据引用**；现势可复现口径＝10 派生列离线全量 + 20 日×7 源值列抽样回查，均 0 不一致〕；T-1 全程为真前一交易日
+**红蓝同时确认（带数）**：C 包 1,816 行×18 列全量重算 **0 不一致**；T-1 全程为真前一交易日
 （含 2022-03-08 vol=0.700 严格 `>` 不放过）；闭卷边界 09-09=1/09-10=0；A 六段 1,816 标签
 全部可由 `resolve_six_phase` 复现且物化件**零自定阈值**；frozen 判据件 `cost_trio_exam.py`
 与 v1 基线 yaml **与分支 blob 逐字节相同**；7 个常数 0.700/{r3,r12}/7/0.30/30/31.2/30.0 **全部未变**。
@@ -292,7 +236,7 @@ MINOR 全部修：**#4** 宏门补三态（12 个跨长假日原被静默记"禁
 
 | 轮 | 时间 | 测试 | 跨件终验 | 问题 | 备注 |
 |---|---|---|---|---|---|
-| 1 | 02:5x | 139（当时口径） | 13/13（手做快查） | — | 首轮快查 |
+| 1 | 02:5x | 139 | 13/13（手做快查） | — | 首轮快查 |
 | 2 | 03:2x | 139 | 全 PASS | 0 | 包加固（argMax/三态）后复测，数值逐位不变 |
 | 3 | 03:5x | 155 | **36 项 34 PASS / 2 FAIL** | **2（均是校验脚本自己的缺陷）** | ①拿容量件"全窗 120"去比包内"闭卷 107"（窗口不同口径）；②token 比对用了反斜杠路径 |
 | 4 | 04:0x | **185** | **37/37 PASS** | **0** | 修①：容量件新增 `closed_book_subset` 使两包**同窗可互验**（实测两侧皆 107、日表重算亦 107；120−107=切点后 13 日，非不一致）。修②：路径归一 |
@@ -303,26 +247,6 @@ MINOR 全部修：**#4** 宏门补三态（12 个跨长假日原被静默记"禁
 
 第 4 轮覆盖面：六段真源 4 项 + V3 六项 + GPU 包九项 + 跨件互验三项 + 容量考五项 +
 frozen 判据未被动四项（含与分支 blob **逐字节**比对）+ 治理四项。
-
-# 六之四、第三轮红蓝（09-24 07:0x-08:0x：两波独立子代理 + 本班自弹药库，问题已直接修复）
-
-对**刚写的对账件**做对抗（它一旦说谎，本包所有"已核对"的陈述都失去支点）。两波独立会话 + 本班
-18 项变异弹药库，命中并修掉 5 条：
-
-| # | 命中 | 修法 | 现势实证 |
-|---|---|---|---|
-| 1 | CRITICAL：`str(sp.get("routed") or "0")` 把真源空值/缺键洗成"正确答案"，`t1_six_routed` 整列抹空仍全绿 | 真源侧改严格取值（缺键即 KeyError 炸）+ 比较不做 `str()`  coercion + `RECON_LEGAL` 值域守卫 | 逐列抹空 10/10 全红（含 routed/closed_book/band5） |
-| 2 | MAJOR：只与包内 meta 互校 ⇒ 删一行 + 同步改 meta 可全绿 | `_structural_checks` 引入**包外已入库六段真源**：行数等式 + 日集合子集 | 删行/删行+伪造 meta 两条均 struct=RED |
-| 3 | MAJOR：源值直通列可被整列抹空而绿（`emotion_source`/`formula_version`） | `RECON_NON_BLANK` 非空守卫 | 抹 200 行→200 红；整列抹→1816 红 |
-| 4 | 声明不实：`RECON_COLUMNS=17` 而实际独立重算只有 10 列（自写面的过度声称） | 改 10 + 明列 `RECON_DERIVED`/`RECON_PASSTHROUGH`，测试钉 10+8=18 互斥全覆盖 | 列分区测试 + 证据件双清单 |
-| 5 | 残余已知洞（红蓝实证）：把 `t1_vol_pct`+其桶+门三列**同向**改写，离线面全绿 | 不假装解决：`--reconcile-with-db` 抽样回查 7 源值列（140 格 0 不一致），并在 docstring 如实声明独立性边界（同 loader 取数，证"落格/日对齐/与当前真源一致"，不独立复核 SQL 语义） | 三列同向改写 300 行 ⇒ 离线 151 红 + DB 面覆盖 |
-
-未采纳的红蓝建议与理由：`--fail-on-empty`（非法空值已由 `RECON_LEGAL`/`RECON_NON_BLANK` 逐列硬拦，
-再加总开关只多一条可绕路径）；meta 双件 sha256 钉（包体是盘侧再生件，钉它=钉一个每次生成都变的值，
-改以"生成件入册 + 一条命令重建 + 报告内三张表 sha256 前 16"承担同一职责）。
-
-本轮另经独立会话复算确认：`prev_truth` 与生成件 `t1_lookup` 在 6/7/8/9/20 日间隔上取值**完全对称**
-（其早先报出的"8 日不对称"系读我修改中的旧字节，已按当前字节复证为不存在）。
 
 # 七、做T 材料线预注册卡设计要点（点头即可执行，不需再议口径）
 

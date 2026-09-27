@@ -1,0 +1,87 @@
+card: docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md (frozen)
+mode: dual_gate
+emotion_gate:
+  available: true
+  truth_source: docs\_working\t0_matrix\six_phase_history_v1.csv
+  allow_set:
+  - euphoria
+  - expansion
+  - ignition
+  pit: T-1 交易日，asof 容差 7 自然日（与宏观门同构）
+material_audit:
+  keep_files:
+  - bt-1bd66583.json
+  - bt-2e42a507.json
+  - bt-2e78adc5.json
+  - bt-790d8a95.json
+  - bt-80c72b17.json
+  - bt-8607ffc2.json
+  fills_total: 130998
+  fills_excluded_daily_bar: 127098
+  fills_in_exam_window: 2605
+  files_keeping_intraday: 6
+  fills_excluded_pre_exam_window: 1295
+  files_total: 60
+measured:
+  n_fills_in_sample: 2605
+  n_pairs_total: 28
+  pair_days:
+  - '2026-06-05'
+  - '2026-06-12'
+  - '2026-06-18'
+  - '2026-06-26'
+  - '2026-07-03'
+  - '2026-07-10'
+  - '2026-07-17'
+  - '2026-07-24'
+  - '2026-07-31'
+  - '2026-08-07'
+  - '2026-08-14'
+  - '2026-08-21'
+  - '2026-08-28'
+  - '2026-08-31'
+  - '2026-09-01'
+  gate_tally:
+    emotion_deny: 21
+    emotion_deny_within_macro_allow: 21
+    emotion_allow: 7
+    primary: 0
+    secondary: 0
+    control: 28
+  primary:
+    n_pairs: 0
+    net_positive: 0
+    edge_ge_30bp: 0
+    gross_mean_bp: null
+    net_mean_bp: null
+    gross_p50_bp: null
+    net_p50_bp: null
+    edge_precondition_hit_rate: null
+  secondary_single_macro:
+    n_pairs: 0
+    net_positive: 0
+    edge_ge_30bp: 0
+    gross_mean_bp: null
+    net_mean_bp: null
+    gross_p50_bp: null
+    net_p50_bp: null
+    edge_precondition_hit_rate: null
+  control:
+    n_pairs: 28
+    net_positive: 6
+    edge_ge_30bp: 6
+    gross_mean_bp: -9.75
+    gross_p50_bp: 2.45
+    net_mean_bp: -40.95
+    net_p50_bp: -28.76
+    edge_precondition_hit_rate: 0.2143
+verdict:
+  status: STATE_GATE_NEVER_TRIGGERED
+  conclusion: 宏观门在材料窗零命中（门规则与窗不相容），如实披露
+criteria_provenance:
+  pairing: cost_trio_exam.build_pairs（import 复用）
+  macro_gate: t0_conditional_e4_exam.{MACRO_VOL_H,MACRO_TREND_STATES,ASOF_TOLERANCE_DAYS,t1_state,load_regime_states}
+  five_state_verdict: t0_conditional_e4_exam._verdict_for
+  emotion_mapping: auto_mount.{R2SIX,phase_overlay,resolve_six_phase}（经 six_phase_history_v1.csv
+    物化）
+  cost_basis: CST-T0-001 rt=31.2bp / 前置 30bp / 前置率 0.30 / 土规 30 对
