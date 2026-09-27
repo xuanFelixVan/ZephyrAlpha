@@ -54954,4 +54954,54 @@ creation_tokens:
   created_by: st-c7-resc-20260927
   capability: chart_condition_package
   merge_evaluation: "P2-1 外置机器块唯一归档位（与 condition_package.yaml 同格式同族），非第二真源：docstring 只留 external 锚"
+- file: docs/_working/fullconnect_campaign/a_data_foundation/13_f123_db_schema_migration_channel.md
+  token: fullconnect-mining-13-f123-db-schema-migration-channel-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/a_data_foundation/14_f125_data_governance_lineage.md
+  token: fullconnect-mining-14-f125-data-governance-lineage-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/a_data_foundation/15_f126_field_dictionary.md
+  token: fullconnect-mining-15-f126-field-dictionary-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/a_data_foundation/16_f127_data_eng_engineering.md
+  token: fullconnect-mining-16-f127-data-eng-engineering-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/b_factory_inbound/11_f129_ml_train_line.md
+  token: fullconnect-mining-11-f129-ml-train-line-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/c_exam_pipeline/08_f131_nlp_text_intelligence.md
+  token: fullconnect-mining-08-f131-nlp-text-intelligence-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/i_ai_ops_gov/13_f132_infra_ops_engineering.md
+  token: fullconnect-mining-13-f132-infra-ops-engineering-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/j_ai_design_gates/13_f130_ml_serve_adapters.md
+  token: fullconnect-mining-13-f130-ml-serve-adapters-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/k_frontend_docs/11_f124_state_vocab_lifecycle.md
+  token: fullconnect-mining-11-f124-state-vocab-lifecycle-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
+- file: docs/_working/fullconnect_campaign/k_frontend_docs/12_f128_data_security_masking.md
+  token: fullconnect-mining-12-f128-data-security-masking-20260927
+  created_by: st-c7-mine-20260927
+  capability: fullconnect_mining
+  merge_evaluation: "单环节挖矿证据载体：仅载本 F 号的六向台账与四态复核，环节分母真源仍是 00_skeleton_verified.md（Z=132 已裁），本册不定义分母/阈值/词表，非第二真源"
 di_seam_exemptions: []
