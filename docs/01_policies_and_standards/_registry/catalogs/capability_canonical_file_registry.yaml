@@ -53770,6 +53770,16 @@ creation_tokens:
   created_by: st-ec2-p0
   capability: chain_circulation
   merge_evaluation: "内收：回灌边消费端读数单件承载 FL1+FL2 双边（同真源 E6/E9 台账可派生→收敛唯一读数件），不新增第二 freshness/decay 口径，复用 MOD-SIG-150 与 sim_attribution_daily 写入端零重建"
+- file: docs/_working/chain_circulation_campaign/99_skipped_for_owner.md
+  token: chain-circulation-99-skipped-for-owner-20260926
+  created_by: st-ec2-p0
+  capability: chain_circulation
+  merge_evaluation: "内收：EC2 九项销账台账单册承载（作业簿复核命令逐项复用不另立口径），Owner 跳过登记并入既有 99 文件族不建第二通道"
+- file: docs/_working/chain_circulation_campaign/ec2_p0_breaks_ledger.md
+  token: chain-circulation-ec2-p0-breaks-ledger-20260926
+  created_by: st-ec2-p0
+  capability: chain_circulation
+  merge_evaluation: "内收：EC2 九项销账台账单册承载（作业簿复核命令逐项复用不另立口径），Owner 跳过登记并入既有 99 文件族不建第二通道"
 - file: docs/03_modules/_domain_data/algo_flow/implementations/consensus_daily_compute.yaml
   token: auto-ext-algoflow-20260927
   created_by: externalize_algo_flow.py (zc-lane-p-20260927)
@@ -53799,6 +53809,11 @@ creation_tokens:
   created_by: zc-lane-p-20260927（战役共有件，Orchestrator 建册）
   capability: architecture_view
   merge_evaluation: Owner 门位台账，task_bound 随战役归档，唯一登记面无第二真源
+- file: docs/_working/fullconnect_campaign/lane_v_notes.md
+  token: architecture-view-lane-v-notes-20260926
+  created_by: zc-lane-v-20260927
+  capability: architecture_view
+  merge_evaluation: "战役V线施工台账，task_bound 随归档退役，无第二真源（与91_progress互链不重复记账）"
 - file: docs/_working/total_command_closeout/95_chief4_ledger.md
   token: chief4-fullflow-ledger-95-chief4-ledger-20260926
   created_by: st-chief4-20260927
@@ -54754,26 +54769,11 @@ creation_tokens:
   created_by: st-final-build-20260926
   capability: campaign_books
   merge_evaluation: "唯一归档位：本役终报与待裁清单，不替代既有册条目（既有宿主无此观测面）"
-- file: docs/_working/chain_circulation_campaign/99_skipped_for_owner.md
-  token: chain-circulation-99-skipped-for-owner-20260926
-  created_by: st-ec2-p0
-  capability: chain_circulation
-  merge_evaluation: "内收：EC2 九项销账台账单册承载（作业簿复核命令逐项复用不另立口径），Owner 跳过登记并入既有 99 文件族不建第二通道"
-- file: docs/_working/chain_circulation_campaign/ec2_p0_breaks_ledger.md
-  token: chain-circulation-ec2-p0-breaks-ledger-20260926
-  created_by: st-ec2-p0
-  capability: chain_circulation
-  merge_evaluation: "内收：EC2 九项销账台账单册承载（作业簿复核命令逐项复用不另立口径），Owner 跳过登记并入既有 99 文件族不建第二通道"
 - file: docs/03_modules/_domain_strategy_pipeline/algo_flow/paper_outpost.yaml
   token: paper-outpost-algo-flow-view-paper-outpost-20260926
   created_by: st-chief4x-promo2-20260927
   capability: paper-outpost-algo-flow-view
   merge_evaluation: "内收对价=前哨考核器算法视图外锚出仓，drafter+externalizer 官方管线产物，零手写块"
-- file: docs/_working/fullconnect_campaign/lane_v_notes.md
-  token: architecture-view-lane-v-notes-20260926
-  created_by: zc-lane-v-20260927
-  capability: architecture_view
-  merge_evaluation: "战役V线施工台账，task_bound 随归档退役，无第二真源（与91_progress互链不重复记账）"
 - file: docs/_working/fullconnect_campaign/lane_t_notes.md
   token: campaign-lane-notes-lane-t-notes-20260927
   created_by: zc-lane-t-20260927
@@ -54809,4 +54809,29 @@ creation_tokens:
   created_by: st-chief4x-govtool-20260927
   capability: gate_face_reconciliation_report_yaml
   merge_evaluation: "波5.2取号器/波1A.3对账表生成器唯一通道，无同真源旧件可并；报告件为生成器派生产出"
+- file: src/zephyr/pf_alloc/rebalance_check_runner.py
+  token: rebalance-check-runner-rebalance-check-runner-20260927
+  created_by: st-chief4x-e8e9-20260927
+  capability: rebalance_check_runner
+  merge_evaluation: "跨域不同对象不并：MOD-PF-003=纯决策算法件（无生产调用方），本件=其唯一生产调用面（读数+调度接线），非同真源重复簇；写作端（pf_alloc_daily 事件链）正交保留"
+- file: src/zephyr/pf_core/core/shadow_portfolio.py
+  token: shadow-portfolio-shadow-portfolio-20260927
+  created_by: st-chief4x-e8e9-20260927
+  capability: shadow_portfolio
+  merge_evaluation: "跨域不同对象不并：MOD-PF-007=归因引擎（钱从哪来），本件=影子对照引擎（真单vs假设差在哪，Perold 四分解）；sim_attribution_report=成本段口径真源，本件经适配器只读复用不复算"
+- file: docs/03_modules/_domain_signal/algo_flow/candidate_pool_snapshot.yaml
+  token: algo-flow-external-truth-candidate-pool-snapshot-20260927
+  created_by: zc-lane-t-20260927
+  capability: algo_flow_external_truth
+  merge_evaluation: "candidate_pool_snapshot ALGO_FLOW 外置真源块（L04-C01/C02 施工批，P2-1 口径）"
+- file: docs/03_modules/_domain_signal/algo_flow/tradability_preflight.yaml
+  token: algo-flow-external-truth-tradability-preflight-20260927
+  created_by: zc-lane-t-20260927
+  capability: algo_flow_external_truth
+  merge_evaluation: "tradability_preflight ALGO_FLOW 外置真源块（L04-C02 盘前腿施工批，P2-1 口径）"
+- file: docs/_working/total_command_closeout/97_chief4_wave_done_audit.md
+  token: chief4-wave-done-audit-97-chief4-wave-done-audit-20260927
+  created_by: st-chief4-20260927
+  capability: chief4_wave_done_audit
+  merge_evaluation: "内收对价=九波完成度审计报告从24hTTL暂存区转正入战役目录，替代口头交接"
 di_seam_exemptions: []

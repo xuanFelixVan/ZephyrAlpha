@@ -45,6 +45,27 @@ A3 待裁四件：①vendor/Kronos/examples 30 假孤儿归引入方/Owner ②in
 | 波1A 可信层（tasks 卡 20 张 pending→推 VERIFIED 流转）/波1B 1.2 同id双条/波5.2 next_ruling_id | 排队 |
 | 终局：连零×2 回归+红蓝+清理+总报 | 未开始 |
 
+## §七 终局段（2026-09-27 上午收班时点）
+
+**断链七处 7/7 全闭**（P0 战役目标达成，全部在 HEAD 祖先、零回退）：
+| 断链 | 落地 | 件 |
+|---|---|---|
+| F34 L9 知识汇聚 | `3522eb8c6d` | l9_readiness_aggregator.py 653行+16测试+TDM-E-L9-AGG 挂接 |
+| F26 E7 前哨 | `88f62e893e` | paper_outpost.py MOD-BT-225 517行+18测试+FAC-E7 built |
+| F04 清洗接线 | `88f62e893e` | scheduler _run_special_schedule+23:15 cross_validation 槽 |
+| F20 胃事件 | `7d81f8b1bd` | 双层接线（事件快路径 EC2-P0 已挂+22:30 兜底槽）+8测试 |
+| F82 order_daemon 接线 | `d0257693f1` | confirm_gate→order_daemon.py:364 真接线+三件捞回+复杂度拆分（decide 34→8），59测试前后双绿 |
+| F62 合规门注入 / F74 转正汇总器 / F73 联赛 / F72 执行壳 | 原有 built | 审计实证（挖掘簿滞后勿信），promotion_advisory.py 773行 |
+
+**落地配方（已四袋验证）**：gate_prerun 硬阻断 0 → git_commit.py 直连四旗 `--allow-non-worktree --allow-multi-domain --allow-overlap --adopt-prior-work`（自动入队）；belt 陈旧纪元病（TRANSLATION-COVERAGE 假死 / mergeable_pred TypeError）处方=按死信重启 ZephyrAlpha_BeltDaemon。
+
+**本班九波完成度审计**：`97_chief4_wave_done_audit.md`（DONE 6/PARTIAL 21/TODO 43 基线）。
+
+**收班时在飞车道**（字节已 staged 主区，本对话关闭不丢， successors 按现场接续）：
+- st-chief4x-e8e9：E8 sleeve/再平衡/TDM 对接 + E9 IS时间戳/影子组合（shadow_portfolio.py、rebalance_check_runner.py 已 staged 未落袋）
+- st-chief4x-govtool：next_ruling_id.py 取号器+悬空号扫描+触发面三列对账表生成器（1A.3/5.2）
+- 磁盘救援：G:/zephyr_cold/90_tmp/chief4_diskrescue_20260927/ 镜像近完成，.worktrees 82 目录未释放（释放前必须逐目录核对镜像文件数+字节）
+
 ## §六 复核命令
 
 ```bash
