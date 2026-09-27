@@ -214,16 +214,16 @@ infrastructure:
   - infra_id: "INFRA-STORE-003"
     name: "four-drive-storage-map"
     type: object_storage
-    description: "四盘分工与存储地图——AI 找数据先查本条目：D=NVMe 生产（项目仓 D:/ZephyrAlpha+CH 虚拟机 data.vhdx 热层，回测主力）；E=SATA SSD 软件+热数据工具（QMT/xtquant/iFinD）；F=USB-SSD 冷储专项（纯冷库，主库=F:/zephyr_cold：30_corpus 研报语料+50_archive/by_project/zephyralpha Parquet 冷档案）；G=USB-HDD 备份总仓（一套完整备份=G:/backup/{working_vault,db_dumps,git_bundles,offrepo}+CH 第二备份链 ch_backup_disk2.vhdx+F 冷储夜镜像）；offsite=Owner 月度手动第三块盘（3-2-1：3 副本 D+G+离场/2 介质/1 离场）。铁律：数据第一公理（删除前两份验证副本+行数 verify）；冷库三红线（immutable/禁双真源/回测数据家不在冷库，SOP=docs/_working/altdata_line/10_g_drive_cold_storage_sop.md）；删除观察期（源 7 天/冷储 30 天）；USB 盘禁热服务/热库/编译。"
+    description: "四盘分工与存储地图——AI 找数据先查本条目：一盘一责终裁定（裁定#414，无双备份双存储）：D=NVMe 生产（项目仓 D:/ZephyrAlpha+CH 虚拟机 data.vhdx 热层，回测主力）；E=SATA SSD 纯软件（无热数据）；F=USB-SSD 唯一冷储（主库=F:/zephyr_cold 原地不动：30_corpus 研报语料+50_archive/by_project/zephyralpha Parquet 冷档案，D 盘滚动归档自动进）；G=USB-HDD 唯一备份（G:/backup={working_vault,db_dumps,git_bundles,offrepo}+60_mirror=F 冷库每夜备份+CH 单链 ch_backup_disk2.vhdx+VM 全量镜像）；offsite=Owner 月度手动第三块盘（3-2-1：3 副本 D+G+离场/2 介质/1 离场）。铁律：数据第一公理（删除前两份验证副本+行数 verify）；冷库三红线（immutable/禁双真源/回测数据家不在冷库，SOP=docs/_working/altdata_line/10_g_drive_cold_storage_sop.md）；删除观察期（源 7 天/冷储 30 天）；USB 盘禁热服务/热库/编译。"
     runtime_plane: cold
     host: "F:/zephyr_cold + G:/backup"
-    access_method: "找冷库→F:/zephyr_cold（DuckDB 直读 Parquet+研报原文）；找备份→G:/backup（restore.ps1/backup.ps1 六阶段）；CH 备份双链=F 盘 ch_backup_disk.vhdx（主链，VM 挂载留 F）+G 盘 ch_backup_disk2.vhdx（第二链，SCSI 热挂）；offsite 手册=docs/_working/disk_reorg_campaign/offsite_monthly_manual.md；保留规则=docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml；安全施工通则=docs/_working/disk_reorg_campaign/a3_safe_construction_checklist.md"
+    access_method: "找冷库→F:/zephyr_cold（DuckDB 直读 Parquet+研报原文）；找备份→G:/backup（restore.ps1/backup.ps1 六阶段）；CH 备份单链=G 盘 ch_backup_disk2.vhdx（裁定#414 双链废止；F 链 716G 待 Owner 点名窗摘除，SCSI 热挂）；offsite 手册=docs/_working/disk_reorg_campaign/offsite_monthly_manual.md；保留规则=docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml；安全施工通则=docs/_working/disk_reorg_campaign/a3_safe_construction_checklist.md"
     health_check: query
     dependency_of:
       - "MOD-INF-043"
       - "MOD-DATA"
       - "MOD-BACKTEST"
-    sla: "数据第一公理：任何删除前两份验证副本；冷储 immutable；备份版本化（working_vault 14 天/db_dumps 14 天/git bundle 留 2 份/CH 双链）"
+    sla: "数据第一公理：任何删除前两份验证副本；冷储 immutable；备份版本化（working_vault 14 天/db_dumps 14 天/git bundle 留 2 份/CH 单链+VM 全量镜像）"
     status: connected
     provisioned_at: "2026-09-21"
     note: "2026-09-28 盘位终裁定（Owner 对话逐项确认；ruling_registry 原子补录候其在途改动清场）：一盘一责、无双备份双存储——D=NVMe 生产（项目仓+CH 虚拟机热层）；E=SATA SSD 纯软件；F=USB-SSD 唯一冷储（主库=F:/zephyr_cold 原地不动，喂回测要速度；滚动归档 D→F 自动化在跑）；G=USB-HDD 唯一备份（G:/backup=D 项目快照/dumps/git_bundles/offrepo + 60_mirror=F 冷库每夜备份 + CH 单链 ch_backup_disk2.vhdx + VM 全量镜像 G:/backup/ch_vm_backup）；CH 双写双链废止：F 主链 ch_backup_disk.vhdx（716G）待 Owner 点名窗停 VM 摘除、G 链升唯一（原 10-05 摘盘计划方向一致）；offsite=Owner 月度手动离场拷贝 G（自动化不管）。2026-09-28 夜班已清：F 复活件 data.vhdx 599G（CompactWindow 自动退役）、F c4 等值重复 52.7G（sha256 60245/60245 全 match，证据=00_manifest/retire_c4_exam_pdf_cache_20260928.json）、F 旧 db_dumps 0.19G；G 原抽屉库 137.6G 候 CompactWindow 落幕后删（manifest 先归档）；D 夜班回收约 10.3G（缓存/临时件；脏车道 Owner 令不动）。方法论：vhdx 原地压缩收益约 0（MinSize=FileSize=600GiB），D 真回收靠 CH 数据时间段收缩+未来 fstrim+Optimize-VHD 窗；盘面导航=F:\\README.md+G:\\README.md+G:\\backup\\README.md；蓝图=disaster_recovery_backup/blueprint.md"

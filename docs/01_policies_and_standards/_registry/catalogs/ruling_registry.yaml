@@ -4463,7 +4463,7 @@ entries:
   category: 'Owner 门位'
   status: 'active'
   summary: >-
-    一：.tmp 现值 148 件/约86MB（含 catalogs 下隐藏点文件 .capability_*_registry.yaml_*.tmp CAS 残留）+0 字节壳 tests/signal_ashare/test_sector_strength_aggregator.py→上交 Owner 批准删除，批后 Flash 先 dry-run 出精确清单（排除 .worktrees 他人工棚）再执行。二：cohort_daily_ledger.py『真岛』定性推翻：WORK-ORDER-5 三笔 commit 在案（1603be4cd4 立项/fac109d7a2 数据线对账/0a276ca249 接口镜像）＝在册立项待接线，F 挂起挂 WORK-ORDER-5 接线里程碑，T-10 撤案禁止删除，废弃须先走正式退役裁定。
+    一：.tmp 现值 148 件/约86MB（含 catalogs 下隐藏点文件 .capability_*_registry.yaml_*.tmp CAS 残留）+0 字节壳 tests/signal_ashare/sector/test_sector_strength_aggregator.py→上交 Owner 批准删除，批后 Flash 先 dry-run 出精确清单（排除 .worktrees 他人工棚）再执行。二：cohort_daily_ledger.py『真岛』定性推翻：WORK-ORDER-5 三笔 commit 在案（1603be4cd4 立项/fac109d7a2 数据线对账/0a276ca249 接口镜像）＝在册立项待接线，F 挂起挂 WORK-ORDER-5 接线里程碑，T-10 撤案禁止删除，废弃须先走正式退役裁定。
   affected_files:
   - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
   related_arch: []
@@ -4667,7 +4667,7 @@ entries:
   category: 'Git 治理'
   status: 'active'
   summary: >-
-    亲验：construction_workflow_policy.md L29 scripts/git_commit_gateway.py 与 L610 python scripts/git_commit_gateway.py 该 CLI 路径全史从未存在；legacy v1 宪法与 data/reports/dm018/dm020 属归档/审计轨迹面。一：agent_constitution_legacy_v1.md、data/reports/dm018/dm020、_archive 全目录登记进断链检测器豁免面（改归=改历史禁修正文），落点=D4 路径检测器 exempt 配置非 rules/。二：SOP L29/L610 统一改 python scripts/git_commit.py（CLI 正门，宪法 2.1/7 钦定）；模块引用保持 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（L32 已正确）。SOP 属可写路径 Flash 施工。
+    亲验：construction_workflow_policy.md L29 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py 与 L610 python src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py 该 CLI 路径全史从未存在；legacy v1 宪法与 data/reports/dm018/dm020 属归档/审计轨迹面。一：agent_constitution_legacy_v1.md、data/reports/dm018/dm020、_archive 全目录登记进断链检测器豁免面（改归=改历史禁修正文），落点=D4 路径检测器 exempt 配置非 rules/。二：SOP L29/L610 统一改 python scripts/git_commit.py（CLI 正门，宪法 2.1/7 钦定）；模块引用保持 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（L32 已正确）。SOP 属可写路径 Flash 施工。
   affected_files:
   - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
   related_arch: []
@@ -5725,3 +5725,28 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#414"
+  title: 四盘一盘一责终裁定（F=唯一冷储/G=唯一备份/E=纯软件；CH 双链废止单链归 G）
+  date: '2026-09-28'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 凌晨对话逐项确认（本裁定=落正式通道；同日 INFRA-STORE-003 note 重写已随 5ca4ae16b6 落地）：
+    ①一盘一责、无双备份双存储：D=NVMe 生产（项目仓+CH 虚拟机热层）；E=SSD 纯软件（无热数据）；
+    F=USB-SSD 唯一冷储（zephyr_cold 主库原地不动，滚动归档 D→F 在跑）；G=USB-HDD 唯一备份
+    （G:/backup=D 项目快照/dumps/git_bundles/offrepo + 60_mirror=F 冷库每夜备份 + CH 单链 + VM 全量镜像）。
+    ②CH 双写双链废止：单链归 G，F 主链 ch_backup_disk.vhdx（716G）待 Owner 点名窗停 VM 摘除。
+    ③offsite=Owner 月度手动离场拷贝 G（自动化不管，Owner 自理）。
+    ④保留契约 v1.4.0 同日落地：tick 滚动 15 个月（超期归档冷库不删除，首次执行 202501-202506 已完成，
+    行数守恒 89.53-23.46=66.07 亿核验）+ TI 全保留（回测查表速度资产，消费面=factor 库/策略管线 daily_job 实证）。
+    ⑤09-28 夜班清偿：F 复活件 599G/c4 等值重复 52.7G/旧 db_dumps/G 旧抽屉库 137.6G/D 缓存临时件约 10G，
+    全部两份验证副本+台账留痕。⑥本裁定 approved_paths 授权 AGENTS.md §7 存储分工行同步提交（一字未越）。
+  related_files:
+  - docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+  - docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
+  - AGENTS.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+  approved_paths: ["AGENTS.md"]
+  expires_at: '2026-10-31'
