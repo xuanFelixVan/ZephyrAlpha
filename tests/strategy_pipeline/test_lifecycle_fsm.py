@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-BT-188 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """策略生命周期 FSM 测试——验收④条款（candidate→production 直跳必拒）+ A 方案治理边界。"""
+
 from __future__ import annotations
 
 import sys
@@ -28,6 +29,7 @@ from zephyr.shared.lifecycle.state_machine import InvalidTransitionError, Transi
 from zephyr.strategy_pipeline.lifecycle_fsm import (  # noqa: E402
     CANDIDATE,
     PRODUCTION,
+    REGISTRY_LIFECYCLE_ALIASES,
     RETIRED,
     SHELVED,
     SIM,
@@ -40,7 +42,8 @@ def _ctx(dual=True, fdr=True, no_decay=True, owner=None):
     ctx: dict = {}
     if dual or fdr or not no_decay:
         ctx["sim_promotion"] = SimPromotionContext(
-            dual_window_pass=dual, bh_fdr_pass=fdr, no_pending_decay_alert=no_decay)
+            dual_window_pass=dual, bh_fdr_pass=fdr, no_pending_decay_alert=no_decay
+        )
     if owner:
         ctx["owner_token"] = owner
     return ctx
@@ -114,3 +117,27 @@ class TestLifecycleFsm:
         fsm.transition(SHELVED, _ctx())
         fsm.transition(RETIRED, _ctx())
         assert fsm.current_state == RETIRED
+
+
+# ---------------------------------------------------------------------------
+# 词表对齐层（Owner 2026-09-27 定稿：FSM 词→注册表八态词，F75 缺口 3.6 销案）
+# ---------------------------------------------------------------------------
+
+
+class TestRegistryVocabAlignment:
+    """FSM 内部五态词不变；写注册表经 REGISTRY_LIFECYCLE_ALIASES 映射（production→live）。"""
+
+    def test_production_maps_to_live(self):
+        assert REGISTRY_LIFECYCLE_ALIASES == {PRODUCTION: "live"}
+
+    def test_other_states_identity(self):
+        for state in (CANDIDATE, SIM, SHELVED, RETIRED):
+            assert REGISTRY_LIFECYCLE_ALIASES.get(state, state) == state
+
+    def test_fsm_internal_words_unchanged(self, monkeypatch):
+        """流转回执仍记 FSM 词（审计面不换词，只有注册表面换）——防映射层越界改 FSM 语义。"""
+        monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", "OWNER")  # 测试假值注入（禁读真实密钥）
+        fsm = build_strategy_fsm("STR-X-010")
+        fsm.transition(SIM, _ctx())
+        fsm.transition(PRODUCTION, _ctx(owner="OWNER"))
+        assert fsm.current_state == "production"  # FSM 态词恒 production（注册表落 live 是映射层职责）

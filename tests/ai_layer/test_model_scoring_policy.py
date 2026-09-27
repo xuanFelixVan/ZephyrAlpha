@@ -9,8 +9,8 @@
 #              权重/合成/档界常数一律从 YAML 读，缺失即 ScoringPolicyError（fail-closed，禁硬编码默认值）；
 #              生产 YAML 只读不写；写用例一律 tmp_path 副本（测试禁写生产路径铁律）；
 #              external_missing_remedy 实现口径=外部权重回流 MCE（0.5+0.2=0.7，0.7+0.3=1 已归一，P 恒在 [0,1]）——
-#              DESIGN §3.3「权重归 0.8 归一化」与之矛盾（见交付报告偏离清单，待 Owner 修订口径），
-#              本测试同时钉住 YAML 里注册的 remedy 字符串，改动即红
+#              Owner 2026-09-27 定稿采纳本口径（B7 三口径互斥销案），YAML 注册字符串同步改
+#              mce_weight_becomes_0.7（MSP-1.1），本测试钉住 remedy 字符串与行为双侧，改动即红
 # [MODIFY-GUARD] docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md §3.3
 # [STABILITY] new
 # [SAFETY] L
@@ -61,8 +61,7 @@ def _require_mapping_value(sec: dict[str, Any], section: str, key: str) -> float
     return float(sec[key])
 
 
-def compute_perf_p(mce: float, job_match: float, external: float | None,
-                   scoring: dict[str, Any]) -> float:
+def compute_perf_p(mce: float, job_match: float, external: float | None, scoring: dict[str, Any]) -> float:
     """性能分 P：三成分加权和（权重和归一）。
 
     外部参照缺失→其权重回流 MCE（0.5+0.2=0.7，剩余 0.7+0.3=1.0 天然归一，P 恒在 [0,1]）。
@@ -92,7 +91,7 @@ def compose_score_s(p: float, v: float, scoring: dict[str, Any]) -> float:
     composite = _section(scoring, "composite")
     alpha = _require_mapping_value(composite, "composite", "alpha_p")
     beta = _require_mapping_value(composite, "composite", "beta_v")
-    return (p ** alpha) * (v ** beta)
+    return (p**alpha) * (v**beta)
 
 
 def assign_tier(p: float, scoring: dict[str, Any]) -> str:
@@ -107,8 +106,14 @@ def assign_tier(p: float, scoring: dict[str, Any]) -> str:
     return "economy"
 
 
-def score_model(mce: float, job_match: float, external: float | None, cost: float,
-                pool_costs: Sequence[float], scoring: dict[str, Any]) -> dict[str, Any]:
+def score_model(
+    mce: float,
+    job_match: float,
+    external: float | None,
+    cost: float,
+    pool_costs: Sequence[float],
+    scoring: dict[str, Any],
+) -> dict[str, Any]:
     """一键全算（纯函数）：{perf_p, value_v, score_s, tier}。"""
     p = compute_perf_p(mce, job_match, external, scoring)
     v = compute_value_v(cost, pool_costs)
@@ -128,11 +133,11 @@ def test_constants_preregistered() -> None:
     assert doc["ttl"] == "permanent"
     assert doc["doc_type"] == "policy"
     assert doc["status"] == "active"
-    assert doc["date"] == "2026-09-23"
+    assert doc["date"] == "2026-09-27"
     scoring = doc["scoring"]
-    assert scoring["version"] == "MSP-1.0"
+    assert scoring["version"] == "MSP-1.1"
     assert scoring["performance_weights"] == {"mce_standard": 0.5, "job_matcher": 0.3, "external_ref": 0.2}
-    assert scoring["external_missing_remedy"] == "mce_weight_becomes_0.8"
+    assert scoring["external_missing_remedy"] == "mce_weight_becomes_0.7"
     assert scoring["value_formula"]["cost_metric"] == "usd_per_pass_unit"
     assert scoring["value_formula"]["time_weighting"] == {"off_peak_discount": 0.5, "free_window": 0.0}
     assert scoring["value_formula"]["normalization"] == "min_max_within_same_job_pool"
@@ -199,7 +204,7 @@ def test_value_min_max_and_composite() -> None:
     assert compute_value_v(2.6, pool) == pytest.approx(0.0)
     assert compute_value_v(1.4, pool) == pytest.approx(1.2 / 1.7)
     s = compose_score_s(0.8, 0.5, scoring)
-    assert s == pytest.approx((0.8 ** 0.6) * (0.5 ** 0.4))
+    assert s == pytest.approx((0.8**0.6) * (0.5**0.4))
     full = score_model(0.8, 0.8, 0.8, 1.4, pool, scoring)
     assert full["tier"] == "premium"
     with pytest.raises(ScoringPolicyError, match="退化岗位池"):

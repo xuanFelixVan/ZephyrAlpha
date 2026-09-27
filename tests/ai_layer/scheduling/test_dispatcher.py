@@ -15,15 +15,18 @@ import pytest
 from zephyr.ai_layer.scheduling.dispatcher import (
     ComputeGateUnavailable,
     QuotaReadings,
+    _load_e0_module,
     advantage_bucket,
+    apply_skeleton_decisions,
     ask_compute_gate,
     champion_overlap_precheck,
+    confirm_skeleton,
     count_labor_segments,
     degrade,
     evaluate_quota,
     rank_pending,
+    skeleton_decisions,
     work_order_score,
-    _load_e0_module,
 )
 
 UTC = timezone.utc
@@ -33,6 +36,7 @@ NOW = datetime(2026, 9, 23, 12, 0, 0, tzinfo=UTC)
 # ---------------------------------------------------------------------------
 # 两问①消灭人工段数
 # ---------------------------------------------------------------------------
+
 
 def test_labor_segments_enumeration(policy: dict[str, Any]) -> None:
     assert count_labor_segments("") == 1  # 空串=1 段保守下限
@@ -46,6 +50,7 @@ def test_labor_segments_enumeration(policy: dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------
 # 两问②优势分桶（分桶线=policy 常量）
 # ---------------------------------------------------------------------------
+
 
 def test_advantage_bucket_lines(policy: dict[str, Any]) -> None:
     assert advantage_bucket(0.25, policy) == "large"
@@ -77,17 +82,21 @@ def test_score_starvation_bump(policy: dict[str, Any]) -> None:
 def test_rank_pending_order_and_fifo(policy: dict[str, Any]) -> None:
     """score 降序→FIFO；带星同分排队尾；repair/骨架级不混队。"""
     mk = lambda oid, lk, sig, star=False, age=0, kind="evolution", og=False: {  # noqa: E731
-        "order_id": oid, "labor_killed": lk, "significance": sig, "starred": star,
-        "kind": kind, "owner_gate": og,
+        "order_id": oid,
+        "labor_killed": lk,
+        "significance": sig,
+        "starred": star,
+        "kind": kind,
+        "owner_gate": og,
         "created_at": NOW - timedelta(days=age),
     }
     orders = [
-        mk("WO-A", "a", 0.25),                       # 2.0
-        mk("WO-B", "a", 0.25),                       # 2.0 FIFO 在后
-        mk("WO-C", "a", 0.25, star=True),            # 1.0 带星
-        mk("WO-D", "a", 0.05, age=8),                # 1.0+1.0 防饥饿
-        mk("WO-R", "a", 0.99, kind="repair"),        # repair 不参排
-        mk("WO-S", "a", 0.99, og=True),              # 骨架级只展示不占队
+        mk("WO-A", "a", 0.25),  # 2.0
+        mk("WO-B", "a", 0.25),  # 2.0 FIFO 在后
+        mk("WO-C", "a", 0.25, star=True),  # 1.0 带星
+        mk("WO-D", "a", 0.05, age=8),  # 1.0+1.0 防饥饿
+        mk("WO-R", "a", 0.99, kind="repair"),  # repair 不参排
+        mk("WO-S", "a", 0.99, og=True),  # 骨架级只展示不占队
     ]
     ranked = rank_pending(orders, policy, NOW)
     ids = [r["order_id"] for r in ranked]
@@ -103,6 +112,7 @@ def test_rank_pending_rejects_naive_now(policy: dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------
 # 配额四读数与降级梯度（§2.6）
 # ---------------------------------------------------------------------------
+
 
 def test_quota_all_green(policy: dict[str, Any]) -> None:
     r = QuotaReadings(q1_active_sessions=1, q2_subagents_requested=3, q3_tokens_today=100, q4_commit_queue_pending=0)
@@ -160,6 +170,7 @@ def test_degrade_gpu_reschedules(policy: dict[str, Any]) -> None:
 # T1 派工前置双预检
 # ---------------------------------------------------------------------------
 
+
 def test_champion_overlap_holds() -> None:
     ok, why = champion_overlap_precheck(["src/zephyr/gov/x.py"], ["src/zephyr/gov/x.py"])
     assert not ok and any("HELD-OVERLAP" in w for w in why)  # 不硬闯
@@ -179,6 +190,7 @@ def test_champion_clean_passes() -> None:
 # E0 拉式问闸（注入零网络；真模块按路径装载零改造）
 # ---------------------------------------------------------------------------
 
+
 def test_ask_compute_gate_allowed_and_denied() -> None:
     seen: dict[str, str] = {}
 
@@ -191,7 +203,8 @@ def test_ask_compute_gate_allowed_and_denied() -> None:
     assert allowed == {"allowed": True, "reason_code": "gate_allow_light_always"}
     assert seen == {"purpose": "evolution_WO-1", "cls": "local"}  # 拉式问闸每段一次
     denied = ask_compute_gate(
-        "WO-1", "local_gpu",
+        "WO-1",
+        "local_gpu",
         gate_fn=lambda purpose, node_compute_class: {"allowed": False, "reason_code": "gate_deny_trading_hours"},
     )
     assert denied == {"allowed": False, "reason_code": "gate_deny_trading_hours"}  # exit 3 语义→deferred
@@ -221,3 +234,87 @@ def test_e0_module_loads_by_path() -> None:
         finally:
             dsp._E0_GATE_RELPATH = saved
             dsp._E0_MODULE_CACHE.clear()
+
+
+# ---------------------------------------------------------------------------
+# C9 骨架单拍板（确认态落点=审批事件账，Owner 2026-09-27 批文）
+# ---------------------------------------------------------------------------
+
+
+def test_rank_pending_skeleton_gate(policy: dict[str, Any]) -> None:
+    """骨架单门：未拍板/reject 不占自动派工队列；confirm 后入队（确认=转派工队列语义）。"""
+    mk = lambda oid, og=False, gd=None: {  # noqa: E731
+        "order_id": oid,
+        "labor_killed": "a",
+        "significance": 0.25,
+        "starred": False,
+        "kind": "evolution",
+        "owner_gate": og,
+        "created_at": NOW,
+        **({"gate_decision": gd} if gd else {}),
+    }
+    normal = mk("WO-N")
+    sk = mk("WO-SK", og=True)
+    assert [r["order_id"] for r in rank_pending([normal, sk], policy, NOW)] == ["WO-N"]
+    confirmed = rank_pending([normal, dict(sk, gate_decision="confirm")], policy, NOW)
+    assert [r["order_id"] for r in confirmed] == ["WO-N", "WO-SK"]  # confirm 后入队
+    assert [r["order_id"] for r in rank_pending([normal, dict(sk, gate_decision="reject")], policy, NOW)] == ["WO-N"]
+
+
+def test_confirm_skeleton_flow(journal, tmp_path) -> None:
+    """拍板全流程：not_found→not_owner_gate→confirm 落账→already_decided 幂等拒→投影合并。"""
+    import yaml as _yaml
+
+    seeds_path = tmp_path / "seeds.yaml"
+    seeds_path.write_text(
+        _yaml.safe_dump(
+            {
+                "seeds": [
+                    {"order_id": "wo-a", "owner_gate": True, "title": "骨架A"},
+                    {"order_id": "wo-b", "owner_gate": False, "title": "普通单"},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert confirm_skeleton("wo-x", "confirm", journal=journal, seeds_path=seeds_path)["reason"] == "order_not_found"
+    assert confirm_skeleton("wo-b", "confirm", journal=journal, seeds_path=seeds_path)["reason"] == "not_owner_gate"
+    with pytest.raises(ValueError, match="decision 非法"):
+        confirm_skeleton("wo-a", "maybe", journal=journal, seeds_path=seeds_path)
+    r1 = confirm_skeleton("wo-a", "confirm", journal=journal, seeds_path=seeds_path, decided_by="test")
+    assert r1["ok"] is True and r1["decision"] == "confirm" and r1["event_id"]
+    assert len(journal.pending()) == 1  # 事件先落盘（append-only 审批事件账）
+    r2 = confirm_skeleton("wo-a", "reject", journal=journal, seeds_path=seeds_path)
+    assert r2["ok"] is False and r2["reason"] == "already_decided"
+    seeds = _yaml.safe_load(seeds_path.read_text(encoding="utf-8"))  # seeds 登记真源零改写
+    assert "gate_decision" not in seeds["seeds"][0]
+
+
+def test_skeleton_decisions_projection(journal, tmp_path) -> None:
+    """投影合并：未拍板 state=pending；confirm→dispatched+回执；reject→dead；普通单透传。"""
+    import yaml as _yaml
+
+    seeds_path = tmp_path / "seeds.yaml"
+    seeds_path.write_text(
+        _yaml.safe_dump(
+            {
+                "seeds": [
+                    {"order_id": "wo-a", "owner_gate": True},
+                    {"order_id": "wo-b", "owner_gate": True},
+                    {"order_id": "wo-c", "owner_gate": True},
+                    {"order_id": "wo-plain", "owner_gate": False},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    confirm_skeleton("wo-a", "confirm", journal=journal, seeds_path=seeds_path)
+    confirm_skeleton("wo-b", "reject", journal=journal, seeds_path=seeds_path)
+    orders = _yaml.safe_load(seeds_path.read_text(encoding="utf-8"))["seeds"]
+    merged = {r["order_id"]: r for r in apply_skeleton_decisions(orders, skeleton_decisions(journal))}
+    assert merged["wo-a"]["state"] == "dispatched"
+    assert merged["wo-a"]["confirm_receipt"]["decision"] == "confirm"
+    assert merged["wo-b"]["state"] == "dead"
+    assert merged["wo-c"]["state"] == "pending"  # 未拍板：页据此渲染拍板按钮
+    assert "state" not in merged["wo-plain"] and "confirm_receipt" not in merged["wo-plain"]
+    assert set(skeleton_decisions(journal)) == {"wo-a", "wo-b"}  # 同单取最新留痕

@@ -25,6 +25,7 @@ from pathlib import Path
 
 import pytest
 
+from zephyr.ai_layer.redline.negative_list import REAL_KEY_MARKER
 from zephyr.ai_layer.redline.negative_list_gates import (
     CONSTITUTION_LINE_LIMIT,
     make_constitution_line_limit_gate,
@@ -37,27 +38,17 @@ from zephyr.ai_layer.redline.negative_list_gates import (
 )
 
 TASK_HEAD = (
-    "task_id: TO-0001\n"
-    "definition_of_done:\n"
-    "  - 交付 A\n"
-    "red_lines:\n"
-    "  - 不碰 B\n"
-    "acceptance:\n"
-    "  tests_pass: true\n"
+    "task_id: TO-0001\ndefinition_of_done:\n  - 交付 A\nred_lines:\n  - 不碰 B\nacceptance:\n  tests_pass: true\n"
 )
 TASK_CHANGED = TASK_HEAD.replace("交付 A", "交付 A+顺手改判据")
 
 
 def test_real_key_reference_blocked(tmp_path: Path, fake_gateway_factory):
     """NL-2 样例：own-diff 源码出现 QMT" "_REAL 引用 → 硬阻断+审计。"""
-    gateway = fake_gateway_factory(
-        staged={"src/zephyr/demo/loader.py": "KEY = 'QMT" "_REAL_PATH'\n"}
-    )
-    passed, detail = make_real_key_reference_scan_gate().check(
-        gateway, ["src/zephyr/demo/loader.py"], session_id="s1"
-    )
+    gateway = fake_gateway_factory(staged={"src/zephyr/demo/loader.py": "KEY = '" + REAL_KEY_MARKER + "_PATH'\n"})
+    passed, detail = make_real_key_reference_scan_gate().check(gateway, ["src/zephyr/demo/loader.py"], session_id="s1")
     assert passed is False
-    assert "QMT" "_REAL" in detail
+    assert REAL_KEY_MARKER in detail
     audit = tmp_path / ".runtime/gate_audit/real_key_reference_scan.jsonl"
     assert audit.exists()
     record = json.loads(audit.read_text(encoding="utf-8").splitlines()[0])
@@ -68,8 +59,8 @@ def test_real_key_whitelist_secret_registry_and_secrets_md(fake_gateway_factory)
     """NL-2 白名单：secret_registry.yaml 本体与 SECRETS.md 文档行放行。"""
     gateway = fake_gateway_factory(
         staged={
-            "config/secret_registry.yaml": "QMT" "_REAL_PATH: {category: config}\n",
-            "docs/SECRETS.md": "# 实盘键现名 QMT" "_REAL_PATH（文档行）\n",
+            "config/secret_registry.yaml": REAL_KEY_MARKER + "_PATH: {category: config}\n",
+            "docs/SECRETS.md": "# 实盘键现名 " + REAL_KEY_MARKER + "_PATH（文档行）\n",
         }
     )
     passed, detail = make_real_key_reference_scan_gate().check(
@@ -82,20 +73,16 @@ def test_real_key_whitelist_secret_registry_and_secrets_md(fake_gateway_factory)
 
 def test_real_key_foreign_staged_not_blocking(fake_gateway_factory):
     """§3.1 own-scope：外来 staged 违规 warn+审计，不阻断无辜提交人。"""
-    gateway = fake_gateway_factory(
-        staged={"other_session/leak.py": "x = 'QMT" "_REAL_ACCOUNT'\n"}
-    )
-    passed, detail = make_real_key_reference_scan_gate().check(
-        gateway, ["mine.py"], session_id="s-mine"
-    )
+    gateway = fake_gateway_factory(staged={"other_session/leak.py": "x = '" + REAL_KEY_MARKER + "_ACCOUNT'\n"})
+    passed, detail = make_real_key_reference_scan_gate().check(gateway, ["mine.py"], session_id="s-mine")
     assert passed is True and detail == ""
 
 
 def test_scan_real_key_hits_pure():
     hits = scan_real_key_hits(
         {
-            "a.py": "QMT" "_REAL here",
-            "SECRETS.md": "QMT" "_REAL doc",
+            "a.py": REAL_KEY_MARKER + " here",
+            "SECRETS.md": REAL_KEY_MARKER + " doc",
             "b.py": "clean",
         }
     )
@@ -124,9 +111,7 @@ def test_task_order_change_without_artifacts_allowed_with_audit(tmp_path: Path, 
         staged={"tasks/TO-0002.yaml": TASK_CHANGED},
         head={"tasks/TO-0002.yaml": TASK_HEAD},
     )
-    passed, detail = make_task_order_docs_lock_gate().check(
-        gateway, ["tasks/TO-0002.yaml"], session_id="s1"
-    )
+    passed, detail = make_task_order_docs_lock_gate().check(gateway, ["tasks/TO-0002.yaml"], session_id="s1")
     assert passed is True and detail == ""
     audit = tmp_path / ".runtime/gate_audit/task_order_docs_lock.jsonl"
     record = json.loads(audit.read_text(encoding="utf-8").splitlines()[0])
@@ -150,13 +135,7 @@ def test_task_order_new_card_is_preregistration_allowed(fake_gateway_factory):
 def test_structural_field_changes_is_parse_level_not_string_level():
     """解析级 diff：键序重排等字符串级差异不判变更；字段值结构变化才判。"""
     reformatted = (
-        "task_id: TO-0001\n"
-        "red_lines:\n"
-        "  - 不碰 B\n"
-        "definition_of_done:\n"
-        "  - 交付 A\n"
-        "acceptance:\n"
-        "  tests_pass: true\n"
+        "task_id: TO-0001\nred_lines:\n  - 不碰 B\ndefinition_of_done:\n  - 交付 A\nacceptance:\n  tests_pass: true\n"
     )
     assert structural_field_changes(TASK_HEAD, reformatted) == []
     assert structural_field_changes(TASK_HEAD, TASK_CHANGED) == ["definition_of_done"]
@@ -214,3 +193,32 @@ def test_gate_specs_shape():
         assert spec.gate_id == gate_id
         assert spec.priority == priority
         assert callable(spec.check)
+
+
+def test_real_key_incremental_scope_no_new_ref_passes(fake_gateway_factory):
+    """NL-2 增量口径（2026-09-27 判据原文对齐修）：存量正文行不连坐——HEAD 已含同数字样、
+    own-diff 未新增引用 → 放行（此前整文件扫描使 OBJ_S DESIGN 等文档合法编辑恒被拦）。"""
+    marker = REAL_KEY_MARKER + "_PATH"
+    gateway = fake_gateway_factory(
+        staged={"docs/_working/obj_s/DESIGN.md": f"# 设计稿\n验收行：含 {marker} 字样的环境应被拒。\n新增无关行。\n"},
+        head={"docs/_working/obj_s/DESIGN.md": f"# 设计稿\n验收行：含 {marker} 字样的环境应被拒。\n"},
+    )
+    passed, detail = make_real_key_reference_scan_gate().check(
+        gateway, ["docs/_working/obj_s/DESIGN.md"], session_id="s1"
+    )
+    assert passed is True, detail
+
+
+def test_real_key_incremental_scope_new_ref_still_blocked(fake_gateway_factory):
+    """NL-2 增量口径红证：own-diff 新增一处实盘键名字样 → 照旧硬阻断+审计。"""
+    marker = REAL_KEY_MARKER + "_PATH"
+    gateway = fake_gateway_factory(
+        staged={
+            "docs/_working/obj_s/DESIGN.md": f"# 设计稿\n验收行：含 {marker} 字样的环境应被拒。\n误加 {marker} 引用。\n"
+        },
+        head={"docs/_working/obj_s/DESIGN.md": f"# 设计稿\n验收行：含 {marker} 字样的环境应被拒。\n"},
+    )
+    passed, detail = make_real_key_reference_scan_gate().check(
+        gateway, ["docs/_working/obj_s/DESIGN.md"], session_id="s1"
+    )
+    assert passed is False and "docs/_working/obj_s/DESIGN.md" in detail
