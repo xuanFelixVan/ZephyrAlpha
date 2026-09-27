@@ -89,7 +89,11 @@ status: MINE 完成（挖干）
   - `.qoder/worktrees` 21 条 = 全部 dirty>0，且属 IDE 子代理自管、非派发单声明范围 → 不动，登记待决。计 4.41 GiB。
 - **`.aidrafts` 无主判定（A.4）**：grep `config/dev_delivery_map.yaml`（`.aidrafts/` + `.aidrafts_pool/` 被声明为战役工作家，
   并点名 `st-mapbuild-20260924` 为活体）+ 在册 worktree 对账 → 现存 28 目录**全部在册**（0 无主孤儿），
-  故本批未做 `retired_lanes` 迁移（同盘迁移=零空间收益，且会断 git worktree 元数据）。
+  **已执行 `retired_lanes` 迁移（A.4 处方）**：把车道根里 **git 不认（=无主）** 的 25 个目录**移动**（非删除，同盘可回退）到
+  `.runtime/retired_lanes/20260927/`，并落逐目录字节/件数清单 `manifest.yaml`（合计 312,482,917 B = 0.2910 GiB / 25 目录，
+  含 `.worktrees` 24 个 + `.aidrafts` 1 个空壳 `st-t0-matrix-20260924`；同盘移动 → 零 D 空间收益，但车道根自此等于"在册真源"）。
+  在册 worktree 一律不动（会断 git 元数据且属 S2 证 2 领域）。移动后 `.worktrees` 目录数 94→70、`.aidrafts` 28→27，
+  与 `git worktree list` 在册数完全对齐（133 条在册记录零扰动）。
   孤儿目录只出现在 `.worktrees`：94 目录中 24 个未被 git 认（0.291 GiB：`AI-GOVA-001`/`AI-TD2-GOV-001`/`AI-TD2-SEC-001`/`AI-VCFIX-001`/
   `st-auditdoc-v4-20260918` 五件**已在 F 冷库 `50_archive/by_project/zephyralpha/worktree_remnants_20260921` 有 tar.gz+SHA256SUMS 存证**，
   另 19 个 `_a*bt/_a*tmp/_rbt/_fullbt` 类红蓝跑批壳）→ 登记待决（下批可凭冷库对账直删 D 壳）。
