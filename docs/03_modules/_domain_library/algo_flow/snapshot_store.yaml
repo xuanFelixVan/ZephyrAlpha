@@ -1,0 +1,64 @@
+# ALGO_FLOW 外部真源——snapshot_store（_domain_library 域，真源 src/zephyr/library/snapshot_store.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.library.snapshot_store
+source_of_truth: src/zephyr/library/snapshot_store.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: PG lib_assets 整表
+    #   fields: 动态列集（SELECT * 不裁行不裁列）+ 写侧注入 ledger_version
+    # - id: I2
+    #   name: 世代指纹 v_new
+    #   fields: ledger_version（R1 read_ledger_fingerprint 单点入口，禁本件复制指纹 SQL）
+    # - id: I3
+    #   name: 回落查询入参
+    #   fields: query(str), limit(int)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 目录布局薄层
+    #   name_en: SnapshotLayout
+    #   intro: 快照命名/路径拼法 + 合规代际清单 + tmp 残渣探测（零业务判定，读写两侧共用）。
+    #   inputs: I1, I2, I3
+    #   outputs: 见函数注解
+    # - id: A2
+    #   name_zh: 七步崩溃安全落盘与留 2 份轮转
+    #   name_en: LedgerSnapshotWriter.refresh
+    #   intro: 写者锁→现读指纹→同代幂等跳过→全表导出（空表拒落）→tmp+fsync+os.replace=提交点①→manifest 提交点②→才删上上代与超 TTL 残渣（删旧严格后置）。
+    #   inputs: I1, I2
+    #   outputs: 见函数注解
+    # - id: A3
+    #   name_zh: 读侧代际校验链
+    #   name_en: LedgerSnapshotReader.verify
+    #   intro: manifest 自洽→文件在→sha256→footer 行数→版本列→行内代际，任一失配即抛（缺版本列一律拒读，禁覆盖语义）。
+    #   inputs: I1
+    #   outputs: 见函数注解
+    # - id: A4
+    #   name_zh: PG 优先回落总口
+    #   name_en: query_ledger_with_fallback
+    #   intro: PG 可达即以 PG 为准（authoritative=True，快照损坏自报 snapshot_load_error）；PG 不可达才回落快照并显式 degraded=True/authoritative=False；双不可用报红上抛禁空返。
+    #   inputs: I3
+    #   outputs: 见函数注解
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 磁盘快照 pair（恒 ≤2 代）
+    #   name_en: lib_snapshot.v<N>.parquet + manifest
+    #   intro: Parquet(gzip) 整表镜像 + manifest 代际记录；可派生镜像非真源，可整删重建。
+    #   downstream: LedgerSnapshotReader 回落读 / CLI status
+    # - id: O2
+    #   name_zh: 带来源标记的读数结果
+    #   name_en: LedgerQueryResult
+    #   intro: rows + source + ledger_version + degraded/authoritative/degraded_reason 显式携带，禁与正常命中同形。
+    #   downstream: 图书馆查询消费方（lookup/CLI）
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A2
+    # I2 --> A2
+    # I1 --> A3
+    # I3 --> A4
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O2
