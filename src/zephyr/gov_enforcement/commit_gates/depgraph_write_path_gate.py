@@ -155,6 +155,9 @@ _WHITELIST: frozenset[str] = frozenset(
         "src/zephyr/governance/meta_question/exam_ops.py",
         # FMS 战役 B3 图书馆 successor_of 迁移脚本，2026-09-27 st-fms-chief-20260927，裁定#ARCH-DEPGRAPH_ACCESS_CONTROL 白名单扩展
         "scripts/governance/migrations/add_library_successor_of.py",
+        # FMS 战役 C5 生命周期退役执行器（lib_events 留痕+lib_assets.successor_of 双写，
+        # 2026-09-27 st-fms-chief-20260927，裁定#ARCH-DEPGRAPH_ACCESS_CONTROL 白名单扩展同上）
+        "scripts/governance/d5_architecture/lifecycle/retire_module.py",
     }
 )
 
@@ -233,6 +236,8 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             "    - scripts/governance/meta_question/wo009/backfill_pledge_event_version.py (质押事件版本回填器)\n"
             "    - src/zephyr/governance/meta_question/meta_question_registry.py (meta_question 主表写入口)\n"
             "    - src/zephyr/governance/meta_question/exam_ops.py (考试生命周期写操作)\n"
+            "    - scripts/governance/migrations/add_library_successor_of.py (successor_of DDL 迁移)\n"
+            "    - scripts/governance/d5_architecture/lifecycle/retire_module.py (退役执行器 lib_events/successor_of 双写)\n"
             "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
             "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
             "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
