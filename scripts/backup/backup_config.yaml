@@ -59,9 +59,20 @@ ch_backup:
 
 dump_dir: "D:\\tmp_db_dumps"
 
-# ---- G 盘兜底镜像（2026-09-20 裁定#380⑥/#381 S4：3-2-1 的 G 侧兜底；backup.ps1 STAGE 3d /MIR 逐条）----
+# ---- 镜像删除传播上限（2026-09-27 治本，backup.ps1 STAGE 3c/3d 共用一把）----
+# /MIR 会传播删除：2026-09-14 docs/_working 误删事故实证过"镜像当晚连源一起毁掉最后恢复源"。
+# 本册原先用"源 immutable/版本化，/MIR 风险可控"为 3d 开脱，该前提已不成立：
+# F:\zephyr_cold 现有每日改写住民（library_ledger_backup.py 滚动 30 天）+ 90_tmp + 人工 .bak，
+# 而读侧没有任何尺能区分"30 天到期"与"有人删了一批"——两种都长得像镜像成功。
+# 现在的机械判据：先跑 robocopy /MIR /L 数出"将被清除的条目数"（*EXTRA 行，含文件与目录，
+# 故口径偏保守），超本帽或数不出来（未知）一律降级为只增不删的 /E 同步。
+# 未知因此只会导致"副本偏旧"，不会导致"副本被清空"。
+mirror_guard:
+  max_propagated_deletes: 200
+
+# ---- G 盘兜底镜像（2026-09-20 裁定#380⑥/#381 S4：3-2-1 的 G 侧兜底；backup.ps1 STAGE 3d 逐条）----
 # 首次全量由 st-disk-ch-20260921 通宵班完成（F→G 710G）；此后每日备份成功事件随跑增量。
-# G 盘=USB 机械盘（写 70MB/s），只放镜像不放在线链路；源 immutable/版本化，/MIR 风险可控。
+# G 盘=USB 机械盘（写 70MB/s），只放镜像不放在线链路。/MIR 的删除传播受 mirror_guard 约束。
 g_mirror:
   base: "G:\\zephyr_cold"
   # a3 阶段4.6 改址（2026-09-21）；2026-09-24 ch_vm_backup 目标移除（Owner 早执裁定：

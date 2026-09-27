@@ -80,6 +80,34 @@ if (Test-Path $_pathsCfg) {
 $ChSshHelper = "$ProjectRoot\scripts\backup\ch_vm_ssh.py"
 $StateFile = "$ProjectRoot\data\databases\backup_state.json"
 
+# -- Which data.vhdx would a restore actually use? (pure, unit-tested) --
+# F is CONFIG-LEVEL by the 2026-09-24 ruling, so a data.vhdx sitting on F is an accident
+# remnant, not the authoritative archive copy. Before this helper, Do-Vm used "whatever is
+# on F" whenever F happened to hold one, while Do-Verify only ever looked at G and printed
+# PASS -- so a verified-green restore could still have replayed an unverified remnant
+# (exactly the 599 GiB 2026-09-26 copy that is on F right now).
+function Get-VmImageChoice {
+    param(
+        [bool]$GExists,
+        [bool]$FExists,
+        [long]$GBytes,
+        [long]$FBytes
+    )
+    if ($GExists) {
+        if ($FExists -and $FBytes -ne $GBytes) { return "g_conflict_remnant" }
+        return "g_archive"
+    }
+    if ($FExists) { return "f_remnant_only" }
+    return "none"
+}
+
+function Get-VmImageSrc {
+    param([string]$Choice, [string]$ImageHome, [string]$ConfigHome)
+    if ($Choice -eq "f_remnant_only") { return (Join-Path $ConfigHome "data.vhdx") }
+    if ($Choice -eq "none") { return "" }
+    return (Join-Path $ImageHome "data.vhdx")
+}
+
 # -- CH config (HTTP endpoint + base/inc filenames) --
 $chBk = @{}
 $chBkEnvFile = "$ProjectRoot\config\.env.ch_backup"
@@ -361,11 +389,24 @@ function Do-Verify {
     if (Test-Path "$ChVmBackup\zephyr-ch") {
         Write-OK "vm: VM config dir zephyr-ch\ (F)"
     } else { Write-Err "vm: VM config dir MISSING"; $issues += "vm:config" }
-    $imgP = Join-Path $ChVmImageHome "data.vhdx"
-    if (Test-Path $imgP) {
-        $gb = [math]::Round((Get-Item $imgP).Length / 1GB, 2)
-        Write-OK "vm: data.vhdx full image (${gb} GB, G archive)"
+    $imgG = Join-Path $ChVmImageHome "data.vhdx"
+    $imgF = Join-Path $ChVmBackup "data.vhdx"
+    $gOk = Test-Path $imgG
+    $fOk = Test-Path $imgF
+    $gB = if ($gOk) { [int64](Get-Item $imgG).Length } else { 0 }
+    $fB = if ($fOk) { [int64](Get-Item $imgF).Length } else { 0 }
+    $vmChoice = Get-VmImageChoice -GExists $gOk -FExists $fOk -GBytes $gB -FBytes $fB
+    $vmSrc = Get-VmImageSrc -Choice $vmChoice -ImageHome $ChVmImageHome -ConfigHome $ChVmBackup
+    if ($gOk) {
+        Write-OK ("vm: data.vhdx full image at G archive ({0:N2} GB, mtime {1:yyyy-MM-dd HH:mm})" -f ($gB/1GB), (Get-Item $imgG).LastWriteTime)
     } else { Write-Err "vm: data.vhdx full image MISSING at $ChVmImageHome"; $issues += "vm:data.vhdx" }
+    # Print what a restore would ACTUALLY replay, not just what exists where we looked.
+    Write-Host ("  vm image a restore would use: {0}  (choice={1})" -f $vmSrc, $vmChoice)
+    if ($vmChoice -eq "g_conflict_remnant") {
+        Write-Warn ("  A data.vhdx ALSO exists on F ({0:N2} GB) and differs from the G archive ({1:N2} GB). F is config-level by the 2026-09-24 ruling, so that F file is an accident remnant -- G wins. Retire it via backup_ch_vm.ps1 -CompactWindow (which refreshes G first)." -f ($fB/1GB), ($gB/1GB))
+    } elseif ($vmChoice -eq "f_remnant_only") {
+        Write-Warn "  No G archive image: restore would replay the F remnant. Re-run backup_ch_vm.ps1 to rebuild the G copy."
+    }
 
     Write-Host ""
     if ($issues.Count -eq 0) {
@@ -612,11 +653,25 @@ function Do-Vm {
     if (-not (Test-Path "$ChVmBackup\boot.vhdx")) { Write-Err "boot.vhdx missing in $ChVmBackup"; exit 1 }
     # (2026-09-24) F is config-level: the full data.vhdx image lives at the G archive
     # home. Restore = bring it back next to boot.vhdx before Import-VM.
+    # 2026-09-27: the choice is now resolved by Get-VmImageChoice instead of "use whatever
+    # F happens to hold" -- otherwise a remnant data.vhdx on F (the 599 GiB 2026-09-26
+    # copy is one) would be replayed while Do-Verify, which looks at G, prints PASS.
     $imgSrc = Join-Path $ChVmImageHome "data.vhdx"
     $imgDst = Join-Path $ChVmBackup "data.vhdx"
-    if (-not (Test-Path $imgDst)) {
-        if (-not (Test-Path $imgSrc)) { Write-Err "data.vhdx missing in BOTH $ChVmBackup and $ChVmImageHome"; exit 1 }
-        Write-Stage "Config-level backup detected: copying data.vhdx image from $ChVmImageHome (591 GB, ~1-2 h on USB)"
+    $vG = Test-Path $imgSrc
+    $vF = Test-Path $imgDst
+    $bG = if ($vG) { [int64](Get-Item $imgSrc).Length } else { 0 }
+    $bF = if ($vF) { [int64](Get-Item $imgDst).Length } else { 0 }
+    $choice = Get-VmImageChoice -GExists $vG -FExists $vF -GBytes $bG -FBytes $bF
+    # Derive the path from the same helper verify prints, so "what the drill reported" and
+    # "what the restore replays" cannot drift apart again.
+    $chosen = Get-VmImageSrc -Choice $choice -ImageHome $ChVmImageHome -ConfigHome $ChVmBackup
+    if ($choice -eq "none") { Write-Err "data.vhdx missing in BOTH $ChVmBackup and $ChVmImageHome"; exit 1 }
+    Write-Host "  vm image source resolved: $choice -> $chosen (G=$([math]::Round($bG/1GB,2))GB F=$([math]::Round($bF/1GB,2))GB)"
+    if ($choice -eq "f_remnant_only") {
+        Write-Warn "No G archive image -- replaying the F remnant. Rebuild G with backup_ch_vm.ps1 as soon as possible."
+    } elseif (-not $vF -or $choice -eq "g_conflict_remnant") {
+        Write-Stage "Copying data.vhdx image from $ChVmImageHome ($([math]::Round($bG/1GB,0)) GB, ~1-2 h on USB)"
         if (-not (Confirm-Action "Copy data.vhdx from $imgSrc to $imgDst now?")) { Write-Host "Aborted."; exit 0 }
         Copy-Item $imgSrc $imgDst -Force
         Write-OK "data.vhdx image restored to $imgDst"

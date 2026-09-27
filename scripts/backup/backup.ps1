@@ -112,6 +112,76 @@ function Release-Lock {
     if (Test-Path $LockFile) { Remove-Item $LockFile -Force -ErrorAction SilentlyContinue }
 }
 
+# ==================== mirror deletion guard ====================
+# WHY: /MIR propagates deletions. The 2026-09-14 docs/_working incident proved that a
+# source-side accident destroys the last recovery copy the same night (see the v2.1.0
+# note in backup_config.yaml and backup.ps1 STAGE 3). The g_mirror comment's own premise
+# for keeping /MIR -- "source is immutable/versioned" -- stopped being true: F:\zephyr_cold
+# now has a daily-rewriting resident writer (library_ledger_backup.py, rolling 30-day
+# retention) plus 90_tmp and hand-made .bak files, and no read-side ruler could tell a
+# legitimate 30-day expiry from "someone deleted a batch". Both looked like a green mirror.
+# CURE: count what /MIR WOULD purge (a /L probe reports it in the Extras column) and only
+# then mirror. Over the cap -- or when the count cannot be read at all -- fall back to an
+# additive sync. Unknown therefore degrades toward staleness, never toward data loss.
+
+# Count what a /MIR run WOULD purge, from a /L (list-only) probe.
+# Signal choice is deliberate: robocopy's summary block is locale-dependent -- on this
+# host the header and its six columns are emitted in the OEM codepage (Chinese labels),
+# not as "Files :"/"Extras". A parser keyed on the English column name would match
+# nothing here, return "unknown" on every run, and the guard would quietly never mirror
+# again (that was my first draft; the real probe output is what changed the design).
+# Instead we count the "*EXTRA" lines, which are locale-independent because they are the
+# only lines /NFL+/NDL leave standing. Returns -1 on any probe failure = unknown; the
+# caller then refuses /MIR.
+function Get-RobocopyPurgeCount {
+    param(
+        [string]$Output,
+        [int]$ExitCode
+    )
+    if ($ExitCode -ge 8) { return -1 }
+    if ([string]::IsNullOrWhiteSpace($Output)) { return 0 }
+    $n = 0
+    foreach ($raw in ($Output -split "`n")) {
+        if ($raw.Trim().StartsWith("*")) { $n += 1 }
+    }
+    return $n
+}
+
+# mirror = safe to /MIR; the additive_* modes copy without purging.
+function Get-MirrorSyncMode {
+    param([int]$Extras, [int]$Cap)
+    if ($Extras -lt 0) { return "additive_unproven" }
+    if ($Extras -gt $Cap) { return "additive_over_cap" }
+    return "mirror"
+}
+
+# Probe, decide, then sync once. Returns a machine-readable result for the run report.
+function Invoke-GuardedMirror {
+    param(
+        [string]$Source,
+        [string]$Target,
+        [int]$Cap,
+        [string[]]$CopyArgs = @()
+    )
+    $probeRaw = & robocopy $Source $Target "/MIR" "/L" "/XJ" "/R:0" "/W:0" "/NFL" "/NDL" "/NP" "/NJH" "/NJS" @CopyArgs 2>&1
+    $probeExit = [int]$LASTEXITCODE
+    $probeText = $probeRaw | Out-String
+    $purge = Get-RobocopyPurgeCount -Output $probeText -ExitCode $probeExit
+    $mode = Get-MirrorSyncMode -Extras $purge -Cap $Cap
+    $switches = @("/XJ", "/R:2", "/W:5", "/MT:8", "/NFL", "/NDL", "/NP") + @($CopyArgs)
+    if ($mode -eq "mirror") { $switches = @("/MIR") + $switches } else { $switches = @("/E") + $switches }
+    & robocopy $Source $Target @switches 2>&1 | Out-Null
+    return @{ robocopy_exit = $LASTEXITCODE; would_purge = $purge; probe_exit = $probeExit; cap = $Cap; mode = $mode }
+}
+
+# Registered cap, with a built-in floor: an unreadable config must never mean "unlimited".
+$MaxPurgeFallback = 200
+function Get-MirrorPurgeCap {
+    param([string]$Yaml, [int]$Fallback)
+    if ($Yaml -match '(?m)^mirror_guard:\s*$[\s\S]*?max_propagated_deletes:\s*(\d+)') { return [int]$matches[1] }
+    return $Fallback
+}
+
 # -- Load config (simple regex parse, avoid powershell-yaml dependency) --
 if (-not (Test-Path $ConfigFile)) { Write-Err "config not found: $ConfigFile"; exit 1 }
 $yamlContent = Get-Content $ConfigFile -Raw -Encoding UTF8
@@ -802,6 +872,7 @@ if ($Mode -eq "ch") {
     }
 
     $offrepoStatus = @{}
+    $mirrorCap = Get-MirrorPurgeCap -Yaml $yamlContent -Fallback $MaxPurgeFallback
     foreach ($t in $offrepoTargets) {
         if (-not (Test-Path $t.source)) {
             $offrepoStatus[$t.id] = @{status="failed"; error="source missing: $($t.source)"}
@@ -809,15 +880,18 @@ if ($Mode -eq "ch") {
             continue
         }
         $tgt = Join-Path $offrepoBase $t.id
-        & robocopy $t.source $tgt "/MIR" "/XJ" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
-        $rc = $LASTEXITCODE
+        $gm = Invoke-GuardedMirror -Source $t.source -Target $tgt -Cap $mirrorCap
+        $rc = [int]$gm.robocopy_exit
+        if ($gm.mode -ne "mirror") {
+            Write-Warn ("Off-repo [{0}]: /MIR withheld ({1}, would purge {2} > cap {3}) -- synced additively, target keeps stale extras" -f $t.id, $gm.mode, $gm.would_purge, $mirrorCap)
+        }
         if ($rc -ge 8) {
-            $offrepoStatus[$t.id] = @{status="failed"; robocopy_exit=$rc}
+            $offrepoStatus[$t.id] = @{status="failed"; robocopy_exit=$rc; mode=$gm.mode; would_purge=$gm.would_purge}
             Write-Err "Off-repo [$($t.id)] robocopy failed (exit $rc)"
         } else {
             $tgtBytes = (Get-ChildItem $tgt -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-            $offrepoStatus[$t.id] = @{status="ok"; robocopy_exit=$rc; bytes=[int64]$tgtBytes}
-            Write-OK ("Off-repo [{0}]: ok ({1:N2} GB)" -f $t.id, ($tgtBytes/1GB))
+            $offrepoStatus[$t.id] = @{status="ok"; robocopy_exit=$rc; mode=$gm.mode; would_purge=$gm.would_purge; cap=$mirrorCap; bytes=[int64]$tgtBytes}
+            Write-OK ("Off-repo [{0}]: ok ({1:N2} GB, mode={2})" -f $t.id, ($tgtBytes/1GB), $gm.mode)
         }
     }
     $offrepoResult = @{
@@ -863,6 +937,7 @@ if ($Mode -eq "ch") {
     }
 
     $gMirrorStatus = @{}
+    $mirrorCapG = Get-MirrorPurgeCap -Yaml $yamlContent -Fallback $MaxPurgeFallback
     foreach ($t in $gMirrorTargets) {
         if (-not (Test-Path $t.source)) {
             $gMirrorStatus[$t.id] = @{status="failed"; error="source missing: $($t.source)"}
@@ -871,14 +946,17 @@ if ($Mode -eq "ch") {
         }
         # a3 4.6: per-target explicit target: overrides base\id derivation
         $gTgt = if ($t.PSObject.Properties['target'] -and $t.target) { [string]$t.target } else { Join-Path $gMirrorBase $t.id }
-        & robocopy $t.source $gTgt "/MIR" "/XJ" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
-        $rcG = $LASTEXITCODE
+        $gmG = Invoke-GuardedMirror -Source $t.source -Target $gTgt -Cap $mirrorCapG -CopyArgs @("/COPY:DAT")
+        $rcG = [int]$gmG.robocopy_exit
+        if ($gmG.mode -ne "mirror") {
+            Write-Warn ("G-mirror [{0}]: /MIR withheld ({1}, would purge {2} > cap {3}) -- the fallback copy is now AHEAD of a possibly-damaged source, which is the point" -f $t.id, $gmG.mode, $gmG.would_purge, $mirrorCapG)
+        }
         if ($rcG -ge 8) {
-            $gMirrorStatus[$t.id] = @{status="failed"; robocopy_exit=$rcG}
+            $gMirrorStatus[$t.id] = @{status="failed"; robocopy_exit=$rcG; mode=$gmG.mode; would_purge=$gmG.would_purge}
             Write-Err "G-mirror [$($t.id)] robocopy failed (exit $rcG)"
         } else {
-            $gMirrorStatus[$t.id] = @{status="ok"; robocopy_exit=$rcG}
-            Write-OK "G-mirror [$($t.id)]: ok"
+            $gMirrorStatus[$t.id] = @{status="ok"; robocopy_exit=$rcG; mode=$gmG.mode; would_purge=$gmG.would_purge; cap=$mirrorCapG}
+            Write-OK "G-mirror [$($t.id)]: ok (mode=$($gmG.mode) would_purge=$($gmG.would_purge)/cap=$($mirrorCapG))"
         }
     }
     $gMirrorResult = @{
