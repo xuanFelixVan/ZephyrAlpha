@@ -476,6 +476,39 @@ tiers:
         owner: MOD-GOVERNANCE
         ssot_for: error_code, error_code_class_mapping
 
+      - registry_id: REG-DOMAIN-NAMING-001
+        name: 域命名规则表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 10
+        counting_rule: entries 数组条目数（域命名/分类学规则，建域校验+NR-006..010）
+        status: active
+        description: 域命名与模块文档分类学规则唯一真源（SSoT）；apply_depgraph --insert-domain 强制校验；裁定#204
+        owner: MOD-INF-037
+
+      - registry_id: REG-FMS-DEADREF-BASELINE
+        name: FMS 死引用棘轮基线
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml
+        format: yaml
+        maintenance: auto （generate_fms_deadref_baseline.py）
+        entry_count: 3702
+        counting_rule: entries 数组条目数（棘轮基线只减不增，人工判读见 ENTRY_MANUAL）
+        status: active
+        description: FMS-HYGIENE 门死引用存量豁免棘轮基线（git 跟踪集存在性判定，生成物禁手改）
+        owner: MOD-GOVERNANCE
+
+      - registry_id: REG-REGEN-CLEAN-001
+        name: 生成物再生清洁棘轮基线
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/regen_clean_baseline.yaml
+        format: yaml
+        maintenance: auto （regen_clean_check.py --update-baseline）
+        entry_count: 5
+        counting_rule: baseline 映射键数（棘轮只减不增，人工判读见 ENTRY_MANUAL）
+        status: active
+        description: 生成器再生清洁对棘轮基线（漂移指纹只减不增，新增须 --update-baseline 显式落）
+        owner: MOD-GOVERNANCE
+
   - tier: 2
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
