@@ -5121,7 +5121,7 @@ nodes:
   decay_scan_frequency: monthly
   tags: ["tdm20", "state-var", "V3"]
 - node_id: TDM-E-L9-AGG
-  note_confirmed: 2026-09-26  # st-chief4x-know-20260927：实件化（module_ref 回填+读数生产者）同批确认
+  note_confirmed: 2026-09-28  # st-c8-l9：G3 换源同批确认（ig_equity_edge→entity_graph 六表 edge_holding，退役第一步）；前次 2026-09-26 st-chief4x-know-20260927 实件化确认
   name_zh: 知识供给汇聚
   market: cn_a
   flow: entry_flow
@@ -5131,7 +5131,7 @@ nodes:
   decision_question: "知识供给轴（源线/图谱/状态变量）的覆盖与健康总览？"
   activation: continuous
   algo_note_zh: >-
-    知识供给汇聚：29源线+5图谱+3状态快照的就绪度读数生产者（纯读取聚合零采集，f34册最小件）；daily_kline系SUCCESS事件唤醒+同日60min节流，逐线绿/黄/红与挂起/跳过读数落c1_market.l9_readiness_daily，T日聚合读数喂次日数据就绪度；本节点只承载结构与指向，不存实时数据。
+    知识供给汇聚：29源线+5图谱+3状态快照的就绪度读数生产者（纯读取聚合零采集，f34册最小件；G3股权穿透读数已切entity_graph六表现行版本edge_holding，valid_to IS NULL口径，ig_equity_edge退役第一步）；daily_kline系SUCCESS事件唤醒+同日60min节流，逐线绿/黄/红与挂起/跳过读数落c1_market.l9_readiness_daily，T日聚合读数喂次日数据就绪度；本节点只承载结构与指向，不存实时数据。
   factor_refs: []
   data_refs: []
   algo_refs: []

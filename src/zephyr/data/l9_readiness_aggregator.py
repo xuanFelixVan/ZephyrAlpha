@@ -165,7 +165,10 @@ _SQL_INSERT_READINGS = "INSERT INTO {table} {cols} FORMAT TSV"
 # PG 侧（图谱五谱，f32 册行数口径；depgraph PG，只读）——
 _SQL_PG_IG_CHAIN = "SELECT count(*) FROM ig_chain"
 _SQL_PG_IG_FACT_CKG = "SELECT count(*) FROM ig_fact WHERE source = 'ckg_2021'"
-_SQL_PG_IG_EQUITY = "SELECT count(*) FROM ig_equity_edge"
+# ig_equity_edge 退役第一步（successor=entity_graph）：G3 切换新真源 edge_holding（entity_graph 六表，
+# DDL 真源=apply_entity_graph_ddl.py；现行集口径=valid_to IS NULL，与 chainmap_equity_graph.py 同判据），
+# 旧表 DROP 待 Owner 终准。
+_SQL_PG_EDGE_HOLDING = "SELECT count(*) FROM edge_holding WHERE valid_to IS NULL"
 _SQL_PG_STOCK_CONCEPT = "SELECT count(*) FROM stock_concept"
 _SQL_PG_IO_EDGE = "SELECT count(*) FROM ig_io_edge"
 #: G5 挂零复测（f32 册：from_sector_code 与 ig_node 两套 id 体系，挂上=治本落地）。
@@ -177,7 +180,9 @@ _SQL_PG_IO_HUNG = (
 _G_PG: Final = (
     ("G1", _SQL_PG_IG_CHAIN, "产业链（ig_chain，DDL 真源=apply_industry_graph_ddl）"),
     ("G2", _SQL_PG_IG_FACT_CKG, "CKG 事实层（静态快照 as_of=2021-10-26，PIT 诚实）"),
-    ("G3", _SQL_PG_IG_EQUITY, "股权穿透（ig_equity_edge，MOD-ENTITY-GRAPH）"),
+    # G3 已切新真源：股权穿透=edge_holding（entity_graph 六表，MOD-ENTITY-GRAPH）；
+    # ig_equity_edge 退役第一步，旧表 DROP 待 Owner 终准。
+    ("G3", _SQL_PG_EDGE_HOLDING, "股权穿透（edge_holding，entity_graph 六表，MOD-ENTITY-GRAPH）"),
     ("G4", _SQL_PG_STOCK_CONCEPT, "概念题材（stock_concept，THS 导出）"),
 )
 
