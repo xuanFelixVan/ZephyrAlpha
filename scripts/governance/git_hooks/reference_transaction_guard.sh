@@ -222,6 +222,19 @@ while read -r old_oid new_oid ref_name; do
             fi
         done
         if [ -z "$forged_token" ]; then
+            # 归属可观测腿（总筹裁定 Z-F8 甲案，2026-09-27；warn_only 不改行为、不阻断）：
+            #   走到这里 = 消息里的每个 [GW:<sid>] 都在会话键内，但本钩子**没有任何提交者身份
+            #   第二信号**可比对——判据是 "sid 是否在册"，不是 "sid 是否等于本笔归属"。
+            #   经网关的合法提交 ZEPHYR_COMMIT_GATEWAY=1（留痕已由网关/滥用监控负责），
+            #   因此只对 **网关未在场** 的在册标记落审计：这正是"冒充在活他人会话键"的形态，
+            #   也是本文件孪生段自认"未关掉"的那一面（攻面登记交总包，勿据此宣称不可伪造）。
+            #   归属级治本需每笔提交带凭据载体（HMAC），属 Owner 门位，本腿不做判定只留痕。
+            if [ "$ZEPHYR_COMMIT_GATEWAY" != "1" ]; then
+                mkdir -p "$reports_dir"
+                _ts=$(date +%s)
+                echo "{\"gate_id\":\"REFERENCE-TRANSACTION-GUARD\",\"timestamp\":$_ts,\"old_oid\":\"$old_oid\",\"new_oid\":\"$new_oid\",\"ref\":\"$ref_name\",\"violation\":\"gw_sid_channel_unverifiable\",\"session_id\":\"$(echo "$gw_tokens" | paste -sd, -)\",\"gw_env\":\"${ZEPHYR_COMMIT_GATEWAY:-0}\",\"action\":\"warn_only\"}" > "$reports_dir/reference_transaction_guard_${_ts}.json"
+                echo "[REFERENCE-TRANSACTION-GUARD] WARN: 在册 sid 但网关未在场（归属不可证）sid=$(echo "$gw_tokens" | paste -sd, -)，落审计放行" >&2
+            fi
             continue  # 全部标记都是注册会话 → 合法 gateway/emergency commit
         fi
         # 两条既有合法通道不得被本收紧打死（红队自纠，与 post_commit_guard.sh 分层对齐）：
