@@ -433,3 +433,12 @@ reserved_ranges:
     purpose: "系统级跨层模块"
   - range: "MOD-EXT-001 ~ MOD-EXT-099"
     purpose: "外部集成模块"
+
+# === retirement_records 退役台账（trae_032 MLC-003 记账载体；S9 簿 §4.3，Owner 2026-09-27 增补令 B10-P1）===
+# 载体修正：规则旧文引用的死 JSON（module-id-registry.json，从未创建）由本顶层节吸收替代——净零，不立新册。
+# 唯一键=module_id；唯一机器写者=scripts/governance/d5_architecture/lifecycle/retire_module.py（safe_write_text CAS）。
+# 独立顶层节：不进 registered_ids 条目集合，不影响 total_registered 计数口径（S4 协调假设，S9 簿 §3.5）。
+# 字段 schema：ruling(裁定#NNN，step6)/deprecated_date(step3/4)/superseded_by(与条目级同值同源，单值双写)/
+#   retain_until(deprecated_date+90d)/consumers_report(step1 报告路径)/contracts_affected(step7 IFC-007 命中)/
+#   archived_date(转换门放行 deprecated→archived 时写)/rollback_of(回收窗口回退链)。
+retirement_records: []
