@@ -588,3 +588,38 @@ class TestGenerateManifestOutputFlag:
         proc = self._run("--output", str(out))
         assert proc.returncode == 0
         assert "unchanged, skipped" in proc.stdout
+
+
+class TestPairTimeoutAuthority:
+    """--budget-ms 只兜底未声明对；登记册声明值必须赢（治 09-27 首轮实测 3 对恒 timeout）。"""
+
+    def test_declared_timeout_beats_global_budget(self) -> None:
+        pair = rcc.RegenPair(name="rule_catalog_registry", timeout_seconds=60)
+        assert rcc._pair_seconds(pair, 8000) == 60.0
+
+    def test_undeclared_pair_falls_back_to_budget(self) -> None:
+        pair = rcc.RegenPair(name="p", timeout_seconds=None)
+        assert rcc._pair_seconds(pair, 8000) == 8.0
+
+    def test_zero_declared_means_undeclared(self) -> None:
+        """registry 里 docs_index_structural 写 timeout_seconds: 0=不用声明值。"""
+        pair = rcc.RegenPair(name="docs_index_structural", timeout_seconds=0)
+        assert rcc._pair_seconds(pair, 12000) == 12.0
+
+    def test_declared_capped_by_hard_ceiling(self) -> None:
+        """声明写错（如 99999）也不得让一次检查挂死。"""
+        pair = rcc.RegenPair(name="p", timeout_seconds=99999)
+        assert rcc._pair_seconds(pair, 8000) == rcc._MAX_PAIR_SECONDS
+
+    def test_registry_pairs_actually_get_their_seconds(self) -> None:
+        """活体口径：真册里声明 60s 的对，压到 8s 预算后仍须是 60s（旧实现此处即红）。"""
+        reg = yaml.safe_load(rcc.DEFAULT_REGISTRY.read_text(encoding="utf-8"))
+        declared = [
+            (g.get("name"), (g.get("regen") or {}).get("timeout_seconds"))
+            for g in (reg.get("generators") or [])
+            if (g.get("regen") or {}).get("timeout_seconds")
+        ]
+        assert declared, "登记册里无任何 timeout_seconds 声明，本尺失去判别对象"
+        for name, secs in declared:
+            got = rcc._pair_seconds(rcc.RegenPair(name=str(name), timeout_seconds=float(secs)), 8000)
+            assert got == min(float(secs), rcc._MAX_PAIR_SECONDS), (name, secs, got)

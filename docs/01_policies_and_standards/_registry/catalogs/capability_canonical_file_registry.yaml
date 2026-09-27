@@ -54844,4 +54844,59 @@ creation_tokens:
   created_by: st-fms-tc-20260927
   capability: disk_reorg_campaign
   merge_evaluation: "vhdx 季度压缩预检单每日生成物（沿 20260920..26 同型在册件），零既有条目可合并"
+- file: docs/_working/fms_overhaul/95_external_review/backup_cold_store_review.md
+  token: fms-overhaul-backup-cold-store-review-20260927
+  created_by: st-fms-tc-20260927
+  capability: fms_overhaul
+  merge_evaluation: "FMS 战役外审案卷三件（G/F 备份体系审查+F 盘空间取证+图书馆纳编与本地 MCP 现状），零既有条目可合并"
+- file: docs/_working/fms_overhaul/95_external_review/f_space_forensics.md
+  token: fms-overhaul-f-space-forensics-20260927
+  created_by: st-fms-tc-20260927
+  capability: fms_overhaul
+  merge_evaluation: "FMS 战役外审案卷三件（G/F 备份体系审查+F 盘空间取证+图书馆纳编与本地 MCP 现状），零既有条目可合并"
+- file: docs/_working/fms_overhaul/95_external_review/library_naming_and_local_mcp.md
+  token: fms-overhaul-library-naming-and-local-mcp-20260927
+  created_by: st-fms-tc-20260927
+  capability: fms_overhaul
+  merge_evaluation: "FMS 战役外审案卷三件（G/F 备份体系审查+F 盘空间取证+图书馆纳编与本地 MCP 现状），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/00_orchestration.md
+  token: library-ledger-cache-00-orchestration-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S1_version_stamp/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S2_librarian_cache/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S3_snapshot_layer/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S4_gate_consumers/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S5_resident_service/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S6_coordination/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
+- file: docs/_working/lib_ram_campaign/S7_redblue_acceptance/README.md
+  token: library-ledger-cache-readme-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "图书馆内存缓存专项骨架与七簿（FMS §九 后续工作#6 挖矿面），零既有条目可合并"
 di_seam_exemptions: []

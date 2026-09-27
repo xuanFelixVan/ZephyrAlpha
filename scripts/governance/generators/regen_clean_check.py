@@ -57,6 +57,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
 
+# 单对 subprocess 硬顶（秒）：登记册声明值优先，本常量只防"声明写错/生成器挂死"。
+_MAX_PAIR_SECONDS = 900.0
+
 __manifest__ = """
 dimensions: [D1, D5]
 priority: P1
@@ -68,7 +71,7 @@ args:
   - {flag: --baseline, type: str, description: "棘轮基线路径"}
   - {flag: --registry, type: str, description: "受检对登记册路径"}
   - {flag: --jsonl, type: str, description: "机器可读报告路径"}
-  - {flag: --budget-ms, type: int, description: "单对 subprocess 预算上限"}
+  - {flag: --budget-ms, type: int, description: "未声明 timeout_seconds 的受检对的缺省 subprocess 预算（声明值优先，硬顶 900s）"}
   - {flag: --auto-fix, type: bool, description: "人工专用：隔离产出拷回正本位"}
   - {flag: --update-baseline, type: bool, description: "人工专用：漂移指纹合并入棘轮基线"}
 warn_only: false
@@ -369,7 +372,11 @@ def _exec_isolated(
             timeout=effective_seconds,
         )
     except subprocess.TimeoutExpired:
-        return None, f"timeout after {effective_seconds:.1f}s (budget {budget_ms}ms)", (time.monotonic() - start) * 1000
+        return (
+            None,
+            f"timeout after {effective_seconds:.1f}s (pair 上限生效；CLI 预算 {budget_ms}ms)",
+            (time.monotonic() - start) * 1000,
+        )
     except OSError as exc:
         return None, f"spawn failed: {exc}", (time.monotonic() - start) * 1000
     return proc, "", (time.monotonic() - start) * 1000
@@ -388,8 +395,23 @@ def _collect_iso_output(proc: subprocess.CompletedProcess, iso_path: Path) -> tu
     return text, (stdout_lines[-1] if stdout_lines else "")
 
 
+def _pair_seconds(pair: RegenPair, budget_ms: int) -> float:
+    """单对 subprocess 上限（秒）——**登记册声明优先，CLI 预算只是缺省**。
+
+    治本（2026-09-27 本班落地后首轮实测）：旧式 `min(declared, budget)` 把
+    generator_registry 里声明的 10/30/60s 一律压到 --budget-ms 缺省 8s，结果是
+    7 个已声明对里有 3 对恒判 "timeout→基建故障 fail-open"
+    （rule_catalog_registry 实测 8.03s 即被 8s 掐死）。声明值是逐对 knowledge，
+    全局预算是未声明对的兜底，二者不得互相压制；只留一个硬顶防挂死。
+    """
+    declared = pair.timeout_seconds or 0.0
+    if declared > 0:
+        return min(declared, _MAX_PAIR_SECONDS)
+    return min(budget_ms / 1000.0, _MAX_PAIR_SECONDS)
+
+
 def _regen_invoke(pair: RegenPair, iso_dir: Path, iso_path: Path, budget_ms: int) -> tuple[str, str, float]:
-    effective_seconds = min(pair.timeout_seconds or budget_ms / 1000.0, budget_ms / 1000.0)
+    effective_seconds = _pair_seconds(pair, budget_ms)
     proc, err, elapsed = _exec_isolated(_iso_argv(pair, iso_path), effective_seconds, budget_ms)
     if proc is None:
         return "", err, elapsed
