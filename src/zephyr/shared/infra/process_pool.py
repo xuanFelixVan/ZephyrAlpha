@@ -41,8 +41,15 @@ import tempfile
 import threading
 import time
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
-from zephyr.shared.lifecycle.resource_optimization_models import ProcessPoolStats
+if TYPE_CHECKING:
+    # R4（st-fms-tc-20260927）：pydantic 形态的统计模型仅 get_stats() 构造时使用，
+    # 急切 import 让所有借道 process_pool 的读侧（含查馆→depgraph_schema）连坐 167ms
+    # pydantic 装载。改为类型注解走 TYPE_CHECKING + 构造点函数内惰性 import
+    # （同仓先例=zephyr/shared/io/io_cache.py 的 CacheStats）。运行时语义逐字不变：
+    # get_stats() 仍返回同一个 ProcessPoolStats 类实例，失败仍按原样上抛。
+    from zephyr.shared.lifecycle.resource_optimization_models import ProcessPoolStats
 
 __all__ = [
     "MCPProcessPool",
@@ -429,7 +436,7 @@ def spawn_python_hidden(
             # 上下文相关的 CIM 通道偶发（09-15/16 reconcile status 实证 6+ 次，本机
             # 直测两变体均 0），原路径 spawn 失败→调用方恒回退 sync=提交会话被
             # reconciler 全链阻塞。防御链：WMI 重试×2 → 无 breakaway Popen 降级
-            #（进程留父 job，父终端关闭可能连坐——reconciler 幂等+事件重跑可接受，
+            # （进程留父 job，父终端关闭可能连坐——reconciler 幂等+事件重跑可接受，
             # warn 留痕）→ 仍失败向上抛（调用方 sync 兜底不变）。
             _last_wmi_err: Exception | None = None
             for _attempt in range(2):
@@ -443,9 +450,7 @@ def spawn_python_hidden(
                     )
                 except RuntimeError as _wmi_err:
                     _last_wmi_err = _wmi_err
-                    logger.warning(
-                        "spawn_python_hidden: WMI 通道失败(第 %d 次): %s", _attempt + 1, _wmi_err
-                    )
+                    logger.warning("spawn_python_hidden: WMI 通道失败(第 %d 次): %s", _attempt + 1, _wmi_err)
                     # 无显式退避 sleep——WMI 通道本身经 powershell CIM 往返秒级，
                     # 天然间隔；且避免 time.sleep 触发 PERM-TRIGGER 时间触发模式。
             logger.warning(
@@ -647,6 +652,10 @@ class MCPProcessPool:
             return count
 
     def get_stats(self) -> ProcessPoolStats:
+        from zephyr.shared.lifecycle.resource_optimization_models import (  # noqa: PLC0415 — R4 惰性化见模块头注释
+            ProcessPoolStats,
+        )
+
         with self.lock:
             active = sum(1 for e in self.pool.values() if e.is_alive)
             zombies = sum(1 for e in self.pool.values() if not e.is_alive)

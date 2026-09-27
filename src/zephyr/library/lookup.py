@@ -32,10 +32,16 @@ import argparse
 import sys
 from typing import Any, Final
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
 from zephyr.library import ledger_cache
 from zephyr.library.ledger_cache import LedgerFilters
 from zephyr.library.librarian import Librarian
+
+# R4（st-fms-tc-20260927）：池化连接件（zephyr.governance.depgraph_schema）只在两条腿用到
+# ——_lookup_terms_via_sql（缓存旁路/无缓存位）与 _run_feeds_query（--feeds），而
+# commit-guide:/--backtest 两条 CLI 腿与世代缓存命中腿都不碰 PG。原模块级 import 让
+# "只要一个查询函数"的消费方（门禁探针）也为连接层买单，故下沉到使用点（同仓惯例
+# =scripts/backup/library_ledger_backup.py 的 refresh_snapshot 与本文件 _load_lookup_axis）。
+# 语义逐字不变：两条腿仍各借还一次连接，DB 异常仍原样上抛（ERROR_CONTRACT 不变）。
 
 __all__ = ["lookup_assets"]  # noqa: n114-final  n114-final豁免: __all__是Python导出约定，非可变常量，无需Final标注（先例=asyncio_run_in_context_gate.py L77）
 
@@ -110,6 +116,11 @@ def _lookup_terms_via_sql(terms: list[str], limit: int, filters: LedgerFilters) 
     conn.close() 会让 per-role 池（min1/max5）反复回收槽位、失去复用收益（§5.64.1 反模式，
     归还接口 release_depgraph_pg_connection）；tags 空元组按 None 透传（=SQL 侧无该过滤器）。
     """
+    from zephyr.governance.depgraph_schema import (  # noqa: PLC0415 — R4 惰性化（见模块头注释）
+        get_depgraph_pg_connection,
+        release_depgraph_pg_connection,
+    )
+
     conn = get_depgraph_pg_connection()
     try:
         lib = Librarian(conn)
@@ -278,6 +289,11 @@ def _run_feeds_query(keyword: str, limit: int) -> int:
     恒现读真源（不经世代缓存）：potential_consumers 属写侧对账轴，世代快照未携该列
     ——宁可多一次查询，也不让供数反查读到旧代（S4 §⑤ 不可缓存位；同代化留 R2 判）。
     """
+    from zephyr.governance.depgraph_schema import (  # noqa: PLC0415 — R4 惰性化（见模块头注释）
+        get_depgraph_pg_connection,
+        release_depgraph_pg_connection,
+    )
+
     conn = get_depgraph_pg_connection()
     try:
         lib = Librarian(conn)

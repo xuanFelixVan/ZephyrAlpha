@@ -32,6 +32,7 @@ from typing import Any
 
 import pytest
 
+from zephyr.governance import depgraph_schema
 from zephyr.library import ledger_cache, lookup
 from zephyr.library.ledger_cache import LedgerFilters
 from zephyr.library.ledger_fingerprint import SQL_LEDGER_FINGERPRINT
@@ -521,10 +522,18 @@ class _FakePooledConn:
 
 
 def _install_fake_conn(monkeypatch: pytest.MonkeyPatch) -> tuple[_FakePooledConn, list[Any]]:
+    """假借还接线（R4 起兼容两种绑定形态）。
+
+    lookup.py 的 depgraph_schema import 已下沉到使用点（函数内），故真源模块属性
+    才是必然生效的接缝；`lookup` 命名空间上的同名属性在 R4 前是绑定点、R4 后不存在，
+    两边都打（lookup 侧 raising=False）即可不分前后版本都测到同一语义。
+    """
     conn = _FakePooledConn()
     released: list[Any] = []
-    monkeypatch.setattr(lookup, "get_depgraph_pg_connection", lambda *args, **kwargs: conn)
-    monkeypatch.setattr(lookup, "release_depgraph_pg_connection", released.append)
+    monkeypatch.setattr(depgraph_schema, "get_depgraph_pg_connection", lambda *a, **k: conn)
+    monkeypatch.setattr(depgraph_schema, "release_depgraph_pg_connection", released.append)
+    monkeypatch.setattr(lookup, "get_depgraph_pg_connection", lambda *a, **k: conn, raising=False)
+    monkeypatch.setattr(lookup, "release_depgraph_pg_connection", released.append, raising=False)
     return conn, released
 
 
@@ -535,8 +544,9 @@ def test_lookup_assets_serves_from_cache_without_connection(monkeypatch: pytest.
     def _boom(*args: object, **kwargs: object) -> None:
         raise AssertionError("缓存命中路径不该借连接")
 
-    monkeypatch.setattr(lookup, "get_depgraph_pg_connection", _boom)
-    monkeypatch.setattr(lookup, "release_depgraph_pg_connection", _boom)
+    for holder, raising in ((lookup, False), (ledger_cache, True), (depgraph_schema, True)):
+        monkeypatch.setattr(holder, "get_depgraph_pg_connection", _boom, raising=raising)
+        monkeypatch.setattr(holder, "release_depgraph_pg_connection", _boom, raising=raising)
     assert [row["asset_id"] for row in lookup.lookup_assets("alpha", limit=5)] == ["FILE:docs/alpha.md"]
     assert [row["asset_id"] for row in lookup.lookup_assets("alpha", limit=5, kind="file")] == ["FILE:docs/alpha.md"]
     assert fake.load_calls == 1
