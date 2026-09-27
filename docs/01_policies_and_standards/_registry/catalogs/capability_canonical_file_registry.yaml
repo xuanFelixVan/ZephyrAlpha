@@ -54939,4 +54939,14 @@ creation_tokens:
   created_by: st-fms-tc-20260927
   capability: library_ledger_cache
   merge_evaluation: "净零声明：拆分为职责件，零新增真源——本 yaml 系 GATE-ALGO-FLOW 要求的机生视图（externalize_algo_flow 产出），非第二真源，真源仍是 src/zephyr/library/snapshot_store.py"
+- file: docs/03_modules/_domain_library/algo_flow/ledger_cache.yaml
+  token: library-ledger-cache-ledger-cache-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "净零声明：本件是同名 .py 的 ALGO_FLOW 机生视图（externalize_algo_flow 产出，同域各件各有一份 algo_flow/*.yaml），非第二真源、零新增视图类型，无同域条目可并"
+- file: docs/03_modules/_domain_library/algo_flow/ledger_fingerprint.yaml
+  token: library-ledger-cache-ledger-fingerprint-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "净零声明：本件是同名 .py 的 ALGO_FLOW 机生视图（externalize_algo_flow 产出，同域各件各有一份 algo_flow/*.yaml），非第二真源、零新增视图类型，无同域条目可并"
 di_seam_exemptions: []
