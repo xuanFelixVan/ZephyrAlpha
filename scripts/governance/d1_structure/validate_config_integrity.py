@@ -648,10 +648,14 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
         except (OSError, UnicodeDecodeError):
             warnings.append(f"[L8] 无法读取 {migrate_path}")
 
-    # 8B: registry-master-index.yaml 路径漂移检测
+    # 8B: registry-master-index.yaml 路径漂移检测（真身=下划线名；连字符名向后兼容）
     idx_path = (
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_master_index.yaml"
     )
+    if not idx_path.exists():
+        idx_path = (
+            REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+        )
     if idx_path.exists():
         try:
             idx_text = idx_path.read_text(encoding="utf-8")
@@ -772,10 +776,14 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
                 if claimed != actual:
                     errors.append(f"[L9] context-rules.yaml: description 声称 {claimed} rules，实际 {actual} 条")
 
-    # 9C: registry-master-index.yaml entry_count 与 YAML 实际条目一致性
+    # 9C: registry-master-index.yaml entry_count 与 YAML 实际条目一致性（真身=下划线名）
     idx_path = (
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_master_index.yaml"
     )
+    if not idx_path.exists():
+        idx_path = (
+            REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+        )
     if idx_path.exists():
         try:
             idx_data = yaml.safe_load(idx_path.read_text(encoding="utf-8"))
@@ -842,8 +850,17 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
                 / "01_policies_and_standards"
                 / "_registry"
                 / "catalogs"
-                / "registry-master-index.yaml"
+                / "registry_master_index.yaml"
             )
+            if not idx_path2.exists():  # 连字符变体向后兼容
+                idx_path2 = (
+                    REPO_ROOT
+                    / "docs"
+                    / "01_policies_and_standards"
+                    / "_registry"
+                    / "catalogs"
+                    / "registry-master-index.yaml"
+                )
             if idx_path2.exists():
                 try:
                     idx2 = yaml.safe_load(idx_path2.read_text(encoding="utf-8"))

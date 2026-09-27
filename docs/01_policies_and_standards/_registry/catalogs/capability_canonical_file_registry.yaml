@@ -55494,4 +55494,9 @@ creation_tokens:
   created_by: st-zcloseout-20260928
   capability: batch_window_preflight
   merge_evaluation: "波13 统一跑批窗口点火前检接管袋：点火前逐条核实五前置并拒绝对外开跑，净零"
+- file: docs/_working/commit_speedup_campaign/80_hmac_proposal/proposal.md
+  token: hmac-proposal-proposal-20260927
+  created_by: st-chiefzc-micro-20260928
+  capability: hmac_proposal
+  merge_evaluation: "W-152 立项新册：波9.4 排产点名件（非实施），无同真源可派生亦无重复簇（dossier_H H-105 实测 80_hmac_proposal=0）"
 di_seam_exemptions: []

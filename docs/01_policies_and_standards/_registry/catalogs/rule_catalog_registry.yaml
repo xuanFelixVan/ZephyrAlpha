@@ -7,7 +7,7 @@ status: active
 generated_at: '2026-09-20T09:41:29Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 294
+total_files: 297
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2759,7 +2759,7 @@ files:
   title: ''
   doc_type: register
   status: active
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -4814,6 +4814,51 @@ files:
   title: 自动化班底族索引
   doc_type: index
   status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml
+  module_id: REG-FMS-DEADREF-BASELINE
+  title: FMS 死引用棘轮基线（生成物，禁手改）
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  module_id: RPT-GATE-FACE-RECONCILIATION
+  title: ''
+  doc_type: register
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  module_id: RPT-GATE-FACE-RECONCILIATION
+  title: 门禁触发面三列对账表（波 1A.3）
+  doc_type: register
+  status: ''
   version: ''
   rule_form: ''
   scope: ''
