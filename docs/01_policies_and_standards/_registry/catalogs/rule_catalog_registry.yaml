@@ -3175,14 +3175,14 @@ files:
   aliases: []
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
-  module_id: PS-REG-006
-  title: ''
+  module_id: CFG-infrastructure-registry
+  title: 运行时基础设施登记表
   doc_type: register
-  status: ''
-  version: ''
+  status: active
+  version: 1.0.12
   rule_form: ''
   scope: ''
-  stability: evolving
+  stability: ''
   layer: ''
   superseded_by: ''
   severity: ''

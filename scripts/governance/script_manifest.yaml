@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-25T03:11:04Z
+# 自动生成于 2026-09-26T17:25:52Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-25T03:11:04Z'
+generated_at: '2026-09-26T17:25:52Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 450
-with_manifest: 407
-missing_manifest: 43
+total_scripts: 516
+with_manifest: 412
+missing_manifest: 104
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 62
+  governance: 70
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -28,10 +28,13 @@ categories:
   governance:generators: 19
   governance:git_hooks: 1
   governance:meta: 48
+  governance:meta_question: 56
   governance:migrate_sqlite_to_pg: 2
   governance:migrations: 1
   governance:observability: 1
   governance:oneoff: 7
+  governance:registry_migration: 1
+  governance:registry_projection: 1
   governance:repair: 7
   governance:shared: 1
   governance:standards: 1
@@ -258,6 +261,16 @@ scripts:
   tags:
   - Periodic
   - Quick
+- name: blob_gc.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: check_commit_message.py
   owner: governance
   dimensions:
@@ -267,6 +280,30 @@ scripts:
   args: []
   warn_only: false
   description: check_commit_message.py — GitHub Actions PR commit message guard (P4-3).
+  tags:
+  - Quick
+- name: check_meta_question_audit_reconcile.py
+  owner: governance
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: PQ-0062/0102 审计双轨对账：PG meta_question_audit vs JSONL 追加账逐日+逐行差集（20§2.2，差集以
+    PG 为真源）。
+  tags:
+  - Quick
+- name: check_meta_question_status_band.py
+  owner: governance
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: PQ-0099 状态分布健康带监控器：只读拉取 meta_question.status 分布，对照 answered 30-70%+单状态≤80%
+    判档（default/campaign 双 regime，campaign 上限=Owner 裁定值 95%）。
   tags:
   - Quick
 - name: check_registry_of_logs.py
@@ -2961,6 +2998,12 @@ scripts:
   - flag: --check
     type: bool
     description: 检测漂移，不一致时 exit 1
+  - flag: --auto-fix
+    type: bool
+    description: 先跑各台 fix 通道再复判定（生成器台重生成 + 自洽台只刷派生标量）
+  - flag: --heal-derived-totals
+    type: bool
+    description: 只把各自洽台的声明标量按段长度就地刷正（单行改写，不再生整册）
   warn_only: false
   description: GATE-21 静态清单漂移阻断——顺序运行所有静态清单生成器的 --check 模式，自动生成版与磁盘版不一致即硬失败
   tags:
@@ -3933,6 +3976,21 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: decision_chain_sentinel.py
+  owner: governance
+  dimensions:
+  - D11
+  priority: P2
+  timeout_seconds: 120
+  args:
+  - --lag-days
+  - --ref-date
+  - --alert-log
+  warn_only: false
+  description: 决策链哨兵——期望交易日（日历 >=今日首个开市日）无 decision_daily 行即告警（TRD-A01/L09-C04, exit
+    0/4/8）。
+  tags:
+  - Security
 - name: decision_node_plain_zh_backfill.py
   owner: governance
   dimensions:
@@ -3955,6 +4013,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: enqueue_preflight.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: evaporation_blackbox.py
   owner: governance
   dimensions: []
   priority: P2
@@ -5022,6 +5090,570 @@ scripts:
   description: verify_reconciliation_registry.py — ReconciliationRegistry 轻量结构 audit（P3-T1）
   tags:
   - Quick
+- name: meta_question/apply_pending_patch.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/build_closure_ledger.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/redblue_metaq_suite.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/reexam/a06/exam_a06.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/reexam/a06/panels.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/reexam/a06/stats_core.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/reexam/dsrhythm/exam_dsrhythm.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/reexam/dsrhythm/writeback_dsrhythm.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo004/recalc_hfq.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo004/sample_check_hfq.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo004/verify_hfq.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo004_cascade/recalc_hfq_cascade.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo004_cascade/sample_check_hfq_cascade.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo004_cascade/verify_hfq_cascade.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo005/generate_board_symbol_routing.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/apply_node_bindings.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/emit_case_file.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/generate_merged_node_convergence.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/generate_micro_chain_retirement_nominations.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/generate_node_binding_candidates.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/probe_source_c_ths.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/recompute_pq0064.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo006/wo006_common.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo007/build_ckg_prior_tier.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo007/build_io_edge_bindings.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo007/build_io_sector_map.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo007/io_edge_binding_loader.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo007/wo007_reexam.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo008/generate_product_synonym_register.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo009/apply_pledge_event_version_ddl.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo009/backfill_pledge_event_version.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo009/recheck_pq0072_violation.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/_probe.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/backfill_news_sentiment.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/backfill_sw_member_history.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/build_news_sentiment_window.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/build_sector_name_registry.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/prepare_io_2018.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/probe_backfill_sources.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/probe_sector_name_sources.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/probe_tdx_cfg_coverage.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/probe_unmatched_880_identity.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/register_reaper_keep.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_a2legs/write_sector_name_map_to_ch.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b1_examloop/check_exam_loop.py
+  owner: governance:meta_question
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 600
+  args:
+  - --selftest
+  warn_only: false
+  description: WO-B1 复考机：按题面判据跑考试循环探针并经 writeback 唯一入口落账（PQ-0051/0054/0055/0056/0057/0060/0061/0096/0098/0103/0108）。
+  tags:
+  - Quick
+- name: meta_question/wo_b1_examloop/run_exam_loop.py
+  owner: governance:meta_question
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 300
+  args:
+  - --selftest
+  warn_only: false
+  description: WO-B1 考试循环运行入口：新鲜窗到期/逾期对账落账 + 预注册考卷结构化补登（13§1.2/§3）。
+  tags:
+  - Quick
+- name: meta_question/wo_b2_e1c/apply_e1c_ledgers.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b2_e1c/build_e1c_space_register.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b2_e1c/e1c_ledger.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b3_macro/apply_macro_vintage_ddl.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b3_macro/audit_macro_vintage.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b3_macro/macro_vintage.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_b3_macro/register_macro_history_inventory.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_intake_reconcile/generate_source_line_register.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_intake_reconcile/intake_batch.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: meta_question/wo_intake_reconcile/replay_audit_to_jsonl.py
+  owner: governance:meta_question
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: migrate_sqlite_to_pg/migrate_data.py
   owner: governance:migrate_sqlite_to_pg
   dimensions:
@@ -5232,6 +5864,36 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: registry_dedup_audit.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: registry_migration/wave0_phase0_gate.py
+  owner: governance:registry_migration
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: registry_projection/registry_projection_generator.py
+  owner: governance:registry_projection
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: repair/apply_verification_results.py
   owner: governance:repair
   dimensions:
@@ -5312,6 +5974,16 @@ scripts:
   description: P1-2 从备份回滚depgraph
   tags:
   - Quick
+- name: replay_gate_verdicts.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: run_all.py
   owner: governance
   dimensions:
@@ -5372,6 +6044,16 @@ scripts:
   tags:
   - Quick
 - name: scan_offrepo_assets.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: scheduled_task_reconcile.py
   owner: governance
   dimensions: []
   priority: P2
