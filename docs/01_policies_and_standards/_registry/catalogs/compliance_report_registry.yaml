@@ -11,11 +11,13 @@ description: >-
 doc_type: register
 ttl: permanent
 status: active
-version: 1.0.0
+version: 1.0.1
 owner: ZephyrAlpha-Owner
 tier: tier_2_business
 created: '2026-08-15'
-last_updated: '2026-08-15'
+last_updated: '2026-09-27'
+# 报送确认溯源：Owner 于 2026-09-27 经认证对话确认——2025 年 12 月开通 QMT 时已按券商流程
+# 报送全部六项（账户/软件/策略类型/申报速率/单日笔数/变更义务），reported_at 以月锚记录。
 related_arch: '#ARCH-COMP-001'
 unique_key: [item_id]
 entry_counts: {report_items: 6}
@@ -37,40 +39,40 @@ report_items:
     content_source: 券商账户档案
     timing: 首次交易前
     required: true
-    reported_at: null
-    broker_ack: false
+    reported_at: "2025-12"  # Owner 口述 2025 年 12 月开通 QMT 时报送（具体日未记，2026-09-27 回填）
+    broker_ack: true
   - item_id: RPT-SOFTWARE-INFO
     name: 交易软件信息
     content_source: miniQMT 客户端标识 + 自研系统说明
     timing: 首次交易前 / 变更时
     required: true
-    reported_at: null
-    broker_ack: false
+    reported_at: "2025-12"  # Owner 口述 2025 年 12 月开通 QMT 时报送（具体日未记，2026-09-27 回填）
+    broker_ack: true
   - item_id: RPT-STRATEGY-TYPES
     name: 策略类型（6 大类）
     content_source: 策略登记（打板/多因子/事件驱动等归类）
     timing: 首次交易前 / 新增策略时
     required: true
-    reported_at: null
-    broker_ack: false
+    reported_at: "2025-12"  # Owner 口述 2025 年 12 月开通 QMT 时报送（具体日未记，2026-09-27 回填）
+    broker_ack: true
   - item_id: RPT-MAX-ORDER-RATE
     name: 最高申报速率
     content_source: miniQMT 通道上限 10 笔/秒（steps JSON；内部限频 ≤15 笔/秒见 24 号 §3.7，取通道值填报）
     timing: 首次交易前 / 变更时
     required: true
-    reported_at: null
-    broker_ack: false
+    reported_at: "2025-12"  # Owner 口述 2025 年 12 月开通 QMT 时报送（具体日未记，2026-09-27 回填）
+    broker_ack: true
   - item_id: RPT-MAX-DAILY-ORDERS
     name: 单日最高申报笔数
     content_source: 按容量测算填报（MVP 初始值 2000 笔/日，待实盘首月统计校准）
     timing: 首次交易前 / 变更时
     required: true
-    reported_at: null
-    broker_ack: false
+    reported_at: "2025-12"  # Owner 口述 2025 年 12 月开通 QMT 时报送（具体日未记，2026-09-27 回填）
+    broker_ack: true
   - item_id: RPT-MAJOR-CHANGE
     name: 重大变更
     content_source: 上述任一项变化
     timing: T+1 报送
     required: true
-    reported_at: null
-    broker_ack: false
+    reported_at: "2025-12"  # Owner 口述 2025 年 12 月开通 QMT 时报送（具体日未记，2026-09-27 回填）
+    broker_ack: true

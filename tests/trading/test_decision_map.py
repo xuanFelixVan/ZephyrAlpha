@@ -670,6 +670,10 @@ class TestGovernanceGates:
 _GOVERNANCE_EXEMPT = frozenset(
     {
         "_index.yaml",
+        # 2026-09-27 FMS 战役落地的治理基线册（非业务资产库，不挂 TDM 轴）：
+        # fms_deadref_baseline=HYGIENE-DEADREF-NEW 棘轮基线；regen_clean_baseline=regen 清零基线
+        "fms_deadref_baseline.yaml",
+        "regen_clean_baseline.yaml",
         # 2026-09-16 僵尸处置批（裁定#258/#259）：六库退役归档至 catalogs/_archive/，豁免清单同步剪除
         # （ai_session_registry/knowledge_article_registry/frontier_llm_benchmark_ranking/business_streams_registry/
         # declarative_contract_tracker_registry/interface_contract_registry）——归档目录不在 glob("*.yaml") 扫描面，
@@ -978,9 +982,7 @@ class TestEdgeSemanticQuad:
     @staticmethod
     def _payload_with_edge(edge: dict) -> dict:
         payload = _minimal_payload()
-        payload["nodes"].append(
-            _make_min_node(node_id="TDM-T-2", layer="L1", name_zh="测试非L9节点")
-        )
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-2", layer="L1", name_zh="测试非L9节点"))
         payload["edges"].append(edge)
         return payload
 
@@ -1006,9 +1008,7 @@ class TestEdgeSemanticQuad:
         )
 
     def test_r43_l9_edge_missing_quad_is_error(self, tmp_path: Path) -> None:
-        payload = self._payload_with_edge(
-            {"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "feed"}
-        )
+        payload = self._payload_with_edge({"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "feed"})
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
@@ -1030,10 +1030,7 @@ class TestEdgeSemanticQuad:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
-        assert any(
-            i.code == "R43" and i.level == "error" and "legacy-unaudited" in i.detail
-            for i in issues
-        )
+        assert any(i.code == "R43" and i.level == "error" and "legacy-unaudited" in i.detail for i in issues)
 
     def test_r43_l9_edge_full_quad_ok(self, tmp_path: Path) -> None:
         payload = self._payload_with_edge(
@@ -1067,19 +1064,12 @@ class TestEdgeSemanticQuad:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
-        assert any(
-            i.code == "R43" and i.level == "error" and "payload_type" in i.detail
-            for i in issues
-        )
+        assert any(i.code == "R43" and i.level == "error" and "payload_type" in i.detail for i in issues)
 
     def test_r43_legacy_edge_missing_pit_warns_only(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
-        payload["nodes"].append(
-            _make_min_node(node_id="TDM-T-3", layer="L1", name_zh="测试非L9节点2")
-        )
-        payload["edges"].append(
-            {"from_node": "TDM-T-2", "to_node": "TDM-T-3", "edge_type": "feedback"}
-        )
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-3", layer="L1", name_zh="测试非L9节点2"))
+        payload["edges"].append({"from_node": "TDM-T-2", "to_node": "TDM-T-3", "edge_type": "feedback"})
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         r43 = [i for i in issues if i.code == "R43"]
@@ -1112,9 +1102,7 @@ class TestChainRefAxis:
     def test_r45_known_chain_ref_ok(self, tmp_path: Path) -> None:
         import yaml as _yaml
 
-        reg = _yaml.safe_load(
-            (_REGISTRY_DIR / "chain_registry.yaml").read_text(encoding="utf-8")
-        )
+        reg = _yaml.safe_load((_REGISTRY_DIR / "chain_registry.yaml").read_text(encoding="utf-8"))
         known_id = reg["chains"][0]["chain_id"]
         payload = _minimal_payload()
         payload["nodes"][0]["chain_refs"] = [known_id]
@@ -1127,11 +1115,7 @@ class TestChainRefAxis:
         from zephyr.trading.decision_map import _XREF_MAX
 
         payload = _minimal_payload()
-        payload["nodes"][0]["chain_refs"] = [
-            f"CH-CAP-OVER-{i:03d}" for i in range(_XREF_MAX["chain_refs"] + 1)
-        ]
+        payload["nodes"][0]["chain_refs"] = [f"CH-CAP-OVER-{i:03d}" for i in range(_XREF_MAX["chain_refs"] + 1)]
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
-        assert any(
-            i.code == "R17" and "chain_refs" in i.detail for i in issues
-        )
+        assert any(i.code == "R17" and "chain_refs" in i.detail for i in issues)

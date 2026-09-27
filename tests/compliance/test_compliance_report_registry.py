@@ -87,11 +87,19 @@ def test_check_logged(tmp_path):
     assert log.read_all()[-1].event_type == "REPORT_GATE_CHECK"
 
 
-def test_real_registry_blocks_before_reporting(tmp_path):
-    """仓内真表：初始 6 项全未确认 → BLOCK（先报告后交易实证）+ 50μs 记录性参数。"""
+def test_real_registry_passes_after_reporting(tmp_path):
+    """仓内真表：报送确认后 6 项全 ack → PASS（先报告后交易·后半段实证）+ 50μs 记录性参数。
+
+    2026-09-27 改判：Owner 经认证对话确认 2025-12 开通 QMT 时已按券商流程报送全部六项，
+    登记表 v1.0.1 回填 broker_ack/reported_at（合规状态是活事实，测试随真值演进）。
+    BLOCK 侧行为（任一必报项缺失→拒单）由上方合成数据测试继续覆盖，fail-closed 语义不变。
+    """
     log = ComplianceLogger(tmp_path / "c.jsonl")
     g = ReportGate(ComplianceReportRegistry(), log)
     r = g.check()
-    assert r.decision is ReportGateDecision.BLOCK
-    assert len(r.missing) == 6
+    assert r.decision is ReportGateDecision.PASS
+    assert r.missing == ()
+    for item in ComplianceReportRegistry().load_items():
+        assert item.broker_ack is True
+        assert item.reported_at  # 月锚 "2025-12"
     assert ComplianceReportRegistry().order_min_dwell_us() == 50
