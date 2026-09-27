@@ -163,3 +163,40 @@ git diff --cached --diff-filter=D --name-only HEAD | wc -l          # 现应=164
 git diff --cached --diff-filter=D --name-only HEAD | grep -E "regen_clean_baseline|check_library_tri|successor_of|test_tri_consistency|test_lookup_tombstone|test_library_page_counts"   # 现应零命中=自家已撤
 git status --porcelain -- docs/01_policies_and_standards/_registry/catalogs/regen_clean_baseline.yaml                        # 现应无 D
 ```
+
+## 十二、FMS-HYGIENE 翻 block 判据的缺陷（实测反证，本班不翻档也不静默改判据）
+
+§五.3/§六 把翻 block 的前置写成"存量基线清偿过半"。按在册基线真身实测分类计数
+（`fms_deadref_baseline.yaml` 3,702 条 [亲验]）：D 类真死 1,801｜E3 906｜B 853｜A 136｜C2 6。
+机械可修面=S1 簿 C 类映射候选 412 条 + A/C2 误报 142 条 ≈ **554/3,702=15%**；
+余下 85% 需作者语义修（改文/补件/判去向），"过半"在机械手段下**不可达**。
+后果：档判据永远不满足 ⇒ 门恒 warn ⇒ 新增死引用与存量同价，棘轮只剩"记"没有"拦"。
+
+**本班处置**：不翻档、不改 Owner 定版判据，改提一条可执行替代（待裁，见 §十四 T-1）：
+翻 block 的触发由"存量过半"改为**"连续 20 笔提交新增违规=0"**（棘轮本征判据，
+机读自 `regen_clean`/`gate_audit` 同族 jsonl，无需人工盘点），存量清偿进度另设独立看板，
+两件事解耦——拦新是门的本职，清旧是工程债治理，绑在一起等于用债主不还款来证明账本没用。
+
+## 十三、同文件对撞登记：队列签名修 vs 他道 +148 未落地改动
+
+- 本班落地链被 `mergeable_pred` 签名缺陷反复处决（§10.5），已派专道在**独立 worktree**
+  基于 HEAD 修复：`scripts/commit_queue.py` +40/−3 与红样 `tests/governance/test_commit_queue_revalidate_mergeable_pred.py`（347 行 5 例，含"mergeable_pred=None 时与修复前逐字节同结论"回归锁）；本班已在该 worktree 亲跑 `5 passed` [亲验]。
+- **对撞事实**：主区 `scripts/commit_queue.py` 另有他道未落地改动 **+148/−0**（队列层内联登记三族判定），
+  与本修同文件不同函数。袋=整档快照 ⇒ 后落地一方会静默覆盖先落地一方（假重基同型）。
+- **自愈机制**：红样测试文件与本修同袋落地，任何后续旧快照覆盖都会在提交面直接判红
+  （缺 `mergeable_pred` 形参即 5 例全红），不依赖人记住这回事。
+- 请后波或队列属主把两处改动**合到同一袋**复落地（处方：以先落地者为基，另一路 rebase 后重投）。
+
+## 十四、本班终态待裁清单（合并去重版；O-1..O-6 沿用 §10.4/§十一 编号）
+
+| 编号 | 事项 | 类型 | 本班可否自裁 |
+|---|---|---|---|
+| O-1 | F 盘 599.00 GiB 无主复活件删除 | 数据面删除 | 否（唯一全量镜像归属未定） |
+| O-2 | `backup_ch_vm.ps1` 写入家 F→G | 生产流转 | 否（改备份家=门位；未知态 fail-open 已修） |
+| O-3 | G 侧 08-22 冻结镜像刷新顺序 | 数据面 | 否（涉 591 GiB 与 restore 回灌） |
+| O-4 | `models/` 15 GiB 处置 | 注册表/数据面净删 | 否（§五.1 原项） |
+| O-5 | VHDX 停机压缩窗 | 全场唯一点名项 | 否（备料已齐，见 §E+） |
+| O-6 | 主区 164 枚他道暂存删除三分诊 | 注册表/文档净删 | 否（自家 7 枚已回填） |
+| T-1 | FMS-HYGIENE 翻 block 判据改写（§十二） | 门禁强度判据 | 否（Owner 定版判据不擅改） |
+| T-2 | 世代指纹"内部空闲 150G 红线"锚定哪个测量面（§E+ 第 2 条：df 面 160.2 绿 / CH 数据盘面 149.2 红） | 判据口径 | 否（择一=替 Owner 定红线锚点） |
+| T-3 | 图书馆内存层第三层（常驻服务）触发判据改写：CLI 物理下限=解释器 26-30ms，字面判据恒真 | 判据口径 | 否（`lib_ram_campaign/00_orchestration.md` §三已给两案） |
