@@ -67,6 +67,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_staged_py_files,
     _norm_rel,
     _read_staged_file,
+    _repo_state_has_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.shared.io.paths import REPO_ROOT
@@ -115,7 +116,7 @@ def _has_module_level_skip(tree: ast.Module) -> bool:
     return False
 
 
-def _module_to_path(module_path: str) -> Path | None:
+def _module_to_path(module_path: str, gateway=None) -> Path | None:
     """将 Python 模块路径转换为源码文件路径。
 
     ``zephyr.gov_audit.feedback_bridge`` ->
@@ -140,6 +141,18 @@ def _module_to_path(module_path: str) -> Path | None:
     init_file = _SRC_ROOT / rel_path / "__init__.py"
     if init_file.exists():
         return init_file
+    if gateway is None:
+        return None
+    # 观测面补齐（2026-09-27 全流通战役落地链治本）：序列化器 worktree 里
+    # "已入 index 但未 checkout 到磁盘"的新模块在磁盘面必判"不存在"，于是
+    # 同袋新码+新测被误报漂移而整袋死（本仓实测：新 producer + 其测试同袋）。
+    # 口径复用 _diff_helpers._repo_state_has_file（裁定#279：仓库态=index 优先、
+    # 磁盘只作补充证据），不另立第二套存在性判据。
+    root = _SRC_ROOT.parent
+    for cand in (rel_path.with_suffix(".py"), rel_path / "__init__.py"):
+        rel_posix = (_SRC_ROOT / cand).relative_to(root).as_posix()
+        if _repo_state_has_file(gateway, rel_posix):
+            return _SRC_ROOT / cand
     return None
 
 
@@ -163,7 +176,7 @@ def _collect_node_symbol(node: ast.AST, symbols: set[str]) -> None:
             symbols.add(alias.asname or alias.name.split(".")[0])
 
 
-def _extract_source_symbols(file_path: Path) -> set[str] | None:
+def _extract_source_symbols(file_path: Path, gateway=None) -> set[str] | None:
     """从源码文件 AST 提取所有顶层符号集合。
 
     提取所有顶层可访问的符号（Python 允许显式 import 任何顶层符号，
@@ -183,10 +196,22 @@ def _extract_source_symbols(file_path: Path) -> set[str] | None:
     Returns:
         符号名称集合；文件不存在/解析失败返回 None（fail-open）。
     """
-    try:
-        content = file_path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return None
+    content = None
+    if gateway is not None:
+        # 源码面与测试面必须同源：测试侧读 index（_read_staged_file），源码侧若只读
+        # 磁盘就会拿"改动前的旧内容"判新符号不存在（两侧不同源=假红，本袋实测致死）。
+        try:
+            rel = file_path.relative_to(_SRC_ROOT.parent).as_posix()
+            content = _read_staged_file(gateway, rel)
+        except ValueError:
+            content = None
+    if not content:
+        # index 面读不到（未 staged/空内容/git 故障）→ 磁盘兜底。把 "" 一并视作
+        # "无 index 视图"不改变语义（空 .py 两侧同结果），只防空串被当有效源码面。
+        try:
+            content = file_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            return None
 
     try:
         tree = ast.parse(content)
@@ -231,7 +256,7 @@ def _extract_all_list(value: ast.expr) -> set[str] | None:
     return names if names else None
 
 
-def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
+def _check_import_node(node: ast.ImportFrom, test_file: str, gateway=None) -> list[str]:
     """检查单个 ImportFrom 节点的符号一致性，返回违规列表。
 
     Args:
@@ -248,7 +273,7 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
         return []
 
     violations: list[str] = []
-    source_file = _module_to_path(module_path)
+    source_file = _module_to_path(module_path, gateway=gateway)
 
     if source_file is None:
         # 源码模块不存在，可能是已删除模块
@@ -261,7 +286,7 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
         return violations
 
     # 提取源码符号表
-    source_symbols = _extract_source_symbols(source_file)
+    source_symbols = _extract_source_symbols(source_file, gateway=gateway)
     if source_symbols is None:
         # 源码解析失败，fail-open
         return []
@@ -277,11 +302,18 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
         # __init__ 显式定义——包目录下存在 <symbol>.py 或 <symbol>/__init__.py
         # 即可 import 成功，不构成漂移（对标本模块 2026-07-19 __getattr__
         # fail-open 先例：避免把可解析 import 误报为漂移而硬阻断 commit）。
-        if pkg_dir is not None and (
-            (pkg_dir / f"{alias.name}.py").is_file()
-            or (pkg_dir / alias.name / "__init__.py").is_file()
-        ):
-            continue
+        if pkg_dir is not None:
+            rel_dir = pkg_dir.relative_to(_SRC_ROOT.parent)
+            as_module = (rel_dir / f"{alias.name}.py").as_posix()
+            as_package = (rel_dir / alias.name / "__init__.py").as_posix()
+            if (pkg_dir / f"{alias.name}.py").is_file() or (pkg_dir / alias.name / "__init__.py").is_file():
+                continue
+            # 同袋新模块只存在于 index（序列化器 worktree 未 checkout 到磁盘）——
+            # 存在性判据走仓库态口径（裁定#279），否则新码+新测同袋必被误报漂移。
+            if gateway is not None and (
+                _repo_state_has_file(gateway, as_module) or _repo_state_has_file(gateway, as_package)
+            ):
+                continue
         violations.append(
             f"  {test_file}:{node.lineno}: "
             f"from {module_path} import {alias.name} "
@@ -290,7 +322,7 @@ def _check_import_node(node: ast.ImportFrom, test_file: str) -> list[str]:
     return violations
 
 
-def _check_test_file(content: str, test_file: str, added_lines: set[int] | None = None) -> list[str]:
+def _check_test_file(content: str, test_file: str, added_lines: set[int] | None = None, gateway=None) -> list[str]:
     """检查单个测试文件的 import 符号一致性，返回违规列表。
 
     Args:
@@ -318,7 +350,7 @@ def _check_test_file(content: str, test_file: str, added_lines: set[int] | None 
         if isinstance(node, ast.ImportFrom):
             if added_lines is not None and node.lineno not in added_lines:
                 continue
-            violations.extend(_check_import_node(node, test_file))
+            violations.extend(_check_import_node(node, test_file, gateway=gateway))
     return violations
 
 
@@ -350,9 +382,7 @@ def make_test_source_consistency_gate() -> GateSpec:
             own_test_files = [f for f in test_files if _norm_rel(gateway, f) in own_scope]
             foreign_staged = [f for f in test_files if _norm_rel(gateway, f) not in own_scope]
             if foreign_staged:
-                _audit_foreign_staged(
-                    gateway, session_id, foreign_staged, gate_name="TEST-SOURCE-CONSISTENCY"
-                )
+                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="TEST-SOURCE-CONSISTENCY")
                 logger.warning(
                     "TEST-SOURCE-CONSISTENCY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
                     len(foreign_staged),
@@ -373,7 +403,7 @@ def make_test_source_consistency_gate() -> GateSpec:
             added_lines = {line_no for line_no, _ in added} if added else set()
             if not added_lines:
                 continue  # 无新增行，跳过
-            violations.extend(_check_test_file(content, test_file, added_lines))
+            violations.extend(_check_test_file(content, test_file, added_lines, gateway=gateway))
 
         # 4. 硬阻断
         if violations:

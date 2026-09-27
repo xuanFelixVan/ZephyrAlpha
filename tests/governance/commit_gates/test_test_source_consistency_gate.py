@@ -501,9 +501,7 @@ class TestGatewayIntegration:
         src_dir = tmp_path / "zephyr" / "mod"
         src_dir.mkdir(parents=True)
         (src_dir / "__init__.py").write_text("PUBLIC = 1\n", encoding="utf-8")
-        (src_dir / "akshare_alt_provider.py").write_text(
-            "class AltProvider:\n    pass\n", encoding="utf-8"
-        )
+        (src_dir / "akshare_alt_provider.py").write_text("class AltProvider:\n    pass\n", encoding="utf-8")
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod import akshare_alt_provider\n"
         gw = _make_gateway(staged_files=[test_file], file_contents={test_file: test_content})
@@ -637,3 +635,111 @@ class TestOwnScope:
         passed, msg = make_test_source_consistency_gate().check(gw, [own_test], session_id="sess-A")
         assert passed is False, "自身漂移未被阻断（own-scope 不得放松保护语义）"
         assert "Missing" in msg
+
+
+class TestIndexAwareSourceView:
+    """源码面必须与测试面同源（2026-09-27 全流通战役落地链治本）。
+
+    病形：序列化器 worktree 里本袋新模块只存在于 index（磁盘上要么没有、要么是改动前
+    的旧内容），而测试侧读 index、源码侧读磁盘 ⇒ "同袋新码+新测"被判符号漂移整袋死
+    （实测死信 q-20260927-st-chief7w-20260927-0001）。
+    本组按真实仓布局（<root>/src/...）构造，避免用非仓形路径蒙混过判据。
+    """
+
+    @staticmethod
+    def _gw(staged, contents, root):
+        from unittest.mock import MagicMock
+
+        class _R:
+            def __init__(self, rc, out):
+                self.returncode, self.stdout = rc, out
+
+        gw = MagicMock()
+        gw.project_root = str(root)
+
+        def _run_git(cmd):
+            joined = " ".join(cmd)
+            if "--name-only" in cmd:
+                return _R(0, "\n".join(staged))
+            if len(cmd) >= 3 and cmd[1] == "show" and cmd[2].startswith(":"):
+                rel = cmd[2][1:].replace("\\", "/")
+                if rel not in contents:
+                    return _R(128, "")
+                return _R(0, contents[rel])
+            if "ls-files" in joined and "--cached" in cmd:
+                rel = cmd[-1].replace("\\", "/")
+                hit = rel if rel in contents or (root / rel).is_file() else ""
+                return _R(0, hit)
+            if "--unified=0" in cmd:
+                rel = cmd[-1].replace("\\", "/")
+                lines = contents.get(rel, "").splitlines()
+                body = "".join("+" + ln + "\n" for ln in lines)
+                return _R(0, f"@@ -0,0 +1,{len(lines)} @@\n{body}" if lines else "")
+            return _R(0, "")
+
+        gw.run_git = _run_git
+        return gw
+
+    @staticmethod
+    def _root(tmp_path, monkeypatch):
+        src = tmp_path / "src"
+        (src / "zephyr").mkdir(parents=True)
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", src)
+        return tmp_path
+
+    def test_staged_only_new_module_with_new_symbol_passes(self, tmp_path, monkeypatch):
+        """新模块仅在 index（磁盘无文件）+ 其新符号 → 不得判漂移。"""
+        root = self._root(tmp_path, monkeypatch)
+        src = "src/zephyr/mod/newmod.py"
+        test = "tests/test_newmod.py"
+        contents = {
+            src: "class Thing:\n    pass\n",
+            test: "from zephyr.mod.newmod import Thing\n",
+        }
+        gw = self._gw([src, test], contents, root)
+        passed, msg = make_test_source_consistency_gate().check(gw, [src, test], session_id="t-index-aware")
+        assert passed is True, msg
+
+    def test_index_content_wins_over_stale_disk(self, tmp_path, monkeypatch):
+        """磁盘=改动前旧内容、index=新内容 → 以 index 为准（两侧同源）。"""
+        root = self._root(tmp_path, monkeypatch)
+        src_rel = "src/zephyr/mod/renamed.py"
+        (root / "src" / "zephyr" / "mod").mkdir(parents=True)
+        (root / "src" / "zephyr" / "mod" / "renamed.py").write_text("class OldName:\n    pass\n", encoding="utf-8")
+        test = "tests/test_renamed.py"
+        contents = {
+            src_rel: "class OldName:\n    pass\n\nclass NewName:\n    pass\n",
+            test: "from zephyr.mod.renamed import NewName\n",
+        }
+        gw = self._gw([src_rel, test], contents, root)
+        passed, msg = make_test_source_consistency_gate().check(gw, [src_rel, test], session_id="t-index-aware")
+        assert passed is True, msg
+
+    def test_truly_missing_symbol_still_blocks(self, tmp_path, monkeypatch):
+        """判别尺（红证）：index 源码确实无该符号时仍必须硬阻断，治本不放水。"""
+        root = self._root(tmp_path, monkeypatch)
+        src = "src/zephyr/mod/ghost.py"
+        test = "tests/test_ghost.py"
+        contents = {
+            src: "class Real:\n    pass\n",
+            test: "from zephyr.mod.ghost import NoSuchSymbol\n",
+        }
+        gw = self._gw([src, test], contents, root)
+        passed, msg = make_test_source_consistency_gate().check(gw, [src, test], session_id="t-index-aware")
+        assert passed is False
+        assert "NoSuchSymbol" in msg
+
+    def test_staged_only_submodule_import_passes(self, tmp_path, monkeypatch):
+        """from pkg import <新子模块>（子模块仅在 index）→ 仓库态存在性判据放行。"""
+        root = self._root(tmp_path, monkeypatch)
+        pkg_init = "src/zephyr/mod2/__init__.py"
+        sub = "src/zephyr/mod2/producer.py"
+        test = "tests/test_mod2.py"
+        contents = {
+            pkg_init: "",
+            sub: "def run():\n    return 1\n",
+            test: "from zephyr.mod2 import producer as p\n",
+        }
+        gw = self._gw([pkg_init, sub, test], contents, root)
+        passed, msg = make_test_source_consistency_gate().check(gw, [pkg_init, sub, test], session_id="t-index-aware")
+        assert passed is True, msg
