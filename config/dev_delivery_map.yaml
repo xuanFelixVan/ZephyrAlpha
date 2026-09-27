@@ -1,0 +1,1547 @@
+# 交付流水线全景图（dev_delivery_map，图 11）——由 generate_dev_delivery_map.py 机生。
+# 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md。
+# 节点只存稳定标识符与指针（INV-1）；machine_facts 层重扫即刷新，人工语义层改动须先回写骨架。
+schema_version: '0.2'
+map_id: dev_delivery_map
+name_zh: 交付流水线全景图
+nickname: 交付流水线
+effective_from: '2026-09-24'
+markets:
+- cn_a
+generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
+generated_at: '2026-09-24T12:36:49+08:00'
+ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md（§6
+  封顶 28 环节）+ 八本作业簿（exec_evidence 口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph
+  在册 module_id 投影面），禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。
+
+  字段分层（六图终局卷 §1 裁定一）：L0 通用层统一名 note_zh/doc_refs（三个同义异名注解字段与两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；L1 纵轴层本图取用 wiring_status/red_reason/doc_refs/exec_evidence；L2
+  图专属层字段清单=exit_codes（提交门退出码全谱：顶层矩阵+节点级专码归属）、gate_cluster（门禁簇归属）、deadletter_class（死信分类归属）。
+
+  双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §1 状态列 ✅（26 个，多了算谎少了算欠），structure=仅结构性事实已核（2 个 🔨 环节 + 2 个 gap 节点）；本生成器不擅改任何判据。
+
+  gap 节点 D11-G01/G02 是骨架外显性化缺口件（六图终局卷 §4 图11 判据②，作业簿 04/05 溢出实测），待总包回写骨架 §1；两节点无运行代码可挂 ⇒ module_id=null + red_reason
+  必填。'
+laws:
+- 正门唯一：一切提交经 git_commit.py/GitCommitGateway 正门，禁裸 git commit 与 plumbing 绕过（骨架 §0 门① 三触发源终点同归正门）
+- 队列是正门：全局锁争用不空转，锁超时自动改道 pending；直连与队列不混抢（骨架 §0 门② 交接面 5）
+- 门禁一套不裁：队列落地仍走网关全门禁链（commit_queue_landing 头 INVARIANTS 原文声明）
+- 死信不卡队：落地普通 Exception→dead/ 队列继续排空；BaseException 留 processing 等回收（§1 D11-D01）
+- 跨车道交接必须有实体：三车道 10 个交接面逐一实证（§0 门②），无实证交接不许画边
+boundary:
+- 不画运行时治理流水线（孵化/监控/熔断/收割/自愈）——归 GOMAP；其 out_of_scope_refs 明示排除提交门禁体系（config/governance_operations_map.yaml），是本图立图正门依据
+- 不画交易决策逻辑——归 TDM（config/trading_decision_map.yaml），引用不吸收
+- '不画单施工任务 15 步生命周期——construction_workflow_policy Step10/Step12 自标「不重复，引用」转引本域真源（骨架 §3 撞车判定 #2）'
+- 叶层清单（门禁条目正文/reconciler 条目/dead_reason 标记串）进作业簿不进图本体：本图只挂计数与指针（INV-1 铁律，TDM 同款）
+layers:
+- layer_id: S
+  name_zh: 会话车道
+  span_zh: 起=对话启动（冷启动序列）；止=会话注销
+  handoff_zh: S06 worktree 内 commit 经 S07 merge 进主区后，收尾批再过正门则入提交车道；S09 handoff 是跨会话状态交接唯一格式真源（骨架 §2）
+- layer_id: C
+  name_zh: 提交车道
+  span_zh: 起=任何通道的提交请求；止=done/ 回填+归属核实
+  handoff_zh: C10 落盘失败→死信车道；C11 reconciler 产 commit 又触发 C12 机器车道（已声明反馈环）
+- layer_id: D
+  name_zh: 死信车道
+  span_zh: 起=C10 失败判定；止=requeue 回 pending 或留 dead/ 终态
+  handoff_zh: D04 回 C08 入队（新 qid）；D03 出域到 task_board（任务治理域，引用不吸收）
+exit_codes:
+  owner_node: D11-C01
+  law_zh: 退出码是全车道共用的机器契约：改分发表=改契约，须经本矩阵穷举并进commit_navigation_playbook 指路面（作业簿 04 §1）
+  machine:
+    commit_exit_map: &id001
+      source: scripts/git_commit.py:_COMMIT_RESULT_MAP
+      exists: true
+      map_entries:
+        OK: 0
+        NOTHING_TO_COMMIT: 1
+        LOCK_TIMEOUT: 2
+        STASH_CONFLICT: 2
+        PROMOTION_BLOCKED: 3
+        SSOT_VIOLATION: 4
+        HELD_OVERLAP_VIOLATION: 5
+        CLAIM_REQUIRED_VIOLATION: 6
+        WORKTREE_VIOLATION: 8
+        COMMIT_SCOPE_VIOLATION: 9
+        MERGE_IN_PROGRESS: 10
+      default_exit_code: 1
+    producer_construction_counts: &id002
+      CLAIM_REQUIRED_VIOLATION: 1
+      COMMIT_SCOPE_VIOLATION: 1
+      HELD_OVERLAP_VIOLATION: 1
+      LOCK_TIMEOUT: 2
+      MERGE_IN_PROGRESS: 1
+      NOTHING_TO_COMMIT: 11
+      OK: 8
+      PROMOTION_BLOCKED: 1
+      SSOT_VIOLATION: 0
+      STASH_CONFLICT: 0
+      WORKTREE_VIOLATION: 1
+    dead_branch_statuses: &id003
+    - SSOT_VIOLATION
+    - STASH_CONFLICT
+    dead_branch_pointer: D11-G01
+  matrix:
+  - code: 0
+    statuses:
+    - OK
+    auto_enqueue: false
+    prescription_zh: 无（message-file 自动删）；claim-only 全成/release-only 回读通过/--enqueue 入袋成功同码
+  - code: 1
+    statuses:
+    - COMMIT_FAILED
+    - METADATA_VIOLATION
+    - NAMING_VIOLATION
+    - SCRIPT_INTEGRITY_VIOLATION
+    - REPO_ROOT_VIOLATION
+    - PURE_ASSERTION_VIOLATION
+    - PURE_SHIM_VIOLATION
+    - FOREIGN_CHANGE_VIOLATION
+    - NOTHING_TO_COMMIT
+    auto_enqueue: false
+    prescription_zh: 读 GUIDE 锚点处方后同参重跑；FOREIGN_CHANGE 必带 --adopt-prior-work；门链非六门阻断/precommit 通道阻断/reconciler block_next
+      硬闸均落此码
+  - code: 2
+    statuses:
+    - LOCK_TIMEOUT
+    - STASH_CONFLICT
+    auto_enqueue: true
+    prescription_zh: 仅 LOCK_TIMEOUT 支自动改道（前置=非 --no-auto-enqueue ∧ 非 --reconciler-verify ∧ 非 --merge-finalize ∧
+      flag commit_queue_interactive ON）；STASH_CONFLICT 支零生产者=D11-G01；argparse 解析失败亦 SystemExit(2)
+  - code: 3
+    statuses:
+    - PROMOTION_BLOCKED
+    auto_enqueue: false
+    prescription_zh: --allow-promote（前置=creation_token 已登记）；gate=FILE-PLACEMENT-TTL 且 detail 前缀命中
+  - code: 4
+    statuses:
+    - SSOT_VIOLATION
+    auto_enqueue: false
+    prescription_zh: 不可达码（全仓零生产者=D11-G01 死分支）；语义处方=扩已有文件而非新建
+  - code: 5
+    statuses:
+    - HELD_OVERLAP_VIOLATION
+    auto_enqueue: false
+    prescription_zh: --allow-overlap（前置=67 号冲突三分法判定；滚动 24h 热文件超阈会被 O2 二次阻断）
+  - code: 6
+    statuses:
+    - CLAIM_REQUIRED_VIOLATION
+    auto_enqueue: false
+    prescription_zh: 先 claim_files（或 --claim-only）；同码第二义=--release-only 回读仍有持有
+  - code: 7
+    statuses: []
+    auto_enqueue: false
+    prescription_zh: claim-only 部分文件被他人持有（纯 claim 快速路径，不经 gateway.commit，无状态枚举）
+  - code: 8
+    statuses:
+    - WORKTREE_VIOLATION
+    auto_enqueue: false
+    prescription_zh: 双义：①WORKTREE_VIOLATION→--allow-non-worktree；②P0-A 锁外预检 blocking→按清单给旗，诊断可 --skip-preflight（锁内仍全套照跑）
+  - code: 9
+    statuses:
+    - COMMIT_SCOPE_VIOLATION
+    auto_enqueue: false
+    prescription_zh: --allow-multi-domain（gate+自家测试同批合法）
+  - code: 10
+    statuses:
+    - MERGE_IN_PROGRESS
+    auto_enqueue: false
+    prescription_zh: --merge-finalize（预检自动跳过）；非本人 merge→等待或升级 Owner；gateway 三处判定（锁外/锁内 TOCTOU 复检/无锁降级路径）
+gate_cluster:
+  in_process:
+    registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+    total_gates_field: 99
+    entries_scanned: 99
+    files_trigger_entries: 26
+    note_zh: priority 真源在代码 GateSpec、own_scope 册面无此字段（作业簿 05 溢出 O-C12）
+  shell:
+    registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+    total_gates_field: 174
+    entries_scanned: 180
+    by_enforcement_channel: &id004
+      commit-gate: 113
+      manual: 12
+      pre-commit: 55
+    own_scope_true_entries: 33
+    generated_by: scripts/governance/generators/generate_gate_registry.py
+    note_zh: 字段值与条目实数双口径并列（total_gates 落后于列表=册内漂移，由生成器 --check 管）
+  two_channel_overlap_note_zh: in-process ∩ pre-commit 实测=1 台（GATE-VOCAB 双执行），生成器注释「交集 0」已过期（作业簿 05 溢出 O-C10）
+deadletter_class:
+  classify_enum:
+  - env
+  - item
+  - other
+  special_branches:
+  - LandingEnvironmentError→退回 pending 绝不死信（env 面）
+  - cascade_stale→死信候选不消耗 landing（item 面）
+  - BaseException→留 processing 等孤儿回收（不分入三类）
+  disposal_trichotomy_zh: superseded / 真未落地 / 历史留档（清零战役三分法，D06 归档维度）
+  marker_table_anchor: scripts/commit_queue.py:242 / scripts/commit_queue.py:274（标记串条目=叶层进作业簿 08，图只挂表位置指针）
+  machine:
+    marker_counts: &id005
+      source: scripts/commit_queue.py
+      exists: true
+      _DEAD_REASON_ENV_MARKERS: 18
+      _DEAD_REASON_ITEM_MARKERS: 11
+nodes:
+- node_id: D11-S01
+  name_zh: 会话冷启动与开班检查
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 本会话该启动吗？启动前环境/守卫/隔离施工/能力反查就位了吗？
+  note_zh: 冷启动序列钩子=phase_manager session_startup（环境切换→reaper 守卫存活→worktree 申请制→能力反查→depgraph 登记）；开班检查脚本 record_session_start_commit.py。逐项守则归并行协调政策，图不复制
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - .runtime/session_registry.json 实查在盘（2026-09-24）
+  - scripts/record_session_start_commit.py 实查在盘
+  - src/zephyr/governance/ops_governance/phase_manager.py:248 session_startup 在位
+  exec_evidence:
+  - .runtime/lookup_audit/ 367 件（2026-09-25 只读计数）=冷启动第 4 条能力反查审计在产面
+  - '复跑: python -c "import json;d=json.load(open(''.runtime/session_registry.json'',encoding=''utf-8''));print(len(d.get(''sessions'',d)))"（主区只读
+    2026-09-25 实查：文件在盘 3725B，schema 可解析）'
+  module_id: MOD-GOVERNANCE
+  module_ref: src/zephyr/governance/ops_governance/phase_manager.py:248
+  source_anchors:
+  - src/zephyr/governance/ops_governance/phase_manager.py:248
+  - scripts/record_session_start_commit.py
+  runtime_refs:
+  - .runtime/session_registry.json
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: 会话注册表
+    location: .runtime/session_registry.json
+    key: session_id
+    retention: 注销即移除
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S01
+  - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+  wiring_status: wired
+  module_label_bilingual: ZephyrAlpha 施工阶段门控引擎. / Phase Manager
+- node_id: D11-S02
+  name_zh: worktree 分配与池化
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 本会话 worktree 从哪来？池 lease 还是直接创建？并发阻断怎么判？
+  note_zh: session_worktree_start 优先 WorktreePool.lease（失败 fall back 直建，池永不阻断启动）+lease 后异步 prefetch 补池；breaking_change
+    双向并发阻断
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:2607 session_worktree_start
+  - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277 lease（P3.3 池化+prefetch）
+  - 本战役工作目录 .aidrafts/st-mapbuild-20260924 即活体
+  exec_evidence:
+  - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277 lease 在位（复跑 grep -n 'def lease'）
+  - 主区只读 ls -d .aidrafts/* → 12 个在途会话 worktree（2026-09-25）；本战役目录 .aidrafts/st-mapbuild-20260924 即活体
+  module_id: MOD-GOV_SESSION_WORKTREE
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:2607
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:2607
+  - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277
+  runtime_refs:
+  - .aidrafts/
+  - .aidrafts_pool/
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: 会话 worktree
+    location: .aidrafts/ + .aidrafts_pool/
+    key: session_id
+    retention: merge 后主仓吸收 / abort 自删
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S02
+  - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+  wiring_status: wired
+  module_label_bilingual: 会话Worktree / Session Worktree
+- node_id: D11-S03
+  name_zh: 会话心跳与活性判定
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 会话还活着吗？新鲜窗与 idle 自退双轨怎么判死？
+  note_zh: heartbeat_daemon 30s 刷新+jsonl 审计；SessionRegistry 90s 新鲜窗+1800s idle 自退双轨；活性 schema 契约引用并行协调政策（吸收其路径作节点注解，不复制正文）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - heartbeat_daemon.py:39-40（30s 刷新+jsonl 审计）
+  - session_concurrency.py:148（90s 新鲜窗+1800s idle 自退）
+  exec_evidence:
+  - heartbeat_daemon 文件路径节声明审计真源=.runtime/sessions/<sid>/heartbeat.jsonl
+  - 主区只读 ls .runtime/sessions → 49 个会话目录，逐目录 heartbeat.jsonl/heartbeat.pid 面（2026-09-25）
+  module_id: MOD-GOV_HEARTBEAT_DAEMON
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:39
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:39
+  - src/zephyr/security/access_control/session_concurrency.py:148
+  runtime_refs:
+  - .runtime/（heartbeat jsonl 审计面）
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S03
+  - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
+  wiring_status: wired
+  module_label_bilingual: session heartbeat 独立进程 / Heartbeat Daemon
+- node_id: D11-S04
+  name_zh: 改前 claim（文件锁+基线快照）
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 动手前这份文件归谁？基线快照锚在哪次 claim？
+  note_zh: lock_files acquire → 网关 claim_files（基线=首次 claim 快照）；git_commit.py --claim-only 前移协议；热文件写入另走 safe_write_text
+    CAS 通道
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - git_commit.py:476 --claim-only 前移协议
+  - git_commit_gateway.py:1257 claim_files（基线=首次 claim 快照）
+  - scripts/lock_files.py:549 cmd_acquire
+  exec_evidence:
+  - '.ailocks/registry.json 在盘（2026-09-25 实查 11621B）；复跑: python scripts/lock_files.py status'
+  - 主区只读 ls .runtime/claim_snapshots → 877 件（2026-09-25，claim 基线快照在产）
+  module_id: MOD-INF-005
+  module_ref: scripts/lock_files.py:549
+  source_anchors:
+  - scripts/lock_files.py:549
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:1257
+  - scripts/git_commit.py:476
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: claim 锁与基线快照
+    location: .ailocks/
+    key: 文件路径×session_id
+    retention: commit 结算即释放
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S04
+  - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+  wiring_status: wired
+  module_label_bilingual: 锁files / lock_files
+- node_id: D11-S05
+  name_zh: 在途编辑与暂存晋升
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: staging 产物在 24h TTL 内被晋升了吗？没晋升谁来兜底清理？
+  note_zh: worktree 编辑隔离=活体（S02）；作业簿 02 全仓 grep 实查=**无任何代码实现 staging→docs/_working 晋升**（同名异物三簇已排除：allow_promote=永久区新文件准入≠暂存晋升、ml_model_factory
+    反向语义、reconciler 告警文案里的「疑似未 promote」是清理者不是晋升者）⇒ 机生面只有其反面：24h TTL 清理+漏晋升告警（专项 reconciler 真源=reconciliation_registry.py:10988，_STAGING_TTL_SECONDS=24*3600
+    @:11020；骨架 S05 格所记 :7677 是通用 .runtime TTL 兜底、非 24h staging 专项真源）；abort 即时清理另腿=session_worktree.py:1779 _cleanup_session_staging；骨架状态列仍记
+    🔨，转性口径归总包
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - reconciliation_registry.py:10988 make_session_staging_lifecycle_reconciler + :11020 _STAGING_TTL_SECONDS 在位（本车道
+    2026-09-25 复跑 grep）
+  - 作业簿 02 §2「内」-1 全仓 grep promote∩staging/_working 排除三簇非同物后=空集（纪律-only 定性）
+  exec_evidence:
+  - src/zephyr/governance/audit/reconciliation_registry.py:10988 make_session_staging_lifecycle_reconciler 与 :11020
+    _STAGING_TTL_SECONDS 在位（本车道 2026-09-25 复跑 grep）
+  - 复跑（簿02 §末-3 命令 1）：全仓 grep promot* ∩ staging/sessions/_working 排除三簇非同物后=空集（⇒ 只有清理面无晋升面，结构事实而非在产流程）
+  module_id: MOD-GOV_RECONCILIATION_REGISTRY
+  module_ref: src/zephyr/governance/audit/reconciliation_registry.py:10988
+  source_anchors:
+  - src/zephyr/governance/audit/reconciliation_registry.py:10988
+  - src/zephyr/governance/audit/reconciliation_registry.py:11020
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:1779
+  - src/zephyr/governance/audit/reconciliation_registry.py:7677
+  runtime_refs:
+  - .runtime/sessions/<sid>/staging/
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: 暂存成果
+    location: .runtime/sessions/<sid>/staging/
+    key: session_id×产物文件
+    retention: 24h TTL，promote 到 docs/_working/ 才算交付
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S05
+  - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+  wiring_status: unwired_no_caller
+  red_reason: unwired
+  module_label_bilingual: 对账注册表 / reconciliation_registry
+- node_id: D11-S06
+  name_zh: 会话内 worktree 提交
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: worktree 内 commit 前，base 新鲜/stash 留痕/DCR/门禁子集四段都校齐了吗？
+  note_zh: worktree 独立 index 直接 add+commit（不占全局锁）；pre-commit 跑 worktree-compatible 门禁子集（跳过 _WORKTREE_SKIP_GATES）；DCR
+    检测 fail-closed；base 过期自动对齐防搭便车提交；stash 留痕→stash_notice.json 恢复通道
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:3312 _ensure_worktree_base_fresh
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:4580 session_worktree_commit
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:5254/7261 stash 留痕+stash_notice 恢复通道
+  exec_evidence:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:4580 session_worktree_commit 在位
+  - 主区只读 .runtime/gate_audit/worktree_skip.jsonl 与 worktree_status_snapshots.jsonl（2355 行）在盘（2026-09-25）=worktree
+    门禁子集/跳门面每日在跑
+  module_id: MOD-GOV_SESSION_WORKTREE
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:4580
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:4580
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:3312
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:5254
+  runtime_refs:
+  - .runtime/workspace_alerts/stash_notice.json
+  data_refs: []
+  gate_refs:
+  - WORKTREE-REQUIRED
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S06
+  - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
+  wiring_status: wired
+  gate_cluster: worktree_compatible_subset
+  module_label_bilingual: 会话Worktree / Session Worktree
+- node_id: D11-S07
+  name_zh: 合并回主区（merge 正门）
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 现在能 merge 吗？HIGH drift 与 commit 后新增门禁规则挡不挡？
+  note_zh: merge 正门双检=_run_pre_merge_topo_check（HIGH drift 阻断；checker 缺失 fail-closed、DB 不可用降 fail-open 留痕）+_pre_merge_gate_check（reset
+    --soft 模拟 staged 重跑 worktree-compatible 门禁）；**重大加注（六图终局卷 §4 图11「还差的活」）**：常量 _PRE_MERGE_SKIP_ALL_COMMIT_GATES=True（session_worktree.py:389，消费点
+    :7098）使 pre-merge 门预演**默认整体短路**——该阶段主区 sys.path 与 worktree 代码版本错位会 ImportError 假阻断，故现行行为=只保留 TOPO-CHECK、跳过全部
+    commit gate ⇒ 本环节 wiring_status=partial（代码在盘而默认不跑，不是没实现）；git_commit.py --merge-finalize 配套（拒晾置）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - scripts/git_commit.py:1053 --merge-finalize
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:389 _PRE_MERGE_SKIP_ALL_COMMIT_GATES=True（预演整体短路的机生实查）
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:5828 _run_pre_merge_topo_check
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:6025 _pre_merge_gate_check
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:6714 session_worktree_merge
+  exec_evidence:
+  - grep -n '_PRE_MERGE_SKIP_ALL_COMMIT_GATES' src/zephyr/gov_enforcement/rule_bridge/session_worktree.py → :389=True
+    / :7098 消费（本车道 2026-09-25 复跑；pre-merge 门预演整体短路即此常量的现行行为）
+  - 主区只读 .runtime/gate_audit/force_merge_usage.jsonl 在盘（2026-09-25，merge 正门 force 计数审计在产）
+  module_id: MOD-GOV_SESSION_WORKTREE
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:6714
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:6714
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:5828
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:6025
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:389
+  - scripts/git_commit.py:1053
+  runtime_refs: []
+  data_refs: []
+  gate_refs:
+  - WORKTREE-REQUIRED
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S07
+  - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+  wiring_status: partial
+  red_reason: unwired
+  gate_cluster: pre_merge_topo_check
+  module_label_bilingual: 会话Worktree / Session Worktree
+- node_id: D11-S08
+  name_zh: 放弃与死会话回收
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 放弃任务或会话死了，产物怎么 salvage、claim 归谁释放？
+  note_zh: abort 直通道；lock_files cleanup auto-salvage：双证判死→merge abort+stash 归档+释放 claim，全程写 salvage_audit.jsonl；死会话
+    stale claim 亦可经网关 release_files 精准释放
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - scripts/lock_files.py:1160 salvage_dead_session（双证判死）
+  - scripts/lock_files.py:786 cmd_cleanup（auto-salvage）
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:7497 abort
+  - 审计面 .ailocks/salvage_audit.jsonl 实查在盘
+  exec_evidence:
+  - 主区只读 wc -l .ailocks/salvage_audit.jsonl → 659 行（2026-09-25，死会话回收持续留痕）
+  - '复跑: python scripts/lock_files.py cleanup（幂等 auto-salvage 入口）'
+  module_id: MOD-INF-005
+  module_ref: scripts/lock_files.py:1160
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:7497
+  - scripts/lock_files.py:786
+  - scripts/lock_files.py:1160
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: salvage 审计
+    location: .ailocks/salvage_audit.jsonl
+    key: 时间戳×session_id
+    retention: 永久留痕
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S08
+  - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+  wiring_status: wired
+  module_label_bilingual: 锁files / lock_files
+- node_id: D11-S09
+  name_zh: 收尾注销与 handoff 交接
+  stage: S
+  lane: S
+  node_type: stage
+  decision_question: 注销前 claim 全放了吗？handoff 包落盘让下一会话可续吗？
+  note_zh: SessionHandoff schema（政策 §4 契约文本引用不复制）；网关 commit finally 写 handoff；close-door 序列真源=parallel_session_coordination_policy.md
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - .runtime/handoffs/ 实查非空（2026-09-24）
+  - git_commit_gateway.py:3538-3545 commit finally 写 handoff
+  - session_concurrency.py:786 SessionHandoff
+  exec_evidence:
+  - src/zephyr/security/access_control/session_concurrency.py:786 SessionHandoff 在位
+  - 主区只读 ls .runtime/handoffs → 242 件（2026-09-25，跨会话交接包在产）
+  module_id: MOD-INF-018
+  module_ref: src/zephyr/security/access_control/session_concurrency.py:786
+  source_anchors:
+  - src/zephyr/security/access_control/session_concurrency.py:786
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3538
+  runtime_refs:
+  - .runtime/handoffs/
+  data_refs:
+  - docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md
+  gate_refs: []
+  store_refs:
+  - artifact: handoff 交接包
+    location: .runtime/handoffs/
+    key: session_id
+    retention: 留档
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-S09
+  - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
+  wiring_status: wired
+  module_label_bilingual: Session 级并发协调模块 / Session Concurrency
+- node_id: D11-C01
+  name_zh: 提交正门 CLI 与危险命令外壳
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 这次提交走哪个入口？失败退出码能不能定位死因与拆批口径？
+  note_zh: git_commit.py=唯一合法 CLI 入口封装网关（拆批纪律见文件头；退出码全谱矩阵=本图顶层 exit_codes，机生半边=AST 读 _COMMIT_RESULT_MAP + 全仓生产者构造计数）；**反裸提交的真担保是三拦截者而非两壳**（作业簿
+    04 旁向实查）：pre-commit hook gate-commit-gw + 网关内 _run_git 守卫（in_commit_flow 非真即返伪结果）+ POST-COMMIT-GUARD 回滚；git_guard.py/git_safety_wrapper.ps1
+    只管删除类与 plumbing 类（DANGEROUS_SUBCOMMANDS 不含 commit），骨架 C01 格把两壳与正门并列易误读为「正门拦截器」——本节点按实查口径记
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - AST 扫描公共函数/退出码分发表/生产者构造计数=本节点 machine_facts
+  - git_guard.py:90/:95 危险集与 plumbing 禁列（二者均不含 commit=实查）
+  - git_safety_wrapper.ps1:19,115,153 BLOCKED 清单
+  - scripts/git_commit.py:18-50 文件头唯一入口声明
+  exec_evidence:
+  - machine_facts.commit_exit_map（AST 读 _COMMIT_RESULT_MAP）非空＝专码分发表活着
+  - '复跑: git log refs/heads/dev --since=''3 days ago'' --format=%B | grep -c ''\[GW:'' → 1382 条（2026-09-25）＝近三日全部提交仍逐条过正门'
+  module_id: MOD-INF-005
+  module_ref: scripts/git_commit.py:18
+  source_anchors:
+  - scripts/git_commit.py:18
+  - scripts/git_safety_wrapper.ps1:19
+  - scripts/git_guard.py
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:4257
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C01
+  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  wiring_status: wired
+  exit_codes:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  module_label_bilingual: Git提交 / git_commit
+  machine_facts:
+    public_api:
+      path: scripts/git_commit.py
+      exists: true
+      public_functions:
+      - main
+      main_exit_codes:
+      - 1
+      - 2
+    commit_exit_map: *id001
+    exit_code_producers: *id002
+    dead_branch_statuses: *id003
+- node_id: D11-C02
+  name_zh: 失败指引锚点递送
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 失败时把 playbook/digest 指引锚点递送到修改者眼前了吗？
+  note_zh: 递送接口在 git_commit.py 失败路径（锚=commit_navigation_playbook.md+gate_digest_registry.yaml 双件）；骨架口径 🔨（递送面无审计
+    sink；作业簿 04 已实弹核验并建议转 ✅，转性留总包）
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 两锚文件 ls 实查在盘（骨架 §1 C02 行）
+  - 作业簿 04 §2 stderr 可见实弹核验
+  exec_evidence:
+  - git_commit.py:116-133 函数体只含 print/logger.debug ⇒ 无审计 sink，故判据停在 structure
+  - '复跑（簿04 §末-3 命令 5）：直调 _format_commit_result(COMMIT_FAILED,''门禁 WORKTREE-REQUIRED 阻断: x'') → stderr 打印 GUIDE
+    锚点行（2026-09-24 实弹，零写盘）'
+  module_id: MOD-INF-005
+  module_ref: scripts/git_commit.py:109
+  source_anchors:
+  - scripts/git_commit.py:109
+  - docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C02
+  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  wiring_status: partial
+  red_reason: unwired
+  module_label_bilingual: Git提交 / git_commit
+- node_id: D11-C03
+  name_zh: claim 结算与失败重试语义
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 成功才释放 claim？失败保留并重试要不要带 --adopt-prior-work？
+  note_zh: 结算规则=成功释放/失败保留+--failed-claim-ttl；--adopt-prior-work 治 FOREIGN_CHANGE 恶性循环；死会话 stale claim 精准释放=网关 release_files
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - --adopt-prior-work 通道在位
+  - _retain_claims_after_failure/_settle_claims_after_commit 实查在位
+  - git_commit.py:32-36 结算契约
+  exec_evidence:
+  - grep -n 'def _settle_claims_after_commit|def _retain_claims_after_failure' scripts/git_commit.py → :734/:680
+    在位
+  - 主区只读 .runtime/claim_snapshots/claim_retention.jsonl 在盘（2026-09-25，失败保留+TTL 收窄留痕）
+  module_id: MOD-INF-005
+  module_ref: scripts/git_commit.py:734
+  source_anchors:
+  - scripts/git_commit.py:680
+  - scripts/git_commit.py:734
+  - scripts/git_commit.py:1071
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:1338
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C03
+  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  wiring_status: wired
+  exit_codes:
+  - 1
+  - 6
+  - 7
+  module_label_bilingual: Git提交 / git_commit
+- node_id: D11-C04
+  name_zh: 全局串行锁与锁争用改道
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 全局锁拿到吗？拿不到是等待还是自动改道入队？
+  note_zh: _GlobalCommitLock 单写者串行；gate→stage→commit 不可分割；--no-auto-enqueue 显式退出改道语义；锁超时 AUTO-ENQUEUE 自动入队（flag
+    控制）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - git_commit.py:1150 --no-auto-enqueue
+  - git_commit.py:1306 锁超时改道入队
+  - git_commit_gateway.py:495 _GlobalCommitLock（TTL 见实现）
+  exec_evidence:
+  - '复跑（主区只读）: ls -la .runtime/gate_audit/commit_lock_fallback.jsonl → 在盘（2026-09-25，锁 fail-open 降级有账）'
+  - '复跑（主区只读）: wc -l .runtime/audit/commit_block_events.jsonl → 833KB 级持续增长（2026-09-25 实查）＝锁/门阻断事件每日在写'
+  module_id: MOD-INF-035
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:495
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:495
+  - scripts/git_commit.py:1150
+  - scripts/git_commit.py:1306
+  runtime_refs: []
+  data_refs:
+  - config/flags.yaml
+  gate_refs: []
+  store_refs:
+  - artifact: 全局提交锁
+    location: .ailocks/git_commit_global.lock
+    key: 单锁
+    retention: TTL 超时自解
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C04
+  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  wiring_status: wired
+  exit_codes:
+  - 2
+  module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+- node_id: D11-C05
+  name_zh: in-process 门禁链执行
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 本改动按 priority 逐台过了门禁册登记的 in-process 门禁吗？（数量以册 total_gates 字段为准）
+  note_zh: in_process_gate_registry.yaml 动态注册（gate_auto_registrar）；锁外预跑+结果缓存+漂移观察（flags gate_preflight/gate_result_cache）；worktree
+    跳过面 _WORKTREE_SKIP_GATES；叶层=册自身（99 条目明细进作业簿 05，INV-1 不抄进图）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - gateway _preflight_flag_enabled/_check_gates_with_drift_watch 在位
+  - in_process_gate_registry.yaml total_gates 字段 grep 实查
+  - machine_facts 双计数（字段值 vs 条目实扫）由本生成器动态产出
+  exec_evidence:
+  - 主区只读 .runtime/audit/preflight_events.jsonl 924KB（2026-09-25）＝P0-A 锁外预检每日在跑
+  - '复跑: python scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py --dry-run + grep total_gates
+    in_process_gate_registry.yaml（双计数口径见 machine_facts.gate_registry_facts）'
+  module_id: MOD-GATE_ENGINE
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:2880
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:347
+  runtime_refs: []
+  data_refs:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - config/flags.yaml
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C05
+  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  wiring_status: wired
+  exit_codes:
+  - 3
+  - 5
+  - 6
+  - 8
+  - 9
+  gate_cluster: in_process
+  module_label_bilingual: YAML 驱动的 in-process gate 自动注册器 / Gate Auto Registrar
+  machine_facts:
+    gate_registry_facts: &id006
+      registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+      exists: true
+      total_gates_field: 99
+      entries_scanned: 99
+      generated_by: null
+      cluster_by_channel:
+        unspecified: 99
+      own_scope_true_entries: 0
+      files_trigger_entries: 26
+- node_id: D11-C06
+  name_zh: 暂存与提交本体
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: gitignored-tracked 怎么分离？rename 检出与 [GW:] 尾标防伪谁守？
+  note_zh: _commit_locked：gitignored-tracked 分离、pathspec-from-file add/rm、rename fallback、--no-verify -F msg 提交+[GW:<sid>]
+    尾标；FORGED-GW-MARKER 门禁守伪标
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - FORGED-GW-MARKER 在册（gate_id 引用不抄正文）
+  - gateway _commit_locked/_has_staged_renames/_commit_with_file_message 行锚实查
+  exec_evidence:
+  - 主区只读 .runtime/gate_audit/gateway_index_hygiene.jsonl 在盘（2026-09-25，两把 index 卫生清扫留痕）
+  - '复跑: git log refs/heads/dev --since=''3 days ago'' --format=%B | grep -c ''q-2026'' → 365 条（2026-09-25）'
+  module_id: MOD-INF-035
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:2971
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:2971
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3607
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3657
+  runtime_refs: []
+  data_refs: []
+  gate_refs:
+  - FORGED-GW-MARKER
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C06
+  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  wiring_status: wired
+  exit_codes:
+  - 1
+  - 10
+  gate_cluster: gw_marker_chain
+  module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+- node_id: D11-C07
+  name_zh: pre-commit shell 门禁通道
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: shell 侧门禁在网关临时索引通道里拿到执行权了吗？（数量以册 total_gates 字段为准）
+  note_zh: 网关内以子进程重放 pre-commit 框架的补执行拍（git hooks 对经网关的提交恒不触发——提交走 --no-verify，故本环不是「git hook 通道」而是重放通道，作业簿 05 §3
+    旁向三证钉界）：_run_precommit_channel+_precommit_build_temp_index（GIT_INDEX_FILE own-scope 临时索引）；开关读 gate_precommit_run_enabled（**在册键名是
+    gate_precommit_run ⇒ 未注册 × default=True ⇒ 恒 ON，回滚面失效见 gap 节点 D11-G02**）；SKIP 名单实含 3 门（gate-commit-gw/gate-worktree-required/gate-protected-paths，2026-09-24
+    四死信实证后加第三门，flags.yaml 描述仍写两门=文档矛盾待总包收口）；失败裁决四态：infra_error→warn 放行、mutation 重跑仍变异→阻断、own_failed→阻断、foreign_failed→warn
+    放行；叶层=shell 门禁册（条目明细归生成器 generate_gate_registry.py，本图只挂指针）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - config/flags.yaml gate_precommit_run 在册 + gateway:358 代码键 gate_precommit_run_enabled（两名不同=实查）
+  - gateway _run_precommit_channel/_precommit_build_temp_index 行锚实查
+  - machine_facts 双计数由本生成器动态产出
+  exec_evidence:
+  - 主区只读 .runtime/gate_audit/precommit_incremental_baseline.json 在盘（2026-09-25，precommit 通道审计面）
+  - 复跑（簿05 §末-3 命令 3）：is_enabled('gate_precommit_run')=True ⇒ 通道实际在跑；其回滚面恒失效另见 gap 节点 D11-G02
+  module_id: MOD-INF-035
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3189
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3189
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3091
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:358
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:401
+  runtime_refs: []
+  data_refs:
+  - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  - config/flags.yaml
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C07
+  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  wiring_status: wired
+  exit_codes:
+  - 1
+  gate_cluster: pre_commit
+  module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+  machine_facts:
+    gate_registry_facts: &id007
+      registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+      exists: true
+      total_gates_field: 174
+      entries_scanned: 180
+      generated_by: scripts/governance/generators/generate_gate_registry.py
+      cluster_by_channel: *id004
+      own_scope_true_entries: 33
+      files_trigger_entries: 73
+- node_id: D11-C08
+  name_zh: 入队即转活（快照入袋）
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 这条提交请求能过入队轻检（穿越/消息/体积/密钥名），并以内容寻址快照入袋吗？
+  note_zh: enqueue_item 轻检四规则+_store_blob 内容寻址去重+_create_item_excl O_EXCL 唯一 qid+_compact_pending 同键覆盖；sys.path
+    清洗等实现细节进作业簿 06（叶层）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - commit_queue.py enqueue_item/_store_blob/_create_item_excl 行锚实查
+  - pending/blobs 目录只读 ls 实查（计数见 machine_facts）
+  exec_evidence:
+  - 主区只读 ls .runtime/commit_queue/pending → 37 件、blobs → 19992 件（2026-09-25，入队面持续收单）
+  - '复跑: grep -n ''def enqueue_item|def _store_blob|def _create_item_excl'' scripts/commit_queue.py → :636/:489/:534'
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:636
+  source_anchors:
+  - scripts/commit_queue.py:636
+  - scripts/commit_queue.py:442
+  - scripts/commit_queue.py:489
+  - scripts/commit_queue.py:534
+  runtime_refs:
+  - .runtime/commit_queue/pending/
+  - .runtime/commit_queue/blobs/
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: 队列项+内容寻址袋
+    location: .runtime/commit_queue/pending + .runtime/commit_queue/blobs
+    key: qid / blob sha
+    retention: pending 同键 compact；排空转 processing
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C08
+  - docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+  wiring_status: wired
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  machine_facts:
+    public_api:
+      path: scripts/commit_queue.py
+      exists: true
+      public_functions:
+      - channel_key_for_files
+      - check_dead_burst
+      - classify_dead_reason
+      - cleanup_done
+      - default_landing_stub
+      - drain_queue
+      - emit_dead_backlog_alert
+      - enqueue_item
+      - main
+      - queue_health
+      - queue_status
+      - requeue_dead_item
+      - resolve_queue_root
+      - try_bootstrap_drain
+      main_exit_codes: []
+- node_id: D11-C09
+  name_zh: 排空调度与消费端
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 这条队列项由谁消费？lease 僵尸回收、通道路由与池并发怎么定？
+  note_zh: SerializerLease TTL+僵尸 PID 回收；channel_key_for_files 通道路由（hot/shared 单通道）；k 池并行排空（drain_queue_pool+_pool_cas_replay）；belt
+    daemon 事件触发自举补位
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - SerializerLease/channel_key_for_files 行锚实查
+  - belt_daemon.heartbeat 文件实查在盘
+  - drain_queue_pool/_pool_cas_replay 在位
+  exec_evidence:
+  - 主区只读 .runtime/commit_queue/belt_daemon.heartbeat mtime=2026-09-25 02:16（消费端守护活着）
+  - 主区只读 ls .runtime/commit_queue/worktrees → w0 w1 w2 w3（k=4 池在盘）
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:769
+  source_anchors:
+  - scripts/commit_queue.py:769
+  - scripts/commit_queue.py:207
+  - scripts/governance/commit_queue_landing.py:1938
+  - scripts/governance/commit_queue_landing.py:1685
+  - src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py
+  runtime_refs:
+  - .runtime/commit_queue/worktrees/（池目录，台数以实扫为准）
+  - .runtime/commit_queue/belt_daemon.heartbeat
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C09
+  - docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+  wiring_status: partial
+  red_reason: unwired
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+- node_id: D11-C10
+  name_zh: 真落盘（worktree+CAS+收敛）
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 这条队列项能走完落盘五步（幂等→基底→blob→全门禁→CAS update-ref）真进 dev 吗？
+  note_zh: 落盘流水线五步+主区受限快进收敛；瞬态 git 冲突标记→退回 pending 绝不死信；单写者 dev 历史断言日检；LandingEnvironmentError 与死信分流边界见作业簿 06/08
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - done/ 最新项 landed_at/landed_id 回填实查（骨架 §0 门①）
+  - landing 文件头落盘流水线声明+关键函数行锚实查
+  - '近 3 日 dev [GW: 标记与队列落地计数复核命令=骨架 §7 附录（只读）'
+  exec_evidence:
+  - 主区只读 .runtime/commit_queue/main_workspace_sync.jsonl 在盘（2026-09-25，主区快进收敛留痕）
+  - 主区只读 done 最新项 q-20260925-st-metaq-gc-20260924-0018：landed_at=2026-09-25T02:13:14+08:00、landed_id=a3bb88146cf48403（真
+    git 落地在产，复跑命令=骨架 §7 附录 1）
+  module_id: MOD-GOV-047
+  module_ref: scripts/governance/commit_queue_landing.py
+  source_anchors:
+  - scripts/governance/commit_queue_landing.py:158
+  - scripts/governance/commit_queue_landing.py:2315
+  runtime_refs:
+  - .runtime/commit_queue/processing/
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: 落地回填台账
+    location: .runtime/commit_queue/done
+    key: qid→landed_id
+    retention: done TTL 定期清理（见 C13）
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C10
+  - docs/_working/map_build/fig11_delivery/06_入队排空与真落盘.md
+  wiring_status: partial
+  red_reason: broken_supply
+  deadletter_class:
+  - env→退回 pending 绝不死信（LandingEnvironmentError）
+  - item→dead/
+  module_label_bilingual: 提交队列落盘执行体 / Commit Queue Landing
+- node_id: D11-C11
+  name_zh: post-commit 对账与守卫
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 这次 commit 之后要跑哪些 reconciler？异步编排与 shell 守卫怎么接力？
+  note_zh: 网关 _register_default_reconcilers 事件触发编排（台数以实扫 register 调用为准，勿背数）；run_post_commit_reconciler 异步化；git_hooks
+    双守卫（post_commit_guard/reference_transaction_guard）红蓝触发；reconciler 必须事件触发禁定时器（永久系统四要素）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - register( 调用动态计数=machine_facts（骨架 §7 复核命令同口径）
+  - 两 shell guard 文件实查在盘
+  exec_evidence:
+  - 主区只读 .git/hooks/post-commit 在盘 + .runtime/reconcile_reports/ 持续产件（2026-09-25）
+  - '复跑: grep -c "self._reconciliation_registry.register(" src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    → 58（本车道 2026-09-25 复跑=machine_facts 同口径）'
+  module_id: MOD-INF-035
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:1547
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:1547
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:1034
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3559
+  - scripts/governance/git_hooks/post_commit_guard.sh
+  - scripts/governance/git_hooks/reference_transaction_guard.sh
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C11
+  - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+  wiring_status: wired
+  module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+  machine_facts:
+    reconciler_register_calls: 58
+- node_id: D11-C12
+  name_zh: 机器车道与紧急通道
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 机器提交要不要按 flag 改道？emergency 通道什么时候合法、伪造标记怎么判？
+  note_zh: _commit_auto 按 serializer flag 改道回队列（单写者断言日检）；BatchedAutoCommitter 合批；emergency_commit 仅注册表/锁不可用时合法（commit-tree
+    plumbing+落册审计，手写标记判 forged）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - _commit_auto/_reroute_commit_auto_to_queue 行锚实查
+  - emergency_commit 合法边界与审计面实查
+  - flags.yaml serializer 开关+翻旗留痕实查
+  exec_evidence:
+  - 'config/flags.yaml:81 commit_queue_serializer enabled:true（复跑: grep -n commit_queue_serializer config/flags.yaml）'
+  - 主区只读 grep -l rerouted_from .runtime/commit_queue/done/*.json → 53 件（2026-09-25，机器车道 reconciler 改道真的落过地）
+  module_id: MOD-INF-035
+  module_ref: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3845
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3845
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:3827
+  - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py:20
+  runtime_refs: []
+  data_refs:
+  - config/flags.yaml
+  gate_refs:
+  - FORGED-GW-MARKER
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C12
+  - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+  wiring_status: wired
+  module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+- node_id: D11-C13
+  name_zh: 队列台账与运维观测
+  stage: C
+  lane: C
+  node_type: stage
+  decision_question: 队列健康可观测吗？TTL、告警阈值与堵点账本各归谁守？
+  note_zh: 四态目录协议+queue_health 只读快照+dead 积压告警（阈值真源=告警阈值册 THD 条目引用）；done TTL/dead 永不自动清理不变量；堵点账本 jsonl；归属核实纪律 git
+    log -1 --name-only
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - THD-ALERT-003 在册（编号引用不抄正文）
+  - _STATES/cleanup/queue_health/emit_dead_backlog_alert 行锚实查
+  - 四态目录只读计数=machine_facts
+  exec_evidence:
+  - 主区只读 .runtime/commit_queue/health_alert_state.json 在盘（2026-09-25，告警冷却态在用）
+  - '复跑（只读）: python scripts/commit_queue.py health --no-alert（禁 status/drain——二者触发自举排空）'
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:1719
+  source_anchors:
+  - scripts/commit_queue.py:166
+  - scripts/commit_queue.py:2311
+  - scripts/commit_queue.py:1719
+  - scripts/commit_queue.py:1777
+  runtime_refs:
+  - .runtime/audit/bottleneck_ledger.jsonl
+  data_refs:
+  - docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml
+  gate_refs: []
+  store_refs:
+  - artifact: 堵点账本
+    location: .runtime/audit/bottleneck_ledger.jsonl
+    key: 时间戳×qid
+    retention: 追加
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-C13
+  - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
+  wiring_status: wired
+  deadletter_class:
+  - env
+  - item
+  - other
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  machine_facts:
+    queue_state_dirs: &id008
+      pending:
+        exists: false
+        item_count: 0
+      processing:
+        exists: false
+        item_count: 0
+      done:
+        exists: false
+        item_count: 0
+      dead:
+        exists: false
+        item_count: 0
+- node_id: D11-D01
+  name_zh: 死信产生（不卡队）
+  stage: D
+  lane: D
+  node_type: stage
+  decision_question: 落地失败了，这一项去哪条道？队列会不会被卡住？
+  note_zh: 落地三分流：普通 Exception→dead/（带 dead_reason/dead_at）；BaseException 留 processing 等回收；LandingEnvironmentError
+    退回 pending 绝不死信（Law 4 的执行面）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - commit_queue.py:71-80 分流协议行锚实查
+  - dead/ 目录只读实查含 dead_reason/dead_at 字段样例（骨架 §1 D01 行）
+  exec_evidence:
+  - scripts/commit_queue.py:71-80 分流协议注释 + :1262-1282 落账段在位
+  - 主区只读 ls .runtime/commit_queue/dead → 403 件，抽读含 dead_reason/dead_at 字段（2026-09-25）
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:71
+  source_anchors:
+  - scripts/commit_queue.py:71
+  runtime_refs:
+  - .runtime/commit_queue/dead/
+  data_refs: []
+  gate_refs: []
+  store_refs:
+  - artifact: 死信项
+    location: .runtime/commit_queue/dead
+    key: qid
+    retention: 永不自动清理
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D01
+  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  wiring_status: wired
+  deadletter_class:
+  - item
+  - env
+  - other
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+- node_id: D11-D02
+  name_zh: 死因三分类甄别
+  stage: D
+  lane: D
+  node_type: stage
+  decision_question: 这次死法是环境病、项内病、还是 other？
+  note_zh: _DEAD_REASON_ENV_MARKERS/_DEAD_REASON_ITEM_MARKERS 标记表（含历史补盲批注）+classify_dead_reason 三分类；标记串条目=叶层进作业簿
+    08，图只挂表位置指针
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 两标记表与 classify_dead_reason 行锚实查
+  - 补盲批注（0916/0922）见作业簿 08 史向
+  exec_evidence:
+  - machine_facts.deadletter_marker_counts（AST 读两标记表条数）非零＝分类表在维护
+  - 主区只读 ls .runtime/commit_queue/dead_triage_*.jsonl → 3 份甄别台账（2026-09-25）
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:1709
+  source_anchors:
+  - scripts/commit_queue.py:240
+  - scripts/commit_queue.py:1709
+  runtime_refs: []
+  data_refs:
+  - docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D02
+  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  wiring_status: wired
+  deadletter_class:
+  - env
+  - item
+  - other
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  machine_facts:
+    deadletter_marker_counts: *id005
+- node_id: D11-D03
+  name_zh: 死信台账联动与告警
+  stage: D
+  lane: D
+  node_type: stage
+  decision_question: 这条死信在任务台账上有标吗？告警发出去了吗？
+  note_zh: _notify_task_board_dead_letter→task_board tag_dead_letter（metadata 承载，不改表）；requeue 同步标注；告警走 C13 积压告警通道。task_board=任务治理域，出域引用不吸收
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - notify/tag 两侧函数行锚实查（task_board.py:332 tag_dead_letter）
+  exec_evidence:
+  - grep -n '_DEADLETTER_WATCH_TASK_ID' scripts/commit_queue.py → :237 在册告警 task（复跑即可）
+  - scripts/task_board.py:332 tag_dead_letter 在位；联动异常吞掉不阻断排空（:961-962）
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:930
+  source_anchors:
+  - scripts/commit_queue.py:930
+  - scripts/task_board.py:332
+  - scripts/commit_queue.py:1349
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D03
+  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  wiring_status: wired
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+- node_id: D11-D04
+  name_zh: requeue 复活链路
+  stage: D
+  lane: D
+  node_type: stage
+  decision_question: 这条死信还能救吗？requeue 基于当前工作区重建快照后原项留什么痕？
+  note_zh: requeue_dead_item：基于当前工作区重建快照→新 qid 排队尾（回 C08 入队口）；原项留 requeued 指针；队列项 dead 后读 dead_reason 修正再 requeue
+    是标准处置
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - requeue_dead_item/CLI requeue 行锚实查
+  - 活体样例 0031→0055 requeued 字段只读核验（骨架 §7 命令 8）
+  exec_evidence:
+  - 主区只读双向 trace 复跑（骨架 §7 命令 8）：dead/0031.requeued.new_qid=…-0055、dead/0055.meta.requeued_from=…-0031（2026-09-25
+    复核仍成立）
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:1387
+  source_anchors:
+  - scripts/commit_queue.py:1387
+  - scripts/commit_queue.py:2184
+  runtime_refs:
+  - .runtime/commit_queue/dead/（requeued 留痕样例实查）
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D04
+  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  wiring_status: wired
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+- node_id: D11-D05
+  name_zh: 级联失效判定（cascade_stale）
+  stage: D
+  lane: D
+  node_type: stage
+  decision_question: 某项落盘后，还在 pending 的项的依赖声明还成立吗？
+  note_zh: 项 X 落盘后扫 pending：depends_on/base_blob vs HEAD 仍适用→清标放行；不适用→dead_reason=cascade_stale 死信候选（不消耗 landing）；interactive/machine
+    双车道 head 选取细节进簿 08
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - B 段协议注释与标记表收录 cascade_stale 行锚实查
+  exec_evidence:
+  - 主区只读 grep -l cascade_stale .runtime/commit_queue/dead/*.json → 10 件（2026-09-25，级联判定真的降过死信）
+  - '复跑: grep -n ''"base_blob": None'' scripts/commit_queue.py → :696/:712（恒 None＝重校验器结构空转的机生证据）'
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:104
+  source_anchors:
+  - scripts/commit_queue.py:104
+  - scripts/commit_queue.py:288
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D05
+  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  wiring_status: unwired_slot_hollow
+  red_reason: unwired
+  deadletter_class:
+  - item(cascade_stale)
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+- node_id: D11-D06
+  name_zh: 死信归档轮换与清零战役
+  stage: D
+  lane: D
+  node_type: stage
+  decision_question: 死信最终去哪？轮换袋与清零战役的处置结论谁留档？
+  note_zh: dead/ 永不自动清理不变量；轮换袋人工搬运（袋名清单以实扫为准）；清零战役三分法（superseded/真未落地/历史留档）结论落 docs/_working 战役记录；hold_* 袋出处考古=🌑
+    候选（骨架 §6 点名，图不编造出处）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 两篇战役记录在盘
+  - 队列根轮换袋目录只读实查（骨架 §1 D06 行）
+  exec_evidence:
+  - 两篇战役记录在盘（docs/_working/2026-09-11-commit-queue-dead-zero-closure.md 与 final3 p12 终态记录）
+  - 主区只读 ls -d .runtime/commit_queue/{dead_archive*,dead_purged*,hold_*} → 11 袋（2026-09-25）
+  module_id: MOD-GOV-046
+  module_ref: scripts/commit_queue.py:56
+  source_anchors:
+  - scripts/commit_queue.py:56
+  runtime_refs:
+  - .runtime/commit_queue/（dead_archive_*/dead_purged_* 轮换袋，袋名以实扫为准）
+  data_refs:
+  - docs/_working/2026-09-11-commit-queue-dead-zero-closure.md
+  - docs/_working/archive/2026-09/final3_campaign/p12_queue_terminal_record.md
+  gate_refs: []
+  store_refs:
+  - artifact: 死信轮换归档袋
+    location: .runtime/commit_queue/ + docs/_working/2026-09-11-commit-queue-dead-zero-closure.md
+    key: 袋名×qid
+    retention: dead 永不自动清理；战役记录永久
+  doc_refs:
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §1 D11-D06
+  - docs/_working/map_build/fig11_delivery/08_死信全链.md
+  wiring_status: wired
+  deadletter_class:
+  - superseded
+  - 真未落地
+  - 历史留档
+  module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+- node_id: D11-G01
+  name_zh: 退出码死分支（码 4 与 STASH_CONFLICT 支无生产者）
+  stage: C
+  lane: C
+  node_type: gap
+  decision_question: 退出码谱里哪些专码永不被产出？按码分诊的调用方会不会白等一个不可能的分支？
+  note_zh: 机生判据=_COMMIT_RESULT_MAP 有专码条目 ∧ 全仓 `status=CommitStatus.X` 生产者构造计数=0（实扫 SSOT_VIOLATION→4 与 STASH_CONFLICT→2
+    两支命中，见 machine_facts.exit_code_producers）；STASH_CONFLICT 支的历史消费者 task_repo 分派仍在盘（阶段3 移除 stash 隔离后成孤儿支路）；内收判据「零触发零消费→退役」适用，处置权在总包（本图不删表不改码）
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - gateway:450 逐字「阶段3 已弃用，保留向后兼容」；gateway:439 SSOT_VIOLATION 全仓无构造点
+  - scripts/git_commit.py:149/:162 两条专码映射在表；复跑（簿04 §末-3 命令 2）：全仓 grep 'CommitStatus.SSOT_VIOLATION' 只命中枚举定义+本表 ⇒
+    零生产者
+  exec_evidence:
+  - 复跑（簿04 §末-3 命令 2/4）：SSOT_VIOLATION/STASH_CONFLICT 全仓仅命中枚举定义+分发表+task_repo 消费支路，生产者构造计数=0（machine_facts.exit_code_producers
+    同源）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - scripts/git_commit.py:162
+  - scripts/git_commit.py:149
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:439
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:450
+  - src/zephyr/governance/persistence/task_repo.py:2528
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
+  - docs/_working/map_build/fig11_delivery/04_提交正门与全局锁.md
+  wiring_status: unwired_no_caller
+  red_reason: unwired
+  exit_codes:
+  - 2
+  - 4
+  machine_facts:
+    commit_exit_map: *id001
+    exit_code_producers: *id002
+    dead_branch_statuses: *id003
+- node_id: D11-G02
+  name_zh: precommit 通道回滚旗恒失效（代码键未注册 × default=True）
+  stage: C
+  lane: C
+  node_type: gap
+  decision_question: 把 flag 关掉能不能停掉 precommit 重放通道？Owner 门位「flag 翻转」在本通道可翻转吗？
+  note_zh: 代码读 `gate_precommit_run_enabled`（gateway:358，is_enabled(…, default=True) :424），在册键却是 `gate_precommit_run`（flags.yaml:96）——未注册键走
+    default ⇒ 通道恒 ON；gateway:413 docstring 自述「Owner 紧急停用=flags.yaml flag OFF」在本通道不可兑现；唯一可停手柄 env `ZEPHYR_PRECOMMIT_FAST_SUBSET=0`
+    只关 Phase-A 子集不关通道本体（gateway:390-398）⇒ 回滚面=幽灵引用（red_reason ghost_ref），开关面与注册表必须同名
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - gateway:358 常量与 flags.yaml:96 在册键逐字比对（本车道 2026-09-25 复跑一致）
+  - 复跑（簿05 §末-3 命令 3）：`gate_precommit_run_enabled` in global_flag_registry._flags=False 而 is_enabled(default=True)=True；`gate_precommit_run`
+    已注册且 is_enabled=True
+  exec_evidence:
+  - 复跑（簿05 §末-3 命令 3）：代码键 gate_precommit_run_enabled 未注册而 is_enabled(default=True)=True ⇒ 恒 ON
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:358
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:424
+  - config/flags.yaml:96
+  - src/zephyr/shared/foundation/flags.py:279
+  runtime_refs: []
+  data_refs: []
+  gate_refs: []
+  store_refs: []
+  doc_refs:
+  - docs/_working/map_build/03_final_blueprint_and_schema.md §4 图11 判据②
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md §6 封顶声明（骨架外 gap 件）
+  - docs/_working/map_build/fig11_delivery/05_门禁链与precommit通道.md
+  wiring_status: unwired_slot_hollow
+  red_reason: ghost_ref
+  machine_facts:
+    precommit_flag_pair:
+      code_key: gate_precommit_run_enabled
+      registered: false
+      in_roster: false
+      default_on: true
+      roster_keys_scanned: 15
+edges:
+- - D11-S01
+  - D11-S02
+- - D11-S02
+  - D11-S03
+- - D11-S03
+  - D11-S04
+- - D11-S04
+  - D11-S05
+- - D11-S05
+  - D11-S06
+- - D11-S06
+  - D11-S07
+- - D11-S06
+  - D11-S08
+- - D11-S07
+  - D11-S09
+- - D11-S08
+  - D11-S09
+- - D11-S07
+  - D11-C01
+- - D11-C01
+  - D11-C02
+- - D11-C01
+  - D11-C03
+- - D11-C01
+  - D11-C08
+- - D11-C03
+  - D11-C04
+- - D11-C04
+  - D11-C05
+- - D11-C04
+  - D11-C08
+- - D11-C05
+  - D11-C06
+- - D11-C06
+  - D11-C07
+- - D11-C06
+  - D11-C11
+- - D11-C08
+  - D11-C09
+- - D11-C09
+  - D11-C10
+- - D11-C10
+  - D11-C13
+- - D11-C11
+  - D11-C12
+- - D11-C10
+  - D11-D01
+- - D11-C10
+  - D11-D05
+- - D11-D01
+  - D11-D02
+- - D11-D02
+  - D11-D03
+- - D11-D03
+  - D11-D04
+- - D11-D01
+  - D11-D06
+- - D11-C01
+  - D11-G01
+- - D11-C07
+  - D11-G02
+feedback_loops:
+- from: D11-D04
+  to: D11-C08
+  note: requeue 复活：基于当前工作区重建快照→新 qid 回入队口排队尾（骨架 §2 死信→提交交接点）
+- from: D11-C12
+  to: D11-C08
+  note: 机器车道改道：reconciler 产 commit→serializer flag 改道回队列（骨架 §2 提交车道内已声明环路）
+- from: D11-D05
+  to: D11-D01
+  note: 级联失效：pending 项依赖声明不再适用→dead_reason=cascade_stale 死信候选（§1 D11-D05 协议）
+counts:
+  total_nodes: 30
+  total_edges: 31
+  by_lane:
+    C: 15
+    D: 6
+    S: 9
+  by_node_type:
+    gap: 2
+    stage: 28
+  by_verified_scope:
+    production: 26
+    structure: 4
+  by_wiring_status:
+    partial: 4
+    unwired_no_caller: 2
+    unwired_slot_hollow: 2
+    wired: 22
+  machine:
+    reconciler_register_calls: 58
+    in_process_gate_facts: *id006
+    shell_gate_facts: *id007
+    queue_state_dirs: *id008
+    deadletter_marker_counts: *id005
+    skeleton_status_scan:
+      source: docs/_working/map_build/fig11_delivery/00_skeleton.md
+      nodes_scanned: 28
+      by_symbol:
+        ✅: 26
+        🔨: 2
+    module_id_scan:
+      source: docs/03_modules/path_ownership_map.yaml
+      claims_scanned: 8064
+      nodes_with_module_id: 28
+      nodes_with_module_ref: 28
+      nodes_null_module_id: 2

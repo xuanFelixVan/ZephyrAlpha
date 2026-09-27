@@ -1,0 +1,4334 @@
+# 交易日循环全景图（trading_day_cycle_map，图 13）——由 generate_trading_day_cycle_map.py 机生。
+# 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md。
+# 三条硬让渡进 laws/boundary：时刻值不搬家（cron 字面量零复制）、决策内容不进图（判据走 tdm_refs）、管线内部不重画；machine_facts 层重扫即刷新。
+schema_version: '0.2'
+map_id: trading_day_cycle_map
+name_zh: 交易日循环全景图
+nickname: 交易日循环
+effective_from: '2026-09-24'
+markets:
+- cn_a
+generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+generated_at: '2026-09-24T12:36:49+08:00'
+ssot_note_zh: '环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节四段）+ 十本作业簿（簿 10=外部对标三扫：表A 七条逐条落
+  L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入不自裁）；machine_facts/trigger_surfaces 层每次全量重扫可执行真相源（排班槽面/任务挂载 join/特殊槽分支面/PHASE_STAGES
+  实扫/日历守卫面/计划任务只读查询面/服务总闸实存面/骨架状态列实扫/depgraph 在册 module_id 投影面），禁手工维护。
+
+  三条硬让渡已落成 laws/boundary：时刻值不搬家（节点只存槽名/tn 名/entity_id/段名）、决策内容不进图（判据唯一出路 tdm_refs）、数据管线内部结构不重画。
+
+  字段分层（六图终局卷 §1 裁定一「同语义必同名」）：L0 通用层统一名 note_zh/doc_refs（三个同义异名注解字段与两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；L1 纵轴层本图取用 slot_source/slot_refs/schtasks_refs/cadence_zh(declared+observed
+  双子键)/wiring_status/downstream_action/fallback/invalidation/ready_gate+no_ready_gate_reason_zh/tdm_refs/gap_refs+red_reason；L2
+  图专属层字段清单=dloop_stages（dloop 段归属）、mechanism（触发机制三分：A_apscheduler/B_windows_task/C_inprocess_stage/D_unscheduled）、skeleton_status（骨架态镜像，实扫得）、mining_recheck_status（作业簿复判另记）、availability（🌑
+  不可得）、entity_refs、miss_policy（表A-A6）、freshness_severity_zh（A2）、expected_emits_per_trading_day（A4）、ready_basis（A5）、no_drift_evidence（A7）、admission_denied_zh/ready_gate_absent_zh
+  等单格注记。
+
+  双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §2 状态列 ✅（14 个，多了算谎少了算欠，校验器 CV-DUAL 计数判且 production 必带 exec_evidence）；structure=仅结构性事实（含「该在而无主」这类负结论）已核，覆盖
+  🔨/⬜ 与 gap 节点。本生成器不擅改任何判据与阈值。
+
+  gap 节点 D13-G01..G04 是骨架外显性化缺口件（簿 10 表A/表C + 图 12 簿 11 消费端反查），无实现代码可挂 ⇒ module_id=null + red_reason 必填，待总包回写骨架
+  §2。'
+laws:
+- 让渡一·时刻值不搬家：节点只存槽名/tn 名/entity_id/段名等稳定标识符，cron 字面量与执行器线程数零复制（骨架 §0.2 硬让渡 1）
+- 让渡二·决策内容不进图：任何"怎么判"唯一出路是 tdm_refs 引 TDM 节点，本图节点禁带 judgment_basis/factor_refs/strategy_refs（骨架 §3 禁则一，违者=第二动作流程真源）
+- 让渡三·管线内部结构不重画：有任务挂载的数据槽在本图只作批次节点（含有效挂载数与当日就绪判定），其源→库→衍生→冷备→对账内部结构归图 12，对账装配落点归 battle_map BM-REC-*（骨架 §0.2 硬让渡
+  3）
+- 槽位挂着≠真在跑：环节存在性判据=该时点的执行体是否被调用 + 该执行体产物表是否有行，禁以"槽 firing/APScheduler 记 success/表里有留痕"三点任一判绿（簿 04 §0.1、簿 06 假绿专段）
+- 缺席必须记账：每环节须声明 ready_gate（本节点是否就绪门格）与 fallback（没跑谁接）；无兜底不许留空，须写 fallback="none:<理由>"；非就绪门格须写 no_ready_gate_reason_zh（骨架
+  §1 门④，字段名一律取六图终局卷 §1 L1 统一名）
+- 看着≠动手：每环节 downstream_action 必须区分自动补跑/仅告警/仅检测/仅编排/执行五态，检出即蒸发（无落盘无消费者）不得记为有兜底（簿 01 三哨兵总裁定、簿 09 3.3）
+boundary:
+- 不画下单/撤单执行流——归 TDM L4/X-S2（骨架 §1 边界）；本图只画"该时点必须发生什么"
+- 不画因子与策略——归各库；本图节点无判据字段（让渡二）
+- 不画数据管线内部结构（源→库→衍生→冷备→对账）——归图 12；本图批次节点只挂有效挂载计数与就绪判定
+- 不画资源争抢与内存天花板——归排班三表（resource_profile_registry + schedule_overview + schedule_consistency_reconciler）；本图放弃"时刻值与资源档位"两项职责，只新增"时序与就绪"
+- 不画治理夜班（C4Exam/ModelExam/GateFullTreeAudit 等 schtasks 族）——主体让渡 GOMAP，本图只留守护接缝三点（骨架 §2 D13-42）
+- 不画开发时会话生命周期——归图 11；不画 24/7 三班制交接（shift_handover_checklist 面向连续市场，不覆盖 A 股日界，骨架 §2 D13-44 实证）
+segments:
+- segment_id: A
+  name_zh: 盘前段
+  span_zh: 05:30–09:30（骨架 §2 段 A）
+  handoff_zh: 三连哨（05:30 档期对账→06:50 停更→07:10 逐日 diff）构成缺席兜底层，交 09:15 前就绪门编排；盘前段的部分语义由 16:45 dloop 圈预产（见 feedback_loops）
+- segment_id: B
+  name_zh: 盘中段
+  span_zh: 09:30–15:00（骨架 §2 段 B）
+  handoff_zh: 采集层群按 5 分钟槽滚动，dloop 唤醒词段与墙钟窗闸段在 16:45 圈被回头驱动；模拟盘 15:05 收口交盘后段
+- segment_id: C
+  name_zh: 盘后段
+  span_zh: 15:00–20:00（骨架 §2 段 C）
+  handoff_zh: 15:10 三件同分钟→15:30 结算单就绪→15:40 核对→16:30 日K线→16:45 dloop 16 段→17:00 起批次群；本段是全图唯一"三机制同窗"密集段（簿 06 O-3）
+- segment_id: D
+  name_zh: 夜窗与贯穿段
+  span_zh: 20:00–次日 05:30 + 周月批 + 全日不变量（骨架 §2 段 D）
+  handoff_zh: 夜窗五槽收口后交日界；日历闸门与常驻守护贯穿全图；D13-44 完成 T→T+1 状态移交
+admission_edges:
+- from: D13-09
+  to: D13-12
+  kind: admission
+  note_zh: 09:25 模拟盘拉起须经 09:15 前就绪门准入——现行实况=拉起腿自带 QMT 与日历双查（只代管本门 C1 一条腿与「开不开市」判定），门体本身零在位（D13-09 red_reason=unwired）
+- from: D13-09
+  to: D13-15
+  kind: admission
+  note_zh: 09:30 起盘中分钟K滚动层须经准入——本层是 60 分钟K唤醒词腿与 dloop 盘中族的原料源头，未过门照跑=把红色天的缺料往后透传三层（表A-A1 点名的第三类准入下游）
+- from: D13-09
+  to: D13-11
+  kind: admission
+  note_zh: 09:15-09:25 竞价采集与本门同分钟窗：采集本身不等门（错过即无），但**其产物进情绪指数档（D13-13）与盘前选股链须经准入**，本边记的是这层等待语义，不是采集时刻本身
+- from: D13-30
+  to: D13-32
+  kind: admission
+  note_zh: 收盘就绪门（与本图开盘前就绪门一字之差、轴不同）：16:45 dloop 圈的 data_readiness 腿以当日主行情落库为前置，缺则整圈在 T-1 上重放且仍记 SUCCESS（fail-closed
+    唯二腿之一）
+- from: D13-30
+  to: D13-35
+  kind: admission
+  note_zh: 17:00 行数视角补下载以「16:30 heavy 批已收口」为前置；实测该前置缺失⇒同表两实例并发写（簿 08 X-11；本边是应然而非实然，缺格事实记在 D13-35 的 ready_gate_absent_zh）
+nodes:
+- node_id: D13-01
+  name_zh: 调度对账补跑（错过档期自愈）
+  segment: A
+  node_type: stage
+  decision_question: 05:30 这一圈补跑跑完了吗？跑不完是谁的手被麻住？错过档期今天还有谁接？
+  note_zh: APScheduler 特殊槽硬编码分支驱动 catchup_guard；单批补跑上限与顺延纪律见实现，补跑宇宙=其档期分桶常量集（机生层 catchup_universe 实扫）
+  module_id: MOD-L00-021
+  source_anchors:
+  - src/zephyr/data/catchup_guard.py:42
+  - src/zephyr/data/scheduler.py:231
+  doc_refs:
+  - docs/01_policies_and_standards/sop/data_ops_sop/
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-01
+  - docs/_working/map_build/fig13_daycycle/01_盘前就绪链.md
+  runtime_refs:
+  - tmp/catchup_guard.lock
+  - tmp/scheduler_run.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - tmp/catchup_guard.lock 现值 PID 经 tasklist 实测已死（锁留死进程）
+  - 特殊槽分发分支该腿无降级告警（对照哨兵两腿均有）→ 崩溃=静默
+  - 簿 01 §1：05:30 每日 firing 但自 09-21 后无一圈完成；task_progress 最后一次成功汇总非 05:30 档期时点且 rows 打满上限
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - catchup_guard
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日 05:30（全周含周末：守卫本身须非交易日可跑）
+    observed: 每日 1 次 firing；自 09-21 起无一圈完成
+  wiring_status: partial
+  downstream_action: auto_remediate
+  failure_visibility_zh: 档期对账台账（task_progress 汇总）+ 锁文件；崩溃腿无降级告警=静默
+  fallback: 无（接不住即档期视角失效）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A6-miss_policy 落格（缺「每格声明」这一层，本图先按机生面派生）
+  - benchmark:C1-rerun 是否=给定时器补跑发准生证（措辞权在总包，本车道不改口径）
+  - task:dividend_incremental
+  - task:futures_warehouse_receipt_backfill_czce
+  - task:futures_warehouse_receipt_backfill_shfe
+  - task:road_freight_index_full_refresh
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/data/catchup_guard.py:42
+  module_label_bilingual: 调度对账补跑器
+  exec_evidence: []
+  remediation_broken: true
+  remediation_break_zh: 晨间调度器重启风暴腰斩长批 + 锁留死 PID
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        catchup_guard: 0
+      special_branch_exists:
+        catchup_guard: true
+      calendar_guarded:
+        catchup_guard: false
+      in_catchup_universe:
+        catchup_guard: false
+      idle_slot: false
+- node_id: D13-02
+  name_zh: 数据断供哨兵（含托管质量变异巡检）
+  segment: A
+  node_type: stage
+  decision_question: 06:50 这一巡检出几条红？红有没有落成可操作产物？谁的手去修？
+  note_zh: 特殊槽分支 → supply_sentinel 三判据腿（业务新鲜度/行数地板/关键列填充率）+ 盲点出声 + 托管 quality_sentinel 变异巡检；配置条目数与覆盖表集合以机生层为准，本图不抄清单
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/supply_sentinel.py:11
+  - src/zephyr/data/scheduler.py:238
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-02
+  - docs/_working/map_build/fig13_daycycle/01_盘前就绪链.md
+  runtime_refs:
+  - data/failures/
+  - data/quality_sentinel/
+  data_refs:
+  - src/zephyr/data/config/data_supply_sentinel.yaml
+  - config/quality_sentinel_tables.yaml
+  store_refs: []
+  evidence:
+  - 只检测不修复写进其 INVARIANTS；检出条目共用同一 task_id 被 300 秒冷却折成 1 个 failures 文件（11 红只剩 1 痕）
+  - 总闸 data/runtime/quality_sentinel.disabled 实存扫=不存在（机生层 service_flags）
+  - 簿 01 §2：今晨 06:51 日志行 checked/breached/blind_spots 三计数在案，连续 6 日 ERROR 落盘文件
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - data_supply_sentinel
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日 06:50（全周含周末：周末断供周一才报=重演两月盲区）
+    observed: 每日 1 拍；托管变异巡检另有 7 天节奏闸（未跑属正常）
+  wiring_status: wired
+  downstream_action: alert_only
+  failure_visibility_zh: failures 案卷文件 + 哨兵日志行；同 task_id 冷却去重致多红折叠一痕
+  fallback: 修复腿让渡 D13-01（档期）与 D13-35（行数）
+  miss_policy: alert
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs:
+  - benchmark:C1-alert 腿与 rerun 腿分工真源至今是散文注释（三路兜底边已在本图落地）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/supply_sentinel.py:11
+  module_label_bilingual: 数据断供哨兵 / data supply sentinel
+  exec_evidence: []
+  alert_folding: true
+  alert_folding_zh: 按 task_id 冷却去重致多红折叠成一痕
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        data_supply_sentinel: 0
+      special_branch_exists:
+        data_supply_sentinel: true
+      calendar_guarded:
+        data_supply_sentinel: false
+      in_catchup_universe:
+        data_supply_sentinel: false
+      idle_slot: false
+- node_id: D13-03
+  name_zh: 交易日历逐日覆盖 diff
+  segment: A
+  node_type: stage
+  decision_question: 07:10 的逐日 diff 有没有检出缺日？检出之后动了谁的手？
+  note_zh: 特殊槽分支 → 日历覆盖检查器：对在册表族逐日 diff，治"补 max(date) 原理性失明"；监控表名单以机生层 scanned 配置为准
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/calendar_coverage_checker.py:101
+  - src/zephyr/data/scheduler.py:255
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-03
+  - docs/_working/map_build/fig13_daycycle/01_盘前就绪链.md
+  runtime_refs:
+  - tmp/scheduler_run.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 01 §3：今晨 07:10 完成行 checked/breached 在日志（滞后 0）
+  - 违规仅出 WARN 日志行：alerter 对 WARN 不落盘、特殊槽分支只回 bool 并丢弃报告 dict→ 既无人看也无人修（"嘴都没有对准人"）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - calendar_coverage_check
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日 07:10（全周）
+    observed: 每日 1 拍
+  wiring_status: wired
+  downstream_action: detect_only
+  failure_visibility_zh: 仅 WARN 日志行（不落盘、报告 dict 被特殊槽分支丢弃）=检出即蒸发
+  fallback: 无（检出即蒸发）
+  miss_policy: alert
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs:
+  - benchmark:C1-detect_only 无落盘面（检出即蒸发，表A-A7 同族）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/calendar_coverage_checker.py:101
+  module_label_bilingual: 交易日历逐日覆盖检查器 / Calendar Coverage Checker
+  exec_evidence: []
+  detection_evaporates: true
+  detection_evaporates_zh: WARN 不落盘 + 报告 dict 被特殊槽分支丢弃
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        calendar_coverage_check: 0
+      special_branch_exists:
+        calendar_coverage_check: true
+      calendar_guarded:
+        calendar_coverage_check: false
+      in_catchup_universe:
+        calendar_coverage_check: false
+      idle_slot: false
+- node_id: D13-04
+  name_zh: 夜间情绪窗结算（窗口 [T-1 18:00, T 08:00)）
+  segment: A
+  node_type: stage
+  decision_question: 08:20 结算的窗闭合了吗？窗内有没有产物行落到情绪窗口表？
+  note_zh: 特殊槽分支 → 夜间情绪窗结算；总闸实存面见机生层 service_flags（存在=停用）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/scheduler.py:272
+  - src/zephyr/data/config/schedule.yaml
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-04
+  - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-04 行：c1_market.news_sentiment_window max(window_ts) 与全表行数读数在案（§7 C 组）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schedule
+  slot_refs:
+  - nightly_sentiment
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日 08:20（全周）；窗口右端=T 日 08:00 → 段归属盘前成立，采集腿落夜窗（两腿跨段）
+    observed: 每日 1 拍
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（窗不闭合则该拍产物缺）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"T-1 18:00 至 T 08:00 新闻窗已闭合"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L0-04
+  - TDM-E-L1-S3
+  - TDM-E-L2-09
+  - TDM-E-L9-A09
+  - TDM-P-P1-03
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py:272
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence:
+  - '复跑: grep -n ''nightly_sentiment'' src/zephyr/data/scheduler.py → 特殊槽分支在位（逐日产出行）'
+  - 复跑（骨架 §7 C 组，DatabaseService CH 只读）：情绪窗口表 max(window_ts) 与全表行数读数
+  spans_segments:
+  - A
+  - D
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        nightly_sentiment: 0
+      special_branch_exists:
+        nightly_sentiment: true
+      calendar_guarded:
+        nightly_sentiment: false
+      in_catchup_universe:
+        nightly_sentiment: false
+      idle_slot: false
+- node_id: D13-05
+  name_zh: 币圈日线（UTC 日界→北京晨间时点）
+  segment: A
+  node_type: stage
+  decision_question: 08:41 的币圈日线跑了吗？水位是自动推进还是全靠手动？
+  note_zh: 常规 DAG 槽（有任务挂载，挂载数见机生层）；执行器池历史幽灵池事故留痕见 schedule.yaml 注
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:75
+  - src/zephyr/data/config/schedule.yaml:77
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-05
+  - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-05 行：该任务上线后从未自动跑成、水位全靠手动（槽注释自证）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - daily_crypto
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日 08:41（全周）
+    observed: 每日 1 拍
+  wiring_status: unwired_slot_hollow
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（该槽不在补跑宇宙内，错过无人补）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs:
+  - 'miss:slot:daily_crypto 全体有效任务在补跑宇宙外（错过无人补，逐任务标识见本条对侧的 task: 台账项；物理表名不在本图真源面内，故不写表名只写任务标识）'
+  - task:crypto_kline_daily_incremental
+  - task:crypto_shadow_gate_daily
+  - task:hl_funding_history_incremental
+  - task:hl_liquidation_capture
+  - task:hl_oi_snapshot_daily_refresh
+  - task:hl_perp_snapshot_daily_refresh
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        daily_crypto: 6
+      special_branch_exists:
+        daily_crypto: false
+      calendar_guarded:
+        daily_crypto: false
+      in_catchup_universe:
+        daily_crypto: false
+      idle_slot: false
+- node_id: D13-06
+  name_zh: L0.5 盘前元数据（universe 与撮合约束前提）
+  segment: A
+  node_type: stage
+  decision_question: 08:34 五子源都到位了吗？有没有"任务 SUCCESS 而水位不动"的子源？
+  note_zh: 常规 DAG 槽（有效挂载数见机生层）；五子源逐个读数归簿 02，本图只作盘前就绪腿
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:24
+  - src/zephyr/data/scheduler.py:475
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-06
+  - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
+  runtime_refs: []
+  data_refs:
+  - docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+  store_refs: []
+  evidence:
+  - 同一子源不在断供哨兵与日历覆盖检查的任何名单内（簿 01 O-4 / 簿 02 旁向）→ 双层哨兵共同盲区
+  - 簿 02 §D13-06：四子源有行、停复牌子源 0 行且水位停在纪元起点 → 子源断链，整槽不得判绿
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - pre_market
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日晨间 08:34（APScheduler 0-4 口径）
+    observed: 交易日每日 1 拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01 档期对账（pre_market 在其 intraday 桶）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  subsource_hollow: true
+  subsource_hollow_zh: 名义在产、一子源零行且不在任何哨兵名单
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        pre_market: 9
+      special_branch_exists:
+        pre_market: false
+      calendar_guarded:
+        pre_market: false
+      in_catchup_universe:
+        pre_market: true
+      idle_slot: false
+- node_id: D13-07
+  name_zh: QMT 终端看门狗
+  segment: A
+  node_type: stage
+  decision_question: 08:45 与 12:55 两拍 QMT 进程在不在？不在时谁来登录？
+  note_zh: 独立 ps1 脚本判进程存活并写留痕；不覆盖自动登录（🌑-1）
+  module_id: MOD-SCRIPT-run_post_settlement
+  source_anchors:
+  - scripts/qmt_watchdog.ps1:28
+  - scripts/qmt_watchdog.ps1:11
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-07
+  - docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
+  runtime_refs:
+  - data/runtime/qmt_watchdog.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-07 行：留痕末六行=连续三交易日两拍均 OK 且带 pid（§2 表内实查）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_QMTWatchdog
+  entity_refs:
+  - ops_qmt_watchdog
+  cadence_zh:
+    declared: 交易日 08:45 与 12:55 两拍（Windows 计划任务；资源册 window_expr 未抽到该双时点=跨机制漏拍）
+    observed: 交易日每日 2 拍
+  wiring_status: wired
+  downstream_action: alert_only
+  failure_visibility_zh: ''
+  fallback: 无人接：登录只能人做（🌑 点名项，图不编造出处）
+  miss_policy: alert
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/qmt_watchdog.ps1:28
+  module_label_bilingual: scripts/qmt_watchdog.ps1
+  exec_evidence:
+  - '复跑: grep -n ''New-ScheduledTaskTrigger'' scripts/qmt_watchdog.ps1 → 两拍时点在注册声明面'
+  - '复跑（主区只读）: tail -6 data/runtime/qmt_watchdog.log → 连续交易日两拍 OK 且带 pid'
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_QMTWatchdog: true
+      declared_in_register_scripts:
+        ZephyrAlpha_QMTWatchdog: true
+- node_id: D13-08
+  name_zh: 十源健康探针（归档 57 号 C3 腿）
+  segment: A
+  node_type: stage
+  decision_question: 今日十源健康日志有没有产出？谁消费它？
+  note_zh: 独立探针模块产日志，被调度器消费；不在 schedule.yaml 与计划任务任何名单内
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/source_health_check.py
+  - src/zephyr/data/scheduler.py:1696
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-08
+  - docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
+  runtime_refs:
+  - logs/
+  data_refs: []
+  store_refs: []
+  evidence:
+  - B4 案例批当场逼出（排班真源里不存在该腿）
+  - 骨架 §2 D13-08 行：logs/source_health_YYYYMMDD.log 连续每日；执行体被调度器两处消费
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日一份日志（触发者未在排班真源定位：槽内不存在，只有日志面能发现）
+    observed: 每日 1 份日志（触发者待定位）
+  wiring_status: partial
+  downstream_action: detect_only
+  failure_visibility_zh: ''
+  fallback: 无（触发者待定位，属图照出来的洞）
+  miss_policy: alert
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs: []
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/data/source_health_check.py
+  module_label_bilingual: 数据源健康检查
+  exec_evidence:
+  - '复跑: grep -n source_health src/zephyr/data/scheduler.py → 消费点在调度器启动挂接'
+  - '复跑（主区只读）: ls -1 logs/source_health_*.log → 逐日一份在盘（簿 03 纠正「连续每日」口径：非交易日与未重启日可缺档，故本环 exec 半边为日志面而非排班面）'
+  trigger_owner_unlocated: true
+- node_id: D13-09
+  name_zh: 开盘前就绪门（09:15 前 C1+C2+C3 合成→当日准入裁定）★一等门节点
+  segment: A
+  node_type: stage
+  decision_question: 09:15 前三个判据合成了吗？判不过当日算 SKIP 还是算照常跑？谁有权让下游拒绝准入？
+  note_zh: 三判据（C1 QMT 进程在否 / C2 关键任务今日水位 / C3 探针 miniqmt connect_ok）合成→当日 SKIP 判定；合成器**零在位**（全仓检索无就绪门执行体，TDM 亦无该节点），故本格
+    ready_gate 的三源判据定义由本图钉死、实现交施工波：C1=watchdog 留痕末行日期==今日 ∧ C2=关键任务水位比对==今日（**禁沿用「最近运行 SUCCESS」字面口径**，已被 SUCCESS
+    而水位未动型假绿证伪） ∧ C3=source_health 当日在且 miniqmt 绿。三判据现行执行者逐个点名（簿 03 §2 死结论）：C1=watchdog(查 XtItClient) 与 paper-session
+    拉起前查(查 XtMiniQmt) 双替身且进程名分裂、C2=纯人读 CLI 且口径已失真、C3=探针自动跑而结果不进任何裁定。「开不开市（日历腿 D13-43）」与「开不开得起（本门）」两问分居两格且后者无主（簿
+    03 O-16）：ready_gate 与 calendar_gated 双字段禁合并
+  module_id: null
+  source_anchors:
+  - docs/_archive/57_daily_cycle_sop.md
+  - scripts/qmt_watchdog.ps1:43
+  - scripts/start_paper_session_daily.ps1:61
+  - src/zephyr/data/scheduler.py:1701
+  doc_refs:
+  - docs/_archive/57_daily_cycle_sop.md
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-09
+  - docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
+  - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - C1 失败的唯一真实强制点在 D13-12 拉起前查（日志反证两日 SKIP(QMT 未开)），只管模拟盘一条命
+  - C2 字面口径已被证伪：盘前元数据一子源状态 SUCCESS 而水位未动（簿 02 §3 实测 11,106=2×5,553 行、无当日行）⇒ 照 57 号原文核 C2 会在红色天上判绿
+  - C3 探针红时没有任何件据此把当日标 SKIP（scheduler 任务级源跳闸≠开盘准入裁定）
+  - '复跑: grep -rn 就绪门 src 与 grep -rn readiness src 均零业务命中；grep -c D13 config/trading_decision_map.yaml=0（TDM 无该裁定节点，骨架
+    §0.1-3 实证 activation 只有窗没有点）'
+  - 骨架 §2 D13-09 状态列 + 簿 03 §2 死结论「门该在、无主」（三判据执行者逐腿点名，合成器零）
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 09:15 前（人工窗，无时点真源：排班三表与计划任务面均无该时刻）
+    observed: 0 拍（无合成器；三判据各自半自动且互不交集）
+  wiring_status: unwired_no_caller
+  downstream_action: none
+  failure_visibility_zh: 无落盘面——合成器不存在即无裁定产物，「接不住当日算什么」今天的答案是默认全绿（本图最大空洞，也是本格作为一等节点要钉住的唯一事实）
+  fallback: none:无合成器⇒接不住当日算什么状态=默认全绿（本图最大空洞的显性化）
+  miss_policy: none
+  invalidation: null
+  ready_gate: true
+  no_ready_gate_reason_zh: ''
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A1-拒准入出边清单见顶层 admission_edges（本门唯一带拒准入语义的出边集）
+  - benchmark:C2-就绪门语义强度（是否允许持续重检/挂几次）留总包复裁——本图按骨架现文只立「当日一次判定」的门，未擅自加 re_check；D13-07 的 12:55 第二拍是否升为门内复检即此分歧的具体落点，故本图未给
+    D13-07 加拒准入出边
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: null
+  exec_evidence: []
+  archived_ssot_only: true
+  archived_ssot_only_zh: 唯一真源已归档且无接替件（57 号承诺并入 55 号监控体系未兑现）
+  admission_denied_zh: 未过门=下游拒绝准入（本图唯一拒准入语义边，逐条列顶层 admission_edges；现行实况=08:45/09:25/09:30 各自到点自跑、无准入边）
+- node_id: D13-10
+  name_zh: 板块状态盘前复制（close_final→pre_open + 偏好重映射）
+  segment: A
+  node_type: stage
+  decision_question: 09:15 的盘前复制产了吗？产物停在 T 日还是 T-1 日？
+  note_zh: 特殊槽分支（sector 双槽合一）→ 板块状态管线；服务总闸实存见机生层
+  module_id: MOD-SIG-026
+  source_anchors:
+  - src/zephyr/data/sector_state_pipeline.py:164
+  - src/zephyr/data/scheduler.py:439
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-10
+  - docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-10 行：pre_open 态 max(trade_date) 滞后 1 交易日（当日未产）；该槽为新增后未热载（同文件在册先例：调度器重启后生效）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - sector_pre_open
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 09:15（与 D13-11 同分钟）
+    observed: 交易日每日 1 拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（缺则该日无盘前板块态）
+  miss_policy: absorb
+  invalidation: T 日 09:15 前读数必然停在上期（当日尚未产），判「滞后」须在该拍之后复跑
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-25 前一交易日 close_final 已定格"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L9-V3
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/sector_state_pipeline.py:164
+  module_label_bilingual: 板块状态落库编排器
+  exec_evidence: []
+  lag_trading_days: 1
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        sector_pre_open: 0
+      special_branch_exists:
+        sector_pre_open: true
+      calendar_guarded:
+        sector_pre_open: false
+      in_catchup_universe:
+        sector_pre_open: false
+      idle_slot: false
+- node_id: D13-11
+  name_zh: 集合竞价高频五档采集
+  segment: A
+  node_type: stage
+  decision_question: 竞价窗内每拍都采到了吗？窗内快照数够吗？
+  note_zh: 六字段（含秒）间隔槽 + 日历守卫在册 9 槽之一；行数读数归图 12
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:183
+  - src/zephyr/data/config/schedule.yaml:186
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-11
+  - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-11 行：当日竞价快照与档位表行数量级读数在案（§7 C 组）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schedule
+  slot_refs:
+  - auction_highfreq
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 09:15–09:25 每 10 秒（含秒槽；coalesce 理由见槽注释）
+    observed: 窗内每 10 秒
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（窗过不补）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"竞价窗开启（交易所时钟）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L3-11-1
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence:
+  - '复跑: grep -n ''auction_highfreq'' src/zephyr/data/config/schedule.yaml → 含秒槽在册、且在日历守卫 9 槽名单内（src/zephyr/data/trading_calendar.py:151）'
+  - '复跑（骨架 §7 C 组）: 竞价快照表与档位表 max(trade_date)=当日 + 行数量级'
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        auction_highfreq: 2
+      special_branch_exists:
+        auction_highfreq: false
+      calendar_guarded:
+        auction_highfreq: true
+      in_catchup_universe:
+        auction_highfreq: true
+      idle_slot: false
+- node_id: D13-12
+  name_zh: 模拟盘会话拉起 + 交易日历闸
+  segment: A
+  node_type: stage
+  decision_question: 09:25 会话拉起来了吗？非交易日与 QMT 未开各算哪种 SKIP？
+  note_zh: 计划任务拉起包装脚本 → 常驻适配器；日历闸在包装层而非槽层
+  module_id: MOD-L06-001
+  source_anchors:
+  - scripts/register_paper_session_task.ps1:67
+  - scripts/start_paper_session_daily.ps1
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-12
+  - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
+  runtime_refs:
+  - .runtime/logs/paper_session.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-12 行：当日 09:25:03 起 + 非交易日 SKIP(is_trading_day=False) + QMT 未开 SKIP 三态留痕各一条在案
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_PaperSession
+  entity_refs:
+  - sch_paper_session
+  cadence_zh:
+    declared: 交易日 09:25（Daily 触发，非 AtLogOn；包装层自带 is_trading_day 闸）
+    observed: 交易日每日 1 次拉起
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-42 三路守护的心跳腿（陈旧则 schtasks 重跑）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-07 判 QMT 进程在 + 今日为交易日"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/register_paper_session_task.ps1:67
+  module_label_bilingual: scripts/register_paper_session_task.ps1
+  exec_evidence:
+  - '复跑: grep -n ''09:25\|Daily'' scripts/register_paper_session_task.ps1 → 触发器声明面在册'
+  - '复跑（主区只读）: grep -n ''START\|SKIP'' .runtime/logs/paper_session.log → 交易日 09:25 起、非交易日 SKIP(is_trading_day=False)、QMT
+    未开 SKIP 三态留痕各在案'
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_PaperSession: true
+      declared_in_register_scripts:
+        ZephyrAlpha_PaperSession: true
+- node_id: D13-13
+  name_zh: 竞价后档位一次性聚合（情绪指数竞价档）
+  segment: B
+  node_type: stage
+  decision_question: 09:30 这一拍真跑了吗？还是槽位挂着、APScheduler 记 success 而什么都没执行？
+  note_zh: 机生判据：该槽有效挂载数与特殊槽分支存在性共同决定真伪——两者皆零=假通道槽，落到调度器"无任务"分支后静默返回空并被记为成功，日志轮转再自毁证据
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/scheduler.py:2256
+  - src/zephyr/data/config/schedule.yaml:34
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-13
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 04 §0.1 A 类：本槽与 eod_reconciliation 是全仓仅有的"零任务∧零分支"两槽=恒假成功
+  - 簿 04 §1：注册证据与进程加载证据齐全，但 HEAD 无挂载任务且无特殊槽分支；09:30 那次实跑是死在导入异常上的在途 WIP，随后当日蒸发窗被灭未落 HEAD
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - post_auction
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 09:30（槽每日 firing）
+    observed: 名义每日 1 拍；实为 0 拍
+  wiring_status: unwired_slot_hollow
+  downstream_action: none
+  failure_visibility_zh: APScheduler 记 executed successfully（假通道槽的痕迹面就是它的反面）
+  fallback: 无（假通道槽：接不住也不会有人知道）
+  miss_policy: none
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-11 竞价窗已收官"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L1-AGG
+  gap_refs:
+  - slot:post_auction
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/data/scheduler.py:2256
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  expected_emits_per_trading_day: 1
+  mining_recheck_status: 🌑
+  availability: unreachable
+  idle_slot_expected: true
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        post_auction: 0
+      special_branch_exists:
+        post_auction: false
+      calendar_guarded:
+        post_auction: false
+      in_catchup_universe:
+        post_auction: false
+      idle_slot: true
+- node_id: D13-14
+  name_zh: 盘中实时层（Tick/L2/Greeks/IV/期货/涨跌停/港股K）
+  segment: B
+  node_type: stage
+  decision_question: 盘中每 5 分钟这一拍有没有真产出？各腿分别在产吗？
+  note_zh: 实时执行器池 DAG 槽（有效挂载数见机生层，内部结构归图 12）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:39
+  - src/zephyr/data/trading_calendar.py:151
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-14
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 04 环节段：多腿实测零产（在册定性），本图取"层在产但腿不齐"的时序事实
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - intraday_realtime
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 盘中每 5 分钟（交易时段窗 + 日历守卫在册）
+    observed: 盘中每 5 分钟
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01（intraday 桶在补跑宇宙内）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"QMT/行情通道可用"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L9-A02
+  gap_refs:
+  - benchmark:A2-freshness_severity 两级未接线
+  - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  freshness_severity_zh: 一档实测：本层多腿零产仅进当日执行台账，无 warn/fail 分级（外部对标 A2 缺位）
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        intraday_realtime: 15
+      special_branch_exists:
+        intraday_realtime: false
+      calendar_guarded:
+        intraday_realtime: true
+      in_catchup_universe:
+        intraday_realtime: true
+      idle_slot: false
+- node_id: D13-15
+  name_zh: 盘中分钟K线滚动层
+  segment: B
+  node_type: stage
+  decision_question: 分钟K滚动有没有落到当日？60 分钟K唤醒词腿是否由它喂？
+  note_zh: 独立执行器池 DAG 槽；其产出的 60 分钟K是 dloop 盘中族唤醒词来源
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:45
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:68
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-15
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-15 行：实测挂载任务数量级在案；簿 04 复判补第三证后升为在产
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - intraday_minute
+  schtasks_refs: []
+  entity_refs:
+  - data_slot_intraday_minute
+  cadence_zh:
+    declared: 盘中每 5 分钟（交易时段窗 + 日历守卫在册）
+    observed: 盘中每 5 分钟
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01（intraday 桶）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs:
+  - TDM-E-L9-A01
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        intraday_minute: 16
+      special_branch_exists:
+        intraday_minute: false
+      calendar_guarded:
+        intraday_minute: true
+      in_catchup_universe:
+        intraday_minute: true
+      idle_slot: false
+- node_id: D13-16
+  name_zh: 盘中板块分钟K线层（独立直连池）
+  segment: B
+  node_type: stage
+  decision_question: 板块分钟K独立池在产吗？断供几个交易日？
+  note_zh: 独立执行器池 DAG 槽（与 miniqmt 全市场慢任务隔离）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:50
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-16
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 04 环节段：该层实测断供 2 交易日（在册定性）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - intraday_sector
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 盘中每 5 分钟（独立执行器避开全市场慢任务）
+    observed: 盘中每 5 分钟
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（该槽不在补跑宇宙内）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs:
+  - TDM-E-L2-04
+  gap_refs:
+  - benchmark:A2-freshness_severity 两级未接线
+  - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  freshness_severity_zh: 一档实测：断供若干交易日而不在断供哨兵名单⇒无级可言（A2 缺位的极端形态）
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        intraday_sector: 5
+      special_branch_exists:
+        intraday_sector: false
+      calendar_guarded:
+        intraday_sector: false
+      in_catchup_universe:
+        intraday_sector: true
+      idle_slot: false
+- node_id: D13-17
+  name_zh: 事件驱动快新闻 + EDB 轮询
+  segment: B
+  node_type: stage
+  decision_question: 快新闻轮询在转吗？全局 3 分钟与盘后多跑的取舍是什么？
+  note_zh: DAG 槽；"一任务只属一槽"由调度器精确字符串匹配强制，故无法做盘中/盘后双节拍（结构约束）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:57
+  - src/zephyr/data/config/schedule.yaml:59
+  - src/zephyr/data/scheduler.py:491
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-17
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-17 行：提速理由是单轮耗时留余量（槽注释自证）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - event_driven
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 7×24 每 3 分钟
+    observed: 每 3 分钟
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01（always_on 桶）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs:
+  - TDM-E-L9-A09
+  gap_refs:
+  - benchmark:A2-下游情绪窗原料新鲜度分级未接线
+  - xref:ghost-table-c1_market.news_data（真身 c3_fundamental 同名表；改册面归图 12 簿 11 §1-D，本图只挂生产者腿不建其环节）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        event_driven: 10
+      special_branch_exists:
+        event_driven: false
+      calendar_guarded:
+        event_driven: false
+      in_catchup_universe:
+        event_driven: true
+      idle_slot: false
+- node_id: D13-18
+  name_zh: 慢新闻/研报独立队列（限流分池）
+  segment: B
+  node_type: stage
+  decision_question: 共享额度下的分池节拍成立吗？研报腿断供几个交易日？
+  note_zh: DAG 槽；单例限流额度共享致并行总时间与串行相同（分池理由见槽注释）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:66
+  - src/zephyr/data/config/schedule.yaml:68
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-18
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 04 环节段：研报腿实测断供 4 交易日；断供哨兵配置不含该表（配置面事实，簿 09）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - news_slow
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每日 17 分与 47 分（7×24）
+    observed: 每小时 2 拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（该槽不在补跑宇宙内）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs:
+  - TDM-E-L9-A09
+  gap_refs:
+  - benchmark:A2-freshness_severity 两级未接线
+  - benchmark:A4-expected_emits 应产断言未接线（本格先落应产数，缺产告警仍无主体）
+  - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  expected_emits_per_trading_day: 1
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        news_slow: 2
+      special_branch_exists:
+        news_slow: false
+      calendar_guarded:
+        news_slow: false
+      in_catchup_universe:
+        news_slow: true
+      idle_slot: false
+- node_id: D13-19
+  name_zh: 板块资金流日内五快照
+  segment: B
+  node_type: stage
+  decision_question: 日内五快照都落库了吗？段内快照数够下跌段差分吗？
+  note_zh: 独立 ps1 注册的计划任务（完全不在 APScheduler 视野内）；差分需段内至少 1 快照
+  module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
+  source_anchors:
+  - scripts/register_counter_trend_feeder_tasks.ps1:11
+  - scripts/register_counter_trend_feeder_tasks.ps1:80
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-19
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs:
+  - logs/fundflow_collect.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-19 行：留痕两拍各 90 个行业、落库各 90 行 + 表侧 max 为当日（三证齐）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_IntradayFundFlow
+  entity_refs:
+  - sch_intraday_fund_flow
+  cadence_zh:
+    declared: 交易日五拍（上午两拍、下午两拍、收盘后一拍；时点语义见 ps1 声明面）
+    observed: 交易日每日 5 拍
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（错过即缺拍，段内差分退化）
+  miss_policy: absorb
+  invalidation: 五拍未跑完前（15:05 前）快照数不足属正常，非断供
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs:
+  - TDM-E-L2-01-4
+  gap_refs: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/register_counter_trend_feeder_tasks.ps1:80
+  module_label_bilingual: scripts/register_counter_trend_feeder_tasks.ps1
+  exec_evidence:
+  - '复跑（主区只读）: tail -6 logs/fundflow_collect.log → 逐拍采集行业数与落库行数同为正'
+  - '复跑（骨架 §7 A-4）: grep -n ''New-ScheduledTaskTrigger'' scripts/register_counter_trend_feeder_tasks.ps1 → 五拍时点在声明面'
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_IntradayFundFlow: true
+      declared_in_register_scripts:
+        ZephyrAlpha_IntradayFundFlow: true
+- node_id: D13-20
+  name_zh: 竞价命中判定（日内唯一带墙钟窗闸的段）
+  segment: B
+  node_type: stage
+  decision_question: 窗闸在自动圈下开过吗？窗外 skipped 与窗内命中在这张图上能区分吗？
+  note_zh: dloop 段 + 墙钟窗闸；只被 16:45 圈或人工逃生口调用 → 自动圈下恒在窗外=结构性失效
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:73
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:294
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-20
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 07 §1.4 段 11：自动但恒不产出（结构性）——16:45 恒在窗外→永久 skipped
+  - 骨架 §2 D13-20 行已把该处标为实证设计缺口
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: dloop 段内；代码内墙钟窗闸限上午 10:00–10:30（非排班槽）
+    observed: 自动圈下 0 拍（恒 skipped）
+  wiring_status: unwired_slot_hollow
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（能力活在事件链，不在排班链）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-32 的 16:45 圈（或人工逃生口）+ 墙钟落窗"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A4-窗内应产 1 拍而实产 0（恒 skipped）
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - auction_hit
+  red_reason: unwired
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:294
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence: []
+  window_gate_dead_under_auto_loop: true
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - auction_hit
+      in_phase_stages:
+        auction_hit: true
+- node_id: D13-21
+  name_zh: 盘中 L1 市场状态跟踪
+  segment: B
+  node_type: stage
+  decision_question: 当日有没有产出行？每交易日几行？
+  note_zh: dloop 段：唤醒词过滤通过才跑；产物按上海日读数
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:211
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:68
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-21
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-21 行：按上海日实测当日内在产、近日逐日行数在案（三证齐）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 60 分钟K唤醒词驱动（dloop 盘中族）
+    observed: 唤醒词驱动（当日数拍）
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-32 的 16:45 圈兜底重放（幂等全命中则空转）
+  miss_policy: absorb
+  invalidation: asof_ts 为 UTC 存储——不按 Asia/Shanghai 日聚合会差 8 小时而误判（骨架 §7 复跑注意 2）
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"60 分钟K到位（D13-15）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L1-AGG
+  - TDM-P-P2
+  gap_refs: []
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - intraday_l1
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:211
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence:
+  - '复跑: grep -n ''_stage_intraday_l1'' src/zephyr/plan_engine/daily_loop_master_switch.py → 段在位'
+  - '复跑（骨架 §7 C 组，必按上海日聚合）: judgment_intraday_market_state 按 toDate(asof_ts,''Asia/Shanghai'') 计数 → 当日在产、近日逐日为正'
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - intraday_l1
+      in_phase_stages:
+        intraday_l1: true
+- node_id: D13-22
+  name_zh: 盘中情景归类
+  segment: B
+  node_type: stage
+  decision_question: 归类段被谁调用？调用方只有 dloop 吗？
+  note_zh: dloop 段 → 情景归类器；本段无独立排班
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:218
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-22
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-22 行：调用方实测仅 dloop 一处
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 同上唤醒词驱动（dloop 段内）
+    observed: 唤醒词驱动
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 同 D13-21
+  miss_policy: absorb
+  invalidation: 同 D13-21 的时区作废条件
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-21 产出为输入"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs: []
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - classify
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:218
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence: []
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - classify
+      in_phase_stages:
+        classify: true
+- node_id: D13-23
+  name_zh: 盘中情绪环单拍（有节拍席位、无节拍）
+  segment: B
+  node_type: stage
+  decision_question: 盘中有没有拍？每日几拍？拍落在什么时刻？
+  note_zh: dloop 段 → 盘中情绪环单拍：无业务日记号，每次调用即一拍；唯一调用方是 dloop
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:274
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:285
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-23
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 07 1.6 表段 10：自动圈下每交易日只 1 拍且落收盘后 16:45–16:50 窗；人工日另有盘中三拍
+  - 该段注释自陈"单拍就绪没节拍——本段=节拍席位"
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 段注释自陈的盘中连续节拍（本段=节拍席位）
+    observed: 每日恰 1 拍（收盘后）；盘中零拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（盘中零拍，无兜底器）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-32 的 16:45 圈"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A4-盘中应产 N 拍而实产 0（席位在、节拍无）
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - sentiment_loop
+  red_reason: unwired
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:274
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence: []
+  cadence_gap: true
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - sentiment_loop
+      in_phase_stages:
+        sentiment_loop: true
+- node_id: D13-24
+  name_zh: 模拟盘保活与成交回路
+  segment: B
+  node_type: stage
+  decision_question: 保活到收口了吗？退出码与成交落盘对不对？尾段成交归属谁裁？
+  note_zh: 常驻适配器：交易时段保活、收口撤未成交单；成交持久化在位态
+  module_id: MOD-L06-001
+  source_anchors:
+  - src/zephyr/ex_core/live_strategy_adapter.py
+  - scripts/register_paper_session_task.ps1:47
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-24
+  - docs/_working/map_build/fig13_daycycle/07_dloop十六段解剖.md
+  runtime_refs:
+  - .runtime/logs/paper_session.log
+  - data/fills/
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-24 行：保活至 15:05 收口、exit_code=0、slot started/slots_running=1 三证在案
+  - 🌑-5：尾段成交完整捕获口径无外部规范可依（图不编造）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_PaperSession
+  entity_refs:
+  - sch_paper_session
+  cadence_zh:
+    declared: 09:25 拉起后常驻至收盘后 15:05 收口
+    observed: 常驻
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-42 DeadmanSwitch 陈旧重跑
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-12 拉起成功"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - table:c1_market.execution_report（消费方在等未产表，环节面见 gap 节点 D13-G02）
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: src/zephyr/ex_core/live_strategy_adapter.py
+  module_label_bilingual: 模拟盘策略常驻服务适配器 / Live Strategy Adapter
+  exec_evidence:
+  - '复跑: grep -n ''CONSUMERS'' src/zephyr/ex_core/live_strategy_adapter.py → 归档件 GAP-2 接线已落的自证面（计划任务在册）'
+  - '复跑（主区只读）: grep -n ''保活至\|exit_code'' .runtime/logs/paper_session.log → 收口时刻与退出码留痕在案'
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_PaperSession: true
+      declared_in_register_scripts:
+        ZephyrAlpha_PaperSession: true
+- node_id: D13-25
+  name_zh: 板块状态盘后定格（真源态）
+  segment: C
+  node_type: stage
+  decision_question: 15:10 定格的态是 T 日还是 T-1 日？
+  note_zh: 特殊槽分支（sector 双槽合一）→ 板块状态管线盘后腿；服务总闸实存见机生层
+  module_id: MOD-SIG-026
+  source_anchors:
+  - src/zephyr/data/sector_state_pipeline.py:164
+  - src/zephyr/data/scheduler.py:439
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-25
+  - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 06 §D13-25：15:10 时今日日线未入库 ⇒ 定格恒 T-1（改判"恒 T-1"而非"偶发滞后"）
+  - 骨架 §2 D13-25 行：close_final 态窗内行数只覆盖 2 个交易日、缺 1 日
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - sector_close_final
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 15:10（与 D13-26 同分钟）
+    observed: 交易日每日 1 拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（缺则 D13-10 次日无源）
+  miss_policy: absorb
+  invalidation: 15:10 定格时当日日线尚未入库（16:30 才产）⇒「恒 T-1」是结构结论，若在 16:30 后复跑该腿则本断言作废
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"当日日线已入库（16:30 才产）→ 实测系统性定格 T-1"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L9-V3
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/sector_state_pipeline.py:164
+  module_label_bilingual: 板块状态落库编排器
+  exec_evidence: []
+  locks_t_minus_1: true
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        sector_close_final: 0
+      special_branch_exists:
+        sector_close_final: true
+      calendar_guarded:
+        sector_close_final: false
+      in_catchup_universe:
+        sector_close_final: false
+      idle_slot: false
+- node_id: D13-26
+  name_zh: 指数分钟K日终补拉（峰谷下跌段探测器供料）
+  segment: C
+  node_type: stage
+  decision_question: 15:10 拉到根数了吗？主源失败降级有没有留痕？
+  note_zh: 独立 ps1 注册计划任务 → 分钟K补拉落行情表
+  module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
+  source_anchors:
+  - scripts/register_counter_trend_feeder_tasks.ps1:14
+  - scripts/register_counter_trend_feeder_tasks.ps1:86
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-26
+  - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+  runtime_refs:
+  - logs/index_minute_eod.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-26 行：末次拉取根数与源标注留痕在案，上一行为源失败降级记录
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_IndexMinuteEOD
+  entity_refs:
+  - sch_index_minute_eod
+  cadence_zh:
+    declared: 交易日 15:10（计划任务；主源失败另有降级源腿）
+    observed: 交易日每日 1 拍
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（缺则下跌段探测器无料）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"收盘（交易所时钟）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/register_counter_trend_feeder_tasks.ps1:86
+  module_label_bilingual: scripts/register_counter_trend_feeder_tasks.ps1
+  exec_evidence:
+  - '复跑: grep -n ''IndexMinuteEOD'' scripts/register_counter_trend_feeder_tasks.ps1 → tn 声明面'
+  - '复跑（主区只读）: tail -4 logs/index_minute_eod.log → 末次拉取根数与源标注在案，上一行为源失败降级记录（降级腿亦有留痕=真在跑的第二证）'
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_IndexMinuteEOD: true
+      declared_in_register_scripts:
+        ZephyrAlpha_IndexMinuteEOD: true
+- node_id: D13-27
+  name_zh: 盘中持仓对账事件入口（与 D13-29 分工）
+  segment: C
+  node_type: stage
+  decision_question: 对账到底由事件触发还是定时器触发？事件入口腿今天醒过吗？
+  note_zh: 持仓对账器两条腿：事件入口腿（零调用方）+ 定周期腿（真跑）；与 D13-29 三账是两条链不合并
+  module_id: MOD-EX-056
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:204
+  - src/zephyr/ex_core/position_reconciler.py
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-27
+  - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 06 硬实查⑤：两条链拆开——事件入口腿零调用、定周期腿真跑；排班注释的两句自辩与实态方向相反
+  - 骨架 §2 D13-27 行：注释自证"本槽位是定时事实核对，非自愈 reconciler 环路"
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: event
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 无槽：position 事件驱动（真跑的另一腿是进程内定时器，非注释自证的事件入口）
+    observed: 定周期腿每若干分钟；事件入口腿 0 次
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"成交回报事件面（实测行数极低）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L4-13
+  - TDM-P-P1-01
+  gap_refs:
+  - benchmark:A7-no_drift_evidence 缺位（matched 零留痕）
+  - table:c1_market.execution_report（消费方在等未产表，环节面见 gap 节点 D13-G02）
+  mechanism: C_inprocess_stage
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/ex_core/position_reconciler.py
+  module_label_bilingual: 盘中持仓对账器 / Position Reconciler
+  exec_evidence: []
+  no_drift_evidence: false
+  entry_leg_unwired: true
+- node_id: D13-28
+  name_zh: 盘后结算管线（T+1 结算单就绪硬时点）
+  segment: C
+  node_type: stage
+  decision_question: 15:30 结算单就绪了吗？QMT 离线时是降级还是伪造券商比对？
+  note_zh: 计划任务 → 结算管线（系统侧核对 + 日终审计）；柜台侧真实结算单为 🌑-3（模拟账户无经纪商文件）
+  module_id: MOD-TRADING-003
+  source_anchors:
+  - scripts/register_post_settlement_task.ps1:42
+  - scripts/register_post_settlement_task.ps1:26
+  - src/zephyr/trading/post_settlement_pipeline.py:43
+  - scripts/run_post_settlement.py
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-28
+  - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+  runtime_refs:
+  - data/runtime/post_settlement_last_run.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 06：OK-over-zero 形态登记（空快照最小输入下的 OK 须标注，不得升格为三账证据）
+  - 骨架 §2 D13-28 行：当日 trade_date/audit_status=OK/errors 空/exit_code=0 留痕在案
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_PostSettlement
+  entity_refs:
+  - sch_post_settlement
+  cadence_zh:
+    declared: 交易日 15:30（计划任务，含补火设置；同一硬时点在代码常量另有一处真源=INV-1 撞车面）
+    observed: 交易日每日 1 拍
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: QMT 离线→显式降级为仅系统侧核对（不伪造）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"收盘后券商侧回报可得（推定，外部真源=🌑-4）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A5-ready_basis=assumed（推定与确认已在字段上分离；外部真源=🌑-4）
+  - benchmark:C5-同硬时点两处真源（ps1 触发器与代码常量）待总包定唯一位
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: src/zephyr/trading/post_settlement_pipeline.py:43
+  module_label_bilingual: '"盘后结算对账每日 15'
+  exec_evidence:
+  - '复跑: grep -n ''StartWhenAvailable\|15:30'' scripts/register_post_settlement_task.ps1 → 硬时点与补火设置在声明面（同值另有一处代码常量=INV-1
+    撞车面，见 node note）'
+  - '复跑（主区只读）: tail -20 data/runtime/post_settlement_last_run.log → 当日 trade_date、audit_status=OK、errors 空、exit_code=0
+    四件同 in'
+  ready_basis: assumed
+  clock_dual_source_zh: 15:30 同时存在于 ps1 触发器与代码常量两处真源（簿 06 O 向）
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_PostSettlement: true
+      declared_in_register_scripts:
+        ZephyrAlpha_PostSettlement: true
+- node_id: D13-29
+  name_zh: 日终三账核对（柜台/内部/持仓 L1+L2+L3）
+  segment: C
+  node_type: stage
+  decision_question: 15:40 这一拍真跑了三账吗？还是假通道槽又记了一次 success？
+  note_zh: 机生判据同 D13-13（零有效任务∧零特殊槽分支=假通道槽）；三件三账实现全零调用方
+  module_id: MOD-TRADING-007
+  source_anchors:
+  - src/zephyr/trading/recon_runner.py:392
+  - src/zephyr/data/config/schedule.yaml:202
+  - src/zephyr/data/scheduler.py:2256
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-29
+  - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+  runtime_refs: []
+  data_refs:
+  - docs/03_modules/_domain_trading/
+  store_refs: []
+  evidence:
+  - 假绿源划清：门禁/自愈环留痕表有约 8.8 万行且当日在写，列语义全是提交侧（gate_id/commit_message），与资金/持仓/柜台三账零关系——按"有留痕=在跑"判绿即中招
+  - 簿 06 §D13-29 三证互不依赖：15:40:03 现场捕获"无任务→APScheduler success"；两件三账实现（MOD-TRADING-013/MOD-L06-003）全仓零调用方；差异表全表 0
+    行
+  - 该模块头仍自陈"本模块不挂调度"，与已挂 15:40 槽冲突=文档滞后
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - eod_reconciliation
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 15:40（槽每日 firing）
+    observed: 名义每日 1 拍；实为 0 拍
+  wiring_status: unwired_slot_hollow
+  downstream_action: none
+  failure_visibility_zh: 名义落差异表；实测零行⇒痕迹去向=无（另有同名门禁留痕表强阳性而语义不相干）
+  fallback: 无（假通道槽）
+  miss_policy: none
+  invalidation: 15:40 前该表恒空属预期，非断供证据（须 15:40 后复跑）
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-28 结算单就绪（等待边）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L4-13
+  gap_refs:
+  - benchmark:A2-freshness_severity 与本环无关但同级缺位
+  - benchmark:A5-ready_basis=assumed
+  - benchmark:A7-no_drift_evidence 缺位
+  - slot:eod_reconciliation
+  - table:c1_market.reconciliation_differences（环节面见 gap 节点 D13-G03）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/trading/recon_runner.py:392
+  module_label_bilingual: 回测模拟盘对账编排器 / Recon Runner
+  exec_evidence: []
+  expected_emits_per_trading_day: 1
+  ready_basis: assumed
+  no_drift_evidence: false
+  mining_recheck_status: 🌑
+  availability: unreachable
+  idle_slot_expected: true
+  false_green_source_zh: reconcile_execution_log 行数强阳性与本环节无关
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        eod_reconciliation: 0
+      special_branch_exists:
+        eod_reconciliation: false
+      calendar_guarded:
+        eod_reconciliation: false
+      in_catchup_universe:
+        eod_reconciliation: false
+      idle_slot: true
+- node_id: D13-30
+  name_zh: 盘后日K线层（当日主行情落库=下游全链就绪门）
+  segment: C
+  node_type: stage
+  decision_question: 16:30 批次收口了吗？标的数看门铃响了吗？本图全链就绪门成立否？
+  note_zh: DAG 槽（有效挂载数见机生层）+ 批后标的数看门铃；内部结构归图 12
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:79
+  - src/zephyr/data/scheduler.py:2265
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-30
+  - docs/_working/map_build/fig13_daycycle/08_盘后批次与当日回测.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 08 X-11：16:30 heavy 批未收口时 17:00 补下载把"仍在跑"误判为"缺"，同一任务两实例并发写同一表、flush 行序交错
+  - 骨架 §2 D13-30 行：日K线索表 max 为前一交易日（当日未到点属正常）+ 实测挂载任务数量级在案
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schedule
+  slot_refs:
+  - daily_kline
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 16:30（heavy 池串行）
+    observed: 交易日每日 1 批
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01 档期对账 + D13-35 行数视角补下载
+  miss_policy: rerun
+  invalidation: 16:30 批次收口前 max(trade_date)=T-1 属正常，不作断供判据（骨架 §7 复跑注意 1）
+  ready_gate: true
+  no_ready_gate_reason_zh: ''
+  tdm_refs:
+  - TDM-E-L3-12-3
+  gap_refs:
+  - benchmark:A1-就绪门语义的第二宿主（本格名即「下游全链就绪门」，与 D13-09 开盘前门一字之差两轴，防混淆点已实证钉死于 D13-09 注记）
+  - benchmark:C2-收盘就绪门与开盘就绪门同字不同轴（防后来者把两门合并成一格）
+  - task:cohort_ledger_daily
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py:2265
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence:
+  - '复跑: grep -n ''daily_kline'' src/zephyr/data/config/schedule.yaml src/zephyr/data/scheduler.py → 槽与批后标的数看门铃均在位'
+  - '复跑（骨架 §7 C 组）: kline_daily / kline_index max(trade_date) 读数（16:30 前显示 T-1 属正常，作废条件见本节点 invalidation）'
+  readiness_gate_for:
+  - D13-32
+  - D13-33
+  - D13-35
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        daily_kline: 30
+      special_branch_exists:
+        daily_kline: false
+      calendar_guarded:
+        daily_kline: true
+      in_catchup_universe:
+        daily_kline: true
+      idle_slot: false
+- node_id: D13-31
+  name_zh: 当日回测跑批（对账 L1 基准腿）
+  segment: C
+  node_type: stage
+  decision_question: 当日回测今天有人排班吗？没有的话 L1 基准腿从哪来？
+  note_zh: 唯一真源=已归档日循环 SOP 的库级调用与显式落盘约定；产物落回测工件目录
+  module_id: null
+  source_anchors:
+  - docs/_archive/57_daily_cycle_sop.md
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-31
+  - docs/_working/map_build/fig13_daycycle/08_盘后批次与当日回测.md
+  runtime_refs: []
+  data_refs:
+  - docs/_archive/57_daily_cycle_sop.md
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-31 行：在位排班零；归档件记 GAP-5 转候选件（编号以归档件为准，本图不复制正文）
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 16:30 之后，无槽（在位排班=零）
+    observed: 无
+  wiring_status: unwired_no_caller
+  downstream_action: none
+  failure_visibility_zh: 无落盘面——无排班即无缺席告警主体（归档件的产物目录约定是唯一留痕），对账 L1 基准腿因此缺料
+  fallback: 无（无排班=无缺席告警）
+  miss_policy: none
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-30 日K线已落库"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A4-应产 1 次日回测而排班侧恒 0（无缺席告警主体）
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: null
+  exec_evidence: []
+  expected_emits_per_trading_day: 1
+  archived_ssot_only: true
+- node_id: D13-32
+  name_zh: 日循环总扳手（全链多段排班编排）★本图最大节点
+  segment: C
+  node_type: stage
+  decision_question: 16:45 这一圈把几段跑完了？哪几段是空转？输入日是 T 还是 T-1？
+  note_zh: 特殊槽分支 → run_daily_loop(full)：段序与幂等/fail-open 纪律进本图，各段"判什么"引用 TDM（让渡二）；实扫段集与四相成员见机生层 dloop_phases
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:337
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:402
+  - src/zephyr/data/config/schedule.yaml:242
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-32
+  - docs/_working/map_build/fig13_daycycle/07_dloop十六段解剖.md
+  runtime_refs:
+  - data/runtime/daily_loop_master.disabled
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 07 §1.6：两圈耗时差一个量级=幂等全命中空转的量化实证（"跑了"≠"重算了"）
+  - 骨架 §2 D13-32 行：三证齐（槽+段序实扫+当日拍板表在产）；总闸实存扫=不存在（机生层 service_flags）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schedule
+  slot_refs:
+  - dloop_post
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 16:45（原仅人工、后解禁；服务总闸实存见机生层）
+    observed: 交易日每日 1 圈
+  wiring_status: wired
+  downstream_action: orchestrate
+  failure_visibility_zh: ''
+  fallback: 无（fail-open 逐段留痕；唯二 fail-closed 在段内）
+  miss_policy: absorb
+  invalidation: 16:45 圈之前本日无产物属正常；判「当日在产」须 16:45 后复跑
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-30 日K线到位（缺则整圈在 T-1 上重放且仍记 SUCCESS）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L0-03
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:337
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence:
+  - '复跑: python -c "from zephyr.plan_engine.daily_loop_master_switch import PHASE_STAGES as P;print({k: len(v) for
+    k, v in P.items()})" → 四相段数（本图机生层同口径）'
+  - '复跑（主区只读）: ls data/runtime/daily_loop_master.disabled → 不存在=总闸开着；再复跑骨架 §7 C 组日度判定表 max(trade_date)=当日'
+  orchestrates_stages: true
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        dloop_post: 0
+      special_branch_exists:
+        dloop_post: true
+      calendar_guarded:
+        dloop_post: false
+      in_catchup_universe:
+        dloop_post: false
+      idle_slot: false
+- node_id: D13-33
+  name_zh: 收盘验证→三表结算（段序契约：verify 恒先于 settle）
+  segment: C
+  node_type: stage
+  decision_question: verify 与 settle 的先后守住了吗？结算今天扫到几行？
+  note_zh: dloop 相邻两段 + 钩子序契约（注释自证）；结算腿按判定表族遍历
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:225
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:335
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-33
+  - docs/_working/map_build/fig13_daycycle/07_dloop十六段解剖.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 09 §9.3：结算腿扫到 0 行时静默空转，不区分"本无事"与"该有活却扑空"
+  - 骨架 §2 D13-33 行：验证表 scenario_hits 带触发时刻读数在案
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: dloop 段内（无独立时点）
+    observed: 每圈 1 次
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无
+  miss_policy: absorb
+  invalidation: 同 D13-32：本段产物随 16:45 圈产生，圈前判「零产出」即作废
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-30 日K线 + D13-32 圈已跑到该段"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L9-V1
+  - TDM-E-L9-V3
+  gap_refs: []
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - close_verify
+  - settle
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:225
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence: []
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - close_verify
+      - settle
+      in_phase_stages:
+        close_verify: true
+        settle: true
+- node_id: D13-34
+  name_zh: 日度拍板（安全态：毕业包恒空→结构性无实盘）
+  segment: C
+  node_type: stage
+  decision_question: 今天这一拍出了日度判定吗？判定产物落库了吗？
+  note_zh: dloop 末段 → 日度决策编排器；下单动作归 TDM L4/X-S2（边界），本图只记时点与产物
+  module_id: MOD-PLAN-033
+  source_anchors:
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:239
+  - src/zephyr/plan_engine/daily_loop_master_switch.py:44
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-34
+  - docs/_working/map_build/fig13_daycycle/07_dloop十六段解剖.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-34 行：日度判定表 max(trade_date)=当日 + 全表行数量级在案
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: dloop 末段
+    observed: 每圈 1 次
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无
+  miss_policy: absorb
+  invalidation: 同 D13-32：日度判定表在 16:45 圈末段落库，圈前无当日行属正常
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-33 verify→settle 已完成"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L0-03
+  gap_refs: []
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - decision
+  module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:239
+  module_label_bilingual: 日循环手动总扳手 / Daily Loop Master Switch
+  exec_evidence:
+  - '复跑: grep -n ''_stage_decision'' src/zephyr/plan_engine/daily_loop_master_switch.py → 末段落位与 GRADUATED_PACKAGES
+    安全态常量同件在盘'
+  - '复跑（骨架 §7 C 组）: c1_backtest 日度判定表 max(trade_date) 与全表行数'
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - decision
+      in_phase_stages:
+        decision: true
+- node_id: D13-35
+  name_zh: 盘后数据批次群（资金面·事件·当日补下载）
+  segment: C
+  node_type: stage
+  decision_question: 三拍各自动手了吗？17:00 补下载有没有把"仍在跑"误判为"缺"？
+  note_zh: 三槽合并为一个批次节点（内部结构归图 12，让渡三）；17:00 是行数视角补下载（本段唯一"有手"腿）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/scheduler.py:219
+  - src/zephyr/data/config/schedule.yaml:148
+  - src/zephyr/data/config/schedule.yaml:85
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-35
+  - docs/_working/map_build/fig13_daycycle/08_盘后批次与当日回测.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 08 X-11：17:00 补下载于 16:30 批未收口时二次开同一任务 → 同表两实例并发写、flush 行序交错
+  - 骨架 §2 D13-35 行：三槽挂载任务数量级在案 + 资金面表侧 max 为前一交易日（昨日已产=正常）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  build_status_zh: built
+  skeleton_status: ✅
+  slot_source: schedule
+  slot_refs:
+  - daily_backfill
+  - daily_capital
+  - daily_event
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 17:00 / 18:00 / 19:00 三拍
+    observed: 交易日每日 3 拍
+  wiring_status: partial
+  downstream_action: auto_remediate
+  failure_visibility_zh: ''
+  fallback: D13-01 档期视角 / D13-38 仅告警
+  miss_policy: rerun
+  invalidation: 三拍各在其时点前无当日产物属正常；且 16:30 heavy 批未收口时本环「缺」判定作废（同表两实例并发写=真缺陷在另一腿）
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-30 批次已收口（今日它实际没有=结构性缺陷）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L2-01-4
+  gap_refs:
+  - benchmark:C1-rerun 措辞权留总包（17:00 补下载是「有手」腿）
+  - task:cohort_ledger_daily
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/data/backfill_checker.py
+  module_label_bilingual: L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。 / backfill_checker
+  exec_evidence:
+  - '复跑: grep -n ''daily_backfill\|daily_capital\|daily_event'' src/zephyr/data/config/schedule.yaml → 三拍槽在册；复跑
+    grep -n backfill_checker src/zephyr/data/scheduler.py → 行数视角补下载执行体在位'
+  - '复跑（骨架 §7 C 组）: 资金面表 max(trade_date) 读数（17/18/19 点批次昨日已产=正常）'
+  ready_gate_absent_zh: 17:00 腿缺"daily_kline 批次已收口"前置（本图可红用例）
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        daily_backfill: 0
+        daily_capital: 37
+        daily_event: 40
+      special_branch_exists:
+        daily_backfill: true
+        daily_capital: false
+        daily_event: false
+      calendar_guarded:
+        daily_backfill: true
+        daily_capital: true
+        daily_event: true
+      in_catchup_universe:
+        daily_backfill: true
+        daily_capital: true
+        daily_event: true
+      idle_slot: false
+- node_id: D13-36
+  name_zh: 研报明细增量层（全市场逐股长批）
+  segment: D
+  node_type: stage
+  decision_question: 夜窗长批起跑了吗？增量窗补上几行？
+  note_zh: DAG 槽（有效挂载数见机生层）；历史回补量大、日度仅补增量窗（槽注释自证）
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:96
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-36
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 09 §3.2：本格断供 4 交易日而断供哨兵配置不含该表 ⇒ 唯一覆盖者是 23:00 巡检行数阈值（检测真空是配置面事实）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - research_nightly
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 20:30（单实例上限 1）
+    observed: 交易日每日 1 拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（该槽不在补跑宇宙内=错过无人补）
+  miss_policy: absorb
+  invalidation: 20:30 前无当日增量属正常；全市场逐股长批跨零点时「当日」须按北京日界判定
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A2-freshness_severity 两级未接线
+  - benchmark:A4-夜窗长批应产断言未接线
+  - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  - task:consensus_daily_build
+  - task:research_report_detail_incremental
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  freshness_severity_zh: 一档实测：断供而唯一覆盖者是 23:00 巡检行数阈值（检测真空是配置面事实）
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        research_nightly: 2
+      special_branch_exists:
+        research_nightly: false
+      calendar_guarded:
+        research_nightly: false
+      in_catchup_universe:
+        research_nightly: false
+      idle_slot: false
+- node_id: D13-37
+  name_zh: 夜间财务层（财报/十大股东/融资融券）
+  segment: D
+  node_type: stage
+  decision_question: 22:00 夜窗跑到几个任务？当夜漏跑名单有多大？
+  note_zh: DAG 槽（有效挂载数见机生层）；22:00 由因=次日披露口径此时已发布
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:113
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-37
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 09 §3.1：23:01 巡检"漏跑"名单同时出现本槽多数任务，与表侧 max 停在数日前同向（两条独立证据互指）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - nightly_financial
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 22:00（heavy 串行）
+    observed: 交易日每日 1 拍
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01（daily 桶在册）
+  miss_policy: rerun
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A2-freshness_severity 两级未接线
+  - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  freshness_severity_zh: 一档实测：夜窗漏跑名单来自 23:00 巡检，与表侧水位两因不同级
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        nightly_financial: 10
+      special_branch_exists:
+        nightly_financial: false
+      calendar_guarded:
+        nightly_financial: true
+      in_catchup_universe:
+        nightly_financial: true
+      idle_slot: false
+- node_id: D13-38
+  name_zh: 每日完整性巡检（只检测+告警，不补跑）
+  segment: D
+  node_type: stage
+  decision_question: 23:00 巡检检出几条不达标？它自己动手吗？三路兜底边界谁在守？
+  note_zh: 特殊槽分支 → 全表达标巡检（动态发现真源清单）；三路分工=档期视角(D13-01)/行数视角(D13-35)/只告警(本腿)，其真源至今是排班文件散文注释，本图把它变成三条边
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/scheduler.py:225
+  - src/zephyr/data/config/schedule.yaml:153
+  - src/zephyr/data/config/schedule.yaml:159
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-38
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 09 3.3：四路检测里只有 17:00 动手，23:00/23:30/06:50 一律落表/落文件
+  - 骨架 §2 D13-38 行：三路分工真源=散文注释（本图要变成可查边）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - integrity_check
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 23:00
+    observed: 交易日每日 1 拍
+  wiring_status: wired
+  downstream_action: alert_only
+  failure_visibility_zh: 巡检台账 + 告警通道（webhook 侧只认更高一级，故本腿落表即止）
+  fallback: 无（只告警不动手）
+  miss_policy: alert
+  invalidation: 23:00 巡检的「漏跑」名单以当日各批已跑完为前提，否则误判（与 D13-35 同族）
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"当日各批次已跑完（否则误判缺）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A7-no_drift_evidence 推广到巡检格
+  - benchmark:C1-alert 腿（23:00 只检不修）与 rerun 腿边界=本图三条边
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/integrity_checker.py
+  module_label_bilingual: 数据完整性巡检器——每天盘后检测全表当日数据是否达标。 / integrity_checker
+  exec_evidence: []
+  no_drift_evidence: false
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        integrity_check: 0
+      special_branch_exists:
+        integrity_check: true
+      calendar_guarded:
+        integrity_check: true
+      in_catchup_universe:
+        integrity_check: false
+      idle_slot: false
+- node_id: D13-39
+  name_zh: 一致预期管线双向验证
+  segment: D
+  node_type: stage
+  decision_question: 23:30 双向对答案了吗？不一致时谁被通知？总闸开着吗？
+  note_zh: 特殊槽分支 → 交叉验证（秩相关/新鲜度/结构断言/PIT 修正率四查），产物落交叉验证日志表
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/consensus_crosscheck.py:14
+  - src/zephyr/data/scheduler.py:341
+  - src/zephyr/data/config/schedule.yaml:103
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-39
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs:
+  - data/runtime/consensus_crosscheck.disabled
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 服务总闸实存扫=不存在（机生层 service_flags，不存在即开着）
+  - 骨架 §2 D13-39 行：源污染事件治本配套（槽注释自证）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - consensus_crosscheck
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 23:30（单实例）
+    observed: 交易日每日 1 拍
+  wiring_status: wired
+  downstream_action: detect_only
+  failure_visibility_zh: 交叉验证日志表（落表即止，无第二消费者）
+  fallback: 无（落表即止）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"自建聚合与外部快照两侧均已落库"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A2-freshness_severity 两级未接线
+  - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/consensus_crosscheck.py:62
+  module_label_bilingual: 一致预期管线双向验证器 / consensus_crosscheck
+  exec_evidence: []
+  freshness_severity_zh: 一档实测：双向验证落日志表即止，不一致不外发分级告警
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        consensus_crosscheck: 0
+      special_branch_exists:
+        consensus_crosscheck: true
+      calendar_guarded:
+        consensus_crosscheck: false
+      in_catchup_universe:
+        consensus_crosscheck: false
+      idle_slot: false
+- node_id: D13-40
+  name_zh: 另类宏观日频（假日缺价保守游标自愈）
+  segment: D
+  node_type: stage
+  decision_question: 23:35 这一拍的游标自愈了吗？它是 L1 上架流水线的首个正门槽位，排班外它归谁？
+  note_zh: DAG 槽（有效挂载数见机生层）；保守游标治假日缺价
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:194
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-40
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-40 行：槽注释自证为 L1 上架流水线首个正门槽位
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - daily_alt_fx
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 23:35
+    observed: 交易日每日 1 拍
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（该槽不在补跑宇宙内）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"外部参考汇率可得"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - task:alt_fx_ecb_daily_incremental
+  mechanism: A_apscheduler
+  dloop_stages: []
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        daily_alt_fx: 1
+      special_branch_exists:
+        daily_alt_fx: false
+      calendar_guarded:
+        daily_alt_fx: false
+      in_catchup_universe:
+        daily_alt_fx: false
+      idle_slot: false
+- node_id: D13-41
+  name_zh: 周批与月批（跨过日界的重活）
+  segment: D
+  node_type: stage
+  decision_question: 周窗真在意图中的那天 firing 吗？口径注释互斥时以哪条为准？
+  note_zh: 三槽（特殊槽分支 + 两 DAG 槽）；dow 口径互斥属时钟事故族，判定归机生层与实查，图不裁
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:119
+  - src/zephyr/data/config/schedule.yaml:125
+  - src/zephyr/data/config/schedule.yaml:136
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-41
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 骨架 §2 D13-41 行：实测在册时钟事故两起——同一文件内两条互斥星期口径断言（一条"0=周日"、一条"0=周一"），且周窗未 firing 已咬过一次（上游链断多日）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - weekend_backfill
+  - weekend_calibration
+  - monthly_static
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 周初凌晨两拍 + 月初一拍（同文件内两条互斥的星期口径注释在册，须机械判定）
+    observed: 周 1 拍 + 月 1 拍
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: D13-01（weekly/monthly 桶在册）
+  miss_policy: rerun
+  invalidation: 周批按 dow 口径归属而本环 dow 语义在册互斥（机生层判定前，任何「周窗未 firing」结论作废）
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"QMT 可达 + 避开晨维护窗"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: src/zephyr/data/scheduler.py
+  module_label_bilingual: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
+  exec_evidence: []
+  dow_semantics_conflict: true
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        weekend_backfill: 1
+        weekend_calibration: 43
+        monthly_static: 20
+      special_branch_exists:
+        weekend_backfill: true
+        weekend_calibration: false
+        monthly_static: false
+      calendar_guarded:
+        weekend_backfill: false
+        weekend_calibration: false
+        monthly_static: false
+      in_catchup_universe:
+        weekend_backfill: true
+        weekend_calibration: true
+        monthly_static: true
+      idle_slot: false
+- node_id: D13-42
+  name_zh: 常驻守护三路（reaper / deadman 心跳 / guard 三件套）
+  segment: D
+  node_type: stage
+  decision_question: 09:25 前谁必须活着？15:05 后谁该退？心跳缺失算不算当日 FAIL？
+  note_zh: ps1 注册守护族：单实例唯一真源=脚本级 PID 锁 + 心跳判定（计划任务必须不参与单实例决策）；看门狗一台按裁定注册于禁用态
+  module_id: MOD-L00-004
+  source_anchors:
+  - scripts/register_guard_tasks.ps1:46
+  - scripts/register_guard_tasks.ps1:33
+  - scripts/deadman_switch.ps1:138
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-42
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs:
+  - .runtime/
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 簿 01 O-2：晨间重启风暴（当日多次重注册）与本图 D13-01 长批夭亡同时点——重启主体与节律归 GOMAP，日序风险本图记账
+  - 骨架 §2 D13-42 行：两日静默死亡根因已锁在"让计划任务参与单实例决策"上；一台看门狗按在册裁定处于禁用态
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_ProcessReaper
+  - ZephyrAlpha_DeadmanSwitch
+  - ZephyrAlpha_DataScheduler
+  - ZephyrAlpha_TickSubscriber
+  - ZephyrAlpha_TradingWatchdog
+  entity_refs:
+  - sch_trading_watchdog
+  cadence_zh:
+    declared: 登录时 + 每 5 分钟重点火（主体让渡 GOMAP，本图只留日序接缝三点）
+    observed: 每 5 分钟重点火
+  wiring_status: wired
+  downstream_action: auto_remediate
+  failure_visibility_zh: 心跳文件 + deadman 告警；陈旧则由计划任务重跑
+  fallback: 心跳陈旧→计划任务重跑
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/register_guard_tasks.ps1:20
+  module_label_bilingual: 注册守卫任务 / register_guard_tasks
+  exec_evidence: []
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_DataScheduler: true
+        ZephyrAlpha_DeadmanSwitch: true
+        ZephyrAlpha_ProcessReaper: true
+        ZephyrAlpha_TickSubscriber: true
+        ZephyrAlpha_TradingWatchdog: true
+      declared_in_register_scripts:
+        ZephyrAlpha_DataScheduler: true
+        ZephyrAlpha_DeadmanSwitch: true
+        ZephyrAlpha_ProcessReaper: true
+        ZephyrAlpha_TickSubscriber: true
+        ZephyrAlpha_TradingWatchdog: true
+- node_id: D13-43
+  name_zh: 交易日历闸门（本图不变量载体：事件触发禁定时器）
+  segment: D
+  node_type: stage
+  decision_question: 今天该不该跑？这一拍是被守卫跳掉还是被幂等吸收？
+  note_zh: 日历守卫名单覆盖槽集见机生层 calendar_guard（实测少数槽受守卫，余下靠底层幂等吸收）；铁律真源=图 9 laws 第 3 条与运维红线（事件触发禁定时器），本图不复制正文
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/trading_calendar.py:151
+  - src/zephyr/data/scheduler.py:184
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-43
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 生效实证=非交易日会话拉起腿显式 SKIP(is_trading_day=False)
+  - 簿 09 机械抽取：守卫成员数与排班槽总数比值在案（未守卫槽名单已逐名列出）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: event
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 每槽触发时实查（无独立时点）
+    observed: 全日每拍实查
+  wiring_status: wired
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 非交易日空跑由底层幂等闸吸收
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"交易日历本身可得（保守判据）"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs:
+  - benchmark:C5-calendar_gated 三值（true/false/null=未声明）的 null 语义与补填义务留总包；本图只登记「无守卫是有意还是漏配读不出」这一表达缺口，不改守卫名单
+  mechanism: C_inprocess_stage
+  dloop_stages: []
+  module_ref: src/zephyr/data/trading_calendar.py:151
+  module_label_bilingual: A 股交易日历守卫（MOD-L00-004）。 / trading_calendar
+  exec_evidence: []
+  guards_only_subset: true
+- node_id: D13-44
+  name_zh: 日界交接（T 日盘后 → T+1 日盘前的状态移交）
+  segment: D
+  node_type: stage
+  decision_question: T 日的判定与边界真的交给 T+1 了吗？交接件今天有几行？
+  note_zh: dloop 盘后段产次日预测 + 三件边界规划器；三班制交接件面向连续市场不覆盖 A 股日界
+  module_id: MOD-PLAN-029
+  source_anchors:
+  - src/zephyr/plan_engine/intraday_tomorrow_forecast.py
+  - src/zephyr/plan_engine/tomorrow_boundary_planner.py
+  - src/zephyr/plan_engine/overnight_boundary_reviser.py
+  - src/zephyr/trading/shift_handover_checklist.py
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-44
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs: []
+  data_refs:
+  - src/zephyr/plan_engine/next_day_forecaster.py
+  store_refs: []
+  evidence:
+  - 并发现象另记 D13-30/D13-35（同一任务两实例并发写一张表、行序交错）
+  - 真静默在编排层（段状态硬编码 ok）与校准腿（扫 0 行、样本冻结而聚合面照常出数）
+  - 簿 09 硬实查③：交接产物表按业务日（藏在引用串里，表无交易日列）实测已断供多个已收盘交易日；根因锁定在发射件一处变量名错位→负值被产物校验器 fail-closed 拒发（按桶确定性杀掉多数交易日）
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: dloop_stage
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 夜窗收口 → 次日 05:30 重启（段界）
+    observed: 每圈 1 次（当日实为 0 产出）
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 次日 daily_plan 查不到即明写降级并折减置信度（不静默用旧值）
+  miss_policy: absorb
+  invalidation: 交接件的业务日藏在引用串里（表侧无交易日列）——不按上海日重算即差一天，任何「缺 N 交易日」结论在换算前作废
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-34 日度拍板已完成"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs:
+  - TDM-E-L0-03
+  - TDM-E-L0-04
+  gap_refs:
+  - benchmark:A2-断供无分级覆盖
+  - benchmark:A4-应产 1 次日界件而实产 0
+  - table:c1_market.judgment_next_day_forecast（在册断供，环节面在本格、修复归图 12）
+  mechanism: C_inprocess_stage
+  dloop_stages:
+  - next_day
+  red_reason: broken_supply
+  module_ref: src/zephyr/plan_engine/next_day_forecaster.py:268
+  module_label_bilingual: 次日概率件 / Next Day Forecaster
+  exec_evidence: []
+  freshness_severity_zh: 一档实测：断供由本车道人工复跑查出，无任何分级告警覆盖
+  expected_emits_per_trading_day: 1
+  mining_recheck_status: 🔨
+  supply_broken: true
+  business_date_anchor: inputs_ref 内嵌交易日串（表侧无交易日列）
+  silent_layer_zh: 编排层段状态与校准腿聚合面掩盖断供
+  machine_facts:
+    dloop_facts:
+      declared_stages:
+      - next_day
+      in_phase_stages:
+        next_day: true
+- node_id: D13-G01
+  name_zh: 无产出证据态缺位（「该产 N 条而实产 0」与「没跑」在图上同形）
+  segment: A
+  node_type: gap
+  decision_question: 槽在 firing、任务记 SUCCESS、产物表 0 行——图上这算绿、算红，还是算不可确定？
+  note_zh: 状态轴只有骨架 §2 三态（🌑 不占格），「无物化事件」被硬塞进 🔨/⬜。外部对标表A-A3 点名业界第四态 unknown（无物化事件时不判绿也不判红，判不可确定）；本车道**不改状态口径**（加态=改判据，触表C-C3
+    判据分歧，留总包复裁），只把缺格钉成 gap 节点。可机检的半边已在本图落地：expected_emits_per_trading_day（应产断言）∧ machine_facts.slot_facts.idle_slot（零任务零分支实扫）两条并读即可判「该产
+    N 而实产 0」，不加新态也能显红
+  module_id: null
+  source_anchors:
+  - src/zephyr/data/scheduler.py:2256
+  - src/zephyr/data/config/schedule.yaml:34
+  - src/zephyr/data/config/schedule.yaml:202
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+  - 六图终局卷 §4 图13 判据①（空转槽与落空对象全可查）
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - '复跑: 读 machine_facts.trigger_surfaces.dangling_objects.fake_channel_slots 非空（2 槽零任务零分支而被记 success）——现状以「假通道槽」承载同一事实，缺的是态不是证据'
+  - 簿 10 §1.2 与表A-A3（Dagster freshness 四态，一手页面已读到原文）+ 表C-C3（骨架状态四态封闭是批次志与封矿计数的算术基准，加态须总包落笔）
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 全图 44 格共有的表达缺口（无独立时点）
+    observed: 0 拍（表达位不存在，非执行位）
+  wiring_status: unwired_no_caller
+  downstream_action: none
+  failure_visibility_zh: ''
+  fallback: none:无第四态⇒不可确定形态混入绿/灰两态
+  miss_policy: none
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格是表达缺口登记位，非就绪门格
+  tdm_refs: []
+  gap_refs:
+  - benchmark:A3-unknown 第四显示态缺位
+  - benchmark:C3-加态=改判据口径（本车道未改，留总包）
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: unwired
+  module_ref: null
+  exec_evidence: []
+  availability: unreachable
+- node_id: D13-G02
+  name_zh: 成交回报桥面空转（消费方在等一条没有接线在写的表）
+  segment: B
+  node_type: gap
+  decision_question: 成交→回报表→三账 L1 腿这条链今天有原料可流吗？下游按「永远为空」设计降级算不算供给？
+  note_zh: 图 12 侧消费端反查在册的「在等没在产」五态中落到本图环节面的一条：本表近 7 日仅 1 行、当日 0 行；生产端仅对模拟桥可选接线，实盘链路在册原话为「未接线=零行为变更」。两条独立成因图上必须分列：①模拟盘无票池⇒0
+    成交（簿 05 下向）②回报表自上期后未再被写过（表侧读数）。写入通道与幂等归图 12（让渡三），本图只画「谁在等、等什么」，不重画其内部
+  module_id: null
+  source_anchors:
+  - src/zephyr/ex_core/position_reconciler.py
+  - src/zephyr/trading/three_way_reconciliation.py
+  doc_refs:
+  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 图 12 簿 11 §1-C（消费方在等未产表 5 条之一，生产端实况逐条实测在册）
+  - 簿 05 下向：本表全表 1 行、当日 0 行；盘后侧独立同证（结算留痕 fills=0 records=0 symbols=0）
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 随 D13-24 常驻（无独立时点）
+    observed: 0 行/交易日（表在而链路无原料）
+  wiring_status: unwired_no_caller
+  downstream_action: none
+  failure_visibility_zh: ''
+  fallback: none:桥面无料⇒三账 L1 基准腿今日无原料
+  miss_policy: none
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格是跨图缺口登记位，非就绪门格
+  tdm_refs: []
+  gap_refs:
+  - xref:fig12-消费方在等未产表-5 条中涉及本图环节者 1 条（其余 3 条归属图 12/图 9，本图不建其节点：account_nav_daily、factor_feature_value、factor_signal）
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: null
+  exec_evidence: []
+  availability: unreachable
+- node_id: D13-G03
+  name_zh: 三账差异表恒空且消费方已按恒空设计降级
+  segment: C
+  node_type: gap
+  decision_question: 差异表 0 行是「今日无差异」还是「核对从未跑成」？下游拿「空表不阻断」当绿灯怎么办？
+  note_zh: 自建表以来零行（写入侧全仓唯一一处 INSERT，其调用链零在位）；下游判据册已把「空表不阻断写死⇒ 恒空被固化为合规态，「跑过且无差异」与「没跑」不可区分——正是簿 10 表A-A7 点名的no-drift
+    留痕缺口。假绿温床另记：门禁/自愈环留痕表行数强阳性而列语义全是提交侧，与资金/持仓/柜台三账零关系（簿 06 假绿专段）
+  module_id: null
+  source_anchors:
+  - src/zephyr/trading/recon_runner.py:117
+  - src/zephyr/reporting/reconciliation_schema.py:42
+  doc_refs:
+  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
+  - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 图 12 簿 11 §1-C 消费侧新证：回测待办册判据「空表不阻断」（恒空已进降级设计）
+  - 簿 06 §D13-29 三证互不依赖（15:40 现场捕获 + 两件同族实现零调用方 + 差异表全表 0 行）
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 随 D13-29 的 15:40 名义时点（该腿从未产出）
+    observed: 0 行（自建表以来）
+  wiring_status: unwired_no_caller
+  downstream_action: none
+  failure_visibility_zh: ''
+  fallback: none:恒空即被下游读作「无差异」，无第二条证据路
+  miss_policy: none
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格是跨图缺口登记位，非就绪门格
+  tdm_refs: []
+  gap_refs:
+  - xref:fig12-消费方在等未产表-reconciliation_differences（生产者=D13-29 腿，消费侧新证在册）
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: null
+  exec_evidence: []
+  availability: unreachable
+- node_id: D13-G04
+  name_zh: 新闻产物表库名前缀写错的幽灵引用（改册面归图 12，本图只挂生产者腿）
+  segment: B
+  node_type: gap
+  decision_question: 被消费的表名在册吗？按错库名订阅的消费者会不会永远读到空而不报错？
+  note_zh: 图 12 侧全库逐名核对：册面引用的 c1_market 前缀新闻表不存在，真身在 c3_fundamental（行数新鲜）。本图只登记「生产者腿在本图、幽灵名在册外」这一交叉事实，**不建图 12 的环节、不改册**（改册面属其车道与图
+    9 册的处置权）
+  module_id: null
+  source_anchors:
+  - src/zephyr/data/scheduler.py:491
+  - src/zephyr/data/config/schedule.yaml
+  doc_refs:
+  - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 图 12 簿 11 §1-D 幽灵引用（system.tables 逐名核对 exists:false；全库同名仅一表）
+  - 簿 04 §D13-17 生产者腿三证齐（当日本槽千余次执行、真表当日 FINAL 千行级）⇒ 缺陷在引用名而不在供给，本图不得据此下调 D13-17 的态
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  build_status_zh: pending
+  skeleton_status: ⬜
+  slot_source: none
+  slot_refs: []
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 随 D13-17/D13-18 采集节拍（引用名与本图时序面无时刻关系）
+    observed: 0（错名侧无供给，真表侧新鲜）
+  wiring_status: unwired_no_caller
+  downstream_action: none
+  failure_visibility_zh: ''
+  fallback: none:错名订阅恒空返，与真表新鲜同形
+  miss_policy: none
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格是跨图缺口登记位，非就绪门格
+  tdm_refs: []
+  gap_refs:
+  - xref:fig12-幽灵引用-news_data（改册面，非环节面；本图只挂生产者腿 D13-17/18）
+  mechanism: D_unscheduled
+  dloop_stages: []
+  red_reason: ghost_ref
+  module_ref: null
+  exec_evidence: []
+  availability: unreachable
+edges:
+- - D13-01
+  - D13-02
+- - D13-02
+  - D13-03
+- - D13-03
+  - D13-04
+- - D13-04
+  - D13-06
+- - D13-05
+  - D13-06
+- - D13-06
+  - D13-09
+- - D13-07
+  - D13-09
+- - D13-08
+  - D13-09
+- - D13-09
+  - D13-10
+- - D13-09
+  - D13-12
+- - D13-09
+  - D13-11
+- - D13-09
+  - D13-15
+- - D13-10
+  - D13-11
+- - D13-11
+  - D13-13
+- - D13-12
+  - D13-24
+- - D13-13
+  - D13-14
+- - D13-14
+  - D13-15
+- - D13-14
+  - D13-16
+- - D13-14
+  - D13-17
+- - D13-14
+  - D13-18
+- - D13-15
+  - D13-19
+- - D13-19
+  - D13-25
+- - D13-15
+  - D13-21
+- - D13-21
+  - D13-22
+- - D13-22
+  - D13-23
+- - D13-23
+  - D13-20
+- - D13-24
+  - D13-26
+- - D13-24
+  - D13-27
+- - D13-24
+  - D13-28
+- - D13-25
+  - D13-28
+- - D13-26
+  - D13-28
+- - D13-27
+  - D13-28
+- - D13-28
+  - D13-29
+- - D13-29
+  - D13-30
+- - D13-30
+  - D13-31
+- - D13-30
+  - D13-32
+- - D13-31
+  - D13-33
+- - D13-32
+  - D13-33
+- - D13-33
+  - D13-34
+- - D13-30
+  - D13-35
+- - D13-32
+  - D13-35
+- - D13-34
+  - D13-44
+- - D13-35
+  - D13-36
+- - D13-36
+  - D13-37
+- - D13-37
+  - D13-38
+- - D13-38
+  - D13-39
+- - D13-39
+  - D13-40
+- - D13-40
+  - D13-44
+- - D13-41
+  - D13-44
+- - D13-42
+  - D13-43
+- - D13-43
+  - D13-44
+- - D13-01
+  - D13-06
+- - D13-01
+  - D13-14
+- - D13-01
+  - D13-30
+- - D13-01
+  - D13-37
+- - D13-01
+  - D13-41
+- - D13-13
+  - D13-G01
+- - D13-29
+  - D13-G01
+- - D13-24
+  - D13-G02
+- - D13-27
+  - D13-G02
+- - D13-29
+  - D13-G03
+- - D13-31
+  - D13-G03
+- - D13-17
+  - D13-G04
+- - D13-18
+  - D13-G04
+feedback_loops:
+- from: D13-23
+  to: D13-20
+  note: intraday 相段序：PHASE_STAGES 实扫盘中族段序为 intraday_l1→classify→sentiment_loop→auction_hit，与本图环节编号（按墙钟时点排）逆向——段序契约边，非时点先后
+- from: D13-02
+  to: D13-01
+  note: 断供→回补：哨兵检出档期错过后，修复腿让渡次日 05:30 档期对账（其 INVARIANTS 自陈只检测不修复）
+- from: D13-38
+  to: D13-35
+  note: 巡检→补下载：23:00 只告警的行数缺口交给次日 17:00 行数视角补下载（三路兜底分工的第三条边）
+- from: D13-44
+  to: D13-01
+  note: 日界交接回次日：T 日盘后状态移交 → T+1 日 05:30 重启（本图唯一的跨日闭环）
+- from: D13-32
+  to: D13-21
+  note: 16:45 圈回头驱动盘中段（intraday 族唤醒词在自动圈内被伪造）——段界折叠，非时点先后
+- from: D13-32
+  to: D13-22
+  note: 同上：归类段由 16:45 圈驱动，无独立盘中排班
+- from: D13-32
+  to: D13-23
+  note: 同上：情绪环"有节拍席位无节拍"的机制来源——每交易日恰 1 拍且落在收盘后窗
+- from: D13-32
+  to: D13-20
+  note: 同上且更硬：墙钟窗闸段在 16:45 圈恒窗外 → 自动驱动关系存在但产出恒为 skipped
+- from: D13-32
+  to: D13-09
+  note: 盘前段盘后跑：盘前族段（含 T+1 预产腿）实跑在 16:45 圈，为次日窗先行产出（簿 07 溢出 E-3）
+- from: D13-42
+  to: D13-12
+  note: 守护接缝：心跳陈旧则由计划任务重跑拉起腿——09:25 前必须活着是日序前置
+machine_facts:
+  trigger_surfaces:
+    scheduler_slots:
+      auction_highfreq:
+        slot: auction_highfreq
+        executor: realtime
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 2
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      calendar_coverage_check:
+        slot: calendar_coverage_check
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      catchup_guard:
+        slot: catchup_guard
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      consensus_crosscheck:
+        slot: consensus_crosscheck
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      daily_alt_fx:
+        slot: daily_alt_fx
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 1
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      daily_backfill:
+        slot: daily_backfill
+        executor: heavy
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      daily_capital:
+        slot: daily_capital
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 37
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      daily_crypto:
+        slot: daily_crypto
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 6
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      daily_event:
+        slot: daily_event
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 40
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      daily_kline:
+        slot: daily_kline
+        executor: heavy
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 30
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      data_supply_sentinel:
+        slot: data_supply_sentinel
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      dloop_post:
+        slot: dloop_post
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      eod_reconciliation:
+        slot: eod_reconciliation
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: true
+      event_driven:
+        slot: event_driven
+        executor: default
+        cadence_class: interval
+        declared: true
+        effective_task_count: 10
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+      integrity_check:
+        slot: integrity_check
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: true
+        in_catchup_universe: false
+        idle_slot: false
+      intraday_minute:
+        slot: intraday_minute
+        executor: intraday_minute
+        cadence_class: interval
+        declared: true
+        effective_task_count: 16
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      intraday_realtime:
+        slot: intraday_realtime
+        executor: realtime
+        cadence_class: interval
+        declared: true
+        effective_task_count: 15
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      intraday_sector:
+        slot: intraday_sector
+        executor: intraday_sector
+        cadence_class: interval
+        declared: true
+        effective_task_count: 5
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+      monthly_static:
+        slot: monthly_static
+        executor: default
+        cadence_class: monthly
+        declared: true
+        effective_task_count: 20
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+      news_slow:
+        slot: news_slow
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 2
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+      nightly_financial:
+        slot: nightly_financial
+        executor: heavy
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 10
+        special_branch_exists: false
+        calendar_guarded: true
+        in_catchup_universe: true
+        idle_slot: false
+      nightly_sentiment:
+        slot: nightly_sentiment
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      post_auction:
+        slot: post_auction
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: true
+      pre_market:
+        slot: pre_market
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 9
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+      research_nightly:
+        slot: research_nightly
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 2
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      sector_close_final:
+        slot: sector_close_final
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      sector_pre_open:
+        slot: sector_pre_open
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      weekend_backfill:
+        slot: weekend_backfill
+        executor: heavy
+        cadence_class: weekly
+        declared: true
+        effective_task_count: 1
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+      weekend_calibration:
+        slot: weekend_calibration
+        executor: heavy
+        cadence_class: weekly
+        declared: true
+        effective_task_count: 43
+        special_branch_exists: false
+        calendar_guarded: false
+        in_catchup_universe: true
+        idle_slot: false
+    slot_total: 29
+    catchup_universe:
+      source: src/zephyr/data/catchup_guard.py
+      exists: true
+      monthly_schedules_bucket:
+      - monthly_static
+      weekly_schedules_bucket:
+      - weekend_backfill
+      - weekend_calibration
+      daily_schedules_bucket:
+      - daily_backfill
+      - daily_capital
+      - daily_event
+      - daily_kline
+      - nightly_financial
+      intraday_schedules_bucket:
+      - auction_highfreq
+      - intraday_minute
+      - intraday_realtime
+      - intraday_sector
+      - pre_market
+      always_on_schedules_bucket:
+      - event_driven
+      - news_slow
+      skip_schedules_bucket:
+      - catchup_guard
+      - integrity_check
+      universe:
+      - auction_highfreq
+      - daily_backfill
+      - daily_capital
+      - daily_event
+      - daily_kline
+      - event_driven
+      - intraday_minute
+      - intraday_realtime
+      - intraday_sector
+      - monthly_static
+      - news_slow
+      - nightly_financial
+      - pre_market
+      - weekend_backfill
+      - weekend_calibration
+    special_branch_slots:
+    - calendar_coverage_check
+    - catchup_guard
+    - consensus_crosscheck
+    - daily_backfill
+    - data_supply_sentinel
+    - dloop_post
+    - integrity_check
+    - nightly_sentiment
+    - sector_close_final
+    - sector_pre_open
+    - weekend_backfill
+    calendar_guard:
+      source: src/zephyr/data/trading_calendar.py
+      exists: true
+      guarded_slots:
+      - auction_highfreq
+      - daily_backfill
+      - daily_capital
+      - daily_event
+      - daily_kline
+      - integrity_check
+      - intraday_minute
+      - intraday_realtime
+      - nightly_financial
+    dloop_phases:
+      source: src/zephyr/plan_engine/daily_loop_master_switch.py
+      exists: true
+      phases:
+        premarket:
+        - data_readiness
+        - regime_freshness
+        - warroom
+        - daily_plan
+        - llm_premarket
+        intraday:
+        - intraday_l1
+        - classify
+        - sentiment_loop
+        - auction_hit
+        postmarket:
+        - close_verify
+        - warroom
+        - next_day
+        - pf_alloc
+        - settle
+        - similar_day
+        - attribution
+        - decision
+        full:
+        - data_readiness
+        - regime_freshness
+        - warroom
+        - daily_plan
+        - llm_premarket
+        - next_day
+        - pf_alloc
+        - intraday_l1
+        - classify
+        - sentiment_loop
+        - auction_hit
+        - close_verify
+        - settle
+        - similar_day
+        - attribution
+        - decision
+      stage_universe:
+      - attribution
+      - auction_hit
+      - classify
+      - close_verify
+      - daily_plan
+      - data_readiness
+      - decision
+      - intraday_l1
+      - llm_premarket
+      - next_day
+      - pf_alloc
+      - regime_freshness
+      - sentiment_loop
+      - settle
+      - similar_day
+      - warroom
+      dispatch_stages:
+      - attribution
+      - auction_hit
+      - classify
+      - close_verify
+      - daily_plan
+      - data_readiness
+      - decision
+      - intraday_l1
+      - llm_premarket
+      - next_day
+      - pf_alloc
+      - regime_freshness
+      - sentiment_loop
+      - settle
+      - similar_day
+      - warroom
+      dispatch_stage_sync: true
+      sync_outliers: []
+    register_scripts:
+      script_count: 21
+      register_scripts:
+      - scripts/register_aux_tasks.ps1
+      - scripts/register_c4_exam_task.ps1
+      - scripts/register_config_check_task.ps1
+      - scripts/register_counter_trend_feeder_tasks.ps1
+      - scripts/register_drift_watchdog_task.ps1
+      - scripts/register_f06_grid_task.ps1
+      - scripts/register_factory_lane_c_task.ps1
+      - scripts/register_gate_fulltree_audit_task.ps1
+      - scripts/register_guard_tasks.ps1
+      - scripts/register_library_ledger_backup_task.ps1
+      - scripts/register_measure_calibration_task.ps1
+      - scripts/register_ollama_serve_task.ps1
+      - scripts/register_paper_session_task.ps1
+      - scripts/register_pattern_mining_task.ps1
+      - scripts/register_post_settlement_task.ps1
+      - scripts/register_process_reaper_task.ps1
+      - scripts/register_resource_morning_report_task.ps1
+      - scripts/register_resource_regen_check_task.ps1
+      - scripts/register_resource_sampler_scan_task.ps1
+      - scripts/register_resource_sampler_writeback_task.ps1
+      - scripts/register_resource_view_publish_task.ps1
+      declaring_scripts:
+        scripts/deadman_switch.ps1:
+        - ZephyrAlpha_DeadmanSwitch
+        scripts/qmt_watchdog.ps1:
+        - ZephyrAlpha_QMTWatchdog
+        scripts/register_aux_tasks.ps1:
+        - ZephyrAlpha_RSSHub
+        - ZephyrAlpha_TraeCacheCleanup
+        scripts/register_c4_exam_task.ps1:
+        - ZephyrAlpha_C4Exam
+        scripts/register_config_check_task.ps1:
+        - ZephyrAlpha_ConfigCheck
+        scripts/register_counter_trend_feeder_tasks.ps1:
+        - ZephyrAlpha_IndexMinuteEOD
+        - ZephyrAlpha_IntradayFundFlow
+        scripts/register_drift_watchdog_task.ps1:
+        - ZephyrAlpha_WorktreeDriftWatchdog
+        scripts/register_f06_grid_task.ps1:
+        - ZephyrAlpha_F06Grid
+        scripts/register_factory_lane_c_task.ps1:
+        - ZephyrAlpha_FactoryLaneC
+        scripts/register_gate_fulltree_audit_task.ps1:
+        - ZephyrAlpha_GateFullTreeAudit
+        scripts/register_guard_tasks.ps1:
+        - ZephyrAlpha_CHHealthProbe
+        - ZephyrAlpha_DataScheduler
+        - ZephyrAlpha_DeadmanSwitch
+        - ZephyrAlpha_TickSubscriber
+        - ZephyrAlpha_TradingWatchdog
+        scripts/register_library_ledger_backup_task.ps1:
+        - ZephyrAlpha_LibraryLedgerBackup
+        - ZephyrAlpha_LibraryLedgerDrill
+        scripts/register_measure_calibration_task.ps1:
+        - ZephyrAlpha_MeasureCalibration
+        scripts/register_ollama_serve_task.ps1:
+        - ZephyrAlpha_OllamaServe
+        scripts/register_paper_session_task.ps1:
+        - ZephyrAlpha_PaperSession
+        scripts/register_pattern_mining_task.ps1:
+        - ZephyrAlpha_PatternMining
+        scripts/register_post_settlement_task.ps1:
+        - ZephyrAlpha_PostSettlement
+        scripts/register_process_reaper_task.ps1:
+        - ZephyrAlpha_ProcessReaper
+        scripts/register_resource_morning_report_task.ps1:
+        - ZephyrAlpha_ResourceMorningReport
+        scripts/register_resource_regen_check_task.ps1:
+        - ZephyrAlpha_ResourceRegenCheck
+        scripts/register_resource_sampler_scan_task.ps1:
+        - ZephyrAlpha_ResourceSamplerScan
+        scripts/register_resource_sampler_writeback_task.ps1:
+        - ZephyrAlpha_ResourceSamplerWriteback
+        scripts/register_resource_view_publish_task.ps1:
+        - ZephyrAlpha_ResourceViewPublish
+        scripts/start_ch_health_probe.ps1:
+        - ZephyrAlpha_CHHealthProbe
+        scripts/start_scheduler.ps1:
+        - ZephyrAlpha_DataScheduler
+        scripts/start_tick_subscriber.ps1:
+        - ZephyrAlpha_TickSubscriber
+        scripts/start_trading.ps1:
+        - ZephyrAlpha_TradingWatchdog
+      declared_task_names:
+      - ZephyrAlpha_C4Exam
+      - ZephyrAlpha_CHHealthProbe
+      - ZephyrAlpha_ConfigCheck
+      - ZephyrAlpha_DataScheduler
+      - ZephyrAlpha_DeadmanSwitch
+      - ZephyrAlpha_F06Grid
+      - ZephyrAlpha_FactoryLaneC
+      - ZephyrAlpha_GateFullTreeAudit
+      - ZephyrAlpha_IndexMinuteEOD
+      - ZephyrAlpha_IntradayFundFlow
+      - ZephyrAlpha_LibraryLedgerBackup
+      - ZephyrAlpha_LibraryLedgerDrill
+      - ZephyrAlpha_MeasureCalibration
+      - ZephyrAlpha_OllamaServe
+      - ZephyrAlpha_PaperSession
+      - ZephyrAlpha_PatternMining
+      - ZephyrAlpha_PostSettlement
+      - ZephyrAlpha_ProcessReaper
+      - ZephyrAlpha_QMTWatchdog
+      - ZephyrAlpha_RSSHub
+      - ZephyrAlpha_ResourceMorningReport
+      - ZephyrAlpha_ResourceRegenCheck
+      - ZephyrAlpha_ResourceSamplerScan
+      - ZephyrAlpha_ResourceSamplerWriteback
+      - ZephyrAlpha_ResourceViewPublish
+      - ZephyrAlpha_TickSubscriber
+      - ZephyrAlpha_TradingWatchdog
+      - ZephyrAlpha_TraeCacheCleanup
+      - ZephyrAlpha_WorktreeDriftWatchdog
+    registered_schtasks:
+      available: true
+      reason: ''
+      task_names:
+      - ZephyrAlpha_AltFxECB
+      - ZephyrAlpha_BeltDaemon
+      - ZephyrAlpha_BoardIndexRealtime
+      - ZephyrAlpha_C4Exam
+      - ZephyrAlpha_C4Exam_Full0916
+      - ZephyrAlpha_C4Exam_OneShot0915
+      - ZephyrAlpha_CHHealthProbe
+      - ZephyrAlpha_ConfigCheck
+      - ZephyrAlpha_DataScheduler
+      - ZephyrAlpha_DeadmanSwitch
+      - ZephyrAlpha_DecisionChainSentinel
+      - ZephyrAlpha_EvaporationBlackbox
+      - ZephyrAlpha_F06Grid
+      - ZephyrAlpha_FactoryLaneC
+      - ZephyrAlpha_FactoryLaneC_Full0916
+      - ZephyrAlpha_FactoryLaneC_OneShot0915
+      - ZephyrAlpha_GateFullTreeAudit
+      - ZephyrAlpha_IndexMinuteEOD
+      - ZephyrAlpha_IntradayFundFlow
+      - ZephyrAlpha_LibraryLedgerBackup
+      - ZephyrAlpha_LibraryLedgerDrill
+      - ZephyrAlpha_MeasureCalibration
+      - ZephyrAlpha_NightlySentiment
+      - ZephyrAlpha_OllamaServe
+      - ZephyrAlpha_PaperSession
+      - ZephyrAlpha_PatternMining
+      - ZephyrAlpha_PostSettlement
+      - ZephyrAlpha_ProcessReaper
+      - ZephyrAlpha_QMTWatchdog
+      - ZephyrAlpha_RSSHub
+      - ZephyrAlpha_ResourceMorningReport
+      - ZephyrAlpha_ResourceRegenCheck
+      - ZephyrAlpha_ResourceSamplerScan
+      - ZephyrAlpha_ResourceSamplerWriteback
+      - ZephyrAlpha_ResourceViewPublish
+      - ZephyrAlpha_SectorSnapshot
+      - ZephyrAlpha_SimBridgeExecute
+      - ZephyrAlpha_TTLRejudgeDaily
+      - ZephyrAlpha_TickSubscriber
+      - ZephyrAlpha_TradingWatchdog
+      - ZephyrAlpha_TraeCacheCleanup
+      - ZephyrAlpha_WeeklyRest
+      - ZephyrAlpha_WorktreeDriftWatchdog
+    service_flags:
+      data/runtime/daily_loop_master.disabled:
+        present: false
+      data/runtime/quality_sentinel.disabled:
+        present: false
+      data/runtime/sector_state_pipeline.disabled:
+        present: false
+      data/runtime/consensus_crosscheck.disabled:
+        present: false
+      data/runtime/nightly_sentiment.disabled:
+        present: false
+    registry_entities:
+      exists: true
+      total_entity_ids: 81
+      referenced_entity_ids:
+      - data_slot_intraday_minute
+      - ops_qmt_watchdog
+      - sch_index_minute_eod
+      - sch_intraday_fund_flow
+      - sch_paper_session
+      - sch_post_settlement
+      - sch_trading_watchdog
+      unknown_refs: []
+    task_mount_facts:
+      exists: true
+      tasks_by_slot:
+        auction_highfreq:
+        - auction_book_snapshot
+        - auction_data_snapshot
+        calendar_coverage_check: []
+        catchup_guard: []
+        consensus_crosscheck: []
+        daily_alt_fx:
+        - alt_fx_ecb_daily_incremental
+        daily_backfill: []
+        daily_capital:
+        - agri_wholesale_index_refresh
+        - block_trade_detail_incremental
+        - block_trade_incremental
+        - cffex_member_ranking_refresh
+        - china_bond_yield_refresh
+        - cohort_ledger_daily
+        - concept_board_refresh
+        - convertible_bond_clause_refresh
+        - dragon_tiger_incremental
+        - dragon_tiger_seat_incremental
+        - eia_petroleum_incremental
+        - etf_share_snapshot_refresh
+        - futures_warehouse_receipt_incremental
+        - index_member_postclose
+        - ipo_calendar_daily
+        - ir_activity_record_refresh
+        - irm_interactive_qa_refresh
+        - kline_futures_incremental
+        - kline_us_daily_incremental
+        - limit_up_pool_incremental
+        - macro_daily_gauge_refresh
+        - market_fund_flow_refresh
+        - money_flow_incremental
+        - ndrc_fuel_price_refresh
+        - qweather_forecast_incremental
+        - qweather_now_incremental
+        - rate_decision_calendar_refresh
+        - restricted_shares_incremental
+        - share_change_incremental
+        - share_unlock_incremental
+        - shareholder_incremental
+        - st_stock_list_refresh
+        - stk_limit_postclose
+        - stock_basic_postclose
+        - stock_hot_rank_incremental
+        - suspend_status_postclose
+        - us_index_incremental
+        daily_crypto:
+        - crypto_kline_daily_incremental
+        - crypto_shadow_gate_daily
+        - hl_funding_history_incremental
+        - hl_liquidation_capture
+        - hl_oi_snapshot_daily_refresh
+        - hl_perp_snapshot_daily_refresh
+        daily_event:
+        - alt_regime_signal_refresh
+        - alt_shipping_index_incremental
+        - alt_stock_comment_snapshot
+        - alt_sz_air_quality_daily_incremental
+        - alt_sz_air_quality_region_incremental
+        - alt_sz_climate_hist_refresh
+        - alt_sz_env_meteor_refresh
+        - alt_sz_ground_obs_incremental
+        - alt_sz_house_area_incremental
+        - alt_sz_house_daily_incremental
+        - alt_sz_house_listing_refresh
+        - alt_sz_marine_forecast_incremental
+        - alt_sz_port_monthly_refresh
+        - alt_sz_reservoir_level_incremental
+        - alt_sz_reservoir_rain_day_refresh
+        - alt_sz_stat_analysis_refresh
+        - alt_sz_stat_monthly_refresh
+        - alt_sz_visibility_incremental
+        - alt_sz_weather_warning_incremental
+        - alt_typhoon_track_incremental
+        - analyst_forecast_incremental
+        - cb_premium_median_daily
+        - commodity_futures_main_refresh
+        - commodity_spot_price_refresh
+        - crypto_fear_greed_incremental
+        - disclosure_plan_incremental
+        - earnings_forecast_incremental
+        - equity_pledge_incremental
+        - equity_pledge_summary_incremental
+        - ex_dividend_event_incremental
+        - express_report_incremental
+        - hog_futures_core_refresh
+        - hog_province_spot_refresh
+        - hog_spot_index_refresh
+        - macro_activity_gauge_refresh
+        - macro_credit_money_refresh
+        - macro_pmi_gauge_refresh
+        - macro_price_gauge_refresh
+        - macro_trade_gauge_refresh
+        - repurchase_refresh
+        daily_kline:
+        - adj_factor_incremental
+        - anchored_state_build
+        - cohort_ledger_daily
+        - daban_engine_load_daily
+        - daily_valuation_incremental
+        - emotion_index_close_final
+        - etf_nav_refresh
+        - index_valuation_daily_compute_daily
+        - index_valuation_daily_incremental
+        - kline_cb_incremental
+        - kline_daily_hfq_incremental
+        - kline_daily_incremental
+        - kline_etf_daily_incremental
+        - kline_index_calc_refresh
+        - kline_index_incremental
+        - kline_monthly_hfq_incremental
+        - kline_sector_880_incremental
+        - kline_sector_880_resample
+        - kline_sector_incremental
+        - kline_weekly_hfq_incremental
+        - option_daily_stats_daily
+        - option_kline_incremental
+        - pattern_event_incremental
+        - pattern_evidence_certify
+        - pattern_weight_sync
+        - pattern_win_rate_materialize
+        - sector_meta_refresh
+        - stock_daily_basic_incremental
+        - stock_indicator_incremental
+        - technical_indicator_incremental
+        data_supply_sentinel: []
+        dloop_post: []
+        eod_reconciliation: []
+        event_driven:
+        - macro_data_incremental
+        - macro_fred_incremental
+        - news_baidu_incremental
+        - news_cctv_incremental
+        - news_cls_incremental
+        - news_data_incremental
+        - news_eastmoney_incremental
+        - news_economic_baidu_incremental
+        - news_rss_incremental
+        - news_stock_incremental
+        integrity_check: []
+        intraday_minute:
+        - kline_15min_incremental
+        - kline_1min_incremental
+        - kline_30min_incremental
+        - kline_5min_incremental
+        - kline_60min_incremental
+        - kline_etf_15min_incremental
+        - kline_etf_1min_incremental
+        - kline_etf_30min_incremental
+        - kline_etf_5min_incremental
+        - kline_etf_60min_incremental
+        - kline_lof_15min_incremental
+        - kline_lof_1min_incremental
+        - kline_lof_30min_incremental
+        - kline_lof_5min_incremental
+        - kline_lof_60min_incremental
+        - market_breadth_snapshot_minute
+        intraday_realtime:
+        - convertible_bond_iv_incremental
+        - futures_kline_qmt_incremental
+        - futures_position_incremental
+        - futures_term_structure_incremental
+        - futures_tick_intraday
+        - hk_kline_incremental
+        - index_quote_snapshot
+        - kline_hk_daily_incremental
+        - limit_up_down_incremental
+        - option_greeks_incremental
+        - option_iv_surface_incremental
+        - realtime_snapshot_incremental
+        - sector_snapshot_incremental
+        - tick_data_snapshot
+        - us_futures_intraday_snapshot
+        intraday_sector:
+        - kline_sector_15min_incremental
+        - kline_sector_1min_incremental
+        - kline_sector_30min_incremental
+        - kline_sector_5min_incremental
+        - kline_sector_60min_incremental
+        monthly_static:
+        - calendar_event_refresh
+        - concept_sector_refresh
+        - convertible_bond_list_refresh
+        - etf_benchmark_refresh
+        - etf_list_refresh
+        - hk_stock_list_refresh
+        - hk_trade_calendar_refresh
+        - index_adjustment_derive
+        - index_constituent_refresh
+        - index_list_refresh
+        - index_weight_refresh
+        - industry_class_suppl_refresh
+        - kline_daily_delisted_backfill
+        - lof_list_refresh
+        - sector_constituent_refresh
+        - sector_list_refresh
+        - st_namechange_backfill
+        - stock_list_delisted_refresh
+        - stock_list_refresh
+        - trade_calendar_refresh
+        news_slow:
+        - news_stock_em_incremental
+        - research_report_incremental
+        nightly_financial:
+        - balance_sheet_incremental
+        - cashflow_statement_incremental
+        - financial_derived_build
+        - financial_indicator_incremental
+        - income_statement_incremental
+        - main_business_incremental
+        - margin_trading_incremental
+        - northbound_hold_snapshot_refresh
+        - top10_circulating_shareholders_incremental
+        - top10_shareholders_incremental
+        nightly_sentiment: []
+        post_auction: []
+        pre_market:
+        - a50_futures_daily_incremental
+        - emotion_index_pre_open
+        - global_gold_daily_incremental
+        - global_wti_daily_incremental
+        - index_member_premarket
+        - st_status_premarket
+        - stk_limit_premarket
+        - stock_basic_premarket
+        - suspend_status_premarket
+        research_nightly:
+        - consensus_daily_build
+        - research_report_detail_incremental
+        sector_close_final: []
+        sector_pre_open: []
+        weekend_backfill:
+        - tick_backfill_weekly
+        weekend_calibration:
+        - alt_shipping_index_full_refresh
+        - alt_sz_enterprise_year_refresh
+        - alt_sz_house_presale_refresh
+        - alt_sz_market_subject_refresh
+        - alt_sz_reservoir_rain_month_refresh
+        - alt_sz_reservoir_station_refresh
+        - alt_typhoon_landfall_history_refresh
+        - alt_typhoon_names_refresh
+        - alt_typhoon_track_full_refresh
+        - analyst_forecast_full_refresh
+        - block_trade_detail_full_refresh
+        - commodity_futures_main_full_refresh
+        - commodity_spot_price_full_refresh
+        - daban_board_event_derive
+        - daily_valuation_full_refresh
+        - dividend_incremental_akshare
+        - eia_full_refresh
+        - equity_pledge_full_refresh
+        - etf_nav_full_refresh
+        - hk_kline_full_refresh
+        - hog_futures_core_full_refresh
+        - hog_spot_index_full_refresh
+        - index_valuation_daily_backfill
+        - index_valuation_daily_compute_after_ingest
+        - industry_class_refresh
+        - kline_cb_full_refresh
+        - kline_daily_full_refresh
+        - kline_futures_full
+        - kline_us_daily_full_refresh
+        - limit_up_down_full_refresh
+        - macro_data_full_refresh
+        - macro_fred_full_refresh
+        - macro_worldbank_full_refresh
+        - money_flow_full_refresh
+        - option_kline_full_refresh
+        - repurchase_full_refresh
+        - road_freight_index_refresh
+        - share_unlock_forward_refresh
+        - stock_indicator_full_refresh
+        - suspend_status_derive_weekend
+        - technical_indicator_full_refresh
+        - trading_lifecycle_weekly
+        - us_index_full_refresh
+      orphan_task_refs:
+      - task:dividend_incremental
+      - task:futures_warehouse_receipt_backfill_czce
+      - task:futures_warehouse_receipt_backfill_shfe
+      - task:road_freight_index_full_refresh
+      duplicate_task_ids: &id001
+        cohort_ledger_daily:
+        - daily_capital
+        - daily_kline
+      total_declared_tasks: 271
+    dangling_objects:
+      fake_channel_slots:
+      - eod_reconciliation
+      - post_auction
+      orphan_tasks:
+      - task:dividend_incremental
+      - task:futures_warehouse_receipt_backfill_czce
+      - task:futures_warehouse_receipt_backfill_shfe
+      - task:road_freight_index_full_refresh
+      tasks_outside_catchup_universe:
+      - slot: daily_alt_fx
+        effective_task_count: 1
+      - slot: daily_crypto
+        effective_task_count: 6
+      - slot: research_nightly
+        effective_task_count: 2
+      double_slot_tasks: *id001
+      entries:
+      - id: task:cohort_ledger_daily
+        kind: double_slot_task
+        slots:
+        - daily_capital
+        - daily_kline
+        owner_nodes:
+        - D13-30
+        - D13-35
+      - id: slot:eod_reconciliation
+        kind: fake_channel_slot
+        owner_nodes:
+        - D13-29
+      - id: slot:post_auction
+        kind: fake_channel_slot
+        owner_nodes:
+        - D13-13
+      - id: task:dividend_incremental
+        kind: orphan_task
+        owner_nodes:
+        - D13-01
+      - id: task:futures_warehouse_receipt_backfill_czce
+        kind: orphan_task
+        owner_nodes:
+        - D13-01
+      - id: task:futures_warehouse_receipt_backfill_shfe
+        kind: orphan_task
+        owner_nodes:
+        - D13-01
+      - id: task:road_freight_index_full_refresh
+        kind: orphan_task
+        owner_nodes:
+        - D13-01
+      - id: task:alt_fx_ecb_daily_incremental
+        kind: task_outside_catchup_universe
+        slot: daily_alt_fx
+        owner_nodes:
+        - D13-40
+      - id: task:consensus_daily_build
+        kind: task_outside_catchup_universe
+        slot: research_nightly
+        owner_nodes:
+        - D13-36
+      - id: task:crypto_kline_daily_incremental
+        kind: task_outside_catchup_universe
+        slot: daily_crypto
+        owner_nodes:
+        - D13-05
+      - id: task:crypto_shadow_gate_daily
+        kind: task_outside_catchup_universe
+        slot: daily_crypto
+        owner_nodes:
+        - D13-05
+      - id: task:hl_funding_history_incremental
+        kind: task_outside_catchup_universe
+        slot: daily_crypto
+        owner_nodes:
+        - D13-05
+      - id: task:hl_liquidation_capture
+        kind: task_outside_catchup_universe
+        slot: daily_crypto
+        owner_nodes:
+        - D13-05
+      - id: task:hl_oi_snapshot_daily_refresh
+        kind: task_outside_catchup_universe
+        slot: daily_crypto
+        owner_nodes:
+        - D13-05
+      - id: task:hl_perp_snapshot_daily_refresh
+        kind: task_outside_catchup_universe
+        slot: daily_crypto
+        owner_nodes:
+        - D13-05
+      - id: task:research_report_detail_incremental
+        kind: task_outside_catchup_universe
+        slot: research_nightly
+        owner_nodes:
+        - D13-36
+      total: 16
+  external_benchmark_landing:
+    source: docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+    table_a_landed:
+    - id: A1
+      carrier: nodes(D13-09).ready_gate + 顶层 admission_edges
+      nodes:
+      - D13-09
+      - D13-11
+      - D13-12
+      - D13-15
+      - D13-30
+      - D13-32
+      - D13-35
+    - id: A2
+      carrier: nodes(*).freshness_severity_zh
+      nodes:
+      - D13-14
+      - D13-16
+      - D13-36
+      - D13-37
+      - D13-39
+      - D13-44
+    - id: A3
+      carrier: gap 节点 D13-G01（状态口径未改，见 C3）
+      nodes:
+      - D13-G01
+      - D13-13
+      - D13-29
+    - id: A4
+      carrier: nodes(*).expected_emits_per_trading_day
+      nodes:
+      - D13-13
+      - D13-18
+      - D13-29
+      - D13-31
+      - D13-44
+    - id: A5
+      carrier: nodes(*).ready_basis
+      nodes:
+      - D13-28
+      - D13-29
+    - id: A6
+      carrier: nodes(*).miss_policy（机生面派生 + 显式覆盖）
+      nodes:
+      - D13-01
+      - D13-35
+      - D13-38
+      - 全图 44 格
+    - id: A7
+      carrier: nodes(*).no_drift_evidence
+      nodes:
+      - D13-27
+      - D13-29
+      - D13-38
+    table_c_pending:
+    - id: C1
+      question_zh: miss_policy=rerun 是否等于给定时器补跑发准生证
+      nodes:
+      - D13-01
+      - D13-02
+      - D13-03
+      - D13-35
+      - D13-38
+    - id: C2
+      question_zh: 就绪门是否允许持续重检/挂几次（骨架定为当日一次）
+      nodes:
+      - D13-09
+      - D13-30
+    - id: C3
+      question_zh: unknown 第四显示态与骨架状态四态封闭口径能否并存
+      nodes:
+      - D13-G01
+      - 全图 44 格
+    - id: C4
+      question_zh: freshness_severity 分级归告警系统引用还是图侧独立声明
+      nodes:
+      - D13-14
+      - D13-16
+      - D13-36
+      - D13-37
+      - D13-39
+      - D13-44
+    - id: C5
+      question_zh: calendar_gated 三值中 null（未声明理由）的语义与补填义务
+      nodes:
+      - D13-43
+  cross_map_gap_inventory:
+    source: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§1-D
+    in_this_map:
+    - artifact: c1_market.execution_report
+      nodes:
+      - D13-24
+      - D13-27
+      gap_node: D13-G02
+      red_reason: broken_supply
+    - artifact: c1_market.reconciliation_differences
+      nodes:
+      - D13-29
+      - D13-31
+      gap_node: D13-G03
+      red_reason: broken_supply
+    - artifact: ghost:c1_market.news_data
+      nodes:
+      - D13-17
+      - D13-18
+      gap_node: D13-G04
+      red_reason: ghost_ref
+    owned_by_fig12:
+    - artifact: c1_market.account_nav_daily
+      reason_zh: 生产端零调用方，环节面=写通道与消费方接线（图 12 域），本图无对应时点环节，仅交叉引用不建节点
+    - artifact: c1_market.factor_feature_value
+      reason_zh: CH 表未建（DDL 在册未 apply），属工厂在线面供给，本图无时点环节
+    - artifact: c1_market.factor_signal
+      reason_zh: 同上（默认落点悬空）
+  module_id_roster:
+    source: docs/03_modules/path_ownership_map.yaml
+    claims_scanned: 8010
+    note_zh: existence ∈ {未实现, deprecated} 的在册条目不采信；未被覆盖的路径退回源文件 [BLUEPRINT] 头声明（须磁盘实存）。在册面存在性与磁盘实存漂移时以磁盘为准并在环节
+      note 记事实（本车道不改 depgraph）。
+  tdm_roster_scanned: true
+counts:
+  total_nodes: 48
+  total_edges: 64
+  total_feedback_loops: 10
+  by_segment:
+    A: 13
+    B: 14
+    C: 12
+    D: 9
+  by_slot_source:
+    schedule: 25
+    schtasks: 7
+    none: 7
+    dloop_stage: 7
+    event: 2
+  by_node_type:
+    gap: 4
+    stage: 44
+  by_verified_scope:
+    production: 14
+    structure: 34
+  by_wiring_status:
+    partial: 14
+    unwired_no_caller: 6
+    unwired_slot_hollow: 4
+    wired: 24
+  machine:
+    slot_total: 29
+    special_branch_total: 11
+    idle_slot_total: 2
+    idle_slots:
+    - eod_reconciliation
+    - post_auction
+    orphan_task_total: 4
+    double_slot_task_total: 1
+    dangling_total: 16
+    dangling_unclaimed: []
+    calendar_guarded_slot_total: 9
+    dloop_stage_universe: 16
+    register_script_total: 21
+    task_declaring_script_total: 27
+    schtasks_query_available: true
+    service_flag_present: []
+    skeleton_status_scan:
+      source: docs/_working/map_build/fig13_daycycle/00_skeleton.md
+      nodes_scanned: 44
+      by_symbol:
+        ✅: 14
+        ⬜: 3
+        🔨: 27
+    module_id_scan:
+      source: docs/03_modules/path_ownership_map.yaml
+      nodes_with_module_id: 42
+      nodes_with_module_ref: 42
+      nodes_null_module_id: 6
+    tdm_refs:
+      nodes_with_tdm_refs: 20
+      roster_source: config/trading_decision_map.yaml
