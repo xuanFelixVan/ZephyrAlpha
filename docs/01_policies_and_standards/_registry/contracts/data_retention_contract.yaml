@@ -40,11 +40,11 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-003
-version: "1.3.0"
+version: "1.4.0"
 title: "Data Retention & Backtest Layering Contract"
 status: active
 ttl: permanent
-contract_version: "1.3.0"
+contract_version: "1.4.0"
 
 # ============================================================
 # §1 不变原则（铁律）
@@ -104,7 +104,7 @@ layers:
     retention_start: "2022-01-01"
     valid_backtest_start: "2022-01-01"
     hot_ttl: null  # 无TTL，永久保留
-    cold_policy: "手动归档（≥2年后人工触发）"
+    cold_policy: "滚动15个月：超期月度归档进冷库（v1.4.0 Owner 拍板保守档）"
     classification_keywords: [tick, l2_tick, auction, realtime, index_quote]
     # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
@@ -398,7 +398,7 @@ dependencies:
 storage_matrix:
   - table_pattern: "c1_market.tick_data / index_quote / auction_snapshot"
     hot: "ClickHouse，无TTL，永久保留"
-    cold: "冷储主库F盘Parquet，手动CLI或五重安全阀事件触发（≥2年后，v1.3.0）"
+    cold: "冷储主库F盘Parquet，滚动15个月月度归档（v1.4.0 Owner 拍板：回测现役留 15 个月，超期进冷库不删除）"
     delete: "永不"
 
   - table_pattern: "c1_market.kline_*"
@@ -442,7 +442,7 @@ rolling_archive:
   excluded_tables:         # 排除表（甲线互斥回落前 TI 不自动搬，裁定#382 逐表批制同向）
     - technical_indicator
   retention_lines_months:  # 各表热层保留线（月，含在 layers 人工口径内机读化）
-    tick_data: 25          # tick 2 年+1 月滞回
+    tick_data: 16          # tick 15 个月+1 月滞回（v1.4.0 滚动）
     kline_1min: 61         # 分钟 5 年+1
     kline_5min: 61
     kline_15min: 61
@@ -461,6 +461,14 @@ rolling_archive:
 # §6 变更历史
 # ============================================================
 changelog:
+  - version: "1.4.0"
+    date: "2026-09-28"
+    author: "st-storageswap-20260928 (Owner 对话拍板：tick 保守档滚动15个月 + TI 全保留)"
+    changes:
+      - "tick 现役保留从 ≥2年缩为滚动 15 个月：超期月度先归档 F 冷库 Parquet（行数 verify 通过才 DROP），Owner 令=进入冷库而非删除"
+      - "首次执行：202501-202506 六个月经 archiver archive-range 归档（本版落地载体）"
+      - "TI 全保留裁定：回测查表速度资产（factor 库/策略管线 daily_job 在读），Owner 拍板不删不归档，各 period 深史均留 CH 现役"
+      - "version: 1.3.0→1.4.0, contract_version: 1.3.0→1.4.0"
   - version: "1.3.0"
     date: "2026-09-20"
     author: "st-disk-ch-20260921 (乙线, Owner 裁定#380⑤+#384 授权)"
