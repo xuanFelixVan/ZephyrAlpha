@@ -46,7 +46,7 @@ ttl: task_bound
 | # | qid | commit | 内容 | 归属核验 |
 |---|-----|--------|------|----------|
 | 1 | q-20260927-st-ec2-p0-0001 | `3522eb8c6d`（chief 双归属袋吸收）+0009 残件 | F34 知识汇聚落地（聚合器+DDL+16 测+TDM module_ref 回填，死会话 st-chief4x-know 遗产核验落地；主袋与 chief 3522eb8c6d 内容重合已防回退弃用）+sim_observe_daily 回归补落（09-24 契约在 tests 钉死、执行体快照回退丢失）+L9 钩子测试隔离（残件 q-0009） | `git log -1 --name-only` 3522eb8c6d=8 文件恰含五件+chief 增强版 ✓；0009 残件落地后回填 |
-| 2 | q-20260927-st-ec2-p0-0002（v3袋=q-0014） | 落地后回填（v3 补 ALGO_FLOW 锚+F821 治本）| F74 堵点1+2：combo v2 frozen 尺（STD-SIM-ACCESS-002/裁定#337，dsr 0.5+ρ̄+换手腿+suspect 注记）+combo 事件入口（advisory due 执行体尾传动渲染） | 待 drain 后核 |
+| 2 | q-20260927-st-ec2-p0-0002→（v9袋=q-0021，内容门全过余 landing 环境死因重投链） | 落地后回填（v9=最终内容：v2 尺+combo 传动+ALGO_FLOW 锚+F821 治本）| F74 堵点1+2：combo v2 frozen 尺（STD-SIM-ACCESS-002/裁定#337，dsr 0.5+ρ̄+换手腿+suspect 注记）+combo 事件入口（advisory due 执行体尾传动渲染） | 待 drain 后核 |
 | 3 | q-20260927-st-ec2-p0-0003（v2袋=0013） | 落地后回填（v2 修 SSOT-REDEFINITION+NO-BARE-SQL）| FL1/FL2 回灌边消费端 MOD-BT-223 feedback_prior（E6/E9 digest→E2 先验注记+E1 方向面）+两消费端接线+翻译/token 共册随批 | 待 drain 后核 |
 | 4 | q-20260927-st-ec2-p0-0004（v2袋=4ce7dd9ced） | F20 事件沿落地 | F20 车道G 事件沿：intel_harvester 落新班 fire-and-forget 触发 lane_g 消化（零 cron 事件沿） | 待 drain 后核 |
 
