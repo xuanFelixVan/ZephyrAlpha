@@ -41,7 +41,9 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.file_utils import atomic_write_if_changed  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
+from _shared.file_utils import (
+    atomic_write_if_changed,  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
+)
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.registry_entry_count import count_primary_registry_entries
 from _shared.yaml_utils import load_yaml
@@ -132,7 +134,7 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
     data: dict | None = None
     try:
         data = load_yaml(yaml_path)
-    except Exception:
+    except Exception:  # noqa: BLE001  解析失败一律按无数据降级（扫描器容错语义，非吞错）
         data = None
 
     # R4 机生口径统一（2026-09-16 裁定#263）：候选 id 按 module_id→registry_id（YAML 体）
@@ -181,6 +183,30 @@ def extract_registry_info(yaml_path: Path) -> dict | None:
     }
 
 
+def dedup_by_identity(
+    registries: list[dict],
+) -> tuple[list[dict], list[tuple[str, str, str]]]:
+    """身份键去重：同 registry_id 只出一条（主索引=一登记表一条，身份键唯一是
+    commit_queue_landing 三向合并的硬前提——q-20260927-st-ailayer-sx-20260927-0003
+    因 ours 侧同键异容死信实录）。
+
+    语义依据：S6/K1 裁定 dataflow_graph_registry.yaml → data_asset_registry.yaml
+    改名扩展（registry_id=REG-DATAFLOW-001 保留，稳定标识符不断），旧文件过渡态
+    物理保留但同属一张登记表；ROOR 仅登记 data_asset_registry.yaml。保留排序首位
+    （glob sorted 序=data_asset 在前=ROOR 在册真源），丢弃后续重复并 WARNING 留痕
+    （不静默，漂移可见）。
+    """
+    seen: dict[str, dict] = {}
+    dropped: list[tuple[str, str, str]] = []
+    for r in registries:
+        rid = r["registry_id"]
+        if rid in seen:
+            dropped.append((rid, seen[rid]["physical_path"], r["physical_path"]))
+            continue
+        seen[rid] = r
+    return list(seen.values()), dropped
+
+
 def scan_catalogs() -> list[dict]:
     """scan_catalogs implementation."""
     registries = []
@@ -205,6 +231,9 @@ def scan_catalogs() -> list[dict]:
         print(f"WARNING: {len(skipped)} 个文件含 module_id 但未被收录（检查 frontmatter/YAML 兼容性）:")
         for s in skipped:
             print(f"  - {s}")
+    registries, dropped = dedup_by_identity(registries)
+    for rid, kept, dup in dropped:
+        print(f"WARNING: registry_id {rid} 重复出条：保留 {kept}，跳过 {dup}（同库过渡态双物理文件，真源见 ROOR）")
     return registries
 
 
