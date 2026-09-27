@@ -81,7 +81,10 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
-_SSOT_PATH = _REPO_ROOT / "src" / "zephyr" / "governance" / "reconciliation_registry.py"
+# 2026-09-27 自动化假绿修复：真源模块在 audit/ 子包（与 oracle
+# verify_reconciliation_registry.py:84 同路径）；旧值指 governance/ 根，run_all 变异
+# 开跑即 [FATAL] SSoT 真源不存在 exit 2，与本件要防的静默失效同族。
+_SSOT_PATH = _REPO_ROOT / "src" / "zephyr" / "governance" / "audit" / "reconciliation_registry.py"
 _ORACLE_PATH = _SCRIPT_DIR.parent / "verify_reconciliation_registry.py"
 _SEAM_ENV = "RR_UNDER_TEST"  # 与 verify_reconciliation_registry.py 约定的 seam 名
 

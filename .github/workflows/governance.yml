@@ -131,7 +131,9 @@ jobs:
       # Tier 2: 结构层 — 索引同步 + 目录完整性
       # ============================================================
       - name: Index-Reality Sync (GATE-IDX)
-        run: python scripts/governance/d1_structure/validate_index_reality.py --ci
+        # 2026-09-27 自动化假绿修复：validate_index_reality.py 不解析 argv（默认即硬阻断），
+        # 原 --ci 为被静默吞掉的装饰性旗标，去掉使调用面与真源一致
+        run: python scripts/governance/d1_structure/validate_index_reality.py
         continue-on-error: false
 
       - name: Registry Consistency Cross-Check
@@ -323,8 +325,11 @@ jobs:
       # ============================================================
       # Tier 7: 全量回归 — 12 维度审计扫描（最后防线）
       # ============================================================
-      - name: Full Governance Regression (D1-D12, --ci hard-block)
-        run: python scripts/governance/run_all.py --ci
+      - name: Full Governance Regression (D1-D12, default hard-block)
+        # 2026-09-27 自动化假绿修复：run_all.py 的 argparse 从未声明 --ci（unrecognized →
+        # exit 2，CI 治理全量回归根本起不来）。其缺省模式=D1-D12 全维度+有 Finding 即
+        # exit 1，正是本 job 要的 hard-block 语义（--warn-only 才是旁路），故按现实调用。
+        run: python scripts/governance/run_all.py
         continue-on-error: false
 
       - name: Dependency Vulnerability Scan (pip-audit)

@@ -43,6 +43,9 @@ $ErrorActionPreference = "Stop"
 # ============== Paths ==============
 $RepoRoot = "D:\ZephyrAlpha"
 $TmpDir = Join-Path $RepoRoot "tmp"
+# Test/sandbox injection (pairing pytest): redirects ALL state paths below
+# (heartbeats, report, sig, alert log) into a caller-provided directory.
+if ($env:DEADMAN_TMP_DIR) { $TmpDir = $env:DEADMAN_TMP_DIR }
 $AlertLog = Join-Path $TmpDir "deadman_switch_alerts.log"
 
 if (-not (Test-Path $TmpDir)) {
@@ -171,6 +174,60 @@ if ($isMarketHours) {
         } catch {
             $staleServices += "live_strategy_biz: biz heartbeat parse error ($($_.Exception.Message))"
         }
+    }
+}
+
+# ============== config_effect_check verdict channel (ZephyrAlpha_ConfigCheck, MOD-INF-092) ==============
+# Read-side wiring for the daily 08:05 scheduled-config-drift alarm (2026-09-27
+# automation-false-green campaign, env F132): the task legitimately exits 1 when disk
+# config (schedule.yaml/tasks.yaml) drifted from the scheduler loaded-state snapshot,
+# but the verdict had no automated consumer (data/failures files = pull human view,
+# scheduled_task_reconcile.py = manual CLI whose task attachment is an Owner gate).
+# Deadman principle holds: only READ the report file written by others; classification
+# stays single-source in config_effect_checker.py (no second classifier here).
+# Alert conditions: status != ok, or report not refreshed within DEADMAN_CONFIG_MAX_AGE_H
+# (default 48h -> the ConfigCheck task itself died silently). Cooldown: alert once per
+# distinct verdict (status+checked_at signature file), mirroring Alerter's built-in dedup,
+# so the 5-min cadence does not spam while a mismatch persists.
+$CfgReport = Join-Path $TmpDir "config_effect_check_report.json"
+if ($env:DEADMAN_CONFIG_REPORT) { $CfgReport = $env:DEADMAN_CONFIG_REPORT }
+$CfgSigFile = Join-Path $TmpDir "deadman_config_effect_last.sig"
+$CfgMaxAgeH = 48
+if ($env:DEADMAN_CONFIG_MAX_AGE_H -match '^\d+$') { $CfgMaxAgeH = [int]$env:DEADMAN_CONFIG_MAX_AGE_H }
+$cfgAlert = $null
+$cfgSig = $null
+if (-not (Test-Path $CfgReport)) {
+    # MISSING-alert only after the channel has been live once (sig file = proof of first
+    # real alert); before first run this is absence-of-feature, not a fault. Also keeps
+    # foreign test sandboxes (which never planted a sig) log-clean.
+    if (Test-Path $CfgSigFile) {
+        $cfgAlert = "config_effect_check: report MISSING (ConfigCheck went silent after prior alert; run: python -m zephyr.infra_ops.config_effect_checker)"
+        $cfgSig = "missing"
+    }
+} else {
+    try {
+        $cfg = Get-Content $CfgReport -Raw -Encoding utf8 | ConvertFrom-Json
+        $cfgAgeH = ($now - (Get-Item $CfgReport).LastWriteTime).TotalHours
+        $cfgSig = "{0}|{1}" -f $cfg.status, $cfg.checked_at
+        if ($cfgAgeH -gt $CfgMaxAgeH) {
+            $cfgAlert = "config_effect_check: report STALE ($([int]$cfgAgeH)h > ${CfgMaxAgeH}h -- ZephyrAlpha_ConfigCheck silent)"
+            $cfgSig = "stale|$cfgSig"
+        } elseif ($cfg.status -eq 'mismatch') {
+            $cfgAlert = "config_effect_check: MISMATCH -- disk config differs from scheduler loaded-state (scheduler running stale values); restart scheduler in a safe window, details: $CfgReport"
+        } elseif ($cfg.status -ne 'ok') {
+            $cfgAlert = "config_effect_check: status=$($cfg.status) (unknown = fail-closed, snapshot missing/corrupt)"
+        }
+    } catch {
+        $cfgAlert = "config_effect_check: report parse error ($($_.Exception.Message))"
+        $cfgSig = "parse|$((Get-Item $CfgReport).LastWriteTime.Ticks)"
+    }
+}
+if ($null -ne $cfgAlert) {
+    $cfgPrevSig = $null
+    if (Test-Path $CfgSigFile) { $cfgPrevSig = (Get-Content $CfgSigFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim() }
+    if ($cfgPrevSig -ne $cfgSig) {
+        $staleServices += $cfgAlert
+        $cfgSig | Out-File -FilePath $CfgSigFile -Encoding utf8
     }
 }
 
