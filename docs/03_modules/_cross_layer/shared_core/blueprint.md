@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.31"
+version: "0.19.32"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -484,6 +484,7 @@ build_status: generated
 | `src/zephyr/trading/trading_contracts/market/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/trading_contracts/market/instrument.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/risk/compliance_rule.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/risk/kill_switch_state_store.py` | ✅ 已实现 | |
 
 ### 5.2 测试文件
 
@@ -535,6 +536,7 @@ build_status: generated
 | `tests/shared/test_state_store_redis.py` | ✅ 已实现 | |
 | `tests/trading/integration/test_trading_contracts.py` | ✅ 已实现 | |
 | `tests/trading/test_feature_flag.py` | ✅ 已实现 | |
+| `tests/trading/test_kill_switch_state_store.py` | ✅ 已实现 | |
 | `tests/utils/test_foundation_deprecation.py` | ✅ 已实现 | |
 | `tests/utils/test_foundation_env.py` | ✅ 已实现 | |
 | `tests/utils/test_foundation_errors.py` | ✅ 已实现 | |

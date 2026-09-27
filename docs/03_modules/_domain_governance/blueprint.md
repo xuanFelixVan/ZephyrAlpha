@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.19"
+version: "0.13.20"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -91,7 +91,7 @@ ssot_claims:
     note: "D-GAP-01~12设计真源在MOD-GOV-CAP-001（2026-05归档，docs/_archive/03_modules/_gov_cap_001/blueprint.md），本蓝图仅保留索引+引用"
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
-design_maturity: production
+design_maturity: design
 build_status: generated
 ---
 
@@ -2204,6 +2204,7 @@ STEP 3: 拆分后验证
 | `tests/governance/lifecycle/test_strategy_archive.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `tests/governance/test_alert_threshold_consistency.py` | ✅ 已实现 | |
+| `tests/governance/test_capability_library_dedup.py` | ✅ 已实现 | |
 | `tests/governance/test_error_code_consistency.py` | ✅ 已实现 | |
 | `tests/governance/test_intelligence_governance_facade.py` | ✅ 已实现 | |
 | `tests/governance/test_llm_registry_reconciliation.py` | ✅ 已实现 | |

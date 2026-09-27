@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.42"
+version: "2.2.43"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.42 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.43 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -1112,6 +1112,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market/market_sentiment_panel.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_st_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_stk_limit.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_stock_daily_basic.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_stock_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_stock_valuation.py` | ✅ 已实现 | |
@@ -1125,6 +1126,11 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/meta/meta_stock_profile_ths.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_basic.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_profile_ths.py` | ✅ 已实现 | |
+| `schemas/categories/registry_ledger/__init__.py` | ⚠️ 骨架 | |
+| `schemas/categories/registry_ledger/registry_catalog.py` | ✅ 已实现 | |
+| `schemas/categories/registry_ledger/registry_entry.py` | ✅ 已实现 | |
+| `schemas/categories/registry_ledger/registry_event.py` | ✅ 已实现 | |
+| `schemas/categories/registry_ledger/registry_snapshot.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/implementations/ch_tick_replay.py` | ✅ 已实现 | |
 | `src/zephyr/data/implementations/consensus_daily_compute.py` | ✅ 已实现 | |
 | `src/zephyr/data/implementations/consensus_daily_repaired_compute.py` | ✅ 已实现 | |

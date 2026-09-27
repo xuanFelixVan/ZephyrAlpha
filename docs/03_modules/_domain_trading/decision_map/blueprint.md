@@ -3,7 +3,7 @@ module_id: MOD-TRADING-015
 title: "交易决策地图蓝图 — 决策链真源加载与引用校验"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 ttl: permanent
 layer: L03_trading
 layer_name: trading
@@ -127,6 +127,7 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 | `tests/trading/test_decision_map.py` | ✅ 已实现 | |
 | `tests/trading/test_decision_map_adversarial.py` | ✅ 已实现 | |
 | `tests/trading/test_decision_map_d38_adversarial.py` | ✅ 已实现 | |
+| `tests/trading/test_decision_map_r9_depgraph_check.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

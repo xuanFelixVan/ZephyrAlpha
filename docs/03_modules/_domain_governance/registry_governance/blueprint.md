@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.12"
+version: "0.2.13"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -1108,19 +1108,146 @@ class OverlapResult:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `schemas/categories/ai_cost_daily.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/ai_layer/cleaning/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/cleaning/auditor.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/cleaning/local_prefill.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/cleaning/policy.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/cleaning/spec_store.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/cleaning/washer.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/compare_events.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/executor.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/experiment_store.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/fairness.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/policy.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/too_good.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/venue_c4.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/venue_dual_run.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/venue_replay.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/comparator/venue_tool_bench.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/closure_check.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/forget.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/heritage_events.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/policy.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/priors.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/heritage/store.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/intake/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/ai_layer/perceive/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/perceive/search_orders.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/perceive/source_registry.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/perceive/translator.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/annual_review.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/dashboard_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/drop_gate.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/freedom_weekly_report.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/negative_list.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/negative_list_gates.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/no_delete_manifest.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/session_env_guard.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/sev_router.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/dispatcher.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/maturity.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/order_daemon.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/router.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/scheduling_events.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/seed_writer.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/switch_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/switch_engine/approval_router.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/switch_engine/revert_drill.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/switch_engine/rollout_tiers.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/switch_engine/tombstone_manager.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/tools/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/tools/inventory_generator.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/tools/scoring.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/tools/suite.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/tools/usage_stats.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_ledger/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_ledger/api.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_ledger/baseline.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_ledger/deploy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_projection/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_projection/model.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_projection/pg_source.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_projection/projection_generator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_projection/renderer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/registry_projection/state.py` | ✅ 已实现 | |
 | `src/zephyr/governance/standards_governance/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/standards_governance/rule_replay.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/budget_analyzer.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/canonical_hash.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_intel/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/intelligence/model_intel/intel_card.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_intel/scanner.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/model_profiling/dual_run.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/switch_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/switch_engine/criteria.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/switch_engine/shadow_runner.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/switch_engine/switch_engine.py` | ✅ 已实现 | |
+| `src/zephyr/intelligence/switch_engine/switch_registry.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/ai_layer/cleaning/test_auditor.py` | ✅ 已实现 | |
+| `tests/ai_layer/cleaning/test_local_prefill.py` | ✅ 已实现 | |
+| `tests/ai_layer/cleaning/test_policy.py` | ✅ 已实现 | |
+| `tests/ai_layer/cleaning/test_spec_store.py` | ✅ 已实现 | |
+| `tests/ai_layer/cleaning/test_washer.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_closure_check.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_ddl.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_digest.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_events.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_forget.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_policies.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_priors.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_snapshot.py` | ✅ 已实现 | |
+| `tests/ai_layer/heritage/test_heritage_store.py` | ✅ 已实现 | |
+| `tests/ai_layer/intake/test_card_store.py` | ✅ 已实现 | |
 | `tests/ai_layer/intake/test_dedup.py` | ✅ 已实现 | |
+| `tests/ai_layer/intake/test_events.py` | ✅ 已实现 | |
+| `tests/ai_layer/intake/test_gate.py` | ✅ 已实现 | |
+| `tests/ai_layer/intake/test_kpi.py` | ✅ 已实现 | |
+| `tests/ai_layer/intake/test_snapshot_regen.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/conftest.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/test_monthly_checkup.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/test_quota_sync.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/test_search_orders.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/test_source_registry.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/test_translator.py` | ✅ 已实现 | |
+| `tests/ai_layer/perceive/test_veins.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/conftest.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_annual_review.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_dashboard_pipeline.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_drop_gate.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_freedom_weekly_report.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_negative_list.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_negative_list_gates.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_no_delete_manifest.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_session_env_guard.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_sev_router.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/conftest.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_dispatcher.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_maturity.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_order_daemon.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_router.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_schedule_gate_policy.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_scheduling_ddl.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_scheduling_events.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_seed_writer.py` | ✅ 已实现 | |
+| `tests/ai_layer/test_evolution_chain_e2e.py` | ✅ 已实现 | |
+| `tests/ai_layer/test_model_library_ddl.py` | ✅ 已实现 | |
+| `tests/ai_layer/test_model_scoring_policy.py` | ✅ 已实现 | |
 | `tests/governance/test_rule_replay.py` | ✅ 已实现 | |
+| `tests/governance/test_standard_checkup.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_registry_governance_infrastructure.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_registry_governance_root.py` | ✅ 已实现 | |
+| `tests/intelligence/test_budget_analyzer.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

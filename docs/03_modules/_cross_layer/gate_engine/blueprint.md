@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.43"
+version: "0.8.44"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -50,7 +50,7 @@ ssot_claims:
   - {claim: "法证审计协议SSoT", scope: "module"}
   - {claim: "自指硬化协议SSoT", scope: "module"}
 responsibility_domain: 
-design_maturity: production
+design_maturity: design
 build_status: stable
 ---
 
@@ -1472,8 +1472,10 @@ STEP 3: 拆分后验证
 | `src/zephyr/feedback_loop/gates/_safety_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_security_gates.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/_tree_view.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/approval_resolver.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py` | ✅ 已实现 | |
@@ -1547,6 +1549,7 @@ STEP 3: 拆分后验证
 | `tests/governance/code_quality/test_detect_forward_reference.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/gate_test_helpers.py` | ⚠️ 骨架 | |
 | `tests/governance/commit_gates/test_algo_note_sync_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_approval_resolver.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_bare_subprocess_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_blueprint_amodule_cross_check_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_blueprint_node_id_hardcode_gate.py` | ✅ 已实现 | |
@@ -1560,6 +1563,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_depgraph_freshness_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_depgraph_pre_registration_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_derived_file_deletion_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_doc_header_suite_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_domain_name_zh_direct_access_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_errcode_consistency_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_file_placement_ttl_gate.py` | ✅ 已实现 | |
@@ -1572,6 +1576,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_new_file_depgraph_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_noqa_validation_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_own_scope_promoted_gates.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_p4_merged_gates.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_precommit_offline_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_protected_paths_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_reconciler_health_gate.py` | ✅ 已实现 | |
@@ -1606,6 +1611,7 @@ STEP 3: 拆分后验证
 | `tests/governance/rule_enforcement/test_triple_alignment.py` | ✅ 已实现 | |
 | `tests/governance/test_alignment_gates_red_blue.py` | ✅ 已实现 | |
 | `tests/governance/test_gate_failure_probes.py` | ✅ 已实现 | |
+| `tests/governance/test_preflight_bare_sql_alignment.py` | ✅ 已实现 | |
 | `tests/governance/test_risk_tier_registry.py` | ✅ 已实现 | |
 | `tests/governance/test_split_coordination.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_cost_router.py` | ✅ 已实现 | |

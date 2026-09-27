@@ -4,7 +4,7 @@ title: "五阶段情绪周期蓝图 — 冰点/反核/主升/疯狂/退潮"
 doc_type: blueprint
 status: Active
 version: "0.1.4"
-design_maturity: design
+design_maturity: production
 ttl: permanent
 layer: L01_market
 layer_name: market

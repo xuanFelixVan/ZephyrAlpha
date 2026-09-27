@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.34
+version: 5.5.35
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -48,7 +48,7 @@ codification_at: "2026-05-13"
 references: []
 responsibility_domain: 
 build_status: generated
-design_maturity: production
+design_maturity: design
 ---
 
 > actual_disk_path: src/zephyr/infrastructure/script_system/ + scripts/governance/ + scripts/governance/meta/ + scripts/governance/generators/ (12 .py files)
@@ -1458,7 +1458,6 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/blueprint/test_no_stale_agents_numbered_refs_in_scripts.py` | ✅ 已实现 | |
 | `tests/blueprint/test_normalize_blueprint_autogen_anchors.py` | ✅ 已实现 | |
 | `tests/blueprint/test_sync_blueprint_code_index_template.py` | ✅ 已实现 | |
 | `tests/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
@@ -1491,15 +1490,19 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `tests/governance/d3_metadata/test_pattern_code_fingerprint.py` | ✅ 已实现 | |
 | `tests/governance/d5_architecture/__init__.py` | ⚠️ 骨架 | |
 | `tests/governance/d5_architecture/test_check_vocab_domain_convergence.py` | ✅ 已实现 | |
+| `tests/governance/generators/test_generate_commit_guide.py` | ✅ 已实现 | |
 | `tests/governance/governance_e2e/test_naming_e2e.py` | ✅ 已实现 | |
 | `tests/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
+| `tests/governance/rule_bridge/test_cas_restore_hot_files.py` | ✅ 已实现 | |
 | `tests/governance/rule_bridge/test_session_worktree_cli.py` | ✅ 已实现 | |
+| `tests/governance/scripts_governance/test_d6_exclude_parts_hot_reload.py` | ✅ 已实现 | |
 | `tests/governance/shared/test_finding.py` | ✅ 已实现 | |
 | `tests/governance/test_algo_quality.py` | ✅ 已实现 | |
 | `tests/governance/test_architecture_health_dashboard_metrics.py` | ✅ 已实现 | |
 | `tests/governance/test_architecture_health_dashboard_metrics_p2.py` | ✅ 已实现 | |
 | `tests/governance/test_chart_pattern_registry_integrity.py` | ✅ 已实现 | |
 | `tests/governance/test_check_blueprint_code_alignment.py` | ✅ 已实现 | |
+| `tests/governance/test_commit_guide_delivery.py` | ✅ 已实现 | |
 | `tests/governance/test_gate_prerun.py` | ✅ 已实现 | |
 | `tests/governance/test_git_hooks_marker_forgery.py` | ✅ 已实现 | |
 | `tests/governance/test_scaffold_module_registration.py` | ✅ 已实现 | |
