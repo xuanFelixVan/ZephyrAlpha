@@ -1,0 +1,435 @@
+# 图15 卡状态登记面·唯一宿主扩枚举机读提案（91_registry_host_proposal.yaml）
+# 产件车道 L-CARD15。本件是"现态真源"——宿主册 experiment_registry.yaml 尚未扩枚举期间，
+# 图15 的状态词表/实例种子/判据回炉记录一律以本件为锚（anchor_source: proposal），
+# 宿主落地后由总包把图头 registry_host 改为 experiment_registry、anchor_source 改为 registry，
+# 本件随即降级为施工档案（回落判据见 host_migration_checklist.regression_when_landed）。
+# 禁手改本件的 *_universe/counts 派生数字（一律由 generate_strategy_card_lifecycle_map.py 现算回查）。
+schema_version: '0.1'
+proposal_id: fig15-card-state-host-extension
+title_zh: 策略卡状态登记面唯一宿主扩枚举提案（含 89 张卡映射与六处分裂收敛）
+lane: L-CARD15
+map_id: strategy_card_lifecycle_map
+skeleton_ref: docs/_working/map_build/fig15_cardlife/00_skeleton.md
+registry_spec_ref: docs/_working/map_build/fig15_cardlife/90_card_state_registry_spec.md
+books_ref:
+- docs/_working/map_build/fig15_cardlife/01_状态族前段.md
+- docs/_working/map_build/fig15_cardlife/02_状态族后段与迁移.md
+- docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+blueprint_ref: docs/_working/map_build/03_final_blueprint_and_schema.md
+
+# ---------------------------------------------------------------------------
+# §1 宿主裁定承接（总包已裁：唯一宿主=扩 experiment_registry，不新建卡状态册）
+# ---------------------------------------------------------------------------
+host:
+  decision: extend_existing_registry            # 总包已裁，本件不再另立候选
+  registry_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+  registry_id: REG-EXP-001
+  schema_now: '2.1'
+  schema_target: '2.2'
+  unique_key: [experiment_id]                   # 主键不动（改主键=牵动全册 FK 与 ROOR 消费方）
+  contract_entry_prefix: CARD-                  # 与既有 EXP- 前缀互斥，无重号风险（实测 11 条全 EXP-*）
+  write_authority: 总包                          # 本车道禁写该热册（提案+机读块归本件，迁移归总包）
+  rejected_alternatives:
+    - {candidate: 新建 strategy_card_registry.yaml, reason: 同域重复簇必并（宪法 §4 第 2 条），且 +ROOR 行 +双真源同步义务}
+    - {candidate: 卡 md frontmatter 为唯一真源, reason: 89 张中 29 张无头、23 种自由串、0 张在受控词表内（簿03 §A-1）}
+    - {candidate: backtest_backlog.yaml, reason: 注释承诺的 threshold_status 字段实测 142 条中出现 0 次（F-09）}
+    - {candidate: run 档案面 data/backtest_artifacts, reason: 整目录 gitignored、本 worktree 不存在（F-11），换机即断}
+    - {candidate: task_card_meta_registry.yaml, reason: 跨域不同对象（任务卡），塞入触发其 MR-05 违例；只借 migration_rules 形态}
+    - {candidate: 复用 contract_status_vocabulary.yaml, reason: 宿主册已归档（孤儿）且值域缺六态，扩它=跨域污染}
+  why_this_host_evidence:
+    - 在册且有 unique_key/pending_fk 治理面（可承接 CARD-* forward-ref）
+    - 已在管预注册语义 pre_registered（实测 True 6 / False 5）+ n_trials/dsr_value/pbo_value 齐备
+    - 闲置字段 viability_verdict 三值恰为 exam_policy 三态出口直译（实测 11 条全 null）⇒ 启用而非新造
+    - 该册有活执法链（registry_code_anchor_gate / check_registry_code_fingerprint / registry_alignment 等，簿03 §A-2）
+    - 与卡语料键级零交集 ⇒ 扩它是"补键"，不是"改语义"（簿03 §A-2 实测 bizmine/prereg 命中 0）
+
+# ---------------------------------------------------------------------------
+# §2 拟新增词表 card_state_vocabulary.yaml（13 值，值集与骨架 §1 一一对应）
+#     校验器与生成器现在从本块动态取值（registry 词表落地后自动改读 registry 面）
+# ---------------------------------------------------------------------------
+card_state_vocabulary:
+  target_path: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+  values:
+    - {value: draft, map_state: D15-S1, name_zh: 草案, terminal: false, credential_required: false, definition_zh: 卡已立、判据未写死，可自由改}
+    - {value: candidate, map_state: D15-S2, name_zh: 候选卡, terminal: false, credential_required: false, definition_zh: 机器筛出未升格，禁出任何 PASS 语义}
+    - {value: frozen, map_state: D15-S3, name_zh: 冻结, terminal: false, credential_required: false, definition_zh: 考窗/阈值/桶边界/N_eff 全部写死，参数不可再改}
+    - {value: frozen_amended, map_state: D15-S4, name_zh: 冻结带附录, terminal: false, credential_required: true, definition_zh: 只增不改，勘误与修订以带日期附录追加，frozen 参数零改动}
+    - {value: executing, map_state: D15-S5, name_zh: 在测, terminal: false, credential_required: true, definition_zh: 试验台账行已开、执行件跑数中}
+    - {value: green, map_state: D15-S6, name_zh: 判绿, terminal: false, credential_required: true, legacy_field: viability_verdict=supported, definition_zh: 预注册阈值全过且 DSR 校正后仍显著}
+    - {value: red, map_state: D15-S7, name_zh: 判红, terminal: false, credential_required: true, legacy_field: viability_verdict=refuted, definition_zh: 阈值未过，机制假设是否可修尚未定}
+    - {value: insufficient, map_state: D15-S8, name_zh: 不可判, terminal: false, credential_required: true, legacy_field: viability_verdict=inconclusive, definition_zh: 样本或功效不足、fail-closed 存疑，既非绿也非红}
+    - {value: suspended, map_state: D15-S9, name_zh: 挂起, terminal: false, credential_required: true, definition_zh: 裁定延后重考并带显式触发条件，禁被读成通过}
+    - {value: sealed, map_state: D15-S10, name_zh: 封卡, terminal: true, credential_required: true, definition_zh: 终态，不再重开、不再改参重跑，证据定版}
+    - {value: condemned, map_state: D15-S11, name_zh: 判死归档, terminal: true, credential_required: true, definition_zh: 终态，机制证伪或数据面不可修，入死矿账防复挖}
+    - {value: graduated, map_state: D15-S12, name_zh: 毕业出卡, terminal: true, credential_required: true, definition_zh: 终态，结论已回写因子与策略册，卡使命完成}
+    - {value: void, map_state: D15-S13, name_zh: 作废, terminal: true, credential_required: true, definition_zh: 终态，挪门柱或中途加条目或 N_eff 破，本批结论作废}
+
+# ---------------------------------------------------------------------------
+# §3 宿主 entry_schema 2.1→2.2 的字段增量（三处分裂的收敛点全在这里）
+# ---------------------------------------------------------------------------
+entry_schema_delta:
+  add_fields:
+    - {field: card_id, type: str, required: 契约条目必填, semantics: 卡业务号（业务键，非主键）, regex: '^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){1,4}$'}
+    - {field: entry_kind, type: enum, values: [single_hypothesis, family, narrowing_ruling], required: true, semantics: 卡粒度（骨架案例 B 实测三粒度，族级文书不得参与族成员计数）}
+    - {field: card_state, type: vocabulary, source: card_state_vocabulary.yaml, required: true, semantics: 契约法律地位（13 值闭集）}
+    - {field: hypothesis_key, type: str, required: 回填目标（缺则 CV-08 A 腿不可判）, semantics: 同一假设归一标识，X09 双卡判定的唯一合法轴}
+    - {field: claim_fingerprint, type: str, required: false, semantics: H1 正文归一化 sha256 前 12 位，hypothesis_key 的机器可复核来源}
+    - {field: status_note, type: str, required: false, semantics: 收纳卡头原自由文本串（23 种串的语义不丢位）}
+    - {field: lives_in, type: map, required: true, semantics: path_history 列表（一张卡允许多版本文件，单键 path 会把正常 M03 升版误判为重复）}
+    - {field: credential, type: list, required: 'card_state 所在状态的 credential_required 为真时必填', semantics: '迁移流水清单，每条含 seq/from/to/ruling_id 或 flag/date，是跳序列表而非单值（簿03 §D E-1）'}
+    - {field: rejudge_used, type: bool, required: true, semantics: M10 一次性重判全局令牌，true 后再有重判请求即 X03/X01}
+    - {field: revives, type: str, required: '命中复活判据时必填（X13）', semantics: 复活指针，指向已终态旧卡 card_id}
+    - {field: revived_by, type: str, required: false, derived: true, semantics: 反向指针，由 revives 派生生成，禁手填双写}
+    - {field: derived_from, type: str, required: false, semantics: 派生指针（S2 候选卡由 frozen 卡派生，与复活分轴，簿01 OBS-K-2）}
+    - {field: verdict_bindings, type: list, required: false, semantics: 判决件三元组（card_id 与 ruling_id 或 report_path 与 verdict 三值同读），CV-08 B 腿的输入}
+    - {field: body_fingerprint, type: map, required: true, semantics: '{path, content_sha256, frozen_at}，X02 静默改的机验原料（复用 file_utils.content_sha256）'}
+    - {field: history_from, type: date, required: true, semantics: 登记面生效日，此前迁移不计（🌑L-1 诚实截断）}
+    - {field: frozen_at, type: date, required: false, semantics: 冻结日（字段名复用 config/standards.yaml 既有键，不新造第三套同义词）}
+    - {field: conclusion_tier, type: enum, values: [final, provisional], required: false, semantics: 结论可信度档（exam_policy §4 引用位，不映射进 card_state）}
+  reuse_untouched: [experiment_id, status, pre_registered, viability_verdict, n_trials, dsr_value, pbo_value, is_overfit, target_id, target_type]
+  new_enums_added: 0        # green/red/insufficient 直译在册 viability_verdict 三值 ⇒ 净零
+  run_to_card_fk: {field: card_id, on_run_entries: true, cardinality: '卡 1 : N run', naming: 对齐既有 target_id/target_type 范式，不新造第三套 FK 命名}
+  pending_fk_policy: 允许 CARD-* 的 forward-ref，形态照既有 UNI-BASKET-001 记录（实测该册已有 pending_fk 治理面且已 resolved 一条）
+
+# ---------------------------------------------------------------------------
+# §4 23 种卡头 status 串 → 13 值的映射规则（"融合处置"的成品；语义不丢）
+#     disposition: map | non_domain | needs_adjudication | unmapped_headless
+# ---------------------------------------------------------------------------
+status_alias_rules:
+  ordered: true
+  rules:
+    - {rule_id: AL-01, when_token: 已封卡, disposition: map, to_state: sealed, matched_strings: 1, note: 唯一 S10 实例，串内嵌裁定号在回填后改为引用（X11）}
+    - {rule_id: AL-02, when_token: 候选, disposition: map, to_state: candidate, matched_strings: 1, note: 唯一 S2 实例}
+    - {rule_id: AL-03, when_token: draft, disposition: map, to_state: draft, matched_strings: 1, note: 唯一 S1 实例（sector v0）}
+    - {rule_id: AL-04, when_token: frozen, disposition: map, to_state: frozen, matched_strings: 19, note: 17 种括号变体零语义增量，差异落在 frozen_at/data_collection_started/amendment_channel 三个正交字段（簿01 结论 2）}
+    - {rule_id: AL-05, when_token: frozen, when_path_in: [IBT-PROTOCOL-V1.md], disposition: non_domain, matched_strings: 1, note: 战役规程件，不是契约卡（簿01 映射表 T04）}
+    - {rule_id: AL-06, when_token: active, disposition: needs_adjudication, matched_strings: 2, note: 设计备忘录 35/37，无 H1 与判据结构，不入册（簿01 T01）}
+    - {rule_id: AL-07, when_path_in: [tick_matrix_protocol.md], disposition: non_domain, note: 月度滚动考试规程，一卡一规程里的"规程"侧（簿01 T02）}
+    - {rule_id: AL-08, when_headless: true, disposition: unmapped_headless, matched_files: 29, note: 无头率 29/89=32.6%（骨架口径 29/68，本件口径 29/89）}
+
+# ---------------------------------------------------------------------------
+# §5 六处分裂的收敛方案（簿03 §A 开账 + §C 处置；图的 gaps 面由此显性化）
+# ---------------------------------------------------------------------------
+split_faces:
+  - {face_id: D15-G01, name_zh: 卡头 status 面, object: 契约, today: '89 张卡 / 60 有头 29 无头 / 23 种串 / 0 张在受控词表内', red_reason: unwired, disposition: 降级为只读镜像（方向恒为 册→md）, net_zero: 替代 23 种自由串与模板 status 行，语义进 status_note}
+  - {face_id: D15-G02, name_zh: 宿主 REG-EXP-001 面, object: 一次跑数实例, today: '11 条与卡键级交集 0；viability_verdict 11 条全 null', red_reason: unwired, disposition: 升格为唯一宿主并扩 schema 2.2, net_zero: 启用在册闲置字段 viability_verdict，零新枚举}
+  - {face_id: D15-G03, name_zh: 战役台账面, object: 战役事件, today: '6 本台账 ≈527 表格行，带 card_state 语义键的行 0', red_reason: terminal, disposition: 保留为视图（卡态不再是它的职责，只留 card_id 指针）, net_zero: 替代台账"状态"列中的卡语义，不改台账文件}
+  - {face_id: D15-G04, name_zh: CH 三判定表面, object: 策略件与因子件与节点, today: 'hypothesis_precheck 58 / strategy_screen 1340 / node_verdict 58 行，带卡号 0 行', red_reason: terminal, disposition: 不并（跨域不同对象），禁建 verdict 推 card_state 的隐式派生, net_zero: 无对价（不新增不删除）}
+  - {face_id: D15-G05, name_zh: 以卡为键的机读判决件面, object: 卡级 verdict 与 N_eff 三关, today: 'pattern_narrow_results.csv 6 张卡带 verdict 列、exam_results.csv 18 行带 n_eff 与三关布尔、7 处 card: 键（2 处悬空）', red_reason: broken_supply, disposition: '收编为 runs 与 verdict_bindings 的 schema 母版，禁再新增第四种 csv 形态', net_zero: 替代"新造卡-run 结构"的需要}
+  - {face_id: D15-G06, name_zh: 真源完整性面, object: 判据灭失与档案不在版本控制, today: '3 个 production 脚本的 BLUEPRINT 卡锚指向从未入库的两张卡；run 档案整目录 gitignored', red_reason: ghost_ref, disposition: 纠偏 + 校验器显性红（CV-17 指纹无从计算即 error，禁静默 warn）, net_zero: 无（属修复不属新建）}
+
+# ---------------------------------------------------------------------------
+# §6 判据回炉记录（总包已裁"两处判据缺陷必须先回炉"；本件只改输入口径，不改阈值）
+# ---------------------------------------------------------------------------
+validator_rework:
+  cv_06:
+    defect: 原前置"entry_kind 新卡且 family_id 命中已 SEALED 族 ⇒ revives 必填"对唯一真复活链不成立——复活卡的 family_id 是新族名 T0-CONDITIONAL，不命中被封族 T0-PRERG（簿02 §11 X13 行、§末 B R-23）
+    changed_input: 复活判定的输入从"单字段 family_id 等值"改为"三元命中即触发"——(1) 条目自带 revives；(2) 条目 parent_context 或 credential 引用图内 revival_authorizations 集合中的在册裁定号；(3) 条目文本或路径命中处于终态的 card_id 或 family_id
+    threshold: 未改（仍是一条 error 级 X13，不降级不放宽）
+    red_case_kept: 复活卡 t0_conditional_prereg_card.md 引用 裁定#399 与 裁定#331 而 revives 缺省 ⇒ 必红（F-05 现状被抓）
+    blue_case_zeroed: 候选卡 parent_context 指向一张 frozen 卡与其考试报告（派生而非复活，簿01 OBS-K-2）⇒ 不得红
+    also: revives 指向自身、指向不存在卡、指向非终态卡、以及同一 card_id 从终态回非终态，四形一律 error
+  cv_08:
+    defect: 原判定式"同 family_id 且 entry_kind=single_hypothesis 的活跃条目 >1 ⇒ error"既误伤又漏判——family_id 是封闭族（N_eff 账）的键而非"同一假设"的键，多成员族本就合法（89 张口径下命中 37 张，簿03 在 89 未收 force_index 时算得 36）；而 F-07 的两张卡不共享 family_id（ALGO 件③ 连 family_id 头都没有），等值判据天然失效
+    changed_input: 拆成三条独立腿且各自读三元组而非单字段——A 假设身份：同 hypothesis_key 的活跃 single_hypothesis 条目 >1 ⇒ error（X09 正解，hypothesis_key 缺失只计 warn 不猜）；B 卡号↔文件↔判决三元对齐：verdict_bindings 每条按 evidence_path 反查所属卡，判决挂到别的卡上 ⇒ error（F-07 抓的就是这一条）；C 族账对账：每个 family_id 下 count(entry_kind=single_hypothesis) 必须等于声明 n_eff ⇒ 不等即 error（这才是 family_id 的正确用法）
+    threshold: 未改（>1 语义与 error 级别一字不动，改的是"按什么分组"）
+    red_case_kept: T0-PRERG 族两张卡（T0-PRERG-01 与 ALGO-VWAP-03）hypothesis_key 同为 vwap_reversion_t0 且 n_eff=1 而族内单假设成员 2 ⇒ A 腿与 C 腿双红；#390 把 T0-PRERG-01 的 RED 判据落在 algo_mining 报告上 ⇒ B 腿红
+    blue_case_zeroed: P3-E1C-STABLE13（13/13）、P3-B2-VOL12（12/12，含归还的 force_index 一张）、P3-B2-STAT3（3/3）、P3-B-FIRST6（族级 NARROWING 按 entry_kind 剔除后 6/6）四族在 C 腿下全部合规，A 腿因 hypothesis_key 互异不误伤
+  non_negotiable: 任何后续放宽/收紧判据都必须先回写骨架与作业簿实测，禁在校验器侧改阈值凑绿
+
+# ---------------------------------------------------------------------------
+# §7 实例种子台账（登记面落地时的首批条目；CV-04..CV-10 与 CV-06/CV-08 的判定输入）
+#     真源方向：本块 → 宿主册 → 卡 frontmatter 镜像（禁反向）
+# ---------------------------------------------------------------------------
+card_entries:
+  - card_id: T0-PRERG-02
+    entry_kind: single_hypothesis
+    family_id: T0-PRERG
+    n_eff: 1
+    hypothesis_key: funding_carry_t0
+    card_state: sealed
+    rejudge_used: true
+    revives: null
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md, first_seen: '2026-09-19'}
+      - {path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md, first_seen: '2026-09-19', role: verdict}
+      - {path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md, first_seen: '2026-09-19', role: verdict}
+    credential:
+      - {seq: 1, from: frozen, to: frozen_amended, ruling_id: 裁定#363, date: '2026-09-19'}
+      - {seq: 2, from: frozen_amended, to: executing, flag: machine_admitted, date: '2026-09-19'}
+      - {seq: 3, from: executing, to: red, flag: test_evidence, date: '2026-09-19'}
+      - {seq: 4, from: red, to: frozen_amended, ruling_id: 裁定#363, date: '2026-09-19', note: M10 一次性重判，令牌消耗点}
+      - {seq: 5, from: frozen_amended, to: executing, flag: machine_admitted, date: '2026-09-19'}
+      - {seq: 6, from: executing, to: red, flag: test_evidence, date: '2026-09-19'}
+      - {seq: 7, from: red, to: sealed, ruling_id: 裁定#363, date: '2026-09-19'}
+    verdict_bindings:
+      - {ruling_id: 裁定#363, verdict: RED, evidence_path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md}
+  - card_id: T0-PRERG-01
+    entry_kind: single_hypothesis
+    family_id: T0-PRERG
+    n_eff: 1
+    hypothesis_key: vwap_reversion_t0
+    card_state: frozen
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md, first_seen: '2026-09-19'}
+    credential: []
+    verdict_bindings:
+      - {ruling_id: 裁定#390, verdict: RED, evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md, defect_ref: F-07}
+  - card_id: ALGO-VWAP-03
+    entry_kind: single_hypothesis
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: vwap_reversion_t0
+    card_state: red
+    card_face_state: frozen      # 卡头停在 frozen、判决已 RED ⇒ CV-10 镜像冲突腿（甲档滞后同型）
+    rejudge_used: false
+    legacy_ref: ALGO件③（原卡无编号，回填时给新号并按规格在 legacy_ref 记文件名）
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md, first_seen: '2026-09-19'}
+      - {path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md, first_seen: '2026-09-19', role: verdict}
+    credential:
+      - {seq: 1, from: executing, to: red, flag: test_evidence, date: '2026-09-19'}
+    verdict_bindings:
+      - {verdict: RED, evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md}
+  - card_id: T0-CONDITIONAL
+    entry_kind: single_hypothesis
+    family_id: T0-CONDITIONAL
+    n_eff: unknown
+    hypothesis_key: state_selective_t0
+    card_state: frozen
+    rejudge_used: false
+    revives: null              # 现状即缺陷 F-05：复活链只有散文 parent_context，无键 ⇒ CV-06 必红
+    parent_context_cites: [裁定#399, 裁定#331, 裁定#386]
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/t0_revival/t0_conditional_prereg_card.md, first_seen: '2026-09-22'}
+    credential:
+      - {seq: 1, from: draft, to: frozen, ruling_id: 裁定#399, date: '2026-09-22'}
+    verdict_bindings: []
+  - card_id: P3-E1C-09
+    entry_kind: single_hypothesis
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: e1c_stable13_09
+    card_state: suspended
+    card_face_state: frozen    # 卡头今天仍写 frozen ⇒ CV-10 的镜像冲突腿（F-03）
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md, first_seen: '2026-09-15'}
+    credential:
+      - {seq: 1, from: executing, to: insufficient, flag: test_evidence, date: '2026-09-18'}
+      - {seq: 2, from: insufficient, to: suspended, ruling_id: 裁定#398, date: '2026-09-21'}
+    verdict_bindings: []
+  - card_id: P3-B-NARROWING
+    entry_kind: narrowing_ruling
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: p3_b_narrowing
+    card_state: frozen
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md, first_seen: '2026-09-15'}
+    credential: []
+    verdict_bindings: []
+  - card_id: ALGO-CAND-MOM-01
+    entry_kind: single_hypothesis
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: open_momentum_to_close
+    card_state: candidate
+    derived_from: PRERG-MOM-01
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md, first_seen: '2026-09-19'}
+    credential: []
+    verdict_bindings: []
+  - card_id: PRERG-MOM-01
+    entry_kind: single_hypothesis
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: midday_momentum_t1
+    card_state: red
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md, first_seen: '2026-09-19'}
+      - {path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md, first_seen: '2026-09-19', role: verdict}
+    credential:
+      - {seq: 1, from: executing, to: red, flag: test_evidence, date: '2026-09-19'}
+    verdict_bindings:
+      - {verdict: RED, evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md}
+  - card_id: SECTOR-PRERG-DECK-01
+    entry_kind: family
+    family_id: SECTOR-V1
+    n_eff: unknown
+    hypothesis_key: sector_line_deck_v1
+    card_state: frozen
+    versions: [sector_prereg_exam_cards_v0, sector_prereg_exam_cards_v1_frozen]
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md, first_seen: '2026-09-22'}
+      - {path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md, first_seen: '2026-09-23'}
+    credential:
+      - {seq: 1, from: draft, to: frozen, flag: owner_sign, date: '2026-09-23'}
+    verdict_bindings: []
+  - card_id: T0-MATRIX-VWAP-CEILING
+    entry_kind: single_hypothesis
+    family_id: T0-MATRIX
+    n_eff: unknown
+    hypothesis_key: t0_ceiling_capacity
+    card_state: frozen
+    rejudge_used: false
+    truth_source_missing: true   # F-10：被三个 production 脚本引为判据真源，卡件从未入库 ⇒ CV-17 必须红
+    history_from: '2026-09-24'
+    lives_in:
+      - {path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md, first_seen: '2026-09-20'}
+    credential: []
+    verdict_bindings: []
+
+# 复活授权集（CV-06 触发条件 2 的在册真源，逐条为在册裁定号）
+revival_authorizations: [裁定#331, 裁定#399, 裁定#404]
+# 在册但语义错绑的引用（CV-09 只能 warn，须总包勘误，骨架 F-01 / 收口 X-1）
+known_misref_rulings: [裁定#304]
+
+# ---------------------------------------------------------------------------
+# §8 需总包登记与迁移的清单（本车道禁写共享面）
+# ---------------------------------------------------------------------------
+host_migration_checklist:
+  registry_side:
+    - 新增 card_state_vocabulary.yaml（13 值，§2 整块可直抄），并登记 ROOR 行
+    - experiment_registry.yaml schema 2.1→2.2：按 §3 add_fields 增 17 键、unique_key 不动、启用 viability_verdict
+    - 首批回填：§7 card_entries 十条 → CARD-* 契约条目 + 89 张卡的其余条目按 §4 规则批量生成（回填批 P2）
+    - frontmatter_field_registry.yaml 登记 card_state 与 card 两字段（实测该册 fields 条目数与自述 total_registered 已不一致，F-08，纠偏同批）
+  governance_side:
+    - in_process_gate_registry.yaml 的 MAP-ALIGNMENT 条目 files_trigger 追加本图触发面，subs 增行 (STRATEGY-CARD-LIFECYCLE-MAP, strategy_card_lifecycle_map_gate, _check)；不新增 gate_id、不动 total_gates
+    - alignment_checklist.md §3 图15 行（对齐 key=state_id(D15-S*)+card_id）+ §6 时机矩阵行 + align_all.py 新节
+    - 三个新代码件的 depgraph 设计态登记与 module_translation 大白话简介（本图 module_id 现取 null 并带 red_reason=pending_registration，在册后由生成器换挂）
+    - creation_token 六件（校验器/生成器/gate/图 YAML/两份测试）+ 本提案件
+  regression_when_landed:
+    - registry_host 由 proposed:experiment_registry 改为 experiment_registry、anchor_source 由 proposal 改为 registry
+    - 改后 pending_registration 必须清空、词表装载点必须切到 registry 面（校验器 CV-HOST 两腿，未清空即红）
+    - 本件保留为档案，图与册不再回读本件（单向派生，禁双源）
+
+# ---------------------------------------------------------------------------
+# §9 语料口径（生成器唯一合法口径；三数并存是缺陷不是巧合）
+# ---------------------------------------------------------------------------
+corpus_caliber:
+  include_regex: prereg|pre_register|pre-registration|exam_card|_card|card_|protocol
+  include_dirs: [docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg]
+  exclude_regex: README|(^|/)index\.md$|master_directive|general_order|ledger|report|ruling_cards|skeleton|fig15_cardlife
+  exclude_path_substrings: [fig15_cardlife]
+  notes: 骨架 §8-A1 的 index[.]md 未锚定，误杀 prereg_group_12_force_index 一张（簿01 OBS-K-3），本口径以 (^|/)index\.md$ 修正
+  denominator_ledger:
+    - {source: 骨架 §3-A, n: 68, caliber: 未收 p3_prereg 20 张、误杀 force_index}
+    - {source: 作业簿 03 §A-1, n: 89, caliber: 68+20+1 归还}
+    - {source: 本车道生成器实测, n: 89, caliber: 与簿 03 同（排除本车道目录与 index.md 锚定后）}
+
+# ---------------------------------------------------------------------------
+# §10 迁移执行记录（L-HOST15，2026-09-26 落册；本件自此为施工档案——词表与实例两面
+#     的真源已切到 card_state_vocabulary.yaml + experiment_registry.yaml CARD-* 面）
+#     数字全为当进程实测，非抄前轮；分母恒等式见 counts 现算，禁在散文写死。
+# ---------------------------------------------------------------------------
+execution_record:
+  landed_at: '2026-09-26'
+  host_face:
+    experiments_before: 11
+    experiments_after: 67
+    net_added: 56
+    plan: 56
+    entry_schema_before: 68
+    entry_schema_after: 92
+    net_added_fields: 24
+    planned_fields: 17
+    unplanned_fields_reason_zh: >-
+      计划 17 键之外补 7 键，全部是本件 §7 种子与 90 号件 §2.2 已在用而 §3 漏列的键
+      （family_id 与 n_eff 在 §2.2 标必填既有语义；card_face_state / parent_context_cites /
+      truth_source_missing / legacy_ref / versions 是 §7 种子在用的判据输入位）；
+      补登记不是造新语义，不补就等于把在册条目字段留成无声明键。
+    unique_key_unchanged: true
+    new_enums_added: 0
+    viability_verdict_activated_by: [ALGO-VWAP-03, PRERG-MOM-01]
+    viability_verdict_left_null_zh: >-
+      T0-PRERG-02 已终态 sealed 而历史判定为 RED——在册 CV-10 第四腿的实现口径是
+      「viability_verdict 非空即与 card_state 比映射」，终态卡带历史判定必判红。
+      填它=由回填造出一处新红（且与「封卡即终」的语义无干），故留 null 并把判决留在
+      verdict_bindings 与 credential 流水里；该腿口径是否应按 card_state∈{green,red,
+      insufficient} 才绑，属判据口径问题，交总包定，本车道未动阈值。
+  vocabulary_face:
+    file: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+    values: 13
+    roor_entry_added: 1
+    roor_registry_id: REG-CARDSTATE-VOCAB-001
+    roor_entries_before: 77
+    roor_entries_after: 78
+    reg_exp_entry_count_sync: '11 -> 67'
+    summary_refresh: >-
+      summary 段由在册工具 check_registry_consistency.py --refresh-summary 再生
+      （HEAD 原值 total_registries 76 与实测 77 已漂移在先，再生后为 78）；
+      该轮实测 broken=1 指向 REG-STATE-VOCAB-001——其 physical_path 件在本会话分支不在盘
+      （主区已有，属分支未合），合并后自愈，非本批写入所致。
+  backfill:
+    corpus_measured: {total: 89, headed: 60, headless: 29, distinct_status_strings: 23}
+    reproduced_prior_round: true
+    registered_total: 56
+    registered_from_seeds: 10
+    registered_batch_new: 46
+    failed_total: 31
+    failed_headless_no_state: 29
+    failed_needs_adjudication: 2
+    non_domain_excluded: 2
+    failure_reason_zh: >-
+      无头卡（29）的卡面没有任何可判状态信息，而 13 值闭集里没有 unknown 值——补一个状态
+      就是替卡做判决，违「回填只补登记面不改判决」，故整批留册外并在图
+      pending_registration.state_undeclared_headless 逐条列名；needs_adjudication（2）
+      是 AL-06 明文「设计备忘录无 H1 与判据结构，不入册」；non_domain（2）是 AL-05/AL-07
+      的战役规程件。三形分列不合并隐身。
+  alias_rule_order_defect_zh: >-
+    §4 声明 ordered=true，但按声明序 AL-04（token=frozen 无路径限）恒先到，AL-05/AL-07
+    的路径级例外实测零触发（matched_strings 各 1 而 firing 0），IBT-PROTOCOL-V1 会被当卡登记。
+    本车道在生成器 _alias_precedence 与回填脚本里按声明意图把路径级规则前置——
+    只改判定输入的**顺序**，不改任何阈值与映射目标；效果是镜像面 frozen 由 54 降为 53
+    （少登记的那一张正是战役规程件），词表装载点与 13 值集合一字未动。
+  idempotency: {runs: 3, same_sha256: true, sha16: 3297a22f83934c81, as_of: '2026-09-26T00:00:00+08:00'}
+  map_face_switch:
+    registry_host: experiment_registry
+    anchor_source: registry
+    anchor_block_origin: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+    caliber_source_still_this_file_zh: >-
+      本件继续提供非状态类口径（§9 语料分母 / §4 别名规则 / §5 六处分裂面 / §7 复活授权注），
+      词表与实例两面不再回读本件（图的 derived_from 已列宿主两面；CV-HOST 硬腿盯假迁移）。
+    renamed_keys: ['seed_ledger -> card_ledger', 'observed_in_seed_ledger -> observed_in_registered_ledger']
+    pending_registration_debt_cleared: true
+  red_state_after_migration:
+    structure_errors: 0
+    instance_errors: 9
+    disappeared: 0
+    kept_as_real_defects:
+      - {leg: CV-06, card: T0-CONDITIONAL, nature: 数据真缺陷, fact: 复活链只有散文 parent_context 无 revives 指针（F-05，§6 明令该红仍红）}
+      - {leg: CV-08, cards: [ALGO-VWAP-03, T0-PRERG-01], nature: 数据真缺陷, fact: 同 hypothesis_key 两张活跃卡（X09 双重计分，§6 red_case_kept）}
+      - {leg: CV-08B, card: T0-PRERG-01, nature: 数据真缺陷, fact: 判决件挂到别卡文件（F-07 三元错绑，§6 red_case_kept）}
+      - {leg: CV-08C, family: T0-PRERG, nature: 数据真缺陷, fact: 族内单假设成员 2 ≠ 声明 n_eff 1（§6 red_case_kept）}
+      - {leg: CV-08C, family: FPOOL-20260919-TOP20, nature: 数据真缺陷带待裁口径, fact: 族声明 n_eff 6 而族面只有 1 张成员卡；该卡的 N_eff 是族内聚类推出来的，不走族成员计数轴——是否算违例需总包裁，本车道未放宽判据}
+      - {leg: CV-08C, family: MIDVAL-20260919-TOP10, nature: 数据真缺陷带待裁口径, fact: 同上（声明 10 而成员 1，卡自述「名义 10、同源合并后有效独立族≈4」）}
+      - {leg: CV-10, card: ALGO-VWAP-03, nature: 数据真缺陷, fact: 卡头镜像 frozen 而登记真源 red（F-03 同型）}
+      - {leg: CV-10, card: P3-E1C-09, nature: 数据真缺陷, fact: 卡头镜像 frozen 而登记真源 suspended（裁定挂起、卡头未跟）}
+      - {leg: CV-17, card: T0-MATRIX-VWAP-CEILING, nature: 数据真缺陷, fact: 被三个 production 脚本引为判据真源的卡件从未入库（F-10，判据灭失必须显性红）}
+    zeroed_false_positives_zh: >-
+      §6 承诺的误伤归零在迁移后仍成立——四个多成员族（P3-E1C-STABLE13/P3-B2-VOL12/
+      P3-B2-STAT3/P3-B-FIRST6）在 C 腿全绿，候选卡的派生关系未被 CV-06 误判为复活；
+      新增 46 条批量条目全部落在免凭证状态（frozen），没有因回填而新造任何红。
+  tests: {adversarial_passed: 70, gate_passed: 20, both_files_total_passed: 90, failed: 0}
+  handoff_to_integrator:
+    - creation_token：card_state_vocabulary.yaml 是本批唯一新建版本资产，CREATE-GUARD 需登记 token（本车道无权改 token 册）
+    - frontmatter_field_registry.yaml 登记 card_state 与 card 两字段（§8 第 4 项，含该册 total_registered 与实条目数不一致的纠偏，本车道未动该册）
+    - in_process_gate_registry.yaml 的 MAP-ALIGNMENT files_trigger 追加宿主两面（gate 模块 _TRIGGER_FILES 已扩至六件，注册面须同批）
+    - 图 15 头的 seed_ledger 改名 card_ledger、transitions[].observed_in_seed_ledger 改名 observed_in_registered_ledger——若有消费方引旧名须同批改
+    - CV-10 第四腿与 CV-08C 族成员轴的口径待定（见上两条 nature 标注），本车道未改阈值
+
