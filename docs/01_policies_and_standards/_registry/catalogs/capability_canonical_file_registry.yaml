@@ -55294,4 +55294,9 @@ creation_tokens:
   created_by: st-zcloseout-20260928
   capability: wave13_coordinator_integration
   merge_evaluation: "st-zmaster2 遗产 dd60ae13 接管袋：写手字段级蒸发治本案卷落档，同袋带 token，零既有条目可合并"
+- file: scripts/register_ai_l1_scan_task.ps1
+  token: ai-l1-scan-task-registrar-register-ai-l1-scan-task-20260927
+  created_by: st-chiefzc-rescue-20260928
+  capability: ai_l1_scan_task_registrar
+  merge_evaluation: "AI L1 扫描计划任务注册器（T3 双前置门控件），宿主 run_ai_l1_scan_tick.py 的配套注册面，无同域重复条目"
 di_seam_exemptions: []

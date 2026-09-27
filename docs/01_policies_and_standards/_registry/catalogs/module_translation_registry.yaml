@@ -61679,6 +61679,31 @@ entries:
   plain_zh: "把名册说有、装载面没有、触发面打不到三件事摆成一张表：一台门声明了却从没被任何文件路径触发，就会被点名进红名单，取代人工周审计的抽查。"
   responsibility_layer: governance
 
+- module_path: scripts/governance/fullflow/generate_fullflow_crosscheck.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "全流通五向对账生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把散文里声称的五个计数（F 环节/TDM 节点/策略工厂节点/注册表/挖矿簿册）逐个实测一遍，机生成一张对账 YAML：声称数和实测数对不上就标 drift=true 报红，取不到数就标 unavailable，绝不填估计值装绿。"
+  responsibility_layer: governance
+- module_path: scripts/ai_layer/gen_obj_r_s3_threshold_census.py
+  domain_id: D_GOVERNANCE
+  name_zh: "OBJ_R S3 阈值外置化普查生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把治理门禁源码里写死的数字常量用 AST 机械扫一遍，分成身份常量/非阈值/像阈值/已外置四层，产出普查清单，让'哪个阈值该搬进注册表'有账可查，不再靠人眼翻代码漏项。"
+  responsibility_layer: governance
+- module_path: scripts/ai_layer/run_ai_l1_scan_tick.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L1 外扫节拍宿主"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI 感知层 L1 外扫的单次节拍执行器：计划任务到点叫它跑一次重新生成搜索脉络加落运行台账，本件自己不带定时器不睡循环，跑完就退；资源画像和裁定没登记齐之前，注册计划任务的守卫不放行。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
