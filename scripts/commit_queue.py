@@ -137,6 +137,7 @@ import re
 import sys
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -1423,7 +1424,28 @@ def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
     return marked
 
 
-def _revalidate_stale_base(item: dict, head_reader) -> tuple[bool, list[str]]:
+def _note_rebased_registry(item: dict, paths: list[str]) -> None:
+    """re-base 放行留痕：把漂移并被交合并仲裁的注册表路径写进 item.meta.rebased_registry。
+
+    拆出主函数为守复杂度上限（宪法复杂度≤15）。留痕是硬要求——"漂移被接管"不得静默，
+    否则审计侧无法区分"基底本就对齐"与"基底漂移但交给合并器"两种放行。
+    meta 缺失或非 dict（历史项/损坏项）时新建，不覆写既有键以外的内容。
+    """
+    meta = item.get("meta")
+    if not isinstance(meta, dict):
+        meta = {}
+        item["meta"] = meta
+    meta["rebased_registry"] = paths
+    logger.info(
+        "[queue] qid=%s 基底漂移交条目级三向合并仲裁（re-base 不退袋）: %s",
+        item.get("qid", "?"),
+        paths,
+    )
+
+
+def _revalidate_stale_base(
+    item: dict, head_reader, mergeable_pred: Callable[[str], bool] | None = None
+) -> tuple[bool, list[str]]:
     """stale 项基底重校验（66 号 §6.4）：base_blob vs 当前 HEAD 逐文件比对。
 
     返回 (仍适用, 不适用路径清单)。判定口径：
@@ -1433,8 +1455,17 @@ def _revalidate_stale_base(item: dict, head_reader) -> tuple[bool, list[str]]:
     - head_reader: callable(仓内相对路径) -> 当前 HEAD 该路径 blob 标识（与 base_blob
       同 id 空间），路径不在 HEAD 返回 None；比对不一致即不适用。
     队列层保持零 git 依赖（66 号 §6.1 刻意出入 #3）——HEAD 读取能力由调用方注入。
+
+    mergeable_pred（可选形参， callable(仓内相对路径) -> bool）：注册表族 base_blob
+    **确已比对出与 HEAD 不一致**且谓词判真时，不再在队列层判 cascade_stale 退袋，改交
+    本仓落地模块的条目级三向合并仲裁（W2 2026-09-22 上线；真冲突仍由合并器死信并携带
+    双方条目全文，绝不静默放行）。放行路径经 `_note_rebased_registry` 留痕。
+    两条不得放宽的边界：
+    ① 缺省 None ⇒ 判定与历史**逐字节一致**（drain 直连口等既有调用方口径不变）；
+    ② head_reader 缺失＝根本没比对出"不一致"，不属本形参管辖，保险丝照旧判不适用。
     """
     mismatched: list[str] = []
+    rebased: list[str] = []
     for f in item.get("files") or []:
         base_blob = f.get("base_blob")
         if not base_blob:
@@ -1443,8 +1474,14 @@ def _revalidate_stale_base(item: dict, head_reader) -> tuple[bool, list[str]]:
         if head_reader is None:
             mismatched.append(f"{path}(head_reader 缺失无法重校验)")
             continue
-        if head_reader(path) != base_blob:
-            mismatched.append(path)
+        if head_reader(path) == base_blob:
+            continue
+        if mergeable_pred is not None and mergeable_pred(path):
+            rebased.append(path)
+            continue
+        mismatched.append(path)
+    if rebased:
+        _note_rebased_registry(item, rebased)
     return (not mismatched, mismatched)
 
 
