@@ -857,6 +857,55 @@ class EnqueueOptions:
     worktree_root: str | None = None
 
 
+# 登记三族内联判定的适用扩展名（CREATE-GUARD 新文件面 ∪ TRANSLATION-COVERAGE .py 面
+# ∪ TTL-METADATA frontmatter 面的并集）——袋内无一命中时判定可零 git 面跳过（快路径）。
+_REGISTRATION_GATE_EXTENSIONS = (".py", ".yaml", ".md", ".sh", ".ps1", ".mmd", ".json")
+
+
+def _run_registration_gate(
+    project_root: Path,
+    files: list[str],
+    session_id: str,
+    message: str,
+    *,
+    audit_event: str,
+) -> tuple[list[str], list[str], dict]:
+    """登记三族内联判定入口（C-1/C-2 同一真源；调用方=enqueue_item 与 requeue_dead_item）。
+
+    - project_root：判据的落地面=「声明的工作区」——enqueue_item 用 opts.worktree_root
+      （缺省回退 cwd，覆盖 E-3 直接 import enqueue_item 的裸调用方，mapbuild 四件实证
+      其 meta 裸无 options）；requeue 用重建快照来源工作区。判据读的是该盘面（入队
+      语义下盘上内容=快照内容，git_commit.py 797-799 既有论证）；root 无 .git（tmp
+      隔离测试/非仓目录）⇒ 无 HEAD 面可仿真，整体跳过（fail-open，与
+      run_enqueue_preflight 在非仓目录的 degraded 同口径）。
+    - 差量级：只跑登记三族（CREATE-GUARD/TTL-METADATA/TRANSLATION-COVERAGE），非
+      36s 全门重放；袋内扩展名全不在族面时零 git 面直接放行。
+    - 队列层零 git/零 governance 顶层依赖（66 号 §6.1 刻意出入 #3 同款）：延迟 import，
+      设施任何故障在 run_registration_inline_checks 内降级为空 findings（「预检非新
+      权威」不变——权威执行仍在落地锁内）。
+    """
+    if not (project_root / ".git").exists():
+        return [], [], {}
+    family_paths = [p for p in files if str(p).endswith(_REGISTRATION_GATE_EXTENSIONS) and not p.startswith("tests/")]
+    if not family_paths:
+        return [], [], {}
+
+    from zephyr.gov_enforcement.rule_bridge.commit_preflight import (  # noqa: PLC0415
+        run_registration_inline_checks,
+    )
+
+    # 袋内路径=仓相对；预检查件的输入口径=绝对路径清单（_rel_of 统一转回仓相对，
+    # 与 CLI 面 run_enqueue_preflight 收到的绝对清单同构）。
+    absolute_paths = [str(project_root / p) for p in family_paths]
+    return run_registration_inline_checks(
+        project_root,
+        absolute_paths,
+        session_id,
+        commit_message=message,
+        audit_event=audit_event,
+    )
+
+
 def enqueue_item(
     session_id: str,
     message: str,
@@ -903,6 +952,22 @@ def enqueue_item(
             f"单批 {total_entries} 文件超上限 {_MAX_BATCH_FILES}（R2 大批硬顶）："
             f"请拆分为多个语义批次入队（失败早暴露不互相拖累）；"
             f"确属原子大批用 --allow-oversize-batch / EnqueueOptions(allow_oversize_batch=True)（meta 留痕）"
+        )
+
+    # C-1 登记三族内联强制（chain_fullflow mine_door_registration_completion §3.7-(ii)/§8）：
+    # 第四裸入口（直接 import enqueue_item 的脚本化入队，E-3 mapbuild 四件 audit 零记录
+    # 实证）在此结构性补口——任何调用方都无法绕过本点。判据落地面=声明工作区（缺省
+    # cwd）；设施故障 fail-open（degraded 留 meta，不产生拒绝）。拒绝文案含逐门禁处方；
+    # 放行证据随袋（registration_gate 摘要 + preflight_face 面貌快照，E-4 TOCTOU 比对
+    # 素材），放行面不写文件审计（防锁外高频 jsonl 写放大）。
+    _pf_root = Path(opts.worktree_root) if opts.worktree_root else Path.cwd()
+    _pf_findings, _pf_degraded, _pf_face = _run_registration_gate(
+        _pf_root, [p for p, _ in files], session_id, msg, audit_event="enqueue_api"
+    )
+    if _pf_findings:
+        raise QueueReject(
+            "登记三族入队预检拦截（C-1：直接调用 enqueue_item 与 CLI 正门同判据，"
+            "注定死信的单子在入队口快败）——逐门禁处方：\n" + "\n".join(_pf_findings)
         )
 
     # 1) 轻检 + blob 落袋（先于队列项创建——blob 入袋即内容不丢）
@@ -1001,6 +1066,22 @@ def enqueue_item(
                     # C1 合批判据键：同会话+同 worktree_root 才允许短窗并入（红线）；
                     # 不传=不做合批（历史调用方行为不变）
                     **({"worktree_root": _normalize_worktree_root(opts.worktree_root)} if opts.worktree_root else {}),
+                    # C-1 放行证据随袋（registration_gate 摘要；done/dead 永留可答
+                    # 「这袋过没过预检」—— witness doc §2.10「剥除名单不进 done/」教训）；
+                    # preflight_face=E-4 TOCTOU 死信出口漂移比对素材
+                    **(
+                        {
+                            "registration_gate": {
+                                "ran": True,
+                                "findings": 0,
+                                "degraded": list(_pf_degraded),
+                                "at": _now_iso(),
+                            }
+                        }
+                        if _pf_degraded or _pf_face
+                        else {}
+                    ),
+                    **({"preflight_face": dict(_pf_face)} if _pf_face else {}),
                     **(meta_extra or {}),
                 },
             }
@@ -1810,6 +1891,11 @@ def drain_queue(
                 # 一跳可达，死信爆发 per_session 聚合同源口径）。
                 item["prescription"] = dead_letter_prescription(result.reason)
                 item["owner_session"] = item.get("session_id") or ""
+                # E-4 TOCTOU 死信出口增信（chain_fullflow §3.7-(iii)）：登记面貌快照随袋
+                # 者（meta.preflight_face）与当前 HEAD 面貌比对，漂移=预检基础在入队后
+                # 过期——「不是你的内容错，是注册表面貌变了」一跳点明（观测级增信，
+                # 不改死信裁决；「预检非新权威」在册原则不动）。
+                _annotate_preflight_face_drift(item)
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
                 _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
@@ -2060,6 +2146,27 @@ def requeue_dead_item(
                 "重投快照含未解决合并冲突标记（与入队口同源预扫）——回会话 worktree 解决合并后再重投",
                 details={"path": _rq_path, "violation": _rq_violation},
             )
+
+    # C-2（chain_fullflow mine_door_registration_completion §3.7-(i)/§8）：requeue 重建
+    # 快照通道挂登记三族内联判定——E-2 实锤 q-…-st-cmd-…-0083（meta 含 requeued_from）
+    # 死于落地三族，此前 requeue 全程零预检。同一真源入口（_run_registration_gate），
+    # 轻量差量级非 36s 全门重放；audit_event="requeue"（拦截写 preflight_events.jsonl，
+    # E-2 的 B 级证据由此可升 A：投袋看 audit）。已知限界（登记不遮掩）：--from-bag
+    # 原袋重建时判据读的是工作区盘面——盘上缺该文件即被检查器按缺失跳过（fail-open
+    # 口径，不阻断原袋取回）；盘面≠袋字节的残余窗由落地权威链兜底。
+    _rq_findings, _rq_deg, _rq_face = _run_registration_gate(
+        wt,
+        [p for p, _ in payload],
+        session_id or old_item.get("session_id", ""),
+        message or old_item.get("message", ""),
+        audit_event="requeue",
+    )
+    if _rq_findings:
+        raise RequeueError(
+            "重投预检拦截（C-2：requeue 与入队口同判据，注定再死信的重投在重投口快败）"
+            "——逐门禁处方：\n" + "\n".join(_rq_findings),
+            details={"requeued_from": qid, "degraded": list(_rq_deg)},
+        )
 
     # M1.3-① 基底补全（作业簿 producer_enqueue 矿#4）：此前 requeue 恒不填 base_blobs
     # ⇒ 新袋 base_blob 全 None ⇒ 级联重校验 _revalidate_stale_base 结构空转、注册表
@@ -2451,6 +2558,47 @@ def dead_letter_prescription(reason: str) -> str:
         if marker in reason:
             return prescription
     return _DEAD_PRESCRIPTION_FALLBACK.get(classify_dead_reason(reason), _DEAD_PRESCRIPTION_FALLBACK["other"])
+
+
+def _annotate_preflight_face_drift(item: dict, *, repo_root: Path | None = None) -> None:
+    """E-4 TOCTOU 死信出口增信（观测级，非裁决——「预检非新权威」在册原则不变）。
+
+    袋 meta.preflight_face（enqueue_item 登记三族判定时采的注册表面貌快照）与当前
+    HEAD 面貌逐册比对：不一致 ⇒ 预检基础在入队后漂移（E-4 实锤形态：同会话预检
+    passed 的袋仍死于 CREATE-GUARD）。只做三件事：meta 增 preflight_face_drift 明细、
+    处方补「直接重投」指引、warning 留痕。任何故障静默跳过（观测面 fail-open，绝不
+    影响死信本体落册）；未随快照的袋（历史件/跳过判定件）零开销直接返回。
+    做不到的已登记（lane_q_notes）：不按漂移改判死因/不阻断落地——那会让预检升格为
+    权威，须 Owner 门位。
+    """
+    face = (item.get("meta") or {}).get("preflight_face")
+    if not isinstance(face, dict) or not face:
+        return
+    try:
+        from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+            resolve_base_blobs,
+            resolve_base_head,
+        )
+
+        wt = repo_root if repo_root is not None else _REPO_ROOT
+        current = resolve_base_blobs(wt, resolve_base_head(wt), list(face.keys()))
+    except Exception as exc:  # noqa: BLE001 — 观测面故障静默（死信本体照常落册）
+        logger.debug("[drain] E-4 面貌比对跳过（git 面不可用）: %s", exc)
+        return
+    drifted = {
+        rel: {"preflight": pre_sha, "current": current.get(rel)}
+        for rel, pre_sha in face.items()
+        if pre_sha != current.get(rel)
+    }
+    if not drifted:
+        return
+    item["preflight_face_drift"] = drifted
+    item["prescription"] = (
+        f"{item.get('prescription') or ''}"
+        "；另：入队预检后注册表面貌已漂移（E-4 TOCTOU 窗）——若内容未变可直接重投，"
+        "预检将按新面貌重判"
+    ).strip()
+    logger.warning("[drain] qid=%s 预检注册表面漂移（E-4 增信）: %s", item.get("qid", "?"), sorted(drifted))
 
 
 def queue_health(queue_root: str | os.PathLike | None = None) -> dict:

@@ -89,6 +89,7 @@ import logging
 import os
 import sys
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -742,3 +743,138 @@ def run_preflight(
         },
     )
     return CommitPreflightResult(findings=findings, degraded=degraded, elapsed_ms=elapsed_ms)
+
+
+# ---------------------------------------------------------------------------
+# C-1 登记三族内联判定（chain_fullflow 20260926 mine_door_registration_completion
+# §3.7-(ii)/§8：enqueue_item API 层唯一强制点的共享判据入口）
+# ---------------------------------------------------------------------------
+
+# 三族=登记族（CREATE-GUARD/TRANSLATION-COVERAGE 内联 + TTL-METADATA spec）；只跑
+# 这三道差量判定，非全门重放（实测成本约束：全链 2.4s–36s/袋，内联差量是唯一可处处
+# 挂的面）。NO-BARE-SQL 不在族内（维持 enqueue 主预检 M1.1 口径不扩面）。
+_REGISTRATION_FAMILY_INLINE = frozenset({"CREATE-GUARD", "TRANSLATION-COVERAGE"})
+
+
+def _registration_finding_text(gate_id: str, detail: str) -> str:
+    """快败文案＝「[门禁] 详情 + 修复/逃生处方」一行式（拆出为守复杂度上限，宪法 §5.158）。"""
+    hint = _ESCAPE_HINTS.get(gate_id, "")
+    text = f"[{gate_id}] {detail}"
+    return f"{text}\n  修复/逃生: {hint}" if hint else text
+
+
+def _registration_ttl_findings(
+    gateway: GitCommitGateway,
+    files: list[str],
+    session_id: str,
+    commit_message: str,
+) -> tuple[list[str], list[str]]:
+    """② TTL-METADATA（files 驱动 spec gate）——spec 不在册/执行异常均 degraded 不假红。"""
+    try:
+        specs = gateway._gate_registry.specs_sorted()  # noqa: SLF001 — 注册表快照唯读（同 run_preflight）
+        spec = next((s for s in specs if s.gate_id == "TTL-METADATA"), None)
+        if spec is None:
+            logger.warning("registration gate TTL-METADATA spec 不在册（degraded 放行）")
+            return [], ["TTL-METADATA"]
+        result = spec.check(gateway, list(files), session_id=session_id, commit_message=commit_message)
+        passed, detail = (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
+        if not passed:
+            return [_registration_finding_text("TTL-METADATA", str(detail))], []
+        return [], []
+    except Exception:  # noqa: BLE001 — 同款降级口径（锁内权威链兜底）
+        logger.warning("registration gate TTL-METADATA degraded（不阻断，锁内兜底）", exc_info=True)
+        return [], ["TTL-METADATA"]
+
+
+def _registration_family_findings(
+    gateway: GitCommitGateway,
+    files: list[str],
+    session_id: str,
+    commit_message: str,
+) -> tuple[list[str], list[str]]:
+    """①+② 三族判定体：返回 (findings, degraded)，顺序=内联两族在前、TTL 族在后。
+
+    设施异常一律进 degraded（fail-open，绝不升格为 findings）——「预检非新权威」在册
+    原则不变，权威执行仍在落地锁内。
+    """
+    findings: list[str] = []
+    degraded: list[str] = []
+    # ① 内联两族（CREATE-GUARD/TRANSLATION-COVERAGE——staged-diff 依赖型的入队面等价判定）
+    for gate_id, fn in _INLINE_PREFLIGHT_CHECKS:
+        if gate_id not in _REGISTRATION_FAMILY_INLINE:
+            continue
+        try:
+            passed, detail = fn(gateway, list(files), session_id=session_id, commit_message=commit_message)
+            if not passed:
+                findings.append(_registration_finding_text(gate_id, str(detail)))
+        except Exception:  # noqa: BLE001 — 设施异常降级不阻断（锁内权威链兜底）
+            degraded.append(gate_id)
+            logger.warning("registration inline gate %s degraded（不阻断，锁内兜底）", gate_id, exc_info=True)
+    ttl_findings, ttl_degraded = _registration_ttl_findings(gateway, files, session_id, commit_message)
+    return findings + ttl_findings, degraded + ttl_degraded
+
+
+def _registration_registry_face(gateway: GitCommitGateway) -> dict[str, str]:
+    """③ E-4 面貌快照（纯观测素材；单册不可读即缺位，绝不因采集失败产生 findings）。"""
+    registry_face: dict[str, str] = {}
+    for rel in (_CAPABILITY_REGISTRY_REL, _TRANSLATION_REGISTRY_REL):
+        try:
+            registry_face[rel] = _head_blob_sha(gateway, rel)
+        except Exception:  # noqa: BLE001 — 面貌素材缺位可接受（W17 第二可达路径同类）
+            pass
+    return registry_face
+
+
+def run_registration_inline_checks(
+    project_root: Path | str,
+    files: list[str],
+    session_id: str,
+    *,
+    commit_message: str = "",
+    audit_event: str = "enqueue_api",
+    gateway_factory: Callable[..., Any] | None = None,
+) -> tuple[list[str], list[str], dict[str, str]]:
+    """登记三族内联判定（判据复用本模块既有检查，零第二真源）。
+
+    返回 (findings, degraded, registry_face)：
+    - findings 非空=应快败（调用方 QueueReject/RequeueError 收口；文案含逐门禁处方）；
+    - degraded=设施异常族（fail-open 放行——「预检非新权威」在册原则不变，权威执行
+      仍在落地锁内；本函数任何故障都不产生 findings）；
+    - registry_face=两登记册的 HEAD blob sha 快照（E-4 TOCTOU 观测素材：随袋携带，
+      死信出口比对漂移用；采集失败缺位可接受，不参与判定）。
+
+    审计口径：仅在 findings 非空（快败拦截）时写 preflight_events.jsonl（拦截必须
+    有处可查）；放行面不留文件审计——放行证据随袋落 meta（commit_queue 侧
+    meta.registration_gate），避免锁外高频路径的 jsonl 写放大。
+    """
+    t0 = time.monotonic()
+    findings: list[str] = []
+    degraded: list[str] = []
+    try:
+        if gateway_factory is None:
+            from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
+                GitCommitGateway as gateway_factory,
+            )
+        gateway = gateway_factory(project_root=Path(project_root))
+    except Exception as exc:  # noqa: BLE001 — 网关构造失败 degraded 放行（绝不堵入队）
+        degraded.append("__gateway__")
+        logger.warning("[registration-inline] 网关构造失败，degraded 放行（落地侧权威链兜底）: %s", exc)
+        return findings, degraded, {}
+
+    findings, degraded = _registration_family_findings(gateway, files, session_id, commit_message)
+    registry_face = _registration_registry_face(gateway)
+
+    if findings:
+        _write_audit(
+            gateway,
+            {
+                "session_id": session_id,
+                "event": "blocked",
+                "path": audit_event,
+                "gates_failed": [line.split("]", 1)[0].lstrip("[") for line in findings],
+                "degraded": degraded,
+                "files_count": len(files),
+                "ms": round((time.monotonic() - t0) * 1000, 1),
+            },
+        )
+    return findings, degraded, registry_face

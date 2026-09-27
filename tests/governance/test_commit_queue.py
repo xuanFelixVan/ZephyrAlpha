@@ -33,6 +33,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+import subprocess
 import threading
 import time
 from datetime import datetime, timedelta
@@ -1317,3 +1318,202 @@ def test_b4_machine_lane_starvation_escape_still_works(queue_root: Path) -> None
     )
     picked, lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
     assert lane == "machine" and picked.name == m.name, "machine 防饿死兜底被 B4 改坏"
+
+
+# ---------------------------------------------------------------------------
+# C-1/C-2/E-4（chain_fullflow 20260926）回归尺：登记三族入队预检三口挂线
+# 真源=docs/_working/chain_fullflow_20260926/mine_door_registration_completion.md
+# §3.7/§8 C-1/C-2 + mine_snapshot_selfconsistency_witness.md §8 候选 D。
+# 尺的纪律（同 base_head 判别尺）：阳性=构造违规必拦，阴性=登记齐全必放，
+# fail-open 阴性=设施故障必放行（「预检非新权威」在册原则不被本挂线改写）。
+# ---------------------------------------------------------------------------
+
+from zephyr.gov_enforcement.rule_bridge.commit_preflight import (  # noqa: E402
+    _CAPABILITY_REGISTRY_REL,
+    _TRANSLATION_REGISTRY_REL,
+)
+
+_REG_REL = _CAPABILITY_REGISTRY_REL
+
+
+def _git(cwd: Path, *args: str) -> str:
+    r = subprocess.run(
+        ["git", *args], cwd=str(cwd), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120
+    )
+    assert r.returncode == 0, f"git {' '.join(args)} -> {r.stderr[:300]}"
+    return r.stdout.strip()
+
+
+def _repo_with_registry(tmp_path: Path, *, registered: list[str]) -> Path:
+    """tmp 真 git 仓（dev 分支），HEAD 带 capability 注册表（零 git 面预检在非仓目录
+    整体跳过，故登记族判据必须真仓才能驱动——口径同 base_head 判别尺 fixture）。"""
+    repo = tmp_path / "wtrepo"
+    repo.mkdir()
+    _git(repo, "init", "-q", "-b", "dev")
+    _git(repo, "config", "user.email", "probe@local")
+    _git(repo, "config", "user.name", "probe")
+    _git(repo, "config", "core.autocrlf", "false")
+    tokens = "".join(f"  - file: {f}\n    created_by: probe\n" for f in registered)
+    reg = repo / _REG_REL
+    reg.parent.mkdir(parents=True, exist_ok=True)
+    reg.write_bytes(f"creation_tokens:\n{tokens}".encode())
+    _git(repo, "add", "--", _REG_REL)
+    _git(repo, "commit", "-qm", "seed registry")
+    return repo
+
+
+class TestRegistrationGate:
+    def test_enqueue_item_direct_call_blocked_on_unregistered_new_file(self, queue_root: Path, tmp_path: Path) -> None:
+        """C-1 阳性：直接 import enqueue_item 的裸调用方（E-3 第四入口）对未登记新文件
+        必须在入队口快败——mapbuild 四件死于落地 CREATE-GUARD/TRANSLATION 的形态不再可达。"""
+        repo = _repo_with_registry(tmp_path, registered=[])
+        (repo / "docs").mkdir(exist_ok=True)
+        (repo / "docs" / "probe_new.md").write_bytes(b"unregistered\n")
+        with pytest.raises(cq.QueueReject, match="登记三族入队预检拦截") as ei:
+            cq.enqueue_item(
+                "probe-e3",
+                "bare caller",
+                [("docs/probe_new.md", b"unregistered\n")],
+                queue_root=queue_root,
+                options=cq.EnqueueOptions(worktree_root=str(repo)),
+            )
+        assert "[CREATE-GUARD]" in str(ei.value), "处方必须点名门禁"
+        # 拦截必须留审计（拦截无袋可查，jsonl 是唯一追踪面）
+        audit = repo / ".runtime" / "audit" / "preflight_events.jsonl"
+        assert audit.exists(), "快败拦截必须写 preflight_events"
+        lines = [json.loads(ln) for ln in audit.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        assert any(rec.get("event") == "blocked" and rec.get("path") == "enqueue_api" for rec in lines)
+        assert (queue_root / "pending").exists() is False or not list((queue_root / "pending").glob("*.json")), (
+            "被拦单子不得落袋"
+        )
+
+    def test_enqueue_item_registered_file_passes_and_carries_face(self, queue_root: Path, tmp_path: Path) -> None:
+        """C-1 阴性对照：登记齐全必放行，且放行证据随袋（registration_gate 摘要 +
+        preflight_face 面貌快照）——E-4 死信出口比对的素材来源。"""
+        target = "docs/probe_registered.md"
+        repo = _repo_with_registry(tmp_path, registered=[target])
+        (repo / "docs").mkdir(exist_ok=True)
+        (repo / target).write_bytes(b"registered\n")
+        item = cq.enqueue_item(
+            "probe-e3",
+            "registered caller",
+            [(target, b"registered\n")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(repo)),
+        )
+        meta = item["meta"]
+        assert meta["registration_gate"]["ran"] is True and meta["registration_gate"]["findings"] == 0
+        face = meta["preflight_face"]
+        assert _REG_REL in face and face[_REG_REL] == _git(repo, "rev-parse", f"HEAD:{_REG_REL}")
+        # 翻译册不在 HEAD（fixture 未提交）⇒ 面貌缺位而非假值
+        assert _TRANSLATION_REGISTRY_REL not in face
+
+    def test_enqueue_item_gate_fail_open_on_facility_error(
+        self, queue_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """fail-open 阴性：预检设施故障（网关构造失败）放行不拒——「预检非新权威」
+        在册原则不被 C-1 挂线改写；degraded 留 meta 不静默。"""
+        repo = _repo_with_registry(tmp_path, registered=[])
+        (repo / "docs").mkdir(exist_ok=True)
+        (repo / "docs" / "probe_new.md").write_bytes(b"unregistered\n")
+
+        def _boom(*a: object, **k: object) -> None:
+            raise RuntimeError("probe 设施故障")
+
+        import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as gcg
+
+        monkeypatch.setattr(gcg, "GitCommitGateway", _boom)
+        item = cq.enqueue_item(
+            "probe-e3",
+            "facility broken",
+            [("docs/probe_new.md", b"unregistered\n")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(repo)),
+        )
+        assert item["meta"]["registration_gate"]["degraded"] == ["__gateway__"], "degraded 必须留袋不静默"
+        assert not list((queue_root / "dead").glob("*.json"))
+
+    @staticmethod
+    def _hand_write_dead(root: Path, qid: str, path: str) -> None:
+        """手写死信袋（跳过 enqueue 正门——正门三族判定在，未登记内容进不了 dead/，
+        C-2 阳性需先有「历史上已存在的死信」作重投对象；手写 pending JSON 为本文件
+        B4 用例既有技法）。"""
+        dead = {
+            "qid": qid,
+            "session_id": "probe-rq",
+            "created_at": "2026-09-27T00:00:00+08:00",
+            "branch": "dev",
+            "base_head": None,
+            "message": "legacy dead bag",
+            "files": [{"path": path, "action": "modify"}],
+            "meta": {},
+            "dead_at": "2026-09-27T00:01:00+08:00",
+            "dead_reason": "boom-历史死因",
+        }
+        (root / "dead").mkdir(parents=True, exist_ok=True)
+        (root / "dead" / f"{qid}.json").write_text(json.dumps(dead, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def test_requeue_channel_blocked_by_registration_gate(self, queue_root: Path, tmp_path: Path) -> None:
+        """C-2 阳性（E-2 升 A）：requeue 重建快照通道挂同款三族判定——未登记新文件
+        的死信重投在重投口快败并写 requeue 审计，不再白烧一轮落地才死。"""
+        repo = _repo_with_registry(tmp_path, registered=[])
+        target = "docs/probe_rq.md"
+        (repo / "docs").mkdir(exist_ok=True)
+        (repo / target).write_bytes(b"v2-current\n")
+        self._hand_write_dead(queue_root, "q-20260927-probe-rq-0001", target)
+        with pytest.raises(cq.RequeueError, match="重投预检拦截") as ei:
+            cq.requeue_dead_item("q-20260927-probe-rq-0001", queue_root=queue_root, worktree_root=repo)
+        assert "[CREATE-GUARD]" in str(ei.value)
+        audit = repo / ".runtime" / "audit" / "preflight_events.jsonl"
+        lines = [json.loads(ln) for ln in audit.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        assert any(rec.get("event") == "blocked" and rec.get("path") == "requeue" for rec in lines), (
+            "E-2 升 A 证据面：requeue 拦截必须可从 audit 复核"
+        )
+
+    def test_requeue_channel_passes_when_registered(self, queue_root: Path, tmp_path: Path) -> None:
+        """C-2 阴性对照：登记齐全的死信重投照常取回（死信闭环不被误伤）。"""
+        target = "docs/probe_rq_ok.md"
+        repo = _repo_with_registry(tmp_path, registered=[target])
+        (repo / "docs").mkdir(exist_ok=True)
+        (repo / target).write_bytes(b"v2-current\n")
+        self._hand_write_dead(queue_root, "q-20260927-probe-rq-0002", target)
+        result = cq.requeue_dead_item("q-20260927-probe-rq-0002", queue_root=queue_root, worktree_root=repo)
+        assert result["new_qid"] != result["old_qid"]
+        assert _blob_content(queue_root, result["item"], target) == b"v2-current\n"
+        assert result["item"]["meta"]["registration_gate"]["ran"] is True
+
+    def test_dead_exit_annotates_preflight_face_drift(self, queue_root: Path, tmp_path: Path) -> None:
+        """E-4 阳性+阴性：死信出口对随袋面貌快照与当前 HEAD 比对，漂移必增信
+        （preflight_face_drift 明细+处方补「直接重投」）；面貌一致不加注；未随快照的
+        袋零开销跳过。"""
+        target = "docs/probe_drift.md"
+        repo = _repo_with_registry(tmp_path, registered=[])
+        stale_sha = _git(repo, "rev-parse", f"HEAD:{_REG_REL}")
+
+        def _make(sha: str) -> dict:
+            return {
+                "qid": "q-probe-drift-0001",
+                "session_id": "probe",
+                "dead_reason": "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断",
+                "prescription": "原处方",
+                "meta": {"preflight_face": {_REG_REL: sha}},
+            }
+
+        drifted = _make(stale_sha)
+        # 制造面貌漂移：HEAD 前进一版（注册表内容变更 ⇒ blob sha 变）
+        reg = repo / _REG_REL
+        reg.write_bytes(b"creation_tokens:\n  - file: docs/other.md\n    created_by: probe\n")
+        _git(repo, "add", "--", _REG_REL)
+        _git(repo, "commit", "-qm", "drift registry")
+        cq._annotate_preflight_face_drift(drifted, repo_root=repo)
+        assert drifted["preflight_face_drift"][_REG_REL]["preflight"] == stale_sha
+        assert drifted["preflight_face_drift"][_REG_REL]["current"] == _git(repo, "rev-parse", f"HEAD:{_REG_REL}")
+        assert "E-4" in drifted["prescription"] and "直接重投" in drifted["prescription"]
+
+        same = _make(_git(repo, "rev-parse", f"HEAD:{_REG_REL}"))
+        cq._annotate_preflight_face_drift(same, repo_root=repo)
+        assert "preflight_face_drift" not in same and same["prescription"] == "原处方", "面貌一致不得加注"
+
+        bare = {"qid": "q-x", "meta": {}, "prescription": "原处方"}
+        cq._annotate_preflight_face_drift(bare, repo_root=repo)
+        assert "preflight_face_drift" not in bare
