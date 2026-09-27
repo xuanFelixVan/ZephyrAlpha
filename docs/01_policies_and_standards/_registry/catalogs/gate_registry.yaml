@@ -7,7 +7,7 @@ generated_at: '2026-09-22T22:18:47Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 181
+total_gates: 182
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -2100,6 +2100,17 @@ gates:
   name: 'DOC-HEADER-SUITE: DOC-HEADER-SUITE（CommitGate, priority=77）'
   entry: in-process (GitCommitGateway)
   description: DOC-HEADER-SUITE
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: FMS-HYGIENE
+  name: 'FMS-HYGIENE: FMS-HYGIENE（CommitGate, priority=138）'
+  entry: in-process (GitCommitGateway)
+  description: FMS-HYGIENE
   files_trigger: ''
   always_run: false
   category: commit_gate
