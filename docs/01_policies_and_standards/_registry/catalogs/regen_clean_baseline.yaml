@@ -1,0 +1,19 @@
+schema_version: 1.0.0
+generated_by: scripts/governance/generators/regen_clean_check.py --update-baseline
+ratchet: 只减不增——漂移修复后人工删除对应指纹；新增仅经 --update-baseline 显式落（留 first_seen）
+baseline:
+  docs_index_structural:
+  - diff_hash: d4ba1b6a751da0ca110cb9eeea5e6d30de60a3224fe2a5fb1cce346d73b811e3
+    first_seen: '2026-09-27'
+  gate_registry:
+  - diff_hash: b1693a11200e16a1f5b31ab10edabf9d548a1286f405dc45bac2050312565ec4
+    first_seen: '2026-09-27'
+  script_manifest:
+  - diff_hash: 6e19b8ad242ba5b92d3db6ed23876b3ab7abb9fb9bed5025997f38210c65dc3d
+    first_seen: '2026-09-27'
+  script_manifest_fulltree:
+  - diff_hash: 4c312b6fc8e208104b6b451fc46b18b4cd5befa6e5c9baff6635ac90ed2ac5a4
+    first_seen: '2026-09-27'
+  registry_master_index:
+  - diff_hash: d8f574766bddb2d64fcac8ad566c39c6590d3da7bd3f42f8eeb11a1b52be3c24
+    first_seen: '2026-09-27'

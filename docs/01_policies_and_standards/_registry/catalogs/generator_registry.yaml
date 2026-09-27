@@ -45,6 +45,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/00_overview_entry/navigation_index.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: panorama_registry
     module_path: scripts.governance.d5_architecture.generators.generate_panorama_registry
@@ -59,6 +63,10 @@ generators:
     output_globs:
       - docs/02_enterprise_architecture/00_overview_entry/panorama_registry.md
       - docs/02_enterprise_architecture/00_overview_entry/panorama_registry_full.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 01_global_architecture_diagram — 全局架构图
@@ -71,6 +79,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: capability_heatmap
     module_path: scripts.governance.d5_architecture.generators.generate_capability_heatmap
@@ -80,6 +92,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: contract_catalog
     module_path: scripts.governance.d5_architecture.generators.generate_contract_catalog
@@ -89,6 +105,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/01_global_architecture_diagram/contract_catalog.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: cross_domain_matrix
     module_path: scripts.governance.d5_architecture.generators.generate_cross_domain_matrix
@@ -98,6 +118,10 @@ generators:
       - db:depgraph_nodes|edges|domain_dependencies
     output_globs:
       - docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: integration_topology
     module_path: scripts.governance.d5_architecture.generators.generate_integration_topology
@@ -107,6 +131,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: path_tree
     module_path: scripts.governance.d5_architecture.generators.generate_path_tree
@@ -116,6 +144,10 @@ generators:
       - db:depgraph_nodes|arch_directory_tree
     output_globs:
       - docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 02_domain_architecture_docs — 域架构文档
@@ -130,6 +162,10 @@ generators:
       - db:depgraph_nodes|edges|domains
     output_globs:
       - docs/02_enterprise_architecture/02_domain_architecture_docs/D_*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: domain_index
     module_path: scripts.governance.d5_architecture.generators.generate_domain_index
@@ -139,6 +175,10 @@ generators:
       - db:depgraph_nodes|domains
     output_globs:
       - docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 03_governance_reports — 治理报告
@@ -151,6 +191,10 @@ generators:
       - db:depgraph_nodes|candidate_module_registry
     output_globs:
       - docs/02_enterprise_architecture/03_governance_reports/candidate_modules/*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: capacity_report
     module_path: scripts.governance.d5_architecture.generators.generate_capacity_report
@@ -160,6 +204,10 @@ generators:
       - db:depgraph_nodes|domains
     output_globs:
       - docs/02_enterprise_architecture/03_governance_reports/capacity_report.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: constraint_violations
     module_path: scripts.governance.d5_architecture.generators.generate_constraint_violations
@@ -169,6 +217,10 @@ generators:
       - db:depgraph_nodes|edges|arch_constraints
     output_globs:
       - docs/02_enterprise_architecture/03_governance_reports/constraint_violations.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: design_vs_production
     module_path: scripts.governance.d5_architecture.generators.generate_design_vs_production
@@ -178,6 +230,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/03_governance_reports/design_vs_production.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 04_architecture_principles_decisions — 架构原则与决策
@@ -191,6 +247,10 @@ generators:
     output_globs:
       - docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md
       - project_handbook/*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: blueprint_panorama
     module_path: scripts.governance.d5_architecture.generators.generate_blueprint_panorama
@@ -206,6 +266,10 @@ generators:
       - db:decisiongraph_nodes|edges
     output_globs:
       - docs/03_modules/**/blueprint.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 05_dataflow_architecture — 数据流架构
@@ -220,6 +284,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/05_dataflow_architecture/dataflow_*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: data_acquisition_flow
     module_path: scripts.governance.d5_architecture.generators.generate_data_acquisition_flow
@@ -229,6 +297,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   - name: data_inventory
     module_path: scripts.governance.d5_architecture.generators.generate_data_inventory
@@ -239,6 +311,10 @@ generators:
       - yaml:docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
     output_globs:
       - docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: ch-metadata
 
   # ════════════════════════════════════════════════════════════════════════
   # 06_decision_architecture — 决策架构
@@ -253,6 +329,10 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - docs/02_enterprise_architecture/06_decision_architecture/decision_*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 07_trading_decision_architecture/battle_map — 交易决策作战地图（试点已完成）
@@ -271,6 +351,10 @@ generators:
     output_globs:
       - docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/*.md
       - docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/*.html
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # 10_trading_map — 交易决策地图全景图（MOD-TRADING-015 派生，D91-D93）
@@ -285,6 +369,10 @@ generators:
     output_globs:
       - docs/02_enterprise_architecture/10_trading_map/*.md
       - docs/02_enterprise_architecture/10_trading_map/_zoomable_html/*.html
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
 
   # ════════════════════════════════════════════════════════════════════════
   # Codegen 管线（YAML→代码，非文档生成器但同样需自动触发）
@@ -298,6 +386,10 @@ generators:
     output_globs:
       - src/zephyr/shared/contracts/market_data.py
       - src/zephyr/shared/contracts/order.py
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: no-iso-output
 
   - name: policies
     module_path: scripts.governance.d5_architecture.generators.generate_policies
@@ -307,6 +399,10 @@ generators:
       - yaml:architecture_model/data/data_sources_registry.yaml
     output_globs:
       - src/zephyr/data/config/policies.yaml
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: no-iso-output
 
   # ════════════════════════════════════════════════════════════════════════
   # 规则感知索引（trae_*.yaml → rule_ai_perception_index.yaml，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
@@ -338,6 +434,10 @@ generators:
     trigger_sources: []
     input_sources: []
     output_globs: []
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: manual-rollout-tool
   # ════════════════════════════════════════════════════════════════════════
   # 终极图书馆总账派生件（E 包登记，2026-09-21 总攻）：lib_assets → 七馆页+INDEX；
   # 双向对账盲册。触发源=lib_assets 表（无 mtime，手工/总攻窗跑）；输出自带索书号。
@@ -356,6 +456,10 @@ generators:
       - docs/library/gate.md
       - docs/library/pipeline.md
       - docs/library/backup.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-lib_assets
   - name: library_coverage
     module_path: scripts.governance.generators.check_library_coverage
     trigger_sources: []
@@ -363,6 +467,10 @@ generators:
       - pg:lib_assets
     output_globs:
       - docs/library/COVERAGE.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-lib_assets
   - name: module_algorithm_overview
     module_path: scripts.governance.d5_architecture.generators.generate_module_algorithm_overview
     trigger_sources:
@@ -373,6 +481,10 @@ generators:
     output_globs:
       - docs/02_enterprise_architecture/08_algorithm_overview/*.md
       - docs/02_enterprise_architecture/08_algorithm_overview/stages/*.md
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
   - name: governance_map
     module_path: scripts.governance.generate_governance_map
     trigger_sources:
@@ -381,3 +493,133 @@ generators:
       - db:depgraph_nodes|edges
     output_globs:
       - config/governance_operations_map.yaml
+    regen:
+      tier: red                    # B4 首批红级登记（S7 簿 §4.1）
+      enabled: false
+      skip_reason: pg-depgraph
+
+  # ════════════════════════════════════════════════════════════════════════
+  # regen-clean 受检对首批（B4/st-fms-chief-20260927，S7 簿 §4.1）——FMS-REGEN-CLEAN
+  # 门数据源，消费者=scripts/governance/generators/regen_clean_check.py。
+  # ⚠ trigger_sources 一律留空：本节只登记"受检对"，不激活 reconcile 自动触发链
+  #   （生成侧自动化挂接归门挂接波次统一落，勿在此顺手开）。
+  # index.md 族（1,125 个，generate_missing_index_md 只补缺不保鲜）按 S7 簿 §4.3.4
+  #   收敛为 mode: structural 结构对账型；首批登记 docs/index.md 一对样板，全族按需逐对增登。
+  # 本节同时是 derived_file_deletion_gate.py _PROTECTED_DERIVED_FILES frozenset 的
+  #   P1.5 YAML 真源迁移承接位（一处 YAML 两台消费：检查器+删除门）。
+  # ════════════════════════════════════════════════════════════════════════
+  - name: gate_registry
+    module_path: scripts.governance.generators.generate_gate_registry
+    trigger_sources: []
+    input_sources:
+      - yaml:.pre-commit-config.yaml
+      - src/zephyr/gov_enforcement/commit_gates
+    output_globs:
+      - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+    regen:
+      tier: green
+      invoke: "scripts/governance/generators/generate_gate_registry.py --output {iso_out}"
+      canonical: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+      normalize: ["volatile_lines", "yaml_canonical"]
+      timeout_seconds: 10
+      enabled: true
+
+  - name: script_manifest
+    module_path: scripts.governance.generators.generate_script_manifest
+    trigger_sources: []
+    input_sources:
+      - scripts/governance
+    output_globs:
+      - scripts/governance/script_manifest.yaml
+    regen:
+      tier: green
+      invoke: "scripts/governance/generators/generate_script_manifest.py --output {iso_out}"
+      canonical: scripts/governance/script_manifest.yaml
+      normalize: ["volatile_lines", "yaml_canonical"]
+      timeout_seconds: 30
+      enabled: true
+
+  - name: registry_master_index
+    module_path: scripts.governance.generators.generate_registry_master_index
+    trigger_sources: []
+    input_sources:
+      - docs/01_policies_and_standards/_registry/catalogs
+    output_globs:
+      - docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml
+    regen:
+      tier: green
+      invoke: "scripts/governance/generators/generate_registry_master_index.py --output {iso_out}"
+      canonical: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml
+      normalize: ["volatile_lines", "yaml_canonical"]
+      timeout_seconds: 60
+      enabled: true
+
+  - name: rule_catalog_registry
+    module_path: scripts.governance.d3_metadata.generate_rule_catalog
+    trigger_sources: []
+    input_sources:
+      - docs/01_policies_and_standards
+    output_globs:
+      - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+    regen:
+      tier: green
+      invoke: "scripts/governance/d3_metadata/generate_rule_catalog.py --output {iso_out}"
+      canonical: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+      normalize: ["volatile_lines", "yaml_canonical"]
+      seed_iso: true                  # 保育语义（#11.4-W2）：_load_unmanaged_entries 读 --output 位，iso 副本须先含正本既有条目
+      timeout_seconds: 60
+      enabled: true
+
+  - name: commit_navigation_playbook
+    module_path: scripts.governance.generators.generate_commit_guide
+    trigger_sources: []
+    input_sources:
+      - yaml:docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+      - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources
+    output_globs:
+      - docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+    regen:
+      tier: green
+      invoke: "scripts/governance/generators/generate_commit_guide.py --output {iso_out}"
+      canonical: docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+      normalize: ["volatile_lines"]
+      timeout_seconds: 30
+      enabled: true
+
+  - name: script_manifest_fulltree
+    module_path: scripts.generate_manifest
+    trigger_sources: []
+    input_sources:
+      - scripts
+    output_globs:
+      - scripts/script-manifest.yaml
+    regen:
+      tier: yellow                    # 原无 --check 无 --output（S7 簿缺口②）；B4 已补 --output 旗标
+      invoke: "scripts/generate_manifest.py --output {iso_out}"
+      canonical: scripts/script-manifest.yaml
+      normalize: ["volatile_lines", "yaml_canonical"]
+      timeout_seconds: 30
+      enabled: true
+
+  - name: docs_index_structural
+    module_path: scripts.governance.d1_structure.generate_missing_index_md
+    trigger_sources: []
+    input_sources:
+      - yaml:docs/index.md
+    output_globs:
+      - docs/index.md
+    regen:
+      mode: structural                # 结构对账型（S7 簿 §4.3.4）：不重生成正本，核验表行∩盘面双向覆盖
+      tier: green
+      invoke: ""
+      canonical: docs/index.md
+      normalize: ["volatile_lines"]
+      structural:
+        scope_dir: docs
+        include: ["*"]
+        exclude: [".git", "__pycache__", ".obsidian", "_DO_NOT_USE", "node_modules", ".mypy_cache", "scripts", "_archive", ".trae", "_", "windi", "spikes", ".*", "index.md"]
+        ref_section: "## 目录内容"
+        ref_pattern: '\[[^\]]*\]\(([^)]+)\)'
+        ref_strip: ["/index.md"]
+      timeout_seconds: 0
+      enabled: true
