@@ -5,7 +5,7 @@
 # [CONSUMERS] （候选：指数详情页叠加层——趋势线/压力支撑位渲染数据）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 分形极值须满窗（±k，边缘不满窗不判）；价位聚类容差 %（均值口径，触点数=强度）；支撑=现价下方最近位/压力=现价上方最近位（另一侧无位 → None + notes 不硬编）；趋势线取最近两个同向显著极值（两低点斜率>0=上升线/两高点斜率<0=下降线）；数据不足/无极值 → degraded 不出伪线；价格 ≤0 或类型非法 → ValueError fail-closed；frozen dataclass asdict JSON 可序列化
+# [INVARIANTS] 分形极值须满窗（±k，边缘不满窗不判）；价位聚类容差 %（均值口径，触点数=强度；cluster_method=average 时 1-D 平均链接层次并簇、判据同为簇均值×容差%，<5 点回退贪心）；支撑=现价下方最近位/压力=现价上方最近位（另一侧无位 → None + notes 不硬编）；趋势线取最近两个同向显著极值（两低点斜率>0=上升线/两高点斜率<0=下降线）；trend_fit=ransac 时对同向全部分形点加拟合 RANSAC 线（两点线保留并列输出，fit_method 字段区分；<5 点或 sklearn 不可用不出 RANSAC 线只留 notes）；数据不足/无极值 → degraded 不出伪线；价格 ≤0 或类型非法或 trend_fit/cluster_method 非法 → ValueError fail-closed；frozen dataclass asdict JSON 可序列化
 # [MODIFY-GUARD] docs/_working/2026-08-22-frontend-backend-gap-ledger.md GAP-F-33 行
 # [STABILITY] evolving
 # [SAFETY] L
@@ -32,6 +32,13 @@ r"""MOD-SIG-069 supplement — 趋势线/压力支撑自动识别（GAP-F-33，�
 4. **趋势线**：最近两个同向显著极值连线——两低点斜率>0 → 上升趋势线
    （uptrend），两高点斜率<0 → 下降趋势线（downtrend）；输出锚点日期/
    斜率/当前值/现价距离 %（同向不足两个 → 该向不出线）。
+5. **RANSAC 趋势线（trend_fit="ransac" 时启用）**：对同向全部分形点做
+   RANSAC 线性拟合（抗离群极值），与第 4 条两点线并列输出（fit_method
+   区分）；residual_threshold=极值均价 × ransac_residual_pct%；斜率方向
+   校验同第 4 条；点数 <5 或 sklearn 不可用 → 不出 RANSAC 线只留 notes。
+6. **层次聚类（cluster_method="average" 时启用）**：1-D 平均链接逐对并簇
+   （并簇距离=两簇价差均值），判据同贪心（并簇后均值 × 容差 %）；点数
+   <5 回退贪心；输出结构与贪心完全一致。
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/trendline_sr_detector.yaml
 """
@@ -66,6 +73,9 @@ class TrendSRConfig:
     fractal_window: int = 2  # 分形半窗 k（±k 满窗判定）
     tolerance_pct: float = 1.5  # 价位聚类容差 %（相对均值）
     max_levels: int = 10  # 位清单条数上限（触点数降序）
+    cluster_method: str = "greedy"  # greedy=容差贪心 / average=1-D 平均链接层次
+    trend_fit: str = "two_point"  # two_point=两锚点线 / ransac=加拟合 RANSAC 线并列
+    ransac_residual_pct: float = 1.0  # RANSAC residual_threshold %（相对极值均价）
 
 
 @dataclass(frozen=True, slots=True)
@@ -99,6 +109,7 @@ class TrendLine:
     anchor_prices: tuple[float, float]
     current_value: float  # 线延伸至最新 bar 的值
     distance_pct: float  # 最新收相对线值距离 %（正=线上方）
+    fit_method: str = "two_point"  # two_point/ransac（RANSAC 线标记，旧输出兼容）
 
 
 @dataclass(frozen=True, slots=True)
@@ -136,25 +147,110 @@ def _fractals(bars: Sequence[SRBar], k: int) -> tuple[list[tuple[int, float, str
 def _cluster_levels(
     points: list[tuple[int, float, str]],
     tolerance_pct: float,
+    method: str = "greedy",
 ) -> list[tuple[float, int, str, str]]:
-    """极值价聚类（容差 % 相对簇均值）→ (mean_price, touches, first_date, last_date)。"""
-    clusters: list[list[tuple[int, float, str]]] = []
-    for pt in sorted(points, key=lambda p: p[1]):
-        placed = False
-        for cl in clusters:
-            mean = sum(p[1] for p in cl) / len(cl)
-            if mean > 0 and abs(pt[1] - mean) / mean * 100.0 <= tolerance_pct:
-                cl.append(pt)
-                placed = True
-                break
-        if not placed:
-            clusters.append([pt])
+    """极值价聚类（容差 % 相对簇均值）→ (mean_price, touches, first_date, last_date)。
+
+    method="greedy"：按价排序逐点入首个容差内簇（原口径）。
+    method="average"：1-D 平均链接层次并簇——每轮取簇间平均价差最小的两簇，
+    并簇距离 ≤ 并簇后均值 × 容差 % 则合并，否则终止；点数 <5 回退 greedy。
+    """
+    if method == "average" and len(points) >= 5:
+        clusters: list[list[tuple[int, float, str]]] = [[p] for p in sorted(points, key=lambda p: p[1])]
+
+        def _pair_dist(a: list[tuple[int, float, str]], b: list[tuple[int, float, str]]) -> float:
+            return sum(abs(x[1] - y[1]) for x in a for y in b) / (len(a) * len(b))
+
+        merged = True
+        while merged and len(clusters) > 1:
+            merged = False
+            best_i, best_j, best_d = -1, -1, float("inf")
+            for i in range(len(clusters)):
+                for j in range(i + 1, len(clusters)):
+                    d = _pair_dist(clusters[i], clusters[j])
+                    if d < best_d:
+                        best_i, best_j, best_d = i, j, d
+            combined_mean = sum(p[1] for c in (clusters[best_i], clusters[best_j]) for p in c) / (
+                len(clusters[best_i]) + len(clusters[best_j])
+            )
+            if combined_mean > 0 and best_d / combined_mean * 100.0 <= tolerance_pct:
+                clusters[best_i] = clusters[best_i] + clusters[best_j]
+                del clusters[best_j]
+                merged = True
+    else:
+        clusters = []
+        for pt in sorted(points, key=lambda p: p[1]):
+            placed = False
+            for cl in clusters:
+                mean = sum(p[1] for p in cl) / len(cl)
+                if mean > 0 and abs(pt[1] - mean) / mean * 100.0 <= tolerance_pct:
+                    cl.append(pt)
+                    placed = True
+                    break
+            if not placed:
+                clusters.append([pt])
     out: list[tuple[float, int, str, str]] = []
     for cl in clusters:
         prices = [p[1] for p in cl]
         dates = sorted(p[2] for p in cl)
         out.append((sum(prices) / len(prices), len(prices), dates[0], dates[-1]))
     return out
+
+
+def _fit_ransac_line(
+    points: list[tuple[int, float, str]],
+    kind: str,
+    bars: Sequence[SRBar],
+    residual_pct: float,
+) -> TrendLine | None:
+    """RANSAC 拟合同向全部分形点（抗离群），输出带 fit_method="ransac" 的趋势线。
+
+    residual_threshold=极值均价 × residual_pct%；斜率方向校验同两点线；
+    sklearn 不可用 / 内点不足两点 / 方向不符 → None（调用方留 notes）。
+    """
+    if len(points) < 5:
+        return None
+    try:
+        from sklearn.linear_model import LinearRegression, RANSACRegressor
+    except ImportError:  # pragma: no cover - 环境缺 sklearn 时降级
+        return None
+    xs = [[float(p[0])] for p in points]
+    ys = [float(p[1]) for p in points]
+    mean_price = sum(ys) / len(ys)
+    model = RANSACRegressor(
+        estimator=LinearRegression(),
+        residual_threshold=max(mean_price * residual_pct / 100.0, 1e-9),
+        min_samples=2,
+        random_state=0,
+    )
+    try:
+        model.fit(xs, ys)
+    except ValueError:  # 退化输入（全离群/常数列等）RANSAC 拒拟
+        return None
+    inlier_idx = [i for i, flag in enumerate(model.inlier_mask_) if flag]
+    if len(inlier_idx) < 2:
+        return None
+    slope = float(model.estimator_.coef_[0])
+    intercept = float(model.estimator_.intercept_)
+    if kind == "uptrend" and slope <= 0:
+        return None
+    if kind == "downtrend" and slope >= 0:
+        return None
+    first, last = points[inlier_idx[0]], points[inlier_idx[-1]]
+    last_idx = len(bars) - 1
+    current = slope * last_idx + intercept
+    if current <= 0:
+        return None
+    distance = (bars[-1].close / current - 1.0) * 100.0
+    return TrendLine(
+        kind=kind,
+        slope_per_bar=round(slope, 6),
+        anchor_dates=(first[2], last[2]),
+        anchor_prices=(round(slope * first[0] + intercept, 4), round(slope * last[0] + intercept, 4)),
+        current_value=round(current, 4),
+        distance_pct=round(distance, 4),
+        fit_method="ransac",
+    )
 
 
 def _build_line(
@@ -204,6 +300,10 @@ def analyze_trend_sr(
         ValueError: bars 元素类型非法 / 价格非正（fail-closed）。
     """
     cfg = config or TrendSRConfig()
+    if cfg.trend_fit not in ("two_point", "ransac"):
+        raise ValueError(f"trend_fit 非法（two_point/ransac）: {cfg.trend_fit!r}")
+    if cfg.cluster_method not in ("greedy", "average"):
+        raise ValueError(f"cluster_method 非法（greedy/average）: {cfg.cluster_method!r}")
     for b in bars:
         if not isinstance(b, SRBar):
             raise ValueError(f"bars 元素非法（须 SRBar）: {type(b).__name__}")
@@ -223,8 +323,8 @@ def analyze_trend_sr(
         notes.append("窗口内无分形极值（全平/单边无回摆），位与线均不出")
 
     # ---- 价位聚类 → 支撑/压力 ----
-    low_levels = _cluster_levels(lows, cfg.tolerance_pct)
-    high_levels = _cluster_levels(highs, cfg.tolerance_pct)
+    low_levels = _cluster_levels(lows, cfg.tolerance_pct, cfg.cluster_method)
+    high_levels = _cluster_levels(highs, cfg.tolerance_pct, cfg.cluster_method)
     last_close = float(bars[-1].close)
     levels: list[SRLevel] = []
     for price, touches, d0, d1 in low_levels:
@@ -263,6 +363,15 @@ def analyze_trend_sr(
             notes.append("最近两高点斜率非负，下降趋势线不出")
     else:
         notes.append("有效高点不足两个，下降趋势线不出")
+
+    # ---- RANSAC 并列线（trend_fit="ransac" 才出；两点线保留不替代）----
+    if cfg.trend_fit == "ransac":
+        for pts, kind, label in ((lows, "uptrend", "低点"), (highs, "downtrend", "高点")):
+            rline = _fit_ransac_line(pts, kind, bars, cfg.ransac_residual_pct)
+            if rline is not None:
+                trendlines.append(rline)
+            else:
+                notes.append(f"RANSAC {label}线不出（点数不足/离群过散/方向不符/sklearn 缺失）")
 
     return SRAnalysis(
         levels=levels,
