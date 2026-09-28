@@ -603,15 +603,6 @@ MANUAL_ENTITY_SEED: list[dict] = [
         "wt": "manual",
     },
     {
-        "task_id": "ops_bdpan_tick_watch",
-        "cn": "bdpan tick 兜底回灌守望 bdpan_tick_watch.py（实测每日 08:00；tick_drain 族）",
-        "class": "network_download",
-        "dmin": 30,
-        "mem": 1.0,
-        "grp": ["tick_drain"],
-        "wt": "manual",
-    },
-    {
         "task_id": "ops_board_index_realtime",
         "cn": "板块指数实时采集 board_index_realtime.py（实测每日 09:20）",
         "class": "network_download",
@@ -1229,7 +1220,9 @@ OPS_TASK_ALIASES: dict[str, str] = {
     "ZephyrAlpha-AI-Wrapper-Inject": "ops_ai_wrapper_inject",
     "ZephyrAlpha_TTLRejudgeDaily": "ops_ttl_rejudge_daily",
     "ZephyrAlpha_QMTWatchdog": "ops_qmt_watchdog",
-    "ZephyrAlpha_BdpanTickWatch": "ops_bdpan_tick_watch",
+    # ZephyrAlpha_BdpanTickWatch 退役（OS 任务 2026-09-24 删除，看门狗使命完成）：
+    # 别名与 ops_bdpan_tick_watch 画像一并移除；注册表存量条目由 merge_preserve
+    # 转 orphaned_source 挂"待 Owner 裁定删除"，净删走 Owner 门位。
     "ZephyrAlpha_BoardIndexRealtime": "ops_board_index_realtime",
     "ZephyrAlpha_SectorSnapshot": "ops_sector_snapshot",
     "ZephyrAlpha_WeeklyRest": "ops_weekly_rest",
