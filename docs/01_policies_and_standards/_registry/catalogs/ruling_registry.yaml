@@ -5840,3 +5840,22 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#420"
+  title: 决策时间戳契约 15→16 字段：decision_timestamp=Order.created_at PIT 语义，禁墙钟伪造；"15 契约字段不增不减"改判"只增不减"
+  date: '2026-09-29'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-29 对话批准批文②正式补登（总筹裁-13 自裁于 2026-09-27 随袋留痕，正册通道当时被 #415-417 落册占用故避让，99_skipped_for_owner #34 挂账待注册即此件）：
+    ①market_execution_report.py 增列 decision_timestamp，决策报告契约 15→16 字段；
+    ②语义=PIT 决策时间戳（=Order.created_at；NULL=上游未布点），禁墙钟伪造；
+    ③契约约束由"15 契约字段不增不减"改判"只增不减"（允许追加，禁删禁改义）；
+    ④动因=E9 IS 分解归因刚性需求；
+    ⑤证据=E8/E9 袋 commit a349ddc1fe（随袋 message 裁定留痕+test_execution_report_decision_timestamp.py）。
+  related_files:
+  - src/zephyr/trading/reports/categories/intraday/market_execution_report.py
+  - src/zephyr/ex_core/execution_report.py
+  - docs/_working/fullconnect_campaign/99_skipped_for_owner.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
