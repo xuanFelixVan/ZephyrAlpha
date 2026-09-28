@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, date, datetime, timezone
 from decimal import Decimal
 from unittest.mock import MagicMock
@@ -1384,3 +1385,47 @@ class TestSessionFeedsRiskPipeline:
         snap = session.build_risk_snapshot(as_of=datetime(2026, 8, 21, 10, 0, tzinfo=UTC))
         assert snap.missing_price_symbols == ("000002.SZ",)
         assert snap.degraded
+
+
+# ---------------------------------------------------------------------
+# C-004 清单闸写侧②：逐单限额验证执行回执（F62 雷三批）
+# ---------------------------------------------------------------------
+
+
+def test_rebalance_writes_position_limit_receipt(tmp_path) -> None:
+    """每次调仓在限额验证处刷新执行回执（最新一条即真源；写者可注入 tmp_path）。"""
+    from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter
+
+    writer = ChecklistEvidenceWriter(tmp_path)
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+    session = _make_session(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.10}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+    )
+    # 直接注入 writer（_make_session 不透传该参，会话构造后补挂——仅测试装配面）
+    session._checklist_evidence_writer = writer
+    orders = session.rebalance()
+    assert len(orders) == 1
+    rec = json.loads((tmp_path / "position_limit_verify.json").read_text(encoding="utf-8"))
+    assert rec["item_key"] == "position_limit_verify"
+    assert rec["writer"] == "trading_session._validate_and_submit"
+    assert rec["detail"]["symbol"] == "600519.SH"
+    assert rec["detail"]["risk_blocked"] is False
+    assert rec["snapshot_id"] == session._config.risk_limits.idempotency_key
+
+
+def test_rebalance_without_writer_keeps_default_behavior() -> None:
+    """未注入 writer=零行为变化（默认 None 跳过落证，既有放行/拦截语义不变）。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(cash=Decimal("1000000"))
+    session = _make_session(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.10}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
+    )
+    assert session._checklist_evidence_writer is None
+    assert len(session.rebalance()) == 1
