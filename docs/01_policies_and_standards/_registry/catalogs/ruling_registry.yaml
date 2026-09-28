@@ -5750,3 +5750,54 @@ entries:
   superseded_by: null
   approved_paths: ["AGENTS.md"]
   expires_at: '2026-10-31'
+- ruling_id: "裁定#415"
+  title: 唯一在任总包+热册队列侧单写者（多总包并存终裁）
+  date: '2026-09-28'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包代裁（第一性原理：并发系统正确性只来自单一写入点+可仲裁序；
+    0922 注册表事故与 94854bcbbb 拉锯族同根因）。裁三条：
+    ①任一时刻至多一个在任总包（判定=其 session 在 SessionRegistry 且心跳活），其余会话只做工序不做跨线裁定；
+    ②共享热册（*_registry.yaml/宪法/tracker 类）写侧唯一=队列序列化器（条目级合并仲裁 a4211e4b16 通道），
+    任何会话禁绕队直写热册整档；
+    ③代投必须在 meta/message 注明原属主，冲突处置=登记让位不硬闯。
+  related_files:
+  - docs/_working/fullflow_chief_20260928/00_orchestration.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#416"
+  title: 存量红判据重定义（资产齐基座+逐目录对照差零+真缺陷两轮零）
+  date: '2026-09-28'
+  category: 验收
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包代裁。「连续两轮测试零问题」重定义为三条件同时成立：
+    ①资产齐基座=fixture 校验配置/三方库/数据工件在位，缺件红入环境债台账（带 owner+期限），不计代码缺陷；
+    ②逐目录对照差=0（pytest 逐目录对 manifest 差集为空，禁全量单进程）；
+    ③真缺陷两轮=0（归因后代码缺陷连续两轮复跑零新增）。
+    依据=业界实证约46%测试红为环境/资源问题（flaky attribution+quarantine 实践）；
+    本仓 09-27 实测 41 红中真缺陷仅 1 同分布。历史行文「两轮全绿」自本裁定起按本口径解读。
+  related_files:
+  - docs/_working/total_command_closeout/92_acceptance_rulers.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#417"
+  title: AI 层 12 项已批项补批文（货已验收，发票补开）
+  date: '2026-09-28'
+  category: 架构
+  status: 'active'
+  summary: |-
+    就 09-26 commit 30505c93f6c（678 件 v6 emergency 通道，自述含 Owner 批准）补可复核批文：
+    Owner 2026-09-28 授权总包复查后追认——12 项已批项 31 核心件 09-28 实测 10 件已入 dev，
+    其余经死信外科/总包代投袋归位（同日落地）；registry_state_vocab 成对落地与 tombstone test
+    补齐为遗留义务（ORPHAN 缓袋）；自本裁定起「12 项已批准」有册可查，补-9 销项。
+    本裁定不推翻任何他道已落地内容（不追认不推翻只补票）。
+  related_files:
+  - docs/_working/total_command_closeout/pending_owner_items.md
+  - docs/_working/ai_layer_vision/HANDOFF_st_ailayer_sx_20260927.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
