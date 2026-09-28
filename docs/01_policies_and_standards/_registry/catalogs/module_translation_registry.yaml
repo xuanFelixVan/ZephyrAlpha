@@ -61905,6 +61905,62 @@ entries:
   plain_zh: "测试模拟盘下单前的两道新闸：程序化报备闸（未报备拒单、模拟模式放行）和信息空窗回避名单闸（命中拒单、干净放行、检测坏了也拒单）"
   responsibility_layer: business
 
+- module_path: scripts/governance/chief_lease.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 总指挥租约仲裁器
+  name_en: chief lease arbiter
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 给整个项目选一个且只选一个总指挥的登记器：谁想当总指挥先来登记领号，号没过期他就是总指挥，别人来登记会被拒绝并告知现任是谁；号过期自动作废，先到先得。这样每个AI会话自称总指挥都不算数，查册才算数，根治多个AI同时自封总包互相覆盖成果的顽疾。
+  responsibility_layer: governance
+- module_path: scripts/governance/lane_leases.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 车道路径租约分配器
+  name_en: path lease registry and allocator
+  desc_zh: S5② 动态车道 v1：sid→路径前缀租约登记（心跳 TTL 600s）+段边界冲突判定+FCFS 贪心 N 队不相交拆分建议
+  desc_en: ''
+  plain_zh: 给每个施工队划分专属地盘的登记器：队里开工前登记自己要动哪些目录，别人已经占了重叠地盘就拒绝并告知是谁占的；过期自动收回。配合影子门禁让多队并行时谁也别写到别人地盘里，根治施工队互相覆盖文件的事故。
+  responsibility_layer: governance
+- module_path: scripts/governance/lane_leases_gate.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 车道租约影子门禁
+  name_en: lease shadow audit gate
+  desc_zh: S5② 动态车道 v1 影子门：落盘文件对活租约核验，no-lease/outside-lease/cross-lease-overlap 三类 WARN 信号，退出码 0/2，永不阻断不入 commit 链
+  desc_en: ''
+  plain_zh: 检查提交的文件是否越出了本队登记的地盘：越界只报警不拦人（影子观察期），报警信息写明哪队越了谁的地界。攒够三天观察数据没问题后再升级成真拦截。
+  responsibility_layer: governance
+- module_path: src/zephyr/backtest/gpu_core.py
+  domain_id: D_BACKTEST
+  name_zh: 回测GPU薄核
+  name_en: GPU/CPU dual-backend backtest tensor core
+  desc_zh: 考试引擎张量热路径的 CuPy 薄核：后端开关+单一代码路径+FP64 红线+CPU 逐位 fallback
+  desc_en: ''
+  plain_zh: 把回测考试里最耗时的计算搬上显卡的加速核心：同一套代码在显卡（CuPy）和普通CPU（NumPy）上都能跑，显卡快得多；考卷成绩和CPU逐位一致才放行，显卡不在就自动切回CPU，绝不悄悄算错。
+  responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: 数据供给链图结构门禁
+  name_en: data supply chain map gate
+  desc_zh: 校验 config/data_supply_chain_map.yaml 图12结构合法性（节点/边/域引用闭合）
+  desc_en: ''
+  plain_zh: 这张门禁像地图审查员：数据供给链全景图（图12）每次改动，它就逐节点检查图里的箭头和地名是否真实存在、有没有断链，防止一张画错的地图把后续施工带沟里。
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/dev_delivery_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: 交付流水线全景图结构门禁
+  name_en: dev delivery map gate
+  desc_zh: 校验交付流水线全景图（图11）结构合法性（阶段节点/流向/引用闭合）
+  desc_en: ''
+  plain_zh: 这个门禁是交付流水线地图的审图员：图11（从需求到交付的全流程图）一有改动它就重查一遍每个环节的接线和指向，发现断头路或指错方向就拦下，保证照图施工不会走错。
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/trading_day_cycle_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: 交易日循环全景图结构门禁
+  name_en: trading day cycle map gate
+  desc_zh: 校验交易日循环全景图（图13）结构合法性（日环节时序/引用闭合）
+  desc_en: ''
+  plain_zh: 这个门禁管着交易日循环那张大图（图13）：开盘前到收盘后每个环节的先后顺序和接线一旦被改动，它就把全图重新走一遍查断链和错序，别让一张错图害得盘中流程跑偏。
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
