@@ -141,3 +141,15 @@ class TestRegistryVocabAlignment:
         fsm.transition(SIM, _ctx())
         fsm.transition(PRODUCTION, _ctx(owner="OWNER"))
         assert fsm.current_state == "production"  # FSM 态词恒 production（注册表落 live 是映射层职责）
+
+
+def test_build_strategy_fsm_initial_state_validation():
+    """F75 缺口2：initial_state 参数非法值 fail-closed；sim 起步可直接走 sim→shelved。"""
+    import pytest as _pytest
+
+    from zephyr.strategy_pipeline.lifecycle_fsm import build_strategy_fsm
+
+    with _pytest.raises(ValueError, match="initial_state"):
+        build_strategy_fsm("S-X", initial_state="bogus")
+    fsm = build_strategy_fsm("S-X", initial_state="sim")
+    assert fsm.current_state == "sim"

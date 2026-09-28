@@ -365,11 +365,12 @@ class TestDecide:
         assert out["ok"] is True and out["decision"] == "approve"
         assert out["fsm"] == {"from": "sim", "to": "production"}
         assert out["sim_preauthorization"]["mode"] == "evidence"
-        assert out["registry"]["lifecycle_status"] == "production"
+        assert out["registry"]["lifecycle_status"] == "live"
+        assert out["registry"]["fsm_state"] == "production"  # 回执留痕原始 FSM 词
         # 注册表真变 + 他条目零触碰
         reg = yaml.safe_load(tree["reg"].read_text(encoding="utf-8"))
         lc = {s["strategy_id"]: s["lifecycle_status"] for s in reg["strategies"]}
-        assert lc["STR-SIM-001"] == "production" and lc["STR-SIM-002"] == "sim"
+        assert lc["STR-SIM-001"] == "live" and lc["STR-SIM-002"] == "sim"
         # 台账：token 指纹留痕，明文绝不落盘
         ledger = json.loads((tree["adv"] / f"{aid}.decision.json").read_text(encoding="utf-8"))
         assert ledger["token_fingerprint"] == hashlib.sha256(TOKEN.encode()).hexdigest()[:12]
@@ -407,9 +408,9 @@ class TestDecide:
         assert first["ok"] is True
         again = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
         assert again["ok"] is False and again["reason"] == "already_decided"
-        # 幂等复核：注册表仍 production，未被二次流转
+        # 幂等复核：注册表仍 live（FSM 词 production 映射），未被二次流转
         reg = yaml.safe_load(tree["reg"].read_text(encoding="utf-8"))
-        assert reg["strategies"][0]["lifecycle_status"] == "production"
+        assert reg["strategies"][0]["lifecycle_status"] == "live"
 
     def test_reject_records_ledger_no_transition(self, tree, monkeypatch):
         monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", TOKEN)
@@ -424,7 +425,9 @@ class TestDecide:
         monkeypatch.setenv("ZEPHYR_OWNER_APPROVAL_TOKEN", TOKEN)
         aid = self._adv(tree, sid="STR-SIM-002", rec="demote")
         out = pa.decide(aid, "approve", advisory_dir=tree["adv"], registry_path=tree["reg"])
-        assert out["ok"] is True and out["fsm"] == {"from": "candidate", "to": "shelved"}
+        # F75 缺口2（2026-09-29）：在册 sim 策略 demote 按真实边 sim→shelved 起步，
+        # 回执 from=sim（旧断言 from=candidate 系 candidate 假起步缺陷口径）
+        assert out["ok"] is True and out["fsm"] == {"from": "sim", "to": "shelved"}
         assert out["sim_preauthorization"]["mode"] == "not_required"
         assert out["registry"]["lifecycle_status"] == "shelved"
 

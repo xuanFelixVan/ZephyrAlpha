@@ -44,6 +44,9 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
+from zephyr.shared.lifecycle.registry_state_vocab import (  # noqa: E501 — 裁定#417 词表单源配对（ORPHAN 消费接线）
+    FSM_STATE_TO_REGISTRY_STATE as _FSM_STATE_TO_REGISTRY_STATE,
+)
 from zephyr.shared.lifecycle.state_machine import (
     StateDefinition,
     StateMachine,
@@ -52,10 +55,6 @@ from zephyr.shared.lifecycle.state_machine import (
     TransitionGuard,
 )
 from zephyr.shared.security.secrets import get_secret_or_default
-
-from zephyr.shared.lifecycle.registry_state_vocab import (  # noqa: E501 — 裁定#417 词表单源配对（ORPHAN 消费接线）
-    FSM_STATE_TO_REGISTRY_STATE as _FSM_STATE_TO_REGISTRY_STATE,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -123,8 +122,16 @@ class OwnerTokenGuard(TransitionGuard):
         )
 
 
-def build_strategy_fsm(sid: str) -> StateMachine:
-    """每策略一台 FSM 实例（对齐因子版 per-factor 模式）。"""
+def build_strategy_fsm(sid: str, initial_state: str = CANDIDATE) -> StateMachine:
+    """每策略一台 FSM 实例（对齐因子版 per-factor 模式）。
+
+    initial_state：注册表 lifecycle_now 起步（F75 缺口2，2026-09-29）——
+    demote 场景按在册态起步走真实边（sim→shelved），不再 candidate 假起步；
+    非法值 ValueError fail-closed。
+    """
+    known = {CANDIDATE, SIM, PRODUCTION, SHELVED, RETIRED}
+    if initial_state not in known:
+        raise ValueError(f"initial_state 非法（须为策略五态之一）: {initial_state!r}")
     config = StateMachineConfig(
         fsm_id=f"strategy_lifecycle_{sid}",
         states=[
@@ -143,7 +150,7 @@ def build_strategy_fsm(sid: str) -> StateMachine:
             Transition(source=SIM, target=SHELVED),
             Transition(source=PRODUCTION, target=RETIRED, guard=OwnerTokenGuard()),
         ],
-        initial=CANDIDATE,
+        initial=initial_state,
         owner_module="MOD-BT-188",
     )
     return StateMachine(config)
