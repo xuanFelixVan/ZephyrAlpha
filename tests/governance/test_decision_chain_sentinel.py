@@ -115,6 +115,8 @@ def test_ok_via_main_exit_zero(sent, tmp_path: Path, monkeypatch):
         open_days_after=0,
     )
     monkeypatch.setattr(sent, "_default_executor", lambda: ex)
+    # dloop 第二判据隔离（L09-C04 2026-09-29）：fetch_perf 指向空沙箱，禁读生产盘
+    monkeypatch.setattr(sent, "_FETCH_PERF_DIR", tmp_path / "fetch_perf")
     alert_log = tmp_path / "alert.jsonl"
     code = sent.main(
         [
@@ -163,6 +165,8 @@ def test_lag_over_threshold_main_exit_four(sent, tmp_path: Path, monkeypatch, ca
         open_days_after=2,
     )
     monkeypatch.setattr(sent, "_default_executor", lambda: ex)
+    # dloop 第二判据隔离（L09-C04 2026-09-29）：fetch_perf 指向空沙箱，禁读生产盘
+    monkeypatch.setattr(sent, "_FETCH_PERF_DIR", tmp_path / "fetch_perf")
     alert_log = tmp_path / "alert.jsonl"
     with caplog.at_level("WARNING"):
         code = sent.main(
@@ -207,6 +211,8 @@ def test_lag_boundary_equals_threshold_alerts_below_passes(sent, tmp_path: Path)
 def test_db_error_fail_soft_exit_eight(sent, tmp_path: Path, monkeypatch):
     ex = FakeExecutor(fail_predicate="decision_daily", fail_message="connection refused")
     monkeypatch.setattr(sent, "_default_executor", lambda: ex)
+    # dloop 第二判据隔离（L09-C04 2026-09-29）：fetch_perf 指向空沙箱，禁读生产盘
+    monkeypatch.setattr(sent, "_FETCH_PERF_DIR", tmp_path / "fetch_perf")
     alert_log = tmp_path / "alert.jsonl"
     code = sent.main(
         [
