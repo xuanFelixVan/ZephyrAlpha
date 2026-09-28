@@ -551,10 +551,15 @@ def test_declared_total_heal_has_negative_controls(cql, repo: Path, tmp_path: Pa
 
 
 def test_landing_pairs_agree_with_gate21_selfcheck(cql) -> None:
-    """口径同源尺：落地侧自愈配对 == GATE-21 自洽台配对（两份配置各写一次必漂移）。"""
+    """口径同源尺：落地侧自愈配对 == GATE-21 自洽台配对（两份配置各写一次必漂移）。
+
+    SKIP-6（2026-09-28）起两侧真源=落地侧 all_derived_total_pairs()（自动发现 ⊕
+    手工点名），GATE-21 derived_total_pairs() 延迟同源到它；本尺钉住"检测判红口径
+    == 落地自愈/自证读回口径"不被任何一侧单独扩表破坏。
+    """
     drift = _load("_vsmd_pairs", "scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py")
-    assert drift.derived_total_pairs() == cql._DERIVED_TOTAL_PAIRS, (
-        f"GATE-21 配对={drift.derived_total_pairs()} vs 落地侧={cql._DERIVED_TOTAL_PAIRS}"
+    assert drift.derived_total_pairs() == cql.all_derived_total_pairs(), (
+        f"GATE-21 配对={drift.derived_total_pairs()} vs 落地侧={cql.all_derived_total_pairs()}"
     )
 
 

@@ -145,10 +145,12 @@ _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
 # 故不能用上面的 _QUEUE_MARKER_RE（它强制 :q- 段，只用于假落地防线的标记核验）。
 _GW_OWNER_RE = re.compile(r"\[GW:([^:\]\s]+)")
 
-# 派生计数标量 → 集合段（按册名）。与 GATE-21 selfcheck 的 pairs 同一份口径——
-# 检测器（判红）与落地侧自愈（改对）必须同源，否则"检测说 174、修补写 180"会变成新漂移源；
-# 两处一致性由 tests/governance/test_audit_fix_lanes_rulers.py 的配对标尺断言。
-_DERIVED_TOTAL_PAIRS: dict[str, dict[str, str]] = {
+# 派生计数标量 → 集合段（按册名）——**手工点名层**。与 GATE-21 selfcheck 的 pairs 同一份
+# 口径——检测器（判红）与落地侧自愈（改对）必须同源，否则"检测说 174、修补写 180"会变成
+# 新漂移源；两处一致性由 tests/governance/test_commit_queue_base_head.py 的口径同源尺断言。
+# 生效全集 = 自动发现（SKIP-6，discover_derived_total_pairs）⊕ 本表（同名手工覆盖），
+# 统一经 all_derived_total_pairs() 消费；本表保留为覆盖层=净零（不删任何既有条目）。
+_MANUAL_DERIVED_TOTAL_PAIRS: dict[str, dict[str, str]] = {
     "gate_registry.yaml": {"total_gates": "gates"},
     "rule_catalog_registry.yaml": {"total_files": "files"},
     # 2026-09-27 st-chief6-20260927 补：in_process 门禁名册漏在册 ⇒ 该册标量走不了队列（两投皆
@@ -219,6 +221,76 @@ def _is_transient_git_error(exc: BaseException | str) -> bool:
 _REGISTRY_CATALOGS_PREFIX = "docs/01_policies_and_standards/_registry/catalogs/"
 # 合并死信详情里单侧条目 dump 的截断上限（防 reason 超 2000 字符截断丢双侧原文）
 _MERGE_CONFLICT_DUMP_CHARS = 800
+
+# SKIP-6 自动发现结果进程内缓存（None=未扫描；landing 长驻进程只扫一次）
+_DISCOVERED_PAIRS_CACHE: dict[str, dict[str, str]] | None = None
+
+
+def discover_derived_total_pairs(catalogs_dir: Path | str | None = None) -> dict[str, dict[str, str]]:
+    """SKIP-6 自动发现器（2026-09-28）：扫描注册表目录，收编派生计数配对册。
+
+    病根：_MANUAL_DERIVED_TOTAL_PAIRS 是手工点名表——每出现一只新的 total_ 册就要
+    记得"再点一次名"，漏点=该册标量走不了队列（q-0006/FMS 38168467d1 同型假成功），
+    结构性复发点。现口径：扫描 catalogs/*.yaml，凡 `total_<x>:` 顶层**整数**标量与
+    同名顶层 `<x>:` 集合段共存、且**当前自洽**（声明值==段实际长度）的册即收编。
+
+    三重保守面（发现器只做收编，绝不发明配对）：
+    ① "曾经自洽"是收编前提——语义凑巧/故意不等长的册（total 统计口径≠段长）永远
+       不会同时满足同名+整数+等长三条件，不会被误配后在落地时刷毁语义值；
+    ② 解析失败/非映射册/无配对册一律跳过留痕（_index.yaml 等 markdown 混写件），
+       单册失败绝不拖垮发现器；
+    ③ 手工点名表保留为覆盖层：all_derived_total_pairs() 同名手工赢，发现集只做增量
+       （净零——不删任何既有条目）。
+    """
+    import yaml  # noqa: PLC0415 — landing 模块保持 stdlib 顶层 import（与 gate lazy 风格一致）
+
+    base = (
+        Path(catalogs_dir)
+        if catalogs_dir is not None
+        else Path(__file__).resolve().parents[2] / _REGISTRY_CATALOGS_PREFIX
+    )
+    out: dict[str, dict[str, str]] = {}
+    if not base.is_dir():
+        logger.warning("[landing] 派生标量发现器：目录不存在 %s（退手工点名表）", base)
+        return out
+    for p in sorted(base.glob("*.yaml")):
+        try:
+            data = yaml.safe_load(p.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001 — 单册解析失败不拖垮发现器
+            logger.info("[landing] 派生标量发现器跳过不可解析册 %s: %s", p.name, exc)
+            continue
+        if not isinstance(data, dict):
+            continue
+        pairs: dict[str, str] = {}
+        for key, val in data.items():
+            ks = key if isinstance(key, str) else str(key)
+            if not ks.startswith("total_") or isinstance(val, bool) or not isinstance(val, int):
+                continue
+            section_key = ks[len("total_") :]
+            section = data.get(section_key)
+            if isinstance(section, (list, dict)) and val == len(section):
+                pairs[ks] = section_key
+        if pairs:
+            out[p.name] = pairs
+    return out
+
+
+def all_derived_total_pairs() -> dict[str, dict[str, str]]:
+    """生效配对全集 = SKIP-6 自动发现 ⊕ 手工点名层（同名手工覆盖）。
+
+    检测（GATE-21 自洽台）/落地自愈（_heal_derived_totals）/落地前自证读回
+    （_noop_absorption_verdict）三者唯一同源消费口——任何一方单独另配一张表
+    都会重演"检测说 174、修补写 180"的漂移。发现器故障 fail-open 退手工表
+    （自愈覆盖面收窄，绝不阻断落地）。结果进程内缓存一次。
+    """
+    global _DISCOVERED_PAIRS_CACHE
+    if _DISCOVERED_PAIRS_CACHE is None:
+        try:
+            _DISCOVERED_PAIRS_CACHE = discover_derived_total_pairs()
+        except Exception as exc:  # noqa: BLE001 — fail-open：发现器故障不阻断落地
+            logger.warning("[landing] 派生标量自动发现失败（退手工点名表）: %s", exc)
+            _DISCOVERED_PAIRS_CACHE = {}
+    return {**_DISCOVERED_PAIRS_CACHE, **_MANUAL_DERIVED_TOTAL_PAIRS}
 
 
 def is_registry_mergeable(rel: str) -> bool:
@@ -947,6 +1019,183 @@ def three_way_merge_registry_yaml(
     return merged, ""
 
 
+_MISSING = object()  # 头部键判等的"键不存在"哨兵（None 是合法 YAML 值，不可复用）
+
+
+def _noop_absorption_verdict(
+    rel: str, base_text: str | None, ours_text: str, theirs_text: str
+) -> tuple[str | None, str]:
+    """落地前自证读回（防 done 零变化，2026-09-28）：合并零变化必须有合法解释。
+
+    病根（q-0006 名册标量袋实证）：合并器对标量/头部行恒取 ours（防陈旧快照吃热册
+    头部的正确设计），袋内增量凡走不进条目合并通道就**静默蒸发**，落地器却记 done
+    ——假成功。本判别在 merged == ours 的必经返回点分流三态：
+
+    - 合法 noop（返回 (None, 审计注)）：袋内预期增量全有解——条目已被 dev 吸收
+      （他袋已落）、陈旧携带（theirs==base，非本袋意图）、ours 侧合法退役吸收、
+      头部标量在派生配对覆盖内且 dev 已自洽（自愈已处理）；
+    - 内容被吞（返回 (吞没报告, "")）：预期增量（base→theirs 真差异）既未被 dev
+      携带又无合法解释——拒绝记 done，死信人工核查；
+    - 判别不能（解析/切分/身份异常）→ 同样拒绝（fail-closed：证明不了的零变化
+      不算自证通过）。
+
+    纯函数零 IO；与主合并共用同一套切分/索引/身份函数（同输入必同判定）。
+    """
+    try:
+        return _noop_absorption_verdict_inner(rel, base_text, ours_text, theirs_text)
+    except Exception as exc:  # noqa: BLE001 — 判别器自身异常=证明不了，绝不放行也不裸抛
+        return f"{rel}: 自证读回判别器异常（{type(exc).__name__}: {exc}）——零变化无法自证，拒绝记 done", ""
+
+
+def _entry_level_absorption(ours_idx: dict, theirs_idx: dict, base_idx: dict) -> tuple[list[str], list[str]]:
+    """条目级核对：theirs 相对 base 的真差异，逐键核对去向（吸收有解/被吞）。
+
+    Returns:
+        (absorbed 审计注列表, swallowed 吞没键列表)。
+    """
+    absorbed: list[str] = []
+    swallowed: list[str] = []
+    for key, (_t_fam, _fam, t_block) in theirs_idx.items():
+        ours_block = ours_idx.get(key)
+        base_block = base_idx.get(key)
+        if ours_block is None:
+            if base_block is None:
+                # base 无+theirs 有（ours 无）：合并器必插（渲染自检也拦），零变化=被吞。
+                # 今日到不了这里（防御面）——到得了即说明合并器换了实现，正是要抓的回归。
+                swallowed.append(str(key))
+            elif base_block[2].data == t_block.data:
+                absorbed.append(f"{key}(陈旧携带，非本袋意图)")  # ATK-1 加侧闸语义
+            else:
+                absorbed.append(f"{key}(ours 侧合法退役吸收)")  # 退役吸收必须仍通行
+            continue
+        if base_block is None:
+            absorbed.append(f"{key}(dev 已有，他袋已落)")  # 袋内新增但 dev HEAD 已存在
+            continue
+        if base_block[2].data == t_block.data:
+            continue  # 袋未触碰该条目（ours 自行演化）——无意图即无吞没
+        if ours_block[2].data == t_block.data:
+            absorbed.append(f"{key}(改动已被 dev 吸收)")
+            continue
+        # theirs 真改、ours 也非 base（或 ours==base 却未采纳）——本应采纳或冲突死信，
+        # 零变化=被吞（防御面：现行合并器两条路都到不了这里）
+        swallowed.append(str(key))
+    return absorbed, swallowed
+
+
+def _header_key_verdict(
+    k: object,
+    ours_families: dict,
+    theirs_doc: dict,
+    ours_doc: dict,
+    base_doc: dict | None,
+    covered: dict[str, str],
+) -> tuple[str | None, str | None]:
+    """单个头部键的 absorb/swallow 判定（结构族键交条目级核对，此处恒不判）。
+
+    Returns:
+        (absorbed 注, swallowed 报告)；键无袋侧意图时 (None, None)。
+    """
+    ks = k if isinstance(k, str) else str(k)
+    if k in ours_families:  # 结构族键已由条目级核对覆盖（ours_families 已剔直通族）
+        return None, None
+    t_val = theirs_doc.get(k, _MISSING)
+    b_val = base_doc.get(k, _MISSING) if base_doc is not None else t_val  # 基底不可知⇒不推断头部意图
+    if b_val == t_val:
+        return None, None  # 袋未改此键——无意图即无吞没
+    o_val = ours_doc.get(k, _MISSING)
+    if o_val == t_val:
+        return f"{ks}(头部已被 dev 吸收)", None
+    section = covered.get(ks)
+    ours_section = ours_doc.get(section, _MISSING) if section else _MISSING
+    if section and isinstance(o_val, int) and isinstance(ours_section, (list, dict)) and o_val == len(ours_section):
+        return f"{ks}(自愈覆盖内，dev 已自洽)", None  # 自愈按段长重算，袋侧计值被权威值取代
+    return None, f"{ks}（base {_short(b_val)} → theirs {_short(t_val)}，dev {_short(o_val)}）"
+
+
+def _header_level_absorption(
+    rel: str,
+    families: tuple[dict, dict, dict],
+    texts: tuple[str | None, str, str],
+    absorbed: list[str],
+) -> tuple[list[str], str | None]:
+    """头部级核对：非结构族键（标量/直通族/缺失键）base→theirs 真差异逐键核对。
+
+    直通族先剔出结构空间（主合并同序）；ours 有结构族的键交条目级核对，此处跳过。
+
+    Args:
+        families: (ours, theirs, base) 三侧族切分（可变，直通族会被就地剔除）。
+        texts: (base_text, ours_text, theirs_text)——base 可为 None（基底无此文件）。
+        absorbed: 条目级审计注的累加器（头部吸收注原地追加）。
+
+    Returns:
+        (header_swallowed 报告列表, err)；err 非 None=判别不能（fail-closed）。
+    """
+    ours_families, theirs_families, base_families = families
+    base_text, ours_text, theirs_text = texts
+    passthrough, perr = _split_passthrough_and_drift(ours_families, theirs_families, base_families, rel)
+    if perr:
+        return [], perr
+    for fam_map in families:  # 直通族剔出结构空间（主合并同序）
+        for pt_key in passthrough:
+            fam_map.pop(pt_key, None)
+    covered = all_derived_total_pairs().get(rel.rsplit("/", 1)[-1]) or {}
+    theirs_doc = _safe_load_doc(theirs_text) or {}
+    ours_doc = _safe_load_doc(ours_text) or {}
+    base_doc = (_safe_load_doc(base_text) or {}) if base_text is not None else None
+    header_keys: set[object] = set(theirs_doc)
+    if base_doc is not None:
+        header_keys |= set(base_doc)
+    header_swallowed: list[str] = []
+    for k in header_keys:
+        head_absorb, head_swallow = _header_key_verdict(k, ours_families, theirs_doc, ours_doc, base_doc, covered)
+        if head_absorb:
+            absorbed.append(head_absorb)
+        if head_swallow:
+            header_swallowed.append(head_swallow)
+    return header_swallowed, None
+
+
+def _noop_absorption_verdict_inner(
+    rel: str, base_text: str | None, ours_text: str, theirs_text: str
+) -> tuple[str | None, str]:
+    """_noop_absorption_verdict 本体（异常交外壳统一 fail-closed）。"""
+    identity_fn = _family_identity_fn(rel, ours_text, theirs_text, base_text)
+    ours_families, theirs_families, base_families, err = _split_all_sides(
+        ours_text, theirs_text, base_text, rel, identity_fn
+    )
+    if err:
+        return f"{rel}: 自证读回无法判别（ours 侧 {err}）", ""
+    ours_idx, theirs_idx, base_idx, err, _dedup = _index_all_sides(ours_families, theirs_families, base_families, rel)
+    if err:
+        return f"{rel}: 自证读回无法判别（{err}）", ""
+    absorbed, swallowed = _entry_level_absorption(ours_idx, theirs_idx, base_idx)
+    header_swallowed, herr = _header_level_absorption(
+        rel,
+        (ours_families, theirs_families, base_families),
+        (base_text, ours_text, theirs_text),
+        absorbed,
+    )
+    if herr:
+        return f"{rel}: 自证读回无法判别（{herr}）", ""
+
+    if swallowed or header_swallowed:
+        detail = "；".join([f"条目 {s}" for s in swallowed] + header_swallowed)
+        report = (
+            f"{rel}: 落地前自证读回失败——合并结果与 dev 零变化，但袋内预期增量未被携带（内容被合并器吞没）: {detail}"
+        )
+        return report, ""
+    note = "；".join(absorbed) if absorbed else "袋与 dev 语义等价（零增量）"
+    return None, note
+
+
+def _short(val: object) -> str:
+    """判别报告里的值摘要（防超长 dump 撑爆死信 reason；_MISSING 显式记 缺失）。"""
+    if val is _MISSING:
+        return "缺失"
+    text = repr(val)
+    return text if len(text) <= 60 else text[:57] + "..."
+
+
 class CasConflict(RuntimeError):
     """dev ref CAS 推进失败（old 期望值失配——队列外写入者插队）。"""
 
@@ -966,6 +1215,30 @@ class SnapshotVerifyError(cq.LandingEnvironmentError):
     def __init__(self, message: str, *, dead_result: cq.LandingResult | None = None) -> None:
         super().__init__(message)
         self.dead_result = dead_result
+
+
+class MergeSwallowVerifyError(SnapshotVerifyError):
+    """落地前自证读回失败（防 done 零变化，2026-09-28，q-0006 名册标量袋假成功治本）。
+
+    合并结果与 dev 零变化、但袋内预期增量（条目行/头部键）既未被 dev 携带又无合法
+    解释（他袋已落/陈旧携带/合法退役/自愈覆盖）＝内容被合并器吞没——拒绝记 done。
+    判 SnapshotVerifyError 同族（继承）；吞没是**确定性**故障，重放无益，故构造时
+    恒携 ``dead_result``（调用方见之即死信带处方，不烧 snapshot_retry 计数）。
+    """
+
+    def __init__(self, message: str) -> None:
+        super().__init__(
+            message,
+            dead_result=cq.LandingResult(
+                ok=False,
+                reason=(
+                    f"{message}。处方: 内容被合并器吞没，人工核查——①核对增量是否已由他袋落地"
+                    f"（dev 已含则同步工作区后重投即吸收）；②确属合并器吞没勿重投原袋，"
+                    f"报值班排查合并器并改走 git_commit.py 直提；③头部标量被吞=该配对未入"
+                    f"自愈覆盖（可补 _MANUAL_DERIVED_TOTAL_PAIRS 点名或核查自动发现器）"
+                ),
+            ),
+        )
 
 
 # M5.1/M5.2 重试升级阈值：同一 item 同类环境失败达 3 次=确定性故障，升级死信带处方，
@@ -1553,7 +1826,7 @@ class WorktreeLanding:
         且让 GATE-21 永红并振荡；段不是集合/标量不是整数/计数已一致/形态不认识 ⇒
         一律不动（自愈是附加收益，绝不因此把可落地的袋变成死信，解析失败只 log 不抛）。
         """
-        pairs = _DERIVED_TOTAL_PAIRS.get(rel.rsplit("/", 1)[-1])
+        pairs = all_derived_total_pairs().get(rel.rsplit("/", 1)[-1])
         if not pairs:
             return merged
         try:
@@ -1786,7 +2059,20 @@ class WorktreeLanding:
             raise RuntimeError(f"[landing] 注册表三向合并失败（死信回退人工）: {conflict}")
         merged = self._heal_derived_totals(rel, merged)
         if merged == ours_text:
-            return None  # 合并未给 dev 带来任何变化（快照侧新增全被退役判定吸收等）
+            # 落地前自证读回（防 done 零变化，2026-09-28，q-0006 假成功治本）：零变化
+            # 必须有合法解释——吸收有解（他袋已落/陈旧携带/合法退役/自愈覆盖）→ 合法
+            # noop 带审计注；判不了或判为吞没 → 拒绝记 done（确定性故障，死信不烧重试）。
+            swallow, note = _noop_absorption_verdict(rel, base_text, ours_text, theirs_text)
+            if swallow is not None:
+                raise MergeSwallowVerifyError(swallow)
+            meta = item.get("meta")
+            if not isinstance(meta, dict):
+                meta = {}
+                item["meta"] = meta
+            prev = str(meta.get("noop_audit") or "")
+            meta["noop_audit"] = f"{prev}; {rel}: {note}" if prev else f"{rel}: {note}"
+            logger.info("[landing] %s 合并零变化自证通过（合法 noop 吸收）: %s", rel, note)
+            return None
         return merged.encode("utf-8")
 
     @_timed_phase("snapshot")

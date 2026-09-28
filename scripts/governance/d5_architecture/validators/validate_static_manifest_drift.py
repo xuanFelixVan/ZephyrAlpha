@@ -66,6 +66,7 @@ from pathlib import Path
 # 自举 sys.path（顺序敏感）：
 #   1. scripts/governance/ —— import _shared.*
 #   2. <repo_root>/src      —— _shared.constants 内部 import zephyr.*（治本：原缺此行）
+#   3. <repo_root>          —— SKIP-6 同源口延迟 import scripts.governance.commit_queue_landing
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists())
 _REPO_ROOT = _GOV_DIR.parent.parent  # scripts/governance -> scripts -> <repo_root>
@@ -74,6 +75,8 @@ if str(_GOV_DIR) not in sys.path:
 _SRC_DIR = _REPO_ROOT / "src"
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
@@ -157,19 +160,69 @@ CHECKS = [
 ]
 
 
+_CATALOGS_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+_STATIONS_ENSURED = False
+
+
+def _ensure_discovered_stations() -> None:
+    """SKIP-6（2026-09-28）：把自动发现的 total_ 配对册补进 CHECKS 自洽台（进程内一次）。
+
+    手工点名三台保留不动（覆盖层=净零，不删任何既有台）；发现集只做增量收编——
+    新册的"声明计数 vs 段长"自洽检查从"有人记得点名"变为"发现器自动上榜"，
+    结构性漏检点（q-0006/FMS 38168467d1 同型）就此封死。发现器故障降级：打 NOTE
+    只跑手工台，绝不因收编失败把整条 gate 拒之门外。
+    """
+    global _STATIONS_ENSURED
+    if _STATIONS_ENSURED:
+        return
+    _STATIONS_ENSURED = True
+    try:
+        from scripts.governance.commit_queue_landing import discover_derived_total_pairs
+
+        discovered = discover_derived_total_pairs(_CATALOGS_DIR)
+    except Exception as exc:  # noqa: BLE001 — 收编失败降级为手工台，gate 不因此失明
+        print(f"NOTE[自洽台] 派生标量自动发现失败（只跑手工点名台）: {type(exc).__name__}: {exc}")
+        return
+    existing = {Path(str((chk.get("selfcheck") or {}).get("path", ""))).name for chk in CHECKS if chk.get("selfcheck")}
+    for book in sorted(discovered):
+        if book in existing:
+            continue  # 手工台已点名：同名手工赢（净零，不覆盖不改写）
+        pairs = discovered[book]
+        CHECKS.append(
+            {
+                "name": f"{book} (declared total == section length, SKIP-6 auto-discovered)",
+                "selfcheck": {
+                    "path": f"docs/01_policies_and_standards/_registry/catalogs/{book}",
+                    "pairs": pairs,
+                },
+                "fix": [sys.executable, str(_SCRIPT_DIR), "--heal-derived-totals"],
+            }
+        )
+
+
 def derived_total_pairs() -> dict[str, dict[str, str]]:
     """册名 → {声明标量: 集合段}——GATE-21 自洽台的配对对外读口。
 
     存在的唯一理由＝让"检测口径"与"落地侧自愈口径"可被一把尺直接比对
-    （见 tests/governance/test_audit_fix_lanes_rulers.py 的配对一致性尺）。
+    （见 tests/governance/test_commit_queue_base_head.py 的口径同源尺）。
+    SKIP-6 起真源=落地侧 all_derived_total_pairs()（自动发现 ⊕ 手工点名，单点同源，
+    两份配置各写一次必漂移）；落地侧设施不可用时降级为 CHECKS 提取（覆盖面收窄，
+    但绝不虚报同源）。
     """
-    out: dict[str, dict[str, str]] = {}
-    for chk in CHECKS:
-        sc = chk.get("selfcheck") or {}
-        pairs = sc.get("pairs")
-        if pairs:
-            out[Path(str(sc.get("path", ""))).name] = dict(pairs)
-    return out
+    _ensure_discovered_stations()
+    try:
+        from scripts.governance.commit_queue_landing import all_derived_total_pairs
+
+        return {book: dict(pairs) for book, pairs in all_derived_total_pairs().items()}
+    except Exception as exc:  # noqa: BLE001 — 降级路径（见 docstring），覆盖面收窄不虚报
+        print(f"NOTE[自洽台] 落地侧配对全集不可达（降级 CHECKS 提取）: {type(exc).__name__}: {exc}")
+        out: dict[str, dict[str, str]] = {}
+        for chk in CHECKS:
+            sc = chk.get("selfcheck") or {}
+            pairs = sc.get("pairs")
+            if pairs:
+                out[Path(str(sc.get("path", ""))).name] = dict(pairs)
+        return out
 
 
 def heal_derived_totals(root: Path | None = None) -> list[str]:
@@ -188,6 +241,7 @@ def heal_derived_totals(root: Path | None = None) -> list[str]:
     保守面与落地侧逐条同源（真源已收敛到共享件）：顶层同键必须恰好一行、段必须是集合、
     标量必须是整数、已一致不动；改不了的情况返回读数交调用方判红，绝不静默放行。
     """
+    _ensure_discovered_stations()  # SKIP-6：修复通道同步吃发现结果（新册标量同样只刷一行）
     from zephyr.shared.io.file_utils import safe_write_text  # noqa: PLC0415
     from zephyr.shared.io.yaml_utils import heal_derived_scalars  # noqa: PLC0415
 
@@ -347,6 +401,7 @@ def main() -> None:
         bad = [n for n in notes if n.startswith(("SKIP", "FAIL", "NOOP")) and "一致" not in n]
         print(f"\nheal-derived-totals: {len(notes)} 台，未刷正 {len(bad)} 台")
         sys.exit(EXIT_PASS if not bad else EXIT_FINDINGS)
+    _ensure_discovered_stations()  # SKIP-6：检测台同步吃发现结果（新册自动上榜）
     auto_fix = "--auto-fix" in sys.argv
     failures = []
     for check in CHECKS:

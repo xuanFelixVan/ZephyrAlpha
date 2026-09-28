@@ -61869,6 +61869,15 @@ entries:
   plain_zh: "这个文件是图形信号和考试判读之间的转接头：把已经建好的图形条件包包装成考试能直接用的条件轴供给面，其他模块拿它就能按图形状态给逐日收益贴条件分层标签，让建成即闲置的图形条件包有了第一个真正的下游用户"
   responsibility_layer: business
 
+- module_path: tests/governance/test_commit_queue_readback_discovery.py
+  domain_id: D_GOVERNANCE
+  name_zh: "落地自证读回与SKIP-6发现器回归尺"
+  name_en: ""
+  desc_zh: "merged==ours三态分流判别尺（合法noop/吞没拒绝）+派生标量自动发现器收编判据与参数化heal尺"
+  desc_en: ""
+  plain_zh: "给提交队列落地器装的自检考试卷：袋子落地时要是内容悄悄丢了就拒绝打勾；另一份卷子盯着自动发现器，新册子的计数标量必须真的能自动修好"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
