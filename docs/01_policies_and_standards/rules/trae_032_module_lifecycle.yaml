@@ -60,7 +60,7 @@ sections:
     - type: mandatory
       step: P0模块额外通过MAD-005
     - type: mandatory
-      step: 准入记录写入module-id-registry.json admission_records数组
+      step: 准入记录写入architecture_model/module_id_registry.yaml admission_records数组
     - type: mandatory
       step: 功能域重叠四步判定：关键词扫描→responsibility_domain匹配→covers[]交叉→输出 veto_candidates[]（生成器绑定字段）
     prohibitions:
@@ -81,7 +81,7 @@ sections:
       - '记录否决原因: 明确哪一级筛选未通过及原因'
       - '风险接受声明: Owner明确声明接受该模块注入的技术风险'
       - '限时有效: 豁免仅在当前Phase有效——下一Phase开始前必须补齐所有筛选条件否则自动回退至未准入'
-      - '豁免记录: 在module-id-registry.json中标记admission_override: true + 豁免原因'
+      - '豁免记录: 在architecture_model/module_id_registry.yaml中标记admission_override: true + 豁免原因'
     gov_mod_001_third_party:
       section_type: procedure
       checks:
@@ -242,7 +242,7 @@ sections:
       rules:
       - '每份豁免必须指定: 豁免的铁律编号+豁免范围(文件/模块)+有效截止日期'
       - 豁免到期自动回退——不自动续期
-      - 所有豁免记录在module-id-registry.json的exemptions字段
+      - 所有豁免记录在architecture_model/module_id_registry.yaml的exemptions字段
     gov_mod_002_normative_refs:
       section_type: principles
       refs:
@@ -511,7 +511,7 @@ sections:
     conditions:
     - type: pre_condition
       check: INJ-001 ID唯一性
-      pass: module_id在module-id-registry.json中唯一
+      pass: module_id在architecture_model/module_id_registry.yaml中唯一
       fail: ID重复→REJECT
     - type: pre_condition
       check: INJ-002依赖可解析
@@ -568,7 +568,7 @@ sections:
       - step: 5
         action: 本规则execution.sequence顺序执行INJ-001~008全部检查
       - step: 6
-        action: INJ全部通过→最终注入完成→更新module-id-registry.json(admission_records + status)
+        action: INJ全部通过→最终注入完成→更新architecture_model/module_id_registry.yaml(admission_records + status)
       - step: 7
         action: INJ任一失败→准入回退→模块回到未准入状态修正后重新提交至步骤1
     gov_mod_005_exemptions:
@@ -580,7 +580,7 @@ sections:
         condition: module_priority != 'P0'
         action: SKIP
         reason: 非P0模块免接口契约+KB决策记录检查
-        record: 必须在module-id-registry.json中标注豁免原因
+        record: 必须在architecture_model/module_id_registry.yaml中标注豁免原因
     gov_mod_005_normative_refs:
       section_type: principles
       refs:
