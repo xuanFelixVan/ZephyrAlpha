@@ -104,14 +104,27 @@ def is_in_quote(line: str) -> bool:
 
 
 def scan_file(filepath: Path) -> list[dict]:
-    """扫描单个文件并返回发现列表"""
+    """扫描单个文件并返回发现列表。
+
+    判据收窄（夜裁-13，处方真源=A2_M5_prescriptions.md:55-57，2026-09-29）：
+    词表只在规则结构位匹配——conditions/actions/invariants 块内，或
+    check/pass/fail/step/description 键行；同句含禁止性标记（禁止/不得/
+    MUST NOT）或以名词后缀（产出/输出/记录）收尾的行豁免（禁令句本身
+    就是明确语义，非模糊表述）。此前全文含词判=38% 误报根因（裁定#350
+    判「工具侧可立即施工」）。
+    """
     findings = []
     try:
-        "扫描并返回发现列表."
         content = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
         return findings
     lines = content.split("\n")
+    section: str | None = None  # 最近命中的规则结构块（conditions/actions/invariants）
+    structural_key = re.compile(r"^\s*(check|pass|fail|step|description)\s*:")
+    section_key = re.compile(r"^\s*(conditions|actions|invariants)\s*:")
+    top_key = re.compile(r"^\S")
+    exempt_marker = re.compile(r"禁止|不得|MUST NOT|must not", re.IGNORECASE)
+    noun_suffix = re.compile(r"(产出|输出|记录)[^，。；；]*$")
     for pattern, label in VAGUE_TERMS_CN + VAGUE_TERMS_EN:
         for match in re.finditer(pattern, content, re.IGNORECASE):
             line_idx = content[: match.start()].count("\n")
@@ -119,6 +132,16 @@ def scan_file(filepath: Path) -> list[dict]:
             if is_in_code_block(lines, line_idx):
                 continue
             if is_in_quote(line_text):
+                continue
+            if section_key.match(line_text):
+                section = section_key.match(line_text).group(1)
+                continue
+            if top_key.match(line_text):
+                section = None
+            in_structural = section in ("conditions", "actions", "invariants") or bool(structural_key.match(line_text))
+            if not in_structural:
+                continue
+            if exempt_marker.search(line_text) or noun_suffix.search(line_text):
                 continue
             findings.append(
                 {
@@ -129,7 +152,6 @@ def scan_file(filepath: Path) -> list[dict]:
                 }
             )
     return findings
-    "扫描单个文件并返回发现列表."
 
 
 def scan_target_dir(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
