@@ -55519,4 +55519,25 @@ creation_tokens:
   created_by: chiefzc-docs2-dispatch-20260928
   capability: fullflow_chief
   merge_evaluation: "总包作战室册迁移语义目录(R5处方)"
+- file: src/zephyr/governance/consumption/__init__.py
+  token: consumption-census---init---20260927
+  created_by: st-zcloseout-20260928
+  capability: consumption_census
+  merge_evaluation: "波13 消费面普查包入口接管袋重登：净零，前登被主区回退丢失"
+- file: docs/_working/three_piece_infra/t2_gate/CASE.md
+  token: three-piece-infra-case-20260927
+  created_by: st-zcloseout-20260928
+  capability: three_piece_infra
+  merge_evaluation: "波13 T2 闸案卷接管袋重登：点火前检两案卷，净零"
+- file: docs/_working/three_piece_infra/t2_gate/register_manifest.md
+  token: three-piece-infra-register-manifest-20260927
+  created_by: st-zcloseout-20260928
+  capability: three_piece_infra
+  merge_evaluation: "波13 T2 闸案卷接管袋重登：点火前检两案卷，净零"
+- file: src/zephyr/gov_enforcement/rule_bridge/coordination_state_board.py
+  token: coordination-state-board-coordination-state-board-20260927
+  created_by: st-zcloseout-20260928
+  capability: coordination_state_board
+  merge_evaluation: "波13 并发施工态势公告牌接管袋重登：一条命令读全并发面，净零，前登被主区回退丢失"
+
 di_seam_exemptions: []
