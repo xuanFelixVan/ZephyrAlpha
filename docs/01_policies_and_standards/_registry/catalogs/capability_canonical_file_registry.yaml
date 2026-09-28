@@ -56041,4 +56041,115 @@ creation_tokens:
   created_by: st-secbatch-20260928
   capability: trd_a20_a21
   merge_evaluation: G1/G7 dual gate evaluator
+- file: data/strategy_intake/du881_verdict_case/p1_v1_universe_469codes.yaml
+  token: du881-verdict-case-p1-v1-universe-469codes-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: du881_verdict_case
+  merge_evaluation: "du881 案卷 v1 宇宙 469 码清单（st-ddup 已按 DCR-005 将 .txt 转 .yaml 内容零变更，原 .txt token 随迁址披露废止）；casefile.md 引用同步修正，无重复真源"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/fullconnect_campaign/00_skeleton/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/a_data_foundation/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/b_factory_inbound/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/c_exam_pipeline/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/d_l9_knowledge/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/e_decision_chain/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/f_exec_risk/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/g_backtest_gpu/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/h_sched_recovery/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/i_ai_ops_gov/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/j_ai_design_gates/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/k_frontend_docs/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: docs/_working/fullconnect_campaign/l_methodology_routing/index.md
+  token: fullconnect-campaign-index-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: fullconnect_campaign
+  merge_evaluation: "全流通战役 132 环节 per-F 挖矿卷+车道索引（chief8 收官战利品字节抢救代管）；夜战骨架补干册 00_skeleton_nightsweep.md 处方指针唯一直消费源，无同真源旧件需合并"
+- file: src/zephyr/ex_core/ghost_order_sentinel.py
+  token: ghost-order-sentinel-ghost-order-sentinel-20260928
+  created_by: st-zc9-lane-s-20260929
+  capability: ghost_order_sentinel
+  merge_evaluation: "TRD-A10 观察窗唯一日终读侧对账尺，判定复用内核 bridge_instruction_kernel 同一把尺，无同域重复(capability_lookup 零命中); 运行时执法腿在 broker，本件只读统计"
+- file: docs/_working/trd_a10_sandbox/runbook.md
+  token: trd-a10-sandbox-runbook-runbook-20260928
+  created_by: st-zc9-lane-s-20260929
+  capability: trd_a10_sandbox_runbook
+  merge_evaluation: "TRD-A10 换版 Owner 交接 runbook，替代口头交接；探测结论与补丁规格真源均在卷内，无同域重复"
+- file: docs/_working/trd_a10_sandbox/observation_ledger.md
+  token: trd-a10-sandbox-ledger-observation-ledger-20260928
+  created_by: st-zc9-lane-s-20260929
+  capability: trd_a10_sandbox_ledger
+  merge_evaluation: "TRD-A10 观察窗 30 交易日台账，抄数源=哨兵日报告，替代散落聊天记录"
+- file: docs/_working/night_sweep_20260929/00_orchestration.md
+  token: night-sweep-warroom-00-orchestration-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: night_sweep_warroom
+  merge_evaluation: "夜战总Sweep战情室交付件：总纲副本+132环节补干总表；开口清零后本目录整族归档（task_bound），无并行旧件需合并"
+- file: docs/_working/night_sweep_20260929/00_skeleton_nightsweep.md
+  token: night-sweep-warroom-00-skeleton-nightsweep-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: night_sweep_warroom
+  merge_evaluation: "夜战总Sweep战情室交付件：总纲副本+132环节补干总表；开口清零后本目录整族归档（task_bound），无并行旧件需合并"
+- file: tests/library/test_library_hygiene.py
+  token: library-hygiene-aging-ruler-test-library-hygiene-20260928
+  created_by: st-nightsweep-sw6-20260929
+  capability: library_hygiene_aging_ruler
+  merge_evaluation: "净零：替代 library_hygiene.py 头部 [TESTS] 谎登记（登记零实存）——本尺即该谎的治本载体，无并条目"
+- file: docs/03_modules/_domain_ai_layer/algo_flow/washer.yaml
+  token: washer-algo-flow-block-washer-20260928
+  created_by: st-nightsweep-sw2-20260929
+  capability: washer_algo_flow_block
+  merge_evaluation: "跨域不同对象：washer.py 专属算法地图机器块，门禁处方生成物，无同真源可派生条目可并"
 di_seam_exemptions: []

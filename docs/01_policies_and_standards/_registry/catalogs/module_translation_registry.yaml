@@ -61969,6 +61969,22 @@ entries:
   desc_en: ''
   plain_zh: 读密钥轮换核对回执和仓位参数签发表，两道实盘准入门没过就报红，没确认的仓位上限一律按零处理
   responsibility_layer: governance
+- module_path: src/zephyr/ex_core/ghost_order_sentinel.py
+  domain_id: D_EX_CORE
+  name_zh: "幽灵单日哨兵"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "TRD-A10 换版观察窗用的日终对账尺：收盘后把指令文件和柜台官方导出摆一起，数一数执行器声称已发但柜台全天零收录的幽灵单有几张，落 JSON 报告给台账抄数。只数不动单，柜台账缺失就禁判不假绿。"
+  responsibility_layer: business
+- module_path: tests/library/test_library_hygiene.py
+  domain_id: D_AUDITTEST
+  name_zh: "图书馆卫生陈化判据尺"
+  name_en: "library hygiene aging ruler"
+  desc_zh: "锁 library_hygiene.py 四判据：created 轴非 mtime/ttl 走 YAML 解析/读不得者单列计数/在册盘缺分桶"
+  desc_en: ""
+  plain_zh: "检查图书馆月度卫生扫描器有没有偷懒：判文件年龄必须看登记的出生日期而不是文件修改时间（git 会天天碰修改时间导致永远扫不出旧文件）；带引号的标签也要认得；读不出日期的文件要单独计数不许装看不见；登记在册但盘上没有的文件要单独列队"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
