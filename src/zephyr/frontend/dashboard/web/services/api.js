@@ -92,10 +92,10 @@ ZK.api = (function(){
     postPromotionDecide: function(advisoryId, decision){   /* Owner 拍板 approve/reject（api_server 第四获准写端点；两段式确认在前端 window.confirm，token 服务端自取） */
       return fetchJson('/api/promotion-decide', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({advisory_id:advisoryId, decision:decision})});
     },
-    fetchSchedulegateQueue: function(){   /* L5 排产队列投影（schedulegate 页真源：load_seeds+dispatcher.rank_pending 服务端逐请求打分无缓存，15s 兜底）；响应 {ok,count,data:scored}，降级=ok:false+data:[] */
+    fetchSchedulegateQueue: function(){   /* L5 排产队列投影（schedulegate 页真源：load_seeds+dispatcher.rank_pending 服务端逐请求打分无缓存，15s 兜底）；响应 {ok,count,data:{orders:[...state=scored 行]}}（页契约 render 读 data.orders），降级=ok:false+data:{orders:[]} */
       return fetchJson('/api/schedulegate-queue', 15000);
     },
-    fetchSchedulegateSkeletons: function(){   /* 骨架级提案包（owner_gate 提案不占自动派工队列，只读）；响应 {ok,count,data}，降级=ok:false+data:[] */
+    fetchSchedulegateSkeletons: function(){   /* 骨架级提案包（owner_gate 提案不占自动派工队列，只读）；响应 {ok,count,data:{orders:[...]}}（未拍板 state=pending，已拍板携 confirm_receipt），降级=ok:false+data:{orders:[]} */
       return fetchJson('/api/schedulegate-skeletons', 10000);
     },
     postSchedulegateConfirm: function(orderId, decision){   /* 骨架级一键确认 confirm/reject（本页唯一写路由；后端=ConfirmGate.decide 三落点账，actor/allow_amend 不经 body 故改判不走本路由；拒因渲染 ok:false 不假持久化） */

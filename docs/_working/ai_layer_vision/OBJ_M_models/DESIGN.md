@@ -130,7 +130,9 @@ intel_card:
 ```
 P = 0.5 × MCE_standard 综合分（护照 overall_score）
   + 0.3 × JobMatcher match_score（目标岗位匹配）
-  + 0.2 × 外部参照分（AA intelligence 与 Arena rank 归一化均值；缺失时该项回流给 MCE，权重归 0.8 归一化）
+  + 0.2 × 外部参照分（AA intelligence 与 Arena rank 归一化均值；缺失时其 0.2 全额回流给 MCE，
+    MCE 权重 0.5→0.7，与 JobMatcher 0.3 天然归一，不再做 /0.8 再归一化——Owner 2026-09-27 定稿，
+    B7 三口径互斥销案；实现口径 tests/ai_layer/test_model_scoring_policy.py compute_perf_p 自初版即此）
 ```
 
 **性价比分 V（0-1）**，实测口径（不trust 牌价，牌价只做兜底估算）：

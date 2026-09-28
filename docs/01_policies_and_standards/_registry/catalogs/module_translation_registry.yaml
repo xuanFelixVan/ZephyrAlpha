@@ -61851,6 +61851,15 @@ entries:
   plain_zh: "一条命令看清谁在改代码——每个车道的未提交改动、认领文件、排队袋子和这份读数的年龄"
   responsibility_layer: governance
 
+- module_path: tests/ai_layer/tools/test_tool_sandbox_profile.py
+  domain_id: D_GOVERNANCE
+  name_zh: "工具沙箱profile结构钉值测试"
+  name_en: "tool sandbox profile schema pin tests"
+  desc_zh: "钉住OBJ_T C5沙箱profile的默认禁用、密钥零发放、禁写清单与注入probe必跑四闸结构"
+  desc_en: "Pins the OBJ_T C5 sandbox profile gates: default-disabled, zero secrets, forbidden writes, mandatory probe"
+  plain_zh: "这份测试用来防止工具沙箱规则被悄悄改松：新工具默认不许直接用、测试时绝不发密钥、生产目录一律禁写、注入探针必须真跑，哪条被改测试就变红。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

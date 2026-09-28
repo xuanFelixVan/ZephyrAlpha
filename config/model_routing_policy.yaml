@@ -7,7 +7,7 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 # 模型路由级联策略（11号文 §4.3 P1-5：规则化落配置，配置变更不改代码）
-# 真源：附表 A（任务类型×场景路由表 12 类）/ 附表 B（分时段路由）/ 附表 C（成本规则，口径归 10号文 BudgetEngine）
+# 真源：附表 A（任务类型×场景路由表 12 类编号 13 轨+AI 层 8 轨）/ 附表 B（分时段路由）/ 附表 C（成本规则，口径归 10号文 BudgetEngine）
 
 # L2 融合权重（JobMatcher match_score × w_job + task_model_learner composite_score × w_learn）
 fusion:
@@ -23,7 +23,7 @@ risk_api_default: "deepseek:pro"
 rule_engine_provider: "rule_engine"
 default_local_model: "qwen3:8b"
 
-# 附表 A：任务类型×场景路由表（12 类）
+# 附表 A：任务类型×场景路由表（既有 13 轨=12 类编号+AI 层 8 轨=21 轨；AI 层轨=OBJ_M C6 提案 2026-09-27 Owner 终批落地）
 task_routes:
   risk_veto:              # 1 风控否决判定
     preferred: rule_engine
@@ -92,6 +92,57 @@ task_routes:
     fallbacks: [local]
     kind: general
     reason: "三路并行任一 API 熔断降级两路+本地"
+  # AI 层轨新增字段（OBJ_M DESIGN §5.2）：免费窗偏好（M2 free_window.active 双闸后才生效）
+  # free_window_pref: {enabled: bool, window: '<expr>', quota_guard: '<说明>'}
+  # ---- AI 层轨（OBJ_M M4 v0；evidence_ref 逐条反提依据；Owner 终批 OBJ_M-#1 后生效）----
+  mining_broad:            # AI-1 挖矿广度扫（ economy 档：免费/最低价优先）
+    preferred: zhipu:glm-4.5-free
+    fallbacks: ["zhipu:qwen-flash", "deepseek:deepseek-chat"]
+    free_window_pref: {enabled: true, window: '00:30-08:30 UTC+8', quota_guard: '免费配额尽/上下文超限→谷时付费档'}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+挖矿SOP §2 二维法+2026-09-17 通宵班夜间 Flash 免费实战'
+  mining_deep:             # AI-2 深读复现（premium 档：数学密度/长上下文）
+    preferred: deepseek:deepseek-reasoner
+    fallbacks: ["anthropic:claude-sonnet", "local:qwen3:8b"]
+    free_window_pref: {enabled: true, window: '00:30-08:30 UTC+8 谷时半价', quota_guard: '>128k 上下文→长上下文档'}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+挖矿 SOP 二维法"最强模型"轴'
+  cleaning_rewrite:        # AI-3 清洗规格化（standard 档）
+    preferred: deepseek:deepseek-chat
+    fallbacks: ["zhipu:glm-4-plus"]
+    free_window_pref: {enabled: true, window: '00:30-08:30 UTC+8 谷时半价', quota_guard: ''}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+主文档 §一 L2=API 强模型执行'
+  review_judge:            # AI-4 审查裁判（premium 档；裁判独立性>省钱，不用免费窗）
+    preferred: anthropic:claude-sonnet
+    fallbacks: ["deepseek:deepseek-reasoner"]
+    free_window_pref: {enabled: false, window: '', quota_guard: '同源互判禁止（MCE RISK-3.2）'}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+MCE RISK-3.2 裁判解耦'
+  translation_registry:    # AI-5 翻译/登记（economy 档）
+    preferred: zhipu:glm-4.5-free
+    fallbacks: ["zhipu:qwen-flash"]
+    free_window_pref: {enabled: true, window: '00:30-08:30 UTC+8', quota_guard: '术语表命中失败→升 standard 复核'}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+三层翻译 loader 现状'
+  daily_report:            # AI-6 日报/通知（economy 档：牌价最低档）
+    preferred: zhipu:qwen-flash
+    fallbacks: ["zhipu:glm-4-flash"]
+    free_window_pref: {enabled: true, window: '00:30-08:30 UTC+8', quota_guard: ''}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+model_pricing.yaml 最低价档'
+  overseer_dispatch:       # AI-7 总包派工/任务书（premium 档：裁定先行铁律）
+    preferred: deepseek:deepseek-reasoner
+    fallbacks: ["anthropic:claude-sonnet"]
+    free_window_pref: {enabled: false, window: '', quota_guard: '派工裁定需强模型'}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+总令模板实践'
+  budget_analysis:         # AI-8 预算分析/报表（economy 档：本地优先成本 0）
+    preferred: local:qwen3:8b
+    fallbacks: ["zhipu:glm-4-flash"]
+    free_window_pref: {enabled: true, window: '本地优先（成本 0）', quota_guard: 'Ollama 忙（llm_local 组互斥）→落免费档'}
+    period_constraint: inherit
+    evidence_ref: 'OBJ_M DESIGN §5.3+数据不出域+成本 0'
 
 # 附表 B：分时段路由（api: allowed=允许 / restricted=限制；restricted 时仅 api_allowed_kinds 可用 API）
 period_rules:

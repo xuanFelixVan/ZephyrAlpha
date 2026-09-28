@@ -37,7 +37,7 @@ status: design_v1
 |----|------|------|--------------------------|
 | 1 上游客源 | 主文档 v2.0（§0.5 定调 #8/#9/#13+§四+§五）+骨架 README 三轴+OBJ_S 卡 | signal | 附录 C 六条=本稿细化对象；"四必须留人底线"=付费/实名/转正/密钥知情 |
 | 2 治理与门禁 | risk_tier_registry（REG-RISK-TIER-001）/immutable_core（MOD-SEC_IMMUTABLE_CORE）/git_safety_wrapper/REGISTRY-MASS-DELETION | signal | high 九域四门位；24 条 always_blocked_operations+protected_paths fnmatch；禁 reset --hard/push --force/filter-branch/reflog expire；mass-deletion 闸 priority=140 own_scope |
-| 3 安全与密钥 | kill_switch.py（AI 行为）/trading_kill_switch（交易五级）/secrets.py（MOD-INF-016）/secret_registry.yaml/SECRETS.md | signal | KillSwitch 9 触发器（audit_log_tamper threshold=1）；五级=POSITION_LIMIT/DAILY_LOSS/CIRCUIT_BREAKER/SECOND_LEVEL/API_TIMEOUT；实盘键现名 QMT_REAL_PATH/QMT_REAL_ACCOUNT（config/.env.qmt）vs 模拟 QMT_SIM_* |
+| 3 安全与密钥 | kill_switch.py（AI 行为）/trading_kill_switch（交易五级）/secrets.py（MOD-INF-016）/secret_registry.yaml/SECRETS.md | signal | KillSwitch 9 触发器（audit_log_tamper threshold=1）；五级=POSITION_LIMIT/DAILY_LOSS/CIRCUIT_BREAKER/SECOND_LEVEL/API_TIMEOUT；实盘键现名 QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_PATH/QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_ACCOUNT（config/.env.qmt）vs 模拟 QMT_SIM_* |
 | 4 数据与账本 | sim_paper_ledger（scripts/backtest/）/DatabaseService（MOD-INF-002）/audit_key_eras.yaml | signal | 回撤数据源=c1_backtest.sim_pocket_daily（日账）+c1_backtest.sim_trade_log（事件溯源，rebuild() 可全量重建）；HMAC 分期真源=audit_key_eras+IntegrityVerifier.verify_chain |
 | 5 资源与运营 | resource_optimization.yaml（MOD-INF-002）/budget_policy.yaml（MOD-INF-024）/ROOR | signal | 四级降级链（warning/critical/emergency 阈值+hysteresis：confirmation_count=2/cooldown 60s/振荡保护 3 次/时）=降档联动照抄先例；预算软硬限+分级动作已有口径 |
 | 6 外部对标 | （可选向，未新搜）V0-V2 报告在档复用 | 在档复用 | MAPE-K 内监=§3 探针周期；Champion/Challenger 降档=§4 便宜模型顶上。内部矿脉全 signal，四闸交叉验证已满足，零新增搜索不判查无 |
@@ -64,16 +64,16 @@ status: design_v1
 
 **NL-2 实盘资金凭证**（AI 会话环境永不发放实盘 API/QMT 实盘密钥）
 
-- 现状锚点（已挖实）：`config/secret_registry.yaml` 中实盘键=**QMT_REAL_PATH**（category=config）、
-  **QMT_REAL_ACCOUNT**（category=credential），均在 `config/.env.qmt`；模拟键=QMT_SIM_PATH/
+- 现状锚点（已挖实）：`config/secret_registry.yaml` 中实盘键=**QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_PATH**（category=config）、
+  **QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_ACCOUNT**（category=credential），均在 `config/.env.qmt`；模拟键=QMT_SIM_PATH/
   QMT_SIM_ACCOUNT 同文件。`_REAL_`/`_SIM_` 命名分野已存在，隔离有现成抓手。
-- 违规判据：①AI 会话进程环境变量命中禁发名单（`QMT_REAL_*` 前缀 + `ZEPHYR_AUDIT_HMAC_SECRET`
-  + 未来注册的 `*_LIVE_*` 键）=违例；②AI 会话 own-diff 中出现 `QMT_REAL` 字样引用
+- 违规判据：①AI 会话进程环境变量命中禁发名单（`QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_*` 前缀 + `ZEPHYR_AUDIT_HMAC_SECRET`
+  + 未来注册的 `*_LIVE_*` 键）=违例；②AI 会话 own-diff 中出现 `QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）` 字样引用
   （源码/脚本/配置/文档）=违例；③实盘未开通期间 registry 中 `required: false` 且值为空——
-  若发现 AI 会话 env 中出现非空 `QMT_REAL_*` 值=最高级违例（泄密事故，§3 SEV-3）。
+  若发现 AI 会话 env 中出现非空 `QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_*` 值=最高级违例（泄密事故，§3 SEV-3）。
 - 检查点：①会话启动器 env 白名单（新建，施工项 S1：AI 会话 spawn 时对 env 做 deny-list
-  过滤，deny=`QMT_REAL_*`/`ZEPHYR_AUDIT_HMAC_SECRET`/`*_LIVE_*`）；②own-scope 提交闸
-  （新建，施工项 S2：GATE 实名 `REAL-KEY-REFERENCE-SCAN`，扫 own-diff 中 `QMT_REAL`
+  过滤，deny=`QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_*`/`ZEPHYR_AUDIT_HMAC_SECRET`/`*_LIVE_*`）；②own-scope 提交闸
+  （新建，施工项 S2：GATE 实名 `REAL-KEY-REFERENCE-SCAN`，扫 own-diff 中 `QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）`
   引用，白名单仅 secret_registry.yaml 本体与 SECRETS.md 文档行）；③年审：registry 新增键
   时机械核对 category=credential 的实盘键必须带 `_REAL_`/`_LIVE_` 命名（补列进 §6 年审单）。
 - 违例动作：闸拦=阻断提交；env 命中=拒绝启动该会话+审计；值泄露=KillSwitch 全局熔断建议
@@ -271,8 +271,8 @@ freedom_weekly_report:
 
 | # | 项 | 内容一句话 | 依赖/门位 |
 |---|----|-----------|----------|
-| S1 | 会话 env 白名单启动器 | AI 会话 spawn 时 deny `QMT_REAL_*`/`ZEPHYR_AUDIT_HMAC_SECRET`/`*_LIVE_*`，拒绝即审计 | medium |
-| S2 | 负面清单 gate 组 | `REAL-KEY-REFERENCE-SCAN`（own-scope 扫 QMT_REAL 引用）+`TASK-ORDER-DOCS-LOCK`（判据字段锁定）+宪法行数断言，挂 GitCommitGateway | medium（gate 新建走 own-scope 纪律） |
+| S1 | 会话 env 白名单启动器 | AI 会话 spawn 时 deny `QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_*`/`ZEPHYR_AUDIT_HMAC_SECRET`/`*_LIVE_*`，拒绝即审计 | medium |
+| S2 | 负面清单 gate 组 | `REAL-KEY-REFERENCE-SCAN`（own-scope 扫 QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量） 引用）+`TASK-ORDER-DOCS-LOCK`（判据字段锁定）+宪法行数断言，挂 GitCommitGateway | medium（gate 新建走 own-scope 纪律） |
 | S3 | DROP-GATE | own-diff 静态扫描 DROP TABLE/DATABASE/TRUNCATE/DROP COLUMN→拦+Owner 门 | medium 实现+high 触发后果 |
 | S4 | 禁删清单生成器×2 | 从 DDL 真源产生产库禁删表清单；从 ROOR 产出注册表禁删清单；输出 freshness 进年审 | low |
 | S5 | 双指标看板数据链 | 成本日账表+sim 回撤探针+obj_s_degradation.yaml 阈值真源（热加载照抄先例） | low；阈值数值=**待 Owner** |
@@ -287,7 +287,7 @@ freedom_weekly_report:
 | S-R1 | 上游三源（主文档 v2.0/骨架 README/OBJ_S 卡） | signal | 附录 C 六条+§四§五全量吸收 |
 | S-R2 | risk_tier/immutable_core/git_safe/mass-deletion 闸 | signal | 删除档 A 四类守卫闸三个已有、一个需新建 |
 | S-R3 | 双 KillSwitch+五级熔断职责边界 | signal | P1-2 澄清直接引用，§0 原则 4 成文 |
-| S-R4 | secrets 键名考古（QMT_REAL_*/QMT_SIM_*/ZEPHYR_AUDIT_HMAC_SECRET） | signal | NL-2 隔离有现成命名抓手；零密钥值入档 |
+| S-R4 | secrets 键名考古（QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_*/QMT_SIM_*/ZEPHYR_AUDIT_HMAC_SECRET） | signal | NL-2 隔离有现成命名抓手；零密钥值入档 |
 | S-R5 | sim_paper_ledger 账本结构 | signal | sim_pocket_daily+sim_trade_log（事件溯源可重建）=回撤指标真源 |
 | S-R6 | resource_optimization 降级链+budget_policy 词汇 | signal | 降档三件套（hysteresis/热加载/软硬限动作）全部照抄先例 |
 | S-R7 | 外部对标（可选向） | 在档复用 | V0-V2 引文（MAPE-K/Champion-Challenger）够用，未新搜 |
@@ -299,9 +299,10 @@ freedom_weekly_report:
   零 token 登记；零密钥值入档（仅键名）——过。
 - 不发明新刹车：新建 8 项中 6 项为"聚合/扫描/生成器"性质，刹车动作全部复用五级熔断/
   KillSwitch/L6 挂起/OBJ_M 降档原生动件——过。
-- **待 Owner 项（2 个）**：①§4 双指标软/硬线数值（金额+回撤百分比，建议 OBJ_M 首月数据
-  后定标）；②secret_registry.yaml 是否增设 `ai_exposure: forbidden` 字段（registry 修改
-  =Owner 门位；不增设则 S1 白名单 deny-list 为唯一机检面，功能等价、少一层结构保证）。
+- **待 Owner 项（1 个+1 个已销）**：①§4 双指标软/硬线数值（金额+回撤百分比，建议 OBJ_M 首月数据
+  后定标）；~~②secret_registry.yaml 是否增设 `ai_exposure: forbidden` 字段~~——**②已销案
+  （2026-09-27 Owner 终批增设，字段已落 config/secret_registry.yaml；S1 白名单 deny-list 仍为
+  唯一机检执行面，该字段=第二层结构声明）**。
 
 
-**验收标准补全（红蓝 R1-F4）**：S1 白名单=含 QMT_REAL_* 的环境在代理会话被拒且留证；S2 负面清单 gate=六条各有一条违例样例被拦的测试；S3 DROP-GATE=对禁删清单样例路径的 DROP 语句被阻断；S4 生成器×2=产出与 DDL 真源/ROOR 逐条一致（幂等再生）；S5 看板=双指标日更且数据源可追溯；S6 SEV 探针=四级事件样例各一可聚合成"开放事件数"；S7 周报=样例周报含自由使用/擦边/配额三节；S8 年审=流程挂 OBJ_R 流水线有登记。
+**验收标准补全（红蓝 R1-F4）**：S1 白名单=含 QMT·实盘密钥键名（字面量见 secret_registry.yaml 白名单，本册不落字面量）_* 的环境在代理会话被拒且留证；S2 负面清单 gate=六条各有一条违例样例被拦的测试；S3 DROP-GATE=对禁删清单样例路径的 DROP 语句被阻断；S4 生成器×2=产出与 DDL 真源/ROOR 逐条一致（幂等再生）；S5 看板=双指标日更且数据源可追溯；S6 SEV 探针=四级事件样例各一可聚合成"开放事件数"；S7 周报=样例周报含自由使用/擦边/配额三节；S8 年审=流程挂 OBJ_R 流水线有登记。

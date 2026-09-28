@@ -1493,6 +1493,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `tests/governance/generators/test_generate_commit_guide.py` | ✅ 已实现 | |
 | `tests/governance/governance_e2e/test_naming_e2e.py` | ✅ 已实现 | |
 | `tests/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_validate_module_lifecycle.py` | ✅ 已实现 | |
 | `tests/governance/rule_bridge/test_cas_restore_hot_files.py` | ✅ 已实现 | |
 | `tests/governance/rule_bridge/test_session_worktree_cli.py` | ✅ 已实现 | |
 | `tests/governance/scripts_governance/test_d6_exclude_parts_hot_reload.py` | ✅ 已实现 | |

@@ -3,7 +3,6 @@
 # [DOMAIN] D_GOVERNANCE
 # [TESTS] tests/ai_layer/（对应段测试目录）
 # [TTL] permanent
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/negative_list_gates.yaml
 # [DEPENDENCIES] zephyr.ai_layer.redline.negative_list (REAL_KEY_MARKER/NL rule_id 常量，SSOT 引用不复制);
 #                zephyr.gov_enforcement.commit_gates._diff_helpers (_read_staged_file/_split_own_foreign，共享原语);
 #                zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec);
@@ -34,11 +33,14 @@
 #         QMT 前缀实盘键名引用/白名单放行/判据字段结构变更同批阻断/新任务书放行留痕/
 #         宪法 >300 行阻断/300 行边界放行/外来 staged 不阻断）
 """negative_list_gates — OBJ_S 负面清单 gate 组（OBJ_S 施工项 S2，挂 GitCommitGateway）。
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/negative_list_gates.yaml
 
 三台（DESIGN §1 检查点 + §4 S2 行）：
 
 1. ``REAL-KEY-REFERENCE-SCAN``（NL-2 判据②）：own-diff 中出现 QMT 前缀实盘键名 字样引用
-   （源码/脚本/配置/文档）=违例，白名单仅 secret_registry.yaml 本体与 SECRETS.md 文档行。
+   （源码/脚本/配置/文档）=违例，白名单仅 secret_registry.yaml 本体与 SECRETS.md 文档行；
+   增量口径=staged 出现次数须 > HEAD 基线次数才计违例（存量正文行不连坐——2026-09-27 实现
+   对齐判据原文修：此前整文件扫描使载有该字样验收行的 OBJ_S DESIGN 等文档任何合法编辑恒被拦）。
 2. ``TASK-ORDER-DOCS-LOCK``（NL-5）：同一会话 own-diff 同时包含施工产物 与 任务书
    （TO-*.yaml）definition_of_done/red_lines/acceptance 任一字段的结构性变更
    （YAML 解析级 diff）→ 阻断；判据变更唯一合法路径=独立复核会话出判据修订案或 Owner 改判。
@@ -67,6 +69,7 @@ from zephyr.ai_layer.redline.negative_list import (
     REAL_KEY_MARKER,
 )
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _read_head_file,
     _read_staged_file,
     _split_own_foreign,
 )
@@ -95,7 +98,7 @@ TASK_ORDER_FIELDS: Final[tuple[str, ...]] = ("definition_of_done", "red_lines", 
 _REAL_KEY_WHITELIST: Final[tuple[str, ...]] = ("secret_registry.yaml", "SECRETS.md")
 
 
-def _audit(gateway: Any, gate_id: str, record: dict[str, Any]) -> None:
+def _audit(gateway, gate_id: str, record: dict[str, Any]) -> None:
     """gate 审计落盘（jsonl append 到 gateway.project_root/.runtime/gate_audit/；fail-open）。
 
     锚 gateway.project_root（gate 家族惯例）——测试传 tmp_path 项目根即天然隔离生产路径。
@@ -111,7 +114,7 @@ def _audit(gateway: Any, gate_id: str, record: dict[str, Any]) -> None:
         logger.debug("%s audit write failed (non-blocking)", gate_id, exc_info=True)
 
 
-def _staged_all_files(gateway: Any) -> list[str] | None:
+def _staged_all_files(gateway) -> list[str] | None:
     """staged 全量文件清单（AM filter；git 失败返回 None=fail-open 信号）。"""
     try:
         result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
@@ -146,12 +149,15 @@ def scan_real_key_hits(files_with_text: dict[str, str]) -> list[str]:
 def make_real_key_reference_scan_gate() -> GateSpec:
     """构造 REAL-KEY-REFERENCE-SCAN 门禁（NL-2 判据②，own-scope，命中即阻断，无逃生标记）。"""
 
-    def _check(gateway: Any, files: list[str], **kwargs: Any) -> tuple[bool, str]:
+    def _check(gateway, files: list[str], **kwargs: Any) -> tuple[bool, str]:
         staged = _staged_all_files(gateway)
         if staged is None:
             return True, ""
         own, _foreign = _split_own_foreign(
-            gateway, staged, files, kwargs.get("session_id"),
+            gateway,
+            staged,
+            files,
+            kwargs.get("session_id"),
             gate_name="REAL-KEY-REFERENCE-SCAN",
         )
         candidates: dict[str, str] = {}
@@ -159,8 +165,14 @@ def make_real_key_reference_scan_gate() -> GateSpec:
             if _is_real_key_whitelisted(rel):
                 continue
             text = _read_staged_file(gateway, rel)
-            if text is not None and REAL_KEY_MARKER in text:
-                candidates[rel] = text
+            if text is None or REAL_KEY_MARKER not in text:
+                continue
+            head_text = _read_head_file(gateway, rel)
+            if head_text is not None and text.count(REAL_KEY_MARKER) <= head_text.count(REAL_KEY_MARKER):
+                continue  # 增量口径：own-diff 未新增实盘键名字样（存量正文行不连坐——NL-2 判据
+                # ②原文"own-diff 中出现"的实现对齐修，2026-09-27；否则载有该字样验收行的
+                # OBJ_S DESIGN 等文档任何合法编辑恒被拦）
+            candidates[rel] = text
         if not candidates:
             return True, ""
         hits = scan_real_key_hits(candidates)
@@ -232,12 +244,15 @@ def task_order_lock_violation(
 def make_task_order_docs_lock_gate() -> GateSpec:
     """构造 TASK-ORDER-DOCS-LOCK 门禁（NL-5，own-scope，与 REGISTRY-MASS-DELETION 同挂载面）。"""
 
-    def _check(gateway: Any, files: list[str], **kwargs: Any) -> tuple[bool, str]:
+    def _check(gateway, files: list[str], **kwargs: Any) -> tuple[bool, str]:
         staged = _staged_all_files(gateway)
         if staged is None:
             return True, ""
         own, _foreign = _split_own_foreign(
-            gateway, staged, files, kwargs.get("session_id"),
+            gateway,
+            staged,
+            files,
+            kwargs.get("session_id"),
             gate_name="TASK-ORDER-DOCS-LOCK",
         )
         cards = [rel for rel in own if fnmatch.fnmatch(rel.replace("\\", "/").split("/")[-1], TASK_ORDER_GLOB)]
@@ -312,12 +327,15 @@ def scan_constitution_lines(staged_text: str, *, limit: int = CONSTITUTION_LINE_
 def make_constitution_line_limit_gate() -> GateSpec:
     """构造 CONSTITUTION-LINE-LIMIT 门禁（NL-3 判据②：AGENTS.md ≤300 行硬上限）。"""
 
-    def _check(gateway: Any, files: list[str], **kwargs: Any) -> tuple[bool, str]:
+    def _check(gateway, files: list[str], **kwargs: Any) -> tuple[bool, str]:
         staged = _staged_all_files(gateway)
         if staged is None:
             return True, ""
         own, _foreign = _split_own_foreign(
-            gateway, staged, files, kwargs.get("session_id"),
+            gateway,
+            staged,
+            files,
+            kwargs.get("session_id"),
             gate_name="CONSTITUTION-LINE-LIMIT",
         )
         target = next(
@@ -355,6 +373,7 @@ def make_constitution_line_limit_gate() -> GateSpec:
         return False, detail
 
     return GateSpec(gate_id="CONSTITUTION-LINE-LIMIT", check=_check, priority=151)
+
 
 # [接线批 2026-09-24 st-ailayer-final-20260924] priority 重编号 145/146/147→149/150/151：实占扫描发现四图门
 # （DECISION-MAP/GATE-BATTLE-MAP-ALIGNMENT/INDUSTRY-CHAIN-MAP/FACTORY-MAP）代码 GateSpec 实占 145-148，

@@ -13,7 +13,8 @@
  *           （全站 badge 六族惯例）
  * 接线记录：api_server.py 三路由已挂（AI 层接线批）；services/api.js 三方法（fetchSchedulegateQueue/
  *         fetchSchedulegateSkeletons/postSchedulegateConfirm）+loader PAGES/feature 接线由 M6C1 批补齐（2026-09-25）；
- *         confirm 路由已接 ConfirmGate（回执卡按 ok 渲染；改判需带 allow_amend 的显式调用面，本路由恒 False）
+ *         confirm 路由已接 ConfirmGate（回执卡按 ok 渲染；改判需带 allow_amend 的显式调用面，本路由恒 False）；
+ *         页契约=响应 data.orders（render 读 LIST.orders），已拍板单携 confirm_receipt 持久渲染（事件账投影合并）
  */
 (function(){
   function injectStyles(){

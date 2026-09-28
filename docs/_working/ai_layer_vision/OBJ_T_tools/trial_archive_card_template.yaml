@@ -1,0 +1,69 @@
+---
+ttl: task_bound
+title: OBJ_T 工具试用档案卡模板（C5 立案件交付物②）
+owner: ZephyrAlpha-Owner
+session: st-ailayer-sx-20260927
+date: 2026-09-27
+status: active
+---
+
+# 工具试用档案卡模板（trial archive card template）
+
+> **用途**：每个进入沙箱试用的工具开卡一张（复制本模板为
+> `trial_card_<tool>_<yyyymmdd>.yaml`，落本目录），与 `config/tool_sandbox_profile.yaml`
+> 配套消费。字段口径=OBJ_T DESIGN §4.2 试用规程+§4.3 转正四判据，禁增删判据字段
+> （判据修订走 OBJ_R 流水线）。**密钥值零入卡**（只记键名有无，违者按 RULE-SECRETS 处置）。
+
+```yaml
+card_id: trial_<tool>_20260927_001        # 唯一卡号（trial_<tool>_<date>_<seq>）
+tool:
+  name: ''                                # 工具名（与 source 一致）
+  version: ''                             # 试用版本/commit
+  source: ''                              # 官方仓/Marketplace URL（挖矿四闸过闸留痕）
+  kind: mcp|cli|library                   # 工具形态
+  delete_class: ttl_only|tombstone|none   # 物理删除类默认拒转正（§4.3 判据1）
+trial:
+  status: trial                           # trial → active | tombstone（不删，含拒绝理由）
+  started_at: ''                          # TZ-aware ISO（RULE-SCHEMA-TZ）
+  deadline_at: ''                         # started_at+14d（先到为准：或 min_tasks 满）
+  session_id: ''                          # 试用会话（隔离边界归属）
+  sandbox_profile: config/tool_sandbox_profile.yaml
+isolation_receipt:                        # §4.2 ①：隔离边界逐项回执（全 true 才算过）
+  dedicated_venv: null                    # 独立 venv/容器 安装回执
+  work_dir_confined: null                 # 工作目录限 staging/ 回执
+  no_production_write: null               # 禁写清单零违例回执
+secrets_receipt:                          # §4.2 ②：密钥零发放回执
+  secrets_py_read: false                  # 必须 false
+  env_secret_passthrough: false           # 必须 false（零透传；只记键名不记值）
+  keys_touched: []                        # 触及的密钥"键名"清单（禁值）
+network_receipt:                          # §4.2 ③：网络边界回执
+  outbound_used: null
+  forbidden_target_hits: 0                # 必须 0
+injection_review:                         # §4.2 ④：注入审查（probe 必跑）
+  lsg_wash_done: null
+  probe_result: cleared|flagged|not_run   # not_run=不许转正
+  probe_evidence_ref: ''                  # probe 产物锚点（.runtime 留存路径或 run id）
+tasks:                                    # 试用任务登记（≥3 或窗口先到为准）
+  - {task_id: '', suite_ref: '', result: '', ran_at: ''}
+benchmark:                                # §4.3 判据2：Tier B 非劣实测
+  champion_ref: ''                        # 现役同类工具（无同类=补位空白，填 blank_filler）
+  win_pp: null                            # 相对 champion 成功率差
+  noninferior_verdict: null               # pass|fail|blank_filler
+resource_profile:                         # §4.3 判据3：排班第四源申报
+  peak_mem_gb: null
+  quota: ''
+  exclusive_group: ''
+pitfall_written_back:                     # §4.3 判据4：坑集回写 ≥1 条（传承不缺环）
+  - {pitfall_id: '', summary: ''}
+verdict:
+  promotion_criteria_4of4: null           # 四判据逐条 [true/false]
+  decided_at: null
+  decided_by: ''                          # Owner 拍板/流水线回执锚点
+  tombstone_reason: ''                    # 不过时必填（墓碑留档）
+```
+
+## 使用纪律（三行）
+
+1. 开卡即 `trial.status=trial`；`injection_review.probe_result=not_run` 的卡禁提转正。
+2. 判据字段禁改语义；新增工具形态字段走 OBJ_R 提案，禁散卡私改。
+3. 终态只有 active/tombstone 两态；废弃卡亦 tombstone 留档（对齐 L6 蓝绿墓碑纪律）。

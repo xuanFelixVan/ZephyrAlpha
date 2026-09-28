@@ -1140,6 +1140,7 @@ class OverlapResult:
 | `src/zephyr/ai_layer/perceive/source_registry.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/perceive/translator.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/redline/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/redline/ai_secret_exposure.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/redline/annual_review.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/redline/dashboard_pipeline.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/redline/drop_gate.py` | ✅ 已实现 | |
@@ -1150,6 +1151,7 @@ class OverlapResult:
 | `src/zephyr/ai_layer/redline/session_env_guard.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/redline/sev_router.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/scheduling/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/scheduling/confirm_gate.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/scheduling/dispatcher.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/scheduling/maturity.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/scheduling/order_daemon.py` | ✅ 已实现 | |
@@ -1161,6 +1163,7 @@ class OverlapResult:
 | `src/zephyr/ai_layer/switch_engine/revert_drill.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/switch_engine/rollout_tiers.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/switch_engine/tombstone_manager.py` | ✅ 已实现 | |
+| `src/zephyr/ai_layer/switch_engine/tombstone_ttl_proposer.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/tools/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/tools/inventory_generator.py` | ✅ 已实现 | |
 | `src/zephyr/ai_layer/tools/scoring.py` | ✅ 已实现 | |
@@ -1222,6 +1225,7 @@ class OverlapResult:
 | `tests/ai_layer/perceive/test_translator.py` | ✅ 已实现 | |
 | `tests/ai_layer/perceive/test_veins.py` | ✅ 已实现 | |
 | `tests/ai_layer/redline/conftest.py` | ✅ 已实现 | |
+| `tests/ai_layer/redline/test_ai_secret_exposure.py` | ✅ 已实现 | |
 | `tests/ai_layer/redline/test_annual_review.py` | ✅ 已实现 | |
 | `tests/ai_layer/redline/test_dashboard_pipeline.py` | ✅ 已实现 | |
 | `tests/ai_layer/redline/test_drop_gate.py` | ✅ 已实现 | |
@@ -1232,6 +1236,7 @@ class OverlapResult:
 | `tests/ai_layer/redline/test_session_env_guard.py` | ✅ 已实现 | |
 | `tests/ai_layer/redline/test_sev_router.py` | ✅ 已实现 | |
 | `tests/ai_layer/scheduling/conftest.py` | ✅ 已实现 | |
+| `tests/ai_layer/scheduling/test_confirm_gate.py` | ✅ 已实现 | |
 | `tests/ai_layer/scheduling/test_dispatcher.py` | ✅ 已实现 | |
 | `tests/ai_layer/scheduling/test_maturity.py` | ✅ 已实现 | |
 | `tests/ai_layer/scheduling/test_order_daemon.py` | ✅ 已实现 | |
@@ -1243,6 +1248,7 @@ class OverlapResult:
 | `tests/ai_layer/test_evolution_chain_e2e.py` | ✅ 已实现 | |
 | `tests/ai_layer/test_model_library_ddl.py` | ✅ 已实现 | |
 | `tests/ai_layer/test_model_scoring_policy.py` | ✅ 已实现 | |
+| `tests/governance/test_next_ruling_id.py` | ✅ 已实现 | |
 | `tests/governance/test_rule_replay.py` | ✅ 已实现 | |
 | `tests/governance/test_standard_checkup.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_registry_governance_infrastructure.py` | ✅ 已实现 | |

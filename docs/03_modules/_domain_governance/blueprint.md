@@ -2197,9 +2197,11 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/governance/lifecycle/test_ai_behavior_baseline.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_detect_retirement_candidates.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_drift_observatory_orchestrator.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_factor_promotion_wiring.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_msprt_promotion_channel.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_retire_module.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_retirement_workflow.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_strategy_archive.py` | ✅ 已实现 | |
 | `tests/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |

@@ -39,7 +39,7 @@ depends_on:
   - {target: "MOD-GATE_ENGINE", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
   - {target: "MOD-INF-009", at: "blueprint.md", why: "Pipeline 消费 Shared 分层限流+PriorityLock"}
 responsibility_domain: 
-design_maturity: production
+design_maturity: design
 build_status: generated
 ---
 

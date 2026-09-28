@@ -4,10 +4,14 @@ title: L7 传承段——回流闭环 真源设计稿 v1
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: design_v1
+status: design_final
 ---
 
 # L7 传承段真源设计稿：传承库（经验结构化回流，闭环的关键边）
+
+> **定稿记录（2026-09-27）**：Owner 终批（12 项已批项之4）本稿 design_v1→**定稿**
+> （status: design_final）。随定稿解锁：L1 施工项 9（先验消费接口，`priors.py` V3/V4
+> 只读服务在库）+ L2 查重基线 ref_family='L7' 面生效。落定会话=st-ailayer-sx-20260927。
 
 > **一句话**：把 L6 切换终局、工单关单、红蓝发现、casebook 归并沉淀为**传承库**（PG 机读真源：
 > 精英档案/判据档案/缺陷模式三类条目统一登记），机检喂回 L1 搜索先验、L2 查重基线与组合素材、

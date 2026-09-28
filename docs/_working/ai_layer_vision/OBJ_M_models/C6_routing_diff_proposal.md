@@ -4,10 +4,14 @@ title: C6 M4 路由表增轨 diff 提案（AI 层轨 8 条+free_window_pref；Ow
 owner: ZephyrAlpha-Owner
 session: st-ailayer-p1-20260923
 date: 2026-09-23
-status: proposal_awaiting_owner
+status: landed_20260927
 ---
 
 # C6 M4 路由表增轨 diff 提案
+
+> **落地记录（2026-09-27）**：Owner 终批（12 项已批项之1）后 diff 原样落
+> `config/model_routing_policy.yaml`（既有 12 轨零改动，api_providers 零增删，OBJ_M-#1 计费线
+> 前置零触碰——8 轨全用既有通道在册模型）。落地会话=st-ailayer-sx-20260927。
 
 > **性质**：diff 提案，零落地。`config/model_routing_policy.yaml` 是产线路由面
 > （P1_construction_plan.md 批次红线："C6 触碰既有路由表=产线路由面，Owner 终批前零改动，

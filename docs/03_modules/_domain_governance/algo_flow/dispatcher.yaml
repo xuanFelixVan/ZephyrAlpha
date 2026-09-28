@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——dispatcher（_domain_governance 域，真源 src/zephyr/ai_layer/scheduling/dispatcher.py）
+# 2026-09-27 st-ailayer-sx-20260927 P2-1 口径出仓：docstring 只留 external 锚，机器块落本件；
+# 算法公共面变化时同步更新本块。C9 骨架单拍板路径同批入块（confirm 后入队语义）。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.ai_layer.scheduling.dispatcher
+source_of_truth: src/zephyr/ai_layer/scheduling/dispatcher.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 进化工单池（seeds 登记真源只读投影）
+    #   code: load_seeds -> orders
+    # - id: I2
+    #   name: 治理常量层（schedule_gate_policy，AI 不持尺）
+    #   code: policy
+    # - id: I3
+    #   name: tz-aware 当前时刻（调用方注入，禁 naive）
+    #   code: now
+    # 层: 步骤
+    # - id: P1
+    #   name: 队列门（repair 独立队列不参排；骨架单未经 Owner confirm 不占自动派工队列）
+    #   code: rank_pending (kind==repair continue; owner_gate and gate_decision!="confirm" continue)
+    # - id: P2
+    #   name: 两问打分（labor_segments × advantage_bucket × 带星降权 + 防饥饿 bump）
+    #   code: work_order_score
+    # - id: P3
+    #   name: 排序（score 降序 → FIFO；带星同分队尾）
+    #   code: scored.sort(key=(-score, starred, fifo_seq))
+    # 层: 算法
+    # - id: A1
+    #   name: 骨架单拍板落账（Owner confirm/reject → 审批事件账 append-only；已拍板幂等拒）
+    #   code: confirm_skeleton -> SchedulingJournal.emit(order_confirmed_due)
+    # - id: A2
+    #   name: 拍板投影合并（seeds 零改写，读侧贴 state/confirm_receipt）
+    #   code: apply_skeleton_decisions(skeleton_decisions(journal))
+    # - id: A3
+    #   name: 配额四读数与降级梯度（Q1-Q4 注入，不建新计量；终点禁自我扩容）
+    #   code: evaluate_quota / degrade
+    # - id: A4
+    #   name: E0 拉式问闸（每段开工瞬间调一次，exit 3=拒→deferred，不轮询不 sleep-loop）
+    #   code: ask_compute_gate
+    # 层: 输出
+    # - id: O1
+    #   name: 排产队列投影（score 序工单行，含四读数挂起态）
+    #   code: -> list[dict]

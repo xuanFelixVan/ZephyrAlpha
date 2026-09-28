@@ -84,6 +84,7 @@ docs/_working/ 与一切临时区（.runtime/tmp、根 tmp）= **场外区**：�
 |---------|:---:|------|
 | `tests/library/test_library_regen_reconciler.py` | ✅ 已实现 | |
 | `tests/library/test_library_smoke.py` | ✅ 已实现 | |
+| `tests/library/test_potential_consumers_guard.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

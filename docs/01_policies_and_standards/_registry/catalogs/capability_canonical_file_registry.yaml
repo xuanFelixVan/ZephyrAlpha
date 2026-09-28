@@ -55540,4 +55540,21 @@ creation_tokens:
   capability: coordination_state_board
   merge_evaluation: "波13 并发施工态势公告牌接管袋重登：一条命令读全并发面，净零，前登被主区回退丢失"
 
+- file: config/tool_sandbox_profile.yaml
+  token: ai-layer-obj-t-sandbox-c5-tool-sandbox-profile-20260926
+  created_by: st-ailayer-sx-20260927
+  capability: ai_layer_obj_t_sandbox_c5
+- file: docs/_working/ai_layer_vision/OBJ_T_tools/trial_archive_card_template.yaml
+  token: ai-layer-obj-t-sandbox-c5-trial-archive-card-template-20260926
+  created_by: st-ailayer-sx-20260927
+  capability: ai_layer_obj_t_sandbox_c5
+- file: docs/03_modules/_domain_governance/algo_flow/dispatcher.yaml
+  token: ai-layer-schedulegate-c9-dispatcher-20260927
+  created_by: st-ailayer-sx-20260927
+  capability: ai_layer_schedulegate_c9
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/lifecycle_fsm.yaml
+  token: algo-flow-external-view-lifecycle-fsm-20260927
+  created_by: st-ailayer-sx-20260927
+  capability: algo_flow_external_view
+  merge_evaluation: "lifecycle_fsm.py P2-1 出仓形态机器块（GATE-ALGO-FLOW 补锚），真源唯一 src/zephyr/strategy_pipeline/lifecycle_fsm.py，validate_file 全过"
 di_seam_exemptions: []

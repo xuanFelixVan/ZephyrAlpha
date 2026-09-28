@@ -1,0 +1,31 @@
+# ALGO_FLOW 外部真源——api_server（_domain_frontend 域，真源 src/zephyr/frontend/dashboard/api_server.py）
+# 2026-09-27 st-ailayer-sx-20260927 P2-1 口径出仓：docstring 只留 external 锚，机器块落本件；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.frontend.dashboard.api_server
+source_of_truth: src/zephyr/frontend/dashboard/api_server.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 仪表盘前端轮询请求（GET 只读投影 + 少量 Owner 拍板写路由）
+    #   code: FastAPI app.get/app.post
+    # 层: 步骤
+    # - id: P1
+    #   name: 路由分发（路径 → handler；写路由=白名单少数：promotion-decide/schedulegate-confirm 等）
+    #   code: @app.post handler
+    # - id: P2
+    #   name: 数据装配（注册表/CH/PG/运行时日志只读真源；执行器经模块内 lazy import）
+    #   code: _load_* / dispatcher / promotion_advisory
+    # - id: P3
+    #   name: 降级纪律（执行器缺位/异常 → 200 + ok:false + 空态或拒因，不 500 硬崩）
+    #   code: except -> ok:false
+    # 层: 算法
+    # - id: A1
+    #   name: 拍板写路由守门（schedulegate-confirm：order/decision 校验→事件账落账→幂等拒）
+    #   code: dispatcher.confirm_skeleton
+    # 层: 输出
+    # - id: O1
+    #   name: JSON 信封 {ok, count?, data, error?}（页契约形状；schedulegate=data.orders）
+    #   code: -> dict[str, Any]

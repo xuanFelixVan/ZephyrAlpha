@@ -1,0 +1,67 @@
+# =============================================================================
+# tool_sandbox_profile.yaml — OBJ_T T3 沙箱规程 profile（C5 立案件，Owner 2026-09-27 准许）
+# =============================================================================
+# 治理锚定:
+# ttl: permanent
+#   blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_tools
+#   design_source: docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md §4.2（沙箱试用规程）
+# 净零声明:
+#   吸收 OBJ_T DESIGN §4.2 散文规程为可机读 profile（原散文仍在 DESIGN 不删）；不建新隔离机制——
+#   venv/容器复用既有运行环境形态，工作目录走宪法 §9.4 既有 .runtime/sessions/<sid>/staging/ 纪律。
+# 边界自守:
+#   本文件只声明沙箱边界与判据常量，不实现执行器（试用工具默认禁用=声明面；机检执行面归
+#   OBJ_S S1 白名单 deny-list 与 LSG 注入洗涤，接线另行单派）。
+# 连通核验销账（DESIGN C5 验收项"源 1 Registry API 连通核验"）:
+#   2026-09-27 st-ailayer-sx-20260927 实测 GET https://registry.modelcontextprotocol.io/v0/servers?limit=1
+#   → HTTP 200（JSON servers 数组合法）——销账。
+# =============================================================================
+schema_version: 1.0.0
+doc_type: policy
+ttl: permanent
+title: 工具试用沙箱 profile（tool sandbox profile，OBJ_T C5）
+status: active
+version: 1.0.0
+date: '2026-09-27'
+
+sandbox:
+  # ① 隔离边界（DESIGN §4.2 第①行）：外部代码零执行于生产域
+  isolation:
+    install_target: dedicated_venv_or_container   # MCPMark 隔离容器先例；禁装进生产环境
+    work_dir: '.runtime/sessions/<sid>/staging/'  # 宪法 §9.4 既有纪律；禁另造临时区
+    forbidden_write_paths:                        # 禁写生产路径清单（违反=试用作废+墓碑留档）
+      - config/
+      - src/
+      - scripts/
+      - tests/
+      - data/
+    production_db_access: forbidden               # 禁触生产 DB（DatabaseService 域不出借凭据）
+  # ② 密钥零发放（RULE-SECRETS；DESIGN §4.2 第②行）
+  secrets:
+    issuance: forbidden
+    secrets_py_read: forbidden                    # 沙箱禁 secrets.py 读取；env 密钥零透传
+  # ③ 网络（DESIGN §4.2 第③行）
+  network:
+    outbound: allowed                             # 允许出网试用
+    forbidden_targets:
+      - live_trading_domain                       # 禁触实盘/交易域（QMT/实盘网关全禁）
+      - production_database                       # 禁触生产 DB
+  # ④ 注入审查（DESIGN §4.2 第④行；蓝图 B308/B311 攻击面）
+  injection_review:
+    tool_description_trust: untrusted             # tool description 一律按不可信数据过 LSG 洗涤
+    lsg_wash_required: true
+    injection_probe_required: true                # 注入 probe 必跑（C5 验收项）
+  # 试用工具会话内默认禁用，显式申请制（DESIGN §4.2 试用时长行）
+  default_enabled: false
+  trial:
+    status_word: trial
+    max_days: 14                                  # 7-14 天窗口上限
+    min_tasks: 3                                  # 或累计 ≥3 次试用任务（器官基准集子集+1 真实小任务）
+    rule: 先到为准
+    scheduling: compute_class=light 且与 mine_vs_exam 串行组错峰（客户自助登记接口，禁自建排班逻辑）
+  # 转正四判据（DESIGN §4.3，全过才转 active；模板见 trial_archive_card_template.yaml）
+  promotion_criteria:
+    - safety_review_cleared                       # 注入 probe cleared+权限面声明+safety_level 定级；物理删除类默认拒转正
+    - benchmark_noninferior                       # ≥ champion−10pp（Tier B）或补位现役空白
+    - resource_profile_registered                 # peak_mem/配额/互斥组申报（排班第四源）
+    - pitfall_written_back                        # 坑集强制回写 ≥1 条
+  fail_close: tombstone                           # 不过→status=tombstone 墓碑留档（含拒绝理由，不删）

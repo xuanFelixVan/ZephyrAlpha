@@ -1,36 +1,36 @@
-# 自动生成于 2026-09-26T17:25:52Z
+# 自动生成于 2026-09-27T18:03:03Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-26T17:25:52Z'
+generated_at: '2026-09-27T18:03:03Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 516
-with_manifest: 412
-missing_manifest: 104
+total_scripts: 526
+with_manifest: 419
+missing_manifest: 107
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 70
+  governance: 72
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
-  governance:d1_structure: 25
+  governance:d1_structure: 26
   governance:d2_links: 2
   governance:d3_metadata: 29
   governance:d4_paths: 4
-  governance:d5_architecture: 123
+  governance:d5_architecture: 125
   governance:d6_security: 15
   governance:d7_code: 37
   governance:d8_doc_sync: 15
   governance:d9_knowledge: 2
   governance:data_quality: 2
-  governance:generators: 19
+  governance:generators: 23
   governance:git_hooks: 1
   governance:meta: 48
   governance:meta_question: 56
   governance:migrate_sqlite_to_pg: 2
-  governance:migrations: 1
+  governance:migrations: 2
   governance:observability: 1
   governance:oneoff: 7
   governance:registry_migration: 1
@@ -915,6 +915,16 @@ scripts:
   description: 索引完整性校验（PS-STD-012 §7.3 — index.md清单vs磁盘双向差集）
   tags:
   - Quick
+- name: d1_structure/check_mirror_tree.py
+  owner: governance:d1_structure
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d1_structure/cleanup_stash.py
   owner: governance:d1_structure
   dimensions:
@@ -2469,6 +2479,53 @@ scripts:
   description: 可缩放 Mermaid HTML 生成器（共享模块）。
   tags:
   - Critical
+- name: d5_architecture/lifecycle/detect_retirement_candidates.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 120
+  args:
+  - --output
+  - --staging
+  - --session
+  - --registry
+  - --capability-registry
+  - --roor
+  - --candidate-registry
+  - --risk-tier-registry
+  - --top
+  - --p0-extra
+  warn_only: true
+  description: 退役候选四路机械探测（MLC-003 前置情报；只读；候选仅提示）
+  tags:
+  - Critical
+- name: d5_architecture/lifecycle/retire_module.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 120
+  args:
+  - --module
+  - --successor
+  - --step
+  - --all
+  - --status
+  - --rollback
+  - --owner-ruling
+  - --execute
+  - --cascade-contracts
+  - --registry
+  - --ruling-registry
+  - --consumer-registry
+  - --contracts
+  - --state-dir
+  - --session
+  warn_only: false
+  description: MLC-003 退役七步执行器（默认 dry-run；真实执行须 --execute+--owner-ruling）
+  tags:
+  - Critical
 - name: d5_architecture/panorama_common.py
   owner: governance:d5_architecture
   dimensions:
@@ -2680,9 +2737,10 @@ scripts:
   - D5
   priority: P1
   timeout_seconds: 30
-  args: []
+  args:
+  - --staged
   warn_only: false
-  description: 模块生命周期校验（GOV-MOD-003 MLC-001/002/003 — 8阶段状态机+P0约束）
+  description: 模块生命周期转换门（ORPHAN-MODULE 执行体 — 8阶段状态机+转换合法性+P0红线）
   tags:
   - Critical
 - name: d5_architecture/validators/session/validate_session_log_index_integrity.py
@@ -4121,6 +4179,29 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: generate_gate_face_reconciliation.py
+  owner: governance
+  dimensions:
+  - D1
+  - D5
+  priority: P2
+  timeout_seconds: 120
+  args:
+  - flag: --check
+    type: bool
+    description: 只判红名单不出表（rc 1=红非空）
+  - flag: --output-dir
+    type: str
+    description: 输出目录（默认 docs/01_policies_and_standards/_registry/reports）
+  - flag: --json
+    type: bool
+    description: stdout 附机器可读 JSON 摘要
+  warn_only: false
+  description: ''
+  tags:
+  - Critical
+  - Disruptive
+  - Quick
 - name: generate_governance_map.py
   owner: governance
   dimensions: []
@@ -4179,6 +4260,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: generators/check_library_tri_consistency.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/fix_module_manifest_layout.py
   owner: governance:generators
   dimensions:
@@ -4201,6 +4292,36 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: generators/generate_fms_deadref_baseline.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: generators/generate_front_door.py
+  owner: governance:generators
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 15
+  args:
+  - flag: --check
+    type: bool
+    description: 检测漂移（产物与真源派生结果不一致即报）
+  warn_only: false
+  description: '从 INDEX.md/ROOR/registry_master_index/根宪法派生 FRONT_DOOR.md 与 llms.txt
+    双投导航产物。 输出零时间戳，regen 幂等；--check 报漂移。
+
+    '
+  tags:
+  - Critical
+  - Disruptive
+  - Quick
 - name: generators/generate_gate_registry.py
   owner: governance:generators
   dimensions:
@@ -4212,6 +4333,9 @@ scripts:
   - flag: --check
     type: bool
     description: 仅检测漂移，不写文件
+  - flag: --diff
+    type: bool
+    description: 三账对账（F98 G1），纯只读，差集即红
   - flag: --output
     type: str
     description: 输出路径
@@ -4411,6 +4535,49 @@ scripts:
     description: 自动刷新 entries（写盘）
   warn_only: false
   description: '读取 registry-master-index.yaml，对各行 entries 字段与实际文件条目数比对，漂移时刷新。
+
+    '
+  tags:
+  - Critical
+  - Quick
+- name: generators/regen_clean_check.py
+  owner: governance:generators
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 120
+  args:
+  - flag: --check
+    type: bool
+    description: 门模式：只报不写盘面（默认）
+  - flag: --staged
+    type: str
+    description: 逗号分隔 staged 清单（触发过滤）
+  - flag: --pairs
+    type: str
+    description: 逗号分隔受检对名或 '*'
+  - flag: --baseline
+    type: str
+    description: 棘轮基线路径
+  - flag: --registry
+    type: str
+    description: 受检对登记册路径
+  - flag: --jsonl
+    type: str
+    description: 机器可读报告路径
+  - flag: --budget-ms
+    type: int
+    description: 未声明 timeout_seconds 的受检对的缺省 subprocess 预算（声明值优先，硬顶 900s）
+  - flag: --auto-fix
+    type: bool
+    description: 人工专用：隔离产出拷回正本位
+  - flag: --update-baseline
+    type: bool
+    description: 人工专用：漂移指纹合并入棘轮基线
+  warn_only: false
+  description: 'regen-clean 生成闭环检查器（FMS-REGEN-CLEAN 数据源）：受检对清单（generator_registry.yaml
+    regen: 节）→ 隔离重生成 → volatile 归一化 → diff → 棘轮基线判定 → jsonl+人读摘要。 绝不改盘面不改工作树；红级对跳过留痕。
 
     '
   tags:
@@ -5697,6 +5864,50 @@ scripts:
   warn_only: false
   description: add_acquisition_fields.py — 为 nodes_metadata 表添加 acquisition 字段 + 枚举
     CHECK 约束
+  tags:
+  - Quick
+- name: migrations/add_library_successor_of.py
+  owner: governance:migrations
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: add_library_successor_of.py — lib_assets 增枝 successor_of 墓碑去向指针列 （幂等
+    ADD COLUMN IF NOT EXISTS + 注释，纯增量可回滚）
+  tags:
+  - Quick
+- name: next_ruling_id.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 30
+  args:
+  - flag: --next
+    type: bool
+    description: 幂等查询下一可用裁定号（零副作用）
+  - flag: --claim
+    type: bool
+    description: 原子占号（O_EXCL，防并发取同号）
+  - flag: --release
+    type: int
+    description: 释放本 session 占用的指定号
+  - flag: --session
+    type: str
+    description: session id（--claim/--release 必带，留痕）
+  - flag: --check
+    type: bool
+    description: 扫描悬空裁定#NNN 引用（只报告不删）
+  - flag: --json
+    type: bool
+    description: 机器可读 JSON 输出
+  - flag: paths
+    type: list
+    description: --check 扫描目标（文件/目录）
+  warn_only: false
+  description: ''
   tags:
   - Quick
 - name: observability/gate_cache.py

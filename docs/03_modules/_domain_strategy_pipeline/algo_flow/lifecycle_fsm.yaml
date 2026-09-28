@@ -1,0 +1,54 @@
+# ALGO_FLOW 外部真源——lifecycle_fsm（_domain_strategy_pipeline 域，真源 src/zephyr/strategy_pipeline/lifecycle_fsm.py）
+# 2026-09-28 st-ailayer-sx-20260927 补锚（袋C2 落地触 GATE-ALGO-FLOW 缺标记，P2-1 契约头减负出仓形态）：
+# 外部锚经 parse_algo_flow 同一管线加载；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.strategy_pipeline.lifecycle_fsm
+source_of_truth: src/zephyr/strategy_pipeline/lifecycle_fsm.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name_zh: 策略流转请求（sid/source/target/context）
+    #   code: StateMachine.transition
+    # - id: I2
+    #   name_zh: Owner 令牌（sim→production、production→retired 两道 Owner 门必带）
+    #   code: owner_token
+    # - id: I3
+    #   name_zh: candidate→sim 预授权三条件（§8 双窗过 ∧ BH-FDR 过 ∧ 无未决衰减预警）
+    #   code: SimPromotionGuard
+    # 层: 算法
+    # - id: A1
+    #   name_zh: guard 链评估（预授权三条件/Owner 令牌 sha256 常量时间比对）
+    #   name_en: TransitionGuard.evaluate
+    #   intro: candidate→sim=SimPromotionGuard 三条件全过才放行；sim→production 与 production→retired=OwnerTokenGuard
+    #     强制 owner_token，键 ZEPHYR_OWNER_APPROVAL_TOKEN 未配置=fail-closed 一律拒绝，机器调用不带 token 必被拒
+    #   inputs: I1, I2, I3
+    #   outputs: 放行/拒绝判定
+    #   invariant: 非空即真已废（须 hmac.compare_digest 常量时间比对）；guard 失败抛 TransitionGuardError 不静默
+    # - id: A2
+    #   name_zh: 状态转移执行（A 方案治理边界：candidate→production 无直连边）
+    #   name_en: StateMachine.transition
+    #   intro: 合法转换表 candidate→sim/candidate→shelved/shelved→candidate/sim→production/sim→shelved/
+    #     production→retired/shelved→retired 逐边校验后迁态
+    #   inputs: 放行判定
+    #   outputs: 新状态与流转回执
+    #   invariant: 非法转换抛 InvalidTransitionError（fail-closed）；FSM 内部五态词不变，注册表落词经映射层
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 流转回执（FSM 态词审计面）
+    #   intro: 回执恒记 FSM 词（production 不换词），消费方 intake/promotion_advisory/C6 管线
+    #   downstream: zephyr.strategy_pipeline.intake; zephyr.strategy_pipeline.promotion_advisory
+    # - id: O2
+    #   name_zh: 注册表落册词（REGISTRY_LIFECYCLE_ALIASES 映射 production→live）
+    #   intro: FSM 词→注册表 lifecycle_status 八态词对齐层；其余状态恒等映射
+    #   downstream: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> O1
+    # A2 --> O2

@@ -5134,32 +5134,49 @@ def schedulegate_queue() -> dict[str, Any]:
 
     真源：zephyr.ai_layer.scheduling.seed_writer.load_seeds + dispatcher.rank_pending
     （score 降序+四读数挂起态；now 由服务端注入 tz-aware）。
+    响应形状=页契约 ``data.orders``（schedulegate.js render 读 LIST.orders）；拍板态经审批
+    事件账投影合并（confirm 后骨架单入队），事件账不可达=按未拍板诚实降级不假造。
     """
     try:
         from datetime import datetime, timezone
 
         from zephyr.ai_layer.scheduling import dispatcher
+        from zephyr.ai_layer.scheduling.scheduling_events import SchedulingJournal
         from zephyr.ai_layer.scheduling.seed_writer import load_seeds
 
         doc = load_seeds()
         orders = list(doc.get("orders") or doc.get("seeds") or [])
+        try:
+            orders = dispatcher.apply_skeleton_decisions(orders, dispatcher.skeleton_decisions(SchedulingJournal()))
+        except Exception:  # noqa: BLE001 — 事件账不可达=按未拍板投影（拍板留痕缺席不假造）
+            pass
         scored = dispatcher.rank_pending(orders, doc, datetime.now(timezone.utc))
-        return {"ok": True, "count": len(scored), "data": scored}
+        return {"ok": True, "count": len(scored), "data": {"orders": [{**r, "state": "pending"} for r in scored]}}
     except Exception as exc:  # noqa: BLE001 — 排产件缺位降级空态
-        return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": []}
+        return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": {"orders": []}}
 
 
 @app.get("/api/schedulegate-skeletons")
 def schedulegate_skeletons() -> dict[str, Any]:
-    """骨架级提案包（利弊对照+两问打分展示；只读；owner_gate 提案不占自动派工队列）。"""
+    """骨架级提案包（利弊对照+两问打分展示；只读；owner_gate 提案不占自动派工队列）。
+
+    响应形状=页契约 ``data.orders``；未拍板单 state=pending（页据此渲染拍板按钮），
+    已拍板单携 confirm_receipt（改判留痕持久渲染在该卡）。
+    """
     try:
+        from zephyr.ai_layer.scheduling import dispatcher
+        from zephyr.ai_layer.scheduling.scheduling_events import SchedulingJournal
         from zephyr.ai_layer.scheduling.seed_writer import load_seeds
 
         doc = load_seeds()
-        skeletons = [s for s in (doc.get("orders") or doc.get("seeds") or []) if s.get("owner_gate")]
-        return {"ok": True, "count": len(skeletons), "data": skeletons}
+        entries = [s for s in (doc.get("orders") or doc.get("seeds") or []) if s.get("owner_gate")]
+        try:
+            entries = dispatcher.apply_skeleton_decisions(entries, dispatcher.skeleton_decisions(SchedulingJournal()))
+        except Exception:  # noqa: BLE001 — 事件账不可达=按未拍板投影
+            pass
+        return {"ok": True, "count": len(entries), "data": {"orders": entries}}
     except Exception as exc:  # noqa: BLE001
-        return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": []}
+        return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": {"orders": []}}
 
 
 # 审计主体由服务端钉死：仪表盘是免鉴权本地面，actor/allow_amend 一律不取自 body
