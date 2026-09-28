@@ -9,6 +9,7 @@ from decimal import Decimal
 
 import pytest
 
+from zephyr.ex_sor.core.algo_trading_engine import AlgoTradingEngine, AlgoType, MarketContext
 from zephyr.ex_sor.services.execution_quality_scorer import (
     DefaultBenchmarkProvider,
     ExecutionDimensionScore,
@@ -19,6 +20,7 @@ from zephyr.ex_sor.services.execution_quality_scorer import (
     QualityDimension,
     QualityScorerError,
     QualityWeights,
+    ScorerBackedQualityPrior,
 )
 from zephyr.shared.contracts.enums.order_enums import OrderSide
 
@@ -509,3 +511,67 @@ class TestErrorsAndEdgeCases:
         assert r.dimension_scores[0].dimension == QualityDimension.IMPACT
         # 1 - 10/20 = 0.5
         assert r.overall_score == pytest.approx(0.5)
+
+
+# ── G41-1 L4-14 反馈环评分侧适配器（zc-lane-t-20260927）────────────────────────
+class TestScorerBackedQualityPrior:
+    def _scorer_with_history(self) -> ExecutionQualityScorer:
+        scorer = ExecutionQualityScorer()
+        scorer.score("O1", "X", OrderSide.BUY, slippage_bps=Decimal("0"), now=NOW)  # good≈1.0
+        scorer.score("O2", "X", OrderSide.BUY, slippage_bps=Decimal("0"), now=NOW)
+        scorer.score("O3", "X", OrderSide.BUY, slippage_bps=Decimal("50"), now=NOW)  # worst≈0.0
+        return scorer
+
+    def test_prior_is_per_algo_mean(self) -> None:
+        """按归因回调 join：O1/O2→TWAP（好分）、O3→VWAP（差分），先验=各自均值。"""
+        prior = ScorerBackedQualityPrior(
+            self._scorer_with_history(),
+            lambda oid: {"O1": AlgoType.TWAP, "O2": AlgoType.TWAP, "O3": AlgoType.VWAP}.get(oid),
+        )
+        twap, vwap = prior.quality_prior(AlgoType.TWAP), prior.quality_prior(AlgoType.VWAP)
+        assert twap is not None and vwap is not None
+        assert twap > 0.9 and vwap < 0.1
+        assert prior.quality_prior(AlgoType.IS) is None  # 无归因样本=None 中性
+
+    def test_min_samples_guard(self) -> None:
+        """样本不足 min_samples → None（禁拍假先验冒充有数据）。"""
+        prior = ScorerBackedQualityPrior(self._scorer_with_history(), lambda oid: AlgoType.TWAP, min_samples=5)
+        assert prior.quality_prior(AlgoType.TWAP) is None
+
+    def test_invalid_min_samples_raises(self) -> None:
+        with pytest.raises(QualityScorerError):
+            ScorerBackedQualityPrior(self._scorer_with_history(), lambda oid: None, min_samples=0)
+
+    def test_wires_into_selector(self) -> None:
+        """端到端：scorer 历史→先验→选择器总分调制（反馈环最后一段贯通实证）。"""
+        from datetime import datetime
+        from datetime import timezone as tz
+        from decimal import Decimal as D
+
+        from zephyr.ex_sor.core.algo_execution_selector import AlgoExecutionSelector
+        from zephyr.shared.contracts.enums.order_enums import OrderSide as OS
+        from zephyr.shared.contracts.enums.order_enums import OrderType as OT
+        from zephyr.shared.contracts.order import Order
+
+        attribution = {"O1": AlgoType.TWAP, "O2": AlgoType.TWAP}
+        prior = ScorerBackedQualityPrior(self._scorer_with_history(), lambda oid: attribution.get(oid))
+        sel = AlgoExecutionSelector(AlgoTradingEngine(), quality_prior_provider=prior)
+        order = Order(
+            order_id="ORD-FB1",
+            idempotency_key="IDEMP-ORD-FB1",
+            order_type=OT.LIMIT,
+            quantity=D("1000"),
+            side=OS.BUY,
+            strategy_id="STRAT-1",
+            symbol="000001.SZ",
+            limit_price=D("10.50"),
+        )
+        ctx = MarketContext(
+            symbol="000001.SZ", last_price=D("10.50"), adv=D("1000000"), bid_price=D("10.49"), ask_price=D("10.51")
+        )
+        out = sel.select(order, ctx, D("0.3"), now=datetime(2026, 9, 27, tzinfo=tz.utc))
+        by_algo = {bd.algo: bd for bd in out.breakdowns}
+        # TWAP 有两条好分历史→先验在册且接近 1；无历史算法=None 中性（反馈环契约）
+        assert by_algo[AlgoType.TWAP].quality_prior is not None
+        assert by_algo[AlgoType.TWAP].quality_prior > 0.9
+        assert by_algo[AlgoType.VWAP].quality_prior is None

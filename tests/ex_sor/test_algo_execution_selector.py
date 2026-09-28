@@ -529,3 +529,63 @@ def test_integration_select_then_generate_plan():
     plan = eng.generate_plan(order, params, ctx, now=NOW)
     assert plan.algo_type == selection.selected_algo
     assert sum((s.quantity for s in plan.slices), Decimal("0")) == order.quantity
+
+
+# ── G41-1 L4-14 反馈环（zc-lane-t-20260927）：质量先验输入 ─────────────────────
+class _StaticPrior:
+    """固定先验表 provider（鸭型实现 QualityPriorProvider）。"""
+
+    def __init__(self, priors: dict[AlgoType, float | None]):
+        self._priors = priors
+
+    def quality_prior(self, algo: AlgoType) -> float | None:
+        return self._priors.get(algo)
+
+
+def test_quality_prior_neutral_when_unwired():
+    """未接 provider：行为与三维基线完全一致（quality_prior/raw_total 恒 None）。"""
+    sel = make_selector()
+    sel_feedback = AlgoExecutionSelector(AlgoTradingEngine(), quality_prior_provider=_StaticPrior({}))
+    a, b = (
+        sel.select(make_order(), make_ctx(), Decimal("0.3"), now=NOW),
+        sel_feedback.select(make_order(), make_ctx(), Decimal("0.3"), now=NOW),
+    )
+    assert a.selected_algo == b.selected_algo
+    for x, y in zip(a.breakdowns, b.breakdowns, strict=True):
+        assert x.algo == y.algo and x.total == y.total
+        assert y.quality_prior is None and y.raw_total is None
+
+
+def test_quality_prior_modulates_total_and_can_rerank():
+    """先验 q 调制总分：q=0.5 恒等；q=1 上调 20%；好差先验可改选（消费方非零实证）。"""
+    base = make_selector().select(make_order(), make_ctx(), Decimal("0.3"), now=NOW)
+    raw = {bd.algo: bd.total for bd in base.breakdowns}
+    runner_up = max((a for a in raw if a != base.selected_algo), key=lambda a: raw[a])
+
+    # q=0.5 恒等：选中不变、total 不变
+    neutral = AlgoExecutionSelector(
+        AlgoTradingEngine(), quality_prior_provider=_StaticPrior({k: 0.5 for k in raw})
+    ).select(make_order(), make_ctx(), Decimal("0.3"), now=NOW)
+    assert neutral.selected_algo == base.selected_algo
+    for bd in neutral.breakdowns:
+        assert bd.raw_total == pytest.approx(raw[bd.algo], abs=1e-12)
+        assert bd.total == pytest.approx(raw[bd.algo], abs=1e-12)
+        assert bd.quality_prior == 0.5
+
+    # 次优算法给满先验 q=1（+20%）、选中算法给差先验 q=0（−20%）→ 改选次优
+    flip = AlgoExecutionSelector(
+        AlgoTradingEngine(),
+        quality_prior_provider=_StaticPrior({base.selected_algo: 0.0, runner_up: 1.0}),
+    ).select(make_order(), make_ctx(), Decimal("0.3"), now=NOW)
+    assert flip.selected_algo == runner_up
+    flipped_bd = next(bd for bd in flip.breakdowns if bd.algo == runner_up)
+    assert flipped_bd.total == pytest.approx(raw[runner_up] * 1.2, abs=1e-12)
+    assert "质量反馈" in flip.reason
+
+
+def test_quality_prior_out_of_range_clamped():
+    """先验越界 [0,1] 夹边（不炸选择，夹边值入明细留痕）。"""
+    sel = AlgoExecutionSelector(AlgoTradingEngine(), quality_prior_provider=_StaticPrior({AlgoType.TWAP: 7.0}))
+    sel_out = sel.select(make_order(), make_ctx(), Decimal("0.3"), now=NOW)
+    bd = next(bd for bd in sel_out.breakdowns if bd.algo == AlgoType.TWAP)
+    assert bd.quality_prior == 1.0
