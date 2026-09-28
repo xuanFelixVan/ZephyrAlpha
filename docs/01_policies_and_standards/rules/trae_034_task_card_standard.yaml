@@ -37,7 +37,7 @@ sections:
     conditions: []
     actions:
     - type: mandatory
-      step: 唯一创建入口为TaskRepository.create()写入SQLite(data/zalpha_metadata.db)
+      step: 唯一创建入口为TaskRepository.create()写入SQLite(data/databases/governance.db)
     - type: mandatory
       step: .md文件为伴读副本，不作为创建入口
     prohibitions:
@@ -209,7 +209,7 @@ sections:
     - 批量建卡完成（蓝图拆解/Bug修复/架构债务/代码扫描/重构任务产生≥2张任务卡）
     conditions:
     - type: pre_condition
-      check: 阶段一建卡完成——按task_001_template/task_001_fields/task_001_granularity建卡，所有任务卡已写入SQLite(data/zalpha_metadata.db)
+      check: 阶段一建卡完成——按task_001_template/task_001_fields/task_001_granularity建卡，所有任务卡已写入SQLite(data/databases/governance.db)
       pass: 进入阶段二批量审查
       fail: 先完成建卡
     - type: pre_condition
@@ -557,7 +557,7 @@ sections:
     - TASK-001
     steps:
     - order: 1
-      action: 调用TaskRepository.create()写入SQLite(data/zalpha_metadata.db)
+      action: 调用TaskRepository.create()写入SQLite(data/databases/governance.db)
       pre_condition: 任务卡数据准备完毕
       expected_result: 任务卡创建成功，task_id自动分配
       on_failure: 检查必填字段完整性
