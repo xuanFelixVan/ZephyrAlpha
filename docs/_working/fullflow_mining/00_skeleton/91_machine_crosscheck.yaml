@@ -6,7 +6,7 @@ idempotency: 无时间戳/无随机项；输入相同则字节相同（配 pytes
 head_tracking:
   status: ok
   reason: ''
-  tracked_files_total: 17746
+  tracked_files_total: 18455
   method: git -c core.quotePath=false ls-tree -r --name-only HEAD（先验 .git 与 toplevel==repo root，绝不上溯外层仓库）
 source_files:
 - config/strategy_production_map.yaml
@@ -101,73 +101,35 @@ counts:
       - FAC-E9
       raw_line_count: 16
       duplicate_fac_lines: 0
-      module_ref_null_ids:
-      - FAC-E7
-      module_ref_null_count: 1
+      module_ref_null_ids: []
+      module_ref_null_count: 0
   roor_registries:
     label: ROOR 注册表数
     status: ok
-    measured: 77
+    measured: 80
     method: 'grep -c ''registry_id: REG-''（实测面）；summary.total_registries 字段另记为声称探针'
     source_files:
     - docs/registry_of_registries.yaml
     detail:
-      grep_count: 77
+      grep_count: 80
       summary_field_present: true
   mining_books:
     label: 挖矿簿册数（fullflow_mining/*.md，HEAD 跟踪集）
     status: ok
-    measured: 118
+    measured: 183
     method: git -c core.quotePath=false ls-tree -r --name-only HEAD 过滤 docs/_working/fullflow_mining/*.md 计数（落地面实测面）；盘面
       rglob 计数另记为 detail.disk_count，两者之差=not_in_head_count（P-0 敞口，未落地件不记功）
     source_files:
     - docs/_working/fullflow_mining
     detail:
       head_status: ok
-      head_count: 118
-      disk_count: 161
-      not_in_head_count: 43
+      head_count: 183
+      disk_count: 186
+      not_in_head_count: 3
       not_in_head_sample:
-      - docs/_working/fullflow_mining/00_skeleton/92_coverage_triage_20260926.md
-      - docs/_working/fullflow_mining/00_skeleton/93_true_gap_list_20260926.md
-      - docs/_working/fullflow_mining/00_skeleton/94_declaration_pass_F1.md
-      - docs/_working/fullflow_mining/00_skeleton/95_declaration_pass_F2.md
-      - docs/_working/fullflow_mining/02_tdm_decision/wiring_F_alloc_ssot.md
-      - docs/_working/fullflow_mining/05_missing_p0/00_verification_table.md
-      - docs/_working/fullflow_mining/05_missing_p0/01_state_vocabulary_lane.md
-      - docs/_working/fullflow_mining/05_missing_p0/02_data_governance_lineage.md
-      - docs/_working/fullflow_mining/05_missing_p0/03_tdm_null_node_attribution.md
-      - docs/_working/fullflow_mining/05_missing_p0/04_p1p3p5_evidence_pages.md
-      - docs/_working/fullflow_mining/05_missing_p0/05_f116_sop_methodology_family.md
-      - docs/_working/fullflow_mining/05_missing_p0/91_machine_crosscheck_notes.md
-      - docs/_working/fullflow_mining/05_missing_p0/pending_rulings.md
-      - docs/_working/fullflow_mining/05_missing_p0/rb1_meter_attacks.md
-      - docs/_working/fullflow_mining/05_missing_p0/rb2_guard_attacks.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_C_confirm_hardening.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_E_anchor_register.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_E_state_vocab.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_H_honest_status.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_M_meter_hardening.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_N_header_compliance.md
-      - docs/_working/fullflow_mining/05_missing_p0/wiring_V_vocab_merge.md
-      - docs/_working/fullflow_mining/92_chief_command_wave2.md
-      - docs/_working/fullflow_mining/93_wave2_findings.md
-      - docs/_working/fullflow_mining/94_chief_rulings_wave2.md
-      - docs/_working/fullflow_mining/96_final_report_wave2.md
-      - docs/_working/fullflow_mining/m1_data/wiring_C_cleaning.md
-      - docs/_working/fullflow_mining/m3_governance/05_f100_adversarial_validation.md
-      - docs/_working/fullflow_mining/m3_governance/06_f103_clone_guard_code_dedup.md
-      - docs/_working/fullflow_mining/m3_governance/07_rollback_recovery_infra.md
-      - docs/_working/fullflow_mining/m3_governance/pending_rulings.md
-      - docs/_working/fullflow_mining/m4_ai_layer/接续收口_20260925/04_f89_local_models_and_embedding.md
-      - docs/_working/fullflow_mining/m4_ai_layer/接续收口_20260925/pending_rulings.md
-      - docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/06_f83_automation_crew.md
-      - docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/pending_rulings.md
-      - docs/_working/fullflow_mining/m7_live_execution/backfill_wave2/10_f53_f56_dataflow.md
-      - docs/_working/fullflow_mining/m7_live_execution/backfill_wave2/20_f57_settlement_recon.md
-      - docs/_working/fullflow_mining/m7_live_execution/backfill_wave2/30_f58_execution_cost_feedback.md
-      - docs/_working/fullflow_mining/m7_live_execution/backfill_wave2/40_f63_position_recon.md
-      - docs/_working/fullflow_mining/m7_live_execution/backfill_wave2/90_backfill_wave.md
+      - docs/_working/fullflow_mining/05_missing_p0/index.md
+      - docs/_working/fullflow_mining/m7_live_execution/backfill_wave2/index.md
+      - docs/_working/fullflow_mining/m7_live_execution/补挖波_20260925/index.md
       in_head_missing_on_disk_count: 0
       in_head_missing_on_disk_sample: []
   code_top_domains:
@@ -277,7 +239,7 @@ claims:
   claimed: 56
   measured: 57
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行⑥
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
@@ -285,7 +247,7 @@ claims:
   claimed: 122
   measured: 122
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 13
+  line: 14
   note: 总册摘要行合计
   excerpt: '> **与既有 M0 骨架的关系**：本册吸收并扩展 docs/_working/fullflow_mining/00_skeleton_fullflow.md（M0 车道已收卷的 76 环节 D/T/B/A/G/S/F/X
     八段）——既有 76 环节全部保留并映射到本册 F 编号；新增供给端策略工厂（E0-E9+六车'
@@ -293,14 +255,14 @@ claims:
   claimed: 122
   measured: 122
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 20
+  line: 21
   note: §一 标题
   excerpt: '## 一、环节总清单（122 环节 / 13 段）'
 - metric: f_segment_B
   claimed: 17
   measured: 17
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 13
+  line: 14
   note: 摘要行：策略工厂新增段行数声称
   excerpt: '> **与既有 M0 骨架的关系**：本册吸收并扩展 docs/_working/fullflow_mining/00_skeleton_fullflow.md（M0 车道已收卷的 76 环节 D/T/B/A/G/S/F/X
     八段）——既有 76 环节全部保留并映射到本册 F 编号；新增供给端策略工厂（E0-E9+六车'
@@ -308,7 +270,7 @@ claims:
   claimed: 7
   measured: 7
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 13
+  line: 14
   note: 摘要行：L9 段行数声称
   excerpt: '> **与既有 M0 骨架的关系**：本册吸收并扩展 docs/_working/fullflow_mining/00_skeleton_fullflow.md（M0 车道已收卷的 76 环节 D/T/B/A/G/S/F/X
     八段）——既有 76 环节全部保留并映射到本册 F 编号；新增供给端策略工厂（E0-E9+六车'
@@ -316,7 +278,7 @@ claims:
   claimed: 16
   measured: 16
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 13
+  line: 14
   note: 摘要行：TDM 细化段行数声称
   excerpt: '> **与既有 M0 骨架的关系**：本册吸收并扩展 docs/_working/fullflow_mining/00_skeleton_fullflow.md（M0 车道已收卷的 76 环节 D/T/B/A/G/S/F/X
     八段）——既有 76 环节全部保留并映射到本册 F 编号；新增供给端策略工厂（E0-E9+六车'
@@ -324,7 +286,7 @@ claims:
   claimed: 4
   measured: 4
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 13
+  line: 14
   note: 摘要行：转正链段行数声称
   excerpt: '> **与既有 M0 骨架的关系**：本册吸收并扩展 docs/_working/fullflow_mining/00_skeleton_fullflow.md（M0 车道已收卷的 76 环节 D/T/B/A/G/S/F/X
     八段）——既有 76 环节全部保留并映射到本册 F 编号；新增供给端策略工厂（E0-E9+六车'
@@ -332,7 +294,7 @@ claims:
   claimed: 13
   measured: 13
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 13
+  line: 14
   note: 总册摘要行分段
   excerpt: '> **与既有 M0 骨架的关系**：本册吸收并扩展 docs/_working/fullflow_mining/00_skeleton_fullflow.md（M0 车道已收卷的 76 环节 D/T/B/A/G/S/F/X
     八段）——既有 76 环节全部保留并映射到本册 F 编号；新增供给端策略工厂（E0-E9+六车'
@@ -340,37 +302,37 @@ claims:
   claimed: 13
   measured: 13
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 20
+  line: 21
   note: §一 标题分段
   excerpt: '## 一、环节总清单（122 环节 / 13 段）'
 - metric: roor_registries
   claimed: 76
-  measured: 77
+  measured: 80
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
 - metric: roor_registries
   claimed: 76
-  measured: 77
+  measured: 80
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 184
+  line: 185
   note: F109 行
   excerpt: '| F109 | 注册表族治理 | ROOR 76 册+master_index+一致性契约+净零审计 | 全注册表 | 全链 | docs/registry_of_registries.yaml | built |
     P1 | G13 |'
 - metric: roor_registries
   claimed: 76
-  measured: 77
+  measured: 80
   file: docs/registry_of_registries.yaml
-  line: 881
+  line: 916
   note: summary.total_registries 字段（机读声称面）
   excerpt: 'total_registries: 76'
 - metric: tdm_flow_entry
   claimed: 132
   measured: 132
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 73
+  line: 74
   note: §D 段标题 flow:entry
   excerpt: '### D 段·交易决策消费链（TDM 四流环节级，F37-F52，本次细化；真源=config/trading_decision_map.yaml，182 节点：entry 132/position 18/exit
     19/portfolio 13）'
@@ -378,7 +340,7 @@ claims:
   claimed: 19
   measured: 19
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 73
+  line: 74
   note: §D 段标题 flow:exit
   excerpt: '### D 段·交易决策消费链（TDM 四流环节级，F37-F52，本次细化；真源=config/trading_decision_map.yaml，182 节点：entry 132/position 18/exit
     19/portfolio 13）'
@@ -386,7 +348,7 @@ claims:
   claimed: 13
   measured: 13
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 73
+  line: 74
   note: §D 段标题 flow:portfolio
   excerpt: '### D 段·交易决策消费链（TDM 四流环节级，F37-F52，本次细化；真源=config/trading_decision_map.yaml，182 节点：entry 132/position 18/exit
     19/portfolio 13）'
@@ -394,7 +356,7 @@ claims:
   claimed: 18
   measured: 18
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 73
+  line: 74
   note: §D 段标题 flow:position
   excerpt: '### D 段·交易决策消费链（TDM 四流环节级，F37-F52，本次细化；真源=config/trading_decision_map.yaml，182 节点：entry 132/position 18/exit
     19/portfolio 13）'
@@ -402,7 +364,7 @@ claims:
   claimed: 182
   measured: 182
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
@@ -410,7 +372,7 @@ claims:
   claimed: 182
   measured: 182
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 73
+  line: 74
   note: §D 段标题
   excerpt: '### D 段·交易决策消费链（TDM 四流环节级，F37-F52，本次细化；真源=config/trading_decision_map.yaml，182 节点：entry 132/position 18/exit
     19/portfolio 13）'
@@ -427,7 +389,7 @@ unverified_prose_claims:
   measured_source: none_registered
   status: unverified
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 121
+  line: 122
   note: F66 行
   excerpt: '| F66 | 回测预注册与七步循环 | backtest_backlog 137 对象跑前写死阈值；无注册不归档 | F64 | F25/F67 | scripts/backtest/generate_backtest_backlog.py；sop_a/sop_b（backtest_system_sop）
     | bui'
@@ -436,7 +398,7 @@ unverified_prose_claims:
   measured_source: none_registered
   status: unverified
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 273
+  line: 274
   note: §五 口径漂移①宪法侧表数
   excerpt: 1. TDM 交叉轴：宪法/AGENTS 称"业务资产库 16 表挂 TDM 交叉轴"，代码 `_XREF_SPECS`（src/zephyr/trading/decision_map.py:100-118）实declared
     13 轴（11 库+model+chain）——待 M1/M3 深挖确认口径。
@@ -445,7 +407,7 @@ unverified_prose_claims:
   measured_source: none_registered
   status: unverified
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 173
+  line: 174
   note: F98 行
   excerpt: '| F98 | GateEngine 运行时门禁 | 91 门禁 canonical+GatePipeline+MAD 准入 | 规则 | 全链 | src/zephyr/gov_enforcement/rule_enforcement/
     | built | P1 | G2 |'
@@ -454,7 +416,7 @@ unverified_prose_claims:
   measured_source: none_registered
   status: unverified
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行③：模块册域数
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
@@ -463,7 +425,7 @@ unverified_prose_claims:
   measured_source: none_registered
   status: unverified
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行③：模块册行数
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
@@ -472,125 +434,76 @@ unverified_prose_claims:
   measured_source: none_registered
   status: unverified
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 176
+  line: 177
   note: F101 行
   excerpt: '| F101 | 规则与裁定体系 | 86 trae_*.yaml+ruling_registry 同 commit 原子 | Owner 门 | 全链 | docs/01_policies_and_standards/rules/
     | built | P1 | G5 |'
 drift_flags:
-- id: code_top_domains@00_全环节总册.md:12
+- id: code_top_domains@00_全环节总册.md:13
   kind: claimed_ne_measured
   metric: code_top_domains
   claimed: 56
   measured: 57
   delta: -1
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行⑥
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
 - &id001
-  kind: declaration_line_malformed
+  kind: illegal_f_token_in_claim_surface
   metric: f_link_id_legality
-  claimed: 本册覆盖 F64 F69
+  claimed: F1
   measured: null
-  file: docs/_working/fullflow_mining/m2_backtest_sim/05_cost_gates.md
-  line: 9
-  surface: 本册覆盖-line
-  reason: declaration_line_not_strict
-  note: 声明行不符严格式（行尾不得再有任何散文）⇒ 整行不记功
-  id: f_link_id_legality@05_cost_gates.md:9
+  file: docs/_working/fullflow_mining/00_skeleton/94_declaration_pass_F1.md
+  line: 0
+  surface: filename
+  token: F1
+  reason: too_few_digits
+  note: 声明位 filename 出现不合法 F 号 F1（too_few_digits）：不记功并报漂移
+  id: f_link_id_legality@94_declaration_pass_F1.md:0
 - &id002
-  kind: declaration_line_malformed
+  kind: illegal_f_token_in_claim_surface
   metric: f_link_id_legality
-  claimed: 本册覆盖 F97 F104
+  claimed: F2
   measured: null
-  file: docs/_working/fullflow_mining/m3_governance/01_runtime_guards.md
-  line: 7
-  surface: 本册覆盖-line
-  reason: declaration_line_not_strict
-  note: 声明行不符严格式（行尾不得再有任何散文）⇒ 整行不记功
-  id: f_link_id_legality@01_runtime_guards.md:7
-- &id003
-  kind: declaration_line_malformed
-  metric: f_link_id_legality
-  claimed: 本册覆盖 F98 F106 F108
-  measured: null
-  file: docs/_working/fullflow_mining/m3_governance/03_registry_families.md
-  line: 7
-  surface: 本册覆盖-line
-  reason: declaration_line_not_strict
-  note: 声明行不符严格式（行尾不得再有任何散文）⇒ 整行不记功
-  id: f_link_id_legality@03_registry_families.md:7
-- kind: non_workbook_exclusion_not_landed
-  metric: non_workbook_exclusions
-  claimed: 1
-  measured: 0
-  file: docs/_working/fullflow_mining/00_skeleton/91_machine_crosscheck.yaml
+  file: docs/_working/fullflow_mining/00_skeleton/95_declaration_pass_F2.md
   line: 0
-  note: 豁免清单条目盘上有但未入 HEAD（已 staged 未落地）
-  id: non_workbook_exclusions@91_machine_crosscheck.yaml:0
-- kind: non_workbook_exclusion_not_landed
-  metric: non_workbook_exclusions
-  claimed: 1
-  measured: 0
-  file: docs/_working/fullflow_mining/00_skeleton/92_coverage_triage_20260926.md
-  line: 0
-  note: 豁免清单条目盘上有但未入 HEAD（已 staged 未落地）
-  id: non_workbook_exclusions@92_coverage_triage_20260926.md:0
-- kind: non_workbook_exclusion_not_landed
-  metric: non_workbook_exclusions
-  claimed: 1
-  measured: 0
-  file: docs/_working/fullflow_mining/05_missing_p0/04_p1p3p5_evidence_pages.md
-  line: 0
-  note: 豁免清单条目盘上有但未入 HEAD（已 staged 未落地）
-  id: non_workbook_exclusions@04_p1p3p5_evidence_pages.md:0
-- kind: non_workbook_exclusion_not_landed
-  metric: non_workbook_exclusions
-  claimed: 1
-  measured: 0
-  file: docs/_working/fullflow_mining/05_missing_p0/91_machine_crosscheck_notes.md
-  line: 0
-  note: 豁免清单条目盘上有但未入 HEAD（已 staged 未落地）
-  id: non_workbook_exclusions@91_machine_crosscheck_notes.md:0
-- kind: non_workbook_exclusion_not_landed
-  metric: non_workbook_exclusions
-  claimed: 1
-  measured: 0
-  file: docs/_working/fullflow_mining/92_chief_command_wave2.md
-  line: 0
-  note: 豁免清单条目盘上有但未入 HEAD（已 staged 未落地）
-  id: non_workbook_exclusions@92_chief_command_wave2.md:0
-- id: roor_registries@00_全环节总册.md:12
+  surface: filename
+  token: F2
+  reason: too_few_digits
+  note: 声明位 filename 出现不合法 F 号 F2（too_few_digits）：不记功并报漂移
+  id: f_link_id_legality@95_declaration_pass_F2.md:0
+- id: roor_registries@00_全环节总册.md:13
   kind: claimed_ne_measured
   metric: roor_registries
   claimed: 76
-  measured: 77
-  delta: -1
+  measured: 80
+  delta: -4
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 12
+  line: 13
   note: 七源真源行
   excerpt: '> **方法**：七源真源通读+抽读（禁臆造，逐环节带文件锚点）：①config/strategy_production_map.yaml（供给端 E0-E9+六车道）②config/trading_decision_map.yaml（消费端
     182 节点四流）③docs/01.../_registry/catalog'
-- id: roor_registries@00_全环节总册.md:184
+- id: roor_registries@00_全环节总册.md:185
   kind: claimed_ne_measured
   metric: roor_registries
   claimed: 76
-  measured: 77
-  delta: -1
+  measured: 80
+  delta: -4
   file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
-  line: 184
+  line: 185
   note: F109 行
   excerpt: '| F109 | 注册表族治理 | ROOR 76 册+master_index+一致性契约+净零审计 | 全注册表 | 全链 | docs/registry_of_registries.yaml | built |
     P1 | G13 |'
-- id: roor_registries@registry_of_registries.yaml:881
+- id: roor_registries@registry_of_registries.yaml:916
   kind: claimed_ne_measured
   metric: roor_registries
   claimed: 76
-  measured: 77
-  delta: -1
+  measured: 80
+  delta: -4
   file: docs/registry_of_registries.yaml
-  line: 881
+  line: 916
   note: summary.total_registries 字段（机读声称面）
   excerpt: 'total_registries: 76'
 - id: tdm_nodes@91_chief_command_wave1.md:28
@@ -604,16 +517,15 @@ drift_flags:
   note: 波1 指挥册数值漂移四例之一（过期声称面）
   excerpt: 4. **数值漂移四例已在册**：TDM"138 节点"过期（实 182）、F 册 entry 132 实 128、ROOR 77 vs summary 76、代码顶层域 57 vs 册称 56。凡引用这些数字前先跑对账表。
 drift_summary:
-  total_drifts: 13
+  total_drifts: 7
   by_metric:
     code_top_domains: 1
-    f_link_id_legality: 3
-    non_workbook_exclusions: 5
+    f_link_id_legality: 2
     roor_registries: 3
     tdm_nodes: 1
   unavailable_metrics: []
   unverified_prose_claims: 6
-  coverage_uncovered_links: 56
+  coverage_uncovered_links: 63
   head_tracking_ok: true
   red: true
 coverage_matrix:
@@ -644,22 +556,37 @@ coverage_matrix:
     - 91_chief_command_wave1.md
     - 92_chief_command_wave2.md
     non_workbook_excluded_count: 11
-    workbook_count: 112
-    tracked_book_count: 118
-    untracked_books_ignored_count: 43
+    workbook_count: 173
+    tracked_book_count: 183
+    untracked_books_ignored_count: 3
     untracked_books_ignored_sample:
-    - 00_skeleton/92_coverage_triage_20260926.md
+    - 05_missing_p0/index.md
+    - m7_live_execution/backfill_wave2/index.md
+    - m7_live_execution/补挖波_20260925/index.md
+    workbooks_with_zero_f_tokens:
     - 00_skeleton/93_true_gap_list_20260926.md
     - 00_skeleton/94_declaration_pass_F1.md
     - 00_skeleton/95_declaration_pass_F2.md
+    - 00_skeleton/index.md
+    - 00_skeleton_fullflow.md
+    - 01_strategy_factory/00_overview.md
+    - 01_strategy_factory/B_后半断点清单.md
+    - 01_strategy_factory/index.md
+    - 02_tdm_decision/00_overview_a_front.md
+    - 02_tdm_decision/index.md
+    - 02_tdm_decision/pending_rulings.md
     - 02_tdm_decision/wiring_F_alloc_ssot.md
+    - 03_promotion_ab/01_paper_four_pieces.md
+    - 03_promotion_ab/02_ab_league.md
+    - 03_promotion_ab/03_promotion_gate.md
+    - 03_promotion_ab/04_lifecycle_fsm.md
+    - 03_promotion_ab/index.md
+    - 04_knowledge_supply/00_实件化路径总述.md
+    - 04_knowledge_supply/index.md
     - 05_missing_p0/00_verification_table.md
     - 05_missing_p0/01_state_vocabulary_lane.md
     - 05_missing_p0/02_data_governance_lineage.md
     - 05_missing_p0/03_tdm_null_node_attribution.md
-    - 05_missing_p0/04_p1p3p5_evidence_pages.md
-    - 05_missing_p0/05_f116_sop_methodology_family.md
-    - 05_missing_p0/91_machine_crosscheck_notes.md
     - 05_missing_p0/pending_rulings.md
     - 05_missing_p0/rb1_meter_attacks.md
     - 05_missing_p0/rb2_guard_attacks.md
@@ -670,74 +597,94 @@ coverage_matrix:
     - 05_missing_p0/wiring_M_meter_hardening.md
     - 05_missing_p0/wiring_N_header_compliance.md
     - 05_missing_p0/wiring_V_vocab_merge.md
-    - 92_chief_command_wave2.md
+    - 92_chief_handover_card_wave2.md
     - 93_wave2_findings.md
     - 94_chief_rulings_wave2.md
     - 96_final_report_wave2.md
-    - m1_data/wiring_C_cleaning.md
-    - m3_governance/05_f100_adversarial_validation.md
-    - m3_governance/06_f103_clone_guard_code_dedup.md
-    - m3_governance/07_rollback_recovery_infra.md
-    - m3_governance/pending_rulings.md
-    - m4_ai_layer/接续收口_20260925/04_f89_local_models_and_embedding.md
-    - m4_ai_layer/接续收口_20260925/pending_rulings.md
-    - m5_scheduling/补挖波_20260925/06_f83_automation_crew.md
-    - m5_scheduling/补挖波_20260925/pending_rulings.md
-    - m7_live_execution/backfill_wave2/10_f53_f56_dataflow.md
-    - m7_live_execution/backfill_wave2/20_f57_settlement_recon.md
-    - m7_live_execution/backfill_wave2/30_f58_execution_cost_feedback.md
-    - m7_live_execution/backfill_wave2/40_f63_position_recon.md
-    - m7_live_execution/backfill_wave2/90_backfill_wave.md
-    workbooks_with_zero_f_tokens:
-    - 00_skeleton_fullflow.md
-    - 01_strategy_factory/00_overview.md
-    - 01_strategy_factory/B_后半断点清单.md
-    - 02_tdm_decision/00_overview_a_front.md
-    - 02_tdm_decision/pending_rulings.md
-    - 03_promotion_ab/01_paper_four_pieces.md
-    - 03_promotion_ab/02_ab_league.md
-    - 03_promotion_ab/03_promotion_gate.md
-    - 03_promotion_ab/04_lifecycle_fsm.md
-    - 04_knowledge_supply/00_实件化路径总述.md
+    - index.md
+    - m1_data/01_ingest.md
+    - m1_data/02_cleaning.md
     - m1_data/03_ch_warehouse.md
     - m1_data/04_cold_storage.md
+    - m1_data/05_tdm_crossaxis.md
     - m1_data/90_backfill_wave.md
     - m1_data/c351_migration_plan.md
+    - m1_data/index.md
     - m1_data/pending_rulings.md
+    - m1_data/wiring_C_cleaning.md
+    - m1_data/补挖波_20260925/index.md
     - m2_backtest_sim/00_m2_overview.md
+    - m2_backtest_sim/01_auto_runtime.md
+    - m2_backtest_sim/02_backtest.md
     - m2_backtest_sim/03_sim_daily.md
+    - m2_backtest_sim/04_gpu_matrix.md
     - m2_backtest_sim/05_cost_gates.md
     - m2_backtest_sim/06_ibt_backtest.md
     - m2_backtest_sim/07_pf_alloc.md
+    - m2_backtest_sim/index.md
     - m2_backtest_sim/pending_rulings.md
     - m3_governance/01_runtime_guards.md
+    - m3_governance/02_reconcilers.md
     - m3_governance/03_registry_families.md
+    - m3_governance/04_coverage_gaps.md
+    - m3_governance/07_rollback_recovery_infra.md
+    - m3_governance/index.md
+    - m3_governance/pending_rulings.md
+    - m4_ai_layer/01_ai_layer_six_families.md
     - m4_ai_layer/02_capability_lookup.md
     - m4_ai_layer/03_lsg_defense.md
     - m4_ai_layer/04_meta_question_pg.md
+    - m4_ai_layer/index.md
     - m4_ai_layer/接续收口_20260925/01_lsg_dead_paths.md
     - m4_ai_layer/接续收口_20260925/02_evolution_ignition_three_gaps.md
+    - m4_ai_layer/接续收口_20260925/index.md
+    - m4_ai_layer/接续收口_20260925/pending_rulings.md
     - m5_scheduling/01_windows_schedtasks.md
+    - m5_scheduling/02_inrepo_daemons.md
     - m5_scheduling/03_cron_automations.md
     - m5_scheduling/04_silent_failure_modes.md
     - m5_scheduling/05_master_health_table.md
     - m5_scheduling/90_backfill_wave.md
+    - m5_scheduling/index.md
+    - m5_scheduling/s3_simbridge_forensics.md
     - m5_scheduling/补挖波_20260925/00_overview.md
     - m5_scheduling/补挖波_20260925/01_fbl_feedback_loop.md
     - m5_scheduling/补挖波_20260925/02_boot_chain.md
+    - m5_scheduling/补挖波_20260925/03_backup_coldstore.md
     - m5_scheduling/补挖波_20260925/04_perf_watermark.md
     - m5_scheduling/补挖波_20260925/05_order_daemon_wiring.md
+    - m5_scheduling/补挖波_20260925/index.md
+    - m5_scheduling/补挖波_20260925/pending_rulings.md
     - m6_frontend/01_dashboard.md
+    - m6_frontend/02_api_server.md
     - m6_frontend/03_panel_caches.md
     - m6_frontend/90_backfill_wave.md
+    - m6_frontend/index.md
     - m6_frontend/补挖波_20260925/04_reporting.md
     - m6_frontend/补挖波_20260925/05_api_contract_forensics.md
+    - m6_frontend/补挖波_20260925/index.md
     - m7_live_execution/00_m7_overview.md
     - m7_live_execution/01_qmt_bridge.md
+    - m7_live_execution/02_kill_switch.md
     - m7_live_execution/03_position_sell.md
+    - m7_live_execution/04_ex_core_ladder.md
+    - m7_live_execution/05_ex_sor.md
+    - m7_live_execution/06_compliance_gates.md
+    - m7_live_execution/backfill_wave2/90_backfill_wave.md
+    - m7_live_execution/backfill_wave2/pending_rulings.md
+    - m7_live_execution/backfill_wave2/wiring_A_cage.md
+    - m7_live_execution/backfill_wave2/wiring_A_fill_writer.md
+    - m7_live_execution/index.md
     - m8_bottlenecks/00_root_cause_synthesis.md
     - m8_bottlenecks/01_open_wounds.md
+    - m8_bottlenecks/index.md
+    - m8_bottlenecks/补裁证据_20260925/index.md
+    - pending_rulings.md
     f_token_census_per_workbook:
+      00_skeleton/93_true_gap_list_20260926.md: 0
+      00_skeleton/94_declaration_pass_F1.md: 0
+      00_skeleton/95_declaration_pass_F2.md: 0
+      00_skeleton/index.md: 0
       00_skeleton_fullflow.md: 0
       01_strategy_factory/00_overview.md: 0
       01_strategy_factory/01_f13_e0_compute_gate.md: 1
@@ -758,6 +705,7 @@ coverage_matrix:
       01_strategy_factory/b2_f27_e8_assembly_allocation.md: 1
       01_strategy_factory/b2_f28_e9_live_attribution.md: 1
       01_strategy_factory/b2_f29_factory_ledger_birth_cert.md: 1
+      01_strategy_factory/index.md: 0
       02_tdm_decision/00_overview_a_front.md: 0
       02_tdm_decision/10_f43_p2_t_trade_rebalance.md: 1
       02_tdm_decision/11_f44_p3_pyramiding.md: 1
@@ -775,11 +723,14 @@ coverage_matrix:
       02_tdm_decision/f40_l3_stock_selection.md: 1
       02_tdm_decision/f41_l4_execution.md: 1
       02_tdm_decision/f42_p1_position_checkup.md: 1
+      02_tdm_decision/index.md: 0
       02_tdm_decision/pending_rulings.md: 0
+      02_tdm_decision/wiring_F_alloc_ssot.md: 0
       03_promotion_ab/01_paper_four_pieces.md: 0
       03_promotion_ab/02_ab_league.md: 0
       03_promotion_ab/03_promotion_gate.md: 0
       03_promotion_ab/04_lifecycle_fsm.md: 0
+      03_promotion_ab/index.md: 0
       04_knowledge_supply/00_实件化路径总述.md: 0
       04_knowledge_supply/f30_源线行情基本面.md: 1
       04_knowledge_supply/f31_源线另类.md: 1
@@ -788,85 +739,133 @@ coverage_matrix:
       04_knowledge_supply/f34_知识汇聚.md: 1
       04_knowledge_supply/f35_一问一考.md: 1
       04_knowledge_supply/f36_治理横切.md: 1
-      m1_data/01_ingest.md: 2
-      m1_data/02_cleaning.md: 1
+      04_knowledge_supply/index.md: 0
+      05_missing_p0/00_verification_table.md: 0
+      05_missing_p0/01_state_vocabulary_lane.md: 0
+      05_missing_p0/02_data_governance_lineage.md: 0
+      05_missing_p0/03_tdm_null_node_attribution.md: 0
+      05_missing_p0/05_f116_sop_methodology_family.md: 1
+      05_missing_p0/pending_rulings.md: 0
+      05_missing_p0/rb1_meter_attacks.md: 0
+      05_missing_p0/rb2_guard_attacks.md: 0
+      05_missing_p0/wiring_C_confirm_hardening.md: 0
+      05_missing_p0/wiring_E_anchor_register.md: 0
+      05_missing_p0/wiring_E_state_vocab.md: 0
+      05_missing_p0/wiring_H_honest_status.md: 0
+      05_missing_p0/wiring_M_meter_hardening.md: 0
+      05_missing_p0/wiring_N_header_compliance.md: 0
+      05_missing_p0/wiring_V_vocab_merge.md: 0
+      92_chief_handover_card_wave2.md: 0
+      93_wave2_findings.md: 0
+      94_chief_rulings_wave2.md: 0
+      96_final_report_wave2.md: 0
+      index.md: 0
+      m1_data/01_ingest.md: 0
+      m1_data/02_cleaning.md: 0
       m1_data/03_ch_warehouse.md: 0
       m1_data/04_cold_storage.md: 0
-      m1_data/05_tdm_crossaxis.md: 1
+      m1_data/05_tdm_crossaxis.md: 0
       m1_data/90_backfill_wave.md: 0
       m1_data/c351_migration_plan.md: 0
+      m1_data/index.md: 0
       m1_data/pending_rulings.md: 0
+      m1_data/wiring_C_cleaning.md: 0
       m1_data/补挖波_20260925/07_f02_source_onboarding.md: 1
       m1_data/补挖波_20260925/08_f04_cleaning_zero_wiring.md: 1
       m1_data/补挖波_20260925/09_f08_cold_storage_confirm.md: 1
       m1_data/补挖波_20260925/10_f11_xref_counting_drift.md: 1
+      m1_data/补挖波_20260925/index.md: 0
       m2_backtest_sim/00_m2_overview.md: 0
-      m2_backtest_sim/01_auto_runtime.md: 1
-      m2_backtest_sim/02_backtest.md: 1
+      m2_backtest_sim/01_auto_runtime.md: 0
+      m2_backtest_sim/02_backtest.md: 0
       m2_backtest_sim/03_sim_daily.md: 0
-      m2_backtest_sim/04_gpu_matrix.md: 1
+      m2_backtest_sim/04_gpu_matrix.md: 0
       m2_backtest_sim/05_cost_gates.md: 0
       m2_backtest_sim/06_ibt_backtest.md: 0
       m2_backtest_sim/07_pf_alloc.md: 0
+      m2_backtest_sim/index.md: 0
       m2_backtest_sim/pending_rulings.md: 0
       m3_governance/01_runtime_guards.md: 0
-      m3_governance/02_reconcilers.md: 1
+      m3_governance/02_reconcilers.md: 0
       m3_governance/03_registry_families.md: 0
-      m3_governance/04_coverage_gaps.md: 1
-      m4_ai_layer/01_ai_layer_six_families.md: 1
+      m3_governance/04_coverage_gaps.md: 0
+      m3_governance/05_f100_adversarial_validation.md: 1
+      m3_governance/06_f103_clone_guard_code_dedup.md: 1
+      m3_governance/07_rollback_recovery_infra.md: 0
+      m3_governance/index.md: 0
+      m3_governance/pending_rulings.md: 0
+      m4_ai_layer/01_ai_layer_six_families.md: 0
       m4_ai_layer/02_capability_lookup.md: 0
       m4_ai_layer/03_lsg_defense.md: 0
       m4_ai_layer/04_meta_question_pg.md: 0
+      m4_ai_layer/index.md: 0
       m4_ai_layer/接续收口_20260925/01_lsg_dead_paths.md: 0
       m4_ai_layer/接续收口_20260925/02_evolution_ignition_three_gaps.md: 0
       m4_ai_layer/接续收口_20260925/03_f94_f95_construction_orders.md: 2
+      m4_ai_layer/接续收口_20260925/04_f89_local_models_and_embedding.md: 1
+      m4_ai_layer/接续收口_20260925/index.md: 0
+      m4_ai_layer/接续收口_20260925/pending_rulings.md: 0
       m5_scheduling/01_windows_schedtasks.md: 0
-      m5_scheduling/02_inrepo_daemons.md: 1
+      m5_scheduling/02_inrepo_daemons.md: 0
       m5_scheduling/03_cron_automations.md: 0
       m5_scheduling/04_silent_failure_modes.md: 0
       m5_scheduling/05_master_health_table.md: 0
       m5_scheduling/90_backfill_wave.md: 0
+      m5_scheduling/index.md: 0
+      m5_scheduling/s3_simbridge_forensics.md: 0
       m5_scheduling/补挖波_20260925/00_overview.md: 0
       m5_scheduling/补挖波_20260925/01_fbl_feedback_loop.md: 0
       m5_scheduling/补挖波_20260925/02_boot_chain.md: 0
-      m5_scheduling/补挖波_20260925/03_backup_coldstore.md: 1
+      m5_scheduling/补挖波_20260925/03_backup_coldstore.md: 0
       m5_scheduling/补挖波_20260925/04_perf_watermark.md: 0
       m5_scheduling/补挖波_20260925/05_order_daemon_wiring.md: 0
+      m5_scheduling/补挖波_20260925/06_f83_automation_crew.md: 1
+      m5_scheduling/补挖波_20260925/index.md: 0
+      m5_scheduling/补挖波_20260925/pending_rulings.md: 0
       m6_frontend/01_dashboard.md: 0
-      m6_frontend/02_api_server.md: 1
+      m6_frontend/02_api_server.md: 0
       m6_frontend/03_panel_caches.md: 0
       m6_frontend/90_backfill_wave.md: 0
+      m6_frontend/index.md: 0
       m6_frontend/补挖波_20260925/04_reporting.md: 0
       m6_frontend/补挖波_20260925/05_api_contract_forensics.md: 0
+      m6_frontend/补挖波_20260925/index.md: 0
       m7_live_execution/00_m7_overview.md: 0
       m7_live_execution/01_qmt_bridge.md: 0
-      m7_live_execution/02_kill_switch.md: 1
+      m7_live_execution/02_kill_switch.md: 0
       m7_live_execution/03_position_sell.md: 0
-      m7_live_execution/04_ex_core_ladder.md: 1
-      m7_live_execution/05_ex_sor.md: 1
-      m7_live_execution/06_compliance_gates.md: 1
+      m7_live_execution/04_ex_core_ladder.md: 0
+      m7_live_execution/05_ex_sor.md: 0
+      m7_live_execution/06_compliance_gates.md: 0
+      m7_live_execution/backfill_wave2/10_f53_f56_dataflow.md: 2
+      m7_live_execution/backfill_wave2/20_f57_settlement_recon.md: 1
+      m7_live_execution/backfill_wave2/30_f58_execution_cost_feedback.md: 1
+      m7_live_execution/backfill_wave2/40_f63_position_recon.md: 1
+      m7_live_execution/backfill_wave2/90_backfill_wave.md: 0
+      m7_live_execution/backfill_wave2/pending_rulings.md: 0
+      m7_live_execution/backfill_wave2/wiring_A_cage.md: 0
+      m7_live_execution/backfill_wave2/wiring_A_fill_writer.md: 0
+      m7_live_execution/index.md: 0
       m8_bottlenecks/00_root_cause_synthesis.md: 0
       m8_bottlenecks/01_open_wounds.md: 0
+      m8_bottlenecks/index.md: 0
       m8_bottlenecks/补裁证据_20260925/f120_skeleton_fouraxis_evidence.md: 1
       m8_bottlenecks/补裁证据_20260925/f121_research_domains_evidence.md: 1
       m8_bottlenecks/补裁证据_20260925/f122_pipeline_routing_boundary_evidence.md: 1
+      m8_bottlenecks/补裁证据_20260925/index.md: 0
+      pending_rulings.md: 0
     claim_anomalies:
     - *id001
     - *id002
-    - *id003
   totals:
     links: 122
-    covered: 66
-    uncovered: 56
+    covered: 59
+    uncovered: 63
   covered_ids:
   - F02
-  - F03
   - F04
-  - F05
   - F08
-  - F09
   - F11
-  - F12
   - F13
   - F14
   - F15
@@ -907,56 +906,60 @@ coverage_matrix:
   - F50
   - F51
   - F52
-  - F54
-  - F55
-  - F61
-  - F62
-  - F64
-  - F68
-  - F71
-  - F77
-  - F78
-  - F87
+  - F53
+  - F56
+  - F57
+  - F58
+  - F63
+  - F83
+  - F89
   - F94
   - F95
-  - F99
-  - F105
-  - F114
+  - F100
+  - F103
+  - F116
   - F120
   - F121
   - F122
   uncovered_ids:
   - F01
+  - F03
+  - F05
   - F06
   - F07
+  - F09
   - F10
-  - F53
-  - F56
-  - F57
-  - F58
+  - F12
+  - F54
+  - F55
   - F59
   - F60
-  - F63
+  - F61
+  - F62
+  - F64
   - F65
   - F66
   - F67
+  - F68
   - F69
   - F70
+  - F71
   - F72
   - F73
   - F74
   - F75
   - F76
+  - F77
+  - F78
   - F79
   - F80
   - F81
   - F82
-  - F83
   - F84
   - F85
   - F86
+  - F87
   - F88
-  - F89
   - F90
   - F91
   - F92
@@ -964,11 +967,11 @@ coverage_matrix:
   - F96
   - F97
   - F98
-  - F100
+  - F99
   - F101
   - F102
-  - F103
   - F104
+  - F105
   - F106
   - F107
   - F108
@@ -977,8 +980,8 @@ coverage_matrix:
   - F111
   - F112
   - F113
+  - F114
   - F115
-  - F116
   - F117
   - F118
   - F119
@@ -986,8 +989,8 @@ coverage_matrix:
     A:
       declared_range: F01-F12
       row_count: 12
-      covered: 8
-      uncovered: 4
+      covered: 4
+      uncovered: 8
       rows:
       - id: F01
         status: uncovered
@@ -999,20 +1002,18 @@ coverage_matrix:
         - m1_data/补挖波_20260925/07_f02_source_onboarding.md
         workbook_count: 1
       - id: F03
-        status: covered
-        workbooks:
-        - m1_data/01_ingest.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F04
         status: covered
         workbooks:
         - m1_data/补挖波_20260925/08_f04_cleaning_zero_wiring.md
         workbook_count: 1
       - id: F05
-        status: covered
-        workbooks:
-        - m1_data/02_cleaning.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F06
         status: uncovered
         workbooks: []
@@ -1027,10 +1028,9 @@ coverage_matrix:
         - m1_data/补挖波_20260925/09_f08_cold_storage_confirm.md
         workbook_count: 1
       - id: F09
-        status: covered
-        workbooks:
-        - m5_scheduling/补挖波_20260925/03_backup_coldstore.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F10
         status: uncovered
         workbooks: []
@@ -1041,10 +1041,9 @@ coverage_matrix:
         - m1_data/补挖波_20260925/10_f11_xref_counting_drift.md
         workbook_count: 1
       - id: F12
-        status: covered
-        workbooks:
-        - m1_data/05_tdm_crossaxis.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
     B:
       declared_range: F13-F29
       row_count: 17
@@ -1266,40 +1265,42 @@ coverage_matrix:
     E:
       declared_range: F53-F58
       row_count: 6
-      covered: 2
-      uncovered: 4
+      covered: 4
+      uncovered: 2
       rows:
       - id: F53
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - m7_live_execution/backfill_wave2/10_f53_f56_dataflow.md
+        workbook_count: 1
       - id: F54
-        status: covered
-        workbooks:
-        - m7_live_execution/04_ex_core_ladder.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F55
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
+      - id: F56
         status: covered
         workbooks:
-        - m7_live_execution/05_ex_sor.md
+        - m7_live_execution/backfill_wave2/10_f53_f56_dataflow.md
         workbook_count: 1
-      - id: F56
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
       - id: F57
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - m7_live_execution/backfill_wave2/20_f57_settlement_recon.md
+        workbook_count: 1
       - id: F58
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - m7_live_execution/backfill_wave2/30_f58_execution_cost_feedback.md
+        workbook_count: 1
     F:
       declared_range: F59-F63
       row_count: 5
-      covered: 2
-      uncovered: 3
+      covered: 1
+      uncovered: 4
       rows:
       - id: F59
         status: uncovered
@@ -1310,30 +1311,28 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F61
-        status: covered
-        workbooks:
-        - m7_live_execution/02_kill_switch.md
-        workbook_count: 1
-      - id: F62
-        status: covered
-        workbooks:
-        - m7_live_execution/06_compliance_gates.md
-        workbook_count: 1
-      - id: F63
         status: uncovered
         workbooks: []
         workbook_count: 0
+      - id: F62
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
+      - id: F63
+        status: covered
+        workbooks:
+        - m7_live_execution/backfill_wave2/40_f63_position_recon.md
+        workbook_count: 1
     G:
       declared_range: F64-F71
       row_count: 8
-      covered: 3
-      uncovered: 5
+      covered: 0
+      uncovered: 8
       rows:
       - id: F64
-        status: covered
-        workbooks:
-        - m2_backtest_sim/02_backtest.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F65
         status: uncovered
         workbooks: []
@@ -1347,10 +1346,9 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F68
-        status: covered
-        workbooks:
-        - m2_backtest_sim/04_gpu_matrix.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F69
         status: uncovered
         workbooks: []
@@ -1360,10 +1358,9 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F71
-        status: covered
-        workbooks:
-        - m2_backtest_sim/01_auto_runtime.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
     H:
       declared_range: F72-F75
       row_count: 4
@@ -1389,23 +1386,21 @@ coverage_matrix:
     I:
       declared_range: F76-F85
       row_count: 10
-      covered: 2
-      uncovered: 8
+      covered: 1
+      uncovered: 9
       rows:
       - id: F76
         status: uncovered
         workbooks: []
         workbook_count: 0
       - id: F77
-        status: covered
-        workbooks:
-        - m1_data/01_ingest.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F78
-        status: covered
-        workbooks:
-        - m5_scheduling/02_inrepo_daemons.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F79
         status: uncovered
         workbooks: []
@@ -1423,9 +1418,10 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F83
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - m5_scheduling/补挖波_20260925/06_f83_automation_crew.md
+        workbook_count: 1
       - id: F84
         status: uncovered
         workbooks: []
@@ -1445,18 +1441,18 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F87
-        status: covered
-        workbooks:
-        - m4_ai_layer/01_ai_layer_six_families.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F88
         status: uncovered
         workbooks: []
         workbook_count: 0
       - id: F89
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - m4_ai_layer/接续收口_20260925/04_f89_local_models_and_embedding.md
+        workbook_count: 1
       - id: F90
         status: uncovered
         workbooks: []
@@ -1502,14 +1498,14 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F99
-        status: covered
-        workbooks:
-        - m3_governance/02_reconcilers.md
-        workbook_count: 1
-      - id: F100
         status: uncovered
         workbooks: []
         workbook_count: 0
+      - id: F100
+        status: covered
+        workbooks:
+        - m3_governance/05_f100_adversarial_validation.md
+        workbook_count: 1
       - id: F101
         status: uncovered
         workbooks: []
@@ -1519,18 +1515,18 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F103
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - m3_governance/06_f103_clone_guard_code_dedup.md
+        workbook_count: 1
       - id: F104
         status: uncovered
         workbooks: []
         workbook_count: 0
       - id: F105
-        status: covered
-        workbooks:
-        - m3_governance/04_coverage_gaps.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F106
         status: uncovered
         workbooks: []
@@ -1554,8 +1550,8 @@ coverage_matrix:
     L:
       declared_range: F111-F115
       row_count: 5
-      covered: 1
-      uncovered: 4
+      covered: 0
+      uncovered: 5
       rows:
       - id: F111
         status: uncovered
@@ -1570,10 +1566,9 @@ coverage_matrix:
         workbooks: []
         workbook_count: 0
       - id: F114
-        status: covered
-        workbooks:
-        - m6_frontend/02_api_server.md
-        workbook_count: 1
+        status: uncovered
+        workbooks: []
+        workbook_count: 0
       - id: F115
         status: uncovered
         workbooks: []
@@ -1581,13 +1576,14 @@ coverage_matrix:
     M:
       declared_range: F116-F122
       row_count: 7
-      covered: 3
-      uncovered: 4
+      covered: 4
+      uncovered: 3
       rows:
       - id: F116
-        status: uncovered
-        workbooks: []
-        workbook_count: 0
+        status: covered
+        workbooks:
+        - 05_missing_p0/05_f116_sop_methodology_family.md
+        workbook_count: 1
       - id: F117
         status: uncovered
         workbooks: []

@@ -1,4 +1,5 @@
 ---
+created: 2026-09-28
 ttl: task_bound
 volume: 06_f103_clone_guard_code_dedup
 session: st-ailayer-final-20260924
@@ -15,7 +16,8 @@ creation_token: fullflow-w4b-f103-cloneguard-book-20260926
 
 总册口径（`00_skeleton/00_全环节总册.md:178`）：F103 代码质量与克隆守卫｜code_dedup + extract 级克隆无逃生｜上游 F98（GateEngine 运行时门禁）｜下游=施工｜真源=`src/zephyr/gov_code_quality/`、`clone_guard/`｜总册标 built、P2、G7。
 
-**本册覆盖 F103**（机生对账尺认领锚，判据=本行 F 号字面出现；实证面为下列两包，缺一即本行应撤锚）。
+本册覆盖 F103
+> 机生对账尺认领锚，机生对账尺认领锚，判据=本行 F 号字面出现；实证面为下列两包，缺一即本行应撤锚）。
 
 实测真源修正：总册写的 `clone_guard/` 是**裸相对名**，盘上唯一路径=`src/zephyr/clone_guard/`（9 件，编排层）；`src/zephyr/gov_code_quality/` 下只有一层子包 `code_dedup/`（60 件，引擎层）。二者是**同域双层**（编排 vs 引擎），非重复簇。边界：`capability_overlap_gate`（commit 侧消费方）、`create_guard`（新建文件守卫）不属本册，只作下游消费证据引用。
 

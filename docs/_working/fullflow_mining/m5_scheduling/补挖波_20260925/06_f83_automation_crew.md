@@ -1,4 +1,5 @@
 ---
+created: 2026-09-28
 ttl: task_bound
 volume: 06_f83_automation_crew
 session: st-ailayer-final-20260924
@@ -16,7 +17,8 @@ creation_token: fullflow-w4b-f83-automation-crew-book-20260926
 
 总册口径（`00_skeleton/00_全环节总册.md:148`）：F83 自动化班底｜双引擎两班制（治理班×业务班）夜班 9 席+晨报插单｜上游 F76｜下游 全链｜真源=`sop/automation_sop/automation_crew_policy.md`；`docs/_working/cmd_ledger/automation_master_plan.md`｜总册标 built、P2、I 段调度常驻（F76-F85）。
 
-**本册覆盖 F83**（机生对账尺认领锚）。实证面=上列两真源册＋`automation_sop/index.md`＋`cmd_ledger/` 另两件（`automation_plan_discussion.md`、`overnight_decisions_20260924.md`）＋两处机读目录登记。
+本册覆盖 F83
+> 实证面=上列两真源册＋`automation_sop/index.md`＋`cmd_ledger/` 另两件（`automation_plan_discussion.md`、`overnight_decisions_20260924.md`）＋两处机读目录登记。
 
 边界与两处总册问题（本册不自行改总册，见 §六末）：
 1. **段归属判错**：F83 挂在"I 段调度常驻"，但实测本环节**无常驻件**（无 daemon、无计划任务、无 reconciler，§二"自动化触发"向实证为零）——它是**人机排班制度册**，属横切治理面，与 F119 同段更合理。

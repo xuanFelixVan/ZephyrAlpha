@@ -1,4 +1,5 @@
 ---
+created: 2026-09-28
 ttl: task_bound
 volume: 05_f100_adversarial_validation
 session: st-ailayer-final-20260924
@@ -15,7 +16,8 @@ creation_token: fullflow-w4b-f100-redblue-book-20260926
 
 总册口径（`00_skeleton/00_全环节总册.md:175`）：F100 红蓝对抗｜攻击场景 53 + 宪法条款 44｜上游 —（总册未填）｜下游 F98（GateEngine 运行时门禁）｜真源=`src/zephyr/security/adversarial_validation/`｜总册标 built、P2、G4（K 段治理门禁）。
 
-**本册覆盖 F100**（机生对账尺认领锚）。实证面=该包 28 个 .py（ls 实测，§三）＋两册 canonical 注册表（REG-RB-001/002）＋三处外部接线（boot_hooks / git_commit_gateway / gov_audit）。
+本册覆盖 F100
+> 实证面=该包 28 个 .py（ls 实测，§三）＋两册 canonical 注册表（REG-RB-001/002）＋三处外部接线（boot_hooks / git_commit_gateway / gov_audit）。
 
 总册"上游 —"判错：实测上游=F98 门禁达标事件（`boot_hooks.py:752` 注释"门禁达标时跑 TIER_1 对抗"）＋ commit 暂存区（`commit_trigger.detect_formal_files` :90）。属"上游/下游写反"型骨架笔误，回写建议见 §六末。
 

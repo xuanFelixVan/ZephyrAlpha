@@ -1,4 +1,5 @@
 ---
+created: 2026-09-28
 ttl: task_bound
 volume: 05_f116_sop_methodology_family
 session: st-ailayer-final-20260924
@@ -15,7 +16,8 @@ creation_token: fullflow-w4b-f116-sop-family-book-20260926
 
 总册口径（`00_skeleton/00_全环节总册.md:201`）：F116 SOP 方法论族｜九族真源（挖矿/施工/数据操作/回测/治理/图书馆/自动化/运维/审查+TDM 族）｜上游 —｜下游 全链方法论｜真源=`docs/01_policies_and_standards/sop/`（**12 目录实测**：automation/backtest_system/construction/data_audit/data_ops/governance/library/mining/ops/review/trading_decision_map）｜总册标 built、P1、M 段横切（X1）。
 
-**本册覆盖 F116**（机生对账尺认领锚）。实证面=`sop/` 目录族 11 个（ls 实测）＋族内 44 个 .md（逐族计数实测）＋`README.md`（module_id `SOP-INDEX-001`）＋生成器 3 件＋门禁 2 条（GATE-NAMING / GATE-NAMING-AUDIT）。
+本册覆盖 F116
+> 机生对账尺认领锚，机生对账尺认领锚）。实证面=`sop/` 目录族 11 个（ls 实测）＋族内 44 个 .md（逐族计数实测）＋`README.md`（module_id `SOP-INDEX-001`）＋生成器 3 件＋门禁 2 条（GATE-NAMING / GATE-NAMING-AUDIT）。
 
 边界：F116 = **族的组织与真源地图层**（谁归哪族、族内唯一真源是谁、索引与命名是否合规），不含各族方法论本体内容（那是各族格的事，如 F119 自动化计划本体、SOP-A/B/C/D 回测四卷、mining_sop 六向寻路法本身）。与 F106（术语三层翻译）、F97/F98（门禁链）不并。
 

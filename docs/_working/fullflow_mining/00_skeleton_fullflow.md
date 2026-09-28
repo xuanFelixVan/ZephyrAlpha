@@ -1,4 +1,5 @@
 ---
+created: 2026-09-26
 ttl: task_bound
 completes_when: M0 骨架总册被总筹验收并入晨报后，随战役归档
 ---

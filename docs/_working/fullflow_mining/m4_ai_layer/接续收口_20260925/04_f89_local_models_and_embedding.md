@@ -1,4 +1,5 @@
 ---
+created: 2026-09-28
 ttl: task_bound
 volume: 04_f89_local_models_and_embedding
 session: st-ailayer-final-20260924
@@ -16,7 +17,8 @@ creation_token: fullflow-w4b-f89-localmodel-book-20260926
 
 总册口径（`00_skeleton/00_全环节总册.md:159`）：F89 本地模型与嵌入｜ollama+嵌入路由+24/7 排程+reranker｜上游"F89 模型源"（自指，笔误）｜下游 F86/F16｜真源=`data/capability_cards/{ollama_chat,embedding_router,local_model_scheduler,reranker}.yaml`｜总册标 built、P1、A4（J 段 AI 层）。
 
-**本册覆盖 F89**（机生对账尺认领锚）。实证面=真源代码包 `src/zephyr/integration/local_model/`（8 件）＋ `src/zephyr/intelligence/model_evaluation/reranker.py`＋四张 capability_card＋三处外部消费。
+本册覆盖 F89
+> 实证面=真源代码包 `src/zephyr/integration/local_model/`（8 件）＋ `src/zephyr/intelligence/model_evaluation/reranker.py`＋四张 capability_card＋三处外部消费。
 
 **总册真源列判不全**：总册只列了四张卡（画像面），未列**代码真源**。卡自述 module_id=MOD-INF-035（四卡一致），代码落点=本册 §三。回写建议见 §六末。
 

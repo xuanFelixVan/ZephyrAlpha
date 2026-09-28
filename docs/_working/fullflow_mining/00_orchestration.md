@@ -1,4 +1,5 @@
 ---
+created: 2026-09-26
 ttl: task_bound
 ---
 
@@ -89,3 +90,12 @@ Owner 门位晨报清单（勿自动施工）：M7 合规门接线前置（人�
 
 ## 九、包7 收官（2026-09-26 晨）——提速三件套全落
 cb3c13b74f 落地：缓存键移除 staged_tree_sha+head_sha（87 命中/24h 病根），新增 spec_sha（122 门实现面哈希）+manifest_inputs_sha；top15 白名单全数据驱动（24h 实测）；红证三连（旧键他人提交必 miss 病根实证/源码字节篡改判失/注册表篡改判失）+命中绿证；19 测试绿。**提速三件套（包8/9/7）全部落齐**；>1500/24h 与 <15s 判据待 flag ON 后整窗复测（Owner 门位）。
+
+## 十、P3 链最后一关（ORPHAN↔IMPORT 循环互锁）——下一棒处方
+**现状**：0138 死于 ORPHAN-MODULE（derived_dirty_ledger 在 HEAD 无任何 import 引用——gateway 的引用在同一袋，ORPHAN 只读 HEAD）；0139 死于 TRANSLATION-COVERAGE（reconcile_gate_rosters 条目在册唯一且合格、belt 缓存窗口病反复）。
+**破环处方（三选一，按序尝试）**：
+1. **零号引用袋**：先落一个对 HEAD 已存在文件的最小改动+文件尾追加 `def _p3_ledger_probe():\n    from zephyr.gov_enforcement.derived_dirty_ledger import append_intent\n    return append_intent`（永不被调用的惰性探针函数，ORPHAN 的引用扫描认 import 语句即可）——该袋内同时放 ledger 本体（同袋 IMPORT-INTEGRITY 满足：staged 集合里模块存在）。即"引用者+被引者同袋"已经试过失败（0138）……除非 ORPHAN 扫描含 staged——**先实测定论**：读 ORPHAN 门源码确认扫描面（HEAD-only or staged∪HEAD），再定拆法。0138 死于 ORPHAN 而 0083 死于 DEPGRAPH（前置已修）——0083 的原始组合是 gateway+ledger：gateway 当时同袋带 import 仍被判孤儿 ⇒ ORPHAN 疑似 HEAD-only ⇒ 处方1 不成立 ⇒ 转 2。
+2. **测试先行袋**：ledger+tests/governance/audit/test_integrity_head_baseline.py 同袋（test 文件 import ledger；若 ORPHAN 的引用面含 tests/ 则落地后引用成立——先确认 ORPHAN 扫描面含 tests，历史经验 tests 的 import 被 ORPHAN 认账（duckdb 先例=tests 引用+__init__ 双保险））。
+3. **__init__ 登记行袋**（M3-C1b 同款）：src/zephyr/gov_enforcement/__init__.py 尾加惰性 re-export（带 __getattr__ 惰性形态则不触发 IMPORT-INTEGRITY——`def __getattr__(name): if name=="derived_dirty_ledger": import ...`）+ledger 同袋。先例：commit_gates/__init__ 对 _tree_view 的 ORPHAN 登记行。
+**0139**：belt 注册表缓存窗口病——等守护下次纪元换血（任何 commit_gates 代码落地都会触发）后新袋重投；或请 Owner 窗口重启 belt（MQ-5 同型）。
+**注意**：包8 的 DOC-HEADER-SUITE 已在 HEAD，新袋过门时文档头七台走聚合门判定（行为等价已证）。
