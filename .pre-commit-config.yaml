@@ -1121,4 +1121,15 @@ repos:
         verbose: true
         description: "阻断派生产物（域文档/项目树）git add（治本 #ARCH-GOV-BUDGET-001 / I-GOV-1）。派生产物已离库，用 scripts/serve_docs.py 按需生成"
 
+      # ── 模块生命周期转换门（B10-P2 接线，GOV-MOD-003 执行体；S9 簿/99 报告 §十四余量）──
+      - id: gate-module-lifecycle-transition
+        name: "GATE-MODULE-LIFECYCLE"
+        entry: python scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py --staged --warn-only
+        language: system
+        pass_filenames: false
+        files: ^architecture_model/.*\.ya?ml$
+        stages: [pre-commit]
+        verbose: true
+        description: "模块生命周期枚举/转换/退役完整性校验（trae_032 GOV-MOD-003 + PS-VOC-027；--staged own-diff）。warn-only 起步：转硬前置=P3 越界值迁移批清零（32 项存量）+Owner 批准"
+
 
