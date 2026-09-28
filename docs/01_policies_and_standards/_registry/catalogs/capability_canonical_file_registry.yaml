@@ -55488,7 +55488,7 @@ creation_tokens:
   token: f56-bridge-instruction-kernel-bridge-instruction-kernel-20260927
   created_by: st-zchief8-20260928
   capability: f56_bridge_instruction_kernel
-  merge_evaluation: "净零：F56 断腿治本的内核新件，唯一实现无同真源重复"
+  merge_evaluation: "净零：F56 断腿治本的内核新件，唯一实现无同真源重复；已退役(墓碑)：被 B7 实现 qmt_file_bridge_broker 完全取代(判定 commit 78982c4c81，内建 phantom_grace_s/cancel_hold_s 超集)，字节封存 .runtime/commit_queue/blobs 死袋 q-20260927-st-c7-f56-20260927-0001 blob_sha256 索引(总筹裁定 c 葬法，Owner 2026-09-29 批)"
 - file: src/zephyr/backtest/core/batch_window_preflight.py
   token: batch-window-preflight-batch-window-preflight-20260927
   created_by: st-zcloseout-20260928
