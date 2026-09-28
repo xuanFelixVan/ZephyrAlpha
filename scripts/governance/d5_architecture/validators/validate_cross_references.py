@@ -121,7 +121,7 @@ def _load_all_layer_yamls() -> list[tuple[str, dict]]:
                 data = load_yaml(yf)
                 if isinstance(data, dict):
                     results.append((yf.name, data))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 校验器容错采集：单文件坏不阻断全量扫描，告警留痕
                 _warn(f"无法加载 {yf.name}: {e}")
     return results
 
@@ -222,7 +222,10 @@ def check_dim2_invariant_refs() -> None:
 def _build_adr_registry() -> set[str]:
     """_build_adr_registry implementation — 从 KB SQLite 读取 ADR 条目。"""
     adr_ids: set[str] = set()
-    db_path = REPO_ROOT / "data" / "zalpha_metadata.db"
+    # 波 1A.5（2026-09-27）死指针修正：原指 data/zalpha_metadata.db 实测 0 字节 0 表
+    # （KB 系统 2026-07 退役后未复活），活库= data/databases/governance.db——与
+    # detectors/detect_deprecated_adr_references.py 同口径（同表同查询）。
+    db_path = REPO_ROOT / "data" / "databases" / "governance.db"
     if db_path.exists():
         try:
             import sqlite3
@@ -234,7 +237,7 @@ def _build_adr_registry() -> set[str]:
                     adr_ids.add(row[0])
             finally:
                 conn.close()
-        except Exception:
+        except Exception:  # noqa: BLE001 — KB 库缺失/损坏属预期降级：告警后继续 ADR 目录扫描
             _warn(f"KB 数据库读取失败: {db_path}")
     else:
         _warn(f"KB 数据库不存在: {db_path}")
@@ -593,9 +596,7 @@ _ANCHOR_PATTERN = re.compile(
 # 裁定#360(a)（2026-09-19）：归档/历史面免断链豁免——改归=改历史禁修正文，
 # 豁免面登记在 D4 路径检测器 exempt 配置（非 rules/）：
 # scripts/governance/d4_paths/broken_links_exempt.yaml（匹配语义见该文件头注释）。
-_XREF_EXEMPT_YAML = (
-    REPO_ROOT / "scripts" / "governance" / "d4_paths" / "broken_links_exempt.yaml"
-)
+_XREF_EXEMPT_YAML = REPO_ROOT / "scripts" / "governance" / "d4_paths" / "broken_links_exempt.yaml"
 
 
 def _load_xref_exempt_faces() -> list[str]:

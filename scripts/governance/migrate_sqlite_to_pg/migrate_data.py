@@ -107,6 +107,7 @@ SQL_SELECT_IDENTITY_COLS = """
       AND is_identity = 'YES'
     ORDER BY table_name
 """
+SQL_COUNT_SOURCE_TABLES = "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
 SQL_CREATE_MIGRATION_LOG = f"""
     CREATE TABLE IF NOT EXISTS {MIGRATION_LOG_TABLE} (
         migration_id  TEXT PRIMARY KEY,
@@ -394,6 +395,59 @@ def run_migration(sqlite_conn, pg_conn, tables=None, migration_id=MIGRATION_ID, 
     return EXIT_PASS if not failed else EXIT_FINDINGS
 
 
+class SourceProbeError(RuntimeError):
+    """源库探针失败（MSG-EXPOSURE 合规：路径等敏感面走 details 字段，消息只留摘要）。"""
+
+    def __init__(self, msg: str, details: dict | None = None):
+        super().__init__(msg)
+        self.details = details or {}
+
+
+def probe_sqlite_source(path: str) -> int:
+    """读侧探针：返回 SQLite 源库用户表数；空壳/不可读一律抛错（禁静默降级）。
+
+    波 1A.5 死库护栏（2026-09-27）：`data/databases/depgraph.db` 实测 0 字节，而
+    sqlite3 眼里 0 字节文件是"合法空库"——connect 成功、查询返回 0 表。旧流程据此
+    先连 PG 并 SET session_replication_role（禁触发器）再逐表报 no such table，
+    把"空壳源"读成"跑了 0 张表=没出错"。故在**触碰目标库之前**判死。
+
+    Raises:
+        SourceProbeError: 源库不存在 / 0 字节 / sqlite_master 零用户表 / 探测异常
+            （RuntimeError 子类；路径等上下文在 ``.details``，消息文本不含路径）。
+    """
+    if not os.path.exists(path):
+        raise SourceProbeError("SQLite 源库不存在（路径见 details.path）", details={"path": path})
+    size = os.path.getsize(path)
+    if size == 0:
+        raise SourceProbeError(
+            "SQLite 源库为 0 字节空壳（死库，非合法空库；路径见 details.path）",
+            details={"path": path},
+        )
+    uri = Path(path).as_uri() + "?mode=ro"
+    try:
+        conn = sqlite3.connect(uri, uri=True)
+    except sqlite3.Error as e:
+        raise SourceProbeError(
+            "SQLite 源库只读打开失败（路径与原因见 details）",
+            details={"path": path, "error": str(e)},
+        ) from e
+    try:
+        n_tables = int(conn.execute(SQL_COUNT_SOURCE_TABLES).fetchone()[0])
+    except sqlite3.Error as e:
+        raise SourceProbeError(
+            "SQLite 源库探测 sqlite_master 失败（路径与原因见 details）",
+            details={"path": path, "error": str(e)},
+        ) from e
+    finally:
+        conn.close()
+    if n_tables == 0:
+        raise SourceProbeError(
+            "SQLite 源库零用户表（空壳死库；路径与字节数见 details）",
+            details={"path": path, "size": size},
+        )
+    return n_tables
+
+
 def main():
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="SQLite → PostgreSQL 运营数据迁移")
@@ -410,9 +464,13 @@ def main():
         sys.exit(EXIT_FINDINGS)
     env = load_env(ENV_PATH)
 
-    if not os.path.exists(SQLITE_PATH):
-        print(f"ERROR: SQLite 数据库不存在: {SQLITE_PATH}")
+    # 波 1A.5：源库必须是"有表的活库"，否则在任何 PG 动作之前 fail-closed
+    try:
+        _src_tables = probe_sqlite_source(SQLITE_PATH)
+    except RuntimeError as e:
+        print(f"ERROR: 源库预检失败（拒绝触碰目标库）: {e}")
         sys.exit(EXIT_FINDINGS)
+    print(f"[PREFLIGHT] SQLite 源库用户表数: {_src_tables}")
 
     # 2. 连接两个数据库
     # PostgreSQL 连接使用 postgres 超级用户（而非应用用户 zephyr），

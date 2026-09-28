@@ -146,7 +146,7 @@ utilities:
       note: 项目根目录绝对路径
     - symbol: DB_PATH
       type: Path
-      note: data/zalpha_metadata.db
+      note: data/databases/governance.db
     - symbol: find_repo_root
       type: () -> Path
       note: 健壮的根目录定位函数

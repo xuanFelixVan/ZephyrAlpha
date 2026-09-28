@@ -43,11 +43,11 @@ import seed_from_yaml  # noqa: E402
 class _FakeCursor:
     """模拟 psycopg2 cursor：按 SQL 文本路由到内存状态。"""
 
-    def __init__(self, conn: "_FakePGConnection") -> None:
+    def __init__(self, conn: _FakePGConnection) -> None:
         self._conn = conn
         self._result: list = []
 
-    def __enter__(self) -> "_FakeCursor":
+    def __enter__(self) -> _FakeCursor:
         return self
 
     def __exit__(self, *args) -> bool:
@@ -258,3 +258,43 @@ def test_seed_tables_split_consistency():
     # 运营数据核心表必须在迁移清单（防拆分时丢表）
     for core in ("nodes", "edges", "rule_bindings", "governance_audit_logs"):
         assert core in migrate_data.MIGRATION_ORDER
+
+
+# ── 波 1A.5 死库护栏：源库预检必抛（禁静默空跑） ──────────────────────────
+
+
+def test_probe_rejects_zero_byte_source(tmp_path):
+    """0 字节 .db 在 sqlite 眼里"合法"，预检必须判死而非放行。"""
+    dead = tmp_path / "depgraph.db"
+    dead.write_bytes(b"")
+    with pytest.raises(RuntimeError, match="0 字节空壳"):
+        migrate_data.probe_sqlite_source(str(dead))
+
+
+def test_probe_rejects_empty_but_valid_sqlite(tmp_path):
+    """有 sqlite 头但零用户表（空壳活库形态）同样判死。"""
+    empty = tmp_path / "empty_valid.db"
+    conn = sqlite3.connect(empty)
+    conn.execute("CREATE TABLE not_mine (x INTEGER)")  # 先写一行才有合法页头，再删表
+    conn.commit()
+    conn.execute("DROP TABLE not_mine")
+    conn.commit()
+    conn.close()
+    assert empty.stat().st_size > 0
+    with pytest.raises(RuntimeError, match="零用户表"):
+        migrate_data.probe_sqlite_source(str(empty))
+
+
+def test_probe_accepts_source_with_tables(tmp_path):
+    src = tmp_path / "live.db"
+    conn = sqlite3.connect(src)
+    conn.execute("CREATE TABLE nodes (id INTEGER)")
+    conn.execute("INSERT INTO nodes VALUES (1)")
+    conn.commit()
+    conn.close()
+    assert migrate_data.probe_sqlite_source(str(src)) == 1
+
+
+def test_probe_missing_source_raises(tmp_path):
+    with pytest.raises(RuntimeError, match="不存在"):
+        migrate_data.probe_sqlite_source(str(tmp_path / "nope.db"))
