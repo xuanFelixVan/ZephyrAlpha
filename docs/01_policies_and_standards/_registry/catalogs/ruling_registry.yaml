@@ -5801,3 +5801,23 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#418"
+  title: tick 热层滚动 9 个月=研究6+闭卷考试3（契约 v1.5.0；替代 #414 第④条 15 个月口径）
+  date: '2026-09-28'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 下午对话拍板（推荐档），取代 #414 第④条之"15 个月"口径，#414 其余各条不变：
+    ①tick 在库（CH 热层）滚动保留 9 个月=研究 6 + 闭卷考试 3；
+    ②闭卷考试机制：tick 级考试用最近 3 个月滚动切块（约 60 交易日：覆盖月末/季末效应+滑点统计厚度），每季一轮，
+    多轮切块优于单段长留（López de Prado CPCV 思路）；
+    ③依据=专业机构执行校准口径：Kissell 成交量曲线 20-60 交易日滚动窗口、执行模拟器季度重校准（SSRN 2026）、
+    微观结构信号月级衰减；日线永久/分钟线一牛熊周期维持 #413 原口径不变；
+    ④首次执行 202507-202512 六分区经 archiver 归档冷库（逐分区行数 verify 后 DROP，成功 6/失败 0/399.7s），
+    热层余 202601-202609 恰 9 个月 38.67 亿行；冷库累计 tick 202201-202512 共 48 个月完整可 restore；
+    ⑤载体=保留契约 v1.5.0。
+  related_files:
+  - docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
+  related_arch: []
+  related_rulings: ['裁定#414', '裁定#413']
+  superseded_by: null
