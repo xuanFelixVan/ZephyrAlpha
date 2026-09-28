@@ -360,6 +360,7 @@ registered_ids:
     title: "Vibe Coding Session 状态机规则"
     path: "docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-machine.md"
     status: deprecated
+    superseded_by: OPS-VC-004
     deprecated_reason: "文件从未创建（幽灵条目）——2026-05-02 审计发现。Session 状态机操作已合并到 vibe-coding-session-state-runbook.md（OPS-VC-004）"
   - module_id: OPS-VC-004
     title: "AI 与系统事故响应手册"
@@ -374,11 +375,14 @@ registered_ids:
     title: "架构变更操作手册"
     path: "docs/01_policies_and_standards/governance/architecture/architecture-change-playbook.md"
     status: deprecated
+    superseded_by: N/A
     note: "原 operational/architecture/ 于 2026-05-01 删除，内容待归入 governance/architecture/"
   - module_id: MOD-INF-003
     title: "任务卡系统 + 知识库（KMS）蓝图与施工"
     path: "docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md"
-    status: retired
+    status: deprecated
+    superseded_by: MOD-TASK_SYSTEM
+    deprecated_date: "2026-05-06"
     note: "已废弃——内容已被 MOD-TASK_SYSTEM (任务系统) 吸收。物理文件已于2026-05-06标记删除。"
   - module_id: MOD-INF-009
     title: "Task Pipeline — M1-M11 双管线路由"
