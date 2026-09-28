@@ -15,7 +15,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(落库未确认/全部重放失败); SystemExit(2)(参数错)
-# [TESTS] tests/backtest/test_sim_daily_runner.py
+# [TESTS] tests/backtest/test_sim_daily_runner.py; tests/backtest/test_bridge_execute.py
 # [A_module] module_id=MOD-BT-222 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: CLI 接电执行体由管线事件链/排产调用（同 sim 家族
@@ -39,18 +39,31 @@
   python scripts/backtest/sim_daily_runner.py e4-replay [--day 2026-09-22] [--limit 5]
   python scripts/backtest/sim_daily_runner.py report [--day 2026-09-22]
   python scripts/backtest/sim_daily_runner.py settle [--day 2026-09-22]
+  python scripts/backtest/sim_daily_runner.py bridge-execute [--day 2026-09-28] [--orders-file P] [--dry-run]
+
+- bridge-execute：SimBridgeExecute 执行腿（F56 断腿重建，run_sim_bridge_execute_daily.ps1
+  09:35/13:05 调用点）。链路=委托批次文件→解析（坏行跳过计数）→窗口闸→幂等预扫
+  （批次指纹回执存在=SKIP 不重复下单）→正门装配（三闸 OrderManager+R-H5E-1 风控闸，
+  env=sim 恒定 real 恒不接=裁定#338⑤）→经 QMT 文件桥逐单执行→执行回执落盘（文件面）。
+  退出码 0=成功/honest SKIP、4=有单失败、1=环境失败。处方=delivery_report_20260923 §3
+  （限价=桥盘口 买=ask1/卖=bid1、quote mtime>900s 或零盘口=fail-visible 不下单）。
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import dataclasses
+import hashlib
 import importlib.util
+import io
 import json
 import logging
 import math
 import sys
 from datetime import date, datetime, timedelta, timezone
+from datetime import time as dtime
+from decimal import Decimal
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -59,6 +72,7 @@ _ROOT = Path(__file__).resolve().parents[2]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 sys.path.insert(0, str(_ROOT / "scripts" / "backtest"))
+sys.path.insert(0, str(_ROOT / "scripts"))  # start_paper_session 正门装配件（bridge-execute 延迟导入用）
 
 import sim_paper_ledger as _ledger  # noqa: E402  常量/写入器同源复用
 
@@ -864,15 +878,299 @@ def settle(day: str) -> dict:
     return {"settled": settled, "unresolvable": unresolvable, "sweep_before": day}
 
 
+# ══ bridge-execute（F56 断腿重建：SimBridgeExecute 执行腿，处方=delivery_report_20260923 §3）══
+# 语义：读委托批次文件→正门装配（三闸 OrderManager+R-H5E-1 风控闸）→env=sim 文件桥逐单执行→
+# 写执行回执（文件面）。退出码 0=成功/honest SKIP、4=有单失败、1=环境失败（装配/连接失败）。
+_BRIDGE_DATA_DIR = _ROOT / "data" / "runtime" / "qmt_bridge"
+_BRIDGE_ORDERS_DIR = _BRIDGE_DATA_DIR / "orders"
+_BRIDGE_RECEIPTS_DIR = _BRIDGE_DATA_DIR / "receipts"
+_BRIDGE_ENV = "sim"  # env=sim ONLY——real 账户=Owner 门（裁定 #338⑤），装配 enable_real 恒 False
+_BRIDGE_BROKER_ID = "qmt_sim"
+_BRIDGE_STRATEGY_ID = "bridge-execute"
+_BRIDGE_SIGNAL_BATCH_PREFIX = "plan-bridge"  # 幂等键批次号（处方 §3：signal_batch=plan-bridge-<day>）
+_BRIDGE_TRADE_WINDOWS = ((dtime(9, 30), dtime(11, 25)), (dtime(13, 0), dtime(14, 55)))  # 处方 §3 窗口闸
+_BRIDGE_QUOTE_STALE_SECONDS = 900.0  # 处方：quote mtime>900s=fail-visible 不下单（禁旧价）
+_BRIDGE_RISK_STATE_DIR = _ROOT / "data" / "runtime" / "state"  # 与 start_paper_session 同源（kill switch SSoT）
+
+
+class BridgeEnvError(RuntimeError):
+    """桥环境失败（装配/连接失败=非订单语义，退出码 1；订单语义失败=回执 failed 行，退出码 4）。"""
+
+
+def _now_cn() -> datetime:
+    from zoneinfo import ZoneInfo  # noqa: PLC0415  stdlib 延迟导入（本文件延迟面同风格）
+
+    return datetime.now(ZoneInfo("Asia/Shanghai"))
+
+
+def in_bridge_trade_window(now: datetime) -> bool:
+    """纯函数：北京时 now 是否落在桥执行窗口（09:30-11:25 / 13:00-14:55，处方 §3）。"""
+    t = now.time()
+    return any(lo <= t <= hi for lo, hi in _BRIDGE_TRADE_WINDOWS)
+
+
+def parse_orders_csv(text: str) -> tuple[list[dict], list[str]]:
+    """委托批次文件解析（纯函数）：返回 (合法单列表, 坏行原因列表)。
+
+    行格式 ``symbol,action,shares[,limit_px]``（action∈buy/sell，symbol 用桥格式如
+    510300.SH；首条非空行以 symbol 开头=表头跳过）。坏行（列数/非数字/未知动作/
+    非正值）跳过计数不阻断——如实回执，不伪造成功（平台铁律）。
+    """
+    rows: list[dict] = []
+    bad: list[str] = []
+    seen_data_line = False
+    for lineno, raw in enumerate(text.splitlines(), start=1):
+        line = raw.strip()
+        if not line:
+            continue
+        parts = [p.strip() for p in line.split(",")]
+        if not seen_data_line and parts and parts[0].lower() == "symbol":
+            seen_data_line = True  # 表头行
+            continue
+        seen_data_line = True
+        if len(parts) not in (3, 4):
+            bad.append(f"line{lineno}:columns={len(parts)}")
+            continue
+        symbol, action = parts[0], parts[1].lower()
+        if action not in ("buy", "sell"):
+            bad.append(f"line{lineno}:action={parts[1]}")
+            continue
+        try:
+            shares = int(parts[2])
+            limit_px = float(parts[3]) if len(parts) == 4 and parts[3] else None
+        except ValueError:
+            bad.append(f"line{lineno}:non_numeric")
+            continue
+        if not symbol or shares <= 0 or (limit_px is not None and limit_px <= 0):
+            bad.append(f"line{lineno}:non_positive_value")
+            continue
+        rows.append({"symbol": symbol, "action": action, "shares": shares, "limit_px": limit_px})
+    return rows, bad
+
+
+def _bridge_batch_id(day: str, text: str) -> str:
+    """批次指纹（规范化非空行 sha256 前 12 位）——同批文件重跑=同 id，回执存在即幂等 SKIP。"""
+    normalized = "\n".join(ln.strip() for ln in text.splitlines() if ln.strip())
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    return f"bridge-{day}-{digest[:12]}"
+
+
+def _new_paper_order_manager():
+    """正门 OrderManager（F62/M7-06 禁裸构造：C-004 三闸注入，assemble_session 同源装配件）。"""
+    from start_paper_session import _assemble_paper_order_manager  # noqa: PLC0415  延迟导入防重 import 面
+
+    return _assemble_paper_order_manager()
+
+
+def _build_bridge_assembly(order_manager, state_dir: Path | None = None):
+    """env=sim 桥装配（R-H5E-1 风控闸注入=裁定#338⑤；enable_real 恒 False=实盘腿零接）。"""
+    from zephyr.ex_core.adapters.qmt_file_bridge_integration import QmtFileBridgeAssembly  # noqa: PLC0415
+    from zephyr.governance.adapters.risk_validation_bridge import RiskValidationBridge  # noqa: PLC0415
+    from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator  # noqa: PLC0415
+    from zephyr.shared.state_store import JsonStateStore  # noqa: PLC0415
+
+    validator = DefaultRiskValidator(state_store=JsonStateStore(state_dir or _BRIDGE_RISK_STATE_DIR))
+    return QmtFileBridgeAssembly(
+        order_manager,
+        enable_real=False,
+        enable_sim=True,
+        sync_interval=3.0,
+        risk_validator=RiskValidationBridge(validator),
+    )
+
+
+def _connect_bridge_world(order_manager, state_dir: Path | None = None):
+    """装配+连接 env=sim 桥与反向行情桥。返回 (assembly, quote_provider|None)。
+
+    broker 连接失败=BridgeEnvError（退出码 1）；quote 面失败=返回 None
+    （显式限价单仍可执行，盘口推导单逐单 fail-visible——处方 §3 拒单语义）。
+    """
+    assembly = _build_bridge_assembly(order_manager, state_dir=state_dir)
+    results = assembly.connect_all()
+    if not results.get(_BRIDGE_BROKER_ID):
+        assembly.disconnect_all()
+        raise BridgeEnvError("qmt_sim broker connect 失败（终端未就绪/桥目录不可达）")
+    quote_provider = None
+    try:
+        from zephyr.ex_core.adapters.qmt_file_bridge_quote import QmtFileBridgeQuoteProvider  # noqa: PLC0415
+
+        quote_provider = QmtFileBridgeQuoteProvider(env=_BRIDGE_ENV, stale_seconds=_BRIDGE_QUOTE_STALE_SECONDS)
+        quote_provider.connect()
+    except Exception:  # noqa: BLE001  quote 面 fail-visible：坏天气不阻断显式价单
+        quote_provider = None
+    return assembly, quote_provider
+
+
+def _resolve_bridge_limit_px(row: dict, quote_provider) -> tuple[Decimal | None, str]:
+    """委托行→(限价, 价格来源)。显式价直用；否则买=ask1/卖=bid1（处方 §3 禁旧价）；
+    quote 缺失/超龄/零盘口/异常=（None, 原因）——fail-visible 该单不下。"""
+    if row["limit_px"] is not None:
+        return Decimal(str(row["limit_px"])), "explicit"
+    if quote_provider is None:
+        return None, "quote_unavailable"
+    try:
+        if not quote_provider.is_fresh():
+            return None, "quote_stale"
+        snap = quote_provider.get_quote(row["symbol"])
+        if snap is None:
+            return None, "quote_missing"
+        px = snap.ask1 if row["action"] == "buy" else snap.bid1
+    except Exception:  # noqa: BLE001  行情面任何异常都按无价处理（不下单不猜价）
+        return None, "quote_error"
+    if px is None or px <= 0:
+        return None, "quote_zero_spread"
+    return px, "bridge_quote"
+
+
+def _submit_bridge_batch(order_manager, rows: list[dict], quote_provider) -> list[dict]:
+    """逐单 create+submit（幂等键由 OrderManager 批次上下文派生=R-L3；单失败隔离不连坐）。
+
+    返回回执行列表：status∈submitted/skipped_no_price/failed。
+    """
+    from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderType  # noqa: PLC0415
+
+    receipts: list[dict] = []
+    for row in rows:
+        px, px_source = _resolve_bridge_limit_px(row, quote_provider)
+        rec = {
+            "symbol": row["symbol"],
+            "action": row["action"],
+            "shares": row["shares"],
+            "limit_px": str(px) if px is not None else "",
+            "px_source": px_source,
+            "order_id": "",
+            "status": "",
+            "error": "",
+        }
+        if px is None:
+            rec.update(status="skipped_no_price", error=px_source)
+            receipts.append(rec)
+            continue
+        try:
+            order = order_manager.create_order(
+                symbol=row["symbol"],
+                strategy_id=_BRIDGE_STRATEGY_ID,
+                side=OrderSide.BUY if row["action"] == "buy" else OrderSide.SELL,
+                order_type=OrderType.LIMIT,
+                quantity=Decimal(str(row["shares"])),
+                limit_price=px,
+                broker_id=_BRIDGE_BROKER_ID,
+            )
+            rec["order_id"] = str(order_manager.submit_order(order.order_id, _BRIDGE_BROKER_ID))
+            rec["status"] = "submitted"
+        except Exception as exc:  # noqa: BLE001  单失败隔离计数（处方 §3 fail-visible）
+            rec["status"] = "failed"
+            rec["error"] = f"{type(exc).__name__}: {str(exc)[:120]}"
+        receipts.append(rec)
+    return receipts
+
+
+def _write_bridge_receipt(path: Path, day: str, batch_id: str, receipts: list[dict]) -> None:
+    """执行回执落盘（文件面，safe_write CAS 原子写）。回执存在=同批已处理（幂等标记）。"""
+    from zephyr.shared.io.file_utils import safe_write_text  # noqa: PLC0415  热文件写入纪律同源
+
+    buf = io.StringIO()
+    writer = csv.DictWriter(
+        buf,
+        fieldnames=(
+            "day",
+            "batch_id",
+            "submitted_at",
+            "symbol",
+            "action",
+            "shares",
+            "limit_px",
+            "px_source",
+            "order_id",
+            "status",
+            "error",
+        ),
+        lineterminator="\n",  # LF 落盘（safe_write 回读=universal newlines，CRLF 会哈希错位）
+    )
+    submitted_at = _now_utc().strftime("%Y-%m-%d %H:%M:%S")
+    writer.writeheader()
+    for rec in receipts:
+        writer.writerow({"day": day, "batch_id": batch_id, "submitted_at": submitted_at, **rec})
+    path.parent.mkdir(parents=True, exist_ok=True)
+    result = safe_write_text(path, buf.getvalue())
+    if not result.written:
+        # 路径不进错误消息文本（MSG-EXPOSURE 5.99.20：safe_write 审计已留痕路径）
+        raise RuntimeError("执行回执落盘未确认——fail-closed（safe_write 拒写/回读不符，路径见 safe_write 审计）")
+
+
+def bridge_execute(
+    day: str,
+    orders_file: str | None = None,
+    dry_run: bool = False,
+    *,
+    receipts_dir: Path | None = None,
+    state_dir: Path | None = None,
+) -> dict:
+    """bridge-execute 主流程（SimBridgeExecute 执行腿本体，ps1 09:35/13:05 调用点）。
+
+    链路：委托批次文件（默认 data/runtime/qmt_bridge/orders/orders_<day>.csv）→
+    解析（坏行跳过计数）→窗口闸→幂等预扫（批次指纹回执存在=SKIP）→
+    正门装配（三闸 OrderManager+R-H5E-1 env=sim 桥）→逐单执行→执行回执落盘。
+    dry-run 只解析+打印计划，不装配、不下单、不落任何文件。
+
+    退出码（ps1 契约）：0=成功/honest SKIP、4=有单失败、1=环境失败。
+    """
+    path = Path(orders_file) if orders_file else _BRIDGE_ORDERS_DIR / f"orders_{day}.csv"
+    out: dict = {"day": day, "orders_file": str(path), "env": _BRIDGE_ENV, "dry_run": dry_run}
+    if not path.exists():
+        return {**out, "executed": False, "why": "orders_file_missing", "exit_code": 0}
+    text = path.read_text(encoding="utf-8")
+    rows, bad = parse_orders_csv(text)
+    out["bad_rows"] = bad
+    if not rows:
+        return {**out, "executed": False, "why": "no_valid_orders", "exit_code": 0}
+    if not in_bridge_trade_window(_now_cn()):
+        return {**out, "executed": False, "why": "outside_trade_window", "exit_code": 0}
+    batch_id = _bridge_batch_id(day, text)
+    receipt_path = (receipts_dir or _BRIDGE_RECEIPTS_DIR) / f"{batch_id}.csv"
+    out["batch_id"] = batch_id
+    out["receipt"] = str(receipt_path)
+    if receipt_path.exists():
+        # 幂等（处方 §3：同批重跑不二次下单）——回执存在即 SKIP，绝不重复执行
+        return {**out, "executed": False, "why": "already_executed_idempotent_skip", "exit_code": 0}
+    if dry_run:
+        return {**out, "executed": False, "why": "dry_run_no_action", "would_submit": len(rows), "exit_code": 0}
+    order_manager = _new_paper_order_manager()  # 正门装配：禁裸 OrderManager()（F62/M7-06）
+    order_manager.begin_signal_batch(f"{_BRIDGE_SIGNAL_BATCH_PREFIX}-{day}", day)  # R-L3 幂等键批次上下文
+    try:
+        assembly, quote_provider = _connect_bridge_world(order_manager, state_dir=state_dir)
+    except BridgeEnvError as exc:
+        return {**out, "executed": False, "why": "bridge_env_failure", "error": str(exc)[:200], "exit_code": 1}
+    try:
+        receipts = _submit_bridge_batch(order_manager, rows, quote_provider)
+    finally:
+        assembly.disconnect_all()
+    failed = sum(1 for r in receipts if r["status"] != "submitted")
+    _write_bridge_receipt(receipt_path, day, batch_id, receipts)
+    out["submitted"] = len(receipts) - failed
+    out["failed"] = failed
+    out["receipts"] = receipts
+    out["executed"] = True
+    out["exit_code"] = 4 if failed else 0  # 0=全成；4=有单失败（任务契约）
+    return out
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
-    ap = argparse.ArgumentParser(description="模拟盘日链接电执行体（plan桥/E4重放/日报/结算）")
+    ap = argparse.ArgumentParser(description="模拟盘日链接电执行体（plan桥/E4重放/日报/结算/桥执行）")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("plan-bridge", "plan-execute", "e4-replay", "report", "settle"):
+    for name in ("plan-bridge", "plan-execute", "e4-replay", "report", "settle", "bridge-execute"):
         p = sub.add_parser(name)
         p.add_argument("--day", default=date.today().strftime("%Y-%m-%d"))
         if name == "e4-replay":
             p.add_argument("--limit", type=int, default=5, help="首夜控面（自裁 A3），跑通后扩全量")
+        if name == "bridge-execute":
+            p.add_argument(
+                "--orders-file",
+                default=None,
+                help="委托批次文件（默认 data/runtime/qmt_bridge/orders/orders_<day>.csv，行=symbol,action,shares[,limit_px]）",
+            )
+            p.add_argument("--dry-run", action="store_true", help="只解析+打印计划，不装配不下单不落回执")
     args = ap.parse_args()
     day = args.day
     if args.cmd == "plan-bridge":
@@ -883,9 +1181,13 @@ def main() -> None:
         out = plan_execute(day)
     elif args.cmd == "report":
         out = report(day)
+    elif args.cmd == "bridge-execute":
+        out = bridge_execute(day, orders_file=args.orders_file, dry_run=args.dry_run)
     else:
         out = settle(day)
     print(json.dumps(out, ensure_ascii=False, default=str))
+    if args.cmd == "bridge-execute":
+        sys.exit(int(out.get("exit_code", 0)))  # 0=成功/SKIP 4=有单失败 1=环境失败（ps1 契约）
 
 
 if __name__ == "__main__":
