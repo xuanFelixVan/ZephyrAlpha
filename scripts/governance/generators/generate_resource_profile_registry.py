@@ -34,6 +34,78 @@
 # [TESTS] tests/scripts/test_generate_resource_profile_registry.py
 # [A_module] module_id=MOD-RESCHED-PROFILE | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""generate_resource_profile_registry — 资源画像注册表生成器（MOD-RESCHED-PROFILE，B1 库）。
+
+资源排班全景四件套之"库"的产出器（方案 §2.1 十八字段总表/§3 三层地图）。
+把排班真源散落四处（register_*.ps1 / schedule.yaml / drill_schedule.yaml / E0 日历）收敛为
+单一真源：config/resource_profile_registry.yaml（ROOR tier0 REG-RESCHED-001）。
+
+四输入：
+1. scripts/register_*.ps1 —— Windows 计划任务（任务名/触发器/时限/DISABLED 解析）；
+2. src/zephyr/data/config/schedule.yaml —— DataScheduler 21 槽位（cron 原样抽取）；
+3. MANUAL_ENTITY_SEED —— 方案 §3.C 手动/事件盲区实体清单（生成器内种子，时间真源
+   指向方案文档直至有更正式真源；L-8 收编的触发型实体用可选键 `src` 把真源指针钉在
+   自己的触发代码上）；
+4. scripts/governance/meta/drill_schedule.yaml —— 应急演练定期排程（MOD-INF-005 §13.4，
+   L-5 第 4 真源源：第三种日期法 frequency/day_of_month/months 在此归一为标准 cron）。
+
+合并保全（A2）：再生按 task_id 合并——module_id/map_node_id/pool/peak_mem_gb/
+est_duration_min/exclusive_group/status/notes_zh（人复核字段）与 measured.*/samples_uri
+（采样器独占）原样保留；生成器自有字段（resource_class 初值/window_type/window_expr/
+schedule_truth_source/trading_sensitive）刷新。真源消失的旧实体保留并标
+status=orphaned_source（不静默删——删除是 Owner 门位）。
+
+排产链自检臂（2026-09-17 P0，v2 方案 L-2/C-5/C-10——"再生"本身也是排产对象）：
+`--check` 除比对四真源与现盘注册表，还顺带自检整条链是否活着：
+- C-5 闸/E0/闸注册缺席 → `sched_gate_absent`（block；原先整条告警链在闸缺席时
+  静默，本检测刻意放在闸之外——闸无法自证在场）；
+- C-10 周历视图 rw-data.js 内嵌 registry_sha256 ≠ 注册表现盘指纹 →
+  `sched_view_stale`（warn，下次日视图任务自愈）；
+- `--publish-alerts` 经告警桥落 `.runtime/ops_notifications/notifications.jsonl`
+  （发布方 module_id=`resource-schedule-regen`，与闸/视图发布方划界，互不解除）；
+- `--auto-regen` 检出漂移→就地全量再生（"改真源→表跟上"零人工）。
+
+池词表守卫（2026-09-17 P1-a，v2 方案 C-7/裁定 R-C）：pool 的合法值只有 DataScheduler
+APScheduler 执行器字典里真实存在的泳道（实测提取，禁硬编码）。历史 21 实体挂的 `light`
+是幽灵池——daily_crypto 事故自证：不存在的 executor 注册时不报错、触发时 job 被摘除，
+该槽位自上线从未自动跑成过（见 src/zephyr/data/config/schedule.yaml:72 注释）。
+幽灵池上的班次在闸的同窗求和里根本不存在，故 `sched_pool_undeclared`=block 且**写盘前置
+同一守卫**：未知池绝不进注册表（合并保全为此开唯一例外，其余人填字段照旧不丢）。
+
+计划任务实测对账（2026-09-17 P1-a，v2 方案 C-15，第 5 真源=Windows Task Scheduler）：
+`schtasks /query /fo CSV` 只读拉实测任务表，与注册表"在册声明"作差集——
+`sched_task_disabled`（声明 active 系统却禁用）/`sched_task_missing`（有源无任务）/
+`sched_task_orphan`（系统里有而表里没有）/`sched_task_probe_unavailable`（探针降级，
+不静默）。已登记待裁的差集走 SCHED_TASK_EXEMPTIONS 豁免表（stdout 打 EXEMPT 行留痕、
+不落告警板）。本臂只读、永不阻断再生——注册表改不动操作系统的任务表。
+
+演练排程收编（2026-09-17 P4-α，v2 方案 L-5，第 4 真源源）：MOD-INF-005 §13.4 的三类定期
+演练本就是排班表，却用**第三种日期法**（frequency/day_of_month/months）在表外自转。本臂
+把它归一为标准 cron（`parse_drill_entities`），实体 `drill_*` 与三源同权——合并保全、幂等
+再生、孤儿标记、`--check` 漂移比对一视同仁。起跑档 04:00 由 `avoid_backup_window` 对备份
+禁排窗（06:00-10:00 上包络）判避让；无法归一的频率降级为 `window_type=manual` 并出告警，
+**不猜时间**。演练无自动触发器 → status=planned（R-D：未排产不占闸内存和）。
+
+声明↔代码受闸反查（2026-09-17 P4-α，v2 方案 C-11 第二半）：C-15 治的是"ps1 声称↔系统
+实际"，本臂治"注册表申报 trading_sensitive ↔ 执行体代码真问过闸吗"。执行体定位口径
+（`resolve_executor_sources`）：真源直指 .py → ps1 动作链一跳 → data_slot_* 归 DataScheduler
+宿主；源码里找不到闸调用形态（check_gate(/gate_decision(/runtime_e0_decision(）即
+gap。**finding 码 `sched_gate_declaration_gap` 只打 stdout + 再生 notes_zh 幂等标注**——
+闸与告警桥的理由码清单归 P2-a 所有，合流前不入告警板、不计退出码（不自加码造私码）。
+
+用法:
+  python scripts/governance/generators/generate_resource_profile_registry.py            # 生成
+  python scripts/governance/generators/generate_resource_profile_registry.py --check    # 漂移+链健康自检
+  python ... --check --publish-alerts --auto-regen                                       # 计划任务体（每小时）
+  python ... --check --skip-schtasks                                                     # 离线/非 Windows 跳过实测臂
+  python ... --check --schtasks-csv <path>                                               # 实测表以 CSV 注入（对账取证）
+  python scripts/governance/generators/generate_resource_profile_registry.py --output <path>
+
+退出码（register_resource_regen_check_task.ps1 消费契约）：
+  0=健康；2=注册表与真源漂移（--auto-regen 后仍漂移才留 2；池词表守卫阻断写出时也留 2，
+  此时不写盘——宁可带可见漂移也不把幽灵池写进表）；
+  3=无漂移但有健康码（闸缺席/视图过期/幽灵池/实测差集——不触发再生，只告警）。
+
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
@@ -161,77 +233,6 @@
 # I4 --> A4
 # A4 --> O2
 # A4 --> A3
-"""generate_resource_profile_registry — 资源画像注册表生成器（MOD-RESCHED-PROFILE，B1 库）。
-
-资源排班全景四件套之"库"的产出器（方案 §2.1 十八字段总表/§3 三层地图）。
-把排班真源散落四处（register_*.ps1 / schedule.yaml / drill_schedule.yaml / E0 日历）收敛为
-单一真源：config/resource_profile_registry.yaml（ROOR tier0 REG-RESCHED-001）。
-
-四输入：
-1. scripts/register_*.ps1 —— Windows 计划任务（任务名/触发器/时限/DISABLED 解析）；
-2. src/zephyr/data/config/schedule.yaml —— DataScheduler 21 槽位（cron 原样抽取）；
-3. MANUAL_ENTITY_SEED —— 方案 §3.C 手动/事件盲区实体清单（生成器内种子，时间真源
-   指向方案文档直至有更正式真源；L-8 收编的触发型实体用可选键 `src` 把真源指针钉在
-   自己的触发代码上）；
-4. scripts/governance/meta/drill_schedule.yaml —— 应急演练定期排程（MOD-INF-005 §13.4，
-   L-5 第 4 真源源：第三种日期法 frequency/day_of_month/months 在此归一为标准 cron）。
-
-合并保全（A2）：再生按 task_id 合并——module_id/map_node_id/pool/peak_mem_gb/
-est_duration_min/exclusive_group/status/notes_zh（人复核字段）与 measured.*/samples_uri
-（采样器独占）原样保留；生成器自有字段（resource_class 初值/window_type/window_expr/
-schedule_truth_source/trading_sensitive）刷新。真源消失的旧实体保留并标
-status=orphaned_source（不静默删——删除是 Owner 门位）。
-
-排产链自检臂（2026-09-17 P0，v2 方案 L-2/C-5/C-10——"再生"本身也是排产对象）：
-`--check` 除比对四真源与现盘注册表，还顺带自检整条链是否活着：
-- C-5 闸/E0/闸注册缺席 → `sched_gate_absent`（block；原先整条告警链在闸缺席时
-  静默，本检测刻意放在闸之外——闸无法自证在场）；
-- C-10 周历视图 rw-data.js 内嵌 registry_sha256 ≠ 注册表现盘指纹 →
-  `sched_view_stale`（warn，下次日视图任务自愈）；
-- `--publish-alerts` 经告警桥落 `.runtime/ops_notifications/notifications.jsonl`
-  （发布方 module_id=`resource-schedule-regen`，与闸/视图发布方划界，互不解除）；
-- `--auto-regen` 检出漂移→就地全量再生（"改真源→表跟上"零人工）。
-
-池词表守卫（2026-09-17 P1-a，v2 方案 C-7/裁定 R-C）：pool 的合法值只有 DataScheduler
-APScheduler 执行器字典里真实存在的泳道（实测提取，禁硬编码）。历史 21 实体挂的 `light`
-是幽灵池——daily_crypto 事故自证：不存在的 executor 注册时不报错、触发时 job 被摘除，
-该槽位自上线从未自动跑成过（见 src/zephyr/data/config/schedule.yaml:72 注释）。
-幽灵池上的班次在闸的同窗求和里根本不存在，故 `sched_pool_undeclared`=block 且**写盘前置
-同一守卫**：未知池绝不进注册表（合并保全为此开唯一例外，其余人填字段照旧不丢）。
-
-计划任务实测对账（2026-09-17 P1-a，v2 方案 C-15，第 5 真源=Windows Task Scheduler）：
-`schtasks /query /fo CSV` 只读拉实测任务表，与注册表"在册声明"作差集——
-`sched_task_disabled`（声明 active 系统却禁用）/`sched_task_missing`（有源无任务）/
-`sched_task_orphan`（系统里有而表里没有）/`sched_task_probe_unavailable`（探针降级，
-不静默）。已登记待裁的差集走 SCHED_TASK_EXEMPTIONS 豁免表（stdout 打 EXEMPT 行留痕、
-不落告警板）。本臂只读、永不阻断再生——注册表改不动操作系统的任务表。
-
-演练排程收编（2026-09-17 P4-α，v2 方案 L-5，第 4 真源源）：MOD-INF-005 §13.4 的三类定期
-演练本就是排班表，却用**第三种日期法**（frequency/day_of_month/months）在表外自转。本臂
-把它归一为标准 cron（`parse_drill_entities`），实体 `drill_*` 与三源同权——合并保全、幂等
-再生、孤儿标记、`--check` 漂移比对一视同仁。起跑档 04:00 由 `avoid_backup_window` 对备份
-禁排窗（06:00-10:00 上包络）判避让；无法归一的频率降级为 `window_type=manual` 并出告警，
-**不猜时间**。演练无自动触发器 → status=planned（R-D：未排产不占闸内存和）。
-
-声明↔代码受闸反查（2026-09-17 P4-α，v2 方案 C-11 第二半）：C-15 治的是"ps1 声称↔系统
-实际"，本臂治"注册表申报 trading_sensitive ↔ 执行体代码真问过闸吗"。执行体定位口径
-（`resolve_executor_sources`）：真源直指 .py → ps1 动作链一跳 → data_slot_* 归 DataScheduler
-宿主；源码里找不到闸调用形态（check_gate(/gate_decision(/runtime_e0_decision(）即
-gap。**finding 码 `sched_gate_declaration_gap` 只打 stdout + 再生 notes_zh 幂等标注**——
-闸与告警桥的理由码清单归 P2-a 所有，合流前不入告警板、不计退出码（不自加码造私码）。
-
-用法:
-  python scripts/governance/generators/generate_resource_profile_registry.py            # 生成
-  python scripts/governance/generators/generate_resource_profile_registry.py --check    # 漂移+链健康自检
-  python ... --check --publish-alerts --auto-regen                                       # 计划任务体（每小时）
-  python ... --check --skip-schtasks                                                     # 离线/非 Windows 跳过实测臂
-  python ... --check --schtasks-csv <path>                                               # 实测表以 CSV 注入（对账取证）
-  python scripts/governance/generators/generate_resource_profile_registry.py --output <path>
-
-退出码（register_resource_regen_check_task.ps1 消费契约）：
-  0=健康；2=注册表与真源漂移（--auto-regen 后仍漂移才留 2；池词表守卫阻断写出时也留 2，
-  此时不写盘——宁可带可见漂移也不把幽灵池写进表）；
-  3=无漂移但有健康码（闸缺席/视图过期/幽灵池/实测差集——不触发再生，只告警）。
 """
 
 from __future__ import annotations
@@ -256,7 +257,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from zephyr.shared.io.file_utils import safe_write_text, content_sha256  # noqa: E402
+from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -358,8 +359,13 @@ RESOURCE_CLASS_TO_POOL: dict[str, str] = {
 DEFAULT_POOL = "default"
 
 DOW_PS1_TO_CRON = {  # ps1 DaysOfWeek → cron dow（0/7=周日…6=周六，APScheduler/croniter 口径）
-    "Sunday": 0, "Monday": 1, "Tuesday": 2, "Wednesday": 3,
-    "Thursday": 4, "Friday": 5, "Saturday": 6,
+    "Sunday": 0,
+    "Monday": 1,
+    "Tuesday": 2,
+    "Wednesday": 3,
+    "Thursday": 4,
+    "Friday": 5,
+    "Saturday": 6,
 }
 
 # ---------------------------------------------------------------------------
@@ -368,51 +374,314 @@ DOW_PS1_TO_CRON = {  # ps1 DaysOfWeek → cron dow（0/7=周日…6=周六，APS
 # mem=peak_mem_gb 申报初值；grp=exclusive_group；wt=window_type
 # ---------------------------------------------------------------------------
 MANUAL_ENTITY_SEED: list[dict] = [
-    {"task_id": "manual_factory_grid_executor", "cn": "工厂网格执行器（单批最大算力实体，2万配方）", "class": "cpu_heavy", "dmin": 240, "mem": 4.0, "grp": [], "wt": "manual"},
-    {"task_id": "manual_kronos_adapter", "cn": "Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）", "class": "gpu", "dmin": 60, "mem": 6.0, "grp": ["gpu_default"], "wt": "manual"},
-    {"task_id": "manual_kronos_finetune", "cn": "Kronos 两段式微调（tokenizer→predictor，torchrun 单卡；2026-09-16 实测 GPU 峰值~7GB、两段各 0.5-2h，kronos_small bs=128）", "class": "gpu", "dmin": 240, "mem": 8.0, "grp": ["gpu_default"], "wt": "manual"},
-    {"task_id": "manual_run_sentiment_batch", "cn": "情绪批量（2010-2026 全历史，llm_api_local 小时级）", "class": "llm_api_local", "dmin": 180, "mem": 3.0, "grp": ["llm_local"], "wt": "manual"},
-    {"task_id": "manual_run_sft_train", "cn": "SFT 手动重训（GPU 小时级）", "class": "gpu", "dmin": 240, "mem": 8.0, "grp": ["gpu_default"], "wt": "manual"},
-    {"task_id": "manual_convert_gguf", "cn": "GGUF 转换（GPU 手动）", "class": "gpu", "dmin": 60, "mem": 6.0, "grp": ["gpu_default"], "wt": "manual"},
-    {"task_id": "manual_lane_c_agentic_miner", "cn": "Lane-C agentic 挖掘（llm_api_local+cpu，分钟-十几分钟）", "class": "llm_api_local", "dmin": 30, "mem": 2.0, "grp": ["llm_local"], "wt": "manual"},
-    {"task_id": "manual_hypothesis_translator", "cn": "假设翻译器（llm_api_local 手动/夜批）", "class": "llm_api_local", "dmin": 15, "mem": 1.5, "grp": ["llm_local"], "wt": "manual"},
-    {"task_id": "manual_mcts_miner", "cn": "MCTS 挖掘（llm_api_local+cpu 手动）", "class": "llm_api_local", "dmin": 30, "mem": 2.0, "grp": ["llm_local"], "wt": "manual"},
-    {"task_id": "manual_lane_b_miner", "cn": "Lane-B 挖掘（llm_api_local 手动/夜批）", "class": "llm_api_local", "dmin": 20, "mem": 2.0, "grp": ["llm_local"], "wt": "manual"},
-    {"task_id": "manual_factory_grid_anova", "cn": "网格 ANOVA/E4 考尺/DSR 重算（cpu 分钟级手动）", "class": "light", "dmin": 15, "mem": 1.0, "grp": [], "wt": "manual"},
-    {"task_id": "manual_bdpan_tick_backfill", "cn": "bdpan tick 大回补（全手动，与 heavy 槽互不可见）", "class": "network_download", "dmin": 1440, "mem": 4.0, "grp": ["tick_drain", "ch_bulk_write"], "wt": "manual"},
-    {"task_id": "manual_bse_minute_backfill", "cn": "BSE 分钟回补（死线 2026-09-17，手动）", "class": "network_download", "dmin": 720, "mem": 3.0, "grp": ["tick_drain", "ch_bulk_write"], "wt": "manual"},
-    {"task_id": "manual_tick_depth5_backfill", "cn": "tick 五档深度回补（水位 7600 万行，手动）", "class": "network_download", "dmin": 720, "mem": 3.0, "grp": ["tick_drain"], "wt": "manual"},
-    {"task_id": "manual_lof_minute_backfill", "cn": "LOF 分钟回补（手动）", "class": "network_download", "dmin": 360, "mem": 2.0, "grp": ["tick_drain"], "wt": "manual"},
-    {"task_id": "manual_sector880_backfill", "cn": "880 板块分钟回补（手动）", "class": "network_download", "dmin": 240, "mem": 2.0, "grp": ["tick_drain"], "wt": "manual"},
-    {"task_id": "manual_repair_kline_tz", "cn": "K线时区修复月务（15.6亿行 DELETE+回插=全库最大破坏性负载，护照级）", "class": "db_heavy", "dmin": 2880, "mem": 6.0, "grp": ["repair_passport", "ch_bulk_write"], "wt": "manual"},
-    {"task_id": "event_dashboard_backtest_run", "cn": "面板 backtest-run 端点（无 E0 远程重算入口→B2 已纳管）", "class": "cpu_heavy", "dmin": 60, "mem": 2.0, "grp": [], "wt": "event"},
-    {"task_id": "event_dashboard_services_control", "cn": "面板服务编排端点（重启/停止控制面，轻载触发器）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "event"},
-    {"task_id": "dynamic_local_replay", "cn": "local_replay 排水（事件突发 replay_batch，与 tick 回补互斥）", "class": "db_heavy", "dmin": 120, "mem": 3.0, "grp": ["tick_drain"], "wt": "dynamic"},
+    {
+        "task_id": "manual_factory_grid_executor",
+        "cn": "工厂网格执行器（单批最大算力实体，2万配方）",
+        "class": "cpu_heavy",
+        "dmin": 240,
+        "mem": 4.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_kronos_adapter",
+        "cn": "Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）",
+        "class": "gpu",
+        "dmin": 60,
+        "mem": 6.0,
+        "grp": ["gpu_default"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_kronos_finetune",
+        "cn": "Kronos 两段式微调（tokenizer→predictor，torchrun 单卡；2026-09-16 实测 GPU 峰值~7GB、两段各 0.5-2h，kronos_small bs=128）",
+        "class": "gpu",
+        "dmin": 240,
+        "mem": 8.0,
+        "grp": ["gpu_default"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_run_sentiment_batch",
+        "cn": "情绪批量（2010-2026 全历史，llm_api_local 小时级）",
+        "class": "llm_api_local",
+        "dmin": 180,
+        "mem": 3.0,
+        "grp": ["llm_local"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_run_sft_train",
+        "cn": "SFT 手动重训（GPU 小时级）",
+        "class": "gpu",
+        "dmin": 240,
+        "mem": 8.0,
+        "grp": ["gpu_default"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_convert_gguf",
+        "cn": "GGUF 转换（GPU 手动）",
+        "class": "gpu",
+        "dmin": 60,
+        "mem": 6.0,
+        "grp": ["gpu_default"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_lane_c_agentic_miner",
+        "cn": "Lane-C agentic 挖掘（llm_api_local+cpu，分钟-十几分钟）",
+        "class": "llm_api_local",
+        "dmin": 30,
+        "mem": 2.0,
+        "grp": ["llm_local"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_hypothesis_translator",
+        "cn": "假设翻译器（llm_api_local 手动/夜批）",
+        "class": "llm_api_local",
+        "dmin": 15,
+        "mem": 1.5,
+        "grp": ["llm_local"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_mcts_miner",
+        "cn": "MCTS 挖掘（llm_api_local+cpu 手动）",
+        "class": "llm_api_local",
+        "dmin": 30,
+        "mem": 2.0,
+        "grp": ["llm_local"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_lane_b_miner",
+        "cn": "Lane-B 挖掘（llm_api_local 手动/夜批）",
+        "class": "llm_api_local",
+        "dmin": 20,
+        "mem": 2.0,
+        "grp": ["llm_local"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_factory_grid_anova",
+        "cn": "网格 ANOVA/E4 考尺/DSR 重算（cpu 分钟级手动）",
+        "class": "light",
+        "dmin": 15,
+        "mem": 1.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_bdpan_tick_backfill",
+        "cn": "bdpan tick 大回补（全手动，与 heavy 槽互不可见）",
+        "class": "network_download",
+        "dmin": 1440,
+        "mem": 4.0,
+        "grp": ["tick_drain", "ch_bulk_write"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_bse_minute_backfill",
+        "cn": "BSE 分钟回补（死线 2026-09-17，手动）",
+        "class": "network_download",
+        "dmin": 720,
+        "mem": 3.0,
+        "grp": ["tick_drain", "ch_bulk_write"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_tick_depth5_backfill",
+        "cn": "tick 五档深度回补（水位 7600 万行，手动）",
+        "class": "network_download",
+        "dmin": 720,
+        "mem": 3.0,
+        "grp": ["tick_drain"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_lof_minute_backfill",
+        "cn": "LOF 分钟回补（手动）",
+        "class": "network_download",
+        "dmin": 360,
+        "mem": 2.0,
+        "grp": ["tick_drain"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_sector880_backfill",
+        "cn": "880 板块分钟回补（手动）",
+        "class": "network_download",
+        "dmin": 240,
+        "mem": 2.0,
+        "grp": ["tick_drain"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "manual_repair_kline_tz",
+        "cn": "K线时区修复月务（15.6亿行 DELETE+回插=全库最大破坏性负载，护照级）",
+        "class": "db_heavy",
+        "dmin": 2880,
+        "mem": 6.0,
+        "grp": ["repair_passport", "ch_bulk_write"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "event_dashboard_backtest_run",
+        "cn": "面板 backtest-run 端点（无 E0 远程重算入口→B2 已纳管）",
+        "class": "cpu_heavy",
+        "dmin": 60,
+        "mem": 2.0,
+        "grp": [],
+        "wt": "event",
+    },
+    {
+        "task_id": "event_dashboard_services_control",
+        "cn": "面板服务编排端点（重启/停止控制面，轻载触发器）",
+        "class": "light",
+        "dmin": 5,
+        "mem": 0.5,
+        "grp": [],
+        "wt": "event",
+    },
+    {
+        "task_id": "dynamic_local_replay",
+        "cn": "local_replay 排水（事件突发 replay_batch，与 tick 回补互斥）",
+        "class": "db_heavy",
+        "dmin": 120,
+        "mem": 3.0,
+        "grp": ["tick_drain"],
+        "wt": "dynamic",
+    },
     # --- ops_* 补注册批（2026-09-17，st-autolnk-20260917）：Task Scheduler 直注册、
     # 无 register_*.ps1 真源的系统运维任务（I1 解析盲区：dash 命名/非 register 脚本）。
     # 触发时间=实测 StartBoundary 记入备注；window_expr 留空，待立 register ps1 后由真源重抽。
-    {"task_id": "ops_ch_optimize_merge_weekly", "cn": "CH 周度优化合并（实测周六 03:30；ch_bulk_write 族，与 weekend_calibration 03:00+180min 同窗——补注册后冲突闸首次可见）", "class": "db_heavy", "dmin": 120, "mem": 3.0, "grp": ["ch_bulk_write"], "wt": "manual"},
-    {"task_id": "ops_daily_backup", "cn": "全量日备份 backup.ps1 -Mode all（实测每日 06:00；F 盘增量，磁盘 I/O 主导）", "class": "light", "dmin": 60, "mem": 1.0, "grp": [], "wt": "manual"},
-    {"task_id": "ops_weekly_vm_backup", "cn": "CH VM VHDX 周备份 backup_ch_vm.ps1（实测周六 06:00，与日备份同刻叠 I/O）", "class": "light", "dmin": 240, "mem": 1.0, "grp": [], "wt": "manual"},
-    {"task_id": "ops_io_check_monthly", "cn": "磁盘 IO 月检 io_check_task.bat（实测每月 13 日 09:00）", "class": "light", "dmin": 30, "mem": 0.5, "grp": [], "wt": "manual"},
-    {"task_id": "ops_tilib_indicator_backfill_nightly", "cn": "指标库夜间回填 backfill_night.bat（实测每日 02:30；tilib 线资产，cpu+db）", "class": "cpu_heavy", "dmin": 120, "mem": 2.0, "grp": [], "wt": "manual"},
-    {"task_id": "ops_bdpan_tick_watch", "cn": "bdpan tick 兜底回灌守望 bdpan_tick_watch.py（实测每日 08:00；tick_drain 族）", "class": "network_download", "dmin": 30, "mem": 1.0, "grp": ["tick_drain"], "wt": "manual"},
-    {"task_id": "ops_board_index_realtime", "cn": "板块指数实时采集 board_index_realtime.py（实测每日 09:20）", "class": "network_download", "dmin": 15, "mem": 1.0, "grp": [], "wt": "manual"},
-    {"task_id": "ops_sector_snapshot", "cn": "板块快照 run_sector_snapshot.py（实测每日 16:40）", "class": "network_download", "dmin": 15, "mem": 1.0, "grp": [], "wt": "manual"},
-    {"task_id": "ops_qmt_watchdog", "cn": "QMT 行情桥看门狗 qmt_watchdog.ps1（实测每日 08:45）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
-    {"task_id": "ops_ttl_rejudge_daily", "cn": "TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）", "class": "light", "dmin": 15, "mem": 0.5, "grp": [], "wt": "manual"},
-    {"task_id": "ops_ai_wrapper_inject", "cn": "AI Wrapper 注入保活 ensure_ai_wrapper_injection.ps1（实测每日 12:41；开发工具链）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
+    {
+        "task_id": "ops_ch_optimize_merge_weekly",
+        "cn": "CH 周度优化合并（实测周六 03:30；ch_bulk_write 族，与 weekend_calibration 03:00+180min 同窗——补注册后冲突闸首次可见）",
+        "class": "db_heavy",
+        "dmin": 120,
+        "mem": 3.0,
+        "grp": ["ch_bulk_write"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_daily_backup",
+        "cn": "全量日备份 backup.ps1 -Mode all（实测每日 06:00；F 盘增量，磁盘 I/O 主导）",
+        "class": "light",
+        "dmin": 60,
+        "mem": 1.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_weekly_vm_backup",
+        "cn": "CH VM VHDX 周备份 backup_ch_vm.ps1（实测周六 06:00，与日备份同刻叠 I/O）",
+        "class": "light",
+        "dmin": 240,
+        "mem": 1.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_io_check_monthly",
+        "cn": "磁盘 IO 月检 io_check_task.bat（实测每月 13 日 09:00）",
+        "class": "light",
+        "dmin": 30,
+        "mem": 0.5,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_tilib_indicator_backfill_nightly",
+        "cn": "指标库夜间回填 backfill_night.bat（实测每日 02:30；tilib 线资产，cpu+db）",
+        "class": "cpu_heavy",
+        "dmin": 120,
+        "mem": 2.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_bdpan_tick_watch",
+        "cn": "bdpan tick 兜底回灌守望 bdpan_tick_watch.py（实测每日 08:00；tick_drain 族）",
+        "class": "network_download",
+        "dmin": 30,
+        "mem": 1.0,
+        "grp": ["tick_drain"],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_board_index_realtime",
+        "cn": "板块指数实时采集 board_index_realtime.py（实测每日 09:20）",
+        "class": "network_download",
+        "dmin": 15,
+        "mem": 1.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_sector_snapshot",
+        "cn": "板块快照 run_sector_snapshot.py（实测每日 16:40）",
+        "class": "network_download",
+        "dmin": 15,
+        "mem": 1.0,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_qmt_watchdog",
+        "cn": "QMT 行情桥看门狗 qmt_watchdog.ps1（实测每日 08:45）",
+        "class": "light",
+        "dmin": 5,
+        "mem": 0.5,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_ttl_rejudge_daily",
+        "cn": "TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）",
+        "class": "light",
+        "dmin": 15,
+        "mem": 0.5,
+        "grp": [],
+        "wt": "manual",
+    },
+    {
+        "task_id": "ops_ai_wrapper_inject",
+        "cn": "AI Wrapper 注入保活 ensure_ai_wrapper_injection.ps1（实测每日 12:41；开发工具链）",
+        "class": "light",
+        "dmin": 5,
+        "mem": 0.5,
+        "grp": [],
+        "wt": "manual",
+    },
     # --- P3 销项（2026-09-17）：WeeklyRest 建模裁定=ops 一等实体+machine_blackout 组标 ---
     # 关机由 OS 强制（排班拦不住也不需拦）；表侧职责=可见性——晨报/周历在周日 05:00 显示
     # 全机 blackout，重活误排此窗即被错过并由 catchup_guard 语义兜住。wt=manual 不入同刻账。
-    {"task_id": "ops_weekly_rest", "cn": "周休息机守卫 weekly_rest_guard.ps1（实测周日 05:00 关机；全机 blackout 窗，Owner 2026-09-17 全批点头）", "class": "light", "dmin": 10, "mem": 0.1, "grp": ["machine_blackout"], "wt": "manual"},
+    {
+        "task_id": "ops_weekly_rest",
+        "cn": "周休息机守卫 weekly_rest_guard.ps1（实测周日 05:00 关机；全机 blackout 窗，Owner 2026-09-17 全批点头）",
+        "class": "light",
+        "dmin": 10,
+        "mem": 0.1,
+        "grp": ["machine_blackout"],
+        "wt": "manual",
+    },
     # --- L-8 收编（2026-09-17 P4-α）：唯一漏网的"自动触发重活"——新模型入库即 Quick 考试 ---
-    {"task_id": "event_model_exam_trigger", "cn": "触发式考试调度器（ModelDiscovery 见新模型→自动 Quick 考试 39 次推断，经本地 Ollama 吃 GPU）"
-                                                 "｜窗档=event 参照 sch_resource_regen_check 先例（无 cron 可抽，触发即开工）"
-                                                 "｜盘中拒跑守卫自 v2 C-3 起单源引 E0 compute_window_gate"
-                                                 "｜申报=单批 3 模型上限（每模型 Quick 约 6-8min）",
-     "class": "llm_api_local", "dmin": 30, "mem": 2.0, "grp": ["llm_local"], "wt": "event",
-     "src": "src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py"},
+    {
+        "task_id": "event_model_exam_trigger",
+        "cn": "触发式考试调度器（ModelDiscovery 见新模型→自动 Quick 考试 39 次推断，经本地 Ollama 吃 GPU）"
+        "｜窗档=event 参照 sch_resource_regen_check 先例（无 cron 可抽，触发即开工）"
+        "｜盘中拒跑守卫自 v2 C-3 起单源引 E0 compute_window_gate"
+        "｜申报=单批 3 模型上限（每模型 Quick 约 6-8min）",
+        "class": "llm_api_local",
+        "dmin": 30,
+        "mem": 2.0,
+        "grp": ["llm_local"],
+        "wt": "event",
+        "src": "src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py",
+    },
 ]
 
 # schedule.yaml 槽位 → resource_class/申报时长 特化映射（executor 兜底，槽位覆写）
@@ -467,8 +736,13 @@ def _base_entity(task_id: str, cn: str) -> dict:
         # measured 段真源=采样器（本模块只声明骨架，值由 writeback CAS 写入并合并保全）
         # no_sample_reason_zh（2026-09-17 L-1）：零样本实体的如实原因——"取不到实测"是
         # 事实、不是缺陷，编造数值才是缺陷；采样器 [MODIFY-GUARD] 双向同步此子键。
-        "measured": {"peak_mem_gb": None, "p90_duration_min": None, "samples": 0,
-                     "last_at": None, "no_sample_reason_zh": None},
+        "measured": {
+            "peak_mem_gb": None,
+            "p90_duration_min": None,
+            "samples": 0,
+            "last_at": None,
+            "no_sample_reason_zh": None,
+        },
         "samples_uri": f".runtime/logs/resource_samples/{task_id}.jsonl",
         "status": "planned",
         "notes_zh": cn,
@@ -575,11 +849,23 @@ def check_pool_vocabulary(entities: list[dict]) -> list[dict]:
     audit_ns, audit_problems = extract_audit_pool_namespace()
     out: list[dict] = []
     for p in problems:  # 词表读不动也必须能报警（降级不静默）
-        out.append({"reason_code": REASON_POOL_UNDECLARED, "severity": "warn",
-                    "task_ids": ["<executor_vocabulary>"], "detail": p})
+        out.append(
+            {
+                "reason_code": REASON_POOL_UNDECLARED,
+                "severity": "warn",
+                "task_ids": ["<executor_vocabulary>"],
+                "detail": p,
+            }
+        )
     for p in audit_problems:
-        out.append({"reason_code": REASON_POOL_UNDECLARED, "severity": "warn",
-                    "task_ids": ["<audit_pool_vocabulary>"], "detail": p})
+        out.append(
+            {
+                "reason_code": REASON_POOL_UNDECLARED,
+                "severity": "warn",
+                "task_ids": ["<audit_pool_vocabulary>"],
+                "detail": p,
+            }
+        )
     for e in entities:
         if not isinstance(e, dict):
             continue
@@ -590,20 +876,23 @@ def check_pool_vocabulary(entities: list[dict]) -> list[dict]:
         cls = str(e.get("resource_class") or "")
         status = str(e.get("status") or "")
         if pool in audit_ns:
-            detail = (f"{tid}.pool={pool!r} 串用了审计准入的空间维池（{AUDIT_POOL_SOURCE_RELPATH} "
-                      f"{sorted(audit_ns)} 双池）——排班泳道词表={sorted(vocab)}（v2 C-6/C-7）")
+            detail = (
+                f"{tid}.pool={pool!r} 串用了审计准入的空间维池（{AUDIT_POOL_SOURCE_RELPATH} "
+                f"{sorted(audit_ns)} 双池）——排班泳道词表={sorted(vocab)}（v2 C-6/C-7）"
+            )
         else:
-            detail = (f"{tid}.pool={pool!r} 不在执行器真实词表 {sorted(vocab)}"
-                      f"（幽灵池；daily_crypto 事故实证=不存在的 executor 在触发时 job 被摘除，"
-                      f"排班等于没排；class={cls} 应挂 {derive_pool(cls)!r}，v2 C-7/R-C）")
+            detail = (
+                f"{tid}.pool={pool!r} 不在执行器真实词表 {sorted(vocab)}"
+                f"（幽灵池；daily_crypto 事故实证=不存在的 executor 在触发时 job 被摘除，"
+                f"排班等于没排；class={cls} 应挂 {derive_pool(cls)!r}，v2 C-7/R-C）"
+            )
         # 红蓝 BLUE-1 治本（2026-09-17）：retired/orphaned_source 不在任何泳道排班，
         # merge_preserve 又原样保留其旧池——若照 block 则一条退役幽灵池永久锁死全表
         # 再生（rc=2 且 --auto-regen 拒写），只能人手改表解锁。退役=降级 warn 留痕可见。
         sev = "warn" if status in ("retired", "orphaned_source") else "block"
         if sev == "warn":
             detail += f"｜status={status} 不排班→降级 warn 防再生死锁（红蓝 BLUE-1）"
-        out.append({"reason_code": REASON_POOL_UNDECLARED, "severity": sev,
-                    "task_ids": [tid], "detail": detail})
+        out.append({"reason_code": REASON_POOL_UNDECLARED, "severity": sev, "task_ids": [tid], "detail": detail})
     return out
 
 
@@ -616,7 +905,9 @@ _RE_TIME_LIMIT = re.compile(r"-ExecutionTimeLimit\s+\(?New-TimeSpan\s+-Hours\s+(
 _RE_TIME_LIMIT_MIN = re.compile(r"-ExecutionTimeLimit\s+\(?New-TimeSpan\s+-Minutes\s+(\d+)")
 _RE_WEEKLY = re.compile(r"-Weekly(?:\s+-DaysOfWeek\s+([\w,]+))?\s+-At\s+\"?(\d{1,2}:\d{2})\"?")
 _RE_DAILY = re.compile(r"-Daily\s+-At\s+\"?(\d{1,2}:\d{2})\"?")
-_RE_ONCE_REP = re.compile(r"-Once\s+-At\s+\(Get-Date\)|-Once\s+-At\s+\"?(\d{1,2}:\d{2})\"?[\s\S]{0,200}?-RepetitionInterval\s+\(?New-TimeSpan\s+-Minutes\s+(\d+)")
+_RE_ONCE_REP = re.compile(
+    r"-Once\s+-At\s+\(Get-Date\)|-Once\s+-At\s+\"?(\d{1,2}:\d{2})\"?[\s\S]{0,200}?-RepetitionInterval\s+\(?New-TimeSpan\s+-Minutes\s+(\d+)"
+)
 _RE_TIMES_LIST = re.compile(r"-Times\s+@\(([^)]*)\)")
 _RE_ATLOGON = re.compile(r"-AtLogOn\b")
 _RE_TIME_STR = re.compile(r'"(\d{1,2}:\d{2})"')
@@ -635,47 +926,156 @@ _RE_TIME_STR = re.compile(r'"(\d{1,2}:\d{2})"')
 #   其余轻守护与 one-shot 批 → default（8 线程通用池）
 # 新填未知池由 check_pool_vocabulary 阻断再生并出健康码（sched_pool_undeclared）。
 PS1_TASK_OVERRIDES: dict[str, dict] = {
-    "FactoryLaneC": {"class": "cpu_heavy", "pool": "heavy", "mem": 2.0, "dmin": 240, "grp": ["mine_vs_exam"], "status": "active"},
-    "C4Exam": {"class": "cpu_heavy", "pool": "heavy", "mem": 2.0, "dmin": 240, "grp": ["mine_vs_exam"], "status": "active"},
-    "F06Grid": {"class": "cpu_heavy", "pool": "heavy", "mem": 4.0, "dmin": 240, "grp": [], "status": "active",
-                "note": "周六 14:00 批 A census+批 B subspace（factory_grid_executor×2，4ea29d816f；与 C4Exam 同刻——错窗处置待 Owner/资源线裁）"},
-    "OllamaServe": {"class": "llm_api_local", "pool": "heavy", "mem": 8.0, "dmin": 0, "grp": ["gpu_default"], "status": "active", "wt": "event",
-                    "note": "AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留"},
+    "FactoryLaneC": {
+        "class": "cpu_heavy",
+        "pool": "heavy",
+        "mem": 2.0,
+        "dmin": 240,
+        "grp": ["mine_vs_exam"],
+        "status": "active",
+    },
+    "C4Exam": {
+        "class": "cpu_heavy",
+        "pool": "heavy",
+        "mem": 2.0,
+        "dmin": 240,
+        "grp": ["mine_vs_exam"],
+        "status": "active",
+    },
+    "F06Grid": {
+        "class": "cpu_heavy",
+        "pool": "heavy",
+        "mem": 4.0,
+        "dmin": 240,
+        "grp": [],
+        "status": "active",
+        "note": "周六 14:00 批 A census+批 B subspace（factory_grid_executor×2，4ea29d816f；与 C4Exam 同刻——错窗处置待 Owner/资源线裁）",
+    },
+    "OllamaServe": {
+        "class": "llm_api_local",
+        "pool": "heavy",
+        "mem": 8.0,
+        "dmin": 0,
+        "grp": ["gpu_default"],
+        "status": "active",
+        "wt": "event",
+        "note": "AtLogOn 常驻（est=0 表示常驻）；qwen3:8b 显存/内存驻留",
+    },
     "PatternMining": {"class": "light", "pool": "default", "mem": 1.0, "dmin": 5, "status": "active"},
-    "PaperSession": {"class": "light", "pool": "realtime", "mem": 1.0, "dmin": 30, "status": "active",
-                     "note": "09:25 起贯穿盘中时段的模拟盘会话 → realtime 泳道（live_strategy_biz 第 4 通道）"},
+    "PaperSession": {
+        "class": "light",
+        "pool": "realtime",
+        "mem": 1.0,
+        "dmin": 30,
+        "status": "active",
+        "note": "09:25 起贯穿盘中时段的模拟盘会话 → realtime 泳道（live_strategy_biz 第 4 通道）",
+    },
     "IntradayFundFlow": {"class": "light", "pool": "realtime", "mem": 0.5, "dmin": 10, "status": "active"},
-    "IndexMinuteEOD": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 10, "status": "active",
-                       "note": "15:10 收盘后 EOD，不与盘中争抢 → default"},
-    "PostSettlement": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 10, "status": "active",
-                       "note": "工作日 15:30 盘后结算 → default"},
-    "DataScheduler": {"class": "light", "pool": "default", "mem": 1.5, "dmin": 0, "status": "active", "wt": "event",
-                      "note": "AtLogOn 常驻守护（est=0 表示常驻）；21 个 data_slot 的宿主进程——"
-                              "采样器宿主归因锚点=SLOT_HOST_TASK_ID（L-1 pid join）"},
-    "TickSubscriber": {"class": "light", "pool": "realtime", "mem": 1.5, "dmin": 0, "status": "active", "wt": "event",
-                       "note": "AtLogOn 常驻（est=0）；盘中高频 WAL 写 → realtime"},
+    "IndexMinuteEOD": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 10,
+        "status": "active",
+        "note": "15:10 收盘后 EOD，不与盘中争抢 → default",
+    },
+    "PostSettlement": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 10,
+        "status": "active",
+        "note": "工作日 15:30 盘后结算 → default",
+    },
+    "DataScheduler": {
+        "class": "light",
+        "pool": "default",
+        "mem": 1.5,
+        "dmin": 0,
+        "status": "active",
+        "wt": "event",
+        "note": "AtLogOn 常驻守护（est=0 表示常驻）；21 个 data_slot 的宿主进程——"
+        "采样器宿主归因锚点=SLOT_HOST_TASK_ID（L-1 pid join）",
+    },
+    "TickSubscriber": {
+        "class": "light",
+        "pool": "realtime",
+        "mem": 1.5,
+        "dmin": 0,
+        "status": "active",
+        "wt": "event",
+        "note": "AtLogOn 常驻（est=0）；盘中高频 WAL 写 → realtime",
+    },
     "CHHealthProbe": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 1, "status": "active", "wt": "event"},
     "DeadmanSwitch": {"class": "light", "pool": "default", "mem": 0.3, "dmin": 1, "status": "active", "wt": "event"},
     "ProcessReaper": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 1, "status": "active", "wt": "event"},
-    "WorktreeDriftWatchdog": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 1, "status": "active", "wt": "event"},
-    "RSSHub": {"class": "light", "pool": "default", "mem": 0.8, "dmin": 0, "status": "active", "wt": "event", "note": "AtLogOn 常驻（pm2 resurrect，est=0 表示常驻）"},
+    "WorktreeDriftWatchdog": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 1,
+        "status": "active",
+        "wt": "event",
+    },
+    "RSSHub": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.8,
+        "dmin": 0,
+        "status": "active",
+        "wt": "event",
+        "note": "AtLogOn 常驻（pm2 resurrect，est=0 表示常驻）",
+    },
     "TraeCacheCleanup": {"class": "light", "pool": "default", "mem": 0.3, "dmin": 5, "status": "active", "wt": "event"},
-    "TradingWatchdog": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 5, "status": "retired", "wt": "event",
-                        "note": "注册为 DISABLED（裁定 INT-03：Owner 手动启用才生效）——"
-                                "C-15 schtasks 实测臂的现役对账样本（实测确为 Disabled，与退役一致=零告警）"},
-    "ResourceSamplerScan": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 1, "status": "active", "wt": "event",
-                            "note": "AtLogOn+PT10M one-shot 采样扫描（2026-09-16 生产接线：register_resource_sampler_scan_task.ps1）"},
-    "ResourceSamplerWriteback": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 1, "status": "active",
-                                 "note": "日 05:40 measured 回写（git 跟踪文件日更一次，derived-sync 例行吸收）"},
+    "TradingWatchdog": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 5,
+        "status": "retired",
+        "wt": "event",
+        "note": "注册为 DISABLED（裁定 INT-03：Owner 手动启用才生效）——"
+        "C-15 schtasks 实测臂的现役对账样本（实测确为 Disabled，与退役一致=零告警）",
+    },
+    "ResourceSamplerScan": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 1,
+        "status": "active",
+        "wt": "event",
+        "note": "AtLogOn+PT10M one-shot 采样扫描（2026-09-16 生产接线：register_resource_sampler_scan_task.ps1）",
+    },
+    "ResourceSamplerWriteback": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 1,
+        "status": "active",
+        "note": "日 05:40 measured 回写（git 跟踪文件日更一次，derived-sync 例行吸收）",
+    },
     # 2026-09-17 P0（v2 方案 L-2 再生排产化）：把"再生"本身排进班次——两个新任务
     # 由本生成器自己的 ps1 真源源物化为实体（吃自己狗粮，active 计入闸内存求和）
-    "ResourceRegenCheck": {"class": "light", "pool": "default", "mem": 0.5, "dmin": 2, "status": "active", "wt": "event",
-                           "note": "每小时排产自检+漂移就地再生+C-5/C-10/C-7/C-15 告警发布（register_resource_regen_check_task.ps1；"
-                                   "cadence=注册后 Post-Registration 补 PT1H 重复，ps1 静态文本无 cron 可抽→event，"
-                                   "与 ResourceSamplerScan 同型先例）"},
-    "ResourceViewPublish": {"class": "light", "pool": "default", "mem": 1.0, "dmin": 5, "status": "active",
-                            "note": "日 05:50 周历重渲+闸 findings 告警发布（register_resource_view_publish_task.ps1；"
-                                    "排在采样器回写 05:40 之后——视图吃 measured 回写结果）"},
+    "ResourceRegenCheck": {
+        "class": "light",
+        "pool": "default",
+        "mem": 0.5,
+        "dmin": 2,
+        "status": "active",
+        "wt": "event",
+        "note": "每小时排产自检+漂移就地再生+C-5/C-10/C-7/C-15 告警发布（register_resource_regen_check_task.ps1；"
+        "cadence=注册后 Post-Registration 补 PT1H 重复，ps1 静态文本无 cron 可抽→event，"
+        "与 ResourceSamplerScan 同型先例）",
+    },
+    "ResourceViewPublish": {
+        "class": "light",
+        "pool": "default",
+        "mem": 1.0,
+        "dmin": 5,
+        "status": "active",
+        "note": "日 05:50 周历重渲+闸 findings 告警发布（register_resource_view_publish_task.ps1；"
+        "排在采样器回写 05:40 之后——视图吃 measured 回写结果）",
+    },
 }
 
 
@@ -715,8 +1115,9 @@ def parse_ps1_entities(ps1_paths: list[Path] | None = None) -> tuple[list[dict],
             continue
         time_limit_h = _RE_TIME_LIMIT.search(code)
         time_limit_m = _RE_TIME_LIMIT_MIN.search(code)
-        limit_min = int(time_limit_h.group(1)) * 60 if time_limit_h else (
-            int(time_limit_m.group(1)) if time_limit_m else None)
+        limit_min = (
+            int(time_limit_h.group(1)) * 60 if time_limit_h else (int(time_limit_m.group(1)) if time_limit_m else None)
+        )
         for name in task_names:
             short = name.replace("ZephyrAlpha_", "", 1)
             tid = "sch_" + _snake(short)
@@ -770,7 +1171,7 @@ def _extract_trigger_exprs(code: str, task_name: str) -> list[str]:
             if s > m.end() and s < end:
                 end = s
                 break
-        segments.append(code[m.start(): end])
+        segments.append(code[m.start() : end])
     segments.append(code)
     for seg in segments:
         m_times = _RE_TIMES_LIST.search(seg)
@@ -843,8 +1244,8 @@ SCHED_TASK_EXEMPTIONS: dict[str, dict] = {
     "ZephyrAlpha_C4Exam_Full0916": {
         "reason_code": REASON_TASK_ORPHAN,
         "reason_zh": "2026-09-16 全量重跑实验遗留（每日 17:30 调 run_c4_exam.ps1 全量），"
-                     "禁用/删除/转正=Owner 门位（docs/_working/automation/"
-                     "20260917_automation_linkage_plan_v1.md §待裁-4）",
+        "禁用/删除/转正=Owner 门位（docs/_working/automation/"
+        "20260917_automation_linkage_plan_v1.md §待裁-4）",
     },
     "ZephyrAlpha_C4Exam_OneShot0915": {
         "reason_code": REASON_TASK_ORPHAN,
@@ -853,7 +1254,7 @@ SCHED_TASK_EXEMPTIONS: dict[str, dict] = {
     "ZephyrAlpha_FactoryLaneC_Full0916": {
         "reason_code": REASON_TASK_ORPHAN,
         "reason_zh": "2026-09-16 全量重跑实验遗留（每日 15:35 调 run_factory_lane_c.ps1 全量），"
-                     "与正式 sch_factory_lane_c 重复跑同一条线，同上 §待裁-4",
+        "与正式 sch_factory_lane_c 重复跑同一条线，同上 §待裁-4",
     },
     "ZephyrAlpha_FactoryLaneC_OneShot0915": {
         "reason_code": REASON_TASK_ORPHAN,
@@ -866,10 +1267,10 @@ SCHED_TASK_EXEMPTIONS: dict[str, dict] = {
     "ZephyrAlpha_NightlySentiment": {
         "reason_code": REASON_TASK_ORPHAN,
         "reason_zh": "OS 侧已退役残余（实测 Disabled）：该 job 的现役真源是 schedule.yaml:169"
-                     "（cron 20 8 * * *，executor default），由数据调度器进程内触发，注册表已以"
-                     " data_slot_nightly_sentiment(active) 在册。不收编进别名（否则 active 实体挂"
-                     "Disabled OS 名=误报纸面班次，见 OPS_TASK_ALIASES 注释），删除本条 OS 任务即"
-                     "可彻底销项——删任务=Owner 门位，本会话禁改活任务",
+        "（cron 20 8 * * *，executor default），由数据调度器进程内触发，注册表已以"
+        " data_slot_nightly_sentiment(active) 在册。不收编进别名（否则 active 实体挂"
+        "Disabled OS 名=误报纸面班次，见 OPS_TASK_ALIASES 注释），删除本条 OS 任务即"
+        "可彻底销项——删任务=Owner 门位，本会话禁改活任务",
     },
     # （ZephyrAlpha_WeeklyRest 豁免已销项：2026-09-17 P3 收尾批落建模裁定——ops_weekly_rest
     #  一等实体 + machine_blackout 组标 + OPS_TASK_ALIASES 收编，见 ops 种子区注释。）
@@ -927,12 +1328,13 @@ def query_schtasks(timeout_s: float = 60.0) -> tuple[dict[str, list[str]], list[
     （C-15 的意义就是"有人在替排班表看门"，看门人缺席必须吭声）。
     """
     cmd = [
-        "powershell", "-NoProfile", "-Command",
+        "powershell",
+        "-NoProfile",
+        "-Command",
         "[Console]::OutputEncoding=[System.Text.Encoding]::UTF8; schtasks /query /fo CSV",
     ]
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=timeout_s)
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout_s)
     except FileNotFoundError:
         return {}, ["schtasks_probe_unavailable: 无 powershell 可执行（非 Windows 环境）"]
     except Exception as exc:  # noqa: BLE001 — 探针任何异常都必须降级成健康码，不得抛崩计划任务
@@ -999,40 +1401,62 @@ def reconcile_sched_tasks(
         """_emit implementation."""
         ex = exemptions.get(name)
         if ex and str(ex.get("reason_code") or code) == code:
-            exempted.append({"task_name": name, "task_id": tid, "reason_code": code,
-                             "reason_zh": str(ex.get("reason_zh") or "")})
+            exempted.append(
+                {"task_name": name, "task_id": tid, "reason_code": code, "reason_zh": str(ex.get("reason_zh") or "")}
+            )
             return
-        findings.append({"reason_code": code, "severity": "warn",
-                         "task_ids": [tid if tid in by_tid else name], "detail": detail})
+        findings.append(
+            {"reason_code": code, "severity": "warn", "task_ids": [tid if tid in by_tid else name], "detail": detail}
+        )
 
     for name, tid in sorted(declared.items()):
         ent = by_tid.get(tid)
         if ent is None:  # 声称在册但实体不在表里=表自己漏了（真源消失/命名漂移）
-            _emit(REASON_TASK_MISSING, name, tid,
-                  f"{name}: 真源声称实体 {tid} 不在注册表（再生未物化，须查 _RE_TASKNAME 命名口径）")
+            _emit(
+                REASON_TASK_MISSING,
+                name,
+                tid,
+                f"{name}: 真源声称实体 {tid} 不在注册表（再生未物化，须查 _RE_TASKNAME 命名口径）",
+            )
             continue
         status = str(ent.get("status") or "")
         if status not in ("active",):
             if status in ("retired", "orphaned_source") and name in live and not _disabled(_status_of(name)):
-                _emit(REASON_TASK_ORPHAN, name, tid,
-                      f"{name}: 注册表 status={status}（退役/真源消失）但系统实测 {sorted(_status_of(name))} 仍在跑"
-                      "——纸面退役、现实在跑，闸与求和都看不见它")
+                _emit(
+                    REASON_TASK_ORPHAN,
+                    name,
+                    tid,
+                    f"{name}: 注册表 status={status}（退役/真源消失）但系统实测 {sorted(_status_of(name))} 仍在跑"
+                    "——纸面退役、现实在跑，闸与求和都看不见它",
+                )
             continue
         if name not in live:
-            _emit(REASON_TASK_MISSING, name, tid,
-                  f"{name}: 注册表 active（真源={ent.get('schedule_truth_source')}）但 Task Scheduler 查无此任务"
-                  "——排了班却没开门，daily_crypto 型纸面排班（v2 C-15）")
+            _emit(
+                REASON_TASK_MISSING,
+                name,
+                tid,
+                f"{name}: 注册表 active（真源={ent.get('schedule_truth_source')}）但 Task Scheduler 查无此任务"
+                "——排了班却没开门，daily_crypto 型纸面排班（v2 C-15）",
+            )
             continue
         if _disabled(_status_of(name)):
-            _emit(REASON_TASK_DISABLED, name, tid,
-                  f"{name}: 注册表 active 但系统实测 Disabled——班次存在却永不触发（v2 C-15）")
+            _emit(
+                REASON_TASK_DISABLED,
+                name,
+                tid,
+                f"{name}: 注册表 active 但系统实测 Disabled——班次存在却永不触发（v2 C-15）",
+            )
     known = set(declared)
     for name in sorted(live):
         if not name.startswith(ZA_TASK_PREFIXES) or name in known:
             continue
-        _emit(REASON_TASK_ORPHAN, name, name,
-              f"{name}: 系统实测在注册（状态 {sorted(live[name])}）但注册表不认识它"
-              "——无 ps1 真源/无别名收编，资源画像与冲突闸双双失明（v2 C-15）")
+        _emit(
+            REASON_TASK_ORPHAN,
+            name,
+            name,
+            f"{name}: 系统实测在注册（状态 {sorted(live[name])}）但注册表不认识它"
+            "——无 ps1 真源/无别名收编，资源画像与冲突闸双双失明（v2 C-15）",
+        )
     return findings, exempted
 
 
@@ -1066,7 +1490,11 @@ def _aps_dow_to_standard(field: str) -> str:
             lo, hi = tok.split("-", 1)
             lo_i, hi_i = int(lo), int(hi)
             if hi_i < lo_i:  # 环周范围（如 5-1=周六..周一）：先展开再平移
-                seq = [d % 8 for d in range(lo_i, lo_i + 7)] if False else [d % 7 for d in list(range(lo_i, 7)) + list(range(0, hi_i + 1))]
+                seq = (
+                    [d % 8 for d in range(lo_i, lo_i + 7)]
+                    if False
+                    else [d % 7 for d in list(range(lo_i, 7)) + list(range(0, hi_i + 1))]
+                )
             else:
                 seq = list(range(lo_i, hi_i + 1))
             return sorted({str(shift_int(d)) for d in seq}, key=int)
@@ -1234,8 +1662,7 @@ def parse_drill_entities(path: Path | None = None) -> tuple[list[dict], list[str
         cron, why = normalize_drill_cron(spec, start)
         if why:
             warnings.append(f"drill_window_unnormalized {key}: {why}→窗档降级 manual（不猜时间）")
-        ent = _base_entity("drill_" + _snake(re.sub(r"_drill$", "", str(key))),
-                           str(spec.get("type") or key)[:40])
+        ent = _base_entity("drill_" + _snake(re.sub(r"_drill$", "", str(key))), str(spec.get("type") or key)[:40])
         ent["schedule_truth_source"] = DRILL_SCHEDULE_RELPATH
         ent["resource_class"] = cls
         ent["pool"] = derive_pool(cls, ov.get("pool"))
@@ -1408,13 +1835,14 @@ def check_gate_declaration_gaps(entities: list[dict]) -> tuple[list[dict], list[
         if hits:
             ledger.append({"task_id": tid, "verdict": "gated", "how": how, "sources": hits})
             continue
-        detail = (f"{tid}: 注册表申报 trading_sensitive=True（受 FAC-E0 算力窗闸管辖），"
-                  f"但执行体源码未见闸调用（{'; '.join(srcs[:4])}"
-                  + (f"，另有 {len(unreadable)} 个文件读不动" if unreadable else "")
-                  + f"；解析口径={how}）——纸面受管、裸奔执行（v2 C-11，lane_b 型）。"
-                  "修法=执行体开工前问 check_gate()，或如实改申报（trading_sensitive=false 须给理由）")
-        findings.append({"reason_code": GAP_REASON_CODE, "severity": "warn",
-                         "task_ids": [tid], "detail": detail})
+        detail = (
+            f"{tid}: 注册表申报 trading_sensitive=True（受 FAC-E0 算力窗闸管辖），"
+            f"但执行体源码未见闸调用（{'; '.join(srcs[:4])}"
+            + (f"，另有 {len(unreadable)} 个文件读不动" if unreadable else "")
+            + f"；解析口径={how}）——纸面受管、裸奔执行（v2 C-11，lane_b 型）。"
+            "修法=执行体开工前问 check_gate()，或如实改申报（trading_sensitive=false 须给理由）"
+        )
+        findings.append({"reason_code": GAP_REASON_CODE, "severity": "warn", "task_ids": [tid], "detail": detail})
         ledger.append({"task_id": tid, "verdict": "gap", "how": how, "sources": srcs})
     return findings, ledger
 
@@ -1452,8 +1880,10 @@ def report_gate_declaration_gaps(entities: list[dict]) -> int:
         print(f"GAP[{f['reason_code']}][{f['severity']}]: {f['detail']}")
     gated = sum(1 for l in ledger if l.get("verdict") == "gated")
     unresolved = sum(1 for l in ledger if l.get("verdict") == "unresolved")
-    print(f"GAP-AUDIT: active 且申报受闸 {len(ledger)} 实体 → 代码实闸 {gated} / 声明缺口 {len(findings)}"
-          f" / 反查不可达 {unresolved}（{GAP_REASON_CODE} 未入闸与告警桥清单：不计退出码，待主会话合流）")
+    print(
+        f"GAP-AUDIT: active 且申报受闸 {len(ledger)} 实体 → 代码实闸 {gated} / 声明缺口 {len(findings)}"
+        f" / 反查不可达 {unresolved}（{GAP_REASON_CODE} 未入闸与告警桥清单：不计退出码，待主会话合流）"
+    )
     return len(findings)
 
 
@@ -1461,8 +1891,17 @@ def report_gate_declaration_gaps(entities: list[dict]) -> int:
 # ④ 合并保全 + 落盘
 # ---------------------------------------------------------------------------
 # 人填字段（再生保全；消费者=对齐机制/闸/图）+采样器独占字段
-_HUMAN_FIELDS = ("module_id", "map_node_id", "pool", "peak_mem_gb", "est_duration_min",
-                 "exclusive_group", "status", "notes_zh", "co_start_intent")
+_HUMAN_FIELDS = (
+    "module_id",
+    "map_node_id",
+    "pool",
+    "peak_mem_gb",
+    "est_duration_min",
+    "exclusive_group",
+    "status",
+    "notes_zh",
+    "co_start_intent",
+)
 _SAMPLER_FIELDS = ("measured", "samples_uri")
 
 
@@ -1557,10 +1996,10 @@ def build_registry(existing_path: Path | None = None, output_path: Path | None =
             "source": EXECUTOR_SOURCE_RELPATH,
             "audit_namespace_excluded": sorted(audit_ns),
             "note": "pool=执行器真实泳道词表（实测提取，禁硬编码）；值不在 lanes 内即幽灵池"
-                    "（daily_crypto 事故：不存在的 executor 在触发时被 APScheduler 摘 job，"
-                    "任务从未自动跑成）——check 臂 sched_pool_undeclared 并阻断再生"
-                    "（v2 方案 C-7/裁定 R-C）。audit_namespace_excluded=空间维池（回答"
-                    "'落到哪台算力'），与时间维泳道同名不同物，注册表挂它=串维度（C-6）",
+            "（daily_crypto 事故：不存在的 executor 在触发时被 APScheduler 摘 job，"
+            "任务从未自动跑成）——check 臂 sched_pool_undeclared 并阻断再生"
+            "（v2 方案 C-7/裁定 R-C）。audit_namespace_excluded=空间维池（回答"
+            "'落到哪台算力'），与时间维泳道同名不同物，注册表挂它=串维度（C-6）",
         },
         "extraction_warnings": sorted(
             list(w1) + list(w2) + list(w3) + list(w4) + list(vocab_problems) + list(audit_problems)
@@ -1650,8 +2089,7 @@ def check_gate_availability(repo_root: Path | None = None) -> list[str]:
     entry: dict | None = None
     try:
         data = yaml.safe_load((root / GATE_REGISTRATION_RELPATH).read_text(encoding="utf-8")) or {}
-        hits = [g for g in (data.get("gates") or [])
-                if isinstance(g, dict) and str(g.get("gate_id")) == GATE_ID]
+        hits = [g for g in (data.get("gates") or []) if isinstance(g, dict) and str(g.get("gate_id")) == GATE_ID]
         if not hits:
             problems.append(f"gate_unregistered: {GATE_ID} 不在 {GATE_REGISTRATION_RELPATH}（gateway 永不加载）")
         else:
@@ -1702,8 +2140,7 @@ def check_view_freshness(view_path: Path | str | None = None, registry_path: Pat
     current = registry_content_sha(rp)
     if m.group(1) != current:
         return [
-            f"view_stale: 视图内嵌 {VIEW_SHA_KEY}={m.group(1)} 现盘注册表={current}"
-            "（待日视图发布任务重渲，24h 内自愈）"
+            f"view_stale: 视图内嵌 {VIEW_SHA_KEY}={m.group(1)} 现盘注册表={current}（待日视图发布任务重渲，24h 内自愈）"
         ]
     return []
 
@@ -1715,10 +2152,13 @@ def to_findings(raw: list[dict]) -> list[SimpleNamespace]:
     唯一能开口的时候），告警桥只 getattr 取值，SimpleNamespace 即契约。
     """
     return [
-        SimpleNamespace(reason_code=str(f.get("reason_code")),
-                        severity=str(f.get("severity") or "warn"),
-                        task_ids=list(f.get("task_ids") or []),
-                        detail=str(f.get("detail") or ""), at=None)
+        SimpleNamespace(
+            reason_code=str(f.get("reason_code")),
+            severity=str(f.get("severity") or "warn"),
+            task_ids=list(f.get("task_ids") or []),
+            detail=str(f.get("detail") or ""),
+            at=None,
+        )
         for f in raw or []
     ]
 
@@ -1739,22 +2179,33 @@ def collect_check_findings(
     findings: list[SimpleNamespace] = []
     for p in gate_problems:
         findings.append(
-            SimpleNamespace(reason_code=REASON_GATE_ABSENT, severity="block",
-                            task_ids=["<schedule_chain>"], detail=f"排班闸缺席/不可解析：{p}", at=None)
+            SimpleNamespace(
+                reason_code=REASON_GATE_ABSENT,
+                severity="block",
+                task_ids=["<schedule_chain>"],
+                detail=f"排班闸缺席/不可解析：{p}",
+                at=None,
+            )
         )
     for p in view_problems:
         findings.append(
-            SimpleNamespace(reason_code=REASON_VIEW_STALE, severity="warn",
-                            task_ids=["<resource_week_view>"], detail=p, at=None)
+            SimpleNamespace(
+                reason_code=REASON_VIEW_STALE, severity="warn", task_ids=["<resource_week_view>"], detail=p, at=None
+            )
         )
-    findings.extend(to_findings(pool_findings or []))     # C-7 词表臂
-    findings.extend(to_findings(sched_findings or []))    # C-15 实测对账臂
+    findings.extend(to_findings(pool_findings or []))  # C-7 词表臂
+    findings.extend(to_findings(sched_findings or []))  # C-15 实测对账臂
     if drifts:
         head = "; ".join(drifts[:5])
         more = f" …（共 {len(drifts)} 条）" if len(drifts) > 5 else ""
         findings.append(
-            SimpleNamespace(reason_code=REASON_DRIFT, severity="warn", task_ids=["<registry>"],
-                            detail=f"注册表与四真源漂移 {len(drifts)} 条：{head}{more}", at=None)
+            SimpleNamespace(
+                reason_code=REASON_DRIFT,
+                severity="warn",
+                task_ids=["<registry>"],
+                detail=f"注册表与四真源漂移 {len(drifts)} 条：{head}{more}",
+                at=None,
+            )
         )
     return findings
 
@@ -1781,18 +2232,32 @@ def publish_check_findings(findings: list, board_dir: str | None = None) -> dict
 def main() -> int:  # noqa: C901
     """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="资源画像注册表生成器（MOD-RESCHED-PROFILE）")
-    ap.add_argument("--check", action="store_true",
-                    help="自检臂：漂移检测（实体集/window_expr 与磁盘比对）+C-5 闸在场性"
-                         "+C-10 视图新鲜度+C-7 池词表+C-15 计划任务实测对账+C-11 受闸反查留痕，不写")
-    ap.add_argument("--publish-alerts", action="store_true",
-                    help="与 --check 同用：自检 findings 落 ops 告警板（缺省 .runtime/ops_notifications/"
-                         "，测试经 ZEPHYR_OPS_NOTIFICATION_DIR 重定向——不加旗标，板路径单源）")
-    ap.add_argument("--auto-regen", action="store_true",
-                    help="与 --check 同用：检出注册表漂移→就地全量再生（排产化零人工）")
-    ap.add_argument("--skip-schtasks", action="store_true",
-                    help="自检臂跳过 C-15 实测对账（非 Windows/离线取证用；生产计划任务不带此旗标）")
-    ap.add_argument("--schtasks-csv", type=str, default=None,
-                    help="以 CSV 文件替代 schtasks 探针（单测/离线对账注入；仅 --check 生效）")
+    ap.add_argument(
+        "--check",
+        action="store_true",
+        help="自检臂：漂移检测（实体集/window_expr 与磁盘比对）+C-5 闸在场性"
+        "+C-10 视图新鲜度+C-7 池词表+C-15 计划任务实测对账+C-11 受闸反查留痕，不写",
+    )
+    ap.add_argument(
+        "--publish-alerts",
+        action="store_true",
+        help="与 --check 同用：自检 findings 落 ops 告警板（缺省 .runtime/ops_notifications/"
+        "，测试经 ZEPHYR_OPS_NOTIFICATION_DIR 重定向——不加旗标，板路径单源）",
+    )
+    ap.add_argument(
+        "--auto-regen", action="store_true", help="与 --check 同用：检出注册表漂移→就地全量再生（排产化零人工）"
+    )
+    ap.add_argument(
+        "--skip-schtasks",
+        action="store_true",
+        help="自检臂跳过 C-15 实测对账（非 Windows/离线取证用；生产计划任务不带此旗标）",
+    )
+    ap.add_argument(
+        "--schtasks-csv",
+        type=str,
+        default=None,
+        help="以 CSV 文件替代 schtasks 探针（单测/离线对账注入；仅 --check 生效）",
+    )
     ap.add_argument("--output", type=str, default=str(DEFAULT_OUTPUT))
     ap.add_argument("--view", type=str, default=str(DEFAULT_VIEW), help="周历视图路径（新鲜度自检注入用）")
     ap.add_argument("--existing", type=str, default=None, help="合并保全的旧档路径（测试注入；缺省=output）")
@@ -1819,21 +2284,30 @@ def main() -> int:  # noqa: C901
         if args.schtasks_csv:
             try:
                 live, probe_problems = parse_schtasks_csv(
-                    Path(args.schtasks_csv).read_text(encoding="utf-8", errors="replace"))
+                    Path(args.schtasks_csv).read_text(encoding="utf-8", errors="replace")
+                )
             except OSError as exc:
                 live, probe_problems = {}, [f"schtasks_csv_unreadable: {exc}"]
         else:
             live, probe_problems = query_schtasks()
         if live:
             sched_findings, exempted = reconcile_sched_tasks(list(registry["entities"]), live)
-            exempt_lines = [f"{e['reason_code']}: {e['task_name']} → {e['task_id']}: {e['reason_zh']}"
-                            for e in exempted]
-            sched_findings.extend({"reason_code": REASON_TASK_PROBE, "severity": "warn",
-                                   "task_ids": ["<task_scheduler>"], "detail": p} for p in probe_problems)
+            exempt_lines = [
+                f"{e['reason_code']}: {e['task_name']} → {e['task_id']}: {e['reason_zh']}" for e in exempted
+            ]
+            sched_findings.extend(
+                {"reason_code": REASON_TASK_PROBE, "severity": "warn", "task_ids": ["<task_scheduler>"], "detail": p}
+                for p in probe_problems
+            )
         else:
-            sched_findings = [{"reason_code": REASON_TASK_PROBE, "severity": "warn",
-                               "task_ids": ["<task_scheduler>"],
-                               "detail": "；".join(probe_problems) or "实测任务表为空"}]
+            sched_findings = [
+                {
+                    "reason_code": REASON_TASK_PROBE,
+                    "severity": "warn",
+                    "task_ids": ["<task_scheduler>"],
+                    "detail": "；".join(probe_problems) or "实测任务表为空",
+                }
+            ]
     if args.check:
         if not out.exists():
             print("DRIFT: 磁盘无注册表")
@@ -1860,8 +2334,10 @@ def main() -> int:  # noqa: C901
                 # 见 73f2e54339 先例：目标受 .gitattributes eol=lf 钉定，缺省 newline=None 在 Windows 会把 \n 翻成 CRLF（safe_write_text 回读校验走 universal-newlines 看不见）
                 safe_write_text(out, text, expected_base_sha256=expected, newline="\n")
                 disk_after = yaml.safe_load(out.read_text(encoding="utf-8")) or {}
-                drifts_after = detect_registry_drift(list(disk_after.get("entities") or []),
-                                                     list(build_registry(existing_path=out, output_path=out)["entities"]))
+                drifts_after = detect_registry_drift(
+                    list(disk_after.get("entities") or []),
+                    list(build_registry(existing_path=out, output_path=out)["entities"]),
+                )
                 regen_summary = {
                     "attempted": True,
                     "drift_before": len(drifts),
@@ -1873,8 +2349,9 @@ def main() -> int:  # noqa: C901
                 if out == DEFAULT_OUTPUT:
                     view_problems = check_view_freshness(args.view, out)
             print(f"AUTO-REGEN: {regen_summary}")
-        findings = collect_check_findings(drifts, gate_problems, view_problems,
-                                          pool_findings=pool_findings, sched_findings=sched_findings)
+        findings = collect_check_findings(
+            drifts, gate_problems, view_problems, pool_findings=pool_findings, sched_findings=sched_findings
+        )
         for p in gate_problems:
             print(f"HEALTH[{REASON_GATE_ABSENT}]: {p}")
         for p in view_problems:
@@ -1905,7 +2382,9 @@ def main() -> int:  # noqa: C901
         expected = content_sha256(out.read_text(encoding="utf-8"))
     out.parent.mkdir(parents=True, exist_ok=True)
     safe_write_text(out, text, expected_base_sha256=expected, newline="\n")
-    print(json.dumps({"ok": True, "total_entities": registry["total_entities"], "output": str(out)}, ensure_ascii=False))
+    print(
+        json.dumps({"ok": True, "total_entities": registry["total_entities"], "output": str(out)}, ensure_ascii=False)
+    )
     report_gate_declaration_gaps(list(registry["entities"]))  # C-11 留痕（不进 JSON 结果契约，不动退出码）
     return 0
 

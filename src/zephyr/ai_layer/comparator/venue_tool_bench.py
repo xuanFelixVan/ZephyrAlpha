@@ -13,7 +13,6 @@
 #                RULER_MODULES 指向 OBJ_T 目录真源（改一处常量即可，制式不变）
 # [STABILITY] new
 # [SAFETY] L
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/venue_tool_bench.yaml
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 考尺未建成→available()=False + run() VenueUnavailable（拒考，DESIGN C4 验收
 #                  标准的既定路径）；未知 op→ValueError
@@ -29,12 +28,13 @@
 现状：OBJ_T 基准任务集目录未建成（vision README §3.5 OBJ_T-#2 治理立案保留中）——
 本件把"拒考"作为一等公民：available() 探测 OBJ_T 真源模块，缺席即拒考，
 绝不本地造考卷（D-L4-01：L4 不自建考尺）。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/venue_tool_bench.yaml
 """
 
 from __future__ import annotations
 
 import functools
-
 from typing import Any, Final, Mapping
 
 from zephyr.ai_layer.comparator import import_ruler, make_available_probe, ruler_available

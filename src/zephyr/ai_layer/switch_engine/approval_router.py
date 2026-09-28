@@ -17,7 +17,6 @@
 #                tier 值漂移=risk_tier_registry.yaml 变更流程
 # [STABILITY] new
 # [SAFETY] M（owner_one_click 路由涉 production 流转建议——只产建议卡不执行）
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/approval_router.yaml
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 未知 debt_class->ValueError；risk_tier_registry 缺失/形状非法->
 #                  RiskTierRegistryError（fail-closed，不降级内置九域表）；建议卡缺
@@ -32,6 +31,8 @@
 advisory kind=switch，二次确认+服务端留痕回执），independent_review 道由 L4 对比器独立
 裁定（升 canary/promote 的裁定出自 L4，评估者独立），auto 道仍受 T1-T6 机检与回切武装
 约束（全自动≠无安全带）。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/approval_router.yaml
 """
 
 from __future__ import annotations
@@ -54,7 +55,9 @@ def _risk_tier_registry_path() -> str:
     if _RISK_TIER_PATH_CACHE:
         return _RISK_TIER_PATH_CACHE
     import yaml
+
     from zephyr.shared.io.paths import REPO_ROOT
+
     doc = yaml.safe_load((REPO_ROOT / "docs" / "registry_of_registries.yaml").read_text(encoding="utf-8"))
     found = ""
 
@@ -79,10 +82,8 @@ def _risk_tier_registry_path() -> str:
     _RISK_TIER_PATH_CACHE = found
     return found
 
-DEFAULT_RISK_TIER_PATH: Final[Path] = (
-    REPO_ROOT
-    / _risk_tier_registry_path()
-)
+
+DEFAULT_RISK_TIER_PATH: Final[Path] = REPO_ROOT / _risk_tier_registry_path()
 DEFAULT_TIER: Final[str] = "low"  # risk_tier_registry default_tier（勿在调用方自定）
 ADVISORY_KIND: Final[str] = "switch"
 
@@ -91,14 +92,12 @@ ROUTE_INDEPENDENT_REVIEW: Final[str] = "independent_review"
 ROUTE_OWNER_ONE_CLICK: Final[str] = "owner_one_click"
 ROUTE_OBJ_R_PIPELINE: Final[str] = "obj_r_pipeline"
 
-DEBT_MECHANICAL: Final[str] = "mechanical"   # 机械债类：行为零变化（diff_kind 全 identical）
-DEBT_LOGIC: Final[str] = "logic"             # 逻辑债类：行为变
-DEBT_RULE: Final[str] = "rule"               # 规则类：OBJ_R 尺子
-DEBT_SKELETON: Final[str] = "skeleton"       # 骨架级：增删环节/改层级
+DEBT_MECHANICAL: Final[str] = "mechanical"  # 机械债类：行为零变化（diff_kind 全 identical）
+DEBT_LOGIC: Final[str] = "logic"  # 逻辑债类：行为变
+DEBT_RULE: Final[str] = "rule"  # 规则类：OBJ_R 尺子
+DEBT_SKELETON: Final[str] = "skeleton"  # 骨架级：增删环节/改层级
 
-_KNOWN_DEBTS: Final[frozenset[str]] = frozenset(
-    {DEBT_MECHANICAL, DEBT_LOGIC, DEBT_RULE, DEBT_SKELETON}
-)
+_KNOWN_DEBTS: Final[frozenset[str]] = frozenset({DEBT_MECHANICAL, DEBT_LOGIC, DEBT_RULE, DEBT_SKELETON})
 
 
 class RiskTierRegistryError(RuntimeError):
@@ -120,8 +119,6 @@ class ApprovalRoutingDecision:
     tier: str
     rationale: str
     requires_owner_gate: bool
-
-
 
 
 def load_domain_tiers(path: Path | None = None) -> dict[str, str]:
@@ -156,28 +153,47 @@ def route(
 
     if debt_class == DEBT_MECHANICAL:
         return ApprovalRoutingDecision(
-            ROUTE_AUTO, debt_class, domain, tier,
+            ROUTE_AUTO,
+            debt_class,
+            domain,
+            tier,
             "机械债类行为零变化：corpus byte-identical+gates 全绿+回切武装即 promote（全自动）",
             False,
         )
     if debt_class == DEBT_LOGIC:
         if tier == "high":
             return ApprovalRoutingDecision(
-                ROUTE_OWNER_ONE_CLICK, debt_class, domain, tier,
-                "逻辑债类·high 域：Owner 前端一键（promotion 建议卡 kind=switch）", True,
+                ROUTE_OWNER_ONE_CLICK,
+                debt_class,
+                domain,
+                tier,
+                "逻辑债类·high 域：Owner 前端一键（promotion 建议卡 kind=switch）",
+                True,
             )
         return ApprovalRoutingDecision(
-            ROUTE_INDEPENDENT_REVIEW, debt_class, domain, tier,
-            "逻辑债类 medium/low：L4 对比器独立复核+canary 满期零事故自动 promote", False,
+            ROUTE_INDEPENDENT_REVIEW,
+            debt_class,
+            domain,
+            tier,
+            "逻辑债类 medium/low：L4 对比器独立复核+canary 满期零事故自动 promote",
+            False,
         )
     if debt_class == DEBT_RULE:
         return ApprovalRoutingDecision(
-            ROUTE_OBJ_R_PIPELINE, debt_class, domain, tier,
-            "规则类：OBJ_R 四步流水线+重考历史一票否决+Owner 修标", True,
+            ROUTE_OBJ_R_PIPELINE,
+            debt_class,
+            domain,
+            tier,
+            "规则类：OBJ_R 四步流水线+重考历史一票否决+Owner 修标",
+            True,
         )
     return ApprovalRoutingDecision(
-        ROUTE_OWNER_ONE_CLICK, debt_class, domain, tier,
-        "骨架级（增删环节/改层级）：AI 提案+Owner 一键（先他指后自指）", True,
+        ROUTE_OWNER_ONE_CLICK,
+        debt_class,
+        domain,
+        tier,
+        "骨架级（增删环节/改层级）：AI 提案+Owner 一键（先他指后自指）",
+        True,
     )
 
 
@@ -198,7 +214,7 @@ def build_switch_advisory(
         "object_ref": object_ref,
         "a_vs_b": {"champion": a_summary, "challenger": b_summary},
         "actions": ["promote", "revert"],
-        "confirm_required": True,   # 二次确认（S13 先例铁律）
+        "confirm_required": True,  # 二次确认（S13 先例铁律）
         "evidence_link": evidence_link,
     }
 

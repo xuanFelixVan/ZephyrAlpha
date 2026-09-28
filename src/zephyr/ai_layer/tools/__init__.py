@@ -15,7 +15,6 @@
 # [MODIFY-GUARD] docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md §2/§3（设计真源，判据改动走 OBJ_R）
 # [STABILITY] new
 # [SAFETY] L
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/tools_pkg.yaml
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 本包公共异常：ToolBenchError 基类；子模块各自派生（词表外值一律拒收）
 # [TESTS] tests/ai_layer/tools/（词表一致性护栏在 test_package_vocab.py 所在目录合跑）
@@ -35,6 +34,8 @@
 （宪法红线：本班禁改既有文件，改指针=后续授权批一处常量改动）；指针缺席期间
 L4 考场维持 fail-closed 拒考既定态，本包 suite 契约面已按该指针预期的
 ``suite_criteria()``/``suite_run(payload)`` 形态对齐（C4 验收=考卷 schema 对齐）。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/tools_pkg.yaml
 """
 
 from __future__ import annotations
@@ -66,12 +67,25 @@ class ToolBenchError(Exception):
 ORGANS: Final = ("hand", "eye", "foot")
 STAT_SOURCES: Final = ("telemetry", "audit_jsonl", "failures_dir", "manual_v0")
 KINDS: Final = ("script", "skill", "mcp_server", "cli", "builtin", "plugin", "card")
+
+
 def _load_safety_levels() -> tuple[str, ...]:
     """safety_level 词表 SSoT 动态加载（fail-open 回退内置三元组）。"""
     try:
         import yaml as _yaml
+
         from zephyr.shared.io.paths import REPO_ROOT
-        doc = _yaml.safe_load((REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "safety_level_vocabulary.yaml").read_text(encoding="utf-8"))
+
+        doc = _yaml.safe_load(
+            (
+                REPO_ROOT
+                / "docs"
+                / "01_policies_and_standards"
+                / "_registry"
+                / "vocabularies"
+                / "safety_level_vocabulary.yaml"
+            ).read_text(encoding="utf-8")
+        )
         vals = doc.get("safety_levels") or doc.get("values") or []
         if isinstance(vals, list) and vals:
             out = []
@@ -92,7 +106,9 @@ DELETE_CLASSES: Final = ("none", "owner_gated", "tombstone", "ttl_only")
 STATUSES: Final = ("active", "trial", "tombstone")
 
 # 包公共面显式重导出（2026-09-24 st-ailayer-final-20260924：suite 由 venue_tool_bench RULER_MODULES 字符串动态导入，静态不可见需包级边）
-from . import inventory_generator  # noqa: F401
-from . import scoring  # noqa: F401
-from . import suite  # noqa: F401
-from . import usage_stats  # noqa: F401
+from . import (
+    inventory_generator,  # noqa: F401
+    scoring,  # noqa: F401
+    suite,  # noqa: F401
+    usage_stats,  # noqa: F401
+)

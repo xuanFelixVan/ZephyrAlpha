@@ -17,7 +17,6 @@
 # [MODIFY-GUARD] docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md §②-F/§④-S7
 # [STABILITY] new
 # [SAFETY] L
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/revert_drill.yaml
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 三查失败不抛（记 passed=False+detail 继续查完，报告含全量失败项）；
 #                  store 缺 switch_id→KeyError 上抛（演练对象必须真实在册）；
@@ -33,11 +32,11 @@ dry-run——revert_plan 可执行且状态机回滚分支正确；②champion �
 worktree checkout 成功；③回执链完整——state_history 逐格有 since+evidence_ref 且末态
 与当前态一致。报告含耗时与结果（验收锚），留档月度体检建议书，摘要回写 switch_registry
 rollback.last_drill_date（由调用方经 store patch）。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/revert_drill.yaml
 """
 
 from __future__ import annotations
-
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 import json
 import subprocess
@@ -54,6 +53,7 @@ from zephyr.intelligence.switch_engine.switch_registry import (
     SwitchRegistryRecord,
     SwitchRegistryStore,
 )
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 from zephyr.shared.utils.time_utils import now_utc
 
 DRILL_CHECK_REVERT_PLAN: Final[str] = "revert_plan_executable"
@@ -88,6 +88,7 @@ def select_targets(
     month_index: int,
 ) -> dict[str, SwitchRegistryRecord | None]:
     """round-robin 抽样（确定性）：champion 优先最近 promote，tombstone 抽 1。"""
+
     def _promoted_at_desc(records: Sequence[SwitchRegistryRecord]) -> list[SwitchRegistryRecord]:
         return sorted(
             records,
@@ -98,14 +99,8 @@ def select_targets(
     ordered_champions = _promoted_at_desc(list(champions))
     ordered_tombstones = sorted(tombstones, key=lambda r: r.switch_id)
     return {
-        "champion": (
-            ordered_champions[month_index % len(ordered_champions)]
-            if ordered_champions else None
-        ),
-        "tombstone": (
-            ordered_tombstones[month_index % len(ordered_tombstones)]
-            if ordered_tombstones else None
-        ),
+        "champion": (ordered_champions[month_index % len(ordered_champions)] if ordered_champions else None),
+        "tombstone": (ordered_tombstones[month_index % len(ordered_tombstones)] if ordered_tombstones else None),
     }
 
 
@@ -133,8 +128,8 @@ def run_drill(
         "active_ref": active_ref(record),
         "drill_date": now_utc().isoformat(),
         "checks": checks,
-        "success": success,                       # 判据=100%，任一失败即 False
-        "incident_flag": not success,             # 任一失败=事故立案
+        "success": success,  # 判据=100%，任一失败即 False
+        "incident_flag": not success,  # 任一失败=事故立案
         "elapsed_ms": elapsed_ms,
         "stale_alert": is_drill_stale(record),
     }
@@ -173,9 +168,7 @@ def _check_revert_plan(engine: SwitchEngine, record: SwitchRegistryRecord) -> di
     return {"name": DRILL_CHECK_REVERT_PLAN, "passed": passed, "detail": detail}
 
 
-def _check_snapshot(
-    record: SwitchRegistryRecord, git_runner: Callable[[Sequence[str]], str]
-) -> dict[str, Any]:
+def _check_snapshot(record: SwitchRegistryRecord, git_runner: Callable[[Sequence[str]], str]) -> dict[str, Any]:
     """②champion 快照可重建：生效 ref（tag/分支）git 可解析。"""
     ref = active_ref(record)
     try:

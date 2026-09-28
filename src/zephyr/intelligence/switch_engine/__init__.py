@@ -9,7 +9,6 @@
 # [MODIFY-GUARD] docs/_working/ai_layer_vision/（段 DESIGN.md）
 # [STABILITY] new
 # [SAFETY] L
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/iswitch_pkg.yaml
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] （见正文/DESIGN）
 # [TESTS] tests/ai_layer/（对应段测试目录）
@@ -22,14 +21,15 @@
 
 施工项落位（DESIGN §④）：S1=switch_registry / S2 加载器=criteria（YAML 真源在
 config/switch_criteria.yaml）/ S3=shadow_runner / S4=switch_engine。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/iswitch_pkg.yaml
 """
 
 from typing import Final
 
 __all__: Final[list[str]] = ["criteria", "shadow_runner", "switch_engine", "switch_registry"]
-from . import criteria  # noqa: F401
-from . import shadow_runner  # noqa: F401
-
 # 包公共面显式重导出（2026-09-24 st-ailayer-final-20260924：ORPHAN-MODULE 静态可见边——动态派发消费型模块）
-from . import criteria  # noqa: F401
-from . import shadow_runner  # noqa: F401
+from . import (
+    criteria,  # noqa: F401  # noqa: F401
+    shadow_runner,  # noqa: F401  # noqa: F401
+)

@@ -26,6 +26,56 @@
 # [TESTS] tests/scripts/test_apply_resource_plan.py
 # [A_module] module_id=MOD-RESCHED-APPLY | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""apply_resource_plan — 排班方案 → 时间真源受闸写回一竿子（MOD-RESCHED-APPLY，v2 方案 P2-b）。
+
+Owner 目标②（AI 重排班并更新模块）的执行机构。裁定 R-A：排班写回走真源不走表——
+`config/resource_profile_registry.yaml` 是 [GENERATED] 静态清单（手工增删=红线），所以
+"改排班"在机器层面只能是"改 schedule.yaml 的 cron 行 / 改 register_*.ps1 的触发器构造行"，
+表由再生跟上。本工具产 patch，不产表。
+
+一竿子五步（任一环节失败=整单拒绝，绝不部分落地）：
+
+1. **定位**：方案里每个 task_id 归到四类真源之一——``schedule_slot``（schedule.yaml 槽位，
+   时间真源=其 ``cron:`` 行，APScheduler dow 语义）/ ``ps1_task``（某个 register_*.ps1，
+   时间真源=其触发器构造行）/ ``drill_schedule``（第 4 真源源，窗档由 frequency 结构量归一
+   而来，无 cron 行可改）/ ``plan_doc_seed``（生成器 §3.C 种子，**无机器时间真源**）；后两类
+   改窗即拒（先按 P4 收编成前两类再排班）。映射复用生成器自己的解析函数，不另立第二套。
+2. **产 patch**：文本级精准替换（保注释/键序/缩进/引号风格/行尾约定；ps1 保持纯 ASCII）。
+   每处 patch 立刻用生成器自己的抽取函数复验（ps1 走 ``_extract_trigger_exprs``、槽位走
+   ``parse_schedule_slots(scratch)``）：重抽 ≠ 方案预期，说明"改的行不是真源读的那行"，拒。
+   方案窗档另须自身能被 croniter 展开——闸的求和臂对坏 cron 是"跳过该实体"，若不在这里拦，
+   越界 cron 会伪装成"该班永不触发"把既存冲突误判为消解。
+   cron 口径：方案里的 cron 是**注册表口径（标准 cron，0=周日）**；写回 schedule.yaml 时自动
+   反向平移成 APScheduler 口径（0=周一），与生成器的归一函数成对。
+3. **受闸验**：patch 应用到 tmp 沙箱真源 → 沙箱跑再生 → 闸三查（互斥组交叠/内存天花板/E0 交易
+   窗）+ 漂移查 +（P2-a 已合入时）C-8 同 pool 同窗并发查 → 要求"本次引入的 block=0"（现盘既存
+   block 另列 pre_existing，不拿别人的账拦这一次）。
+4. **存档 + 落地 + 复验**：旧值全量入 ``.runtime/sessions/<sid>/archive/plan_<ts>/``（原文件 +
+   逐文件 unified diff + manifest）→ CAS/safe_write_text 写生产真源 → 子进程调再生 + 重渲周历
+   视图 → 落地后复验；复验失败自动回滚。
+5. **三角对账**：表 ↔ 真源重抽 ↔ schtasks 实测 三方一致性 summary（复用生成器
+   ``detect_registry_drift``/``query_schtasks``；探针不可用时降级为健康码，不静默）。
+
+确定性三条（P2-b 真实 dry-run 实测换来的，改代码前先读）：
+
+- **评估瞬间按日取整**：闸以 ``now`` 起算 28 天地平线，未取整时两次相隔 21 秒的 dry-run
+  会因末端某刻进出展开集而报出不同 block 集合（实测 23 处差异），判定与幂等指纹一起变成
+  "看几点跑"。故 ``now = pin_eval_now(...)``，真实时刻只留在 ``ts_utc`` 与存档目录名里。
+- **非生产 root 强制不外呼**：``tri_skip = skip_schtasks or root != REPO_ROOT``——自测跑在
+  tmp 副本上时 schtasks 反映的是本机生产的在册态，探它等于把无关状态写进报告。
+- **清单按文本排序**：pre_existing/new/resolved 三张 block 表输出前排序，人和指纹都别看运气。
+
+用法::
+
+    # 默认 dry-run：只产 patch 与报告，零生产写
+    python scripts/governance/apply_resource_plan.py --plan <path> --report-json
+    python scripts/governance/apply_resource_plan.py --plan <path> --map          # 真源命中全表
+    python scripts/governance/apply_resource_plan.py --plan <path> --apply --session <sid>
+    python scripts/governance/apply_resource_plan.py --rollback .runtime/sessions/<sid>/archive/plan_<ts>
+
+退出码：0=OK（dry-run 通过 / apply 落地并复验成功）；2=方案非法或闸阻断（零生产写）；
+3=命令行参数错误；4=环境/子进程/CAS 异常（已写文件自动回滚）。
+
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
@@ -97,55 +147,6 @@
 # A2 --> A5
 # A4 --> O1
 # A5 --> O1
-"""apply_resource_plan — 排班方案 → 时间真源受闸写回一竿子（MOD-RESCHED-APPLY，v2 方案 P2-b）。
-
-Owner 目标②（AI 重排班并更新模块）的执行机构。裁定 R-A：排班写回走真源不走表——
-`config/resource_profile_registry.yaml` 是 [GENERATED] 静态清单（手工增删=红线），所以
-"改排班"在机器层面只能是"改 schedule.yaml 的 cron 行 / 改 register_*.ps1 的触发器构造行"，
-表由再生跟上。本工具产 patch，不产表。
-
-一竿子五步（任一环节失败=整单拒绝，绝不部分落地）：
-
-1. **定位**：方案里每个 task_id 归到四类真源之一——``schedule_slot``（schedule.yaml 槽位，
-   时间真源=其 ``cron:`` 行，APScheduler dow 语义）/ ``ps1_task``（某个 register_*.ps1，
-   时间真源=其触发器构造行）/ ``drill_schedule``（第 4 真源源，窗档由 frequency 结构量归一
-   而来，无 cron 行可改）/ ``plan_doc_seed``（生成器 §3.C 种子，**无机器时间真源**）；后两类
-   改窗即拒（先按 P4 收编成前两类再排班）。映射复用生成器自己的解析函数，不另立第二套。
-2. **产 patch**：文本级精准替换（保注释/键序/缩进/引号风格/行尾约定；ps1 保持纯 ASCII）。
-   每处 patch 立刻用生成器自己的抽取函数复验（ps1 走 ``_extract_trigger_exprs``、槽位走
-   ``parse_schedule_slots(scratch)``）：重抽 ≠ 方案预期，说明"改的行不是真源读的那行"，拒。
-   方案窗档另须自身能被 croniter 展开——闸的求和臂对坏 cron 是"跳过该实体"，若不在这里拦，
-   越界 cron 会伪装成"该班永不触发"把既存冲突误判为消解。
-   cron 口径：方案里的 cron 是**注册表口径（标准 cron，0=周日）**；写回 schedule.yaml 时自动
-   反向平移成 APScheduler 口径（0=周一），与生成器的归一函数成对。
-3. **受闸验**：patch 应用到 tmp 沙箱真源 → 沙箱跑再生 → 闸三查（互斥组交叠/内存天花板/E0 交易
-   窗）+ 漂移查 +（P2-a 已合入时）C-8 同 pool 同窗并发查 → 要求"本次引入的 block=0"（现盘既存
-   block 另列 pre_existing，不拿别人的账拦这一次）。
-4. **存档 + 落地 + 复验**：旧值全量入 ``.runtime/sessions/<sid>/archive/plan_<ts>/``（原文件 +
-   逐文件 unified diff + manifest）→ CAS/safe_write_text 写生产真源 → 子进程调再生 + 重渲周历
-   视图 → 落地后复验；复验失败自动回滚。
-5. **三角对账**：表 ↔ 真源重抽 ↔ schtasks 实测 三方一致性 summary（复用生成器
-   ``detect_registry_drift``/``query_schtasks``；探针不可用时降级为健康码，不静默）。
-
-确定性三条（P2-b 真实 dry-run 实测换来的，改代码前先读）：
-
-- **评估瞬间按日取整**：闸以 ``now`` 起算 28 天地平线，未取整时两次相隔 21 秒的 dry-run
-  会因末端某刻进出展开集而报出不同 block 集合（实测 23 处差异），判定与幂等指纹一起变成
-  "看几点跑"。故 ``now = pin_eval_now(...)``，真实时刻只留在 ``ts_utc`` 与存档目录名里。
-- **非生产 root 强制不外呼**：``tri_skip = skip_schtasks or root != REPO_ROOT``——自测跑在
-  tmp 副本上时 schtasks 反映的是本机生产的在册态，探它等于把无关状态写进报告。
-- **清单按文本排序**：pre_existing/new/resolved 三张 block 表输出前排序，人和指纹都别看运气。
-
-用法::
-
-    # 默认 dry-run：只产 patch 与报告，零生产写
-    python scripts/governance/apply_resource_plan.py --plan <path> --report-json
-    python scripts/governance/apply_resource_plan.py --plan <path> --map          # 真源命中全表
-    python scripts/governance/apply_resource_plan.py --plan <path> --apply --session <sid>
-    python scripts/governance/apply_resource_plan.py --rollback .runtime/sessions/<sid>/archive/plan_<ts>
-
-退出码：0=OK（dry-run 通过 / apply 落地并复验成功）；2=方案非法或闸阻断（零生产写）；
-3=命令行参数错误；4=环境/子进程/CAS 异常（已写文件自动回滚）。
 """
 
 from __future__ import annotations
@@ -171,17 +172,32 @@ import yaml
 if str(Path(__file__).resolve().parents[2] / "src") not in sys.path:  # 匿名 bootstrap，REPO_ROOT 归 canonical（SSOT）
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  SSOT
 from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: E402
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  SSOT
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "main", "run_plan", "load_plan", "locate_all", "build_patches",
-    "build_sandbox", "regen_sandbox", "gate_findings", "materialization_problems",
-    "triangle_report", "archive_originals", "restore_archive", "stable_hash", "cron_ok",
+    "main",
+    "run_plan",
+    "load_plan",
+    "locate_all",
+    "build_patches",
+    "build_sandbox",
+    "regen_sandbox",
+    "gate_findings",
+    "materialization_problems",
+    "triangle_report",
+    "archive_originals",
+    "restore_archive",
+    "stable_hash",
+    "cron_ok",
     "pin_eval_now",
-    "PlanError", "EnvError", "Located", "Patch", "TimeSpec",
+    "PlanError",
+    "EnvError",
+    "Located",
+    "Patch",
+    "TimeSpec",
 ]
 
 # --- 路径真源（全部经 root 拼接；root 可注入 = 测试在沙箱里跑同一份代码）----------------
@@ -317,8 +333,10 @@ def load_plan(path: Path) -> tuple[dict, dict]:
         raise PlanError(f"方案 YAML 解析失败: {exc}") from exc
     if not isinstance(data, dict) or not data:
         raise PlanError("方案为空或不是映射")
-    items = data.get("items") if isinstance(data.get("items"), dict) else (
-        data.get("plan") if isinstance(data.get("plan"), dict) else None
+    items = (
+        data.get("items")
+        if isinstance(data.get("items"), dict)
+        else (data.get("plan") if isinstance(data.get("plan"), dict) else None)
     )
     if items is None:
         items = {k: v for k, v in data.items() if k not in _META_FIELDS}
@@ -427,8 +445,11 @@ def expand_dow_field(field_text: object) -> list[int] | None | bool:
             if not (lo.strip().isdigit() and hi.strip().isdigit()):
                 return False
             lo_i, hi_i = int(lo), int(hi)
-            out.update({d % 7 for d in range(lo_i, hi_i + 1)} if hi_i >= lo_i
-                       else set(range(lo_i, 7)) | set(range(0, hi_i + 1)))
+            out.update(
+                {d % 7 for d in range(lo_i, hi_i + 1)}
+                if hi_i >= lo_i
+                else set(range(lo_i, 7)) | set(range(0, hi_i + 1))
+            )
         elif part.isdigit():
             out.add(int(part) % 7)
         else:
@@ -549,8 +570,10 @@ def resolve_time_spec(item: dict, current_expr: str | None, what: str = "") -> T
     if not keys:
         return None
     if "new_window_cron" in item and len(keys) > 1:
-        raise PlanError(f"{what}new_window_cron 与 new_hour/new_minute/new_dow/new_times 互斥"
-                        "（前者是全量重写，混填会让'哪个说了算'变成隐式规则）")
+        raise PlanError(
+            f"{what}new_window_cron 与 new_hour/new_minute/new_dow/new_times 互斥"
+            "（前者是全量重写，混填会让'哪个说了算'变成隐式规则）"
+        )
     if "new_times" in item and set(keys) != {"new_times"}:
         raise PlanError(f"{what}new_times 只允许单独出现（它是多触发点清单的全量重写）")
 
@@ -572,8 +595,9 @@ def resolve_time_spec(item: dict, current_expr: str | None, what: str = "") -> T
     if "new_window_cron" in item:
         bands = cron_bands(item["new_window_cron"])
         if bands is None:
-            raise PlanError(f"{what}new_window_cron 段数非法（须 5 或 6 段，"
-                            f"实得 {str(item['new_window_cron']).split()!r}）")
+            raise PlanError(
+                f"{what}new_window_cron 段数非法（须 5 或 6 段，实得 {str(item['new_window_cron']).split()!r}）"
+            )
         if len(bands) == 6:
             second, mi, h, dom, month, dow = bands
         else:
@@ -611,17 +635,20 @@ def _check_crons(spec: TimeSpec, what: str) -> None:
     """方案预期的每条窗档必须真能被 croniter 展开（见 `cron_ok` 的宁拦不漏理由）。"""
     for expr in spec.requested_exprs():
         if cron_ok(expr) is False:
-            raise PlanError(f"{what}窗档 {expr!r} 不是合法 cron（croniter 判不可展开）——"
-                            "越界/拼错的 cron 在闸的求和臂里是「跳过该实体」，会被误读成"
-                            "「该班永不触发」，从而把既存冲突当成被消解而放行")
+            raise PlanError(
+                f"{what}窗档 {expr!r} 不是合法 cron（croniter 判不可展开）——"
+                "越界/拼错的 cron 在闸的求和臂里是「跳过该实体」，会被误读成"
+                "「该班永不触发」，从而把既存冲突当成被消解而放行"
+            )
 
 
 def _require_int(tok: str, band: str, current_expr: object, what: str) -> int:
     """_require_int implementation."""
     v = single_int(tok)
     if v is None:
-        raise PlanError(f"{what}现值 {current_expr!r} 的 {band} 段={tok!r} 不是单值，"
-                        "无法只改另一段——请给 new_window_cron 全量重写")
+        raise PlanError(
+            f"{what}现值 {current_expr!r} 的 {band} 段={tok!r} 不是单值，无法只改另一段——请给 new_window_cron 全量重写"
+        )
     return v
 
 
@@ -664,23 +691,28 @@ def locate_all(gen, root: Path) -> dict[str, Located]:
     def _common(e: dict) -> dict:
         """_common implementation."""
         return dict(
-            window_type=e.get("window_type"), window_expr=e.get("window_expr"),
-            status=e.get("status"), pool=e.get("pool"), resource_class=e.get("resource_class"),
+            window_type=e.get("window_type"),
+            window_expr=e.get("window_expr"),
+            status=e.get("status"),
+            pool=e.get("pool"),
+            resource_class=e.get("resource_class"),
             exclusive_group=[str(x) for x in (e.get("exclusive_group") or [])],
         )
 
     for e in slot_ents:
         tid = str(e["task_id"])
         out[tid] = Located(
-            task_id=tid, kind=KIND_SLOT,
+            task_id=tid,
+            kind=KIND_SLOT,
             truth_rel=str(e.get("schedule_truth_source") or SCHEDULE_REL),
-            slot=tid[len("data_slot_"):] if tid.startswith("data_slot_") else tid,
+            slot=tid[len("data_slot_") :] if tid.startswith("data_slot_") else tid,
             **_common(e),
         )
     for e in ps1_ents:
         tid = str(e["task_id"])
         loc = Located(
-            task_id=tid, kind=KIND_PS1,
+            task_id=tid,
+            kind=KIND_PS1,
             truth_rel=str(e.get("schedule_truth_source") or ""),
             ps1_task_name=name_by_tid.get(tid),
             **_common(e),
@@ -704,9 +736,11 @@ def locate_all(gen, root: Path) -> dict[str, Located]:
     for e in drill_ents:
         tid = str(e["task_id"])
         out[tid] = Located(
-            task_id=tid, kind=KIND_DRILL,
+            task_id=tid,
+            kind=KIND_DRILL,
             truth_rel=str(e.get("schedule_truth_source") or ""),
-            **_common(e), patchable_window=False,
+            **_common(e),
+            patchable_window=False,
             why_not=(
                 f"实体来自第 4 真源源 {e.get('schedule_truth_source')}（window_type={e.get('window_type')}）："
                 "其窗档由 frequency/day_of_month/months 结构量归一而来，真源里没有可改写的 cron 行；"
@@ -717,9 +751,11 @@ def locate_all(gen, root: Path) -> dict[str, Located]:
     for e in seeds:
         tid = str(e["task_id"])
         out[tid] = Located(
-            task_id=tid, kind=KIND_SEED,
+            task_id=tid,
+            kind=KIND_SEED,
             truth_rel=str(e.get("schedule_truth_source") or ""),
-            **_common(e), patchable_window=False,
+            **_common(e),
+            patchable_window=False,
             why_not=(
                 f"实体类型={tid.split('_')[0]}*（window_type={e.get('window_type')}）：时间真源是生成器 "
                 "§3.C 种子/方案文档而非机器可读 cron，无窗可改；须先按 v2 方案 P4（L-5/L-8）收编成 "
@@ -782,7 +818,7 @@ def patch_slot_cron(text: str, slot: str, aps_cron: str) -> tuple[str, int, str,
     quote = '"' if old_val[:1] in ('"', "'") and old_val[-1:] == old_val[:1] else ""
     inner = old_val[1:-1] if quote else old_val
     new_cron = _pad_bands_like_truth(aps_cron, inner)
-    new_line = f'{m.group("indent")}cron: {quote}{new_cron}{quote}{m.group("tail") or ""}'
+    new_line = f"{m.group('indent')}cron: {quote}{new_cron}{quote}{m.group('tail') or ''}"
     lines[idx] = new_line
     return "\n".join(lines), idx + 1, old_line, new_line
 
@@ -810,8 +846,11 @@ def ps1_trigger_line_indices(code_lines: list[str], task_name: str) -> list[int]
     之前的任务名，前面没有则归给最近一个在其之后的任务名。
     """
     name_lines = [i for i, ln in enumerate(code_lines) if _RE_PS_ANYNAME.search(ln)]
-    cands = [i for i, ln in enumerate(code_lines)
-             if _RE_PS_WEEKLY.search(ln) or _RE_PS_DAILY.search(ln) or _RE_PS_TIMES.search(ln)]
+    cands = [
+        i
+        for i, ln in enumerate(code_lines)
+        if _RE_PS_WEEKLY.search(ln) or _RE_PS_DAILY.search(ln) or _RE_PS_TIMES.search(ln)
+    ]
     owners: dict[int, str] = {}
     for i in cands:
         prev = [n for n in name_lines if n < i]
@@ -848,7 +887,7 @@ def patch_ps1_trigger(text: str, task_name: str, spec: TimeSpec) -> tuple[str, i
             raise PlanError(f"{task_name}: new_times 只能改写 -Times @(...) 形态的触发器")
         q = '"' if '"' in m_times.group(1) else ("'" if "'" in m_times.group(1) else '"')
         frag = "-Times @(" + ", ".join(f"{q}{t}{q}" for t in spec.times) + ")"
-        new_line = line[: m_times.start()] + frag + line[m_times.end():]
+        new_line = line[: m_times.start()] + frag + line[m_times.end() :]
     else:
         if _RE_PS_TIMES.search(line):
             old_pts = len(re.findall(r"\d{1,2}:\d{2}", _RE_PS_TIMES.search(line).group(1)))  # type: ignore[union-attr]
@@ -889,11 +928,13 @@ def patch_ps1_trigger(text: str, task_name: str, spec: TimeSpec) -> tuple[str, i
         at = fmt_hh(int(hour), int(minute), pad_hour=pad_hour)
         at_txt = f'"{at}"' if quoted else at
         frag = f"-Weekly -DaysOfWeek {','.join(dow_names)} -At {at_txt}" if dow_names else f"-Daily -At {at_txt}"
-        new_line = line[: anchor.start()] + frag + line[anchor.end():]
+        new_line = line[: anchor.start()] + frag + line[anchor.end() :]
 
     if not new_line.isascii():
-        raise PlanError(f"{task_name}: 改写后的 ps1 行含非 ASCII——PowerShell 5.1 无 BOM 按 GBK "
-                        "解码中文会造出假语法错误（宪法 §9.7）")
+        raise PlanError(
+            f"{task_name}: 改写后的 ps1 行含非 ASCII——PowerShell 5.1 无 BOM 按 GBK "
+            "解码中文会造出假语法错误（宪法 §9.7）"
+        )
     lines[code_idx[idx]] = new_line
     return "\n".join(lines), code_idx[idx] + 1, line, new_line
 
@@ -925,9 +966,7 @@ def patch_registry_group(text: str, task_id: str, groups: list[str]) -> tuple[st
             while j < end and lines[j].startswith("  - "):
                 old_block.append(lines[j])
                 j += 1
-        new_block = ["  exclusive_group: []"] if not groups else (
-            ["  exclusive_group:"] + [f"  - {g}" for g in groups]
-        )
+        new_block = ["  exclusive_group: []"] if not groups else (["  exclusive_group:"] + [f"  - {g}" for g in groups])
         lines[i:j] = new_block
         return "\n".join(lines), i + 1, "\n".join(old_block), "\n".join(new_block)
     raise PlanError(f"实体 {task_id!r} 块内没有 exclusive_group 字段（18 字段 schema 变更须同步本工具）")
@@ -935,17 +974,23 @@ def patch_registry_group(text: str, task_id: str, groups: list[str]) -> tuple[st
 
 def unified_diff(rel: str, old_text: str, new_text: str) -> str:
     """unified_diff implementation."""
-    return "".join(difflib.unified_diff(
-        old_text.splitlines(keepends=True), new_text.splitlines(keepends=True),
-        fromfile=f"a/{rel}", tofile=f"b/{rel}", lineterm="\n",
-    ))
+    return "".join(
+        difflib.unified_diff(
+            old_text.splitlines(keepends=True),
+            new_text.splitlines(keepends=True),
+            fromfile=f"a/{rel}",
+            tofile=f"b/{rel}",
+            lineterm="\n",
+        )
+    )
 
 
 # ---------------------------------------------------------------------------
 # ②′ 方案 → patch 清单（含生成器复验）
 # ---------------------------------------------------------------------------
-def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
-                  scratch: Path) -> tuple[list[Patch], dict[str, str]]:
+def build_patches(
+    gen, root: Path, located: dict[str, Located], items: dict, scratch: Path
+) -> tuple[list[Patch], dict[str, str]]:
     """把方案条目变成逐文件 patch + 逐文件改后全文。
 
     每处 patch 用生成器自己的抽取函数复验，不符即拒。改后全文按 task_id 序在同一份
@@ -975,8 +1020,10 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
             raise PlanError(f"条目 {tid} 必须是映射")
         unknown = set(item) - _ITEM_FIELDS
         if unknown:
-            raise PlanError(f"条目 {tid} 含未知字段 {sorted(unknown)}（可用={sorted(_ITEM_FIELDS)}）——"
-                            "拼错的字段会被静默忽略，排班不允许")
+            raise PlanError(
+                f"条目 {tid} 含未知字段 {sorted(unknown)}（可用={sorted(_ITEM_FIELDS)}）——"
+                "拼错的字段会被静默忽略，排班不允许"
+            )
         rationale = str(item.get("rationale_zh") or "").strip()
         if not rationale:
             raise PlanError(f"条目 {tid} 缺 rationale_zh（R-E：排班权归 AI+闸，但每条改动必须留人可复核理由）")
@@ -992,8 +1039,10 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
             assert spec is not None
             if loc.kind == KIND_SLOT:
                 if spec.mode == "times":
-                    raise PlanError(f"{tid}: new_times 只适用于 ps1 的 -Times @(...) 多触发点清单；"
-                                    "schedule.yaml 槽位是单一 cron 表达式，改窗请用 new_window_cron")
+                    raise PlanError(
+                        f"{tid}: new_times 只适用于 ps1 的 -Times @(...) 多触发点清单；"
+                        "schedule.yaml 槽位是单一 cron 表达式，改窗请用 new_window_cron"
+                    )
                 rel = _norm(loc.truth_rel if str(loc.truth_rel).endswith((".yaml", ".yml")) else SCHEDULE_REL)
                 text, nl = _text(rel)
                 lines = text.split("\n")
@@ -1005,13 +1054,13 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
                 if cur_bands is None:
                     raise PlanError(f"{tid}: 现值 cron 不可解析（{cur_val!r}）")
                 if len(cur_bands) == 6 and spec.mode != "cron":
-                    raise PlanError(f"{tid}: 现值是 6 段 cron（含秒段），增量改会静默丢秒段——"
-                                    "请给 6 段 new_window_cron")
+                    raise PlanError(f"{tid}: 现值是 6 段 cron（含秒段），增量改会静默丢秒段——请给 6 段 new_window_cron")
                 if len(cur_bands) == 6 and spec.second is None:
                     raise PlanError(f"{tid}: 6 段 cron 必须显式给秒段")
                 if len(cur_bands) == 5 and spec.second is not None:
-                    raise PlanError(f"{tid}: 现值是 5 段 cron，方案给了秒段（会把槽位升成 6 段，"
-                                    "须显式确认，本工具拒绝隐式改形态）")
+                    raise PlanError(
+                        f"{tid}: 现值是 5 段 cron，方案给了秒段（会把槽位升成 6 段，须显式确认，本工具拒绝隐式改形态）"
+                    )
                 aps = _slot_aps_cron(spec)
                 new_text, line_no, old_line, new_line = patch_slot_cron(text, loc.slot, aps)
                 # 复验：把改后的整份 schedule.yaml 交给生成器自己的抽取函数重抽
@@ -1035,13 +1084,21 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
                     raise PlanError(f"{tid}: 改后 schedule.yaml 触发抽取告警：{warns}")
                 texts[rel] = (new_text, nl)
                 loc.pending_expr = str(pend.get("window_expr"))
-                patches.append(Patch(
-                    rel_path=rel, kind="slot_cron", task_id=tid, line_no=line_no,
-                    old_line=old_line, new_line=new_line,
-                    old_value=str(loc.window_expr), new_value=loc.pending_expr,
-                    rationale_zh=rationale, noop=(old_line == new_line),
-                    note=f"槽位 {loc.slot}（APScheduler dow 口径写回）",
-                ))
+                patches.append(
+                    Patch(
+                        rel_path=rel,
+                        kind="slot_cron",
+                        task_id=tid,
+                        line_no=line_no,
+                        old_line=old_line,
+                        new_line=new_line,
+                        old_value=str(loc.window_expr),
+                        new_value=loc.pending_expr,
+                        rationale_zh=rationale,
+                        noop=(old_line == new_line),
+                        note=f"槽位 {loc.slot}（APScheduler dow 口径写回）",
+                    )
+                )
             else:  # KIND_PS1
                 rel = _norm(loc.truth_rel)
                 text, nl = _text(rel)
@@ -1061,13 +1118,21 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
                     )
                 texts[rel] = (new_text, nl)
                 loc.pending_expr = "|".join(pend_exprs)
-                patches.append(Patch(
-                    rel_path=rel, kind="ps1_trigger", task_id=tid, line_no=line_no,
-                    old_line=old_line, new_line=new_line,
-                    old_value=str(loc.window_expr), new_value=loc.pending_expr,
-                    rationale_zh=rationale, noop=(old_line == new_line),
-                    note=f"计划任务 {loc.ps1_task_name}",
-                ))
+                patches.append(
+                    Patch(
+                        rel_path=rel,
+                        kind="ps1_trigger",
+                        task_id=tid,
+                        line_no=line_no,
+                        old_line=old_line,
+                        new_line=new_line,
+                        old_value=str(loc.window_expr),
+                        new_value=loc.pending_expr,
+                        rationale_zh=rationale,
+                        noop=(old_line == new_line),
+                        note=f"计划任务 {loc.ps1_task_name}",
+                    )
+                )
 
         # ── B. 互斥组改动：人审字段，真源位置就是表内该字段
         if _GROUP_FIELD in item:
@@ -1085,13 +1150,21 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
             text, nl = _text(rel)
             new_text, line_no, old_line, new_line = patch_registry_group(text, tid, new_groups)
             texts[rel] = (new_text, nl)
-            patches.append(Patch(
-                rel_path=rel, kind="registry_group", task_id=tid, line_no=line_no,
-                old_line=old_line, new_line=new_line,
-                old_value=",".join(loc.exclusive_group), new_value=",".join(new_groups),
-                rationale_zh=rationale, noop=(old_line == new_line),
-                note="人审字段（§2.1 生产者=人；再生合并保全）",
-            ))
+            patches.append(
+                Patch(
+                    rel_path=rel,
+                    kind="registry_group",
+                    task_id=tid,
+                    line_no=line_no,
+                    old_line=old_line,
+                    new_line=new_line,
+                    old_value=",".join(loc.exclusive_group),
+                    new_value=",".join(new_groups),
+                    rationale_zh=rationale,
+                    noop=(old_line == new_line),
+                    note="人审字段（§2.1 生产者=人；再生合并保全）",
+                )
+            )
     return patches, {rel: text for rel, (text, _nl) in texts.items()}
 
 
@@ -1120,8 +1193,9 @@ def _norm(rel: str) -> str:
 # ---------------------------------------------------------------------------
 # ③ 沙箱与受闸验
 # ---------------------------------------------------------------------------
-def build_sandbox(root: Path, sandbox: Path, patched: dict[str, str],
-                  extra_rels: tuple[str, ...] | frozenset[str] = ()) -> Path:
+def build_sandbox(
+    root: Path, sandbox: Path, patched: dict[str, str], extra_rels: tuple[str, ...] | frozenset[str] = ()
+) -> Path:
     """从 root 复制真源/生成器/闸/词表源 → sandbox，再把 patch 后的文本覆盖进去。
 
     ``extra_rels``：locate_all 发现的额外机器真源（如第 4 源 drill_schedule.yaml）。沙箱
@@ -1177,8 +1251,9 @@ def regen_sandbox(sandbox: Path, skip_schtasks: bool = True) -> Path:
     if skip_schtasks:
         cmd.append("--skip-schtasks")
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", env=env, timeout=600)
+        r = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, timeout=600
+        )
     except Exception as exc:  # noqa: BLE001
         raise EnvError(f"沙箱再生进程失败: {str(exc)[:200]}") from exc
     if r.returncode != 0:
@@ -1186,8 +1261,7 @@ def regen_sandbox(sandbox: Path, skip_schtasks: bool = True) -> Path:
     return out
 
 
-def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime,
-                 focus: set[str] | None = None) -> dict:
+def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime, focus: set[str] | None = None) -> dict:
     """闸三查 + 漂移查（repo_root 口径真源）+ C-8（P2-a 就绪才跑，否则报告注明降级）。
 
     findings 以**结构记录**返回（rendered/severity/code/ids）而不只是文本：判定"本次是否
@@ -1200,6 +1274,7 @@ def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime,
     ``focus``：P2-a 给 C-8 的 own-scope 归因集（宪法 §3 "存量债不连坐本提交"）。按真实签名
     投递——兄弟代理在途改签名是常态，参数不存在就降级并留痕，不炸整条验收链路。
     """
+
     def _sig_names(fn) -> set[str]:
         """_sig_names implementation."""
         try:
@@ -1229,17 +1304,25 @@ def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime,
         try:
             fs = list(fn(*a, **kw))
         except Exception as exc:  # noqa: BLE001 — 单检查臂异常不得炸整条验收链路（显式记账）
-            return [{"rendered": f"<check_error> {name}: {str(exc)[:180]}", "severity": "block",
-                     "code": f"<check_error:{name}>", "ids": [f"<{name}>"]}]
+            return [
+                {
+                    "rendered": f"<check_error> {name}: {str(exc)[:180]}",
+                    "severity": "block",
+                    "code": f"<check_error:{name}>",
+                    "ids": [f"<{name}>"],
+                }
+            ]
         out = []
         for f in fs:
             render = getattr(f, "render", None)
-            out.append({
-                "rendered": render() if callable(render) else str(f),
-                "severity": str(getattr(f, "severity", "?")),
-                "code": str(getattr(f, "reason_code", "?")),
-                "ids": sorted(str(x) for x in (getattr(f, "task_ids", None) or [])),
-            })
+            out.append(
+                {
+                    "rendered": render() if callable(render) else str(f),
+                    "severity": str(getattr(f, "severity", "?")),
+                    "code": str(getattr(f, "reason_code", "?")),
+                    "ids": sorted(str(x) for x in (getattr(f, "task_ids", None) or [])),
+                }
+            )
         return out
 
     c8_available = hasattr(gate, "check_pool_concurrency")
@@ -1254,8 +1337,10 @@ def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime,
         _run("check_pool_concurrency", entities, now, focus_arg=focus) if c8_available else []
     )
     if not c8_available:
-        out["c8_note"] = ("P2-a 的 check_pool_concurrency（v2 方案 C-8 同 pool 同窗并发/同刻不同组）"
-                          "未就绪——本轮只跑三查+漂移查，同刻跨组冲突可能漏检")
+        out["c8_note"] = (
+            "P2-a 的 check_pool_concurrency（v2 方案 C-8 同 pool 同窗并发/同刻不同组）"
+            "未就绪——本轮只跑三查+漂移查，同刻跨组冲突可能漏检"
+        )
     if notes:
         out["arm_notes"] = notes
     return out
@@ -1273,14 +1358,22 @@ def block_records(findings: dict) -> list[dict]:
         if not str(arm).startswith("check_"):
             continue
         if isinstance(items, dict):  # 检查臂缺席：闸改了这个函数名≠这条检查不用做
-            out.append({"arm": arm, "rendered": str(items.get("error", "check_arm_absent")),
-                        "severity": "block", "code": "<check_arm_absent>", "ids": [f"<{arm}>"]})
+            out.append(
+                {
+                    "arm": arm,
+                    "rendered": str(items.get("error", "check_arm_absent")),
+                    "severity": "block",
+                    "code": "<check_arm_absent>",
+                    "ids": [f"<{arm}>"],
+                }
+            )
             continue
         if not isinstance(items, list):
             continue
         for f in items:
-            if isinstance(f, dict) and (f.get("severity") == "block"
-                                        or str(f.get("code", "")).startswith("<check_error")):
+            if isinstance(f, dict) and (
+                f.get("severity") == "block" or str(f.get("code", "")).startswith("<check_error")
+            ):
                 out.append({**f, "arm": arm})
     return out
 
@@ -1295,7 +1388,9 @@ def block_lines(findings: dict) -> list[str]:
     return [f"{b['arm']}: {b['rendered']}" for b in block_records(findings)]
 
 
-def materialization_problems(entities: list[dict], located: dict[str, Located], items: dict, patches: list[Patch]) -> list[str]:
+def materialization_problems(
+    entities: list[dict], located: dict[str, Located], items: dict, patches: list[Patch]
+) -> list[str]:
     """方案意图必须在再生后的表里如实出现（时间值不搬家；被合并保全遮蔽/被解析吞=没落地）。"""
     problems: list[str] = []
     by_tid = {str(e.get("task_id")): e for e in entities if isinstance(e, dict)}
@@ -1308,8 +1403,7 @@ def materialization_problems(entities: list[dict], located: dict[str, Located], 
         if loc.pending_expr is not None:
             if expr_sig(ent.get("window_expr")) != expr_sig(loc.pending_expr):
                 problems.append(
-                    f"{tid}: 表内 window_expr={ent.get('window_expr')!r} ≠ 真源重抽="
-                    f"{loc.pending_expr!r}（再生未物化）"
+                    f"{tid}: 表内 window_expr={ent.get('window_expr')!r} ≠ 真源重抽={loc.pending_expr!r}（再生未物化）"
                 )
         if _GROUP_FIELD in items[tid]:
             want = sorted(str(x) for x in items[tid][_GROUP_FIELD])
@@ -1325,8 +1419,7 @@ def materialization_problems(entities: list[dict], located: dict[str, Located], 
 # ---------------------------------------------------------------------------
 # ④ 三角对账：表 ↔ 真源重抽 ↔ schtasks 实测
 # ---------------------------------------------------------------------------
-def triangle_report(gen, registry_path: Path, root: Path, tids: list[str],
-                    skip_schtasks: bool = False) -> dict:
+def triangle_report(gen, registry_path: Path, root: Path, tids: list[str], skip_schtasks: bool = False) -> dict:
     """三方一致性 summary（只读探针；schtasks 不可用降级为健康码，不静默）。"""
     data = yaml.safe_load(Path(registry_path).read_text(encoding="utf-8")) or {}
     table = list(data.get("entities") or [])
@@ -1384,16 +1477,18 @@ def triangle_report(gen, registry_path: Path, root: Path, tids: list[str],
             verdict = "不适用"  # 无机器 cron 可比（种子/常驻/事件型）
         else:
             verdict = "一致" if expr_sig(t_expr) == expr_sig(f_expr) else "漂移"
-        rows.append({
-            "task_id": tid,
-            "table_window_expr": t_expr,
-            "truth_window_expr": f_expr if f_expr else "<无机器时间真源>",
-            "truth_source": ent.get("schedule_truth_source") or fr.get("schedule_truth_source"),
-            "os_task_name": task_name,
-            "schtasks_status": os_state,
-            "table_vs_truth": verdict,
-            "table_status": ent.get("status"),
-        })
+        rows.append(
+            {
+                "task_id": tid,
+                "table_window_expr": t_expr,
+                "truth_window_expr": f_expr if f_expr else "<无机器时间真源>",
+                "truth_source": ent.get("schedule_truth_source") or fr.get("schedule_truth_source"),
+                "os_task_name": task_name,
+                "schtasks_status": os_state,
+                "table_vs_truth": verdict,
+                "table_status": ent.get("status"),
+            }
+        )
     counted = [r for r in rows if r["os_task_name"]]
     return {
         "rows": rows,
@@ -1405,9 +1500,12 @@ def triangle_report(gen, registry_path: Path, root: Path, tids: list[str],
             "truth_drifted": sum(1 for r in rows if r["table_vs_truth"] in ("漂移", "表有真源无")),
             "no_machine_truth": sum(1 for r in rows if r["table_vs_truth"] == "不适用"),
             "os_registered": sum(1 for r in counted if not str(r["schtasks_status"][0]).startswith("<")),
-            "os_absent_or_disabled": sum(1 for r in counted
-                                         if str(r["schtasks_status"][0]) in {"<not_registered>"}
-                                         or "disabled" in str(r["schtasks_status"]).lower()),
+            "os_absent_or_disabled": sum(
+                1
+                for r in counted
+                if str(r["schtasks_status"][0]) in {"<not_registered>"}
+                or "disabled" in str(r["schtasks_status"]).lower()
+            ),
             "os_not_probed": sum(1 for r in counted if str(r["schtasks_status"][0]) == "<not_probed>"),
             "os_probe_available": probed,
         },
@@ -1435,13 +1533,16 @@ def archive_originals(archive_dir: Path, root: Path, rels: list[str], meta: dict
         dst = ad / "orig" / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(raw)
-        files.append({
-            "rel_path": _norm(rel),
-            "sha256": sha256_bytes(raw),
-            "bytes": len(raw),
-        })
-    (ad / "manifest.json").write_text(json.dumps({**meta, "files": files}, ensure_ascii=False, indent=1),
-                                      encoding="utf-8", newline="\n")
+        files.append(
+            {
+                "rel_path": _norm(rel),
+                "sha256": sha256_bytes(raw),
+                "bytes": len(raw),
+            }
+        )
+    (ad / "manifest.json").write_text(
+        json.dumps({**meta, "files": files}, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n"
+    )
     return ad
 
 
@@ -1462,8 +1563,13 @@ def restore_archive(root: Path, archive_dir: Path) -> dict:
                 aside = ad / "removed_by_rollback" / rel
                 aside.parent.mkdir(parents=True, exist_ok=True)
                 os.replace(str(dst), str(aside))
-                restored.append({"rel_path": rel, "removed_as_created_by_apply": True,
-                                 "before_sha256": sha256_bytes(aside.read_bytes())})
+                restored.append(
+                    {
+                        "rel_path": rel,
+                        "removed_as_created_by_apply": True,
+                        "before_sha256": sha256_bytes(aside.read_bytes()),
+                    }
+                )
             else:
                 restored.append({"rel_path": rel, "unchanged_absent": True})
             continue
@@ -1480,12 +1586,14 @@ def restore_archive(root: Path, archive_dir: Path) -> dict:
         os.replace(str(tmp), str(dst))
         if dst.read_bytes() != raw:
             raise EnvError(f"回滚后校验失败: {dst}")
-        restored.append({
-            "rel_path": rel,
-            "restored_sha256": sha256_bytes(raw),
-            "before_sha256": sha256_bytes(was) if was is not None else None,
-            "byte_identical_to_pre_apply": sha256_bytes(raw) == f.get("sha256"),
-        })
+        restored.append(
+            {
+                "rel_path": rel,
+                "restored_sha256": sha256_bytes(raw),
+                "before_sha256": sha256_bytes(was) if was is not None else None,
+                "byte_identical_to_pre_apply": sha256_bytes(raw) == f.get("sha256"),
+            }
+        )
     return {"archive_dir": _norm(ad), "plan_id": man.get("plan_id"), "restored": restored}
 
 
@@ -1507,12 +1615,17 @@ def run_child(root: Path, rel: str, extra: list[str] | None = None) -> dict:
     """子进程调生产再生/视图渲染（落地后全链跟上）。"""
     cmd = [sys.executable, str(Path(root) / rel)] + list(extra or [])
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=900, cwd=str(root))
+        r = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=900, cwd=str(root)
+        )
     except Exception as exc:  # noqa: BLE001
         return {"script": _norm(rel), "rc": -1, "stdout": "", "stderr": str(exc)[:400]}
-    return {"script": _norm(rel), "rc": r.returncode,
-            "stdout": (r.stdout or "")[-600:], "stderr": (r.stderr or "")[-600:]}
+    return {
+        "script": _norm(rel),
+        "rc": r.returncode,
+        "stdout": (r.stdout or "")[-600:],
+        "stderr": (r.stderr or "")[-600:],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -1536,6 +1649,7 @@ def pin_eval_now(t: datetime) -> datetime:
         t = t.replace(tzinfo=timezone.utc)
     try:
         from zoneinfo import ZoneInfo
+
         local = t.astimezone(ZoneInfo("Asia/Shanghai"))
         return local.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
     except Exception:  # noqa: BLE001 — 无 tzdata 时退回 UTC 日首（仍确定，只是网格偏 8h）
@@ -1544,14 +1658,34 @@ def pin_eval_now(t: datetime) -> datetime:
 
 def stable_hash(report: dict) -> str:
     """幂等指纹：剔除时间/路径等易变字段后对报告取 sha（同方案两次 dry-run 必须同值）。"""
+
     def _scrub(o):
         """_scrub implementation."""
         if isinstance(o, dict):
-            return {k: _scrub(v) for k, v in o.items()
-                    if k not in {"ts_utc", "elapsed_s", "sandbox", "archive_dir", "generated_at",
-                                 "regen_stdout", "view_rc", "now_utc", "at", "restored", "written",
-                                 "report_path", "sid", "session", "children", "plan_path"}
-                    and not str(k).endswith("_at")}
+            return {
+                k: _scrub(v)
+                for k, v in o.items()
+                if k
+                not in {
+                    "ts_utc",
+                    "elapsed_s",
+                    "sandbox",
+                    "archive_dir",
+                    "generated_at",
+                    "regen_stdout",
+                    "view_rc",
+                    "now_utc",
+                    "at",
+                    "restored",
+                    "written",
+                    "report_path",
+                    "sid",
+                    "session",
+                    "children",
+                    "plan_path",
+                }
+                and not str(k).endswith("_at")
+            }
         if isinstance(o, list):
             return [_scrub(v) for v in o]
         if isinstance(o, str):
@@ -1559,6 +1693,7 @@ def stable_hash(report: dict) -> str:
             # 与方案无关——两次 dry-run 跨分钟就会变，留着幂等指纹等于自设 flaky。
             return _RE_AT_TAIL.sub("（at=<scrubbed>）", o.replace("\\", "/"))
         return o
+
     return hashlib.sha256(json.dumps(_scrub(report), ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
 
 
@@ -1588,10 +1723,14 @@ def run_plan(
         """_stub implementation."""
         return {
             "tool": "scripts/governance/apply_resource_plan.py",
-            "plan_id": plan_id, "plan_path": _norm(plan_path), "session": session,
+            "plan_id": plan_id,
+            "plan_path": _norm(plan_path),
+            "session": session,
             "mode": "apply" if apply else "dry-run",
             "ts_utc": t0.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "items": [], "patches": [], "refusals": [],
+            "items": [],
+            "patches": [],
+            "refusals": [],
         }
 
     # ── ⓪ 前置件（任一件不可用=契约出口码，绝不冒 traceback：ERROR_CONTRACT）
@@ -1626,8 +1765,9 @@ def run_plan(
 
     coverage = {
         "total_entities": len(located),
-        "by_kind": {k: sum(1 for v in located.values() if v.kind == k)
-                    for k in (KIND_SLOT, KIND_PS1, KIND_SEED, KIND_DRILL)},
+        "by_kind": {
+            k: sum(1 for v in located.values() if v.kind == k) for k in (KIND_SLOT, KIND_PS1, KIND_SEED, KIND_DRILL)
+        },
         "window_patchable": sum(1 for v in located.values() if v.patchable_window),
         "extraction_warnings": list(getattr(locate_all, "warnings", [])),
     }
@@ -1638,9 +1778,11 @@ def run_plan(
         "session": session,
         "mode": "apply" if apply else "dry-run",
         "ts_utc": t0.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "horizon_note": ("闸窗档地平线沿用 gate.HORIZON_DAYS（28 天）；评估瞬间按上海墙钟日首取整"
-                         "（见 pin_eval_now）→ 同日重跑同方案报告逐字节可复现，跨日差异=地平线整体"
-                         "前移一天，属真值变化而非工具抖动"),
+        "horizon_note": (
+            "闸窗档地平线沿用 gate.HORIZON_DAYS（28 天）；评估瞬间按上海墙钟日首取整"
+            "（见 pin_eval_now）→ 同日重跑同方案报告逐字节可复现，跨日差异=地平线整体"
+            "前移一天，属真值变化而非工具抖动"
+        ),
         "eval_now_utc": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "locate_coverage": coverage,
         "items": [],
@@ -1658,8 +1800,9 @@ def run_plan(
         rep["report_sha256"] = stable_hash(rep)
         if ad is not None and ad.exists():
             try:
-                (ad / "report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1) + "\n",
-                                                encoding="utf-8", newline="\n")
+                (ad / "report.json").write_text(
+                    json.dumps(rep, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"
+                )
             except OSError as exc:  # 报告落档失败不得掩盖主链结论
                 rep["report_archive_error"] = str(exc)[:200]
         return rep, rc
@@ -1667,16 +1810,26 @@ def run_plan(
     # ── ① 定位命中表（先于 patch：让"哪几个真源文件会被碰"在最早处可见）
     for tid in sorted(items):
         loc = located.get(tid)
-        report["items"].append({
-            "task_id": tid,
-            "located": None if loc is None else {
-                "kind": loc.kind, "truth_source": loc.truth_rel, "slot": loc.slot,
-                "ps1_task_name": loc.ps1_task_name, "window_type": loc.window_type,
-                "current_window_expr": loc.window_expr, "status": loc.status,
-                "pool": loc.pool, "exclusive_group": loc.exclusive_group,
-                "patchable_window": loc.patchable_window, "why_not": loc.why_not,
-            },
-        })
+        report["items"].append(
+            {
+                "task_id": tid,
+                "located": None
+                if loc is None
+                else {
+                    "kind": loc.kind,
+                    "truth_source": loc.truth_rel,
+                    "slot": loc.slot,
+                    "ps1_task_name": loc.ps1_task_name,
+                    "window_type": loc.window_type,
+                    "current_window_expr": loc.window_expr,
+                    "status": loc.status,
+                    "pool": loc.pool,
+                    "exclusive_group": loc.exclusive_group,
+                    "patchable_window": loc.patchable_window,
+                    "why_not": loc.why_not,
+                },
+            }
+        )
 
     sandbox = Path(sandbox_dir) if sandbox_dir else root / ".runtime/tmp/apply_resource_plan_sandbox"
     # 逐 patch 复验的临时真源必须落在 root 之内：生成器 parse_schedule_slots 用
@@ -1714,10 +1867,18 @@ def run_plan(
         else:
             patched[rel] = patched_all[rel]
     report["patches"] = [
-        {"task_id": p.task_id, "kind": p.kind, "rel_path": p.rel_path, "line_no": p.line_no,
-         "old_value": p.old_value, "new_value": p.new_value, "noop": p.noop,
-         "note": p.note, "rationale_zh": p.rationale_zh,
-         "diff_lines": len(unified_diff(p.rel_path, p.old_line, p.new_line).splitlines())}
+        {
+            "task_id": p.task_id,
+            "kind": p.kind,
+            "rel_path": p.rel_path,
+            "line_no": p.line_no,
+            "old_value": p.old_value,
+            "new_value": p.new_value,
+            "noop": p.noop,
+            "note": p.note,
+            "rationale_zh": p.rationale_zh,
+            "diff_lines": len(unified_diff(p.rel_path, p.old_line, p.new_line).splitlines()),
+        }
         for p in patches
     ]
     report["files_touched"] = sorted(patched)
@@ -1764,12 +1925,18 @@ def run_plan(
 
     pre_keys = block_keys(block_records(baseline))
     post_keys = block_keys(block_records(findings))
-    new_blocks = [f"{b['arm']}: {b['rendered']}" for b in block_records(findings)
-                  if (b["arm"], b["code"], tuple(b["ids"])) not in pre_keys]
+    new_blocks = [
+        f"{b['arm']}: {b['rendered']}"
+        for b in block_records(findings)
+        if (b["arm"], b["code"], tuple(b["ids"])) not in pre_keys
+    ]
     # 反向账同样重要：P3 全局重排要的判据是"这一挪有没有清掉一条既存冲突"（如周六 14:00
     # c4_exam/f06_grid 同刻开工），只报新账会把减账看成白干。
-    blocks_resolved = sorted(f"{b['arm']}: {b['rendered']}" for b in block_records(baseline)
-                             if (b["arm"], b["code"], tuple(b["ids"])) not in post_keys)
+    blocks_resolved = sorted(
+        f"{b['arm']}: {b['rendered']}"
+        for b in block_records(baseline)
+        if (b["arm"], b["code"], tuple(b["ids"])) not in post_keys
+    )
     problems = materialization_problems(sb_ents, located, items, patches)
     report["gate"] = {
         "focus_tasks": sorted(touched),
@@ -1783,9 +1950,12 @@ def run_plan(
         **({"c8_note": findings["c8_note"]} if "c8_note" in findings else {}),
         **({"arm_notes": findings["arm_notes"]} if "arm_notes" in findings else {}),
     }
-    report["sandbox_registry"] = {"entities": len(sb_ents), "total_entities_field": sb_data.get("total_entities"),
-                                  "baseline_entities": len(base_ents),
-                                  "entity_delta_vs_baseline": len(sb_ents) - len(base_ents)}
+    report["sandbox_registry"] = {
+        "entities": len(sb_ents),
+        "total_entities_field": sb_data.get("total_entities"),
+        "baseline_entities": len(base_ents),
+        "entity_delta_vs_baseline": len(sb_ents) - len(base_ents),
+    }
 
     # ── ⑤ 三角对账（dry-run 侧=沙箱"改后预期"：真源重抽也须走沙箱副本，否则拿旧生产真源
     #       对改后表，报出来的全是假漂移）
@@ -1794,7 +1964,9 @@ def run_plan(
     except EnvError:
         gen_sb = gen
     report["triangle"] = triangle_report(
-        gen_sb, sb_reg, sandbox,
+        gen_sb,
+        sb_reg,
+        sandbox,
         [p.task_id for p in patches if not p.noop] or sorted(items),
         skip_schtasks=tri_skip,
     )
@@ -1818,9 +1990,13 @@ def run_plan(
 
     ad = Path(root) / ".runtime/sessions" / session / "archive" / f"plan_{_utc_ts()}"
     plan_meta = {
-        "plan_id": report["plan_id"], "session": session, "ts_utc": report["ts_utc"],
+        "plan_id": report["plan_id"],
+        "session": session,
+        "ts_utc": report["ts_utc"],
         "plan_sha256": sha256_bytes(Path(plan_path).read_bytes()),
-        "mode": "apply", "report_sha256_pending": True, "files": [],
+        "mode": "apply",
+        "report_sha256_pending": True,
+        "files": [],
     }
     written: list[dict] = []
     view_existed_before = (Path(root) / VIEW_REL).exists()
@@ -1839,12 +2015,16 @@ def run_plan(
         if regen["rc"] == 0:
             fresh_disk = _disk_entities(root)
             post = gate_findings(gate, fresh_disk, root, now, focus=touched)
-            post_new = sorted(f"{b['arm']}: {b['rendered']}" for b in block_records(post)
-                            if (b["arm"], b["code"], tuple(b["ids"])) not in pre_keys)
+            post_new = sorted(
+                f"{b['arm']}: {b['rendered']}"
+                for b in block_records(post)
+                if (b["arm"], b["code"], tuple(b["ids"])) not in pre_keys
+            )
             problems2 = materialization_problems(fresh_disk, located, items, patches)
             # 再生只保证"表跟真源一致"，还得反过来确认一致的不是别处的旧真源
-            if triangle_report(gen, root / REGISTRY_REL, root, sorted(items),
-                               skip_schtasks=True)["summary"]["truth_drifted"]:
+            if triangle_report(gen, root / REGISTRY_REL, root, sorted(items), skip_schtasks=True)["summary"][
+                "truth_drifted"
+            ]:
                 problems2.append("post_apply_drift: 落地后表↔真源仍有漂移条目")
         else:
             fresh_disk = None
@@ -1860,10 +2040,14 @@ def run_plan(
                 )
         report["children"] = {"regen": regen, "view": view}
         report["written"] = written
-        report["post_apply"] = {"new_blocks": post_new, "materialization_problems": problems2,
-                                "entities_after_regen": None if fresh_disk is None else len(fresh_disk)}
+        report["post_apply"] = {
+            "new_blocks": post_new,
+            "materialization_problems": problems2,
+            "entities_after_regen": None if fresh_disk is None else len(fresh_disk),
+        }
         report["triangle_after_apply"] = triangle_report(
-            gen, root / REGISTRY_REL, root, sorted(items), skip_schtasks=tri_skip)
+            gen, root / REGISTRY_REL, root, sorted(items), skip_schtasks=tri_skip
+        )
         if post_new or problems2:
             rb = restore_archive(root, ad)
             reroll = run_child(root, GENERATOR_REL, extra=["--skip-schtasks"] if tri_skip else [])
@@ -1883,8 +2067,11 @@ def run_plan(
             return _finish(report, EXIT_ENV, drop_sandbox=True)
         try:
             report["rollback"] = restore_archive(root, ad)
-            report["children"] = {"regen_after_rollback": run_child(
-                root, GENERATOR_REL, extra=["--skip-schtasks"] if skip_schtasks else [])}
+            report["children"] = {
+                "regen_after_rollback": run_child(
+                    root, GENERATOR_REL, extra=["--skip-schtasks"] if skip_schtasks else []
+                )
+            }
             report["verdict"] = "rolled_back"
         except Exception as exc2:  # noqa: BLE001 — 回滚失败必须比原错误更显眼
             report["verdict"] = "apply_failed_no_rollback"
@@ -1899,16 +2086,26 @@ def _render_view(root: Path) -> dict:
     view_script = Path(root) / VIEW_GENERATOR_REL
     if not view_script.exists():
         return {"script": _norm(view_script), "rc": -1, "stdout": "", "stderr": "view generator absent"}
-    cmd = [sys.executable, str(view_script),
-           "--registry", str(Path(root) / REGISTRY_REL),
-           "--output", str(Path(root) / VIEW_REL)]
+    cmd = [
+        sys.executable,
+        str(view_script),
+        "--registry",
+        str(Path(root) / REGISTRY_REL),
+        "--output",
+        str(Path(root) / VIEW_REL),
+    ]
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=900, cwd=str(root))
+        r = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=900, cwd=str(root)
+        )
     except Exception as exc:  # noqa: BLE001
         return {"script": _norm(view_script), "rc": -1, "stdout": "", "stderr": str(exc)[:300]}
-    return {"script": _norm(view_script), "rc": r.returncode, "stdout": (r.stdout or "")[-600:],
-            "stderr": (r.stderr or "")[-600:]}
+    return {
+        "script": _norm(view_script),
+        "rc": r.returncode,
+        "stdout": (r.stdout or "")[-600:],
+        "stderr": (r.stderr or "")[-600:],
+    }
 
 
 def _disk_entities(root: Path) -> list[dict]:
@@ -1939,8 +2136,11 @@ def _diff_stats(diff_text: str) -> dict:
     """_diff_stats implementation."""
     add = sum(1 for ln in diff_text.splitlines() if ln.startswith("+") and not ln.startswith("+++"))
     rem = sum(1 for ln in diff_text.splitlines() if ln.startswith("-") and not ln.startswith("---"))
-    return {"added_lines": add, "removed_lines": rem, "hunks": sum(1 for ln in diff_text.splitlines()
-                                                                   if ln.startswith("@@"))}
+    return {
+        "added_lines": add,
+        "removed_lines": rem,
+        "hunks": sum(1 for ln in diff_text.splitlines() if ln.startswith("@@")),
+    }
 
 
 def render_map(located: dict[str, Located]) -> str:
@@ -1948,8 +2148,10 @@ def render_map(located: dict[str, Located]) -> str:
     lines = [f"{'task_id':40s} {'kind':15s} {'window_expr':30s} {'truth_source'}"]
     for tid in sorted(located):
         loc = located[tid]
-        lines.append(f"{tid:40s} {loc.kind:15s} {str(loc.window_expr)[:30]:30s} {loc.truth_rel}"
-                     + ("" if loc.patchable_window else "   [改窗不可: " + loc.why_not.split("；")[0][:40] + "]"))
+        lines.append(
+            f"{tid:40s} {loc.kind:15s} {str(loc.window_expr)[:30]:30s} {loc.truth_rel}"
+            + ("" if loc.patchable_window else "   [改窗不可: " + loc.why_not.split("；")[0][:40] + "]")
+        )
     return "\n".join(lines)
 
 
@@ -1970,16 +2172,33 @@ def _build_argparser() -> argparse.ArgumentParser:
             "  python scripts/governance/apply_resource_plan.py --rollback <archive_dir>\n"
         ),
     )
-    p.add_argument("--plan", type=str, default=None, help=f"排班方案 YAML（缺省 .runtime/sessions/<sid>/staging/{PLAN_DEFAULT_NAME}）")
+    p.add_argument(
+        "--plan",
+        type=str,
+        default=None,
+        help=f"排班方案 YAML（缺省 .runtime/sessions/<sid>/staging/{PLAN_DEFAULT_NAME}）",
+    )
     p.add_argument("--session", type=str, default=DEFAULT_SID, help=f"会话号（存档目录锚点，缺省 {DEFAULT_SID}）")
     p.add_argument("--dry-run", action="store_true", help="只产 patch 与报告（默认即 dry-run，旗标为显式表达）")
-    p.add_argument("--apply", action="store_true", help="把 patch 落生产真源 + 调再生 + 重渲视图 + 复验（复验失败自动回滚）")
-    p.add_argument("--rollback", type=str, default=None, metavar="ARCHIVE_DIR", help="按存档 manifest 逐字节还原（含表与视图）")
-    p.add_argument("--report-json", nargs="?", const="-", default=None, metavar="PATH",
-                   help="机器可读报告：不给值=打印 stdout，给路径=写该文件；--apply 时另存一份进存档目录 report.json")
+    p.add_argument(
+        "--apply", action="store_true", help="把 patch 落生产真源 + 调再生 + 重渲视图 + 复验（复验失败自动回滚）"
+    )
+    p.add_argument(
+        "--rollback", type=str, default=None, metavar="ARCHIVE_DIR", help="按存档 manifest 逐字节还原（含表与视图）"
+    )
+    p.add_argument(
+        "--report-json",
+        nargs="?",
+        const="-",
+        default=None,
+        metavar="PATH",
+        help="机器可读报告：不给值=打印 stdout，给路径=写该文件；--apply 时另存一份进存档目录 report.json",
+    )
     p.add_argument("--map", action="store_true", dest="show_map", help="打印 task→真源命中全表（人读）")
     p.add_argument("--root", type=str, default=str(REPO_ROOT), help="仓根（测试/沙箱注入用，缺省=真实仓根）")
-    p.add_argument("--sandbox", type=str, default=None, help="沙箱目录（缺省 <root>/.runtime/tmp/apply_resource_plan_sandbox）")
+    p.add_argument(
+        "--sandbox", type=str, default=None, help="沙箱目录（缺省 <root>/.runtime/tmp/apply_resource_plan_sandbox）"
+    )
     p.add_argument("--keep-sandbox", action="store_true", help="保留沙箱现场（排障）")
     p.add_argument("--skip-schtasks", action="store_true", help="跳过 C-15 schtasks 实测探针（离线/非 Windows/测试）")
     p.add_argument("--list-tasks", action="store_true", help="仅打印 task→真源命中表后退出")
@@ -2021,9 +2240,13 @@ def main(argv: list[str] | None = None) -> int:
         print(render_map(located))
     try:
         report, rc = run_plan(
-            root=root, plan_path=plan, session=args.session, apply=bool(args.apply),
+            root=root,
+            plan_path=plan,
+            session=args.session,
+            apply=bool(args.apply),
             sandbox_dir=Path(args.sandbox) if args.sandbox else None,
-            skip_schtasks=bool(args.skip_schtasks), keep_sandbox=bool(args.keep_sandbox),
+            skip_schtasks=bool(args.skip_schtasks),
+            keep_sandbox=bool(args.keep_sandbox),
         )
     except (PlanError, EnvError) as exc:  # 编排层漏网=编排 bug，仍按契约出口码落，不冒 traceback
         print(f"{'REFUSE' if isinstance(exc, PlanError) else 'ENV-FAIL'}: {exc}")
@@ -2050,19 +2273,25 @@ def _print_human(report: dict, located: dict[str, Located]) -> None:
         if loc is None:
             print(f"  - {it['task_id']}: 未命中")
             continue
-        print(f"  - {it['task_id']} → {loc['kind']} @ {loc['truth_source']}"
-              + (f"（{loc['ps1_task_name']}）" if loc["kind"] == KIND_PS1 else "")
-              + (f" 槽位={loc['slot']}" if loc["kind"] == KIND_SLOT else ""))
+        print(
+            f"  - {it['task_id']} → {loc['kind']} @ {loc['truth_source']}"
+            + (f"（{loc['ps1_task_name']}）" if loc["kind"] == KIND_PS1 else "")
+            + (f" 槽位={loc['slot']}" if loc["kind"] == KIND_SLOT else "")
+        )
     for p in report.get("patches", []):
-        print(f"  patch {p['kind']} {p['rel_path']}:{p['line_no']} {p['old_value']!r} → {p['new_value']!r}"
-              + ("（已是目标态，noop）" if p["noop"] else ""))
+        print(
+            f"  patch {p['kind']} {p['rel_path']}:{p['line_no']} {p['old_value']!r} → {p['new_value']!r}"
+            + ("（已是目标态，noop）" if p["noop"] else "")
+        )
     for rel, st in (report.get("diff_stats") or {}).items():
         print(f"  diff {rel}: +{st['added_lines']} -{st['removed_lines']} hunks={st['hunks']}")
     g = report.get("gate") or {}
     if g:
-        print(f"  闸：新增 block={len(g.get('new_blocks', []))} 基线既存 block={len(g.get('pre_existing_blocks', []))} "
-              f"本方案消解={len(g.get('blocks_resolved', []))} "
-              f"C-8 就绪={g.get('c8_available')} 物化问题={len(g.get('materialization_problems', []))}")
+        print(
+            f"  闸：新增 block={len(g.get('new_blocks', []))} 基线既存 block={len(g.get('pre_existing_blocks', []))} "
+            f"本方案消解={len(g.get('blocks_resolved', []))} "
+            f"C-8 就绪={g.get('c8_available')} 物化问题={len(g.get('materialization_problems', []))}"
+        )
         for b in (g.get("blocks_resolved") or [])[:3]:
             print(f"    RESOLVED {b[:200]}")
         for b in (g.get("new_blocks") or [])[:6]:
@@ -2071,8 +2300,10 @@ def _print_human(report: dict, located: dict[str, Located]) -> None:
             print(f"    MATERIALIZE {b[:200]}")
     t = report.get("triangle") or {}
     for r in t.get("rows", []):
-        print(f"  三角 {r['task_id']}: 表={r['table_window_expr']!r} 真源={r['truth_window_expr']!r} "
-              f"{r['table_vs_truth']} schtasks={r['schtasks_status']}")
+        print(
+            f"  三角 {r['task_id']}: 表={r['table_window_expr']!r} 真源={r['truth_window_expr']!r} "
+            f"{r['table_vs_truth']} schtasks={r['schtasks_status']}"
+        )
     for s in report.get("refusals", []):
         print(f"  REFUSE[{s['stage']}]: {s['reason']}")
     if report.get("env_error"):

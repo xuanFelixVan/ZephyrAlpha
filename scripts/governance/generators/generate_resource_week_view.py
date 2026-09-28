@@ -21,6 +21,17 @@
 # [TESTS] tests/scripts/test_generate_resource_week_view.py
 # [A_module] module_id=MOD-RESCHED-VIEW | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""generate_resource_week_view — 周历全景视图生成器（MOD-RESCHED-VIEW，B3 图）。
+
+资源排班全景四件套之"图"（方案 §2.4）：注册表+时间真源指针 → 周历网格数据
+（左=实体泳道，横=周一~周日 0-24h），冲突=闸 findings 同源标注，视图只读禁手改。
+前端页照抄 TDM/工厂页交互范式（页面片段+引擎拆件+manifest/frontend_map 登记，
+dashboard 体系内加页——按方案 §4.5-⑥ 免 alignment_checklist §3 登记）。
+
+用法:
+  python scripts/governance/generators/generate_resource_week_view.py
+  python scripts/governance/generators/generate_resource_week_view.py --output <path> --publish-alerts
+
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
@@ -67,16 +78,6 @@
 # A1 --> A3
 # A2 --> A3
 # A3 --> O1
-"""generate_resource_week_view — 周历全景视图生成器（MOD-RESCHED-VIEW，B3 图）。
-
-资源排班全景四件套之"图"（方案 §2.4）：注册表+时间真源指针 → 周历网格数据
-（左=实体泳道，横=周一~周日 0-24h），冲突=闸 findings 同源标注，视图只读禁手改。
-前端页照抄 TDM/工厂页交互范式（页面片段+引擎拆件+manifest/frontend_map 登记，
-dashboard 体系内加页——按方案 §4.5-⑥ 免 alignment_checklist §3 登记）。
-
-用法:
-  python scripts/governance/generators/generate_resource_week_view.py
-  python scripts/governance/generators/generate_resource_week_view.py --output <path> --publish-alerts
 """
 
 from __future__ import annotations
@@ -95,7 +96,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from zephyr.shared.io.file_utils import safe_write_text, content_sha256  # noqa: E402
+from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +158,7 @@ def build_week_slots(entities: list[dict], week_start: datetime) -> tuple[list[d
             wins = []
             parse_failed = True
         day_slots: dict[int, list[list[int]]] = {}
-        for (s, t) in wins:
+        for s, t in wins:
             # 跨日切分（含溢出周界的裁剪）
             cur = max(s, week_start)
             while cur < t and cur < week_end:
@@ -227,7 +228,9 @@ def build_view_data(registry_path: Path, now: datetime | None = None) -> dict:
     return {
         "generated_at": now.astimezone(timezone.utc).isoformat(timespec="seconds"),
         "generator": "scripts/governance/generators/generate_resource_week_view.py",
-        "registry": str(Path(registry_path).relative_to(REPO_ROOT)) if Path(registry_path).is_relative_to(REPO_ROOT) else str(registry_path),
+        "registry": str(Path(registry_path).relative_to(REPO_ROOT))
+        if Path(registry_path).is_relative_to(REPO_ROOT)
+        else str(registry_path),
         "registry_sha256": fingerprint,
         "week_start": week_start.strftime("%Y-%m-%d"),
         "days": days,

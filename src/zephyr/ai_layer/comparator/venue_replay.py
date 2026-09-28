@@ -14,7 +14,6 @@
 #                docs/_working/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md §②-E
 # [STABILITY] new
 # [SAFETY] L
-# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/venue_replay.yaml
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 考尺 import 失败→VenueUnavailable；未知 op→ValueError；
 #                  request 非 ReplayRequest 实例→TypeError（契约在考尺侧，不复制不放宽）
@@ -29,12 +28,13 @@
 
 成本线重放（降档规则 vs 现行规则对 usage_records）为同构重放（OBJ_R 重放器同构换数据底表），
 考尺建成前经本件同 op 形态接入，调不到=拒考。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_ai_layer/algo_flow/venue_replay.yaml
 """
 
 from __future__ import annotations
 
 import functools
-
 from pathlib import Path
 from typing import Any, Final, Mapping
 
