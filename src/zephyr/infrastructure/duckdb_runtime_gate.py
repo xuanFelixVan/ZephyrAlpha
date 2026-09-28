@@ -87,6 +87,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Final
 
+from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
+
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -118,7 +120,7 @@ _DEFAULT_ALLOWLIST: tuple[str, ...] = (
 )
 
 
-class BareDuckDBConnectError(RuntimeError):
+class BareDuckDBConnectError(ErrorCodeRuntimeError):
     """裸 duckdb.connect 被运行时门阻断（block 模式）。
 
     对标宪法 §9.1：数据库访问一律经 DatabaseService。受控直连须在
@@ -127,10 +129,8 @@ class BareDuckDBConnectError(RuntimeError):
 
     error_code = "ZA-INF-0901"
 
-    def __init__(self, *args, error_code: str | None = None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if error_code is not None:
-            self.error_code = error_code
+    # 包5 工厂化（st-nightsweep-sw8-20260929）：__init__ 同构收编 ErrorCodeRuntimeError
+    # 基类（原 extract 级克隆与 git_commit_gateway.GatewayError 同构）。
 
 
 # ============================================================================

@@ -177,6 +177,7 @@ from zephyr.governance.audit.translation_coverage_reconciler import (  # TRANSLA
 from zephyr.governance.audit.workspace_hygiene_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
     make_workspace_hygiene_reconciler,
 )
+from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -488,15 +489,14 @@ _STATUS_GATE_ID: dict[str, str] = {
 }
 
 
-class GatewayError(RuntimeError):
-    """Gateway 层错误（锁超时等）。"""
+class GatewayError(ErrorCodeRuntimeError):
+    """Gateway 层错误（锁超时等）。
+
+    包5 工厂化（st-nightsweep-sw8-20260929）：__init__ 同构收编 ErrorCodeRuntimeError
+    基类（原 extract 级克隆与 duckdb_runtime_gate.BareDuckDBConnectError 同构）。
+    """
 
     error_code = "ZA-GV-0032"
-
-    def __init__(self, *args, error_code: str | None = None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if error_code is not None:
-            self.error_code = error_code
 
 
 class StashConflictWarning(RuntimeWarning):
@@ -2144,6 +2144,39 @@ class GitCommitGateway:
         except Exception as e:  # noqa: BLE001 — buffer 失败降级 post-flush 尾笔
             logger.warning("F1 rules_integrity buffer failed (降级 post-flush): %s", e)
 
+    def _integrity_baseline_mode(self) -> str:
+        """integrity 基线面读取唯一点（fail-closed=snapshot=现行为，不翻出厂默认）。
+
+        与 validate_rules_integrity._baseline_mode 同优先级（env > flags > snapshot）；
+        读取本体在 derived_dirty_ledger.read_integrity_baseline_mode。
+        """
+        try:
+            from zephyr.gov_enforcement.derived_dirty_ledger import read_integrity_baseline_mode
+
+            return read_integrity_baseline_mode(self.project_root)
+        except Exception:  # noqa: BLE001 — 设施异常回现状
+            logger.warning("_integrity_baseline_mode: 读取异常，fail-closed snapshot", exc_info=True)
+            return "snapshot"
+
+    def _record_integrity_refresh_intent(self, session_id: str, trigger: str) -> None:
+        """只记刷新意图、不 spawn、不开尾笔（战役 B0/M1·P3；消费端=事件触发）。"""
+        try:
+            from zephyr.gov_enforcement.derived_dirty_ledger import append_intent
+
+            head = self.run_git(["git", "rev-parse", "HEAD"])
+            append_intent(
+                self.project_root,
+                {
+                    "qid": "",
+                    "session_id": session_id,
+                    "head_sha": (head.stdout or "").strip()[:12] if head.returncode == 0 else "",
+                    "rules_touched": [],
+                    "reason": trigger,
+                },
+            )
+        except Exception:  # noqa: BLE001 — 意图记录 fail-open
+            logger.warning("_record_integrity_refresh_intent failed (non-blocking)", exc_info=True)
+
     def _post_flush_rules_integrity_re_register(self, session_id: str) -> None:
         """flush 后重注册 rules_integrity 基线（治本时序竞态，2026-08-02 audit-02）。
 
@@ -2162,13 +2195,22 @@ class GitCommitGateway:
 
         递归安全：``_commit_auto`` 不触发 reconciler（见 _commit_auto docstring），无递归。
         fail-open：任何异常降级为 warning log，不阻断主流程。
+
+        战役 B0/M1·P3（2026-09-24）：head 态下 DB 退出判定链 ⇒ 本方法整体退役为
+        "记刷新意图"——不 spawn ``--register``、不为 DB 快照开 auto-commit 尾笔。
+        snapshot=出厂回滚态，原样跑（一个发布周期）。
         """
+        if self._integrity_baseline_mode() != "snapshot":
+            self._record_integrity_refresh_intent(session_id, "post_flush_register")
+            return
         import os as _os
         import subprocess as _sp
         import sys as _sys
 
         _env = dict(_os.environ)
         _env["ZEPHYR_RECONCILER_MODE"] = "1"
+        # 战役 B0/M1·P3：基线面经 per-spawn env 注入（D2 范式：禁改进程全局 os.environ）
+        _env["ZEPHYR_INTEGRITY_BASELINE"] = self._integrity_baseline_mode()
         _script = "scripts/governance/meta/validate_rules_integrity.py"
         try:
             reg_result = _sp.run(
@@ -2259,6 +2301,9 @@ class GitCommitGateway:
             # 2026-08-26..09-15 持续）。升级为同文件 _ensure_scripts_package_importable
             # （补根+毒缓存整族清除两步治本，与 reconcile_for 入口修复互为纵深）。
             _ensure_scripts_package_importable(_root_str)
+            # 战役 B0/M1·P3（2026-09-24）：head 态下 DB 退出判定链 ⇒ 锁内 --fold 退役
+            # （fold 只为"DB 快照并入原子提交"服务）；snapshot=出厂回滚态原样跑。
+            _integrity_snapshot_mode = self._integrity_baseline_mode() == "snapshot"
             # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
             with self._batcher as _batcher_ctx:
                 _batcher_ctx.enable(session_id)
@@ -2267,8 +2312,10 @@ class GitCommitGateway:
                     session_id,
                     commit_message=commit_message,
                 )
-                # F1 治本（衍生提交并入原子化）：flush 前折入 rules_integrity_db，消除独立尾笔。
-                self._fold_rules_integrity_into_batch(existing, session_id, _batcher_ctx)
+                if _integrity_snapshot_mode:
+                    # F1 治本（衍生提交并入原子化）：flush 前折入 rules_integrity_db，消除独立尾笔。
+                    self._fold_rules_integrity_into_batch(existing, session_id, _batcher_ctx)
+            # 战役 B0/M1·P3：head 态下本调用内部转记刷新意图后早退（不 spawn、不开尾笔）。
             # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
             # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
             # GATE-INTEGRITY-AUDIT 在 reconcile_for 内已 defer（见 _reconcile_rules_integrity）。
@@ -2325,6 +2372,8 @@ class GitCommitGateway:
 
         供 ``zephyr.governance.audit.reconcile_worker._run_worker`` 调用。
         """
+        # 战役 B0/M1·P3（2026-09-24）：head 态下 DB 退出判定链 ⇒ 锁内 --fold 退役（同同步链）。
+        _integrity_snapshot_mode = self._integrity_baseline_mode() == "snapshot"
         # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
         with self._batcher as _batcher_ctx:
             _batcher_ctx.enable(session_id)
@@ -2334,8 +2383,9 @@ class GitCommitGateway:
                 commit_message=commit_message,
                 heartbeat=heartbeat,
             )
-            # F1 治本（衍生提交并入原子化）：flush 前折入 rules_integrity_db，消除独立尾笔。
-            self._fold_rules_integrity_into_batch(existing, session_id, _batcher_ctx)
+            if _integrity_snapshot_mode:
+                # F1 治本（衍生提交并入原子化）：flush 前折入 rules_integrity_db，消除独立尾笔。
+                self._fold_rules_integrity_into_batch(existing, session_id, _batcher_ctx)
         # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
         # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
         # F1 后此调用通常 no-op（折入已使 DB == 最终态 HEAD），仅作自愈/空 buffer 兜底。

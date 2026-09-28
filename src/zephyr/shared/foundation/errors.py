@@ -47,6 +47,7 @@ from typing import Any
 
 __all__ = [
     "ConfigError",
+    "ErrorCodeRuntimeError",
     "ContextError",
     "ContractError",
     "DataError",
@@ -103,6 +104,24 @@ class ZephyrBaseError(Exception):
         if self.error_code:
             return f"[{self.error_code}] {self.message}"
         return self.message
+
+
+class ErrorCodeRuntimeError(RuntimeError):
+    """携带动态 error_code 的运行时错误基类（包5 工厂化，st-nightsweep-sw8-20260929）。
+
+    收敛 gateway.GatewayError ↔ infrastructure.duckdb_runtime_gate.BareDuckDBConnectError
+    的 extract 级同构 ``__init__(*args, error_code=None, **kwargs)``（.CloneGuard 判据：
+    异常惯用法平凡 __init__ 复制）。语义：类属性 error_code=默认码；实例可经 kwarg
+    覆盖；其余 args/kwargs 原样透传 RuntimeError。子类只声明 ``error_code`` 类属性
+    即完成定制，零 __init__ 复制。
+    """
+
+    error_code: str | None = None
+
+    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        if error_code is not None:
+            self.error_code = error_code
 
 
 class ConfigError(ZephyrBaseError):

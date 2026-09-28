@@ -149,3 +149,54 @@ class TestErrorSubclasses:
         err = IOError("zephyr io error")
         assert not isinstance(err, OSError)
         assert isinstance(err, ZephyrBaseError)
+
+
+class TestErrorCodeRuntimeError:
+    """包5 工厂化（st-nightsweep-sw8-20260929）：gateway↔duckdb 同构 __init__ 收编基类。"""
+
+    def test_base_semantics_default_code(self):
+        from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
+
+        class _Demo(ErrorCodeRuntimeError):
+            error_code = "ZA-XX-0001"
+
+        err = _Demo("boom", 42)
+        assert err.error_code == "ZA-XX-0001"
+        assert isinstance(err, RuntimeError)
+        assert err.args == ("boom", 42)
+
+    def test_base_semantics_kwarg_override(self):
+        from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
+
+        class _Demo(ErrorCodeRuntimeError):
+            error_code = "ZA-XX-0001"
+
+        err = _Demo("boom", error_code="ZA-XX-9999")
+        assert err.error_code == "ZA-XX-9999"
+
+    def test_base_no_default_code(self):
+        from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
+
+        err = ErrorCodeRuntimeError("bare")
+        assert err.error_code is None
+
+    def test_gateway_error_adopts_base(self):
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GatewayError
+        from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
+
+        assert issubclass(GatewayError, ErrorCodeRuntimeError)
+        # 工厂化最严格判据：不再持有复制的 __init__（原 extract 级克隆收编基类）
+        assert GatewayError.__init__ is ErrorCodeRuntimeError.__init__
+        err = GatewayError("lock timeout", error_code="ZA-GV-CUSTOM")
+        assert err.error_code == "ZA-GV-CUSTOM"
+        assert GatewayError("x").error_code == "ZA-GV-0032"
+
+    def test_duckdb_gate_error_adopts_base(self):
+        from zephyr.infrastructure.duckdb_runtime_gate import BareDuckDBConnectError
+        from zephyr.shared.foundation.errors import ErrorCodeRuntimeError
+
+        assert issubclass(BareDuckDBConnectError, ErrorCodeRuntimeError)
+        assert BareDuckDBConnectError.__init__ is ErrorCodeRuntimeError.__init__
+        err = BareDuckDBConnectError("bare connect", error_code="ZA-INF-CUSTOM")
+        assert err.error_code == "ZA-INF-CUSTOM"
+        assert BareDuckDBConnectError("x").error_code == "ZA-INF-0901"
