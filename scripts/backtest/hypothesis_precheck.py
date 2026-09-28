@@ -198,7 +198,11 @@ def precheck_one(chat, hypothesis_zh: str, birth_channel: str = "", prior_note: 
 
 
 def load_candidates(source: str, limit: int | None = None) -> pd.DataFrame:
-    """进货台账读取（CSV；birth 三件套原样携带）。"""
+    """进货台账读取（CSV；birth 三件套原样携带；同 id 多行去重保首行）。
+
+    F21 缺口2：limit 截断语义已移出本函数（见 select_pending）——在读取端截文件头
+    会让已审行挤占名额，文件尾新增永远排不上。limit 参数仅为既有外部调用兼容保留。
+    """
     path = Path(source)
     if not path.exists():
         raise RuntimeError(f"进货源不存在: {source}")
@@ -207,7 +211,20 @@ def load_candidates(source: str, limit: int | None = None) -> pd.DataFrame:
     missing = need - set(df.columns)
     if missing:
         raise RuntimeError(f"进货源缺列: {missing}")
+    df = df.drop_duplicates(subset="candidate_id", keep="first")
     return df.head(limit) if limit else df
+
+
+def select_pending(cands: pd.DataFrame, done: set[str], limit: int | None = None) -> pd.DataFrame:
+    """幂等过滤后再截断（F21 缺口2 顺序对调）。
+
+    原实现 load_candidates(source, limit) 先截文件头再过滤——台账头部堆积的已终判行
+    挤占 limit 名额，文件尾部新增候选永远进不了当批。现语义：先剔除已终判 id，
+    剩余（新增+待重审 deferred）才参与名额截断。
+    """
+    if done:
+        cands = cands[~cands["candidate_id"].astype(str).isin(done)]
+    return cands.head(limit) if limit else cands
 
 
 def fetch_prechecked_ids() -> set[str]:
@@ -272,12 +289,11 @@ def ledger_preflight(source: str) -> dict:
 
 
 def run(source: str, limit: int | None = None, dry_run: bool = False) -> dict:
-    """主流程：前置对账→读进货→幂等过滤→逐条预审→落台账→汇总。"""
+    """主流程：前置对账→读进货→幂等过滤→名额截断→逐条预审→落台账→汇总。"""
     recon = ledger_preflight(source)
-    cands = load_candidates(source, limit)
+    cands = load_candidates(source)
     done = fetch_prechecked_ids()
-    if done:
-        cands = cands[~cands["candidate_id"].isin(done)]
+    cands = select_pending(cands, done, limit)  # F21 缺口2：先幂等过滤后截断，名额只给真新增
     if cands.empty:
         return {"batch": None, "message": "无新增候选（全部已预审或源为空）", "ledger_recon": recon}
 

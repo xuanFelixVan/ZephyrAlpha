@@ -38,7 +38,9 @@ from scripts.backtest.hypothesis_precheck import (
     build_prompt,
     fetch_prechecked_ids,
     ledger_preflight,
+    load_candidates,
     parse_reply,
+    select_pending,
 )
 
 
@@ -259,6 +261,73 @@ class TestLedgerPreflightF16:
         out = ledger_preflight("some_random_file.csv")
         assert out["status"] == "unknown_ledger"
         assert calls == []
+
+
+class TestFilterThenLimitF21Gap2:
+    """F21 缺口2：幂等过滤后再截断（顺序对调）——已终判行不再挤占 limit 名额。
+
+    旧实现 load_candidates(source, limit) 先截文件头再过滤：台账头部堆积已审行时，
+    文件尾部新增候选永远进不了当批（D 台账 60 行唯一 29 挤占实证）。
+    """
+
+    @staticmethod
+    def _df(ids):
+        return pd.DataFrame(
+            {
+                "candidate_id": ids,
+                "hypothesis_zh": [f"h{i}" for i in range(len(ids))],
+                "birth_channel": ["D"] * len(ids),
+                "birth_batch": ["E1B-x"] * len(ids),
+            }
+        )
+
+    def test_head_ids_no_longer_consume_limit(self):
+        cands = self._df(["done_a", "new_1", "new_2"])
+        out = select_pending(cands, {"done_a"}, limit=2)
+        assert list(out["candidate_id"]) == ["new_1", "new_2"]
+
+    def test_without_done_limit_takes_file_head(self):
+        out = select_pending(self._df(["a", "b", "c"]), set(), limit=2)
+        assert list(out["candidate_id"]) == ["a", "b"]
+
+    def test_all_done_yields_empty(self):
+        assert select_pending(self._df(["a", "b"]), {"a", "b"}, limit=5).empty
+
+    def test_deferred_recheck_candidates_occupy_limit(self):
+        # done 集已排除 deferred（缺口1），待重审候选与新增同享名额
+        out = select_pending(self._df(["done_a", "defer_b", "new_1"]), {"done_a"}, limit=2)
+        assert list(out["candidate_id"]) == ["defer_b", "new_1"]
+
+    def test_run_uses_filter_then_limit_order(self, tmp_path, monkeypatch):
+        # 接线验证：run() 对 head 堆积已审行+limit 场景，真新增仍入选（零 LLM 零 CH）
+        import scripts.backtest.hypothesis_precheck as hp
+
+        p = tmp_path / "intake.csv"
+        self._df(["done_a", "new_1"]).to_csv(p, index=False, encoding="utf-8-sig")
+        monkeypatch.setattr(hp, "ledger_preflight", lambda source: {"status": "unknown_ledger"})
+        monkeypatch.setattr(hp, "fetch_prechecked_ids", lambda: {"done_a"})
+        monkeypatch.setattr(
+            hp,
+            "precheck_one",
+            lambda chat, h, b, prior_note="": (
+                {"verdict": VERDICT_PASS, "reason_code": REASON_PASS, "confidence": 0.9, "rationale": "ok"},
+                1,
+            ),
+        )
+        record = hp.run(str(p), limit=1, dry_run=True)
+        assert [i["candidate_id"] for i in record["items"]] == ["new_1"]
+
+    def test_load_candidates_dedups_same_id(self, tmp_path):
+        p = tmp_path / "intake.csv"
+        pd.DataFrame(
+            {
+                "candidate_id": ["dup", "dup", "solo"],
+                "hypothesis_zh": ["x", "x2", "y"],
+                "birth_channel": ["D", "D", "D"],
+                "birth_batch": ["b", "b", "b"],
+            }
+        ).to_csv(p, index=False, encoding="utf-8-sig")
+        assert list(load_candidates(str(p))["candidate_id"]) == ["dup", "solo"]  # 保首行
 
 
 if __name__ == "__main__":  # pragma: no cover
