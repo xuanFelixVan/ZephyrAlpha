@@ -147,6 +147,7 @@ BLOCKED 项：无（不依赖外部等待；上列均为仓内可读件）。
 | # | 施工项 | 对应子块 | 沿用账本 | 类型 | 前置/门位 |
 |---|---|---|---|---|---|
 | **L09-C01** | **编排器收拢令草案（BT-P1-031 裁定件）**：Owner 二选一裁定——(a) 蓝图版 S1-S7 完全体施工、总扳手降级为其跑批壳；(b) 现役双轨（事件链 9 棒+总扳手 16 段）转正为编排器本体，BT-P1-031 蓝图降格为需求档案+T3/T4 接口分期施工。裁定前增量工作冻结在双轨上，防第三套平行实现。草案要点：①双轨对账声明先行（同日同段两触发面的幂等冲实说明，复用 date-marker/记号闸口径）；②T3 盘中修订/T4 盘后核对随裁定分期；③晨间窗（TRD-A04）随编排器节拍表一并落 | S9-1/S9-2 | BT-P1-031+TRD-A04 | Owner 裁定+施工 | **Owner 一句话** |
+| **L09-C01 ✅裁定结果** | 判 (b)（裁定#421，2026-09-29 夜班自裁授权）：现役双轨转正为本体；BT-P1-031 蓝图降格需求档案+T3/T4 分期；9098c65245 刀1-4 冻结为需求档案附件。真源=ruling_registry 裁定#421 | — | 裁定#421 | 已裁定 | — |
 | **L09-C02** | **计划 vs 实际核对实体化（postmarket_reconcile 实装）**：把 `daily_decision_orchestrator.py:764-767` 签名占位做成实装——T 日盘后取 T-1 decision_daily 快照行（SQL_LATEST_BY_TARGET_DATE）vs 当日实际（regime 态/收盘验证行/plan_verification deviations/执行偏差归因六类 MOD-PLAN-016 注入），产出 reconcile 行落新列或伴生表（判定台账标准"判定/结算分离"口径），喂 S9-7 归因与 TRD-A19 审计报表；与 sim 平台日刊双账合流（=TRD-A17 全量） | S9-4 | TRD-A17 | 施工 | 判定/结算分离真源对表（judgment-ledger-standard §一） |
 | **L09-C03** | **日刊双账合流（决策复盘×平台日刊）**：sim_platform_journal 三健康检产物并入 Owner 晨报面同一视图——decision_daily 快照（账 A）+平台健康行（账 B）+连续连绿判定件（13 号文环节⑥"绿天数靠人翻台账"治本），消除两账互不消费 | S9-4 | TRD-A17/TRD-A19 | 施工 | L09-C02 后串行 |
 | L09-C04 | 决策链哨兵：连续 N 日无 decision_daily 行/无 dloop_post SUCCESS 心跳即 ERROR 升级（N 草案=2），挂 data_supply_sentinel 同款宿主槽位（防"有名无实假通道"先例，schedule.yaml:219-227 自注） | S9-6 | TRD-A01 | 小施工 | 走注册表流程 |
@@ -194,4 +195,4 @@ BLOCKED 项：无（不依赖外部等待；上列均为仓内可读件）。
 | B7 | OS 调度面 | schtasks //query 实测（Zephyr 族 50 项唯一/62 行，禁用 7 项） | signal |
 | B8 | 标准件 | pybrinson PyPI 核实（MIT/1.3.1/Py3.14+）+Prometheus/Grafana license+SRE Workbook Ch5+三账核对惯例 | signal（5.3 开源面留续搜口） |
 
-> 封矿条件：§三 未挖清单 5 件读完+L09-C01 Owner 裁定回来补录结果 → 转 SEALED。
+> 封矿条件：§三 未挖清单 5 件读完+L09-C01 Owner 裁定回来补录结果 → 转 SEALED。**裁定项已补录=裁定#421（判 b，2026-09-29）**，余 §三 5 件读完后转 SEALED。

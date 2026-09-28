@@ -7193,10 +7193,7 @@ fields:
   entry_role: "reference"
   applies_to: []
   tags: ["均线", "质量", "执行", "成本"]
-  algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
+
 - field_id: FLD-EXP-001
   field_name: experiment_id
   name_zh: 实验ID
@@ -8278,3 +8275,35 @@ fields:
   code_symbol: null
   code_fingerprint: null
 
+- field_id: FLD-EXEC-011
+  field_name: decision_timestamp
+  name_zh: 决策时间戳
+  business_definition: 决策下达的 PIT 时间戳（=Order.created_at；NULL=上游未布点）
+  data_type: datetime64(3)
+  unit: ms
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 可NULL（上游未布点）
+  - 禁墙钟回填
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（决策下达）
+  notes: 'E9 IS 分解归因刚性需求；契约 15→16 字段只增不减｜来源: 契约 CTR-P1-007 v2；裁定#420 补册'
+  module_id: MOD-INF-016
+  doc_ref: ruling_registry 裁定#420（2026-09-29）
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-09-29'
+  updated_at: '2026-09-29'
+  owner: ZephyrAlpha-Owner
+  entry_role: "reference"
+  applies_to: []
+  tags: ["时间", "执行", "PIT"]
+  algorithm_status: "not_applicable"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
