@@ -37,6 +37,20 @@ import pytest
 from zephyr.gov_enforcement.rule_bridge.worktree_pool import WorktreePool, get_pool
 from zephyr.shared.io.paths import REPO_ROOT
 
+# DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：本文件对真实 REPO_ROOT
+# 做真实 git 外科（WorktreePool 预建/lease、worktree remove --force、branch -D、
+# 改写 .runtime/session_registry.json、真实 session_worktree_start/abort），
+# 全量跑曾致宿主 4030 文件被删+外来暂存+外来 reset。须显式 ZEPHYR_GIT_E2E=1 且
+# 密闭车道运行——见 docs/_working/qoder_legacy_closeout/00_orchestration 台账。
+pytestmark = pytest.mark.skipif(
+    os.environ.get("ZEPHYR_GIT_E2E") != "1",
+    reason=(
+        "DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：真实 git 外科 e2e "
+        "须显式 ZEPHYR_GIT_E2E=1 且密闭车道运行——见 "
+        "docs/_working/qoder_legacy_closeout/00_orchestration 台账"
+    ),
+)
+
 _TEST_SID = "sess-pytest-pool-A"
 _TEST_SID_2 = "sess-pytest-pool-B"
 
@@ -50,7 +64,7 @@ def _force_rmtree(path: Path) -> None:
                 os.chmod(p, stat.S_IWRITE)
                 func(p)
                 return
-            except Exception:
+            except Exception:  # noqa: BLE001 — Windows 句柄延迟释放兜底重试，fail-soft 清理
                 time.sleep(0.5 * (attempt + 1))
 
     shutil.rmtree(path, onerror=_on_error)
@@ -134,7 +148,7 @@ def _cleanup_pool_artifacts(repo: Path) -> None:
                 json.dumps(data, ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — registry 残留清理 fail-soft（物理残留无害）
             pass
 
 

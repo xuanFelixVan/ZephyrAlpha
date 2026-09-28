@@ -50,6 +50,20 @@ from zephyr.gov_enforcement.rule_bridge.session_worktree import (
 )
 from zephyr.shared.io.paths import REPO_ROOT
 
+# DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：本文件跑真实
+# git worktree/reset --soft/stash push 流（tmp 仓注入靠 monkeypatch REPO_ROOT，
+# 任一未补丁 import 路径即伤宿主；campaign 台账点名本文件）。须显式
+# ZEPHYR_GIT_E2E=1 且密闭车道运行——见 docs/_working/qoder_legacy_closeout/
+# 00_orchestration 台账。
+pytestmark = pytest.mark.skipif(
+    os.environ.get("ZEPHYR_GIT_E2E") != "1",
+    reason=(
+        "DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：真实 git 外科 e2e "
+        "须显式 ZEPHYR_GIT_E2E=1 且密闭车道运行——见 "
+        "docs/_working/qoder_legacy_closeout/00_orchestration 台账"
+    ),
+)
+
 _TEST_SIDS = ["sess-pytest-A", "sess-pytest-B"]
 _TEST_FILE_A = "tests/governance/rule_bridge/_wt_marker_a.json"
 _TEST_FILE_B = "tests/governance/rule_bridge/_wt_marker_b.json"
@@ -70,7 +84,7 @@ def _force_rmtree(path: Path) -> None:
                 os.chmod(p, stat.S_IWRITE)
                 func(p)
                 return
-            except Exception:
+            except Exception:  # noqa: BLE001 — Windows 句柄延迟释放兜底重试，fail-soft 清理
                 time.sleep(0.5 * (attempt + 1))  # 0.5s, 1.0s, 1.5s
         # 3 轮后放弃，残留由下轮 fixture 或 create_session_worktree 的 _force_rmtree 处理
 
@@ -120,7 +134,7 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
             data = json.loads(reg_file.read_text(encoding="utf-8"))
             data = {k: v for k, v in data.items() if not k.startswith("sess-pytest")}
             reg_file.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        except Exception:
+        except Exception:  # noqa: BLE001 — registry 残留清理 fail-soft（物理残留无害）
             pass
 
     # 回退测试产生的 commit（--soft 保留工作区，再 unstage + 删 marker 文件）

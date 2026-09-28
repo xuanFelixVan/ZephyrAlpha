@@ -29,7 +29,15 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import pytest
+
 from zephyr.trading.decision_map import _AI_AUTONOMY, load_decision_map
+
+# DEFECT-4（2026-09-28 st-zcloseout 收口，owner=域会话）：decision map 317MB +
+# 每 auto 节点全量重扫 44MB 语料，本机实测 234.21s（3/3 PASSED，900s 预算下），
+# 超全局 pytest-timeout 120s 默认预算必被杀。非无限挂、非断言红——具名 timeout
+# 覆盖到 240s（治本方向：语料读一次共享/按文件懒扫，留待域会话另批）。
+pytestmark = pytest.mark.timeout(240)
 
 _ROOT = Path(__file__).resolve().parents[2]
 _MAP_PATH = _ROOT / "config" / "trading_decision_map.yaml"

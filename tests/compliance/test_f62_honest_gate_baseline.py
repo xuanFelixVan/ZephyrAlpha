@@ -117,13 +117,34 @@ class _PaperBroker:
 
 
 def _assemble(tmp_path: Path, broker: _PaperBroker) -> TradingSession:
-    """走生产正门装配（state_dir/compliance_log_path 全注 tmp，禁写 data/）。"""
-    return sps.assemble_session(
+    """走生产正门装配（state_dir/compliance_log_path/checklist_evidence_dir 全注 tmp，禁写 data/）。
+
+    DEFECT-2（2026-09-28 st-zcloseout 收口）：清单闸三腿证据目录不注入时锚主仓
+    ``data/compliance_log/checklist``——装配引导即向生产路径落
+    risk_param_confirm/position_limit_verify（宪法 §9.6 隔离红线），且"当日无人工
+    ack"的日态会让对照组被 C-004 清单闸吞单（必红）。本测经 ``checklist_evidence_dir=``
+    正门缝注入 tmp，并经生产写侧真接口在 tmp 落③人工拍板件（C-004 fail-closed
+    熔断语义保持全武装、被真实演练，只是演练面从生产目录换成 tmp）。
+    """
+    evidence_dir = tmp_path / "checklist_evidence"
+    session = sps.assemble_session(
         sps.parse_args([]),
         broker,
         state_dir=tmp_path / "risk_state",
         compliance_log_path=tmp_path / "compliance_log.jsonl",
+        checklist_evidence_dir=evidence_dir,
     )
+    # 写侧③人工腿：经生产 ChecklistEvidenceWriter 落 tmp 拍板件（来源标注留痕，
+    # ZEPHYR_COMPLIANCE_ACK_KEY 在场时走同一 HMAC 路径）——INTRADAY 三腿在 tmp 齐，
+    # C-004 闸保持 armed 且逐单被查，对照组测的是补仓腿因果而非日态。
+    from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter
+
+    ChecklistEvidenceWriter(evidence_dir).write_signal_compliance_ack(
+        "f62-honest-baseline-test",
+        note="st-zcloseout DEFECT-2 隔离修复：测试证据目录全注 tmp_path",
+        ack_source="pytest_tmp_injection",
+    )
+    return session
 
 
 def _buy_add_order(session: TradingSession, *, price: str = "10", qty: str = _ORDER_QTY):
