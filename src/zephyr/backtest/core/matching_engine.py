@@ -1179,8 +1179,10 @@ class StkLimitProvider:
       3. CH 不可达/查询异常 → warn 一次后降级记忆（本实例不再重试），返回
          {}——撮合退回引擎内规则兜底（无 ST，fail-open 不炸回测）。
 
-    使用：vectorized_engine 每次回测构造一个实例注入 MatchingEngine(limit_provider=)；
-    撮合引擎按日批量调用本 provider（一次 SQL/回测日），不在逐 symbol 判定中触库。
+    使用：vectorized_engine 引擎级持有一个实例注入 MatchingEngine(limit_provider=)
+    （2026-09-29 L09 治本起跨 run 复用，PIT 历史行不可变故实例级缓存安全）；
+    撮合引擎按日批量调用本 provider（一次 SQL/回测日，表行全命中走正结果缓存），
+    不在逐 symbol 判定中触库。
     """
 
     #: stk_limit 单日行（inject_final 对 ReplacingMergeTree 注入 FINAL；
@@ -1198,12 +1200,24 @@ class StkLimitProvider:
     def __init__(self) -> None:
         self._degraded = False
         self._st_cache: dict[datetime.date, set[str] | None] = {}
+        # 正结果缓存（2026-09-29 L09 延迟回归治本，L09-PROV-CACHE-1）：
+        # stk_limit 是 ReplacingMergeTree+FINAL 的 PIT 历史行，同一回测日同请求
+        # 在本实例存活期内逐位不变——原实现无缓存且引擎每 run 重建本实例，同批
+        # 日期每 run 重打 65+ 条 FINAL 点查（CH 在线 6-8ms/条 ≈ 800-1000ms/run，
+        # 即 test_l09_backtest_latency 800ms 红的根因）。只缓存"表行全命中"的
+        # 正结果；空/缺失结果一律不缓存，CH 降级与重试语义保持原样。
+        self._limit_cache: dict[tuple[datetime.date, tuple[str, ...]], dict] = {}
 
     def __call__(self, trade_date: datetime.date, symbols: Iterable[str]) -> dict:
         from zephyr.data import ch_reader as _chr
 
         out: dict = {}
         symbols = list(symbols)  # 可能被迭代两次（裸码集 + _canon 回映射），防生成器耗尽
+        cache_key = (trade_date, tuple(sorted(str(s) for s in symbols)))
+        cached = self._limit_cache.get(cache_key)
+        if cached is not None:
+            # 浅拷贝防调用方改写污染缓存（LimitInfo 本身 frozen，共享安全）
+            return dict(cached)
         codes = {str(s or "").split(".")[0].zfill(6) for s in symbols if str(s or "").strip()}
         if not codes:
             return out
@@ -1225,6 +1239,7 @@ class StkLimitProvider:
             )
         missing = [c for c in codes if c not in seen]
         if not missing:
+            self._limit_cache[cache_key] = dict(out)
             return out
         if self._degraded:
             return out

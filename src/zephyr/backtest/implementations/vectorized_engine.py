@@ -188,6 +188,12 @@ class DefaultBacktestEngine(BacktestEngineBase):
             slippage_bps=self._config.slippage_bps,
         )
         self._enable_stk_limit_provider = enable_stk_limit_provider
+        # 涨跌停 provider 提升为引擎级（2026-09-29 L09 延迟回归治本）：原 run() 每次
+        # 新建实例，涨跌停/ST 缓存随 run 丢弃——同一引擎复跑同一日期面板时逐 run 重打
+        # stk_limit FINAL 点查（CH 在线≈66 条/run×6-8ms ≈ 800-1000ms/run，L09 红根因，
+        # 引入=6209755283a P0-3 接线）。实例级 PIT 缓存语义与 PitUniverseProvider
+        # ._registry_cache 同款（PIT 历史行不可变）。
+        self._stk_limit_provider = StkLimitProvider() if self._enable_stk_limit_provider else None
         # P0-3：PIT 标的池提供器（默认按 config 构建；测试可注入 fake）。
         # CH 不可达时 provider 内部 fail-open（返回 None=不过滤），与 stk_limit 同语义。
         self._universe_provider = universe_provider
@@ -195,6 +201,11 @@ class DefaultBacktestEngine(BacktestEngineBase):
             self._universe_provider = PitUniverseProvider(
                 exclude_st=self._config.exclude_st,
                 min_listing_age_days=self._config.min_listing_age_days,
+                # ST 腿共享引擎级 provider（正结果缓存跨 run 复用）；引擎级被显式
+                # 关闭（enable_stk_limit_provider=False）时传 None，保持其自建旧行为。
+                limit_provider=self._stk_limit_provider
+                if (self._config.exclude_st and self._stk_limit_provider is not None)
+                else None,
             )
         elif not self._config.enable_pit_universe_filter:
             self._universe_provider = None
@@ -256,11 +267,12 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         # 初始化持仓管理器和撮合引擎
         portfolio = Portfolio(initial_capital=capital)
-        # 涨跌停 PIT 提供器默认注入（#ARCH-DATA-020 重评条件②）：撮合涨跌停价
-        # 优先读 c1_market.stk_limit 表 PIT 行，缺行走 _limit_pct_of 日期切片
+        # 涨跌停 PIT 提供器（#ARCH-DATA-020 重评条件②）：引擎级实例（见 __init__
+        # L09-PROV-CACHE 注），跨 run 复用正结果缓存；撮合涨跌停价优先读
+        # c1_market.stk_limit 表 PIT 行，缺行走 _limit_pct_of 日期切片
         # （主板 ST 2026-07-06 起 10%、此前 5%）；CH 不可达 provider 内部降级
         # fail-open。enable_stk_limit_provider=False 或单测注入 fake 可关。
-        limit_provider = StkLimitProvider() if self._enable_stk_limit_provider else None
+        limit_provider = self._stk_limit_provider
         matching_engine = MatchingEngine(
             config=self._matching_config,
             limit_provider=limit_provider,
