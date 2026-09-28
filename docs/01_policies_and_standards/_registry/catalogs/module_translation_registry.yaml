@@ -61961,6 +61961,14 @@ entries:
   desc_en: ''
   plain_zh: 这个门禁管着交易日循环那张大图（图13）：开盘前到收盘后每个环节的先后顺序和接线一旦被改动，它就把全图重新走一遍查断链和错序，别让一张错图害得盘中流程跑偏。
   responsibility_layer: governance
+- module_path: scripts/governance/check_trd_a20_a21_dual_gates.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: TRD-A20/21 双闸判定器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 读密钥轮换核对回执和仓位参数签发表，两道实盘准入门没过就报红，没确认的仓位上限一律按零处理
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
