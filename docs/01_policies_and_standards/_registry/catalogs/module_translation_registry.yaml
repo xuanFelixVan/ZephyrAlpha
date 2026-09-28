@@ -61834,6 +61834,23 @@ entries:
   plain_zh: "在正式点火前逐条核实五个前置条件是否真的达标，取不到数的就报未知并拒绝对外开跑，不再靠人记住散文里的规矩"
   responsibility_layer: business
 
+- module_path: scripts/backtest/intake_ledger_recon.py
+  domain_id: D_BACKTEST
+  name_zh: "进货台账对账校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对账进货台账和判定台账，丢了条目就从判定台账原样补回来，绝不删已有记录"
+  responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/rule_bridge/coordination_state_board.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "并发施工态势公告牌"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一条命令看清谁在改代码——每个车道的未提交改动、认领文件、排队袋子和这份读数的年龄"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
