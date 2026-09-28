@@ -24,6 +24,7 @@ ttl: permanent
 > **权威清单不手写**：本目录的完整登记表清单以 [registry_master_index.yaml](registry_master_index.yaml)
 > 为唯一真源（`generate_registry_master_index.py` 自动生成，随各登记表 frontmatter 实时重建）。
 > 各登记表的分层归属/责任人/条目数声明以 [ROOR](../../../registry_of_registries.yaml) 为准。
+> 常驻前台视图（top-10 注册表指针+七馆对照，S4 簿 §2.4）：[FRONT_DOOR](../../../library/FRONT_DOOR.md)——先门口后全卷，深查才进 ROOR 904 行。
 > 本索引只做分类导航，不再手工复制文件清单（手写清单必然漂移——v2.3.0 清单 26 条 vs 实测 64 条的教训）。
 
 ## 分类导航（2026-08-17 实测：64 份登记表 YAML + `_index.yaml` + `_archive/`）
