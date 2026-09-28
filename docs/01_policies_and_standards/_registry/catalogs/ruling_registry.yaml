@@ -5859,3 +5859,130 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#421"
+  title: execution_report 补列=生产者 V2 契约 UTC 列型（纠 Asia/Shanghai 口径防 8h 平移）
+  date: '2026-09-28'
+  category: 数据
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    ①execution_report 补列选"补列即日开始攒"，列型按生产者 V2 契约（schemas/categories/intraday/market_execution_report.py L103）取 Nullable(DateTime64(3,'UTC'))——纠正任务书 Asia/Shanghai 口径，防 8 小时平移污染时序对齐；
+    ②ALTER 已系统级执行（库变更非 git 件），执行后验证 INSERT 列差集=∅；
+    ③遗留义务=下一 sim 桥执行日首笔自然落行验证 count>1。
+  related_files:
+  - schemas/categories/intraday/market_execution_report.py
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#422"
+  title: F74 堵点3 通知通道=晨报承接（不复活 SMTP/飞书、不加推送组件）
+  date: '2026-09-28'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    F74 堵点3"转正建议待办通知"通道裁定=晨报承接：morning_digest 摘要面（data/reports/morning_digest.md=Owner 晨读唯一入口）承接全部转正建议待办通知，不复活 SMTP/飞书、不新增推送组件；
+    登记面已落地 d988f1e6d0（capability_canonical_file_registry+module_translation_registry 同批）；
+    渲染件 src/zephyr/strategy_pipeline/morning_digest.py 与 ALGO_FLOW 外置块走补落袋（会话分支通道件，队列投递落地 dev 为准）。
+  related_files:
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#423"
+  title: F04 AI 判净站+三引擎托管花钱点冻结（分歧率统计两周观察先行，超阈值才立项）
+  date: '2026-09-28'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    F04"AI 判净站+三引擎托管"两处花钱点裁定=冻结：先跑分歧率统计两周观察，超阈值才立项，观察期不产生任何采购/托管支出；
+    届时引擎接入走 LSG+LiteLLM 式自建路由，禁采购托管 API；
+    观察期结论回 Owner 门位复裁（判净站花钱触发=Owner 门位存留项，见台账待办⑧）。
+  related_files:
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#424"
+  title: ig_equity_edge 退役批准三步走（第一步 l9 G3 切 edge_holding 已落；soak 后 Owner 终准 DROP）
+  date: '2026-09-28'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    ig_equity_edge 退役按三步走批准：第一步 l9 聚合器 G3 股权穿透切 entity_graph 新真源 edge_holding 已落地（8b098e31eb，l9_readiness_aggregator+trading_decision_map 注记同批）；
+    第二步 soak 观察 10 个交易日；
+    第三步 soak 期满无回归由 Owner 终准 DROP+墓碑 successor_of（注册表净删=Owner 门位）；DROP 未准前旧表只读保留。
+  related_files:
+  - src/zephyr/data/l9_readiness_aggregator.py
+  - config/trading_decision_map.yaml
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#425"
+  title: xtdata 通道=零新增数据源（立法口径）；纪律闸追高腿获准待装
+  date: '2026-09-28'
+  category: 数据
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    xtdata 通道立法定性=零新增数据源（MiniQMT 模拟盘既有通道口径，承裁定#380 探针实证）；
+    纪律闸"追高腿"获准安装、当前待装（台账待办①：装后即纪律闸第五腿）。
+  related_files:
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: ['裁定#380']
+  superseded_by: null
+- ruling_id: "裁定#426"
+  title: total_* 派生标量治本=落地期自愈唯一机制+自动发现器（SKIP-6 关闭）
+  date: '2026-09-28'
+  category: 治本
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    注册表 total_* 类派生标量漂移治本=落地期自愈为唯一机制（commit_queue 落地器自证读回内条目级计数自愈），配 total_* 自动发现器兜底；
+    af7e492276 落地：commit_queue_landing.py 自证读回+validate_static_manifest_drift.py 发现器扩展+双测试件；
+    临时豁免通道 SKIP-6 就此关闭，不再续期；此后条目+标量同批铁律由机制保证，不再靠人肉自查。
+  related_files:
+  - scripts/governance/commit_queue_landing.py
+  - scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
+  - tests/governance/test_commit_queue_readback_discovery.py
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#427"
+  title: EvaporationBlackbox ExecutionTimeLimit PT72H→PT30M（系统级已执行）+晨检新鲜度行
+  date: '2026-09-28'
+  category: 治本
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    蒸发黑匣子（EvaporationBlackbox，schtasks ZephyrAlpha_EvaporationBlackbox）计划任务 ExecutionTimeLimit 由 PT72H 收紧为 PT30M——系统级已执行（计划任务变更非 git 件），
+    治"任务假死最长盲跑 72 小时（实测 34.6h 盲态）"病根；
+    配套义务=晨检增黑匣子新鲜度行（每日核对最近快照时间戳，超 PT30M 无新快照即告警）。
+  related_files:
+  - scripts/governance/evaporation_blackbox.py
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#428"
+  title: 并发写热册治本闭环确认（自证读回+语义分叉+发现器三件套；chief7 并发写总册问题销案）
+  date: '2026-09-28'
+  category: 治本
+  status: 'active'
+  summary: |-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁（登记依据=docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账）：
+    并发会话同写热册问题治本闭环确认，三件套在位=①落地前自证读回（防 done 零变化/重复件，af7e492276）②热册写侧唯一=队列序列化器条目级合并仲裁（承裁定#415 第②条）③total_* 自动发现器兜底（裁定#426）；
+    K 线冗余袋经自证读回以合法 noop 吸收=新机制首次实战生效；
+    chief7 任内并发写总册问题就此销案；此后并发写热册一律走队列单写者，禁绕队直写整档。
+  related_files:
+  - scripts/governance/commit_queue_landing.py
+  - docs/_working/chief8_night/91_progress.md
+  related_arch: []
+  related_rulings: ['裁定#415']
+  superseded_by: null
