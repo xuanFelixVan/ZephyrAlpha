@@ -47,21 +47,25 @@ session: st-ec2-p0
 - **为何要 Owner 点头**：EC3 原令"禁 kill 只记录"，故当班未动运行态。但黑匣子是本仓防"热注册表静默蒸发"的**唯一现场取证件**，而 09-27 03:2x 本役亲历过 capability 册被并发车道工作树快照压盘一次——**该窗内它正盲着**。
 - **不点的后果**：继续盲；下次热册蒸发仍只能靠事后 git 反推（历史上"主区改注册表必死、git 不可回取"案例在案）。
 - **处置**：`Stop-ScheduledTask` 后 `PT5M` 自愈（EC3 已给处方），可逆、非破坏。
+> **2026-09-28 夜终态**：已修（Stop-ScheduledTask 11:38 + ExecutionTimeLimit PT72H→PT30M 防复发，见裁7）。
 
 ### SKIP-4 · 清单闸（C-004 checklist_checker）无生产真源=二选一硬局
 - **盘上实证**：`HARD_BLOCK → return []` 整批吞且不重放（`trading_session.py:809` → 消费侧 `:555-564` 仅 log `submitted=0`）；INTRADAY 三必需 key（`signal_compliance_check/risk_param_confirm/position_limit_verify`）**全仓仅模块自身+4 测试文件命中，无任何生成器/注册表/DB 生产写入侧**。
 - **待裁**：①本批不装（零风险，登 backlog）；②先建"盘前完成态"真源再接（治本，跨模块排期）；③把 `state_store` 当半真源派生 `risk_param_confirm`（需先定义写入侧，否则等价空集=每轮全拒）。
 - **附带需新裁定的判据**：INTRADAY 在 paper 环境能否放宽为 Warning——`discipline_must_do_checker.py:24` 头注"盘中执行除外，Hard Block"是**裁定值**，改判需新裁定（本役不自行放宽）。
+> **2026-09-28 夜终态**：已治本（写侧三腿+装配落地，详见 chief8 台账 docs/_working/chief8_night/91_progress.md）。
 
 ### SKIP-5 · 纪律闸（C-004 discipline_guard）降级形态是否可接受
 - **盘上实证**：`DisciplineContext` 九字段中 **4 个真源全仓查无**（30min 涨幅/持仓成本价/20 日 freq+size 双基线/成交连击）；零新增数据源只能写成 `tests/compliance/test_runtime_wiring.py:85-98` 模板形态＝追高/补仓/报复三条**全跳过**、只剩骄傲 Warning。
 - **待裁**：①装"模板式 provider"但审计口径须自认 MVP 仅骄傲提醒（防"有闸"错觉）；②补 4 真源后全装（施工量大，且 provider 内每字段须自带 try→None 降级，否则一抛即逐单拒 `:1011-1018`）；③本批不装。
 - **口径边界待 Owner 定**："xtdata 已连接"算不算零新增数据源（30min 涨幅可否走既有 xtdata 通道）。
+> **2026-09-28 夜终态**：诚实两把已装、其余腿待源（xtdata 追高腿见 chief8 台账待办①）。
 
 ### SKIP-6 · `total_gates` 手工派生计数=结构性复发点（立法项）
 - 名册标量与实长不一致已实测致 `auto_register_gates` fail-closed 抛、入队预检整体 degraded 放行、reconcile worker 启动即失败；FMS `38168467d1` 的"条目+计数同批原子修"**标量未落**（队列合并器对标量恒取 ours），本役以 dev 字节重放单行修（袋 q-0004）。
 - **治本待裁**：`total_gates` 改机生或加后置重算钩子（根宪法 §9 条目 5"凡条目列表+计数清单必须生成器产出"）。**在治本落地前，任何改门禁名册条数的批次都必须自查 `int(total_gates)==len(gates)`**，否则该批预检静默降级。
 - 建议登记为治理立法提案，勿只当一次性 heal。
+> **2026-09-28 夜终态**：治本落地（落地期自愈读回 + total_* 自动发现器 af7e492276，见裁6）。
 
 ### 更正与消灭（对上方原始记录）
 1. **原 Owner 待裁⑤"NightlySentiment 双源"→ 消灭**：实测 `config/schedule.yaml` 零 sentiment 命中（文件存在），仅剩 Windows 计划任务 `NextRun=09-27 22:30 result=0`＝**已单源**，无需裁定。

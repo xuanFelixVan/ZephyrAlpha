@@ -134,3 +134,7 @@ dev 面 `in_process_gate_registry.yaml`：`gates:` 实长 **104** vs 声明 `tot
 - 站点数更正：案卷"6 处裸构造"中 `qmt_file_bridge_integration.py:52` 在 `QmtFileBridgeAssembly` 类 docstring 的 Usage 示例块内，**真实生产站点=5 处**。
 - `REPO_ROOT` 判据（影响测试在哪跑）：`compliance_report_registry.py:48-57` 用 `REPO_ROOT`，解析序=`ZEPHYR_WORKTREE_ROOT` env 优先，否则从 `paths.py.__file__` 上溯（**与 cwd 无关，取决于 import 哪份 zephyr**）⇒ worktree 里起会话读的是 worktree 陈旧副本；`KillSwitchLite:137` 用 `MAIN_REPO_ROOT` 恒锚主仓无此问题。
 
+
+## 终局收尾段（总筹 st-chief8-20260928 代 st-chief6-20260928 补账，2026-09-28 夜）
+- chief6 五任务终态：F74=a46e1fbc3f；q-0021 销案；read_side 落地；F62 全链终态（broker_ack 解锁 ab267577bb→诚实两把 5ddaf667aa→三门注入 0cecaf771d→G07/G09 执法闸 fa9ae36533）；EC3 六项终态（黑匣子 11:38 修复+PT30M 防复发、tilib 新定义 09-28 02:30 首跑、NightlySentiment 单源健康、板块分钟K仍断供 tdx、execution_report 补列完成、etb/account_nav 仍 0）
+- 会话收尾：chief6 claim 已全释放（lock_files salvage）、worktree .aidrafts/st-chief6-20260927 留待清理政策、无未落地在途袋
