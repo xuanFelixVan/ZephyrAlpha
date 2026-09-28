@@ -1,0 +1,52 @@
+# =====================================================================
+# W12 波12 统一批跑窗口·点火批准卡（WAITING_APPROVAL 证据形态）
+# 契约真源=src/zephyr/backtest/core/batch_window_preflight.py L115 read_approval_card/_card_checks
+# 防伪三关：①status=APPROVED（唯一合法前置停点=WAITING_APPROVAL）②approval_ref 须在裁定册在册
+#         ③prereg_sha256 须等于现役 config/search_space_prereg.yaml 摘要
+# 呈卡：st-nightclean-20260929（2026-09-29 夜班，chief8 待办「W12_WINDOW 判据数据随战役另袋」销项件）
+# 批准动作：Owner 一句话批准后，由批准线把 status 翻 APPROVED、approval_ref 填裁定册实锚，
+#         并逐项把 conditions[].checked 置 true（附判定输出哈希）。未翻面前 compute_window_gate
+#         对 wave12_* purpose 一律 gate_deny_wave12_preflight（fail-closed 现状不变）。
+# =====================================================================
+ttl: task_bound
+# TTL 注：FILE-PLACEMENT-TTL 口径 docs/_working=临时区。本卡被 batch_window_preflight
+# APPROVAL_CARD_REL 常量指址（生命周期=波12 窗口任务域）；批准翻面后由册线 externalize
+# 出仓至永久区（chief7 先例「机器块待册批后 externalize 出仓」同款）。
+schema_version: "w12_ignition_card/1"
+purpose_scope: wave12_batch_window
+status: WAITING_APPROVAL
+approval_ref: "(待批) 波12 点火窗 Owner 批文——呈卡待批，批准后此处填裁定册实锚（如 裁定#NNN）"
+prereg_sha256: "da8fbbfb58dcaa56d620ee6bb0cda76cee795fad55606703c9dcf827b6b9d5af"
+universe_declaration_sha256: "ea7fe1451935510b7672d9279d441888bcab43ac9032b7c6fc6961f4f63aa20c"
+universe_declaration_source: "docs/_working/decision_map_campaign/12_data_universe_census.md"
+conditions:
+  - condition_id: c1_waves0_11_verified
+    description: 波0-11 全部任务卡状态 verified（真源=governance.db tasks 表）
+    checked: false
+    evidence: ""
+    check_command: "python -m zephyr.infrastructure.database_service 查 tasks 表 status 分布（或台账 docs/_working/total_command_closeout/00_master_skeleton.md 对账）"
+  - condition_id: c2_w178_universe_880
+    description: W-178 宇宙=880 概念清单冻结与卡面宇宙声明一致
+    checked: false
+    evidence: "universe_declaration_sha256 已摘要（12_data_universe_census.md）；880 对账数待批线核"
+    check_command: "对照 12_data_universe_census.md 条目数==880"
+  - condition_id: c3_w173_gpu_budget
+    description: W-173 GPU 耗时实测达标（T0 标定 35.33s/格口径下的窗口可行解）
+    checked: false
+    evidence: "历史锚=T0 标定 59h 窗 4640 格三案重排（gpu-final 台账）；波12 终值待批线读最新 profile"
+    check_command: "读最新 grid profiling 台账对预算线"
+  - condition_id: c4_cost_gate_bc_ruling
+    description: ⚑-2 成本门 B/C 案引用已生效裁定条目（成对关键词在 ruling_registry）
+    checked: false
+    evidence: "裁定册已含成本门相关裁定（#404 修数/40bp→3.83 实证）；成对关键词待批线点名"
+    check_command: "grep 成对关键词 ruling_registry.yaml"
+  - condition_id: c5_w64_t2_pool_sentinel
+    description: W-64 T2 池基线+哨兵件在位（batch_window_preflight/compute_window_gate 已接线，f6e288fc54）
+    checked: true
+    evidence: "代码面已落 HEAD：batch_window_preflight.py 五触发条件+compute_window_gate 接线+factory_grid_executor t2 不可旁路（commit f6e288fc54，21 用例红蓝绿）"
+    check_command: "git log --oneline -1 f6e288fc54"
+notes: |
+  本卡=chief8 八待办之「W12_WINDOW.yaml 判据数据随战役另袋」销项件（f6e288fc54 自述挂账）。
+  呈卡前病根：APPROVAL_CARD_REL 指向目录不存在→preflight 判 unreadable→compute_window_gate
+  gate_deny_wave12_preflight_unreadable 永拒点火。本卡落位后 deny 原因转为可判读的
+  WAITING_APPROVAL（未批状态保持 fail-closed，不因呈卡而放开任何执行面）。
