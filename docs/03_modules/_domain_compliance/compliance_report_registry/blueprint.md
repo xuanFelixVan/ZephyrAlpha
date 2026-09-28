@@ -3,7 +3,7 @@ module_id: MOD-CMP-009
 title: "程序化交易报告登记+报送门禁蓝图 — 6 项义务 + ReportGate"
 doc_type: blueprint
 status: Active
-version: "0.1.22"
+version: "0.1.23"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -88,11 +88,11 @@ tests/compliance/test_compliance_report_registry.py — 7 用例：全确认/缺
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 9.1 源码文件
+### 9.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/compliance/test_f62_compliance_gate_wiring.py` | ✅ 已实现 | |
 
 ### 9.5 路径索引使用指南
 

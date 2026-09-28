@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.44"
+version: "0.8.45"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1598,6 +1598,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_translation_coverage_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_undefined_name_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_worktree_required_gate.py` | ✅ 已实现 | |
+| `tests/governance/redblue_wave73/test_v1_v3_forged_node_and_domain.py` | ✅ 已实现 | |
 | `tests/governance/rule_enforcement/gate_engine/test_adversarial_gate_integration.py` | ✅ 已实现 | |
 | `tests/governance/rule_enforcement/gate_engine/test_adversarial_validation.py` | ✅ 已实现 | |
 | `tests/governance/rule_enforcement/gate_engine/test_adversarial_validation_gate.py` | ✅ 已实现 | |

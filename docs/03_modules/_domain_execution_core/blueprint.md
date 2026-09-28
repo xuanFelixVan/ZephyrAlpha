@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.24"
+version: "2.2.25"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -1239,13 +1239,16 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | `tests/ex_core/adapters/test_qmt_file_bridge_quote.py` | ✅ 已实现 | |
 | `tests/ex_core/test_daban_load_producer.py` | ✅ 已实现 | |
 | `tests/ex_core/test_execution_report.py` | ✅ 已实现 | |
+| `tests/ex_core/test_execution_report_decision_timestamp.py` | ✅ 已实现 | |
 | `tests/ex_core/test_execution_report_producer.py` | ✅ 已实现 | |
 | `tests/ex_core/test_live_portfolio.py` | ✅ 已实现 | |
 | `tests/ex_core/test_live_strategy_adapter.py` | ✅ 已实现 | |
 | `tests/ex_core/test_local_order_queue.py` | ✅ 已实现 | |
 | `tests/ex_core/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/ex_core/test_order_manager_compliance_gate.py` | ✅ 已实现 | |
+| `tests/ex_core/test_order_manager_sim_compliance_wiring.py` | ✅ 已实现 | |
 | `tests/ex_core/test_price_cage.py` | ✅ 已实现 | |
+| `tests/ex_core/test_price_cage_bf6_wiring.py` | ✅ 已实现 | |
 | `tests/ex_core/test_qmt_trading_session.py` | ✅ 已实现 | |
 | `tests/ex_core/test_rejection_action_handler.py` | ✅ 已实现 | |
 | `tests/ex_core/test_risk_layer_orchestrator.py` | ✅ 已实现 | |

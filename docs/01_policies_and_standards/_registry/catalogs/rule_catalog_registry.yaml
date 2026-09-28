@@ -3809,7 +3809,7 @@ files:
   title: Data Retention & Backtest Layering Contract
   doc_type: gate
   status: active
-  version: 1.3.0
+  version: 1.5.0
   rule_form: ''
   scope: ''
   stability: ''

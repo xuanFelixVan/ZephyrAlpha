@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.13"
+version: "0.2.14"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -1248,6 +1248,7 @@ class OverlapResult:
 | `tests/ai_layer/test_evolution_chain_e2e.py` | ✅ 已实现 | |
 | `tests/ai_layer/test_model_library_ddl.py` | ✅ 已实现 | |
 | `tests/ai_layer/test_model_scoring_policy.py` | ✅ 已实现 | |
+| `tests/ai_layer/tools/test_tool_sandbox_profile.py` | ✅ 已实现 | |
 | `tests/governance/test_next_ruling_id.py` | ✅ 已实现 | |
 | `tests/governance/test_rule_replay.py` | ✅ 已实现 | |
 | `tests/governance/test_standard_checkup.py` | ✅ 已实现 | |

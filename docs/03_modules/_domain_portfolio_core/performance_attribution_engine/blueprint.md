@@ -3,7 +3,7 @@ module_id: MOD-PF-007
 title: "绩效归因引擎蓝图 — Brinson 三因子 + 因子/风险归因 + 降级检测"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 ttl: permanent
 layer: L02_portfolio_core
 layer_name: portfolio_core
@@ -150,7 +150,7 @@ interaction_effect = Σ (w_p,i - w_b,i) × (r_p,i - r_b,i)  (交互效应)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/pf_core/core/shadow_portfolio.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

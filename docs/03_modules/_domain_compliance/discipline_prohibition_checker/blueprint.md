@@ -3,7 +3,7 @@ module_id: MOD-CMP-002
 title: "四项严禁纪律闸蓝图 — 追高/补仓/骄傲/报复检测 + KillSwitchLite"
 doc_type: blueprint
 status: Active
-version: "0.1.22"
+version: "0.1.23"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -96,11 +96,11 @@ tests/compliance/test_discipline_prohibition_checker.py — 18 用例：四行�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 9.1 源码文件
+### 9.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/compliance/test_f62_honest_gate_baseline.py` | ✅ 已实现 | |
 
 ### 9.5 路径索引使用指南
 
