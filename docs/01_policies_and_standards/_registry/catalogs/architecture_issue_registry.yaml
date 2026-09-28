@@ -22575,3 +22575,20 @@ entries:
     审批真源=Owner 总筹令+裁定权下放令原文（2026-09-28 会话在案），gate 逃生审计+本登记双留痕。
     内容=ruling_registry 追加三裁定（同袋原子）+总包作战室册 docs/_working/fullflow_chief_20260928/00_orchestration.md。
   related_rulings: []
+- issue_id: '#ARCH-363'
+  title: '总包夜八项代裁落册八条（执行报告补列/F74 晨报承接/F04 花钱点冻结/ig_equity_edge 三步退役/xtdata 零新增源/total_* 自愈治本/黑匣子 PT30M/并发热册闭环）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-28'
+  last_updated: '2026-09-28'
+  owner: 'Owner（2026-09-28 授权总包 st-chief8-20260928 夜战代裁，台账 docs/_working/chief8_night/91_progress.md 裁定节+落地哈希总账在案）'
+  description: >-
+    Owner 2026-09-28 授权总包 st-chief8-20260928 夜战代裁，八项裁定全部 executed（终态见台账裁定节+落地哈希总账：
+    8b098e31eb/d988f1e6d0/af7e492276 等六袋+两系统级变更）。
+    PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即裁定册八新条目
+    （号段 #420-#427，为避让他线在途 staged 号段 #419 依连续分配铁律让位顺延）
+    正门标记的登记载体（#ARCH-361 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-363]，
+    审批真源=Owner 夜战代裁授权+台账哈希总账（2026-09-28 在案），gate 逃生审计+本登记双留痕。
+    内容=ruling_registry 纯追加八裁定（同袋原子）；串行序=本袋先落（被引裁定防伪回查须先在册，#ARCH-361 先例）。
+  related_rulings: []
