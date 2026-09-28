@@ -1027,16 +1027,25 @@ def _apply_prereg_budget(stage: str, n_samples: int) -> int:
     return n_samples
 
 
-def _ask_compute_window_gate() -> None:
-    """E0 问闸（w3_w5_precheck §2.3：F06/grid 路 0 接缺口治本）。拒=SystemExit(3)。"""
+def _ask_compute_window_gate(stage: str = "") -> None:
+    """E0 问闸（w3_w5_precheck §2.3：F06/grid 路 0 接缺口治本）。拒=SystemExit(3)。
+
+    stage=t2 属波12 统一跑批窗口内容 A（T2 终审 900 格）⇒ purpose 换点火类，
+    闸门自动前置"五触发条件+批准卡"预检（MOD-BT-226）；t0/t1/无 stage 走原语义不变。
+    """
     from datetime import datetime as _dt
     from zoneinfo import ZoneInfo
 
     from compute_window_gate import check_gate
 
-    decision = check_gate("f06_grid_batch", "local_gpu", _dt.now(ZoneInfo("Asia/Shanghai")))
+    purpose = "wave12_t2_final" if stage == "t2" else "f06_grid_batch"
+    decision = check_gate(purpose, "local_gpu", _dt.now(ZoneInfo("Asia/Shanghai")))
     if not decision.get("allowed"):
-        raise SystemExit(f"[E0] 算力窗问闸拒绝: reason_code={decision.get('reason_code')}")
+        raise SystemExit(
+            f"[E0] 算力窗问闸拒绝: reason_code={decision.get('reason_code')}"
+            f" blocking={decision.get('blocking')}"
+            + (f" detail={decision.get('detail')}" if decision.get("detail") else "")
+        )
 
 
 def main() -> int:
@@ -1055,11 +1064,14 @@ def main() -> int:
         help="预算阶段（t0 标定 200/t1 粗扫 17100/t2 细化 13000；空=沿用 n-samples 不受 stage 帽）",
     )
     ap.add_argument(
-        "--skip-compute-gate", action="store_true", help="跳过 E0 问闸（仅 --smoke 管线联通允许；正式跑批禁用）"
+        "--skip-compute-gate",
+        action="store_true",
+        help="跳过 E0 日历窗问闸（仅 --smoke 管线联通允许；正式跑批禁用；波12 点火类 stage=t2 无效）",
     )
     args = ap.parse_args()
-    if not args.smoke and not args.skip_compute_gate:
-        _ask_compute_window_gate()
+    # 波12 点火类不可旁路——--skip-compute-gate 只关日历窗，不关触发条件与批准卡
+    if (not args.smoke and not args.skip_compute_gate) or args.stage == "t2":
+        _ask_compute_window_gate(args.stage)
     stage_tiers = None
     if args.stage and not args.smoke:
         args.n_samples = _apply_prereg_budget(args.stage, args.n_samples)
