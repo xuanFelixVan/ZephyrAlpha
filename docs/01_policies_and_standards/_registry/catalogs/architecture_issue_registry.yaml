@@ -22560,3 +22560,18 @@ entries:
     docs/library/FRONT_DOOR.md（52 行生成物）+ 根 llms.txt（26 行生成物，.gitignore 与 directory_contract 根白名单各+1 行）。
   related_rulings: []
 
+- issue_id: '#ARCH-361'
+  title: '全流通收尾总包夜裁三条（#415 唯一在任总包+热册单写者/#416 存量红判据重定义/#417 AI层12项补批文）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-28'
+  last_updated: '2026-09-28'
+  owner: 'Owner（2026-09-28 凌晨总筹令+裁定权下放令原文授权，会话在案）'
+  description: >-
+    Owner 2026-09-28 凌晨令授总包裁定权："待裁定的任务你进行裁定……你给出一个分析过程和裁定结果来自己裁定结果"。
+    PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即裁定册三新条目（#415/#416/#417）
+    正门标记的登记载体（#ARCH-360 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-361]，
+    审批真源=Owner 总筹令+裁定权下放令原文（2026-09-28 会话在案），gate 逃生审计+本登记双留痕。
+    内容=ruling_registry 追加三裁定（同袋原子）+总包作战室册 docs/_working/fullflow_chief_20260928/00_orchestration.md。
+  related_rulings: []

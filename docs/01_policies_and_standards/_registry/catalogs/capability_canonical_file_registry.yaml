@@ -55509,4 +55509,14 @@ creation_tokens:
   created_by: st-zc8-lane-e89-20260928
   capability: algo-flow
   merge_evaluation: "ALGO_FLOW 算法地图锚文档与所属模块一对一，不并"
+- file: docs/_working/fullflow_chief_20260928/00_orchestration.md
+  token: fullflow-chief-00-orchestration-20260927
+  created_by: st-chiefzc-docs-20260928
+  capability: fullflow_chief
+  merge_evaluation: "total包作战室册登记"
+- file: docs/_working/fullflow_chief_closeout/00_orchestration.md
+  token: fullflow-chief-00-orchestration-20260927
+  created_by: chiefzc-docs2-dispatch-20260928
+  capability: fullflow_chief
+  merge_evaluation: "总包作战室册迁移语义目录(R5处方)"
 di_seam_exemptions: []
