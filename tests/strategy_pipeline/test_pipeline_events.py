@@ -261,11 +261,13 @@ class TestSimDailyWiring:
         r = pe.maybe_emit_sim_daily(task_id="kline_daily_incremental", success=True)
         # 段2 接线（裁定#392-D5）+观察面日链（st-sim-launch-20260923）：
         # 账本→日刊→归因→观察面（判定/重放/日报/结算，输入依赖前三件）
+        # L05-C10 D-1（2026-09-29）：做T条件包到期件挂链尾（FIFO=观察面后建次日包）
         assert r["emitted"] == [
             "sim_ledger_daily",
             "sim_journal_daily",
             "attribution_daily",
             "sim_observe_daily",
+            "t0_condition_pack_due",
         ]
         r2 = pe.maybe_emit_sim_daily(task_id="kline_daily_incremental", success=True)
         assert r2["emitted"] == []  # 非 poison 在队=去重
@@ -279,6 +281,7 @@ class TestSimDailyWiring:
             "sim_journal_daily",
             "attribution_daily",
             "sim_observe_daily",
+            "t0_condition_pack_due",
         ]
 
     def test_daily_skips_non_kline_and_failed_tasks(self, state, marker):
@@ -294,6 +297,7 @@ class TestSimDailyWiring:
             "sim_journal_daily",
             "attribution_daily",
             "sim_observe_daily",
+            "t0_condition_pack_due",
         ]  # 只有未落 marker 的件入队
 
     def test_wire_hook_enqueues_daily_and_drains(self, state, marker, monkeypatch):

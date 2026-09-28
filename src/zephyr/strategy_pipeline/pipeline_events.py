@@ -138,6 +138,7 @@ LIGHT_KINDS = frozenset(
         "pf_alloc_daily",
         "attribution_daily",
         "sim_observe_daily",
+        "t0_condition_pack_due",
     }
 )
 HEAVY_KINDS = frozenset({"c4_batch_due"})
@@ -162,6 +163,9 @@ SIM_OBSERVE_TIMEOUT_S = 1800
 # 主任务/kline_index_incremental（账本直读指数行情）。DAG 并行竞态由 journal 失败重试兜底
 # （行情未齐→账本 RuntimeError→留队，下个数据任务完成唤醒重试）。
 SIM_DAILY_WAKE_TASKS = ("daily_kline", "kline_daily", "kline_index")
+# 做T条件包到期件（L05-C10 D-1，2026-09-29）：次日盘中做T的条件包预产，挂 kline 唤醒链尾
+# （FIFO=观察面结算后建次日包）；执行体 D-2 交付，交付前 run_optional_due log-and-skip。
+T0_CONDITION_PACK_KIND = "t0_condition_pack_due"
 # pf_alloc 日分配件（车道 D）：kind 名 + 装配体模块（子进程 -m 调用，进程级超时边界）+ 有界运行时
 # （分配链=分钟级：逐策略读净值/regime + 三表追加；超时视同失败进重试计数，不挂住调度器线程）
 PF_ALLOC_KIND = "pf_alloc_daily"
@@ -182,6 +186,14 @@ REGIME_SNAPSHOT_OK_ACTIONS = frozenset({"fresh", "refreshed"})
 OPTIONAL_DUE_KINDS = {
     "fw_backtest_due": ("zephyr.strategy_pipeline.fw_backtest", "run_fw_backtest_due"),
     "promotion_advisory_due": ("zephyr.strategy_pipeline.promotion_advisory", "run_promotion_advisory_due"),
+    # F26 E7 前哨考核（2026-09-29 SW5 事件接线批，I2-21 四缺补③）：月度档挂
+    # maybe_emit_monthly（考核窗默认 4 周≈30 天 marker 线），消费走 run_optional_due
+    # 契约（run_paper_outpost_due），marker 触指在 _default_handler 分支（失败不触=跨唤醒重试）。
+    "paper_outpost_due": ("zephyr.strategy_pipeline.paper_outpost", "run_paper_outpost_due"),
+    # L05-C10 D-1（2026-09-29，T0_CHAIN_WIRING_GAPS §D 做T链自动化接线批首步）：
+    # 做T条件包到期事件——执行体 run_t0_condition_pack_due 由 D-2（build_anchored_state_history
+    # 自动产出者）交付，交付前走本函数 log-and-skip 契约（不占 attempts 不堵队）。
+    "t0_condition_pack_due": ("zephyr.strategy_pipeline.t0_condition_pack", "run_t0_condition_pack_due"),
 }
 AUDIT_MARKER = STATE_DIR / "last_audit.json"  # mount_audit/sim_memo 最近执行时间戳
 MONTHLY_DAYS = 30  # 月度档评估线（对齐 decay_watch monthly 语义）
@@ -301,7 +313,12 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
         _touch_marker("pf_alloc_daily")  # kind 级日号（唤醒侧去重）；trade_date 级双写闸在 handler 内
         return out
     if kind in OPTIONAL_DUE_KINDS:
-        return run_optional_due(kind, evt)
+        out = run_optional_due(kind, evt)
+        # F26 E7 前哨月度档（SW5 接线批）：可选契约消费成功才触 marker——
+        # 失败/模块缺失不触（module_not_ready 跳过也不触，跨唤醒重评，月度档不静默丢失）
+        if kind == "paper_outpost_due" and not out.get("skipped"):
+            _touch_marker("paper_outpost")
+        return out
     if kind == "c2_screen_due":
         return run_c2_screen(evt["payload"])
     if kind == "c4_batch_due":
@@ -688,6 +705,7 @@ def maybe_emit_monthly() -> dict[str, Any]:
         ("mount_audit", "mount_audit_monthly"),
         ("sim_memo", "sim_memo_monthly"),
         ("sim_deviation", "sim_deviation_monthly"),
+        ("paper_outpost", "paper_outpost_due"),  # F26 E7 前哨月度考核（SW5 接线批）
     ):
         if not _marker_due(name):
             continue
@@ -739,7 +757,7 @@ def maybe_emit_sim_daily(task_id: object = None, success: bool = True, **_kwargs
     if not success or not any(k in tid for k in SIM_DAILY_WAKE_TASKS):
         return {"emitted": []}
     emitted = []
-    for kind in SIM_DAILY_KINDS:
+    for kind in (*SIM_DAILY_KINDS, T0_CONDITION_PACK_KIND):
         if _date_marker_done(kind) or any(e["kind"] == kind and not e.get("poison") for e in pending()):
             continue
         record(kind, {"due": "daily_kline", "task_id": str(task_id)})
@@ -1214,6 +1232,7 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover — CLI 薄�
             "sim_deviation_monthly",
             "fw_backtest_due",
             "promotion_advisory_due",
+            "paper_outpost_due",
             "pf_alloc_daily",
             "attribution_daily",
         ],
