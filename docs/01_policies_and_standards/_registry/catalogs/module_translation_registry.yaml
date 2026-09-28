@@ -61887,6 +61887,15 @@ entries:
   plain_zh: "盘前清单闸要判断三件必做事做没做，就得有真凭实据可查：风控参数确认和仓位限额验证这两件由系统在装配会话和每次限额检查时自动写证据文件，策略信号合规检查这件由人在盘前用命令行确认并留下来源、配了密钥还要签名防手改；证据缺、损坏、日期不对或签名验不过一律算没做，当天就会拒单，绝不假装做了。读这些证据给清单闸判定用"
   responsibility_layer: governance
 
+- module_path: src/zephyr/strategy_pipeline/morning_digest.py
+  domain_id: D_BACKTEST
+  name_zh: "转正建议晨报摘要渲染器"
+  name_en: "morning_digest"
+  desc_zh: "扫未决转正建议包渲染固定晨报摘要面，advisory due 尾挂刷新"
+  desc_en: ""
+  plain_zh: "每天把等你拍板的转正建议汇总成一页晨报，你早上打开一个固定文件就能看到该批哪些、批什么、去哪批，不用再开前端页面翻找"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

@@ -55939,4 +55939,14 @@ creation_tokens:
   created_by: scaffold.py
   capability: checklist_evidence
   merge_evaluation: "checklist_evidence ALGO_FLOW 外部真源（同域唯一下沉件，非第二真源）；净零：随死袋复活批 GATE-ALGO-FLOW 处方出仓，无新增规则/gate"
+- file: src/zephyr/strategy_pipeline/morning_digest.py
+  token: morning-digest-morning-digest-20260928
+  created_by: st-c8-digest
+  capability: morning_digest
+  merge_evaluation: "F74堵点3唯一新增渲染件；Owner三选一裁定晨报承接，复活SMTP/飞书/新推送组件均已排除，无同域可并条目"
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/morning_digest.yaml
+  token: morning-digest-morning-digest-20260928
+  created_by: st-c8-digest
+  capability: morning_digest
+  merge_evaluation: "morning_digest ALGO_FLOW外部真源（同域唯一下沉件，非第二真源）"
 di_seam_exemptions: []
