@@ -25,8 +25,8 @@ related_modules:
   - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/diagnose_depgraph.py
-  - scripts/git_commit_gateway.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
   - scripts/session_worktree.py
   - scripts/lock_files.py
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
@@ -385,7 +385,7 @@ python scripts/governance/d5_architecture/generators/align_all.py
 - L2 治本：`git checkout --`/`git restore` 文件级自伤检测
 - 逃生：`ZEPHYR_FORCE_STASH=1` 环境变量授权放行+记审计
 **任务卡系统**（[trae_034_task_card_standard.yaml](../rules/trae_034_task_card_standard.yaml)，若施工需要任务卡载体）：
-- 唯一创建入口：`TaskRepository.create()` 写入 SQLite（`data/zalpha_metadata.db`），.md 为伴读副本
+- 唯一创建入口：`TaskRepository.create()` 写入 SQLite（`data/databases/governance.db`），.md 为伴读副本
 - 33 字段（21 必填+12 选填）：task_id/namespace/title/description/status/priority/phase/execution_model/files_in_scope/deliverables/source_blueprint/source_section/safety_level/directive/classification/ai_autonomy_level/applicable_rules/allowed_touch 等
 - 粒度约束（RULE-THIRTEEN，代码强制）：deliverables≤1 / files_in_scope≤3 / acceptance≤1 / 不跨 Phase
 - P0 冻结：活跃 P0 任务≥5 冻结新增（P0InflationFrozenError），≥3 黄色警戒需附论证
@@ -555,7 +555,7 @@ python scripts/governance/generate_project_path_tree.py --write
 python scripts/governance/d5_architecture/generators/align_all.py
 
 # 6. 依赖图诊断
-python scripts/governance/diagnose_depgraph.py
+python scripts/governance/d5_architecture/diagnose_depgraph.py
 ```
 
 **通过判据**：depgraph design_maturity=production / 五图对齐通过 / path_tree 无旧引用 / diagnose exit 0
@@ -610,7 +610,7 @@ python scripts/lock_files.py status
 
 ```powershell
 # 1. 走 GitCommitGateway 网关提交（禁止裸 git commit）
-python scripts/git_commit_gateway.py
+python src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
 # 或 worktree 模式：
 python scripts/session_worktree.py commit <sid> "commit message"
 
@@ -625,7 +625,7 @@ python scripts/session_worktree.py commit <sid> "commit message"
 2. GitCommitGateway（次选）
 3. 裸 git commit（**禁止**）
 
-**GitCommitGateway 工作流详解**（[src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py](../../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py)）：
+**GitCommitGateway 工作流详解**（[src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py](../../../src/zephyr/gov_enforcement/git_commit_gateway.py)）：
 - **入队前**：
   - `claim_files`：为 session 声明持有本次 commit 的文件，捕获基线快照（`git diff HEAD -- <file>`）供 FOREIGN-CHANGE gate 检测搭便车，持久化到 `.runtime/claim_snapshots/{session_id}.json`（S3-C 治本：进程崩溃可恢复）
   - `adopt_prior_work=True`：认领前序未提交变更——审计记录基线 diff_size+sha256+domain 到 `.runtime/claim_snapshots/{sid}_adopted.jsonl` 但存储空基线让 FOREIGN-CHANGE gate 放行（替代 stash 舞蹈/逃生通道）
@@ -638,7 +638,7 @@ python scripts/session_worktree.py commit <sid> "commit message"
 - **入队前 gate 检查**（100 个 in-process gate，[src/zephyr/gov_enforcement/commit_gates/](../../../src/zephyr/gov_enforcement/commit_gates)）：
   - 注册制：`gate_auto_registrar.auto_register_gates` YAML 驱动自动注册，替代硬编码 `_check_*`
   - 关键 gate（按 priority 排序）：HELD-OVERLAP(50)/CLAIM-REQUIRED/WORKTREE-REQUIRED(44)/FOREIGN-CHANGE(45)/COMMIT-SCOPE(48)/NEW-FILE-DEPGRAPH-ENFORCEMENT(58)/DIRECTORY-CONTRACT/TTL-METADATA/FILE-PLACEMENT-TTL/RENAME-DEPGRAPH-SYNC(39)/BLUEPRINT-NODE-ID-HARDCODE(57)/CAPABILITY-LOOKUP-REQUIRED/TEST-RESIDUE-SSOT/TEST-SOURCE-CONSISTENCY/SECRET-HARDCODE/PURE-SHIM 等
-- **出队后 post-commit reconciler**（40+ 个，[git_commit_gateway.py](../../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py) §`_register_default_reconcilers` L783）：
+- **出队后 post-commit reconciler**（40+ 个，[git_commit_gateway.py](../../../src/zephyr/gov_enforcement/git_commit_gateway.py) §`_register_default_reconcilers` L783）：
   - 异步执行框架：`reconcile_runner.launch_reconcile_async` spawn detached worker subprocess（DETACHED_PROCESS on Windows）
   - status file 持久化：`.runtime/reconcile_reports/reconcile_status_<sha>.json`
   - 孤儿扫描：`sweep_stale_workers` 主动扫描（running 超 30min + PID 死→改 stale）
@@ -1043,7 +1043,7 @@ A/D/E 类不涉及代码时一行 N/A。
 
 ## 附录 C：post-commit reconciler 清单（40+ 个）
 
-> 真源：[src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py](../../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py) §`_register_default_reconcilers` L783
+> 真源：[src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py](../../../src/zephyr/gov_enforcement/git_commit_gateway.py) §`_register_default_reconcilers` L783
 > 异步执行框架：[src/zephyr/governance/audit/reconcile_runner.py](../../../src/zephyr/governance/audit/reconcile_runner.py) §`launch_reconcile_async`
 > 查询进度：`.runtime/reconcile_reports/reconcile_status_<sha>.json` 或 `query_reconcile_status` 命令
 

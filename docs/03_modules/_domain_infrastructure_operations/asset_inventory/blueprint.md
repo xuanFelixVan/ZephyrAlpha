@@ -133,7 +133,7 @@ Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有�
 | 2 | §4 数据模型 | `models.py` Pydantic 模型 |
 | 3 | §11 产出物路径 | `data/` 目录实际路径 |
 | 4 | frontmatter construction_progress | 代码实际施工状态 |
-| 5 | §17 注册表格式 | `src/zephyr/data/asset-inventory/classifier.py` 适配器 |
+| 5 | §17 注册表格式 | `src/zephyr/infrastructure/asset_inventory/classifier.py` 适配器 |
 
 ### 负向责任
 
@@ -252,7 +252,7 @@ CREATE INDEX idx_assets_priority ON assets(priority);
 
 | 步骤 | 操作 | 影响 |
 |:--:|------|------|
-| 1 | 新增 `src/zephyr/security/access_control/orphan-judge/db.py`——SQLite CRUD + 迁移 | 新文件 |
+| 1 | 新增 `src/zephyr/security/access_control/orphan_judge/db.py`——SQLite CRUD + 迁移 | 新文件 |
 | 2 | `index_generator.py` 输出从 YAML 改为 SQLite INSERT + YAML export | 修改 |
 | 3 | `scanner.py` 写入路径从 YAML append 改为 SQLite INSERT OR REPLACE | 修改 |
 | 4 | `models.py` ClassifiedAsset 增加 `to_row()` / `from_row()` 方法 | 修改 |
@@ -1876,9 +1876,9 @@ scaffold.py → asset.created
 | 文件 | 路径 | 职责 |
 |------|------|------|
 | `scanner.py` | `src/zephyr/data/asset-inventory/scanner.py` | 全量文件系统扫描引擎（ThreadPoolExecutor） |
-| `classifier.py` | `src/zephyr/data/asset-inventory/classifier.py` | 规则驱动四维分类器 |
+| `classifier.py` | `src/zephyr/infrastructure/asset_inventory/classifier.py` | 规则驱动四维分类器 |
 | `reconciler.py` | `src/zephyr/data/asset-inventory/reconciler.py` | 发现清单 vs 24注册表 对账引擎 |
-| `lifecycle.py` | `src/zephyr/data/asset-inventory/lifecycle.py` | 状态机 + MOD-INF-020 联动 |
+| `lifecycle.py` | `src/zephyr/infrastructure/asset_inventory/lifecycle.py` | 状态机 + MOD-INF-020 联动 |
 | `dashboard.py` | `src/zephyr/data/asset-inventory/dashboard.py` | 健康评分 + Dashboard 生成 |
 | `index_generator.py` | `scripts/governance/generators/generate_asset_index.py` | 统一资产索引生成脚本 |
 | `models.py` | `src/zephyr/data/asset-inventory/models.py` | 本蓝图全部 Pydantic V2 模型定义 |
@@ -2407,7 +2407,7 @@ Scanner 2 产出 → raw_scan_2.json (timestamp T2, T2 > T1)
 | Frontmatter + body | 3 | AGENTS.md | `FrontmatterAdapter` |
 | CSV | 1 | 未来可能的导出格式 | `CsvAdapter` |
 | TOML | 0 | 保留 | `TomlAdapter` |
-| SQLite | 3 | `zalpha_metadata.db` 各表 | `SqliteAdapter` |
+| SQLite | 3 | `governance.db` 各表 | `SqliteAdapter` |
 
 ### 17.2 统一接口
 
@@ -3411,11 +3411,11 @@ def scaffold_doc(layer_path: str, doc_type: str) -> Path: ...
 
 | 组件 | 测试文件 | 覆盖目标 | 关键测试场景 |
 |------|---------|:--:|------------|
-| `scanner.py` | `tests/asset-inventory/test_scanner.py` | > 90% | 六大目录全扫描、锁定文件跳过、SHA256 重试、超大文件跳过、安全文件跳过、空目录、扫描中途崩溃恢复 |
+| `scanner.py` | `tests/intelligence/model_intel/test_scanner.py` | > 90% | 六大目录全扫描、锁定文件跳过、SHA256 重试、超大文件跳过、安全文件跳过、空目录、扫描中途崩溃恢复 |
 | `classifier.py` | `tests/asset-inventory/test_classifier.py` | > 90% | 四种 type 分类、layer 提取、优先级估算、置信度计算、UNKNOWN 边界 |
 | `reconciler.py` | `tests/asset-inventory/test_reconciler.py` | > 90% | ORPHAN/GHOST/DRIFT 三类检测、损坏注册表隔离、24h 容忍窗口、自愈触发 |
 | `lifecycle.py` | `tests/asset-inventory/test_lifecycle.py` | > 85% | 状态迁移合法性、非法迁移拒绝、事件触发 MOD-INF-020、TIME-DECAY 规则 |
-| `dashboard.py` | `tests/asset-inventory/test_dashboard.py` | > 85% | 健康评分 A~F、趋势计算、Top 异常列表、信任等级 |
+| `dashboard.py` | `tests/zephyr/shared/observability/test_dashboard.py` | > 85% | 健康评分 A~F、趋势计算、Top 异常列表、信任等级 |
 | `index_generator.py` | `tests/asset-inventory/test_index_generator.py` | > 80% | 完整管道（扫描→分类→对账→索引）、增量更新、备份恢复 |
 | `models.py` | 包含在以上各测试中 | > 95% | 所有 Pydantic 模型的正向/反向验证、边界值 |
 | TripleTrustAnchor | `tests/asset-inventory/test_trust_anchor.py` | > 80% | Git clean/pytest green/audit continuous 三重全组合 |
