@@ -94,8 +94,14 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
+from zephyr.compliance.checklist_evidence import (  # noqa: E402, I001  -- I001 分类随落地环境翻面(队列落地不回写主区=本模块不在落地面 src)，两态排序要求互斥故锚点抑制
+    ChecklistEvidenceProvider,
+    ChecklistEvidenceWriter,
+    today_shanghai,
+)
 from zephyr.compliance.compliance_log import ComplianceLogger  # noqa: E402
 from zephyr.compliance.compliance_report_registry import ReportGate  # noqa: E402
+from zephyr.compliance.discipline_must_do_checker import ChecklistCompletionChecker  # noqa: E402
 from zephyr.compliance.discipline_prohibition_checker import (  # noqa: E402
     DisciplineContext,
     DisciplineGuard,
@@ -649,6 +655,7 @@ def assemble_session(
     *,
     state_dir: Path | None = None,
     compliance_log_path: Path | None = None,
+    checklist_evidence_dir: Path | None = None,
 ) -> TradingSession:
     """装配 TradingSession（57 号文 §2 过渡形态编排）。
 
@@ -676,10 +683,19 @@ def assemble_session(
     生产零注入=闸装了没通水；计数实例分裂会让日申报 1 万笔阻断线假激活
     （TradingSession 同实例防护直接 raise，43 号 §7.4/§8/§10）。
 
+    F62 清单闸写侧批（2026-09-28）：装配 ChecklistCompletionChecker（INTRADAY
+    唯一 Hard Block 时点，裁定值不改）+ 三腿生产写侧（checklist_evidence）——
+    ①risk_param_confirm/②position_limit_verify 机器自动落证（装配引导+逐单限额
+    执行回执，后者经 ``checklist_evidence_writer=`` 透传会话在限额验证处刷新）；
+    ③signal_compliance_check 盘前人工拍板 ack CLI。证据目录可注入
+    （``checklist_evidence_dir=``，测试 MUST 注入 tmp_path）。
+
     Args:
         state_dir: 风控状态外部化根目录（None=生产路径，测试 MUST 注入 tmp_path）。
         compliance_log_path: 合规证据日志落点（None=生产 data/compliance_log；
             测试 MUST 注入 tmp_path——根宪法 §9 第 6 条禁测试写生产 data/）。
+        checklist_evidence_dir: 清单闸三腿证据目录（None=生产
+            data/compliance_log/checklist 主仓锚定；测试 MUST 注入 tmp_path）。
     """
     # C-002 三道订单级合规闸（F62 装配批，43 号 §7.4/§8/§7.3）：注入即生效，
     # 未注入=该闸跳过——故本正门 MUST 全三门齐装。
@@ -758,6 +774,25 @@ def assemble_session(
             max_single_position=max(args.max_single, 0.01),
         ),
     )
+    # ── C-004 清单闸写侧①/②装配引导（F62 雷三批：三 key 生产真源）─────────────
+    # 清单闸在逐单限额检查**之前**评估：若 position_limit_verify 证据只能由限额
+    # 检查产生，首批必因缺证 Hard Block→写者永无执行机会=自锁死锁。故装配期先落
+    # 两份引导证（RiskLimits 装配成功=①参数已确认+②限额基线就绪的事实），逐单
+    # 执行回执由 trading_session 在限额验证处刷新（写侧②同一入口，writer 透传）。
+    checklist_evidence_writer = ChecklistEvidenceWriter(checklist_evidence_dir)
+    _trade_date = today_shanghai(now)
+    checklist_evidence_writer.write_risk_param_confirm(
+        config.risk_limits.idempotency_key,
+        {"max_single_position": float(config.risk_limits.max_single_position)},
+        trade_date=_trade_date,
+        source="start_paper_session.assemble_session",
+    )
+    checklist_evidence_writer.write_position_limit_verify(
+        config.risk_limits.idempotency_key,
+        trade_date=_trade_date,
+        source="start_paper_session.assemble_session(assembly_bootstrap)",
+        detail={"phase": "assembly_bootstrap"},
+    )
     # ── C-004 合规闸（43 号 §4.3，MOD-CMP-002）：诚实起点两把 ──────────────────
     # 均价真源＝PositionTracker 只读 avg_costs 性质（CTR-006 PositionSnapshot 无
     # 成本字段，故成本只能从 tracker 侧取；本批不改 CTR-006 契约、不给 tracker
@@ -773,6 +808,11 @@ def assemble_session(
         discipline_tracker,
         normal_exposure=float(config.risk_limits.max_single_position),
     )
+    # ── C-004 清单闸（F62 雷三批）：checker+三腿写侧 provider，接线进正门 ──────
+    # provider 判定全 fail-closed（证据缺失/损坏/日期不符/HMAC 不过=该腿未完成），
+    # INTRADAY 缺项=Hard Block（43 号 §3.3 裁定值，未获新裁定不放宽）。
+    checklist_provider = ChecklistEvidenceProvider(checklist_evidence_dir)
+    checklist_checker = ChecklistCompletionChecker(checklist_provider, logger=compliance_logger)
     session = TradingSession(
         broker=broker,
         strategy=strategy,
@@ -786,12 +826,40 @@ def assemble_session(
         kill_switch=kill_switch_lite,
         discipline_guard=discipline_guard,
         discipline_ctx_provider=discipline_ctx_provider,
+        checklist_checker=checklist_checker,
+        checklist_evidence_writer=checklist_evidence_writer,
     )
     _print_discipline_declaration(_discipline_leg_arming_status(discipline_tracker))
     print(
-        "[DISCIPLINE] 未装清单（本批明示）：清单闸 ChecklistCompletionChecker / 交易合规检测 "
-        "TradingComplianceDetector / ProgrammaticTradingGuard 均未注入本正门——"
-        "清单三项 INTRADAY key 全仓零生产写侧，接上即每轮整批拒单（那是另一种假闸）"
+        "[CHECKLIST] 清单闸 ChecklistCompletionChecker 已装配（INTRADAY=唯一 Hard Block 时点，"
+        "43 号 §3.3 裁定值未放宽），三腿写侧：①risk_param_confirm=装配期机器落证"
+        "（时间戳+快照 id+limit 集）；②position_limit_verify=装配引导证+逐单限额验证"
+        "执行回执；③signal_compliance_check=盘前人工拍板确认件（带来源标注，"
+        "密钥在场时 HMAC 防手改）"
+    )
+    print(
+        "[CHECKLIST] 人工腿盘前必做（未 ack 当日调仓将被 Hard Block 拒下）："
+        "python -m zephyr.compliance.checklist_evidence ack --confirmed-by <确认人> [--note ...]"
+        "  状态查读=同模块 status 子命令  证据目录=" + str(checklist_evidence_writer.base_dir)
+    )
+    print(
+        "[CHECKLIST][STATUS] "
+        + json.dumps(
+            {
+                "checklist_checker": "armed_hard_block",
+                "writer_risk_param_confirm": "machine_auto",
+                "writer_position_limit_verify": "machine_auto",
+                "writer_signal_compliance_check": "manual_ack_cli",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
+    print(
+        "[DISCIPLINE] 未装清单（本批明示）：交易合规检测 TradingComplianceDetector / "
+        "ProgrammaticTradingGuard 均未注入本正门（缺市场级进料口生产者，登记 tracker "
+        "不凑数）；清单闸 ChecklistCompletionChecker 本批已装配（见 [CHECKLIST] 横幅，"
+        "整批吞单缺陷已登记 trading_session.py:809 留维护班）"
     )
     print(
         "[COMPLIANCE] C-002 三道订单级合规闸已注入：先报告后交易(ReportGate) + "
