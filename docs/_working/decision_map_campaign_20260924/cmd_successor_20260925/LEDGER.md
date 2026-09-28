@@ -166,3 +166,40 @@ title: 总筹台账（st-qmine-20260925 继任轮 · 2026-09-25 20:45 接管）
 3. detect_git_dangerous.py 豁免条目（10号文取证原文）——编辑被 watchdog 吞一次，文件已在 HEAD 故当前无阻断，待下次触碰前先落豁免。
 4. 他会话在飞未落件回归红：reexam_cpcv_harness 族（haircut_sharpe 导入未落源）/closed_book_tick_gate 族（mock 漂移）/test_n_trial_ledger_t0_family 孤儿（收集错）——按"他会话在途不代修"铁律登记不代修。
 5. infra：test_f18 的 generate_board_symbol_routing.py eval 白名单化（存量红，非本轮引入）。
+
+T1 守望 03:59 进度 505/3700（PID 33548 活，日志 mtime 前进）
+
+T1 守望 04:00 进度 510/3700（PID 33548 活，日志 mtime 前进）
+
+T1 守望 04:21 进度 667/3700（PID 33548 活，日志 mtime 前进；速率 ~7.1 格/分 稳定）
+
+T1 守望 04:51 进度 902/3700（PID 33548 活，日志 mtime 前进；速率 ~7.8 格/分）
+
+T1 守望 05:21 进度 1155/3700（PID 33548 活，日志 mtime 前进；速率 ~8.4 格/分，ETA ~10:20）
+
+T1 守望 05:51 进度 1393/3700（PID 33548 活，日志 mtime 前进；速率 ~7.9 格/分）
+
+T1 守望 05:56 追加处置：belt daemon 已于 05:06 自愈换血（PID 35260，在 02:05 gate 落地之后——04:4x 的 DOC-HEADER-SUITE priority=77 冲突死信系旧 daemon 进程内存旧注册所致，不会再发）；q-0020/q-0025 已带新 claim 重投为 q-0026/q-0027（快照=当前工作区）
+
+T1 守望 06:21 进度 1660/3700（PID 33548 活，日志 mtime 前进；速率 ~8.6 格/分，ETA ~10:00）
+
+T1 守望 06:51 进度 1934/3700（PID 33548 活，日志 mtime 前进；速率 ~9.1 格/分，ETA ~09:30）
+
+T1 守望 06:51 追加处置：q-0028 死于 COMPLEXITY-GUARD（t1_t2_handover.py 整文件新落=存量复杂度全算新增：run_acceptance=52/run_handover=31/build_t2_subspace=16+13参）。裁定=**缓发不硬闯**：凌晨对交接验收逻辑做 52→15 大重构风险>收益（T1 完赛在即，cron 走盘面版本不受影响）；登记债务，静窗重构+全测后落。
+T1 守望 06:51 进度 1934/3700（PID 33548 活，日志 mtime 前进；速率 ~9.1 格/分，ETA ~09:30）
+
+T1 守望 07:21 进度 2214/3700（PID 33548 活，日志 mtime 前进；速率 ~9.3 格/分，ETA ~09:10）
+
+## 十、T1 完赛验收与交接裁决（st-ddup 守望 · 09-26 08:00）
+
+### T1 重跑完赛（grid_20260926-024947，02:50→07:47，4h57m，~7.9 格/分）
+- 3,698/3,700 评完；2 格阴性=kelly_050×halflife60×all_a 净值零方差（executor 自带 insufficient_net 哨兵如实记阴，配方内生非引擎故障——同配方旧引擎同死，检查逻辑本重构逐字保留）。
+- N_eff=19（≥12 ✔）；垃圾三线全绿：完成率 1.0 / 死亡率 0.00054 / 可疑 sharpe 占比 0.0013。
+
+### 交接哨兵官方裁决：VERDICT_RED，T2 不发（裁决书=运行目录 handover_verdict.yaml）
+- blocking=[manifest_points 3698≠3700, dead_zero 2, cost_gate_spot 28/50 超 survival_floor]
+- cost_gate_spot 定性：**上轮 LEDGER §五·补 R-2 已登记待追认的口径项实证**（40bp 幸存层抽查看门对全档粗扫按构造必红；上轮实测 33% 负，本轮 56% 负）——判据阈值一字未动，按协议不代裁，呈 Owner。
+- 附带修复：t1_t2_handover.py 重放腿 importlib 合成模块缺 sys.modules 注册（py3.12 dataclass 反查炸）一行修，7 测试绿；随该文件缓发袋同落。
+- 守望自动化（automation-bb243f8c）使命完成：完赛验收+裁决取回+不强行发车。
+
+T1 守望 08:21 复核 no-op：产物四件+handover_verdict.yaml 俱在，§十记账完备。automation-bb243f8c 使命已完成但本会话无 CronDelete 工具——请在 Automations 页将其停用（后续巡检均为 no-op）。
