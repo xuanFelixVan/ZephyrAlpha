@@ -55557,4 +55557,20 @@ creation_tokens:
   created_by: st-ailayer-sx-20260927
   capability: algo_flow_external_view
   merge_evaluation: "lifecycle_fsm.py P2-1 出仓形态机器块（GATE-ALGO-FLOW 补锚），真源唯一 src/zephyr/strategy_pipeline/lifecycle_fsm.py，validate_file 全过"
+- file: src/zephyr/governance/consumption/consumption_census.py
+  token: consumption-census-consumption-census-20260928
+  created_by: st-zcloseout-20260928
+  capability: consumption_census
+  merge_evaluation: "波13 消费面普查件接管袋路径修正重登（原登记路径缺 consumption/ 子包段，精确匹配不可达）"
+- file: src/zephyr/governance/consumption/consumption_census_reconciler.py
+  token: consumption-census-reconciler-consumption-census-reconciler-20260928
+  created_by: st-zcloseout-20260928
+  capability: consumption_census
+  merge_evaluation: "波13 消费面普查件接管袋路径修正重登（原登记路径缺 consumption/ 子包段，精确匹配不可达）"
+- file: src/zephyr/governance/consumption/scan_scope_converged.py
+  token: consumption-census-scan-scope-converged-20260928
+  created_by: st-zcloseout-20260928
+  capability: consumption_census
+  merge_evaluation: "波13 单一扫描口径接管袋路径修正重登（原登记路径缺子包段），净零"
+
 di_seam_exemptions: []
