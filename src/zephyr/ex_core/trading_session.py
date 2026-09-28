@@ -80,6 +80,7 @@ from decimal import Decimal
 from typing import Any, Final
 from zoneinfo import ZoneInfo
 
+from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter
 from zephyr.compliance.discipline_must_do_checker import (
     ChecklistAction,
     ChecklistCheckpoint,
@@ -310,6 +311,7 @@ class TradingSession:
         config: TradingSessionConfig,
         cancel_rate_guard: CancelRateGuard | None = None,
         checklist_checker: ChecklistCompletionChecker | None = None,
+        checklist_evidence_writer: ChecklistEvidenceWriter | None = None,
         kill_switch: KillSwitchLite | None = None,
         discipline_guard: DisciplineGuard | None = None,
         discipline_ctx_provider: DisciplineCtxProvider | None = None,
@@ -348,6 +350,8 @@ class TradingSession:
         self._cancel_rate_guard = cancel_rate_guard or om_guard or CancelRateGuard()
         # C-004 合规闸（None=未接线不校验，AI-ASM-001 装配批）
         self._checklist_checker = checklist_checker
+        # C-004 清单闸写侧②逐批回执（None=不落证；F62 雷三批：三 key 生产真源补齐）
+        self._checklist_evidence_writer = checklist_evidence_writer
         self._kill_switch = kill_switch
         self._discipline_guard = discipline_guard
         self._discipline_ctx_provider = discipline_ctx_provider
@@ -806,6 +810,10 @@ class TradingSession:
                     len(sorted_deltas),
                 )
                 self._blocked_orders.extend(sorted_deltas)
+                # [缺陷登记·维护班待办·本批不改语义] (trading_session.py:809) 整批吞单
+                # 无重放：_blocked_orders 只记不重试，rebalance 消费侧见 submitted=0
+                # 即返回——清单判缺期间每次调仓全吞，不逐单保留、不延迟重放
+                # （F62 排雷案卷雷三"整批语义"§；修复须随重放机制另立裁定批）。
                 return []
 
         # ── 资金预占初始化（§2.14 决策⑬）──
@@ -816,7 +824,19 @@ class TradingSession:
         for order in sorted_deltas:
             # ── 盘前检查链 Step 1-3: 风控检查（仓位/行业/杠杆/Kill Switch）──
             target_weight = float(target_weights.get(order.symbol, 0.0))
-            if self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float):
+            # （原 if 判定提为变量：判定语义零变化，仅为在判定后落写侧②执行回执）
+            risk_blocked = self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float)
+            # ── C-004 清单闸写侧②：限额验证执行回执（F62 雷三批）──
+            # 该单的限额检查已实际执行（无论是否被拦），刷新执行证据供
+            # ChecklistEvidenceProvider 取证（最新一条即真源；装配引导证由
+            # assemble_session 落，此处是逐单执行回执）。
+            if self._checklist_evidence_writer is not None:
+                self._checklist_evidence_writer.write_position_limit_verify(
+                    self._config.risk_limits.idempotency_key,
+                    source="trading_session._validate_and_submit",
+                    detail={"symbol": order.symbol, "risk_blocked": risk_blocked},
+                )
+            if risk_blocked:
                 self._blocked_orders.append(order)
                 continue
 
