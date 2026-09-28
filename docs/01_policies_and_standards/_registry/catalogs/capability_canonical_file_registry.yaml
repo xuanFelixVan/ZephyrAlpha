@@ -55966,4 +55966,79 @@ creation_tokens:
   capability: chief8_night_ledger
   merge_evaluation: "总包夜战台账唯一登记面（内收 w5_1：替代散落会话内存报告收敛单真源）；新域首册零退役对象"
 
+- file: scripts/governance/chief_lease.py
+  token: chief-lease-chief-lease-20260928
+  created_by: st-chieflease-20260928
+  capability: chief_lease
+  merge_evaluation: 裁定#415 唯一在任总包机制化：lease 仲裁器为同真源唯一实现，替代各 lane 复制粘贴'自称总指挥'措辞（内收判据 w5_1 同域收敛唯一）
+- file: docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
+  token: chief-lease-chief-lease-protocol-20260928
+  created_by: st-chieflease-20260928
+  capability: chief_lease
+  merge_evaluation: 裁定#415 配套协议文：同真源唯一协议页（模板替换行+三层治理地图+接入注记），替代各指令散页复制漂移（w5_1 同域收敛唯一）
+- file: docs/_working/fullflow_chief_closeout/s52_dynamic_lanes_v1.md
+  token: fullflow-chief-s52-dynamic-lanes-v1-20260928
+  created_by: st-s52-20260928
+  capability: fullflow_chief
+  merge_evaluation: S5② 战役交付文档（租约模型设计+影子期方案+v1→v2 毕业判据），归 fullflow_chief 作战室册
+- file: scripts/governance/lane_leases.py
+  token: s52-lanes-lane-leases-20260928
+  created_by: st-s52-20260928
+  capability: s52_lanes
+  merge_evaluation: S5② 动态车道 v1 新对象（路径租约分配器+影子审计门，WARN-only 不入 gate 链）；静态分工无同域登记对象，零替代退役
+- file: scripts/governance/lane_leases_gate.py
+  token: s52-lanes-lane-leases-gate-20260928
+  created_by: st-s52-20260928
+  capability: s52_lanes
+  merge_evaluation: S5② 动态车道 v1 新对象（路径租约分配器+影子审计门，WARN-only 不入 gate 链）；静态分工无同域登记对象，零替代退役
+- file: src/zephyr/backtest/gpu_core.py
+  token: gpu-core-gpu-core-20260928
+  created_by: st-gpu-conv-20260928
+  capability: gpu_core
+  merge_evaluation: P0 先例件：替代'无 GPU 薄核'的空缺；与 census/three_tiers 同族引用不并（流程卡 vs 代码核跨域不同对象）；零触发旧条目可退役=无
+- file: src/zephyr/backtest/gpu_core.py
+  token: gpu-core-gpu-core-2026-09-28
+  created_by: st-gpu-conv-20260928
+  capability: gpu_core
+  merge_evaluation: GPU薄核P0：平价11/11真机RTX3090+FP64红线+CPU fallback
+- file: tests/backtest/test_gpu_core_parity.py
+  token: gpu-core-test-gpu-core-parity-2026-09-28
+  created_by: st-gpu-conv-20260928
+  capability: gpu_core
+  merge_evaluation: GPU薄核P0：平价11/11真机RTX3090+FP64红线+CPU fallback
+- file: docs/_working/gpu_rewrite/new_asset_gpu_cpu_checklist.md
+  token: gpu-core-new-asset-gpu-cpu-checklist-2026-09-28
+  created_by: st-gpu-conv-20260928
+  capability: gpu_core
+  merge_evaluation: GPU薄核P0：平价11/11真机RTX3090+FP64红线+CPU fallback
+- file: docs/_working/gpu_rewrite/new_asset_gpu_cpu_checklist.md
+  token: gpu-checklist-new-asset-gpu-cpu-checklist-20260928
+  created_by: st-gpu-conv-20260928
+  capability: gpu_checklist
+  merge_evaluation: Owner 令流程卡：收敛各车道重复的'要不要GPU'人工判定；不并 census/three_tiers（判定卡 vs 证据册跨域不同对象）；替代物=无（此前无等价清单在册）
+- file: docs/_working/fullflow_chief_20260928/dead_letter_surgery_ledger.md
+  token: tailwork-dead-letter-surgery-ledger-20260929
+  created_by: st-tailwork-20260928
+  capability: dead_letter_surgery_ledger
+  merge_evaluation: TAIL-WORK §8 续账件（chief 直写件首次入 git；chief §7 预嘱 CREATE-GUARD 索 token 时补登记）
+- file: docs/_working/fullflow_chief_closeout/c7_exit_code_impact_manifest.md
+  token: fullflow-chief-c7-exit-code-impact-manifest-20260928
+  created_by: st-secbatch-20260928
+  capability: fullflow_chief
+  merge_evaluation: C7 manifest
+- file: docs/_working/fullflow_chief_closeout/f56_simbridge_forensics.md
+  token: fullflow-chief-f56-simbridge-forensics-20260928
+  created_by: st-secbatch-20260928
+  capability: fullflow_chief
+  merge_evaluation: F56 forensics
+- file: config/position_parameters.yaml
+  token: trd-a20-a21-position-parameters-20260928
+  created_by: st-secbatch-20260928
+  capability: trd_a20_a21
+  merge_evaluation: G7 position params carrier
+- file: scripts/governance/check_trd_a20_a21_dual_gates.py
+  token: trd-a20-a21-check-trd-a20-a21-dual-gates-20260928
+  created_by: st-secbatch-20260928
+  capability: trd_a20_a21
+  merge_evaluation: G1/G7 dual gate evaluator
 di_seam_exemptions: []
