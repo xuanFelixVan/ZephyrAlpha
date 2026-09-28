@@ -684,6 +684,48 @@ MANUAL_GATES: list[dict] = [
 ]
 
 
+def _locate_entry_script(entry: str) -> Path | None:
+    """定位 entry 命令的脚本源文件（scripts/ 或 src/ 下任意 .py 路径 token）。
+
+    T14 own_scope 补全（st-commitspeed-tbl-20260924）辅助：pre-commit hook 的
+    entry 形如 ``python scripts/governance/d5_architecture/checkers/check_arch.py``
+    或 ``python src/zephyr/.../x.py`` 或 ``python -m zephyr.foo``。内联 ``-c`` /
+    pytest 形态返回 None（不可机械判定，留待 Owner）。
+    """
+    for tok in entry.split():
+        if tok.endswith(".py"):
+            cand = REPO_ROOT / tok
+            return cand if cand.is_file() else None
+    m = re.search(r"-m\s+([\w.]+)", entry)
+    if m:
+        mod = m.group(1).replace(".", "/")
+        for cand in (REPO_ROOT / "src" / f"{mod}.py", REPO_ROOT / "src" / mod / "__main__.py"):
+            if cand.is_file():
+                return cand
+    return None
+
+
+def _derive_own_scope_for_entry(entry: str) -> bool | None:
+    """pre-commit 条目 own_scope 机械派生（判据与 commit-gate 通道同源同则）。
+
+    T14 补全（2026-09-24）：#ARCH-310 R2 own-diff 作用域标记完备性——原生成器仅对
+    commit_gates/*.py 派生 own_scope，pre-commit(55)/manual(12) 通道整片缺失
+    （own_scope=None 67 条）。本函数对 pre-commit 脚本型同则派生：
+    可定位源码且含 ``_build_own_scope`` 标记 → True；可定位无标记 → False
+    （未标记者默认全暂存区扫描，全仓例外须按 R2 登记理由）；无可定位源文件
+    （内联 -c / pytest 形态）→ None（不可机械判定，对账工具 pending_owner 节跟踪，
+    改册是 Owner 门位）。manual 源（墓碑/机制实名条目）不经本函数，保持待 Owner。
+    """
+    script = _locate_entry_script(entry)
+    if script is None:
+        return None
+    try:
+        text = script.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    return "_build_own_scope" in text
+
+
 def extract_gates(config: dict) -> list[dict]:
     """extract_gates implementation."""
     gates = []
@@ -714,6 +756,9 @@ def extract_gates(config: dict) -> list[dict]:
                     "always_run": hook.get("always_run", False),
                     "category": CATEGORY_MAP.get(gate_suffix, "unknown"),
                     "status": "active",
+                    # T14 own_scope 机械派生（st-commitspeed-tbl-20260924，SW8 代投移植）：
+                    # pre-commit 通道原 own_scope 整片缺失（own_scope=None），同则派生。
+                    "own_scope": _derive_own_scope_for_entry(hook.get("entry", "")),
                 }
             )
     return gates

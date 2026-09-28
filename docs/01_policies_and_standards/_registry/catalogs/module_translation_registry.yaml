@@ -61985,6 +61985,47 @@ entries:
   desc_en: ""
   plain_zh: "检查图书馆月度卫生扫描器有没有偷懒：判文件年龄必须看登记的出生日期而不是文件修改时间（git 会天天碰修改时间导致永远扫不出旧文件）；带引号的标签也要认得；读不出日期的文件要单独计数不许装看不见；登记在册但盘上没有的文件要单独列队"
   responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/perceive/l7_prior_opener.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L7先验开单面"
+  name_en: "l7_prior_opener"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "挖矿开单前先查历史经验库：富矿方向把优先级调高（最多加倍），历史踩坑的关键词自动避开（但至少留一组词），每天靠历史经验开的单不超过一半——防止只会走老路。"
+  responsibility_layer: governance
+- module_path: src/zephyr/signal_ashare/strategy_signal/combo_rule_loader.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "组合规则卡加载器"
+  name_en: "combo rule loader"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "读取K线组合规则的YAML配置卡，把形态、支撑阻力位置、成交量三个条件组合成买卖方向和强度判断，供统一图形引擎使用"
+  responsibility_layer: business
+- module_path: scripts/governance/backfill_registry_consumption.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "消费面注册表机械回填派生器"
+  name_en: ""
+  desc_zh: "从TDM挂载×因子引用映射与recipes接线台账机械派生，回填factor/strategy注册表的消费面字段"
+  desc_en: ""
+  plain_zh: "注册表里有一堆字段没人填：这个工具自动把'哪个策略用哪些因子、哪个因子被哪些策略用、技术因子由哪个代码算'从设计图和代码里扫出来填进登记册，填不了的留空不瞎编，改前留底可重跑"
+  responsibility_layer: governance
+- module_path: scripts/backtest/eval_tech_indicator_ic.py
+  domain_id: D_BACKTEST
+  name_zh: "技术因子IC取证器"
+  name_en: ""
+  desc_zh: "因子日仓面板×前视收益逐日截面Spearman IC聚合，产出CNS-01验收证据CSV/JSON"
+  desc_en: ""
+  plain_zh: "因子好不好要用'今天打分、明天涨没涨'的历史命中率来验证：这个工具把算好的因子分和之后的涨跌对着算相关性，输出证据文件供登记册回填；没数据就明说没数据，不造数"
+  responsibility_layer: business
+- module_path: scripts/governance/d3_metadata/reconcile_gate_rosters.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "门禁名册对账器"
+  name_en: "gate_roster_reconciler"
+  desc_zh: "对账模块册/in_process 册/统一册三册门禁清单漂移并机生对账报告"
+  desc_en: ""
+  plain_zh: "门禁的名册有好几本，各记各的账总会对不上。这个工具把几本名册放在一起逐条对账，谁多了谁少了谁写错了，生成一张差异报告，让维护的人一眼看到哪里漂了，不用再靠人肉翻册子。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

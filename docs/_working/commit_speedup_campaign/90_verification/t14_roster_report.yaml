@@ -1,0 +1,2959 @@
+---
+ttl: task_bound
+---
+summary:
+  root: D:\ZephyrAlpha\.runtime\tmp\csx_t14_wt
+  module_py_total: 116
+  module_gate_count: 114
+  module_helper_count: 2
+  in_process_count: 99
+  unified_count: 180
+  drift_found: true
+scalar_consistency:
+  in_process:
+    scalar: 99
+    list_len: 99
+  unified:
+    scalar: 180
+    list_len: 180
+drift_distribution:
+  MODULE_NOT_IN_IN_PROCESS: 15
+  OWN_SCOPE_MISSING: 12
+  PRECOMMIT_SCRIPT_MISSING: 2
+own_scope_distribution:
+  'false': 133
+  'true': 33
+  missing: 12
+  'null': 2
+roster:
+- gate_id: ALGO-FLOW-LINK
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.algo_flow_link_gate
+    factories:
+    - make_algo_flow_link_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.algo_flow_link_gate
+    factory_function: make_algo_flow_link_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: ALGO-NOTE-SYNC
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.algo_note_sync_gate
+    factories:
+    - make_algo_note_sync_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.algo_note_sync_gate
+    factory_function: make_algo_note_sync_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: ARCH-REFERENCE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.arch_reference_gate
+    factories:
+    - make_arch_reference_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: ASYNCIO-RUN-IN-CONTEXT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.asyncio_run_in_context_gate
+    factories:
+    - make_asyncio_run_in_context_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.asyncio_run_in_context_gate
+    factory_function: make_asyncio_run_in_context_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: BARE-SUBPROCESS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.bare_subprocess_gate
+    factories:
+    - make_bare_subprocess_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.bare_subprocess_gate
+    factory_function: make_bare_subprocess_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: BLOOD-FLESH
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate
+    factories:
+    - make_library_blood_flesh_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate
+    factory_function: make_library_blood_flesh_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: BLUEPRINT-AMODULE-CONSISTENCY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_cross_check_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_amodule_cross_check_gate
+    factories:
+    - make_blueprint_amodule_cross_check_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: BLUEPRINT-FORMAT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_format_gate
+    factories:
+    - make_blueprint_format_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_format_gate
+    factory_function: make_blueprint_format_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: BLUEPRINT-HEADER
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate
+    factories:
+    - make_blueprint_amodule_consistency_gate
+    - make_blueprint_header_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate
+    factory_function: make_blueprint_header_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate
+    factories:
+    - make_blueprint_node_id_hardcode_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate
+    factory_function: make_blueprint_node_id_hardcode_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: BUSINESS-REGISTRY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.business_registry_gate
+    factories:
+    - make_business_registry_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.business_registry_gate
+    factory_function: make_business_registry_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: CAP-CONSISTENCY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/capability_consistency_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.capability_consistency_gate
+    factories:
+    - make_capability_consistency_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.capability_consistency_gate
+    factory_function: make_capability_consistency_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: CAPABILITY-LOOKUP-REQUIRED
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate
+    factories:
+    - make_capability_lookup_required_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate
+    factory_function: make_capability_lookup_required_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: CAPABILITY-OVERLAP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.capability_overlap_gate
+    factories:
+    - make_capability_overlap_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.capability_overlap_gate
+    factory_function: make_capability_overlap_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: CH-BATCH-SIZE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ch_batch_size_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ch_batch_size_gate
+    factories:
+    - make_ch_batch_size_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.ch_batch_size_gate
+    factory_function: make_ch_batch_size_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: CH-FINAL-GATE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ch_final_gate
+    factories:
+    - make_ch_final_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.ch_final_gate
+    factory_function: make_ch_final_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: CH-VERSION-COL
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ch_version_col_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ch_version_col_gate
+    factories:
+    - make_ch_version_col_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.ch_version_col_gate
+    factory_function: make_ch_version_col_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: CLAIM-REQUIRED
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/claim_required_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.claim_required_gate
+    factories:
+    - make_claim_required_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.claim_required_gate
+    factory_function: make_claim_required_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: COMMIT-CRITICAL-SECTION-LOCK
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: active
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: COMMIT-SCOPE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/commit_scope_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.commit_scope_gate
+    factories:
+    - make_commit_scope_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.commit_scope_gate
+    factory_function: make_commit_scope_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: COMPLEXITY-GUARD
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/high_complexity_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.high_complexity_gate
+    factories:
+    - make_high_complexity_gate
+    - make_complexity_guard_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.high_complexity_gate
+    factory_function: make_complexity_guard_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: CONSUMERS-ACCURACY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate
+    factories:
+    - make_consumers_accuracy_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate
+    factory_function: make_consumers_accuracy_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: CREATE-GUARD
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/create_guard.py
+    module_path: zephyr.gov_enforcement.commit_gates.create_guard
+    factories:
+    - make_create_guard
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.create_guard
+    factory_function: make_create_guard
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: DANGLING-REFERENCE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: DATA-TASK-COMPLETENESS
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: DATETIME-NOW-FORBIDDEN
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate
+    factories:
+    - make_datetime_now_forbidden_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate
+    factory_function: make_datetime_now_forbidden_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: DECISION-MAP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.decision_map_gate
+    factories:
+    - make_decision_map_gate
+    own_scope_marker: true
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: DEPGRAPH-ENFORCEMENT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate
+    factories:
+    - make_depgraph_pre_registration_gate
+    - make_depgraph_enforcement_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate
+    factory_function: make_depgraph_enforcement_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: DEPGRAPH-FRESHNESS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate
+    factories:
+    - make_depgraph_freshness_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate
+    factory_function: make_depgraph_freshness_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: DEPGRAPH-PRE-REGISTRATION
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: DEPGRAPH-WRITE-PATH
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate
+    factories:
+    - make_depgraph_write_path_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: DERIVATION-ANNOTATION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.derivation_annotation_gate
+    factories:
+    - make_derivation_annotation_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.derivation_annotation_gate
+    factory_function: make_derivation_annotation_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: DERIVED-FILE-DELETION-PROTECTION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/derived_file_deletion_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.derived_file_deletion_gate
+    factories:
+    - make_derived_file_deletion_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.derived_file_deletion_gate
+    factory_function: make_derived_file_deletion_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: DIRECTORY-CONTRACT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/directory_contract_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.directory_contract_gate
+    factories:
+    - make_directory_contract_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.directory_contract_gate
+    factory_function: make_directory_contract_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: DOC-REF-BROKEN
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate
+    factories:
+    - make_doc_ref_broken_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate
+    factory_function: make_doc_ref_broken_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: EMPTY-HANDLER
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.empty_handler_gate
+    factories:
+    - make_empty_handler_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.empty_handler_gate
+    factory_function: make_empty_handler_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: ENCODING-SAFETY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/encoding_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.encoding_gate
+    factories:
+    - make_encoding_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.encoding_gate
+    factory_function: make_encoding_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: EXEMPT-ZONE-FM
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate
+    factories:
+    - make_exempt_zone_frontmatter_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate
+    factory_function: make_exempt_zone_frontmatter_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: FACTORY-MAP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.strategy_factory_map_gate
+    factories:
+    - make_strategy_factory_map_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: FILE-COPY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.file_copy_gate
+    factories:
+    - make_file_copy_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.file_copy_gate
+    factory_function: make_file_copy_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: FILE-PLACEMENT-TTL
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/file_placement_ttl_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate
+    factories:
+    - make_file_placement_ttl_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate
+    factory_function: make_file_placement_ttl_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: FOLDER-CAPACITY-HARD-LIMIT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/folder_capacity_hard_limit_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.folder_capacity_hard_limit_gate
+    factories:
+    - make_folder_capacity_hard_limit_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.folder_capacity_hard_limit_gate
+    factory_function: make_folder_capacity_hard_limit_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: FOREIGN-CHANGE-DETECTION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.foreign_change_gate
+    factories:
+    - make_foreign_change_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.foreign_change_gate
+    factory_function: make_foreign_change_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: FORGED-GW-MARKER
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate
+    factories:
+    - make_forged_gw_marker_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate
+    factory_function: make_forged_gw_marker_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: FRONTEND-MAP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/frontend_map_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.frontend_map_gate
+    factories:
+    - make_frontend_map_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: FRONTEND-TRUTH-SOURCE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate
+    factories:
+    - make_frontend_truth_source_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate
+    factory_function: make_frontend_truth_source_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: FUNCTION-DUP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/function_dup_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
+    factories:
+    - make_function_dup_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
+    factory_function: make_function_dup_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-12
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-13
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-14
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-16
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-17
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-20
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-21
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-22
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ADM
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ALGO-FLOW
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ALGO-QUALITY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ANY-ABUSE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ARCH
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-BATTLE-MAP-ALIGNMENT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.battle_map_alignment_gate
+    factories:
+    - make_battle_map_alignment_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: GATE-BP-PLACE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-C2
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-CANONICAL-YAML-DRIFT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-CODEGEN-IDEMPOTENT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-COMMIT-GW
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-DEBT-BRIDGE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-DEDUP
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-DIRECTORY-CONTRACT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-DOC-NODE-ID
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-DOMAIN-FK
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.domain_fk_gate
+    factories:
+    - make_domain_fk_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.domain_fk_gate
+    factory_function: make_domain_fk_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-DRIFT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: null
+  drift:
+  - PRECOMMIT_SCRIPT_MISSING
+- gate_id: GATE-ENCODING
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ERRCODE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ERRCODE-CONSISTENCY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.errcode_consistency_gate
+    factories:
+    - make_errcode_consistency_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.errcode_consistency_gate
+    factory_function: make_errcode_consistency_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-FRONTMATTER
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-FRONTMATTER-AUDIT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-GEN-NO-REALTIME-TIME
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ID-UNIQ
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-INTEGRITY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-MCP
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-NAMING
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-NAMING-AUDIT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-NESTED-FLAT-PREFIX
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-NO-COMMIT-DERIVED
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-NO-TESTS-UNIT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-NODE-LABEL-QUALITY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-PANORAMA-ALIGNMENT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: GATE-PRECOMMIT-OFFLINE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.precommit_offline_gate
+    factories:
+    - make_precommit_offline_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.precommit_offline_gate
+    factory_function: make_precommit_offline_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-PROTECTED-PATHS
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-PYTEST-CONFIG-DRIFT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-REG-BL
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-RETURN-CONTRACT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-SCHEMA-HEALTH
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: GATE-SCHEMA-TRUTH
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-SCRIPT-Q
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-SILENT-DEGRADATION
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-SRC-NO-DATA
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-SSOT-CODE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-SYMBOL-CONVENTION
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-TEST
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-TEST-SYMBOL
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-TRIPLE-ALIGN
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-VMS-SSOT
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-VOCAB
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate
+    factories:
+    - make_vocab_hardcode_gate
+    - make_gate_vocab_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate
+    factory_function: make_gate_vocab_gate
+    enabled: true
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-WORKTREE-OPS-TELEMETRY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-WORKTREE-REQUIRED
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: GATE-ZR
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: pre-commit
+    status: active
+    own_scope: null
+  drift:
+  - PRECOMMIT_SCRIPT_MISSING
+- gate_id: GIT-CALL-BUDGET
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.git_call_budget_gate
+    factories:
+    - make_git_call_budget_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.git_call_budget_gate
+    factory_function: make_git_call_budget_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: HELD-OVERLAP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.held_overlap_gate
+    factories:
+    - make_held_overlap_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.held_overlap_gate
+    factory_function: make_held_overlap_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: HOT-FILE-BASE-FRESHNESS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.hot_file_base_freshness_gate
+    factories:
+    - make_hot_file_base_freshness_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.hot_file_base_freshness_gate
+    factory_function: make_hot_file_base_freshness_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: ID-UNIQUENESS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/id_uniqueness_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.id_uniqueness_gate
+    factories:
+    - make_id_uniqueness_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.id_uniqueness_gate
+    factory_function: make_id_uniqueness_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: IMPORT-INTEGRITY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.import_integrity_gate
+    factories:
+    - make_import_integrity_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.import_integrity_gate
+    factory_function: make_import_integrity_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: INDUSTRY-CHAIN-MAP
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.industry_chain_map_gate
+    factories:
+    - make_industry_chain_map_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: ISSUE-RESOLVED-INTEGRITY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: LIBRARY-COVERAGE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: MANUAL-ONLY-PERMANENT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate
+    factories:
+    - make_manual_only_permanent_gate
+    own_scope_marker: true
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: MAP-ALIGNMENT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
+    factories:
+    - make_panorama_alignment_gate
+    - make_map_alignment_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
+    factory_function: make_map_alignment_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: MCP-VERSION-FIELD
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.mcp_version_field_gate
+    factories:
+    - make_mcp_version_field_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.mcp_version_field_gate
+    factory_function: make_mcp_version_field_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: META-TESTS-COVERAGE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.tests_coverage_gate
+    factories:
+    - make_tests_coverage_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.tests_coverage_gate
+    factory_function: make_tests_coverage_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: MODULE-ID-CONSISTENCY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.module_id_consistency_gate
+    factories:
+    - make_module_id_consistency_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.module_id_consistency_gate
+    factory_function: make_module_id_consistency_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: MSG-EXPOSURE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/msg_exposure_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.msg_exposure_gate
+    factories:
+    - make_msg_exposure_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.msg_exposure_gate
+    factory_function: make_msg_exposure_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: MSG-STYLE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/msg_style_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.msg_style_gate
+    factories:
+    - make_msg_style_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.msg_style_gate
+    factory_function: make_msg_style_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/mutable_const_without_final_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.mutable_const_without_final_gate
+    factories:
+    - make_mutable_const_without_final_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.mutable_const_without_final_gate
+    factory_function: make_mutable_const_without_final_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NEW-FILE-DEPGRAPH-ENFORCEMENT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate
+    factories:
+    - make_new_file_depgraph_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: NO-BARE-GETENV
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.bare_getenv_gate
+    factories:
+    - make_bare_getenv_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.bare_getenv_gate
+    factory_function: make_bare_getenv_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NO-BARE-SQL
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.bare_sql_gate
+    factories:
+    - make_bare_sql_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.bare_sql_gate
+    factory_function: make_bare_sql_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/domain_name_zh_direct_access_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate
+    factories:
+    - make_domain_name_zh_direct_access_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate
+    factory_function: make_domain_name_zh_direct_access_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NO-GOD-CLASS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/god_class_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.god_class_gate
+    factories:
+    - make_god_class_gate
+    own_scope_marker: true
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: NO-HARDCODED-URL
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/hardcoded_url_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.hardcoded_url_gate
+    factories:
+    - make_hardcoded_url_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.hardcoded_url_gate
+    factory_function: make_hardcoded_url_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NO-HIGH-COMPLEXITY
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: NO-IMPORT-SIDE-EFFECT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/no_import_side_effect_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate
+    factories:
+    - make_no_import_side_effect_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate
+    factory_function: make_no_import_side_effect_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NO-LONG-PARAM-LIST
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.long_param_list_gate
+    factories:
+    - make_long_param_list_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: NO-SECRET-HARDCODE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.secret_hardcode_gate
+    factories:
+    - make_secret_hardcode_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.secret_hardcode_gate
+    factory_function: make_secret_hardcode_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NO-UPWARD-IMPORT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.import_direction_gate
+    factories:
+    - make_import_direction_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.import_direction_gate
+    factory_function: make_import_direction_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: NOQA-VALIDATION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.noqa_validation_gate
+    factories:
+    - make_noqa_validation_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.noqa_validation_gate
+    factory_function: make_noqa_validation_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: OPEN-WITHOUT-WITH
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/open_without_with_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.open_without_with_gate
+    factories:
+    - make_open_without_with_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.open_without_with_gate
+    factory_function: make_open_without_with_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: ORPHAN-MODULE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/orphan_module_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.orphan_module_gate
+    factories:
+    - make_orphan_module_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.orphan_module_gate
+    factory_function: make_orphan_module_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: PERM-TRIGGER
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: PERMANENT-SYSTEM-TRIGGER
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.perm_trigger_gate
+    factories:
+    - make_perm_trigger_gate
+    - make_permanent_system_trigger_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.perm_trigger_gate
+    factory_function: make_permanent_system_trigger_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: PROTECTED-PATHS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.protected_paths_gate
+    factories:
+    - make_protected_paths_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.protected_paths_gate
+    factory_function: make_protected_paths_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: PURE-ASSERTION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.pure_assertion_gate
+    factories:
+    - make_pure_assertion_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.pure_assertion_gate
+    factory_function: make_pure_assertion_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: PURE-SHIM
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.pure_shim_gate
+    factories:
+    - make_pure_shim_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.pure_shim_gate
+    factory_function: make_pure_shim_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: R5-DIGIT-SUFFIX
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate
+    factories:
+    - make_r5_digit_suffix_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate
+    factory_function: make_r5_digit_suffix_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: RECONCILER-FILE-OPS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
+    factories:
+    - make_reconciler_file_ops_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
+    factory_function: make_reconciler_file_ops_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: RECONCILER-HEALTH
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.reconciler_health_gate
+    factories:
+    - make_reconciler_health_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.reconciler_health_gate
+    factory_function: make_reconciler_health_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: REFERENCE-INTEGRITY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.dangling_reference_gate
+    factories:
+    - make_dangling_reference_gate
+    - make_reference_integrity_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.dangling_reference_gate
+    factory_function: make_reference_integrity_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: REGISTRY-CODE-ANCHOR
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/registry_code_anchor_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate
+    factories:
+    - make_registry_code_anchor_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate
+    factory_function: make_registry_code_anchor_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: REGISTRY-MASS-DELETION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
+    factories:
+    - make_registry_mass_deletion_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
+    factory_function: make_registry_mass_deletion_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: REGISTRY-YAML-PARSE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate
+    factories:
+    - make_registry_yaml_parse_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate
+    factory_function: make_registry_yaml_parse_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: RELATIVE-PATH-LITERAL
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/relative_path_literal_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.relative_path_literal_gate
+    factories:
+    - make_relative_path_literal_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.relative_path_literal_gate
+    factory_function: make_relative_path_literal_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: RENAME-DEPGRAPH-SYNC
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.rename_depgraph_sync_gate
+    factories:
+    - make_rename_depgraph_sync_gate
+    own_scope_marker: true
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: RESOURCE-SCHEDULE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.resource_schedule_gate
+    factories:
+    - make_resource_schedule_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.resource_schedule_gate
+    factory_function: make_resource_schedule_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: RULE-EXECUTION-PAIRING
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/rule_execution_pairing_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.rule_execution_pairing_gate
+    factories:
+    - make_rule_execution_pairing_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.rule_execution_pairing_gate
+    factory_function: make_rule_execution_pairing_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: RULE-FOUR-WAY-ALIGN
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/rule_four_way_alignment_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.rule_four_way_alignment_gate
+    factories:
+    - make_rule_four_way_alignment_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.rule_four_way_alignment_gate
+    factory_function: make_rule_four_way_alignment_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: RULING-COMMIT-VERIFIED
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ruling_commit_verified_gate
+    factories:
+    - make_ruling_commit_verified_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.ruling_commit_verified_gate
+    factory_function: make_ruling_commit_verified_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: RULING-REFERENCE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ruling_reference_gate
+    factories:
+    - make_ruling_reference_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: SCHEMA-FILE-EXISTS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/schema_file_exists_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.schema_file_exists_gate
+    factories:
+    - make_schema_file_exists_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.schema_file_exists_gate
+    factory_function: make_schema_file_exists_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: SCRIPTS-IMPORT-INTEGRITY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate
+    factories:
+    - make_scripts_import_integrity_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate
+    factory_function: make_scripts_import_integrity_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: SECRET-REGISTRY-CONSISTENCY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/secret_registry_consistency_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate
+    factories:
+    - make_secret_registry_consistency_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate
+    factory_function: make_secret_registry_consistency_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: SESSION-REQUIRED
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/session_required_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.session_required_gate
+    factories:
+    - make_session_required_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.session_required_gate
+    factory_function: make_session_required_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: SNAPSHOT-DRIFT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.snapshot_drift_gate
+    factories:
+    - make_snapshot_drift_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.snapshot_drift_gate
+    factory_function: make_snapshot_drift_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: SPLIT-COORDINATION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.split_coordination_gate
+    factories:
+    - make_split_coordination_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.split_coordination_gate
+    factory_function: make_split_coordination_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: SSOT-REDEFINITION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate
+    factories:
+    - make_ssot_redefinition_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate
+    factory_function: make_ssot_redefinition_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: STASH-ACCUMULATION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.stash_accumulation_gate
+    factories:
+    - make_stash_accumulation_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.stash_accumulation_gate
+    factory_function: make_stash_accumulation_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: STATE-VOCAB-REGISTRY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate
+    factories:
+    - make_state_vocab_registry_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate
+    factory_function: make_state_vocab_registry_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: SYNTAX-VALIDATION
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.syntax_validation_gate
+    factories:
+    - make_syntax_validation_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.syntax_validation_gate
+    factory_function: make_syntax_validation_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: TABLE-NAME-REGISTRY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.table_name_registry_gate
+    factories:
+    - make_table_name_registry_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.table_name_registry_gate
+    factory_function: make_table_name_registry_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: TAG-VOCAB
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.library.tag_vocab_gate
+    factories:
+    - make_tag_vocab_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.library.tag_vocab_gate
+    factory_function: make_tag_vocab_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: TEST-RESIDUE-SSOT
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate
+    factories:
+    - make_test_residue_ssot_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate
+    factory_function: make_test_residue_ssot_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: TEST-SOURCE-CONSISTENCY
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.test_source_consistency_gate
+    factories:
+    - make_test_source_consistency_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.test_source_consistency_gate
+    factory_function: make_test_source_consistency_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: TRANSLATION-COVERAGE
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.translation_coverage_gate
+    factories:
+    - make_translation_coverage_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.translation_coverage_gate
+    factory_function: make_translation_coverage_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: TTL-METADATA
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/ttl_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.ttl_gate
+    factories:
+    - make_ttl_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.ttl_gate
+    factory_function: make_ttl_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: UNDEFINED-NAME
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.undefined_name_gate
+    factories:
+    - make_undefined_name_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.undefined_name_gate
+    factory_function: make_undefined_name_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: UNSAFE-DICT-SPREAD
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/unsafe_dict_spread_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate
+    factories:
+    - make_unsafe_dict_spread_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate
+    factory_function: make_unsafe_dict_spread_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+- gate_id: VOCAB-CHAIN
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/vocab_chain_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.vocab_chain_gate
+    factories:
+    - make_vocab_chain_gate
+    own_scope_marker: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift:
+  - MODULE_NOT_IN_IN_PROCESS
+- gate_id: VOCAB-HARDCODE
+  module:
+    present: false
+  in_process:
+    present: false
+  unified:
+    present: true
+    source: manual
+    status: deprecated
+    own_scope: ABSENT
+  drift:
+  - OWN_SCOPE_MISSING
+- gate_id: WORKTREE-REQUIRED
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.worktree_required_gate
+    factories:
+    - make_worktree_required_gate
+    own_scope_marker: false
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.worktree_required_gate
+    factory_function: make_worktree_required_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: false
+  drift: []
+- gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+  module:
+    present: true
+    path: src/zephyr/gov_enforcement/commit_gates/zephyr_env_direct_access_gate.py
+    module_path: zephyr.gov_enforcement.commit_gates.zephyr_env_direct_access_gate
+    factories:
+    - make_zephyr_env_direct_access_gate
+    own_scope_marker: true
+  in_process:
+    present: true
+    module_path: zephyr.gov_enforcement.commit_gates.zephyr_env_direct_access_gate
+    factory_function: make_zephyr_env_direct_access_gate
+    enabled: true
+  unified:
+    present: true
+    source: commit-gate
+    status: active
+    own_scope: true
+  drift: []
+pending_owner:
+  own_scope_undecidable:
+  - gate_id: BLUEPRINT-AMODULE-CONSISTENCY
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: COMMIT-CRITICAL-SECTION-LOCK
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: DANGLING-REFERENCE
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: DATA-TASK-COMPLETENESS
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: DEPGRAPH-PRE-REGISTRATION
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: GATE-DRIFT
+    source: pre-commit
+    reason: 显式 null：无可定位执行体源码，不可机械判定
+  - gate_id: GATE-PANORAMA-ALIGNMENT
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: GATE-SCHEMA-HEALTH
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: GATE-ZR
+    source: pre-commit
+    reason: 显式 null：无可定位执行体源码，不可机械判定
+  - gate_id: ISSUE-RESOLVED-INTEGRITY
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: LIBRARY-COVERAGE
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: NO-HIGH-COMPLEXITY
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: PERM-TRIGGER
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  - gate_id: VOCAB-HARDCODE
+    source: manual
+    reason: manual 源（重定向锚点/机制实名登记），无执行体可机械判定
+  note: 改册（净增/净删）是 Owner 门位；本工具只产证据，不自动改两册。
+generated_at: '2026-09-24T14:11:19Z'
+generated_by: scripts/governance/d3_metadata/reconcile_gate_rosters.py
+mode: check
