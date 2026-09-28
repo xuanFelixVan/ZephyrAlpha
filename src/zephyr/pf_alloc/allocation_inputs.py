@@ -617,8 +617,15 @@ def universe_from_registry(
 from schemas.categories.backtest.backtest_regime_state_anchored import (
     DATABASE as _ANCHORED_DB,
 )
-from schemas.categories.backtest.backtest_regime_state_anchored import (
-    SQL_LATEST_ANCHORED_STATE,
+# [L01-C01 本地定义] schema 件头标 [AI_AUTONOMY] human_only 禁改，且该件无此符号——
+# 待 human_only 解除后迁移至 backtest_regime_state_anchored.py（迁移时删此块）。
+# 语义=锚定态表最新可用日快照（PIT：trade_date ≤ 当日，禁未来函数）；列序=trade_date,
+# dominant, vol_pct；tiebreaker ingest_ts=ReplacingMergeTree 版本列。
+# 来源=L01-C01（2026-09-25 本地常量修法为总指挥裁定；2026-09-28 probe-sql2 误删后按史裁恢复）。
+SQL_LATEST_ANCHORED_STATE = (
+    "SELECT trade_date, dominant, vol_pct "
+    "FROM {table} WHERE trade_date <= '{date}' "
+    "ORDER BY trade_date DESC, ingest_ts DESC LIMIT 1"
 )
 from schemas.categories.backtest.backtest_regime_state_anchored import (
     TABLE_NAME as _ANCHORED_TABLE_NAME,
