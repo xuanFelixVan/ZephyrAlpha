@@ -30,6 +30,9 @@ from zephyr.backtest.regime_validation.exam_cost_gate import (
 
 CFG = CostGateConfig()
 
+#: 规模维测试谱（40bp 档微正=旧门"纸面存活"；末段斜率 -0.02/bp 供规模外推翻案）
+_SCALE_CURVE = {0.0: 0.90, 5.0: 0.75, 10.0: 0.62, 20.0: 0.42, 40.0: 0.02}
+
 
 def _monotone_tier_sharpes() -> dict[float, float]:
     return {0.0: 0.80, 5.0: 0.62, 10.0: 0.45, 20.0: 0.18, 40.0: -0.05}
@@ -139,3 +142,82 @@ class TestTierScan:
                 tiers_bp=tuple(CFG.tiers_bp),
                 nets_by_tier={0.0: pd.Series(0.0, index=idx)},
             )
+
+
+class TestScaleAwareGate:
+    """裁-4 item5（st-zcloseout-20260928）：成本档规模维——门必须能 fail。"""
+
+    def test_size_blind_pass_now_fails_at_inflated_scale(self):
+        """红→绿证尺：旧门恒过的规模盲输入，注入 20% ADV 参与率后必须 FAIL。
+
+        旧判：40bp 锚 sharpe=0.02>=0 → 全档存活 → pass（与格点成交规模无关=橡皮图章）。
+        新判：参与率 0.20/锚 0.05 → 开方律乘数 2.0 → 有效档 80bp，末段斜率 -0.02/bp
+        外推 sharpe=0.02-0.80=-0.78 <0 → 规模存活门拦截。
+        """
+        legacy = evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG)
+        assert legacy.passed is True and legacy.full_cost_survived is True
+        scaled = evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=0.20)
+        assert scaled.passed is False, "规模盲旧过案在通胀规模下必须转红（裁-4：门必须能 fail）"
+        assert scaled.scale_adjusted_survived is False
+        assert scaled.scale_multiplier == pytest.approx(2.0)
+        assert scaled.effective_top_bp == pytest.approx(80.0)
+        assert any("规模存活门" in r for r in scaled.reasons)
+        # 三门原判证据不回写变脸：单调解剖逐门可读
+        assert scaled.monotonic is True and scaled.turnover_within_cap is True
+
+    def test_anchor_scale_preserves_legacy_verdict(self):
+        """40bp 锚语义不动：参与率=校准锚(5%)处 m=1，判定与缺省逐字一致。"""
+        legacy = evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG)
+        anchored = evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=0.05)
+        assert anchored.passed is legacy.passed
+        assert anchored.scale_multiplier == pytest.approx(1.0)
+        assert anchored.effective_top_bp == pytest.approx(40.0)
+        assert anchored.scale_adjusted_survived == legacy.full_cost_survived
+
+    def test_small_scale_gets_no_discount(self):
+        """单边只罚不奖：参与率低于锚 → m=1（不产生比冻结档更便宜的判定）。"""
+        v = evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=0.005)
+        assert v.scale_multiplier == pytest.approx(1.0)
+        assert v.passed is True
+
+    def test_scale_verdict_monotone_no_improvement(self):
+        """单调性：参与率升 → 乘数不降 → 有效档 sharpe 不升 → 判定不改善。"""
+        mults = [
+            evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=p).scale_multiplier
+            for p in (0.02, 0.05, 0.08, 0.20, 0.45)
+        ]
+        assert mults == sorted(mults) and all(m >= 1.0 for m in mults)
+        passed_flags = [
+            evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=p).passed
+            for p in (0.02, 0.08, 0.20)
+        ]
+        assert passed_flags[0] and not passed_flags[1] and not passed_flags[2], "更大规模不得复活判定"
+
+    def test_multiplier_capped_at_cap(self):
+        assert CostGateConfig().scale_multiplier_cap == 2.0
+        v = evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=0.90)
+        assert v.scale_multiplier == pytest.approx(2.0), "参与率 90% 不得突破乘数上限（防无限外推）"
+
+    def test_nonpositive_participation_fail_closed(self):
+        """fail-closed：participation 非正（含 NaN）=ValueError；None=合法禁用维。"""
+        for bad in (0.0, -0.1, float("nan")):
+            with pytest.raises(ValueError):
+                evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG, participation_rate=bad)
+        assert evaluate_exam_cost_gate(_SCALE_CURVE, 0.02, 400, CFG).scale_multiplier is None
+
+    def test_scale_config_validation(self):
+        with pytest.raises(ValueError):
+            CostGateConfig(scale_participation_ref=0.0)
+        with pytest.raises(ValueError):
+            CostGateConfig(scale_exponent=0.0)
+        with pytest.raises(ValueError):
+            CostGateConfig(scale_exponent=1.5)
+        with pytest.raises(ValueError):
+            CostGateConfig(scale_multiplier_cap=0.5)
+
+    def test_disabled_dimension_zero_drift_fields(self):
+        """缺省调用：规模维三证据字段=None，行为零变化（消费方零改动兼容）。"""
+        v = evaluate_exam_cost_gate(_monotone_tier_sharpes(), 0.016, 400, CFG)
+        assert v.scale_adjusted_survived is None
+        assert v.scale_multiplier is None
+        assert v.effective_top_bp is None

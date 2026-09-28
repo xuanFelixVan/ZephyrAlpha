@@ -15,6 +15,20 @@ cost_gate:
   monotonic_tol: 1.0e-09
   # 证据最低样本天数（低于判不通过，fail-closed）
   min_days: 60
+scale_gate:
+  # 规模维（裁-4 item5 2026-09-28 chief adjudication：成本档不带规模参数=验收门恒过）。
+  # 净零声明：不开新册——折入本册（exam_scale_cost_gate.yaml 即成本门唯一参数面）；
+  # 复用既有 survival_floor 作规模调整判据、既有 tiers_bp 曲线作成本谱（零新成本常量）；
+  # 开方律=square_root 冲击模型（cost_model_registry impact_model 枚举既有，CST-ASTOCK-002 同款），
+  # 不新增模型条目。本节取代的旧假设：隐式"档位 bp 适用于任意成交规模"（旧门对规模恒盲）。
+  # participation_rate 缺省 None=规模维禁用=行为零变化；40bp 锚语义不动（锚=ref 处 m=1）。
+  # 消费形参: evaluate_exam_cost_gate(participation_rate=格点成交额/ADV)
+  # 参与率校准锚（5% ADV 机构级分界）：档位 bp 视为在 ≤该规模处校准；锚处及以下 m=1
+  participation_ref: 0.05
+  # 开方律指数（Almgren-Chriss/平方根冲击经验律）
+  exponent: 0.5
+  # 乘数上限（40bp 锚最深 2×=80bp 有效档，防测量档外无限外推）
+  multiplier_cap: 2.0
 turnover_gate:
   # E7 换手上限门预注册默认档 8x/年（推导: 38.6pct/4.75年 ÷39x ≈ 0.21pct/换手·年，
   # 8x→成本拖累 ≈1.7pct/年；OOS 零成本超额 +18pct 保留一半即过 C 门线）
