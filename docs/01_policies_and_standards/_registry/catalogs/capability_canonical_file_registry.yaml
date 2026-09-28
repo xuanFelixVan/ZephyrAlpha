@@ -55894,4 +55894,40 @@ creation_tokens:
   created_by: st-zc8-lane-docs64b-20260928
   capability: fullflow_mining_rescue
   merge_evaluation: "净零：既有挖矿案卷的落地载体，收敛视图无同真源重复"
+- file: docs/_working/total_command_closeout/leaf_books/f02/w21_gate_priority.md
+  token: closeout-leaf-books-w21-gate-priority-20260928
+  created_by: st-zcloseout-20260928
+  capability: closeout_leaf_books
+  merge_evaluation: "同真源派生汇编：dossier与wave案卷逐W收敛为唯一叶簿视图；与three_piece_infra旧W簿跨战役不同对象不并"
+- file: docs/_working/total_command_closeout/leaf_books/f02/w23_create_guard_trigger.md
+  token: closeout-leaf-books-w23-create-guard-trigger-20260928
+  created_by: st-zcloseout-20260928
+  capability: closeout_leaf_books
+  merge_evaluation: "同真源派生汇编：dossier与wave案卷逐W收敛为唯一叶簿视图；与three_piece_infra旧W簿跨战役不同对象不并"
+- file: docs/_working/total_command_closeout/leaf_books/f02/w27_dead_letter_disposition.md
+  token: closeout-leaf-books-w27-dead-letter-disposition-20260928
+  created_by: st-zcloseout-20260928
+  capability: closeout_leaf_books
+  merge_evaluation: "同真源派生汇编：dossier与wave案卷逐W收敛为唯一叶簿视图；与three_piece_infra旧W簿跨战役不同对象不并"
+- file: docs/_working/total_command_closeout/leaf_books/f04/w41_reaper_pid_reuse.md
+  token: closeout-leaf-books-w41-reaper-pid-reuse-20260928
+  created_by: st-zcloseout-20260928
+  capability: closeout_leaf_books
+  merge_evaluation: "同真源派生汇编：dossier与wave案卷逐W收敛为唯一叶簿视图；与three_piece_infra旧W簿跨战役不同对象不并"
+- file: docs/_working/total_command_closeout/leaf_books/f06/w61_t1_scorecard.md
+  token: closeout-leaf-books-w61-t1-scorecard-20260928
+  created_by: st-zcloseout-20260928
+  capability: closeout_leaf_books
+  merge_evaluation: "同真源派生汇编：dossier与wave案卷逐W收敛为唯一叶簿视图；与three_piece_infra旧W簿跨战役不同对象不并"
+- file: docs/_working/total_command_closeout/leaf_books/f11/w110_compliance_gate_wiring.md
+  token: closeout-leaf-books-w110-compliance-gate-wiring-20260928
+  created_by: st-zcloseout-20260928
+  capability: closeout_leaf_books
+  merge_evaluation: "同真源派生汇编：dossier与wave案卷逐W收敛为唯一叶簿视图；与three_piece_infra旧W簿跨战役不同对象不并"
+- file: docs/_working/qoder_legacy_closeout/w_case_compaction_lost_update.md
+  token: qoder-legacy-closeout-w-case-compaction-lost-update-20260928
+  created_by: st-zcloseout-20260928
+  capability: qoder_legacy_closeout
+  merge_evaluation: "队列压缩缺陷病案档案：唯一新增病案真源；同域无重复对象不并"
+
 di_seam_exemptions: []
