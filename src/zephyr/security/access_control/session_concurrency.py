@@ -190,7 +190,7 @@ def _replace_with_retry(src: str, dst: str) -> None:
     """
     import errno
 
-    _sleep = getattr(time, "sleep")
+    _sleep = time.sleep
     for attempt, delay_ms in enumerate((0, *_REPLACE_RETRY_DELAYS_MS)):
         if delay_ms:
             _sleep(delay_ms / 1000.0)
@@ -233,6 +233,11 @@ class SessionInfo:
     # 检查依赖 session 是否仍活跃——仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED），
     # 避免悬空 import 污染 main 分支（ba40fa5b75 同型违规治本）。
     depends_on_sessions: list[str] = field(default_factory=list)
+    # W-29（chief3 碰撞根因处方，2026-09-29）：逻辑长会话标志（总包/夜战 chief 形态=
+    # 长会话+短命 python 进程，无本地持续活动，治理操作稀疏）。True 时 heartbeat_daemon
+    # 不因 idle>1800s 自退（活会话周期 re-register/mark_logical 即不被判死）；
+    # 默认 False=维持 #ARCH-HEARTBEAT-002 僵尸 daemon 自退治本不变（opt-in，防活性反转回归）。
+    logical: bool = False
 
     def to_dict(self) -> dict:
         return {
@@ -245,6 +250,7 @@ class SessionInfo:
             "is_breaking_change": self.is_breaking_change,
             "task_files": self.task_files,
             "depends_on_sessions": self.depends_on_sessions,
+            "logical": self.logical,
         }
 
     @classmethod
@@ -260,6 +266,7 @@ class SessionInfo:
             is_breaking_change=d.get("is_breaking_change", False),
             task_files=d.get("task_files") or [],
             depends_on_sessions=d.get("depends_on_sessions") or [],
+            logical=bool(d.get("logical", False)),
         )
 
 
@@ -338,6 +345,7 @@ class SessionRegistry:
         is_breaking_change: bool = False,
         task_files: list[str] | None = None,
         depends_on_sessions: list[str] | None = None,
+        logical: bool = False,
     ) -> SessionInfo:
         """注册一个活跃 session。
 
@@ -345,6 +353,10 @@ class SessionRegistry:
             depends_on_sessions: 本 session 依赖的其他 session_id 列表
                 （#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
                 commit 前由 _check_cross_commit_deps 检查依赖 session 是否仍活跃。
+            logical: W-29 逻辑长会话标志（总包/chief 形态 opt-in）——True 时
+                heartbeat_daemon 不因 idle 自退；活会话周期 re-register 即不被判死。
+                注意 re-register 会整体重建条目（held_files 以显式实参为准），
+                已有 claim 的会话续注册请改用 mark_logical（零触碰 held_files）。
         """
         with self._lock:
             info = SessionInfo(
@@ -357,18 +369,35 @@ class SessionRegistry:
                 is_breaking_change=is_breaking_change,
                 task_files=task_files or [],
                 depends_on_sessions=depends_on_sessions or [],
+                logical=logical,
             )
             data = self._load()
             data[session_id] = info.to_dict()
             self._save(data)
             logger.info(
-                "SessionRegistry: registered session=%s pid=%d breaking_change=%s deps=%s",
+                "SessionRegistry: registered session=%s pid=%d breaking_change=%s deps=%s logical=%s",
                 session_id,
                 info.pid,
                 is_breaking_change,
                 info.depends_on_sessions,
+                logical,
             )
             return info
+
+    def mark_logical(self, session_id: str, *, logical: bool = True) -> bool:
+        """W-29：原地翻转逻辑会话标志（零触碰 held_files/last_activity/心跳——防判死又不丢 claim）。
+
+        Returns: True=已更新；False=session 不在册（调用方自行决定是否 register）。
+        """
+        with self._lock:
+            data = self._load()
+            entry = data.get(session_id)
+            if not isinstance(entry, dict):
+                return False
+            entry["logical"] = bool(logical)
+            self._save(data)
+            logger.info("SessionRegistry: mark_logical session=%s logical=%s", session_id, logical)
+            return True
 
     def register_dependency(
         self,

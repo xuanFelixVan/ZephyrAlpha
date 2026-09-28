@@ -5,8 +5,8 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；worktree 锚点丢失（spawn 传入的 worktree 目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001 2026-08-17：根治孤儿 daemon 制造假活性，锚点未配置时跳过零行为变更）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
-# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS）；_append_heartbeat_log 字段集
+# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；worktree 锚点丢失（spawn 传入的 worktree 目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001 2026-08-17：根治孤儿 daemon 制造假活性，锚点未配置时跳过零行为变更）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；W-29 豁免（chief3 碰撞处方 2026-09-29）：SessionRegistry.logical=True 的逻辑长会话不被 idle 判死（活会话周期 re-register/mark_logical 即不被判死，opt-in；非逻辑会话自退治本零回退）；不抛异常（所有错误写 log 后 continue）
+# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS 且非 logical）；_append_heartbeat_log 字段集
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -255,6 +255,27 @@ def _session_in_registry(session_id: str, project_root: str | Path) -> bool:
         return True
 
 
+def _session_is_logical(session_id: str, project_root: str | Path) -> bool:
+    """W-29（chief3 碰撞处方，2026-09-29）：session 是否为逻辑长会话（SessionRegistry.logical）。
+
+    总包/chief 形态=长会话+短命 python 进程，治理操作稀疏——本地 idle 不等于会话死亡。
+    查询失败保守 False（维持 #ARCH-HEARTBEAT-002 自退语义，不因故障扩权保活）。
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        registry = SessionRegistry(project_root)
+        info = registry.get_session(session_id)
+        if info is None:
+            return False
+        if isinstance(info, dict):  # 兼容 mock/旧式 dict 返回
+            return bool(info.get("logical", False))
+        return bool(getattr(info, "logical", False))
+    except Exception as e:  # noqa: BLE001 — 查询失败保守 False（不扩权保活）
+        logger.debug("session logical flag query failed (assume non-logical): %s", e)
+        return False
+
+
 def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | None:
     """返回 session 的 idle 秒数（now - last_activity），用于活性反转治本退出判定。
 
@@ -330,6 +351,7 @@ def run_daemon(
     project_root: str | Path,
     interval: int = _HEARTBEAT_INTERVAL,
     worktree_path: str | Path | None = None,
+    max_iterations: int | None = None,
 ) -> int:
     """heartbeat daemon 主循环（独立进程入口）。
 
@@ -346,6 +368,10 @@ def run_daemon(
       5b. session idle 超 ``_MAX_IDLE_SECONDS``（last_activity 活性锚点，
           heartbeat 不刷新）→ 写 ``exited``(reason=idle timeout) 记录，返回 0
           （#ARCH-HEARTBEAT-002 活性反转治本：消除僵尸 daemon 永久保活死 session）
+      5b'. W-29 豁免（chief3 碰撞处方 2026-09-29）：SessionRegistry.logical=True
+          （逻辑长会话，活会话周期 re-register/mark_logical 即不被判死）→
+          不自退，写 ``alive``(keepalive=logical) 留痕后继续——僵尸自退治本对
+          非逻辑会话维持不变（opt-in，防活性反转回归）。
       6. 异常 → 写 ``error`` 记录，continue（不退出）
       7. 致命错误 → 写 ``fatal`` 记录，返回 1
 
@@ -355,6 +381,7 @@ def run_daemon(
         interval: 心跳间隔（秒，默认 30）。
         worktree_path: 所属 worktree 锚点路径（可选；None=未配置锚，
             跳过失锚检查——兼容旧 spawn 调用方）。
+        max_iterations: 循环轮数上限（测试确定性接缝；None=生产默认无限循环）。
 
     Returns:
         0=正常退出，1=致命错误。
@@ -380,6 +407,7 @@ def run_daemon(
     time.sleep(_INITIAL_DELAY)
 
     consecutive_errors = 0
+    iterations = 0
     while True:
         try:
             # 检查 session 是否仍在 registry 中
@@ -406,16 +434,31 @@ def run_daemon(
             # 90s 后 registry 条目过期 → held_files 自动释放。
             idle = _session_idle_seconds(session_id, root)
             if idle is not None and idle > _MAX_IDLE_SECONDS:
-                _append_heartbeat_log(
-                    hb_path,
-                    "exited",
-                    {
-                        "reason": "idle timeout",
-                        "idle_seconds": round(idle, 1),
-                        "timeout_seconds": _MAX_IDLE_SECONDS,
-                    },
-                )
-                return 0
+                # W-29 豁免（chief3 碰撞处方 2026-09-29）：逻辑长会话（总包/chief
+                # 形态，长会话+短命 python 进程，治理操作稀疏）不被本地 idle 判死
+                # ——活会话周期 re-register/mark_logical 即不被判死。opt-in：
+                # 非逻辑会话维持自退，#ARCH-HEARTBEAT-002 治本零回退。
+                if _session_is_logical(session_id, root):
+                    _append_heartbeat_log(
+                        hb_path,
+                        "alive",
+                        {
+                            "keepalive": "logical_session",
+                            "idle_seconds": round(idle, 1),
+                            "note": "W-29 logical session idle exemption",
+                        },
+                    )
+                else:
+                    _append_heartbeat_log(
+                        hb_path,
+                        "exited",
+                        {
+                            "reason": "idle timeout",
+                            "idle_seconds": round(idle, 1),
+                            "timeout_seconds": _MAX_IDLE_SECONDS,
+                        },
+                    )
+                    return 0
 
             # 刷新 registry heartbeat
             try:
@@ -438,6 +481,11 @@ def run_daemon(
 
             consecutive_errors = 0
             _append_heartbeat_log(hb_path, "alive")
+            # 测试确定性接缝：max_iterations 轮后正常退出（None=生产默认无限循环）
+            if max_iterations is not None:
+                iterations += 1
+                if iterations >= max_iterations:
+                    return 0
             time.sleep(interval)
 
         except SystemExit:

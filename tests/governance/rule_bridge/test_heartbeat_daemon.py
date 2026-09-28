@@ -820,3 +820,100 @@ def test_run_daemon_exits_immediately_when_session_never_registered(tmp_path: Pa
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
+# ---------------------------------------------------------------------------
+# W-29: 逻辑长会话 idle 豁免（chief3 碰撞处方，2026-09-29）
+# ---------------------------------------------------------------------------
+
+
+def test_run_daemon_exits_on_idle_timeout_non_logical(tmp_path: Path) -> None:
+    """两态之一（idle 非逻辑会话）：logical 缺省 False → idle 超限照旧自退（治本零回退）。"""
+
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+
+        def get_session(self, sid):
+            return {
+                "session_id": sid,
+                "last_activity": time.time() - 4000,
+                "start_time": time.time() - 5000,
+            }
+
+        def heartbeat(self, sid):
+            pass
+
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._MAX_IDLE_SECONDS", 1800),
+    ):
+        rc = run_daemon("sess-w29-plain", tmp_path, interval=0.05)
+
+    assert rc == 0
+    hb = heartbeat_file_path(tmp_path, "sess-w29-plain")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    exited = [r for r in recs if r["status"] == "exited"]
+    assert exited and exited[0]["reason"] == "idle timeout"
+
+
+def test_run_daemon_logical_session_survives_idle(tmp_path: Path) -> None:
+    """两态之二（idle 逻辑会话）：logical=True → 不自退，keepalive 留痕后继续心跳。
+
+    W-29 场景：总包/chief 长会话（短命 python 进程无本地持续活动），治理操作稀疏
+    （last_activity 停在 4000s 前）但会话真实存活——daemon 不得判死。
+    max_iterations=2 确定性两轮：第一轮 keepalive 豁免，第二轮照常 alive 后退出。
+    """
+
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+
+        def get_session(self, sid):
+            return {
+                "session_id": sid,
+                "last_activity": time.time() - 4000,
+                "start_time": time.time() - 5000,
+                "logical": True,
+            }
+
+        def heartbeat(self, sid):
+            pass
+
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._MAX_IDLE_SECONDS", 1800),
+    ):
+        rc = run_daemon("sess-w29-logical", tmp_path, interval=0.05, max_iterations=2)
+
+    assert rc == 0
+    hb = heartbeat_file_path(tmp_path, "sess-w29-logical")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    statuses = [r["status"] for r in recs]
+    assert "exited" not in statuses, "逻辑会话不得因 idle 自退"
+    keep = [r for r in recs if r.get("keepalive") == "logical_session"]
+    assert keep, "应有 logical keepalive 留痕"
+    assert statuses.count("alive") >= 2, "豁免后应继续心跳"
+
+
+def test_mark_logical_flips_flag_without_touching_claims(tmp_path: Path) -> None:
+    """mark_logical：原地翻标志，held_files/last_activity 零触碰（活会话 re-register 不丢 claim）。"""
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    reg = SessionRegistry(tmp_path)
+    reg.register("sess-mk", pid=0, held_files=["a.py"])
+    before = reg.get_session("sess-mk")
+    assert before.logical is False
+    ok = reg.mark_logical("sess-mk")
+    assert ok is True
+    after = reg.get_session("sess-mk")
+    assert after.logical is True
+    assert after.held_files == ["a.py"], "claim 不得被触碰"
+    assert abs(after.last_activity - before.last_activity) < 1.0
+    assert reg.mark_logical("sess-absent") is False
