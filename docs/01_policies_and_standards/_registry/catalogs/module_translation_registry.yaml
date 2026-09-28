@@ -61860,6 +61860,15 @@ entries:
   plain_zh: "这份测试用来防止工具沙箱规则被悄悄改松：新工具默认不许直接用、测试时绝不发密钥、生产目录一律禁写、注入探针必须真跑，哪条被改测试就变红。"
   responsibility_layer: governance
 
+- module_path: src/zephyr/backtest/regime_validation/chart_condition_consumer.py
+  domain_id: D_BACKTEST
+  name_zh: "图形条件轴消费适配器"
+  name_en: ""
+  desc_zh: "把图形条件包接成考试条件轴供给面的纯适配层"
+  desc_en: ""
+  plain_zh: "这个文件是图形信号和考试判读之间的转接头：把已经建好的图形条件包包装成考试能直接用的条件轴供给面，其他模块拿它就能按图形状态给逐日收益贴条件分层标签，让建成即闲置的图形条件包有了第一个真正的下游用户"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
