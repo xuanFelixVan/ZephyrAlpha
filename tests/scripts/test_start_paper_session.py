@@ -865,3 +865,57 @@ class TestRiskLayerFailFast:
         assert "[RISK]" in out
         assert "回撤基线=10000000.00" in out
         assert "rollback_metrics_provider" in out
+
+
+# ── 11. C-004 清单闸接线（F62 雷三批：三腿写侧+checker 装配，INTRADAY Hard Block 不放宽）──
+
+
+class TestChecklistGateWiring:
+    """清单闸生产写侧装配面（写者真源=checklist_evidence，人工腿=ack CLI）。"""
+
+    def test_assemble_writes_bootstrap_evidence_and_arms_checker(self, tmp_path):
+        """写侧①/②装配引导证当日即落；checker+writer 注入会话（人工腿未 ack 前缺=设计内）。"""
+        from zephyr.compliance.checklist_evidence import today_shanghai
+        from zephyr.compliance.discipline_must_do_checker import ChecklistCheckpoint
+
+        evidence_dir = tmp_path / "evidence"
+        session = sps.assemble_session(
+            sps.parse_args([]), _RiskBroker(), state_dir=tmp_path, checklist_evidence_dir=evidence_dir
+        )
+        rec1 = json.loads((evidence_dir / "risk_param_confirm.json").read_text(encoding="utf-8"))
+        assert rec1["item_key"] == "risk_param_confirm"
+        assert rec1["snapshot_id"] == session._config.risk_limits.idempotency_key
+        assert rec1["writer"] == "start_paper_session.assemble_session"
+        rec2 = json.loads((evidence_dir / "position_limit_verify.json").read_text(encoding="utf-8"))
+        assert rec2["detail"]["phase"] == "assembly_bootstrap"
+        assert session._checklist_checker is not None
+        assert session._checklist_evidence_writer is not None
+        # 机器两腿当日即绿；人工腿未 ack → 缺一（诚实缺项，会话侧 Hard Block 处置）
+        completed = session._checklist_checker._provider(ChecklistCheckpoint.INTRADAY, today_shanghai())
+        assert completed == {"risk_param_confirm", "position_limit_verify"}
+
+    def test_session_writer_targets_injected_evidence_dir(self, tmp_path):
+        """会话侧 writer=装配注入的同一实例，落证落在注入目录（测试隔离口径）。"""
+        evidence_dir = tmp_path / "evidence"
+        session = sps.assemble_session(
+            sps.parse_args([]), _RiskBroker(), state_dir=tmp_path, checklist_evidence_dir=evidence_dir
+        )
+        session._checklist_evidence_writer.write_position_limit_verify(
+            session._config.risk_limits.idempotency_key,
+            source="test",
+            detail={"symbol": "600519.SH", "risk_blocked": False},
+        )
+        rec = json.loads((evidence_dir / "position_limit_verify.json").read_text(encoding="utf-8"))
+        assert rec["detail"]["symbol"] == "600519.SH"
+
+    def test_banner_declares_checklist_armed_with_manual_ack_entry(self, tmp_path, capsys):
+        """横幅同源宣告：清单闸已装+人工腿写入口可见；未装清单面收敛为两件。"""
+        sps.assemble_session(
+            sps.parse_args([]), _RiskBroker(), state_dir=tmp_path, checklist_evidence_dir=tmp_path / "evidence"
+        )
+        out = capsys.readouterr().out
+        assert "[CHECKLIST][STATUS]" in out
+        assert "manual_ack_cli" in out
+        assert "python -m zephyr.compliance.checklist_evidence ack" in out
+        assert "清单闸 ChecklistCompletionChecker 本批已装配" in out
+        assert "INTRADAY" in out
