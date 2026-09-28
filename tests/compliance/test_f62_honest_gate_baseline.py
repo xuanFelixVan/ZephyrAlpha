@@ -123,7 +123,7 @@ def _assemble(tmp_path: Path, broker: _PaperBroker) -> TradingSession:
     ``data/compliance_log/checklist``——装配引导即向生产路径落
     risk_param_confirm/position_limit_verify（宪法 §9.6 隔离红线），且"当日无人工
     ack"的日态会让对照组被 C-004 清单闸吞单（必红）。本测经 ``checklist_evidence_dir=``
-    正门缝注入 tmp，并经生产写侧真接口在 tmp 落③人工拍板件（C-004 fail-closed
+    正门缝注入 tmp，并经生产写侧真接口在 tmp 铺满三腿完成证据（C-004 fail-closed
     熔断语义保持全武装、被真实演练，只是演练面从生产目录换成 tmp）。
     """
     evidence_dir = tmp_path / "checklist_evidence"
@@ -134,14 +134,32 @@ def _assemble(tmp_path: Path, broker: _PaperBroker) -> TradingSession:
         compliance_log_path=tmp_path / "compliance_log.jsonl",
         checklist_evidence_dir=evidence_dir,
     )
-    # 写侧③人工腿：经生产 ChecklistEvidenceWriter 落 tmp 拍板件（来源标注留痕，
-    # ZEPHYR_COMPLIANCE_ACK_KEY 在场时走同一 HMAC 路径）——INTRADAY 三腿在 tmp 齐，
-    # C-004 闸保持 armed 且逐单被查，对照组测的是补仓腿因果而非日态。
+    # 三腿全铺满：经生产 ChecklistEvidenceWriter 落 tmp 证据（来源标注留痕，
+    # ZEPHYR_COMPLIANCE_ACK_KEY 在场时走同一 HMAC 路径）——C-004 闸保持 armed 且
+    # 逐单被查，对照组测的是补仓腿因果而非日态。trade_date 必须对齐 checker 的
+    # UTC 日口径（trading_session._validate_and_submit 以 datetime.now(UTC).date()
+    # 取证，而装配引导①②与写侧③默认北京时区今天）：北京 00:00–08:00 窗口两者
+    # 差一天，不对齐则三腿全判陈旧=跨零点常红（884e5639f8 红因链跨零点实测）。
     from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter
 
-    ChecklistEvidenceWriter(evidence_dir).write_signal_compliance_ack(
+    writer = ChecklistEvidenceWriter(evidence_dir)
+    trade_date = datetime.now(UTC).date()
+    writer.write_risk_param_confirm(
+        "f62-baseline-snapshot",
+        {"max_single_position": _TARGET_WEIGHT},
+        trade_date=trade_date,
+        source="test_f62_honest_gate_baseline._assemble",
+    )
+    writer.write_position_limit_verify(
+        "f62-baseline-snapshot",
+        trade_date=trade_date,
+        source="test_f62_honest_gate_baseline._assemble",
+        detail={"phase": "test_seed"},
+    )
+    writer.write_signal_compliance_ack(
         "f62-honest-baseline-test",
-        note="st-zcloseout DEFECT-2 隔离修复：测试证据目录全注 tmp_path",
+        note="DEFECT-2 隔离修复+UTC 日对齐：测试证据目录全注 tmp_path",
+        trade_date=trade_date,
         ack_source="pytest_tmp_injection",
     )
     return session
