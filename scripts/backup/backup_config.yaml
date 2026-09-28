@@ -31,7 +31,7 @@
 code_backup:
   source: "D:\\ZephyrAlpha"
   target: "F:\\code_backup"
-  exclude_dirs: [".git", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".runtime", ".aidrafts", "tmp", ".venv"]
+  exclude_dirs: [".git", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".runtime", ".aidrafts", "tmp", ".venv", ".worktrees"]  # 2026-09-28 加 .worktrees：会话整仓副本致 vault diff 无界增长（09-25/09-28 两轮 9-19h 长跑根因），其内容为 git 派生可重建
   exclude_files: ["*.pyc", "*.db-wal", "*.db-shm"]
 
 # 版本化代码快照（v2.1）：base\<yyyyMMdd>\，retention 天轮转
@@ -67,6 +67,11 @@ dump_dir: "D:\\tmp_db_dumps"
 # 现在的机械判据：先跑 robocopy /MIR /L 数出"将被清除的条目数"（*EXTRA 行，含文件与目录，
 # 故口径偏保守），超本帽或数不出来（未知）一律降级为只增不删的 /E 同步。
 # 未知因此只会导致"副本偏旧"，不会导致"副本被清空"。
+# 帽本身另有可信上界 5000：写 999999 这类值不会把裸 /MIR 重新武装，而是判"帽不可用"⇒ 同样降级。
+# 代价（诚实记账，非缺陷隐瞒）：探针=多跑一次只读枚举，故 STAGE 3c/3d 各多一次双侧目录遍历。
+# 全量复制日可忽略（枚举<<拷贝）；**增量日**（几乎无字节要搬）遍历可能成为主要耗时，
+# 且 G 是 USB 盘。下一班若要判值不值，量测口径=比对改动前后 report json 里 3c/3d 的耗时，
+# 不要凭"应该差不多"下结论。
 mirror_guard:
   max_propagated_deletes: 200
 
