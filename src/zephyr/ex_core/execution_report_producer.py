@@ -41,8 +41,9 @@ SUBMITTED / CANCELLED / EXPIRED 三点发射，**FILLED 与 REJECTED 不发事�
   - **落行时机 = 订单到达终态**（全部成交 / 已撤单 / 已拒单）时落一行聚合；
     中间态（PENDING/SUBMITTED/PARTIAL）**禁落行**（本仓既有"禁 forming 中间态"原则）。
   - **字段取舍 = 以表现有 schema 为准，不新增字段**。列序唯一真源 =
-    `schemas.categories.intraday.market_execution_report.INSERT_COLUMNS`（15 列，
-    与 CTR-P1-007 codegen 一一对应）；`ingest_ts` 是 DEFAULT 列、`exchange` /
+    `schemas.categories.intraday.market_execution_report.INSERT_COLUMNS`（16 列，
+    与 CTR-P1-007 codegen 一一对应；decision_timestamp=V2 扩展 2026-09-27，
+    线上表 ALTER 落地前该列 INSERT 报未知列=迁移登记施工单）；`ingest_ts` 是 DEFAULT 列、`exchange` /
     `symbol_canonical` 是 MATERIALIZED 派生列，均不由 INSERT 写入。
   - `algo_type` 恒 "NONE"：文件桥/HTTP 桥是单笔直投通道，无算法切片语义。
   - `broker_id` = 通道 venue（如 `qmt_sim`），由调用方注入。
@@ -69,8 +70,8 @@ from schemas.categories.intraday.market_execution_report import (
 from zephyr.ex_core.execution_engine import ExecutionEngineRunRecord
 from zephyr.ex_core.execution_report import build_execution_report
 from zephyr.shared.contracts.execution_report import ExecutionReport
-from zephyr.shared.contracts.execution_report_contract import execution_report_to_payload
 from zephyr.shared.contracts.execution_report_contract import (
+    execution_report_to_payload,
     validate_execution_report,
 )
 from zephyr.shared.contracts.fill import Fill
@@ -409,6 +410,9 @@ class ExecutionReportProducer:
             value = payload.get(name)
             if name in ("execution_start", "execution_end"):
                 cells.append(_to_ch_ts(datetime.fromisoformat(str(value))))
+            elif name == "decision_timestamp":
+                # V2 扩展（2026-09-27）：None=上游未布点 → \N（NULL 合法，禁墙钟伪造决策时刻）
+                cells.append(_to_ch_ts(datetime.fromisoformat(str(value))) if value else "\\N")
             elif name in ("intended_quantity", "actual_quantity"):
                 cells.append(str(int(value)))
             elif name == "slippage_bps":

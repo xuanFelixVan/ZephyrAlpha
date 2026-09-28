@@ -101,7 +101,7 @@ class TestFieldCompleteness:
         payload = execution_report_to_payload(_report())
         codegen_fields = {f.name for f in dataclasses.fields(ExecutionReport)}
         assert set(payload.keys()) == codegen_fields
-        assert len(codegen_fields) == 15
+        assert len(codegen_fields) == 16  # decision_timestamp=V2 扩展 2026-09-27
 
     def test_contract_constants(self):
         assert CONTRACT_ID == "CTR-P1-007"

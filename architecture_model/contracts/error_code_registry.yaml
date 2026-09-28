@@ -3667,6 +3667,11 @@ error_codes:
   module: zephyr.pf_core.rl_portfolio_execution
   file: src/zephyr/pf_core/rl_portfolio_execution.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-PF-UNREGISTERED-RL-PORTFOLIO 转正'
+- code: ZA-PF-0087
+  class: ShadowDataIncompleteError
+  module: zephyr.pf_core.core.shadow_portfolio
+  file: src/zephyr/pf_core/core/shadow_portfolio.py
+  introduced: '2026-09-27: st-chief4x-e8e9-20260927 FAC-E9 影子组合对照引擎——四分解守恒破裂/strict 模式锚点缺席 fail-closed'
 - code: ZA-PA-0031
   class: AllocationInputError
   module: zephyr.pf_alloc.allocation_inputs

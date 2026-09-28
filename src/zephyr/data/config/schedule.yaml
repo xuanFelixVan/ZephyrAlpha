@@ -197,6 +197,18 @@ schedules:
     executor: default
     description: "调度对账补跑层——检测错过档期的任务并自动补跑（月度/周度/日频 overdue + 空表兜底）"
 
+  # L12 组合再平衡巡检层：05:45 交易日档（FAC-E8 再平衡调度接线，2026-09-27
+  # st-chief4x-e8e9-20260927）。alloc_budget_daily 目标面 vs sim_pocket_daily 当前面
+  # → MOD-PF-003 四触发源+成本感知决策读数，纯只读对照+Advisory 告警（执行仍归分配链
+  # 事件正门）。05:45 而非晚间：昨夜 sim/归因 FIFO 通常凌晨落地（实测 attribution
+  # marker 00:43），晨间看全量结果；05:30 catchup_guard 之后错峰。
+  # 总闸 data/runtime/pf_alloc_rebalance_check.disabled 存在=停用（服务总闸惯例）。
+  pf_alloc_rebalance_check:
+    cron: "45 5 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "组合再平衡巡检层——预算目标面 vs 钱包当前面漂移对账（MOD-PF-003 决策读数，只读+告警不执行）"
+
   # 夜间情绪窗层：08:20 日频（窗口 [T-1 18:00, T 08:00) 08:00 闭合后 20 分钟起步，
   # 给 news_data 300s flush 缓冲留余量）。MOD-INT-NEWS-NIGHT 接线（2026-09-10，
   # 治本 known_data_gaps news_sentiment_window_no_scheduler_wiring——写入器此前零调用方，

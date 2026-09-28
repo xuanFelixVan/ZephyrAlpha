@@ -109,6 +109,7 @@ def build_execution_report(
         actual_quantity=actual_qty,
         broker_id=run_record.venue,
         commission=run_record.commission,
+        decision_timestamp=(order.created_at.isoformat() if order.created_at is not None else None),
         direction=order.side.value if hasattr(order.side, "value") else str(order.side),
         execution_end=run_record.end_time.isoformat(),
         execution_start=run_record.start_time.isoformat(),

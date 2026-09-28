@@ -154,9 +154,9 @@ class TestTerminalEmission:
         table, columns, _ = writer.calls[0]
         assert table == EXECUTION_REPORT_TABLE == "c1_market.execution_report"
         assert columns == INSERT_COLUMNS
-        assert len(_cols()) == 15
+        assert len(_cols()) == 16  # decision_timestamp=V2 扩展 2026-09-27（IS 分解锚点）
         assert "ingest_ts" not in _cols()  # DEFAULT 列不写入
-        assert len(writer.rows[0]) == 15
+        assert len(writer.rows[0]) == 16
 
     def test_filled_with_commission_and_vwap(self):
         """FILLED 终态：佣金/VWAP/滑点取成交面真值（带方向符号，买贵=正=不利）。"""
@@ -199,9 +199,7 @@ class TestNoIntermediateState:
         assert producer.stats.emitted == 0
 
     def test_terminal_set_is_exactly_three(self):
-        assert TERMINAL_STATUSES == frozenset(
-            {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}
-        )
+        assert frozenset({OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}) == TERMINAL_STATUSES
 
 
 class TestIdempotency:

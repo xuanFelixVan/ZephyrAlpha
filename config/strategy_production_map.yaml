@@ -352,7 +352,13 @@ nodes:
       已建算法件族=MOD-PA-002..024（多策略资金分配 MOD-PA-003/regime 元分配 MOD-PA-007
       消费 MOD-REGIME-001/风险预算 MOD-PA-022/回撤限额 MOD-PA-013/相关性闸 MOD-PA-004/
       三维筛选 MOD-PA-014/BMA 加权 MOD-PA-015，有 pf_core/signal 域消费端）；
-      sleeve 装配落库+再平衡调度+TDM 组合流对接未闭环=partial 非 built
+      sleeve 装配落库+再平衡调度+TDM 组合流对接未闭环=partial 非 built；
+      2026-09-27 st-chief4x-e8e9-20260927 推进：sleeve 语义落库已闭（PP-001 plan/条目/
+      相位三件套入 alloc_budget_daily.batch_plan_json.sleeve，读面=SQL_SLEEVE_DAY_SLICE）；
+      再平衡调度已闭（MOD-PF-003 挂 data scheduler pf_alloc_rebalance_check 05:45 巡检槽，
+      只读+Advisory 告警，执行仍归 SIM_DAILY 事件正门）；TDM-F 地图 module_ref 九件全
+      实证在盘、钱包额度消费已闭（sim_paper_ledger 读 allocated_capital），组合流运行时
+      消费欠账仍归 TD 组=partial 维持
     compute_class: local
     data_refs: [c1_market.account_nav_daily]
     module_ref: MOD-PA-002..024
@@ -362,7 +368,7 @@ nodes:
       - 风险平价 AQR white paper aqr.com/-/media/AQR/Documents/Insights/White-Papers/Understanding-Risk-Parity.pdf
       - 多策略基金 sleeve 轮动实践 daloopa.com/blog/analyst-best-practices/multi-strategy-hedge-funds-an-overview
     store_refs:
-      - {artifact: 组合权重方案, location: 待定（E8 施工时定）, key: portfolio_id, retention: 永久}
+      - {artifact: 组合权重方案, location: c1_backtest.alloc_budget_daily, key: trade_date+run_id+strategy_id, retention: 永久}
 
   - node_id: FAC-E9
     name_zh: 实盘归因
@@ -375,7 +381,12 @@ nodes:
       归因回灌 E2 假说库完成价值链闭环。因果出处=Owner 2025-09 决策树第 8 层；
       已建引擎=MOD-PF-007 绩效归因（Brinson-Fachler 三因子+因子归因+风险归因复用
       MOD-RK-16，813 行有 risk 域消费端）；IS 分解决策时间戳 FIELD-GAP 未落+
-      影子组合工作流未建=partial 非 built
+      影子组合工作流未建=partial 非 built；2026-09-27 st-chief4x-e8e9-20260927 推进：
+      IS 分解决策时间戳已落字段级链（CTR-P1-007 V2 扩展 decision_timestamp+codegen+
+      execution_report DDL 列+producer 写入点=Order.created_at；线上表 ALTER 待 CH 迁移
+      窗=施工单登记）；影子组合对照引擎已落（pf_core/core/shadow_portfolio.py，Perold
+      四分解守恒+契约/sim 双适配器，只读零订单路径）；日账管线与持久化表=施工单移交
+      =partial 维持
     compute_class: local
     data_refs: [c1_market.execution_report, c1_market.account_nav_daily]
     module_ref: MOD-PF-007

@@ -1,0 +1,40 @@
+# ALGO_FLOW 外部真源——shadow_portfolio（_domain_portfolio_core 域，真源 src/zephyr/pf_core/core/shadow_portfolio.py）
+# 2026-09-27 st-chief7w-20260927 全流通 E9（FAC-E9 影子组合对照）施工批出仓（P2-1 口径：docstring 只留 external 锚）。
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_core.core.shadow_portfolio
+source_of_truth: src/zephyr/pf_core/core/shadow_portfolio.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 目标权重与影子锚点（compare_symbol 入参，调用方注入，本模块不查库）
+    #   fields: symbol/target_weight/anchor_price/anchor_date
+    # - id: I2
+    #   name: 执行报告行（from_execution_reports 装配腿，E9 归因面）
+    #   fields: order_id/fill_price/fill_qty/decision_timestamp/venue
+    # - id: I3
+    #   name: sim 交易日志行（from_sim_trade_log 装配腿，_sim_group_legs 按 (symbol,side) 分组）
+    #   fields: symbol/side/price/qty/ts
+    # - id: I4
+    #   name: 严格旗 strict（compare_portfolio 参数：锚点缺席时 fail-closed 抛错而非静默补零）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 逐标的纸面重放与四分解
+    #   desc: 按目标权重在纸上重建组合，量出计划面与实际面的差并分解到来源腿；非有限值经 _finite 当场拒（NaN/inf 不入库）
+    # - id: A2
+    #   name_zh: 组合层聚合与守恒校验
+    #   desc: compare_portfolio 汇总各腿，分解和与总差守恒破裂即判数据不完备（ShadowDataIncompleteError），strict 下锚点缺席同判
+    # - id: A3
+    #   name_zh: 缺数据降级模式
+    #   desc: 非 strict 且当日数据缺席→如实标 degraded（不造数、不回填假想值），读数仍出但标注不可比
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 单票对照读数
+    #   name_en: ShadowComparison | None
+    #   desc: ShadowComparison（as_dict 出机读面：计划/实际/分解腿/降级标记）
+    # - id: O2
+    #   name_zh: 组合对照报告
+    #   name_en: dict[str, Any]
+    #   desc: 聚合读数+守恒判定+degraded 计数，供 FAC-E9 归因链与前端只读消费

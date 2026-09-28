@@ -1,0 +1,36 @@
+# ALGO_FLOW 外部真源——rebalance_check_runner（_domain_portfolio_alloc 域，真源 src/zephyr/pf_alloc/rebalance_check_runner.py）
+# 2026-09-27 st-chief7w-20260927 全流通 E8（FAC-E8 再平衡调度接线）施工批出仓（P2-1 口径：docstring 只留 external 锚）。
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_alloc.rebalance_check_runner
+source_of_truth: src/zephyr/pf_alloc/rebalance_check_runner.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 预算目标面（_load_target_weights 读 alloc_budget_daily，reader 注入，本模块不建连接）
+    #   fields: book_id/target_weight/budget_date
+    # - id: I2
+    #   name: 钱包当前面（_load_current_weights 读 sim_pocket_daily）
+    #   fields: symbol/qty/price/weight
+    # - id: I3
+    #   name: 总闸与阈值（data/runtime/pf_alloc_rebalance_check.disabled 存在=停用；漂移阈值来自 MOD-PF-003 口径）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 目标面与实际面逐标的漂移对账
+    #   desc: run_rebalance_check 按标的对齐两脸，算漂移幅度并按四触发源（阈值/成本/时钟/预算）出决策读数；纯只读，不产生订单
+    # - id: A2
+    #   name_zh: 成本感知过滤
+    #   desc: 漂移小于再平衡成本期望值时判"不动"（避抖），与分配链事件正门的成本口径同源
+    # - id: A3
+    #   name_zh: Advisory 告警外发
+    #   desc: _notify(level, text) 只出告警读数；执行仍归分配链，本件绝不直接下单
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 再平衡巡检读数
+    #   name_en: dict[str, Any]
+    #   desc: 逐标的漂移/触发源/建议动作（read-only 决策读数），由 _write_report 落机读报告
+    # - id: O2
+    #   name_zh: 巡检告警
+    #   desc: 超阈时 Advisory 级告警，进既有告警面（不新建通道）

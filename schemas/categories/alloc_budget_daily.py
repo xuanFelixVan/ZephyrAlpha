@@ -13,7 +13,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DDL 与 DB 不一致→scripts/ch/verify_schema_truth.py 报告漂移
-# [TESTS] tests/pf_alloc/test_pf_alloc_schemas.py
+# [TESTS] tests/pf_alloc/test_sleeve_provenance.py; tests/pf_alloc/test_allocation_chain.py
 # [A_module] module_id=MOD-PA-040 | layer=schema | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [CREATION-TOKEN] alloc-budget-daily-mod-pa-040-20260916
@@ -99,6 +99,9 @@ INSERT_COLUMNS = (
 # 会静默取到旧 run 的预算 → MOD-POS-022 防抖对照失真）。
 # 对比：regime_snapshot_history 的 run_id（VAL-P0-YYYYMMDD-HHMMSS）字典序=时间序，
 # 那边按 run_id 排是安全的，本表不是。
+# 巡检用最新业务日（rebalance_check_runner 取分配面 as-of 日；max=DB 侧聚合，禁墙钟猜日）
+SQL_LATEST_TRADE_DATE = "SELECT max(trade_date) FROM {table}"
+
 SQL_LATEST_EFFECTIVE_BUDGETS = (
     "SELECT strategy_id, argMax(effective_budget, (trade_date, ingest_ts)) AS eb "
     "FROM {table} WHERE trade_date < '{date}' GROUP BY strategy_id"
@@ -113,4 +116,23 @@ SQL_DAY_SLICE = (
     "allocated_capital, final_weight, budget_action, current_tier "
     "FROM {table} WHERE trade_date = '{date}' "
     "ORDER BY ingest_ts DESC LIMIT 1 BY strategy_id"
+)
+
+# sleeve 切面（FAC-E8 sleeve 语义落库 2026-09-27）：batch_plan_json.sleeve 三件套读面，
+# 按"最近 run"取每策略一行后聚合到 sleeve 条目粒度（TDM-F-C1/C3 与归因的 sleeve 视图）。
+# 溯源写侧=allocation_orchestrator.StrategyAllocation.to_row（sleeve plan_id/ref/phases）。
+SQL_SLEEVE_DAY_SLICE = (
+    "SELECT sleeve_plan_id, sleeve_ref, count() AS strategies, "
+    "round(sum(effective_budget), 8) AS sleeve_effective_budget, "
+    "round(sum(allocated_capital), 2) AS sleeve_allocated_capital "
+    "FROM ("
+    "SELECT strategy_id, effective_budget, allocated_capital, "
+    "JSONExtractString(batch_plan_json, 'sleeve', 'plan_id') AS sleeve_plan_id, "
+    "if(JSONExtractString(batch_plan_json, 'sleeve', 'ref') != '', "
+    "   JSONExtractString(batch_plan_json, 'sleeve', 'ref'), strategy_id) AS sleeve_ref "
+    "FROM {table} WHERE trade_date = '{date}' "
+    "ORDER BY ingest_ts DESC LIMIT 1 BY strategy_id"
+    ") "
+    "GROUP BY sleeve_plan_id, sleeve_ref "
+    "ORDER BY sleeve_effective_budget DESC"
 )

@@ -5,7 +5,7 @@
 # [CONSUMERS] apply_market_tables_ddl; zephyr.ex_core.execution_report(产出侧); zephyr.reporting.default_tca_engine(TCA消费); zephyr.shared.contracts.execution_report_contract(ExecutionReportSource 拉取口)
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] execution_report 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_market_tables_ddl.py 执行；15 个契约字段与 CTR-P1-007 codegen frozen dataclass 一一对应，不按想象加字段
+# [INVARIANTS] execution_report 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_market_tables_ddl.py 执行；16 个契约字段与 CTR-P1-007 codegen frozen dataclass 一一对应，不按想象加字段
 # [MODIFY-GUARD] schema-change
 # [STABILITY] evolving
 # [SAFETY] M
@@ -25,9 +25,10 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     拉取口=execution_report_contract.ExecutionReportSource Protocol
     （get_execution_report(order_id) / iter_execution_reports(symbol, 窗口)）。
 
-字段对齐（15 个契约字段，唯一真源=codegen 契约，不增不减）：
+字段对齐（16 个契约字段，唯一真源=codegen 契约，不增不减）：
     order_id/symbol/direction/intended_quantity/actual_quantity/intended_price/
-    vwap_price/slippage_bps/commission/execution_start/execution_end/broker_id/
+    vwap_price/slippage_bps/commission/execution_start/execution_end/
+    decision_timestamp(V2 2026-09-27)/broker_id/
     algo_type/idempotency_key/schema_version。
     类型映射：Decimal→Decimal(18,4)（commission 佣金同价精度，Decimal 等值比较
     不受标度影响）；int→UInt64（契约校验 intended>0/actual>=0）；str 时间戳
@@ -41,6 +42,15 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     → 表侧先与线上一致消除漂移，producer 侧 NULL 实现在契约批准后另批落地。
 
 变更记录：
+    2026-09-27 st-chief4x-e8e9-20260927 IS 分解时间戳落列（FAC-E9 FIELD-GAP 治本·字段级）：
+    decision_timestamp DateTime64(3,'UTC') NULL 新增（=Order.created_at 决策时刻，
+    Perold 1988 IS 四分解延迟项锚点）；契约侧 CTR-P1-007 同批增 Optional 字段
+    （codegen --force 已重生成，None=上游未布点，既有 15 字段消费者零破坏）。
+    线上表待 ALTER：apply_market_tables_ddl.py _MIGRATIONS 增量迁移通道已预留
+    （ADD COLUMN IF NOT EXISTS，本窗迁移登记归施工单，CH 维护窗口执行）；
+    ALTER 落地前 verify_schema_truth --table execution_report 将报告该列漂移=
+    已登记的 code-ahead-of-DB 态，非事故。写入侧：NULL 合法（上游未布点），
+    禁墙钟伪造决策时刻。
     2026-09-18 st-ff-drift-20260918 漂移收口（RULE-SSOT：表 schema 属架构数据，
     真源=本 DDL-as-Code）：slippage_bps Float64 → Nullable(Float64)。
     背景=前手车道对生产表执行 MODIFY COLUMN→Nullable(Float64) 成功后回改
@@ -90,6 +100,7 @@ CREATE TABLE IF NOT EXISTS c1_market.execution_report
     commission        Decimal(18, 4)          COMMENT '佣金(元,>=0)',
     execution_start   DateTime64(3, 'UTC')    COMMENT '执行开始时间(契约口径ISO 8601 UTC)',
     execution_end     DateTime64(3, 'UTC')    COMMENT '执行结束时间(契约口径ISO 8601 UTC,>=start)',
+    decision_timestamp Nullable(DateTime64(3, 'UTC')) COMMENT '决策时间戳(=Order.created_at,Perold IS分解延迟项锚点;NULL=上游未布点,V2契约扩展2026-09-27)',
     broker_id         LowCardinality(String)  COMMENT '执行券商(venue)',
     algo_type         LowCardinality(String)  DEFAULT 'NONE' COMMENT '算法类型(TWAP|VWAP|NONE)',
     idempotency_key   String                  COMMENT '幂等键(UUID,防重复处理)',
@@ -114,10 +125,12 @@ PARTITION_KEY: Final = "toYYYYMM(execution_start)"
 ORDER_BY: Final = "(symbol, execution_start, order_id)"
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT/MATERIALIZED 列由 CH 自动派生）
-# 15 列与 CTR-P1-007 codegen ExecutionReport 契约字段一一对应（contract 字段序）
+# 16 列与 CTR-P1-007 codegen ExecutionReport 契约字段一一对应（contract 字段序；
+# decision_timestamp=V2 扩展 2026-09-27，线上表 ALTER 前该列 INSERT 会报未知列——
+# 迁移归施工单，见变更记录）
 INSERT_COLUMNS: Final = (
     "(order_id, symbol, direction, intended_quantity, actual_quantity, "
     "intended_price, vwap_price, slippage_bps, commission, "
-    "execution_start, execution_end, broker_id, algo_type, "
+    "execution_start, execution_end, decision_timestamp, broker_id, algo_type, "
     "idempotency_key, schema_version)"
 )

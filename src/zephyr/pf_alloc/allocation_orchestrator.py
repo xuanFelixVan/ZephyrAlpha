@@ -73,6 +73,7 @@ from typing import Any
 
 from zephyr.pf_alloc.allocation_config import AllocationConfig, load_allocation_config
 from zephyr.pf_alloc.allocation_inputs import (
+    SOURCE_PP001,
     AllocationInputError,
     BaseWeightTable,
     PerformanceScoreTable,
@@ -246,6 +247,11 @@ class StrategyAllocation:
     cash_seat: CashSeat | None = None
     excluded_reason: str = ""  # 非空=本成员被显式剔除（死成员/零权重），budget 恒 0
     note: str = ""
+    # sleeve 溯源（FAC-E8 sleeve 语义落库 2026-09-27：三表 DDL 无对应列，折入
+    # batch_plan_json——同 cash_seat/excluded_reason 先例，改列=跨域 schema 变更）
+    sleeve_plan_id: str = ""  # 命中的 PP-001 plan（空=先验来自补齐/等权）
+    sleeve_ref: str = ""  # 命中的 PP-001 sleeve 条目 ref（空=未命中）
+    sleeve_phases: tuple[str, ...] = ()  # 命中条目的 activation_state 相位（条目自述）
 
     def to_row(self, run_id: str, trade_date: str) -> dict[str, Any]:
         return {
@@ -287,6 +293,13 @@ class StrategyAllocation:
                     "cash_seat": self.cash_seat.as_dict() if self.cash_seat else None,
                     "excluded_reason": self.excluded_reason,
                     "note": self.note,
+                    # sleeve 语义落库（FAC-E8 2026-09-27）：plan/条目/相位三件套，
+                    # 消费读面=alloc_budget_daily.SQL_SLEEVE_DAY_SLICE（JSONExtract）
+                    "sleeve": {
+                        "plan_id": self.sleeve_plan_id,
+                        "ref": self.sleeve_ref,
+                        "phases": list(self.sleeve_phases),
+                    },
                     "schema_version": SCHEMA_VERSION,
                 },
                 ensure_ascii=False,
@@ -1020,6 +1033,9 @@ def run_daily_allocation(
                 cash_seat=seat,
                 excluded_reason=excluded_reasons.get(sid, ""),
                 note=" | ".join(note_parts)[:500],
+                sleeve_plan_id=str(base.plan_id or ""),
+                sleeve_ref=(sid if base.sources.get(sid, "") == SOURCE_PP001 else ""),
+                sleeve_phases=tuple(base.sleeve_phases.get(sid, ())),
             )
         )
 

@@ -257,6 +257,34 @@ def _run_special_schedule(
                 source="cross_source_validator",
             )
         return {"cross_validation": report.is_healthy}
+    # L12 组合再平衡巡检槽（FAC-E8 再平衡调度接线 2026-09-27 st-chief4x-e8e9-20260927）：
+    # alloc_budget_daily 目标面 vs sim_pocket_daily 当前面 → MOD-PF-003 四触发源+成本感知
+    # 决策读数（其头注 CONSUMERS 即本槽 run_schedule("pf_alloc_rebalance_check")）。
+    # 挂 05:45（catchup_guard 05:30 之后、pre_market 08:34 之前，看昨夜分配链全量结果）；
+    # 纯只读对照+Advisory 告警，禁触分配链执行面（再权节拍仍=SIM_DAILY 事件正门，
+    # PFA-4③ 口径）——本槽只补"漂移巡检无调度位"的缺口；总闸
+    # data/runtime/pf_alloc_rebalance_check.disabled 存在=停用（lane_g 总闸惯例）。
+    if schedule_name == "pf_alloc_rebalance_check":
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "pf_alloc_rebalance_check.disabled"
+        if _flag.exists():
+            log.info("时段 %s 跳过：总闸 pf_alloc_rebalance_check.disabled 存在", schedule_name)
+            return {"pf_alloc_rebalance_check": False}
+        try:
+            from zephyr.pf_alloc.rebalance_check_runner import run_rebalance_check
+
+            result = run_rebalance_check(alerter=scheduler._alerter)
+        except Exception as exc:  # noqa: BLE001 — 接线故障降级告警，不炸调度器（同族先例）
+            try:
+                scheduler._alerter.notify(
+                    "pf_alloc_rebalance_check",
+                    f"组合再平衡巡检执行异常: {str(exc)[:200]}",
+                    level="ERROR",
+                    source="rebalance_check_runner",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+            return {"pf_alloc_rebalance_check": False}
+        return {"pf_alloc_rebalance_check": bool(result.get("ok", False))}
     # L10.7 调度对账补跑层：任务档期对账 + 空表兜底 + 自动补跑（#ARCH-DATA-CATCHUP-001）
     if schedule_name == "catchup_guard":
         from zephyr.data.catchup_guard import run_catchup_guard
