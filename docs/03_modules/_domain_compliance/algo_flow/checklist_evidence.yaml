@@ -1,0 +1,31 @@
+# ALGO_FLOW 外部真源——checklist_evidence（_domain_compliance 域，真源 src/zephyr/compliance/checklist_evidence.py）
+# 2026-09-28 F62 C-004 清单闸写侧批 ALGO-FLOW 合规出仓：external 锚加载走 parse_algo_flow 管线；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.compliance.checklist_evidence
+source_of_truth: src/zephyr/compliance/checklist_evidence.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 证据写者构造参（evidence_dir 注入）
+    #   fields: checklist_evidence_dir 注入（测试 MUST tmp_path，禁生产路径）
+    #   code: ChecklistEvidenceWriter(...)
+    # - id: I2
+    #   name: 人工 ack CLI 参数
+    #   fields: confirmed_by/ack_source 必填非空；ZEPHYR_COMPLIANCE_ACK_KEY 在场强制 HMAC-SHA256
+    #   code: python -m zephyr.compliance.checklist_evidence ack
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 三腿证据写与 fail-closed 读
+    #   name_en: checklist_evidence
+    #   intro: 机器腿 risk_param_confirm/position_limit_verify 在装配与逐单限额处落证，人工腿 ack 带来源标注与签名防篡改，读侧缺证/损坏/跨日/验签不过一律记未完成
+    #   desc: writer 原子落盘最新一条即真源；provider 按交易日取证 fail-closed，缺项归 checker INTRADAY Hard Block 处置
+    # 层: 输出
+    # - id: O1
+    #   name: 证据文件与完成度判定
+    #   fields: JSON 证据文件（最新一条=真源）/ CompletionProvider 证据集
+    #   code: 落盘 DEFAULT_EVIDENCE_DIR=data/compliance_log/checklist
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; I2 --> A1 ; A1 --> O1

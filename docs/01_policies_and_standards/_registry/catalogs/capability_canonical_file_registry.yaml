@@ -55930,4 +55930,13 @@ creation_tokens:
   capability: qoder_legacy_closeout
   merge_evaluation: "队列压缩缺陷病案档案：唯一新增病案真源；同域无重复对象不并"
 
+- file: src/zephyr/compliance/checklist_evidence.py
+  token: auto-scaffold-checklist_evidence-20260928
+  created_by: scaffold.py
+  capability: checklist_evidence
+- file: docs/03_modules/_domain_compliance/algo_flow/checklist_evidence.yaml
+  token: auto-scaffold-checklist_evidence-20260928
+  created_by: scaffold.py
+  capability: checklist_evidence
+  merge_evaluation: "checklist_evidence ALGO_FLOW 外部真源（同域唯一下沉件，非第二真源）；净零：随死袋复活批 GATE-ALGO-FLOW 处方出仓，无新增规则/gate"
 di_seam_exemptions: []
