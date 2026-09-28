@@ -250,6 +250,10 @@ def execution_report_from_payload(payload: Mapping[str, object]) -> ExecutionRep
                 _fail(f"{f.name} 反序列化只接受数值", field=f.name, actual_type=type(value).__name__)
             kwargs[f.name] = float(value)
         else:
+            if value is None and f.default is None:
+                # 可选字段（dataclass 默认 None）往返容忍缺省——decision_timestamp 上游缺位时为 None
+                kwargs[f.name] = None
+                continue
             if not isinstance(value, str):
                 _fail(f"{f.name} 反序列化只接受 str", field=f.name, actual_type=type(value).__name__)
             kwargs[f.name] = value

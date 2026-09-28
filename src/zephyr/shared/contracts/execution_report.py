@@ -58,6 +58,7 @@ class ExecutionReport:
     symbol: str
     vwap_price: Decimal
     algo_type: str = "NONE"
+    decision_timestamp: str | None = None
     schema_version: str = "1.0"
 
 
