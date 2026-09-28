@@ -21,6 +21,7 @@
 # [TTL] permanent
 # [CREATION-TOKEN] lifecycle-fsm-mod-bt-188-20260915
 """策略生命周期 FSM——A 方案预授权状态机（挖矿真源 §2.5，复用因子版 8 态 10 转换模式）。
+# [ALGO_FLOW] external: docs/03_modules/_domain_strategy_pipeline/algo_flow/lifecycle_fsm.yaml
 
 状态：candidate → sim → production（Owner 门）→ retired；shelved（留档侧枝）。
 合法转换：
@@ -52,6 +53,10 @@ from zephyr.shared.lifecycle.state_machine import (
 )
 from zephyr.shared.security.secrets import get_secret_or_default
 
+from zephyr.shared.lifecycle.registry_state_vocab import (  # noqa: E501 — 裁定#417 词表单源配对（ORPHAN 消费接线）
+    FSM_STATE_TO_REGISTRY_STATE as _FSM_STATE_TO_REGISTRY_STATE,
+)
+
 logger = logging.getLogger(__name__)
 
 OWNER_TOKEN_SECRET_KEY = "ZEPHYR_OWNER_APPROVAL_TOKEN"
@@ -62,14 +67,22 @@ PRODUCTION = "production"
 SHELVED = "shelved"
 RETIRED = "retired"
 
+# 词表对齐层（Owner 2026-09-27 定稿：FSM 目标态→注册表 lifecycle_status 八态词；F75 挖矿册
+# 缺口 3.6 销案）。注册表词表=candidate/backtest/sim/paper/live/monitoring/decayed/retired
+# （strategy_registry.yaml schema，shelved 已收编进注释）；FSM 词 production 写注册表时恒映射
+# live。FSM 内部五态词不变（流转回执/审计仍记 FSM 词）。
+REGISTRY_LIFECYCLE_ALIASES: dict[str, str] = {
+    _fsm: _reg for _fsm, _reg in _FSM_STATE_TO_REGISTRY_STATE.items() if _fsm != _reg
+}
+
 
 @dataclass(frozen=True)
 class SimPromotionContext:
     """candidate→sim 预授权三条件（guard 消费；字段均可机器验证）。"""
 
-    dual_window_pass: bool          # §8：IS>0 ∧ 各 OOS 段>0 ∧ 衰减<0.5
-    bh_fdr_pass: bool               # BH-FDR q≤0.10 批内过滤通过
-    no_pending_decay_alert: bool    # decay_watch 无未决 decaying 行
+    dual_window_pass: bool  # §8：IS>0 ∧ 各 OOS 段>0 ∧ 衰减<0.5
+    bh_fdr_pass: bool  # BH-FDR q≤0.10 批内过滤通过
+    no_pending_decay_alert: bool  # decay_watch 无未决 decaying 行
 
 
 class SimPromotionGuard(TransitionGuard):
@@ -100,8 +113,9 @@ class OwnerTokenGuard(TransitionGuard):
             return False
         secret = get_secret_or_default(OWNER_TOKEN_SECRET_KEY, "")
         if not secret:
-            logger.warning("OwnerTokenGuard 拒绝 %s→%s：%s 未配置（fail-closed）",
-                           source, target, OWNER_TOKEN_SECRET_KEY)
+            logger.warning(
+                "OwnerTokenGuard 拒绝 %s→%s：%s 未配置（fail-closed）", source, target, OWNER_TOKEN_SECRET_KEY
+            )
             return False
         return hmac.compare_digest(
             hashlib.sha256(token.encode("utf-8")).hexdigest(),
