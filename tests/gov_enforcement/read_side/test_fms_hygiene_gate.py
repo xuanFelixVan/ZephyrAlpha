@@ -44,8 +44,11 @@ for _p in (str(_PROJECT_ROOT / "src"), str(_PROJECT_ROOT)):
         sys.path.insert(0, _p)
 
 import zephyr.gov_enforcement.commit_gates.read_side.fms_hygiene_gate as g  # noqa: E402
-from zephyr.gov_enforcement.commit_gates.read_side.fms_hygiene_gate import (  # noqa: E402
+from zephyr.gov_enforcement.commit_gates.read_side.fms_hygiene_gate import (  # noqa: E402  # noqa: E402
+    BLOCK_FLIP_CLEAN_STREAK,
     FMS_BASELINE_REL_PATH,
+    block_flip_eligible,
+    consecutive_clean_commits,
     make_fms_hygiene_gate,
 )
 from zephyr.gov_enforcement.commit_gates.read_side.fms_ref_extractor import (  # noqa: E402
@@ -369,3 +372,76 @@ class TestGatewayIntegration:
         passed, detail = make_fms_hygiene_gate().check(gw, ["docs/guide.md"])
         assert passed is False  # 升硬后 fail-closed
         assert "HYGIENE-DEADREF-NEW" in detail
+
+
+class TestBlockFlipReadiness:
+    """翻 block 判据改写（99 报告 §十二 T-1）：连零机读 + 资格判定 + mode 保持 warn。"""
+
+    def _audit(self, tmp_root: Path, records: list[dict]) -> None:
+        audit_dir = tmp_root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with (audit_dir / "fms_hygiene.jsonl").open("a", encoding="utf-8") as f:
+            for rec in records:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+    def test_mode_stays_warn(self):
+        """翻档=OWNER-GATE：判据改写不得顺手翻 mode（防自作主张升硬）。"""
+        assert g.FMS_HYGIENE_GATE_MODE == "warn"
+
+    def test_streak_counts_trailing_clean_records(self, tmp_path):
+        self._audit(
+            tmp_path,
+            [
+                {"gate": "FMS-HYGIENE", "findings": {}, "checked": 3},
+                {"gate": "FMS-HYGIENE", "findings": {}, "checked": 1},
+            ],
+        )
+        assert consecutive_clean_commits(str(tmp_path)) == 2
+
+    def test_violation_resets_streak(self, tmp_path):
+        self._audit(
+            tmp_path,
+            [
+                {"gate": "FMS-HYGIENE", "findings": {}, "checked": 5},
+                {"gate": "FMS-HYGIENE", "findings": {"HYGIENE-DEADREF-NEW": ["a -> b"]}, "checked": 2},
+                {"gate": "FMS-HYGIENE", "findings": {}, "checked": 1},
+            ],
+        )
+        assert consecutive_clean_commits(str(tmp_path)) == 1
+
+    def test_missing_audit_file_zero(self, tmp_path):
+        assert consecutive_clean_commits(str(tmp_path)) == 0
+        assert block_flip_eligible(str(tmp_path)) is False
+
+    def test_zero_checked_not_counted(self, tmp_path):
+        """checked=0（未实际扫查）不计连零——防"门没跑"虚增连零（§十二判空教训）。"""
+        self._audit(tmp_path, [{"gate": "FMS-HYGIENE", "findings": {}, "checked": 0}])
+        assert consecutive_clean_commits(str(tmp_path)) == 0
+
+    def test_corrupt_tail_breaks_streak(self, tmp_path):
+        audit_dir = tmp_path / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with (audit_dir / "fms_hygiene.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"gate": "FMS-HYGIENE", "findings": {}, "checked": 2}) + "\n")
+            f.write("{broken json\n")  # 坏行=中断（宁少不多）
+        assert consecutive_clean_commits(str(tmp_path)) == 0
+
+    def test_eligibility_boundary(self, tmp_path):
+        for i in range(BLOCK_FLIP_CLEAN_STREAK - 1):
+            self._audit(tmp_path, [{"gate": "FMS-HYGIENE", "findings": {}, "checked": 1}])
+        assert block_flip_eligible(str(tmp_path)) is False  # 19 笔=不够
+        self._audit(tmp_path, [{"gate": "FMS-HYGIENE", "findings": {}, "checked": 1}])
+        assert block_flip_eligible(str(tmp_path)) is True  # 20 笔=够评审（翻档仍 OWNER-GATE）
+
+    def test_clean_pass_audited_with_checked_count(self, tmp_path):
+        """集成：干净提交也落账（checked>0），连零数因此可机读。"""
+        _write_baseline(tmp_path, [])
+        staged = "docs/guide.md"
+        # 引用目标取 tracked 集（src/zephyr/shared/io/file_utils.py）⇒ 存在 ⇒ 零违规
+        gw = _make_gw(tmp_path, staged={staged: "见 `src/zephyr/shared/io/file_utils.py`\n"}, staged_list=[staged])
+        passed, _ = make_fms_hygiene_gate().check(gw, [staged])
+        assert passed is True
+        audit_file = tmp_path / ".runtime" / "gate_audit" / "fms_hygiene.jsonl"
+        recs = [json.loads(ln) for ln in audit_file.read_text(encoding="utf-8").splitlines() if ln.strip()]
+        assert any(r.get("findings") == {} and r.get("checked", 0) >= 1 for r in recs)
+        assert consecutive_clean_commits(str(tmp_path)) == 1

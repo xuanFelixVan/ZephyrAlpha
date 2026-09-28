@@ -37,8 +37,10 @@ fms_hygiene_gate.py — FMS 读侧文件卫生门（FMS-HYGIENE，四查类）
 
 设计权衡
 --------
-1. **warn 起步两段制**：FMS_HYGIENE_GATE_MODE="warn"（误报率连续两轮=0 才翻
-   "block"，S1 §4.4 风险 5；tag_vocab_gate 同构升硬机制）。
+1. **warn 起步两段制**：FMS_HYGIENE_GATE_MODE="warn"；翻档判据=「连续 20 笔 checked
+   提交新增违规=0」（block_flip_eligible 机读审计 jsonl；原"存量基线清偿过半"经 99 报告
+   §十二实测机械不可达 554/3,702=15%，已改写为棘轮本征判据——tag_vocab_gate 同构升硬
+   机制保留，翻档本身仍=OWNER-GATE）。
 2. **观测面=git 仓库态**（裁定#279 同盲区家族）：内容读 staged blob、目标
    存在性走 index/HEAD——序列化器落地 worktree 未 checkout 的同批目标不误报。
 3. **单写者提取器**：与基线生成器共用 fms_ref_extractor——基线收录键与门拦截
@@ -96,10 +98,21 @@ __all__: Final = [
     "make_fms_hygiene_gate",
     "FMS_HYGIENE_GATE_MODE",
     "FMS_BASELINE_REL_PATH",
+    "BLOCK_FLIP_CLEAN_STREAK",
+    "consecutive_clean_commits",
+    "block_flip_eligible",
 ]
 
-# warn→block 两段制（S1 §4.1 文件 3 / tag_vocab_gate 同构）：误报率连续两轮=0 翻 "block"
+# warn→block 两段制（S1 §4.1 文件 3 / tag_vocab_gate 同构）。
+# 翻档判据（99 报告 §十二实测改写，原判"存量基线清偿过半"机械不可达 554/3,702=15% ⇒ 门恒 warn）：
+# 现=「连续 BLOCK_FLIP_CLEAN_STREAK 笔 checked 提交新增违规=0」（棘轮本征判据，机读
+# .runtime/gate_audit/fms_hygiene.jsonl 尾部连零数，block_flip_eligible()）；存量清偿进度
+# 另设独立看板——拦新是门的本职、清旧是工程债治理，两事解耦。
+# mode 翻转本身仍=OWNER-GATE（本常量保持 "warn"，改 "block" 须 Owner 批准）。
 FMS_HYGIENE_GATE_MODE = "warn"
+
+# 翻 block 前置连零笔数（T-1 替代判据；99 报告 §十二/§十四 T-1）
+BLOCK_FLIP_CLEAN_STREAK: Final = 20
 
 FMS_BASELINE_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml"
 
@@ -224,8 +237,12 @@ def _classify_new_ref(
     return None
 
 
-def _audit_findings(gateway, findings: dict[str, list[str]]) -> None:
-    """审计落盘（non-blocking，tag_vocab_gate._audit_findings 同款）：供 Owner 回评误报率与升硬决策。"""
+def _audit_findings(gateway, findings: dict[str, list[str]], checked: int = 0) -> None:
+    """审计落盘（non-blocking，tag_vocab_gate._audit_findings 同款）：供 Owner 回评误报率与升硬决策。
+
+    空违规（clean pass）同样落账（checked>0 时）——翻档判据「连续 N 笔 checked 提交
+    新增违规=0」的数据面（99 报告 §十二 T-1：无 clean 记录则连零数不可机读，判据空转）。
+    """
     try:
         from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
@@ -236,6 +253,7 @@ def _audit_findings(gateway, findings: dict[str, list[str]]) -> None:
             "gate": _GATE_ID,
             "mode": FMS_HYGIENE_GATE_MODE,
             "findings": findings,
+            "checked": checked,
         }
         with (audit_dir / "fms_hygiene.jsonl").open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
@@ -282,6 +300,9 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
 
         findings = {k: v for k, v in findings.items() if v}
         if not findings:
+            # clean pass 也落账（checked>0 才算一笔"参与连零计数"的提交）——
+            # 翻档判据「连续 N 笔 checked 提交零违规」的机读数据面（§十二 T-1）
+            _audit_findings(gateway, {}, checked=len(own))
             return True, ""
 
         _audit_findings(gateway, findings)
@@ -302,6 +323,48 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     except Exception as e:  # noqa: BLE001 — ERROR_CONTRACT 兜底：判定体任何异常降级 fail-open
         logger.warning("%s fail-open: 判定体异常(%s: %s)。", _GATE_ID, type(e).__name__, e, exc_info=True)
         return True, ""
+
+
+def consecutive_clean_commits(project_root: str) -> int:
+    """机读翻档前置量：审计 jsonl 尾部「连续 checked 且零违规」记录数（T-1 判据）。
+
+    语义（保守计数）：
+    - 记录 findings 为空 dict 且 checked>0 = 一笔连零；
+    - 任一记录 findings 非空 = 连零中断（含 modes 混跑——升硬评审以实际数据面为准）；
+    - 记录缺 findings 键/坏行 = 中断（宁少不多，防半截写入虚增连零）；
+    - 文件不存在 = 0（门尚无执法轨迹，不具备翻档评审输入）。
+    """
+    path = Path(project_root) / ".runtime" / "gate_audit" / "fms_hygiene.jsonl"
+    if not path.exists():
+        return 0
+    streak = 0
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return 0
+    for line in reversed(lines):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            break  # 坏行=中断（宁少不多）
+        findings = rec.get("findings")
+        if not isinstance(findings, dict) or findings:
+            break
+        if int(rec.get("checked") or 0) <= 0:
+            break  # 未实际扫查的记录不计入连零
+        streak += 1
+    return streak
+
+
+def block_flip_eligible(project_root: str) -> bool:
+    """翻 "block" 评审资格：连零数是否达 BLOCK_FLIP_CLEAN_STREAK。
+
+    仅回答「数据面是否够评审」；真正翻档=OWNER-GATE（FMS_HYGIENE_GATE_MODE 保持 "warn"）。
+    """
+    return consecutive_clean_commits(project_root) >= BLOCK_FLIP_CLEAN_STREAK
 
 
 def make_fms_hygiene_gate() -> GateSpec:
