@@ -1,0 +1,94 @@
+# =============================================================================
+# 清洗规则引擎 DSL 承载册（R-M1-06 / WO-④-03 收口第一刀）
+# 真源消费者: src/zephyr/data/cleaning_rules_hosting.py（zephyr.data.cleaning_rules_hosting）
+#   —— 本册是 cleaning_rule_engine 的 DSL 规则**唯一真源**；代码侧禁写任何判据值
+#      （宪法硬规则 6 RULE-SSOT）。判据值改这里即改行为，红测=
+#      tests/zephyr/data/test_cleaning_rules_hosting.py::test_changing_yaml_threshold_changes_behavior
+# =============================================================================
+# 出生史与必要性：
+#   cleaning_rule_engine.py（418 行 DSL 引擎 + 65 例测试）自晋升批起**零生产调用点**
+#   （实证 docs/_working/fullflow_mining/m1_data/90_backfill_wave.md §三 3.1，
+#    2026-09-26 本车道复跑：全仓 run_quality_gate/CleaningRuleEngine 命中仅
+#    src/zephyr/data/cleaning_rule_engine.py 自身 + src/zephyr/data/__init__.py:33/:74
+#    re-export，无任何宿主班次/脚本/配置引用；且 config/ 此前无 DSL 承载文件=无插座）。
+#   本册补"插座"，接线点=既有 L13 data_supply_sentinel 排班腿的托管第二段
+#   （同 quality_sentinel 的 run_hosted_sweep 先例，见 config/quality_sentinel_tables.yaml
+#   的 wiring 块），**不新建平行管线、不新开排班槽位**（R-021 空槽位=静默假通道）。
+#
+# 读侧 flag 档先行（本役出厂态，属"新能力默认不改变既有产出"）：
+#   - 本腿只**读** CH（DatabaseService role=reader）并对近窗行做 DSL 判定，出报告+告警；
+#   - 不写库、不改写 ch_writer 写路径、不剔除任何生产行；
+#   - 即便规则 action=block，本腿也只把它计入 stats.intercepted 并在报告里出声
+#     （写侧真拦截=改 ch_writer 热路径+翻默认值，属 Owner 门位，本册未做，见 §待登项）。
+#   - 关停用 data/runtime/cleaning_gate.disabled 标记文件（每次触发实查，即时生效）。
+#
+# 键面纪律（防"册里写了但码不读"的第二形态装饰）：
+#   wiring 与每条 tables 条目的键集由 hosting 模块派生校验，**未知键=配置错上抛**
+#   （拼错一个阈值名会让该检查静默空转却看起来在岗——同 supply_sentinel/quality_sentinel
+#    的 _reject_unknown_keys 先例）。加新键必须先让代码读它。
+schema_version: 1
+
+wiring:
+  # 总闸：false=本腿跳过（报告 skipped，不参与宿主结论）
+  enabled: true
+  # 宿主排班槽位（登记用途，供普查器对账；宿主实接=supply_sentinel.run_supply_sentinel）
+  host_schedule: data_supply_sentinel
+  # 节奏闸（天）：距上次报告不足 cadence_days 即跳过（全表扫描代价高，按报告日期自愈节流）
+  # 真源=报告文件名前 10 字符日期，不另立 state 文件（防第二真源）
+  cadence_days: 7
+  # 每表读取行数上限（读侧安全阀，禁对亿行表无界 SELECT）
+  read_limit_rows: 2000
+  # 告警级别（Alerter 口径：info/warn/error/critical）——出厂 warn=只出声不阻断
+  alert_level: warn
+  report_dir: data/cleaning_gate
+  disabled_flag: data/runtime/cleaning_gate.disabled
+
+tables:
+  # 病灶出处（2026-09-18 全流通战役实测，见 data_supply_sentinel.yaml:310/:372-381 注）：
+  #   c1_market.daily_valuation 曾有 FINAL 259,238 行 close/amount 全 0（D 型"错数进闭环"）。
+  #   断供腿的非零率地板（column_fill_ratio min_ratio 0.95）量的是**聚合比例**，
+  #   本腿 DSL 量的是**逐行判据**（哪一行、哪条规则、几行）——两把尺对象不同，禁合并
+  #   （w5_1"跨域不同对象→不并"；此处同域不同粒度，同理）。
+  - table: c1_market.daily_valuation
+    date_col: trade_date
+    # 回看窗（自然日）：只对近窗行做逐行判定，避免全史无界扫（亿行表 FINAL 代价教训在案）
+    lookback_days: 10
+    rules:
+      # DSL op 语义（真源 src/zephyr/data/cleaning_rule_engine.py:174-210）：
+      #   gt=值必须 > value（否则违规）｜lt=值必须 < value｜between=值必须 ∈ [lower,upper]
+      #   rolling_quantile=值必须 ≤ 滚动分位阈值（阈值自进化+上下护栏+超限挂起人工审批）
+      # action: flag=打标 quality_flag=0 保留｜block=剔除（本读侧腿只计数不剔生产行）
+      - name: close_positive
+        field: close
+        op: gt
+        value: 0
+        action: flag
+      - name: amount_positive
+        field: amount
+        op: gt
+        value: 0
+        action: flag
+      # 涨跌幅合法区间（判据值在此册，禁抄进代码）。A 股主板日内 ±20% 之外即数据可疑
+      # —— 上下限是**清洗判据**，调它=改这里，红测会跟着变。
+      # 列名真源=schemas/categories/market/market_daily_valuation.py:52-62
+      # （trade_date/close/amount/volume/pct_change；勿写 pct_chg——未知列 CH 查询即报错）
+      - name: pct_change_within_bounds
+        field: pct_change
+        op: between
+        lower: -20
+        upper: 20
+        action: flag
+      # 滚动分位规则（DSL 的第四型 op）本次**不起样**，理由=BRK-046 教训：
+      # 手写 seed 定不准 → 近全表命中 → 结构性永久红 → 告警疲劳后被拔线（比无尺更糟）。
+      # 2026-09-26 实测（read_limit_rows=2000 近窗样本）：以 seed=[1e6,2e6,3e6]/q99/window=30
+      # 起样时 volume_rolling_upper 命中 1,722/2,000 行=纯噪音，故撤下待正确基线再起。
+      # 起样形态（届时把下列键放开即生效，代码无需改动——op 与必填项已由 parse_rules 校验）：
+      # - name: volume_rolling_upper
+      #   field: volume
+      #   op: rolling_quantile
+      #   quantile: 0.99
+      #   window: 30
+      #   guard_lower: <阈值下限>     # 候选阈值越出护栏即挂起待人工审批（不自动放宽）
+      #   guard_upper: <阈值上限>
+      #   action: flag
+      #   seed: [<历史观测样本…>]      # 首个生效阈值由 seed 的分位数决定
