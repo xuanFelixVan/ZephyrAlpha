@@ -648,6 +648,7 @@ _VALID_FILE_OPS = frozenset({"none", "read", "write", "delete", "move"})
 _EXTERNAL_SPEC_MODULES: Final[tuple[str, ...]] = (
     "zephyr.governance.audit.schedule_consistency_reconciler",  # W4-4 排班三表一致性（GATE-SCHEDULE-CONSISTENCY，只 warn/skip/fix-in-place）
     "zephyr.library.library_regen_reconciler",  # ulib3 T4 图书馆 post-commit 自动刷新（LIBRARY-REGEN，只 clean/warn/skip，零 git 文件操作）
+    "zephyr.governance.consumption.consumption_census_reconciler",  # W-163 九族消费普查 post-commit 事件触发（CONSUMPTION-CENSUS，只 record/warn，零删除）
 )
 
 _external_spec_factories: list[Callable[[Any], ReconcilerSpec]] = []
@@ -661,6 +662,7 @@ if TYPE_CHECKING:
     # 故运行时零导入、类型检查面声明依赖边。
     import zephyr.governance.audit.schedule_consistency_reconciler  # noqa: F401
     import zephyr.library.library_regen_reconciler  # noqa: F401
+    import zephyr.governance.consumption.consumption_census_reconciler  # noqa: F401
 
 
 def _load_external_spec_factories() -> list[Callable[[Any], ReconcilerSpec]]:

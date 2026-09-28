@@ -88,7 +88,8 @@ def run_indicator_usage_audit(
     id_variants = {i: (i, i.replace("-", "_")) for i in ids}
     registry_resolved = str(registry_path.resolve())
     for f in _iter_source_files(root, exclude_registry=registry_path):
-        fstr = str(f)
+        # consumer_files 出相对扫描根的 posix 路径（indicator_usage/2 规格：清单非计数）
+        fstr = f.relative_to(root).as_posix() if f.is_relative_to(root) else f.as_posix()
         if fstr == registry_resolved:
             continue
         try:
@@ -98,21 +99,24 @@ def run_indicator_usage_audit(
         for ind, (hyphen, underscore) in id_variants.items():
             if hyphen in text or underscore in text:
                 consumers[ind].add(fstr)
+    # indicator_usage/2 规格（案卷 §一）：stale 态显式退役，counts 不再广告该键；
+    # consumer_files=文件清单（非计数）
     entries: list[dict[str, Any]] = []
-    counts: dict[str, int] = {"active": 0, "stale": 0, "zero": 0}
+    counts: dict[str, int] = {"active": 0, "zero": 0}
     for ind in ids:
-        n = len(consumers[ind])
+        consumer_list = sorted(consumers[ind])
+        n = len(consumer_list)
         state = "active" if n >= 1 else "zero"
         counts[state] = counts.get(state, 0) + 1
         entries.append({
             "indicator_id": ind, "state": state,
-            "consumer_files": n, "recommendation": (
+            "consumer_files": consumer_list, "recommendation": (
                 "keep" if state == "active" else
                 "retire_candidate(零消费，指标域会话核实后处置)"
             ),
         })
     entries.sort(key=lambda e: e["indicator_id"])
-    doc = {"schema": "indicator_usage/1", "updated_at": today,
+    doc = {"schema": "indicator_usage/2", "updated_at": today,
            "counts": counts, "entries": entries}
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
