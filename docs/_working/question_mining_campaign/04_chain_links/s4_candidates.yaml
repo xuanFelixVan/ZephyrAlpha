@@ -1,0 +1,480 @@
+# =============================================================================
+# S4 链路环节面挖矿草稿册（PQ-0284+ 候选池）——F 编号 122 环节逐环节验收考题
+# 挖矿代理: S3+S4 挖矿代理（st-pqmine-20260927 战役）
+# 日期: 2026-09-27
+# 真源: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md（122 环节/13 段）
+# 出题三角度: ①输入输出契约 ②上游断供行为（fail-closed vs 静默空转）③产出独立验证
+# 选题口径: P0 断链点全收（总册 §二 红叉位 7 处）+ P1 主链咽喉，共 22 环节
+# ==============================================================================
+meta:
+  campaign: question_mining_20260927
+  source_lane: S4_chain_links
+  candidate_count: 22
+  id_range: S4-001..S4-022
+  covered_links: [F04, F05, F10, F11, F13, F14, F17, F21, F23, F25, F26, F27, F28, F34, F38, F47, F53, F57, F62, F64, F72, F74]
+  p0_breakpoints_covered: [F26, F34, F62, F72, F74, F04]   # 总册 §二 红叉位（F20/F82 归他组主挖车道，此处不重复）
+  dedup_baseline:
+    results_all: docs/_working/meta_question_answers/results/results_all.yaml (283)
+    retired: docs/_working/meta_question_answers/gaps/RETIREMENT_REGISTER.md (30)
+
+candidates:
+
+  # ── A 段·数据供给链 ──────────────────────────────────────────────────────
+  - candidate_id: S4-001
+    title: "F04 清洗校验三引擎零接线=上游坏数静默落库吗"
+    question: >
+      F04（清洗校验与坏数修复）的跨源校验/回补检查/AI 判净三引擎被总册标记'零接线'
+      （P0 断链位）。环节验收三问：①契约——F01→F06 灌水路径的坏数拦截契约写在哪个接口？
+      ②断供行为——清洗引擎缺位时坏数是 fail-closed 拦截还是 fail-open 静默入 CH 热库？
+      ③独立验证——注入一条跨源矛盾样本，引擎调用次数与拦截留痕能否实证？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:29
+      - src/zephyr/data/cross_source_validator.py
+    outcome: 引擎接入灌水路径（调用锚≥1+注入样本被拦）判 pass；零调用锚+样本直达 CH 判 fail(infra fail-open)
+    threshold: "清洗引擎在 F01→F06 路径的静态调用锚点≥1，且注入跨源矛盾样本后 CH 侧该样本被拦截/标记留痕率=100%；调用锚=0 判 fail(infra)"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "283 题无链路接线类考题（治理面 PQ-0001..0103 考 meta_question 本体，数据面 PQ-0012..0223 考数据质量本体）；本题考环节接线，非同义"
+      vs_retired: "与退役 30 题零交集"
+    probe_hint: "grep 调用图 cross_source_validator/backfill_checker 的 import 方；构造矛盾样本走测试路径"
+
+  - candidate_id: S4-002
+    title: "F05 tick 判重器是采集路径强制关口还是旁路件"
+    question: >
+      RULE-DATA-OPS 铁律规定判重必用 check_tick_duplication.py 禁聚合数。环节验收：
+      ①F01 采集管线 tick 灌入是否强制经过判重器（调用锚≥1）？②是否存在绕过判重的旁路
+      写入路径（provider 直写 CH）？③判重器自身有无覆盖'聚合数冒充逐笔'场景的单测？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:30
+      - AGENTS.md §1 RULE-DATA-OPS 行
+    outcome: 强制关口+单测齐判 pass；存在旁路或单测缺失判 fail(infra)
+    threshold: "tick 写 CH 的全部代码路径中判重调用覆盖率=100%（无旁路），且判重器单测含聚合数误用用例≥1；任一不满足判 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0020 考 tick_data 断档登记完整率（存量完整性），本题考入库路径的判重强制接线（过程控制），不同环节"
+      vs_retired: "零交集"
+    probe_hint: "grep -rn 'check_tick_duplication' src/zephyr/data + provider 写路径枚举"
+
+  - candidate_id: S4-003
+    title: "F10 行情订阅断线重连的缺口回补行为（fail-closed 验证）"
+    question: >
+      F10 tick 订阅常驻盘中直供决策链。验收：①断线期间缺口是否被显式登记
+      （known_data_gaps.yaml #ARCH-CH-029 机制对实时腿是否生效）？②重连后缺口自动回补还是
+      静默丢失？③盘中决策链在订阅断链窗口内收到的行情请求是 fail-closed 拒绝还是拿到陈旧价？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:35
+      - src/zephyr/data/scheduler.py
+    outcome: 缺口登记+回补+fail-closed 三真判 pass；任一缺失判 fail(infra)
+    threshold: "演练 kill 订阅进程≥5 分钟后恢复：①缺口时段出现在缺口登记载体 ②回补任务触发留痕 ③断链窗口内行情请求 100% 显式失败（无陈旧价返回）——三项全真判 pass"
+    min_confidence: 0.6
+    dedup_check:
+      vs_results: "PQ-0137 考 TDX 分笔历史断档的登记对冲（日级历史数据面），本题考实时订阅断链的运行时行为（盘中链路面），不同对象"
+      vs_retired: "零交集"
+    probe_hint: "测试环境 kill sch_tick_subscriber→观察 known_data_gaps 与请求方报错"
+
+  - candidate_id: S4-004
+    title: "F11 TDM 交叉轴口径漂移收敛（宪法 16 表 vs 代码 13 轴）"
+    question: >
+      宪法/AGENTS 称'业务资产库 16 表挂 TDM 交叉轴'，代码 _XREF_SPECS
+      （src/zephyr/trading/decision_map.py:100-118）declared 13 轴，总册 §五.1 列为待核漂移。
+      宪法 §4.4 明文'文档矛盾=事故'。题：以 yaml/AST 机械解析 _XREF_SPECS 实际轴数，
+      与宪法、ROOR 三方对账，口径漂移是否收敛为零？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:36
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:273
+      - src/zephyr/trading/decision_map.py:100
+    outcome: 三方轴数一致判 pass；现状预期 16≠13 判 fail(文档事故)，处置=修文档或补轴
+    threshold: "宪法文本、ROOR 登记、_XREF_SPECS 机械解析值三方轴数全等判 pass；任一不等判 fail(口径漂移)，列三方值"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0102/0062 是 JSONL/PG 审计双轨对账（meta_question 面）；本题是交叉轴挂接口径三方对账（TDM 面），不同载体"
+      vs_retired: "零交集"
+    probe_hint: "python -c 解析 decision_map._XREF_SPECS len() + grep AGENTS.md '16 表'"
+
+  # ── B 段·策略工厂 ────────────────────────────────────────────────────────
+  - candidate_id: S4-005
+    title: "F13 E0 算力闸 fail-closed 演练（日历缺失/盘中重任务两场景）"
+    question: >
+      FAC-E0 拉式闸门声明：交易日历缺失 fail-closed、收盘缓冲 15:30、classify_window+
+      gate_decision 四枚理由码、事件触发禁定时器。验收：①注入日历缺失场景闸门是否拒绝？
+      ②盘中时刻提交重任务（挖掘/批测）是否拒绝且理由码∈枚举？③四枚理由码各有单测覆盖吗？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:45
+      - config/strategy_production_map.yaml:50
+    outcome: 两场景 100% 拒绝+理由码合法判 pass；任一放行判 fail(闸门失效)
+    threshold: "①日历缺失场景拒绝率=100% ②盘中重任务拒绝率=100% 且理由码∈四枚枚举 ③四理由码单测各≥1 例——三项全真判 pass"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0043/0089 考 alloc 预算回测样本（组合层面）；本题考算力闸门语义演练（工厂调度层面），零交集"
+      vs_retired: "零交集"
+    probe_hint: "实例化闸门类注入两场景断言 gate_decision 返回值"
+
+  - candidate_id: S4-006
+    title: "F14 E1 进货编排幂等性（同 md5 重复投递不产生双行）"
+    question: >
+      FAC-E1 统一卸台账 key=md5_12（retention 永久）。验收：①同一候选（同 md5_12）重复进货
+      两次，台账行数增量=0 吗？②E2 预审是否对重复候选幂等跳过（不重复花预审判定）？
+      ③重跑 factory_intake_pipeline 全量批次会不会造成台账翻倍？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:66
+      - config/strategy_production_map.yaml:81
+    outcome: 幂等违例=0 判 pass；产生双行判 fail(infra)
+    threshold: "同 md5_12 双次投递后 data/strategy_intake/ 台账行增量=0，且 hypothesis_precheck 无同 candidate_id 双判定行；违例=0 判 pass"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0105 考三轨产出账与 birth_channel 标识缺失（insufficient）；本题考进货幂等语义演练，判据是重复投递行为非渠道标识"
+      vs_retired: "零交集"
+    probe_hint: "测试目录投递同文件两次→wc -l 台账；或静态读 pipeline upsert 语义"
+
+  - candidate_id: S4-007
+    title: "F17 车道C 白名单审定的拦截刚性（越白名单算子 100% 拒绝）"
+    question: >
+      车道C gplearn 轨 MVP 声明 config/factor_mining_whitelist.yaml 为算子约束真源、
+      智能体轨三道验收（DSL 校验/AST 原创/增量 IC）。验收：①构造白名单外算子表达式，
+      三道验收是否 100% 拦截并留痕（非静默丢弃）？②拦截记录有独立台账吗？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:120
+      - config/strategy_production_map.yaml:130
+    outcome: 越界样本 100% 拦截+留痕判 pass；任一通过判 fail(白名单失效)
+    threshold: "注入越白名单算子样本≥10 条：拦截率=100% 且每条拦截有留痕记录（台账/日志可机查）；任一漏网判 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0105 考三轨考试产出账（结果面）；本题考白名单输入约束刚性（入口面），互补"
+      vs_retired: "零交集"
+    probe_hint: "构造 'log(x)+rank(close)*hetero_op' 类越界 DSL 喂 DSL 校验器"
+
+  - candidate_id: S4-008
+    title: "F21 E2 假说预审的否决留痕完整率（讲不通的想法死得有据）"
+    question: >
+      FAC-E2 判定记录落 c1_backtest.hypothesis_precheck（retention 永久），设计原则
+      '经济学讲不通的想法在此死'。验收：①全部被否决（rejected）行是否带非空否决理由？
+      ②否决理由是否可归类（机制缺失/数据面不可修/重复假说）？③有无假说绕过预审直达 E3/E4
+      的路径？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:215
+      - config/strategy_production_map.yaml:232
+    outcome: 否决理由非空率=100% 且无绕行判 pass；任一空理由/绕行判 fail(留痕债)
+    threshold: "rejected 行 reason 非空率=100%，且 E3 translated_manifest 中每条候选可回溯到 precheck 过审行（绕行=0）；任一不满足判 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0105 考 birth_channel 渠道差异与三轨考试结果关联；本题考预审否决留痕与绕行审计，不同判据"
+      vs_retired: "零交集"
+    probe_hint: "SELECT reason FROM c1_backtest.hypothesis_precheck WHERE verdict='rejected'（经 DatabaseService）"
+
+  - candidate_id: S4-009
+    title: "F23 E4 考试预注册冻结时序审计（prereg 冻结时戳先于首行结果）"
+    question: >
+      exam_policy §1 准入四条：prereg 卡 frozen（考窗/阈值跑前写死并冻结）、封闭族声明 N_eff、
+      沙箱三关过关单、试验台账行已开（后补=造假）。验收：①已归档考试批次是否每批有冻结时戳
+      先于首批结果时戳的机检证据？②无 prereg 冻结证据的批次占比是多少？
+    layer: chain_link
+    status: candidate
+    frequency: monthly
+    origin:
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:28
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:31
+      - config/strategy_production_map.yaml:265
+    outcome: 冻结时序违例=0 判 pass；现状预期 prereg 载体缺失居多 判 insufficient（机制未建）或 fail（有载体但违例）
+    threshold: "每批考试存在 prereg 冻结记录且 frozen_at < min(结果落账时戳)，违例批次=0 判 pass；prereg 载体全缺判 insufficient；有载体有违例判 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0107 考 E1C 三轨统一考尺配置快照不存在；PQ-0104 考 space_hash 预注册台账。本题考 E4 批次级冻结时序审计（时间先后关系机检），对象与判据不同"
+      vs_retired: "流程纪律题，非预测力题；不构成任何旧卷重跑"
+    probe_hint: "runs/ 目录 manifest 时戳 vs strategy_screen ingest_ts 逐批比对"
+
+  - candidate_id: S4-010
+    title: "F25 E6 台账只增审计（strategy_screen UPDATE/DELETE 违例=0）"
+    question: >
+      FAC-E6 铁律'台账只增+判死行追加'。验收：①c1_backtest.strategy_screen 是否存在任何
+      UPDATE/DELETE 通道（代码路径或 DB 权限）？②判死/存疑是否全部以追加行表达？
+      ③'台账只增'有无机检（审计触发器或对账）？
+    layer: chain_link
+    status: candidate
+    frequency: quarterly
+    origin:
+      - config/strategy_production_map.yaml:305
+      - config/strategy_production_map.yaml:310
+    outcome: 只增违例=0 且机检在位判 pass；存在改写通道无机检判 fail(infra)
+    threshold: "全仓 grep strategy_screen 的 UPDATE/DELETE 语句=0，且判死表达=追加行（同 strategy_id 多 verdict 行历史可查），且存在只增机检载体；任一不满足判 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0044 考 screen 通过率与判据执行一致率（结果值）；本题考台账只增语义（写入模式），不同"
+      vs_retired: "零交集"
+    probe_hint: "grep -rn 'UPDATE.*strategy_screen|DELETE.*strategy_screen' src scripts + 表触发器实查"
+
+  - candidate_id: S4-011
+    title: "F26 E7 前哨缺位下 lifecycle 状态流转留痕（谁写的 sim）"
+    question: >
+      FAC-E7 module_ref=null（P0 断链位），但 registry 已有 2 条 lifecycle_status=sim 策略
+      （Owner 批准入 sim 2026-09-13）。验收：①这两条 sim 状态的写入者与授权留痕在哪？
+      ②E7 缺位下'模拟盘 N 周逐日对账'义务由谁承担（F72 四件？还是无人）？③sim→decayed
+      退回路径存在吗？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:323
+      - config/strategy_production_map.yaml:335
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:56
+    outcome: 状态变更留痕可查+承担者明确判 pass；sim 无对账义务承担者判 fail(断链确认)
+    threshold: "①每条 sim 状态有授权留痕（裁定/事件/commit）②存在该策略 sim 期逐日对账产物（≥1 日）③sim→decayed 状态机分支代码锚≥1——三项全真判 pass，缺②判 fail(断链确认)"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0090 考 IR 归因账零样本（组合流）；本题考策略 lifecycle 流转治理留痕，不同对象"
+      vs_retired: "零交集"
+    probe_hint: "git log -S 'STR-VREV-025' + registry 更新事件审计 + find runs 模拟盘对账产物"
+
+  - candidate_id: S4-012
+    title: "F27 E8 组装空输入行为（sleeve 断供时 fail-closed 还是默认出权重）"
+    question: >
+      FAC-E8 partial（sleeve 落库+再平衡调度未闭环），已建算法件 MOD-PA-003/007/022 等。
+      验收：①上游 E7 幸存者断供（空 sleeve 集合）时 multi_strategy_capital_allocator
+      返回拒绝还是空/默认权重方案？②零个可用策略日再平衡调度的行为？
+      ③行为有无单测覆盖？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:343
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:57
+    outcome: 空输入显式拒绝+留痕判 pass；静默默认权重判 fail(fail-open)；无运行样本判 insufficient
+    threshold: "空 sleeve 输入注入→分配器返回显式错误/拒绝且留痕，单测覆盖该分支≥1 例判 pass；返回默认权重判 fail；代码分支不存在无从注入判 insufficient"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0043/0089 考风险预算规则样本外回测效果（效果面零样本）；本题考分配器输入契约断供行为（契约面代码演练），不同"
+      vs_retired: "零交集"
+    probe_hint: "读 pf_alloc multi_strategy_capital_allocator 空输入分支+单测枚举"
+
+  - candidate_id: S4-013
+    title: "F28 E9 归因 IS 分解时间戳 FIELD-GAP 的降级诚实性"
+    question: >
+      FAC-E9 partial：IS 分解（Perold 1988：延迟/执行/机会/费用四分量）因决策时间戳
+      FIELD-GAP 未落而无法机械计算，影子组合未建。验收：①FIELD-GAP 登记在案吗（哪个字段的
+      DDL 缺口单）？②在缺口未补前，归因引擎产出是否显式降级（IS 分解字段置空+标注）而非
+      用近似值冒充？③Brinson-Fachler 腿有独立验证（对照样本复算）吗？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - config/strategy_production_map.yaml:367
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:58
+    outcome: 缺口登记+降级诚实判 pass；近似值冒充判 fail；双缺判 insufficient
+    threshold: "①FIELD-GAP 缺口登记载体命中≥1 ②归因产物 IS 分解字段空置且带缺口标注率=100% ③BF 归因有对照复算测试——三项全真判 pass；②违例判 fail；①③缺判 insufficient"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0090 考 IR 贡献归因账切点后零样本（insufficient）；本题考归因环节的降级诚实性与字段缺口治理，判据不同"
+      vs_retired: "零交集"
+    probe_hint: "grep FIELD-GAP 登记 + attribution 引擎 IS 分解分支审读"
+
+  # ── C 段·知识供给线 ──────────────────────────────────────────────────────
+  - candidate_id: S4-014
+    title: "F34 知识汇聚缺位下的绕行检测（下游直连源线=架构违例）"
+    question: >
+      F34 汇聚点 module_ref=null（P0 断链位），设计契约=全 L9 源线经 AGG 汇聚后供下游。
+      验收：①TDM 边表中是否存在下游节点绕过 AGG 直连 L9 源线节点的边（绕行边）？
+      ②若有绕行边，AGG 施工后这些边会双真源吗？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:69
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:242
+    outcome: 绕行边=0 判 pass；绕行边>0 判 fail(架构债) 并列边清单
+    threshold: "TDM edges 中 (src∈L9源线节点 ∧ dst∈下游层 ∧ dst≠AGG) 的边数=0 判 pass；>0 判 fail 并逐边列 node_id 对"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0003 考 consumers 字段可解析性（meta_question 面）；本题考 TDM 拓扑绕行（架构面），零交集"
+      vs_retired: "零交集"
+    probe_hint: "yaml.safe_load trading_decision_map edges 按 L9 层位过滤计数"
+
+  # ── D 段·交易决策消费链 ──────────────────────────────────────────────────
+  - candidate_id: S4-015
+    title: "F38 L1 六传感器断供降级（陈旧状态 carry-forward 必须带 staleness 标记）"
+    question: >
+      F38 六路传感器→7 态状态机 built。验收：①单一传感器（如波动率腿）当日数据断供时，
+      状态机输出是沿用昨日状态还是降级到保守态？②沿用陈旧状态时输出是否携带 staleness
+      标记与最长容忍时限？③下游 F39/F40 能机读到该标记吗？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:78
+      - src/zephyr/regime/core/regime_detector.py
+    outcome: 断供行为显式+标记可机读判 pass；静默用陈旧值判 fail(fail-open)
+    threshold: "注入单传感器断供→状态输出含 staleness/降级标记率=100%，且标记字段在下游消费代码有读取锚≥1；陈旧值无标记判 fail"
+    min_confidence: 0.6
+    dedup_check:
+      vs_results: "PQ-0081/0046 波动状态题已退役（因子预测力面）；本题考状态机输入断供的运行时行为，非状态因子主张"
+      vs_retired: "与 PQ-0046/0081 退役簇不同对象（运行时行为 vs 因子收益预测），非翻案"
+    probe_hint: "regime_detector 注入 NaN 断供输入断言输出结构"
+
+  - candidate_id: S4-016
+    title: "F47 R1 熔断横切的拦截刚性（kill_switch ACTIVE 时下单 100% 被拒）"
+    question: >
+      F47 应急保命横切全流，F61 KillSwitch 三实例族（交易级/容量级/回滚级，M3 在案
+      '持久化待裁'）。验收：①交易级 kill_switch 置 ACTIVE 后，F41/F53 订单提交路径是否
+      100% 拒绝（调用锚在 order_manager 提交前）？②拒单留痕率？③kill switch 状态重启后
+      是否自动复位（危险）还是需人工确认（fail-closed 持久化）？
+    layer: chain_link
+    status: candidate
+    frequency: quarterly
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:87
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:111
+    outcome: ACTIVE 期拒单 100%+留痕+重启不复位判 pass；任一违例判 fail(保命失效)
+    threshold: "①ACTIVE 注入订单拒绝率=100% ②拒单审计事件留痕率=100% ③进程重启后 kill 状态保持 ACTIVE（需人工解除）——三项全真判 pass；③自动复位判 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "283 题治理面/数据面均未考 kill switch 拦截演练；零同义"
+      vs_retired: "零交集"
+    probe_hint: "测试环境置 kill 状态→注入模拟订单→断言拒绝+审计行；重启持久化读代码"
+
+  - candidate_id: S4-017
+    title: "F53 价格笼子硬约束拒绝演练（超笼订单 100% 拒+违例码）"
+    question: >
+      F53 订单生命周期含 price_cage 价格笼子硬约束。验收：①注入超出笼子约束的委托价样本，
+      拒绝率是否 100%？②拒单是否带笼子违例专用错误码（可机查区分于其他拒单）？
+      ③部分成交后撤改路径同样过笼吗？
+    layer: chain_link
+    status: candidate
+    frequency: quarterly
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:98
+      - src/zephyr/ex_core/price_cage.py
+    outcome: 拒绝率 100%+专用码+撤改同笼判 pass；任一违例判 fail
+    threshold: "越笼样本≥20 条拒绝率=100%，违例码唯一可机查，撤改单过笼覆盖率=100%——三项全真判 pass"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "零同义（执行面考题在 283 题中缺席）"
+      vs_retired: "零交集"
+    probe_hint: "price_cage 单测补注入用例或既有测试断言枚举"
+
+  - candidate_id: S4-018
+    title: "F57 三方对账不平的后续行为（冻结该标的还是带病继续交易）"
+    question: >
+      F57 结算对账/三方核对/EOD 四步对账 built。验收：①券商回执 vs 本地账 vs 结算单三方
+      不平时，该标的后续订单是被冻结（fail-closed）还是仅告警继续交易？②不平事件有独立
+      台账与处置闭环（谁批准继续）吗？③对账不平容忍度阈值登记在哪？
+    layer: chain_link
+    status: candidate
+    frequency: quarterly
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:102
+      - src/zephyr/trading/three_way_reconciliation.py
+    outcome: 不平→冻结+台账+阈值登记三真判 pass；带病继续判 fail
+    threshold: "注入不平样本→该标的后续订单冻结率=100%，不平事件台账留痕率=100%，容忍度阈值有登记锚——三项全真判 pass；继续放行判 fail"
+    min_confidence: 0.6
+    dedup_check:
+      vs_results: "PQ-0053 考焊成本滑点校准（对账数据的统计用途）；本题考对账不平的交易控制行为，不同"
+      vs_retired: "零交集"
+    probe_hint: "three_way_reconciliation 分支审读+注入演练"
+
+  - candidate_id: S4-019
+    title: "F62 合规门零注入修复验收（未报告订单 100% C-002 拒单）"
+    question: >
+      F62 合规门'码成闸空零注入'=总册 P0 前科（ReportGate C-002 拒单逻辑已成但未注入订单
+      路径，'先报告后交易'铁律无强制力）。验收：①注入点施工后，订单路径调用 ReportGate
+      的锚点≥1 吗？②未完成程序化交易报告的订单 100% 被 C-002 拒吗？③broker_ack 人工回填
+      有超时升级吗？
+    layer: chain_link
+    status: candidate
+    frequency: quarterly
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:112
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:242
+    outcome: 注入锚≥1+拒单演练 100% 判 pass（翻绿）；现状零注入判 fail(接线缺位确认)
+    threshold: "①订单提交路径 ReportGate 调用锚≥1 ②未报告状态注入订单拒单率=100% 且错误码=C-002 ③broker_ack 逾期升级机制存在——三项全真判 pass；锚=0 判 fail(零注入)"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "零同义（合规门接线在 283 题缺席）"
+      vs_retired: "零交集"
+    probe_hint: "grep order_manager/pre_execution_checker 的 ReportGate import；演练注入"
+
+  # ── G 段·回测模拟链 ──────────────────────────────────────────────────────
+  - candidate_id: S4-020
+    title: "F64/F66 回测预注册冻结率（backtest_backlog 142 对象 threshold_status 5/120）"
+    question: >
+      REG-BTB-001 预注册纪律：验收阈值跑前写死冻结、禁事后挪门柱；总册 F64 称'每测 MUST
+      指定 universe/benchmark/cost_model'。实测：142 对象中 plan 非空仅 5、嵌套
+      threshold_status=frozen 仅 5、testable=true 120——冻结率 4.2%；且总册记'137 对象'
+      与实查 142 存在计数漂移。题：testable 对象的预注册冻结率现状与漂移计数收敛。
+    layer: chain_link
+    status: candidate
+    frequency: monthly
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/backtest_backlog.yaml:7
+      - docs/01_policies_and_standards/_registry/catalogs/backtest_backlog.yaml:181
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:119
+    outcome: 冻结率=100%（testable 全 frozen）判 pass；现状 4.2% 判 fail(预注册纪律未执行)
+    threshold: "plan.threshold_status=frozen 的 testable 对象占比=100% 判 pass；且对象总数口径（137 vs 142）漂移收敛=0；现状冻结率<100% 判 fail"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0104 考 E1C space_hash 空间台账（组合层预注册空间）；本题考 TDM 全节点回测对象预注册冻结率（backlog 面），不同载体；计数漂移部分对标宪法'计数用字段不写死'精神但对象不同"
+      vs_retired: "零交集"
+    probe_hint: "yaml.safe_load 统计 plan.threshold_status 分布（实测 5/120 frozen）+ 再生成器跑一次对比总数"
+
+  # ── H 段·模拟盘→转正链 ───────────────────────────────────────────────────
+  - candidate_id: S4-021
+    title: "F72 模拟盘四件的静默断链检测（SimBridge 09-24 前科复检）"
+    question: >
+      F72 模拟盘日跑四件 partial，总册记'SimBridge 09-24 静默断链嫌疑（M5 在案）'——断链
+      无告警即静默。验收：①四件产物（session 日跑/平台四件/对账验证）任一缺失时，告警在
+      24h 内触发吗？②bridge-execute 心跳与产物落盘有无断链检测器？③缺失日的补跑机制存在吗？
+    layer: chain_link
+    status: candidate
+    frequency: weekly
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:132
+      - src/zephyr/ex_core/live_strategy_adapter.py
+    outcome: 缺失→24h 告警率=100% 判 pass；静默缺口复现判 fail(静默断链确认)
+    threshold: "构造任一件缺失→health/alert 体系 24h 内告警事件命中=100%，且补跑/升话机制锚≥1；缺失无告警判 fail(静默断链)"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0081/0082 等运行监控题不在 283；F81 告警面本题只作载体不作对象；零同义"
+      vs_retired: "零交集"
+    probe_hint: "审读 sch_paper_session/sch_sim_bridge_execute 心跳与 F81 告警接线；历史断链日（09-24）告警账回查"
+
+  - candidate_id: S4-022
+    title: "F74 转正门唯一人工门的汇总器缺位（全链最大单点）验收前置"
+    question: >
+      F74 转正建议书汇总器 missing=全流通最大单点：四件产出→一页报告+组合门打分无施工件，
+      promotion_advisory.py 缺位。验收（作为 F74 施工的验收考题预注册）：①施工后每条转正
+      候选有一页汇总报告归档吗？②Owner 门位决策（批准/驳回）有留痕载体吗？③驳回案例的
+      反馈是否回灌 F25/F21（合法回灌边）？
+    layer: chain_link
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:134
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:242
+    outcome: 现状缺位判 insufficient（对象未建禁硬答）；建成后三真判 pass
+    threshold: "现状：promotion_advisory/汇总器实件=0 → 判 insufficient（登记 P0 缺位实证）；建成后：①每候选一页报告归档率=100% ②门位决策留痕率=100% ③驳回回灌事件≥0 且可查——三真判 pass"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0051~0057 等 meta_question 考试循环题（治理面人工门缺席）；本题考策略转正人工门（生产面唯一人工门），不同平面"
+      vs_retired: "零交集"
+    probe_hint: "ls src/zephyr/strategy_pipeline/promotion_advisory.py（预期不存在）→ 建成后按三判据复考"

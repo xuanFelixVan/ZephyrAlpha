@@ -1,0 +1,421 @@
+ttl: task_bound
+completes_when: 挖矿战役归档后随包清理
+count: 32
+candidates:
+- candidate_id: S1-001
+  layer: L1
+  status: draft
+  frequency: monthly
+  origin: c1_market.macro_data_vintage + c1_market.macro_data（probe6_cov2/probe10：vintage
+    表 uniqExact(indicator_name)=28，macro_data=2261，交集=28）
+  question: 宏观指标 PIT 发布快照（vintage）重建覆盖率：macro_data_vintage 是否已覆盖 macro_data 全部 2261
+    个指标中至少 80%，使宏观因子可按发布时点重放？
+  threshold: SELECT uniqExact(indicator_name) FROM c1_market.macro_data_vintage /
+    (SELECT uniqExact(indicator_name) FROM c1_market.macro_data) >= 0.8
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 最近邻=PQ-0185（宏观 vintage 存证机制未建成：当时 macro_data schema 无 pub_ts/vintage
+    字段、切点窗零执行）。本题对象是重建后的 macro_data_vintage 表自身的覆盖率，属 PQ-0185 复考前置『vintage 存证补建』的后继验收题，非翻案。
+- candidate_id: S1-002
+  layer: L1
+  status: draft
+  frequency: monthly
+  origin: c1_market.macro_data_vintage（probe7/probe10：pub_ts 全表 16091 行 100% 为 NULL，pub_ts_basis
+    单值 backfill_final，vintage 单值 1）
+  question: macro_data_vintage 表的 pub_ts（实际发布时戳）字段是否已实装非空（vintage=1 单值 + pub_ts 全空意味着该表当前不能做任何按发布时点的
+    PIT 重放）？
+  threshold: SELECT countIf(pub_ts IS NULL) FROM c1_market.macro_data_vintage = 0
+  min_confidence: 0.9
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0185 判的是 macro_data 主表 schema 无字段；本题判的是补建表 pub_ts 字段空转（表在、列在、值全空），不同对象不同时点。
+- candidate_id: S1-003
+  layer: L1
+  status: draft
+  frequency: quarterly
+  origin: c3_fundamental.top10_shareholders（probe6/probe10：max(announce_date)=2026-06-30，announce_date>='2026-07-01'
+    行数=0；对照 income_statement report_period='2026-06-30' 已覆盖 5217 只，半年报披露截止 2026-08-31）
+  question: 十大股东表是否跟上 2026 年中报披露节奏：全市场半年报已于 2026-08-31 披露截止，top10_shareholders 在 2026-07-01
+    之后应有一批公告（期末日 2026-06-30 的十大股东），当前是否为零？
+  threshold: SELECT count() FROM c3_fundamental.top10_shareholders WHERE announce_date
+    >= '2026-07-01' > 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0202（SL-A13 股东户数 announce_date 10 日哨兵）是 shareholder_count 表的滞后哨兵；本题是
+    top10_shareholders 表的季报批次完整性，表不同判据不同。退役 PQ-0071 是股东关系预测题，与数据覆盖无关。
+- candidate_id: S1-004
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.kline_daily vs kline_daily_hfq（probe8：kline_daily 5913 只 vs hfq
+    5909 只，差集=['000022','000043','300114','600849']）
+  question: 后复权日线表是否与不复权日线表股票集合一致：kline_daily 在册而 kline_daily_hfq 完全缺失的代码数是否为 0？
+  threshold: SELECT count() FROM (SELECT DISTINCT symbol FROM c1_market.kline_daily
+    WHERE symbol NOT IN (SELECT DISTINCT symbol FROM c1_market.kline_daily_hfq)) =
+    0
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0012 考的是 hfq/raw×adj_factor 逐点比率对齐（口径分裂），本题考两表 symbol 集合完整性（键域对齐），不同面。
+- candidate_id: S1-005
+  layer: L1
+  status: draft
+  frequency: weekly
+  origin: c1_market.kline_daily vs c1_market.stock_list（probe11：20 只 kline 在册代码不在
+    stock_list，全为 810/899/920 段北交所码及 000022/000043 等深市老码）
+  question: 证券主档表 stock_list 是否覆盖行情侧实际出现的全部交易所板块代码（含北交所）：kline_daily 中不在 stock_list
+    的代码数是否为 0？
+  threshold: SELECT count() FROM (SELECT DISTINCT symbol FROM c1_market.kline_daily
+    WHERE symbol NOT IN (SELECT symbol FROM c1_market.stock_list)) = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（grep '孤儿'=0、北交所 0 命中）；stock_list.list_status 取值为中文（上市/退市），与 tushare
+    L/D 枚举不互通是伴生事实。
+- candidate_id: S1-006
+  layer: L1
+  status: draft
+  frequency: monthly
+  origin: c1_market.kline_monthly_hfq vs kline_monthly_hfq_legacy_r1_20260924（probe9/probe10：legacy
+    有 524476 行 vs 主表 502496 行，EXCEPT 后 legacy 独有 105940 键，其中属于 list_status='上市' 在册代码者
+    105914）
+  question: 月线后复权表重建时是否丢了仍在市股票的历史：legacy_r1 备份中存在而新主表缺失的 (symbol, 月末) 键，限定当前在市代码后是否为
+    0？
+  threshold: SELECT count() FROM (SELECT symbol, trade_date FROM c1_market.kline_monthly_hfq_legacy_r1_20260924
+    EXCEPT SELECT symbol, trade_date FROM c1_market.kline_monthly_hfq) t WHERE t.symbol
+    IN (SELECT symbol FROM c1_market.stock_list WHERE list_status='上市') = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻：legacy/quarantine 族表对账（hfq 重建丢失历史）是新问题面；退役册无月线覆盖类题。
+- candidate_id: S1-007
+  layer: L1
+  status: draft
+  frequency: monthly
+  origin: c1_market.daily_valuation（probe6：覆盖窗仅 2026-08-03~2026-09-24、5571 只；stock_valuation
+    0 行、index_valuation_daily_v2 0 行，见 system.tables）
+  question: 个股估值日表 daily_valuation 是否已按设计回填历史（当前仅两个月窗口，而被替代的 stock_valuation 为 0 行空表，估值因子将只有约
+    35 个交易日的可用历史）？
+  threshold: SELECT min(trade_date) FROM c1_market.daily_valuation <= '2025-01-01'
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 近邻=index_valuation_daily 双写抹零事故注记（results_all.yaml line 6435，指数表）；本题是个股估值表的历史回填完整性，对象不同。
+- candidate_id: S1-008
+  layer: L1
+  status: draft
+  frequency: weekly
+  origin: c1_market.hk_connect_flow（probe11：max(trade_date)=2024-08-16，距最近交易日 2026-09-24
+    落后约 520+ 个交易日；对应 2024-08 沪深港所停止实时北向逐日披露的制度变更）
+  question: 沪深港通资金流表 hk_connect_flow 的日度序列已终态停在 2024-08-16（披露制度变更），该终态是否已在数据资产登记中标明（表仍以活跃日频源姿态存在会误导下游消费方）？
+  threshold: (SELECT max(cal_date) FROM c1_market.trade_calendar WHERE exchange='SSE'
+    AND is_open=1 AND cal_date <= today()) - (SELECT max(trade_date) FROM c1_market.hk_connect_flow)
+    <= 10
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 无近邻（hk_connect/北向 0 命中）；SL-B01~B05 是源线谱文档三方一致性题，本题是 CH 表实际新鲜度，对象不同。
+- candidate_id: S1-009
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.option_daily_stats（probe11：max(trade_date)=2026-09-22，最近交易日 2026-09-24，落后
+    2 个交易日）
+  question: 期权日统计表是否跟到最近交易日（T 日收盘后 T 日数据应入库）：option_daily_stats 最大交易日落后最近交易日是否不超过
+    1 个交易日？
+  threshold: (SELECT max(cal_date) FROM c1_market.trade_calendar WHERE exchange='SSE'
+    AND is_open=1 AND cal_date <= today()) - (SELECT max(trade_date) FROM c1_market.option_daily_stats)
+    <= 1
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（option_daily 0 命中）。
+- candidate_id: S1-010
+  layer: L1
+  status: draft
+  frequency: monthly
+  origin: system.tables（probe10：c1_market 共 13 张 0 行生产表：account_nav_daily/edb_data/etf_benchmark/index_valuation_daily_v2/ipo_schedule/l2_tick/margin_target_adjustment/market_index_meta/msci_adjustment/realtime_snapshot/reconciliation_differences/stock_candidate_pool/stock_valuation）
+  question: c1_market 库中声明的生产表是否存在零行僵尸表（建了表从未入数，排除 quarantine/legacy 隔离备份族）：零行表数量是否为
+    0？
+  threshold: SELECT count() FROM system.tables WHERE database='c1_market' AND total_rows=0
+    AND engine!='View' AND name NOT LIKE '%quar%' AND name NOT LIKE '%legacy%' AND
+    name NOT LIKE '%preversion%' = 0
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 既有『零行』命中均为板块成分映射表切点前无数据的 PIT 叙述（PQ-0046 等 evidence），无以零行僵尸表为对象的治理题。
+- candidate_id: S1-011
+  layer: L1
+  status: draft
+  frequency: monthly
+  origin: c0_meta.fetch_perf（probe9：min(test_date)=2026-07-09、max=2026-07-11，共 103
+    行，距今约 2.5 个月未更新）
+  question: 数据源拉取性能台账 fetch_perf 是否按月滚动更新（最后记录是否落在当月）？
+  threshold: SELECT max(test_date) FROM c0_meta.fetch_perf >= toStartOfMonth(today())
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 无近邻（fetch_perf 零命中）。
+- candidate_id: S1-012
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c3_fundamental.news_sentiment_score vs news_data（probe4：打分表 max(publish_time)=2025-09-09
+    恰为 PIT 切点，news_data max=2026-09-27；打分表 7733898 行全部落在切点前）
+  question: 新闻情绪打分管线是否对切点后新流入新闻持续打分（打分表最新 publish_time 是否落后新闻主表不超过 7 天）？
+  threshold: (SELECT max(publish_time) FROM c3_fundamental.news_sentiment_score) >=
+    (SELECT max(publish_time) FROM c3_fundamental.news_data) - INTERVAL 7 DAY
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0015 复考前置是『存量新闻回填情绪分』（向切点前回看）；本题是切点后前向连续性（管线停摆检测），方向相反；PQ-0015
+    退役是预测力结论，本题不涉预测力，不构成翻案。
+- candidate_id: S1-013
+  layer: L1
+  status: draft
+  frequency: weekly
+  origin: c1_market.cftc_positioning（probe6：max(report_date)=2026-09-08；CFTC COT 为周五发布周频，截至
+    2026-09-27 应已有 09-18/09-25 两期）
+  question: CFTC 持仓周报是否按周频跟更（最新报告期距今天不超过 14 天）？
+  threshold: SELECT max(report_date) FROM c1_market.cftc_positioning >= today() -
+    14
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 无近邻（cftc 0 命中）。
+- candidate_id: S1-014
+  layer: L1
+  status: draft
+  frequency: static
+  origin: system.columns（probe10：c3_fundamental.analyst_forecast 列集=[report_date,
+    symbol, forecast_year, forecast_eps, forecast_pe, rating, analyst_count, ...]，无任何
+    announce/pub/as_of 列）
+  question: 分析师预测表 analyst_forecast 是否具备 PIT 可用性必需的公告/发布时点列（仅按 report_date 消费会把未来修正值当历史可见值，构成前视泄漏入口）？
+  threshold: SELECT count() FROM system.columns WHERE database='c3_fundamental' AND
+    table='analyst_forecast' AND (positionCaseInsensitive(name,'announce')>0 OR positionCaseInsensitive(name,'pub')>0
+    OR name IN ('as_of','pub_ts')) >= 1
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0185（macro_data 无发布时戳字段）为同型缺口不同表；PQ-0024 是因子口径泄漏的预测力题（退役），本题是
+    schema 级 PIT 字段验收。
+- candidate_id: S1-015
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c3_fundamental.news_data（probe7：publish_time > crawl_time + 1 小时的行数=3963，即抓取发生在所谓发布之前，时点语义乱序）
+  question: 新闻表发布时点与抓取时点的因果序是否自洽（publish_time 晚于 crawl_time 超过 1 小时的行应不存在）？
+  threshold: SELECT countIf(publish_time > crawl_time + INTERVAL 1 HOUR) FROM c3_fundamental.news_data
+    WHERE crawl_time IS NOT NULL = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（crawl/抓取时间 0 命中）；PQ-0015 是新闻密度因子题。
+- candidate_id: S1-016
+  layer: L1
+  status: draft
+  frequency: quarterly
+  origin: c3_fundamental.restricted_shares（probe7：10208142 行中 announce_date 为 NULL
+    者 373783，占 3.66%）
+  question: 限售解禁表 announce_date 空值率是否为 0（无公告日的解禁记录无法定位 PIT 可见时点，事件研究将被迫用 unlock_date
+    造成前视）？
+  threshold: SELECT countIf(announce_date IS NULL) FROM c3_fundamental.restricted_shares
+    = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（解禁/restricted 0 命中）。
+- candidate_id: S1-017
+  layer: L1
+  status: draft
+  frequency: weekly
+  origin: c1_market.kline_daily（probe10：trade_date>=today()-90 且 ingest_ts::Date -
+    trade_date > 7 的行=250875，迟到回补规模巨大）
+  question: 日线行情近 90 天窗内入库延迟是否受控（入库日期晚于交易日 7 天以上的行数不超过 1000 行）？
+  threshold: SELECT count() FROM c1_market.kline_daily WHERE trade_date >= today()-90
+    AND ingest_ts::Date - trade_date > 7 <= 1000
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 『回填』41 处命中均为既有题的复考前置叙述（如 PQ-0015/0091 等 notes），无一题以 ingest 迟到率为验收对象。
+- candidate_id: S1-018
+  layer: L1
+  status: draft
+  frequency: weekly
+  origin: c1_market.money_flow（probe10：近 90 日窗迟到（>7 天）行数=285052）
+  question: 资金流表近 90 天窗内入库延迟是否受控（入库晚于交易日 7 天以上的行数不超过 1000 行）？
+  threshold: SELECT count() FROM c1_market.money_flow WHERE trade_date >= today()-90
+    AND ingest_ts::Date - trade_date > 7 <= 1000
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 退役 PQ-0113~0115（尾盘主买）用的是 money_flow 数据但结论是预测力；本题是入库时效验收，非预测力翻案。
+- candidate_id: S1-019
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.money_flow（probe7/probe12：GROUP BY symbol,trade_date HAVING count()>1
+    得 88800 组，且 uniqExact(main_net_inflow)=1 证明为同值重复写入）
+  question: 资金流表同键 (symbol, trade_date) 是否存在重复行（88800 组同值重复会在任何按日聚合/因子合成中双倍计入）？
+  threshold: SELECT count() FROM (SELECT symbol, trade_date FROM c1_market.money_flow
+    GROUP BY symbol, trade_date HAVING count()>1) = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0172（SL-A08）判『4460 组重复行全部同值=幂等重采 pass』，对象是单一指数存证序列且值域唯一性已保；本题对象是全市场事实表的行数卫生（聚合膨胀），判据是键唯一性而非值冲突，结论域不同。
+- candidate_id: S1-020
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c3_fundamental.news_data（probe7：news_id 重复组=194859；news_id 是 news_sentiment_score
+    的关联键，重复将使打分连接翻倍）
+  question: 新闻主键 news_id 是否唯一（作为情绪打分表的连接键，194859 组重复 id 会使 join 后样本膨胀）？
+  threshold: SELECT count() FROM (SELECT news_id FROM c3_fundamental.news_data GROUP
+    BY news_id HAVING count()>1) = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（news_id 唯一性无既有考题）。
+- candidate_id: S1-021
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c3_fundamental.consensus_daily（probe7：GROUP BY symbol,trade_date,forecast_year
+    HAVING count()>1 得 17390 组）
+  question: 一致预期日表的主键 (symbol, trade_date, forecast_year) 是否唯一？
+  threshold: SELECT count() FROM (SELECT symbol, trade_date, forecast_year FROM c3_fundamental.consensus_daily
+    GROUP BY symbol, trade_date, forecast_year HAVING count()>1) = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（consensus 仅 3 处命中且为证据引用，无唯一性考题）。
+- candidate_id: S1-022
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.kline_sector_880（既有 PQ-0143/0144 evidence 实测 3599 条 (trade_date,code)
+    重复行与 1953 个板块日刻度重置伪影，results_all.yaml line 6312，且明示『正源修复应走数据线挖矿』）
+  question: 880 板块分钟线表是否已按 PQ-0143/0144 遗留指引完成正源修复：(trade_date, code) 重复行数是否为 0？
+  threshold: SELECT count() FROM (SELECT trade_date, code FROM c1_market.kline_sector_880
+    GROUP BY trade_date, code HAVING count()>1) = 0
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 既有仅为 PQ-0143/0144 evidence 内的发现注记（非注册考题），本题按其指引把『正源修复』立为可机解验收题；板块动量持续性预测题
+    PQ-0039 已退役，本题不涉预测力。
+- candidate_id: S1-023
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.kline_daily（probe7/probe12：GROUP BY symbol,trade_date HAVING count()>1
+    得 113 组，集中在 2026-09-21/09-23 两日的 920 段北交所码，同值重复）
+  question: 日线行情主键 (symbol, trade_date) 是否唯一（当前 113 组重复虽同值，但破坏主键约定且随批量重跑可能扩大）？
+  threshold: SELECT count() FROM (SELECT symbol, trade_date FROM c1_market.kline_daily
+    GROUP BY symbol, trade_date HAVING count()>1) = 0
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 同 S1-019 对 PQ-0172 的区分：本题是行情主表键唯一性，PQ-0172 判据是存证序列值冲突；另 PQ-0012 比率对齐题不含键唯一性。
+- candidate_id: S1-024
+  layer: L1
+  status: draft
+  frequency: static
+  origin: c1_market.kline_daily（probe10：全表 10108162 行 adj_factor 全部=1，countIf(adj_factor!=1)=0；对照
+    adj_factor 表同日真实因子约 1.00x，同键失配 9313778 行）
+  question: kline_daily.adj_factor 列是否承载真实复权因子（当前全表恒为 1 的占位列，与 adj_factor 独立表在同键上失配
+    931 万行——任何直接读该列做复权的消费方都会拿到未复权结果）？
+  threshold: SELECT countIf(adj_factor != 1) FROM c1_market.kline_daily > 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 近邻 PQ-0012（hfq/raw×adj_factor 逐点比率对齐，发现口径分裂）考的是 hfq 生成链与因子链口径；本题考 kline_daily
+    内嵌列的列完整性（死列），对象与判据不同；退役 PQ-0110~0112 是预测力题不相关。
+- candidate_id: S1-025
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.daily_valuation vs kline_daily（probe10：同键 close 差绝对值 >0.005 者
+    116433 行；原始不等值 116891 行，样本显示非四舍五入可解释）
+  question: 估值表与行情主表同键收盘价是否一致（超出 0.005 容差的行数应为 0，当前 116433 行意味着两表至少一表价格口径失真）？
+  threshold: SELECT count() FROM c1_market.daily_valuation v INNER JOIN c1_market.kline_daily
+    k ON v.symbol=k.symbol AND v.trade_date=k.trade_date WHERE abs(v.close-k.close)>0.005
+    = 0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻：跨表同键价格对账类考题在 283 题中未见（line 5542 仅为单表证据叙述）。
+- candidate_id: S1-026
+  layer: L1
+  status: draft
+  frequency: weekly
+  origin: c3_fundamental.consensus_daily_repaired vs consensus_daily（probe10：同键 (symbol,trade_date,forecast_year)
+    eps_consensus 不一致行=78570；repaired 表 2026-09-16 建成，主表未回写）
+  question: 一致预期修复表的修正值是否已回写主表（同键值不一致行应为 0，当前 78570 行意味着主表仍带未修正值、下游读主表即读到错值）？
+  threshold: SELECT count() FROM c3_fundamental.consensus_daily_repaired r INNER JOIN
+    c3_fundamental.consensus_daily m ON r.symbol=m.symbol AND r.trade_date=m.trade_date
+    AND r.forecast_year=m.forecast_year WHERE r.eps_consensus != m.eps_consensus =
+    0
+  min_confidence: 0.85
+  expected_outcome: fail
+  dedup_note: 无近邻（repaired 0 命中）；与 S1-021 互补（键唯一性 vs 值一致性）。
+- candidate_id: S1-027
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.emotion_index（probe8/probe10：stage='auction' 仅 17 行且 max(trade_date)=2026-09-23，close_final
+    段已至 2026-09-24；auction/pre_open 段 2026-09-01 起建）
+  question: 情绪指数新时段（auction/pre_open）管线是否逐交易日连续出数（2026-09-01 起每个 SSE 交易日各 stage 至少
+    1 行）？
+  threshold: SELECT count() FROM (SELECT cal_date d FROM c1_market.trade_calendar
+    WHERE exchange='SSE' AND is_open=1 AND cal_date >= '2026-09-01' AND cal_date <=
+    (SELECT max(trade_date) FROM c1_market.emotion_index WHERE stage='close_final'))
+    WHERE d NOT IN (SELECT trade_date FROM c1_market.emotion_index WHERE stage='auction')
+    = 0
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: emotion 17 处命中均为情绪因子预测题（退役簇 PQ-0037/PQ-0091 同族）；本题是 L3 状态变量管线出数连续性，不涉预测力。
+- candidate_id: S1-028
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.sector_state（probe8：stage='pre_open' 仅 469 行且全部落在 2026-09-23 单日；close_final
+    段 2022-09-01 起连续）
+  question: 板块状态表 pre_open 时段是否已形成逐日出数（自首发日起累计出数交易日是否达到同期交易日数，当前仅 1 日像试点残留）？
+  threshold: SELECT uniqExact(trade_date) FROM c1_market.sector_state WHERE stage='pre_open'
+    >= 15
+  min_confidence: 0.8
+  expected_outcome: fail
+  dedup_note: 无近邻（sector_state 0 命中）；与 S1-027 分表分立（emotion vs sector_state）。
+- candidate_id: S1-029
+  layer: L1
+  status: draft
+  frequency: quarterly
+  origin: c3_fundamental.income_statement（probe11：report_period='2026-06-30' 覆盖 uniqExact(symbol)=5217，max(announce_date)=2026-09-02，半年报截止
+    2026-08-31 后仅个别晚披）
+  question: 2026 年中报利润表披露覆盖是否达标（期末日 2026-06-30 的 report_period 覆盖在市股票数不低于 5100 只）？
+  threshold: SELECT uniqExact(symbol) FROM c3_fundamental.income_statement WHERE report_period='2026-06-30'
+    >= 5100
+  min_confidence: 0.85
+  expected_outcome: pass
+  dedup_note: 无近邻：财报覆盖完整性考题未见（PQ-0202 是股东户数哨兵，PQ-0122~0124 是 PEAD 预测题已退役）。
+- candidate_id: S1-030
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c3_fundamental.news_sentiment_score（probe9：7733898 行中 countIf(scored_at
+    < publish_time)=0，打分时点全部晚于发布时点，PIT 顺序零违规）
+  question: 新闻情绪打分的时点因果序是否全量合规（scored_at 早于 publish_time 的行应为 0，任何此类行意味着打分先于新闻存在、不可用于
+    PIT）？
+  threshold: SELECT countIf(scored_at < publish_time) FROM c3_fundamental.news_sentiment_score
+    = 0
+  min_confidence: 0.9
+  expected_outcome: pass
+  dedup_note: 无近邻（sentiment 表仅有 PQ-0015 复考前置的回填叙述）；与 S1-012 互补（连续性 fail 面 + 顺序合规 pass
+    面）。
+- candidate_id: S1-031
+  layer: L1
+  status: draft
+  frequency: static
+  origin: c1_market.kline_daily_hfq_quarantine_20260925 vs kline_daily_hfq（probe9：隔离表
+    10475 键与主表交集=0，隔离语义成立——被隔离数据确实未混入主表）
+  question: 后复权隔离表语义是否成立：quarantine 表中的 (symbol, trade_date) 键不得同时存在于主表（隔离=确认不入库）？
+  threshold: SELECT count() FROM c1_market.kline_daily_hfq_quarantine_20260925 q LEFT
+    ANTI JOIN c1_market.kline_daily_hfq m ON q.symbol=m.symbol AND q.trade_date=m.trade_date
+    = 10475 AND (SELECT count() FROM c1_market.kline_daily_hfq_quarantine_20260925
+    q INNER JOIN c1_market.kline_daily_hfq m ON q.symbol=m.symbol AND q.trade_date=m.trade_date)
+    = 0
+  min_confidence: 0.85
+  expected_outcome: pass
+  dedup_note: index_valuation_daily_quar_20260920 的隔离仅有事故注记（line 6435，指数表）；本题对象是 2026-09-25
+    hfq 重建的隔离表，不同对象，且考的是隔离不变量本身。
+- candidate_id: S1-032
+  layer: L1
+  status: draft
+  frequency: daily
+  origin: c1_market.emotion_index / c1_market.sector_state（probe11：emotion_index 同
+    trade_date+stage 重复组=0；sector_state 同 trade_date+stage+sector_code 重复组=0）
+  question: L3 状态变量两表的主键唯一性是否成立（同一交易日同一 stage 的情绪值/板块状态值必须唯一，否则下游读到歧义快照）？
+  threshold: SELECT (SELECT count() FROM (SELECT trade_date, stage FROM c1_market.emotion_index
+    GROUP BY trade_date, stage HAVING count()>1)) + (SELECT count() FROM (SELECT trade_date,
+    stage, sector_code FROM c1_market.sector_state GROUP BY trade_date, stage, sector_code
+    HAVING count()>1)) = 0
+  min_confidence: 0.9
+  expected_outcome: pass
+  dedup_note: 无近邻（sector_state 0 命中；emotion 命中均为预测题）。

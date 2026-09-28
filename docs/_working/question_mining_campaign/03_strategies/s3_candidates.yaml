@@ -1,0 +1,324 @@
+# =============================================================================
+# S3 策略面挖矿草稿册（PQ-0284+ 候选池）
+# 挖矿代理: S3+S4 挖矿代理（st-pqmine-20260927 战役）
+# 日期: 2026-09-27
+# 格式: 对标 docs/_working/meta_question_answers/results/results_all.yaml 五要素
+#       （layer/status/frequency/origin/outcome + 题面 + 可机解 threshold + min_confidence）
+# 纪律: 草稿非注册；注册须经 90_consolidated 去重 + 质量闸 + registry.py 正门 intake
+# 去重基线: results_all.yaml 283 题 + gaps/RETIREMENT_REGISTER.md 退役 30 题（禁同义）
+# ==============================================================================
+meta:
+  campaign: question_mining_20260927
+  source_lane: S3_strategies
+  candidate_count: 13
+  id_range: S3-001..S3-013
+  dedup_baseline:
+    results_all: docs/_working/meta_question_answers/results/results_all.yaml (283)
+    retired: docs/_working/meta_question_answers/gaps/RETIREMENT_REGISTER.md (30)
+  key_ore_veins:
+    - strategy_registry.yaml 161 策略字段填充率实测（risk_rules 0/161、exit_logic 15/161、
+      capacity_aum_limit 0/161、last_decay_scan_at 0/161、regime_valid 43/161、双 sim 条目）
+    - 成本三口径并存实锤（CST-ASTOCK-001 万0.854/5bp/1bp vs f06 冻结 2.5/10/5bp vs exam_policy 禁硬编码）
+    - 组合层宪章 DSR N 未落账事故（145 条台账冻结 + 重放 Sharpe 0.983→1.15 数据漂移）
+    - FAC-E0..E9 工厂图 build_status 与 registry lifecycle 交叉
+    - data/backtest_artifacts/runs/ 154 个 run 目录
+
+candidates:
+
+  # ── ① 可复现性 ────────────────────────────────────────────────────────────
+  - candidate_id: S3-001
+    title: 策略 evidence 引用的 run 台账落盘完整率
+    question: >
+      strategy_registry 中全部 lifecycle_status∈{backtest,sim} 且 evidence 含 run= 引用的策略条目
+      （当前 10 条，含 STR-E-TIMING-001 引 SCR-C4-OOS2-20260913、STR-VREV-025 引
+      SCR-C4-20260913-002056 等），其引用的每个 run_id 是否都在 data/backtest_artifacts/runs/
+      落盘且目录内含可机读净值/判定产物（非空目录+结果文件存在）？
+      若 evidence 只引 run 号而盘上无产物，则登记 evidence 不可回查=登记债。
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:148
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:12228
+      - config/strategy_production_map.yaml:283
+    outcome: 落盘率=100% 判 pass；任一 run_id 缺失或空目录判 fail(infra)
+    threshold: "落盘率=100%（evidence 解析出的 run_id 全集 ⊆ runs/ 实存目录集，且每目录含 ≥1 个非空结果文件）；违例数=0"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0044 考 strategy_screen 通过率（PG 表），本题考 evidence→run 目录盘面回查链，对象不同；PQ-0104/0109 考 space_hash 预注册台账（E1C），不同载体"
+      vs_retired: "退役 30 题均为因子/信号预测力 fail，无 run 台账存在性题，非同义"
+    probe_hint: "正则解析 evidence 'run=([A-Za-z0-9_-]+)' 全集 → ls data/backtest_artifacts/runs/ 对账（实测现有 154 目录）"
+
+  - candidate_id: S3-002
+    title: sim 策略同参数重放净值一致性（数据漂移前科复检）
+    question: >
+      对 STR-VREV-025（恐慌反弹翻译件，sim）：以其 evidence 声明的固定参数（双日跌幅阈值
+      -1.5%/-1.4%、持有 19 交易日、000852 指数替代、冻结成本档）与归档 run 产物重放回测，
+      净值曲线与归档净值是否逐日一致？组合层宪章已实锤前科——同代码重放 Sharpe 0.983→1.15
+      的数据层漂移（2026-09-14 宪章 §11.2），本题对该 sim 策略作同等复检。
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:12197
+      - docs/_working/2026-09-14-combination-layer-exhaustive-charter.md:173
+    outcome: 可复现(逐日一致)判 pass；不可复现判 fail(可复现性)，并量化漂移幅度
+    threshold: "重放净值 vs 归档净值逐日相对差 |Δ|≤0.5% 的交易日占比=100%，且 Sharpe 偏差≤0.02；任一破线判不可复现"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0091 是动量+情绪择时对比回测（新回测结论），本题是既有归档 run 的重放对账（复现性审计），不产生新 alpha 主张；S3-001 只查目录存在性，本题查数值一致性，递进不重复"
+      vs_retired: "退役册禁的是改参数重跑翻案；本题重放用原参数原窗且判据=复现偏差非预测力，合法且非同义"
+    probe_hint: "读 SCR-C4-* run 目录参数 manifest → 复用 scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py 重放 → 逐日 diff"
+
+  # ── ② 成本敏感性 ─────────────────────────────────────────────────────────
+  - candidate_id: S3-003
+    title: sim 策略成本敏感性带宽（±1bp 符号翻转检验）
+    question: >
+      对 STR-VREV-025 在三档成本假设下重放：①E4 冻结土规成本（佣金 2.5bp 双边+印花 10bp 卖+
+      滑点 5bp，f06:640）②CST-ASTOCK-001 登记成本（万0.854 佣金+5bp 印花+1bp 滑点）③各档
+      ±1bp 滑点扰动。十年仅约 15 笔、在市 10% 的低频策略，其 OOS Sharpe=0.83 结论对成本档
+      的敏感带宽是多少？最低成本档到最高成本档之间年化收益/Sharpe 是否符号翻转？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - scripts/backtest/f06_e4_wfa_exam.py:640
+      - docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml:80
+      - docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml:92
+    outcome: 给出 6 档（2 基准×±1bp）费后年化与 Sharpe 表；任一档符号翻转即披露翻转临界 bp
+    threshold: "机械产出 6 档指标矩阵；判据=Sharpe(E4档-1bp) 与 Sharpe(E4档+1bp) 同号且 |ΔSharpe|≤0.1 判稳健 pass，出现符号翻转或 |ΔSharpe|>0.1 判成本敏感 fail"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0053 是焊成本滑点校准偏差（sim_trade_log vs 回执，insufficient 零样本），本题是策略级成本档敏感性带宽度量，判据与对象均不同；PQ-0145 是 SL-A03 U6 轮动扣费后超额重放（单档固定 0.3%），非敏感性带宽"
+      vs_retired: "退役题为因子 IC 预测力；本题只测同一策略对成本参数的稳健性，非同义亦非翻案"
+    probe_hint: "复用 c4 引擎成本参数化接口，固定其余参数仅变成本三数"
+
+  - candidate_id: S3-004
+    title: E4 考试冻结成本与登记成本模型对账（三口径矛盾实证）
+    question: >
+      项目并存三个成本口径：①CST-ASTOCK-001（登记册 active，佣金 0.854bp+印花 5bp+滑点 1bp，
+      被 3 个 sleeve 策略 cost_model_id 引用）②f06_e4_wfa_exam.py:640 冻结土规成本
+      （2.5bp+10bp+5bp）③exam_policy §2'费率读实际账户配置禁硬编码'。三者两两不等
+      （单边合计 6.354bp vs 17.5bp vs 账户实配）。题：全部已完成 E4 考试并晋升 backtest/sim
+      的策略，其考试所用成本口径与该策略 registry cost_model_id 引用模型机械对账，
+      口径漂移条目数是多少？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:35
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:43
+      - scripts/backtest/f06_e4_wfa_exam.py:640
+      - docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml:99
+    outcome: 口径一致判 pass；现状预期 10/10 策略考试口径(17.5bp)≠登记口径(6.354bp) 判 fail(infra)
+    threshold: "对账不一致数=0 判 pass；≥1 判 fail（每条不一致须列：策略 id、考试口径三数、登记口径三数、差值 bp）"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0107 考 E1C 三轨统一考尺配置快照不存在（insufficient），对象=E1C 组合层预注册空间；本题对象=E4 已考策略成本口径对账，不同环节不同载体"
+      vs_retired: "与退役 30 题无关；登记债/口径漂移类 infra 题不涉预测力主张"
+    probe_hint: "yaml.safe_load cost_model_registry 取 CST-ASTOCK-001 components 三数 vs f06:640 字面量 vs strategy_registry cost_model_id 引用图"
+
+  # ── ③ regime 适应性 ──────────────────────────────────────────────────────
+  - candidate_id: S3-005
+    title: regime_valid 标注的证据支撑率（无状态分解=降级档纪律执行）
+    question: >
+      strategy_registry 161 条中 43 条 regime_valid 非空，但 exam_policy §2.3 规定每正考报告
+      MUST 附分状态桶指标与'什么状态下有效'结论，无状态分解的报告按'无条件证据档'降级收录。
+      题：非空 regime_valid 条目的标注是否全部能指到分桶回测证据（evidence 字段引用或 run 目录
+      产物中的分桶表）？无支撑的 regime_valid 标注即属装饰性标注=登记债。
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:116
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:37
+    outcome: 证据支撑率=100% 判 pass；现状预期多数条目无分桶证据（151 条 candidate 大多未回测）判 fail(登记债)
+    threshold: "有分桶证据支撑的 regime_valid 条目占比=100% 判 pass；每条无支撑条目列 id+regime_valid 值+证据缺口；支撑率<100% 判 fail(登记债)"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0081/0046 等是波动状态/转移矩阵因子本身（已退役簇），本题是 registry 标注字段的证据链审计，不主张任何状态因子预测力"
+      vs_retired: "PQ-0031（月度转移矩阵 CI 半宽）、PQ-0081（波动半衰期）退役不涉本题；本题非同义"
+    probe_hint: "43 条非空 regime_valid 清单 → 逐条 evidence 字段与 run 目录产物 grep 分桶关键词（regime/桶/状态）"
+
+  # ── ④ 风控闸接线 ─────────────────────────────────────────────────────────
+  - candidate_id: S3-006
+    title: 风控限额真源在回测/考试路径的接线断链（risk_rules 0/161 实证）
+    question: >
+      REG-RLM-001 风控限额库 117+ 条九类限额，strategy_registry.risk_rules 字段（schema 定义
+      'risk_limit_id 列表'）161 条全部为空，且 grep 实证 risk_limit_registry.yaml 仅被
+      dashboard api_server / 治理门禁 / decision_map 交叉轴引用，src/zephyr/backtest 与
+      scripts/backtest 回测执行链零引用。题：风控限额真源到回测/考试路径的调用锚点是否存在？
+      策略声明的风控规则是否真的进过任何一次回测判定？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:50
+      - docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml:1
+      - config/strategy_production_map.yaml:270
+    outcome: 存在接线锚点判 pass；现状预期回测链 0 锚点+字段 0 填充 判 fail(infra 断链)
+    threshold: "回测执行链（src/zephyr/backtest/**+scripts/backtest/**）中读取 risk_limit_registry 或 strategy.risk_rules 的调用锚点数≥1，且至少 1 个已考策略回测产物含风控约束生效记录；现状双零判 fail"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0049 考'单因子组合权重上限15%'约束在 pf_alloc 的定位（insufficient），PQ-0094 考标的层 5% 硬限与板块上限在 pf_alloc 的实现；本题考 REG-RLM-001→回测引擎的 registry 消费接线，真源与路径均不同"
+      vs_retired: "无涉预测力；与退役 30 题零交集"
+    probe_hint: "grep -rn 'risk_limit' src/zephyr/backtest scripts/backtest（实测 0 命中）；对照 src/zephyr/risk/ 有本地 risk_limits.py 实现但非 registry 消费"
+
+  - candidate_id: S3-007
+    title: sim/backtest 状态策略的风控字段齐备率（E7 前哨施工前置）
+    question: >
+      strategy_registry 中 lifecycle_status∈{backtest,sim} 的 10 条策略 risk_rules 全空、
+      exit_logic 仅部分非空、position_sizing 仅 4/161 非空。FAC-E7 模拟盘前哨（施工缺位）
+      的准入前提=策略带完整入场+出场+仓位+风控四件套（registry 头部 description 自我声明
+      '策略=入场+出场+仓位+风控的完整交易逻辑'）。题：10 条已考策略的四件套齐备率是多少？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:24
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:50
+      - config/strategy_production_map.yaml:323
+    outcome: 齐备率=100% 判 pass；现状预期显著缺件 判 fail(登记债)，缺口清单逐条列
+    threshold: "四件套（entry_logic∧exit_logic∧position_sizing∧risk_rules 全非空）齐备率=100%（10/10）判 pass；每缺一件计 1 缺口，齐备率<100% 判 fail(登记债)"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0044 考 strategy_screen 通过率；本题考 registry 字段四件套齐备率，对象不同。S3-006 考限额真源接线（registry 侧消费），本题考策略条目自身字段完整性（registry 侧登记），互补不重复"
+      vs_retired: "字段齐备率题，与预测力退役题零交集"
+    probe_hint: "yaml.safe_load 后过滤 lifecycle_status∈{backtest,sim}，逐条四字段空判"
+
+  # ── ⑤ 策略间相关性与去重 ─────────────────────────────────────────────────
+  - candidate_id: S3-008
+    title: 注册表内语义重复条目检测（恐慌反弹双胞胎实证）
+    question: >
+      STR-E-TIMING-001（llm_assisted，持有 20 日）与 STR-VREV-025（C4 翻译件，持有 19 日）
+      登记同一恐慌反弹逻辑：同双日跌幅阈值（≤-1.5% 且 ≤-1.4%）、同标的（中证1000）、同价值
+      反转类、variant_of 均 null、双方 evidence 互相引用同一 run 台账（SCR-C4-OOS2-20260913 /
+      CAND-e3da6fa71af1）。题：注册表内同 strategy_class 下 entry_logic 关键参数元组
+      （信号阈值+标的+持有期）语义等价的条目组数是多少？宪法 §4 内收判据'同真源可派生→必并'
+      是否被违反？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:129
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:12197
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:132
+    outcome: 重复组=0 判 pass；现状预期≥1 组 判 fail(登记债+净零违例)，处置=合并或 variant_of 挂接
+    threshold: "参数元组（双日阈值,标的,持有期±1 日,策略类）全等的条目组数=0 判 pass；≥1 组判 fail，每组列成员 id 与差异字段（如 20 vs 19 日）"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0002 是 meta_question 表标题归一化去重（治理面），本题是策略注册表业务语义去重（参数元组级），对象与口径均不同"
+      vs_retired: "注册表去重题，非信号预测力题，非同义"
+    probe_hint: "解析 entry_logic 正则抽取 (-1.5%|-1.4%|中证1000|持有\\d+交易日) 元组 → 全对分组"
+
+  - candidate_id: S3-009
+    title: 已考策略两两收益相关矩阵（E8 组装 ρ<0.7 闸的前置数据）
+    question: >
+      E8 组装/F73 A/B 联赛声明 ρ>0.7 相关性闸，但其输入=各 sleeve 策略净值。当前 10 条
+      backtest/sim 策略中可重放出净值序列者，两两日收益 Spearman ρ 矩阵是否存在且全部 <0.7？
+      STR-E-TIMING-001 与 STR-VREV-025 预期 ρ≈1（同一逻辑双登记），若属实则 E8 的相关性闸
+      输入数据在源头即不成立。
+    layer: strategy
+    status: candidate
+    frequency: monthly
+    origin:
+      - config/strategy_production_map.yaml:343
+      - docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md:133
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:129
+    outcome: 全对 ρ<0.7 判 pass；任一对 ρ≥0.7 判 fail 并触发合并/分仓降权登记
+    threshold: "可重放策略两两 Spearman ρ 最大值<0.7 判 pass；≥0.7 的策略对数≥1 判 fail（逐对列 ρ 值与共享因子暴露）"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0106 考合并闸阈值口径（Pearson 0.85 vs 题面 Spearman 0.7 不一致，insufficient 无运行账）；本题考闸的输入数据本体（策略对 ρ 实测矩阵），是 0106 指出'无运行账'之后的首次实测题，非同义"
+      vs_retired: "相关性矩阵题不涉单因子预测力，与退役题零交集"
+    probe_hint: "重放净值（或读 run 目录净值产物）→ pandas DataFrame 两两 spearman"
+
+  # ── 衰减/容量/标签纪律 ────────────────────────────────────────────────────
+  - candidate_id: S3-010
+    title: E6 衰减扫描空转（decay_scan_frequency 160 填充 vs last_decay_scan_at 0 执行）
+    question: >
+      strategy_registry 161 条中 decay_scan_frequency 160/160 填充（active=monthly 等），
+      但 decay_detection_method/decay_threshold/last_decay_scan_at 全部 0/161——即扫描频率
+      登记了、扫描从未发生过。FAC-E6 入库监控 build_status=built（MOD-BT-078 台账只增+
+      oos_years_decay≥0.5 判存疑）。题：E6 声明的衰减扫描对 registry 策略的执行痕迹
+      （last_decay_scan_at 回写或独立扫描台账）是否存在？
+    layer: strategy
+    status: candidate
+    frequency: monthly
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:99
+      - config/strategy_production_map.yaml:305
+    outcome: 存在执行痕迹判 pass；现状预期 0 痕迹 判 fail(infra 空转)——登记了频率但零执行
+    threshold: "last_decay_scan_at 非空条目数 ≥1 或存在含策略衰减扫描记录的独立台账（路径+非空）判 pass；双零判 fail(空转)"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0044 考 E4 screen 通过率（入考环节），本题考 E6 衰减巡检执行痕迹（入库后监控环节），工厂位次不同；PQ-0108 考新鲜窗重考队列（meta_question 面），不同对象"
+      vs_retired: "监控空转题，非预测力题"
+    probe_hint: "yaml 字段统计（实测 last_decay_scan_at 0/161）+ find data/backtest_artifacts -name '*decay*'"
+
+  - candidate_id: S3-011
+    title: 已考策略容量三件套登记债（G9 容量门禁字段全空）
+    question: >
+      registry v1.20.0 新增容量字段：capacity_aum_limit（按 5% ADV 估算）0/161 填充、
+      baseline_trade_frequency 0/161、participation_rate_limit 与 market_impact_model 160/160
+      填充但为默认占位。FAC-E8 资金分配与 FAC-E7 滑点/容量实测都以容量参数为输入。
+      题：10 条 backtest/sim 策略的容量三件套真实齐备率是多少？占位默认值冒充登记值吗？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:94
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:97
+      - config/strategy_production_map.yaml:328
+    outcome: 真实齐备率=100% 判 pass；现状预期 0 判 fail(登记债)
+    threshold: "capacity_aum_limit>0 ∧ participation_rate_limit∈(0,0.10] 且非全表同值占位 ∧ market_impact_model≠'none' 三者齐备的策略数=10/10 判 pass；否则 fail 并逐条列缺口"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0089 考 inverse-vol 风险预算规则样本外回测（零样本 insufficient），本题考容量字段登记完整性与占位值判别，不同对象"
+      vs_retired: "容量登记题，与预测力退役题零交集"
+    probe_hint: "yaml 统计 + participation_rate_limit 值分布（若 160 条同值=占位实证）"
+
+  - candidate_id: S3-012
+    title: 日线级结论暂定档标签纪律执行率（adj_factor 断供 vs registry evidence）
+    question: >
+      exam_policy §4 实查认定 kline_daily.adj_factor 恒 1（复权链断供），规定一切日线结论
+      MUST 带'暂定（复权链断供）'标签、禁当最终档引用或升级。但 strategy_registry 中
+      STR-VREV-025 baseline_sharpe=0.83、STR-E-TIMING-001 evidence 三窗 Sharpe 等日线级结论
+      均未带暂定标签（全 registry grep '暂定' 实证）。题：registry 与已归档考试判定书中
+      日线级结论的暂定档标签覆盖率是多少？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:48
+      - docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md:49
+      - docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml:12228
+    outcome: 标签覆盖率=100% 判 pass；现状预期 0 判 fail(纪律违例)
+    threshold: "含日线级 Sharpe/收益结论的 registry 条目与判定书中带'暂定（复权链断供）'标签的比例=100% 判 pass；现状 0/N 判 fail(纪律违例)，N=日线级结论条目数"
+    min_confidence: 0.8
+    dedup_check:
+      vs_results: "PQ-0012/0131 是复权数据链路本身的违例审计（hfq 重算 45.4% 违例，数据面）；本题是结论标签纪律在 registry/判定书的执行率（治理面），同一根源不同审计对象"
+      vs_retired: "标签纪律题，非预测力题"
+    probe_hint: "grep '暂定' strategy_registry.yaml（预期 0 命中）+ baseline_sharpe 非空条目清单"
+
+  - candidate_id: S3-013
+    title: DSR 台账 145 条冻结解冻前置三件套完成度（N 账本重建）
+    question: >
+      组合层宪章 2026-09-15 裁定：存量 145 条台账 DSR 因'N 未落账批间不可比+数据漂移不可复现
+      +solo 零折减虚高'冻结，解冻硬前置=N 账本（累计口径+落台账字段）重建+DSR 口径三步走+
+      阴性库 schema（死亡层+死因），且 DSR 开关只对新批次开启。题：至今三件前置的施工证据
+      （N 计数器代码锚+台账 N 字段 DDL/落账+存量重算回填率）现状如何？
+    layer: strategy
+    status: candidate
+    frequency: one_off
+    origin:
+      - docs/_working/2026-09-14-combination-layer-exhaustive-charter.md:173
+      - docs/_working/2026-09-14-combination-layer-exhaustive-charter.md:218
+      - docs/_working/2026-09-14-combination-layer-exhaustive-charter.md:224
+    outcome: 三件全落地判 pass（145 条解冻合法）；任一缺位判 insufficient（前置未成，禁硬答 DSR 数）
+    threshold: "①N 计数器代码锚 grep 命中≥1 ②台账含 N 字段（DDL/表结构实证）③存量 145 条 N 重算回填率=100%——三项全真判 pass；任一假判 insufficient 并列缺项"
+    min_confidence: 0.7
+    dedup_check:
+      vs_results: "PQ-0104 考 space_hash 预注册空间台账/N_eff 估计账不存在（E1C 空间登记面）；本题考 DSR 试验次数 N 账本与存量重算（考试统计口径面），载体与判据不同；PQ-0098 考 IC 类考试功效与降阈值事件（meta_question 面），不同"
+      vs_retired: "DSR 统计基建题，非预测力主张；非改参数翻案"
+    probe_hint: "grep -rn 'n_ledger\\|N_eff\\|variance_trials' src/zephyr/backtest scripts/backtest + 台账表结构实查"
