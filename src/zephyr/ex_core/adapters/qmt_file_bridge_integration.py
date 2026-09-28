@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.adapters.qmt_file_bridge_integration
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.local_order_queue; zephyr.ex_core.order_manager; zephyr.ex_core.adapters.qmt_file_bridge_quote; zephyr.ex_core.execution_report_producer(断点E4生产端)
+# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.local_order_queue; zephyr.ex_core.order_manager; zephyr.ex_core.adapters.qmt_file_bridge_quote; zephyr.ex_core.execution_report_producer(断点E4生产端); zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed(TRD-A10 告警落点, 函数内延迟导入仅 sim)
 # [CONSUMERS] zephyr.ex_core.qmt_trading_session; scripts.construction.test_qmt_file_bridge_e2e
 # [STARTUP] manual
 # [MATURITY] draft
-# [INVARIANTS] 双实例物理隔离(enable_real/enable_sim); 装配即注册; 连接即启动同步+队列; execution_report 生产端默认接线(断点E4闭合, configure_execution_report 可关/可注入 writer)
+# [INVARIANTS] 双实例物理隔离(enable_real/enable_sim); 装配即注册; 连接即启动同步+队列; execution_report 生产端默认接线(断点E4闭合, configure_execution_report 可关/可注入 writer); TRD-A10 告警出口仅 sim 接通知板, real 恒传 None(实盘零变更)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -43,6 +43,42 @@ from zephyr.ex_core.order_manager import OrderManager
 from zephyr.governance.adapters.risk_validation_bridge import RiskValidationPort
 
 _logger = logging.getLogger(__name__)
+
+
+def build_bridge_alert_sink(env: str):
+    """TRD-A10 丢弃/竞态告警出口装配（**仅 sim 接线；real 返回 None=实盘腿零行为变更**）。
+
+    落点=本仓今天真在用的运营通知板 `OpsAlertFeed`（JSONL + CAS 写，
+    前端 `frontend/dashboard/api_server.py` 读）——**不复活已删除的 feishu/SMTP 通道**
+    （本仓告警通道已收敛到前端页，见 00 宪法 §9 与三件基建方案册）。
+    静默窗由 OpsAlertFeed.publish 自带（同 key 300s 内只刷新不重复），故此处不再造去重。
+    延迟导入：装配层不在导入期依赖 system_telemetry，避免 ex_core↔基础设施的导入环。
+    """
+    if env != "sim":
+        return None
+
+    from zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed import OpsAlertFeed
+
+    feed = OpsAlertFeed(module_id=f"qmt-file-bridge-{env}")
+
+    def _sink(payload: dict) -> None:
+        event = str(payload.get("event", "unknown"))
+        remark = str(payload.get("remark", ""))
+        feed.publish(
+            key=f"trd-a10-{event}-{remark}",
+            severity="error",
+            title=f"桥客户端拒单/护栏告警（{event}）",
+            message=str(payload.get("reason", "")),
+            source=f"qmt_file_bridge_broker:{payload.get('broker_id', env)}",
+            labels={
+                "event": event,
+                "order_id": str(payload.get("order_id", "")),
+                "remark": remark,
+                "env": env,
+            },
+        )
+
+    return _sink
 
 
 class QmtFileBridgeAssembly:
@@ -142,6 +178,8 @@ class QmtFileBridgeAssembly:
                 env=env,
                 sync_interval=self._sync_interval,
                 risk_validator=self._risk_validator if env == "sim" else None,
+                # TRD-A10：丢弃/竞态告警只在 sim 接通知板；real 传 None=实盘零变更
+                alert_sink=build_bridge_alert_sink(env),
             )
             # 成交回调接线：broker → OrderManager._on_fill
             broker.register_fill_callback(self._order_manager._on_fill)
