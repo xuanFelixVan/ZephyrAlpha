@@ -2428,7 +2428,7 @@ nodes:
 
   # ── D31 L4 补缺：订单生命周期状态机/部分成交处理/订单级预检/执行容灾对账（OMS 标准件）──
 - node_id: TDM-E-L4-10
-  note_confirmed: 2026-09-18
+  note_confirmed: 2026-09-28
   name_zh: 订单生命周期状态机
   market: cn_a
   flow: entry_flow
@@ -2439,7 +2439,7 @@ nodes:
     每笔订单当前处于九态的哪一态（New/PendingNew/Accepted/Partial/Filled/PendingCancel/Cancelled/Rejected/Expired）
   algo_note_zh: >-
     订单九态机：New/PendingNew/PartiallyFilled/Filled/Cancelled/PendingCancel/Rejected/Expired/Suspended。
-    每态有明确的超时与重试策略（如 PendingNew>3 秒重发确认）。    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_execution_core/algo_flow/order_manager.yaml：算法推导图外迁，算法口径不变）
+    每态有明确的超时与重试策略（如 PendingNew>3 秒重发确认）。    （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_execution_core/algo_flow/order_manager.yaml：算法推导图外迁，算法口径不变）    （2026-09-28 F62 P0-10 模拟侧执法接线：submit 前合规闸链 _check_compliance_gates 增至五闸，新增程序化报备闸 registration_guard.check_can_trade 与信息空窗回避闸 avoidance_detector.avoid_symbols，None=跳过、守卫/检测异常=Fail-Closed 拒单，SIMULATION 模式报备天然豁免）
   parent_node: TDM-E-L4
   factor_refs: []
   data_refs: []

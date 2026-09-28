@@ -110,12 +110,20 @@ from zephyr.compliance.discipline_prohibition_checker import (  # noqa: E402
 from zephyr.compliance.manipulation_realtime_monitor import (  # noqa: E402
     ManipulationRealtimeMonitor,
 )
+from zephyr.compliance.info_asymmetry_manipulation_detector import (  # noqa: E402
+    InfoAsymmetryManipulationDetector,
+)
 from zephyr.ex_core.async_fill_dispatcher import AsyncFillDispatcher  # noqa: E402
 from zephyr.ex_core.cancel_rate_guard import CancelRateGuard  # noqa: E402
 from zephyr.ex_core.live_strategy_adapter import LiveStrategyAdapter, StrategySlot  # noqa: E402
 from zephyr.ex_core.order_manager import OrderManager  # noqa: E402
 from zephyr.ex_core.position_reconciler import PositionReconciler  # noqa: E402
 from zephyr.ex_core.position_tracker.tracker import PositionTracker  # noqa: E402
+from zephyr.ex_core.programmatic_trading_guard import (  # noqa: E402
+    ProgrammaticTradingGuard,
+    ProgrammaticTradingGuardConfig,
+    TradingMode as RegistrationTradingMode,
+)
 from zephyr.ex_core.risk_layer_orchestrator import RiskLayerConfig, RiskLayerOrchestrator  # noqa: E402
 from zephyr.ex_core.signal_providers import make_mock_price_provider, make_mock_signal_provider  # noqa: E402
 from zephyr.ex_core.trading_session import DisciplineCtxProvider, TradingSession, TradingSessionConfig  # noqa: E402
@@ -705,10 +713,23 @@ def assemble_session(
     declaration_guard = CancelRateGuard()
     report_gate = ReportGate()
     manipulation_monitor = ManipulationRealtimeMonitor()
+    # F62 P0-10（2026-09-28，st-zcloseout）第四/五道闸：程序化报备闸（SIMULATION
+    # 豁免语义=模拟盘天然放行、零行为变化；模式一旦 LIVE 且未报备即拒发保险丝）
+    # + 信息空窗操纵回避名单闸（空披露登记=空名单=零误拒，scan/register_disclosure
+    # 进入即执法）。None=跳过口径，守卫/检测异常=Fail-Closed 拒单（order_manager 闸链）。
+    registration_guard = ProgrammaticTradingGuard(
+        config=ProgrammaticTradingGuardConfig(
+            mode=RegistrationTradingMode.SIMULATION,
+            live_broker_ids={_BROKER_ID},
+        ),
+    )
+    avoidance_detector = InfoAsymmetryManipulationDetector()
     order_manager = OrderManager(
         report_gate=report_gate,
         declaration_guard=declaration_guard,
         manipulation_monitor=manipulation_monitor,
+        registration_guard=registration_guard,
+        avoidance_detector=avoidance_detector,
     )
     # 冻结集合只由报单/撤单/成交事件喂入，不 attach 就等于没接这道闸（43 号 §10 被动观察边界）
     manipulation_monitor.attach_order_manager(order_manager)

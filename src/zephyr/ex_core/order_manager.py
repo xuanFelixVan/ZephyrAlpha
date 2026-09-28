@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.order_manager
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry; zephyr.compliance.manipulation_realtime_monitor(TYPE_CHECKING 预接线); zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry; zephyr.compliance.manipulation_realtime_monitor(TYPE_CHECKING 预接线); zephyr.ex_core.programmatic_trading_guard(TYPE_CHECKING 预接线); zephyr.compliance.info_asymmetry_manipulation_detector(TYPE_CHECKING 预接线); zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.foundation.errors
 # [CONSUMERS] zephyr.compliance.manipulation_realtime_monitor(订单事件/fill 回调消费+is_frozen 闸抛转)
 # [STARTUP] imported
 # [MATURITY] production
@@ -46,6 +46,11 @@ C-002 执行域合规门禁（2026-08-15 AI-ASM-001 装配批接线，43_complia
      manipulation_monitor（MOD-CMP-018）is_frozen(symbol) 命中冻结 →
      ComplianceGateBlockError 拒发新申报（既有闸抛转，不新建执行通道）；
      监测失效 → Fail-Closed 拒发（43 号 §7.6）。
+  4/5. 程序化报备闸（40 号 §决策⑱）+ 信息空窗回避闸（MOD-CMP-014）——F62 P0-10
+       模拟侧接线（2026-09-28 st-zcloseout）：registration_guard.check_can_trade
+       blocked → 拒发（SIMULATION/PAPER 模式天然豁免，LIVE 未报备即保险丝）；
+       avoidance_detector 回避名单命中 → 拒发（INFO_ASYMMETRY_AVOIDED）；
+       守卫/检测异常 → Fail-Closed 拒发。None=未注入不影响既有行为。
   订单事件流（A8 批接线）：submit_order 券商确认后与 cancel_order 撤单终态后
   经 _order_callbacks 发射订单事件（被动观察，回调异常隔离不阻断主链），
   供盘中操纵实时监测消费委托流；fill 事件经既有 register_fill_callback 链。
@@ -78,7 +83,9 @@ from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 if TYPE_CHECKING:
+    from zephyr.compliance.info_asymmetry_manipulation_detector import InfoAsymmetryManipulationDetector
     from zephyr.compliance.manipulation_realtime_monitor import ManipulationRealtimeMonitor
+    from zephyr.ex_core.programmatic_trading_guard import ProgrammaticTradingGuard
 
 _logger = logging.getLogger(__name__)
 
@@ -155,6 +162,8 @@ class OrderManager:
         report_gate: ReportGate | None = None,
         declaration_guard: CancelRateGuard | None = None,
         manipulation_monitor: ManipulationRealtimeMonitor | None = None,
+        registration_guard: ProgrammaticTradingGuard | None = None,
+        avoidance_detector: InfoAsymmetryManipulationDetector | None = None,
     ):
         self._brokers = brokers or {}
         self._orders: dict[str, Order] = {}
@@ -169,6 +178,12 @@ class OrderManager:
         self._declaration_guard = declaration_guard
         # C-002 第三道闸：盘中操纵冻结闸（43 号 §7.3/§10，AI-WAVE3C-001 A8 批；None=未注入跳过）
         self._manipulation_monitor = manipulation_monitor
+        # 第四道闸：程序化交易报备闸（40 号 §决策⑱，F62 P0-10 接线；None=未注入跳过；
+        # SIMULATION/PAPER 模式天然豁免，LIVE 未报备→拒发——实盘保险丝语义不变）
+        self._registration_guard = registration_guard
+        # 第五道闸：信息空窗操纵回避名单闸（MOD-CMP-014，F62 P0-10 接线；None=未注入跳过；
+        # 标的命中回避名单→拒发；检测失效→Fail-Closed 拒发）
+        self._avoidance_detector = avoidance_detector
         # R-L3（尽调 C1）：幂等键业务语义上下文。键 = sha256(strategy|symbol|trade_date|batch|side)，
         # 批次号由信号侧在发单前显式开启；未开启时退化为"当日同标的同方向同一笔意图"，
         # 仍是确定性的（绝不回退 uuid4 随机键）。
@@ -246,7 +261,9 @@ class OrderManager:
         """
         self._signal_batch_id = str(signal_batch_id)
         self._signal_trade_date = trade_date or now_utc().date().isoformat()
-        _logger.info("Signal batch context opened: batch=%s trade_date=%s", self._signal_batch_id, self._signal_trade_date)
+        _logger.info(
+            "Signal batch context opened: batch=%s trade_date=%s", self._signal_batch_id, self._signal_trade_date
+        )
 
     def _resolve_trade_date(self) -> str:
         """解析幂等键用交易日：优先信号批次上下文，其次当前 UTC 日期。"""
@@ -328,7 +345,7 @@ class OrderManager:
             raise ValueError(f"Broker not found: {broker_id}")
 
         # ── C-002 合规门禁（43 号 §7.4/§8）：发送 broker 前 Fail-Closed 硬闸 ──
-        self._check_compliance_gates(order)
+        self._check_compliance_gates(order, broker_id)
 
         self._transition_status(order, OrderStatus.SUBMITTED)
         # 记录 order->broker 映射，供 cancel_order 治本使用（消除硬编码+反查）
@@ -351,16 +368,21 @@ class OrderManager:
 
         return broker_order_id
 
-    def _check_compliance_gates(self, order: Order) -> None:
+    def _check_compliance_gates(self, order: Order, broker_id: str) -> None:
         """C-002 执行域合规门禁（AI-ASM-001 装配批接线）。
 
-        三道硬闸（注入即生效，None=未接线跳过）：
+        五道硬闸（注入即生效，None=未接线跳过）：
         1. ReportGate 先报告后交易（43 号 §7.4 铁律）：任一必报项 broker_ack
            缺失 → BLOCK → ComplianceGateBlockError 拒发；
         2. 日申报笔数读数检查（43 号 §8 方案 A）：>=1 万笔拒发；>=5000 笔
            WARNING 不阻断。
         3. 盘中操纵冻结闸（43 号 §7.3/§10，A8 批）：monitor is_frozen 命中
            → 拒发新申报；监测失效 → Fail-Closed 拒发（§7.6）。
+        4. 程序化交易报备闸（40 号 §决策⑱，F62 P0-10）：guard.check_can_trade
+           blocked（LIVE 未报备/漂移/未知 broker）→ 拒发；SIMULATION/PAPER
+           天然豁免；守卫异常 → Fail-Closed 拒发。
+        5. 信息空窗操纵回避闸（MOD-CMP-014，F62 P0-10）：标的命中回避名单
+           → 拒发（reason_code=INFO_ASYMMETRY_AVOIDED）；检测异常 → Fail-Closed。
         """
         if self._report_gate is not None:
             gate_result = self._report_gate.check()
@@ -412,6 +434,66 @@ class OrderManager:
                 raise ComplianceGateBlockError(
                     "盘中操纵命中冻结标的，拒绝新申报",
                     details={"order_id": order.order_id, "symbol": order.symbol},
+                )
+        if self._registration_guard is not None:
+            # 第四道闸（40 号 §决策⑱，F62 P0-10）：程序化报备校验——blocked 拒发，
+            # 守卫自身异常按 Fail-Closed 处理（与闸3 §7.6 同口径）
+            try:
+                reg_result = self._registration_guard.check_can_trade(broker_id)
+            except Exception as exc:  # noqa: BLE001 — 守卫失效=Fail-Closed
+                _logger.exception("程序化报备守卫失效，Fail-Closed 拒单: broker_id=%s", broker_id)
+                raise ComplianceGateBlockError(
+                    "程序化报备守卫失效，Fail-Closed 拒绝新申报",
+                    details={
+                        "order_id": order.order_id,
+                        "broker_id": broker_id,
+                        "reason_code": "REGISTRATION_GUARD_FAILED",
+                    },
+                ) from exc
+            if reg_result.is_blocked:
+                _logger.error(
+                    "C-002 拒单[程序化报备]: order_id=%s broker_id=%s outcome=%s reason=%s",
+                    order.order_id,
+                    broker_id,
+                    reg_result.outcome.value,
+                    reg_result.reason,
+                )
+                raise ComplianceGateBlockError(
+                    f"程序化交易报备闸：{reg_result.reason} (order_id={order.order_id})",
+                    details={
+                        "order_id": order.order_id,
+                        "broker_id": broker_id,
+                        "reason_code": "PROGRAMMATIC_REGISTRATION_" + reg_result.outcome.value.upper(),
+                    },
+                )
+        if self._avoidance_detector is not None:
+            # 第五道闸（MOD-CMP-014，F62 P0-10）：标的命中信息空窗操纵回避名单拒发；
+            # 检测失效=Fail-Closed（§7.6 同口径）
+            try:
+                avoided = order.symbol in self._avoidance_detector.avoid_symbols()
+            except Exception as exc:  # noqa: BLE001 — 检测失效=Fail-Closed
+                _logger.exception("信息空窗回避名单检测失效，Fail-Closed 拒单: symbol=%s", order.symbol)
+                raise ComplianceGateBlockError(
+                    "信息空窗回避名单检测失效，Fail-Closed 拒绝新申报",
+                    details={
+                        "order_id": order.order_id,
+                        "symbol": order.symbol,
+                        "reason_code": "AVOIDANCE_DETECTOR_FAILED",
+                    },
+                ) from exc
+            if avoided:
+                _logger.error(
+                    "C-002 拒单[信息空窗回避]: order_id=%s symbol=%s（回避名单标的拒发新申报，待人工复核）",
+                    order.order_id,
+                    order.symbol,
+                )
+                raise ComplianceGateBlockError(
+                    "标的命中信息不对称操纵回避名单，拒绝新申报",
+                    details={
+                        "order_id": order.order_id,
+                        "symbol": order.symbol,
+                        "reason_code": "INFO_ASYMMETRY_AVOIDED",
+                    },
                 )
 
     def cancel_order(self, order_id: str) -> bool:

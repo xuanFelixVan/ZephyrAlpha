@@ -55949,4 +55949,15 @@ creation_tokens:
   created_by: st-c8-digest
   capability: morning_digest
   merge_evaluation: "morning_digest ALGO_FLOW外部真源（同域唯一下沉件，非第二真源）"
+- file: docs/_working/qoder_legacy_closeout/W140_f62_wiring_table.md
+  token: qcloseout-f62-w140-f62-wiring-table-20260928
+  created_by: st-zcloseout-20260928
+  capability: qcloseout_f62
+  merge_evaluation: "W140=一次性任务交付文档（12行接线表唯一真源），无常驻同源可派生条目；随 campaign 归档不新增常驻规则（裁定#375 内收评估通过）"
+- file: src/zephyr/backtest/regime_validation/chart_condition_consumer.py
+  token: chart-condition-consumer-chart-condition-consumer-20260928
+  created_by: st-zcloseout-20260928
+  capability: chart_condition_consumer
+  merge_evaluation: "st-zcloseout 接线袋：零消费的 chart_condition_package 接出首个 src 下游真消费（纯适配零第二实现，判据口径全数委托包内真源；替代方案=判读端直改，已被同构工件契约取代故不立第二实现）"
+
 di_seam_exemptions: []
