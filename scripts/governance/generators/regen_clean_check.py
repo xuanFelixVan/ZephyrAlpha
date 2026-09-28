@@ -194,10 +194,12 @@ def load_pairs(registry_path: Path) -> dict[str, RegenPair]:
 
 
 def _norm_rel(p: str) -> str:
+    """_norm_rel implementation."""
     return p.replace("\\", "/").lstrip(_REL_STRIP)
 
 
 def pair_triggered(pair: RegenPair, staged: list[str], repo_root: Path) -> bool:
+    """pair_triggered implementation."""
     for f in staged:
         rel = _norm_rel(f)
         for path, is_glob in pair.trigger_paths():
@@ -226,6 +228,7 @@ def read_text_normalized(path: Path) -> str | None:
 
 
 def strip_volatile_lines(text: str, extra_patterns: list[str] | None = None) -> str:
+    """strip_volatile_lines implementation."""
     rx = re.compile("|".join(DEFAULT_VOLATILE_LINE_PATTERNS + tuple(extra_patterns or [])), re.MULTILINE)
     return rx.sub("", text)
 
@@ -257,6 +260,7 @@ def normalize_text(text: str, pair: RegenPair) -> tuple[str, bool]:
 
 
 def unified_diff(canonical_text: str, iso_text: str, pair: RegenPair) -> list[str]:
+    """unified_diff implementation."""
     return list(
         difflib.unified_diff(
             canonical_text.splitlines(),
@@ -288,6 +292,7 @@ def drift_fingerprint(diff_lines: list[str]) -> str:
 
 
 def load_baseline(path: Path) -> dict[str, set[str]]:
+    """load_baseline implementation."""
     if not path.exists():
         return {}
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -350,6 +355,7 @@ def run_regenerate(pair: RegenPair, iso_dir: Path, budget_ms: int) -> tuple[str,
 
 
 def _iso_argv(pair: RegenPair, iso_path: Path) -> list[str]:
+    """_iso_argv implementation."""
     return [sys.executable] + [
         tok[1:-1] if len(tok) > 1 and tok[0] == tok[-1] and tok[0] in ("'", '"') else tok
         for tok in (t.replace("{iso_out}", str(iso_path)) for t in shlex.split(pair.invoke, posix=False))
@@ -383,6 +389,7 @@ def _exec_isolated(
 
 
 def _collect_iso_output(proc: subprocess.CompletedProcess, iso_path: Path) -> tuple[str, str]:
+    """_collect_iso_output implementation."""
     if proc.returncode != 0:
         tail = "\n".join((proc.stderr or proc.stdout or "").strip().splitlines()[-10:])
         return "", f"generator exit {proc.returncode}: {tail}"
@@ -411,6 +418,7 @@ def _pair_seconds(pair: RegenPair, budget_ms: int) -> float:
 
 
 def _regen_invoke(pair: RegenPair, iso_dir: Path, iso_path: Path, budget_ms: int) -> tuple[str, str, float]:
+    """_regen_invoke implementation."""
     effective_seconds = _pair_seconds(pair, budget_ms)
     proc, err, elapsed = _exec_isolated(_iso_argv(pair, iso_path), effective_seconds, budget_ms)
     if proc is None:
@@ -425,6 +433,7 @@ def _regen_invoke(pair: RegenPair, iso_dir: Path, iso_path: Path, budget_ms: int
 
 
 def _table_section(text: str, header: str) -> str:
+    """_table_section implementation."""
     if not header:
         return text
     lines = text.splitlines()
@@ -440,6 +449,7 @@ _REL_STRIP = "." + "/"
 
 
 def _collect_disk(spec: dict, scope_dir: Path, scope_rel: str) -> list[str]:
+    """_collect_disk implementation."""
     include = [str(g) for g in (spec.get("include") or ["*"])]
     exclude = [str(g) for g in (spec.get("exclude") or [])]
     disk = []
@@ -453,6 +463,7 @@ def _collect_disk(spec: dict, scope_dir: Path, scope_rel: str) -> list[str]:
 
 
 def _collect_refs(section: str, spec: dict, scope_rel: str) -> set[str]:
+    """_collect_refs implementation."""
     refs: set[str] = set()
     pat = str(spec.get("ref_pattern", ""))
     if not (pat and section):
@@ -511,6 +522,7 @@ class PairRecord:
     detail: str = ""
 
     def to_jsonl(self) -> str:
+        """to_jsonl implementation."""
         return json.dumps(
             {
                 "run_id": self.run_id,
@@ -529,6 +541,7 @@ class PairRecord:
 
 
 def _check_structural(pair: RegenPair, rec: PairRecord) -> None:
+    """_check_structural implementation."""
     start = time.monotonic()
     violations, detail = run_structural(pair)
     rec.elapsed_ms = (time.monotonic() - start) * 1000
@@ -542,6 +555,7 @@ def _check_structural(pair: RegenPair, rec: PairRecord) -> None:
 
 
 def _check_regenerated(pair: RegenPair, rec: PairRecord, iso_dir: Path, budget_ms: int) -> Path | None:
+    """_check_regenerated implementation."""
     iso_text, detail, elapsed = run_regenerate(pair, iso_dir, budget_ms)
     rec.elapsed_ms = elapsed
     if (
@@ -620,6 +634,7 @@ def classify(
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """build_parser implementation."""
     parser = argparse.ArgumentParser(
         prog="regen_clean_check.py",
         description="regen-clean 生成闭环检查器：凡生成物必有 regenerate && diff 机械验证（FMS-REGEN-CLEAN）",
@@ -740,6 +755,7 @@ def _print_summary(
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ensure_utf8_stdout()
     args = build_parser().parse_args(argv)
     run_id = f"{time.strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"

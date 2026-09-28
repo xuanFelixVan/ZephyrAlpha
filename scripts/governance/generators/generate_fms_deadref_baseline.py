@@ -321,6 +321,7 @@ def _print_scan_report(report: _ScanReport) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="FMS 死引用棘轮基线生成器（只读扫描+CAS 产册）")
     parser.add_argument("--check", action="store_true", help="只校验不写盘（棘轮+对账报告）")
     parser.add_argument(
