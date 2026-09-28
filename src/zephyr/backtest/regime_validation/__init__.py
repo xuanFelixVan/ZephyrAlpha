@@ -18,6 +18,7 @@ D_BACKTEST — Regime 回测验证包（11_regime_backtest_validation_plan 验�
 
 # 单行 from-import 系刻意写法：ORPHAN-MODULE 用行级 grep 认 `from X import Y`，
 # 括号多行 import 匹配不到 → 新模块被判孤儿（实证死信 q-20260923-st-e2e-20260924-0001）。
+from zephyr.backtest.regime_validation import chart_condition_consumer  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（图形条件轴消费适配器·st-zcloseout接线袋）
 from zephyr.backtest.regime_validation import chart_condition_package  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（图形条件轴输入包·波10 G-A）
 from zephyr.backtest.regime_validation import condition_package  # noqa: I001,F401 单行刻意写法：ORPHAN行级grep认（条件轴输入包）
 from zephyr.backtest.regime_validation import exam_cost_gate  # noqa: F401 考尺成本门
@@ -134,6 +135,7 @@ __all__ = [
     "E4CostSensitivityError",
     "analyze_cost_sensitivity",
     # GPU 条件轴输入包（MOD-BT-COND-PACKAGE，2026-09-24 st-gpu-final）
+    "chart_condition_consumer",
     "chart_condition_package",
     "condition_package",
 ]
