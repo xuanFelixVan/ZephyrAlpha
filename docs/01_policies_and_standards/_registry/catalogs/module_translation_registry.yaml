@@ -61878,6 +61878,15 @@ entries:
   plain_zh: "给提交队列落地器装的自检考试卷：袋子落地时要是内容悄悄丢了就拒绝打勾；另一份卷子盯着自动发现器，新册子的计数标量必须真的能自动修好"
   responsibility_layer: governance
 
+- module_path: src/zephyr/compliance/checklist_evidence.py
+  domain_id: D_COMPLIANCE
+  name_zh: "清单闸完成度证据写侧"
+  name_en: "Checklist Completion Evidence"
+  desc_zh: "C-004 清单闸 INTRADAY 三腿完成度证据的生产写侧与读侧：机器写者（risk_param_confirm/position_limit_verify）+人工 ack（signal_compliance_check，HMAC/来源标注）+CompletionProvider 形态读侧"
+  desc_en: ""
+  plain_zh: "盘前清单闸要判断三件必做事做没做，就得有真凭实据可查：风控参数确认和仓位限额验证这两件由系统在装配会话和每次限额检查时自动写证据文件，策略信号合规检查这件由人在盘前用命令行确认并留下来源、配了密钥还要签名防手改；证据缺、损坏、日期不对或签名验不过一律算没做，当天就会拒单，绝不假装做了。读这些证据给清单闸判定用"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
