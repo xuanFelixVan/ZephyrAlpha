@@ -92,3 +92,19 @@ catchup_guard 09-26 18:15 对账：overdue=20 补跑=15 失败=6 顺延=19 截�
 
 - RULE-ENV Python 3.12.8 ✓；RULE-GUARDIAN reaper 活（02:31 last_run）✓；改前 claim ×2（bat+qmt 路径）✓；
 - capability_lookup.find('tilib indicator night backfill bat', st-ec3-water)=空集留审计 ✓；查库全只读（ch_reader SELECT）✓；未 kill 任何进程（ollama 经 Start-ScheduledTask 拉起）✓；他会话在飞件零触碰 ✓。
+
+## 六、SW5 夜战复测段（2026-09-29 04:1x-04:3x，CH 复活后六项；sid=st-nightsweep-sw5-20260929）
+
+> 背景：CH 172.24.30.100:9000 复活（Owner 确认全线打通）；本段对 §三/§四 移交项做活体复测。查库全只读（DatabaseService admin 连接，SELECT/DESCRIBE/count 口径），未 kill 任何进程，禁改域（akshare_provider/realtime_snapshot/etf_benchmark 换源=zc9-lane-d）零触碰。
+
+| # | 项 | 本夜读数 | 判读 |
+|---|---|---|---|
+| ① | tilib 晨检（09-28 02:30 后效果） | `c1_market.stock_indicator` max(trade_date)=**2026-09-28**（11,689,777 行）；`c1_market.technical_indicator` max=**2026-09-28**（369,080,208 行） | **绿：09-28 02:30 夜批效果已落**（前账 S2 终章重注册后首个验证晨） |
+| ② | ollama 挂起 | tasklist 无 ollama 进程（grep rc=1）；端口 11434 探测=False | **挂起演进：前账"进程活 API 死"→现"进程不存在+端口不通"**。禁杀禁拉起（让日班/Owner，99_skipped #4 在案）；nightly_sentiment_llm.enabled 旗仍开（09-23 起），LLM 不可达时走 llm_fallback 规则腿 |
+| ③ | kline_sector_intraday | max(trade_date)=**2026-09-22 15:00**（10,436,356 行），较前账（09-27 读数同值）未涨 | **红维持：tdx 断供未恢复**（本夜 CH 活条件下复测仍 09-22；与 tasks/供应链图"本车道复跑未涨"一致）；恢复腿归数据链车道（tdx/mootdx 通道死亡，known_data_gaps :726 在案） |
+| ④ | 空表三件复测 | `c1_market.edb_data`=0（前账"etb_data"系本表笔误，CH 无 etb_data 表）；`c1_market.etf_benchmark`=0；`c1_market.account_nav_daily`=0 | **三 0 维持**。处置：account_nav_daily→**新增 known_data_gaps 条目** `account_nav_daily_writer_zero_caller`（写器零调用方=从未接线，无既有腿可开，禁新建源）；edb_data→已有条目在案（iFind 配额退役，替代源 macro_data 活）；**etf_benchmark 不动**——换源域归 zc9-lane-d 在途施工（避让图），禁开腿禁代修 |
+| ⑤ | NightlySentiment 单源 | 基座=规则法单源（data_source: rule/llm_fallback 留痕）；nightly_sentiment_batch 最近读数：09-26 SUCCESS 3813s（疑 LLM 挂试）→09-27 SUCCESS 289s（规则速）；**09-28 08:20 槽位无运行读数**（调度器本体两日 2902 条活跃至 04:21） | **黄**：单源语义确认（规则法兜底成立，ollama 挂不阻塞主腿）；但 09-28 缺跑一日=新观察→**新增 known_data_gaps 条目** `nightly_sentiment_batch_missed_20260928`（根因未定位，只登记不妄断；.disabled 总闸确认为开） |
+| ⑥ | EvaporationBlackbox 运行态 | `.runtime/evaporation_blackbox/blackbox.jsonl` mtime=**09-29 04:21**（395,900B，追加中），末条 ts_local=2026-09-29T04:21:01+08:00 branch=dev | **绿：黑匣子活体快照在飞**（前账"僵尸实例禁 kill"观察维持——快照正常产出即保留，处置仍归 LANE-EV/日班） |
+
+**本段产出**：known_data_gaps.yaml 追加 2 条（CAS 留痕，YAML 校验过）；无代码/任务/进程变更。
+**结论**：CH 复活后六项=①绿 ②红(演进) ③红(维持) ④三0维持(1 登记/1 在案/1 让路) ⑤黄(1 登记) ⑥绿——供水面恢复主力干线（tilib/新闻/模拟链/黑匣子），板块分钟线与三空表缺口维持登记态。
