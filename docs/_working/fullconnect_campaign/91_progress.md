@@ -30,3 +30,47 @@ session: zc-chief-20260927
 | 09-28 08:41 | F56 判定 | F56 死袋判定=被 B7 超集取代：78982c4c81（st-zcloseout 接管袋B7）自含 phantom_grace_s/cancel_hold_s+18 测为更完整实现；kernel 件仓内零消费者 ORPHAN-MODULE 拦，三选一处方登记 99 #36 |
 | 09-28 10:21 | 1A.5 | 死袋复活 6d0be14e4c：死指针改指活库+空壳源 fail-closed 预检+死指针尺（trae_034 与 99_skipped 两件剔除待裁，补登 99 #30-33/#35） |
 | 09-28 12:32 | 跨队代修 | pf_alloc 史裁恢复 40003d97bb：allocation_inputs.py 本地常量 SQL_LATEST_ANCHORED_STATE 忠实恢复（probe-sql2 74a00a3605 误删致 import 断裂；09-25 史裁 schema 件 human_only，总包代修披露；13/13 绿） |
+
+| 09-28 14:56 | 治理卫生 | ⚑-1② 判伪落档+99 台账合并 #21-#41+91 回填 a60cbe844e（含 376105ce64 误删五行恢复 #37-#41） |
+| 09-28 15:11 | S4 工厂包 | F21/F22/F16 三修复收尾落袋 f28ce0d0f0（intake_ledger_recon 新件+台账 11 行补回；72/72 绿；CH rebuild 实弹留待） |
+| 09-28 15:13 | W-156 | run_post_settlement_daily.ps1 假声明改锚 3dc18f13d6（手工/备份入口，非任务目标） |
+| 09-28 15:41-16:12 | 挖矿救援 | 64 件 HEAD 外孤儿案卷 4 袋落库：068021b493 册先行(63 token)+06ec30c09c(32md)+603a8b404f(31md)+90d2e89f06(yaml)；64/64 token 零 CAS 冲突 |
+| 09-28 17:0x | 终验处置 | 孤儿对抗测试退役 e36d0ff70f：test_dev_delivery_map/test_trading_day_cycle_map_adversarial 模块级 skip 随被测地图退役（验证器从未入 git，collect 炸弹拆除） |
+| 09-28 17:0x-18:0x | 他会话交叉 | F62 清单闸写侧四连（5acdd1ef85/884e5639f8/03c1e41ab3/be37c89eb7）+F74 通知通道 d988f1e6d0+保留契约 v1.5.0 eda2898c52——总筹抽验通过 |
+| - | 终验 | 两轮回归进行中（轮 1：library 195/gov_enf 104/ex_sor 616/signal_ashare 2850 全绿；governance 块A 3183P/5F 全分类；trading 2461P/2F 分类=CH 停机+负载敏感） |
+
+## §终局四清单（总筹 st-zchief8-20260928 收官）
+
+### ①已打通（全流通主链新增落地）
+T 袋（F40 候选池+盘前通电/F41 反馈环+九态桥）｜K 袋（F60 减仓进料/F61 失忆窗+形态探测器）｜E8/E9 袋（F27 sleeve 装配+再平衡调度/F28 decision_timestamp+影子组合）｜S4 工厂包（F21 deferred 幂等/F22 llm_error 占坑/F16 台账对账器）｜t1_t2 交接件重构｜1A.5 死指针改活库｜F62 三门注入+清单闸写侧（他会话，总筹抽验）｜F56 判定=被 B7 超集取代（78982c4c81）｜pf_alloc 史裁恢复（40003d97bb）｜64 件挖矿案卷入库｜红蓝 wave7.3 八向量全闭合（V1-V8：6 拦+2 在案如实记录）+两缺陷修复（真域错挂门/PID 复用复核）。
+
+### ②已修复（质量与基建）
+落地链治本系列（2754cc9e6f TEST-SOURCE/94326c3bd9+a4211e4b16 head_reader/af7e492276 落地自证读回）｜红蓝两缺陷（5103bbca85/3065146281）｜孤儿对抗测试退役（e36d0ff70f）｜W-156 假声明改锚（3dc18f13d6）｜⚑-1② 判伪撤销（a60cbe844e）｜99 台账 #21-#41 合并+误删五行恢复｜91 台账断档回填。
+
+### ③已排序待施工（二期，按优先序）
+1. 合规门十闸余量接线（W-140：模拟盘执法先行，实盘面绑 TRD-A10 沙箱换版+30 交易日窗）｜2. F56 kernel 三选一（99 #36：a 委托 B7/b 例外面/等沙箱写侧进仓）｜3. M1 封矿治理（F125/F127/F128/F130 装饰环接线或退役；裁-6 分母活边）｜4. trae_034 三死指针（PROTECTED-PATHS 待裁定通道，99 #35）｜5. CH 复活后实弹批（etf_benchmark 重写#19/realtime 换源#20/intake_ledger_recon rebuild/apply_market_tables_ddl 执行）｜6. 二期序列：F53 Saga/F04 清洗四引擎/F74 铃铛余量/F73/F75/F92/F30/F05-F06｜7. 波9 回流 W-152..W-162。
+
+### ④Owner 门位（99_skipped_for_owner.md #1-#41 全录）
+高频提醒：#29 TRD-A10 沙箱换版+env=real（实盘前置）｜#34 裁-13 decision_timestamp 正式注册｜#35 trae_034 死指针｜#36 F56 kernel 三选一｜#8 见证层实盘域二次批｜#14 commit_queue_interactive 出厂翻转｜#21 F34 DDL --apply｜#25 F51 币圈退役｜#19/#20 换源实弹。其余见台账原文。
+
+| 09-28 14:56 | 治理卫生 | ⚑-1② 判伪落档+99 台账合并 #21-#41+91 回填 a60cbe844e（含 376105ce64 误删五行恢复 #37-#41） |
+| 09-28 15:11 | S4 工厂包 | F21/F22/F16 三修复收尾落袋 f28ce0d0f0（intake_ledger_recon 新件+台账 11 行补回；72/72 绿；CH rebuild 实弹留待） |
+| 09-28 15:13 | W-156 | run_post_settlement_daily.ps1 假声明改锚 3dc18f13d6（手工/备份入口，非任务目标） |
+| 09-28 15:41-16:12 | 挖矿救援 | 64 件 HEAD 外孤儿案卷 4 袋落库：068021b493 册先行(63 token)+06ec30c09c(32md)+603a8b404f(31md)+90d2e89f06(yaml)；64/64 token 零 CAS 冲突 |
+| 09-28 17:0x | 终验处置 | 孤儿对抗测试退役 e36d0ff70f：test_dev_delivery_map/test_trading_day_cycle_map_adversarial 模块级 skip 随被测地图退役（验证器从未入 git，collect 炸弹拆除） |
+| 09-28 17:0x-18:0x | 他会话交叉 | F62 清单闸写侧四连（5acdd1ef85/884e5639f8/03c1e41ab3/be37c89eb7）+F74 通知通道 d988f1e6d0+保留契约 v1.5.0 eda2898c52——总筹抽验通过 |
+| - | 终验 | 两轮回归进行中（轮 1：library 195/gov_enf 104/ex_sor 616/signal_ashare 2850 全绿；governance 块A 3183P/5F 全分类；trading 2461P/2F 分类=CH 停机+负载敏感） |
+
+## §终局四清单（总筹 st-zchief8-20260928 收官）
+
+### ①已打通（全流通主链新增落地）
+T 袋（F40 候选池+盘前通电/F41 反馈环+九态桥）｜K 袋（F60 减仓进料/F61 失忆窗+形态探测器）｜E8/E9 袋（F27 sleeve 装配+再平衡调度/F28 decision_timestamp+影子组合）｜S4 工厂包（F21 deferred 幂等/F22 llm_error 占坑/F16 台账对账器）｜t1_t2 交接件重构｜1A.5 死指针改活库｜F62 三门注入+清单闸写侧（他会话，总筹抽验）｜F56 判定=被 B7 超集取代（78982c4c81）｜pf_alloc 史裁恢复（40003d97bb）｜64 件挖矿案卷入库｜红蓝 wave7.3 八向量全闭合（V1-V8：6 拦+2 在案如实记录）+两缺陷修复（真域错挂门/PID 复用复核）。
+
+### ②已修复（质量与基建）
+落地链治本系列（2754cc9e6f TEST-SOURCE/94326c3bd9+a4211e4b16 head_reader/af7e492276 落地自证读回）｜红蓝两缺陷（5103bbca85/3065146281）｜孤儿对抗测试退役（e36d0ff70f）｜W-156 假声明改锚（3dc18f13d6）｜⚑-1② 判伪撤销（a60cbe844e）｜99 台账 #21-#41 合并+误删五行恢复｜91 台账断档回填。
+
+### ③已排序待施工（二期，按优先序）
+1. 合规门十闸余量接线（W-140：模拟盘执法先行，实盘面绑 TRD-A10 沙箱换版+30 交易日窗）｜2. F56 kernel 三选一（99 #36：a 委托 B7/b 例外面/等沙箱写侧进仓）｜3. M1 封矿治理（F125/F127/F128/F130 装饰环接线或退役；裁-6 分母活边）｜4. trae_034 三死指针（PROTECTED-PATHS 待裁定通道，99 #35）｜5. CH 复活后实弹批（etf_benchmark 重写#19/realtime 换源#20/intake_ledger_recon rebuild/apply_market_tables_ddl 执行）｜6. 二期序列：F53 Saga/F04 清洗四引擎/F74 铃铛余量/F73/F75/F92/F30/F05-F06｜7. 波9 回流 W-152..W-162。
+
+### ④Owner 门位（99_skipped_for_owner.md #1-#41 全录）
+高频提醒：#29 TRD-A10 沙箱换版+env=real（实盘前置）｜#34 裁-13 decision_timestamp 正式注册｜#35 trae_034 死指针｜#36 F56 kernel 三选一｜#8 见证层实盘域二次批｜#14 commit_queue_interactive 出厂翻转｜#21 F34 DDL --apply｜#25 F51 币圈退役｜#19/#20 换源实弹。其余见台账原文。
