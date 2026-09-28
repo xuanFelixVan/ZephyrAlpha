@@ -138,3 +138,9 @@ dev 面 `in_process_gate_registry.yaml`：`gates:` 实长 **104** vs 声明 `tot
 ## 终局收尾段（总筹 st-chief8-20260928 代 st-chief6-20260928 补账，2026-09-28 夜）
 - chief6 五任务终态：F74=a46e1fbc3f；q-0021 销案；read_side 落地；F62 全链终态（broker_ack 解锁 ab267577bb→诚实两把 5ddaf667aa→三门注入 0cecaf771d→G07/G09 执法闸 fa9ae36533）；EC3 六项终态（黑匣子 11:38 修复+PT30M 防复发、tilib 新定义 09-28 02:30 首跑、NightlySentiment 单源健康、板块分钟K仍断供 tdx、execution_report 补列完成、etb/account_nav 仍 0）
 - 会话收尾：chief6 claim 已全释放（lock_files salvage）、worktree .aidrafts/st-chief6-20260927 留待清理政策、无未落地在途袋
+
+### 审计更正三（09-29，Owner 令二次全面复审）
+- **后续班组消化了我交接清单的大半**：①F74 收敛已做（STD-SIM-ACCESS-002 四处在册）②read_side 三件 FMS 原主落地（80b03fd10e8，代修 Final 被吸收）③F62 接线被 st-c8-checklist/Agent-L 线活跃推进（伴生测试卡多袋，f9a89566 后续）④ReportGate 保持 PASS。
+- **哨兵二次追认**：+pf_alloc_rebalance_check（a349ddc1fec F27 加槽）→ 23/32（2b682838d2），tests/frontend 567/0。
+- **登记债（E8/E9 线自有，不代管）**：src/zephyr/backtest/core/batch_window_preflight.py ①__all__ 缺 Final（MUTABLE-CONST 连坐源，我暂存时被门点名，已还原不代修）②全文件未过 ruff-format（其复活袋同款钩子债）。归 a349ddc1fec 所属线处置。
+- 复审结论：18+2 袋全在 dev 零回退；本役无新增遗留；仅上述一条他线债登记在案。
