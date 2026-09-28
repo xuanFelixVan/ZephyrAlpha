@@ -627,7 +627,7 @@ class TradingSession:
         inflight: dict[str, tuple[Decimal, Decimal]] = {}
         try:
             orders = self._order_manager.orders
-        except Exception as e:  # OM 不可用时按无在途处理并留痕（下轮调仓再校准）
+        except Exception as e:  # noqa: BLE001 — OM 不可用时按无在途处理并留痕（下轮调仓再校准）
             _logger.warning("读取在途订单失败，按无在途处理: %r", e)
             return inflight
         for order in orders.values():
@@ -1280,7 +1280,7 @@ def subscribe_eventbus() -> None:
         bus.subscribe(TOPIC_REBALANCE_REQUESTED, _on_rebalance_requested)
         _subscribed = True
         _logger.info("TradingSession 事件驱动调仓已订阅: %s", TOPIC_REBALANCE_REQUESTED)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 总线不可用时降级仅手动调仓（留痕不阻断启动）
         _logger.warning("TradingSession 事件订阅失败（总线不可用），调仓仅手动可用", exc_info=True)
 
 
