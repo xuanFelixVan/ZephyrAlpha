@@ -56152,4 +56152,182 @@ creation_tokens:
   created_by: st-nightsweep-sw2-20260929
   capability: washer_algo_flow_block
   merge_evaluation: "跨域不同对象：washer.py 专属算法地图机器块，门禁处方生成物，无同真源可派生条目可并"
+- file: scripts/governance/d3_metadata/reconcile_gate_rosters.py
+  token: commit-speedup-campaign-reconcile-gate-rosters-20260928
+  created_by: st-nightsweep-sw3-20260929
+  capability: commit_speedup_campaign
+  merge_evaluation: "T14 治本唯一对账工具（三册不同步取证）：非同源派生（新证据面，扫描面与生成器同源同则）、有消费（t14_roster_report 跑批产物+own_scope 机生面对账）、无同域重复簇（generate_gate_registry 是产物生成器、本工具是漂移对账器）、跨域不适用——四判据过，不并"
+- file: docs/_working/commit_speedup_campaign/90_verification/index.md
+  token: commit-speedup-campaign-index-20260928
+  created_by: st-nightsweep-sw3-20260929
+  capability: commit_speedup_campaign
+  merge_evaluation: "T14 对账跑批证据卷宗（rosters 工具 run 产物快照=取证归档）：非同源派生（对账结论文本）、有消费（夜战验收与 Owner 复盘读取）、无同域重复簇（90_verification 下唯一 T14 卷宗）、跨域不适用——四判据过，不并"
+- file: docs/_working/commit_speedup_campaign/90_verification/t14_roster_report.md
+  token: commit-speedup-campaign-t14-roster-report-20260928
+  created_by: st-nightsweep-sw3-20260929
+  capability: commit_speedup_campaign
+  merge_evaluation: "T14 对账跑批证据卷宗（rosters 工具 run 产物快照=取证归档）：非同源派生（对账结论文本）、有消费（夜战验收与 Owner 复盘读取）、无同域重复簇（90_verification 下唯一 T14 卷宗）、跨域不适用——四判据过，不并"
+- file: docs/_working/commit_speedup_campaign/90_verification/t14_roster_report.yaml
+  token: commit-speedup-campaign-t14-roster-report-20260928
+  created_by: st-nightsweep-sw3-20260929
+  capability: commit_speedup_campaign
+  merge_evaluation: "T14 对账跑批证据卷宗（rosters 工具 run 产物快照=取证归档）：非同源派生（对账结论文本）、有消费（夜战验收与 Owner 复盘读取）、无同域重复簇（90_verification 下唯一 T14 卷宗）、跨域不适用——四判据过，不并"
+- file: docs/_working/commit_speedup_campaign/90_verification/s1_acceptance_20260929.md
+  token: commit-speedup-campaign-s1-acceptance-20260929-20260928
+  created_by: st-nightsweep-sw8-20260929
+  capability: commit_speedup_campaign
+  merge_evaluation: "S1 验收实测台账（replay_gate_verdicts --since 30 全册双口径）：新证据面非同源派生、有消费（S1 改指不可变树发布前绊线清零判据）、无同域重复簇（selfcheck100 是字节保真基线、本件是门禁 verdict 语义零漂移验收，互补不重复）"
+- file: docs/_working/night_sweep/00_orchestration.md
+- file: docs/_working/night_sweep/00_skeleton_nightsweep.md
+- file: src/zephyr/ai_layer/perceive/l7_prior_opener.py
+  token: l7-prior-opener-module-l7-prior-opener-20260928
+  created_by: st-nightsweep-sw2-20260929
+  capability: l7_prior_opener_module
+  merge_evaluation: "跨域不同对象：L1施工项9先验消费面新模块（L7 DESIGN design_final 解锁），无可并同真源条目"
+- file: docs/03_modules/_domain_ai_layer/algo_flow/l7_prior_opener.yaml
+  token: l7-prior-opener-algo-flow-block-l7-prior-opener-20260928
+  created_by: st-nightsweep-sw2-20260929
+  capability: l7_prior_opener_algo_flow_block
+  merge_evaluation: "跨域不同对象：l7_prior_opener.py 专属算法地图机器块，门禁处方生成物，无可并条目"
+- file: docs/_working/night_sweep/phase2_F04.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f04-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: docs/_working/night_sweep/phase2_F05-F06.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f05-f06-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: docs/_working/night_sweep/phase2_F30.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f30-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: docs/_working/night_sweep/phase2_F53.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f53-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: docs/_working/night_sweep/phase2_F73.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f73-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: docs/_working/night_sweep/phase2_F75.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f75-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: docs/_working/night_sweep/phase2_F92.md
+  token: nightsweep-sw5-phase2-mining-cards-phase2-f92-20260928
+  created_by: st-nightsweep-sw5-20260929
+  capability: nightsweep-sw5-phase2-mining-cards
+  merge_evaluation: "六卡各派生自既有 F-案卷（fullconnect_campaign 单一真源转译施工处方），非同源重复新建；F05-F06 同账合卡防两账；零替代既有条目"
+- file: config/pattern_combo_rules.yaml
+  token: pattern-combo-rules-pattern-combo-rules-20260928
+  created_by: st-nightclean-20260929
+  capability: pattern_combo_rules
+  merge_evaluation: "图形四件要单新真源（组合规则 YAML 卡，Owner 2026-09-29 最高优先令），配置化替代 dual_engine 硬编码权重，非重复造册"
+- file: src/zephyr/signal_ashare/strategy_signal/combo_rule_loader.py
+  token: combo-rule-loader-combo-rule-loader-20260928
+  created_by: st-nightclean-20260929
+  capability: combo_rule_loader
+  merge_evaluation: "组合规则卡加载器（Owner 图形四件要单），唯一新读端消费 pattern_combo_rules.yaml，无既有等价物"
+- file: docs/_working/night_sweep/sw4_t1_repair_pairing_report.md
+  token: sw4-t1-repair-sw4-t1-repair-pairing-report-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: sw4-t1-repair
+  merge_evaluation: "卡1③对拍留证件；替代口头移交，非新增规则面"
+- file: data/strategy_intake/grid_20260926-024947/handover_verdict.yaml
+  token: t1-handover-verdict-handover-verdict-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-handover-verdict
+  merge_evaluation: "哨兵机读判决件（t1_t2_handover 原子产出），非新真源"
+- file: data/strategy_intake/grid_20260926-024947/manifest.csv
+  token: t1-handover-verdict-manifest-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-handover-verdict
+  merge_evaluation: "哨兵机读判决件（t1_t2_handover 原子产出），非新真源"
+- file: data/strategy_intake/grid_20260926-024947/negatives.csv
+  token: t1-handover-verdict-negatives-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-handover-verdict
+  merge_evaluation: "哨兵机读判决件（t1_t2_handover 原子产出），非新真源"
+- file: data/strategy_intake/grid_20260926-024947/net_returns.parquet
+  token: t1-handover-verdict-net-returns-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-handover-verdict
+  merge_evaluation: "哨兵机读判决件（t1_t2_handover 原子产出），非新真源"
+- file: data/strategy_intake/grid_20260926-024947/summary.json
+  token: t1-handover-verdict-summary-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-handover-verdict
+  merge_evaluation: "哨兵机读判决件（t1_t2_handover 原子产出），非新真源"
+- file: data/strategy_intake/grid_20260929-040003/manifest.csv
+  token: t1-repair-run-a-manifest-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-repair-run-a
+  merge_evaluation: "对拍证据 run 产物（exec 机构生），非新真源"
+- file: data/strategy_intake/grid_20260929-040003/negatives.csv
+  token: t1-repair-run-a-negatives-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-repair-run-a
+  merge_evaluation: "对拍证据 run 产物（exec 机构生），非新真源"
+- file: data/strategy_intake/grid_20260929-040003/summary.json
+  token: t1-repair-run-a-summary-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-repair-run-a
+  merge_evaluation: "对拍证据 run 产物（exec 机构生），非新真源"
+- file: data/strategy_intake/grid_20260929-040141/manifest.csv
+  token: t1-repair-run-b-manifest-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-repair-run-b
+  merge_evaluation: "对拍证据 run 产物（exec 机构生），非新真源"
+- file: data/strategy_intake/grid_20260929-040141/negatives.csv
+  token: t1-repair-run-b-negatives-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-repair-run-b
+  merge_evaluation: "对拍证据 run 产物（exec 机构生），非新真源"
+- file: data/strategy_intake/grid_20260929-040141/summary.json
+  token: t1-repair-run-b-summary-20260928
+  created_by: st-nightsweep-sw4-20260929
+  capability: t1-repair-run-b
+  merge_evaluation: "对拍证据 run 产物（exec 机构生），非新真源"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/fms_hygiene_gate.yaml
+  token: fms-hygiene-gate-algo-block-fms-hygiene-gate-20260928
+  created_by: st-nightsweep-sw2-20260929
+  capability: fms_hygiene_gate_algo_block
+  merge_evaluation: "跨域不同对象：FMS-HYGIENE 读侧门专属算法地图机器块（N-1 悬空锚治愈生成物），无可并条目"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/fms_ref_extractor.yaml
+  token: fms-ref-extractor-algo-block-fms-ref-extractor-20260928
+  created_by: st-nightsweep-sw2-20260929
+  capability: fms_ref_extractor_algo_block
+  merge_evaluation: "跨域不同对象：fms_ref_extractor 共享提取器专属算法地图机器块（N-1 悬空锚治愈生成物），无可并条目"
+- file: docs/_working/total_command_closeout/ignition/W12_WINDOW.yaml
+  token: w12-ignition-card-w12-window-20260928
+  created_by: st-nightclean-20260929
+  capability: w12_ignition_card
+  merge_evaluation: "W12 点火批准卡呈卡件（chief8 待办销项，f6e288fc54 自述挂账「判据数据随战役另袋」）：呈卡消病根（目录缺失=unreadable 永拒），status=WAITING_APPROVAL 保持 fail-closed 未批现状，批准翻面留 Owner/批准线"
+- file: scripts/governance/backfill_registry_consumption.py
+  token: gov-registry-backfill-backfill-registry-consumption-20260928
+  created_by: st-nightsweep-sw10-20260929
+  capability: gov_registry_backfill
+  merge_evaluation: "补建案卷声明的缺席派生器，替代三处手工登记路径"
+- file: scripts/backtest/eval_tech_indicator_ic.py
+  token: tech-indicator-ic-eval-eval-tech-indicator-ic-20260928
+  created_by: st-nightsweep-sw10-20260929
+  capability: tech_indicator_ic_eval
+  merge_evaluation: "补建案卷点名的缺席取证件，替代人工IC报告散页"
+- file: docs/_working/fullflow_mining/m3_governance/08_f107_rollback_recovery.md
+  token: f107-rollback-recovery-book-08-f107-rollback-recovery-20260928
+  created_by: st-nightclean-20260929
+  capability: f107_rollback_recovery_book
+  merge_evaluation: "F107 缺簿开槽（W2-2 六格核验唯一真缺格）：续挖 07 册补两缺向+死锚修复，内收合并 07 册非重复开簿"
+- file: docs/_working/night_sweep/SW10_cns_chart_wiring.md
+  token: sw10-cns-chart-wiring-sw10-cns-chart-wiring-20260928
+  created_by: st-nightsweep-sw10-20260929
+  capability: sw10_cns_chart_wiring
+  merge_evaluation: "SW10车道案卷：CNS消化台账+cn_macro判定+TIF残袋发现，替代散落会话记录"
+
 di_seam_exemptions: []
