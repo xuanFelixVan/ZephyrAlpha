@@ -24,6 +24,7 @@ import pandas as pd
 import pytest
 
 from zephyr.signal_ashare.strategy_signal.candlestick_scanner import (
+    _CDL_PAT_SEED,
     _cdl_functions,
     scan_candles,
 )
@@ -48,6 +49,17 @@ def test_cdl_functions_has_61():
     fns = _cdl_functions()
     assert len(fns) == 61
     assert "CDLHAMMER" in fns and "CDLENGULFING" in fns
+
+
+def test_cdl_seed_full_coverage():
+    # 种子映射覆盖全部 61 个 CDL 函数（双向对账，零「待核对」残留）
+    fns = set(_cdl_functions())
+    assert set(_CDL_PAT_SEED.keys()) == fns
+    assert len(_CDL_PAT_SEED) == 61
+    # 值全部是 PAT-CANDLE 册条目 id 且（除 ENGULFING 双证据注释外）id 互不重复
+    vals = list(_CDL_PAT_SEED.values())
+    assert all(v.startswith("PAT-CANDLE-") for v in vals)
+    assert len(set(vals)) == len(vals)
 
 
 def test_hammer_detected_bullish():

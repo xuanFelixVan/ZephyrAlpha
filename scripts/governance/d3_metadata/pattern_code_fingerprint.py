@@ -173,7 +173,9 @@ def apply_fingerprints() -> int:
     parts.append(text[last:])
     new_text = "".join(parts)
     try:
-        res = safe_write_text(_REGISTRY, new_text, expected_base_sha256=base, newline="")
+        # allow_mass_edit：--apply 即显式授权的外科回填（W4 守卫 09-22 后，83 条指纹
+        # 替换 >册 0.5% 行阈值会被拒；守卫 docstring 明示外科脚本可传该参数）
+        res = safe_write_text(_REGISTRY, new_text, expected_base_sha256=base, newline="", allow_mass_edit=True)
         print(f"落盘: {res.written}")
     except Exception as exc:  # noqa: BLE001 — CAS 冲突=磁盘已被推进，重跑即重试（幂等）
         print(f"FAIL: CAS 冲突 ({type(exc).__name__})——重跑 --apply 即重试", file=sys.stderr)
