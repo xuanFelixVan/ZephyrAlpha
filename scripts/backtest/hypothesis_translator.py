@@ -9,7 +9,9 @@
 # [MODIFY-GUARD] none
 # [INVARIANTS] MVP 边界=假说→因子表达式公式化子集（自然语言→任意代码不在此轨，防幻觉）；
 #   不可公式化的假说如实记 translatable=false（阴性档案，禁硬翻）；表达式必须过 DSL
-#   白名单校验+非退化 sanity；翻译台账只追加；LLM 调用必经 OllamaChat（内置 LSG）；
+#   白名单校验+非退化 sanity；翻译台账只追加；幂等跳过集只认"有效结论"行——
+#   refusal_reason 前缀 llm_error 的基础设施阴性不占坑（F22 治本，否则断供班永久锁死候选）；
+#   LLM 调用必经 OllamaChat（内置 LSG）；
 #   出生证字段从 E2 台账原样携带（原假说 birth 链保持），翻译行为记入 birth_source 尾注；
 #   生成考卷件入 translated/ 前必须过 creation_token 登记
 # [STABILITY] experimental
@@ -35,6 +37,7 @@
   python scripts/backtest/hypothesis_translator.py translate --seeds 3
   python scripts/backtest/hypothesis_translator.py translate --model deepseek-r1:8b --dry-run
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,13 +62,25 @@ SQL_TRANSLATION_SEEDS = (
     "WHERE verdict = 'precheck_passed' AND birth_channel IN ('D', 'B') "
     "ORDER BY prechecked_at DESC LIMIT {limit}"
 )
-MANIFEST_COLS = ["candidate_id", "birth_channel", "hypothesis_zh", "expression",
-                 "mechanism", "top_n", "translatable", "refusal_reason", "model",
-                 "exam_file", "translated_at"]
+MANIFEST_COLS = [
+    "candidate_id",
+    "birth_channel",
+    "hypothesis_zh",
+    "expression",
+    "mechanism",
+    "top_n",
+    "translatable",
+    "refusal_reason",
+    "model",
+    "exam_file",
+    "translated_at",
+]
+# F22：阴性档中"基础设施失败"类前缀（run_translate 写入 f"llm_error:{exc_type}"）。
+# 这类行不是对假说的判定，故不占幂等坑（见 load_translated_ids）。
+LLM_ERROR_REFUSAL_PREFIX = "llm_error"
 
 
-def build_translation_prompt(hypothesis: str, features: list[str],
-                             op_names: list[str]) -> str:
+def build_translation_prompt(hypothesis: str, features: list[str], op_names: list[str]) -> str:
     """确定性翻译 prompt（公式化子集边界写进事前约束）。"""
     return (
         f"市场假说：{hypothesis}\n\n"
@@ -101,53 +116,76 @@ def parse_translation(raw: str) -> dict:
 
 def fetch_translation_seeds(limit: int) -> list[dict]:
     """E2 台账 D/B 过审假说（翻译种子；不可达=空→上层报缺）。"""
-    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
     from clickhouse_driver import Client
 
     from schemas.categories.backtest.backtest_hypothesis_precheck import (
         DATABASE,
         TABLE_NAME,
     )
+    from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 
     ensure_ch_env_loaded()
     cfg = load_ch_reader_config()
-    cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                 user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                 connect_timeout=5)
-    rows = cli.execute(
-        SQL_TRANSLATION_SEEDS.format(table=f"{DATABASE}.{TABLE_NAME}", limit=int(limit)))
-    return [{"candidate_id": r[0], "birth_channel": r[1], "hypothesis_zh": r[2]}
-            for r in rows]
+    cli = Client(
+        host=cfg["host"],
+        port=int(cfg.get("port", 9000)),
+        user=cfg.get("user", "default"),
+        password=cfg.get("password", ""),
+        connect_timeout=5,
+    )
+    rows = cli.execute(SQL_TRANSLATION_SEEDS.format(table=f"{DATABASE}.{TABLE_NAME}", limit=int(limit)))
+    return [{"candidate_id": r[0], "birth_channel": r[1], "hypothesis_zh": r[2]} for r in rows]
+
+
+def infra_negative_rows(tr: pd.DataFrame) -> pd.Series:
+    """基础设施类阴性行掩码（translatable=false 且 refusal_reason 前缀 llm_error）。
+
+    缺列即退化（无 refusal_reason 列=全非基础设施阴性；无 translatable 列=只看前缀），
+    宁少跳过不多跳过——漏翻可补，占坑死锁无解。
+    """
+    if "refusal_reason" not in tr.columns:
+        return pd.Series(False, index=tr.index)
+    is_llm_err = tr["refusal_reason"].fillna("").astype(str).str.startswith(LLM_ERROR_REFUSAL_PREFIX)
+    if "translatable" in tr.columns:
+        positive = tr["translatable"].fillna(False).astype(str).str.strip().str.lower() == "true"
+        return is_llm_err & ~positive
+    return is_llm_err
 
 
 def load_translated_ids() -> set[str]:
-    """翻译台账已登记 id 集（幂等）。"""
+    """翻译台账"已有效结论"id 集（幂等跳过集）。
+
+    F22 治本（2026-09-27，案卷 b_factory_inbound/10 卷缺口2）：refusal_reason 前缀
+    llm_error 的阴性行=LLM 断供/被闸的**基础设施失败**，不是对假说的判定，不得占幂等坑
+    （09-26 实证：Ollama 断供班 3 行 llm_error:ConnectionError 把 3 条 B 过审假说永久锁死，
+    无自动重试路径）。同一 id 只要另有任一有效行（阳性或非 llm_error 阴性）仍照常跳过，
+    幂等语义与"台账只追加"均不变。
+    """
     if not _MANIFEST_CSV.exists():
         return set()
     try:
-        return set(pd.read_csv(_MANIFEST_CSV, encoding="utf-8-sig")["candidate_id"]
-                   .astype(str))
-    except Exception:  # noqa: BLE001 — 台账损坏重建
+        tr = pd.read_csv(_MANIFEST_CSV, encoding="utf-8-sig")
+        return set(tr.loc[~infra_negative_rows(tr), "candidate_id"].astype(str))
+    except Exception:  # noqa: BLE001 — 台账损坏/缺列=重建（原语义不扩不缩）
         return set()
 
 
-def run_translate(model: str, seeds_limit: int, universe_n: int, days: int,
-                  top_n: int, dry_run: bool = False) -> dict:
+def run_translate(model: str, seeds_limit: int, universe_n: int, days: int, top_n: int, dry_run: bool = False) -> dict:
     """主流程：问闸→种子→LLM 翻译→校验→桥生成考卷件→翻译台账。"""
     from scripts.backtest.compute_window_gate import check_gate
     from scripts.backtest.factor_strategy_template import (
         generate_strategy_file,
         strategy_id_for,
     )
-    from scripts.backtest.lane_c_formula_miner import (
-        FEATURES,
-        fetch_panel,
-        load_whitelist,
-    )
     from scripts.backtest.lane_c2_agentic_miner import (
         build_eval_ops,
         evaluate_expr,
         validate_expr,
+    )
+    from scripts.backtest.lane_c_formula_miner import (
+        FEATURES,
+        fetch_panel,
+        load_whitelist,
     )
     from zephyr.integration.local_model.ollama_chat import OllamaChat
 
@@ -173,16 +211,18 @@ def run_translate(model: str, seeds_limit: int, universe_n: int, days: int,
     if _MANIFEST_CSV.exists():
         try:
             tr = pd.read_csv(_MANIFEST_CSV, encoding="utf-8-sig")
-            translated_exprs = set(tr[tr["translatable"] == True]["expression"]  # noqa: E712
-                                   .dropna().astype(str))
+            translated_exprs = set(
+                tr[tr["translatable"] == True]["expression"]  # noqa: E712
+                .dropna()
+                .astype(str)
+            )
         except Exception:  # noqa: BLE001
             translated_exprs = set()
     for seed in seeds:
         cid = seed["candidate_id"]
         if cid in done:
             continue
-        prompt = build_translation_prompt(seed["hypothesis_zh"], list(FEATURES),
-                                          op_names)
+        prompt = build_translation_prompt(seed["hypothesis_zh"], list(FEATURES), op_names)
         tr: dict | None = None
         expr = ""
         ok, why = False, ""
@@ -197,20 +237,17 @@ def run_translate(model: str, seeds_limit: int, universe_n: int, days: int,
             ok, why = validate_expr(expr, list(FEATURES), set(op_names))
             if not ok:
                 # 纠错重试一次（把 DSL 校验错误喂回去）
-                retry = (prompt + "\n\n上一次输出未通过 DSL 校验：" + why +
-                         "\n修正后重新输出单个 JSON 对象。")
+                retry = prompt + "\n\n上一次输出未通过 DSL 校验：" + why + "\n修正后重新输出单个 JSON 对象。"
                 try:
                     tr = parse_translation(chat.ask(retry, temperature=0.2))
                     if tr.get("translatable"):
                         expr = str(tr.get("expression", "")).strip()
                         ok, why = validate_expr(expr, list(FEATURES), set(op_names))
                 except Exception as exc:  # noqa: BLE001
-                    manifest_rows.append(_negative(
-                        seed, model, f"llm_error:{type(exc).__name__}"))
+                    manifest_rows.append(_negative(seed, model, f"llm_error:{type(exc).__name__}"))
                     continue
         if not tr.get("translatable"):
-            manifest_rows.append(_negative(seed, model,
-                                           tr.get("refusal_reason", "model_refusal")))
+            manifest_rows.append(_negative(seed, model, tr.get("refusal_reason", "model_refusal")))
             continue
         if not ok:
             manifest_rows.append(_negative(seed, model, f"dsl_{why[:40]}"))
@@ -232,16 +269,26 @@ def run_translate(model: str, seeds_limit: int, universe_n: int, days: int,
             continue
         exam = generate_strategy_file(expr, src_cand=cid, top_n=int(tr.get("top_n") or top_n))
         exam_files.append(str(exam))
-        manifest_rows.append({
-            "candidate_id": cid, "birth_channel": seed["birth_channel"],
-            "hypothesis_zh": seed["hypothesis_zh"], "expression": expr,
-            "mechanism": str(tr.get("mechanism", ""))[:200], "top_n": tr.get("top_n") or top_n,
-            "translatable": True, "refusal_reason": "", "model": model,
-            "exam_file": str(exam.relative_to(_ROOT)),
-            "translated_at": now.isoformat(timespec="seconds"),
-        })
+        manifest_rows.append(
+            {
+                "candidate_id": cid,
+                "birth_channel": seed["birth_channel"],
+                "hypothesis_zh": seed["hypothesis_zh"],
+                "expression": expr,
+                "mechanism": str(tr.get("mechanism", ""))[:200],
+                "top_n": tr.get("top_n") or top_n,
+                "translatable": True,
+                "refusal_reason": "",
+                "model": model,
+                "exam_file": str(exam.relative_to(_ROOT)),
+                "translated_at": now.isoformat(timespec="seconds"),
+            }
+        )
     record = {
-        "batch": batch_id, "gate": gate, "model": model, "seeds": len(seeds),
+        "batch": batch_id,
+        "gate": gate,
+        "model": model,
+        "seeds": len(seeds),
         "translated": sum(1 for r in manifest_rows if r.get("translatable")),
         "negative": sum(1 for r in manifest_rows if not r.get("translatable")),
         "rows": manifest_rows,
@@ -252,32 +299,42 @@ def run_translate(model: str, seeds_limit: int, universe_n: int, days: int,
             if c not in df.columns:
                 df[c] = ""
         df = df[[c for c in MANIFEST_COLS if c in df.columns]]
-        df.to_csv(_MANIFEST_CSV, mode="a", header=not _MANIFEST_CSV.exists(),
-                  index=False, encoding="utf-8-sig")
+        df.to_csv(_MANIFEST_CSV, mode="a", header=not _MANIFEST_CSV.exists(), index=False, encoding="utf-8-sig")
         record["written_to"] = str(_MANIFEST_CSV.relative_to(_ROOT))
         record["exam_files"] = exam_files
     return record
 
 
 def _negative(seed: dict, model: str, reason: str) -> dict:
-    return {"candidate_id": seed["candidate_id"],
-            "birth_channel": seed.get("birth_channel", ""),
-            "hypothesis_zh": seed.get("hypothesis_zh", ""), "expression": "",
-            "mechanism": "", "top_n": "", "translatable": False,
-            "refusal_reason": reason[:120], "model": model, "exam_file": "",
-            "translated_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(
-                timespec="seconds")}
+    return {
+        "candidate_id": seed["candidate_id"],
+        "birth_channel": seed.get("birth_channel", ""),
+        "hypothesis_zh": seed.get("hypothesis_zh", ""),
+        "expression": "",
+        "mechanism": "",
+        "top_n": "",
+        "translatable": False,
+        "refusal_reason": reason[:120],
+        "model": model,
+        "exam_file": "",
+        "translated_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds"),
+    }
 
 
 def _positive_dry(seed: dict, tr: dict, expr: str, model: str, top_n: int) -> dict:
-    return {"candidate_id": seed["candidate_id"],
-            "birth_channel": seed.get("birth_channel", ""),
-            "hypothesis_zh": seed.get("hypothesis_zh", ""), "expression": expr,
-            "mechanism": str(tr.get("mechanism", ""))[:200],
-            "top_n": tr.get("top_n") or top_n, "translatable": True,
-            "refusal_reason": "", "model": model, "exam_file": "(dry-run)",
-            "translated_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(
-                timespec="seconds")}
+    return {
+        "candidate_id": seed["candidate_id"],
+        "birth_channel": seed.get("birth_channel", ""),
+        "hypothesis_zh": seed.get("hypothesis_zh", ""),
+        "expression": expr,
+        "mechanism": str(tr.get("mechanism", ""))[:200],
+        "top_n": tr.get("top_n") or top_n,
+        "translatable": True,
+        "refusal_reason": "",
+        "model": model,
+        "exam_file": "(dry-run)",
+        "translated_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds"),
+    }
 
 
 def main() -> int:
@@ -292,8 +349,7 @@ def main() -> int:
     m.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     try:
-        record = run_translate(args.model, args.seeds, args.universe_n,
-                               args.days, args.top_n, args.dry_run)
+        record = run_translate(args.model, args.seeds, args.universe_n, args.days, args.top_n, args.dry_run)
     except RuntimeError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1

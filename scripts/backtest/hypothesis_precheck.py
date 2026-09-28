@@ -1,7 +1,8 @@
 # [BLUEPRINT] MOD-BT-091 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.hypothesis_precheck
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] pandas; zephyr.integration.local_model.ollama_chat; zephyr.data.ch_config; schemas.categories.backtest.backtest_hypothesis_precheck
+# [DEPENDENCIES] pandas; zephyr.integration.local_model.ollama_chat; zephyr.data.ch_config;
+#   schemas.categories.backtest.backtest_hypothesis_precheck; scripts.backtest.intake_ledger_recon
 # [CONSUMERS] 策略生产全景图 FAC-E2 假说预审逻辑门；E3 构造排产（只消费 precheck_passed）；
 #   c1_backtest.hypothesis_precheck（判定记录台账）
 # [STARTUP] manual
@@ -9,8 +10,9 @@
 # [MODIFY-GUARD] none
 # [INVARIANTS] verdict/verdict_reason 由本模块代码生成禁手填；LLM 调用必经 OllamaChat（内置
 #   LSG 闸门 fail-closed，MOD-INF-042/052）；运动员不兼任裁判——本门只做经济学预审，
-#   考试权仍在 E4；deferred 不是拒绝（基础设施类失败不冤枉想法）；出生证原样携带不重导出；
-#   判定台账只追加
+#   考试权仍在 E4；deferred 不是拒绝（基础设施类失败不冤枉想法）⇒幂等集只认终局结论
+#   （passed/rejected），deferred 必须留在重审通道（F21 治本，SQL_ALREADY 兑现）；
+#   出生证原样携带不重导出；判定台账只追加；E2 前置台账对账 fail-open 但必须显式出声
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -73,7 +75,11 @@ MODEL = "qwen3:8b"
 SYSTEM_PROMPT = "你是量化策略假说预审员。只做经济学逻辑判断，不做回测。始终输出合法 JSON，不要输出额外文本。"
 
 SQL_INSERT = "INSERT INTO {table} {cols} VALUES"  # INSERT_COLUMNS 自带括号
-SQL_ALREADY = "SELECT DISTINCT candidate_id FROM {table}"
+# F21 治本（2026-09-27，案卷 b_factory_inbound/09 卷缺口1）：幂等集**必须排除 deferred**——
+# deferred 是基础设施类失败（LLM 断供/解析失败/低置信），不是结论；全表 DISTINCT 把 24 条
+# defer 永久锁在"已审"集里=滞留死坑（:214 注释自认"deferred 可重跑"语义此前未被 SQL 兑现）。
+# passed/rejected 才是终局结论（reject 不重审=省算力设计）。
+SQL_ALREADY = f"SELECT DISTINCT candidate_id FROM {{table}} WHERE verdict != '{VERDICT_DEFER}'"
 
 
 def _table() -> str:
@@ -247,14 +253,33 @@ def insert_verdicts(rows: list[dict]) -> int:
     return len(tuples)
 
 
+def ledger_preflight(source: str) -> dict:
+    """E2 前置对账（F16 治本，MOD-BT-231）：进货台账 ↔ CH 判定台账漂移报告。
+
+    fail-open：对账故障不阻断预审主链；但故障必须显式出声（status=probe_failed），
+    禁静默归零判全绿。drift 只报不拦——E2 消费的是 csv 现有行，重建是独立动作。
+    """
+    try:
+        from scripts.backtest.intake_ledger_recon import STATUS_DRIFT, STATUS_PROBE_FAILED, preflight
+
+        report = preflight(source)
+    except Exception as exc:  # noqa: BLE001 — 对账器自身异常降级为显式探针失败
+        return {"status": "probe_failed", "error": f"{type(exc).__name__}: {exc}"[:200]}
+    if report.get("status") in (STATUS_DRIFT, STATUS_PROBE_FAILED):
+        loud = {k: v for k, v in report.items() if k != "detail"}
+        print(f"[E2-PREFLIGHT] 台账对账 {report['status']}: {json.dumps(loud, ensure_ascii=False)}", file=sys.stderr)
+    return report
+
+
 def run(source: str, limit: int | None = None, dry_run: bool = False) -> dict:
-    """主流程：读进货→幂等过滤→逐条预审→落台账→汇总。"""
+    """主流程：前置对账→读进货→幂等过滤→逐条预审→落台账→汇总。"""
+    recon = ledger_preflight(source)
     cands = load_candidates(source, limit)
     done = fetch_prechecked_ids()
     if done:
         cands = cands[~cands["candidate_id"].isin(done)]
     if cands.empty:
-        return {"batch": None, "message": "无新增候选（全部已预审或源为空）"}
+        return {"batch": None, "message": "无新增候选（全部已预审或源为空）", "ledger_recon": recon}
 
     from zephyr.integration.local_model.ollama_chat import OllamaChat
 
@@ -295,6 +320,7 @@ def run(source: str, limit: int | None = None, dry_run: bool = False) -> dict:
         "passed": sum(1 for r in rows if r["verdict"] == VERDICT_PASS),
         "rejected": sum(1 for r in rows if r["verdict"] == VERDICT_REJECT),
         "deferred": sum(1 for r in rows if r["verdict"] == VERDICT_DEFER),
+        "ledger_recon": recon,
         "reason_codes": {rc: sum(1 for r in rows if r["reason_code"] == rc) for rc in {r["reason_code"] for r in rows}},
     }
     if not dry_run:

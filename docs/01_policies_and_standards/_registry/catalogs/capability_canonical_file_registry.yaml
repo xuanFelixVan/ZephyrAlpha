@@ -55573,4 +55573,10 @@ creation_tokens:
   capability: consumption_census
   merge_evaluation: "波13 单一扫描口径接管袋路径修正重登（原登记路径缺子包段），净零"
 
+- file: scripts/backtest/intake_ledger_recon.py
+  token: s4-factory-fix-intake-ledger-recon-20260928
+  created_by: st-zc8-lane-s4c-20260928
+  capability: s4_factory_fix
+  merge_evaluation: "F16 处方缺口1新增能力（台账蒸发对账与重建），跨域不同对象不并、无同真源可派生条目，登记前零检测面"
+
 di_seam_exemptions: []

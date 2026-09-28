@@ -1,7 +1,8 @@
 # [BLUEPRINT] MOD-BT-150 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] scripts.backtest.lane_b_idea_generator
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] pandas; zephyr.integration.local_model.ollama_chat
+# [DEPENDENCIES] pandas; zephyr.integration.local_model.ollama_chat;
+#   scripts.backtest.intake_ledger_recon(append_ledger_rows 写口，惰性导入避免与本模块互为环)
 # [CONSUMERS] 策略生产全景图 FAC-E1B 车道B-AI生成；FAC-E2 假说预审（下游消费方）；
 #   data/strategy_intake/lane_b_candidates.csv（进货台账）
 # [STARTUP] manual
@@ -9,7 +10,9 @@
 # [MODIFY-GUARD] none
 # [INVARIANTS] 出生证（birth_channel/birth_batch/birth_source）由本模块代码机器写入，AI 禁手填；
 #   运动员不兼任裁判——本车道只生成不打分，成绩与判定权在 E2 预审/E4 考试；
-#   候选 id=CAND-md5_12('E1B:'+假说全文) 内容寻址稳定可去重；台账只追加；
+#   候选 id=CAND-md5_12('E1B:'+假说全文) 内容寻址稳定可去重；台账只追加且必经
+#   intake_ledger_recon.append_ledger_rows 的 safe_write_text CAS 通道（F16 治本，
+#   禁裸 to_csv(mode="a")——09-16 班 11 行蒸发的写手侧根因）；
 #   LLM 调用必经 OllamaChat（内置 LSG fail-closed 闸门）；同一假说跨批不重复入账
 # [STABILITY] experimental
 # [SAFETY] L
@@ -33,6 +36,7 @@
   python scripts/backtest/lane_b_idea_generator.py generate --n-per-theme 2 --dry-run
   python scripts/backtest/lane_b_idea_generator.py generate --themes 动量,反转 --n-per-theme 3
 """
+
 from __future__ import annotations
 
 import argparse
@@ -54,13 +58,25 @@ BIRTH_CHANNEL = "B"
 
 # 内置主题种子（12 策略族，确定性清单；--themes 可选子集）
 SEED_THEMES = (
-    "价格动量", "价格反转", "横截面价值", "波动率变化", "成交量异动", "事件驱动",
-    "趋势过滤", "均值回归", "季节性", "相对强弱", "流动性溢价", "风险规避切换",
+    "价格动量",
+    "价格反转",
+    "横截面价值",
+    "波动率变化",
+    "成交量异动",
+    "事件驱动",
+    "趋势过滤",
+    "均值回归",
+    "季节性",
+    "相对强弱",
+    "流动性溢价",
+    "风险规避切换",
 )
 
-GENERATION_SYSTEM = ("你是量化策略假说生成器。只生成假说，不写代码，不做回测。"
-                     "每个假说必须说清：赚的是谁的钱（机制）、什么信号、持有多久、用在什么股票域。"
-                     "始终输出合法 JSON，不要输出额外文本。")
+GENERATION_SYSTEM = (
+    "你是量化策略假说生成器。只生成假说，不写代码，不做回测。"
+    "每个假说必须说清：赚的是谁的钱（机制）、什么信号、持有多久、用在什么股票域。"
+    "始终输出合法 JSON，不要输出额外文本。"
+)
 
 
 def build_generation_prompt(theme: str, n: int) -> str:
@@ -69,9 +85,9 @@ def build_generation_prompt(theme: str, n: int) -> str:
         f"围绕主题「{theme}」生成 {n} 条 A 股日频策略假说。\n"
         "要求：机制具体到交易对手或风险来源；避免纯数据挖掘巧合（冰淇淋销量式）；"
         "信号必须是 T 日收盘可知的信息；不涉及做空（A 股个股限制）。\n"
-        f"输出 JSON 数组，每条：{{\"hypothesis_zh\": \"一句话假说\", "
-        f"\"mechanism_hint\": \"机制提示\", \"horizon\": \"持有期如5日/20日\", "
-        f"\"universe\": \"适用域如沪深300/全A\"}}，恰好 {n} 条。"
+        f'输出 JSON 数组，每条：{{"hypothesis_zh": "一句话假说", '
+        f'"mechanism_hint": "机制提示", "horizon": "持有期如5日/20日", '
+        f'"universe": "适用域如沪深300/全A"}}，恰好 {n} 条。'
     )
 
 
@@ -82,7 +98,7 @@ def parse_ideas(raw: str) -> list[dict]:
     end = text.rfind("]")
     if start >= 0 and end > start:
         try:
-            arr = json.loads(text[start:end + 1])
+            arr = json.loads(text[start : end + 1])
             return [x for x in arr if isinstance(x, dict) and x.get("hypothesis_zh")]
         except json.JSONDecodeError:
             pass
@@ -99,12 +115,11 @@ def parse_ideas(raw: str) -> list[dict]:
 
 def make_candidate_id(hypothesis_zh: str) -> str:
     """候选 id：CAND-<md5_12>，对假说全文内容寻址（跨批同假说不换 id）。"""
-    digest = hashlib.md5(f"E1B:{hypothesis_zh.strip()}".encode("utf-8")).hexdigest()[:12]
+    digest = hashlib.md5(f"E1B:{hypothesis_zh.strip()}".encode()).hexdigest()[:12]
     return f"CAND-{digest}"
 
 
-def attach_birth_certificate(ideas: list[dict], batch_id: str, theme: str,
-                             prompt: str) -> list[dict]:
+def attach_birth_certificate(ideas: list[dict], batch_id: str, theme: str, prompt: str) -> list[dict]:
     """出生证三件套机器写入（v9 防幻觉块：溯源由流水线代码生成）。"""
     prompt_fp = hashlib.md5(prompt.encode("utf-8")).hexdigest()[:12]
     out = []
@@ -159,28 +174,36 @@ def run_generation(themes: list[str], n_per_theme: int, dry_run: bool = False) -
                 skipped_dup += 1
                 continue
             existing.add(cid)
-            rows.append({
-                "candidate_id": cid,
-                "theme": theme,
-                "hypothesis_zh": x["hypothesis_zh"],
-                "mechanism_hint": x.get("mechanism_hint", ""),
-                "horizon": x.get("horizon", ""),
-                "universe": x.get("universe", ""),
-                "birth_channel": x["birth_channel"],
-                "birth_batch": x["birth_batch"],
-                "birth_source": x["birth_source"],
-            })
+            rows.append(
+                {
+                    "candidate_id": cid,
+                    "theme": theme,
+                    "hypothesis_zh": x["hypothesis_zh"],
+                    "mechanism_hint": x.get("mechanism_hint", ""),
+                    "horizon": x.get("horizon", ""),
+                    "universe": x.get("universe", ""),
+                    "birth_channel": x["birth_channel"],
+                    "birth_batch": x["birth_batch"],
+                    "birth_source": x["birth_source"],
+                }
+            )
     record = {
-        "batch": batch_id, "themes": list(themes), "generated": len(rows),
-        "failed_themes": failed_themes, "skipped_dup": skipped_dup,
+        "batch": batch_id,
+        "themes": list(themes),
+        "generated": len(rows),
+        "failed_themes": failed_themes,
+        "skipped_dup": skipped_dup,
         "items": [{k: r[k] for k in ("candidate_id", "theme", "hypothesis_zh")} for r in rows],
     }
     if not dry_run and rows:
-        header = not _INTAKE_CSV.exists()
+        # F16 治本第三刀：台账追加写改走 CAS 通道（safe_write_text）——旧裸
+        # to_csv(mode="a") 无 base 校验，是 09-16 班 11 行蒸发面无告警的写手侧根因之一。
+        from scripts.backtest.intake_ledger_recon import append_ledger_rows
+
         _INTAKE_CSV.parent.mkdir(parents=True, exist_ok=True)
-        pd.DataFrame(rows).to_csv(_INTAKE_CSV, mode="a", header=header, index=False,
-                                  encoding="utf-8-sig")
+        written = append_ledger_rows(_INTAKE_CSV, rows, list(rows[0].keys()))
         record["written_to"] = str(_INTAKE_CSV.relative_to(_ROOT))
+        record["cas"] = written
     return record
 
 
@@ -192,8 +215,7 @@ def main() -> int:
     g.add_argument("--n-per-theme", type=int, default=2, help="每主题生成条数")
     g.add_argument("--dry-run", action="store_true", help="只回看不写台账")
     args = ap.parse_args()
-    themes = ([t.strip() for t in args.themes.split(",") if t.strip()]
-              if args.themes else list(SEED_THEMES))
+    themes = [t.strip() for t in args.themes.split(",") if t.strip()] if args.themes else list(SEED_THEMES)
     try:
         record = run_generation(themes, args.n_per_theme, args.dry_run)
     except RuntimeError as exc:
