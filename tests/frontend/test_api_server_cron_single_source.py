@@ -221,9 +221,10 @@ def dow_field_values(field: str) -> set[int]:
     return out
 
 
-def test_dow_bearing_slots_are_the_22_expected() -> None:
-    """受 dow 口径影响面基线（22/31）——真源扩缩容时提醒对拍覆盖面复核。
+def test_dow_bearing_slots_are_the_23_expected() -> None:
+    """受 dow 口径影响面基线（23/32）——真源扩缩容时提醒对拍覆盖面复核。
 
+    2026-09-29 追认（22/31→23/32）：+pf_alloc_rebalance_check（F27 再平衡调度，E8/E9 袋复活 a349ddc1fec）。
     2026-09-27 追认（17/24→22/31）：今夜多车道排班扩容 +cross_validation（F04 交叉校验，
     88f62e893e）+lane_g_intake_sweep（F20 兜底扫描，7d81f8b1bd）+dloop_post/research_nightly/
     auction_highfreq/consensus_crosscheck 等七槽（09-26/27 各线批次）。
@@ -232,8 +233,8 @@ def test_dow_bearing_slots_are_the_22_expected() -> None:
     +eod_reconciliation（R-015 日终对账，全流通战役排班批）。
     """
     bearing = {k for k, v in RAW.items() if v.split()[-1] != "*"}
-    assert len(RAW) == 31, f"schedule.yaml 时段数漂移：{len(RAW)}"
-    assert len(bearing) == 22, sorted(bearing)
+    assert len(RAW) == 32, f"schedule.yaml 时段数漂移：{len(RAW)}"
+    assert len(bearing) == 23, sorted(bearing)
 
 
 def test_croniter_available() -> None:
@@ -350,7 +351,9 @@ def test_weekday_bearing_slots_now_land_on_intended_weekdays() -> None:
         assert old_days != want_days, (
             f"{name} 旧实现触发日集与真源原意相同 → 本测试失效（真源口径变了？请复核 C-4 裁定）"
         )
-    assert checked == 22, f"带 dow 时段数漂移：{checked}"  # 2026-09-27 追认 17→22（今夜多车道七槽，见 22/31 追认注）
+    assert checked == 23, (
+        f"带 dow 时段数漂移：{checked}"
+    )  # 2026-09-29 追认 22→23（+pf_alloc_rebalance_check，见 23/32 追认注）
 
 
 def test_legacy_weekend_slots_reported_sunday_new_reports_monday() -> None:
