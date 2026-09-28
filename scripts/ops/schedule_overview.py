@@ -23,6 +23,19 @@
 # [A_module] module_id=MOD-OPS_SCHED_OVERVIEW | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI 会话按需调用的 permanent CLI runner（排班三表总览/一致性自检/reconciler status 查询，非 cron/非 daemon/非常驻服务），由会话显式触发；自动维护面由 GATE-SCHEDULE-CONSISTENCY reconciler（post-commit 事件触发）承担
+"""schedule_overview — 排班三表统一总览入口（W4-4：三表一入口，物理表不合并）。
+
+三张物理表 → 一个逻辑系统 → 一条命令：
+
+  python scripts/ops/schedule_overview.py                    # 三段总览（周历/资源档位/一致性）
+  python scripts/ops/schedule_overview.py --section week     # 只看周历视图（槽位×任务映射）
+  python scripts/ops/schedule_overview.py --json             # 机生输出（供上游消费）
+  python scripts/ops/schedule_overview.py --selftest         # 一致性检查红/绿自证（内存注入）
+  python scripts/ops/schedule_overview.py --reconciler-status  # reconciler 注册/执行 status
+
+设计依据：Owner 裁定——tasks.yaml+schedule.yaml 本就一体（任务引用槽位主从系统），
+resource_profile_registry 独立维度；不合并物理表，读侧统一入口 + 一致性 reconciler。
+
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
@@ -60,18 +73,6 @@
 # A1 --> O1
 # A2 --> O1
 # A3 --> O1
-"""schedule_overview — 排班三表统一总览入口（W4-4：三表一入口，物理表不合并）。
-
-三张物理表 → 一个逻辑系统 → 一条命令：
-
-  python scripts/ops/schedule_overview.py                    # 三段总览（周历/资源档位/一致性）
-  python scripts/ops/schedule_overview.py --section week     # 只看周历视图（槽位×任务映射）
-  python scripts/ops/schedule_overview.py --json             # 机生输出（供上游消费）
-  python scripts/ops/schedule_overview.py --selftest         # 一致性检查红/绿自证（内存注入）
-  python scripts/ops/schedule_overview.py --reconciler-status  # reconciler 注册/执行 status
-
-设计依据：Owner 裁定——tasks.yaml+schedule.yaml 本就一体（任务引用槽位主从系统），
-resource_profile_registry 独立维度；不合并物理表，读侧统一入口 + 一致性 reconciler。
 """
 
 from __future__ import annotations

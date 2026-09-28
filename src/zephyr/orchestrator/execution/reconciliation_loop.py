@@ -1,6 +1,5 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.execution.reconciliation_loop
-# [ALGO_FLOW] external: docs/03_modules/_domain_orchestrator/algo_flow/reconciliation_loop.yaml
 # [DOMAIN] D_ORCHESTRATOR
 # [DEPENDENCIES] zephyr.orchestrator.__init__; zephyr.shared.utils.time_utils
 # [CONSUMERS] 无生产消费方（BRK-017 在册断点；本件调和的是**编排器自身完整性**5 项不变量，非 FF-11→FF-12 成交对账链）
@@ -40,6 +39,8 @@ Fail-Closed 加严（对齐裁定 R-E1"保留不产生约束力的门=没有门"
     states=None / 缺某键 / 值非 bool      → 该项 ok=False, current="unobserved"
     全部键显式 True                        → all_ok=True
     新增 result.unobserved 列表            → 区分"查了且坏"与"根本没查"
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_orchestrator/algo_flow/reconciliation_loop.yaml
 """
 
 from typing import Final
