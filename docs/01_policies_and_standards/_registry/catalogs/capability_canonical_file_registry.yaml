@@ -55960,4 +55960,10 @@ creation_tokens:
   capability: chart_condition_consumer
   merge_evaluation: "st-zcloseout 接线袋：零消费的 chart_condition_package 接出首个 src 下游真消费（纯适配零第二实现，判据口径全数委托包内真源；替代方案=判读端直改，已被同构工件契约取代故不立第二实现）"
 
+- file: docs/_working/chief8_night/91_progress.md
+  token: chief8-night-ledger-91-progress-20260928
+  created_by: st-chief8-20260928
+  capability: chief8_night_ledger
+  merge_evaluation: "总包夜战台账唯一登记面（内收 w5_1：替代散落会话内存报告收敛单真源）；新域首册零退役对象"
+
 di_seam_exemptions: []
