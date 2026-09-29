@@ -38,7 +38,7 @@ session: st-finaldel-m5-20260929
 | C192 | READY | 00_orchestration@HEAD 无 57 条对账表 | 产出对账表新件（docs/_working）：57 缺口×fullflow F01-F122 映射，注明合并/重复/独立三态；源=遗留任务.txt 任务三 P3（153 行）/§八验收3 |
 | C224 | ✅自开工已施工 | 91_flash_one_click L175 tee 相对路径、文件 git-clean → 施工 | tee 改 `$(git rev-parse --show-toplevel)/docs/_working/total_command_closeout/LEDGER_execution.md`＋注释；在队 q-0001 |
 | C247 | ✅自开工已施工 | W-176 行已载四家名、W-102 行无注记 → 施工 | W-102 行尾并入四家对表注记（GE/pandera/dbt tests+data-diff/QLib，不引依赖）；在队 q-0001 |
-| C431 | READY（前提收窄） | 10_d_data.md 已在 HEAD（docs/02_enterprise_architecture/02_domain_architecture_docs/） | 文件已定位（无需再捞）；按 G-75「行数当条目数」尺对 10_d_data.md 全文行数引用再扫一轮，未闭合三条之二收口 |
+| C431 | ✅本道已收口（st-finaldel-cdocs2 20260929） | 前提修正：10_d_data.md=派生离库件（.gitignore L541 #ARCH-GOV-BUDGET-001，--all 零历史，**从未在 HEAD**，M5 卡前提不实）；本轮 wc -l 实测=19,399 行 | 二轮全扫收口：00:115/01:88·177/93:87 三册已带 SW15 活值条款（「复测 19,364，现值以 wc -l 为准」）=正确标注结卡；残留错数 19131 两处已改——91:154（Flash 唯一照做册）与 dossier_H:155（自陈未核数）均改 19,037+2026-09-29 复测 19,399+活值条款+行数非件数注；全仓兜底扫无第三处 |
 | C73 | READY | HANDOVER.md@HEAD L88 在册；HANDOVER_FINAL/INSTRUCTION 两件未逐一复核在册态 | HANDOVER_FINAL/INSTRUCTION 若仍缺→走正门落 HEAD；07_pending_work_master_list.md 以旧战役版或重建版明确真源（波13 实测全仓不存在） |
 | C226 | ✅自开工已施工 | W-117 行@HEAD L175 仍旧口径（61 形态/RANSAC）→ 施工 | 行尾补补丁D 终审注记（RANSAC 弃用→trendln/pytrendline；154 件实测口径）；在队 q-0001 |
 | C341 | READY | — | 「编目有排产无」余项并入 19号文 backlog 与 10_wave_plan 唯一真源；禁开第二本排产册 |
