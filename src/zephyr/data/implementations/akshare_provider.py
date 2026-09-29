@@ -8135,7 +8135,20 @@ class AkshareIngestProvider(IngestProviderBase):
     # ---- 32. ETF基准列表（etf_benchmark） ----
 
     def _fetch_etf_benchmark(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
-        """ETF基准指数列表全量刷新，写入 c1_market.etf_benchmark。"""
+        """ETF基准指数元数据全量刷新，写入 c1_market.etf_benchmark。
+
+        真源接口=ak.index_csindex_all()（中证官网全家族列表，2026-09-29 实测 2370 只）：
+            指数代码/指数全称/指数简称/发布时间/基日/基点 一一对应表列；
+            publish_date（发布时间）=tasks.yaml date_col 新鲜度锚；
+            publisher 恒"中证指数有限公司"（数据源即中证官网，单一发布机构）；
+            adjust_cycle 源接口不提供，如实留空（禁编造）。
+        99 #19 治本（2026-09-29，实弹证据见 tests/data/implementations/test_akshare_etf_benchmark.py
+            模块注释）：原实现调 ak.index_stock_info(symbol="000300")——该接口现为无参签名
+            （实调 TypeError: unexpected keyword argument 'symbol'）且仅代码+名称两列无元数据、
+            返回值被丢弃恒 rows=[] 假绿 SUCCESS；tasks.yaml 原声明的 fund_etf_fund_info_em
+            为 ETF 净值时序（净值日期/单位净值/累计净值），与本表指数元数据列语义不符，
+            声明已同步修正为 index_csindex_all。
+        """
         import akshare as ak
 
         table = _TBL_ETF_BENCHMARK
@@ -8150,20 +8163,66 @@ class AkshareIngestProvider(IngestProviderBase):
             "adjust_cycle",
         ]
         t0 = time.monotonic()
-        rows: list[tuple] = []
-        # 从指数列表中获取
         try:
-            df = self._call_with_policy(ak.index_stock_info, policy, symbol="000300")
+            df = self._call_with_policy(ak.index_csindex_all, policy)
+            if df is None or len(df) == 0:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.monotonic() - t0,
+                    error="index_csindex_all 返回空",
+                )
+                return
+            rows: list[tuple] = []
+            for _, r in df.iterrows():
+                index_code = str(r.get("指数代码", "") or "").strip()
+                # publish_date 是 Date 非空列+新鲜度锚：缺锚行丢弃，不拍哨兵日期冒充
+                publish_date = self._norm_hog_date(r.get("发布时间"))
+                if not index_code or not publish_date:
+                    continue
+                rows.append(
+                    (
+                        index_code,
+                        str(r.get("指数全称", "") or ""),
+                        str(r.get("指数简称", "") or ""),
+                        "中证指数有限公司",
+                        publish_date,
+                        self._norm_hog_date(r.get("基日")),
+                        safe_float(r.get("基点")),
+                        "",  # adjust_cycle 源不提供，留空
+                    )
+                )
+            if not rows:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.monotonic() - t0,
+                    error="index_csindex_all 无有效行（缺指数代码/发布时间）",
+                )
+                return
+            # last_key=行集最大 publish_date（与 date_col 锚列同口径，禁 today() 假新鲜）
+            last_key = max(str(r[4]) for r in rows)
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+            )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._log.debug(f"index_stock_info 失败: {e}")
-        # 如果没有专门接口，用空数据返回（该表为静态参考，低频变化）
-        yield FetchResult(
-            table=table,
-            columns=columns,
-            rows=rows,
-            last_key=datetime.date.today().isoformat(),
-            elapsed_sec=time.monotonic() - t0,
-        )
+            self._log.warning(f"etf_benchmark 获取失败: {e}")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=str(e),
+            )
 
     # ---- ETF基金净值（etf_nav，#ARCH-CH-023: 替代 miniQMT get_etf_info） ----
 

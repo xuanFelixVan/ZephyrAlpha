@@ -2336,7 +2336,7 @@ tasks:
   capability: etf_benchmark
   symbols:
   extra:
-    description: "ETF基准列表全量刷新（AKShare fund_etf_fund_info_em，依赖etf_list）"
+    description: "ETF基准列表全量刷新（AKShare index_csindex_all 中证官网全家族元数据；99#19 2026-09-29 修正：原声明 fund_etf_fund_info_em 为净值时序与本表指数元数据列语义不符；依赖etf_list）"
 
   # ============== 通达信静态表持续更新（2026-07-11）==============
 - task_id: sector_meta_refresh
