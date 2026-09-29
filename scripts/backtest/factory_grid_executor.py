@@ -59,6 +59,14 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
             run_cost_tier_scan（nets_by_tier，逐档全量重算→标量成本线）；③掩码
             批级缓存向量化在引擎侧（_c4_engine），本件零语义变化只换调用面。
             实测依据=gpu_rewrite/hotspot_census.md §二（单 pass 74-95% 在掩码重建）。
+  T5（2026-09-29）: gpu_rewrite P1+L1（st-gpup1-20260929，行为逐位保持）: ①批级
+            张量预热——closes/rets 只依赖 (窗口,宇宙列集)，prep_px_tensor 每宇宙
+            一次共享（原逐格重算），透传 pre_tensor；②成本门场景 run_backtest_full
+            +net_returns_by_tiers 两连调合并为 run_backtest_full_with_tiers 单趟
+            三产物（nets_by_tier 逐位一致，缺席回退原路，死亡层归因不变）；③计算
+            后端开关 ZEPHYR_COMPUTE_BACKEND（缺省 auto=cupy 可用即 gpu FP64 张量核，
+            env=cpu 恒原 pandas 路径零漂移），快路径资格=等形对齐（引擎侧判，
+            gpu_core 零索引语义）。基准=docs/_working/gpu_rewrite/p1_wiring_benchmark.md。
 
 用法:
   python scripts/backtest/factory_grid_executor.py --smoke                 # 烟测（管线联通，8 格点）
@@ -157,11 +165,23 @@ def _load_engine():
         load_px,
         load_st_flags,
         net_returns_by_tiers,
+        prep_px_tensor,
         run_backtest_full,
+        run_backtest_full_with_tiers,
         wide,
     )
 
-    return load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net_returns, net_returns_by_tiers
+    return (
+        load_px,
+        wide,
+        filter_st,
+        load_st_flags,
+        run_backtest_full,
+        daily_net_returns,
+        net_returns_by_tiers,
+        prep_px_tensor,
+        run_backtest_full_with_tiers,
+    )
 
 
 def _load_universe(universe: str, start: str, end: str) -> set[str]:
@@ -688,7 +708,17 @@ def run_batch(
     """
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
-    load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net_returns, net_returns_by_tiers = _load_engine()
+    (
+        load_px,
+        wide,
+        filter_st,
+        load_st_flags,
+        run_backtest_full,
+        daily_net_returns,
+        net_returns_by_tiers,
+        prep_px_tensor,
+        run_backtest_full_with_tiers,
+    ) = _load_engine()
     compiler = GridCompiler.from_yaml(SCHEMA_PATH)
     expansion = compiler.compile(DEFAULT_CONTEXT)
     recipes_all = list(expansion.recipes)
@@ -766,8 +796,10 @@ def run_batch(
         if g not in factors_cache:
             closes_g = closes_eval[cols]
             factors_cache[g] = compute_v1_factors(closes_g)
-            slice_cache[g] = (closes_g, vol20[cols])
-        closes_g, vol20_g = slice_cache[g]
+            # L1 hoist（st-gpup1-20260929）: closes/rets 张量面只依赖 (窗口, 宇宙列集)，
+            # 同宇宙多格点批级预热一次共享（原逐格重算；与内联式同式同序=逐位一致）。
+            slice_cache[g] = (closes_g, vol20[cols], prep_px_tensor(closes_g.index, closes_g))
+        closes_g, vol20_g, pre_tensor = slice_cache[g]
         try:
             weights, degraded = evaluate_recipe(
                 r,
@@ -790,7 +822,16 @@ def run_batch(
         try:
             # st-ddup-20260925 去重改造②: run_backtest+daily_net_returns 两连调合并为
             # run_backtest_full 单趟（stats/net 与原两调逐位一致，掩码批级缓存自动复用）。
-            stats, net = run_backtest_full(weights, closes_g)
+            # st-gpup1-20260929 L1 hoist: pre_tensor（批级 closes/rets）透传免逐格重算；
+            # 成本门场景升级 run_backtest_full_with_tiers 单趟三产物（同 (weights,px)
+            # 原第二趟 net_returns_by_tiers 免除，三产物与两调逐位一致）。
+            nets_by_tier = None
+            if cost_gate_tiers_bp is not None:
+                stats, net, nets_by_tier = run_backtest_full_with_tiers(
+                    weights, closes_g, tuple(cost_gate_tiers_bp), pre_tensor=pre_tensor
+                )
+            else:
+                stats, net = run_backtest_full(weights, closes_g, pre_tensor=pre_tensor)
             if len(net.dropna()) < 60 or float(net.std()) == 0:
                 raise RuntimeError(f"insufficient_net:{len(net)}")
             sharpe = stats["sharpe"]
@@ -815,10 +856,13 @@ def run_batch(
             # st-ddup-20260925 去重改造①: 档位 net 序列经 net_returns_by_tiers 一趟
             # gross/turnover×五档标量成本线派生后注入扫描（与逐档 daily_net_returns
             # 逐位一致；exam_cost_gate nets_by_tier 注入口=其"净值序列由调用方注入"不变量）。
+            # st-gpup1-20260929: 档位序列优先消费单趟三产物的 nets_by_tier（逐位一致），
+            # 缺席（异常路径）回退 net_returns_by_tiers 原路——死亡层归因不变。
             try:
                 from zephyr.backtest.regime_validation.exam_cost_gate import run_cost_tier_scan
 
-                nets_by_tier = net_returns_by_tiers(weights, closes_g, tuple(cost_gate_tiers_bp))
+                if nets_by_tier is None:
+                    nets_by_tier = net_returns_by_tiers(weights, closes_g, tuple(cost_gate_tiers_bp))
                 cost_rows[r.recipe_id] = run_cost_tier_scan(
                     weights, closes_g, daily_net_returns, tiers_bp=tuple(cost_gate_tiers_bp), nets_by_tier=nets_by_tier
                 )

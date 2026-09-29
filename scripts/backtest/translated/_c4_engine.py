@@ -14,6 +14,10 @@
 #   dict/iat+每 pass 重查 CH）、_backtest_core 单趟共享（替代 run_backtest 与
 #   daily_net_returns 同式两算）、net_returns_by_tiers 多档标量成本线（替代五档各全跑）；
 #   判定式/容差/fail-open/净收益公式逐位不变，gpu_rewrite/hotspot_census.md §二为实测依据
+#   gpu_rewrite P1 接线（st-gpup1-20260929）：backend=ZEPHYR_COMPUTE_BACKEND 后端开关
+#   （缺省 auto；"cpu"=恒原 pandas 路径零漂移红线；"gpu"=仅等形对齐格点走 gpu_core FP64
+#   张量核，掩码 CH 查询留在本件）；prep_px_tensor/run_backtest_full_with_tiers=L1 hoist
+#   （批级 closes/rets 预热共享+成本门单趟三产物，输出与原两调逐位一致）
 # [MODIFY-GUARD] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -473,14 +477,107 @@ def apply_fillability_gate(weights: pd.DataFrame, gate_limits: bool = True) -> p
     return pd.DataFrame(out, index=weights.index, columns=weights.columns)
 
 
+# ── P1 接线（st-gpup1-20260929）：ZEPHYR_COMPUTE_BACKEND=gpu|cpu|auto 快路径 ──
+# 真源=src/zephyr/backtest/gpu_core.py（[CONSUMERS] 预定消费方本件）；缺省 auto=cupy 可用即 gpu。
+# 快路径前提=等形对齐（gpu_core 只吃已对齐 (T,S) 等形数组，reindex 索引语义留在本件 pandas 侧）；
+# CPU 后端恒走本件原 pandas 路径（零漂移红线，gpu_core 仅作 GPU 快路径）；
+# gpu_core 缺件（P0 未落地环境）=cpu 回退，原路径零影响。
+# auto 档尺寸守卫：串行闸循环 GPU 下=T 次小 kernel（kernel-launch 税），面板小时 GPU 反输
+# （T=1622 实测：S=1037 gpu 0.41s vs hoisted-cpu 0.10s；S=5217 gpu 0.93s vs 0.61s 反超
+# ——p1_wiring_benchmark.md）→ auto 只在实测赢面区（格数≥_GPU_AUTO_MIN_CELLS）走 gpu，
+# 小面板 auto=cpu-hoisted（最快）；显式 backend="gpu" 无视守卫（调用方自担）。
+_GPU_AUTO_MIN_CELLS: int = 8_000_000
+_VALID_BACKEND_OPTS = ("gpu", "cpu", "auto")
+
+
+def _resolve_engine_backend(backend: str | None) -> str:
+    """后端解析（委托 gpu_core.resolve_backend：显式入参 > env ZEPHYR_COMPUTE_BACKEND > auto）。
+
+    取值非法=ValueError（与 gpu_core 同契约）；gpu_core 缺件=cpu 回退（ transitional，
+    P0 落地后本分支不可达）；显式 gpu 但 CUDA 不可用=resolve_backend 内部 fail-closed
+    降级 cpu 并出声（degrade 台账，禁静默——gpu_core 契约）。
+    """
+    if backend is not None and backend not in _VALID_BACKEND_OPTS:
+        raise ValueError(f"backend 须为 {'|'.join(_VALID_BACKEND_OPTS)}|None，得到 {backend!r}")
+    try:
+        from zephyr.backtest.gpu_core import resolve_backend
+    except ImportError:
+        return "cpu"
+    return resolve_backend(backend)
+
+
+def _gpu_fastpath_eligible(weights: pd.DataFrame, px_close: pd.DataFrame) -> bool:
+    """GPU 快路径资格：索引/列完全一致（等形对齐）。
+
+    px 多余列（本件 reindex 语义可吃）或索引错位=资格否决走原 pandas 路径——
+    gpu_core 禁在本件外做索引重排（其 [INVARIANTS] 钉定）。
+    """
+    return len(weights.index) > 0 and weights.index.equals(px_close.index) and weights.columns.equals(px_close.columns)
+
+
+def _backtest_core_gpu(
+    weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool, backend: str | None
+) -> tuple[pd.Series, pd.Series]:
+    """GPU 张量核薄封装：掩码原料（CH 查询）留在本件，gpu_core 只吃等形数组。
+
+    掩码 None 语义：gate_limits=False=fail-open 全 False（gpu_core 同态）；闸原料 CH
+    不可得=_load_seal_masks 返回全 False 宽表（fail-open 如实），语义与原路径一致。
+    返回 Series 与原路径同构（index=weights.index，float64）。
+    """
+    from zephyr.backtest.gpu_core import tensor_core
+
+    masks = _load_seal_masks(weights.index, weights.columns) if gate_limits else None
+    res = tensor_core(
+        weights,
+        px_close,
+        gate_masks=masks,
+        slippage_bps=(SLIPPAGE_BP,),
+        gate_limits=gate_limits,
+        backend=backend,
+    )
+    gross = pd.Series(res["gross"], index=weights.index, dtype=float)
+    turnover = pd.Series(res["turnover"], index=weights.index, dtype=float)
+    return gross, turnover
+
+
+def prep_px_tensor(weights_index: pd.DatetimeIndex, px_close: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """批级张量预热（L1 hoist，st-gpup1-20260929）：closes/rets 只依赖 (px_close, 权重索引)。
+
+    同窗同宇宙多格点逐格重算→批级一次计算共享（gpu_rewrite/p1_wiring_benchmark.md 实测
+    依据）；表达式与 _backtest_core 内联式同式同序=逐位一致。返回 (closes, rets)。
+    """
+    closes = px_close.reindex(weights_index.union(weights_index)).ffill()
+    rets = closes.pct_change()
+    return closes, rets
+
+
 def _backtest_core(
-    weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool = True
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    gate_limits: bool = True,
+    *,
+    backend: str | None = None,
+    pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
 ) -> tuple[pd.Series, pd.Series]:
     """run_backtest / daily_net_returns 共享单趟（st-ddup-20260925 去重改造②，
     gpu_rewrite/hotspot_census.md §二 L2-b：两函数体重叠 90%，执行器两连调=白付 1 个 pass）。
-    返回 (gross, turnover)，成本线由 _net_line 标量乘派生——净收益公式零改写。"""
-    closes = px_close.reindex(weights.index.union(weights.index)).ffill()
-    rets = closes.pct_change()
+    返回 (gross, turnover)，成本线由 _net_line 标量乘派生——净收益公式零改写。
+
+    backend（P1 接线）：None=按 env/auto 解析（cupy 可用即 gpu）；"cpu"=恒原 pandas 路径
+    （零漂移红线）；"gpu"=gpu_core 张量核（仅等形对齐格点，否则原路径）。
+    pre_tensor（L1 hoist）：prep_px_tensor 产出 (closes, rets) 批级共享，免逐格重算；
+    仅 CPU 原路径消费（GPU 核内含等价张量面）。
+    """
+    if _resolve_engine_backend(backend) == "gpu" and _gpu_fastpath_eligible(weights, px_close):
+        # auto 档尺寸守卫：小面板 gpu 输 hoisted-cpu（kernel-launch 税，实测见上注）——
+        # 仅显式 backend="gpu" 绕过；auto/env 解析出的 gpu 落在赢面区外=回 pandas。
+        if backend == "gpu" or weights.size >= _GPU_AUTO_MIN_CELLS:
+            return _backtest_core_gpu(weights, px_close, gate_limits, backend)
+    if pre_tensor is not None:
+        closes, rets = pre_tensor
+    else:
+        closes = px_close.reindex(weights.index.union(weights.index)).ffill()
+        rets = closes.pct_change()
     w = weights.reindex(closes.index).ffill().fillna(0.0)
     w = apply_fillability_gate(w, gate_limits=gate_limits)
     gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
@@ -497,24 +594,9 @@ def _net_line(gross: pd.Series, turnover: pd.Series, slippage_bp: float | None) 
     return gross - cost
 
 
-def run_backtest(
-    weights: pd.DataFrame,
-    px_close: pd.DataFrame,
-    gate_limits: bool = True,
-    slippage_bp: float | None = None,
-) -> dict[str, Any]:
-    """T+1 收盘执行向量化回测——与 pilot_002_ma_cross 逐行同口径。
-
-    weights: index=trade_date, columns=symbol，目标权重（收盘再平衡）；
-    px_close: 同结构收盘价宽表（可含额外列，内部 reindex 对齐）；
-    gate_limits: 涨跌停可成交性闸（默认开，E7 引擎洞修复 2026-09-18——封板买入/跌停卖出
-    不可成交；False=旧行为，仅供反例对照）。
-    slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用，st-ibt-remedy-cf-20260923）；
-    None=冻结土规 SLIPPAGE_BP 零变更。仅滑点项可覆盖，佣金/印花不动——
-    正考口径必须传 None，档位扫描是侧向分析不改冻结土规。
-    """
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
-    net = _net_line(gross, turnover, slippage_bp)
+def _stats_from_net(net: pd.Series, turnover: pd.Series, weights: pd.DataFrame) -> dict[str, Any]:
+    """net/turnover→stats 摘要（run_backtest/run_backtest_full/run_backtest_full_with_tiers
+    三处同式收敛一处，内收声明；表达式同序同精度=逐位一致）。"""
     equity = (1.0 + net).cumprod()
     years = max(len(net) / 244.0, 1e-9)
     sharpe = float(net.mean() / net.std() * np.sqrt(244)) if net.std() > 0 else 0.0
@@ -530,18 +612,47 @@ def run_backtest(
     }
 
 
+def run_backtest(
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    gate_limits: bool = True,
+    slippage_bp: float | None = None,
+    *,
+    backend: str | None = None,
+    pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+) -> dict[str, Any]:
+    """T+1 收盘执行向量化回测——与 pilot_002_ma_cross 逐行同口径。
+
+    weights: index=trade_date, columns=symbol，目标权重（收盘再平衡）；
+    px_close: 同结构收盘价宽表（可含额外列，内部 reindex 对齐）；
+    gate_limits: 涨跌停可成交性闸（默认开，E7 引擎洞修复 2026-09-18——封板买入/跌停卖出
+    不可成交；False=旧行为，仅供反例对照）。
+    slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用，st-ibt-remedy-cf-20260923）；
+    None=冻结土规 SLIPPAGE_BP 零变更。仅滑点项可覆盖，佣金/印花不动——
+    正考口径必须传 None，档位扫描是侧向分析不改冻结土规。
+    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。
+    """
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    net = _net_line(gross, turnover, slippage_bp)
+    return _stats_from_net(net, turnover, weights)
+
+
 def daily_net_returns(
     weights: pd.DataFrame,
     px_close: pd.DataFrame,
     gate_limits: bool = True,
     slippage_bp: float | None = None,
+    *,
+    backend: str | None = None,
+    pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
 ) -> pd.Series:
     """与 run_backtest 同口径的净收益序列（供 DSR 批内偏度/峰度合并计算）。
 
     gate_limits: 涨跌停可成交性闸（默认开，与 run_backtest 一致）。
     slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用）；None=冻结土规零变更。
+    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。
     """
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
     return _net_line(gross, turnover, slippage_bp).fillna(0.0)
 
 
@@ -550,28 +661,40 @@ def run_backtest_full(
     px_close: pd.DataFrame,
     gate_limits: bool = True,
     slippage_bp: float | None = None,
+    *,
+    backend: str | None = None,
+    pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
 ) -> tuple[dict[str, Any], pd.Series]:
     """单趟双产物 (stats, net)——run_backtest + daily_net_returns 合并入口
     （st-ddup-20260925 去重改造②，内收声明：替代执行器两连调 run_backtest+
     daily_net_returns；stats 与 run_backtest(...) 逐位一致，net 与
     daily_net_returns(...) 逐位一致，两原函数签名/语义不变）。
-    slippage_bp 语义与 run_backtest 相同（None=冻结土规；扫描档走 net_returns_by_tiers）。"""
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    slippage_bp 语义与 run_backtest 相同（None=冻结土规；扫描档走 net_returns_by_tiers）。
+    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。"""
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
     net = _net_line(gross, turnover, slippage_bp)
-    equity = (1.0 + net).cumprod()
-    years = max(len(net) / 244.0, 1e-9)
-    sharpe = float(net.mean() / net.std() * np.sqrt(244)) if net.std() > 0 else 0.0
-    mdd = float((equity / equity.cummax() - 1.0).min())
-    stats = {
-        "days": int(len(net)),
-        "sharpe": round(sharpe, 3),
-        "ann_return": round(float(equity.iloc[-1] ** (1 / years) - 1.0), 4),
-        "max_drawdown": round(mdd, 4),
-        "avg_turnover_1side": round(float(turnover.mean()), 4),
-        "equity_final": round(float(equity.iloc[-1]), 4),
-        "hold_days_pct": round(float((weights.sum(axis=1) > 0).mean()), 3),
-    }
-    return stats, net.fillna(0.0)
+    return _stats_from_net(net, turnover, weights), net.fillna(0.0)
+
+
+def run_backtest_full_with_tiers(
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    slippage_bps,
+    gate_limits: bool = True,
+    *,
+    backend: str | None = None,
+    pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+) -> tuple[dict[str, Any], pd.Series, dict[float, pd.Series]]:
+    """单趟三产物 (stats, net, nets_by_tier)——run_backtest_full + net_returns_by_tiers
+    同 (weights,px) 合并入口（st-gpup1-20260929 L1 hoist，hotspot_census §二 L2-b 同族
+    内收声明：替代执行器成本门场景 run_backtest_full+net_returns_by_tiers 两连调——
+    原先同 (weights,px) 白付 1 个 pass；gross/turnover 一次计算两处消费，三产物与
+    两函数各自输出逐位一致）。backend/pre_tensor 语义见 _backtest_core。"""
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    net = _net_line(gross, turnover, None)
+    stats = _stats_from_net(net, turnover, weights)
+    nets_by_tier = {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
+    return stats, net.fillna(0.0), nets_by_tier
 
 
 def net_returns_by_tiers(
@@ -579,12 +702,16 @@ def net_returns_by_tiers(
     px_close: pd.DataFrame,
     slippage_bps,
     gate_limits: bool = True,
+    *,
+    backend: str | None = None,
+    pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
 ) -> dict[float, pd.Series]:
     """一趟 gross/turnover × 多档成本标量乘（st-ddup-20260925 去重改造①，内收声明：
     替代 run_cost_tier_scan 五档各自全量重算的引擎侧路径——档间唯一差异是一行标量
     成本线，五遍全量回测收敛为一遍回测+五档后处理）。
-    返回 {float(bp): net}；各档 net 与 daily_net_returns(slippage_bp=bp) 逐位一致。"""
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    返回 {float(bp): net}；各档 net 与 daily_net_returns(slippage_bp=bp) 逐位一致。
+    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。"""
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
     return {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
 
 

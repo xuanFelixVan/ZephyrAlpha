@@ -535,8 +535,9 @@ class TestNetReturnsArchive:
             r = px.reindex(weights.index.union(weights.index)).ffill().pct_change()
             return (weights.fillna(0.0).shift(1) * r).sum(axis=1).fillna(0.0)
 
-        def run_backtest_full(weights, px):
+        def run_backtest_full(weights, px, *args, **kwargs):
             # st-ddup-20260925 去重改造②：执行器单趟入口（stats, net）——桩与原两函数同值
+            # （*args/**kwargs 吸收 st-gpup1-20260929 透传的 backend/pre_tensor）
             net = daily_net(weights, px)
             stats = {
                 "sharpe": float(net.mean() / net.std() * np.sqrt(244)),
@@ -549,7 +550,27 @@ class TestNetReturnsArchive:
         def net_returns_by_tiers(weights, px, tiers):
             return {float(b): daily_net(weights, px) - float(b) * 1e-4 for b in tiers}
 
-        return load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net, net_returns_by_tiers
+        # st-gpup1-20260929: 桩随执行器新引擎签名同步（9 元组）——prep_px_tensor 批级
+        # 预热与单趟三产物 run_backtest_full_with_tiers（桩忽略 pre_tensor，数值同式）。
+        def prep_px_tensor(weights_index, px_arg):
+            cl = px_arg.reindex(weights_index.union(weights_index)).ffill()
+            return cl, cl.pct_change()
+
+        def run_backtest_full_with_tiers(weights, px_arg, tiers, **kwargs):
+            stats_, net_ = run_backtest_full(weights, px_arg)
+            return stats_, net_, net_returns_by_tiers(weights, px_arg, tiers)
+
+        return (
+            load_px,
+            wide,
+            filter_st,
+            load_st_flags,
+            run_backtest_full,
+            daily_net,
+            net_returns_by_tiers,
+            prep_px_tensor,
+            run_backtest_full_with_tiers,
+        )
 
     def _run_batch(self, tmp_path, monkeypatch, seed: int = 7) -> tuple[dict, int]:
         closes = _synth_closes(self.N_DAYS, 36, seed=seed)  # 36 列 ≥ universe_too_small 门槛

@@ -56350,4 +56350,15 @@ creation_tokens:
   created_by: st-boardidx-20260928
   capability: board-index-consumer-registration
   merge_evaluation: BOARD-INTRADAY-SUPPLY 消费者注册半件（设计稿§6）——纯增量消费面，不替代不合并既有资产
+- file: tests/backtest/test_c4_engine_gpu_wiring.py
+  token: gpu-rewrite-test-c4-engine-gpu-wiring-20260929
+  created_by: st-gpup1-20260929
+  capability: gpu_rewrite
+  merge_evaluation: "P1 接线守护测试：CPU 逐位红线+单趟三产物等价+后端开关/资格守卫；与 parity 测试互补（接线面 vs 核面）不并，替代手工对拍"
+- file: docs/_working/gpu_rewrite/p1_wiring_benchmark.md
+  token: gpu-rewrite-p1-wiring-benchmark-20260929
+  created_by: st-gpup1-20260929
+  capability: gpu_rewrite
+  merge_evaluation: "P1+L1 接线基准卷宗（task_bound）：cpu/gpu/hoisted 实测+auto 尺寸守卫依据；同族 census/three_tiers 引用不并（基准 vs 架构跨域不同对象），零替代退役"
+
 di_seam_exemptions: []

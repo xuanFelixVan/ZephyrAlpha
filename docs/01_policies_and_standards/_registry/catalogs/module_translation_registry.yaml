@@ -62034,6 +62034,15 @@ entries:
   desc_en: ''
   plain_zh: 统一取板块一分钟指数给做T方法用，自算优先，厂商指数只在自算缺的时候当对账兜底
   responsibility_layer: business
+- module_path: tests/backtest/test_c4_engine_gpu_wiring.py
+  domain_id: D_BACKTEST
+  name_zh: "C4引擎GPU接线守护测试"
+  name_en: "C4 engine GPU wiring guard tests"
+  desc_zh: "守护 _c4_engine P1 接线面：CPU 后端逐位红线、单趟三产物等价、后端开关与快路径资格守卫、GPU parity"
+  desc_en: ""
+  plain_zh: "这个测试文件盯着回测引擎新加的显卡加速接线不出错。它验证三件事：普通电脑算法算出来的结果和新算法一位不差；成本档位扫描从算两遍改成算一遍后结果还是一样的；只有在大面板上才真的用显卡算，小面板自动走普通算法不拖慢。全部用假数据，不查数据库。"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
