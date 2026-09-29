@@ -80,7 +80,7 @@ from decimal import Decimal
 from typing import Any, Final
 from zoneinfo import ZoneInfo
 
-from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter
+from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter, today_shanghai
 from zephyr.compliance.discipline_must_do_checker import (
     ChecklistAction,
     ChecklistCheckpoint,
@@ -798,9 +798,14 @@ class TradingSession:
 
         # ── C-004 合规闸 0：INTRADAY 必做清单（43 号 §3.4，订单无关每次循环查一次）──
         if self._checklist_checker is not None:
+            # 取证日=合规交易日锚 today_shanghai（北京日）——与写侧①②③同锚。
+            # 时区错口修复（st-c9-tzday，2026-09-28）：原以 datetime.now(UTC).date()
+            # 取证日，北京 00:00–08:00 窗口与写侧北京日差一天，三腿全判陈旧整批拒。
+            checklist_now = datetime.now(timezone.utc)
             checklist_verdict = self._checklist_checker.check_checkpoint(
                 ChecklistCheckpoint.INTRADAY,
-                datetime.now(timezone.utc),
+                checklist_now,
+                trade_date=today_shanghai(checklist_now),
             )
             if checklist_verdict.action is ChecklistAction.HARD_BLOCK:
                 _logger.error(

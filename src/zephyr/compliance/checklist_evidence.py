@@ -89,7 +89,12 @@ class ChecklistEvidenceError(ZephyrBaseError):
 
 
 def today_shanghai(now: datetime | None = None) -> date:
-    """A 股交易日口径日期（北京时区；UTC 时刻换算当日）。"""
+    """合规交易日锚（唯一真源）：A 股交易日语义=北京日。
+
+    写侧①②③与读侧 checker 取证 MUST 同锚本函数（st-c9-tzday 2026-09-28 时区
+    错口修复：读侧曾以 UTC 日取证，北京 00:00–08:00 窗口与写侧北京日差一天，
+    三腿全判陈旧整批拒）。时区显式 ZoneInfo('Asia/Shanghai')，禁裸本地时区。
+    """
     return (now or datetime.now(timezone.utc)).astimezone(_SHANGHAI_TZ).date()
 
 

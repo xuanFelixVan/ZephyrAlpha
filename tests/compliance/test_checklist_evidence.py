@@ -48,6 +48,37 @@ def test_today_shanghai_converts_utc_to_beijing_date() -> None:
     assert today_shanghai(datetime(2026, 9, 28, 4, 0, tzinfo=timezone.utc)) == date(2026, 9, 28)
 
 
+def test_cross_midnight_beijing_0030_read_write_same_anchor(tmp_path: Path) -> None:
+    """跨零点判别尺（单元级，st-c9-tzday 时区错口修复）。
+
+    北京 00:30（=UTC 前一日 16:30）检测时刻：锚必须给北京日（非 UTC 日=北京
+    昨日），写侧按锚种证 + checker 同锚取证 → 三腿齐判 NONE。修复前读侧以
+    UTC 日取证（trading_session 曾传 datetime.now(UTC)），本窗口三腿全判陈旧
+    整批拒——本测钉死读写同锚北京日语义。
+    """
+    frozen_utc = datetime(2026, 9, 28, 16, 30, tzinfo=timezone.utc)  # 北京 2026-09-29 00:30
+    td = today_shanghai(frozen_utc)
+    assert td == date(2026, 9, 29)  # 锚=北京日；UTC 日 09-28（北京昨日）必被否
+
+    writer = ChecklistEvidenceWriter(tmp_path)
+    writer.write_risk_param_confirm("snap", {}, trade_date=td, source="asm")
+    writer.write_position_limit_verify("snap", trade_date=td, source="ts")
+    writer.write_signal_compliance_ack("Owner", trade_date=td, ack_source="cli")
+    checker = ChecklistCompletionChecker(ChecklistEvidenceProvider(tmp_path))
+    verdict = checker.check_checkpoint(ChecklistCheckpoint.INTRADAY, frozen_utc, trade_date=td)
+    assert verdict.action is ChecklistAction.NONE
+    assert verdict.complete is True
+
+    # 昨日（北京视角）证据不抵今日：UTC 日种证（旧错口写法）在本窗口必判陈旧
+    stale_td = frozen_utc.date()  # 2026-09-28 = 北京 09-28
+    assert stale_td != td
+    writer.write_risk_param_confirm("snap", {}, trade_date=stale_td, source="asm")
+    writer.write_position_limit_verify("snap", trade_date=stale_td, source="ts")
+    writer.write_signal_compliance_ack("Owner", trade_date=stale_td, ack_source="cli")
+    verdict = checker.check_checkpoint(ChecklistCheckpoint.INTRADAY, frozen_utc, trade_date=td)
+    assert verdict.action is ChecklistAction.HARD_BLOCK
+
+
 # ---------------------------------------------------------------------
 # 写者①②（机器）
 # ---------------------------------------------------------------------

@@ -30,6 +30,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter, today_shanghai
 from zephyr.compliance.compliance_log import ComplianceLogger
 from zephyr.compliance.discipline_prohibition_checker import (
     DisciplineAction,
@@ -136,14 +137,12 @@ def _assemble(tmp_path: Path, broker: _PaperBroker) -> TradingSession:
     )
     # 三腿全铺满：经生产 ChecklistEvidenceWriter 落 tmp 证据（来源标注留痕，
     # ZEPHYR_COMPLIANCE_ACK_KEY 在场时走同一 HMAC 路径）——C-004 闸保持 armed 且
-    # 逐单被查，对照组测的是补仓腿因果而非日态。trade_date 必须对齐 checker 的
-    # UTC 日口径（trading_session._validate_and_submit 以 datetime.now(UTC).date()
-    # 取证，而装配引导①②与写侧③默认北京时区今天）：北京 00:00–08:00 窗口两者
-    # 差一天，不对齐则三腿全判陈旧=跨零点常红（884e5639f8 红因链跨零点实测）。
-    from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter
-
+    # 逐单被查，对照组测的是补仓腿因果而非日态。trade_date 必须走合规交易日锚
+    # today_shanghai（北京日）——读写同锚（st-c9-tzday 2026-09-28 时区错口修复
+    # 后的统一口径；884e5639f8 版曾用 datetime.now(UTC).date() 种证对齐旧 UTC
+    # 读侧口径，读侧改锚北京日后该种法在北京 00:00–08:00 窗口反而错口）。
     writer = ChecklistEvidenceWriter(evidence_dir)
-    trade_date = datetime.now(UTC).date()
+    trade_date = today_shanghai()
     writer.write_risk_param_confirm(
         "f62-baseline-snapshot",
         {"max_single_position": _TARGET_WEIGHT},
@@ -463,3 +462,104 @@ class _BoomMapping(dict[str, Decimal]):
 
     def get(self, key: object, default: object = None) -> Decimal:  # type: ignore[override]
         raise RuntimeError("tracker 均价面不可读")
+
+
+# ── 6. 跨零点判别尺（st-c9-tzday 时区错口修复）：北京 00:30 读写同锚 ──────────
+
+_BEIJING_0030_UTC = datetime(2026, 9, 28, 16, 30, tzinfo=UTC)  # = 北京 2026-09-29 00:30
+
+
+def _freeze_session_clock(monkeypatch: pytest.MonkeyPatch, frozen_utc: datetime) -> None:
+    """把 trading_session 模块内 datetime.now 冻结在跨零点时刻（读侧锚联测缝）。
+
+    只冻结 checker 取证面所在模块——写侧/装配面仍走真实时钟，种证日期由测试
+    显式给定，A/B 两测唯一差异=种证锚（北京日 vs UTC 日），结论只可能来自锚。
+    """
+    import zephyr.ex_core.trading_session as ts_module
+
+    class _FrozenDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):  # type: ignore[override]
+            return frozen_utc.astimezone(tz) if tz is not None else frozen_utc
+
+    monkeypatch.setattr(ts_module, "datetime", _FrozenDatetime)
+
+
+def _seed_three_legs(evidence_dir: Path, trade_date: date) -> None:
+    """经生产写侧真接口按指定交易日种满三腿（同 _assemble，锚为显式参）。"""
+    writer = ChecklistEvidenceWriter(evidence_dir)
+    writer.write_risk_param_confirm(
+        "f62-cross-midnight",
+        {"max_single_position": _TARGET_WEIGHT},
+        trade_date=trade_date,
+        source="test_f62_honest_gate_baseline._seed_three_legs",
+    )
+    writer.write_position_limit_verify(
+        "f62-cross-midnight",
+        trade_date=trade_date,
+        source="test_f62_honest_gate_baseline._seed_three_legs",
+        detail={"phase": "test_seed"},
+    )
+    writer.write_signal_compliance_ack(
+        "f62-cross-midnight-test",
+        note="跨零点判别尺种证",
+        trade_date=trade_date,
+        ack_source="pytest_tmp_injection",
+    )
+
+
+class TestCrossMidnightBeijingDayAnchor:
+    """北京 00:30 场景（UTC 16:30 前一日）三腿有效性——本缺陷的判别尺。
+
+    缺陷史：修复前读侧 datetime.now(UTC).date() 取证日，写侧①②③按北京日
+    落证，北京 00:00–08:00 窗口两者差一天 → 三腿全判陈旧=整批拒。修复=读证
+    写证统一到合规交易日锚 today_shanghai（北京日）。两测互为对照：北京日种证
+    必须过闸放行（正身）；UTC 日种证必须仍判陈旧整批拒（fail-closed 不放宽，
+    修复不是把日期校验放松成"哪天都行"）。
+    """
+
+    def _assemble_frozen(self, tmp_path: Path, monkeypatch, broker: _PaperBroker) -> tuple[TradingSession, Path]:
+        _freeze_session_clock(monkeypatch, _BEIJING_0030_UTC)
+        evidence_dir = tmp_path / "checklist_evidence"
+        session = sps.assemble_session(
+            sps.parse_args([]),
+            broker,
+            state_dir=tmp_path / "risk_state",
+            compliance_log_path=tmp_path / "compliance_log.jsonl",
+            checklist_evidence_dir=evidence_dir,
+        )
+        return session, evidence_dir
+
+    def test_beijing_0030_seeded_at_beijing_day_submits(self, tmp_path, monkeypatch):
+        """判别尺正身：北京 00:30 检测，北京日种证 → 三腿有效 → 订单真提交。"""
+        broker = _PaperBroker(holdings={_SYMBOL: _SEED_QTY})
+        session, evidence_dir = self._assemble_frozen(tmp_path, monkeypatch, broker)
+        _seed_three_legs(evidence_dir, today_shanghai(_BEIJING_0030_UTC))
+        _neutralize_unrelated_gates(session, monkeypatch)
+        session._risk_layer._position_tracker.apply_fill(_fill(price="10"), OrderSide.BUY)
+        positions = broker.get_positions()
+        order = _buy_add_order(session)
+
+        submitted = session._validate_and_submit([order], {_SYMBOL: _TARGET_WEIGHT}, positions)
+        assert len(submitted) == 1
+        assert len(broker.submitted) == 1
+        assert order not in session._blocked_orders
+
+    def test_beijing_0030_seeded_at_utc_day_still_judged_stale(self, tmp_path, monkeypatch):
+        """对照：同窗口改用 UTC 日种证（=北京昨日，旧错口写法）→ 仍整批拒。
+
+        钉死修复方向：锚统一到北京日是"读写对齐"而非放宽——隔日证据不抵今日，
+        checker Hard Block 语义（裁定值）原样保持。
+        """
+        broker = _PaperBroker(holdings={_SYMBOL: _SEED_QTY})
+        session, evidence_dir = self._assemble_frozen(tmp_path, monkeypatch, broker)
+        _seed_three_legs(evidence_dir, _BEIJING_0030_UTC.date())  # 2026-09-28 = 北京昨日
+        _neutralize_unrelated_gates(session, monkeypatch)
+        session._risk_layer._position_tracker.apply_fill(_fill(price="10"), OrderSide.BUY)
+        positions = broker.get_positions()
+        order = _buy_add_order(session)
+
+        submitted = session._validate_and_submit([order], {_SYMBOL: _TARGET_WEIGHT}, positions)
+        assert submitted == []
+        assert broker.submitted == []  # 整批吞单，从未触达 broker
+        assert order in session._blocked_orders
