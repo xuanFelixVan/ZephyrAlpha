@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan_conflict_markers 纯函数不上抛（异常输入按跳过返回 None）；run_enqueue_preflight 永不上抛——网关构造/preflight 异常一律 warn+放行（degraded fail-open，对齐 commit_preflight 整体异常口径 PF:477）；阻断经返回处方文本由调用方 QueueReject 收口（exit 2）
-# [TESTS] tests/governance/test_enqueue_preflight.py
+# [TESTS] tests/governance/test_enqueue_preflight.py; tests/governance/test_ruff_preclean_enqueue.py
 # [A_module] module_id=MOD-GOV-046 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """enqueue_preflight.py — 入队口预检（QCure M2.2 冲突标记字节预扫 + M1.1 预检挂线）。
@@ -47,8 +47,17 @@ QueueReject→exit 2）；预检异常/网关构造失败→warn+放行（degrad
 from __future__ import annotations
 
 import logging
+import os
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Callable
+
+try:  # 统一无窗口 subprocess 入口（TRAE-067 铁律2）；孤立环境降级不破模块自足性
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+except Exception:  # noqa: BLE001 — 降级仅剩属性引用无窗口语义缺失，设施故障由调用方 fail-open 兜底
+    run_subprocess_hidden = subprocess.run  # noqa: bare-subprocess  zephyr 包不可用时的降级兜底，调用方 fail-open
 
 logger = logging.getLogger(__name__)
 
@@ -119,6 +128,124 @@ def scan_conflict_markers(relpath: str, content: bytes, *, max_bytes: int) -> st
 ENQUEUE_SKIP_GATES = frozenset({"SESSION-REQUIRED", "CLAIM-REQUIRED"})
 
 
+# ---------------------------------------------------------------------------
+# Rx-1 入队侧 ruff/format 预清（st-finaldel-crx-20260929，提交链治本 P0 首刀）
+# ---------------------------------------------------------------------------
+
+# env 开关（缺省 ON；"0"/"false"/"off"=一键回退现行为——B5/C1 同款零 yaml 依赖）
+RUFF_PRECLEAN_ENV = "ZEPHYR_ENQUEUE_RUFF_PRECLEAN"
+# 大批限流：批内 .py 超过即跳过并记原因（快检性能预算 <3s；落地侧权威兜底不缺席）
+_RUFF_PRECLEAN_MAX_FILES = 200
+# subprocess 硬杀兜底（ruff 实测秒级；超时=设施故障按 fail-open 放行）
+_RUFF_PRECLEAN_TIMEOUT_S = 60.0
+# 拒收处方输出截断（Owner 口径 800 字）
+_RUFF_PRECLEAN_TRUNC = 800
+
+
+def ruff_preclean_enabled() -> bool:
+    """env 开关读取：ZEPHYR_ENQUEUE_RUFF_PRECLEAN 缺省 ON，"0"/"false"/"off"=回退现行为。"""
+    return os.environ.get(RUFF_PRECLEAN_ENV, "").strip().lower() not in {"0", "false", "off"}
+
+
+def _ruff_preclean_py_files(root: Path, files: list[str] | None) -> list[str]:
+    """批内可用 .py 清单收集：相对路径锚 worktree 根；缺失/删除件/非 .py 不触发。"""
+    py_files: list[str] = []
+    for f in files or []:
+        p = Path(f)
+        if not p.is_absolute():
+            p = root / p
+        if p.suffix == ".py" and p.is_file():
+            py_files.append(str(p))
+    return py_files
+
+
+def _ruff_exec_once(root: Path, argv: list[str], label: str, fix_hint: str) -> str | None:
+    """跑单条 ruff 子命令：rc=0 放行；rc≠0 返回截断处方；设施故障 warn+None（fail-open）。"""
+    try:
+        r = run_subprocess_hidden(
+            argv,
+            cwd=str(root),
+            encoding="utf-8",
+            errors="replace",
+            timeout=_RUFF_PRECLEAN_TIMEOUT_S,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning(
+            "[ruff-preclean] skip：%s 超时 >%.0fs（设施故障 fail-open；落地侧权威兜底）",
+            label,
+            _RUFF_PRECLEAN_TIMEOUT_S,
+        )
+        return None
+    except OSError as exc:
+        logger.warning("[ruff-preclean] skip：%s 不可用（%s；设施故障 fail-open；落地侧权威兜底）", label, exc)
+        return None
+    if r.returncode == 0:
+        return None
+    out = ((r.stdout or "") + (r.stderr or "")).strip()
+    if len(out) > _RUFF_PRECLEAN_TRUNC:
+        out = out[:_RUFF_PRECLEAN_TRUNC] + f"\n...（截断，完整输出共 {len(out)} 字符）"
+    return f"[{label}] 命中（哪行哪规）：\n{out}\n  修复: {fix_hint}"
+
+
+def _ruff_findings(root: Path, py_files: list[str]) -> list[str]:
+    """ruff check + format --check 两连跑，聚合命中处方。
+
+    ruff 可执行解析：优先 ruff.exe 直调（Rust 原生二进制，实测 spawn 31-89ms）；
+    `python -m ruff` 走 Python 包装器启动实测 ~1.8-2.0s/次（两次=3.6-4s，超 <3s
+    预算）——仅在 PATH 无 ruff exe 时兜底降级（慢但可用）。
+    """
+    ruff_base = [shutil.which("ruff")] if shutil.which("ruff") else [sys.executable, "-m", "ruff"]
+    findings: list[str] = []
+    for argv, label, fix_hint in (
+        (
+            [*ruff_base, "check", "--no-cache", "--output-format", "concise", "--", *py_files],
+            "ruff check",
+            "ruff check --fix <file>",
+        ),
+        (
+            [*ruff_base, "format", "--check", "--", *py_files],
+            "ruff format --check",
+            "ruff format <file>",
+        ),
+    ):
+        rx = _ruff_exec_once(root, argv, label, fix_hint)
+        if rx is not None:
+            findings.append(rx)
+    return findings
+
+
+def ruff_preclean(worktree_root: Path | str, files: list[str]) -> str | None:
+    """入队前 ruff check + ruff format --check 只读快检（绝不自动改写用户文件）。
+
+    返回 None=放行（含 skip：非 .py 批零开销/缺失删除件/大批限流/设施故障，均记
+    skip 原因）；返回 str=拒收处方（哪行哪规+修复命令）。判据真源=仓内
+    pyproject.toml [tool.ruff]（与 .pre-commit-config.yaml 落地通道同一配置，
+    ruff 按文件位置自 discovery）。任何设施故障（ruff 不可用/超时/异常）fail-open
+    放行——本步是快败优化不是新权威，落地侧 pre-commit 通道照跑。
+    """
+    if not ruff_preclean_enabled():
+        return None
+    root = Path(worktree_root)
+    py_files = _ruff_preclean_py_files(root, files)
+    if not py_files:
+        return None  # 非 .py 批零开销跳过（缺失/删除件不触发）
+    if len(py_files) > _RUFF_PRECLEAN_MAX_FILES:
+        logger.warning(
+            "[ruff-preclean] skip：批内 .py %d 个 > 上限 %d（大批限流；落地侧权威兜底）",
+            len(py_files),
+            _RUFF_PRECLEAN_MAX_FILES,
+        )
+        return None
+    findings = _ruff_findings(root, py_files)
+    if not findings:
+        return None
+    return (
+        "RUFF-PRECLEAN 拦截：入队批命中确定性 lint/format 违规——这些错误落到落地侧"
+        "必然烧完一整轮 landing（通道阻断谱 ruff-format+ruff 占全史 46%）才第一次见红，"
+        "先修再入队（本预检只读，绝不自动改写；auto-fix 请自行执行）：\n" + "\n".join(findings)
+    )
+
+
 def run_enqueue_preflight(
     worktree_root: Path | str,
     files: list[str],
@@ -134,7 +261,14 @@ def run_enqueue_preflight(
     preflight_fn 注入位仅供测试，生产走缺省真源。任何设施故障（网关构造失败/
     preflight 异常）一律 warn+放行——预检是快败优化不是新权威，绝不因预检故障堵入队
     （degraded fail-open，PF:477 同口径）。
+
+    Rx-1（st-finaldel-crx-20260929）：gate 预检之前先跑 ruff/format 只读快检
+    （ruff 族=通道阻断谱前两名，全史 46%）——同 fail-open 口径，env
+    ZEPHYR_ENQUEUE_RUFF_PRECLEAN=0 一键回退现行为。
     """
+    _ruff_rx = ruff_preclean(worktree_root, list(files))
+    if _ruff_rx is not None:
+        return _ruff_rx
     if gateway_factory is None:
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: PLC0415
             GitCommitGateway as gateway_factory,

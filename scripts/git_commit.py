@@ -772,6 +772,32 @@ def _commit_with_claim_lifecycle(
     return result
 
 
+def _ruff_preclean_gate(args, files: list[str], project_root: str) -> int | None:
+    """Rx-1（st-finaldel-crx-20260929）入队/提交前 ruff/format 只读快检（P0 首刀）。
+
+    病灶：ruff/ruff-format 只在落地侧 pre-commit 通道跑、入队不检——通道阻断谱前
+    两名 ruff-format 37 + ruff 36（占全史 46%），每死一次=整轮 landing 白烧
+    （gates 相位 mean 448-593s）。本步在锁外秒级快败：fail 时打印「哪行哪规」并
+    拒收（exit 8=预检快败，与 _run_preflight 同码）。只做加法预检，绝不自动改写
+    用户文件（auto-fix 属行为变更，登记不做）；设施故障 fail-open 放行（落地侧
+    pre-commit 通道权威兜底）；env ZEPHYR_ENQUEUE_RUFF_PRECLEAN=0 一键回退；
+    --skip-preflight 与既有预检同口径跳过（诊断逃生）。
+    """
+    if getattr(args, "skip_preflight", False):
+        return None
+    try:
+        from scripts.governance.enqueue_preflight import ruff_preclean  # noqa: PLC0415
+
+        rx = ruff_preclean(project_root, files)
+    except Exception as exc:  # noqa: BLE001 — 预检设施故障降级放行（锁内/落地侧权威兜底）
+        logger.warning("ruff preclean skipped (fail-open): %s", exc)
+        return None
+    if rx is None:
+        return None
+    print(f"RUFF-PRECLEAN-BLOCKED: {rx}", file=sys.stderr)
+    return 8
+
+
 def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozenset[str] = frozenset()) -> int | None:
     """P0-A 锁外预检：blocking 时打印一过式失败清单并返回 exit 8；否则 None 放行。"""
     if (
@@ -853,6 +879,10 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
         )
         if pf_exit is not None:
             return pf_exit
+    # Rx-1 入队口 ruff/format 快检（st-finaldel-crx-20260929）：阻断谱前两名入队口快败
+    _rx_exit = _ruff_preclean_gate(args, files, args.project_root)
+    if _rx_exit is not None:
+        return _rx_exit
     _ensure_scripts_package_importable(str(_PROJECT_ROOT))
     from scripts.commit_queue import (  # noqa: PLC0415
         EnqueueOptions,
@@ -1255,6 +1285,12 @@ def main() -> int:
                     file=sys.stderr,
                 )
                 return _enqueue_mode(args, files, message)
+
+        # Rx-1（st-finaldel-crx-20260929）直连路径 ruff/format 快检：claim 前秒级快败，
+        # 拒收时零 claim 占用（比锁内/落地侧见红省整轮 landing 白烧）
+        _rx_exit = _ruff_preclean_gate(args, files, args.project_root)
+        if _rx_exit is not None:
+            return _rx_exit
 
         # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
         claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
