@@ -1,0 +1,38 @@
+{
+  "run_ts": "20260926-024947",
+  "mode": "batch_a_census",
+  "subspace": null,
+  "stratify_dims": null,
+  "n_raw": 362880,
+  "n_sampled": 3700,
+  "evaluated": 3700,
+  "eval_dead": 0,
+  "backtest_dead": 0,
+  "degraded_recipes": 0,
+  "window": [
+    "2019-01-04",
+    "2025-09-09"
+  ],
+  "seed": 20260915,
+  "out_dir": "D:\\ZephyrAlpha\\data\\strategy_intake\\grid_20260926-024947",
+  "net_returns_file": "net_returns.parquet",
+  "n_trials_effective": 19,
+  "n_eff_meta": {
+    "n_trials": 3698,
+    "common_T": 1622,
+    "boundary": false
+  },
+  "repair": {
+    "repaired_by": "st-nightsweep-sw4-20260929",
+    "date": "2026-09-29",
+    "cells": [
+      "4bdf3555a27d",
+      "d6759a48a594"
+    ],
+    "evidence_runs": [
+      "grid_20260929-040003",
+      "grid_20260929-040141"
+    ],
+    "disposition": "endogenous_zero_variance (kelly_050 全期零仓位) -> manifest rows with negative_note; negatives.csv cleared; dead=0"
+  }
+}

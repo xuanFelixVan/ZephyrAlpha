@@ -56330,4 +56330,14 @@ creation_tokens:
   capability: sw10_cns_chart_wiring
   merge_evaluation: "SW10车道案卷：CNS消化台账+cn_macro判定+TIF残袋发现，替代散落会话记录"
 
+- file: docs/_working/night_sweep/00_orchestration.md
+  token: night-sweep-warroom-00-orchestration-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: night_sweep_warroom
+  merge_evaluation: "夜战总Sweep战情室交付件：总纲副本+132环节补干总表；开口清零后本目录整族归档（task_bound），无并行旧件需合并"
+- file: docs/_working/night_sweep/00_skeleton_nightsweep.md
+  token: night-sweep-warroom-00-skeleton-nightsweep-20260928
+  created_by: st-nightsweep-sw1-20260929
+  capability: night_sweep_warroom
+  merge_evaluation: "夜战总Sweep战情室交付件：总纲副本+132环节补干总表；开口清零后本目录整族归档（task_bound），无并行旧件需合并"
 di_seam_exemptions: []

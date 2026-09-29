@@ -248,7 +248,12 @@ def test_full_pass_builds_subspace_and_launches_once(repo: Path):
     # 发车命令沿用既有 CLI 语义
     cmd = rec.calls[0][0]
     assert "--stage" in cmd and cmd[cmd.index("--stage") + 1] == "t2"
-    assert "--subspace-json" in cmd and cmd[cmd.index("--subspace-json") + 1].endswith("t2_subspace.json")
+    # 执行器消费面 = _json.loads(args.subspace_json) 内联 JSON（2026-09-29 SW4 实障修复：
+    # 旧版传文件路径串必 JSONDecodeError 秒崩 LAUNCH_FAILED 循环）——断言该参为合法 JSON
+    # 且与 t2_subspace.json 落盘负载逐字段一致。
+    assert "--subspace-json" in cmd
+    inline_arg = cmd[cmd.index("--subspace-json") + 1]
+    assert json.loads(inline_arg) == json.loads((run / "t2_subspace.json").read_text(encoding="utf-8"))
     assert cmd[cmd.index("--start") + 1] == "2019-01-04"
     # 认领标记 + reaper keep 登记
     claim = yaml.safe_load((run / "t2_handover_claim.yaml").read_text(encoding="utf-8"))

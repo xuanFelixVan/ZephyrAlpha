@@ -1,0 +1,63 @@
+{
+  "run_ts": "20260929-040141",
+  "mode": "batch_b_subspace",
+  "subspace": {
+    "A1_factor_normalize": [
+      "raw"
+    ],
+    "A2_combine_weight": [
+      "halflife60"
+    ],
+    "B_top_n": [
+      "top10",
+      "top20"
+    ],
+    "C_sizing": [
+      "kelly_050"
+    ],
+    "D1_rebalance_freq": [
+      "weekly"
+    ],
+    "D2_rebalance_trigger": [
+      "periodic"
+    ],
+    "E_single_cap": [
+      "cap10",
+      "cap5"
+    ],
+    "F_merge_policy": [
+      "single"
+    ],
+    "G_universe": [
+      "all_a_ex_st"
+    ],
+    "H_turnover_lambda": [
+      "lambda_15bp"
+    ],
+    "I_cost_tier": [
+      "frozen_l0"
+    ],
+    "J_regime_switch": [
+      false
+    ],
+    "K_capital_ramp": [
+      "lump"
+    ]
+  },
+  "stratify_dims": null,
+  "n_raw": 362880,
+  "n_sampled": 4,
+  "evaluated": 0,
+  "eval_dead": 0,
+  "backtest_dead": 4,
+  "degraded_recipes": 0,
+  "window": [
+    "2019-01-04",
+    "2025-09-09"
+  ],
+  "seed": 20260915,
+  "out_dir": "D:\\ZephyrAlpha\\data\\strategy_intake\\grid_20260929-040141",
+  "net_returns_file": null,
+  "n_trials_effective": null,
+  "n_eff_meta": {}
+}

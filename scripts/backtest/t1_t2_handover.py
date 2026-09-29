@@ -1038,13 +1038,16 @@ def _launch_sequence(run_dir: Path, repo_root: Path, caps: dict, deps: HandoverD
             print(f"[KEEP] 已登记 process_reaper_keep.txt: {REAPER_KEEP_SUBSTRING}")
         start, end = caps["search_window"]
         log_path = repo_root / ".runtime" / "logs" / f"grid_t2_handover_{time.strftime('%Y%m%d-%H%M%S')}.log"
+        # 执行器消费面 = main 里 _json.loads(args.subspace_json)（内联 JSON，非文件路径）——
+        # 2026-09-29 SW4 实障修复：旧版传路径串必 JSONDecodeError 秒崩（LAUNCH_FAILED 循环）。
+        subspace_inline = (run_dir / "t2_subspace.json").read_text(encoding="utf-8")
         cmd = [
             sys.executable,
             str(repo_root / "scripts" / "backtest" / "factory_grid_executor.py"),
             "--stage",
             "t2",
             "--subspace-json",
-            str(run_dir / "t2_subspace.json"),
+            subspace_inline,
             "--start",
             start,
             "--end",
