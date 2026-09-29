@@ -120,7 +120,7 @@ gates:
   register_line: 417
   enabled: true
 - gate_id: REFERENCE-INTEGRITY
-  files_trigger: ["docs/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["docs/*.md", "docs/*.py", "docs/*.yaml", "docs/*.yml", "docs/*.json", "docs/*.txt"]  # P5 条件化(C98三批/st-finaldel-c98-20260930，台账#8)=docs/ 前缀收窄到门内 REFERENCE_TEXT_EXTS 六文本类型（消 png/二进制等非文本噪音触发，HEAD 实测 8641→8536；门内逐文件 exts 过滤不变=检出面零变化）；perf 方案§2.6 分级=内容扫描型/own-diff（门只核本次 commit files 的新增 §X.Y 引用）
   module_path: zephyr.gov_enforcement.commit_gates.dangling_reference_gate
   factory_function: make_reference_integrity_gate
   source: in_process
@@ -395,14 +395,14 @@ gates:
   register_line: 470
   enabled: true
 - gate_id: DEPGRAPH-FRESHNESS
-  files_trigger: ["src/", "scripts/", "depgraph"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/", "scripts/"]  # P5 条件化(C98三批/st-finaldel-c98-20260930，台账#9)=删「depgraph」裸子串（与 src//scripts/ 前缀高度重叠、纯命中 docs/册名散文噪音，HEAD 实测 5467→5440）；结构校验型宽触发登记(宪法§3.3)：新鲜度天然随代码面，src/+scripts/ 前缀=语义域保留；perf 方案§2.6 分级=全局观测型/单次=1 次缓存 json 时间戳读取
   module_path: zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate
   factory_function: make_depgraph_freshness_gate
   source: in_process
   register_line: 471
   enabled: true
 - gate_id: RECONCILER-HEALTH
-  files_trigger: ["governance"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: []  # P5 显式无条件化(C98三批/st-finaldel-c98-20260930，台账#13)：「governance」裸子串系历史意外口径——门自身设计即 always-on（[INVARIANTS] 原文"reconciler 健康与本次 commit 文件无关"），裸子串反致无 governance 路径提交漏检（HEAD 实测 2625 命中/全仓 18706≈14% 触发=86% 提交漏检健康检查）；本改=诚实口径（对标 W-135 NO-BARE-GETENV 先例）属加严非放松；perf 方案§2.6 分级=全局观测型/单次=1 次 governance.db 读查询（缺失/失败 fail-open 放行）
   module_path: zephyr.gov_enforcement.commit_gates.reconciler_health_gate
   factory_function: make_reconciler_health_gate
   source: in_process

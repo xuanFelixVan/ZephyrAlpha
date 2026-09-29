@@ -43,6 +43,7 @@ ensure_utf8_stdout()
 
 import argparse
 import ast
+import subprocess
 from collections import defaultdict
 from difflib import SequenceMatcher
 
@@ -82,6 +83,37 @@ def similarity_ast(a_path: Path, b_path: Path) -> float:
         return 0.0
 
 
+def _list_tracked_py_relpaths() -> list[str] | None:
+    """既有索引面：``git ls-files`` 单次读 index，返回仓根相对 posix 路径（*.py）。
+
+    C98 第一批（st-finaldel-c98-20260930，2026-09-30）：--files 模式对照面从
+    rglob 全树磁盘遍历（逐文件 stat，含未跟踪暂态件）改为 git 既有索引单次读取
+    ——"你的新文件 vs 全库"语义保留且更准（全库=已纳入版本管理的库面）。
+    调用走 run_subprocess_hidden（trae_067 CREATE_NO_WINDOW 铁律；C98 一批
+    落地侧 BARE-SUBPROCESS 拦截修正，原死信 q-…-0001）；zephyr 包不可导入
+    （裸脚本环境）时返回 None，调用方回退 rglob 旧路径（fail-open 口径不变）。
+    """
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+    except Exception:  # noqa: BLE001 — 裸脚本环境无 zephyr 包=回退 rglob（fail-open）
+        return None
+    try:
+        out = run_subprocess_hidden(
+            ["git", "ls-files", "--", "src/zephyr", "scripts"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            timeout=30,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if out.returncode != 0:
+        return None
+    return [ln.strip() for ln in (out.stdout or "").splitlines() if ln.strip().endswith(".py")]
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Check code duplication across packages")
@@ -117,19 +149,35 @@ def main() -> int:
             return None
 
         new_suffixes = {s for s in (_anchored_suffix(f) for f in new_files if f.exists()) if s}
+
         # 建立已有 .py 文件的 basename 索引（排除新文件自身 + 排除目录）
+        # C98 第一批（st-finaldel-c98-20260930）：对照面优先走既有索引（git ls-files
+        # 单次读 index，"新文件 vs 全库"语义保留且更准——全库=已纳管库面，剥离
+        # 磁盘未跟踪暂态件误报面）；索引不可得回退 rglob 旧路径（fail-open 不变）。
+        def _admit_new_corpus_file(py_file: Path) -> bool:
+            if py_file.resolve() in new_resolved:
+                return False  # 跳过新文件自身（绝对路径等价）
+            suf = _anchored_suffix(py_file)
+            if suf is not None and suf in new_suffixes:
+                return False  # 跳过新文件自身（跨树孪生：serializer worktree 落地路径 vs 主区施工原文）
+            if any(excluded in py_file.parts for excluded in EXCLUDE_DIRS):
+                return False
+            return True
+
         existing_index: dict[str, list[Path]] = defaultdict(list)
-        for scan_dir in [REPO_ROOT / "src" / "zephyr", REPO_ROOT / "scripts"]:
-            if not scan_dir.exists():
-                continue
-            for py_file in scan_dir.rglob("*.py"):
-                if py_file.resolve() in new_resolved:
-                    continue  # 跳过新文件自身（绝对路径等价）
-                if _anchored_suffix(py_file) in new_suffixes and _anchored_suffix(py_file) is not None:
-                    continue  # 跳过新文件自身（跨树孪生：serializer worktree 落地路径 vs 主区施工原文）
-                if any(excluded in py_file.parts for excluded in EXCLUDE_DIRS):
+        tracked_rel = _list_tracked_py_relpaths()
+        if tracked_rel is not None:
+            for rel in tracked_rel:
+                py_file = REPO_ROOT / rel
+                if _admit_new_corpus_file(py_file):
+                    existing_index[py_file.name].append(py_file)
+        else:
+            for scan_dir in [REPO_ROOT / "src" / "zephyr", REPO_ROOT / "scripts"]:
+                if not scan_dir.exists():
                     continue
-                existing_index[py_file.name].append(py_file)
+                for py_file in scan_dir.rglob("*.py"):
+                    if _admit_new_corpus_file(py_file):
+                        existing_index[py_file.name].append(py_file)
 
         duplicates = []
         for new_file in new_files:

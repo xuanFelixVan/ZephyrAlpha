@@ -176,10 +176,13 @@ def extract_commit_gates() -> list[dict]:
                 "category": "commit_gate",
                 "status": "active",
                 "source": "commit-gate",
-                # own-scope 派生标记（#ARCH-310 R2 落地，2026-09-12）：gate 模块源码
-                # import _build_own_scope 即为 own-diff 作用域（外来 staged 降级审计）；
-                # 未标记者默认全暂存区扫描（全仓例外须按 R2 登记理由）。
-                "own_scope": "_build_own_scope" in text,
+                # own-scope 派生标记（#ARCH-310 R2 落地，2026-09-12；C98 第一批
+                # st-finaldel-c98-20260930 增补 _split_own_foreign 识别）：gate 模块源码
+                # import _build_own_scope，或 import 共享原语 _split_own_foreign（其内部
+                # 即调 _build_own_scope 做范围构建，file_copy/function_dup 等台实证），
+                # 均为 own-diff 作用域（外来 staged 降级审计）；未标记者默认全暂存区
+                # 扫描（全仓例外须按 R2 登记理由）。
+                "own_scope": ("_build_own_scope" in text) or ("_split_own_foreign" in text),
             }
         )
         # P5 条件触发贯通（st-gslim-20260923）：统一册 files_trigger 拉通自 in_process 名册
@@ -933,9 +936,7 @@ def generate(entry_count: int | None = None) -> dict:
     # （实测 15 台悬空：RULING-REFERENCE 等）。改为墓碑优先覆盖扫描条目；唯 id 已回装
     # in_process 名册时让位装载事实（防误墓活门）。
     try:
-        loaded_ids = {
-            g.get("gate_id") for g in (load_yaml(IN_PROCESS_REGISTRY_PATH).get("gates") or [])
-        }
+        loaded_ids = {g.get("gate_id") for g in (load_yaml(IN_PROCESS_REGISTRY_PATH).get("gates") or [])}
     except Exception:  # noqa: BLE001 — 名册不可得时退回旧口径（只追加不覆盖）
         loaded_ids = set()
     for mg in MANUAL_GATES:

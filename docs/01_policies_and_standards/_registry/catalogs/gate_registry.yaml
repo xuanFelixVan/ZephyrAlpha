@@ -905,7 +905,12 @@ gates:
   entry: in-process (GitCommitGateway)
   description: REFERENCE-INTEGRITY
   files_trigger:
-  - docs/
+  - docs/*.md
+  - docs/*.py
+  - docs/*.yaml
+  - docs/*.yml
+  - docs/*.json
+  - docs/*.txt
   always_run: false
   category: commit_gate
   status: active
@@ -942,7 +947,6 @@ gates:
   files_trigger:
   - src/
   - scripts/
-  - depgraph
   always_run: false
   category: commit_gate
   status: active
@@ -1594,8 +1598,7 @@ gates:
   name: 'RECONCILER-HEALTH: RECONCILER-HEALTH（CommitGate, priority=64）'
   entry: in-process (GitCommitGateway)
   description: RECONCILER-HEALTH
-  files_trigger:
-  - governance
+  files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
