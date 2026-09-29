@@ -124,16 +124,37 @@ def _gateway(script: dict[str, list[GatewayReply]]):
 
 
 def _ok_gateway() -> Any:
-    return _gateway({
-        "mining_deep": [GatewayReply(content="结构化笔记：动量机制", model="deepseek-reasoner",
-                                     request_id_ref="lsg:d:r1", tokens_in=500, tokens_out=200)],
-        "cleaning_rewrite": [GatewayReply(
-            content="```json\n" + json.dumps(SPEC_BODY, ensure_ascii=False) + "\n```",
-            model="deepseek-chat", request_id_ref="lsg:d:r2", tokens_in=800, tokens_out=400)],
-        "translation_registry": [GatewayReply(
-            content=json.dumps(LOCALIZED, ensure_ascii=False), model="glm-4.5-free",
-            request_id_ref="lsg:d:r3", tokens_in=300, tokens_out=100)],
-    })
+    return _gateway(
+        {
+            "mining_deep": [
+                GatewayReply(
+                    content="结构化笔记：动量机制",
+                    model="deepseek-reasoner",
+                    request_id_ref="lsg:d:r1",
+                    tokens_in=500,
+                    tokens_out=200,
+                )
+            ],
+            "cleaning_rewrite": [
+                GatewayReply(
+                    content="```json\n" + json.dumps(SPEC_BODY, ensure_ascii=False) + "\n```",
+                    model="deepseek-chat",
+                    request_id_ref="lsg:d:r2",
+                    tokens_in=800,
+                    tokens_out=400,
+                )
+            ],
+            "translation_registry": [
+                GatewayReply(
+                    content=json.dumps(LOCALIZED, ensure_ascii=False),
+                    model="glm-4.5-free",
+                    request_id_ref="lsg:d:r3",
+                    tokens_in=300,
+                    tokens_out=100,
+                )
+            ],
+        }
+    )
 
 
 def _deps(gateway: Any, **kw: Any) -> WasherDeps:
@@ -151,9 +172,17 @@ def _deps(gateway: Any, **kw: Any) -> WasherDeps:
 
 
 CARD = SimpleNamespace(
-    card_id="CC-W1", domain_id="trading_algo", mechanism="动量机制原文",
-    source_name="arxiv", source_url="https://arxiv.org/abs/x", source_publisher="arXiv",
-    source_year=2025, mechanism_family="prediction", raw_ref=None, four_gates={}, risk_flags=[],
+    card_id="CC-W1",
+    domain_id="trading_algo",
+    mechanism="动量机制原文",
+    source_name="arxiv",
+    source_url="https://arxiv.org/abs/x",
+    source_publisher="arXiv",
+    source_year=2025,
+    mechanism_family="prediction",
+    raw_ref=None,
+    four_gates={},
+    risk_flags=[],
 )
 
 
@@ -164,11 +193,13 @@ def test_wash_success_full_path() -> None:
     gw = _ok_gateway()
     store = FakeStore()
     writer = FakeWriter()
-    outcome = Washer(_deps(gw, store=store, card_writer=writer,
-                           card_reader=FakeReader(CARD))).wash_card("CC-W1", raw_text=RAW_TEXT)
+    outcome = Washer(_deps(gw, store=store, card_writer=writer, card_reader=FakeReader(CARD))).wash_card(
+        "CC-W1", raw_text=RAW_TEXT
+    )
     assert outcome.status == "washed" and outcome.spec_id == "SP-CC-W1-v1"
-    assert [c["task_type"] for c in gw.calls] == [
-        "mining_deep", "cleaning_rewrite", "translation_registry"], "三工序按 OBJ_M 轨分派"
+    assert [c["task_type"] for c in gw.calls] == ["mining_deep", "cleaning_rewrite", "translation_registry"], (
+        "三工序按 OBJ_M 轨分派"
+    )
     assert outcome.tokens_used == 500 + 200 + 800 + 400 + 300 + 100
     draft = store.inserted[0]
     assert draft.source_name == "arxiv" and draft.source_url == "https://arxiv.org/abs/x"
@@ -191,9 +222,7 @@ def test_wash_via_card_reader_raw_ref(tmp_path: Path) -> None:
 def test_process_clean_due_summary(monkeypatch: pytest.MonkeyPatch) -> None:
     gw = _ok_gateway()
     # 生产文本面=E1 staging 的 raw_ref；单测注入 _resolve_text 返回固定文本，其余流程真实。
-    monkeypatch.setattr(
-        Washer, "_resolve_text", lambda self, raw_text, raw_path, card_map: RAW_TEXT
-    )
+    monkeypatch.setattr(Washer, "_resolve_text", lambda self, raw_text, raw_path, card_map: RAW_TEXT)
     summary = Washer(_deps(gw, card_reader=FakeReader(CARD))).process_clean_due(
         {"card_ids": ["CC-W1", "CC-W2"], "domain_id": "trading_algo"}
     )
@@ -207,26 +236,32 @@ def test_p1_injection_rejected_as_suspect() -> None:
     gw = _ok_gateway()
     journal = FakeJournal()
     writer = FakeWriter()
-    outcome = Washer(_deps(gw, sanitizer=FakeSanitizer(inject=True),
-                           journal=journal, card_writer=writer)).wash_card("CC-W1", raw_text=RAW_TEXT)
+    outcome = Washer(_deps(gw, sanitizer=FakeSanitizer(inject=True), journal=journal, card_writer=writer)).wash_card(
+        "CC-W1", raw_text=RAW_TEXT
+    )
     assert outcome.status == "rejected" and outcome.rejection_reason == "injection_suspect"
     assert not gw.calls, "P1 拒收不得进任何 API 工序"
     kind, payload = journal.events[0]
     assert kind == "intake_reject_due" and payload["stage"] == "L3"
     assert payload["rejection_reason"] == "injection_suspect"
-    assert ("CC-W1", "rejected", {"rejection_reason": "injection_suspect",
-                                  "evidence_ref": outcome.evidence_ref}) in writer.calls
+    assert (
+        "CC-W1",
+        "rejected",
+        {"rejection_reason": "injection_suspect", "evidence_ref": outcome.evidence_ref},
+    ) in writer.calls
 
 
 def test_p3_blocked_rewashes_once_then_rejects() -> None:
-    gw = _gateway({
-        "mining_deep": [GatewayReply(content="笔记", tokens_in=10, tokens_out=5)],
-        "cleaning_rewrite": [
-            GatewayReply(content="好想法 [BLOCKED BY LSG]", tokens_in=10, tokens_out=5),
-            GatewayReply(content="还是 [BLOCKED BY LSG]", tokens_in=10, tokens_out=5),
-        ],
-        "translation_registry": [],
-    })
+    gw = _gateway(
+        {
+            "mining_deep": [GatewayReply(content="笔记", tokens_in=10, tokens_out=5)],
+            "cleaning_rewrite": [
+                GatewayReply(content="好想法 [BLOCKED BY LSG]", tokens_in=10, tokens_out=5),
+                GatewayReply(content="还是 [BLOCKED BY LSG]", tokens_in=10, tokens_out=5),
+            ],
+            "translation_registry": [],
+        }
+    )
     outcome = Washer(_deps(gw)).wash_card("CC-W1", raw_text=RAW_TEXT)
     assert outcome.status == "rejected" and outcome.rejection_reason == "wash_failed"
     assert "p3_broken:rewrite" in outcome.evidence_ref
@@ -235,16 +270,23 @@ def test_p3_blocked_rewashes_once_then_rejects() -> None:
 
 
 def test_p3_rewash_recovers() -> None:
-    gw = _gateway({
-        "mining_deep": [GatewayReply(content="笔记", tokens_in=10, tokens_out=5)],
-        "cleaning_rewrite": [
-            GatewayReply(error="all providers failed"),
-            GatewayReply(content="```json\n" + json.dumps(SPEC_BODY, ensure_ascii=False) + "\n```",
-                         model="deepseek-chat", tokens_in=10, tokens_out=5),
-        ],
-        "translation_registry": [GatewayReply(content=json.dumps(LOCALIZED, ensure_ascii=False),
-                                              tokens_in=10, tokens_out=5)],
-    })
+    gw = _gateway(
+        {
+            "mining_deep": [GatewayReply(content="笔记", tokens_in=10, tokens_out=5)],
+            "cleaning_rewrite": [
+                GatewayReply(error="all providers failed"),
+                GatewayReply(
+                    content="```json\n" + json.dumps(SPEC_BODY, ensure_ascii=False) + "\n```",
+                    model="deepseek-chat",
+                    tokens_in=10,
+                    tokens_out=5,
+                ),
+            ],
+            "translation_registry": [
+                GatewayReply(content=json.dumps(LOCALIZED, ensure_ascii=False), tokens_in=10, tokens_out=5)
+            ],
+        }
+    )
     outcome = Washer(_deps(gw)).wash_card("CC-W1", raw_text=RAW_TEXT)
     assert outcome.status == "washed", "第一次破损、重洗恢复=正常洗成"
 
@@ -262,8 +304,9 @@ def test_card_missing_rejected_not_found_without_card_write() -> None:
     gw = _ok_gateway()
     journal = FakeJournal()
     writer = FakeWriter()
-    outcome = Washer(_deps(gw, card_reader=FakeReader(None), journal=journal,
-                           card_writer=writer)).wash_card("CC-ghost", raw_text=RAW_TEXT)
+    outcome = Washer(_deps(gw, card_reader=FakeReader(None), journal=journal, card_writer=writer)).wash_card(
+        "CC-ghost", raw_text=RAW_TEXT
+    )
     assert outcome.status == "rejected" and outcome.rejection_reason == "not_found"
     assert journal.events and writer.calls == [], "卡不存在：只发事件，不写卡态"
 
@@ -313,14 +356,57 @@ def test_default_route_fail_closed_without_track(tmp_path: Path) -> None:
 def test_default_route_resolves_track_when_present(tmp_path: Path) -> None:
     config = tmp_path / "model_routing_policy.yaml"
     config.write_text(
-        "ai_layer_routes:\n  - task_type: cleaning_rewrite\n    provider: deepseek\n"
-        "    model: deepseek-chat\n",
+        "ai_layer_routes:\n  - task_type: cleaning_rewrite\n    provider: deepseek\n    model: deepseek-chat\n",
         encoding="utf-8",
     )
     target = resolve_route_from_config("cleaning_rewrite", config)
     assert (target.provider, target.model) == ("deepseek", "deepseek-chat")
     with pytest.raises(RouteNotResolvedError, match="OBJ_M C6"):
         resolve_route_from_config("review_judge", config)
+
+
+def test_default_route_reads_task_routes_truth_source(tmp_path: Path) -> None:
+    """C6 消费端修复：真源键=task_routes 映射（附表 A 'provider:model' 串）命中。"""
+    config = tmp_path / "model_routing_policy.yaml"
+    config.write_text(
+        "task_routes:\n"
+        "  cleaning_rewrite:\n"
+        "    preferred: deepseek:deepseek-chat\n"
+        "    fallbacks: ['zhipu:glm-4-plus']\n"
+        "  mining_deep:\n"
+        "    preferred: deepseek:deepseek-reasoner\n",
+        encoding="utf-8",
+    )
+    target = resolve_route_from_config("cleaning_rewrite", config)
+    assert (target.provider, target.model) == ("deepseek", "deepseek-chat")
+    target2 = resolve_route_from_config("mining_deep", config)
+    assert (target2.provider, target2.model) == ("deepseek", "deepseek-reasoner")
+    # 查无轨仍 fail-closed
+    with pytest.raises(RouteNotResolvedError, match="route_missing:review_judge"):
+        resolve_route_from_config("review_judge", config)
+
+
+def test_default_route_prefers_task_routes_over_alias(tmp_path: Path) -> None:
+    """真源优先：task_routes 与 ai_layer_routes 别名并存时真源胜（别名只兜底）。"""
+    config = tmp_path / "model_routing_policy.yaml"
+    config.write_text(
+        "task_routes:\n"
+        "  cleaning_rewrite:\n"
+        "    preferred: deepseek:deepseek-chat\n"
+        "ai_layer_routes:\n"
+        "  - task_type: cleaning_rewrite\n"
+        "    provider: stale\n"
+        "    model: stale-model\n",
+        encoding="utf-8",
+    )
+    target = resolve_route_from_config("cleaning_rewrite", config)
+    assert (target.provider, target.model) == ("deepseek", "deepseek-chat")
+
+
+def test_default_route_real_config_cleaning_rewrite_hit() -> None:
+    """端到端钉：生产真源 config（Owner 终批数据，只读）下 cleaning_rewrite 轨可解析。"""
+    target = resolve_route_from_config("cleaning_rewrite")
+    assert target.provider == "deepseek" and target.model
 
 
 def test_lsg_gateway_annotation_present() -> None:

@@ -1,0 +1,48 @@
+# ALGO_FLOW 外部真源——washer（_domain_ai_layer 域，真源 src/zephyr/ai_layer/cleaning/washer.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ai_layer.cleaning.washer
+source_of_truth: src/zephyr/ai_layer/cleaning/washer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: intake_clean_due 领洗卡（card_reader.get；E1 staging 路径校验 validate_staging_path）
+    #   fields: card_id/session_id/raw_path
+    #   code: wash_card
+    # - id: I2
+    #   name: 路由策略真源 config/model_routing_policy.yaml task_routes（OBJ_M C6 AI 层轨）
+    #   fields: task_type→{preferred: 'provider:model'}
+    #   code: resolve_route_from_config
+    # 层: 处理
+    # - id: P1
+    #   name_zh: P1 注入消毒（LSG scan_input 前置，异常=injection_suspect 退回）
+    #   name_en: sanitize_input
+    #   code: wash_card
+    # - id: P2
+    #   name_zh: L2 本地预洗（route 缺席仍可本地工序；API 工序轨缺席 fail-closed）
+    #   name_en: local_preprocess
+    #   code: _pipeline
+    # - id: P3
+    #   name_zh: 网关工序（注入式 GatewayFn；生产默认 lsg_gateway_call→LLMGateway.call 双扫描）
+    #   name_en: gateway_steps
+    #   code: lsg_gateway_call
+    # - id: P4
+    #   name_zh: P3 结构判收（剥 json 围栏→loads，两次破损=wash_failed 退回）
+    #   name_en: extract_json
+    #   code: _extract_json
+    # 层: 输出
+    # - id: O1
+    #   name_zh: spec 卡落库+card_writer 流转+journal 留痕（外部产出物只入库登记不执行）
+    #   name_en: write_spec_card
+    #   code: wash_card
+    # 边:
+    # I1 -.->|断点| P1
+    # I2 -.->|断点| P3
+    # P1 --> P2
+    # P2 --> P3
+    # P3 --> P4
+    # P4 --> O1
+    # [/ALGO_FLOW]
