@@ -2,6 +2,7 @@
 ttl: task_bound
 title: L09 案卷 F92 — 原问题账本（PG meta_question 三表；entry_count=0 空转的真相=ROOR 册页字段失同步）
 session: zc-l09-20260927
+updated: 2026-09-29
 ---
 
 # F92 原问题账本（J 段 A7，骨架态=partial/P2）
@@ -13,7 +14,7 @@ session: zc-l09-20260927
 | 上游输入 | register 校验链（A 级必填→layer 枚举→五要素机检→查重→净零→q_id 墓碑机生 max+1 连号）；写入唯一入口=MetaQuestionRegistry（registry.py 438 行+exam_ops.py 543 行拆分件） |
 | 下游消费 | snapshot CLI（PG→registry_latest.yaml 机生）；exam_loop 八件（见 §二）；月检 status band 机检（本日实跑 OUT_OF_BAND exit 1）；缺口分流簿+退役登记（M4-04 §五） |
 | 自动化触发 | 全链 manual CLI（registry/snapshot/status_band 均 STARTUP manual+M11 豁免注记）；reexam_scheduler 复考排程为 exam_loop 内组件（gc 班复考即其产物） |
-| 真源与注册表 | **PG 行=唯一真源**（meta_question 三表；snapshot 头 FORBID_MANUAL_EDIT 声明）；ROOR REG-METAQ-001（registry_of_registries.yaml:833-842）：physical_path=快照，counting_rule="快照头部 row_count 字段"，**entry_count: 0（:838，本日实读）** |
+| 真源与注册表 | **PG 行=唯一真源**（meta_question 三表；snapshot 头 FORBID_MANUAL_EDIT 声明）；ROOR REG-METAQ-001（registry_of_registries.yaml:833-842）：physical_path=快照，counting_rule="快照头部 row_count 字段"，**entry_count: 0（:838，本日实读）**（已过时，见刷新批注——3cb98bb6f6 已回填 422） |
 | 门禁与质量尺 | 状态词表唯一真源=meta_question_statuses_vocabulary.yaml（GATE-VOCAB 动态加载）；乐观锁 version 冲突检测；审计双轨=PG audit 行+JSONL 追加（无对账器，M4-04 §六.4） |
 | 当前运行状态 | **黄（账本本体绿、册页字段红、月检狼来了）**：PG 主表 283 行（281 answered+2 reexam）、exam_result **337 行/283 distinct q_id**（较 M4 的 335 又 +2，复考在继续）；快照 row_count=283 正确；唯 ROOR entry_count=0 失同步 |
 
@@ -61,3 +62,19 @@ python -c "from zephyr.governance.depgraph_schema import get_depgraph_pg_connect
 python scripts/governance/check_meta_question_status_band.py --regime campaign 2>&1 | tail -3   # OUT_OF_BAND
 ls src/zephyr/governance/meta_question/exam_loop/                    # exam_lifecycle.py 非 state_machine.py
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（本卷缺口 1 短期腿已闭合）
+- `3cb98bb6f6`（09-29 F92 序1）：ROOR REG-METAQ-001 entry_count **0→422 回填**（P1 短期回填，safe_write_text CAS 留痕 before=2907be07/after=8c9c3934；counting_rule 同步更新="meta_question 主表行数"；registry_of_registries.yaml:873 现值实锚）——**缺口 1 短期回填翻面**；挖矿卡基线 76／09-22 机生快照 283 均判过期（真源=PG，RULE-SSOT）。
+- 随批发现登记：meta_question/snapshot.py PG 导出通道 YAML RepresenterError（Decimal('100') 不可表示）——**快照机生链阻断**新缺陷（归治理车道；月检面需 _coerce_row 增 Decimal 规整）。
+
+### HEAD 现状复测（2026-09-29）
+- PG 主表 **422 行**（原卷 283）——§一/§二 全部行数基数**已过时**（283/337/142/45/96 等快照值）；exam_result 行数未复测；月检 OUT_OF_BAND 态未复跑。
+
+### 缺口清单状态修订
+- 缺口 1（ROOR entry_count 失同步）：短期回填**已做**（3cb98bb6f6）；治本（entry_count 纳入 reconciler 对账）维持；新增快照机生链阻断缺陷（登记）。
+- 缺口 2（PQ-0099 占位裁定）／3／4：维持。
+
+### 自审闸三态
+- **挖干（维持）**；"entry_count=0 失同步（空转实体）"核心发现**已被处置**（回填 422）；卷内全部行数基数标过时（422 新基线）。

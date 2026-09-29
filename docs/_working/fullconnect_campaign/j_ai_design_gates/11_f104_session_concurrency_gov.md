@@ -2,6 +2,7 @@
 ttl: task_bound
 title: F104 会话并发治理——挖干案卷
 session: zc-l10-20260927
+updated: 2026-09-29
 ---
 
 # F104 · 会话并发治理（session_concurrency+lock claim+worktree 四证）
@@ -16,7 +17,7 @@ session: zc-l10-20260927
 | 上游输入 | 会话注册/心跳/claim 请求＋宪法 §2 并发队列协议（commit_queue 正门/--adopt-prior-work/释放-重 claim 序列） |
 | 下游消费 | 提交链全族：git_commit.py 网关（1332 行）→commit_queue.py serializer→worktree 四证清理面；M3 04 矩阵"会话 claim/锁=双侧覆盖范例面" |
 | 自动化触发 | 事件/调用触发（register/heartbeat/claim/release）；staleness 判活 `_is_session_alive`；锁文件 TTL+stale 判定（`_is_stale`:161/`_claim_expired_and_idle`:225 死会话回收+审计）；无 cron |
-| 真源与注册表 | src/zephyr/security/access_control/session_concurrency.py（**902 行**，M3 01 §3.6 逐件锚）＋lock_files.py（1659 行）＋scripts/session_worktree.py（S2 四证，:338/:347/:468 本日 grep 实证，真源 worktree_cleanup_sop.md） |
+| 真源与注册表 | src/zephyr/security/access_control/session_concurrency.py（**902 行**，M3 01 §3.6 逐件锚）（已过时，见刷新批注——W-29 后现 935 行）＋lock_files.py（1659 行）＋scripts/session_worktree.py（S2 四证，:338/:347/:468 本日 grep 实证，真源 worktree_cleanup_sop.md） |
 | 门禁与质量尺 | WORKTREE-REQUIRED/CLAIM-REQUIRED 门（C1 卷宗"并发毁伤面，有效拦截榜"）；SessionConflictDetector（:861）；依赖登记 find_breaking_change_session |
 | 当前运行状态 | built（黄）：结构+范例面地位成立；但 session_claim 守护件被 §1.6 判"疑似判据失效（有调用方零测试）" |
 
@@ -56,3 +57,16 @@ grep -n "_is_session_alive\|find_breaking_change_session" src/zephyr/security/ac
 grep -rn "_trusted_git_env" src/zephyr/gov_enforcement/rule_bridge/session_worktree.py scripts/session_worktree.py | head -4  # B4 双定义
 python scripts/lock_files.py cleanup  # 冷启动惯例核验（只读清理）
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `48aa677f7f`（09-29 W-29 心跳守护修复·chief3 碰撞根因处方落地）：session_concurrency.py（+33，902→935 行）新增 logical 逻辑长会话标志（SessionInfo 字段+register(logical=) 形参+mark_logical() 原地翻转零触碰 held_files/last_activity）+heartbeat_daemon.py（+72）idle 超限逻辑会话豁免（keepalive 留痕不自退）+run_daemon max_iterations 测试接缝；tests/rule_bridge/test_heartbeat_daemon.py（+97）两态红绿测试。
+
+### 缺口清单状态修订
+- G1（session_claim 零测试）：**部分收敛**——心跳侧两态红证已落（idle 非逻辑会话自退／idle 逻辑会话 keepalive 存活+mark_logical 不丢 claim）；stale 抢占／salvage／死会话回收三场景配对红证仍未见，维持待施工。
+- G2（_trusted_git_env 双定义）／G3（env 信任）／G4（skip 审计消费）：零改动，维持。
+- 新增已闭：chief3 碰撞根因（活会话被判死丢 claim）——挖矿时点未立案，W-29 闭合。
+
+### 自审闸三态
+- **结构面=挖干可施工（维持）**；行数锚 902→935（勘误）；"判据红证=待施工"**部分翻面**（心跳侧已落，claim 三场景维持待施工）。

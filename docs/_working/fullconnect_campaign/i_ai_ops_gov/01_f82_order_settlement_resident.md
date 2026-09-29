@@ -2,6 +2,7 @@
 ttl: task_bound
 title: L09 案卷 F82 — 订单与结算常驻（盘后管线/夜班队列/工单守护三件接线四态）
 session: zc-l09-20260927
+updated: 2026-09-29
 ---
 
 # F82 订单与结算常驻（I 段 S7，骨架态=partial/P0）
@@ -19,7 +20,7 @@ session: zc-l09-20260927
 
 ## 二、子模块三级枚举（逐目录实扫）
 
-1. `src/zephyr/trading/post_settlement_pipeline.py`（7471B，MOD-TRADING-003）
+1. `src/zephyr/trading/post_settlement_pipeline.py`（7471B，MOD-TRADING-003）（已过时，见刷新批注——SW5 卡2 违宪整改后大改，事件触发腿+幂等日终 sweep 落地）
    - `build_post_settlement_jobs()`：任务规格声明（15:30 cron+交易日过滤）——**函数级，不挂生产 APScheduler**（头注自述施工口径）；
    - `run_post_settlement_pipeline()`：SettlementReconciler→DailyAuditor 串联，异常落步骤状态不逃逸；
    - 生产触发面=计划任务→`scripts/run_post_settlement.py`（非 scheduler 槽位）。
@@ -62,3 +63,18 @@ grep -rn "OrderDaemon(" src/ scripts/ --include="*.py" | grep -v test | wc -l   
 grep -n "NightShiftQueue" src/zephyr/trading/auto_runtime_core.py | head -4
 tail -3 data/runtime/post_settlement_last_run.log
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `35ca1d69cd`（09-29 SW5 夜战卡2·F62 SettlementReconciler 违宪整改，死袋重投/SW12 代投）：post_settlement_pipeline.py（+176）——**事件触发腿落地**（subscribe_eventbus 幂等订阅+同 trade_date 进程内去重；boot_hooks._subscribe_eventbus_consumers 挂钩）+run_daily_end_sweep 幂等日终 sweep+register_sweep_deps 装配单（**未装配=UNWIRED 显式落状态不伪跑**）；INVARIANTS 增事件触发腿条；99_skipped_for_owner.md +4；test_post_settlement_pipeline.py（+102）。宪法 §9.3 reconciler 禁 cron 违宪点整改（过渡期时钟腿与事件腿并存安全：CLI 幂等+sweep 去重双保险）。
+- `a349ddc1fe`（09-28 E8/E9袋）：scheduler.py +28（再平衡调度接线）——本卷 §一调度层引用面行号漂移源。
+
+### 缺口清单状态修订
+- 缺口 1（order_daemon 零 spawn）：未见施工，维持。
+- 缺口 2（night_shift_queue 宿主）：维持。
+- 缺口 3（注册脚本↔live 任务漂移）：维持。
+- 缺口 4（build_post_settlement_jobs 双轨二选一）：**部分推进**——过渡期时钟腿+事件腿并存已显式声明（头注 :20-23/:40），收敛未完成；新增 sweep 依赖装配批（register_sweep_deps）待接=UNWIRED 语义（新施工面）。
+
+### 自审闸三态
+- **挖干可施工（维持）**；运行状态"黄"维持但构成变化——结算腿增事件触发腿（违宪整改落地），sweep 装配批待接；§二件描述的 file:line/字节数锚全数漂移（7471B→大改），"函数级不挂生产 APScheduler"表述仍准确但需补读事件腿半边。

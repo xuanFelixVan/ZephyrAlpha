@@ -3,6 +3,7 @@ ttl: task_bound
 title: F41 L4 买卖点与执行——全流通挖干案卷（矿道 L05）
 session: zc-l05-20260927
 creation_token: fc-f41-l4-exec-20260927
+updated: 2026-09-29
 ---
 
 # F41 L4 买卖点与执行——挖干案卷
@@ -18,7 +19,7 @@ creation_token: fc-f41-l4-exec-20260927
 | ③状态输出 | 订单流（7 态 OrderStatus 显式封闭流转表）+质量三档评分+滑点分量拆解 |
 | ④下游消费 | F53 订单生命周期/F57 结算对账/F58 成本反馈；EXA 六算法选型（algo_refs 全挂） |
 | ⑤自动化触发 | continuous 横切件（L4-07 tick 驱动条件队列/L4-10 状态机/L4-13 容灾）事件驱动非 cron；盘后 L4-14 成本反馈回写（册引） |
-| ⑥缺口债 | 九态判据-码面差异（唯一 P0 级语义债）；trade_log 归因字段缺；L4-14 反馈环断链（选择器不消费评分器）；BT-P2-047..053 valid 与 plan=None 并存 |
+| ⑥缺口债 | 九态判据-码面差异（唯一 P0 级语义债）；trade_log 归因字段缺；L4-14 反馈环断链（选择器不消费评分器）；BT-P2-047..053 valid 与 plan=None 并存 **〔过时标记 2026-09-29：九态桥与反馈环两项 P0 均已由 T 袋 1dd6c70c74+8e446b7d08 落地，见卷末刷新批注〕** |
 
 ## 二、子模块三级枚举（2026-09-27 实扫）
 
@@ -33,9 +34,9 @@ creation_token: fc-f41-l4-exec-20260927
 |---|---|---|
 | L4-07 条件队列/L4-10 状态机/L4-13 容灾 | **事件驱动接线** | continuous 激活+tick 驱动（册引）；order_manager 状态机 7 态今日实锚 |
 | L4-02 买入时序 | **判据接线（语义分层）** | 决策侧 14:45-15:00 与执行侧 batched_position_builder 14:50-14:57 双窗（册引） |
-| L4-06 EXA 选型 | **半接线（反馈断）** | **今日 grep algo_execution_selector.py scorer/quality 零命中**——L4-14 断链复核仍断（与 yaml:2550 自认注"L4-14 断链实证 2026-09-10"一致；L07 SKEL EXE-5 09-25 复核同判=D34） |
+| L4-06 EXA 选型 | **半接线（反馈断）** | **今日 grep algo_execution_selector.py scorer/quality 零命中**——L4-14 断链复核仍断（与 yaml:2550 自认注"L4-14 断链实证 2026-09-10"一致；L07 SKEL EXE-5 09-25 复核同判=D34）**〔过时标记 2026-09-29：反馈环最后一米已接（selector 消费 scorer，grep 现 13 命中），见卷末刷新批注〕** |
 | L4-12 订单级预检 | **接线（口径漂移）** | gate 族四 gate+rule_id 今日实锚；节点散文"五查"与 check_id 非一一对应（禁做清单入口待核） |
-| L4-10 九态判据 | **判据先行未回写** | 码面 7 态无 New/Accepted/Suspended/PendingCancel（今日实锚）；QMT 风格九态映射桥缺失 |
+| L4-10 九态判据 | **判据先行未回写** | 码面 7 态无 New/Accepted/Suspended/PendingCancel（今日实锚）；QMT 风格九态映射桥缺失 **〔过时标记 2026-09-29：order_enums 已增 BrokerOrderState 九态+收口映射桥，见卷末刷新批注〕** |
 
 **骨架勘误**：无新增（f41 册三处结构性欠账今日独立复核全部成立：九态映射桥缺、归因字段缺、反馈环断）。总册 F41"P0"分级与 materiality=critical（L4-09）一致，维持。
 
@@ -43,8 +44,8 @@ creation_token: fc-f41-l4-exec-20260927
 
 | # | 缺口 | 处置 | 级 |
 |---|---|---|---|
-| G41-1 | L4-14 反馈环断链（选择器不消费评分器） | 选择器增评分输入（0.5-1 天，F58 扩册交界）——断链三零件全 production 只差最后一米 | **P0** |
-| G41-2 | 订单九态判据-码面差异（语义债） | a) 桥层补券商态→内部态映射表（F53 交界，1 天）+b) 节点注对齐码面（S4 D 裁定） | **P0** |
+| G41-1 | L4-14 反馈环断链（选择器不消费评分器）**〔09-29 已闭合，见刷新批注〕** | 选择器增评分输入（0.5-1 天，F58 扩册交界）——断链三零件全 production 只差最后一米 | **P0** |
+| G41-2 | 订单九态判据-码面差异（语义债）**〔09-29 桥件腿已闭合，见刷新批注〕** | a) 桥层补券商态→内部态映射表（F53 交界，1 天）+b) 节点注对齐码面（S4 D 裁定） | **P0** |
 | G41-3 | trade_log 归因字段缺（order_type/algo_id/排板标记） | 回测流水 schema 增字段（BT/M1 交界）+重放窗口；字段落地前按全量代理口径出数并披露（BT-P2-045/046 caliber_note） | P1 |
 | G41-4 | BT-P2-047..053 valid 与 plan 缺失并存 | 核 c1_backtest.node_verdict 台账后补 plan 或降级标记 | P1 |
 | G41-5 | BT-P0-003 成本模型（生死线三件套之一）pending | plan 已冻结 2026-09-12，待批次决策点开考（cross：L4-09+P2-01/03+X-S2-01） | P1 |
@@ -65,6 +66,18 @@ creation_token: fc-f41-l4-exec-20260927
 sed -n '52,63p' src/zephyr/shared/contracts/enums/order_enums.py      # 7 态实锚
 sed -n '136,149p' src/zephyr/ex_core/order_manager.py                 # VALID_TRANSITIONS
 grep -n "check_id=" src/zephyr/ex_core/pre_execution_checker.py | head
-grep -cn "scorer\|quality" src/zephyr/ex_sor/core/algo_execution_selector.py  # =0 断链复验
+grep -cn "scorer\|quality" src/zephyr/ex_sor/core/algo_execution_selector.py  # =0 断链复验 **〔过时标记 2026-09-29：T 袋后现=13，此命令判读口径需更新为"=0 才是断链复发"〕**
 grep -c "node_id: TDM-E-L4" config/trading_decision_map.yaml          # =15
 ```
+
+## 刷新批注（2026-09-29 st-finaldel-freshb）
+
+> 刷新基线：HEAD dev @ 0cacd4a64d（09-29）；对卷内真源跑 `git log --since=2026-09-28` 复核，T 袋+残留袋已落。
+
+- **翻面 commit**：`1dd6c70c74`（09-28 03:59，F41 L4-14 执行反馈环最后一米+九态映射桥）＋ `8e446b7d08`（09-28 08:43，反馈环配套两测试件 +126 纯增）。
+- **影响（卷内两个 P0 的桥件腿已闭合）**：
+  - **G41-1 反馈环断链 → 已闭合（P0 撤销）**：`src/zephyr/ex_sor/core/algo_execution_selector.py` +55/-… 接入评分器消费（卷 §六 复跑命令 `grep -c "scorer\|quality"` 由 0 → 13 命中实测）；`services/execution_quality_scorer.py` +45 配套；随批 `tests/ex_sor/test_algo_execution_selector.py`（60 行）+`test_execution_quality_scorer.py`（66 行）（8e446b7d08）。卷 §三"L4-06 半接线（反馈断）/grep 零命中"判定过时；yaml:2550 自认注与 L07 SKEL D34 判定自此成为历史快照。
+  - **G41-2 九态映射桥 → 桥件腿已闭合**：`src/zephyr/shared/contracts/enums/order_enums.py` +59 行——新增 `BrokerOrderState` 九态（NEW/ACCEPTED/SUSPENDED/PENDING_CANCEL 等，:79-87 实锚）+ 券商态→内部 7 态收口映射（:95-96 起，收口策略注记在位）+ 红样 `tests/shared/test_order_enums_nine_state_bridge.py`（92 行）。卷 §三"L4-10 码面 7 态无 New/Accepted"过时。G41-2 b) 腿（TDM 节点注对齐码面）未在本批，仍留 S4 场景。
+- **缺口状态修订**：G41-1 P0→已闭合｜G41-2 P0→桥件腿闭合、节点注腿维持｜G41-3..G41-7 维持（trade_log 归因字段/推进器/成本模型等本批未触及）。
+- **自审闸三态（刷新后）**：**挖干可施工（维持；三件结构性欠账中两件已闭合，余归因字段缺一件）**——G41-1 处方对施工面失效（勿重复施工），卷作历史快照+验收锚使用。
+- **复跑**：`git show 1dd6c70c74 --stat`｜`sed -n '79,96p' src/zephyr/shared/contracts/enums/order_enums.py`（九态+映射）｜`python -m pytest tests/shared/test_order_enums_nine_state_bridge.py tests/ex_sor/test_algo_execution_selector.py -q`。

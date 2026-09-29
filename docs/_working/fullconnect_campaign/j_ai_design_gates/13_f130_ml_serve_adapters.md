@@ -2,12 +2,13 @@
 ttl: task_bound
 title: "F130 ml_serve 模型服务适配族（codegen/deep_review 适配器/压缩加速/漂移监控）复飞案卷"
 session: st-c7-mine-20260927
+updated: 2026-09-29
 ---
 
 # F130 ml_serve 模型服务适配族（J 段，P1，骨架态=unmined(new id)）
 
 > 立卷依据：`00_skeleton_verified.md` §二 D-07 行——"`ml_serve`（11 py：model adapter/compression）→ F130（P1，J 段；与 F89 分界=数值 ML 族 vs LLM 族）"。件数实核=11（§六 P1），非 `__init__` 实体件=4。
-> **主结论（红）**：四件实体**生产面零 import、无工厂/注册表按名选取**，唯一在世的跨包文本引用来自归档脚本 ⇒ 判**装饰**。本卷另发现一处需交克隆判据的同名件（`model_drift_monitor.py` 在 gov_drift 与 ml_serve 各有一份），本卷不自行裁定。
+> **主结论（红）**：四件实体**生产面零 import、无工厂/注册表按名选取**，唯一在世的跨包文本引用来自归档脚本 ⇒ 判**装饰**。本卷另发现一处需交克隆判据的同名件（`model_drift_monitor.py` 在 gov_drift 与 ml_serve 各有一份），本卷不自行裁定。（后记 2026-09-29：本卷红判已被 SW5 夜战卡1 采纳为定罪依据，退役标记落地——见刷新批注）
 
 ## 一、六向台账（2026-09-27 实证，基准=HEAD 3b4b1f86a1）
 
@@ -104,3 +105,17 @@ grep -n "zephyr.ml_serve" .importlinter
 # G1 效果尺缺位（期望零命中）
 grep -in "ml_serve\|model_adapter\|compression" docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | head
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（本卷被采纳为定罪依据）
+- `794f16569b`（09-29 SW5 夜战卡1·M1 封矿第一批，F125/F127/F128/F130 逐环三选一落地）：ml_serve/__init__.py（+14）现挂 **[DEPRECATED] 2026-09-29 退役标记**——定罪原文逐条引本卷（四件实体 PROD=0/TC=0、无工厂/注册表反射装配、唯一跨包命中在 scripts/_archive 归档件）；successor 声明=serve 层现役 F129 ml_train（core/model_version_registry+implementations/default_inference_engine，后者被 src/zephyr/intelligence/model_evaluation/implementations/default_inference_engine.py:36 真实消费）；model_drift_monitor 双同名件附登记不裁=OWNER-GATE。
+
+### 缺口清单状态修订
+- 缺口 1（serve 层去留）：**方向已裁并落地**（退役标记入册；四件实体净删与 .importlinter 撤层未见=净删 Owner 门维持）。
+- 缺口 2（真源倒挂/改错包风险）：**已对冲**（successor 声明随标记入册）。
+- 缺口 3（双同名 clone 态）：维持 OWNER-GATE 挂起。
+- 缺口 4/5：维持。
+
+### 自审闸三态
+- **未干（维持）但方向已裁**——本卷红判经 SW5 采纳为封矿定罪依据；缺口 1 主问（"退役 vs 接入"）已由 Owner 通道落地为退役标记；剩余未干面=四件实体净删、clone 尺判定、operations_map 消费面（均 Owner/治理车道）。

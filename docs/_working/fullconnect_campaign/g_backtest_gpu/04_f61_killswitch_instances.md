@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "F61 KillSwitch 三实例族——交易级/容量级/回滚级+状态存储"
 session: zc-l07-20260927
+updated: 2026-09-29
 create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 ---
 
@@ -16,7 +17,7 @@ create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 | 自动化触发 | 盘中评估=调仓线程内嵌；**rebuild_from_disk 设计为进程启动重臂但零生产调用**（M7-02 grep 复证在案）；无独立常驻 |
 | 真源与注册表 | 五级唯一真源=src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py:52-112（KILL_SWITCHES，本日 wc=165 行）；磁盘影子=data/runtime/trading_kill_switch_state.json（**本日实测存在**：saved_at 2026-09-25T03:49Z，5 开关全 false=写路径走过真）；kill_switch_state_store.py 143 行（save :60/rebuild :93） |
 | 门禁与质量尺 | 触发/复位自动落盘 fail-open（:119-127 落盘失败 CRITICAL 不回滚熔断）；rebuild 纯加闸不加放；KILL 态人工复位；DefaultRiskValidator JsonStateStore 启动读"启动即熔断=禁新单"（risk/implementations/default_risk_validator.py:75-157+start_paper_session.py:541） |
-| 当前运行状态 | **黄**：触发/落盘/逐单拦截=绿（state file 实证）；**重臂=红**（rebuild 零调用=重启失忆窗）；演练=红（HALT 拒单演练 0 次，M7-02 B4） |
+| 当前运行状态 | **黄**：触发/落盘/逐单拦截=绿（state file 实证）；**重臂=红**（rebuild 零调用=重启失忆窗）（已过时，见刷新批注——K 袋已接 trading_session.py:400）；演练=红（HALT 拒单演练 0 次，M7-02 B4）（已过时，见刷新批注——合成演练测试已落库） |
 
 ## 二、子模块三级枚举（同名族 6 件全实扫，本日 wc）
 
@@ -61,3 +62,18 @@ cat data/runtime/trading_kill_switch_state.json     # saved_at 2026-09-25T03:49Z
 grep -rn "rebuild_from_disk" src scripts --include="*.py" | grep -v state_store.py | grep -v test   # 零生产调用
 sed -n '27,33p' src/zephyr/security/access_control/kill_switch.py   # 非-交易边界自注
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `461a86be17`（09-28 全流通·K袋落地，同 F60 批）：**F61 KillSwitch 重启失忆窗闭合**——ex_core/trading_session.py:400 现调 `kill_switch_state_store.rebuild_from_disk()`（启动重臂接线；state_store 头注 [CONSUMERS] 同步更新为"G2b/G5 sim 部署接线点"）；tests/trading/test_kill_switch_rejection_drill.py（232 行）拒单演练合成测试落库。
+- 同名族 6 件本体 9/28 后零直改。
+
+### 缺口清单状态修订
+- 缺口 1①（rebuild_from_disk 一行接入 TradingSession.start）：**已施工翻面**（trading_session.py:400 实锚）。
+- 缺口 1②（长期并入 JsonStateStore 家族）：维持 Owner 待裁。
+- 缺口 4（拒单演练 0 次）：**部分翻面**——合成演练测试在册（232 行，K 袋）；实弹（真进程注入假 validator）仍待 G5。
+- 缺口 2/3/5：维持。
+
+### 自审闸三态
+- **挖干可施工（维持）**；§一"重臂=红（rebuild 零调用）"与 §三"半接线（save 通/rebuild 断）"断言**已过时**（重臂已接，见上）——缺口 1① 由 P0 转已闭合，缺口 4 由"0 次"转"合成演练在册、实弹待 G5"。

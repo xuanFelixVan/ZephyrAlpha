@@ -2,6 +2,7 @@
 ttl: task_bound
 title: F28 E9 实盘归因（IS 分解/影子组合/回灌）——L03 接线矿道案卷
 session: zc-l03-20260927
+updated: 2026-09-29
 ---
 
 # F28 · E9 实盘归因
@@ -11,7 +12,7 @@ session: zc-l03-20260927
 ## 一、六向台账
 | 向 | 实证锚点（09-27 实测） |
 |----|------|
-| 上游 | c1_market.execution_report DDL（schemas/categories/intraday/market_execution_report.py **本日复读：列族=order/symbol/execution_start/execution_end/ingest_ts（:91-97），无 decision_timestamp——FIELD-GAP 维持实锤**）；c1_market.account_nav_daily；sim 级=c1_backtest.sim_pocket_daily/sim_trade_log |
+| 上游 | c1_market.execution_report DDL（schemas/categories/intraday/market_execution_report.py **本日复读：列族=order/symbol/execution_start/execution_end/ingest_ts（:91-97），无 decision_timestamp——FIELD-GAP 维持实锤**）（已过时，见刷新批注——decision_timestamp V2 契约扩展已落地）；c1_market.account_nav_daily；sim 级=c1_backtest.sim_pocket_daily/sim_trade_log |
 | 下游 | c1_backtest.sim_attribution_daily 归因长表；D_REPORTING attribution_calculator；D_GOV_ENFORCEMENT 降级审计；MOD-PF-001 PC-01（激活度未核维持，跨组对账面）；回灌 E2 **无实件维持** |
 | 自动触发 | attribution_daily=SIM_DAILY_KINDS FIFO 次段（:139 实证）；**marker 09-26T00:42:49（last_audit 实读）——sim 级日更绿至 09-26**；实盘级无（等 M7 Owner 门位） |
 | 真源注册表 | 图 FAC-E9 partial；MOD-PF-007 performance_attribution_engine（excess=allocation+selection+interaction 守恒）；MOD-BT-215 sim_attribution_report（四段答案，成本铁律逐字 import）；TDM 17_f50 卷交叉：**C3 与 E9 共享 Brinson 引擎禁双算**+归因引擎自证验证欠账（portfolio_attribution 残差<1bp 对账未跑） |
@@ -48,3 +49,18 @@ cat .runtime/strategy_pipeline/last_audit.json | tr ',' '\n' | grep attribution
 grep -rn "hypothesis_precheck" src/zephyr/pf_core src/zephyr/reporting --include="*.py" | wc -l  # 0=回灌断
 python -m pytest tests/pf_core/test_performance_attribution_engine.py -q
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `a349ddc1fe`（09-28 E8/E9袋复活·21 件，同 F27 批）：**F28 影子组合对照+IS 决策时间戳链**——src/zephyr/pf_core/core/shadow_portfolio.py（389 行新件）+algo_flow/shadow_portfolio.yaml+tests/pf_core/test_shadow_portfolio.py（200 行）；schemas/categories/intraday/market_execution_report.py（+23）+src/zephyr/ex_core/execution_report.py（+1）+execution_report_producer.py（+10）+tests/ex_core/test_execution_report_decision_timestamp.py（154 行）。
+- `7c3da698df0`（09-29 DEFECT-1 治愈·75 红根因）：decision_timestamp 契约三件收口。
+- HEAD 复读：DDL :46/:103 `decision_timestamp DateTime64(3,'UTC') NULL` 在码（=Order.created_at 决策时刻；NULL=上游未布点；DDL 头 :129-134 有线上表 ALTER 前显式列清单护栏注记）。
+
+### 缺口清单状态修订
+- 缺口 1（IS 分解 FIELD-GAP）：**翻面**——schema 契约+DDL 双改已落（V2 契约扩展 2026-09-27 起）；M7 产出侧实数据回填状态未核（历史行 NULL 属设计允许）。
+- 缺口 2（影子组合工作流未建）：**最小件已翻面**——shadow_portfolio 389 行+C4 引擎复刻对照形态落地（a349ddc1fe）；实盘前置=M7 合规门 Owner 报送维持（报送面 broker_ack 已回填 true×6，见 F62 卷批注）。
+- 缺口 3（回灌 E2 环断）／4（归因自证对账）／5（1/N 占位）：未见施工证据，维持。
+
+### 自审闸三态
+- **挖干（维持）**；§一"FIELD-GAP 维持实锤"与 §四缺口 1/2 两大 P0 断言**已过时**（双 P0 均有施工落地，见上）——三缺件中两件翻面，实盘级红线维持零触。

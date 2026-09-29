@@ -2,10 +2,11 @@
 ttl: task_bound
 title: "F62 合规门与程序化交易报告——ReportGate C-002 拒单+FeatureGate 硬边界（码成闸空）"
 session: zc-l07-20260927
+updated: 2026-09-29
 create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 ---
 
-# F62 · 合规门与程序化交易报告（总册状态 built（M7：码成闸空零注入=P0 接线前置）/P0；本卷复核=红态维持，broker_ack 6/6 false 本日复测）
+# F62 · 合规门与程序化交易报告（总册状态 built（M7：码成闸空零注入=P0 接线前置）/P0；本卷复核=红态维持，broker_ack 6/6 false 本日复测）（已过时，见刷新批注——四袋施工后红态部分翻面）
 
 ## 一、六向台账（实证锚点）
 
@@ -59,3 +60,21 @@ grep -rn "ProgrammaticTradingGuard(" src/zephyr scripts --include="*.py" | grep 
 sed -n '356,418p' src/zephyr/ex_core/order_manager.py          # C-002 三门全文
 grep -rn "FeatureGate\|feature_gate" src/zephyr/compliance --include="*.py" | grep -v __pycache__ | head -3   # 勘误取证
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（本卷=四段中施工面最重的卷，四袋落地）
+- `fa9ae36533`（09-28，Agent-L 死信复苏重投）：G07 程序化报备闸+G09 信息空窗回避闸接入 OrderManager C-002 链（None=skip，fail-closed）；scripts/start_paper_session.py（+21）paper 会话装配注入两件；W140 接线表 12 行落 docs/_working/qoder_legacy_closeout/；test_order_manager_sim_compliance_wiring.py（222 行）8 项红绿。
+- `5acdd1ef85`（09-28，F62 清单闸写侧）：**C-004 ChecklistCompletionChecker 生产写侧三腿+装配接线**——compliance/checklist_evidence.py（354 行新件）+algo_flow/checklist_evidence.yaml（commit 注记自证真源=本卷 C-004 处方与 F62 排雷案卷雷三）。
+- `ced0f780bf`（09-29，清单证据时区锚）：trading_session._validate_and_submit 取证日由 datetime.now(UTC) 改经 today_shanghai(Asia/Shanghai) 显式锚——修复北京 00:00-08:00 窗读证（UTC 日）与写证（北京日）差一天致三腿误判陈旧整批拒的生产缺陷（修读写对齐非放宽，Hard Block 裁定值原样）。
+- `35ca1d69cd`（09-29，SW5 卡2）：SettlementReconciler 违宪整改——post_settlement_pipeline 事件触发腿+幂等日终 sweep（宪法 §9.3，详见 F82 卷批注）。
+- 登记面：compliance_report_registry 6 项义务 broker_ack 已回填 **true×6**（reported_at="2025-12"，Owner 口述 QMT 开通时报送，2026-09-27 回填注记）——本卷"broker_ack: false ×6 全数（从未报送）"**已过时**。
+
+### 缺口清单状态修订
+- 缺口 1（12 件零生产装配）：**部分翻面**——paper 腿已注入（G07/G09 经 start_paper_session 装配；HEAD 复测裸构造 6→5 处：start_paper_session.py:727 现带参注入，余 qmt_trading_session.py:123／qmt_file_bridge_integration.py:88／app_panel.py:524／construction 两处维持）；Owner 前置半边（先报送→回填 YAML）已由 broker_ack 回填兑现。
+- 缺口 2（1 万笔日申报防线未激活）：未见施工证据，维持。
+- 缺口 3/4/5：维持。
+- 清单外新增已闭面：C-004 清单闸生产写侧三腿（5acdd1ef85）+清单证据时区锚统一（ced0f780bf）——挖矿时点未立案的施工，现已落地。
+
+### 自审闸三态
+- **挖干可施工（维持）**；标题红判与 §一/§三"生产装配零注入/红（码成闸空）"**已过时**——红→黄偏绿（paper 腿注入+清单闸写侧建成+报送面回填；实盘腿与 qmt 链装配仍缺位），缺口 1 的"Owner 先报送"前置已解除半边。

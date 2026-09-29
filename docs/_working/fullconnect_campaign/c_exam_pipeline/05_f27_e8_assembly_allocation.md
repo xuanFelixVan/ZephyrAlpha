@@ -2,6 +2,7 @@
 ttl: task_bound
 title: F27 E8 组装与资金分配——L03 接线矿道案卷
 session: zc-l03-20260927
+updated: 2026-09-29
 ---
 
 # F27 · E8 组装与资金分配
@@ -12,7 +13,7 @@ session: zc-l03-20260927
 | 向 | 实证锚点（09-27 实测） |
 |----|------|
 | 上游 | regime 日序（regime_snapshot_daily）；StrategyBook 读账本钱包；PIT 锚定四档表（allocation_inputs.load_anchored_cap，tuple/dict 双形态兼容治本注释 **在码实证 ：710-719**） |
-| 下游 | alloc 三表（alloc_budget_daily/alloc_shrinkage_daily/alloc_budget_change_log）；sim_paper_ledger 钱包额度（**接线 diff 未落地维持**=E8-②）；crisis_gate L1；TDM 组合流（F48 跨组欠账维持） |
+| 下游 | alloc 三表（alloc_budget_daily/alloc_shrinkage_daily/alloc_budget_change_log）；sim_paper_ledger 钱包额度（**接线 diff 未落地维持**=E8-②）（已过时，见刷新批注——E8 袋 sleeve/再平衡/TDM 三面已落）；crisis_gate L1；TDM 组合流（F48 跨组欠账维持） |
 | 自动触发 | maybe_emit_pf_alloc_daily 已投产维持（daily_kline 唤醒+trade_date 级幂等）；**marker 进展：pf_alloc_daily:2026-09-24 已落（09-25T00:42:31 写入，last_audit 实读）**——基册"09-24/25 日成验证待做"完成一半；**09-25/26/27 无 trade_date marker**：09-25 周五（中秋休市推断）+09-26/27 周末，下一预期 marker=trade_date 09-28（推断级，待 09-28 验证，见待裁注） |
 | 真源注册表 | 图 FAC-E8 partial；MOD-PA-030 装配体（G15→G14 单向流）；MOD-PA-007/022/013/004/014/015；DDL=schemas/categories/alloc_*.py；TDM 17_f50 卷交叉：C3-03 装配体夜批已运行（RegimeMetaAllocator :1081 实例化）+"地图 note 待回填" |
 | 门禁质量尺 | Σallocations=1.0 硬不变量；死成员显式剔除；全灭 fail-closed；现金三账闭合；alloc 三表只增+同日双写防 |
@@ -48,3 +49,19 @@ python -c "import json;[print(e['id'],e['attempts'],e.get('poison')) for e in ma
 sed -n '710,720p' src/zephyr/pf_alloc/allocation_inputs.py    # 治本注释在码
 python -m pytest tests/pf_alloc/test_allocation_chain.py -q
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `a349ddc1fe`（09-28 E8/E9袋复活·21 件）：**F27 sleeve 装配+再平衡调度+TDM 对接**——allocation_orchestrator.py（+16）+schemas/categories/alloc_budget_daily.py（+24）+tests/pf_alloc/test_sleeve_provenance.py（156 行）；rebalance_check_runner.py（242 行新件）+algo_flow/rebalance_check_runner.yaml+src/zephyr/data/config/schedule.yaml（+12）+scheduler.py（+28）+tests/data/test_pf_alloc_rebalance_check_wiring.py（92 行）；config/strategy_production_map.yaml（+17）。
+- `082d4591e7`（09-29 F34 L9 消费接线）：pf_alloc 增 L9 知识供给就绪度闸（allocation_inputs.load_l9_readiness；黄 0.90/红 0.70 工程缺省待 Owner 签批，一键失效开关在案）——清单外新增接线面。
+- 数据面：**pf_alloc_daily:2026-09-28 marker 已落**（last_audit 实读）——缺口 3 的 09-28 唤醒验证通过；3 条 PIPE-20260923 毒丸 attempts 3/3/6 维持（陈旧遗体判定维持）。
+
+### 缺口清单状态修订
+- 缺口 3（休市缺口观察）：**翻面**——09-28 trade_date marker 在，休市推断成立、链未断。
+- 缺口 5（sleeve 落库语义+TDM 对接）：**已施工**（a349ddc1fe sleeve provenance+strategy_production_map 对接）。
+- 缺口 1（钱包额度接线）：a349ddc1fe 的 allocation_orchestrator +16 行为 sleeve 装配面，钱包开户额度对齐未见直接证据——维持 P0 待复核。
+- 缺口 2（毒丸清队）／4（IC_IR/爬坡两法待裁）：维持。
+
+### 自审闸三态
+- **挖干可施工（维持）**；§一"接线 diff 未落地维持=E8-②"**已过时**（E8 袋已落 sleeve/再平衡/TDM 三面，见上）；marker 链更新至 09-28（八日→+1）。

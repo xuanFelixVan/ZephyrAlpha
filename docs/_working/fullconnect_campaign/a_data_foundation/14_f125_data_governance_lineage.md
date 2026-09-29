@@ -2,12 +2,13 @@
 ttl: task_bound
 title: "F125 data_governance 数据治理本体（血缘/元数据/schema 注册）复飞案卷"
 session: st-c7-mine-20260927
+updated: 2026-09-29
 ---
 
 # F125 data_governance 数据治理本体（A·K 交界，主归 A 段，P0，骨架态=unmined(new id)）
 
 > 立卷依据：`00_skeleton_verified.md` §二 D-03 行——"`data_governance`（21 py）→ F125（P0，A/K 交界，数据治理本体）"。包内件数经本卷实核=21（§六 P1），与骨架口径逐字吻合。
-> **本卷首要结论（红）**：该包在 HEAD 上有 21 件实现 + 15 件测试，但**生产面零 import**（AST 全仓判定，§六 W1 输出 PROD=0），全部跨包引用只存在于注释与测试里。按本仓四态口径=**装饰**，不得因"件数多/测试全绿/在册"判已接线。
+> **本卷首要结论（红）**：该包在 HEAD 上有 21 件实现 + 15 件测试，但**生产面零 import**（AST 全仓判定，§六 W1 输出 PROD=0），全部跨包引用只存在于注释与测试里。按本仓四态口径=**装饰**，不得因"件数多/测试全绿/在册"判已接线。**〔过时标记 2026-09-29：M1 封矿第一批已选"接线"落地，生产 import 0→1（首条真实 PROD 消费边），装饰态解除，见卷末刷新批注〕**
 
 ## 一、六向台账（2026-09-27 实证，基准=HEAD 3b4b1f86a1）
 
@@ -37,8 +38,8 @@ session: st-c7-mine-20260927
 
 **判定=装饰（非半接线）**，判据链三条，缺一不立：
 
-1. **生产 import 面**：AST 全仓扫描（§六 W1）把 `zephyr.data_governance*` 的 import 节点按 PROD/TEST/TYPE_CHECKING 三态归类，结果 **PROD=0 / TEST=18 条 import 语句（分布 15 文件）/ TC=0**。零 PROD import 是"装饰"的硬前提，本环节满足。
-2. **注入接缝无供方（本仓最常见假绿形态，专门测）**：`alt_data_catalog` 的血缘是**依赖注入**式接缝，不看 import 看谁传参。实测 `lineage_sink` 的**非测试供给方=0**（§六 W3）：全仓仅 `tests/alt_data/test_alt_data_catalog.py:200` 与 `tests/ml_train/test_research_data_manager.py:128` 两处用 lambda 传入。**决定性补强**：生产装配点 `src/zephyr/alt_data/alt_source_bootstrap.py:258` 实写 `catalog = AltDataCatalog(clock=clock, fts_connection=fts_connection)`——**未传 lineage_sink**，取默认 `None`（:126 形参默认值），于是 :263-264 的 Fail-Closed 分支成为该装配路径下挂血缘的唯一出口。⇒ 本环节的血缘能力在真实装配里是"接了口但没人插"，生产血缘边写入量=0。两种情形下 F125 对真实数据链路的贡献都是**零**：走挂血缘即抛、不走则永不抛——这正是"守卫/接缝存在但无供给方喂它 = 装饰"的教科书实例。
+1. **生产 import 面**：AST 全仓扫描（§六 W1）把 `zephyr.data_governance*` 的 import 节点按 PROD/TEST/TYPE_CHECKING 三态归类，结果 **PROD=0 / TEST=18 条 import 语句（分布 15 文件）/ TC=0**。零 PROD import 是"装饰"的硬前提，本环节满足。**〔过时标记 2026-09-29：794f16569b 接线后 PROD 0→1，见卷末刷新批注〕**
+2. **注入接缝无供方（本仓最常见假绿形态，专门测）**：`alt_data_catalog` 的血缘是**依赖注入**式接缝，不看 import 看谁传参。实测 `lineage_sink` 的**非测试供给方=0**（§六 W3）：全仓仅 `tests/alt_data/test_alt_data_catalog.py:200` 与 `tests/ml_train/test_research_data_manager.py:128` 两处用 lambda 传入。**决定性补强**：生产装配点 `src/zephyr/alt_data/alt_source_bootstrap.py:258` 实写 `catalog = AltDataCatalog(clock=clock, fts_connection=fts_connection)`——**未传 lineage_sink**，取默认 `None`（:126 形参默认值），于是 :263-264 的 Fail-Closed 分支成为该装配路径下挂血缘的唯一出口。⇒ 本环节的血缘能力在真实装配里是"接了口但没人插"，生产血缘边写入量=0。两种情形下 F125 对真实数据链路的贡献都是**零**：走挂血缘即抛、不走则永不抛——这正是"守卫/接缝存在但无供给方喂它 = 装饰"的教科书实例。**〔过时标记 2026-09-29：供方已接——build_governance_triple 现注入 LineageTracker（:58 import/:240 参），attach_lineage 由抛错转真实落边，见卷末刷新批注〕**
 3. **在册态不能救场**：34 处翻译册命中 + 33 处候选册命中 + `.importlinter` + 错误码在册，全部是登记面；`asset_inventory/__init__.py:175` 更证明登记面会指向不存在的模块（`data_governance.asset_inventory` 包内查无）。⇒ 名册计数与运行连通性无因果，本卷按 §三.1/.2 定罪，不按名册免罪。
 4. **半接线为什么不成立**：半接线要求"部分腿通"。本包四条外联可能性中，注入腿（无供方）、注释腿（非代码）、名册腿（登记面）、错误码腿（自我声明）**均不构成运行时通路**，故无"部分通"可言。
 5. **同批横向对照**（防以偏概全）：同夜实测 ml_train PROD=5 条真 import、nlp PROD=9 条、infra_ops PROD=1 条——证明本仓存在真被消费的包，F125 的 PROD=0 是**该包自身缺陷**而非扫描口径失效。
@@ -47,7 +48,7 @@ session: st-c7-mine-20260927
 
 | # | 缺口 | 处置 | 优先 |
 |---|---|---|---|
-| 1 | 生产零消费：21 件包整体为装饰态，血缘能力未接入任何真实数据链路 | 施工（二选一，须总筹定方向）：A=把 `core/lineage_tracker` 作为 `lineage_sink` 供方接入 `alt_data_catalog` 与 `data_service` 的构造点并补红样；B=本环节转挂起，登记为"未接线待排期"，禁在施工波中被当作已有能力引用 | P0 |
+| 1 | 生产零消费：21 件包整体为装饰态，血缘能力未接入任何真实数据链路 **〔09-29 已按 A 方向施工落首条消费边，见刷新批注〕** | 施工（二选一，须总筹定方向）：A=把 `core/lineage_tracker` 作为 `lineage_sink` 供方接入 `alt_data_catalog` 与 `data_service` 的构造点并补红样；B=本环节转挂起，登记为"未接线待排期"，禁在施工波中被当作已有能力引用 | P0 |
 | 2 | 真源方向未定：血缘语义究竟以 `lineage_tracker.py` 代码、`openlineage_exporter` 导出件、还是 depgraph `edges` 表为真源，无声明 | 挂起：属 RULE-SSOT 判定面，须立法件定档后回填本卷；挖矿道不自裁真源 | P0 |
 | 3 | `infrastructure/asset_inventory/__init__.py:175` 记录的"复制残留"死名（指向不存在的 `data_governance.asset_inventory`）仍在权威链上 | 施工：清死名并核 `candidate_module_registry.yaml`（33 处命中内）是否含同名条目；禁手工点删热册（根宪法 §1.13） | P1 |
 | 4 | 五个分层目录（api/services/models/infrastructure/_extensions）零实现件＝纯骨架 | 挂起：净零判据（根宪法 §4.2）下是否收敛由治理侧定；本卷只登记"骨架层无件"事实 | P2 |
@@ -56,9 +57,19 @@ session: st-c7-mine-20260927
 
 ## 五、自审闸三态
 
-**未干（但主结论已定）。** 已定且可复算的：生产零 import、注入无供方、在册态三层计数、21 件三级枚举、五骨架目录零实现——这五项足以支撑"装饰/P0 红"的判读并可直接转工单。未干的原因：①`core/lineage_parser.py` 的 SQL 解析覆盖面（能吃哪些方言、能吃几张真实表）未测，那是"若接线则能力多大"的定量前提；②`openlineage_exporter.py` 的输出契约是否与 OpenLineage 官方 schema 对齐未核；③缺 6 的 depgraph 在册面未实测。⇒ 本卷交"红线 + 未干"，不盖挖干章。
+**未干（但主结论已定）。** 已定且可复算的：生产零 import、注入无供方、在册态三层计数、21 件三级枚举、五骨架目录零实现——这五项足以支撑"装饰/P0 红"的判读并可直接转工单。未干的原因：①`core/lineage_parser.py` 的 SQL 解析覆盖面（能吃哪些方言、能吃几张真实表）未测，那是"若接线则能力多大"的定量前提；②`openlineage_exporter.py` 的输出契约是否与 OpenLineage 官方 schema 对齐未核；③缺 6 的 depgraph 在册面未实测。⇒ 本卷交"红线 + 未干"，不盖挖干章。**〔过时标记 2026-09-29：主结论"生产零 import/装饰"已被 M1 封矿施工翻面，刷新见卷末批注〕**
 
-## 六、复跑命令
+## 刷新批注（2026-09-29 st-finaldel-freshb）
+
+> 刷新基线：HEAD dev @ 0cacd4a64d（09-29）；对卷内真源跑 `git log --since=2026-09-28` 复核＋码面现读。
+
+- **翻面 commit**：`794f16569b`（09-29 09:54，[SW5 夜战卡1·M1 封矿第一批] ①F125 接线）。
+- **影响（缺口1 P0 按 A 方向施工落地）**：
+  - 三选一裁定=**能接线·有消费者缺装配→接线**：`src/zephyr/alt_data/alt_source_bootstrap.py` `build_governance_triple` 新增 `lineage_tracker` 参（:235/:240 现锚；`from zephyr.data_governance.core.lineage_tracker import LineageTracker` :58）——缺省内部新建 LineageTracker 并把 `tracker.add_edge` 作为 `AltDataCatalog.lineage_sink` 供方注入，`attach_lineage` 由 Fail-Closed 抛错转**真实血缘落边**；调用方传自有 tracker 即可查询血缘边。**`zephyr.data_governance` 生产 import 0→1（AST 口径首条真实 PROD 消费边）**——卷 §首要结论与 §三判据 1/2（PROD=0/注入无供方/:258 未传 sink）全部过时。
+  - 契约不放松：直构不注入仍 Fail-Closed（红样三测：注入落边+上下游贯通／缺省自建不再抛／直构不注入仍抛）。测试：`tests/zephyr/data/test_alt_sources.py` 29 passed；alt_data+lineage_tracker 回归 455 passed（封矿批自报，本卷未复跑全量）。
+- **缺口状态修订**：缺口1 P0→**已施工（A 方向首条消费边落；深挖面=血缘能力对真实数据链路的覆盖度仍属 §五 未干项，不因接线而豁免）**｜缺口2（真源方向 RULE-SSOT）/缺口3（死名）/缺口4（骨架层）/缺口5（效果尺）/缺口6（depgraph 在册面）——封矿批均未触及，维持。
+- **自审闸三态（刷新后）**：**未干（维持）但主结论翻面**——"装饰/P0 红"判读完成历史使命，卷转作 M1 封矿 F125 环的**接线前基线快照+验收锚**；§五三项未干原因（parser 覆盖面/OpenLineage 契约/depgraph）仍为后续挖干真缺口。
+- **复跑**：`git show 794f16569b --stat`（封矿批 5 件）｜`sed -n '235,240p' src/zephyr/alt_data/alt_source_bootstrap.py`（lineage_tracker 参）｜`python -m pytest tests/zephyr/data/test_alt_sources.py -q`。
 
 ```bash
 export PATH="$LOCALAPPDATA/Programs/Python/Python312:$LOCALAPPDATA/Programs/Python/Python312/Scripts:$PATH"

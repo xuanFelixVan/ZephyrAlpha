@@ -2,12 +2,13 @@
 ttl: task_bound
 title: "F127 data_eng 数据工程引擎族（湖/冷储/流处理/GPU 资源）复飞案卷"
 session: st-c7-mine-20260927
+updated: 2026-09-29
 ---
 
 # F127 data_eng 数据工程引擎族（A 段，P1，骨架态=unmined(new id)）
 
 > 立卷依据：`00_skeleton_verified.md` §二 D-02 行——"`data_eng`（16 py：data_lake_manager/cold_data_archive_manager 等）→ F127（P1，A 段；与 F08 冷库归档存在冷储交叠=勘误点）"。件数实核=16（§六 P1），与骨架口径吻合。
-> **本卷两条主结论**：①与 F125 同形——生产面零 import，判**装饰**；②骨架自标的"与 F08 冷储交叠"经实核**是双活源风险**：F08 现役归档件是 `scripts/ch/archiver.py`（920 行，四命令），而 `data_eng/cold_data_archive_manager.py` 是另一套并行实现、无人调用。
+> **本卷两条主结论**：①与 F125 同形——生产面零 import，判**装饰**；②骨架自标的"与 F08 冷储交叠"经实核**是双活源风险**：F08 现役归档件是 `scripts/ch/archiver.py`（920 行，四命令），而 `data_eng/cold_data_archive_manager.py` 是另一套并行实现、无人调用。**〔过时标记 2026-09-29：M1 封矿第一批已按本卷判据落全包退役标记（[DEPRECATED]+successor=F08 链），物理净删待 Owner 门，见卷末刷新批注〕**
 
 ## 一、六向台账（2026-09-27 实证，基准=HEAD 3b4b1f86a1）
 
@@ -48,18 +49,29 @@ session: st-c7-mine-20260927
 
 | # | 缺口 | 处置 | 优先 |
 |---|---|---|---|
-| 1 | 全族生产零消费（装饰）；9 件能力对业务链贡献=0 | 施工：逐件判"接入 or 退役"，禁整包留置为潜在第二真源；接入须给红样（先测后接），退役走净零声明 | P1 |
-| 2 | 冷储双实现：`cold_data_archive_manager.py` vs F08 `scripts/ch/archiver.py`，且本件自称另立 SQLite 归档索引 | Owner 门位：收敛方向（保 F08 删本件 / 或本件取代 F08）涉及生产归档链路，属根宪法 §5 high 域；本卷只提交判据不代裁 | P1 |
-| 3 | 头部 `[MATURITY] production`/`[CONSUMERS]` 与实盘相反的三处假声明在册 | 施工：随接入或未接入实况更正头部；并评估把"头注自述 vs 实测消费者"做成一把 own-scope 尺（防同形复发） | P1 |
+| 1 | 全族生产零消费（装饰）；9 件能力对业务链贡献=0 **〔09-29 退役标记已落（方向已裁），见刷新批注〕** | 施工：逐件判"接入 or 退役"，禁整包留置为潜在第二真源；接入须给红样（先测后接），退役走净零声明 | P1 |
+| 2 | 冷储双实现：`cold_data_archive_manager.py` vs F08 `scripts/ch/archiver.py`，且本件自称另立 SQLite 归档索引 **〔09-29 successor 方向注记已落（=F08 链），净删待 Owner 门〕** | Owner 门位：收敛方向（保 F08 删本件 / 或本件取代 F08）涉及生产归档链路，属根宪法 §5 high 域；本卷只提交判据不代裁 | P1 |
+| 3 | 头部 `[MATURITY] production`/`[CONSUMERS]` 与实盘相反的三处假声明在册 **〔包级退役标记已落，件级头注未更正〕** | 施工：随接入或未接入实况更正头部；并评估把"头注自述 vs 实测消费者"做成一把 own-scope 尺（防同形复发） | P1 |
 | 4 | M1 机采 symbol 尺产生 `ArchivePlan` 假阳性 | 施工：M1 采集器补同名消歧（须 import 面共证才计消费） | P2 |
 | 5 | GPU 配额族与 G 段回测 GPU 线的归属边界未定 | 挂起：待 G 段卷交叉确认，避免两卷各记一次 | P2 |
 | 6 | 告警出口（`data_anomaly_alerter.py`）与 F114 通知路由未接 | 施工：接入批的一部分，随缺 1 决策 | P2 |
 
 ## 五、自审闸三态
 
-**未干。** 已实核且可复算：PROD=0 的 import 面、10 件测试面、三处头注假声明的逐条否证、`ArchivePlan` 同名假阳性拆解、与 F08 的双实现事实、计划任务名册无本包项。未干原因：①9 件**未逐件读实现体**（各件真实能力边界、是否依赖外部服务如 MinIO/对象存储、是否写生产路径）——装饰判定不依赖它，但"接入还是退役"的处置建议依赖它，缺此不能算干；②与 G 段 GPU 面的交叉未做；③缺 2 属 Owner 门位。⇒ 交红线 + 未干。
+**未干。** 已实核且可复算：PROD=0 的 import 面、10 件测试面、三处头注假声明的逐条否证、`ArchivePlan` 同名假阳性拆解、与 F08 的双实现事实、计划任务名册无本包项。未干原因：①9 件**未逐件读实现体**（各件真实能力边界、是否依赖外部服务如 MinIO/对象存储、是否写生产路径）——装饰判定不依赖它，但"接入还是退役"的处置建议依赖它，缺此不能算干；②与 G 段 GPU 面的交叉未做；③缺 2 属 Owner 门位。⇒ 交红线 + 未干。**〔过时标记 2026-09-29："接入还是退役"已由 M1 封矿裁定为退役标记落地，刷新见卷末批注〕**
 
-## 六、复跑命令
+## 刷新批注（2026-09-29 st-finaldel-freshb）
+
+> 刷新基线：HEAD dev @ 0cacd4a64d（09-29）；对卷内真源跑 `git log --since=2026-09-28` 复核＋码面现读。
+
+- **翻面 commit**：`794f16569b`（09-29 09:54，[SW5 夜战卡1·M1 封矿第一批] ②F127 退役标记）。
+- **影响（处置方向已裁=退役，物理净删待 Owner 门）**：
+  - 判据采纳：本卷 PROD=0+零触发+与 F08 双实现的"装饰/潜在第二真源"判定被封矿批复用为退役依据。
+  - 落地物：`src/zephyr/data_eng/__init__.py` 包门面落 **[DEPRECATED]**（:37 现锚"2026-09-29 夜战 SW5（st-nightsweep-sw5-20260929）依 F127 案卷"）+ **successor 注记**（:40"冷储归档唯一现役真源 = scripts/ch/archiver.py（F08 链，F:/zephyr_cold）"）——缺口2 的收敛方向注记就此落盘（保 F08 删本件方向），物理净删**未执行**。
+  - Owner 门登记：99_skipped_for_owner.md **#42/43/44**（safe_write_text CAS）——三包物理净删候选+F127 冷储收敛方向二选一确认归 Owner。
+- **缺口状态修订**：缺口1 P1→**方向已裁（退役标记落），逐件读实现体的"未干"项仍开放但降级为净删前尽调**｜缺口2 P1→successor 注记已落，净删待 Owner 门（99 #42-44）｜缺口3 P1→包级 [DEPRECATED] 落、`cold_data_archive_manager.py` 件级三处假头注未更正（余量）｜缺口4/5/6 维持。
+- **自审闸三态（刷新后）**：**未干（维持）但处置方向已闭**——卷作 M1 封矿 F127 环的**退役前判据基线**使用；§五①的逐件实现体阅读转为"净删前尽调"语义，②GPU 交叉仍开放。
+- **复跑**：`git show 794f16569b --stat`｜`sed -n '37,42p' src/zephyr/data_eng/__init__.py`（DEPRECATED+successor）｜`grep -n "#4[234]" docs/_working/fullconnect_campaign/99_skipped_for_owner.md`（Owner 门三行）。
 
 ```bash
 export PATH="$LOCALAPPDATA/Programs/Python/Python312:$LOCALAPPDATA/Programs/Python/Python312/Scripts:$PATH"

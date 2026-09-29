@@ -2,10 +2,11 @@
 ttl: task_bound
 title: "F58 执行成本反馈——执行质量评分→选型回写（G4 增长批闭环）"
 session: zc-l07-20260927
+updated: 2026-09-29
 create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 ---
 
-# F58 · 执行成本反馈（总册状态 partial/P1；本卷独立复核=确认 partial，断链一米未接）
+# F58 · 执行成本反馈（总册状态 partial/P1；本卷独立复核=确认 partial，断链一米未接）（断链已于 09-28 T 袋码面闭合——已过时，见刷新批注）
 
 ## 一、六向台账（实证锚点）
 
@@ -52,3 +53,17 @@ sed -n '5351,5352p' config/trading_decision_map.yaml                  # 两边
 grep -n "G4" docs/_working/2026-09-09-tdm-growth-blueprint.md | head -3   # G4 增长批出处
 wc -l src/zephyr/ex_sor/services/execution_quality_scorer.py          # 532
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `1dd6c70c74`（09-28 全流通·T袋落地）：`algo_execution_selector.py`（+55 行）新增 `QualityPriorProvider` Protocol+`quality_prior` 形参+`FEEDBACK_GAIN=0.20` 选型回写公式；`execution_quality_scorer.py`（+45 行）新增 `ScorerBackedQualityPrior` 评分侧适配器；trading_decision_map.yaml 同批 16 行——**L4-14→L4-06 执行反馈环最后一米已接（码面）**。
+- `config/trading_decision_map.yaml` 另有 3 commit（`fa9ae36533` F62 注记／`8b098e31eb` ig_equity_edge 退役／`e21ebc03ec` F34 L9 消费接线）——本卷引用边无语义变化。
+
+### 缺口清单状态修订
+- 缺口 1（selector 增评分输入）：**已施工翻面**——QualityPriorProvider／ScorerBackedQualityPrior／FEEDBACK_GAIN 三件在码（1dd6c70c74）；生产装配仍受 ex_sor 全族可达性约束（缺口 2 维持）。
+- 缺口 2（ex_sor 生产装配缺位）：维持（归 F55 接线裁定，未见施工）。
+- 缺口 3（RL 远期候选）：维持。
+
+### 自审闸三态
+- **挖干可施工（维持）**；标题行"断链一米未接"与 §一/§三"selector 零消费评分/未接线（码缺）"断言**已翻面**——§六复跑命令第 1 条（grep 零命中=断链复证）现会命中新增 scorer 引用，勿据零命中误判回退。

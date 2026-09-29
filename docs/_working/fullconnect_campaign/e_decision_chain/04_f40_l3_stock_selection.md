@@ -3,6 +3,7 @@ ttl: task_bound
 title: F40 L3 个股选择——全流通挖干案卷（矿道 L05）
 session: zc-l05-20260927
 creation_token: fc-f40-l3-stock-20260927
+updated: 2026-09-29
 ---
 
 # F40 L3 个股选择——挖干案卷
@@ -15,7 +16,7 @@ creation_token: fc-f40-l3-stock-20260927
 |---|---|
 | ①上游输入 | F39 板块调节分+龙头定位（只两字段）；DS-150/082/181；L1 六段（L3-06 查表轴） |
 | ②数据原料 | technical_indicator 3.5 亿行/stock_daily_basic 7.1M/dragon_tiger_seat 4.5 年/money_flow 六年/limit_up_pool（L04 SKEL W2-W5 册引）；daban_engine_load PIT 真读（max(trade_date)<T 最近事件日分区，2026-09-16 E2 接线，册引） |
-| ③状态输出 | 最终候选池 10-20 只（否决只标记不剔除/去重确定序/三来源注入零 IO 37 单测，册引）+双池 5 分制+顺位分+Tier 归属——**纯内存/回测内存话无持久化**（M-41/D22） |
+| ③状态输出 | 最终候选池 10-20 只（否决只标记不剔除/去重确定序/三来源注入零 IO 37 单测，册引）+双池 5 分制+顺位分+Tier 归属——**纯内存/回测内存话无持久化**（M-41/D22）**〔过时标记 2026-09-29：持久化载体已由 T 袋 1dd6c70c74 落地（candidate_pool_snapshot+stock_candidate_pool 表），见卷末刷新批注〕** |
 | ④下游消费 | F41 L4（带 sleeve 标签）；L3-09 持久池喂次日；L3-11-2 观察池喂盘中；现唯一实际消费面=回测 framework_composer（L04 SKEL §1 audit:102 册引） |
 | ⑤自动化触发 | 盘后链经 dloop_post+sector_state 面板供数；盘前 L3-06/L3-10 开盘前收口；盘中 L3-11 竞价 9:26-9:28+涨速 9:30-10:30（册引）；**tasks.yaml 仅数据任务无决策日循环触发面（LK-04 本体缺位）**（L04 SKEL W2⑤） |
 | ⑥缺口债 | L3-05 六顺位判据-码面差异；L3-12-3 筹码维 trial 挂起（裁定#257④）；L3-09 池成员持久化无 SSOT（M-41）；L3-08 depgraph 登记欠账；25 件验证全 untested |
@@ -33,7 +34,7 @@ creation_token: fc-f40-l3-stock-20260927
 |---|---|---|
 | 选股主链互调 | **域内接线（回测面）** | selection_funnel 4/fine_scoring 6 消费方（audit:102，L04 SKEL 册引）；生产日循环零挂点 |
 | environment_switch | **半接线（最近生产挂点）** | strategy_pipeline/daily_gate_snapshot.py:166 已采集六段×四开关"只采不断言"（L04 SKEL W2⑤；今日 grep absent 契约实锚同文件） |
-| tradability_preflight | **纯库挂机** | 调用方=0（audit:18，L04 SKEL W5④ 双源） |
+| tradability_preflight | **纯库挂机** | 调用方=0（audit:18，L04 SKEL W5④ 双源）**〔过时标记 2026-09-29：premarket_workflow 已接线消费（1dd6c70c74 +14 行），见卷末刷新批注〕** |
 | daban_engine_load | **生产接线** | tasks.yaml:3422 盘后日批→internal_compute_provider→daban_load_producer（仓内唯一持久化先例） |
 | 策略挂载 | **proposed 为主** | 8 sleeve 引用 6 个 confidence=proposed evidence=None，仅 STR-TSMALL/VAL verified（册引 f40 册 §六） |
 
@@ -45,8 +46,8 @@ creation_token: fc-f40-l3-stock-20260927
 
 | # | 缺口 | 处置 | 级 |
 |---|---|---|---|
-| G40-1 | 候选池持久化载体缺（M-41/D22） | L04-C01 建表族 c1_market.stock_candidate_pool（DDL 对齐 sector_state 草案，RULE-SCHEMA-TZ 合规） | **P0** |
-| G40-2 | L3 生产日循环挂点缺（LK-04） | L04-C02 盘后 internal 批串接+tradability_preflight 挂 premarket_workflow，复用 daban_engine_load_daily 模式零新调度器 | **P0** |
+| G40-1 | 候选池持久化载体缺（M-41/D22）**〔09-29 已闭合，见刷新批注〕** | L04-C01 建表族 c1_market.stock_candidate_pool（DDL 对齐 sector_state 草案，RULE-SCHEMA-TZ 合规） | **P0** |
+| G40-2 | L3 生产日循环挂点缺（LK-04）**〔09-29 盘前通电腿已闭合，见刷新批注〕** | L04-C02 盘后 internal 批串接+tradability_preflight 挂 premarket_workflow，复用 daban_engine_load_daily 模式零新调度器 | **P0** |
 | G40-3 | G05 选股引擎 admission_gate 未激活（同 F39 堵点 3） | G05 施工批或临时由 candidate_pool_aggregator 承载+图注声明 | P1 |
 | G40-4 | L3-05 六顺位判据-码面差异 | a) 码面补顺位分级（1 天，成本低优先）或 b) S4 改判据 | P1 |
 | G40-5 | L3-12-3 筹码维 trial 挂起 | 流通股本数据工程立卡（M1 交界）或 S4 改四指标语义；解除须重跑回测（裁定#257④） | P2 |
@@ -56,7 +57,7 @@ creation_token: fc-f40-l3-stock-20260927
 
 ## 五、自审闸三态
 
-**挖干可施工**（实件零缺；两处判据-码面差异+两处登记欠账已列修法；两个 P0 均有现成工单真源引用不重立）。
+**挖干可施工**（实件零缺；两处判据-码面差异+两处登记欠账已列修法；两个 P0 均有现成工单真源引用不重立）。**〔过时标记 2026-09-29：两个 P0 的施工状态已变，三态刷新见卷末批注〕**
 
 ### 待裁
 - L3-05/L3-12-3 处置路径 a/b——D 裁定场景。
@@ -71,3 +72,16 @@ grep -c "node_id: TDM-E-L3" config/trading_decision_map.yaml          # =25
 grep -rln "tradability_preflight" src/zephyr --include="*.py" | grep -v __pycache__  # 调用方清点
 grep -rn "daban_engine_load_daily" src/zephyr/data/config/tasks.yaml  # :3422 先例
 ```
+
+## 刷新批注（2026-09-29 st-finaldel-freshb）
+
+> 刷新基线：HEAD dev @ 0cacd4a64d（09-29）；对卷内真源跑 `git log --since=2026-09-28` 复核，T 袋已落。
+
+- **翻面 commit**：`1dd6c70c74`（09-28 03:59，[全流通·T袋落地] F40 候选池持久化+盘前通电，15 件 +1513/-30）。
+- **影响（本卷两个 P0 的主体施工已落）**：
+  - **G40-1 候选池持久化 → 已闭合（P0 撤销）**：新件 `src/zephyr/signal_ashare/core/candidate_pool_snapshot.py`（542 行）+ 契约 `docs/03_modules/_domain_backtest/algo_flow/candidate_pool_snapshot.yaml`（46 行）+ `src/zephyr/signal_ashare/market/market_stock_candidate_pool.py`（111 行）+ DDL 落地（`scripts/ch/apply_market_tables_ddl.py` :473/:611 `c1_market.stock_candidate_pool` STOCK_CANDIDATE_POOL_DDL、:1202 ReplacingMergeTree）+ 红样 `tests/signal_ashare/test_candidate_pool_snapshot.py`（337 行）。M-41/D22"无持久化"口径作废。
+  - **G40-2 盘前通电腿 → 已闭合（盘前半边）**：`tradability_preflight.py` +119 行（五查升级）+ 契约 `algo_flow/tradability_preflight.yaml`（40 行）+ `src/zephyr/plan_engine/premarket_workflow.py` +14 行挂点 + `tests/plan_engine/test_premarket_workflow.py` +9。卷 §三"tradability_preflight 纯库挂机/调用方=0"判定过时。盘后 internal 批串接半边未见本批落地，G40-2 余量为盘后腿。
+  - **G40-6（25 件验证 untested）→ 新增面已带测试**：本批新三件均随红样（337+47+9 行），存量 25 件 untested 维持。
+- **缺口状态修订**：G40-1 P0→已闭合｜G40-2 P0→盘前腿闭合、盘后腿维持｜G40-3..G40-8 维持原状（本批未触及）。
+- **自审闸三态（刷新后）**：**挖干可施工（维持，两个 P0 主体已由 T 袋闭合）**——卷内处方对 G40-1 全量失效（勿按工单重复施工）；G40-2 盘后腿、G40-3..8 处方仍有效。
+- **复跑**：`git show 1dd6c70c74 --stat`｜`grep -n "stock_candidate_pool" scripts/ch/apply_market_tables_ddl.py`（:611/:1202）｜`grep -c "node_id: TDM-E-L3" config/trading_decision_map.yaml`（注：本批 TDM 面另改 16 行，节点数复核建议随总筹）。

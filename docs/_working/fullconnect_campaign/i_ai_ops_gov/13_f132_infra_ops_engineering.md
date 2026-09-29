@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "F132 infra_ops 运维工程域（配置生效核对/loki 日志/存储成本/WAL 监控/拓扑可视化）复飞案卷"
 session: st-c7-mine-20260927
+updated: 2026-09-29
 ---
 
 # F132 infra_ops 运维工程域（I 段，P1，骨架态=unmined(new id)）
@@ -15,7 +16,7 @@ session: st-c7-mine-20260927
 |---|---|
 | 实现件 | `src/zephyr/infra_ops/`（6 .py 在 HEAD）：`config_effect_checker.py`、`loki_log_pipeline.py`、`wal_checkpoint_monitor.py`、`storage_cost_calculator.py`、`runtime_topology_visualizer.py` + `__init__.py`。注意骨架 D-11 只点名 3 件（loki/storage_cost/wal_monitor），**恰好是被动的 3 件**，未点名主动的那件（config_effect_checker）——骨架定号描述与本环节实际唯一在产腿错位，属卷级勘误（§四 缺 5）。 |
 | 在册态 | `module_translation_registry.yaml` 命中 **6**、`candidate_module_registry.yaml` 命中 **10**（本包是 12 环节中候选册命中数唯一高于翻译册的一件）；`config/governance_operations_map.yaml` 有本包条目（§六 R3）。迁移史在册：`scripts/migration/dm314_infra_ops_split.py:52  OLD_PREFIX = "zephyr.infra_ops."`（DM-314 拆分件，读 REG-MIGRATION-001，见 F123 卷）。 |
-| 消费者 | **生产 import=1 条（AST 实测，§六 W1）**：`src/zephyr/data/scheduler.py:1361  from zephyr.infra_ops.config_effect_checker import (...)`，其上文 :1354 注释自述该腿语义="只在加载时刷新，… 对比磁盘现状"⇒ **事件语义为"调度器加载时核对配置生效态"**，属真消费。其余 4 件：`loki_log_pipeline`/`wal_checkpoint_monitor`/`storage_cost_calculator`/`runtime_topology_visualizer` **生产 import=0**，仅 `tests/infra_ops/` 各 1 件（§六 T1）。`src/zephyr/gov_drift/contract_drift_detector.py` 的命中为文本级（非 import，§六 C2）。 |
+| 消费者 | **生产 import=1 条（AST 实测，§六 W1）**：`src/zephyr/data/scheduler.py:1361  from zephyr.infra_ops.config_effect_checker import (...)`，其上文 :1354 注释自述该腿语义="只在加载时刷新，… 对比磁盘现状"⇒ **事件语义为"调度器加载时核对配置生效态"**，属真消费。其余 4 件：`loki_log_pipeline`/`wal_checkpoint_monitor`/`storage_cost_calculator`/`runtime_topology_visualizer` **生产 import=0**，仅 `tests/infra_ops/` 各 1 件（§六 T1）。`src/zephyr/gov_drift/contract_drift_detector.py` 的命中为文本级（非 import，§六 C2）。（行号已过时，见刷新批注——E8/E9 袋后 import 现居 :1389） |
 | 测试 | 5 件全覆盖 5 实体：`tests/infra_ops/test_config_effect_checker.py:22`、`test_loki_log_pipeline.py:26`、`test_wal_checkpoint_monitor.py:27`、`test_storage_cost_calculator.py:23`、`test_runtime_topology_visualizer.py:27`。⇒ 本包是 12 环节中**测试覆盖最齐**的一件（5/5），但齐覆盖不代表齐接线（4 件仅测试可达）。 |
 | 自动化触发 | **有一条，机器实测在案**（§六 A2）：计划任务 `ZephyrAlpha_ConfigCheck` State=**Ready**，Action=`pythonw.exe -m zephyr.infra_ops.config_effect_checker`，注册脚本 `scripts/register_config_check_task.ps1:17/31/47/69/85` 五处指向同一模块；`Get-ScheduledTaskInfo` 实测 LastRunTime=2026-09-27 08:05:01、NextRunTime=2026-09-28 08:05:00（**日班定时**）、LastTaskResult=**1**（非零）。其余 4 件：`git grep -ln "<模块名>" HEAD -- '*.ps1' 'config/*' 'src/zephyr/data/config/*'` 零命中 ⇒ 无触发面。 |
 | 真源方向 | 架构数据=DB（depgraph，本包模块身份）；配置生效核对的比对面=配置 YAML（规则数据侧）与磁盘现状，读侧经 `src/zephyr/data/scheduler.py` 的调度配置加载；loki 日志族真源=外部 Loki 服务（**盘上无本仓真源声明**，见 §四 缺 2）。 |
@@ -57,6 +58,19 @@ session: st-c7-mine-20260927
 ## 五、自审闸三态
 
 **未干。** 已可复算且是实测硬料：计划任务的机器态（名称/State/Action/LastRunTime/NextRunTime/LastTaskResult 六项）、PROD import 精确到 `scheduler.py:1361` 一腿、四件装饰的三面排查、5/5 测试覆盖、在册两册命中数、DM-314 迁移史锚点。未干原因：①**未读 `config_effect_checker.py` 实现体**，故缺 1 的"结果码 1 到底是什么"未闭，而这是本环节唯一在产腿的核心健康判据；②四件装饰件的能力边界与接入成本未逐件评估，处置建议因此只是二选一而非推荐项；③缺 4 属条款解释、缺 5 属总册勘误，均非本道权限。⇒ 本卷交"半接线黄判 + 未干"。
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更核查
+- 实体面：config_effect_checker 等 5+1 件本体**零 commit**；唯一消费锚行号漂移——data/scheduler.py:1361→**:1389**（`a349ddc1fe` E8/E9 袋再平衡调度 +28 行挤位；:84"烟雾报警器"注记在位）。
+- 登记面：翻译/候选册等 16 commits 纯增（GPU P1 `cf16fa43fd` 等）——M6 审计判定的噪音级 STALE。
+- 日班任务机器态（ZephyrAlpha_ConfigCheck LastTaskResult=1 等）本刷新未重采——缺口 1 维持待查。
+
+### 缺口清单状态修订
+- 缺口 1-6 全部维持；§六 W1 引用行号 :1361 勘误为 :1389。
+
+### 自审闸三态
+- **未干（维持，零翻面）**——轻刷新档（行号勘误+登记面噪音），实体判定"半接线（1 件在产/4 件装饰）"维持。
 
 ## 六、复跑命令
 

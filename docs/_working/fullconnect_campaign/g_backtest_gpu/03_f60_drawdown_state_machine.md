@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "F60 回撤状态机与熔断——回撤分级状态机+清算守卫+券商端止损双保险"
 session: zc-l07-20260927
+updated: 2026-09-29
 create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 ---
 
@@ -16,7 +17,7 @@ create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 | 自动化触发 | paper 日链内运行（daily_gate_snapshot 日快照+session_persistence 会话持久化）；**盘中 continuous 保命扫描无常驻载体**（f47 册 §五-2 同判，M7/RC+M5 域） |
 | 真源与注册表 | 判定件=src/zephyr/risk/core/drawdown_state_machine.py（773 行实测，MOD-RK-049，DAL-CIRCUIT-5 code_ref）；TDM 判据=trading_decision_map.yaml:3156-3289（f47 册实锚）；algo_flow yaml 外迁件=docs/03_modules/_domain_risk/algo_flow/drawdown_state_machine.yaml+drawdown_liquidation_guard.yaml（f47 册实锚）；离散态 L0-L4+迟滞解除+L4 Owner 人工=f47 册 §二全表 |
 | 门禁与质量尺 | tests/risk/test_drawdown_state_machine.py 在盘（f47 册实证）；KILL 态人工复位/降级机只迁移警报不解除闩锁（risk_layer_orchestrator.py:8 INVARIANTS，M7-02 实锚） |
-| 当前运行状态 | **黄（判定绿/编排红）**：状态机落码+测试+paper 日链 4 消费=绿；drawdown_liquidation_guard（209 行实测，MOD-RK-050）**零外部消费方**（f47 册 grep 实证）=判了没人执行 |
+| 当前运行状态 | **黄（判定绿/编排红）**：状态机落码+测试+paper 日链 4 消费=绿；drawdown_liquidation_guard（209 行实测，MOD-RK-050）**零外部消费方**（f47 册 grep 实证）=判了没人执行（已过时，见刷新批注——K 袋减仓编排进料已接） |
 
 ## 二、子模块三级枚举（risk/core 回撤族本日实扫 9 件）
 
@@ -62,3 +63,18 @@ grep -rln "drawdown_state_machine\|DrawdownStateMachine" src/zephyr --include="*
 grep -rln "drawdown_liquidation_guard" src/zephyr --include="*.py" | grep -v __pycache__   # 仅自身=零消费
 grep -n "node_id: TDM-X-R1" config/trading_decision_map.yaml | head -4
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- `461a86be17`（09-28 全流通·K袋落地）：risk_layer_orchestrator.py（+66）+ex_core/trading_session.py（+21）+scripts/start_paper_session.py（+13）+tests/ex_core/test_risk_layer_orchestrator.py（+132）——**F60 减仓编排进料落地**。
+- 本卷 9 件回撤族本体（drawdown_state_machine／liquidation_guard／broker_side_stop／session_persistence 等）9/28 后零直改。
+
+### 缺口清单状态修订
+- 缺口 1（liquidation_guard 零消费=R1-02 减仓编排断）：**翻面**——HEAD 复测 `drawdown_liquidation_guard` 生产消费者=risk_layer_orchestrator.py（原零消费→1 生产消费，grep 实证）。
+- 缺口 2（盘中 continuous 保命扫描无常驻）：维持（K 袋为编排进料，非新常驻载体）。
+- 缺口 3/4（双五级仲裁序／M-55 Owner 入口）：维持 Owner 门位。
+- 缺口 5（R1-03 数据地基）：维持。
+
+### 自审闸三态
+- **挖干可施工（维持）**；§一"清算守卫零外部消费方"与 §三"码在零消费（半接线）"断言**已过时**（减仓编排进料已接，见上）——缺口 1 由 P0 转已闭合。

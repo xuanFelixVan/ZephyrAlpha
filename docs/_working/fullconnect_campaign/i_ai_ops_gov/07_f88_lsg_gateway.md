@@ -2,9 +2,10 @@
 ttl: task_bound
 title: L09 案卷 F88 — LSG 安全网关（十层纵深+双捕防线；静态网在岗、运行时网四模式引导死）
 session: zc-l09-20260927
+updated: 2026-09-29
 ---
 
-# F88 LSG 安全网关（J 段 A3，骨架态=built/P0）
+# F88 LSG 安全网关（J 段 A3，骨架态=built/P0）（标题"运行时网四模式引导死"已过时，见刷新批注——运行时网已在岗）
 
 ## 一、六向台账（2026-09-27 实证）
 
@@ -59,3 +60,19 @@ python -c "import sys; print([type(f).__name__ for f in sys.meta_path if 'LLMGua
 sed -n '707p' .pre-commit-config.yaml
 python -c "from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway; print(len(LSGSecurityGateway()._layers))"  # 10
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（i 段最大翻面卷）
+- `46063bade4`（09-29 F88·DP-7 双网同漏补）：GATE-20 _BARE_LLM_SIGNATURES+responses.create（含链式 suffix2 分支关键修——三段链带客户端名永不匹配，必须走两段分支）+runtime_interceptor _patch_openai 增 Responses/AsyncResponses.create 守卫——**缺口 3 翻面**；留账：F88 P0（usercustomize 落环境=机器级配置变更须走流程/Owner 窗）、DP-6 白名单扩库清单（案卷未点名扩库目标，不擅自发明范围）。
+- **运行时网三探针今日复测全转绿**：is_installed()=True／usercustomize 存在（mtime 2026-09-29 07:46 落环境）／meta_path finder=[_LLMGuardFinder] 活跃——§一"本日四模式复核仍全死"与 §三"运行时拦截器=建成未接线（维持）"**已翻面**。
+
+### 缺口清单状态修订
+- 缺口 1（运行时网全模式未引导，P0 唯一修复）：**翻面**——usercustomize 已落+finder 活跃；机器级配置变更的流程追认留 Owner 窗账（46063bade4 留痕）。
+- 缺口 3（DP-7 双网同漏）：**翻面**（46063bade4）。
+- 缺口 2（L4 HMAC 未配置）：本刷新未复测，维持。
+- 缺口 4（kill-switch 单 env+patch fail-open）：维持；DP-6 扩库留账。
+- 15 死路径清单：DP-1/DP-2/DP-7 三条已闭，其余未逐条重放。
+
+### 自审闸三态
+- **挖干（维持）**；标题"运行时网四模式引导死"与 §一/§三"红（防线半失位）/运行时网整体不在岗"**已过时**——运行时网在岗（红→绿），缺口 1/3 两条翻面；§六复跑命令前 3 条期望值已反转（False→True），勿据旧期望误判回退。

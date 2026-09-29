@@ -2,6 +2,7 @@
 ttl: task_bound
 title: F103 代码质量与克隆守卫——挖干案卷
 session: zc-l10-20260927
+updated: 2026-09-29
 ---
 
 # F103 · 代码质量与克隆守卫（code_dedup+extract 级克隆无逃生）
@@ -55,3 +56,13 @@ ls src/zephyr/clone_guard/                               # 8 件
 find tests/clone_guard tests/gov_code_dedup -name "test_*.py" | wc -l  # 23（16+7）
 grep -rn "check_before_write" src/zephyr/clone_guard/__init__.py | head -3  # 宪法铁律入口
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更核查
+- 双包本体（src/zephyr/clone_guard/、src/zephyr/gov_code_quality/code_dedup/）与配套（lock_files.py／session_worktree.py）**9/28 后零 commit**——结构判定与缺口 G1-G4 全部维持。
+- 邻面波及（登记面）：`98ce6370c5`（六簇撞号修复）与 `81d85b9a77`（墓碑治本）均在 commit_gates/gate_registry 面，与本卷无直接码面交集；FUNCTION-DUP 约束引用位（worktree_pool.py）未见改动。
+- 宪法 RULE-CLONEGUARD 写前预查入口（check_before_write）在 HEAD 未变，§六复跑命令全部有效。
+
+### 自审闸三态
+- **挖干可施工（维持，零翻面）**——本卷属 M6 审计波 2 轻刷新档（段级登记面噪音级 STALE），无实体变化需修订。

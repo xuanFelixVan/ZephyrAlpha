@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "F83 自动化班底（双引擎两班制：治理班×业务班）复飞扩卷案卷"
 session: st-c7-mine-20260927
+updated: 2026-09-29
 ---
 
 # F83 自动化班底（I 段 S8，总册行 `00_全环节总册.md:148`：F76｜全链｜P2｜S8）
@@ -95,3 +96,16 @@ grep -n "^| F83 \|^| F119 " docs/_working/fullflow_mining/00_skeleton/00_全环�
 # G1 机检尺缺位（期望零命中）
 grep -in "automation_crew\|checkpoint" docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | head
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更核查
+- 双载体（automation_crew_policy.md／automation_master_plan.md）**9/28 后零 commit**；checkpoint 目录（docs/_working/automation_campaign/）今日复测仍不存在——"执行面零观测"核心红判维持。
+- M6 审计对本卷的 STALE 判定系段级映射（ai_layer 21 件波及 i 段）的登记面噪音，本卷实体面零变化。
+
+### 缺口清单状态修订
+- 缺口 1-6 全部维持。
+- 窗口提示：缺口 6 的 2026-10-08 计划册归档断链风险临近（今日 09-29，剩 9 天）——迁移政策册 §2 窗口表的处置窗口应收窄排队。
+
+### 自审闸三态
+- **未干（维持，零翻面）**——轻刷新档，无实体变化需修订。

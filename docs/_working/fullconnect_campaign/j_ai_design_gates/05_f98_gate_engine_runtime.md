@@ -2,6 +2,7 @@
 ttl: task_bound
 title: F98 GateEngine 运行时门禁——挖干案卷
 session: zc-l10-20260927
+updated: 2026-09-29
 ---
 
 # F98 · GateEngine 运行时门禁（91 canonical+GatePipeline+MAD 准入）
@@ -16,7 +17,7 @@ session: zc-l10-20260927
 | 上游输入 | 规则面：docs/01_policies_and_standards/rules/ 86 trae_*.yaml（F101）＋rule_enforcement/ 内 45 个 g_trae_*.yaml 门定义（本日 ls 计数：g_trae_003..059 缺 13/14/15/19/55-58 号段） |
 | 下游消费 | 全链提交面（commit_gates 114 模块）＋运行时面（in_process 册 102 门）＋admission 准入面 |
 | 自动化触发 | commit/merge 事件经 GitCommitGateway；in_process 门经 gate_auto_registrar YAML 驱动注册；名册机生=generate_gate_registry.py post-commit reconciler GATE-GATE-REGISTRY-SYNC（M3 03 分册 §二） |
-| 真源与注册表 | canonical 名册=src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml（**本日 grep gate_id: = 91，与总册一致**，MOD-GATE_ENGINE，last_updated 2026-09-18）；门总册=catalogs/gate_registry.yaml（total_gates 180，auto 机生 2026-09-24T07:29:34Z，M3 03 实测）；in_process 册=102/102 自洽 |
+| 真源与注册表 | canonical 名册=src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml（**本日 grep gate_id: = 91，与总册一致**，MOD-GATE_ENGINE，last_updated 2026-09-18）；门总册=catalogs/gate_registry.yaml（total_gates 180，auto 机生 2026-09-24T07:29:34Z，M3 03 实测）（已过时，见刷新批注——T14 regen 后现 183）；in_process 册=102/102 自洽（现 104/104） |
 | 门禁与质量尺 | 门禁的门禁=invariants/（en_001 循环依赖/en_002 执法验证器/en_003 契约兼容/en_process_lifecycle_gateway/post_doc_review_check/zero_residue_check，7 .py 本日计数）＋gate_integrity_guard.py＋gate_health.py |
 | 当前运行状态 | **built（黄）**：引擎与名册在产，但名册三账漂移 114/102/180（M3 03 §四）＋机判面 43 门疑似判据失效（§1.6/本卷 §三） |
 
@@ -64,6 +65,27 @@ python -c "import json;raw=json.load(open('.runtime/tmp/mine_dossiers_20260926/c
 python -c "import yaml;d=yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml',encoding='utf-8'));print(d['total_gates'],len(d['gates']))"
 ls src/zephyr/gov_enforcement/rule_enforcement/admission/                       # MAD 5 yaml
 ```
+
+## 八、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（gate 治理面 9/28-29 大改，本卷为主战场，四件治本落地）
+- `81d85b9a77`（09-29 SW15 墓碑治本）：generate_gate_registry 三源合并改墓碑胜出（extract_commit_gates 每文件首 gate_id 遮蔽墓碑=假 active 借 post-commit 重生的病根修复）；统一册 15 台 active→deprecated+redirect_to（RULING-REFERENCE/RENAME-DEPGRAPH-SYNC/七簇吸收台）；**悬空镜头 16→1**（残 1=裁定 #347 _GlobalCommitLock 机制实名，镜头不可见非真悬空）；22 台全部定性=P4 吸收台退役登记（Owner 09-23 全批 E 既批）；回归测试 test_manual_tombstones_override_disk_shadowed_entries（红 15 违例→绿）。
+- `76fd3f1788`（09-29 T14 三件套）：**对账生成器 reconcile_gate_rosters.py（404 行）落库**——卷尾附记"三账对账生成器化"（G2 修法）兑现；own_scope 机生面补全（非空 114→168）；统一册重生成 182→183 台 identity 零丢失。
+- `98ce6370c5`（09-29 红五簇撞号修复·实为六簇）：commit_gates 六簇同 priority 撞号（70/79/80/82/92/113——每簇=被吸收薄工厂与 union 吸收面同号，任一面重装载即 GateRegistrationError 整链 fail-closed）迁 152-157 空带；修后 134 passed+in_process 104 台装载零撞号——**装载面 fail-closed 风险解除**。
+- `ea0b362d0c`（W-135 密钥门触发面改型）+`1042b6d9e2`（N-3 五台超宽门 files_trigger 按门内真域收窄）：in_process 名册触发面收敛。
+
+### HEAD 现状复测（2026-09-29）
+- 三账：gate_registry total_gates=**183**｜_registry.yaml gate_id=**91**（不变）｜in_process **104/104**——卷面"180"与附记"生成器 182≠盘面 181 在飞漂移"均**已过时**（T14 regen 收敛）。
+
+### 缺口清单状态修订
+- G1（43 门疑似判据失效）：未见逐门处置证据，维持待裁。
+- G2（停用虚报+三账对账生成器化）：**大半翻面**——对账生成器已落（reconcile_gate_rosters.py）+墓碑胜出机制+虚报面收敛（15 台 deprecated）。
+- G3（悬空）：**翻面**——悬空镜头 16→1（残 1 非真悬空）。
+- G4（半接线 2）：维持；G5（102≠103）：附记已记"可销"，维持销账。
+- 新增已闭：六簇撞号装载风险（挖矿时点未立案，09-29 施工闭合）。
+
+### 自审闸三态
+- **引擎与名册结构=挖干可施工（维持）**；"43 门处置与三账收敛=待裁"**部分翻面**——三账收敛面已有生成器+墓碑+撞号修复三件落地，43 门逐门处置仍待 Owner；卷尾附记悬空 16 项清单**已过时**（现 1，见上）。
 
 ## 七、卷尾附记：三账对账首跑实录（2026-09-27，zc-lane-v-20260927；只读报告，不修册）
 

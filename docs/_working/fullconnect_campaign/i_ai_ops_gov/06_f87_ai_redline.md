@@ -2,6 +2,7 @@
 ttl: task_bound
 title: L09 案卷 F87 — AI 红线（negative_list/年审/会话环境守卫/严重度路由）
 session: zc-l09-20260927
+updated: 2026-09-29
 ---
 
 # F87 AI 红线（J 段 A2，骨架态=partial/P1）
@@ -13,7 +14,7 @@ session: zc-l09-20260927
 | 上游输入 | OBJ_S 自由域 DESIGN（negative_list NL-1..6 编号层）；CONSTITUTION-LINE-LIMIT 判据②=AGENTS.md ≤300 行硬上限（宪法 §6，gate register_line 注记原文） |
 | 下游消费 | 提交链三 gate（in_process_gate_registry.yaml:710 REAL-KEY-REFERENCE-SCAN / :716 TASK-ORDER-DOCS-LOCK / :722 CONSTITUTION-LINE-LIMIT，本日三条 enabled:true）；dashboard_pipeline→前端投影；freedom_weekly_report/annual_review→治理周报/年审面 |
 | 自动化触发 | 三 gate=提交链内自动（每次 commit 经网关）；sev_router=严重度路由（事件内）；年审/周报=manual CLI |
-| 真源与注册表 | `src/zephyr/ai_layer/redline/` 10 件（本日实扫）；gate 工厂=negative_list_gates.make_*（module_path 实锚） |
+| 真源与注册表 | `src/zephyr/ai_layer/redline/` 10 件（本日实扫）（已过时，见刷新批注——W-135 批后现 11 件，新增 ai_secret_exposure.py）；gate 工厂=negative_list_gates.make_*（module_path 实锚） |
 | 门禁与质量尺 | tests/ai_layer/redline/test_negative_list_gates.py（register_line 注记指认）；09-26 st-ddup 翻回注记"三工厂实测可导入" |
 | 当前运行状态 | **黄**：三 gate 在岗自动（提交链内）；但 session_env_guard 被 09-27 接线普查判"装饰"（仅 noqa 静态 import）；周报/年审 manual 且无周/年节拍宿主证据 |
 
@@ -62,3 +63,18 @@ sed -n '710,728p' docs/01_policies_and_standards/_registry/catalogs/in_process_g
 python -c "import zephyr.ai_layer.redline.sev_router"               # 导入 OK
 grep -rn "session_env_guard" src/ scripts/ --include="*.py" | grep -v "redline/session_env_guard.py\|test" | head -4
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更
+- redline 包 10→**11 件**：新增 `ai_secret_exposure.py`（W-135/X-50 密钥门触发面改型批；`8ff283b74f5` ALGO_FLOW 头注锚迁移同批+`ea0b362d0c` 改判落地）——§二"10 件穷举"**已过时**。
+- 消费边增量：negative_list.py:5 [CONSUMERS] 现自注 `zephyr.ai_layer.redline.session_env_guard (S1 deny-list 常量)`——session_env_guard 获包内消费边，缺口 1"装饰"判据材料已变（原"仅 noqa 静态 import"口径需按新边复断，本刷新不代断）。
+- `6f17ba47b90`（09-28 sx 分支 40 件）等登记面批波及（头注锚迁移）。
+
+### 缺口清单状态修订
+- 缺口 1（session_env_guard 装饰）：复断材料更新（包内 deny-list 常量消费边在册）——判定待复断，不维持原判亦不翻面。
+- 缺口 2（周报/年审节拍宿主）／缺口 3（三件消费面待挖）：维持。
+- 新增：ai_secret_exposure.py 为清单外第 11 件（登记面扩展，消费面未核）。
+
+### 自审闸三态
+- **挖干（维持）**；"10 件穷举"基数勘误（现 11 件）+缺口 1 判据材料更新——两处过时标注。

@@ -2,6 +2,7 @@
 ttl: task_bound
 title: F74 转正建议书汇总器（全链唯一人工门）——L08 复飞矿道案卷
 session: zc-l08-20260927
+updated: 2026-09-29
 ---
 
 # F74 · 转正建议书汇总器
@@ -37,9 +38,9 @@ session: zc-l08-20260927
 
 | # | 现象 | 处置 | 优先 |
 |---|------|------|------|
-| 1 | combo gate 未切 v2 frozen 尺（硬编码 v1 suspect） | 切 standards.yaml 动态取尺+judge_std_id 跟升+测试钉值（与 F73 堵点 5 同批） | **P0** |
-| 2 | combo 无事件入口（建议包→一页报告中间断链） | 挂 promotion_advisory_due 执行体尾或新 optional kind（禁 cron） | **P0** |
-| 3 | 唯一人工门无带外通知（Owner 不开屏=建议无限滞留） | Owner 裁定触达（晨报消费/邮件/死件开关三选一）；裁定前 F74 不得宣 built | **P0**（Owner 门位） |
+| 1 | combo gate 未切 v2 frozen 尺（硬编码 v1 suspect）**〔09-27 v9 收敛批已闭合，见刷新批注〕** | 切 standards.yaml 动态取尺+judge_std_id 跟升+测试钉值（与 F73 堵点 5 同批） | **P0** |
+| 2 | combo 无事件入口（建议包→一页报告中间断链）**〔09-27 v9 收敛批已闭合，见刷新批注〕** | 挂 promotion_advisory_due 执行体尾或新 optional kind（禁 cron） | **P0** |
+| 3 | 唯一人工门无带外通知（Owner 不开屏=建议无限滞留）**〔09-28 晨报承接落地（载体在途），见刷新批注〕** | Owner 裁定触达（晨报消费/邮件/死件开关三选一）；裁定前 F74 不得宣 built | **P0**（Owner 门位） |
 | 4 | 处女链零实弹（生产路径未经流量检验） | tmp 目录 e2e 彩排（不污染生产） | P1 |
 | 5 | token 键生产配置未验（未配=拍板面永远 reject） | 彩排时一并核 secrets | P1 |
 | 6 | 上游带伤：fw-auto 停 09-16/sim_memo stats.error=CH TCP | 归 M2/XC（PR-B 登记归属维持） | P2 |
@@ -47,7 +48,18 @@ session: zc-l08-20260927
 
 ## 五、自审闸三态
 
-**部分挖干（复核维持）**：PR-B 六向+五堵点全证引用；本卷补当日事件计数/advisories 目录双活探。未挖面（fw 停更根因/S4 消费细节/league 维度）归属有主不在本卷下钻。三态=**partial（missing 勘误成立）**。
+**部分挖干（复核维持）**：PR-B 六向+五堵点全证引用；本卷补当日事件计数/advisories 目录双活探。未挖面（fw 停更根因/S4 消费细节/league 维度）归属有主不在本卷下钻。三态=**partial（missing 勘误成立）**。**〔过时标记 2026-09-29：三条 P0 堵点已两闭一半落，刷新见卷末批注〕**
+
+## 刷新批注（2026-09-29 st-finaldel-freshb）
+
+> 刷新基线：HEAD dev @ 0cacd4a64d（09-29）；对卷内真源跑 `git log --since=2026-09-28`（含 09-27 当日卷写作后落地件）复核＋码面现读。
+
+- **翻面 commit（两件）**：
+  - `a46e1fbc3f7`（09-27 10:19，F74 双实现收敛·v9 增量并入已落地版）——**堵点1 闭合**：`promotion_combo_gate.py` 切 v2 frozen 尺（`THRESHOLD_SOURCE=config/standards.yaml#STD-SIM-ACCESS-002（v2 frozen 2026-09-18，裁定#337）` :62 实锚；v1 suspect 注记保留防口径误读；dsr_min≥0.5+combo_corr_max≤0.7 新腿）；**堵点2 闭合**：combo 事件入口挂 `run_promotion_advisory_due` 执行体尾（`promotion_advisory.py:508-510` 实锚，`run_promotion_combo_gate()`，传动故障不反噬建议产出）——即卷内处方"挂执行体尾"选项，满足禁 cron 约束；**未走新 optional kind**（OPTIONAL_DUE_KINDS 现四席无 combo 席，:186-200 现读）。
+  - `d988f1e6d0`（09-28 19:12，F74 堵点3·通知通道落地）——**堵点3 裁定面落地**：晨报承接路线选定（转正建议待办摘要面 `data/reports/morning_digest.md`，Owner 晨读唯一入口），随批 CCR +10/MTR +9 登记在册。**半落余量**：通道实体件 `algo_flow/morning_digest.yaml` 在会话分支 `c4c1eeda67`（通道件，"内容由队列袋投递落地 dev 为准"），dev HEAD 上 `data/reports/morning_digest.md` 实体与晨报生产面未见——载体在途。
+- **缺口状态修订**：堵点1 P0→**闭合**｜堵点2 P0→**闭合**｜堵点3 P0（Owner 门位）→裁定已选+登记在册、载体在途（半落）｜堵点4（处女链零实弹）/堵点5（token 生产配置未验）/堵点6（fw-auto 带伤）维持。
+- **自审闸三态（刷新后）**：**partial（维持；构成变化：三条 P0 堵点两闭一半落，"全流通最大单点"进一步降格为"晨报载体收尾+处女链未转"）**——堵点1/2 处方对施工面失效；"裁定前 F74 不得宣 built"前置条件中触达裁定已落，宣 built 仍受堵点4/5 与载体收尾约束。
+- **复跑**：`git show a46e1fbc3f7 --stat`｜`sed -n '62p' scripts/backtest/promotion_combo_gate.py`（v2 尺源）｜`sed -n '508,510p' src/zephyr/strategy_pipeline/promotion_advisory.py`（combo 执行体尾）｜`git log --all --oneline --grep morning_digest`（两件在案）。
 
 ## 六、复跑命令
 

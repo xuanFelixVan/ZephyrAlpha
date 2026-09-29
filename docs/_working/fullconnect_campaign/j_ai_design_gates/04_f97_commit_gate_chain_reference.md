@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "F97 commit 侧门禁链（23 环节/115 子环节——引用不重挖）复飞扩卷案卷"
 session: st-c7-mine-20260927
+updated: 2026-09-29
 ---
 
 # F97 · commit 侧门禁链（K 段，总册行 `00_全环节总册.md:172`：—｜提交链｜P2｜G1）
@@ -16,7 +17,7 @@ session: st-c7-mine-20260927
 | 向 | 实测证据 |
 |---|---|
 | 实现件 | 被引真源三件 + 卷宗一件，全在 HEAD（`git cat-file -e HEAD:` 四通过，§六 K1）：`docs/_working/commit_speedup_campaign/00_skeleton/S1_stage_inventory.md`、`S2_substage_tree.yaml`、`S3_gaps_and_blindspots.md`、`docs/_working/commit_speedup_campaign/30_gate_census/C1_gate_dossier.md`。整个 `commit_speedup_campaign/` 在 HEAD 有 **46 件**（§六 K2）⇒ 与本次战役的 130 卷不同，**被引侧是真落地面**，不是 index 在途件。 |
-| 在册态 | 权威文件册点名：`capability_canonical_file_registry.yaml` 含 `commit_speedup_campaign/00_skeleton` 系条目（§六 R1）；战役侧引用者=`docs/_working/fullflow_mining/m3_governance/01_runtime_guards.md`（引用卷头的边界声明）。门名册在册=`docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:10  total_gates: 182`（字段化计数，符合根宪法 §4.3 计数用字段铁律）。 |
+| 在册态 | 权威文件册点名：`capability_canonical_file_registry.yaml` 含 `commit_speedup_campaign/00_skeleton` 系条目（§六 R1）；战役侧引用者=`docs/_working/fullflow_mining/m3_governance/01_runtime_guards.md`（引用卷头的边界声明）。门名册在册=`docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:10  total_gates: 182`（字段化计数，符合根宪法 §4.3 计数用字段铁律）（已过时，见刷新批注——T14 regen 后现 183）。 |
 | 消费者 | 无代码消费者（引用型环节，载体为文档）。引用它的战役侧下游=本战役 F98（门引擎运行时）与 K 段各卷，原 stub 已记"其现状漂移（114/102/180）记入 F98 案卷"。⇒ 本卷对该让渡**部分否证**：漂移数字应可由本环节自身复算，让渡给 F98 造成"引用环节的尺在别的环节手里"（§四 缺 3）。 |
 | 测试 | 0 件（引用型环节无被测代码；`git ls-tree` 侧无对应测试件，§六 T1）。替代判据=可复算性：本卷 §六 M2 提供两行机械复算（stage 数 / substage 递归数）。 |
 | 自动化触发 | 无（本环节=卷宗引用位）。真正的自动触发属被引链路的运行时面（F98 门引擎 / commit 钩子链），本环节不持进程 ⇒ dir6 wide=false/narrow=false 与定性一致。 |
@@ -116,3 +117,24 @@ sed -n '13,17p' docs/_working/commit_speedup_campaign/30_gate_census/C1_gate_dos
 # T1 测试面（期望 0）
 git ls-tree -r --name-only HEAD | grep -iE "test.*(substage|gate_census|commit_speedup)" | wc -l
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（gate 治理面 9/28-29 大改波及）
+- `76fd3f1788`（09-29 T14 治本三件套）：对账生成器 scripts/governance/d3_metadata/reconcile_gate_rosters.py（404 行；CONSUMERS 指针修 30_gate_census→90_verification 实际落点）+commit_speedup_campaign/90_verification/t14_roster_report.{md,yaml}（110/2959 行）+generate_gate_registry own_scope 机生面补全（own_scope 非空 114→168；统一册重生成 182→183 台）+tests/governance/test_gate_registry_ms_visibility.py（**ms 盲区证尺 2 绿**）——与本卷缺口 1"ms≥1.0 过滤盲区"直接同题的机检尺已落库。
+- `81d85b9a77`（09-29 SW15 墓碑治本）：统一册 15 台 active→deprecated+redirect_to；悬空镜头 16→1；三源合并改墓碑胜出（extract_commit_gates 每文件首 gate_id 遮蔽墓碑=假 active 借 post-commit 重生的病根修复）。
+- `98ce6370c5`（09-29 红五簇撞号修复·实为六簇）：commit_gates 六簇同 priority 撞号（70/79/80/82/92/113）迁 152-157 空带；in_process 104 台装载零撞号。
+- 被引战役目录四 commit（`65b7c8d9ef` 死袋拆袋重投／`ed1b083e51` 16 件死信抢救／`4f088caae8` S1 验收台账落库／`3c8168ad3f` micro 内收 5 件）——commit_speedup_campaign 46→52 件。
+
+### HEAD 现状复测（2026-09-29）
+- dock `gate_execution_stats.jsonl`：n=2159，**仍聚合 schema、per-gate 身份列=0**（窗口 09-15→09-29）——缺口 1 的"per-gate 身份维度"**未闭合**；但 T14 ms 盲区证尺已给"过滤盲区"面立机检尺（缺口 1 处置面部分推进）。
+- total_gates 182→**183**；被引战役件数 46→**52**；2060 条→**2159 条**——§六复跑命令各期望值相应漂移，S2 23/115 机械复算不变。
+
+### 缺口清单状态修订
+- 缺口 1：per-gate 列未补（维持）；ms 盲区机检尺已落（部分推进）。
+- 缺口 2（102 vs 182 口径注）：基数已变（183），"现役/总数同段口径注"缺口本身维持。
+- 缺口 3（自留尺）／4/5/6：维持。
+- 新增：T14 对账生成器+roster report 两件为被引链路新增真源件（引用面扩展）。
+
+### 自审闸三态
+- **未干（维持）**——dock 粒度否证今日复测仍成立；卷内 182/46/2060 等基数引文**已过时**（183/52/2159，见上）。

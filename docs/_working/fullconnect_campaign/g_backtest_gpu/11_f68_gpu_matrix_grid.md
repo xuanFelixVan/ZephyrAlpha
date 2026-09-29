@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "F68 GPU 矩阵/工厂格子——prereg 冻结 v2→T0/T1→判卷→DSR（T1 dedup 完赛 all_green=false 本日新态）"
 session: zc-l07-20260927
+updated: 2026-09-29
 create_guard: creation_token 由落地车道随批补办（M2 车道先例）
 ---
 
@@ -61,3 +62,19 @@ cat .runtime/logs/f06_grid.log; ls data/strategy_intake/grid_20260926-230010/   
 powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | ? { \$_.CommandLine -match 'factory_grid' } | select ProcessId"   # 现=无（keeper 除外）
 head -6 src/zephyr/trading/gpu_consensus_scheduler.py | grep CONSUMERS -A1   # zombie 候选原文
 ```
+
+## 七、刷新批注（2026-09-29 st-finaldel-fresha）
+
+### 9/28 后变更（三袋落地，施工侧全面开动）
+- `cf16fa43fd`（09-29 GPU P1+L1 接线）：scripts/backtest/translated/_c4_engine.py（+201）增 backend=ZEPHYR_COMPUTE_BACKEND 三档（缺省 auto；"cpu"=恒原 pandas 路径零漂移；"gpu"=等形格点走 gpu_core FP64 张量核，缺件回退）+_GPU_AUTO_MIN_CELLS=8e6 尺寸守卫；L1 hoist 批级预热+三产物单趟；factory_grid_executor.py（+56）；tests/backtest/test_c4_engine_gpu_wiring.py（185 行）+parity 11 例（RTX 3090 真机 FP64 rel diff 2.5e-13）+docs/_working/gpu_rewrite/p1_wiring_benchmark.md 基准卷宗。
+- `f6e288fc54`（09-28 T2 闸代码袋）：factory_grid_executor **t2 不可旁路**（--skip-compute-gate 对 stage=t2 失效）+batch_window_preflight 四件+compute_window_gate 接线+点火闸 21 用例——波 12 统一跑批窗口前置。
+- `4970433e97`（09-29 W-173 prereg 声明）：search_space_prereg.yaml budget_caps 双键（target 3.5s/measured 0.53，#ARCH-366 载体；Owner 09-28 GPU 总令授权）。
+- `d72852ccf9`（09-29 P1-4 cost-tier scale-aware，裁-4 item5）：exam_cost_gate 参数率规模缩放+config/exam_scale_cost_gate.yaml 新件——缺口 1②"cost_gate_spot 40bp 档对高频格天然过严"的判卷口径施工侧答案已落。
+
+### 缺口清单状态修订
+- 缺口 1（T1 dedup 验收三阻断）：②口径复核已有施工侧落地（P1-4 scale-aware，d72852ccf9）；①核死格与重跑/降档决策仍挂 Owner/总筹（维持）。
+- 缺口 2（grid_20260926-230010 静默嫌疑）：目录在、f06_grid.log 09-26 23:00 后零新 fire 行——嫌疑维持未解除，处置照旧。
+- 缺口 3（规模口径 R-M2-1）／4（跑中观测性）／5（考试循环自动）／6（gpu_consensus_scheduler zombie）：零 commit，维持。
+
+### 自审闸三态
+- **挖干可施工（维持且施工已开动）**——"在飞禁令解除、施工可排"判断被三袋落地证实（GPU P1 接线/T2 闸/prereg 双键）；"GPU T1 在跑禁中动"时代早已翻页。
