@@ -23,6 +23,6 @@
       </div>
     </div>
 
-    <div class="note">监控口径：HTTP 桥探活=GET /health（2s 超时，回设计数器 tick/http_ok/thread_ok）；速度基线=2026-09-04 盘中三方实测（HTTP 32ms / miniQMT 41ms / 文件兜底 5.7s 中位）；行情=v17 线程 200ms 轮询。miniQMT 退役后其列转为历史基线（灰显）。交易时段外（午休/收盘）线程冻结属正常——HTTP 探活降级黄灯不告警</div>
+    <div class="note">监控口径：HTTP 桥探活=GET /health（2s 超时，回设计数器 tick/http_ok/thread_ok）；速度基线=2026-09-04 盘中三方实测（HTTP 32ms / miniQMT 41ms / 文件兜底 5.7s 中位）；行情=v17 线程 200ms 轮询。miniQMT 实盘退役后其列转为历史基线（灰显；模拟盘供数继续=裁定#339）。交易时段外（午休/收盘）线程冻结属正常——HTTP 探活降级黄灯不告警</div>
   </section>
 

@@ -38,9 +38,12 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Final, Protocol
+from typing import Any, Final, Protocol, TypeVar
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+
+_T = TypeVar("_T")
+
 
 _logger = logging.getLogger(__name__)
 
@@ -56,7 +59,7 @@ _DEFAULT_MAX_RECONNECT_ATTEMPTS: Final[int] = 3
 _DEFAULT_MAX_HEARTBEAT_FAILURES: Final[int] = 3
 
 # ── miniQMT 通道退役冻结（迁移台账 §3-9，2026-09-09；93 号备忘 §2.1 政策时间线）──
-# 券商 2026-09-18 关停 miniQMT 通道（XtMiniQmt.exe 全面清退）。本通道管理器**保留接口
+# 券商 2026-09-18 关停 miniQMT 通道（XtMiniQmt.exe 实盘退役；模拟盘供数继续=裁定#339 口径）。本通道管理器**保留接口
 # 不删码**（tests/ex_core/test_miniqmt_channel_manager.py 消费 + 状态机语义仍是桥通道
 # 重连管理的参照实现），但退役日起禁真连（fail-closed）：
 #   - 任何真实 xttrader 会话接线在 RETIRED_DATE 之后必须拒绝 connect（上层装配点判断，
@@ -228,7 +231,7 @@ class MiniQmtChannelManager:
                 details={"state": self._state.value},
             )
 
-    def run_channel_call(self, call: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    def run_channel_call(self, call: Callable[..., _T], *args: Any, **kwargs: Any) -> _T:
         """包裹一次真单通道调用：先过 Fail-Closed 闸，异常计入断线信号并透传。
 
         通道调用异常是 KS-L3 断线检测信号之一——异常计数累计达心跳失败阈值

@@ -15,8 +15,11 @@
 # [TTL] permanent
 """回测 tick 回放 CH adapter（台账 §8.6 任务三/裁定①，2026-09-09）。
 
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/ch_tick_replay.yaml
+
 背景：event_driven_engine.run_tick 经 MiniQmtQuoteProvider.fetch_historical
-（xtquant 本地缓存）读回测 tick——9/18 miniQMT 退役后断供。本 adapter 读
+（xtquant 本地缓存）读回测 tick——9/18 miniQMT 实盘退役（裁定#339 口径：模拟盘供数
+继续；原生 provider 取数路径停用）。本 adapter 读
 c1_market.tick_data（miniqmt 囤货 + qmt_bridge 双源同表），SQL 直取、
 无 SDK 依赖，保持 provider 注入接口不变（duck-typed 替换）。
 
@@ -52,9 +55,7 @@ class CHBackfillReadError(Exception):
 
 
 # tick_data → 回放 DataFrame 的列映射（1 档；2-5 档填 0 如实降级）
-_SQL_COLUMNS = (
-    "timestamp, price, volume, amount, bid_price, ask_price, bid_volume, ask_volume"
-)
+_SQL_COLUMNS = "timestamp, price, volume, amount, bid_price, ask_price, bid_volume, ask_volume"
 
 
 def fetch_historical(
@@ -109,8 +110,14 @@ def fetch_historical(
     df = pd.DataFrame(
         rows,
         columns=[
-            "timestamp", "last_price", "volume", "amount",
-            "bid_price_1", "ask_price_1", "bid_vol_1", "ask_vol_1",
+            "timestamp",
+            "last_price",
+            "volume",
+            "amount",
+            "bid_price_1",
+            "ask_price_1",
+            "bid_vol_1",
+            "ask_vol_1",
         ],
     )
     # 1 档 → 5 档（2-5 档填 0，如实降级；撮合预校验只用 bid1/ask1）
@@ -129,12 +136,35 @@ def fetch_historical(
     df["transaction_num"] = 0
     # 列序对齐 _row_to_tick_snapshot 期望（dict 读取，顺序无硬约束，统一排好）
     ordered = [
-        "timestamp", "last_price", "open", "high", "low", "prev_close",
-        "amount", "volume",
-        "ask_price_1", "ask_price_2", "ask_price_3", "ask_price_4", "ask_price_5",
-        "bid_price_1", "bid_price_2", "bid_price_3", "bid_price_4", "bid_price_5",
-        "ask_vol_1", "ask_vol_2", "ask_vol_3", "ask_vol_4", "ask_vol_5",
-        "bid_vol_1", "bid_vol_2", "bid_vol_3", "bid_vol_4", "bid_vol_5",
-        "stock_status", "transaction_num",
+        "timestamp",
+        "last_price",
+        "open",
+        "high",
+        "low",
+        "prev_close",
+        "amount",
+        "volume",
+        "ask_price_1",
+        "ask_price_2",
+        "ask_price_3",
+        "ask_price_4",
+        "ask_price_5",
+        "bid_price_1",
+        "bid_price_2",
+        "bid_price_3",
+        "bid_price_4",
+        "bid_price_5",
+        "ask_vol_1",
+        "ask_vol_2",
+        "ask_vol_3",
+        "ask_vol_4",
+        "ask_vol_5",
+        "bid_vol_1",
+        "bid_vol_2",
+        "bid_vol_3",
+        "bid_vol_4",
+        "bid_vol_5",
+        "stock_status",
+        "transaction_num",
     ]
     return df[ordered]

@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——ch_tick_replay（_domain_backtest 域，真源 src/zephyr/backtest/implementations/ch_tick_replay.py）
+# 2026-09-29 夜战 SW11 补登记（GATE-ALGO-FLOW 拦截历史带病件 bae99e9362d，按 P2-1 口径直接外置锚形态出仓）；
+# miniQMT 文案修正同批触面（裁定#339 口径）。算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.implementations.ch_tick_replay
+source_of_truth: src/zephyr/backtest/implementations/ch_tick_replay.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 回测代码与时间窗
+    #   fields: symbol(QMT 格式 600000.SH) / start,end(datetime 含端点) / interval='tick'
+    #   code: fetch_historical (L61)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 参数校验与格式转换
+    #   name_en: validate_and_normalize
+    #   intro: interval 非 tick 抛 ValueError(L82)；symbol 剥交易所后缀取裸码；start/end 拆 trade_date 日窗+toDateTime64 时间戳窗（Asia/Shanghai）
+    #   code: fetch_historical (L75-95)
+    # - id: A2
+    #   name_zh: CH tick_data SQL 直取
+    #   name_en: sql_direct_fetch
+    #   intro: symbol+trade_date BETWEEN+timestamp BETWEEN+price>0 六腿过滤，ORDER BY timestamp，8 列 1 档投影（idx_ts/idx_symbol 跳数索引裁剪）
+    #   code: fetch_historical (L88-103) / _SQL_COLUMNS (L56)
+    # - id: A3
+    #   name_zh: 异常转译与空窗语义
+    #   name_en: error_translation
+    #   intro: CH 异常统一转 CHBackfillReadError（调用方 TickReplayEngine 转 TickReplayError）；空窗返回空 DataFrame（既有 warning+跳过语义）
+    #   code: fetch_historical (L104-108)
+    # - id: A4
+    #   name_zh: 列契约组装与 1→5 档如实降级
+    #   name_en: dataframe_assembly
+    #   intro: 8 列→18 列契约映射（对齐 TickReplayEngine._row_to_tick_snapshot）；bid/ask 2-5 档填 0（撮合预校验只用 bid1/ask1 既有口径）；stock_status/transaction_num/prev_close 等列按契约补齐
+    #   code: fetch_historical (L110-125)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 回放 tick DataFrame
+    #   name_en: tick_replay_frame
+    #   intro: 与 MiniQmtQuoteProvider.fetch_historical duck-typed 同构返回；供 event_driven_engine.run_tick 回放
+    #   code: fetch_historical 返回值

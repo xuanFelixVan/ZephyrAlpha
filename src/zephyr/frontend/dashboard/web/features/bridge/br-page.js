@@ -51,7 +51,7 @@ function brRenderKpi() {
     var end = new Date(st.retire_date + 'T23:59:59');
     var diffMs = end - new Date();
     if (diffMs <= 0) {
-      cd.textContent = 'miniQMT 已退役（' + st.retire_date + '）';
+      cd.textContent = 'miniQMT 实盘已退役（模拟盘供数继续）（' + st.retire_date + '）';
     } else {
       var days = Math.floor(diffMs / 86400000);
       var hours = Math.floor((diffMs % 86400000) / 3600000);

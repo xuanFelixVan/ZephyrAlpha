@@ -56361,4 +56361,9 @@ creation_tokens:
   capability: gpu_rewrite
   merge_evaluation: "P1+L1 接线基准卷宗（task_bound）：cpu/gpu/hoisted 实测+auto 尺寸守卫依据；同族 census/three_tiers 引用不并（基准 vs 架构跨域不同对象），零替代退役"
 
+- file: docs/03_modules/_domain_backtest/algo_flow/ch_tick_replay.yaml
+  token: backtest-algo-flow-ch-tick-replay-20260928
+  created_by: st-nightsweep-sw11-20260929
+  capability: backtest_algo_flow
+  merge_evaluation: "ALGO_FLOW 外置真源（P2-1 既有机制面新增一模块条目，与 vectorized_engine.yaml 同族同真源管线，不立平行表）"
 di_seam_exemptions: []
