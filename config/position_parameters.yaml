@@ -1,0 +1,28 @@
+# 仓位参数表（TRD-A21 / P1 / 准入门 G7 载体）
+# 真源锚点：
+#   - 设计判据: docs/_working/live_readiness/admission_gate_design.md §1 G7 + §3 判定矩阵
+#   - 参数口径: docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md:30/:187
+#     （六段预算带 × 过渡带 0.5-0.7，总仓位=min(预算带, 60% 硬顶)）
+#   - 代码同源: src/zephyr/strategy_pipeline/daily_decision_orchestrator.py
+#     （HARD_CAP/BUDGET_BANDS/TRANSITION_*，注释值全 proposed）
+# 签发纪律：status: proposed→confirmed 须 Owner 在 owner_sign 段签发（signed_by/signed_at），
+# 禁 AI 代签；confirmed 前消费方必须按 effective_hard_cap=0.0 处置（fail-closed 不建仓）。
+# 消费方：scripts/governance/check_trd_a20_a21_dual_gates.py（G7 判定+与代码常量漂移守卫）。
+schema_version: 1
+status: proposed            # proposed | confirmed（仅 Owner 签发后可改 confirmed）
+hard_cap: 0.60              # 总仓位硬顶（RLM-CONCENTRATION-002）
+transition:
+  threshold: 0.60           # 最大隶属度阈值（低于=过渡带）
+  factor_low: 0.5           # 过渡带折减系数带下缘（0.5-0.7 取保守）
+  factor_high: 0.7
+budget_bands:               # 六段预算带（regime phase → 仓位区间）
+  capitulation: [0.00, 0.10]
+  accumulation: [0.20, 0.30]
+  ignition: [0.30, 0.50]
+  expansion: [0.50, 0.70]
+  euphoria: [0.00, 0.30]    # 只卖不买
+  distribution: [0.00, 0.00]
+owner_sign:
+  signed_by: ""             # Owner 签发人（confirmed 时必填）
+  signed_at: ""             # 签发日期（ISO 8601）
+  ruling_ref: ""            # 裁定登记号（RULE-RULING：确认记录须原子入册）

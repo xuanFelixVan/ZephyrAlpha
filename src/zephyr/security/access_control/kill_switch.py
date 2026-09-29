@@ -5,7 +5,7 @@
 # [CONSUMERS] tests/agent_rbac/test_kill_switch_agent_rbac.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] KillSwitch default state is NORMAL; trigger only on critical failure; reset requires owner approval
+# [INVARIANTS] KillSwitch default state is NORMAL; trigger only on critical failure; reset requires owner approval; F61: engaged 态可选持久化（state_path/env 显式启用），影子件损坏=fail-CLOSED 按 ENGAGED 处置，save fail-open
 # [MODIFY-GUARD] Owner approval required; changes require blueprint update
 # [STABILITY] evolving
 # [SAFETY] H
@@ -29,21 +29,38 @@ KillSwitch — 熔断器.
   audit_log_tamper 等 9 触发器，服务自治/安全域），与交易资金安全无关。
   交易侧熔断真源 = zephyr.trading.trading_contracts.risk.trading_kill_switch
   （五级交易熔断）+ zephyr.ex_core.risk_layer_orchestrator（盘中回撤级联/VaR/
-  回滚姿态/对账循环）。另注意：本单例为**纯进程内存态**，进程崩溃即归零——
-  禁作为任何交易资金安全场景的依赖（交易侧熔断有独立级联与持久化覆盖）。
+  回滚姿态/对账循环）。
+
+持久化语义（F61，2026-09-28 SECURITY BATCH——原"纯进程内存态"升级）:
+  显式传 state_path 或设 ZEPHYR_KILL_SWITCH_STATE_PATH 时，全局熔断 engaged
+  态落盘（原子写 tmp→os.replace，落盘纪律对标
+  trading_contracts.risk.kill_switch_state_store 的 data/runtime 影子件），
+  新实例 __init__ 重载；文件缺失=全新 NORMAL，文件损坏/不可读=**fail-CLOSED**
+  （按 ENGAGED 处置——熔断器宁可误熔断不可静默漏熔断）。
+  默认（无 state_path 无 env）保持纯内存态不变——既有单例行为/测试零扰动，
+  生产接线（是否给默认单例配影子件）属 SAFETY=H 部署门位，另行裁定。
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_security/algo_flow/access_control/kill_switch.yaml
 """
 
 from __future__ import annotations
 
+import json
 import logging
+import os
+import tempfile
 import time
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
+from pathlib import Path
+from typing import Any, Final
 
 logger = logging.getLogger(__name__)
+
+KILL_SWITCH_STATE_ENV: Final[str] = "ZEPHYR_KILL_SWITCH_STATE_PATH"
+DEFAULT_STATE_RELATIVE: Final[str] = "data/runtime/kill_switch_state.json"
+_STATE_VERSION: Final = 1
 
 
 class KillSwitchState(str, Enum):
@@ -142,7 +159,7 @@ class KillSwitch:
     支持单Agent阻断和全局熔断两级机制。
     """
 
-    def __init__(self) -> None:
+    def __init__(self, state_path: str | Path | None = None) -> None:
         self._status = KillSwitchStatus()
         self._triggers: dict[str, TriggerDefinition] = {t.trigger: t for t in DEFAULT_TRIGGERS}
         self._agent_events: dict[str, dict[str, list[float]]] = {}
@@ -151,6 +168,82 @@ class KillSwitch:
         self._global_reason = ""
         self._override_active = False
         self._pre_override_tripped = False
+        # F61: 显式 state_path 或 env 指定即启用持久化；两者皆无=纯内存态（既有行为）。
+        self._state_path: Path | None = _resolve_state_path(state_path)
+        if self._state_path is not None:
+            self._load_state_fail_closed()
+
+    @property
+    def state_path(self) -> Path | None:
+        """持久化影子件路径（None=纯内存态，未启用持久化）."""
+        return self._state_path
+
+    # ============ F61 持久化（原子写 tmp→os.replace；损坏 fail-CLOSED） ============
+
+    def _apply_engaged(self, reason: str, tripped_at: float = 0.0) -> None:
+        """置全局熔断（不落盘——加载路径用；落盘由变更方法负责）。"""
+        self._global_tripped = True
+        self._global_reason = reason
+        self._status.state = KillSwitchState.TRIPPED
+        self._status.tripped_at = tripped_at
+        self._status.reason = reason
+
+    def _load_state_fail_closed(self) -> None:
+        """__init__ 重载影子件：缺失=NORMAL；损坏/不可读=fail-CLOSED 按 ENGAGED 处置。
+
+        语义依据（F61）：熔断器的危险方向是"漏熔断"——状态文件读不出来时，
+        无法证明"未熔断"，故按已熔断处置（宁可误熔断等 Owner 复位，不可静默归零）。
+        """
+        path = self._state_path
+        if path is None or not path.is_file():
+            return  # 文件缺失=全新部署 NORMAL，非异常
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            engaged = payload.get("engaged")
+            if not isinstance(payload.get("version"), int) or not isinstance(engaged, bool):
+                raise ValueError("state payload malformed (version/engaged)")
+        except Exception as exc:  # noqa: BLE001 — 损坏/不可读一律 fail-CLOSED
+            logger.critical(
+                "KILL_SWITCH_STATE_CORRUPT 影子件不可读，按 ENGAGED 处置（fail-closed） path=%s error=%s",
+                path,
+                exc,
+            )
+            self._apply_engaged("kill switch state unreadable (fail-closed)")
+            return
+        if engaged:
+            try:
+                tripped_at = float(payload.get("tripped_at") or 0.0)
+            except (TypeError, ValueError):
+                tripped_at = 0.0
+            reason = str(payload.get("reason") or "persisted engaged state")
+            logger.warning("KILL_SWITCH_RELOAD 重载持久化熔断态（跨实例维持）reason=%s", reason)
+            self._apply_engaged(reason, tripped_at)
+
+    def _persist_state(self) -> None:
+        """engaged 态变更后落盘影子（原子写；save fail-open——内存态已生效=主保护在手）."""
+        path = self._state_path
+        if path is None:
+            return
+        payload = {
+            "version": _STATE_VERSION,
+            "engaged": bool(self._global_tripped),
+            # trigger() 旧接口只写 _status.reason，不写 _global_reason——取并集兜底
+            "reason": self._global_reason or self._status.reason,
+            "tripped_at": float(self._status.tripped_at or 0.0),
+            "updated_at": datetime.now(tz=UTC).isoformat(),
+        }
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=path.name, suffix=".tmp")
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as f:
+                    json.dump(payload, f, ensure_ascii=False, indent=1)
+                os.replace(tmp, path)
+            finally:
+                if os.path.exists(tmp):
+                    os.unlink(tmp)
+        except Exception as exc:  # noqa: BLE001 — save fail-open（对标 kill_switch_state_store INVARIANTS）
+            logger.critical("KILL_SWITCH_STATE_SAVE_FAILED 落盘失败 path=%s error=%s", path, exc)
 
     @property
     def status(self) -> KillSwitchStatus:
@@ -223,6 +316,7 @@ class KillSwitch:
                 self._status.tripped_at = now
                 self._status.reason = self._global_reason
                 logger.warning("KillSwitch GLOBAL TRIPPED: %s", self._global_reason)
+                self._persist_state()
 
             return TriggerResult(action=TriggerResult.BLOCK_AGENT, agent_id=agent_id)
 
@@ -247,6 +341,7 @@ class KillSwitch:
         self._status.tripped_at = time.time()
         self._status.reason = reason
         logger.warning("KillSwitch manual global trip: %s", reason)
+        self._persist_state()
 
     def manual_trip_agent(self, agent_id: str) -> None:
         """手动阻断单个agent."""
@@ -265,6 +360,7 @@ class KillSwitch:
         # 治本(2026-07-18): 标记 owner 已启用覆盖模式。
         self._status.owner_override = True
         logger.info("KillSwitch global released by owner (override active)")
+        self._persist_state()
 
     def owner_release_agent(self, agent_id: str) -> None:
         """Owner释放单个agent."""
@@ -283,6 +379,7 @@ class KillSwitch:
                 self._status.reason = self._global_reason or "override revoked"
                 self._status.tripped_at = time.time()
             logger.info("KillSwitch override revoked, global_tripped=%s", self._global_tripped)
+            self._persist_state()
 
     def trigger(self, trigger_name: str = "manual", reason: str = "") -> TriggerResult:
         """触发熔断器（兼容旧接口）."""
@@ -295,6 +392,7 @@ class KillSwitch:
         self._status.reason = reason or trigger_name
         self._global_tripped = True
         logger.warning("KillSwitch TRIPPED: trigger=%s reason=%s", trigger_name, reason)
+        self._persist_state()
         return TriggerResult(action=TriggerResult.GLOBAL_BLOCK, agent_id="", reason=reason)
 
     def reset(self) -> TriggerResult:
@@ -315,22 +413,39 @@ class KillSwitch:
         self._blocked_agents.clear()
         self._agent_events.clear()
         logger.info("KillSwitch RESET to NORMAL")
+        self._persist_state()
         return TriggerResult(action=TriggerResult.NO_ACTION)
 
 
 _kill_switch_instance: KillSwitch | None = None
 
 
-def get_kill_switch() -> KillSwitch:
-    """获取KillSwitch单例."""
+def _resolve_state_path(state_path: str | Path | None) -> Path | None:
+    """F61 state 路径解析：显式参数 > env（ZEPHYR_KILL_SWITCH_STATE_PATH）> None（纯内存态）。
+
+    环境变量覆盖位先例：ZEPHYR_ALERT_WEBHOOK_DIR / ZEPHYR_OPS_NOTIFICATION_DIR
+    （测试与多仓隔离注入，缺省=生产锚定）。
+    """
+    if state_path is not None:
+        return Path(state_path)
+    env_path = os.environ.get(KILL_SWITCH_STATE_ENV, "").strip()
+    if env_path:
+        return Path(env_path)
+    return None
+
+
+def get_kill_switch(state_path: str | Path | None = None) -> KillSwitch:
+    """获取KillSwitch单例（state_path 仅在首次构造时生效，后续调用返回既有单例）."""
     global _kill_switch_instance
     if _kill_switch_instance is None:
-        _kill_switch_instance = KillSwitch()
+        _kill_switch_instance = KillSwitch(state_path=state_path)
     return _kill_switch_instance
 
 
 __all__ = [
+    "DEFAULT_STATE_RELATIVE",
     "DEFAULT_TRIGGERS",
+    "KILL_SWITCH_STATE_ENV",
     "KillSwitch",
     "KillSwitchState",
     "KillSwitchStatus",

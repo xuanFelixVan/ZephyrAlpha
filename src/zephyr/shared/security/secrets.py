@@ -71,7 +71,9 @@ __all__ = [
     "get_secret_from_file",
     "get_secret_from_file_or_default",
     "get_service_secret",
+    "is_secret_shaped_key",
     "sanitize_secret",
+    "get_secret_fail_closed",
 ]
 
 logger = logging.getLogger(__name__)
@@ -143,7 +145,81 @@ SECRET_INDICATOR_PATTERNS: Final[tuple[str, ...]] = (
     "PASSWD",
     "PWD",
     "CREDENTIAL",
+    "WEBHOOK",
 )
+
+# F105 密钥信任绑定：fail-closed 读取拒绝的占位符值标记（大小写不敏感子串）。
+# 用途：拦截 "changeme"/"your-api-key" 类未配置占位值被当真密钥消费。
+_PLACEHOLDER_VALUE_MARKERS: Final[tuple[str, ...]] = (
+    "changeme",
+    "change_me",
+    "your",
+    "placeholder",
+    "dummy",
+    "example",
+    "todo",
+    "fixme",
+    "<",
+    ">",
+    "****",
+)
+
+
+def is_secret_shaped_key(key: str) -> bool:
+    """判定变量名是否为密钥形态（大小写不敏感匹配 SECRET_INDICATOR_PATTERNS）。
+
+    与 gov_enforcement.commit_gates.bare_getenv_gate / secret_rotation 扫描
+    同词表口径（真源=本模块 SECRET_INDICATOR_PATTERNS，不硬编码）。
+
+    Args:
+        key: 环境变量名。
+
+    Returns:
+        True=密钥形态变量名（读取必须经 secrets 模块）。
+    """
+    key_upper = key.upper()
+    return any(pattern in key_upper for pattern in SECRET_INDICATOR_PATTERNS)
+
+
+def get_secret_fail_closed(key: str) -> str:
+    """fail-closed 读取 secret（F105 密钥信任绑定新增）——任何不确定一律抛错，绝不静默降级。
+
+    与 get_secret / get_secret_or_default 的区别（安全语义升级）：
+      1. 键名必须是密钥形态（is_secret_shaped_key）——防止把本通道当通用
+         配置读取器滥用（非密钥配置走普通 config 通道）。
+      2. 值缺失或空串 → SecretsError（同 get_required_secret）。
+      3. 值疑似占位符（"changeme"/"your-api-key"/"<token>" 等，见
+         _PLACEHOLDER_VALUE_MARKERS）→ SecretsError——占位值被当真密钥
+         消费是静默安全事故（请求打到无效端点/认证必败）。
+
+    Args:
+        key: 密钥型环境变量名。
+
+    Returns:
+        Secret 值（明文，非空且非占位符）。
+
+    Raises:
+        SecretsError: 键名非密钥形态 / 缺失 / 空 / 疑似占位符。
+    """
+    if not is_secret_shaped_key(key):
+        raise SecretsError(
+            f"key '{key}' is not secret-shaped (SECRET_INDICATOR_PATTERNS mismatch) ——secrets 通道拒绝读取非密钥配置",
+            details={"key": key},
+        )
+    _check_rotation(key)
+    value = os.environ.get(key)
+    if not value:
+        raise SecretsError(
+            f"required secret '{key}' is not set (fail-closed)",
+            details={"key": key, "hint": f"请在 .env 文件或环境变量中设置 {key}"},
+        )
+    value_lower = value.lower()
+    if any(marker in value_lower for marker in _PLACEHOLDER_VALUE_MARKERS):
+        raise SecretsError(
+            f"secret '{key}' looks like a placeholder value (fail-closed)",
+            details={"key": key, "value": sanitize_secret(key, value)},
+        )
+    return value
 
 
 def sanitize_secret(name: str, value: str) -> str:
@@ -451,6 +527,9 @@ _SERVICE_ENV_FILES: Final[dict[str, str]] = {
     "ch_backup": "config/.env.ch_backup",
     "glassnode": "config/.env.glassnode",
     "cryptoquant": "config/.env.cryptoquant",
+    # F105 修复：security_event_bus 以 service="feishu" 调 get_service_secret，
+    # 未登记前每次必抛 unknown service → 永远降级裸 os.environ 读取（信任绑定失效）。
+    "feishu": "config/.env.feishu",
 }
 
 

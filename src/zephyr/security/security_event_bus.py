@@ -354,16 +354,21 @@ class FeishuAlertChannel:
     def _resolve_webhook(self) -> str:
         if self._webhook_override is not None:
             return self._webhook_override
-        # 先走 secret 机制（service 未登记会抛 SecretsError → 捕获降级到环境变量）
+        # 先走 secret 机制（service="feishu" 已登记 _SERVICE_ENV_FILES；required=False
+        # 时缺失返回空串，不再因 unknown service 必然抛错降级）
         try:
             from zephyr.shared.security.secrets import get_service_secret
 
             url = get_service_secret(FEISHU_WEBHOOK_ENV, FEISHU_WEBHOOK_SERVICE, required=False)
             if url:
                 return url
-        except Exception:  # noqa: BLE001 — secret 机制不可用时降级环境变量，绝不阻断告警通道
-            logger.debug("get_service_secret 不可用，降级环境变量读取", exc_info=True)
-        return os.environ.get(FEISHU_WEBHOOK_ENV, "")
+        except Exception:  # noqa: BLE001 — secret 机制不可用时降级，绝不阻断告警通道
+            logger.debug("get_service_secret 不可用，降级 secrets 模块直读", exc_info=True)
+        # F105 密钥信任绑定：降级路径同样必经 secrets 模块（含 rotation 检查），
+        # 禁止裸读环境变量获取密钥型变量——裸读已删除，改走 get_secret_or_default。
+        from zephyr.shared.security.secrets import get_secret_or_default
+
+        return get_secret_or_default(FEISHU_WEBHOOK_ENV, "")
 
     @staticmethod
     def format_alert_text(event: SecurityEvent) -> str:

@@ -49,13 +49,9 @@ nodes:
   point: 持续
   decision_question: 今天买什么、买多少、什么时候买？（本流最终输出=今日建仓清单）
   activation: continuous
-  note_confirmed: 2026-09-29  # st-c9-f34：F34 消费接线同批确认（TDM-E-L9-AGG→本节点"供给健康读数"边由有名无实转有码）
   algo_note_zh: >-
     全流终端聚合点：上游=盘前作战计划（L0）与买卖执行段（L4），下游无（终点）。
     组成=计划（L0）→选什么（L2 板块/L3 个股）→怎么买（L4 执行）。本节点只承载结构与指向，不写机制不存实时数据。
-    L9 知识供给就绪度读数消费点（2026-09-29 st-c9-f34 接线坐实）：pf_alloc 组合层按 c1_market.l9_readiness_daily
-    AGG 汇总行黄/红态做总暴露降级（黄 0.90/红 0.70 工程缺省待 Owner 签批，只减不加，
-    一键切回 data/runtime/l9_readiness_check.disabled；供件实件=zephyr.pf_alloc.allocation_inputs load_l9_readiness）。
   factor_refs: []
   data_refs: []
   algo_refs: []
@@ -3166,7 +3162,7 @@ nodes:
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
 - node_id: TDM-X-R1
-  note_confirmed: 2026-09-20  # UP-5 尾部对冲信号接线（algo_note_zh 同步增补）
+  note_confirmed: 2026-09-28  # F61 持久化同 commit 同步本节 algo_note_zh（ALGO-NOTE-SYNC）；判定轴/阈值/升级分叉零改动；前次确认 2026-09-20=UP-5 尾部对冲信号接线（algo_note_zh 同步增补，口径未变）
   name_zh: 应急保命
   market: cn_a
   flow: exit_flow
@@ -3183,6 +3179,10 @@ nodes:
     （默认 -3% 日损，阈值冻结禁挪门柱）→ 生成对冲建议（DAL-TAIL-HEDGE，MOD-PA-024）；信号仅供
     决策参考非执行指令，喂 R1-03 白名单通道（D107 尾部弹药回测验证前维持休眠 fallback；期权
     对冲执行另案，数据窗口短）。
+    （2026-09-28 F61 持久化，SECURITY BATCH）：engaged 态可选落影子件（显式 state_path 或
+    ZEPHYR_KILL_SWITCH_STATE_PATH 启用，原子写对标 kill_switch_state_store 落盘纪律），
+    新实例重载；影子件损坏/不可读=fail-CLOSED 按 ENGAGED 处置（宁可误熔断不可静默漏熔断）；
+    文件缺失=全新 NORMAL；save fail-open。默认单例保持纯内存态，生产接线属部署门位另裁。
   factor_refs: []
   risk_limit_refs: [RLM-KILLSW-003, RLM-KILLSW-005, RLM-KILL-SWITCH-004, 
       RLM-KILL-SWITCH-005]
