@@ -291,6 +291,63 @@ def test_bootstrap_fail_closed_on_bad_evidence(monkeypatch):
         build_governance_triple()
 
 
+# ---------- 血缘接线（F125，2026-09-29 夜战批） ----------
+
+def test_bootstrap_lineage_wiring_red_sample():
+    """F125 红样：注入 LineageTracker 后 attach_lineage 走真实血缘记录。
+
+    接线前 build_governance_triple 不传 lineage_sink，attach_lineage 必抛
+    AltDataCatalogError（血缘无供方=装饰）；接线后传入自有 tracker，挂血缘落边。
+    """
+    from zephyr.alt_data.alt_source_bootstrap import build_governance_triple
+    from zephyr.data_governance.core.lineage_tracker import LineageTracker
+
+    tracker = LineageTracker()
+    catalog, _, _ = build_governance_triple(lineage_tracker=tracker)
+    # 挂血缘：raw 层 → 目录 source_id（不再抛 AltDataCatalogError）
+    catalog.attach_lineage("alt_stock_comment", "raw_layer.qian_gu_qian_ping", "catalog_register")
+    edges = {(e.source, e.target, e.transformation) for e in tracker.get_edges()}
+    assert ("raw_layer.qian_gu_qian_ping", "alt_stock_comment", "catalog_register") in edges
+    # 上下游查询贯通（血缘语义消费侧=tracker，F125 首个生产 import 消费者）
+    assert tracker.get_direct_upstream("alt_stock_comment") == ["raw_layer.qian_gu_qian_ping"]
+
+
+def test_bootstrap_lineage_default_wired_no_raise():
+    """缺省（不传 tracker）自动内建血缘供方——attach_lineage 不再 Fail-Closed 抛错。"""
+    from zephyr.alt_data.alt_source_bootstrap import build_governance_triple
+
+    catalog, _, _ = build_governance_triple()
+    catalog.attach_lineage("alt_shipping_index", "raw_layer.sse_bdi")  # 不抛即过
+    # sink 是 tracker.add_edge 绑定方法，回取台账核边确实落账
+    tracker = catalog._lineage_sink.__self__
+    assert any(e.target == "alt_shipping_index" for e in tracker.get_edges())
+
+
+def test_catalog_direct_without_sink_still_fail_closed():
+    """直构 AltDataCatalog 不注入 sink → attach_lineage 仍 Fail-Closed（契约不放松）。"""
+    from zephyr.alt_data.alt_data_catalog import (
+        AltDataCatalog,
+        AltDataCatalogError,
+        CatalogEntry,
+        CatalogSourceType,
+    )
+
+    cat = AltDataCatalog(clock=lambda: datetime.datetime(2026, 9, 29))
+    cat.register(
+        CatalogEntry(
+            source_id="x1",
+            source_type=CatalogSourceType.NEWS,
+            update_frequency="daily",
+            quality_score=0.9,
+            cost_quota=100,
+            description="d",
+            tags=("t",),
+        )
+    )
+    with pytest.raises(AltDataCatalogError):
+        cat.attach_lineage("x1", "raw.up")
+
+
 # ---------- 台风路径（深圳开放数据平台 appKey 通道） ----------
 
 def _typhoon_stub_row(keyid: int, crt: str = "2026-09-13 17:00:00") -> dict:

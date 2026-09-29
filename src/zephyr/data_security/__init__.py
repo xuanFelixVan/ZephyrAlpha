@@ -37,6 +37,16 @@ except ImportError:
 
 """
 [DORMANT] 未启用占位模板，勿当实现引用；2026-08-22 STR-01 标注，架构审查报告 §3.2
+[DEPRECATED] 2026-09-29 夜战 SW5（st-nightsweep-sw5-20260929）依 F128 案卷
+    （docs/_working/fullconnect_campaign/k_frontend_docs/12_f128_data_security_masking.md）
+    定罪：三件实体（data_masking_engine/data_access_auditor/ai_masking_pipeline）
+    生产面零 import（AST PROD=0，连 TYPE_CHECKING 腿都无）、零动态挂载、零计划任务
+    → 纯装饰，退役标记。
+    successor：无直接继任——F88 LSG（LLM 输入输出防御）与 F105（密钥治理）经实核
+    异域不同对象，不覆盖列级脱敏/访问审计能力；能力空缺语义转 known-gap 登记。
+    是否补接线（LSG l1_input 前置+数据出口）或物理净删 = OWNER-GATE 登记，
+    物理净删未执行。M1 机采 SourceType 消费腿经实核为同名假阳性（l1_input 自有枚举）。
+    恢复条件：Owner 判"补接线"则撤销本标记，按 F128 缺1 先红样后接线。
 
 
 # 边:

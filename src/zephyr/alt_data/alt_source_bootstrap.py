@@ -3,7 +3,7 @@
 # [BLUEPRINT] MOD-ALT-008 | docs/03_modules/_domain_alt_data/alt_data_catalog/blueprint.md | §bootstrap
 # [MODULE] zephyr.alt_data.alt_source_bootstrap
 # [DOMAIN] D_ALT_DATA
-# [DEPENDENCIES] zephyr.alt_data.alt_data_catalog; zephyr.alt_data.alt_data_compliance_reviewer; zephyr.alt_data.alt_source_health_manager
+# [DEPENDENCIES] zephyr.alt_data.alt_data_catalog; zephyr.alt_data.alt_data_compliance_reviewer; zephyr.alt_data.alt_source_health_manager; zephyr.data_governance.core.lineage_tracker
 # [CONSUMERS] scheduler 侧接线（后续批）；tests/zephyr/data/test_alt_sources.py
 # [STARTUP] lazy
 # [MATURITY] production
@@ -55,6 +55,7 @@ from zephyr.alt_data.alt_source_health_manager import (
     AltSourceHealthManager,
     HealthAlert,
 )
+from zephyr.data_governance.core.lineage_tracker import LineageTracker
 
 __all__ = [
     "ALT_SOURCES",
@@ -236,6 +237,7 @@ def build_governance_triple(
     clock: Callable[[], datetime.datetime] | None = None,
     alert_sink: Callable[[HealthAlert], None] | None = None,
     fts_connection=None,
+    lineage_tracker: LineageTracker | None = None,
 ) -> tuple[AltDataCatalog, AltDataComplianceReviewer, AltSourceHealthManager]:
     """构建治理三件并完成 ALT_SOURCES 全量登记→审查→放行。
 
@@ -243,6 +245,10 @@ def build_governance_triple(
         clock: 统一时钟注入（测试确定性）。
         alert_sink: 健康告警回调（接 alerter 属后续批，测试可注入收集器）。
         fts_connection: 目录 FTS5 SQLite 连接（可选；生产持久化接线属后续批）。
+        lineage_tracker: 血缘台账（F125 接线批，2026-09-29）。缺省内部新建一只并把
+            ``tracker.add_edge`` 作为 catalog 的 lineage_sink 供方注入——此后
+            ``catalog.attach_lineage`` 走真实血缘记录而非 Fail-Closed 抛错；
+            调用方传入自有 tracker 即可在构建后查询血缘边。
 
     Returns:
         (catalog, compliance_reviewer, health_manager)，三者均已登记全部 ALT_SOURCES，
@@ -255,7 +261,13 @@ def build_governance_triple(
     """
     spec_ids = [s.source_id for s in ALT_SOURCES]
 
-    catalog = AltDataCatalog(clock=clock, fts_connection=fts_connection)
+    if lineage_tracker is None:
+        lineage_tracker = LineageTracker()
+    catalog = AltDataCatalog(
+        clock=clock,
+        lineage_sink=lineage_tracker.add_edge,
+        fts_connection=fts_connection,
+    )
     reviewer = AltDataComplianceReviewer(checklist=COMPLIANCE_CHECKLIST, clock=clock)
     health = AltSourceHealthManager(
         source_ids=spec_ids,

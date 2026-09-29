@@ -34,6 +34,14 @@ except ImportError:
 
 """
 [DORMANT] 未启用占位模板，勿当实现引用；2026-08-22 STR-01 标注，架构审查报告 §3.2
+[DEPRECATED] 2026-09-29 夜战 SW5（st-nightsweep-sw5-20260929）依 F127 案卷
+    （docs/_working/fullconnect_campaign/a_data_foundation/16_f127_data_eng_engineering.md）
+    定罪：全包生产面零 import（AST PROD=0）、零自动化触发、零消费接缝 → 退役标记。
+    successor：冷储归档唯一现役真源 = scripts/ch/archiver.py（F08 链，F:/zephyr_cold）；
+    本包 cold_data_archive_manager 自称另立 SQLite 归档索引，属并行第二实现，
+    收敛方向（保 F08 删本包 / 或反Replace）涉生产归档链路 = OWNER-GATE 登记，
+    物理净删未执行（等 Owner 门位裁定后才可动）。
+    恢复条件：若 Owner 判"保留待接线"，撤销本标记并按 F127 缺1 逐件红样接入。
 
 
 # 边:
