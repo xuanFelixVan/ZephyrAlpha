@@ -74,3 +74,6 @@ T 袋（F40 候选池+盘前通电/F41 反馈环+九态桥）｜K 袋（F60 减�
 
 ### ④Owner 门位（99_skipped_for_owner.md #1-#41 全录）
 高频提醒：#29 TRD-A10 沙箱换版+env=real（实盘前置）｜#34 裁-13 decision_timestamp 正式注册｜#35 trae_034 死指针｜#36 F56 kernel 三选一｜#8 见证层实盘域二次批｜#14 commit_queue_interactive 出厂翻转｜#21 F34 DDL --apply｜#25 F51 币圈退役｜#19/#20 换源实弹。其余见台账原文。
+| 09-29 20:xx-09-30 04:xx | 总筹第二班 | 五遗留+四批文全施工：L09 根因修复 cf1018351b（StkLimit 每 run 68 次点查→缓存 0 次，717→126ms）；gov_audit 锁有界等待治本 cc730f6474+3ded37ff32；CH 实弹批（表核对 19/19、台账 rebuild 缺口=0、etf_benchmark 重写 3c01517bb2+f79a88a11e 实调 2370 行、realtime 换腾讯源 8479b8b7ce+b43af5cf7c 双源量纲互证）；批文②③④（trae_034 指针 1cf01067f5 两红转绿/裁-13=#420 落册 2963aaead9/F56 墓碑 edf0788dfb）；TRD-A10 准备件 337784b504（runbook+30 日台账+幽灵单日哨兵挂日终链）；六死袋复活五袋（belt 楔死换血+TEST-SOURCE 拆袋处方复用）
+| 09-30 03:xx | 终验补账 | CR-007 计数尺七表补 ENTRY_SPECS+--update-entry-counts 回填（UNSPECIFIED 7→0、STALE 24→0，尺全绿）；错误码四码补登+TREEVIEW 前缀+ZA-MLS×4 随 F130 净删标 deprecated（袋在队）
+| 09-30 04:xx | 终验定案 | 六目录两轮：chunkA 3157/3114 双零✓ chunkB r1 10381 零✓ r2 10387P+91F 已全归因（37=q0213 捞回批自曝 43F 基线/12=untracked 残渣已转存/42=状态漂移首曝其中错误码类已修、regen-clean 类=#431 战役在飞门翻中途态移交）｜trading 2458×2 双零✓（L09/FL09 双转绿）｜signal_ashare 2864×2✓ ex_sor 616×2✓ library 193×2✓ gov_enforcement 94×2✓ |
