@@ -46,9 +46,9 @@ ttl: task_bound
 | # | qid | commit | 内容 | 归属核验 |
 |---|-----|--------|------|----------|
 | 1 | q-20260927-st-ec2-p0-0001 | `3522eb8c6d`（chief 双归属袋吸收）+0009 残件 | F34 知识汇聚落地（聚合器+DDL+16 测+TDM module_ref 回填，死会话 st-chief4x-know 遗产核验落地；主袋与 chief 3522eb8c6d 内容重合已防回退弃用）+sim_observe_daily 回归补落（09-24 契约在 tests 钉死、执行体快照回退丢失）+L9 钩子测试隔离（残件 q-0009） | `git log -1 --name-only` 3522eb8c6d=8 文件恰含五件+chief 增强版 ✓；0009 残件落地后回填 |
-| 2 | q-20260927-st-ec2-p0-0002→（v9袋=q-0021，内容门全过余 landing 环境死因重投链） | 落地后回填（v9=最终内容：v2 尺+combo 传动+ALGO_FLOW 锚+F821 治本）| F74 堵点1+2：combo v2 frozen 尺（STD-SIM-ACCESS-002/裁定#337，dsr 0.5+ρ̄+换手腿+suspect 注记）+combo 事件入口（advisory due 执行体尾传动渲染） | 待 drain 后核 |
-| 3 | q-20260927-st-ec2-p0-0003（v2袋=0013） | 落地后回填（v2 修 SSOT-REDEFINITION+NO-BARE-SQL）| FL1/FL2 回灌边消费端 MOD-BT-223 feedback_prior（E6/E9 digest→E2 先验注记+E1 方向面）+两消费端接线+翻译/token 共册随批 | 待 drain 后核 |
-| 4 | q-20260927-st-ec2-p0-0004（v2袋=4ce7dd9ced） | F20 事件沿落地 | F20 车道G 事件沿：intel_harvester 落新班 fire-and-forget 触发 lane_g 消化（零 cron 事件沿） | 待 drain 后核 |
+| 2 | q-20260927-st-ec2-p0-0002→（v9袋=q-0021，内容门全过余 landing 环境死因重投链） | **终态已核（09-29 st-finaldel-cdocs2 实读 done/dead json）**：q-0021=dead（cascade_stale，08:26 死，禁 requeue 第 10 袋销案）——内容 5 件已随 `a46e1fbc3f` 落 dev（HEAD 祖先，`git log -1 --name-only`=恰袋内 5 文件）| F74 堵点1+2：combo v2 frozen 尺（STD-SIM-ACCESS-002/裁定#337，dsr 0.5+ρ̄+换手腿+suspect 注记）+combo 事件入口（advisory due 执行体尾传动渲染） | ✓ 已核（见上；§二销案段同源） |
+| 3 | q-20260927-st-ec2-p0-0003（v2袋=0013） | **终态已核（09-29 st-finaldel-cdocs2 实读）**：q-0013=dead（landing OSError WinError 233 管道无对端，07:16 死）——内容 4 件已随 `c5a6f3d238` 落 dev（HEAD 祖先，commit message 即 v2 袋全文=取代死袋 q-0007；feedback_prior/test/factory 三件末触=c5a6f3d238，hypothesis_precheck 后经 087a7abad8 S4 残余袋再触）| FL1/FL2 回灌边消费端 MOD-BT-223 feedback_prior（E6/E9 digest→E2 先验注记+E1 方向面）+两消费端接线+翻译/token 共册随批 | ✓ 已核（4/4 文件 HEAD tracked） |
+| 4 | q-20260927-st-ec2-p0-0004（v2袋=4ce7dd9ced） | **终态已核（09-29 st-finaldel-cdocs2 实读）**：q-0004=dead（GATE-PRECOMMIT-RUN ruff/ruff-format 拦，05:58 死）——v2 袋已落=`4ce7dd9ced`（HEAD 祖先，`git log -1 --name-only`=恰 intel_harvester+test 2 文件） | F20 车道G 事件沿：intel_harvester 落新班 fire-and-forget 触发 lane_g 消化（零 cron 事件沿） | ✓ 已核（commit message 自述取代死袋 q-0008） |
 
 ### 九项销账（证据全录=ec2_p0_breaks_ledger.md）
 F34 本役落地｜F74 本役修（堵点3 Owner/堵点4 自然时间）｜F20 本役修（胃停摆属 F96）｜F26/F04 **他线已落地**（88f62e893e，本役让位+重复件内收全撤净）｜
