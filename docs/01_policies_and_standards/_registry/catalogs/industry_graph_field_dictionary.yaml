@@ -544,6 +544,11 @@ tables:
         required: false
         standard: 自动
   ig_equity_edge:
+    retired: true
+    retired_at: '2026-09-29'
+    retired_per: "裁定#424 三步走退役：l9 G3 切 edge_holding(8b098e31eb)→前端切 entity_graph(8f03ef44bf)→soak 期满 Owner 终准 DROP（2026-09-29 执行，DROP 前 804 行）"
+    successor: "entity_graph 六表（node_entity/node_person/node_company/edge_holding/edge_role/edge_link），股权边真源=edge_holding（valid_to IS NULL=现行）"
+    backup: "F:/zephyr_cold/retired_tables/ig_equity_edge_20260929/（804 行 sha256=ee5875e0ca471e9d276badc0c8f2a8668cf8aa40c9ce2713d786a94fdb8d3488；第二副本 G:/backup/db_dumps/20260929/ig_equity_edge_retired_20260929.sql 同哈希；重放=psql -f 建 ig_equity_edge_restored；平价复核=同目录 parity_check_20260929.json，100% 前缀归一覆盖）"
     pk: edge_id
     fields:
       edge_id:

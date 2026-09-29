@@ -23,8 +23,9 @@
 背景（2026-09-27 业务链流通战役 EC1 车道）：股权底座已建成（commit c007caac86）——
 scripts/entity_graph/ 三脚本把 akshare 十大股东灌进 PG depgraph 域六表
 （node_entity/node_person/node_company/edge_holding/edge_role/edge_link，140,725 节点/150 万边），
-而前端 /api/chainmap-cluster 与 /api/chainmap-company 的 equity 段仍读旧表 ig_equity_edge
-（仅 804 条 THS 被投数据）。本模块提供六表现行版本（valid_to IS NULL）的三个查询面：
+而前端 /api/chainmap-cluster 与 /api/chainmap-company 的 equity 段原读旧表 ig_equity_edge
+（仅 804 条 THS 被投数据；该表已于 2026-09-29 按裁定#424 退役 DROP，前端已切本模块六表查询面，
+旧表备份=F:/zephyr_cold/retired_tables/ig_equity_edge_20260929/）。本模块提供六表现行版本（valid_to IS NULL）的三个查询面：
 
 1. :func:`company_equity_summary`  按公司键（代码/entity_id/规范名）查现行股权聚合
    （控 N/被 M 控 + 明细行，联 node_company/node_person 富化行业/出生年）。
