@@ -92,8 +92,8 @@ entries:
   - 39个漂移检测器注册与调度
   - 基线管理(BaselineManager)
   - 增量扫描(IncrementalScanner)
-  - 级联检测(CascadeDetector)
-  - 金丝雀控制器(CanaryController)
+  - 级联检测(detect_cascade/CascadeAlert)
+  - 金丝雀控制器(canary_controller/CanaryComparison)
   - 取证引擎(ForensicsEngine)
   - Git二分定位(GitBisector)
   - 漂移预算管理(DriftBudget)
@@ -238,7 +238,8 @@ entries:
   - L1输入防护(注入检测/越狱检测/编码逃逸)
   - L2 Prompt保护(模板/防泄露/话题边界)
   - L3输出安全(Schema验证/沙箱/PII脱敏/幻觉检测)
-  - L4 Agent安全(权限最小化/HITL/工具注入防护)
+  - L4 Agent安全(权限最小化/工具注入防护)
+  - L4 HITL 人机在环——策略语义属本域，机制实体在 integration/pipeline_orchestrator.py、intelligence/human_trust_model.py、intelligence/reflexion/reflctrl_gate.py（跨域注记 2026-09-30 C115）
   - L5资源保护(Token预算/速率限制/成本熔断)
   - L6可观测性(安全日志/异常告警)
   - L7持续验证(自动Red Team/安全回归)
@@ -428,7 +429,7 @@ entries:
   subdomain: budget_enforcement
   domain_name_zh: 自治保护
   ssot_module: MOD-INF-024
-  ssot_path: src/zephyr/autonomy_perm/
+  ssot_path: src/zephyr/governance/financial_governance/
   covers:
   - Token/Cost/Time三维预算
   - 预算引擎(budget_engine)
@@ -438,6 +439,7 @@ entries:
   - 超时守卫(timeout_guard)
   - 定价同步(pricing_sync)
   - RBAC桥接(rbac_bridge)
+  - 跨子域注记（2026-09-30 C115）：BudgetEnforcer 实体在 autonomy_core/skills/skill_executor.py、ModelRouter 实体在 governance/intelligence_governance/model_router.py、BudgetEngine/TimeoutGuard 等预算引擎族实体在 governance/ops_governance/、rbac_bridge 实体在 governance/agent_spec/；本条真源=budget_enforcement.py 聚合代理（MOD-INF-024）
   aliases:
   - budget
   - 预算
@@ -451,10 +453,10 @@ entries:
   subdomain: escalation
   domain_name_zh: 自治保护
   ssot_module: MOD-INF-022
-  ssot_path: src/zephyr/autonomy_perm/
+  ssot_path: src/zephyr/governance/escalation/
   covers:
   - 规则驱动升级(EscalationEngine)
-  - 自动委托(DelegationEngine/DelegationStrategy)
+  - 自动委托(DelegationStrategy/DelegationRecord)
   - 四级约束委托策略
   - 委托记录(DelegationRecord)
   - 委托管理器(delegation_manager)
@@ -464,11 +466,12 @@ entries:
   - 规则金丝雀(rule_canary_manager)
   - 规则影子运行(rule_shadow_runner)
   - 规则债务审计(rule_debt_auditor)
-  - 熔断保护(CircuitBreaker)
+  - 熔断保护(升级链熔断)——CircuitBreaker 实体在 governance/resilience_governance/circuit_breaker.py，跨子域注记
   - 升级疲劳管理(escalation_fatigue_manager)
   - 升级循环检测(escalation_loop_detector)
   - 死锁检测(deadlock_detector)
   - 最后手段看门狗(last_resort_watchdog)
+  - 跨子域注记（2026-09-30 C115）：DelegationEngine 实体在 governance/intelligence_governance/delegation_engine.py、process_isolator 实体在 governance/resilience_governance/；rule_canary_manager/rule_shadow_runner/rule_debt_auditor 规划中未建（承诺面收敛）
   aliases:
   - escalation
   - 升级
@@ -605,7 +608,7 @@ entries:
   subdomain: persistence
   domain_name_zh: 运行时集成
   ssot_module: SH-DB-001
-  ssot_path: src/zephyr/data/persistence/
+  ssot_path: src/zephyr/governance/persistence/
   covers:
   - SQLite DDL Schema(v1-v8迁移)
   - 任务卡CRUD仓库(task_repo)
@@ -617,6 +620,7 @@ entries:
   - 数据加密与脱敏(data_encryption/data_masking)
   - 访问审计日志(data_access_audit)
   - 敏感数据分类(sensitive_data_classifier)
+  - 跨域注记（2026-09-30 C115）：真源=governance/persistence（task_repo/database_manager/sqlite_schema 实体所在）；gate_repo 实体在 gov_enforcement/commit_gates/、olap_engine 实体在 frontend/dashboard/；circuit_breaker_repo/data_encryption/data_access_audit/sensitive_data_classifier 规划中未建（承诺面收敛）
   aliases:
   - database
   - 数据库
@@ -698,7 +702,7 @@ entries:
   subdomain: shared_services
   domain_name_zh: 共享服务
   ssot_module: MOD-INF-016
-  ssot_path: src/zephyr/shared/shared_services/
+  ssot_path: src/zephyr/shared/
   covers:
   - 事件总线(event_bus)
   - 生命周期钩子(lifecycle/hooks)
@@ -718,6 +722,7 @@ entries:
   - 锁(lock)
   - 观察者(observer)
   - 死信队列(dlq)
+  - 跨子包注记（2026-09-30 C115）：实体散在 shared/ 各子包——event_bus.py、lifecycle/lazy_loader、io/file_utils、api/ 弹性族（CircuitBreaker/CircuitState/FallbackChain）、observability/ 等，无统一 shared_services 子包；本条=共享基础设施收敛登记面
   aliases:
   - shared core
   - 共享核心
@@ -778,11 +783,12 @@ entries:
   ssot_module: MOD-INF-013
   ssot_path: src/zephyr/integration/mcp/
   covers:
-  - 11个MCP服务端 + 1 Gateway
+  - 10个MCP服务端 + 1 Gateway（2026-09-30 C115 复测；知识库 KnowledgeBaseServer 已不存在，实体能力由 VectorMemoryServer 承接）
   - 蓝图搜索(BlueprintSearchServer)
   - 门禁引擎(GateEngineServer)
   - 治理(GovernanceServer)
-  - 知识库(KnowledgeBaseServer)
+  - 规则发现(RuleDiscoveryServer)
+  - 沙箱(SandboxServer)
   - 向量记忆(VectorMemoryServer)
   - 哨兵(SentinelServer)
   - 任务管理(TaskManagerMCP)
@@ -1878,6 +1884,7 @@ entries:
   domain_name_zh: 测试占位域
   ssot_module: MOD-INF-027
   ssot_path: '(depgraph domains.ssot_path 为空)'
+  ssot_exempt: placeholder
   covers:
   - "空壳域：depgraph 实测 0 节点（普查 BRK-083 登记项）；保留登记以维持 FDR↔depgraph 两册一致，净删属 Owner 门位"
   aliases:

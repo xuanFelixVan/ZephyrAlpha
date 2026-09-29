@@ -231,6 +231,21 @@ def test_domain_ssot_does_not_cry_wolf_on_prose_tokens(crc, tmp_path):
     assert [r["verdict"] for r in crc.verify_domain_ssot(reg2, check_covers=True)] == ["COVERS_UNFOUND"]
 
 
+def test_domain_ssot_honors_explicit_exempt_field(crc, tmp_path):
+    """显式豁免：条目带 ssot_exempt 字段⇒尺跳过（不哭狼）；豁免必须在册面显式登记，不许静默绿。"""
+    ghost = (tmp_path / "renamed_away" / "mod.py").as_posix()
+    reg = _write(tmp_path / "domain.yaml", _DOM_TMPL.format(sym="CanaryController", path=ghost))
+    assert [r["verdict"] for r in crc.verify_domain_ssot(reg)] == ["PATH_MISSING"]  # 无豁免必红
+    exempted = _write(
+        tmp_path / "domain2.yaml",
+        _DOM_TMPL.format(sym="CanaryController", path=ghost).replace(
+            "    ssot_path:", "    ssot_exempt: placeholder\n    ssot_path:"
+        ),
+    )
+    assert crc.verify_domain_ssot(exempted) == []  # 显式豁免⇒跳过
+    assert crc.verify_domain_ssot(exempted, check_covers=True) == []  # covers 核对同样跳过
+
+
 # ── 尺 1b：_shared.registry_entry_count 口径文本解析（生成器共用真源）──────
 
 

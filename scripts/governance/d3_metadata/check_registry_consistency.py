@@ -5,13 +5,13 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] CR-001~006 只读不改文件；CR-007/CR-007b 默认只读，--update-entry-counts 显式授权才写（ROOR 行级手术 + 内嵌 entry_counts 快照行，均保注释）；回填仅限已登记口径的 STALE 行
+# [INVARIANTS] CR-001~006 只读不改文件；CR-007/CR-007b 默认只读，--update-entry-counts 显式授权才写（ROOR 行级手术 + 内嵌 entry_counts 快照行，均保注释）；回填仅限已登记口径的 STALE 行；CR-008 恒只读
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/governance/test_registry_entry_counts.py（CR-007 对账+回填）
+# [TESTS] tests/governance/test_registry_entry_counts.py（CR-007 对账+回填）+ tests/governance/test_registry_derivation_canary.py（CR-008 反事实红证）
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_registry_consistency — 跨登记表一致性校验。
@@ -23,6 +23,10 @@ CR-007（2026-09-06 Owner 批"账本数字自动回填"）：ROOR entry_count �
 按 ENTRY_SPECS 显式口径逐表数数，STALE/MISSING/UNSPECIFIED 即 FAIL（CI 执法）；
 --update-entry-counts 行级手术回填（保注释保格式，仅动 STALE 行的数字，
 值变更且缺 counting_rule 时补插口径行）。
+
+CR-008（W-53，字节原样落库自 st-final-build-20260926 车道）：functional_domain_registry
+的 ssot_path 存在性对账；--check-domain-covers 另核 covers 声明符号能否在
+ssot_path 真源内词边界命中。
 """
 
 from __future__ import annotations
@@ -289,6 +293,9 @@ def check_rule(ror: dict, rule: dict) -> FindingCollection:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 ROOR_PATH = REPO_ROOT / "docs" / "registry_of_registries.yaml"
+DOMAIN_REGISTRY_PATH = (
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "functional_domain_registry.yaml"
+)
 
 # 口径元组：(kind, key, counting_rule 文本)
 # kind ∈ yaml_list（顶层数组条目数）/ yaml_field（顶层整数字段值）/
@@ -374,6 +381,15 @@ ENTRY_SPECS: dict[str, tuple[str, str, str]] = {
     "REG-FEATURE-ADJ-001": ("yaml_list", "features", "features 数组条目数"),
     "REG-CMP-REPORT-001": ("yaml_list", "report_items", "report_items 数组条目数"),
     "REG-ATH-001": ("yaml_list", "thresholds", "thresholds 数组条目数"),
+    # 2026-09-30 补口径：七张新表登记 ROOR 时未挂 ENTRY_SPECS，CR-007 报 UNSPECIFIED
+    # （同 2026-09-16 先例："新表无口径静默漂移"强制闭环的正向触发）——结构核验后统一补齐
+    "REG-STATE-VOCAB-001": ("yaml_list", "vocabularies", "vocabularies 数组条目数（封闭状态词表登记）"),
+    "REG-CARDSTATE-VOCAB-001": ("yaml_list", "values", "values 数组条目数（card_state 受控词表）"),
+    "REG-STD-FAMILY-001": ("yaml_list", "entries", "entries 数组条目数（标准↔治理族派生，口径见册内 counting_rule）"),
+    "REG-DOMAIN-NAMING-001": ("yaml_list", "entries", "entries 数组条目数（功能域 ID 命名规则）"),
+    "REG-FMS-DEADREF-BASELINE": ("yaml_list", "entries", "entries 数组条目数（死引用棘轮基线，生成物）"),
+    "REG-REGEN-CLEAN-001": ("yaml_dict_len", "baseline", "baseline 指纹字典键数（生成对棘轮）"),
+    "REG-METAQ-001": ("yaml_field", "row_count", "row_count 字段值（PG meta_question 快照）"),
 }
 
 # 不可自动数的表（原因显式登记；改口径需同步本表）
@@ -418,7 +434,7 @@ def _actual_entry_count(spec: tuple[str, str, str], physical_path: str) -> int |
         return None
     try:
         data = load_yaml(path)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 物理面探测容忍任何解析/IO 错误，统一判 None（既有行为，C115 仅补 noqa 过 RUFF-PRECLEAN）
         return None
     if not isinstance(data, dict):
         return None
@@ -482,7 +498,13 @@ def verify_entry_counts(roor_path: Path = ROOR_PATH) -> list[dict] | None:
             continue
         if expected is None:
             rows.append(
-                {"rid": rid, "verdict": "NO_COUNT", "expected": None, "actual": None, "note": "ROOR 无 entry_count 字段"}
+                {
+                    "rid": rid,
+                    "verdict": "NO_COUNT",
+                    "expected": None,
+                    "actual": None,
+                    "note": "ROOR 无 entry_count 字段",
+                }
             )
             continue
         actual = _actual_entry_count(spec, physical_path)
@@ -500,7 +522,14 @@ def verify_entry_counts(roor_path: Path = ROOR_PATH) -> list[dict] | None:
             continue
         verdict = "MATCH" if (isinstance(expected, int) and expected == actual) else "STALE"
         rows.append(
-            {"rid": rid, "verdict": verdict, "expected": expected, "actual": actual, "note": spec[2], "path": physical_path}
+            {
+                "rid": rid,
+                "verdict": verdict,
+                "expected": expected,
+                "actual": actual,
+                "note": spec[2],
+                "path": physical_path,
+            }
         )
     return rows
 
@@ -598,15 +627,31 @@ def verify_internal_entry_counts() -> list[dict]:
     for rid, (rel, keys) in INTERNAL_COUNT_SPECS.items():
         path = REPO_ROOT / rel
         if not path.is_file():
-            rows.append({"rid": rid, "verdict": "MISSING", "expected": None, "actual": None,
-                         "note": f"物理文件不存在: {rel}", "path": rel})
+            rows.append(
+                {
+                    "rid": rid,
+                    "verdict": "MISSING",
+                    "expected": None,
+                    "actual": None,
+                    "note": f"物理文件不存在: {rel}",
+                    "path": rel,
+                }
+            )
             continue
         text = path.read_text(encoding="utf-8")
         m = _INLINE_EC_RE.search(text)
         data = load_yaml(path)
         if m is None or not isinstance(data, dict):
-            rows.append({"rid": rid, "verdict": "NO_INLINE", "expected": None, "actual": None,
-                         "note": "无内嵌 entry_counts 快照行或顶层非 dict", "path": rel})
+            rows.append(
+                {
+                    "rid": rid,
+                    "verdict": "NO_INLINE",
+                    "expected": None,
+                    "actual": None,
+                    "note": "无内嵌 entry_counts 快照行或顶层非 dict",
+                    "path": rel,
+                }
+            )
             continue
         for key, list_key in keys.items():
             dm = re.search(rf"\b{re.escape(key)}:\s*(\d+)\b", m.group(1))
@@ -614,8 +659,17 @@ def verify_internal_entry_counts() -> list[dict]:
             actual = len(value) if isinstance(value, list) else None
             expected = int(dm.group(1)) if dm else None
             verdict = "MATCH" if expected is not None and expected == actual else "STALE"
-            rows.append({"rid": rid, "key": key, "verdict": verdict, "expected": expected,
-                         "actual": actual, "note": f"{list_key} 数组条目数", "path": rel})
+            rows.append(
+                {
+                    "rid": rid,
+                    "key": key,
+                    "verdict": verdict,
+                    "expected": expected,
+                    "actual": actual,
+                    "note": f"{list_key} 数组条目数",
+                    "path": rel,
+                }
+            )
     return rows
 
 
@@ -639,10 +693,9 @@ def apply_internal_entry_count_updates(rows: list[dict]) -> list[str]:
             if n:
                 updates.append(f"{r['rid']} entry_counts.{r['key']}: {r['expected']} -> {r['actual']}")
         new_line = f"entry_counts: {{{body}}}{m.group(2)}"
-        text = text[: m.start()] + new_line + text[m.end():]
+        text = text[: m.start()] + new_line + text[m.end() :]
         path.write_text(text, encoding="utf-8", newline="\n")
     return updates
-
 
 
 # ============================================================
@@ -677,15 +730,9 @@ def compute_roor_summary(roor: dict) -> dict:
     by_tier = {f"tier_{t.get('tier')}": len(t.get("registries") or []) for t in tiers}
     by_status = collections.Counter(str(e.get("status") or "<missing>") for e in entries)
     health = collections.Counter(_roor_entry_health(e) for e in entries)
-    broken_ids = [
-        str(e.get("registry_id") or "<no-id>")
-        for e in entries
-        if _roor_entry_health(e) == "broken"
-    ]
+    broken_ids = [str(e.get("registry_id") or "<no-id>") for e in entries if _roor_entry_health(e) == "broken"]
     # 条目自带 tier 字段者参与交叉校验（该字段历史上是手写的，与所在块可能不一致）
-    declared_tier = collections.Counter(
-        str(e.get("tier")) for e in entries if e.get("tier")
-    )
+    declared_tier = collections.Counter(str(e.get("tier")) for e in entries if e.get("tier"))
     return {
         "generated_by": "scripts/governance/d3_metadata/check_registry_consistency.py --refresh-summary",
         "total_tiers": len(tiers),
@@ -698,22 +745,22 @@ def compute_roor_summary(roor: dict) -> dict:
         "broken_registry_ids": broken_ids,
         "legacy_manual_claims_replaced": {
             "fully_scanned": "19（无机械真源：ROOR 条目 status 值域为 active/draft/archived/"
-                             "deprecated，从不出现 fully_scanned）",
+            "deprecated，从不出现 fully_scanned）",
             "pending_scan": "5（同上；条目侧亦无 pending_scan 取值）",
             "broken": "1（旧值无对应条目；本字段现由 _roor_entry_health 机判）",
             "by_tier.tier_0_core": "11（手写值，实测该块 registries 长度=12 → 计数漂移 1，已归零）",
         },
         "scan_coverage_note": "跨表一致性扫描覆盖以 registry_consistency_contract.yaml 的 "
-                              "registries 段为准（该册才是扫描面真源，RULE-SSOT）；"
-                              "本 summary 不再重复手写扫描计数。",
+        "registries 段为准（该册才是扫描面真源，RULE-SSOT）；"
+        "本 summary 不再重复手写扫描计数。",
     }
 
 
 def apply_roor_summary_update(roor_path: Path = ROOR_PATH) -> str:
     """行级手术替换 ROOR 尾部 summary 段（保注释、保其余条目，禁 yaml.safe_dump 整写）。"""
-    from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: PLC0415
-
     import yaml  # noqa: PLC0415
+
+    from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: PLC0415
 
     nl = chr(10)
     raw = roor_path.read_text(encoding="utf-8")
@@ -732,10 +779,93 @@ def apply_roor_summary_update(roor_path: Path = ROOR_PATH) -> str:
     indented = nl.join(("  " + ln) if ln.strip() else ln for ln in body.split(nl))
     out = raw[: idx + 1] + _ROOR_SUMMARY_KEY + nl + indented + nl
     yaml.safe_load(out)  # 解析自检后才落盘
-    safe_write_text(
-        roor_path, out, expected_base_sha256=content_sha256(raw), newline=nl
-    )
+    safe_write_text(roor_path, out, expected_base_sha256=content_sha256(raw), newline=nl)
     return "REFRESHED total_registries=" + str(data.get("summary", {}).get("total_registries"))
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CR-008 · 功能域册 ssot_path ↔ covers 对账（W-53，恒只读）
+#
+# 病灶：域册的 ssot_path/covers 是手写的，路径改名与类名重构都无人对账——
+#   「域说它管 X，X 却不在它说的真源里」正是模块归属与 depgraph 误判的源头。
+# 口径：ssot_path 不存在⇒PATH_MISSING；括注占位⇒PATH_UNDECLARED；
+#   covers 声明符号在真源内词边界不可寻⇒COVERS_UNFOUND（--check-domain-covers）。
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# covers 文案里括号内的符号名（如 "门禁引擎流程编排(GatePipeline/GateEngine)"）。
+# 只认「括号内、以 / 、 , 分隔后仍是纯标识」的片段——"三层运行时编排(L1 Trae/L2 Local/L3 API)"
+# 这类散文层级标签不是类名，混进来会让尺自哭狼（红证见 canary 的 prose 用例）。
+_PAREN_TOKEN_RE = re.compile(r"\(([^()]*)\)")
+_SYMBOL_RE = re.compile(r"[A-Z][A-Za-z0-9_]{2,}")
+_SOURCE_SUFFIXES = (".py", ".pyi", ".md", ".yaml", ".yml", ".sql", ".ps1")
+_CORPUS_FILE_CAP = 3000  # 单条目扫描文件数上限（超时防线，非阈值放松）
+
+
+def _domain_entries(registry_path: Path) -> list[dict]:
+    """装载功能域注册表 entries 段；册不存在/结构不符返回空表。"""
+    if not registry_path.is_file():
+        return []
+    data = load_yaml(registry_path)
+    entries = data.get("entries") if isinstance(data, dict) else None
+    return [e for e in (entries or []) if isinstance(e, dict)]
+
+
+def _declared_symbols(covers: Any) -> set[str]:
+    """从 covers 文案提取符号名（括号内、以 / 、 , 分隔后的纯标识；含空白的散文片段不认）。"""
+    found: set[str] = set()
+    if not isinstance(covers, list):
+        return found
+    for text in covers:
+        for group in _PAREN_TOKEN_RE.findall(str(text)):
+            for part in re.split(r"[/、,]", group):
+                if _SYMBOL_RE.fullmatch(part):
+                    found.add(part)
+    return found
+
+
+def _symbol_in_scope(symbol: str, root: Path) -> bool:
+    """符号是否作为**独立标识**出现在真源范围内（早退式扫描，文件数封顶）。
+
+    词边界而非子串：子串匹配会让 covers 里的 "GateEngine" 命中源码的
+    "GateEngineV2"（红证 test_domain_ssot_red_when_covered_symbol_moved 实测逼出）。
+    """
+    needle = re.compile(rf"\b{re.escape(symbol)}\b")
+    files = [f for f in (root.rglob("*") if root.is_dir() else [root]) if f.is_file() and f.suffix in _SOURCE_SUFFIXES]
+    for f in files[:_CORPUS_FILE_CAP]:
+        try:
+            if needle.search(f.read_text(encoding="utf-8", errors="ignore")):
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def verify_domain_ssot(registry_path: Path = DOMAIN_REGISTRY_PATH, check_covers: bool = False) -> list[dict]:
+    """CR-008：ssot_path 存在性（默认可跑，廉价）+ covers 符号可寻（--check-domain-covers）。
+
+    病灶：域册的 ssot_path/covers 是手写的，路径改名与类名重构都无人对账——
+    「域说它管 X，X 却不在它说的真源里」正是模块归属与 depgraph 误判的源头。
+    豁免：条目带非空 ssot_exempt 字段（如占位域 placeholder）即跳过——豁免显式登记在册面。
+    """
+    rows: list[dict] = []
+    for entry in _domain_entries(registry_path):
+        if str(entry.get("ssot_exempt") or "").strip():
+            continue  # 显式豁免（如占位域）：白名单进册面 ssot_exempt 字段，非代码硬编码，不许静默绿
+        raw = str(entry.get("ssot_path") or "").strip()
+        ident = {"domain": entry.get("domain"), "subdomain": entry.get("subdomain")}
+        if not raw or raw.startswith("("):
+            rows.append({**ident, "verdict": "PATH_UNDECLARED", "detail": raw or "(空)", "path": raw})
+            continue
+        target = Path(raw)
+        target = target if target.is_absolute() else REPO_ROOT / raw
+        if not target.exists():
+            rows.append({**ident, "verdict": "PATH_MISSING", "detail": raw, "path": raw})
+            continue
+        if check_covers:
+            missing = sorted(s for s in _declared_symbols(entry.get("covers")) if not _symbol_in_scope(s, target))
+            if missing:
+                rows.append({**ident, "verdict": "COVERS_UNFOUND", "detail": " ".join(missing), "path": raw})
+    return rows
 
 
 def main() -> None:
@@ -751,6 +881,11 @@ def main() -> None:
         "--refresh-summary",
         action="store_true",
         help="BRK-084：由 tiers 实测再生 ROOR summary 计数（宪法 §4.3 计数用字段不写死在散文）",
+    )
+    parser.add_argument(
+        "--check-domain-covers",
+        action="store_true",
+        help="CR-008b：额外核对功能域册 covers 里声明的符号能否在 ssot_path 真源内找到（扫源码，较慢）",
     )
     args = parser.parse_args()
     if args.refresh_summary:
@@ -834,6 +969,28 @@ def main() -> None:
         )
     status = "PASS" if not istale else f"FAIL ({len(istale)} 项)"
     print(f"  CR-007b: 内嵌 entry_counts 对账 ... {status}", file=sys.stderr)
+
+    # CR-008：功能域册 ssot_path ↔ covers 对账（W-53，恒只读）
+    domain_rows = verify_domain_ssot(check_covers=args.check_domain_covers)
+    for r in domain_rows:
+        entry_problems += 1
+        print(f"    {r['verdict']}: {r['domain']}/{r['subdomain']} {r['detail']}", file=sys.stderr)
+        if FINDING_AVAILABLE:
+            all_findings.add(
+                Finding(
+                    dimension=Dimension.D3,
+                    severity=Severity.HIGH,
+                    category="跨登记表一致性 — CR-008",
+                    target_file=r.get("path") or "functional_domain_registry.yaml",
+                    description=f"[CR-008] {r['domain']}/{r['subdomain']} {r['verdict']}: {r['detail']}",
+                    evidence="ssot_path ↔ covers 对账（functional_domain_registry.yaml entries）",
+                    blast_radius=BlastRadius.MODULE,
+                    remediation_action=RemediationAction.FIX,
+                    remediation_priority="P1",
+                )
+            )
+    status = "PASS" if not domain_rows else f"FAIL ({len(domain_rows)} 项)"
+    print(f"  CR-008: 功能域册 ssot_path↔covers 对账 ... {status}", file=sys.stderr)
 
     total = all_findings.total
     if total == 0:
