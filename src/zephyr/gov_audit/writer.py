@@ -5,7 +5,7 @@
 # [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 报告写入必须原子操作(temp-file+os.replace); events.jsonl 追加必须持跨进程文件锁+锁内重读尾哈希(GW-A 2026-09-16, 禁凭实例内存 _last_hash 链接——多写方交错落盘=断链根因)
+# [INVARIANTS] 报告写入必须原子操作(temp-file+os.replace); events.jsonl 追加必须持跨进程文件锁+锁内重读尾哈希(GW-A 2026-09-16, 禁凭实例内存 _last_hash 链接——多写方交错落盘=断链根因); 锁等待必须有界(2026-09-29 lane-l: LK_NBLCK 轮询+总预算 GOV_AUDIT_LOCK_WAIT_S 默认30s, 超预算 TimeoutError 让路 fail-closed)
 # [MODIFY-GUARD] 报告格式变更必须同步 cli.py + query.py; events.jsonl 追加临界区变更必须同步 tests/governance/audit/test_writer_multiproc_append.py 并发测试
 # [STABILITY] stable
 # [SAFETY] H
@@ -20,12 +20,14 @@
 # [ALGO_FLOW] external: docs/03_modules/_domain_gov_audit/algo_flow/writer.yaml
 """
 
+import errno
 import hashlib
 import hmac
 import json
 import logging
 import os
 import threading
+import time
 import uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -96,11 +98,68 @@ _GLOBAL_WRITER_LOCK = threading.Lock()
 #   prev 断链 5,595 处（首处 #35156，签名=#35155/#35156 同 prev 同秒——
 #   两写方各持陈旧内存 _last_hash 交错落盘），且断链持续发生至普查当日。
 # 治本=append 临界区跨进程互斥 + 锁内实时重读文件尾哈希。
-# 等待语义：OS 阻塞锁（Windows msvcrt LK_LOCK 每 1s 自动重试约 10s 后 OSError；
-# POSIX flock LOCK_EX 全阻塞）——零用户态轮询（守"永久系统禁时间触发轮询"铁律，
-# PERM-TRIGGER 同源），获取失败（约 10s 超时）映射 TimeoutError fail-closed。
+#
+# 等待语义 v2（2026-09-29 lane-l 有界等待治本）：
+#   v1 等待方=OS 阻塞锁（Windows LK_LOCK 每 1s 自动重试约 10s 后 OSError；
+#   POSIX flock LOCK_EX 全阻塞直至持锁方释放）——四战实证（governance 跑批
+#   连续 4 次楔死于 writer.py 锁等待，pytest-timeout 420s 打栈）：多队并发
+#   提交窗口中提交链批量审计写反复过锁，等待方累计阻塞 10s×N / 或随持锁方
+#   时长无界延伸，任何要写审计的进程被饿死。
+#   v2=非阻塞尝试（LK_NBLCK / LOCK_EX|LOCK_NB）+ 50ms 短轮询 + 总预算：
+#   - 预算默认 30s，env GOV_AUDIT_LOCK_WAIT_S 可覆盖（0=仅试一次即让路）
+#   - 预算耗尽抛 TimeoutError 让路（消息含 lock_path 与实际等待时长），
+#     fail-closed 不变——丢一条事件好过写断链
+#   - 非后台 Timer/sleep-loop 常驻轮询：这是请求作用域内的同步等待预算
+#     （bounded acquisition），不违反"永久系统禁时间触发轮询"铁律
+#     （该铁律管 reconciler 类常驻触发器，PERM-TRIGGER 同源）
+#   - 调用方消费盘查（2026-09-29）：session_audit.append_record 与
+#     AuditChainVerifier.append 均已吞 OSError/RuntimeError（warn+让路，
+#     审计=观察面不阻断业务面）；write() 自身借异常计数驱动 I8 readonly
+#     保护——故锁超时保持向上抛出，不设 spillover 旁路。
 _TAIL_SCAN_CHUNK_BYTES: Final[int] = 65536
 _TAIL_SCAN_MAX_BYTES: Final[int] = 32 * 1024 * 1024
+_LOCK_WAIT_POLL_INTERVAL_S: Final[float] = 0.05
+_LOCK_WAIT_BUDGET_DEFAULT_S: Final[float] = 30.0
+_LOCK_WAIT_BUDGET_ENV: Final[str] = "GOV_AUDIT_LOCK_WAIT_S"
+# 竞争特征（锁被他人持有=可重试继续等）；其余 OSError=真 I/O 故障（立即失败不空转）。
+# POSIX flock 非阻塞 → BlockingIOError(EAGAIN/EWOULDBLOCK) 或 EACCES；
+# Windows LK_NBLCK → winerror 33（ERROR_LOCK_VIOLATION）/36（EDEADLK）/errno 13。
+_CONTENTION_ERRNOS: Final[frozenset[int]] = frozenset({errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK, errno.EDEADLK})
+_CONTENTION_WINERRORS: Final[frozenset[int]] = frozenset({33, 36})
+
+
+def _lock_wait_budget_s() -> float:
+    """锁等待总预算（秒）：默认 30s，env GOV_AUDIT_LOCK_WAIT_S 覆盖；0=仅试一次。"""
+    raw = os.getenv(_LOCK_WAIT_BUDGET_ENV, "").strip()
+    if raw:
+        try:
+            val = float(raw)
+        except ValueError:
+            logger.warning(
+                "invalid %s=%r; falling back to default %.0fs",
+                _LOCK_WAIT_BUDGET_ENV,
+                raw,
+                _LOCK_WAIT_BUDGET_DEFAULT_S,
+            )
+            return _LOCK_WAIT_BUDGET_DEFAULT_S
+        if val >= 0:
+            return val
+        logger.warning(
+            "negative %s=%r; falling back to default %.0fs",
+            _LOCK_WAIT_BUDGET_ENV,
+            raw,
+            _LOCK_WAIT_BUDGET_DEFAULT_S,
+        )
+    return _LOCK_WAIT_BUDGET_DEFAULT_S
+
+
+def _is_lock_contention(exc: OSError) -> bool:
+    """区分"锁被他人持有"（可重试继续等预算）与真 I/O 故障（立即失败不空转）。"""
+    if isinstance(exc, BlockingIOError):
+        return True
+    if getattr(exc, "winerror", None) in _CONTENTION_WINERRORS:
+        return True
+    return exc.errno in _CONTENTION_ERRNOS
 
 
 def _read_tail_entry_hash(event_log_path: Path, hash_field: str = "entry_hash") -> str:
@@ -161,15 +220,17 @@ def _read_tail_entry_hash(event_log_path: Path, hash_field: str = "entry_hash") 
 
 @contextmanager
 def _cross_process_append_lock(event_log_path: Path) -> Iterator[None]:
-    """events.jsonl 追加跨进程互斥锁（GW-A 治本 2026-09-16）。
+    """events.jsonl 追加跨进程互斥锁（GW-A 治本 2026-09-16；有界等待 v2 2026-09-29）。
 
     复用仓内既有 OS 字节排他锁先例（src/zephyr/data/scheduler.py
     acquire_single_instance_lock：msvcrt.locking/fcntl.flock），差异=本锁是
-    单条 append 的短临界区，等待交给 OS：
-    - Windows: msvcrt.locking(LK_LOCK) 每 1s 自动重试、约 10s 后 OSError（映射
-      TimeoutError，fail-closed：丢一条事件好过写断链）
-    - POSIX: fcntl.flock(LOCK_EX) 阻塞直至获取
-    全程零用户态轮询（无 sleep/spin——守"永久系统必须全自动事件触发"铁律）。
+    单条 append 的短临界区，等待=有界轮询：
+    - 非阻塞尝试：Windows msvcrt.locking(LK_NBLCK) / POSIX flock(LOCK_EX|LOCK_NB)
+    - 竞争（锁被他人持有）→ sleep 50ms 后重试，总预算默认 30s
+      （env GOV_AUDIT_LOCK_WAIT_S 覆盖，0=仅试一次）
+    - 预算耗尽 → TimeoutError 让路（消息含 lock_path 与实际等待时长），
+      fail-closed：丢一条事件好过写断链。请求作用域有界等待，非后台常驻轮询。
+    - 非竞争性 OSError（真 I/O 故障）→ 不空转，立即映射 TimeoutError（v1 同型）
     - 进程崩溃/被杀 → OS 关句柄自动释放，无 stale 锁残留（句柄即锁生命周期）
     - 锁文件（events.jsonl.lock）只创建永不删除——删除=拆散互斥域
     """
@@ -183,18 +244,35 @@ def _cross_process_append_lock(event_log_path: Path) -> Iterator[None]:
     # with 持句柄：释放顺序=内层 finally 先 UNLCK、with 退出后关柄——
     # 解锁先于关柄，互斥语义完整（无需裸句柄，过 OPEN-WITHOUT-WITH）。
     with open(lock_path, "a+b") as fh:
-        try:
+        budget_s = _lock_wait_budget_s()
+        started = time.monotonic()
+        deadline = started + budget_s
+        while True:
             fh.seek(0)
-            if os.name == "nt":
-                import msvcrt
+            try:
+                if os.name == "nt":
+                    import msvcrt
 
-                msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 1)
-            else:
-                import fcntl  # noqa: import-integrity  平台条件分支：fcntl 仅 Unix 存在，Windows 上不可解析属预期
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl  # noqa: import-integrity  平台条件分支：fcntl 仅 Unix 存在，Windows 上不可解析属预期
 
-                fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
-        except OSError as exc:
-            raise TimeoutError(f"audit append lock not acquired (OS blocking wait exhausted): {lock_path}") from exc
+                    fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except OSError as exc:
+                waited = time.monotonic() - started
+                if not _is_lock_contention(exc):
+                    # 真 I/O 故障（句柄/磁盘级）：不重试不空转，v1 同型 fail-closed
+                    raise TimeoutError(
+                        f"audit append lock acquire failed on {lock_path} (waited {waited:.1f}s): {exc}"
+                    ) from exc
+                if time.monotonic() >= deadline:
+                    raise TimeoutError(
+                        f"audit append lock not acquired after waited {waited:.1f}s "
+                        f"(budget {budget_s:.0f}s, env {_LOCK_WAIT_BUDGET_ENV}): {lock_path} — "
+                        f"giving way (fail-closed: dropping this append beats forking the chain)"
+                    ) from exc
+                time.sleep(_LOCK_WAIT_POLL_INTERVAL_S)
         try:
             yield
         finally:
@@ -427,29 +505,34 @@ class AuditWriter:
             # GW-A 收尾修复（2026-09-16 st-auditkey）：失败计数临界区覆盖锁获取+
             # 尾读+落盘全链——锁 open/尾读失败（目录缺失、超限 fail-closed）同样
             # 计入 I8 失败保护（连续 5 次→readonly），恢复 GW-A 前语义。
+            #
+            # 有界等待加固（2026-09-29 lane-l）：锁依赖外的组装重活（dict 拷贝/
+            # 保留字段净化/entry_id/timestamp/lamport 字段）全部移到跨进程锁外
+            # ——线程安全由 self._lock 保证（与原顺序一致），跨进程临界区收窄到
+            # 最小必要集：尾读+prev_hash+canonical 序列化+签名+append+fsync。
+            self._lamport_counter += 1
+            entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
+
+            entry: dict[str, Any] = dict(event)
+            # 治本（AI-AUDIT12 保留字段净化）：剔除生产方注入的保留字段——实证主仓
+            # 2026-07-04 起 5343 条 gate_audit 事件（audit_chain_verifier 预注入自有
+            # entry_hash）canonical 绑定了不可恢复的外来哈希值，整段链永久不可验证；
+            # 且 writer 无 HMAC 密钥时外来 hmac_signature 会原样落盘（伪造签名幻象）。
+            # entry_hash/hmac_signature 只能由本 writer 计算赋值，禁止生产方预注入。
+            entry.pop("entry_hash", None)
+            entry.pop("hmac_signature", None)
+            entry["entry_id"] = entry_id
+            entry["timestamp"] = datetime.now(timezone.utc).isoformat()
+            entry["lamport_time"] = self.lamport_time + 1
+            entry["lamport_clock_counter"] = self._lamport_counter
+            entry["lamport_clock_ide"] = self.ide_source
             try:
                 with _cross_process_append_lock(self._event_log_path):
                     # 治本（GW-A 2026-09-16 多写方互踩断链）：跨进程锁内实时重读文件尾哈希。
                     # 实例内存 _last_hash 仅为初始化启发式——多进程/多实例并发 append 时
                     # 各持陈旧尾哈希交错落盘即 prev 断链（实证 #35155/#35156 同 prev 同秒）。
                     tail_hash = _read_tail_entry_hash(self._event_log_path)
-                    self._lamport_counter += 1
-                    entry_id = _generate_entry_id(prefix=prefix, seq=self._lamport_counter)
-
-                    entry: dict[str, Any] = dict(event)
-                    # 治本（AI-AUDIT12 保留字段净化）：剔除生产方注入的保留字段——实证主仓
-                    # 2026-07-04 起 5343 条 gate_audit 事件（audit_chain_verifier 预注入自有
-                    # entry_hash）canonical 绑定了不可恢复的外来哈希值，整段链永久不可验证；
-                    # 且 writer 无 HMAC 密钥时外来 hmac_signature 会原样落盘（伪造签名幻象）。
-                    # entry_hash/hmac_signature 只能由本 writer 计算赋值，禁止生产方预注入。
-                    entry.pop("entry_hash", None)
-                    entry.pop("hmac_signature", None)
-                    entry["entry_id"] = entry_id
-                    entry["timestamp"] = datetime.now(timezone.utc).isoformat()
                     entry["prev_hash"] = tail_hash
-                    entry["lamport_time"] = self.lamport_time + 1
-                    entry["lamport_clock_counter"] = self._lamport_counter
-                    entry["lamport_clock_ide"] = self.ide_source
 
                     # entry_hash = SHA-256(canonical JSON of entry，不含 entry_hash/hmac_signature)
                     canonical = dumps(entry, sort_keys=True, ensure_ascii=False)
