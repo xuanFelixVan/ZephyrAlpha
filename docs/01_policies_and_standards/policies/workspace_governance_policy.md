@@ -77,12 +77,17 @@ GitCommitGateway post-commit 自动触发的 reconciler 重新生成的文件，
 | `data/asset_index/unified-asset-index.yaml` | generate_asset_index.py（唯一写者，2026-09-06 裁定） | 派生产物 |
 | `data/scans/raw-asset-scan.json` | asset scanner | 运行时快照 |
 | `data/architecture_health/latest.json` | health reconciler | 运行时快照 |
-| `scripts/governance/meta/rules_integrity_db.json` | integrity checker | 运行时快照 |
 
 > **派生面退役（2026-09-06 Owner 批二③）**：`data/reports/dashboard.json`、
 > `data/reports/reconciliation-report.md`、`data/classified/classified-assets.json`
 > 三派生物已 git rm——零活消费方（唯一读方为无挂载的 MCP 死端/管线自循环），
 > 内容停在 2026-08-16 窄口径，与新索引（宽口径 v2 计数聚合）schema 分裂。
+
+> **出库 git（2026-09-29 C148，Owner 批②）**：`scripts/governance/meta/rules_integrity_db.json`
+> 已 git rm --cached + .gitignore（工作树保留）。纯派生件：可由
+> `validate_rules_integrity.py --register/--fold` 全量重算，且机器每笔提交后重写——
+> 跟踪态=「写入→还原死循环」温床（2026-07-22 教训同源）。commit_derived_sync
+> `_DERIVED_PATTERNS` 白名单同步移除（两通道一致）。
 
 > **注意（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，2026-07-21）**：`docs/03_modules/**/blueprint.md`
 > 已从 auto-sync 清单移除。原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级

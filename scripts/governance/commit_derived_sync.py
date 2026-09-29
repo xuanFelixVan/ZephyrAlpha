@@ -21,7 +21,10 @@
   其中纯信息类（手册统计 AUTO 块/README 快照/latest.json 等）已由 workspace_hygiene_reconciler
   post-commit 自动 git restore 自愈；但持久化类不能自动还原——
     ① blueprint.md 统计区（混合内容文件，整文件还原会误伤未提交正文——#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 教训）
-    ② scripts/governance/meta/rules_integrity_db.json（金标哈希 DB，还原=写入→还原死循环，2026-07-22 教训）
+    ② rules_integrity_db.json 已出库 git（2026-09-29 C148，Owner 批②：git rm --cached +
+       .gitignore，工作树保留；纯派生件，validate_rules_integrity.py --register/--fold
+       全量可重算）——本脚本白名单同步移除，与 ritual 侧 ZEPHYR_INTEGRITY_BASELINE=head
+       门控两通道一致
     ③ rule_catalog_registry.yaml / registry_master_index.yaml（新生成条目=真实内容，须持久化）
   这些文件跨多域（COMMIT_SCOPE_VIOLATION 拦截单域提交），AI 任务 commit 不含它们 → 持续残留。
   历史模式：每轮会话累积 → 下个 AI 重新 triage → 循环往复。
@@ -46,7 +49,9 @@ GATEWAY = REPO / "scripts" / "git_commit.py"
 _DERIVED_PATTERNS: tuple[str, ...] = (
     # 持久化类（不能 auto-restore，必须 commit）
     "docs/03_modules/",  # blueprint.md 统计区（注意：若该蓝图有本会话真实未提交正文，应由任务 commit 先行，本脚本后跑）
-    "scripts/governance/meta/rules_integrity_db.json",
+    # rules_integrity_db.json 已移除（2026-09-29 C148，Owner 批②）：出库 git（git rm --cached
+    # + .gitignore）。保留条目会让本脚本对未跟踪文件反复走 git add（被拒）=死信循环；
+    # 该件真源=validate_rules_integrity.py（--register/--fold 全量重算），非提交面。
     "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml",
     # architecture_model/index.yaml 已移除（Owner 裁定 2026-09-11 选 A，st-perf-plan-20260910）：
@@ -63,7 +68,11 @@ def _dirty_files() -> list[str]:
     """_dirty_files implementation."""
     out = subprocess.run(
         ["git", "-c", "core.quotepath=false", "status", "--porcelain=v1", "-uno"],
-        capture_output=True, text=True, encoding="utf-8", cwd=REPO, timeout=30,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        cwd=REPO,
+        timeout=30,
     ).stdout
     files = []
     for line in out.splitlines():
@@ -122,11 +131,16 @@ def main() -> int:
         " [no-lookup:continuation] [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]"
     )
     cmd = [
-        sys.executable, str(GATEWAY),
-        "--session", args.session,
-        "--allow-overlap", "--allow-multi-domain",
-        "--files", ",".join(derived),
-        "--message", msg,
+        sys.executable,
+        str(GATEWAY),
+        "--session",
+        args.session,
+        "--allow-overlap",
+        "--allow-multi-domain",
+        "--files",
+        ",".join(derived),
+        "--message",
+        msg,
     ]
     ret = subprocess.run(cmd, cwd=REPO).returncode
     if ret != 0:

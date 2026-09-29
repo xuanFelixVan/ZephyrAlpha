@@ -637,3 +637,8 @@ data/crypto/shadow/
 # c4 论文 PDF 运行时缓存止血（st-oddjobs-20260923 2026-09-23，60,245 件/56.59GB 实证；
 # 审批登记=#ARCH-C4CACHE-001 architecture_issue_registry 同批）。可再生缓存，不入库。
 data/c4_pdf_cache/
+
+# rules_integrity_db.json 出库 git（2026-09-29 C148，Owner 批②）：金标哈希 DB=纯派生件，
+# validate_rules_integrity.py --register/--fold 全量重算可达；机器每笔提交后重写，
+# 跟踪态=写入→还原死循环温床（2026-07-22 教训）。工作树保留，git rm --cached 同批落地。
+scripts/governance/meta/rules_integrity_db.json
