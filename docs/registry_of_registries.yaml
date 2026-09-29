@@ -870,7 +870,7 @@ tiers:
         physical_path: docs/_working/chain_piling_campaign/snapshots/registry_latest.yaml
         format: yaml+pg（真源=PG schema meta_question 三表；YAML 为机生快照禁手工维护）
         maintenance: auto （src/zephyr/governance/meta_question/snapshot.py 机生）
-        entry_count: 0
+        entry_count: 422
         counting_rule: meta_question 主表行数（快照头部 row_count 字段）
         status: active
         description: 原问题（值得问的问题本身）全生命周期唯一账本——入库闸五要素机检/一问一考/状态机 draft→…→retired（墓碑 PQ-NNNN 不复用）/认领/考试回填。设计真源=docs/_working/chain_piling_campaign/infra_mining/（W1 挖矿包五份）；写入唯一入口=MetaQuestionRegistry（TRAE-087）。问题视角源线谱与图谱谱系见同战役 02/03 号件。
