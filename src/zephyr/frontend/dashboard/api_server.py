@@ -5091,24 +5091,6 @@ else:  # 仓库 web 目录缺失（异常场景）：纯 API 降级运行，页�
     logger.warning("static web dir missing: %s — 8890 降级为纯 API（页面不服务）", _WEB_ROOT)
 
 
-def main() -> None:
-    import ctypes
-
-    import uvicorn
-
-    # SEM_FAILCRITICALERRORS(0x8003)：子进程继承错误模式——子进程硬错误（如 schtasks
-    # 0xc0000142 DLL 初始化失败）不再弹 GUI 对话框，只以非零退出码返回。
-    # 背景 2026-09-12 弹窗风暴：病变 api_server 实例每次 schtasks /query 都弹窗，
-    # 前端 60s 缓存轮询 → 每分钟多个弹窗。本防线保证同类故障只降级为状态灯红色。
-    ctypes.windll.kernel32.SetErrorMode(0x8003)
-
-    uvicorn.run(app, host="127.0.0.1", port=8890, log_level="warning")
-
-
-if __name__ == "__main__":
-    main()
-
-
 # ── AI 层接线批路由（st-ailayer-final-20260924；promotion_advisories 同款降级惯例）──────────
 
 
@@ -5212,3 +5194,21 @@ def schedulegate_confirm(payload: dict[str, Any] | None = None) -> dict[str, Any
         }
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": f"confirm unavailable: {str(exc)[:180]}"}
+
+
+def main() -> None:
+    import ctypes
+
+    import uvicorn
+
+    # SEM_FAILCRITICALERRORS(0x8003)：子进程继承错误模式——子进程硬错误（如 schtasks
+    # 0xc0000142 DLL 初始化失败）不再弹 GUI 对话框，只以非零退出码返回。
+    # 背景 2026-09-12 弹窗风暴：病变 api_server 实例每次 schtasks /query 都弹窗，
+    # 前端 60s 缓存轮询 → 每分钟多个弹窗。本防线保证同类故障只降级为状态灯红色。
+    ctypes.windll.kernel32.SetErrorMode(0x8003)
+
+    uvicorn.run(app, host="127.0.0.1", port=8890, log_level="warning")
+
+
+if __name__ == "__main__":
+    main()
