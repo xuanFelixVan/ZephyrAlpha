@@ -106,7 +106,7 @@ completes_when: 每个可开工（⬜/🔨）中类都有叶簿且三扫收敛�
 | W-56 | ⬜→**HEAD 面已完成** | `mining/families/family05_governance_registries/W-56.md` | **IDX-3 补**：HEAD 文档引用上界=413=在册最大 ⇒ 当前**零悬空号**；真实残留改两处：①**迁号无闭包**（`#404→#407` 在册，旧号引用无台管）②**号在册而事未办**（X-49 的 #410"授权空转"）⇒ 判据焦点应从"扫悬空"改向这两条；车道面须由有 claim 权者扫（本层禁扫他道） |
 | W-57 | ⬜ | `NOT-MINED` | 宪法 L0 漂移：X-52 判 `#ARCH-AGENTS-SSOT-DRIFT-001` 已在册（行 22528）⇒ 引用号可用 |
 | W-58 | ⬜ | `NOT-MINED` | 议题册 severity 变体归一 |
-| W-59 | 🌑 | `NOT-MINED` | `10_d_data.md` 19,037 行未跟踪（X-52） |
+| W-59 | 🌑 | `NOT-MINED` | `10_d_data.md` 19,037 行未跟踪（X-52；〔SW15 2026-09-29 复测 19,364，活文件现值以 wc -l 为准〕） |
 
 ## 七、族 6 · 考试与搜索链（`family06_exam_and_search_chain/`）
 
