@@ -194,6 +194,10 @@ OPTIONAL_DUE_KINDS = {
     # 做T条件包到期事件——执行体 run_t0_condition_pack_due 由 D-2（build_anchored_state_history
     # 自动产出者）交付，交付前走本函数 log-and-skip 契约（不占 attempts 不堵队）。
     "t0_condition_pack_due": ("zephyr.strategy_pipeline.t0_condition_pack", "run_t0_condition_pack_due"),
+    # F73 A/B 联赛判据执行器（st-c9-f73，2026-09-29，处方 02_ab_league.md 堵点2/堵点6）：
+    # league_judge_due 月度档——执行体 scripts.backtest.league_judge.run_league_judge_due
+    # （namespace 包导入），空场落空判定书=链路保温；marker 触指在 _default_handler 分支。
+    "league_judge_due": ("scripts.backtest.league_judge", "run_league_judge_due"),
 }
 AUDIT_MARKER = STATE_DIR / "last_audit.json"  # mount_audit/sim_memo 最近执行时间戳
 MONTHLY_DAYS = 30  # 月度档评估线（对齐 decay_watch monthly 语义）
@@ -318,6 +322,10 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
         # 失败/模块缺失不触（module_not_ready 跳过也不触，跨唤醒重评，月度档不静默丢失）
         if kind == "paper_outpost_due" and not out.get("skipped"):
             _touch_marker("paper_outpost")
+        # F73 A/B 联赛判据执行器（st-c9-f73，处方 02_ab_league.md 堵点2）：同款月度档
+        # marker 触指——空场照常落空判定书（链路保温），失败不触=跨唤醒重评
+        if kind == "league_judge_due" and not out.get("skipped"):
+            _touch_marker("league_judge")
         return out
     if kind == "c2_screen_due":
         return run_c2_screen(evt["payload"])
@@ -706,6 +714,7 @@ def maybe_emit_monthly() -> dict[str, Any]:
         ("sim_memo", "sim_memo_monthly"),
         ("sim_deviation", "sim_deviation_monthly"),
         ("paper_outpost", "paper_outpost_due"),  # F26 E7 前哨月度考核（SW5 接线批）
+        ("league_judge", "league_judge_due"),  # F73 A/B 联赛判据月度档（st-c9-f73，处方堵点2/6）
     ):
         if not _marker_due(name):
             continue

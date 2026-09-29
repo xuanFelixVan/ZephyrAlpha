@@ -56701,6 +56701,11 @@ creation_tokens:
   created_by: st-c9-f115
   capability: review_trigger_docs
   merge_evaluation: "R1 薄刀伴读蓝图（架构资产非代码真源）"
+- file: scripts/backtest/league_judge.py
+  token: league-judge-pairwise-promotion-executor-20260929
+  created_by: st-c9-f73
+  capability: league_judge
+  merge_evaluation: "F73 处方堵点2/3 唯一新执行器：成对判定+ρ闸并入本件（不新建独立闸系统=收敛唯一）；判定器复用既有 msprt(MOD-PF-008)+bhy_fdr 零重建；替代项=无（league 域机制三件缺位件填补，非重复建设）"
 - file: src/zephyr/governance/audit/registry_entry_counts_reconciler.py
   token: registry-entry-counts-postcommit-backfill-wiring-registry-entry-counts-reconciler-20260929
   created_by: st-finaldel-ownr2-20260930

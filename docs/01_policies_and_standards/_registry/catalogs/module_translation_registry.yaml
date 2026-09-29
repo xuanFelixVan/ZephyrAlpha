@@ -61819,11 +61819,11 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/governance/audit/library_new_module_reconciler.py
   domain_id: D_GOVERNANCE
-  name_zh: "新模块入馆协调器"
-  name_en: "library new module reconciler"
-  desc_zh: "新 .py 落 HEAD 后经 Librarian.act 入编并一次真 grep 派生 potential_consumers（post-commit 事件触发）"
+  name_zh: "图书馆新模块自动入编对账器"
+  name_en: ""
+  desc_zh: ""
   desc_en: ""
-  plain_zh: "每当有全新的 Python 代码文件合进仓库，这个小协调器就自动把它登记进图书馆总账，并顺手查一遍全仓库找出谁在引用它（潜在消费者）。如果发现它谁都不引用（孤岛件），账上会如实写零并打上观察标记，提醒人来决定要不要补场景或下架。它只在提交事件发生时干一次活，不搞定时轮询。"
+  plain_zh: "新写的代码一落地，图书馆就自动给它登记一条户口，并当场查一遍到底有没有人用它；没人用就如实记零并点名"
   responsibility_layer: governance
 - module_path: src/zephyr/backtest/core/batch_window_preflight.py
   domain_id: D_BACKTEST
@@ -62051,6 +62051,15 @@ entries:
   desc_en: ""
   plain_zh: "自动发现已经死掉的会话，把它们占用的文件锁释放掉，把残留的暂存残影清理干净，并把会话目录归档，防止死会话长期占用资源"
   responsibility_layer: governance
+- module_path: scripts/backtest/league_judge.py
+  domain_id: D_BACKTEST
+  name_zh: "A/B联赛成对晋升判据执行器"
+  name_en: "AB league pairwise promotion judge"
+  desc_zh: "champion vs challenger 成对判定：msprt e-process 序贯显著性+BHY q=0.10 族守门+ρ>0.7 相关性闸，三态输出 promote/eliminate/observe，判定书落档月度幂等"
+  desc_en: ""
+  plain_zh: "联赛裁判：拿擂主和踢馆者的每日成绩差做序贯显著性检验，全家族多重比较校正，太像擂主的踢馆者不算独立一席，最后给晋升/淘汰/继续观察三种结论并出裁判报告"
+  responsibility_layer: business
+
 
 - module_path: src/zephyr/ex_core/saga_session_orchestrator.py
   domain_id: D_EX_CORE

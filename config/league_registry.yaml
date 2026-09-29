@@ -25,7 +25,8 @@ groups:
     name_zh: A 组（champion 初始席位）
     status: champion            # champion | challenger | retired
     joined_date: "2026-09-21"
-    members: []                 # strategy_id 清单（组合入组时回填）
+    members:                    # strategy_id 清单（组合入组时回填）——首位参赛者 F73 st-c9-f73
+      - STR-E-TIMING-001
     archive_path: ""            # 参赛档案目录（league_archive.py 产出后回填）
     review_window:
       start: "2026-09-21"
