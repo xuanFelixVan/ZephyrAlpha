@@ -122,6 +122,22 @@ def test_collect_missing_dir_returns_empty(tmp_path):
     assert md.collect_pending_advisories(tmp_path / "nope") == []
 
 
+def test_collect_and_refresh_skip_poison_shapes(adv_dir, tmp_path):
+    """毒 ADV 包（顶层 list/标量而非 dict）跳过不抛（redblue R4c 回归钉）：
+
+    一个毒包不许打死整份晨报——合法包照收、毒包记 warning 跳过、refresh 仍 ok=True。
+    """
+    _make_adv(adv_dir, "STR-A")
+    (adv_dir / "ADV-20260928-STR-POISON-LIST.json").write_text("[1, 2, 3]", encoding="utf-8")
+    (adv_dir / "ADV-20260928-STR-POISON-SCALAR.json").write_text("42", encoding="utf-8")
+    events = md.collect_pending_advisories(adv_dir)
+    assert [e["strategy_id"] for e in events] == ["STR-A"]
+    out = tmp_path / "digest" / "morning_digest.md"
+    r = md.refresh_morning_digest(adv_dir, out, date_str="2026-09-28")
+    assert r["ok"] is True and r["rc"] == 0 and r["pending"] == 1
+    assert "**STR-A**" in out.read_text(encoding="utf-8")
+
+
 # ---------- 刷新落盘 ----------
 def test_refresh_writes_digest(adv_dir, tmp_path):
     _make_adv(adv_dir, "STR-A")

@@ -90,6 +90,9 @@ def collect_pending_advisories(advisory_dir: Path | None = None) -> list[dict[st
         except (OSError, ValueError):
             logger.warning("建议包解析失败（晨报跳过）: %s", path.name, exc_info=True)
             continue
+        if not isinstance(adv, dict):
+            logger.warning("建议包顶层非对象（晨报跳过）: %s", path.name)
+            continue
         if (target / f"{path.stem}{_DECISION_TAIL}").exists():
             continue  # 已决建议不进待办区（台账即墓碑，拍板后晨报自然摘除）
         out.append(
