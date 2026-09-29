@@ -20227,8 +20227,8 @@ entries:
   created: '2026-09-02'
   last_updated: '2026-09-02'
 
-# --- CAND-GOVTEST-005: 测试身份泄漏入主仓历史（"initial [GW:sess-initial]" 事件） ---
-- id: CAND-GOVTEST-005
+# --- CAND-GOVTEST-007: 测试身份泄漏入主仓历史（"initial [GW:sess-initial]" 事件）；原占用 CAND-GOVTEST-005 与 commit queue 扩展条目（2026-08-20 先用者）撞号，2026-09-05 AI-00 审计沿 MOD-RK-048 先例改号，2026-09-29 SW3 注释同步落账 ---
+- id: CAND-GOVTEST-007
   name: 测试上下文 commit 泄漏主仓——tests 身份穿透隔离边界实证堵源
   aliases:
   - 测试泄漏 commit
