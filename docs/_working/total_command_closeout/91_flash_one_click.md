@@ -172,7 +172,7 @@ find tests -type f -name 'test_*.py' | sed 's|/[^/]*$||' | sort -u > .runtime/tm
 # 实测 258 个『含测试文件的目录』；车道纪律册说的『129 个 tests/ 子目录』是另一口径（顶层+次层目录数），两数勿混用
 while read -r d; do
   python -m pytest "$d" -q -W "ignore::pytest.PytestConfigWarning" \
-    --basetemp=.runtime/tmp/f7_$(basename "$d") 2>&1 | tail -3 | tee -a LEDGER_execution.md
+    --basetemp=.runtime/tmp/f7_$(basename "$d") 2>&1 | tail -3 | tee -a "$(git rev-parse --show-toplevel)/docs/_working/total_command_closeout/LEDGER_execution.md"  # 补丁C.2(2026-09-29 st-finaldel-m5)：tee 改仓根绝对路径，防 cwd 漂移写丢台账
 done < .runtime/tmp/total_command_closeout/test_dirs.txt
 ```
 ⚠ **实测回退分支（X-41）**：本仓 pyproject 里的 `cache_dir` 与 `-p no:cacheprovider` **互斥**——带该旗标跑会 INTERNALERROR 且显示"0 跑"，极易被误读成"该文件收集失败"。正解：**先不带 `-p no:cacheprovider`**；若某目录仍报 cache 类 INTERNALERROR，则改 `-o cache_dir=/tmp/...`（也别用，车道纪律册说它会诱发 INTERNALERROR）⇒ 唯一稳的口径是"去掉 cacheprovider 旗标 + 独占 basetemp + 带 `-W ignore::pytest.PytestConfigWarning`"，并用 `--collect-only -q | wc -l` 独立互证件数。
@@ -186,6 +186,7 @@ done < .runtime/tmp/total_command_closeout/test_dirs.txt
 2. `.runtime/tmp/*` 自有临时件清零（本项目：`total_command_closeout/`、`st-zmaster-20260926/`）；项目根与 `.runtime` 根零新增。
 3. claim 释放判据＝重读 `.ailocks/registry.json` 的 `locks` 键（扫根层永远得 0）；会话注销。
 4. 终报 + Owner 菜单定稿（把每波实测数填进 `93_owner_menu.md`）。
+5. **豁免（补丁C.3）**：`docs/_working/total_command_closeout/final_review_chartlib/` 为 permanent 案卷库（dossier 四族+prereg+施工册），禁列入第 2 条临时件清理面，清洁波重跑时不得触碰。
 
 ## 第 4 步：子代理派单模板（并发 8–10；**模板错口径会复制 N 倍，先小批验门**）
 
