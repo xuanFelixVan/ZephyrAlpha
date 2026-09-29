@@ -57,6 +57,7 @@ domain_prefixes:
   STRADAPT: D_PF_CORE
   TR: D_TRADING
   TDMVAL: D_TRADING
+  TREEVIEW: D_GOV_CODE_QUALITY
   TRIG: D_TRADING
   XC: D_EX_CORE
   XS: D_EX_SOR
@@ -3537,21 +3538,25 @@ error_codes:
   module: zephyr.ml_serve.codegen_model_adapter
   file: src/zephyr/ml_serve/codegen_model_adapter.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-CODEGEN-ADAPTER 转正'
+  deprecated: '2026-09-30: C267a F130 ml_serve 物理净删（5ccc4c3cf1，Owner 2026-09-30 批终局交付清单）——模块文件已删，本码无存活定义点，随包退役'
 - code: ZA-MLS-0002
   class: ModelDriftError
   module: zephyr.ml_serve.core.model_drift_monitor
   file: src/zephyr/ml_serve/core/model_drift_monitor.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-MODEL-DRIFT 转正'
+  deprecated: '2026-09-30: C267a F130 ml_serve 物理净删（5ccc4c3cf1，Owner 2026-09-30 批终局交付清单）——模块文件已删，本码无存活定义点，随包退役'
 - code: ZA-MLS-0003
   class: DeepReviewAdapterError
   module: zephyr.ml_serve.deep_review_model_adapter
   file: src/zephyr/ml_serve/deep_review_model_adapter.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-DEEP-REVIEW-ADAPTER 转正'
+  deprecated: '2026-09-30: C267a F130 ml_serve 物理净删（5ccc4c3cf1，Owner 2026-09-30 批终局交付清单）——模块文件已删，本码无存活定义点，随包退役'
 - code: ZA-MLS-0004
   class: ModelCompressionError
   module: zephyr.ml_serve.model_compression_accelerator
   file: src/zephyr/ml_serve/model_compression_accelerator.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-MLS-UNREGISTERED-MODEL-COMPRESSION 转正'
+  deprecated: '2026-09-30: C267a F130 ml_serve 物理净删（5ccc4c3cf1，Owner 2026-09-30 批终局交付清单）——模块文件已删，本码无存活定义点，随包退役'
 
 # --- 2026-09-06 占位码转正批 MLT（Owner 批准 B17-②，取号=段内 max+1 顺延）---
 - code: ZA-MLT-0016
@@ -3968,6 +3973,28 @@ error_codes:
   module: zephyr.pf_core.strategy_engine.translated_strategy_adapter
   file: src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py
   introduced: '2026-09-15: st-fullauto C3 整装回测接线班——STR-* 翻译件适配器统一错误码（前缀路由/契约不符/注册表缺失）'
+
+# --- 2026-09-30 总筹终验补登批（四支车道新码已在使用未登记，test_error_code_consistency 逮住后按代码真源补登）---
+- code: ZA-CMP-0020
+  class: ChecklistEvidenceError
+  module: zephyr.compliance.checklist_evidence
+  file: src/zephyr/compliance/checklist_evidence.py
+  introduced: '2026-09-30 补登: F62 清单闸写侧（checklist 完成度证据）——码在 HEAD 0cecaf771d 系落地'
+- code: ZA-INF-0901
+  class: BareDuckDBConnectError
+  module: zephyr.infrastructure.duckdb_runtime_gate
+  file: src/zephyr/infrastructure/duckdb_runtime_gate.py
+  introduced: '2026-09-30 补登: duckdb 运行时门 block 模式——裸 duckdb.connect 阻断（宪法 §9.1）'
+- code: ZA-INF-RT-ADM
+  class: RuntimeAdmissionError
+  module: zephyr.infra_runtime.runtime_admission
+  file: src/zephyr/infra_runtime/runtime_admission.py
+  introduced: '2026-09-30 补登: 运行时准入 Fail-Closed——输入/状态非法'
+- code: ZA-TREEVIEW-001
+  class: WorktreeReadBlocked
+  module: zephyr.gov_enforcement.commit_gates._tree_view
+  file: src/zephyr/gov_enforcement/commit_gates/_tree_view.py
+  introduced: '2026-09-30 补登: strict 模式工作树直读拒绝（红证/绊线用）'
 
 known_duplicates: []
 # ============================================================
