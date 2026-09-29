@@ -62052,6 +62052,15 @@ entries:
   plain_zh: "自动发现已经死掉的会话，把它们占用的文件锁释放掉，把残留的暂存残影清理干净，并把会话目录归档，防止死会话长期占用资源"
   responsibility_layer: governance
 
+- module_path: src/zephyr/ex_core/saga_session_orchestrator.py
+  domain_id: D_EX_CORE
+  name_zh: "Saga 会话订单编排器"
+  name_en: "Saga Session Orchestrator"
+  desc_zh: "TradingSession 提交面的 Saga 编排层封装：订单生命周期四相跟踪、超时补偿三态、九态桥断言与流转守卫"
+  desc_en: ""
+  plain_zh: "给下单流程配的跟单管家：订单发出去之后一直盯着，多久没动静就帮忙撤单，成交了几成、最后成没成、和券商对不对得上账，它都记账并报告，但自己绝不经手下单，也不动账本"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

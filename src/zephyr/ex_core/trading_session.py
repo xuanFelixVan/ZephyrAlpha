@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.ex_core.pre_execution_checker; zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.data.calendar; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.ex_core.pre_execution_checker; zephyr.ex_core.saga_session_orchestrator(TYPE_CHECKING 可选注入); zephyr.risk.core.risk_data_pipeline; zephyr.risk.core.risk_veto_engine; zephyr.data.calendar; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -55,6 +55,14 @@ C-004 合规闸（2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipli
   attach_pre_execution_gate() 或 pre_execution_checker= 注入即生效；
   未注入不改既有行为，注入后判定失效逐单 Fail-Closed 拒（不牵连整批）。
 
+Saga 编排层封装（F53 双编排解冻批，MOD-L06-001-SAGAO 可选注入）：
+  saga_orchestrator= 注入即生效——下单→部分成交→终态→对账的 Saga 补偿语义
+  挂接本提交面（submit 成功后 track_order 登记；rebalance 到达时事件触发
+  超时补偿懒扫；fill/订单事件经 OrderManager 回调自动推进相位）。
+  Saga 是本会话的编排层封装，非第二提交通道：唯一写通道仍=OrderManager
+  （补偿撤单走 cancel_order 同一入口），持仓账本写者仍=本会话成交链，
+  单写者不变。未注入=既有行为零变化。
+
 # [ALGO_FLOW]
 # I1: target_weights(策略目标权重) + positions(持仓快照cash/holdings/total_market_value) + prices(当前价格)
 # I2: risk_limits(风控限额) + config(熔断阈值/资金费率) + CancelRateGuard(撤单率状态)
@@ -77,7 +85,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 from zoneinfo import ZoneInfo
 
 from zephyr.compliance.checklist_evidence import ChecklistEvidenceWriter, today_shanghai
@@ -122,6 +130,10 @@ from zephyr.shared.contracts.position import PositionSnapshot
 from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.risk import kill_switch_state_store
+
+if TYPE_CHECKING:
+    # F53 Saga 编排层封装（可选注入；仅类型面引用，无运行时环）
+    from zephyr.ex_core.saga_session_orchestrator import SagaSessionOrchestrator
 
 _logger = logging.getLogger(__name__)
 
@@ -319,6 +331,7 @@ class TradingSession:
         compliance_ctx_provider: ComplianceCtxProvider | None = None,
         risk_layer: RiskLayerOrchestrator | None = None,
         pre_execution_checker: PreExecutionChecker | None = None,
+        saga_orchestrator: SagaSessionOrchestrator | None = None,
     ) -> None:
         # C-004 合规闸成对注入校验（43 号 §4.3/§7.6：检测失效 Fail-Closed，
         # 缺 ctx 提供器=检测不可评估=配置错误，装配期 fail-fast 优于盘中拒单）
@@ -364,6 +377,11 @@ class TradingSession:
         # 避免逐单重复拉四路真源（PreExecutionChecker 逐单消费同一快照）
         self._pre_execution_checker = pre_execution_checker
         self._pre_exec_cycle_snapshot: RiskSnapshot | None = None
+        # F53 Saga 编排层封装（None=未接线零变化；注入即生效）：
+        # 下单→部分成交→终态→对账的补偿语义挂接本提交面——Saga 是本会话
+        # 的编排层封装，非第二提交通道（唯一写通道仍=OrderManager，
+        # 持仓账本写者仍=本会话成交链，单写者不变）
+        self._saga_orchestrator = saga_orchestrator
         self._lock = threading.Lock()
         self._running = False
         self._fills: list[Fill] = []
@@ -525,6 +543,11 @@ class TradingSession:
     # 核心调仓
     # ------------------------------------------------------------------
 
+    @property
+    def saga_orchestrator(self) -> SagaSessionOrchestrator | None:
+        """只读：Saga 编排层封装（F53；None=未注入。对账面/eod 归档经此消费）。"""
+        return self._saga_orchestrator
+
     def rebalance(self) -> list[Order]:
         """执行一次完整调仓循环，返回已提交订单列表。"""
         with self._lock:
@@ -532,6 +555,10 @@ class TradingSession:
 
     def _do_rebalance(self) -> list[Order]:
         """实际调仓逻辑（调用方已持锁）。"""
+        # ── F53 Saga 编排层：事件触发超时补偿懒扫（rebalance 到达=事件；
+        # 编排器内部吞单笔异常，不阻断调仓主链）──
+        if self._saga_orchestrator is not None:
+            self._saga_orchestrator.sweep()
         # ── 风控层闸门（#ARCH-100）：启动恢复未完成或熔断已触发 → 整批拒下 ──
         if self._risk_layer is not None and not self._risk_layer.is_trading_allowed:
             _logger.error("风控层未就绪（启动恢复未完成或熔断已触发）——本次调仓整批拒下")
@@ -932,6 +959,10 @@ class TradingSession:
                 # ATK-5：与撤单侧对称，broker 异常时仍计数防漏；session 不再重复计）
                 self._submitted_orders.append(registered)
                 submitted.append(registered)
+                # F53 Saga 编排层：下单相位登记（Saga=本提交面的编排层封装，
+                # 非第二提交通道——补偿撤单仍走 OrderManager 同一入口）
+                if self._saga_orchestrator is not None:
+                    self._saga_orchestrator.track_order(registered, order.side)
             except Exception as exc:  # noqa: BLE001 — 拒单分类处理，不阻断后续订单
                 # 拒单回滚资金预占（§2.14 决策⑬）
                 if order.side is OrderSide.SELL:
