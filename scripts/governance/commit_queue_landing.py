@@ -1969,18 +1969,33 @@ class WorktreeLanding:
             return None
         return r.stdout  # _run_git 的 stdout 已按 utf-8 解码（str）
 
-    def _registry_entry_retired(self, entry: object) -> bool:
+    def _bag_payload_paths(self, item: dict) -> frozenset[str]:
+        """本袋 payload 路径集合（分隔符归一 /，与 _extract_entry_paths 同口径）。"""
+        out: set[str] = set()
+        for f in item.get("files") or []:
+            p = str(f.get("path") or "").replace("\\", "/").strip()
+            if p:
+                out.add(p)
+        return frozenset(out)
+
+    def _registry_entry_retired(self, entry: object, bag_paths: frozenset[str] = frozenset()) -> bool:
         """ours 侧合法退役判定（W2 规则 b 例外项）：条目引用路径盘上与 HEAD 双不存在。
 
         判据真源=DISPATCH_v1 Lane A 卡片 W2「该条目文件路径盘上与 HEAD 双不存在」；
         条目无路径候选 / 任一路径存活 → 非合法退役（采纳恢复，宁可多救不可漏救——
         被救回的多余条目由属主会话按正规删除通道二次移除，方向安全）。
+        雷三豁免（st-c9-mfix，f43 两代死信同签名）：引用路径 ∈ 本袋 payload → 必非
+        退役——该文件正随本袋落地，合并瞬间 HEAD 与主区盘上自然都还没有它，旧判据
+        把「同袋自洽新增」误读成「合法退役」静默吞条目。豁免只放宽本袋自洽场景；
+        袋外引用缺失的既有退役语义原样保留（真实退役吸收必须仍通行）。
         """
         paths = _extract_entry_paths(entry)
         if not paths:
             return False
         head = self._dev_head()
         for p in paths:
+            if p in bag_paths:
+                return False
             if (self.repo_root / p).exists():
                 return False
             r = self._git_repo("cat-file", "-e", f"{head}:{p}", check=False)
@@ -2048,12 +2063,13 @@ class WorktreeLanding:
             if r.returncode != 0:
                 raise RuntimeError(f"[landing] base_blob 对象不可读（{base_blob[:12]}）——死信回退人工")
             base_text = r.stdout
+        bag_paths = self._bag_payload_paths(item)
         merged, conflict = three_way_merge_registry_yaml(
             base_text,
             ours_text,
             theirs_text,
             rel_path=rel,
-            retired_check=self._registry_entry_retired,
+            retired_check=lambda entry: self._registry_entry_retired(entry, bag_paths),
         )
         if conflict:
             raise RuntimeError(f"[landing] 注册表三向合并失败（死信回退人工）: {conflict}")

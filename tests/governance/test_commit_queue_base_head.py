@@ -745,3 +745,75 @@ def test_drain_without_reader_stays_fail_closed(cq, repo: Path, tmp_path: Path, 
 
     cq.drain_queue(str(qroot), landing=_plain_landing)
     assert seen and seen[0] is None, f"无读口时应保持 None 交下游 fail-closed，实得 {seen[0]!r}"
+
+
+# ---------------------------------------------------------------------------
+# ⑨ 雷三回归尺（st-c9-mfix）：retired 判定的本袋 payload 豁免
+# ---------------------------------------------------------------------------
+
+
+def _book_refs(rows: list[tuple[str, str, str]]) -> str:
+    """带模块路径引用的册：行=(gate_id, module_path, note)；身份键=首标量字段 gate_id。"""
+    body = "".join(f"  - gate_id: {g}\n    module_path: {p}\n    note: {n}\n" for g, p, n in rows)
+    return f"total_gates: {len(rows)}\ngates:\n{body}"
+
+
+_KEEPER = ("K", "src/cure_mod/kept_mod.py", "probe-K")
+
+
+@pytest.mark.parametrize(
+    ("scenario", "bag_extra", "expect_alive"),
+    [
+        ("same_bag_new_module", ["src/cure_mod/bag_mod.py"], True),
+        ("out_of_bag_missing_stays_retired", [], False),
+        ("head_alive_ref_unaffected", [], True),
+    ],
+    ids=["cure-same-bag", "preserve-real-retirement", "zero-change-unrelated"],
+)
+def test_retired_check_exempts_bag_payload_paths(
+    cql, repo: Path, tmp_path: Path, scenario: str, bag_extra: list[str], expect_alive: bool
+) -> None:
+    """雷三（f43 两代死信同签名）三态尺：条目引用文件正随本袋落地时不得判退役。
+
+    病机：`_registry_entry_retired` 以「盘上与 HEAD 双不存在」判合法退役，但合并
+    瞬间本袋 payload 里的新增件自然还没上 HEAD、也不在主区盘上——同袋「新增
+    .py＋册条目」被误读成退役而静默吞条目（QV 实证：关 retired_check 后条目完好）。
+    修法=引用路径 ∈ 本袋 files → 必非退役；袋外引用缺失的退役语义原样保留。
+
+    三态（每态既红且绿）：①同袋新模块＝豁免腿——摘豁免即红（条目被吞→返回 None），
+    摘 retired_check 全拆即红（②反向）；②袋外缺失＝既有退役吸收仍通行——真退役
+    被复活即红，豁免误伤（把袋外也豁免）即红不了本态但①③兜住方向；③引用在 HEAD
+    存活＝与退役腿无关的无关条目零变化——多救语义被砍即红。
+    """
+    keeper_rows = [_KEEPER]
+    if scenario == "same_bag_new_module":
+        victim = ("B", "src/cure_mod/bag_mod.py", "probe-B-v1")
+        theirs_rows = [_KEEPER, ("B", "src/cure_mod/bag_mod.py", "probe-B-v2-changed")]
+    elif scenario == "out_of_bag_missing_stays_retired":
+        victim = ("C", "src/cure_mod/gone_mod.py", "probe-C-v1")
+        theirs_rows = [_KEEPER, ("C", "src/cure_mod/gone_mod.py", "probe-C-v2-changed")]
+    else:  # head_alive_ref_unaffected
+        victim = ("A", "src/cure_mod/alive_mod.py", "probe-A-v1")
+        theirs_rows = [_KEEPER, ("A", "src/cure_mod/alive_mod.py", "probe-A-v2-changed")]
+    base = _commit(repo, GATE_BOOK_REL, _book_refs([*keeper_rows, victim]), "C0 基底含受害条目")
+    dev = _commit(repo, GATE_BOOK_REL, _book_refs(keeper_rows), "C1 dev 删受害条目")
+    if scenario == "head_alive_ref_unaffected":
+        _commit(repo, victim[1], "x = 1\n", "C2 被引模块在 HEAD 存活（仅条目被删）")
+    landing = _landing(cql, repo, tmp_path, f"queue-retired-{scenario}")
+    item = {
+        "qid": f"q-{scenario}",
+        "base_head": base,
+        "files": [{"path": GATE_BOOK_REL}, *({"path": p} for p in bag_extra)],
+    }
+    out = landing._merge_registry_file(item, GATE_BOOK_REL, _book_refs(theirs_rows).encode("utf-8"), dev)
+    if expect_alive:
+        assert out is not None, "条目被吞＝退役误杀（同袋 payload 豁免缺失或被砍）"
+        text = out.decode("utf-8")
+        assert f"gate_id: {victim[0]}" in text, "条目必须随本袋落地存活"
+        assert f"probe-{victim[0]}-v2-changed" in text, (
+            "存活条目必须是 theirs 改版（证明确经 retired 分支采纳，非旁路）"
+        )
+    else:
+        assert out is None, "袋外引用缺失＝真实退役，必须仍被吸收（不得复活）"
+        note = str((item.get("meta") or {}).get("noop_audit") or "")
+        assert victim[0] in note and "退役" in note, f"零变化必须带合法退役吸收审计注，实得 {note!r}"
