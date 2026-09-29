@@ -22,12 +22,19 @@
 
 from typing import Final
 
-__all__: Final[list[str]] = ["approval_router", "revert_drill", "rollout_tiers", "tombstone_manager"]
-from . import revert_drill  # noqa: F401
-from . import rollout_tiers  # noqa: F401
-from . import tombstone_manager  # noqa: F401
-
+__all__: Final[list[str]] = [
+    "approval_router",
+    "revert_drill",
+    "rollout_tiers",
+    "tombstone_manager",
+    "tombstone_ttl_proposer",
+]
 # 包公共面显式重导出（2026-09-24 st-ailayer-final-20260924：ORPHAN-MODULE 静态可见边——动态派发消费型模块）
-from . import revert_drill  # noqa: F401
-from . import rollout_tiers  # noqa: F401
-from . import tombstone_manager  # noqa: F401
+# tombstone_ttl_proposer 接线（2026-09-29 st-nightsweep-sw2：chief3 令"零消费→接线"——
+# 月度体检窗/夜间收口班 CLI 手跑款（L6 DESIGN §②-D 挂点），调用点=propose_from_store/main）
+from . import (
+    revert_drill,  # noqa: F401  # noqa: F401
+    rollout_tiers,  # noqa: F401  # noqa: F401
+    tombstone_manager,  # noqa: F401  # noqa: F401
+    tombstone_ttl_proposer,  # noqa: F401  # noqa: F401
+)

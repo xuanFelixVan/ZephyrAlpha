@@ -236,3 +236,13 @@ def test_no_db_read_branch_never_touches_store(tmp_path: Path) -> None:
     assert payload["counts"]["records_scanned"] == 0
     assert payload["execution"]["actions_executed"] == 0
     assert (tmp_path / "skipped.yaml").is_file()
+
+
+def test_package_static_edge_exposes_proposer() -> None:
+    """接线验收（chief3 令零消费→接线）：包公共面静态可见边暴露提案器（动态派发可发现）。"""
+    import zephyr.ai_layer.switch_engine as pkg
+
+    assert "tombstone_ttl_proposer" in pkg.__all__
+    assert hasattr(pkg, "tombstone_ttl_proposer")
+    assert callable(pkg.tombstone_ttl_proposer.propose_from_store)
+    assert callable(pkg.tombstone_ttl_proposer.main)
