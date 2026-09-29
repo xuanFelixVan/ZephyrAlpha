@@ -57,7 +57,7 @@ session: st-finaldel-m5-20260929
 | C29 | DONE_BY_SIBLING @9a2c6402d4 | .pre-commit L1125 `gate-module-lifecycle-transition`（--staged --warn-only）＋gate_registry L682 GATE-MODULE-LIFECYCLE | 落地注记：warn-only 起步，转硬拦前置=32 项 P3 越界值迁移批清零+Owner 批（hook description 内已写明） |
 | C166 | DONE_BY_SIBLING @c2ec2ff87a | module_id_registry@HEAD L380-385 MOD-INF-003 `deprecated`+`superseded_by: MOD-TASK_SYSTEM` | 无余量 |
 | C170 | CONFLICT_INFLIGHT defer（+OWNER_GATE 本性） | trae_032 yaml=MM（他会话在飞）；册内 L682 已载批文②五件处方全文 | defer 等在飞落地；本体 human_gated：6 处 module-id-registry.json 死指针批量替换+准入记录字段口径对齐，须先裁定登记（热 rules 目录不代改） |
-| C267 | OWNER_GATE | — | 退役批（空壳表8张/F51币圈/F130 ml_serve/六0字节死库）走归档式净删：先 G 盘归档→呈 Owner 批→批后执行；本道只立处方 |
+| C267 | OWNER_GATE→非币圈面已执行（2026-09-30 st-finaldel-retire） | — | 退役批（空壳表8张/F51币圈/F130 ml_serve/六0字节死库）走归档式净删：先 G 盘归档→呈 Owner 批→批后执行；本道只立处方 →**执行**：F130 净删 8 件（4 src+4 tests，TC=0 勘误见 99_owner_gate §执行回填）已归档+git rm；七 0 字节库+13 空壳表（strict 权威口径，suspend 翻案剔除）凭证归档 G:/zephyr_cold/retire_c267_20260930/，DROP 移交 C 道 HANDOVER_TO_C_LANE.json；F51/C55 币圈挂起归 G 道 |
 | C412 | READY | tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py 在 HEAD | 拆超时件（tests/ 豁免 CREATE-GUARD）后按 G-77 尺跑 14/14 目录两轮真终验 |
 | C55 | OWNER_GATE | — | chief8 裁4 第一步已落（8b098e31eb）；终步 ig_equity_edge 旧表净删呈 Owner |
 | C77 | ✅本道已收口（st-finaldel-cdocs3 20260929） | harness 建块全在册：core/cpcv.py+strategy_cpcv_matrix.py+tests 双件+85 件 c4_*.py 译件池均 tracked@HEAD | 首批 30 条已跑毕实证：runs/p1_translated_jq_outpool/state.yaml@HEAD done=30/30、全带 frozen_caliber_sharpe_obs（material_insufficient 全 false）；预注册卡接管、冻结口径未破；残=逐格三件套成绩单未落库（如需归档另卡，非阻断） |
@@ -131,7 +131,7 @@ session: st-finaldel-m5-20260929
 
 | 卡 | 态 | 30 秒 HEAD 重验证据 | 处方 / 下一步 |
 |---|---|---|---|
-| C22 | OWNER_GATE | models/=95M 仅 qwen25-7b-sft-v1（与卡称一致） | 呈 Owner：15G 主体已消失无裁定记录可考→正式销账+残留 95M 去留裁定 |
+| C22 | OWNER_GATE→✅销账（2026-09-30 st-finaldel-retire，Owner 已批） | models/=95M 仅 qwen25-7b-sft-v1（与卡称一致） | 呈 Owner：15G 主体已消失无裁定记录可考→正式销账+残留 95M 去留裁定 →**销账口径**：15G 主体=Qwen2.5-7B-Instruct 基座在 E:/ai_cache/huggingface/hub/models--Qwen--Qwen2.5-7B-Instruct（实测 15G 在盘=未消失，共享 HF 缓存）；95M=项目自训 LoRA 适配器 qwen25-7b-sft-v1（adapter+checkpoint-800），被 ml_train/sentiment_sft_trainer.py+scripts/ml/ 三脚本实消费=活资产保留 |
 | C64 | DONE_BY_SIBLING @884c34d35b | ruling_registry@HEAD L5825「决策时间戳契约 15→16 字段」正册条目在册（证据 a349ddc1fe） | 无余量 |
 | C83 | OWNER_GATE | environment_switch.py `auto_mount` 0 命中 | auto_mount 单件批+剩余三步收编待批准凭据经 ruling_registry 补登（热册）后施工 |
 | C187 | OWNER_GATE | HANDOVER.md@HEAD L88 §五在册 | 消化态复核结论呈 Owner 追认（DU-07 补齐=唯一未施工活跃项，可另卡施工） |
