@@ -22592,3 +22592,17 @@ entries:
     审批真源=Owner 夜战代裁授权+台账哈希总账（2026-09-28 在案），gate 逃生审计+本登记双留痕。
     内容=ruling_registry 纯追加八裁定（同袋原子）；串行序=本袋先落（被引裁定防伪回查须先在册，#ARCH-361 先例）。
   related_rulings: []
+- issue_id: '#ARCH-364'
+  title: 'trae_032 修正批（B10-P3 五件，rules/trae_032_module_lifecycle.yaml）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-29'
+  last_updated: '2026-09-29'
+  owner: 'Owner（2026-09-28 总包代裁获批：chief5 五件之 trae_032 修正批批准执行，会话在案）'
+  description: >-
+    Owner 2026-09-28 对总包逐条裁定批复"全部同意"（chief5 五件含 trae_032
+    修正批 B10-P3）。rules/ 下 .yaml 属 PROTECTED-PATHS 保护面，本议题即该写入的
+    [ARCH-APPROVAL] 标记登记载体（#ARCH-360/361 同款先例；#ARCH-363 已被 c8-rulings
+    占用故跳号）。审批真源=Owner 批复原文+本登记双留痕。
+  related_rulings: []
