@@ -180,13 +180,14 @@ def test_legacy_shim_emits_real_consumer_lists_without_stale(tmp_path):
     assert "stale" not in r["counts"]  # 态位退役：键不再广告
     assert set(r["counts"]) <= {"active", "zero", "retired"}
     doc = json.loads(out.read_text(encoding="utf-8"))
-    # schema /3=CNS-14 机账口径升级（SW14 2026-09-29 落地，薄壳 docstring 在案）：
-    # consumer_files 分列为 code_refs（计消费）+doc_refs（证据位不计消费），
-    # 本断言随真源演化更新——非 shim 串味，是真实新消费方形态。
-    assert doc["schema"] == "indicator_usage/3"
+    # schema 断言随真源演化走：HEAD 现行=463eba49bef v2（indicator_usage/2，consumer_files
+    # 单列）。CNS-14 /3 口径升级（薄壳化+code_refs/doc_refs 分列，SW14 2026-09-29）当时为
+    # 会话盘面在飞件，2026-09-30 被队列 serializer 清暂存连带清除、未落 HEAD——本断言回归
+    # HEAD 真源；/3 薄壳由属主会话重落地时本断言随之翻转（翻回时 consumer_files→code_refs
+    # 双列判据见本文件 2026-09-30 早版 e35049071f）。
+    assert doc["schema"] == "indicator_usage/2"
     by = {e["indicator_id"]: e for e in doc["entries"]}
-    assert by["IND-RED-001"]["code_refs"] == ["src/zephyr/factor/tech.py"]
-    assert by["IND-RED-001"]["doc_refs"] == []  # 代码消费者不进文档证据位
+    assert by["IND-RED-001"]["consumer_files"] == ["src/zephyr/factor/tech.py"]
     assert by["IND-ORPHAN-001"]["recommendation"].startswith("retire_candidate")
 
 
