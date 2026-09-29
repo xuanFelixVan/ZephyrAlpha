@@ -56641,4 +56641,9 @@ creation_tokens:
   capability: ghost-order-sentinel
   merge_evaluation: "TRD-A10 S 袋收官件：哨兵日终读侧对账尺的 ALGO_FLOW 外部真源，与 source_of_truth 同袋落地，无替代对象"
 
+- file: src/zephyr/data/onboarding_wizard.py
+  token: onboarding-wizard-onboarding-wizard-20260929
+  created_by: st-c9-f02
+  capability: onboarding_wizard
+  merge_evaluation: "内收判定：向导=纯编排壳，十环零散件全复用既有真源（apply_*_ddl/validate_tasks_yaml/两册一表），不新造接数逻辑；capability_lookup 反查空命中无重复轮子"
 di_seam_exemptions: []

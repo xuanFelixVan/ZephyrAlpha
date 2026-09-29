@@ -62061,6 +62061,14 @@ entries:
   plain_zh: "给下单流程配的跟单管家：订单发出去之后一直盯着，多久没动静就帮忙撤单，成交了几成、最后成没成、和券商对不对得上账，它都记账并报告，但自己绝不经手下单，也不动账本"
   responsibility_layer: business
 
+- module_path: src/zephyr/data/onboarding_wizard.py
+  domain_id: D_DATA
+  name_zh: "数据源上架十环向导"
+  name_en: "source onboarding wizard"
+  desc_zh: "把数据源全生命周期 SOP 十环（候选/毕业/DS册/provider/DDL/品类/任务/槽位/首跑/验收）编排为显式状态机的单入口 CLI：机器环直接执行既有脚本与两册一表登记（CAS 尾插），人工环产出待办指令暂停等回执，状态落 data/runtime/onboarding 支持断点续跑，dry-run 全链打印零落盘"
+  desc_en: ""
+  plain_zh: "新数据源上架原来要靠人会话记忆串十个环节，经常漏一步就断供俩月没人知道。这个向导把十步排成一条流水线：能自动的（建表脚本、登记各种册子）它直接办，必须人拍板的（老板报批、写代码、首跑验收）它停下来开清单等你办完打卡，中途停了下次能从停的地方接着跑，演练模式只看不改"
+  responsibility_layer: data
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
