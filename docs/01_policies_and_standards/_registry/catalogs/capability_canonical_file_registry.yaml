@@ -56626,4 +56626,10 @@ creation_tokens:
   capability: f53f04_saga_compensation
   merge_evaluation: "F53 模拟盘 Saga 装配入口（F53+F04 死账复活代投 token）"
 
+- file: docs/03_modules/_domain_execution_core/algo_flow/ghost_order_sentinel.yaml
+  token: ghost-order-sentinel-ghost-order-sentinel-20260929
+  created_by: st-zc9-lane-s2-20260929
+  capability: ghost-order-sentinel
+  merge_evaluation: "TRD-A10 S 袋收官件：哨兵日终读侧对账尺的 ALGO_FLOW 外部真源，与 source_of_truth 同袋落地，无替代对象"
+
 di_seam_exemptions: []

@@ -96,6 +96,7 @@ _logger = logging.getLogger(__name__)
 
 #: 默认系统侧 Fill JSONL 落盘目录（56 号文 G3 口径：{fills_dir}/YYYYMMDD.jsonl）
 _DEFAULT_FILLS_DIR = _REPO_ROOT / "data" / "fills"
+_DEFAULT_REPORT_DIR = _REPO_ROOT / "data" / "reports"
 #: QMT 模拟盘配置文件（QMT_SIM_PATH / QMT_SIM_ACCOUNT；实盘 QMT_REAL_* 本脚本永不触碰）
 _ENV_QMT_PATH = _REPO_ROOT / "config" / ".env.qmt"
 #: 风控层状态根（36号 §3.18 持久化门面根目录）——盘后 VaR 回测定级的**跨进程交付面**：
@@ -407,6 +408,43 @@ def _stdout_alert_sink(trade_date: str, message: str) -> None:
     print(f"[ALERT] {trade_date} {message}")
 
 
+def _run_ghost_order_sentinel_step(trade_date: str, *, report_dir: Path | None = None) -> None:
+    """托管腿：TRD-A10 幽灵单日哨兵（日终读侧对账尺，只读统计）。
+
+    先例=28d596cf96 hosted cleaning gate 同款纪律：故障出声不阻断——本步异常
+    与结论**永不改退出码**（结算对账语义不受哨兵影响）；只读桥文件与柜台导出，
+    唯一写副作用=当日 JSON 报告落 data/reports/（观察窗台账抄数源）。
+    report_dir 可注入（测试 tmp 隔离用；缺省=生产 data/reports）。
+    TRD-A10 观察窗判据：换版日起连续 30 交易日 status=ran_and_clean（幽灵单=0，
+    禁判日不算归零）。"""
+    try:
+        from zephyr.ex_core.adapters.qmt_file_bridge_broker import QmtFileBridgeBroker
+        from zephyr.ex_core.ghost_order_sentinel import run_ghost_order_check
+
+        env_cfg = QmtFileBridgeBroker.ENV_CONFIG["sim"]
+        target_dir = report_dir if report_dir is not None else _DEFAULT_REPORT_DIR
+        report = run_ghost_order_check(
+            trade_date=trade_date,
+            env="sim",
+            orders_file=Path(env_cfg["orders_file"]),
+            stock_dir=Path(env_cfg["stock_dir"]),
+            report_dir=target_dir,
+        )
+        print(
+            f"[INFO] 幽灵单日哨兵: status={report.status} ghost={report.ghost_count} "
+            f"stuck_sending={len(report.stuck_sending_remarks)} "
+            f"duplicate={len(report.duplicate_remark_violations)} → "
+            f"{Path(target_dir) / f'ghost_order_sentinel_{trade_date}_sim.json'}"
+        )
+        if report.status == "ran_with_findings":
+            print(
+                f"[ALERT] {trade_date} TRD-A10 观察窗判据破坏：当日幽灵单 {report.ghost_count} 张 "
+                f"({', '.join(report.ghost_remarks)})——30 交易日零静默丢弃计数中断"
+            )
+    except Exception:  # noqa: BLE001 — 托管腿纪律：出声不阻断（同 _run_var_backtest_step）
+        _logger.exception("幽灵单日哨兵托管腿异常（已吞没，不影响结算结论与退出码）")
+
+
 def build_production_deps() -> tuple[PipelineDeps, object | None]:
     """生产装配：探测 QMT → 有券商侧则全量对账，否则降级仅系统侧+标注。
 
@@ -526,6 +564,9 @@ def main(argv: list[str] | None = None, *, deps: PipelineDeps | None = None) -> 
 
     _run_var_backtest_step(deps, trade_date)
     _run_sim_journal_step(trade_date)
+    if deps is None:
+        # 测试隔离：注入 deps（测试干跑）不触生产桥面；生产 CLI（deps=None）才跑日终哨兵
+        _run_ghost_order_sentinel_step(trade_date)
     _print_result(result, deps)
     code = _exit_code_of(result)
     print(f"[INFO] exit_code={code}（0=OK/SKIPPED, 3=DRIFT, 1=ERROR）")

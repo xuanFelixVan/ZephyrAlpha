@@ -1,0 +1,30 @@
+# ALGO_FLOW 外部真源——ghost_order_sentinel（_domain_execution_core 域，真源 src/zephyr/ex_core/ghost_order_sentinel.py）
+# 2026-09-29 TRD-A10 准备·S 袋收官 externalize_algo_flow.py 单件出仓：docstring 内联块逐字节副本，
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.ghost_order_sentinel
+source_of_truth: src/zephyr/ex_core/ghost_order_sentinel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 桥指令文件与柜台导出
+    #   fields: 指令文件全量行文本；柜台 Order.csv 全量行（含终态行）；trade_date/env 与注入时钟 now
+    #   code: _read_lines/_load_counter_remarks/_resolve_bridge_paths(QmtFileBridgeBroker.ENV_CONFIG)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 逐行解析→盖章圈出→新鲜度门→幽灵差集→只读报告落盘
+    #   name_en: run_ghost_order_check
+    #   intro: parse_instruction 逐行解析（坏行容错跳过）；圈出 #SENDING/#DONE 盖章下单行 claimed_remarks、#SENDING 日终未闭合 stuck_sending；_export_fresh 判 Order.csv 当日新鲜（缺失/隔日=禁判，ghost_count=None 宁缺勿假绿）；新鲜则 claimed−柜台 remark 全量集=幽灵差集，另列 #FAIL/裸行/撤单/同 remark 重复（duplicate_remark_violations 内联副本同尺）；装 GhostSentinelReport 经 safe_write_text 落 JSON——只数不动单
+    #   inputs: I1
+    #   outputs: O1
+    # 层: 输出
+    # - id: O1
+    #   name: GhostSentinelReport JSON 报告
+    #   intro: 日终只读统计结果——幽灵单张数与全量旁证计数（stuck/#FAIL/裸行/撤单/重复 remark）+ 新鲜度与状态位，供观察窗台账抄数，不回写任何桥文件
+    #   fields: ghost_remarks/ghost_count/stuck_sending_remarks/fail_order_rows/bare_order_rows/cancel_rows/duplicate_remark_violations/mirror_fresh/status
+    #   code: GhostSentinelReport.to_dict/_write_report
+    #   downstream: scripts.run_post_settlement._run_ghost_order_sentinel_step（日终托管腿→TRD-A10 观察窗台账抄数）；独立 CLI(python -m zephyr.ex_core.ghost_order_sentinel)；运行时执法腿=qmt_file_bridge_broker._reconcile_unconfirmed_claims（与本件分尺分工）
+    # 边: I1 --> A1 ; A1 --> O1
+    # [/ALGO_FLOW]
