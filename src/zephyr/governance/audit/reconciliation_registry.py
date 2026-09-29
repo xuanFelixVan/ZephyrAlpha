@@ -661,8 +661,8 @@ if TYPE_CHECKING:
     # 循环导入——该模块反向 import 本模块的 ReconcileResult/ReconcilerSpec），
     # 故运行时零导入、类型检查面声明依赖边。
     import zephyr.governance.audit.schedule_consistency_reconciler  # noqa: F401
-    import zephyr.library.library_regen_reconciler  # noqa: F401
     import zephyr.governance.consumption.consumption_census_reconciler  # noqa: F401
+    import zephyr.library.library_regen_reconciler  # noqa: F401
 
 
 def _load_external_spec_factories() -> list[Callable[[Any], ReconcilerSpec]]:
@@ -6765,6 +6765,31 @@ def make_integrity_audit_reconciler(gateway: object) -> ReconcilerSpec:
         # 修复：batcher 启用时 defer 到 post-flush，读 post-flush HEAD = 最终状态 → --check 0 TAMPERED。
 
         # 安全性：post-flush register 仍用 _hash_git_head()（HEAD-based），红蓝发现3 的 WIP 篡改防护不降级。
+
+        # 战役 B0/M1·P3（2026-09-24）：head 态下 DB 不承载判定 ⇒ 注册动作降级为
+        # "记刷新意图"，不 spawn、不 _commit_auto（消灭第二个 chore(integrity) 潜在税源）。
+        import os
+
+        if os.environ.get("ZEPHYR_INTEGRITY_BASELINE", "").strip().lower() == "head":
+            try:
+                from zephyr.gov_enforcement.derived_dirty_ledger import append_intent
+
+                append_intent(
+                    project_root,
+                    {
+                        "qid": "",
+                        "session_id": session_id,
+                        "head_sha": "",
+                        "rules_touched": list(committed_files),
+                        "reason": "reconciler",
+                    },
+                )
+            except Exception:  # noqa: BLE001 — 意图记录 fail-open
+                pass
+            return ReconcileResult(
+                action="clean",
+                detail="rules_integrity 基线改按 HEAD 派生（head 态）：判定不读 DB，刷新意图已入册",
+            )
 
         _batcher = getattr(gateway, "_batcher", None)
 

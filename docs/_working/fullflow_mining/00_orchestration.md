@@ -99,3 +99,7 @@ cb3c13b74f 落地：缓存键移除 staged_tree_sha+head_sha（87 命中/24h 病
 3. **__init__ 登记行袋**（M3-C1b 同款）：src/zephyr/gov_enforcement/__init__.py 尾加惰性 re-export（带 __getattr__ 惰性形态则不触发 IMPORT-INTEGRITY——`def __getattr__(name): if name=="derived_dirty_ledger": import ...`）+ledger 同袋。先例：commit_gates/__init__ 对 _tree_view 的 ORPHAN 登记行。
 **0139**：belt 注册表缓存窗口病——等守护下次纪元换血（任何 commit_gates 代码落地都会触发）后新袋重投；或请 Owner 窗口重启 belt（MQ-5 同型）。
 **注意**：包8 的 DOC-HEADER-SUITE 已在 HEAD，新袋过门时文档头七台走聚合门判定（行为等价已证）。
+## 十·SW3 判定（2026-09-29 夜战，st-nightsweep-sw3-20260929）——处方定案与实证
+**扫描面实测定论**（读 orphan_module_gate.py 源码 + commit_queue_landing._apply_snapshot）：ORPHAN 门 git grep（无 tree-ish）搜 belt 专用 worktree 内 tracked 文件的**工作树内容**，pathspec 仅 `src/**/*.py`（tests/ 引用不认账 ⇒ 处方2 不成立）；落地器 `_apply_snapshot` 对全部袋内文件 write_bytes 物化到盘后才跑门禁 ⇒ **同袋引用（处方1 框架）对 grep 可见，成立**。
+**0138 死因翻案**：非门语义问题——重投袋丢失 gateway 文件只剩 ledger 单件（0138 files 长度=1），引用面为空才死于 ORPHAN。P3a 同袋四连死（0049/0077/0083/0125）死因全是别的门（TRANSLATION→CREATE-GUARD→NEW-FILE-DEPGRAPH→DEPGRAPH-PRE-REG），逐台已治：翻译册/canonical 册/token 均已在 HEAD（0064/0075 落地实证），depgraph 节点 15208301 在册（planned），ledger blob 3b859636 已补 14 字段头。
+**落地形态**：gateway/landing/ritual/VI/reconciliation_registry 五件陈旧 blob 全部只摘 P3 意图 hunk 重加到 HEAD 版（弃整文件快照防回退包8/9/7）；ledger 新件用 0138 blob 原样；红蓝=既有 R-1..R-9 套件 9 红→10 绿 + 新增 test_orphan_same_bag_reference.py 3 例（真实 git 沙箱钉死扫描面语义）。出厂态 flag 仍 snapshot（翻 head=Owner 门位）。

@@ -64,9 +64,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
+from _shared.constants import EXIT_FINDINGS
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
-from _shared.constants import EXIT_FINDINGS
 
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _INTEGRITY_DB = _SCRIPTS_DIR / "meta" / "rules_integrity_db.json"
@@ -161,7 +161,12 @@ _STATIC_MANIFEST: list[dict] = [
 # 动态条目：commit_gates/*.py 全量自动加载（治本3，防漏登）。
 # 含 __init__.py（保护机制防漏登优先；__init__.py 含 __all__ 声明，篡改可影响包导入）。
 # 新增 gate 文件自动受保护——防漏登 > 噪音成本（TAMPERED 是信息性报告，post-commit 自动重基线）。
-_GATES_DIR = _REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
+# 治本（战役 P3 预研发现，2026-09-24，MQ-3）：本目录随 governance→gov_enforcement 迁移失效，
+# glob 静默返回空 ⇒ _DYNAMIC_GATE_ENTRIES=0 ⇒ RULES_MANIFEST 只剩 17 条静态项，
+# 119 台 pre-commit gate 实现整体脱离 C 层 golden hash 保护（卷宗
+# docs/_working/commit_speedup_campaign/30_gate_census/p3_integrity_head_derivative_prep.md §2.4）。
+# glob 型清单"漏登"与"目录改名"不可分辨，故补非空自证（A3b）与 check() 阈值红（MQ-3）。
+_GATES_DIR = _REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
 _DYNAMIC_GATE_ENTRIES: list[dict] = [
     {
         "path": str(p.relative_to(_REPO_ROOT)).replace("\\", "/"),
@@ -170,6 +175,14 @@ _DYNAMIC_GATE_ENTRIES: list[dict] = [
     }
     for p in sorted(_GATES_DIR.glob("*.py"))
 ]
+
+# A3b：glob 空=清单失效，不得静默（MQ-3：空≠正常）。check() 另按 _MIN_DYNAMIC_GATES 阈值判红。
+if not _DYNAMIC_GATE_ENTRIES and _GATES_DIR.exists():
+    print("[INTEGRITY] ⚠ commit_gates 动态清单为空但目录存在——RULES_MANIFEST 覆盖已失效", file=sys.stderr)
+
+# MQ-3 阈值：在册 gate 实现常态 119 台；低于此值=保护面退化（governance→gov_enforcement 族改名
+# 再发或 glob 失效），check() 直接 MANIFEST_DEGRADED 红。改阈值=改判据，须经门位裁定。
+_MIN_DYNAMIC_GATES = 100
 
 RULES_MANIFEST: list[dict] = _STATIC_MANIFEST + _DYNAMIC_GATE_ENTRIES
 
@@ -375,12 +388,173 @@ def register_fold(changed_files: set[str]) -> bool:
     )
 
 
-def check() -> dict:
-    """check implementation."""
-    db = _load_db()
+_HEAD_UNREADABLE = object()  # HEAD 面不可读三态哨兵（与 None=HEAD 无此文件 严格区分；战役 B0/M1·P3）
+
+
+def _read_head_blobs(rel_paths: list[str]) -> dict[str, str | None]:
+    """一次 git 子进程批量取 HEAD 面内容 hash（战役 B0/M1·P3：基线按当前 HEAD 派生）。
+
+    语义与 _hash_git_head() 逐字节等价（同一 _normalize_eol + 同一 sha256[:16]），
+    区别只在"一次调用读全清单"——实测 n=17 0.026s / n=120 0.110s，
+    而 17 次 `git show HEAD:` 要 0.332s（Windows 进程创建主导）。
+
+    Returns:
+        {rel_path: hash}；HEAD 中不存在的路径 → None（等价 _hash_git_head 的 None 分支）。
+        整体读失败（非 0 rc / 解析越界）→ 抛 RuntimeError，调用方按 fail-closed 处理。
+    """
+    if not rel_paths:
+        return {}
+    stdin = "".join(f"HEAD:{p}\n" for p in rel_paths).encode("utf-8")
+    result = subprocess.run(  # noqa: bare-subprocess  治理自检脚本 spawn 本地 git 读 HEAD blob，已带 CREATE_NO_WINDOW，process_pool 循环依赖不可用
+        ["git", "cat-file", "--batch"],
+        input=stdin,
+        capture_output=True,
+        cwd=str(_REPO_ROOT),
+        timeout=20,
+        creationflags=getattr(
+            subprocess, "CREATE_NO_WINDOW", 0x08000000
+        ),  # trae_067 CREATE_NO_WINDOW (SW18 BARE-SUBPROCESS dead-letter rx)
+    )
+    out = result.stdout
+    if result.returncode != 0 and not out:
+        raise RuntimeError(f"git cat-file --batch failed rc={result.returncode}")
+    # 应答头首 token 是 oid 而非请求串（missing 应答才回显请求串）；
+    # git cat-file --batch 保证应答序==请求序，故按请求序配对。（实弹冒烟纠正：
+    # 原稿"路径当键"解析使全部路径误落哨兵分支——2026-09-24 深夜 scratch 冒烟捕获。）
+    parsed: dict[str, str | None] = {}
+    i = 0
+    n = len(out)
+    req_at = 0
+    while i < n and req_at < len(rel_paths):
+        nl = out.find(b"\n", i)
+        if nl < 0:
+            break
+        parts = out[i:nl].split(b" ")
+        i = nl + 1
+        req = rel_paths[req_at]
+        req_at += 1
+        if len(parts) == 2 and parts[-1] == b"missing":
+            parsed[req] = None
+            continue
+        size = int(parts[2])
+        data = out[i : i + size]
+        i += size + 1  # 跳过内容后的一个换行
+        parsed[req] = hashlib.sha256(_normalize_eol(data)).hexdigest()[:16]
+    for p in rel_paths:  # 协议保证"每请求一行应答"；缺行=解析失败
+        parsed.setdefault(p, _HEAD_UNREADABLE)
+        # 哨兵：本路径无应答 = HEAD 面不可读，调用方必须 fail-closed，
+        # 绝不允许"读不到就当没这个文件"（B0_3 §2.3 的第三种分支禁令）。
+    return parsed
+
+
+def _staged_change_set(rel_paths: list[str]) -> set[str]:
+    """ "正在被本提交合法改写"的受保护路径集 = check() 的解释位（MQ-2：own-scope）。
+
+    `git diff --cached --name-only HEAD -- <protected>`：
+    - 网关 own-scope 通道（_run_precommit_channel）注入 GIT_INDEX_FILE 临时索引
+      （HEAD 树 + 仅本提交文件），本调用继承 env ⇒ 天然只见本提交面（宪法 §3.1 同口径）；
+    - 无临时索引（直跑）→ 退化为真实 index，语义仍是"正在被提交的"。
+    读不到（rc≠0）→ 返回空集：解释位为空 = 判定更严，不会因异常放行篡改。
+    """
+    if not rel_paths:
+        return set()
+    result = subprocess.run(  # noqa: bare-subprocess  治理自检脚本 spawn 本地 git 读 staged 名单，已带 CREATE_NO_WINDOW，process_pool 循环依赖不可用
+        ["git", "diff", "--cached", "--name-only", "HEAD", "--", *rel_paths],
+        capture_output=True,
+        cwd=str(_REPO_ROOT),
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=10,
+        creationflags=getattr(
+            subprocess, "CREATE_NO_WINDOW", 0x08000000
+        ),  # trae_067 CREATE_NO_WINDOW (SW18 BARE-SUBPROCESS dead-letter rx)
+    )
+    if result.returncode != 0:
+        return set()
+    return {ln.strip().replace("\\", "/") for ln in result.stdout.splitlines() if ln.strip()}
+
+
+def _baseline_mode() -> str:
+    """完整性基线真源态读取唯一点（scripts 侧；fail-closed 回现状，不翻出厂默认）。
+
+    优先级：env ZEPHYR_INTEGRITY_BASELINE ∈ {head, snapshot} > config/flags.yaml
+    flags.integrity_baseline_mode.mode > "snapshot"（出厂默认=现行为）。
+    src 侧同语义读取在 zephyr.gov_enforcement.derived_dirty_ledger（VI 独立运行不依赖
+    src 包，故此处保留自足实现——两处同优先级、互为镜像，非 extract 级克隆）。
+    """
+    env = os.environ.get("ZEPHYR_INTEGRITY_BASELINE", "").strip().lower()
+    if env in ("head", "snapshot"):
+        return env
+    try:
+        import yaml
+
+        with open(_REPO_ROOT / "config" / "flags.yaml", encoding="utf-8") as fh:
+            doc = yaml.safe_load(fh) or {}
+        mode = ((doc.get("flags") or {}).get("integrity_baseline_mode") or {}).get("mode")
+        return mode if mode in ("head", "snapshot") else "snapshot"
+    except Exception:  # noqa: BLE001 — 配置设施异常回现状
+        return "snapshot"
+
+
+def check(baseline_mode: str | None = None) -> dict:
+    """完整性校验：判定式 `hash(工作树) vs hash(参考面)`（战役 B0/M1·P3，2026-09-24）。
+
+    参考面两态（flag `integrity_baseline_mode.mode`，出厂=snapshot=现行为）：
+      - "head"（M1 目标态）= 当前 HEAD blob（一次 `git cat-file --batch` 批量取）。
+        不可变、零滞后 ⇒ "基线未刷新"类假 TAMPERED 结构性不可能，DB 退出判定链。
+      - "snapshot"（回滚态）= rules_integrity_db.json 快照（=某过去 HEAD），
+        即现行行为，逐字节保留（滞后即假红是历史已知行为）。
+
+    两态共有判定（阈值与 exit code 零改动，不放松任何判据）：
+      工作树 == 参考                                 → OK
+      不等 且 该路径正被本提交改写（own-scope 解释位）  → CHANGING_IN_COMMIT（不计数）
+      不等 且 无解释（未提交漂移）                     → TAMPERED（计数 → exit 2，同现行）
+      参考面查无此条目                                → UNTRACKED（不计数，同现行）
+      文件缺失                                       → MISSING（critical 计数，同现行；
+        本改法不新增"受保护文件可随提交消失"的出口——MQ-4/R-5 锁死）
+      HEAD 面整体不可读（head 态）                    → HEAD_UNREADABLE（计数阻断，
+        禁"读不到就回退默认"的第三种分支）
+
+    工作树面继续读不是遗漏：WIP 篡改只有读工作树才看得见；参考面换 HEAD 后
+    它从"不同源所以假红"变成"同源所以真判"。
+    """
+    mode = baseline_mode or _baseline_mode()
     now = datetime.now(UTC)
     results: list[dict] = []
     tampered = 0
+    paths = [entry["path"] for entry in RULES_MANIFEST]
+    if mode == "head":
+        try:
+            refs = _read_head_blobs(paths)  # {rel: hash | None | _HEAD_UNREADABLE}
+        except Exception as e:  # noqa: BLE001 — 批量读失败退逐条（同语义，贵一些）
+            print(f"[INTEGRITY] ⚠ HEAD 批量读失败（{e}），退化为逐条读取", file=sys.stderr)
+            refs = {}
+            for p in paths:
+                h = _hash_git_head(p)
+                # None 两义（HEAD 无此文件 vs git 调用失败）用"工作树也没有"区分：
+                # 两边都拿不到 → 不可读 fail-closed；工作树有而 HEAD 无 → UNTRACKED 同口径。
+                refs[p] = _HEAD_UNREADABLE if (h is None and not (_REPO_ROOT / p).exists()) else h
+        in_commit = _staged_change_set(paths)
+    else:
+        db_files = _load_db().get("files", {})
+        refs = {p: (db_files.get(p, {}) or {}).get("hash", "") for p in paths}
+        in_commit = set()
+
+    if len(_DYNAMIC_GATE_ENTRIES) < _MIN_DYNAMIC_GATES:
+        # MQ-3：清单数低于阈值即红——glob 静默归零（目录改名族）不得无红无日志。
+        results.append(
+            {
+                "file": "(manifest)",
+                "status": "MANIFEST_DEGRADED",
+                "detail": (
+                    f"commit_gates 动态清单仅 {len(_DYNAMIC_GATE_ENTRIES)} 条"
+                    f"（阈值 {_MIN_DYNAMIC_GATES}）——C 层保护面失效（空≠正常）"
+                ),
+                "critical": True,
+            }
+        )
+        tampered += 1
 
     for entry in RULES_MANIFEST:
         fp = _REPO_ROOT / entry["path"]
@@ -399,15 +573,36 @@ def check() -> dict:
             continue
 
         current_hash = _hash_file(fp)
-        known = db.get("files", {}).get(rel, {})
-        known_hash = known.get("hash", "")
+        known_hash = refs.get(rel, "")
 
-        if not known_hash:
+        if known_hash is _HEAD_UNREADABLE:
+            # fail-closed：HEAD 面读不到不是"没篡改"的证据（第三种分支禁令）
+            results.append(
+                {
+                    "file": rel,
+                    "status": "HEAD_UNREADABLE",
+                    "detail": "HEAD blob 不可读——基线面失效，拒绝放行",
+                    "critical": entry["critical"],
+                }
+            )
+            tampered += 1
+        elif not known_hash:
             results.append(
                 {
                     "file": rel,
                     "status": "UNTRACKED",
                     "detail": "未被注册——首次发现",
+                    "critical": entry["critical"],
+                }
+            )
+        elif current_hash != known_hash and rel in in_commit:
+            # 解释位（MQ-2：own-scope only）：本提交正在合法改写该受保护文件。
+            # 今天的等效结论要靠"提交前先改基线工件"换取，head 派生后无需任何工件动作。
+            results.append(
+                {
+                    "file": rel,
+                    "status": "CHANGING_IN_COMMIT",
+                    "detail": f"本提交在途变更 (head: {known_hash} → staged/worktree: {current_hash})",
                     "critical": entry["critical"],
                 }
             )
@@ -440,6 +635,8 @@ def check() -> dict:
         "timestamp": now.isoformat(),
         "total": len(results),
         "ok_count": sum(1 for r in results if r["status"] == "OK"),
+        "baseline_mode": mode,
+        "changing_count": sum(1 for r in results if r["status"] == "CHANGING_IN_COMMIT"),
         "tampered_count": tampered,
         "results": results,
         "clean": tampered == 0,
@@ -528,7 +725,13 @@ def main() -> None:
             print(json_mod.dumps(result, ensure_ascii=False, indent=2))
         else:
             if result["clean"]:
-                print(f"[INTEGRITY] ✅ 全部 {result['total']} 个规则文件完整", file=sys.stderr)
+                _chg = result.get("changing_count", 0)
+                _tail = f"（本提交在途变更 {_chg} 项，已解释）" if _chg else ""
+                print(
+                    f"[INTEGRITY] ✅ 全部 {result['total']} 个规则文件完整"
+                    f"[基线面={result.get('baseline_mode', 'snapshot')}]{_tail}",
+                    file=sys.stderr,
+                )
             else:
                 print(f"[INTEGRITY] 🔴 {result['tampered_count']} 个文件被修改/缺失", file=sys.stderr)
                 for r in result["results"]:

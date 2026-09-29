@@ -121,6 +121,12 @@ flags:
     description: "C1 同会话短窗自动合批（提速战役 T11/C1，A4 阶梯 S7『批均规模 ≥3』前置编排档，st-commitspeed-tbl-20260924 施工）：enqueue 时同 session 已有 pending 件且创建于 <20 分钟内则自动并入前件（文件集并集、零内容改动、纯队列编排；只对同 session+同 worktree-root 生效，跨会话绝不合并；吸收痕迹记 meta.supersedes/absorbed 复用 compaction 名册）。判据口径=件数/日 158→<60、文件中位/件 1→>5。资格闸：stale/attempts>0/depends_on 任一侧/lane 混用/task_id 异/base_head 异/超 R2 大批硬顶一律不并（宁不并不错并）。运行时开关=env ZEPHYR_CQ_C1_DEBOUNCE（commit_queue.py 零 yaml 依赖，B5 同款；缺省随本键出厂 ON）。净零声明：合并『同会话多件手动并批』的人工编排约定为机械自动（替代人工拆批/等批指引），不新增门禁判据/阈值/队列状态。回滚=本键 enabled:false（改 YAML 一值；或 env ZEPHYR_CQ_C1_DEBOUNCE=0 即时生效）"
     implementation_status: "gated_mvp"
 
+  integrity_baseline_mode:
+    enabled: true
+    mode: "snapshot"
+    description: "战役 B0/M1（提交链治本夜战 分包3/P3，2026-09-24）：GATE-RULES-INTEGRITY 基线真源面。mode=snapshot=出厂现行（读 rules_integrity_db.json 滞后快照，每件须同步 --register 续命，实测尾段 mean 46.1s/med 6.2s/max 300.7s + 近 24h 10 笔 chore(integrity) 记账尾笔）；mode=head=按当前 HEAD blob 派生（一次 git cat-file --batch，实测 n=17 0.026s/n=120 0.110s），DB 退出判定链⇒同步刷新义务与记账税一并消失，工作树面继续读故 WIP 篡改检测不降级（MQ-2：解释位 CHANGING_IN_COMMIT 仅 own-scope）。判定阈值与 exit code 两态完全相同；解释位/R-2/R-5 哨兵同批有测试。翻 head 属 Owner 门位（flag 出厂态翻转=high tier）；回滚=改回 snapshot 一个 YAML 值不动码"
+    implementation_status: "gated"
+
   duckdb_runtime_gate:
     enabled: true
     mode: "warn"

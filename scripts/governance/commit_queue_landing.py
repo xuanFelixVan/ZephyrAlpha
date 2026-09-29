@@ -2399,7 +2399,9 @@ class WorktreeLanding:
                 logger.warning("[landing] 主工作区收敛异常 qid=%s %s: %s", qid, rel, exc)
             counts[action] = counts.get(action, 0) + 1
             if os.environ.get("RB1_DEBUG"):
-                print(f"RB1DBG qid={qid} old={old_sha[:10]} new={new_sha[:10]} dev_tip={self._git_repo('rev-parse', 'dev').stdout.strip()[:10] if False else '?'} path={rel}")
+                print(
+                    f"RB1DBG qid={qid} old={old_sha[:10]} new={new_sha[:10]} dev_tip={self._git_repo('rev-parse', 'dev').stdout.strip()[:10] if False else '?'} path={rel}"
+                )
             try:
                 # RB1 条件式 index 收敛臂（2026-09-29 治本战役）：清纯落地残影/保他意 staged，
                 # off/shadow 双开关缺省 shadow 只判不动；fail-open 同款（index 异常不回滚 landing）
@@ -2462,9 +2464,49 @@ class WorktreeLanding:
         "AGENTS.md",
     )
 
+    def _integrity_baseline_mode(self) -> str:
+        """integrity 基线面旗读取（战役 B0/M1·P3；fail-closed=snapshot=现行为）。
+
+        与 validate_rules_integrity._baseline_mode 同优先级；读取本体在
+        zephyr.gov_enforcement.derived_dirty_ledger（唯一点）。设施异常回 snapshot
+        ⇒ 退回旧同步 spawn 通道，绝不因配置读不到而改变判定。
+        """
+        try:
+            from zephyr.gov_enforcement.derived_dirty_ledger import read_integrity_baseline_mode
+
+            return read_integrity_baseline_mode(self.repo_root)
+        except Exception:  # noqa: BLE001 — 设施异常回现状
+            return "snapshot"
+
+    def _record_integrity_refresh_intent(self, item: dict, qid: str) -> None:
+        """把"该刷一次完整性审计快照"的意图落册（战役 B0/M1·P3）：不 spawn、不等待、不改工作区。
+
+        head 态下校验参考面=当前 HEAD（validate_rules_integrity check head 模式），
+        DB 退出判定链 ⇒ 本记录纯观测（审计快照批量刷新的事件源，消费端=事件触发，
+        宪法运维红线第 3 条）；去抖键=head_sha（N 件 → 1 刷）。
+        """
+        from zephyr.gov_enforcement.derived_dirty_ledger import append_intent
+
+        touched = sorted(p for p in self._item_paths(item) if p.startswith(self._RULES_PREFIXES_FOR_BASELINE))
+        append_intent(
+            self.repo_root,
+            {
+                "qid": qid,
+                "session_id": item.get("session_id", ""),
+                "head_sha": self._dev_head(),
+                "rules_touched": touched,  # 仅观测标签：head 态刷新与是否触碰规则册无关
+                "reason": "queue_landed",
+            },
+        )
+
     @_timed_phase("baseline")
     def _refresh_integrity_baseline_main_repo(self, item: dict) -> str:
         """落地成功后在主仓补跑 integrity 基线注册（fail-open，返回空=成功）。
+
+        【snapshot 回滚态专用】战役 B0/M1·P3：head 态下 B1/B2 调用点改走
+        _record_integrity_refresh_intent，本方法仅在 flag
+        integrity_baseline_mode.mode == "snapshot"（出厂态）被调用；
+        真删待"零消费"观察一个发布周期后按净零条款退役。
 
         与直提路径 GATE-INTEGRITY-AUDIT reconciler 完全对齐：该 reconciler trigger
         always-True（每次 commit 无条件注册），本方法同样不设前缀过滤——任何队列
@@ -2917,12 +2959,17 @@ class WorktreeLanding:
             #    在 serializer worktree 内——基线写进 worktree 副本，主仓基线恒 stale
             #    → TAMPERED 误报（宪法替换 c964c376c0 实证）。此处按 ritual 同款
             #    触发口径（_RULES_PREFIXES 命中）在主仓补跑一次注册；fail-open 留痕。
+            # 6·P3（2026-09-24）：head 态=校验参考面读当前 HEAD，刷新义务消失 ⇒ 只记意图
+            #    （不 spawn、不等待，旧路 timeout=180 白等面归零）；snapshot=出厂回滚态同步 spawn 原样。
             try:
-                reg_note = self._refresh_integrity_baseline_main_repo(item)
-                if reg_note:
-                    logger.warning("[landing] qid=%s 主仓基线注册失败（non-blocking）: %s", qid, reg_note)
-            except Exception as exc:  # noqa: BLE001 — 注册 fail-open
-                logger.warning("[landing] qid=%s 主仓基线注册异常（non-blocking）: %s", qid, exc)
+                if self._integrity_baseline_mode() == "snapshot":
+                    reg_note = self._refresh_integrity_baseline_main_repo(item)
+                    if reg_note:
+                        logger.warning("[landing] qid=%s 主仓基线注册失败（non-blocking）: %s", qid, reg_note)
+                else:
+                    self._record_integrity_refresh_intent(item, qid)
+            except Exception as exc:  # noqa: BLE001 — 基线刷新/意图记录 fail-open（意图丢了也有兜底对账）
+                logger.warning("[landing] qid=%s 基线刷新/意图记录异常（non-blocking）: %s", qid, exc)
             return cq.LandingResult(ok=True, landed_id=result.commit_hash)
 
         return cq.LandingResult(
@@ -2997,11 +3044,14 @@ class WorktreeLanding:
             except Exception as exc:  # noqa: BLE001 — 收敛 fail-open（landing 已成功）
                 logger.warning("[landing] qid=%s 主工作区收敛异常（non-blocking）: %s", qid, exc)
             try:
-                reg_note = self._refresh_integrity_baseline_main_repo(item)
-                if reg_note:
-                    logger.warning("[landing] qid=%s 主仓基线注册失败（non-blocking）: %s", qid, reg_note)
-            except Exception as exc:  # noqa: BLE001 — 注册 fail-open
-                logger.warning("[landing] qid=%s 主仓基线注册异常（non-blocking）: %s", qid, exc)
+                if self._integrity_baseline_mode() == "snapshot":
+                    reg_note = self._refresh_integrity_baseline_main_repo(item)
+                    if reg_note:
+                        logger.warning("[landing] qid=%s 主仓基线注册失败（non-blocking）: %s", qid, reg_note)
+                else:
+                    self._record_integrity_refresh_intent(item, qid)
+            except Exception as exc:  # noqa: BLE001 — 基线刷新/意图记录 fail-open
+                logger.warning("[landing] qid=%s 基线刷新/意图记录异常（non-blocking）: %s", qid, exc)
             return cq.LandingResult(ok=True, landed_id=commit_sha)
         return cq.LandingResult(
             ok=False,
