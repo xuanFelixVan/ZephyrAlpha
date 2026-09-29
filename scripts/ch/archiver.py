@@ -326,8 +326,11 @@ def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
     import pyarrow.parquet as pq
 
     if not ch_rows:
-        log.warning("  verify: 抽样返回 0 行，跳过字段值比对")
-        return True
+        # C305 fail-closed（2026-09-29）：抽样 0 行不再放行。ch_count>0 时抽样为空＝
+        # 抽样链路异常或 CH 侧分区状态可疑，字段值比对一票未投——旧 fail-open
+        # （return True）会让 verify 假绿灯直通 drop（T4 假绿灯病灶，M4 工单实证）。
+        log.error("  verify 失败: 抽样返回 0 行（fail-closed，字段值比对未执行）")
+        return False
     pq_cols = pq.read_schema(str(pq_path)).names
     cols = [c for c in pq_cols if c in ch_rows[0]]
     # ingest_ts（灌入元数据）不参与比对（2026-09-20 修）：同版本重复行 FINAL 折叠
@@ -401,6 +404,14 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
     # 2. ClickHouse 行数
     r = ch_reader.query(_SQL_COUNT_PARTITION.format(table=table, where=where)).strip()
     ch_count = int(r) if r else 0
+
+    # C305 交叉尺 fail-closed（2026-09-29）：0 行判据不可放行。ch_reader.query 失败静默
+    # 返回 "" 会被读成 0——把"查询失败"当"空表"放行 → drop 真实分区＝数据丢失链；
+    # 且空分区本无可归档（system.parts 不列出空分区）。行数比对（rows_written vs 目标表
+    # 行数）只在两侧都非 0 时才有判据力。
+    if ch_count <= 0:
+        log.error("  verify 失败: CH 计数=%d（0＝查询失败或空分区，fail-closed 拒绝归档）", ch_count)
+        return False
 
     # 行数比对（大分区允许 ±1 行容差：ClickHouse count() 元数据优化 vs FORMAT Parquet 已知差异）
     diff = abs(ch_count - pq_count)

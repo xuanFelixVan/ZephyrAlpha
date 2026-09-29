@@ -253,18 +253,27 @@ class TestVerifySampleFieldComparison:
     """抽样 100 行字段值比对（符号/OHLC/volume 精确比对，替换原"可查性确认"）。"""
 
     def _setup(self, monkeypatch, tmp_path, rows: list[dict], sample: list[dict]):
+        """确定性夹具：count 走 ch_reader.query 桩、抽样走 _http_query_json 桩。
+
+        2026-09-29（C305）前抽样曾打到真 CH（本机 CH 存活时已归档分区返回 0 行，
+        旧 fail-open 把假绿灯放行——两条断言 False 的用例因此挂红）；现一律桩掉，
+        测试不再依赖真实 ClickHouse。
+        """
         pq_path = tmp_path / "p.parquet"
         _pq.write_table(_pa.Table.from_pandas(_pd.DataFrame(rows)), str(pq_path))
 
         def fake_query(sql):
             if sql.startswith("SELECT count()"):
                 return str(len(rows))
-            if "ORDER BY rand() LIMIT 100" in sql:
-                return _ch_json(sample)
             raise AssertionError(f"unexpected SQL: {sql}")
+
+        def fake_http_json(sql):
+            assert "ORDER BY rand() LIMIT 100" in sql
+            return _json.loads(_ch_json(sample))
 
         monkeypatch.setattr(archiver.ch_reader, "query", fake_query)
         monkeypatch.setattr(archiver.ch_reader, "inject_final", lambda s: s)
+        monkeypatch.setattr(archiver, "_http_query_json", fake_http_json)
         return pq_path
 
     def test_sample_match_passes(self, monkeypatch, tmp_path):
@@ -297,6 +306,30 @@ class TestVerifySampleFieldComparison:
 
     def test_missing_parquet_fails(self, tmp_path):
         assert archiver.verify_partition("c1_market.kline_1min", "202101", tmp_path / "nope.parquet") is False
+
+
+class TestVerifyFailClosed:
+    """C305 回归（2026-09-29）：verify 两条假绿灯链路全部改 fail-closed。"""
+
+    def test_empty_sample_fails_closed(self, monkeypatch, tmp_path):
+        """抽样 0 行必须判 False（旧 fail-open return True 直通 drop——T4 假绿灯病灶）。"""
+        rows = _write_test_parquet(tmp_path / "seed.parquet", 50)
+        pq_path = TestVerifySampleFieldComparison()._setup(monkeypatch, tmp_path, rows, [])
+        assert archiver.verify_partition("c1_market.kline_1min", "202101", pq_path) is False
+
+    def test_zero_ch_count_fails_closed(self, monkeypatch, tmp_path):
+        """CH 计数 0（含 query fail-silent 空串被读成 0）不得放行——防空表假绿灯丢分区。"""
+        rows = _write_test_parquet(tmp_path / "seed.parquet", 50)
+        pq_path = TestVerifySampleFieldComparison()._setup(monkeypatch, tmp_path, rows, rows[:1])
+        monkeypatch.setattr(archiver.ch_reader, "query", lambda sql: "")
+        assert archiver.verify_partition("c1_market.kline_1min", "202101", pq_path) is False
+
+    def test_zero_ch_count_with_empty_parquet_fails_closed(self, monkeypatch, tmp_path):
+        """双 0（CH=0 且 Parquet=0）同样拒绝：空分区无可归档，不做无判据放行。"""
+        empty = tmp_path / "empty.parquet"
+        _pq.write_table(_pa.Table.from_pandas(_pd.DataFrame([])), str(empty))
+        monkeypatch.setattr(archiver.ch_reader, "query", lambda sql: "0")
+        assert archiver.verify_partition("c1_market.kline_1min", "202101", empty) is False
 
 
 class TestManifestExtendedFields:
