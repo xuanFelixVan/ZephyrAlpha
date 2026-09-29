@@ -87,7 +87,7 @@ gates:
   factory_function: make_capability_overlap_gate
   source: in_process
   register_line: 412
-  enabled: false  # 临时禁用（Owner 批准 B 方案扩展；echo-guard acknowledged 21 对在册但 worktree sync 不到位）
+  enabled: true  # Owner 2026-09-30 批复翻回（裁定#431 第①项；原禁用理由 echo-guard 21 对 worktree sync 不到位已被 98ce6370c5 红五簇撞号治愈解除，99_owner_gate #1）
 - gate_id: DIRECTORY-CONTRACT
   module_path: zephyr.gov_enforcement.commit_gates.directory_contract_gate
   factory_function: make_directory_contract_gate
@@ -205,7 +205,7 @@ gates:
   factory_function: make_gate_vocab_gate
   source: in_process
   register_line: 434
-  enabled: false  # 临时禁用（Owner 批准 B 方案；187 件落地后恢复）
+  enabled: true  # Owner 2026-09-30 批复翻回（裁定#431 第①项；恢复前置"187 件落地"已达成）
 - gate_id: SNAPSHOT-DRIFT
   module_path: zephyr.gov_enforcement.commit_gates.snapshot_drift_gate
   factory_function: make_snapshot_drift_gate
@@ -243,7 +243,7 @@ gates:
   factory_function: make_permanent_system_trigger_gate
   source: in_process
   register_line: 443
-  enabled: false  # 临时禁用（Owner B方案；api_server既有代码时间模式非本批引入）
+  enabled: true  # Owner 2026-09-30 批复翻回（裁定#431 第①项；本批复为 Owner 新令，覆盖名册在案旧否决注记）
 - gate_id: MSG-EXPOSURE
   module_path: zephyr.gov_enforcement.commit_gates.msg_exposure_gate
   factory_function: make_msg_exposure_gate
@@ -349,7 +349,7 @@ gates:
   module_path: zephyr.gov_enforcement.commit_gates.algo_flow_link_gate
   factory_function: make_algo_flow_link_gate
   source: in_process
-  enabled: false  # 临时禁用（Owner B方案；八卡在批内，worktree sync 后恢复）
+  enabled: true  # Owner 2026-09-30 批复翻回（裁定#431 第①项；恢复前置 worktree sync 已达成）
 - gate_id: META-TESTS-COVERAGE
   files_trigger: ["src/zephyr/gov_enforcement/commit_gates/"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=门内真触发条件 commit_gates/*.py 变更时才扫描
   module_path: zephyr.gov_enforcement.commit_gates.tests_coverage_gate
