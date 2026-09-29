@@ -59,7 +59,9 @@ _EMPTY_CELL_REASONS = frozenset({"pending-owner-adoption", "by-design-empty", "p
 # R43 边语义四元组词表（2026-09-23 st-tdm20 扩容批）：封闭枚举防随手写
 _QUAD_FIELDS: Final = ("payload_type", "frequency", "lag", "pit_proof")
 _PAYLOAD_TYPES = frozenset({"data", "signal", "state", "decision", "exam", "evidence", "feedback", "governance"})
-_FREQUENCIES = frozenset({"realtime", "intraday", "daily", "weekly", "monthly", "quarterly", "annual", "adhoc", "static", "continuous"})
+_FREQUENCIES = frozenset(
+    {"realtime", "intraday", "daily", "weekly", "monthly", "quarterly", "annual", "adhoc", "static", "continuous"}
+)
 _LEGACY_PIT = "legacy-unaudited"  # 存量边欠账显式标记（未经逐边 PIT 审计，不冒充已证）
 _L9_LAYER = "L9"  # 知识供给层（TDM 2.0 扩容轴）：触及该层的边四元组硬门禁
 _SCHEMA_VERSIONS = frozenset({"1.0", "1.1", "1.2"})
@@ -75,7 +77,7 @@ _REG_FACTOR = "factor_registry.yaml"
 _REG_DATA = "data_asset_registry.yaml"
 _REG_EXA = "execution_algo_registry.yaml"
 _REG_IND = "technical_indicator_registry.yaml"
-_REG_DAL = "decision_algo_registry.yaml"   # P1-3（PB-05）：决策算法库，algo_refs 值域扩 DAL-*
+_REG_DAL = "decision_algo_registry.yaml"  # P1-3（PB-05）：决策算法库，algo_refs 值域扩 DAL-*
 
 # D32 门禁包常量（R15 治理字段枚举 / R17 粒度门禁 / R16 树深上限）
 _ACTIVATIONS = frozenset({"premarket", "intraday", "postmarket", "weekly", "on_demand", "continuous"})
@@ -84,15 +86,15 @@ _VAGUE_WORDS = ("视情况", "看情况", "酌情", "到时候再说")
 _MAX_QUESTION_LEN = 100
 _MAX_TREE_DEPTH = 4
 # D33 节点容量门禁（Owner 裁定"单节点承载必须限死，不能全写在一个节点里"）：字段级数量上限
-_MAX_MOUNTS = 8        # strategy_mounts 上限（超出=该拆环节）
+_MAX_MOUNTS = 8  # strategy_mounts 上限（超出=该拆环节）
 _MAX_FACTOR_REFS = 12  # factor_refs 上限
-_MAX_DATA_REFS = 8     # data_refs 上限
-_MAX_ALGO_REFS = 8     # algo_refs 上限
-_WARN_CHILDREN = 12    # 单父节点子节点数 warning 阈值（超=提示分层，不阻断）
+_MAX_DATA_REFS = 8  # data_refs 上限
+_MAX_ALGO_REFS = 8  # algo_refs 上限
+_WARN_CHILDREN = 12  # 单父节点子节点数 warning 阈值（超=提示分层，不阻断）
 # D34 交叉索引门禁（Owner 裁定"最细节点须能交叉定位其他全景图"）+ 膨胀预算
 _MAX_NODES_PER_FLOW = 80  # 单流节点数 warning 阈值（防血肉阶段无限膨胀）
 _NODE_ID_RE = r"TDM-[A-Z]-[A-Z0-9]+(-[A-Z0-9]+)*"  # R20：TDM-{流}-{层}-{序号}… 骨架
-_MOD_ID_RE = r"MOD-[A-Z0-9]+(?:[_-][A-Z0-9]+)*"    # R21：MOD-* 交叉锚格式（2026-09-16 复核班放宽：depgraph 库侧已下划线治理 MOD-INT_NEWS_CHAIN 类，旧连字符-only 正则与缓存一致性检查互斥=R21 死锁残留）
+_MOD_ID_RE = r"MOD-[A-Z0-9]+(?:[_-][A-Z0-9]+)*"  # R21：MOD-* 交叉锚格式（2026-09-16 复核班放宽：depgraph 库侧已下划线治理 MOD-INT_NEWS_CHAIN 类，旧连字符-only 正则与缓存一致性检查互斥=R21 死锁残留）
 _DEPGRAPH_CACHE = ".runtime/depgraph_scan_cache.json"  # path→blueprint_id 映射（派生缓存，缺失记 warning）
 
 # D36 全库交叉轴（Owner 裁定"按消费场景分批打通全库"）：八业务库引用字段
@@ -205,7 +207,8 @@ class DecisionMapNode:
     latency_budget: str | None = None
     # v1.10（Owner 2026-09-11 红因徽标批复）：红节点红因显式登记——module_ref 缺失且非 paper 时必填
     #   （缺=R40 warning，不阻断）；枚举=structural（结构位聚合）/pending_gate（验证或裁定挂起）/
-    #   not_built（未施工）/terminal（流根终态）。前端画布角标+抽屉徽标消费，三态色语义不变
+    #   not_built（未施工）/terminal（流根终态）/by_ref_design（引用式投影——数据本体按 DS/CH 真源
+    #   引用不在图复制，非缺件；F30 卷一行案 2026-09-29）。前端画布角标+抽屉徽标消费，三态色语义不变
     red_reason: str | None = None
 
 
@@ -635,9 +638,7 @@ def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -
     # 其余边缺失或 pit=legacy-unaudited=欠账 warning（只报不清，读数归对账报告）
     fn_node = by_id.get(e.from_node)
     tn_node = by_id.get(e.to_node)
-    touches_l9 = any(
-        n is not None and n.layer == _L9_LAYER for n in (fn_node, tn_node)
-    )
+    touches_l9 = any(n is not None and n.layer == _L9_LAYER for n in (fn_node, tn_node))
     if touches_l9:
         quad = dict(payload_type=e.payload_type, frequency=e.frequency, lag=e.lag, pit_proof=e.pit_proof)
         for field in _QUAD_FIELDS:
@@ -762,7 +763,12 @@ def _validate_governance(
         for rel_field, rel_val in (("doc_ref", n.doc_ref), ("module_ref", n.module_ref)):
             # V3 路径穿越/绝对路径拒绝（防 ../ 与盘符绕过仓库根）
             if rel_val and (Path(rel_val).is_absolute() or ".." in Path(rel_val).parts):
-                add("error", "R14" if rel_field == "doc_ref" else "R19", n.node_id, f"{rel_field} 禁止绝对路径/上跳: {rel_val}")
+                add(
+                    "error",
+                    "R14" if rel_field == "doc_ref" else "R19",
+                    n.node_id,
+                    f"{rel_field} 禁止绝对路径/上跳: {rel_val}",
+                )
         if n.doc_ref:
             rel = n.doc_ref.split("#", 1)[0]
             if rel and not (repo_root / rel).is_file():
@@ -775,7 +781,12 @@ def _validate_governance(
         if n.module_id and n.module_ref and depgraph_entries is not None:
             actual = _resolve_mod_id(depgraph_entries, repo_root, n.module_ref)
             if actual is not None and actual != n.module_id:
-                add("error", "R21", n.node_id, f"module_id {n.module_id} 与 depgraph 缓存 {actual} 不一致（module_ref={n.module_ref}）")
+                add(
+                    "error",
+                    "R21",
+                    n.node_id,
+                    f"module_id {n.module_id} 与 depgraph 缓存 {actual} 不一致（module_ref={n.module_ref}）",
+                )
             elif actual is None and depgraph_entries.get(n.module_ref):
                 # 禁静默降级：有缓存条目却无当前内容 hash 命中＝缓存陈旧（或条目缺
                 # blueprint_id），对账降级为格式校验，欠账必须浮出（不阻断：对不存在的
@@ -816,7 +827,7 @@ def _validate_governance(
                 "warning",
                 "R40",
                 n.node_id,
-                "红节点缺 red_reason（红因登记欠账——structural/pending_gate/not_built/terminal 四选一）",
+                "红节点缺 red_reason（红因登记欠账——structural/pending_gate/not_built/terminal/by_ref_design 五选一）",
             )
         # R17 粒度门禁：一句话说清楚（长度上限+禁模糊词）；空串防御（折叠块头被截断的历史病根）
         if not n.decision_question.strip():
@@ -837,7 +848,12 @@ def _validate_governance(
             add("error", "R37", n.node_id, "缺 algo_note_zh（大白话算法说明——含关键指标与阈值口径，全景图可读性门禁）")
         # D33 节点容量门禁：单节点承载上限（超出=粒度过粗，必须拆节点）
         if len(n.strategy_mounts) > _MAX_MOUNTS:
-            add("error", "R17", n.node_id, f"strategy_mounts {len(n.strategy_mounts)} 个超上限 {_MAX_MOUNTS}（该拆环节）")
+            add(
+                "error",
+                "R17",
+                n.node_id,
+                f"strategy_mounts {len(n.strategy_mounts)} 个超上限 {_MAX_MOUNTS}（该拆环节）",
+            )
         if len(n.factor_refs) > _MAX_FACTOR_REFS:
             add("error", "R17", n.node_id, f"factor_refs {len(n.factor_refs)} 个超上限 {_MAX_FACTOR_REFS}")
         if len(n.data_refs) > _MAX_DATA_REFS:
@@ -897,7 +913,9 @@ def _validate_governance(
     anchor = dm.nodes[0].node_id if dm.nodes else ""
     for flow, cnt in sorted(by_flow.items()):
         if cnt > _MAX_NODES_PER_FLOW:
-            add("warning", "R23", anchor, f"flow={flow} 节点数 {cnt} 超预算 {_MAX_NODES_PER_FLOW}（膨胀预警，考虑收口）")
+            add(
+                "warning", "R23", anchor, f"flow={flow} 节点数 {cnt} 超预算 {_MAX_NODES_PER_FLOW}（膨胀预警，考虑收口）"
+            )
 
     # R24 因子交叉欠账（warning）：挂策略的节点 factor_refs 空=因子链路断
     for n in dm.nodes:
@@ -910,13 +928,7 @@ def _validate_governance(
         if n.node_id in parented:
             continue
         no_refs = not (
-            n.strategy_mounts
-            or n.factor_refs
-            or n.data_refs
-            or n.algo_refs
-            or n.module_ref
-            or n.module_id
-            or n.doc_ref
+            n.strategy_mounts or n.factor_refs or n.data_refs or n.algo_refs or n.module_ref or n.module_id or n.doc_ref
         )
         if no_refs:
             add("warning", "R25", n.node_id, "叶子节点无任何引用锚（空转节点：决策无落点也无交叉索引）")
@@ -952,7 +964,15 @@ def validate_decision_map(
     registry_dir = Path(registry_dir)
     # V1 注册表真源缺失=error（文件不存在时引用校验静默通过=假阴性漏洞）
     anchor0 = dm.nodes[0].node_id if dm.nodes else ""
-    for fname in (_REG_STRATEGY, _REG_FACTOR, _REG_DATA, _REG_EXA, _REG_IND, _REG_DAL, *(spec[1] for spec in _XREF_SPECS)):
+    for fname in (
+        _REG_STRATEGY,
+        _REG_FACTOR,
+        _REG_DATA,
+        _REG_EXA,
+        _REG_IND,
+        _REG_DAL,
+        *(spec[1] for spec in _XREF_SPECS),
+    ):
         if not (registry_dir / fname).exists():
             add("error", "R99", anchor0, f"注册表真源缺失: {fname}（引用校验不可信）")
     strat_ids = _load_registry_ids(registry_dir, _REG_STRATEGY, "strategies", "strategy_id")
@@ -997,12 +1017,15 @@ def validate_decision_map(
         add("warning", "R21", anchor0, f"depgraph 扫描缓存缺失（{cache_path}）——MOD 对账降级为格式校验")
     # D36 八库交叉轴 ID 集合（表驱动加载）
     xref_ids: dict[str, frozenset[str]] = {
-        field: _load_registry_ids(registry_dir, fname, sec, key)
-        for field, fname, sec, key, _code, _lib in _XREF_SPECS
+        field: _load_registry_ids(registry_dir, fname, sec, key) for field, fname, sec, key, _code, _lib in _XREF_SPECS
     }
     _validate_governance(
-        dm, registry_dir, exa_ids | ind_ids | dal_ids, add,
-        depgraph_entries=depgraph_entries, xref_ids=xref_ids,
+        dm,
+        registry_dir,
+        exa_ids | ind_ids | dal_ids,
+        add,
+        depgraph_entries=depgraph_entries,
+        xref_ids=xref_ids,
     )
 
     # R12 整装方案（v1.1）：sleeve 引用存在性+权重范围+和≤1+activation_state 在列轴+置信度
@@ -1026,9 +1049,7 @@ def validate_decision_map(
                 # v1.2：activation_state 支持 str 或 tuple[str, ...]（多状态激活）
                 if s.activation_state is not None:
                     states_required = (
-                        (s.activation_state,)
-                        if isinstance(s.activation_state, str)
-                        else tuple(s.activation_state)
+                        (s.activation_state,) if isinstance(s.activation_state, str) else tuple(s.activation_state)
                     )
                     for st in states_required:
                         if st not in dm.state_matrix.states:
@@ -1052,7 +1073,7 @@ def validate_decision_map(
 # 知识层 PIT 时间诊断（D119/D121，2026-09-08 Owner 终裁）：拼装回测预检项
 # 语义见 docs/_working/2026-09-07-tdm-backtest-protocol.md §1 强制声明。
 # ---------------------------------------------------------------------------
-_PIT_REPO = Path(__file__).resolve().parents[3]   # src/zephyr/trading/x.py → 仓库根
+_PIT_REPO = Path(__file__).resolve().parents[3]  # src/zephyr/trading/x.py → 仓库根
 _PIT_CATALOG = _PIT_REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 
 
@@ -1069,7 +1090,12 @@ def pit_drift_report(map_path: Path, backtest_start: str, backtest_end: str, dri
     raw = yaml.safe_load(Path(map_path).read_text(encoding="utf-8"))
     effective = str(raw.get("effective_from") or "").strip()
     if not effective:
-        return {"verdict": "blocked", "reason": "地图无 effective_from 字段（D118 未落盘）", "effective_from": None, "drift_items": []}
+        return {
+            "verdict": "blocked",
+            "reason": "地图无 effective_from 字段（D118 未落盘）",
+            "effective_from": None,
+            "drift_items": [],
+        }
     eff_d = date.fromisoformat(effective[:10])
     s_d, e_d = date.fromisoformat(backtest_start[:10]), date.fromisoformat(backtest_end[:10])
 
@@ -1084,14 +1110,16 @@ def pit_drift_report(map_path: Path, backtest_start: str, backtest_end: str, dri
                 u_d = date.fromisoformat(upd)
             except ValueError:
                 continue
-            if u_d > s_d:   # 知识在回测起点之后才登记/修改 → 区间内用了"未来认知"
-                drift_items.append({"id": x.get("dataset_id"), "name_zh": x.get("name_zh") or x.get("entity_name"), "updated_at": upd})
+            if u_d > s_d:  # 知识在回测起点之后才登记/修改 → 区间内用了"未来认知"
+                drift_items.append(
+                    {"id": x.get("dataset_id"), "name_zh": x.get("name_zh") or x.get("entity_name"), "updated_at": upd}
+                )
         drift_items.sort(key=lambda x: x["updated_at"])
     except OSError as exc:
         drift_items.append({"id": "REG-DATAFLOW-001", "name_zh": f"数据资产注册表读取失败: {exc}", "updated_at": ""})
 
     if e_d < eff_d:
-        verdict = "drift"   # 回测完全在生效前=整段都是未来知识，放行但报告必须整段声明
+        verdict = "drift"  # 回测完全在生效前=整段都是未来知识，放行但报告必须整段声明
     elif s_d < eff_d or drift_items:
         verdict = "drift"
     else:
@@ -1112,8 +1140,14 @@ def pit_drift_report(map_path: Path, backtest_start: str, backtest_end: str, dri
 # 代码 StrategyMeta 真源（8 实盘策略，pf_core/*.py）——与 tests/trading/test_decision_map.py 同源
 _CODE_STRATEGY_IDS: Final = frozenset(
     {
-        "daban-sleeve", "default-equity", "eventdriven-sleeve", "multifactor-sleeve",
-        "topn-momentum", "intraday-surge-fall", "orderbook-imbalance", "vwap-reversion",
+        "daban-sleeve",
+        "default-equity",
+        "eventdriven-sleeve",
+        "multifactor-sleeve",
+        "topn-momentum",
+        "intraday-surge-fall",
+        "orderbook-imbalance",
+        "vwap-reversion",
     }
 )
 
@@ -1131,9 +1165,11 @@ if __name__ == "__main__":
     if _args.command == "validate":
         _dm = load_decision_map(Path(_args.map))
         _reg = yaml.safe_load((_PIT_CATALOG / "strategy_registry.yaml").read_text(encoding="utf-8"))
-        _known = frozenset(
-            x["strategy_id"] for x in _reg.get("strategies", []) if x.get("strategy_id")
-        ) | frozenset(a for x in _reg.get("strategies", []) for a in (x.get("aliases") or [])) | _CODE_STRATEGY_IDS
+        _known = (
+            frozenset(x["strategy_id"] for x in _reg.get("strategies", []) if x.get("strategy_id"))
+            | frozenset(a for x in _reg.get("strategies", []) for a in (x.get("aliases") or []))
+            | _CODE_STRATEGY_IDS
+        )
         _ok, _issues = validate_decision_map(_dm, _PIT_CATALOG, _known)
         print(json.dumps({"ok": _ok, "issue_count": len(_issues)}, ensure_ascii=False))
         for _i in _issues:

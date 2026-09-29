@@ -4278,7 +4278,7 @@ nodes:
   data_refs: [DS-002]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
@@ -4301,7 +4301,7 @@ nodes:
   data_refs: [DS-001, DS-057]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
@@ -4325,7 +4325,7 @@ nodes:
   data_refs: [DS-117, DS-119]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
@@ -4348,7 +4348,7 @@ nodes:
   data_refs: [DS-123, DS-141]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4371,7 +4371,7 @@ nodes:
   data_refs: [DS-208, DS-232]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4394,7 +4394,7 @@ nodes:
   data_refs: [DS-016]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
@@ -4417,7 +4417,7 @@ nodes:
   data_refs: [DS-230]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4440,7 +4440,7 @@ nodes:
   data_refs: [DS-231]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4463,7 +4463,7 @@ nodes:
   data_refs: [DS-104, DS-107]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: critical
@@ -4487,7 +4487,7 @@ nodes:
   data_refs: [DS-101]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4510,7 +4510,7 @@ nodes:
   data_refs: []
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4533,7 +4533,7 @@ nodes:
   data_refs: [DS-198, DS-237]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4557,7 +4557,7 @@ nodes:
   data_refs: [DS-218]
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4580,7 +4580,7 @@ nodes:
   data_refs: []
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4604,7 +4604,7 @@ nodes:
   data_refs: []
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
@@ -4628,7 +4628,7 @@ nodes:
   data_refs: []
   algo_refs: []
   module_ref: null
-  red_reason: structural
+  red_reason: by_ref_design
   doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
   strategy_mounts: []
   materiality: normal
