@@ -61,6 +61,12 @@ from zephyr.signal_ashare.chanlun_structure import (
     ChanlunConfig,
     analyze_chanlun,
 )
+from zephyr.signal_ashare.strategy_signal.combo_rule_loader import (
+    ComboRule,
+)
+from zephyr.signal_ashare.strategy_signal.combo_rule_loader import (
+    match as combo_match,
+)
 from zephyr.signal_ashare.trendline_sr_detector import (
     SRBar,
     TrendSRConfig,
@@ -235,9 +241,9 @@ def _swing_points(series: Sequence[float], k: int, find_max: bool) -> list[tuple
     for i in range(k, n - k):
         window = series[i - k : i + k + 1]
         v = series[i]
-        if find_max and v == max(window) and window.count(v) == 1:
-            out.append((i, v))
-        elif not find_max and v == min(window) and window.count(v) == 1:
+        if (find_max and v == max(window) and window.count(v) == 1) or (
+            not find_max and v == min(window) and window.count(v) == 1
+        ):
             out.append((i, v))
     return out
 
@@ -251,10 +257,12 @@ class UnifiedPatternEngine:
         *,
         win_rate_provider: Callable[[str], float | None] | None = None,
         templates: Sequence[PatternTemplate] = (),
+        combo_rules: Sequence[ComboRule] | None = None,
     ) -> None:
         self._cfg = config or PatternEngineConfig()
         self._win_rate = win_rate_provider
         self._templates = tuple(templates)
+        self._combo_rules: tuple[ComboRule, ...] = tuple(combo_rules) if combo_rules else ()
 
     # ── 经典腿：双顶/双底 + 平台突破 ─────────────────────
     def _classic_leg(
@@ -381,10 +389,7 @@ class UnifiedPatternEngine:
             return None
 
         def _gaps_ok(i1: int, i2: int, i3: int) -> bool:
-            return (
-                i2 - i1 >= cfg.double_extreme_min_gap
-                and i3 - i2 >= cfg.double_extreme_min_gap
-            )
+            return i2 - i1 >= cfg.double_extreme_min_gap and i3 - i2 >= cfg.double_extreme_min_gap
 
         # 头肩顶：连续三峰，头最高、两肩对称，颈线=两谷低者；收盘破颈线确认
         for a in range(len(tops) - 2):
@@ -583,9 +588,15 @@ class UnifiedPatternEngine:
                 if j_up is not None:
                     events.append(
                         self._event(
-                            name="矩形箱体", cls=PatternClass.CONTINUATION, direction=PatternDirection.UP,
+                            name="矩形箱体",
+                            cls=PatternClass.CONTINUATION,
+                            direction=PatternDirection.UP,
                             confidence=0.6,
-                            key_points=(KeyPoint(*t1, "上沿1"), KeyPoint(*t2, "上沿2"), KeyPoint(j_up, closes[j_up], "上破点")),
+                            key_points=(
+                                KeyPoint(*t1, "上沿1"),
+                                KeyPoint(*t2, "上沿2"),
+                                KeyPoint(j_up, closes[j_up], "上破点"),
+                            ),
                             anchor=j_up,
                         )
                     )
@@ -593,9 +604,15 @@ class UnifiedPatternEngine:
                 if j_dn is not None:
                     events.append(
                         self._event(
-                            name="矩形箱体", cls=PatternClass.CONTINUATION, direction=PatternDirection.DOWN,
+                            name="矩形箱体",
+                            cls=PatternClass.CONTINUATION,
+                            direction=PatternDirection.DOWN,
                             confidence=0.6,
-                            key_points=(KeyPoint(*b1, "下沿1"), KeyPoint(*b2, "下沿2"), KeyPoint(j_dn, closes[j_dn], "下破点")),
+                            key_points=(
+                                KeyPoint(*b1, "下沿1"),
+                                KeyPoint(*b2, "下沿2"),
+                                KeyPoint(j_dn, closes[j_dn], "下破点"),
+                            ),
                             anchor=j_dn,
                         )
                     )
@@ -611,9 +628,15 @@ class UnifiedPatternEngine:
                 if j_up is not None:
                     events.append(
                         self._event(
-                            name="对称三角形", cls=PatternClass.CONTINUATION, direction=PatternDirection.UP,
+                            name="对称三角形",
+                            cls=PatternClass.CONTINUATION,
+                            direction=PatternDirection.UP,
                             confidence=0.6,
-                            key_points=(KeyPoint(*t1, "高1"), KeyPoint(*t2, "高2"), KeyPoint(j_up, closes[j_up], "上破点")),
+                            key_points=(
+                                KeyPoint(*t1, "高1"),
+                                KeyPoint(*t2, "高2"),
+                                KeyPoint(j_up, closes[j_up], "上破点"),
+                            ),
                             anchor=j_up,
                         )
                     )
@@ -622,9 +645,15 @@ class UnifiedPatternEngine:
                 if j_dn is not None:
                     events.append(
                         self._event(
-                            name="对称三角形", cls=PatternClass.CONTINUATION, direction=PatternDirection.DOWN,
+                            name="对称三角形",
+                            cls=PatternClass.CONTINUATION,
+                            direction=PatternDirection.DOWN,
                             confidence=0.6,
-                            key_points=(KeyPoint(*b1, "低1"), KeyPoint(*b2, "低2"), KeyPoint(j_dn, closes[j_dn], "下破点")),
+                            key_points=(
+                                KeyPoint(*b1, "低1"),
+                                KeyPoint(*b2, "低2"),
+                                KeyPoint(j_dn, closes[j_dn], "下破点"),
+                            ),
                             anchor=j_dn,
                         )
                     )
@@ -712,7 +741,10 @@ class UnifiedPatternEngine:
         notes: list[str],
     ) -> list[PatternEvent]:
         events: list[PatternEvent] = []
-        bars = [SRBar(date=f"bar{i}", high=h, low=l, close=c) for i, (h, l, c) in enumerate(zip(highs, lows, closes))]
+        bars = [
+            SRBar(date=f"bar{i}", high=h, low=l, close=c)
+            for i, (h, l, c) in enumerate(zip(highs, lows, closes, strict=True))
+        ]
         try:
             sr = analyze_trend_sr(bars, TrendSRConfig())
         except ValueError as exc:
@@ -809,6 +841,7 @@ class UnifiedPatternEngine:
         closes: Sequence[float],
         *,
         timeframe: str = "1d",
+        volumes: Sequence[float] | None = None,
     ) -> PatternScanResult:
         """OHLCV → 统一 PatternEvent 序列（去重+置信度降序）。"""
         if not symbol:
@@ -818,11 +851,17 @@ class UnifiedPatternEngine:
             raise ValueError("输入序列不能为空")
         if len(highs) != n or len(lows) != n:
             raise ValueError(f"序列不等长: highs={len(highs)} lows={len(lows)} closes={n}")
+        if volumes is not None and len(volumes) != n:
+            raise ValueError(f"volumes 不等长: {len(volumes)} vs {n}")
         for i in range(n):
             if highs[i] <= 0 or lows[i] <= 0 or closes[i] <= 0:
                 raise ValueError(f"价格须为正: idx={i}")
             if highs[i] < lows[i]:
                 raise ValueError(f"high<low: idx={i}")
+            if volumes is not None and volumes[i] < 0:
+                raise ValueError(f"量须非负: idx={i}")
+            if volumes is not None and volumes[i] < 0:
+                raise ValueError(f"量须非负: idx={i}")
 
         cfg = self._cfg
         notes: list[str] = []
@@ -853,6 +892,33 @@ class UnifiedPatternEngine:
             ev = self._dtw_leg(closes)
             raw.extend(ev)
             stats["dtw"] = len(ev)
+
+        # ── 组合规则卡装配（形态×SR邻近×量能 → 方向/强度，三要素 YAML 卡）──
+        if self._combo_rules:
+            volume_ratio: float | None = None
+            if volumes is not None and n >= 21:
+                prev20 = volumes[-21:-1]
+                mean20 = sum(prev20) / len(prev20)
+                # 红队补丁：前 20 量全 0（长停牌）→ ratio=0.0 判量能不达标，不以 None 静默跳过
+                volume_ratio = float(volumes[-1]) / mean20 if mean20 > 0 else 0.0
+            sr_levels = [e.key_points[0].price for e in raw if e.pattern_class == PatternClass.SR and e.key_points]
+            hits = combo_match(self._combo_rules, raw, sr_levels, float(closes[-1]), volume_ratio)
+            for h in hits:
+                extra_notes: tuple[str, ...] = (f"近位{h.proximity_pct:.2f}%",)
+                if h.volume_ratio is not None:
+                    extra_notes = extra_notes + (f"量能比{h.volume_ratio:.2f}",)
+                raw.append(
+                    self._event(
+                        name=f"组合:{h.rule_id}",
+                        cls=PatternClass.SR,
+                        direction=PatternDirection.UP if h.direction == "向上" else PatternDirection.DOWN,
+                        confidence=min(max(0.5 + h.strength_delta, 0.0), 1.0),
+                        key_points=(KeyPoint(n - 1, h.sr_price, "组合锚位"),),
+                        anchor=n - 1,
+                        notes=extra_notes,
+                    )
+                )
+            stats["combo"] = len(hits)
 
         # 去重：同 (name, anchor_idx) 取置信度最高；补 timeframe
         best: dict[tuple[str, int], PatternEvent] = {}

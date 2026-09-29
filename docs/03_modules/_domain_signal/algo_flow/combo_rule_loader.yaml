@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——combo_rule_loader（_domain_signal 域，真源 src/zephyr/signal_ashare/strategy_signal/combo_rule_loader.py）
+# 2026-09-30 P2-1 口径出仓：docstring 只留一行 external 锚，机器块落本文件；
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.strategy_signal.combo_rule_loader
+source_of_truth: src/zephyr/signal_ashare/strategy_signal/combo_rule_loader.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: path 参数
+    #   fields: 组合规则 YAML 卡路径（配置真源=config/pattern_combo_rules.yaml）
+    #   code: load(path)
+    # - id: I2
+    #   name: match 参数
+    #   fields: rules（ComboRule 序列）×events（引擎腿部事件，duck 型读 pattern_id/name）×sr_levels（SR 水平位价）×last_close（现价）×volume_ratio（末量/前20均量，None=跳过量能条件）
+    #   code: match(rules, events, sr_levels, last_close, volume_ratio=None)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 读卡与域校验
+    #   name_en: load_and_validate
+    #   intro: yaml.safe_load 读 rules 列表，逐条 _parse 构造 ComboRule；validate fail-closed（rule_id 非空且唯一、sr_side∈{support,resistance,any}、direction∈{向上,向下}、proximity/volume 阈值非负、pattern_id 非空），任一违反 ValueError。
+    #   desc: 加载 fail-closed（yaml 缺失/结构非法/字段越界一律 ValueError，禁半读）；读失败消息只带异常类型名（MSG-EXPOSURE 口径，路径细节由调用方日志承载）。
+    #   inputs: path
+    #   outputs: tuple[ComboRule, ...]
+    # - id: A2
+    #   name_zh: ② 规则×事件×水平位×量能 四要素匹配
+    #   name_en: match
+    #   intro: 逐启用规则：事件按 pattern_id∈(event.pattern_id, event.name) 过滤→_best_sr_level 侧位过滤（support 须≤现价/resistance 须≥现价）+邻近度阈值内取最近水平位→量能比达 volume_ratio_min（volume_ratio=None 跳过=SKIP 口径）→产出 ComboHit；单规则至多一命中（最近水平位口径），last_close≤0 直接 ValueError。
+    #   desc: _best_sr_level 返回 (proximity_pct, sr_price)：prox=|last_close−sr|/sr×100，取阈值内最小 prox。
+    #   inputs: rules events sr_levels last_close volume_ratio
+    #   outputs: tuple[ComboHit, ...]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ComboHit
+    #   name_en: ComboHit
+    #   intro: rule_id/matched_pattern/sr_price/proximity_pct/volume_ratio/direction/strength_delta；引擎侧以 0.5 置信基线叠加 strength_delta 后截断 0~1 装配「组合:」前缀事件（本模块不碰引擎类型，保持无环依赖）。
+    #   downstream: unified_pattern_engine.UnifiedPatternEngine（combo_rules 注入 + recognize 装配）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A2
+    # A1 --> A2
+    # A2 --> O1

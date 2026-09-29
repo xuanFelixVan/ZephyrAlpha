@@ -1,0 +1,25 @@
+# 组合规则卡真源（图形四件要单之「组合规则 YAML 卡」，Owner 2026-09-29 最高优先令）
+# 真源读端=src/zephyr/signal_ashare/strategy_signal/combo_rule_loader.py（fail-closed）
+# 装配点=unified_pattern_engine.UnifiedPatternEngine(combo_rules=...)，recognize(volumes=...)
+# 三要素：形态事件(pattern_id) × SR 邻近度(sr_proximity_pct_max) × 量能比(volume_ratio_min)
+#       → 方向(direction: 向上/向下) + 强度增量(strength_delta，引擎 0.5 基线叠加截断 0~1)
+# 口径：sr_side=support 指水平位在现价下方；量能比=末量/前20均量（<21 根或未传 volumes 则跳过量能条件）
+ttl: permanent
+schema_version: "1.0"
+rules:
+  - rule_id: combo_bull_engulf_at_support
+    pattern_id: "CDLENGULFING"     # 扫描器事件粒度=CDL 函数名（candlestick_scanner 契约）
+    sr_side: "support"
+    sr_proximity_pct_max: 2.0      # 现价距支撑 ≤2%
+    volume_ratio_min: 1.2          # 放量确认
+    direction: "向上"
+    strength_delta: 0.1
+    enabled: true
+  - rule_id: combo_shooting_star_at_resistance
+    pattern_id: "CDLSHOOTINGSTAR"
+    sr_side: "resistance"
+    sr_proximity_pct_max: 1.5
+    volume_ratio_min: 1.0          # 量能中性即可（≥1.0）
+    direction: "向下"
+    strength_delta: 0.1
+    enabled: true
