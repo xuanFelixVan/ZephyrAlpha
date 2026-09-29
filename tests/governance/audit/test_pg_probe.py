@@ -144,8 +144,13 @@ class TestRefreshState:
         assert on_disk["reachable"] is False
 
     def test_refresh_online_clears_offline_anchor(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """离线后恢复可达 → first_offline_at 清空、last_reachable_at 更新。"""
-        _write_state(tmp_path, reachable=False)
+        """离线后恢复可达 → first_offline_at 清空、last_reachable_at 更新。
+
+        2026-09-30 新鲜度短路后：须把预置离线态写成陈旧（超出 fresh_window）才会
+        真正重探——新鲜态短路返回现值，恢复检测延迟 ≤60s 是设计契约。
+        """
+        stale_at = (datetime.now(_UTC) - timedelta(seconds=120)).isoformat()
+        _write_state(tmp_path, reachable=False, checked_at=stale_at)
         srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         srv.bind(("127.0.0.1", 0))
         srv.listen(1)
@@ -187,6 +192,44 @@ class TestRefreshState:
         state = refresh_pg_probe_state(tmp_path)
         assert state["reachable"] is False
         assert "config_unresolved" in state["error"]
+
+    def test_fresh_state_short_circuits_no_probe(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """新鲜窗内（在线态）→ 直接返回现值，TCP 探测零调用（2026-09-30 短路）。"""
+        _write_state(tmp_path, reachable=True, checked_at=_now_iso())
+        calls = []
+
+        def _boom(*a, **k):
+            calls.append(1)
+            raise AssertionError("probe must not run when state is fresh")
+
+        monkeypatch.setattr("zephyr.governance.audit.pg_probe.probe_pg_tcp", _boom)
+        state = refresh_pg_probe_state(tmp_path)
+        assert state["reachable"] is True
+        assert calls == []
+
+    def test_fresh_offline_state_short_circuits(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """新鲜窗内（离线态）→ 短路返回现值（1s 超时税摊薄到每窗一次）；陈旧后才重探。"""
+        monkeypatch.setattr(
+            "zephyr.governance.audit.pg_probe._resolve_pg_endpoint",
+            lambda: ("127.0.0.1", 1),  # 端口 1 确定未监听（本机 5432 可能有真 PG）
+        )
+        _write_state(tmp_path, reachable=False, checked_at=_now_iso())
+        calls = []
+        real_probe = __import__("zephyr.governance.audit.pg_probe", fromlist=["probe_pg_tcp"]).probe_pg_tcp
+
+        def _counting(*a, **k):
+            calls.append(1)
+            return real_probe(*a, **k)
+
+        monkeypatch.setattr("zephyr.governance.audit.pg_probe.probe_pg_tcp", _counting)
+        state = refresh_pg_probe_state(tmp_path)
+        assert state["reachable"] is False
+        assert calls == []  # 新鲜态短路
+        stale_at = (datetime.now(_UTC) - timedelta(seconds=120)).isoformat()
+        _write_state(tmp_path, reachable=False, checked_at=stale_at)
+        state = refresh_pg_probe_state(tmp_path)
+        assert state["reachable"] is False
+        assert len(calls) == 1  # 陈旧态重探
 
 
 # ---------------------------------------------------------------------------

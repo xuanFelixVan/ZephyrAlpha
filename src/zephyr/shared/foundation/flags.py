@@ -236,10 +236,26 @@ class FlagRegistry:
             return
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
+            self._rotate_audit_if_oversized(path)
             with path.open("a", encoding="utf-8") as fh:
                 fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
         except Exception as exc:  # noqa: BLE001 — 审计写入失败绝不阻断 flag 操作（OSError/ValueError 等）
             logger.warning("flag audit write failed (%s): %s", path, exc)
+
+    _AUDIT_ROTATE_BYTES: int = 32 * 1024 * 1024  # 超限翻代 .1（总量上限 2×32MB；2.1GB 无轮转事故 2026-09-30 治本）
+
+    @classmethod
+    def _rotate_audit_if_oversized(cls, path: Path) -> None:
+        """审计 jsonl 超 32MB 时翻代 .1（旧 .1 直接覆盖）——写侧自愈轮转，审计仅追加了无整读消费方。"""
+        try:
+            if path.exists() and path.stat().st_size > cls._AUDIT_ROTATE_BYTES:
+                rotated = path.with_name(path.name + ".1")
+                if rotated.exists():
+                    rotated.unlink()
+                path.rename(rotated)
+                logger.info("flag audit rotated: %s -> %s", path, rotated)
+        except OSError as e:
+            logger.warning("flag audit rotate skipped (%s): %s", path, e)
 
     def register(self, flag: FeatureFlag) -> None:
         self._flags[flag.key] = flag

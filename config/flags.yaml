@@ -45,7 +45,7 @@ flags:
   git_operations:
     enabled: true
     description: "提交链操作旗组（提交链治本夜战 st-commitspeed-tbl-20260924）"
-    regen_scope: "any_worktree"
+    regen_scope: "main_only"  # [翻转 2026-09-30·Owner批] any_worktree->main_only：M2意图账+pending_rerun尾收敛已在盘(reconcile_generators.py:802消费)，worktree语境只记账不spawn——修"75%静默丢弃+负收益工"缺陷(gate_survival_adjudication.md A6)
     # S1 不可变树接线（st-commitspeed-tbl-20260924）：门禁链输入源改读 CommitTreeView
     # 两棵不可变树（HEAD^/index 树），出厂 OFF=现行为；ON=重放 verdict 全等判据达标后
     # 由 Owner 门位翻转（宪法 §5）。

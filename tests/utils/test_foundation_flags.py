@@ -175,3 +175,40 @@ class TestFlagNotFoundError:
 
         err = FlagNotFoundError("not found", details={"key": "x"})
         assert isinstance(err, ZephyrBaseError)
+
+
+class TestAuditRotation:
+    """审计 jsonl 超限翻代（2026-09-30：2.1GB 无轮转事故治本，gate_survival_adjudication §6）。"""
+
+    def test_oversized_audit_rotates(self, tmp_path):
+        import json as _json
+        from pathlib import Path as _Path
+
+        from zephyr.shared.foundation.flags import FlagRegistry as _FR
+
+        audit = tmp_path / "feature_flags.jsonl"
+        reg = _FR(audit_path=audit)
+
+        # 阈值压到 200 字节构造翻代条件（不改类常量，走 monkeypatch 式子类覆写）
+        class _Small(_FR):
+            _AUDIT_ROTATE_BYTES = 200
+
+        reg2 = _Small(audit_path=audit)
+        reg2.register(FeatureFlag("a1", state=FlagState.ALWAYS_ON, description="x" * 80))
+        reg2.register(FeatureFlag("a2", state=FlagState.ALWAYS_OFF, description="y" * 80))
+        # 两次 100+ 字节追加已超 200 → 第二次写入前翻代：.1 存在且当前文件只剩最后一条
+        rotated = audit.with_name(audit.name + ".1")
+        assert rotated.exists(), "oversized audit must rotate to .1"
+        lines_now = audit.read_text(encoding="utf-8").strip().splitlines()
+        assert len(lines_now) == 1, lines_now
+        _json.loads(lines_now[0])
+
+    def test_small_audit_no_rotate(self, tmp_path):
+        from zephyr.shared.foundation.flags import FlagRegistry as _FR
+
+        audit = tmp_path / "feature_flags.jsonl"
+        reg = _FR(audit_path=audit)
+        reg.register(FeatureFlag("ok1", state=FlagState.ALWAYS_ON))
+        reg.register(FeatureFlag("ok2", state=FlagState.ALWAYS_OFF))
+        assert not audit.with_name(audit.name + ".1").exists()
+        assert len(audit.read_text(encoding="utf-8").strip().splitlines()) == 2

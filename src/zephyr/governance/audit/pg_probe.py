@@ -178,15 +178,30 @@ def read_pg_probe_state(project_root: object) -> dict | None:
         return None
 
 
-def refresh_pg_probe_state(project_root: object, timeout: float = _PROBE_TIMEOUT_SECONDS) -> dict:
+def refresh_pg_probe_state(
+    project_root: object,
+    timeout: float = _PROBE_TIMEOUT_SECONDS,
+    fresh_window: float = 60.0,
+) -> dict:
     """执行探测并原子写状态文件。永不抛异常（探针失败不阻断主流程）。
 
     网关 commit 前置 / merge 前置 / reconciler 复跑共用入口。
     状态字段：reachable/checked_at/host/port/error/last_reachable_at/first_offline_at。
+
+    新鲜度短路（2026-09-30 提速批，gate_survival_adjudication §6）：状态文件存在且
+    checked_at 距今 < fresh_window 秒时直接返回现值不探测不写盘——PG 在线时省每笔
+    一次 TCP 探测+原子写；离线时把 1s 超时税从每笔一次摊薄到每 fresh_window 一次。
+    代价=状态翻转（掉线/恢复）检测延迟至多 fresh_window 秒，消费端
+    （pg_probe_shows_offline 默认 600s 新鲜窗）本就容忍更陈旧状态。
     """
     root = Path(str(project_root))
-    now = _utc_now().isoformat()
     prev = read_pg_probe_state(root) or {}
+    if fresh_window > 0 and prev:
+        prev_at = _parse_iso(prev.get("checked_at"))
+        if prev_at is not None and (_utc_now() - prev_at).total_seconds() < fresh_window:
+            return prev
+
+    now = _utc_now().isoformat()
 
     host: str = ""
     port: int = 0
