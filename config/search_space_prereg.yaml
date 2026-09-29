@@ -51,6 +51,9 @@ tracks:
     entry: LLM 智能体轨（LSG 内置，提案经 exam_cost_gate 预检后才入试）
     note: LLM 提案空间=因子族新假设卡（预注册卡模板），禁直接改冻结翻译件
 budget_caps:
+  resonance_per_cell_seconds_target: 3.5   # 目标=冻结声明：CPU 基线 35.33s/格（上行 T0 实测）÷10=3.5，取 dossier L2「10-30x」（HANDOVER_FINAL.md:104）保守下沿——弱承诺、门仍有意义；30x 理想上沿=1.2s 不作承诺。暂按估计值 declaration，待 L2 批量落地全引擎复测后经裁定校准
+  resonance_per_cell_seconds_measured: 0.53  # 实测回填 2026-09-29（st-w173-20260929 冒烟）：gpu_core.tensor_core 单格薄核 backend=gpu RTX 3090 暖态均值 0.53s/格（合成 T=1630×S=5000 五档成本线；首呼冷态 5.89s；同形 cpu=0.48s=0.9x 平价）。口径=薄核单格≠上行全引擎网格单格（35.33s 含数据装载+门禁）；批量摊销复测待 L2 落地后重跑回填（裁定通道）
+
   # 口径真源=w3_w5_precheck §2.5（59h 窗 212,400s × 0.8 占空 ÷ 6.8s/格 ≈ 24,990 格）
   wall_clock_hours: 59              # 2026-09-24 22:00 点火（裁定#413 提前开考）-> 09-27 09:00
   effective_duty_pct: 80

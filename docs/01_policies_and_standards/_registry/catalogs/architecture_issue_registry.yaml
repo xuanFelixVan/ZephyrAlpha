@@ -22621,3 +22621,22 @@ entries:
     内容=CTR-P1-018 消费端登记（T0_SCHEME_MATRIX 6.1/6.2 + emotion C1/C2，
     设计真源=docs/_working/t0_matrix/BOARD_INDEX_INTRADAY_SUPPLY_DESIGN.md）。
   related_rulings: []
+- issue_id: '#ARCH-366'
+  title: 'W-173 prereg 声明通道：search_space_prereg budget_caps 补共振矩阵单格耗时双键（c3 转绿前置）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P2中
+  category: governance
+  created: '2026-09-29'
+  last_updated: '2026-09-29'
+  owner: 'Owner（2026-09-28 GPU 全方位改造指令：正式切 GPU 需 W-173 门转绿，会话在案）'
+  description: >-
+    W-173「GPU 重写 L2」前置 UNKNOWN 根因=batch_window_preflight.py read_gpu_l2（c3）要求
+    config/search_space_prereg.yaml budget_caps 声明 resonance_per_cell_seconds_target +
+    回填 resonance_per_cell_seconds_measured，两键缺失。本议题即本批正门标记的登记载体
+    （#ARCH-361 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-366]，审批真源=Owner
+    2026-09-28 GPU 指令原文（会话在案），gate 逃生审计+本登记双留痕。内容=prereg yaml budget_caps
+    仅追加两键+注释块（零搜索空间轴变更，不触发"改空间=作废重开预注册"——budget/判据键非 tracks/axes），
+    同袋原子；值=dossier L2 10-30x 保守下沿 3.5s 目标+gpu_core 薄核冒烟实测 0.53s 回填
+    （车道 st-w173-20260929，capability 反查 0 命中审计在案）。
+  related_rulings: []
+
