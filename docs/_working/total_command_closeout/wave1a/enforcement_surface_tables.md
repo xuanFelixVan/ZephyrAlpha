@@ -86,3 +86,10 @@ python -m pytest tests/governance/test_enforcement_surface_reconcile_canary.py -
 | trae_083 design_intent_source_discipline | 否 | 是(5) | 设计意图真源纪律（偏方法论）。建议：多为"改判据面/人工审"，慎按"零执法→退役"（语义类规则本就难机判） |
 
 > 口径边界（写死防混用）：本尺主覆盖率≠散文册 80/86，因主口径只认"可执行判据引用规则号"，目录/描述性提及归入"被提及面"。二者分列即二级判定的输入，禁把两口径的分子相加。补执法面/改判据/退役三选一属 Owner/裁决通道，本包只给字段与建议，不代裁。
+
+## 复核注记（2026-09-29，st-finaldel-cdocs-20260929；C428/C451 文档面核对）
+
+- 本包 6 件（delivery_cards_report / enforcement_surface_reconciliation.yaml / enforcement_surface_tables / dead_store_triage / store_liveness_census / read_shape_violations）**全在 HEAD**，对账 yaml 快照自洽（roster_declared_total_gates=103 == roster_entry_count=103，enabled_false=4，data_as_of=2026-09-26T22:53:10+08:00）。
+- **快照漂移实测**：in_process_gate_registry 现册 gate_id=105（快照 103，+2=98ce6370c5 红五簇撞号修复迁带后净增）——对账 yaml 按机生禁手工纪律不手改，等生成器落地后重跑刷新。
+- **生成器字节全域蒸发**：yaml meta 自报 `scripts/governance/meta/enforcement_surface_reconcile.py` 与表②引用的 `scripts/governance/wave1a/build_delivery_cards.py` 在 HEAD、全部 .worktrees 车道、.runtime/commit_queue blobs 三面均 0 命中（蒸发族，同 wiring_gap_inventory 案）。
+- **C451 余量=代码道重写生成器**（按本表+对账 yaml meta 契约反推：roster/catalog 双册扫描+code/catalog 语料四目录+rows 机生）；C428 余量=1A.3-1A.6 四包施工（同属代码/混合道）。文档面核对到此结，无 AI 文档余量。
