@@ -74,7 +74,7 @@ class TestGateSpecFields:
 
     def test_priority(self) -> None:
         gate = make_depgraph_pre_registration_gate()
-        assert gate.priority == 113
+        assert gate.priority == 157  # 2026-09-29 SW4/C36 让位迁移 113→157（原位让予 DEPGRAPH-ENFORCEMENT union 面）
 
     def test_isinstance(self) -> None:
         gate = make_depgraph_pre_registration_gate()

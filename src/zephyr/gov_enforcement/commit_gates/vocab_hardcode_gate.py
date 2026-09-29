@@ -41,7 +41,7 @@ M01 检出 13 个词表硬编码违规（基线）。check_vocab_hardcode.py 能
    检出违规（exit 1）才阻断。对标 create_guard fail-closed 设计但更宽松——
    create_guard 的 YAML 是项目内文件，缺失=异常；本 gate 的 subprocess 可能因
    Python 环境问题失败，fail-open 更安全。
-4. **priority=80**：在 ARCH-REFERENCE(75) 之后、CAPABILITY-OVERLAP(200) 之前。
+4. **priority=154**（2026-09-29 SW4/C36 让位迁移 80→154，原位让予在册 union 面 GATE-VOCAB；旧单门不再注册）：仍在 ARCH-REFERENCE(75) 之后、CAPABILITY-OVERLAP(200) 之前。
 
 Usage::
 
@@ -209,7 +209,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
 
 def make_vocab_hardcode_gate() -> GateSpec:
     """旧单门工厂（st-gslim-20260923 P4 已并入新台 GATE-VOCAB，不再注册；保留供历史测试/引用兼容）。"""
-    return GateSpec(gate_id="VOCAB-HARDCODE", check=_check, priority=80)
+    return GateSpec(gate_id="VOCAB-HARDCODE", check=_check, priority=154)
 
 
 def make_gate_vocab_gate() -> GateSpec:

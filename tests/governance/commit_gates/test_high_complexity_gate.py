@@ -108,7 +108,7 @@ class TestGateSpecFields:
         assert make_high_complexity_gate().gate_id == "NO-HIGH-COMPLEXITY"
 
     def test_priority(self):
-        assert make_high_complexity_gate().priority == 92
+        assert make_high_complexity_gate().priority == 156  # 2026-09-29 SW4/C36 让位迁移 92→156（原位让予 COMPLEXITY-GUARD union 面）
 
 
 # ---------------------------------------------------------------------------

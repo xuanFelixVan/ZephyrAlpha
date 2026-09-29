@@ -48,7 +48,7 @@ perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻�
 2. **in-process AST**：无 subprocess 调用，纯 ast.parse + ast.walk，自包含。
 3. **fail-open on AST error**：语法错误文件（可能正在编辑）不阻断，由其他 gate
    （如 syntax check）负责。本 gate 关注架构违规而非语法。
-4. **priority=82**：在 VOCAB-HARDCODE(80) 之后、EMPTY-HANDLER(84) 之前。
+4. **priority=155**（2026-09-29 SW4/C36 让位迁移 82→155，原位让予在册 union 面 PERMANENT-SYSTEM-TRIGGER；旧单门不再注册）：原序注=VOCAB-HARDCODE(80) 之后、EMPTY-HANDLER(84) 之前；迁移后仍保持 VOCAB-HARDCODE(154) 之前。
 
 Usage::
 
@@ -379,7 +379,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
 
 def make_perm_trigger_gate() -> GateSpec:
     """旧单门工厂（st-gslim-20260923 P4 已并入新台 PERMANENT-SYSTEM-TRIGGER，不再注册；保留供历史测试/引用兼容）。"""
-    return GateSpec(gate_id="PERM-TRIGGER", check=_check, priority=82)
+    return GateSpec(gate_id="PERM-TRIGGER", check=_check, priority=155)
 
 
 def make_permanent_system_trigger_gate() -> GateSpec:

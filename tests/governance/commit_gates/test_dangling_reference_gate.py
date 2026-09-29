@@ -178,4 +178,4 @@ class TestGateSpecFields:
 
     def test_priority(self):
         gate = make_dangling_reference_gate()
-        assert gate.priority == 70
+        assert gate.priority == 152  # 2026-09-29 SW4/C36 让位迁移 70→152（原位让予 REFERENCE-INTEGRITY union 面）

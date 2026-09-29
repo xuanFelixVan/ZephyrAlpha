@@ -73,7 +73,7 @@ class TestGateSpecFields:
 
     def test_priority(self) -> None:
         gate = make_blueprint_amodule_consistency_gate()
-        assert gate.priority == 79
+        assert gate.priority == 153  # 2026-09-29 SW4/C36 让位迁移 79→153（原位让予 BLUEPRINT-HEADER union 面）
 
     def test_is_gate_spec(self) -> None:
         gate = make_blueprint_amodule_consistency_gate()

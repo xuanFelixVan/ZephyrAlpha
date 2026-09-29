@@ -50,7 +50,7 @@ L1 铁律要求"施工前 MUST 通过 apply_depgraph.py --add-design-node 登记
 3. **只检测 [TTL]=permanent**：临时文件（task_bound）不强制 depgraph 流转。
 4. **fail-open on DB error**：DB 不可达时不阻断（环境异常非违规，对标
    NEW-FILE-DEPGRAPH-ENFORCEMENT 设计）。
-5. **priority=113**：在 FOLDER-CAPACITY-HARD-LIMIT(112) 之后。
+5. **priority=157**（2026-09-29 SW4/C36 让位迁移 113→157，原位让予在册 union 面 DEPGRAPH-ENFORCEMENT；旧单门不再注册）：仍在 FOLDER-CAPACITY-HARD-LIMIT(112) 之后。
 6. **in-process DB 查询**：复用 NEW-FILE-DEPGRAPH-ENFORCEMENT 的
    get_depgraph_pg_connection 模式（只读，read_only=True）。
 
@@ -315,7 +315,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
 
 def make_depgraph_pre_registration_gate() -> GateSpec:
     """旧单门工厂（st-gslim-20260923 P4 已并入新台 DEPGRAPH-ENFORCEMENT，不再注册；保留供历史测试/引用兼容）。"""
-    return GateSpec(gate_id="DEPGRAPH-PRE-REGISTRATION", check=_check, priority=113)
+    return GateSpec(gate_id="DEPGRAPH-PRE-REGISTRATION", check=_check, priority=157)
 
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──

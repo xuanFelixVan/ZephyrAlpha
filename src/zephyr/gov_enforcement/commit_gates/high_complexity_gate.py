@@ -47,7 +47,7 @@ architecture_debt §5.158：10 处长函数（复杂度 30+/17/16 等），
 1. **只检测新增函数**：存量高复杂度由人工排查+全量扫描脚本补充，gate 只防新增。
 2. **AST-based McCabe**：统计 If/For/While/ExceptHandler/BoolOp/comprehension-if。
 3. **阈值=15**：与 §5.158 裁定一致（>15 即反模式）。
-4. **priority=92**：在 FILE-COPY(85) 之后、NO-GOD-CLASS(93) 之前。
+4. **priority=156**（2026-09-29 SW4/C36 让位迁移 92→156，原位让予在册 union 面 COMPLEXITY-GUARD；旧单门不再注册）：原序注=FILE-COPY(85) 之后、NO-GOD-CLASS(93) 之前。
 
 Usage::
 
@@ -194,7 +194,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
 
 def make_high_complexity_gate() -> GateSpec:
     """旧单门工厂（st-gslim-20260923 P4 已并入新台 COMPLEXITY-GUARD，不再注册；保留供历史测试/引用兼容）。"""
-    return GateSpec(gate_id="NO-HIGH-COMPLEXITY", check=_check, priority=92)
+    return GateSpec(gate_id="NO-HIGH-COMPLEXITY", check=_check, priority=156)
 
 
 def make_complexity_guard_gate() -> GateSpec:

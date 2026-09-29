@@ -378,3 +378,38 @@ class TestPriorityConflictBlock:
         assert len(results) == 1
         assert results[0].gate_id == "FIRST"
         assert results[0].passed is True
+
+
+class TestWholeBookPriorityUniqueness:
+    """全册唯一性机械校验（SW4 st-nightsweep-sw4-20260929 / 卡 C36 红五簇）：
+
+    commit_gates 全部 GateSpec 面（含已吸收的薄工厂保留面）AST 扫描，
+    同 priority 异 gate_id 对=失败并逐簇呈报。2026-09-29 实测 6 簇同号
+    （70/79/80/82/92/113）——吸收台 union 面在册、被吸收薄工厂休眠但同号，
+    任一面被重新装载即 GateRegistrationError 整链 fail-closed。
+    """
+
+    def test_commit_gates_all_faces_priority_unique(self):
+        import ast
+        from pathlib import Path
+
+        gates_dir = Path(__file__).resolve().parents[3] / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
+        occ: dict[int, set[str]] = {}
+        for p in sorted(gates_dir.glob("*.py")):
+            tree = ast.parse(p.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Call) and getattr(node.func, "id", "") == "GateSpec":
+                    prio = gid = None
+                    for kw in node.keywords:
+                        try:
+                            val = ast.literal_eval(kw.value)
+                        except (ValueError, SyntaxError):
+                            continue  # 非字面量实参（常量/表达式）不在机械校验面
+                        if kw.arg == "priority":
+                            prio = val
+                        elif kw.arg == "gate_id":
+                            gid = val
+                    if isinstance(prio, int):
+                        occ.setdefault(prio, set()).add(str(gid))
+        dups = {p: sorted(g) for p, g in sorted(occ.items()) if len(g) > 1}
+        assert not dups, f"priority 撞号簇（同号异 gate_id）: {dups}"

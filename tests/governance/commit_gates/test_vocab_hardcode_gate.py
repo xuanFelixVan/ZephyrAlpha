@@ -141,7 +141,7 @@ class TestGateSpecFields:
         assert make_vocab_hardcode_gate().gate_id == "VOCAB-HARDCODE"
 
     def test_priority(self):
-        assert make_vocab_hardcode_gate().priority == 80
+        assert make_vocab_hardcode_gate().priority == 154  # 2026-09-29 SW4/C36 让位迁移 80→154（原位让予 GATE-VOCAB union 面）
 
 
 # ---------------------------------------------------------------------------

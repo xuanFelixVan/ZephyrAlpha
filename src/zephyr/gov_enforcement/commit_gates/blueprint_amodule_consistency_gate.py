@@ -206,9 +206,9 @@ def make_blueprint_amodule_consistency_gate() -> GateSpec:
 
     Returns:
 
-        GateSpec(gate_id="BLUEPRINT-AMODULE-CONSISTENCY", priority=79)。
+        GateSpec(gate_id="BLUEPRINT-AMODULE-CONSISTENCY", priority=153)。
 
-        priority=79——在 GATE-DOMAIN-FK(78) 之后、VOCAB-HARDCODE(80) 之前。
+        priority=153（2026-09-29 SW4/C36 让位迁移 79→153，原位让予在册 union 面 BLUEPRINT-HEADER）——原序注：GATE-DOMAIN-FK(78) 之后、VOCAB-HARDCODE(80) 之前。
 
     """
 
@@ -234,7 +234,7 @@ def make_blueprint_amodule_consistency_gate() -> GateSpec:
     return GateSpec(
         gate_id="BLUEPRINT-AMODULE-CONSISTENCY",
         check=_check,
-        priority=79,
+        priority=153,
     )
 
 

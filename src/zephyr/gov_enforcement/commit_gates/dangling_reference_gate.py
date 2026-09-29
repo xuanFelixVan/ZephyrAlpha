@@ -47,7 +47,7 @@ canonical 扩展点也不覆盖 §X.Y——全项目无任何机制检测 AGENTS
    否则门禁静默失效（对标 directory_contract_gate.py fail-closed 设计）。
 3. **章节号从工作区 AGENTS.md 提取**：commit 后 AGENTS.md 的新真源即工作区
    版本，用工作区版本提取 valid_sections 是正确的。
-4. **priority=70**：在 CREATE-GUARD(60) 之后、CAPABILITY-OVERLAP(200) 之前
+4. **priority=152**（2026-09-29 SW4/C36 让位迁移 70→152，原位让予在册 union 面 REFERENCE-INTEGRITY；旧单门不再注册）：仍在 CREATE-GUARD(60) 之后、CAPABILITY-OVERLAP(200) 之前
    执行——悬空引用是文档质量问题，优先级低于目录契约/搭便车/创建守卫等
    根因级检查，但应在能力重叠检查前完成。
 5. **不检测 blueprint.md §X.Y**：蓝图内部引用是合法的（blueprint.md 有自己
@@ -215,12 +215,12 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         )
     return True, ""
 
-    return GateSpec(gate_id="DANGLING-REFERENCE", check=_check, priority=70)
+    return GateSpec(gate_id="DANGLING-REFERENCE", check=_check, priority=152)
 
 
 def make_dangling_reference_gate() -> GateSpec:
     """旧单门工厂（st-gslim-20260923 P4 已并入新台 REFERENCE-INTEGRITY，不再注册；保留供历史测试/引用兼容）。"""
-    return GateSpec(gate_id="DANGLING-REFERENCE", check=_check, priority=70)
+    return GateSpec(gate_id="DANGLING-REFERENCE", check=_check, priority=152)
 
 
 def make_reference_integrity_gate() -> GateSpec:

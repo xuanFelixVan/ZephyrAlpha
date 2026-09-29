@@ -146,7 +146,7 @@ class TestGateSpecFields:
         assert make_perm_trigger_gate().gate_id == "PERM-TRIGGER"
 
     def test_priority(self):
-        assert make_perm_trigger_gate().priority == 82
+        assert make_perm_trigger_gate().priority == 155  # 2026-09-29 SW4/C36 让位迁移 82→155（原位让予 PERMANENT-SYSTEM-TRIGGER union 面）
 
 
 # ---------------------------------------------------------------------------
