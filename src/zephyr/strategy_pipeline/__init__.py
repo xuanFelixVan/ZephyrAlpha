@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """strategy_pipeline — C6 全自动入库管线（A 方案：自动到 sim，production Owner 门）。
 
 事件驱动五段：C4 落账事件 → C5 自动聚类 → C6 自动入库 → auto_mount 挂图 → sim 流转(FSM)。
@@ -7,4 +6,12 @@
 sim→production 仍 Owner 门；KillSwitch/月度审计/告警全程保留。
 """
 
-__all__: list[str] = ["bh_fdr", "intake", "lifecycle_fsm", "pipeline_events", "registry_writer", "screen_source"]
+__all__: list[str] = [
+    "bh_fdr",
+    "intake",
+    "lifecycle_fsm",
+    "morning_digest",
+    "pipeline_events",
+    "registry_writer",
+    "screen_source",
+]

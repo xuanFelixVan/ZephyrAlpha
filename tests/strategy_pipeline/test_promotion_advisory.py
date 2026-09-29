@@ -143,6 +143,10 @@ def tree(tmp_path, monkeypatch):
     # PA-1 两路只读证据源也钉到 tmp（禁读真 intake 批报告/真衰减台账）
     monkeypatch.setattr(pa, "INTAKE_REPORT_DIR", tmp_path / "intake-reports")
     monkeypatch.setattr(pa, "DECAY_LEDGER", tmp_path / "strategy_decay_ledger.json")
+    # F74 堵点3 尾挂：晨报摘要落点同步钉到 tmp（禁写生产 data/reports）
+    import zephyr.strategy_pipeline.morning_digest as _md
+
+    monkeypatch.setattr(_md, "_digest_path_default", lambda: tmp_path / "reports" / "morning_digest.md")
     return {
         "runs": runs,
         "fw": fw,

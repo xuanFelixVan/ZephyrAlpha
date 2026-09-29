@@ -486,7 +486,8 @@ def run_promotion_advisory_due(event: dict) -> dict:
 
     webhook 未配置=alerter 自降级本地告警文件（data/failures/），通道故障不抛不反噬。
     尾部接通 combo gate 一页报告（堵点2：汇总器两半"建议包→报告"最后一跳，
-    失败不反噬建议产出——包已在盘，跨事件可重渲染）。
+    失败不反噬建议产出——包已在盘，跨事件可重渲染）。再尾挂晨报摘要刷新（堵点3：
+    晨报承接裁定落地面，fire-and-forget，失败同样不反噬）。
     """
     advisories = build_advisories()
     pushed: list[str] = []
@@ -514,7 +515,20 @@ def run_promotion_advisory_due(event: dict) -> dict:
     except Exception:  # noqa: BLE001  传动故障不反噬建议产出（包已在盘上，跨事件可重渲染）
         logger.warning("combo gate 传动失败（包已在盘）", exc_info=True)
         combo = {"rc": -1}
-    logger.info("转正建议包 %d 份（推送 %d）combo_rc=%s", len(advisories), len(pushed), combo.get("rc"))
+    try:
+        from zephyr.strategy_pipeline.morning_digest import refresh_morning_digest
+
+        digest = refresh_morning_digest()
+    except Exception:  # noqa: BLE001  晨报刷新故障不反噬建议产出（F74 堵点3 晨报承接，fire-and-forget）
+        logger.warning("晨报摘要刷新失败（包已在盘）", exc_info=True)
+        digest = {"rc": -1}
+    logger.info(
+        "转正建议包 %d 份（推送 %d）combo_rc=%s digest_rc=%s",
+        len(advisories),
+        len(pushed),
+        combo.get("rc"),
+        digest.get("rc"),
+    )
     return {
         "event_id": event.get("id"),
         "built": len(advisories),
@@ -522,6 +536,7 @@ def run_promotion_advisory_due(event: dict) -> dict:
         "pushed": pushed,
         "combo_rc": combo.get("rc"),
         "combo_skipped": combo.get("skipped"),
+        "digest_rc": digest.get("rc"),
     }
 
 

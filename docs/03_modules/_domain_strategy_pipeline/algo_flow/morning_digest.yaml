@@ -1,0 +1,59 @@
+# ALGO_FLOW 外部真源——morning_digest（_domain_strategy_pipeline 域，真源 src/zephyr/strategy_pipeline/morning_digest.py）
+# 2026-09-28 st-c8-digest 初版（F74 堵点3"通知通道"晨报承接批）：P2-1 契约头减负出仓形态，
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；按 daily_gate_snapshot.yaml canonical
+# 形态书写（层名=输入/算法/输出+# 边: 段+# [/ALGO_FLOW] 收标记）；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.strategy_pipeline.morning_digest
+source_of_truth: src/zephyr/strategy_pipeline/morning_digest.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 未决建议包目录（data/strategy_intake/promotion_advisories/ADV-*.json，promotion_advisory_due 落盘事件面）
+    #   fields: 待校准
+    #   code: collect_pending_advisories
+    # - id: I2
+    #   name: 摘要面落点与日期（data/reports/morning_digest.md，路径/日期可注入）
+    #   fields: 待校准
+    #   code: refresh_morning_digest
+    # 层: 算法
+    # - id: P1
+    #   name_zh: ① 收集未决建议（已决跳过）
+    #   name_en: collect_pending_advisories
+    #   intro: 扫 advisory 目录收集无 decision 台账的建议包作渲染事件列表
+    #   desc: 只读扫描 ADV-*.json；带 .decision.json 墓碑者跳过（拍板后晨报自然摘除）；坏包跳过不抛（list_advisories 同款降级）
+    #   inputs: I1
+    #   outputs: 事件列表（advisory_id/strategy_id/lifecycle_now/recommendation/generated_at/report_ref）
+    #   invariant: 零判定零写回——摘要面是建议包的只读消费端
+    # - id: P2
+    #   name_zh: ② 晨报纯渲染
+    #   name_en: render_digest
+    #   intro: 事件列表→markdown 文本，零 I/O 同输入同输出
+    #   desc: 日期头+待办区（每条=策略/结论/建议动作/报告文件路径指针）+尾指针（组合门报告目录+#promotion 拍板入口）；空列表出"无待办"行仍出报
+    #   inputs: I2 P1
+    #   outputs: 晨报 markdown 文本
+    #   invariant: 纯函数——渲染与落盘分离，测试零生产 IO
+    # - id: P3
+    #   name_zh: ③ 刷新入口（尾挂 fire-and-forget）
+    #   name_en: refresh_morning_digest
+    #   intro: 收集→渲染→safe_write_text CAS 落盘，advisory due 执行体尾挂一次
+    #   desc: advisory 目录空/缺=静默跳过（combo gate 同款，处女链不白跑）；写入未确认/任何异常折进返回 dict 不外抛；调用方 run_promotion_advisory_due 再包一层 try/except——双重防御保建议产出与拍板执行零反噬
+    #   inputs: P1 P2
+    #   outputs: {"ok","rc","written"/"skipped"/"reason"} 三态回执
+    #   invariant: 事件传动非 cron（宪法 §9.3）；不注册计划任务（schtasks=Owner 门位）；前端横幅与 data/failures 落盘现状零改动
+    # 层: 输出
+    # - id: O1
+    #   name: 晨报摘要面 data/reports/morning_digest.md（Owner 每天醒来必看处）
+    #   intro: 固定摘要文件=唯一人工门带外触达面（F74 堵点3 三选一裁定：晨报承接）
+    #   fields: 待校准
+    #   code: refresh_morning_digest
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> P1
+    # I2 --> P2
+    # P1 --> P2
+    # P1 --> P3
+    # P2 --> P3
+    # P3 --> O1
