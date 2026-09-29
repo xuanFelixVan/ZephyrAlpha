@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 闸门馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：299｜馆内总数：299
+- 条目数（本页列出）：300｜馆内总数：307
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -95,7 +95,11 @@ doc_type: "index"
 | FILE:src/zephyr/gov_enforcement/rule_enforcement/task/g0_orc_gate_engine.yaml | file | active | src/zephyr/gov_enforcement/rule_enforcement/task/g0_orc_gate_engine.yaml |
 | FILE:src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_gate_engine.yaml | file | active | src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_gate_engine.yaml |
 | FILE:src/zephyr/gov_enforcement/rule_enforcement/zero_residue.yaml | file | active | src/zephyr/gov_enforcement/rule_enforcement/zero_residue.yaml |
+| FILE:tests/gov_enforcement/create_guard_batch_replay.py | file | active | tests/gov_enforcement/create_guard_batch_replay.py |
+| FILE:tests/gov_enforcement/create_guard_batch_replay_evidence.json | file | active | tests/gov_enforcement/create_guard_batch_replay_evidence.json |
+| FILE:tests/gov_enforcement/read_side/test_fms_hygiene_gate.py | file | active | tests/gov_enforcement/read_side/test_fms_hygiene_gate.py |
 | FILE:tests/gov_enforcement/test_construction_governor_gate.py | file | active | tests/gov_enforcement/test_construction_governor_gate.py |
+| FILE:tests/gov_enforcement/test_create_guard_keyword_overlap_canary.py | file | active | tests/gov_enforcement/test_create_guard_keyword_overlap_canary.py |
 | FILE:tests/gov_enforcement/test_library_blood_flesh_gate.py | file | active | tests/gov_enforcement/test_library_blood_flesh_gate.py |
 | FILE:tests/gov_enforcement/test_state_vocab_registry_gate.py | file | active | tests/gov_enforcement/test_state_vocab_registry_gate.py |
 | FILE:tests/gov_enforcement/test_tag_vocab_gate.py | file | active | tests/gov_enforcement/test_tag_vocab_gate.py |
@@ -112,10 +116,13 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py | module | active | src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py |
 | MOD:src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py | module | active | src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/__init__.py | module | active | src/zephyr/gov_enforcement/commit_gates/__init__.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py | module | active | src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py | module | active | src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py | module | active | src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/_tree_view.py | module | active | src/zephyr/gov_enforcement/commit_gates/_tree_view.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/approval_resolver.py | module | active | src/zephyr/gov_enforcement/commit_gates/approval_resolver.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py |
@@ -139,7 +146,6 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/create_guard.py | module | active | src/zephyr/gov_enforcement/commit_gates/create_guard.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py |
@@ -174,9 +180,9 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py |
@@ -196,6 +202,9 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py | module | active | src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/read_side/fms_ref_extractor.py | module | active | src/zephyr/gov_enforcement/commit_gates/read_side/fms_ref_extractor.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/registry_code_anchor_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/registry_code_anchor_gate.py |
@@ -217,11 +226,9 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/state_vocab_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/state_vocab_registry_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py |
-| MOD:src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py |
@@ -241,6 +248,7 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py | module | active | src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py | module | active | src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/commit_preflight.py | module | active | src/zephyr/gov_enforcement/rule_bridge/commit_preflight.py |
+| MOD:src/zephyr/gov_enforcement/rule_bridge/coordination_state_board.py | module | active | src/zephyr/gov_enforcement/rule_bridge/coordination_state_board.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py | module | active | src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py | module | active | src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py | module | active | src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py |
@@ -303,10 +311,5 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_shadow_runner.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_shadow_runner.py |
 | MOD:src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py |
 | MOD:src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/task/__init__.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/task/__init__.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/task_types.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/task_types.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/truth_source_validator.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/truth_source_validator.py |
+
+（仅列前 300 条，共 307 条——全量请走总口查询）

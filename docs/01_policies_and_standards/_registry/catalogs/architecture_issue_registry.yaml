@@ -9933,10 +9933,10 @@ entries:
   title: 开发环境 usercustomize.py 安装工具
   severity: P3低
   adjudication: '开发环境一次性初始化——setup_dev_env.py 安装 usercustomize.py 工具，确保 Python 环境配置自动化。'
-  fix_phase: '已落地（capability_canonical_file_registry.yaml:6613, scripts/setup_dev_env.py）'
+  fix_phase: '已落地（capability_canonical_file_registry.yaml:6613, scripts/setup_dev_env.py）；F88 治愈执行批注 2026-09-29（Owner 批准任务单 task-f88-lsg-runtime）：本机 usercustomize 首次经官方安装通道落地（scripts/setup_dev_env.py），三探针全绿（is_installed/exists/finder）；同批配套宪法 AGENTS.md §0 RULE-ENV 行增 setup_dev_env --check 冷启动校验 + AutoRuntimeCore.boot() 增 is_installed() 自证告警（收口册01 修法①②）——本 issue 即该引导链族真源锚'
   status: decided
   created: '2026-07-19'
-  last_updated: '2026-07-29'
+  last_updated: '2026-09-29'
 - issue_id: '#ARCH-TORCH-CPU-ONLY'
   title: PyTorch CPU 版替换（2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB）
   severity: P2中

@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 制度馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：85｜馆内总数：85
+- 条目数（本页列出）：88｜馆内总数：88
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -30,6 +30,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml |
@@ -50,6 +51,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml |
@@ -70,6 +72,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/regen_clean_baseline.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/regen_clean_baseline.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml |

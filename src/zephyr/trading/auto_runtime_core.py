@@ -306,6 +306,10 @@ class AutoRuntimeCore:
     # 保留理由：boot_sequence→L2 模型栈→benchmark→资源引擎→RBAC→子系统注册 的顺序
     # 与 report 累积语义/_booted 状态翻转/降级标记深度交织，是纯编排而非职责簇。
     def boot(self) -> BootReport:
+        # F88 治愈（收口册01 修法①-②，2026-09-29）：运行时拦截器在岗自证——
+        # usercustomize 引导链失效（换机/重装 Python/文件被删）时"第二捕"静默失位，
+        # 此处响亮告警兜底可观测性（不阻断启动：主防线 GATE-20 pre-commit 独立在岗）。
+        self._warn_if_runtime_gate_down()
         report = self.lifecycle.boot_sequence(
             audit_logger=self._audit_logger,
             registry=self._registry,
@@ -346,6 +350,35 @@ class AutoRuntimeCore:
 
         self.booted = report.success
         return report
+
+    @staticmethod
+    def _warn_if_runtime_gate_down() -> None:
+        """LSG 运行时拦截器在岗自证（F88 修法②：可观测性兜底，绝不阻断启动）。
+
+        usercustomize 引导链是解释器级配置（仓外机器文件，不入版本控制），换机/
+        重装 Python/误删即静默失位——第二捕不在岗时此处发响亮告警而非静默。
+        尊重 kill-switch：ZEPHYR_RUNTIME_GATE=0 为显式关闭，不发告警。
+        """
+        import os
+        import sys
+
+        if os.environ.get("ZEPHYR_RUNTIME_GATE", "1") == "0":
+            return  # 显式 kill-switch：属设计内关闭，不算失位
+        try:
+            from zephyr.security.llm_defense.llm_security import runtime_interceptor
+
+            if runtime_interceptor.is_installed():
+                return
+            msg = (
+                "[LSG-RUNTIME-GATE-DOWN] LLM 裸调运行时拦截器未引导（第二捕不在岗，仅剩 "
+                "GATE-20 静态单网在防）。修复：python scripts/setup_dev_env.py（落 "
+                "usercustomize.py 引导件）。详见 RULE-LSG-001 与宪法 §0 RULE-ENV。"
+            )
+            print(f"CRITICAL: {msg}", file=sys.stderr)
+            logger.critical(msg)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 自证自身故障不阻断 boot（fail-open 与拦截器挂载同口径），但要留痕
+            logger.warning("LSG runtime gate self-check failed", exc_info=True)
 
     # ── RBAC 生命周期区（交织保留：boot 成功末段启动 / shutdown 最先关闭） ──
     # 保留理由：仅 2 个方法且与 boot/shutdown 编排顺序强耦合（启动顺序敏感：
@@ -799,7 +832,9 @@ class _OllamaProcessManager:
 
             _smi = subprocess.run(
                 ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
-                capture_output=True, text=True, timeout=8,
+                capture_output=True,
+                text=True,
+                timeout=8,
             )
             if _smi.returncode == 0 and _smi.stdout.strip():
                 _vram_used_gb = float(_smi.stdout.strip().splitlines()[0]) / 1024.0

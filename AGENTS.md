@@ -11,7 +11,7 @@
 ## 0. 冷启动序列（按序执行，缺一不可）
 
 1. **RULE-ENV**：`$env:PATH = "$env:LOCALAPPDATA\Programs\Python\Python312;...Scripts;" + $env:PATH`，
-   验证 `python --version` = 3.12.x（TRAE 注入 3.10 会崩 `datetime.UTC`）。
+   验证 `python --version` = 3.12.x（TRAE 注入 3.10 会崩 `datetime.UTC`）；并 `python scripts/setup_dev_env.py --check`（败则先跑 `python scripts/setup_dev_env.py` 安装 usercustomize——LSG 运行时网引导，缺席=第二捕不在岗）。
 2. **RULE-GUARDIAN**：`python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper --status`。
    计划任务不存在 = 禁止任何写操作。长批任务先登记 `data/runtime/process_reaper_keep.txt` 防误杀(每行一个 cmdline 子串)。
 3. **RULE-WORKTREE**：`session_worktree_start` 为默认；降级直改主区=显式申请制（登记原因，GW

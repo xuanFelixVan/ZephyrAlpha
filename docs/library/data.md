@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 数据馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：322｜馆内总数：322
+- 条目数（本页列出）：300｜馆内总数：347
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -15,6 +15,7 @@ doc_type: "index"
 | TBL:ch:c1_backtest.alloc_budget_change_log | table | active | ch:c1_backtest.alloc_budget_change_log |
 | TBL:ch:c1_backtest.alloc_budget_daily | table | active | ch:c1_backtest.alloc_budget_daily |
 | TBL:ch:c1_backtest.alloc_shrinkage_daily | table | active | ch:c1_backtest.alloc_shrinkage_daily |
+| TBL:ch:c1_backtest.cohort_daily_ledger | table | active | ch:c1_backtest.cohort_daily_ledger |
 | TBL:ch:c1_backtest.crisis_gate_log | table | active | ch:c1_backtest.crisis_gate_log |
 | TBL:ch:c1_backtest.decision_daily | table | active | ch:c1_backtest.decision_daily |
 | TBL:ch:c1_backtest.hypothesis_precheck | table | active | ch:c1_backtest.hypothesis_precheck |
@@ -27,6 +28,7 @@ doc_type: "index"
 | TBL:ch:c1_backtest.sim_pocket_daily | table | active | ch:c1_backtest.sim_pocket_daily |
 | TBL:ch:c1_backtest.sim_trade_log | table | active | ch:c1_backtest.sim_trade_log |
 | TBL:ch:c1_backtest.strategy_screen | table | active | ch:c1_backtest.strategy_screen |
+| TBL:ch:c1_market._tmp_mat_test | table | active | ch:c1_market._tmp_mat_test |
 | TBL:ch:c1_market.a50_futures_daily | table | active | ch:c1_market.a50_futures_daily |
 | TBL:ch:c1_market.account_nav_daily | table | active | ch:c1_market.account_nav_daily |
 | TBL:ch:c1_market.adj_factor | table | active | ch:c1_market.adj_factor |
@@ -63,7 +65,6 @@ doc_type: "index"
 | TBL:ch:c1_market.auction_snapshot | table | active | ch:c1_market.auction_snapshot |
 | TBL:ch:c1_market.block_trade | table | active | ch:c1_market.block_trade |
 | TBL:ch:c1_market.block_trade_detail | table | active | ch:c1_market.block_trade_detail |
-| TBL:ch:c1_market.board_index_1m | table | active | ch:c1_market.board_index_1m |
 | TBL:ch:c1_market.board_index_tick | table | active | ch:c1_market.board_index_tick |
 | TBL:ch:c1_market.calendar_event | table | active | ch:c1_market.calendar_event |
 | TBL:ch:c1_market.cftc_positioning | table | active | ch:c1_market.cftc_positioning |
@@ -84,6 +85,7 @@ doc_type: "index"
 | TBL:ch:c1_market.dragon_tiger | table | active | ch:c1_market.dragon_tiger |
 | TBL:ch:c1_market.dragon_tiger_seat | table | active | ch:c1_market.dragon_tiger_seat |
 | TBL:ch:c1_market.edb_data | table | active | ch:c1_market.edb_data |
+| TBL:ch:c1_market.emotion_index | table | active | ch:c1_market.emotion_index |
 | TBL:ch:c1_market.etf_benchmark | table | active | ch:c1_market.etf_benchmark |
 | TBL:ch:c1_market.etf_list | table | active | ch:c1_market.etf_list |
 | TBL:ch:c1_market.etf_nav | table | active | ch:c1_market.etf_nav |
@@ -127,6 +129,10 @@ doc_type: "index"
 | TBL:ch:c1_market.kline_cb | table | active | ch:c1_market.kline_cb |
 | TBL:ch:c1_market.kline_daily | table | active | ch:c1_market.kline_daily |
 | TBL:ch:c1_market.kline_daily_hfq | table | active | ch:c1_market.kline_daily_hfq |
+| TBL:ch:c1_market.kline_daily_hfq_legacy_20260924 | table | active | ch:c1_market.kline_daily_hfq_legacy_20260924 |
+| TBL:ch:c1_market.kline_daily_hfq_preversion_20260925 | table | active | ch:c1_market.kline_daily_hfq_preversion_20260925 |
+| TBL:ch:c1_market.kline_daily_hfq_quarantine_20260925 | table | active | ch:c1_market.kline_daily_hfq_quarantine_20260925 |
+| TBL:ch:c1_market.kline_daily_hfq_recalc | table | active | ch:c1_market.kline_daily_hfq_recalc |
 | TBL:ch:c1_market.kline_etf_15min | table | active | ch:c1_market.kline_etf_15min |
 | TBL:ch:c1_market.kline_etf_1min | table | active | ch:c1_market.kline_etf_1min |
 | TBL:ch:c1_market.kline_etf_30min | table | active | ch:c1_market.kline_etf_30min |
@@ -145,13 +151,18 @@ doc_type: "index"
 | TBL:ch:c1_market.kline_lof_60min | table | active | ch:c1_market.kline_lof_60min |
 | TBL:ch:c1_market.kline_monthly | table | active | ch:c1_market.kline_monthly |
 | TBL:ch:c1_market.kline_monthly_hfq | table | active | ch:c1_market.kline_monthly_hfq |
+| TBL:ch:c1_market.kline_monthly_hfq_legacy_20260924 | table | active | ch:c1_market.kline_monthly_hfq_legacy_20260924 |
+| TBL:ch:c1_market.kline_monthly_hfq_legacy_r1_20260924 | table | active | ch:c1_market.kline_monthly_hfq_legacy_r1_20260924 |
 | TBL:ch:c1_market.kline_sector | table | active | ch:c1_market.kline_sector |
 | TBL:ch:c1_market.kline_sector_880 | table | active | ch:c1_market.kline_sector_880 |
 | TBL:ch:c1_market.kline_sector_intraday | table | active | ch:c1_market.kline_sector_intraday |
 | TBL:ch:c1_market.kline_us_daily | table | active | ch:c1_market.kline_us_daily |
 | TBL:ch:c1_market.kline_weekly | table | active | ch:c1_market.kline_weekly |
 | TBL:ch:c1_market.kline_weekly_hfq | table | active | ch:c1_market.kline_weekly_hfq |
+| TBL:ch:c1_market.kline_weekly_hfq_legacy_20260924 | table | active | ch:c1_market.kline_weekly_hfq_legacy_20260924 |
+| TBL:ch:c1_market.kline_weekly_hfq_legacy_r1_20260924 | table | active | ch:c1_market.kline_weekly_hfq_legacy_r1_20260924 |
 | TBL:ch:c1_market.l2_tick | table | active | ch:c1_market.l2_tick |
+| TBL:ch:c1_market.l9_readiness_daily | table | active | ch:c1_market.l9_readiness_daily |
 | TBL:ch:c1_market.limit_up_down | table | active | ch:c1_market.limit_up_down |
 | TBL:ch:c1_market.limit_up_pool | table | active | ch:c1_market.limit_up_pool |
 | TBL:ch:c1_market.lof_list | table | active | ch:c1_market.lof_list |
@@ -159,6 +170,9 @@ doc_type: "index"
 | TBL:ch:c1_market.macro_credit_money | table | active | ch:c1_market.macro_credit_money |
 | TBL:ch:c1_market.macro_daily_gauge | table | active | ch:c1_market.macro_daily_gauge |
 | TBL:ch:c1_market.macro_data | table | active | ch:c1_market.macro_data |
+| TBL:ch:c1_market.macro_data_compat | table | active | ch:c1_market.macro_data_compat |
+| TBL:ch:c1_market.macro_data_latest | table | active | ch:c1_market.macro_data_latest |
+| TBL:ch:c1_market.macro_data_vintage | table | active | ch:c1_market.macro_data_vintage |
 | TBL:ch:c1_market.macro_pmi_gauge | table | active | ch:c1_market.macro_pmi_gauge |
 | TBL:ch:c1_market.macro_price_gauge | table | active | ch:c1_market.macro_price_gauge |
 | TBL:ch:c1_market.macro_trade_gauge | table | active | ch:c1_market.macro_trade_gauge |
@@ -180,6 +194,7 @@ doc_type: "index"
 | TBL:ch:c1_market.ndrc_fuel_price | table | active | ch:c1_market.ndrc_fuel_price |
 | TBL:ch:c1_market.news_sentiment_window | table | active | ch:c1_market.news_sentiment_window |
 | TBL:ch:c1_market.northbound_hold_snapshot | table | active | ch:c1_market.northbound_hold_snapshot |
+| TBL:ch:c1_market.option_daily_stats | table | active | ch:c1_market.option_daily_stats |
 | TBL:ch:c1_market.option_greeks | table | active | ch:c1_market.option_greeks |
 | TBL:ch:c1_market.option_iv_surface | table | active | ch:c1_market.option_iv_surface |
 | TBL:ch:c1_market.option_kline | table | active | ch:c1_market.option_kline |
@@ -187,16 +202,21 @@ doc_type: "index"
 | TBL:ch:c1_market.realtime_snapshot | table | active | ch:c1_market.realtime_snapshot |
 | TBL:ch:c1_market.reconciliation_differences | table | active | ch:c1_market.reconciliation_differences |
 | TBL:ch:c1_market.road_freight_index | table | active | ch:c1_market.road_freight_index |
+| TBL:ch:c1_market.sector_code_name_map | table | active | ch:c1_market.sector_code_name_map |
 | TBL:ch:c1_market.sector_constituent | table | active | ch:c1_market.sector_constituent |
 | TBL:ch:c1_market.sector_constituent_snapshot | table | active | ch:c1_market.sector_constituent_snapshot |
+| TBL:ch:c1_market.sector_constituent_sw_history | table | active | ch:c1_market.sector_constituent_sw_history |
 | TBL:ch:c1_market.sector_fund_flow | table | active | ch:c1_market.sector_fund_flow |
 | TBL:ch:c1_market.sector_list | table | active | ch:c1_market.sector_list |
 | TBL:ch:c1_market.sector_meta | table | active | ch:c1_market.sector_meta |
+| TBL:ch:c1_market.sector_preference | table | active | ch:c1_market.sector_preference |
 | TBL:ch:c1_market.sector_snapshot | table | active | ch:c1_market.sector_snapshot |
+| TBL:ch:c1_market.sector_state | table | active | ch:c1_market.sector_state |
 | TBL:ch:c1_market.sentiment_panel | table | active | ch:c1_market.sentiment_panel |
 | TBL:ch:c1_market.st_stock_list | table | active | ch:c1_market.st_stock_list |
 | TBL:ch:c1_market.stk_limit | table | active | ch:c1_market.stk_limit |
 | TBL:ch:c1_market.stock_basic | table | active | ch:c1_market.stock_basic |
+| TBL:ch:c1_market.stock_candidate_pool | table | active | ch:c1_market.stock_candidate_pool |
 | TBL:ch:c1_market.stock_daily_basic | table | active | ch:c1_market.stock_daily_basic |
 | TBL:ch:c1_market.stock_hot_rank | table | active | ch:c1_market.stock_hot_rank |
 | TBL:ch:c1_market.stock_indicator | table | active | ch:c1_market.stock_indicator |
@@ -210,6 +230,7 @@ doc_type: "index"
 | TBL:ch:c1_market.trade_calendar | table | active | ch:c1_market.trade_calendar |
 | TBL:ch:c1_market.us_futures_intraday | table | active | ch:c1_market.us_futures_intraday |
 | TBL:ch:c1_market.us_index | table | active | ch:c1_market.us_index |
+| TBL:ch:c1_market.v_kline_sector_880_named | table | active | ch:c1_market.v_kline_sector_880_named |
 | TBL:ch:c1_market.weather_data | table | active | ch:c1_market.weather_data |
 | TBL:ch:c3_fundamental.analyst_forecast | table | active | ch:c3_fundamental.analyst_forecast |
 | TBL:ch:c3_fundamental.audit_opinion | table | active | ch:c3_fundamental.audit_opinion |
@@ -234,6 +255,7 @@ doc_type: "index"
 | TBL:ch:c3_fundamental.irm_interactive_qa | table | active | ch:c3_fundamental.irm_interactive_qa |
 | TBL:ch:c3_fundamental.main_business | table | active | ch:c3_fundamental.main_business |
 | TBL:ch:c3_fundamental.news_data | table | active | ch:c3_fundamental.news_data |
+| TBL:ch:c3_fundamental.news_sentiment_score | table | active | ch:c3_fundamental.news_sentiment_score |
 | TBL:ch:c3_fundamental.pdf_forecast_extracted | table | active | ch:c3_fundamental.pdf_forecast_extracted |
 | TBL:ch:c3_fundamental.repurchase | table | active | ch:c3_fundamental.repurchase |
 | TBL:ch:c3_fundamental.research_report | table | active | ch:c3_fundamental.research_report |
@@ -268,6 +290,9 @@ doc_type: "index"
 | TBL:pg:decision_layers | table | active | pg:decision_layers |
 | TBL:pg:decision_nodes | table | active | pg:decision_nodes |
 | TBL:pg:decision_tracks | table | active | pg:decision_tracks |
+| TBL:pg:depgraph.meta_question.meta_question | table | active | pg:depgraph.meta_question.meta_question |
+| TBL:pg:depgraph.meta_question.meta_question_audit | table | active | pg:depgraph.meta_question.meta_question_audit |
+| TBL:pg:depgraph.meta_question.meta_question_exam_result | table | active | pg:depgraph.meta_question.meta_question_exam_result |
 | TBL:pg:derived_identifier_registry | table | active | pg:derived_identifier_registry |
 | TBL:pg:domain_dependencies | table | active | pg:domain_dependencies |
 | TBL:pg:domain_events | table | active | pg:domain_events |
@@ -286,28 +311,5 @@ doc_type: "index"
 | TBL:pg:ig_chain | table | active | pg:ig_chain |
 | TBL:pg:ig_chain_bak_20260914 | table | active | pg:ig_chain_bak_20260914 |
 | TBL:pg:ig_chunk | table | active | pg:ig_chunk |
-| TBL:pg:ig_chunk_bak_20260914 | table | active | pg:ig_chunk_bak_20260914 |
-| TBL:pg:ig_company_edge | table | active | pg:ig_company_edge |
-| TBL:pg:ig_company_edge_bak_20260914 | table | active | pg:ig_company_edge_bak_20260914 |
-| TBL:pg:ig_company_metric | table | active | pg:ig_company_metric |
-| TBL:pg:ig_company_metric_bak_20260914 | table | active | pg:ig_company_metric_bak_20260914 |
-| TBL:pg:ig_document | table | active | pg:ig_document |
-| TBL:pg:ig_document_bak_20260914 | table | active | pg:ig_document_bak_20260914 |
-| TBL:pg:ig_edge | table | active | pg:ig_edge |
-| TBL:pg:ig_edge_bak_20260914 | table | active | pg:ig_edge_bak_20260914 |
-| TBL:pg:ig_entity_code_map | table | active | pg:ig_entity_code_map |
-| TBL:pg:ig_equity_edge | table | active | pg:ig_equity_edge |
-| TBL:pg:ig_equity_edge_bak_20260914 | table | active | pg:ig_equity_edge_bak_20260914 |
-| TBL:pg:ig_fact | table | active | pg:ig_fact |
-| TBL:pg:ig_fact_bak_20260914 | table | active | pg:ig_fact_bak_20260914 |
-| TBL:pg:ig_io_edge | table | active | pg:ig_io_edge |
-| TBL:pg:ig_node | table | active | pg:ig_node |
-| TBL:pg:ig_node_bak_20260914 | table | active | pg:ig_node_bak_20260914 |
-| TBL:pg:ig_node_binding | table | active | pg:ig_node_binding |
-| TBL:pg:ig_node_company | table | active | pg:ig_node_company |
-| TBL:pg:ig_node_company_bak_20260914 | table | active | pg:ig_node_company_bak_20260914 |
-| TBL:pg:ig_product_revenue | table | active | pg:ig_product_revenue |
-| TBL:pg:ig_product_revenue_bak_20260918 | table | active | pg:ig_product_revenue_bak_20260918 |
-| TBL:pg:ig_sector_bridge | table | active | pg:ig_sector_bridge |
-| TBL:pg:ig_unlisted_entity | table | active | pg:ig_unlisted_entity |
-| TBL:pg:ig_unlisted_entity_bak_20260914 | table | active | pg:ig_unlisted_entity_bak_20260914 |
+
+（仅列前 300 条，共 347 条——全量请走总口查询）
