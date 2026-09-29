@@ -56504,6 +56504,21 @@ creation_tokens:
   created_by: st-finaldel-chief-20260929
   capability: final_delivery_campaign
   merge_evaluation: "终局交付战役文档族收尾批：终验报告+红蓝报告（同族并卷，裁定#375 判据）"
+- file: docs/_working/final_delivery_campaign/recovered_final_reconciliation_checklist_2026_09_28.md
+  token: final-delivery-campaign-recovered-final-reconciliation-checklist-2026-09-28-20260929
+  created_by: st-finaldel-c266-20260930
+  capability: final_delivery_campaign
+  merge_evaluation: "捞回件非新建：原件已寻获（.runtime/tmp/st-legacy-audit-20260929 备份位字节级恢复），本卷仅新增捞回注记两行"
+- file: docs/_working/final_delivery_campaign/c115_derivation_mismatch_list.md
+  token: final-delivery-campaign-c115-derivation-mismatch-list-20260929
+  created_by: st-finaldel-lists-20260930
+  capability: final_delivery_campaign
+  merge_evaluation: "C98/C115 两张 Owner 裁定清单（工卡 M 台账面），勾选后另批施工"
+- file: docs/_working/final_delivery_campaign/c98_wide_trigger_ledger.md
+  token: final-delivery-campaign-c98-wide-trigger-ledger-20260929
+  created_by: st-finaldel-lists-20260930
+  capability: final_delivery_campaign
+  merge_evaluation: "C98/C115 两张 Owner 裁定清单（工卡 M 台账面），勾选后另批施工"
 - file: scripts/governance/_tasks/session_closeout_reconciler.py
   token: session-closeout-reconciler-session-closeout-reconciler-20260929
   created_by: st-nightclean-20260929
@@ -56681,4 +56696,9 @@ creation_tokens:
   created_by: st-c9-f115
   capability: review_trigger_docs
   merge_evaluation: "R1 薄刀伴读蓝图（架构资产非代码真源）"
+- file: src/zephyr/governance/audit/registry_entry_counts_reconciler.py
+  token: registry-entry-counts-postcommit-backfill-wiring-registry-entry-counts-reconciler-20260929
+  created_by: st-finaldel-ownr2-20260930
+  capability: registry-entry-counts-postcommit-backfill-wiring
+  merge_evaluation: "buzhong: xianyou reconciler wu ROOR entry_count huitian chuyufa, CR-007 gongju wu zidong chufa — ben jian wei gai kongque de weiyi jexian, wu tongyu ke bing tiaomu"
 di_seam_exemptions: []
