@@ -153,6 +153,24 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 | 9.12 | **W-161 L18 六册口径互斥清理**（同名册/异路径册并存导致的读侧错配） | 波 5.1 | ROOR 指向唯一真源 |
 | 9.13 | **W-162 arbiter 令第二阶段④⑥ 收尾**（AGENTS.md 漂移修正走金哈希规程 + candidate 报告生成器刷新） | 波 5.2/6.2 | 在册议题 `#ARCH-AGENTS-SSOT-DRIFT-001` 状态推进有据 |
 
+### 波 9 销账读数（2026-09-29，st-finaldel-cdocs-20260929，判定锚=当日 HEAD；C48）
+
+| 项 | 销账读数 |
+|----|----------|
+| 9.3 W-142..W-151 | 审查后已删除（对账器机生替代，无账可销），维持删除态 |
+| 9.4 W-152 | **✅销**——`docs/_working/commit_speedup_campaign/80_hmac_proposal/proposal.md` 在 HEAD，§六量级评估节在（L111，自标"波 9.4 验收必备节"，5 文件/150-300 行量级）；状态行"立项提案未批准开工"=文档交付面完整，实施面=flag 出厂翻转归 Owner 门另案 |
+| 9.5 W-153 | 分流 C16（工单注记在案），本表不改判据 |
+| 9.6 W-154 | 分流 C336（generate_connection_matrix，M2 工单 READY 待施工）；生成器在 HEAD 0 命中=**未销**，随 C336 落地 |
+| 9.7 W-155 | **未销**——"负结果台账/死矿登记"全仓仅 SOP 散文提及（sop/mining_sop、exam_policy 等），宿主册专段与可判尺均无实证；需先定宿主再落段（候补=rule_catalog_registry 或 mining_sop，立处方后施工） |
+| 9.8 W-156 | **未销**——三态表（保留/改道/退役）未见产出；`11_rescue_playbook.md` 本尊仍在 HEAD（孤儿件之一在册），`repair_capability_tokens*.py` 全仓 0 命中（去向无登记） |
+| 9.9 W-157 | **未销**——`st-metaq-gc-20260924` 引用 src/scripts/config 三面实测 32 处仍在 HEAD（判据"读侧无默认路径依赖"未达；较卡面 28 处反增=X-44 病灶仍活） |
+| 9.10 W-158 | **未销**——13 行追认单未见成表（01_adjudication_master.md 有 Z 系个案裁决但无"代裁 1-13"专表；93_owner_menu.md grep 代裁=0=⚑ 附录未并入） |
+| 9.11 W-159/W-160 | **半销**——标注实体在册：gate_registry P4 七簇合并重定向锚多条（【已合并/重定向】Owner 2026-09-23 全批 E 口径落册）+ own_scope 机生字段 155 处 + t14_roster_report.md 在 HEAD；"两册自洽 rc=0"终验未复跑（热册核验面归总筹窗） |
+| 9.12 W-161 | **未销**——ROOR 无 L18 互斥清理痕迹（ROOR=human_gated 热册，清理走 Owner 通道） |
+| 9.13 W-162 | **半销**——AGENTS.md 漂移修正半已落 HEAD（st-finaldel-m2 金哈希规程，批文 #ARCH-AGENTS-SSOT-DRIFT-001 在册）；candidate 报告生成器刷新半涉热册在飞（=C09，defer） |
+
+> 波 9 计 13 项：全销 1（W-152）｜半销 2（W-159/W-160、W-162）｜分流在飞 2（W-153→C16、W-154→C336）｜未销 8 行中的 5 项（W-155/W-156/W-157/W-158/W-161，其中 W-161/W-158 主属 Owner/⚑ 面，W-155/W-156/W-157 可施工面待立处方）。
+
 ## 波 9.5 · ⚑ 菜单补位批（W-163，外部终审新增；先于一切 ⚑ 呈报定稿）
 
 > 真源＝`final_review_chartlib/ext_03_schedule_completeness_audit.md` §二 W-163 行与 §三 分类视图。**本波不复制判据，只补"呈得到"这一环**——原方案里 9 项裁定书已判"应呈"而 `93_owner_menu.md` grep 零命中（呈裁链断裂），属第三层遗漏。
