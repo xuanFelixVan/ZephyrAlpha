@@ -4998,7 +4998,7 @@ nodes:
   decision_question: "谁控制谁？（股权/任职/隐形边N度向上穿透）"
   activation: continuous
   algo_note_zh: >-
-    传导图谱供给侧（G3）：ig_equity_edge 804条+十大股东274,865对；穿透函数=scripts/entity_graph/equity_penetration.py（600566/600927/601963实测）；境外BVI/开曼断线不编造。
+    传导图谱供给侧（G3）：股权边真源=edge_holding（entity_graph 六表现行集 valid_to IS NULL；原 ig_equity_edge 804条已于 2026-09-29 按裁定#424 退役 DROP，备份=F:/zephyr_cold/retired_tables/ig_equity_edge_20260929/）+十大股东274,865对；穿透函数=scripts/entity_graph/equity_penetration.py（600566/600927/601963实测；merge-ig/compare 步源表已退役）；境外BVI/开曼断线不编造。
     本节点引用图谱真源不复制内容；下游消费经 chain_refs 轴挂具体链 id（W4 对账轴）。
   factor_refs: []
   data_refs: []
