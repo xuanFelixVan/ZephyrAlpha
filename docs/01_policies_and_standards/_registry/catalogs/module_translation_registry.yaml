@@ -62026,6 +62026,14 @@ entries:
   plain_zh: "门禁的名册有好几本，各记各的账总会对不上。这个工具把几本名册放在一起逐条对账，谁多了谁少了谁写错了，生成一张差异报告，让维护的人一眼看到哪里漂了，不用再靠人肉翻册子。"
   responsibility_layer: governance
 
+- module_path: src/zephyr/alt_data/board_index_supply.py
+  domain_id: D_ALT_DATA
+  name_zh: 板块指数盘中供给消费面
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 统一取板块一分钟指数给做T方法用，自算优先，厂商指数只在自算缺的时候当对账兜底
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
