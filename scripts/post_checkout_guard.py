@@ -4,7 +4,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.post_checkout_guard
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard
+# [DEPENDENCIES] zephyr.infrastructure.runtime.concurrency_guard
 # [CONSUMERS] .git/hooks/post-checkout
 # [STARTUP] manual
 # [MATURITY] production

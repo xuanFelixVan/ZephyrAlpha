@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §concurrency_guard
 # [MODULE] scripts.git_guard
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.rollback.concurrency_guard
+# [DEPENDENCIES] zephyr.infrastructure.runtime.concurrency_guard
 # [CONSUMERS] AI session 执行 git reset/checkout/stash/revert 前调用
 # [STARTUP] manual
 # [MATURITY] production
@@ -171,7 +171,7 @@ def get_project_root() -> Path:
             check=True,
         )
         return Path(result.stdout.strip())
-    except Exception:
+    except Exception:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
         return Path.cwd()
 
 
@@ -190,7 +190,7 @@ def run_git_silent(args: list[str]) -> str:
             check=False,
         )
         return result.stdout.strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
         return ""
 
 
@@ -274,7 +274,7 @@ def _check_conflict_or_passthrough(git_args: list[str], files_in_scope: list[str
     session_id = get_session_id()
     try:
         conflict = check_rollback_conflict(files_in_scope, session_id, project_root)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
         print(f"[GIT-GUARD] 冲突检查内部错误: {e}", file=sys.stderr)
         return passthrough(git_args)
     if conflict.has_conflict:
@@ -660,7 +660,7 @@ def scan_untracked_in_dir(dir_rel: str, project_root: Path) -> list[str]:
             check=False,
             cwd=str(project_root),
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
         return []
 
     dir_prefix = dir_rel.replace("\\", "/").rstrip("/") + "/"
@@ -735,7 +735,7 @@ def _mv_strategy_move(
             dest_file.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(src_file), str(dest_file))
             moved.append(dest_prefix + rel_name)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
             failed.append((rel_path, str(e)))
 
     if moved:
@@ -775,7 +775,7 @@ def _mv_strategy_stage(
             stage_rel = str(stage_file.relative_to(project_root)).replace("\\", "/")
             mapping[rel_path] = stage_rel
             staged.append(rel_path)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
             failed.append((rel_path, str(e)))
 
     if mapping:
@@ -935,7 +935,7 @@ def check_and_execute(git_args: list[str]) -> int:
 
     try:
         files_in_scope = extractor(git_args[1:])
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量兜底（20260929 Rx-1 入队通道整文件 ruff 预清，fail-open 透传语义零变更）
         print(f"[GIT-GUARD] 内部错误（文件提取失败）: {e}", file=sys.stderr)
         return _passthrough(git_args)
 
