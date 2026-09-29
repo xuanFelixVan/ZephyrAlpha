@@ -13,7 +13,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=success; exit 1=error; exit 2=internal error
-# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py
+# [TESTS] tests/governance/rule_bridge/test_session_worktree*.py; tests/scripts/test_session_worktree_env.py; tests/scripts/test_session_worktree_archive.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI会话按需调用的CLI worktree协调工具，人工触发非常驻服务/非cron/非daemon
 """
@@ -39,12 +39,16 @@ CLI:
     python scripts/session_worktree.py merge <session-id> [--to dev] [--squash] [--yes]
     python scripts/session_worktree.py abort <session-id>
     python scripts/session_worktree.py list
+    python scripts/session_worktree.py archive <session名|分支名|worktree路径> [--execute]
+        [--batch-file <清单>] [--all] [--skip-rescue] [--base dev]
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
 import subprocess
 import sys
 import time
@@ -97,9 +101,7 @@ def _provision_worktree_env(wt_path: Path, source_root: Path | None = None) -> l
                 dst.write_bytes(src.read_bytes())
                 notes.append(f"{label} 配置已复制 config/{cfg_name}")
             else:
-                notes.append(
-                    f"WARN: 主仓 {label} 配置 config/{cfg_name} 不存在，跳过（依赖它的门禁/对账将不可用）"
-                )
+                notes.append(f"WARN: 主仓 {label} 配置 config/{cfg_name} 不存在，跳过（依赖它的门禁/对账将不可用）")
         except OSError as e:
             notes.append(f"WARN: {label} 配置复制失败: {e}")
 
@@ -160,7 +162,7 @@ def _find_branch_for_session(session_id: str) -> str | None:
                         # porcelain 输出是 refs/heads/ 全限定名；git branch -D 只认短名
                         return full[len("refs/heads/") :] if full.startswith("refs/heads/") else full
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
         return None
 
 
@@ -261,7 +263,7 @@ def cmd_create(args: argparse.Namespace) -> int:
             print(f"  WARN: heartbeat daemon 启动失败（不阻断创建）: {e}", file=sys.stderr)
         print(f"  进入 worktree: cd {wt_path}")
         return 0
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
         print(f"[WORKTREE] 内部错误: {e}", file=sys.stderr)
         return 2
 
@@ -285,7 +287,7 @@ def cmd_exec(args: argparse.Namespace) -> int:
     try:
         result = run_subprocess_hidden(args.command, cwd=str(wt_path))
         return result.returncode
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
         print(f"[WORKTREE] 执行失败: {e}", file=sys.stderr)
         return 2
 
@@ -338,7 +340,7 @@ def cmd_merge(args: argparse.Namespace) -> int:
         # S2 四证：merge 场景豁免证 1（会话仍活跃），仍走证 2/4（快照）
         print("[WORKTREE] 自动清理 worktree...")
         return cmd_abort_inner(session_id, exempt_cert1=True)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
         print(f"[WORKTREE] 内部错误: {e}", file=sys.stderr)
         return 2
 
@@ -619,14 +621,473 @@ def cmd_list(args: argparse.Namespace) -> int:
         print("[WORKTREE] 当前 worktree 列表:")
         print(result.stdout, end="")
         return 0
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
         print(f"[WORKTREE] 内部错误: {e}", file=sys.stderr)
         return 2
 
 
 # ============================================================================
-# 入口
+# lane-archive（RB-4 车道生命周期治本）
+# 真源: docs/_working/root_cure_campaign/RB4_lane_lifecycle.md §2
+# 流程: 死判（活跃硬拒）→ V 判型（ahead+cherry+dirty 三查）→ patch 存证+？？rescue
+#       → worktree remove --force --force → prune+进程外核实 → branch -d（真 ahead 落台账，禁 -D）
 # ============================================================================
+
+_ARCHIVE_ACTIVE_LOCK_TTL = 3600  # session_active lockfile 新鲜度 TTL（对齐 sweep 判据 4）
+_ARCHIVE_COMMIT_PERSISTED_TTL = 86400  # commit_persisted 标记免疫窗（对齐 sweep 24h）
+_AHEAD_LEDGER = Path(".runtime") / "quarantine" / "ahead_branches.log"
+_ARCHIVE_RESCUE_DIR = Path(".runtime") / "tmp" / "rescue"
+# --all 批量排除表（设计 §4：主区+pool+qoder+serializer 队列车道不进常驻归档）
+_ARCHIVE_ALL_EXCLUDED_MARKERS = (".aidrafts_pool", ".qoder", "commit_queue")
+
+
+class _ArchiveEvidenceManager:
+    """最小 WorktreeManager 适配器——仅供 rule_bridge._generate_retire_patch_evidence 使用。
+
+    archive 的车道可位于任意注册路径（.worktrees/、.aidrafts/、qoder 遗产…），
+    rule_bridge 的 _wt_path 硬锚 .aidrafts/<sid>，故用本适配器把 wt_path 直指
+    porcelain 反查到的真实路径；run_git 契约与 WorktreeManager.run_git 一致。
+    """
+
+    def __init__(self, repo_root: Path, wt_path: Path) -> None:
+        self.repo_root = Path(repo_root)
+        self._lane_wt_path = wt_path
+
+    def _wt_path(self, session_id: str) -> Path:
+        """契约签名（session_id 未用——适配器恒指向反查到的真实车道路径）。"""
+        return self._lane_wt_path
+
+    def run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        return run_subprocess_hidden(
+            cmd,
+            cwd=str(cwd or self.repo_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+        )
+
+    def _run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
+        """向后兼容 thin wrapper（对齐 WorktreeManager 既有惯例）。"""
+        return self.run_git(cmd, cwd)
+
+
+def _list_worktree_registry() -> list[dict]:
+    """解析 git worktree list --porcelain 为注册表（唯一真源，不做目录遍历）。"""
+    result = _run_git(["worktree", "list", "--porcelain"], check=False)
+    if result.returncode != 0:
+        return []
+    entries: list[dict] = []
+    cur: dict = {}
+    for line in result.stdout.splitlines():
+        if not line.strip():
+            if cur:
+                entries.append(cur)
+                cur = {}
+            continue
+        key, _, value = line.partition(" ")
+        if key == "worktree":
+            cur = {
+                "path": value,
+                "head": None,
+                "branch": None,
+                "detached": False,
+                "locked": False,
+                "prunable": False,
+                "bare": False,
+            }
+        elif key == "HEAD":
+            cur["head"] = value
+        elif key == "branch":
+            # porcelain 输出 refs/heads/ 全限定名；统一剥前缀存短名
+            cur["branch"] = value[len("refs/heads/") :] if value.startswith("refs/heads/") else value
+        elif key == "detached":
+            cur["detached"] = True
+        elif key == "locked":
+            cur["locked"] = True
+        elif key == "prunable":
+            cur["prunable"] = True
+        elif key == "bare":
+            cur["bare"] = True
+    if cur:
+        entries.append(cur)
+    return entries
+
+
+def _normcase(p: str | Path) -> str:
+    """路径标准化（porcelain 正斜杠 vs Windows 反斜杠、盘符大小写差异，对齐 WorktreeManager）。"""
+    return os.path.normcase(str(p))
+
+
+def _resolve_archive_target(target: str, registry: list[dict]) -> dict | None:
+    """按 worktree 路径 | session 名（目录 basename）| 分支名 反查注册表。
+
+    返回 entry dict；未命中返回 None（不猜、不遍历目录——git 注册表是唯一真源）。
+    """
+    t = target.strip()
+    if not t:
+        return None
+    # ① 路径匹配（绝对路径或相对 REPO_ROOT）
+    cand = Path(t)
+    if not cand.is_absolute():
+        cand = REPO_ROOT / cand
+    t_norm = _normcase(cand)
+    for e in registry:
+        if _normcase(e["path"]) == t_norm:
+            return e
+    # ② session 名 = worktree 目录 basename（sid 提取不硬编码前缀，RB-4 §4）
+    for e in registry:
+        if Path(e["path"]).name == t:
+            return e
+    # ③ 分支名（短名；接受误带 refs/heads/ 前缀的输入）
+    t_branch = t[len("refs/heads/") :] if t.startswith("refs/heads/") else t
+    for e in registry:
+        if e["branch"] and e["branch"] == t_branch:
+            return e
+    return None
+
+
+def _check_archive_target_dead(sid: str) -> tuple[bool, str]:
+    """死会话硬判（lane-archive 证 1）：活跃注册表/新鲜 lockfile/免疫标记任一命中=活。
+
+    命中活跃=硬拒绝，无逃生 flag（要动活车道只能等它死——RB-4 §2.1）。
+    """
+    # ① SessionRegistry 活跃名单（心跳停跳>90s / TTL 3600s 已由 list_active reap）
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        actives = {s.session_id for s in SessionRegistry(REPO_ROOT).list_active()}
+        if sid in actives:
+            return False, f"session '{sid}' 仍活跃（registry list_active 命中）——活车道禁止 archive，无逃生 flag"
+    except Exception as e:  # noqa: BLE001 — registry 不可读降级到标记检查（对齐 _check_cert_death）
+        print(f"  WARN: SessionRegistry 读取异常（降级到锁标记检查）: {e}", file=sys.stderr)
+    # ② 新鲜 session_active lockfile（commit/merge 关键段进行中，P1-2 同源路径）
+    lock = REPO_ROOT / ".runtime" / "locks" / f"session_active_{sid}.lock"
+    try:
+        if lock.exists() and (time.time() - lock.stat().st_mtime) < _ARCHIVE_ACTIVE_LOCK_TTL:
+            return False, f"fresh session_active lockfile（age<{_ARCHIVE_ACTIVE_LOCK_TTL}s）: {lock.name}"
+    except OSError:
+        pass
+    # ③ commit_persisted 免疫窗（24h，对齐 sweep commit-persisted 判据）
+    marker = REPO_ROOT / ".runtime" / "locks" / f"commit_persisted_{sid}.json"
+    try:
+        if marker.exists() and (time.time() - marker.stat().st_mtime) < _ARCHIVE_COMMIT_PERSISTED_TTL:
+            return False, f"commit_persisted 标记在 24h 免疫窗内: {marker.name}"
+    except OSError:
+        pass
+    return True, "死车道（registry 无活跃记录 + 无新鲜锁/免疫标记）"
+
+
+def _probe_ahead_count(branch: str | None, base: str) -> int:
+    """① ahead 计数（detached 记 0；rev-list 失败记 -1 → 保守按真 ahead 处置）。"""
+    if not branch:
+        return 0
+    r = _run_git(["rev-list", "--count", f"{base}..{branch}"], check=False)
+    if r.returncode == 0 and r.stdout.strip().isdigit():
+        return int(r.stdout.strip())
+    return -1
+
+
+def _probe_cherry_all_equal(branch: str | None, base: str, ahead: int) -> bool:
+    """② cherry 全等判据（仅 ahead>0 有意义；全 '-' = 补丁已全部在基线）。"""
+    if not branch or ahead <= 0:
+        return False
+    r = _run_git(["cherry", base, branch], check=False)
+    if r.returncode != 0:
+        return False
+    lines = [l for l in r.stdout.splitlines() if l.strip()]
+    return bool(lines) and all(l.startswith("-") for l in lines)
+
+
+def _probe_status_lines(wt_path: Path) -> tuple[list[str], list[str]]:
+    """③ 脏查 → (porcelain 行, 未跟踪路径)。"""
+    r = _run_git(["-C", str(wt_path), "status", "--porcelain"], check=False)
+    if r.returncode != 0:
+        return [], []
+    lines = [l for l in r.stdout.splitlines() if l.strip()]
+    return lines, [l[3:] for l in lines if l.startswith("?? ") and len(l) > 3]
+
+
+def _classify_archive_lane(entry: dict, base: str) -> dict:
+    """V 判型三查：ahead（rev-list --count）+ cherry 全等 + status --porcelain。
+
+    判型结论:
+        zero_loss       ahead=0 且无脏 → 直清
+        superseded_shell ahead>0 但 cherry 全 '-'（补丁已入基线）→ 直清，branch -d 可过
+        needs_rescue    有脏 → patch 存证（fail-closed）+ ？？rescue 后再清
+        ahead_only      ahead>0 且 cherry 有 '+' → 真独有内容，branch -d 必败 → 台账
+    """
+    wt_path = Path(entry["path"])
+    branch = entry.get("branch")
+    ahead = _probe_ahead_count(branch, base)
+    cherry_all_equal = _probe_cherry_all_equal(branch, base, ahead)
+    dirty, untracked = _probe_status_lines(wt_path)
+
+    if dirty:
+        verdict = "needs_rescue"
+    elif ahead == 0:
+        verdict = "zero_loss"
+    elif cherry_all_equal:
+        verdict = "superseded_shell"
+    else:
+        verdict = "ahead_only"
+    return {
+        "sid": wt_path.name,
+        "wt_path": wt_path,
+        "branch": branch,
+        "ahead": ahead,
+        "cherry_all_equal": cherry_all_equal,
+        "dirty": dirty,
+        "untracked": untracked,
+        "verdict": verdict,
+    }
+
+
+def _rescue_untracked_files(wt_path: Path, sid: str, untracked: list[str]) -> dict:
+    """？？未跟踪文件 → .runtime/tmp/rescue/<sid>/（+mapping.json 台账）。
+
+    mv_rescue（git_guard.py 策略 C）同构，落点换临时区（24h TTL 由 tmp 清理管，
+    避开一代 .aidrafts 目录本身可能被清的缺陷——RB-4 §1.3）。
+    """
+    rescue_dir = REPO_ROOT / _ARCHIVE_RESCUE_DIR / sid
+    rescue_dir.mkdir(parents=True, exist_ok=True)
+    mapping: dict[str, str] = {}
+    moved = 0
+    for raw in untracked:
+        rel = raw.strip().strip('"').rstrip("/")
+        if not rel or rel == ".":
+            continue
+        src = wt_path / rel
+        if not src.exists():
+            continue
+        dst = rescue_dir / rel
+        try:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(src), str(dst))
+            mapping[rel] = str(dst)
+            moved += 1
+        except (OSError, shutil.Error) as e:
+            print(f"  WARN: rescue 失败 {rel}: {e}", file=sys.stderr)
+    try:
+        (rescue_dir / "mapping.json").write_text(
+            json.dumps(
+                {
+                    "session_id": sid,
+                    "source_worktree": str(wt_path),
+                    "rescued": mapping,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+    except OSError as e:
+        print(f"  WARN: mapping.json 写入失败: {e}", file=sys.stderr)
+    return {"moved": moved, "rescue_dir": rescue_dir}
+
+
+def _archive_generate_evidence(sid: str, wt_path: Path) -> dict:
+    """退役 patch 存证（复用 rule_bridge Z1 原语；fail-closed——失败调用方必须保留车道）。"""
+    try:
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import _generate_retire_patch_evidence
+    except ImportError as e:
+        return {"generated": False, "error": f"rule_bridge 导入失败: {e}"}
+    return _generate_retire_patch_evidence(
+        REPO_ROOT, sid, _ArchiveEvidenceManager(REPO_ROOT, wt_path), source="lane-archive"
+    )
+
+
+def _record_ahead_branch(sid: str, branch: str, ahead: int, patch_path: str | None) -> Path:
+    """真 ahead 分支白名单台账（禁 -D，交人工裁定 merge-or-die——RB-4 §2.5）。"""
+    ledger = REPO_ROOT / _AHEAD_LEDGER
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    with open(ledger, "a", encoding="utf-8") as f:
+        f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S')}\t{sid}\t{branch}\tahead={ahead}\tpatch={patch_path or '-'}\n")
+    return ledger
+
+
+def _archive_hard_guards(entry: dict, sid: str, wt_path: Path, branch: str | None, base: str) -> tuple[bool, int]:
+    """硬拒三关：主区/裸仓 / 活车道死判 / 基线分支本身。打印+审计在关内。"""
+    if entry.get("bare") or _normcase(wt_path) == _normcase(REPO_ROOT):
+        print(f"[ARCHIVE] 硬拒绝: 主区/裸仓禁止归档: {wt_path}", file=sys.stderr)
+        return False, 1
+    dead, reason = _check_archive_target_dead(sid)
+    print(f"  死判: {'PASS' if dead else '硬拒绝'}——{reason}")
+    if not dead:
+        _audit_abort(sid, "BLOCKED", f"lane-archive 活车道硬拒: {reason}", {"cert": 1, "mode": "archive"})
+        print("[ARCHIVE] 硬拒绝：活跃会话车道禁止归档（无逃生 flag，要动活车道只能等它死）", file=sys.stderr)
+        return False, 1
+    if branch and branch == base:
+        print(f"[ARCHIVE] 硬拒绝: 基线分支本身禁止归档: {branch}", file=sys.stderr)
+        return False, 1
+    return True, 0
+
+
+def _archive_rescue_phase(info: dict, sid: str, wt_path: Path, skip_rescue: bool) -> tuple[bool, str | None]:
+    """①patch 存证（fail-closed）+ ②？？rescue。返回 (是否失败, patch_path)。"""
+    patch_path: str | None = None
+    if not info["dirty"]:
+        return False, None
+    ev = _archive_generate_evidence(sid, wt_path)
+    if not ev.get("generated"):
+        if ev.get("reason") == "clean":
+            print("  ① patch 存证: SKIP（status 已转干净）")
+            return False, None
+        err = ev.get("error", ev.get("reason", "unknown"))
+        print(f"[ARCHIVE] fail-closed：存证失败，保留车道待人工: {err}", file=sys.stderr)
+        _audit_abort(sid, "BLOCKED", f"lane-archive 存证失败: {err}", {"cert": "evidence"})
+        return True, None
+    patch_path = ev.get("patch_path")
+    print(f"  ① patch 存证: {patch_path}（三分类={ev.get('counts')}）")
+    if info["untracked"] and not skip_rescue:
+        r_rescue = _rescue_untracked_files(wt_path, sid, info["untracked"])
+        print(f"  ② ？？rescue: {r_rescue['moved']} 项 → {r_rescue['rescue_dir']}（mapping.json 台账）")
+    elif info["untracked"]:
+        print("  ② ？？rescue: SKIP（--skip-rescue）")
+    return False, patch_path
+
+
+def _archive_remove_and_verify(wt_path: Path) -> bool:
+    """③remove（locked 双 force 实测可过；失败 safe_rmtree 兜底）+ ④prune 进程外核实。"""
+    r_rm = _run_git(["worktree", "remove", "--force", "--force", str(wt_path)], check=False)
+    if r_rm.returncode != 0:
+        print(f"  ③ worktree remove 失败（{(r_rm.stderr or '').strip()[:120]}）→ safe_rmtree 兜底", file=sys.stderr)
+        try:
+            from zephyr.shared.io.file_utils import safe_rmtree
+
+            safe_rmtree(wt_path, allowed_prefix=wt_path.parent, ignore_errors=True)
+        except Exception as e:  # noqa: BLE001 — 兜底失败交给 ④ 核实拦截
+            print(f"  ③ safe_rmtree 兜底也失败: {e}", file=sys.stderr)
+    _run_git(["worktree", "prune"], check=False)
+    still = [e for e in _list_worktree_registry() if _normcase(e["path"]) == _normcase(wt_path)]
+    if still:
+        print("[ARCHIVE] 核实失败：worktree 仍注册——分支保持不动，报告人工", file=sys.stderr)
+        return False
+    print("  ④ prune+核实: worktree 已从注册表消失")
+    return True
+
+
+def _archive_branch_finish(sid: str, branch: str | None, info: dict, patch_path: str | None) -> None:
+    """⑤branch -d（只认已合并；失败=真 ahead → 禁 -D 落白名单）+ 收尾注销与审计。"""
+    if branch:
+        r_bd = _run_git(["branch", "-d", branch], check=False)
+        if r_bd.returncode == 0:
+            print(f"  ⑤ branch -d: {branch} 已删（壳分支）")
+        else:
+            ledger = _record_ahead_branch(sid, branch, max(info["ahead"], 0), patch_path)
+            print(f"  ⑤ branch -d 失败（真 ahead）→ 禁 -D，已落白名单台账: {ledger}")
+    _teardown_session_governance(sid)
+    _audit_abort(
+        sid,
+        "ARCHIVED",
+        "lane-archive 完成",
+        {"branch": branch, "verdict": info["verdict"], "ahead": info["ahead"], "patch": patch_path},
+    )
+
+
+def _archive_one(entry: dict, *, execute: bool, base: str, skip_rescue: bool) -> int:
+    """单车道归档。dry-run 打印完整处置计划；--execute 才动真格。返回退出码。"""
+    sid = Path(entry["path"]).name
+    wt_path = Path(entry["path"])
+    ok, guard_rc = _archive_hard_guards(entry, sid, wt_path, entry.get("branch"), base)
+    if not ok:
+        return guard_rc
+
+    dead, _reason = _check_archive_target_dead(sid)
+    info = _classify_archive_lane(entry, base)
+    branch = info["branch"]
+    mode = "执行" if execute else "DRY-RUN 计划"
+    nl = chr(92) + "n"
+    print(f"[ARCHIVE] {mode}: {sid}")
+    print(
+        f"  路径: {wt_path}" + nl + f"  分支: {branch or '(detached)'}  基线: {base}  ahead={info['ahead']}"
+        f"  cherry全等={info['cherry_all_equal']}  脏文件={len(info['dirty'])}（？？{len(info['untracked'])}）"
+    )
+    print("  死判已在守卫关输出。")
+    print(f"  判型: {info['verdict']}")
+    if info["dirty"]:
+        print(
+            f"  处置: ①patch 存证（fail-closed）→ ②？？rescue→.runtime/tmp/rescue/{sid}/"
+            " → ③remove --force --force → ④prune+核实 → ⑤branch -d"
+        )
+    else:
+        print("  处置: 零丢失型直清 ③remove --force --force → ④prune+核实 → ⑤branch -d")
+    if not execute:
+        print("  [DRY-RUN] 未做任何变更（--execute 才执行）")
+        return 0
+
+    failed, patch_path = _archive_rescue_phase(info, sid, wt_path, skip_rescue)
+    if failed:
+        return 1
+    if not _archive_remove_and_verify(wt_path):
+        return 1
+    _archive_branch_finish(sid, branch, info, patch_path)
+    print(f"[ARCHIVE] 已归档: {sid}")
+    return 0
+
+
+def _archive_collect_targets(args: argparse.Namespace, registry: list[dict]) -> list[str]:
+    """目标收集：显式 targets + --batch-file + --all（排除表滤主区/pool/qoder/serializer）。"""
+    targets: list[str] = list(getattr(args, "targets", None) or [])
+    batch_file = getattr(args, "batch_file", None)
+    if batch_file:
+        bf = Path(batch_file)
+        if not bf.exists():
+            print(f"[ARCHIVE] 错误: 批量清单不存在: {bf}", file=sys.stderr)
+            return []
+        for line in bf.read_text(encoding="utf-8").splitlines():
+            line = line.split("#", 1)[0].strip()
+            if line:
+                targets.append(line)
+    if getattr(args, "all", False):
+        main_norm = _normcase(REPO_ROOT)
+        for e in registry:
+            p_norm = _normcase(e["path"]).replace(chr(92) + "/", "/")
+            if _normcase(e["path"]) == main_norm or e.get("bare"):
+                continue
+            if any(m in p_norm for m in _ARCHIVE_ALL_EXCLUDED_MARKERS):
+                continue
+            if e.get("branch") and e["branch"].startswith("serializer/"):
+                continue
+            targets.append(e["path"])
+    return targets
+
+
+def cmd_archive(args: argparse.Namespace) -> int:
+    """lane-archive：死车道归档（dry-run 默认，--execute 显式；RB-4 治本）。"""
+    registry = _list_worktree_registry()
+    if not registry:
+        print("[ARCHIVE] 错误: git worktree list --porcelain 失败或为空", file=sys.stderr)
+        return 2
+
+    targets = _archive_collect_targets(args, registry)
+    if not targets:
+        print("[ARCHIVE] 错误: 未指定目标（session 名|分支名|路径 / --batch-file / --all）", file=sys.stderr)
+        return 1
+
+    execute = bool(getattr(args, "execute", False))
+    if not execute:
+        print("[ARCHIVE] === DRY-RUN 模式（默认；--execute 才真正执行）===")
+    rc = 0
+    done = 0
+    for t in targets:
+        entry = _resolve_archive_target(t, registry)
+        if entry is None:
+            print(f"[ARCHIVE] 错误: 目标未命中 worktree 注册表（唯一真源=git worktree list）: {t}", file=sys.stderr)
+            rc = 1
+            continue
+        one_rc = _archive_one(
+            entry, execute=execute, base=args.base, skip_rescue=bool(getattr(args, "skip_rescue", False))
+        )
+        if one_rc == 0:
+            done += 1
+        else:
+            rc = rc or one_rc
+    print(f"[ARCHIVE] 汇总: {done}/{len(targets)} 处理完成（execute={execute}）")
+    return rc
 
 
 def main() -> int:
@@ -685,10 +1146,47 @@ def main() -> int:
     p_list = sub.add_parser("list", help="列出所有 worktree")
     p_list.set_defaults(func=cmd_list)
 
+    # archive（RB-4 lane-archive：dry-run 默认，--execute 显式）
+    p_archive = sub.add_parser(
+        "archive",
+        help="归档死车道（死判→V判型→存证→remove→prune→branch -d；真 ahead 落台账禁 -D）",
+    )
+    p_archive.add_argument(
+        "targets",
+        nargs="*",
+        help="目标（session 名 | 分支名 | worktree 路径），可多个",
+    )
+    p_archive.add_argument(
+        "--execute",
+        action="store_true",
+        help="真正执行（默认 dry-run 只打印处置计划）",
+    )
+    p_archive.add_argument(
+        "--batch-file",
+        dest="batch_file",
+        help="批量清单文件（每行一个目标，# 注释）",
+    )
+    p_archive.add_argument(
+        "--all",
+        action="store_true",
+        help="批量全量（排除表：主区/pool/qoder/serializer；活跃由死判硬拒）",
+    )
+    p_archive.add_argument(
+        "--skip-rescue",
+        action="store_true",
+        help="跳过 ？？文件 rescue（仍做 patch 存证）",
+    )
+    p_archive.add_argument(
+        "--base",
+        default="dev",
+        help="ahead/cherry 判定基线分支（默认 dev）",
+    )
+    p_archive.set_defaults(func=cmd_archive)
+
     args = parser.parse_args()
     try:
         return args.func(args)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — CLI 边界兜底转退出码（存量基线注记）
         print(f"[WORKTREE] 内部错误: {e}", file=sys.stderr)
         return 2
 
