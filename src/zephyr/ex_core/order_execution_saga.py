@@ -5,7 +5,7 @@
 # [CONSUMERS] D-PORTFOLIO(TradingSession可调用); D-EX-CORE(ExecutionEngine可调用)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞;超时撤单失败强制查询订单终态(已成交补走step5/6不吞掉);拒单分类动作经注入RejectionActionExecutor执行(未注入=仅日志,Saga不自动重试下单)
+# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞;超时撤单失败强制查询订单终态(已成交补走step5/6不吞掉);拒单分类动作经注入RejectionActionExecutor执行(未注入=仅日志,Saga不自动重试下单);补偿注册表动作在内建补偿后逆序执行(未注入=行为零变化,MOD-EX-057-R1)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -70,6 +70,10 @@ from zephyr.ex_core.position_tracker.tracker import PositionTracker
 from zephyr.ex_core.rejection_action_handler import (
     RejectionActionExecutor,
     RejectionActionResult,
+)
+from zephyr.ex_core.saga_compensation_registry import (
+    SagaCompensationContext,
+    SagaCompensationRegistry,
 )
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
@@ -282,6 +286,7 @@ class _SagaContext:
     start_time: float = 0.0  # time.monotonic()
     started_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     collector: _FillCollector | None = None  # step3 注册, execute() finally 清理
+    failed_step: str = ""  # 正在执行的步骤名（补偿点按其定位注册表动作）
 
     def remaining_timeout(self, config: SagaConfig) -> float:
         """剩余超时秒数。"""
@@ -351,6 +356,7 @@ class OrderExecutionSaga:
         config: SagaConfig | None = None,
         signal_confirmer: Callable[[Order], bool] | None = None,
         rejection_executor: RejectionActionExecutor | None = None,
+        compensation_registry: SagaCompensationRegistry | None = None,
     ) -> None:
         """初始化 Saga 编排器。
 
@@ -370,6 +376,11 @@ class OrderExecutionSaga:
                 ALERT_FREEZE/ALERT_RECONCILE）；Saga 不自带 retry_fn——
                 修正价格重试需装配层注入定价策略，未接线时执行器降级放弃
                 （Fail-Closed 不盲目重试）。
+            compensation_registry: 补偿动作注册表（F53 夜战批，MOD-EX-057-R1）。
+                None=不启用（既有行为零变化）。注入后三个补偿点（step5 失败/
+                异常路径/超时终判 TIMEOUT）在**内建补偿之后**对已完成步骤+
+                失败步骤逆序执行注册动作（经典 Saga 反向补偿扩展点，如释放
+                预占资源/清 pending 标记），执行记录写执行审计。
         """
         self._order_manager = order_manager
         self._risk_validator = risk_validator
@@ -381,6 +392,7 @@ class OrderExecutionSaga:
         self._risk_limits = risk_limits or self._default_risk_limits()
         self._signal_confirmer = signal_confirmer
         self._rejection_executor = rejection_executor
+        self._compensation_registry = compensation_registry
 
     @staticmethod
     def _default_risk_limits() -> RiskLimits:
@@ -447,18 +459,22 @@ class OrderExecutionSaga:
         """执行六步 Saga（内部, collector 在 step3 注册到 ctx.collector）。"""
         try:
             # 步骤1: 风控检查
+            ctx.failed_step = "risk_check"
             if not self._step1_risk_check(ctx):
                 return ctx.to_result()
 
             # 步骤2: 信号确认（可选）
+            ctx.failed_step = "signal_confirm"
             if not self._step2_signal_confirm(ctx):
                 return ctx.to_result()
 
             # 步骤3: 下单提交（注册 fill collector 到 ctx.collector）
+            ctx.failed_step = "order_submit"
             if not self._step3_order_submit(ctx):
                 return ctx.to_result()
 
             # 步骤4: 成交确认
+            ctx.failed_step = "fill_confirm"
             remaining = ctx.remaining_timeout(self._config)
             fill = self._step4_fill_confirm(ctx, ctx.collector, remaining)
             if fill is None:
@@ -479,6 +495,7 @@ class OrderExecutionSaga:
                             ctx.order.order_id,
                         )
                 self._audit_timeout(ctx)
+                self._run_registered_compensations(ctx)
                 return ctx.to_result()
 
             ctx.fill = fill
@@ -493,10 +510,12 @@ class OrderExecutionSaga:
             )
 
             # 步骤5: 持仓更新
+            ctx.failed_step = "position_update"
             if not self._step5_position_update(ctx):
                 return ctx.to_result()
 
             # 步骤6: 报告生成
+            ctx.failed_step = "report"
             self._step6_report(ctx)
 
             ctx.state = SagaState.COMPLETED
@@ -515,6 +534,7 @@ class OrderExecutionSaga:
             # 尝试补偿
             if ctx.state in (SagaState.ORDER_SUBMITTED, SagaState.FILL_RECEIVED):
                 self._compensate_order(ctx)
+            self._run_registered_compensations(ctx)
             return ctx.to_result()
 
     # ── 六步实现 ──
@@ -726,6 +746,7 @@ class OrderExecutionSaga:
             ctx.error = f"position update failed: {exc}"
             # 补偿: 持仓回滚
             self._compensate_position(ctx)
+            self._run_registered_compensations(ctx)
             return False
 
     def _step6_report(self, ctx: _SagaContext) -> None:
@@ -740,6 +761,56 @@ class OrderExecutionSaga:
             _logger.warning("[Saga %s] report step failed (best-effort): %s", ctx.saga_id[:8], exc)
 
     # ── 补偿操作 ──
+
+    def _run_registered_compensations(self, ctx: _SagaContext) -> None:
+        """注册表补偿扩展点（F53 夜战批，MOD-EX-057-R1）。
+
+        内建补偿（撤单/持仓回滚）之后调用：对"已完成步骤+失败步骤"逆序执行
+        注册动作（经典 Saga 反向补偿），记录写执行审计。未注入注册表=零操作
+        （既有行为零变化）；动作异常已在注册表层捕获成 FAILED 记录不外抛。
+        """
+        registry = self._compensation_registry
+        if registry is None:
+            return
+        steps = list(ctx.steps_completed)
+        if ctx.failed_step and ctx.failed_step not in steps:
+            steps.append(ctx.failed_step)
+        context = SagaCompensationContext(
+            saga_id=ctx.saga_id,
+            order_id=ctx.order.order_id,
+            symbol=ctx.order.symbol,
+            side=ctx.side.value,
+            state=ctx.state.value,
+            error=ctx.error,
+            fill=ctx.fill,
+        )
+        try:
+            records = registry.run_compensations(steps, context)
+        except Exception as exc:  # noqa: BLE001 — 注册表故障不阻断 Saga 收尾
+            _logger.error("[Saga %s] compensation registry fault (contained): %s", ctx.saga_id[:8], exc)
+            return
+        for record in records:
+            self._audit.log(
+                ExecutionAuditEventType.ORDER_CANCELLED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {
+                    "reason": "saga_compensation_registry",
+                    "step": record.step,
+                    "action": record.action_name,
+                    "outcome": record.outcome.value,
+                    "error": record.error,
+                },
+            )
+            if record.outcome.value == "FAILED":
+                _logger.error(
+                    "[Saga %s] 补偿动作失败: step=%s action=%s error=%s",
+                    ctx.saga_id[:8],
+                    record.step,
+                    record.action_name,
+                    record.error,
+                )
 
     def _compensate_order(self, ctx: _SagaContext) -> _CancelOutcome:
         """步骤3补偿: 撤单（幂等）。返回撤单结果，供超时分支决定是否强制查询终态。"""

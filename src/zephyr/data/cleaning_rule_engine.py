@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data.cleaning_rule_engine
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.quality_gate; zephyr.gov_enforcement.rule_enforcement.quality_gate
-# [CONSUMERS] zephyr.data.ch_writer
+# [CONSUMERS] zephyr.data.cleaning_rules_hosting（R-M1-06 读侧托管接线 2026-09-26，L13 data_supply_sentinel 排班腿；原头注 ch_writer 虚标已矫正——写侧 ch_writer 热路径接线=F04 C1 Owner 门未做）；统一入口=zephyr.data.cleaning_engines.run_dsl_rules
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 规则DSL声明式; 滚动分位阈值限幅内自动生效; 超限挂起等人工approve; 拦截必出报告
@@ -175,11 +175,12 @@ class RollingQuantileThreshold:
 class CleaningRule:
     """单条清洗规则（DSL 解析产物）。
 
-    op 语义（violation 判定）：
-        gt:               value > rule.value       → 违规（上限）
-        lt:               value < rule.value       → 违规（下限）
-        between:          value ∉ [lower, upper]   → 违规（区间外）
-        rolling_quantile: value > 滚动分位阈值      → 违规（阈值自进化）
+    op 语义（violation 判定，真源=本方法+config/cleaning_rules.yaml 头注，
+    2026-09-29 F04 夜战批矫正——原文档与码面反向，码面/红测/生产配置三方一致）：
+        gt:               v <= rule.value  → 违规（值必须 > value，如 close_positive）
+        lt:               v >= rule.value  → 违规（值必须 < value，如 close_cap 上限）
+        between:          v ∉ [lower, upper] → 违规（区间外）
+        rolling_quantile: v > 滚动分位阈值      → 违规（阈值自进化）
     action: flag=打标 quality_flag=0 保留行；block=拦截剔除行。
     """
 

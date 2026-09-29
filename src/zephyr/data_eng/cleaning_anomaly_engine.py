@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data_eng.cleaning_anomaly_engine
 # [DOMAIN] D_DATA_ENG
 # [DEPENDENCIES] pandas; zephyr.data.alerter(惰性, 告警路由复用B13-04267)
-# [CONSUMERS]
+# [CONSUMERS] built-not-wired（零生产调用方——F04 案卷 C1 接线挂 Owner 门；统一入口=zephyr.data.cleaning_engines.detect_frame_anomalies）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 前值填充连续缺失≤3根; 超限剔除并标quality_flag; 全部修复动作留审计; 剔除必进人工审核队列

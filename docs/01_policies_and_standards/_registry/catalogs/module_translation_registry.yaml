@@ -61819,11 +61819,11 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/governance/audit/library_new_module_reconciler.py
   domain_id: D_GOVERNANCE
-  name_zh: "图书馆新模块自动入编对账器"
-  name_en: ""
-  desc_zh: ""
+  name_zh: "新模块入馆协调器"
+  name_en: "library new module reconciler"
+  desc_zh: "新 .py 落 HEAD 后经 Librarian.act 入编并一次真 grep 派生 potential_consumers（post-commit 事件触发）"
   desc_en: ""
-  plain_zh: "新写的代码一落地，图书馆就自动给它登记一条户口，并当场查一遍到底有没有人用它；没人用就如实记零并点名"
+  plain_zh: "每当有全新的 Python 代码文件合进仓库，这个小协调器就自动把它登记进图书馆总账，并顺手查一遍全仓库找出谁在引用它（潜在消费者）。如果发现它谁都不引用（孤岛件），账上会如实写零并打上观察标记，提醒人来决定要不要补场景或下架。它只在提交事件发生时干一次活，不搞定时轮询。"
   responsibility_layer: governance
 - module_path: src/zephyr/backtest/core/batch_window_preflight.py
   domain_id: D_BACKTEST
@@ -62100,6 +62100,38 @@ entries:
   desc_zh: "持仓体检编排：按TDM-P-P1边序串五件体检器+裁决中心出当日动作清单，挂dloop盘前段"
   desc_en: ""
   plain_zh: "每天开盘前把手里每只股票自动检查一遍：账对不对、要盯多紧、买入理由还在不在、踩没踩止损线、组合是不是太偏，最后给每只股票一张今日动作清单（维持/减仓/离场）。"
+- module_path: src/zephyr/ex_core/saga_compensation_registry.py
+  domain_id: D_EX_CORE
+  name_zh: "Saga补偿动作注册表"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "订单执行每一步出问题时该做什么回退的登记簿：步骤对应补偿动作、逆序执行回退、单步补偿失败不炸全局，非幂等动作不许登记"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_core/sim_saga_assembly.py
+  domain_id: D_EX_CORE
+  name_zh: "模拟盘Saga装配入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把订单编排器开箱装到模拟盘的装配口：一条命令建好带补偿回退的模拟盘执行器，只通模拟盘不通实盘"
+  responsibility_layer: business
+- module_path: src/zephyr/data/cleaning_engines.py
+  domain_id: D_DATA
+  name_zh: "数据清洗引擎族"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把脏数据洗干净的一组引擎：按规则修数、隔离坏行、留清单可追溯，是数据入仓前的清洁工序"
+  responsibility_layer: business
+- module_path: src/zephyr/data/quarantine_manifest.py
+  domain_id: D_DATA
+  name_zh: "隔离清单"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "被清洗工序拦下来的坏数据统一登记在册（哪来的、为什么拦、怎么处置），事后可翻可审可重放"
+  responsibility_layer: business
 
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）

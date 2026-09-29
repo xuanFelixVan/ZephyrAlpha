@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data_eng.data_anomaly_alerter
 # [DOMAIN] D_DATA_ENG
 # [DEPENDENCIES] numpy(标准科学栈); zephyr.data.alerter(惰性, 默认告警通道可注入替代)
-# [CONSUMERS] 运行时装配批（数据质量门控事件消费 / B13-04305 因子可用性 / B13-04309 信号退化复用本件路由）
+# [CONSUMERS] built-not-wired（原头注"运行时装配批"虚标——2026-09-29 F04 复扫全仓零生产调用方，F04 C1 接线挂 Owner 门；统一入口=zephyr.data.cleaning_engines.evaluate_anomaly_signals）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 判定核心纯内存无IO不触网不触库; 四路检测确定性; 输入非法Fail-Closed; 同源同因merge_window内合并不重复路由; 维护窗口静默只留痕; 通道异常吞掉不阻断判定

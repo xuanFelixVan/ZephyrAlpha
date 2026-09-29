@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data_eng.expectation_governance
 # [DOMAIN] D_DATA_ENG
 # [DEPENDENCIES] pandas; PyYAML; zephyr.shared.contracts.market_data(CTR-001字段联动)
-# [CONSUMERS]
+# [CONSUMERS] built-not-wired（零生产调用方——F04 案卷 C1 接线挂 Owner 门；统一入口=zephyr.data.cleaning_engines.validate_expectations）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 三档裁定block>degrade>warn>ok; 报告JSONL追加存档可追溯; 未知期望类型fail-closed抛ValueError
