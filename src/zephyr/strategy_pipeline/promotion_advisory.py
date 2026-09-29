@@ -81,6 +81,10 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.io.file_utils import safe_write_text
+from zephyr.shared.lifecycle.registry_state_vocab import (
+    FSM_STATE_TO_REGISTRY_STATE,
+    to_registry_lifecycle_state,
+)
 from zephyr.shared.security.secrets import get_secret_or_default
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -594,14 +598,19 @@ def _verify_registry_surgery(before: str, after: str, sid: str) -> None:
 
 
 def _update_registry_lifecycle(sid: str, new_state: str, registry_path: Path | None = None) -> dict[str, Any]:
-    """单条目 lifecycle_status 手术更新（safe_write_text CAS+写后复核：仅目标条目两字段变化）。"""
+    """单条目 lifecycle_status 手术更新（safe_write_text CAS+写后复核：仅目标条目两字段变化）。
+
+    注册表只收注册表词：FSM 词经 to_registry_lifecycle_state 映射（production→live，
+    真源=shared/lifecycle/registry_state_vocab.py）；回执 fsm_state 留痕原始 FSM 词。
+    """
     import yaml
 
+    registry_state = to_registry_lifecycle_state(new_state)
     path = registry_path or REGISTRY
     before = path.read_text(encoding="utf-8")
     lines = before.splitlines(keepends=True)
     start, end = _locate_registry_block(lines, sid)
-    _rewrite_lifecycle_fields(lines, start, end, sid, new_state)
+    _rewrite_lifecycle_fields(lines, start, end, sid, registry_state)
     after = "".join(lines)
     _verify_registry_surgery(before, after, sid)
     r = safe_write_text(
@@ -611,11 +620,12 @@ def _update_registry_lifecycle(sid: str, new_state: str, registry_path: Path | N
         raise RuntimeError("safe_write_text 未确认写入（CAS 竞争?）——fail-closed")
     back = yaml.safe_load(path.read_text(encoding="utf-8"))
     back_lc = {e["strategy_id"]: str(e.get("lifecycle_status") or "") for e in back.get("strategies", [])}
-    if back_lc.get(sid) != new_state:
+    if back_lc.get(sid) != registry_state:
         raise RuntimeError("写后磁盘复核失败：lifecycle 未生效——fail-closed")
     return {
         "strategy_id": sid,
-        "lifecycle_status": new_state,
+        "lifecycle_status": registry_state,
+        "fsm_state": new_state,
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest()[:12],
     }
 
@@ -670,7 +680,9 @@ def _transition_lifecycle(
 ) -> tuple[dict, dict]:
     """FSM 定位+流转到决策目标态，返回 (fsm 回执, 预授权留痕)。
 
-    FSM 每台以 candidate 起步（注册表才是状态真源），lifecycle_now 留痕进审计字段说明落差。
+    FSM 起步态：production 流转以 candidate 起步（内部自行 candidate→sim→production）；
+    demote 按注册表 lifecycle_now 真实起步（F75 缺口2），注册表才是状态真源，
+    lifecycle_now 留痕进审计字段说明落差。
     promote（→production）：必须先以**实据**走过 candidate→sim（PA-1，取代旧硬编码 True
     三元组），任一条件证据缺位即 _PreauthDenied；
     demote（→shelved）：走 candidate→shelved 无守卫合法边——降档是风险收敛动作，
@@ -684,7 +696,14 @@ def _transition_lifecycle(
         build_strategy_fsm,
     )
 
-    fsm = build_strategy_fsm(sid)
+    # F75 缺口2（2026-09-29）：demote 按注册表真实态起步走真实边（如 sim→shelved），
+    # production 分支保留 candidate 起步（内部自行 candidate→sim→production）。
+    # 注册表词→FSM 词取 FSM_STATE_TO_REGISTRY_STATE 逆映射（缺向=回退 candidate 缺省）。
+    if target_state == PRODUCTION:
+        fsm = build_strategy_fsm(sid)
+    else:
+        _inv = {v: k for k, v in FSM_STATE_TO_REGISTRY_STATE.items()}
+        fsm = build_strategy_fsm(sid, initial_state=_inv.get(str(lifecycle_now or "").strip(), CANDIDATE))
     preauth: dict[str, Any]
     if target_state == PRODUCTION:
         pre = evaluate_sim_preauthorization(sid, registry_path=registry_path, **(sim_evidence or {}))
@@ -703,7 +722,7 @@ def _transition_lifecycle(
             "mode": "not_required",
             "lifecycle_now": lifecycle_now,
             "reason": f"目标态 {target_state} 低于 sim（在册 {lifecycle_now}）："
-            f"降档走 candidate→{SHELVED} 无守卫合法边，不复核晋升预授权",
+            f"降档自在册真实态 {lifecycle_now}→{SHELVED} 无守卫合法边，不复核晋升预授权",
         }
     fsm_target = PRODUCTION if target_state == "production" else SHELVED
     ctx: dict[str, Any] = {"owner_token": effective_token} if target_state == "production" else {}
