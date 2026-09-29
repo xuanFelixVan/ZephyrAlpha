@@ -107,7 +107,7 @@ tqcenter `get_stock_list_in_sector` 对 134 缺码逐码实采（探针 `.runtim
 ### 乙、v1 宇宙按台账实证重建（非记忆、非 README 抄数）
 
 v1 原件已被原地覆盖且**从未单独入库**（`git log --all -- data/strategy_intake/conditional_tables/` 全史仅 1 次提交＝v2）。
-v1 宇宙改按 **`ingest_ts` 首采台账**机械派生：首采日 ≤2026-09-11 的 **469 码**（清单 `../../../../../../data/strategy_intake/du881_verdict_case/p1_v1_universe_469codes.txt`，本目录）→ 重放 T1 = **2,806 格**，与 README 记载的"469×6=2,806 格（可考 1,837/不可考 969）"**逐数吻合（2,806/1,837/969 三项全等）**＝v1 重放有效性的独立旁证。
+v1 宇宙改按 **`ingest_ts` 首采台账**机械派生：首采日 ≤2026-09-11 的 **469 码**（清单 `../../../../../../data/strategy_intake/du881_verdict_case/p1_v1_universe_469codes.yaml`，本目录）→ 重放 T1 = **2,806 格**，与 README 记载的"469×6=2,806 格（可考 1,837/不可考 969）"**逐数吻合（2,806/1,837/969 三项全等）**＝v1 重放有效性的独立旁证。
 
 ### 丙、对照控制（防"重放器自己造假"）
 
@@ -171,7 +171,7 @@ v1 宇宙改按 **`ingest_ts` 首采台账**机械派生：首采日 ≤2026-09-
 |---|---|---|
 | DU-01① 板块数 ≥727 | **达成（既有，本车道复核确认）** | §一表（`du881_probe1/2`） |
 | DU-01② 历史深度 2020-03 | **不可达（死亡证明式台账）** → 不销口，交总筹按现实重裁 | §二（probe5/8/9/11 台账；上限=2021-08-02） |
-| DU-01③ P1 v2 + 对比报告 | **交付完成**：v2 已入库（既有）+ v1↔v2 对比件三份 + 生成器转正 + 4 项证尺（3 变异全红） | §四 + `../../../../../../data/strategy_intake/du881_verdict_case/p1_v1v2_cell_diff.csv`/`p1_v1v2_summary.yaml`/`../../../../../../data/strategy_intake/du881_verdict_case/p1_v1_universe_469codes.txt` + `scripts/backtest/p1_conditional_tables.py` + `tests/backtest/test_p1_conditional_tables.py` |
+| DU-01③ P1 v2 + 对比报告 | **交付完成**：v2 已入库（既有）+ v1↔v2 对比件三份 + 生成器转正 + 4 项证尺（3 变异全红） | §四 + `../../../../../../data/strategy_intake/du881_verdict_case/p1_v1v2_cell_diff.csv`/`p1_v1v2_summary.yaml`/`../../../../../../data/strategy_intake/du881_verdict_case/p1_v1_universe_469codes.yaml` + `scripts/backtest/p1_conditional_tables.py` + `tests/backtest/test_p1_conditional_tables.py` |
 | L03-B7-G1 成分扩容 | **半态（如实标注）**：881 侧实测无缺口；134 缺码=8803/8804/8808 段，已出待写清单与生成器改造点，**未写库**（三处采集宇宙连带 + 坐标系待 Owner 裁） | §三 + `constituent_expansion_manifest.yaml`（`written_to_ch: false`） |
 | 补采作业（事件驱动/批处理） | **未建**——判据②经实测为"源侧不可得"，建补采器＝给不可达目标造半成品；一次性深度探针已归档（probe8/11），复核只需重跑 | §二 |
 
