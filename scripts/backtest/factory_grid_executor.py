@@ -975,11 +975,114 @@ def run_batch(
         summary["cost_gate_tiers_bp"] = [float(t) for t in cost_gate_tiers_bp]
         summary["gate_dead"] = gate_dead
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    if not smoke:
+        # P0-6 试验台账记账治本（2026-09-28）：批末入账——17.4% 漏记的根因是没人调
+        # record/sync；本批 record_run（幂等、与 sync_screen_counts 同口径 evaluated），
+        # 台账失败不阻断回测产物（fail-open，warning 留痕）。
+        try:
+            _auto_record_and_advance(out_dir, summary)
+        except Exception as exc:  # noqa: BLE001
+            import logging as _lg
+
+            _lg.getLogger(__name__).warning("批末台账记账失败（trial ledger 未入账）: %s", exc)
     return summary
 
 
 #: 方案①分层语义字段（prereg budget_caps；在场=启用，缺省=现行语义零变化）
 STAGED_TIERS_KEY = "cost_gate_t1_tiers_bp"
+
+
+def _auto_record_and_advance(out_dir: Path, summary: dict) -> dict:
+    """P0-6 批末记账（2026-09-28）：record 本批 + 只登新批不回填历史。
+
+    record_run 幂等（同 batch_id 跳过）；水位线 registry_record_watermark 只标记
+    「自动记账从何时起覆盖」，历史缺账不静默补记（须 Owner 睁眼裁定，未回填的
+    缺口由 --verify-counts 显式报红）。
+    """
+    from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+    ledger = TrialLedger()
+    rec = ledger.record_run(
+        "factory_grid_batch_a",
+        f"grid_{summary['run_ts']}",
+        int(summary.get("evaluated") or 0),
+        note=f"auto: {_rel_cwd(out_dir / 'summary.json')}",
+        recorded_by="factory_grid_executor",
+    )
+    wm = ledger.set_watermark("registry_record_watermark", time.time())
+    return {"record": rec, "watermark": wm}
+
+
+def _rel_cwd(path: Path) -> str:
+    try:
+        return str(Path(path).resolve().relative_to(_REPO))
+    except ValueError:
+        return str(path)
+
+
+def _scan_grid_summaries(root: Path) -> list[dict]:
+    """扫描网格产物 summary（身份集口径：每批 batch_id+artifact_n+mtime）。"""
+    import json as _json
+
+    rows: list[dict] = []
+    for summary_path in sorted(root.glob("grid_*/summary.json")):
+        try:
+            s = _json.loads(summary_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        batch_id = f"grid_{summary_path.parent.name[len('grid_') :]}"
+        n = s.get("evaluated")
+        if n is None:
+            n = s.get("n_sampled")
+        rows.append({"batch_id": batch_id, "artifact_n": int(n or 0), "mtime": summary_path.stat().st_mtime})
+    return rows
+
+
+def _classify_verify_rows(rows: list[dict], records: dict[str, int], watermark: float) -> tuple[list[str], list[str]]:
+    """分账：缺账（水位线后新批）/水位线前已知缺口（不回填，呈 Owner）。"""
+    missing: list[str] = []
+    under_wm: list[str] = []
+    for r in rows:
+        if r["batch_id"] in records:
+            continue
+        bucket = under_wm if watermark and r["mtime"] < watermark else missing
+        bucket.append(r["batch_id"])
+    return missing, under_wm
+
+
+def _print_verify_report(rows: list[dict], records: dict[str, int], missing: list[str], under_wm: list[str]) -> None:
+    ledger_only = sorted(set(records) - {r["batch_id"] for r in rows})
+    for r in rows:
+        flag = "OK" if r["batch_id"] in records else "MISS"
+        print(f"[verify-counts] {flag} {r['batch_id']} artifact={r['artifact_n']} ledger={records.get(r['batch_id'])}")
+    print(
+        f"[verify-counts] 批次={len(rows)} 在账={sum(1 for r in rows if r['batch_id'] in records)} "
+        f"缺账={len(missing)} 水位线前已知缺口={len(under_wm)}（不回填，呈 Owner） 台账无产物批={len(ledger_only)}"
+    )
+    if missing:
+        print(f"[verify-counts] 缺账批清单: {', '.join(missing)}")
+
+
+def _verify_counts(grid_root_override: str | None = None) -> int:
+    """P0-6 只读对账尺：产物身份集 vs 台账逐批对照（禁写；缺账点名，不回填）。
+
+    口径=身份集（每批 batch_id 一个身份，n=summary 的 evaluated/n_sampled），
+    禁聚合行数。水位线前的历史批=已知缺口（显式列 under_watermark，裁定：不回填）。
+    """
+    from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
+    root = Path(grid_root_override) if grid_root_override else INTAKE_DIR
+    if not root.exists():
+        print(f"[verify-counts] grid root 不存在: {root}")
+        return 1
+    ledger = TrialLedger()
+    data = ledger.load_registry()
+    records = {str(r.get("batch_id")): int(r.get("n_trials") or 0) for r in (data.get("batch_records") or [])}
+    watermark = ledger.get_watermark("registry_record_watermark")
+    rows = _scan_grid_summaries(root)
+    missing, under_wm = _classify_verify_rows(rows, records, watermark)
+    _print_verify_report(rows, records, missing, under_wm)
+    return 1 if missing else 0
 
 
 def _load_prereg_caps() -> dict:
@@ -1112,7 +1215,19 @@ def main() -> int:
         action="store_true",
         help="跳过 E0 日历窗问闸（仅 --smoke 管线联通允许；正式跑批禁用；波12 点火类 stage=t2 无效）",
     )
+    ap.add_argument(
+        "--verify-counts",
+        action="store_true",
+        help="只读对账尺：网格产物身份集计数 vs 台账逐批对照（禁任何写）；缺账批显式点名（P0-6）",
+    )
+    ap.add_argument(
+        "--verify-grid-root",
+        default="",
+        help="对账尺网格根目录覆盖（默认 data/strategy_intake；测试注入 tmp）",
+    )
     args = ap.parse_args()
+    if args.verify_counts:
+        return _verify_counts(args.verify_grid_root or None)
     # 波12 点火类不可旁路——--skip-compute-gate 只关日历窗，不关触发条件与批准卡
     if (not args.smoke and not args.skip_compute_gate) or args.stage == "t2":
         _ask_compute_window_gate(args.stage)

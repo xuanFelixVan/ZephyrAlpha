@@ -46,6 +46,8 @@ Usage:
     snap = ledger.snapshot()            # 全量快照（breakdown/known_floor/as_of）
     out = ledger.sync_screen_counts()   # 自动同步台账读数+发现网格批次（幂等）
     ledger.record_run("manual", "BATCH-x", 12, note="...")  # 显式登记（幂等）
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/n_trial_ledger.yaml
 """
 
 from __future__ import annotations
@@ -63,8 +65,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 _logger = logging.getLogger(__name__)
 
 LEDGER_REGISTRY_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "trial_ledger_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "trial_ledger_registry.yaml"
 )
 _GRID_ROOT = REPO_ROOT / "data" / "strategy_intake"
 
@@ -75,6 +76,7 @@ def _rel_to_repo(path: Path) -> str:
         return path.relative_to(REPO_ROOT).as_posix()
     except ValueError:
         return str(path).replace("\\", "/")
+
 
 REGISTRY_SKELETON: dict[str, Any] = {
     "schema_version": "1.0.0",
@@ -228,8 +230,9 @@ class TrialLedger:
         for rec in data.get("batch_records") or []:
             nt = rec.get("n_trials")
             if nt is None:
-                # fail-closed（文件头不变量）：缺失读数拒绝按 0 计入，否则分母缩水=DSR 欠折减放水
-                raise ValueError(
+                # fail-closed（文件头不变量+ERROR_CONTRACT：口径失败归 TrialLedgerError）：
+                # 缺失读数拒绝按 0 计入，否则分母缩水=DSR 欠折减放水
+                raise TrialLedgerError(
                     f"n_trial 台账 batch_records[{rec.get('batch_id', '?')}] 缺 n_trials——拒猜测，先补登记再读数"
                 )
             total += int(nt)
@@ -241,8 +244,15 @@ class TrialLedger:
         sr = data.get("screen_runs") or {}
         breakdown: dict[str, int] = {"screen_runs": int(sr.get("total_trials") or 0)}
         for rec in data.get("batch_records") or []:
+            nt = rec.get("n_trials")
+            if nt is None:
+                # fail-closed（V04-P2 钉死）：snapshot 与 cumulative_trials 同判据，
+                # null 读数拒绝静默按 0 计入 breakdown（旧码 or 0=分母缩水放水）
+                raise TrialLedgerError(
+                    f"n_trial 台账 batch_records[{rec.get('batch_id', '?')}] 缺 n_trials——拒猜测，先补登记再读数"
+                )
             key = f"batch:{rec.get('batch_id', '?')}"
-            breakdown[key] = breakdown.get(key, 0) + int(rec.get("n_trials") or 0)
+            breakdown[key] = breakdown.get(key, 0) + int(nt)
         trials = sum(breakdown.values())
         manual = int(data.get("manual_population") or 0)
         return TrialLedgerSnapshot(
@@ -290,9 +300,7 @@ class TrialLedger:
                 # scripts/backtest/generate_backtest_backlog.py:284。
                 # 注意 safe_write_text 的写后回读校验走 universal-newlines，对 CRLF 免疫，
                 # 故该污染不会被自家 CAS 校验发现——必须由调用点禁翻译。
-                safe_write_text(
-                    self._path, new_text, expected_base_sha256=base_sha, newline="\n"
-                )
+                safe_write_text(self._path, new_text, expected_base_sha256=base_sha, newline="\n")
                 # 写后进程外核实
                 final = yaml.safe_load(safe_read(self._path))
                 if final != reparsed:  # pragma: no cover - 并发窗口极窄，兜底
@@ -361,14 +369,16 @@ class TrialLedger:
             records: list[dict[str, Any]] = list(data.get("batch_records") or [])
             if any(str(r.get("batch_id")) == str(batch_id) for r in records):
                 return None  # 幂等：已登记
-            records.append({
-                "batch_id": str(batch_id),
-                "n_trials": n_trials,
-                "kind": str(kind),
-                "note": str(note),
-                "recorded_at": _now_iso(),
-                "recorded_by": str(recorded_by),
-            })
+            records.append(
+                {
+                    "batch_id": str(batch_id),
+                    "n_trials": n_trials,
+                    "kind": str(kind),
+                    "note": str(note),
+                    "recorded_at": _now_iso(),
+                    "recorded_by": str(recorded_by),
+                }
+            )
             records.sort(key=lambda r: str(r.get("batch_id")))
             data["batch_records"] = records
             state["changed"] = True
@@ -378,14 +388,35 @@ class TrialLedger:
         if not state["changed"]:
             return {"batch_id": batch_id, "n_trials": n_trials, "status": "exists"}
         total = self._count_of(data)
-        return {"batch_id": batch_id, "n_trials": n_trials, "status": "recorded",
-                "cumulative_trials": total}
+        return {"batch_id": batch_id, "n_trials": n_trials, "status": "recorded", "cumulative_trials": total}
+
+    def set_watermark(self, key: str, ts: float) -> dict[str, float | str]:
+        """推进命名水位线（幂等单调：只前进不回退，回退调用静默无效）。"""
+        if not key or not str(key).strip():
+            raise ValueError("key 不能为空")
+        ts = float(ts)
+
+        def _mutate(data: dict[str, Any]) -> str | None:  # noqa: any-abuse -- 与本文件既有 _cas_update 回调签名同款（registry 全量 dict），类型面诚实要求
+            wms = data.setdefault("watermarks", {})
+            if ts <= float(wms.get(key) or 0):
+                return None  # 单调：回退/同值不动
+            wms[key] = ts
+            return f"watermark {key} -> {ts}"
+
+        self._cas_update(_mutate)
+        result: dict[str, float | str] = {"key": key, "watermark": self.get_watermark(key)}
+        return result
+
+    def get_watermark(self, key: str) -> float:
+        """读命名水位线（未设置=0.0）。"""
+        data = self.load_registry()
+        return float((data.get("watermarks") or {}).get(key) or 0)
 
     # ---------- 自动同步 ----------
 
     def sync_screen_counts(
         self,
-        conn: Any | None = None,
+        conn: object | None = None,
         *,
         grid_root: Path | None = None,
         synced_by: str = "n_trial_ledger",
@@ -408,8 +439,7 @@ class TrialLedger:
             conn = DatabaseService().get_clickhouse_conn()
         self.load_registry(create_if_missing=True)  # 引导入口：骨架缺失自动落盘
         rows = conn.execute(
-            "SELECT run_id, count() FROM c1_backtest.strategy_screen "
-            "WHERE is_sharpe IS NOT NULL GROUP BY run_id"
+            "SELECT run_id, count() FROM c1_backtest.strategy_screen WHERE is_sharpe IS NOT NULL GROUP BY run_id"  # noqa: bare-sql  存量SQL未动一字，ruff重排致本袋diff现新（P0-6袋）
         )
         screen_trials = sum(int(r[1]) for r in rows)
         screen_batches = len(rows)
@@ -434,19 +464,22 @@ class TrialLedger:
                     n = summary.get("n_sampled")
                 if n is None:
                     continue
-                discovered.append({
-                    "batch_id": f"grid_{m.group(1)}",
-                    "n_trials": int(n),
-                    "kind": "factory_grid_batch_a",
-                    "note": f"auto: {_rel_to_repo(summary_path)}",
-                })
+                discovered.append(
+                    {
+                        "batch_id": f"grid_{m.group(1)}",
+                        "n_trials": int(n),
+                        "kind": "factory_grid_batch_a",
+                        "note": f"auto: {_rel_to_repo(summary_path)}",
+                    }
+                )
 
         state = {"added": []}
 
         def _mutate(data: dict[str, Any]) -> str | None:
             sr = data.setdefault("screen_runs", {})
-            changed = (int(sr.get("total_trials") or 0) != screen_trials
-                       or int(sr.get("total_runs") or 0) != screen_batches)
+            changed = (
+                int(sr.get("total_trials") or 0) != screen_trials or int(sr.get("total_runs") or 0) != screen_batches
+            )
             sr["total_trials"] = screen_trials
             sr["total_runs"] = screen_batches
             sr["last_synced_at"] = _now_iso()
@@ -463,8 +496,7 @@ class TrialLedger:
                 state["added"].append(str(disc["batch_id"]))
             records.sort(key=lambda r: str(r.get("batch_id")))
             data["batch_records"] = records
-            return f"sync screen={screen_trials} grids+{len(state['added'])}" if (
-                changed or state["added"]) else None
+            return f"sync screen={screen_trials} grids+{len(state['added'])}" if (changed or state["added"]) else None
 
         data = self._cas_update(_mutate)
         return {
