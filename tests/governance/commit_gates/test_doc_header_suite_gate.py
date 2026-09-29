@@ -97,6 +97,8 @@ def test_roster_triggers_wired():
     )
     data = _yaml.safe_load(roster.read_text(encoding="utf-8"))
     tg = {g["gate_id"]: g.get("files_trigger") for g in data["gates"]}
-    assert tg["COMPLEXITY-GUARD"] == [".py"]
-    assert tg["FILE-COPY"] == [".py"]
-    assert tg["FUNCTION-DUP"] == [".py"]
+    # 2026-09-30 C98 一批（4817b8c4f4）：.py 裸子串→*.py fnmatch（消 x.py.md/.pyx 伪触发），
+    # 204 对重放 verdict 零漂移验收——本断言同步 C98 后名册口径。
+    assert tg["COMPLEXITY-GUARD"] == ["*.py"]
+    assert tg["FILE-COPY"] == ["*.py"]
+    assert tg["FUNCTION-DUP"] == ["*.py"]
