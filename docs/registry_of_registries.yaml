@@ -10,15 +10,15 @@ version: "1.1.0"
 date: "2026-05-07"
 owner: ZephyrAlpha-Owner
 description: >
-  本文件是所有子注册表（registries/manifests/indexes）的中央汇聚点。
-  任何 AI 或人类需要了解"项目有哪些登记表、在哪、管什么"时，以此为唯一入口。
-  对标 AGENTS.md RULE-TWO/RULE-FOUR：每个注册表必须在此登记，否则不存在于系统。
+  本文件是所有子注册表（registries/manifests/indexes）的全量账本与发现唯一真源；
+  常驻前台=docs/library/FRONT_DOOR.md（上方 front_door 键），先单口后深查（S4 簿 §2.4/B5-1）。
+  RULE-REGISTRY：每个注册表必须在此登记，否则不存在于系统。
 
 purpose: >
-  1. 提供全项目注册表的单一发现入口（避免散落在 38 个文件里找不到）
+  1. 充当注册表发现唯一真源全量账本（前台 FRONT_DOOR.md 只留指针，深查才进本卷）
   2. 声明每个注册表的 SSoT 归属、格式、责任人
   3. 驱动 registry-consistency 校验脚本的扫描范围
-  4. 新增注册表时 MUST 第一时间在此登记（RULE-FOUR）
+  4. 新增注册表时 MUST 第一时间在此登记（RULE-REGISTRY）
 
 # ============================================================
 # 三个层级的注册表体系
