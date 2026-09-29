@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；worktree 锚点丢失（spawn 传入的 worktree 目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001 2026-08-17：根治孤儿 daemon 制造假活性，锚点未配置时跳过零行为变更）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；W-29 豁免（chief3 碰撞处方 2026-09-29）：SessionRegistry.logical=True 的逻辑长会话不被 idle 判死（活会话周期 re-register/mark_logical 即不被判死，opt-in；非逻辑会话自退治本零回退）；不抛异常（所有错误写 log 后 continue）
-# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS 且非 logical）；_append_heartbeat_log 字段集
+# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS 且非 logical 且无队列待落项——W-29 logical + C355 队列等待双豁免）；_append_heartbeat_log 字段集
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -276,6 +276,44 @@ def _session_is_logical(session_id: str, project_root: str | Path) -> bool:
         return False
 
 
+def _session_has_pending_queue_items(
+    session_id: str, project_root: str | Path, queue_root: str | Path | None = None
+) -> bool:
+    """C355（2026-09-30）：session 是否有 commit 队列待落/在落项（落地期判活证据）。
+
+    病灶：队列等待 > registry TTL ⇒ 落地期 SESSION-REQUIRED 误处死——会话入队后
+    本地 idle 超限，daemon 自退 → 90s 后 registry 条目过期 → 轮到该会话队列项
+    落地时 session 已"死"，SESSION-REQUIRED 把落地拦死（判活侧 W-29 logical 豁免
+    已治本本地活性面，本件=落地等待面：队列 pending/processing 项=会话仍在等待
+    治理动作完成的活证据）。
+
+    与 W-29 同族 opt-in 事实豁免：有在队列的项才保活，队列清空即恢复自退语义，
+    零扩权（#ARCH-HEARTBEAT-002 治本不回退）。查询失败保守 False（不因故障
+    扩权保活）。src→scripts 惰性 import（baseline.py 先例）；测试显式传
+    queue_root（resolve_queue_root pytest 态禁回退生产根）。
+    """
+    try:
+        from scripts.commit_queue import resolve_queue_root  # noqa: PLC0415 — src→scripts 惰性
+
+        qroot = Path(queue_root) if queue_root is not None else resolve_queue_root(None)
+        # 目录布局同 commit_queue._STATES 的 pending/processing 两态（待落+在落=落地期）
+        for state in ("pending", "processing"):
+            state_dir = Path(qroot) / state
+            if not state_dir.is_dir():
+                continue
+            for entry in state_dir.glob("q-*.json"):
+                try:
+                    item = json.loads(entry.read_text(encoding="utf-8"))
+                except (OSError, ValueError):
+                    continue  # 腐坏项不判活（宁自退不扩权）
+                if item.get("session_id") == session_id:
+                    return True
+        return False
+    except Exception as e:  # noqa: BLE001 — 查询失败保守 False（不扩权保活）
+        logger.debug("commit queue pending query failed (assume none): %s", e)
+        return False
+
+
 def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | None:
     """返回 session 的 idle 秒数（now - last_activity），用于活性反转治本退出判定。
 
@@ -372,6 +410,10 @@ def run_daemon(
           （逻辑长会话，活会话周期 re-register/mark_logical 即不被判死）→
           不自退，写 ``alive``(keepalive=logical) 留痕后继续——僵尸自退治本对
           非逻辑会话维持不变（opt-in，防活性反转回归）。
+      5b''. C355 落地期判活（2026-09-30）：commit 队列有本会话 pending/processing
+          项 → 不自退，写 ``alive``(keepalive=commit_queue_wait) 留痕后继续——
+          队列等待 > registry TTL 曾致落地被 SESSION-REQUIRED 误处死；队列清空
+          恢复自退（opt-in 事实豁免，零扩权）。
       6. 异常 → 写 ``error`` 记录，continue（不退出）
       7. 致命错误 → 写 ``fatal`` 记录，返回 1
 
@@ -446,6 +488,20 @@ def run_daemon(
                             "keepalive": "logical_session",
                             "idle_seconds": round(idle, 1),
                             "note": "W-29 logical session idle exemption",
+                        },
+                    )
+                elif _session_has_pending_queue_items(session_id, root):
+                    # C355（2026-09-30）：落地期判活——队列 pending/processing 项
+                    # =会话仍在等待治理落地。idle 自退会让 registry 条目过期，
+                    # 轮到该会话队列项落地时被 SESSION-REQUIRED 误处死（队列等待
+                    # >TTL 病灶）。有在队列项才保活，队列清空恢复自退（零扩权）。
+                    _append_heartbeat_log(
+                        hb_path,
+                        "alive",
+                        {
+                            "keepalive": "commit_queue_wait",
+                            "idle_seconds": round(idle, 1),
+                            "note": "C355 landing-period liveness: pending commit queue item",
                         },
                     )
                 else:
