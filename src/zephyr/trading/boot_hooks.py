@@ -187,10 +187,11 @@ _eventbus_consumers_subscribed = False
 
 
 def _subscribe_eventbus_consumers() -> None:
-    """统一调用10个消费方模块的 subscribe_eventbus() — DM-2507-J.
+    """统一调用各消费方模块的 subscribe_eventbus() — DM-2507-J.
 
     混合注册模式：各模块提供模块级 subscribe_eventbus() 函数，
     boot_hooks 统一调用。每个 subscribe_eventbus() 内部幂等。
+    （计数不写死——消费方清单见下方 consumers 列表，条目数以清单为准。）
 
     消费方列表:
       1. F4  budget_engine          — slo_violation
@@ -225,6 +226,10 @@ def _subscribe_eventbus_consumers() -> None:
         ("auto_task_generator", "zephyr.trading.auto_task_generator"),
         ("premarket_checker", "zephyr.ex_core.premarket_checker"),
         ("trading_session", "zephyr.ex_core.trading_session"),
+        # F62 违宪整改事件腿（2026-09-29 SW5）：盘后结算对账幂等日终 sweep，
+        # 订阅 post_settlement.recon.requested——宪法 §9.3 reconciler 事件触发
+        # （时钟腿=ZephyrAlpha_PostSettlement 计划任务退役归 Owner 门位）。
+        ("post_settlement_pipeline", "zephyr.trading.post_settlement_pipeline"),
     ]
 
     succeeded = 0
