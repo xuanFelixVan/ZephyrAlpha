@@ -56826,4 +56826,29 @@ creation_tokens:
   created_by: st-c9-f42
   capability: f42p1orch-c
   merge_evaluation: "跨域不同对象：体检棒编排新件/外迁算法图/蓝图，与既有件零同真源重复"
+- file: docs/01_policies_and_standards/_registry/reports/index.md
+  token: generated-index-md-index-20260929
+  created_by: st-zc9-lane-r3-20260930
+  capability: generated-index-md
+  merge_evaluation: "机生目录索引非手工清单，收编消幻影（守卫 test_untracked_phantom_docs_guard）"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/index.md
+  token: generated-index-md-index-20260929
+  created_by: st-zc9-lane-r3-20260930
+  capability: generated-index-md
+  merge_evaluation: "机生目录索引非手工清单，收编消幻影（守卫 test_untracked_phantom_docs_guard）"
+- file: docs/01_policies_and_standards/sop/library_sop/index.md
+  token: generated-index-md-index-20260929
+  created_by: st-zc9-lane-r3-20260930
+  capability: generated-index-md
+  merge_evaluation: "机生目录索引非手工清单，收编消幻影（守卫 test_untracked_phantom_docs_guard）"
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/index.md
+  token: generated-index-md-index-20260929
+  created_by: st-zc9-lane-r3-20260930
+  capability: generated-index-md
+  merge_evaluation: "机生目录索引非手工清单，收编消幻影（守卫 test_untracked_phantom_docs_guard）"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/derived_dirty_ledger.yaml
+  token: derived-dirty-ledger-derived-dirty-ledger-20260929
+  created_by: st-nightsweep-sw19-20260929
+  capability: derived_dirty_ledger
+  merge_evaluation: "机生 ALGO_FLOW 外部真源，与 derived_dirty_ledger.py 模块一对一寄生（externalize_algo_flow 生成器产物），非独立新能力，同批同源落地零增量真源"
 di_seam_exemptions: []
