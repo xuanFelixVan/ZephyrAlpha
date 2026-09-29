@@ -62103,6 +62103,30 @@ entries:
   desc_en: ""
   plain_zh: "复盘机器人都造好了却没人按启动键，风险报告从来没真正生成过。这个小件就是那个启动键：一声令下跑完审计加摘要加归档全流程，报告落到 data/reports，也可以命令行手动触发，不装定时任务。"
   responsibility_layer: business
+- module_path: src/zephyr/data/cleaning_anomaly_hosting.py
+  domain_id: D_DATA
+  name_zh: "清洗异常引擎托管腿"
+  name_en: "cleaning anomaly hosting leg"
+  desc_zh: "把 cleaning_anomaly_engine 五类检出按承载册 config/cleaning_anomaly_rules.yaml 挂进 L13 data_supply_sentinel 排班腿托管第三段：近窗按标的取帧只检不修，出报告+告警"
+  desc_en: ""
+  plain_zh: "数据清洗有台能查跳变、量能异常、缺数的引擎，建好后一直没接上生产管道。这个组件把它接进每天早上六点五十的数据体检班次，按名单抽标的查一遍，发现可疑数据就写报告、发告警，但绝不直接改数据"
+  responsibility_layer: business
+- module_path: src/zephyr/data/divergence_stats.py
+  domain_id: D_DATA
+  name_zh: "多源分歧率统计器"
+  name_en: "cross-source divergence stats"
+  desc_zh: "把 cross_source_validator 的分歧结果归并为日期/表/分歧类型/计数四字段 jsonl 档案（同键覆盖 upsert），为裁定 #423 两周分歧率观察供数"
+  desc_en: ""
+  plain_zh: "股票行情同时存在主备两个数据来源，两边偶尔对不上。这个组件每天把对不上的情况按类型数一数、记到账本里，连续记两周，用来决定哪些分歧值得请 AI 来评判"
+  responsibility_layer: business
+- module_path: src/zephyr/data/purity_adjudicator.py
+  domain_id: D_DATA
+  name_zh: "AI 判净站薄件"
+  name_en: "data purity adjudicator"
+  desc_zh: "裁定 #423 薄版：分歧集残余语义冲突经 LSG 正门（LLMGateway 内嵌 scan_input/scan_output）调免费额度引擎裁决，只产建议不改数，证据链 jsonl 落档+每日调用预算闸 fail-closed"
+  desc_en: ""
+  plain_zh: "两份数据打架、规则又定不了谁对时，把这个争议连同双方证据交给 AI 评理。AI 每天最多评 20 次、评过的每一次都留完整底稿，结论只供人参考，绝不自动改数据"
+  responsibility_layer: business
 - module_path: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
   domain_id: D_SELL_DECISION
   name_zh: "S1信号扫描编排器"
@@ -62149,6 +62173,14 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "被清洗工序拦下来的坏数据统一登记在册（哪来的、为什么拦、怎么处置），事后可翻可审可重放"
+  responsibility_layer: business
+- module_path: scripts/backtest/cost_accounting_ruler.py
+  domain_id: D_BACKTEST
+  name_zh: "成本口径对账尺"
+  name_en: "cost accounting ruler"
+  desc_zh: "C345 四件（佣金五处重复/印花税两侧过期/无规模参数/阶梯双真源）红证固化对账工具，AST 普查只量不改"
+  desc_en: ""
+  plain_zh: "它是给全项目交易成本数字做体检的尺子：把佣金、印花税、滑点这些费率散落在五个文件里的同一个数字收拢对账，确认没人偷偷改动。它现在只负责发现和看住问题，不负责修改数字——改数字要等老板拍板后的下一波施工。"
   responsibility_layer: business
 
 battle_map_steps:

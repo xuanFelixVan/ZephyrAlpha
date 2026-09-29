@@ -41,3 +41,50 @@ search_objective:
   # 毛 Sharpe 仅作观察项披露
   observed: gross_sharpe
   note: 正考 OOS sharpe 本就基于冻结土规净收益（成本后）；本键声明搜索轨目标函数同口径切换
+
+# ---------------------------------------------------------------------------
+# ⚑-2② B案声明通道追加块 v2.0.0（Owner 2026-09-30 批复"选 B"，裁定#435）。
+# 声明通道=追加新版本块而非改旧值：上方 cost_gate/scale_gate/turnover_gate/search_objective
+# 四块一字未动（冻结 v1，survival_floor 禁改照旧）；本块为 B 案判据冻结快照，
+# 数值改动仍走裁定通道。声明全文=docs/_working/night_sweep/c_exam/flag2_declaration_b.md
+# （为何换尺不降标/新旧判据对照/功效计算引用 n≈82 vs NIST 保守 97）。
+# 消费面：T2 判定书/成绩单生成器按波次接线；接线前哨兵 t1_t2_handover.py 判据面仍走 v1 键。
+# 重建注记：首登块遭 2026-09-30 07:4x 队列落盘崩溃回滚波及，本块为同内容重建重投。
+breakeven_cost_gate:
+  version: '2.0.0'
+  declared: '2026-09-30'
+  declaration: docs/_working/night_sweep/c_exam/flag2_declaration_b.md
+  ruling: 裁定#435
+  criterion_id: G-COST-BREAKEVEN-40BP
+  judge_object: breakeven_cost_c_star   # 判据对象=盈亏平衡成本（Sharpe(c)=0 的单边成本，逐格确定量）
+  sampling: none                        # 不抽样（c* 逐格全量可算，抽样误差整体消解）
+  stratification_role: report_dimension # 分层降级为报告维度（抽样框职能废除）
+  gates:
+    p1_median_bp_min: 40.0              # 40bp 锚一字不动
+    p2_p10_bp_min: 0.0                  # "Sharpe≥0"语义一字不动（逐格解到零点）
+    p3_stratified_pass_ratio_min: 0.80  # 达标层占比（换手三分位×策略族×市场状态）
+    p3_layer_min_n: 30                  # 层内 n<30 判 INSUFFICIENT-N（fail-closed 不算绿）
+    p4_scale_sensitivity_max: 0.20      # 1x/5x/10x 目标仓位 c* 相对变化上限
+    p5_data_version_required: [adjustment_basis, snapshot_date, snapshot_sha256, n_trials]
+  bisect:
+    lo_bp: 0.0
+    hi_bp: 200.0
+    tol_bp: 0.1
+    over_hi_label: '>200'               # Sharpe(200bp)>0 单列不计入中位数
+    monotonic_grid_bp: [0, 5, 10, 20, 40, 60, 80, 100, 150, 200]
+    non_monotonic: NaN_separate_pool    # 非单调格=NaN 单列，疑引擎缺陷；占比>5% → INDETERM
+  sharpe_annualization:                 # A 股四条强制（Lo 2002 / PSR-DSR 同口径）
+    ban_sqrt_252: true
+    ljung_box_q: 252
+    ddof: 0
+    suspended_days: exclude_both_sides  # 分子分母同剔，禁填 0；复牌首日跳空计入
+    unfillable_at_limit: separate_pool  # 计数>0 的格子单列池
+  dsr_gate:                             # C 并联（可并；两门都绿才放行）
+    enabled: true
+    dsr_min: 0.95
+    n_trials: 3700                      # 禁填抽样数 50
+    pbo_max: 0.20                       # PBO>0.20 且 prob_oos_loss>0.50 → FAIL；≤0.50 → INDETERM
+    min_trl_check: fail_on_infinite
+    cscv_precheck_ljung_box: true       # 显著自相关格占比>30% → CSCV 降 S=8 复算同报
+  tri_state: [PASS, INDETERM, FAIL]     # INDETERM 必须补数据/补跑，禁默认降级 PASS
+  report_required: [c_star_quantiles, survivor_k_and_total_n, non_monotonic_list, unfillable_pool]

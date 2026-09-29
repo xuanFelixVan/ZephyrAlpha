@@ -56891,6 +56891,11 @@ creation_tokens:
   created_by: st-nightsweep2-nc-20260930
   capability: night_sweep_c_exam
   merge_evaluation: "C6 五条件现状报告：证据面核验件（跨域不同对象不并；W12 卡面批准线专属素材非第二点火册）"
+- file: docs/_working/night_sweep/c_exam/flag2_declaration_b.md
+  token: night-sweep-c-exam-flag2-declaration-b-20260929
+  created_by: st-nightsweep2-nc-20260930
+  capability: night_sweep_c_exam
+  merge_evaluation: "声明通道专册重建重投：⚑-2 B案判据声明（同内容首登遭崩溃回滚）"
 - file: docs/_working/final_delivery_campaign/final_loopcheck_redblue_20260930.md
   token: final-delivery-campaign-final-loopcheck-redblue-20260930-20260930
   created_by: st-finaldel-final2-20260930
@@ -57766,4 +57771,9 @@ creation_tokens:
   created_by: st-nightsweep2-nd-20260930
   capability: exam_verdict_docs
   merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: scripts/backtest/cost_accounting_ruler.py
+  token: cost-accounting-ruler-cost-accounting-ruler-20260929
+  created_by: st-nightsweep2-nc-20260930
+  capability: cost_accounting_ruler
+  merge_evaluation: "C345 对账尺=唯一成本口径断言面（token 重建重投，首登遭崩溃回滚）"
 di_seam_exemptions: []
