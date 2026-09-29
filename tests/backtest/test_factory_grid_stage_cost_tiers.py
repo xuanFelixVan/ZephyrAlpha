@@ -412,9 +412,15 @@ class TestRunBatchStageCostWiring:
                 "avg_turnover_1side": 0.3,
             }
 
-        # st-ddup-20260925 去重改造②①适配: 7 元组（run_backtest_full 单趟/net_returns_by_tiers
-        # 一趟多档派生），桩与引擎新调用面同构；slip_kwarg=False 探针语义保持（档位调用 TypeError→gate 阴性）
-        def run_backtest_full(weights, px, gate_limits=True, slippage_bp=None):
+        # st-ddup-20260925 去重改造②①适配: run_backtest_full 单趟/net_returns_by_tiers
+        # 一趟多档派生，桩与引擎新调用面同构；slip_kwarg=False 探针语义保持（旧签名
+        # daily_net 收到 slippage_bp kwarg 即 TypeError）。
+        # st-finaldel-csib-20260929 九元组同步（cf16fa43fd 改 _load_engine 9 元组漏同步本件）:
+        # 补 prep_px_tensor 批级预热与单趟三产物 run_backtest_full_with_tiers
+        # （与 test_factory_grid_executor.py 同款桩形）；run_backtest_full 以 **kwargs 吸收
+        # pre_tensor 透传。探针阴性层随接线面同步: 档位序列改由三产物单趟派生（backtest
+        # 层内），旧签名 TypeError 在该层暴露——阴性层 gate→backtest，fail-closed 不变。
+        def run_backtest_full(weights, px, gate_limits=True, slippage_bp=None, **kwargs):
             net = daily_net(weights, px)
             stats = {
                 "sharpe": float(net.mean() / net.std() * np.sqrt(244)),
@@ -427,7 +433,25 @@ class TestRunBatchStageCostWiring:
         def net_returns_by_tiers(weights, px, tiers, gate_limits=True):
             return {float(b): daily_net(weights, px, slippage_bp=b) for b in tiers}
 
-        return load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net, net_returns_by_tiers
+        def prep_px_tensor(weights_index, px_arg):
+            cl = px_arg.reindex(weights_index.union(weights_index)).ffill()
+            return cl, cl.pct_change()
+
+        def run_backtest_full_with_tiers(weights, px_arg, tiers, **kwargs):
+            stats_, net_ = run_backtest_full(weights, px_arg)
+            return stats_, net_, net_returns_by_tiers(weights, px_arg, tiers)
+
+        return (
+            load_px,
+            wide,
+            filter_st,
+            load_st_flags,
+            run_backtest_full,
+            daily_net,
+            net_returns_by_tiers,
+            prep_px_tensor,
+            run_backtest_full_with_tiers,
+        )
 
     def _run(
         self, tmp_path, monkeypatch, closes: pd.DataFrame, seed: int = 7, slip_kwarg: bool = True, **run_kwargs
@@ -517,20 +541,26 @@ class TestRunBatchStageCostWiring:
 
     # —— fail-closed：扫描异常=gate 层阴性 ——
 
-    def test_scan_failure_is_gate_negative_not_silent_skip(self, tmp_path, monkeypatch):
-        """扫描跑不出（旧签名桩收不到 slippage_bp kwarg）→ gate 阴性，禁静默跳过。"""
+    def test_scan_failure_is_negative_not_silent_skip(self, tmp_path, monkeypatch):
+        """扫描跑不出（旧签名桩收不到 slippage_bp kwarg）→ 阴性落 negatives，禁静默跳过。
+
+        st-finaldel-csib-20260929 九元组语义同步（原名 test_scan_failure_is_gate_negative_
+        not_silent_skip）: 档位序列随单趟三产物 run_backtest_full_with_tiers 派生
+        （backtest 层内，st-gpup1 cf16fa43fd 接线），旧签名 daily_net 的 slippage_bp
+        TypeError 在该层暴露——阴性层 gate→backtest；fail-closed 语义不变（阴性全落盘、
+        批不崩、gate 层零静默）。
+        """
         closes = _synth_closes_rotating(seed=11)
         summary = self._run(tmp_path, monkeypatch, closes, seed=11, slip_kwarg=False, cost_gate_tiers_bp=(0.0, 5.0))
-        assert summary["gate_dead"] >= 1
+        assert summary["backtest_dead"] >= 1
+        assert summary["gate_dead"] == 0
         neg = pd.read_csv(Path(summary["out_dir"]) / "negatives.csv")
-        gate_rows = neg[neg["death_layer"] == "gate"]
-        assert len(gate_rows) == summary["gate_dead"]
-        assert (gate_rows["death_reason"].str.startswith("cost_scan_fail:TypeError")).all()
-        # 全员 gate 阴性批: manifest 空表但 schema 可解析（不崩批、阴性全落 negatives.csv）
+        bt_rows = neg[neg["death_layer"] == "backtest"]
+        assert len(bt_rows) == summary["backtest_dead"]
+        assert (bt_rows["death_reason"].str.startswith("backtest_fail:TypeError")).all()
+        # 全员阴性批: manifest 空表但 schema 可解析（不崩批、阴性全落 negatives.csv）
         manifest = pd.read_csv(Path(summary["out_dir"]) / "manifest.csv")
-        assert len(manifest) == summary["evaluated"]
-        if len(manifest):
-            assert manifest["cost_tier_sharpes_json"].notna().sum() == len(manifest)
+        assert len(manifest) == summary["evaluated"] == 0
 
     def test_list_input_tiers_accepted_and_normalized(self, tmp_path, monkeypatch):
         """prereg 侧 YAML list 直传（[0,5]）与 tuple 等价——解析层已转 float 元组。"""
