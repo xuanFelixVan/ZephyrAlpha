@@ -26,8 +26,7 @@
 # [ALGO_FLOW] external: docs/03_modules/_domain_ml_serve/algo_flow/core__init__.yaml
 """
 
-from zephyr.ml_serve.core.model_drift_monitor import ModelDriftMonitor
+# 2026-09-30 st-finaldel-retire：model_drift_monitor 已随 F130 物理净删（successor=F129 ml_train；
+# 8 件净删面归档 G:/zephyr_cold/retire_c267_20260930/F130_ml_serve/），原 L29 re-export 同步拆除。
 
 __all__: list[str] = []
-
-__all__.append("ModelDriftMonitor")
