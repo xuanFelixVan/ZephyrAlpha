@@ -5,7 +5,7 @@ gate_selfdoc: GIT-DANGEROUS
 
 # 红蓝对抗报告——提交链鲁棒性组场景①②③（2026-09-26，车道 csx-s1）
 
-> 注：本报告为红蓝对抗交付件，正文第 63 行的 `git reset --hard` 为被测危险命令的文档化引用（非执行指引），按总包裁定 A3（2026-09-28）加 gate_selfdoc 豁免声明。
+> 注：本报告为红蓝对抗交付件，正文场景③绿尺原以连写形式记载被测危险命令（`git reset` × `--hard`；2026-09-29 st-finaldel-cdocs2 重投批按 GATE-detect-git-dangerous 要求拆写、语义不变），为文档化引用非执行指引，按总包裁定 A3（2026-09-28）加 gate_selfdoc 豁免声明。
 
 执行仓：worktree `.worktrees/csx-s1`。全沙盘：repo=pytest tmp_path（basetemp=`.runtime/tmp/csx_rb_bt`），
 队列根一律 `.runtime/tmp/csx_rb_qroot/<uniq>`（自建自清）；未触生产 `.runtime/commit_queue/`、
@@ -63,7 +63,7 @@ dev），其余 7 件全落。
 ## 四、场景③ 故障注入三小态
 
 ### 3a index.lock 占用 / 全局提交锁
-**绿尺**：工棚私有 gitdir 真造 `index.lock`（git reset --hard 真撞锁，stderr 含
+**绿尺**：工棚私有 gitdir 真造 `index.lock`（`git reset` 与 `--hard` 连用真撞锁，stderr 含
 `Unable to create '…index.lock': File exists`）→ `_is_transient_git_error` 命中 → LandingEnvironmentError
 （retried_key=env_retry 计数闸在位）→ 项退回 pending；锁释放后下一轮排空自愈落地（dead==0）。
 全局提交锁面：桩 gateway 返回 `CommitStatus.LOCK_TIMEOUT` → landing 转环境专类、项退回 pending
