@@ -69,7 +69,7 @@ session: st-finaldel-final2-20260930
 
 | 类型 | 对象 | 处置 | 凭证 |
 |------|------|------|------|
-| 红胜小缺陷（已修） | functional_domain_registry.yaml escalation 条三实体误标 | 跨子域注记改写，CAS 单 hunk | 本袋 commit（含本报告） |
+| 红胜小缺陷（已修） | functional_domain_registry.yaml escalation 条三实体误标 | 跨子域注记改写，CAS 单 hunk | 报告+token 袋=856252cef2；修复补投=0db0b9eb78（首修 hunk 未随 856252ce 落地且工作区重写件被并发落地覆没，无 stash 痕迹，CAS 重做补投） |
 | 红胜（登记不修） | C98 二批 STATE-VOCAB 观测通道回归 | §3.4 建议 Owner 复裁 | 本报告 §3.4 |
 | 观察（登记） | C115 persistence 条 data_access_audit 能力同一性 | 域 owner 复核 | 本报告 §3.2 |
 | 观察（留档） | 暂存区 in_process_gate_registry.yaml 旧快照（会回退三批 3 行） | 不碰；提请其 owner 落袋前刷新 | 本报告 §2 |
