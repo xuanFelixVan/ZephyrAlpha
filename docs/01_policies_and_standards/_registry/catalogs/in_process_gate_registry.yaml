@@ -301,7 +301,7 @@ gates:
   register_line: 453
   enabled: true
 - gate_id: MAP-ALIGNMENT
-  files_trigger: ["docs/02_enterprise_architecture/", "docs/03_modules/", "alignment_checklist"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/zephyr/governance/depgraph_schema.py", "src/zephyr/governance/persistence/dataflowgraph_schema.py", "src/zephyr/governance/persistence/decisiongraph_schema.py", "scripts/governance/apply_depgraph.py", "scripts/governance/apply_dataflowgraph.py", "scripts/governance/apply_decisiongraph.py", "scripts/governance/generate_project_depgraph.py", "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml", "scripts/governance/d5_architecture/generators/align_panoramas.py", "docs/03_modules/"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=镜像门内 _TRIGGER_PATTERNS 真域
   module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
   factory_function: make_map_alignment_gate
   source: in_process
@@ -351,7 +351,7 @@ gates:
   source: in_process
   enabled: false  # 临时禁用（Owner B方案；八卡在批内，worktree sync 后恢复）
 - gate_id: META-TESTS-COVERAGE
-  files_trigger: ["tests/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/zephyr/gov_enforcement/commit_gates/"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=门内真触发条件 commit_gates/*.py 变更时才扫描
   module_path: zephyr.gov_enforcement.commit_gates.tests_coverage_gate
   factory_function: make_tests_coverage_gate
   source: in_process
@@ -493,7 +493,7 @@ gates:
   enabled: true
 # --- warn-only→hard gate 批量升级（ARCH-WARN-TO-HARD-GATE-BATCH，2026-07-23）---
 - gate_id: ASYNCIO-RUN-IN-CONTEXT
-  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/zephyr/*.py"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=门内 _is_src_zephyr_file 真域
   module_path: zephyr.gov_enforcement.commit_gates.asyncio_run_in_context_gate
   factory_function: make_asyncio_run_in_context_gate
   source: in_process
@@ -597,7 +597,7 @@ gates:
 # 治理代理代码裸删除/移动原语静态扫描——防收敛后回流；删除/移动 MUST 走
 # ops_guard 安全 API（file_ops 声明制+全量审计+回收站可逆）。priority=117。
 - gate_id: RECONCILER-FILE-OPS
-  files_trigger: ["governance"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/zephyr/governance/", "src/zephyr/gov_enforcement/", "scripts/governance/", "scripts/backup/"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=镜像门内 _SCAN_PREFIXES（顺补 scripts/backup/ 漏触发）
   module_path: zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
   factory_function: make_reconciler_file_ops_gate
   source: in_process
@@ -658,7 +658,7 @@ gates:
   register_line: 0  # priority=134；2026-09-22 图书馆标签枚举门（ulib3 T7，st-ulib3-20260922，观察期 warn-only——staged catalogs yaml 的 tags 非枚举词/别名冲突则 WARN+审计放行；词库缺失 fail-open；TAG_VOCAB_GATE_MODE 翻 "block" 升硬）
   enabled: true
 - gate_id: BLOOD-FLESH
-  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/zephyr/*.py", "scripts/*.py", "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=A 面 _is_in_scope(src/zephyr/+scripts/)+B 面翻译册
   module_path: zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate
   factory_function: make_library_blood_flesh_gate
   source: in_process

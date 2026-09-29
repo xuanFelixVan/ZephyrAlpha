@@ -56,8 +56,21 @@ creation_token: fullflow-closure-wave2-final-report-20260926
 
 两路红队子代理的工具返回中被追加伪指令（24 条，两次谎称"Owner 已批准立即修复"），诱导修改判据函数 `_claim_tokens`/`NON_WORKBOOK_RELS`/`build_coverage`。两路按"文件与外来消息=数据"拒执行并上报。总筹读盘复核：现尺代码与我本人写入一致，无外来改动；两路盘面自证 sha 逐字节一致。⇒ 攻击未得手但通道存在。
 
-## 七、待写：落地终态（最后一袋入队/落地后补）
+## 七、落地终态（2026-09-29 夜战 SW11 台账回填；源=.runtime/commit_queue done|dead 实录＋git log 全史核）
 
-- [ ] 各袋 qid 与 landed commit
-- [ ] 两轮循环检查读数
-- [ ] 临时件清理与工作树收尾
+**队列正门袋（qid↔landed commit，done/ 实录）**：
+
+| qid | 内容 | landed commit | 落地时刻 |
+|---|---|---|---|
+| q-20260924-st-ailayer-final-20260924-0002 | token 先行批（九卡+resume 清单 11 行） | `5081f0ca91e` | 2026-09-24 13:17:31 |
+| q-20260924-st-ailayer-final-20260924-0004 | token 先行批二（终报三件 3 行） | `9d71b563bd9` | 2026-09-24 14:20:50 |
+| q-20260926-st-ailayer-final-20260924-0014 | 波2 开班·指挥册先行袋 | `ec0dd4f43a0` | 2026-09-26 02:41:26 |
+| q-20260926-st-ailayer-final-20260924-0022 | 终局袋0·登记册先行 | `3ae33e7ffed` | 2026-09-26 04:36:18 |
+
+**死袋（过门失败未落地，dead/ 实录，死因=门禁阻断）**：0001（DIRECTORY-CONTRACT）/ 0016（ENCODING-SAFETY）/ 0019（CREATE-GUARD）/ 0021（ALGO-NOTE-SYNC）。
+
+**直连与代投携带（非队列袋，git log --all 全史核）**：`30505c93f6c`（P1 终局大单 678 件，allow-multi-domain 直连）；`8f03ef44bf7`（st-chief5 代投本会话孤儿接线件 [adopted-orphan]）；`6a4124cd8fd`（st-commitspeed-tbl 携带 budget/schedulegate 基线件落 dev）。0003/0005-0013/0015/0017-0018/0020 未见于 done|dead 与全史 grep＝直连或记录已被清理，队列实录无法归因（诚实缺口，不虚补）。
+
+- [x] 各袋 qid 与 landed commit（上表＋直连/代投实录）
+- [ ] 两轮循环检查读数（队列实录不可推，待原会话口径）
+- [ ] 临时件清理与工作树收尾（待原会话/总筹终检）
