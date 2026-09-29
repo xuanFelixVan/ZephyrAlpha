@@ -2180,6 +2180,22 @@ class GitCommitGateway:
         _db_rel = "scripts/governance/meta/rules_integrity_db.json"
         _script = "scripts/governance/meta/validate_rules_integrity.py"
         try:
+            # C148 出库防回灌（st-finaldel-final-20260929 总筹刀）：DB 已不被 git 跟踪
+            # （.gitignore + git rm --cached，Owner 批②）后，fold 不得再把工作树 DB
+            # buffer 进批提交——否则删除记落地后被下一笔 fold 静默 add -f 回灌，出库被
+            # 撤销。未跟踪即整段跳过；post-flush register 仅写盘不进 git，无害保留作自愈兜底。
+            _track_chk = _sp.run(
+                ["git", "ls-files", "--", _db_rel],
+                cwd=str(self.project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=10,
+            )
+            if not (_track_chk.stdout or "").strip():
+                logger.info("F1 skip: rules_integrity_db untracked (C148 出库)——fold 不回灌")
+                return
             _root_abs = _os.path.abspath(str(self.project_root))
             # changed = rel(existing) ∪ batcher.buffered_files()
             changed: set[str] = set()

@@ -232,3 +232,61 @@ def test_mq2_explainer_own_scope_only(git_sandbox, monkeypatch):
     assert st["alpha.py"] == "CHANGING_IN_COMMIT", "own 文件在临时索引内 → 解释"
     assert st["beta.py"] == "TAMPERED", "外来在途路径不配享有解释位（MQ-2①）"
     assert r["clean"] is False
+
+
+# ---------------------------------------------------------------------------
+# C148 出库防回灌（st-finaldel-final-20260929 总筹刀）：fold 对未跟踪 DB 短路
+# ---------------------------------------------------------------------------
+
+
+def test_c148_fold_skips_when_db_untracked(tmp_path, monkeypatch):
+    """DB 未被 git 跟踪（.gitignore+git rm --cached）时 fold 整段跳过：不跑 --fold、不 buffer。"""
+    from types import SimpleNamespace
+
+    from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+
+    calls: list[list[str]] = []
+
+    def fake_run(cmd, *a, **kw):
+        calls.append([str(x) for x in cmd])
+        if cmd[:2] == ["git", "ls-files"]:
+            return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+        return subprocess.CompletedProcess(cmd, 1, stdout="", stderr="unexpected")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    def _no_buffer(*a, **k):
+        pytest.fail("未跟踪态 buffer 不得被调用（防回灌）")
+
+    batcher = SimpleNamespace(buffered_files=lambda: set(), buffer=_no_buffer)
+    GitCommitGateway._fold_rules_integrity_into_batch(SimpleNamespace(project_root=tmp_path), [], "sess-c148a", batcher)
+    assert calls, "ls-files 跟踪检查应执行"
+    assert calls[0][1] == "ls-files"
+    assert len(calls) == 1, f"短路后不得再有后续调用，实测: {calls}"
+
+
+def test_c148_fold_still_runs_when_db_tracked(tmp_path, monkeypatch):
+    """对照腿：DB 仍被跟踪时 fold 照常走到 --fold（短路不误伤既有 F1 行为）。"""
+    from types import SimpleNamespace
+
+    from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+
+    calls: list[list[str]] = []
+
+    def fake_run(cmd, *a, **kw):
+        calls.append([str(x) for x in cmd])
+        if cmd[:2] == ["git", "ls-files"]:
+            return subprocess.CompletedProcess(
+                cmd, 0, stdout="scripts/governance/meta/rules_integrity_db.json\n", stderr=""
+            )
+        # --fold 腿：沙箱内 rc=1 → 函数 fail-open 降级返回（本测试只验短路未误伤）
+        return subprocess.CompletedProcess(cmd, 1, stdout="", stderr="sandbox-no-fold")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    def _no_buffer(*a, **k):
+        pytest.fail("rc=1 降级路径下 buffer 不得被调用")
+
+    batcher = SimpleNamespace(buffered_files=lambda: set(), buffer=_no_buffer)
+    GitCommitGateway._fold_rules_integrity_into_batch(SimpleNamespace(project_root=tmp_path), [], "sess-c148b", batcher)
+    assert any("validate_rules_integrity" in " ".join(c) for c in calls), "跟踪态 --fold 应被调用"
