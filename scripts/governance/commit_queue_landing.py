@@ -2335,6 +2335,53 @@ class WorktreeLanding:
         os.replace(tmp, target)  # 原子替换，并发读者不见半成品
         return "fast_forwarded"
 
+    def _index_matches(self, sha: str, rel: str) -> bool:
+        """主工作区 INDEX 与 <sha>:<rel> 是否一致（--cached diff 语义；rc>1 抛错）。"""
+        r = self._git_repo("diff", "--quiet", "--cached", sha, "--", rel, check=False)
+        if r.returncode in (0, 1):
+            return r.returncode == 0
+        raise RuntimeError(f"diff --cached {sha[:12]}:{rel} -> rc={r.returncode}")
+
+    def _index_convergence_mode(self) -> str:
+        """RB1 双开关（2026-09-29 治本战役）：off=完全关 / live=实做清 index / 缺省=shadow。
+
+        shadow 只判不动（决策进审计流），观察期后由 data/runtime/main_index_convergence.live
+        翻实做；data/runtime/main_index_convergence.off 一票关停（回退=v1 行为）。
+        """
+        runtime_dir = self.repo_root / "data" / "runtime"
+        if (runtime_dir / "main_index_convergence.off").exists():
+            return "off"
+        if (runtime_dir / "main_index_convergence.live").exists():
+            return "live"
+        return "shadow"
+
+    def _converge_index_one(self, rel: str, old_sha: str, new_sha: str, wt_action: str) -> str:
+        """RB1 条件式 index 收敛臂：清「纯落地残影」、保「他意 staged WIP」（零丢失）。
+
+        前提=工作树已等于 dev 新 blob（wt_action 为落地成功态），此时 index 只可能：
+          ==new → already（无残影）；==old → 纯残影（session staged 旧版后工作树演进），
+          restore --staged --source=<new_sha> 清之（显式 source，不依赖主区 HEAD 分支位）；
+          异于两者 → 他会话有意 staged 的 WIP → skip_staged_wip（禁碰）。
+        执行前工作树复验关竞态窗；off/shadow 模式只判不动（shadow 记 would_* 进审计）。
+        """
+        mode = self._index_convergence_mode()
+        if mode == "off":
+            return "index_off"
+        if wt_action in ("skipped_dirty", "skipped_missing", "error"):
+            return "index_skip_dirty_wt"
+        if not self._worktree_matches(new_sha, rel):
+            return "index_skip_dirty_wt"
+        if self._index_matches(new_sha, rel):
+            return "index_already"
+        if not self._index_matches(old_sha, rel):
+            return "index_skip_staged_wip"
+        if mode != "live":
+            return "index_shadow_clear"
+        r = self._git_repo("restore", "--staged", "--source", new_sha, "--", rel, check=False)
+        if r.returncode != 0:
+            return "index_error"
+        return "index_cleared"
+
     @_timed_phase("converge")
     def _converge_main_workspace(self, item: dict, old_sha: str, new_sha: str) -> None:
         """landing 后主工作区受限收敛：干净文件快进 / 脏文件跳过留痕（fail-open）。"""
@@ -2351,6 +2398,27 @@ class WorktreeLanding:
                 action = "error"
                 logger.warning("[landing] 主工作区收敛异常 qid=%s %s: %s", qid, rel, exc)
             counts[action] = counts.get(action, 0) + 1
+            if os.environ.get("RB1_DEBUG"):
+                print(f"RB1DBG qid={qid} old={old_sha[:10]} new={new_sha[:10]} dev_tip={self._git_repo('rev-parse', 'dev').stdout.strip()[:10] if False else '?'} path={rel}")
+            try:
+                # RB1 条件式 index 收敛臂（2026-09-29 治本战役）：清纯落地残影/保他意 staged，
+                # off/shadow 双开关缺省 shadow 只判不动；fail-open 同款（index 异常不回滚 landing）
+                idx_action = self._converge_index_one(rel, old_sha, new_sha, action)
+            except Exception as exc:  # noqa: BLE001 — 同上 fail-open
+                idx_action = "index_error"
+                logger.warning("[landing] index 收敛异常 qid=%s %s: %s", qid, rel, exc)
+            counts[idx_action] = counts.get(idx_action, 0) + 1
+            if idx_action not in ("index_already", "index_off", "index_skip_dirty_wt"):
+                audit_records.append(
+                    {
+                        "ts": time.time(),
+                        "qid": qid,
+                        "path": rel,
+                        "action": idx_action,
+                        "old": old_sha[:12],
+                        "new": new_sha[:12],
+                    }
+                )
             if action in ("skipped_dirty", "skipped_missing", "error"):
                 audit_records.append(
                     {

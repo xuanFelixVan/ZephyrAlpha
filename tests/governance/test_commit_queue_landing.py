@@ -596,6 +596,9 @@ def _audit_records(qroot: Path) -> list[dict]:
 
 
 class TestMainWorkspaceConvergence:
+    def _non_index_audit(self, queue_root):
+        """RB1 后审计含 index_* 决策流（shadow 记录=新契约）；非 index 项=旧语义审计。""",
+        return [r for r in _audit_records(queue_root) if not str(r.get("action", "")).startswith("index_")]
     def test_clean_file_fast_forwarded_to_main_workspace(self, tmp_repo: Path, queue_root: Path) -> None:
         """干净文件（与旧 HEAD 逐字节一致）→ 快进写入新内容；零审计（无跳过项）。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
@@ -612,7 +615,7 @@ class TestMainWorkspaceConvergence:
         # 主工作区字节级快进（治陈旧快照：landing 后工作区即见新内容）
         assert (tmp_repo / "base.txt").read_bytes() == new_base
         assert (tmp_repo / "docs" / "added.txt").read_bytes() == b"new file\n"
-        assert _audit_records(queue_root) == [], f"干净快进不得产生审计留痕（qid={item['qid']}）"
+        assert self._non_index_audit(queue_root) == [], f"干净快进不得产生非 index 审计（qid={item['qid']}）；index_* 决策流=RB1 shadow 新契约"
 
     def test_dirty_file_skipped_with_audit_and_wip_preserved(self, tmp_repo: Path, queue_root: Path) -> None:
         """脏文件（主工作区有 WIP 修改）→ 跳过 + 审计留痕，WIP 字节零丢失。"""
@@ -679,7 +682,7 @@ class TestMainWorkspaceConvergence:
 
         assert not (tmp_repo / "base.txt").exists(), "干净删除项收敛后工作区文件移除"
         assert _git(tmp_repo, "cat-file", "-e", "dev:base.txt", check=False).returncode != 0, "dev 树已删除"
-        assert _audit_records(queue_root) == [], "成功删除非跳过项，零审计"
+        assert self._non_index_audit(queue_root) == [], "成功删除非跳过项，零非 index 审计"
 
     def test_delete_action_already_missing_is_noop_without_audit(self, tmp_repo: Path, queue_root: Path) -> None:
         """delete action + 工作区已缺失（WIP 删除先行）→ already_deleted 幂等零审计。"""
@@ -695,7 +698,7 @@ class TestMainWorkspaceConvergence:
         stats = cq.drain_queue(queue_root, landing=landing)
         assert stats["done"] == 1
         assert not (tmp_repo / "base.txt").exists()
-        assert _audit_records(queue_root) == [], "语义已达成的删除不审计（already_deleted）"
+        assert self._non_index_audit(queue_root) == [], "语义已达成的删除不审计（already_deleted；index_* 决策流=RB1 新契约）"
 
     def test_replay_converges_after_crash_window(
         self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
@@ -731,13 +734,13 @@ class TestMainWorkspaceConvergence:
         assert calls["n"] == 2, "重放短路路径补跑收敛"
         assert (tmp_repo / "base.txt").read_bytes() == new_base, "补收敛把干净文件快进到新内容"
         assert _dev_commit_count(tmp_repo) == 1, "补收敛不双 commit"
-        assert _audit_records(queue_root) == [], "快进成功零审计"
+        assert self._non_index_audit(queue_root) == [], "快进成功零非 index 审计"
 
         # ③ 二次重放：文件已 == new_sha → already_synced，幂等零副作用
         (queue_root / "pending" / done_path.name).write_bytes(done_path.read_bytes())
         stats3 = cq.drain_queue(queue_root, landing=landing)
         assert stats3["done"] == 1
-        assert _audit_records(queue_root) == [], "already_synced 幂等，零审计零副作用"
+        assert self._non_index_audit(queue_root) == [], "already_synced 幂等，零非 index 审计零副作用"
 
 
 # ---------------------------------------------------------------------------
@@ -1868,3 +1871,73 @@ def test_a3_pool_wave_log_is_on_disk_with_three_exits(tmp_path: Path) -> None:
     body = inspect.getsource(cql)
     for tag in ("exit=claim_none", "exit=no_slot", "claim_raised", "process_raised"):
         assert tag in body, f"{tag} 未接线——该出口将永久无账"
+
+
+class TestIndexConvergenceRB1:
+    """RB1 条件式 index 收敛臂（2026-09-29 治本战役）：清纯落地残影/保他意 staged WIP。
+
+    残影场景构造：index 暂存旧 blob（git add 后工作树改回未来内容）→ 落地后
+    工作树==dev 新 blob 而 index 留旧 = 经典 skipped_dirty 残影。
+    """
+
+    def _stage_then_evolve(self, repo: Path, path: str, staged: bytes, evolved: bytes) -> None:
+        target = repo / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(staged)
+        _git(repo, "add", path)
+        target.write_bytes(evolved)
+
+    def test_shadow_default_records_without_touching(self, tmp_repo: Path, queue_root: Path) -> None:
+        """缺省=shadow：判定 index_shadow_clear 进审计，index 字节不动（观察期契约）。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        _old_blob = _git_bytes(tmp_repo, "show", "dev:base.txt")
+        self._stage_then_evolve(tmp_repo, "base.txt", _old_blob, b"queue content\n")
+        item = cq.enqueue_item("sess-rb1-a", "feat: rb1 shadow", [("base.txt", b"queue content\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+        recs = [r for r in _audit_records(queue_root) if r["action"].startswith("index_")]
+        assert any(r["action"] == "index_shadow_clear" and r["path"] == "base.txt" for r in recs)
+        # index 未被清：staged diff 仍见旧 blob（与 dev 不同）
+        r = _git_bytes(tmp_repo, "diff", "--cached", "dev", "--", "base.txt")
+        assert r != b"", "shadow 模式 index 不得被清"
+
+    def test_live_mode_clears_residue(self, tmp_repo: Path, queue_root: Path) -> None:
+        """live 开关：纯残影（index==old）→ index_cleared，staged diff 归零。"""
+        (tmp_repo / "data" / "runtime").mkdir(parents=True, exist_ok=True)
+        (tmp_repo / "data" / "runtime" / "main_index_convergence.live").write_text("", encoding="utf-8")
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        _old_blob = _git_bytes(tmp_repo, "show", "dev:base.txt")
+        self._stage_then_evolve(tmp_repo, "base.txt", _old_blob, b"queue content\n")
+        cq.enqueue_item("sess-rb1-b", "feat: rb1 live", [("base.txt", b"queue content\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+        assert _git_bytes(tmp_repo, "diff", "--cached", "dev", "--", "base.txt") == b"", "live 模式残影被清"
+        recs = [r for r in _audit_records(queue_root) if r["action"] == "index_cleared"]
+        assert len(recs) == 1 and recs[0]["path"] == "base.txt"
+
+    def test_staged_wip_protected_even_in_live(self, tmp_repo: Path, queue_root: Path) -> None:
+        """他意 staged WIP（index 异于 old/new 双版）→ live 模式也禁碰（零丢失）。"""
+        (tmp_repo / "data" / "runtime").mkdir(parents=True, exist_ok=True)
+        (tmp_repo / "data" / "runtime" / "main_index_convergence.live").write_text("", encoding="utf-8")
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        # index 暂存「第三方新内容」（异于 old=b"base\n" 与 new=b"queue content\n"）
+        self._stage_then_evolve(tmp_repo, "base.txt", b"someone WIP staged\n", b"queue content\n")
+        cq.enqueue_item("sess-rb1-c", "feat: rb1 wip", [("base.txt", b"queue content\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+        # index 里的 WIP 字节仍在（restore 未执行）
+        assert b"someone WIP staged" in _git_bytes(tmp_repo, "show", ":base.txt")
+        recs = [r for r in _audit_records(queue_root) if r["action"] == "index_skip_staged_wip"]
+        assert len(recs) == 1
+
+    def test_off_mode_no_index_actions(self, tmp_repo: Path, queue_root: Path) -> None:
+        """off 开关：一票关停（v1 行为），无 index_* 审计。"""
+        (tmp_repo / "data" / "runtime").mkdir(parents=True, exist_ok=True)
+        (tmp_repo / "data" / "runtime" / "main_index_convergence.off").write_text("", encoding="utf-8")
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        _old_blob = _git_bytes(tmp_repo, "show", "dev:base.txt")
+        self._stage_then_evolve(tmp_repo, "base.txt", _old_blob, b"queue content\n")
+        cq.enqueue_item("sess-rb1-d", "feat: rb1 off", [("base.txt", b"queue content\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1
+        assert all(not r["action"].startswith("index_") for r in _audit_records(queue_root))
