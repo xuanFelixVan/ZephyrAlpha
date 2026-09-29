@@ -56851,4 +56851,14 @@ creation_tokens:
   created_by: st-nightsweep-sw19-20260929
   capability: derived_dirty_ledger
   merge_evaluation: "机生 ALGO_FLOW 外部真源，与 derived_dirty_ledger.py 模块一对一寄生（externalize_algo_flow 生成器产物），非独立新能力，同批同源落地零增量真源"
+- file: docs/_working/night_sweep/c_exam/state_matrix_fill_plan_v1.md
+  token: night-sweep-c-exam-state-matrix-fill-plan-v1-20260929
+  created_by: st-nightsweep2-nc-20260930
+  capability: night_sweep_c_exam
+  merge_evaluation: "C5 填充方案件：state_matrix 候选面提案+禁用标记依据，跨域不同对象不并（Owner 格提案稿非第二切换册）"
+- file: docs/_working/final_delivery_campaign/final_loopcheck_redblue_20260930.md
+  token: final-delivery-campaign-final-loopcheck-redblue-20260930-20260930
+  created_by: st-finaldel-final2-20260930
+  capability: final_delivery_campaign
+  merge_evaluation: "终验循环检查与红蓝对抗报告替代散落临时证据（两轮读数+逐场景判定+修复hash 单一归档面），与同批域册误标注记修复同源收敛"
 di_seam_exemptions: []
