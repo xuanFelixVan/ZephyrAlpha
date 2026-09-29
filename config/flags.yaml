@@ -123,7 +123,7 @@ flags:
 
   integrity_baseline_mode:
     enabled: true
-    mode: "snapshot"
+    mode: "head"  # [翻转 2026-09-30·Owner批] snapshot->head（gate_survival_adjudication.md §9.2/§6；实现+测试随 SW19 袋 228ce95188 落地，head_baseline12 19/19 绿）。省落地件同步刷新 mean 46.1s/件；回滚=本值改回 snapshot
     description: "战役 B0/M1（提交链治本夜战 分包3/P3，2026-09-24）：GATE-RULES-INTEGRITY 基线真源面。mode=snapshot=出厂现行（读 rules_integrity_db.json 滞后快照，每件须同步 --register 续命，实测尾段 mean 46.1s/med 6.2s/max 300.7s + 近 24h 10 笔 chore(integrity) 记账尾笔）；mode=head=按当前 HEAD blob 派生（一次 git cat-file --batch，实测 n=17 0.026s/n=120 0.110s），DB 退出判定链⇒同步刷新义务与记账税一并消失，工作树面继续读故 WIP 篡改检测不降级（MQ-2：解释位 CHANGING_IN_COMMIT 仅 own-scope）。判定阈值与 exit code 两态完全相同；解释位/R-2/R-5 哨兵同批有测试。翻 head 属 Owner 门位（flag 出厂态翻转=high tier）；回滚=改回 snapshot 一个 YAML 值不动码"
     implementation_status: "gated"
 
