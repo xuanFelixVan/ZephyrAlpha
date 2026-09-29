@@ -1,23 +1,23 @@
-# 自动生成于 2026-09-28T23:01:29Z
+# 自动生成于 2026-09-29T23:23:45Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-28T23:01:29Z'
+generated_at: '2026-09-29T23:23:45Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 528
-with_manifest: 419
-missing_manifest: 109
+total_scripts: 536
+with_manifest: 423
+missing_manifest: 113
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 72
+  governance: 76
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 26
   governance:d2_links: 2
-  governance:d3_metadata: 30
+  governance:d3_metadata: 31
   governance:d4_paths: 4
   governance:d5_architecture: 125
   governance:d6_security: 15
@@ -25,6 +25,7 @@ categories:
   governance:d8_doc_sync: 15
   governance:d9_knowledge: 2
   governance:data_quality: 2
+  governance:data_supply: 1
   governance:fullflow: 1
   governance:generators: 23
   governance:git_hooks: 1
@@ -41,6 +42,8 @@ categories:
   governance:standards: 1
   governance:standards_governance: 1
   governance:vms: 9
+  governance:wave1a: 1
+  governance:wave3: 1
 scripts:
 - name: _sync/check_p0_status.py
   owner: governance:_sync
@@ -342,6 +345,16 @@ scripts:
   description: 孤儿测试符号检测——测试 import 引用真源不存在的符号即报（CAND-GATEMECH-007）
   tags:
   - Critical
+- name: check_trd_a20_a21_dual_gates.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: check_wiring_orphan.py
   owner: governance
   dimensions: []
@@ -352,6 +365,15 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: chief_lease.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ''
+  tags: []
 - name: classify_workspace_wip.py
   owner: governance
   dimensions:
@@ -1432,6 +1454,34 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d3_metadata/reconcile_gate_rosters.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D3
+  priority: P1
+  timeout_seconds: 30
+  args:
+  - flag: --check
+    type: bool
+    description: 对账模式：发现漂移 exit 1
+  - flag: --out
+    type: str
+    description: yaml 报告落盘路径（自动附同名 .md 摘要）
+  - flag: --root
+    type: str
+    description: 仓库根（默认脚本定位推导，支持 worktree）
+  - flag: --note
+    type: str
+    description: 附注行（可重复，写入 .md 摘要）
+  - flag: --evidence-file
+    type: str
+    description: 证据文件路径（可重复，全文嵌入 .md 附录）
+  warn_only: true
+  description: '门禁名册三方对账（模块面 vs in_process 名册 vs 统一册），只读取证不改册。
+
+    '
+  tags:
+  - Quick
 - name: d3_metadata/validate_architecture.py
   owner: governance:d3_metadata
   dimensions:
@@ -4045,6 +4095,16 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: data_supply/ch_probe.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: decision_chain_sentinel.py
   owner: governance
   dimensions:
@@ -4653,6 +4713,67 @@ scripts:
   description: 从场外草稿CSV抓取候选模块入候选库+翻译真源（双注册表幂等去重）
   tags:
   - Critical
+- name: lane_leases.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P3
+  timeout_seconds: 30
+  args:
+  - flag: command
+    type: str
+    description: 子命令：claim/status/release/heartbeat/suggest
+  - flag: --session
+    type: str
+    description: session id（claim/release/heartbeat 必带）
+  - flag: --leases
+    type: str
+    description: 租约注册表路径（默认仓根 .runtime/lane_leases.json）
+  - flag: --ttl
+    type: int
+    description: 租约 TTL 秒数（默认 600）
+  - flag: --teams
+    type: int
+    description: suggest 建议队数（默认 2）
+  - flag: --json
+    type: bool
+    description: 机器可读 JSON 输出
+  - flag: files_csv
+    type: str
+    description: suggest 文件清单（csv 串或清单文件路径）
+  warn_only: true
+  description: ''
+  tags:
+  - Quick
+- name: lane_leases_gate.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P3
+  timeout_seconds: 30
+  args:
+  - flag: --session
+    type: str
+    description: session id（必填）
+  - flag: --files
+    type: str
+    description: 逗号分隔落盘文件清单
+  - flag: --file
+    type: list
+    description: 单文件（可重复）
+  - flag: --files-file
+    type: str
+    description: 清单文件路径（逐行）
+  - flag: --leases
+    type: str
+    description: 租约注册表路径（默认仓根 .runtime/lane_leases.json）
+  - flag: --json
+    type: bool
+    description: 机器可读 JSON 输出
+  warn_only: true
+  description: ''
+  tags:
+  - Quick
 - name: meta/_concurrency.py
   owner: governance:meta
   dimensions: []
@@ -6525,3 +6646,23 @@ scripts:
   description: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222
   tags:
   - Quick
+- name: wave1a/ch_read_shape_ruler.py
+  owner: governance:wave1a
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave3/recheck_empty_tables.py
+  owner: governance:wave3
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
