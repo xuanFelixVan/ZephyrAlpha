@@ -39,7 +39,7 @@ session: st-finaldel-m5-20260929
 | C224 | ✅自开工已施工 | 91_flash_one_click L175 tee 相对路径、文件 git-clean → 施工 | tee 改 `$(git rev-parse --show-toplevel)/docs/_working/total_command_closeout/LEDGER_execution.md`＋注释；在队 q-0001 |
 | C247 | ✅自开工已施工 | W-176 行已载四家名、W-102 行无注记 → 施工 | W-102 行尾并入四家对表注记（GE/pandera/dbt tests+data-diff/QLib，不引依赖）；在队 q-0001 |
 | C431 | ✅本道已收口（st-finaldel-cdocs2 20260929） | 前提修正：10_d_data.md=派生离库件（.gitignore L541 #ARCH-GOV-BUDGET-001，--all 零历史，**从未在 HEAD**，M5 卡前提不实）；本轮 wc -l 实测=19,399 行 | 二轮全扫收口：00:115/01:88·177/93:87 三册已带 SW15 活值条款（「复测 19,364，现值以 wc -l 为准」）=正确标注结卡；残留错数 19131 两处已改——91:154（Flash 唯一照做册）与 dossier_H:155（自陈未核数）均改 19,037+2026-09-29 复测 19,399+活值条款+行数非件数注；全仓兜底扫无第三处 |
-| C73 | READY | HANDOVER.md@HEAD L88 在册；HANDOVER_FINAL/INSTRUCTION 两件未逐一复核在册态 | HANDOVER_FINAL/INSTRUCTION 若仍缺→走正门落 HEAD；07_pending_work_master_list.md 以旧战役版或重建版明确真源（波13 实测全仓不存在） |
+| C73 | ✅本道复核结卡（st-finaldel-cdocs3 20260929） | 实测：HANDOVER.md@HEAD L88-90 §五在册；HANDOVER_FINAL.md 仅 token 在册（capability 册随袋落地、无本体）；HANDOVER_INSTRUCTION 全域 0 命中 | 复核结论：两件 HEAD+盘面+.aidrafts+git 全史+blob 池（25,436 件全扫）均 0 本体命中=字节不可考（蒸发族，归 C96/C105 同族处置）；「走正门落 HEAD」前置=总筹/Owner 重供内容，本道不代造。07_pending_work_master_list.md 旧战役版已在册@30505c93f6c（st-ailayer-final-20260924 落地，基线 2026-09-24 22:00）——是否仍为活真源归总筹裁定，本道只标注事实 |
 | C226 | ✅自开工已施工 | W-117 行@HEAD L175 仍旧口径（61 形态/RANSAC）→ 施工 | 行尾补补丁D 终审注记（RANSAC 弃用→trendln/pytrendline；154 件实测口径）；在队 q-0001 |
 | C341 | READY | — | 「编目有排产无」余项并入 19号文 backlog 与 10_wave_plan 唯一真源；禁开第二本排产册 |
 | C342 | READY | — | 按封矿复核清单逐条补实物或删引用（幽灵引用 37/142 项实数/封矿复核 11 份）；余缺叶册随施工同批出（96 册 R-1 处方） |
@@ -60,7 +60,7 @@ session: st-finaldel-m5-20260929
 | C267 | OWNER_GATE | — | 退役批（空壳表8张/F51币圈/F130 ml_serve/六0字节死库）走归档式净删：先 G 盘归档→呈 Owner 批→批后执行；本道只立处方 |
 | C412 | READY | tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py 在 HEAD | 拆超时件（tests/ 豁免 CREATE-GUARD）后按 G-77 尺跑 14/14 目录两轮真终验 |
 | C55 | OWNER_GATE | — | chief8 裁4 第一步已落（8b098e31eb）；终步 ig_equity_edge 旧表净删呈 Owner |
-| C77 | READY（前提部分收窄） | reexam_strategy_lane/pre_registration_card.md 已 tracked@HEAD | 余=reexam harness+test 核在册态、续跑/收口首批 30 条（预注册卡已接管，冻结口径不破） |
+| C77 | ✅本道已收口（st-finaldel-cdocs3 20260929） | harness 建块全在册：core/cpcv.py+strategy_cpcv_matrix.py+tests 双件+85 件 c4_*.py 译件池均 tracked@HEAD | 首批 30 条已跑毕实证：runs/p1_translated_jq_outpool/state.yaml@HEAD done=30/30、全带 frozen_caliber_sharpe_obs（material_insufficient 全 false）；预注册卡接管、冻结口径未破；残=逐格三件套成绩单未落库（如需归档另卡，非阻断） |
 | C168 | DONE_BY_SIBLING @9a2c6402d4 | =B10-P2 同一挂接动作（与 C29 同 commit） | 无余量 |
 | C169 | OWNER_GATE | retire_module@HEAD L475-482 step7 只登记、注释明示待批文② | Owner 增枝批文②批后启用 --cascade-deprecate+事件触发钩子 |
 
@@ -88,20 +88,20 @@ session: st-finaldel-m5-20260929
 | C127 | READY | 抽样 99_FINAL_REPORT/LEDGER_final 头 3 行无 created | 1807 件文件名 ISO 日期→created 机械回填批（可抽查）；与 C126 已落的 created 判龄轴配套才生效 |
 | C334 | READY（册挂行=热册 defer） | LIBRARY-NEW-MODULE capability 册 0 命中+.py 0 命中 | 从 st-zmaster2-20260926 车道捞件（reconciler+零命中读侧分支）走队列；reconciliation_registry 挂行+capability 册条目=官方工具通道，落地后核对册路径与实际一致 |
 | C126 | DONE_BY_SIBLING @14dc95cb05 | library_hygiene.py@HEAD L8 明示「判龄轴=frontmatter created，不用 mtime」（mtime 恒空转病灶已治） | 无余量 |
-| C473 | READY | fms_overhaul 盘面+HEAD 均只有 S2/S3/S5/S7/S8——**S1/S4/S6/S9 四簿双缺**（多卡必读引用悬空：S9 README/S4 README 等） | 四簿按 00_orchestration 骨架补簿或修 §三 陈述；S9 处方簿现为 staged 态（C23 依赖），优先随批落 |
+| C473 | ✅字节不可考结卡（st-finaldel-cdocs3 20260929） | 四簿双缺复核加固：S9/S6 实名可证（S9_module_retirement/S6_navigation_context，见 retire_module/generate_front_door blueprint 引用），HEAD+盘面+.aidrafts+git 全史+queue json+blob 池（18,377+7,050 件全扫，13 命中均系引用方 blueprint 非簿本体）全域 0 本体；「S9 处方簿 staged」与实测不符（staged 面=他会话 index.md 生成物，无 S9 簿） | 补簿=挖矿内容重造（非文档扫尾道可代造）、修 §三 陈述=总筹裁量，两路呈总筹择一；四簿本体字节不可考如实登记 |
 
 ## 五、其他（5❌ + 3🔶 = 8 卡）
 
 | 卡 | 态 | 30 秒 HEAD 重验证据 | 处方 / 下一步 |
 |---|---|---|---|
 | C62 | BLOCKED | gov_audit 域文档在 HEAD；锁竞争楔死需复现取证环境 | 日班带宽时段专项：先锁竞争复现取证，L09 先立 800ms 复测尺；本道不闭 |
-| C189 | READY | L08_risk/SKEL.md 在 HEAD | 按 SKEL §5 候选清单 5 项逐项补二源对表（外仓禁商用只学思想，sop_c §9；研究型） |
+| C189 | defer（st-finaldel-cdocs3 20260929 复核标注） | 在册态已核：L08_risk/SKEL.md@HEAD §5 标准件表 9 行全带出处/许可证列 | 补二源对表=外仓研究型（外仓禁商用只学思想），无代码面可机械核实，研究班带宽项 defer |
 | C293 | DONE_BY_SIBLING @cad41feb2f | backup.ps1@HEAD L114+ H04 share-tolerant handle copy：只读位继承(a)＋活动写者 share(b) 双治 | 无余量 |
 | C294 | DONE_BY_SIBLING @cad41feb2f | restore_drill.py@HEAD L64-80 H06：TEMPLATE template0+活库 locale 建库保真 | 无余量 |
 | C295 | OWNER_GATE（清理半 DONE） | process_reaper.py@HEAD L262 H08：keep 行 `|session=<sid>` 尾注+--keep-cleanup 已落 | 死会话行清理工具已备＝可执行；保命面改身份段匹配=Owner 门（改变保命面），呈批后施工 |
 | C183 | BLOCKED | 运行时态 | 需要时日班冷启动重拉 ollama+探 /api/tags；本道不闭 |
-| C190 | READY | L09_review/_INDEX_MINE.md 在 HEAD | DAG 范式/Brinson 1985·1986 一手/Grafana 时点三项挂账续做，完成后随 L09-C01 补录转 SEALED |
-| C325 | READY | data/databases/backup_state.json `last_run_outcome: lock_skipped` 实证 | 处置 lock_skipped 根因→跑一次 judge_drill 拿首份可恢复性实证（运维执行面按窗口排产） |
+| C190 | defer（st-finaldel-cdocs3 20260929 复核标注） | 在册态已核：_INDEX_MINE.md@HEAD 三挂账如实记载（Grafana 时点/Brinson 1985·1986 一手/DAG 范式），SEALED 唯一硬阻塞=L09-C01 Owner 裁定 | 三挂账=外部一手源研究（自陈非阻塞完备性项）+转 SEALED=Owner 门，双 defer |
+| C325 | defer（st-finaldel-cdocs3 20260929 复核标注） | 复测：backup_state.json last_run_outcome 仍=lock_skipped（last_lock_skip 09-26/cadence skip 09-29 08:04 实证）；judge_drill 产物 2026-09-20 后 0 新增 | 处置 lock_skipped+跑 judge_drill=运维执行面，按窗口排产 defer |
 
 ## 六、Owner裁定类 AI-可施工部分（❌3 + 🔶8 = 11 卡）
 
