@@ -56494,6 +56494,16 @@ creation_tokens:
   created_by: st-finaldel-chief-20260929
   capability: final_delivery_campaign
   merge_evaluation: "终局交付战役文档族：替代零散会话汇报，收敛为单战役目录案卷族（裁定#375 同真源派生并卷判据）"
+- file: docs/_working/final_delivery_campaign/redblue_report.md
+  token: final-delivery-campaign-redblue-report-20260929
+  created_by: st-finaldel-chief-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "终局交付战役文档族收尾批：终验报告+红蓝报告（同族并卷，裁定#375 判据）"
+- file: docs/_working/final_delivery_campaign/verification_report.md
+  token: final-delivery-campaign-verification-report-20260929
+  created_by: st-finaldel-chief-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "终局交付战役文档族收尾批：终验报告+红蓝报告（同族并卷，裁定#375 判据）"
 - file: scripts/governance/_tasks/session_closeout_reconciler.py
   token: session-closeout-reconciler-session-closeout-reconciler-20260929
   created_by: st-nightclean-20260929
@@ -56625,7 +56635,6 @@ creation_tokens:
   created_by: st-nightsweep-sw18-20260929
   capability: f53f04_saga_compensation
   merge_evaluation: "F53 模拟盘 Saga 装配入口（F53+F04 死账复活代投 token）"
-
 - file: docs/03_modules/_domain_execution_core/algo_flow/ghost_order_sentinel.yaml
   token: ghost-order-sentinel-ghost-order-sentinel-20260929
   created_by: st-zc9-lane-s2-20260929
