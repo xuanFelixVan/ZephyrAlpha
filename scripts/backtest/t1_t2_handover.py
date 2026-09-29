@@ -303,7 +303,21 @@ def replay_cost_tiers_via_engine(
     # st-ddup-20260925 去重改造②适配：_load_engine 已升级 7 元组（run_backtest_full/
     # net_returns_by_tiers 替代两连调）；本重放腿仍走逐档 daily_net_returns 口径
     # （抽查面量小，掩码缓存自动惠及，无需切注入路径）。
-    load_px, wide, filter_st, load_st_flags, _rbt_full, daily_net_returns, _nets_by_tiers = mod._load_engine()
+    # st-nightsweep2-nc-20260930 C4 对齐：gpup1 cf16fa43fd L1 hoist 再升 9 元组
+    # （尾增 prep_px_tensor/run_backtest_full_with_tiers），哨兵调用方漏改致重放腿
+    # ValueError——此处补解包两新位（本腿不消费，命名保留 _ 前缀=只对齐不接线）。
+    # 重建注记：首登修复遭 2026-09-30 07:4x 队列落盘崩溃回滚波及，本版为同内容重建重投。
+    (
+        load_px,
+        wide,
+        filter_st,
+        load_st_flags,
+        _rbt_full,
+        daily_net_returns,
+        _nets_by_tiers,
+        _prep_px_tensor,
+        _rbt_full_with_tiers,
+    ) = mod._load_engine()
     recipes = {r.recipe_id: r for r in GridCompiler.from_yaml(mod.SCHEMA_PATH).compile(mod.DEFAULT_CONTEXT).recipes}
 
     warm_start = (pd.Timestamp(start) - pd.Timedelta(days=200)).date().isoformat()
