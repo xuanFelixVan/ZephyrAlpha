@@ -20,3 +20,21 @@ session: st-finaldel-chief-20260929
 | 8 | C25/C98/C27/C115/C163/C427 治理门位 6 项 | M2 | 见 workorders_governance |
 | 9 | C344 补 4 日期数据/C324 EV 施工令/C439 补 134 生产写 | M4 | 数据门位 |
 | 10 | C355/C408/C444 提交链门位 3 项 | M3 | 见 workorders_commit_clean |
+
+
+## 币圈专项（2026-09-30 Owner 令）
+
+> Owner 2026-09-30 口谕：币圈模块不建门禁系统，只在模块表头加通知；所有币圈相关删除/退役全部挂起，等 Owner 通知后再议。登记人 st-finaldel-crypto-20260930。
+
+| # | 事项 | 状态 |
+|---|---|---|
+| 1 | C55 ig_equity_edge 旧表净删 | **挂起**（等 Owner 通知；出处 workorders_docs_misc §OWNER_GATE C55，本节登记不代裁） |
+| 2 | F51 币圈退役（C267 退役批中币圈部分） | **挂起**（等 Owner 通知；同上不代裁） |
+
+表头通知已加清单（2026-09-30，仅注释/引用行，零逻辑改动）：
+- docs/03_modules/_domain_data/algo_flow/：crypto.yaml、crypto_event_calendar.yaml、crypto_profile_provider.yaml、crypto_universe_selector.yaml、okx_provider.yaml、okx_swap_provider.yaml、onchain_provider.yaml、sentiment_panel_provider.yaml
+- docs/03_modules/_domain_execution_core/algo_flow/crypto.yaml
+- docs/03_modules/_domain_frontend/acceptance/ACC-F-CRYPTO-CM-ENGINE.yaml（币圈组引擎验收单）
+- src/zephyr/data/config/tasks.yaml（crypto 影子 MVP 段 / Hyperliquid D5 段 / 恐贪段三处注释横幅）
+- 跳过未动：docs/_working/2026-09-11-crypto-shadow-mvp.md（工作区脏=他会话在飞，按纪律回避）
+- igdrop：全仓 grep 零命中，无现存资产可挂表头

@@ -859,6 +859,7 @@ tasks:
   symbols:
   extra:
     description: "申万行业分类全量刷新（tushare index_classify + index_member）"
+# > ⏸ 币圈模块：研发与开通等 Owner 通知（Owner 2026-09-30 口谕，终局交付战役登记）。在此之前保持现状不扩面不清算。
 - task_id: crypto_kline_daily_incremental
   table: c1_market.crypto_kline_daily
   source: crypto_binance   # 币圈免费影子 MVP（Owner 2026-09-11 裁定）：binance.vision 公开镜像免 key；2026-09-11 OKX 全域 DNS 阻断后按 95 号蓝图"币安主源"路线换道；只记账不进 TDM 决策链路
@@ -889,6 +890,7 @@ tasks:
   # 官方免费公开 API（api.hyperliquid.xyz，匿名无 key）；hl_ 前缀与既有 crypto 影子线隔离。
   # 快照两表自积起点 2026-09-18（官方无历史回补通道，晚一天少一天）；funding 首跑已逐币深回溯（BTC 起 2023-05-12）。
 
+# > ⏸ 币圈模块：研发与开通等 Owner 通知（Owner 2026-09-30 口谕，终局交付战役登记）。在此之前保持现状不扩面不清算。
 - task_id: hl_perp_snapshot_daily_refresh
   table: c1_market.hl_perp_snapshot_daily
   source: hyperliquid
@@ -2757,6 +2759,7 @@ tasks:
 
 # ============== C-1 消费端首批：市场级 regime 信号（2026-09-14，alt_data_consumption_plan §7.3）==============
 
+# > ⏸ 币圈模块：研发与开通等 Owner 通知（Owner 2026-09-30 口谕，终局交付战役登记）。在此之前保持现状不扩面不清算。
 - task_id: crypto_fear_greed_incremental
   table: c1_market.sentiment_panel
   source: crypto_sentiment_panel
