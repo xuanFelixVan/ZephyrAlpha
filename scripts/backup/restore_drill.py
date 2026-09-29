@@ -61,7 +61,28 @@ _DUMP_GLOB = "G:/backup/db_dumps/**/depgraph.dump"
 _SQL_COUNT_ROWS = "SELECT count(*) FROM {}"
 _SQL_DROP_DRILL_DB = "DROP DATABASE IF EXISTS " + _DRILL_DB
 _SQL_DROP_DRILL_DB_FORCE = "DROP DATABASE IF EXISTS " + _DRILL_DB + " WITH (FORCE)"
-_SQL_CREATE_DRILL_DB = "CREATE DATABASE " + _DRILL_DB
+#: H06（2026-09-29 SW11）collate 保真治本：演练库改由 template0 + 活库实测 locale 建出，
+#: datcollate 与生产库一致（09-26 实测活库=「C」，旧语句继承 template1=「Chinese (Simplified)_China.936」
+#: 是 C3 头段零交集的根因）。_PK_ORDER 的 COLLATE "C" 钉保留作双保险（locale 查询回落时兜底）。
+#: locale 读数失败时的回落参数（=活库 09-26 实测值），回落事实入 report["drill_db_locale_source"]。
+_DRILL_LOCALE_FALLBACK: tuple[str, str, str] = ("C", "C", "UTF8")
+_SQL_LIVE_DB_LOCALE = "SELECT datcollate, datctype, pg_encoding_to_char(encoding) FROM pg_database WHERE datname='{db}'"
+
+
+def _build_create_drill_sql(collate: str, ctype: str, encoding: str) -> str:
+    """构造 template0 + 显式 locale 的演练库建库语句（locale 值含单引号时 SQL 转义）。"""
+
+    def _q(v: str) -> str:
+        return "'" + v.replace("'", "''") + "'"
+
+    return (
+        f"CREATE DATABASE {_DRILL_DB} TEMPLATE template0 "
+        f"ENCODING {_q(encoding)} LC_COLLATE {_q(collate)} LC_CTYPE {_q(ctype)}"
+    )
+
+
+#: H06 前的旧语句保留为常量供对照（禁止再被消费——仅测试红证用）
+_SQL_CREATE_DRILL_DB_LEGACY = "CREATE DATABASE " + _DRILL_DB
 _SQL_DRILL_DB_EXISTS = "SELECT count(*) FROM pg_database WHERE datname='" + _DRILL_DB + "'"
 #: C1 取数面：某库 public 下基表名（09-26 实测生产库 89 张，演练库还原后同为 89 张）
 _SQL_LIST_BASE_TABLES = "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename"
@@ -102,11 +123,12 @@ _DEFAULT_STALENESS_LIMIT: int | None = None
 
 #: 主键列名（C3 样本取键面）
 _PK_OF: dict[str, str] = {"lib_assets": "asset_id", "lib_events": "event_id", "nodes": "node_id"}
-#: C3 主键序表达式。演练库由本脚本 CREATE DATABASE 建出，datcollate 继承 template1
+#: C3 主键序表达式。历史病根：演练库旧建库语句继承 template1 datcollate
 #: =「Chinese (Simplified)_China.936」，而生产库 depgraph 的 datcollate=「C」（09-26 实测）——
 #: 文本主键两侧排序结果不同，「两侧各取前 N」会零交集（实测 lib_assets common=0），
-#: 于是 C3 会退化成 P-3 正在修的「恒红尺」。故文本主键必须钉死 COLLATE "C"；
-#: bigint 主键用数值序（=时间序），不钉。判据变更点。
+#: 于是 C3 会退化成 P-3 正在修的「恒红尺」。
+#: H06（2026-09-29）治本=建库即保真（template0+活库 locale，见 _build_create_drill_sql）；
+#: 本表的 COLLATE "C" 钉保留作双保险（locale 回落窗兜底）；bigint 主键用数值序（=时间序），不钉。
 _PK_ORDER: dict[str, str] = {
     "lib_assets": 'asset_id COLLATE "C"',
     "lib_events": "event_id",
@@ -604,8 +626,27 @@ def run_drill(
     env = {**os.environ, "PGPASSWORD": password}
     try:
         report["drill_db_preflight"] = _drop_drill_db(host, user, password, psql)
+        # H06：读活库实测 locale → template0 保真建库；读数失败回落实测缺省值（事实入报告）
+        locale_rows = _psql_rows(host, user, password, "postgres", _SQL_LIVE_DB_LOCALE.format(db=live_db), psql)
+        if locale_rows and len(locale_rows[0]) == 3 and all(locale_rows[0]):
+            collate, ctype, encoding = (s.strip() for s in locale_rows[0])
+            report["drill_db_locale_source"] = "live_db"
+        else:
+            collate, ctype, encoding = _DRILL_LOCALE_FALLBACK
+            report["drill_db_locale_source"] = "fallback"
+        report["drill_db_locale"] = {"collate": collate, "ctype": ctype, "encoding": encoding}
         run_subprocess_hidden(
-            [psql, "-h", host, "-U", user, "-d", "postgres", "-c", _SQL_CREATE_DRILL_DB],
+            [
+                psql,
+                "-h",
+                host,
+                "-U",
+                user,
+                "-d",
+                "postgres",
+                "-c",
+                _build_create_drill_sql(collate, ctype, encoding),
+            ],
             capture_output=True,
             text=True,
             env=env,

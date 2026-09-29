@@ -777,3 +777,88 @@ class TestKillPidTreeNeverRaises:
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))
+
+
+# ============ H08（2026-09-29 SW11）：keep 免死名单身份段匹配 + 死会话标记行清理 ============
+
+
+class TestH08IdentitySegmentMatching:
+    """keep 项命中收窄为身份段（程序基名/python -m 模块/脚本基名），全行子串误报治本。"""
+
+    def test_param_text_no_longer_matches(self):
+        """`git commit -m "pytest docs"` 的消息参数不得再触发 keep:pytest（旧实现误报）。"""
+        assert pr._is_whitelisted('git commit -m "pytest docs"', [], ["pytest"]) is None
+
+    def test_python_module_invocation_matches(self):
+        """python -m pytest / pytest 直调两条正路仍免死。"""
+        assert pr._is_whitelisted("python -m pytest tests/x.py -q", [], ["pytest"]) is not None
+        assert pr._is_whitelisted("pytest tests/backtest -q", [], ["pytest"]) is not None
+        assert pr._is_whitelisted("C:/Python312/python.exe -m pytest tests/x.py", [], ["pytest"]) is not None
+
+    def test_script_flag_minus_m_on_non_python_not_module(self):
+        """非 python 程序的 -m 旗不算模块段（python scripts/foo.py -m badmsg 同理）。"""
+        assert pr._is_whitelisted("python scripts/foo.py -m badmsg", [], ["pytest"]) is None
+
+    def test_script_and_ps1_basename_matches(self):
+        assert pr._is_whitelisted("pwsh -File scripts/backup/backup.ps1", [], ["backup.ps1"]) is not None
+        assert pr._is_whitelisted("python scripts/git_commit.py --session x", [], ["git_commit.py"]) is not None
+
+    def test_segments_lowercase_and_basename_only(self):
+        segs = pr._cmdline_identity_segments("C:/Python312/PYTHON.EXE -m PYTEST A/B/x.py")
+        assert "python.exe" in segs and "pytest" in segs and "x.py" in segs
+
+    def test_empty_cmdline_safe(self):
+        assert pr._cmdline_identity_segments("") == []
+        assert pr._is_whitelisted("", [], ["pytest"]) is None
+
+
+class TestH08KeepLineSessionTag:
+    """`<子串>|session=<sid>` 标记行解析；裸行不动。"""
+
+    def test_parse_tagged_and_bare(self):
+        assert pr._parse_keep_line("foo.py|session=st-a-1") == ("foo.py", "st-a-1")
+        assert pr._parse_keep_line("bare_substring") == ("bare_substring", None)
+        assert pr._parse_keep_line("|session=st-x") == ("|session=st-x", None)  # 空子串=裸行语义
+
+    def test_loader_strips_tag(self, tmp_path, monkeypatch):
+        f = tmp_path / "keep.txt"
+        f.write_text(
+            "bare_sub\n# comment\ntagged.py|session=st-live\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(pr, "_KEEP_FILE", f)
+        assert pr._load_keep_patterns() == ["bare_sub", "tagged.py"]
+
+    def test_cleanup_removes_only_dead_tagged_lines(self, tmp_path, monkeypatch):
+        f = tmp_path / "keep.txt"
+        f.write_text(
+            "bare_a\ndead.py|session=st-dead\nalive.py|session=st-live\n# keep comment\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(pr, "_KEEP_FILE", f)
+        counts = pr.cleanup_dead_session_keep_lines(active_session_ids={"st-live"})
+        assert counts == {
+            "kept_bare": 1,
+            "kept_alive_tagged": 1,
+            "removed_dead_tagged": 1,
+            "parsed": 3,
+        }
+        body = f.read_text(encoding="utf-8")
+        assert "dead.py" not in body
+        assert "bare_a" in body and "alive.py|session=st-live" in body
+
+    def test_cleanup_registry_unreachable_keeps_all(self, tmp_path, monkeypatch):
+        f = tmp_path / "keep.txt"
+        f.write_text("dead.py|session=st-dead\n", encoding="utf-8")
+        monkeypatch.setattr(pr, "_KEEP_FILE", f)
+
+        class _Boom:
+            def list_active(self):
+                raise RuntimeError("registry down")
+
+        import zephyr.security.access_control.session_concurrency as sc
+
+        monkeypatch.setattr(sc, "SessionRegistry", lambda *a, **k: _Boom())
+        counts = pr.cleanup_dead_session_keep_lines(active_session_ids=None)
+        assert counts["parsed"] == -1
+        assert "dead.py" in f.read_text(encoding="utf-8")

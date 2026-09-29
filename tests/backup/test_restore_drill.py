@@ -508,3 +508,35 @@ def test_c2_direction_uses_strict_inequality_on_equal_counts():
     rep = _judge(rows, _table_names(89), _table_names(89), _consistent_samples(rows))
     assert rep["pass"] is True
     assert all(v["match"] is True for v in rep["rows"].values())
+
+
+# ============ H06（2026-09-29 SW11）：演练库 collate 保真（template0） ============
+
+
+def test_h06_create_drill_sql_pins_template0_and_live_locale():
+    """建库语句必须 template0+显式三 locale——治本 datcollate 继承 template1 的零交集根因。"""
+    sql = rd._build_create_drill_sql("C", "C", "UTF8")
+    assert "TEMPLATE template0" in sql
+    assert "LC_COLLATE 'C'" in sql
+    assert "LC_CTYPE 'C'" in sql
+    assert "ENCODING 'UTF8'" in sql
+    assert rd._DRILL_DB in sql
+    # 旧语句（继承 template1）降级为对照常量，运行面唯一建库入口=_build_create_drill_sql
+    assert rd._SQL_CREATE_DRILL_DB_LEGACY == "CREATE DATABASE " + rd._DRILL_DB
+    src = Path(rd.__file__).read_text(encoding="utf-8")
+    run_face = src.split("def run_drill", 1)[1]
+    assert "_SQL_CREATE_DRILL_DB " not in run_face.replace("_SQL_CREATE_DRILL_DB_LEGACY", "")
+
+
+def test_h06_create_drill_sql_escapes_single_quotes():
+    """locale 读数含单引号（如 Windows locale 名带撇号）时 SQL 转义，不破语句。"""
+    sql = rd._build_create_drill_sql("Chinese (Simplified)_China.936", "C", "UTF8")
+    assert "LC_COLLATE 'Chinese (Simplified)_China.936'" in sql
+    evil = "obrien"
+    sql2 = rd._build_create_drill_sql(f"{evil}'x", "C", "UTF8")
+    assert "LC_COLLATE 'obrien''x'" in sql2
+
+
+def test_h06_fallback_locale_is_live_measured_values():
+    """locale 读数失败回落值=活库 09-26 实测值（C/C/UTF8），回落事实由 run_drill 入报告。"""
+    assert rd._DRILL_LOCALE_FALLBACK == ("C", "C", "UTF8")

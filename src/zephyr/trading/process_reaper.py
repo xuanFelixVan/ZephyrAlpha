@@ -257,28 +257,140 @@ class ReapReport:
 
 
 def _load_keep_patterns() -> list[str]:
-    """读取个案保留清单（data/runtime/process_reaper_keep.txt，每行一个 cmdline 子串）。"""
+    """读取个案保留清单（data/runtime/process_reaper_keep.txt，每行一个 cmdline 子串）。
+
+    H08（2026-09-29 SW11）扩展行格式：`<子串>|session=<sid>` 尾注形式（供 --keep-cleanup
+    按会话生死清理）；裸行永不自动清理。返回值仍为纯子串列表（session 尾注剥离），消费面
+    （_is_whitelisted）语义不变。
+    """
     patterns: list[str] = []
     try:
         if _KEEP_FILE.exists():
             for line in _KEEP_FILE.read_text(encoding="utf-8").splitlines():
                 line = line.strip()
                 if line and not line.startswith("#"):
-                    patterns.append(line)
+                    patterns.append(_strip_keep_session_tag(line))
     except OSError as e:
         logger.warning("keep 文件读取失败（忽略，按无个案保留处理）: %s", e)
     return patterns
 
 
+#: H08：标记行尾注分隔符（`<子串>|session=<sid>`；子串含 `|` 的用例请改写子串）
+_KEEP_SESSION_TAG_SEP = "|session="
+
+
+def _parse_keep_line(line: str) -> tuple[str, str | None]:
+    """拆 keep 行为 (pattern, session_tag|None)。裸行返回 (line, None)。"""
+    if _KEEP_SESSION_TAG_SEP in line:
+        pat, _, tag = line.rpartition(_KEEP_SESSION_TAG_SEP)
+        if pat.strip():
+            return pat.strip(), tag.strip()
+    return line, None
+
+
+def _strip_keep_session_tag(line: str) -> str:
+    return _parse_keep_line(line)[0]
+
+
+def _cmdline_identity_segments(cmdline: str) -> list[str]:
+    """提取 cmdline 的身份段（H08，2026-09-29）：程序基名 + python -m 模块名 + 脚本/可执行件基名。
+
+    keep 免死名单只应在「进程身份」粒度命中——旧实现 `sub in cmdline` 全行子串匹配会把
+    `git commit -m "pytest docs"` 这类参数误判免死。段=小写基名（去目录）。
+    `-m` 只在 python 族程序且紧随程序位时算模块段（git commit -m 的消息旗不是身份）。
+    """
+    segs: list[str] = []
+    toks = cmdline.split()
+    if not toks:
+        return segs
+
+    def _base(t: str) -> str:
+        t = t.replace("\\", "/").rsplit("/", 1)[-1]
+        # 剥引号尾巴（cmdline 渲染差异）
+        return t.strip('"').lower()
+
+    prog = _base(toks[0])
+    segs.append(prog)
+    prog_core = prog[:-4] if prog.endswith(".exe") else prog
+    pythonish = prog_core in {"python", "python3", "py", "pythonw"}
+    if pythonish and len(toks) >= 3 and toks[1] == "-m":
+        segs.append(_base(toks[2]))
+    for i, t in enumerate(toks):
+        tl = t.lower()
+        if pythonish and i == 1 and tl == "-m":
+            continue  # 已按模块段消费
+        if tl.endswith((".py", ".exe", ".ps1", ".cmd", ".bat")) and i > 0:
+            segs.append(_base(t))
+    return segs
+
+
 def _is_whitelisted(cmdline: str, whitelist_res: list[re.Pattern], keep_subs: list[str]) -> str | None:
-    """命中白名单返回命中描述，未命中返回 None。"""
+    """命中白名单返回命中描述，未命中返回 None。
+
+    H08（2026-09-29）：keep 子串从「全行子串」收窄为「身份段子串」——keep 项命中
+    进程身份段（程序基名/-m 模块名/脚本基名）才免死，参数/注释文本不再误触发。
+    """
     for rx in whitelist_res:
         if rx.search(cmdline):
             return f"whitelist:{rx.pattern[:40]}"
+    segs = _cmdline_identity_segments(cmdline)
     for sub in keep_subs:
-        if sub in cmdline:
+        s = sub.lower()
+        if any(s in seg for seg in segs):
             return f"keep_file:{sub[:40]}"
     return None
+
+
+def cleanup_dead_session_keep_lines(active_session_ids: set[str] | None = None) -> dict[str, int]:
+    """H08（2026-09-29 SW11）：清理 keep 文件中「标记行归属会话已死」的行。
+
+    纪律（宪法 §2/夜战铁律）：**裸行（无 session 尾注）永不自动删除**；只动
+    `<子串>|session=<sid>` 标记行且其 sid 不在 active_session_ids（None=查
+    SessionRegistry 活跃集）。文件重写走 safe_write_text CAS（热文件铁律）。
+    返回计数 dict（kept_bare/kept_alive_tagged/removed_dead_tagged/parsed）。
+    """
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    if active_session_ids is None:
+        try:
+            active_session_ids = {s.session_id for s in SessionRegistry().list_active()}
+        except Exception as e:  # noqa: BLE001 — 注册表不可达时宁可全保留
+            logger.warning("SessionRegistry 不可达，跳过 keep 清理: %s", e)
+            active_session_ids = None
+    if active_session_ids is None:
+        return {"kept_bare": 0, "kept_alive_tagged": 0, "removed_dead_tagged": 0, "parsed": -1}
+
+    try:
+        raw = _KEEP_FILE.read_text(encoding="utf-8").splitlines() if _KEEP_FILE.exists() else []
+    except OSError as e:
+        logger.warning("keep 文件读取失败，跳过清理: %s", e)
+        return {"kept_bare": 0, "kept_alive_tagged": 0, "removed_dead_tagged": 0, "parsed": -1}
+
+    kept: list[str] = []
+    counts = {"kept_bare": 0, "kept_alive_tagged": 0, "removed_dead_tagged": 0, "parsed": 0}
+    for line in raw:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            kept.append(line)
+            continue
+        counts["parsed"] += 1
+        pat, sid = _parse_keep_line(stripped)
+        if sid is None:
+            counts["kept_bare"] += 1
+            kept.append(line)
+        elif sid in active_session_ids:
+            counts["kept_alive_tagged"] += 1
+            kept.append(line)
+        else:
+            counts["removed_dead_tagged"] += 1
+    if counts["removed_dead_tagged"]:
+        from zephyr.shared.io.file_utils import safe_write_text
+
+        r = safe_write_text(_KEEP_FILE, "\n".join(kept) + "\n", repo_root=REPO_ROOT)
+        if not r.written:
+            logger.error("keep 清理写回失败（CAS 冲突），本轮不删任何行: %s", r)
+            return {"kept_bare": 0, "kept_alive_tagged": 0, "removed_dead_tagged": 0, "parsed": -1}
+    return counts
 
 
 # ============== 进程枚举与判定（纯函数，可测试）==============
@@ -1262,10 +1374,19 @@ def main() -> None:
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--dry-run", action="store_true", help="只报告不杀（验证用）")
     group.add_argument("--status", action="store_true", help="读取上次运行状态")
+    group.add_argument(
+        "--keep-cleanup",
+        action="store_true",
+        help="清理 keep 文件中归属死会话的标记行（|session=<sid> 尾注；裸行永不删）。H08 2026-09-29",
+    )
     args = parser.parse_args()
 
     if args.status:
         sys.exit(_print_status())
+
+    if args.keep_cleanup:
+        print(json.dumps(cleanup_dead_session_keep_lines(), ensure_ascii=False))
+        return
 
     report = reap(dry_run=args.dry_run)
     print(

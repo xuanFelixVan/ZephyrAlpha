@@ -112,6 +112,31 @@ function Release-Lock {
     if (Test-Path $LockFile) { Remove-Item $LockFile -Force -ErrorAction SilentlyContinue }
 }
 
+# ---- share-tolerant handle copy (H04, 2026-09-29 SW11) ----
+# WHY: two failure forms at the vault copy step fed error_sample:
+#   (a) read-only-attributed sources: [System.IO.File]::Copy inherits the
+#       ReadOnly bit onto the destination, so the mtime-parity write right
+#       after it throws UnauthorizedAccessException -> counted as a failure;
+#   (b) sources held open by a live writer under restrictive share modes.
+# The handle-based copy opens the destination as a FRESH stream (no attribute
+# inheritance -> (a) cured) and opens the source with FileShare.ReadWrite
+# (accepts any existing open that allows read/write sharing -> (b) eased).
+# NOTE: a copy taken mid-write can capture a torn tail; accepted tradeoff -
+# the alternative was skipping the file entirely (status=failed).
+function Copy-FileShareTolerant {
+    param([string]$Source, [string]$Dest, [bool]$Overwrite)
+    $mode = [System.IO.FileMode]::CreateNew
+    if ($Overwrite) { $mode = [System.IO.FileMode]::Create }
+    $fsSrc = [System.IO.FileStream]::new($Source, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+    try {
+        $fsDst = [System.IO.FileStream]::new($Dest, $mode, [System.IO.FileAccess]::Write, [System.IO.FileShare]::Read)
+        try {
+            $fsSrc.CopyTo($fsDst)
+            $fsDst.Flush()
+        } finally { $fsDst.Dispose() }
+    } finally { $fsSrc.Dispose() }
+}
+
 # ==================== mirror deletion guard ====================
 # WHY: /MIR propagates deletions. The 2026-09-14 docs/_working incident proved that a
 # source-side accident destroys the last recovery copy the same night (see the v2.1.0
@@ -695,7 +720,7 @@ if ($Mode -eq "ch") {
                     New-Item -ItemType HardLink -Path $dstFull -Value $prevFull -ErrorAction Stop | Out-Null
                     $linked++
                 } else {
-                    [System.IO.File]::Copy($srcFull, $dstFull, $false)
+                    Copy-FileShareTolerant -Source $srcFull -Dest $dstFull -Overwrite $false
                     # Guarantee mtime parity with source (diff consistency)
                     (Get-Item -LiteralPath $dstFull -Force).LastWriteTimeUtc = $srcMtime
                     $copied++
@@ -705,7 +730,7 @@ if ($Mode -eq "ch") {
                 try {
                     if (Test-Path -LiteralPath $dstFull) { Remove-Item -LiteralPath $dstFull -Force -ErrorAction SilentlyContinue }
                     if (-not (Test-Path -LiteralPath $dstDir)) { New-Item -ItemType Directory -Path $dstDir -Force | Out-Null }
-                    [System.IO.File]::Copy($srcFull, $dstFull, $true)
+                    Copy-FileShareTolerant -Source $srcFull -Dest $dstFull -Overwrite $true
                     (Get-Item -LiteralPath $dstFull -Force).LastWriteTimeUtc = $srcMtime
                     $copied++
                 } catch {
