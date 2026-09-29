@@ -19,6 +19,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from zephyr.gov_enforcement.rule_bridge import commit_gate_registry as cgr  # noqa: E402
 
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+
 
 class _FakeGateway:
     def __init__(self, project_root: Path) -> None:
@@ -32,8 +34,13 @@ def _last_rec(root: Path) -> dict:
 
 
 def test_stat_flush_records_sub_ms_gates(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    # 防假绿：确认加载的是本 worktree 的源码
-    assert "csx-p13" in cgr.__file__.replace("\\", "/")
+    # 防假绿：确认加载的是本仓树（本测试所在 checkout/worktree）的源码，
+    # 而非 pip editable .pth 指向的外来 checkout——原版曾绑作者 worktree 绝对路径
+    # 子串 "csx-p13"，任何其他 worktree/主区恒红（st-nightsweep-sw12 改相对判据，
+    # 语义零放宽：跨仓加载仍必红）
+    assert Path(cgr.__file__).resolve().is_relative_to(_REPO_ROOT), (
+        f"commit_gate_registry 加载自外来源码: {cgr.__file__} (本仓根={_REPO_ROOT})"
+    )
     monkeypatch.setattr(
         cgr,
         "_STAT_ACC",
