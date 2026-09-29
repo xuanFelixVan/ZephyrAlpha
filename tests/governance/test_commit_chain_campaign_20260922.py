@@ -642,3 +642,82 @@ def test_rx4_config_hook_ids_parse_fallback(tmp_path: Path, monkeypatch: pytest.
     )
     assert rc == 0
     assert "ruff" not in _ENV_LOG[-1].get("SKIP", "")  # 无枚举 → 不收窄
+
+
+# ---------------------------------------------------------------------------
+# E4 落地池治本（夜总攻 NE4 st-nightsweep2-ne4-20260930）：通道超时 fail-closed。
+# 实证：k=4 池 552 次通道运行 73 例双超时 1200s 后零校验放行（precommit_channel_stats）。
+# ---------------------------------------------------------------------------
+
+
+def _stub_timeout_subprocess(monkeypatch: pytest.MonkeyPatch) -> None:
+    """pre-commit 子进程调用恒抛 TimeoutExpired（git 调用照常 rc=0）。"""
+    import zephyr.shared.infra.process_pool as pp
+
+    def _fake_run(cmd, **kwargs):  # noqa: ANN001, ANN003
+        if cmd and cmd[0] == "git":
+            return subprocess.CompletedProcess(cmd, 0, "headsha\n", "")
+        raise subprocess.TimeoutExpired(cmd, timeout=900)
+
+    monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
+
+
+def _stub_unavailable_subprocess(monkeypatch: pytest.MonkeyPatch) -> None:
+    """pre-commit 子进程调用恒抛 FileNotFoundError（git 调用照常 rc=0）——#341 放行面。"""
+    import zephyr.shared.infra.process_pool as pp
+
+    def _fake_run(cmd, **kwargs):  # noqa: ANN001, ANN003
+        if cmd and cmd[0] == "git":
+            return subprocess.CompletedProcess(cmd, 0, "headsha\n", "")
+        raise FileNotFoundError("pre_commit")
+
+    monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
+
+
+def _read_block_events(tmp_path: Path) -> list[dict]:
+    p = tmp_path / ".runtime" / "audit" / "commit_block_events.jsonl"
+    if not p.exists():
+        return []
+    return [json.loads(ln) for ln in p.read_text(encoding="utf-8").splitlines() if ln.strip()]
+
+
+def test_e4_channel_timeout_blocks_fail_closed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """E4 判别①：全量 run 超时 → 拒袋阻断（含处方），禁零校验放行；审计落 timeout_block。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_timeout_subprocess(monkeypatch)
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: False)  # 直达 Phase-B 超时
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    blocked = gw.GitCommitGateway._run_precommit_channel(g, "sid-e4", ["a.py"])
+    assert blocked is not None
+    assert "GATE-PRECOMMIT-RUN 阻断" in blocked and "超时" in blocked
+    assert "requeue" in blocked  # 处方面：瞬态负载语义可复位
+    events = _read_block_events(tmp_path)
+    assert any(e.get("event") == "precommit_channel_timeout_block" for e in events)
+
+
+def test_e4_timeout_failopen_env_rollback(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """E4 回退手柄：ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1 → 恢复 #341 fail-open 放行。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_timeout_subprocess(monkeypatch)
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: False)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setenv("ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN", "1")
+    assert gw.GitCommitGateway._run_precommit_channel(g, "sid-e4r", ["a.py"]) is None
+    assert not [e for e in _read_block_events(tmp_path) if e.get("event") == "precommit_channel_timeout_block"]
+
+
+def test_e4_non_timeout_infra_still_fail_open(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """E4 边界：非超时基础设施故障（pre-commit 不可用）维持 #341 放行语义不变。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_unavailable_subprocess(monkeypatch)
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: False)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    assert gw.GitCommitGateway._run_precommit_channel(g, "sid-e4n", ["a.py"]) is None
+    events = _read_block_events(tmp_path)
+    assert any(e.get("event") == "precommit_channel_infra_error" for e in events)  # 原审计面保持

@@ -433,6 +433,16 @@ def _precommit_phaseb_full_enabled() -> bool:
     return os.environ.get("ZEPHYR_PRECOMMIT_PHASEB_FULL", "0").strip() == "1"
 
 
+def _precommit_timeout_failopen() -> bool:
+    """E4 回退手柄：env ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1 → 通道超时恢复 #341 fail-open 放行。
+
+    缺省 fail-closed（夜总攻 NE4 车道 2026-09-30）：k=4 落地池 552 次通道运行实证
+    73 例双超时（fast 300s→全量 900s，墙钟 1200s）后零校验放行——每例白付 20 分钟
+    且门禁空转，既吞吞吐吐又破防线。超时=fail-closed 拒袋留处方（瞬态负载语义）。
+    """
+    return os.environ.get("ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN", "0").strip() == "1"
+
+
 def _precommit_config_hook_ids(project_root: str) -> tuple[str, ...]:
     """Rx-4：解析 .pre-commit-config.yaml 全部 hook id（Phase-B SKIP 反选=快段已验台的枚举真源）。
 
@@ -3536,7 +3546,10 @@ class GitCommitGateway:
         - pre-commit 报 "files were modified by this hook" → 重跑 1 次消解并发写入假阳
           后仍变异 → 阻断（staged 内容已被改写，带修改落盘=提交内容与校验内容不一致，
           fail-closed）
-        - pre-commit 自身不可用/超时（基础设施故障，非违规证据）→ warn + 审计 + 放行
+        - pre-commit run 超时 → fail-closed 拒袋留处方（E4 2026-09-30：实测双超时
+          1200s 后零校验放行 73/552 例，p90 尾巴主源；env
+          ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1 回退 #341 fail-open）
+        - pre-commit 自身不可用等其余基础设施故障 → warn + 审计 + 放行
           （可用性优先；flag OFF 是 Owner 停用手柄）
 
         SKIP 清单（_PRECOMMIT_CHANNEL_SKIP_HOOKS）：
@@ -3598,7 +3611,34 @@ class GitCommitGateway:
             return None  # 空 repo（无 HEAD）：临时索引无从建立，放行走既有门禁链
 
         if infra_error:
-            # 基础设施故障（非违规证据）→ warn + 审计 + 放行（可用性优先，见 docstring）
+            # E4 落地池治本（夜总攻 NE4 2026-09-30，排查授权已批）：超时=fail-closed
+            # 拒袋留处方，不再静默吞。实证：k=4 池 552 次通道运行，73 例（13%）
+            # fast-subset 300s 超时→全量 900s 超时（墙钟 1200s）后零校验放行——
+            # p90 尾巴主源+门禁空转。判据零变化：hook 集/判定器/超时数值全不动，
+            # 只改超时的失败方向；拒绝语义=瞬态负载（requeue 退避重投），非违规。
+            # 回退手柄：env ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1 恢复 #341 原 fail-open。
+            if "timeout" in infra_error.lower() and not _precommit_timeout_failopen():
+                logger.warning(
+                    "GitCommitGateway: pre-commit 通道超时，fail-closed 拒袋（E4）: %s",
+                    infra_error,
+                )
+                self._append_commit_anomaly_jsonl(
+                    {
+                        "session_id": session_id,
+                        "event": "precommit_channel_timeout_block",
+                        "gate_id": "GATE-PRECOMMIT-RUN",
+                        "files_count": len(files),
+                        "detail": infra_error[:500],
+                    }
+                )
+                return (
+                    "门禁 GATE-PRECOMMIT-RUN 阻断: pre-commit run 超时（fail-closed，E4 治本："
+                    "超时禁零校验放行）。处方=机器负载瞬态：退避 5-10min 后 requeue 重投；"
+                    "连续超时=hook 挂起或机器过载，报维护班排查，勿绕行勿 --no-verify。\n"
+                    f"{infra_error[:500]}"
+                )
+            # 基础设施故障（非违规证据、非超时：pre-commit 不可用等）→ warn + 审计 +
+            # 放行（#341 可用性优先语义保持不变，见 docstring）
             logger.warning("GitCommitGateway: pre-commit 通道基础设施故障，放行并落审计: %s", infra_error)
             self._append_commit_anomaly_jsonl(
                 {
