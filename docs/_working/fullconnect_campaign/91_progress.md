@@ -48,7 +48,7 @@ T 袋（F40 候选池+盘前通电/F41 反馈环+九态桥）｜K 袋（F60 减�
 落地链治本系列（2754cc9e6f TEST-SOURCE/94326c3bd9+a4211e4b16 head_reader/af7e492276 落地自证读回）｜红蓝两缺陷（5103bbca85/3065146281）｜孤儿对抗测试退役（e36d0ff70f）｜W-156 假声明改锚（3dc18f13d6）｜⚑-1② 判伪撤销（a60cbe844e）｜99 台账 #21-#41 合并+误删五行恢复｜91 台账断档回填。
 
 ### ③已排序待施工（二期，按优先序）
-1. 合规门十闸余量接线（W-140：模拟盘执法先行，实盘面绑 TRD-A10 沙箱换版+30 交易日窗）｜2. F56 kernel 三选一（99 #36：a 委托 B7/b 例外面/等沙箱写侧进仓）｜3. M1 封矿治理（F125/F127/F128/F130 装饰环接线或退役；裁-6 分母活边）｜4. trae_034 三死指针（PROTECTED-PATHS 待裁定通道，99 #35）｜5. CH 复活后实弹批（etf_benchmark 重写#19/realtime 换源#20/intake_ledger_recon rebuild/apply_market_tables_ddl 执行）｜6. 二期序列：F53 Saga/F04 清洗四引擎/F74 铃铛余量/F73/F75/F92/F30/F05-F06｜7. 波9 回流 W-152..W-162。
+1. 合规门十闸余量接线（W-140：模拟盘执法先行，实盘面绑 TRD-A10 沙箱换版+30 交易日窗）｜2. F56 kernel 三选一（99 #36：a 委托 B7/b 例外面/等沙箱写侧进仓）（已做：edf0788dfb 选c墓碑+dd3b17f9fd 断腿重建，2026-09-29 回填）｜3. M1 封矿治理（F125/F127/F128/F130 装饰环接线或退役；裁-6 分母活边）（已做：794f16569b，2026-09-29 回填）｜4. trae_034 三死指针（PROTECTED-PATHS 待裁定通道，99 #35）（已做：1cf01067f5+7f9de37b2a，2026-09-29 回填）｜5. CH 复活后实弹批（etf_benchmark 重写#19/realtime 换源#20/intake_ledger_recon rebuild/apply_market_tables_ddl 执行）｜6. 二期序列：F53 Saga/F04 清洗四引擎/F74 铃铛余量/F73/F75/F92/F30/F05-F06｜7. 波9 回流 W-152..W-162。
 
 ### ④Owner 门位（99_skipped_for_owner.md #1-#41 全录）
 高频提醒：#29 TRD-A10 沙箱换版+env=real（实盘前置）｜#34 裁-13 decision_timestamp 正式注册｜#35 trae_034 死指针｜#36 F56 kernel 三选一｜#8 见证层实盘域二次批｜#14 commit_queue_interactive 出厂翻转｜#21 F34 DDL --apply｜#25 F51 币圈退役｜#19/#20 换源实弹。其余见台账原文。
@@ -70,7 +70,7 @@ T 袋（F40 候选池+盘前通电/F41 反馈环+九态桥）｜K 袋（F60 减�
 落地链治本系列（2754cc9e6f TEST-SOURCE/94326c3bd9+a4211e4b16 head_reader/af7e492276 落地自证读回）｜红蓝两缺陷（5103bbca85/3065146281）｜孤儿对抗测试退役（e36d0ff70f）｜W-156 假声明改锚（3dc18f13d6）｜⚑-1② 判伪撤销（a60cbe844e）｜99 台账 #21-#41 合并+误删五行恢复｜91 台账断档回填。
 
 ### ③已排序待施工（二期，按优先序）
-1. 合规门十闸余量接线（W-140：模拟盘执法先行，实盘面绑 TRD-A10 沙箱换版+30 交易日窗）｜2. F56 kernel 三选一（99 #36：a 委托 B7/b 例外面/等沙箱写侧进仓）｜3. M1 封矿治理（F125/F127/F128/F130 装饰环接线或退役；裁-6 分母活边）｜4. trae_034 三死指针（PROTECTED-PATHS 待裁定通道，99 #35）｜5. CH 复活后实弹批（etf_benchmark 重写#19/realtime 换源#20/intake_ledger_recon rebuild/apply_market_tables_ddl 执行）｜6. 二期序列：F53 Saga/F04 清洗四引擎/F74 铃铛余量/F73/F75/F92/F30/F05-F06｜7. 波9 回流 W-152..W-162。
+1. 合规门十闸余量接线（W-140：模拟盘执法先行，实盘面绑 TRD-A10 沙箱换版+30 交易日窗）｜2. F56 kernel 三选一（99 #36：a 委托 B7/b 例外面/等沙箱写侧进仓）（已做：edf0788dfb 选c墓碑+dd3b17f9fd 断腿重建，2026-09-29 回填）｜3. M1 封矿治理（F125/F127/F128/F130 装饰环接线或退役；裁-6 分母活边）（已做：794f16569b，2026-09-29 回填）｜4. trae_034 三死指针（PROTECTED-PATHS 待裁定通道，99 #35）（已做：1cf01067f5+7f9de37b2a，2026-09-29 回填）｜5. CH 复活后实弹批（etf_benchmark 重写#19/realtime 换源#20/intake_ledger_recon rebuild/apply_market_tables_ddl 执行）｜6. 二期序列：F53 Saga/F04 清洗四引擎/F74 铃铛余量/F73/F75/F92/F30/F05-F06｜7. 波9 回流 W-152..W-162。
 
 ### ④Owner 门位（99_skipped_for_owner.md #1-#41 全录）
 高频提醒：#29 TRD-A10 沙箱换版+env=real（实盘前置）｜#34 裁-13 decision_timestamp 正式注册｜#35 trae_034 死指针｜#36 F56 kernel 三选一｜#8 见证层实盘域二次批｜#14 commit_queue_interactive 出厂翻转｜#21 F34 DDL --apply｜#25 F51 币圈退役｜#19/#20 换源实弹。其余见台账原文。

@@ -4,7 +4,7 @@ ttl: task_bound
 
 # 99_FINAL_REPORT — 提交链治本战役终报（st-commitspeed-tbl-20260924）
 
-> 状态：**草稿（数据持续回填）**。红蓝治理组已收、鲁棒组在跑、T13 双袋在队、flag 翻转呈 Owner。
+> 状态：**定稿（2026-09-29 st-finaldel-m5 HEAD 复核回填，增量见 §七）**。红蓝治理组已收、鲁棒组已收、flag immutable_tree 已翻、rules_integrity_db 出库已批②。
 > 真源链：本报告 ← CAMPAIGN_STATE_SNAPSHOT.md ← decisions_log.md（60+ 条裁定全录）。
 
 ## 一、目标与结果总览
@@ -31,15 +31,15 @@ Owner 原始目标：查清"提交一个文件为何等 10-20 分"并彻底治�
 1. ~~重试环 723min~~ → 簇1 已收（CREATE-GUARD 塌缩实证）；T10 廉价门前置待逐 hook 取证定责
 2. ~~hook 成本与件数脱钩~~ → 冷启动税证伪（0.49s×69）；own-scope 取证批框架已留
 3. precommit 1200s 超时×3 → 待 hook own-scope 改造
-4. S1 生效（flag 翻转后 64s→<25s）→ 待 Owner 门位
+4. S1 生效：flag 已翻（2026-09-29）；余量=生效验收实测（C04：重放对照 selfcheck100 + 四工新链 total_ms 读数）
 5. residual 未解释 123s/笔 → 锁等待插桩（R2 前置）
 
 ## 三、Owner 呈报清单（唯一待裁定集，全部不阻塞链路）
 
-1. **flag `immutable_tree` 翻转**（快照 §十二 有一键命令+回滚命令）
-2. flag `regen_scope: main_only` / `gate_result_cache` 同批翻转（可选）
-3. DB `rules_integrity_db.json` 出库 git（MQ-1）
-4. 死信 119 封废弃确认 + 59 封归还属主（R1+R2 分诊清单）
+1. **[已落地 2026-09-29]** flag `immutable_tree` 翻转（flags.yaml@HEAD `immutable_tree: true`）；余量=S1 生效验收实测（C04）（勘误补注 2026-09-29：翻转=ed935c29afd，Owner 09-26 批——防重复走门位）
+2. flag `regen_scope: main_only` / `gate_result_cache` 同批翻转（可选）（勘误补注 2026-09-29：gate_result_cache+T7 新键已 live=df8507ac9b+cb3c13b74f8——防重复走门位；regen_scope 仍呈 Owner）
+3. **[已批②]** DB `rules_integrity_db.json` 出库 git（Owner 终局批②）；处方待执行：git rm --cached + .gitignore + 再注册通道拦截（可全量重算=--register/--fold 重建基线；工单 C148）。C148 处方已立（含再注册白名单前提），待 Owner 批后执行
+4. 死信处置：draft 时 119+59 分诊口径已过期——2026-09-29 审计窗 dead 已涨至 1079 封，按内容驱动新规分批（≤10 封/批）处置（C02），废弃/归还确认仍呈 Owner
 5. T14 own_scope 14 条终裁 + 15 门 P4 家族处置
 6. 归属级 HMAC 载体（红蓝④发现，登记待办）
 
@@ -61,3 +61,17 @@ Owner 原始目标：查清"提交一个文件为何等 10-20 分"并彻底治�
 ## 六、事故与学费（全部在册）
 
 worktree 局部队列陷阱×3（enqueue 三件套配方）/token 与文件同批违例（token 先行配方）/S1 前置件落错分支（branch --contains 铁律）/stash 前置 pwd 断言/自举 drain PYTHONPATH 毒/PYTHONPATH=src 测自改码。
+
+## 七、定稿补记（2026-09-29 st-finaldel-m5 HEAD 复核）
+
+本报告按 2026-09-29 HEAD 复核定稿，上文陈旧处已就地标注；增量对账表：
+
+| 项 | draft 时口径 | HEAD 复核终态（2026-09-29） | 证据 |
+|---|---|---|---|
+| flag immutable_tree | 呈 Owner 待翻 | **已翻**：flags.yaml@HEAD `immutable_tree: true` | git show HEAD:config/flags.yaml |
+| 红蓝鲁棒组 | ①②③（执行中） | **已收**：报告+测试面在 HEAD；F1 真实生产竞态（低频高后果）→移交 Owner 修复单 | 70_redblue/redblue_robust.md@HEAD |
+| rules_integrity_db 出库 | 呈 Owner（MQ-1） | **Owner 终局批②已获**，处方未执行（出库后 --register/--fold 仍可全量重算基线；须同步拦截 commit_derived_sync/post_commit_ritual 再注册通道防回灌） | 工单 C148 |
+| 死信 | 119 废弃+59 归还 | 审计窗 dead=1079 封且持续增长；按内容驱动新规 ≤10 封/批分诊处置 | 2026-09-29 终审清单 C02 |
+| S1 生效 | 待 Owner 翻 flag | flag 已翻；**唯一余量=C04 生效验收实测**（连续两轮达标=战役终止判据） | C04 |
+
+仍呈 Owner 面（§三收敛后）：regen_scope/gate_result_cache 可选同批翻转、T14 own_scope 14 条终裁+15 门 P4 家族处置、归属级 HMAC 载体立项、死信废弃/归还确认、rules_integrity_db 出库处方执行。T13 双袋终态以 .runtime/commit_queue done|dead 实读为准，本报告不再追记在飞袋号。
