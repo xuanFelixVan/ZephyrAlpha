@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SCRIPT-run_post_settlement | scripts/run_post_settlement.py | §
 # [MODULE] scripts.run_post_settlement
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] stdlib；zephyr.trading.post_settlement_pipeline（流水线真源）；zephyr.trading.settlement_reconciliation（SettlementReconciler）；zephyr.trading.broker_settlement_adapter（fetch_broker_settlement_records 券商侧适配）；zephyr.ex_core.fill_handler（query_fills_by_date 读取口径）；zephyr.risk.core.daily_auditor（DailyAuditor.audit + run_var_backtest_from_store）；zephyr.risk.core.backtest_store（VarBacktestStore 门面，VaR 定级归档）；zephyr.shared.state_store（JsonStateStore 风控状态根）；zephyr.data.trading_calendar（is_trading_day 交易日回推）；zephyr.ex_core.adapters.miniqmt_broker（QMT 模拟盘连接，延迟 import 可降级）
+# [DEPENDENCIES] stdlib；zephyr.trading.post_settlement_pipeline（流水线真源）；zephyr.trading.settlement_reconciliation（SettlementReconciler）；zephyr.trading.broker_settlement_adapter（fetch_broker_settlement_records 券商侧适配）；zephyr.ex_core.fill_handler（query_fills_by_date 读取口径）；zephyr.risk.core.daily_auditor（DailyAuditor.audit + run_var_backtest_from_store）；zephyr.risk.core.backtest_store（VarBacktestStore 门面，VaR 定级归档）；zephyr.shared.state_store（JsonStateStore 风控状态根）；zephyr.data.trading_calendar（is_trading_day 交易日回推）；zephyr.ex_core.adapters.miniqmt_broker（QMT 模拟盘连接，延迟 import 可降级）；zephyr.position.live_nav_recorder（GAP-F-29 净值腿，延迟 import）；zephyr.data.ch_writer（净值落库正门）；schemas.categories.market.market_account_nav_daily（INSERT 列真源）
 # [CONSUMERS] 57 号文 §3 收盘结算管线触发入口（人工 CLI 保留；挂调度已获 Owner 2026-09-15 全自动指令批准——计划任务 ZephyrAlpha_PostSettlement 工作日 15:30 经 scripts/register_post_settlement_task.ps1 注册，幂等只读不变）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 只读对账+审计不写业务 DB（reconciliation_differences 落库由 recon_runner 负责，本脚本不重复写）；VaR 回测定级为本脚本新增状态写副作用且只写既有风控状态根(data/runtime/state)的 var_backtest_report_* 归档——状态根/盘前基线缺失即整步跳过且绝不 mkdir 造目录，本步异常与结论永不改退出码，定级动作不在本脚本执行（§3.10 唯一执行者=编排层 apply_var_backtest_action）；QMT 不在线降级为仅系统侧+显式标注（不伪造"券商侧为空"的假比对）；对账不一致必打印 C 类异常清单+exit 3（不静默）；步骤异常 exit 1；幂等（同 trade_date 重跑无副作用）
+# [INVARIANTS] 对账/审计步保持只读（reconciliation_differences 落库由 recon_runner 负责，本脚本不重复写）；唯一业务 DB 写副作用=GAP-F-29 日终净值腿（st-c9-emptyfill 接线：account_nav_daily 单表，ch_writer 正门 TSV，资产数=QMT 模拟账户实时快照禁编造，基准缺失 NULL 降级；失败大声留痕并吞没、永不改退出码矩阵，broker 离线则整步不跑）；VaR 回测定级为本脚本状态写副作用且只写既有风控状态根(data/runtime/state)的 var_backtest_report_* 归档——状态根/盘前基线缺失即整步跳过且绝不 mkdir 造目录，本步异常与结论永不改退出码，定级动作不在本脚本执行（§3.10 唯一执行者=编排层 apply_var_backtest_action）；QMT 不在线降级为仅系统侧+显式标注（不伪造"券商侧为空"的假比对）；对账不一致必打印 C 类异常清单+exit 3（不静默）；步骤异常 exit 1；幂等（同 trade_date 重跑无副作用——净值表 ReplacingMergeTree 按 trade_date 同键替换）
 # [MODIFY-GUARD] 57_daily_cycle_sop.md §3/§7 GAP-3；54_reconciliation_attribution.md §2.4/§3.3；#ARCH-DAILY-CYCLE-GAP23-001
 # [STABILITY] evolving
 # [SAFETY] M
@@ -75,7 +75,13 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 # 脚本直跑（python scripts/xxx.py）时保证 src 布局可导入（冒烟脚本同口径）
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
+# GAP-F-29 净值腿接线（st-c9-emptyfill）：DDL 真源 schemas/ 在仓根非 src/，
+# 导入 INSERT_COLUMNS 须仓根入 path（apply_market_tables_ddl.py 同款双路径口径）
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
+from schemas.categories.market.market_account_nav_daily import INSERT_COLUMNS as _NAV_INSERT_COLUMNS  # noqa: E402
+from zephyr.data.table_registry import get_registry  # noqa: E402
 from zephyr.data.trading_calendar import is_trading_day  # noqa: E402
 from zephyr.ex_core.fill_handler import FillHandler  # noqa: E402
 from zephyr.risk.core.backtest_store import VarBacktestStore  # noqa: E402
@@ -112,6 +118,24 @@ _PAPER_PORTFOLIO_ID = "miniqmt-sim"
 _C_CLASS_DRIFT_TYPES = frozenset({DriftType.MISSING_IN_SYSTEM, DriftType.MISSING_IN_BROKER})
 #: 严格 YYYY-MM-DD 格式（四-二-二位，连字符分隔）
 _TRADE_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+# ── GAP-F-29 净值腿常量（表名走 TableRegistry 真源禁硬编码——#ARCH-CH-024；
+#    SQL 提取模块级常量——NO-BARE-SQL §5.160.2；trade_date 由 _TRADE_DATE_RE
+#    校验后才可填充模板，无注入面）────────────────────────────────────────────
+_TBL_NAV_DAILY = get_registry().table("market_account_nav_daily")
+_TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
+_TBL_INDEX_KLINE = get_registry().table("market_index_kline")
+#: 表内首点总资产（base_nav 真源；ReplacingMergeTree FINAL 消同键多版本）
+_SQL_BASE_NAV = f"SELECT total_asset FROM {_TBL_NAV_DAILY} FINAL ORDER BY trade_date ASC LIMIT 1"
+#: 沪深300 当日收盘（当日无行情=当日无比价，缺→NULL 降级不回填隔日价）
+_SQL_BENCH_CLOSE = (
+    f"SELECT close FROM {_TBL_INDEX_KLINE}"
+    f" WHERE symbol='000300' AND trade_date='{{trade_date}}'"
+    " ORDER BY ingest_ts DESC LIMIT 1"
+)
+#: 沪深300 基点（etf_benchmark 表，2026-09-29 起供水中证全列表）
+_SQL_BENCH_BASE_POINT = (
+    f"SELECT base_point FROM {_TBL_ETF_BENCHMARK} WHERE index_code='000300' ORDER BY publish_date DESC LIMIT 1"
+)
 
 
 # ── 注入依赖容器（生产装配 vs 测试 mock 同一入口）─────────────────────────────
@@ -339,6 +363,113 @@ def _build_var_backtest_fn(
     return _grade
 
 
+# ── GAP-F-29 净值腿（st-c9-emptyfill 接线）───────────────────────────────────
+
+
+def _ch_query_scalar(sql: str) -> str | None:
+    """ch_reader.query（TSV 文本；失败与空结果均返 ''）取首行首列；空→None。
+
+    走 ch_reader 正门（裁定 #ARCH-CH-007：ReplacingMergeTree 读侧自动 FINAL
+    去重）。注：query() 不区分"查询失败"与"零行"（皆 ''）——本步把两者都按
+    "无输入"降级（None），写侧 write_tsv 失败仍会显式暴露，不吞真故障。
+    """
+    from zephyr.data import ch_reader
+
+    text = (ch_reader.query(sql) or "").strip()
+    if not text:
+        return None
+    return text.splitlines()[0].split("\t")[0]
+
+
+def _fetch_base_nav() -> float | None:
+    """读表内首点（最早 trade_date）总资产作 base_nav；空表/读失败→None（首点自身为基准=1.0）。
+
+    数字全取自库内既有行（禁编造）；FINAL 读 ReplacingMergeTree 消同键多版本。
+    """
+    v = _ch_query_scalar(_SQL_BASE_NAV)
+    return float(v) if v else None
+
+
+def _fetch_benchmark_close(trade_date: str) -> float | None:
+    """沪深300 当日收盘（kline_index 000300）；缺→None（降级语义）。
+
+    live_nav_recorder 契约：benchmark 缺任一输入 → benchmark_ratio=NULL，
+    不硬编不回填隔日价（当日无行情=当日无比价）。
+    """
+    v = _ch_query_scalar(_SQL_BENCH_CLOSE.format(trade_date=trade_date))
+    return float(v) if v else None
+
+
+def _fetch_benchmark_base_point() -> float | None:
+    """沪深300 基点（etf_benchmark 表 base_point，2026-09-29 起供水中证全列表）；缺→None。"""
+    v = _ch_query_scalar(_SQL_BENCH_BASE_POINT)
+    return float(v) if v else None
+
+
+def _make_ch_nav_writer() -> Callable[[list], int]:
+    """CH 落库闭包（persist_nav_points 的 writer 注入位；TSV 正门 ch_writer）。"""
+    from zephyr.data import ch_writer
+
+    def _write(points: list) -> int:
+        tsv = "\n".join(
+            "\t".join(
+                ch_writer.tsv_escape(v)
+                for v in (
+                    p.trade_date,
+                    p.total_asset,
+                    p.cash,
+                    p.market_value,
+                    p.nav_ratio,
+                    p.benchmark_close,
+                    p.benchmark_ratio,
+                )
+            )
+            for p in points
+        )
+        return len(points) if ch_writer.write_tsv(_TBL_NAV_DAILY, _NAV_INSERT_COLUMNS, tsv.encode("utf-8")) else 0
+
+    return _write
+
+
+def _run_nav_record_step(broker: object, trade_date: str) -> None:
+    """QMT 模拟账户日终净值落库 c1_market.account_nav_daily（GAP-F-29 / 57 号文 GAP 族）。
+
+    2026-09-29 st-c9-emptyfill 接线（原 account_nav_daily_writer_zero_caller）：
+    资产快照=SimulatedQmtAssetSource(broker.get_positions()) 实时真数（禁编造：
+    源失败→ValueError，本步捕获后大声留痕并吞没——与日刊步同口径，永不改
+    盘后对账/审计退出码矩阵）；净值口径/降级语义真源=zephyr.position.
+    live_nav_recorder（MOD-POS-023）模块头 INVARIANTS；落库列=DDL 真源
+    INSERT_COLUMNS（data_source 默认 miniqmt_sim）。
+    """
+    try:
+        from zephyr.position.live_nav_recorder import (  # noqa: PLC0415
+            SimulatedQmtAssetSource,
+            persist_nav_points,
+            record_daily_nav,
+        )
+
+        snapshot = SimulatedQmtAssetSource(broker).fetch_asset()
+        benchmark_close = _fetch_benchmark_close(trade_date)
+        benchmark_base = _fetch_benchmark_base_point()
+        point = record_daily_nav(
+            snapshot,
+            trade_date,
+            base_nav=_fetch_base_nav(),
+            benchmark_close=benchmark_close,
+            benchmark_base=benchmark_base,
+        )
+        written = persist_nav_points([point], _make_ch_nav_writer())
+        print(
+            f"[INFO] 日终净值落库: trade_date={point.trade_date} total_asset={point.total_asset}"
+            f" cash={point.cash} market_value={point.market_value} nav_ratio={point.nav_ratio}"
+            f" benchmark_close={point.benchmark_close} benchmark_ratio={point.benchmark_ratio}"
+            f" rows={written}"
+        )
+    except Exception as exc:  # noqa: BLE001 — 本步永不改既有退出码矩阵（大声留痕）
+        _logger.exception("日终净值落库异常（已吞没，不影响盘后对账/审计结论）")
+        print(f"[WARN] 日终净值落库失败（GAP-F-29 净值腿，不阻断主流水线）: {type(exc).__name__}: {exc}")
+
+
 def _run_sim_journal_step(trade_date: str) -> None:
     """模拟盘平台日刊收盘档（④ 排程语义修复 2026-09-22 st-sim-launch）。
 
@@ -555,6 +686,10 @@ def main(argv: list[str] | None = None, *, deps: PipelineDeps | None = None) -> 
             audit_fn=deps.audit_fn,
             alert_sink=deps.alert_sink,
         )
+        if broker is not None:
+            # GAP-F-29 净值腿（st-c9-emptyfill）：broker 仍在线窗口内记当日净值点，
+            # 失败只留痕不改退出码（见 _run_nav_record_step）
+            _run_nav_record_step(broker, trade_date)
     finally:
         if broker is not None:
             try:
