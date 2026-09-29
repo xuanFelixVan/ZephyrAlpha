@@ -1,4 +1,5 @@
 ---
+created: 2026-09-24
 ttl: task_bound
 completes_when: 八包监控收官（本包 0600-VERIFY-PASS 或其 FAIL 闭环+批注清零+终报+自动化自删）
 session: st-backup-cold-20260924
@@ -710,3 +711,4 @@ P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_i
 - **修复三连**：①exclude_dirs 补 .worktrees（backup_config.yaml，注释留痕）②杀卡死轮 PID 34532（其 CH 段从未执行，杀之无数据损失）+清陈旧锁 ③07:19 重新点火（PID 38532，新 config 生效）
 - **预期**：CH 增量 ~50min→双写→vault diff（排除 worktrees 后大幅缩短）→~09:00-09:30 完成；明晨探针核验 BACKUP_CREATED 前移+inc.zip 刷新
 - 09-27 全天空窗定性：备份被 12:26 卡死轮阻塞+后续全 lock-skip——**数据无损**（CH 最后备份 09-26 16:14 的增量已在第二链），24h 节奏中断一日待今日轮补上
+【第二链日检 09-29】PASS*（inc=92,737,649,359B≈92.7G=09-28 08:07 修复后重跑轮增量同步 ✓ ratio=0.264；今晨 07:04 新备份 CH 完成，双写在飞预计 07:4x 刷新 chbackup2，下轮复核确认）——第 5/14 天。附注：state 见 05:57 一轮 failed（post-commit 触发）待审计班查；07:04 备份 total_size 351.7G 较前降 57G 与 .worktrees 排除无关（CH 数据在 VM 盘），幅度待观察
