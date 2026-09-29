@@ -62051,6 +62051,15 @@ entries:
   desc_en: ""
   plain_zh: "自动发现已经死掉的会话，把它们占用的文件锁释放掉，把残留的暂存残影清理干净，并把会话目录归档，防止死会话长期占用资源"
   responsibility_layer: governance
+- module_path: scripts/governance/d3_metadata/backfill_roor_reg_annotation.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "ROOR册页REG名批注回填器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫描中央注册表索引里每张登记表有没有写自己的REG编号，缺的就产出建议补丁供人确认后安全回填"
+  responsibility_layer: governance
+
 - module_path: scripts/backtest/league_judge.py
   domain_id: D_BACKTEST
   name_zh: "A/B联赛成对晋升判据执行器"

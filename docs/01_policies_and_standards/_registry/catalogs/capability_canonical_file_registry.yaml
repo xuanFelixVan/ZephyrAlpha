@@ -56544,6 +56544,11 @@ creation_tokens:
   created_by: st-zcloseout-20260928
   capability: qoder_legacy_closeout
   merge_evaluation: "总交付报告（#416 三条件终判）唯一归档位，与内容同袋原子"
+- file: scripts/governance/d3_metadata/backfill_roor_reg_annotation.py
+  token: roor-reg-annotation-backfill-f92-backfill-roor-reg-annotation-20260929
+  created_by: st-c9-f92
+  capability: roor-reg-annotation-backfill-f92
+  merge_evaluation: "跨域不同对象不并：CR-007 管 entry_count 数字对账，本件管册页 REG 名批注可达性，正交新环节；已复用 check_registry_consistency 的 ROOR 读口与 safe_write 门，无同真源重复"
 - file: docs/_working/final_delivery_campaign/q0213_triage.md
   token: finaldel-deadbag-triage-q0213-triage-20260929
   created_by: st-finaldel-cdead-20260929
@@ -56866,4 +56871,9 @@ creation_tokens:
   created_by: st-finaldel-final2-20260930
   capability: final_delivery_campaign
   merge_evaluation: "终验循环检查与红蓝对抗报告替代散落临时证据（两轮读数+逐场景判定+修复hash 单一归档面），与同批域册误标注记修复同源收敛"
+- file: docs/_working/total_command_closeout/wave11/w178_truth_source_declaration.md
+  token: w178-truth-source-w178-truth-source-declaration-20260929
+  created_by: st-nightsweep2-nc-20260930
+  capability: w178_truth_source
+  merge_evaluation: "W-178 真源声明落册件：冻结注记+映射表立项+known 差异清单（跨域不同对象不并；strict 案卷同族互引不重挖）"
 di_seam_exemptions: []
