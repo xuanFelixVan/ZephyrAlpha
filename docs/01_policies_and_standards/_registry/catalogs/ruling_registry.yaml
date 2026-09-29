@@ -5652,11 +5652,14 @@ entries:
     全量：lib_assets 加列→08 词典 v1.1→librarian upsert 带新列→供给台账 S1-S70 回填注出处→
     lookup --feeds 反查面），依据=Owner 2026-09-23 总包批文 §五"2"+今日全批。
     两项执行完毕后终局班收官（终态行→自动化自删）。
+    Owner 2026-09-30 续期：93_owner_menu 12条#1 回法"1 续到 2027-10-08"（E 组批文），
+    续期裁定=裁定#442（同 commit 原子）。X-49 空转注记保留：三袋仍 dead、rules/
+    自 09-24 起零改动，本续期=授权面存活，三袋重投时仍按本条原条件执行。
   affected_files:
   - docs/_working/ultimate_library/ulib3b_potential_consumers_proposal.md
   - docs/_working/ultimate_library/library_final_ledger.md
   approved_paths: ["docs/01_policies_and_standards/rules/"]
-  expires_at: '2026-10-08'
+  expires_at: '2027-10-08'
   related_arch: []
   related_rulings: []
   superseded_by: null
@@ -6134,8 +6137,8 @@ entries:
   related_rulings: ['裁定#305']
   superseded_by: null
 
-- ruling_id: "裁定#436"
-  title: "C2 T1 成绩单定稿追认：3698 有效+2 配方内生阴性（同窗对拍三证），前置证据闭环"
+- ruling_id: "裁定#446"
+  title: "C2 T1 成绩单定稿追认：3698 有效+2 配方内生阴性（同窗对拍三证），前置证据闭环（原登#436撞号改号核订，#419→#420 先例）"
   date: '2026-09-30'
   category: 流程
   status: 'active'
@@ -6158,4 +6161,168 @@ entries:
   - docs/_working/total_command_closeout/leaf_books/f06/w61_t1_scorecard.md
   related_arch: ['#ARCH-368']
   related_rulings: ['裁定#431', '裁定#435']
+  superseded_by: null
+
+- ruling_id: "裁定#447"
+  title: "C8 W-178 板块宇宙真源落冻：选股=tqcenter sector_constituent（595）、概念=akshare concept_board（375）辅助展示（原登#437撞号改号核订，#419→#420 先例）"
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    总筹 st-nightsweep-chief-20260929 第二夜 C 组派发裁定（Owner 2026-09-30"打通 C 组前置"授权面）：
+    tqcenter sector_constituent（595 板块=880 段 467+881 段 128）为选股真源、akshare concept_board（375）
+    为辅助展示。与裁定#431⑥ 同向互补（行业成分股真源=880+881 两段行业板块序列、概念板块为独立一族
+    不混入行业口径、零重合已复测）。落冻动作：
+    (1) 真源声明 docs/_working/total_command_closeout/wave11/w178_truth_source_declaration.md
+    （FROZEN_BY_OWNER_REF：读法铁律/映射表立项——两族板块码零交叠故只能按成分股集合对齐+去重律、
+    known 差异清单 K1-K6：134 板有行情无成分/成分表滞后 21 天/PIT 深度 6 日/两族股票池规模差/96 板无名）；
+    (2) w178_sector_universe_strict.md §E 翻面 DRAFT_NOT_FROZEN→FROZEN_BY_OWNER_REF（冻结注记追加，
+    实测数值零改动，未决项保留各自处方）；
+    (3) 映射表（board_pair_mapping 股票级对齐）立项待另波施工。
+    事实底座=w178_universe_facts.yaml（57 读数双通道一致，2026-09-26 strict 实测）。
+  affected_files:
+  - docs/_working/total_command_closeout/wave11/w178_truth_source_declaration.md
+  - docs/_working/total_command_closeout/wave11/w178_sector_universe_strict.md
+  - docs/_working/total_command_closeout/wave11/w178_universe_facts.yaml
+  related_arch: ['#ARCH-368']
+  related_rulings: ['裁定#431']
+  superseded_by: null
+
+- ruling_id: "裁定#441"
+  title: 二夜总攻 D/E 组批文载体：宪法两行落 HEAD+宪法入口唯一化+GATE-SELFDOC 立法（E13 三小裁执行注记）
+  date: '2026-09-30'
+  category: 治理
+  status: active
+  summary: |-
+    Owner 2026-09-30 对话批"第一组（D 组）/E 组按建议执行"（总筹 st-nightsweep-chief-20260929
+    派单面，执行=st-nightsweep2-nd-20260930）：①D1 宪法两行落 HEAD=§7 速查表三行（提交队列
+    子命令清单补 cleanup/health、数据集成器 7→8 子命令、仪表盘 app_panel.py→api_server.py；
+    93_owner_menu 补-17 甲通道=授权车道按实测改）；工作树基为陈旧快照（缺 F88 setup_dev_env
+    子句），落地件以 HEAD 为基重建防回退（本裁定 approved_paths 供 PROTECTED-PATHS 裁定通道）。
+    ②D3 宪法入口唯一化：头部"规则细节正式真源"行去散文计数（"86 个 trae_*.yaml"违宪法§4.4
+    计数不写死），规则发现唯一入口改指 docs/registry_of_registries.yaml（ROOR）。
+    ③D4 GATE-SELFDOC 立法（门吃自己文档豁免+统一拆写规范）：.md 自引自免三态=行级标
+    [GATE-SELFDOC:GIT-DANGEROUS] 或 frontmatter gate_selfdoc: GIT-DANGEROUS（各限 ≤10 违规行）
+    放行；无标照拦、超限照拦；豁免标记须门 id 精确匹配不许通配（拆写规范）。契约单测已在 HEAD
+    （tests/governance/scripts_governance/test_detect_git_dangerous_selfdoc.py，现红=产品件未落，
+    实现件=SW19 残件俟重投；立法先行，不构成行为承诺）。
+    ④E13 三小裁按 93_owner_menu 建议执行落册：补-17 宪法两处漂移=本条①治愈；补-20 磁盘
+    18G/98%=E3 执行（done 回执 26 件+quarantine 过期 218 目录+blobs_archive 7051 件 1.17G+
+    blob_gc 孤儿 8794 块 1.30G 归档 G:/backup/zephyr_cold_queue，.aidrafts 因 chief4_diskrescue
+    镜像无踪 SKIP=禁毁唯一字节）；补-12 flags 轮转=E5（写侧自愈轮转治本已由他队落工作树
+    32MB 翻代+2.1GB .1 归档 G:/backup/feature_flags 留 90 天，写方活跃实证）。
+  related_files:
+  - AGENTS.md
+  - tests/governance/scripts_governance/test_detect_git_dangerous_selfdoc.py
+  approved_paths: ["AGENTS.md"]
+  expires_at: '2026-10-31'
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: "裁定#442"
+  title: 裁定#410 rules 免检授权续期 2026-10-08→2027-10-08
+  date: '2026-09-30'
+  category: 治理
+  status: active
+  summary: |-
+    Owner 2026-09-30 E 组批文，93_owner_menu 12条#1 回法"1 续到 2027-10-08"（默认"不续期
+    自动收紧"被 Owner 明示推翻）。#410 expires_at 机械续期与本裁定同 commit 原子（RULE-RULING）。
+    X-49 空转史实保留：#410 所批三袋至今 dead、rules/ 自 09-24 零改动，本续期=授权面存活，
+    三袋重投时仍按 #410 原条件执行；若 2027-10-08 前授权仍未被消费，续期不自动再延。
+  related_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings: ['裁定#410']
+  superseded_by: null
+
+- ruling_id: "裁定#443"
+  title: 灾备性价比终裁落地（93_owner_menu ③建议全收）+g_mirror 防回退锚声明
+  date: '2026-09-30'
+  category: 架构
+  status: active
+  summary: |-
+    Owner 2026-09-30 E 组批文按 93_owner_menu ③唯一建议执行：①备份排除 .worktrees（实测占
+    全树条目 92.42%）+备份硬时限 4h 改"按实测 P95 上浮的派生值"（生成器算，不手填）；
+    ②工作树补"只备份 git 已跟踪文件"轻量灾备（未提交草稿不进灾备=明示可接受代价）；
+    ③收割器免死名单收紧前先跑 3 天影子账（只记"本该杀但被免死"，不真杀）。
+    ④g_mirror 防回退锚=配置锚在案：scripts/backup/backup_config.yaml ch_vm_backup 目标
+    2026-09-24 配置级移除（data.vhdx 全量镜像冻结 G:/backup/ch_vm_backup 不再回写 F），
+    测试面=tests/dr/test_backup_ch_vm_autocheck.py+test_vm_image_source_choice.py；任何把
+    /MIR 目标改回 F 侧 ch_vm_backup 的变更=回退事故（93册 补-10 三笔 commit 在案先例），
+    须经 Owner 门位。①②③执行属运维/施工面另窗，本裁定=授权与锚声明。
+  related_files:
+  - scripts/backup/backup_config.yaml
+  - tests/dr/test_backup_ch_vm_autocheck.py
+  related_arch: ['INFRA-STORE-003']
+  related_rulings: ['裁定#414']
+  superseded_by: null
+
+- ruling_id: "裁定#444"
+  title: ConfigCheck 计划任务三件批注落册（门位注记+宿主挂靠待安全窗+日红根因搁置注记）
+  date: '2026-09-30'
+  category: 运维
+  status: decided
+  summary: |-
+    99_skipped_for_owner #41（st-c7-autofix-20260927 当班实测；原#25=376105ce64 误删、
+    09-28 回复）Owner 2026-09-30 E 组批文批注落册：①任务级 action 变更（pythonw→python、
+    exit-1 后挂动作）=计划任务注册/变更类=Owner 门位，本批只登记不执行（实测 LastTaskResult=1
+    @09-27 08:05；09-27 11:10 调度器重启后 checker exit 0 回绿）；②scheduled_task_reconcile.py
+    （三色对账，ConfigCheck 判红尺）宿主任务挂靠=任务级动作，待安全窗执行，不夜改生产调度器；
+    ③日红根因=schedule.yaml/tasks.yaml 无 reload 路径而热更新本体已裁搁置（config_effect_checker
+    头记 2026-09-17 Owner 裁定）——磁盘漂移在下次调度器重启前必日红=已知限界，安全窗重启
+    =运维动作非本批判决。
+  related_files:
+  - docs/_working/fullconnect_campaign/99_skipped_for_owner.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: "裁定#445"
+  title: 10-05 F 盘摘除三段式执行单排窗备案（只排班不执行）
+  date: '2026-09-30'
+  category: 运维
+  status: decided
+  summary: |-
+    Owner 2026-09-30 E 组批文排班备案；真源锚=INFRA-STORE-003（四盘一盘一责）+裁定#414②
+    （F 主链 ch_backup_disk.vhdx 716G 待 Owner 点名窗停 VM 摘除）+93_owner_menu 补-10
+    （"摘除"定义 grep 不到，甲选项"先定义后双链影响表"仍开放）。三段式执行单：
+    ①假日窗时点=2026-10-05（国庆休市 CH 静默窗；前置=前一日 06:00 备份轮全绿+G 侧
+    ch_vm_backup 副本当日核验通过）；②点停 VM 步骤=CH 写面 pause（调度器任务挂起）→VM
+    graceful shutdown→F 挂载摘除/断链→确认零进程持 F 句柄；③716G 回收验证法=摘前
+    df F 基线→摘后差≈716G 对拍+VM 重启后 CH 单链归 G 写入实证（新备份轮零 F 路径）+
+    G 侧镜像字节抽验。乙（只停写）/丙（整盘摘除）选项未批=禁不可逆动作；执行时点仍待
+    Owner 点名（#414②门位不变），本裁定=排班与步骤备案，非执行授权。
+  related_files:
+  - docs/_working/total_command_closeout/93_owner_menu.md
+  related_arch: ['INFRA-STORE-003']
+  related_rulings: ['裁定#414']
+  superseded_by: null
+
+- ruling_id: "裁定#438"
+  title: "C9 三小件：时帽 12h 追认（仅约束调度层）+补-1 相位拒单 OWNER-GATE 落点留痕+补-2 退出码拆分排期登记"
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    夜总攻二 C 组三小件打包登记（授权链=Owner 2026-09-30"打通 C 组前置"夜总攻裁定，总筹派发）：
+    ①时帽追认（补-8/C91）：single_job_wall_clock_cap_hours=12（config/search_space_prereg.yaml:70）
+    与 schedule_gate_policy timebox gpu=12（:97）同值口径追认为"仅约束调度层"——src/scripts 现读零
+    消费点（无运行时牙齿）如实维持，暂不装牙齿；数值改动走裁定通道。
+    ②补-1/C445（#ARCH-355 价格笼子 UNKNOWN 语义）： OWNER-GATE 维持待裁不翻旗。落点已定位=
+    src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py:605 UNKNOWN 分支（现语义"UNKNOWN 原价通过"，
+    注释在行）与 tradability_preflight.py:191（笼子=夹边语义非拒单，UNKNOWN 跳过）。93 册补-1 推荐乙
+    （先建相位判别器，判别器排波 3）且属四类门位（生产流转+资金动作）；相位判别器未建成前翻"判不出即拒"
+    ＝100% 误拒/模拟盘 0 成交（93 册原文）。本裁定留痕：Owner 裁"甲（拒单）"后落地=改 605 行 UNKNOWN
+    分支为拒单+补边界单测，一次改动即可。
+    ③补-2/C446（盘后退出码拆 0=真绿/4=不可判定）：排期登记=等 Owner 一句话（93 册推荐甲：先出逐条
+    受影响消费清单再动契约，牵 freeze_manifest 38 条）；排期挂波 3 后窗，未批不动契约（行为零变更）。
+  affected_files:
+  - config/search_space_prereg.yaml
+  - config/schedule_gate_policy.yaml
+  - src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py
+  - docs/_working/total_command_closeout/93_owner_menu.md
+  - docs/_working/total_command_closeout/pending_owner_items.md
+  related_arch: ['#ARCH-355', '#ARCH-368']
+  related_rulings: ['裁定#431']
   superseded_by: null
