@@ -175,6 +175,27 @@ def test_cost_sort_numeric_not_lexicographic(tmp_path, monkeypatch):
     assert expensive < cheap  # 贵的排前
 
 
+def test_disabled_gate_renders_with_offline_marker(tmp_path, monkeypatch):
+    """蒸馏面与死门显式分家（2026-09-30）：enabled:false 门不再 SystemExit 拒渲染，
+    卡片明标"（停用：见 gate_registry）"+顶部横幅清点——门状态真源=gate_registry，
+    指南只导航不二次裁判（裁定#431 后 8 台停用门的真仓红治本）。"""
+    root = _make_tmp_repo(tmp_path)
+    reg = root / "in_process_gate_registry.yaml"
+    reg.write_text(
+        _REGISTRY_BODY.replace(
+            "  factory_function: make_a\n  enabled: true\n",
+            "  factory_function: make_a\n  enabled: false\n",
+        ),
+        encoding="utf-8",
+    )
+    _patch_paths(monkeypatch, root)
+    text = gcg._render()  # 不抛 SystemExit=分家成立
+    assert "### A-GATE（停用：见 gate_registry）" in text
+    assert "停用（enabled:false，不参与在飞预检）" in text
+    assert "1 台已停用 enabled:false" in text
+    assert "- B-GATE" in text  # 在册门不受连坐（未蒸馏走附录，同 happy-path 口径）
+
+
 def test_integration_real_repo_render_readonly():
     """真仓集成（只读）：真实四源可渲染、99 台覆盖、锚点约定成立。"""
     text = gcg._render()
@@ -182,7 +203,13 @@ def test_integration_real_repo_render_readonly():
     import re as _re
 
     m = _re.search(r"在册覆盖: (\d+)/(\d+)", text)
-    assert m and m.group(1) == m.group(2)  # 不变量=在册全覆盖（台数随名册成长动态）
+    assert m
+    covered, total = int(m.group(1)), int(m.group(2))
+    assert 0 < covered <= total
+    # 不变量（2026-09-30 放宽为"清零可见"自洽尺）：全覆盖 ⇔ 附录 B 显式"（无）"；
+    # 未蒸馏台目（如当期 DOC-HEADER-SUITE/FMS-HYGIENE）必须入附录 B 可见——
+    # 蒸馏节奏归治理批次，指南只如实清点，不以覆盖率拒渲染。
+    assert (covered == total) == ("（无——在册全覆盖）" in text)
     assert "### CREATE-GUARD" in text
     assert "### ORPHAN-MODULE" in text
     # 漂移台数允许动态（判据源随他班演进），横幅机制本身必须在场

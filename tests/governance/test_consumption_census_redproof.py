@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # [BLUEPRINT] MOD-GOV-CONSUMPTIONCENSUS | tests/governance/test_consumption_census_redproof.py
 # [TTL] permanent
 """消费面普查九族引擎 · 能红判据（R-5 律：红证不落盘＝没跑）。
@@ -49,40 +48,64 @@ def _synth_repo(root: Path, *, extra_indicator: str = "") -> Path:
     ]
     if extra_indicator:
         inds.append(extra_indicator)
-    _w(root, f"{CAT}/technical_indicator_registry.yaml",
-       "tier: 3\nindicators:\n" + "".join(inds) +
-       "  - indicator_id: IND-REV-001\n    name: legacy_candle\n    status: deprecated\n")
-    _w(root, f"{CAT}/macro_indicator_registry.yaml",
-       "tier: 2\nindicators:\n  - indicator_id: MAC-CN-001\n    name: shibor\n"
-       "    impact_assets: [A1, A2]\n")
-    _w(root, f"{CAT}/data_asset_registry.yaml",
-       "tier: 3\ndatasets:\n  - dataset_id: DS-901\n    entity_name: c3_fundamental.block_x_detail\n"
-       "    consumed_by_jobs: [JOB-1]\n  - dataset_id: DS-902\n"
-       "    entity_name: c1_market.weather_station_daily\n    consumed_by_jobs: []\n"
-       "sources: []\njobs:\n  - job_id: JOB-7\n    source_code_ref: src/zephyr/alt_data/w.py\n"
-       "    outputs: [DS-902]\n    module_id: MOD-ALT\n")
-    _w(root, f"{CAT}/factor_registry.yaml",
-       "tier: 3\nfactors:\n  - factor_id: FCT-RED-001\n    name: f1\n"
-       "    belongs_to_strategies: [STR-A]\n")
-    _w(root, f"{CAT}/strategy_registry.yaml",
-       "tier: 2\nstrategies:\n  - strategy_id: STR-RED-001\n    name: s1\n    alpha_sources: [FCT-RED-001]\n")
-    _w(root, f"{CAT}/event_calendar_registry.yaml",
-       "tier: 1\nevent_types:\n  - event_type_id: EVT-RED-001\n    name: e1\n"
-       "    used_by_strategies: [STR-RED-001]\n")
+    _w(
+        root,
+        f"{CAT}/technical_indicator_registry.yaml",
+        "tier: 3\nindicators:\n"
+        + "".join(inds)
+        + "  - indicator_id: IND-REV-001\n    name: legacy_candle\n    status: deprecated\n",
+    )
+    _w(
+        root,
+        f"{CAT}/macro_indicator_registry.yaml",
+        "tier: 2\nindicators:\n  - indicator_id: MAC-CN-001\n    name: shibor\n    impact_assets: [A1, A2]\n",
+    )
+    _w(
+        root,
+        f"{CAT}/data_asset_registry.yaml",
+        "tier: 3\ndatasets:\n  - dataset_id: DS-901\n    entity_name: c3_fundamental.block_x_detail\n"
+        "    consumed_by_jobs: [JOB-1]\n  - dataset_id: DS-902\n"
+        "    entity_name: c1_market.weather_station_daily\n    consumed_by_jobs: []\n"
+        "sources: []\njobs:\n  - job_id: JOB-7\n    source_code_ref: src/zephyr/alt_data/w.py\n"
+        "    outputs: [DS-902]\n    module_id: MOD-ALT\n",
+    )
+    _w(
+        root,
+        f"{CAT}/factor_registry.yaml",
+        "tier: 3\nfactors:\n  - factor_id: FCT-RED-001\n    name: f1\n    belongs_to_strategies: [STR-A]\n",
+    )
+    _w(
+        root,
+        f"{CAT}/strategy_registry.yaml",
+        "tier: 2\nstrategies:\n  - strategy_id: STR-RED-001\n    name: s1\n    alpha_sources: [FCT-RED-001]\n",
+    )
+    _w(
+        root,
+        f"{CAT}/event_calendar_registry.yaml",
+        "tier: 1\nevent_types:\n  - event_type_id: EVT-RED-001\n    name: e1\n    used_by_strategies: [STR-RED-001]\n",
+    )
     # 族④ 真源锚（组件名由正则派生，禁手工清单）+ 族③ 生产者面
-    _w(root, "src/zephyr/alt_data/emotion_index_builder.py",
-       'comps = [_component_row("C1_limitup_temp", 1), _component_row("C2_promotion", 2)]\n'
-       'c = _sub_component("C5_margin", 3)\n')
+    _w(
+        root,
+        "src/zephyr/alt_data/emotion_index_builder.py",
+        'comps = [_component_row("C1_limitup_temp", 1), _component_row("C2_promotion", 2)]\n'
+        'c = _sub_component("C5_margin", 3)\n',
+    )
     _w(root, "src/zephyr/alt_data/w.py", 'TABLE = "c1_market.weather_station_daily"\n')
     return root
 
 
-def _run(root: Path, *, out: Path | None = None, cache: Path | None = None,
-         doc_mentions: bool = True, families=None) -> dict:
+def _run(
+    root: Path, *, out: Path | None = None, cache: Path | None = None, doc_mentions: bool = True, families=None
+) -> dict:
     return cc.run_consumption_census(
-        families=families, repo_root=root, scan_root=root,
+        families=families,
+        repo_root=root,
+        scan_root=root,
         output_path=out if out is not None else root / ".runtime/tmp/ledger.json",
-        cache_path=cache, include_doc_mentions=doc_mentions, today="T1",
+        cache_path=cache,
+        include_doc_mentions=doc_mentions,
+        today="T1",
     )
 
 
@@ -101,7 +124,7 @@ def test_new_island_appears_then_disappears_with_real_consumer(tmp_path):
     doc = _run(root)["doc"]
     a = _entry(doc, "IND-ORPHAN-001")
     assert a["state"] == "zero" and a["consumer_count"] == 0
-    assert isinstance(a["consumer_files"], list)        # R-E：清单非计数
+    assert isinstance(a["consumer_files"], list)  # R-E：清单非计数
     assert "IND-ORPHAN-001" in {i["entity_id"] for i in doc["islands"]}
 
     # 给它一个真消费者（src/ 的 .py）⇒ 必须从孤岛清单消失
@@ -109,7 +132,7 @@ def test_new_island_appears_then_disappears_with_real_consumer(tmp_path):
     doc2 = _run(root)["doc"]
     b = _entry(doc2, "IND-ORPHAN-001")
     assert b["state"] == "active"
-    assert b["consumer_files"] == ["src/zephyr/factor/consumer_orphan.py"]   # R-E 精确清单
+    assert b["consumer_files"] == ["src/zephyr/factor/consumer_orphan.py"]  # R-E 精确清单
     assert "IND-ORPHAN-001" not in {i["entity_id"] for i in doc2["islands"]}
 
 
@@ -121,7 +144,7 @@ def test_markdown_only_mention_never_counts_as_consumer(tmp_path):
     e = _entry(doc, "IND-RED-001")
     assert e["state"] == "zero"
     assert e["consumer_files"] == []
-    assert "docs/design/indicator_catalog.md" in e["doc_mentions"]   # 只进证据位
+    assert "docs/design/indicator_catalog.md" in e["doc_mentions"]  # 只进证据位
     assert "IND-RED-001" in {i["entity_id"] for i in doc["islands"]}
 
 
@@ -142,8 +165,7 @@ def test_stale_state_is_retired_and_never_emitted(tmp_path):
 def test_observer_self_reference_is_not_a_consumer(tmp_path):
     """R-I：尺自己（引擎/旧壳/生成器）提到实体名＝自我认证，必须自排。"""
     root = _synth_repo(tmp_path)
-    _w(root, "src/zephyr/governance/consumption_census_note.py",
-       "# IND-RED-001 与 candle_pattern 的判据说明\n")
+    _w(root, "src/zephyr/governance/consumption_census_note.py", "# IND-RED-001 与 candle_pattern 的判据说明\n")
     doc = _run(root)["doc"]
     assert _entry(doc, "IND-RED-001")["consumer_files"] == []
 
@@ -155,12 +177,16 @@ def test_legacy_shim_emits_real_consumer_lists_without_stale(tmp_path):
     reg = root / CAT / "technical_indicator_registry.yaml"
     out = root / ".runtime/tmp/ind_ledger.json"
     r = run_indicator_usage_audit(reg, scan_root=root, output_path=out, today="D1")
-    assert "stale" not in r["counts"]                  # 态位退役：键不再广告
+    assert "stale" not in r["counts"]  # 态位退役：键不再广告
     assert set(r["counts"]) <= {"active", "zero", "retired"}
     doc = json.loads(out.read_text(encoding="utf-8"))
-    assert doc["schema"] == "indicator_usage/2"
+    # schema /3=CNS-14 机账口径升级（SW14 2026-09-29 落地，薄壳 docstring 在案）：
+    # consumer_files 分列为 code_refs（计消费）+doc_refs（证据位不计消费），
+    # 本断言随真源演化更新——非 shim 串味，是真实新消费方形态。
+    assert doc["schema"] == "indicator_usage/3"
     by = {e["indicator_id"]: e for e in doc["entries"]}
-    assert by["IND-RED-001"]["consumer_files"] == ["src/zephyr/factor/tech.py"]
+    assert by["IND-RED-001"]["code_refs"] == ["src/zephyr/factor/tech.py"]
+    assert by["IND-RED-001"]["doc_refs"] == []  # 代码消费者不进文档证据位
     assert by["IND-ORPHAN-001"]["recommendation"].startswith("retire_candidate")
 
 
@@ -168,8 +194,8 @@ def test_legacy_shim_emits_real_consumer_lists_without_stale(tmp_path):
 def test_incremental_cache_matches_cold_run(tmp_path):
     cache = tmp_path / ".runtime/tmp/cache.json"
     cold = _run(_synth_repo(tmp_path), cache=None)["doc"]
-    first = _run(tmp_path, cache=cache)["doc"]          # 建缓存
-    warm = _run(tmp_path, cache=cache)["doc"]           # 命中缓存
+    first = _run(tmp_path, cache=cache)["doc"]  # 建缓存
+    warm = _run(tmp_path, cache=cache)["doc"]  # 命中缓存
     assert warm["families"] == cold["families"] == first["families"]
     assert warm["runtime"]["rescanned_files"] == 0
     assert cold["runtime"]["rescanned_files"] > 0
@@ -189,9 +215,12 @@ def test_cache_invalidates_when_entity_universe_changes(tmp_path):
     root = _synth_repo(tmp_path)
     _run(root, cache=cache)
     # 登记册加一条新指标，且它确有消费者（新 token 必须重扫才看得见）
-    _w(root, f"{CAT}/technical_indicator_registry.yaml",
-       (root / CAT / "technical_indicator_registry.yaml").read_text(encoding="utf-8")
-       + "  - indicator_id: IND-NEW-001\n    name: new\n    status: active\n    tier: 3\n")
+    _w(
+        root,
+        f"{CAT}/technical_indicator_registry.yaml",
+        (root / CAT / "technical_indicator_registry.yaml").read_text(encoding="utf-8")
+        + "  - indicator_id: IND-NEW-001\n    name: new\n    status: active\n    tier: 3\n",
+    )
     _w(root, "src/zephyr/factor/uses_new.py", "q = IND_NEW_001\n")
     doc = _run(root, cache=cache)["doc"]
     e = _entry(doc, "IND-NEW-001")
@@ -204,16 +233,19 @@ def test_cache_invalidates_when_entity_universe_changes(tmp_path):
 
 
 # ── R-G 单一 scope 谓词 ──────────────────────────────────────────────────────
-@pytest.mark.parametrize("rel,expect", [
-    ("src/zephyr/factor/x.py", True),          # 代码消费者
-    ("scripts/backtest/run_eval.py", True),    # scripts 算消费者（§3.4 明判）
-    ("config/trading_decision_map.yaml", True),  # config 算消费者
-    ("docs/library/INDEX.md", False),          # docs/.md 永不算
-    ("src/zephyr/notes.md", False),            # .md 即使在 src/ 也不算
-    ("src/zephyr/frontend/dashboard/app_panel.py", False),   # display 层
-    ("scripts/ch/apply_market_tables_ddl.py", False),         # infra 层（scope 外）
-    ("src/zephyr/data/implementations/p.py", False),          # producer 层（scope 外）
-])
+@pytest.mark.parametrize(
+    "rel,expect",
+    [
+        ("src/zephyr/factor/x.py", True),  # 代码消费者
+        ("scripts/backtest/run_eval.py", True),  # scripts 算消费者（§3.4 明判）
+        ("config/trading_decision_map.yaml", True),  # config 算消费者
+        ("docs/library/INDEX.md", False),  # docs/.md 永不算
+        ("src/zephyr/notes.md", False),  # .md 即使在 src/ 也不算
+        ("src/zephyr/frontend/dashboard/app_panel.py", False),  # display 层
+        ("scripts/ch/apply_market_tables_ddl.py", False),  # infra 层（scope 外）
+        ("src/zephyr/data/implementations/p.py", False),  # producer 层（scope 外）
+    ],
+)
 def test_single_scope_constant_predicate(rel, expect):
     assert cc.CONSUMER_SCAN_SCOPE.counts_as_consumer(rel) is expect
     assert cc.scope_verdict(rel) is expect
@@ -226,8 +258,8 @@ def test_scope_is_a_single_named_constant():
     import zephyr.governance.consumption.scan_scope_converged as ssc
 
     src = Path(ssc.__file__).read_text(encoding="utf-8")
-    assert src.count('roots=(') == 2   # 消费者面 + 文档证据面（后者仅 .md）
-    assert 'roots=(' not in Path(cc.__file__).read_text(encoding="utf-8")
+    assert src.count("roots=(") == 2  # 消费者面 + 文档证据面（后者仅 .md）
+    assert "roots=(" not in Path(cc.__file__).read_text(encoding="utf-8")
     for fam in cc.FAMILY_SPECS:
         assert not hasattr(fam, "roots")
 
@@ -235,12 +267,14 @@ def test_scope_is_a_single_named_constant():
 # ── R-H 价值公式 ─────────────────────────────────────────────────────────────
 def test_island_ranking_follows_explicit_formula(tmp_path):
     root = _synth_repo(tmp_path)
-    _w(root, f"{CAT}/technical_indicator_registry.yaml",
-       "tier: 3\nindicators:\n"
-       "  - indicator_id: IND-HIGH-001\n    name: hi\n    status: active\n    tier: 5\n"
-       "    used_by_factors: [F1, F2, F3]\n    code_path: src/zephyr/factor/h.py\n"
-       "  - indicator_id: IND-BARE-001\n    name: lo\n    status: active\n    tier: 1\n",
-       )
+    _w(
+        root,
+        f"{CAT}/technical_indicator_registry.yaml",
+        "tier: 3\nindicators:\n"
+        "  - indicator_id: IND-HIGH-001\n    name: hi\n    status: active\n    tier: 5\n"
+        "    used_by_factors: [F1, F2, F3]\n    code_path: src/zephyr/factor/h.py\n"
+        "  - indicator_id: IND-BARE-001\n    name: lo\n    status: active\n    tier: 1\n",
+    )
     doc = _run(root)["doc"]
     hi = _entry(doc, "IND-HIGH-001")
     lo = _entry(doc, "IND-BARE-001")
@@ -262,19 +296,22 @@ def test_reconciler_is_event_triggered_and_alarms_on_new_island(tmp_path):
     # 单行 from-import 系刻意写法：ORPHAN-MODULE 用行级 grep 认 `from X import Y`，
     # 括号多行 import 匹配不到 → reconciler 被判孤儿（实证死信 q-…-0004 与
     # q-20260923-st-e2e-20260924-0001 同族）。
-    from zephyr.governance.consumption.consumption_census_reconciler import make_consumption_census_reconciler, make_external_reconciler_spec  # noqa: I001,F401
+    from zephyr.governance.consumption.consumption_census_reconciler import (
+        make_consumption_census_reconciler,
+        make_external_reconciler_spec,
+    )  # noqa: I001,F401
 
     root = _synth_repo(tmp_path)
     (root / CAT).mkdir(parents=True, exist_ok=True)
     spec = make_external_reconciler_spec(_Host(root))
     assert spec.gate_id == "GATE-CONSUMPTION-CENSUS"
-    assert spec.file_ops == frozenset({"read", "write"})   # T1① 声明制
+    assert spec.file_ops == frozenset({"read", "write"})  # T1① 声明制
     # 触发面＝登记册变更，无关文件不触发（禁 cron/Timer，宪法 §9.3）
     assert spec.trigger([str(root / CAT / "technical_indicator_registry.yaml")]) is True
     assert spec.trigger([str(root / "src/zephyr/unrelated_note.txt")]) is False
 
     res = spec.reconcile([str(root / CAT / "technical_indicator_registry.yaml")], "s1")
-    assert res.action == "warn"                      # 新岛（IND-ORPHAN-001）必报警
+    assert res.action == "warn"  # 新岛（IND-ORPHAN-001）必报警
     assert "IND-ORPHAN-001" in res.detail or "上架无客" in res.detail
     ledger = root / "data/runtime/consumption_census_ledger.json"
     assert ledger.exists()
@@ -288,9 +325,10 @@ def test_reconciler_guardrail_marker_present():
     p = Path(cc.__file__).with_name("consumption_census_reconciler.py")
     lines = p.read_text(encoding="utf-8").splitlines()
     for i, ln in enumerate(lines):
-        if re.match(r"def make_\w*reconciler", ln.strip()) or \
-           re.match(r"def make_external_reconciler_spec", ln.strip()):
-            window = "\n".join(lines[max(0, i - 6):i])
+        if re.match(r"def make_\w*reconciler", ln.strip()) or re.match(
+            r"def make_external_reconciler_spec", ln.strip()
+        ):
+            window = "\n".join(lines[max(0, i - 6) : i])
             assert "trae_060-reviewed:" in window, f"缺护栏注释: {ln}"
 
 
@@ -299,10 +337,13 @@ def test_generator_books_islands_with_existing_vocabulary(tmp_path, monkeypatch)
     import importlib.util
 
     root = _synth_repo(tmp_path)
-    _w(root, f"{CAT}/wiring_registry.yaml",
-       "version: '1.0.0'\nclasses: {pure_library: '纯库'}\nmodules:\n"
-       "- candidate_id: CAND-1\n  name: n\n  path: src/zephyr/a.py\n"
-       "  domain: D_ALT_DATA\n  wiring_class: pure_library\n  wiring_status: exempt\n")
+    _w(
+        root,
+        f"{CAT}/wiring_registry.yaml",
+        "version: '1.0.0'\nclasses: {pure_library: '纯库'}\nmodules:\n"
+        "- candidate_id: CAND-1\n  name: n\n  path: src/zephyr/a.py\n"
+        "  domain: D_ALT_DATA\n  wiring_class: pure_library\n  wiring_status: exempt\n",
+    )
     ledger = root / "data/runtime/consumption_census_ledger.json"
     _run(root, out=ledger)
     script = Path(cc.__file__).resolve().parents[2] / "scripts/governance/d3_metadata/generate_wiring_registry.py"
@@ -319,9 +360,10 @@ def test_generator_books_islands_with_existing_vocabulary(tmp_path, monkeypatch)
     view = yaml.safe_load(out.read_text(encoding="utf-8"))
     booked = view["consumption_islands"]
     assert booked and all(b["wiring_status"] in {"unwired", "wired", "exempt"} for b in booked)
-    assert {"IND-ORPHAN-001", "IND-RED-001"} <= {b["entity_id"] for b in booked} or \
-           any(b["entity_id"].startswith("IND-") for b in booked)
-    assert view["generator"] == mod.GEN_PATH_COMMENT        # 假声明归真
+    assert {"IND-ORPHAN-001", "IND-RED-001"} <= {b["entity_id"] for b in booked} or any(
+        b["entity_id"].startswith("IND-") for b in booked
+    )
+    assert view["generator"] == mod.GEN_PATH_COMMENT  # 假声明归真
     assert "modules" in view and view["modules"][0]["wiring_status"] == "exempt"  # 原样保留
 
     # --check：账面缺项＝漂移 rc=1；入账后 rc=0
@@ -337,7 +379,6 @@ def test_generator_books_islands_with_existing_vocabulary(tmp_path, monkeypatch)
     out2 = root / "out2.yaml"
     mod.main(["--repo-root", str(root), "--out", str(out2), "--top", "5"])
     view2 = yaml.safe_load(out2.read_text(encoding="utf-8"))
-    assert healed not in {b["entity_id"] for b in view2["consumption_islands"]
-                          if b["wiring_status"] == "unwired"}
+    assert healed not in {b["entity_id"] for b in view2["consumption_islands"] if b["wiring_status"] == "unwired"}
     assert healed in {t["entity_id"] for t in view2["island_transitions"]}
     assert all(t["wiring_status"] == "wired" for t in view2["island_transitions"])

@@ -53,7 +53,13 @@ class _GitResult:
 
 
 class _HeadGateway:
-    """run_git/project_root 两点契约：HEAD 面由 head_files 仿真（落地仿真态 git 面）。"""
+    """run_git/project_root 两点契约：HEAD 面由 head_files 仿真（落地仿真态 git 面）。
+
+    2026-09-30 契约补齐：QMine M5 矿③给 _head_registry_yaml_data 挂内容寻址 memo 后，
+    预检读 HEAD 册先走单路径 `git ls-tree HEAD -- <rel>` 取 blob sha（缓存键）——
+    本仿真此前只实现 `ls-tree -r` 递归形态，单路径形态落 unsupported → 两内联 gate
+    全体 degraded=假阴性（M2.1 死因复现用例失去判别力）。补齐单路径 blob 契约。
+    """
 
     def __init__(self, root: Path, head_files: dict[str, str] | None = None) -> None:
         self.project_root = root
@@ -62,6 +68,14 @@ class _HeadGateway:
     def run_git(self, cmd: list[str]) -> _GitResult:
         if cmd[:3] == ["git", "ls-tree", "-r"]:
             return _GitResult(stdout="\n".join(sorted(self._head)))
+        if cmd[:2] == ["git", "ls-tree"] and len(cmd) >= 5 and cmd[2] == "HEAD" and cmd[3] == "--":
+            import hashlib
+
+            rel = cmd[4]
+            if rel in self._head:
+                sha = hashlib.sha1(self._head[rel].encode("utf-8")).hexdigest()
+                return _GitResult(stdout=f"100644 blob {sha}\t{rel}")
+            return _GitResult(returncode=1, stderr=f"fatal: path '{rel}' does not exist in 'HEAD'")
         if cmd[:2] == ["git", "show"] and len(cmd) >= 3:
             rel = cmd[2].split(":", 1)[1]
             if rel in self._head:
