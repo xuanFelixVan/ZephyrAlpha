@@ -1,0 +1,78 @@
+# ALGO_FLOW 外部真源——position_checkup_orchestrator（_domain_position 域，真源 src/zephyr/position/core/position_checkup_orchestrator.py）
+# 2026-09-28 F42 G42-1 接线批（st-c9-f42）：新件按 external 锚格式落 yaml（与 extractor
+# parse_algo_flow 管线同构）；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.position.core.position_checkup_orchestrator
+source_of_truth: src/zephyr/position/core/position_checkup_orchestrator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: positions 参数
+    #   fields: 参数 positions（Sequence[CheckupPositionInput]）
+    #   code: run_position_checkup 形参（AST 提取）
+    # - id: I2
+    #   name: data_date 参数
+    #   fields: 参数 data_date（YYYY-MM-DD，fail-closed 校验）
+    #   code: run_position_checkup 形参（AST 提取）
+    # - id: I3
+    #   name: adjudication_layers 参数
+    #   fields: 参数 adjudication_layers（四层 callable 表，缺装配=人工确认默认态）
+    #   code: run_position_checkup 形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 组合级漂移（P1-05）
+    #   name_en: portfolio drift
+    #   intro: PositionDriftMonitor.check 整组合一次（MOD-POS-003 委托）。
+    #   desc: 只编排不重造；缺权重=skipped。
+    #   inputs: positions
+    #   outputs: drifted_symbols
+    # - id: A2
+    #   name_zh: ② 逐仓四段（P1-01/02/03/04）
+    #   name_en: per-position segments
+    #   intro: 对账快照态合法性→分级（MOD-SELL-000）→逻辑存活（MOD-PLAN-024）→风险否决（MOD-RK-09）。
+    #   desc: 单持仓单段失败 fail-open 留痕继续；缺维度=skipped 降级。
+    #   inputs: positions
+    #   outputs: segments
+    # - id: A3
+    #   name_zh: ③ 动作映射（P1-06 前半）
+    #   name_en: action derivation
+    #   intro: 确定性映射：止损信号∨thesis DEAD→EXIT；漂移越带→REDUCE；其余→HOLD。
+    #   desc: 单票看对错，组合看结构。
+    #   inputs: segments, drifted_symbols
+    #   outputs: derived_action
+    # - id: A4
+    #   name_zh: ④ 裁决中心+审计（P1-06 后半）
+    #   name_en: adjudication and audit
+    #   intro: EXIT/REDUCE 过 PositionAdjudicationCenter（MOD-POS-024 四层注入）；报告 JSONL append-only。
+    #   desc: 缺装配/裁决拒绝=人工确认默认态；零下单观察态；审计盘故障 fail-open 留痕。
+    #   inputs: derived_action, adjudication_layers
+    #   outputs: PositionCheckupReport
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 模块公共 API 面（4 定义）
+    #   name_en: public defs
+    #   intro: CheckupPositionInput, CheckupSegmentError, default_positions_loader, run_position_checkup
+    #   downstream: zephyr.plan_engine.daily_loop_master_switch（_stage_position_checkup，dloop premarket 段）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I2 --> A4
+    # I3 --> A4
+    # A1 --> A3
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O1
+
+algo_flow_prose: |
+    # [ALGO_FLOW]
+    # I1: positions(Sequence[CheckupPositionInput] 上游对账投放面 inputs_<date>.json 契约)
+    # I2: data_date(YYYY-MM-DD fail-closed) / I3: adjudication_layers(四层 callable 缺省=None)
+    # A1: 组合级漂移整组合一次(P1-05) / A2: 逐仓四段 fail-open(P1-01..04)
+    # A3: 动作映射确定性(止损∨DEAD→EXIT; 越带→REDUCE; 余→HOLD)
+    # A4: EXIT/REDUCE 过裁决中心(缺装配=人工确认默认态)+审计 JSONL 追加; 零下单观察态
+    # O1: PositionCheckupReport(JSON 可序列化)+default_positions_loader 投放面读数
+    # [/ALGO_FLOW]

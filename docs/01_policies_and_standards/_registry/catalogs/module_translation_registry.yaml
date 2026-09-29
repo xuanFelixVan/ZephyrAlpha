@@ -62093,6 +62093,14 @@ entries:
   desc_en: "G45-1 remediation: wires TDM-X-S1 six nodes into one event-triggered scan (providers to fusion to urgency to S2-01 route envelope); no resident loop, paper mode by default, honest empty runs, explicit skip trails"
   plain_zh: "定期把六个卖出信号判定件跑一遍，有卖出信号就打包送到执行路由口，没信号就如实记录空跑，没接好的部件明确记下没跑的原因"
   responsibility_layer: business
+- module_path: src/zephyr/position/core/position_checkup_orchestrator.py
+  domain_id: D_POSITION
+  name_zh: "P1持仓体检棒"
+  name_en: "position checkup orchestrator"
+  desc_zh: "持仓体检编排：按TDM-P-P1边序串五件体检器+裁决中心出当日动作清单，挂dloop盘前段"
+  desc_en: ""
+  plain_zh: "每天开盘前把手里每只股票自动检查一遍：账对不对、要盯多紧、买入理由还在不在、踩没踩止损线、组合是不是太偏，最后给每只股票一张今日动作清单（维持/减仓/离场）。"
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

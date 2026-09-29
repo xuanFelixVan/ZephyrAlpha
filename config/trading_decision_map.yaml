@@ -2574,6 +2574,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-P-P1
+  note_confirmed: 2026-09-28  # F42 G42-1 接线（st-c9-f42）：体检棒 MOD-POS-030 落地挂 dloop premarket 段，编排面补齐
   name_zh: 持仓体检
   market: cn_a
   flow: position_flow
@@ -2584,9 +2585,11 @@ nodes:
   activation: premarket
   algo_note_zh: >-
     持仓体检枢纽：六个子环节（对账/分级/逻辑存活/风险否决/组合级/结论汇总）盘前并行跑一遍+盘中持续，输出每只持仓的当日动作清单。
+    编排=position_checkup_orchestrator（MOD-POS-030）串五件+裁决中心（只编排不重造，逐段 fail-open，零下单观察态），
+    挂 dloop premarket 段（dloop_post 16:45 自动圈，事件驱动无 cron）；上游对账取数面未接线前 inputs 缺席=skipped 留痕。
   factor_refs: []
   data_refs: []
-  module_ref:
+  module_ref: src/zephyr/position/core/position_checkup_orchestrator.py
   red_reason: structural
   strategy_mounts: []
   materiality: normal
@@ -2826,7 +2829,8 @@ nodes:
   activation: premarket
   invalidation:
   ai_autonomy: auto
-    # 红节点（P 流三空白之一：体检汇总编排面）；动作过 position_adjudication_center（MOD-POS-024）+审计；
+    # 红节点（体检汇总编排面）已于 2026-09-28 由体检棒 MOD-POS-030 补齐挂 dloop premarket 段（st-c9-f42，F42 G42-1）；
+    #   动作过 position_adjudication_center（MOD-POS-024）+审计；
     #   引用轴皆空=接受 R25 warning（与 E 流 17 空转叶子同池，血肉阶段欠账）
   fallback: 任一子项异常→该持仓动作置人工确认默认态
   strategy_mounts: []

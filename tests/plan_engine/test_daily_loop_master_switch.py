@@ -26,15 +26,63 @@ def _patch_ch(monkeypatch: pytest.MonkeyPatch, kline_max: str, regime_max: str) 
 
 
 def test_phase_stage_plan_contract() -> None:
-    """钩子序契约：close_verify 恒先于 settle；full 含全部 11 段。"""
+    """钩子序契约：close_verify 恒先于 settle；full 含全部 17 段。"""
     post = dloop.PHASE_STAGES["postmarket"]
     assert post.index("close_verify") < post.index("settle")
-    assert len(dloop.PHASE_STAGES["full"]) == 16
+    assert len(dloop.PHASE_STAGES["full"]) == 17
     assert dloop.PHASE_STAGES["premarket"][0] == "data_readiness"
     # Owner 扩面（2026-09-21）：A 类四段入位
     assert "llm_premarket" in dloop.PHASE_STAGES["premarket"]
+    # F42 G42-1 接线（st-c9-f42）：P1 持仓体检棒入 premarket（晨间预案后、LLM 分析前）
+    assert "position_checkup" in dloop.PHASE_STAGES["premarket"]
+    assert dloop.PHASE_STAGES["premarket"].index("position_checkup") < dloop.PHASE_STAGES["premarket"].index(
+        "llm_premarket"
+    )
     assert {"sentiment_loop", "auction_hit"} <= set(dloop.PHASE_STAGES["intraday"])
     assert {"similar_day", "attribution"} <= set(dloop.PHASE_STAGES["postmarket"])
+
+
+def test_position_checkup_stage_skips_without_inputs(monkeypatch: pytest.MonkeyPatch) -> None:
+    """投放面缺席=skipped 留痕（fail-open，禁伪造持仓数据）。"""
+    monkeypatch.setattr("zephyr.position.core.position_checkup_orchestrator.default_positions_loader", lambda d: [])
+    out = dloop._stage_position_checkup("2026-09-18")
+    assert out["status"] == "skipped"
+    assert out["reason"] == "no_checkup_inputs"
+
+
+def test_position_checkup_stage_ok_passes_params(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """编排触发+参数传递：data_date 直传体检棒，报告摘要回流段结果。"""
+    captured: dict = {}
+
+    def fake_run(positions, *, data_date, **kw):
+        captured["data_date"] = data_date
+        captured["n"] = len(positions)
+        return {"summary": {"actions": {"HOLD": 1}}, "audit_path": str(tmp_path / "a.jsonl"), "positions": []}
+
+    monkeypatch.setattr(
+        "zephyr.position.core.position_checkup_orchestrator.default_positions_loader",
+        lambda d: [{"symbol": "600519.SH"}],
+    )
+    monkeypatch.setattr("zephyr.position.core.position_checkup_orchestrator.run_position_checkup", fake_run)
+    out = dloop._stage_position_checkup("2026-09-18")
+    assert out["status"] == "ok"
+    assert captured == {"data_date": "2026-09-18", "n": 1}
+    assert out["summary"] == {"actions": {"HOLD": 1}}
+
+
+def test_position_checkup_stage_fail_open(monkeypatch: pytest.MonkeyPatch) -> None:
+    """体检棒炸=异常上抛由循环壳收敛为该段 error（fail-open 契约同其他段）。"""
+    monkeypatch.setattr(
+        "zephyr.position.core.position_checkup_orchestrator.default_positions_loader",
+        lambda d: [{"symbol": "x"}],
+    )
+
+    def boom(positions, *, data_date, **kw):
+        raise RuntimeError("注入失败:checkup")
+
+    monkeypatch.setattr("zephyr.position.core.position_checkup_orchestrator.run_position_checkup", boom)
+    with pytest.raises(RuntimeError, match="注入失败:checkup"):
+        dloop._stage_position_checkup("2026-09-18")
 
 
 def test_input_validation_fail_closed() -> None:

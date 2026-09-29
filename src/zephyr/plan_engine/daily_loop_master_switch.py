@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-PLAN-033 | docs/_working/daily_loop_campaign/00_reuse_audit_ledger.md（缺口①真源；上层蓝图 docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md §十一）
 # [MODULE] zephyr.plan_engine.daily_loop_master_switch
 # [DOMAIN] D_PLAN
-# [DEPENDENCIES] zephyr.plan_engine.daily_warroom_pipeline(run_daily_warroom_pipeline); zephyr.plan_engine.daily_plan(emit_for_trade_date); zephyr.plan_engine.next_day_forecaster(emit_for_trade_date); zephyr.plan_engine.intraday_l1_tracker(maybe_track_intraday_state); zephyr.plan_engine.scenario_classifier(maybe_classify_intraday_scenario); zephyr.plan_engine.close_verifier(verify_for_session); zephyr.plan_engine.judgment_settler(settle_all); zephyr.strategy_pipeline.daily_decision_orchestrator(run_daily_decision); zephyr.strategy_pipeline.pipeline_events(maybe_emit_pf_alloc_daily); zephyr.pf_alloc.allocation_inputs(load_pp001_plan); zephyr.data.ch_reader(只读新鲜度); scripts/backtest/print_regime_history.py(子进程逃生口)
+# [DEPENDENCIES] zephyr.plan_engine.daily_warroom_pipeline(run_daily_warroom_pipeline); zephyr.plan_engine.daily_plan(emit_for_trade_date); zephyr.plan_engine.next_day_forecaster(emit_for_trade_date); zephyr.plan_engine.intraday_l1_tracker(maybe_track_intraday_state); zephyr.plan_engine.scenario_classifier(maybe_classify_intraday_scenario); zephyr.plan_engine.close_verifier(verify_for_session); zephyr.plan_engine.judgment_settler(settle_all); zephyr.strategy_pipeline.daily_decision_orchestrator(run_daily_decision); zephyr.strategy_pipeline.pipeline_events(maybe_emit_pf_alloc_daily); zephyr.pf_alloc.allocation_inputs(load_pp001_plan); zephyr.position.core.position_checkup_orchestrator(default_positions_loader/run_position_checkup); zephyr.data.ch_reader(只读新鲜度); scripts/backtest/print_regime_history.py(子进程逃生口)
 # [CONSUMERS] 人工/Owner 门位（手动逃生口）；zephyr.data.scheduler（dloop_post 特殊槽，交易日 16:45 自动圈）；日循环 E2E 验收（st-dloop-20260921）
 # [STARTUP] manual
 # [MATURITY] testing
@@ -24,6 +24,7 @@ daily_loop_master_switch — 日循环手动总扳手（缺口①，对账总账
     数据就绪门(fail-closed) → regime 新鲜度体检(消费方口径,缺则逃生口补印)
     → warroom scenario_plan 族(MOD-PLAN-018, 唯一未挂事件链的棒)
     → 晨间预案(MOD-PLAN-030) → 次日概率(MOD-PLAN-029) → pf_alloc 分配(记号幂等)
+    → P1 持仓体检棒(MOD-POS-030, F42 G42-1 接线, 盘前段)
     → 盘中 L1(MOD-PLAN-028) → 盘中归类(MOD-PLAN-031)
     → 收盘验证(MOD-PLAN-032, 序契约先于结算) → 三表结算(MOD-PLAN-027)
     → 日度拍板(MOD-BT-214, #305 安全态, force=显式重拍逃生口)
@@ -246,6 +247,33 @@ def _stage_decision(data_date: str, *, force: bool) -> dict[str, Any]:
 # ── Owner 扩面令（2026-09-21）A 类新段：未进编排器件的打通席位 ────────────────
 
 
+def _stage_position_checkup(data_date: str) -> dict[str, Any]:
+    """P1 持仓体检棒（MOD-POS-030，F42 G42-1 接线）：五件体检器+裁决中心编排席位。
+
+    上游对账产物投放面（F57→P1，inputs_<date>.json 契约）未接线前缺席=skipped
+    留痕（fail-open，与 auction_hit 窗闸同款）；禁伪造持仓数据。零下单（观察记录面）。
+    """
+    from zephyr.position.core.position_checkup_orchestrator import (
+        default_positions_loader,
+        run_position_checkup,
+    )
+
+    positions = default_positions_loader(data_date)
+    if not positions:
+        return {
+            "status": "skipped",
+            "reason": "no_checkup_inputs",
+            "inputs_contract": "data/runtime/position_checkup/inputs_<data_date>.json",
+        }
+    report = run_position_checkup(positions, data_date=data_date)
+    return {
+        "status": "ok",
+        "summary": report.get("summary"),
+        "audit_path": report.get("audit_path"),
+        "detail": str(report.get("positions"))[:300],
+    }
+
+
 def _stage_llm_premarket(data_date: str) -> dict[str, Any]:
     """盘前 LLM 分析（MOD-PLAN-007）：工序定义了无执行者——本段=执行者席位。
 
@@ -335,7 +363,7 @@ def _stage_attribution(data_date: str) -> dict[str, Any]:
 # ── 段序注册（postmarket 内 verify 恒先于 settle——钩子序契约）───────────────
 
 PHASE_STAGES: Final[dict[str, list[str]]] = {
-    "premarket": ["data_readiness", "regime_freshness", "warroom", "daily_plan", "llm_premarket"],
+    "premarket": ["data_readiness", "regime_freshness", "warroom", "daily_plan", "position_checkup", "llm_premarket"],
     "intraday": ["intraday_l1", "classify", "sentiment_loop", "auction_hit"],
     "postmarket": [
         "close_verify",
@@ -352,6 +380,7 @@ PHASE_STAGES: Final[dict[str, list[str]]] = {
         "regime_freshness",
         "warroom",
         "daily_plan",
+        "position_checkup",
         "llm_premarket",
         "next_day",
         "pf_alloc",
@@ -411,6 +440,7 @@ def run_daily_loop(
         "close_verify": _stage_close_verify,
         "settle": _stage_settle,
         "llm_premarket": _stage_llm_premarket,
+        "position_checkup": _stage_position_checkup,
         "sentiment_loop": _stage_sentiment_loop,
         "auction_hit": _stage_auction_hit,
         "similar_day": _stage_similar_day,
