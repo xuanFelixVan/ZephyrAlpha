@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: 判定台账标准 v0.1 全仓推广——每个产出判定的模块接电时必接台账发射器；三张首批表已建并产出结算数据；meta-回测 harness 出具首份逐层归因报告。
 ---

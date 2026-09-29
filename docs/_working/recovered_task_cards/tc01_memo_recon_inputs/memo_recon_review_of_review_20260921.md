@@ -1,4 +1,5 @@
 ---
+created: 2026-09-21
 ttl: task_bound
 session: st-xhs-full-20260922
 topic: tc01_memo_recon_inputs

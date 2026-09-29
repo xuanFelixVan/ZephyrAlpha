@@ -1,4 +1,5 @@
 ---
+created: 2026-09-18
 ttl: task_bound
 completes_when: 交接令被执行方接方确认收讫（本件为 R-038 损失事件救回件，随全流通战役归档）
 ---

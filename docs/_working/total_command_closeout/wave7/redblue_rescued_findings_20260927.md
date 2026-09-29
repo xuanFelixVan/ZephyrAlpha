@@ -1,4 +1,5 @@
 ---
+created: 2026-09-27
 ttl: task_bound
 completes_when: "本件 P-1 的静默放行面被补丁覆盖且两条红证在落地面转绿，或 Owner 明令保留现状并把该项登记为长期可观测风险"
 authored_by: "st-final-build-20260926（总筹本班）"

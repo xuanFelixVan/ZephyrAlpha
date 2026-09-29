@@ -1,4 +1,5 @@
 ---
+created: 2026-09-21
 ttl: task_bound
 completes_when: 首日样张被日常日报流程替代后归档
 ---

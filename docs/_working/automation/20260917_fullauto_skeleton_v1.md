@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 8+1 工段缺口全部立卡施工完毕且Owner驳回本骨架，或被 v2 替代
 ---

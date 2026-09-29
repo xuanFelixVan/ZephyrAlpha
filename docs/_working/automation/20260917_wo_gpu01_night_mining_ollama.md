@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 夜窗挖矿批上线且模型档位 A/B 定版并报备
 ---

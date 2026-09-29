@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: Owner 对 §八 待批准点逐条裁定；蓝图获批后刀1（一库）/刀2（一闸）可挂单开工；§九自裁记录无 Owner 否决。
 ---

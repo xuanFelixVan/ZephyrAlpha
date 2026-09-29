@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 情绪 SFT 模型回灌 Ollama 且夜窗情绪批切换自模型验证一轮
 ---

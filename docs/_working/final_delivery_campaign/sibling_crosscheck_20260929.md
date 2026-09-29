@@ -1,4 +1,5 @@
 ---
+created: 2026-09-29
 ttl: task_bound
 title: 兄弟施工队 2026-09-29 落地袋交叉验证报告（矿道 M7）
 session: st-finaldel-m7-20260929

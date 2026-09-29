@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: Owner 已阅覆盖矩阵与三清单；基建最小方案四件（一库一器一闸一图）挂单或立项；黄灯断点逐条归入既有 backlog 或新立工单。
 ---

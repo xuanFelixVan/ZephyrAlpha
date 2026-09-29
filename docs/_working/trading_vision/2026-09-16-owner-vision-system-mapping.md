@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: Owner 交易愿景已完成机构化翻译与系统映射，两张策略卡进入工厂考试线，缺件挂入 backtest_backlog；后续按行动项推进至整装策略进入模拟盘。
 ---

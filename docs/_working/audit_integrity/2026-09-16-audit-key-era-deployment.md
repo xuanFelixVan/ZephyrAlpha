@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: 裁定#267 落地+终验 mismatch=0+提交入库+Owner 验收（密钥分期与新钥部署收口）
 ---

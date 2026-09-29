@@ -1,4 +1,5 @@
 ---
+created: 2026-08-28
 ttl: task_bound
 title: 产业链/供应链图谱前端功能设计
 owner: ZephyrAlpha-Owner

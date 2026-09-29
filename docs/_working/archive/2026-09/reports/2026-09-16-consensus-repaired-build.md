@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: consensus_daily_repaired 经 Owner 验收切换（或判废）后归档
 ---

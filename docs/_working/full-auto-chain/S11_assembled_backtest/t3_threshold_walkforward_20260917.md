@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 title: T3 money_effect / mainline 阈值本土 walk-forward 校准研究（只研究不改产，供裁定）
 session: st-qoder-t1a-20260915

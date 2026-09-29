@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: RL trainer 施工完成并通过 B-007 审批启动真训练，或工单被否决归档
 ---

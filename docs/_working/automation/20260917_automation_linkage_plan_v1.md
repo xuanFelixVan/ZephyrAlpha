@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 待批清单全部获 Owner 批复并施工完毕，或本方案被 v2 替代
 ---

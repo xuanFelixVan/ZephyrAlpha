@@ -1,4 +1,5 @@
 ---
+created: 2026-09-21
 ttl: task_bound
 session: st-data-fix-20260921
 title: 总包甲·数据正确性线 端到端交付报告（七分包全终态）

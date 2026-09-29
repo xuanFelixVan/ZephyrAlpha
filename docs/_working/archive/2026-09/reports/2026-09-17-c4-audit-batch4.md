@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 30 份抽核协议全量完成并经 consensus_daily_repaired 验收后归档
 ---

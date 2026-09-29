@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 数据线完成①采集链重启+09-16/09-17 补跑 ②ETF 族 60min 结构缺口经通道 C/D 回补 ③覆盖矩阵复跑缺格清零 ④known_data_gaps.yaml kline_etf_60min_depth_windows 条目回写 resolution_actual
 ---

@@ -1,4 +1,5 @@
 ---
+created: 2026-09-19
 ttl: task_bound
 title: 规则审计战役·施工交接指令（Max 日班→施工班，裁定已全批）
 session: st-maxday-20260919

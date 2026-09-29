@@ -1,4 +1,5 @@
 ---
+created: 2026-09-15
 ttl: task_bound
 completes_when: >-
   加减乘除清单（§5）每一项均有终态（commit 落地 / 裁定保留 / 裁定废弃归档）；

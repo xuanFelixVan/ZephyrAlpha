@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 title: S2 breadth_thrust 阈值 A 股本土 walk-forward 复推报告（OVB-4 台账项 s2_breadth_thrust 清偿）
 session: st-qoder-t1a-20260915

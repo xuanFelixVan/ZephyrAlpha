@@ -1,4 +1,5 @@
 ---
+created: 2026-09-24
 ttl: task_bound
 sid: st-gpu-final-20260924
 lane: e2e_integration

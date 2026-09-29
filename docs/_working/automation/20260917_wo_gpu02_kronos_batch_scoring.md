@@ -1,4 +1,5 @@
 ---
+created: 2026-09-17
 ttl: task_bound
 completes_when: 全市场日线批量打分夜窗上线且预测落表，或本工单被否决归档
 ---

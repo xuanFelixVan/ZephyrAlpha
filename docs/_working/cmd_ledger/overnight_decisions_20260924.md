@@ -1,4 +1,5 @@
 ---
+created: 2026-09-24
 ttl: task_bound
 title: 总指挥通宵看护台账（续册——原册 registry_incident_20260922/ 目录今晨被清扫消失，R1-R30 记录随目录丢失）
 ---

@@ -1,4 +1,5 @@
 ---
+created: 2026-09-22
 ttl: task_bound
 session: st-b10-final-20260922
 title: 批10 终局+甲域收尾班 交付报告（四分包）

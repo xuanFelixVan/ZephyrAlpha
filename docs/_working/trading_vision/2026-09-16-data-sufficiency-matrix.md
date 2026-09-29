@@ -1,4 +1,5 @@
 ---
+created: 2026-09-16
 ttl: task_bound
 completes_when: 五层数据够用性矩阵已并入骨架文档族；三类缺口分派归口（采集→数据线/结构→蓝图/历史→登记）；S-OWNER-001 小时线料源查实（kline_60min+kline_etf_60min）。
 ---
