@@ -56519,6 +56519,11 @@ creation_tokens:
   created_by: st-finaldel-lists-20260930
   capability: final_delivery_campaign
   merge_evaluation: "C98/C115 两张 Owner 裁定清单（工卡 M 台账面），勾选后另批施工"
+- file: docs/_working/final_delivery_campaign/ch_ops_ledger_20260930.md
+  token: final-delivery-campaign-ch-ops-ledger-20260930-20260929
+  created_by: st-finaldel-chief-20260930
+  capability: final_delivery_campaign
+  merge_evaluation: "CH实弹批VM离线阻塞移交账（同族并卷，裁定#431执行面）"
 - file: scripts/governance/_tasks/session_closeout_reconciler.py
   token: session-closeout-reconciler-session-closeout-reconciler-20260929
   created_by: st-nightclean-20260929
@@ -56701,6 +56706,11 @@ creation_tokens:
   created_by: st-finaldel-ownr2-20260930
   capability: registry-entry-counts-postcommit-backfill-wiring
   merge_evaluation: "buzhong: xianyou reconciler wu ROOR entry_count huitian chuyufa, CR-007 gongju wu zidong chufa — ben jian wei gai kongque de weiyi jexian, wu tongyu ke bing tiaomu"
+- file: docs/03_modules/_domain_signal/algo_flow/combo_rule_loader.yaml
+  token: signal-algo-flow-combo-rule-loader-20260929
+  created_by: st-nightclean-20260929
+  capability: signal_algo_flow
+  merge_evaluation: "组合规则卡 loader 的 ALGO_FLOW 外置真源（P2-1 锚+机器块标准出仓形态，与 banker_pattern_simulator.yaml 同族同管线，零平行真源）"
 - file: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
   token: f45-s1-scan-orchestrator-20260928
   created_by: st-c9-f45
