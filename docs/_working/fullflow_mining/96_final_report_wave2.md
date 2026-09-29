@@ -72,5 +72,5 @@ creation_token: fullflow-closure-wave2-final-report-20260926
 **直连与代投携带（非队列袋，git log --all 全史核）**：`30505c93f6c`（P1 终局大单 678 件，allow-multi-domain 直连）；`8f03ef44bf7`（st-chief5 代投本会话孤儿接线件 [adopted-orphan]）；`6a4124cd8fd`（st-commitspeed-tbl 携带 budget/schedulegate 基线件落 dev）。0003/0005-0013/0015/0017-0018/0020 未见于 done|dead 与全史 grep＝直连或记录已被清理，队列实录无法归因（诚实缺口，不虚补）。
 
 - [x] 各袋 qid 与 landed commit（上表＋直连/代投实录）
-- [ ] 两轮循环检查读数（队列实录不可推，待原会话口径）
+- [x] 两轮循环检查读数（2026-09-29 落地面复跑两轮，st-finaldel-cdocs-20260929；原会话口径不可得，以当日 HEAD 实跑替代）——电池=①对账尺 `generate_fullflow_crosscheck.py --check`＋②波2 触达域 `pytest tests/ai_layer -q`＋③`test_switch_criteria_ssot.py`。**两轮读数逐项全等**：①两轮同为 STALE rc=1（91_machine_crosscheck.yaml 生成物落后世界态——末次重跑=st-nightclean ba400ea294，其后各波落地累积漂移，属簿务面既有病非波2 残留，重跑归簿务车道；读数两轮确定性一致）；②两轮均 768 passed/2 skipped；③两轮均 1 skipped（skip=st-chiefzc-rescue 捞回袋官方豁免标记在案，上游实现件落地后恢复硬测）。红蓝完整轮次=原会话 §五/§六 在案（红队两轮打假收紧判据 W6-M＋伪指令攻击未得手），本复跑不重开红蓝只证落地面两轮一致
 - [ ] 临时件清理与工作树收尾（待原会话/总筹终检）
