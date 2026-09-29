@@ -403,8 +403,8 @@ _PRECOMMIT_SLOW_TAIL_HOOKS: tuple[str, ...] = (
     "gate-vocab",
     "gate-16-architecture-compliance",
     "gate-12-blueprint-provenance",
-    "gate-13-blueprint-overlap",
-    "gate-14-authority-registry",
+    # gate-13-blueprint-overlap / gate-14-authority-registry 已于 2026-09-30 退役
+    # （.pre-commit-config.yaml 墓碑；慢尾清单残留死 id 只会误导排查，清出）。
     "gate-mcp-contract-consistency",
     "gate-c2",
     "gate-codegen-idempotent",
@@ -631,6 +631,9 @@ class _GlobalCommitLock:
     def __enter__(self) -> _GlobalCommitLock:
         t0 = time.monotonic()
         deadline = time.monotonic() + self._timeout
+        # 指数退避（2026-09-30 提速批）：等待期从固定 0.1s 轮询改为 0.1s 起步×1.5 封顶
+        # 1.0s——竞争时把 10 次/s 的 O_EXCL+整读降一个量级；成功路径零影响（首轮即获锁）。
+        poll = self._poll_interval
         while True:
             try:
                 fd = os.open(str(self._lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -701,7 +704,8 @@ class _GlobalCommitLock:
                         f"another session is committing. Lock file: {self._lock_file}"
                     ) from None
                 # PERM-TRIGGER fix: use Event().wait() instead of time.sleep()
-                threading.Event().wait(self._poll_interval)
+                threading.Event().wait(poll)
+                poll = min(poll * 1.5, 1.0)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         if self._acquired:
@@ -785,7 +789,16 @@ def _print_bottleneck_banner(project_root: Path, context: str) -> None:
             return
         cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
         groups: dict[str, list[dict]] = {}
-        for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
+        # 尾读 256KB（2026-09-30 提速批）：事件按时间追加，24h 窗必在文件尾部；
+        # 横幅每笔成功+阻断各跑一次，整读会随账本无限增长线性变慢。
+        with p.open("rb") as fh:
+            fh.seek(0, 2)
+            size = fh.tell()
+            fh.seek(max(0, size - 262144))
+            tail_text = fh.read().decode("utf-8", errors="ignore")
+        if size > 262144:
+            tail_text = tail_text.split("\n", 1)[1]  # 丢弃截断的首半行
+        for line in tail_text.splitlines():
             if not line.strip():
                 continue
             try:

@@ -769,14 +769,13 @@ def _registration_ttl_findings(
     session_id: str,
     commit_message: str,
 ) -> tuple[list[str], list[str]]:
-    """② TTL-METADATA（files 驱动 spec gate）——spec 不在册/执行异常均 degraded 不假红。"""
+    """② TTL 判定（files 驱动）——2026-09-30 起直连 ttl_gate 判定体：名册 TTL-METADATA
+    standalone 已执行退役（判据由 DOC-HEADER-SUITE 同参转发承载），本预检引用改判定体
+    直连以脱钩名册在册状态；执行异常仍 degraded 不假红。"""
     try:
-        specs = gateway._gate_registry.specs_sorted()  # noqa: SLF001 — 注册表快照唯读（同 run_preflight）
-        spec = next((s for s in specs if s.gate_id == "TTL-METADATA"), None)
-        if spec is None:
-            logger.warning("registration gate TTL-METADATA spec 不在册（degraded 放行）")
-            return [], ["TTL-METADATA"]
-        result = spec.check(gateway, list(files), session_id=session_id, commit_message=commit_message)
+        from zephyr.gov_enforcement.commit_gates import ttl_gate  # noqa: PLC0415
+
+        result = ttl_gate._check(gateway, list(files), session_id=session_id, commit_message=commit_message)
         passed, detail = (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
         if not passed:
             return [_registration_finding_text("TTL-METADATA", str(detail))], []
