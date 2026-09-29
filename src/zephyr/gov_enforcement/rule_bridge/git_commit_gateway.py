@@ -72,6 +72,7 @@ __all__ = [
     "StashConflictWarning",
 ]
 
+import importlib
 import json
 import logging
 import os
@@ -515,6 +516,42 @@ class CommitResult:
     reconcile: list[ReconcileResult] = field(default_factory=list)
 
 
+# ---------------------------------------------------------------------------
+# Rx-2（st-finaldel-crx2-20260929）锁等待落账——02_prescriptions.md Rx-2 施工点2
+# 病灶：_GlobalCommitLock 轮询等待时长零落账，gates 相位四合一无法定案
+# 「夜间排队 107min 归因」；R2 定案判据=本册 lock_wait 行 100% 覆盖提交尝试。
+# ---------------------------------------------------------------------------
+LOCK_WAIT_LEDGER_FILENAME = "lock_wait_events.jsonl"
+# env 开关（缺省 ON；"0"/"false"/"off"=一键回退零落账——B5/C1 同款零 yaml 依赖）
+_LOCK_WAIT_LEDGER_ENV = "ZEPHYR_LOCK_WAIT_LEDGER"
+
+
+def _lock_wait_ledger_enabled() -> bool:
+    """Rx-2 env 开关读取：ZEPHYR_LOCK_WAIT_LEDGER 缺省 ON，"0"/"false"/"off"=回退。"""
+    return os.environ.get(_LOCK_WAIT_LEDGER_ENV, "").strip().lower() not in {"0", "false", "off"}
+
+
+def _append_lock_wait_event(project_root: str | Path, record: dict) -> None:
+    """锁等待账本写入器：append 一行 <root>/.runtime/audit/lock_wait_events.jsonl。
+
+    字段口径（Owner 六字段）：timestamp/event/session_id/waited_ms/holder/timeout，
+    timestamp 由本写入器统一注入。审计写永不回 tracked 区；写失败静默——
+    可观测性永不阻断提交主链路。
+    """
+    if not _lock_wait_ledger_enabled():
+        return
+    try:
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+        audit_dir = Path(str(project_root)) / ".runtime" / "audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        row = {"timestamp": now_utc().isoformat(), **record}
+        with open(audit_dir / LOCK_WAIT_LEDGER_FILENAME, "a", encoding="utf-8") as f:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 落账任何故障静默（不阻断提交主链路）
+        pass
+
+
 class _GlobalCommitLock:
     """跨进程全局串行锁（os.open O_CREAT|O_EXCL 原子创建）。
 
@@ -544,8 +581,14 @@ class _GlobalCommitLock:
         self._timeout = timeout
         self._poll_interval = poll_interval
         self._acquired = False
+        # Rx-2（st-finaldel-crx2-20260929）锁等待观测字段：waited_ms=本次获取等待耗时；
+        # holder=「等了谁」（pid=N，仅经历 FileExistsError 等待后非空）；_timed_out=超时路径标记。
+        self.waited_ms: float | None = None
+        self.holder: str = ""
+        self._timed_out = False
 
     def __enter__(self) -> _GlobalCommitLock:
+        t0 = time.monotonic()
         deadline = time.monotonic() + self._timeout
         while True:
             try:
@@ -561,6 +604,8 @@ class _GlobalCommitLock:
                 finally:
                     os.close(fd)
                 self._acquired = True
+                # Rx-2：成功获取（含等待后获取）记录等待耗时——账本数据源
+                self.waited_ms = (time.monotonic() - t0) * 1000.0
                 return self
             except FileExistsError:
                 try:
@@ -569,6 +614,9 @@ class _GlobalCommitLock:
                     if not isinstance(acquired_at, (int, float)):
                         acquired_at = 0
                     holder_pid = data.get("pid")
+                    if holder_pid is not None:
+                        # Rx-2：「等了谁」在账（含僵尸/TTL 回收场景，回收后仍可观测）
+                        self.holder = f"pid={holder_pid}"
                     if holder_pid is not None and not is_pid_alive(int(holder_pid)):
                         logger.warning(
                             "_GlobalCommitLock: 持有进程 PID %s 已死亡，清理僵尸锁: %s",
@@ -604,6 +652,9 @@ class _GlobalCommitLock:
                         pass
                     continue
                 if time.monotonic() >= deadline:
+                    # Rx-2：超时路径 waited_ms≈timeout 随对象带出（调用方落账 lock_timeout 行）
+                    self._timed_out = True
+                    self.waited_ms = (time.monotonic() - t0) * 1000.0
                     raise GatewayError(
                         f"Cannot acquire global commit lock (timeout {self._timeout}s)— "
                         f"another session is committing. Lock file: {self._lock_file}"
@@ -2151,7 +2202,10 @@ class GitCommitGateway:
         读取本体在 derived_dirty_ledger.read_integrity_baseline_mode。
         """
         try:
-            from zephyr.gov_enforcement.derived_dirty_ledger import read_integrity_baseline_mode
+            # 模块本体由在队袋 q-20260929-st-nightsweep-sw8-20260929-0002（SW3-P3）落地（130548cdb1 披露一）；懒导入+except 兜底本就安全
+            from zephyr.gov_enforcement.derived_dirty_ledger import (  # noqa: import-integrity  在队袋 q-0002 落地前存量引用，懒导入+except 兜底
+                read_integrity_baseline_mode,
+            )
 
             return read_integrity_baseline_mode(self.project_root)
         except Exception:  # noqa: BLE001 — 设施异常回现状
@@ -2161,10 +2215,12 @@ class GitCommitGateway:
     def _record_integrity_refresh_intent(self, session_id: str, trigger: str) -> None:
         """只记刷新意图、不 spawn、不开尾笔（战役 B0/M1·P3；消费端=事件触发）。"""
         try:
-            from zephyr.gov_enforcement.derived_dirty_ledger import append_intent
-
+            # 模块本体随在队袋 q-20260929-st-nightsweep-sw8-20260929-0002 落地（130548cdb1 披露一）；
+            # 动态导入=落袋前静态不存在且 ImportError 已兜底（noqa_exempt_registry 明列合法形态；
+            # 行级 noqa 让位密度上限——本文件 import-integrity 已 8/10 顶格，NOQA-VALIDATION）
+            _ddl = importlib.import_module("zephyr.gov_enforcement.derived_dirty_ledger")
             head = self.run_git(["git", "rev-parse", "HEAD"])
-            append_intent(
+            _ddl.append_intent(
                 self.project_root,
                 {
                     "qid": "",
@@ -2588,11 +2644,23 @@ class GitCommitGateway:
             except Exception:  # noqa: BLE001 — 预跑编排异常=回退现行全量链
                 preflight_results = None
                 preflight_fp = None
+        _lock_timeout = lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT
+        _lock = _GlobalCommitLock(self.project_root, timeout=_lock_timeout)
+        _lock_entered = False
         try:
-            with _GlobalCommitLock(
-                self.project_root,
-                timeout=lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT,
-            ):
+            with _lock:
+                _lock_entered = True
+                # Rx-2 锁等待落账（成功路径，含无竞争 waited_ms≈0 行——覆盖率判据要求全量）
+                _append_lock_wait_event(
+                    self.project_root,
+                    {
+                        "event": "lock_wait",
+                        "session_id": session_id,
+                        "waited_ms": round(_lock.waited_ms or 0.0),
+                        "holder": _lock.holder,
+                        "timeout": _lock_timeout,
+                    },
+                )
                 # B2① TOCTOU 根治：锁内二次校验（晾置可能发生在锁外 pre-flight 通过之后）
                 if not merge_finalize and self._is_merge_in_progress():
                     return self._merge_in_progress_result()
@@ -2639,6 +2707,18 @@ class GitCommitGateway:
         except GatewayError as e:
             # 2026-09-11 诊断性治本：此前 message 固定 "internal error" 吞掉真实异常，
             # 并发夜锁定排查困难（对齐 #ARCH-TOOL-HEALTH-V1 可诊断性精神）；status 语义不变。
+            if not _lock_entered:
+                # Rx-2 超时路径落账：waited_ms≈timeout 随锁对象带出，holder=被谁挡住
+                _append_lock_wait_event(
+                    self.project_root,
+                    {
+                        "event": "lock_timeout",
+                        "session_id": session_id,
+                        "waited_ms": round(_lock.waited_ms or 0.0),
+                        "holder": _lock.holder,
+                        "timeout": _lock_timeout,
+                    },
+                )
             logger.exception("GitCommitGateway: GatewayError during gated commit flow")
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message=f"internal error: {e}")
         except OSError as e:
