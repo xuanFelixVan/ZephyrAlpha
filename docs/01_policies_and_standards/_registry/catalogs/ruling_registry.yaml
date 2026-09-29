@@ -6065,3 +6065,97 @@ entries:
   related_arch: []
   related_rulings: ['裁定#431']
   superseded_by: null
+
+
+- ruling_id: "裁定#435"
+  title: "⚑-2② B案判据声明通道落册：考试链判据对象换盈亏平衡成本 c*（五道门不抽样，可并 DSR/PBO）"
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 批复原文（93_owner_menu.md 最短回法②）："选 B（判据对象改盈亏平衡成本 c* 的分布，
+    五道门、不抽样；可并 C=DSR≥0.95+PBO）；40bp 锚与"Sharpe≥0"语义都不动；2 格先补同窗对拍再定稿"。
+    本裁定按声明通道落册（宪法铁律：预注册冻结判据禁改值，调整只走声明通道=追加版本块）：
+    (1) 声明文件 docs/_working/night_sweep/c_exam/flag2_declaration_b.md（为何换尺不降标/新旧判据对照/
+    功效计算引用 n≈82 假设 p≈0.30-0.33 vs NIST 保守 97 vs 80%功效 180-194）；
+    (2) config/exam_scale_cost_gate.yaml 追加顶层键 breakeven_cost_gate（version 2.0.0，B 案判据冻结快照：
+    P1 中位数≥40bp/P2 P10≥0/P3 分层达标层占比≥80% 层内 n<30 判 INSUFFICIENT-N/P4 规模敏感≤20%/
+    P5 数据版本四字段 + DSR≥0.95(N=3700)+PBO≤0.20 并联 + A 股年化四条强制 + 三态输出），
+    旧四块（cost_gate/scale_gate/turnover_gate/search_objective）逐键零改值（survival_floor=0 禁改照旧，C1 未批降标）；
+    (3) 定稿前置"2 格同窗对拍"已完成=docs/_working/night_sweep/sw4_t1_repair_pairing_report.md
+    （A/B 双跑+直调引擎三证净值哈希一致 342432347427，配方内生阴性实锤）。
+    授权链：Owner 2026-09-30 "打通 C 组前置"夜总攻裁定（总筹 st-nightsweep-chief-20260929 派发
+    st-nightsweep2-nc-20260930 执行）。消费面接线（T2 判定书/成绩单生成器）另波；接线前哨兵判据面走 v1 键。
+  affected_files:
+  - docs/_working/night_sweep/c_exam/flag2_declaration_b.md
+  - config/exam_scale_cost_gate.yaml
+  - docs/_working/total_command_closeout/93_owner_menu.md
+  - docs/_working/night_sweep/sw4_t1_repair_pairing_report.md
+  related_arch: ['#ARCH-367']
+  related_rulings: ['裁定#431', '裁定#306']
+  superseded_by: null
+
+
+- ruling_id: "裁定#436"
+  title: 波12 点火批准卡 APPROVED 翻面 + RB2 带外归档追认与首跑授权
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 晨间对话全批（载体=#ARCH-367；初取 #422 撞号重排 #436）：
+    ①W12_WINDOW.yaml 批准卡 status=WAITING_APPROVAL→APPROVED，approval_ref=本裁定；
+    （呈卡证据：prereg sha256=da8fbbfb… 与现役一致、universe 摘要在案、五条件 c5 代码面已核）
+    ②RB2 追认：2026-09-29 04:13 带外脚本 743 封死信归档 mv 入 dead_archive_final/
+    （抽验 25/25 全落地、可逆非删除）结果追认，程序缺失以本裁定补登；
+    ③commit_queue.py dead-archive 官方子命令首跑授权（--days 3 --verify-landed 口径，
+    租约活体整体拒绝守卫维持）。
+  related_files:
+  - docs/_working/total_command_closeout/ignition/W12_WINDOW.yaml
+  - scripts/commit_queue.py
+  related_arch: ['#ARCH-367']
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: "裁定#437"
+  title: L09-C01 复盘编排器收拢：判(b) 现役双轨转正为本体，BT-P1-031 蓝图降格需求档案
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-29 凌晨授权夜班总负责人按架构师框架自裁（选题原文=L09_review/SKEL.md:149 二选一），2026-09-30 晨间 Owner 全批落册（载体=#ARCH-367；初取 #421 与 st-c8-rulings 夜八项代裁撞号重排，再遇并行取号二次穿插终排 #437）：
+    ①判 (b)：现役双轨（事件链 9 棒+总扳手 16 段）转正为复盘编排器本体；
+    ②BT-P1-031 蓝图版 S1-S7 完全体降格为需求档案+T3/T4 接口分期，禁第三套平行实现；
+    ③双轨对账声明先行（SKEL 封矿条件裁定项就此补录）；
+    ④时序张力归档：蓝图版刀1-4 已施工件（9098c65245）自本裁定生效起冻结为需求档案附件，不回退不扩写；
+    ⑤裁定理由：第一性原理=复盘编排的真实消费方是既有事件链与总扳手，双轨已承载全部流量；蓝图完全体无消费方且与 Z-C4 收拢令同向收敛；100% AI 开发模式下禁止三套编排器并存。
+  related_files:
+  - docs/_working/decision_map_campaign/links/L09_review/SKEL.md
+  related_arch: ['#ARCH-367']
+  related_rulings: ['裁定#305']
+  superseded_by: null
+
+- ruling_id: "裁定#436"
+  title: "C2 T1 成绩单定稿追认：3698 有效+2 配方内生阴性（同窗对拍三证），前置证据闭环"
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    对裁定#431 第⑦项"T1 定稿（Owner 签字落 2026-09-30）"的前置证据追认闭环：Owner 批复附条件
+    "2 格先补同窗对拍再定稿"（93_owner_menu.md ②）——该对拍已于 2026-09-29 完成
+    （docs/_working/night_sweep/sw4_t1_repair_pairing_report.md）：
+    (1) 2 阴格 d6759a48a594/4bdf3555a27d 经工厂执行器 A/B 双跑（grid_20260929-040003/040141，
+    同窗 2019-01-04~2025-09-09，引擎 HEAD 62898892）死因逐字段一致=确定性复现；
+    (2) 直调引擎第三证（evaluate_recipe+run_backtest_full）净值序列哈希三者一致（342432347427）；
+    (3) 死因定性=配方内生阴性（kelly_050 sizing 全期零仓位→零方差，非引擎 bug、非数据漂移）。
+    据此追认：T1 成绩单定稿态=3698 有效格+2 可审计阴性（manifest 3700 守恒，negatives.csv 已清零，
+    阴性以 manifest negative_note=endogenous_zero_variance 留痕）；"2 格与引擎无关"由转述升为实证。
+    落地面：data/strategy_intake/grid_20260926-024947/summary.json 增补 finalization 块（定稿指针）。
+    授权链：裁定#431⑦（Owner 签）+Owner 2026-09-30"打通 C 组前置"夜总攻裁定
+    （st-nightsweep-chief-20260929→st-nightsweep2-nc-20260930）。
+  affected_files:
+  - docs/_working/night_sweep/sw4_t1_repair_pairing_report.md
+  - data/strategy_intake/grid_20260926-024947/summary.json
+  - docs/_working/total_command_closeout/leaf_books/f06/w61_t1_scorecard.md
+  related_arch: ['#ARCH-368']
+  related_rulings: ['裁定#431', '裁定#435']
+  superseded_by: null
