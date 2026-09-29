@@ -7,6 +7,7 @@ ttl: task_bound
 > 族 6（考试与搜索链 GPU/T1/T2）· 骨架行锚=`00_master_skeleton.md` L121（态 🌑，出处「裁决归总令 裁2」，案卷 E）
 > 编译：2026-09-28，会话 st-zcloseout-20260928（Agent-H），lane HEAD=`325b69a193`。
 > 状态标记：🌑 Owner 门位（成绩单"定稿"=三项 blocking 的追认/改判，AI 不代裁）；哨兵与其测试**已落地**（本会话复读，见 M1）。
+> **✅ Owner 定稿 2026-09-30**：Owner 2026-09-30 批复"终局交付战役 Owner 门位清单按总筹建议逐项执行"，其中 T1 定稿拍板按总筹建议（99_owner_gate #4"只差 Owner 签"，3700 格 manifest 全 pass、计数前置已消化）签付——本叶簿 🌑 定稿门位就此闭合，定稿登记=裁定#431 第⑦项（ruling_registry.yaml）。后续 T2 选优发车（前置 W-64/W-65）按工单推进，不在本批。
 > 素材真源：`dossier_E_gpu_t1_t2.md` 主表 1a-1e、§B/§C/§D、追加批 2 条 5a-5e/6a-6c、收尾 1-6。
 
 ## 1. 六向台账（对象=`data/strategy_intake/grid_20260926-024947/` 成绩单的定稿面）

@@ -335,3 +335,44 @@ universes:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+  - universe_id: UNI-SECTOR-880-001
+    name: A-share Industry Sector Board Universe (880+881)
+    name_zh: A 股行业板块宇宙（880+881 两段行业序列）
+    aliases: [行业板块池, 880 板块序列, 881 二级行业, sector universe]
+    universe_type: static
+    construction_rule: >-
+      行业成分股真源=880+881 两段行业板块序列（W-178 真源裁定，总批复=裁定#431 第⑥项，2026-09-30）：
+      行业板块名册=c1_market.sector_code_name_map 729 行=880 段 601+881 段 128（与 kline_sector_880 distinct 729 同构）；
+      成分行覆盖=c1_market.sector_constituent 880 段 467 板块/89,586 行 + 881 段 128 板块/5,538 行；
+      板块 K 线=c1_market.kline_sector_880（880 前缀 602,204 行 + 881 前缀 158,814 行）。
+      概念板块 375（concept_board/concept_board_constituent/concept_sector 同码集）为独立一族，不混入行业口径（与 880 段零重合已复测）。
+    base_universe: null
+    filter_rules:
+    - 仅 880xxx/881xxx 行业段板块代码
+    - 概念板块（375 族）排除在行业口径外
+    rebalance_frequency: none
+    component_count: 729
+    components_ref: CH c1_market.sector_code_name_map（名册 729=601+128）+ c1_market.sector_constituent（成分行）
+    used_by_strategies: []
+    data_source: miniqmt（880xxx 行业板块序列）
+    module_id: MOD-GOVERNANCE
+    doc_ref: docs/_working/total_command_closeout/wave11/w178_sector_universe_strict.md（strict 复测案卷）+ 裁定#431
+    code_path: null
+    market: a_share
+    status: active
+    version: 1.0.0
+    created_at: '2026-09-30'
+    updated_at: '2026-09-30'
+    owner: MOD-GOVERNANCE
+    pit_constituent_construction: null    # 板块序列为全量截面索引（非成分回溯池），PIT 语义不适用=诚实留空
+    delisted_handling: unknown            # 板块代码表无退市语义字段，未声明
+    survivorship_free: null               # 未声明（非股票成分池，生存偏差框架不直接适用）
+    eligibility: eligible
+    data_tier: realtime
+    entry_role: reference
+    applies_to: [sector]
+    tags: [板块, 股票池, 行业]
+    algorithm_status: not_applicable
+    evidence: w178_universe_facts.yaml strict 复测（2026-09-26T18:05Z，双通道 57/57 一致，tcp/tcp，生成器 scripts/governance/wave11/w178_universe_facts_gen.py）；概念 375 与 880 段零重合复测在案
+    code_symbol: null
+    code_fingerprint: null
