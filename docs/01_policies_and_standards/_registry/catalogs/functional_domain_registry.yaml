@@ -471,7 +471,7 @@ entries:
   - 升级循环检测(escalation_loop_detector)
   - 死锁检测(deadlock_detector)
   - 最后手段看门狗(last_resort_watchdog)
-  - 跨子域注记（2026-09-30 C115）：DelegationEngine 实体在 governance/intelligence_governance/delegation_engine.py、process_isolator 实体在 governance/resilience_governance/；rule_canary_manager/rule_shadow_runner/rule_debt_auditor 规划中未建（承诺面收敛）
+  - 跨子域注记（2026-09-30 C115）：DelegationEngine 实体在 governance/intelligence_governance/delegation_engine.py、process_isolator 实体在 governance/resilience_governance/；rule_canary_manager/rule_shadow_runner/rule_debt_auditor 实体在 gov_enforcement/rule_enforcement/rule_engine/（跨子域注记；2026-09-30 终验红攻 st-finaldel-final2-20260930 修正：原注「规划中未建」系误标——三实体在产带测试，rule_debt_auditor docstring 明析 escalation_rules.yaml；首修被并发落地覆没本件为重做）
   aliases:
   - escalation
   - 升级
