@@ -219,6 +219,24 @@ def get_secret_fail_closed(key: str) -> str:
             f"secret '{key}' looks like a placeholder value (fail-closed)",
             details={"key": key, "value": sanitize_secret(key, value)},
         )
+    # C108 通电件②（2026-09-30）：读取面秘钥断言——AI 施工会话拒读 secret_registry
+    # `ai_exposure: forbidden` 名单键；owner/生产通道不拦（判别=current_session_is_ai_side，
+    # env+会话注册表最小判别）。断言器不可达/名单为空=零拒绝（现网 106 条 0 标注=插座态），
+    # 判定语义真源=ai_secret_exposure（本处只委托，不复制判定）。
+    try:
+        from zephyr.ai_layer.redline.ai_secret_exposure import (  # noqa: PLC0415 — 惰性防环
+            AiExposureError,
+            assert_key_not_forbidden_ai_side,
+        )
+    except Exception:  # noqa: BLE001 — 断言器模块不可达不反噬读取主路径（S1 启动面兜底）
+        pass
+    else:
+        try:
+            assert_key_not_forbidden_ai_side(key)
+        except AiExposureError:
+            raise  # AI 侧命中 forbidden 名单=真拒绝，必须穿透
+        except Exception:  # noqa: BLE001 — 断言面基础设施故障不反噬读取主路径
+            pass
     return value
 
 

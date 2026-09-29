@@ -85,7 +85,9 @@ __all__: Final = [
     "AiExposureError",
     "AiExposureReport",
     "assert_key_not_forbidden",
+    "assert_key_not_forbidden_ai_side",
     "combined_deny_patterns",
+    "current_session_is_ai_side",
     "forbidden_secret_keys",
     "key_matches_forbidden",
     "load_ai_exposure_report",
@@ -448,6 +450,71 @@ def assert_key_not_forbidden(
             },
         )
     return name
+
+
+#: 会话身份 env 惯例（真源=scripts/git_safety_wrapper.ps1 §Session ID injection）
+SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"
+
+
+def current_session_is_ai_side(
+    session_id: str | None = None,
+    *,
+    project_root: str | Path | None = None,
+) -> bool:
+    """C108 前置：AI/生产会话判别器（owner 侧通道不拦，只拦 AI 侧）。
+
+    仓内无现成判别器（grep session 判别/owner 通道 0 命中）→ 最小实现=env+会话注册表
+    标志判别（2026-09-30）：
+
+      1. session_id 显式参 > ``ZEPHYR_SESSION_ID``（git_safety_wrapper 注入惯例）；
+         仍空 = 生产/owner 直连通道 → False（不拦）
+      2. SessionRegistry.get_session 在册 = AI 施工会话 → True（拦）
+      3. 不在册 / 查询失败 = owner 侧优先放行 → False（S1 启动面三族硬编码 deny
+         仍在兜底，本判定只影响读取面断言的owner豁免，不缩 S1 拦截面）
+
+    本函数永不抛异常（判别器故障不得反噬读取主路径）。
+    """
+    try:
+        import os
+
+        sid = (session_id or os.environ.get(SESSION_ID_ENV_VAR) or "").strip()
+        if not sid:
+            return False
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        if project_root is not None:
+            registry = SessionRegistry(project_root)
+        else:
+            registry = SessionRegistry()
+        info = registry.get_session(sid)
+        if info is None:
+            return False
+        if isinstance(info, dict):  # 兼容 mock/旧式 dict 返回
+            return bool(info.get("session_id") or sid)
+        return True
+    except Exception as e:  # noqa: BLE001 — 判别器故障保守非 AI（owner 侧优先，不反噬读取路径）
+        logger.debug("ai-side session probe failed (assume non-AI): %s", e)
+        return False
+
+
+def assert_key_not_forbidden_ai_side(
+    key: str,
+    *,
+    session_id: str | None = None,
+    registry_path: Path | str | None = None,
+    ledger_path: Any = _USE_DEFAULT,  # noqa: any-abuse -- 三态哨兵参数(_USE_DEFAULT/None/Path|str)，类型面诚实要求
+) -> str | None:
+    """秘钥读取面的"AI 侧感知"断言（C108 通电件②）：owner/生产通道放行，AI 会话拦。
+
+    判别见 :func:`current_session_is_ai_side`；AI 侧 → 委托
+    :func:`assert_key_not_forbidden`（同一 fnmatch matcher，同一名单）；非 AI →
+    原样返回键名（owner 侧通道不拦）。
+
+    :return: 放行时原样键名；AI 侧命中 forbidden 抛 :class:`AiExposureError`。
+    """
+    if not current_session_is_ai_side(session_id):
+        return str(key or "").strip()
+    return assert_key_not_forbidden(key, registry_path=registry_path, ledger_path=ledger_path)
 
 
 def _cli(argv: list[str] | None = None) -> int:

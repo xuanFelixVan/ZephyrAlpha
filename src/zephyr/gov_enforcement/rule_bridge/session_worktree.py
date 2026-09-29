@@ -2851,6 +2851,34 @@ def session_worktree_start(
             "health_check": health_check,
         }
 
+    # 1.5 S1 环境筛查通电（C108 通电件①，2026-09-30）：AI 会话启动即跑
+    # screen_session_env_with_registry（deny=秘钥册 ai_exposure:forbidden ∪ S1 三族
+    # 硬编码基线，只扩不缩）。子进程无关、零 git 面；pytest 态跳过（筛查留证面写
+    # 生产 .runtime 台账，测试禁写生产路径）；筛查器任何异常 fail-open 不阻断
+    # session 启动（与 sweep 同族：观测/合规面不绑架主流程）。
+    try:
+        import os as _os
+
+        if "PYTEST_CURRENT_TEST" not in _os.environ:
+            from zephyr.ai_layer.redline.ai_secret_exposure import (  # noqa: PLC0415 — 惰性装载
+                screen_session_env_with_registry,
+            )
+
+            verdict = screen_session_env_with_registry(dict(_os.environ), sid)
+            denied = len(getattr(verdict, "denied_keys", ()) or ())
+            if denied or not getattr(verdict, "allowed", True):
+                logger.warning(
+                    "S1 env screen (C108): session=%s denied=%d keys=%s（v1 通电幅面=装载+留证，"
+                    "不阻断启动——拦启动待 Owner 门位裁定，防误锁 owner shell 环境）",
+                    sid,
+                    denied,
+                    list(getattr(verdict, "denied_keys", ()) or ())[:8],
+                )
+            else:
+                logger.info("S1 env screen (C108): session=%s clean", sid)
+    except Exception as e:  # noqa: BLE001 — 合规面故障 fail-open 不阻断启动
+        logger.warning("S1 env screen failed (C108, fail-open): %s", e)
+
     # 2. 创建 worktree
 
     manager = _get_manager(root)
