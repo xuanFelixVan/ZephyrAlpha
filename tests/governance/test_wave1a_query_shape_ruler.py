@@ -111,8 +111,13 @@ def test_ruler_cli_exit_code_green(tmp_path):
 
 
 def test_ruler_head_tree_baseline_is_reproducible():
-    """存量基线（波 1A.5 开工首读）：HEAD 树候选面命中可复算，且无 S1/S2 类硬违规。"""
+    """存量基线（波 1A.5 开工首读）：HEAD 树候选面命中可复算，且无 S1/S2 类硬违规。
+
+    硬违规=硬红=JUDGMENT（尺 §退出码契约）；tests/ 豁免面引用病样本字面量属
+    EXEMPT 软红——本测试文件自身引用 RED_SAMPLES 病样本即属此类，不算硬违约
+    （2026-09-30 SW19 死账救援修正：q0213 捞回本件后 HEAD 树自 trip 假红）。
+    """
     findings, scanned, _ = ruler.run(_LANE_ROOT, None)
     assert scanned > 10, f"HEAD 树候选文件数异常：{scanned}"
-    hard = [f for f in findings if f.kind in ("S1_DIRECT_SUBSCRIPT", "S2_FOR_IN_CALL")]
+    hard = [f for f in findings if f.kind in ("S1_DIRECT_SUBSCRIPT", "S2_FOR_IN_CALL") and f.severity == "JUDGMENT"]
     assert hard == [], f"HEAD 树存在未清算的直取违约：{[(f.file, f.line_no) for f in hard]}"
