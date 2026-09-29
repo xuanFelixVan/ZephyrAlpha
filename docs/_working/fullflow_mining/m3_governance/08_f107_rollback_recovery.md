@@ -20,7 +20,7 @@ ttl: task_bound
 | 下游 | ⚠️半 | git_guard.py:276/post_checkout_guard.py 实调 check_rollback_conflict（运行面活）；ex_core 三处 rollback（order_execution_saga 等）为订单级异对象不并（93 册 §二同判） |
 | 消费 | ✅ | 双 guard 脚本消费 concurrency_guard.check_rollback_conflict/scan_active_locks（imports 实证 :66-70） |
 | 供给 | ✅ | runtime/concurrency_guard.py:150 check_rollback_conflict 真身在册 |
-| 接线 | ✅（本册修正后） | 头注 [DEPENDENCIES] 锚漂移已修：git_guard.py:5 / post_checkout_guard.py:7 原指 `rollback.concurrency_guard`（不存在），实 import=`runtime.concurrency_guard`（真身）。属文档锚漂移非死码（imports 恒真，IMPORT-INTEGRITY 门未拦因实际导入面合法） |
+| 接线 | ✅（本册修正后） | 头注 [DEPENDENCIES] 锚漂移已修：git_guard.py:5 / post_checkout_guard.py:7 原指 `rollback.concurrency_guard`（不存在），实 import=`runtime.concurrency_guard`（真身）。属文档锚漂移非死码（imports 恒真，IMPORT-INTEGRITY 门未拦因实际导入面合法）。锚修复落地袋=21c1b7b1（20260929 M7 交叉验证修复班补落——初袋 75bdc25470 拆袋未随落致本册面先行，本行回填对齐 git 面） |
 | 测试 | ⚠️ | rollback 包测试面未逐件清点（07 册遗留项），本册未补新测（无码变更） |
 
 ## 2. 本册产出（补两缺向）
@@ -35,6 +35,6 @@ ttl: task_bound
 ## 4. 自审闸
 
 - [x] 码面实测（ls/imports/函数真身）
-- [x] 死引用修复落地（2 锚，随袋提交）
+- [x] 死引用修复落地（2 锚，修复袋 21c1b7b1：git_guard.py:5 / post_checkout_guard.py:7 → `runtime.concurrency_guard`。初袋 75bdc25470 拆袋未随落、本闸曾失实勾选，20260929 M7 交叉验证逮出后补落并回改本行）
 - [ ] rollback 主包包外调用方穷尽（07 册遗留，限量取证）
 - [ ] 测试面清点 + 回滚实弹演练（施工波）
