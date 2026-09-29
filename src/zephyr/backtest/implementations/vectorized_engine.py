@@ -282,6 +282,19 @@ class DefaultBacktestEngine(BacktestEngineBase):
         # 获取排序后的日期列表
         dates = self._get_sorted_dates(data)
 
+        # DEFECT-6 键契约修正：单symbol扁平价格布局（index=date）的取数键固定为
+        # "default"（_collect_day_field_single，该布局无符号元数据）；若信号面板以
+        # 真实代码命名唯一符号列（如"600519"），撮合/估值按符号精确匹配将永远
+        # miss → 零成交空跑（sanity guard 正确 fail-closed）。此处解析出唯一信号
+        # 符号，逐日把"default"键一致重映射为该符号（prices/opens/volumes 同步，
+        # prev_close/市值估值随 day_prices 自动跟随）。仅当信号为扁平单列且列名
+        # 非"default"时生效；legacy"default"信号布局与 MultiIndex 布局零影响。
+        flat_signal_symbol: str | None = None
+        if not isinstance(signals.index, pd.MultiIndex) and len(signals.columns) == 1:
+            only_col = str(signals.columns[0])
+            if only_col != "default":
+                flat_signal_symbol = only_col
+
         # 逐日回测（P0-1：date=T 执行的是 T-lag 日信号，成交价=T 日开盘优先/收盘兜底）
         prev_close: dict[str, Decimal] = {}
         skipped_fills = 0  # AI-NIGHT-001：apply_fill 失败计数（原静默 debug 吞没）
@@ -302,15 +315,20 @@ class DefaultBacktestEngine(BacktestEngineBase):
             day_volumes = self._get_day_volumes(data, date)
             if not day_volumes and not self._volume_warned:
                 self._volume_warned = True
-                _logger.info(
-                    "数据无 volume 列：P0-2 成交量上限/冲击成本自动旁路（日线回测容量失真风险自查）"
-                )
+                _logger.info("数据无 volume 列：P0-2 成交量上限/冲击成本自动旁路（日线回测容量失真风险自查）")
+
+            # DEFECT-6：扁平单symbol价格键"default" → 唯一信号符号 的一致重映射
+            # （每日先于成交价/估值执行，持仓市值与 prev_close 同步跟随新键）
+            if flat_signal_symbol is not None and len(day_prices) == 1 and "default" in day_prices:
+                day_prices = {flat_signal_symbol: day_prices["default"]}
+                if "default" in day_opens:
+                    day_opens = {flat_signal_symbol: day_opens["default"]}
+                if "default" in day_volumes:
+                    day_volumes = {flat_signal_symbol: day_volumes["default"]}
 
             # 执行价：开盘优先（PIT：T 日开盘在 T-lag 日收盘信号之后，零前视），
             # 缺 open 的标的回退当日收盘
-            exec_prices = (
-                {s: day_opens.get(s, p) for s, p in day_prices.items()} if day_opens else day_prices
-            )
+            exec_prices = {s: day_opens.get(s, p) for s, p in day_prices.items()} if day_opens else day_prices
 
             # 获取滞后信号(目标权重)：T 日执行 T-lag 日信号
             target_weights: dict[str, float] = {}
@@ -322,15 +340,15 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
             # P0-3 PIT 标的池过滤（provider 返回 None=fail-open 不过滤）。
             # 作用域仅真实 A 股代码（_is_ashare_code）：合成/占位代码不误剔。
-            if target_weights and self._universe_provider is not None and any(
-                _is_ashare_code(s) for s in target_weights
+            if (
+                target_weights
+                and self._universe_provider is not None
+                and any(_is_ashare_code(s) for s in target_weights)
             ):
                 allowed = self._universe_provider(_normalize_date_obj(date), list(target_weights))
                 if allowed is not None:
                     filtered = {
-                        s: w
-                        for s, w in target_weights.items()
-                        if (not _is_ashare_code(s)) or _bare_code(s) in allowed
+                        s: w for s, w in target_weights.items() if (not _is_ashare_code(s)) or _bare_code(s) in allowed
                     }
                     if len(filtered) != len(target_weights):
                         _logger.debug(
@@ -430,8 +448,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         self._results.append(result)
         self._last_portfolio = portfolio
         _logger.info(
-            "Backtest completed: result_id=%s sharpe=%.2f return=%.2f%% trades=%d "
-            "exec_lag=%dd exec_price=%s",
+            "Backtest completed: result_id=%s sharpe=%.2f return=%.2f%% trades=%d exec_lag=%dd exec_price=%s",
             result_id,
             result.sharpe_ratio,
             result.total_return * 100,
@@ -790,7 +807,13 @@ def _collect_day_field_columns(data: pd.DataFrame, date: object, field: str, val
 
 
 def _collect_day_field_single(data: pd.DataFrame, date: object, field: str, values: dict[str, Decimal]) -> None:
-    """从单symbol(以date为index)布局中收集field值到values['default']。"""
+    """从单symbol(以date为index)布局中收集field值到values['default']。
+
+    键契约（DEFECT-6）：该布局的 DataFrame 无符号元数据，故取数键只能固定为
+    "default"。run() 会在信号面板恰有一个非"default"扁平符号列时，把该键逐日
+    一致重映射为真实信号符号（prices/opens/volumes 同步）；以"default"命名
+    信号的 legacy 布局与 MultiIndex/date+symbol 列布局不受影响。
+    """
     try:
         if field not in data.columns:
             return
@@ -897,10 +920,7 @@ class PitUniverseProvider:
                 allowed.add(code)
                 continue
             # 在市性：任一窗口覆盖当日
-            if not any(
-                (vf is None or vf <= trade_date) and (vt is None or vt > trade_date)
-                for vf, vt in windows
-            ):
+            if not any((vf is None or vf <= trade_date) and (vt is None or vt > trade_date) for vf, vt in windows):
                 continue  # 已退市/未上市（正证据剔除）
             # 次新：按最早上市日
             if self._min_age_days > 0:

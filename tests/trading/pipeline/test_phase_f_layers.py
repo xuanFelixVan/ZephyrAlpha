@@ -218,6 +218,51 @@ class TestPhaseFL09:
         assert isinstance(result, BacktestResult)
         assert result.strategy_id == "test"
 
+    @staticmethod
+    def _flat_prices(dates):
+        return pd.DataFrame(
+            {
+                "close": [1800.0 + i * 0.3 for i in range(len(dates))],
+                "open": [1795.0 + i * 0.3 for i in range(len(dates))],
+                "high": [1805.0 + i * 0.3 for i in range(len(dates))],
+                "low": [1790.0 + i * 0.3 for i in range(len(dates))],
+                "volume": [1000000.0 for _ in range(len(dates))],
+            },
+            index=dates,
+        )
+
+    def test_single_symbol_flat_prices_real_symbol_produces_trades(self):
+        """DEFECT-6 pin：扁平单symbol价格布局 + 真实代码命名信号列 → 有成交。
+
+        键契约：单symbol扁平价格（index=date）取数键只能是"default"（布局无符号
+        元数据）；修复前信号列"600519"与价格键"default"永不匹配 → 零成交空跑
+        被 sanity guard 正确 fail-closed 拦截。修复后引擎把"default"键一致重映射
+        为唯一信号符号。合成数据、tmp 隔离、CH provider 显式关闭（DEFECT-6 排查口径）。
+        """
+        config = BacktestConfig(enable_pit_universe_filter=False)
+        engine = DefaultBacktestEngine(config, enable_stk_limit_provider=False)
+        dates = pd.date_range("2025-01-01", "2025-02-28", freq="B")
+        prices = self._flat_prices(dates)
+        signals = pd.DataFrame({"600519": 1.0}, index=dates)
+
+        result = engine.run(signals=signals, data=prices, strategy_name="defect6-pin")
+        assert isinstance(result, BacktestResult)
+        assert result.strategy_id == "defect6-pin"
+        assert result.trades_count > 0
+
+    def test_single_symbol_flat_prices_default_layout_still_works(self):
+        """DEFECT-6 pin：legacy 以"default"命名信号列的布局行为不变（键重映射豁免）。"""
+        config = BacktestConfig(enable_pit_universe_filter=False)
+        engine = DefaultBacktestEngine(config, enable_stk_limit_provider=False)
+        dates = pd.date_range("2025-01-01", "2025-02-28", freq="B")
+        prices = self._flat_prices(dates)
+        signals = pd.DataFrame({"default": 1.0}, index=dates)
+
+        result = engine.run(signals=signals, data=prices, strategy_name="legacy-default")
+        assert isinstance(result, BacktestResult)
+        assert result.strategy_id == "legacy-default"
+        assert result.trades_count > 0
+
     def test_backtest_engine_base_is_abstract(self):
         assert BacktestEngineBase.__abstractmethods__ == frozenset({"run"})
 
