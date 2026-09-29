@@ -56646,4 +56646,9 @@ creation_tokens:
   created_by: st-c9-f02
   capability: onboarding_wizard
   merge_evaluation: "内收判定：向导=纯编排壳，十环零散件全复用既有真源（apply_*_ddl/validate_tasks_yaml/两册一表），不新造接数逻辑；capability_lookup 反查空命中无重复轮子"
+- file: scripts/register_sector_synth_task.ps1
+  token: data-supply-chain-register-sector-synth-task-20260929
+  created_by: st-c9-secktide
+  capability: data_supply_chain
+  merge_evaluation: "kline_sector_intraday 断供治愈：tdx 真值腿服务端拒答后的 EOD 合成续供腿任务注册器（每日 15:50 sector_board_synth_eod，tilib 先例镜像）"
 di_seam_exemptions: []
