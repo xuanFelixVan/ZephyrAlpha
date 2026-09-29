@@ -153,16 +153,20 @@ class TestNoqaRegistrySmoke:
         assert isinstance(registry, dict)
         assert "exemptions" in registry and isinstance(registry["exemptions"], list)
         assert "categories" in registry and isinstance(registry["categories"], list)
-        # 94 个豁免（74 基线 + 后续净增 20 条，见上方 2026-09-17 注记）
-        assert len(registry["exemptions"]) == 94, f"应有94个豁免, 实际: {len(registry['exemptions'])}"
+        # 豁免数=registry 真源实时计数（派生断言，禁锚死手工数——本探针曾 74→82→94
+        # 三次手工追数仍漂移，2026-09-29 实证 193；宪法§9.5 静态清单禁手工维护）
+        n_exempt = len(registry["exemptions"])
+        assert n_exempt > 0, f"豁免应非空, 实际: {n_exempt}"
         # 5 个分类（ssot_self 已退役）
         assert len(registry["categories"]) == 5
 
     def test_baseline_from_registry(self):
-        """基线 = len(exemptions) = 94（从 registry 自动计算，非硬编码 33）。"""
+        """基线 = len(exemptions)（从 registry 自动计算，非硬编码 33）。"""
         registry = cvh._load_noqa_registry()
         baseline = cvh._noqa_baseline(registry)
-        assert baseline == 94, f"基线应从 registry 计算=94, 实际: {baseline}"
+        assert baseline == len(registry["exemptions"]), (
+            f"基线应=registry 豁免数 {len(registry['exemptions'])}, 实际: {baseline}"
+        )
 
     def test_baseline_fallback_when_registry_none(self):
         """registry=None 时退化为 fallback 基线 33。"""
@@ -173,7 +177,10 @@ class TestNoqaRegistrySmoke:
         """_registered_exemption_keys 返回 (file, line) 集合，非空。"""
         registry = cvh._load_noqa_registry()
         keys = cvh._registered_exemption_keys(registry)
-        assert len(keys) == 94, f"应有94个键, 实际: {len(keys)}"
+        assert len(keys) > 0, "键集应非空"
+        assert len(keys) <= len(registry["exemptions"]), (
+            f"键集应⊆豁免集（去重后可小于 {len(registry['exemptions'])}）, 实际: {len(keys)}"
+        )
         # 验证键格式：(str, int)
         for file_path, line in keys:
             assert isinstance(file_path, str) and "\\" not in file_path, "file 应为正斜杠规范化"
@@ -227,10 +234,11 @@ class TestNoqaRegistrySmoke:
         exit_code = cvh.main()
         captured = capsys.readouterr()
         assert exit_code == 0, f"warn-only 应 exit 0, 实际: {exit_code}"
-        # 应输出 NOQA AUDIT 行，baseline=94 via registry（基线恒由 registry 计算）
+        # 应输出 NOQA AUDIT 行，baseline=N via registry（基线恒由 registry 计算，N=实时计数）
+        n_exempt = len(cvh._load_noqa_registry()["exemptions"])
         assert "NOQA AUDIT" in captured.out
-        assert "baseline=94 via registry" in captured.out
-        assert "trend=0" in captured.out  # 94-94=0，闭环收敛
+        assert f"baseline={n_exempt} via registry" in captured.out
+        assert "trend=" in captured.out  # 趋势方向不锚死：负值=治本见效（noqa 实数<基线）
         # 不应有 UNREGISTERED（94 个全部登记）
         assert "UNREGISTERED" not in captured.out
 

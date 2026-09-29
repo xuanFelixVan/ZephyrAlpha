@@ -940,3 +940,7 @@ exemptions:
   line: 63
   reason: '业务数据 schema（策略键名），非 knowledge_taxonomy 词表校验（st-ailayer-final-20260924 收官批代登记）'
 
+- category: no_vocab_source
+  file: src/zephyr/gov_enforcement/registry_alignment.py
+  line: 700
+  reason: '产业链字典=registry catalog，vocab 段是被交叉校验的数据而非加载词表（st-nightsweep-sw16-20260929 代登记；noqa 随 registry_alignment.py 落地批引入，UNREGISTERED 闭环补账）'
