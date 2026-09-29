@@ -47,3 +47,32 @@ ttl: task_bound
 - 12 行齐：6 已接线（G01-G06，caller 证据在表）+ 2 本轮接线（G07/G09）+ 4 DEFER 带精确插入点（G08/G10/G11/G12）。
 - G07/G09 接线后生产调用点=1 处（order_manager 闸链）+1 处生产装配（start_paper_session）。
 - 模拟路径测试绿 + 既有 `test_order_manager_compliance_gate.py` 回归绿。
+
+## 5. C41 销账复核补记（2026-09-29，st-finaldel-cdocs-20260929，判定锚=当日 HEAD）
+
+12 行逐行 HEAD 复核（表内 path:line 为 2026-09-28 基线读数，实体零丢失、个别行号漂移如实记录）：
+
+| 行 | HEAD 复核读数 |
+|----|---------------|
+| G01 | ReportGate caller 四件在 HEAD：order_manager.py:75（基线 :70，漂移+5）、qmt_trading_session.py:42（无漂移）、start_paper_session.py:103/714；**app_panel.py caller 已消失**（:524,534 基线读数失效——面板重构后台账门禁引用不再直达，执法主链 order_manager 闸链不受影响） |
+| G02 | TradingComplianceDetector 在 HEAD：trading_session.py:96（基线 :95，漂移+1）+ 三个 compliance 内部消费实体在 |
+| G03 | ManipulationStreamDriver 在 HEAD：intraday_manipulation_detector.py:67、manipulation_realtime_monitor.py:63（各漂移+1） |
+| G04 | ManipulationRealtimeMonitor 在 HEAD：order_manager 闸3 仍在（TYPE_CHECKING 预接线 :87+闸链运行时注入）；**app_panel.py:525 caller 同 G01 消失**（同因） |
+| G05 | DisciplineGuard must_do 在 HEAD：trading_session.py:84（基线 :83，漂移+1） |
+| G06 | DisciplineGuard prohibition+KillSwitchLite 在 HEAD：trading_session.py:89、batched_position_builder.py:57/:63（后者无漂移） |
+| G07 | 接线四件套在 HEAD：order_manager.py:165-166 构造参+`:348,371` 闸链；start_paper_session.py:720-726 装配；测试件在 HEAD；本日实跑 29 passed in 0.79s（含既有 test_order_manager_compliance_gate 回归） |
+| G08 | DEFER 处方复核仍成立（批窗批扫涉 sibling 热路径 batch_window_preflight，禁触）——接线施工归代码车道 |
+| G09 | 接线四件套在 HEAD（同 G07 批）；INFO_ASYMMETRY_AVOIDED 拒单语义经测试绿实证 |
+| G10 | DEFER 处方复核仍成立（Owner feature 登记 human_gated 前置，§5 人机门位） |
+| G11 | DEFER 处方复核仍成立（依赖引入期门禁，非交易路径） |
+| G12 | DEFER 处方复核仍成立（报送管道工件生产器，非拒单闸） |
+
+C41 卡面三余项对号：
+
+1. **SettlementReconciler 周时钟违宪整改——已落 HEAD**（2026-09-29 夜战 SW5）：`src/zephyr/trading/post_settlement_pipeline.py` 事件触发腿上线（订阅 `post_settlement.recon.requested`，幂等 sweep+UNWIRED 禁伪跑，boot_hooks 统一挂载）；Windows 计划任务 `ZephyrAlpha_PostSettlement` 退役=schtasks 任务级变更=**Owner 门位**（99_skipped_for_owner #23 先例），过渡期时钟腿与事件腿并存安全（CLI 幂等+sweep 去重双保险）。
+2. **F34 DDL**——部署器与 16 测已在 HEAD（chain_circulation EC2-P0 q-0001 落地）；`--apply` 落库=**Owner 门位存留**（chief8_night/91_progress.md Owner 门位清单在案）。
+3. **退役批零 commit**——退役执行类按工单纪律只立处方不执行（真删/落库退役=Owner 窗）；本表 12 行无退役对象，零 commit 即合规终态。
+
+实盘腿：绑 TRD-A10=**Owner 等待**（decision_map_campaign/17_quantified_acceptance.md 锚），本车道零触碰，§3 安全声明继续有效。
+
+**C41 结论**：12 行表 AI 余量已清（逐行复核读数如上）；代码道余量=G08/G11/G12 接线施工（插入点备忘在 §1 表内）；Owner 门位四件=实盘腿 TRD-A10、G10 feature 登记、F34 DDL `--apply`、ZephyrAlpha_PostSettlement schtask 退役。
