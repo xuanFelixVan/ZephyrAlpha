@@ -48,7 +48,7 @@ session: zc-l00-20260927
 | B-6 | REG-MAC-001 宏观指标册 | 并入 | **F38**（宏观传感器补数据线真源） |
 | B-7 | REG-FLD-001 字段字典（8280 行，schema v2.0） | **新增** | **F126**（P1，A/K 交界，schema 治理面） |
 | B-8 | REG-DATAFLOW-001 数据资产册（15517 行） | 并入 | **F11**（挂轴对象清单，台账与挂轴同面） |
-| B-9 | REG-MIGRATION-001 迁移册（276 行） | **新增** | **F123**（**P0**，A 段 F07 邻位，DB schema 迁移通道——F07 只写 depgraph 不含迁移纪律） |
+| B-9 | REG-MIGRATION-001 迁移册（276 行） | **新增**（勘误注 2026-09-29：册本体已在 HEAD=`docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml`，含 13 条 pending 退役议题（F123 卷 §四缺口3，净删=Owner 门）；"新增"指骨架 B 系行项登记+F123 立卡，非新建册文件） | **F123**（**P0**，A 段 F07 邻位，DB schema 迁移通道——F07 只写 depgraph 不含迁移纪律） |
 | B-10 | REG-ARCH-ISSUE-001 架构议题册（276 行） | 并入 | **F101**（议题→裁定同链入口补真源；裁定机制 F101 已在） |
 | B-11 | REG-INTF-001 接口契约册（physical_path 在 `_archive/`） | 并入 | **F110**（补真源+archive 态注记） |
 | B-12 | REG-STATE-VOCAB-001 状态词表册（GATE-VOCAB 实拦无主） | **新增** | **F124**（**P0**，K 段，词表生命周期） |

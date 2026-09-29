@@ -86,3 +86,7 @@ Harvey & Liu (2015 JPM) Backtesting——haircut Sharpe｜Bailey & López de Pra
 ## 十、Owner 裁决清单快照（09-26 06:00）
 
 见当轮对话裁决单；本表销项与 07 号文 C 栏同步。
+
+## 十一、波10 G-D 四件套判据真源指针（防两处漂移，2026-09-29 登记）
+
+G-D（共振矩阵逐格四件套：样本／夏普[Lo2002 自相关修正+ddof=0]／盈亏平衡成本 c*[二分+单调校验]／DSR[有效试验数]）判据**唯一真源=`docs/_working/total_command_closeout/10_wave_plan.md` 10.G-D 行（READY_NOT_FIRED 口径，禁点火）**；本册在 G-D 引擎落地前不另立副本，落地后按该行口径回填本册判据表（补卡 C250 处方·指针选项）。
