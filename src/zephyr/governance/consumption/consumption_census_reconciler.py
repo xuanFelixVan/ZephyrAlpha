@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # [BLUEPRINT] MOD-GOV-CENSUSRECON
 # [MODULE] zephyr.governance.consumption.consumption_census_reconciler
 # [DOMAIN] D_GOVERNANCE
@@ -31,7 +30,7 @@
 → `_fetch_trading_lifecycle_weekly:880`，调用点 `:904`）——该 capability 分支的指标审计
 现由本引擎族①承担（`indicator_usage_audit` 已降为薄壳）。
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/consumption_census_reconciler.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/consumption/consumption_census_reconciler.yaml
 """
 
 from __future__ import annotations
@@ -40,8 +39,8 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
-from zoneinfo import ZoneInfo
 from typing import Any, Final
+from zoneinfo import ZoneInfo
 
 from zephyr.governance.audit.reconciliation_registry import ReconcileResult, ReconcilerSpec
 from zephyr.governance.consumption.consumption_census import FAMILY_SPECS, run_consumption_census
@@ -122,7 +121,7 @@ def make_consumption_census_reconciler(host: object | None = None) -> Reconciler
         return any(_rel(f, project_root) in trigger_rels for f in committed_files)
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        pre_islands = _islands_of(ledger_path)   # 上次账面（必须在跑之前取，闭包期取＝永远空）
+        pre_islands = _islands_of(ledger_path)  # 上次账面（必须在跑之前取，闭包期取＝永远空）
         hit = [_rel(f, project_root) for f in committed_files if _rel(f, project_root) in trigger_rels]
         try:
             summary = run_consumption_census(
@@ -130,7 +129,7 @@ def make_consumption_census_reconciler(host: object | None = None) -> Reconciler
                 output_path=ledger_path,
                 cache_path=project_root / "data/runtime/consumption_census_cache.json",
                 today=_as_of(project_root),
-                include_doc_mentions=False,   # post-commit 快档：文档证据面留在全量档
+                include_doc_mentions=False,  # post-commit 快档：文档证据面留在全量档
             )
         except Exception as exc:  # noqa: BLE001 — 对账非阻断，失败必须点名不可静默
             return ReconcileResult(
@@ -168,7 +167,7 @@ def make_consumption_census_reconciler(host: object | None = None) -> Reconciler
         gate_id=GATE_ID,
         trigger=_trigger,
         reconcile=_reconcile,
-        priority=246,   # 排在 library(≈220)/schedule 之后：普查是末端观测件，不参与修复竞争
+        priority=246,  # 排在 library(≈220)/schedule 之后：普查是末端观测件，不参与修复竞争
         file_ops=frozenset({"read", "write"}),
     )
 

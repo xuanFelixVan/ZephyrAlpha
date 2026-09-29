@@ -1,0 +1,63 @@
+# ALGO_FLOW 外部真源——chart_condition_consumer（_domain_backtest 域，真源 src/zephyr/backtest/regime_validation/chart_condition_consumer.py）
+# 2026-09-29 C97 悬空锚清偿补册：图形条件轴消费适配器锚 born-dangling（st-zcloseout 接线袋
+# P2-1 口径挂锚后机器块未出仓）。真源自述"无独立算法图、算法真源=chart_condition_package、
+# 图随真源件"——本块只标定本件五入口的委托适配路径，不复制 chart_condition_package 判据图。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.regime_validation.chart_condition_consumer
+source_of_truth: src/zephyr/backtest/regime_validation/chart_condition_consumer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 图形条件包/事件读数
+    #   fields: ChartConditionPack（或事件 DataFrame，CH 由上游负责）
+    #   code: ChartConditionAxisProvider
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 稳定条件轴供给面包装
+    #   name_en: ChartConditionAxisProvider
+    #   intro: axis_frame/cells/eligible_cells/provenance 四方法，axis_id 冻结 "chart_condition"，列契约与判读端逐列对齐
+    #   inputs: I1
+    #   outputs: 条件轴供给面
+    # - id: A2
+    #   name_zh: ② 事件通道装配
+    #   name_en: provider_from_events
+    #   intro: 注入事件 DataFrame→委托 build_chart_daily_state+build_chart_condition_pack 出三轴包（读数通道 DI）
+    #   inputs: A1
+    #   outputs: 装配好的条件轴
+    # - id: A3
+    #   name_zh: ③ 离线回读装配
+    #   name_en: provider_from_pack_dir
+    #   intro: load_pack 同构文件契约闭卷回读——一次性装配、多次消费的判读路径
+    #   inputs: A2
+    #   outputs: 装配好的条件轴
+    # - id: A4
+    #   name_zh: ④ 同构落盘
+    #   name_en: save_axis_pack
+    #   intro: 委托 save_pack 落盘（同构文件名），condition_attribution.py 判读端零改动即可归因本轴
+    #   inputs: A3
+    #   outputs: 盘上条件轴工件
+    # - id: A5
+    #   name_zh: ⑤ 条件分层键供给
+    #   name_en: stratify_key_join
+    #   intro: 逐日收益/信号面板按 date join 上 cell_id/cell_eligible 条件分层键（T1 条件维分层）
+    #   inputs: A1
+    #   outputs: 分层键面板
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 判读端真消费面
+    #   name_en: attribution_consumer_surface
+    #   intro: 图形条件包首个 src 下游真消费（真消费红证=tests/backtest/test_chart_condition_consumer.py 圆归测试）
+    #   downstream: scripts/backtest/condition_attribution.py；tests/backtest/test_chart_condition_consumer.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A1 --> A5
+    # A4 --> O1
+    # A5 --> O1

@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——consumption_census_reconciler（_domain_governance 域，真源 src/zephyr/governance/consumption/consumption_census_reconciler.py）
+# 2026-09-29 C97 悬空锚清偿补册+锚改指：事件触发对账器原锚指向域根平铺名（born-dangling
+# 且违反子包镜像落点惯例），改指本册（镜像路径按 GOV-DOC-018 源子包口径）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.consumption.consumption_census_reconciler
+source_of_truth: src/zephyr/governance/consumption/consumption_census_reconciler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 登记册变更事件
+    #   fields: 九族任一名册提交（上架动作）或普查引擎自身落地事件；非 cron（宪法 §9.3）
+    #   code: reconciler 触发入口
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 增量普查重跑
+    #   name_en: rerun_census_incremental
+    #   intro: post-commit 重跑消费面普查增量段（复用 consumption_census 同一引擎同一口径）
+    #   inputs: I1
+    #   outputs: 增量普查结果
+    # - id: A2
+    #   name_zh: ② 孤岛点名报警
+    #   name_en: alert_new_orphans
+    #   intro: 新孤岛/回填岛点名 warn；钩子永不反噬调度器（全捕获出声）
+    #   inputs: A1
+    #   outputs: 孤岛报警
+    # - id: A3
+    #   name_zh: ③ 复用既有事件路径入账
+    #   name_en: reuse_lifecycle_event_path
+    #   intro: 复用 trading_lifecycle_weekly 既有事件链（真源 src/zephyr/data/config/tasks.yaml 声明），不新建第二条
+    #   inputs: A2
+    #   outputs: data/runtime/ 写侧记录（gitignore 面；正式入册由 generate_wiring_registry 产机器视图）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 孤岛对账账本
+    #   name_en: orphan_reconcile_ledger
+    #   intro: 落地后自动重跑并点名新孤岛的事件触发对账（ReconciliationRegistry 同款先例）
+    #   downstream: scripts.governance.d3_metadata.generate_wiring_registry；src/zephyr/governance/audit/reconciliation_registry.py（ReconcileResult/ReconcilerSpec）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

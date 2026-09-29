@@ -43887,12 +43887,16 @@ creation_tokens:
   token: dloop-algo-flow-cohort-daily-writer-20260922
   created_by: st-dloop-20260921
   capability: dloop_algo_flow
-- file: docs/03_modules/_domain_shared/algo_flow/vocab__init__.py.yaml
+- file: docs/03_modules/_domain_shared/algo_flow/vocab__init__.yaml
   token: dloop-algo-flow-vocab--init--py-20260922
   created_by: st-dloop-20260921
   capability: dloop_algo_flow
 - file: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_gate_snapshot.yaml
   token: dloop-algo-flow-daily-gate-snapshot-20260922
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+- file: docs/03_modules/_domain_shared/algo_flow/vocab__init__.py.yaml
+  token: dloop-algo-flow-vocab--init--py-20260922
   created_by: st-dloop-20260921
   capability: dloop_algo_flow
 - file: docs/03_modules/_domain_shared/algo_flow/market_state.yaml
@@ -56540,5 +56544,60 @@ creation_tokens:
   created_by: st-nightsweep-sw18-20260929
   capability: fig14_fig15_map_bodies
   merge_evaluation: "六图战役收口代投前置 token 批（同上）"
+- file: docs/03_modules/_domain_backtest/algo_flow/batch_window_preflight.yaml
+  token: c97-algo-flow-batch-window-preflight-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_backtest/algo_flow/chart_condition_consumer.yaml
+  token: c97-algo-flow-chart-condition-consumer-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_backtest/algo_flow/n_trial_ledger.yaml
+  token: c97-algo-flow-n-trial-ledger-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/c/capability_registry_io.yaml
+  token: c97-algo-flow-capability-registry-io-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_governance/algo_flow/consumption/consumption__init__.yaml
+  token: c97-algo-flow-consumption--init---20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_governance/algo_flow/consumption/consumption_census.yaml
+  token: c97-algo-flow-consumption-census-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_governance/algo_flow/consumption/consumption_census_reconciler.yaml
+  token: c97-algo-flow-consumption-census-reconciler-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_governance/algo_flow/consumption/index.md
+  token: c97-algo-flow-index-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/03_modules/_domain_governance/algo_flow/consumption/scan_scope_converged.yaml
+  token: c97-algo-flow-scan-scope-converged-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
 
+- file: docs/03_modules/_domain_data/algo_flow/data/l9_readiness_aggregator.yaml
+  token: c97-algo-flow-l9-readiness-aggregator-20260929
+  created_by: st-finaldel-creg-20260929
+  capability: c97_algo_flow
+  merge_evaluation: "C97 悬空锚清偿补册，无同真源可派生项"
+- file: docs/_working/gate_survival_adjudication.md
+  token: gate-rationalization-gate-survival-adjudication-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: gate_rationalization
+  merge_evaluation: "唯一载体不并:提交链路存留裁定唯一交接件,替代零旧条目,与05_gate_audit衔接不重不漏"
 di_seam_exemptions: []

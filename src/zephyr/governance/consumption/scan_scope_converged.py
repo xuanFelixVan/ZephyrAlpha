@@ -46,7 +46,7 @@ docs/_working/three_piece_infra/scope_convergence/CASE.md §二）：
 与 ORPHAN-MODULE 门的分歧不消除：那是**创建期**判据、扫 src/**，对象不同→不并
 （内收判据"跨域不同对象→不并"），详见 CASE.md §六。
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/scan_scope_converged.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/consumption/scan_scope_converged.yaml
 """
 
 from __future__ import annotations
@@ -86,11 +86,24 @@ __all__: Final = [
 SCOPE_RULING_REF: Final = "docs/_working/three_piece_infra/00_plan_and_ownership.md §3.4（单一 scope 定档）"
 
 #: 版本控制/构建噪声与产物面（任何口径都不翻）——戊集 ∪ 丁集（C6：并集，语义中性）
-EXCLUDED_DIR_NAMES: Final = frozenset({
-    ".git", ".runtime", ".venv", "__pycache__", "node_modules", ".pytest_cache",
-    ".mypy_cache", ".ruff_cache", "dist", "build", ".venvs", ".venv-local",
-    "tmp", "_archive",
-})
+EXCLUDED_DIR_NAMES: Final = frozenset(
+    {
+        ".git",
+        ".runtime",
+        ".venv",
+        "__pycache__",
+        "node_modules",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "dist",
+        "build",
+        ".venvs",
+        ".venv-local",
+        "tmp",
+        "_archive",
+    }
+)
 
 #: 14 号文 infra 层词表——取 14 号文 :11 原词（丙道原样；大小写不敏感子串匹配，
 #: 覆盖丁道"DDL"大写形态——统一在 lower() 上匹配即丁的超集，从严）
@@ -118,9 +131,7 @@ DISPLAY_EXCLUDE_RE: Final = re.compile(r"(frontend/)|(^scripts/dashboard/)")
 #: infra：14 号文词表子串 + 丁道增量 `^scripts/.*ch_`（运维/测速件同族语义；
 #: 注意该形态亦把 scripts/governance/d5_architecture/… 纳入 infra 面——案卷 C4 已记）。
 _INFRA_EXTRA_RE: Final = re.compile(r"(^scripts/.*ch_)")
-INFRA_EXCLUDE_RE: Final = re.compile(
-    "|".join(re.escape(t) for t in DOC14_INFRA_TOKENS) + r"|(^scripts/.*ch_)"
-)
+INFRA_EXCLUDE_RE: Final = re.compile("|".join(re.escape(t) for t in DOC14_INFRA_TOKENS) + r"|(^scripts/.*ch_)")
 #: 观察者层（丁道实测新发现的第四层 + 壬道扩容：三件尺自身提名实体名＝自我认证假绿，
 #: 与 .md 假绿同型；§3.4 沉默→从严保留并扩容，裁决 C5）
 OBSERVER_EXCLUDE_RE: Final = re.compile(
@@ -150,9 +161,7 @@ def is_doc14_layer_excluded(rel_path: str) -> bool:
     """14 号文**三层**（producer/display/infra）剔除判定——丙道原名原义（不含观察者层；
     消费判定请走 counts_as_consumer，四层齐全）。"""
     rp = rel_path.replace("\\", "/").lower()
-    return any(
-        rx.search(rp) for name, rx in EXCLUSION_LAYERS if name != "observer"
-    )
+    return any(rx.search(rp) for name, rx in EXCLUSION_LAYERS if name != "observer")
 
 
 @dataclass(frozen=True)
@@ -218,6 +227,7 @@ DOC_EVIDENCE_SCOPE: Final[ScanScope] = ScanScope(
     excluded_dir_names=EXCLUDED_DIR_NAMES,
     excluded_rel_prefixes=(),
 )
+
 
 #: 全波统一出口谓词（丙 derive / 丁 scope_verdict / 矩阵消费判定都走这一个名字）
 def counts_as_consumer(rel_path: str) -> bool:

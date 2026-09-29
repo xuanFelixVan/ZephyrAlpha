@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——n_trial_ledger（_domain_backtest 域，真源 src/zephyr/backtest/core/n_trial_ledger.py）
+# 2026-09-29 C97 悬空锚清偿补册：N 试次账本锚 born-dangling（P2-1 批量出仓漏配目标），
+# 本块按真源 docstring 计数口径标定（2026-09-15 DSR 修口径裁定 A1 交付件）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.core.n_trial_ledger
+source_of_truth: src/zephyr/backtest/core/n_trial_ledger.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 可审计机器回测证据
+    #   fields: c1_backtest.strategy_screen is_sharpe 非空行 + 批量 manifest/summary.json + record_run 显式登记
+    #   code: TrialLedger()
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 台账读数同步
+    #   name_en: sync_screen_counts
+    #   intro: 同步 strategy_screen 机器回测行数+自动发现 grid_*/summary.json 网格批次（幂等；挂起/未考行零 is_sharpe 不算试验）
+    #   inputs: I1
+    #   outputs: screen_runs + batch_records 分项计数
+    # - id: A2
+    #   name_zh: ② 累计 N 口径汇聚
+    #   name_en: cumulative_trials
+    #   intro: count = screen_runs + batch_records（缺账本/缺读数=抛错 fail-closed）；人工历史试错只入 known_floor 披露位永不入 count
+    #   inputs: A1
+    #   outputs: 累计原始 N（n_trials_raw；N_eff 预注册披露位预留）
+    # - id: A3
+    #   name_zh: ③ 全量快照
+    #   name_en: snapshot
+    #   intro: breakdown/known_floor/as_of 三元组全量快照供 DSR 多重测试修正与审计
+    #   inputs: A2
+    #   outputs: 快照字典
+    # 层: 输出
+    # - id: O1
+    #   name_zh: N 分母真源
+    #   name_en: trial_ledger_snapshot
+    #   intro: DSR 修正分母唯一真源（"N 未落账"三根因之一治愈）
+    #   downstream: 台账 DSR 口径消费方；tests/backtest（TrialLedger 契约）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

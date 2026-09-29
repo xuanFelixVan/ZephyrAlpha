@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # [BLUEPRINT] MOD-GOV-CONSUMPTIONCENSUS
 # [MODULE] zephyr.governance.consumption.consumption_census
 # [DOMAIN] D_GOVERNANCE
@@ -37,7 +36,7 @@
   * `consumer_files` 存计数  → 存真实文件清单，计数由 len() 派生
   * `.md` 算消费者（IND-REV-001 假绿）→ `.md`/`docs/` 移出消费面，另记 `doc_mentions`
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/consumption_census.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/consumption/consumption_census.yaml
 """
 
 from __future__ import annotations
@@ -75,6 +74,7 @@ class CensusInputError(ValidationError, ValueError):
     调用方与测试的 ``except ValueError`` 面零变更。
     """
 
+
 # ── 单一 scope 定档（§3.4 裁定）──壬道收敛：唯一真源在 zephyr.governance.consumption.scan_scope_converged，
 # 本车道全部公开名改**薄别名 import**（禁再派生；收敛裁决=scope_convergence/CASE.md §二）。
 # 扫描对象：src/ + scripts/ + config/ 的 .py/.yaml；排除 .md 与 docs/；排除 14 号文三层
@@ -93,7 +93,6 @@ from zephyr.governance.consumption.scan_scope_converged import (  # noqa: E402
     exclusion_layer,
 )
 
-
 _CATALOGS = "docs/01_policies_and_standards/_registry/catalogs"
 _DATA_ASSET_REGISTRY = f"{_CATALOGS}/data_asset_registry.yaml"
 
@@ -105,22 +104,22 @@ _TOKEN_SPLIT_RE = re.compile(r"[^0-9a-zA-Z_.\-]+")
 class FamilySpec:
     family_id: str
     label_zh: str
-    source: str                 # 实体提取器 kind
+    source: str  # 实体提取器 kind
     registry_path: str
     list_key: str = ""
     id_key: str = ""
     status_key: str = "status"
-    status_filter: tuple[str, ...] = ()   # 空=不过滤
-    prefix: str = ""                      # source='dataset_prefix'
-    leaf_regex: str = ""                  # source='dataset_regex' / 'file_regex'
-    producer_prefix: str = ""             # source='dataset_in_producer_dir'
-    union_of: tuple["FamilySpec", ...] = ()   # source='union'
-    file_path: str = ""                   # source='file_regex'
-    demand_fields: tuple[str, ...] = ()   # 声明需求因子（价值公式第一维）
-    alias_fields: tuple[str, ...] = ()    # 登记册别名列（仅"可能有列名消费者"建议位，不计客）
-    wiring_target_hint: str = ""          # 建议接线目标（孤岛"往哪接"一栏）
-    retired_ids: tuple[str, ...] = ()     # 退役件 token（族②：裁定#233 在册的退役面）
-    self_surface: str = ""                # 族自证面：入选该族所依据的代码，不得再算消费者
+    status_filter: tuple[str, ...] = ()  # 空=不过滤
+    prefix: str = ""  # source='dataset_prefix'
+    leaf_regex: str = ""  # source='dataset_regex' / 'file_regex'
+    producer_prefix: str = ""  # source='dataset_in_producer_dir'
+    union_of: tuple[FamilySpec, ...] = ()  # source='union'
+    file_path: str = ""  # source='file_regex'
+    demand_fields: tuple[str, ...] = ()  # 声明需求因子（价值公式第一维）
+    alias_fields: tuple[str, ...] = ()  # 登记册别名列（仅"可能有列名消费者"建议位，不计客）
+    wiring_target_hint: str = ""  # 建议接线目标（孤岛"往哪接"一栏）
+    retired_ids: tuple[str, ...] = ()  # 退役件 token（族②：裁定#233 在册的退役面）
+    self_surface: str = ""  # 族自证面：入选该族所依据的代码，不得再算消费者
 
     def key(self) -> str:
         return self.family_id
@@ -229,8 +228,9 @@ def load_family_entities(family: FamilySpec, repo_root: Path) -> dict[str, dict[
     return extractor(family, repo_root)
 
 
-def _residual_datasets(fam: FamilySpec, repo_root: Path,
-                       entities: dict[str, dict[str, dict[str, Any]]]) -> dict[str, dict[str, Any]]:
+def _residual_datasets(
+    fam: FamilySpec, repo_root: Path, entities: dict[str, dict[str, dict[str, Any]]]
+) -> dict[str, dict[str, Any]]:
     """族⑩＝"已在产登记但九族选择器没框住"的补集（禁手工清单：由九族成员集反推）。"""
     covered = {e for fid, d in entities.items() if fid in TABLE_FAMILIES for e in d}
     out: dict[str, dict[str, Any]] = {}
@@ -239,7 +239,7 @@ def _residual_datasets(fam: FamilySpec, repo_root: Path,
         if not eid or str(eid) in covered:
             continue
         if it.get("scope") != "production" or not it.get("produced_by_job"):
-            continue                      # 判"上架"：有生产作业把数据落进去才算，光有条目不算
+            continue  # 判"上架"：有生产作业把数据落进去才算，光有条目不算
         out[str(eid)] = it
     return out
 
@@ -292,8 +292,9 @@ def _load_cache(path: Path) -> dict[str, Any]:
         return {}
 
 
-def _scan_file(abs_path: Path, token_map: dict[str, set[str]],
-               alias_map: dict[str, set[str]] | None = None) -> tuple[str, list[str], list[str]] | None:
+def _scan_file(
+    abs_path: Path, token_map: dict[str, set[str]], alias_map: dict[str, set[str]] | None = None
+) -> tuple[str, list[str], list[str]] | None:
     """单文件指纹 + 命中实体列表 + 别名命中列表（仅建议位，不计消费者）。
 
     指纹=mtime_ns:size:sha1 前 12——mtime/size 相同而内容被替换的场景由 sha1 兜住。
@@ -362,89 +363,146 @@ def _proof_cmd(eid: str, family: FamilySpec) -> str:
 
 # ── 九族规格（顺序＝14 号文矩阵 ①-⑨）───────────────────────────────────────
 _F1 = FamilySpec(
-    family_id="indicator", label_zh="①技术指标", source="registry_ids",
-    registry_path=f"{_CATALOGS}/technical_indicator_registry.yaml", list_key="indicators",
+    family_id="indicator",
+    label_zh="①技术指标",
+    source="registry_ids",
+    registry_path=f"{_CATALOGS}/technical_indicator_registry.yaml",
+    list_key="indicators",
     id_key="indicator_id",
     demand_fields=("used_by_factors", "used_by_strategies"),
     alias_fields=("name", "aliases"),
     wiring_target_hint="src/zephyr/factor/indicator_reader.py PIT 白名单 → factor/analysis/multifactor_synthesis.py（CNS-01）",
 )
 _F2 = FamilySpec(
-    family_id="candle_pattern", label_zh="②图形指标（退役面）", source="registry_ids",
-    registry_path=f"{_CATALOGS}/technical_indicator_registry.yaml", list_key="indicators",
-    id_key="indicator_id", status_key="status", status_filter=("deprecated",),
+    family_id="candle_pattern",
+    label_zh="②图形指标（退役面）",
+    source="registry_ids",
+    registry_path=f"{_CATALOGS}/technical_indicator_registry.yaml",
+    list_key="indicators",
+    id_key="indicator_id",
+    status_key="status",
+    status_filter=("deprecated",),
     retired_ids=("candle_pattern",),
     demand_fields=("used_by_factors",),
     alias_fields=("name", "aliases"),
     wiring_target_hint="退役件不接线（裁定#233 后继=图形域 MOD-SIG-145 pattern_event_store）",
 )
 _F3 = FamilySpec(
-    family_id="alt_data_table", label_zh="③另类数据表", source="dataset_in_producer_dir",
-    registry_path=_DATA_ASSET_REGISTRY, list_key="datasets", id_key="entity_name",
+    family_id="alt_data_table",
+    label_zh="③另类数据表",
+    source="dataset_in_producer_dir",
+    registry_path=_DATA_ASSET_REGISTRY,
+    list_key="datasets",
+    id_key="entity_name",
     producer_prefix="src/zephyr/alt_data/",
     self_surface=r"^src/zephyr/alt_data/",
     demand_fields=("consumed_by_jobs",),
     wiring_target_hint="src/zephyr/alt_data/ 消费者或 signal_ashare/（CNS-03/CNS-11/CNS-12）",
 )
 _F4 = FamilySpec(
-    family_id="emotion_component", label_zh="④情绪成分 C1-C6", source="file_regex",
-    registry_path="", file_path="src/zephyr/alt_data/emotion_index_builder.py",
+    family_id="emotion_component",
+    label_zh="④情绪成分 C1-C6",
+    source="file_regex",
+    registry_path="",
+    file_path="src/zephyr/alt_data/emotion_index_builder.py",
     leaf_regex=r"\b(C[1-6]_[a-z][a-z0-9_]*)\b",
     self_surface=r"emotion_index_builder\.py$",
     demand_fields=(),
     wiring_target_hint="data/sector_state_pipeline.py / signal_ashare/sector/sector_state_aggregator.py（D13 缺口）",
 )
 _F5 = FamilySpec(
-    family_id="macro", label_zh="⑤宏观", source="union", registry_path=_DATA_ASSET_REGISTRY,
+    family_id="macro",
+    label_zh="⑤宏观",
+    source="union",
+    registry_path=_DATA_ASSET_REGISTRY,
     union_of=(
-        FamilySpec(family_id="macro__mac", label_zh="⑤a MAC-*", source="registry_ids",
-                   registry_path=f"{_CATALOGS}/macro_indicator_registry.yaml", list_key="indicators",
-                   id_key="indicator_id", demand_fields=("impact_assets", "used_by", "data_ref"),
-                   alias_fields=("name", "aliases")),
-        FamilySpec(family_id="macro__tables", label_zh="⑤b 宏观表", source="dataset_regex",
-                   registry_path=_DATA_ASSET_REGISTRY, list_key="datasets", id_key="entity_name",
-                   leaf_regex=r"^(cn_macro|sw_daily|us_index|macro_data|edb_data|us_futures_intraday|"
-                              r"macro_[a-z_]+gauge)$",
-                   demand_fields=("consumed_by_jobs",)),
+        FamilySpec(
+            family_id="macro__mac",
+            label_zh="⑤a MAC-*",
+            source="registry_ids",
+            registry_path=f"{_CATALOGS}/macro_indicator_registry.yaml",
+            list_key="indicators",
+            id_key="indicator_id",
+            demand_fields=("impact_assets", "used_by", "data_ref"),
+            alias_fields=("name", "aliases"),
+        ),
+        FamilySpec(
+            family_id="macro__tables",
+            label_zh="⑤b 宏观表",
+            source="dataset_regex",
+            registry_path=_DATA_ASSET_REGISTRY,
+            list_key="datasets",
+            id_key="entity_name",
+            leaf_regex=r"^(cn_macro|sw_daily|us_index|macro_data|edb_data|us_futures_intraday|"
+            r"macro_[a-z_]+gauge)$",
+            demand_fields=("consumed_by_jobs",),
+        ),
     ),
     demand_fields=("impact_assets", "used_by", "data_ref", "consumed_by_jobs"),
     alias_fields=("name", "aliases"),
     wiring_target_hint="regime/regime_cycle_analyzer.py 或 plan_engine 隔夜链（CNS-04 宏观族总裁决）",
 )
 _F6 = FamilySpec(
-    family_id="factor", label_zh="⑥因子", source="registry_ids",
-    registry_path=f"{_CATALOGS}/factor_registry.yaml", list_key="factors", id_key="factor_id",
+    family_id="factor",
+    label_zh="⑥因子",
+    source="registry_ids",
+    registry_path=f"{_CATALOGS}/factor_registry.yaml",
+    list_key="factors",
+    id_key="factor_id",
     demand_fields=("belongs_to_strategies",),
     alias_fields=("name", "aliases"),
     wiring_target_hint="src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）",
 )
 _F7 = FamilySpec(
-    family_id="strategy", label_zh="⑦策略", source="registry_ids",
-    registry_path=f"{_CATALOGS}/strategy_registry.yaml", list_key="strategies", id_key="strategy_id",
+    family_id="strategy",
+    label_zh="⑦策略",
+    source="registry_ids",
+    registry_path=f"{_CATALOGS}/strategy_registry.yaml",
+    list_key="strategies",
+    id_key="strategy_id",
     demand_fields=("alpha_sources",),
     alias_fields=("name", "aliases"),
     wiring_target_hint="TDM nodes[].strategy_mounts（族⑦→执行路径）",
 )
 _F8 = FamilySpec(
-    family_id="fundamental_table", label_zh="⑧基本面表", source="dataset_prefix",
-    registry_path=_DATA_ASSET_REGISTRY, list_key="datasets", id_key="entity_name",
-    prefix="c3_fundamental.", demand_fields=("consumed_by_jobs",),
+    family_id="fundamental_table",
+    label_zh="⑧基本面表",
+    source="dataset_prefix",
+    registry_path=_DATA_ASSET_REGISTRY,
+    list_key="datasets",
+    id_key="entity_name",
+    prefix="c3_fundamental.",
+    demand_fields=("consumed_by_jobs",),
     wiring_target_hint="data/pit_query.py 白名单 + backtest/core/data_handler.py（CNS-05）",
 )
 _F9 = FamilySpec(
-    family_id="calendar", label_zh="⑨另类日历", source="union", registry_path=_DATA_ASSET_REGISTRY,
+    family_id="calendar",
+    label_zh="⑨另类日历",
+    source="union",
+    registry_path=_DATA_ASSET_REGISTRY,
     union_of=(
-        FamilySpec(family_id="calendar__types", label_zh="⑨a 事件型", source="registry_ids",
-                   registry_path=f"{_CATALOGS}/event_calendar_registry.yaml", list_key="event_types",
-                   id_key="event_type_id", demand_fields=("used_by_strategies", "data_dataset_ref",
-                                                           "data_source"),
-                   alias_fields=("name", "aliases")),
-        FamilySpec(family_id="calendar__tables", label_zh="⑨b 日历表", source="dataset_regex",
-                   registry_path=_DATA_ASSET_REGISTRY, list_key="datasets", id_key="entity_name",
-                   leaf_regex=r"^(trade_calendar|hk_trade_calendar|calendar_event|ipo_calendar|"
-                              r"ipo_schedule|index_adjustment|disclosure_date|disclosure_plan|"
-                              r"share_unlock)$",
-                   demand_fields=("consumed_by_jobs",)),
+        FamilySpec(
+            family_id="calendar__types",
+            label_zh="⑨a 事件型",
+            source="registry_ids",
+            registry_path=f"{_CATALOGS}/event_calendar_registry.yaml",
+            list_key="event_types",
+            id_key="event_type_id",
+            demand_fields=("used_by_strategies", "data_dataset_ref", "data_source"),
+            alias_fields=("name", "aliases"),
+        ),
+        FamilySpec(
+            family_id="calendar__tables",
+            label_zh="⑨b 日历表",
+            source="dataset_regex",
+            registry_path=_DATA_ASSET_REGISTRY,
+            list_key="datasets",
+            id_key="entity_name",
+            leaf_regex=r"^(trade_calendar|hk_trade_calendar|calendar_event|ipo_calendar|"
+            r"ipo_schedule|index_adjustment|disclosure_date|disclosure_plan|"
+            r"share_unlock)$",
+            demand_fields=("consumed_by_jobs",),
+        ),
     ),
     demand_fields=("used_by_strategies", "data_dataset_ref", "data_source", "consumed_by_jobs"),
     alias_fields=("name", "aliases"),
@@ -453,8 +511,12 @@ _F9 = FamilySpec(
 #: 族⑩ 补集面（本道新增，理由见案卷 §三"覆盖安全网"）：九族选择器都没框住、但确已在产登记的表
 #: ——净零对价＝替掉 14 号文 §三手工维护的"63 号 CSV zero_ref 老表"散文账，禁再手抄清单
 _F10 = FamilySpec(
-    family_id="table_residual", label_zh="⑩族外在产表（补集安全网）", source="dataset_residual",
-    registry_path=_DATA_ASSET_REGISTRY, list_key="datasets", id_key="entity_name",
+    family_id="table_residual",
+    label_zh="⑩族外在产表（补集安全网）",
+    source="dataset_residual",
+    registry_path=_DATA_ASSET_REGISTRY,
+    list_key="datasets",
+    id_key="entity_name",
     demand_fields=("consumed_by_jobs",),
     wiring_target_hint="先归类到 ③/⑤/⑧/⑨ 或出死亡证明（CNS-13 零客老表评审）",
 )
@@ -527,8 +589,9 @@ def _token_signature(token_map: dict[str, set[str]]) -> str:
     （本道实测缺陷，案卷 §六）。
     """
     return hashlib.sha1(
-        json.dumps({k: sorted(v) for k, v in sorted(token_map.items())},
-                   ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        json.dumps(
+            {k: sorted(v) for k, v in sorted(token_map.items())}, ensure_ascii=False, separators=(",", ":")
+        ).encode("utf-8")
     ).hexdigest()
 
 
@@ -550,13 +613,14 @@ def _collect_entities(st: _RunState) -> None:
                     if len(a) >= 6 and not a.isdigit():
                         st.alias_map.setdefault(eid, set()).update(_token_forms(a))
     if not st.token_map:
-        raise CensusInputError("普查族无实体（登记册全空？）", details={"families": ",".join(
-            f.family_id for f in st.fam_list)})
+        raise CensusInputError(
+            "普查族无实体（登记册全空？）", details={"families": ",".join(f.family_id for f in st.fam_list)}
+        )
 
 
 def _prepare_cache(st: _RunState, req: CensusRequest, signature: str) -> None:
     """按 (扫描根, token 签名) 双键取回可用缓存；签名不符则整包作废冷跑。"""
-    st.prefix = f"{st.scan.resolve().as_posix()}|"     # 缓存按扫描根分桶，沙盘与生产互不污染
+    st.prefix = f"{st.scan.resolve().as_posix()}|"  # 缓存按扫描根分桶，沙盘与生产互不污染
     cache_root = Path(req.cache_path) if req.cache_path is not None else None
     cache: dict[str, Any] = {} if (req.force_full or cache_root is None) else _load_cache(cache_root)
     if cache and cache.get("signature") != signature:
@@ -637,8 +701,9 @@ def _family_registry_tier(fam: FamilySpec, repo: Path) -> object:
     return _registry_doc(repo, fam.registry_path).get("tier")
 
 
-def _entity_row(st: _RunState, fam: FamilySpec, eid: str, item: dict[str, Any],
-                reg_tier: object) -> tuple[dict[str, Any], str]:
+def _entity_row(
+    st: _RunState, fam: FamilySpec, eid: str, item: dict[str, Any], reg_tier: object
+) -> tuple[dict[str, Any], str]:
     """单实体台账行 + 该实体消费态（value_score 三项加权＝案卷 §三 公式，禁在此改判据）。"""
     consumers = _consumers_for(st, eid, fam)
     prod = _producer_only(st, eid)
@@ -657,13 +722,13 @@ def _entity_row(st: _RunState, fam: FamilySpec, eid: str, item: dict[str, Any],
         "entity_id": eid,
         "family": fam.family_id,
         "state": state,
-        "consumer_files": consumers,          # 修复②：清单非计数
+        "consumer_files": consumers,  # 修复②：清单非计数
         "consumer_count": len(consumers),
         "code_consumers": [c for c in consumers if Path(c).suffix == ".py"],
         "config_consumers": [c for c in consumers if Path(c).suffix in (".yaml", ".yml")],
         "producer_only_hits": prod,
-        "self_surface_hits": selfs,           # 入选该族所依据的代码（自证面，不计客）
-        "doc_mentions": docs,                 # 修复③：文档只作证据
+        "self_surface_hits": selfs,  # 入选该族所依据的代码（自证面，不计客）
+        "doc_mentions": docs,  # 修复③：文档只作证据
         "advisory_alias_files": sorted(st.idx.alias_hits.get(eid, set()))[:12],
         "advisory_alias_count": len(st.idx.alias_hits.get(eid, set())),
         "declared_demand_refs": demand,
@@ -672,8 +737,7 @@ def _entity_row(st: _RunState, fam: FamilySpec, eid: str, item: dict[str, Any],
         "value_score": round(score, 4),
     }
     if fam.family_id == "indicator":
-        row["recommendation"] = ("keep" if state == "active" else
-                                 "retire_candidate(零消费，指标域会话核实后处置)")
+        row["recommendation"] = "keep" if state == "active" else "retire_candidate(零消费，指标域会话核实后处置)"
     return row, state
 
 
@@ -709,8 +773,9 @@ def _scan_faces(st: _RunState, *, include_doc_mentions: bool) -> None:
         _bucketed_scan(st, DOC_EVIDENCE_SCOPE, doc_side=True)
 
 
-def _family_block(fam: FamilySpec, rows: list[dict[str, Any]],
-                  fam_islands: list[dict[str, Any]], counts: dict[str, int]) -> dict[str, Any]:
+def _family_block(
+    fam: FamilySpec, rows: list[dict[str, Any]], fam_islands: list[dict[str, Any]], counts: dict[str, int]
+) -> dict[str, Any]:
     rows.sort(key=lambda r: r["entity_id"])
     ordered = sorted(fam_islands, key=lambda i: (-i["value_score"], i["entity_id"]))
     return {
@@ -737,8 +802,14 @@ def _fam_list(req: CensusRequest) -> list[FamilySpec]:
     return [f if isinstance(f, FamilySpec) else get_family(f) for f in wanted]
 
 
-def _census_doc(st: _RunState, signature: str, families_out: list[dict[str, Any]],
-                islands: list[dict[str, Any]], grand_counts: dict[str, int], today: str) -> dict[str, Any]:
+def _census_doc(
+    st: _RunState,
+    signature: str,
+    families_out: list[dict[str, Any]],
+    islands: list[dict[str, Any]],
+    grand_counts: dict[str, int],
+    today: str,
+) -> dict[str, Any]:
     islands.sort(key=lambda i: (-i["value_score"], i["family"], i["entity_id"]))
     return {
         "schema": "consumption_census/2",
@@ -746,23 +817,34 @@ def _census_doc(st: _RunState, signature: str, families_out: list[dict[str, Any]
         "value_formula": {
             "version": VALUE_FORMULA_VERSION,
             "weights": VALUE_WEIGHTS,
-            "terms": {"declared_demand": "min(refs,10)/10", "build_maturity": _MATURITY_BANDS,
-                      "registry_priority": "tier/5（缺省取登记册顶层 tier）"},
+            "terms": {
+                "declared_demand": "min(refs,10)/10",
+                "build_maturity": _MATURITY_BANDS,
+                "registry_priority": "tier/5（缺省取登记册顶层 tier）",
+            },
             "ch_row_count": "本尺零 ClickHouse 读数——见案卷 §四（在途缺陷：query() 返 TSV，下标取到首位数字）",
         },
         "stale_state": "retired(案卷 §一：单一 scope 下 stale 为空集，产出侧不再写该键)",
         "updated_at": today,
         "counts": grand_counts,
-        "runtime": {"rescanned_files": st.rescanned, "cached_files": st.scanned - st.rescanned,
-                    "files_scanned": st.scanned, "token_signature": signature[:12]},
+        "runtime": {
+            "rescanned_files": st.rescanned,
+            "cached_files": st.scanned - st.rescanned,
+            "files_scanned": st.scanned,
+            "token_signature": signature[:12],
+        },
         "families": families_out,
         "islands": islands,
     }
 
 
-def _write_outputs(doc: dict[str, Any], output_path: str | Path | None,
-                   cache_path: str | Path | None, signature: str,
-                   new_cache: dict[str, Any]) -> None:
+def _write_outputs(
+    doc: dict[str, Any],
+    output_path: str | Path | None,
+    cache_path: str | Path | None,
+    signature: str,
+    new_cache: dict[str, Any],
+) -> None:
     """台账与缓存两本账各自落盘（None=该本不写；壳层零副作用走的就是这条开关）。"""
     if output_path is not None:
         out = Path(output_path)
@@ -771,16 +853,21 @@ def _write_outputs(doc: dict[str, Any], output_path: str | Path | None,
     if cache_path is not None:
         cp = Path(cache_path)
         cp.parent.mkdir(parents=True, exist_ok=True)
-        safe_write_text(str(cp), json.dumps({"schema": "census_cache/2", "signature": signature,
-                                             "files": new_cache},
-                                            ensure_ascii=False, separators=(",", ":")), newline="\n")
+        safe_write_text(
+            str(cp),
+            json.dumps(
+                {"schema": "census_cache/2", "signature": signature, "files": new_cache},
+                ensure_ascii=False,
+                separators=(",", ":"),
+            ),
+            newline="\n",
+        )
 
 
 _REQUEST_FIELDS: Final[frozenset[str]] = frozenset(f.name for f in fields(CensusRequest))
 
 
-def run_consumption_census(*, request: CensusRequest | None = None,
-                           **overrides: Any) -> dict[str, Any]:
+def run_consumption_census(*, request: CensusRequest | None = None, **overrides: Any) -> dict[str, Any]:
     """九族消费普查：产台账 JSON + 孤岛清单（按 value_score 降序）。
 
     scan_root 注入供测试沙盘；repo_root 缺省=登记册上溯三级（生产仓库根）。
@@ -815,9 +902,14 @@ def run_consumption_census(*, request: CensusRequest | None = None,
             grand_counts[state] += 1
             rows.append(row)
             if state == "zero":
-                fam_islands.append({**row, "why_zero": _island_reasons(row),
-                                    "proof_cmd": _proof_cmd(eid, fam),
-                                    "suggested_wiring_target": fam.wiring_target_hint})
+                fam_islands.append(
+                    {
+                        **row,
+                        "why_zero": _island_reasons(row),
+                        "proof_cmd": _proof_cmd(eid, fam),
+                        "suggested_wiring_target": fam.wiring_target_hint,
+                    }
+                )
         islands.extend(fam_islands)
         families_out.append(_family_block(fam, rows, fam_islands, counts))
 

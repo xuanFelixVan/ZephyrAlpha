@@ -1,0 +1,40 @@
+# ALGO_FLOW 外部真源——capability_registry_io（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py）
+# 2026-09-29 C97 悬空锚清偿补册：capability 册共享解析缓存锚 born-dangling（T8 簇1 共册
+# 解析治本件，P2-1 批量出仓漏配目标）。本块按真源 docstring 病根/形态契约标定。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates._capability_registry_io
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: capability 册读取请求
+    #   fields: capability_canonical_file_registry.yaml（2.7MB/万条）+可选 reader 注入
+    #   code: parse_capability_registry_cached()
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 一次解析+进程级单条缓存
+    #   name_en: parse_capability_registry_cached
+    #   intro: (normcase 路径, mtime_ns, st_size) 键控缓存——册未变零解析（实测 2.16s→0.2ms），写后任一字节变化即失效；键含 normcase 防跨 worktree/测试 tmp 册串台
+    #   inputs: I1
+    #   outputs: 解析结果 (data, err)
+    # - id: A2
+    #   name_zh: ② 多门共享分派
+    #   name_en: shared_parse_dispatch
+    #   intro: create_guard(60)/ssot_redefinition(65)/capability_overlap(200) 等同链各台共享一次 yaml.safe_load，判定逻辑零变化
+    #   inputs: A1
+    #   outputs: 各台判据数据
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 共册解析结果
+    #   name_en: registry_parse_result
+    #   intro: parse 失败返回 (None, exc) 不抛穿；path stat 失败同口径；永不写盘（ERROR_CONTRACT）
+    #   downstream: src/zephyr/gov_enforcement/commit_gates（create_guard/ssot_redefinition/capability_overlap 等消费台）；tests/governance/commit_gates/test_capability_registry_io.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

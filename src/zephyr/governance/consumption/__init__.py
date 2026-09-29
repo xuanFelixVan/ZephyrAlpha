@@ -26,7 +26,7 @@
 本 __init__ 只做命名空间，不做再导出（re-export 会造出第二条导入路径＝第二真源风险）；
 消费者请直连子模块全路径。
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/__init__.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_governance/algo_flow/consumption/consumption__init__.yaml
 """
 
 __all__: list[str] = []

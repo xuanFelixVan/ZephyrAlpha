@@ -3,7 +3,7 @@
 # [DOMAIN] D_SHARED
 # [TTL] permanent
 """官方状态词表包（zephyr.shared.vocab）——市场状态与情绪阶段官方常量的命名空间。
-# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/vocab__init__.py.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_shared/algo_flow/vocab__init__.yaml
 """
 
 from typing import Final

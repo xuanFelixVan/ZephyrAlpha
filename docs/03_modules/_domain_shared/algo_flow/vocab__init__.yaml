@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——__init__（_domain_shared 域，真源 src/zephyr/shared/vocab/__init__.py）
+# 2026-09-29 C97 悬空锚清偿·语义正名改指：原册 vocab__init__.py.yaml 文件名违反 N-13
+# snake_case（LEDGER_chief3 §6.4 N-1 畸形名实证），正名为本册并按真源公共面重标定
+# （原块全待校准占位）；旧册随批退役。丁线扩面批（2026-09-22）P2-1 出仓内容继承。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.shared.vocab.__init__
+source_of_truth: src/zephyr/shared/vocab/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 官方状态词表命名空间请求
+    #   fields: 无公共形参/无逻辑（纯包命名空间，W1 立法件）
+    #   code: __init__.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① market_state 符号静态导入
+    #   name_en: from zephyr.shared.vocab.market_state import ...
+    #   intro: 导入官方状态词表全量公开符号（MacroRegimeVocab/AnchoredTierVocab/EmotionCycleSixVocab/IntradayFiveVocab/ANCHORED_R1-R4/EXTREME_STATE_ALIASES/INTRADAY_TO_SIX）
+    #   inputs: I1
+    #   outputs: 词表符号集
+    # - id: A2
+    #   name_zh: ② 包级导出封口
+    #   name_en: __all__ Final 封口
+    #   intro: __all__: Final[list[str]] 十符号封口（零逻辑零 IO，新增状态值须先过 state_vocabulary_registry 立法）
+    #   inputs: A1
+    #   outputs: 包公开导出表
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 官方状态词表包公开面
+    #   name_en: vocab_package_surface
+    #   intro: 全系统状态/情绪消费方唯一官方常量入口（存量 28 套词表收编映射见 state_vocabulary_registry）
+    #   downstream: src/zephyr/shared/vocab/market_state.py；docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml；tests/plan_engine/test_daily_loop_master_switch.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

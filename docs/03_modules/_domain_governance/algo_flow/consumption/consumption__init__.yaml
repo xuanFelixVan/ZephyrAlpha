@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——consumption__init__（_domain_governance 域，真源 src/zephyr/governance/consumption/__init__.py）
+# 2026-09-29 C97 悬空锚清偿补册+锚改指：包 __init__ 原锚指向域根裸 __init__.yaml（born-dangling
+# 且违反子包镜像落点惯例），改指本册（镜像路径按 GOV-DOC-018 源子包口径）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.consumption.__init__
+source_of_truth: src/zephyr/governance/consumption/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 消费面自动化件命名空间请求
+    #   fields: 无公共形参/无逻辑（包根纯命名空间，INVARIANTS 契约头自述）
+    #   code: __init__.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 三件静态锚定（不 re-export）
+    #   name_en: import scan_scope_converged / consumption_census / consumption_census_reconciler
+    #   intro: 单一扫描口径/九族普查引擎/事件触发对账器三件装配；不 re-export（第二条导入路径=第二真源风险），消费者直连子模块全路径
+    #   inputs: I1
+    #   outputs: 三子模块可引符号
+    # 层: 输出
+    # - id: O1
+    #   name_zh: consumption 包公开面
+    #   name_en: consumption_package_surface
+    #   intro: 波 13 消费面自动化件落位包（ARCH-031 governance/ 根禁新增 .py 的承接位）
+    #   downstream: zephyr.governance.indicator_usage_audit；zephyr.governance.audit.library_new_module_reconciler；scripts.governance.d3_metadata.generate_wiring_registry；scripts.governance.d5_architecture.generators.generate_connection_matrix
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——scan_scope_converged（_domain_governance 域，真源 src/zephyr/governance/consumption/scan_scope_converged.py）
+# 2026-09-29 C97 悬空锚清偿补册+锚改指：波 13 §3.4 单一扫描口径唯一定义处原锚指向域根平铺名
+# （born-dangling 且违反子包镜像落点惯例），改指本册（镜像路径按 GOV-DOC-018 源子包口径）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.consumption.scan_scope_converged
+source_of_truth: src/zephyr/governance/consumption/scan_scope_converged.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 待判消费态的实体名
+    #   fields: 登记册条目实体名（普查/连接矩阵/图书馆入编共用输入）
+    #   code: in_scan_surface() / counts_as_consumer()
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 扫描面判定（面/层两分 C7）
+    #   name_en: in_scan_surface
+    #   intro: 翻 src/+scripts/+config/ 下 .py/.yaml（§3.4 原文口径；.yml 不收）+根+后缀+噪声目录+面级前缀
+    #   inputs: I1
+    #   outputs: 扫描对象面
+    # - id: A2
+    #   name_zh: ② 四层排除消费判定
+    #   name_en: counts_as_consumer
+    #   intro: 面 ∧ ¬四层（producer/display/infra 14 号文三层+observer 观察者层=自我认证假绿排除）；.md 一律不算（IND-REV-001 假绿）
+    #   inputs: A1
+    #   outputs: 消费者判定布尔
+    # - id: A3
+    #   name_zh: ③ 收敛唯一真源封口
+    #   name_en: converge_single_scope
+    #   intro: 三份近重复副本→本文件唯一真源（CASE.md §二裁决记录）；与 ORPHAN-MODULE 门分歧不消除（创建期判据对象不同→不并）
+    #   inputs: A2
+    #   outputs: 全波统一尺（消费面普查+连接矩阵+图书馆入编共用）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: §3.4 单一扫描口径
+    #   name_en: converged_scan_scope
+    #   intro: "有没有人真用"的唯一尺子定义处
+    #   downstream: zephyr.governance.consumption.consumption_census；连接矩阵取证；图书馆入编；tests/governance/test_scan_scope_convergence_equivalence.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

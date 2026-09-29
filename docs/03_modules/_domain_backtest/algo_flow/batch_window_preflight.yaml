@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——batch_window_preflight（_domain_backtest 域，真源 src/zephyr/backtest/core/batch_window_preflight.py）
+# 2026-09-29 C97 悬空锚清偿补册：波12 点火前检器锚 born-dangling（P2-1 批量出仓漏配目标），
+# 本块按真源 docstring 契约头+五触发条件/四态判决口径标定（W 册波12 §判据真源）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.core.batch_window_preflight
+source_of_truth: src/zephyr/backtest/core/batch_window_preflight.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 五触发条件读数原料
+    #   fields: W 册判据真源+批准卡声明值+哨兵件/T2 池基等在盘证据
+    #   code: run_preflight()
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 五条件逐项判读（c1 波0-11 终态/c2 板块宇宙完整性/c3 GPU L2 耗时/c4 成本门口径/c5 T2 池基）
+    #   name_en: run_preflight
+    #   intro: 读不到/目标值未声明/通道失败一律 UNKNOWN=阻断，不存在"默认绿"
+    #   inputs: I1
+    #   outputs: 五条判决（GREEN/RED/UNKNOWN/BLOCKED_AWAITING_GATE + knowable_when）
+    # - id: A2
+    #   name_zh: ② 四态判决汇聚+机读 JSON
+    #   name_en: to_json
+    #   intro: 五条判决+批准卡+阻断清单串成机读判决字典；c4 Owner 门位未拍板=BLOCKED_AWAITING_GATE
+    #   inputs: A1
+    #   outputs: 判决 JSON（消费方 compute_window_gate 闸门前置）
+    # - id: A3
+    #   name_zh: ③ 点火武装断言
+    #   name_en: assert_ignition_armed
+    #   intro: 不放行即抛 IgnitionNotArmed（.details=全量判决，消息体不含路径=MSG-EXPOSURE）
+    #   inputs: A2
+    #   outputs: 放行或 IgnitionNotArmed
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 点火闸前置判决
+    #   name_en: preflight_verdict
+    #   intro: 供 scripts/backtest/compute_window_gate.py 在重算力开工瞬间消费（不另立第二道 gate）
+    #   downstream: scripts/backtest/compute_window_gate.py；tests/backtest/test_batch_window_ignition_gate.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

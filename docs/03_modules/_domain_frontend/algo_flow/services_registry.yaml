@@ -1,0 +1,30 @@
+# ALGO_FLOW 外部真源——services_registry（_domain_frontend 域，真源 src/zephyr/frontend/dashboard/services_registry.py）
+# 2026-09-21 st-disk-ch-20260921 冷储主库迁 F 批补锚（ALGO-FLOW gate 暴露存量缺口）：
+# docstring 内联块按 drafter 产出落此，extractor 经 external 锚加载走同一 parse_algo_flow 管线；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.frontend.dashboard.services_registry
+source_of_truth: src/zephyr/frontend/dashboard/services_registry.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 16 启动项注册表（服务/数据/交易/基础设施/守护域）
+    #   fields: SERVICES 注册表 + psutil 进程扫描 + tmp/*.heartbeat + 端口探测 + schtasks
+    #   code: src/zephyr/frontend/dashboard/services_registry.py SERVICES/_ASSET_TIER_OVERRIDES
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 四态灯探测
+    #   name_en: detect
+    #   intro: 按探测类型（env_tcp/cold_archive/daily_fresh/file_fresh 等）逐项判 DS-12 四态
+    #   desc: 60s 缓存 + psutil 活性 + 心跳 freshness + 端口/文件新鲜度，green/yellow/red/gray
+    # 层: 输出
+    # - id: O1
+    #   name: 仪表盘服务总闸状态面
+    #   fields: 状态灯/控制分级（free/confirm/guard/external/self）/审计日志
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——l9_readiness_aggregator（_domain_data 域，真源 src/zephyr/data/l9_readiness_aggregator.py）
+# 2026-09-29 C97 悬空锚清偿补册：L9 知识供给汇聚就绪度聚合器锚 born-dangling（P2-1 批量
+# 出仓漏配目标）。本块按真源 docstring 四源拼装/分档纪律/fail-open 三条标定（f34 册 §四）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.l9_readiness_aggregator
+source_of_truth: src/zephyr/data/l9_readiness_aggregator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 汇聚读数原料（事件触发）
+    #   fields: 调度器 task_completed 唤醒（daily_kline 系 SUCCESS=行情到位）+源线 CH 新鲜度+图谱 PG/registry 对账+状态快照 CH+TDM pit_effective_from 真源
+    #   code: 聚合入口（同日 60min 节流 DB 侧时钟比较）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 四源纯读取拼装
+    #   name_en: aggregate_readiness
+    #   intro: 29 源线（A01-A16/B01-B10/C01-C03）+5 图谱（G1-G5）+3 状态快照（V1-V3）逐源线单行读数，零新采集
+    #   inputs: I1
+    #   outputs: 逐源线读数行（绿/黄/红/挂起/跳过+时戳+行数）
+    # - id: A2
+    #   name_zh: ② 分档纪律判定
+    #   name_en: tier_discipline
+    #   intro: A 档 16 线计健康分；B/C 档 13 线 suspended 单列不计红（渠道未接禁凑数）；读数面未登记 skip 留因；G5 挂零 red 如实
+    #   inputs: A1
+    #   outputs: 分档后读数集
+    # - id: A3
+    #   name_zh: ③ fail-open 出声
+    #   name_en: fail_open_error_rows
+    #   intro: 探测失败=error 行留因（绝不静默记绿/零）；CH 写失败出声返回 error 摘要；业务日不可解析=data_insufficient
+    #   inputs: A2
+    #   outputs: error 行+可审计读数
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 就绪度日读数落库
+    #   name_en: l9_readiness_daily
+    #   intro: 写 c1_market.l9_readiness_daily（ReplacingMergeTree latest-wins 同日刷新幂等），T 日读数喂次日数据就绪度
+    #   downstream: TDM-E-L9-AGG→TDM-E-FLOW 供给健康读数边（latency_budget=T-1 08:00）；晨报供给健康段；tests/data/test_l9_readiness_aggregator.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
