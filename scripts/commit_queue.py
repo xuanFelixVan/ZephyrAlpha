@@ -83,7 +83,7 @@ CLI
 ---
   python scripts/commit_queue.py enqueue --session S --files a.py,b.py --message "msg"
       [--message-file F] [--worktree-root DIR] [--base-head SHA] [--depends-on qid1,qid2]
-      [--queue-root DIR] [--no-bootstrap]
+      [--priority N] [--queue-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py status [--session S] [--queue-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py drain [--queue-root DIR] [--max-items N]
   python scripts/commit_queue.py requeue <qid> [--worktree-root DIR] [--no-bootstrap]
@@ -710,6 +710,8 @@ def _c1_target_meta_ok(meta: dict, incoming: _C1Incoming) -> bool:
         return False  # 跨 worktree 不合并（红线）；历史项无此键=不可证同根→不并
     if _item_lane({"meta": meta}) != _item_lane({"meta": incoming.incoming_meta}):
         return False  # 车道不混（interactive/machine 调度优先语义不被合并改写）
+    if _item_priority({"meta": meta}) != _item_priority({"meta": incoming.incoming_meta}):
+        return False  # Rx-5：优先级不混（出队主键不被合并改写，同 lane 判据；缺省 0 两侧恒等）
     return meta.get("task_id") == incoming.incoming_meta.get("task_id")  # 死信打标归属不串
 
 
@@ -1065,6 +1067,9 @@ def enqueue_item(
                 "message": msg,
                 "files": blob_entries,
                 "meta": {
+                    # Rx-5：队列优先级（int，缺省 0，越大越先出队；显式落 0=新件自描述，
+                    # 读侧 _item_priority get 缺省兼容无键旧件）
+                    "priority": _normalize_priority((meta_extra or {}).get("priority")),
                     "depends_on": list(depends_on or []),  # P1 级联标记依据（66 号 §6.4）
                     "supersedes": removed,  # compaction 覆盖全链（传递累积，审计可追溯）
                     # C1 合批判据键：同会话+同 worktree_root 才允许短窗并入（红线）；
@@ -1657,12 +1662,33 @@ def _item_lane(item: dict | None) -> str:
     return "interactive"
 
 
-def _pick_head(heads: list) -> tuple:
-    """B4 排队键：车道内按 **created_at 先来先服务**（qid 仅破平），不改车道优先语义。
+def _normalize_priority(raw: object) -> int:
+    """Rx-5：priority 归一（int 原样含负数；bool/非 int/缺省 → 0）。读写两侧同判据。
 
-    返回 (path, lane)。interactive 项存在 → 取其中最老 interactive；无 interactive
-    → 取其中最老 machine。最老 machine 等待超 _MACHINE_LANE_STARVATION_SEC → 提前放行。
-    项读取失败按 interactive 保守处理，排序时刻退化用文件 mtime（既不让它插队也不冤枉垫底）。
+    bool 是 int 子类必须显式排除（True 归 1 会悄悄插队）；旧件/外来值（字符串、
+    null）一律兜底 0=不改变 FCFS 相对序。
+    """
+    if isinstance(raw, bool) or not isinstance(raw, int):
+        return 0
+    return raw
+
+
+def _item_priority(item: dict | None) -> int:
+    """Rx-5 队列优先级读取：meta.priority（int，缺省 0，越大越先出队）。
+
+    旧件兼容：q-*.json 无 priority 键 → 0（get 缺省），与改造前 FCFS 相对序逐字节一致。
+    """
+    return _normalize_priority(((item or {}).get("meta") or {}).get("priority"))
+
+
+def _pick_head(heads: list) -> tuple:
+    """B4 排队键 + Rx-5 优先级：(-priority, interactive 先于 machine, created_at FCFS, qid 破平)。
+
+    返回 (path, lane)。Rx-5（2026-09-29）：priority 为全局主键——高优 machine 可先于
+    缺省 interactive（车道优先降为同优先级内次键）；同优先级内严格保持 B4 语义
+    （interactive 全在 machine 前、created_at 先来先服务、qid 仅破平）。
+    其余语义零变更：B5 退避未来时刻惩罚、读取失败 mtime 退化、machine 防饿死提前放行
+    （仍取**最老到达**的 machine 件，与 priority 无关）。
 
     为什么必须改（实测，st-commitspeed-tbl-20260924 提交等待调查 R5）：入参 heads 由调用方
     按 qid 字典序预排，而 qid 形如 `q-<日期>-<session_id>-<序号>` ⇒ 全局排序主键其实是
@@ -1680,9 +1706,11 @@ def _pick_head(heads: list) -> tuple:
     now_ts = datetime.now().astimezone().timestamp()
 
     def _rank(path: Path) -> tuple:
-        """(到达时刻, qid, lane, path) 排序键；时刻不可解析时退化文件 mtime。"""
+        """(-priority, lane_key, 到达时刻, qid, path) 排序键；lane_key 0=interactive/1=machine
+        （升序即 interactive 在前）；时刻不可解析时退化文件 mtime。"""
         item = _read_item(path)
         lane = _item_lane(item)
+        prio = _item_priority(item)
         raw = (item or {}).get("created_at")
         ts = None
         if raw:
@@ -1702,17 +1730,16 @@ def _pick_head(heads: list) -> tuple:
         penalty = _backoff_penalty_seconds(item)
         if penalty:
             ts = max(ts, now_ts) + penalty
-        return ts, str(path.name), lane, path
+        return -prio, (1 if lane == "machine" else 0), ts, str(path.name), path
 
     ranked = [_rank(h) for h in heads[:_HEAD_SCAN_BOUND]]
-    interactive = sorted((r for r in ranked if r[2] != "machine"), key=lambda r: (r[0], r[1]))
-    machine = sorted((r for r in ranked if r[2] == "machine"), key=lambda r: (r[0], r[1]))
-    if machine and (now_ts - machine[0][0]) > _MACHINE_LANE_STARVATION_SEC:
-        return machine[0][3], "machine"
-    if interactive:
-        return interactive[0][3], "interactive"
-    if machine:
-        return machine[0][3], "machine"
+    ordered = sorted(ranked, key=lambda r: (r[0], r[1], r[2], r[3]))
+    machine = [r for r in ranked if r[1] == 1]
+    oldest_machine = min(machine, key=lambda r: (r[2], r[3])) if machine else None
+    if oldest_machine and (now_ts - oldest_machine[2]) > _MACHINE_LANE_STARVATION_SEC:
+        return oldest_machine[4], "machine"
+    if ordered:
+        return ordered[0][4], ("machine" if ordered[0][1] == 1 else "interactive")
     return None, "machine"
 
 
@@ -2647,11 +2674,12 @@ def _daemon_snapshot(root: Path) -> dict:
 
 
 def _pending_position_map(root: Path) -> dict:
-    """B4 位次表：qid → 前面还有几项，判据与 _pick_head 完全一致。
+    """B4 位次表：qid → 前面还有几项，判据与 _pick_head 完全一致（Rx-5 同键）。
 
     旧实现用"字典序枚举下标"当位次，跨会话时报的是**会话名排名**不是到达排名——
     与队首选择改 FIFO 后会出现"位次说排第 3、实际最后一个走"的自相矛盾，故必须同源。
-    车道优先保留：interactive 全部排在 machine 之前（machine 防饿死例外由 _pick_head 处理）。
+    Rx-5：与 _pick_head 同一排序键 (-priority, interactive 先于 machine, created_at, qid)；
+    machine 防饿死例外（拾取序可提前）不计入位次，同改造前口径。
     """
     from datetime import datetime
 
@@ -2675,15 +2703,10 @@ def _pending_position_map(root: Path) -> dict:
                 ts = e.stat().st_mtime
             except OSError:
                 ts = now_ts
-        parsed.append((e.stem, ts, _item_lane(item)))
-    inter = sorted((p for p in parsed if p[2] != "machine"), key=lambda p: (p[1], p[0]))
-    mach = sorted((p for p in parsed if p[2] == "machine"), key=lambda p: (p[1], p[0]))
-    out: dict[str, int] = {}
-    for i, p in enumerate(inter):
-        out[p[0]] = i
-    for j, p in enumerate(mach):
-        out[p[0]] = len(inter) + j
-    return out
+        lane = _item_lane(item)
+        parsed.append((e.stem, ts, 1 if lane == "machine" else 0, _item_priority(item)))
+    ordered = sorted(parsed, key=lambda p: (-p[3], p[2], p[1], p[0]))
+    return {p[0]: i for i, p in enumerate(ordered)}
 
 
 def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str | None = None) -> dict:
@@ -3274,6 +3297,9 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
                 base_head=base_head,
                 base_blobs=base_blobs,
                 depends_on=depends_on or None,
+                # Rx-5：出队优先级（int，缺省 0，越大越先出队）经 meta_extra 入袋——
+                # 与 C1 合批判据同源（_c1_target_meta_ok 优先级不混，防止合并改写调度主键）
+                meta_extra={"priority": args.priority},
                 # C1 合批判据键透传（同会话+同 worktree-root 短窗自动并；跨会话/跨
                 # worktree 永不并——红线）。归一化在 enqueue_item 内做。
                 worktree_root=str(worktree_root),
@@ -3488,6 +3514,12 @@ def main(argv: list[str] | None = None) -> int:
         "--depends-on",
         default=None,
         help="依赖的前置 qid 逗号分隔（P1 起 drain 级联标记生效：前置项落盘后本项标 stale 重校验基底，66 号 §6.4）",
+    )
+    p_enq.add_argument(
+        "--priority",
+        type=int,
+        default=0,
+        help="Rx-5 出队优先级（int，缺省 0，越大越先出队；负数=低于缺省；同优先级保持到达序 FCFS）",
     )
     p_enq.add_argument("--no-bootstrap", action="store_true", help="入队后不尝试自举排空")
     p_enq.set_defaults(func=_cmd_enqueue)

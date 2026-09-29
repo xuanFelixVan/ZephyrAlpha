@@ -1747,3 +1747,148 @@ class TestDeadArchive:
         result = cq.cleanup_done(queue_root, ttl_days=7)
         assert result["removed"] == [i1["qid"]]
         assert (queue_root / "dead" / "q-20260919-rb2-l-0001.json").exists(), "cleanup 不触碰 dead/"
+
+
+# ---------------------------------------------------------------------------
+# Rx-5 队列优先级（meta.priority，2026-09-29）：出队排序键
+# (-priority, interactive 先于 machine, created_at FCFS, qid 破平)。
+# 尺面：优先级主键跨 FCFS/跨车道；同优先级 B4 语义零变更；旧件无键=0；
+# 非 int（bool/字符串/None）兜底 0；位次表与队首同源；enqueue 写侧缺省显式 0；
+# C1 合批优先级不混（调度主键不被合并改写）。
+# ---------------------------------------------------------------------------
+
+
+def _hand_priority_bag(
+    root: Path,
+    qid: str,
+    *,
+    minutes_ago: float,
+    priority: int | None = None,
+    lane: str = "interactive",
+) -> Path:
+    """手写 pending 袋（B4 测试同技法）。priority=None=不写键（旧件形态）。"""
+    p = root / "pending" / f"{qid}.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    meta: dict = {"lane": lane}
+    if priority is not None:
+        meta["priority"] = priority
+    p.write_text(
+        json.dumps(
+            {
+                "qid": p.stem,
+                "session_id": "rx5-sess",
+                "created_at": (datetime.now().astimezone() - timedelta(minutes=minutes_ago)).isoformat(),
+                "branch": "dev",
+                "files": [],
+                "meta": meta,
+            }
+        ),
+        encoding="utf-8",
+    )
+    return p
+
+
+def test_rx5_higher_priority_jumps_fcfs_queue(queue_root: Path) -> None:
+    """优先级主键：p5 新件先于 p0 老件出队（同车道）；位次表/队首快照同源。"""
+    old_low = _hand_priority_bag(queue_root, "q-20260929-rx5-a-0001", minutes_ago=30, priority=0)
+    new_high = _hand_priority_bag(queue_root, "q-20260929-rx5-b-0002", minutes_ago=1, priority=5)
+    picked, lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert lane == "interactive"
+    assert picked.name == new_high.name, "Rx-5 失效：高优先级未越过 FCFS 队首"
+    pos = cq._pending_position_map(queue_root)
+    assert pos[new_high.stem] == 0 and pos[old_low.stem] == 1, pos
+    assert cq._head_snapshot(queue_root)["qid"] == new_high.stem, "队首快照与出队判据不同源"
+
+
+def test_rx5_same_priority_keeps_fcfs_and_lane_order(queue_root: Path) -> None:
+    """同优先级：B4 语义零变更——FCFS 保持 + interactive 仍先于缺省 machine。"""
+    old_first = _hand_priority_bag(queue_root, "q-20260929-rx5-c-0001", minutes_ago=20, priority=3)
+    new_second = _hand_priority_bag(queue_root, "q-20260929-rx5-d-0002", minutes_ago=5, priority=3)
+    picked, _lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert picked.name == old_first.name, "同优先级未保持 FCFS"
+    assert cq._pending_position_map(queue_root)[new_second.stem] == 1
+    # 车道次键：缺省（无键=0）young machine 不得越过缺省 old interactive
+    _hand_priority_bag(queue_root, "q-20260929-rx5-e-0003", minutes_ago=30)  # interactive 无键
+    young_machine = _hand_priority_bag(queue_root, "q-20260929-rx5-f-0004", minutes_ago=1, lane="machine")
+    picked2, lane2 = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert lane2 == "interactive" and picked2.name != young_machine.name, "同优先级下车道优先被 Rx-5 破坏"
+
+
+def test_rx5_priority_crosses_lane(queue_root: Path) -> None:
+    """优先级跨车道：高优 machine（新）先于缺省 interactive（老）——主键语义。"""
+    old_inter = _hand_priority_bag(queue_root, "q-20260929-rx5-g-0001", minutes_ago=30)
+    high_machine = _hand_priority_bag(queue_root, "q-20260929-rx5-h-0002", minutes_ago=1, priority=5, lane="machine")
+    picked, lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert lane == "machine" and picked.name == high_machine.name, "priority 未作为跨车道主键"
+    pos = cq._pending_position_map(queue_root)
+    assert pos[high_machine.stem] == 0 and pos[old_inter.stem] == 1, pos
+
+
+def test_rx5_machine_starvation_escape_trumps_priority(queue_root: Path) -> None:
+    """其余语义零变更：machine 防饿死提前放行仍看最老到达，priority 压不过它。"""
+    old_machine = _hand_priority_bag(queue_root, "q-20260929-rx5-i-0001", minutes_ago=40, lane="machine")
+    _hand_priority_bag(queue_root, "q-20260929-rx5-j-0002", minutes_ago=1, priority=9)
+    picked, lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert lane == "machine" and picked.name == old_machine.name, "防饿死兜底被 priority 改写"
+
+
+def test_rx5_legacy_bag_without_key_and_foreign_values(queue_root: Path) -> None:
+    """旧件兼容：无 priority 键=0；bool/字符串等外来值兜底 0（不悄悄插队）。"""
+    legacy_old = _hand_priority_bag(queue_root, "q-20260929-rx5-k-0001", minutes_ago=30)  # 旧件无键
+    neg_new = _hand_priority_bag(queue_root, "q-20260929-rx5-l-0002", minutes_ago=1, priority=-1)
+    str_new = _hand_priority_bag(queue_root, "q-20260929-rx5-m-0003", minutes_ago=1, priority="5")  # type: ignore[arg-type]
+    bool_new = _hand_priority_bag(queue_root, "q-20260929-rx5-n-0004", minutes_ago=1, priority=True)  # type: ignore[arg-type]
+    picked, _lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert picked.name == legacy_old.name, "无键旧件未按 0 参与排序（外来值悄悄变优先级）"
+    pos = cq._pending_position_map(queue_root)
+    assert pos[legacy_old.stem] == 0, pos
+    assert pos[neg_new.stem] == 3 and {pos[str_new.stem], pos[bool_new.stem]} == {1, 2}, "负数与兜底 0 未同层 FCFS"
+    # 读侧单元口径：缺省/None/bool/字符串→0；int 含负数原样
+    assert cq._item_priority(None) == 0
+    assert cq._item_priority({}) == 0
+    assert cq._item_priority({"meta": {"priority": True}}) == 0
+    assert cq._item_priority({"meta": {"priority": "9"}}) == 0
+    assert cq._item_priority({"meta": {"priority": 7}}) == 7
+    assert cq._item_priority({"meta": {"priority": -3}}) == -3
+    assert cq._item_priority({"meta": {}}) == 0
+
+
+def test_rx5_enqueue_writes_priority_default_zero_and_explicit(queue_root: Path) -> None:
+    """写侧：enqueue 缺省显式落 0（自描述）；meta_extra["priority"]=7 原样入袋可读回。"""
+    plain = _enqueue(queue_root, "AI-RX5", "m1", [("docs/rx5_a.md", b"1")])
+    assert plain["meta"]["priority"] == 0, "缺省未显式落 priority=0"
+    boosted = cq.enqueue_item(
+        "AI-RX5",
+        "m2",
+        [("docs/rx5_b.md", b"2")],
+        queue_root=queue_root,
+        options=cq.EnqueueOptions(meta_extra={"priority": 7}),
+    )
+    assert boosted["meta"]["priority"] == 7
+    assert cq._item_priority(boosted) == 7
+
+
+def test_rx5_c1_absorb_priority_mismatch_not_merged(queue_root: Path) -> None:
+    """C1 合批优先级不混：p7 来件不并入无键（0）在途件；同 0 照常并（不回归既有合批）。"""
+    from scripts.commit_queue import _c1_target_meta_ok, _C1Incoming
+
+    wt = cq._normalize_worktree_root("D:\\wt")
+    base_meta = {"lane": "interactive", "worktree_root": "D:\\wt"}
+
+    def _incoming(extra: dict) -> _C1Incoming:
+        return _C1Incoming(
+            session_id="s",
+            worktree_root=wt,
+            base_head=None,
+            incoming_meta={"lane": "interactive", **extra},
+            allow_oversize=False,
+            now_ts=0.0,
+            qid="q-x",
+            entries=[],
+            message="m",
+        )
+
+    assert _c1_target_meta_ok(dict(base_meta), _incoming({"priority": 7})) is False, "不同优先级被合并=调度主键被改写"
+    assert _c1_target_meta_ok(dict(base_meta), _incoming({"priority": 0})) is True, (
+        "显式 0 vs 无键（同效 0）被误判不并=合批回归"
+    )
