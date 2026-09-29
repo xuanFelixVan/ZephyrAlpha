@@ -62085,6 +62085,14 @@ entries:
   desc_en: ""
   plain_zh: "复盘机器人都造好了却没人按启动键，风险报告从来没真正生成过。这个小件就是那个启动键：一声令下跑完审计加摘要加归档全流程，报告落到 data/reports，也可以命令行手动触发，不装定时任务。"
   responsibility_layer: business
+- module_path: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
+  domain_id: D_SELL_DECISION
+  name_zh: "S1信号扫描编排器"
+  name_en: "S1 Signal Scan Orchestrator"
+  desc_zh: "G45-1治缺口件：把TDM-X-S1六节点串成一次可事件触发的扫描（providers产信号→S1-05融合→紧迫度→S2-01路由口信封投递）；无常驻循环，paper档硬默认，无信号诚实空跑，未就绪节点显式跳过留痕"
+  desc_en: "G45-1 remediation: wires TDM-X-S1 six nodes into one event-triggered scan (providers to fusion to urgency to S2-01 route envelope); no resident loop, paper mode by default, honest empty runs, explicit skip trails"
+  plain_zh: "定期把六个卖出信号判定件跑一遍，有卖出信号就打包送到执行路由口，没信号就如实记录空跑，没接好的部件明确记下没跑的原因"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

@@ -1,0 +1,80 @@
+# ALGO_FLOW 外部真源——s1_scan_orchestrator（_domain_sell_decision 域，真源 src/zephyr/sell_decision/core/s1_scan_orchestrator.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.sell_decision.core.s1_scan_orchestrator
+source_of_truth: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 扫描标的清单 symbols
+    #   fields: tuple[str,...]（槽位持有方传入，与 P1-02 triage 同循环产出）
+    #   code: scan_once(symbols=...)
+    # - id: I2
+    #   name: 共享分级 triage_levels
+    #   fields: dict[symbol, WATCH/MONITOR/HOLD]（D104 单循环铁律，只留痕不判定）
+    #   code: scan_once(triage_levels=...)
+    # - id: I3
+    #   name: 判定族信号源 node_providers/collector providers/bypass_triggers
+    #   fields: 按 TDM 节点注册；未注册=显式跳过（诚实性核心）
+    #   code: register_node_provider()/collector.register()/register_bypass_trigger()
+    # - id: I4
+    #   name: 档位 mode 与解锁 allow_live
+    #   fields: paper（默认，构造期 live 硬拒）/live（scan_once 单次显式解锁）
+    #   code: S1ScanMode + _ensure_mode_unlocked()
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 就绪面盘点
+    #   name_en: readiness
+    #   intro: 六节点机生盘点——code_ready(module_ref 在盘)/wired(provider 注册)/validation_state
+    #   formula: wired = 结构位常驻 or provider 已注册；validation_state=pending(VAL-20260909-164042 台账)
+    #   code: readiness()
+    #   registry: 无（就绪面为本模块机生事实）
+    #   is_break: false
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 信号收集（S1-01..04）
+    #   name_en: _collect_signals
+    #   intro: collector.collect + 注册 provider 逐标的产出；单 provider 故障隔离为 NodeTrace
+    #   inputs: I1/I3/F1
+    #   outputs: list[SellSignal]（未注册节点显式 skipped 留痕）
+    # - id: A2
+    #   name_zh: ② 绕过通道（S1-06）
+    #   name_en: _scan_bypass
+    #   intro: 注册触发源逐标的探测；命中=urgency 1.0 BYPASS_FORCE 直送（不经过融合仲裁）
+    #   inputs: I1/I3/F1
+    #   outputs: list[S1RouteEnvelope]（组合级触发归 X-R1/F47 不在此接线）
+    # - id: A3
+    #   name_zh: ③ 融合+紧迫度（S1-05）
+    #   name_en: _fuse_and_score
+    #   intro: 空输入诚实跳过融合（InvalidFusionInputError 契约）；评分故障隔离按意愿投递
+    #   inputs: A1
+    #   outputs: list[FusedSellDecision] + urgency_by_symbol
+    # - id: A4
+    #   name_zh: ④ 信封化投递 S2-01 路由口
+    #   name_en: _deliver_all
+    #   intro: 统一 schema=TDM-X-S2-01_INBOX/v1 信封，经 S2RouteSink 投递；sink 故障计数留痕
+    #   inputs: A2/A3
+    #   outputs: delivered_count（paper 档落 FileOutboxSink JSONL）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: S1ScanReport
+    #   name_en: scan report
+    #   intro: 逐节点 trace+空跑标记+投递计数（结论必须能翻到过程；空跑诚实标记 empty_run）
+    #   downstream: TDM-X-S2-01(f46 卷执行方式路由, 经 S2RouteSink 信封) ; SOP 槽位持有方(报告消费)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I3 --> A1
+    # I1 --> A2
+    # I3 --> A2
+    # F1 --> A1
+    # F1 --> A2
+    # A1 --> A3
+    # I2 --> A4
+    # A2 --> A4
+    # A3 --> A4
+    # A4 --> O1

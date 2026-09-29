@@ -56701,4 +56701,34 @@ creation_tokens:
   created_by: st-finaldel-ownr2-20260930
   capability: registry-entry-counts-postcommit-backfill-wiring
   merge_evaluation: "buzhong: xianyou reconciler wu ROOR entry_count huitian chuyufa, CR-007 gongju wu zidong chufa — ben jian wei gai kongque de weiyi jexian, wu tongyu ke bing tiaomu"
+- file: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
+  token: f45-s1-scan-orchestrator-20260928
+  created_by: st-c9-f45
+  capability: fullconnect_campaign
+  merge_evaluation: "F45 G45-1 治缺口件：S1 信号扫描编排器（S1 全族零消费→事件触发编排接线，paper 档）；与 blueprint/test 同批原子"
+- file: docs/03_modules/_domain_sell_decision/s1_scan_orchestrator/blueprint.md
+  token: f45-s1-scan-orchestrator-blueprint-20260928
+  created_by: st-c9-f45
+  capability: fullconnect_campaign
+  merge_evaluation: "MOD-SELL-016 蓝图（与模块同袋原子）"
+- file: docs/_working/chief9_night/f45_xflow_ablation_runbook.md
+  token: f45-xflow-ablation-runbook-20260928
+  created_by: st-c9-f45
+  capability: fullconnect_campaign
+  merge_evaluation: "G45-2 X 流消融实弹 runbook（只记不跑；与 chief9_night/index.md 生成件同袋）"
+- file: docs/03_modules/_domain_sell_decision/s1_scan_orchestrator/index.md
+  token: f45-s1-scan-orchestrator-index-20260928
+  created_by: st-c9-f45
+  capability: fullconnect_campaign
+  merge_evaluation: "MOD-SELL-016 目录索引（generate_missing_index_md 生成件，与模块同袋原子）"
+- file: docs/_working/chief9_night/index.md
+  token: f45-chief9-night-index-20260928
+  created_by: st-c9-f45
+  capability: fullconnect_campaign
+  merge_evaluation: "chief9_night 目录索引（生成件，与 runbook 同袋原子）"
+- file: docs/03_modules/_domain_sell_decision/algo_flow/s1_scan_orchestrator.yaml
+  token: f45-s1-scan-algo-flow-20260928
+  created_by: st-c9-f45
+  capability: fullconnect_campaign
+  merge_evaluation: "MOD-SELL-016 ALGO_FLOW 机外真源（externalize_algo_flow 出仓件，与模块同批原子）"
 di_seam_exemptions: []
