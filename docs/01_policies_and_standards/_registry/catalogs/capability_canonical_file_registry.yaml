@@ -56450,6 +56450,21 @@ creation_tokens:
   created_by: st-finaldel-m3-20260929
   capability: final_delivery_campaign
   merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/00_orchestration.md
+  token: final-delivery-campaign-00-orchestration-20260929
+  created_by: st-finaldel-chief-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "终局交付战役文档族：替代零散会话汇报，收敛为单战役目录案卷族（裁定#375 同真源派生并卷判据）"
+- file: docs/_working/final_delivery_campaign/91_progress.md
+  token: final-delivery-campaign-91-progress-20260929
+  created_by: st-finaldel-chief-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "终局交付战役文档族：替代零散会话汇报，收敛为单战役目录案卷族（裁定#375 同真源派生并卷判据）"
+- file: docs/_working/final_delivery_campaign/99_owner_gate.md
+  token: final-delivery-campaign-99-owner-gate-20260929
+  created_by: st-finaldel-chief-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "终局交付战役文档族：替代零散会话汇报，收敛为单战役目录案卷族（裁定#375 同真源派生并卷判据）"
 - file: scripts/governance/_tasks/session_closeout_reconciler.py
   token: session-closeout-reconciler-session-closeout-reconciler-20260929
   created_by: st-nightclean-20260929
