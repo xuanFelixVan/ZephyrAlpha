@@ -55557,6 +55557,31 @@ creation_tokens:
   created_by: st-ailayer-sx-20260927
   capability: algo_flow_external_view
   merge_evaluation: "lifecycle_fsm.py P2-1 出仓形态机器块（GATE-ALGO-FLOW 补锚），真源唯一 src/zephyr/strategy_pipeline/lifecycle_fsm.py，validate_file 全过"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/fms_hygiene_gate.yaml
+  token: algo-flow-external-view-fms-hygiene-gate-20260929
+  created_by: st-finaldel-cdocs-20260929
+  capability: algo_flow_external_view
+  merge_evaluation: "C97 补册：read_side 家族外链 yaml 清偿 born-dangling 锚，同真源派生无第二真源"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/fms_ref_extractor.yaml
+  token: algo-flow-external-view-fms-ref-extractor-20260929
+  created_by: st-finaldel-cdocs-20260929
+  capability: algo_flow_external_view
+  merge_evaluation: "C97 补册：read_side 家族外链 yaml 清偿 born-dangling 锚，同真源派生无第二真源"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/read_side__init__.yaml
+  token: algo-flow-external-view-read-side--init---20260929
+  created_by: st-finaldel-cdocs-20260929
+  capability: algo_flow_external_view
+  merge_evaluation: "C97 补册：read_side 家族外链 yaml 清偿 born-dangling 锚，同真源派生无第二真源"
+- file: docs/03_modules/_domain_library/algo_flow/generators/generate_fms_deadref_baseline.yaml
+  token: algo-flow-external-view-generate-fms-deadref-baseline-20260929
+  created_by: st-finaldel-cdocs-20260929
+  capability: algo_flow_external_view
+  merge_evaluation: "C97 补册：deadref 基线生成器外链 yaml 清偿复制粘贴锚，同真源派生无第二真源"
+- file: docs/03_modules/_domain_library/algo_flow/generators/index.md
+  token: algo-flow-external-view-index-20260929
+  created_by: st-finaldel-cdocs-20260929
+  capability: algo_flow_external_view
+  merge_evaluation: "C97 补册：deadref 基线生成器外链 yaml 清偿复制粘贴锚，同真源派生无第二真源"
 - file: src/zephyr/governance/consumption/consumption_census.py
   token: consumption-census-consumption-census-20260928
   created_by: st-zcloseout-20260928
@@ -56485,4 +56510,14 @@ creation_tokens:
   created_by: st-zcloseout-20260928
   capability: qoder_legacy_closeout
   merge_evaluation: "总交付报告（#416 三条件终判）唯一归档位，与内容同袋原子"
+- file: docs/_working/final_delivery_campaign/q0213_triage.md
+  token: finaldel-deadbag-triage-q0213-triage-20260929
+  created_by: st-finaldel-cdead-20260929
+  capability: finaldel_deadbag_triage
+  merge_evaluation: "死袋考古车道产出：q-0213 分诊报告+R-1 蒸发件捞回件，task_bound 随战役归档，无替代合并对象"
+- file: docs/_working/final_delivery_campaign/recovered_wiring_gap_inventory_20260927.md
+  token: finaldel-deadbag-triage-recovered-wiring-gap-inventory-20260927-20260929
+  created_by: st-finaldel-cdead-20260929
+  capability: finaldel_deadbag_triage
+  merge_evaluation: "死袋考古车道产出：q-0213 分诊报告+R-1 蒸发件捞回件，task_bound 随战役归档，无替代合并对象"
 di_seam_exemptions: []
