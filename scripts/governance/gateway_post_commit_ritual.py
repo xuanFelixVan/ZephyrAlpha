@@ -62,6 +62,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
+
 from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: E402
 
 __all__: Final = ["RitualResult", "detect_batch_signals", "run_ritual", "main"]
@@ -197,7 +198,10 @@ def run_ritual(root: Path, files: list[str], check_only: bool = False) -> Ritual
     if touched_contracts:
         plan.append(("generate_contracts", [sys.executable, _GENERATE_CONTRACTS]))
         plan.append(("contract_freeze", [sys.executable, _CONTRACT_FREEZE, "--freeze"]))
-    plan.append(("integrity_register", [sys.executable, _INTEGRITY_REGISTER, "--register"]))
+    # 战役 B0/M1·P3：head 态下重钉基线不再是"提交后必须及时"的义务 ⇒ 从仪式计划摘出
+    # （不 spawn）；snapshot=出厂回滚态原样保留（回滚通道，一个发布周期）。
+    if os.environ.get("ZEPHYR_INTEGRITY_BASELINE", "").strip().lower() != "head":
+        plan.append(("integrity_register", [sys.executable, _INTEGRITY_REGISTER, "--register"]))
 
     for name, cmd in plan:
         rc = _run_step(cmd, root, env)
