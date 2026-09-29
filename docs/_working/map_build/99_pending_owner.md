@@ -34,3 +34,25 @@ owner: st-mapbuild-20260924（总包）
 8. **CLI `pause <source>` 名义化**：`policies.yaml` 无 `enabled` 键、热重载即复位、不跨进程——停源动作今天不真生效。
 9. **图14 政策与实码背离 9 处**：`construction_workflow_policy` 声称的件里 `scripts/ide_health_service.py`（5 份文档共引、全仓不存在）、`session_worktree.py` 四子命令、`apply_depgraph --query-production` flag 等**不存在**；且裁定#384（2026-09-20）把该政策上游 49 件 design_memos 整体归档，造成政策内 12 处链接全断、行号锚 7/7 全偏。
 10. **L-INTEG 收口撞号重编（知会，非决策件）**：任务书预设收口裁=裁定#412，实扫发现主区已落地 #411（翻译册 dedupe）/#412（akshare 克隆退役）/#413（GPU 点火三件套），且本战役未落地首波三图准入裁原编 #411 与已落地 #411 撞号。处置=战役侧让号重编 #411→#414、收口总裁取 #415（取号器在册面+手工核对 pending 袋，在途无新声明）；已落地条目零改动，册面删除集=∅。选项A=维持 414/415（推荐，键唯一已实证）；选项B=若 Owner 认为战役条目应回到 411 位则需对已落地条目做历史改写（不推荐，违"已落地不回改"）。
+
+## SW13 终态段（夜战 2026-09-29 · 图14/15 图本体+词表收口）
+
+> 车道 st-nightsweep-sw13-20260929（总筹 st-nightsweep-chief-20260929）。审计卡 I4:I453 组缺口「图14/15 图本体 yaml=0/2 proposal+词表缺+红蓝对抗缺」的**图本体面**于本段落地收口。
+
+**落地件（收编自本战役 st-mapbuild-20260924 终版成品，非重造；sha256 前 16 位锚定）**：
+
+| 件 | sha16 | 状态 |
+|---|---|---|
+| config/construction_workflow_map.yaml | 254732370135ad20 | 新落 HEAD（2221 行；29 节点/34 边/7 反馈环；anchor_source=proposal，pending_anchors 17 诚实开账） |
+| config/strategy_card_lifecycle_map.yaml | 3297a22f83934c81 | 新落 HEAD（与 91 提案件 §10 idempotency.sha16 逐字一致；13 状态+17 迁移+13 禁边+56 条 card_ledger；anchor_source=registry） |
+| docs/.../vocabularies/card_state_vocabulary.yaml | 288ef273321f89df | 新落 HEAD（REG-CARDSTATE-VOCAB-001，13 值闭集） |
+| docs/.../catalogs/experiment_registry.yaml | 迁移批整拷 | 2.1→2.2（L-HOST15 已按总包裁执行的迁移落地主区；+56 CARD-* 条目，unique_key 不动，零新枚举） |
+| docs/registry_of_registries.yaml | 增量重放 | +REG-CARDSTATE-VOCAB-001 行；REG-EXP-001 entry_count 11→67；summary 由 check_registry_consistency.py --refresh-summary 机生（total 80，broken 0） |
+| docs/.../vocabularies/index.md | +1 行 | card_state_vocabulary 行（照 mapbuild 同款 diff） |
+
+**验证留痕**：SW13 自含结构对抗测试 tests/governance/d5_architecture/test_fig14_fig15_map_bodies_adversarial.py 18/18 过（3 绿控制组+15 红案：杀节点/断边/伪造计数/坏枚举/封卡就地复活/悬空 revives 全部先证能红）；chief7 预放校验器 validate_strategy_card_lifecycle_map.py 只读复跑=结构 0 错+8 实例红账，逐条等于 91 提案件 §10 red_state_after_migration 已登记真实数据缺陷（F-05/F-07/X09/F-03×2/族账×3），零新增红。规格卡=docs/_working/night_sweep/fig14_fig15_spec.md。
+
+**仍未收口（非本车道，登记待整合）**：
+1. chief7 两袋在飞（q-…-0329/0369）：validate_construction_steps.py、两图 adversarial 测试、fig14 簿 00/01——其 _GOOD 控制组读 config/construction_workflow_map.yaml，本段落地后其缺图前置已解除。
+2. 战役整合批（272 件）：alignment_checklist 图14/15 行、construction policy 17 锚块、三 gate、五生成器、ruling #414/#415（战役编号，与主区已占用 #414（存储终裁）/#415（总包单写者）撞号，需按其 §10 让号机制再重编）。
+3. fig15 两判据口径待总包：CV-10 第四腿终态绑法 / CV-08C FPOOL/MIDVAL 两族成员轴（91 提案件 §10 留痕，SW13 未动阈值）。

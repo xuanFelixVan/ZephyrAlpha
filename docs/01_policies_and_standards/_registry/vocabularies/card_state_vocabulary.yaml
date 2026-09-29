@@ -1,0 +1,130 @@
+# [A_config] module_id=MOD-GOVERNANCE | layer=config | stability=evolving | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §strategy_card_lifecycle_map
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# card_state 受控词表（图15 策略卡生命周期·契约法律地位轴）
+#
+# 本词表是策略预注册卡（契约）card_state 字段所有合法值（13 值）的唯一真源。
+# experiment_registry.yaml（REG-EXP-001）entry_schema.card_state 与
+# scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+# 必须从本词表动态加载（load_vocabulary_values），禁止在任何脚本/校验器里硬编码值集。
+#
+# 语义契约真源=docs/_working/map_build/fig15_cardlife/00_skeleton.md §1 状态全集（骨架=契约）；
+# 本件只登记值名与定义，不复制判据正文（INV-1）。
+# 迁移边与禁止边不在本词表内——合法边真源=骨架 §2.1 / 图 YAML transitions[]，
+# 禁边真源=骨架 §2.2 / 图 YAML forbidden_edges[]（本词表不写 next_states，避免第二真源）。
+# 值集来源=docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml §2（迁移清单）。
+# 净零论证：green/red/insufficient 三值直译在册字段 viability_verdict 三值
+# （supported/refuted/inconclusive，见 legacy_field 列），零新枚举。
+
+schema_version: "1.0.0"
+module_id: MOD-GOVERNANCE
+registry_id: REG-CARDSTATE-VOCAB-001
+version: "1.0.0"
+title: "card_state 受控词表"
+status: active
+vocabulary_name: card_state
+total_values: 13
+host_registry: REG-EXP-001
+host_registry_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+depends_on: []
+
+values:
+  - value: draft
+    map_state: D15-S1
+    name_zh: 草案
+    terminal: false
+    credential_required: false
+    definition_zh: 卡已立、判据未写死，可自由改
+
+  - value: candidate
+    map_state: D15-S2
+    name_zh: 候选卡
+    terminal: false
+    credential_required: false
+    definition_zh: 机器筛出未升格，禁出任何 PASS 语义
+
+  - value: frozen
+    map_state: D15-S3
+    name_zh: 冻结
+    terminal: false
+    credential_required: false
+    definition_zh: 考窗/阈值/桶边界/N_eff 全部写死，参数不可再改
+
+  - value: frozen_amended
+    map_state: D15-S4
+    name_zh: 冻结带附录
+    terminal: false
+    credential_required: true
+    definition_zh: 只增不改，勘误与修订以带日期附录追加，frozen 参数零改动
+
+  - value: executing
+    map_state: D15-S5
+    name_zh: 在测
+    terminal: false
+    credential_required: true
+    definition_zh: 试验台账行已开、执行件跑数中
+
+  - value: green
+    map_state: D15-S6
+    name_zh: 判绿
+    terminal: false
+    credential_required: true
+    legacy_field: "viability_verdict=supported"
+    definition_zh: 预注册阈值全过且 DSR 校正后仍显著
+
+  - value: red
+    map_state: D15-S7
+    name_zh: 判红
+    terminal: false
+    credential_required: true
+    legacy_field: "viability_verdict=refuted"
+    definition_zh: 阈值未过，机制假设是否可修尚未定
+
+  - value: insufficient
+    map_state: D15-S8
+    name_zh: 不可判
+    terminal: false
+    credential_required: true
+    legacy_field: "viability_verdict=inconclusive"
+    definition_zh: 样本或功效不足、fail-closed 存疑，既非绿也非红
+
+  - value: suspended
+    map_state: D15-S9
+    name_zh: 挂起
+    terminal: false
+    credential_required: true
+    definition_zh: 裁定延后重考并带显式触发条件，禁被读成通过
+
+  - value: sealed
+    map_state: D15-S10
+    name_zh: 封卡
+    terminal: true
+    credential_required: true
+    definition_zh: 终态，不再重开、不再改参重跑，证据定版
+
+  - value: condemned
+    map_state: D15-S11
+    name_zh: 判死归档
+    terminal: true
+    credential_required: true
+    definition_zh: 终态，机制证伪或数据面不可修，入死矿账防复挖
+
+  - value: graduated
+    map_state: D15-S12
+    name_zh: 毕业出卡
+    terminal: true
+    credential_required: true
+    definition_zh: 终态，结论已回写因子与策略册，卡使命完成
+
+  - value: void
+    map_state: D15-S13
+    name_zh: 作废
+    terminal: true
+    credential_required: true
+    definition_zh: 终态，挪门柱或中途加条目或 N_eff 破，本批结论作废

@@ -1,0 +1,4467 @@
+# 策略卡生命周期图（strategy_card_lifecycle_map，图15）——由 generate_strategy_card_lifecycle_map.py 机生。
+# 真源=骨架 §1/§2（状态与边的语义契约）+ 装载面（anchor_source 标当前装载点：registry=在册词表 card_state_vocabulary.yaml + 宿主册 experiment_registry.yaml 的 CARD-* 契约条目，proposal=91 号提案件）；91 号件恒为语料口径/别名规则/分裂面档案；本文件禁手改后不回生成（counts 一致性判红）。
+# 三类对象全入：states / transitions / forbidden_edges（禁止边是一半价值，一条不许丢）；# 六处分裂面以 gaps + gap_refs 显性化；节点只存标识与指针，禁复制判据正文（INV-1）。
+schema_version: '0.2'
+map_id: strategy_card_lifecycle_map
+name_zh: 策略卡生命周期图
+nickname: 卡生命周期
+effective_from: '2026-09-24'
+markets:
+- cn_a
+generator: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+generated_at: '2026-09-26T00:00:00+08:00'
+registry_host: experiment_registry
+anchor_source: registry
+anchor_block_origin: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+caliber_source: docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+registry_host_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+derived_from:
+- docs/_working/map_build/fig15_cardlife/00_skeleton.md
+- docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+- docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+- docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+ssot_note_zh: 真源方向：骨架 §1/§2（状态与边的语义契约）+ 受控词表 card_state_vocabulary.yaml + 宿主册 experiment_registry.yaml 的 CARD-*
+  契约条目（登记面实例真源）→ 本图 YAML（派生件，禁手改后不回生成）。91 号提案件自宿主落地起降级为施工档案，只为本图提供非状态类口径（语料分母 §9 / 卡头别名规则 §4 / 六处分裂面 §5 / 复活授权 §7
+  注），词表与实例两面不再回读它（anchor_source=registry 且 CV-HOST 硬腿盯假迁移）。卡头 status 串面已降级为只读镜像：镜像推断列 corpus.cards[].mapped_state，登记真源列
+  registered_state，两列并存供 CV-10 判冲突，方向恒为 册→md。本图三类对象=states/transitions/forbidden_edges，禁止边是一半价值，一条不许丢（CV-13 判）。字段分层（六图终局卷
+  §1 裁定一）：L0 统一名 note_zh/doc_refs/source_anchors/confidence+verified_scope；L1 取用 gap_refs/red_reason/wiring 面在本图为
+  enforcement 与 bypass_guard；L2 图专属层=from_state/to_state/edge_kind/permitted|forbidden/terminal/machine_readable/hypothesis_key/one_time_token/revives。双轴口径：production
+  ⇔ 骨架 §2.1/§2.2 实查列 ✅（骨架 §1 无 ✅ 列 ⇒ 状态面禁宣 production）。
+laws:
+- 状态真源恒在登记面（宿主册）；卡 md 是判据正文真源，图与镜像字段都是派生件
+- 图只存标识与引用，禁复制 exam_policy / factor_mining_sop / 卡正文（INV-1）
+- 封卡即终：任何就地复活边一律非法，复活=新 card_id + revives 指针
+- 禁止边与合法迁移同对并存即判据自相矛盾；禁边不得被无凭证路径绕开
+- 计数只进 counts，散文写死数字判红；production 数恒等骨架实查 ✅ 数
+boundary:
+- 轴区分：本图 state_id=D15-S*、对象键=card_id；策略工厂 node_id=FAC-*、build_status 是工序进度不是契约地位（config/strategy_production_map.yaml:20）
+- 不含考试判据正文（判据真源=docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md §1 与 §3）
+- 不含裁定产生流程（治理立法流图16）与提交机制（图11）与数据供料（图12）
+- 不含卡内单张卡的全部字段与判据正文（骨架 L-5：叶层不枚举）
+instance_key_space:
+  card_id: T0-PRERG-*/P3-E1C-*/P3-B-*/ALGO-*-<lane>-<family>-<NNN>
+  disjoint_with:
+  - candidate_id(CAND-*)
+  - strategy_id
+  - node_id(TDM-*)
+  - node_id(FAC-*)
+  - step_id(BM-*)
+  - step_id(D14-*)
+  - module_id(MOD-*)
+  - data_step(DS-*)
+  sample_ids:
+  - ALGO-CAND-MOM-01
+  - ALGO-VWAP-03
+  - ETFT0-PREREG-CARD
+  - OFI-PREREG-CARD
+  - P3-B-EXP-01
+  - P3-B-EXP-02
+  - P3-B-EXP-03
+  - P3-B-EXP-04
+  - P3-B-EXP-05
+  - P3-B-EXP-06
+  - P3-B-NARROWING
+  - P3-E1C-01
+  - P3-E1C-02
+  - P3-E1C-03
+  - P3-E1C-04
+  - P3-E1C-05
+  - P3-E1C-06
+  - P3-E1C-07
+  - P3-E1C-08
+  - P3-E1C-09
+  - P3-E1C-10
+  - P3-E1C-11
+  - P3-E1C-12
+  - P3-E1C-13
+  - PREREG-CARD-B15-BUCKET-SWITCH
+  - PREREG-CARD-F-TOP20-EXAM
+  - PREREG-CARD-MID-VALLEY-SCREEN
+  - PREREG-CARD-MID-VALLEY-TOP10
+  - PREREG-EXAM-CARDS-V0
+  - PREREG-FAMILY-SUMMARY
+  - PREREG-GROUP-01-OBV
+  - PREREG-GROUP-02-MFI
+  - PREREG-GROUP-03-VR
+  - PREREG-GROUP-04-AD
+  - PREREG-GROUP-05-PVT
+  - PREREG-GROUP-06-WVAD
+  - PREREG-GROUP-07-ADOSC
+  - PREREG-GROUP-08-EOM
+  - PREREG-GROUP-09-KVO
+  - PREREG-GROUP-10-NVI
+  - PREREG-GROUP-11-PVI
+  - PREREG-GROUP-12-FORCE-INDEX
+  - PREREG-GROUP-13-CORREL
+  - PREREG-GROUP-14-BETA
+  - PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+  - PREREG-SLICE3-PROTOCOL
+  - PRERG-MOM-01
+  - SECTOR-PRERG-DECK-01
+  - T-PREREGISTER
+  - T0-CONDITIONAL
+  - T0-MATRIX-VWAP-CEILING
+  - T0-PRERG-01
+  - T0-PRERG-02
+  - T0-REGIME-PREREG-CARD
+  - TICK-MATRIX-PREREG-CARD
+  - TICK-T0-PREREG-CARD
+revival_authorizations:
+- 裁定#331
+- 裁定#399
+- 裁定#404
+credential_register:
+  cited: []
+  in_register: []
+states:
+- state_id: D15-S1
+  value: draft
+  map_state: D15-S1
+  name_zh: 草案 draft
+  node_type: state
+  state: draft
+  terminal: false
+  credential_exemption: true
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「草案 draft」？谁有权把它推出去、凭什么凭证？
+  note_zh: 卡已立、判据未写死，可自由改
+  entry_condition_zh: AI/人起草卡（`factor_mining_sop_policy.md:55-58` S3）
+  exit_zh: →S3（M03）；→S13（M16）
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+  - docs/_working/emotion_line/prereg_exam_cards_v0.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '`docs/_working/sector_line/sector_prereg_exam_cards_v0.md` frontmatter `status: draft（先于实验落盘；施工开工时冻结为 frozen，冻结后禁改参数）…'
+  instances_observed: 1
+  instances_by_card: []
+- state_id: D15-S2
+  value: candidate
+  map_state: D15-S2
+  name_zh: 候选卡 candidate
+  node_type: state
+  state: candidate
+  terminal: false
+  credential_exemption: true
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「候选卡 candidate」？谁有权把它推出去、凭什么凭证？
+  note_zh: 机器筛出未升格，禁出任何 PASS 语义
+  entry_condition_zh: 有界矩阵/宽筛产出（`ruling_registry.yaml:4755` 裁定#366 条件③"矩阵只产候选卡不出 PASS"）
+  exit_zh: →S3（M04，Owner 快签）；→S13
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md:9
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '`docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md:9` `status:
+    候选（…升格=Ow…'
+  instances_observed: 1
+  instances_by_card:
+  - ALGO-CAND-MOM-01
+- state_id: D15-S3
+  value: frozen
+  map_state: D15-S3
+  name_zh: 冻结 frozen
+  node_type: state
+  state: frozen
+  terminal: false
+  credential_exemption: true
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「冻结 frozen」？谁有权把它推出去、凭什么凭证？
+  note_zh: 考窗/阈值/桶边界/N_eff 全部写死，参数不可再改
+  entry_condition_zh: 卡面 frozen 落盘 + Owner 批或快签通道（`:5197` 裁定#389 ②）
+  exit_zh: →S5（M06）；→S4（M05）；→S13（M16）
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - factor_mining_sop_policy.md:108
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '33 张卡的 frontmatter `status: frozen（…）`（§3-A 计数）；模板真源 `factor_mining_sop_policy.md:108` `status: frozen # 启动后不得改动`'
+  instances_observed: 53
+  instances_by_card:
+  - ETFT0-PREREG-CARD
+  - OFI-PREREG-CARD
+  - P3-B-EXP-01
+  - P3-B-EXP-02
+  - P3-B-EXP-03
+  - P3-B-EXP-04
+  - P3-B-EXP-05
+  - P3-B-EXP-06
+  - P3-B-NARROWING
+  - P3-E1C-01
+  - P3-E1C-02
+  - P3-E1C-03
+  - P3-E1C-04
+  - P3-E1C-05
+  - P3-E1C-06
+  - P3-E1C-07
+  - P3-E1C-08
+  - P3-E1C-10
+  - P3-E1C-11
+  - P3-E1C-12
+  - P3-E1C-13
+  - PREREG-CARD-B15-BUCKET-SWITCH
+  - PREREG-CARD-F-TOP20-EXAM
+  - PREREG-CARD-MID-VALLEY-SCREEN
+  - PREREG-CARD-MID-VALLEY-TOP10
+  - PREREG-EXAM-CARDS-V0
+  - PREREG-FAMILY-SUMMARY
+  - PREREG-GROUP-01-OBV
+  - PREREG-GROUP-02-MFI
+  - PREREG-GROUP-03-VR
+  - PREREG-GROUP-04-AD
+  - PREREG-GROUP-05-PVT
+  - PREREG-GROUP-06-WVAD
+  - PREREG-GROUP-07-ADOSC
+  - PREREG-GROUP-08-EOM
+  - PREREG-GROUP-09-KVO
+  - PREREG-GROUP-10-NVI
+  - PREREG-GROUP-11-PVI
+  - PREREG-GROUP-12-FORCE-INDEX
+  - PREREG-GROUP-13-CORREL
+  - PREREG-GROUP-14-BETA
+  - PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+  - PREREG-SLICE3-PROTOCOL
+  - SECTOR-PRERG-DECK-01
+  - T-PREREGISTER
+  - T0-CONDITIONAL
+  - T0-MATRIX-VWAP-CEILING
+  - T0-PRERG-01
+  - T0-REGIME-PREREG-CARD
+  - TICK-MATRIX-PREREG-CARD
+  - TICK-T0-PREREG-CARD
+- state_id: D15-S4
+  value: frozen_amended
+  map_state: D15-S4
+  name_zh: 冻结带附录 frozen-amended
+  node_type: state
+  state: frozen_amended
+  terminal: false
+  credential_exemption: false
+  machine_readable: 'no'
+  decision_question: 这张卡当前是否处于「冻结带附录 frozen-amended」？谁有权把它推出去、凭什么凭证？
+  note_zh: 只增不改，勘误与修订以带日期附录追加，frozen 参数零改动
+  entry_condition_zh: 出现事实修正或裁定修订（`sop_d_run_archive_naming.md:28` errata 同构）
+  exit_zh: →S5；→S10（M10/M11）；禁回 S1
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - t0_prereg_funding_carry.md
+  - tick_t0_prereg_card.md
+  - momentum_prereg_card.md:14
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '`t0_prereg_funding_carry.md` §6 勘误 + §7 修订附录（"其余 frozen 参数零改动"）；`tick_t0_prereg_card.md` status 头逐字"修订=带日期附录，禁静默改卡"；`…'
+  instances_observed: 0
+  instances_by_card: []
+- state_id: D15-S5
+  value: executing
+  map_state: D15-S5
+  name_zh: 在测 executing
+  node_type: state
+  state: executing
+  terminal: false
+  credential_exemption: false
+  machine_readable: 'no'
+  decision_question: 这张卡当前是否处于「在测 executing」？谁有权把它推出去、凭什么凭证？
+  note_zh: 试验台账行已开、执行件跑数中
+  entry_condition_zh: '`exam_policy.md:24-30` §1 四条准入全满足'
+  exit_zh: →S6/S7/S8（M07-M09）
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - docs/_working/archive/2026-09/kimi_audit/experiments_ledger.md
+  - experiment_registry.yaml:78
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '**卡面无**。仅战役台账有：`docs/_working/archive/2026-09/kimi_audit/experiments_ledger.md` 状态列 `running（首轮脚本 bug 已修，二轮跑中）`；`expe…'
+  instances_observed: 0
+  instances_by_card: []
+- state_id: D15-S6
+  value: green
+  map_state: D15-S6
+  name_zh: 判绿 green
+  node_type: state
+  state: green
+  terminal: false
+  credential_exemption: false
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「判绿 green」？谁有权把它推出去、凭什么凭证？
+  note_zh: 预注册阈值全过且 DSR 校正后仍显著
+  entry_condition_zh: 判定书 verdict 达标（`exam_policy.md:60-66` 出口"达标"）
+  exit_zh: →S12（M13）；→S10（M11）
+  legacy_field: viability_verdict=supported
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - momentum_prereg_card.md:36
+  - factor_registry.yaml
+  - strategy_registry.yaml
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - 卡外报告面：`momentum_prereg_card.md:36`「verdict 三态：PASS…/RED/INSUFFICIENT」；`factor_registry.yaml` factors[].status（candida…
+  instances_observed: 0
+  instances_by_card: []
+- state_id: D15-S7
+  value: red
+  map_state: D15-S7
+  name_zh: 判红 red
+  node_type: state
+  state: red
+  terminal: false
+  credential_exemption: false
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「判红 red」？谁有权把它推出去、凭什么凭证？
+  note_zh: 阈值未过，机制假设是否可修尚未定
+  entry_condition_zh: 同上，判据不过
+  exit_zh: →S4（M10 一次性重判）；→S10；→S11（M12）
+  legacy_field: viability_verdict=refuted
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md:20
+  - t0_regime/t0_regime_narrow_test_results.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '`docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md:20`"verdict=RED 变硬"；`t0_regime/t0_…'
+  instances_observed: 0
+  instances_by_card:
+  - ALGO-VWAP-03
+  - PRERG-MOM-01
+- state_id: D15-S8
+  value: insufficient
+  map_state: D15-S8
+  name_zh: 不可判 insufficient
+  node_type: state
+  state: insufficient
+  terminal: false
+  credential_exemption: false
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「不可判 insufficient」？谁有权把它推出去、凭什么凭证？
+  note_zh: 样本或功效不足、fail-closed 存疑，既非绿也非红
+  entry_condition_zh: 桶 n<功效门 / 配对数<30 / 判据不可评
+  exit_zh: →S9（M14）；→S10；→S5（重跑须新卡或触发条件）
+  legacy_field: viability_verdict=inconclusive
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - experiments_ledger.md
+  - experiment_registry.yaml:102
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '`experiments_ledger.md` biz2 行"维持 insufficient_samples：0/24 毛价差≥30bp 前置"；biz4 行"verdict=**存疑**(fail-closed)…can_deplo…'
+  instances_observed: 0
+  instances_by_card: []
+- state_id: D15-S9
+  value: suspended
+  map_state: D15-S9
+  name_zh: 挂起 suspended
+  node_type: state
+  state: suspended
+  terminal: false
+  credential_exemption: false
+  machine_readable: 'no'
+  decision_question: 这张卡当前是否处于「挂起 suspended」？谁有权把它推出去、凭什么凭证？
+  note_zh: 裁定延后重考并带显式触发条件，禁被读成通过
+  entry_condition_zh: 裁定#398 R2 / 裁定#404 R2（`:5595`）"判挂起并入 IBT 批D 新鲜窗重考…触发=样本显著增厚或下个预注册考试窗"
+  exit_zh: →S5（M15）；→S13
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - docs/_working/integrated_backtest/max_remediation_plan.md
+  - P3-E1C-09.md:9
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '**只在裁定册 + `docs/_working/integrated_backtest/max_remediation_plan.md`**；卡 `P3-E1C-09.md:9` status 头**仍停留 frozen**（F-0…'
+  instances_observed: 0
+  instances_by_card:
+  - P3-E1C-09
+- state_id: D15-S10
+  value: sealed
+  map_state: D15-S10
+  name_zh: 封卡 SEALED|终态：不再重开、不再改参重跑；证据定版
+  node_type: state
+  state: sealed
+  terminal: true
+  credential_exemption: false
+  machine_readable: 'no'
+  decision_question: 这张卡当前是否处于「封卡 SEALED|终态：不再重开、不再改参重跑；证据定版」？谁有权把它推出去、凭什么凭证？
+  note_zh: 终态，不再重开、不再改参重跑，证据定版
+  entry_condition_zh: 唯一出路=**跨实例边** M17（新卡 S1 指回本卡）；禁任何就地复活
+  exit_zh: '实测全仓 **1/68**：`t0_prereg_funding_carry.md:9` `status: 已封卡 SEALED（…裁定#363；修订见 §7，禁静默改）`；代码/配置面零命中（`grep
+    -rniE "SEALED'
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - 封卡" src scripts config` 仅涨停封板语义）
+  instances_observed: 1
+  instances_by_card:
+  - T0-PRERG-02
+- state_id: D15-S11
+  value: condemned
+  map_state: D15-S11
+  name_zh: 判死归档 condemned
+  node_type: state
+  state: condemned
+  terminal: true
+  credential_exemption: false
+  machine_readable: 'no'
+  decision_question: 这张卡当前是否处于「判死归档 condemned」？谁有权把它推出去、凭什么凭证？
+  note_zh: 终态，机制证伪或数据面不可修，入死矿账防复挖
+  entry_condition_zh: '`exam_policy.md:66` 出口"判死归档" + `:57` §5.4 死矿登记（判死单须带 ≥3 个已排除候选与理由）'
+  exit_zh: M17（带新机制假设或新数据面的新卡，`:57` "复挖须带新机制假设或新数据面，否则禁复挖"）
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - docs/_working/archive/2026-09/tdchain_mine/a0_master_ledger.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - 散在各战役台账"挖干/TERMINATE"行（`docs/_working/archive/2026-09/tdchain_mine/a0_master_ledger.md` 状态列实测：执行中 4/挖干 1/挖干待合并
+    1/阻塞待终…
+  instances_observed: 0
+  instances_by_card: []
+- state_id: D15-S12
+  value: graduated
+  map_state: D15-S12
+  name_zh: 毕业出卡 graduated
+  node_type: state
+  state: graduated
+  terminal: true
+  credential_exemption: false
+  machine_readable: partial
+  decision_question: 这张卡当前是否处于「毕业出卡 graduated」？谁有权把它推出去、凭什么凭证？
+  note_zh: 终态，结论已回写因子与策略册，卡使命完成
+  entry_condition_zh: '`exam_policy.md:64`「factor 回写 registry ic/ir/decay；strategy 走 sop_c C5-C6」'
+  exit_zh: 无（知识遗产转 E6 衰减监控，属工厂域）
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - factor_registry.yaml
+  - strategy_registry.yaml
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - '`factor_registry.yaml`/`strategy_registry.yaml` 条目 status（candidate→experimental→…/backtest→sim）；**无一条能反查它来自哪张卡**（J3…'
+  instances_observed: 0
+  instances_by_card: []
+- state_id: D15-S13
+  value: void
+  map_state: D15-S13
+  name_zh: 作废 void
+  node_type: state
+  state: void
+  terminal: true
+  credential_exemption: false
+  machine_readable: 'no'
+  decision_question: 这张卡当前是否处于「作废 void」？谁有权把它推出去、凭什么凭证？
+  note_zh: 终态，挪门柱或中途加条目或 N_eff 破，本批结论作废
+  entry_condition_zh: '`exam_policy.md:28`「事后挪门柱=本批作废」、`:29`「中途加条目=重开预注册」；23 张卡头自述"改动即作废重开"'
+  exit_zh: M17（重开=新预注册，非改旧卡）
+  legacy_field: null
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - scripts/audit/t0_gpu_condition_pack.py:1
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  - D15-G02
+  evidence:
+  - 实测**零登记**：`grep -rniE "作废" docs/_working/**/prereg*` 的"作废"全部只出现在**卡头条件句**（"改动即作废重开"），无任何一张卡被真标为作废态；最接近的活体=代码注释
+    `scrip…
+  instances_observed: 0
+  instances_by_card: []
+transitions:
+- transition_id: D15-M01
+  edge_kind: permitted
+  from_state:
+  - null
+  to_state: draft
+  name_zh: D15-M01 ∅→S1
+  node_type: transition
+  actor: ai
+  credential_required: none
+  gated: false
+  credential_zh: 无（起草自由）
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 无（起草自由）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - factor_mining_sop_policy.md:55-58
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ✅ 案例：`sector_prereg_exam_cards_v0.md`
+  observed_in_registered_ledger: []
+- transition_id: D15-M02
+  edge_kind: permitted
+  from_state:
+  - null
+  to_state: candidate
+  name_zh: D15-M02 ∅→S2
+  node_type: transition
+  actor: machine
+  credential_required: none
+  gated: false
+  credential_zh: 封闭族声明 + 不得写 PASS
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 封闭族声明 + 不得写 PASS
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:4755
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ✅ `bounded_matrix_wave1_report.md` → `candidate_card_open_momentum_market.md`
+  observed_in_registered_ledger: []
+- transition_id: D15-M03
+  edge_kind: permitted
+  from_state:
+  - draft
+  to_state: frozen
+  name_zh: D15-M03 S1→S3
+  node_type: transition
+  actor: human
+  credential_required: owner_sign
+  gated: true
+  credential_zh: 卡面 frozen + 批文或快签通道
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 卡面 frozen + 批文或快签通道
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:5197
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ✅ `sector_prereg_exam_cards_v0.md`→`sector_prereg_exam_cards_v1_frozen.md`（v0 draft / v1 frozen 两份俱在，卡号未变）
+  observed_in_registered_ledger:
+  - SECTOR-PRERG-DECK-01
+  - T0-CONDITIONAL
+- transition_id: D15-M04
+  edge_kind: permitted
+  from_state:
+  - candidate
+  to_state: frozen
+  name_zh: D15-M04 S2→S3
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 同上
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'no'
+  skeleton_status: ⬜
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 同上
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ⬜ 无活体（`candidate_card_open_momentum_market.md` 至今停在 S2，实测该文件存在且 status=候选）
+  observed_in_registered_ledger: []
+- transition_id: D15-M05
+  edge_kind: permitted
+  from_state:
+  - frozen
+  to_state: frozen_amended
+  name_zh: D15-M05 S3→S4
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 带日期附录 + 同批入册；frozen 参数零改动
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 带日期附录 + 同批入册；frozen 参数零改动
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - t0_prereg_funding_carry.md
+  - tick_t0_prereg_card.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G03
+  evidence:
+  - ✅ 实测 ≥5 卡用 §6/§7 附录承载修订
+  observed_in_registered_ledger:
+  - T0-PRERG-02
+- transition_id: D15-M06
+  edge_kind: permitted
+  from_state:
+  - frozen
+  - frozen_amended
+  to_state: executing
+  name_zh: D15-M06 S3\|S4→S5
+  node_type: transition
+  actor: machine
+  credential_required: test_evidence
+  gated: false
+  credential_zh: 四条准入全绿：frozen 卡 / N_eff 封闭族 / 沙箱三关 / 试验台账行已开
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 四条准入全绿：frozen 卡 / N_eff 封闭族 / 沙箱三关 / 试验台账行已开
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - exam_policy.md:24-30
+  - t0_conditional_e4_exam.py:8
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G05
+  evidence:
+  - ✅ `t0_conditional_e4_result.yaml` + `t0_conditional_e4_verdict.md` 在盘
+  observed_in_registered_ledger:
+  - T0-PRERG-02
+- transition_id: D15-M07
+  edge_kind: permitted
+  from_state:
+  - executing
+  to_state: green
+  name_zh: D15-M07 S5→S6
+  node_type: transition
+  actor: human
+  credential_required: test_evidence
+  gated: false
+  credential_zh: 判定书 + DSR 校正
+  one_time_token: null
+  cross_instance: false
+  machine_readable: partial
+  skeleton_status: 🔨
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 判定书 + DSR 校正
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - exam_policy.md:62-64
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G05
+  evidence:
+  - 🔨 有出口无实例（`experiment_registry` 实测 supported=0 条，11 条 viability_verdict 全 null）
+  observed_in_registered_ledger: []
+- transition_id: D15-M08
+  edge_kind: permitted
+  from_state:
+  - executing
+  to_state: red
+  name_zh: D15-M08 S5→S7
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 同上
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 同上
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - funding_carry_results.md
+  - vwap_exam_report.md:13
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G05
+  evidence:
+  - '✅ 多例（`status: 完成（考试已执行，结果 RED）`）'
+  observed_in_registered_ledger:
+  - ALGO-VWAP-03
+  - PRERG-MOM-01
+  - T0-PRERG-02
+- transition_id: D15-M09
+  edge_kind: permitted
+  from_state:
+  - executing
+  to_state: insufficient
+  name_zh: D15-M09 S5→S8
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 样本/功效不足须显式标
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 样本/功效不足须显式标
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - experiments_ledger.md
+  - experiment_registry.yaml:102
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G05
+  evidence:
+  - ✅ 2 例（insufficient_samples、存疑 fail-closed）
+  observed_in_registered_ledger:
+  - P3-E1C-09
+- transition_id: D15-M10
+  edge_kind: permitted
+  from_state:
+  - red
+  to_state: frozen_amended
+  name_zh: D15-M10 S7→S4 **一次性重判**
+  node_type: transition
+  actor: human
+  credential_required: ruling
+  gated: true
+  credential_zh: '**裁定必备** + 全局唯一令牌 `rejudge_used=true` + 只许改裁定明示项，其余零改动'
+  one_time_token: rejudge_used
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: '**裁定必备** + 全局唯一令牌 `rejudge_used=true` + 只许改裁定明示项，其余零改动'
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:4708
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ✅ `funding_carry_rejudge.md`（"授权与唯一 diff"§1）——**全仓唯一活体**
+  observed_in_registered_ledger:
+  - T0-PRERG-02
+- transition_id: D15-M11
+  edge_kind: permitted
+  from_state:
+  - green
+  - red
+  - insufficient
+  to_state: sealed
+  name_zh: D15-M11 S6\|S7\|S8→S10
+  node_type: transition
+  actor: human
+  credential_required: ruling
+  gated: true
+  credential_zh: 裁定必备（RULE-RULING 同 commit 原子）
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 裁定必备（RULE-RULING 同 commit 原子）
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ✅ 1 例（funding）
+  observed_in_registered_ledger:
+  - T0-PRERG-02
+- transition_id: D15-M12
+  edge_kind: permitted
+  from_state:
+  - red
+  to_state: condemned
+  name_zh: D15-M12 S7→S11
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 判死单（≥3 已排除候选+理由）+ 死矿登记
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'no'
+  skeleton_status: 🔨
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 判死单（≥3 已排除候选+理由）+ 死矿登记
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - exam_policy.md:55
+  - sop_b_node_loop.md:73-77
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G03
+  evidence:
+  - 🔨 散在台账 TERMINATE/挖干行，无死矿专册（**负结果台账缺面**，F-06）
+  observed_in_registered_ledger: []
+- transition_id: D15-M13
+  edge_kind: permitted
+  from_state:
+  - green
+  to_state: graduated
+  name_zh: D15-M13 S6→S12
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 回写 factor/strategy 册 + 原卡封存
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'no'
+  skeleton_status: 🔨
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 回写 factor/strategy 册 + 原卡封存
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - exam_policy.md:64
+  - factor_mining_sop_policy.md:71
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G04
+  evidence:
+  - 🔨 册侧字段在（factor status=experimental 4 条、strategy lifecycle=backtest 8/sim 2），**卡侧无从反查**（J3）
+  observed_in_registered_ledger: []
+- transition_id: D15-M14
+  edge_kind: permitted
+  from_state:
+  - insufficient
+  to_state: suspended
+  name_zh: D15-M14 S8→S9
+  node_type: transition
+  actor: human
+  credential_required: ruling
+  gated: true
+  credential_zh: 裁定必备 + 必填 trigger 表达式
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 裁定必备 + 必填 trigger 表达式
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:5369
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ✅ 1 例（E1C-09 挂起并入 IBT 批D）——但卡头未跟（F-03）
+  observed_in_registered_ledger:
+  - P3-E1C-09
+- transition_id: D15-M15
+  edge_kind: permitted
+  from_state:
+  - suspended
+  to_state: executing
+  name_zh: D15-M15 S9→S5
+  node_type: transition
+  actor: machine
+  credential_required: none
+  gated: false
+  credential_zh: trigger 达成；**禁改卡**，要改=新卡
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'no'
+  skeleton_status: ⬜
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: trigger 达成；**禁改卡**，要改=新卡
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs: []
+  evidence:
+  - ⬜ 零活体（宪法 §9.3 铁律下这是必建面，属作业簿 04）
+  observed_in_registered_ledger: []
+- transition_id: D15-M16
+  edge_kind: permitted
+  from_state:
+  - draft
+  - candidate
+  - frozen
+  - frozen_amended
+  - executing
+  - green
+  - red
+  - insufficient
+  - suspended
+  to_state: void
+  name_zh: D15-M16 S1..S9→S13
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: 挪门柱/加条目/N_eff 破/卡被改的事实认定
+  one_time_token: null
+  cross_instance: false
+  machine_readable: 'no'
+  skeleton_status: ❌
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: 挪门柱/加条目/N_eff 破/卡被改的事实认定
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  source_anchors:
+  - exam_policy.md:28-29
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G06
+  evidence:
+  - ❌ **零登记**（F-04：唯一近似记录在 `t0_gpu_condition_pack.py:1` 脚本注释）
+  observed_in_registered_ledger: []
+- transition_id: D15-M17
+  edge_kind: permitted
+  from_state:
+  - sealed
+  - condemned
+  - void
+  to_state: draft
+  name_zh: D15-M17 S10\|S11\|S13 →**新卡** S1
+  node_type: transition
+  actor: human
+  credential_required: none
+  gated: false
+  credential_zh: '跨实例边：新卡必填 `revives: <旧卡号>`；旧卡状态**不变**'
+  one_time_token: null
+  cross_instance: true
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  decision_question: 这次迁移是否发生过、由谁推动、凭证是否在册？
+  note_zh: '跨实例边：新卡必填 `revives: <旧卡号>`；旧卡状态**不变**'
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:5409
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G06
+  evidence:
+  - ✅ 活体链完整：funding SEALED → `t0_revival/t0_conditional_prereg_card.md`（新 family_id，parent_context 散文指旧证据链）；⬜ 但**无
+    card_i…
+  observed_in_registered_ledger: []
+forbidden_edges:
+- edge_id: D15-X01
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - red
+  to_state: green
+  name_zh: D15-X01 S7→S6 就地改判
+  node_type: forbidden_edge
+  rule_zh: S7→S6 就地改判
+  note_zh: S7→S6 就地改判
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: 判定权在判据，AI 无翻案权；`config/strategy_production_map.yaml:20`「考试权只在 E4 咽喉」+ `strategy_screen` verdict
+    只增（`:310`「台账只增+判死行追加」）
+  checker: CV-08
+  enforcement: machine_checkable
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=['D15-M10', 'D15-M11']
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - config/strategy_production_map.yaml:20
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 机验：状态流水里出现 red→green 即红（规格 CV-08）
+- edge_id: D15-X02
+  edge_kind: forbidden
+  pattern_kind: self_pair
+  from_state:
+  - frozen
+  to_state: frozen
+  name_zh: D15-X02 S3→S3 静默改 frozen 参数
+  node_type: forbidden_edge
+  rule_zh: S3→S3 静默改 frozen 参数
+  note_zh: S3→S3 静默改 frozen 参数
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`factor_mining_sop_policy.md:108`；`exam_policy.md:28`；33 张卡头'
+  checker: CV-17
+  enforcement: machine_checkable
+  bypass_guard: 跨面禁令无状态对可绕，判定入口固定为 checker 所指 CV 项
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - factor_mining_sop_policy.md:108
+  - exam_policy.md:28
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G01
+  evidence:
+  - 机验：卡文件 frozen 段落字节级 sha 变更而 card_state 未过 M05/M16 ⇒ 红（先例工具 `src/zephyr/backtest/run_archive.py:44` `content_sha256`）
+- edge_id: D15-X03
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - sealed
+  to_state: executing
+  name_zh: D15-X03 S10→S5 就地复活重跑
+  node_type: forbidden_edge
+  rule_zh: S10→S5 就地复活重跑
+  note_zh: S10→S5 就地复活重跑
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`ruling_registry.yaml:5219` #390「任何会话禁以 #389 为凭重跑两卡」；卡头「禁静默改」'
+  checker: CV-05
+  enforcement: live_incident_observed
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=无（此禁令只能靠实例面判）
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  actor: human
+  credential_required: ruling
+  gated: null
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:5219
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G06
+  evidence:
+  - ✅ 该禁令是**真实事故后立的**：#389 批准开测时两卡早已测毕，#390 即日勘误（F-02 是本边唯一实弹案例）
+- edge_id: D15-X04
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - condemned
+  to_state: executing
+  name_zh: D15-X04 S11→S5 无新假设复挖死矿
+  node_type: forbidden_edge
+  rule_zh: S11→S5 无新假设复挖死矿
+  note_zh: S11→S5 无新假设复挖死矿
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`exam_policy.md:58`「复挖须带新机制假设或新数据面，否则禁复挖」'
+  checker: CV-05
+  enforcement: machine_checkable
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=无（此禁令只能靠实例面判）
+  machine_readable: 'yes'
+  skeleton_status: ⬜
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - exam_policy.md:58
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G06
+  evidence:
+  - ⬜ 无机验面（无死矿册）
+- edge_id: D15-X05
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - candidate
+  to_state: green
+  name_zh: D15-X05 S2→S6 候选卡直接出 PASS
+  node_type: forbidden_edge
+  rule_zh: S2→S6 候选卡直接出 PASS
+  note_zh: S2→S6 候选卡直接出 PASS
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`ruling_registry.yaml:4755` #366 条件③'
+  checker: CV-07
+  enforcement: machine_checkable
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=无（此禁令只能靠实例面判）
+  machine_readable: 'yes'
+  skeleton_status: 卡
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:4755
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - '卡头逐字已声明（candidate 卡 `status: 候选（矩阵只产候选卡不出 PASS…）`）'
+- edge_id: D15-X06
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - draft
+  to_state: executing
+  name_zh: D15-X06 S1→S5 未冻结先跑数
+  node_type: forbidden_edge
+  rule_zh: S1→S5 未冻结先跑数
+  note_zh: S1→S5 未冻结先跑数
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`exam_policy.md:26`「不满足任一条=禁点火，跑了也白跑（结论作废）」+ `:28` prereg 卡 frozen'
+  checker: CV-04
+  enforcement: machine_checkable
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=['D15-M03']
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - exam_policy.md:26
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 机验：S5 时间戳 < S3 冻结时间戳 ⇒ 红（时间真源=git commit，`experiment_registry.yaml:98` 注"git commit 时间戳为证"）
+- edge_id: D15-X07
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - executing
+  to_state: green
+  name_zh: D15-X07 S5→S6 无试验台账行
+  node_type: forbidden_edge
+  rule_zh: S5→S6 无试验台账行
+  note_zh: S5→S6 无试验台账行
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`exam_policy.md:31`「后补=造假」'
+  checker: CV-09
+  enforcement: machine_checkable
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=无（此禁令只能靠实例面判）
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - exam_policy.md:31
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G05
+  evidence:
+  - 机验：trial_ledger 无对应 batch_id ⇒ 红
+- edge_id: D15-X08
+  edge_kind: forbidden
+  pattern_kind: self_pair
+  from_state:
+  - frozen_amended
+  to_state: frozen_amended
+  name_zh: D15-X08 S4→S4 无日期附录 / 附录里改 frozen 值
+  node_type: forbidden_edge
+  rule_zh: S4→S4 无日期附录 / 附录里改 frozen 值
+  note_zh: S4→S4 无日期附录 / 附录里改 frozen 值
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`t0_prereg_funding_carry.md` §6-§7；`sop_d_run_archive_naming.md:28`'
+  checker: CV-07
+  enforcement: machine_checkable
+  bypass_guard: 跨面禁令无状态对可绕，判定入口固定为 checker 所指 CV 项
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - t0_prereg_funding_carry.md
+  - sop_d_run_archive_naming.md:28
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 机验：附录缺 `YYYY-MM-DD` 前缀 ⇒ 红
+- edge_id: D15-X09
+  edge_kind: forbidden
+  pattern_kind: cross_cutting
+  from_state:
+  - '*'
+  to_state: '*'
+  name_zh: D15-X09 同一假设双卡并行考（N_eff 双重计分）
+  node_type: forbidden_edge
+  rule_zh: 同一假设双卡并行考（N_eff 双重计分）
+  note_zh: 同一假设双卡并行考（N_eff 双重计分）
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`factor_mining_sop_policy.md:100`「封闭族：每批考试 N_eff 封闭…中途加条目=重开预注册」'
+  checker: CV-08
+  enforcement: live_incident_observed
+  bypass_guard: 跨面禁令无状态对可绕，判定入口固定为 checker 所指 CV 项
+  machine_readable: 'yes'
+  skeleton_status: ✅
+  actor: human
+  credential_required: ruling
+  gated: null
+  confidence: verified
+  verified_scope: production
+  build_status: built
+  source_anchors:
+  - factor_mining_sop_policy.md:100
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G05
+  evidence:
+  - ✅ **实测活例**：`t0_regime/t0_prereg_vwap_revert.md`（T0-PRERG-01，510300 VWAP 负偏离回归做T，N_eff=1）与 `algo_mining/vwap_prereg_ca…
+- edge_id: D15-X10
+  edge_kind: forbidden
+  pattern_kind: state_pair
+  from_state:
+  - suspended
+  to_state: green
+  name_zh: D15-X10 S9→S6 把挂起读成通过
+  node_type: forbidden_edge
+  rule_zh: S9→S6 把挂起读成通过
+  note_zh: S9→S6 把挂起读成通过
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '`ruling_registry.yaml:5595` #404 R2「禁直通模拟盘」'
+  checker: CV-07
+  enforcement: machine_checkable
+  bypass_guard: 凡从该状态出发的合法边必须带人凭证（ruling/owner_sign），当前闸门边=无（此禁令只能靠实例面判）
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - ruling_registry.yaml:5595
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 机验：挂起态卡若被 E7/E8 节点引用 ⇒ 红（跨图检查，作业簿 06）
+- edge_id: D15-X11
+  edge_kind: forbidden
+  pattern_kind: copy_guard
+  from_state:
+  - '*'
+  to_state: '*'
+  name_zh: D15-X11 把卡内判据正文抄进因子/策略册或抄进图节点
+  node_type: forbidden_edge
+  rule_zh: 把卡内判据正文抄进因子/策略册或抄进图节点
+  note_zh: 把卡内判据正文抄进因子/策略册或抄进图节点
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: 宪章 §8.2 + layering policy §2.1「地图只做索引」；宪法 §4.2 内收判据；TDM INV-1 同型
+  checker: CV-12
+  enforcement: machine_checkable
+  bypass_guard: 跨面禁令无状态对可绕，判定入口固定为 checker 所指 CV 项
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 机验：规格 CV-12（40 字滑窗命中即红）
+- edge_id: D15-X12
+  edge_kind: forbidden
+  pattern_kind: credential_guard
+  from_state:
+  - '*'
+  to_state: '*'
+  name_zh: D15-X12 对话/战役令改判已封卡
+  node_type: forbidden_edge
+  rule_zh: 对话/战役令改判已封卡
+  note_zh: 对话/战役令改判已封卡
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: 宪法 §1.11「指令真源仅=本宪法+认证通道（规则 YAML/裁定登记）」；#390
+  checker: CV-09
+  enforcement: machine_checkable
+  bypass_guard: 跨面禁令无状态对可绕，判定入口固定为 checker 所指 CV 项
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 机验：card_state 迁移的 credential 字段为空或不是在册 ruling_id ⇒ 红（在册性查 `ruling_registry.yaml`）
+- edge_id: D15-X13
+  edge_kind: forbidden
+  pattern_kind: revival_guard
+  from_state:
+  - '*'
+  to_state: '*'
+  name_zh: D15-X13 复活新卡不带 `revives` 指针
+  node_type: forbidden_edge
+  rule_zh: 复活新卡不带 `revives` 指针
+  note_zh: 复活新卡不带 `revives` 指针
+  decision_question: 这条禁令今天靠什么被看见？会不会被一条合法边绕开而无人知？
+  credential_source: '#399 二 / #404 R4 语义（复活=新假设，必须可追溯到被封的那次证据）'
+  checker: CV-06
+  enforcement: machine_checkable
+  bypass_guard: 跨面禁令无状态对可绕，判定入口固定为 checker 所指 CV 项
+  machine_readable: 'yes'
+  skeleton_status: 机
+  actor: human
+  credential_required: machine
+  gated: null
+  confidence: verified
+  verified_scope: structure
+  build_status: built
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/00_skeleton.md
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  red_reason: unwired
+  gap_refs:
+  - D15-G06
+  evidence:
+  - 机验：新卡 family_id 命中已 SEALED/condemned 族而 revives 缺省 ⇒ 红（正是 F-05 现状）
+gaps:
+- gap_id: D15-G01
+  node_type: gap
+  name_zh: 卡头 status 面
+  object_zh: 契约
+  today_zh: 89 张卡 / 60 有头 29 无头 / 23 种串 / 0 张在受控词表内
+  disposition_zh: 降级为只读镜像（方向恒为 册→md）
+  net_zero_zh: 替代 23 种自由串与模板 status 行，语义进 status_note
+  red_reason: unwired
+  decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
+  note_zh: 89 张卡 / 60 有头 29 无头 / 23 种串 / 0 张在受控词表内
+  measured:
+    cards: 89
+    headed: 60
+    headless: 29
+    distinct_status_strings: 23
+    in_controlled_vocab: 56
+    registered_in_host: 56
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  machine_readable: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  gap_refs:
+  - D15-G01
+  evidence:
+  - 簿03 §A 逐处开账（本件 measured 由生成器现算）
+- gap_id: D15-G02
+  node_type: gap
+  name_zh: 宿主 REG-EXP-001 面
+  object_zh: 一次跑数实例
+  today_zh: 11 条与卡键级交集 0；viability_verdict 11 条全 null
+  disposition_zh: 升格为唯一宿主并扩 schema 2.2
+  net_zero_zh: 启用在册闲置字段 viability_verdict，零新枚举
+  red_reason: unwired
+  decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
+  note_zh: 11 条与卡键级交集 0；viability_verdict 11 条全 null
+  measured:
+    registry_entries: 67
+    contract_card_entries: 56
+    run_entries: 11
+    card_key_intersection_with_corpus: 56
+    viability_verdict_null: 65
+    viability_verdict_filled_by:
+    - ALGO-VWAP-03
+    - PRERG-MOM-01
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  machine_readable: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  gap_refs:
+  - D15-G02
+  evidence:
+  - 簿03 §A 逐处开账（本件 measured 由生成器现算）
+- gap_id: D15-G03
+  node_type: gap
+  name_zh: 战役台账面
+  object_zh: 战役事件
+  today_zh: 6 本台账 ≈527 表格行，带 card_state 语义键的行 0
+  disposition_zh: 保留为视图（卡态不再是它的职责，只留 card_id 指针）
+  net_zero_zh: 替代台账"状态"列中的卡语义，不改台账文件
+  red_reason: terminal
+  decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
+  note_zh: 6 本台账 ≈527 表格行，带 card_state 语义键的行 0
+  measured:
+    ledger_rows_scanned: 527
+    rows_with_card_state_key: 0
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  machine_readable: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  gap_refs:
+  - D15-G03
+  evidence:
+  - 簿03 §A 逐处开账（本件 measured 由生成器现算）
+- gap_id: D15-G04
+  node_type: gap
+  name_zh: CH 三判定表面
+  object_zh: 策略件与因子件与节点
+  today_zh: hypothesis_precheck 58 / strategy_screen 1340 / node_verdict 58 行，带卡号 0 行
+  disposition_zh: 不并（跨域不同对象），禁建 verdict 推 card_state 的隐式派生
+  net_zero_zh: 无对价（不新增不删除）
+  red_reason: terminal
+  decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
+  note_zh: hypothesis_precheck 58 / strategy_screen 1340 / node_verdict 58 行，带卡号 0 行
+  measured:
+    faces:
+    - c1_backtest.hypothesis_precheck
+    - c1_backtest.strategy_screen
+    - c1_backtest.node_verdict
+    note: 跨域不同对象，不并
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  machine_readable: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  gap_refs:
+  - D15-G04
+  evidence:
+  - 簿03 §A 逐处开账（本件 measured 由生成器现算）
+- gap_id: D15-G05
+  node_type: gap
+  name_zh: 以卡为键的机读判决件面
+  object_zh: 卡级 verdict 与 N_eff 三关
+  today_zh: 'pattern_narrow_results.csv 6 张卡带 verdict 列、exam_results.csv 18 行带 n_eff 与三关布尔、7 处 card: 键（2 处悬空）'
+  disposition_zh: 收编为 runs 与 verdict_bindings 的 schema 母版，禁再新增第四种 csv 形态
+  net_zero_zh: 替代"新造卡-run 结构"的需要
+  red_reason: broken_supply
+  decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
+  note_zh: 'pattern_narrow_results.csv 6 张卡带 verdict 列、exam_results.csv 18 行带 n_eff 与三关布尔、7 处 card: 键（2 处悬空）'
+  measured:
+    csv_faces:
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/pattern_narrow_results.csv
+      columns: 26
+      key_column: card
+      has_n_eff: false
+      has_verdict: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/exam_results.csv
+      columns: 26
+      key_column: null
+      has_n_eff: true
+      has_verdict: true
+    card_key_faces:
+    - docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md
+    - docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_exam_report.md
+    - docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+    - docs/_working/archive/2026-09/bizmine_night/regime_axis/b15_bucket_switch_narrow_test_report.md
+    - docs/_working/t0_matrix/t0_ceiling_verdict.md
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  machine_readable: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  gap_refs:
+  - D15-G05
+  evidence:
+  - 簿03 §A 逐处开账（本件 measured 由生成器现算）
+- gap_id: D15-G06
+  node_type: gap
+  name_zh: 真源完整性面
+  object_zh: 判据灭失与档案不在版本控制
+  today_zh: 3 个 production 脚本的 BLUEPRINT 卡锚指向从未入库的两张卡；run 档案整目录 gitignored
+  disposition_zh: 纠偏 + 校验器显性红（CV-17 指纹无从计算即 error，禁静默 warn）
+  net_zero_zh: 无（属修复不属新建）
+  red_reason: ghost_ref
+  decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
+  note_zh: 3 个 production 脚本的 BLUEPRINT 卡锚指向从未入库的两张卡；run 档案整目录 gitignored
+  measured:
+    missing_truth_sources:
+    - docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+    blueprint_card_anchors: 7
+  confidence: verified
+  verified_scope: structure
+  build_status: pending
+  machine_readable: partial
+  source_anchors:
+  - docs/_working/map_build/fig15_cardlife/03_三处分裂对账与外部对标.md
+  doc_refs:
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  module_id: null
+  module_ref: null
+  gap_refs:
+  - D15-G06
+  evidence:
+  - 簿03 §A 逐处开账（本件 measured 由生成器现算）
+card_ledger:
+- experiment_id: CARD-T0-PRERG-02
+  card_id: T0-PRERG-02
+  entry_kind: single_hypothesis
+  family_id: T0-PRERG
+  n_eff: 1
+  hypothesis_key: funding_carry_t0
+  card_state: sealed
+  rejudge_used: true
+  revives: null
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+    first_seen: '2026-09-19'
+  - path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md
+    first_seen: '2026-09-19'
+    role: verdict
+  - path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md
+    first_seen: '2026-09-19'
+    role: verdict
+  credential:
+  - seq: 1
+    from: frozen
+    to: frozen_amended
+    ruling_id: 裁定#363
+    date: '2026-09-19'
+  - seq: 2
+    from: frozen_amended
+    to: executing
+    flag: machine_admitted
+    date: '2026-09-19'
+  - seq: 3
+    from: executing
+    to: red
+    flag: test_evidence
+    date: '2026-09-19'
+  - seq: 4
+    from: red
+    to: frozen_amended
+    ruling_id: 裁定#363
+    date: '2026-09-19'
+    note: M10 一次性重判，令牌消耗点
+  - seq: 5
+    from: frozen_amended
+    to: executing
+    flag: machine_admitted
+    date: '2026-09-19'
+  - seq: 6
+    from: executing
+    to: red
+    flag: test_evidence
+    date: '2026-09-19'
+  - seq: 7
+    from: red
+    to: sealed
+    ruling_id: 裁定#363
+    date: '2026-09-19'
+  verdict_bindings:
+  - ruling_id: 裁定#363
+    verdict: RED
+    evidence_path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md
+  name_zh: T0-PRERG-02
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+    content_sha256: 5bf8c5e58f5e5abf4ebec83b846f038a8fb9d02f814e860dd277b48697247f97
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-T0-PRERG-01
+  card_id: T0-PRERG-01
+  entry_kind: single_hypothesis
+  family_id: T0-PRERG
+  n_eff: 1
+  hypothesis_key: vwap_reversion_t0
+  card_state: frozen
+  rejudge_used: false
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+    first_seen: '2026-09-19'
+  credential: []
+  verdict_bindings:
+  - ruling_id: 裁定#390
+    verdict: RED
+    evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+    defect_ref: F-07
+  name_zh: T0-PRERG-01
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+    content_sha256: dbdc34476aea42f29ea6934dcf8d3e2b4c8250e63e42d8cc2e822fcc18e965d0
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-ALGO-VWAP-03
+  card_id: ALGO-VWAP-03
+  entry_kind: single_hypothesis
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: vwap_reversion_t0
+  card_state: red
+  card_face_state: frozen
+  rejudge_used: false
+  legacy_ref: ALGO件③（原卡无编号，回填时给新号并按规格在 legacy_ref 记文件名）
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+    first_seen: '2026-09-19'
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+    first_seen: '2026-09-19'
+    role: verdict
+  credential:
+  - seq: 1
+    from: executing
+    to: red
+    flag: test_evidence
+    date: '2026-09-19'
+  verdict_bindings:
+  - verdict: RED
+    evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+  name_zh: ALGO-VWAP-03
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+    content_sha256: 349876ad5656c596fe3ad34fa24554c929a9bae229597767c9df259a90657b0f
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+  viability_verdict: refuted
+- experiment_id: CARD-T0-CONDITIONAL
+  card_id: T0-CONDITIONAL
+  entry_kind: single_hypothesis
+  family_id: T0-CONDITIONAL
+  n_eff: unknown
+  hypothesis_key: state_selective_t0
+  card_state: frozen
+  rejudge_used: false
+  revives: null
+  parent_context_cites:
+  - 裁定#399
+  - 裁定#331
+  - 裁定#386
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+    first_seen: '2026-09-22'
+  credential:
+  - seq: 1
+    from: draft
+    to: frozen
+    ruling_id: 裁定#399
+    date: '2026-09-22'
+  verdict_bindings: []
+  name_zh: T0-CONDITIONAL
+  body_fingerprint:
+    path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+    content_sha256: c847c3a55f6afc623acbe34a2c5058cf8d6ddf8e8857fcd57f4e4e82ba01c9e3
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-09
+  card_id: P3-E1C-09
+  entry_kind: single_hypothesis
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: e1c_stable13_09
+  card_state: suspended
+  card_face_state: frozen
+  rejudge_used: false
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md
+    first_seen: '2026-09-15'
+  credential:
+  - seq: 1
+    from: executing
+    to: insufficient
+    flag: test_evidence
+    date: '2026-09-18'
+  - seq: 2
+    from: insufficient
+    to: suspended
+    ruling_id: 裁定#398
+    date: '2026-09-21'
+  verdict_bindings: []
+  name_zh: P3-E1C-09
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md
+    content_sha256: 9e45c95e1a51849428bc2491700e2168ad92065630bfdb8c552ebc665741c71f
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-NARROWING
+  card_id: P3-B-NARROWING
+  entry_kind: narrowing_ruling
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: p3_b_narrowing
+  card_state: frozen
+  rejudge_used: false
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md
+    first_seen: '2026-09-15'
+  credential: []
+  verdict_bindings: []
+  name_zh: P3-B-NARROWING
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md
+    content_sha256: e1cd7de2d6fedec0220642aa66d0876eec1677edd8380dcea60b3eea2cd3315c
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-ALGO-CAND-MOM-01
+  card_id: ALGO-CAND-MOM-01
+  entry_kind: single_hypothesis
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: open_momentum_to_close
+  card_state: candidate
+  derived_from: PRERG-MOM-01
+  rejudge_used: false
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+    first_seen: '2026-09-19'
+  credential: []
+  verdict_bindings: []
+  name_zh: ALGO-CAND-MOM-01
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+    content_sha256: b8e255e780d98df27681217d9aed9730e964c83e0017a6c243659416cc7afc1d
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-PRERG-MOM-01
+  card_id: PRERG-MOM-01
+  entry_kind: single_hypothesis
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: midday_momentum_t1
+  card_state: red
+  rejudge_used: false
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md
+    first_seen: '2026-09-19'
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md
+    first_seen: '2026-09-19'
+    role: verdict
+  credential:
+  - seq: 1
+    from: executing
+    to: red
+    flag: test_evidence
+    date: '2026-09-19'
+  verdict_bindings:
+  - verdict: RED
+    evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md
+  name_zh: PRERG-MOM-01
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md
+    content_sha256: d4a0066749d345e55b94726cc760538467e2d395e92641371f95a0929d24158f
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+  viability_verdict: refuted
+- experiment_id: CARD-SECTOR-PRERG-DECK-01
+  card_id: SECTOR-PRERG-DECK-01
+  entry_kind: family
+  family_id: SECTOR-V1
+  n_eff: unknown
+  hypothesis_key: sector_line_deck_v1
+  card_state: frozen
+  versions:
+  - sector_prereg_exam_cards_v0
+  - sector_prereg_exam_cards_v1_frozen
+  rejudge_used: false
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+    first_seen: '2026-09-22'
+  - path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
+    first_seen: '2026-09-23'
+  credential:
+  - seq: 1
+    from: draft
+    to: frozen
+    flag: owner_sign
+    date: '2026-09-23'
+  verdict_bindings: []
+  name_zh: SECTOR-PRERG-DECK-01
+  body_fingerprint:
+    path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+    content_sha256: d4922ad656666fc860fa1ae4c40d4b2be614f0c7b5e0bc107d6261a2348b569b
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-T0-MATRIX-VWAP-CEILING
+  card_id: T0-MATRIX-VWAP-CEILING
+  entry_kind: single_hypothesis
+  family_id: T0-MATRIX
+  n_eff: unknown
+  hypothesis_key: t0_ceiling_capacity
+  card_state: frozen
+  rejudge_used: false
+  truth_source_missing: true
+  history_from: '2026-09-24'
+  lives_in:
+  - path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+    first_seen: '2026-09-20'
+  credential: []
+  verdict_bindings: []
+  name_zh: T0-MATRIX-VWAP-CEILING
+  body_fingerprint:
+    path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+    content_sha256: null
+    frozen_at: null
+  claim_fingerprint: null
+  revived_by: null
+  conclusion_tier: null
+- experiment_id: CARD-OFI-PREREG-CARD
+  card_id: OFI-PREREG-CARD
+  name_zh: ALGO件① OFI成交签名代理 预注册卡（frozen，先于实验落盘）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（2026-09-19，W2-T2，sid=st-final3-20260919）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_prereg_card.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_prereg_card.md
+    content_sha256: bf1360147f40859ad8119ecc7d523b5d819c4cf8d1de894cbaf2be891251417c
+    frozen_at: '2026-09-19'
+  history_from: '2026-09-26'
+  frozen_at: '2026-09-19'
+  conclusion_tier: null
+- experiment_id: CARD-ETFT0-PREREG-CARD
+  card_id: ETFT0-PREREG-CARD
+  name_zh: ETFT0 预注册卡——高波资产做T 振幅经济学勘测（三宇宙，宇宙选择规则先于测量，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: ETFT0-SCREEN
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（本卡于任何宇宙筛选取数之前写死；实验启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md
+    content_sha256: 9259ad8a10663c2e05be3196d955e7480c562f12bd8b2b4324194c48d69f92c3
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-CARD-F-TOP20-EXAM
+  card_id: PREREG-CARD-F-TOP20-EXAM
+  name_zh: F 车道 top-20 待考池窄考+正考预注册卡（W2-T3 E4 收口批次，st-final3-20260919）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: FPOOL-20260919-TOP20
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（本卡在考试执行前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+    content_sha256: d4ffeb457b1cf07edb49dbfc461f0a0cd35560dac50ddd6d82dbbf23e03a1c2f
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-SLICE3-PROTOCOL
+  card_id: PREREG-SLICE3-PROTOCOL
+  name_zh: 指标库全扫切片C 预注册协议（执行前钉死）——c1_market.technical_indicator 因子列第3等分 55 列 IC 大海选
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（本文落盘先于任何因子取数；落盘后禁改，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
+    content_sha256: fb803dc4f981379158babe2bce0901e0ee6994a9913862689852ec6f1a65ca6f
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-CARD-MID-VALLEY-SCREEN
+  card_id: PREREG-CARD-MID-VALLEY-SCREEN
+  name_zh: MID 洼地深挖预注册卡——38 可映射候选 × vol_pct 灰度三桶条件 IC 二筛（st-bizmine-mid-20260919，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（二筛启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_screen.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_screen.md
+    content_sha256: 5219b1e8fe2020c1c7a3ba6d6755465996f7cce2965d998b8f34c0d2afb63b82
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-CARD-MID-VALLEY-TOP10
+  card_id: PREREG-CARD-MID-VALLEY-TOP10
+  name_zh: MID 洼地 top-10 候选预注册卡（10 卡合册，考试门槛 frozen，st-bizmine-mid-20260919）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: MIDVAL-20260919-TOP10
+  n_eff: 10
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（卡片在考试执行前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_top10.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_top10.md
+    content_sha256: 9072dedcda6083ba75b467b1a6a881aef0a518ae3c68fe738cbae7c225cd669c
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-CARD-B15-BUCKET-SWITCH
+  card_id: PREREG-CARD-B15-BUCKET-SWITCH
+  name_zh: B-15 预注册卡——按大盘灰度桶切换组队 前向窗窄测（裁定#361，frozen 先于取数）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（2026-09-19 落定后禁改；计算代码只实现本卡口径）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+    content_sha256: d768d15182b3f98632106f5b2139d252fc8f813e4f491834b4f12d5ebf72c920
+    frozen_at: '2026-09-19'
+  history_from: '2026-09-26'
+  frozen_at: '2026-09-19'
+  conclusion_tier: null
+- experiment_id: CARD-T0-REGIME-PREREG-CARD
+  card_id: T0-REGIME-PREREG-CARD
+  name_zh: T0 预注册卡——510300 做T 行情条件化窄测（regime 条件振幅勘测，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: T0-REGIME
+  n_eff: 1
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（本卡于实验运行前写死；实验启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_regime_prereg_card.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_regime_prereg_card.md
+    content_sha256: 3c8671a016f5d640971d541590abc985b5674377148f6c89d5c5880409719859
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-TICK-MATRIX-PREREG-CARD
+  card_id: TICK-MATRIX-PREREG-CARD
+  name_zh: tick 矩阵基线轮预注册卡（frozen，先于实验落盘）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（2026-09-19 基线轮）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_prereg_card.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_prereg_card.md
+    content_sha256: a126ec98c163398241eaf6da3c5b2598fe564e090636784e4f183873da6a652e
+    frozen_at: '2026-09-19'
+  history_from: '2026-09-26'
+  frozen_at: '2026-09-19'
+  conclusion_tier: null
+- experiment_id: CARD-TICK-T0-PREREG-CARD
+  card_id: TICK-T0-PREREG-CARD
+  name_zh: TICK-T0 预注册卡（tick 级执行三模型×三标的窄测，frozen 先于任何取数统计）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（本 commit 落盘后 scripting 才允许开始；修订=带日期附录，禁静默改卡）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/tick_t0/tick_t0_prereg_card.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/tick_t0/tick_t0_prereg_card.md
+    content_sha256: f14a45ce3ad7ab10f83da2cdecd9e7a76746b65e613349126fe62f4c768af1b5
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-FAMILY-SUMMARY
+  card_id: PREREG-FAMILY-SUMMARY
+  name_zh: L1 第二批预注册·族总卡——量能/统计族 18 档（去重后 15 组）沙箱考试（frozen）
+  entry_kind: family
+  card_state: frozen
+  family_id: P3-B2-VOLSTAT
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_family_summary.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_family_summary.md
+    content_sha256: 6f9e02e0e9f5a6cd520484ae4799b93a8a5419dbdb44ac9c1259c66ced85010d
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-01-OBV
+  card_id: PREREG-GROUP-01-OBV
+  name_zh: L1 第二批预注册卡 prereg_group_01_obv（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_01_obv.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_01_obv.md
+    content_sha256: 49b4a4e95ddd1ee5ea5ffcd17f6d2981a165def44389c9ce19c09c2ec577613e
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-02-MFI
+  card_id: PREREG-GROUP-02-MFI
+  name_zh: L1 第二批预注册卡 prereg_group_02_mfi（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_02_mfi.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_02_mfi.md
+    content_sha256: 213d4d62cc9cf1cbd76bb94434a0f5ab93d59b1ee32e3dd243382d394a72122c
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-03-VR
+  card_id: PREREG-GROUP-03-VR
+  name_zh: L1 第二批预注册卡 prereg_group_03_vr（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_03_vr.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_03_vr.md
+    content_sha256: 0fb6ed0273eeacb81d0ad646f3afe3e87f6c8f4389b95d005cdf0e22ebc896da
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-04-AD
+  card_id: PREREG-GROUP-04-AD
+  name_zh: L1 第二批预注册卡 prereg_group_04_ad（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_04_ad.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_04_ad.md
+    content_sha256: 08ea079632f1222ae835f80684df43ee3d9bacd90ff31d82e0f9f470c17c7b5c
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-05-PVT
+  card_id: PREREG-GROUP-05-PVT
+  name_zh: L1 第二批预注册卡 prereg_group_05_pvt（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_05_pvt.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_05_pvt.md
+    content_sha256: c64e50892104389035d897f9a000d2ace84aacb3cebf7d31051fb0e24b8bcd1e
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-06-WVAD
+  card_id: PREREG-GROUP-06-WVAD
+  name_zh: L1 第二批预注册卡 prereg_group_06_wvad（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_06_wvad.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_06_wvad.md
+    content_sha256: 8dc6f82cc35fe768117a3e2e5430bff97c02e53e2cd827da835a89aa7df3eead
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-07-ADOSC
+  card_id: PREREG-GROUP-07-ADOSC
+  name_zh: L1 第二批预注册卡 prereg_group_07_adosc（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_07_adosc.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_07_adosc.md
+    content_sha256: a3e1045ed7c6d705c7b4dc5d95f335906d750f2b8950a6840dd1d548c51de8a8
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-08-EOM
+  card_id: PREREG-GROUP-08-EOM
+  name_zh: L1 第二批预注册卡 prereg_group_08_eom（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_08_eom.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_08_eom.md
+    content_sha256: 4c1eae13e58a12e74e1d97c1daa72f705102589f0f4293516e2935e2db77599f
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-09-KVO
+  card_id: PREREG-GROUP-09-KVO
+  name_zh: L1 第二批预注册卡 prereg_group_09_kvo（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_09_kvo.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_09_kvo.md
+    content_sha256: d001f0da51acd89dcff7ce60a3b8c537d909abc8f55c581bd8af1dbc66b9d9d4
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-10-NVI
+  card_id: PREREG-GROUP-10-NVI
+  name_zh: L1 第二批预注册卡 prereg_group_10_nvi（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_10_nvi.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_10_nvi.md
+    content_sha256: 15ec64dccc9395c79aad1ea0101d493bbcdd4be99ee0f0045824332114766066
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-11-PVI
+  card_id: PREREG-GROUP-11-PVI
+  name_zh: L1 第二批预注册卡 prereg_group_11_pvi（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_11_pvi.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_11_pvi.md
+    content_sha256: c31ba5d71177cd1a6b70ec9cddaaf0e27a6280f325c380e796a830424b2c38ba
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-12-FORCE-INDEX
+  card_id: PREREG-GROUP-12-FORCE-INDEX
+  name_zh: L1 第二批预注册卡 prereg_group_12_force_index（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-VOL12
+  n_eff: 12
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_12_force_index.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_12_force_index.md
+    content_sha256: f55687139c01d59adaa9b297a70c58541869841c034685ecabbb838da1d08883
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-13-CORREL
+  card_id: PREREG-GROUP-13-CORREL
+  name_zh: L1 第二批预注册卡 prereg_group_13_correl（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-STAT3
+  n_eff: 3
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_13_correl.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_13_correl.md
+    content_sha256: 5a40e0aa3f522ab08e61ac81744395e48ba192edf5697c604bb7928e92e6c9ba
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-14-BETA
+  card_id: PREREG-GROUP-14-BETA
+  name_zh: L1 第二批预注册卡 prereg_group_14_beta（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-STAT3
+  n_eff: 3
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_14_beta.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_14_beta.md
+    content_sha256: 5dbd421196c0edc3d7aee39ded2206cfe5b346bfb54e7602054fd8f308703084
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+  card_id: PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+  name_zh: L1 第二批预注册卡 prereg_group_15_rollvar_pricelevel（量能/统计族点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B2-STAT3
+  n_eff: 3
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_15_rollvar_pricelevel.md
+    first_seen: '2026-09-19'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_15_rollvar_pricelevel.md
+    content_sha256: 6152850239fd016744ef24854c0f5b05a8b6bb5666dbc02fd356eb809e30ca49
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-EXP-01
+  card_id: P3-B-EXP-01
+  name_zh: P3 预注册卡 P3-B-EXP-01（FCT-EXP-001 一致预期EP 点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-01.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-01.md
+    content_sha256: 4524161a120d95619545c20684936d4450315187a57561b2e52b56b4ed279c4a
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-EXP-02
+  card_id: P3-B-EXP-02
+  name_zh: P3 预注册卡 P3-B-EXP-02（FCT-EXP-002 修正动量 点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-02.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-02.md
+    content_sha256: 6fd65b30b1277f1180dbfa4c4da0674afafb9cc13d2779baf0d14fefdb1091db
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-EXP-03
+  card_id: P3-B-EXP-03
+  name_zh: P3 预注册卡 P3-B-EXP-03（FCT-EXP-003 修正广度 点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-03.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-03.md
+    content_sha256: 71fc242b931c0b2906b69bd5f451e8ec2c476774f9f237cf2ec4df3375a13c74
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-EXP-04
+  card_id: P3-B-EXP-04
+  name_zh: P3 预注册卡 P3-B-EXP-04（FCT-EXP-004 异常覆盖 点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-04.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-04.md
+    content_sha256: 83279986a8c4fcf698009df0a1732849947b2d5312094ddb41e6241176c3a03e
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-EXP-05
+  card_id: P3-B-EXP-05
+  name_zh: P3 预注册卡 P3-B-EXP-05（FCT-EXP-005 分歧度 点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-05.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-05.md
+    content_sha256: 4ade22bd46d9683c0a35e824f04c01494ce0df7724fdbfb7aa9e302a3b722716
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-B-EXP-06
+  card_id: P3-B-EXP-06
+  name_zh: P3 预注册卡 P3-B-EXP-06（FCT-EXP-006 评级动量 点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-B-FIRST6
+  n_eff: 6
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-06.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-06.md
+    content_sha256: 9f15de0f16fe5992eeccb87c9a19adcdee3437884ef6c215b343eef70ba8b63d
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-01
+  card_id: P3-E1C-01
+  name_zh: P3 预注册卡 P3-E1C-01（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-01.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-01.md
+    content_sha256: d857e6d8e6732ce63ffe71187cb3a9ee1d1293248672dd15e4d86b1f3d7de92c
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-02
+  card_id: P3-E1C-02
+  name_zh: P3 预注册卡 P3-E1C-02（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-02.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-02.md
+    content_sha256: 8dc8b61d7334d1372fd248e3d6d17c525720a14ab64180450fe71c4ad68ce0d1
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-03
+  card_id: P3-E1C-03
+  name_zh: P3 预注册卡 P3-E1C-03（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-03.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-03.md
+    content_sha256: 5ca27efddb32198990c70922dff1211bee23df6e3e42dfed830222ff4a6d3035
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-04
+  card_id: P3-E1C-04
+  name_zh: P3 预注册卡 P3-E1C-04（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-04.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-04.md
+    content_sha256: 68da3d54d84b14d2c6600d68f790a5941bc20942afdc161d6cc5316c627b7b18
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-05
+  card_id: P3-E1C-05
+  name_zh: P3 预注册卡 P3-E1C-05（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-05.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-05.md
+    content_sha256: b33e4c80168893323704cbdd5fe87d08ac1b45769c9d2dc1f707e60d08f7a1d8
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-06
+  card_id: P3-E1C-06
+  name_zh: P3 预注册卡 P3-E1C-06（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-06.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-06.md
+    content_sha256: e07252b3c8da4d1418ae1978e52bd0c9f3b4734886458df5f7c74fa10fb1dda4
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-07
+  card_id: P3-E1C-07
+  name_zh: P3 预注册卡 P3-E1C-07（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-07.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-07.md
+    content_sha256: 08e499dd46b794c94895de7e2bffddaad37fd09a0e4014703ed8528284505735
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-08
+  card_id: P3-E1C-08
+  name_zh: P3 预注册卡 P3-E1C-08（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-08.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-08.md
+    content_sha256: ff2aed8c39955069983b6536d09eb9f035d0db5a02cb5fed08cc7845c60c1908
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-10
+  card_id: P3-E1C-10
+  name_zh: P3 预注册卡 P3-E1C-10（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-10.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-10.md
+    content_sha256: 11ee566d09ba72e3f2b0795c381c37d7a9db53bf011e783754e460c7a0a06783
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-11
+  card_id: P3-E1C-11
+  name_zh: P3 预注册卡 P3-E1C-11（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-11.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-11.md
+    content_sha256: 5f089f38a836d40d98d6a1a56cf74295b5bad8b83a8bb3be724a61d191a66c7d
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-12
+  card_id: P3-E1C-12
+  name_zh: P3 预注册卡 P3-E1C-12（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-12.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-12.md
+    content_sha256: 5386f5cb8f81e7d2ff51d41f3e4ae10c0a92aed7eb02e02a189278c82b2ad699
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-P3-E1C-13
+  card_id: P3-E1C-13
+  name_zh: P3 预注册卡 P3-E1C-13（E1C 稳健池候选点火考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: P3-E1C-STABLE13
+  n_eff: 13
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-13.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-13.md
+    content_sha256: 3f662ca3a4fc4dc350917b640daa1b94ed90bfaee3723cd4aa6393a0c2fb2bd7
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-T-PREREGISTER
+  card_id: T-PREREGISTER
+  name_zh: lane T 预注册卡——做T v2 单假设窄考试「三重共振极值点出手」（frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（实验启动前写死；启动后本卡任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/T_preregister.md
+    first_seen: '2026-09-17'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-09/kimi_audit/lane_reports/T_preregister.md
+    content_sha256: b0e38622c0bf0906d28f5775404b1b7f5a89c0ae7b65c0d1a4ce42a827a1b1c2
+    frozen_at: null
+  history_from: '2026-09-26'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-PREREG-EXAM-CARDS-V0
+  card_id: PREREG-EXAM-CARDS-V0
+  name_zh: 情绪指数预注册考试卡草案 v0——S8 领先性卡 + 成分有效性单卡
+  entry_kind: family
+  card_state: frozen
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: null
+  claim_fingerprint: null
+  status_note: frozen（2026-09-22 施工班冻结，先于实验落盘；实跑结果见 exam_report_v1.md）
+  lives_in:
+  - path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+    first_seen: '2026-09-22'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+    content_sha256: e5b70dae20b8c642049308d9bb14feb9e225558c6bdda618226b6bf3c7dd8a45
+    frozen_at: '2026-09-22'
+  history_from: '2026-09-26'
+  frozen_at: '2026-09-22'
+  conclusion_tier: null
+corpus:
+  n: 89
+  headed: 60
+  headless: 29
+  distinct_status_strings: 23
+  in_controlled_vocab: 56
+  registered: 56
+  by_token:
+    None: 29
+    候选: 1
+    frozen: 54
+    已封卡 SEALED: 1
+    active: 3
+    draft: 1
+  by_disposition:
+    unmapped_headless: 29
+    map: 56
+    non_domain: 2
+    needs_adjudication: 2
+  by_state: &id001
+    candidate: 1
+    draft: 1
+    frozen: 53
+    sealed: 1
+  by_registered_state: &id002
+    candidate: 1
+    frozen: 51
+    red: 2
+    sealed: 1
+    suspended: 1
+  families:
+    ETFT0-SCREEN:
+      members: 1
+      declared_n_eff: []
+      single_hypothesis_members: 1
+    FPOOL-20260919-TOP20:
+      members: 1
+      declared_n_eff:
+      - 6
+      single_hypothesis_members: 1
+    MIDVAL-20260919-TOP10:
+      members: 1
+      declared_n_eff:
+      - 10
+      single_hypothesis_members: 1
+    P3-B-FIRST6:
+      members: 7
+      declared_n_eff:
+      - 6
+      single_hypothesis_members: 6
+    P3-B2-STAT3:
+      members: 3
+      declared_n_eff:
+      - 3
+      single_hypothesis_members: 3
+    P3-B2-VOL12:
+      members: 12
+      declared_n_eff:
+      - 12
+      single_hypothesis_members: 12
+    P3-B2-VOLSTAT:
+      members: 1
+      declared_n_eff: []
+      single_hypothesis_members: 1
+    P3-E1C-STABLE13:
+      members: 13
+      declared_n_eff:
+      - 13
+      single_hypothesis_members: 13
+    T0-CONDITIONAL:
+      members: 1
+      declared_n_eff: []
+      single_hypothesis_members: 1
+    T0-PRERG:
+      members: 2
+      declared_n_eff:
+      - 1
+      single_hypothesis_members: 2
+    T0-REGIME:
+      members: 1
+      declared_n_eff:
+      - 1
+      single_hypothesis_members: 1
+  family_id_coverage: 43
+  n_eff_coverage: 40
+  lane_coverage: 56
+  card_id_field_coverage: 56
+  duplicate_content_groups:
+    5d359d00e153:
+    - docs/_working/2026-09-15-neff-estimator-preregistration.md
+    - docs/_working/archive/2026-09/c_class_scattered/2026-09-15-neff-estimator-preregistration.md
+    f6f1f7452600:
+    - docs/_working/2026-09-07-tdm-backtest-protocol.md
+    - docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
+  cards:
+  - path: docs/_working/2026-09-07-tdm-backtest-protocol.md
+    stem: 2026-09-07-tdm-backtest-protocol
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: f6f1f7452600
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/2026-09-15-neff-estimator-preregistration.md
+    stem: 2026-09-15-neff-estimator-preregistration
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 5d359d00e153
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+    stem: candidate_card_open_momentum_market
+    mapped_state: candidate
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: b8e255e780d9
+    registered_card_id: ALGO-CAND-MOM-01
+    registered_state: candidate
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md
+    stem: momentum_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: d4a0066749d3
+    registered_card_id: PRERG-MOM-01
+    registered_state: red
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_prereg_card.md
+    stem: ofi_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: bf1360147f40
+    registered_card_id: OFI-PREREG-CARD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+    stem: vwap_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 349876ad5656
+    registered_card_id: ALGO-VWAP-03
+    registered_state: red
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
+    stem: altdata_b_preregistration
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: c4b8684f5859
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
+    stem: prereg_etf_timing_rotation
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 9a8be4a34e19
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md
+    stem: etft0_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: ETFT0-SCREEN
+    n_eff_declared: null
+    sha12: 9259ad8a1066
+    registered_card_id: ETFT0-PREREG-CARD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+    stem: prereg_card_f_top20_exam
+    mapped_state: frozen
+    disposition: map
+    family_id: FPOOL-20260919-TOP20
+    n_eff_declared: 6
+    sha12: d4ffeb457b1c
+    registered_card_id: PREREG-CARD-F-TOP20-EXAM
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
+    stem: prereg_screen_slice_a
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 86e16fb17e41
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_b/prereg_indicators_sweep_b.md
+    stem: prereg_indicators_sweep_b
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: eb5c37c112bd
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
+    stem: prereg_slice3_protocol
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: fb803dc4f981
+    registered_card_id: PREREG-SLICE3-PROTOCOL
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_screen.md
+    stem: prereg_card_mid_valley_screen
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 5219b1e8fe20
+    registered_card_id: PREREG-CARD-MID-VALLEY-SCREEN
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_top10.md
+    stem: prereg_card_mid_valley_top10
+    mapped_state: frozen
+    disposition: map
+    family_id: MIDVAL-20260919-TOP10
+    n_eff_declared: 10
+    sha12: 9072dedcda60
+    registered_card_id: PREREG-CARD-MID-VALLEY-TOP10
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_events/preregistration.md
+    stem: preregistration
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 7d191959e570
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_01_tower_bottom.md
+    stem: exam_card_01_tower_bottom
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 909adce2bf9f
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_02_double_bottom.md
+    stem: exam_card_02_double_bottom
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 195c27ba9326
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_03_tower_top.md
+    stem: exam_card_03_tower_top
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: af3f49ea6a26
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_04_marubozu.md
+    stem: exam_card_04_marubozu
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: e51fe820ccf1
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_05_shooting_star.md
+    stem: exam_card_05_shooting_star
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: e3369e762010
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_06_limit_up_flat.md
+    stem: exam_card_06_limit_up_flat
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 112667238a5a
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+    stem: prereg_card_b15_bucket_switch
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: d768d15182b3
+    registered_card_id: PREREG-CARD-B15-BUCKET-SWITCH
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_survivor_regime_buckets.md
+    stem: prereg_card_survivor_regime_buckets
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 65767c134f20
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/sector_family/a_sector_signal_prereg.md
+    stem: a_sector_signal_prereg
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: a6b081e2616e
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+    stem: t0_prereg_funding_carry
+    mapped_state: sealed
+    disposition: map
+    family_id: T0-PRERG
+    n_eff_declared: 1
+    sha12: 5bf8c5e58f5e
+    registered_card_id: T0-PRERG-02
+    registered_state: sealed
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+    stem: t0_prereg_vwap_revert
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-PRERG
+    n_eff_declared: 1
+    sha12: dbdc34476aea
+    registered_card_id: T0-PRERG-01
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_regime_prereg_card.md
+    stem: t0_regime_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-REGIME
+    n_eff_declared: 1
+    sha12: 3c8671a016f5
+    registered_card_id: T0-REGIME-PREREG-CARD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_prereg_card.md
+    stem: tick_matrix_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: a126ec98c163
+    registered_card_id: TICK-MATRIX-PREREG-CARD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_protocol.md
+    stem: tick_matrix_protocol
+    mapped_state: null
+    disposition: non_domain
+    family_id: null
+    n_eff_declared: null
+    sha12: dc8880529e28
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/bizmine_night/tick_t0/tick_t0_prereg_card.md
+    stem: tick_t0_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: f14a45ce3ad7
+    registered_card_id: TICK-T0-PREREG-CARD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_family_summary.md
+    stem: prereg_family_summary
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOLSTAT
+    n_eff_declared: null
+    sha12: 6f9e02e0e9f5
+    registered_card_id: PREREG-FAMILY-SUMMARY
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_01_obv.md
+    stem: prereg_group_01_obv
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 49b4a4e95ddd
+    registered_card_id: PREREG-GROUP-01-OBV
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_02_mfi.md
+    stem: prereg_group_02_mfi
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 213d4d62cc9c
+    registered_card_id: PREREG-GROUP-02-MFI
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_03_vr.md
+    stem: prereg_group_03_vr
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 0fb6ed0273ee
+    registered_card_id: PREREG-GROUP-03-VR
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_04_ad.md
+    stem: prereg_group_04_ad
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 08ea079632f1
+    registered_card_id: PREREG-GROUP-04-AD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_05_pvt.md
+    stem: prereg_group_05_pvt
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: c64e50892104
+    registered_card_id: PREREG-GROUP-05-PVT
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_06_wvad.md
+    stem: prereg_group_06_wvad
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 8dc6f82cc35f
+    registered_card_id: PREREG-GROUP-06-WVAD
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_07_adosc.md
+    stem: prereg_group_07_adosc
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: a3e1045ed7c6
+    registered_card_id: PREREG-GROUP-07-ADOSC
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_08_eom.md
+    stem: prereg_group_08_eom
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 4c1eae13e58a
+    registered_card_id: PREREG-GROUP-08-EOM
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_09_kvo.md
+    stem: prereg_group_09_kvo
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: d001f0da51ac
+    registered_card_id: PREREG-GROUP-09-KVO
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_10_nvi.md
+    stem: prereg_group_10_nvi
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: 15ec64dccc93
+    registered_card_id: PREREG-GROUP-10-NVI
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_11_pvi.md
+    stem: prereg_group_11_pvi
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: c31ba5d71177
+    registered_card_id: PREREG-GROUP-11-PVI
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_12_force_index.md
+    stem: prereg_group_12_force_index
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-VOL12
+    n_eff_declared: 12
+    sha12: f55687139c01
+    registered_card_id: PREREG-GROUP-12-FORCE-INDEX
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_13_correl.md
+    stem: prereg_group_13_correl
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-STAT3
+    n_eff_declared: 3
+    sha12: 5a40e0aa3f52
+    registered_card_id: PREREG-GROUP-13-CORREL
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_14_beta.md
+    stem: prereg_group_14_beta
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-STAT3
+    n_eff_declared: 3
+    sha12: 5dbd421196c0
+    registered_card_id: PREREG-GROUP-14-BETA
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_15_rollvar_pricelevel.md
+    stem: prereg_group_15_rollvar_pricelevel
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B2-STAT3
+    n_eff_declared: 3
+    sha12: 6152850239fd
+    registered_card_id: PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
+    stem: 2026-09-07-tdm-backtest-protocol
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: f6f1f7452600
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/c_class_scattered/2026-09-15-neff-estimator-preregistration.md
+    stem: 2026-09-15-neff-estimator-preregistration
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 5d359d00e153
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
+    stem: 35_drawdown_protocol_impl
+    mapped_state: null
+    disposition: needs_adjudication
+    family_id: null
+    n_eff_declared: null
+    sha12: 095716a9b78f
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
+    stem: 37_liquidity_crisis_protocol
+    mapped_state: null
+    disposition: needs_adjudication
+    family_id: null
+    n_eff_declared: null
+    sha12: 820c18f69098
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/final3_campaign/x2_adjfactor_prereg.md
+    stem: x2_adjfactor_prereg
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 60b1a5938340
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-01.md
+    stem: P3-B-EXP-01
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: 4524161a120d
+    registered_card_id: P3-B-EXP-01
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-02.md
+    stem: P3-B-EXP-02
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: 6fd65b30b127
+    registered_card_id: P3-B-EXP-02
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-03.md
+    stem: P3-B-EXP-03
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: 71fc242b931c
+    registered_card_id: P3-B-EXP-03
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-04.md
+    stem: P3-B-EXP-04
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: 83279986a8c4
+    registered_card_id: P3-B-EXP-04
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-05.md
+    stem: P3-B-EXP-05
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: 4ade22bd46d9
+    registered_card_id: P3-B-EXP-05
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-06.md
+    stem: P3-B-EXP-06
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: 9f15de0f16fe
+    registered_card_id: P3-B-EXP-06
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md
+    stem: P3-B-NARROWING
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-B-FIRST6
+    n_eff_declared: 6
+    sha12: e1cd7de2d6fe
+    registered_card_id: P3-B-NARROWING
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-01.md
+    stem: P3-E1C-01
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: d857e6d8e673
+    registered_card_id: P3-E1C-01
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-02.md
+    stem: P3-E1C-02
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 8dc8b61d7334
+    registered_card_id: P3-E1C-02
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-03.md
+    stem: P3-E1C-03
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 5ca27efddb32
+    registered_card_id: P3-E1C-03
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-04.md
+    stem: P3-E1C-04
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 68da3d54d84b
+    registered_card_id: P3-E1C-04
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-05.md
+    stem: P3-E1C-05
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: b33e4c801688
+    registered_card_id: P3-E1C-05
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-06.md
+    stem: P3-E1C-06
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: e07252b3c8da
+    registered_card_id: P3-E1C-06
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-07.md
+    stem: P3-E1C-07
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 08e499dd46b7
+    registered_card_id: P3-E1C-07
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-08.md
+    stem: P3-E1C-08
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: ff2aed8c3995
+    registered_card_id: P3-E1C-08
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md
+    stem: P3-E1C-09
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 9e45c95e1a51
+    registered_card_id: P3-E1C-09
+    registered_state: suspended
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-10.md
+    stem: P3-E1C-10
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 11ee566d09ba
+    registered_card_id: P3-E1C-10
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-11.md
+    stem: P3-E1C-11
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 5f089f38a836
+    registered_card_id: P3-E1C-11
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-12.md
+    stem: P3-E1C-12
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 5386f5cb8f81
+    registered_card_id: P3-E1C-12
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-13.md
+    stem: P3-E1C-13
+    mapped_state: frozen
+    disposition: map
+    family_id: P3-E1C-STABLE13
+    n_eff_declared: 13
+    sha12: 3f662ca3a4fc
+    registered_card_id: P3-E1C-13
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/T_preregister.md
+    stem: T_preregister
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: b0e38622c0bf
+    registered_card_id: T-PREREGISTER
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/archive/2026-09/pattern_line/lifecycle-protocol-v2.md
+    stem: lifecycle-protocol-v2
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: cd3299f0ee0a
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/pattern_line/resurrection-protocol.md
+    stem: resurrection-protocol
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 2f3e53d13421
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/regime_recal/regime_recal_protocol_2026_09_17.md
+    stem: regime_recal_protocol_2026_09_17
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 23aa948f1232
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
+    stem: tilib_clear_a2_wave1_card
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 341e68a636e7
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
+    stem: wyf3_preregistered_protocol
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 200906587b1c
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+    stem: wyf3_preregistered_protocol_v2
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 425a93b3ef5c
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+    stem: prereg_exam_cards_v0
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: e5b70dae20b8
+    registered_card_id: PREREG-EXAM-CARDS-V0
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
+    stem: IBT-PROTOCOL-V1
+    mapped_state: null
+    disposition: non_domain
+    family_id: null
+    n_eff_declared: null
+    sha12: 9ab7c545a6eb
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
+    stem: tc06_r2_e1c09_options_card
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: ab0ddd382618
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
+    stem: tc06_r3_traderecord_card
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 4c8e2cf5a4b6
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+    stem: tc06_r4_t0_pairs_card
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 808c1755be32
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+    stem: sector_prereg_exam_cards_v0
+    mapped_state: draft
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: d4922ad65666
+    registered_card_id: SECTOR-PRERG-DECK-01
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
+    stem: sector_prereg_exam_cards_v1_frozen
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 8dfebf3a6a6f
+    registered_card_id: SECTOR-PRERG-DECK-01
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+    stem: t0_conditional_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-CONDITIONAL
+    n_eff_declared: null
+    sha12: c847c3a55f6a
+    registered_card_id: T0-CONDITIONAL
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
+    stem: comment_pool_alpha101_cards
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: f46ab3ca78ba
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
+    stem: huanfang_ten_hypothesis_cards
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 46d222f5c993
+    registered_card_id: null
+    registered_state: null
+    registered: false
+counts:
+  total_states: 13
+  total_transitions: 17
+  total_forbidden_edges: 13
+  total_gaps: 6
+  total_edges: 30
+  terminal_states: 4
+  production: 13
+  cards_total: 89
+  by_state: *id001
+  registered_by_state: *id002
+  registered_entries_in_ledger: 56
+  corpus_files_registered: 56
+  unregistered_declarable: 0
+  state_undeclared_headless: 29
+  needs_adjudication: 2
+  unmatched_alias: 0
+  non_domain_excluded: 2
+  by_verified_scope:
+    structure: 36
+    production: 13
+  by_confidence:
+    verified: 49
+  by_build_status:
+    built: 31
+    partial: 12
+    pending: 6
+  by_machine_readable:
+    partial: 8
+    'no': 11
+    'yes': 24
+  by_enforcement:
+    machine_checkable: 11
+    live_incident_observed: 2
+  by_edge_kind:
+    permitted: 17
+    forbidden: 13
+  in_register_rulings: 0
+  uncited_rulings: []
+  pending_registration: 0
+pending_registration:
+  unregistered_declarable: []
+  state_undeclared_headless:
+  - docs/_working/2026-09-07-tdm-backtest-protocol.md
+  - docs/_working/2026-09-15-neff-estimator-preregistration.md
+  - docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
+  - docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
+  - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
+  - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_b/prereg_indicators_sweep_b.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_events/preregistration.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_01_tower_bottom.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_02_double_bottom.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_03_tower_top.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_04_marubozu.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_05_shooting_star.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_06_limit_up_flat.md
+  - docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_survivor_regime_buckets.md
+  - docs/_working/archive/2026-09/bizmine_night/sector_family/a_sector_signal_prereg.md
+  - docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
+  - docs/_working/archive/2026-09/c_class_scattered/2026-09-15-neff-estimator-preregistration.md
+  - docs/_working/archive/2026-09/final3_campaign/x2_adjfactor_prereg.md
+  - docs/_working/archive/2026-09/pattern_line/lifecycle-protocol-v2.md
+  - docs/_working/archive/2026-09/pattern_line/resurrection-protocol.md
+  - docs/_working/archive/2026-09/regime_recal/regime_recal_protocol_2026_09_17.md
+  - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
+  - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
+  - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  - docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
+  - docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
+  needs_adjudication:
+  - docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
+  - docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
+  unmatched_alias: []
+  non_domain_excluded:
+  - docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_protocol.md
+  - docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
+  unmapped_cards:
+  - docs/_working/2026-09-07-tdm-backtest-protocol.md
+  - docs/_working/2026-09-15-neff-estimator-preregistration.md
+  - docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
+  - docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
+  - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
+  - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_b/prereg_indicators_sweep_b.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_events/preregistration.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_01_tower_bottom.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_02_double_bottom.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_03_tower_top.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_04_marubozu.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_05_shooting_star.md
+  - docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_06_limit_up_flat.md
+  - docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_survivor_regime_buckets.md
+  - docs/_working/archive/2026-09/bizmine_night/sector_family/a_sector_signal_prereg.md
+  - docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_protocol.md
+  - docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
+  - docs/_working/archive/2026-09/c_class_scattered/2026-09-15-neff-estimator-preregistration.md
+  - docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
+  - docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
+  - docs/_working/archive/2026-09/final3_campaign/x2_adjfactor_prereg.md
+  - docs/_working/archive/2026-09/pattern_line/lifecycle-protocol-v2.md
+  - docs/_working/archive/2026-09/pattern_line/resurrection-protocol.md
+  - docs/_working/archive/2026-09/regime_recal/regime_recal_protocol_2026_09_17.md
+  - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
+  - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
+  - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  - docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  - docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
+  - docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
+  reason_zh: unregistered_declarable=卡头可判态却无登记条目（本役回填欠账，registry 期必须清空，CV-HOST 硬腿判红）；state_undeclared_headless=卡头无
+    status 且受控词表无 unknown 值——补登记即造判决，故留册外逐条列名；needs_adjudication=别名规则 AL-06 明令不入册（无 H1 与判据结构）；non_domain_excluded=路径级规程件例外
+    AL-05/AL-07（战役规程不是契约卡）；四形分列禁合并隐身，分母与各形数量一律读 counts。
+  code_artifacts_awaiting_depgraph:
+  - scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+  - scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+  - src/zephyr/gov_enforcement/commit_gates/strategy_card_lifecycle_map_gate.py

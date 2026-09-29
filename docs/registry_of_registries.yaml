@@ -261,6 +261,16 @@ tiers:
         status: active
         description: 28 套封闭状态/情绪词表逐套登记（四轴：宏观 regime 10/情绪周期 12/预测预案 5/个股行为 1 合并条）——官方词表本体=zephyr.shared.vocab.market_state（SH-VOCAB-001），撞名冲突 C1/C2/C5/C6/C9/C11 注记（DLOOP-V2-STATE-VOCAB-UNIFICATION W2）
 
+      - registry_id: REG-CARDSTATE-VOCAB-001
+        name: 策略卡状态受控词表
+        physical_path: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 13
+        counting_rule: values 数组条目数
+        status: active
+        description: 策略预注册卡 card_state 契约地位轴 13 值唯一真源（图15 登记面）——experiment_registry.yaml REG-EXP-001 契约条目类与 validate_strategy_card_lifecycle_map.py 均动态装载本表，禁硬编码值集；值名↔图状态编号 D15-S1..S13 一一映射，green/red/insufficient 三值直译在册 viability_verdict 三值（零新枚举）；迁移边与禁止边不在本表（真源=骨架 §2 与图 YAML）。
+        owned_by: governance
       - registry_id: REG-DIR-001
         name: 项目目录登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
@@ -728,7 +738,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 11
+        entry_count: 67
         counting_rule: experiments 数组条目数
         status: draft
         description: 实验/回测目录唯一真源（SSoT）——登记所有实验运行实例（backtest/factor_eval/strategy_eval/param_search/walk_forward/regime_validation）的元信息。存储后端=FallbackBackend 本地 JSON（MLflow 已裁定完全卸载），展示层=Panel 实验历史 Tab。parent_experiment_id 支持迭代链。5 条真实可溯源实验（4 条 regime_validation completed + 1 条 walk_forward running）。#ARCH-BREG-001 P2

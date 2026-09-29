@@ -892,6 +892,1530 @@ experiments:
     completed_at: '2026-09-16'
 
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
+  - experiment_id: CARD-T0-PRERG-02
+    card_id: T0-PRERG-02
+    entry_kind: single_hypothesis
+    family_id: T0-PRERG
+    n_eff: 1
+    hypothesis_key: funding_carry_t0
+    card_state: sealed
+    rejudge_used: true
+    revives: null
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+      first_seen: '2026-09-19'
+    - path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md
+      first_seen: '2026-09-19'
+      role: verdict
+    - path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md
+      first_seen: '2026-09-19'
+      role: verdict
+    credential:
+    - seq: 1
+      from: frozen
+      to: frozen_amended
+      ruling_id: 裁定#363
+      date: '2026-09-19'
+    - seq: 2
+      from: frozen_amended
+      to: executing
+      flag: machine_admitted
+      date: '2026-09-19'
+    - seq: 3
+      from: executing
+      to: red
+      flag: test_evidence
+      date: '2026-09-19'
+    - seq: 4
+      from: red
+      to: frozen_amended
+      ruling_id: 裁定#363
+      date: '2026-09-19'
+      note: M10 一次性重判，令牌消耗点
+    - seq: 5
+      from: frozen_amended
+      to: executing
+      flag: machine_admitted
+      date: '2026-09-19'
+    - seq: 6
+      from: executing
+      to: red
+      flag: test_evidence
+      date: '2026-09-19'
+    - seq: 7
+      from: red
+      to: sealed
+      ruling_id: 裁定#363
+      date: '2026-09-19'
+    verdict_bindings:
+    - ruling_id: 裁定#363
+      verdict: RED
+      evidence_path: docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md
+    name_zh: T0-PRERG-02
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+      content_sha256: 5bf8c5e58f5e5abf4ebec83b846f038a8fb9d02f814e860dd277b48697247f97
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-T0-PRERG-01
+    card_id: T0-PRERG-01
+    entry_kind: single_hypothesis
+    family_id: T0-PRERG
+    n_eff: 1
+    hypothesis_key: vwap_reversion_t0
+    card_state: frozen
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+      first_seen: '2026-09-19'
+    credential: []
+    verdict_bindings:
+    - ruling_id: 裁定#390
+      verdict: RED
+      evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+      defect_ref: F-07
+    name_zh: T0-PRERG-01
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+      content_sha256: dbdc34476aea42f29ea6934dcf8d3e2b4c8250e63e42d8cc2e822fcc18e965d0
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-ALGO-VWAP-03
+    card_id: ALGO-VWAP-03
+    entry_kind: single_hypothesis
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: vwap_reversion_t0
+    card_state: red
+    card_face_state: frozen
+    rejudge_used: false
+    legacy_ref: ALGO件③（原卡无编号，回填时给新号并按规格在 legacy_ref 记文件名）
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+      first_seen: '2026-09-19'
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+      first_seen: '2026-09-19'
+      role: verdict
+    credential:
+    - seq: 1
+      from: executing
+      to: red
+      flag: test_evidence
+      date: '2026-09-19'
+    verdict_bindings:
+    - verdict: RED
+      evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+    name_zh: ALGO-VWAP-03
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+      content_sha256: 349876ad5656c596fe3ad34fa24554c929a9bae229597767c9df259a90657b0f
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+    viability_verdict: refuted
+  - experiment_id: CARD-T0-CONDITIONAL
+    card_id: T0-CONDITIONAL
+    entry_kind: single_hypothesis
+    family_id: T0-CONDITIONAL
+    n_eff: unknown
+    hypothesis_key: state_selective_t0
+    card_state: frozen
+    rejudge_used: false
+    revives: null
+    parent_context_cites:
+    - 裁定#399
+    - 裁定#331
+    - 裁定#386
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+      first_seen: '2026-09-22'
+    credential:
+    - seq: 1
+      from: draft
+      to: frozen
+      ruling_id: 裁定#399
+      date: '2026-09-22'
+    verdict_bindings: []
+    name_zh: T0-CONDITIONAL
+    body_fingerprint:
+      path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+      content_sha256: c847c3a55f6afc623acbe34a2c5058cf8d6ddf8e8857fcd57f4e4e82ba01c9e3
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-09
+    card_id: P3-E1C-09
+    entry_kind: single_hypothesis
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: e1c_stable13_09
+    card_state: suspended
+    card_face_state: frozen
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md
+      first_seen: '2026-09-15'
+    credential:
+    - seq: 1
+      from: executing
+      to: insufficient
+      flag: test_evidence
+      date: '2026-09-18'
+    - seq: 2
+      from: insufficient
+      to: suspended
+      ruling_id: 裁定#398
+      date: '2026-09-21'
+    verdict_bindings: []
+    name_zh: P3-E1C-09
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md
+      content_sha256: 9e45c95e1a51849428bc2491700e2168ad92065630bfdb8c552ebc665741c71f
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-NARROWING
+    card_id: P3-B-NARROWING
+    entry_kind: narrowing_ruling
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: p3_b_narrowing
+    card_state: frozen
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md
+      first_seen: '2026-09-15'
+    credential: []
+    verdict_bindings: []
+    name_zh: P3-B-NARROWING
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md
+      content_sha256: e1cd7de2d6fedec0220642aa66d0876eec1677edd8380dcea60b3eea2cd3315c
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-ALGO-CAND-MOM-01
+    card_id: ALGO-CAND-MOM-01
+    entry_kind: single_hypothesis
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: open_momentum_to_close
+    card_state: candidate
+    derived_from: PRERG-MOM-01
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+      first_seen: '2026-09-19'
+    credential: []
+    verdict_bindings: []
+    name_zh: ALGO-CAND-MOM-01
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+      content_sha256: b8e255e780d98df27681217d9aed9730e964c83e0017a6c243659416cc7afc1d
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-PRERG-MOM-01
+    card_id: PRERG-MOM-01
+    entry_kind: single_hypothesis
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: midday_momentum_t1
+    card_state: red
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md
+      first_seen: '2026-09-19'
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md
+      first_seen: '2026-09-19'
+      role: verdict
+    credential:
+    - seq: 1
+      from: executing
+      to: red
+      flag: test_evidence
+      date: '2026-09-19'
+    verdict_bindings:
+    - verdict: RED
+      evidence_path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_exam_report.md
+    name_zh: PRERG-MOM-01
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md
+      content_sha256: d4a0066749d345e55b94726cc760538467e2d395e92641371f95a0929d24158f
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+    viability_verdict: refuted
+  - experiment_id: CARD-SECTOR-PRERG-DECK-01
+    card_id: SECTOR-PRERG-DECK-01
+    entry_kind: family
+    family_id: SECTOR-V1
+    n_eff: unknown
+    hypothesis_key: sector_line_deck_v1
+    card_state: frozen
+    versions:
+    - sector_prereg_exam_cards_v0
+    - sector_prereg_exam_cards_v1_frozen
+    rejudge_used: false
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+      first_seen: '2026-09-22'
+    - path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
+      first_seen: '2026-09-23'
+    credential:
+    - seq: 1
+      from: draft
+      to: frozen
+      flag: owner_sign
+      date: '2026-09-23'
+    verdict_bindings: []
+    name_zh: SECTOR-PRERG-DECK-01
+    body_fingerprint:
+      path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+      content_sha256: d4922ad656666fc860fa1ae4c40d4b2be614f0c7b5e0bc107d6261a2348b569b
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-T0-MATRIX-VWAP-CEILING
+    card_id: T0-MATRIX-VWAP-CEILING
+    entry_kind: single_hypothesis
+    family_id: T0-MATRIX
+    n_eff: unknown
+    hypothesis_key: t0_ceiling_capacity
+    card_state: frozen
+    rejudge_used: false
+    truth_source_missing: true
+    history_from: '2026-09-24'
+    lives_in:
+    - path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+      first_seen: '2026-09-20'
+    credential: []
+    verdict_bindings: []
+    name_zh: T0-MATRIX-VWAP-CEILING
+    body_fingerprint:
+      path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+      content_sha256: null
+      frozen_at: null
+    claim_fingerprint: null
+    revived_by: null
+    conclusion_tier: null
+  - experiment_id: CARD-OFI-PREREG-CARD
+    card_id: OFI-PREREG-CARD
+    name_zh: ALGO件① OFI成交签名代理 预注册卡（frozen，先于实验落盘）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（2026-09-19，W2-T2，sid=st-final3-20260919）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_prereg_card.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_prereg_card.md
+      content_sha256: bf1360147f40859ad8119ecc7d523b5d819c4cf8d1de894cbaf2be891251417c
+      frozen_at: '2026-09-19'
+    history_from: '2026-09-26'
+    frozen_at: '2026-09-19'
+    conclusion_tier: null
+  - experiment_id: CARD-ETFT0-PREREG-CARD
+    card_id: ETFT0-PREREG-CARD
+    name_zh: ETFT0 预注册卡——高波资产做T 振幅经济学勘测（三宇宙，宇宙选择规则先于测量，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: ETFT0-SCREEN
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（本卡于任何宇宙筛选取数之前写死；实验启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md
+      content_sha256: 9259ad8a10663c2e05be3196d955e7480c562f12bd8b2b4324194c48d69f92c3
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-CARD-F-TOP20-EXAM
+    card_id: PREREG-CARD-F-TOP20-EXAM
+    name_zh: F 车道 top-20 待考池窄考+正考预注册卡（W2-T3 E4 收口批次，st-final3-20260919）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: FPOOL-20260919-TOP20
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（本卡在考试执行前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+      content_sha256: d4ffeb457b1cf07edb49dbfc461f0a0cd35560dac50ddd6d82dbbf23e03a1c2f
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-SLICE3-PROTOCOL
+    card_id: PREREG-SLICE3-PROTOCOL
+    name_zh: 指标库全扫切片C 预注册协议（执行前钉死）——c1_market.technical_indicator 因子列第3等分 55 列 IC 大海选
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（本文落盘先于任何因子取数；落盘后禁改，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
+      content_sha256: fb803dc4f981379158babe2bce0901e0ee6994a9913862689852ec6f1a65ca6f
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-CARD-MID-VALLEY-SCREEN
+    card_id: PREREG-CARD-MID-VALLEY-SCREEN
+    name_zh: MID 洼地深挖预注册卡——38 可映射候选 × vol_pct 灰度三桶条件 IC 二筛（st-bizmine-mid-20260919，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（二筛启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_screen.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_screen.md
+      content_sha256: 5219b1e8fe2020c1c7a3ba6d6755465996f7cce2965d998b8f34c0d2afb63b82
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-CARD-MID-VALLEY-TOP10
+    card_id: PREREG-CARD-MID-VALLEY-TOP10
+    name_zh: MID 洼地 top-10 候选预注册卡（10 卡合册，考试门槛 frozen，st-bizmine-mid-20260919）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: MIDVAL-20260919-TOP10
+    n_eff: 10
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（卡片在考试执行前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_top10.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_top10.md
+      content_sha256: 9072dedcda6083ba75b467b1a6a881aef0a518ae3c68fe738cbae7c225cd669c
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-CARD-B15-BUCKET-SWITCH
+    card_id: PREREG-CARD-B15-BUCKET-SWITCH
+    name_zh: B-15 预注册卡——按大盘灰度桶切换组队 前向窗窄测（裁定#361，frozen 先于取数）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（2026-09-19 落定后禁改；计算代码只实现本卡口径）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+      content_sha256: d768d15182b3f98632106f5b2139d252fc8f813e4f491834b4f12d5ebf72c920
+      frozen_at: '2026-09-19'
+    history_from: '2026-09-26'
+    frozen_at: '2026-09-19'
+    conclusion_tier: null
+  - experiment_id: CARD-T0-REGIME-PREREG-CARD
+    card_id: T0-REGIME-PREREG-CARD
+    name_zh: T0 预注册卡——510300 做T 行情条件化窄测（regime 条件振幅勘测，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: T0-REGIME
+    n_eff: 1
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（本卡于实验运行前写死；实验启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_regime_prereg_card.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_regime_prereg_card.md
+      content_sha256: 3c8671a016f5d640971d541590abc985b5674377148f6c89d5c5880409719859
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-TICK-MATRIX-PREREG-CARD
+    card_id: TICK-MATRIX-PREREG-CARD
+    name_zh: tick 矩阵基线轮预注册卡（frozen，先于实验落盘）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（2026-09-19 基线轮）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_prereg_card.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_prereg_card.md
+      content_sha256: a126ec98c163398241eaf6da3c5b2598fe564e090636784e4f183873da6a652e
+      frozen_at: '2026-09-19'
+    history_from: '2026-09-26'
+    frozen_at: '2026-09-19'
+    conclusion_tier: null
+  - experiment_id: CARD-TICK-T0-PREREG-CARD
+    card_id: TICK-T0-PREREG-CARD
+    name_zh: TICK-T0 预注册卡（tick 级执行三模型×三标的窄测，frozen 先于任何取数统计）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（本 commit 落盘后 scripting 才允许开始；修订=带日期附录，禁静默改卡）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/tick_t0/tick_t0_prereg_card.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/tick_t0/tick_t0_prereg_card.md
+      content_sha256: f14a45ce3ad7ab10f83da2cdecd9e7a76746b65e613349126fe62f4c768af1b5
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-FAMILY-SUMMARY
+    card_id: PREREG-FAMILY-SUMMARY
+    name_zh: L1 第二批预注册·族总卡——量能/统计族 18 档（去重后 15 组）沙箱考试（frozen）
+    entry_kind: family
+    card_state: frozen
+    family_id: P3-B2-VOLSTAT
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_family_summary.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_family_summary.md
+      content_sha256: 6f9e02e0e9f5a6cd520484ae4799b93a8a5419dbdb44ac9c1259c66ced85010d
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-01-OBV
+    card_id: PREREG-GROUP-01-OBV
+    name_zh: L1 第二批预注册卡 prereg_group_01_obv（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_01_obv.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_01_obv.md
+      content_sha256: 49b4a4e95ddd1ee5ea5ffcd17f6d2981a165def44389c9ce19c09c2ec577613e
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-02-MFI
+    card_id: PREREG-GROUP-02-MFI
+    name_zh: L1 第二批预注册卡 prereg_group_02_mfi（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_02_mfi.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_02_mfi.md
+      content_sha256: 213d4d62cc9cf1cbd76bb94434a0f5ab93d59b1ee32e3dd243382d394a72122c
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-03-VR
+    card_id: PREREG-GROUP-03-VR
+    name_zh: L1 第二批预注册卡 prereg_group_03_vr（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_03_vr.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_03_vr.md
+      content_sha256: 0fb6ed0273eeacb81d0ad646f3afe3e87f6c8f4389b95d005cdf0e22ebc896da
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-04-AD
+    card_id: PREREG-GROUP-04-AD
+    name_zh: L1 第二批预注册卡 prereg_group_04_ad（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_04_ad.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_04_ad.md
+      content_sha256: 08ea079632f1222ae835f80684df43ee3d9bacd90ff31d82e0f9f470c17c7b5c
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-05-PVT
+    card_id: PREREG-GROUP-05-PVT
+    name_zh: L1 第二批预注册卡 prereg_group_05_pvt（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_05_pvt.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_05_pvt.md
+      content_sha256: c64e50892104389035d897f9a000d2ace84aacb3cebf7d31051fb0e24b8bcd1e
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-06-WVAD
+    card_id: PREREG-GROUP-06-WVAD
+    name_zh: L1 第二批预注册卡 prereg_group_06_wvad（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_06_wvad.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_06_wvad.md
+      content_sha256: 8dc6f82cc35fe768117a3e2e5430bff97c02e53e2cd827da835a89aa7df3eead
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-07-ADOSC
+    card_id: PREREG-GROUP-07-ADOSC
+    name_zh: L1 第二批预注册卡 prereg_group_07_adosc（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_07_adosc.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_07_adosc.md
+      content_sha256: a3e1045ed7c6d705c7b4dc5d95f335906d750f2b8950a6840dd1d548c51de8a8
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-08-EOM
+    card_id: PREREG-GROUP-08-EOM
+    name_zh: L1 第二批预注册卡 prereg_group_08_eom（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_08_eom.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_08_eom.md
+      content_sha256: 4c1eae13e58a12e74e1d97c1daa72f705102589f0f4293516e2935e2db77599f
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-09-KVO
+    card_id: PREREG-GROUP-09-KVO
+    name_zh: L1 第二批预注册卡 prereg_group_09_kvo（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_09_kvo.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_09_kvo.md
+      content_sha256: d001f0da51acd89dcff7ce60a3b8c537d909abc8f55c581bd8af1dbc66b9d9d4
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-10-NVI
+    card_id: PREREG-GROUP-10-NVI
+    name_zh: L1 第二批预注册卡 prereg_group_10_nvi（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_10_nvi.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_10_nvi.md
+      content_sha256: 15ec64dccc9395c79aad1ea0101d493bbcdd4be99ee0f0045824332114766066
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-11-PVI
+    card_id: PREREG-GROUP-11-PVI
+    name_zh: L1 第二批预注册卡 prereg_group_11_pvi（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_11_pvi.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_11_pvi.md
+      content_sha256: c31ba5d71177cd1a6b70ec9cddaaf0e27a6280f325c380e796a830424b2c38ba
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-12-FORCE-INDEX
+    card_id: PREREG-GROUP-12-FORCE-INDEX
+    name_zh: L1 第二批预注册卡 prereg_group_12_force_index（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-VOL12
+    n_eff: 12
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_12_force_index.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_12_force_index.md
+      content_sha256: f55687139c01d59adaa9b297a70c58541869841c034685ecabbb838da1d08883
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-13-CORREL
+    card_id: PREREG-GROUP-13-CORREL
+    name_zh: L1 第二批预注册卡 prereg_group_13_correl（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-STAT3
+    n_eff: 3
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_13_correl.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_13_correl.md
+      content_sha256: 5a40e0aa3f522ab08e61ac81744395e48ba192edf5697c604bb7928e92e6c9ba
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-14-BETA
+    card_id: PREREG-GROUP-14-BETA
+    name_zh: L1 第二批预注册卡 prereg_group_14_beta（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-STAT3
+    n_eff: 3
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_14_beta.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_14_beta.md
+      content_sha256: 5dbd421196c0edc3d7aee39ded2206cfe5b346bfb54e7602054fd8f308703084
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+    card_id: PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+    name_zh: L1 第二批预注册卡 prereg_group_15_rollvar_pricelevel（量能/统计族点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B2-STAT3
+    n_eff: 3
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_15_rollvar_pricelevel.md
+      first_seen: '2026-09-19'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_15_rollvar_pricelevel.md
+      content_sha256: 6152850239fd016744ef24854c0f5b05a8b6bb5666dbc02fd356eb809e30ca49
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-EXP-01
+    card_id: P3-B-EXP-01
+    name_zh: P3 预注册卡 P3-B-EXP-01（FCT-EXP-001 一致预期EP 点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-01.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-01.md
+      content_sha256: 4524161a120d95619545c20684936d4450315187a57561b2e52b56b4ed279c4a
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-EXP-02
+    card_id: P3-B-EXP-02
+    name_zh: P3 预注册卡 P3-B-EXP-02（FCT-EXP-002 修正动量 点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-02.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-02.md
+      content_sha256: 6fd65b30b1277f1180dbfa4c4da0674afafb9cc13d2779baf0d14fefdb1091db
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-EXP-03
+    card_id: P3-B-EXP-03
+    name_zh: P3 预注册卡 P3-B-EXP-03（FCT-EXP-003 修正广度 点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-03.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-03.md
+      content_sha256: 71fc242b931c0b2906b69bd5f451e8ec2c476774f9f237cf2ec4df3375a13c74
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-EXP-04
+    card_id: P3-B-EXP-04
+    name_zh: P3 预注册卡 P3-B-EXP-04（FCT-EXP-004 异常覆盖 点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-04.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-04.md
+      content_sha256: 83279986a8c4fcf698009df0a1732849947b2d5312094ddb41e6241176c3a03e
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-EXP-05
+    card_id: P3-B-EXP-05
+    name_zh: P3 预注册卡 P3-B-EXP-05（FCT-EXP-005 分歧度 点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-05.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-05.md
+      content_sha256: 4ade22bd46d9683c0a35e824f04c01494ce0df7724fdbfb7aa9e302a3b722716
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-B-EXP-06
+    card_id: P3-B-EXP-06
+    name_zh: P3 预注册卡 P3-B-EXP-06（FCT-EXP-006 评级动量 点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-B-FIRST6
+    n_eff: 6
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-06.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-06.md
+      content_sha256: 9f15de0f16fe5992eeccb87c9a19adcdee3437884ef6c215b343eef70ba8b63d
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-01
+    card_id: P3-E1C-01
+    name_zh: P3 预注册卡 P3-E1C-01（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-01.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-01.md
+      content_sha256: d857e6d8e6732ce63ffe71187cb3a9ee1d1293248672dd15e4d86b1f3d7de92c
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-02
+    card_id: P3-E1C-02
+    name_zh: P3 预注册卡 P3-E1C-02（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-02.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-02.md
+      content_sha256: 8dc8b61d7334d1372fd248e3d6d17c525720a14ab64180450fe71c4ad68ce0d1
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-03
+    card_id: P3-E1C-03
+    name_zh: P3 预注册卡 P3-E1C-03（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-03.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-03.md
+      content_sha256: 5ca27efddb32198990c70922dff1211bee23df6e3e42dfed830222ff4a6d3035
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-04
+    card_id: P3-E1C-04
+    name_zh: P3 预注册卡 P3-E1C-04（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-04.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-04.md
+      content_sha256: 68da3d54d84b14d2c6600d68f790a5941bc20942afdc161d6cc5316c627b7b18
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-05
+    card_id: P3-E1C-05
+    name_zh: P3 预注册卡 P3-E1C-05（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-05.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-05.md
+      content_sha256: b33e4c80168893323704cbdd5fe87d08ac1b45769c9d2dc1f707e60d08f7a1d8
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-06
+    card_id: P3-E1C-06
+    name_zh: P3 预注册卡 P3-E1C-06（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-06.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-06.md
+      content_sha256: e07252b3c8da4d1418ae1978e52bd0c9f3b4734886458df5f7c74fa10fb1dda4
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-07
+    card_id: P3-E1C-07
+    name_zh: P3 预注册卡 P3-E1C-07（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-07.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-07.md
+      content_sha256: 08e499dd46b794c94895de7e2bffddaad37fd09a0e4014703ed8528284505735
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-08
+    card_id: P3-E1C-08
+    name_zh: P3 预注册卡 P3-E1C-08（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-08.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-08.md
+      content_sha256: ff2aed8c39955069983b6536d09eb9f035d0db5a02cb5fed08cc7845c60c1908
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-10
+    card_id: P3-E1C-10
+    name_zh: P3 预注册卡 P3-E1C-10（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-10.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-10.md
+      content_sha256: 11ee566d09ba72e3f2b0795c381c37d7a9db53bf011e783754e460c7a0a06783
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-11
+    card_id: P3-E1C-11
+    name_zh: P3 预注册卡 P3-E1C-11（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-11.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-11.md
+      content_sha256: 5f089f38a836d40d98d6a1a56cf74295b5bad8b83a8bb3be724a61d191a66c7d
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-12
+    card_id: P3-E1C-12
+    name_zh: P3 预注册卡 P3-E1C-12（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-12.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-12.md
+      content_sha256: 5386f5cb8f81e7d2ff51d41f3e4ae10c0a92aed7eb02e02a189278c82b2ad699
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-P3-E1C-13
+    card_id: P3-E1C-13
+    name_zh: P3 预注册卡 P3-E1C-13（E1C 稳健池候选点火考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: P3-E1C-STABLE13
+    n_eff: 13
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（考试启动前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-13.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-13.md
+      content_sha256: 3f662ca3a4fc4dc350917b640daa1b94ed90bfaee3723cd4aa6393a0c2fb2bd7
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-T-PREREGISTER
+    card_id: T-PREREGISTER
+    name_zh: lane T 预注册卡——做T v2 单假设窄考试「三重共振极值点出手」（frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（实验启动前写死；启动后本卡任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/T_preregister.md
+      first_seen: '2026-09-17'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-09/kimi_audit/lane_reports/T_preregister.md
+      content_sha256: b0e38622c0bf0906d28f5775404b1b7f5a89c0ae7b65c0d1a4ce42a827a1b1c2
+      frozen_at: null
+    history_from: '2026-09-26'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-PREREG-EXAM-CARDS-V0
+    card_id: PREREG-EXAM-CARDS-V0
+    name_zh: 情绪指数预注册考试卡草案 v0——S8 领先性卡 + 成分有效性单卡
+    entry_kind: family
+    card_state: frozen
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: null
+    claim_fingerprint: null
+    status_note: frozen（2026-09-22 施工班冻结，先于实验落盘；实跑结果见 exam_report_v1.md）
+    lives_in:
+    - path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+      first_seen: '2026-09-22'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+      content_sha256: e5b70dae20b8c642049308d9bb14feb9e225558c6bdda618226b6bf3c7dd8a45
+      frozen_at: '2026-09-22'
+    history_from: '2026-09-26'
+    frozen_at: '2026-09-22'
+    conclusion_tier: null
+# ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
 pending_fk:
   - fk_field: universe
     fk_value: UNI-BASKET-001

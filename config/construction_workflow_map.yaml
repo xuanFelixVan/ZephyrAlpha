@@ -1,0 +1,2220 @@
+# AI 施工升级流图（construction_workflow_map，图 14）——由 generate_construction_workflow_map.py 机生。
+# 真源=政策内嵌机读锚块（政策未嵌块期回落 91 号提案件，见 anchor_source）；本文件禁手改后不回生成（counts 一致性校验判红）。
+# 节点只存 step_id 与引用，禁复制政策正文（INV-1）；machine_facts 层重扫即刷新，人工语义层改动须先回写骨架与锚块。
+schema_version: '0.1'
+map_id: construction_workflow_map
+name_zh: AI 施工升级流图
+nickname: 施工升级流
+effective_from: '2026-09-24'
+markets:
+- cn_a
+generator: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+generated_at: '2026-09-25T04:00:00+08:00'
+anchor_source: proposal
+anchor_block_origin: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
+derived_from: docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md
+ssot_note_zh: '真源方向：政策 MD 内嵌机读锚块（唯一真源）→ 本图 YAML（派生件，禁手改后不回生成）。本轮锚块来源 anchor_source=proposal（docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml）；政策未嵌块期间
+  17 个环节全量记入 pending_anchors，欠账显式化禁静默。
+
+  字段分层（六图终局卷 §1 裁定一）：L0 通用层统一名 note_zh/doc_refs；L1 纵轴层本图取用 wiring_status/red_reason/fallback/invalidation/gap_refs；L2
+  图专属层字段清单=verifiability/anchor_kind/exec_source/gates/executable/cli_anchors/docs/policy_step/policy_anchor/role/handoff_to/conditional/trigger_when/rollback_to/max_rounds_ref/red_findings/sub_workflow/human_gate/skeleton_status/skeleton_verifiability。
+
+  双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §1 状态列 ✅（6 个，多了算谎少了算欠），structure=🔨 环节 + gap 节点；两列独立不合并——build_status
+  取状态列、verifiability 取可机验列（值集动态取 verifiability 受控词表），原始列值另存 skeleton_status/skeleton_verifiability 供 CV-STATE 反查。handoff
+  节点 verifiability 恒 manual（簿03 反洗白口径：禁借图11 的 auto 结论抬本图分数）。
+
+  gap 节点 D14-G01~G12 取骨架 §1 红条目点名册的『文档说有、实则没有』9 条 + 幽灵脚本引用面在册可证部分 + 前端真源路径双份嫌疑 1 条，全部只挂标识符与复跑命令（INV-1）；无实现代码可挂 ⇒
+  module_id/module_ref 双 null + red_reason 必填。'
+laws:
+- 图只存 step_id 与引用，禁复制政策正文——政策自述是编排层，本图同构承接
+- 每个环节必须有可执行真相源或已登记门禁作锚，否则记 manual 并计入红账
+- 落地收尾机制属交付流水线（图11），本图只挂 handoff 引用，禁重复登记
+- 状态列与可机验列两列口径独立，禁压成一列；production 数恒等骨架 ✅ 数
+- handoff 段不得借图11 的 auto 结论抬本图分数（反洗白，取簿03 实测口径）
+boundary:
+- 不画提交门禁体系与队列落地机制——config/governance_operations_map.yaml 的 out_of_scope_refs 原文已排除，归属图11
+- 不含数据运维流——政策边界节明令数据运维另必读 data_ops 规程
+- 轴区分：本图 step_id=D14-* ；作战地图 step_id=BM-*（交易 flow_stage 值域闭集，施工步骤挂入必被判域漂移）
+- 不裁域宽：政策 scope 声明与正文收窄口径矛盾（骨架 R-16），本图按正文收窄口径建，矛盾交总包裁定
+layers:
+- layer_id: 前置
+  name_zh: 前置段
+  span_zh: 起=接到施工任务；止=任务文档可施工
+- layer_id: 判定
+  name_zh: 判定段
+  span_zh: 起=可施工文档；止=要不要动架构与方案是否挖干
+- layer_id: 设计登记
+  name_zh: 设计登记段
+  span_zh: 起=方案定稿；止=depgraph 设计态 + 全图对齐 + 前端真源盘点
+- layer_id: 施工
+  name_zh: 施工段
+  span_zh: 起=登记通过；止=落码完成（含子 SOP 引用）
+- layer_id: 验收
+  name_zh: 验收段
+  span_zh: 起=落码；止=循环验收归零 + 长清单审查结论
+- layer_id: 文档
+  name_zh: 文档段
+  span_zh: 起=审查通过；止=施工文档与代码对齐
+- layer_id: 文档转正
+  name_zh: 文档转正段
+  span_zh: 起=文档对齐；止=全景图双态流转完成
+- layer_id: 落地收尾
+  name_zh: 落地收尾段
+  span_zh: 起=流转完成；止=任务终态（机制归图11，本图只挂交接）
+nodes:
+- node_id: D14-01
+  name_zh: Session 冷启动
+  segment: 前置
+  node_type: stage
+  decision_question: 会话是否已就绪到"可以开始施工"？就绪结论落在哪个面？
+  note_zh: 就绪判据实体在图11 D11-S01（门控引擎+会话注册表），本段只作交接；政策点名的守护件为幽灵（D14-G01），实测可跑入口未被政策指认（D14-G02）
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 §1 D14-01 行实扫：phase_manager 内 gate_* 唯一名 58（政策称 46）；session_startup_check.py --json 实跑 overall=GREEN
+  - 2026-09-25 本车道只读复跑：ls scripts/ide_health_service.py → No such file（D14-G01 成立）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-0-session-冷启动前置必做
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 0
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-01
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md#全景图
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: handoff
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+    symbol: 全景图
+  role: handoff
+  handoff_to:
+  - D11-S01
+  - D11-S02
+  - D11-S09
+  order: 1
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-01
+  - R-02
+  - WJ-R-01
+  - WJ-R-13
+  - WJ-R-14
+  gap_refs:
+  - D14-G01
+  - D14-G02
+  red_reason: terminal
+  wiring_status: partial
+  fallback: 就绪判据不可用时按宪法冷启动序列逐项人工核，不阻塞进 D14-02
+  invalidation: 图11 D11-S01 环节改号或门控入口换件 ⇒ 本段 handoff 引用作废
+  policy_step: Step 0
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-0-session-冷启动前置必做
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: partial
+- node_id: D14-02
+  name_zh: 文档审查
+  segment: 前置
+  node_type: stage
+  decision_question: 待施工文档现在可施工吗？GAP 清单产在哪、由谁签收？
+  note_zh: 审查清单宿主实为政策附录 A（与 D14-11 同物，簿01 WJ-R-03）；被指认的真源件已 deprecated，审查结论政策明禁留痕 ⇒ 结构性无机验面
+  build_status: pending
+  build_status_zh: pending
+  confidence: untested
+  verified_scope: null
+  evidence:
+  - 2026-09-24 骨架 §1 D14-02 行 + 簿01 §2：AI_review_instructions.md 在盘但 status=deprecated；全仓无 12 节结构
+  - 2026-09-25 本车道只读复跑：docs/_archive/AI_review_instructions.md 存在（deprecated 真源，故本段 anchor_kind=doc 而非 exec）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-1-文档审查
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 1
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-02
+  - docs/_archive/AI_review_instructions.md#审查
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: doc
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/_archive/AI_review_instructions.md
+    symbol: 审查
+  role: internal
+  handoff_to: []
+  order: 2
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-10
+  - WJ-R-03
+  - WJ-R-06
+  gap_refs: []
+  red_reason: broken_supply
+  wiring_status: unwired_no_caller
+  fallback: 无留痕面时以对话内 GAP 清单为准，图不代主张
+  invalidation: 若裁定允许 .runtime 会话内留痕，本段可升 inspection；现按 manual 记
+  policy_step: Step 1
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-1-文档审查
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ⬜
+  skeleton_verifiability: 'no'
+- node_id: D14-03
+  name_zh: 创建前搜索
+  segment: 前置
+  node_type: stage
+  decision_question: 拟新建的东西是否已有现成件？反查发生过与复用决策分别留在哪？
+  note_zh: 反查留痕面实测存在（lookup_audit jsonl + 执法台在册）；复用决策标注政策只说"对话内"⇒ 无结构落点
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 簿01 §3：capability_lookup.py 审计写入函数在位；主区 .runtime/lookup_audit/ 实测 363 件
+  - 2026-09-25 本车道只读复跑：CAPABILITY-LOOKUP-REQUIRED 在两册各 1 条在册
+  module_id: MOD-INF-037
+  module_ref: src/zephyr/governance/capability_lookup.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-15-创建前搜索仅新建模块触发
+  - src/zephyr/governance/capability_lookup.py
+  - gate:CAPABILITY-LOOKUP-REQUIRED
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 1.5
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-03
+  - docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml#search_first
+  - docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml#phase_1_search
+  data_refs: []
+  store_refs:
+  - artifact: 能力反查审计流水
+    location: .runtime/lookup_audit/<sid>.jsonl
+    key: session_id
+    retention: 按运行时回收策略
+  runtime_refs:
+  - .runtime/lookup_audit/
+  verifiability: inspection
+  anchor_kind: gate_id
+  exec_source: gate:CAPABILITY-LOOKUP-REQUIRED
+  gates:
+  - CAPABILITY-LOOKUP-REQUIRED
+  executable:
+  - src/zephyr/governance/capability_lookup.py
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml
+    symbol: search_first
+  - path: docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml
+    symbol: phase_1_search
+  role: internal
+  handoff_to: []
+  order: 3
+  conditional: true
+  trigger_when: 仅新建模块/蓝图/代码文件/门禁时触发
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-09
+  gap_refs:
+  - D14-G11
+  red_reason: null
+  wiring_status: partial
+  fallback: 逃生通道=提交标记 no-lookup 白名单理由（真源=能力反查规则册，本图不重述）
+  invalidation: 反查审计面停写 ⇒ 本段 automated 主张作废（降 manual）
+  policy_step: Step 1.5
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-15-创建前搜索仅新建模块触发
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: partial
+  exec_evidence:
+  - 2026-09-25 只读复跑 grep -n 'def write_lookup_audit_log' src/zephyr/governance/capability_lookup.py 命中
+  - 2026-09-25 只读复跑：CAPABILITY-LOOKUP-REQUIRED 两册各 1 条在册
+  module_label_bilingual: 能力lookup / capability_lookup
+- node_id: D14-04
+  name_zh: 架构评审门控判定
+  segment: 判定
+  node_type: stage
+  decision_question: 本次变更要不要动架构？要动的门位由谁签、记录落哪？
+  note_zh: 人门位=Owner（执行或书面委托），设计上不可自动化；政策指认的评审记录目录不在盘，实际落点在归档侧且仅 2 条
+  build_status: pending
+  build_status_zh: pending
+  confidence: untested
+  verified_scope: null
+  evidence:
+  - 2026-09-24 骨架 §6 L-1 + 簿01 §4：docs/_working/audit/architecture-reviews/ 不存在；archive 侧实测 2 条记录
+  - 2026-09-25 本车道只读复跑：三份规则锚件俱在盘（gov_arch_002 / OPS-DEV-002 符号命中）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-18-架构评审门控判定-4-种变更触发
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 1.8
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-04
+  - docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml#gov_arch_002
+  - docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml#OPS-DEV-002
+  - docs/01_policies_and_standards/rules/trae_017_arch_governance_order.yaml
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: doc
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml
+    symbol: gov_arch_002
+  - path: docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml
+    symbol: OPS-DEV-002
+  - path: docs/01_policies_and_standards/rules/trae_017_arch_governance_order.yaml
+    symbol: ''
+  role: internal
+  handoff_to: []
+  order: 4
+  conditional: true
+  trigger_when: 变更类型命中架构评审触发清单时
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-11
+  - WJ-R-04
+  gap_refs:
+  - D14-G12
+  red_reason: broken_supply
+  wiring_status: unwired_no_caller
+  fallback: 门位不可用时按高危域人工门位停等，不自动放行
+  invalidation: 评审记录唯一落点由总包裁定后，本段 anchor 须改写；裁定前不得升 inspection
+  policy_step: Step 1.8
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-18-架构评审门控判定-4-种变更触发
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ⬜
+  skeleton_verifiability: 'no'
+- node_id: D14-05
+  name_zh: 方案挖矿
+  segment: 判定
+  node_type: stage
+  decision_question: 方案挖干了吗？挖矿日志进了章节、自审三态留了痕吗？
+  note_zh: 三条子判据全仓零 checker（挖矿增补在 .py 命中 0，两册 gate 零条目）⇒ 执法率 0 是设计后果；可 auto 化的上限只是 MD 结构断言
+  build_status: pending
+  build_status_zh: pending
+  confidence: untested
+  verified_scope: null
+  evidence:
+  - 2026-09-24 骨架 §7-C6 + 簿01 §5：grep -rl 挖矿增补 --include=*.py src scripts → 0 命中
+  - 2026-09-25 本车道只读复跑：mining_sop_policy.md / skeleton_mining_policy.md 两真源在盘
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-19-方案挖矿施工前先做方案方案先挖矿把矿挖干再施工
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 1.9
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-05
+  - docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md#挖矿
+  - docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md#骨架
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: doc
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
+    symbol: 挖矿
+  - path: docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md
+    symbol: 骨架
+  role: internal
+  handoff_to: []
+  order: 5
+  conditional: true
+  trigger_when: 内容产出类任务（方案/策略/设计文档）
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-12
+  gap_refs: []
+  red_reason: unwired
+  wiring_status: unwired_no_caller
+  fallback: 无 checker 期间由施工会话在方案 MD 内自审留痕，图不代证
+  invalidation: 结构 checker 落地（建议挂 d9_knowledge 目录，零新目录）后本段可升 inspection
+  policy_step: Step 1.9
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-19-方案挖矿施工前先做方案方案先挖矿把矿挖干再施工
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ⬜
+  skeleton_verifiability: 'no'
+- node_id: D14-06
+  name_zh: 全景图登记（设计态先行）
+  segment: 设计登记
+  node_type: stage
+  decision_question: 施工前设计态节点登记上了吗？运营态就绪与否有可读的回读面吗？
+  note_zh: 登记面（两选项 + 三台在册 gate）机验成立；L2 铁律的"先查运营态"无执行面（D14-G05）、准入记录面无宿主（D14-G06）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 2026-09-24 骨架 §1 D14-06 行 + 簿01 §6：apply_depgraph.py 选项集实测含 --add-design-node/--add-design-edge；三台 gate 在册
+  - 2026-09-25 本车道只读复跑：grep -oE 选项集 apply_depgraph.py 无含 query 的选项（D14-G05 成立）
+  module_id: MOD-GOV_SCRIPTS
+  module_ref: scripts/governance/apply_depgraph.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-2-全景图登记设计态先行
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/apply_depgraph.py#--add-design-node
+  - scripts/governance/apply_depgraph.py#--add-design-edge
+  - gate:DEPGRAPH-ENFORCEMENT
+  - gate:DEPGRAPH-PRE-REGISTRATION
+  - gate:NEW-FILE-DEPGRAPH-ENFORCEMENT
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 2
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-06
+  - docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml#panorama_alignment
+  - docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml#depgraph_access_protocol
+  data_refs: []
+  store_refs:
+  - artifact: depgraph 设计态节点
+    location: PostgreSQL depgraph.nodes
+    key: module_id
+    retention: 在册期间存续
+  runtime_refs: []
+  verifiability: automated
+  anchor_kind: cli
+  exec_source: cli:scripts/governance/apply_depgraph.py#add-design-node
+  gates:
+  - DEPGRAPH-ENFORCEMENT
+  - DEPGRAPH-PRE-REGISTRATION
+  - NEW-FILE-DEPGRAPH-ENFORCEMENT
+  executable:
+  - scripts/governance/apply_depgraph.py
+  cli_anchors:
+  - script: scripts/governance/apply_depgraph.py
+    option: --add-design-node
+  - script: scripts/governance/apply_depgraph.py
+    option: --add-design-edge
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml
+    symbol: panorama_alignment
+  - path: docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml
+    symbol: depgraph_access_protocol
+  role: internal
+  handoff_to: []
+  order: 6
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-04
+  - R-05
+  - R-11
+  - WJ-R-08
+  - WJ-R-11
+  gap_refs:
+  - D14-G05
+  - D14-G06
+  red_reason: null
+  wiring_status: partial
+  fallback: 设计态不可读时由施工会话人工核 depgraph，不替代登记动作
+  invalidation: depgraph 存储面（PG）不可达 ⇒ 本段"已登记"断言不可证，降 inspection
+  policy_step: Step 2
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-2-全景图登记设计态先行
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ✅
+  skeleton_verifiability: 'yes'
+  exec_evidence:
+  - 复跑 grep -oE add-design 选项集 scripts/governance/apply_depgraph.py 命中 --add-design-node/--add-design-edge
+  - 2026-09-25 只读复跑：DEPGRAPH-ENFORCEMENT/DEPGRAPH-PRE-REGISTRATION/NEW-FILE-DEPGRAPH-ENFORCEMENT 在册
+  module_label_bilingual: Apply依赖图 / Apply Depgraph
+- node_id: D14-07
+  name_zh: 全图全库对齐
+  segment: 设计登记
+  node_type: stage
+  decision_question: 全景图与库对上了吗？对齐不通过是谁拦、拦在哪一层？
+  note_zh: 三证齐（单入口聚合器可跑 + sync 派生 + 聚合台在册触发式）；张数读 alignment_checklist，政策"七图定义"表为过期散文，本图不引
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 2026-09-24 骨架 §7-C4 + 簿01 §7：align_all.py 九节实测、sync_panorama_module.py --all 在册、MAP-ALIGNMENT 聚合 6 子台
+  - 2026-09-25 本车道只读复跑：MAP-ALIGNMENT 在册；两执行体含 argparse/def main
+  module_id: MOD-GOV-ALIGN-ALL
+  module_ref: scripts/governance/d5_architecture/generators/align_all.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-3-全图全库对齐七图自动align_all-单命令简称裁定-arch-align-naming-001
+  - scripts/governance/d5_architecture/generators/align_all.py
+  - scripts/governance/sync_panorama_module.py
+  - scripts/governance/sync_panorama_module.py#--all
+  - gate:MAP-ALIGNMENT
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 3
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-07
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md#全景图
+  - docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml#panorama_alignment
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: automated
+  anchor_kind: gate_id
+  exec_source: gate:MAP-ALIGNMENT
+  gates:
+  - MAP-ALIGNMENT
+  executable:
+  - scripts/governance/d5_architecture/generators/align_all.py
+  - scripts/governance/sync_panorama_module.py
+  cli_anchors:
+  - script: scripts/governance/sync_panorama_module.py
+    option: --all
+  docs:
+  - path: docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+    symbol: 全景图
+  - path: docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml
+    symbol: panorama_alignment
+  role: internal
+  handoff_to: []
+  order: 7
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-06
+  max_rounds_ref: null
+  red_findings:
+  - R-12
+  - WJ-R-09
+  - WJ-R-10
+  gap_refs: []
+  red_reason: null
+  wiring_status: wired
+  fallback: 对齐工具不可用时禁止进施工段（先登记后施工）
+  invalidation: 聚合台 subs 增删或单入口聚合器节数变化 ⇒ 本段 evidence 作废需重扫
+  policy_step: Step 3
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-3-全图全库对齐七图自动align_all-单命令简称裁定-arch-align-naming-001
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ✅
+  skeleton_verifiability: 'yes'
+  exec_evidence:
+  - 复跑 ls scripts/governance/d5_architecture/generators/align_all.py scripts/governance/sync_panorama_module.py
+    两件在盘
+  - 2026-09-25 只读复跑：MAP-ALIGNMENT 在 in_process_gate_registry 条目集合内
+  module_label_bilingual: 全图全库对齐执行入口 / Align All Panoramas and Registries
+- node_id: D14-08
+  name_zh: 后端盘点与拆件判定
+  segment: 设计登记
+  node_type: stage
+  decision_question: 前端这块的数据真源在哪、有没有可拆的既有件？判定结论落在哪个可查面？
+  note_zh: 台子在册但阻断位关闭（源码常量 _HARD_BLOCK=False）⇒ 有台不等于有门禁，本段 verifiability 记 inspection 不记 automated
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 §1 D14-08 行 + 簿01 §8：FRONTEND-TRUTH-SOURCE 在册且 _HARD_BLOCK=False；ACC-*.yaml 实测 69 张无读方
+  - 2026-09-25 本车道只读复跑：frontend_map.yaml 政策路径 web/ 不存在，真身两份并存在册（双真源嫌疑 D14-G09）
+  module_id: MOD-D_GOV_SCRIPTS
+  module_ref: scripts/governance/d5_architecture/generators/check_frontend_map.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-35-后端盘点与拆件判定前端施工前置
+  - scripts/governance/d5_architecture/generators/check_frontend_map.py
+  - gate:FRONTEND-TRUTH-SOURCE
+  - gate:FRONTEND-MAP
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 3.5
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-08
+  - docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml#truth_source_wiring
+  - docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_policy.md#拆件
+  data_refs: []
+  store_refs: []
+  runtime_refs:
+  - .runtime/gate_audit/frontend_truth_source.jsonl
+  verifiability: inspection
+  anchor_kind: gate_id
+  exec_source: gate:FRONTEND-TRUTH-SOURCE
+  gates:
+  - FRONTEND-TRUTH-SOURCE
+  - FRONTEND-MAP
+  executable:
+  - scripts/governance/d5_architecture/generators/check_frontend_map.py
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
+    symbol: truth_source_wiring
+  - path: docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_policy.md
+    symbol: 拆件
+  role: internal
+  handoff_to: []
+  order: 8
+  conditional: true
+  trigger_when: 前端页面新建/改造/加数据区块时触发
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-11
+  - WJ-R-02
+  - WJ-R-05
+  gap_refs:
+  - D14-G09
+  red_reason: null
+  wiring_status: unwired_slot_hollow
+  fallback: 盘留痕无结构落点时以 gate_audit jsonl 作次级证据面
+  invalidation: 阻断位翻硬（Owner 门位）后本段可升 automated；两真源件收敛唯一前不得升
+  policy_step: Step 3.5
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-35-后端盘点与拆件判定前端施工前置
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: partial
+  exec_evidence:
+  - 复跑 grep -n '_HARD_BLOCK' src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py 命中（阻断位关闭）
+  - 2026-09-25 只读复跑：FRONTEND-TRUTH-SOURCE / FRONTEND-MAP 两台在册
+  module_label_bilingual: 前端全景图校验器
+- node_id: D14-09
+  name_zh: 施工编码
+  segment: 施工
+  node_type: stage
+  decision_question: 落码动作本身合规吗（文件头/容量/git 预算/复杂度/新建前置）？哪些判据其实没台子拦？
+  note_zh: 六台在册且新建路径执法；启动方式事件驱动与存量修改的字段齐全两条判据零执法面；容量口径分三对象不可压一列
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 2026-09-24 骨架 §1 D14-09 行 + 簿02 §1：六台 gate 双册对账在册；git_guard.py 危险子命令清单在 :90；create_guard 动态读字段集 :757
+  - 2026-09-25 本车道只读复跑：BLUEPRINT-FORMAT/BLUEPRINT-HEADER/GIT-CALL-BUDGET/FOLDER-CAPACITY-HARD-LIMIT/COMPLEXITY-GUARD/CREATE-GUARD
+    全命中 gate_id 集合
+  module_id: MOD-GATE_ENGINE
+  module_ref: src/zephyr/gov_enforcement/commit_gates/create_guard.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-4-施工编码
+  - scripts/git_guard.py
+  - scripts/scaffold.py
+  - gate:BLUEPRINT-FORMAT
+  - gate:BLUEPRINT-HEADER
+  - gate:GIT-CALL-BUDGET
+  - gate:FOLDER-CAPACITY-HARD-LIMIT
+  - gate:COMPLEXITY-GUARD
+  - gate:CREATE-GUARD
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 4
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-09
+  - docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml#A_full
+  - docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml#phase_4_blueprint
+  - docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml#mod_001
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: automated
+  anchor_kind: gate_id
+  exec_source: gate:CREATE-GUARD
+  gates:
+  - BLUEPRINT-FORMAT
+  - BLUEPRINT-HEADER
+  - GIT-CALL-BUDGET
+  - FOLDER-CAPACITY-HARD-LIMIT
+  - COMPLEXITY-GUARD
+  - CREATE-GUARD
+  executable:
+  - scripts/git_guard.py
+  - scripts/scaffold.py
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml
+    symbol: A_full
+  - path: docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml
+    symbol: phase_4_blueprint
+  - path: docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml
+    symbol: mod_001
+  role: internal
+  handoff_to: []
+  order: 9
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-02
+  max_rounds_ref: null
+  red_findings:
+  - R-11
+  - R-13
+  - WJ-R-12
+  - WJ-R-15
+  - WJ-R-16
+  - WJ-R-17
+  gap_refs:
+  - D14-G12
+  red_reason: null
+  wiring_status: partial
+  fallback: gate 不可用时由 pre-commit 通道兜底，兜底面归属交付流水线（本图不重述）
+  invalidation: 六台中任一台退役或执法面转读硬编码 ⇒ 本段 automated 主张作废
+  policy_step: Step 4
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-4-施工编码
+  sub_workflow: docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml#phase_4_blueprint
+  human_gate: null
+  skeleton_status: ✅
+  skeleton_verifiability: 'yes'
+  exec_evidence:
+  - 复跑 grep -n 'a_full' src/zephyr/gov_enforcement/commit_gates/create_guard.py 命中（字段集动态读规则）
+  - 2026-09-25 只读复跑：六台 gate_id 全命中两册集合（BLUEPRINT-FORMAT/BLUEPRINT-HEADER/GIT-CALL-BUDGET/FOLDER-CAPACITY-HARD-LIMIT/COMPLEXITY-GUARD/CREATE-GUARD）
+  module_label_bilingual: 创建守卫 / create_guard
+- node_id: D14-10
+  name_zh: 单元测试与循环验收
+  segment: 验收
+  node_type: stage
+  decision_question: 连续两轮零错误这条验收判据由谁强制？没任务卡的施工谁来强制？
+  note_zh: 循环验收是真执行（代码常量+子进程），但只在任务卡转终态且验收命令集非空时触发；无卡施工形态下永不相触
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 §1 D14-10 行 + 簿02 §2：task_repo.py 常量与循环函数四锚链条实测在位
+  - 2026-09-25 本车道只读复跑：TEST-SOURCE-CONSISTENCY / TEST-RESIDUE-SSOT 两册在册；词表模块 zephyr.shared.vocab 不存在（D14-G10）
+  module_id: MOD-TASK_SYSTEM
+  module_ref: src/zephyr/governance/persistence/task_repo.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-5-单元测试--循环验收
+  - src/zephyr/governance/persistence/task_repo.py
+  - gate:TEST-SOURCE-CONSISTENCY
+  - gate:TEST-RESIDUE-SSOT
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 5
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-10
+  - docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml#test_residue_reclaim
+  - docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml#task_card
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: inspection
+  anchor_kind: gate_id
+  exec_source: gate:TEST-RESIDUE-SSOT
+  gates:
+  - TEST-SOURCE-CONSISTENCY
+  - TEST-RESIDUE-SSOT
+  executable:
+  - src/zephyr/governance/persistence/task_repo.py
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
+    symbol: test_residue_reclaim
+  - path: docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml
+    symbol: task_card
+  role: internal
+  handoff_to: []
+  order: 10
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-10
+  max_rounds_ref: zephyr.governance.persistence.task_repo#CIRCULAR_ACCEPTANCE_ROUNDS
+  red_findings:
+  - R-08
+  - WJ-R-19
+  gap_refs:
+  - D14-G10
+  red_reason: null
+  wiring_status: partial
+  fallback: 无卡施工现无等价面（簿02 X-16 待裁），本段按 inspection 记不放宽
+  invalidation: 常量改名或触发条件变化 ⇒ max_rounds_ref 符号锚作废，本段连带判红
+  policy_step: Step 5
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-5-单元测试--循环验收
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: partial
+  exec_evidence:
+  - 复跑 grep -n 'CIRCULAR_ACCEPTANCE_ROUNDS' src/zephyr/governance/persistence/task_repo.py 命中常量与循环函数
+  - 2026-09-25 只读复跑：TEST-SOURCE-CONSISTENCY / TEST-RESIDUE-SSOT 在册
+  module_label_bilingual: 任务repo / task_repo
+- node_id: D14-11
+  name_zh: 长清单审查
+  segment: 验收
+  node_type: stage
+  decision_question: 逐节对抗审查的结论留在哪？遗留项登记目的地还在吗？
+  note_zh: 政策明文禁创建审查报告文件 ⇒ 主判据结构性不可机验（与门④互斥，待裁定）；基座维度册在盘，漂移六件套在盘但未接入判据
+  build_status: pending
+  build_status_zh: pending
+  confidence: untested
+  verified_scope: null
+  evidence:
+  - 2026-09-24 骨架 §1 D14-11 行 + 簿02 §3：附录 A 实测 16 个 A.* 小节（政策称 12 节/修订记 14 节并存）；漂移套件六件在盘
+  - 2026-09-25 本车道只读复跑：trae_081 维度册在盘
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-6-长清单审查12-节全维度对抗审查
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 6
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-11
+  - docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml#dimensions
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#附录 A
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: doc
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml
+    symbol: dimensions
+  - path: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
+    symbol: 附录 A
+  role: internal
+  handoff_to: []
+  order: 11
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-09
+  max_rounds_ref: null
+  red_findings:
+  - R-11
+  - WJ-R-09
+  gap_refs:
+  - D14-G12
+  red_reason: unwired
+  wiring_status: unwired_no_caller
+  fallback: 结论留在对话内（政策口径），图不代证；遗留项登记目的地已随上游真源归档（D14-G12）
+  invalidation: 若裁定允许会话内留痕，本段可升 inspection；禁以删政策句的方式变绿
+  policy_step: Step 6
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-6-长清单审查12-节全维度对抗审查
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ⬜
+  skeleton_verifiability: 'no'
+- node_id: D14-12
+  name_zh: 更新施工文档
+  segment: 文档
+  node_type: stage
+  decision_question: 文档与代码对齐了吗？要同步的那两处目标件还在原位置吗？
+  note_zh: 元数据/放置子判据有台有脚本；"三处对齐 + 索引同步"的两个目标件已整体归档 ⇒ 判据结构上不可满足（不是没人做，是目的地没了）
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 §1 D14-12 行 + 簿02 §4：d8_doc_sync 三件实测在盘；两目标件在 archive 不在原目录
+  - 2026-09-25 本车道只读复跑：TTL-METADATA / FILE-PLACEMENT-TTL 在册；三件规则锚符号命中
+  module_id: MOD-INF-005
+  module_ref: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-7-更新施工文档
+  - scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  - scripts/governance/d8_doc_sync/update_progress.py
+  - scripts/governance/d8_doc_sync/auto_sync_all_registries.py
+  - gate:TTL-METADATA
+  - gate:FILE-PLACEMENT-TTL
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 7
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-12
+  - docs/01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml#rule_eleven
+  - docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml#GOV-DOC-011
+  - docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml#GOV-ARCH-003
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: inspection
+  anchor_kind: script
+  exec_source: script:scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  gates:
+  - TTL-METADATA
+  - FILE-PLACEMENT-TTL
+  executable:
+  - scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  - scripts/governance/d8_doc_sync/update_progress.py
+  - scripts/governance/d8_doc_sync/auto_sync_all_registries.py
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml
+    symbol: rule_eleven
+  - path: docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml
+    symbol: GOV-DOC-011
+  - path: docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml
+    symbol: GOV-ARCH-003
+  role: internal
+  handoff_to: []
+  order: 12
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-09
+  max_rounds_ref: null
+  red_findings:
+  - R-11
+  gap_refs:
+  - D14-G12
+  red_reason: null
+  wiring_status: partial
+  fallback: 目标件缺位时以文档生命周期脚本的 exit 码作子判据，不代证整体对齐
+  invalidation: 设计备忘体系存续性被裁定为终止 ⇒ 本段判据须改写（属改政策，本车道不主张）
+  policy_step: Step 7
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-7-更新施工文档
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: partial
+  exec_evidence:
+  - 复跑 ls scripts/governance/d8_doc_sync/ 三件俱在（生命周期校验/进度更新/册同步）
+  - 2026-09-25 只读复跑：TTL-METADATA / FILE-PLACEMENT-TTL 在册
+  module_label_bilingual: 扫描生命周期引用违规. / Validate Document Lifecycle
+- node_id: D14-13
+  name_zh: 全景图状态流转
+  segment: 文档转正
+  node_type: stage
+  decision_question: 设计态到运营态的双态流转真的发生了吗？谁来证明核验过？
+  note_zh: 两流转选项 + 六态词表由 DB CHECK 强制 + 同身份转换通道在代码；worktree 分流后的人工核验零留痕面
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 2026-09-24 骨架 §1 D14-13 行 + 簿02 §5：两选项实测在册、DB CHECK 六态、生成器通道注释在 :396-428
+  - 2026-09-25 本车道只读复跑：DEPGRAPH-FRESHNESS 在册；diagnose_depgraph 真身在 d5_architecture 下
+  module_id: MOD-GOV_DIAGNOSE_DEPGRAPH
+  module_ref: scripts/governance/d5_architecture/diagnose_depgraph.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-8-全景图状态流转designproduction
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/apply_depgraph.py#--transition-design-maturity
+  - scripts/governance/apply_depgraph.py#--transition-build-status
+  - gate:DEPGRAPH-FRESHNESS
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 8
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-13
+  - docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml#planned
+  - docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml#phase_9
+  data_refs: []
+  store_refs:
+  - artifact: depgraph 双态字段
+    location: PostgreSQL depgraph.nodes
+    key: module_id
+    retention: design_maturity 与 build_status 两列
+  runtime_refs: []
+  verifiability: automated
+  anchor_kind: cli
+  exec_source: cli:scripts/governance/apply_depgraph.py#transition-design-maturity
+  gates:
+  - DEPGRAPH-FRESHNESS
+  executable:
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  cli_anchors:
+  - script: scripts/governance/apply_depgraph.py
+    option: --transition-design-maturity
+  - script: scripts/governance/apply_depgraph.py
+    option: --transition-build-status
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml
+    symbol: planned
+  - path: docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml
+    symbol: phase_9
+  role: internal
+  handoff_to: []
+  order: 13
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-12
+  max_rounds_ref: null
+  red_findings:
+  - R-03
+  - WJ-R-18
+  gap_refs:
+  - D14-G04
+  red_reason: null
+  wiring_status: wired
+  fallback: 诊断件路径与政策所指不一致时以在册真身为准（D14-G04）
+  invalidation: PG 不可达 ⇒ 双态读不到，本段 automated 主张降 inspection
+  policy_step: Step 8
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-8-全景图状态流转designproduction
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ✅
+  skeleton_verifiability: 'yes'
+  exec_evidence:
+  - 复跑 grep -oE transition 选项集 scripts/governance/apply_depgraph.py 命中 --transition-design-maturity/--transition-build-status
+  - 2026-09-25 只读复跑：DEPGRAPH-FRESHNESS 在册；诊断件真身在 d5_architecture 目录（政策路径见 D14-G04）
+  module_label_bilingual: 诊断依赖图 / Diagnose Depgraph
+- node_id: D14-14
+  name_zh: 文件完整性检查
+  segment: 落地收尾
+  node_type: stage
+  decision_question: 提交前工作区是否自证完整？丢失件从哪恢复？
+  note_zh: 三条判据里两条实体在图11（对账/pre-merge/claim 快照）；本域只剩"本任务改动清单与 staged 差集为空"，且无阈值判据；政策所指 CLI 子命令不存在（D14-G07）
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 簿03 §1 实弹：lock_files.py status 可跑（输出 CLEAN）；session_worktree.py status 报 invalid choice
+  - 2026-09-25 本车道只读复跑：scripts/rollback.py 在盘（政策所列子命令为在册件，本段不登记为机制锚）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-9-文件完整性检查
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 9
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-14
+  - docs/01_policies_and_standards/policies/workspace_governance_policy.md#临时
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: handoff
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/policies/workspace_governance_policy.md
+    symbol: 临时
+  role: handoff
+  handoff_to:
+  - D11-C11
+  - D11-S07
+  - D11-S04
+  order: 14
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-06
+  - R-11
+  gap_refs:
+  - D14-G07
+  - D14-G12
+  red_reason: terminal
+  wiring_status: partial
+  fallback: 无阈值判据时按交付流水线侧的完整性守卫处置（引用不重述）
+  invalidation: 图11 侧对账环节改号 ⇒ 本段 handoff 引用作废
+  policy_step: Step 9
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-9-文件完整性检查
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: 'no'
+- node_id: D14-15
+  name_zh: 提交网关落地
+  segment: 落地收尾
+  node_type: stage
+  decision_question: 本施工任务的改动在哪一步把控制权交给交付正门？交接前必须满足什么？
+  note_zh: 机制真源全归图11（政策自标"不重复，引用"）；module_ref 仅为交接正门指针，本段不得重述锁/队列/落地/对账，也不借图11 的 auto 抬本段分数
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 2026-09-24 骨架 §1 D14-15 行 + 簿03 §2：政策所指正门脚本不存在（D14-G03）；gate 实名两条漂移
+  - 2026-09-25 本车道只读复跑：scripts/git_commit.py 在盘（交接正门指针）；11 个 D11-C* 引用全部命中图11 骨架 §1
+  module_id: MOD-INF-005
+  module_ref: scripts/git_commit.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-10-gitcommitgateway-落地
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 10
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-15
+  - docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml#stash
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: handoff
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml
+    symbol: stash
+  role: handoff
+  handoff_to:
+  - D11-C01
+  - D11-C03
+  - D11-C04
+  - D11-C05
+  - D11-C07
+  - D11-C08
+  - D11-C09
+  - D11-C10
+  - D11-C11
+  - D11-C12
+  - D11-C13
+  order: 15
+  conditional: false
+  trigger_when: null
+  rollback_to:
+  - D14-11
+  max_rounds_ref: null
+  red_findings:
+  - R-03
+  - R-06
+  - R-12
+  - R-14
+  - WJ-R-21
+  - WJ-R-22
+  - WJ-R-24
+  gap_refs:
+  - D14-G03
+  - D14-G07
+  red_reason: terminal
+  wiring_status: wired
+  fallback: 正门不可用时按交付侧退道入队语义处置（引用不重述）
+  invalidation: 图11 C 车道环节改号 ⇒ 本段 handoff_to 作废；本段 verifiability 恒 manual
+  policy_step: Step 10
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-10-gitcommitgateway-落地
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ✅
+  skeleton_verifiability: 'yes'
+  exec_evidence:
+  - 复跑 ls scripts/git_commit.py 在盘（交接正门指针；政策所指 gateway 件不存在=D14-G03）
+  - 2026-09-25 只读复跑：handoff_to 的 11 个 D11-C* 全部命中图11 骨架 §1 环节集合
+  module_label_bilingual: Git提交 / git_commit
+- node_id: D14-16
+  name_zh: 临时文件清理
+  segment: 落地收尾
+  node_type: stage
+  decision_question: 提交之后暂存与锁归谁清？"我清完了"有没有凭据？
+  note_zh: 清理由事件触发的对账件承担（在册，机制归图11）；政策两条命令一条元数不符、一条全仓零实现（D14-G07/G08）；产出物"清理报告"无落点
+  build_status: partial
+  build_status_zh: partial
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 §1 D14-16 行 + 簿03 §3：staging 生命周期对账件在位、priority=802 口径与政策一致
+  - 2026-09-25 本车道只读复跑：lock_files.py 命令集含 release/release-all（政策命令形态需 3 参，D14-G08 成立）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-11-临时文件清理只清自己不动他人
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 11
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-16
+  - docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml#DCR-008
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: handoff
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml
+    symbol: DCR-008
+  role: handoff
+  handoff_to:
+  - D11-S05
+  - D11-S08
+  - D11-C11
+  order: 16
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-06
+  - R-07
+  - R-14
+  gap_refs:
+  - D14-G08
+  red_reason: terminal
+  wiring_status: partial
+  fallback: 凭据缺位时按交付侧回收语义处置，本图只保顺序
+  invalidation: 簿03 §5 判本段"真切不开"，若总包裁定与 D14-17 合并则本节点作废（X-20）
+  policy_step: Step 11
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-11-临时文件清理只清自己不动他人
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: 🔨
+  skeleton_verifiability: partial
+- node_id: D14-17
+  name_zh: worktree 合并与清理
+  segment: 落地收尾
+  node_type: stage
+  decision_question: 施工任务到本域终态了吗？合并失败时逃生通道在哪？
+  note_zh: merge/abort/sweep 机制归图11；本段独有语义只剩"合并冲突暂不清理=终止分支"（非回边）；政策所指 cleanup 子命令不存在（D14-G07）
+  build_status: built
+  build_status_zh: built
+  confidence: verified
+  verified_scope: production
+  evidence:
+  - 2026-09-24 骨架 §1 D14-17 行 + 簿03 §4：CLI 实测子命令 create/exec/merge/abort/list；两符号锚实测命中
+  - 2026-09-25 本车道只读复跑：scripts/session_worktree.py 在盘（交接正门指针）；三份规则件在册在盘
+  module_id: MOD-CD-001
+  module_ref: scripts/session_worktree.py
+  source_anchors:
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-12-worktree-合并与清理有风险暂不清理
+  doc_refs:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 12
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 D14-17
+  - docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml#force_merge
+  - docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml#commit_persist
+  - docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml#base_fresh
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: handoff
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs:
+  - path: docs/01_policies_and_standards/rules/trae_078_force_merge_safety.yaml
+    symbol: force_merge
+  - path: docs/01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml
+    symbol: commit_persist
+  - path: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
+    symbol: base_fresh
+  role: handoff
+  handoff_to:
+  - D11-S07
+  - D11-S08
+  - D11-S03
+  order: 17
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-03
+  - R-06
+  - R-11
+  - R-13
+  - WJ-R-23
+  - WJ-R-25
+  gap_refs:
+  - D14-G07
+  red_reason: terminal
+  wiring_status: wired
+  fallback: 合并冲突时保留现场，不清理、不 abort（终止分支）
+  invalidation: 图11 S07/S08 环节改号 ⇒ handoff 引用作废
+  policy_step: Step 12
+  policy_anchor: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-12-worktree-合并与清理有风险暂不清理
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: ✅
+  skeleton_verifiability: 'yes'
+  exec_evidence:
+  - 复跑 grep -n add_parser scripts/session_worktree.py 命中 create/exec/merge/abort/list 五项
+  - 2026-09-25 只读复跑：handoff_to 的 D11-S07/S08/S03 全部命中图11 骨架 §1 环节集合
+  module_label_bilingual: 设计文档
+- node_id: D14-G01
+  name_zh: 政策指认的守护件不存在（幽灵脚本）
+  segment: 前置
+  node_type: gap
+  decision_question: 政策写死的启动件到底存不存在？不存在时施工准入靠什么判？
+  note_zh: 政策两行命令的执行体全仓零命中；实测可跑入口是另一件且未被政策指认（本图不把它当政策锚用）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 §7-C3：find -iname "*ide_health*" 零文件
+  - 2026-09-25 本车道只读复跑：ls scripts/ide_health_service.py → No such file
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 0
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-01
+  - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §1
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 18
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-01
+  host_steps:
+  - D14-01
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - scripts/ide_health_service.py
+- node_id: D14-G02
+  name_zh: 幽灵脚本已进注册表（引用面）
+  segment: 前置
+  node_type: gap
+  decision_question: 一件不存在的脚本被多少在册条目引用？退役要不要走净删门位？
+  note_zh: 引用面实测覆盖规则册/宪章归档/模块蓝图/注册表等多族；其中**在册可证部分**=catalogs 册内命中（机扫计数进 machine_facts），退役须走注册表净删高危门位
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 簿01 §9 WJ-R-14：引用文件实测 39 个（骨架原判 5 份文档，面积低估）
+  - 2026-09-25 本车道只读复跑：machine_facts 由生成器按声明口径重扫（排除案卷与归档目录）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 0
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §9 WJ-R-14
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 19
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - WJ-R-14
+  host_steps:
+  - D14-01
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - scripts/ide_health_service.py
+- node_id: D14-G03
+  name_zh: 政策所指正门脚本不存在
+  segment: 落地收尾
+  node_type: gap
+  decision_question: 政策给的提交正门件跑不起来时，交付动作的真门是哪一件？
+  note_zh: 与 D14-G04 同族（路径失效类）；真门在交付流水线侧（引用不重述），本图只在 gap 节点钉"政策所指件不存在"这一事实
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-03 + 簿03 §2 实弹：ls scripts/git_commit_gateway.py → No such file，真门 scripts/git_commit.py 在盘
+  - 2026-09-25 本车道只读复跑：同上结论一致
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 10
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-03
+  - docs/_working/map_build/fig14_construction/03_验收与收尾段.md §2
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 20
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-03
+  host_steps:
+  - D14-15
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - scripts/git_commit_gateway.py
+- node_id: D14-G04
+  name_zh: 政策所指诊断件路径失效
+  segment: 文档转正
+  node_type: gap
+  decision_question: 诊断入口按政策路径找得到吗？找不到时谁是唯一真身？
+  note_zh: 政策两处 + frontmatter 一处均指旧路径；真身在 d5_architecture 子目录下（find 唯一命中），图节点锚取真身、政策纠偏由总包落
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-03 + 簿02 §5：find 唯一命中 scripts/governance/d5_architecture/diagnose_depgraph.py
+  - 2026-09-25 本车道只读复跑：政策路径件不存在、真身件在盘
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 8
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-03
+  - docs/_working/map_build/fig14_construction/02_施工与门禁段.md §5
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 21
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-03
+  host_steps:
+  - D14-13
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - scripts/governance/diagnose_depgraph.py
+- node_id: D14-G05
+  name_zh: 设计态先行铁律无执行面（选项不存在）
+  segment: 设计登记
+  node_type: gap
+  decision_question: 写入设计态前确保运营态已就绪这条铁律由哪条命令保证？
+  note_zh: 政策两处声明的选项实测不存在（argparse 直接拒绝）⇒ 该铁律无可执行工具面；补法应复用既有只读通道而非新造选项（净零）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-04 + 簿01 §6 实弹：python scripts/governance/apply_depgraph.py --query-production → usage 报错 exit
+    2
+  - 2026-09-25 本车道只读复跑：选项全集内无含 query 的选项
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 2
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-04
+  - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §6
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 22
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-04
+  host_steps:
+  - D14-06
+  red_reason: broken_supply
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_options:
+  - script: scripts/governance/apply_depgraph.py
+    option: --query-production
+- node_id: D14-G06
+  name_zh: 准入记录面不存在
+  segment: 设计登记
+  node_type: gap
+  decision_question: 模块准入四级筛选的留痕落到哪件里？没有宿主时 MAD 判据怎么回溯？
+  note_zh: 政策与多份规则册同源声明的记录件与字段在盘上均无（近似册也无该字段）⇒ 留痕无处可落；本图只点名不修（跨车道纠偏）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-05：find -name module-id-registry.json 零命中；architecture_model/module_id_registry.yaml 无该字段
+  - 2026-09-25 本车道只读复跑：同结论
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 2
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-05
+  - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §6
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 23
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-05
+  host_steps:
+  - D14-06
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - module-id-registry.json
+- node_id: D14-G07
+  name_zh: 会话工作树 CLI 子命令不存在（四条）
+  segment: 落地收尾
+  node_type: gap
+  decision_question: 政策写的四条子命令哪几条真能跑？跑不通时施工收尾怎么落？
+  note_zh: 实测 CLI 子命令集仅五种；status/commit 只有库函数未暴露、mark-completed 全仓唯一命中=政策行本身、cleanup 正解为另一子命令（簿03 附实弹 usage 报错）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - '2026-09-24 骨架 R-06 + 簿03 §1/§4 实弹：invalid choice: status（choose from create, exec, merge, abort, list）'
+  - 2026-09-25 本车道只读复跑：add_parser 子命令集实测五项
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 9
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-06
+  - docs/_working/map_build/fig14_construction/03_验收与收尾段.md §1
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 24
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-06
+  host_steps:
+  - D14-14
+  - D14-15
+  - D14-17
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_cli_anchors:
+  - script: scripts/session_worktree.py
+    option: status
+  - script: scripts/session_worktree.py
+    option: commit
+  - script: scripts/session_worktree.py
+    option: mark-completed
+  - script: scripts/session_worktree.py
+    option: cleanup
+- node_id: D14-G08
+  name_zh: 锁释放命令契约与实现不符
+  segment: 落地收尾
+  node_type: gap
+  decision_question: 照政策抄下来的清理命令能跑吗？参数元数谁定的？
+  note_zh: 政策写单参形态，实现要求两参以上；意图对应命令是另一子命令 ⇒ 照抄必失败（属命令契约错，不是件不存在）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-07 + 簿03 §3：lock_files.py release 分支要求参数不少于 3
+  - 2026-09-25 本车道只读复跑：命令集含 release/release-all/release-batch（语义与政策口径不同）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 11
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-07
+  - docs/_working/map_build/fig14_construction/03_验收与收尾段.md §3
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 25
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-07
+  host_steps:
+  - D14-16
+  red_reason: unwired
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  mismatch_anchors:
+  - script: scripts/lock_files.py
+    option: release
+    policy_form: release-single-arg
+    actual_form: file-and-owner
+- node_id: D14-G09
+  name_zh: 前端真源图路径三份不一（双真源嫌疑）
+  segment: 设计登记
+  node_type: gap
+  decision_question: 政策所指前端真源图路径存在吗？存在几份、字节相同吗？
+  note_zh: 政策路径仓根不存在；两处真身并存且字节不同 ⇒ 骨架把该锚标 ✅ 需纠；唯一宿主待裁（X-13），本图不选边
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 簿01 §8 WJ-R-02：ls web/frontend_map.yaml 不存在；两真身字节不同（113652 vs 71738）
+  - 2026-09-25 本车道只读复跑：政策路径件确认不存在（幽灵）
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 3.5
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §8
+  - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §9 WJ-R-02
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 26
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - WJ-R-02
+  host_steps:
+  - D14-08
+  red_reason: broken_supply
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - web/frontend_map.yaml
+- node_id: D14-G10
+  name_zh: 官方状态词表模块不存在（双册同谎）
+  segment: 验收
+  node_type: gap
+  decision_question: 验收判据挂的词表模块存在吗？两册文档称"已建成"与磁盘事实差多少？
+  note_zh: 目录与常量在 .py 侧零命中；另一册自称已建成 ⇒ 属验收不通过级事故候选（本车道只点名不修，纠偏归词表立法线）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-08 + 簿02 §2：ls src/zephyr/shared/vocab → 不存在；EXTREME_STATE_ALIASES 在 .py 零命中
+  - 2026-09-25 本车道只读复跑：同上
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 5
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-08
+  - docs/_working/map_build/fig14_construction/02_施工与门禁段.md §2
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 27
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-08
+  host_steps:
+  - D14-10
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - src/zephyr/shared/vocab
+- node_id: D14-G11
+  name_zh: 规则册符号锚不存在
+  segment: 前置
+  node_type: gap
+  decision_question: 政策引用的规则节名在那本册里真的存在吗？
+  note_zh: 该册节名仅两项，被引节名全文件零命中 ⇒ 引用锚断链（与 gate 实名漂移同族但对象是规则册）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-09 + 簿01 §3：grep -c rule_eight 该册 = 0
+  - 2026-09-25 本车道只读复跑：同结论
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 1.5
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-09
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 28
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-09
+  host_steps:
+  - D14-03
+  red_reason: ghost_ref
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_doc_anchor: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml#rule_eight
+- node_id: D14-G12
+  name_zh: 上游真源整体归档未跟进（十二处链接）
+  segment: 判定
+  node_type: gap
+  decision_question: 本段判据指向的上游真源还在原位置吗？搬走之后判据由谁满足？
+  note_zh: 设计备忘体系一次整体搬家早于政策改版 5 天未跟进；全仓仍有大批文件引旧路径；blast radius 实测进 machine_facts（在册可证部分=旧路径引用文件计数）
+  build_status: pending
+  confidence: verified
+  verified_scope: structure
+  evidence:
+  - 2026-09-24 骨架 R-11 + §7-C7：原目录仅剩 README + 16 号，archive 侧实测 49 件
+  - 2026-09-25 本车道只读复跑：政策所引五件旧路径全部不在原位
+  module_id: null
+  module_ref: null
+  source_anchors:
+  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 1.8
+  doc_refs:
+  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-11
+  - docs/_working/map_build/fig14_construction/02_施工与门禁段.md §4
+  data_refs: []
+  store_refs: []
+  runtime_refs: []
+  verifiability: manual
+  anchor_kind: none
+  exec_source: null
+  gates: []
+  executable: []
+  cli_anchors: []
+  docs: []
+  role: internal
+  handoff_to: []
+  order: 29
+  conditional: false
+  trigger_when: null
+  rollback_to: []
+  max_rounds_ref: null
+  red_findings:
+  - R-11
+  host_steps:
+  - D14-04
+  - D14-09
+  - D14-11
+  - D14-12
+  - D14-14
+  red_reason: broken_supply
+  wiring_status: unwired_no_caller
+  fallback: null
+  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
+  policy_step: null
+  policy_anchor: null
+  sub_workflow: null
+  human_gate: null
+  skeleton_status: null
+  skeleton_verifiability: null
+  ghost_refs:
+  - docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md
+  - docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md
+  - docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md
+  - docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md
+  - docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md
+edges:
+- - D14-01
+  - D14-02
+- - D14-02
+  - D14-03
+- - D14-03
+  - D14-04
+- - D14-04
+  - D14-05
+- - D14-05
+  - D14-06
+- - D14-06
+  - D14-07
+- - D14-07
+  - D14-08
+- - D14-08
+  - D14-09
+- - D14-09
+  - D14-10
+- - D14-10
+  - D14-11
+- - D14-11
+  - D14-12
+- - D14-12
+  - D14-13
+- - D14-13
+  - D14-14
+- - D14-14
+  - D14-15
+- - D14-15
+  - D14-16
+- - D14-16
+  - D14-17
+- - D14-01
+  - D14-G01
+- - D14-01
+  - D14-G02
+- - D14-15
+  - D14-G03
+- - D14-13
+  - D14-G04
+- - D14-06
+  - D14-G05
+- - D14-06
+  - D14-G06
+- - D14-14
+  - D14-G07
+- - D14-15
+  - D14-G07
+- - D14-17
+  - D14-G07
+- - D14-16
+  - D14-G08
+- - D14-08
+  - D14-G09
+- - D14-10
+  - D14-G10
+- - D14-03
+  - D14-G11
+- - D14-04
+  - D14-G12
+- - D14-09
+  - D14-G12
+- - D14-11
+  - D14-G12
+- - D14-12
+  - D14-G12
+- - D14-14
+  - D14-G12
+feedback_loops:
+- from: D14-07
+  to: D14-06
+  loop_id: B5
+  note: domain 不一致回登记
+- from: D14-09
+  to: D14-02
+  loop_id: B8
+  note: 算法缺失回补文档（本图最长回边）
+- from: D14-10
+  to: D14-10
+  loop_id: B9
+  note: 循环验收真自环，轮次由代码常量定
+- from: D14-11
+  to: D14-09
+  loop_id: B10
+  note: FAIL 无法就地修回施工
+- from: D14-12
+  to: D14-09
+  loop_id: B11
+  note: 文档代码漂移回施工
+- from: D14-13
+  to: D14-12
+  loop_id: B12
+  note: 对齐失败回文档
+- from: D14-15
+  to: D14-11
+  loop_id: B13
+  note: 网关拒绝回长清单审查（跨段长回边）
+loops:
+- loop_id: B5
+  from: D14-07
+  to: D14-06
+  kind: in_graph
+  note_zh: domain 不一致回登记
+- loop_id: B8
+  from: D14-09
+  to: D14-02
+  kind: in_graph
+  note_zh: 算法缺失回补文档（本图最长回边）
+- loop_id: B9
+  from: D14-10
+  to: D14-10
+  kind: in_graph_self_loop
+  max_rounds_ref: zephyr.governance.persistence.task_repo#CIRCULAR_ACCEPTANCE_ROUNDS
+  note_zh: 循环验收真自环，轮次由代码常量定
+- loop_id: B10
+  from: D14-11
+  to: D14-09
+  kind: in_graph
+  note_zh: FAIL 无法就地修回施工
+- loop_id: B11
+  from: D14-12
+  to: D14-09
+  kind: in_graph
+  note_zh: 文档代码漂移回施工
+- loop_id: B12
+  from: D14-13
+  to: D14-12
+  kind: in_graph
+  note_zh: 对齐失败回文档
+- loop_id: B13
+  from: D14-15
+  to: D14-11
+  kind: in_graph
+  note_zh: 网关拒绝回长清单审查（跨段长回边）
+- loop_id: B1
+  from: D14-02
+  to: null
+  kind: out_of_graph
+  red_reason: terminal
+  note_zh: GAP 回讨论环节，目的地是设计备忘/架构条目（上游已归档，见 D14-G12）
+- loop_id: B2
+  from: D14-04
+  to: D14-04
+  kind: pending
+  red_reason: unwired
+  note_zh: 否决后重设计再评审=自环，无轮次常量 ⇒ 不得进图
+- loop_id: B3
+  from: D14-05
+  to: D14-05
+  kind: pending
+  red_reason: unwired
+  note_zh: 无日志回本步补挖（阻塞前进）=自环，无轮次常量
+- loop_id: B4
+  from: D14-06
+  to: null
+  kind: out_of_graph
+  red_reason: terminal
+  note_zh: 依赖缺失回设计备忘补设计（出图，同 B1 目的地）
+- loop_id: B6
+  from: D14-07
+  to: D14-07
+  kind: pending
+  red_reason: unwired
+  note_zh: 孤儿/状态漂移重跑同步与对齐=自环，无轮次常量
+- loop_id: B7
+  from: D14-08
+  to: null
+  kind: out_of_graph
+  red_reason: terminal
+  note_zh: 该拆不拆转前端拆件子 SOP 闭环（子流程真源另册）
+- loop_id: B14
+  from: D14-17
+  to: null
+  kind: terminal_branch
+  red_reason: terminal
+  note_zh: 合并冲突暂不清理=终止分支，非回边
+- loop_id: B15
+  from: D14-14
+  to: null
+  kind: recovery_branch
+  red_reason: terminal
+  note_zh: 文件丢失经版本库恢复后重走，恢复机制归交付流水线
+pending_anchors:
+- D14-01
+- D14-02
+- D14-03
+- D14-04
+- D14-05
+- D14-06
+- D14-07
+- D14-08
+- D14-09
+- D14-10
+- D14-11
+- D14-12
+- D14-13
+- D14-14
+- D14-15
+- D14-16
+- D14-17
+machine_facts:
+  skeleton_status_scan:
+    source: docs/_working/map_build/fig14_construction/00_skeleton.md
+    steps_scanned: 17
+    by_symbol:
+      ✅: 6
+      ⬜: 4
+      🔨: 7
+    by_machine_verifiable:
+      'no': 5
+      partial: 6
+      'yes': 6
+  anchor_block:
+    source: proposal
+    origin: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
+    step_anchors: 17
+    gap_anchors: 12
+    loops_declared: 15
+  policy_step_heads:
+    count: 17
+    values:
+    - '0'
+    - '1'
+    - '1.5'
+    - '1.8'
+    - '1.9'
+    - '10'
+    - '11'
+    - '12'
+    - '2'
+    - '3'
+    - '3.5'
+    - '4'
+    - '5'
+    - '6'
+    - '7'
+    - '8'
+    - '9'
+  policy_matrix_rows:
+    count: 16
+    values:
+    - '0'
+    - '1'
+    - '1.5'
+    - '1.8'
+    - '1.9'
+    - '10'
+    - '11'
+    - '12'
+    - '2'
+    - '3'
+    - '4'
+    - '5'
+    - '6'
+    - '7'
+    - '8'
+    - '9'
+    closure_diff:
+      heads_minus_rows:
+      - '3.5'
+      rows_minus_heads: []
+  verifiability_vocabulary:
+    source: docs/01_policies_and_standards/_registry/vocabularies/verifiability_vocabulary.yaml
+    values:
+    - automated
+    - inspection
+    - manual
+  gate_face:
+    gate_ids_scanned: 181
+    cited_gate_ids: 18
+    unresolvable_gate_ids: []
+  module_id_scan:
+    nodes_with_module_id: 10
+    nodes_with_module_ref: 10
+    nodes_null_module_id: 19
+  handoff_face:
+    fig11_ids_scanned: 28
+    handoff_nodes: 5
+    handoff_refs: 19
+  ghost_reference_surface:
+    token: ide_health
+    scanned_dirs:
+    - docs/01_policies_and_standards
+    - docs/03_modules
+    - src
+    - scripts
+    - tests
+    - config
+    - .trae
+    excluded_prefixes:
+    - docs/_working
+    - docs/_archive
+    - __pycache__
+    - .runtime
+    referencing_files: 30
+    occurrences: 58
+    in_catalog_files: 6
+    in_catalog_occurrences: 13
+    in_catalog_breakdown:
+      docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml: 3
+      docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml: 3
+      docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: 2
+      docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml: 2
+      docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: 1
+      docs/01_policies_and_standards/_registry/catalogs/test_suite_registry.yaml: 2
+counts:
+  total_nodes: 29
+  total_steps: 17
+  total_gaps: 12
+  total_edges: 34
+  total_feedback: 7
+  by_node_type:
+    gap: 12
+    stage: 17
+  by_verified_scope:
+    None: 4
+    production: 6
+    structure: 19
+  by_verifiability:
+    automated: 4
+    inspection: 4
+    manual: 21
+  by_build_status:
+    built: 6
+    partial: 7
+    pending: 16
+  by_role:
+    handoff: 5
+    internal: 24
+  by_segment:
+    判定: 3
+    前置: 6
+    文档: 1
+    文档转正: 2
+    施工: 1
+    落地收尾: 7
+    设计登记: 6
+    验收: 3
+  by_skeleton_status:
+    ✅: 6
+    ⬜: 4
+    🔨: 7
+  pending_anchors: 17

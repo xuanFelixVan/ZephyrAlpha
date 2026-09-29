@@ -22,6 +22,7 @@ generated: '2026-08-17'
 | ai_autonomy_vocabulary.yaml | ai_autonomy 受控词表（3 值） |
 | ai_capability_slot_vocabulary.yaml | ai_capability_slot 受控词表（4 值） |
 | blueprint_refs_status_vocabulary.yaml | blueprint_refs.status 受控词表（3 值） |
+| card_state_vocabulary.yaml | card_state 受控词表（13 值，图15 卡契约地位轴，宿主=REG-EXP-001） |
 | category_vocabulary.yaml | category 受控词表（10 值） |
 | classification_vocabulary.yaml | classification 受控词表（3 值） |
 | compliance_tags_vocabulary.yaml | compliance_tags 受控词表（6 值） |

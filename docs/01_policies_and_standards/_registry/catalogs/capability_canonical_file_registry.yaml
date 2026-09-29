@@ -56520,4 +56520,25 @@ creation_tokens:
   created_by: st-finaldel-cdead-20260929
   capability: finaldel_deadbag_triage
   merge_evaluation: "死袋考古车道产出：q-0213 分诊报告+R-1 蒸发件捞回件，task_bound 随战役归档，无替代合并对象"
+- file: config/construction_workflow_map.yaml
+  token: fig14-fig15-map-bodies-construction-workflow-map-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: fig14_fig15_map_bodies
+  merge_evaluation: "六图战役收口代投前置 token 批（原 sw13 袋内容收编 st-mapbuild-20260924 终版成品，死账复活车道代登记）"
+- file: config/strategy_card_lifecycle_map.yaml
+  token: fig14-fig15-map-bodies-strategy-card-lifecycle-map-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: fig14_fig15_map_bodies
+  merge_evaluation: "六图战役收口代投前置 token 批（同上）"
+- file: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+  token: fig14-fig15-map-bodies-card-state-vocabulary-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: fig14_fig15_map_bodies
+  merge_evaluation: "六图战役收口代投前置 token 批（同上）"
+- file: docs/_working/night_sweep/fig14_fig15_spec.md
+  token: fig14-fig15-map-bodies-fig14-fig15-spec-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: fig14_fig15_map_bodies
+  merge_evaluation: "六图战役收口代投前置 token 批（同上）"
+
 di_seam_exemptions: []
