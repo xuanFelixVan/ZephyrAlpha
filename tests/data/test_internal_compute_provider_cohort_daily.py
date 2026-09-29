@@ -29,20 +29,9 @@ import pytest
 
 import zephyr.alt_data.cohort_daily_ledger as cdl
 import zephyr.data.implementations.internal_compute_provider as icp
-from schemas.categories.cohort_daily_ledger import INSERT_COLUMNS
 from zephyr.data.provider_base import FetchPayload
 
 _TBL = icp._TBL_COHORT_DAILY_LEDGER
-_FAKE_REC = {
-    "trade_date": "2026-09-15",
-    "cohort_id": "retail",
-    "metric_id": "discount_rate_avg",
-    "metric_value": 0.1,
-    "state": "ok",
-    "proxy_source": "test",
-    "bias_note": "",
-    "detail": "{}",
-}
 
 
 def _payload(start: dt.date, end: dt.date) -> FetchPayload:
@@ -74,29 +63,31 @@ def test_route_dispatch_never_falls_through_to_indicator(monkeypatch):
 
 
 def test_route_builds_per_trading_day_and_aligns_columns(monkeypatch):
-    """交易日守卫后逐日驱动 builder，行元组严格按 INSERT_COLUMNS 序。"""
+    """交易日守卫后逐日驱动唯一写入口 write_cohort_daily；结果仅记账（HEAD 契约
+    2026-09-21/22 写入器收敛）：columns/rows 恒空防框架二次插行=禁双写，
+    rows_fetched=实写行数供游标推进，committed=True 无 error。"""
     days = [dt.date(2026, 9, 15)]
-    built: list[str] = []
+    written: list[str] = []
     monkeypatch.setattr(
         icp.InternalComputeProvider,
         "_trade_days_guarded",
         staticmethod(lambda start, end: list(days)),
     )
 
-    def _fake_build(day, reader=None):
-        built.append(day)
-        return [dict(_FAKE_REC)]
+    def _fake_write(day, reader=None):
+        written.append(day)
+        return {"rows": 3, "committed": True, "day": day, "error": None}
 
-    monkeypatch.setattr(cdl, "build_cohort_daily", _fake_build)
+    # 生产分支在函数内延迟导入 writer——patch 模块属性即生效；禁触真 CH（零 DB 铁律）
+    monkeypatch.setattr("zephyr.alt_data.cohort_daily_writer.write_cohort_daily", _fake_write)
     prov = icp.InternalComputeProvider()
     results = list(prov.fetch(_payload(dt.date(2026, 9, 14), dt.date(2026, 9, 16)), None))
-    assert built == ["2026-09-15"]
+    assert written == ["2026-09-15"]
     assert len(results) == 1
     res = results[0]
     assert res.table == _TBL
-    assert res.columns == [c.strip() for c in INSERT_COLUMNS.strip("()").split(",")]
-    assert len(res.rows) == 1
-    assert res.rows[0][0] == "2026-09-15" and res.rows[0][1] == "retail"
+    assert res.columns == [] and res.rows == []
+    assert res.rows_fetched == 3
     assert res.error is None and res.last_key == "2026-09-16"
 
 
