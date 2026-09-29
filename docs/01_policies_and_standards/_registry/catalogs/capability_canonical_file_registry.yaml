@@ -29924,11 +29924,11 @@ creation_tokens:
   token: auction-backfill-verify-exchange-coverage-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_coverage.ps1
+- file: scripts/_archive/ops/check_coverage.ps1
   token: auction-backfill-check-coverage-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_coverage2.ps1
+- file: scripts/_archive/ops/check_coverage2.ps1
   token: auction-backfill-check-coverage2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -29944,15 +29944,15 @@ creation_tokens:
   token: auction-backfill-check-risk-memos2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_specific_versions.ps1
+- file: scripts/_archive/ops/check_specific_versions.ps1
   token: auction-backfill-check-specific-versions-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_version_drift.ps1
+- file: scripts/_archive/ops/check_version_drift.ps1
   token: auction-backfill-check-version-drift-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_version_drift_v2.ps1
+- file: scripts/_archive/ops/check_version_drift_v2.ps1
   token: auction-backfill-check-version-drift-v2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32172,7 +32172,7 @@ creation_tokens:
   token: auction-backfill-vms-version-sync-check-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/grep_coverage.ps1
+- file: scripts/_archive/ops/grep_coverage.ps1
   token: auction-backfill-grep-coverage-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -55929,6 +55929,11 @@ creation_tokens:
   created_by: st-zcloseout-20260928
   capability: qoder_legacy_closeout
   merge_evaluation: "队列压缩缺陷病案档案：唯一新增病案真源；同域无重复对象不并"
+- file: docs/_working/qoder_legacy_closeout/index.md
+  token: qoder-legacy-closeout-index-20260929
+  created_by: st-zcloseout-20260928
+  capability: qoder_legacy_closeout
+  merge_evaluation: "总筹台账+96 终报+目录索引唯一归档位（token 同袋原子）"
 
 - file: src/zephyr/compliance/checklist_evidence.py
   token: auto-scaffold-checklist_evidence-20260928
@@ -56366,4 +56371,88 @@ creation_tokens:
   created_by: st-nightsweep-sw11-20260929
   capability: backtest_algo_flow
   merge_evaluation: "ALGO_FLOW 外置真源（P2-1 既有机制面新增一模块条目，与 vectorized_engine.yaml 同族同真源管线，不立平行表）"
+- file: scripts/check_coverage.ps1
+  token: auction-backfill-check-coverage-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
+- file: scripts/check_coverage2.ps1
+  token: auction-backfill-check-coverage2-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
+- file: scripts/check_specific_versions.ps1
+  token: auction-backfill-check-specific-versions-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
+- file: scripts/check_version_drift.ps1
+  token: auction-backfill-check-version-drift-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
+- file: scripts/check_version_drift_v2.ps1
+  token: auction-backfill-check-version-drift-v2-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
+- file: scripts/grep_coverage.ps1
+  token: auction-backfill-grep-coverage-20260916
+  created_by: st-auction-bridge-20260917
+  capability: auction_backfill
+- file: docs/_working/final_delivery_campaign/index.md
+  token: final-delivery-campaign-index-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/mining_commit_chain/01_state_and_residuals.md
+  token: final-delivery-campaign-01-state-and-residuals-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/mining_commit_chain/02_prescriptions.md
+  token: final-delivery-campaign-02-prescriptions-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/mining_commit_chain/03_flag_adjudications.md
+  token: final-delivery-campaign-03-flag-adjudications-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/mining_commit_chain/index.md
+  token: final-delivery-campaign-index-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/mining_freshness_audit.md
+  token: final-delivery-campaign-mining-freshness-audit-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/sibling_crosscheck_20260929.md
+  token: final-delivery-campaign-sibling-crosscheck-20260929-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/workorders_commit_clean.md
+  token: final-delivery-campaign-workorders-commit-clean-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/workorders_data_exam_factory.md
+  token: final-delivery-campaign-workorders-data-exam-factory-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/workorders_docs_misc.md
+  token: final-delivery-campaign-workorders-docs-misc-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: docs/_working/final_delivery_campaign/workorders_governance.md
+  token: final-delivery-campaign-workorders-governance-20260929
+  created_by: st-finaldel-m3-20260929
+  capability: final_delivery_campaign
+  merge_evaluation: "M3 分诊矿道工作单族：提交链+清洁卫生 41 卡工作单与兄弟矿道状态/处方册同域不同件，无合并冲突"
+- file: scripts/governance/_tasks/session_closeout_reconciler.py
+  token: session-closeout-reconciler-session-closeout-reconciler-20260929
+  created_by: st-nightclean-20260929
+  capability: session_closeout_reconciler
+  merge_evaluation: "RB3 治本：死会话收尾协调器（判死四门+动作分级+shadow 首版），挂 reaper 脉冲，净零无新哨兵"
 di_seam_exemptions: []
