@@ -62069,6 +62069,22 @@ entries:
   desc_en: ""
   plain_zh: "新数据源上架原来要靠人会话记忆串十个环节，经常漏一步就断供俩月没人知道。这个向导把十步排成一条流水线：能自动的（建表脚本、登记各种册子）它直接办，必须人拍板的（老板报批、写代码、首跑验收）它停下来开清单等你办完打卡，中途停了下次能从停的地方接着跑，演练模式只看不改"
   responsibility_layer: data
+- module_path: src/zephyr/reporting/report_archive_sink.py
+  domain_id: D_REPORTING
+  name_zh: "报告归档持久化出口"
+  name_en: "report_archive_sink"
+  desc_zh: "ReportPublisher 注入式持久化 sink：归档记录 append-only JSONL 落盘 data/reports/，尾哈希跨进程接链，只读读面供 /api/reports 投影（F115 R2）。"
+  desc_en: ""
+  plain_zh: "报告归档以前只存在内存里，程序一重启就全丢。这个小件把每份归档报告追加写到 data/reports 的日志文件里，重启后能接着上一条的指纹继续记账，前端还能直接读这个文件看历史报告。"
+  responsibility_layer: business
+- module_path: src/zephyr/reporting/review_trigger.py
+  domain_id: D_REPORTING
+  name_zh: "复盘链事件触发入口"
+  name_en: "review_trigger"
+  desc_zh: "review_orchestrator 缺失的事件调用方：最小输入驱动 run_daily 真实全链+CLI 一次性事件面，宿主中立待裁（F115 R1）。"
+  desc_en: ""
+  plain_zh: "复盘机器人都造好了却没人按启动键，风险报告从来没真正生成过。这个小件就是那个启动键：一声令下跑完审计加摘要加归档全流程，报告落到 data/reports，也可以命令行手动触发，不装定时任务。"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

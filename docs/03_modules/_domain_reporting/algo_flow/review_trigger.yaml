@@ -1,0 +1,59 @@
+# ALGO_FLOW 外部真源——review_trigger（_domain_reporting 域，真源 src/zephyr/reporting/review_trigger.py）
+# 2026-09-29 st-c9-f115 初版（F115 R1 触发链薄刀）：review_orchestrator 缺失的事件调用方
+# 最薄一刀，事件驱动零定时器；按 daily_gate_snapshot.yaml canonical 形态书写
+# （层名=输入/算法/输出+# 边: 段+# [/ALGO_FLOW] 收标记）；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.reporting.review_trigger
+source_of_truth: src/zephyr/reporting/review_trigger.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 触发参数
+    #   fields: trading_date（YYYY-MM-DD）+ portfolio_id（默认 PAPER-模拟盘）+ publish 旗 + orchestrator 注入位
+    #   code: trigger_daily_review(trading_date, *, orchestrator, portfolio_id, publish) / CLI main(argv)
+    # - id: I2
+    #   name: 归档落点
+    #   fields: archive_path（None=默认 data/reports/report_archive.jsonl）
+    #   code: build_default_orchestrator(archive_path) 装配参数
+    # 层: 算法
+    # - id: P1
+    #   name_zh: ① 真实依赖装配（或采用注入）
+    #   name_en: build_default_orchestrator
+    #   intro: DailyAuditor+RiskReportEngine+ReportPublisher(挂 JsonlArchiveSink) 全真装配
+    #   desc: 注入 orchestrator 时直用（Fake 友好）；缺省装配即把 R1 触发→R2 归档落盘串成一条链
+    #   inputs: I2
+    #   outputs: ReviewOrchestrator 实例
+    #   invariant: 事件驱动零定时器（禁 cron/Timer/计划任务）
+    # - id: P2
+    #   name_zh: ② 最小输入组装（上游缺口显式标注）
+    #   name_en: AuditRequest 最小构造 + _build_minimal_snapshot/_build_minimal_metrics
+    #   intro: 空持仓/空成交/零净值审计请求 + 零值契约快照与指标
+    #   desc: 同 run_post_settlement._build_audit_fn 先例——持仓/净值/限额真源未接线（57 号 GAP 族），calculation_method=upstream_gap_minimal 显式标注，不伪装完整审计；portfolio_id 双契约一致性校验由 generate_daily 承接
+    #   inputs: I1
+    #   outputs: AuditRequest + RiskDashboardSnapshot + RiskMetricsReport
+    #   invariant: 上游缺口显式标注不伪装；trading_date 非法 ValueError 原样上抛
+    # - id: P3
+    #   name_zh: ③ 日复盘全链驱动
+    #   name_en: ReviewOrchestrator.run_daily
+    #   intro: DailyAuditor 五件套审计→日度风险摘要→ReportPublisher 归档（sink 落盘）
+    #   desc: human_attention=非 PASS 项待人看清单；publish=False 时只算不归档；本模块只编排零新造分析（review_orchestrator 同款边界）
+    #   inputs: P1 P2
+    #   outputs: DailyReviewResult（audit_report/daily_summary/human_attention/archived_report）
+    #   invariant: 触发宿主中立——三选一待裁宿主一行接线即可替换 CLI/本函数调用位
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 日复盘产物与归档件
+    #   name_en: DailyReviewResult + archive JSONL 行
+    #   intro: 审计状态/日摘要/待人看清单 + data/reports/ 落盘归档记录
+    #   invariant: 归档经 ReportPublisher 唯一出口面（D-RPT-D05），零第二出口
+    #   downstream: /api/reports 投影（R3）；CLI stdout 摘要（人工门触达）
+    # [/ALGO_FLOW]
+
+    # 边:
+    # I1 --> P2
+    # I2 --> P1
+    # P1 --> P3
+    # P2 --> P3
+    # P3 --> O1

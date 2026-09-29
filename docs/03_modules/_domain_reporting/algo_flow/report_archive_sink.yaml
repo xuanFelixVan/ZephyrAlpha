@@ -1,0 +1,68 @@
+# ALGO_FLOW 外部真源——report_archive_sink（_domain_reporting 域，真源 src/zephyr/reporting/report_archive_sink.py）
+# 2026-09-29 st-c9-f115 初版（F115 R2 归档链薄刀）：publisher 内存归档的注入式持久化
+# 出口，append-only JSONL 落盘 data/reports/；按 daily_gate_snapshot.yaml canonical 形态
+# 书写（层名=输入/算法/输出+# 边: 段+# [/ALGO_FLOW] 收标记）；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.reporting.report_archive_sink
+source_of_truth: src/zephyr/reporting/report_archive_sink.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 归档报告（ArchivedReport）
+    #   fields: archive_id/report_id/source/report_type/archived_at/content/content_hash/prev_hash/record_hash/schema_version
+    #   code: persist(report) 参数（ReportPublisher publish 产物，frozen 不可变）
+    # - id: I2
+    #   name: 归档落点
+    #   fields: path（None=默认仓根 data/reports/report_archive.jsonl，测试走 tmp_path）
+    #   code: JsonlArchiveSink(path) 构造参数
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 记录规范化
+    #   name_en: record_to_dict + json.dumps(sort_keys)
+    #   intro: ArchivedReport 转 JSON dict（archived_at 转 ISO8601 带时区）再规范化序列化
+    #   desc: json.dumps(record_to_dict(report), sort_keys=True, ensure_ascii=False, default=str)——同行追加一字节不重不漏
+    #   inputs: I1
+    #   outputs: 规范 JSON 行文本
+    # - id: A2
+    #   name_zh: ② append-only 追加落盘
+    #   name_en: JsonlArchiveSink.persist
+    #   intro: 父目录惰性构造后以追加模式写一行，历史行永不改写
+    #   desc: open(path,"a",encoding="utf-8") 单行追加+\n；内部 Lock 线程安全；IO 异常原样上抛由 publisher 侧捕获降级（留 ERROR 日志不阻断内存归档主链）
+    #   inputs: A1 I2
+    #   outputs: 盘面 JSONL 追加行
+    #   invariant: append-only禁改写历史行；落盘失败降级不阻断归档主链
+    # - id: A3
+    #   name_zh: ③ 尾哈希读取（跨进程接链）
+    #   name_en: JsonlArchiveSink.last_record_hash
+    #   intro: 顺序扫盘面取最后一条可解析记录的 record_hash，供新进程起链接续
+    #   desc: 空盘/文件缺失返回空串；坏行（JSONDecodeError）跳过留 WARN；publisher 内存链空时以该值接续 prev_hash（进程重启不再空链起链）
+    #   inputs: I2
+    #   outputs: 尾记录哈希（str）
+    #   invariant: 哈希链跨进程连续
+    # - id: A4
+    #   name_zh: ④ 只读投影读面
+    #   name_en: JsonlArchiveSink.load_records / load_report_records
+    #   intro: 只读加载全部可解析记录（坏行跳过不抛），供 /api/reports 投影
+    #   desc: 文件缺失返回空列表；逐行 json.loads，dict 才收；零写副作用
+    #   inputs: I2
+    #   outputs: 记录 dict 列表（盘面序=归档升序）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 归档落盘面 data/reports/report_archive.jsonl
+    #   name_en: report_archive.jsonl
+    #   intro: 报告归档持久化出口（54 号 §7 DB 落库施工的前置薄刀）
+    #   invariant: append-only；与晨报面 morning_digest.md 同目录不同文件零冲突
+    #   downstream: zephyr.frontend.dashboard.api_server /api/reports（R3 只读投影）
+    # [/ALGO_FLOW]
+
+    # 边:
+    # I1 --> A1
+    # I2 --> A2
+    # A1 --> A2
+    # I2 --> A3
+    # I2 --> A4
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1

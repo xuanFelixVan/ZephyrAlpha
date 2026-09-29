@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.reporting (各报告模块汇聚至此)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 报告域唯一出口(D-RPT-D05); append-only归档+哈希链; 3分发渠道(ARCHIVE/WEBHOOK/EMAIL); frozen不可变; 线程安全; 纯消费层不发布事件(D-RPT-D01)
+# [INVARIANTS] 报告域唯一出口(D-RPT-D05); append-only归档+哈希链; 3分发渠道(ARCHIVE/WEBHOOK/EMAIL); frozen不可变; 线程安全; 纯消费层不发布事件(D-RPT-D01); 可选持久化sink注入(archive_sink,R2)落盘失败降级不阻断
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -26,6 +26,8 @@ D_REPORTING — Report Publisher (报告发布器)
   - 报告分发: ARCHIVE(仅归档→SENT) / WEBHOOK(微信→PENDING) / EMAIL(邮件→PENDING)
   - 报告查询: 按 archive_id/source/type 查询, get_latest
   - 完整性校验: verify_chain() 校验哈希链
+  - 持久化出口(F115 R2, 可选): 注入 archive_sink(JsonlArchiveSink) 后归档逐条
+    append-only 落盘 data/reports/, 进程重启以盘面尾哈希接链; 落盘失败降级内存态
 
 受限功能(基础版不含): LLM摘要/Crypto-Shredding/SQLite+Parquet持久化/Merkle树/
 微信Webhook/邮件SMTP实际发送。
@@ -48,7 +50,7 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Callable
+from typing import Callable, Protocol
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -193,6 +195,23 @@ _BASE_DISTRIBUTION_STATUS: dict[DistributionChannel, DistributionStatus] = {
 ReportSender = Callable[["ArchivedReport"], bool]
 
 
+class ArchiveSink(Protocol):
+    """注入式持久化 sink 协议（F115 R2 归档链薄刀，MOD-RPT-037）。
+
+    真身=report_archive_sink.JsonlArchiveSink（append-only JSONL 落盘）；此处只
+    声明结构契约避免反向 import（sink 依赖本模块的 ArchivedReport 类型）。
+    persist/last_record_hash 异常由 publish 侧捕获降级，不阻断内存归档主链。
+    """
+
+    def persist(self, report: ArchivedReport) -> object:
+        """追加一条归档记录到持久层（append-only）。"""
+        ...
+
+    def last_record_hash(self) -> str:
+        """持久层尾记录哈希（跨进程接链）；空持久层返回空串。"""
+        ...
+
+
 def _distribute(
     archived: ArchivedReport,
     channel: DistributionChannel,
@@ -257,6 +276,7 @@ class ReportPublisher:
         self,
         webhook_sender: Callable[[ArchivedReport], bool] | None = None,
         email_sender: Callable[[ArchivedReport], bool] | None = None,
+        archive_sink: ArchiveSink | None = None,
     ) -> None:
         self._archive: list[ArchivedReport] = []
         self._archive_by_id: dict[str, ArchivedReport] = {}
@@ -267,6 +287,19 @@ class ReportPublisher:
             DistributionChannel.WEBHOOK: webhook_sender,
             DistributionChannel.EMAIL: email_sender,
         }
+        # 注入式持久化 sink（F115 R2 归档链薄刀）：None=未配置 → 维持内存态现状；
+        # 注入后每条归档 append-only 落盘，进程重启后以盘面尾哈希接续哈希链。
+        self._archive_sink = archive_sink
+
+    def _tail_prev_hash(self) -> str:
+        """起链 prev_hash——内存链为空时取持久层尾哈希（跨进程接链），无 sink 则空串起链。"""
+        if self._archive_sink is None:
+            return ""
+        try:
+            return self._archive_sink.last_record_hash()
+        except Exception:  # noqa: BLE001 —— 尾哈希读取失败降级为空串起链，不阻断发布
+            _logger.exception("archive_sink.last_record_hash 异常（降级为空串起链）")
+            return ""
 
     # ── 发布（归档 + 分发）──
 
@@ -307,7 +340,7 @@ class ReportPublisher:
             archive_id = f"ARCH-{uuid.uuid4().hex[:10]}"
             archived_at = datetime.now(UTC)
             content_hash = _compute_content_hash(content)
-            prev_hash = self._archive[-1].record_hash if self._archive else ""
+            prev_hash = self._archive[-1].record_hash if self._archive else self._tail_prev_hash()
 
             record_hash = _compute_record_hash(
                 archive_id,
@@ -334,6 +367,17 @@ class ReportPublisher:
 
             self._archive.append(archived)
             self._archive_by_id[archive_id] = archived
+
+            # 持久化出口（F115 R2 归档链薄刀）：注入 sink 时 append-only 落盘；
+            # 落盘失败降级为内存态并留 ERROR 日志（best-effort，不阻断归档主链）。
+            if self._archive_sink is not None:
+                try:
+                    self._archive_sink.persist(archived)
+                except Exception:  # noqa: BLE001 —— 持久化失败不阻断内存归档
+                    _logger.exception(
+                        "archive_sink.persist 异常（归档降级为内存态）: archive_id=%s",
+                        archive_id,
+                    )
 
             # 执行分发（WEBHOOK/EMAIL 经注入 sender 实发，未注入维持 PENDING）
             dist_records = [_distribute(archived, ch, self._senders.get(ch)) for ch in channels]
@@ -434,6 +478,7 @@ class ReportPublisher:
 
 
 __all__ = [
+    "ArchiveSink",
     "ArchivedReport",
     "DistributionChannel",
     "DistributionRecord",

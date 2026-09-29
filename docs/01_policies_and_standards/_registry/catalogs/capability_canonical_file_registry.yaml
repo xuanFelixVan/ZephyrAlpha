@@ -56651,4 +56651,34 @@ creation_tokens:
   created_by: st-c9-secktide
   capability: data_supply_chain
   merge_evaluation: "kline_sector_intraday 断供治愈：tdx 真值腿服务端拒答后的 EOD 合成续供腿任务注册器（每日 15:50 sector_board_synth_eod，tilib 先例镜像）"
+- file: src/zephyr/reporting/report_archive_sink.py
+  token: report-archive-sink-report-archive-sink-20260929
+  created_by: st-c9-f115
+  capability: report_archive_sink
+  merge_evaluation: "R2 归档链薄刀：ReportPublisher 唯一出口面内补注入式持久化 sink（54号§7 DB 落库前置），同真源非平行件，无新增归档出口"
+- file: docs/03_modules/_domain_reporting/algo_flow/report_archive_sink.yaml
+  token: report-archive-sink-report-archive-sink-20260929
+  created_by: st-c9-f115
+  capability: report_archive_sink
+  merge_evaluation: "R2 薄刀 ALGO_FLOW 外部真源出仓件"
+- file: src/zephyr/reporting/review_trigger.py
+  token: review-trigger-review-trigger-20260929
+  created_by: st-c9-f115
+  capability: review_trigger
+  merge_evaluation: "R1 触发链薄刀：review_orchestrator 缺失的事件调用方（宿主中立待裁），零新班次零定时器，晨报面 zero 交集"
+- file: docs/03_modules/_domain_reporting/algo_flow/review_trigger.yaml
+  token: review-trigger-review-trigger-20260929
+  created_by: st-c9-f115
+  capability: review_trigger
+  merge_evaluation: "R1 薄刀 ALGO_FLOW 外部真源出仓件"
+- file: docs/03_modules/_domain_reporting/report_archive_sink/blueprint.md
+  token: report-archive-sink-docs-blueprint-20260929
+  created_by: st-c9-f115
+  capability: report_archive_sink_docs
+  merge_evaluation: "R2 薄刀伴读蓝图+ALGO_FLOW 出仓（架构资产非代码真源）"
+- file: docs/03_modules/_domain_reporting/review_trigger/blueprint.md
+  token: review-trigger-docs-blueprint-20260929
+  created_by: st-c9-f115
+  capability: review_trigger_docs
+  merge_evaluation: "R1 薄刀伴读蓝图（架构资产非代码真源）"
 di_seam_exemptions: []

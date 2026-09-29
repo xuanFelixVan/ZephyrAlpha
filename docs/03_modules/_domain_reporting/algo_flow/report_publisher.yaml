@@ -28,10 +28,18 @@ algo_flow: |
     #   name_zh: ② 归档与哈希链（append-only）
     #   name_en: ReportPublisher.publish/_compute_content_hash/_compute_record_hash
     #   intro: 报告内容算 SHA-256 指纹并链接上一条记录哈希，append-only 写入归档
-    #   desc: content_hash=SHA-256(canonical_json(content))；prev_hash=上一条 record_hash（首条为空）；record_hash=SHA-256(archive_id|archived_at|report_id|source|report_type|content_hash|prev_hash)；Lock 保证线程安全
+    #   desc: content_hash=SHA-256(canonical_json(content))；prev_hash=上一条 record_hash（内存链空且注入 sink 时取 archive_sink.last_record_hash() 跨进程接链，否则空串起链）；record_hash=SHA-256(archive_id|archived_at|report_id|source|report_type|content_hash|prev_hash)；Lock 保证线程安全
     #   inputs: A1
     #   outputs: ArchivedReport（含哈希链）
     #   invariant: append-only归档+哈希链；frozen不可变；线程安全；纯消费层不发布事件(D-RPT-D01)
+    # - id: A2B
+    #   name_zh: ②b 持久化出口（可选注入，F115 R2 薄刀）
+    #   name_en: archive_sink.persist（真身 report_archive_sink.JsonlArchiveSink）
+    #   intro: 注入 archive_sink 时归档逐条 append-only 落盘 JSONL（默认 data/reports/report_archive.jsonl）
+    #   desc: publish 在内存归档后调用 sink.persist(archived)；落盘失败降级为内存态并留 ERROR 日志不阻断主链；未注入 sink 维持内存态现状
+    #   inputs: A2
+    #   outputs: 盘面 JSONL 追加行（跨进程可投影 /api/reports）
+    #   invariant: append-only落盘禁改写历史行；哈希链跨进程连续；持久化失败不阻断归档主链
     # - id: A3
     #   name_zh: ③ 报告分发（基础版）
     #   name_en: _distribute
