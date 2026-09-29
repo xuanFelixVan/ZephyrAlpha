@@ -46,72 +46,7 @@ PIT 取数::
     print(PIT_LATEST_SQL.format(as_of="2025-09-09 00:00:00", names="('FRED_CPI_US')"))
 
 自检：``python macro_vintage.py --selftest``
-# #
-# # 边:
-# # I1 -.->|断点| F1
-# # I2 -.->|断点| F1
-# # I3 -.->|断点| F1
-# # I4 -.->|断点| F1
-# # F1 --> A1
-# # A1 --> O1
-# [/ALGO_FLOW]
-# target: src/zephyr/data/macro_vintage.py (docstring 2151 字, 20 函数, 0 步骤)
 # [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/data/macro_vintage.yaml
-# target: src/zephyr/data/macro_vintage.py (docstring 1351 字, 20 函数, 0 步骤)
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: value 参数
-#   fields: 待校准
-#   code: value
-# - id: I2
-#   name: report_date 参数
-#   fields: 待校准
-#   code: report_date
-# - id: I3
-#   name: legacy_rows 参数
-#   fields: 待校准
-#   code: legacy_rows
-# - id: I4
-#   name: existing 参数
-#   fields: 待校准
-#   code: existing
-# 层: 特征
-# - id: F1
-#   name_zh: 待校准特征
-#   name_en: feature_tbd
-#   intro: 待校准（AI读代码确认）
-#   formula: 待校准
-#   code: 待校准
-#   registry: factor_registry: 待查
-#   is_break: true
-# 层: 算法
-# - id: A1
-#   name_zh: 待校准算法步骤
-#   name_en: tbd
-#   intro: 待校准算法步骤
-#   inputs: 待校准
-#   outputs: 待校准
-# 层: 输出
-# - id: O1
-#   name_zh: 待校准输出 Path
-#   name_en: Path
-#   intro: 待校准
-#   downstream: 待校准
-# - id: O2
-#   name_zh: 待校准输出 bool
-#   name_en: bool
-#   intro: 待校准
-#   downstream: 待校准
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 -.->|断点| F1
-# I2 -.->|断点| F1
-# I3 -.->|断点| F1
-# I4 -.->|断点| F1
-# F1 --> A1
-# A1 --> O1
 """
 
 from __future__ import annotations

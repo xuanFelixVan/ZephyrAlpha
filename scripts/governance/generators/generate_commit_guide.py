@@ -5,7 +5,7 @@
 # [CONSUMERS] docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md (机生产物), scripts/governance/d3_metadata/batch_creation_tokens.py (递送接口), scripts/git_commit.py (死因锚点)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 指南唯一产出通道（禁手写第二真源）——正文全部由四源机生：in_process_gate_registry.yaml(在册台目真源)+gate_digest_registry.yaml(判据蒸馏层)+file_type_checklists_registry.yaml(类型清单层)+death_cases_registry.yaml(死因案例层)；硬校验三道——①gate_refs/案例 gate 必须在（in_process 注册表 ∪ digest ∪ 已知钩子阶段名）否则生成失败；②digest entry 的 source_file 必须实存否则生成失败；③source_sha256 与现源不符的台目在指南顶部出"待重蒸馏"横幅+逐台 ⚠（机生新鲜度闸，指南永不无声过期）；在册但无 digest 条目的台目自动列入附录"待蒸馏清单"（覆盖面完整可见）；输出经 safe_write_text 原子写；--check 校验模式零写盘（CI 可挂）；--refresh-hashes 蒸馏确认后同步哈希（纯插入文本编辑，不动既有行）
+# [INVARIANTS] 指南唯一产出通道（禁手写第二真源）——正文全部由四源机生：in_process_gate_registry.yaml(在册台目真源)+gate_digest_registry.yaml(判据蒸馏层)+file_type_checklists_registry.yaml(类型清单层)+death_cases_registry.yaml(死因案例层)；硬校验三道——①gate_refs/案例 gate 必须在（in_process 注册表 ∪ digest ∪ 已知钩子阶段名）否则生成失败；②digest entry 的 source_file 必须实存否则生成失败；③source_sha256 与现源不符的台目在指南顶部出"待重蒸馏"横幅+逐台 ⚠（机生新鲜度闸，指南永不无声过期）；在册但无 digest 条目的台目自动列入附录"待蒸馏清单"（覆盖面完整可见）；enabled:false 停用门不拒渲染——顶部横幅清点+卡片明标"（停用）"（蒸馏面与死门显式分家，状态真源=gate_registry，2026-09-30 起）；输出经 safe_write_text 原子写；--check 校验模式零写盘（CI 可挂）；--refresh-hashes 蒸馏确认后同步哈希（纯插入文本编辑，不动既有行）
 # [MODIFY-GUARD] gate_id="COMMIT-GUIDE-GENERATOR"
 # [STABILITY] evolving
 # [SAFETY] L
@@ -61,6 +61,7 @@ _GENERATE_CMD = "python scripts/governance/generators/generate_commit_guide.py"
 
 
 def _load_yaml(path: Path):
+    """_load_yaml implementation."""
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
@@ -73,6 +74,7 @@ def _sha256_of(path: Path) -> str:
 
 
 def _head_blob_bytes(rel: str) -> bytes | None:
+    """_head_blob_bytes implementation."""
     import subprocess  # noqa: PLC0415
 
     flags = subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0
@@ -155,6 +157,7 @@ def _invalidate_hashes(digest_path: Path) -> None:
 
 
 def _needs_hash(entry: dict) -> bool:
+    """_needs_hash implementation."""
     recorded = entry.get("source_sha256")
     return not (recorded and re.fullmatch(r"[0-9a-f]{64}", str(recorded)))
 
@@ -211,14 +214,22 @@ def _refresh_hashes(digest_path: Path) -> int:
     return patched
 
 
-def _render_gate_card(entry: dict, drifted: set[str]) -> list[str]:
+def _render_gate_card(entry: dict, drifted: set[str], disabled: set[str] = frozenset()) -> list[str]:
+    """_render_gate_card implementation."""
     gid = entry["gate_id"]
     flag = " ⚠️待重蒸馏(判据源已漂移)" if gid in drifted else ""
-    mode = {"block": "硬阻断", "warn": "warn-only", "conditional": "分级/条件"}.get(
-        entry.get("block_or_warn", ""), entry.get("block_or_warn", "")
+    # 蒸馏面与死门显式分家（裁定#431 后 8 台 enabled:false 在册）：停用门照常渲染
+    # 但卡片明标"（停用）"，不拒绝整个渲染——指南是导航不是门禁状态机。
+    off = "（停用：见 gate_registry）" if gid in disabled else ""
+    mode = (
+        "停用（enabled:false，不参与在飞预检）"
+        if gid in disabled
+        else {"block": "硬阻断", "warn": "warn-only", "conditional": "分级/条件"}.get(
+            entry.get("block_or_warn", ""), entry.get("block_or_warn", "")
+        )
     )
     lines = [
-        f"### {gid}{flag}",
+        f"### {gid}{off}{flag}",
         "",
         f"- 强度: {mode}",
         f"- 触发面: {entry.get('trigger', '')}",
@@ -235,17 +246,16 @@ class _RenderCtx:
     """渲染上下文（四源装载+校验+新鲜度一次性计算）。"""
 
     def __init__(self) -> None:
+        """__init__ implementation."""
         registry = _load_yaml(_REGISTRY_PATH)
         digest = _load_yaml(_SOURCES_DIR / "gate_digest_registry.yaml")
         self.checklists = _load_yaml(_SOURCES_DIR / "file_type_checklists_registry.yaml")
         cases_doc = _load_yaml(_SOURCES_DIR / "death_cases_registry.yaml")
         self.registry_gates = registry["gates"]
         self.registry_ids = {g["gate_id"] for g in self.registry_gates}
-        disabled = {g["gate_id"] for g in self.registry_gates if g.get("enabled") is False}
-        if disabled:
-            raise SystemExit(
-                f"指南生成校验失败: 注册表存在 enabled:false 死门: {sorted(disabled)}（蒸馏面与死门必须显式分家）"
-            )
+        # 蒸馏面与死门显式分家（2026-09-30）：enabled:false 门不再 SystemExit 拒渲染，
+        # 改为停用清单进横幅+卡片明标（指南=导航面；门状态真源=gate_registry，禁在此二次裁判）。
+        self.disabled = {g["gate_id"] for g in self.registry_gates if g.get("enabled") is False}
         self.digest_gates = digest["gates"]
         self.cases = cases_doc.get("cases", [])
         problems = _collect_validation_problems(self.registry_ids, self.digest_gates, self.checklists, self.cases)
@@ -261,11 +271,13 @@ class _RenderCtx:
         self.ordered = [g for g in self.registry_gates if g["gate_id"] in self.digest_by_id]
 
     def gate_card(self, gate_id: str) -> list[str]:
+        """gate_card implementation."""
         entry = self.digest_by_id.get(gate_id)
-        return _render_gate_card(entry, self.drifted_set) if entry else []
+        return _render_gate_card(entry, self.drifted_set, self.disabled) if entry else []
 
 
 def _render_header(ctx: _RenderCtx, ts: str) -> list[str]:
+    """_render_header implementation."""
     out = [
         "---",
         "ttl: permanent",
@@ -288,6 +300,11 @@ def _render_header(ctx: _RenderCtx, ts: str) -> list[str]:
         )
     if ctx.pending:
         banner.append(f"**{len(ctx.pending)} 台在册未蒸馏**（附录 B）: {', '.join(ctx.pending)}")
+    if ctx.disabled:
+        banner.append(
+            f"**{len(ctx.disabled)} 台已停用 enabled:false**（卡片标'停用'，状态真源=gate_registry）: "
+            + ", ".join(sorted(ctx.disabled))
+        )
     if banner:
         out.extend(["", "> " + " ｜ ".join(banner)])
     out.extend(["", "锚点约定：gate 卡片标题=`### <GATE_ID>`，类型节=`## FT-<type_id>`；接口按子串检索。", ""])
@@ -295,6 +312,7 @@ def _render_header(ctx: _RenderCtx, ts: str) -> list[str]:
 
 
 def _render_universal(ctx: _RenderCtx) -> list[str]:
+    """_render_universal implementation."""
     uni = ctx.checklists.get("universal", {}) or {}
     out = ["## FT-universal — 每一笔提交的通用前置", ""]
     out.extend(f"1. {s}" for s in uni.get("steps", []) or [])
@@ -306,6 +324,7 @@ def _render_universal(ctx: _RenderCtx) -> list[str]:
 
 
 def _render_one_type(ctx: _RenderCtx, sec: dict) -> list[str]:
+    """_render_one_type implementation."""
     out = [f"## FT-{sec.get('type_id')} — {sec.get('title', '')}", "", f"判定口诀: {sec.get('match_hint', '')}", ""]
     out.extend(f"1. {s}" for s in sec.get("steps", []) or [])
     if sec.get("common_deaths"):
@@ -321,6 +340,7 @@ def _render_one_type(ctx: _RenderCtx, sec: dict) -> list[str]:
 
 
 def _render_types_and_extra(ctx: _RenderCtx) -> list[str]:
+    """_render_types_and_extra implementation."""
     out: list[str] = []
     for sec in ctx.checklists.get("file_types", []) or []:
         out.extend(_render_one_type(ctx, sec))
@@ -339,6 +359,7 @@ def _cost_minutes(case: dict) -> float:
 
 
 def _render_cases(cases: list[dict]) -> list[str]:
+    """_render_cases implementation."""
     out = [
         "## DEATH-CASES — 死因处方速查（按实测成本排序）",
         "",
@@ -362,6 +383,7 @@ def _render_cases(cases: list[dict]) -> list[str]:
 
 
 def _render_appendix_a(ctx: _RenderCtx) -> list[str]:
+    """_render_appendix_a implementation."""
     out = ["## APPENDIX-A — 全台速查表", "", "| gate | 强度 | 触发面（一句） | 处方（一句） |", "|---|---|---|---|"]
     for g in ctx.ordered:
         e = ctx.digest_by_id[g["gate_id"]]
@@ -380,17 +402,22 @@ def _render_appendix_a(ctx: _RenderCtx) -> list[str]:
 
 
 def _render_appendix_bc(ctx: _RenderCtx) -> list[str]:
+    """_render_appendix_bc implementation."""
     out = ["## APPENDIX-B — 在册未蒸馏台目（生成器自动清点，蒸馏后重跑）", ""]
     out.extend([f"- {pid}" for pid in ctx.pending] if ctx.pending else ["（无——在册全覆盖）"])
     out.extend(["", "## APPENDIX-C — 判据源新鲜度快照", ""])
     out.append(f"- 漂移待重蒸馏: {len(ctx.drifted)} 台{('：' + ', '.join(ctx.drifted)) if ctx.drifted else ''}")
     out.append(f"- 未记录哈希: {len(ctx.unhashed)} 台{('：' + ', '.join(ctx.unhashed)) if ctx.unhashed else ''}")
+    out.append(
+        f"- 已停用 enabled:false: {len(ctx.disabled)} 台{('：' + ', '.join(sorted(ctx.disabled))) if ctx.disabled else ''}"
+    )
     out.append(f"- 在册覆盖: {len(ctx.ordered)}/{len(ctx.registry_ids)}")
     out.append("")
     return out
 
 
 def _render() -> str:
+    """_render implementation."""
     ctx = _RenderCtx()
     from zephyr.shared.utils.time_utils import now_utc
 
@@ -406,6 +433,7 @@ def _render() -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="提交指路指南机生器（禁手写第二真源）")
     parser.add_argument("--check", action="store_true", help="只校验+渲染，零写盘")
     parser.add_argument("--refresh-hashes", action="store_true", help="蒸馏确认后同步判据源哈希到 digest 册")
