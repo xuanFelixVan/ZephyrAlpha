@@ -62043,6 +62043,15 @@ entries:
   plain_zh: "这个测试文件盯着回测引擎新加的显卡加速接线不出错。它验证三件事：普通电脑算法算出来的结果和新算法一位不差；成本档位扫描从算两遍改成算一遍后结果还是一样的；只有在大面板上才真的用显卡算，小面板自动走普通算法不拖慢。全部用假数据，不查数据库。"
   responsibility_layer: business
 
+- module_path: scripts/governance/_tasks/session_closeout_reconciler.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "会话收尾协调器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "自动发现已经死掉的会话，把它们占用的文件锁释放掉，把残留的暂存残影清理干净，并把会话目录归档，防止死会话长期占用资源"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
