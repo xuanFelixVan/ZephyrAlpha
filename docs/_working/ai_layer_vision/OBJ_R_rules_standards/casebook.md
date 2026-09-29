@@ -44,6 +44,12 @@ status: patterned   # Owner-4 补登确认后由 open 转 patterned（夜批授�
 relapse_verification: 重放用例挂 queue 落地侧回归（test_commit_queue_landing 族）；体检指标=dead_reason 结构化占比
 ```
 
+> 修订注记（2026-09-29，st-ignite-20260929）：本案已按 L7_heredity DESIGN §2.5 登记闸经
+> `store.register()` 回种传承库——L7 entry_id=**HT-20260917-001**（entry_kind=defect，
+> pattern_norm=`single_side_defense`（DESIGN §2.3 同源 slug），source_kind=casebook，
+> source_ref=CASE-2026-0917-001，first_seen=2026-09-17）——“首案一次登记两头引用”
+> 兑现（DESIGN §三 时序行）。本册 pattern_norm 词表引用自此指向该 L7 词条，历史案块原样不动。
+
 ## CASE-2026-0922-001
 
 ```yaml
