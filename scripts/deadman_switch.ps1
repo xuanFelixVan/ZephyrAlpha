@@ -34,6 +34,8 @@
 #
 # Config (env, optional):
 # DEADMAN_STALE_MIN stale threshold minutes (default 10)
+# DEADMAN_DASHBOARD_PORT dashboard port to probe (default 8890)
+# DEADMAN_DASHBOARD_STALE_MIN dashboard heartbeat stale threshold minutes (default 10)
 #
 # Deploy: registered by scripts/register_guard_tasks.ps1 (4th task ZephyrAlpha_DeadmanSwitch).
 # Manual run: powershell -ExecutionPolicy Bypass -File scripts\deadman_switch.ps1
@@ -228,6 +230,62 @@ if ($null -ne $cfgAlert) {
     if ($cfgPrevSig -ne $cfgSig) {
         $staleServices += $cfgAlert
         $cfgSig | Out-File -FilePath $CfgSigFile -Encoding utf8
+    }
+}
+
+# ============== dashboard conditional channel (6th path, QMine 06 contract) ==============
+# api_server dashboard heartbeat: manual-semantics channel - only meaningful while the
+# dashboard port is actually LISTENING (panel closed = nothing to monitor, never
+# false-alert). While listening: stale heartbeat beyond threshold = alert, with pid
+# liveness branch (heartbeat line format "ts|pid|pid"):
+#   pid ALIVE = process up but heartbeat stopped (suspected hang)
+#   pid DEAD  = heartbeat pid exited, port likely held by some other process.
+# Threshold is independent of DEADMAN_STALE_MIN (base-3 double-guard env must not wake
+# this channel). Contract: tests/scripts/test_deadman_dashboard_channel.py
+# (2026-09-28 rebuild, st-chief7: 09-26 batch landed the pytest half only - the ps1
+# half was lost in the 09-27 dead-letter incident and is unrecoverable from git;
+# 2026-09-29 re-grafted from dead-bag q-0213 blob 9fcfe69d onto the evolved HEAD base).
+$DashHb = Join-Path $TmpDir "dashboard.heartbeat"
+$DashStaleMin = 10
+if ($env:DEADMAN_DASHBOARD_STALE_MIN -match '^\d+$') { $DashStaleMin = [int]$env:DEADMAN_DASHBOARD_STALE_MIN }
+$DashPort = 8890
+if ($env:DEADMAN_DASHBOARD_PORT -match '^\d+$') { $DashPort = [int]$env:DEADMAN_DASHBOARD_PORT }
+$dashListening = $false
+try {
+    $dashProbe = New-Object Net.Sockets.TcpClient
+    $dashProbe.Connect("127.0.0.1", $DashPort)
+    $dashListening = $dashProbe.Connected
+    $dashProbe.Close()
+} catch { $dashListening = $false }
+if ($dashListening) {
+    if (-not (Test-Path $DashHb)) {
+        $staleServices += "dashboard: port $DashPort listening but heartbeat file MISSING (api_server not writing dashboard.heartbeat)"
+    } else {
+        try {
+            $dashLine = (Get-Content $DashHb -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
+            if (-not $dashLine) {
+                $staleServices += "dashboard: port $DashPort listening but heartbeat file EMPTY"
+            } else {
+                $dashParts = $dashLine -split '\|'
+                $dashDate = [datetime]$dashParts[0]
+                $dashAgeMin = ($now - $dashDate).TotalMinutes
+                if ($dashAgeMin -gt $DashStaleMin) {
+                    $dashPid = $null
+                    if ($dashParts.Count -gt 1 -and $dashParts[1] -match '^\d+$') { $dashPid = [int]$dashParts[1] }
+                    $dashPidState = "pid-unknown (heartbeat line carries no numeric pid)"
+                    if ($null -ne $dashPid) {
+                        if (Get-Process -Id $dashPid -ErrorAction SilentlyContinue) {
+                            $dashPidState = "pid=$dashPid ALIVE (process up but heartbeat stopped = suspected hang)"
+                        } else {
+                            $dashPidState = "pid=$dashPid DEAD (heartbeat pid exited; port likely held by another process)"
+                        }
+                    }
+                    $staleServices += "dashboard: port $DashPort listening but heartbeat stale $([int]$dashAgeMin)min (threshold ${DashStaleMin}min); $dashPidState"
+                }
+            }
+        } catch {
+            $staleServices += "dashboard: port $DashPort listening but heartbeat parse error ($($_.Exception.Message))"
+        }
     }
 }
 
