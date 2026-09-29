@@ -324,6 +324,16 @@ def _patch_openai(module) -> None:
         Completions.create = _make_guard(Completions.create, "openai.chat.completions.create")
     if not _is_guarded(AsyncCompletions.create):
         AsyncCompletions.create = _make_async_guard(AsyncCompletions.create, "openai.chat.completions.create (async)")
+    # DP-7（F88 案卷缺口3，2026-09-29）：openai 2.x responses.create 双网同漏之 patch 侧
+    # （GATE-20 签名侧同批补；可选依赖缺席即跳过，同 chat 腿降级口径）
+    try:
+        from openai.resources.responses import AsyncResponses, Responses
+    except Exception:  # noqa: BLE001 — 5.135治标: 可选依赖缺席跳过
+        return
+    if not _is_guarded(Responses.create):
+        Responses.create = _make_guard(Responses.create, "openai.responses.create")
+    if not _is_guarded(AsyncResponses.create):
+        AsyncResponses.create = _make_async_guard(AsyncResponses.create, "openai.responses.create (async)")
 
 
 def _patch_anthropic(module) -> None:

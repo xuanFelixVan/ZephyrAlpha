@@ -84,6 +84,7 @@ _LLM_IMPORTS = {
 # ── 裸调 LLM 方法签名（用于 exec/eval 字符串扫描 + API 调用检测） ──
 _BARE_LLM_SIGNATURES = [
     "chat.completions.create",
+    "responses.create",
     "messages.create",
     "litellm.completion",
     "litellm.acompletion",
@@ -227,12 +228,14 @@ def _find_bare_llm_calls(tree: ast.AST) -> list[tuple[int, str]]:
                 chain.append(cur.id)
             if len(chain) >= 3:
                 suffix3 = ".".join(reversed(chain[:3]))
-                if suffix3 in ("chat.completions.create", "messages.create"):
+                if suffix3 in ("chat.completions.create", "responses.create", "messages.create"):
                     violations.append((node.lineno, f"裸调 {suffix3}()"))
                     continue
             if len(chain) >= 2:
                 suffix2 = ".".join(reversed(chain[:2]))
-                if suffix2 == "messages.create":
+                # DP-7（F88 案卷缺口3，2026-09-29）：responses.create 为两段链
+                # （client.responses.create 的 suffix3 带客户端名永不匹配三段表）
+                if suffix2 in ("messages.create", "responses.create"):
                     violations.append((node.lineno, f"裸调 {suffix2}()"))
                     continue
 
