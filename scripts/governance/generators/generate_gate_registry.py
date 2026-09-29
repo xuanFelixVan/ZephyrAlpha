@@ -927,9 +927,22 @@ def generate(entry_count: int | None = None) -> dict:
         deduped.append(g)
     gates = deduped
     auto_ids = {g["gate_id"] for g in gates}
+    # 墓碑覆盖（st-nightsweep-sw15-20260929，92 册 G-81 尺"声明在册、无人装载"治本）：
+    # extract_commit_gates 每文件只取首个 gate_id——薄工厂文件首匹配=自身 id 时（独立薄
+    # 工厂文件）旧逻辑跳过墓碑 → 统一册恒为假 active，post-commit 重生成自我复活
+    # （实测 15 台悬空：RULING-REFERENCE 等）。改为墓碑优先覆盖扫描条目；唯 id 已回装
+    # in_process 名册时让位装载事实（防误墓活门）。
+    try:
+        loaded_ids = {
+            g.get("gate_id") for g in (load_yaml(IN_PROCESS_REGISTRY_PATH).get("gates") or [])
+        }
+    except Exception:  # noqa: BLE001 — 名册不可得时退回旧口径（只追加不覆盖）
+        loaded_ids = set()
     for mg in MANUAL_GATES:
-        if mg["gate_id"] not in auto_ids:
-            mg["source"] = "manual"
+        mg["source"] = "manual"
+        if mg["gate_id"] in auto_ids and mg["gate_id"] not in loaded_ids:
+            gates = [mg if g["gate_id"] == mg["gate_id"] else g for g in gates]
+        elif mg["gate_id"] not in auto_ids:
             gates.append(mg)
     # 裁定#341（2026-09-19 W1-D2）：enforcement_channel 执行通道字段——照 source 现值
     # 机械标注（pre-commit 55 台 / commit-gate 113 台 / manual 1 台），防"守规会话永久

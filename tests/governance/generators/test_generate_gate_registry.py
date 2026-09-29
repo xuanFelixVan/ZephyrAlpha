@@ -376,3 +376,46 @@ class TestThreeAccountDiffCli:
         assert ei.value.code == 1  # EXIT_FINDINGS
         assert "RED" in out
         assert "虚报" in out and "悬空" in out
+
+
+def test_manual_tombstones_override_disk_shadowed_entries():
+    """墓碑覆盖回归（st-nightsweep-sw15-20260929，92 册 G-81 治本）。
+
+    病根：extract_commit_gates 每文件只取首个 gate_id——吸收台薄工厂独立成文件时
+    （如 ruling_reference_gate.py），MANUAL_GATES 墓碑被盘上扫描条目遮蔽，统一册
+    恒为假 active，post-commit 重生成自我复活（实测 15 台"声明在册、无人装载"）。
+    不变量：MANUAL_GATES 中未回装 in_process 名册的 gate_id，在 generate() 输出中
+    必须呈现 MANUAL_GATES 自带 status（deprecated 墓碑胜出）；已回装者不受墓碑影响。
+    修前此测试红（RULING-REFERENCE 等 15 台 active），修后绿。
+    """
+    from scripts.governance.generators.generate_gate_registry import (  # noqa: PLC0415
+        IN_PROCESS_REGISTRY_PATH,
+        MANUAL_GATES,
+        generate,
+        load_yaml,
+    )
+
+    roster_ids = {
+        g.get("gate_id")
+        for g in (load_yaml(IN_PROCESS_REGISTRY_PATH).get("gates") or [])
+    }
+    output = generate()
+    by_id = {}
+    for g in output["gates"]:
+        by_id.setdefault(g["gate_id"], []).append(g)
+
+    for mg in MANUAL_GATES:
+        gid = mg["gate_id"]
+        entries = by_id.get(gid)
+        assert entries, f"MANUAL_GATES 条目 {gid} 在 generate() 输出中缺失"
+        assert len(entries) == 1, f"{gid} 出现重复条目: {len(entries)}"
+        if gid in roster_ids:
+            continue  # 已回装名册：装载事实优先，墓碑让位
+        assert entries[0]["status"] == mg["status"], (
+            f"{gid} 统一册 status={entries[0]['status']} ≠ 墓碑 status={mg['status']}"
+            "（盘上扫描条目遮蔽墓碑=假 active 复活）"
+        )
+        if mg.get("redirect_to"):
+            assert entries[0].get("redirect_to") == mg["redirect_to"], (
+                f"{gid} redirect_to 漂移: {entries[0].get('redirect_to')}"
+            )
