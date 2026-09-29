@@ -73250,3 +73250,35 @@ algo_submodules:
   desc_en: ""
   plain_zh: "管因子权重的唯一出处并卡住谁有资格往地图上写权重：不在权柄清单里的路径想写就直接拒绝，防止两套权重各说各话"
   responsibility_layer: business
+- module_path: src/zephyr/data/cleaning_engines.py
+  domain_id: D_DATA
+  name_zh: "数据清洗引擎族"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把脏数据洗干净的一组引擎：按规则修数、隔离坏行、留清单可追溯，是数据入仓前的清洁工序"
+  responsibility_layer: business
+- module_path: src/zephyr/data/quarantine_manifest.py
+  domain_id: D_DATA
+  name_zh: "隔离清单"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "被清洗工序拦下来的坏数据统一登记在册（哪来的、为什么拦、怎么处置），事后可翻可审可重放"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_core/saga_compensation_registry.py
+  domain_id: D_EX_CORE
+  name_zh: "Saga补偿动作注册表"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "订单执行每一步出问题时该做什么回退的登记簿：步骤对应补偿动作、逆序执行回退、单步补偿失败不炸全局，非幂等动作不许登记"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_core/sim_saga_assembly.py
+  domain_id: D_EX_CORE
+  name_zh: "模拟盘Saga装配入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把订单执行链各环节组装成模拟盘可跑整机的工厂入口：环境隔离只碰模拟盘，实盘接线留白等Owner门位"
+  responsibility_layer: business

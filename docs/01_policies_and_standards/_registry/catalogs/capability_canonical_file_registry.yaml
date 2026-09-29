@@ -56605,4 +56605,25 @@ creation_tokens:
   created_by: st-c9-f53
   capability: saga_session_orchestrator
   merge_evaluation: "F53 双编排解冻批：Saga=TradingSession 提交面编排层封装唯一新码面件（替代方案=第二提交通道已禁）；与 MOD-EX-057 同步六步 Saga 分工（异步流补偿+九态对账断言）"
+- file: src/zephyr/data/cleaning_engines.py
+  token: f53f04-saga-cleaning-engines-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: f53f04_saga_compensation
+  merge_evaluation: "F53+F04 死账复活代投 token（原袋 sw9-0001 内容收编，CREATE-GUARD 关键词门配平）"
+- file: src/zephyr/data/quarantine_manifest.py
+  token: f53f04-saga-quarantine-manifest-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: f53f04_saga_compensation
+  merge_evaluation: "F53+F04 死账复活代投 token（同上）"
+- file: src/zephyr/ex_core/saga_compensation_registry.py
+  token: f53f04-saga-compensation-registry-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: f53f04_saga_compensation
+  merge_evaluation: "F53 Saga 补偿动作注册表（F53+F04 死账复活代投 token）"
+- file: src/zephyr/ex_core/sim_saga_assembly.py
+  token: f53f04-sim-saga-assembly-20260929
+  created_by: st-nightsweep-sw18-20260929
+  capability: f53f04_saga_compensation
+  merge_evaluation: "F53 模拟盘 Saga 装配入口（F53+F04 死账复活代投 token）"
+
 di_seam_exemptions: []
