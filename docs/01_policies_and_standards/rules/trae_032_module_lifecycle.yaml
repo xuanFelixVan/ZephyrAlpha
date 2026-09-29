@@ -1,6 +1,6 @@
 rule_id: TRAE-032
 title: 模块治理-准入与生命周期
-version: 1.1.3
+version: 1.2.0
 layer: L1_foundation
 module_id: TRAE-032
 depends_on:
@@ -60,7 +60,7 @@ sections:
     - type: mandatory
       step: P0模块额外通过MAD-005
     - type: mandatory
-      step: 准入记录写入architecture_model/module_id_registry.yaml admission_records数组
+      step: 准入记录写入module_id_registry.yaml admission_records数组（账本实存 architecture_model/module_id_registry.yaml；退役记账走顶层 retirement_records 节，见 gov_mod_003_status_convergence）
     - type: mandatory
       step: 功能域重叠四步判定：关键词扫描→responsibility_domain匹配→covers[]交叉→输出 veto_candidates[]（生成器绑定字段）
     prohibitions:
@@ -81,7 +81,7 @@ sections:
       - '记录否决原因: 明确哪一级筛选未通过及原因'
       - '风险接受声明: Owner明确声明接受该模块注入的技术风险'
       - '限时有效: 豁免仅在当前Phase有效——下一Phase开始前必须补齐所有筛选条件否则自动回退至未准入'
-      - '豁免记录: 在architecture_model/module_id_registry.yaml中标记admission_override: true + 豁免原因'
+      - '豁免记录: 在module_id_registry.yaml中标记admission_override: true + 豁免原因'
     gov_mod_001_third_party:
       section_type: procedure
       checks:
@@ -242,7 +242,7 @@ sections:
       rules:
       - '每份豁免必须指定: 豁免的铁律编号+豁免范围(文件/模块)+有效截止日期'
       - 豁免到期自动回退——不自动续期
-      - 所有豁免记录在architecture_model/module_id_registry.yaml的exemptions字段
+      - 所有豁免记录在module_id_registry.yaml的exemptions字段
     gov_mod_002_normative_refs:
       section_type: principles
       refs:
@@ -339,6 +339,32 @@ sections:
     gov_mod_003_retirement_extension:
       section_type: escalation
       rule: 90天到期后仍有引用未迁移→Owner可批准延期(最长再90天)→必须在Session Log中记录原因和截止日期
+    gov_mod_003_status_convergence:
+      section_type: procedure
+      title: 越界status收敛映射（Owner增枝批文②·B10-P3）
+      rule: 注册表历史越界status按下表机械收敛——收敛=减值（宪法§4净零判据）；存量迁移逐条一裁定（旁路格式转正，复用裁定#258/#259通道）；转换合法性=PS-VOC-027 next_states 机械判定
+      mapping:
+      - from: merged
+        to: deprecated
+        extra: 附superseded_by
+      - from: superseded
+        to: deprecated
+        extra: 附superseded_by
+      - from: deleted
+        to: archived
+        extra: 无
+      - from: retired
+        to: archived
+        extra: 无
+      - from: migrated_to_kb
+        to: archived
+        extra: 附migrated去向标注
+      - from: draft
+        to: planned
+        extra: 无
+      - from: production
+        to: active
+        extra: 无
     gov_mod_003_exemption:
       section_type: escalation
       scenarios:
@@ -357,7 +383,7 @@ sections:
       - target: PS-STD-001 §4.1
         role: active/deprecated生命周期状态定义
       - target: PS-STD-003 §3 ABS-22
-        role: 跨级降格禁止——deprecated不能直接标记为archived
+        role: 跨级降格禁止——deprecated不能直接标记为archived（Owner 增枝批文②消解句：“跨级”指 active→archived 跳阶段；deprecated→archived 为 PS-VOC-027 next_states 合法转换，前置条件=满 90 天保留期）
       - target: GOV-MOD-ALPHA_SIGNAL_DOMAIN MOD-P4
         role: 接口可定义性筛选——决定模块是否能进入设计阶段
       - target: GOV-MOD-004 IFC-005
@@ -430,7 +456,7 @@ sections:
       rule: 'IFC-004: cross_layer_contracts.yaml为契约注册表'
       flow:
       - 人工/AI在模块文件中定义契约schema(IFC-001六字段)
-      - 脚本validate_module_schema.py --sync-contracts将契约条目同步至注册表
+      - 契约条目同步至注册表为机生通道——IFC-007 契约级联废弃由 scripts/governance/d5_architecture/lifecycle/retire_module.py --cascade-deprecate 执行（原 --sync-contracts 旗标经查不存在，Owner 增枝批文②废止；注册表镜像禁手工编辑条款不变）
       - 注册表是镜像——禁止手动编辑——所有变更在源契约文件中进行
       - 消费者查找契约时仅从此注册表查询——禁止扫描源码推测接口
     gov_mod_004_ifc007_cascade:
@@ -511,7 +537,7 @@ sections:
     conditions:
     - type: pre_condition
       check: INJ-001 ID唯一性
-      pass: module_id在architecture_model/module_id_registry.yaml中唯一
+      pass: module_id在module_id_registry.yaml中唯一
       fail: ID重复→REJECT
     - type: pre_condition
       check: INJ-002依赖可解析
@@ -568,7 +594,7 @@ sections:
       - step: 5
         action: 本规则execution.sequence顺序执行INJ-001~008全部检查
       - step: 6
-        action: INJ全部通过→最终注入完成→更新architecture_model/module_id_registry.yaml(admission_records + status)
+        action: INJ全部通过→最终注入完成→更新module_id_registry.yaml(admission_records + status)
       - step: 7
         action: INJ任一失败→准入回退→模块回到未准入状态修正后重新提交至步骤1
     gov_mod_005_exemptions:
@@ -580,7 +606,7 @@ sections:
         condition: module_priority != 'P0'
         action: SKIP
         reason: 非P0模块免接口契约+KB决策记录检查
-        record: 必须在architecture_model/module_id_registry.yaml中标注豁免原因
+        record: 必须在module_id_registry.yaml中标注豁免原因
     gov_mod_005_normative_refs:
       section_type: principles
       refs:
@@ -638,15 +664,22 @@ enforcement:
   - scripts/governance/d7_code/check_encoding.py
   - scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py
   - scripts/governance/d2_links/audit_broken_links.py
+  - scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
+  - scripts/governance/d5_architecture/lifecycle/retire_module.py
   bypass_allowed: false
 metadata:
   change_policy: stable
   impact_level: H
   modification_permission: human_gated
   superseded_by:
-  version: "1.1.3"
-  last_modified: "2026-07-20"
+  version: "1.2.0"
+  last_modified: "2026-09-28"
   change_history:
+  - version: 1.2.0
+    date: '2026-09-28'
+    by: st-tailwork-20260928
+    changes:
+    - 'Owner增枝批文②（B10-P3 trae_032修正批五件，S9簿§4.7处方落地）：①死载体module-id-registry.json改指实存module_id_registry.yaml（6处）；②不存在的--sync-contracts旗标废止→IFC-007契约级联机生通道retire_module.py --cascade-deprecate；③executors增validate_module_lifecycle.py+retire_module.py；④ABS-22跨级降格禁令消解句（deprecated→archived满90天保留期合法）；⑤新增7种越界status收敛映射gov_mod_003_status_convergence（净减收敛，存量逐条一裁定另批）'
   - version: 1.1.3
     date: '2026-07-20'
     by: sess-49952-20260720044516
