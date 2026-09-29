@@ -5986,3 +5986,82 @@ entries:
   related_arch: []
   related_rulings: ['裁定#415']
   superseded_by: null
+- ruling_id: "裁定#431"
+  title: 终局交付战役 Owner 门位清单总批复（按总筹建议逐项执行）
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 批复：终局交付战役 Owner 门位清单（docs/_working/final_delivery_campaign/99_owner_gate.md 十项）按总筹建议逐项执行。逐项授权清单：
+    ①4 台 disabled 门翻 enabled（CAPABILITY-OVERLAP/GATE-VOCAB/PERMANENT-SYSTEM-TRIGGER/ALGO-FLOW-LINK，in_process_gate_registry 翻 true，与统一册三账对账同步）；
+    ②FMS-HYGIENE 翻 block=达标即翻（判据=block_flip_eligible 机读连零 20 笔，未达标维持 warn 不翻）；
+    ③C108 执法通电；
+    ④CH 实弹三件批（#20 换源实弹/intake_ledger_recon rebuild/apply_market_tables_ddl --apply，按数据操作纪律三步验证执行）；
+    ⑤补数批（C344 补 4 日期数据/C439 补 134 生产写）；
+    ⑥W-178 板块宇宙真源：行业成分股真源=880+881 两段行业板块序列（729=601+128），概念板块 375 为独立一族不混入行业口径（零重合已复测）；
+    ⑦T1 定稿（Owner 签字落 2026-09-30）；
+    ⑧EV-02~06 施工令签发；
+    ⑨C408 夜裁#2 五项套餐 79 件追认（=裁定#432）；
+    ⑩C187 DU-07 消化态复核追认（=裁定#433）；
+    ⑪C96 证据追认补录（=裁定#434）；
+    ⑫C163/C25/C83/C295/C355/C267 非币圈退役=先归档后删；
+    ⑬C444 封矿；
+    ⑭C266 授权按桌面总清单重建（约 60 项清单源文件三处皆无）；
+    ⑮C22 销账口径主体在 E 盘；币圈=仅表头通知+删除挂起等通知；
+    ⑯C98/C115=出清单待 Owner 勾选（不代勾）。
+    各子项执行状态回填 99_owner_gate.md 批复结果列。
+  related_files:
+  - docs/_working/final_delivery_campaign/99_owner_gate.md
+  - docs/_working/final_delivery_campaign/workorders_commit_clean.md
+  - docs/_working/final_delivery_campaign/workorders_docs_misc.md
+  - docs/_working/final_delivery_campaign/workorders_data_exam_factory.md
+  related_arch: []
+  related_rulings: ['裁定#432', '裁定#433', '裁定#434']
+  superseded_by: null
+- ruling_id: "裁定#432"
+  title: C408 追认：夜裁#2 五项套餐 79 件正式追认入册
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 批复（总批复=裁定#431 第⑨项）追认夜裁#2 五项套餐 79 件提交：原批以夜裁授权先行落地、裁定册 0 命中，workorders_commit_clean.md C408 行载明"需 ruling_registry 正式条目（5 项套餐批准），未登前下一班按未批处理"。
+    本条目即该正式条目：79 件已落地提交按五项套餐整体追认为已批，五项套餐范围以其呈报台账（M3 提交链 workorders_commit_clean.md C408 行及对应提交链 hash 总账）为准；
+    自本条目登记日起"按未批处理"暂缓口径解除。追认既成事实，不改变已落地内容。
+  related_files:
+  - docs/_working/final_delivery_campaign/workorders_commit_clean.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings: ['裁定#431']
+  superseded_by: null
+- ruling_id: "裁定#433"
+  title: C187 追认：DU-07 消化态复核结论追认
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 批复（总批复=裁定#431 第⑩项）追认 C187 消化态复核结论（workorders_docs_misc.md C187 行：HANDOVER.md@HEAD L88 §五在册；复核结论=DU-07 补齐为唯一未施工活跃项，可另卡施工）。
+    本条目追认该复核结论成立；DU-07 补齐施工另卡开立，不含在本追认内。
+  related_files:
+  - docs/_working/final_delivery_campaign/workorders_docs_misc.md
+  related_arch: []
+  related_rulings: ['裁定#431']
+  superseded_by: null
+- ruling_id: "裁定#434"
+  title: C96 证据追认补录：st-ailayer-sx-20260927 AI 层 12 项已批项（凭据文件蒸发）
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 批复（总批复=裁定#431 第⑪项）对 st-ailayer-sx-20260927 会话 AI 层 12 项已批项作证据追认补录：原始批准凭据 HANDOFF_st_ailayer_sx_20260927.md 双层真源均已蒸发（workorders_docs_misc.md C96 行：HEAD/盘面/.aidrafts/.runtime 全域 0 命中=字节不可考，并入 C105 蒸发机制定位案同族）。
+    追认依据=成果已全落 dev 实证（ConfirmGate=src/zephyr/ai_layer/scheduling/confirm_gate.py、lifecycle_fsm 词表/状态机=docs/03_modules/_domain_strategy_pipeline/algo_flow/lifecycle_fsm.yaml+src/zephyr/strategy_pipeline/lifecycle_fsm.py、sandbox profile=config/tool_sandbox_profile.yaml、remedy 0.7 定稿、ai_exposure、mining_broad 等）+会话记忆重建清单。
+    盘=HEAD 实证文件 sha256 前 16 位：confirm_gate.py=1c7e5420681a029b、test_confirm_gate.py=a1b52aa59438c602、lifecycle_fsm.yaml=53c42197e5da9e0f、lifecycle_fsm.py=fa676c3e33b1d7e2、tool_sandbox_profile.yaml=9007c1a1cb74ea17。
+    本条目追认既成事实，凭据以本条目+上述实证 hash 替代蒸发文件。
+  related_files:
+  - docs/_working/final_delivery_campaign/workorders_docs_misc.md
+  - src/zephyr/ai_layer/scheduling/confirm_gate.py
+  - docs/03_modules/_domain_strategy_pipeline/algo_flow/lifecycle_fsm.yaml
+  - src/zephyr/strategy_pipeline/lifecycle_fsm.py
+  - config/tool_sandbox_profile.yaml
+  related_arch: []
+  related_rulings: ['裁定#431']
+  superseded_by: null
