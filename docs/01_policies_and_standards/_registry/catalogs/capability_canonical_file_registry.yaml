@@ -56363,6 +56363,26 @@ creation_tokens:
   created_by: st-nightsweep-sw10-20260929
   capability: sw10_cns_chart_wiring
   merge_evaluation: "SW10车道案卷：CNS消化台账+cn_macro判定+TIF残袋发现，替代散落会话记录"
+- file: src/zephyr/data/cleaning_anomaly_hosting.py
+  token: f04-purity-station-cleaning-anomaly-hosting-20260929
+  created_by: st-c9-purify
+  capability: f04_purity_station
+  merge_evaluation: "裁定 #423 F04 判净站薄版开工：新建件无同真源可派生条目（四引擎接线为体/分歧统计/#423 薄件，各一对象）"
+- file: src/zephyr/data/divergence_stats.py
+  token: f04-purity-station-divergence-stats-20260929
+  created_by: st-c9-purify
+  capability: f04_purity_station
+  merge_evaluation: "裁定 #423 F04 判净站薄版开工：新建件无同真源可派生条目（四引擎接线为体/分歧统计/#423 薄件，各一对象）"
+- file: src/zephyr/data/purity_adjudicator.py
+  token: f04-purity-station-purity-adjudicator-20260929
+  created_by: st-c9-purify
+  capability: f04_purity_station
+  merge_evaluation: "裁定 #423 F04 判净站薄版开工：新建件无同真源可派生条目（四引擎接线为体/分歧统计/#423 薄件，各一对象）"
+- file: config/cleaning_anomaly_rules.yaml
+  token: f04-purity-station-cleaning-anomaly-rules-20260929
+  created_by: st-c9-purify
+  capability: f04_purity_station
+  merge_evaluation: "裁定 #423 F04 判净站薄版开工：新建件无同真源可派生条目（四引擎接线为体/分歧统计/#423 薄件，各一对象）"
 
 - file: docs/_working/night_sweep/00_orchestration.md
   token: night-sweep-warroom-00-orchestration-20260928
@@ -56866,6 +56886,11 @@ creation_tokens:
   created_by: st-nightsweep2-nc-20260930
   capability: night_sweep_c_exam
   merge_evaluation: "C5 填充方案件：state_matrix 候选面提案+禁用标记依据，跨域不同对象不并（Owner 格提案稿非第二切换册）"
+- file: docs/_working/night_sweep/c_exam/wave12_five_conditions_status.md
+  token: night-sweep-c-exam-wave12-five-conditions-status-20260929
+  created_by: st-nightsweep2-nc-20260930
+  capability: night_sweep_c_exam
+  merge_evaluation: "C6 五条件现状报告：证据面核验件（跨域不同对象不并；W12 卡面批准线专属素材非第二点火册）"
 - file: docs/_working/final_delivery_campaign/final_loopcheck_redblue_20260930.md
   token: final-delivery-campaign-final-loopcheck-redblue-20260930-20260930
   created_by: st-finaldel-final2-20260930
@@ -56876,4 +56901,869 @@ creation_tokens:
   created_by: st-nightsweep2-nc-20260930
   capability: w178_truth_source
   merge_evaluation: "W-178 真源声明落册件：冻结注记+映射表立项+known 差异清单（跨域不同对象不并；strict 案卷同族互引不重挖）"
+- file: docs/_working/commit_chain_fullflow/00_skeleton.md
+  token: commit-chain-fullflow-00-skeleton-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e01_claim_locks.md
+  token: commit-chain-fullflow-e01-claim-locks-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e02_gateway_preflight.md
+  token: commit-chain-fullflow-e02-gateway-preflight-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e03_l2_gates.md
+  token: commit-chain-fullflow-e03-l2-gates-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e04_precommit_channel.md
+  token: commit-chain-fullflow-e04-precommit-channel-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e05_git_core.md
+  token: commit-chain-fullflow-e05-git-core-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e06_postcommit.md
+  token: commit-chain-fullflow-e06-postcommit-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e07_queue_landing.md
+  token: commit-chain-fullflow-e07-queue-landing-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e08_reconciler.md
+  token: commit-chain-fullflow-e08-reconciler-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e09_telemetry_flags.md
+  token: commit-chain-fullflow-e09-telemetry-flags-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/e10_observability.md
+  token: commit-chain-fullflow-e10-observability-20260929
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: data/backtest_artifacts/runs/E4-BIZMINE-L1-IND-STAT-001-CORREL/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/E4-BIZMINE-L1-IND-STAT-002-BETA/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/E4-E1C09-P3-E1C-09/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/E4-F06-38b453ca/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-20260912-192909/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-ADJ-20260913-012358/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260913-002056/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260913-013339/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260913-014220/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260913-232100/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260913-232609/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-022107/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-023406/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-034927/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-045225/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-051102/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-051809/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-070216/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-070706/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-082130/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260914-082555/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-012151/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-012830/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-014654/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-025332/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-025400/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-032455/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-032916/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-112409/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-113344/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260915-185614/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260916-123928/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260916-123934/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260918-042822/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260918-060143/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-C4-20260923-025548/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260914-031358/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260915-065032/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260915-065316/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260915-065339/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-214203/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-214330/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-215033/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-215249/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-215459/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-220349/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-222222/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-222309/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-230631/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-230715/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-231132/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260916-232620/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260917-012159/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260917-103930/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260917-105423/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260917-115142/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260917-120223/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-023152/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-093030/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-094318/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-095902/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-104740/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-163406/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-163616/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-164332/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-172728/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-172812/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-183814/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-184005/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-184027/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-200119/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-211606/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-213247/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-213642/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260918-215734/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260919-000713/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260919-003206/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260919-010630/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260919-012028/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260920-040645/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260921-131223/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260923-044734/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260925-025205/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-DEV-20260927-081747/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-LIFE-20260915-033421/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-LIFE-20260915-033448/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-LIFE-20260915-033517/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-OUTPOST-20260928-203146/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-OUTPOST-20260928-203149/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-OUTPOST-20260928-205646/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-OUTPOST-20260928-205648/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-OUTPOST-20260928-213140/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-OUTPOST-20260928-213142/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260915-065036/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260915-065320/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260915-065343/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-214207/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-214333/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-215036/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-215254/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-215504/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-220356/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-222225/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-222313/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-230635/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-230719/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-231136/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260916-232623/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260917-012204/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260917-103933/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260917-105427/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260917-115145/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260917-120226/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-023155/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-093035/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-094323/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-095907/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-104744/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-163409/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-163619/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-164335/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-172732/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-172816/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-183817/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-184008/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-184029/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-200122/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-211609/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-213251/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-213647/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260918-215737/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260919-000716/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260919-003210/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260919-010633/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260919-012031/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260920-040649/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260921-131226/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260923-044737/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260925-025209/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/SCR-SIMGOV-20260927-081751/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-20260912-070605/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-20260912-070622/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-20260918-015408/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260912-154118/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260912-163755-001/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260912-163755-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260912-163855-001/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260912-164116-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260912-170843-003/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-000856-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-001639-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-001738-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-001859-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-003946-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-004026-001/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-004026-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260914-004029-002/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260916-230726/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260921-050922/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260922-164519/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260924-164044/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
+- file: data/backtest_artifacts/runs/VAL-P0-20260928-164039/verdict.md
+  token: exam-verdict-docs-verdict-20260929
+  created_by: st-nightsweep2-nd-20260930
+  capability: exam_verdict_docs
+  merge_evaluation: "存量考卷判定书纳管（Owner '6 纳入'批文），非新建资产，同真源唯一（runs/*/verdict.md 判定面入库）"
 di_seam_exemptions: []
