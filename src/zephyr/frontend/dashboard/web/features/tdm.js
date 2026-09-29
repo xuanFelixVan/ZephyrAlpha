@@ -416,9 +416,9 @@
     roTimer = setTimeout(render, 120);
   });
 
-  /* 红因徽标（v1.10，Owner 2026-09-11）：红节点四分红因——三态色语义不变，只加字符角标 */
-  var RED_ZH = { structural: '结构位（子件已锚）', pending_gate: '验证/裁定挂起', not_built: '未施工', terminal: '流根终态（设计不锚）' };
-  var RED_GLYPH = { structural: '◇', pending_gate: '○', not_built: '△', terminal: '·' };
+  /* 红因徽标（v1.10，Owner 2026-09-11；by_ref_design=F30 引用式投影增补 2026-09-29）：红节点五分红因——三态色语义不变，只加字符角标 */
+  var RED_ZH = { structural: '结构位（子件已锚）', pending_gate: '验证/裁定挂起', not_built: '未施工', terminal: '流根终态（设计不锚）', by_ref_design: '引用式投影（真源在产，非缺件）' };
+  var RED_GLYPH = { structural: '◇', pending_gate: '○', not_built: '△', terminal: '·', by_ref_design: '◈' };
   var FLOW_ZH = { entry_flow: '建仓流 E', position_flow: '持仓流 P', exit_flow: '离场流 X', portfolio_flow: '组合流 F' };
   var REF_ZH = { factor: '因子', data: '数据源', cost_model: '成本模型', risk_limit: '风险限额', threshold: '阈值',
     event: '事件', algo: '算法', universe: '股票域', strategy: '策略', indicator: '技术指标' };

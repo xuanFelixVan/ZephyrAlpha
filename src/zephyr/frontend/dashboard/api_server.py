@@ -2615,7 +2615,7 @@ def tdm_map() -> dict[str, Any]:
                 "fallback": n.get("fallback"),
                 "module_ref": n.get("module_ref"),
                 "module_id": n.get("module_id"),
-                "red_reason": n.get("red_reason"),  # v1.10 红因徽标（structural/pending_gate/not_built/terminal）
+                "red_reason": n.get("red_reason"),  # v1.10 红因徽标（五枚举，含 by_ref_design）
                 "mounts": [
                     m.get("strategy_ref") if isinstance(m, dict) else str(m) for m in (n.get("strategy_mounts") or [])
                 ],
