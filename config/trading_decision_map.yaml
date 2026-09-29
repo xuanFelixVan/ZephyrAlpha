@@ -49,9 +49,13 @@ nodes:
   point: 持续
   decision_question: 今天买什么、买多少、什么时候买？（本流最终输出=今日建仓清单）
   activation: continuous
+  note_confirmed: 2026-09-29  # st-c9-f34：F34 消费接线同批确认（TDM-E-L9-AGG→本节点"供给健康读数"边由有名无实转有码）
   algo_note_zh: >-
     全流终端聚合点：上游=盘前作战计划（L0）与买卖执行段（L4），下游无（终点）。
     组成=计划（L0）→选什么（L2 板块/L3 个股）→怎么买（L4 执行）。本节点只承载结构与指向，不写机制不存实时数据。
+    L9 知识供给就绪度读数消费点（2026-09-29 st-c9-f34 接线坐实）：pf_alloc 组合层按 c1_market.l9_readiness_daily
+    AGG 汇总行黄/红态做总暴露降级（黄 0.90/红 0.70 工程缺省待 Owner 签批，只减不加，
+    一键切回 data/runtime/l9_readiness_check.disabled；供件实件=zephyr.pf_alloc.allocation_inputs load_l9_readiness）。
   factor_refs: []
   data_refs: []
   algo_refs: []
