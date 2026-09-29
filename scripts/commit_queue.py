@@ -1825,6 +1825,11 @@ def drain_queue(
             if _attempts_backoff_enabled() and _item_attempts(item) >= _ATTEMPTS_DEAD_THRESHOLD:
                 item["dead_at"] = _now_iso()
                 item["dead_reason"] = _attempts_exhausted_reason(item)
+                # M3.3 口径对齐（SW16 红蓝 S6 实证补漏）：B5 出口与通用死信出口同携
+                # 处方+责任会话——此前仅通用出口写 prescription/owner_session，
+                # 同形态出口漏配=bd8ba4d85a7 自述"M3.3 口径脱节"的残留面。
+                item["prescription"] = dead_letter_prescription(item["dead_reason"])
+                item["owner_session"] = item.get("session_id") or ""
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
                 _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
