@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-28T23:20:12Z'
+generated_at: '2026-09-29T21:07:27Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 183
+total_gates: 178
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -140,28 +140,6 @@ gates:
   own_scope: false
   source: pre-commit
   enforcement_channel: pre-commit
-- gate_id: GATE-14
-  name: 'GATE-14: AI 自治权限注册表自校验（Wave 0 V-11）'
-  entry: python scripts/governance/d5_architecture/validators/validate_authority_registry.py
-  description: 权限注册表自校验（三层权限值 / 必填字段 / 重复模块 / 章节覆盖 / Immutable Core 最低数量），骨架阶段 warn-only
-  files_trigger: ^docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry\.md$
-  always_run: false
-  category: ai_autonomy
-  status: active
-  own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
-- gate_id: GATE-13
-  name: 'GATE-13: 蓝图重叠检测门禁（Wave 1 V-14）'
-  entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
-  description: 蓝图重叠检测（同一 component_id 出现在多个草稿时 warn），骨架阶段 warn-only
-  files_trigger: ^docs/19_development_workspace/drafts-and-audits/.*\.md$
-  always_run: false
-  category: blueprint_overlap
-  status: active
-  own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
 - gate_id: GATE-TRIPLE-ALIGN
   name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
   entry: python src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py
@@ -277,10 +255,10 @@ gates:
   name: 'GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 防复发 + snapshot 方法重建 防复发）'
   entry: python scripts/governance/d5_architecture/checkers/check_vms_ssot.py
   description: 双检测：①src/zephyr/governance/vector_memory/ 路径硬阻断（VMS 真源唯一 integration/，governance
-    副本 2026-06-28 删除治本 commit 306dbb2f76+0137750451）；②src/zephyr/integration/vector_memory/
+    副本 2026-06-28 删除治本 commit 306dbb2f76+0137750451；该分支 2026-09-30 收缩出触发面=已死路径）；②src/zephyr/integration/vector_memory/
     下 .py AST 扫描，重建 snapshot_backup/cleanup_snapshots/_cleanup_old_snapshots 方法名即阻断（commit
     dddd1813 删除治本——30GB 递归灾难+零消费方+R4 被 ACID+WAL 覆盖）
-  files_trigger: ^src/zephyr/(governance|integration)/vector_memory/
+  files_trigger: ^src/zephyr/integration/vector_memory/
   always_run: false
   category: unknown
   status: active
@@ -449,17 +427,6 @@ gates:
   own_scope: false
   source: pre-commit
   enforcement_channel: pre-commit
-- gate_id: GATE-22
-  name: 'GATE-22: AI加载路径完整性（加载路径铁律）'
-  entry: python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
-  description: 解析 AGENTS.md 任务菜单路径引用（§8.2 待补建，当前 SKIP）。warn-only骨架阶段，对标 AI加载路径不可漂移铁律
-  files_trigger: ^AGENTS\.md$
-  always_run: false
-  category: load_path_integrity
-  status: active
-  own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
 - gate_id: GATE-SILENT-DEGRADATION
   name: 'GATE-SILENT-DEGRADATION: 静默降级检测（COND-45 — 降级路径必须有日志）'
   entry: python scripts/governance/d7_code/detect_silent_degradation.py
@@ -548,18 +515,6 @@ gates:
   own_scope: false
   source: pre-commit
   enforcement_channel: pre-commit
-- gate_id: GATE-NODE-LABEL-QUALITY
-  name: 'GATE-NODE-LABEL-QUALITY: 域文档节点标签简介质量审计（五类坏简介防复发）'
-  entry: python scripts/governance/d5_architecture/checkers/check_node_label_quality.py
-  description: 审计域文档 Mermaid 节点标签简介质量——检测五类坏简介（模板话/截断/消费者引用/术语堆砌/名称重复）。warn-only 观察期，存量清零后转
-    --ci。与 TRANSLATION-COVERAGE 互补（存在性 vs 质量）。详见 visualization_view_template.md §十七
-  files_trigger: ^docs/02_enterprise_architecture/02_domain_architecture_docs/.*\.md$
-  always_run: false
-  category: unknown
-  status: active
-  own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
 - gate_id: GATE-ENCODING
   name: 'GATE-ENCODING: 编码安全+mojibake+BOM检测'
   entry: python scripts/governance/d7_code/check_encoding.py
@@ -582,17 +537,6 @@ gates:
   category: unknown
   status: active
   own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
-- gate_id: GATE-DRIFT
-  name: 'GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023）'
-  entry: python -m zephyr.behavioral_auditor scan --level LIGHT
-  description: 漂移检测 LIGHT scan——src/zephyr/ 下 .py 变更时触发，warn-only 骨架阶段
-  files_trigger: ^src/zephyr/.*\.py$
-  always_run: false
-  category: unknown
-  status: active
-  own_scope: null
   source: pre-commit
   enforcement_channel: pre-commit
 - gate_id: GATE-NO-TESTS-UNIT
@@ -733,7 +677,7 @@ gates:
   entry: in-process (GitCommitGateway)
   description: ASYNCIO-RUN-IN-CONTEXT
   files_trigger:
-  - .py
+  - src/zephyr/*.py
   always_run: false
   category: commit_gate
   status: active
@@ -744,19 +688,12 @@ gates:
   name: 'NO-BARE-GETENV: NO-BARE-GETENV（CommitGate, priority=81）'
   entry: in-process (GitCommitGateway)
   description: NO-BARE-GETENV
-  files_trigger:
-  - .env
-  - secret
-  - credential
-  - token
-  - password
-  - api_key
-  - private_key
+  files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: NO-BARE-SQL
   name: 'NO-BARE-SQL: NO-BARE-SQL（CommitGate, priority=94）'
@@ -773,14 +710,7 @@ gates:
   name: 'BARE-SUBPROCESS: BARE-SUBPROCESS（CommitGate, priority=132）'
   entry: in-process (GitCommitGateway)
   description: BARE-SUBPROCESS
-  files_trigger:
-  - .env
-  - secret
-  - credential
-  - token
-  - password
-  - api_key
-  - private_key
+  files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
@@ -843,7 +773,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: BUSINESS-REGISTRY
   name: 'BUSINESS-REGISTRY: 业务资产库入库门禁（BUSINESS-REGISTRY，priority=139）（CommitGate,
@@ -923,7 +853,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: CLAIM-REQUIRED
   name: 'CLAIM-REQUIRED: CLAIM-REQUIRED（CommitGate, priority=40）'
@@ -968,7 +898,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: REFERENCE-INTEGRITY
   name: 'REFERENCE-INTEGRITY: REFERENCE-INTEGRITY（CommitGate, priority=152）'
@@ -1028,7 +958,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: DEPGRAPH-WRITE-PATH
   name: 'DEPGRAPH-WRITE-PATH: depgraph 写路径白名单（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
@@ -1052,7 +982,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: DERIVED-FILE-DELETION-PROTECTION
   name: 'DERIVED-FILE-DELETION-PROTECTION: DERIVED-FILE-DELETION-PROTECTION（CommitGate,
@@ -1086,19 +1016,19 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: GATE-DOMAIN-FK
   name: 'GATE-DOMAIN-FK: GATE-DOMAIN-FK（CommitGate, priority=78）'
   entry: in-process (GitCommitGateway)
   description: GATE-DOMAIN-FK
   files_trigger:
-  - .py
+  - '*.py'
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
   name: 'NO-DOMAIN-NAME-ZH-DIRECT-ACCESS: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS（CommitGate,
@@ -1110,7 +1040,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: EMPTY-HANDLER
   name: 'EMPTY-HANDLER: EMPTY-HANDLER（CommitGate, priority=84）'
@@ -1121,7 +1051,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: ENCODING-SAFETY
   name: 'ENCODING-SAFETY: ENCODING-SAFETY（CommitGate, priority=42）'
@@ -1163,12 +1093,12 @@ gates:
   entry: in-process (GitCommitGateway)
   description: FILE-COPY
   files_trigger:
-  - .py
+  - '*.py'
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: FILE-PLACEMENT-TTL
   name: 'FILE-PLACEMENT-TTL: FILE-PLACEMENT-TTL（CommitGate, priority=33）'
@@ -1237,19 +1167,19 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: FUNCTION-DUP
   name: 'FUNCTION-DUP: FUNCTION-DUP（CommitGate, priority=90）'
   entry: in-process (GitCommitGateway)
   description: FUNCTION-DUP
   files_trigger:
-  - .py
+  - '*.py'
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: GIT-CALL-BUDGET
   name: 'GIT-CALL-BUDGET: GIT-CALL-BUDGET（CommitGate, priority=105）'
@@ -1283,7 +1213,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: HELD-OVERLAP
   name: 'HELD-OVERLAP: HELD-OVERLAP（CommitGate, priority=50）'
@@ -1301,7 +1231,7 @@ gates:
   entry: in-process (GitCommitGateway)
   description: COMPLEXITY-GUARD
   files_trigger:
-  - .py
+  - '*.py'
   always_run: false
   category: commit_gate
   status: active
@@ -1340,7 +1270,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: IMPORT-INTEGRITY
   name: 'IMPORT-INTEGRITY: IMPORT-INTEGRITY（CommitGate, priority=107）'
@@ -1370,7 +1300,9 @@ gates:
   entry: in-process (GitCommitGateway)
   description: BLOOD-FLESH
   files_trigger:
-  - .py
+  - src/zephyr/*.py
+  - scripts/*.py
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   always_run: false
   category: commit_gate
   status: active
@@ -1382,8 +1314,8 @@ gates:
   entry: in-process (GitCommitGateway)
   description: STATE-VOCAB-REGISTRY
   files_trigger:
-  - src/
-  - .py
+  - src/zephyr/shared/vocab/
+  - docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
   always_run: false
   category: commit_gate
   status: active
@@ -1437,7 +1369,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: MODULE-ID-CONSISTENCY
   name: 'MODULE-ID-CONSISTENCY: MODULE-ID-CONSISTENCY（CommitGate, priority=88）'
@@ -1470,7 +1402,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: MUTABLE-CONST-WITHOUT-FINAL
   name: 'MUTABLE-CONST-WITHOUT-FINAL: MUTABLE-CONST-WITHOUT-FINAL（CommitGate, priority=123）'
@@ -1538,21 +1470,28 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: MAP-ALIGNMENT
   name: 'MAP-ALIGNMENT: MAP-ALIGNMENT（CommitGate, priority=830）'
   entry: in-process (GitCommitGateway)
   description: MAP-ALIGNMENT
   files_trigger:
-  - docs/02_enterprise_architecture/
-  - docs/03_modules/
-  - alignment_checklist
+  - src/zephyr/governance/depgraph_schema.py
+  - src/zephyr/governance/persistence/dataflowgraph_schema.py
+  - src/zephyr/governance/persistence/decisiongraph_schema.py
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/apply_dataflowgraph.py
+  - scripts/governance/apply_decisiongraph.py
+  - scripts/governance/generate_project_depgraph.py
+  - docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
+  - scripts/governance/d5_architecture/generators/align_panoramas.py
+  - docs/03_modules/*.md
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: PERMANENT-SYSTEM-TRIGGER
   name: 'PERMANENT-SYSTEM-TRIGGER: PERMANENT-SYSTEM-TRIGGER（CommitGate, priority=155）'
@@ -1608,7 +1547,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: R5-DIGIT-SUFFIX
   name: 'R5-DIGIT-SUFFIX: R5-DIGIT-SUFFIX（CommitGate, priority=35）'
@@ -1634,14 +1573,17 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: RECONCILER-FILE-OPS
   name: 'RECONCILER-FILE-OPS: RECONCILER-FILE-OPS（CommitGate, priority=117）'
   entry: in-process (GitCommitGateway)
   description: RECONCILER-FILE-OPS
   files_trigger:
-  - governance
+  - src/zephyr/governance/
+  - src/zephyr/gov_enforcement/
+  - scripts/governance/
+  - scripts/backup/
   always_run: false
   category: commit_gate
   status: active
@@ -1702,7 +1644,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: RENAME-DEPGRAPH-SYNC
   name: 'RENAME-DEPGRAPH-SYNC: 重命名 depgraph 同步（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
@@ -1798,7 +1740,7 @@ gates:
   entry: in-process (GitCommitGateway)
   description: SCRIPTS-IMPORT-INTEGRITY
   files_trigger:
-  - scripts/
+  - scripts/*.py
   always_run: false
   category: commit_gate
   status: active
@@ -1809,19 +1751,12 @@ gates:
   name: 'NO-SECRET-HARDCODE: NO-SECRET-HARDCODE（CommitGate, priority=128）'
   entry: in-process (GitCommitGateway)
   description: NO-SECRET-HARDCODE
-  files_trigger:
-  - .env
-  - secret
-  - credential
-  - token
-  - password
-  - api_key
-  - private_key
+  files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: SECRET-REGISTRY-CONSISTENCY
   name: 'SECRET-REGISTRY-CONSISTENCY: SECRET-REGISTRY-CONSISTENCY（CommitGate, priority=127）'
@@ -1832,7 +1767,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: SESSION-REQUIRED
   name: 'SESSION-REQUIRED: SESSION-REQUIRED（CommitGate, priority=31）'
@@ -1854,7 +1789,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: SPLIT-COORDINATION
   name: 'SPLIT-COORDINATION: 拆分×编辑双重存在协议门禁（SPLIT-COORDINATION，priority=143）（CommitGate,
@@ -1877,7 +1812,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: STASH-ACCUMULATION
   name: 'STASH-ACCUMULATION: STASH-ACCUMULATION（CommitGate, priority=118）'
@@ -1933,7 +1868,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: TEST-SOURCE-CONSISTENCY
   name: 'TEST-SOURCE-CONSISTENCY: TEST-SOURCE-CONSISTENCY（CommitGate, priority=102）'
@@ -1951,7 +1886,7 @@ gates:
   entry: in-process (GitCommitGateway)
   description: META-TESTS-COVERAGE
   files_trigger:
-  - tests/
+  - src/zephyr/gov_enforcement/commit_gates/
   always_run: false
   category: commit_gate
   status: active
@@ -1967,7 +1902,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: TTL-METADATA
   name: 'TTL-METADATA: TTL-METADATA（CommitGate, priority=32）'
@@ -1996,7 +1931,7 @@ gates:
   entry: in-process (GitCommitGateway)
   description: UNSAFE-DICT-SPREAD
   files_trigger:
-  - .py
+  - '*.py'
   always_run: false
   category: commit_gate
   status: active

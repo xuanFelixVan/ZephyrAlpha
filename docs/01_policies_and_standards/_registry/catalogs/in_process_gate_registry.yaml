@@ -27,7 +27,7 @@ tier: tier_1_governance
 status: active
 version: 1.0.0
 created: '2026-07-21'
-last_updated: '2026-07-21'
+last_updated: '2026-09-30'
 unique_key: gate_id
 entry_schema:
   gate_id: string (required, unique) — gate 标识，与 GateSpec.gate_id 一致
@@ -140,7 +140,7 @@ gates:
   register_line: 422
   enabled: true
 - gate_id: R5-DIGIT-SUFFIX
-  files_trigger: ["docs/", "scripts/", "src/", "data/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["docs/", "scripts/", "src/", "data/"]  # P5 结构校验型宽触发登记(C98二批/st-finaldel-c98-20260930，台账#1)：宪法§3.3 全仓扫描理由=门语义只看 commit 路径的父目录名 _\d+$ 后缀（新增目录判定），目录前缀=语义域不可再收；perf 方案§2.6 分级=结构校验型/单次成本极低（常态零 git 调用：suspect 集空即返，命中才逐目录 ls-tree；逐文件 isfile stat 保留=deletion 语义），A/R 触发面改型经复核否决（index 锚定盲化 worktree 落地路径+常态反增一次 subprocess=变慢）
   module_path: zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate
   factory_function: make_r5_digit_suffix_gate
   source: in_process
@@ -164,7 +164,7 @@ gates:
   register_line: 427
   enabled: true
 - gate_id: UNSAFE-DICT-SPREAD
-  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消伪触发）；台内 staged .py added 行 own-scope 扫描不变（warn-only）
   module_path: zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate
   factory_function: make_unsafe_dict_spread_gate
   source: in_process
@@ -213,7 +213,7 @@ gates:
   register_line: 436
   enabled: true
 - gate_id: FILE-COPY
-  files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；台内只检 staged 新增 .py，无 .py 提交短路）
+  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消 x.py.md/.pyx 伪触发，HEAD 同窗实测零合法 .py 丢失）；台内只检 staged 新增 .py own-diff、无 .py 提交短路不变
   module_path: zephyr.gov_enforcement.commit_gates.file_copy_gate
   factory_function: make_file_copy_gate
   source: in_process
@@ -269,7 +269,7 @@ gates:
   register_line: 448
   enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: FUNCTION-DUP
-  files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；台内只检 staged 新增 .py，无 .py 提交短路）
+  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消伪触发）；台内只检 staged 新增 .py own-diff（_split_own_foreign）不变
   module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
   factory_function: make_function_dup_gate
   source: in_process
@@ -301,7 +301,7 @@ gates:
   register_line: 453
   enabled: true
 - gate_id: MAP-ALIGNMENT
-  files_trigger: ["src/zephyr/governance/depgraph_schema.py", "src/zephyr/governance/persistence/dataflowgraph_schema.py", "src/zephyr/governance/persistence/decisiongraph_schema.py", "scripts/governance/apply_depgraph.py", "scripts/governance/apply_dataflowgraph.py", "scripts/governance/apply_decisiongraph.py", "scripts/governance/generate_project_depgraph.py", "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml", "scripts/governance/d5_architecture/generators/align_panoramas.py", "docs/03_modules/"]  # P5 收窄(N-3/st-nightsweep-sw11-20260929)=镜像门内 _TRIGGER_PATTERNS 真域
+  files_trigger: ["src/zephyr/governance/depgraph_schema.py", "src/zephyr/governance/persistence/dataflowgraph_schema.py", "src/zephyr/governance/persistence/decisiongraph_schema.py", "scripts/governance/apply_depgraph.py", "scripts/governance/apply_dataflowgraph.py", "scripts/governance/apply_decisiongraph.py", "scripts/governance/generate_project_depgraph.py", "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml", "scripts/governance/d5_architecture/generators/align_panoramas.py", "docs/03_modules/*.md"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#11)=docs/03_modules/ 整目录→*.md fnmatch（对齐检测真读面仅 blueprint .md，HEAD 实测 4844→1438；9 精确路径与门内 _TRIGGER_PATTERNS 镜像不变，目录前缀为真域超集=注册册不宽于门内）
   module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
   factory_function: make_map_alignment_gate
   source: in_process
@@ -333,7 +333,7 @@ gates:
   register_line: 459
   enabled: true
 - gate_id: COMPLEXITY-GUARD
-  files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；P4 合并丢子台触发面→无条件全跑补回；三子台均 .py-only）
+  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消伪触发）；三子台均 staged .py own-diff-only（新增函数判定）不变
   module_path: zephyr.gov_enforcement.commit_gates.high_complexity_gate
   factory_function: make_complexity_guard_gate
   source: in_process
@@ -370,7 +370,7 @@ gates:
   register_line: 464
   enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: GATE-DOMAIN-FK
-  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["*.py"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#3)=.py 裸子串→*.py fnmatch（消伪触发音化，HEAD 实测 9102→9102 零合法丢失）；同批门实现 own 化（_split_own_foreign，外来 staged warn+审计）
   module_path: zephyr.gov_enforcement.commit_gates.domain_fk_gate
   factory_function: make_domain_fk_gate
   source: in_process
@@ -409,7 +409,7 @@ gates:
   register_line: 472
   enabled: true
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
-  files_trigger: ["scripts/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["scripts/*.py"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#14)=scripts/ 前缀→scripts/*.py fnmatch（消 yaml/md 噪音触发，HEAD 实测 1384→1150；台内仍只查 scripts/governance/**/*.py own-scope）
   module_path: zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate
   factory_function: make_scripts_import_integrity_gate
   source: in_process
@@ -644,7 +644,7 @@ gates:
   register_line: 0  # priority=47；2026-08-23 陈旧快照覆写事故治本（claim_head 锚点 vs 当前 HEAD：热文件上游已推进则阻断，与 safe_write_text CAS 文件级防线互补）
   enabled: true
 - gate_id: STATE-VOCAB-REGISTRY
-  files_trigger: ["src/", ".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
+  files_trigger: ["src/zephyr/shared/vocab/", "docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#2)=词表真源前缀+册精确路径（HEAD 实测 9374→3；warn-only 门阻断面恒零，真源域检出防护保留）
   module_path: zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate
   factory_function: make_state_vocab_registry_gate
   source: in_process

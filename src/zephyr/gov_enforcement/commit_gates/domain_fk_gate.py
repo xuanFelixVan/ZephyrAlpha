@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含 [DOMAIN] D_XXX 头部时，D_XXX 必须在 functional_domain_registry.yaml 的 entries 中存在；tests/豁免；docstring 行豁免；git diff 不可达 fail-open；YAML 不可读 fail-open；检出违规则 fail-closed 阻断
+# [INVARIANTS] 硬阻断——staged .py added 行含 [DOMAIN] D_XXX 头部时，D_XXX 必须在 functional_domain_registry.yaml 的 entries 中存在；tests/豁免；docstring 行豁免；git diff 不可达 fail-open；YAML 不可读 fail-open；检出违规则 fail-closed 阻断；own 化 2026-09-30(C98 二批 st-finaldel-c98-20260930，台账 #3)：扫描范围=全暂存∩本 session（_split_own_foreign），外来 staged warn+审计不阻断，own_scope=None 退化扫全量
 # [MODIFY-GUARD] gate_id="GATE-DOMAIN-FK"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；真源=functional_domain_registry.yaml（staged 版本，SSoT TRAE-062）；diff-based 只检测 added 行
 # [STABILITY] stable
 # [SAFETY] L
@@ -65,6 +65,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
@@ -170,7 +171,7 @@ def _package_of(py_file: str) -> str:
     i = norm.find(marker)
     if i < 0:
         return ""
-    rest = norm[i + len(marker):]
+    rest = norm[i + len(marker) :]
     if "/" not in rest:
         return ""
     return rest.split("/", 1)[0]
@@ -271,6 +272,12 @@ def make_domain_fk_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = [f for f in _get_staged_py_files(gateway, "GATE-DOMAIN-FK") if not is_test_exempt(f)]
+        if not py_files:
+            return True, ""
+        # own 化（宪法 §3.1 内容扫描默认作用域；C98 二批 st-finaldel-c98-20260930，台账 #3 建议）：
+        # 只扫本 session staged，外来 staged warn+审计不阻断；own_scope=None（历史直调场景）
+        # 退化为旧行为扫全量（保守面不改宽）。
+        py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="GATE-DOMAIN-FK")[0]
         if not py_files:
             return True, ""
 
