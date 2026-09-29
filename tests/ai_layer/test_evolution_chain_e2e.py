@@ -120,14 +120,27 @@ def _wash_gateway():
     }
     localized = {"applicability": {"regime": "趋势", "frequency": "日", "universe": "沪深300"}}
     script = {
-        "mining_deep": GatewayReply(content="结构化笔记：动量机制", model="deepseek-reasoner",
-                                    request_id_ref="lsg:e2e:r1", tokens_in=500, tokens_out=200),
+        "mining_deep": GatewayReply(
+            content="结构化笔记：动量机制",
+            model="deepseek-reasoner",
+            request_id_ref="lsg:e2e:r1",
+            tokens_in=500,
+            tokens_out=200,
+        ),
         "cleaning_rewrite": GatewayReply(
             content="```json\n" + json.dumps(spec_body, ensure_ascii=False) + "\n```",
-            model="deepseek-chat", request_id_ref="lsg:e2e:r2", tokens_in=800, tokens_out=400),
+            model="deepseek-chat",
+            request_id_ref="lsg:e2e:r2",
+            tokens_in=800,
+            tokens_out=400,
+        ),
         "translation_registry": GatewayReply(
-            content=json.dumps(localized, ensure_ascii=False), model="glm-4.5-free",
-            request_id_ref="lsg:e2e:r3", tokens_in=300, tokens_out=100),
+            content=json.dumps(localized, ensure_ascii=False),
+            model="glm-4.5-free",
+            request_id_ref="lsg:e2e:r3",
+            tokens_in=300,
+            tokens_out=100,
+        ),
     }
 
     def gateway(messages: list[dict[str, str]], *, task_type: str, tier: str) -> GatewayReply:
@@ -187,9 +200,7 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
         )
 
         orders_journal = SearchOrderJournal(tmp_path / "search_orders")
-        translator = PerceiveTranslator(
-            orders_journal, ledger=BudgetLedger(orders_journal.state_dir)
-        )
+        translator = PerceiveTranslator(orders_journal, ledger=BudgetLedger(orders_journal.state_dir))
         signal = DetectorSignal(
             channel="strategy_decay",
             signal_name="synthetic-strategy_decay",
@@ -215,9 +226,7 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             staging_path=str(staging_dir),
             now=FIXED_NOW,
         )
-        assert collect_order.status == "open" and collect_order.staging_path, (
-            "[L1] 收集单应携带 E1 staging 落点"
-        )
+        assert collect_order.status == "open" and collect_order.staging_path, "[L1] 收集单应携带 E1 staging 落点"
 
         # ============================================================= L2 收集
         from zephyr.ai_layer.intake.gate import IntakeCandidate, IntakeGate
@@ -261,16 +270,12 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             "intake_ingest_due",
             {"source_slug": "qlib", "raw_staging_path": "staging/cc-e2e-0001.json"},
         )
-        intake_journal.emit(
-            "intake_clean_due", {"card_ids": [card_id], "domain_id": "governance"}
-        )
+        intake_journal.emit("intake_clean_due", {"card_ids": [card_id], "domain_id": "governance"})
         assert intake_journal.journal_path.exists() and len(intake_journal.pending()) == 2, (
             "[L2] 事件行应落账两条（journal 先落盘，唯一真源）"
         )
 
-        collected = orders_journal.transition(
-            collect_order.order_id, "collected", produced_ref=f"card_id={card_id}"
-        )
+        collected = orders_journal.transition(collect_order.order_id, "collected", produced_ref=f"card_id={card_id}")
         assert collected.status == "collected" and collected.produced_ref == f"card_id={card_id}", (
             "[L1→L2] 搜索工单应以候选卡出生证收单（produced_ref+staging 双契约）"
         )
@@ -320,6 +325,11 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
         assert audit.sampled and audit.reason == "cold_start", "[L3] 冷启动窗内应强制抽验（审计抽验行）"
 
         # ============================================================= L4 比较
+        from zephyr.ai_layer.comparator.executor import (
+            VerdictRuling,
+            issue_verdict_card,
+            run_preflight,
+        )
         from zephyr.ai_layer.comparator.experiment_store import (
             ExperimentDraft,
             ExperimentStore,
@@ -327,11 +337,6 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             criteria_hash,
             new_experiment_id,
             render_criteria_ref,
-        )
-        from zephyr.ai_layer.comparator.executor import (
-            VerdictRuling,
-            issue_verdict_card,
-            run_preflight,
         )
 
         experiment_store = ExperimentStore(schema=COMPARE_SCHEMA)
@@ -357,47 +362,44 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             "[L4] 实验创建应冻结且挑战者=L3 规格件"
         )
         l4_hash = record.criteria_hash
-        assert l4_hash == criteria_hash(canonical_criteria_text(criteria)), (
-            "[L4] 冻结哈希应=canonical 判据哈希"
-        )
+        assert l4_hash == criteria_hash(canonical_criteria_text(criteria)), "[L4] 冻结哈希应=canonical 判据哈希"
 
         # 判据冻结触发器：DB 直改判据必须被拒（双道：应用层 guard 同判）
         tamper_conn = experiment_store.write_conn()
         with pytest.raises(Exception, match="frozen_criteria_immutable"):
             tamper_conn.cursor().execute(
-                f"UPDATE {COMPARE_SCHEMA}.ai_comparison_experiment "
-                "SET criteria_yaml = %s WHERE experiment_id = %s",
+                f"UPDATE {COMPARE_SCHEMA}.ai_comparison_experiment SET criteria_yaml = %s WHERE experiment_id = %s",
                 ("tampered: true\n", experiment_id),
             )
         tamper_conn.rollback()  # 清 aborted 事务（写连接进程内复用）
 
+        # 时序锁锚点=卡上真实 frozen_at（DB DEFAULT now()）：派发/首commit 取冻结+1d/+2d。
+        # 原实现锚死 FIXED_NOW(2026-09-24)——真实时钟越过 T_DISPATCH 后必炸（time bomb，
+        # 2026-09-29 复现 time_lock_inverted）；时序锁语义 frozen<dispatched<first_commit 不变。
+        frozen_dt = datetime.fromisoformat(str(record.frozen_at))
+        t_dispatch_live = frozen_dt + timedelta(days=1)
+        t_commit_live = frozen_dt + timedelta(days=2)
         preflight = run_preflight(
             record,
             task_criteria_ref=render_criteria_ref(experiment_id, l4_hash),
             fairness_passed=True,
-            dispatched_at=T_DISPATCH,
-            first_commit_at=T_COMMIT,
+            dispatched_at=t_dispatch_live,
+            first_commit_at=t_commit_live,
         )
-        assert preflight.passed and not preflight.reasons, (
-            f"[L4] 考场预检三锁应全过：{preflight.reasons}"
-        )
+        assert preflight.passed and not preflight.reasons, f"[L4] 考场预检三锁应全过：{preflight.reasons}"
         verdict_card = issue_verdict_card(
             record,
             "win",
             ruled_by_session="st-e2e-eval",
-            ruling=VerdictRuling(
-                evidence_pack={"experiment_id": experiment_id}, significance="p=0.01"
-            ),
-            issued_at=T_COMMIT,
+            ruling=VerdictRuling(evidence_pack={"experiment_id": experiment_id}, significance="p=0.01"),
+            issued_at=t_commit_live,
         )
         assert verdict_card.verdict == "win" and verdict_card.evaluator_session == "st-e2e-eval", (
             "[L4] 裁定卡应仅由 evaluator 会话签发"
         )
         assert experiment_store.transition(experiment_id, "running") == (True, "ok")
         assert experiment_store.transition(experiment_id, "verdict") == (True, "ok")
-        assert experiment_store.set_verdict(
-            experiment_id, "win", evidence_ref=f"verdict-card:{experiment_id}"
-        )[0]
+        assert experiment_store.set_verdict(experiment_id, "win", evidence_ref=f"verdict-card:{experiment_id}")[0]
         assert experiment_store.archive(experiment_id) == (True, "ok")
         archived = experiment_store.get(experiment_id)
         assert archived is not None and archived.status == "archived" and archived.verdict == "win", (
@@ -421,11 +423,17 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
         spolicy = load_gate_policy()
         now = FIXED_NOW
 
-        def _order(oid: str, sig: float, *, star: bool = False, age: float = 0,
-                   kind: str = "evolution", og: bool = False) -> dict[str, Any]:
+        def _order(
+            oid: str, sig: float, *, star: bool = False, age: float = 0, kind: str = "evolution", og: bool = False
+        ) -> dict[str, Any]:
             return {
-                "order_id": oid, "labor_killed": "a", "significance": sig, "starred": star,
-                "kind": kind, "owner_gate": og, "created_at": now - timedelta(days=age),
+                "order_id": oid,
+                "labor_killed": "a",
+                "significance": sig,
+                "starred": star,
+                "kind": kind,
+                "owner_gate": og,
+                "created_at": now - timedelta(days=age),
             }
 
         ranked = rank_pending(
@@ -441,14 +449,21 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             now,
         )
         assert [r["order_id"] for r in ranked] == [
-            "WO-E2E-A", "WO-E2E-B", "WO-E2E-D", "WO-E2E-C",
+            "WO-E2E-A",
+            "WO-E2E-B",
+            "WO-E2E-D",
+            "WO-E2E-C",
         ], "[L5] 工单应按 分>防饥饿>带星 排序；repair/骨架级不混队"
 
-        assert evaluate_quota(
-            QuotaReadings(q1_active_sessions=1, q2_subagents_requested=3,
-                          q3_tokens_today=100, q4_commit_queue_pending=0),
-            spolicy,
-        ) == [], "[L5] 配额四读数全绿应无降级旗"
+        assert (
+            evaluate_quota(
+                QuotaReadings(
+                    q1_active_sessions=1, q2_subagents_requested=3, q3_tokens_today=100, q4_commit_queue_pending=0
+                ),
+                spolicy,
+            )
+            == []
+        ), "[L5] 配额四读数全绿应无降级旗"
         quota = spolicy["quota"]
         assert evaluate_quota(
             QuotaReadings(
@@ -552,9 +567,7 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             engine.promote(switch_id, approved_by="yolo", receipt_ref="r-1")  # 审批人必须在册
         promoted = engine.promote(switch_id, approved_by="independent_review", receipt_ref="rcpt-e2e")
         assert promoted.state == "promoted", "[L6] 审批晋升应到 promoted 态"
-        assert active_ref(engine.store.require(switch_id)) == wash.spec_id, (
-            "[L6] 晋升后消费指针应切到挑战者"
-        )
+        assert active_ref(engine.store.require(switch_id)) == wash.spec_id, "[L6] 晋升后消费指针应切到挑战者"
 
         engine.transition(switch_id, "stabilize", "stable-window")
         engine.transition(switch_id, "supersede", "next-gen-promoted")
@@ -576,12 +589,13 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             "[L6] 退役件应封存为墓碑并带复活条件"
         )
         assert git_calls and git_calls[0][0] == "tag", "[L6] 封存应 git tag（物理文件零删除）"
-        assert [r.switch_id for r in list_tombstones(sw_store)] == [switch_id], (
-            "[L6] 退役件应可查询（list_tombstones）"
-        )
+        assert [r.switch_id for r in list_tombstones(sw_store)] == [switch_id], "[L6] 退役件应可查询（list_tombstones）"
         ticket = revival_ticket(
-            sw_store, switch_id, trigger="regime_recurrence",
-            evidence_ref="L1-signal-e2e", out_dir=tmp_path,
+            sw_store,
+            switch_id,
+            trigger="regime_recurrence",
+            evidence_ref="L1-signal-e2e",
+            out_dir=tmp_path,
         )
         assert ticket["revival_not_direct_promotion"] is True and ticket["route"] == REVIVAL_ROUTE, (
             "[L6→L1] 复活≠直提：恒回 shadow 重走对比"
@@ -590,8 +604,8 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
         # ============================================================= L7 传承
         from zephyr.ai_layer.heritage.closure_check import validate_receipt
         from zephyr.ai_layer.heritage.forget import HeritageForget
-        from zephyr.ai_layer.heritage.priors import HeritagePriors
         from zephyr.ai_layer.heritage.policy import load_policy
+        from zephyr.ai_layer.heritage.priors import HeritagePriors
         from zephyr.ai_layer.heritage.store import (
             HeritageDraft,
             HeritageStore,
@@ -610,10 +624,12 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
         # 入库五道检查在岗：缺源锚 / 占位白话各自机读拒因
         with pytest.raises(RegistrationRefused) as ei:
             hstore.register(
-                HeritageDraft(**{
-                    **_defect_kwargs(switch_suffix="x"),
-                    "source_ref": "",
-                }),
+                HeritageDraft(
+                    **{
+                        **_defect_kwargs(switch_suffix="x"),
+                        "source_ref": "",
+                    }
+                ),
                 as_of=FIXED_NOW,
             )
         assert ei.value.reason == "missing_source_anchor", "[L7] 闸1 缺源锚应机读拒收"
@@ -695,9 +711,7 @@ def test_evolution_chain_l1_to_l7(tmp_path: Path) -> None:
             "[L7] 遗忘执行应降级受影响面全退役的缺陷 1 例"
         )
         entry = hstore.get(defect_id)
-        assert entry is not None and entry["status"] == "retired", (
-            "[L7] forget=只降级不删：retired 条目仍可反查全量"
-        )
+        assert entry is not None and entry["status"] == "retired", "[L7] forget=只降级不删：retired 条目仍可反查全量"
 
         # ============================================================= 链路闭环（L7→L1）
         replay = translator.translate(
