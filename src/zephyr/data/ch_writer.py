@@ -2,15 +2,15 @@
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config; zephyr.shared.observability.metrics
-# [CONSUMERS] zephyr.data.scheduler
+# [CONSUMERS] zephyr.data.scheduler; zephyr.data.ch_reader（query_strict/parse_tsv_rows/ClickHouseQueryError，W-180.1）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断
+# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断; query_strict() 与 query() 共用同一传输层，仅错误契约不同（失败必抛、只读语句白名单）
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串; delete_where失败->返回False
+# [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串(存量静默契约，判据类读数禁用，改走 query_strict); delete_where失败->返回False; query_strict失败->raise ClickHouseQueryError(W-180.1，禁降级为空值/空表)
 # [TESTS] tests/zephyr/data/test_ch_writer.py
 # [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -1168,3 +1168,117 @@ def health_check() -> dict[str, str]:
     ch_http_host = old_http_host
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# W-180.1 严格读通道（判据类读数唯一合法入口的传输层；字节源=死袋 q-20260927-st-final-build-20260926-0012 捞回转正）
+# 契约：query_strict 失败必抛、只读白名单；"查询失败"与"真 0 行"两态显式可分。
+# 内收：复用本模块 TCP/HTTP 传输层与自愈钩子，不新建连接层；query() 存量静默契约不变。
+# ---------------------------------------------------------------------------
+
+
+class ClickHouseQueryError(RuntimeError):
+    """W-180.1 严格读错误契约：CH 读在传输层失败时必抛，禁降级为 `''` / 空行集。
+
+    病源（终审卷 §7.2 L2）：`query()` 双链路（TCP→HTTP）全失败时 `log.error` +
+    `return ""`，而**空结果集也返回 `""`** ⇒ "查询失败"与"真 0 行"在返回面上不可分；
+    下游 `count()` 把它读成 0，于是"空壳表清单"可能是 fail-silent 的产物。
+
+    Attributes:
+        sql: 触发失败的 SQL 原文（截断 200 字符入消息，全量留在属性里）
+        attempts: [(传输路径, 失败原因), ...]，TCP 与 HTTP 各一条，供探针/案卷溯源
+    """
+
+    def __init__(self, sql: str, attempts: list[tuple[str, str]]):
+        self.sql = sql
+        self.attempts = list(attempts)
+        detail = "; ".join(f"{t}: {r}" for t, r in self.attempts) or "无可用传输路径"
+        super().__init__(f"ClickHouse 严格读失败（{detail}）| SQL={sql[:200]}")
+
+
+def parse_tsv_rows(text: str) -> list[tuple[str, ...]]:
+    """TSV 文本 → 行元组列表（与 `splitlines()` + `split('\\t')` 对拍，W-180.1 出口判据）。
+
+    空文本/纯空白 → `[]`（真空，与"失败必抛"配套，调用方不会再撞字符串劈裂）。
+    """
+    if not text or not text.strip():
+        return []
+    return [tuple(line.split("\t")) for line in text.splitlines() if line != ""]
+
+
+_READ_ONLY_PREFIXES: Final[tuple[str, ...]] = ("SELECT", "WITH", "SHOW", "DESCRIBE", "DESC", "EXPLAIN")
+
+#: 最近一次 query_strict 实际成功的传输路径（探针 W-180.4 需要"传输路径"字段；纯观测，不影响契约）
+_LAST_TRANSPORT: str = ""
+
+
+def last_transport() -> str:
+    """返回 `"tcp"` / `"http"` / `""`（空＝本次未成功或走的是非严格通道）。"""
+    return _LAST_TRANSPORT
+
+
+def query_strict(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> list[tuple]:
+    """严格行集读（W-180.1）：复用本模块传输层（TCP 9000 → HTTP 8123），**只换错误契约**。
+
+    与 `query()` 的差别仅在失败面：
+      - `query()`：双链路全失败 → `log.error` + 返回 `""`（存量 12+ 消费者行为**不变**）
+      - `query_strict()`：双链路全失败 → `raise ClickHouseQueryError`；空结果 → `[]`（真空）
+
+    内收约束：不新建连接层——复用 `get_client()` / `get_http_host()` / `_ch_lock` /
+    `_ch_http_headers()` 与既有的自愈失效钩子（`_invalidate_tcp_client` /
+    `_invalidate_http_host` / `_note_http_failure` / `_reset_http_fail_streak`）。
+    只读守卫：非 `_READ_ONLY_PREFIXES` 开头的 SQL 直接抛（判据通道禁写）。
+
+    Returns:
+        `list[tuple]`——行集（HTTP 路径经 `parse_tsv_rows` 解析，TCP 路径取原生行）。
+
+    Raises:
+        ClickHouseQueryError: 传输失败、服务端错误、或结果形状不合契约。
+    """
+    sql_stripped = sql.strip()
+    if not sql_stripped.upper().startswith(_READ_ONLY_PREFIXES):
+        raise ClickHouseQueryError(sql, [("contract", "query_strict 仅允许只读语句")])
+    attempts: list[tuple[str, str]] = []
+    global _LAST_TRANSPORT
+    _LAST_TRANSPORT = ""
+
+    client = get_client()
+    if client is None:
+        attempts.append(("tcp", "client 不可用（配置缺失或处于冷却期）"))
+    else:
+        try:
+            with _ch_lock:  # 串行化 execute（clickhouse-driver Client 非线程安全）
+                rows = client.execute(sql_stripped, settings={"max_execution_time": timeout})
+            _LAST_TRANSPORT = "tcp"
+            return [tuple(r) for r in rows]
+        except Exception as e:  # noqa: BLE001 — 契约要求：捕获后转严格异常，不外泄裸驱动异常
+            attempts.append(("tcp", f"{type(e).__name__}: {e}"))
+            _invalidate_tcp_client(f"query_strict execute 失败: {e}")
+
+    http_host = get_http_host()
+    if not http_host:
+        attempts.append(("http", "host 不可用（配置缺失或处于冷却期）"))
+    else:
+        path = f"/?query={urllib.parse.quote(sql_stripped)}"
+        try:
+            conn = http.client.HTTPConnection(http_host, _CH_HTTP_PORT, timeout=timeout)
+            conn.request("GET", path, headers=_ch_http_headers())
+            resp = conn.getresponse()
+            body = resp.read().decode("utf-8", errors="replace")
+            conn.close()
+            if resp.status == 200:
+                _reset_http_fail_streak()
+                _LAST_TRANSPORT = "http"
+                return parse_tsv_rows(body)
+            attempts.append(("http", f"status={resp.status} body={body[:200]}"))
+            if 500 <= resp.status < 600:
+                _note_http_failure(f"query_strict status={resp.status}")
+            else:
+                _reset_http_fail_streak()  # 4xx＝服务端应答正常的语句/权限错，链路本身健康
+        except Exception as e:  # noqa: BLE001 — 契约要求：转严格异常并触发链路自愈
+            attempts.append(("http", f"{type(e).__name__}: {e}"))
+            _invalidate_http_host(f"query_strict HTTP 失败: {e}")
+            _note_http_failure(f"query_strict exception: {e}")
+
+    log.error("CH query_strict 失败(TCP+HTTP 均失败): %s | attempts=%s", sql_stripped[:200], attempts)
+    raise ClickHouseQueryError(sql_stripped, attempts)
