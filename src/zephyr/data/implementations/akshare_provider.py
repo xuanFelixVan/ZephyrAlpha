@@ -127,6 +127,9 @@ _TBL_CONCEPT_BOARD_CONSTITUENT = get_registry().table("market_concept_board_cons
 # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
 _TBL_CONCEPT_SECTOR = get_registry().table("market_concept_sector")
 _TBL_REALTIME_SNAPSHOT = get_registry().table("market_realtime_snapshot")
+# 99 #20 换源试验（2026-09-29）：腾讯批量行情端点（只读公开接口，GBK 文本非 HTML），
+# 实测 6/6 只含 BJ 全返、88 字段含 OHLC+量额；新浪 hq.sinajs.cn 无 Referer 实测 403 Forbidden
+_QT_GTIMG_URL: Final[str] = "https://qt.gtimg.cn/q="
 _TBL_INDEX_QUOTE = get_registry().table("market_index_quote")
 _TBL_SECTOR_META = get_registry().table("market_sector_meta")
 _TBL_CONVERTIBLE_BOND_LIST = get_registry().table("market_cb_list")
@@ -5802,18 +5805,57 @@ class AkshareIngestProvider(IngestProviderBase):
             return f"{s}.BJ"
         return f"{s}.SZ"
 
+    @staticmethod
+    def _parse_qt_gtimg_text(
+        text: str,
+    ) -> list[tuple[str, float | None, float | None, float | None, float, int, float]]:
+        """解析 qt.gtimg.cn 批量应答文本 → (code, open, high, low, close, volume_股, amount_元)。
+
+        字段版式（2026-09-29 实测）：GBK 纯文本，每标的一段
+        ``v_sh600519="1~贵州茅台~600519~现价[3]~昨收[4]~今开[5]~成交量手[6]~...~最高[33]~最低[34]~...~成交额万元[37]~..."``，
+        sh/sz 88 字段、bj 87 字段。量纲对齐 c1_market.realtime_snapshot 存量（新浪源口径）：
+        成交量 手→股 ×100、成交额 万元→元 ×10000——同日双源交叉验证 600519.SH
+        close=1243.88/2,821,830 股/3,488,720,613 元 精确吻合。
+        """
+        out: list[tuple[str, float | None, float | None, float | None, float, int, float]] = []
+        for seg in text.split(";"):
+            if '"' not in seg:
+                continue
+            fields = seg.split('"')[1].split("~")
+            if len(fields) < 38:
+                continue
+            code = str(fields[2] or "").strip()
+            close = safe_float(fields[3])
+            if not code or close is None or close <= 0:
+                continue  # 停牌/残段无现价，跳过不拍哨兵值
+            out.append(
+                (
+                    code,
+                    safe_float(fields[5]),  # 今开
+                    safe_float(fields[33]),  # 最高
+                    safe_float(fields[34]),  # 最低
+                    close,
+                    int(safe_float(fields[6]) or 0) * 100,  # 成交量 手→股
+                    (safe_float(fields[37]) or 0.0) * 10000.0,  # 成交额 万元→元
+                )
+            )
+        return out
+
     def _fetch_realtime_snapshot(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取实时行情快照，写入 c1_market.realtime_snapshot。
 
         #ARCH-IFIND-FAILOVER: 替代 iFind THS_RealtimeQuotes（试用账号不可用时自动切换）。
-        使用 ak.stock_zh_a_spot() 一次获取全部 A 股实时行情（新浪源，非东财）。
-        相比 iFind 分批50个标的，akshare 一次返回全市场，更高效。
 
-        接口选型（#ARCH-AKSHARE-ANTICRAWLER-001）：原 stock_zh_a_spot_em 为东财接口，
-        高频调用触发 IP 级 TCP RST 封锁；改用 stock_zh_a_spot（新浪源）规避反爬。
-        新浪代码格式为 "sh600000"/"sz000001"/"bj920000"，需 strip 字母前缀取6位数字。
-
-        表 schema: (snapshot_time, symbol, open, high, low, close, volume, amount, data_source)
+        换源史（三候选实测，99 #20，2026-09-29）：
+            1. 东财 stock_zh_a_spot_em——高频触发 IP 级 TCP RST 封锁（#ARCH-AKSHARE-ANTICRAWLER-001）退役；
+            2. 新浪 stock_zh_a_spot——hq.sinajs.cn 无 Referer 实测 HTTP 403 Forbidden
+               （反爬返错/HTML），盘中累计 112 次降级件，退役；
+            3. 腾讯 qt.gtimg.cn 直连（现行主源）——实测 6/6 只（含 BJ）全返、88 字段含
+               OHLC+量额、GBK 纯文本非 HTML、零鉴权；akshare stock_zh_a_spot_tx 虽可用
+               （5569 行/12.9s）但列集仅 zxj 现价无 open/high/low，会让快照丢 OHLC，弃用。
+        实现：交易所官方清单（_get_all_a_symbols）取全 A 代码 → 80 只/批 qt.gtimg.cn
+        批量拉取（_call_with_policy 自带限流+重试）→ 解析量纲换算落行。
+        失败显式 error 报红（禁空 rows 假绿 SUCCESS）。
         """
         import akshare as ak
 
@@ -5833,8 +5875,55 @@ class AkshareIngestProvider(IngestProviderBase):
         t0 = now_utc()
 
         try:
-            df = self._call_with_policy(ak.stock_zh_a_spot, policy)
+            codes = self._get_all_a_symbols(ak, policy)
+            if not codes:
+                raise RuntimeError("全 A 代码清单获取失败（空列表）")
+            # 6位裸码 → 腾讯前缀码（复用既有 _code_to_ts_code 交易所映射真源）：600519.SH → sh600519
+            qcodes: list[str] = []
+            for c in codes:
+                ts = self._code_to_ts_code(str(c))
+                if ts and "." in ts:
+                    qcodes.append(ts[-2:].lower() + ts[:6])
+            rows: list[tuple] = []
+            batch = 80  # URL 长度 ~720 字符/批，安全余量充足
+            for i in range(0, len(qcodes), batch):
+                url = _QT_GTIMG_URL + ",".join(qcodes[i : i + batch])
+                resp = self._call_with_policy(self._http_get, policy, url, timeout=15)
+                for parsed in self._parse_qt_gtimg_text(resp.content.decode("gbk", errors="replace")):
+                    code, open_, high, low, close, vol, amt = parsed
+                    rows.append(
+                        (
+                            now_str,
+                            self._code_to_ts_code(code),
+                            open_,
+                            high,
+                            low,
+                            close,
+                            vol,
+                            amt,
+                            "tencent_qt",
+                        )
+                    )
+            if not rows:
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=now_str,
+                    elapsed_sec=seconds_since(t0),
+                    error="qt.gtimg.cn 批量拉取解析后 0 行",
+                )
+                return
+            self._log.info(f"realtime_snapshot: {len(rows)} 行（tencent_qt 直连）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=now_str,
+                elapsed_sec=seconds_since(t0),
+            )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"realtime_snapshot 获取失败(tencent_qt): {e}")
             yield FetchResult(
                 table=table,
                 columns=columns,
@@ -5843,38 +5932,6 @@ class AkshareIngestProvider(IngestProviderBase):
                 elapsed_sec=seconds_since(t0),
                 error=str(e),
             )
-            return
-
-        rows: list[tuple] = []
-        if df is not None and len(df) > 0:
-            for _, row in df.iterrows():
-                # 新浪代码格式 "sh600000"/"sz000001"/"bj920000"，strip 字母前缀取6位数字
-                code = "".join(ch for ch in str(row.get("代码") or "") if ch.isdigit())
-                if not code:
-                    continue
-                symbol = self._code_to_ts_code(code)
-                rows.append(
-                    (
-                        now_str,
-                        symbol,
-                        safe_float(row.get("今开")),
-                        safe_float(row.get("最高")),
-                        safe_float(row.get("最低")),
-                        safe_float(row.get("最新价")),
-                        int(safe_float(row.get("成交量")) or 0),  # CH volume=UInt64，需 int
-                        safe_float(row.get("成交额")),
-                        "akshare",
-                    )
-                )
-
-        self._log.info(f"realtime_snapshot: {len(rows)} 行（akshare）")
-        yield FetchResult(
-            table=table,
-            columns=columns,
-            rows=rows,
-            last_key=now_str,
-            elapsed_sec=seconds_since(t0),
-        )
 
     # ---- 指数实时快照（index_quote，裁定#339 接管批 2026-09-21 st-data-fix） ----
 

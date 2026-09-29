@@ -1051,7 +1051,7 @@ tasks:
   capability: realtime_snapshot
   symbols:         # null=全A股，也可指定标的列表
   extra:
-    description: "实时行情快照增量（akshare stock_zh_a_spot 新浪源，全市场一次返回）"
+    description: "实时行情快照增量（腾讯 qt.gtimg.cn 直连批量 80 只/批含 OHLC；99#20 2026-09-29 换源：新浪 stock_zh_a_spot 无 Referer 403 反爬退役，东财 spot_em 更早 TCP RST 退役）"
 
   # ============== 静态数据月初刷新（每月1日 09:00）==============
 - task_id: trade_calendar_refresh
