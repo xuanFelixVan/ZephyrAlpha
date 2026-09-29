@@ -612,7 +612,7 @@
     var eq = n.equity || {};
     var rows = (eq.rows || []).map(function (r) {
       var zh = EQ_REL_ZH[r.relation] || (r.relation || '股权');
-      var ver = r.verification === 'official' ? '官方口径' : (r.verification === 'verified' ? '已核验' : '未核验');
+      var ver = r.verification === 'official' ? '官方口径' : (r.verification === 'verified' ? '已核验' : (r.verification === 'akshare_top10' ? 'Akshare 十大股东' : (r.verification === 'ig_equity_edge' ? '股权图谱并入边' : '未核验')));
       var nm = r.name || r.symbol || r.ref || '—';
       var idp = r.symbol ? r.symbol : (r.ref || '非上市编码');
       var lk = !!r.symbol;
