@@ -182,7 +182,7 @@ def _entities_producer_dir(family: FamilySpec, repo_root: Path) -> dict[str, dic
     return out
 
 
-def _registry_item_keeps(family: FamilySpec, eid: Any, leaf: str, status: str) -> bool:
+def _registry_item_keeps(family: FamilySpec, eid: str, leaf: str, status: str) -> bool:
     """登记册型族的单条准入判据（registry_ids / dataset_prefix / dataset_regex 三形态共用）。"""
     if not eid:
         return False
@@ -327,7 +327,7 @@ def _maturity(item: dict[str, Any], repo_root: Path) -> tuple[float, str]:
     return (0.0, "bare_entry")
 
 
-def _registry_tier(item: dict[str, Any], registry_tier: Any) -> float:
+def _registry_tier(item: dict[str, Any], registry_tier: object) -> float:
     raw = item.get("tier") or item.get("priority") or registry_tier or 0
     try:
         v = float(raw)
@@ -630,7 +630,7 @@ def _self_surface(st: _RunState, eid: str, fam: FamilySpec) -> list[str]:
     return [r for r in sorted(st.idx.all_hits.get(eid, set())) if re.search(fam.self_surface, r)]
 
 
-def _family_registry_tier(fam: FamilySpec, repo: Path) -> Any:
+def _family_registry_tier(fam: FamilySpec, repo: Path) -> object:
     """登记册顶层 tier（union 族不取——子族各自有册，取顶层只会拿到 None 语义混淆）。"""
     if fam.source == "union" or not fam.registry_path:
         return None
@@ -638,7 +638,7 @@ def _family_registry_tier(fam: FamilySpec, repo: Path) -> Any:
 
 
 def _entity_row(st: _RunState, fam: FamilySpec, eid: str, item: dict[str, Any],
-                reg_tier: Any) -> tuple[dict[str, Any], str]:
+                reg_tier: object) -> tuple[dict[str, Any], str]:
     """单实体台账行 + 该实体消费态（value_score 三项加权＝案卷 §三 公式，禁在此改判据）。"""
     consumers = _consumers_for(st, eid, fam)
     prod = _producer_only(st, eid)
