@@ -546,13 +546,13 @@ repos:
       #           ② check_test_structure.py（测试结构合规）
       # 行为变化：原 GATE-18/GATE-19 分别 pass_filenames=false 自扫描，合并后 run_gate_chain 等价。
       - id: gate-test
-        name: "GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）"
-        entry: "python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:asyncio,--import-mode=importlib,-m,\"not slow and not e2e\" scripts/governance/d11_compliance/check_test_structure.py"
+        name: "GATE-TEST: 测试门禁合并（GATE-18 staged收集 + GATE-19 结构）"
+        entry: 'bash -c "files=$(git diff --cached --name-only --diff-filter=AMR -- tests/ | grep ''\.py$'' | tr ''\n'' '' ''); if [ -z \"$files\" ]; then echo ''[gate-test] no staged test files, skip collect (B1 2026-09-30)''; rc1=0; else pytest --collect-only -q --tb=line -p no:asyncio --import-mode=importlib -m ''not slow and not e2e'' $files; rc1=$?; fi; python scripts/governance/d11_compliance/check_test_structure.py; rc2=$?; if [ $rc1 -ge 2 ] || [ $rc2 -ge 2 ]; then exit 2; fi; if [ $rc1 -ne 0 ] || [ $rc2 -ne 0 ]; then exit 1; fi; exit 0"'
         language: system
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
-        description: "测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) + GATE-19(测试结构合规)，run_gate_chain 顺序执行"
+        description: "测试门禁合并——GATE-18 收集域 2026-09-30 按 9/24 报告 B1 处方收窄：全树 pytest --collect-only(3967 文件/分钟级底座) 改 staged tests/ 收集（空则跳过；src 单独提交时 import 断裂由 L2 UNDEFINED-NAME/IMPORT-INTEGRITY 承载+夜检兜底）；GATE-19 check_test_structure 保留全量；退出码聚合保序不短路（0/1/2 语义与 run_gate_chain 对齐）。回滚=恢复 run_gate_chain 原entry"
 
       # ── GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007，2026-08-30 落地）──
       # 权威依据：2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）
