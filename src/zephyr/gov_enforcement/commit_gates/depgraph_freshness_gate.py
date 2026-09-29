@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.governance.audit.pg_probe (pg_offline_beyond/log_db_failopen，#ARCH-119 延迟 import); stdlib(json, datetime, logging)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.governance.audit.pg_probe (pg_offline_beyond/log_db_failopen，#ARCH-119 延迟 import); stdlib(json, re, datetime, logging)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -67,6 +67,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -157,16 +158,30 @@ def make_depgraph_freshness_gate() -> GateSpec:
 
         # 1. 文件缺失——fail-open（首次启动/新环境）
         if not cache_path.is_file():
-            return True, (f"depgraph scan cache not found ({_CACHE_REL}, source={cache_src}); skip freshness check (first-run or new env)")
+            return True, (
+                f"depgraph scan cache not found ({_CACHE_REL}, source={cache_src}); skip freshness check (first-run or new env)"
+            )
 
-        # 2. 读取 + JSON 解析——fail-open
+        # 2. 读取 saved_at——流式快路径：_meta 固定在文件头部（生成器先写 _meta 再写 entries），
+        #    只读头部 4KB 正则提取即可，免整读+解析 10MB 级依赖图（2026-09-30 提速批，
+        #    gate_survival_adjudication.md §6；头部失配回落全量 parse，fail-open 语义不变）。
         try:
-            data = json.loads(cache_path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError) as e:
-            logger.warning("depgraph scan cache parse failed: %s", e)
-            return True, f"depgraph scan cache parse failed, skip: {e}"
-
-        saved_at_raw = (data.get("_meta") or {}).get("saved_at")
+            with cache_path.open("r", encoding="utf-8") as fh:
+                head = fh.read(4096)
+        except OSError as e:
+            logger.warning("depgraph scan cache head read failed: %s", e)
+            return True, f"depgraph scan cache read failed, skip: {e}"
+        m = re.search(r'"saved_at"\s*:\s*"([^"]+)"', head)
+        if m:
+            saved_at_raw = m.group(1)
+        else:
+            # 回落：头部未见 saved_at（格式演化/字段后置）→ 全量解析
+            try:
+                data = json.loads(cache_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError) as e:
+                logger.warning("depgraph scan cache parse failed: %s", e)
+                return True, f"depgraph scan cache parse failed, skip: {e}"
+            saved_at_raw = (data.get("_meta") or {}).get("saved_at")
         if not saved_at_raw:
             return True, "depgraph scan cache missing _meta.saved_at, skip"
 

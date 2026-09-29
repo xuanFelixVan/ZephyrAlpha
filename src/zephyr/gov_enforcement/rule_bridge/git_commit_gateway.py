@@ -461,7 +461,16 @@ def _precommit_config_hook_ids(project_root: str) -> tuple[str, ...]:
 # 标记）恰定义在 message 上——同批被 Layer-1 PROTECTED-PATHS 门放行的已审批写入会被本 hook
 # 无差别再杀（0053 实测：env ZEPHYR_PROTECTED_PATHS_BYPASS=1 全链透传验证通过仍死）。
 # 防护不降级：Layer-1 in-process PROTECTED-PATHS 门（消息感知+审计）继续全量拦截无审批写入。
-_PRECOMMIT_CHANNEL_SKIP_HOOKS = "gate-commit-gw,gate-worktree-required,gate-protected-paths"
+# 五个同脚本 hook twin 加入依据（2026-09-30 Owner 批，gate_survival_adjudication.md §5.1.3）：
+# gate-id-uniq/gate-frontmatter/gate-encoding-safety/gate-directory-contract/gate-doc-node-id
+# 的 Layer-1（ID-UNIQUENESS/TTL-METADATA[经DOC-HEADER-SUITE]/ENCODING-SAFETY/DIRECTORY-CONTRACT/
+# BLUEPRINT-NODE-ID-HARDCODE）为 subprocess 调同一 checker 脚本的 thin wrapper，且自带 own/foreign
+# 归因——网关通道内 hook 版属纯双跑。裸 commit 面由 gate-commit-gw（always_run 硬阻断）整体封死，
+# 「hook 兜裸面」论据不成立；hook 在非网关路径仍登记保留（防 --no-verify 有意绕过语境）。
+_PRECOMMIT_CHANNEL_SKIP_HOOKS = (
+    "gate-commit-gw,gate-worktree-required,gate-protected-paths,"
+    "gate-id-uniq,gate-frontmatter,gate-encoding-safety,gate-directory-contract,gate-doc-node-id"
+)
 _PRECOMMIT_EXIT_CODE_RE = re.compile(r"- exit code: (\d+)")
 
 

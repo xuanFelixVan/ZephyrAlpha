@@ -315,9 +315,7 @@ def _make_linked_worktree(tmp_path: Path) -> tuple[Path, Path]:
     (main / ".git" / "worktrees" / "wt").mkdir(parents=True)
     wt = tmp_path / "wt"
     (wt / ".runtime").mkdir(parents=True, exist_ok=True)
-    (wt / ".git").write_text(
-        f"gitdir: {main / '.git' / 'worktrees' / 'wt'}\n", encoding="utf-8"
-    )
+    (wt / ".git").write_text(f"gitdir: {main / '.git' / 'worktrees' / 'wt'}\n", encoding="utf-8")
     return main, wt
 
 
@@ -376,9 +374,7 @@ class TestLinkedWorktreeAuthoritativeCache:
     def test_relative_gitdir_resolved(self, tmp_path: Path) -> None:
         """gitdir 为相对路径 → 仍解析到主树并以主树副本判定。"""
         main, wt = _make_linked_worktree(tmp_path)
-        (wt / ".git").write_text(
-            "gitdir: ../main/.git/worktrees/wt\n", encoding="utf-8"
-        )
+        (wt / ".git").write_text("gitdir: ../main/.git/worktrees/wt\n", encoding="utf-8")
         _write_cache(main, saved_at=_fresh_ts())
         _write_cache(wt, saved_at=_stale_ts())
         assert _main_worktree_root(wt) == main
@@ -402,12 +398,69 @@ class TestLinkedWorktreeAuthoritativeCache:
     def test_gitdir_pointing_outside_no_ancestor(self, tmp_path: Path) -> None:
         """gitdir 路径无 .git 祖先（异常布局）→ 回落本地，不误指他处。"""
         main, wt = _make_linked_worktree(tmp_path)
-        (wt / ".git").write_text(
-            f"gitdir: {tmp_path / 'elsewhere' / 'meta'}\n", encoding="utf-8"
-        )
+        (wt / ".git").write_text(f"gitdir: {tmp_path / 'elsewhere' / 'meta'}\n", encoding="utf-8")
         _write_cache(main, saved_at=_fresh_ts())
         _write_cache(wt, saved_at=_stale_ts())
         assert _main_worktree_root(wt) is None
         gate = make_depgraph_freshness_gate()
         passed, _ = gate.check(_make_gateway(wt), [])
         assert passed is False
+
+
+# ---------------------------------------------------------------------------
+# TestStreamingSavedAtExtraction（2026-09-30 提速批：头部 4KB 流式读 _meta.saved_at，
+# 免整读+解析 10MB 级依赖图；gate_survival_adjudication.md §6）
+# ---------------------------------------------------------------------------
+
+
+def _write_large_cache(project_root: Path, saved_at: str, *, saved_at_at_head: bool = True) -> None:
+    """写入 >4KB 的大 cache；saved_at_at_head=False 时 _meta 被垫到 4KB 头窗之外。"""
+    cache_dir = project_root / ".runtime"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = cache_dir / "depgraph_scan_cache.json"
+    filler = "x" * 8192
+    if saved_at_at_head:
+        data = {"_meta": {"saved_at": saved_at}, "entries": {"k": filler}}
+    else:
+        data = {"entries": {"k": filler}, "_meta": {"saved_at": saved_at}}
+    cache_path.write_text(json.dumps(data), encoding="utf-8")
+
+
+class TestStreamingSavedAtExtraction:
+    """头部流式提取 saved_at：快路径命中不走全量 parse；失配回落全量（语义零漂移）。"""
+
+    def test_head_hit_avoids_full_parse(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """_meta 在头部 + entries 巨大 → 头部提取命中，json.loads 全量解析不被调用。"""
+        recent = (datetime.now(timezone.utc) - timedelta(seconds=60)).isoformat()
+        _write_large_cache(tmp_path, saved_at=recent, saved_at_at_head=True)
+
+        import zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate as mod
+
+        def _boom(*a: object, **k: object) -> None:
+            raise AssertionError("full json.loads must not run when head hit")
+
+        monkeypatch.setattr(mod.json, "loads", _boom)
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(tmp_path), [])
+        assert passed is True, detail
+        assert "fresh" in detail.lower()
+
+    def test_head_hit_tolerates_broken_entries(self, tmp_path: Path) -> None:
+        """头部 saved_at 正常 + 尾部 entries 非法 JSON → 仍放行（快路径不触碰尾部）。"""
+        recent = (datetime.now(timezone.utc) - timedelta(seconds=60)).isoformat()
+        cache_dir = tmp_path / ".runtime"
+        cache_dir.mkdir(parents=True)
+        head = json.dumps({"_meta": {"saved_at": recent}})[:-1]  # 去尾括号
+        (cache_dir / "depgraph_scan_cache.json").write_text(head + ', "entries": {broken', encoding="utf-8")
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(tmp_path), [])
+        assert passed is True, detail
+
+    def test_head_miss_falls_back_full_parse(self, tmp_path: Path) -> None:
+        """saved_at 被垫出 4KB 头窗 → 回落全量解析，判定结果与旧路径一致。"""
+        stale = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+        _write_large_cache(tmp_path, saved_at=stale, saved_at_at_head=False)
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(tmp_path), [])
+        assert passed is False
+        assert "stale" in detail.lower() or "24h" in detail

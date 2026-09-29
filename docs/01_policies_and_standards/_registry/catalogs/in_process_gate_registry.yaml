@@ -99,13 +99,13 @@ gates:
   factory_function: make_ttl_gate
   source: in_process
   register_line: 414
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: FILE-PLACEMENT-TTL
   module_path: zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate
   factory_function: make_file_placement_ttl_gate
   source: in_process
   register_line: 415
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: CREATE-GUARD
   module_path: zephyr.gov_enforcement.commit_gates.create_guard
   factory_function: make_create_guard
@@ -231,13 +231,13 @@ gates:
   factory_function: make_exempt_zone_frontmatter_gate
   source: in_process
   register_line: 440
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: MODULE-ID-CONSISTENCY
   module_path: zephyr.gov_enforcement.commit_gates.module_id_consistency_gate
   factory_function: make_module_id_consistency_gate
   source: in_process
   register_line: 441
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: PERMANENT-SYSTEM-TRIGGER
   module_path: zephyr.gov_enforcement.commit_gates.perm_trigger_gate
   factory_function: make_permanent_system_trigger_gate
@@ -267,7 +267,7 @@ gates:
   factory_function: make_doc_ref_broken_gate
   source: in_process
   register_line: 448
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: FUNCTION-DUP
   files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；台内只检 staged 新增 .py，无 .py 提交短路）
   module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
@@ -368,7 +368,7 @@ gates:
   factory_function: make_blueprint_format_gate
   source: in_process
   register_line: 464
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: GATE-DOMAIN-FK
   files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.domain_fk_gate
@@ -381,7 +381,7 @@ gates:
   factory_function: make_blueprint_header_gate
   source: in_process
   register_line: 466
-  enabled: true
+  enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: CAP-CONSISTENCY
   module_path: zephyr.gov_enforcement.commit_gates.capability_consistency_gate
   factory_function: make_capability_consistency_gate
@@ -414,7 +414,7 @@ gates:
   factory_function: make_scripts_import_integrity_gate
   source: in_process
   register_line: 473
-  enabled: true
+  enabled: false  # 退役(2026-09-30 Owner批):违规集⊂UNDEFINED-NAME(F821同域),残余报错文案并入UNDEFINED-NAME——gate_survival_adjudication.md §4.2
 - gate_id: GIT-CALL-BUDGET
   module_path: zephyr.gov_enforcement.commit_gates.git_call_budget_gate
   factory_function: make_git_call_budget_gate
