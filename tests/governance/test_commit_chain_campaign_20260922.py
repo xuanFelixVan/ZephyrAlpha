@@ -437,3 +437,208 @@ def test_a1_precommit_block_event_no_longer_reports_zero_ms(tmp_path: Path, monk
     assert "self._audit_commit_block_event(session_id, blocked, files, _pc_ms)" in src
     assert "self._audit_commit_block_event(session_id, blocked, files, 0.0)" not in src
     assert ms >= 0
+
+
+# ---------------------------------------------------------------------------
+# Rx-3/Rx-4（st-finaldel-crx3-20260929）：确定性 fail_fast + Phase-B 慢尾续跑
+# ---------------------------------------------------------------------------
+
+_RX3_FAIL_FAST_HOOKS = ("check-merge-conflict-marker", "detect-private-key-local", "ruff", "ruff-format")
+
+
+def _mk_gateway(tmp_path: Path):
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    g = gw.GitCommitGateway.__new__(gw.GitCommitGateway)
+    g.project_root = tmp_path
+    return g
+
+
+def _stub_precommit_subprocess(monkeypatch: pytest.MonkeyPatch, results: list[tuple[int, str]]) -> list[list[str]]:
+    """按脚本顺序返回 pre-commit 调用结果；git 调用恒 rc=0（rev-parse/read-tree/add）。
+
+    副作用：pre-commit 调用的 env 顺序记入 _ENV_LOG（SKIP 反选断言面）。
+    """
+    import zephyr.shared.infra.process_pool as pp
+
+    calls: list[list[str]] = []
+    _ENV_LOG.clear()
+    idx = {"i": 0}
+
+    class _P:
+        def __init__(self, rc: int, out: str):
+            self.returncode = rc
+            self.stdout = out
+            self.stderr = ""
+
+    def _fake_run(cmd, **kwargs):  # noqa: ANN001, ANN003
+        calls.append(list(cmd))
+        if cmd and cmd[0] == "git":
+            return _P(0, "headsha\n")
+        _ENV_LOG.append(dict(kwargs.get("env") or {}))
+        i = idx["i"]
+        idx["i"] += 1
+        rc, out = results[i] if i < len(results) else (0, "")
+        return _P(rc, out)
+
+    monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
+    return calls
+
+
+def _stub_channel_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, g) -> None:
+    """_run_precommit_channel 前置面最小桩（flag/merge/rel_lists/git-dir）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    (tmp_path / ".git").mkdir(exist_ok=True)
+    monkeypatch.setattr(gw, "_precommit_run_enabled", lambda: True)
+    monkeypatch.setattr(gw.GitCommitGateway, "_is_merge_in_progress", lambda self: False)
+    monkeypatch.setattr(gw.GitCommitGateway, "_precommit_rel_lists", lambda self, files, root: (["a.py"], []))
+    monkeypatch.setattr(
+        gw.GitCommitGateway,
+        "run_git",
+        lambda self, args, **kw: subprocess.CompletedProcess(args, 0, ".git\n", ""),
+    )
+    monkeypatch.setattr(gw.GitCommitGateway, "_precommit_build_temp_index", lambda self, env, re_, rd: None)
+    assert g is not None
+
+
+def test_rx3_nail_exactly_four_deterministic_hooks_fail_fast() -> None:
+    """Rx-3 钉子：恰 4 台确定性 hook 配 fail_fast:true，其余台不配（保 own/foreign 归因）。
+
+    红证：改前 fail_fast 键全仓 0 台——本断言必红；语义=per-hook 先败即停
+    （pre_commit run.py:301：current_retval and (config/hook/args 任一 fail_fast)）。
+    """
+    import yaml
+
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    root = Path(__file__).resolve().parents[2]
+    cfg = yaml.safe_load((root / ".pre-commit-config.yaml").read_text(encoding="utf-8"))
+    flagged: list[str] = []
+    total = 0
+    for repo in cfg["repos"]:
+        for hook in repo.get("hooks") or []:
+            total += 1
+            if hook.get("fail_fast"):
+                flagged.append(hook["id"])
+    assert sorted(flagged) == sorted(_RX3_FAIL_FAST_HOOKS)
+    assert total > 60  # 其余 60+ 台零 fail_fast（枚举面守卫）
+    # 网关枚举器与同一真源对齐：解析含 4 台 id 且含慢尾代表台
+    ids = gw._precommit_config_hook_ids(str(root))
+    assert set(_RX3_FAIL_FAST_HOOKS) <= set(ids)
+    assert "gate-test" in ids  # 慢尾代表
+    assert "ruff" not in gw._PRECOMMIT_SLOW_TAIL_HOOKS  # ruff 在快段（Phase-A 即拦）
+
+
+def test_rx3_deterministic_red_short_circuits_phaseb(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rx-3+Rx-4 判别①：确定性 hook（ruff）红 → Phase-A 单调用短路，Phase-B/慢尾零调用。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    (tmp_path / ".git").mkdir(exist_ok=True)
+    ruff_red = "- hook id: ruff\n- exit code: 1\n\na.py:3:1 F401 unused import\n"
+    calls = _stub_precommit_subprocess(monkeypatch, [(1, ruff_red)])
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    monkeypatch.setattr(gw, "_precommit_run_enabled", lambda: True)
+    monkeypatch.setattr(gw.GitCommitGateway, "_is_merge_in_progress", lambda self: False)
+    monkeypatch.setattr(gw.GitCommitGateway, "_precommit_rel_lists", lambda self, files, root: (["a.py"], []))
+    monkeypatch.setattr(
+        gw.GitCommitGateway,
+        "run_git",
+        lambda self, args, **kw: subprocess.CompletedProcess(args, 0, ".git\n", ""),
+    )
+    monkeypatch.setattr(gw.GitCommitGateway, "_precommit_build_temp_index", lambda self, env, re_, rd: None)
+    blocked = gw.GitCommitGateway._run_precommit_channel(g, "sid-rx3", ["a.py"])
+    assert blocked is not None and "ruff" in blocked  # own 阻断归因含确定性 hook id
+    pc_calls = [c for c in calls if c and c[0] != "git"]  # 只数 pre_commit 调用（git 层桩共用）
+    assert len(pc_calls) == 1  # Phase-B/慢尾零调用（先失败即停）
+    stat = json.loads(
+        (tmp_path / ".runtime" / "audit" / "precommit_channel_stats.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+    )
+    assert stat["rc"] == 1 and stat["skipped"] is False
+
+
+def test_rx4_phaseb_skips_fast_subset_after_phasea_green(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rx-4 判别②：Phase-A 绿 → Phase-B SKIP 含快段 id 且慢尾 id 不在 SKIP（慢尾续跑）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    calls = _stub_precommit_subprocess(monkeypatch, [(0, "phase-a-green"), (0, "phase-b-green")])
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    monkeypatch.setattr(gw, "_precommit_config_hook_ids", lambda root: ("ruff", "ruff-format", "gate-test"))
+    out, rc, mut, infra, skipped = gw.GitCommitGateway._precommit_run_scoped(
+        g, {"SKIP": "gate-commit-gw"}, str(tmp_path), ["a.py"], [], str(tmp_path / "idx")
+    )
+    assert (rc, infra, skipped) == (0, "", False)
+    pc_calls = [c for c in calls if c and c[0] != "git"]  # 只数 pre_commit 调用（git 层桩共用）
+    assert len(pc_calls) == 2  # Phase-A + Phase-B 各一次调用（非逐 hook）
+    env_a = _captured_env(0)
+    env_b = _captured_env(1)
+    assert "gate-test" in env_a.get("SKIP", "") and "ruff" not in env_a.get("SKIP", "")
+    assert "ruff" in env_b.get("SKIP", "") and "gate-test" not in env_b.get("SKIP", "")
+    assert "gate-commit-gw" in env_b.get("SKIP", "")  # 基础通道 SKIP 保持
+    assert out.startswith("phase-a-green")  # 归因面合并：Phase-A（绿）段并入输出
+
+
+def _captured_env(i: int) -> dict:
+    """取第 i 次 pre-commit 调用的 env 快照（_stub_precommit_subprocess 记录）。"""
+    return _ENV_LOG[i]
+
+
+_ENV_LOG: list[dict] = []
+
+
+def test_rx4_phaseb_full_env_rollback(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rx-4 回退手柄：ZEPHYR_PRECOMMIT_PHASEB_FULL=1 → Phase-B 恢复全量（SKIP 不含快段）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_precommit_subprocess(monkeypatch, [(0, "a"), (0, "b")])
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    monkeypatch.setattr(gw, "_precommit_config_hook_ids", lambda root: ("ruff", "gate-test"))
+    monkeypatch.setattr(gw, "_precommit_phaseb_full_enabled", lambda: True)
+    _, rc, _, infra, _ = gw.GitCommitGateway._precommit_run_scoped(
+        g, {"SKIP": "gate-commit-gw"}, str(tmp_path), ["a.py"], [], str(tmp_path / "idx")
+    )
+    assert (rc, infra) == (0, "")
+    assert _ENV_LOG  # 环境记录器已填充
+    assert "ruff" not in _ENV_LOG[-1].get("SKIP", "")  # 全量 Phase-B：快段不进 SKIP
+
+
+def test_rx4_slow_tail_red_block_attributes_slow_tail_hook(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rx-4 判别③：快段绿+慢尾红 → own 阻断归因含慢尾 hook id（归因面合并生效）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    slow_red = "- hook id: gate-test\n- exit code: 1\n\na.py:12: GATE-TEST violation\n"
+    _stub_precommit_subprocess(monkeypatch, [(0, "phase-a-green"), (1, slow_red)])
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    monkeypatch.setattr(gw, "_precommit_config_hook_ids", lambda root: ("ruff", "gate-test"))
+    blocked = gw.GitCommitGateway._run_precommit_channel(g, "sid-rx4", ["a.py"])
+    assert blocked is not None
+    assert "gate-test" in blocked  # 慢尾 hook id 进 own 归因
+    assert "a.py" in blocked  # own 文件引用面完整
+
+
+def test_rx4_config_hook_ids_parse_fallback(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rx-4 降级面：配置缺失/解析失败 → 空元组 → Phase-B 回全量（SKIP 不含快段）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    assert gw._precommit_config_hook_ids(str(tmp_path)) == ()  # 文件缺失
+    (tmp_path / ".pre-commit-config.yaml").write_text(
+        "repos:\n  - repo: local\n    hooks:\n      - id: x\n", encoding="utf-8"
+    )
+    assert gw._precommit_config_hook_ids(str(tmp_path)) == ("x",)
+    (tmp_path / ".pre-commit-config.yaml").write_text("repos: [\n  broken", encoding="utf-8")
+    assert gw._precommit_config_hook_ids(str(tmp_path)) == ()  # 解析失败降级
+    # 收窄降级：枚举为空 → Phase-B 全量
+    _stub_precommit_subprocess(monkeypatch, [(0, "a"), (0, "b")])
+    g = _mk_gateway(tmp_path)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    monkeypatch.setattr(gw, "_precommit_config_hook_ids", lambda root: ())
+    _, rc, _, _, _ = gw.GitCommitGateway._precommit_run_scoped(
+        g, {"SKIP": "gate-commit-gw"}, str(tmp_path), ["a.py"], [], str(tmp_path / "idx")
+    )
+    assert rc == 0
+    assert "ruff" not in _ENV_LOG[-1].get("SKIP", "")  # 无枚举 → 不收窄

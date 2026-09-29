@@ -58,12 +58,16 @@ repos:
       #   check-yaml / check-json：gate-encoding-safety + gate-frontmatter 覆盖
       #   check-merge-conflict：→ check_merge_conflict.py（local 纯 stdlib）
       #   detect-private-key：→ detect_private_key.py（local 纯 stdlib）
+      # Rx-3（st-finaldel-crx3-20260929）：确定性快检 4 台配 per-hook fail_fast=true
+      # （本台/ruff/ruff-format/detect-private-key-local）——own 面秒级可判，红了=必然 own
+      # 违规，先失败即停不白跑后续 50+ 台；慢尾全仓自扫描台不配，保 own/foreign 归因。
       - id: check-merge-conflict-marker
         name: "检测未解决的合并冲突标记（local 替代 external #ARCH-PRECOMMIT-OFFLINE-001）"
         entry: python scripts/governance/d7_code/check_merge_conflict.py
         language: system
         pass_filenames: false
         always_run: false
+        fail_fast: true
         description: "纯 stdlib 检测 staged 文件中 <<<<<<< / ======= / >>>>>>> 合并冲突标记，替代 external pre-commit-hooks check-merge-conflict"
       - id: detect-private-key-local
         name: "检测意外提交的私钥（local 替代 external #ARCH-PRECOMMIT-OFFLINE-001）"
@@ -71,6 +75,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
+        fail_fast: true
         description: "纯 stdlib 检测 staged 文件中 PEM/SSH/PGP 私钥标记，替代 external pre-commit-hooks detect-private-key"
       # ── PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 双层防护 Layer 2）──
       # 治本：check_protected_paths.py 原为手动工具，无自动触发源。100% AI 开发场景下
@@ -154,12 +159,14 @@ repos:
         language: system
         types: [python]
         require_serial: true
+        fail_fast: true  # Rx-3 确定性快检：红了=必然 own 违规，先败即停
       - id: ruff-format
         name: "Ruff Format Check (只检查不修复—避免pre-commit stash冲突)"
         entry: python -m ruff format --check --no-cache
         language: system
         types: [python]
         require_serial: true
+        fail_fast: true  # Rx-3 确定性快检：红了=必然 own 违规，先败即停
 
   - repo: local
     hooks:

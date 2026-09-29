@@ -383,9 +383,14 @@ def _preflight_flag_enabled() -> bool:
 _PRECOMMIT_RUN_FLAG = "gate_precommit_run_enabled"
 _PRECOMMIT_RUN_TIMEOUT_S = 900
 # D3 两段式（st-commitchain-20260922）：Phase-A=全通道减慢尾（SKIP 反选，单次调用），
-# 首败短路；Phase-B=全通道照旧（保 own/foreign 归因）。慢尾清单=环节5 成本分档 T2/T3
+# 首败短路；Phase-B=慢尾续跑（Rx-4 st-finaldel-crx3-20260929：Phase-A 已绿 ⇒ 快段已验，
+# Phase-B SKIP 反选快段只跑慢尾，归因面合并 Phase-A+Phase-B 输出；env
+# ZEPHYR_PRECOMMIT_PHASEB_FULL=1 一键回全量 Phase-B）。慢尾清单=环节5 成本分档 T2/T3
 # 档（全仓自扫描/pytest 收集/生成器全簇/CH 对账等分钟级台）；SKIP 不存在的 id 无害，
-# 新增 hook 默认进 Phase-A（快段偏置，正确性无损只多付一次重复执行）。
+# 新增 hook 默认进 Phase-A（快段偏置；Rx-4 后快段只跑一次，正确性无损少付一次重复执行）。
+# 另（Rx-3 同批）：确定性快检 4 台（序 1/2/10/11）在 .pre-commit-config.yaml 配 per-hook
+# fail_fast:true——own 面秒级可判，红了=必然 own 违规，先失败即停不白跑后续 50+ 台；
+# 慢尾全仓自扫描台不配（保 own/foreign 归因，原"全局 fail_fast 禁用"论证不受影响）。
 _PRECOMMIT_SLOW_TAIL_HOOKS: tuple[str, ...] = (
     "gate-triple-align",
     "gate-schema-truth",
@@ -421,6 +426,33 @@ def _precommit_fast_subset_enabled() -> bool:
     if os.environ.get("ZEPHYR_PRECOMMIT_FAST_SUBSET", "1").strip() == "0":
         return False
     return "PYTEST_CURRENT_TEST" not in os.environ
+
+
+def _precommit_phaseb_full_enabled() -> bool:
+    """Rx-4 回退手柄：env ZEPHYR_PRECOMMIT_PHASEB_FULL=1 → Phase-B 恢复全量 57 台（缺省=收窄）。"""
+    return os.environ.get("ZEPHYR_PRECOMMIT_PHASEB_FULL", "0").strip() == "1"
+
+
+def _precommit_config_hook_ids(project_root: str) -> tuple[str, ...]:
+    """Rx-4：解析 .pre-commit-config.yaml 全部 hook id（Phase-B SKIP 反选=快段已验台的枚举真源）。
+
+    解析失败/文件缺失 → 空元组，调用方回退全量 Phase-B（正确性永不依赖收窄）。
+    """
+    try:
+        import yaml  # noqa: PLC0415 通道收窄依赖（与 flags 读取同依赖面）
+
+        cfg_path = os.path.join(project_root, ".pre-commit-config.yaml")
+        with open(cfg_path, encoding="utf-8") as fh:
+            cfg = yaml.safe_load(fh) or {}
+        ids: list[str] = []
+        for repo in cfg.get("repos") or []:
+            for hook in (repo or {}).get("hooks") or []:
+                hid = (hook or {}).get("id")
+                if hid:
+                    ids.append(str(hid))
+        return tuple(dict.fromkeys(ids))  # 去重保序（历史上曾有同 id 双台，SKIP 按 id 命中）
+    except Exception:  # noqa: BLE001 收窄降级面：任何设施故障回全量，不阻断
+        return ()
 
 
 # 网关通道 SKIP 的 pre-commit hook id（三者与网关通道存在结构性冲突，理由见 _run_precommit_channel docstring）
@@ -3357,13 +3389,20 @@ class GitCommitGateway:
                 return f"temp-index rm failed: {r.stderr.strip()[:300]}"
         return None
 
-    def _precommit_execute(self, env: dict, chunks: list[list[str]]) -> tuple[str, int, bool, str]:
+    def _precommit_execute(
+        self, env: dict, chunks: list[list[str]], extra_skip: str = ""
+    ) -> tuple[str, int, bool, str]:
         """分批运行 pre-commit（含变异侦测重跑消解）。
+
+        extra_skip（Rx-4）：追加进 SKIP 的 hook id 清单——Phase-B 收窄时跳过 Phase-A
+        已验快段，只跑慢尾续跑；SKIP 不存在的 id 无害（模块头既定语义）。
 
         Returns:
             (output, rc, mutation, infra_error)。
         """
         cmd: list[str] = [sys.executable, "-m", "pre_commit", "run", "--files"]
+        if extra_skip:
+            env = {**env, "SKIP": (env.get("SKIP", "") + "," + extra_skip).strip(",")}
         output = ""
         rc = 0
         mutation = False
@@ -3573,20 +3612,31 @@ class GitCommitGateway:
                 # 而非 55 hooks 全跑（实测 2-10 分钟）后才死；子集输出仍走既有
                 # own/foreign 归因器（_precommit_decide_failure），语义零变化。
                 # 全局 fail_fast 禁用原因：会以 foreign 失败掩蔽 own 失败→误放行。
-                fa_output, fa_rc, fa_infra = "", 0, ""
+                fa_output, fa_rc, fa_infra, fa_ran = "", 0, "", False
                 if _precommit_fast_subset_enabled():  # P1-1（红队 0922）：开关必须门住调用本身
                     _fa_t0 = time.monotonic()
                     fa_output, fa_rc, fa_infra = self._precommit_fast_subset(env, chunks)
                     # A1 装表：快段与全段的差≈慢尾成本（不改调用形态——逐 hook 已被
                     # 实测否决："会把真落地集成套件时长乘 N 倍"，50-commit 挂死教训）
                     self._pc_fast_ms = (time.monotonic() - _fa_t0) * 1000
+                    fa_ran = not fa_infra
                 if not fa_infra and fa_rc != 0:
                     logger.info(
                         "GitCommitGateway: precommit fast-subset 命中违规，短路全通道（rc=%d）",
                         fa_rc,
                     )
                     return fa_output, fa_rc, False, infra_error, skipped
-                output, rc, mutation, infra_error = self._precommit_execute(env, chunks)
+                # ── Rx-4（st-finaldel-crx3-20260929）：Phase-B 收窄为慢尾续跑 ──
+                # Phase-A 已绿 ⇒ 快段全部已验，Phase-B SKIP 反选快段只跑慢尾（绿路径
+                # 91→57 台次）；快段未跑（子集关/infra 降级）或 ZEPHYR_PRECOMMIT_PHASEB_FULL=1
+                # → 全量照旧；配置枚举失败同回全量（正确性永不依赖收窄）。
+                pb_extra_skip = ""
+                if fa_ran and not _precommit_phaseb_full_enabled():
+                    fast_ids = _precommit_config_hook_ids(str(self.project_root))
+                    pb_extra_skip = ",".join(hid for hid in fast_ids if hid not in _PRECOMMIT_SLOW_TAIL_HOOKS)
+                output, rc, mutation, infra_error = self._precommit_execute(env, chunks, extra_skip=pb_extra_skip)
+                if pb_extra_skip and fa_output:
+                    output = fa_output + "\n" + output  # 归因面合并：快段（绿）段并入判定输入
         finally:
             try:
                 os.remove(tmp_index)
