@@ -54,3 +54,39 @@ completes_when: "Owner 逐行勾选收窄口径后，另批施工收窄；本台
 - **建议分布**：own-diff 化 4 台（#3/#4/#5/#8，均 own_scope=False 内容扫描门）｜收 glob 5 台（#2/#6/#7/#11/#14）｜条件化/登记结构性超宽 4 台（#1/#9/#13/#15）｜判可接受 2 台（#10/#12）。风险 高 4 / 中 7 / 低 4。
 - **边界声明**：本台账只读 `gate_registry.yaml`/`in_process_gate_registry.yaml`（两册 files_trigger 逐台一致已互证），零册面改动；收窄施工=Owner 按行勾选后另批（注册表净改/翻 flag 属 Owner 门位，见 workorders_governance L93）。
 - **runtime 同证**：`gate_auto_registrar._warn_suspect_triggers` 每 commit 对同口径超宽台 emit warn（观测簿通道，"先可见再治理"）；registrar 内注记录的观测值 governance=2377/docs=7858/.py=8764 与本表 governance=2,621/docs/=8,630/.py=9,099 同量级漂移，均为真。
+
+## C98 施工结果注记（st-finaldel-c98-20260930，2026-09-30，Owner 批"按建议执行"）
+
+> 三批落地：一批 own-diff 通道 4 台、二批触发面收窄 5 台、三批条件化/登记 4 台、维持 2 台。
+> 验收铁律全过：重放对拍三窗（一批 204 对/二批 192 对/三批 168 对，共享窗口径）阻断判定全程零漂移、新 fail 零；
+> 阴性样例 5+9+4=18/18 仍拦；套件 98+26r5+57 绿；ruff/compile 净；每批独立一袋（一批 q-…-0001、二批 8a1ecdc6、三批 q-…-0002）。
+> 触发面读数（台账复算口径，收窄前→收窄后，2026-09-30 HEAD=18,720 文件）：
+> R5 14,529→14,529（登记维持）｜STATE-VOCAB 9,374→3｜GATE-DOMAIN-FK 9,102→9,102（音化防未来噪声）｜
+> FILE-COPY/FUNCTION-DUP/COMPLEXITY-GUARD/UNSAFE-DICT-SPREAD 各 9,102→9,102（同上）｜MAP-ALIGNMENT 4,844→1,438｜
+> SCRIPTS-IMPORT 1,384→1,150｜REF-INTEGRITY 8,641→8,536｜DEPGRAPH-FRESH 5,467→5,440｜
+> RECONCILER-HEALTH 2,625→18,720（显式无条件=加严修复 86% 漏检）｜RECONCILER-FILE-OPS 1,375→1,378（维持）｜
+> BLOOD-FLESH 4,934→4,935（维持）｜ASYNCIO 3,785→3,784（维持）。
+> 耗时估计（触发面≈触发频次代理+单次成本）：静态消除噪音触发 ≈9,371+3,406+234+105+27=13,143 次/全树窗，
+> 另 FILE-COPY 对照面单次 79ms→18ms（4.4x，rglob→git ls-files 既有索引）且剥离 71 个盘面暂态 .py 误报源；
+> RECONCILER-HEALTH 反向 +16,095 次×1 读查询（fail-open，ms 级）=防护修复成本。
+
+| # | gate_id | C98 施工注记 |
+|---|---------|-------------|
+| 1 | R5-DIGIT-SUFFIX | 登记执行（经复核维持宽触发）：A/R 改型否决——index 锚定盲化 worktree 落地路径（防护损失）且常态反增 1 次 subprocess=变慢；门现状 suspect 集空即返=常态零 git 调用；§3.3+perf §2.6 结构校验型登记已落名册行注 |
+| 2 | STATE-VOCAB-REGISTRY | 按建议执行：9,374→3（vocab 真源前缀+册精确路径）；warn-only 门阻断面恒零，未登记词表类阴性样例仍检出 |
+| 3 | GATE-DOMAIN-FK | 按建议执行：.py→*.py+门实现 own 化（_split_own_foreign，外来 staged warn+审计）；own_scope 名册字段 false→true 机生归真；假域阴性样例仍阻断 |
+| 4 | FILE-COPY | 按建议执行：触发面 .py→*.py 音化；对照面 rglob 全树→git ls-files 既有索引（"新文件 vs 全库"语义保留，79ms→18ms=4.4x）；实现原已 own-scope（2026-09-23）复核确认；复制阴性样例仍阻断+干净对照过 |
+| 5 | FUNCTION-DUP | 按建议执行：.py→*.py；实现原已 own-scope 复核确认；own_scope 名册字段归真；同体兄弟函数阴性样例仍阻断 |
+| 6 | COMPLEXITY-GUARD | 按建议执行：.py→*.py（own_scope 原已 true）；cc>15 新增函数阴性样例仍阻断 |
+| 7 | UNSAFE-DICT-SPREAD | 按建议执行：.py→*.py（own_scope 原已 true；warn-only 检出即防护）；**data 新增行阴性样例仍检出 |
+| 8 | REFERENCE-INTEGRITY | 条件化执行：docs/ 前缀→门内 REFERENCE_TEXT_EXTS 六文本类型 fnmatch（8,641→8,536）；门本就 own-diff（只核 commit files 新增 §X.Y 引用）复核确认+登记；悬空引用阴性样例仍阻断 |
+| 9 | DEPGRAPH-FRESHNESS | 条件化执行：删「depgraph」裸子串（5,467→5,440，纯 docs/册名散文噪音）；src/+scripts/ 语义域保留+§3.3/§2.6 结构校验型登记 |
+| 10 | BLOOD-FLESH | 经复核维持（理由）：own_scope=true 已合宪，触发面=翻译覆盖义务域（TRANSLATION-COVERAGE）结构性全模块面，判可接受成立，零改动 |
+| 11 | MAP-ALIGNMENT | 按建议执行：docs/03_modules/→*.md（4,844→1,438；实证 align_panoramas 只读 blueprint .md，非 .md 变更不影响对齐输出）；9 精确路径与门内 _TRIGGER_PATTERNS 镜像不变；own_scope false→true 归真 |
+| 12 | ASYNCIO-RUN-IN-CONTEXT | 经复核维持（理由）：own_scope=true 已合宪，src/zephyr/*.py=AST 扫描意图边界，判可接受成立，零改动 |
+| 13 | RECONCILER-HEALTH | 显式无条件化执行（W-135 NO-BARE-GETENV 先例）：「governance」裸子串系历史意外口径——门自身 [INVARIANTS] 即 always-on，裸子串反致 86% 提交漏检健康检查；本改=诚实口径属加严非放松；单次=1 次 governance.db 读查询（fail-open） |
+| 14 | SCRIPTS-IMPORT-INTEGRITY | 按建议执行：scripts/→scripts/*.py（1,384→1,150，enabled=false 台卫生收窄，台内仍只查 scripts/governance/**/*.py own-scope） |
+| 15 | RECONCILER-FILE-OPS | 经复核维持（登记执行）：四前缀=意图边界；门运行时本就 own-diff（只扫 commit files∩前缀逐文件全文），触发面=扫描域镜像非全仓扫描；§3.3/perf §2.6 登记已落名册行注 |
+
+> 边界声明：本注记只记施工事实，注册表真源=in_process_gate_registry.yaml（CAS 机生通道），统一册=generate_gate_registry.py 机生；
+> 重放证据=.runtime/tmp/st-finaldel-c98-20260930/{baseline,after_batch1,after_batch2,after_batch3}/verdicts.jsonl（各 480 行）。
