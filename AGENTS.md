@@ -1,7 +1,7 @@
 # ZephyrAlpha — AI Agent 接入宪法 L0
 
 > **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，与本宪法正交）
-> **历史规则索引**: v1 全文归档=[`agent_constitution_legacy_v1.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md)；规则细节正式真源=[`docs/01_policies_and_standards/rules/`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/)（86 个 trae_*.yaml）；渐进披露=[`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)
+> **历史规则索引**: v1 全文归档=[`agent_constitution_legacy_v1.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md)；规则细节正式真源=`docs/01_policies_and_standards/rules/`（发现唯一入口=[`docs/registry_of_registries.yaml`](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml)（ROOR），数量勿背数）；渐进披露=[`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)
 > 本宪法经 #ARCH-310 R3 极限对抗测试后于 2026-09-12 替换 v1（1639 行→本文件）；回滚=revert。
 
 # ZephyrAlpha — AI Agent 宪法 L0
@@ -45,6 +45,7 @@
 
 补充铁律（同硬阻断级）：RULE-CLONEGUARD（extract 级克隆无逃生；写前预查 `clone_guard.check_before_write`，合理重复走 `resolve_finding` 标 acknowledged）；新建 .py 模块须登记大白话简介（`add_module_translation.py`，TRANSLATION-COVERAGE gate 拦截）；
 RULE-WORKSPACE-WIP（脏文件先跑 classify_workspace_wip.py，禁肉眼判罚）；
+GATE-SELFDOC（门吃自己文档豁免，统一拆写规范）：列禁令的清洁册 .md 行级标 `[GATE-SELFDOC:GIT-DANGEROUS]` 或 frontmatter `gate_selfdoc: GIT-DANGEROUS`（各限 ≤10 违规行）放行；无标照拦、超限照拦；豁免标记须门 id 精确匹配禁通配；
 CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests/ 豁免）。
 
 ## 2. 并发与提交（#ARCH-310 R1：队列是正门）
@@ -101,13 +102,13 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 |------|------|
 | AutoRuntime Core | `python -m zephyr.trading` |
 | GitCommitGateway | `zephyr.gov_enforcement.rule_bridge.git_commit_gateway`（唯一合法 commit 入口） |
-| 提交队列 | `scripts/commit_queue.py`（enqueue/status/drain/requeue；drain=真落地） |
+| 提交队列 | `scripts/commit_queue.py`（enqueue/status/drain/requeue/cleanup/health；drain=真落地） |
 | DatabaseService | `zephyr.infrastructure.database_service`（唯一真源，禁裸 duckdb）；存储分工一盘一责（2026-09-28 Owner 终裁定）：冷库=F:/zephyr_cold（唯一冷储）、备份总仓=G:/backup（唯一备份=D 项目+F 冷库夜镜像+CH 单链+VM 镜像）、E=纯软件；CH 双链废止过渡期后单链归 G——地图=INFRA-STORE-003 |
 | LSG | `zephyr.security.llm_defense.llm_security.gateway`（所有 LLM 调用必经） |
 | CapabilityLookup | `zephyr.governance.capability_lookup` |
 | KillSwitch | `zephyr.security.access_control.kill_switch` |
-| 数据集成器 | `python -m zephyr.data`（7 子命令） |
-| 仪表盘 | `src/zephyr/frontend/dashboard/app_panel.py` |
+| 数据集成器 | `python -m zephyr.data`（8 子命令） |
+| 仪表盘 | `src/zephyr/frontend/dashboard/api_server.py` |
 
 ## 8. 词汇与对齐
 
@@ -135,6 +136,5 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 ## 切换记录
 
 - 2026-09-12 本文件经四波红蓝极限对抗（32 场景/9 维度/A-B 双基准）达标后替换 v1 全文。
-- v1 完整原文归档：agent_constitution_legacy_v1.md（零内容丢失，可检索）。
-- 回滚=git revert 本 commit。
+- v1 完整原文归档：agent_constitution_legacy_v1.md（零内容丢失，可检索）；回滚=git revert 本 commit。
 
