@@ -32,6 +32,8 @@
   PFA-3（regime/Shrinkage 在实盘分配里零消费，"实盘连被压缩的分配器都没有"；
         注记 "regime_snapshot_history 已有 shrinkage 列可作分配输入真源"）
   PFA-4（三实物缺口：base_weights 无源 / 月度再权无调度体 / PerformanceScore 无生产者）
+F34 消费接线（2026-09-29）：⑤ L9 知识供给就绪度闸（c1_market.l9_readiness_daily AGG 行，
+  黄/红降级留痕，仿 anchored_cap 06 号件模式）——AGG→TDM-E-FLOW"供给健康读数"边落地的消费端。
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/allocation_inputs.yaml
 """
@@ -743,6 +745,132 @@ def load_anchored_cap(
         cap=anchored_cap_from_vol_pct(vol),  # type: ignore[arg-type]
         dominant=str(dom_raw or "unknown"),
         vol_pct=vol,
+        source_date=src_date,
+        lag_days=lag,
+        applied=True,
+    )
+
+
+# ── ⑤ L9 知识供给就绪度检查（F34 消费接线 2026-09-29；仿 anchored_cap 06 号件模式：
+#     disabled flag+留痕+一键切回，f34 册缺口 3"黄/红=降级留痕"）────────────────
+# 设计真源=docs/_working/fullflow_mining/04_knowledge_supply/f34_知识汇聚.md §四 +
+# docs/_working/fullconnect_campaign/d_l9_knowledge/05_f34_知识汇聚.md §四（消费端挂 allocation_inputs）。
+# 读数真源=c1_market.l9_readiness_daily AGG 汇总行（TDM-E-L9-AGG→TDM-E-FLOW 边 payload"供给健康读数"，
+# T 日聚合读数喂次日数据就绪度）。语义边界：本检查是"知识供给健康"降级（只减不加），仓位数字仍由
+# shrinkage 轴独家给出（agg-switch-design §2 方案A 分家原则不变）。
+from schemas.categories.l9_readiness_daily import TABLE_NAME as _L9_TABLE_NAME  # noqa: E402
+
+L9_READINESS_TABLE = _L9_TABLE_NAME
+#: AGG 汇总行 PIT 探测（trade_date ≤ 当日最新一条；ingest_ts tiebreaker=ReplacingMergeTree 版本列，
+#: 与 SQL_LATEST_ANCHORED_STATE 同判据——不写 FINAL，读者通道无自动注入）。
+SQL_LATEST_L9_AGG = (
+    "SELECT trade_date, status, produced_at "
+    "FROM {table} WHERE source_line = 'AGG' AND trade_date <= '{date}' "
+    "ORDER BY trade_date DESC, ingest_ts DESC LIMIT 1"
+)
+# 降级系数（工程缺省，Owner 数字未签——签批后随裁定固化；一键切回 flag 兜底）：
+# 黄=供给有黄帽（陈旧/稀疏/未吸收）轻降；红=断供/挂零/断链重降。只减不加，green 不施加。
+L9_READINESS_YELLOW_CAP = 0.90
+L9_READINESS_RED_CAP = 0.70
+L9_READINESS_STALE_DAYS = 3  # 日历日：AGG 行距当日超此值=供给退化（边 frequency=daily，latency_budget=T-1 08:00）
+L9_READINESS_DISABLE_FLAG = Path("data/runtime/l9_readiness_check.disabled")
+
+
+@dataclass(frozen=True)
+class L9ReadinessGate:
+    """L9 知识供给就绪度闸（F34 消费接线）。
+
+    applied=False 时不得降级（旁路/green/无行/陈旧四态，原因留 degraded_reasons 供告警面；
+    green 不施加属正常态，degraded_reasons 留空）。
+    """
+
+    cap: float
+    status: str
+    source_date: date | None
+    lag_days: int
+    applied: bool
+    degraded_reasons: tuple[str, ...] = ()
+
+
+def l9_readiness_enabled() -> bool:
+    """一键切回开关：创建 L9_READINESS_DISABLE_FLAG 空文件即整段旁路（anchored_cap 同款）。"""
+    return not L9_READINESS_DISABLE_FLAG.exists()
+
+
+def l9_cap_from_status(status: str) -> float:
+    """AGG 汇总态 → 总暴露降级上限（黄/红降级留痕，f34 册口径；未知态按红保守处理）。"""
+    if str(status).strip().lower() == "yellow":
+        return L9_READINESS_YELLOW_CAP
+    return L9_READINESS_RED_CAP
+
+
+def load_l9_readiness(
+    trade_date: str | date,
+    *,
+    reader: Reader | None = None,
+) -> L9ReadinessGate:
+    """PIT 读 l9_readiness_daily AGG 汇总行（trade_date ≤ 当日）→ 知识供给降级闸。
+
+    供给退化态（applied=False，degraded_reasons 留痕，禁静默）：开关旁路/无行/陈旧超窗/态不可解析。
+    green=供给健康不施加（applied=False 且无 degrade 留痕）。
+    """
+    day_s = validate_date_literal(trade_date)
+    day = date.fromisoformat(day_s)
+    if not l9_readiness_enabled():
+        return L9ReadinessGate(
+            cap=1.0,
+            status="disabled",
+            source_date=None,
+            lag_days=-1,
+            applied=False,
+            degraded_reasons=("disabled_flag",),
+        )
+    rows = list(resolve_reader(reader)(SQL_LATEST_L9_AGG.format(table=L9_READINESS_TABLE, date=day_s)))
+    if not rows:
+        return L9ReadinessGate(
+            cap=1.0,
+            status="unknown",
+            source_date=None,
+            lag_days=-1,
+            applied=False,
+            degraded_reasons=("no_row",),
+        )
+    row = rows[0]
+    # reader 双形态兼容（tuple=DatabaseService execute 位置序；dict=注入式测试 reader）——
+    # anchored_cap 2026-09-24 st-gpu-final poison 同款教训：tuple 调 .get() 会 AttributeError。
+    if isinstance(row, dict):
+        src_raw, status_raw, _produced = row.get("trade_date"), row.get("status"), row.get("produced_at")
+    else:
+        src_raw, status_raw, _produced = row[0], row[1], row[2]
+    src_date = _date_or_none(src_raw)
+    status = str(status_raw or "").strip().lower()
+    reasons: list[str] = []
+    if src_date is None:
+        reasons.append("trade_date=不可解析")
+        lag = -1
+    else:
+        lag = (day - src_date).days
+        if lag > L9_READINESS_STALE_DAYS:
+            reasons.append(f"stale: 最新 AGG 行 {src_date} 距当日 {lag} 天 > {L9_READINESS_STALE_DAYS}")
+    if status not in ("green", "yellow", "red"):
+        reasons.append(f"status=不可解析({status_raw!r})")
+        status = ""
+    if reasons:
+        return L9ReadinessGate(
+            cap=1.0,
+            status=status or "unknown",
+            source_date=src_date,
+            lag_days=lag,
+            applied=False,
+            degraded_reasons=tuple(reasons),
+        )
+    if status == "green":
+        return L9ReadinessGate(
+            cap=1.0, status=status, source_date=src_date, lag_days=lag, applied=False, degraded_reasons=()
+        )
+    return L9ReadinessGate(
+        cap=l9_cap_from_status(status),
+        status=status,
         source_date=src_date,
         lag_days=lag,
         applied=True,

@@ -80,6 +80,7 @@ from zephyr.pf_alloc.allocation_inputs import (
     RegimeInput,
     build_base_weights,
     load_anchored_cap,
+    load_l9_readiness,
     load_performance_scores,
     load_previous_effective_budgets,
     load_regime_input,
@@ -402,6 +403,8 @@ class _LayerFacts:
     is_crisis: bool
     # AGG 消费切换终批（agg-switch-design §2 方案A）：锚定态总暴露熔断上限；None=未施加
     anchored_cap: float | None = None
+    # F34 消费接线（2026-09-29）：L9 知识供给就绪度降级上限（黄 0.90/红 0.70，只减不加）；None=未施加
+    l9_readiness_cap: float | None = None
 
 
 def _clip01(value: float) -> float:
@@ -439,6 +442,17 @@ def _portfolio_layer(facts: _LayerFacts) -> Callable[[AdjudicationRequest], Laye
             weight *= scale
             violations.append("ANCHORED_CAP")
             reasons.append(f"锚定态熔断上限 cap={facts.anchored_cap:.2f}（vol_pct 灰度曲线）总暴露裁剪×{scale:.3f}")
+
+        # F34 消费接线（2026-09-29）：L9 知识供给就绪度降级（黄/红降级留痕，f34 册缺口 3）。
+        # 与锚定 cap 同款"只减不加、min 去重"——两闸并存时取更紧者，仓位数字仍由 shrinkage 轴独家给出。
+        if facts.l9_readiness_cap is not None and 0 < facts.l9_readiness_cap < facts.sum_effective:
+            scale = facts.l9_readiness_cap / facts.sum_effective
+            weight *= scale
+            violations.append("L9_READINESS_CAP")
+            reasons.append(
+                f"L9 知识供给就绪度降级 cap={facts.l9_readiness_cap:.2f}（AGG 黄/红态，读数表真源=TableRegistry）"
+                f"总暴露裁剪×{scale:.3f}"
+            )
 
         aggregate = float(facts.symbol_aggregate.get(request.symbol, 0.0))
         firm_cap = SINGLE_NAME_CAP_LAYERS[LAYER_FIRM_AGG]
@@ -917,6 +931,11 @@ def run_daily_allocation(
     anchored = load_anchored_cap(day, reader=reader)
     if not anchored.applied and anchored.degraded_reasons != ("disabled_flag",):
         warnings.append(f"anchored_cap_degraded: {'; '.join(anchored.degraded_reasons) or 'unknown'}（cap 未施加）")
+    # F34 消费接线：L9 知识供给就绪度闸 PIT 装载（旁路/green/无行/陈旧=applied False；green 属正常
+    # 不告警，旁路不告警；无行/陈旧/态坏=fail-open 留痕出声——禁静默绿同款）
+    l9_gate = load_l9_readiness(day, reader=reader)
+    if not l9_gate.applied and l9_gate.degraded_reasons not in ((), ("disabled_flag",)):
+        warnings.append(f"l9_readiness_degraded: {'; '.join(l9_gate.degraded_reasons) or 'unknown'}（降级未施加）")
 
     centers_facts = _LayerFacts(
         sleeve_cap=float(base.max_single_sleeve or cfg.max_single_sleeve),
@@ -927,6 +946,7 @@ def run_daily_allocation(
         retain=retains,
         is_crisis=crisis_is_crisis,
         anchored_cap=(anchored.cap if anchored.applied else None),
+        l9_readiness_cap=(l9_gate.cap if l9_gate.applied else None),
         **_calendar_facts(_as_date(day)),
     )
     center = build_adjudication_center(centers_facts)
