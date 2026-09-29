@@ -136,6 +136,10 @@ ENQUEUE_SKIP_GATES = frozenset({"SESSION-REQUIRED", "CLAIM-REQUIRED"})
 RUFF_PRECLEAN_ENV = "ZEPHYR_ENQUEUE_RUFF_PRECLEAN"
 # 大批限流：批内 .py 超过即跳过并记原因（快检性能预算 <3s；落地侧权威兜底不缺席）
 _RUFF_PRECLEAN_MAX_FILES = 200
+# 单文件体积限流（红蓝对抗 st-finaldel-redblue-20260929 R1a 实证：限流原按数不按体积，
+# 单个 10MB .py 即把 ruff format --check 顶到 >60s 超时——"秒级快败"被拖成 2×60s/次；
+# 超限跳过=落地侧权威兜底不缺席，与 M2.2 max_bytes 同款保守判据）
+_RUFF_PRECLEAN_MAX_FILE_BYTES = 1_000_000
 # subprocess 硬杀兜底（ruff 实测秒级；超时=设施故障按 fail-open 放行）
 _RUFF_PRECLEAN_TIMEOUT_S = 60.0
 # 拒收处方输出截断（Owner 口径 800 字）
@@ -148,13 +152,28 @@ def ruff_preclean_enabled() -> bool:
 
 
 def _ruff_preclean_py_files(root: Path, files: list[str] | None) -> list[str]:
-    """批内可用 .py 清单收集：相对路径锚 worktree 根；缺失/删除件/非 .py 不触发。"""
+    """批内可用 .py 清单收集：相对路径锚 worktree 根；缺失/删除件/非 .py 不触发。
+
+    红蓝对抗 R1a（st-finaldel-redblue-20260929）：单文件体积超限同款跳过——ruff
+    format --check 实测 10MB 文件 >60s，不设体积帽则"秒级快败"可被单大文件拖死。
+    """
     py_files: list[str] = []
     for f in files or []:
         p = Path(f)
         if not p.is_absolute():
             p = root / p
         if p.suffix == ".py" and p.is_file():
+            try:
+                oversized = p.stat().st_size > _RUFF_PRECLEAN_MAX_FILE_BYTES
+            except OSError:
+                continue  # stat 失败（竞态删除等）——同缺失件不触发
+            if oversized:
+                logger.warning(
+                    "[ruff-preclean] skip：%s 体积超限 >%d 字节（单文件限流；落地侧权威兜底）",
+                    p,
+                    _RUFF_PRECLEAN_MAX_FILE_BYTES,
+                )
+                continue
             py_files.append(str(p))
     return py_files
 
@@ -193,8 +212,34 @@ def _ruff_findings(root: Path, py_files: list[str]) -> list[str]:
     ruff 可执行解析：优先 ruff.exe 直调（Rust 原生二进制，实测 spawn 31-89ms）；
     `python -m ruff` 走 Python 包装器启动实测 ~1.8-2.0s/次（两次=3.6-4s，超 <3s
     预算）——仅在 PATH 无 ruff exe 时兜底降级（慢但可用）。
+
+    红蓝对抗 R1f（st-finaldel-redblue-20260929）实证：ruff 包缺失机器上
+    `python -m ruff check` 以 rc=1 + "No module named ruff" 退出——旧逻辑把 rc≠0
+    一律当违规命中=好文件假红硬拦，违反本模块"ruff 不可用 fail-open"不变量。
+    故无 exe 时先探测 `-m ruff --version`，探测失败=设施故障 fail-open 放行。
     """
-    ruff_base = [shutil.which("ruff")] if shutil.which("ruff") else [sys.executable, "-m", "ruff"]
+    which = shutil.which("ruff")
+    if which:
+        ruff_base: list[str] = [which]
+    else:
+        try:
+            probe = run_subprocess_hidden(
+                [sys.executable, "-m", "ruff", "--version"],
+                cwd=str(root),
+                encoding="utf-8",
+                errors="replace",
+                timeout=15.0,
+            )
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            logger.warning("[ruff-preclean] skip：ruff 不可用（%s；设施故障 fail-open；落地侧权威兜底）", exc)
+            return []
+        if probe.returncode != 0:
+            logger.warning(
+                "[ruff-preclean] skip：ruff 不可用（-m ruff rc=%s；设施故障 fail-open；落地侧权威兜底）",
+                probe.returncode,
+            )
+            return []
+        ruff_base = [sys.executable, "-m", "ruff"]
     findings: list[str] = []
     for argv, label, fix_hint in (
         (

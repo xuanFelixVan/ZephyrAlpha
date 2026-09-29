@@ -4,7 +4,7 @@
 # [DEPENDENCIES] pytest; scripts.governance.enqueue_preflight; scripts.git_commit
 # [STARTUP] python -m pytest tests/governance/test_ruff_preclean_enqueue.py
 # [MATURITY] testing
-# [INVARIANTS] 红例=带 ruff 违规的 .py 批被拒且处方含哪行哪规；蓝例=干净批/非 .py 批/缺失件放行；env=0 回退；大批限流 skip；设施故障 fail-open；_ruff_preclean_gate exit 8 与 --skip-preflight 逃生；全部临时文件走 tmp_path（测试隔离红线）
+# [INVARIANTS] 红例=带 ruff 违规的 .py 批被拒且处方含哪行哪规；蓝例=干净批/非 .py 批/缺失件放行；env=0 回退；大批限流 skip；设施故障 fail-open；_ruff_preclean_gate exit 8 与 --skip-preflight 逃生；红蓝对抗 0929 增=单文件体积限流 skip、ruff 包缺失探测 fail-open 不假红；全部临时文件走 tmp_path（测试隔离红线）
 # [TTL] task_bound
 """test_ruff_preclean_enqueue.py — Rx-1 入队侧 ruff/format 预清验收（st-finaldel-crx-20260929）。
 
@@ -142,3 +142,47 @@ class TestGitCommitRuffGate:
         monkeypatch.setattr(ep, "ruff_preclean", _boom)
         f = _write(tmp_path, "ok.py", _OK_PY)
         assert _ruff_preclean_gate(self._args(), [f], str(tmp_path)) is None
+
+
+class TestRuffPrecleanRedblue:
+    """红蓝对抗回归钉子（st-finaldel-redblue-20260929 两处红胜修复）。"""
+
+    @pytest.fixture(autouse=True)
+    def _env_default_on(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv(ep.RUFF_PRECLEAN_ENV, raising=False)
+
+    def test_oversized_file_skipped_batch_not_poisoned(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """R1a 钉：单文件体积超限 skip（帽收紧到 100B 免造大文件），不触发子进程、不连坐余批。"""
+        monkeypatch.setattr(ep, "_RUFF_PRECLEAN_MAX_FILE_BYTES", 100)
+        big = tmp_path / "big.py"
+        big.write_text(_BAD_PY + "# " + "p" * 500 + "\n", encoding="utf-8")
+        ok = tmp_path / "ok.py"
+        ok.write_text(_OK_PY, encoding="utf-8")
+        assert ep.ruff_preclean(tmp_path, [str(big)]) is None  # 超限件跳过=放行（落地侧兜底）
+        assert ep.ruff_preclean(tmp_path, [str(big), str(ok)]) is None  # 余批不因它整体降级报错
+
+    def test_oversized_default_cap_real_mb_file(self, tmp_path: Path) -> None:
+        """R1a 实弹：默认 1MB 帽下 ≈1.2MB 文件秒级 skip（修复前=ruff format 咬到 60s 超时）。"""
+        big = tmp_path / "huge.py"
+        big.write_text("x = 1\n" + ("# pad\n" * 200_000), encoding="utf-8")  # ≈1.2MB
+        assert big.stat().st_size > ep._RUFF_PRECLEAN_MAX_FILE_BYTES
+        assert ep.ruff_preclean(tmp_path, [str(big)]) is None
+
+    def test_ruff_package_missing_fail_open_no_false_red(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """R1f 钉：无 ruff exe 且 `-m ruff` 探测 rc≠0（包缺失）→ fail-open 放行，绝不假红。
+
+        修复前实证：`python -m ruff check` rc=1 "No module named ruff" 被当违规命中，
+        好文件/坏文件一律假红硬拦（违反模块自身 fail-open 不变量）。
+        """
+        monkeypatch.setattr(ep.shutil, "which", lambda _: None)
+        calls: list[list[str]] = []
+
+        def _fake_run(argv: list[str], **k: object) -> SimpleNamespace:
+            calls.append(list(argv))
+            assert argv[1:3] == ["-m", "ruff"] and argv[3] == "--version"  # 只允许 --version 探测
+            return SimpleNamespace(returncode=1, stdout="", stderr="No module named ruff")
+
+        monkeypatch.setattr(ep, "run_subprocess_hidden", _fake_run)
+        f = _write(tmp_path, "bad.py", _BAD_PY)
+        assert ep.ruff_preclean(tmp_path, [f]) is None  # 修复前=假红处方；修复后=放行
+        assert len(calls) == 1  # 探测一次即收，不落 check/format 两连跑
