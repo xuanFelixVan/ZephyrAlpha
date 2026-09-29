@@ -56340,4 +56340,14 @@ creation_tokens:
   created_by: st-nightsweep-sw1-20260929
   capability: night_sweep_warroom
   merge_evaluation: "夜战总Sweep战情室交付件：总纲副本+132环节补干总表；开口清零后本目录整族归档（task_bound），无并行旧件需合并"
+- file: src/zephyr/alt_data/board_index_supply.py
+  token: board-index-consumer-registration-board-index-supply-2026-09-28
+  created_by: st-boardidx-20260928
+  capability: board-index-consumer-registration
+  merge_evaluation: BOARD-INTRADAY-SUPPLY 消费者注册半件（设计稿§6）——纯增量消费面，不替代不合并既有资产
+- file: tests/alt_data/test_board_index_supply.py
+  token: board-index-consumer-registration-test-board-index-supply-2026-09-28
+  created_by: st-boardidx-20260928
+  capability: board-index-consumer-registration
+  merge_evaluation: BOARD-INTRADAY-SUPPLY 消费者注册半件（设计稿§6）——纯增量消费面，不替代不合并既有资产
 di_seam_exemptions: []
