@@ -31,6 +31,7 @@ serve_docs(8765) 回归文档本职。read-only，零写副作用。
   GET /api/pattern-evidence                       形态机生证据（REG-PAT-001 evidence 直读）
   GET /api/promotion-advisories                   策略转正建议清单（C5 审批页数据源，只读）
   POST /api/promotion-decide                      Owner 拍板 approve/reject（第四获准写端点，见端点 docstring 授权依据）
+  GET /api/reports?source=risk&report_type=daily_risk_review&limit=50   报告归档只读投影（F115 R3，data/reports/ 落盘面直读）
 返回：{"ok": true, "bars": [{timestamp(ms), open, high, low, close, volume, amount}]}
 异常一律 ok:false——前端据此回退演示数据（演示诚实纪律：前端标"演示"角标）。
 """
@@ -2247,6 +2248,35 @@ def _asset_maybe_start(force: bool) -> dict[str, Any]:
         _asset_thread = threading.Thread(target=_run, daemon=True, name="data-asset-audit")
         _asset_thread.start()
     return st
+
+
+@app.get("/api/reports")
+def reports(
+    source: str | None = Query(None),
+    report_type: str | None = Query(None),
+    limit: int = Query(50, ge=1, le=500),
+) -> dict[str, Any]:
+    """报告归档只读投影（F115 R3 投影链薄刀——api_server 47 路由零 reporting 投影的收口刀）。
+
+    真源：data/reports/report_archive.jsonl（MOD-RPT-037 JsonlArchiveSink append-only
+    落盘面，R2 归档链产出）。只读直读盘面，不实例化 ReportPublisher（跨进程投影），
+    零写副作用。筛选参数 source/report_type 精确匹配；输出按归档时间降序（最新在前）。
+    源文件缺失/空盘 → 200 + ok:true + count=0 空态（投影零副作用不 500 硬崩）；
+    读取面异常 → ok:false（前端回退空态，同演示诚实纪律）。
+    """
+    try:
+        # lazy import：api_server 启动期不引入 reporting 域（投影链按需加载）
+        from zephyr.reporting.report_archive_sink import load_report_records
+
+        records = load_report_records()
+    except Exception as exc:  # noqa: BLE001 —— 投影读取面异常降级，不 500
+        return {"ok": False, "error": str(exc)[:200], "count": 0, "reports": []}
+    if source:
+        records = [r for r in records if r.get("source") == source]
+    if report_type:
+        records = [r for r in records if r.get("report_type") == report_type]
+    records = list(reversed(records[-limit:]))  # 盘面升序尾部 N 条 → 降序（最新在前）
+    return {"ok": True, "count": len(records), "reports": records}
 
 
 @app.get("/api/data-asset")
