@@ -22606,3 +22606,18 @@ entries:
     [ARCH-APPROVAL] 标记登记载体（#ARCH-360/361 同款先例；#ARCH-363 已被 c8-rulings
     占用故跳号）。审批真源=Owner 批复原文+本登记双留痕。
   related_rulings: []
+- issue_id: '#ARCH-365'
+  title: 'board_index 消费端登记（BoardIndexIntradaySupply CTR-P1-018）consumer_registry.yaml 写入——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-29'
+  last_updated: '2026-09-29'
+  owner: 'Owner（2026-09-28 凌晨总筹令+施工总令授权总包代裁，会话在案；做T消费端经查证无人施工后由总包路由建道）'
+  description: >-
+    board_index 消费端登记施工的 consumer_registry.yaml（architecture_model/contracts/）写入的
+    [ARCH-APPROVAL] 标记登记载体（#ARCH-360/361 同款先例）。跳号注记：#ARCH-363 已被 c8-rulings
+    先落占用（主题无关本件）。审批真源=Owner 2026-09-28 总令原文+本登记双留痕。
+    内容=CTR-P1-018 消费端登记（T0_SCHEME_MATRIX 6.1/6.2 + emotion C1/C2，
+    设计真源=docs/_working/t0_matrix/BOARD_INDEX_INTRADAY_SUPPLY_DESIGN.md）。
+  related_rulings: []
