@@ -56470,4 +56470,19 @@ creation_tokens:
   created_by: st-nightclean-20260929
   capability: session_closeout_reconciler
   merge_evaluation: "RB3 治本：死会话收尾协调器（判死四门+动作分级+shadow 首版），挂 reaper 脉冲，净零无新哨兵"
+- file: docs/_working/qoder_legacy_closeout/index.md
+  token: qoder-legacy-closeout-index-20260928
+  created_by: st-zcloseout-20260928
+  capability: qoder_legacy_closeout
+  merge_evaluation: "目录索引（四件导航）唯一归档位"
+- file: docs/_working/qoder_legacy_closeout/00_orchestration.md
+  token: qoder-legacy-closeout-orchestration-20260928
+  created_by: st-zcloseout-20260928
+  capability: qoder_legacy_closeout
+  merge_evaluation: "总筹台账（全事件追加式）唯一归档位，与内容同袋原子"
+- file: docs/_working/qoder_legacy_closeout/96_final_delivery_stzc.md
+  token: qoder-legacy-closeout-final-delivery-20260928
+  created_by: st-zcloseout-20260928
+  capability: qoder_legacy_closeout
+  merge_evaluation: "总交付报告（#416 三条件终判）唯一归档位，与内容同袋原子"
 di_seam_exemptions: []
