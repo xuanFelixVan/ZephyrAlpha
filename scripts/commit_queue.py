@@ -53,7 +53,8 @@
   pending/      待处理队列项（q-*.json，O_EXCL 原子创建）
   processing/   Serializer 取走处理中（原子 rename 进入；崩溃留孤儿，下次自举回收）
   done/         已落盘（含 landed_at/landed_id）
-  dead/         死信（含 dead_reason/dead_at；永不自动清理，66 号 §8）
+  dead/         死信（含 dead_reason/dead_at；永不自动清理，66 号 §8；
+                人工 dead-archive 归档除外——mv 非删，RB2）
   blobs/        内容寻址快照（sha256 命名，tmp+os.replace 原子写）
   {session_id}.seq  会话内单调序号（qid 组成部分；唯一性最终由 O_EXCL 保证）
   serializer.lease  Serializer 租约（TTL=300s + 僵尸 PID 检测）
@@ -87,6 +88,7 @@ CLI
   python scripts/commit_queue.py drain [--queue-root DIR] [--max-items N]
   python scripts/commit_queue.py requeue <qid> [--worktree-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py cleanup [--done-ttl-days N]
+  python scripts/commit_queue.py dead-archive [--days N] [--no-verify-landed] [--execute] [--json]
   python scripts/commit_queue.py health [--no-alert]
 
 B 段接口预留点（2026-08-21 B 段已接通）
@@ -120,7 +122,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup/health + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理 + 死信积压告警 + C1 同会话短窗自动合批）
+description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup/dead-archive/health + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理 + 死信积压告警 + C1 同会话短窗自动合批）
 dimensions:
 - D1
 priority: P0
@@ -185,7 +187,9 @@ _SEQ_PAD = 4  # 66 号 §6.1：seq:04d 零填充——qid 字典序 == 数值序
 _READ_RETRY_TIMES = 20  # drain 读 pending 项容忍写入窗口：重试次数（见 _read_item 注释）
 _READ_RETRY_INTERVAL = 0.05  # 重试间隔 50ms × 20 = 1s 上限
 
-_DONE_TTL_DAYS_DEFAULT = 7.0  # 66 号 §12 Q3 已闭环：done 保留 7 天 TTL；dead 永不自动清理
+_DONE_TTL_DAYS_DEFAULT = (
+    7.0  # 66 号 §12 Q3 已闭环：done 保留 7 天 TTL；dead 永不自动清理（人工 dead-archive 归档除外，RB2：mv 非删）
+)
 
 # ---------------------------------------------------------------------------
 # B5 attempts 计数+退避（st-commitspeed-tbl-20260924 止血，B4 排队键 docstring 登记
@@ -1735,7 +1739,8 @@ def drain_queue(
         P1 级联 stale 项基底重校验用（_revalidate_stale_base）；None=仅 base_blob
         全空的项可重校验通过（A 段口径），base_blob 非空项 fail-closed 降死信候选。
     done_ttl_days : done/ TTL 天数（默认 7 天，66 号 §12 Q3）；排空收尾在 lease 内
-        自动清理超龄 done 项；None=本轮不清理。dead/ 永不清理不变量不受影响。
+        自动清理超龄 done 项；None=本轮不清理。dead/ 永不清理不变量不受影响
+        （人工 dead-archive 归档除外——mv 非删，RB2）。
     异常语义：landing 抛 Exception → 单项失败死信；BaseException 不捕获向上传播
         （模拟进程崩溃，当前项留 processing 等孤儿回收）。
     """
@@ -2313,6 +2318,219 @@ def cleanup_done(
     if removed:
         logger.info("[cleanup] done/ TTL(%s 天) 清理 %d 项: %s", ttl_days, len(removed), removed)
     return {"removed": removed, "kept": kept}
+
+
+# ---------------------------------------------------------------------------
+# dead/ 官方归档通道（RB2 治本，设计真源 docs/_working/root_cure_campaign/
+# RB2_dead_archive.md）。66 号 §8 本义="死信回退给人，永不**自动**清理"——人工通道
+# 此前从未建成，"人"退化为带外一次性手工 mv（2026-09-29 04:13 先例：结果正确、
+# 程序违规：无裁定/无 manifest/操作者不入册）。本节把"有人在做对的事"收编为"系统
+# 只允许做对的事"：归档=同卷 os.replace mv 非删（原子、可逆、本命令永久无删除域，
+# 删除须 Owner 门位另走裁定），blob 引用由 blob_gc B 类转 D 类依然保全，与"永不
+# 自动清理"不变量正交（cleanup_done 等自动通道依旧零触碰 dead/）。
+# ---------------------------------------------------------------------------
+
+
+class DeadArchiveError(RuntimeError):
+    """dead-archive 前置拒绝（租约存活等）——整体拒绝非逐件，CLI 映射 exit 1。"""
+
+
+def _dev_head_landed_checker_factory(repo_root: Path | None = None) -> Callable[[str, str], bool]:
+    """默认落地判据工厂：dev HEAD 树存在性（modify=在树；delete=取反判已消失）。
+
+    惰性建 dev 全树路径集合（一次 ``git ls-tree -r dev --name-only``，全量死信×数千
+    路径只扫一次树）；非 git 目录/dev 不可得 → 树集为空 ⇒ 全判未落（fail-closed：
+    判不了落地就不归档，宁留勿丢）。测试经 landed_checker 注入（设计 §3.2），零 git。
+    """
+    root = repo_root if repo_root is not None else _REPO_ROOT
+    tree: set[str] | None = None
+
+    def _checker(path: str, action: str) -> bool:
+        nonlocal tree
+        if tree is None:
+            import subprocess
+
+            try:
+                proc = subprocess.run(
+                    ["git", "-C", str(root), "ls-tree", "-r", "--name-only", _TARGET_BRANCH, "--"],
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                    check=True,
+                )
+                tree = set(proc.stdout.splitlines())
+            except Exception:  # noqa: BLE001 — git 不可用=判据不可得，fail-closed 全留
+                tree = set()
+        if action == "delete":
+            return path not in tree  # delete 取反语义：dev 已无=已落地删除
+        return path in tree
+
+    return _checker
+
+
+def _spot_check_dev_blob(path: str, blob_sha256: str | None) -> str:
+    """落地增信抽验（只读）：dev 上该路径 blob 的 sha256 与袋记录比对。
+
+    返回 identical（逐字节全等=强证据）/ evolved（演进件：树在但字节已演进，仍判
+    已落地——设计 §2.1 口径）/ unknown（无 sha 记录或 git 不可得，不计入样本）。
+    """
+    if not blob_sha256:
+        return "unknown"
+    import subprocess
+
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(_REPO_ROOT), "show", f"{_TARGET_BRANCH}:{path}"],
+            capture_output=True,
+            timeout=30,
+        )
+        if proc.returncode != 0:
+            return "unknown"
+        return "identical" if hashlib.sha256(proc.stdout).hexdigest() == blob_sha256 else "evolved"
+    except Exception:  # noqa: BLE001 — 增信面故障静默（树存在性才是裁决判据）
+        return "unknown"
+
+
+def dead_archive_letters(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    days: float = 7.0,
+    verify_landed: bool = True,
+    execute: bool = False,
+    now: datetime | None = None,
+    landed_checker: Callable[[str, str], bool] | None = None,
+) -> dict:
+    """dead/ 官方归档（RB2）：全落+超龄死信整体 mv 进根级 dead_archive_<日>/ 袋+manifest。
+
+    三闸全过才归档，任一不过留原位并计数：
+      ①年龄：dead_at 距今 ≥ days 天（缺失/解析失败回退 mtime，cleanup_done 同法）；
+      ②revival 互斥：requeued.new_qid 后继在 pending/processing 在途 → 留（重投竞态
+        输家的内容可能正被后继袋携带，归档会制造双源）；done 终态后继不拦；
+      ③落地校验（默认开）：逐 files[].path 判 dev HEAD（modify=在树；delete=已消失，
+        取反语义）；有未落路径 → 留并附 dead_letter_prescription 处方（M3.3 复用）。
+        --no-verify-landed 显式关闭须留 verify=off 痕（已取代型批量归档先例复用）。
+
+    安全五条（设计 §3.4）：①mv 非删可逆，命令永久无删除域；②verify 默认开、delete
+    取反；③租约存活整体拒绝（非逐件）+后继在途逐件跳过；④manifest.jsonl 逐件留痕
+    （还原=按 manifest 反向 mv）；⑤pending/processing/hold_*/blobs/ 零触碰。
+    默认 dry-run 零写，execute=True 才动盘（同构 blob_gc"默认 dry-run、显式才动盘"）。
+
+    袋位置=队列根级 dead_archive_<yyyymmdd>/（设计伪码 archive_* 为笔误，按 §3.3
+    "零新消费方"意图对齐真源消费者：coordination_state_board retired_dirs 与 blob_gc
+    D 类引用集均按根级 dead_archive* 前缀识别；且 state board 的 dead/ 计数用 rglob，
+    袋放 dead/ 之下会污染死信积压读数。与今晨先例 dead_archive_final/ 同约定）。
+
+    返回 {"archived": [qid...], "kept": {young, revival_in_flight, unlanded},
+    "skipped_corrupt": n, "prescriptions": [...], "bag": str, "dry_run": bool,
+    "verify": "on"|"off", "spot_check": {...}|None}（spot_check=默认判据下的落地
+    增信抽验聚合，仅前 10 封过闸袋的首件参与）。
+    """
+    root = resolve_queue_root(queue_root)
+    # 不 _ensure_dirs：dry-run 必须零盘面变化（含不凭空创建四态目录）；execute 只建归档袋。
+    snap = _lease_snapshot(root)
+    if snap.get("present") and snap.get("alive"):
+        raise DeadArchiveError(
+            f"serializer 租约存活（pid={snap.get('holder_pid')}），拒绝并行维护操作——等排空结束再跑 dead-archive"
+        )
+    ref = now or datetime.now().astimezone()
+    cutoff = ref.timestamp() - days * 86400
+    checker = landed_checker or _dev_head_landed_checker_factory()
+    verify = "on" if verify_landed else "off"
+    bag = root / f"dead_archive_{ref:%Y%m%d}"
+    archived: list[str] = []
+    kept: dict[str, int] = {"young": 0, "revival_in_flight": 0, "unlanded": 0}
+    skipped_corrupt = 0
+    prescriptions: list[dict] = []
+    spot_check: dict[str, int] | None = (
+        {"checked": 0, "identical": 0, "evolved": 0} if (verify_landed and landed_checker is None) else None
+    )
+
+    for entry in sorted((root / "dead").glob("q-*.json")):
+        try:
+            item = json.loads(entry.read_text(encoding="utf-8"))
+            if not isinstance(item, dict):
+                raise ValueError("envelope 非字典")
+        except (OSError, ValueError):
+            skipped_corrupt += 1  # 坏 JSON 计数不中断（人工先例口径）
+            continue
+        # ① 年龄门槛：dead_at 基准，缺失/解析失败回退 mtime
+        ts: float | None = None
+        dead_at = item.get("dead_at")
+        if dead_at:
+            try:
+                ts = datetime.fromisoformat(str(dead_at)).timestamp()
+            except (TypeError, ValueError):
+                ts = None
+        if ts is None:
+            try:
+                ts = entry.stat().st_mtime
+            except OSError:
+                kept["young"] += 1
+                continue
+        if ts >= cutoff:
+            kept["young"] += 1  # 未达年龄门槛（dead_at 距今 < days 天）——留
+            continue
+        # ② revival 互斥：重投后继在途（pending/processing）不归档
+        rq = (item.get("requeued") or {}).get("new_qid")
+        if rq and ((root / "pending" / f"{rq}.json").exists() or (root / "processing" / f"{rq}.json").exists()):
+            kept["revival_in_flight"] += 1
+            continue
+        files = item.get("files") or []
+        # ③ 落地校验（默认开）：modify=dev 在树；delete=dev 已无（取反判）
+        if verify_landed:
+            unlanded = [f.get("path", "") for f in files if not checker(f.get("path", ""), f.get("action", "modify"))]
+            if unlanded:
+                kept["unlanded"] += 1
+                reason = str(item.get("dead_reason") or "")
+                prescriptions.append(
+                    {
+                        "qid": item.get("qid", entry.stem),
+                        "dead_reason": reason[:120],
+                        "unlanded_paths": unlanded[:10],
+                        "prescription": dead_letter_prescription(reason),
+                    }
+                )
+                continue
+            if spot_check is not None and files and spot_check["checked"] < 10:
+                f0 = files[0]
+                verdict = _spot_check_dev_blob(f0.get("path", ""), f0.get("blob_sha256"))
+                if verdict != "unknown":
+                    spot_check["checked"] += 1
+                    spot_check[verdict] += 1
+        if execute:
+            bag.mkdir(parents=True, exist_ok=True)
+            _retry_transient(lambda: os.replace(entry, bag / entry.name))  # 同卷原子 mv，可逆
+            manifest = {
+                "qid": item.get("qid", entry.stem),
+                "archived_at": _now_iso(),
+                "dead_at": dead_at,
+                "dead_reason_head": str(item.get("dead_reason") or "")[:120],
+                "n_files": len(files),
+                "verify": verify,
+                "tool": "commit_queue.dead-archive",
+            }
+            with open(bag / "manifest.jsonl", "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(manifest, ensure_ascii=False) + "\n")
+        archived.append(entry.stem)
+    if archived:
+        logger.info(
+            "[dead-archive] %s %d 封 -> %s（verify=%s days=%s）",
+            "归档" if execute else "dry-run 计划归档",
+            len(archived),
+            bag,
+            verify,
+            days,
+        )
+    return {
+        "archived": archived,
+        "kept": kept,
+        "skipped_corrupt": skipped_corrupt,
+        "prescriptions": prescriptions,
+        "bag": str(bag),
+        "dry_run": not execute,
+        "verify": verify,
+        "spot_check": spot_check,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -3194,6 +3412,34 @@ def _cmd_cleanup(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_dead_archive(args: argparse.Namespace) -> int:
+    try:
+        result = dead_archive_letters(
+            args.queue_root,
+            days=args.days,
+            verify_landed=not args.no_verify_landed,
+            execute=args.execute,
+        )
+    except DeadArchiveError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    kept = result["kept"]
+    print(
+        f"DEAD-ARCHIVE: archived={len(result['archived'])} "
+        f"kept={sum(kept.values()) + result['skipped_corrupt']} "
+        f"(young={kept['young']}/unlanded={kept['unlanded']}/revival_in_flight={kept['revival_in_flight']}"
+        f"/skipped_corrupt={result['skipped_corrupt']}) days={args.days:g} verify={result['verify']} "
+        f"execute={args.execute} bag={result['bag']}"
+    )
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        for p in result["prescriptions"][:10]:  # 人读面只列前 10 封处方（全量走 --json）
+            paths = ",".join(p["unlanded_paths"][:3])
+            print(f"  PRESCRIPTION {p['qid']}: {p['prescription']}（未落路径如 {paths}）")
+    return 0
+
+
 def _cmd_health(args: argparse.Namespace) -> int:
     snap = queue_health(args.queue_root)
     print(json.dumps(snap, ensure_ascii=False, indent=2))
@@ -3284,6 +3530,20 @@ def main(argv: list[str] | None = None) -> int:
     p_cl = sub.add_parser("cleanup", help=f"done/ TTL 清理（默认 {_DONE_TTL_DAYS_DEFAULT:.0f} 天；dead/ 永不清理）")
     p_cl.add_argument("--done-ttl-days", type=float, default=_DONE_TTL_DAYS_DEFAULT, help="done/ 保留天数")
     p_cl.set_defaults(func=_cmd_cleanup)
+
+    p_da = sub.add_parser(
+        "dead-archive",
+        help="dead/ 官方归档（RB2：mv 非删可逆；默认 dry-run 零写，--execute 才动盘；落地校验默认开）",
+    )
+    p_da.add_argument("--days", type=float, default=7.0, help="年龄门槛天数（dead_at 基准，解析失败回退 mtime）")
+    p_da.add_argument(
+        "--no-verify-landed",
+        action="store_true",
+        help="显式关闭落地校验（已取代型批量归档先例复用；输出留 verify=off 痕）",
+    )
+    p_da.add_argument("--execute", action="store_true", help="动盘归档（缺省=dry-run 只打印计划零盘面变化）")
+    p_da.add_argument("--json", action="store_true", help="机器可读输出（archived 清单/kept 分布/未落处方）")
+    p_da.set_defaults(func=_cmd_dead_archive)
 
     p_hl = sub.add_parser(
         "health",

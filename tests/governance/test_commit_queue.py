@@ -1517,3 +1517,233 @@ class TestRegistrationGate:
         bare = {"qid": "q-x", "meta": {}, "prescription": "原处方"}
         cq._annotate_preflight_face_drift(bare, repo_root=repo)
         assert "preflight_face_drift" not in bare
+
+
+# ---------------------------------------------------------------------------
+# RB2 治本：dead-archive 官方归档子命令（设计真源 docs/_working/root_cure_campaign/
+# RB2_dead_archive.md）。三态夹具（全落/半落/未落）+ 守卫（dry-run 零盘/年龄门槛/
+# revival 互斥/坏 JSON/租约拒绝/幂等）。landed_checker 注入=零 git 依赖，全 tmp 隔离。
+# ---------------------------------------------------------------------------
+def _hand_dead_bag(
+    root: Path,
+    qid: str,
+    paths: list[str],
+    *,
+    dead_age_days: float = 10.0,
+    actions: list[str] | None = None,
+    requeued_new_qid: str | None = None,
+    dead_reason: str = "COMMIT_FAILED: 网关落盘失败: CREATE-GUARD 阻断",
+) -> dict:
+    """手写死信袋（TestRequeue._hand_write_dead 同技法）：可陈化 dead_at+可选 requeued 标注。"""
+    now = datetime.now().astimezone()
+    actions = actions or ["modify"] * len(paths)
+    dead: dict = {
+        "qid": qid,
+        "session_id": "rb2-test",
+        "created_at": (now - timedelta(days=dead_age_days + 1)).isoformat(timespec="seconds"),
+        "branch": "dev",
+        "base_head": None,
+        "message": "rb2 dead bag",
+        "files": [{"path": p, "action": a} for p, a in zip(paths, actions, strict=True)],
+        "meta": {},
+        "dead_at": (now - timedelta(days=dead_age_days)).isoformat(timespec="seconds"),
+        "dead_reason": dead_reason,
+    }
+    if requeued_new_qid:
+        dead["requeued"] = {"new_qid": requeued_new_qid, "at": now.isoformat(timespec="seconds")}
+    (root / "dead").mkdir(parents=True, exist_ok=True)
+    (root / "dead" / f"{qid}.json").write_text(json.dumps(dead, ensure_ascii=False, indent=2), encoding="utf-8")
+    return dead
+
+
+class TestDeadArchive:
+    """dead-archive 三态+守卫（设计 §5 验收面）。"""
+
+    @staticmethod
+    def _checker(landed: set[str], deleted: set[str] | None = None):
+        """注入式落地判据（cq._dev_head_landed_checker_factory 的零 git 替身）。"""
+        deleted = deleted or set()
+
+        def _check(path: str, action: str) -> bool:
+            if action == "delete":
+                return path in deleted
+            return path in landed
+
+        return _check
+
+    def test_full_landed_archived_with_manifest(self, queue_root: Path) -> None:
+        """三态·全落：execute 后 mv 进根级 dead_archive_<日>/ 袋+manifest 一行留痕。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-a-0001", ["docs/a.md", "docs/b.md"])
+        result = cq.dead_archive_letters(
+            queue_root,
+            days=7,
+            execute=True,
+            landed_checker=self._checker({"docs/a.md", "docs/b.md"}),
+        )
+        assert result["archived"] == ["q-20260919-rb2-a-0001"]
+        assert not (queue_root / "dead" / "q-20260919-rb2-a-0001.json").exists()
+        bag = queue_root / f"dead_archive_{datetime.now():%Y%m%d}"
+        assert (bag / "q-20260919-rb2-a-0001.json").exists(), "袋在队列根级（消费方契约）"
+        lines = [json.loads(x) for x in (bag / "manifest.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
+        assert len(lines) == 1
+        assert lines[0]["qid"] == "q-20260919-rb2-a-0001"
+        assert lines[0]["tool"] == "commit_queue.dead-archive"
+        assert lines[0]["verify"] == "on" and lines[0]["n_files"] == 2
+        assert lines[0]["dead_reason_head"], "dead_reason 摘要留痕"
+
+    def test_partial_and_unlanded_kept_with_prescription(self, queue_root: Path) -> None:
+        """三态·半落+未落：留原位并附 M3.3 处方（半落=部分路径未落同样不归档）。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-b-0001", ["docs/landed.md", "docs/missing.md"])
+        _hand_dead_bag(queue_root, "q-20260919-rb2-b-0002", ["docs/gone.md"])
+        result = cq.dead_archive_letters(
+            queue_root, days=7, execute=True, landed_checker=self._checker({"docs/landed.md"})
+        )
+        assert result["archived"] == []
+        assert result["kept"]["unlanded"] == 2
+        rx = {p["qid"]: p for p in result["prescriptions"]}
+        assert set(rx) == {"q-20260919-rb2-b-0001", "q-20260919-rb2-b-0002"}
+        assert rx["q-20260919-rb2-b-0001"]["unlanded_paths"] == ["docs/missing.md"]
+        assert rx["q-20260919-rb2-b-0001"]["prescription"], "处方非空（dead_letter_prescription 复用）"
+        assert (queue_root / "dead" / "q-20260919-rb2-b-0001.json").exists(), "半落留原位"
+        assert (queue_root / "dead" / "q-20260919-rb2-b-0002.json").exists(), "未落留原位"
+
+    def test_delete_action_landed_when_path_gone(self, queue_root: Path) -> None:
+        """delete 取反语义：dev 已无=已落地删除 → 判落可归档；delete 路径仍在树=未落。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-c-0001", ["docs/deleted.md"], actions=["delete"])
+        _hand_dead_bag(queue_root, "q-20260919-rb2-c-0002", ["docs/still-there.md"], actions=["delete"])
+        result = cq.dead_archive_letters(
+            queue_root,
+            days=7,
+            execute=True,
+            landed_checker=self._checker(set(), deleted={"docs/deleted.md"}),
+        )
+        assert result["archived"] == ["q-20260919-rb2-c-0001"], "delete 件路径已消失判落"
+        assert result["kept"]["unlanded"] == 1, "delete 件路径仍在 dev=删除未落地"
+
+    def test_dry_run_default_zero_disk_change(self, queue_root: Path) -> None:
+        """守卫·默认 dry-run：打印计划但零盘面变化、不建袋。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-d-0001", ["docs/a.md"])
+        before = sorted(str(p.relative_to(queue_root)) for p in queue_root.rglob("*"))
+        result = cq.dead_archive_letters(queue_root, days=7, landed_checker=self._checker({"docs/a.md"}))
+        assert result["dry_run"] is True
+        assert result["archived"] == ["q-20260919-rb2-d-0001"], "dry-run 仍报归档计划"
+        after = sorted(str(p.relative_to(queue_root)) for p in queue_root.rglob("*"))
+        assert before == after, "dry-run 零盘面变化"
+        assert not list(queue_root.glob("dead_archive_*")), "dry-run 不建袋"
+
+    def test_young_letters_kept_by_age_gate(self, queue_root: Path) -> None:
+        """守卫·--days 门槛：未达标留（young 计数），内容已落也不动。"""
+        _hand_dead_bag(queue_root, "q-20260927-rb2-e-0001", ["docs/a.md"], dead_age_days=1)
+        result = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=self._checker({"docs/a.md"}))
+        assert result["kept"]["young"] == 1 and result["archived"] == []
+
+    def test_requeued_successor_in_flight_kept(self, queue_root: Path) -> None:
+        """守卫·revival 互斥：requeued 后继在 pending → 留；done 终态后继不拦。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-f-0001", ["docs/a.md"], requeued_new_qid="q-20260928-rb2-f-0002")
+        _hand_dead_bag(queue_root, "q-20260919-rb2-f-0003", ["docs/b.md"], requeued_new_qid="q-20260919-rb2-f-0004")
+        (queue_root / "pending").mkdir(parents=True, exist_ok=True)
+        (queue_root / "pending" / "q-20260928-rb2-f-0002.json").write_text("{}", encoding="utf-8")
+        (queue_root / "done").mkdir(parents=True, exist_ok=True)
+        (queue_root / "done" / "q-20260919-rb2-f-0004.json").write_text("{}", encoding="utf-8")
+        checker = self._checker({"docs/a.md", "docs/b.md"})
+        result = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=checker)
+        assert result["kept"]["revival_in_flight"] == 1, "后继在途不归档"
+        assert result["archived"] == ["q-20260919-rb2-f-0003"], "后继已 done（终态）不拦"
+
+    def test_requeued_successor_in_processing_kept(self, queue_root: Path) -> None:
+        _hand_dead_bag(queue_root, "q-20260919-rb2-f2-0001", ["docs/a.md"], requeued_new_qid="q-20260928-rb2-f2-0002")
+        (queue_root / "processing").mkdir(parents=True, exist_ok=True)
+        (queue_root / "processing" / "q-20260928-rb2-f2-0002.json").write_text("{}", encoding="utf-8")
+        result = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=self._checker({"docs/a.md"}))
+        assert result["kept"]["revival_in_flight"] == 1 and result["archived"] == []
+
+    def test_corrupt_json_skipped_not_fatal(self, queue_root: Path) -> None:
+        """守卫·坏 JSON：skipped 计数不中断，坏袋本体不动。"""
+        (queue_root / "dead").mkdir(parents=True, exist_ok=True)
+        (queue_root / "dead" / "q-20260919-rb2-g-0000.json").write_text("{not json", encoding="utf-8")
+        _hand_dead_bag(queue_root, "q-20260919-rb2-g-0001", ["docs/a.md"])
+        result = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=self._checker({"docs/a.md"}))
+        assert result["skipped_corrupt"] == 1
+        assert result["archived"] == ["q-20260919-rb2-g-0001"]
+        assert (queue_root / "dead" / "q-20260919-rb2-g-0000.json").exists(), "坏袋不动（人工判）"
+
+    def test_live_lease_refuses_wholesale(self, queue_root: Path) -> None:
+        """守卫·租约存活：整体拒绝（含 dry-run），CLI 映射 exit≠0。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-h-0001", ["docs/a.md"])
+        (queue_root / "serializer.lease").write_text(
+            json.dumps({"pid": os.getpid(), "acquired_at": time.time(), "renewed_at": time.time()}),
+            encoding="utf-8",
+        )
+        with pytest.raises(cq.DeadArchiveError, match="租约存活"):
+            cq.dead_archive_letters(queue_root, days=7, landed_checker=self._checker({"docs/a.md"}))
+        assert (queue_root / "dead" / "q-20260919-rb2-h-0001.json").exists()
+        rc = cq.main(["--queue-root", str(queue_root), "dead-archive", "--days", "7"])
+        assert rc != 0, "CLI 整体拒绝 exit≠0"
+
+    def test_zombie_lease_not_blocking(self, queue_root: Path) -> None:
+        """守卫·僵尸租约（pid 已死）：不拦归档（下个竞争者进 __enter__ 即回收的同款语义）。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-h2-0001", ["docs/a.md"])
+        (queue_root / "serializer.lease").write_text(
+            json.dumps({"pid": 999999999, "acquired_at": time.time() - 9999, "renewed_at": time.time() - 9999}),
+            encoding="utf-8",
+        )
+        result = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=self._checker({"docs/a.md"}))
+        assert result["archived"] == ["q-20260919-rb2-h2-0001"]
+
+    def test_idempotent_second_run_archives_zero(self, queue_root: Path) -> None:
+        """守卫·幂等：重复 execute 第二次 archived=0，manifest 不重复追加。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-i-0001", ["docs/a.md"])
+        checker = self._checker({"docs/a.md"})
+        r1 = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=checker)
+        assert len(r1["archived"]) == 1
+        r2 = cq.dead_archive_letters(queue_root, days=7, execute=True, landed_checker=checker)
+        assert r2["archived"] == [], "重复执行幂等（袋已 mv 走）"
+        lines = [
+            x
+            for x in (queue_root / f"dead_archive_{datetime.now():%Y%m%d}" / "manifest.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+            if x.strip()
+        ]
+        assert len(lines) == 1, "manifest 一件一行不重复"
+
+    def test_verify_off_keeps_trail(self, queue_root: Path) -> None:
+        """守卫·--no-verify-landed：跳过落地校验可归档，报告/manifest 留 verify=off 痕。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-j-0001", ["docs/never-landed.md"])
+        result = cq.dead_archive_letters(
+            queue_root, days=7, execute=True, verify_landed=False, landed_checker=self._checker(set())
+        )
+        assert result["archived"] == ["q-20260919-rb2-j-0001"]
+        assert result["verify"] == "off"
+        bag = queue_root / f"dead_archive_{datetime.now():%Y%m%d}"
+        line = json.loads((bag / "manifest.jsonl").read_text(encoding="utf-8").splitlines()[0])
+        assert line["verify"] == "off", "manifest 逐件留 verify=off 痕"
+
+    def test_cli_dry_run_report_and_json(
+        self, queue_root: Path, capsys: pytest.CaptureFixture, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """CLI 人读一行报告 + --json 机器面（判据工厂 monkeypatch=零 git）。"""
+        _hand_dead_bag(queue_root, "q-20260919-rb2-k-0001", ["docs/a.md"])
+        _hand_dead_bag(queue_root, "q-20260919-rb2-k-0002", ["docs/gone.md"])
+        monkeypatch.setattr(cq, "_dev_head_landed_checker_factory", lambda: self._checker({"docs/a.md"}))
+        rc = cq.main(["--queue-root", str(queue_root), "dead-archive", "--days", "7"])
+        assert rc == 0
+        out = capsys.readouterr().out
+        assert "DEAD-ARCHIVE:" in out and "archived=1" in out and "execute=False" in out
+        assert "unlanded=1" in out and "PRESCRIPTION" in out
+        rc = cq.main(["--queue-root", str(queue_root), "dead-archive", "--days", "7", "--json"])
+        assert rc == 0
+        out2 = capsys.readouterr().out
+        report = json.loads(out2[out2.index("{") :])
+        assert report["dry_run"] is True and len(report["archived"]) == 1
+        assert len(report["prescriptions"]) == 1
+
+    def test_done_cleanup_regression_untouched(self, queue_root: Path) -> None:
+        """回归：dead-archive 落地后 cleanup_done 语义零变化（done 清理/dead 零触碰）。"""
+        i1 = _enqueue(queue_root, "AI-RB2", "m1", [("a.txt", b"1")])
+        _hand_dead_bag(queue_root, "q-20260919-rb2-l-0001", ["docs/a.md"])
+        cq.drain_queue(queue_root)
+        _age_done_item(queue_root, i1["qid"], days=8)
+        result = cq.cleanup_done(queue_root, ttl_days=7)
+        assert result["removed"] == [i1["qid"]]
+        assert (queue_root / "dead" / "q-20260919-rb2-l-0001.json").exists(), "cleanup 不触碰 dead/"
