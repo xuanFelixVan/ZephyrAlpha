@@ -337,7 +337,9 @@ def run_sentinel(
             )
     else:
         # 降级参照日口径: --lag-days 语义原样保留（连续 N 个开市日无新行）; 实评日带上界, 超前行不再掩盖
-        lag, lag_basis = _compute_lag(executor, actual, reference_day) if reference_day > actual else (0, "trading_days")
+        lag, lag_basis = (
+            _compute_lag(executor, actual, reference_day) if reference_day > actual else (0, "trading_days")
+        )
         record.update({"lag_trading_days": lag, "lag_basis": lag_basis})
         if lag >= threshold_lag_days:
             record.update(
@@ -351,9 +353,7 @@ def run_sentinel(
                 }
             )
         else:
-            record.update(
-                {"type": "ok", "detail": f"决策链在供（降级参照日口径 lag={lag} < {threshold_lag_days}）"}
-            )
+            record.update({"type": "ok", "detail": f"决策链在供（降级参照日口径 lag={lag} < {threshold_lag_days}）"})
 
     if record["type"] == "alert":
         if not _append_jsonl(alert_path, record):

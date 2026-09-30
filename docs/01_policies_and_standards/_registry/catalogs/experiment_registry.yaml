@@ -893,6 +893,7 @@ experiments:
 
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
   - experiment_id: CARD-T0-PRERG-02
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: T0-PRERG-02
     entry_kind: single_hypothesis
     family_id: T0-PRERG
@@ -961,6 +962,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-T0-PRERG-01
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: T0-PRERG-01
     entry_kind: single_hypothesis
     family_id: T0-PRERG
@@ -987,6 +989,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-ALGO-VWAP-03
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: ALGO-VWAP-03
     entry_kind: single_hypothesis
     family_id: null
@@ -1022,6 +1025,7 @@ experiments:
     conclusion_tier: null
     viability_verdict: refuted
   - experiment_id: CARD-T0-CONDITIONAL
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: T0-CONDITIONAL
     entry_kind: single_hypothesis
     family_id: T0-CONDITIONAL
@@ -1054,6 +1058,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-09
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-09
     entry_kind: single_hypothesis
     family_id: P3-E1C-STABLE13
@@ -1087,6 +1092,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-NARROWING
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-NARROWING
     entry_kind: narrowing_ruling
     family_id: P3-B-FIRST6
@@ -1109,6 +1115,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-ALGO-CAND-MOM-01
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: ALGO-CAND-MOM-01
     entry_kind: single_hypothesis
     family_id: null
@@ -1132,6 +1139,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-PRERG-MOM-01
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PRERG-MOM-01
     entry_kind: single_hypothesis
     family_id: null
@@ -1165,6 +1173,7 @@ experiments:
     conclusion_tier: null
     viability_verdict: refuted
   - experiment_id: CARD-SECTOR-PRERG-DECK-01
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: SECTOR-PRERG-DECK-01
     entry_kind: family
     family_id: SECTOR-V1
@@ -1197,6 +1206,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-T0-MATRIX-VWAP-CEILING
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: T0-MATRIX-VWAP-CEILING
     entry_kind: single_hypothesis
     family_id: T0-MATRIX
@@ -1220,6 +1230,7 @@ experiments:
     revived_by: null
     conclusion_tier: null
   - experiment_id: CARD-OFI-PREREG-CARD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: OFI-PREREG-CARD
     name_zh: ALGO件① OFI成交签名代理 预注册卡（frozen，先于实验落盘）
     entry_kind: single_hypothesis
@@ -1246,6 +1257,7 @@ experiments:
     frozen_at: '2026-09-19'
     conclusion_tier: null
   - experiment_id: CARD-ETFT0-PREREG-CARD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: ETFT0-PREREG-CARD
     name_zh: ETFT0 预注册卡——高波资产做T 振幅经济学勘测（三宇宙，宇宙选择规则先于测量，frozen）
     entry_kind: single_hypothesis
@@ -1272,6 +1284,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-CARD-F-TOP20-EXAM
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-CARD-F-TOP20-EXAM
     name_zh: F 车道 top-20 待考池窄考+正考预注册卡（W2-T3 E4 收口批次，st-final3-20260919）
     entry_kind: single_hypothesis
@@ -1298,6 +1311,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-SLICE3-PROTOCOL
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-SLICE3-PROTOCOL
     name_zh: 指标库全扫切片C 预注册协议（执行前钉死）——c1_market.technical_indicator 因子列第3等分 55 列 IC 大海选
     entry_kind: single_hypothesis
@@ -1324,6 +1338,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-CARD-MID-VALLEY-SCREEN
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-CARD-MID-VALLEY-SCREEN
     name_zh: MID 洼地深挖预注册卡——38 可映射候选 × vol_pct 灰度三桶条件 IC 二筛（st-bizmine-mid-20260919，frozen）
     entry_kind: single_hypothesis
@@ -1350,6 +1365,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-CARD-MID-VALLEY-TOP10
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-CARD-MID-VALLEY-TOP10
     name_zh: MID 洼地 top-10 候选预注册卡（10 卡合册，考试门槛 frozen，st-bizmine-mid-20260919）
     entry_kind: single_hypothesis
@@ -1376,6 +1392,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-CARD-B15-BUCKET-SWITCH
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-CARD-B15-BUCKET-SWITCH
     name_zh: B-15 预注册卡——按大盘灰度桶切换组队 前向窗窄测（裁定#361，frozen 先于取数）
     entry_kind: single_hypothesis
@@ -1402,6 +1419,7 @@ experiments:
     frozen_at: '2026-09-19'
     conclusion_tier: null
   - experiment_id: CARD-T0-REGIME-PREREG-CARD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: T0-REGIME-PREREG-CARD
     name_zh: T0 预注册卡——510300 做T 行情条件化窄测（regime 条件振幅勘测，frozen）
     entry_kind: single_hypothesis
@@ -1428,6 +1446,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-TICK-MATRIX-PREREG-CARD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: TICK-MATRIX-PREREG-CARD
     name_zh: tick 矩阵基线轮预注册卡（frozen，先于实验落盘）
     entry_kind: single_hypothesis
@@ -1454,6 +1473,7 @@ experiments:
     frozen_at: '2026-09-19'
     conclusion_tier: null
   - experiment_id: CARD-TICK-T0-PREREG-CARD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: TICK-T0-PREREG-CARD
     name_zh: TICK-T0 预注册卡（tick 级执行三模型×三标的窄测，frozen 先于任何取数统计）
     entry_kind: single_hypothesis
@@ -1480,6 +1500,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-FAMILY-SUMMARY
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-FAMILY-SUMMARY
     name_zh: L1 第二批预注册·族总卡——量能/统计族 18 档（去重后 15 组）沙箱考试（frozen）
     entry_kind: family
@@ -1506,6 +1527,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-01-OBV
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-01-OBV
     name_zh: L1 第二批预注册卡 prereg_group_01_obv（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1532,6 +1554,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-02-MFI
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-02-MFI
     name_zh: L1 第二批预注册卡 prereg_group_02_mfi（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1558,6 +1581,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-03-VR
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-03-VR
     name_zh: L1 第二批预注册卡 prereg_group_03_vr（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1584,6 +1608,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-04-AD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-04-AD
     name_zh: L1 第二批预注册卡 prereg_group_04_ad（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1610,6 +1635,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-05-PVT
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-05-PVT
     name_zh: L1 第二批预注册卡 prereg_group_05_pvt（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1636,6 +1662,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-06-WVAD
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-06-WVAD
     name_zh: L1 第二批预注册卡 prereg_group_06_wvad（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1662,6 +1689,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-07-ADOSC
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-07-ADOSC
     name_zh: L1 第二批预注册卡 prereg_group_07_adosc（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1688,6 +1716,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-08-EOM
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-08-EOM
     name_zh: L1 第二批预注册卡 prereg_group_08_eom（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1714,6 +1743,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-09-KVO
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-09-KVO
     name_zh: L1 第二批预注册卡 prereg_group_09_kvo（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1740,6 +1770,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-10-NVI
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-10-NVI
     name_zh: L1 第二批预注册卡 prereg_group_10_nvi（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1766,6 +1797,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-11-PVI
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-11-PVI
     name_zh: L1 第二批预注册卡 prereg_group_11_pvi（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1792,6 +1824,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-12-FORCE-INDEX
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-12-FORCE-INDEX
     name_zh: L1 第二批预注册卡 prereg_group_12_force_index（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1818,6 +1851,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-13-CORREL
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-13-CORREL
     name_zh: L1 第二批预注册卡 prereg_group_13_correl（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1844,6 +1878,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-14-BETA
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-14-BETA
     name_zh: L1 第二批预注册卡 prereg_group_14_beta（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1870,6 +1905,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-GROUP-15-ROLLVAR-PRICELEVEL
     name_zh: L1 第二批预注册卡 prereg_group_15_rollvar_pricelevel（量能/统计族点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1896,6 +1932,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-EXP-01
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-EXP-01
     name_zh: P3 预注册卡 P3-B-EXP-01（FCT-EXP-001 一致预期EP 点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1922,6 +1959,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-EXP-02
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-EXP-02
     name_zh: P3 预注册卡 P3-B-EXP-02（FCT-EXP-002 修正动量 点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1948,6 +1986,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-EXP-03
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-EXP-03
     name_zh: P3 预注册卡 P3-B-EXP-03（FCT-EXP-003 修正广度 点火考试，frozen）
     entry_kind: single_hypothesis
@@ -1974,6 +2013,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-EXP-04
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-EXP-04
     name_zh: P3 预注册卡 P3-B-EXP-04（FCT-EXP-004 异常覆盖 点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2000,6 +2040,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-EXP-05
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-EXP-05
     name_zh: P3 预注册卡 P3-B-EXP-05（FCT-EXP-005 分歧度 点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2026,6 +2067,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-B-EXP-06
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-B-EXP-06
     name_zh: P3 预注册卡 P3-B-EXP-06（FCT-EXP-006 评级动量 点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2052,6 +2094,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-01
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-01
     name_zh: P3 预注册卡 P3-E1C-01（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2078,6 +2121,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-02
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-02
     name_zh: P3 预注册卡 P3-E1C-02（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2104,6 +2148,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-03
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-03
     name_zh: P3 预注册卡 P3-E1C-03（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2130,6 +2175,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-04
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-04
     name_zh: P3 预注册卡 P3-E1C-04（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2156,6 +2202,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-05
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-05
     name_zh: P3 预注册卡 P3-E1C-05（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2182,6 +2229,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-06
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-06
     name_zh: P3 预注册卡 P3-E1C-06（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2208,6 +2256,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-07
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-07
     name_zh: P3 预注册卡 P3-E1C-07（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2234,6 +2283,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-08
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-08
     name_zh: P3 预注册卡 P3-E1C-08（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2260,6 +2310,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-10
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-10
     name_zh: P3 预注册卡 P3-E1C-10（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2286,6 +2337,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-11
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-11
     name_zh: P3 预注册卡 P3-E1C-11（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2312,6 +2364,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-12
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-12
     name_zh: P3 预注册卡 P3-E1C-12（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2338,6 +2391,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-P3-E1C-13
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: P3-E1C-13
     name_zh: P3 预注册卡 P3-E1C-13（E1C 稳健池候选点火考试，frozen）
     entry_kind: single_hypothesis
@@ -2364,6 +2418,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-T-PREREGISTER
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: T-PREREGISTER
     name_zh: lane T 预注册卡——做T v2 单假设窄考试「三重共振极值点出手」（frozen）
     entry_kind: single_hypothesis
@@ -2390,6 +2445,7 @@ experiments:
     frozen_at: null
     conclusion_tier: null
   - experiment_id: CARD-PREREG-EXAM-CARDS-V0
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
     card_id: PREREG-EXAM-CARDS-V0
     name_zh: 情绪指数预注册考试卡草案 v0——S8 领先性卡 + 成分有效性单卡
     entry_kind: family

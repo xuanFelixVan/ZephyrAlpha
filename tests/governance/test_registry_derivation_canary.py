@@ -178,6 +178,9 @@ def test_summary_computation_is_stable(crc, tmp_path):
 
 
 # ── 尺 3：CR-008 功能域册 ssot_path ↔ covers ──────────────────────────────
+# 2026-09-30 转正：C115（ebbf8718f9）把 verify_domain_ssot 落库（含 ssot_exempt 豁免
+# 语义），本段 5 例 xfail 摘除恢复活测试（XPASS 实证后转正，规格 defer lane-r2.md §1
+# 闭环）。
 
 _DOM_TMPL = """entries:
   - domain: D_CANARY
