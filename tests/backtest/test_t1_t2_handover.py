@@ -419,3 +419,199 @@ def test_spot_below_monotonic_fails_verdict(repo: Path):
     verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
     assert verdict["criteria"]["cost_gate_spot"]["pass"] is False
     assert "cost_gate_spot" in verdict["blocking_criteria"]
+
+
+# ------------------------------------------------------------------ ⚑-2② v2 机器门（W2-T2 2026-09-30）
+# v1 回退零漂移钉死 + v2 c* 全量普查双向 + 出生证 fail-closed
+
+
+def _write_exam_yaml(repo: Path, v2: bool) -> None:
+    base = {"cost_gate": {"tiers_bp": [0, 5, 10, 20, 40], "survival_floor": 0.0, "monotonic_tol": 1e-09}}
+    if v2:
+        base["breakeven_cost_gate"] = {
+            "version": "2.0.0",
+            "criterion_id": "G-COST-BREAKEVEN-40BP",
+            "declaration": "docs/_working/night_sweep/c_exam/flag2_declaration_b.md",
+            "gates": {
+                "p1_median_bp_min": 40.0,
+                "p2_p10_bp_min": 0.0,
+                "p3_stratified_pass_ratio_min": 0.80,
+                "p3_layer_min_n": 30,
+                "p4_scale_sensitivity_max": 0.20,
+                "p5_data_version_required": ["adjustment_basis", "snapshot_date", "snapshot_sha256", "n_trials"],
+            },
+            "bisect": {"lo_bp": 0.0, "hi_bp": 200.0, "tol_bp": 0.1, "over_hi_label": ">200"},
+        }
+        base["cost_gate_active"] = {
+            "active_version": "2.0.0",
+            "fallback_version": "1",
+            "launch_gate_scope": ["p1_median_bp_min", "p2_p10_bp_min"],
+        }
+    (repo / "config" / "exam_scale_cost_gate.yaml").write_text(
+        yaml.safe_dump(base, allow_unicode=True), encoding="utf-8"
+    )
+
+
+def _mk_v2_run(repo: Path, cells_spec: list[tuple[float, int]], to: float = 0.03) -> Path:
+    """合成 v2 run：net 序列（冻结土规 5bp 档）+manifest（sharpe/avg_turnover 引擎同式）。"""
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    run.mkdir(parents=True, exist_ok=True)
+    n = sum(k for _c, k in cells_spec)
+    idx = pd.bdate_range("2024-01-01", periods=120)
+    alt = np.array([1.0, -1.0] * 60)  # 确定性交替：样本均值=目标均值（零抽样误差），sharpe≈1<2
+    cols = {}
+    mf_rows = []
+    j = 0
+    for c_star, k in cells_spec:
+        mean_at_ref = (c_star - 5.0) * 2.0 * to / 1e4
+        amp = abs(mean_at_ref) * np.sqrt(244.0) if mean_at_ref != 0 else 1e-4
+        for _ in range(k):
+            series = pd.Series(mean_at_ref + amp * alt, index=idx)
+            cols[j] = series
+            rid = f"r{j:04d}"
+            combos = list(itertools.product(*[DIMS[d] for d in DIMS]))
+            vals = {d: v for d, v in zip(DIMS, combos[j % len(combos)], strict=False)}
+            sharpe = series.mean() / series.std() * np.sqrt(244)
+            mf_rows.append(
+                {
+                    "recipe_id": rid,
+                    "prefix_key": "x",
+                    "degraded_dimensions": "()",
+                    "sharpe": round(float(sharpe), 3),
+                    "ann_return": 0.05,
+                    "max_drawdown": -0.3,
+                    "avg_turnover": to,
+                    "net_days": len(idx),
+                    "values_json": json.dumps(vals, sort_keys=True),
+                }
+            )
+            j += 1
+    pd.DataFrame(cols).to_parquet(run / "net_returns.parquet")
+    pd.DataFrame(mf_rows).to_csv(run / "manifest.csv", index=False)
+    pd.DataFrame(
+        columns=["recipe_id", "death_layer", "death_reason", "values", "degraded_dimensions", "detail"]
+    ).to_csv(run / "negatives.csv", index=False)
+    summary = json.loads((run / "summary.json").read_text(encoding="utf-8")) if (run / "summary.json").exists() else {}
+    summary.update(
+        {
+            "eval_dead": 0,
+            "backtest_dead": 0,
+            "gate_dead": 0,
+            "degraded_recipes": 0,
+            "n_sampled": n,
+            "evaluated": n,
+            "window": ["2019-01-04", "2025-09-09"],
+            "n_trials_effective": 15,
+            "net_returns_file": "net_returns.parquet",
+        }
+    )
+    (run / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+    return run
+
+
+def test_load_cost_gate_params_v1_fallback_zero_drift(repo: Path):
+    _write_exam_yaml(repo, v2=False)
+    cg = mod.load_cost_gate_params(repo / "config" / "exam_scale_cost_gate.yaml")
+    assert cg["active_version"] == "v1"
+    assert cg["tiers"] == [0.0, 5.0, 10.0, 20.0, 40.0]
+    assert cg["survival_floor"] == 0.0
+    assert "breakeven" not in cg and "launch_gate_scope" not in cg
+
+
+def test_load_cost_gate_params_v2_active(repo: Path):
+    _write_exam_yaml(repo, v2=True)
+    cg = mod.load_cost_gate_params(repo / "config" / "exam_scale_cost_gate.yaml")
+    assert cg["active_version"] == "v2"
+    assert cg["breakeven"]["p1_median_bp_min"] == 40.0
+    assert cg["breakeven"]["hi_bp"] == 200.0
+    assert cg["launch_gate_scope"] == ["p1_median_bp_min", "p2_p10_bp_min"]
+    assert cg["survival_floor"] == 0.0  # v1 键仍随行（并列读数用）
+
+
+def test_v2_census_birthcert_and_tail_mapping(repo: Path):
+    """出生证校验（序列↔manifest 逐格 sharpe 3 位舍入一致）+尾行阴性登记映射。"""
+    _write_exam_yaml(repo, v2=True)
+    run = _mk_v2_run(repo, [(45.0, 4), (10.0, 2)])
+    # 追加 2 行阴性登记（无序列）=裁定#446 定稿态形（有效+阴性守恒）
+    mf = pd.read_csv(run / "manifest.csv")
+    extra = mf.tail(2).copy()
+    extra["recipe_id"] = ["neg_x", "neg_y"]
+    extra["negative_note"] = "endogenous_zero_variance"
+    pd.concat([mf, extra], ignore_index=True).to_csv(run / "manifest.csv", index=False)
+    be = mod.load_cost_gate_params(repo / "config" / "exam_scale_cost_gate.yaml")
+    c_star, evidence = mod._census_c_star(run, pd.read_csv(run / "manifest.csv"), be["breakeven"])
+    assert len(c_star) == 6
+    assert evidence["series_cells"] == 6 and evidence["auditable_negatives"] == 2
+    assert all(0 < c <= 200 for c in c_star.values())
+
+
+def test_v2_full_flow_green_dryrun(repo: Path):
+    _write_exam_yaml(repo, v2=True)
+    _mk_v2_run(repo, [(10.0, 10), (45.0, 50)])  # 幸存者中位=45bp>=40，P10=10>=0
+    status, code = mod.run_handover(
+        repo,
+        allow_launch=False,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=_Recorder(),
+        e0_gate=_e0_ok,
+    )
+    assert status == "GREEN_DRYRUN" and code == 0
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
+    crit = verdict["criteria"]["cost_gate_spot"]
+    assert crit["pass"] is True
+    m = crit["measured"]
+    assert m["active_version"] == "v2" and m["criterion_id"] == "G-COST-BREAKEVEN-40BP"
+    assert m["gates"]["p1_median"]["state"] == "PASS"
+    assert m["gates"]["p2_p10"]["state"] == "PASS"
+    assert m["gates"]["p3_stratified"]["state"] == "INDETERM"  # 分层=T2 波次证据面，如实判灰
+    assert m["gates"]["p4_scale"]["state"] == "INDETERM"
+    assert m["tri_state"] == "INDETERM" and m["scope_fail"] == []
+    assert m["survivors_k"] == 60 and m["n_candidates"] == 60
+    assert "v1_parallel" in m
+
+
+def test_v2_p1_fail_verdict_red(repo: Path):
+    _write_exam_yaml(repo, v2=True)
+    _mk_v2_run(repo, [(10.0, 50), (45.0, 10)])  # 中位=10bp<40 → P1 FAIL
+    status, code = mod.run_handover(
+        repo,
+        allow_launch=False,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=_Recorder(),
+        e0_gate=_e0_ok,
+    )
+    assert status == "VERDICT_RED" and code == 1
+    run = repo / "data" / "strategy_intake" / "grid_20260925-111219"
+    verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
+    assert verdict["criteria"]["cost_gate_spot"]["pass"] is False
+    assert "cost_gate_spot" in verdict["blocking_criteria"]
+    assert verdict["criteria"]["cost_gate_spot"]["measured"]["scope_fail"] == ["p1_median_bp_min"]
+
+
+def test_v2_birthcert_tamper_fail_closed(repo: Path):
+    _write_exam_yaml(repo, v2=True)
+    run = _mk_v2_run(repo, [(45.0, 60)])
+    mf = pd.read_csv(run / "manifest.csv")
+    mf.loc[3, "sharpe"] = round(float(mf.loc[3, "sharpe"]) + 0.01, 3)  # 篡改出生证
+    mf.to_csv(run / "manifest.csv", index=False)
+    status, code = mod.run_handover(
+        repo,
+        allow_launch=False,
+        proc_scan=_procs_nothing,
+        gpu_probe=_gpu_free,
+        replay_fn=_replay_ok,
+        importance_fn=_fake_importance,
+        launcher=_Recorder(),
+        e0_gate=_e0_ok,
+    )
+    assert status == "VERDICT_RED" and code == 1
+    verdict = yaml.safe_load((run / "handover_verdict.yaml").read_text(encoding="utf-8"))
+    crit = verdict["criteria"]["cost_gate_spot"]
+    assert crit["pass"] is False and "出生证校验败" in crit["measured"]["error"]

@@ -37,6 +37,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Final
 
@@ -67,7 +68,317 @@ __all__: Final = [
     "run_cost_tier_scan",
     "evaluate_exam_cost_gate",
     "cost_scale_multiplier",
+    "BreakevenGateConfig",
+    "BreakevenGateVerdict",
+    "breakeven_cost_star_from_net_line",
+    "solve_breakeven_cost_star",
+    "evaluate_breakeven_cost_gate",
 ]
+
+# ---------------------------------------------------------------------------
+# ⚑-2② B案机器门 v2（G-COST-BREAKEVEN-40BP；裁定#435 声明通道落册件
+# docs/_working/night_sweep/c_exam/flag2_declaration_b.md 的消费面）。
+# 判据对象=盈亏平衡成本 c*（Sharpe(c)=0 的单边成本，逐格确定量，不抽样）；
+# 五道门 P1-P5 + 三态 PASS/INDETERM/FAIL（禁二值，INDETERM 必须补数据/补跑）。
+# 40bp 锚与"Sharpe≥0"语义一字不动；v1 三门判定（上方 evaluate_exam_cost_gate）
+# 保留原样=回退面（config/exam_scale_cost_gate.yaml cost_gate_active 指针缺席时行为零变化）。
+DEFAULT_BREAKEVEN_REF_BP: Final[float] = 5.0  # 引擎冻结土规缺省滑点档（_c4_engine.SLIPPAGE_BP 同源）
+DEFAULT_BREAKEVEN_HI_BP: Final[float] = 200.0
+DEFAULT_BREAKEVEN_OVER_LABEL: Final[str] = ">200"
+DEFAULT_P3_RATIO_MIN: Final[float] = 0.80
+DEFAULT_P3_LAYER_MIN_N: Final[int] = 30
+DEFAULT_P4_SCALE_SENSITIVITY_MAX: Final[float] = 0.20
+#: P5 成绩单必含四字段（案卷 S-05：缺一即尺红）
+P5_REQUIRED_FIELDS: Final[tuple[str, ...]] = ("adjustment_basis", "snapshot_date", "snapshot_sha256", "n_trials")
+
+
+@dataclass(frozen=True)
+class BreakevenGateConfig:
+    """B案五道门预注册参数（不可变；YAML breakeven_cost_gate 块载入后构造）。"""
+
+    p1_median_bp_min: float = 40.0
+    p2_p10_bp_min: float = 0.0
+    p3_ratio_min: float = DEFAULT_P3_RATIO_MIN
+    p3_layer_min_n: int = DEFAULT_P3_LAYER_MIN_N
+    p4_scale_sensitivity_max: float = DEFAULT_P4_SCALE_SENSITIVITY_MAX
+    #: c* 求解面：ref=净值序列成本档（闭式解锚），hi=外推上界（越界单列不进分位数）
+    ref_bp: float = DEFAULT_BREAKEVEN_REF_BP
+    hi_bp: float = DEFAULT_BREAKEVEN_HI_BP
+    over_hi_label: str = DEFAULT_BREAKEVEN_OVER_LABEL
+    #: 二分面（非线性成本模型/T2 成绩单复算用；线性成本线上与闭式解等价，测试钉死）
+    bisect_tol_bp: float = 0.1
+
+    def __post_init__(self) -> None:
+        if float(self.p1_median_bp_min) < 0 or float(self.p2_p10_bp_min) < 0:
+            raise ValueError("P1/P2 门槛必须非负（40bp 锚语义）")
+        if not 0 <= float(self.ref_bp) < float(self.hi_bp):
+            raise ValueError(f"须 0<=ref_bp<hi_bp: {self.ref_bp}/{self.hi_bp}")
+        if not 0 < float(self.p3_ratio_min) <= 1:
+            raise ValueError(f"P3 达标层占比须在 (0,1]: {self.p3_ratio_min}")
+        if int(self.p3_layer_min_n) < 1:
+            raise ValueError(f"P3 层最小样本须 >=1: {self.p3_layer_min_n}")
+        if not 0 < float(self.p4_scale_sensitivity_max) <= 1:
+            raise ValueError(f"P4 相对变化上限须在 (0,1]: {self.p4_scale_sensitivity_max}")
+        if float(self.bisect_tol_bp) <= 0:
+            raise ValueError(f"二分容差须为正: {self.bisect_tol_bp}")
+
+
+@dataclass(frozen=True)
+class BreakevenGateVerdict:
+    """B案五道门判定——逐门三态+数字证据（案卷 §3.2 五：禁二值/禁默认降级 PASS）。"""
+
+    #: 聚合三态：FAIL(P1-P4 任一不满足) > INDETERM(任一门证据不足/层 n<30) > PASS(五门全过)
+    tri_state: str
+    p1_median: dict
+    p2_p10: dict
+    p3_stratified: dict
+    p4_scale: dict
+    p5_data_version: dict
+    #: 报告面（案卷 §3.2 六：c* 分位数/幸存者 K 与全体候选 N/单列池，禁只报中位数）
+    quantiles: dict
+    survivors_k: int
+    candidates_n: int
+    quantiles_all_defined: dict | None = None
+    over_hi_pool: tuple[str, ...] = ()
+    degenerate_pool: tuple[str, ...] = ()
+    non_survivors_clamped0: int = 0
+    reasons: tuple[str, ...] = ()
+
+    @property
+    def passed(self) -> bool:
+        return self.tri_state == "PASS"
+
+
+def breakeven_cost_star_from_net_line(
+    mean_net_at_ref: float,
+    avg_turnover_1side: float,
+    config: BreakevenGateConfig | None = None,
+) -> float:
+    """闭式解原始 c*（bp；引擎线性成本线下与二分解逐位等价，测试钉死）。
+
+    引擎冻结成本线（_c4_engine._net_line）: net(c)=gross−turnover·(COMM·2+STAMP+c·2)/1e4，
+    mean(net(c)) 对 c 严格线性且斜率=−2·mean(turnover)/1e4；而 Sharpe(c)=0 ⟺ mean(net(c))=0
+    （std>0 恒成立），故零交叉与年化口径（√244/ddof/Lo 修正）无关=对 A 股四条强制稳健：
+        c*_raw = ref_bp + mean(net(ref))·1e4 / (2·mean(turnover))
+    本函数只解零交叉原始值；分池语义（案卷 §3.2 一）由 evaluate_breakeven_cost_gate 统一执行：
+    c*_raw<0（零成本即亏）→钳 0（Sharpe(0)≤0 ⇒ c*=0，非幸存者）；c*_raw>hi_bp→'>200'
+    越界单列（不计入分位数）；turnover≤0→NaN（零方差退化格=单列池，禁混入分布）。
+    avg_turnover_1side 口径=引擎 stats 同源均值（4 位舍入，c* 误差 <0.2bp 量级，
+    远小于 40bp 判据粒度）。
+    """
+    cfg = config or BreakevenGateConfig()
+    to = float(avg_turnover_1side)
+    if not to > 0:  # 覆盖 0/负/NaN（NaN 比较恒 False）→退化池
+        return float("nan")
+    return float(cfg.ref_bp) + float(mean_net_at_ref) * 1e4 / (2.0 * to)
+
+
+def monotonic_grid_violations(sharpe_fn, config: BreakevenGateConfig | None = None) -> list[float]:
+    """成本-Sharpe 单调性网格校验（案卷 §3.2 二"必做"；违反格 c*=NaN 单列禁混入中位数）。
+
+    返回违例档位清单（空=单调非增成立）。线性成本线上结构性恒空（mean(net(c)) 严格
+    递减且 std 有界→Sharpe 单峰不回增违例仅可能来自引擎涨跌停/停牌填充缺陷）。
+    """
+    cfg = config or BreakevenGateConfig()
+    grid = [0.0, 5.0, 10.0, 20.0, 40.0, 60.0, 80.0, 100.0, 150.0, float(cfg.hi_bp)]
+    srs = [float(sharpe_fn(bp)) for bp in grid]
+    return [grid[i + 1] for i in range(len(srs) - 1) if srs[i + 1] > srs[i]]
+
+
+def solve_breakeven_cost_star(
+    sharpe_fn,
+    config: BreakevenGateConfig | None = None,
+) -> float:
+    """通用二分解 c*（案卷 §3.2 二伪代码逐行；非线性成本模型/T2 成绩单复算面）。
+
+    sharpe_fn: callable(bp_bp)->float（单边成本 bp→年化 Sharpe）。前提=单调非增
+    （调用方须先过 monotonic_grid_violations，违反格=NaN 单列禁入本解算器）。
+    线性成本线上与 breakeven_cost_star_from_net_line 等价（容差 bisect_tol_bp 内）。
+    """
+    cfg = config or BreakevenGateConfig()
+    lo, hi = 0.0, float(cfg.hi_bp)
+    if float(sharpe_fn(hi)) > 0:
+        return float("inf")  # 上界不足（案卷：扩界/单列由调用方处置）
+    while hi - lo > float(cfg.bisect_tol_bp):
+        mid = (lo + hi) / 2
+        if float(sharpe_fn(mid)) > 0:
+            lo = mid
+        else:
+            hi = mid
+    return lo
+
+
+def _be_gate_line(name: str, state: str, measured, threshold: str, note: str = "") -> dict:
+    return {"gate": name, "state": state, "measured": measured, "threshold": threshold, "note": note}
+
+
+def evaluate_breakeven_cost_gate(
+    c_star_by_cell: dict[str, float | str],
+    *,
+    layer_keys: dict[str, object] | None = None,
+    scale_c_star: dict[str, dict[float, float]] | None = None,
+    data_version: dict | None = None,
+    candidates_n: int | None = None,
+    config: BreakevenGateConfig | None = None,
+) -> BreakevenGateVerdict:
+    """五道门判定（不抽样；population=幸存者∪有效 c*，案卷 §3.2 四）。
+
+    Args:
+        c_star_by_cell: 每格 c*（bp）原始解（breakeven_cost_star_from_net_line 产出）。
+            float>hi_bp → 越界单列池（over_hi_label，不计入分位数）；float<=0 → 钳 0
+            非幸存者（计入 N 与 K/N 披露，不入分位数）；NaN → 退化/非单调单列池；
+            0<c<=hi → 幸存者有效解；str → 调用方显式越界标签（同越界池）。
+        layer_keys: 格→层键（换手三分位×策略族×市场状态）。None/缺格=P3 证据不足
+            （INDETERM，禁默认降级 PASS）；层内 n<layer_min_n 判 INSUFFICIENT-N。
+        scale_c_star: 格→{scale: c*}（1x/5x/10x 目标仓位重放面）。None=P4 证据不足
+            （INDETERM——线性模型下 c* 结构性尺度不变，禁以恒零读数充当测量=橡皮图章）。
+        data_version: P5 成绩单四字段。缺字段=P5 INDETERM（案卷 FAIL 枚举=P1-P4，
+            成绩单字段缺失=报告面未闭合须补做，不与判据 FAIL 混池）。
+        candidates_n: 全体候选数 N（缺省=len(c_star_by_cell)）。
+    """
+    cfg = config or BreakevenGateConfig()
+    reasons: list[str] = []
+    over_pool: list[str] = []
+    nan_pool: list[str] = []
+    valid: dict[str, float] = {}
+    non_survivor_n = 0
+    for g, c in c_star_by_cell.items():
+        gs = str(g)
+        if isinstance(c, str):  # 调用方显式越界标签
+            over_pool.append(gs)
+            continue
+        cf = float(c)
+        if math.isnan(cf):
+            nan_pool.append(gs)  # 退化/非单调单列
+        elif cf <= 0.0:
+            non_survivor_n += 1  # Sharpe(0)≤0 ⇒ c*=0，非幸存者（K/N 披露，不入分布）
+        elif cf > float(cfg.hi_bp):
+            over_pool.append(gs)
+        else:
+            valid[gs] = cf
+    n_all = int(candidates_n if candidates_n is not None else len(c_star_by_cell))
+    k = len(valid)
+    vals = np.asarray(sorted(valid.values()), dtype=float)
+    if len(vals):
+        p10, p25, med, p75, p90 = (float(x) for x in np.percentile(vals, [10, 25, 50, 75, 90]))
+    else:
+        p10 = p25 = med = p75 = p90 = float("nan")
+    quantiles = {"p10": p10, "p25": p25, "median": med, "p75": p75, "p90": p90}
+    #: P2 域=案卷 §一"定义的 c* 分布"（钳 0 非幸存者并入；越界/退化单列不入）——
+    #: "Sharpe≥0 语义一字不动"的锚门，最差 10% 候选不得上线即亏
+    defined_dist = (
+        np.sort(np.concatenate([vals, np.zeros(non_survivor_n)])) if (len(vals) or non_survivor_n) else np.asarray([])
+    )
+    p10_defined = float(np.percentile(defined_dist, 10)) if len(defined_dist) else float("nan")
+
+    # P1 中位数门（population=幸存者∩有效，案卷 §3.2 四 P1 原文 "g ∈ 幸存者, c*_g 有效"）
+    p1_ok = bool(len(vals) and med >= float(cfg.p1_median_bp_min))
+    p1 = _be_gate_line("p1_median", "PASS" if p1_ok else "FAIL", med, f">={cfg.p1_median_bp_min:g}bp")
+    if not p1_ok:
+        reasons.append(f"P1 中位数 {med:.2f}bp < {cfg.p1_median_bp_min:g}bp（幸存者有效 c* n={k}）")
+
+    # P2 尾部门（定义分布 P10>=0bp；钳 0 并入=零成本即亏格按 §一 c*=0 入分布）
+    p2_ok = bool(len(defined_dist) and p10_defined >= float(cfg.p2_p10_bp_min))
+    p2 = _be_gate_line("p2_p10", "PASS" if p2_ok else "FAIL", p10_defined, f">={cfg.p2_p10_bp_min:g}bp")
+    if not p2_ok:
+        reasons.append(f"P2 P10(定义分布含钳零) {p10_defined:.2f}bp < {cfg.p2_p10_bp_min:g}bp")
+
+    # P3 分层门（层键缺席=P3 INDETERM；层 n<min 判 INSUFFICIENT-N=任一层命中即 INDETERM）
+    if layer_keys is None:
+        p3_state = "INDETERM"
+        p3_measured = "layer_keys 未提供（换手三分位×策略族×市场状态证据面未闭合）"
+        reasons.append("P3 层键缺席（T2 判定书/成绩单波次证据面）→ INDETERM 须补数据")
+        p3_layers: dict = {}
+    else:
+        p3_layers = {}
+        for g, c in valid.items():
+            key = layer_keys.get(g)
+            if key is None:
+                continue
+            p3_layers.setdefault(tuple(key) if isinstance(key, (list, tuple)) else key, []).append(c)
+        insuf = {k3: v for k3, v in p3_layers.items() if len(v) < int(cfg.p3_layer_min_n)}
+        judged = {k3: float(np.median(v)) for k3, v in p3_layers.items() if len(v) >= int(cfg.p3_layer_min_n)}
+        ratio = (
+            (sum(1 for m in judged.values() if m >= float(cfg.p1_median_bp_min)) / len(p3_layers)) if p3_layers else 0.0
+        )
+        missing = len(valid) - sum(len(v) for v in p3_layers.values())
+        if missing:
+            p3_state = "INDETERM"
+            reasons.append(f"P3 层键缺格 {missing}（禁默认降级）")
+        elif insuf or not p3_layers:
+            p3_state = "INDETERM"
+            reasons.append(f"P3 INSUFFICIENT-N 层 {len(insuf)}/{len(p3_layers)}（n<{cfg.p3_layer_min_n} 判灰不算绿）")
+        elif ratio >= float(cfg.p3_ratio_min):
+            p3_state = "PASS"
+        else:
+            p3_state = "FAIL"
+            reasons.append(f"P3 达标层占比 {ratio:.3f} < {cfg.p3_ratio_min:g}")
+        p3_measured = {
+            "layers_total": len(p3_layers),
+            "layers_insufficient_n": len(insuf),
+            "pass_ratio": round(ratio, 6),
+            "layer_medians_head": {str(k3): round(m, 2) for k3, m in sorted(judged.items())[:10]},
+        }
+    p3 = _be_gate_line("p3_stratified", p3_state, p3_measured, f">={cfg.p3_ratio_min:g} 且层 n>={cfg.p3_layer_min_n}")
+
+    # P4 规模门（1x/5x/10x 重放面缺席=INDETERM；线性模型恒零读数禁充测量）
+    if scale_c_star is None:
+        p4_state, p4_measured = "INDETERM", "scale replay 未提供（1x/5x/10x 目标仓位 c* 重放=T2 成绩单波次）"
+        reasons.append("P4 规模重放缺席 → INDETERM 须补跑")
+    else:
+        worst = 0.0
+        for _g, rows in scale_c_star.items():
+            base = rows.get(1.0)
+            if base is None or base <= 0 or isinstance(base, str):
+                continue
+            for s, c in rows.items():
+                if s == 1.0 or c is None or isinstance(c, str) or c <= 0:
+                    continue
+                worst = max(worst, abs(float(c) / float(base) - 1.0))
+        p4_state = "PASS" if worst <= float(cfg.p4_scale_sensitivity_max) else "FAIL"
+        if p4_state == "FAIL":
+            reasons.append(f"P4 规模敏感度 {worst:.3f} > {cfg.p4_scale_sensitivity_max:g}")
+        p4_measured = round(worst, 6)
+    p4 = _be_gate_line("p4_scale", p4_state, p4_measured, f"<={cfg.p4_scale_sensitivity_max:g}")
+
+    # P5 数据版本门（成绩单四字段；缺=报告面未闭合 INDETERM 须补，不冒充判据 FAIL）
+    dv = dict(data_version or {})
+    missing_fields = [f for f in P5_REQUIRED_FIELDS if dv.get(f) in (None, "")]
+    p5_state = "PASS" if not missing_fields else "INDETERM"
+    if missing_fields:
+        reasons.append(f"P5 数据版本字段缺失 {missing_fields}（成绩单指纹管线未接线=补数据项）")
+    p5 = _be_gate_line("p5_data_version", p5_state, {f: dv.get(f) for f in P5_REQUIRED_FIELDS}, "四字段齐备")
+
+    states = [p1["state"], p2["state"], p3["state"], p4["state"], p5["state"]]
+    if any(s == "FAIL" for s in states[:4]):  # 案卷 FAIL 枚举=P1/P2/P3/P4
+        tri = "FAIL"
+    elif any(s == "INDETERM" for s in states):
+        tri = "INDETERM"
+    else:
+        tri = "PASS"
+    return BreakevenGateVerdict(
+        tri_state=tri,
+        p1_median=p1,
+        p2_p10=p2,
+        p3_stratified=p3,
+        p4_scale=p4,
+        p5_data_version=p5,
+        quantiles=quantiles,
+        survivors_k=k,
+        candidates_n=n_all,
+        quantiles_all_defined={
+            kq: (round(float(x), 6) if x == x else None)
+            for kq, x in zip(
+                ("p10", "p25", "median", "p75", "p90"),
+                np.percentile(defined_dist, [10, 25, 50, 75, 90]) if len(defined_dist) else [float("nan")] * 5,
+                strict=True,
+            )
+        },
+        over_hi_pool=tuple(sorted(over_pool)),
+        degenerate_pool=tuple(sorted(nan_pool)),
+        non_survivors_clamped0=non_survivor_n,
+        reasons=tuple(reasons),
+    )
 
 
 @dataclass(frozen=True)

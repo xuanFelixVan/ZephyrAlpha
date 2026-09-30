@@ -64,6 +64,7 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
+import numpy as np
 import pandas as pd
 import yaml
 
@@ -120,13 +121,44 @@ def load_prereg_caps(prereg_path: Path) -> dict:
 
 
 def load_cost_gate_params(exam_cfg_path: Path) -> dict:
-    """全档/存活地板/单调容差真源（config/exam_scale_cost_gate.yaml，禁双头改）。"""
-    cfg = (yaml.safe_load(exam_cfg_path.read_text(encoding="utf-8")) or {}).get("cost_gate") or {}
-    return {
+    """判据面真源读取（config/exam_scale_cost_gate.yaml，禁双头改）。
+
+    ⚑-2② 机器门激活指针（cost_gate_active 块，W2-T2 接线 2026-09-30）：
+    active_version='2.0.0' 且 breakeven_cost_gate 块在场 → 判据走 v2（五道门+三态）；
+    指针缺席/非 2.x/块缺席 → 回退 v1 cost_gate 冻结键（返回 dict 形状与 v1 时代逐键
+    一致+active_version='v1' 标记，行为零变化——tests/backtest 钉死回退面）。
+    """
+    raw = yaml.safe_load(exam_cfg_path.read_text(encoding="utf-8")) or {}
+    cfg = raw.get("cost_gate") or {}
+    params = {
         "tiers": [float(t) for t in (cfg.get("tiers_bp") or [0, 5, 10, 20, 40])],
         "survival_floor": float(cfg.get("survival_floor", 0.0)),
         "monotonic_tol": float(cfg.get("monotonic_tol", MONOTONIC_TOL_FALLBACK)),
+        "active_version": "v1",
     }
+    active = raw.get("cost_gate_active") or {}
+    version = str(active.get("active_version", ""))
+    be = raw.get("breakeven_cost_gate") or {}
+    if version.startswith("2") and be:
+        gates = be.get("gates") or {}
+        params["active_version"] = "v2"
+        params["breakeven"] = {
+            "p1_median_bp_min": float(gates.get("p1_median_bp_min", 40.0)),
+            "p2_p10_bp_min": float(gates.get("p2_p10_bp_min", 0.0)),
+            "p3_ratio_min": float(gates.get("p3_stratified_pass_ratio_min", 0.80)),
+            "p3_layer_min_n": int(gates.get("p3_layer_min_n", 30)),
+            "p4_scale_sensitivity_max": float(gates.get("p4_scale_sensitivity_max", 0.20)),
+            "p5_data_version_required": list(gates.get("p5_data_version_required") or []),
+            "ref_bp": 5.0,  # 引擎冻结土规缺省档（_c4_engine.SLIPPAGE_BP；sharpe_annualization 见 yaml v2 块）
+            "hi_bp": float((be.get("bisect") or {}).get("hi_bp", 200.0)),
+            "over_hi_label": str((be.get("bisect") or {}).get("over_hi_label", ">200")),
+            "bisect_tol_bp": float((be.get("bisect") or {}).get("tol_bp", 0.1)),
+            "declaration": str(be.get("declaration", "")),
+        }
+        params["launch_gate_scope"] = [
+            str(x) for x in (active.get("launch_gate_scope") or ["p1_median_bp_min", "p2_p10_bp_min"])
+        ]
+    return params
 
 
 # --------------------------------------------------------------------------- 进程/GPU 探测
@@ -502,7 +534,9 @@ def _cost_rows_via_replay(
 def _criterion_cost_gate_spot(
     put, run_dir: Path, df: pd.DataFrame, cg: dict, prev: dict, replay_fn, force_replay: bool
 ) -> tuple[str, dict[str, dict[float, float]]]:
-    """成本门真实性判据（抽查≥50 格五档全真跑，三径择一）；返回 (证据来源, cache_rows)。"""
+    """成本门真实性判据（v1=抽查≥50 格五档全真跑，三径择一；v2=B案 c* 全量普查免重放）。"""
+    if cg.get("active_version") == "v2":
+        return _criterion_cost_gate_breakeven(put, run_dir, df, cg, prev)
     tiers, floor, tol = cg["tiers"], cg["survival_floor"], cg["monotonic_tol"]
     if len(df) < SPOT_CHECK_N:
         put(
@@ -545,6 +579,179 @@ def _criterion_cost_gate_spot(
         f"bad={len(bad)}",
     )
     return src, cache_rows
+
+
+def _census_c_star(run_dir: Path, df: pd.DataFrame, be: dict) -> tuple[dict[str, float], dict]:
+    """B案 v2 全量普查 c*（免重放闭式解；证据缺失/出生证校验不过=RuntimeError fail-closed）。
+
+    数据面=run 目录 net_returns.parquet（3698 格×逐日净收益序列，冻结土规 5bp 缺省档）
+    + manifest avg_turnover（引擎 stats 同源均值）。c*=引擎线性成本线零交叉闭式解
+    （exam_cost_gate.breakeven_cost_star_from_net_line；与二分解等价由门模块测试钉死）。
+    出生证校验：逐格由序列复算 sharpe（mean/std·√244，与引擎 _sharpe 同式）须与
+    manifest sharpe 列 3 位舍入一致（容差 6e-4）；序列列数<manifest 行数时，
+    余下行必须全部为 negative_note 登记的可审计阴性（裁定#446 定稿态=3698 有效+2 阴性）。
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backtest" / "translated"))
+    from zephyr.backtest.regime_validation.exam_cost_gate import breakeven_cost_star_from_net_line
+
+    summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
+    nr_name = summary.get("net_returns_file") or "net_returns.parquet"
+    nr_path = run_dir / nr_name
+    if not nr_path.exists():
+        raise RuntimeError(f"v2 普查证据缺失: {nr_name} 不在 run 目录（逐日净收益档案=普查前提）")
+    pf = pd.read_parquet(nr_path) if nr_path.suffix == ".parquet" else pd.read_csv(nr_path)
+    n_cols = pf.shape[1]
+    if n_cols > len(df):
+        raise RuntimeError(f"v2 普查列数 {n_cols} > manifest 行数 {len(df)}（列序映射不可证，fail-closed）")
+    means = pf.mean(axis=0).to_numpy(dtype=float)
+    stds = pf.std(axis=0).to_numpy(dtype=float)
+    turnover = df["avg_turnover"].iloc[:n_cols].to_numpy(dtype=float)
+    mf_sharpe = pd.to_numeric(df["sharpe"].iloc[:n_cols], errors="coerce").to_numpy(dtype=float)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        recomputed = np.where(stds > 0, means / stds * math.sqrt(244), 0.0)
+    bad = [
+        (str(df["recipe_id"].iloc[i]), float(recomputed[i]), float(mf_sharpe[i]))
+        for i in range(n_cols)
+        if not (abs(float(recomputed[i]) - float(mf_sharpe[i])) <= 6.0e-4)
+    ]
+    if bad:
+        raise RuntimeError(f"v2 出生证校验败 {len(bad)} 格（序列↔manifest 列序映射不可证）: {bad[:3]}")
+    tail = df.iloc[n_cols:]
+    if len(tail) and not tail["negative_note"].notna().all():
+        raise RuntimeError(f"v2 普查后 {len(tail)} 行 manifest 无序列且无阴性登记（fail-closed）")
+    c_star = {
+        str(df["recipe_id"].iloc[i]): breakeven_cost_star_from_net_line(
+            float(means[i]), float(turnover[i]), _load_breakeven_config(be)
+        )
+        for i in range(n_cols)
+    }
+    evidence = {
+        "net_returns_file": nr_name,
+        "series_cells": n_cols,
+        "auditable_negatives": int(len(tail)),
+        "sharpe_birthcert_check": f"pass({n_cols}/{n_cols} |Δ|<=6e-4)",
+        "window": summary.get("window"),
+    }
+    return c_star, evidence
+
+
+def _load_breakeven_config(be: dict):
+    """yaml breakeven 参数 dict→门模块 BreakevenGateConfig（懒导入，v1 路径零加载）。"""
+    from zephyr.backtest.regime_validation.exam_cost_gate import BreakevenGateConfig
+
+    return BreakevenGateConfig(
+        p1_median_bp_min=float(be["p1_median_bp_min"]),
+        p2_p10_bp_min=float(be["p2_p10_bp_min"]),
+        p3_ratio_min=float(be["p3_ratio_min"]),
+        p3_layer_min_n=int(be["p3_layer_min_n"]),
+        p4_scale_sensitivity_max=float(be["p4_scale_sensitivity_max"]),
+        ref_bp=float(be["ref_bp"]),
+        hi_bp=float(be["hi_bp"]),
+        over_hi_label=str(be["over_hi_label"]),
+        bisect_tol_bp=float(be["bisect_tol_bp"]),
+    )
+
+
+def _v1_spot_parallel(prev: dict, cg: dict, manifest_sha: str) -> dict:
+    """v1 旧尺并列读数（换尺非掩过）：复用上轮 verdict 五档重放缓存零重放重算 v1 ok/bad。"""
+    cached = prev.get("cost_replay") if isinstance(prev.get("cost_replay"), dict) else None
+    if not cached or cached.get("manifest_sha256") != manifest_sha:
+        return {"available": False, "note": "上轮 v1 重放缓存缺席/manifest 已变，v1 并列读数不可零成本复算"}
+    rows = cached.get("rows") or {}
+    tiers, floor, tol = cg["tiers"], cg["survival_floor"], cg["monotonic_tol"]
+    ok_n = 0
+    bad = 0
+    for rid, tier_rows in rows.items():
+        converted = {float(b): float(v) for b, v in (tier_rows or {}).items()}
+        ok, _why = _check_cost_rows(converted, tiers, floor, tol)
+        ok_n += int(ok)
+        bad += int(not ok)
+    return {
+        "available": True,
+        "sampled": len(rows),
+        "ok": ok_n,
+        "bad": bad,
+        "note": "v1 旧尺（抽50格五档全存活）同数据并列读数——30/50 型 RED 在 v2 尺下的正确读数见本判据 gates",
+    }
+
+
+def _criterion_cost_gate_breakeven(
+    put, run_dir: Path, df: pd.DataFrame, cg: dict, prev: dict
+) -> tuple[str, dict[str, dict[float, float]]]:
+    """⚑-2② B案机器门判据（v2，裁定#435 声明件消费面）：c* 全量普查+五道门三态。
+
+    发车闸=launch_gate_scope（yaml cost_gate_active，缺省 P1+P2=T1 普查证据面可承载核；
+    P3 分层/P4 规模重放/P5 成绩单指纹=T2 判定书波次证据面，随 verdict 全量披露不截断，
+    禁在此冒充可判=三态 INDETERM 如实呈现）。v1 旧尺并列读数随 measured 留证。
+    """
+    from zephyr.backtest.regime_validation.exam_cost_gate import evaluate_breakeven_cost_gate
+
+    be = cg["breakeven"]
+    try:
+        c_star, evidence = _census_c_star(run_dir, df, be)
+    except (RuntimeError, OSError, ValueError) as exc:
+        put(
+            "cost_gate_spot",
+            {"active_version": "v2", "error": str(exc)[:200]},
+            "B案 c* 全量普查（证据面 fail-closed）",
+            False,
+            "普查证据缺失/出生证校验败=判不通过非跳过",
+        )
+        return "census_net_line", {}
+    verdict = evaluate_breakeven_cost_gate(
+        c_star,
+        layer_keys=None,  # 分层证据面=T2 判定书波次（换手×策略族×市场状态），普查层键缺席=INDETERM 如实
+        scale_c_star=None,  # 1x/5x/10x 规模重放=T2 波次（线性模型恒零读数禁充测量）
+        data_version={
+            "adjustment_basis": "hfq(kline_daily_hfq)",
+            "snapshot_date": None,
+            "snapshot_sha256": None,
+            "n_trials": int(len(df)),
+            "note": "快照指纹管线未接线=P5 补数据项（成绩单波次），此处如实留空",
+        },
+        candidates_n=len(df),
+        config=_load_breakeven_config(be),
+    )
+    scope = cg.get("launch_gate_scope") or ["p1_median_bp_min", "p2_p10_bp_min"]
+    scope_states = {"p1_median_bp_min": verdict.p1_median, "p2_p10_bp_min": verdict.p2_p10}
+    scope_fail = [g for g in scope if scope_states.get(g, {}).get("state") != "PASS"]
+    launch_ok = not scope_fail
+    measured = {
+        "active_version": "v2",
+        "criterion_id": "G-COST-BREAKEVEN-40BP",
+        "source": "census_net_line",
+        "n_candidates": verdict.candidates_n,
+        "survivors_k": verdict.survivors_k,
+        "survivor_ratio": round(verdict.survivors_k / verdict.candidates_n, 6) if verdict.candidates_n else None,
+        "quantiles": {k: (round(v, 4) if v == v else None) for k, v in verdict.quantiles.items()},
+        "quantiles_all_defined": verdict.quantiles_all_defined,
+        "over_hi_pool_n": len(verdict.over_hi_pool),
+        "degenerate_pool_n": len(verdict.degenerate_pool),
+        "non_survivors_clamped0": verdict.non_survivors_clamped0,
+        "gates": {
+            "p1_median": verdict.p1_median,
+            "p2_p10": verdict.p2_p10,
+            "p3_stratified": verdict.p3_stratified,
+            "p4_scale": verdict.p4_scale,
+            "p5_data_version": verdict.p5_data_version,
+        },
+        "tri_state": verdict.tri_state,
+        "launch_gate_scope": scope,
+        "scope_fail": scope_fail,
+        "v1_parallel": _v1_spot_parallel(prev, cg, _sha256_file(run_dir / "manifest.csv")),
+        "evidence": evidence,
+        "declaration": be.get("declaration"),
+    }
+    put(
+        "cost_gate_spot",
+        measured,
+        f"B案 v2 发车闸 {scope}: P1 median{{c*|幸存者,有效}}>={be['p1_median_bp_min']:g}bp & "
+        f"P2 P10>={be['p2_p10_bp_min']:g}bp（不抽样；P3/P4/P5=T2 判定书波次随 verdict 披露，"
+        f"tri_state={verdict.tri_state}）",
+        launch_ok,
+        "; ".join(verdict.reasons[:4]),
+    )
+    return "census_net_line", {}
 
 
 def _condition_axis_zero(run_dir: Path) -> object:

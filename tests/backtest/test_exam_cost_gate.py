@@ -221,3 +221,174 @@ class TestScaleAwareGate:
         assert v.scale_adjusted_survived is None
         assert v.scale_multiplier is None
         assert v.effective_top_bp is None
+
+
+# ---------------------------------------------------------------------------
+# ⚑-2② B案机器门 v2（G-COST-BREAKEVEN-40BP）——闭式解/分池/五道门三态（W2-T2 2026-09-30）
+
+from zephyr.backtest.regime_validation.exam_cost_gate import (  # noqa: E402
+    BreakevenGateConfig,
+    breakeven_cost_star_from_net_line,
+    evaluate_breakeven_cost_gate,
+    monotonic_grid_violations,
+    solve_breakeven_cost_star,
+)
+
+BE = BreakevenGateConfig()
+
+
+def _linear_sharpe_fn(mu: float, to: float, sigma: float = 0.01):
+    """引擎线性成本线合成面: net(c)=gross−turnover·(15+2c)/1e4 → sharpe(c) 年化。"""
+
+    def fn(c_bp: float) -> float:
+        return (mu - to * (15.0 + 2.0 * c_bp) / 1e4) / sigma * np.sqrt(244)
+
+    return fn
+
+
+class TestBreakevenCostStar:
+    def test_closed_form_equals_bisection_on_linear_line(self):
+        """闭式解与案卷二分伪代码在线性成本线上逐位等价（容差=tol）。
+
+        入参契约：mean_net_at_ref=档案序列（ref 档净收益）均值，非毛收益均值——
+        gross μ=3e-4、turnover 0.03 时 ref(5bp) 档净值均值=μ−to·25/1e4。
+        """
+        mu, to, sigma = 3.0e-4, 0.03, 0.01
+        fn = _linear_sharpe_fn(mu, to, sigma)
+        bisected = solve_breakeven_cost_star(fn, BE)
+        mean_at_ref = mu - to * (15.0 + 2.0 * BE.ref_bp) / 1e4
+        closed = breakeven_cost_star_from_net_line(mean_at_ref, to, BE)
+        assert abs(bisected - closed) <= BE.bisect_tol_bp
+        # 独立真值: c* = (mu*1e4/to − 15)/2
+        truth = (mu * 1e4 / to - 15.0) / 2.0
+        assert abs(closed - truth) < 1e-9
+
+    def test_monotonic_grid_clean_on_linear_line(self):
+        assert monotonic_grid_violations(_linear_sharpe_fn(3.0e-4, 0.03), BE) == []
+
+    def test_degenerate_zero_turnover_nan(self):
+        assert np.isnan(breakeven_cost_star_from_net_line(1e-3, 0.0, BE))
+        assert np.isnan(breakeven_cost_star_from_net_line(1e-3, float("nan"), BE))
+
+
+class TestBreakevenPools:
+    def test_pool_semantics_clamp_over_degenerate(self):
+        cells = {
+            "dead_zero": -12.0,  # 零成本即亏→钳0非幸存者
+            "alive": 55.0,  # 幸存者有效
+            "tiny": 0.5,  # 幸存者有效（<40bp 拉中位数）
+            "beyond": 260.0,  # >200 越界单列
+            "broken": float("nan"),  # 退化单列
+        }
+        v = evaluate_breakeven_cost_gate(cells, candidates_n=5, config=BE)
+        assert v.over_hi_pool == ("beyond",)
+        assert v.degenerate_pool == ("broken",)
+        assert v.non_survivors_clamped0 == 1
+        assert v.survivors_k == 2  # alive+tiny
+        assert v.candidates_n == 5
+
+    def test_explicit_over_label_string_pool(self):
+        v = evaluate_breakeven_cost_gate({"a": 50.0, "b": BE.over_hi_label}, config=BE)
+        assert v.over_hi_pool == ("b",)
+        assert v.survivors_k == 1
+
+
+class TestBreakevenFiveGates:
+    def _pass_cells(self, n_low: int = 10, n_mid: int = 50, mid: float = 45.0, low: float = 10.0):
+        cells = {}
+        for i in range(n_mid):
+            cells[f"m{i}"] = mid
+        for i in range(n_low):
+            cells[f"l{i}"] = low
+        return cells
+
+    def test_p1_p2_pass_and_fail_directions(self):
+        v_pass = evaluate_breakeven_cost_gate(self._pass_cells(), config=BE)
+        assert v_pass.p1_median["state"] == "PASS"  # median=45>=40
+        assert v_pass.p2_p10["state"] == "PASS"  # P10=10>=0
+        cells_fail = self._pass_cells(n_low=50, n_mid=10)  # 中位数跌到 10bp
+        v_fail = evaluate_breakeven_cost_gate(cells_fail, config=BE)
+        assert v_fail.p1_median["state"] == "FAIL"
+        assert v_fail.tri_state == "FAIL"
+
+    def test_p2_anchor_gate_boundary_semantics(self):
+        """P2=案卷"Sharpe≥0 语义锚"：域=定义分布（钳零并入，§一 c*=0），P10>=0 边界。"""
+        cells = {f"a{i}": 60.0 for i in range(95)}
+        cells.update({f"z{i}": -5.0 for i in range(5)})  # 5% 钳零 <10% → P10 仍在幸存者域
+        v = evaluate_breakeven_cost_gate(cells, config=BE)
+        assert v.p2_p10["state"] == "PASS" and v.p2_p10["measured"] == 60.0
+        assert v.non_survivors_clamped0 == 5
+        assert v.p1_median["state"] == "PASS"
+        cells11 = {f"b{i}": 60.0 for i in range(89)}
+        cells11.update({f"z{i}": -5.0 for i in range(11)})  # 11% 钳零 → P10 恰落 0 边界
+        v_edge = evaluate_breakeven_cost_gate(cells11, config=BE)
+        assert v_edge.p2_p10["state"] == "PASS" and v_edge.p2_p10["measured"] == 0.0
+        assert v_edge.quantiles_all_defined["median"] == 60.0  # 钳零不改幸存者中位数披露
+
+    def test_p3_layer_keys_absent_indeterm(self):
+        v = evaluate_breakeven_cost_gate(self._pass_cells(), layer_keys=None, config=BE)
+        assert v.p3_stratified["state"] == "INDETERM"
+        assert v.tri_state == "INDETERM"
+
+    def test_p3_pass_ratio_and_insufficient_n(self):
+        cells = self._pass_cells()
+        keys = {f"m{i}": ("T2", "famA", "up") for i in range(50)}
+        keys.update({f"l{i}": ("T1", "famB", "down") for i in range(10)})
+        v_ok = evaluate_breakeven_cost_gate(cells, layer_keys=keys, config=BE)
+        # T1 层 n=10<30 → INSUFFICIENT-N → INDETERM（禁算绿）
+        assert v_ok.p3_stratified["state"] == "INDETERM"
+        big = {**{f"m{i}": 50.0 for i in range(40)}, **{f"l{i}": 50.0 for i in range(40)}}
+        keys2 = {**{f"m{i}": ("A", "f1", "up") for i in range(40)}, **{f"l{i}": ("B", "f2", "dn") for i in range(40)}}
+        v_pass = evaluate_breakeven_cost_gate(big, layer_keys=keys2, config=BE)
+        assert v_pass.p3_stratified["state"] == "PASS"
+        mixed = {**{f"m{i}": 50.0 for i in range(40)}, **{f"l{i}": 5.0 for i in range(40)}}
+        v_fail = evaluate_breakeven_cost_gate(mixed, layer_keys=keys2, config=BE)
+        assert v_fail.p3_stratified["state"] == "FAIL"  # 一层达标一层不达标→占比 0.5
+
+    def test_p4_scale_absent_indeterm_measured_directions(self):
+        v_absent = evaluate_breakeven_cost_gate(self._pass_cells(), scale_c_star=None, config=BE)
+        assert v_absent.p4_scale["state"] == "INDETERM"
+        v_ok = evaluate_breakeven_cost_gate(
+            {"a": 50.0}, scale_c_star={"a": {1.0: 50.0, 5.0: 52.0, 10.0: 55.0}}, config=BE
+        )
+        assert v_ok.p4_scale["state"] == "PASS"
+        v_bad = evaluate_breakeven_cost_gate(
+            {"a": 50.0}, scale_c_star={"a": {1.0: 50.0, 5.0: 52.0, 10.0: 70.0}}, config=BE
+        )
+        assert v_bad.p4_scale["state"] == "FAIL"
+
+    def test_p5_data_version_fields(self):
+        dv_ok = {
+            "adjustment_basis": "hfq",
+            "snapshot_date": "2026-09-30",
+            "snapshot_sha256": "ab" * 32,
+            "n_trials": 3700,
+        }
+        v_ok = evaluate_breakeven_cost_gate(self._pass_cells(), data_version=dv_ok, config=BE)
+        assert v_ok.p5_data_version["state"] == "PASS"
+        v_missing = evaluate_breakeven_cost_gate(self._pass_cells(), data_version={"n_trials": 3700}, config=BE)
+        assert v_missing.p5_data_version["state"] == "INDETERM"
+
+    def test_tri_state_all_pass_requires_p3_p4_p5(self):
+        dv = {"adjustment_basis": "hfq", "snapshot_date": "d", "snapshot_sha256": "s", "n_trials": 1}
+        cells = {**{f"m{i}": 50.0 for i in range(40)}, **{f"l{i}": 50.0 for i in range(40)}}
+        keys = {**{f"m{i}": ("A", "f", "up") for i in range(40)}, **{f"l{i}": ("B", "g", "dn") for i in range(40)}}
+        scale = {g: {1.0: cells[g], 5.0: cells[g] * 1.02, 10.0: cells[g] * 1.05} for g in cells}
+        v = evaluate_breakeven_cost_gate(cells, layer_keys=keys, scale_c_star=scale, data_version=dv, config=BE)
+        assert v.tri_state == "PASS" and v.passed
+
+
+class TestBreakevenConfigValidation:
+    def test_rejects_bad_bounds(self):
+        with pytest.raises(ValueError):
+            BreakevenGateConfig(ref_bp=300.0, hi_bp=200.0)
+        with pytest.raises(ValueError):
+            BreakevenGateConfig(p1_median_bp_min=-1.0)
+        with pytest.raises(ValueError):
+            BreakevenGateConfig(p3_ratio_min=1.5)
+        with pytest.raises(ValueError):
+            BreakevenGateConfig(p3_layer_min_n=0)
+        with pytest.raises(ValueError):
+            BreakevenGateConfig(p4_scale_sensitivity_max=0.0)
+        with pytest.raises(ValueError):
+            BreakevenGateConfig(bisect_tol_bp=0.0)

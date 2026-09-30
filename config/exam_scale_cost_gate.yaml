@@ -88,3 +88,20 @@ breakeven_cost_gate:
     cscv_precheck_ljung_box: true       # 显著自相关格占比>30% → CSCV 降 S=8 复算同报
   tri_state: [PASS, INDETERM, FAIL]     # INDETERM 必须补数据/补跑，禁默认降级 PASS
   report_required: [c_star_quantiles, survivor_k_and_total_n, non_monotonic_list, unfillable_pool]
+
+# ---------------------------------------------------------------------------
+# ⚑-2② 机器门激活指针块（W2-T2 接线 st-nightsweep2-t2-20260930，2026-09-30）。
+# 授权链：裁定#435（B案声明通道落册）+裁定#446（T1 定稿追认）+Owner 2026-09-30 夜令
+# "C组……把他们前置条件全部打通，然后来完成他们"；W-173 式声明通道=版本追加，上方
+# v1/v2 全部既有键一字未动（追加后逐键 diff 自证于 verdict 与台账）。
+# 消费面契约：load_cost_gate_params 读本块取判据面——active_version='2.0.0' 且
+# breakeven_cost_gate 块在场→判据走 v2（五道门+三态）；指针缺席/非 2.x/块缺席→
+# 回退 v1 cost_gate 冻结键（行为零变化，tests 钉死）。launch_gate_scope=发车哨兵
+# 闸门子集（P1/P2=T1 普查证据面可承载核）；P3/P4/P5 证据面=T2 判定书/成绩单
+# （declaration §7 "按波次接线"），随 verdict 全量披露不截断。
+cost_gate_active:
+  active_version: '2.0.0'
+  fallback_version: '1'
+  launch_gate_scope: [p1_median_bp_min, p2_p10_bp_min]
+  wired_by: st-nightsweep2-t2-20260930
+  wired: '2026-09-30'
