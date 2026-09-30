@@ -2196,6 +2196,28 @@ class TestCommitAnomalyAudit:
         evs = self._events(tmp_path)
         assert evs[-1]["gate_id"] == "UNKNOWN"
 
+    def test_block_event_digit_suffix_gate_extracted(self, tmp_path: Path) -> None:
+        """带数字门禁号提取（全流通夜战 A2 2026-09-30）：旧字符类在数字处截断失配——
+        R5-DIGIT-SUFFIX 阻断恒落 UNKNOWN（堵点本 09-22/26/28 三笔实证），
+        字符类补数字下划线修复，与 worktree 侧 _wt_block_gate_id 口径对齐。"""
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import CommitResult, CommitStatus
+
+        gw = self._gw(tmp_path)
+        cases = [
+            (
+                "门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/x_20260929/",
+                "R5-DIGIT-SUFFIX",
+            ),
+            ("门禁 GATE-20 阻断: 裸 LLM 调用", "GATE-20"),
+            ("门禁 GATE-PRECOMMIT-RUN 阻断: 落地前违规", "GATE-PRECOMMIT-RUN"),
+            ("门禁 MUTABLE-CONST-WITHOUT-FINAL 阻断: 缺 Final", "MUTABLE-CONST-WITHOUT-FINAL"),
+        ]
+        for msg, expected in cases:
+            blocked = CommitResult(status=CommitStatus.COMMIT_FAILED, message=msg)
+            gw._audit_commit_block_event("sess-digit", blocked, [], 1.0)
+            ev = self._events(tmp_path)[-1]
+            assert ev["gate_id"] == expected, f"{msg[:20]}... 应提取 {expected}，实际 {ev['gate_id']}"
+
     def test_block_event_status_gate_id_mapping(self, tmp_path: Path) -> None:
         """专用 status → gate_id 映射（2026-09-13 UNKNOWN×6 治本）：
         FOREIGN_CHANGE/COMMIT_SCOPE 等专用门禁的 message 无「门禁 XXX 阻断」前缀，

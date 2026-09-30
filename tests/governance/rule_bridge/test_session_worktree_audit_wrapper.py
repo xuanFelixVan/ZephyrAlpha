@@ -246,6 +246,10 @@ class TestPreMergeGateAudit:
         """_wt_block_gate_id 判定链：gate_results 直取 > 标志字段 > message 正则 > UNKNOWN。"""
         assert sw._wt_block_gate_id({"held_overlap": True, "message": "anything"}) == "HELD-OVERLAP"
         assert sw._wt_block_gate_id({"message": "门禁 CREATE-GUARD 阻断: 无 token"}) == "CREATE-GUARD"
+        # 带数字门禁号（全流通夜战 A2 2026-09-30）：字符类补数字前恒在数字处截断失配
+        # 恒落 UNKNOWN——与 gateway 侧正则口径对齐后精确归因
+        assert sw._wt_block_gate_id({"message": "门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止"}) == "R5-DIGIT-SUFFIX"
+        assert sw._wt_block_gate_id({"message": "门禁 GATE-20 阻断: 裸 LLM"}) == "GATE-20"
         assert sw._wt_block_gate_id({"message": "FOREIGN_CHANGE_VIOLATION: xxx"}) == "FOREIGN-CHANGE"
         assert sw._wt_block_gate_id({"message": "奇怪的错误"}) == "UNKNOWN"
         # 堵点本 §2.1 残余病灶治本：commit 路径 base 落地冲突（无 gate_results）此前落 UNKNOWN

@@ -4585,7 +4585,10 @@ def _wt_block_gate_id(result: dict) -> str:
             return _chain_gate_id
     import re as _re
 
-    m = _re.search(r"门禁 ([A-Z][A-Z\-]+) 阻断", str(result.get("message", "")))
+    # 字符类含数字+下划线（与 gateway _audit_commit_block_event 正则口径对齐）：
+    # R5-DIGIT-SUFFIX/GATE-20 等带数字门禁号此前被 [A-Z\-] 在数字处截断失配
+    # → 恒落 UNKNOWN（全流通夜战 A2 2026-09-30 治本，gateway 侧同批修）。
+    m = _re.search(r"门禁 ([A-Z][A-Z0-9_\-]+) 阻断", str(result.get("message", "")))
     if m:
         return m.group(1)
     m = _re.search(r"\b([A-Z][A-Z_]{3,}(?:-[A-Z]+)*)_VIOLATION", str(result.get("message", "")))
