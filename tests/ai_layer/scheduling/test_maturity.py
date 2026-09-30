@@ -44,6 +44,7 @@ def _stats(**over: Any) -> dict[str, Any]:
 # policy 加载（fail-closed）
 # ---------------------------------------------------------------------------
 
+
 def test_load_real_policy(policy: dict[str, Any]) -> None:
     assert policy["policy_id"] == "schedule_gate_policy_v1"
     assert policy["maturity"]["m1_min_wins"] == 2
@@ -75,6 +76,7 @@ def test_load_bad_maturity_keys_raises(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 # M1-M4 判定（纯函数全枚举）
 # ---------------------------------------------------------------------------
+
 
 def test_m1_single_win_does_not_open(policy: dict[str, Any]) -> None:
     v = evaluate_region(_stats(win=1, loss=0), policy, NOW, "governance")
@@ -121,13 +123,15 @@ def test_m4_whitelist_absent_blocks(policy: dict[str, Any]) -> None:
     """冷启动诚实语义：白名单（Owner 区，本班置空）外区域永不开闸。"""
     v = evaluate_region(_stats(whitelisted=False), policy, NOW)
     assert not v.passed and "M4" in v.failed_codes
-    # 真源 policy 白名单=空（L5-#2 待 Owner）：当前任何域都过不了 M4
-    assert policy["maturity"]["m4_first_batch_whitelist"] == []
+    # 真源 policy 白名单（L5-#2）：F5 通电批（裁定#450，2026-09-30 夜总攻）后首批=[ai_eng, tooling]
+    # （钉值随批翻转，W2-FIN 终验车道重落地；白名单外区域 M4 永不开闸语义不变）
+    assert policy["maturity"]["m4_first_batch_whitelist"] == ["ai_eng", "tooling"]
 
 
 # ---------------------------------------------------------------------------
 # 域聚合 SQL 与收集
 # ---------------------------------------------------------------------------
+
 
 def test_region_aggregation_sql_shape() -> None:
     sql = region_aggregation_sql("ai_compare")
@@ -175,6 +179,7 @@ def test_collect_rejects_naive_latest() -> None:
 # ---------------------------------------------------------------------------
 # held_maturity 转正（事件唤醒重评，留痕）
 # ---------------------------------------------------------------------------
+
 
 def test_promote_held_orders(policy: dict[str, Any]) -> None:
     held = {
