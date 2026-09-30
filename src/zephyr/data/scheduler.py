@@ -256,6 +256,20 @@ def _run_special_schedule(
                 level="WARN",
                 source="cross_source_validator",
             )
+        # 分歧率统计输出侧（#423 形态锁第二段供数件 2026-09-28 st-c9-purify）：四字段
+        # （日期/表/分歧类型/计数）jsonl 落档 data/divergence_stats/，同键覆盖 upsert，
+        # 为两周分歧率观察供数。统计故障=降级告警不反噬校验槽（同族托管腿先例）。
+        try:
+            from zephyr.data.divergence_stats import record_report_stats
+
+            record_report_stats(report)
+        except Exception as exc:  # noqa: BLE001 — 统计腿故障只出声，不改写校验结论
+            scheduler._alerter.notify(
+                "cross_validation",
+                f"分歧率统计落档失败（观察供数缺失，禁静默）: {str(exc)[:200]}",
+                level="WARN",
+                source="divergence_stats",
+            )
         return {"cross_validation": report.is_healthy}
     # L12 组合再平衡巡检槽（FAC-E8 再平衡调度接线 2026-09-27 st-chief4x-e8e9-20260927）：
     # alloc_budget_daily 目标面 vs sim_pocket_daily 当前面 → MOD-PF-003 四触发源+成本感知

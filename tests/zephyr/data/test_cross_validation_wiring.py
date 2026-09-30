@@ -40,9 +40,17 @@ class _FakeScheduler:
 
 @pytest.fixture()
 def validator_calls(monkeypatch):
-    """替换 CrossSourceValidator 为记录型替身；返回 (calls, set_report)。"""
+    """替换 CrossSourceValidator 为记录型替身；返回 (calls, set_report)。
+
+    2026-09-28 st-c9-purify：槽位新增分歧率统计输出侧（divergence_stats），本 fixture
+    同步打桩——否则替身 report 会走真统计腿写生产 data/（宪法 §9.6 测试隔离）。
+    """
     calls: list[dict] = []
+    stats_calls: list = []
     holder: dict = {"report": ValidationReport(check_time=None)}
+    monkeypatch.setattr(
+        "zephyr.data.divergence_stats.record_report_stats", lambda report: stats_calls.append(report) or {}
+    )
 
     class _FakeValidator:
         def __init__(self, *a, **k):
@@ -53,11 +61,11 @@ def validator_calls(monkeypatch):
             return holder["report"]
 
     monkeypatch.setattr("zephyr.data.cross_source_validator.CrossSourceValidator", _FakeValidator)
-    return calls, holder
+    return calls, holder, stats_calls
 
 
 def test_cross_validation_slot_invokes_validator(validator_calls):
-    calls, holder = validator_calls
+    calls, holder, _stats = validator_calls
     holder["report"] = ValidationReport(check_time=None, total_symbols=5, passed=5)
     out = sched._run_special_schedule(_FakeScheduler(), "cross_validation")
     assert out == {"cross_validation": True}
@@ -65,8 +73,18 @@ def test_cross_validation_slot_invokes_validator(validator_calls):
     assert calls[0]["time_window_minutes"] == sched._CROSS_VALIDATION_WINDOW_MINUTES
 
 
+def test_cross_validation_feeds_divergence_stats(validator_calls):
+    """#423 形态锁第二段：槽位必须把校验报告喂给分歧率统计（不喂=两周观察断供）。"""
+    calls, holder, stats_calls = validator_calls
+    report = ValidationReport(check_time=None, total_symbols=5, passed=5)
+    holder["report"] = report
+    out = sched._run_special_schedule(_FakeScheduler(), "cross_validation")
+    assert out == {"cross_validation": True}
+    assert stats_calls == [report], "分歧率统计未接到 cross_validation 槽输出侧"
+
+
 def test_cross_validation_fail_alerts_and_returns_false(validator_calls):
-    calls, holder = validator_calls
+    calls, holder, _stats = validator_calls
     holder["report"] = ValidationReport(check_time=None, failures=2)
     fake = _FakeScheduler()
     out = sched._run_special_schedule(fake, "cross_validation")

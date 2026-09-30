@@ -213,6 +213,9 @@ def test_wired_into_supply_sentinel_leg(monkeypatch: pytest.MonkeyPatch) -> None
     monkeypatch.setattr(
         ss, "_run_hosted_cleaning_gate", lambda alerter: calls.append("called") or {"ok": True, "skipped": "stub"}
     )
+    # 2026-09-28 st-c9-purify：宿主新增托管第三段（cleaning_anomaly_hosting），本件测试
+    # 只验清洗腿接线——异常腿必须同样打桩，否则真腿会连 CH/写生产 data/（宪法 §9.6 测试隔离）
+    monkeypatch.setattr(ss, "_run_hosted_anomaly_gate", lambda alerter: {"ok": True, "skipped": "stub"})
 
     summary = ss.run_supply_sentinel(alerter=RecordingAlerter())
     assert calls == ["called"], "清洗门控未接到宿主排班腿=接线未成立"
@@ -673,6 +676,8 @@ def test_host_stores_conclusion_but_scheduling_reads_it_not(monkeypatch: pytest.
     monkeypatch.setattr(ss, "_alert_breaches", lambda alerter, summary: None)
     monkeypatch.setattr(ss, "_run_hosted_quality_sweep", lambda alerter: {"ok": True})
     monkeypatch.setattr(ss, "_run_hosted_cleaning_gate", lambda alerter: {"ok": False, "status": "degraded_partial"})
+    # 2026-09-28 st-c9-purify：宿主新增托管第三段（cleaning_anomaly_hosting），本件测试打桩隔离
+    monkeypatch.setattr(ss, "_run_hosted_anomaly_gate", lambda alerter: {"ok": True, "skipped": "stub"})
 
     summary = ss.run_supply_sentinel(alerter=RecordingAlerter())
     assert summary["cleaning_gate"]["status"] == "degraded_partial", "结论至少要在台账面留痕"

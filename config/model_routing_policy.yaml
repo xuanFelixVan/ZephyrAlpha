@@ -143,6 +143,12 @@ task_routes:
     free_window_pref: {enabled: true, window: '本地优先（成本 0）', quota_guard: 'Ollama 忙（llm_local 组互斥）→落免费档'}
     period_constraint: inherit
     evidence_ref: 'OBJ_M DESIGN §5.3+数据不出域+成本 0'
+  purity_adjudication:     # AI-9 F04 判净站残余语义冲突裁决（裁定 #423 解冻开工 2026-09-28；economy 档：免费额度引擎，禁采购托管）
+    preferred: zhipu:glm-4.5-free
+    fallbacks: ["zhipu:qwen-flash", "zhipu:glm-4-flash"]
+    free_window_pref: {enabled: true, window: '00:30-08:30 UTC+8', quota_guard: '调用侧另有预算闸=每日上限常量 fail-closed（purity_adjudicator.DAILY_CALL_CAP）'}
+    period_constraint: inherit
+    evidence_ref: '裁定 #423 形态锁=确定性先行→分歧率统计→LLM 仅裁残余；LSG 正门+薄路由；每裁决留证据链'
 
 # 附表 B：分时段路由（api: allowed=允许 / restricted=限制；restricted 时仅 api_allowed_kinds 可用 API）
 period_rules:

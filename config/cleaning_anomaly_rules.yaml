@@ -1,0 +1,67 @@
+# =============================================================================
+# 清洗异常引擎承载册（R-M1-06 逐引擎接线第二台 / 裁定 #423 F04 判净站前置体）
+# 真源消费者: src/zephyr/data/cleaning_anomaly_hosting.py（zephyr.data.cleaning_anomaly_hosting）
+#   —— 本册是 cleaning_anomaly_engine 五类检出的判据/代价**唯一真源**；代码侧禁写任何
+#      阈值/倍数/窗口/限额（宪法硬规则 6 RULE-SSOT）。判据值改这里即改行为，
+#      红测=tests/zephyr/data/test_cleaning_anomaly_hosting.py::test_changing_yaml_threshold_changes_behavior
+# =============================================================================
+# 出生史与必要性：
+#   cleaning_anomaly_engine.py（404 行五类检出+修复闭环+13 例测试）自晋升批起零生产调用点
+#   （wiring_C_cleaning.md §七"未完=如实报红"：rule_engine 已接（cleaning_rules_hosting
+#    托管第二段），anomaly_engine/alerter/expectation_governance 仍零调用）。
+#   本册补第二台插座，接线点=同一条 L13 data_supply_sentinel 排班腿的**托管第三段**
+#   （同族先例 quality_sweep/cleaning_gate），不新建平行管线、不新开排班槽位（R-021）。
+#
+# R-M1-06 处方缺口落地口径（"按 symbol 取 OHLCV 帧，读侧代价与窗口口径未定，夜里硬接=给
+# 亿行表加未定尺"）：窗口=lookback_days 自然日×rows_per_symbol 行上限；标的=DISTINCT
+# 符号×watchlist_size 上限（确定性机械选取）；代价上界≈watchlist_size×rows_per_symbol 行。
+#
+# 读侧 flag 档（出厂态，"新能力默认不改变既有产出"）：本腿只 SELECT+engine.detect 出报告与
+# 告警；不写库、不剔行、**不调 repair**（修复闭环=改生产数据，属 Owner 门位，见 hosting 头注）。
+# 关停用 data/runtime/cleaning_anomaly.disabled 标记文件（每次触发实查，即时生效）。
+#
+# 键面纪律：wiring/engines/targets 键集由 hosting 模块 dataclass 字段派生校验，
+#   **未知键=配置错上抛**（拼错键=检查静默空转——同族 _reject_unknown_keys 先例）。
+#   加新键必须先让代码读它。
+#
+# 引擎面台账（本批宣告，普查对账锚）：已接=wired 两台（cleaning_rule_engine 2026-09-26
+#   cleaning_rules_hosting；cleaning_anomaly_engine 2026-09-28 cleaning_anomaly_hosting）；
+#   接口位预留=reserved 两台：data_anomaly_alerter（六检测器，宿主同款托管待批）、
+#   expectation_governance（期望套件，判据册 suite YAML 零在盘）——预留≠已接。
+schema_version: 1
+
+wiring:
+  # 总闸：false=本腿跳过（台账 not_run，不参与宿主结论）
+  enabled: true
+  # 宿主排班槽位（登记用途，供普查器对账；实调宿主不符=配置错 fail-closed）
+  host_schedule: data_supply_sentinel
+  # 节奏闸（天）：距上次报告不足 cadence_days 即跳过（按报告日期自愈节流）
+  cadence_days: 1
+  # 单标的帧行数上限（读侧安全阀，禁无界 SELECT）
+  rows_per_symbol: 60
+  # 单批标的数上限（读侧安全阀；近窗 DISTINCT 符号按名序取前 N）
+  watchlist_size: 10
+  # 告警级别（Alerter 口径：info/warn/error/critical）——出厂 warn=只出声不阻断
+  alert_level: warn
+  report_dir: data/cleaning_anomaly_gate
+  disabled_flag: data/runtime/cleaning_anomaly.disabled
+
+engines:
+  # 五类检出判据值（真源=CleaningAnomalyEngine 构造参数语义，src/zephyr/data_eng/
+  # cleaning_anomaly_engine.py；改这里即改检出行为，代码零判据值）
+  price_jump_pct: 0.20     # 单根涨跌幅绝对值超此比例判价格跳变（A股±20%涨停外即异常）
+  price_jump_z: 8.0        # 收益率 z-score 备选阈值（std>0 时生效）
+  volume_spike_mult: 20.0  # 量能超中位数此倍数判量能异常
+  volume_z: 6.0            # 量能 z-score 备选阈值
+
+targets:
+  # 病灶同源表（cleaning_rules.yaml 同款：daily_valuation 曾有 FINAL 259,238 行 close/amount
+  # 全 0 的 D 型错数）。列名真源=schemas/categories/market/market_daily_valuation.py
+  # （trade_date/close/amount/volume/pct_change）——本腿检出前提列=close/volume（帧内统计
+  # 检出可跑 price_jump/volume_spike/missing；adj_break 需 adj_factor 本表无此列=该项未检
+  # 非"检过干净"，coverage 字段如实披露）。
+  - table: c1_market.daily_valuation
+    date_col: trade_date
+    symbol_col: symbol
+    lookback_days: 30
+    frame_cols: [close, volume]

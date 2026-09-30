@@ -4,7 +4,9 @@
 # [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.alerter; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.data.calendar(懒加载)
 # [CONSUMERS] zephyr.data.scheduler (_run_special_schedule: data_supply_sentinel 槽位); CLI 独立运行;
 #   本槽位同时托管 zephyr.data.quality_sentinel 变异巡检（quality_sentinel.run_hosted_sweep，
-#   全流通战役 R-021 辨析：不为哨兵族另开第二个排班槽位）
+#   全流通战役 R-021 辨析：不为哨兵族另开第二个排班槽位）;
+#   并托管清洗双引擎腿：cleaning_rules_hosting（第二段）+ cleaning_anomaly_hosting（第三段，
+#   R-M1-06 逐引擎接线 2026-09-28）
 # [STARTUP] imported
 # [MATURITY] evolving
 # [INVARIANTS] 阈值配置唯一真源=src/zephyr/data/config/data_supply_sentinel.yaml（fail-visible 缺失即报错）;
@@ -579,7 +581,30 @@ def run_supply_sentinel(alerter: Alerter | None = None) -> dict[str, Any]:
     # 清洗门控托管腿（R-M1-06 第二段；承载册=config/cleaning_rules.yaml 宿主=data_supply_sentinel）：
     # 同腿托管不另开空档期（R-021 同纪律）；自身故障只出声不改写断供结论。
     summary["cleaning_gate"] = _run_hosted_cleaning_gate(alerter)
+    # 清洗异常门控托管腿（R-M1-06 逐引擎接线第二台 2026-09-28；承载册=config/cleaning_anomaly_rules.yaml，
+    # detect-only 读侧 flag 档）：同腿托管第三段（R-021 同纪律）；自身故障只出声不改写断供结论。
+    summary["anomaly_gate"] = _run_hosted_anomaly_gate(alerter)
     return summary
+
+
+def _run_hosted_anomaly_gate(alerter: Alerter) -> dict[str, Any]:
+    """在同一条 L13 排班腿里跑清洗异常门控（承载册核 host_schedule=data_supply_sentinel，错配 fail-closed）。"""
+    try:
+        from zephyr.data.cleaning_anomaly_hosting import run_hosted_anomaly_gate
+
+        return run_hosted_anomaly_gate(alerter=alerter, host_schedule="data_supply_sentinel")
+    except Exception as exc:  # noqa: BLE001 — 托管腿故障出声不阻断断供结论
+        log.exception("托管清洗异常门控失败")
+        try:
+            alerter.notify(
+                "data_supply_sentinel",
+                f"清洗异常门控未执行（托管腿故障）: {str(exc)[:200]}",
+                level=LEVEL_WARN,
+                source="supply_sentinel",
+            )
+        except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+            log.exception("清洗异常门控故障告警发送失败")
+        return {"ok": False, "error": str(exc)[:200]}
 
 
 def _run_hosted_cleaning_gate(alerter: Alerter) -> dict[str, Any]:

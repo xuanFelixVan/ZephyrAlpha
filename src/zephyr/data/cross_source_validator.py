@@ -221,6 +221,10 @@ class CrossSourceValidator:
         else:
             report.passed += 1
 
+        # details 逐条留痕（#423 分歧率统计供数：divergence_stats 按 metric×status 精确归并；
+        # 此前本字段恒空，统计只能按计数器差值推算——2026-09-28 st-c9-purify 补全）
+        report.details.append({"symbol": symbol, "metric": "price", "status": status, "deviation": float(deviation)})
+
         self._add_log_entry(
             log_entries,
             symbol,
@@ -254,6 +258,9 @@ class CrossSourceValidator:
             report.warnings += 1
         else:
             report.passed += 1
+
+        # details 逐条留痕（#423 分歧率统计供数，同 _compare_price 注）
+        report.details.append({"symbol": symbol, "metric": "volume", "status": status, "deviation": float(deviation)})
 
         self._add_log_entry(
             log_entries,
