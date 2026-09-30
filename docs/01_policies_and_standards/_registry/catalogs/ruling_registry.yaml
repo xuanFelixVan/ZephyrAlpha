@@ -6352,3 +6352,49 @@ entries:
   related_arch: ['#ARCH-369']
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#453"
+  title: emoreplay 交接确认登记（补-6 采甲：历史"已批"判未批+处方①原文捞回重呈）
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 夜第二夜总攻 F 组令卡 F9⑤（st-nightsweep2-nf2-20260930 执行登记；载体=#ARCH-369）：
+    ①授权链裁定：此前"emoreplay 处方① ✅ 已批"（07_pending_work_master_list.md:76）与"交接确认待裁"
+    两班口径互斥，且裁定册 grep=0 命中（补-6/NB2 b17⑥ 同实证）——按"凡 Owner 已批准说法一律按未批
+    处理"在册纪律，判历史交接**未批**，不留来历不明授权链；
+    ②处方①原文捞回（重呈载体=本条）：「骨架维持在途+注释挂接随情绪线复职批」（推荐①，出处
+    07_pending_work_master_list.md:50）；影响面一页纸=情绪线 L02 B 块全史回放线（DB 面 8,596 行
+    source='replay' 已落 emotion_index、代码面滞 .aidrafts/st-emoreplay-20260923 死会话残骸；D2 双轴
+    重考 NO_MAP 结论已出档 L02 SKEL §状态更新②）；
+    ③交接确认：残骸承接面=情绪线复职批车道（L02-C01/C9：复职批验收=q 批落地后 10 测+悬空引用复查），
+    捞回前不动手禁令维持，动手面归复职批车道不因本条解锁。
+  related_files:
+  - docs/_working/decision_map_campaign/07_pending_work_master_list.md
+  - docs/_working/decision_map_campaign/links/L02_emotion/SKEL.md
+  - docs/_working/total_command_closeout/93_owner_menu.md
+  related_arch: ['#ARCH-369']
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#454"
+  title: 账房单一写手正式裁定（gov_audit 审计账本 events.jsonl 写侧唯一+锁内追加重登记）
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 夜第二夜总攻 F 组令卡 F9⑥（st-nightsweep2-nf2-20260930 执行登记；载体=#ARCH-369）：
+    审计账房（gov_audit events.jsonl 审计链账本，MOD-INF-020）写侧唯一纪律正式化：
+    ①写侧唯一=src/zephyr/gov_audit/writer.py：events.jsonl 追加必须持跨进程文件锁+锁内重读尾哈希
+    （GW-A 2026-09-16 在案：多写方凭实例内存 _last_hash 交错落盘=断链根因，禁复发）；
+    ②锁等待必须有界（2026-09-29 lane-l 治本 cc730f6474：LK_NBLCK+50ms 轮询+总预算
+    GOV_AUDIT_LOCK_WAIT_S 默认 30s，超预算 TimeoutError 让路 fail-closed；非竞争 OSError 立即失败）；
+    ③禁任何会话另起旁路写手直写审计账本族（.runtime audit jsonl 面）——补写/修复必须走 writer
+    唯一通道或登记退役批；
+    ④裁定依据=落地史三件在案（1b830f63c7 链加固/481aaed065 机械出仓/cc730f6474 有界等待 v2）+
+    并发测试 tests/governance/audit/test_writer_multiproc_append.py+test_writer_lock_bounded_wait.py
+    为判据载体；本条=既成事实的正式裁定登记（F 组"账房单一写手正式裁定登记"卡），零行为变更。
+  related_files:
+  - src/zephyr/gov_audit/writer.py
+  - tests/governance/audit/test_writer_lock_bounded_wait.py
+  related_arch: ['#ARCH-369']
+  related_rulings: []
+  superseded_by: null
