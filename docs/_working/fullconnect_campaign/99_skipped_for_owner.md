@@ -17,35 +17,35 @@ session: zc-chief-20260927
 | 5 | heartbeat 计划任务兜底 | M4 C6 | 登记跳过 |
 | 6 | 门禁 diff 化批门位确认+恒绿贵门处置窗 | M4 C3/C5/C9 | 登记跳过 |
 | 7 | dead 系 2397 件归档净删 | M4 §11.4 | 登记跳过 |
-| 8 | M2 候选 A 见证层并案出厂（含候选 C） | M2 §10.1 | 登记跳过（Q 线只做 W17 补填与预检封旁路的代码准备，出厂 flag 归 Owner） |
+| 8 | M2 候选 A 见证层并案出厂（含候选 C） | M2 §10.1 | 登记跳过（Q 线只做 W17 补填与预检封旁路的代码准备，出厂 flag 归 Owner）→[Owner 2026-09-30 夜批]批（翻转发令面随 flag 轮转窗执行） |
 | 9 | requires-sync"宁停勿吃"适用交互正门 | M2 §10.2 | 登记跳过 |
 | 10 | --base-head 契约二选一 | M2 §10.3 | 登记跳过（代码按"补 base_blobs"准备，flag 默认不启用） |
 | 11 | [GW:] 归属去文本化 | M2 §10.4 | 登记跳过 |
 | 12 | gate_registry 174≠180 归位+自洽台双锚 | M2 §10.5 | 登记跳过 |
 | 13 | single-writer 检测器提为 reconciler | M2 §10.6 | 登记跳过 |
-| 14 | commit_queue_interactive 出厂翻转 | M1 O-1 | 登记跳过 |
+| 14 | commit_queue_interactive 出厂翻转 | M1 O-1 | 登记跳过→[Owner 2026-09-30 夜批]E10 归口：维持默认不翻转 |
 | 15 | 预检原则改册净零声明 | M1 O-2 | 登记跳过（随施工批呈） |
 | 16 | 热册三向合并策略变更 | M1 O-3 | 登记跳过 |
 | 17 | M5 三件：四停用定性/三悬空方向/43 红样排期 | M5 §8 | 登记跳过（43 红样采集若日班带宽许可由矿道卷登记） |
 | 18 | 挖矿新发现门位项 | W1 产出 | 待追加 |
-| 19 | etf_benchmark 数据源_stub 重写：`akshare_provider._fetch_etf_benchmark` 现为恒空 yield（rows=[] 永远 0 行=SUCCESS 假绿），且实调 `index_stock_info(symbol="000300")` 与 tasks.yaml 声明 `fund_etf_fund_info_em` 不符；修复须实弹验证 akshare 通道后选定真源接口重写（date_col: publish_date 已修，P3） | P 线 census :106 | 登记跳过（禁实弹） |
-| 20 | realtime_snapshot 换源决策+suspend 双源反爬持续性观察：112 个降级件（08-26~09-21）全数 realtime_snapshot_incremental，错误=`Can not decode value starting with character '<'`（新浪 stock_zh_a_spot 反爬返 HTML；原东财源因 #ARCH-AKSHARE-ANTICRAWLER-001 IP 封锁弃用）——换源三候选（东财冷却复用/腾讯源/qmt_bridge）选定与验证须实弹；suspend 三腿 census 时点 0 行=东财 stop_em+百度双源反爬暂态（09-27 复测 36 行 max=09-23），持续观察归哨兵（P4 修后尺不再被骗） | P 线只读诊断（lane_p_notes.md §P5） | 登记跳过（禁实弹） |
-| 21 | F34 L9 聚合器收尾三步（DDL --apply+首跑+pf_alloc 消费）涉生产 DDL | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过（Owner 门） |
+| 19 | etf_benchmark 数据源_stub 重写：`akshare_provider._fetch_etf_benchmark` 现为恒空 yield（rows=[] 永远 0 行=SUCCESS 假绿），且实调 `index_stock_info(symbol="000300")` 与 tasks.yaml 声明 `fund_etf_fund_info_em` 不符；修复须实弹验证 akshare 通道后选定真源接口重写（date_col: publish_date 已修，P3） | P 线 census :106 | 登记跳过（禁实弹） →[Owner 2026-09-30 夜批]zc9 已落销账（3c01517bb2 index_csindex_all 重写+tasks.yaml 声明修正，833af2d022 同窗） |
+| 20 | realtime_snapshot 换源决策+suspend 双源反爬持续性观察：112 个降级件（08-26~09-21）全数 realtime_snapshot_incremental，错误=`Can not decode value starting with character '<'`（新浪 stock_zh_a_spot 反爬返 HTML；原东财源因 #ARCH-AKSHARE-ANTICRAWLER-001 IP 封锁弃用）——换源三候选（东财冷却复用/腾讯源/qmt_bridge）选定与验证须实弹；suspend 三腿 census 时点 0 行=东财 stop_em+百度双源反爬暂态（09-27 复测 36 行 max=09-23），持续观察归哨兵（P4 修后尺不再被骗） | P 线只读诊断（lane_p_notes.md §P5） | 登记跳过（禁实弹） →[Owner 2026-09-30 夜批]zc9 已落销账（8479b8b7ce 换源腾讯 qt.gtimg 批量直连） |
+| 21 | F34 L9 聚合器收尾三步（DDL --apply+首跑+pf_alloc 消费）涉生产 DDL | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过（Owner 门） →[Owner 2026-09-30 夜批]已落（L9 消费接线 082d4591e79+833af2d0220 在 HEAD；DDL --apply 残腿归 C41 销账复核留痕） |
 | 22 | F88 usercustomize 运行时网启用（本战役只做仓内安全子集=no usercustomize） | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
 | 23 | F76 schtasks 写操作与 N/A 清理（计划任务注册/变更=任务级 Owner） | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
 | 24 | F68 T1 判卷三阻断处置 | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
-| 25 | F51 币圈空壳去留 | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
+| 25 | F51 币圈空壳去留 | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 →[Owner 2026-09-30 夜批]批退役（执行窗遵同日币圈专项挂起令 st-finaldel-crypto-20260930：物理净删待 Owner 通知窗，先归档后删不代执行） |
 | 26 | F111 宪法入口三方冲突 | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
 | 27 | F119 双引擎真源二选一（10-08 继任窗） | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
 | 28 | F120/F121/F122 收编与边界三裁 | 00_workorders §五（09-27 合入，09-28 补登） | 登记跳过 |
-| 29 | F56 TRD-A10 Owner-gate 半腿：沙箱 v16→v17 换版重启／实盘 env=real 兜底启用／30 交易日零静默丢弃验收窗／缺陷②撤单暂缓窗撞 sim cancel_order 在册契约待协调（376105ce64 提交信息声明登记本行而 diff 实误删旧 #21-25，本行补登） | st-c7-f56-20260927 提交信息（09-28 补登） | 登记跳过（仅登记不代裁） |
+| 29 | F56 TRD-A10 Owner-gate 半腿：沙箱 v16→v17 换版重启／实盘 env=real 兜底启用／30 交易日零静默丢弃验收窗／缺陷②撤单暂缓窗撞 sim cancel_order 在册契约待协调（376105ce64 提交信息声明登记本行而 diff 实误删旧 #21-25，本行补登） | st-c7-f56-20260927 提交信息（09-28 补登） | 登记跳过（仅登记不代裁） →[Owner 2026-09-30 夜批]A2 归口：沙箱窗 v16→v17 换版批；实盘 env=real 兜底启用等人工通知 |
 | 30 | 1A.5 0 字节死库 data/zalpha_metadata.db 真删（净删=Owner 门；trae_034:40/212/560 点名空壳；6d0be14e4c 已落死指针尺与 fail-closed 预检） | 1A.5 车道（09-28） | 登记待裁 |
 | 31 | 1A.5 ADR-KB DIM-3 决策（HEAD 暂无留档面，待 1A.5 案卷落地挂锚） | 总筹分道令（09-28） | 登记待裁 |
 | 32 | 1A.5 FMS 棘轮盲区处置 | 总筹分道令（09-28） | 登记待裁 |
 | 33 | 1A.5 construction_workflow_policy.md:388 让位（该行现指 data/zalpha_metadata.db 死库，trae_034 落地时须让位改指活库） | 1A.5 车道（09-28） | 登记待裁 |
-| 34 | 裁-13 decision_timestamp 增列（15→16 字段）：E8E9 袋 a349ddc1fe 已随袋留痕，正式注册待正册通道空闲（ruling_registry 今夜 chiefzc-docsB3 在落 #415-417，避让不碰正册） | lane-gov3（09-28） | 登记待正式注册 |
-| 35 | trae_034_task_card_standard.yaml 三处死指针（改指 data/databases/governance.db）：PROTECTED-PATHS 拦截待裁定通道；关联代码件已落 6d0be14e4c（死指针尺 2 例待 trae_034 落地转绿） | lane-dbr defer-2（09-28） | 登记待裁定通道；终局注记（2026-09-29）：指针已改 governance.db（1cf01067f5+7f9de37b2a），真删仍待 Owner |
-| 36 | F56 内核 defer 三选一处方：B7 78982c4c81 已取代袋版适配器（自含 phantom_grace_s/cancel_hold_s+18 测超集），kernel bridge_instruction_kernel.py 仓内零消费者=ORPHAN-MODULE 硬拦无逃生；a/B7 判定核心改委托 kernel／b/Owner 裁 ORPHAN 例外面／c/沙箱写侧进仓携带真实消费边（处方全文=.runtime/tmp/st-zchief8-20260928/defers/lane-dbr.md defer-1） | lane-dbr defer-1（09-28） | 登记缓议（归 Owner/TRD-A10 归属线）；终局注记（2026-09-29）：选 c 墓碑已落地（edf0788dfb 墓碑收编+dd3b17f9fd 断腿重建），Owner 无需再裁 |
+| 34 | 裁-13 decision_timestamp 增列（15→16 字段）：E8E9 袋 a349ddc1fe 已随袋留痕，正式注册待正册通道空闲（ruling_registry 今夜 chiefzc-docsB3 在落 #415-417，避让不碰正册） | lane-gov3（09-28） | 登记待正式注册 →[Owner 2026-09-30 夜批]D2 已落销账（nightclean 3f75191285 FLD-EXEC-011 decision_timestamp 已入 field_dictionary 正式注册） |
+| 35 | trae_034_task_card_standard.yaml 三处死指针（改指 data/databases/governance.db）：PROTECTED-PATHS 拦截待裁定通道；关联代码件已落 6d0be14e4c（死指针尺 2 例待 trae_034 落地转绿） | lane-dbr defer-2（09-28） | 登记待裁定通道；终局注记（2026-09-29）：指针已改 governance.db（1cf01067f5+7f9de37b2a），真删仍待 Owner →[Owner 2026-09-30 夜批]销账（指针改指 governance.db 1cf01067f5+7f9de37b2a 终局注记成立，真删残面归退役批） |
+| 36 | F56 内核 defer 三选一处方：B7 78982c4c81 已取代袋版适配器（自含 phantom_grace_s/cancel_hold_s+18 测超集），kernel bridge_instruction_kernel.py 仓内零消费者=ORPHAN-MODULE 硬拦无逃生；a/B7 判定核心改委托 kernel／b/Owner 裁 ORPHAN 例外面／c/沙箱写侧进仓携带真实消费边（处方全文=.runtime/tmp/st-zchief8-20260928/defers/lane-dbr.md defer-1） | lane-dbr defer-1（09-28） | 登记缓议（归 Owner/TRD-A10 归属线）；终局注记（2026-09-29）：选 c 墓碑已落地（edf0788dfb 墓碑收编+dd3b17f9fd 断腿重建），Owner 无需再裁 →[Owner 2026-09-30 夜批]B13 已销（选 c 墓碑 edf0788dfb+dd3b17f9fd 终局注记成立，Owner 无需再裁） |
 | 37 | F85 `src/zephyr/trading/windows_service.py` 退役候选（净删=Owner 门位，本道未动一字）：复核确证零运行时消费者——HEAD 内仅 4 处非消费提及（trading/__init__.py:45 与 speed_baseline_checker.py:43 为字符串清单字面量、process_supervisor.py:22/runtime_config.py:5 为注释头）；本机 SCM 服务未装（sc query ZephyrAlpha→1060），开机链实归 ZephyrAlpha_* 计划任务群+桌面壳自启动（.lnk 在盘）；其 install_service() 若接线=再装一个包装 AutoRuntimeCore 的竞争启动脑，触实盘四禁与生产流转，禁本道擅动。判据依据：宪法 §4.2 零触发零消费→退役；如 Owner 判留，应补运维手册引用面并定性"手动 boot 入口"（F112 同族豁免） | st-c7-wire-20260927 接线复核；原#21（376105ce64 误删，09-28 回复） | 登记退役候选（待裁） |
 | 38 | F85 `scripts/register_desktop_shell_startup.ps1` 定性=已接线（入口即角色，F112/F118 同族豁免，勿再入死件账）：产品态实测在盘——用户 Startup 目录 "ZephyrAlpha Dashboard.lnk" 存在（09-27 ls 验证），用户登录自动触发，拉起 Electron 壳→api_server 8890+serve_docs 8765；本道不改不动 | st-c7-wire-20260927 接线复核；原#22（376105ce64 误删，09-28 回复） | 更正定性（无需动作） |
 | 39 | F89 拆分定性：(a) 三张卡 embedding_router/local_model_scheduler/ollama_chat.yaml=已接线（尺假阳性）：真实消费者 src/zephyr/trading/auto_runtime_core.py:135 `CapabilityRegistry(config.capability_card_dir)`，供数=runtime_config.py:126/142 实时读 capability_card_dir，触发=AutoRuntimeCore 启动序 lifecycle_manager.py:116 步骤 04_registry_load→capability_registry.load_from_dir() 全目录 yaml 装载；dir4 尺漏判因路径为动态参数非字面量。(b) `scripts/governance/meta/mutation_test_reconciliation_registry.py`=半接线且当前坏：SSoT 路径漂移（:84 指向 src/zephyr/governance/reconciliation_registry.py，真源在 governance/audit/ 子目录，从零跑实测 `[FATAL] SSoT 真源不存在` 退出）；分发面仅 scripts/governance/run_all.py manifest（D1/Quick 在册），但 run_all 无自动触发者——.github/workflows/governance.yml:327 调 `run_all.py --ci` 而 run_all argparse 无 --ci 旗（CI 面为名义存在）；模块头自带契约"GATE-MUT 达标后事件驱动"而 GATE-MUT 册查无。请裁：①一行修 :84 路径（修复配方本道已备未动码）；②GATE-MUT 事件面立项或整族（含 mutation_test_post_sync_validator）退役——净删=Owner | st-c7-wire-20260927 接线复核；原#23（376105ce64 误删，09-28 回复） | 登记待裁（(b) 项） |
