@@ -57989,4 +57989,69 @@ creation_tokens:
   created_by: st-nightclean-20260929
   capability: night_fullflow_mine_book
   merge_evaluation: "全流通夜战挖矿主线目录（内收引用 fullflow_mining 骨架真源不另立）"
+- file: src/zephyr/data_security/wiring/__init__.py
+  token: f128-wiring-init-20261001
+  created_by: st-menu-w3h-20260930
+  capability: f128_data_security_wiring
+  merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: src/zephyr/data_security/wiring/audit_sink.py
+  token: f128-wiring-audit-sink-20261001
+  created_by: st-menu-w3h-20260930
+  capability: f128_data_security_wiring
+  merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: src/zephyr/data_security/wiring/lsg_masking_front.py
+  token: f128-wiring-lsg-front-20261001
+  created_by: st-menu-w3h-20260930
+  capability: f128_data_security_wiring
+  merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: src/zephyr/data_security/wiring/data_exit_guard.py
+  token: f128-wiring-data-exit-guard-20261001
+  created_by: st-menu-w3h-20260930
+  capability: f128_data_security_wiring
+  merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: config/data_masking_policy.yaml
+  token: f128-data-masking-policy-20261001
+  created_by: st-menu-w3h-20260930
+  capability: f128_data_security_wiring
+  merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: docs/_working/night_sweep/99_owner_gate_menu.md
+  token: night-sweep-owner-gate-menu-99-owner-gate-menu-20261001
+  created_by: st-menu-w3h-20260930
+  capability: night_sweep_owner_gate_menu
+  merge_evaluation: "SW17 assembly revival part + already-approved execution section; sole approval-archive carrier; w5_1 no-merge (task_bound)"
+- file: scripts/_archive/grep_coverage.ps1
+  token: grep-coverage-grep-coverage-20260930
+  created_by: st-commitfix-20261001
+  capability: grep_coverage
+  merge_evaluation: "非新建：scripts/grep_coverage.ps1 平铺容量治理 git mv 原样迁移（零内容改动），死引用基线在案的退役件，净零"
+- file: src/zephyr/shared/security/__init__.py
+  token: identifier-masking---init---20260930
+  created_by: st-matrix-final-20260930
+  capability: identifier_masking
+  merge_evaluation: "跨域不同对象不并：标识符脱敏纯函数=券商账号日志口径件，非 secrets.py 存量密钥管理面第二实现（其存量向上依赖债独立存在）"
+- file: src/zephyr/shared/security/capability.py
+  token: identifier-masking-capability-20260930
+  created_by: st-matrix-final-20260930
+  capability: identifier_masking
+  merge_evaluation: "跨域不同对象不并：标识符脱敏纯函数=券商账号日志口径件，非 secrets.py 存量密钥管理面第二实现（其存量向上依赖债独立存在）"
+- file: src/zephyr/shared/security/identifier_masking.py
+  token: identifier-masking-identifier-masking-20260930
+  created_by: st-matrix-final-20260930
+  capability: identifier_masking
+  merge_evaluation: "跨域不同对象不并：标识符脱敏纯函数=券商账号日志口径件，非 secrets.py 存量密钥管理面第二实现（其存量向上依赖债独立存在）"
+- file: src/zephyr/shared/security/sandbox_executor.py
+  token: identifier-masking-sandbox-executor-20260930
+  created_by: st-matrix-final-20260930
+  capability: identifier_masking
+  merge_evaluation: "跨域不同对象不并：标识符脱敏纯函数=券商账号日志口径件，非 secrets.py 存量密钥管理面第二实现（其存量向上依赖债独立存在）"
+- file: src/zephyr/shared/security/secrets.py
+  token: identifier-masking-secrets-20260930
+  created_by: st-matrix-final-20260930
+  capability: identifier_masking
+  merge_evaluation: "跨域不同对象不并：标识符脱敏纯函数=券商账号日志口径件，非 secrets.py 存量密钥管理面第二实现（其存量向上依赖债独立存在）"
+- file: src/zephyr/shared/security/ssot_guard.py
+  token: identifier-masking-ssot-guard-20260930
+  created_by: st-matrix-final-20260930
+  capability: identifier_masking
+  merge_evaluation: "跨域不同对象不并：标识符脱敏纯函数=券商账号日志口径件，非 secrets.py 存量密钥管理面第二实现（其存量向上依赖债独立存在）"
 di_seam_exemptions: []
