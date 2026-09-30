@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——environment_switch（_domain_signal 域，真源 src/zephyr/signal_ashare/core/environment_switch.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.core.environment_switch
+source_of_truth: src/zephyr/signal_ashare/core/environment_switch.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: state 参数
+    #   fields: 参数 state，类型注解 str（六段封闭集 capitulation/accumulation/ignition/expansion/euphoria/distribution）
+    #   code: evaluate_environment_switches 形参（AST 提取）
+    # - id: I2
+    #   name: turnover_amount_yi 参数
+    #   fields: 参数 turnover_amount_yi，类型注解 float（两市成交额，亿元）
+    #   code: evaluate_environment_switches 形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 输入契约校验
+    #   name_en: input_contract_check
+    #   intro: state 不在六段封闭集或成交额非有限/负值 → EnvironmentSwitchInputError（fail-closed）。
+    #   inputs: state turnover_amount_yi
+    #   outputs: 无（异常路径）
+    # - id: A2
+    #   name_zh: ② 六段×四开关封闭查表
+    #   name_en: switch_table_lookup
+    #   intro: 查 _SWITCH_TABLE 得首板/短线/波段/收紧四开关基态，再叠加地量与极段规则。
+    #   inputs: state turnover_amount_yi
+    #   outputs: EnvironmentSwitches
+    # 层: 输出
+    # - id: O1
+    #   name_zh: EnvironmentSwitches 冻结结果
+    #   name_en: EnvironmentSwitches
+    #   intro: frozen 纯函数输出（四开关+notes 解释面）；两市成交<8000 亿=首板筛选器停（节点真源，实证=地量首板次日溢价为负）；冰点=短线链全停只留波段链；疯狂=反向收紧 tighten=True。
+    #   downstream: scripts.backtest.auto_mount.explain_panel（SIX_STATES 词表消费）；TDM-E-L3-06 盘前决策面
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

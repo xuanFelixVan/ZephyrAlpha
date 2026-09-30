@@ -1657,7 +1657,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-06
-  note_confirmed: 2026-09-11
+  note_confirmed: 2026-09-30  # auto_mount 单件批复：Consumer 宣告接线确认（Owner 2026-09-30 裁定#431 通道）
   name_zh: 环境开关
   market: cn_a
   flow: entry_flow

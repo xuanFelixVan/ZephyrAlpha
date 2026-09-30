@@ -32396,7 +32396,7 @@ creation_tokens:
   token: auction-backfill-qmt-watchdog-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/quick_profile.py
+- file: scripts/_archive/ops/quick_profile.py
   token: auction-backfill-quick-profile-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -57776,4 +57776,9 @@ creation_tokens:
   created_by: st-nightsweep2-nc-20260930
   capability: cost_accounting_ruler
   merge_evaluation: "C345 对账尺=唯一成本口径断言面（token 重建重投，首登遭崩溃回滚）"
+- file: docs/03_modules/_domain_signal/algo_flow/core/environment_switch.yaml
+  token: environment_switch_algo_flow-environment-switch-20260930
+  created_by: st-finaldel-c83-20260930
+  capability: environment_switch_algo_flow
+  merge_evaluation: "ALGO_FLOW 外部视图真源（GATE-ALGO-FLOW 处方出仓件，由 environment_switch.py docstring 内联块派生，唯一真源无重复面）"
 di_seam_exemptions: []

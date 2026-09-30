@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -117,3 +118,20 @@ class TestPurity:
             "tighten_risk",
             "notes",
         }
+
+
+class TestConsumerPins:
+    """[CONSUMERS] 宣告守卫钉（C83 收编，Owner 裁定#431 通道）：宣告↔消费双向锚定防漂移。"""
+
+    REPO_ROOT = Path(__file__).resolve().parents[2]
+
+    def test_consumers_header_declares_auto_mount(self) -> None:
+        """本件 [CONSUMERS] 头必须宣告 scripts.backtest.auto_mount（宣告侧钉）。"""
+        src = (self.REPO_ROOT / "src/zephyr/signal_ashare/core/environment_switch.py").read_text(encoding="utf-8")
+        consumers_line = next(line for line in src.splitlines() if line.startswith("# [CONSUMERS]"))
+        assert "scripts.backtest.auto_mount" in consumers_line
+
+    def test_auto_mount_imports_six_states_from_here(self) -> None:
+        """auto_mount 必须从本件导入 SIX_STATES 词表（消费侧钉，禁另立词表）。"""
+        src = (self.REPO_ROOT / "scripts/backtest/auto_mount.py").read_text(encoding="utf-8")
+        assert "from zephyr.signal_ashare.core.environment_switch import SIX_STATES" in src

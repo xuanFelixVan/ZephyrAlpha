@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.core.environment_switch
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] 无（纯函数查表核，零 IO；情绪六段状态与两市成交额由调用方注入）
-# [CONSUMERS] TDM-E-L3-06（环境开关）；L3-07 策略专属链（链启停消费，待接线）；L3-07-1 打板链（首板筛选器启停，待接线）；C13 intraday_tomorrow_forecast（情绪档输入协同，待接线）
+# [CONSUMERS] TDM-E-L3-06（环境开关）；L3-07 策略专属链（链启停消费，待接线）；L3-07-1 打板链（首板筛选器启停，待接线）；C13 intraday_tomorrow_forecast（情绪档输入协同，待接线）；scripts.backtest.auto_mount（explain_panel 六段词表 SIX_STATES 消费，已接线）
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] 查表静态可审计（六段状态×开关动作封闭表，蓝图 §2）; 两市成交额<8000 亿=首板筛选器停（节点真源，实证=地量首板次日溢价为负）; 冰点(capitulation)=短线链全停只留波段链; 疯狂(euphoria)=反向收紧 tighten=True; 未知状态/负值/NaN 成交额→EnvironmentSwitchInputError（fail-closed）; 同输入必同输出（frozen+纯函数）; 阈值与开关表=proposed 待实盘标定
@@ -26,6 +26,8 @@ euphoria/distribution）；与 sentiment_cycle.SentimentPhase 五阶段的归并
 晨审定性（st-tdm-review-20260911 §7.1）：STRATEGY_DEPLOYMENT_MATRIX（3 策略×5 阶段）
 仅部分承载，"成交<8000 亿首板链停"类环境开关查无专件→立 C 类候选；Owner 2026-09-11
 夜班令"除币圈外开工"立项本件。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/core/environment_switch.yaml
 """
 
 from __future__ import annotations
@@ -107,9 +109,7 @@ def evaluate_environment_switches(state: str, turnover_amount_yi: float) -> Envi
         EnvironmentSwitchInputError: 状态未知或成交额非法（fail-closed）。
     """
     if not isinstance(state, str) or state not in _SWITCH_TABLE:
-        raise EnvironmentSwitchInputError(
-            f"未知情绪状态: {state!r}（六段封闭集={list(SIX_STATES)}）"
-        )
+        raise EnvironmentSwitchInputError(f"未知情绪状态: {state!r}（六段封闭集={list(SIX_STATES)}）")
     turnover = float(turnover_amount_yi)
     if not math.isfinite(turnover) or turnover < 0.0:
         raise EnvironmentSwitchInputError(f"两市成交额非法: {turnover_amount_yi!r}")
