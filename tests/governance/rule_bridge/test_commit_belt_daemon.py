@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
 
 import pytest
@@ -486,3 +487,142 @@ class TestStalePendingScan:
         _os.utime(p, (old, old))
         alerted: set[str] = set()
         assert cbd._scan_stale_pending(tmp_path, alerted) == 1
+
+
+# ---------------------------------------------------------------------------
+# belt daemon drain 链存活闸+瞬态截收（裁定#459 延伸，st-circ-a1-20260930）：
+# 生产主通道 bootstrap_drain_with_landing→drain_queue_pool→_pool_process_item 的
+# 认领即判活（死会话袋直落 dead/，绝不烧工线程 worktree+门禁段）与泛化异常的
+# 瞬态截收（WinError233 管道类 OSError 旧径直落假死信，现按 env 语义退 pending）。
+# 直接驱动 _pool_process_item（闸点在 landing 使用之前，哑 landing 即证零工段消耗）。
+# ---------------------------------------------------------------------------
+class TestPoolDrainSurvivalGate:
+    @staticmethod
+    def _write_heartbeat(runtime_root: Path, session: str, status: str) -> None:
+        hb_dir = runtime_root / "sessions" / session
+        hb_dir.mkdir(parents=True, exist_ok=True)
+        with open(hb_dir / "heartbeat.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"ts": "2026-09-30T00:00:00+00:00", "pid": 1, "status": status}) + "\n")
+
+    @staticmethod
+    def _to_processing(queue_root: Path, item: dict) -> Path:
+        (queue_root / "processing").mkdir(parents=True, exist_ok=True)
+        src = queue_root / "pending" / f"{item['qid']}.json"
+        dst = queue_root / "processing" / f"{item['qid']}.json"
+        src.replace(dst)
+        return dst
+
+    @staticmethod
+    def _pool_stats() -> tuple[dict, dict, threading.Lock]:
+        return (
+            {"done": 0, "dead": 0, "processed_qids": [], "stale_cleared": 0, "cascade_marked": 0, "landed_index": []},
+            {"processed": 0, "env_aborted": False, "budget_left": None},
+            threading.Lock(),
+        )
+
+    def test_pool_item_of_dead_session_deadletters_as_ghost_never_touches_landing(self, tmp_path) -> None:
+        """belt drain 拾取闸：死会话袋认领即判活直落 dead/，landing（工段）零消耗。"""
+        import os
+
+        import scripts.commit_queue as cq
+        import scripts.governance.commit_queue_landing as cql
+
+        queue_root = tmp_path / "commit_queue"
+        item = cq.enqueue_item(
+            "ghost-sess",
+            "belt ghost bag",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        processing_path = self._to_processing(queue_root, item)
+        self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+
+        class _Sentinel:
+            repo_root = tmp_path  # phase 账本 anchor 兜底（fail-open 写 tmp）
+
+            def __call__(self, item: dict, root: Path):
+                raise AssertionError("幽灵闸必须在此之前出局——死会话袋不得烧工段")
+
+        stats, shared, lock = self._pool_stats()
+        cql._pool_process_item(_Sentinel(), queue_root, processing_path, stats, lock, shared)
+        assert stats["dead"] == 1
+        assert shared["processed"] == 1
+        payload = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert payload["meta"]["ghost"] is True
+        assert payload["dead_reason"].startswith("ghost_session:")
+        assert cq.classify_dead_reason(payload["dead_reason"]) == "env", "可 requeue（处方向 env）"
+        assert payload.get("prescription"), "pool 死信出口处方在场"
+
+    def test_pool_transient_escape_requeues_not_dead(self, tmp_path) -> None:
+        """pool 泛化异常截收：WinError233 管道类 OSError 按 env 语义退 pending，绝不死信。"""
+        import os
+
+        import scripts.commit_queue as cq
+        import scripts.governance.commit_queue_landing as cql
+
+        queue_root = tmp_path / "commit_queue"
+        item = cq.enqueue_item(
+            "live-sess",
+            "pipe broken bag",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        processing_path = self._to_processing(queue_root, item)
+
+        class _BrokenLanding:
+            repo_root = tmp_path
+
+            @staticmethod
+            def _item_paths(item: dict) -> list[str]:
+                return []
+
+            def __call__(self, item: dict, root: Path):
+                raise OSError(233, "管道的另一端上无任何进程。")
+
+        stats, shared, lock = self._pool_stats()
+        cql._pool_process_item(_BrokenLanding(), queue_root, processing_path, stats, lock, shared)
+        assert stats["dead"] == 0, "管道瞬断绝不死信"
+        assert shared["env_aborted"] is True, "共享终止旗置位（本波收工，同 drain 语义）"
+        assert (queue_root / "pending" / f"{item['qid']}.json").is_file(), "项退回 pending 等下次自举"
+        payload = json.loads((queue_root / "pending" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert int((payload.get("meta") or {}).get("env_retry") or 0) == 1, "env_retry 计数闸进账（≤3 防活锁）"
+
+    def test_pool_item_of_alive_session_still_processed(self, tmp_path) -> None:
+        """对照：活会话袋不被闸误伤（heartbeat alive → 闸 fail-open 放行进 landing）。"""
+        import os
+
+        import scripts.commit_queue as cq
+        import scripts.governance.commit_queue_landing as cql
+
+        queue_root = tmp_path / "commit_queue"
+        item = cq.enqueue_item(
+            "live-sess",
+            "alive bag",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        self._to_processing(queue_root, item)
+        self._write_heartbeat(queue_root.parent, "live-sess", "alive")
+
+        class _LiveLanding:
+            repo_root = tmp_path
+            touched = False
+
+            @staticmethod
+            def _item_paths(item: dict) -> list[str]:
+                return []
+
+            def __call__(self, item: dict, root: Path):
+                self.touched = True
+                from scripts.commit_queue import LandingResult
+
+                return LandingResult(ok=True, landed_id="stub0" * 6)
+
+        stats, shared, lock = self._pool_stats()
+        live = _LiveLanding()
+        cql._pool_process_item(live, queue_root, queue_root / "processing" / f"{item['qid']}.json", stats, lock, shared)
+        assert live.touched is True, "活会话袋必须照常进 landing"
+        assert stats["dead"] == 0

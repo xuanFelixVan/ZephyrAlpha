@@ -297,6 +297,15 @@ _DEAD_REASON_ENV_MARKERS = (
     # 幽灵袋归 env（裁定#459，st-ghost-sweep-20260930）：物品无辜，属主会话死了而已
     # ——接管会话 requeue 即愈（env 类=可 requeue 语义，与处方向一致）。
     "ghost_session",
+    # 管道瞬断/墙钟超时/检查器无法执行归 env（st-circ-a1-20260930，存量死信 84 封
+    # 实证假失败：WinError233 管道对端瞬断 77 + LANDING-TIMEOUT 6 + TTL-METADATA
+    # execution failed 1）：落地侧现已转环境通道（特征串真源=
+    # commit_queue_landing._TRANSIENT_GIT_MARKERS/_TRANSIENT_GATE_ENV_MARKERS），
+    # 此表兜历史死信 requeue 判读——存量 84 封全部可安全 requeue/归档。
+    "timeout after",
+    "WinError 233",
+    "no process on the other end",
+    "execution failed",
 )
 _DEAD_REASON_ITEM_MARKERS = (
     "PROTECTED-PATHS",
@@ -1850,15 +1859,19 @@ def _attempts_exhausted_reason(item: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 幽灵会话存活闸（裁定#459，st-ghost-sweep-20260930）：死会话袋「自动重投」止血。
-# 病根：属主会话已死（heartbeat=exited / 注册表注销），其袋仍走自动重投点
-# （_recover_orphans 每波孤儿回收、drain 环境失败退回 pending）无限复读——无人
-# 认领、无人 requeue，纯耗 Serializer 波次。闸语义：两个自动重投点前置存活判定，
-# 死袋不重投、meta.ghost=true 封入 dead/（死信封印唯一出口同源）；**CLI 手动
-# requeue 不受此闸**（人工强制=恢复通道，dead-archive 的 revival 面亦不受影响）。
-# 判定真源：sessions/<sid>/heartbeat.jsonl 末行 status + session_registry.json 在册；
-# 判定不了（无任何信号/IO 异常/空 sid）一律 False=放行——fail-open 宁漏不误，
-# 绝不因判定基础设施缺席冤杀活会话袋子。
+# 幽灵会话存活闸（裁定#459，st-ghost-sweep-20260930；拾取/自举/belt 链延伸
+# st-circ-a1-20260930）：死会话袋「自动重投」止血。病根：属主会话已死
+# （heartbeat=exited / 注册表注销），其袋仍走自动重投点无限复读——无人认领、
+# 无人 requeue，纯耗 Serializer 波次。闸语义：全部自动重投/拾取出口前置存活判定
+# （孤儿回收、drain 环境失败退回、pending 拾取=drain 与 pool 双路、enqueue/CLI
+# 自举与 belt daemon 经 drain/pool 同闸覆盖），死袋不重投、meta.ghost=true 封入
+# dead/（死信封印唯一出口同源）；**CLI 手动 requeue 不受此闸**（人工强制=恢复
+# 通道，dead-archive 的 revival 面亦不受影响）。
+# 判定真源：sessions/<sid>/heartbeat.jsonl 末行 status + session_registry.json 在册
+# （=session_worktree 活性语义的 heartbeat/registry 双真源口径，90s 新鲜度 reap 由
+# SessionRegistry.list_active 承担，此处以 exited 终态与在册性为准）；判定不了
+# （无任何信号/IO 异常/空 sid）一律 False=放行——fail-open 宁漏不误，绝不因判定
+# 基础设施缺席冤杀活会话袋子。
 # ---------------------------------------------------------------------------
 
 
@@ -1915,6 +1928,57 @@ def _mark_ghost_dead_fields(item: dict, session_id: str) -> None:
         meta = {}
         item["meta"] = meta
     meta["ghost"] = True
+
+
+def _transient_env_failure_of(exc: BaseException) -> bool:
+    """瞬态环境失败判据（真源=commit_queue_landing._is_transient_env_failure；惰性
+    import 防循环 import）。设施不可用 fail-open 按非瞬态——保持既有死信路径，
+    绝不因判据缺席放大失败面。"""
+    try:
+        from scripts.governance.commit_queue_landing import _is_transient_env_failure  # noqa: PLC0415
+
+        return bool(_is_transient_env_failure(exc))
+    except Exception:  # noqa: BLE001 — 判据设施缺席按非瞬态（宁走老路不放大）
+        return False
+
+
+def _drain_env_requeue(
+    root: Path,
+    processing_path: Path,
+    head: Path,
+    item: dict,
+    qid: str,
+    exc: BaseException,
+    stats: dict,
+) -> bool:
+    """drain 环境失败统一出口（st-circ-a1-20260930 自 LandingEnvironmentError 分支提取）：
+    B5 attempts 退避计数 + 幽灵会话存活闸（裁定#459）+ 退回 pending。两个消费口：
+    landing 专类逃逸（原分支）与泛化异常的瞬态截收（_transient_env_failure_of 命中）
+    ——同闸同语义零分叉。返回 True=项已被幽灵闸封印 dead/（调用方补 processed 计数）；
+    两分支调用后调用方均 break 终止本轮（环境失败对其余项同样致命，语义不变）。
+    """
+    if _attempts_backoff_enabled():
+        _bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
+    if _session_ghost_dead(str(item.get("session_id") or ""), runtime_root=root.parent):
+        # 幽灵会话存活闸（裁定#459）：属主已死的袋环境失败也不退回 pending——退回=
+        # 下次自举复读，无人认领。ghost=true 死信封印直落 dead/（与 attempts 耗尽
+        # 出口同链），本轮仍终止（环境失败对其余项同样致命，语义不变）。
+        _mark_ghost_dead_fields(item, str(item.get("session_id") or ""))
+        stats["successors_rebuilt"] += len(_seal_dead_letter(root, item))
+        _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+        os.replace(processing_path, root / "dead" / head.name)
+        _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
+        stats["dead"] += 1
+        logger.warning("[drain] qid=%s 属主会话已死（幽灵），存活闸拒绝重投，直落 dead/", qid)
+        _notify_task_board_dead_letter(item)
+        stats["processed_qids"].append(qid)
+        return True
+    try:
+        _retry_transient(lambda: os.rename(processing_path, head))
+    except OSError:
+        logger.error("[drain] qid=%s 环境失败退回 pending 失败，留 processing 等孤儿回收", qid)
+    logger.error("[drain] landing 环境失败，终止本轮排空（当前项退回 pending，不死信）: %s", exc)
+    return False
 
 
 def _item_lane(item: dict | None) -> str:
@@ -2121,6 +2185,24 @@ def drain_queue(
                 break
             qid = item.get("qid", head.stem)
             _item_t0 = time.monotonic()  # D7 单项墙钟挂账（环节2 E4）
+            # 幽灵会话存活闸·拾取点（裁定#459 延伸，st-circ-a1-20260930）：pending→
+            # processing 认领即判活——属主已死的袋不再白耗一次 landing（旧循环：死袋
+            # 被拾取→落地失败→死信/退回→无人认领下轮复读）。ghost_session 直落
+            # dead/（归 env 类，接管会话可 requeue）；判定不了 fail-open 放行。
+            if _session_ghost_dead(str(item.get("session_id") or ""), runtime_root=root.parent):
+                _mark_ghost_dead_fields(item, str(item.get("session_id") or ""))
+                # 死信封印唯一出口（归属五件套+复发熔断+后继重建），与 attempts 耗尽
+                # 出口同链——拾取点死信不脱节 M3.3 口径。
+                stats["successors_rebuilt"] += len(_seal_dead_letter(root, item))
+                _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+                os.replace(processing_path, root / "dead" / head.name)
+                _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
+                stats["dead"] += 1
+                logger.warning("[drain] qid=%s 属主会话已死（幽灵），拾取存活闸拒绝落地，直落 dead/", qid)
+                _notify_task_board_dead_letter(item)
+                stats["processed_qids"].append(qid)
+                processed += 1
+                continue
             # B5 attempts 耗尽（st-commitspeed-tbl-20260924 止血）：attempts≥死信阈值的
             # 毒药件拾取即死信，不再白耗一次 landing——队首让位，后续件同轮照常落地。
             # dead_reason 注明 attempts 耗尽并附末次失败原因（classify_dead_reason 随
@@ -2173,34 +2255,18 @@ def drain_queue(
                     # pending、终止整轮、绝不死信（真实物品不被环境事故拖进坟墓）。
                     # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化——
                     # 毒药件不再无限保留队首资格（≥3 惩罚退避、≥5 拾取死信）。
-                    if _attempts_backoff_enabled():
-                        _bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
-                    if _session_ghost_dead(str(item.get("session_id") or ""), runtime_root=root.parent):
-                        # 幽灵会话存活闸（裁定#459）：属主已死的袋环境失败也不退回
-                        # pending——退回=下次自举复读，无人认领。ghost=true 死信封印
-                        # 直落 dead/（与 attempts 耗尽出口同链），本轮仍终止（环境失败
-                        # 对其余项同样致命，语义不变）。
-                        _mark_ghost_dead_fields(item, str(item.get("session_id") or ""))
-                        stats["successors_rebuilt"] += len(_seal_dead_letter(root, item))
-                        _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
-                        os.replace(processing_path, root / "dead" / head.name)
-                        _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
-                        stats["dead"] += 1
-                        logger.warning("[drain] qid=%s 属主会话已死（幽灵），存活闸拒绝重投，直落 dead/", qid)
-                        _notify_task_board_dead_letter(item)
-                        stats["processed_qids"].append(qid)
+                    if _drain_env_requeue(root, processing_path, head, item, qid, exc, stats):
                         processed += 1
-                        break
-                    try:
-                        _retry_transient(lambda: os.rename(processing_path, head))
-                    except OSError:
-                        logger.error("[drain] qid=%s 环境失败退回 pending 失败，留 processing 等孤儿回收", qid)
-                    logger.error(
-                        "[drain] landing 环境失败，终止本轮排空（当前项退回 pending，不死信）: %s",
-                        exc,
-                    )
                     break
-                except Exception as exc:  # noqa: BLE001 — 单项失败 → 死信不卡队（66 号 §4 裁定 4）
+                except Exception as exc:  # noqa: BLE001 — 单项失败 → 死信不卡队；瞬态环境类截收改道
+                    # 瞬态环境失败逃逸截收（st-circ-a1-20260930）：WinError233 管道瞬断/
+                    # 墙钟超时等不经 landing 内部判据点直达此处——旧径直落 "landing 异常"
+                    # 死信（77 封 WinError233 假失败实证）。按 env 分支同语义处理：
+                    # 幽灵闸→直落 dead；否则退回 pending+B5 计数终止本轮，绝不死信。
+                    if _transient_env_failure_of(exc):
+                        if _drain_env_requeue(root, processing_path, head, item, qid, exc, stats):
+                            processed += 1
+                        break
                     result = LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
             if result.ok:
                 item["landed_at"] = _now_iso()

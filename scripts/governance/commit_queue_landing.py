@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）；**k=4 通道池（st-k4-20260923）：投机并行验证+串行落地——drain_queue_pool 池级单 lease+单心跳线程，k 工各配独立 worktree/分支/gateway（_GlobalCommitLock 按 project_root 键控→门禁段真并行），路径锁同路径项门禁段前串行化（防跨 session claim 冲突+整文件互踩），dev ref CAS 唯一串行落地点，冲突→_pool_cas_replay 落地段重放不重跑门禁（注册表同册=条目级三向合并重放吸收零丢失；无重叠=commit-tree re-parent；非注册表同路径=死信零覆盖）；k=1（thresholds commit_queue_landing_pool_workers）=legacy 逐字节降级**；env 名册/import 同源（gateway roster_root=主仓根，三选一之③，q-0006/q-0007 死信治本）；快照写后读回自验（M5.1 rsync -c 语义：write_bytes 即读回 sha256 比对，注册表族基准=三向合并后字节、普通文件=袋内 blob_sha256，delete/noop 豁免）；gate 装载失败新鲜子进程判别（M5.2：fresh 同败=确定性册坏即死信，fresh 通过=daemon 纪元陈旧退 pending，配 env_retry 上限）；改道入队前锁外预检（M1.2：blocking 返回 COMMIT_FAILED 拒不降级直提，预检设施异常才放行+审计）
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；**热册三连（FOREIGN-CHANGE/HELD-OVERLAP/HOT-FILE-BASE-FRESHNESS 集中打 module_translation/capability_canonical 两热册，结构性并发非物品违规）→ 抛 HotRegistryContentionError 同走退 pending+B5 attempts 退避通道，绝不死信回人工（A3 任务1 st-circ-a3-20260930）**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）；**k=4 通道池（st-k4-20260923）：投机并行验证+串行落地——drain_queue_pool 池级单 lease+单心跳线程，k 工各配独立 worktree/分支/gateway（_GlobalCommitLock 按 project_root 键控→门禁段真并行），路径锁同路径项门禁段前串行化（防跨 session claim 冲突+整文件互踩），dev ref CAS 唯一串行落地点，冲突→_pool_cas_replay 落地段重放不重跑门禁（注册表同册=条目级三向合并重放吸收零丢失；无重叠=commit-tree re-parent；非注册表同路径=死信零覆盖）；k=1（thresholds commit_queue_landing_pool_workers）=legacy 逐字节降级**；env 名册/import 同源（gateway roster_root=主仓根，三选一之③，q-0006/q-0007 死信治本）；快照写后读回自验（M5.1 rsync -c 语义：write_bytes 即读回 sha256 比对，注册表族基准=三向合并后字节、普通文件=袋内 blob_sha256，delete/noop 豁免）；gate 装载失败新鲜子进程判别（M5.2：fresh 同败=确定性册坏即死信，fresh 通过=daemon 纪元陈旧退 pending，配 env_retry 上限）；改道入队前锁外预检（M1.2：blocking 返回 COMMIT_FAILED 拒不降级直提，预检设施异常才放行+审计）
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -184,6 +184,13 @@ _GIT_GUARD_FAST_PATH_ENV = "ZEPHYR_GIT_GUARD_FAST_PATH"
 #   一个只含 13 个 consensus 文件的合法批次被误判物品失败）。
 # 刻意不收 "Invalid argument" 裸串：它太宽（真 bug 也报这个），只收 git 的 unlink/占用
 # 原话——句柄一释放重放就过，与 index.lock 同款语义。
+#   timeout after —— git 子进程墙钟超时被强杀（_run_git 超时分支原话 "… -> timeout
+#   after Ns (killed)"）：慢盘/杀毒扫描类瞬态慢，重放即愈（2026-09-30 批 LANDING-
+#   TIMEOUT 死因实证）。与 LOCK_TIMEOUT 同款"等待即愈"语义。
+#   winerror 233 / 管道的另一端 / no process on the other end —— Windows 命名管道
+#   对端瞬断（OSError [WinError 233] 管道的另一端上无任何进程；存量死信 77 封、
+#   7 天单项最大伪命中实证）：git/子进程通信管道一时无人接听，重放即愈。中英双
+#   形态都收（中文 Windows 报中文、英文环境报英文原话）。
 _TRANSIENT_GIT_MARKERS = (
     "index.lock",
     "unable to create",
@@ -191,13 +198,74 @@ _TRANSIENT_GIT_MARKERS = (
     "permission denied",
     "being used by another process",
     "the process cannot access the file",
+    "timeout after",
+    "winerror 233",
+    "管道的另一端",
+    "no process on the other end",
 )
 
 
 def _is_transient_git_error(exc: BaseException | str) -> bool:
-    """git 失败是否属瞬态环境类（锁争用/句柄占用）——是则项退回 pending，绝不死信。"""
+    """git 失败是否属瞬态环境类（锁争用/句柄占用/管道瞬断/墙钟超时）——是则项退回 pending，绝不死信。"""
     text = str(exc).lower()
     return any(marker in text for marker in _TRANSIENT_GIT_MARKERS)
+
+
+# 瞬态 gate 检查器环境失败特征串：gate 的外部检查器子进程**无法执行**（如
+# check_frontmatter_metadata.py 在 worktree 内起不来——环境问题非物品违规）时，
+# ttl_gate 等以 "…execution failed: …" 报 COMMIT_FAILED。frontmatter 本身没被判过，
+# 死信是假失败——归环境类退 pending 配 env_retry 计数闸（≤3 次防活锁；2026-09-30
+# 批 TTL-METADATA execution failed 死因实证）。真 frontmatter 违规报 "FAIL: …" 原话
+# 不落此表，门禁死信语义零放松。
+_TRANSIENT_GATE_ENV_MARKERS = ("execution failed",)
+
+
+def _is_transient_env_failure(exc: BaseException | str) -> bool:
+    """落地失败是否瞬态环境类：git 瞬态（_is_transient_git_error）∪ 检查器无法执行。
+
+    drain 泛化异常出口、pool 泛化异常出口与 COMMIT_FAILED 结果出口统一消费本判据
+    ——特征串单一真源（_is_transient_git_error 判据思路同款，两表合一消费口）。
+    """
+    text = str(exc).lower()
+    return _is_transient_git_error(text) or any(m in text for m in _TRANSIENT_GATE_ENV_MARKERS)
+
+
+# ── 热册三连自动改道（A3 任务1，st-circ-a3-20260930，深挖矿处方）─────────────────
+# 病根：FOREIGN-CHANGE(42)/HOT-FILE-BASE-FRESHNESS(31)/HELD-OVERLAP(13) 三类阻断
+# 集中打 module_translation_registry.yaml 与 capability_canonical_file_registry.yaml
+# 两册——多会话并发期对同一热册 claim/落盘互踩是**结构性并发**，不是物品违规；
+# 死信回人工是假失败（等持册会话落地后重投即自愈，注册表族落地本就三向合并吸收）。
+# 治本：landing 侧识别这三类阻断 → 抛 HotRegistryContentionError（LandingEnvironmentError
+# 子类）→ drain/pool 既有 env 通道退回 pending + B5 attempts 退避（≥3 次 15min/次惩罚、
+# ≥5 次拾取死信防活锁——终态死因归 env 类可 requeue，处方可行动）。零新增计数器
+# （内收原则：退避/升级全部复用队列 B5 既有机制）。
+_CONTENTION_BLOCK_STATUSES: Final = frozenset({"FOREIGN_CHANGE_VIOLATION", "HELD_OVERLAP_VIOLATION"})
+_CONTENTION_BLOCK_GATE_MARKERS: Final = ("HOT-FILE-BASE-FRESHNESS",)
+
+
+def is_hot_registry_contention_block(status_name: str, message: str) -> bool:
+    """网关落盘失败是否属热册并发类（FOREIGN-CHANGE/HELD-OVERLAP 专用 status 或
+    COMMIT_FAILED 消息带 HOT-FILE-BASE-FRESHNESS 门禁标记）。
+
+    仅落地侧消费：worktree 路径 claim 基线为空，FOREIGN-CHANGE 命中=共享暂存区/
+    热册互踩的结构性并发，不是袋内容违规；HELD-OVERLAP 命中=他会话正持册（等让位）；
+    HOT-FILE-BASE-FRESHNESS 命中=基底被他会话推进（重同步+三向合并即自愈）。
+    """
+    if status_name in _CONTENTION_BLOCK_STATUSES:
+        return True
+    return status_name == "COMMIT_FAILED" and any(m in message for m in _CONTENTION_BLOCK_GATE_MARKERS)
+
+
+class HotRegistryContentionError(cq.LandingEnvironmentError):
+    """热册并发阻断专类（A3 任务1）——项退回 pending 退避重投，绝不死信回人工。
+
+    继承 LandingEnvironmentError：drain/pool 既有 env 分支按「环境失败≠物品失败」
+    退 pending + attempts+1（B5 退避）+ 终止本轮等下次自举。``retried_key="contention"``
+    供 pool 环境分支识别「免烧 env_retry 计数」——热册并发不消耗环境失败预算，
+    其终态由队列 B5 attempts≥5 拾取死信兜底（死因随末次失败文本归 env 类可 requeue）。
+    """
+
+    retried_key = "contention"
 
 
 # ---------------------------------------------------------------------------
@@ -2779,14 +2847,16 @@ class WorktreeLanding:
                 if isinstance(outcome, cq.LandingResult):
                     return outcome
                 raise outcome from exc
-            except RuntimeError as exc:
-                # 瞬态 git 环境失败（索引锁争用 / Windows 句柄占用）≠ 物品失败——高并发期
-                # 他会话 commit 持主仓/worktree 索引锁是常态（2026-09-10 二阶死信：
-                # worktree 修复后 26 项死于 reset --hard 撞锁）；同族还有 Windows 下
-                # 外部进程开着文件句柄导致 reset --hard unlink 失败（2026-09-16
-                # q-…-0018 实证："unable to unlink old '…business_data_categories.yaml':
-                # Invalid argument"）。转环境专类 → 项退回 pending、整轮终止等下次自举，
-                # 绝不死信（特征串单一真源=_TRANSIENT_GIT_MARKERS）。
+            except (RuntimeError, OSError) as exc:
+                # 瞬态 git 环境失败（索引锁争用 / Windows 句柄占用 / 命名管道对端瞬断
+                # [WinError 233]）≠ 物品失败——高并发期他会话 commit 持主仓/worktree
+                # 索引锁是常态（2026-09-10 二阶死信：worktree 修复后 26 项死于
+                # reset --hard 撞锁）；同族还有 Windows 下外部进程开着文件句柄导致
+                # reset --hard unlink 失败（2026-09-16 q-…-0018 实证："unable to unlink
+                # old '…business_data_categories.yaml': Invalid argument"）与管道对端
+                # 瞬断（OSError WinError 233，st-circ-a1-20260930 收编——OSError 非
+                # RuntimeError，捕获面随之加宽）。转环境专类 → 项退回 pending、整轮
+                # 终止等下次自举，绝不死信（特征串单一真源=_TRANSIENT_GIT_MARKERS）。
                 if _is_transient_git_error(exc):
                     outcome = self._env_pending_or_dead(
                         item, queue_root, f"git 瞬态环境失败，项退回 pending 等下次自举: {exc}", cause=exc
@@ -2969,6 +3039,34 @@ class WorktreeLanding:
                             ),
                         )
                     return cq.LandingResult(ok=True, landed_id=f"{_NOOP_LANDED_PREFIX}{old_dev}")
+                # 热册三连自动改道（A3 任务1，st-circ-a3-20260930）：FOREIGN-CHANGE/
+                # HELD-OVERLAP/HOT-FILE-BASE-FRESHNESS 集中打两热册
+                # （module_translation_registry/capability_canonical_file_registry）——
+                # 结构性并发非物品违规，死信回人工是假失败。抛专类走 env 通道：项退
+                # pending + B5 attempts 退避（≥3 次 15min/次惩罚、≥5 次拾取死信防活锁），
+                # 等持册会话落地后重投即自愈（注册表族落地三向合并吸收增量）。
+                if is_hot_registry_contention_block(result.status.name, result.message or ""):
+                    raise HotRegistryContentionError(
+                        f"热册并发阻断（{result.status.value}），项退回 pending 退避重投（结构性并发非物品违规）: "
+                        f"{(result.message or '')[:400]}。处方: 等下次自举自动重投即自愈；若 attempts≥5 反复耗尽，"
+                        f"与持册会话协调提交窗口后 requeue 重投"
+                    )
+                # 瞬态环境失败伪装成 COMMIT_FAILED 的截收（st-circ-a1-20260930，两类
+                # 实证死因）：①LANDING-TIMEOUT——git 墙钟超时经 gateway 报 COMMIT_
+                # FAILED 且消息带 "timeout after"；②TTL-METADATA "execution failed"
+                # ——check_frontmatter_metadata.py 检查器子进程在 worktree 内起不来
+                # （环境故障，frontmatter 根本没被判过）。两者都是环境失败不是物品
+                # 违规：转 env 通道退 pending 配 env_retry 计数闸（≤3 防活锁），绝不
+                # 死信（判据单一真源=_is_transient_env_failure）。
+                if result.status is CommitStatus.COMMIT_FAILED and _is_transient_env_failure(result.message or ""):
+                    outcome = self._env_pending_or_dead(
+                        item,
+                        queue_root,
+                        f"瞬态环境失败伪装 COMMIT_FAILED，项退回 pending 等下次自举: {(result.message or '')[:400]}",
+                    )
+                    if isinstance(outcome, cq.LandingResult):
+                        return outcome
+                    raise outcome
                 return cq.LandingResult(
                     ok=False,
                     # P0-3（#ARCH-310，2026-09-12）：400→2000——门禁阻断详情（多文件
@@ -3603,6 +3701,66 @@ def _stale_revalidate_counted(item: dict, head_reader) -> tuple[bool, list[str]]
         ) from exc
 
 
+@dataclass
+class _PoolLedger:
+    """pool 记账三元组打包（stats/stats_lock/shared）——helper 形参 ≤7（NO-LONG-PARAM-LIST，
+    q-20261001-st-circ-a1-20260930-0001 死信治本：8 参被门禁拦）。"""
+
+    stats: dict
+    lock: threading.Lock
+    shared: dict
+
+
+def _pool_env_failure_exit(
+    root: Path,
+    processing_path: Path,
+    item: dict,
+    qid: str,
+    exc: BaseException,
+    ledger: _PoolLedger,
+) -> None:
+    """pool 环境失败统一出口（st-circ-a1-20260930 自 LandingEnvironmentError 分支提取）：
+    计数（env_retry，retried_key 已标记者免烧）→ 耗尽升级死信防活锁 → 未耗尽退回
+    pending + 置共享终止旗终止本波。两个消费口：landing 专类逃逸（原分支）与
+    泛化异常的瞬态截收（_is_transient_env_failure 命中）——同闸同语义零分叉。
+    """
+    dead: cq.LandingResult | None = None
+    if not getattr(exc, "retried_key", ""):
+        n = _bump_item_retry(item, root, "env_retry")
+        if n >= _RETRY_META_MAX:
+            dead = _retry_dead_result(
+                "env_retry",
+                "环境类失败重试耗尽——排除环境故障后 requeue 重投",
+                f"landing 环境失败: {exc}",
+            )
+    if dead is not None:
+        with ledger.lock:
+            item["dead_at"] = cq._now_iso()
+            item["dead_reason"] = dead.reason
+            item["prescription"] = cq.dead_letter_prescription(dead.reason)
+            item["owner_session"] = item.get("session_id") or ""
+            cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            os.replace(processing_path, root / "dead" / processing_path.name)
+            ledger.stats["dead"] += 1
+            ledger.stats["processed_qids"].append(qid)
+            ledger.shared["processed"] += 1
+        logger.error("[pool] qid=%s 环境失败重试耗尽，升级死信（防活锁）: %s", qid, dead.reason)
+        return
+    # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化（≥3 惩罚
+    # 退避、≥5 拾取死信，毒药件不再无限占队首）。
+    if cq._attempts_backoff_enabled():
+        cq._bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
+    try:
+        cq._retry_transient(lambda: os.rename(processing_path, root / "pending" / processing_path.name))
+    except OSError:
+        logger.error("[pool] qid=%s 环境失败退回 pending 失败，留 processing 等波首回收", qid)
+    with ledger.lock:
+        ledger.shared["env_aborted"] = True
+        if ledger.shared["budget_left"] is not None:
+            ledger.shared["budget_left"] += 1
+    logger.error("[pool] landing 环境失败，终止本波（项退回 pending，不死信）: %s", exc)
+
+
 def _pool_process_item(
     landing: WorktreeLanding,
     root: Path,
@@ -3636,6 +3794,24 @@ def _pool_process_item(
                 shared["budget_left"] += 1
         return
     qid = item.get("qid", processing_path.stem)
+    # 幽灵会话存活闸·池工拾取点（裁定#459 延伸，st-circ-a1-20260930）：belt daemon
+    # 生产主通道（bootstrap_drain_with_landing→drain_queue_pool）认领即判活——死会话
+    # 袋不再烧工线程的 worktree 同步+全门禁段，直落 dead/（ghost_session，归 env 类
+    # 处方可 requeue；CLI 手动 requeue 不受闸限）；判定不了 fail-open 放行。
+    _ghost_sid = str(item.get("session_id") or "")
+    if cq._session_ghost_dead(_ghost_sid, runtime_root=root.parent):
+        cq._mark_ghost_dead_fields(item, _ghost_sid)
+        item["prescription"] = cq.dead_letter_prescription(item["dead_reason"])  # pool 死信出口同处方口径
+        item["owner_session"] = _ghost_sid
+        with stats_lock:
+            cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            os.replace(processing_path, root / "dead" / processing_path.name)
+            stats["dead"] += 1
+            stats["processed_qids"].append(qid)
+            shared["processed"] += 1
+        logger.warning("[pool] qid=%s 属主会话已死（幽灵），拾取存活闸拒绝落地，直落 dead/", qid)
+        cq._notify_task_board_dead_letter(item)
+        return
     _item_t0 = time.monotonic()
     # B5 attempts 耗尽（st-commitspeed-tbl-20260924 止血，与 drain_queue 同语义）：
     # attempts≥死信阈值的毒药件拾取即死信，不再白耗一次 landing——队首让位。
@@ -3708,43 +3884,15 @@ def _pool_process_item(
         # M5.2 活锁治理：landing 内抛点已过计数闸（retried_key 标记）不重复计数；
         # landing 外抛点（路径锁超时等）就地补计数，同一 item 达上限升级死信，
         # 不再无限退 pending。
-        dead: cq.LandingResult | None = None
-        if not getattr(exc, "retried_key", ""):
-            n = _bump_item_retry(item, root, "env_retry")
-            if n >= _RETRY_META_MAX:
-                dead = _retry_dead_result(
-                    "env_retry",
-                    "环境类失败重试耗尽——排除环境故障后 requeue 重投",
-                    f"landing 环境失败: {exc}",
-                )
-        if dead is not None:
-            with stats_lock:
-                item["dead_at"] = cq._now_iso()
-                item["dead_reason"] = dead.reason
-                item["prescription"] = cq.dead_letter_prescription(dead.reason)
-                item["owner_session"] = item.get("session_id") or ""
-                cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
-                os.replace(processing_path, root / "dead" / processing_path.name)
-                stats["dead"] += 1
-                stats["processed_qids"].append(qid)
-                shared["processed"] += 1
-            logger.error("[pool] qid=%s 环境失败重试耗尽，升级死信（防活锁）: %s", qid, dead.reason)
-            return
-        # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化（≥3 惩罚
-        # 退避、≥5 拾取死信，毒药件不再无限占队首）。
-        if cq._attempts_backoff_enabled():
-            cq._bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
-        try:
-            cq._retry_transient(lambda: os.rename(processing_path, root / "pending" / processing_path.name))
-        except OSError:
-            logger.error("[pool] qid=%s 环境失败退回 pending 失败，留 processing 等波首回收", qid)
-        with stats_lock:
-            shared["env_aborted"] = True
-            if shared["budget_left"] is not None:
-                shared["budget_left"] += 1
-        logger.error("[pool] landing 环境失败，终止本波（项退回 pending，不死信）: %s", exc)
+        _pool_env_failure_exit(root, processing_path, item, qid, exc, _PoolLedger(stats, stats_lock, shared))
         return
-    except Exception as exc:  # noqa: BLE001 — 单项失败→死信不卡队
+    except Exception as exc:  # noqa: BLE001 — 单项失败→死信不卡队；瞬态环境类先截收
+        if _is_transient_env_failure(exc):
+            # 瞬态环境失败逃逸截收（st-circ-a1-20260930）：WinError233 管道瞬断类
+            # OSError 等不经 landing 内部判据点直达此处——旧径直落 "landing 异常"
+            # 死信（77 封实证假失败）。按 env 分支同语义退 pending 计数防活锁。
+            _pool_env_failure_exit(root, processing_path, item, qid, exc, _PoolLedger(stats, stats_lock, shared))
+            return
         result = cq.LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
     finally:
         _release_path_locks(path_locks)

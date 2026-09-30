@@ -140,9 +140,7 @@ def tmp_repo(tmp_path: Path) -> Path:
     # 根规则 /* 豁免（TestProvisionedArtifactIgnoreContract 双向钉住该契约：真仓漏豁免
     # = 生产脏 worktree，夹具漏豁免 = 本断言假红）；夹具不复制主仓全量 .gitignore，
     # 故此处按同口径显式列举。
-    (repo / ".gitignore").write_text(
-        "\n".join(_WORKTREE_IGNORE_LINES) + "\n", encoding="utf-8"
-    )
+    (repo / ".gitignore").write_text("\n".join(_WORKTREE_IGNORE_LINES) + "\n", encoding="utf-8")
     (repo / "base.txt").write_text("base\n", encoding="utf-8")
     _git(repo, "add", ".")
     _git(repo, "commit", "-qm", "init")
@@ -822,8 +820,7 @@ class TestCleanResilience:
                 if hit:
                     if check:
                         raise RuntimeError(
-                            "git " + " ".join(args) +
-                            " -> rc=1: warning: failed to remove "
+                            "git " + " ".join(args) + " -> rc=1: warning: failed to remove "
                             "data/databases/governance.db-journal: Invalid argument"
                         )
                     return subprocess.CompletedProcess(["git", *args], 1, "", "")
@@ -911,3 +908,84 @@ class TestProvisionedArtifactIgnoreContract:
             f"#ARCH-328 夹具侧漂移：_WORKTREE_IGNORE_LINES 缺 {missing}——"
             "备置器新增根文件须同步补豁免表（或把产物挪进已豁免目录）"
         )
+
+
+# ---------------------------------------------------------------------------
+# 幽灵会话存活闸·延伸闸点（裁定#459 延伸，st-circ-a1-20260930）：
+# Lane D（st-ghost-sweep-20260930）已闸孤儿回收+drain 环境失败两出口；本批补齐
+# 余下自动重试链——①pending 拾取（drain_queue 认领即判活）；②enqueue 自举
+# （try_bootstrap_drain 全链覆盖证明）。belt daemon drain 走 pool 路径，闸与测试
+# 见 tests/governance/rule_bridge/test_commit_belt_daemon.py。
+# 夹具与 Lane D 同构（tmp 队列根 + heartbeat.jsonl 末行 status 判定）。
+# ---------------------------------------------------------------------------
+class TestGhostGatePickupAndBootstrap:
+    @staticmethod
+    def _write_heartbeat(runtime_root: Path, session: str, status: str) -> None:
+        hb_dir = runtime_root / "sessions" / session
+        hb_dir.mkdir(parents=True, exist_ok=True)
+        with open(hb_dir / "heartbeat.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"ts": "2026-09-30T00:00:00+00:00", "pid": 1, "status": status}) + "\n")
+
+    @staticmethod
+    def _stub_landing_ok(item: dict, root: Path) -> cq.LandingResult:
+        return cq.LandingResult(ok=True, landed_id="stub0" * 6)
+
+    def test_pickup_of_dead_session_item_deadletters_before_landing(self, tmp_path: Path) -> None:
+        """drain 拾取点：死会话 pending 袋拾取即判活，直落 dead/ 绝不进 landing。"""
+        queue_root = tmp_path / "queue"
+        item = cq.enqueue_item(
+            "ghost-sess",
+            "dead owner pickup",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+        landed: list[str] = []
+
+        def _spy_landing(item: dict, root: Path) -> cq.LandingResult:
+            landed.append(item.get("qid", "?"))
+            return self._stub_landing_ok(item, root)
+
+        stats = cq.drain_queue(queue_root, landing=_spy_landing)
+        assert landed == [], "死会话袋不得消耗 landing（拾取闸前置）"
+        assert stats["dead"] == 1 and stats["done"] == 0
+        dead = list((queue_root / "dead").glob("q-*.json"))
+        assert [f.stem for f in dead] == [item["qid"]]
+        payload = json.loads(dead[0].read_text(encoding="utf-8"))
+        assert payload["meta"]["ghost"] is True
+        assert payload["dead_reason"].startswith("ghost_session:")
+        assert cq.classify_dead_reason(payload["dead_reason"]) == "env", "幽灵袋归 env（接管会话可 requeue）"
+        assert payload.get("prescription"), "处方在场（requeue 恢复通道可行动）"
+
+    def test_pickup_of_alive_session_item_still_lands(self, tmp_path: Path) -> None:
+        """对照：活会话（heartbeat alive）袋拾取照常落地，闸零误伤。"""
+        queue_root = tmp_path / "queue"
+        item = cq.enqueue_item(
+            "live-sess",
+            "alive owner",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        self._write_heartbeat(queue_root.parent, "live-sess", "alive")
+        stats = cq.drain_queue(queue_root, landing=self._stub_landing_ok)
+        assert stats["done"] == 1 and stats["dead"] == 0
+
+    def test_enqueue_bootstrap_drain_gates_dead_owner_item(self, tmp_path: Path, caplog) -> None:
+        """enqueue 自举（try_bootstrap_drain）：入队后自举排空经同一拾取闸——
+        死会话历史 pending 袋被自举改道 dead/，不入 done 不留 pending。"""
+        queue_root = tmp_path / "queue"
+        stale_item = cq.enqueue_item(
+            "ghost-sess",
+            "stale ghost bag",
+            [("a.txt", b"v")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(tmp_path / "wt")),
+        )
+        self._write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+        result = cq.try_bootstrap_drain(queue_root, landing=self._stub_landing_ok)
+        assert result.get("skipped") is not True
+        assert result["dead"] == 1 and result["done"] == 0
+        states = {p.stem: p.parent.name for p in queue_root.glob("*/*.json")}
+        assert states.get(stale_item["qid"]) == "dead"

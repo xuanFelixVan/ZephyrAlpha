@@ -2108,3 +2108,135 @@ class TestEv04WorktreeLinkSelfcheck:
     def test_no_worktrees_dir_is_noop(self, tmp_path: Path):
         stats = cql._bootstrap_worktree_link_selfcheck(tmp_path)
         assert stats == {"scanned": 0, "broken": [], "audit_path": None}
+
+
+# ---------------------------------------------------------------------------
+# 瞬态环境失败扩面（裁定#459 延伸+深挖矿处方，st-circ-a1-20260930）：
+# WinError233 管道瞬断（OSError，中英双形态）/ git 墙钟超时（"timeout after"）/
+# TTL-METADATA 检查器 execution failed（COMMIT_FAILED 伪装）——三类都归环境类
+# 退 pending 配 env_retry 计数闸，绝不死信；真 frontmatter 违规死信语义零放松。
+# ---------------------------------------------------------------------------
+class _TtlCheckerEnvFailureStub(_StubGateway):
+    """模拟 ttl_gate 检查器子进程无法执行：COMMIT_FAILED + "execution failed" 原话。"""
+
+    def commit(self, *args, **kwargs):  # noqa: ANN002, ANN003 — 桩签名放宽
+        self.events.append(("commit", {"files": []}))
+        return CommitResult(
+            status=CommitStatus.COMMIT_FAILED,
+            message=(
+                "门禁 TTL-METADATA 阻断: check_frontmatter_metadata.py execution failed: "
+                "FileNotFoundError(2, '...check_frontmatter_metadata.py')"
+            ),
+        )
+
+
+class _RealTtlViolationStub(_StubGateway):
+    """对照：真 frontmatter 违规（"FAIL: ..." 原话）——必须保持物品死信。"""
+
+    def commit(self, *args, **kwargs):  # noqa: ANN002, ANN003 — 桩签名放宽
+        self.events.append(("commit", {"files": []}))
+        return CommitResult(
+            status=CommitStatus.COMMIT_FAILED,
+            message="门禁 TTL-METADATA 阻断: FAIL: docs/x.md 缺 frontmatter ttl 字段",
+        )
+
+
+class TestTransientEnvFailureFamilies:
+    def test_marker_table_covers_pipe_timeout_and_checker_families(self) -> None:
+        """三族新特征串钉住：WinError233 中英双形态 / 墙钟超时 / 检查器无法执行。"""
+        for text in (
+            "landing 异常: OSError: [WinError 233] 管道的另一端上无任何进程。",
+            "OSError: [WinError 233] No process on the other end of the pipe",
+            "RuntimeError: git reset --hard refs/heads/dev -> timeout after 120s (killed)",
+        ):
+            assert cql._is_transient_git_error(text), f"git 族须归瞬态: {text}"
+            assert cq.classify_dead_reason(f"landing 异常: {text}") == "env", f"死因三分类须归 env: {text}"
+        assert cql._is_transient_env_failure(
+            "门禁 TTL-METADATA 阻断: check_frontmatter_metadata.py execution failed: FileNotFoundError"
+        ), "检查器无法执行须归瞬态环境类"
+        assert set(cql._TRANSIENT_GIT_MARKERS) >= {
+            "timeout after",
+            "winerror 233",
+            "管道的另一端",
+            "no process on the other end",
+        }, "标记表三族四串缺一即回归"
+
+    def test_real_gate_violation_not_swallowed_by_env_family(self) -> None:
+        """对照钉：真门禁违规原话不得被 env 族吞掉（门禁死信语义零放松）。"""
+        assert not cql._is_transient_env_failure("门禁 TTL-METADATA 阻断: FAIL: docs/x.md 缺 frontmatter ttl")
+        assert not cql._is_transient_env_failure("门禁 CREATE-GUARD 阻断: 无 creation_token")
+        assert cq.classify_dead_reason("网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: 缺 ttl") == "item"
+
+    def test_winerror233_pipe_oserror_returns_to_pending_not_dead(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """WinError233 管道瞬断（OSError）＝瞬态环境失败：退回 pending、零死信（77 封假死信治本）。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        before = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+        def _pipe_broken() -> None:
+            raise OSError(233, "管道的另一端上无任何进程。")
+
+        monkeypatch.setattr(landing, "_sync_worktree", _pipe_broken)
+        item = cq.enqueue_item("sess-pipe-a", "feat: 管道瞬断项", [("docs/pipe.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 0, f"管道瞬断绝不死信: {stats}"
+        assert stats["done"] == 0
+        assert (queue_root / "pending" / f"{item['qid']}.json").is_file(), "项必须退回 pending 等下次自举"
+        assert not list((queue_root / "dead").glob("*.json"))
+        assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") == before, "未落盘不得推进 dev"
+
+    def test_git_wallclock_timeout_returns_to_pending_not_dead(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """LANDING-TIMEOUT（git 墙钟超时）＝瞬态环境失败：退回 pending、零死信。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        before = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+        def _slow_git() -> None:
+            raise RuntimeError("git reset --hard refs/heads/dev -> timeout after 120s (killed)")
+
+        monkeypatch.setattr(landing, "_sync_worktree", _slow_git)
+        item = cq.enqueue_item("sess-timeo-a", "feat: 墙钟超时项", [("docs/tm.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 0, f"墙钟超时绝不死信: {stats}"
+        assert (queue_root / "pending" / f"{item['qid']}.json").is_file()
+        assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") == before
+
+    def test_ttl_checker_execution_failed_commit_failed_returns_to_pending(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """TTL-METADATA "execution failed"（检查器起不来）＝环境失败：退回 pending、env_retry 计数在袋。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        monkeypatch.setattr(landing, "_gateway", _TtlCheckerEnvFailureStub(landing.worktree_path))
+        before = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+        item = cq.enqueue_item(
+            "sess-ttl-env",
+            "feat: 检查器环境失败项",
+            [("docs/ttl.txt", b"v1\n")],
+            queue_root=queue_root,
+        )
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 0, f"检查器无法执行≠物品违规，绝不死信: {stats}"
+        assert stats["done"] == 0
+        payload = json.loads((queue_root / "pending" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert int((payload.get("meta") or {}).get("env_retry") or 0) == 1, "必须进 env_retry 计数闸（≤3 防活锁）"
+        assert _git_text(tmp_repo, "rev-parse", "refs/heads/dev") == before
+
+    def test_real_ttl_violation_still_dead_letters(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """对照钉：真 frontmatter 违规（FAIL: 原话）保持物品死信——env 扩面不放松门禁。"""
+        landing, _stub = _make_landing(tmp_repo, queue_root)
+        monkeypatch.setattr(landing, "_gateway", _RealTtlViolationStub(landing.worktree_path))
+
+        item = cq.enqueue_item("sess-ttl-real", "feat: 真违规项", [("docs/ttl2.txt", b"v1\n")], queue_root=queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+
+        assert stats["dead"] == 1 and stats["done"] == 0
+        payload = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert "FAIL:" in payload["dead_reason"], "真违规死因原文必须在袋"
