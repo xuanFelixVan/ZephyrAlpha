@@ -362,4 +362,12 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/ai_layer/tools/inventory_generator.py:_canonical_server_id||src/zephyr/gov_enforcement/registry_alignment.py:_norm_mid"
   note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+- id: cg-t0gpu-reg-connect-20260930
+  verdict: intentional
+  stable_key: "scripts/audit/t0_gpu_condition_pack.py:_reg||scripts/governance/meta_question/build_closure_ledger.py:_connect"
+  note: 存量同构对（CH 只读注册器/连接器各自域内样板），0033 袋死因 CAPABILITY-OVERLAP 的既有暴露对之一，非本批引入（ADJ_t0_jiawei_versions §2.4 实测；Z-C1 前置①；st-menu-t1f2-20260930 F2 甲位批配套）
 
+- id: cg-t0gpu-reg-pg-20260930
+  verdict: intentional
+  stable_key: "scripts/audit/t0_gpu_condition_pack.py:_reg||scripts/governance/meta_question/wo008/generate_product_synonym_register.py:_pg"
+  note: 存量同构对（同上 0033 死因既有暴露对之二），非本批引入（ADJ_t0_jiawei_versions §2.4 实测；Z-C1 前置①；st-menu-t1f2-20260930 F2 甲位批配套）

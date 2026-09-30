@@ -6555,3 +6555,100 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#456"
+  title: "CREATE-GUARD 判重腿精准化：标识符命中维持硬拦、description 散文命中降 warn+审计（出生证腿零改动）"
+  date: '2026-09-30'
+  category: 治理
+  status: 'active'
+  summary: |-
+    24h 死信 81%（30/37）为判重腿散文伪命中（'check card'/'now iso' 级通用词撞能力注册表
+    description 散文）；Tricorder 实证误报率>10% 执法信任崩塌，100% AI 语料模式化措辞使散文
+    匹配假阳性结构性偏高、已诱发直提绕行。裁定：①探针命中 capability_id/aliases/canonical_file
+    标识符字段=维持硬拦；仅命中 description 散文=降 warn+审计+提示 # create-guard-not-dup:
+    标记或图书馆 lookup 正查；②出生证腿（100 次阻断价值实证）与既有豁免通道零变化；③共享
+    CapabilityLookup.find() 本体语义禁改，改造封在 create_guard.py 门内；④二阶段挂账 jscpd 式
+    token 相似度。
+  affected_files:
+  - src/zephyr/gov_enforcement/commit_gates/create_guard.py
+  approved_paths:
+  - src/zephyr/gov_enforcement/commit_gates/create_guard.py
+  related_arch: ['#ARCH-310']
+  related_rulings: ['裁定#431']
+  superseded_by: null
+- ruling_id: "裁定#457"
+  title: "startup 词表增设 on_demand：词表落后于现实的补缺（非豁免非放松执法）"
+  date: '2026-09-30'
+  category: 治理
+  status: 'active'
+  summary: |-
+    [STARTUP] 头校验卡死按需拉起服务合法标记（st-zc9-lane 死信实证）；现词表 5 值缺按需形态。
+    裁定：①startup_vocabulary v1.2.0 增补第 6 值 on_demand；②GATE-VOCAB 扫描判据/13 基线/
+    noqa 登记闭环零变化；③不开生成器 blanket 豁免（24h 死信 21/24 为 ghost 复读非活误伤，且
+    豁免须带理由可审计是家法）。human_gated 批文形式=Owner 2026-09-30 对话裁定委托四项开工令。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/vocabularies/startup_vocabulary.yaml
+  approved_paths:
+  - docs/01_policies_and_standards/_registry/vocabularies/startup_vocabulary.yaml
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#458"
+  title: "PERMANENT-SYSTEM-TRIGGER 治头不治门：一次性 CLI 帽子纠正+修改面判定收窄"
+  date: '2026-09-30'
+  category: 治理
+  status: 'active'
+  summary: |-
+    24h 死信 8/8 抽样全为 MANUAL-ONLY 腿拦 scripts/governance 一次性 CLI，而 manual 本是词表
+    合法值——病根=脚本头误盖 [TTL] permanent，门禁依宪法红线判得对。裁定：①门判据不动、
+    复启用维持（裁定#431 第①项）；②抽样在案一次性 CLI 帽子纠正（permanent→task_bound）或
+    带理由豁免 # noqa: m11-perm-manual-legitimate <理由≥10字>；③修改文件面"新增行触发+
+    全文件无订阅"判定收窄为新增行作用域（宪法 §3.1 own-diff 对齐）。
+  affected_files:
+  - src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
+  - scripts/governance/
+  approved_paths:
+  - src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
+  - scripts/governance/
+  related_arch: []
+  related_rulings: ['裁定#431']
+  superseded_by: null
+- ruling_id: "裁定#459"
+  title: "死会话队列幽灵复读止血：重投前查会话存活+死信一次清淤"
+  date: '2026-09-30'
+  category: 治理
+  status: 'active'
+  summary: |-
+    24h 死信主体=已退出会话（st-chief7 等 heartbeat exited 在案）遗留队列被后台重投反复撞门
+    再死（三类死信 top 全 ghost）。裁定：①重投前查会话存活（exited→停滚转 dead 标 ghost）；
+    ②官方 dead-archive 一次清淤（绕行会话货已在 dev 落地校验放行；未落地按 _DEAD_PRESCRIPTIONS
+    处方化留存）；③活会话死信不代投。预期三类死信日均 29/22/15 → 各<5。
+  affected_files:
+  - scripts/commit_queue.py
+  approved_paths:
+  - scripts/commit_queue.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#460"
+  title: "t0 甲位三版本定版：auto_mount.py V2 为唯一真源（Z-C1 收口）"
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 授权自裁（本夜批文"对比表出来你自己裁定，然后直接施工执行"）。三版本实测：V1 主区
+    7316d34b0bd7（无去重无 start 参数）、V2 worktree LF 归一 e4dc2de62355/63,374B（双写去重+
+    dominant 分歧 fail-closed+_SQL_SNAPSHOT_DOMINANT，ruff 双 PASS）、V3 blob 07cb0777c8e7
+    （V2+7B 折行，ruff format FAIL）。裁定：定版本 V2=scripts/backtest/auto_mount.py 唯一真源；
+    V1 deprecated（被 V2 替代）、V3 deprecated+successor=V2。决定性事实=拆批D(1b46889a9f)已把
+    V2 的判据与消费端落 HEAD 而本体缺位（实测 3 红测/物化 TypeError/全史 CSV 与其生成代码版本
+    在库不齐）。施工=V2 写回+echo-guard 两条存量克隆对 acknowledged（Z-C1 前置①）+红转蓝
+    （3 failed→14 passed，基线 81 passed 保持）。实盘暴露=0（GRADUATED_PACKAGES 空，裁定#305
+    安全态；本车道只动版本管理/指向/标记）。Z-C1 前置②（脏口径下游点名+重算）转排期册。
+  affected_files:
+  - scripts/backtest/auto_mount.py
+  - echo-guard.yml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/night_sweep/f2_t0_three_versions.md
+  related_arch: []
+  related_rulings: ["Z-C1", "裁定#305"]
+  superseded_by: null

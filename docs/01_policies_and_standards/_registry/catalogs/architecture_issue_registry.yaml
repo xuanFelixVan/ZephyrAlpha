@@ -22673,3 +22673,20 @@ entries:
     审批真源=Owner F 组令原文（会话在案），gate 逃生 [ARCH-APPROVAL:#ARCH-369] 标记+本登记双留痕
     （#ARCH-368 载体语境限 C 组，F 组另立本条防范围借道）。所涉袋：裁定册 #437 追认注记/#450 改号落册及其批准面变更文件。
   related_rulings: ['裁定#437', '裁定#450']
+- issue_id: '#ARCH-370'
+  title: '菜单执行夜 T1 车道裁定册写入 Owner 批准载体（裁定#460 t0 甲位三版本定版）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-30'
+  last_updated: '2026-09-30'
+  owner: 'Owner（2026-09-30 菜单执行夜批文"t0 三版本打架：对比表出来你自己裁定，然后直接施工执行"+"其他全部按照你的建议批准施工"，总筹 st-nightsweep-chief-20260929 派发 T1-F2 车道 sid=st-menu-t1f2-20260930 在案）'
+  description: >-
+    Owner 2026-09-30 菜单执行夜授权 t0 甲位自裁+直接施工（裁定#460：auto_mount.py V2 定版唯一
+    真源，V1/V3 deprecated+successor；Z-C1 收口）。本议题为裁定册写入的 [ARCH-APPROVAL:#ARCH-370]
+    gate 逃生标记+本登记双留痕载体（#ARCH-368/#ARCH-369 同款先例，语境限 T1-F2 车道防范围借道）。
+    所涉袋：裁定#460 落册+echo-guard acknowledged 2 条（Z-C1 前置①）+V2 写回+对比表
+    docs/_working/night_sweep/f2_t0_three_versions.md。披露：裁定册登记遇他会话并发取号竞态
+    （预案 #455 实测已被占，顺延 #460）+他会话旧基座覆写冲掉 7 条在册裁定（#429/#439/#440/
+    #449/#450/#454/#455），本车道三向合并修复保真后纯增量落地（275=270+5）。
+  related_rulings: ['裁定#460']

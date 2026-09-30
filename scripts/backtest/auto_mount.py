@@ -77,7 +77,9 @@ MAP_YAML = ROOT / "config/trading_decision_map.yaml"
 REPORT_DIR = ROOT / "docs/_working"
 CACHE = ROOT / ".runtime/tmp/auto_mount_judge_cache.json"
 # ---------- ② 判定窗（SLE-3② 解冻：锚点 + 快照表最新可用日，禁写死终点） ----------
-IS_WIN_START = "2020-01-01"  # 起点锚=与 C4 冻结口径可比；终点由 snapshot_panel 动态派生（原 IS_WIN 终点写死致 2024+ 零判定）
+IS_WIN_START = (
+    "2020-01-01"  # 起点锚=与 C4 冻结口径可比；终点由 snapshot_panel 动态派生（原 IS_WIN 终点写死致 2024+ 零判定）
+)
 PIT_TAIL_LAG = 1  # 尾窗回退行数：决策日只能用 ≤T-1 信息（宪法 PIT 纪律，尾日证据未定不入样）
 OOS_TAIL_ROWS = 252  # 样本外子窗=判定窗末端最近 252 交易日（约 1 年，SLE-3① OOS 不反向门）
 OOS_MIN_DAYS = 10  # OOS 门生效样本下限（低于此=该态在 OOS 窗内无足够证据，不据此否决罕见态）
@@ -105,6 +107,10 @@ DEFAULT_SINGLE_SLEEVE_CAP = 0.25  # 兜底单 sleeve 上限（真源=地图 port
 OBSERVATION_CONF_FACTOR = 0.5  # 非 verified 证据的置信折算（verified=1.0）
 VOL_FLOOR = 0.02  # 年化波动下限（防逆波动除零/近零波动爆炸分配）
 SNAPSHOT_TABLE = "c1_backtest.regime_snapshot_history"  # 品类未注册（注册 diff 见车道 B 报告，RULE-REGISTRY）
+
+_SQL_SNAPSHOT_DOMINANT = (
+    "SELECT trade_date, dominant FROM {table} WHERE trade_date >= toDate('{start}'){tail} ORDER BY trade_date"
+)
 FAMILY_DEFAULT_ROUTE = {  # 家族兜底路由（真源=注册表 mount_route 字段，本表仅接住无显式路由的自动入库件）
     # S07-G2：derive_class 兜底类 multifactor 无显式路由时落打分链，不映射则挂图 skipped 永不落位。
     # 其余家族不设兜底：同族路由异构（value_reversal 既有个股反转也有指数择时），强制显式 mount_route 防误挂。
@@ -131,10 +137,19 @@ R2SIX = {"r10": "capitulation", "r4": "accumulation", "r11": "accumulation", "r3
 
 def load_registry_entries() -> list[dict[str, Any]]:
     import yaml
+
     data = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
-    return [{"sid": e["strategy_id"], "cls": e["strategy_class"], "code_path": e["code_path"],
-             "lifecycle": e.get("lifecycle_status"), "route": e.get("mount_route")} for e in data.get("strategies", [])
-            if e.get("code_path") and e.get("strategy_class")]
+    return [
+        {
+            "sid": e["strategy_id"],
+            "cls": e["strategy_class"],
+            "code_path": e["code_path"],
+            "lifecycle": e.get("lifecycle_status"),
+            "route": e.get("mount_route"),
+        }
+        for e in data.get("strategies", [])
+        if e.get("code_path") and e.get("strategy_class")
+    ]
 
 
 def _load_translated_module(rel: str):
@@ -165,6 +180,7 @@ def _cached_judge(e: dict[str, Any], panel) -> dict[str, Any]:
 # ---------- ② 判定窗数据装载（只读经 ch_reader；表名走 TableRegistry 真源） ----------
 def _tsv_df(tsv: str, cols: list[str]):
     import pandas as pd
+
     rows = [l.split("\t") for l in tsv.strip().split("\n") if l.strip()]
     return pd.DataFrame(rows, columns=cols)
 
@@ -172,10 +188,11 @@ def _tsv_df(tsv: str, cols: list[str]):
 def _snapshot_rows(start: str, end: str | None):
     """宏观态日快照（regime_snapshot_history.dominant），end=None=取到最新可用日。"""
     import pandas as pd
+
     from zephyr.data import ch_reader
+
     tail = f" AND trade_date <= toDate('{end}')" if end else ""
-    tsv = ch_reader.query(f"SELECT trade_date, dominant FROM {SNAPSHOT_TABLE} "
-                          f"WHERE trade_date >= toDate('{start}'){tail} ORDER BY trade_date")
+    tsv = ch_reader.query(_SQL_SNAPSHOT_DOMINANT.format(table=SNAPSHOT_TABLE, start=start, tail=tail))
     df = _tsv_df(tsv, ["td", "dom"])
     df["td"] = pd.to_datetime(df["td"])
     return df.set_index("td")
@@ -184,14 +201,17 @@ def _snapshot_rows(start: str, end: str | None):
 def _index_kline(symbol: str, start: str, end: str | None, *, calc: bool = False):
     """指数日线只读装载（close + 涨跌家数；GROUP BY 去重同 F4 读取口径）。"""
     import pandas as pd
+
     from zephyr.data import ch_reader
     from zephyr.data.table_registry import get_registry
+
     table = get_registry().table("market_kline_index_calc" if calc else "market_index_kline")
     tail = f" AND trade_date <= toDate('{end}')" if end else ""
     tsv = ch_reader.query(
         f"SELECT trade_date, toString(any(close)), toString(any(advance_count)), "
         f"toString(any(decline_count)) FROM {table} FINAL WHERE symbol = '{symbol}' "
-        f"AND trade_date >= toDate('{start}'){tail} GROUP BY trade_date ORDER BY trade_date")
+        f"AND trade_date >= toDate('{start}'){tail} GROUP BY trade_date ORDER BY trade_date"
+    )
     df = _tsv_df(tsv, ["td", "close", "adv", "dec"])
     df["td"] = pd.to_datetime(df["td"])
     for c in ("close", "adv", "dec"):
@@ -208,6 +228,7 @@ def _breadth_frame(start: str, end: str | None):
     在比值里消去，两源按日混用不产生量纲跳变。补位缺失=该日无相位（NaN→False，宁漏勿误）。
     """
     from zephyr.regime.regime_feature_builder import BREADTH_INDEX  # noqa: PLC0415 惰性导入（重链 7s+）
+
     br = _index_kline(BREADTH_INDEX, start, end)
     dead = (br["adv"].fillna(0) <= 0) & (br["dec"].fillna(0) <= 0)
     if bool(dead.any()):
@@ -222,7 +243,7 @@ def _rolling_pct(s, window: int = PHASE_PCT_WINDOW):
     return s.rolling(window, min_periods=window // 2).rank(pct=True)
 
 
-def phase_overlay(breadth) -> "pd.DataFrame":
+def phase_overlay(breadth) -> pd.DataFrame:
     """② 微观情绪相位探测器（SLE-3③ 盲区治本）→ DataFrame[euphoria, distribution] bool。
 
     亢奋（疯狂段）= 拉伸与广度双确认且仍在上行：乖离度(close/MA20-1) 250 日分位 ≥0.90
@@ -232,6 +253,7 @@ def phase_overlay(breadth) -> "pd.DataFrame":
     """
     import numpy as np
     import pandas as pd
+
     close = breadth["close"].astype(float)
     tot = (breadth["adv"].astype(float) + breadth["dec"].astype(float)).replace(0, np.nan)
     br = breadth["adv"].astype(float) / tot
@@ -245,7 +267,7 @@ def phase_overlay(breadth) -> "pd.DataFrame":
     return pd.DataFrame({"euphoria": euph.astype(bool), "distribution": dist.astype(bool)})
 
 
-def resolve_six_phase(dom, ov) -> "pd.Series":
+def resolve_six_phase(dom, ov) -> pd.Series:
     """两轴合成当日六段相位：R2SIX 宏观基础映射 ⊕ 微观相位 overlay（盲区补全）。
 
     优先级 PHASE_PREEMPT（r10 冰点/r11 复苏）> distribution > euphoria > 基础映射——
@@ -259,14 +281,34 @@ def resolve_six_phase(dom, ov) -> "pd.Series":
     return base.mask(dist, "distribution").mask(euph, "euphoria")
 
 
-def load_phase_panel(end: str | None = None) -> "pd.DataFrame":
+def load_phase_panel(end: str | None = None, start: str = IS_WIN_START) -> pd.DataFrame:
     """判定窗相位面板：列=dom（宏观腿）/euphoria/distribution（微观腿）/six（合成相位）。
 
-    窗口=[IS_WIN_START, 快照表最新可用日回退 PIT_TAIL_LAG 行]（SLE-3② 解冻：终点禁写死；
-    PIT：尾日相位标签与行情证据未定稿，不入判定样本）。end 仅供复算/测试钉窗。
+    窗口=[start, 快照表最新可用日回退 PIT_TAIL_LAG 行]（SLE-3② 解冻：终点禁写死；
+    PIT：尾日相位标签与行情证据未定稿，不入判定样本）。end/start 仅供复算/测试钉窗
+    （start 下界=快照表首日，实测 2019-04-01；早于该日无宏观腿=六段不可判）。
     """
     import pandas as pd
-    snap = _snapshot_rows(IS_WIN_START, end)
+
+    snap = _snapshot_rows(start, end)
+    # 快照表按日重复写入是既有事实（实测 2020+ 的 1,631 个 trade_date 中 1,624 个有 2 行）。
+    # 不去重则本面板行/日计数翻倍——下游一切按日聚合（含 30 交易日样本地板、window_of
+    # 判窗、intake 段样本数）双双虚高，这是**当下就在发生**的缺陷。
+    # 次生问题：PIT_TAIL_LAG 的语义是"回退尾日"而实现是"切尾行"，故尾日为双写日时尾日
+    # 会漏进判定样本——该情形今日未触发（实测快照最大日 2026-09-22 只写 1 行），
+    # 属**结构性潜伏**而非既存泄漏（红蓝⑨纠正本包早先的过强表述，如实降级）。
+    if snap.index.has_duplicates:
+        # 无损前提=同日多行 dominant 全等（实测零分歧）。分歧一旦出现，first() 等于随机
+        # 选版——快照表是 plain MergeTree 且两条全历史 run 并存、本函数不钉 run_id，
+        # 故必须 fail-closed 而非静默取一版。
+        _dis = snap.groupby(level=0)["dom"].nunique()
+        if bool((_dis > 1).any()):
+            _bad = [str(d.date()) for d in _dis[_dis > 1].index[:5]]
+            raise RuntimeError(
+                f"快照表同 trade_date 出现分歧 dominant（前 5 例 {_bad}）——"
+                "去重将随机选版，禁在此出相位；须先按 run_id/ingest_ts 钉版再放开"
+            )
+        snap = snap.groupby(level=0).first()
     if len(snap) <= PIT_TAIL_LAG:
         raise RuntimeError(f"快照行数 {len(snap)} ≤ PIT 尾窗回退 {PIT_TAIL_LAG}，无判定样本")
     snap = snap.iloc[: len(snap) - PIT_TAIL_LAG]
@@ -300,13 +342,19 @@ def _t_one_sided_p(t: float, n: int) -> float:
 def _seg_stats(ret) -> dict[str, float]:
     """段内日净收益统计：样本数 + 年化 SR + 年化波动 + 单侧 t/p（SR_ann·√(n/252) 同 t）。"""
     import numpy as np
+
     n = int(len(ret))
     sd = float(ret.std(ddof=1)) if n > 1 else 0.0
     mu = float(ret.mean()) if n else 0.0
     sr = mu / sd * np.sqrt(252.0) if sd > 0 else 0.0
     t = mu / sd * np.sqrt(float(n)) if sd > 0 and n > 1 else 0.0
-    return {"n": n, "sr": round(sr, 4), "vol": round(sd * np.sqrt(252.0), 4), "t": round(t, 4),
-            "p": round(_t_one_sided_p(t, n), 6)}
+    return {
+        "n": n,
+        "sr": round(sr, 4),
+        "vol": round(sd * np.sqrt(252.0), 4),
+        "t": round(t, 4),
+        "p": round(_t_one_sided_p(t, n), 6),
+    }
 
 
 def judge_activation_state(sid: str, cls: str, code_path: str, panel) -> dict[str, Any]:
@@ -317,8 +365,10 @@ def judge_activation_state(sid: str, cls: str, code_path: str, panel) -> dict[st
     full=全窗 SR/年化波动，供 ③ 真实分配（风险预算）。段样本 <MIN_SEG_DAYS 不检验（宁漏勿误）。
     """
     import pandas as pd
+
     mod = _load_translated_module(code_path)
     import _c4_engine  # noqa: PLC0415 经 translated 目录注入
+
     end = str(pd.Timestamp(panel.index[-1]).date())
     weights, closes = mod.build(IS_WIN_START, end)
     net = _c4_engine.daily_net_returns(weights, closes)
@@ -338,8 +388,7 @@ def judge_activation_state(sid: str, cls: str, code_path: str, panel) -> dict[st
         oos = sub[sub.index >= oos_cut]
         st.update({"oos_n": int(len(oos)), "oos_sr": _seg_stats(oos)["sr"] if len(oos) >= 2 else 0.0})
         segs[six] = st
-    return {"sid": sid, "activated": sorted(s for s, v in segs.items() if v["sr"] > 0),
-            "segments": segs, "full": full}
+    return {"sid": sid, "activated": sorted(s for s, v in segs.items() if v["sr"] > 0), "segments": segs, "full": full}
 
 
 def apply_multiple_testing(judgements: list[dict[str, Any]], *, q: float = FDR_Q) -> dict[str, Any]:
@@ -354,6 +403,7 @@ def apply_multiple_testing(judgements: list[dict[str, Any]], *, q: float = FDR_Q
     返回族级回执（报告/审计用）。纯统计零 IO。
     """
     from zephyr.factor.analysis.bhy_fdr import bh_qvalues, bhy_fdr
+
     judged = [j for j in judgements if isinstance(j.get("activated"), list)]  # 选股类(=null)不入族
     tests = [(j, s) for j in judged for s in sorted(j.get("segments") or {})]
     m = len(tests)
@@ -365,7 +415,7 @@ def apply_multiple_testing(judgements: list[dict[str, Any]], *, q: float = FDR_Q
     res = bhy_fdr([j["segments"][s]["p"] for j, s in tests], q=q)
     qv = bh_qvalues([j["segments"][s]["p"] for j, s in tests])
     receipt.update({"threshold": round(res.threshold, 6), "n_rejected": int(res.n_rejected)})
-    for (j, s), rej, qq in zip(tests, res.rejected, qv):
+    for (j, s), rej, qq in zip(tests, res.rejected, qv, strict=True):
         st = j["segments"][s]
         st.update({"qvalue": round(float(qq), 6), "fdr_rejected": bool(rej), "accepted": False})
         why = []
@@ -392,7 +442,7 @@ def _apportion(total: float, weights: dict[str, float], grid: int = WEIGHT_GRID)
 
     空/非正输入退化为等分（不抛）；份额按余数大小逐个补/扣，结果确定性可重放。
     """
-    unit = 10.0 ** -grid
+    unit = 10.0**-grid
     refs = list(weights)
     if not refs:
         return {}
@@ -426,8 +476,10 @@ def sleeve_plan(new_refs: list[str], old: list[dict[str, Any]]) -> dict[str, flo
     keep = sum(float(x["weight"]) for x in old)
     budget = NEW_SLEEVE_WEIGHT * len(new_refs)
     if new_refs and budget >= 1.0:
-        raise ValueError(f"新 sleeve {len(new_refs)} 条 × 观察档 {NEW_SLEEVE_WEIGHT} 总权重 {budget:.2f}≥1"
-                         "——超单批预算，须分批转正（挂图侧保留老权重下限）")
+        raise ValueError(
+            f"新 sleeve {len(new_refs)} 条 × 观察档 {NEW_SLEEVE_WEIGHT} 总权重 {budget:.2f}≥1"
+            "——超单批预算，须分批转正（挂图侧保留老权重下限）"
+        )
     if keep <= 0:
         # 空图/全零权：无老权重可缩，候选 ref 等分全预算（Σ=1 精确；0.05 起步档规则让步）
         return _apportion(1.0, {r: 1.0 for r in (new_refs or [x["strategy_ref"] for x in old])})
@@ -436,8 +488,7 @@ def sleeve_plan(new_refs: list[str], old: list[dict[str, Any]]) -> dict[str, flo
     return out
 
 
-def _evidence_scores(prev: dict[str, float], evidence: dict[str, dict[str, Any]]
-                     ) -> tuple[list[str], dict[str, float]]:
+def _evidence_scores(prev: dict[str, float], evidence: dict[str, dict[str, Any]]) -> tuple[list[str], dict[str, float]]:
     """证据→分配分数：score = 正超额 SR × 置信 ÷ 年化波动（风险预算口径，归一前）。
 
     无正超额/退役 ref 不入分数表（=不参与分配）；置信 verified=1.0，其余 OBSERVATION_CONF_FACTOR。
@@ -456,9 +507,15 @@ def _evidence_scores(prev: dict[str, float], evidence: dict[str, dict[str, Any]]
     return universe, score
 
 
-def sleeve_weights(old: list[dict[str, Any]], evidence: dict[str, dict[str, Any]], *,
-                   cap: float = DEFAULT_SINGLE_SLEEVE_CAP, floor: float = NEW_SLEEVE_WEIGHT,
-                   step: float = WEIGHT_STEP_LIMIT, grid: int = WEIGHT_GRID) -> dict[str, float]:
+def sleeve_weights(
+    old: list[dict[str, Any]],
+    evidence: dict[str, dict[str, Any]],
+    *,
+    cap: float = DEFAULT_SINGLE_SLEEVE_CAP,
+    floor: float = NEW_SLEEVE_WEIGHT,
+    step: float = WEIGHT_STEP_LIMIT,
+    grid: int = WEIGHT_GRID,
+) -> dict[str, float]:
     """③ 真实分配语义提案（SLE-1）：w ∝ 正超额证据 × 置信 ÷ 年化波动（风险预算口径）。
 
     与 sleeve_plan 的分工（关键，别混）：本函数=**提案面**（--rebalance 只出 diff，落图须过
@@ -509,9 +566,15 @@ def sleeve_weights(old: list[dict[str, Any]], evidence: dict[str, dict[str, Any]
     return _apportion(1.0, out, grid)
 
 
-def weight_adjust_assert(before: dict[str, float], after: dict[str, float], *,
-                         cap: float = DEFAULT_SINGLE_SLEEVE_CAP, step: float = WEIGHT_STEP_LIMIT,
-                         floor: float = NEW_SLEEVE_WEIGHT, tol: float = 1e-6) -> None:
+def weight_adjust_assert(
+    before: dict[str, float],
+    after: dict[str, float],
+    *,
+    cap: float = DEFAULT_SINGLE_SLEEVE_CAP,
+    step: float = WEIGHT_STEP_LIMIT,
+    floor: float = NEW_SLEEVE_WEIGHT,
+    tol: float = 1e-6,
+) -> None:
     """③ 调权语义门（SLE-1 新增，不动 only_add 语义门）：分配提案的自证伪断言。
 
     校四件事：Σ=1（容差 1e-6）；单 sleeve ∈[0,cap]；存量 ref |Δw|≤step；新 ref ∈[floor,cap]；
@@ -525,8 +588,9 @@ def weight_adjust_assert(before: dict[str, float], after: dict[str, float], *,
         assert 0.0 - tol <= w <= cap + tol, f"调权门：{r} 权重 {w} 越界 [0,{cap}]"
     for r, w in before.items():
         assert r in after, f"调权门：{r} 被静默移除（退役须显式置 0 并经 SLE-2 通道）"
-        assert math.isclose(after[r], w, abs_tol=tol) or abs(after[r] - w) <= step + tol, \
+        assert math.isclose(after[r], w, abs_tol=tol) or abs(after[r] - w) <= step + tol, (
             f"调权门：{r} 单步变动 {after[r] - w:+.4f} 超带宽 ±{step}"
+        )
     for r, w in after.items():
         if r not in before and w > tol:
             assert w >= floor - tol, f"调权门：新 ref {r} 权重 {w} 低于观察期下限 {floor}"
@@ -546,7 +610,7 @@ def _patch_block(text: str, node_id: str, new_block: str) -> str:
 
 
 def insert_node_mount(text: str, node_id: str, sid: str, evidence: str) -> str:
-    block = text[_split_blocks(text)[node_id][0]:_split_blocks(text)[node_id][1]]
+    block = text[_split_blocks(text)[node_id][0] : _split_blocks(text)[node_id][1]]
     assert f"strategy_ref: {sid}" not in block, f"{node_id} 已挂 {sid}"
     anchor = "  strategy_mounts:\n"
     assert block.count(anchor) == 1, f"strategy_mounts 锚不唯一: {node_id}"
@@ -576,7 +640,7 @@ def insert_cell(text: str, node_id: str, state: str, sid: str) -> str:
         depth += (ch == "[") - (ch == "]")
         i += 1
     close = i - 1
-    inner = text[m.end():close]
+    inner = text[m.end() : close]
     assert sid not in [x.strip() for x in inner.split(",")], f"格子已含 {sid}（op 应先查重）"
     if not inner.strip():
         ins, pos = sid, close  # 空数组：] 前直插
@@ -606,12 +670,18 @@ def only_add_assert(before: str, after: str) -> None:
     """红蓝门（语义级）：挂载/格子/证据只增不减不改；sleeve 只增不减、老权重仅允许全局等比缩水
     （立项 §4③设计行为）、新 sleeve 必 0.05 起步。伪造删行/改证据/非等比改权重必被拒。"""
     import math
+
     import yaml
+
     b, a = yaml.safe_load(before), yaml.safe_load(after)
 
     def mounts(dm):
-        return {n["node_id"]: {(m["strategy_ref"], m.get("confidence"), m.get("evidence"))
-                                 for m in (n.get("strategy_mounts") or [])} for n in dm["nodes"]}
+        return {
+            n["node_id"]: {
+                (m["strategy_ref"], m.get("confidence"), m.get("evidence")) for m in (n.get("strategy_mounts") or [])
+            }
+            for n in dm["nodes"]
+        }
 
     bm, am_ = mounts(b), mounts(a)
     for nid, ms in bm.items():
@@ -619,8 +689,10 @@ def only_add_assert(before: str, after: str) -> None:
 
     def cells(dm):
         sm = dm.get("state_matrix") or {}
-        return {(c["node_id"], c["state"]): (tuple(c.get("mounted") or []), c.get("confidence"))
-                for c in (sm.get("cells") or [])}
+        return {
+            (c["node_id"], c["state"]): (tuple(c.get("mounted") or []), c.get("confidence"))
+            for c in (sm.get("cells") or [])
+        }
 
     bc, ac = cells(b), cells(a)
     for k, (mounted, conf) in bc.items():
@@ -650,6 +722,7 @@ def validate_map() -> list[str]:
     if gdir not in sys.path:
         sys.path.insert(0, gdir)
     from check_decision_map import run_checks
+
     fails, _warns, _total = run_checks(map_path=MAP_YAML, registry_dir=None)  # registry_dir 缺省=仓内 _registry 真源
     return fails
 
@@ -662,11 +735,13 @@ def mounted_sids(text: str) -> set[str]:
 def window_of(panel) -> str:
     """判定窗可读标签（SLE-3②：终点=快照表最新可用日回退尾窗，动态派生禁写死）。"""
     import pandas as pd
+
     return f"{IS_WIN_START}..{pd.Timestamp(panel.index[-1]).date()}"
 
 
-def _judge_batch(entries: list[dict[str, Any]], panel, only: set[str] | None
-                 ) -> tuple[list[dict[str, Any]], dict[str, Any], list[str]]:
+def _judge_batch(
+    entries: list[dict[str, Any]], panel, only: set[str] | None
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[str]]:
     """② 批量判定 + 族级多重检验门（编排/报告/审计共用；判定缓存让重复调用零成本）。
 
     返回 (带 FDR 回执的 judgements, 族级 receipt, skipped)。BHY 的判定族=本批 (sid×相位)
@@ -680,20 +755,23 @@ def _judge_batch(entries: list[dict[str, Any]], panel, only: set[str] | None
     judgements: list[dict[str, Any]] = []
     for e in pipeline:
         j = dict(_cached_judge(e, panel))
-        j.update({"cls": e["cls"], "code_path": e["code_path"],
-                  "node": e.get("route") or FAMILY_DEFAULT_ROUTE.get(e["cls"])})
+        j.update(
+            {"cls": e["cls"], "code_path": e["code_path"], "node": e.get("route") or FAMILY_DEFAULT_ROUTE.get(e["cls"])}
+        )
         judgements.append(j)
     return judgements, apply_multiple_testing(judgements, q=FDR_Q), skipped
 
 
-def _plan_inserts(entries: list[dict[str, Any]], panel, only: set[str] | None
-                  ) -> tuple[list[dict[str, Any]], str, str, list[str]]:
+def _plan_inserts(
+    entries: list[dict[str, Any]], panel, only: set[str] | None
+) -> tuple[list[dict[str, Any]], str, str, list[str]]:
     """②③④ 编排：判定（含 FDR 门）→ 待插清单 → 权重方案；返回 (ops, 地图原文, 权重 JSON, skipped)。
 
     签名三位参数=调用面契约（intake._auto_mount_sids 与 CLI 共用），panel 由 load_dominant 产。
     """
     text = MAP_YAML.read_text(encoding="utf-8")
     import yaml
+
     sleeves = yaml.safe_load(text)["portfolio_plan"]["sleeves"]
     have_sleeve = {x["strategy_ref"] for x in sleeves}
     judgements, receipt, skipped = _judge_batch(entries, panel, only)
@@ -701,10 +779,12 @@ def _plan_inserts(entries: list[dict[str, Any]], panel, only: set[str] | None
     ops: list[dict[str, Any]] = []
     for j in judgements:
         sid, node, act = j["sid"], j["node"], j["activated"]
-        block = text[_split_blocks(text)[node][0]:_split_blocks(text)[node][1]] if node else ""
+        block = text[_split_blocks(text)[node][0] : _split_blocks(text)[node][1]] if node else ""
         if node and f"strategy_ref: {sid}" not in block:
-            evidence = (f"auto_mount {win} states={'+'.join(act) or '-'} FDR q={FDR_Q}"
-                        f"/m={receipt['m']}/rej={receipt['n_rejected']}; code={j['code_path']}").replace("'", "")
+            evidence = (
+                f"auto_mount {win} states={'+'.join(act) or '-'} FDR q={FDR_Q}"
+                f"/m={receipt['m']}/rej={receipt['n_rejected']}; code={j['code_path']}"
+            ).replace("'", "")
             ops.append({"kind": "node_mount", "node_id": node, "sid": sid, "evidence": evidence[:150]})
         if act and node:
             for st in act:
@@ -733,7 +813,7 @@ def rescale_sleeves(text: str, plan: dict[str, float]) -> str:
         pat = rf"(?m)^(  - \{{strategy_ref: {re.escape(ref)}, weight: )(\d+(?:\.\d+)?)(,)"
         m = re.search(pat, out)
         assert m, f"rescale 找不到 sleeve 行: {ref}"
-        out = out[:m.start(2)] + f"{w:.6f}".rstrip("0").rstrip(".") + out[m.end(2):]
+        out = out[: m.start(2)] + f"{w:.6f}".rstrip("0").rstrip(".") + out[m.end(2) :]
     return out
 
 
@@ -759,16 +839,18 @@ def mount_audit(scan_frequency: str | None = "monthly") -> dict[str, Any]:
     挂载一致性=格子 mounted 里的 STR-* 必须也在节点挂载区（防两边漂移）。
     """
     import yaml
+
     text = MAP_YAML.read_text(encoding="utf-8")
     data = yaml.safe_load(text)
     fails = validate_map()
     cells = data.get("state_matrix", {}).get("cells") or []
-    node_mounted = {n["node_id"]: {m["strategy_ref"] for m in (n.get("strategy_mounts") or [])}
-                    for n in data.get("nodes", [])}
+    node_mounted = {
+        n["node_id"]: {m["strategy_ref"] for m in (n.get("strategy_mounts") or [])} for n in data.get("nodes", [])
+    }
     drift: list[str] = []
     for c in cells:
         nid = c.get("node_id", "")
-        for sid in (c.get("mounted") or []):
+        for sid in c.get("mounted") or []:
             if str(sid).startswith("STR-") and sid not in node_mounted.get(nid, set()):
                 drift.append(f"{nid}:{c.get('state')}:{sid} 格子挂载不在节点挂载区")
     mounted = sorted(mounted_sids(text))
@@ -782,6 +864,7 @@ def mount_audit(scan_frequency: str | None = "monthly") -> dict[str, Any]:
     if scan_frequency:
         try:
             from zephyr.trading.validation.decay_watch import run_decay_check
+
             out["decay"] = run_decay_check(dry_run=True, scan_frequency=scan_frequency)
         except Exception as exc:  # noqa: BLE001 衰减档巡检是增强项，失败不阻断审计
             out["decay"] = {"error": str(exc)[:120]}
@@ -818,25 +901,36 @@ def write_report(payload: dict[str, Any], sid_label: str, out_dir: Path | None =
         "",
     ]
     for j in payload.get("judgements", []):
-        segs = "; ".join(
-            f"{s} SR={v.get('sr', 0):+.2f} t={v.get('t', 0):.2f} p={v.get('p', 1):.3g} "
-            f"n={v.get('n', 0)}d OOS={v.get('oos_sr', 0):+.2f}({v.get('oos_n', 0)}d) "
-            f"{'✔' if v.get('accepted') else '✘' + str(v.get('reject_reason', ''))}"
-            for s, v in sorted((j.get("segments") or {}).items())) or "（选股类无状态格）"
-        lines.append(f"- **{j['sid']}**（{j.get('cls', '')}）→ `{j.get('node') or '选股链'}`："
-                     f"激活态={j.get('activated')}；分相位证据 {segs}")
+        segs = (
+            "; ".join(
+                f"{s} SR={v.get('sr', 0):+.2f} t={v.get('t', 0):.2f} p={v.get('p', 1):.3g} "
+                f"n={v.get('n', 0)}d OOS={v.get('oos_sr', 0):+.2f}({v.get('oos_n', 0)}d) "
+                f"{'✔' if v.get('accepted') else '✘' + str(v.get('reject_reason', ''))}"
+                for s, v in sorted((j.get("segments") or {}).items())
+            )
+            or "（选股类无状态格）"
+        )
+        lines.append(
+            f"- **{j['sid']}**（{j.get('cls', '')}）→ `{j.get('node') or '选股链'}`："
+            f"激活态={j.get('activated')}；分相位证据 {segs}"
+        )
     fdr = payload.get("fdr") or {}
-    lines += ["", "## 证据指针", "",
-              f"- 判定窗口：{payload.get('window') or IS_WIN_START}..最新可用日（SLE-3② 解冻，"
-              f"终点=快照表尾窗回退 {PIT_TAIL_LAG} 行 PIT）",
-              f"- 状态真源：{SNAPSHOT_TABLE}.dominant（宏观腿）+ 广度指数微观相位 overlay（SLE-3③ 补"
-              f" euphoria/distribution 盲区）",
-              f"- 多重检验：BHY-FDR q={fdr.get('q', FDR_Q)} 族 m={fdr.get('m', '-')} "
-              f"拒绝={fdr.get('n_rejected', '-')} 临界 p={fdr.get('threshold', '-')}"
-              f"{'（大族升级 t≥' + str(T_STAR_HLZ) + '）' if fdr.get('hlz') else ''}",
-              f"- 代码真源：注册表 code_path→翻译件 build()（见各条目）",
-              f"- 地图回执：38 规则校验 {'通过' if not payload.get('fails') else payload.get('fails')}；"
-              f"权重方案：{payload.get('weights', '{}')}", ""]
+    lines += [
+        "",
+        "## 证据指针",
+        "",
+        f"- 判定窗口：{payload.get('window') or IS_WIN_START}..最新可用日（SLE-3② 解冻，"
+        f"终点=快照表尾窗回退 {PIT_TAIL_LAG} 行 PIT）",
+        f"- 状态真源：{SNAPSHOT_TABLE}.dominant（宏观腿）+ 广度指数微观相位 overlay（SLE-3③ 补"
+        f" euphoria/distribution 盲区）",
+        f"- 多重检验：BHY-FDR q={fdr.get('q', FDR_Q)} 族 m={fdr.get('m', '-')} "
+        f"拒绝={fdr.get('n_rejected', '-')} 临界 p={fdr.get('threshold', '-')}"
+        f"{'（大族升级 t≥' + str(T_STAR_HLZ) + '）' if fdr.get('hlz') else ''}",
+        "- 代码真源：注册表 code_path→翻译件 build()（见各条目）",
+        f"- 地图回执：38 规则校验 {'通过' if not payload.get('fails') else payload.get('fails')}；"
+        f"权重方案：{payload.get('weights', '{}')}",
+        "",
+    ]
     path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return path
 
@@ -849,21 +943,30 @@ def explain_panel(panel) -> dict[str, Any]:
     phase_after=叠加微观 overlay 后的合成相位（防御段自此可被真实触发）。
     """
     from zephyr.signal_ashare.core.environment_switch import SIX_STATES  # noqa: PLC0415 词表真源
+
     base = panel["dom"].map(R2SIX)
-    return {"window": window_of(panel), "days": int(len(panel)),
-            "phase_before": {s: int((base == s).sum()) for s in SIX_STATES},
-            "phase_after": {s: int((panel["six"] == s).sum()) for s in SIX_STATES},
-            "unmapped_days": int(panel["six"].isna().sum())}
+    return {
+        "window": window_of(panel),
+        "days": int(len(panel)),
+        "phase_before": {s: int((base == s).sum()) for s in SIX_STATES},
+        "phase_after": {s: int((panel["six"] == s).sum()) for s in SIX_STATES},
+        "unmapped_days": int(panel["six"].isna().sum()),
+    }
 
 
 def _mount_confidence(data: dict[str, Any]) -> dict[str, str]:
     """地图节点挂载 confidence 汇总（分配证据的置信来源，缺失=proposed）。"""
-    return {str(m.get("strategy_ref")): str(m.get("confidence") or "proposed")
-            for n in (data.get("nodes") or []) for m in (n.get("strategy_mounts") or []) if m.get("strategy_ref")}
+    return {
+        str(m.get("strategy_ref")): str(m.get("confidence") or "proposed")
+        for n in (data.get("nodes") or [])
+        for m in (n.get("strategy_mounts") or [])
+        if m.get("strategy_ref")
+    }
 
 
-def allocation_evidence(judgements: list[dict[str, Any]], confidence: dict[str, str] | None = None
-                        ) -> dict[str, dict[str, Any]]:
+def allocation_evidence(
+    judgements: list[dict[str, Any]], confidence: dict[str, str] | None = None
+) -> dict[str, dict[str, Any]]:
     """② 判定 → ③ 分配证据：{sid: {sr, vol, confidence, states, selection, source, retired}}。
 
     sr/vol 用全窗口径（分配要的是整体风险调整表现，不是单相位段内 SR）；selection=True
@@ -874,16 +977,26 @@ def allocation_evidence(judgements: list[dict[str, Any]], confidence: dict[str, 
         full = j.get("full") or {}
         if not full:
             continue
-        out[j["sid"]] = {"sr": float(full.get("sr") or 0.0), "vol": float(full.get("vol") or 0.0),
-                         "confidence": (confidence or {}).get(j["sid"], "proposed"),
-                         "states": list(j.get("activated") or []), "selection": j.get("activated") is None,
-                         "source": j.get("code_path", ""), "retired": bool(j.get("retired"))}
+        out[j["sid"]] = {
+            "sr": float(full.get("sr") or 0.0),
+            "vol": float(full.get("vol") or 0.0),
+            "confidence": (confidence or {}).get(j["sid"], "proposed"),
+            "states": list(j.get("activated") or []),
+            "selection": j.get("activated") is None,
+            "source": j.get("code_path", ""),
+            "retired": bool(j.get("retired")),
+        }
     return out
 
 
-def allocation_request(old: list[dict[str, Any]], evidence: dict[str, dict[str, Any]], *,
-                       cap: float = DEFAULT_SINGLE_SLEEVE_CAP, floor: float = NEW_SLEEVE_WEIGHT,
-                       step: float = WEIGHT_STEP_LIMIT) -> list[dict[str, Any]]:
+def allocation_request(
+    old: list[dict[str, Any]],
+    evidence: dict[str, dict[str, Any]],
+    *,
+    cap: float = DEFAULT_SINGLE_SLEEVE_CAP,
+    floor: float = NEW_SLEEVE_WEIGHT,
+    step: float = WEIGHT_STEP_LIMIT,
+) -> list[dict[str, Any]]:
     """③ 车道 D（pf_alloc）接口约定：本件出**权重来源**，不碰 src/zephyr/pf_alloc/**。
 
     每 sleeve 一行：strategy_ref／weight（归一后目标权，Σ=1）／signal_weight（归一前证据强度
@@ -909,8 +1022,16 @@ def allocation_request(old: list[dict[str, Any]], evidence: dict[str, dict[str, 
             stage = "observation"
         else:
             stage = "decaying"  # 有净值证据但无一相位过 FDR 门=证据衰减中
-        rows.append({"strategy_ref": r, "weight": w, "signal_weight": round(score.get(r, 0.0), 6),
-                     "capacity": round(max(0.0, cap - w), 6), "stage": stage, "source": (ev or {}).get("source", "")})
+        rows.append(
+            {
+                "strategy_ref": r,
+                "weight": w,
+                "signal_weight": round(score.get(r, 0.0), 6),
+                "capacity": round(max(0.0, cap - w), 6),
+                "stage": stage,
+                "source": (ev or {}).get("source", ""),
+            }
+        )
     return rows
 
 
@@ -921,6 +1042,7 @@ def rebalance_proposal(entries: list[dict[str, Any]], panel, only: set[str] | No
     真实调权必然过不了 only_add（它禁任何非等比变动），所以提案只打印，落图须 Owner 开闸。
     """
     import yaml
+
     text = MAP_YAML.read_text(encoding="utf-8")
     data = yaml.safe_load(text)
     plan = data["portfolio_plan"] or {}
@@ -939,12 +1061,23 @@ def rebalance_proposal(entries: list[dict[str, Any]], panel, only: set[str] | No
     # 新 ref 在地图里没有 sleeve 块可写（挂图=only-add 通道的职责），rescale_sleeves 只能动存量
     # → 单列 unmounted_new_refs 出声，禁让读者把"diff 只动存量"读成"提案只动了存量"。
     unmounted_new_refs = sorted(k for k in after_w if k not in before_w)
-    diff = "\n".join(difflib.unified_diff(text.splitlines(), after_text.splitlines(),
-                                          "map.sleeves.current", "map.sleeves.proposed", lineterm="", n=0))
-    return {"window": window_of(panel), "cap": cap, "fdr": receipt, "gate": gate, "evidence": ev,
-            "before": before_w, "after": after_w, "diff": diff,
-            "unmounted_new_refs": unmounted_new_refs,
-            "requests": allocation_request(sleeves, ev, cap=cap)}
+    diff = "\n".join(
+        difflib.unified_diff(
+            text.splitlines(), after_text.splitlines(), "map.sleeves.current", "map.sleeves.proposed", lineterm="", n=0
+        )
+    )
+    return {
+        "window": window_of(panel),
+        "cap": cap,
+        "fdr": receipt,
+        "gate": gate,
+        "evidence": ev,
+        "before": before_w,
+        "after": after_w,
+        "diff": diff,
+        "unmounted_new_refs": unmounted_new_refs,
+        "requests": allocation_request(sleeves, ev, cap=cap),
+    }
 
 
 def main() -> None:
@@ -957,8 +1090,12 @@ def main() -> None:
     ap.add_argument("--rebalance", action="store_true", help="调权提案 diff（只读，永不写图；SLE-1 Owner 门位）")
     ap.add_argument("--strategy", default=None, help="逗号分隔 strategy_id 列表")
     ap.add_argument("--report", action="store_true", help="报告落盘 docs/_working/（--plan/--apply/--replay 均可带）")
-    ap.add_argument("--scan-frequency", default="monthly", choices=["monthly", "quarterly", "semiannual"],
-                    help="审计档位（默认 monthly，对齐 decay_watch 分档）")
+    ap.add_argument(
+        "--scan-frequency",
+        default="monthly",
+        choices=["monthly", "quarterly", "semiannual"],
+        help="审计档位（默认 monthly，对齐 decay_watch 分档）",
+    )
     args = ap.parse_args()
     if args.audit:  # 审计不需判定（三件套全只读），前置分支免付全量归因成本
         print(json.dumps(mount_audit(args.scan_frequency), ensure_ascii=False, indent=1))
@@ -972,17 +1109,27 @@ def main() -> None:
         assert only, "地图上无已挂 STR-* 可重放"
     if args.explain:
         judgements, receipt, _ = _judge_batch(entries, panel, only)
-        print(json.dumps({"panel": explain_panel(panel), "fdr": receipt,
-                          "judgements": judgements}, ensure_ascii=False, indent=1))
+        print(
+            json.dumps(
+                {"panel": explain_panel(panel), "fdr": receipt, "judgements": judgements}, ensure_ascii=False, indent=1
+            )
+        )
         return
     if args.rebalance:
         out = rebalance_proposal(entries, panel, only)
         print(out["diff"] or "(零 diff——提案与现权一致)")
-        print(json.dumps({k: out[k] for k in ("window", "cap", "fdr", "gate", "after",
-                                              "unmounted_new_refs")}, ensure_ascii=False, indent=1))
+        print(
+            json.dumps(
+                {k: out[k] for k in ("window", "cap", "fdr", "gate", "after", "unmounted_new_refs")},
+                ensure_ascii=False,
+                indent=1,
+            )
+        )
         for row in out["requests"]:
-            print(f"  {row['strategy_ref']:<24} w={row['weight']:.6f} sw={row['signal_weight']:.4f} "
-                  f"cap_left={row['capacity']:.4f} stage={row['stage']}")
+            print(
+                f"  {row['strategy_ref']:<24} w={row['weight']:.6f} sw={row['signal_weight']:.4f} "
+                f"cap_left={row['capacity']:.4f} stage={row['stage']}"
+            )
         print("[REBALANCE] 只出提案不写图（落图须 Owner 开 weight_adjust 门位）")
         return
     ops, before, weights, skipped = _plan_inserts(entries, panel, only)
@@ -994,9 +1141,11 @@ def main() -> None:
     report_payload["window"] = window_of(panel)
     if args.replay:
         pending = [o for o in ops if o["kind"] in ("node_mount", "cell", "sleeve")]
-        assert not pending, (f"重放非幂等：仍有 {len(pending)} 个待插操作 {pending[:3]}；"
-                             "若全为 cell 则多为判定窗解冻/相位补全新纳入的态（--explain 看 accept 依据），"
-                             "only-add 不回撤，需 --apply 补挂")
+        assert not pending, (
+            f"重放非幂等：仍有 {len(pending)} 个待插操作 {pending[:3]}；"
+            "若全为 cell 则多为判定窗解冻/相位补全新纳入的态（--explain 看 accept 依据），"
+            "only-add 不回撤，需 --apply 补挂"
+        )
         report_payload["fails"] = validate_map()
         print(f"REPLAY OK: 已挂 {len(only)} 条零 diff（幂等）；38 规则 fails={len(report_payload['fails'])}")
         if args.report:
@@ -1005,7 +1154,9 @@ def main() -> None:
         return
     after = apply_ops(ops, before)
     only_add_assert(before, after)
-    diff = "\n".join(difflib.unified_diff(before.splitlines(), after.splitlines(), "map.before", "map.after", lineterm="", n=1))
+    diff = "\n".join(
+        difflib.unified_diff(before.splitlines(), after.splitlines(), "map.before", "map.after", lineterm="", n=1)
+    )
     report_payload["diff"] = diff
     print(diff or "(零 diff)")
     if skipped:
@@ -1017,8 +1168,10 @@ def main() -> None:
             print(f"[REPORT] {rp}")
         return
     assert only, "--apply 必须显式给 --strategy（挂谁=C6 线决策，工具只管怎么挂）"
-    from zephyr.shared.io.file_utils import safe_write_text
     import hashlib
+
+    from zephyr.shared.io.file_utils import safe_write_text
+
     r = safe_write_text(MAP_YAML, after, expected_base_sha256=hashlib.sha256(before.encode()).hexdigest(), newline="\n")
     if not getattr(r, "written", True):
         raise RuntimeError("safe_write_text 未确认写入")
@@ -1034,7 +1187,8 @@ def main() -> None:
         fw = emit_fw_backtest_due(trigger="auto_mount", sids=sorted(only))
         tail = f" err={fw.get('error')}" if fw.get("error") else ""
         print(f"[FW-BACKTEST-DUE] event={fw.get('event')} drained={fw.get('drained')}{tail}")
-    except Exception as exc:  # noqa: BLE001——事件链故障不回滚挂图
+    # 事件链故障不回滚挂图（原 noqa 写法把理由并进了代码位，指令失效——ruff 实测仍报 BLE001）
+    except Exception as exc:  # noqa: BLE001
         print(f"[FW-BACKTEST-DUE] emit 失败（不影响挂图结果）: {type(exc).__name__}: {exc}")
     if args.report:
         rp = write_report(report_payload, args.strategy)
