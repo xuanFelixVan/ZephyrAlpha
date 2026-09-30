@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway ; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session, register_dependency, clear_dependency) ; zephyr.gov_enforcement.commit_gates.import_integrity_gate (_check_active_session_held_target, Phase 2.5) ; zephyr.governance.audit.reconcile_worker (SessionRegistry) ; zephyr.governance.audit.reconcile_runner (SessionRegistry)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-002 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
+# [INVARIANTS] SessionRegistry S4-D 分片存储（2026-09-30）：主真源=.runtime/session_registry/<sid>.json 每会话一片（per-pid tmp+os.replace+WinError5 退避原语义），写只碰本会话片（整表重写竞态拆面治本——AI-NORTH-001 心跳互踩/WinError5 连锁/#ARCH-324 的结构性病根）；读侧聚合（损坏/缺失片跳过+审计，损失半径=单片），旧单表迁移窗双写为只读兼容副本（直读消费者 watchdog/write_audit_daemon/commit_queue/check_commit_message 不受扰），片目录缺席回退旧表；回退手柄 env ZEPHYR_SESSION_REGISTRY_SHARDS=0；公共 save()=merge-upsert 永不删（删除只能走 unregister/list_active 收割显式意图）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-002 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,7 +19,9 @@ Session 级并发协调模块（P2-SES 落地）。
 
 从 Stub 落地为真实的 session 级协调：
 1. SessionRegistry：注册活跃 session（PID + session_id + start_time + 持有文件锁）
-   - 存储在 .runtime/session_registry.json（原子写入，对标 lock_files.py）
+   - S4-D 起主真源=.runtime/session_registry/<sid>.json 每会话一片（写只碰自己
+     的片，整表重写竞态对象消失）；旧单表 session_registry.json 迁移窗内双写为
+     只读兼容副本，读侧片优先（回退手柄 env ZEPHYR_SESSION_REGISTRY_SHARDS=0）
    - TTL=3600s（session 超时自动注销）
 2. SessionHandoff：session 结束时写 handoff package
    - 对标 drift_detector/blueprint.md §6.14 Cross-Session HandoffPackage
@@ -49,9 +51,11 @@ __all__ = [
     "detect_mtime_conflict",
 ]
 
+import hashlib
 import json
 import logging
 import os
+import re
 import threading
 import time
 from dataclasses import dataclass, field
@@ -168,7 +172,19 @@ _REAP_GRACE_SECONDS: int = 15 * 60
 # daemon 检测 idle 超此上限自动退出 → 90s 后 registry 条目过期 → claim 自动释放。
 _ACTIVITY_IDLE_TIMEOUT_SECONDS: int = 1800
 _REGISTRY_PATH: str = ".runtime/session_registry.json"
+# S4-D 分片目录（全流通夜战 G2 2026-09-30）：每会话一片 <sid>.json——写只碰自己的片，
+# 整表重写竞态对象消失（而非给竞态加锁）。旧单表降级为只读兼容副本（迁移双写窗口）。
+_REGISTRY_SHARDS_DIRNAME: str = "session_registry"
 _HANDOFF_DIR: str = ".runtime/handoffs"
+
+
+def _shards_enabled() -> bool:
+    """S4-D 回退手柄：env ZEPHYR_SESSION_REGISTRY_SHARDS=0 → 停用分片（回退旧表单文件）。
+
+    缺省 ON。OFF 时读=旧表、写=旧表 merge-upsert（双写窗已保证旧表完整，零丢失回退）。
+    """
+    return os.environ.get("ZEPHYR_SESSION_REGISTRY_SHARDS", "1").strip() != "0"
+
 
 # WinError 5（ERROR_ACCESS_DENIED）短退避序列（毫秒）——见 SessionRegistry._save docstring
 _REPLACE_RETRY_DELAYS_MS: tuple[int, ...] = (10, 50, 100)
@@ -300,10 +316,16 @@ def _is_session_alive(info: SessionInfo, now: float) -> bool:
 
 
 class SessionRegistry:
-    """Session 级注册表（P2-SES）。
+    """Session 级注册表（P2-SES；S4-D 起为每会话分片存储）。
 
-    存储在 .runtime/session_registry.json（原子写入：tmp + os.replace）。
-    TTL=3600s（session 超时自动注销）。
+    存储（S4-D 治本，2026-09-30）：主真源=``.runtime/session_registry/<sid>.json``
+    每会话一片（per-pid tmp + os.replace + WinError5 退避原语义）——写路径只读改写
+    本会话片，整表重写竞态对象消失（AI-NORTH-001 心跳互踩/WinError5 连锁/#ARCH-324
+    的结构性病根=共享整表的读-改-写窗口，拆面而非加锁）。读侧聚合：glob 读片、
+    损坏/缺失片跳过+审计（损失半径从整表缩到单片）；旧单表 ``session_registry.json``
+    迁移窗内双写为只读兼容副本（watchdog/write_audit_daemon/commit_queue/
+    check_commit_message 等直读路径不受扰），读侧片优先、片缺 sid 由旧表兜底。
+    回退手柄：``ZEPHYR_SESSION_REGISTRY_SHARDS=0`` 停用分片（读旧表/写旧表）。
 
     不替代 lock_files.py（文件级锁），而是在其上增加 session 级注册。
     不替代 F23 AgentOrchestrator（任务级），补齐 session 级空缺。
@@ -323,18 +345,148 @@ class SessionRegistry:
         self._project_root: Path = root
         self._registry_path: Path = self._project_root / _REGISTRY_PATH
         self._registry_path.parent.mkdir(parents=True, exist_ok=True)
+        # S4-D 分片目录（读容忍缺席——缺席=回退旧表；写时懒创建）
+        self._shards_dir: Path = self._project_root / ".runtime" / _REGISTRY_SHARDS_DIRNAME
         # 进程内读写锁：串行化 _load->修改->_save 的 read-modify-write 序列，
         # 消除 claim_file/release_file 等的 TOCTOU 竞态（两线程并发 claim 同一文件
         # 都读到"无人持有"->都写回->双 claim）。跨进程并发由 gateway 全局锁 + 原子
         # os.replace 兜底；此处只解决进程内多线程竞态（红蓝对抗 TestConcurrentClaimRace）。
+        # S4-D：跨进程竞态面已随整表重写拆片消失（各会话写自己的片）；本锁仍保
+        # 进程内多线程对同片的序列化。
         self._lock = threading.RLock()
 
+    # ------------------------------------------------------------------
+    # S4-D 分片原语（片 IO + 旧表镜像/兜底）
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _shard_filename(session_id: str) -> str:
+        """会话片文件名：sid 净化为 [A-Za-z0-9._-]，含非法字符时加 sha1 前 8 位防碰撞。
+
+        聚合读以片内容 session_id 字段为准（文件名仅为存储键）——键碰撞仅可能发生
+        在净化后同名+hash8 同缀的 sid 对上（概率可忽略）。
+        """
+        safe = re.sub(r"[^A-Za-z0-9._-]", "_", session_id)
+        if safe != session_id or not safe:
+            digest = hashlib.sha1(session_id.encode("utf-8")).hexdigest()[:8]
+            safe = f"{safe}.{digest}" if safe else digest
+        return f"{safe}.json"
+
+    def _load_legacy(self) -> dict[str, dict]:
+        """旧单表读取（文件不存在/损坏返回空 dict——损坏不再一损俱损：片在读侧兜真源）。"""
+        try:
+            if not self._registry_path.exists():
+                return {}
+            content = self._registry_path.read_text(encoding="utf-8")
+            return json.loads(content) if content.strip() else {}
+        except (OSError, ValueError) as e:
+            logger.warning("SessionRegistry: failed to load legacy registry: %s", e)
+            return {}
+
+    def _write_legacy_raw(self, data: dict[str, dict]) -> None:
+        """旧单表原子写入（per-pid tmp + os.replace + WinError5 退避——原 _save 语义）。"""
+        tmp_path = self._registry_path.with_name(f"{self._registry_path.stem}.{os.getpid()}.tmp")
+        try:
+            tmp_path.write_text(
+                json.dumps(data, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            _replace_with_retry(str(tmp_path), str(self._registry_path))
+        except OSError as e:
+            logger.warning("SessionRegistry: failed to save legacy registry: %s", e)
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def _load_shard(self, session_id: str) -> dict | None:
+        """读单片：缺席/空=None；损坏=None+warning（损失半径=单片，不再整表退 {}）。"""
+        p = self._shards_dir / self._shard_filename(session_id)
+        try:
+            if not p.exists():
+                return None
+            content = p.read_text(encoding="utf-8")
+            if not content.strip():
+                return None
+            data = json.loads(content)
+            return data if isinstance(data, dict) else None
+        except (OSError, ValueError) as e:
+            logger.warning("SessionRegistry: shard unreadable/corrupt sid=%s: %s", session_id, e)
+            return None
+
+    def _write_shard_only(self, session_id: str, entry: dict) -> None:
+        """写单片（per-pid tmp + os.replace + WinError5 退避原语义），不碰旧表。"""
+        try:
+            self._shards_dir.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            logger.warning("SessionRegistry: failed to create shards dir: %s", e)
+            return
+        p = self._shards_dir / self._shard_filename(session_id)
+        tmp_path = p.with_name(f"{p.stem}.{os.getpid()}.tmp")
+        try:
+            tmp_path.write_text(
+                json.dumps(entry, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            _replace_with_retry(str(tmp_path), str(p))
+        except OSError as e:
+            logger.warning("SessionRegistry: failed to save shard sid=%s: %s", session_id, e)
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+    def _delete_shard_only(self, session_id: str) -> None:
+        """删单片（缺席幂等）。"""
+        p = self._shards_dir / self._shard_filename(session_id)
+        try:
+            p.unlink(missing_ok=True)
+        except OSError as e:
+            logger.warning("SessionRegistry: failed to delete shard sid=%s: %s", session_id, e)
+
+    def _save_shard(self, session_id: str, entry: dict) -> None:
+        """写单片 + 旧表镜像 upsert（迁移双写窗口：旧表降级为只读兼容副本）。
+
+        镜像自身存在整表读改写窗口——但旧表此时非真源（读侧片优先），窗口内丢失
+        仅为兼容副本滞后，下一次心跳/治理操作自愈重写，无治理语义损失。
+        """
+        self._write_shard_only(session_id, entry)
+        legacy = self._load_legacy()
+        legacy[session_id] = entry
+        self._write_legacy_raw(legacy)
+
+    def _delete_shard(self, session_id: str) -> None:
+        """删单片 + 旧表镜像移除（unregister/收割共用）。"""
+        self._delete_shard_only(session_id)
+        legacy = self._load_legacy()
+        if session_id in legacy:
+            legacy.pop(session_id, None)
+            self._write_legacy_raw(legacy)
+
+    def _get_entry(self, session_id: str) -> dict | None:
+        """单会话条目读取（O(1) 片读优先；片缺由旧表兜底——迁移窗部署前条目可见）。"""
+        if _shards_enabled():
+            entry = self._load_shard(session_id)
+            if entry is not None:
+                return entry
+            return self._load_legacy().get(session_id)
+        return self._load_legacy().get(session_id)
+
+    def _write_own(self, session_id: str, entry: dict) -> None:
+        """本会话条目写入：分片=写自己片+镜像；kill-switch=旧表 merge-upsert。"""
+        if _shards_enabled():
+            self._save_shard(session_id, entry)
+        else:
+            legacy = self._load_legacy()
+            legacy[session_id] = entry
+            self._write_legacy_raw(legacy)
+
     def save(self, data) -> None:
-        """公共接口：save（Stage 4 公共化）。"""
+        """公共接口：save（Stage 4 公共化；S4-D 起=merge-upsert，见 _save）。"""
         return self._save(data)
 
     def load(self) -> dict[str, dict]:
-        """公共接口：load（Stage 4 公共化）。"""
+        """公共接口：load（Stage 4 公共化；S4-D 起=聚合读，见 _load）。"""
         return self._load()
 
     def register(
@@ -371,9 +523,8 @@ class SessionRegistry:
                 depends_on_sessions=depends_on_sessions or [],
                 logical=logical,
             )
-            data = self._load()
-            data[session_id] = info.to_dict()
-            self._save(data)
+            # S4-D：register 语义=覆盖本会话片——无需整表读，跨会话竞态面消失
+            self._write_own(session_id, info.to_dict())
             logger.info(
                 "SessionRegistry: registered session=%s pid=%d breaking_change=%s deps=%s logical=%s",
                 session_id,
@@ -390,12 +541,11 @@ class SessionRegistry:
         Returns: True=已更新；False=session 不在册（调用方自行决定是否 register）。
         """
         with self._lock:
-            data = self._load()
-            entry = data.get(session_id)
+            entry = self._get_entry(session_id)
             if not isinstance(entry, dict):
                 return False
             entry["logical"] = bool(logical)
-            self._save(data)
+            self._write_own(session_id, entry)
             logger.info("SessionRegistry: mark_logical session=%s logical=%s", session_id, logical)
             return True
 
@@ -416,15 +566,14 @@ class SessionRegistry:
         Returns: True=登记成功（含幂等），False=session 未注册且懒注册失败。
         """
         with self._lock:
-            data = self._load()
             now = time.time()  # noqa: m46-time — 注册依赖时的时间戳（对标 claim_file L404 同模式）
-            existing = data.get(session_id)
+            existing = self._get_entry(session_id)
             if existing is None or not _is_session_alive(SessionInfo.from_dict(existing), now):
                 logger.warning(
                     "SessionRegistry: register_dependency auto-registering session=%s (not registered or dead/expired)",
                     session_id,
                 )
-                data[session_id] = SessionInfo(
+                existing = SessionInfo(
                     session_id=session_id,
                     pid=os.getpid(),
                     start_time=now,
@@ -432,15 +581,13 @@ class SessionRegistry:
                     last_heartbeat=now,
                     last_activity=now,
                 ).to_dict()
-                self._save(data)
 
-            info = SessionInfo.from_dict(data[session_id])
+            info = SessionInfo.from_dict(existing)
             info.last_heartbeat = now  # noqa: m46-time — 顺带心跳刷新（对标 claim_file L436）
             info.last_activity = now  # 真实治理操作刷新活性锚点（活性反转治本）
             if depends_on_session_id not in info.depends_on_sessions:
                 info.depends_on_sessions.append(depends_on_session_id)
-            data[session_id] = info.to_dict()
-            self._save(data)
+            self._write_own(session_id, info.to_dict())
             logger.info(
                 "SessionRegistry: registered dependency session=%s -> %s",
                 session_id,
@@ -461,14 +608,13 @@ class SessionRegistry:
         Returns: True=清除成功（含依赖不存在），False=session 未注册。
         """
         with self._lock:
-            data = self._load()
-            if session_id not in data:
+            entry = self._get_entry(session_id)
+            if not isinstance(entry, dict):
                 return False
-            info = SessionInfo.from_dict(data[session_id])
+            info = SessionInfo.from_dict(entry)
             if depends_on_session_id in info.depends_on_sessions:
                 info.depends_on_sessions.remove(depends_on_session_id)
-                data[session_id] = info.to_dict()
-                self._save(data)
+                self._write_own(session_id, info.to_dict())
                 logger.info(
                     "SessionRegistry: cleared dependency session=%s -> %s",
                     session_id,
@@ -500,24 +646,34 @@ class SessionRegistry:
         return None
 
     def unregister(self, session_id: str) -> bool:
-        """注销一个 session。"""
+        """注销一个 session（S4-D：删本会话片+旧表镜像移除）。"""
         with self._lock:
-            data = self._load()
-            if session_id not in data:
+            shard_exists = False
+            if _shards_enabled():
+                shard_exists = (self._shards_dir / self._shard_filename(session_id)).exists()
+            in_legacy = session_id in self._load_legacy()
+            if not shard_exists and not in_legacy:
                 return False
-            del data[session_id]
-            self._save(data)
+            if _shards_enabled():
+                self._delete_shard(session_id)
+            else:
+                legacy = self._load_legacy()
+                legacy.pop(session_id, None)
+                self._write_legacy_raw(legacy)
             logger.info("SessionRegistry: unregistered session=%s", session_id)
             return True
 
     def heartbeat(self, session_id: str) -> bool:
-        """更新 session 心跳时间（防 TTL 过期）。"""
+        """更新 session 心跳时间（防 TTL 过期；S4-D：只写本会话片，O(1)）。"""
         with self._lock:
-            data = self._load()
-            if session_id not in data:
+            entry = self._get_entry(session_id)
+            if not isinstance(entry, dict):
                 return False
-            data[session_id]["last_heartbeat"] = time.time()
-            self._save(data)
+            # last_heartbeat 真源格式=epoch 秒浮点（_is_session_alive 判活矩阵/daemon idle
+            # 判据全靠数值差，改 now_utc 序列化即破 schema——原 _save 时代同语义存量行，
+            # S4-D 重写触碰故按同件先例补豁免标注）
+            entry["last_heartbeat"] = time.time()  # noqa: m46-time — epoch 秒真源格式（见上）
+            self._write_own(session_id, entry)
             return True
 
     def list_active(self) -> list[SessionInfo]:
@@ -537,14 +693,23 @@ class SessionRegistry:
             # 物理删除走 _REAP_GRACE_SECONDS 宽限——tombstone 期各消费方经
             # _is_session_alive 过滤，held_files/claim/冲突检测行为不变；
             # 086d0e24 worker 证3 近期活跃宽限窗依赖记录存续，#119 治本）
+            # S4-D：收割=删各会话自己的片（与写入同片原子，不碰他片）。
             if expired:
                 reaped = 0
-                for sid in expired:
-                    if now - SessionInfo.from_dict(data[sid]).last_heartbeat > _REAP_GRACE_SECONDS:
-                        del data[sid]
-                        reaped += 1
+                if _shards_enabled():
+                    for sid in expired:
+                        if now - SessionInfo.from_dict(data[sid]).last_heartbeat > _REAP_GRACE_SECONDS:
+                            self._delete_shard(sid)
+                            reaped += 1
+                else:
+                    legacy = self._load_legacy()
+                    for sid in expired:
+                        if now - SessionInfo.from_dict(data[sid]).last_heartbeat > _REAP_GRACE_SECONDS:
+                            legacy.pop(sid, None)
+                            reaped += 1
+                    if reaped:
+                        self._write_legacy_raw(legacy)
                 if reaped:
-                    self._save(data)
                     logger.info(
                         "SessionRegistry: reaped %d dead/expired sessions (S3-A PID+TTL, grace %ds)",
                         reaped,
@@ -567,11 +732,12 @@ class SessionRegistry:
         死/过期 session 返回 None（但不删除——删除是 list_active 的职责）。
         供 GitCommitGateway 等只读消费者使用，避免 list_active 的写副作用。
         S3-A: PID 死亡也返回 None（零窗口期，与 TTL 过期同处理）。
+        S4-D: O(1) 单片读（片缺由旧表兜底——迁移窗部署前条目仍可见）。
         """
-        data = self._load()
-        if session_id not in data:
+        entry = self._get_entry(session_id)
+        if not isinstance(entry, dict):
             return None
-        info = SessionInfo.from_dict(data[session_id])
+        info = SessionInfo.from_dict(entry)
         if not _is_session_alive(info, time.time()):
             return None  # 死/过期，视为不存在（不删除——删除是 list_active 的职责）
         return info
@@ -596,28 +762,6 @@ class SessionRegistry:
             for f in info.held_files:
                 held.add(_normalize_file_path(f, self._project_root))
         return held
-
-    def _ensure_registered_locked(self, data: dict[str, dict], session_id: str, now: float) -> bool:
-        """懒注册（调用方持 _lock）：session 缺失或死/过期时以当前 PID 重建条目。
-
-        Returns: True=本次新建条目（调用方须立即持久化，即使后续 claim 冲突 session 仍可查询）。
-        """
-        existing = data.get(session_id)
-        if existing is not None and _is_session_alive(SessionInfo.from_dict(existing), now):
-            return False
-        logger.warning(
-            "SessionRegistry: claim_file auto-registering session=%s (not registered or dead/expired)",
-            session_id,
-        )
-        data[session_id] = SessionInfo(
-            session_id=session_id,
-            pid=os.getpid(),
-            start_time=now,
-            held_files=[],
-            last_heartbeat=now,
-            last_activity=now,
-        ).to_dict()
-        return True
 
     def _foreign_held_locked(self, data: dict[str, dict], session_id: str, now: float) -> dict[str, str]:
         """其他活跃 session 的持有表：归一路径 → 持有者 session_id（死/过期持有忽略，S3-A）。"""
@@ -644,13 +788,26 @@ class SessionRegistry:
         """
         with self._lock:
             norm = _normalize_file_path(file_path, self._project_root)
-            data = self._load()
             now = time.time()
+            # S4-D：外来持有面=聚合只读（无写竞态）；本会话面=单片读改写
+            foreign = self._foreign_held_locked(self._load(), session_id, now)
+            entry = self._get_entry(session_id)
+            if entry is None or not _is_session_alive(SessionInfo.from_dict(entry), now):
+                logger.warning(
+                    "SessionRegistry: claim_file auto-registering session=%s (not registered or dead/expired)",
+                    session_id,
+                )
+                entry = SessionInfo(
+                    session_id=session_id,
+                    pid=os.getpid(),
+                    start_time=now,
+                    held_files=[],
+                    last_heartbeat=now,
+                    last_activity=now,
+                ).to_dict()
+                self._write_own(session_id, entry)  # 立即持久化懒注册（即使后续 claim 冲突，session 仍可查询）
 
-            if self._ensure_registered_locked(data, session_id, now):
-                self._save(data)  # 立即持久化懒注册（即使后续 claim 冲突，session 仍可查询）
-
-            holder = self._foreign_held_locked(data, session_id, now).get(norm)
+            holder = foreign.get(norm)
             if holder is not None:
                 logger.warning(
                     "SessionRegistry: claim_file conflict — file=%s held by session=%s, requested by=%s",
@@ -661,14 +818,13 @@ class SessionRegistry:
                 return False
 
             # 幂等 / 新增
-            own = SessionInfo.from_dict(data[session_id])
+            own = SessionInfo.from_dict(entry)
             own.last_heartbeat = now  # claim 顺带心跳
             own.last_activity = now  # claim 是真实治理操作，刷新活性锚点（活性反转治本）
             own_norm = [_normalize_file_path(f, self._project_root) for f in own.held_files]
             if norm not in own_norm:
                 own.held_files.append(norm)
-            data[session_id] = own.to_dict()
-            self._save(data)
+            self._write_own(session_id, own.to_dict())
             return True
 
     def release_files_batch(self, session_id: str, file_paths: list[str]) -> list[str]:
@@ -678,10 +834,10 @@ class SessionRegistry:
             成功摘除的归一路径列表（未被持有/session 未注册的件排除）。
         """
         with self._lock:
-            data = self._load()
-            if session_id not in data:
+            entry = self._get_entry(session_id)
+            if not isinstance(entry, dict):
                 return []
-            info = SessionInfo.from_dict(data[session_id])
+            info = SessionInfo.from_dict(entry)
             index: dict[str, list[str]] = {}
             for orig in info.held_files:
                 index.setdefault(_normalize_file_path(orig, self._project_root), []).append(orig)
@@ -696,8 +852,7 @@ class SessionRegistry:
                 index[norm] = []
                 released.append(norm)
             if released:
-                data[session_id] = info.to_dict()
-                self._save(data)
+                self._write_own(session_id, info.to_dict())
             return released
 
     def claim_files_batch(self, session_id: str, file_paths: list[str]) -> list[str]:
@@ -715,13 +870,25 @@ class SessionRegistry:
             成功（含幂等）的归一路径列表；被其他活跃 session 持有的件被排除并记 warning。
         """
         with self._lock:
-            data = self._load()
             now = time.time()
-            if self._ensure_registered_locked(data, session_id, now):
-                self._save(data)
+            foreign = self._foreign_held_locked(self._load(), session_id, now)
+            entry = self._get_entry(session_id)
+            if entry is None or not _is_session_alive(SessionInfo.from_dict(entry), now):
+                logger.warning(
+                    "SessionRegistry: claim_files_batch auto-registering session=%s (not registered or dead/expired)",
+                    session_id,
+                )
+                entry = SessionInfo(
+                    session_id=session_id,
+                    pid=os.getpid(),
+                    start_time=now,
+                    held_files=[],
+                    last_heartbeat=now,
+                    last_activity=now,
+                ).to_dict()
+                self._write_own(session_id, entry)
 
-            foreign = self._foreign_held_locked(data, session_id, now)
-            own = SessionInfo.from_dict(data[session_id])
+            own = SessionInfo.from_dict(entry)
             own_norm = {_normalize_file_path(f, self._project_root) for f in own.held_files}
             claimed: list[str] = []
             for file_path in file_paths:
@@ -741,8 +908,7 @@ class SessionRegistry:
                 claimed.append(norm)
             own.last_heartbeat = now
             own.last_activity = now
-            data[session_id] = own.to_dict()
-            self._save(data)
+            self._write_own(session_id, own.to_dict())
             return claimed
 
     def release_file(self, session_id: str, file_path: str) -> bool:
@@ -752,10 +918,10 @@ class SessionRegistry:
         """
         with self._lock:
             norm = _normalize_file_path(file_path, self._project_root)
-            data = self._load()
-            if session_id not in data:
+            entry = self._get_entry(session_id)
+            if not isinstance(entry, dict):
                 return False
-            info = SessionInfo.from_dict(data[session_id])
+            info = SessionInfo.from_dict(entry)
             held_norm = [_normalize_file_path(f, self._project_root) for f in info.held_files]
             if norm not in held_norm:
                 return False
@@ -763,53 +929,58 @@ class SessionRegistry:
             for orig in list(info.held_files):
                 if _normalize_file_path(orig, self._project_root) == norm:
                     info.held_files.remove(orig)
-            data[session_id] = info.to_dict()
-            self._save(data)
+            self._write_own(session_id, info.to_dict())
             return True
 
     def _load(self) -> dict[str, dict]:
-        """原子读取 registry（文件不存在/损坏返回空 dict）。"""
-        try:
-            if not self._registry_path.exists():
-                return {}
-            content = self._registry_path.read_text(encoding="utf-8")
-            return json.loads(content) if content.strip() else {}
-        except (OSError, ValueError) as e:
-            logger.warning("SessionRegistry: failed to load registry: %s", e)
-            return {}
+        """S4-D 读侧聚合：glob 读片、逐片 json.loads、损坏/缺失片跳过+审计。
+
+        片目录缺席（部署前/kill-switch）回退旧表；迁移窗内旧表作底座（片优先、
+        仅片缺的 sid 补入）——部署前注册的会话不会被分片读侧漏看（防 SESSION-REQUIRED
+        假红迁移回归）。损失半径从整表退 {} 缩到单片跳过。
+        """
+        merged: dict[str, dict] = {}
+        if _shards_enabled() and self._shards_dir.is_dir():
+            for p in self._shards_dir.glob("*.json"):
+                try:
+                    content = p.read_text(encoding="utf-8")
+                    if not content.strip():
+                        continue
+                    entry = json.loads(content)
+                except (OSError, ValueError) as e:
+                    logger.warning("SessionRegistry: shard skipped (corrupt/unreadable) file=%s: %s", p.name, e)
+                    continue
+                if not isinstance(entry, dict):
+                    logger.warning("SessionRegistry: shard skipped (not a dict) file=%s", p.name)
+                    continue
+                sid = entry.get("session_id")
+                if not isinstance(sid, str) or not sid:
+                    continue  # 片内容缺 sid：无法归属，跳过（文件名仅为存储键）
+                merged[sid] = entry
+            for sid, entry in self._load_legacy().items():
+                merged.setdefault(sid, entry)  # 迁移窗底座：片优先，片缺的 sid 由旧表补
+            return merged
+        return self._load_legacy()
 
     def _save(self, data: dict[str, dict]) -> None:
-        """原子写入 registry（per-pid tmp + os.replace，防并发写损坏）。
+        """S4-D 语义收敛：merge-upsert（只增改、永不删）——写只碰片，竞态对象消失。
 
-        tmp 文件名带 PID（session_registry.<pid>.tmp）——共享单 tmp 名存在跨进程
-        竞态：A 进程 os.replace 把 tmp 移走后，B 进程 os.replace 报 WinError 2
-        （系统找不到指定的文件），该次写静默丢失（仅 warning）。2026-08-15
-        AI-NORTH-001 实证：心跳 daemon 与 commit 进程并发写互踩，心跳丢失致
-        session 假性过期反复自动重注册。per-pid tmp 从构造上消除共享名竞态；
-        os.replace（MoveFileEx REPLACE_EXISTING）本身原子，JSON 不会撕裂。
-
-        WinError 5 短退避重试（2026-09-13 治本）：Windows 上目标文件若被读方
-        （watchdog/心跳 daemon 的 SessionRegistry.list_active 短窗口打开）持有，
-        os.replace 报 ERROR_ACCESS_DENIED——实证连锁：注册表保存失败 → 会话
-        不在表内 → watchdog active_sessions 为空 → #ARCH-304 单会话自动认领
-        分支不触发（0 活跃=归属歧义）→ 已认领文件的漂移被误报 critical +
-        claim 基线失效（FOREIGN_CHANGE 逃生通道重试，factory-gate-b2-20260913
-        实弹 5 连实证）。读方窗口毫秒级，3 次指数退避（10/50/100ms）足够穿
-        透；仍失败维持原 warning 语义（下一心跳自愈重写）。
+        旧语义=整表替换（删条目靠 omit 后写回）——正是 R-D1 交错写丢条目的结构性
+        病根（A 持旧快照写回抹掉 B 的新增/心跳）。删除只能走 unregister()/list_active
+        收割（显式意图，片级原子）。逐会话片 per-pid tmp + os.replace + WinError5
+        退避原语义保留（防共享 tmp 名竞态/读方持锁，见各原语 docstring）。
+        旧单表迁移窗内双写为只读兼容副本（watchdog/write_audit_daemon/commit_queue/
+        check_commit_message 等直读路径不受扰）；读侧片优先，副本滞后无治理语义损失。
+        kill-switch（ZEPHYR_SESSION_REGISTRY_SHARDS=0）：纯旧表 merge-upsert，回退单文件
+        （双写窗已保证旧表完整，零丢失回退）。
         """
-        tmp_path = self._registry_path.with_name(f"{self._registry_path.stem}.{os.getpid()}.tmp")
-        try:
-            tmp_path.write_text(
-                json.dumps(data, indent=2, ensure_ascii=False),
-                encoding="utf-8",
-            )
-            _replace_with_retry(str(tmp_path), str(self._registry_path))
-        except OSError as e:
-            logger.warning("SessionRegistry: failed to save registry: %s", e)
-            try:
-                tmp_path.unlink(missing_ok=True)
-            except OSError:
-                pass
+        if _shards_enabled():
+            for sid, entry in data.items():
+                if isinstance(entry, dict):
+                    self._write_shard_only(sid, entry)
+        legacy = self._load_legacy()
+        legacy.update({k: v for k, v in data.items() if isinstance(v, dict)})
+        self._write_legacy_raw(legacy)
 
 
 class SessionHandoff:

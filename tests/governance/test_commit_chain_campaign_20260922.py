@@ -721,3 +721,151 @@ def test_e4_non_timeout_infra_still_fail_open(tmp_path: Path, monkeypatch: pytes
     assert gw.GitCommitGateway._run_precommit_channel(g, "sid-e4n", ["a.py"]) is None
     events = _read_block_events(tmp_path)
     assert any(e.get("event") == "precommit_channel_infra_error" for e in events)  # 原审计面保持
+
+
+# ---------------------------------------------------------------------------
+# S4-F rc=143 信号码瞬态分流 + pid/create_time 捕证面
+# （全流通夜战 G2 st-circ-g2-20260930，手术簿 docs/_working/total_circulation_night/s4_f_rc143.md）
+# 实证（簿 §2.1）：143 只能来自 MSYS bash 信号层；repo 内既有杀器（psutil.terminate/
+# taskkill/proc.kill/超时）无一直产 143——现码把 143 当普通失败喂归因器（空输出→
+# fallback 放行）。判读面=瞬态拒袋不进违规统计；捕证面=pid/create_time 落账供与
+# reaper_kill.log 时窗 join（一夜定谳 H1 工具层收割 vs H2 reaper 树级联）。
+# ---------------------------------------------------------------------------
+
+
+def _stub_rc_subprocess(
+    monkeypatch: pytest.MonkeyPatch, results: list[tuple[int, str]], meta: dict | None = None
+) -> list[list[str]]:
+    """按脚本返回 pre-commit rc/输出；meta 非 None 时回填 pid/create_time（捕证面桩）。
+
+    与 _stub_precommit_subprocess 同构，额外验证 meta_out 出参兼容（既有桩签名
+    `(cmd, **kwargs)` 不接收 meta_out 也必须不受扰——差分矩阵 10 全量记账面）。
+    """
+    import zephyr.shared.infra.process_pool as pp
+
+    calls: list[list[str]] = []
+    idx = {"i": 0}
+
+    def _fake_run(cmd, meta_out=None, **kwargs):  # noqa: ANN001, ANN003
+        calls.append(list(cmd))
+        if cmd and cmd[0] == "git":
+            return subprocess.CompletedProcess(cmd, 0, "headsha\n", "")
+        if meta_out is not None and meta:
+            meta_out.update(meta)
+        i = idx["i"]
+        idx["i"] += 1
+        rc, out = results[i] if i < len(results) else (0, "")
+        return subprocess.CompletedProcess(cmd, rc, out, "")
+
+    monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
+    return calls
+
+
+_META_EVIDENCE = {"pid": 424242, "create_time": 1727650000.0}
+
+
+def test_rf1_rc143_routes_transient_not_violation(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-F1 信号码分流红：rc=143 → 瞬态拒袋（非违规措辞）+ signalled 审计。
+
+    现码：rc=143 空 output 喂 _precommit_decide_failure → own/foreign 均无 →
+    fallback 放行（None）——瞬态被静默吞且无审计，必红。
+    """
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_rc_subprocess(monkeypatch, [(143, "")], meta=_META_EVIDENCE)
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    blocked = gw.GitCommitGateway._run_precommit_channel(g, "sid-rf1", ["a.py"])
+    assert blocked is not None, "rc=143 必须走瞬态拒袋分支（现码静默放行）"
+    assert "阻断" not in blocked, "瞬态语义不得产出违规「阻断」措辞"
+    assert "GATE-PRECOMMIT-RUN" in blocked
+    assert "requeue" in blocked, "处方面：瞬态退避重投语义"
+    events = _read_block_events(tmp_path)
+    signalled = [e for e in events if e.get("event") == "precommit_channel_signalled"]
+    assert len(signalled) == 1
+    assert signalled[0]["rc"] == 143
+    assert signalled[0]["pid"] == 424242 and signalled[0]["create_time"] == _META_EVIDENCE["create_time"]
+    assert not [e for e in events if e.get("event") == "precommit_channel_blocked"], "不得进真违规统计"
+
+
+def test_rf1_negative_rc_same_transient_branch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-F1 矩阵5：负信号码（-1，无 infra_error 语境）同走瞬态分支。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_rc_subprocess(monkeypatch, [(-1, "")])
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    blocked = gw.GitCommitGateway._run_precommit_channel(g, "sid-rf1n", ["a.py"])
+    assert blocked is not None and "阻断" not in blocked
+    events = _read_block_events(tmp_path)
+    signalled = [e for e in events if e.get("event") == "precommit_channel_signalled"]
+    assert len(signalled) == 1 and signalled[0]["rc"] == -1
+
+
+def test_rf2_rc1_own_violation_block_unchanged(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-F2 真违规不吞锚：rc=1 own 失败段的现行阻断判定逐字段不变（143 分支不得捕获 rc=1）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    ruff_red = "- hook id: ruff\n- exit code: 1\n\na.py:3:1 F401 unused import\n"
+    _stub_rc_subprocess(monkeypatch, [(1, ruff_red)])
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    blocked = gw.GitCommitGateway._run_precommit_channel(g, "sid-rf2", ["a.py"])
+    assert blocked is not None
+    assert "GATE-PRECOMMIT-RUN 阻断" in blocked, "rc=1 真违规措辞不变"
+    assert "ruff" in blocked and "a.py" in blocked
+    events = _read_block_events(tmp_path)
+    assert any(e.get("event") == "precommit_channel_blocked" for e in events)
+    assert not [e for e in events if e.get("event") == "precommit_channel_signalled"]
+
+
+def test_rf2_matrix_endpoints_rc0_and_foreign_debt_unchanged(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-F2 矩阵1/3 端点：rc=0 放行、rc=1 foreign 债 warn 放行——分流分支零外溢。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    foreign_red = "- hook id: gate-17-orphans\n- exit code: 1\n\nvendor/lib.py: orphan file\n"
+    _stub_rc_subprocess(monkeypatch, [(1, foreign_red)])
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    monkeypatch.setenv("ZEPHYR_PRECOMMIT_DEBT_RATCHET", "0")
+    assert gw.GitCommitGateway._run_precommit_channel(g, "sid-rf2f", ["a.py"]) is None
+    events = _read_block_events(tmp_path)
+    assert any(e.get("event") == "precommit_channel_global_debt_warned" for e in events)
+    assert not [e for e in events if e.get("event") == "precommit_channel_signalled"]
+
+
+def test_rf3_evidence_fields_recorded_on_all_rc(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-F3 捕证全量记账（矩阵10）：pid/create_time 在 rc=0 绿路径也完整落账；
+    meta_out 出参对既有 `(cmd, **kwargs)` 桩签名兼容（不填→键在值 None）。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_rc_subprocess(monkeypatch, [(0, "phase-a-green")], meta=_META_EVIDENCE)
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    assert gw.GitCommitGateway._run_precommit_channel(g, "sid-rf3", ["a.py"]) is None
+    stat = json.loads(
+        (tmp_path / ".runtime" / "audit" / "precommit_channel_stats.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+    )
+    assert stat["rc"] == 0
+    assert stat["pid"] == 424242 and stat["create_time"] == _META_EVIDENCE["create_time"]
+
+
+def test_rf3_meta_out_compatible_with_legacy_stub_signature(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-F3 兼容面：既有 `(cmd, **kwargs)` 形态桩（不接收 meta_out）照常工作，键在值 None。"""
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    _stub_precommit_subprocess(monkeypatch, [(0, "green")])  # 旧形态桩：无 meta_out 形参
+    g = _mk_gateway(tmp_path)
+    _stub_channel_env(monkeypatch, tmp_path, g)
+    monkeypatch.setattr(gw, "_precommit_fast_subset_enabled", lambda: True)
+    assert gw.GitCommitGateway._run_precommit_channel(g, "sid-rf3c", ["a.py"]) is None
+    stat = json.loads(
+        (tmp_path / ".runtime" / "audit" / "precommit_channel_stats.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+    )
+    assert "pid" in stat and "create_time" in stat
+    assert stat["pid"] is None and stat["create_time"] is None

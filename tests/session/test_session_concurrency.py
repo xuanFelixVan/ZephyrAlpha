@@ -301,6 +301,9 @@ class TestSessionRegistrySaveRace:
         import errno
 
         monkeypatch.setattr(os, "getpid", lambda: 424245)
+        # S4-D 双写后一次 _save=片写+旧表镜像写——本测钉的是旧表写路径的退避纪律
+        # （kill-switch 定格单写面，replace 计数语义与治本时点一致）
+        monkeypatch.setenv("ZEPHYR_SESSION_REGISTRY_SHARDS", "0")
         reg = SessionRegistry(project_root=tmp_path)
         calls = {"n": 0}
         real_replace = os.replace
@@ -314,6 +317,7 @@ class TestSessionRegistrySaveRace:
         monkeypatch.setattr(os, "replace", flaky_replace)
         # 压缩退避等待（模拟即可，真实 10/50/100ms 语义不变）
         import zephyr.security.access_control.session_concurrency as sc
+
         monkeypatch.setattr(sc, "time", type("T", (), {"sleep": staticmethod(lambda *_: None)}))
         reg._save({"sess-A": {"x": 1}})
         assert calls["n"] == 3, "EACCES 必须重试到成功"
@@ -327,10 +331,11 @@ class TestSessionRegistrySaveRace:
 
         monkeypatch.setattr(os, "getpid", lambda: 424246)
         reg = SessionRegistry(project_root=tmp_path)
-        monkeypatch.setattr(os, "replace", lambda *_: (_ for _ in ()).throw(
-            OSError(errno.EACCES, "Permission denied (persistent)")
-        ))
+        monkeypatch.setattr(
+            os, "replace", lambda *_: (_ for _ in ()).throw(OSError(errno.EACCES, "Permission denied (persistent)"))
+        )
         import zephyr.security.access_control.session_concurrency as sc
+
         monkeypatch.setattr(sc, "time", type("T", (), {"sleep": staticmethod(lambda *_: None)}))
         reg._save({"sess-A": {"x": 1}})  # 不抛——_save 捕获 OSError 降 warning
         assert not (tmp_path / ".runtime" / "session_registry.json").exists()
@@ -340,6 +345,9 @@ class TestSessionRegistrySaveRace:
         import errno
 
         monkeypatch.setattr(os, "getpid", lambda: 424247)
+        # S4-D 双写后一次 _save=片写+旧表镜像写——本测钉的是旧表写路径的非 EACCES
+        # 不重试纪律（kill-switch 定格单写面，replace 计数语义与治本时点一致）
+        monkeypatch.setenv("ZEPHYR_SESSION_REGISTRY_SHARDS", "0")
         reg = SessionRegistry(project_root=tmp_path)
         calls = {"n": 0}
 
@@ -554,9 +562,7 @@ class TestSessionRegistryAnchorsLandingWorktree:
         )
         wt = main / ".runtime" / "commit_queue" / "worktree"
         (wt / ".runtime").mkdir(parents=True, exist_ok=True)
-        (wt / ".git").write_text(
-            f"gitdir: {main / '.git' / 'worktrees' / 'worktree'}\n", encoding="utf-8"
-        )
+        (wt / ".git").write_text(f"gitdir: {main / '.git' / 'worktrees' / 'worktree'}\n", encoding="utf-8")
         # worktree 自带空 registry——旧代码读到它即产生假红
         (wt / ".runtime" / "session_registry.json").write_text("{}", encoding="utf-8")
         return main, wt
@@ -578,11 +584,268 @@ class TestSessionRegistryAnchorsLandingWorktree:
                 return root.parent.parent
             return root
 
-        monkeypatch.setattr(
-            "zephyr.security.access_control.session_concurrency.anchor_main_root", _old_guess
-        )
+        monkeypatch.setattr("zephyr.security.access_control.session_concurrency.anchor_main_root", _old_guess)
         main, wt = self._make_commit_queue_worktree(tmp_path)
         reg = SessionRegistry(project_root=wt)
         assert reg._project_root != main  # 旧行为漏判——不锚主仓（此即被治好的病根）
         assert reg._registry_path == wt / ".runtime" / "session_registry.json"
         assert reg.load() == {}  # 读到 worktree 空副本 → 若据此判活必假红
+
+
+# ---------------------------------------------------------------------------
+# S4-D 整表重写竞态 → 每会话分片（全流通夜战 G2 st-circ-g2-20260930）
+# 手术簿：docs/_working/total_circulation_night/s4_d_session_registry.md
+# 病根：_load 整表读+_save 整表重写（跨进程零互斥）——A load→B load→B save→A save
+# 交错抹掉 B 的新增/心跳（SESSION-REQUIRED 假红/心跳假死）；单文件一损俱损。
+# 处方：写只碰本会话片（.runtime/session_registry/<sid>.json），读侧聚合+迁移双写。
+# ---------------------------------------------------------------------------
+
+_DEAD_PID_0 = 0  # 逻辑会话：走心跳新鲜度判据（register 即活，90s 窗）
+
+
+class TestS4DShardRedNeedles:
+    """红测两针（先红后修纪律——现码必红，分片后天然绿）。"""
+
+    def test_rd1_stale_snapshot_writeback_must_not_erase_sibling(self, tmp_path):
+        """R-D1 交错写竞态判别：A load → B register → A save(旧快照) —— B 不得被抹。
+
+        现码：a.save(snap) 整表替换 → sB 丢失（last-writer-wins 结构性丢失，必红）。
+        """
+        a = SessionRegistry(project_root=tmp_path)
+        b = SessionRegistry(project_root=tmp_path)
+        a.register("sA", pid=_DEAD_PID_0)
+        snap = a.load()  # A 进程读到旧表 {sA}
+        b.register("sB", pid=_DEAD_PID_0)  # B 读改写（新增 sB）
+        a.save(snap)  # A 用旧快照整表写回
+        assert a.get_session("sB") is not None, "B 的新增被 A 的过期写回抹除（整表重写竞态）"
+
+    def test_rd2a_corrupt_storage_single_session_loss_radius(self, tmp_path):
+        """R-D2 损伤半径：单会话存储损坏 → 其他会话 register/heartbeat/get_session 必须正常。
+
+        现码：单文件一损俱损整表退 {}（必红）；分片后损失半径=单片。
+        """
+        a = SessionRegistry(project_root=tmp_path)
+        a.register("sess-A", pid=_DEAD_PID_0)
+        a.register("sess-B", pid=_DEAD_PID_0)
+        # 损坏 sB 的存储位（分片后=sB 片；现码退化为唯一单表文件）
+        p = tmp_path / ".runtime" / "session_registry" / "sess-B.json"
+        if not p.exists():
+            p = tmp_path / ".runtime" / "session_registry.json"
+        p.write_text("{CORRUPTED!!", encoding="utf-8")
+        assert a.get_session("sess-A") is not None, "他片损坏不得牵连本会话查询（一损俱损）"
+        assert a.heartbeat("sess-A") is True, "他片损坏不得吞本会话心跳"
+        a.register("sess-C", pid=_DEAD_PID_0)
+        assert a.get_session("sess-C") is not None, "损坏后新注册必须可查询"
+
+    def test_rd2b_sibling_write_leaves_own_bytes_untouched(self, tmp_path):
+        """R-D2 写隔离：写 B 片不得改 A 片字节（mtime+内容断言）。
+
+        现码：heartbeat(sB) 整表重写同一文件 → A 的存储字节被动（必红）。
+        """
+        a = SessionRegistry(project_root=tmp_path)
+        b = SessionRegistry(project_root=tmp_path)
+        a.register("sess-A", pid=_DEAD_PID_0)
+        b.register("sess-B", pid=_DEAD_PID_0)
+        pa = tmp_path / ".runtime" / "session_registry" / "sess-A.json"
+        own = pa if pa.exists() else tmp_path / ".runtime" / "session_registry.json"
+        before = own.read_bytes()
+        b.heartbeat("sess-B")
+        assert own.read_bytes() == before, "他会话心跳不得重写本会话存储字节（共享可变面未拆）"
+
+
+class TestS4DShardDifferentialMatrix:
+    """S4-D 差分矩阵（簿 §5，13 例映射；1/2/4/13 由既有用例与 e2e 套件承载）。"""
+
+    def test_m3_dependency_roundtrip_on_shards(self, tmp_path):
+        """矩阵3：depends_on 登记跨片一致性（register_dependency/clear_dependency）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-dep", pid=0)
+        assert reg.register_dependency("sess-dep", "sess-other") is True
+        info = reg.get_session("sess-dep")
+        assert info is not None and "sess-other" in info.depends_on_sessions
+        assert reg.clear_dependency("sess-dep", "sess-other") is True
+        info = reg.get_session("sess-dep")
+        assert info is not None and "sess-other" not in info.depends_on_sessions
+        assert reg.clear_dependency("sess-ghost", "x") is False  # 未注册=False
+
+    def test_m6_shard_missing_reads_as_unregistered(self, tmp_path):
+        """矩阵6：片缺失 → 读侧视作未注册（get_session None）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        assert reg.get_session("sess-never-registered") is None
+
+    def test_m7_shards_dir_absent_falls_back_to_legacy(self, tmp_path):
+        """矩阵7：片目录缺席（部署前形态）→ 回退读旧表。"""
+        runtime = tmp_path / ".runtime"
+        runtime.mkdir(parents=True)
+        (runtime / "session_registry.json").write_text(
+            json.dumps(
+                {
+                    "sess-legacy": {
+                        "session_id": "sess-legacy",
+                        "pid": 0,
+                        "start_time": 1.0,
+                        "held_files": [],
+                        # noqa: m46-time — 测试夹具新鲜心跳构造（非 schema 生成器）
+                        "last_heartbeat": time.time(),
+                        # noqa: m46-time — 同上，活性锚点新鲜值
+                        "last_activity": time.time(),
+                        "is_breaking_change": False,
+                        "task_files": [],
+                        "depends_on_sessions": [],
+                        "logical": False,
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        reg = SessionRegistry(project_root=tmp_path)
+        assert not (runtime / "session_registry").exists()  # 读路径不得创建片目录
+        info = reg.get_session("sess-legacy")
+        assert info is not None and info.session_id == "sess-legacy"
+
+    def test_m8_migration_dualwrite_both_sides_consistent(self, tmp_path):
+        """矩阵8：迁移双写窗口（旧表+片并存，两侧读一致）。"""
+        a = SessionRegistry(project_root=tmp_path)
+        a.register("sess-mig", pid=0)
+        runtime = tmp_path / ".runtime"
+        shard = runtime / "session_registry" / "sess-mig.json"
+        legacy = runtime / "session_registry.json"
+        assert shard.exists() and legacy.exists(), "双写：片与旧表并存"
+        shard_entry = json.loads(shard.read_text(encoding="utf-8"))
+        legacy_entry = json.loads(legacy.read_text(encoding="utf-8"))["sess-mig"]
+        assert shard_entry == legacy_entry, "双写两侧内容一致"
+        b = SessionRegistry(project_root=tmp_path)
+        info = b.get_session("sess-mig")
+        assert info is not None and info.session_id == "sess-mig"
+        assert "sess-mig" in b.load()
+
+    def test_m9_ttl_sweep_spares_live_and_recently_dead(self, tmp_path):
+        """矩阵9：TTL 清扫不误杀——活片（pid 活/心跳新鲜）与宽限窗内死记录保留。"""
+        from zephyr.security.access_control.session_concurrency import _REAP_GRACE_SECONDS
+
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-live", pid=os.getpid())  # PID 活+心跳新鲜
+        reg.register("sess-dead-recent", pid=_DEAD_PID)  # PID 死但心跳新鲜（宽限窗 tombstone）
+        data = reg.load()
+        # noqa: m46-time — 宽限窗相对偏移计时（非 schema 生成器）
+        data["sess-dead-recent"]["last_heartbeat"] = time.time() - 60  # 宽限 900s 内
+        reg.save(data)
+        active_ids = {i.session_id for i in reg.list_active()}
+        assert "sess-live" in active_ids
+        assert "sess-dead-recent" not in active_ids  # 功能判死：消费方立即过滤（S3-A 零窗口）
+        assert "sess-dead-recent" in reg.load()  # 物理记录宽限窗内保留（#119 tombstone）
+        assert reg.get_session("sess-dead-recent") is None  # 只读消费者同样过滤
+
+    def test_m10_sweep_dead_reaps_shard_and_legacy(self, tmp_path):
+        """矩阵10：清扫死片（超宽限）→ 片+旧表双侧移除，gate 立即可见。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-corpse", pid=_DEAD_PID)
+        data = reg.load()
+        data["sess-corpse"]["last_heartbeat"] = 0.0  # 超宽限（epoch 老于 900s）
+        reg.save(data)
+        active_ids = {i.session_id for i in reg.list_active()}
+        assert "sess-corpse" not in active_ids
+        assert reg.get_session("sess-corpse") is None
+        assert not (tmp_path / ".runtime" / "session_registry" / "sess-corpse.json").exists()
+        assert "sess-corpse" not in json.loads(
+            (tmp_path / ".runtime" / "session_registry.json").read_text(encoding="utf-8")
+        )
+
+    def test_m11_shard_layout_under_anchor_root(self, tmp_path):
+        """矩阵11：anchor_main_root 路径下目录布局——片目录与旧表同根（主仓锚定不变）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-anchor", pid=0)
+        runtime = tmp_path / ".runtime"
+        assert (runtime / "session_registry" / "sess-anchor.json").exists()
+        assert (runtime / "session_registry.json").exists()
+
+    def test_m_killswitch_env_falls_back_to_legacy_only(self, tmp_path, monkeypatch):
+        """回退手柄：ZEPHYR_SESSION_REGISTRY_SHARDS=0 → 纯旧表模式（不写片）。"""
+        monkeypatch.setenv("ZEPHYR_SESSION_REGISTRY_SHARDS", "0")
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-ks", pid=0)
+        runtime = tmp_path / ".runtime"
+        assert not (runtime / "session_registry").exists(), "kill-switch 下不得创建片目录"
+        assert reg.get_session("sess-ks") is not None  # 旧表读正常
+        reg.heartbeat("sess-ks")
+        assert "sess-ks" in reg.load()
+
+    def test_m12_soak_ten_writers_zero_loss(self, tmp_path):
+        """矩阵12：高并发 10 写者×30 轮心跳 soak——零丢失（进程内并发形态）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        sids = [f"sess-soak-{i}" for i in range(10)]
+        for s in sids:
+            reg.register(s, pid=0)
+        errors: list[Exception] = []
+
+        def _hammer(sid: str) -> None:
+            try:
+                r = SessionRegistry(project_root=tmp_path)
+                for _ in range(30):
+                    assert r.heartbeat(sid) is True
+            except Exception as e:  # noqa: BLE001 — soak 收集全部异常后统一断言
+                errors.append(e)
+
+        import threading
+
+        threads = [threading.Thread(target=_hammer, args=(s,)) for s in sids]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=60)
+        assert not errors, f"soak 异常: {errors[:3]}"
+        for s in sids:
+            info = reg.get_session(s)
+            assert info is not None, f"{s} 心跳被并发写抹除（零丢失破约）"
+            # noqa: m46-time — soak 新鲜度计时断言（非 schema 生成器）
+            assert time.time() - info.last_heartbeat < 60
+
+    def test_m12b_cross_process_register_race_zero_loss(self, tmp_path):
+        """矩阵12 实形态：跨进程并发注册/心跳——R-D1 病根的真进程复现，零丢失。"""
+        import subprocess
+        import sys
+
+        child_code = (
+            "import sys, time\n"
+            "from pathlib import Path\n"
+            "from zephyr.security.access_control.session_concurrency import SessionRegistry\n"
+            f"root = Path({str(tmp_path)!r})\n"
+            "r = SessionRegistry(project_root=root)\n"
+            "for i in range(20):\n"
+            "    r.register('sess-child', pid=0)\n"
+            "    r.heartbeat('sess-child')\n"
+            "    time.sleep(0.005)\n"
+            "print('CHILD_DONE')\n"
+        )
+        parent = SessionRegistry(project_root=tmp_path)
+        parent.register("sess-parent", pid=0)
+        proc = subprocess.run(  # noqa: S603 — 受控子进程跑注册循环
+            [sys.executable, "-c", child_code],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            cwd=str(tmp_path),
+        )
+        assert "CHILD_DONE" in proc.stdout, f"子进程失败: {proc.stderr[-400:]}"
+        for i in range(20):
+            assert parent.heartbeat("sess-parent") is True  # 与子进程并发写
+        child_info = parent.get_session("sess-child")
+        parent_info = parent.get_session("sess-parent")
+        assert child_info is not None, "子会话注册/心跳被父进程写回抹除（跨进程竞态）"
+        assert parent_info is not None
+        # noqa: m46-time — 跨进程竞态后新鲜度计时断言（非 schema 生成器）
+        assert time.time() - child_info.last_heartbeat < 30
+        assert time.time() - parent_info.last_heartbeat < 30
+
+    def test_m_unregister_removes_from_both_sides(self, tmp_path):
+        """矩阵1 补充：unregister 双侧移除+未知会话 False。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-unreg", pid=0)
+        assert reg.unregister("sess-unreg") is True
+        assert reg.get_session("sess-unreg") is None
+        assert not (tmp_path / ".runtime" / "session_registry" / "sess-unreg.json").exists()
+        assert "sess-unreg" not in json.loads(
+            (tmp_path / ".runtime" / "session_registry.json").read_text(encoding="utf-8")
+        )
+        assert reg.unregister("sess-unreg") is False  # 幂等：已注销再注销=False
+        assert reg.unregister("sess-ghost") is False
