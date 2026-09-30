@@ -238,8 +238,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     if all_violations:
         detail = "; ".join(all_violations[:5])
         return False, (
-            f"新增 .py 文件含 SSoT 路径硬编码（应通过 capability_canonical_file_registry "
-            f"反查发现，非硬编码）: {detail}"
+            f"新增 .py 文件含 SSoT 路径硬编码（应通过 capability_canonical_file_registry 反查发现，非硬编码）: {detail}"
         )
     return True, ""
 
