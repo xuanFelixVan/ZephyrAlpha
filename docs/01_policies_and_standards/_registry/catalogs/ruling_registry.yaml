@@ -6417,3 +6417,31 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#455"
+  title: W12 波12 点火窗发车批准锚（C4 批发车：成本门口径定稿追认+点火批准卡 v2 换发）
+  date: '2026-09-30'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 夜第二夜总攻令原文：「C组……把他们前置条件全部打通，然后来完成他们」；
+    总筹 Top5 推荐「C4 批发车」获采纳=本发车批准锚（st-nightsweep2-card-20260930 车道执行登记）：
+    ①成本门口径拍板追认：⚑-2② 抽查口径经案卷审查改判——判据对象弃「从幸存者分层抽查/分层
+    抽样」改「盈亏平衡成本 c* 五道门+DSR/PBO 并联」（B 案声明通道落册=裁定#435；随 T1 成绩单
+    定稿经 Owner 2026-09-30 总批复签付=裁定#431 第⑦项）；33%/56% 复算统计不可分辨与
+    source=replay 限定见 93 册 ⚑-2① 案卷；
+    ②点火批准卡 v2 换发：docs/_working/total_command_closeout/ignition/W12_WINDOW.yaml
+    status=APPROVED、approval_ref=裁定#455、prereg_sha256=ec966302（现役
+    config/search_space_prereg.yaml 全文摘要现算）；沿革=裁定#436 曾批卡翻面（锚=裁定#436）
+    但卡面从未落地且其引用 da8fbbfb 已因批后 prereg 合法变更（裁定#413/#ARCH-366 budget_caps
+    双键+T1 定稿）过期，按卡契约「批后改空间=卡作废」由本条重锚换发 v2；
+    universe_declaration_sha256=ea7fe145 延续（census 文件复算一致）；
+    ③诚实注记：本条=发车批准锚（问闸 approval_card/c4 两关放行面），实弹点火仍受 c1 波 0-11
+    施工终态闸约束（c1_waves_0_11_construction_terminal=RED 结构性条件在闸，未绿前
+    compute_window_gate 对 wave12_* 一律拒绝——本条不解除该闸、不构成算力放行）。
+  related_files:
+  - docs/_working/total_command_closeout/ignition/W12_WINDOW.yaml
+  - config/search_space_prereg.yaml
+  - src/zephyr/backtest/core/batch_window_preflight.py
+  related_arch: []
+  related_rulings: ['裁定#431', '裁定#413', '裁定#435', '裁定#436']
+  superseded_by: null
