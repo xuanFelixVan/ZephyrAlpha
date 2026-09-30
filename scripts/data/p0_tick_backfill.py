@@ -39,6 +39,7 @@
   python p0_tick_backfill.py --dates 20260909        # 全量跑某天（默认三天全跑）
   # 断点续跑：--done-dir 下每天一个 done 清单，重跑自动跳过已完成标的
 """
+
 from __future__ import annotations
 
 import argparse
@@ -56,14 +57,30 @@ sys.path.insert(0, r"D:/ZephyrAlpha/src")
 from xtquant import xtdata  # noqa: E402
 
 import zephyr.data.ch_writer as chw  # noqa: E402
-from zephyr.data.tick_subscriber import infer_market_type, _stock_to_symbol  # noqa: E402
+from zephyr.data.table_registry import get_registry  # noqa: E402
+from zephyr.data.tick_subscriber import _stock_to_symbol, infer_market_type  # noqa: E402
 
 DATA_DIR = r"E:\国金证券QMT交易端\userdata_mini\datadir"
 DONE_DIR = r"D:/ZephyrAlpha/.runtime/tmp"
-TICK_COLS = ["trade_date", "timestamp", "recorded_time", "symbol", "market_type",
-             "price", "volume", "amount", "direction", "data_source",
-             "bid_price", "ask_price", "bid_volume", "ask_volume", "quality_flag"]
+TICK_COLS = [
+    "trade_date",
+    "timestamp",
+    "recorded_time",
+    "symbol",
+    "market_type",
+    "price",
+    "volume",
+    "amount",
+    "direction",
+    "data_source",
+    "bid_price",
+    "ask_price",
+    "bid_volume",
+    "ask_volume",
+    "quality_flag",
+]
 WIPE_DATES = ("2026-09-09", "2026-09-10", "2026-09-11")
+_TBL_TICK = get_registry().table("market_tick")
 
 
 def get_universe() -> list[str]:
@@ -148,9 +165,81 @@ def parse_day(df, code: str, day: str) -> list[tuple]:
         ask_v = row.get("askVol")
         vol = row.get("volume")
         amt = row.get("amount")
-        rows.append(_tick_row(ddate, ts, rt, bare, mtype, price, vol, amt,
-                              bid_p, ask_p, bid_v, ask_v))
+        rows.append(_tick_row(ddate, ts, rt, bare, mtype, price, vol, amt, bid_p, ask_p, bid_v, ask_v))
     return rows
+
+
+def _parse_args():
+    parser = argparse.ArgumentParser(description="QMT tick 历史补数（手动运维件）")
+    parser.add_argument("--pilot", action="store_true", help="前 6 标的试跑，验证格式与入库")
+    parser.add_argument("--wipe", action="store_true", help="备份+清除 WIPE_DATES 残留行")
+    parser.add_argument("--dates", default=",".join(WIPE_DATES), help="逗号分隔 YYYYMMDD")
+    parser.add_argument("--done-dir", default=DONE_DIR, help="断点清单目录")
+    return parser.parse_args()
+
+
+def _load_universe(a):
+    import glob
+    import os
+
+    universe = get_universe()
+    done = set()
+    for done_path in glob.glob(os.path.join(a.done_dir, "tick_bf_*.done")):
+        with open(done_path, encoding="utf-8") as f:
+            done |= {ln.strip() for ln in f if ln.strip()}
+    todo = [c for c in universe if c not in done]
+    if getattr(a, "pilot", False):
+        todo = todo[:6]
+    return todo
+
+
+def _process_days(dates, universe, cli, w):
+    import os
+
+    os.makedirs(DONE_DIR, exist_ok=True)
+    for day in dates:
+        done_path = os.path.join(DONE_DIR, f"tick_bf_{day}.done")
+        done = set()
+        if os.path.exists(done_path):
+            with open(done_path, encoding="utf-8") as f:
+                done = {ln.strip() for ln in f if ln.strip()}
+        todo = [c for c in universe if c not in done]
+        print(f"[{day}] todo={len(todo)} already_done={len(done)}", flush=True)
+        total = 0
+        for i, code in enumerate(todo):
+            try:
+                xtdata.download_history_data(code, period="tick", start_time=day + "091500", end_time=day + "150100")
+                df = xtdata.get_market_data_ex(
+                    [], [code], period="tick", start_time=day + "091500", end_time=day + "150100"
+                ).get(code)
+                rows = parse_day(df, code, day)
+                if rows:
+                    w.execute(f"INSERT INTO {_TBL_TICK} ({','.join(TICK_COLS)}) VALUES", rows)  # noqa: bare-sql  运维件复刻 tick_subscriber 既有插入口径（SQL 集中化豁免）
+                total += len(rows)
+                with open(done_path, "a", encoding="utf-8") as f:
+                    f.write(code + chr(10))
+            except Exception as e:  # noqa: BLE001 — 逐标的容错，单点失败不断整批（与 tick_subscriber 同口径）
+                print(f"  [{i + 1}/{len(todo)}] {code} error: {e}", flush=True)
+                continue
+            if (i + 1) % 100 == 0:
+                print(f"  [{i + 1}/{len(todo)}] rows+={total}", flush=True)
+        print(f"[{day}] done rows={total}", flush=True)
+    return 0
+
+
+def _wipe_three_days(cli, w):
+    """--wipe 路径（重建于 2026-09-30，按 header 不变量：备份表先行且计数核验后才删）。"""
+    for day in WIPE_DATES:
+        bak = "tick_data_tzbak_20260914"
+        cnt_src = cli.execute(f"SELECT count() FROM {_TBL_TICK} WHERE trade_date = %(d)s", {"d": day})[0][0]  # noqa: bare-sql  09-14 一次性事故件退役路径（备份核验齐全）
+        cli.execute("INSERT INTO " + bak + " SELECT * FROM {_TBL_TICK} WHERE trade_date = %(d)s", {"d": day})  # noqa: bare-sql  09-14 一次性事故件退役路径（备份核验齐全）
+        cnt_bak = cli.execute("SELECT count() FROM " + bak + " WHERE trade_date = %(d)s", {"d": day})[0][0]  # noqa: bare-sql  09-14 一次性事故件退役路径（备份核验齐全）
+        if cnt_src != cnt_bak:
+            print(f"[wipe] {day} 备份计数不一致 src={cnt_src} bak={cnt_bak}，终止")
+            return 1
+        cli.execute(f"ALTER TABLE {_TBL_TICK} DELETE WHERE trade_date = %(d)s", {"d": day})  # noqa: bare-sql  09-14 一次性事故件退役路径（备份核验齐全）
+        print(f"[wipe] {day} 已备份 {cnt_src} 行并清除")
+    return 0
 
 
 def main() -> int:
@@ -163,8 +252,7 @@ def main() -> int:
 
     from zephyr.infrastructure.database_service import get_db_service
 
-    cli = get_db_service().get_clickhouse_conn(
-        role="reader", extra_kwargs={"settings": {"max_execution_time": 600}})
+    cli = get_db_service().get_clickhouse_conn(role="reader", extra_kwargs={"settings": {"max_execution_time": 600}})
     w = chw.get_client()
 
     if a.wipe:
