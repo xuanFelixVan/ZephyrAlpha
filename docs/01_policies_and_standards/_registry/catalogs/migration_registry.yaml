@@ -274,3 +274,25 @@ entries:
   subdir: rule_engine
   status: pending
   classification_method: module_frontmatter
+
+
+# ── retirement_schedule（2026-09-30 夜总攻 B10 追加，Owner 已批"登记排期，不立即删"）──────────
+# 本册 deprecated 冻结；下列 13 条 pending 经逐条现状核实（HEAD 实测 old/new 双路径存在性）：
+#   A 组 12 条（gate_engine 族 8 + rule_engine 族 4）：old_path 已消失+new_path 存活=迁移事实完成，
+#     账面仍 pending（账实漂移）→ 执行窗：下个注册表维护窗（≥2026-10 月批）批量 status: done；
+#     涉及条目身份键 old_module/new_module 对：gate_engine/gate_context/gate_health/gate_pipeline/
+#     gate_simulator/gate_override/gate_integrity_guard/adversarial_validation/rule_engine/
+#     rule_canary_manager/rule_debt_auditor/rule_shadow_runner。
+#   B 组 1 条（rule_watcher）：old_path 已消失+new_path 从未创建（gate_engine/、rule_engine/ 目录
+#     实测无该件，src 树 grep watcher 零命中）=迁移作废 → 同窗标 superseded（非 done）。
+# 执行者义务：维护窗批量改 status 后同批核 ROOR entry_count/计数口径；本块只增不删。
+retirement_schedule:
+  registered_at: "2026-09-30"
+  registered_by: "st-nightsweep2-nb2-20260930"
+  owner_approval: "夜总攻 B10（2026-09-30 Owner 裁定：登记排期表，不立即删）"
+  execution_window: "下个注册表维护窗（≥2026-10 月批）"
+  group_a_mark_done: 12
+  group_a_ids: [gate_engine, gate_context, gate_health, gate_pipeline, gate_simulator, gate_override, gate_integrity_guard, adversarial_validation, rule_engine, rule_canary_manager, rule_debt_auditor, rule_shadow_runner]
+  group_b_mark_superseded: 1
+  group_b_ids: [rule_watcher]
+  evidence: "逐条 old_path/new_path HEAD 存在性实测（12/13 new 存活；rule_watcher 双亡）；本册 pending=13 全覆盖"
