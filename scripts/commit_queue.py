@@ -54,7 +54,8 @@
   processing/   Serializer 取走处理中（原子 rename 进入；崩溃留孤儿，下次自举回收）
   done/         已落盘（含 landed_at/landed_id）
   dead/         死信（含 dead_reason/dead_at；永不自动清理，66 号 §8；
-                人工 dead-archive 归档除外——mv 非删，RB2）
+                人工 dead-archive 归档除外——mv 非删，RB2；属主会话已死的自动重投
+                被存活闸拦落此，meta.ghost=true，裁定#459——CLI 手动 requeue 不受闸限）
   blobs/        内容寻址快照（sha256 命名，tmp+os.replace 原子写）
   {session_id}.seq  会话内单调序号（qid 组成部分；唯一性最终由 O_EXCL 保证）
   serializer.lease  Serializer 租约（TTL=300s + 僵尸 PID 检测）
@@ -293,6 +294,9 @@ _DEAD_REASON_ENV_MARKERS = (
     "WinError 5",
     "WinError 206",
     "文件名或扩展名太长",
+    # 幽灵袋归 env（裁定#459，st-ghost-sweep-20260930）：物品无辜，属主会话死了而已
+    # ——接管会话 requeue 即愈（env 类=可 requeue 语义，与处方向一致）。
+    "ghost_session",
 )
 _DEAD_REASON_ITEM_MARKERS = (
     "PROTECTED-PATHS",
@@ -1498,6 +1502,21 @@ def _recover_orphans(queue_root: Path) -> list[str]:
                 pass
             logger.warning("[drain] 孤儿项 %s 已有终态，删除防双落", qid)
             continue
+        # 幽灵会话存活闸（裁定#459）：属主已死的孤儿不回收重投——旧循环=每波回收
+        # 重放，死袋无人认领无限复读。ghost=true 封印直落 dead/（死信封印唯一出口）。
+        orphan_item = _read_item(orphan)
+        orphan_sid = str((orphan_item or {}).get("session_id") or "")
+        if orphan_item is not None and _session_ghost_dead(orphan_sid, runtime_root=queue_root.parent):
+            try:
+                _mark_ghost_dead_fields(orphan_item, orphan_sid)
+                _seal_dead_letter(queue_root, orphan_item)
+                _atomic_write(orphan, json.dumps(orphan_item, ensure_ascii=False, indent=2).encode("utf-8"))
+                os.replace(orphan, queue_root / "dead" / orphan.name)
+                _cleanup_stale_shadow(queue_root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
+                logger.warning("[drain] 孤儿 %s 属主会话已死（幽灵），存活闸拒绝重投，直落 dead/", qid)
+            except OSError as exc:
+                logger.error("[drain] 幽灵孤儿死信迁移失败 %s: %s（留 processing 下波再判）", qid, exc)
+            continue
         try:
             os.rename(orphan, queue_root / "pending" / orphan.name)
             recovered.append(qid)
@@ -1830,6 +1849,74 @@ def _attempts_exhausted_reason(item: dict) -> str:
     )
 
 
+# ---------------------------------------------------------------------------
+# 幽灵会话存活闸（裁定#459，st-ghost-sweep-20260930）：死会话袋「自动重投」止血。
+# 病根：属主会话已死（heartbeat=exited / 注册表注销），其袋仍走自动重投点
+# （_recover_orphans 每波孤儿回收、drain 环境失败退回 pending）无限复读——无人
+# 认领、无人 requeue，纯耗 Serializer 波次。闸语义：两个自动重投点前置存活判定，
+# 死袋不重投、meta.ghost=true 封入 dead/（死信封印唯一出口同源）；**CLI 手动
+# requeue 不受此闸**（人工强制=恢复通道，dead-archive 的 revival 面亦不受影响）。
+# 判定真源：sessions/<sid>/heartbeat.jsonl 末行 status + session_registry.json 在册；
+# 判定不了（无任何信号/IO 异常/空 sid）一律 False=放行——fail-open 宁漏不误，
+# 绝不因判定基础设施缺席冤杀活会话袋子。
+# ---------------------------------------------------------------------------
+
+
+def _session_ghost_dead(session_id: str, *, runtime_root: Path) -> bool:
+    """属主会话已死判定（裁定#459）。
+
+    runtime_root=队列根父目录（生产=<repo>/.runtime；测试=tmp 根）——heartbeat 与
+    session_registry.json 两真源同根（_REGISTRY_PATH 相对项目根的 .runtime/）。
+    判定序：① heartbeat.jsonl 末行（自尾部取首个可解析行，容忍半行写入）
+    status=="exited" → 死；status 其余值 → 活。② heartbeat 文件缺失 → 册文件
+    session_registry.json 存在且本会话不在册 → 死；册文件也缺失 → 判定不了 → 活。
+    """
+    sid = (session_id or "").strip()
+    if not sid:
+        return False
+    hb_path = runtime_root / "sessions" / sid / "heartbeat.jsonl"
+    try:
+        if hb_path.exists():
+            for line in reversed(hb_path.read_text(encoding="utf-8").splitlines()):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    last = json.loads(line)
+                except ValueError:
+                    continue  # 半行写入/损坏行：向前再找最近一个可解析行
+                return isinstance(last, dict) and last.get("status") == "exited"
+            return False  # 全损坏：判定不了，放行（宁漏不误）
+    except OSError:
+        return False
+    reg_path = runtime_root / "session_registry.json"
+    try:
+        if not reg_path.exists():
+            return False  # 册文件缺席=判定基础设施不可用，放行
+        data = json.loads(reg_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return isinstance(data, dict) and sid not in data
+
+
+def _mark_ghost_dead_fields(item: dict, session_id: str) -> None:
+    """幽灵袋死信字段原地注入：dead_at / dead_reason / meta.ghost=true（裁定#459）。
+
+    只写字段不做迁移；封印（_seal_dead_letter）+落 dead/ 由调用方按各自出口完成
+    （drain 死信出口/孤儿回收出口各自管 _atomic_write+rename 链）。
+    """
+    item["dead_at"] = _now_iso()
+    item["dead_reason"] = (
+        f"ghost_session: 属主会话 {session_id or '?'} 已死（heartbeat=exited / 注册表无在册），"
+        "自动重投被存活闸拒绝（裁定#459；CLI 手动 requeue 不受闸限，人工可强制）"
+    )
+    meta = item.get("meta")
+    if not isinstance(meta, dict):
+        meta = {}
+        item["meta"] = meta
+    meta["ghost"] = True
+
+
 def _item_lane(item: dict | None) -> str:
     """P1-D 车道判定（方案 v2.1 §3.6）：machine=reconciler 派生自动批；缺省 interactive。
 
@@ -2088,6 +2175,22 @@ def drain_queue(
                     # 毒药件不再无限保留队首资格（≥3 惩罚退避、≥5 拾取死信）。
                     if _attempts_backoff_enabled():
                         _bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
+                    if _session_ghost_dead(str(item.get("session_id") or ""), runtime_root=root.parent):
+                        # 幽灵会话存活闸（裁定#459）：属主已死的袋环境失败也不退回
+                        # pending——退回=下次自举复读，无人认领。ghost=true 死信封印
+                        # 直落 dead/（与 attempts 耗尽出口同链），本轮仍终止（环境失败
+                        # 对其余项同样致命，语义不变）。
+                        _mark_ghost_dead_fields(item, str(item.get("session_id") or ""))
+                        stats["successors_rebuilt"] += len(_seal_dead_letter(root, item))
+                        _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+                        os.replace(processing_path, root / "dead" / head.name)
+                        _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
+                        stats["dead"] += 1
+                        logger.warning("[drain] qid=%s 属主会话已死（幽灵），存活闸拒绝重投，直落 dead/", qid)
+                        _notify_task_board_dead_letter(item)
+                        stats["processed_qids"].append(qid)
+                        processed += 1
+                        break
                     try:
                         _retry_transient(lambda: os.rename(processing_path, head))
                     except OSError:
@@ -3205,6 +3308,11 @@ _DEAD_PRESCRIPTIONS: tuple[tuple[str, str], ...] = (
         "环境失败重试耗尽：排除环境故障（daemon 纪元/worktree/锁）后重投；纪元陈旧重启 ZephyrAlpha_BeltDaemon 自愈",
     ),
     ("session_id", "会话标识非法：修正袋 session_id（[A-Za-z0-9._-] ≤64）后重投"),
+    (
+        "ghost_session",
+        "属主会话已死（幽灵袋，裁定#459）：确认会话不回归后，由接管会话 "
+        "requeue --session <新sid> 重投，或 dead-archive 归档清淤",
+    ),
 )
 _DEAD_PRESCRIPTION_FALLBACK = {
     "env": "环境性失败（物品无辜）：直接 requeue 重投即可（瞬态环境争用类，requeue 即愈）",

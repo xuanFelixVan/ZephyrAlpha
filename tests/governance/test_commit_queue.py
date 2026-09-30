@@ -1892,3 +1892,115 @@ def test_rx5_c1_absorb_priority_mismatch_not_merged(queue_root: Path) -> None:
     assert _c1_target_meta_ok(dict(base_meta), _incoming({"priority": 0})) is True, (
         "显式 0 vs 无键（同效 0）被误判不并=合批回归"
     )
+
+
+# ---------------------------------------------------------------------------
+# 幽灵会话存活闸（裁定#459，st-ghost-sweep-20260930）：死会话袋「自动重投」止血。
+# 闸点=两个自动重投出口（_recover_orphans 孤儿回收 / drain 环境失败退回 pending）；
+# 死袋 meta.ghost=true 直落 dead/；CLI 手动 requeue 不受闸限（人工强制=恢复通道）。
+# 判定真源（与生产同构、tmp 内自足）：queue_root.parent/.runtime 同根——
+# sessions/<sid>/heartbeat.jsonl 末行 status + session_registry.json 在册。
+# ---------------------------------------------------------------------------
+def _write_heartbeat(runtime_root: Path, session: str, status: str) -> None:
+    hb_dir = runtime_root / "sessions" / session
+    hb_dir.mkdir(parents=True, exist_ok=True)
+    with open(hb_dir / "heartbeat.jsonl", "a", encoding="utf-8") as fh:
+        fh.write(json.dumps({"ts": "2026-09-30T00:00:00+00:00", "pid": 1, "status": status}) + "\n")
+
+
+def _to_processing(queue_root: Path, item: dict) -> None:
+    """模拟 Serializer 认领：pending 袋原子 rename 进 processing（孤儿现场构造）。"""
+    (queue_root / "processing").mkdir(parents=True, exist_ok=True)
+    os.replace(queue_root / "pending" / f"{item['qid']}.json", queue_root / "processing" / f"{item['qid']}.json")
+
+
+class TestGhostSessionGate:
+    def test_orphan_of_exited_session_deadletters_as_ghost_not_requeued(self, queue_root: Path) -> None:
+        """heartbeat 末行 exited 的孤儿：回收点拒重投，meta.ghost=true 封印直落 dead/。"""
+        item = _enqueue(queue_root, "ghost-sess", "m", [("a.txt", b"v")])
+        _to_processing(queue_root, item)
+        _write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+        stats = cq.drain_queue(queue_root)
+        assert stats["recovered"] == 0, "死会话孤儿不得回收重入 pending（幽灵复读根因）"
+        assert not list((queue_root / "pending").glob("q-*.json"))
+        assert not list((queue_root / "processing").glob("q-*.json"))
+        dead = list((queue_root / "dead").glob("q-*.json"))
+        assert [f.stem for f in dead] == [item["qid"]]
+        payload = json.loads(dead[0].read_text(encoding="utf-8"))
+        assert payload["meta"]["ghost"] is True
+        assert payload["dead_reason"].startswith("ghost_session:")
+        assert cq.classify_dead_reason(payload["dead_reason"]) == "env", "幽灵袋归 env（物品无辜可 requeue）"
+        assert payload.get("owner_session") == "ghost-sess", "死信封印唯一出口五件套在场"
+        assert payload.get("prescription"), "处方映射同 commit 原子补齐"
+
+    def test_orphan_of_alive_session_still_recovered(self, queue_root: Path) -> None:
+        """对照：heartbeat alive 的孤儿照常回收重投（闸不误伤活会话）。"""
+        item = _enqueue(queue_root, "live-sess", "m", [("a.txt", b"v")])
+        _to_processing(queue_root, item)
+        _write_heartbeat(queue_root.parent, "live-sess", "alive")
+        stats = cq.drain_queue(queue_root)
+        assert stats["recovered"] == 1 and stats["done"] == 1
+
+    def test_orphan_without_signals_fail_open_recovered(self, queue_root: Path) -> None:
+        """无 heartbeat 无册文件=判定不了：fail-open 放行回收（宁漏不误，历史袋零回归）。"""
+        item = _enqueue(queue_root, "silent-sess", "m", [("a.txt", b"v")])
+        _to_processing(queue_root, item)
+        stats = cq.drain_queue(queue_root)
+        assert stats["recovered"] == 1
+
+    def test_orphan_unregistered_when_registry_file_exists_is_ghost(self, queue_root: Path) -> None:
+        """判定支路②：heartbeat 缺失 + 册文件存在 + 本会话不在册 → 死。"""
+        (queue_root.parent / "session_registry.json").write_text(json.dumps({"other-sid": {}}), encoding="utf-8")
+        item = _enqueue(queue_root, "noreg-sess", "m", [("a.txt", b"v")])
+        _to_processing(queue_root, item)
+        stats = cq.drain_queue(queue_root)
+        assert stats["recovered"] == 0
+        dead = list((queue_root / "dead").glob("q-*.json"))
+        assert [f.stem for f in dead] == [item["qid"]]
+        assert json.loads(dead[0].read_text(encoding="utf-8"))["meta"]["ghost"] is True
+
+    def test_env_fail_item_of_dead_session_deadletters_as_ghost(self, queue_root: Path) -> None:
+        """drain 环境失败支路：死会话袋不退回 pending，ghost=true 直落 dead/；本轮仍终止。"""
+        dead_item = _enqueue(queue_root, "ghost-sess", "item one", [("a.py", b"a=1\n")])
+        live_item = _enqueue(queue_root, "live-sess", "item two", [("b.py", b"b=2\n")])
+        _write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+
+        def _broken_env_landing(item: dict, root: Path) -> cq.LandingResult:
+            raise cq.LandingEnvironmentError("landing 环境不可用（pytest_50136）: git rev-parse rc=128")
+
+        stats = cq.drain_queue(queue_root, landing=_broken_env_landing)
+        assert stats["dead"] == 1 and stats["done"] == 0
+        states = _all_state_qids(queue_root)
+        assert states[dead_item["qid"]] == "dead"
+        assert states[live_item["qid"]] == "pending", "活会话袋保持既有语义退回 pending"
+        payload = json.loads((queue_root / "dead" / f"{dead_item['qid']}.json").read_text(encoding="utf-8"))
+        assert payload["meta"]["ghost"] is True
+
+    def test_cli_manual_requeue_not_gated(self, queue_root: Path, tmp_path: Path) -> None:
+        """CLI 手动 requeue 不受存活闸限：死会话死信人工可强制重投（恢复通道保持畅通）。"""
+        item = _enqueue(queue_root, "ghost-sess", "m", [("a.txt", b"v")])
+        _write_heartbeat(queue_root.parent, "ghost-sess", "exited")
+
+        def _fail(item: dict, root: Path) -> cq.LandingResult:
+            return cq.LandingResult(ok=False, reason="人工制造死信（非环境非幽灵）")
+
+        cq.drain_queue(queue_root, landing=_fail)
+        payload = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert payload["meta"].get("ghost") is None, "普通死信不带 ghost 标记"
+        result = cq.requeue_dead_item(
+            item["qid"],
+            queue_root=queue_root,
+            worktree_root=tmp_path,
+            session_id="adopter-sess",
+            message="接管重投",
+            from_bag=True,
+        )
+        assert result["new_qid"]
+        assert _all_state_qids(queue_root).get(result["new_qid"]) == "pending"
+
+    def test_ghost_reason_env_marker_and_prescription(self) -> None:
+        """死因族三处同补回归锚：ghost_session 标记归 env + 处方映射命中（勿只改判定）。"""
+        reason = "ghost_session: 属主会话 s 已死（heartbeat=exited / 注册表无在册），自动重投被存活闸拒绝（裁定#459）"
+        assert cq.classify_dead_reason(reason) == "env"
+        rx = cq.dead_letter_prescription(reason)
+        assert "requeue" in rx or "dead-archive" in rx
