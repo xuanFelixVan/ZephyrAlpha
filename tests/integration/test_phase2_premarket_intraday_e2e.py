@@ -81,6 +81,11 @@ from zephyr.signal_ashare.futures_basis_monitor import (
 )
 from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import LhbPremiumResult
 from zephyr.signal_ashare.mainline_candidates import compute_mainline_candidates
+from zephyr.signal_ashare.sector.sector_divergence import (
+    SectorDivergenceResult,
+    compute_sector_divergence,
+)
+from zephyr.signal_ashare.sector.sector_leader import identify_sector_leaders
 from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     BreadthSnapshot,
     BreadthTimeSeries,
@@ -92,11 +97,6 @@ from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import (
     MarketSentimentResult,
 )
 from zephyr.signal_ashare.sentiment.option_sentiment import OptionSentimentResult
-from zephyr.signal_ashare.sector.sector_divergence import (
-    SectorDivergenceResult,
-    compute_sector_divergence,
-)
-from zephyr.signal_ashare.sector.sector_leader import identify_sector_leaders
 
 
 def _tsv(rows: list[tuple]) -> str:
@@ -507,7 +507,18 @@ def test_chain_b_premarket_full_chain(tmp_path):
     )
     assert pkg.trade_date == _DATE_B
     assert pkg.asof_cutoff == f"{_DATE_B} 08:00:00"
-    assert set(pkg.families) == {"index", "sentiment", "sector", "derivatives", "overseas", "capital", "calendar"}
+    # WO-1：+macro_regime 族（离线注入模式 ch_client 注入→不发起 live 读数，跳过）
+    assert set(pkg.families) == {
+        "index",
+        "sentiment",
+        "sector",
+        "derivatives",
+        "overseas",
+        "capital",
+        "calendar",
+        "macro_regime",
+    }
+    assert pkg.families["macro_regime"]["status"] == "skipped:not_injected"
     assert pkg.rejected == []  # 全部注入 T-1 可见 → 准入
     assert pkg.families["sentiment"]["m1_overall_score"] == pytest.approx(58.0)
     assert pkg.families["derivatives"]["im_basis_rate"] == pytest.approx(-0.008)

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-PLAN-007 | 待统筹登记（92号清单 §8.6 / 44号备忘 §9.14 M3-⑨ + §4 表 M3-⑨ 行）
 # [MODULE] zephyr.plan_engine.llm_premarket_analysis
 # [DOMAIN] D_PLAN
-# [DEPENDENCIES] zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.io.serialization(dumps canonical); zephyr.data.ch_reader（默认 CH 读取通道，惰性解析）; zephyr.data.table_registry（表名解析）; 注入契约类型仅 TYPE_CHECKING 引用（MOD-SIG-025/057/058/059/060 输出，运行时鸭子类型读字段）
+# [DEPENDENCIES] zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.io.serialization(dumps canonical); zephyr.data.ch_reader（默认 CH 读取通道，惰性解析）; zephyr.data.table_registry（表名解析）; zephyr.regime.features.macro_regime_sensor（WO-1 宏观敏感度族，惰性导入+异常降级）; 注入契约类型仅 TYPE_CHECKING 引用（MOD-SIG-025/057/058/059/060 输出，运行时鸭子类型读字段）
 # [CONSUMERS] 阶段三 llm_runtime_gateway（09架构10号件——本模块=其首个真实消费场景，llm_client 由 gateway 注入）; MOD-PLAN-005 scenario_planner（三情景注解栏，对接口径见 docstring——本单不改 scenario_planner）; 回测 PIT 消费（llm_daily_analysis 表，历史回填留阶段三）
 # [STARTUP] imported
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] testing
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] trade_date/asof_cutoff 非法→ValueError fail-closed; CH 单族查询/解析异常→该族降级（字段 None+status 留痕）不炸整体; llm_client 调用异常/返回类型非法/输出契约校验失败→status=invalid 落库留痕不炸; llm_client=None→status=skipped_not_wired 落库留痕不炸; DB 写失败 fail-open（db_logged=False+errors 留痕）
+# [ERROR_CONTRACT] trade_date/asof_cutoff 非法→ValueError fail-closed; CH 单族查询/解析异常→该族降级（字段 None+status 留痕）不炸整体; 宏观传感器（WO-1）异常/无数据→该族降级跳过不炸整体; llm_client 调用异常/返回类型非法/输出契约校验失败→status=invalid 落库留痕不炸; llm_client=None→status=skipped_not_wired 落库留痕不炸; DB 写失败 fail-open（db_logged=False+errors 留痕）
 # [TESTS] tests/plan_engine/test_llm_premarket_analysis.py
 # [A_module] module_id=MOD-PLAN-007 | layer=module | stability=testing | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -40,6 +40,9 @@ LlmPremarketAnalysis — LLM 盘前综合复盘与当日情景分析核心件 (M
     - 外盘族：隔夜 SPX/NDX（CH us_index）+ BS-005 状态（注入）；A50 夜盘/
       昨日 ES/NQ 盘中段/日韩早盘=占位 None（数据源缺口 44号 §6，随 M3-①/
       92号 §7.2/M3-④ 落地后回填）。
+    - 宏观敏感度族（WO-1 追加）：MacroRegimeSensor 天气分→caution_factor/tier
+      敏感度档位（注入优先，缺省 live 读数 as_of=None 现值面；传感器异常=
+      降级跳过不炸，ERROR_CONTRACT 调用方降级语义）。
     - 资金族：两融Δ/主力净流入/大宗折溢价（CH margin_trading/money_flow/
       block_trade，MOD-PLAN-004 同口径）+ 龙虎榜机构游资净买 Top 标的
       （MOD-SIG-057 注入，可缺省）。
@@ -104,7 +107,7 @@ SSoT: depgraph MOD-PLAN-007（待统筹登记）
 Version: 0.1.0
 
 # [ALGO_FLOW]
-# 输入: trade_date + CH 七族日频（kline_index/kline_daily/stk_limit/kline_sector_880/sector_meta/money_flow/sector_constituent/us_index/margin_trading/block_trade/calendar_event）+ 注入契约（MOD-SIG-025/057/058/059/060 输出+bs005）+ llm_client（可缺省）
+# 输入: trade_date + CH 七族日频（kline_index/kline_daily/stk_limit/kline_sector_880/sector_meta/money_flow/sector_constituent/us_index/margin_trading/block_trade/calendar_event）+ 注入契约（MOD-SIG-025/057/058/059/060 输出+bs005+macro_regime_reading）+ 宏观敏感度（WO-1 MacroRegimeSensor，live 惰性降级）+ llm_client（可缺省）
 # 特征: 七族数据包 / input_hash(SHA-256 canonical) / asof_cutoff PIT 护栏 / rejected 留痕
 # 算法: 打包（PIT 双护栏：SQL 日期约束+ledger 逐点准入）→ prompt 组装（v1 单调用 / v2 多-空-综合三调用编排）→ llm_client 注入调用 → 输出契约 JSON schema 校验（缺字段/概率和容差拒收）→ llm_daily_analysis 幂等落库
 # 输出: LlmRunResult（status=success/invalid/skipped_not_wired + LlmDailyAnalysis + 计量留痕）
@@ -132,9 +135,9 @@ from zephyr.shared.io.sqlite_factory import get_db_connection
 if TYPE_CHECKING:  # 注入契约类型仅注解用（运行时鸭子类型读字段，缺数据=该族缺省）
     from zephyr.signal_ashare.futures_basis_monitor import FuturesBasisSnapshot
     from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import LhbPremiumResult
+    from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
     from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import MarketSentimentResult
     from zephyr.signal_ashare.sentiment.option_sentiment import OptionSentimentResult
-    from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
 
 log = logging.getLogger(__name__)
 
@@ -195,6 +198,14 @@ _US_INDEX_SPX_CODES: Final = frozenset({"SPX", "SPY", "SPY.US"})
 _US_INDEX_NDX_CODES: Final = frozenset({"IXIC", "NDX", "QQQ", "QQQ.US"})
 
 _SYMBOL_SAFE_RE: Final = re.compile(r"^[A-Za-z0-9.]+$")  # IN 清单符号消毒（防注入）
+
+# 宏观敏感度档位合法枚举（WO-1；与 macro_regime_sensor.CAUTION_TIERS tier 值对齐，
+# "no_data"=传感器零数据态按降级处理不入包）
+_MACRO_TIERS: Final = frozenset({"supportive", "neutral", "cautious"})
+_MACRO_FAMILY_NOTE: Final = (
+    "宏观天气敏感度档位：supportive=支撑/neutral=中性/cautious=压制；"
+    "caution_factor=月级谨慎度修正因子（风险预算系数语义，不直接驱动仓位）"
+)
 
 # ── SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，与 ch_reader/overnight_boundary_reviser 同约定）──
 # PIT 铁律① SQL 层护栏：全部日频查询严格 trade_date < toDate('{trade_date}')（T 日数据 08:00 不可得）
@@ -412,6 +423,7 @@ class PremarketInjections:
     option_sentiment: Any = None  # MOD-SIG-059 OptionSentimentResult（期权 PCR+IV Rank）
     lhb_result: Any = None  # MOD-SIG-057 LhbPremiumResult（龙虎榜机构游资净买 Top 标的）
     bs005_triggered: bool | None = None  # BS-005 外围冲击状态（None=未知）
+    macro_regime_reading: Any = None  # WO-1 MacroRegimeSensor.score() 输出 dict（None=缺省走 live 读数）
 
 
 # ── 输出契约：数据包 / LLM 分析 / 运行结果（纯 dataclass，JSON 可序列化）──
@@ -423,7 +435,7 @@ class PremarketPackage:
 
     trade_date: str  # 交易日 YYYY-MM-DD
     asof_cutoff: str  # PIT cutoff（YYYY-MM-DD HH:MM:SS，Asia/Shanghai）
-    families: dict[str, Any]  # 七族载荷（index/sentiment/sector/derivatives/overseas/capital/calendar）
+    families: dict[str, Any]  # 七族+宏观敏感度（WO-1 追加 macro_regime 族）载荷
     input_hash: str  # canonical JSON({trade_date, asof_cutoff, families}) 的 SHA-256
     rejected: list[dict[str, Any]]  # PIT 拒收留痕（family/field/asof/reason）
     built_at: str  # 打包时点 UTC ISO8601（审计字段，不参与 input_hash）
@@ -501,7 +513,7 @@ def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
     return rows
 
 
-def _safe_float(v: Any) -> float | None:
+def _safe_float(v: object) -> float | None:
     """安全转 float；失败/NaN/Inf 返回 None（区别于 0.0，供降级判定）。"""
     if v is None:
         return None
@@ -512,7 +524,7 @@ def _safe_float(v: Any) -> float | None:
     return f if math.isfinite(f) else None
 
 
-def _safe_int(v: Any) -> int | None:
+def _safe_int(v: object) -> int | None:
     """安全转 int；失败返回 None。"""
     if v is None or isinstance(v, bool):
         return None
@@ -522,7 +534,7 @@ def _safe_int(v: Any) -> int | None:
         return None
 
 
-def _parse_date(v: Any) -> datetime.date | None:
+def _parse_date(v: object) -> datetime.date | None:
     """日期归一（date/datetime/'YYYY-MM-DD'；非法返回 None）。"""
     if isinstance(v, datetime.datetime):
         return v.date()
@@ -534,7 +546,7 @@ def _parse_date(v: Any) -> datetime.date | None:
         return None
 
 
-def _parse_ts(v: Any) -> datetime.datetime | None:
+def _parse_ts(v: object) -> datetime.datetime | None:
     """时点归一（datetime/'YYYY-MM-DD HH:MM[:SS]'/ISO/日频；非法返回 None）。
 
     项目约定：朴素 datetime = Asia/Shanghai（与 futures_basis_monitor._normalize_ts
@@ -558,6 +570,20 @@ def _parse_ts(v: Any) -> datetime.datetime | None:
 def _canon_symbol(sym: str) -> str:
     """symbol 规范化（去交易所后缀，000001.SH→000001）。"""
     return (sym or "").strip().split(".")[0]
+
+
+def _default_macro_reading() -> dict[str, Any]:
+    """WO-1 宏观敏感度 live 读数：MacroRegimeSensor.score()（as_of=None 现值面）。
+
+    传感器不变量②钦定：现值表读数仅限盘前 live 判定面=本模块运行时点（T+1 08:00）。
+    惰性导入；异常透传（传感器 ERROR_CONTRACT：调用方自行降级——打包器捕获后
+    跳过注入不炸，见 _build_macro_regime_family）。测试经 monkeypatch 本函数注入桩。
+    """
+    # 目标模块=他会话 st-menu-w3h-20260930 沙盘在途件（盘上已存在、未 merge 进 HEAD）；
+    # WO-1 消费侧先行接线，运行时 import 可达——行级豁免随其 merge 后可摘。
+    from zephyr.regime.features import macro_regime_sensor  # noqa: import-integrity  他会话沙盘在途件未merge
+
+    return macro_regime_sensor.MacroRegimeSensor().score()
 
 
 # ── PIT 护栏（铁律①：任何数据点时间戳 > cutoff 拒绝入包，fail-closed 并留痕）──
@@ -1283,16 +1309,79 @@ class PremarketPackager:
             "status": "ok" if rows else "degraded:no_data",  # 空表静默跳过（44号 §9.12 fail-open）
         }
 
+    # ── 宏观敏感度族（WO-1：MacroRegimeSensor→caution_factor/tier 盘前注入）──
+
+    def _build_macro_regime_family(self, ledger: _PitLedger, trace: dict[str, Any]) -> dict[str, Any]:
+        """宏观敏感度族（WO-1）：注入优先，缺省 live 读数（惰性）；异常降级跳过不炸。
+
+        传感器 ERROR_CONTRACT 为严格读通道（映射表缺失→ValueError/CH 失败→透传，
+        禁吞成空表）——降级责任在本调用方：任何异常=该族降级留痕，不影响其余族。
+        PIT：读数 generated_at > cutoff 拒入（fail-closed，与注入族同护栏）；
+        tier∉{supportive,neutral,cautious} 或 caution_factor 非有限数=no_data 降级。
+        """
+        family: dict[str, Any] = {
+            "weather_score": None,
+            "caution_factor": None,
+            "tier": None,
+            "asof": None,
+            "note": _MACRO_FAMILY_NOTE,
+            "status": "skipped:sensor_unavailable",
+        }
+        try:
+            reading = self._injected.macro_regime_reading
+            source = "injected"
+            if reading is None:
+                if self._ch is not None:
+                    # 离线/注入模式（ch_client 注入=mock/离线打包，测试全走此态）：
+                    # 不发起 live 读数，该族跳过——离线零 CH 依赖；
+                    # 生产 daily_loop 走 ch_client=None live 面才会调用传感器。
+                    family["status"] = "skipped:not_injected"
+                    trace["channels"]["macro_regime"] = "skipped:not_injected"
+                    return family
+                reading = _default_macro_reading()
+                source = "live"
+            if not isinstance(reading, Mapping):
+                raise TypeError(f"sensor reading 须为 Mapping: {type(reading).__name__}")
+            ts = _parse_ts(reading.get("generated_at"))
+            if not ledger.admit_ts("macro_regime", "sensor_reading", ts):
+                family["status"] = "degraded:pit_rejected"
+                family["notes"] = ["宏观传感器读数超 cutoff 拒入（PIT）"]
+                trace["channels"]["macro_regime"] = "degraded:pit_rejected"
+                return family
+            caution = _safe_float(reading.get("caution_factor"))  # NaN→None（no_data 态）
+            tier = reading.get("tier")
+            if tier not in _MACRO_TIERS or caution is None:
+                family["status"] = "degraded:no_data"
+                family["notes"] = [f"传感器读数不可用: tier={tier!r} caution={caution!r}"]
+                trace["channels"]["macro_regime"] = "degraded:no_data"
+                return family
+            family.update(
+                weather_score=_safe_float(reading.get("weather_score")),
+                caution_factor=caution,
+                tier=str(tier),
+                asof=ts.isoformat(sep=" ") if ts else None,
+                status="ok",
+                source=source,
+            )
+            trace["channels"]["macro_regime"] = f"ok:{source}"
+            return family
+        except Exception as exc:  # noqa: BLE001 — 传感器异常=跳过注入不炸（WO-1 降级契约）
+            log.warning("宏观传感器读数异常，跳过注入（降级）: %s", exc)
+            family["status"] = "degraded:sensor_error"
+            family["notes"] = [f"sensor_error:{exc!r}"]
+            trace["channels"]["macro_regime"] = f"error:{exc!r}"
+            return family
+
     # ── 主合成 ────────────────────────────────────────────────────────────
 
     def build(self, trade_date: str | datetime.date) -> PremarketPackage:
-        """打包七族盘前数据（PIT 铁律① 全护栏；单族异常降级不炸整体）。
+        """打包七族+宏观敏感度族盘前数据（PIT 铁律① 全护栏；单族异常降级不炸整体）。
 
         Args:
             trade_date: 交易日（ISO 字符串或 date；非法抛 ValueError——ERROR_CONTRACT）。
 
         Returns:
-            PremarketPackage：七族载荷 + input_hash（铁律④）+ rejected 留痕。
+            PremarketPackage：七族+宏观敏感度（WO-1）载荷 + input_hash（铁律④）+ rejected 留痕。
         """
         if isinstance(trade_date, str):
             d0 = datetime.date.fromisoformat(trade_date)  # 非法日期抛 ValueError
@@ -1315,6 +1404,7 @@ class PremarketPackager:
             ("overseas", lambda: self._build_overseas_family(iso, ledger, trace)),
             ("capital", lambda: self._build_capital_family(iso, ledger, trace)),
             ("calendar", lambda: self._build_calendar_family(iso, prev_dates, ledger, trace)),
+            ("macro_regime", lambda: self._build_macro_regime_family(ledger, trace)),
         )
         families: dict[str, Any] = {}
         for name, fn in builders:
@@ -1474,7 +1564,7 @@ def _extract_json(text: str) -> dict[str, Any]:
     return obj
 
 
-def _coerce_str_list(v: Any, field_name: str, errors: list[str]) -> list[str]:
+def _coerce_str_list(v: object, field_name: str, errors: list[str]) -> list[str]:
     """list 字段校验（元素强转 str）；非 list → errors 留痕并返回空清单。"""
     if not isinstance(v, list):
         errors.append(f"{field_name} 须为 list: {type(v).__name__}")

@@ -9,6 +9,9 @@
   昨日涨停今表现/M1 分注入）/ 板块（领涨领跌 Top5/资金净额 Top5/5 状态注入）/ 衍生（IF/IM
   基差+PCR/IV Rank 注入）/ 外盘（SPX/NDX 隔夜+BS-005）/ 资金（两融Δ/主力净流入/大宗折溢价/
   龙虎榜注入）/ 日历（昨日命中+今日预告）
+- 宏观敏感度族（WO-1）：注入读数（caution_factor/tier）入包+入提示词+input_hash 敏感 /
+  live 面（ch_client=None）调用传感器、离线注入模式跳过 / 传感器异常降级跳过不炸
+  （端到端照常产出）/ PIT 越界拒入 / no_data 档位降级
 - input_hash 稳定性（同输入同 hash，built_at/rejected 不进哈希）与敏感性（单字段变化→hash 变）
 - 输出契约 schema：缺字段拒收 / 概率和偏离 1 超容差拒收 / prob 越界 / date 不符 / 回显不一致
 - mock llm_client 端到端：v1 单调用 / v2 多空辩论三调用编排（多/空/综合席 prompt 标记断言，
@@ -40,9 +43,9 @@ from zephyr.plan_engine.llm_premarket_analysis import (
 )
 from zephyr.signal_ashare.futures_basis_monitor import FuturesBasisSnapshot, FuturesBasisSymbol
 from zephyr.signal_ashare.limit_up.lhb_premium_analyzer import LhbPremiumResult
+from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
 from zephyr.signal_ashare.sentiment.market_sentiment_analyzer import MarketSentimentResult
 from zephyr.signal_ashare.sentiment.option_sentiment import OptionSentimentResult
-from zephyr.signal_ashare.sector.sector_divergence import SectorDivergenceResult
 
 TRADE_DATE = "2026-08-24"  # 周一
 T1 = "2026-08-21"  # T-1（周五）
@@ -293,7 +296,17 @@ def test_package_seven_families_payload():
     pkg = build_premarket_package(TRADE_DATE, ch_client=_make_ch(), injected=_full_injected())
     assert pkg.trade_date == TRADE_DATE
     assert pkg.asof_cutoff == f"{TRADE_DATE} 08:00:00"
-    assert set(pkg.families) == {"index", "sentiment", "sector", "derivatives", "overseas", "capital", "calendar"}
+    assert set(pkg.families) == {
+        "index",
+        "sentiment",
+        "sector",
+        "derivatives",
+        "overseas",
+        "capital",
+        "calendar",
+        "macro_regime",  # WO-1：宏观敏感度族（离线注入模式不发起 live 读数）
+    }
+    assert pkg.families["macro_regime"]["status"] == "skipped:not_injected"
     assert pkg.rejected == []
 
     # 指数族：涨跌幅/振幅/成交额 vs 20 日均量
@@ -740,3 +753,104 @@ def test_build_user_prompt_contains_package_and_pit_note():
     assert '"sentiment"' in prompt
     debate_prompt = build_user_prompt(pkg, debate_transcripts={"bull": "多", "bear": "空"})
     assert "【多头陈词】\n多" in debate_prompt and "【空头陈词】\n空" in debate_prompt
+
+
+# ══════════════════════════════════════════════════════════════
+# 宏观敏感度族（WO-1：MacroRegimeSensor.score → caution_factor/tier 盘前注入）
+# ══════════════════════════════════════════════════════════════
+
+
+def _macro_reading(**overrides) -> dict:
+    """MacroRegimeSensor.score() 输出形（WO-1 测试桩；字段与传感器契约同构）。"""
+    reading = {
+        "weather_score": 55.0,
+        "caution_factor": 0.9,
+        "tier": "neutral",
+        "groups": {},
+        "missing_indicators": [],
+        "declared_indicators": 13,
+        "as_of": None,
+        "generated_at": f"{T1} 07:00:00",  # T-1 07:00 ≤ cutoff（T 日 08:00）
+    }
+    reading.update(overrides)
+    return reading
+
+
+def test_wo1_macro_injected_reading_appears_in_package_and_prompt():
+    """WO-1a 注入读数：caution_factor/tier 进数据包+提示词；input_hash 同注入稳定/变档敏感。"""
+    inj = PremarketInjections(macro_regime_reading=_macro_reading())
+    pkg = build_premarket_package(TRADE_DATE, ch_client=_make_ch(), injected=inj)
+    m = pkg.families["macro_regime"]
+    assert m["status"] == "ok" and m["source"] == "injected"
+    assert m["caution_factor"] == 0.9 and m["tier"] == "neutral" and m["weather_score"] == 55.0
+    prompt = build_user_prompt(pkg)
+    assert '"macro_regime"' in prompt and '"caution_factor": 0.9' in prompt and '"tier": "neutral"' in prompt
+    pkg2 = build_premarket_package(TRADE_DATE, ch_client=_make_ch(), injected=inj)
+    assert pkg2.input_hash == pkg.input_hash
+    pkg3 = build_premarket_package(
+        TRADE_DATE,
+        ch_client=_make_ch(),
+        injected=PremarketInjections(macro_regime_reading=_macro_reading(tier="cautious", caution_factor=0.75)),
+    )
+    assert pkg3.input_hash != pkg.input_hash
+
+
+def test_wo1_macro_live_sensor_called_in_live_mode(monkeypatch):
+    """WO-1 live 面（ch_client=None）调用传感器入包；离线注入模式（ch_client 注入）跳过不连真库。"""
+    import zephyr.data.ch_reader as ch_reader
+    import zephyr.plan_engine.llm_premarket_analysis as pma
+
+    monkeypatch.setattr(
+        pma,
+        "_default_macro_reading",
+        lambda: _macro_reading(tier="cautious", caution_factor=0.75, weather_score=35.0),
+    )
+    monkeypatch.setattr(ch_reader, "query", lambda sql: "")  # 其余七族降级桩（零 CH）
+
+    live = build_premarket_package(TRADE_DATE, ch_client=None)
+    m = live.families["macro_regime"]
+    assert m["status"] == "ok" and m["source"] == "live" and m["tier"] == "cautious" and m["caution_factor"] == 0.75
+
+    offline = build_premarket_package(TRADE_DATE, ch_client=lambda sql: "")
+    assert offline.families["macro_regime"]["status"] == "skipped:not_injected"
+
+
+def test_wo1_macro_sensor_error_degrades_run_still_succeeds(tmp_path, monkeypatch):
+    """WO-1b 传感器异常：该族降级跳过不炸；盘前分析端到端照常产出（success 不受染）。"""
+    import zephyr.data.ch_reader as ch_reader
+    import zephyr.plan_engine.llm_premarket_analysis as pma
+
+    def _boom():
+        raise RuntimeError("ch down")
+
+    monkeypatch.setattr(pma, "_default_macro_reading", _boom)
+    monkeypatch.setattr(ch_reader, "query", lambda sql: "")
+
+    res = run_llm_analysis(
+        TRADE_DATE, llm_client=lambda p: _valid_llm_json(), ch_client=None, db_path=tmp_path / "g.db"
+    )
+    assert res.status == STATUS_SUCCESS and res.analysis is not None
+    m = res.package.families["macro_regime"]
+    assert m["caution_factor"] is None and m["tier"] is None
+    assert m["status"] == "degraded:sensor_error"
+    assert any("sensor_error" in n for n in m["notes"])
+
+
+def test_wo1_macro_injected_after_cutoff_pit_rejected():
+    """WO-1 PIT：读数 generated_at > cutoff（T 日盘中打点）拒入+rejected 留痕。"""
+    inj = PremarketInjections(macro_regime_reading=_macro_reading(generated_at=f"{TRADE_DATE} 09:00:00"))
+    pkg = build_premarket_package(TRADE_DATE, ch_client=_make_ch(), injected=inj)
+    m = pkg.families["macro_regime"]
+    assert m["caution_factor"] is None and m["status"] == "degraded:pit_rejected"
+    assert any(r["family"] == "macro_regime" and r["field"] == "sensor_reading" for r in pkg.rejected)
+
+
+def test_wo1_macro_no_data_tier_degrades():
+    """WO-1 tier=no_data（传感器零数据态）/NaN caution：按降级处理不注入档位。"""
+    inj = PremarketInjections(
+        macro_regime_reading=_macro_reading(weather_score=None, caution_factor=float("nan"), tier="no_data")
+    )
+    pkg = build_premarket_package(TRADE_DATE, ch_client=_make_ch(), injected=inj)
+    m = pkg.families["macro_regime"]
+    assert m["status"] == "degraded:no_data"
+    assert m["caution_factor"] is None and m["tier"] is None
