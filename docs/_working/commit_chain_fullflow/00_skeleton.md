@@ -49,7 +49,7 @@ session: st-gate-rationalize-20260929
 Owner 追问"现在可以做吗"后续战（同日上午）执行结果：
 
 1. ~~D1 stats_lock 手术~~ **✅ 已落地 4bab350d**（分代理按单施工+总包复核：红证两针先红后绿、差分矩阵 16/16、k=1 字节锚绿、必绿清单 6 红全数归因外部附干净 worktree 证据；串路调用点偏离 1 处已披露=尾 flush 与 stats 全等数学不可兼得，经一元包装同 batch 实现）。**落地件=每落地件省 ~0.15s 串行停世界+消除 O(N²) 扫描扇出。**
-2. **resource_schedule 真违规——决策备忘升级**：碰撞已算清=23:35 同窗五槽（consensus_crosscheck 23:30/2.5G + cross_validation 23:15/2.0G + daily_alt_fx 23:35/2.0G + news_slow 每时 17/47 分/2.0G + nightly_financial 22:00 起 120min/3.0G）=11.5GB>ceiling 10GB。两案：A=挪 consensus_crosscheck 23:30→00:05（窗口降 9.0GB，需核对其对 cross_validation 产物的就绪依赖）；B=ceiling 10→12GB（RAM 64G 现用 62.6%，硬件余量足，但 ceiling 可能编码共享策略）。**决策权归数据班/Owner**——本总包不替数据域盲改生产 cron（T+1 就绪链风险>登记成本）。
+2. **resource_schedule 真违规——决策备忘（2026-09-30 上午二次更新·方案A试投后回滚）**：Owner 选定方案A；本会话选型 consensus_crosscheck（五槽中最后一棒 23:30-00:30/2.5GB，后挪不破坏上游，移除量最大→23:35 窗口 11.5→9.0GB，00:05-01:05 为空档）并完成双真源编辑+验收（WED 口径 47/47 绿、block=0）。**但落地受阻回滚**：①提交时 RESOURCE-SCHEDULE 门用更宽口径扫描，拦下 14-23 条**他车道在途注册表增量**自带的盘中冲突（10-01 09:16-09:42 auction/intraday/event_driven 簇——贴交易时段的槽不可挪时间，属数据班 P3 重排班已知清账对象，测试注释在案）；②裁定 R-F 明文「内存预算永不豁免」，无旗可打；③深挖发现冲突槽位根本不在 HEAD（数据班未提交的在途增量 +450 行），方案A必须随该批一起落。**给数据班的现成处方（随其袋一行一改）**：schedule.yaml `consensus_crosscheck` cron `30 23 * * 0-4`→`5 0 * * 0-4`（注释 23:30→00:05）；resource_profile_registry.yaml 同槽 `window_expr: 30 23 * * 1-5`→`5 0 * * 1-5`。本会话已精确反做双文件编辑（零痕迹核验过），在途内容原样保留。
 3. ~~生成器登记债~~ **✅ 已落地 7cdcaea9**（码+重生成同批：墓碑覆盖条件扩 enabled=false、stages 通道口径、3 实跑 hook 补登记+SCRIPTS-IMPORT-INTEGRITY 墓碑；统一册 178→181，三预期逐一核对+生成器套件 22 绿）。
 4. CREATE-GUARD p90 44.8s 尾——维持登记（热册并发写 cache-miss，需分片/预热设计专项）。
 5. SessionRegistry 增量写——维持登记（协调核心并发手术，短期配方=真实 Windows pid 保活注册已留档 e01）。
