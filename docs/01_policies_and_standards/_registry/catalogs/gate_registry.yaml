@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-29T21:07:27Z'
+generated_at: '2026-09-30T07:33:31Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 178
+total_gates: 181
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -18,8 +18,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-WORKTREE-REQUIRED
   name: 'GATE-WORKTREE-REQUIRED: 主工作区 commit 渐进式软门禁（#ARCH-GIT-SELF-HARM-GUARD L3.1）'
@@ -30,8 +30,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ALGO-FLOW
   name: 'GATE-ALGO-FLOW: src/zephyr 模块必须含 ALGO_FLOW docstring 标记（§4.16）'
@@ -42,8 +42,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-PYTEST-CONFIG-DRIFT
   name: 'GATE-PYTEST-CONFIG-DRIFT: pyproject 与 py.ini [pytest] 段双配置语义对齐（2026-09-15
@@ -56,8 +56,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -67,9 +67,9 @@ gates:
   always_run: false
   category: unknown
   status: active
+  source: manual
   own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
+  enforcement_channel: manual
 - gate_id: GATE-NAMING
   name: 'GATE-NAMING: 命名增量守门（--check-new，只拦 staged 新增重名 #ARCH-PRECOMMIT-INCREMENTAL）'
   entry: python scripts/governance/d3_metadata/check_naming_convention.py --check-new
@@ -79,8 +79,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-NAMING-AUDIT
   name: 'GATE-NAMING-AUDIT: 全仓命名审计+SSOT一致性（不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
@@ -92,9 +92,9 @@ gates:
   always_run: false
   category: unknown
   status: active
+  source: manual
   own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
+  enforcement_channel: manual
 - gate_id: GATE-DOC-NODE-ID
   name: 'GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）'
   entry: python scripts/governance/d3_metadata/check_doc_node_id_hardcode.py --ci
@@ -103,8 +103,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ID-UNIQ
   name: 'GATE-ID-UNIQ: pre-commit hook id 唯一性'
@@ -115,8 +115,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-INTEGRITY
   name: 'GATE-INTEGRITY: 规则文件完整性 golden hash 校验（C 层兜底）'
@@ -126,8 +126,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12）'
@@ -137,8 +137,8 @@ gates:
   always_run: false
   category: blueprint_truth_source
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-TRIPLE-ALIGN
   name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
@@ -148,8 +148,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-FRONTMATTER
   name: 'GATE-FRONTMATTER: 文档前置元数据增量守门（ttl+doc_type，#ARCH-PRECOMMIT-INCREMENTAL）'
@@ -160,8 +160,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-FRONTMATTER-AUDIT
   name: 'GATE-FRONTMATTER-AUDIT: 全仓 frontmatter 审计（规则FM+SSoT+断链，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
@@ -173,9 +173,9 @@ gates:
   always_run: false
   category: unknown
   status: active
+  source: manual
   own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
+  enforcement_channel: manual
 - gate_id: GATE-VOCAB
   name: 'GATE-VOCAB: 词表门禁合并（GATE-VOCAB-HARDCODE + GATE-GENERATE）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_vocab_hardcode.py,--ci
@@ -186,8 +186,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-16
   name: 'GATE-16: 架构合规校验（architecture-contract machine_check 引擎）'
@@ -198,8 +198,8 @@ gates:
   always_run: false
   category: architecture_compliance
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-17
   name: 'GATE-17: 孤儿.py文件检测（§9 根目录零.py）'
@@ -210,8 +210,8 @@ gates:
   always_run: false
   category: orphan_detection
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-NESTED-FLAT-PREFIX
   name: 'GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）'
@@ -222,8 +222,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-SRC-NO-DATA
   name: 'GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（数据真源唯一 data/）'
@@ -233,8 +233,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-DIRECTORY-CONTRACT
   name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008，真源 directory_contract.yaml）'
@@ -248,8 +248,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-VMS-SSOT
   name: 'GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 防复发 + snapshot 方法重建 防复发）'
@@ -262,8 +262,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-SCHEMA-TRUTH
   name: 'GATE-SCHEMA-TRUTH: DDL-as-Code 真源 vs ClickHouse 漂移阻断（#ARCH-CH-025）'
@@ -274,8 +274,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-SYMBOL-CONVENTION
   name: 'GATE-SYMBOL-CONVENTION: Symbol 约定 lint（TRAE-082 #ARCH-DATA-SYMBOL-002）'
@@ -286,8 +286,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ZR
   name: 'GATE-ZR: 零残留强制门禁（IRN-011）'
@@ -299,8 +299,8 @@ gates:
   always_run: false
   category: zero_residue
   status: active
-  own_scope: null
   source: pre-commit
+  own_scope: null
   enforcement_channel: pre-commit
 - gate_id: GATE-SSOT-CODE
   name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
@@ -312,21 +312,28 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-TEST
-  name: 'GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）'
-  entry: python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:asyncio,--import-mode=importlib,-m,"not
-    slow and not e2e" scripts/governance/d11_compliance/check_test_structure.py
-  description: 测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) +
-    GATE-19(测试结构合规)，run_gate_chain 顺序执行
+  name: 'GATE-TEST: 测试门禁合并（GATE-18 staged收集 + GATE-19 结构）'
+  entry: bash -c "files=$(git diff --cached --name-only --diff-filter=AMR -- tests/
+    | grep '\.py$' | tr '\n' ' '); if [ -z \"$files\" ]; then echo '[gate-test] no
+    staged test files, skip collect (B1 2026-09-30)'; rc1=0; else pytest --collect-only
+    -q --tb=line -p no:asyncio --import-mode=importlib -m 'not slow and not e2e' $files;
+    rc1=$?; fi; python scripts/governance/d11_compliance/check_test_structure.py;
+    rc2=$?; if [ $rc1 -ge 2 ] || [ $rc2 -ge 2 ]; then exit 2; fi; if [ $rc1 -ne 0
+    ] || [ $rc2 -ne 0 ]; then exit 1; fi; exit 0"
+  description: 测试门禁合并——GATE-18 收集域 2026-09-30 按 9/24 报告 B1 处方收窄：全树 pytest --collect-only(3967
+    文件/分钟级底座) 改 staged tests/ 收集（空则跳过；src 单独提交时 import 断裂由 L2 UNDEFINED-NAME/IMPORT-INTEGRITY
+    承载+夜检兜底）；GATE-19 check_test_structure 保留全量；退出码聚合保序不短路（0/1/2 语义与 run_gate_chain
+    对齐）。回滚=恢复 run_gate_chain 原entry
   files_trigger: ^src/zephyr/.*\.py$|^tests/.*\.py$
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: null
   enforcement_channel: pre-commit
 - gate_id: GATE-TEST-SYMBOL
   name: 'GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007）'
@@ -336,8 +343,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ERRCODE
   name: 'GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）'
@@ -348,8 +355,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-REG-BL
   name: 'GATE-REG-BL: 注册基线合并门禁（GATE-REG-BL + GATE-IDX）'
@@ -361,8 +368,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-BP-PLACE
   name: 'GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 强制执行）'
@@ -374,9 +381,9 @@ gates:
   always_run: false
   category: blueprint_placement
   status: active
+  source: manual
   own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
+  enforcement_channel: manual
 - gate_id: GATE-SCRIPT-Q
   name: 'GATE-SCRIPT-Q: 脚本质量合并门禁（GATE-SQ + GATE-DD07）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/validate_script_quality.py,--scripts-dir,scripts/governance,--warn-only
@@ -387,8 +394,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ADM
   name: 'GATE-ADM: Manifest 准入控制器（K8s Admission落地）'
@@ -398,8 +405,8 @@ gates:
   always_run: false
   category: manifest_admission
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-21
   name: 'GATE-21: 静态清单漂移阻断（§6.2）'
@@ -411,8 +418,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-20
   name: 'GATE-20: 裸调 LLM API 检测（RULE-LSG-001 + COND-30）'
@@ -424,8 +431,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-SILENT-DEGRADATION
   name: 'GATE-SILENT-DEGRADATION: 静默降级检测（COND-45 — 降级路径必须有日志）'
@@ -436,8 +443,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-RETURN-CONTRACT
   name: 'GATE-RETURN-CONTRACT: TypedDict 返回契约 ok 键审计（P2-5/P3-1）'
@@ -448,8 +455,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-WORKTREE-OPS-TELEMETRY
   name: 'GATE-WORKTREE-OPS-TELEMETRY: 主工作区擦除操作遥测审计（P2-6/P3-1）'
@@ -460,8 +467,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-MCP
   name: 'GATE-MCP: Tool Contract 一致性（R3）'
@@ -471,8 +478,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-C2
   name: 'GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）'
@@ -486,8 +493,8 @@ gates:
   always_run: false
   category: contract_drift
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-CODEGEN-IDEMPOTENT
   name: 'GATE-CODEGEN-IDEMPOTENT: 契约生成器幂等性（C 路径防回潮）'
@@ -499,8 +506,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-CANONICAL-YAML-DRIFT
   name: 'GATE-CANONICAL-YAML-DRIFT: canonical YAML SSoT 防漂移（Phase B 5 项断言）'
@@ -512,8 +519,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ENCODING
   name: 'GATE-ENCODING: 编码安全+mojibake+BOM检测'
@@ -524,8 +531,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-COMMIT-GW
   name: 'GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513）'
@@ -536,8 +543,8 @@ gates:
   always_run: true
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-NO-TESTS-UNIT
   name: 'GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）'
@@ -547,8 +554,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-DEDUP
   name: 'GATE-DEDUP: 代码重复检测（code_dedup 引擎 verify）'
@@ -559,9 +566,9 @@ gates:
   always_run: false
   category: unknown
   status: active
+  source: manual
   own_scope: false
-  source: pre-commit
-  enforcement_channel: pre-commit
+  enforcement_channel: manual
 - gate_id: GATE-DEBT-BRIDGE
   name: 'GATE-DEBT-BRIDGE: 架构债务防御（5.96 维度防复发）'
   entry: python scripts/governance/d7_code/scan_debt.py --ci --staged
@@ -571,8 +578,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ANY-ABUSE
   name: 'GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发，Phase 3 commit 阻断）'
@@ -584,8 +591,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-ALGO-QUALITY
   name: 'GATE-ALGO-QUALITY: 算法糊弄检测（代码AST+blueprint 双层，6类pattern）'
@@ -596,8 +603,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-GEN-NO-REALTIME-TIME
   name: GATE-GEN-NO-REALTIME-TIME
@@ -608,8 +615,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-NO-COMMIT-DERIVED
   name: GATE-NO-COMMIT-DERIVED
@@ -620,8 +627,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: GATE-MODULE-LIFECYCLE
   name: GATE-MODULE-LIFECYCLE
@@ -633,8 +640,8 @@ gates:
   always_run: false
   category: unknown
   status: active
-  own_scope: false
   source: pre-commit
+  own_scope: false
   enforcement_channel: pre-commit
 - gate_id: ALGO-FLOW-LINK
   name: 'ALGO-FLOW-LINK: ALGO_FLOW external 锚链接校验门禁（ALGO-FLOW-LINK）（CommitGate, priority=108）'
@@ -730,16 +737,18 @@ gates:
   enforcement_channel: manual
   redirect_to: MAP-ALIGNMENT
 - gate_id: BLUEPRINT-HEADER
-  name: 'BLUEPRINT-HEADER: BLUEPRINT-HEADER（CommitGate, priority=153）'
-  entry: in-process (GitCommitGateway)
-  description: BLUEPRINT-HEADER
+  name: 'BLUEPRINT-HEADER: A_module 头声明一致性聚合（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
   name: 'BLUEPRINT-AMODULE-CROSS-CHECK: 蓝图↔A_module 交叉校验（已合并至 BLUEPRINT-HEADER，st-gslim-20260923
     P4）'
@@ -1012,16 +1021,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: DOC-REF-BROKEN
-  name: 'DOC-REF-BROKEN: DOC-REF-BROKEN（CommitGate, priority=91）'
-  entry: in-process (GitCommitGateway)
-  description: DOC-REF-BROKEN
+  name: 'DOC-REF-BROKEN: 文档相对路径断裂引用（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: GATE-DOMAIN-FK
   name: 'GATE-DOMAIN-FK: GATE-DOMAIN-FK（CommitGate, priority=78）'
   entry: in-process (GitCommitGateway)
@@ -1082,16 +1093,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: EXEMPT-ZONE-FM
-  name: 'EXEMPT-ZONE-FM: EXEMPT-ZONE-FM（CommitGate, priority=87）'
-  entry: in-process (GitCommitGateway)
-  description: EXEMPT-ZONE-FM
+  name: 'EXEMPT-ZONE-FM: 豁免区 frontmatter doc_type（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: FILE-COPY
   name: 'FILE-COPY: FILE-COPY（CommitGate, priority=85）'
   entry: in-process (GitCommitGateway)
@@ -1105,16 +1118,18 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: FILE-PLACEMENT-TTL
-  name: 'FILE-PLACEMENT-TTL: FILE-PLACEMENT-TTL（CommitGate, priority=33）'
-  entry: in-process (GitCommitGateway)
-  description: FILE-PLACEMENT-TTL
+  name: 'FILE-PLACEMENT-TTL: 文件放置 TTL 三重校验（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: FOLDER-CAPACITY-HARD-LIMIT
   name: 'FOLDER-CAPACITY-HARD-LIMIT: FOLDER-CAPACITY-HARD-LIMIT（CommitGate, priority=112）'
   entry: in-process (GitCommitGateway)
@@ -1376,16 +1391,18 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: MODULE-ID-CONSISTENCY
-  name: 'MODULE-ID-CONSISTENCY: MODULE-ID-CONSISTENCY（CommitGate, priority=88）'
-  entry: in-process (GitCommitGateway)
-  description: MODULE-ID-CONSISTENCY
+  name: 'MODULE-ID-CONSISTENCY: module_id 三声明轨道一致性（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: MSG-EXPOSURE
   name: 'MSG-EXPOSURE: MSG-EXPOSURE（CommitGate, priority=83）'
   entry: in-process (GitCommitGateway)
@@ -1739,17 +1756,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
-  name: 'SCRIPTS-IMPORT-INTEGRITY: SCRIPTS-IMPORT-INTEGRITY（CommitGate, priority=104）'
-  entry: in-process (GitCommitGateway)
-  description: SCRIPTS-IMPORT-INTEGRITY
-  files_trigger:
-  - scripts/*.py
+  name: 'SCRIPTS-IMPORT-INTEGRITY: scripts/governance 用 _shared.constants 符号未 import（已退役并入
+    UNDEFINED-NAME，st-gate-rationalize-20260930 Owner批）'
+  entry: N/A (retired into UNDEFINED-NAME, see redirect_to)
+  description: 【退役】违规集 ⊂ UNDEFINED-NAME（F821 未定义符号，同域覆盖 scripts/governance/**），残余价值=高精度报错文案，并入
+    UNDEFINED-NAME 报错分支。裁定=gate_survival_adjudication.md §4.2，Owner 2026-09-30 批。
+  files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: UNDEFINED-NAME
 - gate_id: NO-SECRET-HARDCODE
   name: 'NO-SECRET-HARDCODE: NO-SECRET-HARDCODE（CommitGate, priority=128）'
   entry: in-process (GitCommitGateway)
@@ -1908,16 +1926,18 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: TTL-METADATA
-  name: 'TTL-METADATA: TTL-METADATA（CommitGate, priority=32）'
-  entry: in-process (GitCommitGateway)
-  description: TTL-METADATA
+  name: 'TTL-METADATA: TTL 元数据硬阻断（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: UNDEFINED-NAME
   name: 'UNDEFINED-NAME: UNDEFINED-NAME（CommitGate, priority=106）'
   entry: in-process (GitCommitGateway)
@@ -2072,8 +2092,8 @@ gates:
   always_run: false
   category: serialization
   status: active
-  source: manual
-  enforcement_channel: manual
+  source: commit-gateway
+  enforcement_channel: commit-gateway
 - gate_id: GATE-SCHEMA-HEALTH
   name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'
   entry: N/A (merged into GATE-C2, see redirect_to)
@@ -2142,3 +2162,35 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: DOC-HEADER-SUITE
+- gate_id: GATE-DETECT-GIT-DANGEROUS
+  name: 检测危险 git 命令（65 号 §7.13，ABS-26/27/28）
+  entry: python scripts/governance/d6_security/detect_git_dangerous.py
+  description: 检测代码/文档中的危险 git 命令（clean -fd/reset --hard/checkout -- 等）。登记债#4（2026-09-30
+    st-gate-rationalize）：实跑 hook 补登记（id=gate-detect-git-dangerous，原提取正则只认 GATE-大写名/gate-数字
+    id 而漏扫）。
+  files_trigger: ''
+  always_run: true
+  category: security
+  status: active
+  source: pre-commit
+  enforcement_channel: pre-commit
+- gate_id: GATE-DETECT-SHELL-DANGEROUS
+  name: 检测危险 shell 命令（65 号 §7.13，ABS-38/39）
+  entry: python scripts/governance/d6_security/detect_shell_dangerous.py
+  description: 检测代码中的危险 shell 命令（Remove-Item -Recurse -Force/rm -rf 等）。登记债#4 补登记（id=gate-detect-shell-dangerous）。
+  files_trigger: ''
+  always_run: true
+  category: security
+  status: active
+  source: pre-commit
+  enforcement_channel: pre-commit
+- gate_id: GATE-DETECT-PERMANENT-DELETION
+  name: 检测 ttl:permanent 文件删除（65 号 §7.13，PS-STD-012 V1）
+  entry: python scripts/governance/d6_security/detect_permanent_file_deletion.py
+  description: 检测 ttl:permanent 元数据文件被删除。登记债#4 补登记（id=gate-detect-permanent-deletion）。
+  files_trigger: ''
+  always_run: false
+  category: security
+  status: active
+  source: pre-commit
+  enforcement_channel: pre-commit

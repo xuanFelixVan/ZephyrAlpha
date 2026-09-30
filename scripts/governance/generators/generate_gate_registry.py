@@ -684,6 +684,59 @@ MANUAL_GATES: list[dict] = [
         "enforcement_channel": "manual",
         "redirect_to": "DOC-HEADER-SUITE",
     },
+    {
+        "gate_id": "SCRIPTS-IMPORT-INTEGRITY",
+        "name": "SCRIPTS-IMPORT-INTEGRITY: scripts/governance 用 _shared.constants 符号未 import（已退役并入 UNDEFINED-NAME，st-gate-rationalize-20260930 Owner批）",
+        "entry": "N/A (retired into UNDEFINED-NAME, see redirect_to)",
+        "description": "【退役】违规集 ⊂ UNDEFINED-NAME（F821 未定义符号，同域覆盖 scripts/governance/**），"
+        "残余价值=高精度报错文案，并入 UNDEFINED-NAME 报错分支。裁定=gate_survival_adjudication.md §4.2，Owner 2026-09-30 批。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "UNDEFINED-NAME",
+    },
+    {
+        "gate_id": "GATE-DETECT-GIT-DANGEROUS",
+        "name": "检测危险 git 命令（65 号 §7.13，ABS-26/27/28）",
+        "entry": "python scripts/governance/d6_security/detect_git_dangerous.py",
+        "description": "检测代码/文档中的危险 git 命令（clean -fd/reset --hard/checkout -- 等）。"
+        "登记债#4（2026-09-30 st-gate-rationalize）：实跑 hook 补登记（id=gate-detect-git-dangerous，"
+        "原提取正则只认 GATE-大写名/gate-数字 id 而漏扫）。",
+        "files_trigger": "",
+        "always_run": True,
+        "category": "security",
+        "status": "active",
+        "source": "pre-commit",
+        "enforcement_channel": "pre-commit",
+    },
+    {
+        "gate_id": "GATE-DETECT-SHELL-DANGEROUS",
+        "name": "检测危险 shell 命令（65 号 §7.13，ABS-38/39）",
+        "entry": "python scripts/governance/d6_security/detect_shell_dangerous.py",
+        "description": "检测代码中的危险 shell 命令（Remove-Item -Recurse -Force/rm -rf 等）。"
+        "登记债#4 补登记（id=gate-detect-shell-dangerous）。",
+        "files_trigger": "",
+        "always_run": True,
+        "category": "security",
+        "status": "active",
+        "source": "pre-commit",
+        "enforcement_channel": "pre-commit",
+    },
+    {
+        "gate_id": "GATE-DETECT-PERMANENT-DELETION",
+        "name": "检测 ttl:permanent 文件删除（65 号 §7.13，PS-STD-012 V1）",
+        "entry": "python scripts/governance/d6_security/detect_permanent_file_deletion.py",
+        "description": "检测 ttl:permanent 元数据文件被删除。登记债#4 补登记（id=gate-detect-permanent-deletion）。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "security",
+        "status": "active",
+        "source": "pre-commit",
+        "enforcement_channel": "pre-commit",
+    },
 ]
 
 
@@ -759,6 +812,9 @@ def extract_gates(config: dict) -> list[dict]:
                     "always_run": hook.get("always_run", False),
                     "category": CATEGORY_MAP.get(gate_suffix, "unknown"),
                     "status": "active",
+                    # 登记债#5（2026-09-30 st-gate-rationalize）：stages 通道口径——
+                    # manual 阶段台在 generate() 侧标 source=manual（原整片 pre-commit）。
+                    "source": "manual" if "manual" in (hook.get("stages") or []) else "pre-commit",
                     # T14 own_scope 机械派生（st-commitspeed-tbl-20260924，SW8 代投移植）：
                     # pre-commit 通道原 own_scope 整片缺失（own_scope=None），同则派生。
                     "own_scope": _derive_own_scope_for_entry(hook.get("entry", "")),
@@ -913,7 +969,10 @@ def generate(entry_count: int | None = None) -> dict:
     pcc = load_yaml(PRE_COMMIT_PATH)
     gates = extract_gates(pcc)
     for g in gates:
-        g["source"] = "pre-commit"
+        # 登记债#5（2026-09-30 st-gate-rationalize）：stages=[manual] 的 hook 台按实际
+        # 执行通道标注（原整片 pre-commit 致「56」对不齐任何单一执行面），未标注者
+        # 维持 pre-commit（与旧口径全等）。
+        g.setdefault("source", "pre-commit")
     # CommitGate 治本（2026-07-17）：合并 CommitGates（~50 个 in-process gate）
     # 源=src/zephyr/gov_enforcement/commit_gates/*.py 的 GateSpec 声明
     gates.extend(extract_commit_gates())
@@ -936,12 +995,19 @@ def generate(entry_count: int | None = None) -> dict:
     # （实测 15 台悬空：RULING-REFERENCE 等）。改为墓碑优先覆盖扫描条目；唯 id 已回装
     # in_process 名册时让位装载事实（防误墓活门）。
     try:
-        loaded_ids = {g.get("gate_id") for g in (load_yaml(IN_PROCESS_REGISTRY_PATH).get("gates") or [])}
+        roster_gates = load_yaml(IN_PROCESS_REGISTRY_PATH).get("gates") or []
+        loaded_ids = {g.get("gate_id") for g in roster_gates}
     except Exception:  # noqa: BLE001 — 名册不可得时退回旧口径（只追加不覆盖）
         loaded_ids = set()
+        roster_disabled = set()
+    else:
+        # 登记债#1（2026-09-30 st-gate-rationalize）：enabled=false 的名册台，统一册
+        # 不得再报 active——墓碑覆盖条件从「不在名册」扩为「不在名册 或 名册停用」，
+        # 使执行退役/退役台的 MANUAL_GATES 墓碑能落册（账实对齐）。
+        roster_disabled = {g.get("gate_id") for g in roster_gates if g.get("enabled") is not True}
     for mg in MANUAL_GATES:
-        mg["source"] = "manual"
-        if mg["gate_id"] in auto_ids and mg["gate_id"] not in loaded_ids:
+        mg.setdefault("source", "manual")
+        if mg["gate_id"] in auto_ids and (mg["gate_id"] not in loaded_ids or mg["gate_id"] in roster_disabled):
             gates = [mg if g["gate_id"] == mg["gate_id"] else g for g in gates]
         elif mg["gate_id"] not in auto_ids:
             gates.append(mg)
