@@ -139,3 +139,20 @@ F 盘当前 free **167.6 GiB**（09-26 无主 599 GiB 复活件所致，见 FMS 
 本身不写 F，不受其影响；但若同窗触发 WeeklyVMBackup/手动 VM 全量，`backup_ch_vm.ps1` 的
 `$BackupRoot` 仍指 F（P-6 之②未改家，属 Owner 门位），有再灌 599 GiB 风险。本班已把
 "探测未知态→拒绝全量"的 fail-open 治好（AutoCheck 四态），但**改家与 F 上无主件删除仍需 Owner**。
+
+
+---
+
+## §F+ tdx→内部撮合切换工单（2026-09-30 深夜 Owner 令，st-storageswap-20260928 立项移交白班施工）
+
+**Owner 原话**：tdx 板块线数据源要改，改成项目内部的模块撮合，以后拉数据自动启动模块去算出来做数据。
+**触发**：tdx 外部服务器连不通（09-30 两次实测），kline_sector_1/5/15min_incremental 全 FAIL。
+
+**设计要点（勘察结论）**：
+1. 下游已有=DB 内重采样任务 kline_sector_880_resample（1m/5m→15/30/60m，toStartOfInterval 幂等 DELETE+INSERT）——缺的只是 1 分钟源头；
+2. 切换点=新任务 kline_sector_1min_from_constituents：从 CH kline_1min（成分股，健康且 0930 早盘已回填）按 sector_constituent 成员映射等权聚合出 880xxx 板块 1m 线，写入 kline_sector_intraday（period=1m），下游重采样链自动接续；
+3. **关键风险=口径差**：tdx 880xxx 是加权指数，等权聚合的点位/涨跌幅会与官方不同——必须先跑校验批（取 09-29 全天：计算值 vs tdx 已入库值逐板对比，量化偏差），偏差可接受（或做权重校准）后才准切源，下游消费者（逆势榜等）需排查绝对值敏感度；
+4. 现成参考件：sector_intraday_aggregator.py（production，成分聚合纯函数先例）/ sector_constituent 表（成员映射）/ sector_code_bridge.TDX_INDUSTRY_BOARDS（132 行业板名单）；
+5. 完成判据：校验报告 + 切源 + 连续 3 个交易日自动产出 + 逆势榜消费无感，tdx 四任务退役留观。
+
+**验收人**：白班施工班（本工单=Owner 令转办）。
