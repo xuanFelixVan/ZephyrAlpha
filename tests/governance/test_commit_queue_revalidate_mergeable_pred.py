@@ -9,7 +9,8 @@
 #              每条尺既能红又能绿（阳性=漂移必判死/必留痕，阴性=对齐必静默放行），恒绿尺不得进本文件；
 #              回归锁的修复前基线取自钉死 blob 的**真实旧码**，非当前 HEAD（防自我循环论证）
 # [MODIFY-GUARD] 半接线回归闸：_revalidate_stale_base 丢 mergeable_pred 形参、或 mergeable 放行
-#                吞掉真冲突/放宽非 mergeable 判定、或 head_reader 缺失保险丝被谓词松动 ⇒ 即红
+#                吞掉真冲突/放宽非 mergeable 判定、或 head_reader 缺失时**非 mergeable
+#                路径**保险丝被谓词松动（或交仲裁不留 rebased_registry 痕）⇒ 即红
 # [STABILITY] volatile
 # [SAFETY] L
 # [TTL] permanent
@@ -27,8 +28,10 @@
   ② 给出谓词时，确已比对出与 HEAD 不一致且谓词判真的路径改交落地侧条目级三向合并
      仲裁（W2 2026-09-22 上线），并写 `item.meta.rebased_registry` 留痕（红证 B）；
   ③ 非 mergeable 路径漂移仍判不适用，**禁放宽**（红证 C）；
-  ④ `head_reader` 缺失＝根本没比对，保险丝照旧 fail-closed 判不适用，谓词无投票权
-     （红证 D）；
+  ④ `head_reader` 缺失＝根本没比对：无谓词（严格缺省口径）一律 fail-closed 判不适用；
+     mergeable 族按 2026-09-27 语义分叉裁定（a4211e4b16 条目级合并仲裁通道）交落地侧
+     条目级合并仲裁——该仲裁在基底不可知时自会 raise 死信回人工（判据取向=绝不猜
+     基底），安全不降级；非 mergeable 路径无下游仲裁者，保险丝照旧（红证 D）；
   ⑤ 签名级防半接线：形参存在且有关省值、参数数 ≤7（红证 E，钉死本类缺陷不再复发）。
 
 谓词真值口径由调用方持有（生产注入的是 `commit_queue_landing.is_registry_mergeable`，
@@ -314,21 +317,41 @@ def test_red_c_nonmergeable_drift_still_inapplicable(cq) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 红证 D（保险丝不动）：head_reader=None 且 base_blob 非空 → 仍 fail-closed 判不适用，
-# loud marker 逐字保留，谓词无投票权，且不留 re-base 痕（没比对＝谈不上漂移）。
+# 红证 D（保险丝不动，按 2026-09-27 语义分叉裁定重定基）：head_reader=None 且
+# base_blob 非空时——无谓词（严格缺省口径）全部 fail-closed，loud marker 逐字保序；
+# mergeable 族交落地侧条目级合并仲裁（a4211e4b16 通道：该仲裁在基底不可知时自会
+# raise 死信回人工，队列层抢先判死只会把可救的袋变成人工重投，2026-09-27 实测该
+# 形态当日误杀 33 只）；非 mergeable 路径无下游仲裁者，保险丝照旧、谓词无投票权。
+# 守卫意图保留三面：marker 文案逐字稳定保序；凡未交仲裁者必判不适用（整袋殉葬）；
+# 交仲裁者必须留 rebased_registry 痕（「漂移被接管」不得静默）。
 # ---------------------------------------------------------------------------
 
 
 def test_red_d_missing_head_reader_fuse_untouched(cq) -> None:
-    for pred in (None, _registry_family, _always_true):
-        item = _item([_f(REG_REL, "blob-reg-base"), _f(PY_REL, "blob-py-base")])
-        ok, mism = cq._revalidate_stale_base(item, None, mergeable_pred=pred)
-        label = getattr(pred, "__name__", "None")
-        assert not ok, f"[谓词={label}] head_reader 缺失必须 fail-closed，实得 ok={ok}"
-        assert mism == [f"{REG_REL}{HEAD_MISSING}", f"{PY_REL}{HEAD_MISSING}"], (
-            f"[谓词={label}] loud marker 文案/顺序须逐字不变，实得 {mism!r}"
-        )
-        assert "rebased_registry" not in (item.get("meta") or {}), f"[谓词={label}] 未比对不得留 re-base 痕"
+    # ① 严格缺省口径（无谓词）：与修复前逐字节同——全部 fail-closed，marker 逐字保序，
+    #    不留 re-base 痕（没有谓词就没有「接管」可言）。
+    strict = _item([_f(REG_REL, "blob-reg-base"), _f(PY_REL, "blob-py-base")])
+    ok, mism = cq._revalidate_stale_base(strict, None)
+    assert not ok, f"缺省口径必须 fail-closed，实得 ok={ok}"
+    assert mism == [f"{REG_REL}{HEAD_MISSING}", f"{PY_REL}{HEAD_MISSING}"], (
+        f"loud marker 文案/顺序须逐字不变，实得 {mism!r}"
+    )
+    assert "rebased_registry" not in (strict.get("meta") or {}), "无谓词不得留 re-base 痕"
+
+    # ② 族谓词在场：族项交仲裁留痕（不抢先判死）；非族项保险丝照旧——marker 逐字保序、
+    #    不得因谓词在场被放行，且混合袋因非族项殉葬仍整体判不适用。
+    item = _item([_f(REG_REL, "blob-reg-base"), _f(PY_REL, "blob-py-base")])
+    ok, mism = cq._revalidate_stale_base(item, None, mergeable_pred=_registry_family)
+    assert not ok, f"含非族项的混合袋必须整体殉葬，实得 ok={ok}"
+    assert mism == [f"{PY_REL}{HEAD_MISSING}"], f"非族项 marker 逐字保序且族项不得混入，实得 {mism!r}"
+    assert item["meta"]["rebased_registry"] == [REG_REL], "族项交仲裁必须留痕（不得静默放行）"
+
+    # ③ 谓词恒真（爆炸半径=注入方负责，红证 C 已留证边界）：全数交仲裁留痕、零判死，
+    #    保序完整——「交仲裁」与「判死」两个出口都不得静默。
+    wide = _item([_f(REG_REL, "blob-reg-base"), _f(PY_REL, "blob-py-base")])
+    ok, mism = cq._revalidate_stale_base(wide, None, mergeable_pred=_always_true)
+    assert ok and mism == [], f"谓词恒真时全数交仲裁（不构成放宽），实得 ok={ok} mism={mism!r}"
+    assert wide["meta"]["rebased_registry"] == [REG_REL, PY_REL], "交仲裁保序留痕必须完整"
 
 
 # ---------------------------------------------------------------------------

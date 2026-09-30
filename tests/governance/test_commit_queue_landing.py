@@ -597,8 +597,9 @@ def _audit_records(qroot: Path) -> list[dict]:
 
 class TestMainWorkspaceConvergence:
     def _non_index_audit(self, queue_root):
-        """RB1 后审计含 index_* 决策流（shadow 记录=新契约）；非 index 项=旧语义审计。""",
+        """RB1 后审计含 index_* 决策流（shadow 记录=新契约）；非 index 项=旧语义审计。"""
         return [r for r in _audit_records(queue_root) if not str(r.get("action", "")).startswith("index_")]
+
     def test_clean_file_fast_forwarded_to_main_workspace(self, tmp_repo: Path, queue_root: Path) -> None:
         """干净文件（与旧 HEAD 逐字节一致）→ 快进写入新内容；零审计（无跳过项）。"""
         landing, _stub = _make_landing(tmp_repo, queue_root)
@@ -615,7 +616,9 @@ class TestMainWorkspaceConvergence:
         # 主工作区字节级快进（治陈旧快照：landing 后工作区即见新内容）
         assert (tmp_repo / "base.txt").read_bytes() == new_base
         assert (tmp_repo / "docs" / "added.txt").read_bytes() == b"new file\n"
-        assert self._non_index_audit(queue_root) == [], f"干净快进不得产生非 index 审计（qid={item['qid']}）；index_* 决策流=RB1 shadow 新契约"
+        assert self._non_index_audit(queue_root) == [], (
+            f"干净快进不得产生非 index 审计（qid={item['qid']}）；index_* 决策流=RB1 shadow 新契约"
+        )
 
     def test_dirty_file_skipped_with_audit_and_wip_preserved(self, tmp_repo: Path, queue_root: Path) -> None:
         """脏文件（主工作区有 WIP 修改）→ 跳过 + 审计留痕，WIP 字节零丢失。"""
@@ -698,7 +701,9 @@ class TestMainWorkspaceConvergence:
         stats = cq.drain_queue(queue_root, landing=landing)
         assert stats["done"] == 1
         assert not (tmp_repo / "base.txt").exists()
-        assert self._non_index_audit(queue_root) == [], "语义已达成的删除不审计（already_deleted；index_* 决策流=RB1 新契约）"
+        assert self._non_index_audit(queue_root) == [], (
+            "语义已达成的删除不审计（already_deleted；index_* 决策流=RB1 新契约）"
+        )
 
     def test_replay_converges_after_crash_window(
         self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
@@ -1592,12 +1597,29 @@ class TestRegistryMergeCompoundIdentity:
         assert toks2 == ["tok-1"], "合法退役（复合键定位）被尊重"
 
     def test_true_duplicate_compound_key_still_deadletters(self):
-        """同 file 同 token 两条（复合键下真重复）→ 死信保留（fail-closed 不放松）。"""
+        """复合键真重复语义重定基（QMine A1 件① 9cc5191df39，工作簿 §4.2「重复的语义学」）：
+        同侧同键 data 全等（token 双发窗，死因实测 33%）=真重复，侧内判等去重保留首条
+        +审计计数，不再陪死；ours 侧字节零改写不变量下产物原样保留+theirs 新增并存。
+        同键异容（同复合键 data 不等）才是仓库态缺陷 → 死信双条 dump（fail-closed 面
+        不放松——合并器无权择优，处方=对账器）。
+        """
+        # data 全等真重复 → 合并零死信（旧码此处必死信「身份不唯一」——本尺先能红）
         dup = self._tok_reg([("src/a.py", "tok-1"), ("src/a.py", "tok-1")])
         merged, err = cql.three_way_merge_registry_yaml(
             dup, dup, dup + "  - file: b.md\n    token: t2\n", rel_path="x.yaml"
         )
-        assert merged is None and "身份不唯一" in err
+        assert err == "", f"data 全等真重复按新裁定侧内去重，不得死信: {err}"
+        keys = [(e["file"], e["token"]) for e in yaml.safe_load(merged)["creation_tokens"]]
+        assert keys == [("src/a.py", "tok-1"), ("src/a.py", "tok-1"), ("b.md", "t2")], (
+            f"ours 侧字节零改写（重复原样保留）+theirs 新增并存，实得 {keys!r}"
+        )
+
+        # 同键异容：同 (file, token) 复合键、data 不等（多 created_by）→ 仍死信
+        conflict = self._tok_reg([("src/a.py", "tok-1")])
+        conflict += "  - file: src/a.py\n    token: tok-1\n    created_by: late-comer\n"
+        merged2, err2 = cql.three_way_merge_registry_yaml(conflict, conflict, conflict, rel_path="x.yaml")
+        assert merged2 is None, "同键异容必须死信（合并器无权择优）"
+        assert "同侧身份键重复且内容冲突" in err2
 
     def test_token_field_edit_is_same_key_content_conflict(self):
         """复合键不含非 token 字段：改 created_by（非键字段）= 同键内容异语义照旧。"""
@@ -1892,7 +1914,9 @@ class TestIndexConvergenceRB1:
         landing, _stub = _make_landing(tmp_repo, queue_root)
         _old_blob = _git_bytes(tmp_repo, "show", "dev:base.txt")
         self._stage_then_evolve(tmp_repo, "base.txt", _old_blob, b"queue content\n")
-        item = cq.enqueue_item("sess-rb1-a", "feat: rb1 shadow", [("base.txt", b"queue content\n")], queue_root=queue_root)
+        item = cq.enqueue_item(
+            "sess-rb1-a", "feat: rb1 shadow", [("base.txt", b"queue content\n")], queue_root=queue_root
+        )
         stats = cq.drain_queue(queue_root, landing=landing)
         assert stats["done"] == 1
         recs = [r for r in _audit_records(queue_root) if r["action"].startswith("index_")]

@@ -300,8 +300,11 @@ class TestC1Cli:
     def test_cli_enqueue_merges_within_window(self, queue_root, tmp_path, capsys):
         wt = tmp_path / "wt_cli"
         wt.mkdir()
-        (wt / "a.py").write_bytes(b"A1")
-        (wt / "b.py").write_bytes(b"B1")
+        # 夹具内容须 ruff 稳定的合法 Python：CLI 入队口现挂确定性 ruff 快检（Rx-5
+        # st-finaldel-crx-20260929，RUFF-PRECLEAN），`A1` 裸表达式在预检即被拦到不了
+        # C1 合批——本尺守卫意图是「CLI 短窗合批回执 C1-MERGED」，文件内容与判据无关。
+        (wt / "a.py").write_bytes(b"A1 = 1\n")
+        (wt / "b.py").write_bytes(b"B1 = 1\n")
         rc1 = cq.main(
             [
                 "--queue-root",

@@ -852,6 +852,12 @@ class EnqueueOptions:
     worktree_root : 入队来源工作区根（C1 合批判据键，meta.worktree_root 落袋）。
         C1 同会话短窗合批只对「同 session + 同 worktree_root」生效（红线：跨会话/
         跨 worktree 绝不合并）；None=不做合批（gateway 直调等历史调用方行为不变）。
+    preflight_root : 声明式预检根（波 1B 包 1.7 防绕过，st-zc9-lane-r1）：显式声明
+        且为 git 工作区（.git 实存）时，直调 enqueue_item 也必经与裸 CLI 同一道权威
+        入队预检（run_enqueue_preflight 锁外只读；blocking→QueueReject）——直调旁路
+        投注定死信件在入队口快败。None=不扫（tmp 隔离测试与 API 直调零变更，向后兼容）。
+    enqueue_preflight : "skip"=唯一合法逃生位（调用方声明已在上游自跑预检，landing
+        reroute 通道用）；其余值按未声明处理。skip 必须与 preflight_root 同给才生效面。
     """
 
     base_head: str | None = None
@@ -861,6 +867,8 @@ class EnqueueOptions:
     meta_extra: dict | None = None
     allow_oversize_batch: bool = False
     worktree_root: str | None = None
+    preflight_root: str | None = None
+    enqueue_preflight: str | None = None
 
 
 # 登记三族内联判定的适用扩展名（CREATE-GUARD 新文件面 ∪ TRANSLATION-COVERAGE .py 面
@@ -912,6 +920,39 @@ def _run_registration_gate(
     )
 
 
+def _run_declared_preflight(
+    session_id: str, message: str, files: list[tuple[str, bytes]], opts: EnqueueOptions
+) -> None:
+    """声明式防绕过（波 1B 包 1.7，st-zc9-lane-r1）：preflight_root 显式声明且为 git
+    工作区（.git 实存）时，直调 enqueue_item 与裸 CLI 走同一道权威入队预检。
+
+    判据（tests/governance/test_enqueue_preflight_bypass_canary 四尺）：
+    - 未声明 preflight_root / 根非 git 工作区 ⇒ 不扫（tmp 隔离测试与 API 直调零变更）；
+    - enqueue_preflight="skip" =唯一合法逃生位（调用方声明已在上游自跑预检）；
+    - blocking ⇒ QueueReject（逐门禁处方随报错），袋不落 pending——直调旁路投注定
+      死信件在入队口快败，无处可绕（enqueue_item / requeue / 裸 CLI 三通道同闸）。
+    预检本体零写副作用（ruff 只读+gate 锁外只读；设施故障 fail-open 与 CLI 口径同源）。
+    """
+    if (opts.enqueue_preflight or "").strip().lower() == "skip":
+        return
+    declared = opts.preflight_root
+    if not declared:
+        return
+    root_path = Path(declared)
+    if not (root_path / ".git").exists():
+        return  # 非 git 工作区不扫（与 CLI 面 run_enqueue_preflight 预检根判据同口径）
+    from scripts.governance.enqueue_preflight import run_enqueue_preflight  # noqa: PLC0415
+
+    prescription = run_enqueue_preflight(
+        root_path,
+        [p for p, _ in files],
+        session_id,
+        message or "",
+    )
+    if prescription:
+        raise QueueReject(prescription)
+
+
 def enqueue_item(
     session_id: str,
     message: str,
@@ -948,6 +989,9 @@ def enqueue_item(
     msg = _validate_message(message)
     if not files and not deletes:
         raise QueueReject("空文件清单拒绝入队")
+    # 波 1B 包 1.7 声明式防绕过：直调通道与裸 CLI 同一道权威预检（先于 C-1 内联判定，
+    # 被拦件连 pending 都不进——见 _run_declared_preflight 判据四尺）。
+    _run_declared_preflight(session_id, msg, files, opts)
     # R2 大批硬顶（st-commitchain-20260922）：交互车道单批 >_MAX_BATCH_FILES 拒绝。
     # 数据实证：0921 workclean 0091=111 文件磨 116 分钟死在终点 CREATE-GUARD；
     # done 项文件数 p50=3。machine 车道（reconciler 派生自动批）与显式逃生旗豁免。
@@ -1792,6 +1836,7 @@ def drain_queue(
         "processed_qids": [],
         "stale_cleared": 0,  # P1 级联：stale 重校验仍适用清标放行数
         "cascade_marked": 0,  # P1 级联：成功落盘后续项被标 stale 数
+        "successors_rebuilt": 0,  # 死信摘除后继重建（波 1B 1.7b）：与死者同路径其后各袋标 stale 数
         "done_cleaned": 0,  # done/ TTL 清理移除数
     }
 
@@ -1857,11 +1902,9 @@ def drain_queue(
             if _attempts_backoff_enabled() and _item_attempts(item) >= _ATTEMPTS_DEAD_THRESHOLD:
                 item["dead_at"] = _now_iso()
                 item["dead_reason"] = _attempts_exhausted_reason(item)
-                # M3.3 口径对齐（SW16 红蓝 S6 实证补漏）：B5 出口与通用死信出口同携
-                # 处方+责任会话——此前仅通用出口写 prescription/owner_session，
-                # 同形态出口漏配=bd8ba4d85a7 自述"M3.3 口径脱节"的残留面。
-                item["prescription"] = dead_letter_prescription(item["dead_reason"])
-                item["owner_session"] = item.get("session_id") or ""
+                # 波 1B 1.7b/c：毒药摘除走死信封印唯一出口（归属五件套+复发熔断+
+                # 后继重建），与通用死信出口同口径——B5 出口 M3.3 脱节残留面治本。
+                stats["successors_rebuilt"] += len(_seal_dead_letter(root, item))
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
                 _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
@@ -1934,17 +1977,15 @@ def drain_queue(
                 # 死信：附原因移 dead/，队列继续前进（DLQ 语义不堵队，66 号 §6.4）
                 item["dead_at"] = _now_iso()
                 item["dead_reason"] = result.reason
-                # M3.3（QCure st-qcure-20260925）：死因处方+责任会话随袋落册——dead 项
-                # 自带一键修复指引（dead_letter_prescription 按 classify 族映射），
-                # requeue 面人工排查成本直降；owner_session=袋 session_id（责任会话
-                # 一跳可达，死信爆发 per_session 聚合同源口径）。
-                item["prescription"] = dead_letter_prescription(result.reason)
-                item["owner_session"] = item.get("session_id") or ""
                 # E-4 TOCTOU 死信出口增信（chain_fullflow §3.7-(iii)）：登记面貌快照随袋
                 # 者（meta.preflight_face）与当前 HEAD 面貌比对，漂移=预检基础在入队后
                 # 过期——「不是你的内容错，是注册表面貌变了」一跳点明（观测级增信，
                 # 不改死信裁决；「预检非新权威」在册原则不动）。
                 _annotate_preflight_face_drift(item)
+                # 波 1B 1.7b/c：死信封印唯一出口——归属五件套（M3.3 处方+责任会话，
+                # E-4 注解先行写入的增强处方 setdefault 不覆写）+ 同签名复发熔断 +
+                # 后继重建（失败袋摘除后，其后同路径各袋按新组合重校验前进）。
+                stats["successors_rebuilt"] += len(_seal_dead_letter(root, item))
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
                 _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
@@ -2008,8 +2049,202 @@ def try_bootstrap_drain(queue_root: str | os.PathLike | None = None, *, landing=
             "processed_qids": [],
             "stale_cleared": 0,
             "cascade_marked": 0,
+            "successors_rebuilt": 0,
             "done_cleaned": 0,
         }
+
+
+# ---------------------------------------------------------------------------
+# 死信封印（波 1B 包 1.7b/c / R-L+R-M，st-zc9-lane-r1 2026-09-29）：归属签名 +
+# 同签名复发熔断 + 根因工序单 + 摘除后继重建——四件事一体，唯一封袋出口。
+# 判据出处 docs/_working/total_command_closeout/10_wave_plan.md:55-56；对标
+# review_ext_ci_and_mergequeue.md 3-1（Google Build Cop：死信是"当天必须有人中断
+# 工作去修的活信号"）。2026-09-29 实测死信 900+ 无归属难处置=本机制运维价值实证。
+# ---------------------------------------------------------------------------
+
+#: 同签名复发熔断阈值：第 3 封即熔断升级根因工序单（10_wave_plan R-M 判据）
+_RECURRENCE_FUSE_LIMIT = 3
+
+
+def _dead_signature(item: dict) -> str:
+    """归因签名 = f"{死因族}:{死因头部特征}"——同根因必同签名，异根因必异签名。
+
+    头部特征取 dead_reason 首个冒号前的 gate/机制标识（CREATE-GUARD/COMMIT_SCOPE/
+    attempts_exhausted…）；族=classify_dead_reason 三分类现读（禁抄常量防漂移）。
+    空死因回退 "other:NOREASON"（熔断永不因缺死因而静默失效）。
+    """
+    reason = str(item.get("dead_reason") or "")
+    family = classify_dead_reason(reason)
+    head = reason.split(":", 1)[0].strip() if reason else ""
+    return f"{family}:{head or 'NOREASON'}"
+
+
+def _seal_dead_letter_attribution(item: dict) -> None:
+    """封袋归属五件套（原地变更，幂等）：owner_session / first_dead_at /
+    dead_letter_family / dead_signature / prescription。
+
+    - owner_session=袋 session_id（责任会话一跳可达；既有值不覆写）；
+    - first_dead_at 首死时跨链继承：meta.requeue_lineage.first_dead_at_prev 优先于
+      本次 dead_at（重投后的新袋再死，首死时不得回退到重投时刻）；
+    - prescription 既有值不覆写（E-4 注解面先行写入的增强处方保留）。
+    """
+    reason = str(item.get("dead_reason") or "")
+    item["owner_session"] = item.get("owner_session") or item.get("session_id") or ""
+    if not item.get("first_dead_at"):
+        lineage = (item.get("meta") or {}).get("requeue_lineage") or {}
+        item["first_dead_at"] = lineage.get("first_dead_at_prev") or item.get("dead_at") or ""
+    item.setdefault("dead_letter_family", classify_dead_reason(reason))
+    item.setdefault("dead_signature", _dead_signature(item))
+    item.setdefault("prescription", dead_letter_prescription(reason))
+
+
+def _recurrence_state_path(root: Path) -> Path:
+    """同签名复发表落点：dead/_recurrence_state.json（下划线前缀不入 q-*.json 名册面）。"""
+    return root / "dead" / "_recurrence_state.json"
+
+
+def _bump_recurrence(root: Path, signature: str, *, owner: str, first_dead_at: str) -> dict:
+    """同签名复发计数 +1 并持久化；返回该签名条目 {count, first_dead_at, owner_sessions}。
+
+    首封定基（first_dead_at 取首封，此后不覆写）；owner_sessions 逐封去重累积。
+    状态文件缺失/损坏按零起算（红队 P2 口径：熔断语义不因脏数据崩溃——计数丢失只
+    损失一次熔断时机，绝不误伤）。调用方负责 _ensure_dirs。
+    """
+    path = _recurrence_state_path(root)
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(state, dict):
+            state = {}
+    except (OSError, ValueError):
+        state = {}
+    signatures = state.get("signatures")
+    if not isinstance(signatures, dict):
+        signatures = {}
+    entry = signatures.get(signature)
+    if not isinstance(entry, dict):
+        entry = {}
+    try:
+        count = int(entry.get("count") or 0) + 1
+    except (TypeError, ValueError):
+        count = 1
+    owners = [o for o in (entry.get("owner_sessions") or []) if o]
+    if owner and owner not in owners:
+        owners.append(owner)
+    new_entry = {
+        "count": count,
+        "first_dead_at": entry.get("first_dead_at") or first_dead_at or "",
+        "owner_sessions": owners,
+    }
+    signatures[signature] = new_entry
+    _atomic_write(path, json.dumps({"signatures": signatures}, ensure_ascii=False, indent=2).encode("utf-8"))
+    return new_entry
+
+
+def _iter_eviction_successors(root: Path, dead_qid: str, dead_paths: set):
+    """产出（qid, candidate 路径）——排死者之后且与其共享路径的 pending 袋。
+
+    判据细分独立成生成器（主函数保复杂度合规，COMPLEXITY-GUARD 治本）：qid 字典序
+    严格大于死者（predecessor 与死者自身绝不牵连）；路径交集非空（无组合关系保守不
+    牵连）；读窗内仍在 pending（已被认领/移除跳过，D4 收窄同款）。解析失败跳过不碰。
+    """
+    for candidate in sorted((root / "pending").glob("q-*.json")):
+        try:
+            successor = json.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue  # 写入窗口或损坏——跳过不碰（读者容错，同 _mark_cascade_stale 口径）
+        qid = str(successor.get("qid") or candidate.stem)
+        if qid <= dead_qid:
+            continue  # 死者自身与其 predecessor 绝不牵连（只重建其后各袋）
+        bag_paths = {f.get("path") for f in (successor.get("files") or []) if isinstance(f, dict) and f.get("path")}
+        if not (bag_paths & dead_paths) or not candidate.exists():
+            continue  # 无组合关系不牵连；读窗内已被认领/移除不再标
+        yield qid, candidate
+
+
+def _rebuild_successors_after_eviction(root: Path, dead_item: dict) -> list[str]:
+    """摘除后继重建（R-L）：与死者共享路径的**其后各袋**写 stale 影子，按新组合继续前进。
+
+    「其后」= qid 字典序严格大于死者（车道内 FIFO 序=clid 序，与 drain 队首排序同一
+    真源）；「按新组合」= 与死者至少共享一个文件路径（同路径叠写才受摘除影响，保守
+    判据不扩大动作面——无组合关系与前序各袋绝不牵连）。标记介质=stale 影子指令
+    （矿③ append-only：袋 JSON 零改写），拾取时经 _revalidate_stale_base 重校验基底：
+    仍适用清标放行并落 meta.stale_cleared_at，不适用降死信候选（判据式非处决式）。
+    影子已存在（前序摘除/级联已标）=不重标（保留首因）。返回本扇标记的 qid 清单
+    （drain stats.successors_rebuilt 消费；monkeypatch 位）。
+    """
+    dead_qid = str(dead_item.get("qid") or "")
+    if not dead_qid:
+        return []
+    dead_paths = {f.get("path") for f in (dead_item.get("files") or []) if isinstance(f, dict) and f.get("path")}
+    if not dead_paths:
+        return []
+    marked: list[str] = []
+    for qid, _candidate in _iter_eviction_successors(root, dead_qid, dead_paths):
+        if not _write_stale_shadow(root, qid, dead_qid, "eviction"):
+            continue  # 已标（前序摘除/级联首因胜出）
+        marked.append(qid)
+    return marked
+
+
+def _seal_dead_letter(queue_root: str | os.PathLike, item: dict) -> list[str]:
+    """死信封印唯一出口：归属签名 + 同签名复发熔断 + 根因工序单 + 后继重建。
+
+    drain 两条死信支线（B5 毒药拾取即死信 / landing 失败死信）与直调封袋者共用本
+    出口，杜绝同形死信两套口径（B5 出口 M3.3 脱节残留面 bd8ba4d85a7 自述的治本）：
+    ① 归属五件套（_seal_dead_letter_attribution）——新死信当场可查属主与归因签名；
+    ② 同签名第 _RECURRENCE_FUSE_LIMIT 封 ⇒ recurrence_fused=true + 根因工序单落
+       dead/_root_cause/<签名slug>.json（含属主集合与首死时）；requeue 面拒盲重投；
+    ③ _rebuild_successors_after_eviction 后继重建（失败袋摘除后其链不停摆）。
+    袋体落盘由调用方负责（drain 死信出口已有 _atomic_write+rename 链）；本函数只做
+    item 原地封印 + 旁路状态（复发表/工序单/影子）。返回后继重建标记的 qid 清单。
+    """
+    root = resolve_queue_root(queue_root)
+    _ensure_dirs(root)
+    _seal_dead_letter_attribution(item)
+    signature = str(item.get("dead_signature") or "")
+    entry = _bump_recurrence(
+        root,
+        signature,
+        owner=str(item.get("owner_session") or ""),
+        first_dead_at=str(item.get("first_dead_at") or ""),
+    )
+    count = int(entry.get("count") or 0)
+    item["recurrence_count"] = count
+    if count >= _RECURRENCE_FUSE_LIMIT:
+        item["recurrence_fused"] = True
+        ticket_rel = f"dead/_root_cause/{_signature_slug(signature)}.json"
+        item["root_cause_ticket"] = ticket_rel
+        ticket_path = root / ticket_rel
+        ticket_path.parent.mkdir(parents=True, exist_ok=True)
+        _atomic_write(
+            ticket_path,
+            json.dumps(
+                {
+                    "root_cause_required": True,
+                    "signature": signature,
+                    "first_dead_at": entry.get("first_dead_at") or item.get("first_dead_at") or "",
+                    "owner_sessions": entry.get("owner_sessions") or [],
+                    "sample_qid": item.get("qid", ""),
+                    "created_at": _now_iso(),
+                },
+                ensure_ascii=False,
+                indent=2,
+            ).encode("utf-8"),
+        )
+        logger.warning(
+            "[dead] qid=%s 同签名 %s 复发 %d 次熔断，根因工序单: %s",
+            item.get("qid", "?"),
+            signature,
+            count,
+            ticket_path,
+        )
+    return _rebuild_successors_after_eviction(root, item)
+
+
+def _signature_slug(signature: str) -> str:
+    """签名→安全文件名 slug（冒号转下划线；空值回退 unsigned，永不产空路径段）。"""
+    slug = "".join(ch if (ch.isalnum() or ch in "-_.") else "_" for ch in signature).strip("._") or "unsigned"
+    return slug[:120]
 
 
 # ---------------------------------------------------------------------------
@@ -2114,6 +2349,18 @@ def requeue_dead_item(
     except (OSError, ValueError) as exc:
         raise RequeueError(f"死信项读取失败: {qid}（{exc}）") from exc
     old_meta = old_item.get("meta") or {}
+    # 波 1B 1.7c 复发熔断（st-zc9-lane-r1）：同签名死信已 _RECURRENCE_FUSE_LIMIT 次
+    # ⇒ 盲 requeue 拒绝（修根因前不再烧 landing）；根因工序单随 details 一跳可达；
+    # --force 显式旗留痕越过（meta.requeue_forced 留痕）。先于 requeue_count 熔断。
+    if old_item.get("recurrence_fused") and not force:
+        raise RequeueError(
+            f"复发熔断：{qid} 同签名死信已 {old_item.get('recurrence_count', _RECURRENCE_FUSE_LIMIT)} 次，"
+            "盲重投拒绝——按根因工序单修因后再取回（确需越过的用 --force，留痕）",
+            details={
+                "root_cause_ticket": old_item.get("root_cause_ticket") or "",
+                "dead_signature": old_item.get("dead_signature") or "",
+            },
+        )
     # M1.3-③ 重投熔断：新袋计数=旧袋+1，≥_REQUEUE_CIRCUIT_LIMIT 拒绝并给死因处方
     # （连败链说明重复重试不可解）；--force 显式旗可越（meta.requeue_forced=true 留痕）。
     try:
@@ -2196,6 +2443,22 @@ def requeue_dead_item(
                 details={"path": _rq_path, "violation": _rq_violation},
             )
 
+    # 波 1B 包 1.7 声明式防绕过（st-zc9-lane-r1）：requeue 与入队口同一道权威预检
+    # ——worktree_root 声明且为 git 工作区（.git 实存）时必跑 run_enqueue_preflight
+    # （锁外只读）；blocking ⇒ QueueReject，注定死信的重投在重投口快败（先于 C-2
+    # 内联判定，被拦件不落 pending、原死信项留 dead/ 不动）。
+    if worktree_root and (Path(worktree_root) / ".git").exists():
+        from scripts.governance.enqueue_preflight import run_enqueue_preflight  # noqa: PLC0415
+
+        _pf_prescription = run_enqueue_preflight(
+            Path(worktree_root),
+            [p for p, _ in payload],
+            session_id or old_item.get("session_id", ""),
+            message or old_item.get("message", ""),
+        )
+        if _pf_prescription:
+            raise QueueReject(_pf_prescription)
+
     # C-2（chain_fullflow mine_door_registration_completion §3.7-(i)/§8）：requeue 重建
     # 快照通道挂登记三族内联判定——E-2 实锤 q-…-st-cmd-…-0083（meta 含 requeued_from）
     # 死于落地三族，此前 requeue 全程零预检。同一真源入口（_run_registration_gate），
@@ -2265,6 +2528,8 @@ def requeue_dead_item(
                     "attempts_prev": _item_attempts(old_item),
                     "env_retry_prev": _retry_meta_prev(old_meta, "env_retry"),
                     "snapshot_retry_prev": _retry_meta_prev(old_meta, "snapshot_retry"),
+                    # 波 1B 1.7c：首死时跨链继承（新袋再死 first_dead_at 不回退到重投时刻）
+                    "first_dead_at_prev": old_item.get("first_dead_at") or "",
                     "requeued_at": _now_iso(),
                 },
                 **({"task_id": task_id} if task_id else {}),

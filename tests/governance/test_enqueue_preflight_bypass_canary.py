@@ -145,6 +145,10 @@ def test_requeue_path_runs_the_same_preflight(tmp_path: Path, blocking_preflight
     (wt / _NEW_FILE).write_bytes(b"print('brand new')\n")
     qid = "q-20260926-canary17b-0001"
     _seed_dead_item(queue_root, qid)
+    # 重投快照内容须 ruff-format 稳定（双引号）：重投口预检第一道是确定性 ruff 快检
+    # （Rx-5，st-finaldel-crx-20260929），单引号串会被 RUFF-PRECLEAN 先拦、权威门替身
+    # 轮不到被调——本尺守卫意图是"权威预检被同一道闸挂线"，内容本身与判据无关。
+    (wt / _NEW_FILE).write_bytes(b'print("brand new")\n')
 
     with pytest.raises(cq.QueueReject) as boom:
         cq.requeue_dead_item(qid, queue_root=queue_root, worktree_root=wt)
