@@ -54,7 +54,7 @@ from _shared.registry_entry_count import count_primary_registry_entries, primary
 ensure_utf8_stdout()
 
 MASTER_INDEX_PATH = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_master_index.yaml"
 )
 
 

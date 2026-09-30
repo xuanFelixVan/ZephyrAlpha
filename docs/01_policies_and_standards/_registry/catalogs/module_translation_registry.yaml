@@ -49780,6 +49780,22 @@ entries:
   desc_en: ''
   plain_zh: 校验归档计划、索引登记、保留期清理裁决和只读检索接口。
   responsibility_layer: business
+- module_path: src/zephyr/data/quality/sla_breach_predictor.py
+  domain_id: D_DATA_ENG
+  name_zh: 质量SLA违约预测器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 按历史达标趋势往前推算：数据新鲜度、完整性这些指标照当前消耗速度还能撑多久，快要违约就提前告警并给出处置窗口。
+  responsibility_layer: business
+- module_path: tests/zephyr/data/quality/test_sla_breach_predictor.py
+  domain_id: D_DATA_ENG
+  name_zh: 质量SLA预测单测
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 校验趋势外推、燃烧率分级、提前告警和处置窗口建议输出。
+  responsibility_layer: business
 - module_path: src/zephyr/data_eng/quality_sla_breach_predictor.py
   domain_id: D_DATA_ENG
   name_zh: 质量SLA违约预测器
@@ -60907,30 +60923,6 @@ entries:
   desc_en: ""
   plain_zh: "规定题目只能按合法路径换状态（比如已登记→考试中→已作答），想跳步或走非法路径会被拦下并记账"
   responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/generate_source_line_register.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "源线谱机器可读册生成器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把写在文档里的那张数据源线路表自动转成机器能查的册子，题目引用的每条线能不能核对，就查这本册。"
-  responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/intake_batch.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "入题批前置校验器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "一批新问题正式入库前先扫一遍：五要素填没填齐、枚举合不合法、数据源在不在册，不合格就挡下并记下挡下的原因。"
-  responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/replay_audit_to_jsonl.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "审计账双轨回放器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把数据库里的审计记录重新灌一份到追加式文本账，让两本账能逐日核对，防止只有一本账时被发现不了漏记。"
-  responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/derived_dirty_ledger.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: "派生刷新意图账"
@@ -61097,7 +61089,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "把哪些该连没连的清单搬到仪表盘上，让人打开页面就能看见断线在哪"
+  plain_zh: "把哪些数据源、因子、策略之间该连没连的差集清单搬到仪表盘看板上，让人打开页面就能直接看见断线在哪一格"
   responsibility_layer: business
 - module_path: src/zephyr/backtest/regime_validation/chart_condition_package.py
   domain_id: D_BACKTEST
@@ -61121,7 +61113,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "把该连的、已连的、还有声明都缺失的三种情况一次算清楚，产出一张能查的矩阵"
+  plain_zh: "把地图上声明过的连接逐条核对，把已连、该连没连、连声明都没有的三种情况一次算清，产出一张可查证的矩阵报表"
   responsibility_layer: governance
 - module_path: scripts/governance/chart_wiring/generate_chart_wiring_inventory.py
   domain_id: D_GOV_SCRIPTS
@@ -61196,11 +61188,11 @@ entries:
   responsibility_layer: governance
 - module_path: scripts/governance/wave1a/verified_promotion_check.py
   domain_id: D_GOV_CODE_QUALITY
-  name_zh: "交付核验升态尺"
-  name_en: ""
-  desc_zh: ""
+  name_zh: "VERIFIED 升态校验器"
+  name_en: "verified promotion precheck"
+  desc_zh: "wave1a 升 VERIFIED 前置三判据校验：artifact_paths 空锚判据①、现读缺锚判据②、rb 旗标判据③，输出 empty/missing/eligible/rb_anchor_required 四态与 REJECT/ELIGIBLE 判定"
   desc_en: ""
-  plain_zh: "自称完成的卡必须在仓库里找得到真东西才算数"
+  plain_zh: "一张任务卡想升 VERIFIED 不能空口自称完成：这个校验器先看卡上有没有写交付物路径（没写就拒），再逐个打开这些路径确认文件真的在（不在就是伪锚，拒），最后看卡上是否带红蓝复核旗（带旗必须先复核，不许直升）。三条全过才放行，可用命令行批量读卡出四态清单"
   responsibility_layer: governance
 - module_path: scripts/governance/wave1a/cross_session_view.py
   domain_id: D_GOV_CODE_QUALITY
@@ -62109,7 +62101,7 @@ entries:
   name_en: "cleaning anomaly hosting leg"
   desc_zh: "把 cleaning_anomaly_engine 五类检出按承载册 config/cleaning_anomaly_rules.yaml 挂进 L13 data_supply_sentinel 排班腿托管第三段：近窗按标的取帧只检不修，出报告+告警"
   desc_en: ""
-  plain_zh: "数据清洗有台能查跳变、量能异常、缺数的引擎，建好后一直没接上生产管道。这个组件把它接进每天早上六点五十的数据体检班次，按名单抽标的查一遍，发现可疑数据就写报告、发告警，但绝不直接改数据"
+  plain_zh: "把查跳变、量能异常、缺数的清洗引擎接进每日数据体检班次，按名单抽样只查不修，出报告并发告警"
   responsibility_layer: business
 - module_path: src/zephyr/data/divergence_stats.py
   domain_id: D_DATA
@@ -62117,7 +62109,7 @@ entries:
   name_en: "cross-source divergence stats"
   desc_zh: "把 cross_source_validator 的分歧结果归并为日期/表/分歧类型/计数四字段 jsonl 档案（同键覆盖 upsert），为裁定 #423 两周分歧率观察供数"
   desc_en: ""
-  plain_zh: "股票行情同时存在主备两个数据来源，两边偶尔对不上。这个组件每天把对不上的情况按类型数一数、记到账本里，连续记两周，用来决定哪些分歧值得请 AI 来评判"
+  plain_zh: "把主备数据源对不上的情况按类型计数记档，连续两周供观察，用来决定哪些分歧值得 AI 评判"
   responsibility_layer: business
 - module_path: src/zephyr/data/purity_adjudicator.py
   domain_id: D_DATA
@@ -62125,7 +62117,7 @@ entries:
   name_en: "data purity adjudicator"
   desc_zh: "裁定 #423 薄版：分歧集残余语义冲突经 LSG 正门（LLMGateway 内嵌 scan_input/scan_output）调免费额度引擎裁决，只产建议不改数，证据链 jsonl 落档+每日调用预算闸 fail-closed"
   desc_en: ""
-  plain_zh: "两份数据打架、规则又定不了谁对时，把这个争议连同双方证据交给 AI 评理。AI 每天最多评 20 次、评过的每一次都留完整底稿，结论只供人参考，绝不自动改数据"
+  plain_zh: "两份数据打架且规则定不了对错时，连证据交 AI 评理，每日限次、全留底稿、只出建议不改数"
   responsibility_layer: business
 - module_path: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
   domain_id: D_SELL_DECISION
@@ -62181,6 +62173,95 @@ entries:
   desc_zh: "C345 四件（佣金五处重复/印花税两侧过期/无规模参数/阶梯双真源）红证固化对账工具，AST 普查只量不改"
   desc_en: ""
   plain_zh: "它是给全项目交易成本数字做体检的尺子：把佣金、印花税、滑点这些费率散落在五个文件里的同一个数字收拢对账，确认没人偷偷改动。它现在只负责发现和看住问题，不负责修改数字——改数字要等老板拍板后的下一波施工。"
+  responsibility_layer: business
+
+- module_path: src/zephyr/data/cleaning_disagreement_stats.py
+  domain_id: D_DATA
+  name_zh: 清洗分歧率统计
+  name_en: cleaning disagreement stats
+  desc_zh: C6 AI 判净站分歧率周窗统计 prep 件（裁定#423 观察期数据面）
+  desc_en: ''
+  plain_zh: 清洗判净站还没开门，这把尺子先造好：以后 AI 和引擎各判各的，它按周算两边不一致的比例，对照预注册的百分之五上界报超没超，给老板复裁用。
+  responsibility_layer: business
+- module_path: src/zephyr/data/quality/archive_sla_burnrate.py
+  domain_id: D_DATA
+  name_zh: "归档SLA燃烧率巡检"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "翻冷库归档账本（manifest），按周看归档节奏有没有变懒，快违约就提前报警。"
+  responsibility_layer: business
+- module_path: src/zephyr/data_security/__init__.py
+  domain_id: D_DATA_SEC
+  name_zh: "F128 接线复活包"
+  name_en: "F128 wiring revival package"
+  desc_zh: "data_security 三实体接线门面（LSG 前置/数据出口护栏/审计落盘）"
+  desc_en: ""
+  plain_zh: "把脱敏三件套真正接到两条出口上：AI 调用先脱敏再过安全网关，面板数据出门前按角色打码并记账"
+  responsibility_layer: governance
+- module_path: src/zephyr/data_security/ai_masking_pipeline.py
+  domain_id: D_DATA_SEC
+  name_zh: "接线审计统一落盘"
+  name_en: "wiring audit jsonl sink"
+  desc_zh: "F128 接线两通道审计事件 JSONL 追加落盘（fail-open）"
+  desc_en: ""
+  plain_zh: "给脱敏接线配一个黑匣子：每次脱敏和每次数据出门都记一行日志，记失败也不耽误正事"
+  responsibility_layer: governance
+- module_path: src/zephyr/data_security/data_masking_engine.py
+  domain_id: D_DATA_SEC
+  name_zh: "LSG l1 前置脱敏包装层"
+  name_en: "LSG masking front"
+  desc_zh: "AiMaskingPipeline 先脱敏后防御组合包装 LSGSecurityGateway（零侵入）"
+  desc_en: ""
+  plain_zh: "发给 AI 的文字先按用途脱敏（打码/泛化/只留统计），再交给安全网关检查，网关代码一行不改"
+  responsibility_layer: governance
+- module_path: src/zephyr/data_security/data_access_auditor.py
+  domain_id: D_DATA_SEC
+  name_zh: "数据出口脱敏护栏"
+  name_en: "data exit guard"
+  desc_zh: "角色字段脱敏（规则册 YAML）+DataAccessAuditor 出口事件采集+FPE 白名单还原"
+  desc_en: ""
+  plain_zh: "面板数据出门前按规则册打码：出厂全放行零变化，翻到对外角色就遮住资金持仓数字，每次出门都记账，加密件只有白名单角色能还原"
+  responsibility_layer: governance
+- module_path: src/zephyr/regime/features/macro_regime_sensor.py
+  domain_id: D_REGIME
+  name_zh: "宏观环境传感器特征件"
+  name_en: "MacroRegimeSensor"
+  desc_zh: "TDM-E-L1-S0 宏观环境传感器：读 macro_data 映射序列按 PIT 裁剪取滚动分位，四组信号加权合成宏观天气分与月级谨慎度修正因子"
+  desc_en: ""
+  plain_zh: "把新闻和公告里的政策表态逐条打分，算出宏观是偏暖还是偏冷的读数，供大盘总闸在行情过热或过冷时自动收紧仓位"
+  responsibility_layer: business
+- module_path: src/zephyr/data/quality/__init__.py
+  domain_id: D_DATA
+  name_zh: "数据质量子包门面"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "数据质量小分队的门牌：把SLA违约预测器和归档账本巡检这两件统一转口给外面用。"
+  responsibility_layer: business
+- module_path: tests/git/test_precommit_debt_ratchet.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "PRECOMMIT存量债棘轮测试"
+  name_en: "test_precommit_debt_ratchet"
+  desc_zh: "PRECOMMIT warn 通道存量债棘轮化行为钉：首扫入基线/基内warn/净增阻断/债消出册/env手柄/损坏fail-open/own路径回归"
+  desc_en: ""
+  plain_zh: "这个文件是提交门禁的考试卷： pre-commit 通道发现的全局老债务以前只警告不拦截, 越积越多没人管。现在立了本账(基线): 第一次扫描把现有债全记上, 以后老债照旧放行, 冒出来的新债直接拦下不让提交, 老债修好一本就划掉一本只减不增。专门验证这套规矩没被改坏。"
+  responsibility_layer: governance
+- module_path: scripts/data/kline_sector_intraday_from_constituents.py
+  domain_id: D_DATA
+  name_zh: "板块分钟线自产"
+  name_en: "sector intraday from constituents"
+  desc_zh: "从成分股1分钟K线等权链式聚合自产880/881板块五周期分钟线（tdx断供替代源）"
+  desc_en: "equal-weight chained sector intraday bars from member stock 1-min klines (tdx outage replacement)"
+  plain_zh: "以前板块每分钟的行情是从通达信服务器下载的现成饭；它连不上后这活儿改为自己算：把同一板块里每只股票每分钟的涨跌平均一下（一人一票），累乘出板块自己的价格线，五粗细周期一起出"
+  responsibility_layer: business
+- module_path: scripts/backtest/cost_model.py
+  domain_id: D_BACKTEST
+  name_zh: "可插拔成本模型适配器"
+  name_en: "Pluggable Cost Model Adapter"
+  desc_zh: "C4 引擎三档成本口径适配：legacy 冻结土规（默认零漂移）/校准滑点分层/participation 冲击，按位置返回 bps"
+  desc_en: "Three-tier cost caliber adapter for the C4 engine: legacy frozen constants (default, zero drift) / calibrated slippage tiers / participation impact, bps per position"
+  plain_zh: "回测算净值时要扣交易成本。这个文件就是\"成本怎么扣\"的换挡器：默认挡是老规矩（佣金万分之2.5双边、印花万分之10卖出、滑点万分之5），算出来的数跟以前一分不差；换到第二挡就按流动性好差分五层用实测滑点；换到第三挡再叠加\"买单太大砸出的价格冲击\"。想让回测更贴近实盘就换挡，不换挡就一切照旧。"
   responsibility_layer: business
 
 battle_map_steps:

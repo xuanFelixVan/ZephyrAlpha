@@ -57776,4 +57776,9 @@ creation_tokens:
   created_by: st-nightsweep2-nc-20260930
   capability: cost_accounting_ruler
   merge_evaluation: "C345 对账尺=唯一成本口径断言面（token 重建重投，首登遭崩溃回滚）"
+- file: docs/03_modules/_domain_frontend/algo_flow/connection_matrix.yaml
+  token: connection-matrix-algo-flow-connection-matrix-20260930
+  created_by: st-matrix-final-20260930
+  capability: connection_matrix_algo_flow
+  merge_evaluation: "跨域不同对象不并：algo_flow 视图 yaml=连接矩阵组件的算法面机器视图（externalizer 生成物），非组件本体/生成器判据面第二实现"
 di_seam_exemptions: []
