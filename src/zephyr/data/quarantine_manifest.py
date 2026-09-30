@@ -57,7 +57,18 @@ __all__: Final = [
     "append_quarantine_entry",
     "load_manifest",
     "replay_candidates",
+    "purge_expired",
+    "PURGE_GATE_TOKEN",
+    "REPLAYED_DIRNAME",
+    "OwnerGateRequiredError",
 ]
+
+#: C4 gated 执行路径字面闸（Owner 批文真源=2026-09-30 夜 F 组令卡 F6「C4 隔离区回放清除
+#: 执行面（manifest report-only→加 gated 执行路径）」；裁定面=Owner 指令原文会话在案）
+PURGE_GATE_TOKEN: Final = "F04-C4-OWNER-F6"
+
+#: 清除动作落点（隔离区内 _replayed/<UTC 日期>/——mv 可逆非删除，R-M1-02/03 禁物理删除口径）
+REPLAYED_DIRNAME: Final = "_replayed"
 
 #: 生产隔离区（F04 案卷 C4 真源；测试一律传 tmp_path，禁写生产 data/）
 DEFAULT_QUARANTINE_DIR: Final = Path("data/local_fallback_quarantine")
@@ -70,6 +81,10 @@ _README_MARK: Final = "隔离时间"
 
 class QuarantineDirMissingError(Exception):
     """隔离目录不存在（扫描面 fail-loud，禁静默空账）。"""
+
+
+class OwnerGateRequiredError(Exception):
+    """C4 清除执行面 gate 字面值缺失/不符（Owner 批文确认位，防误触发）。"""
 
 
 @dataclass(frozen=True)
@@ -269,6 +284,78 @@ def replay_candidates(
         if qat <= cutoff:
             out.append(e)
     return out
+
+
+def purge_expired(
+    ttl_days: int,
+    *,
+    execute: bool = False,
+    gate: str = "",
+    now: datetime | None = None,
+    quarantine_dir: Path | str = DEFAULT_QUARANTINE_DIR,
+) -> dict:
+    """TTL 超期条目清除执行面（F04 案卷 C4 gated 路径，2026-09-30 F 组夜班补装）。
+
+    双闸（缺一即拒，宁停勿伤）：
+    - execute=False（默认）=report-only（与 replay_candidates 同面，零改动）；
+    - execute=True 时 gate 必须等于 PURGE_GATE_TOKEN 字面值——Owner 批文面
+      （2026-09-30 夜 F 组令卡 F6），防误触发的显式确认位。
+
+    动作语义：mv 入 <quarantine_dir>/_replayed/<UTC 日期>/（**可逆搬移非删除**，
+    R-M1-02/03 禁物理删除口径——字节保全可回放），成功后 manifest 追加
+    action=purged 台账行（append_quarantine_entry 同 CAS 通道，账随物走）。
+
+    Returns:
+        {"candidates": n, "purged": [...], "failed": {name: err}, "mode": "report"|"execute"}
+    """
+    if execute and gate != PURGE_GATE_TOKEN:
+        raise OwnerGateRequiredError(
+            "purge_expired execute=True 需显式 gate 字面值（Owner 批文确认位；批文真源=2026-09-30 夜 F 组令卡 F6）"
+        )
+    root = Path(quarantine_dir)
+    expired = replay_candidates(ttl_days, now=now, quarantine_dir=root)
+    if not execute:
+        return {"candidates": len(expired), "purged": [], "failed": {}, "mode": "report"}
+    if not root.is_dir():
+        raise QuarantineDirMissingError(f"隔离目录不存在: {root}")
+    day = (now or datetime.now(UTC)).strftime("%Y%m%d")
+    replayed_dir = root / REPLAYED_DIRNAME / day
+    purged: list[str] = []
+    failed: dict[str, str] = {}
+    for e in expired:
+        src = root / e.name
+        if not src.exists():
+            failed[e.name] = "source missing (already moved?)"
+            continue
+        try:
+            dst_parent = replayed_dir / e.name
+            dst_parent.parent.mkdir(parents=True, exist_ok=True)
+            src.rename(dst_parent)
+        except OSError as exc:
+            failed[e.name] = f"{type(exc).__name__}: {exc}"
+            continue
+        purged.append(e.name)
+        try:
+            append_quarantine_entry(
+                QuarantineEntry(
+                    name=e.name,
+                    kind=e.kind,
+                    file_count=e.file_count,
+                    total_bytes=e.total_bytes,
+                    quarantined_at=e.quarantined_at,
+                    evidence=f"purged->{REPLAYED_DIRNAME}/{day}",
+                ),
+                quarantine_dir=root,
+            )
+        except OSError as exc:  # 账册失败不回滚搬移（物已安全落 _replayed，账面差异留审计）
+            failed[e.name] = f"moved but manifest append failed: {exc}"
+    return {
+        "candidates": len(expired),
+        "purged": purged,
+        "failed": failed,
+        "mode": "execute",
+        "replayed_dir": str(replayed_dir),
+    }
 
 
 if __name__ == "__main__":  # ORPHAN-MODULE 入口豁免形态：默认隔离目录只读账面转储（Owner 门审计面，零参数零副作用）

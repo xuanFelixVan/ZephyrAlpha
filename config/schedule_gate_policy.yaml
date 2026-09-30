@@ -27,7 +27,8 @@ maturity:
   # ── Owner 区：首批区域白名单（M4 冷启动）──
   # L5-#2（治理立案保留项）：首批清单须 Owner 点头后登记于此；本班按避让铁律只落结构置空。
   # 区域=候选卡/实验卡既有 domain_id 词表（不新造分类学）；自治运行满一季可按 OBJ_R 提案退役。
-  m4_first_batch_whitelist: []   # 待 Owner 点头后填首批（空=冷启动零区域自动开闸，诚实语义）
+  m4_first_batch_whitelist: [ai_eng, tooling]  # 首批=Owner 2026-09-30 夜 F 组令 F5 批（裁定#450）；保守口径=低爆炸半径且有卡证据域（ai_eng 3 卡/tooling 1 卡）；trading_algo=资金面显式排除，data_eng/cost_eng 无卡证据不入批
+
 
 # -----------------------------------------------------------------------------
 # 排产优先级：进化量尺两问打分法（§2.5 D-L5-06）
@@ -114,7 +115,7 @@ owner_signoff:
     channel: ai_layer_vision README §3.5 已销项表
     revisit: 首轮运行数据后走 OBJ_R 提案修订
   first_batch_whitelist:
-    status: pending_owner            # L5-#2 治理立案保留：禁施工，结构已落位待点头
-    decided_at: null
-    channel: null
-    revisit: Owner 点头后登记 maturity.m4_first_batch_whitelist；自治满一季可提案退役
+    status: approved_by_night_batch  # L5-#2 已销项：Owner 2026-09-30 夜第二夜总攻 F 组令 F5 批（登记面=裁定#450）
+    decided_at: '2026-09-30'
+    channel: F 组挖矿后执行令（st-nightsweep2-nf-20260930 执行）；批准链=Owner 当夜指令原文
+    revisit: 自治满一季可按 OBJ_R 提案退役

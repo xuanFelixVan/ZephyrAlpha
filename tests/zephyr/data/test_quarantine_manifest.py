@@ -175,3 +175,54 @@ class TestReplayCandidates:
         now = datetime(2026, 9, 30, tzinfo=UTC)  # cutoff=09-16 > README 时间→超期
         candidates = replay_candidates(ttl_days=14, now=now, quarantine_dir=root)
         assert [c.name for c in candidates] == ["aged_table"]
+
+
+class TestPurgeExpiredGated:
+    """F04 C4 gated 执行路径（2026-09-30 F 组夜班）：report-only 默认+字面闸+mv 可逆。"""
+
+    def test_report_mode_zero_mutation(self, tmp_path):
+        from zephyr.data.quarantine_manifest import purge_expired
+
+        root = _make_quarantine(tmp_path)
+        (root / "aged_table").mkdir()
+        now = datetime(2026, 9, 30, tzinfo=UTC)
+        out = purge_expired(ttl_days=14, now=now, quarantine_dir=root)
+        assert out["mode"] == "report" and out["candidates"] == 1 and out["purged"] == []
+        assert (root / "aged_table").exists(), "report 模式零改动"
+
+    def test_execute_without_gate_raises(self, tmp_path):
+        from zephyr.data.quarantine_manifest import purge_expired
+
+        root = _make_quarantine(tmp_path)
+        (root / "aged_table").mkdir()
+        now = datetime(2026, 9, 30, tzinfo=UTC)
+        with pytest.raises(Exception, match="gate"):
+            purge_expired(ttl_days=14, execute=True, gate="wrong-token", now=now, quarantine_dir=root)
+        with pytest.raises(Exception, match="gate"):
+            purge_expired(ttl_days=14, execute=True, gate="", now=now, quarantine_dir=root)
+        assert (root / "aged_table").exists()
+
+    def test_execute_moves_to_replayed_and_audits(self, tmp_path):
+        from zephyr.data.quarantine_manifest import PURGE_GATE_TOKEN, purge_expired
+
+        root = _make_quarantine(tmp_path)
+        (root / "aged_table").mkdir()
+        (root / "aged_table" / "dead.parquet").write_bytes(b"x")
+        now = datetime(2026, 9, 30, tzinfo=UTC)
+        out = purge_expired(ttl_days=14, execute=True, gate=PURGE_GATE_TOKEN, now=now, quarantine_dir=root)
+        assert out["mode"] == "execute" and out["purged"] == ["aged_table"] and out["failed"] == {}
+        assert not (root / "aged_table").exists(), "原位已清"
+        moved = root / "_replayed" / "20260930" / "aged_table" / "dead.parquet"
+        assert moved.exists() and moved.read_bytes() == b"x", "mv 可逆保全字节"
+        entries, _ = load_manifest(root)
+        audit = [e for e in entries if e.evidence.startswith("purged->")]
+        assert len(audit) == 1 and audit[0].name == "aged_table", "manifest 追加 purged 台账行"
+
+    def test_execute_missing_source_counted_failed(self, tmp_path):
+        from zephyr.data.quarantine_manifest import PURGE_GATE_TOKEN, purge_expired
+
+        root = _make_quarantine(tmp_path)
+        now = datetime(2026, 9, 30, tzinfo=UTC)
+        # README 时间证据 2026-09-15 但无实体 aged 目录——manifest 扫描面无条目，无 candidates
+        out = purge_expired(ttl_days=14, execute=True, gate=PURGE_GATE_TOKEN, now=now, quarantine_dir=root)
+        assert out["candidates"] == 0 and out["purged"] == []

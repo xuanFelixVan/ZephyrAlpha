@@ -75,9 +75,21 @@ Spearman≥0.99 且 top50 重合率≥0.9 且轻档单格≤8s → 可实施；�
 - **24h 评估点（09-26 中午）**：高峰并发期（小时级 done≥10）零漂移+对账零异常+11 读端零改动，三项全绿→提请 P-3 提前翻转（新账本转正，旧账本备胎）。
 - 72h（09-27 中午）：同判据兜底完全切换。
 
-## 九、蒸发治本 EV-01~06（15 号文，等施工令）
+## 九、蒸发治本 EV-01~06（15 号文）——施工令已签发（2026-09-30 F 组夜班）
 
-上线后**连续 7 天零新蒸发案**+黑匣子至少一次成功定位演练=治本验收。
+施工令：Owner 2026-09-30"F 组挖矿后执行"令（F3 卡，st-nightsweep2-nf-20260930），引用 07 号文 C2 裁决执行记录 #2（✅已批→开工）。逐项挖矿现状+执行：
+
+| # | 挖矿结论（2026-09-30 实测） | 处置 |
+|---|---|---|
+| EV-01 | **在役实证**：.runtime/evaporation_blackbox/blackbox.jsonl 持续追加（最新 2026-09-30T06:41 local）+schtasks ZephyrAlpha_EvaporationBlackbox 就绪 | 无残余（v8 在役） |
+| EV-02 | 执行前硬校验已落地（_git_wt fail-closed，2026-08-29 事故治本在码）；处方残余=执行后复核关 TOCTOU 窗。主仓 untracked 计数比对不实现（并发假阳性，该面归 EV-01 黑匣子专职，内收不重复建） | **本轮落地**：_verify_wt_integrity_post 挂 reset --hard/clean -fd 执行后，断链/toplevel 漂移即中止+critical；缩比实验=test_sync_worktree_aborts_when_link_lost_midflight（8 新测试全绿） |
+| EV-03 | 处方已被结构性实现+根因修复取代：每项处理前 reset --hard+clean -fd（§11 #6 index 恒净）+pathspec 限定 add/commit（袋面=落面粉）；D12 衍生 D26 让位（真根因=base_blob 恒 None，st-commitsys 修） | 无残余（结构保证+根因已修） |
+| EV-04 | GATE-ROOT-TEMP-SWEEP 扫描面=根/子目录根 depth-0 平铺，.worktrees/<sid>/.git 指针天然不在射程（零误扫结构保证）；处方残余=serializer 启动自检 | **本轮落地**：_bootstrap_worktree_link_selfcheck 挂 drain_queue_pool 启动（断链 warning+审计 jsonl，不阻断），4 新测试 |
+| EV-05 | 处方已被演进形态实现：_pre_merge_auto_clean（旧 5283 行版）已不存在，现役四证归档流 _rescue_untracked_files=untracked 全量 mv 入 .runtime/tmp/rescue/<sid>/+mapping.json 台账（git_guard 策略 C 同构），merge 后 abort 清理路径全覆盖 | 无残余（保全已实现；"自动回搬"残余=mapping.json 人工可回搬，暂存 24h TTL 窗口内，留观察不再施工） |
+| EV-06 | 处方已被 #ARCH-308 A1 实现：死会话清扫只卸 staged（git reset HEAD 仅动 index）+删 claim 快照+释放锁，工作树内容永不销毁（worktree_drift_watchdog.py INVARIANTS 在码） | 无残余 |
+
+验收总判据（不变）：上线后连续 7 天零新蒸发案+黑匣子至少一次成功定位演练。
+披露：test_commit_queue_landing.py 全量 80 绿+2 红均与本轮无关（TestCommitAutoFlagGating 偶发时序单独重跑绿；TestRegistryMergeCompoundIdentity 于 HEAD 基线同红=存量，归 commit_queue 维护班）。ruff 本轮新增面零违规（存量 B018@600 行非本轮射程）。
 
 ## 专业标准出处（18 号文详表）
 

@@ -359,6 +359,46 @@ def _jsonb(payload: dict) -> str:
 # ── 快照发布（不可变全量 + 每册单调版本） ────────────────────────────────────────
 
 
+def _projection_context_from_disk(
+    registry_id: str,
+    repo_root: Path | None,
+    schema: str,
+    c: object,
+) -> tuple[list[str], list, int]:
+    """快照投影上下文（header_lines/trailing_scalars/ledger_revision）提取。
+
+    WM1_24h_evaluation §3.1 bundle 契约断裂治本（2026-09-30 F4，st-nightsweep2-nf-20260930）：
+    读端 snapshot_from_bundle 契约要求 header_lines/sections/trailing_scalars（乙号文
+    设计形态），旧写端只落扁平 map → load_latest_snapshot 恒抛"bundle 结构不符契约:
+    'sections'"，render 通道物理不可执行。条目 sections 由 PG active 行构造（本函数
+    只补 PG 不存的头部/尾部 verbatim+账本修订号）：按册 physical_path（registry_catalog
+    反查）读盘上 YAML compose 提取；任一环失败降级空值（fail-open，快照仍可发布，
+    渲染语义等值验收不受阻，仅 verbatim 头部缺位）。
+    """
+    header_lines: list[str] = []
+    trailing: list = []
+    ledger_revision = 0
+    try:
+        with c.cursor() as cur:
+            cur.execute(
+                f"SELECT physical_path, COALESCE(ledger_version,0) FROM {_t('registry_catalog', schema)} "  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
+                "WHERE registry_id=%s",
+                (registry_id,),
+            )
+            row = cur.fetchone()
+        ledger_revision = int(row[1] or 0) if row else 0
+        if row and repo_root is not None and row[0]:
+            from zephyr.governance.registry_projection.model import snapshot_from_yaml  # noqa: PLC0415
+
+            phys = str(row[0])
+            text = (Path(repo_root) / phys).read_text(encoding="utf-8")
+            snap = snapshot_from_yaml(text, registry_id=registry_id, physical_path=phys)
+            return snap.header_lines, [list(p) for p in snap.trailing_scalars], ledger_revision
+    except Exception:  # noqa: BLE001 — 投影上下文降级（快照发布主链不受阻）
+        pass
+    return header_lines, trailing, ledger_revision
+
+
 def publish_snapshot(
     registry_id: str,
     *,
@@ -366,8 +406,17 @@ def publish_snapshot(
     session_id: str = DEFAULT_SESSION,
     conn: object | None = None,
     schema: str = SCHEMA_NAME,
+    repo_root: Path | None = None,
 ) -> dict:
-    """发布当前 active 条目集为不可变快照；同 content_sha256 重复发布=noop 幂等。"""
+    """发布当前 active 条目集为不可变快照；同 content_sha256 重复发布=noop 幂等。
+
+    bundle 契约=读端 snapshot_from_bundle 结构形态（WM1_24h_evaluation §3.1 统一，
+    2026-09-30）：{registry_id, header_lines[], sections[{root_key,entries[[k,v]...]}],
+    trailing_scalars[[k,v]...], ledger_revision, snapshot_version, content_sha256}——
+    条目=有序 [key,value] 对数组（jsonb 数组保序+重复键可表达）；头部/尾部 verbatim
+    由 _projection_context_from_disk 从盘上 YAML 提取（repo_root 提供时）。
+    content_sha 仍按 manifest 哈希（noop 幂等语义不变）。
+    """
     owned = conn is None
     c = conn or _open_writer_conn()
     try:
@@ -380,7 +429,6 @@ def publish_snapshot(
             )
             rows = cur.fetchall()
             manifest = {f"{fk}||{ek}": sha for fk, ek, _, sha in rows}
-            bundle = {f"{fk}||{ek}": payload for fk, ek, payload, _ in rows}
             content_sha = hashlib.sha256(
                 json.dumps(manifest, sort_keys=True, ensure_ascii=False).encode("utf-8")
             ).hexdigest()
@@ -400,6 +448,27 @@ def publish_snapshot(
                 }
             parent = int(latest[0]) if latest else None
             new_version = (int(latest[0]) + 1) if latest else 1
+            # 结构化 bundle（读端 snapshot_from_bundle 契约，WM1_24h_evaluation §3.1 统一）：
+            # 条目按 family_key 分节段，条目=有序 [key,value] 对数组（jsonb 数组保序）
+            sections: dict[str, list] = {}
+            for fk, ek, payload, _sha in rows:
+                if isinstance(payload, dict):
+                    pairs = [[str(k), v] for k, v in payload.items()]
+                else:  # 非.dict payload 保底整值一条（import 面只收 dict，防御位）
+                    pairs = [[str(ek), payload]]
+                sections.setdefault(str(fk), []).append(pairs)
+            header_lines, trailing_scalars, ledger_revision = _projection_context_from_disk(
+                registry_id, repo_root, schema, c
+            )
+            bundle = {
+                "registry_id": registry_id,
+                "header_lines": header_lines,
+                "sections": [{"root_key": fk, "entries": sections[fk]} for fk in sorted(sections)],
+                "trailing_scalars": trailing_scalars,
+                "ledger_revision": ledger_revision,
+                "snapshot_version": new_version,
+                "content_sha256": content_sha,
+            }
             cur.execute(
                 f"INSERT INTO {_t('registry_snapshot', schema)} "  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
                 "(registry_id, snapshot_version, parent_snapshot_version, manifest, bundle, "

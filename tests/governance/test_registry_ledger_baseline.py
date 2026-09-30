@@ -208,6 +208,41 @@ class TestPublish:
         p3 = baseline_mod.publish_snapshot("REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"])
         assert p3["noop"] is False and p3["snapshot_version"] == 2
 
+    def test_publish_bundle_matches_reader_contract(self, baseline_mod, sample_registry, ledger):
+        """WM1_24h_evaluation §3.1 契约统一回归：bundle=读端结构形态，snapshot_from_bundle
+        可消费，render 往返语义等值（jsonb 键序归一属 cutover 噪音，不判字节）。"""
+        import json as _json
+
+        root, rel = sample_registry
+        baseline_mod.import_baseline(root, rel, conn=ledger["conn"], schema=ledger["schema"])
+        p1 = baseline_mod.publish_snapshot(
+            "REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"], repo_root=root
+        )
+        assert p1["snapshot_version"] == 1
+        cur = ledger["conn"].cursor()
+        cur.execute(
+            f'SELECT bundle FROM "{ledger["schema"]}".registry_snapshot WHERE registry_id=%s AND snapshot_version=1',
+            ("REG-RB-TEST-001",),
+        )
+        raw = cur.fetchone()[0]
+        bundle = raw if isinstance(raw, dict) else _json.loads(raw)
+        assert bundle["registry_id"] == "REG-RB-TEST-001"
+        root_keys = [sec["root_key"] for sec in bundle["sections"]]
+        assert "capabilities" in root_keys and "creation_tokens" in root_keys
+        assert bundle["header_lines"] and bundle["header_lines"][0].startswith("schema_version")
+
+        from zephyr.governance.registry_projection.pg_source import snapshot_from_bundle
+        from zephyr.governance.registry_projection.renderer import render
+
+        snap = snapshot_from_bundle(bundle, rel)
+        assert snap.header_lines == bundle["header_lines"]
+        assert {s.root_key for s in snap.sections} == {"capabilities", "creation_tokens"}
+        assert [k for k, _ in snap.trailing_scalars] == ["di_seam_exemptions"]
+        rendered = render(snap)
+        import yaml as _yaml
+
+        assert _yaml.safe_load(rendered) == _yaml.safe_load(SAMPLE_YAML), "render 往返语义等值"
+
 
 class TestReconcile:
     def test_clean_after_import_then_drift_kinds(self, baseline_mod, sample_registry, ledger):

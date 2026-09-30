@@ -102,7 +102,7 @@ def cmd_publish(args: argparse.Namespace) -> int:
     reports = []
     for p in paths:
         scan = scan_registry_file(REPO_ROOT, p)
-        rep = publish_snapshot(scan["registry_id"], git_commit_ref=head, session_id=args.session)
+        rep = publish_snapshot(scan["registry_id"], git_commit_ref=head, session_id=args.session, repo_root=REPO_ROOT)
         reports.append(rep)
         tag = "NOOP" if rep["noop"] else f"v{rep['snapshot_version']}"
         print(f"[PUBLISH {tag:>4}] {rep['registry_id']:<22} entries={rep['entry_count']}")
