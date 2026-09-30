@@ -5,13 +5,13 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动；S4-C（2026-09-30，手术簿 s4_c_p90_cache.md）进程级 lookup 单例：_build_capability_lookup 失效键=registry(normcase+mtime_ns+size)∪双根扫描概要(scan_root_summary)，未变复用常驻实例/变即重建，env ZEPHYR_CG_LOOKUP_SINGLETON=0 一键回退每次新构造，warm_capability_lookup_async 判重链后后台预热（daemon，异常全吞），判定语义零变化（检索面/#456 两档/fail-closed 出口不动，monkeypatch 注入缝保留）；S4-B（2026-09-30，手术簿 s4_b_token_sim.md）判重二阶段 token 相似度影子采集：触发面收敛=仅 #456 散文级 warn 命中条目，结构证据=新建 .py 与命中条目 canonical_file 的 AST 标识符有序序列（_TOKEN_SIM_TRUNC 截断护栏）经 _tokenize 切词后 diff_utils.similarity_ratio（stdlib 零新依赖），canonical 侧 (normcase,mtime_ns,size) 键缓存（失败不缓存），audit-only 只落 .runtime/gate_audit/create_guard_token_sim_shadow.jsonl（fail-open），would_block 恒 False/threshold 恒 None——不改任何判定，相似度分布一周后 Owner 门位定档
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML 读取/解析异常降级为 fail-closed 阻断（passed=False，detail 含修复指引：恢复 registry / 修正 YAML 语法）；git diff 异常降级为 fail-closed 阻断；对标 directory_contract_gate.py fail-closed 设计
-# [TESTS] tests/governance/commit_gates/test_create_guard.py
+# [TESTS] tests/governance/commit_gates/test_create_guard.py; tests/gov_enforcement/test_create_guard_lookup_singleton.py; tests/gov_enforcement/test_create_guard_token_sim_shadow.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
@@ -145,8 +145,11 @@ import json
 import logging
 import os
 import re
+import threading
 import time
 from itertools import pairwise
+from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -161,6 +164,7 @@ from zephyr.gov_enforcement.commit_gates._capability_registry_io import (
 from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.governance.rule_patterns import RULE_NAME_RE
+from zephyr.shared.utils.diff_utils import similarity_ratio
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
@@ -185,6 +189,13 @@ _KEYWORD_DUP_MARKER_RE = re.compile(rf"^#\s*{re.escape(_KEYWORD_DUP_MARKER)}:\s*
 # 每文件探针上限（查询面=stem+docstring 首段+顶层类/函数名；上限防大 docstring 爆炸——
 # 每次 find() 均落一条 lookup_audit 且有图书馆查重探针，实测 find 首轮开销不可忽略）
 _MAX_KEYWORD_PROBES = 8
+# === S4-B 判重二阶段 token 相似度影子采集（2026-09-30，手术簿 s4_b_token_sim.md） ===
+# 影子账本（audit-only，零判据变化；相似度分布攒一周后 Owner 门位定档）
+_TOKEN_SIM_SHADOW_AUDIT_REL = (".runtime", "gate_audit", "create_guard_token_sim_shadow.jsonl")
+# 大文件护栏：AST 标识符有序序列截断常量（矩阵 9——超限截断后仍可比，不崩不扫全文）
+_TOKEN_SIM_TRUNC = 10_000
+# canonical 侧 token 串进程内缓存：键=(normcase 路径, mtime_ns, size)（同款键型见 :734）
+_CANON_TOKEN_SIM_CACHE: dict[tuple[str, int, int], str] = {}
 _CJK_RUN_RE = re.compile(r"[\u4e00-\u9fff]{3,}")
 _ASCII_DOC_WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*")
 # bigram 词对噪声门：docstring 通用词不成"功能关键词"（仅作用于④bigram 探针，
@@ -854,6 +865,142 @@ def _audit_keyword_dup_warn(
         logger.warning("CREATE-GUARD: 判重 warn 审计写入失败: %s", _e, exc_info=True)
 
 
+def _ast_identifier_sequence(tree: ast.Module) -> str:
+    """AST 标识符有序序列（S4-B 结构证据面，手术簿 s4_b_token_sim.md §3.2）。
+
+    收集面=类/函数名+Name.id+Attribute.attr+arg.arg（ast.walk 序）——只看标识符
+    不看字面量/注释，改名同构体保留词素结构即高相似。数量截断 _TOKEN_SIM_TRUNC
+    （矩阵 9 大文件护栏：截断后仍可比，不崩不扫全文）。
+    """
+    names: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            names.append(node.name)
+        elif isinstance(node, ast.Name):
+            names.append(node.id)
+        elif isinstance(node, ast.Attribute):
+            names.append(node.attr)
+        elif isinstance(node, ast.arg):
+            names.append(node.arg)
+        if len(names) >= _TOKEN_SIM_TRUNC:
+            break
+    return " ".join(names[:_TOKEN_SIM_TRUNC])
+
+
+def _comparable_token_string(ident_seq: str) -> str:
+    """标识符序列 → 可比较 token 串（复用 _tokenize 切词——既有设施只调用不复制）。"""
+    from zephyr.governance.capability_lookup import CapabilityLookup
+
+    ascii_tokens, cjk_str = CapabilityLookup._tokenize(ident_seq)
+    parts = ascii_tokens + ([cjk_str] if cjk_str else [])
+    return " ".join(parts)
+
+
+def _source_token_string(src: str) -> str | None:
+    """源码 → 可比较 token 串；语法错误 → None（矩阵 6 fail-open 面）。"""
+    try:
+        tree = ast.parse(src)
+    except (SyntaxError, ValueError):
+        return None
+    return _comparable_token_string(_ast_identifier_sequence(tree))
+
+
+def _canonical_token_string(project_root, canon_rel: str) -> str | None:
+    """canonical 侧可比较 token 串（进程内 (normcase 路径, mtime_ns, size) 键缓存，§3.4）。
+
+    键型与 :734 registry 解析缓存同款（写后失效）；读不到/语法错误 → None 且不入
+    缓存（对标 :734「解析失败不缓存」——并发写窗口下次应重试，负结果不钉死）。
+    """
+    abs_path = Path(project_root) / canon_rel
+    try:
+        st = abs_path.stat()
+    except OSError:
+        return None
+    key = (os.path.normcase(str(abs_path)), st.st_mtime_ns, st.st_size)
+    cached = _CANON_TOKEN_SIM_CACHE.get(key)
+    if cached is not None:
+        return cached
+    try:
+        src = abs_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    token_string = _source_token_string(src)
+    if token_string is not None:
+        _CANON_TOKEN_SIM_CACHE[key] = token_string
+    return token_string
+
+
+def _audit_token_sim_shadow(
+    gateway,
+    session_id: str | None,
+    new_py_files: list[str],
+    warn_violations: list[tuple[str, str, str, list[str]]],
+) -> None:
+    """S4-B 判重二阶段 token 相似度影子采集（audit-only，手术簿 s4_b_token_sim.md）。
+
+    - 触发面收敛：只对 #456 散文级 warn 命中条目触发（调用点=warn 出口），
+      标识符级硬拦路径零触碰（矩阵 1）。
+    - 结构证据=（新建 .py 的 AST 标识符有序序列）vs（命中条目 canonical_file 的
+      同款序列）经 _tokenize 切词后的 ``diff_utils.similarity_ratio``（stdlib
+      difflib，零新依赖；jscpd 滑窗思路的零依赖近似）。
+    - **影子模式不改任何判定**：结果只落
+      ``.runtime/gate_audit/create_guard_token_sim_shadow.jsonl``（fail-open），
+      ``would_block`` 恒 False、``threshold`` 恒 None——相似度分布攒满一周后由
+      Owner 门位定硬拦阈值（禁止拍脑袋阈值直接上硬拦，对标 gate_cache_preflight
+      「实测准入」纪律；R-B2 重放锚锁死影子先行）。
+    - canonical 读不到/语法错误 → event=token_sim_skipped（fail-open 维持现状
+      warn，不新增放水也不新增拦）；新建文件语法错误在上游 :1146 已豁免（矩阵 6）。
+    - 时间戳 now_utc（RULE-SCHEMA-TZ）；落 gateway.project_root（tmp 测试仓不触碰
+      生产 .runtime）；独立账本不回写 #456 warn 账本（风险 4）。
+    """
+    if not warn_violations:
+        return
+    try:
+        new_tokens: dict[str, str | None] = {}
+
+        def _new_token(rel: str) -> str | None:
+            if rel not in new_tokens:
+                try:
+                    src = (Path(gateway.project_root) / rel).read_text(encoding="utf-8", errors="replace")
+                except OSError:
+                    new_tokens[rel] = None
+                else:
+                    new_tokens[rel] = _source_token_string(src)
+            return new_tokens[rel]
+
+        records: list[dict] = []
+        for rel, cap_id, canon, _tokens in warn_violations[:50]:
+            record = {
+                "timestamp": now_utc().isoformat(),
+                "gate": "CREATE-GUARD",
+                "event": "token_sim_shadow",
+                "mode": "shadow",
+                "ruling": "456",
+                "session_id": session_id or "?",
+                "file": rel,
+                "capability_id": cap_id,
+                "canonical": canon,
+            }
+            new_tok = _new_token(rel)
+            canon_tok = _canonical_token_string(gateway.project_root, canon) if canon else None
+            if new_tok is None or canon_tok is None:
+                record["event"] = "token_sim_skipped"
+                record["reason"] = "new_file_unparseable" if new_tok is None else "canonical_unreadable"
+                records.append(record)
+                continue
+            record["similarity"] = round(similarity_ratio(new_tok, canon_tok), 4)
+            record["would_block"] = False  # 影子期永不判死（R-B2 锚锁死）
+            record["threshold"] = None  # 阈值未标定——Owner 影子期满定档
+            records.append(record)
+        audit_path = Path(gateway.project_root).joinpath(*_TOKEN_SIM_SHADOW_AUDIT_REL)
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        with audit_path.open("a", encoding="utf-8") as _f:
+            for record in records:
+                _f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception as _e:  # noqa: BLE001 — 影子采集 fail-open（audit-only 契约）
+        logger.warning("CREATE-GUARD: token 相似度影子采集失败（fail-open）: %s", _e, exc_info=True)
+
+
 def _warn_merge_evaluation(
     gateway,
     session_id: str | None,
@@ -1006,16 +1153,111 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
     return True, ""
 
 
+# === S4-C CREATE-GUARD p90 缓存尾治本（2026-09-30，手术簿 s4_c_p90_cache.md） ===
+# 病根：有新建 .py 的 commit 每次 _build_capability_lookup() 全量构造（实测 ~86-109s/
+# 实例），CREATE-GUARD 门级 p90=55.3s 且 reused=0（head_dependent 被排除出 P2⑧
+# 白名单=结构性，gate_cache_preflight.py:44-47）。治本=判定语义零变化，只动构造时机
+# 与失效粒度：进程级单例+失效键（registry mtime_ns+size ∪ 双根扫描概要）+分片扫描
+# （capability_lookup.scan_disk_headers 片缓存）+空闲期后台预热。
+# 一键回退：env ZEPHYR_CG_LOOKUP_SINGLETON=0 → 每次新构造（现行为）。
+_LOOKUP_SINGLETON_ENV = "ZEPHYR_CG_LOOKUP_SINGLETON"
+# {"entry": (失效键, lookup 实例)}——单键槽（最新实例即全部语义），测试经 fixture 清零
+_LOOKUP_SINGLETON_CACHE: dict[str, tuple[tuple, Any]] = {}
+# 预热线程与 commit 线程同抢构造的收敛锁（双线程同抢只建一次——手术簿 §3.3）
+_LOOKUP_LOCK = threading.Lock()
+
+
+def _lookup_invalidation_key() -> tuple | None:
+    """进程级 lookup 单例失效键（S4-C §3.1）。
+
+    键 =（registry yaml normcase 路径, mtime_ns, size）∪（双根扫描概要序列：
+    每根 (normcase 路径, .py 文件数, max mtime_ns)）——registry 是判重真源面，
+    扫描概要是 basename/头部派生面，两面任一变化都必须重建（陈旧册=漏拦第二真源）。
+
+    返回 None=失效判定设施自身异常（stat/概要失败）→ 调用方不缓存不复用，
+    回退现行为每次新构造（fail-safe 对齐 gate_cache_preflight [ERROR_CONTRACT]）。
+    """
+    try:
+        from zephyr.governance.capability_lookup import REGISTRY_YAML, SCAN_ROOTS, scan_root_summary
+
+        reg = Path(REGISTRY_YAML)
+        st = reg.stat()
+        summaries: list[tuple[str, int, int]] = []
+        for root in SCAN_ROOTS:
+            root_p = Path(root)
+            if not root_p.exists():
+                continue
+            summary = scan_root_summary(root_p)
+            if summary is None:
+                return None
+            summaries.append((os.path.normcase(str(root_p)), summary[0], summary[1]))
+        return (os.path.normcase(str(reg)), st.st_mtime_ns, st.st_size, tuple(summaries))
+    except Exception:  # noqa: BLE001 — fail-safe：失效判定设施异常=回退现行为（手术簿 §3.4）
+        return None
+
+
 def _build_capability_lookup():
     """CapabilityLookup 构造缝（唯一构造点，供 basename 碰撞与查功能关键词共享）。
 
-    实测本仓构造一次 ~86s（磁盘头部扫描+派生，另有首次 find 的 removed 派生 ~15s，
-    冷缓存读数）——一次 commit 只允许构造一次，两处检测共享同一实例。
-    测试可用 monkeypatch 本缝注入小型 lookup（禁在测试里跑全库扫描）。
+    S4-C 进程级单例（2026-09-30）：失效键（_lookup_invalidation_key）未变 → 复用
+    常驻实例（gateway / commit_belt_daemon / 队列 serializer 均常驻进程，跨 commit
+    复用成立，0.2s 档）；键变（registry 写入/扫描根概要漂移）→ 重建。判定语义
+    零变化——检索面、#456 两档判据、fail-closed 出口全部不动，动的只是构造时机。
+
+    - 一键回退：env ``ZEPHYR_CG_LOOKUP_SINGLETON=0`` → 每次新构造（现行为）。
+    - 失效键不可得（None）→ 不缓存（每次新构造，fail-safe 不带病复用）。
+    - 双线程同抢构造经 _LOOKUP_LOCK 收敛为单次（预热线程与 commit 竞争不双建）。
+    - 实测本仓构造一次 ~86-109s（磁盘头部扫描+派生，另有首次 find 的 removed
+      派生 ~15s）——本缝仍是测试注入缝：测试可 monkeypatch 本函数注入小型
+      lookup（禁在测试里跑全库扫描）。
     """
     from zephyr.governance.capability_lookup import CapabilityLookup
 
-    return CapabilityLookup()
+    if os.environ.get(_LOOKUP_SINGLETON_ENV, "") == "0":
+        return CapabilityLookup()
+    key = _lookup_invalidation_key()
+    if key is not None:
+        entry = _LOOKUP_SINGLETON_CACHE.get("entry")
+        if entry is not None and entry[0] == key:
+            return entry[1]
+    with _LOOKUP_LOCK:
+        if key is not None:
+            entry = _LOOKUP_SINGLETON_CACHE.get("entry")
+            if entry is not None and entry[0] == key:
+                return entry[1]
+        instance = CapabilityLookup()
+        if key is not None:
+            _LOOKUP_SINGLETON_CACHE["entry"] = (key, instance)
+        return instance
+
+
+def warm_capability_lookup_async() -> None:
+    """空闲期后台预热/刷新 lookup 单例（S4-C §3.3：把构造尾从提交关键路径搬走）。
+
+    判重链完成后 fire-and-forget：键未变→_build_capability_lookup 命中缓存即返回
+    （线程毫秒级自灭）；键已陈旧→后台重建，为本进程下一次 commit 备好热实例。
+    - daemon 线程不阻塞进程退出；任何异常全吞（预热是优化，绝不影响判定路径）。
+    - spawn 后全局态变化（测试拆装/他线程改册）→ 键不匹配即放弃本轮，下次触发重验
+      ——防测试线程用已还原的全局态误建生产实例。
+    - 与 commit 线程抢构造经 _LOOKUP_LOCK 收敛为单次（手术簿 §5 矩阵 8/9）。
+    - kill-switch（ZEPHYR_CG_LOOKUP_SINGLETON=0）下不预热。
+    """
+    if os.environ.get(_LOOKUP_SINGLETON_ENV, "") == "0":
+        return
+    key_at_spawn = _lookup_invalidation_key()
+    if key_at_spawn is None:
+        return
+
+    def _warm() -> None:
+        try:
+            key = _lookup_invalidation_key()
+            if key is None or key != key_at_spawn:
+                return
+            _build_capability_lookup()
+        except Exception:  # noqa: BLE001 — 预热失败静默（fail-safe：下次触发重验）
+            logger.debug("CREATE-GUARD lookup 预热失败（下次触发重验）", exc_info=True)
+
+    threading.Thread(target=_warm, name="create-guard-lookup-warmup", daemon=True).start()
 
 
 def _check_basename_collision(gateway, new_py_files: list[str], lookup=None) -> tuple[bool, str]:
@@ -1276,6 +1518,9 @@ def _check_capability_keyword_overlap(
             _warn_lines,
         )
         _audit_keyword_dup_warn(gateway, session_id, warn_violations)
+        # S4-B 二阶段影子采集（audit-only）：散文级 warn 面加 token 相似度结构证据，
+        # 只落影子账本不改判定（would_block 恒 False，阈值 Owner 影子期满定档）。
+        _audit_token_sim_shadow(gateway, session_id, new_py_files, warn_violations)
     return True, ""
 
 
@@ -1337,9 +1582,13 @@ def _run_file_registration_checks(
     passed, detail = _check_basename_collision(gateway, new_py_files, lookup=_lookup)
     if not passed:
         return False, detail
-    return _check_capability_keyword_overlap(
+    passed, detail = _check_capability_keyword_overlap(
         gateway, new_py_files, session_id=session_id, lookup=_lookup, lookup_error=_lookup_err
     )
+    # S4-C 预热：判重链完成后空闲期后台预热/刷新单例（daemon，异常全吞，不影响
+    # 本链判定）——为本进程下一次 commit 把 ~86-109s 构造尾从关键路径搬走。
+    warm_capability_lookup_async()
+    return passed, detail
 
 
 def make_create_guard() -> GateSpec:
