@@ -6,6 +6,8 @@
 #   scripts.backtest.{sim_platform_journal,sim_deviation_report,sim_governance}(子进程);
 #   zephyr.pf_alloc.allocation_orchestrator(子进程 -m，pf_alloc_daily 日分配执行体);
 #   zephyr.pf_alloc.crisis_gate(危机闸 L1 判定——只调 crisis_block_check 不改其文件，fail-closed);
+#   zephyr.ai_layer.scheduling.{scheduling_events,order_daemon,maturity}(F82 工单守护 spawn——
+#     import 复用非修改，journal 非空才起守护；守护语义真源在其本件);
 #   zephyr.strategy_pipeline.fw_backtest(import 复用 ensure_regime_snapshot——regime 日序供给，
 #     函数级惰性导入避开 fw_backtest 侧对本模块的相互引用);
 #   zephyr.infrastructure.database_service(reader 角色——日频产出者共用业务日解析，宪法 §9.1 禁裸连接)
@@ -95,6 +97,10 @@
     其调用（分配链的 regime 口径就读这张表，表旧=分配带旧教材）；内部走 fw_backtest.
     ensure_regime_snapshot(refresh=True)——滞后 ≤3 天零成本直通，超限才子进程全窗重印；
     一个业务日至多一印（append-only 台账，同日重印=纯行数膨胀零信息增益）。
+  F82 工单守护 spawn（st-circ-a7，2026-09-30）：maybe_drain_order_daemon 挂同一唤醒链——
+    SchedulingJournal 非空才起 OrderDaemon.process_once（胜者→任务书），空=零成本跳过；
+  F27 尾段 fail-isolation（同批）：唤醒链尾四棒（pf_alloc 发射/sim 日件发射/月度档/drain）
+    各自 try+ERROR 出声，单棒异常不再砍断整段（09-30 08:39 型静默停摆根治）。
 用法:
     python -m zephyr.strategy_pipeline.pipeline_events status          # 看积压
     python -m zephyr.strategy_pipeline.pipeline_events drain --all     # 全量消费（含重 kind）
@@ -1031,6 +1037,53 @@ def maybe_record_auction_hit(task_id: object = None, success: bool = True, **_kw
         return {"action": "error", "trade_date": day, "error": type(exc).__name__[:200]}
 
 
+# ---------- L5 排产段工单守护 spawn（F82 P0，2026-09-30 st-circ-a7-20260930）----------
+# 处方真源：docs/_working/total_circulation_night/s5_skeleton.md §5 P0-1——order_daemon 全仓
+# 无生产 spawn 点（仅 DDL 脚本引用），胜者→任务书→施工队事件链断；守护本体
+# （单例锁 PID+TTL+僵尸检测 / last_read_offset 断点续读 / 毒丸留档）齐备于
+# zephyr.ai_layer.scheduling.order_daemon，缺的只是"谁在事件到达后唤它一轮"。
+ORDER_DAEMON_PREFIX = "[ORDER-DAEMON]"
+
+
+def maybe_drain_order_daemon(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
+    """SchedulingJournal 的生产消费 spawn：数据任务完成=自然唤醒点，journal 非空才起守护跑
+    一轮 ``OrderDaemon.process_once``（消费 evolution_winner_due→建任务书、order_confirmed_due→
+    确认半写自愈对账；单例锁/断点续读/毒丸留档皆守护内建，本件零复制该语义）。
+    宪法 §9.3 合规（零新机制）：不建 cron/Timer/sleep 循环——事件落 journal（emit 方=L4/L2
+    落库侧与 confirm_gate），消费沿=下一个数据任务完成唤醒点；journal 空=零成本跳过
+    （只读一次 pending）。唤醒词过滤不适用：胜者事件与数据日历无关，任何成功唤醒沿都可消费。
+    守护缺 policy/异常只 WARN 不反噬唤醒链（排产件是增益不是依赖），下个唤醒点自然重评。
+    人工逃生口=``OrderDaemon(SchedulingJournal(), load_gate_policy()).process_once()``。
+    """
+    del task_id  # 全成功唤醒沿消费（见 docstring：胜者事件无数据日历语义）
+    if not success:
+        return {"action": "skipped_failed_task"}
+    try:
+        from zephyr.ai_layer.scheduling.maturity import load_gate_policy  # noqa: PLC0415
+        from zephyr.ai_layer.scheduling.order_daemon import OrderDaemon  # noqa: PLC0415
+        from zephyr.ai_layer.scheduling.scheduling_events import SchedulingJournal  # noqa: PLC0415
+
+        journal = SchedulingJournal()
+        if not any(not e.poison for e in journal.pending()):
+            return {"action": "journal_empty"}
+        receipt = OrderDaemon(journal, load_gate_policy()).process_once()
+        alert(
+            f"{ORDER_DAEMON_PREFIX} 工单守护消费 processed={len(receipt.get('processed', []))} "
+            f"failed={len(receipt.get('failed', []))} pending_left={receipt.get('pending_left')}",
+            level="INFO",
+        )
+        return {
+            "action": "drained",
+            "processed": len(receipt.get("processed", [])),
+            "failed": len(receipt.get("failed", [])),
+            "pending_left": receipt.get("pending_left"),
+        }
+    except Exception as exc:  # noqa: BLE001 — 守护缺席/异常出声不反噬唤醒链（同判定件待遇）
+        msg = f"{ORDER_DAEMON_PREFIX} spawn 失败（不影响唤醒链，下个唤醒点重评）: {type(exc).__name__}: {exc}"
+        alert(msg[:300], level="WARN")
+        return {"action": "error", "error": type(exc).__name__[:200]}
+
+
 # ---------- 写侧钩子 ----------
 def emit_c4_batch_completed(batch: str, run_id: str, inserted: int) -> dict[str, Any]:
     """C4 批测落账成功后的通知钩子（c4_batch_screen 调用）：记录事件并尝试立即消费。"""
@@ -1071,6 +1124,9 @@ def wire_data_scheduler(scheduler) -> None:
         try:
             scan_translated_backlog()
             scan_c1_c2_backlog()
+            # F82 P0（st-circ-a7）：L5 工单守护消费 spawn——journal 非空才起守护（空=零成本
+            # 一次 pending 读），胜者→任务书事件链由此接通；内部全捕获不反噬后续链
+            maybe_drain_order_daemon(**_kwargs)
             # 挖矿 F3：regime 日序台账日产出者——须先于分配链（pf_alloc 的 regime 口径读本表，
             # 表旧=分配快照带旧教材）；滞后 ≤3 天时只是一条只读查询，不起子进程
             maybe_refresh_regime_snapshot(**_kwargs)
@@ -1125,11 +1181,34 @@ def wire_data_scheduler(scheduler) -> None:
             except Exception:  # noqa: BLE001  出声不反噬
                 log.warning("[WARROOM/AUCTION] 扩面钩子唤醒失败（不影响后续链）", exc_info=True)
             # 车道 D #15：分配链日产出者——必须先于日件入队（journal FIFO=分配先落，
-            # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）
-            maybe_emit_pf_alloc_daily(**_kwargs)
-            maybe_emit_sim_daily(**_kwargs)  # S09 C2：daily_kline SUCCESS=模拟盘日件自然唤醒
-            maybe_emit_monthly()
-            drain(allow_heavy=False)
+            # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）。
+            # F27 P0 尾段 fail-isolation（st-circ-a7，2026-09-30）：09-30 08:39 唤醒链实证——
+            # regime/judgment/warroom 三 marker 齐落而本段四棒全灭（任一异常即整段砍断且只
+            # log.debug 静默=分配链"静默停摆"病灶）。四棒各自隔离+ERROR 出声，单棒炸不连坐，
+            # 下个唤醒点按各自幂等闸自然重评
+            try:
+                maybe_emit_pf_alloc_daily(**_kwargs)
+            except Exception as exc:  # noqa: BLE001 — 出声不反噬（分配件缺席=账本回退 flat 额度，必须可见）
+                alert(f"[PF-ALLOC-EMIT] 发射钩子异常（不影响后续链）: {type(exc).__name__}: {exc}"[:300], level="ERROR")
+            try:
+                maybe_emit_sim_daily(**_kwargs)  # S09 C2：daily_kline SUCCESS=模拟盘日件自然唤醒
+            except Exception as exc:  # noqa: BLE001 — 同上
+                alert(
+                    f"[SIM-DAILY-EMIT] 发射钩子异常（不影响后续链）: {type(exc).__name__}: {exc}"[:300], level="ERROR"
+                )
+            try:
+                maybe_emit_monthly()
+            except Exception as exc:  # noqa: BLE001 — 同上
+                alert(
+                    f"[MONTHLY-EMIT] 月度档钩子异常（不影响后续链）: {type(exc).__name__}: {exc}"[:300], level="ERROR"
+                )
+            try:
+                drain(allow_heavy=False)
+            except Exception as exc:  # noqa: BLE001 — journal 消费失败出声留队（事件不丢，重试跨唤醒）
+                alert(
+                    f"[PIPELINE-DRAIN] 轻消费异常（事件留队跨唤醒重试）: {type(exc).__name__}: {exc}"[:300],
+                    level="ERROR",
+                )
             # BT-P1-031 日度编排器（2026-09-16 st-orchp3-20260916，蓝图 §三）：daily_kline
             # SUCCESS 唤醒链**末棒**（钩子序契约：编排器必须最后——S2 消费 regime 快照、
             # S3/L4 消费当日 alloc run，须等上方 drain 把 pf_alloc 分配真落地后再拍板，

@@ -39,7 +39,8 @@ for _p in (str(_REPO), str(_REPO / "src")):
         sys.path.insert(0, _p)
 
 _spec = importlib.util.spec_from_file_location(
-    "sim_paper_ledger_alloc_wiring", _REPO / "scripts" / "backtest" / "sim_paper_ledger.py")
+    "sim_paper_ledger_alloc_wiring", _REPO / "scripts" / "backtest" / "sim_paper_ledger.py"
+)
 mod = importlib.util.module_from_spec(_spec)
 sys.modules["sim_paper_ledger_alloc_wiring"] = mod
 _spec.loader.exec_module(mod)
@@ -49,8 +50,7 @@ SID = "STR-E-WIRING-001"
 ALLOC_TABLE = "c1_backtest.alloc_budget_daily"
 
 
-def slice_row(sid: str, *, run_id: str = "alloc-2026-09-15-zz1",
-              capital: float = 250_000.0) -> tuple:
+def slice_row(sid: str, *, run_id: str = "alloc-2026-09-15-zz1", capital: float = 250_000.0) -> tuple:
     """SQL_DAY_SLICE 列序一行（strategy_id, run_id, allocation, global_shrinkage,
     effective_budget, allocated_capital, final_weight, budget_action, current_tier）——
     位置即契约，改序=账本读到 final_weight 当额度（静默事故形态），故此处按真源模板对齐。"""
@@ -73,9 +73,12 @@ def ledger(monkeypatch):
         return [(0,)]  # sim_pocket_daily 无当日行 → 继续开行
 
     monkeypatch.setattr(mod, "_q", fake_q)
-    monkeypatch.setattr(
-        mod, "run",
-        lambda *a, **k: pytest.fail("非内置引擎策略不得走内置引擎 run()"))
+    monkeypatch.setattr(mod, "run", lambda *a, **k: pytest.fail("非内置引擎策略不得走内置引擎 run()"))
+    # R5 注册表卫兵隔离（st-circ-a7，2026-10-01）：2026-09-22 st-sim-launch 给 ensure_wallet
+    # 加 lifecycle==sim 准入闸后本文件未同步打桩，6 用例被 not_in_registry_sim 拒于闸外
+    # （测试专用 ID 不在生产册=自该日起 HEAD 既有红）。此处按卫兵自身 docstring 指明的
+    # 测试隔离通道打桩，只恢复隔离不改断言语义。
+    monkeypatch.setattr(mod, "registry_sim_entries", lambda: [{"strategy_id": SID, "lifecycle_status": "sim"}])
 
     def fake_write(table, cols, payload):
         state["writes"].append((table, cols, payload.decode("utf-8")))
@@ -192,8 +195,10 @@ class _Sink:
         for name, columns, payload in self.calls:
             if name == table:
                 names = [c.strip() for c in columns.strip().strip("()").split(",") if c.strip()]
-                return [dict(zip(names, line.split("\t"), strict=False))
-                        for line in payload.decode("utf-8").rstrip("\n").split("\n")]
+                return [
+                    dict(zip(names, line.split("\t"), strict=False))
+                    for line in payload.decode("utf-8").rstrip("\n").split("\n")
+                ]
         return []
 
 
@@ -206,23 +211,39 @@ def test_wallet_capital_equals_run_daily_allocation_output(tmp_path, ledger):
         persist_path=(tmp_path / "tier_state.json").as_posix(),
         tdm_path=(tmp_path / "missing_tdm.yaml").as_posix(),
     )
-    universe = [{"strategy_id": SID, "strategy_type": "多因子"},
-                {"strategy_id": "STR-E-WIRING-002", "strategy_type": "多因子"}]
+    universe = [
+        {"strategy_id": SID, "strategy_type": "多因子"},
+        {"strategy_id": "STR-E-WIRING-002", "strategy_type": "多因子"},
+    ]
     sink = _Sink()
-    res = run_daily_allocation(DAY, universe=universe, config=cfg, reader=_EmptyReader(),
-                               sink=sink, run_suffix="t", alpha_provider=lambda sid, sig: ["600000.SH"])
+    res = run_daily_allocation(
+        DAY,
+        universe=universe,
+        config=cfg,
+        reader=_EmptyReader(),
+        sink=sink,
+        run_suffix="t",
+        alpha_provider=lambda sid, sig: ["600000.SH"],
+    )
 
     landed = sink.rows_of(ALLOC_TABLE)  # 同一次 run 的落地行（重跑=新 run_id 追加）
     assert [r["run_id"] for r in landed] == [res.run_id] * len(landed)
     ledger["alloc_rows"] = [
-        (r["strategy_id"], r["run_id"], r["allocation"], r["global_shrinkage"],
-         r["effective_budget"], float(r["allocated_capital"]), r["final_weight"],
-         r["budget_action"], r["current_tier"])
+        (
+            r["strategy_id"],
+            r["run_id"],
+            r["allocation"],
+            r["global_shrinkage"],
+            r["effective_budget"],
+            float(r["allocated_capital"]),
+            r["final_weight"],
+            r["budget_action"],
+            r["current_tier"],
+        )
         for r in landed
     ]
 
     out = mod.ensure_wallet(SID, day=DAY)
     assert out["capital"] == pytest.approx(res.wallet_capital[SID], abs=0.01)
-    assert float(pocket_row(ledger)["initial_capital"]) == pytest.approx(
-        res.wallet_capital[SID], abs=0.01)
+    assert float(pocket_row(ledger)["initial_capital"]) == pytest.approx(res.wallet_capital[SID], abs=0.01)
     assert res.run_id in pocket_row(ledger)["note"]

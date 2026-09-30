@@ -213,6 +213,9 @@ def _stub_executors(monkeypatch):
     monkeypatch.setattr(pe, "_pf_alloc_crisis_gate_skip", lambda day: None)  # 危机闸隔离=恒放行
     monkeypatch.setattr(pe, "maybe_refresh_regime_snapshot", lambda **kw: {"action": "fresh"})
     monkeypatch.setattr(pe, "run_pf_alloc_daily", lambda p: {"rc": 0, "trade_date": "2026-09-15"})
+    # F82 工单守护 spawn 同款隔离：wire 测试触发 hook 不得读生产 .runtime/ai_scheduling
+    # （真件回归归本文件 TestOrderDaemonSpawn，journal 注入 tmp）
+    monkeypatch.setattr(pe, "maybe_drain_order_daemon", lambda **kw: {"action": "skipped_test_isolation"})
     monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
 
 
@@ -660,3 +663,138 @@ class TestCrisisGateShortCircuit:
         r = pe.maybe_emit_pf_alloc_daily(task_id="daily_kline", success=True)
         assert r == {"emitted": [pe.PF_ALLOC_KIND], "trade_date": "2026-09-23"}
         assert len(pe.pending()) == 1 and pe.pending()[0]["payload"]["trade_date"] == "2026-09-23"
+
+
+class TestOrderDaemonSpawn:
+    """F82 P0（st-circ-a7）：工单守护 spawn——journal 空=零成本跳过；非空才起守护；
+    守护异常 WARN 不反噬。SchedulingJournal/OrderDaemon/policy 全注入桩（零生产 IO）。"""
+
+    @staticmethod
+    def _fake_journal(monkeypatch, events):
+        """把 hook 内惰性 import 的 SchedulingJournal 指向 tmp 桩（禁触生产 .runtime/ai_scheduling）。"""
+        import zephyr.ai_layer.scheduling.scheduling_events as se
+
+        class FakeJournal:
+            def pending(self):
+                return list(events)
+
+        monkeypatch.setattr(se, "SchedulingJournal", lambda: FakeJournal())
+        return se
+
+    def test_empty_journal_skips_daemon(self, monkeypatch):
+        self._fake_journal(monkeypatch, [])
+        import zephyr.ai_layer.scheduling.order_daemon as od
+
+        def _no_daemon(journal, policy):
+            raise AssertionError("空 journal 不得起守护")
+
+        monkeypatch.setattr(od, "OrderDaemon", _no_daemon)
+        r = pe.maybe_drain_order_daemon(task_id="daily_kline", success=True)
+        assert r == {"action": "journal_empty"}
+
+    def test_nonempty_journal_spawns_process_once(self, state, monkeypatch):
+        import zephyr.ai_layer.scheduling.maturity as mat
+        import zephyr.ai_layer.scheduling.order_daemon as od
+
+        class FakeEvent:
+            poison = False
+
+        calls = {}
+
+        class FakeDaemon:
+            def __init__(self, journal, policy):
+                calls["policy"] = policy
+
+            def process_once(self):
+                calls["ran"] = True
+                return {"processed": [{"id": "SCHED-1"}], "failed": [], "skipped": [], "pending_left": 0}
+
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        self._fake_journal(monkeypatch, [FakeEvent()])
+        monkeypatch.setattr(od, "OrderDaemon", FakeDaemon)
+        monkeypatch.setattr(mat, "load_gate_policy", lambda: {"stub": True})
+        r = pe.maybe_drain_order_daemon(task_id="kline_daily", success=True)
+        assert r["action"] == "drained" and r["processed"] == 1 and calls["ran"]
+        assert any(lv == "INFO" and "ORDER-DAEMON" in m for lv, m in alerts)
+
+    def test_daemon_failure_alerts_and_never_raises(self, monkeypatch):
+        import zephyr.ai_layer.scheduling.maturity as mat
+        import zephyr.ai_layer.scheduling.order_daemon as od
+
+        class FakeEvent:
+            poison = False
+
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        self._fake_journal(monkeypatch, [FakeEvent()])
+
+        def boom(journal, policy):
+            raise RuntimeError("policy 缺节")
+
+        monkeypatch.setattr(od, "OrderDaemon", boom)
+        monkeypatch.setattr(mat, "load_gate_policy", lambda: {})
+        r = pe.maybe_drain_order_daemon(task_id="daily_kline", success=True)
+        assert r["action"] == "error" and r["error"] == "RuntimeError"
+        assert any(lv == "WARN" and "ORDER-DAEMON" in m for lv, m in alerts)
+
+    def test_failed_task_and_poison_only_journal_skip(self, monkeypatch):
+        import zephyr.ai_layer.scheduling.order_daemon as od
+
+        def _no_daemon(journal, policy):
+            raise AssertionError("毒丸 journal 不得起守护")
+
+        monkeypatch.setattr(od, "OrderDaemon", _no_daemon)
+        assert pe.maybe_drain_order_daemon(task_id="daily_kline", success=False)["action"] == "skipped_failed_task"
+        self._fake_journal(monkeypatch, [type("E", (), {"poison": True})()])
+        assert pe.maybe_drain_order_daemon(task_id="daily_kline", success=True)["action"] == "journal_empty"
+
+
+class TestTailFailIsolation:
+    """F27 P0（st-circ-a7）：唤醒链尾段 fail-isolation——pf_alloc 发射炸了，
+    sim 日件/monthly/drain 照跑且 ERROR 出声（09-30 08:39 型整段熄火根治回归）。"""
+
+    def test_pf_alloc_emit_failure_does_not_kill_tail(self, state, marker, monkeypatch):
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        monkeypatch.setattr(pe, "kill_switch_clear", lambda: (True, "normal"))
+        monkeypatch.setattr(pe, "scan_translated_backlog", lambda: {"backlog": []})
+        monkeypatch.setattr(pe, "scan_c1_c2_backlog", lambda: {})
+        monkeypatch.setattr(pe, "maybe_drain_order_daemon", lambda **kw: {"action": "journal_empty"})
+        monkeypatch.setattr(pe, "maybe_refresh_regime_snapshot", lambda **kw: {"action": "fresh"})
+        monkeypatch.setattr(pe, "maybe_settle_judgment_ledger", lambda **kw: {"action": "settled"})
+        monkeypatch.setattr(pe, "maybe_run_warroom_pipeline", lambda **kw: {"action": "run"})
+        monkeypatch.setattr(pe, "maybe_record_auction_hit", lambda **kw: {"action": "run"})
+        # Phase 2b 判定产出件（惰性 import）同款隔离（autouse 只盖 2a/编排器/L9）
+        monkeypatch.setattr("zephyr.plan_engine.daily_plan.maybe_emit_daily_plan", lambda *a, **k: {"emitted": []})
+        monkeypatch.setattr(
+            "zephyr.plan_engine.scenario_classifier.maybe_classify_intraday_scenario",
+            lambda *a, **k: {"action": "skipped"},
+        )
+        monkeypatch.setattr(
+            "zephyr.plan_engine.close_verifier.maybe_verify_plan_close", lambda *a, **k: {"action": "skipped"}
+        )
+        monkeypatch.setattr(
+            pe,
+            "maybe_emit_pf_alloc_daily",
+            lambda **kw: (_ for _ in ()).throw(RuntimeError("journal 并发读竞态（09-30 断因同型）")),
+        )
+        called = {"sim": False, "monthly": False, "drain": False}
+        monkeypatch.setattr(pe, "maybe_emit_sim_daily", lambda **kw: called.__setitem__("sim", True))
+        monkeypatch.setattr(pe, "maybe_emit_monthly", lambda: called.__setitem__("monthly", True))
+
+        def fake_drain(allow_heavy=False, handler=None, max_events=20):
+            called["drain"] = True
+            return {"processed": [], "failed": [], "skipped": [], "stop_reason": None, "pending_left": 0}
+
+        monkeypatch.setattr(pe, "drain", fake_drain)
+
+        class S:
+            def subscribe(self, event, handler):
+                self.h = handler
+
+        s = S()
+        pe.wire_data_scheduler(s)
+        s.h(task_id="daily_kline", success=True)
+        assert called == {"sim": True, "monthly": True, "drain": True}  # 尾段不连坐
+        assert any(lv == "ERROR" and "PF-ALLOC-EMIT" in m for lv, m in alerts)  # 且出声

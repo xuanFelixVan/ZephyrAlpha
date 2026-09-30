@@ -173,6 +173,11 @@ class BaseWeightTable:
     max_total_position: float | None = None
     plan_id: str = ""
     source_path: str = ""
+    # strategy_id -> activation_state 相位（PP-001 条目自述；仅 SOURCE_PP001 命中行有键，
+    # 条目 null/缺相位=不落键）。丢失半截补齐（st-circ-a7，2026-10-01）：a349ddc1fec 只落了
+    # orchestrator 读侧（allocation_orchestrator sleeve_phases=base.sleeve_phases.get(sid,())），
+    # 本字段随 allocation_inputs 移出袋外未落地 → 每次分配 rc=1 AttributeError=E8/C1 停摆真断点。
+    sleeve_phases: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     def as_allocator_weights(self) -> dict[str, float]:
         return dict(self.weights)
@@ -188,9 +193,33 @@ def load_pp001_plan(tdm_path: str | Path) -> tuple[dict[str, float], dict[str, f
 
     缺失文件/缺失段 -> 空表（调用方据此走等权补齐，并如实登记来源）。
     """
+    detail = load_pp001_plan_detail(tdm_path)
+    return detail.weights, detail.aggregator, detail.plan_id
+
+
+@dataclass(frozen=True)
+class Pp001PlanDetail:
+    """PP-001 plan 解析详表（FAC-E8 sleeve 三件套的解析侧，丢失半截补齐 st-circ-a7）。
+
+    sleeve_phases：strategy_ref -> activation_state 相位（条目 null/缺失=不落键，测试契约
+    "null 相位=空表不落键"）；weight 聚合口径与 load_pp001_plan 完全一致（后者=本详表的
+    兼容投影，旧 3 元组消费方 plan_engine.daily_loop_master_switch 零破坏）。
+    """
+
+    weights: dict[str, float]
+    aggregator: dict[str, float]
+    plan_id: str
+    sleeve_phases: dict[str, tuple[str, ...]] = field(default_factory=dict)
+
+
+def load_pp001_plan_detail(tdm_path: str | Path) -> Pp001PlanDetail:
+    """只读 TDM 的 portfolio_plan 段 -> Pp001PlanDetail（权重+aggregator+plan_id+sleeve 相位）。
+
+    缺失文件/缺失段 -> 空详表（调用方据此走等权补齐，并如实登记来源）。
+    """
     path = Path(tdm_path)
     if not path.exists():
-        return {}, {}, ""
+        return Pp001PlanDetail(weights={}, aggregator={}, plan_id="", sleeve_phases={})
     import yaml
 
     doc = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -198,6 +227,7 @@ def load_pp001_plan(tdm_path: str | Path) -> tuple[dict[str, float], dict[str, f
     if not isinstance(plan, Mapping):
         raise AllocationInputError(f"{path} portfolio_plan 根节点非映射")
     weights: dict[str, float] = {}
+    phases: dict[str, tuple[str, ...]] = {}
     for sleeve in plan.get("sleeves") or []:
         if not isinstance(sleeve, Mapping):
             continue
@@ -212,12 +242,17 @@ def load_pp001_plan(tdm_path: str | Path) -> tuple[dict[str, float], dict[str, f
         if w <= 0:
             continue
         weights[ref] = weights.get(ref, 0.0) + w
+        raw_phases = sleeve.get("activation_state")
+        if raw_phases:  # null/空=不落键（条目自述相位缺席≠空相位，测试契约钉死）
+            phases[ref] = tuple(str(p) for p in raw_phases)
     aggregator = {
         k: float(v)
         for k, v in (plan.get("aggregator") or {}).items()
         if isinstance(v, (int, float)) and not isinstance(v, bool)
     }
-    return weights, aggregator, str(plan.get("plan_id") or "")
+    return Pp001PlanDetail(
+        weights=weights, aggregator=aggregator, plan_id=str(plan.get("plan_id") or ""), sleeve_phases=phases
+    )
 
 
 def build_base_weights(
@@ -230,7 +265,8 @@ def build_base_weights(
     不给未登记策略以系统性歧视；均值是尺度无关的中性选择（allocator 归一后只剩相对差）。
     """
     ids = [str(s) for s in strategy_ids]
-    priors, aggregator, plan_id = load_pp001_plan(config.tdm_full_path)
+    detail = load_pp001_plan_detail(config.tdm_full_path)
+    priors, aggregator, plan_id = detail.weights, detail.aggregator, detail.plan_id
     weights: dict[str, float] = {}
     sources: dict[str, str] = {}
     matched = [w for sid, w in priors.items() if sid in set(ids)]
@@ -245,6 +281,8 @@ def build_base_weights(
         else:  # PP-001 完全不可用 -> 等权（分配器亦会在 None 时等权，此处显式登记）
             weights[sid] = 1.0
             sources[sid] = SOURCE_EQUAL
+    # FAC-E8 sleeve 三件套：相位只随 PP-001 命中行走（补齐/等权行不落键=ref 恒空的行侧契约）
+    phases = {sid: detail.sleeve_phases[sid] for sid in weights if sid in detail.sleeve_phases}
     return BaseWeightTable(
         weights=weights,
         sources=sources,
@@ -252,6 +290,7 @@ def build_base_weights(
         max_total_position=aggregator.get("max_total_position"),
         plan_id=plan_id,
         source_path=str(config.tdm_full_path),
+        sleeve_phases=phases,
     )
 
 
@@ -619,6 +658,7 @@ def universe_from_registry(
 from schemas.categories.backtest.backtest_regime_state_anchored import (
     DATABASE as _ANCHORED_DB,
 )
+
 # [L01-C01 本地定义] schema 件头标 [AI_AUTONOMY] human_only 禁改，且该件无此符号——
 # 待 human_only 解除后迁移至 backtest_regime_state_anchored.py（迁移时删此块）。
 # 语义=锚定态表最新可用日快照（PIT：trade_date ≤ 当日，禁未来函数）；列序=trade_date,

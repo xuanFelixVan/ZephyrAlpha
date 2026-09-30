@@ -25,18 +25,17 @@
 测试纪律：TDM 地图用 tmp_path 假件，零触生产配置/库。
 """
 
+# skip 移除（st-circ-a7，2026-10-01）：依赖的 allocation_inputs 新 API
+# load_pp001_plan_detail/Pp001PlanDetail/BaseWeightTable.sleeve_phases 已补齐落地
+# （a349ddc1fec 分袋断链的丢失半截——orchestrator 读侧 09-28 先落、本侧因勿碰令移出
+# 袋外=E8/C1 停摆真断点；本批按 2026-09-28 夜班调度令预留的本行恢复通道复位）。
+
 from __future__ import annotations
 
-import pytest
-
-pytest.skip(
-    "依赖 allocation_inputs.py 新 API load_pp001_plan_detail/Pp001PlanDetail——该文件按"
-    " 2026-09-28 夜班调度令移出本袋（st-gpu-final 74a00a3605 域内在途，勿碰令），"
-    "其落地后由属主移除本行即恢复运行（st-zc8-lane-e89-20260928）",
-    allow_module_level=True,
-)
 import json
 from pathlib import Path
+
+import pytest
 
 from schemas.categories.alloc_budget_daily import (
     SQL_DAY_SLICE,
