@@ -464,15 +464,23 @@ class TestRunSubprocessHiddenPopenForm:
                 timeout=3,
             )
         assert isinstance(meta.get("pid"), int) and meta["pid"] > 0
-        # 收尸验证：kill+communicate 后进程应已退出（NoSuchProcess=已收尸，即通过；
-        # psutil 缺席则跳过断言）
+        # 收尸验证：kill 后轮询至进程消失（Windows 进程拆除有滞后，is_running 可短暂
+        # 返回 True；NoSuchProcess=已收尸即通过；psutil 缺席则跳过断言）
         try:
             import psutil  # noqa: PLC0415
 
-            try:
-                assert not psutil.Process(meta["pid"]).is_running()
-            except psutil.NoSuchProcess:
-                pass
+            survived = True
+            deadline = time.time() + 5
+            while time.time() < deadline:
+                try:
+                    if not psutil.Process(meta["pid"]).is_running():
+                        survived = False
+                        break
+                except psutil.NoSuchProcess:
+                    survived = False
+                    break
+                time.sleep(0.2)
+            assert not survived, "子进程 kill 后 5s 内未收尸"
         except ImportError:
             pass
 
