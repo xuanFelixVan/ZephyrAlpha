@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-30T07:33:31Z'
+generated_at: '2026-09-30T13:41:17Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -1335,6 +1335,7 @@ gates:
   files_trigger:
   - src/zephyr/shared/vocab/
   - docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
+  - added:*.py
   always_run: false
   category: commit_gate
   status: active

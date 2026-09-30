@@ -277,20 +277,75 @@ def run_checker_script(
     return run_subprocess_hidden([sys.executable, str(script_path), *args], **kwargs)
 
 
-def _files_trigger_hit(patterns: tuple[str, ...], files: list[str] | None) -> bool:
-    """P5 条件触发匹配（st-gslim-20260923）：目录前缀 / fnmatch 通配 / 子串。"""
-    if not patterns:
-        return True
-    if not files:
-        return False
+# C98-c 中间方案（st-finaldel-vocabmid-20260930）：第五路触发前缀——`added:` 开头的
+# 模式只对本笔 git 新增（A 态）文件做同款四路匹配。动机=红蓝实测 C98 二批收窄后
+# 词表目录外新增词表类提交 trigger_skip（final_loopcheck_redblue_20260930 §3.4，
+# Owner 批中间方案：触发面=词表目录+本笔提交的新增文件）。非 added: 模式行为不变。
+ADDED_TRIGGER_PREFIX: Final[str] = "added:"
+
+
+def _trigger_single_hit(rel: str, p: str) -> bool:
+    """单条目单文件匹配（四路 OR：目录前缀/精确/fnmatch/子串；_files_trigger_hit 原语）。"""
     import fnmatch  # noqa: PLC0415
 
-    for f in files:
-        rel = str(f).replace("\\", "/")
-        for p in patterns:
-            p = p.replace("\\", "/")
-            if (p.endswith("/") and rel.startswith(p)) or rel == p.rstrip("/") or fnmatch.fnmatch(rel, p) or p in rel:
-                return True
+    p = p.replace("\\", "/")
+    return (p.endswith("/") and rel.startswith(p)) or rel == p.rstrip("/") or fnmatch.fnmatch(rel, p) or p in rel
+
+
+def _staged_added_files(gateway: object) -> list[str]:
+    """本笔 staged 新增（A 态）文件清单（fail-open 空 list；零扩展名过滤——过滤归 added: 模式）。
+
+    C98-c（st-finaldel-vocabmid-20260930）第五路触发的新增集唯一来源：单次
+    ``git diff --cached --name-only --diff-filter=A``（常态 0-5 个/笔，禁全仓扫描）。
+    S1 同证：tree 视图 run_git 把 --cached 改写为 base..head 两树 diff（_map_diff
+    _KIND_INDEX_TO_TREE），语义=仓库态读，非工作树直读。
+    """
+    try:
+        result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])  # type: ignore[attr-defined]
+        if getattr(result, "returncode", 1) != 0:
+            logger = logging.getLogger(__name__)
+            logger.warning("files_trigger added: 新增集获取失败(rc=%s)——fail-open 按无新增处理。", result.returncode)
+            return []
+        return [f.replace("\\", "/") for f in result.stdout.strip().splitlines() if f]
+    except Exception as e:  # noqa: BLE001 — fail-open（触发面取法失败=按无新增处理，不阻断提交链）
+        logger = logging.getLogger(__name__)
+        logger.warning("files_trigger added: 新增集获取异常(%s: %s)——fail-open 按无新增处理。", type(e).__name__, e)
+        return []
+
+
+def _files_trigger_hit(
+    patterns: tuple[str, ...], files: list[str] | None, added_files: list[str] | None = None
+) -> bool:
+    """P5 条件触发匹配（st-gslim-20260923）：目录前缀 / fnmatch 通配 / 子串。
+
+    C98-c 第五路（st-finaldel-vocabmid-20260930）：``added:`` 前缀模式仅对
+    ``added_files``（本笔 git 新增 A 态集）做同款四路匹配；无前缀模式只看
+    ``files``——不传 added_files 或无 added: 模式时行为与四路版逐字节一致
+    （向后兼容由 test_files_trigger_wiring 钉死）。
+    """
+    if not patterns:
+        return True
+    plain = [p for p in patterns if not p.startswith(ADDED_TRIGGER_PREFIX)]
+    # 空后缀防御过滤（校验层拒收后的纵深）：空串经子串路恒真=形同 always-fire。
+    added_pats = [
+        p[len(ADDED_TRIGGER_PREFIX) :]
+        for p in patterns
+        if p.startswith(ADDED_TRIGGER_PREFIX) and len(p) > len(ADDED_TRIGGER_PREFIX)
+    ]
+    if plain and files:
+        for f in files:
+            rel = str(f).replace("\\", "/")
+            for p in plain:
+                if _trigger_single_hit(rel, p):
+                    return True
+    elif plain and not files and not added_pats:
+        return False  # 有条件但无清单且无 added: 路（原 `if not files: return False` 语义逐字节保留）
+    if added_pats and added_files:
+        for f in added_files:
+            rel = str(f).replace("\\", "/")
+            for p in added_pats:
+                if _trigger_single_hit(rel, p):
+                    return True
     return False
 
 
@@ -339,7 +394,8 @@ class GateSpec:
     priority: int = 100
     # 条件触发（st-gslim-20260923 P5，gate_audit_report_v1 §C5/Owner E6/E7）：非空时
     # 仅当本次提交清单命中任一模式才执行；空=无条件执行（历史行为）。匹配语义：
-    # 目录前缀（尾随 /）/ fnmatch 通配 / 子串（如 ".py"、"schema"）。由
+    # 目录前缀（尾随 /）/ fnmatch 通配 / 子串（如 ".py"、"schema"）＋ C98-c 第五路
+    # `added:` 前缀=仅本笔 git 新增（A 态）文件。由
     # gate_auto_registrar 从 in_process_gate_registry.yaml files_trigger 字段注入。
     files_trigger: tuple[str, ...] = ()
 
@@ -448,8 +504,13 @@ class CommitGateRegistry:
         except Exception:  # noqa: BLE001 — 缓存设施异常=回退全量现算
             cache_ctx = None
         results: list[GateResult] = []
+        # C98-c（st-finaldel-vocabmid-20260930）：added: 第五路的本笔新增集——惰性单次
+        # 计算（常态无门声明 added: → 不付任何 git 调用，向后兼容=逐字节不变）。
+        added_files: list[str] | None = None
+        if any(p.startswith(ADDED_TRIGGER_PREFIX) for s in self._specs.values() for p in s.files_trigger):
+            added_files = _staged_added_files(gateway)
         for spec in sorted(self._specs.values(), key=lambda s: s.priority):
-            if spec.files_trigger and not _files_trigger_hit(spec.files_trigger, files):
+            if spec.files_trigger and not _files_trigger_hit(spec.files_trigger, files, added_files):
                 results.append(
                     GateResult(
                         gate_id=spec.gate_id,

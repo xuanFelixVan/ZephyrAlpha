@@ -95,6 +95,13 @@ class TestGoodTriggers:
             assert auto_register_gates(registry, tmp_path) == []
             assert not registry.get("HELD-OVERLAP").files_trigger
 
+    def test_added_prefix_pattern_registers_and_injects(self, tmp_path: Path) -> None:
+        """C98-c：added: 前缀条目合法且原样注入（第五路=本笔新增态，st-finaldel-vocabmid-20260930）。"""
+        _write_roster(tmp_path, "    files_trigger:\n      - 'added:*.py'\n")
+        registry = CommitGateRegistry()
+        assert auto_register_gates(registry, tmp_path) == []
+        assert registry.get("HELD-OVERLAP").files_trigger == ("added:*.py",)
+
 
 class TestBadTriggersFailClosed:
     """坏 trigger：全部经既有 except 收集 → GateAutoRegistrationError（零新增控制流）。"""
@@ -110,6 +117,8 @@ class TestBadTriggersFailClosed:
         ("control_char", '    files_trigger:\n      - "docs\\tsub"\n', "控制符"),
         ("pure_glob_star", "    files_trigger:\n      - '*'\n", "纯 glob"),
         ("pure_glob_doublestar", "    files_trigger:\n      - '**/*'\n", "纯 glob"),
+        ("added_bare_prefix", "    files_trigger:\n      - 'added:'\n", "缺模式后缀"),
+        ("added_pure_glob_suffix", "    files_trigger:\n      - 'added:**'\n", "纯 glob"),
     ]
 
     @pytest.fixture(autouse=True)
@@ -161,6 +170,15 @@ class TestWarnChannel:
         monkeypatch.setattr(gar, "_head_tracked_relpaths", lambda *a, **k: called.append(1) or None)
         self._register(tmp_path, "")
         assert not called
+
+    def test_added_prefix_pattern_skips_head_tree_warn(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog
+    ) -> None:
+        """C98-c：added: 模式对 HEAD 树静态计数无口径 → 不进死触发/超宽 warn 面（防伪 warn）。"""
+        monkeypatch.setattr(gar, "_head_tracked_relpaths", lambda *_a, **_k: {"src/a.py"})
+        with caplog.at_level(logging.WARNING, logger=gar.logger.name):
+            self._register(tmp_path, "    files_trigger:\n      - 'added:zzz_never_matches'\n")
+        assert not caplog.records  # 旧逻辑会误报死触发（把 added: 后缀当 HEAD 模式数零命中）
 
     def test_git_face_failure_is_silent(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog) -> None:
         """git 面不可用 → warn 通道静默跳过，绝不影响装载（观测不是门禁）。"""

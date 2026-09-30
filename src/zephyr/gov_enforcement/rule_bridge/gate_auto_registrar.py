@@ -127,7 +127,8 @@ def _read_roster(project_root: Path) -> dict[str, Any] | None:
 
 
 # ── files_trigger 注入校验（QMine M5 矿②/st-qmine-20260925，fail-closed）──
-# 消费方语义唯一真源=commit_gate_registry._files_trigger_hit 四路 OR（目录前缀/精确/fnmatch/子串）。
+# 消费方语义唯一真源=commit_gate_registry._files_trigger_hit 匹配 OR
+# （目录前缀/精确/fnmatch/子串＋C98-c 第五路 added:=本笔新增态）。
 _CONTROL_CHARS_RE = re.compile(r"[\x00-\x1f\x7f]")
 #: 纯 glob 字符集——条目字符全部落在此集（如 `*`/`**/*`）=fnmatch 恒真，P5 条件触发形同虚设。
 _GLOB_ONLY_CHARS = frozenset("*/?[]!")
@@ -138,11 +139,15 @@ _OVERWIDE_WARN_THRESHOLD = 1000
 def _validate_files_trigger(gate_id: str, ft: object) -> tuple[str, ...]:
     """files_trigger 注入校验，非法抛 ValueError（fail-closed，QMine M5 矿②）。
 
-    合法定义（对齐 _files_trigger_hit 四路匹配语义）：缺省/null/空 list（=always-fire，
+    合法定义（对齐 _files_trigger_hit 匹配语义）：缺省/null/空 list（=always-fire，
     消费侧 `not patterns: return True` 同义，合法）｜list[str] 且每条：非空、无边缘空白、
     无反斜杠（名册 canonical 强制 posix）、无控制符（\\n\\r\\t 等，YAML 多行事故面）、
     非纯 glob 字符集（恒真=触发面爆炸）。非 list 标量（dict/int/str…）一律拒收——
     替换旧 `(str(ft),)` 静默 coercion（册侧笔误→触发面静默漂移，变小方向=门禁静默免检）。
+
+    C98-c（st-finaldel-vocabmid-20260930）：``added:`` 前缀条目合法（第五路=本笔
+    git 新增 A 态文件匹配，commit_gate_registry.ADDED_TRIGGER_PREFIX 同源）——
+    后缀按同款规则校验（空后缀/纯 glob 后缀仍拒收）；无前缀条目校验行为逐字节不变。
 
     Raises:
         ValueError: 任一结构违例——调用位在 auto_register_gates 既有 try 块内，异常流入
@@ -155,6 +160,10 @@ def _validate_files_trigger(gate_id: str, ft: object) -> tuple[str, ...]:
     non_str = [type(p).__name__ for p in ft if not isinstance(p, str)]
     if non_str:
         raise ValueError(f"files_trigger 含非 str 条目: {non_str[:5]}")
+    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC0415
+        ADDED_TRIGGER_PREFIX,
+    )
+
     for p in ft:
         if not p or p.strip() != p:
             raise ValueError(f"files_trigger 条目为空串或带边缘空白: {p!r}")
@@ -162,7 +171,10 @@ def _validate_files_trigger(gate_id: str, ft: object) -> tuple[str, ...]:
             raise ValueError(f"files_trigger 条目含反斜杠（名册 canonical 强制 posix）: {p!r}")
         if _CONTROL_CHARS_RE.search(p):
             raise ValueError(f"files_trigger 条目含控制符（YAML 多行事故面）: {p!r}")
-        if set(p) <= _GLOB_ONLY_CHARS:
+        body = p[len(ADDED_TRIGGER_PREFIX) :] if p.startswith(ADDED_TRIGGER_PREFIX) else p
+        if not body:
+            raise ValueError(f"files_trigger added: 前缀条目缺模式后缀: {p!r}")
+        if set(body) <= _GLOB_ONLY_CHARS:
             raise ValueError(f"files_trigger 条目为纯 glob 字符集（恒真=条件触发形同虚设）: {p!r}")
     return tuple(ft)
 
@@ -205,13 +217,23 @@ def _warn_suspect_triggers(entries: list[dict[str, Any]], project_root: Path) ->
     模式）；超宽=命中文件数 ≥ _OVERWIDE_WARN_THRESHOLD（近 always-fire）。git 面不可用=静默
     跳过；本函数绝不 raise、绝不阻断装载。
     """
+    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC0415
+        ADDED_TRIGGER_PREFIX,
+    )
+
     triggered: list[tuple[str, str]] = []
     for entry in entries:
         if not entry.get("enabled", True):
             continue
         ft = entry.get("files_trigger")
         if isinstance(ft, list):
-            triggered.extend((str(entry.get("gate_id", "?")), p) for p in ft if isinstance(p, str))
+            # added: 前缀（C98-c）不进本通道：HEAD 树静态命中数对"本笔新增态"事件条件
+            # 无口径（死触发/超宽判据均不适用），静默跳过防伪 warn。
+            triggered.extend(
+                (str(entry.get("gate_id", "?")), p)
+                for p in ft
+                if isinstance(p, str) and not p.startswith(ADDED_TRIGGER_PREFIX)
+            )
     if not triggered:
         return
     tracked = _head_tracked_relpaths(project_root)

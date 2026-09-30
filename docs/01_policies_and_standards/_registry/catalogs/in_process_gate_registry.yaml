@@ -644,7 +644,7 @@ gates:
   register_line: 0  # priority=47；2026-08-23 陈旧快照覆写事故治本（claim_head 锚点 vs 当前 HEAD：热文件上游已推进则阻断，与 safe_write_text CAS 文件级防线互补）
   enabled: true
 - gate_id: STATE-VOCAB-REGISTRY
-  files_trigger: ["src/zephyr/shared/vocab/", "docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#2)=词表真源前缀+册精确路径（HEAD 实测 9374→3；warn-only 门阻断面恒零，真源域检出防护保留）
+  files_trigger: ["src/zephyr/shared/vocab/", "docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml", "added:*.py"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#2)+C98-c 中间方案扩展(st-finaldel-vocabmid-20260930)=词表真源前缀+册精确路径+本笔新增*.py（added: 第五路=仅本笔 git 新增 A 态文件 fnmatch，修 redblue §3.4 观测通道回归：vocab 目录外新增词表类提交必触发门；HEAD 静态面维持 3，新增面常态 0-5 文件/笔近零成本）
   module_path: zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate
   factory_function: make_state_vocab_registry_gate
   source: in_process
