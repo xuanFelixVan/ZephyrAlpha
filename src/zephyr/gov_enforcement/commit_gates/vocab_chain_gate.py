@@ -86,6 +86,11 @@ _EXEMPT_PATH_FRAGMENTS = (
     "governance\\commit_gates\\",
     "governance/generators/",
     "governance\\generators\\",
+    # d5_architecture 生成器同属「本就处理 SSoT 路径」类（generate_connection_matrix 读
+    # catalogs 三册作数据源）；ulib3 T10 同理扩展（st-matrix-revive12 补豁免缺口：
+    # 原 _EXEMPT_PATH_FRAGMENTS 有 validators/ 无 generators/）
+    "governance/d5_architecture/generators/",
+    "governance\\d5_architecture\\generators\\",
     "governance/d3_metadata/",
     "governance\\d3_metadata\\",
     "governance/d5_architecture/validators/",
