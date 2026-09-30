@@ -76,13 +76,14 @@ tier: tier_2_data_runtime
 status: active
 version: 1.9.8
 created: '2026-08-13'
-last_updated: '2026-09-14'
+last_updated: '2026-10-01'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 18, datasets: 293, jobs: 122}  # 2026-09-14 v1.9.3：+DS-241/242 +JOB-106/107（C-1 消费端首批：sentiment_panel+alt_regime_signal）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+entry_counts: {sources: 18, datasets: 334, jobs: 122}  # 2026-09-14 v1.9.3：+DS-241/242 +JOB-106/107（C-1 消费端首批：sentiment_panel+alt_regime_signal）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
+# W1 册面接线批 changelog(2026-10-01, st-datasop-20260930): +DS-306~345 补注册 40 张（P0 12 张 §2+P1 28 张 §3，CH 2026-10-01 system.tables 行数实测；SRC 回填核括号已核实去除）；幽灵降级 13（DS-029~039/DS-224/DS-225→candidate+degradation_note）；production 幽灵实体名锚定校正 2（DS-084→c1_market.index_constituent、DS-085→c1_market.st_stock_list，方案A）；DS-123 CH 复验 close≠0=99.50%/max(trade_date)=2026-09-30→撤黑名单复登 active；DS-237 断供标注；SRC-OKX-001 尾 13 字段补全（degraded）；entry_counts 机械重算 datasets 293（账面）→334（实测 294+40，消存量漂移；W1 工单快照基线，T1-B6 删块已经由总筹 merge session/st-menu-t1b6-20260930 落 dev，不在本批）
 
 # v1.9.8 changelog(2026-09-16): C4 历史修复双轨重建——+DS-275 c3_fundamental.consensus_daily_repaired
 #   （研报 PDF 原文提取的**发布时点** EPS 重建一致预期历史，治 §9 档案「历史快照=今天的预期回放」污染；
@@ -697,6 +698,19 @@ sources:
   module_id: MOD-L00-004
   doc_ref: docs/_working/2026-09-11-crypto-shadow-mvp.md
   code_path: src/zephyr/data/implementations/crypto_provider.py
+  status: degraded
+  version: 1.0.0
+  created_at: '2026-09-11'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["market"]
+  tags: ["加密", "行情"]
+  algorithm_status: "not_applicable"
+  evidence: ""
+  code_symbol:
+  code_fingerprint:
+  degradation_note: "2026-09-11 实测跨境不可达；下游 DS-226 crypto_kline_daily 存活（18952 行，produced_by_source=SRC-INTERNAL-001 与本源 provides_datasets=[DS-226] 互指矛盾待裁）；恢复采集前维持 degraded"
 
 # 2026-09-12 另类数据第 1 批：akshare 免注册直连另类源（千股千评/航运运价，独立 provider 成件）
 - source_id: SRC-AKSHARE-ALT-001
@@ -1799,7 +1813,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.correlation_analyzer
   name_zh: 因子间相关系数矩阵
-  status: active
+  status: candidate
+  degradation_note: "factor_analysis 六件套注册时仅设计态，CH 无物理表，降级待物化"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -1835,7 +1850,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.correlation_dedup
   name_zh: 去重后的因子集合
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -1871,7 +1887,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.decay_monitor
   name_zh: 因子衰减报告
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -1907,7 +1924,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.factor_attribution
   name_zh: 因子归因报告
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -1943,7 +1961,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.factor_optimization
   name_zh: 优化后的因子权重
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -1979,7 +1998,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.ic_decay
   name_zh: IC衰减曲线
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -2015,7 +2035,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.ic_ir_calc
   name_zh: IC/IR指标序列
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -2051,7 +2072,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.ic_ir_evaluator
   name_zh: IC/IR评估报告
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -2087,7 +2109,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.layered_backtest
   name_zh: 分层回测结果
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -2123,7 +2146,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.multifactor_synthesis
   name_zh: 合成因子信号
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -2159,7 +2183,8 @@ datasets:
   design_maturity: production
   name: factor_analysis.three_level_judgment
   name_zh: 三级研判结果
-  status: active
+  status: candidate
+  degradation_note: "同 DS-029"
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
@@ -3758,7 +3783,7 @@ datasets:
   code_fingerprint:
 
 - dataset_id: DS-084
-  entity_name: meta.index_member
+  entity_name: c1_market.index_constituent
   entity_type: dataset
   scope: production
   contract_ref:
@@ -3772,7 +3797,7 @@ datasets:
   valid_since: '2020-01-01'
   module_id: MOD-L00-004
   design_maturity: design
-  name: meta.index_member
+  name: c1_market.index_constituent
   name_zh: 指数成分
   status: production
   version: 1.0.0
@@ -3797,7 +3822,7 @@ datasets:
   code_fingerprint:
 
 - dataset_id: DS-085
-  entity_name: meta.st_status
+  entity_name: c1_market.st_stock_list
   entity_type: dataset
   scope: production
   contract_ref:
@@ -3806,11 +3831,11 @@ datasets:
   consumed_by_jobs: []
   domain_id: D_MARKET
   pit_policy: strict
-  format_summary: 历史 ST/*ST 状态标记（戴帽/摘帽日期），universe 过滤与涨跌停幅度（5%）判定必需
+  format_summary: 历史 ST/*ST 状态标记（戴帽/摘帽日期），universe 过滤与涨跌停幅度（5%）判定必需；派生历史段=data_source=tushare_namechange_derived
   valid_since: '2020-01-01'
   module_id: MOD-L00-004
   design_maturity: design
-  name: meta.st_status
+  name: c1_market.st_stock_list
   name_zh: ST 状态
   status: production
   version: 1.0.0
@@ -5319,10 +5344,10 @@ datasets:
   design_maturity: production
   name: c1_market.daily_valuation
   name_zh: 每日估值
-  status: degraded
+  status: active
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-12"
+  updated_at: '2026-10-01'
   owner: MOD-L00-004
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: unknown
@@ -5336,7 +5361,7 @@ datasets:
   applies_to:
   - stock
   - market
-  degradation_note: "2026-09-12 白班抽检：整表 close/volume/amount 全 0（600519 近 3 日与全表近 30 天 131168 行 100% close=0，全表无一行非零 close）——采集管道产空壳，禁消费；健康替代=stock_indicator（估值倍数）+kline_daily_hfq（行情）。修复前 status 维持 degraded（数据质量黑名单，巡检器跟踪）；【2026-09-12 晚班修复：本 note 插入位置曾截断 applies_to 列表致全文件 YAML 解析失败，已按最小改动恢复列表顺序——白班会话请知悉】"
+  degradation_note: "2026-09-12 白班抽检：整表 close/volume/amount 全 0（600519 近 3 日与全表近 30 天 131168 行 100% close=0，全表无一行非零 close）——采集管道产空壳，禁消费；健康替代=stock_indicator（估值倍数）+kline_daily_hfq（行情）。修复前 status 维持 degraded（数据质量黑名单，巡检器跟踪）；【2026-09-12 晚班修复：本 note 插入位置曾截断 applies_to 列表致全文件 YAML 解析失败，已按最小改动恢复列表顺序——白班会话请知悉】；2026-10-01 W1 CH 复验：全表 273847 行中 close≠0 共 272485 行（99.50%），max(trade_date)=2026-09-30——空壳已修复，撤黑名单复登 active（巡检器继续跟踪）"
   tags:
   - 数据
   - 行情
@@ -9538,7 +9563,8 @@ datasets:
   design_maturity: production
   name: governance.ig_industry_graph
   name_zh: 产业链图谱（ig_* 四表族）
-  status: active
+  status: candidate
+  degradation_note: "W1 复核：physical_type=postgres_table（depgraph PG），非 CH 表，本次 CH 排查不含 PG——降级候选，PG 侧复验四表族存活后可回升 active"
   version: 1.0.0
   created_at: "2026-09-11"
   updated_at: "2026-09-11"
@@ -9583,7 +9609,8 @@ datasets:
   design_maturity: testing
   name: intelligence.chain_impact_stream
   name_zh: 盘中事件冲击流
-  status: active
+  status: candidate
+  degradation_note: "派生流视图（无物理表为设计态），降级候选；若 api_server /api/chain-impact-stream 仍在用，改登 job/endpoint 资产而非 dataset"
   version: 0.1.0
   created_at: "2026-09-11"
   updated_at: "2026-09-11"
@@ -10045,8 +10072,9 @@ datasets:
   name: c1_market.alt_sz_weather_warning
   name_zh: 深圳灾害天气预警信号流
   status: degraded
+  degradation_note: "2026-10-01 W1 断供标注：源平台 2020-09-23 后止更是既定断供（非临时故障），CH 现存 10026 行历史档案，仅限历史事件窗研究，禁当活跃流消费"
   created_at: "2026-09-14"
-  updated_at: "2026-09-14"
+  updated_at: '2026-10-01'
   owner: MOD-L00-004
   produced_by_source: SRC-SZOPENDATA-001
   survivorship_free: true
@@ -11932,6 +11960,1447 @@ datasets:
   evidence: ''
   code_symbol: null
   code_fingerprint: null
+
+- dataset_id: DS-306
+  entity_name: c1_market.tick_depth_5
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: tick_depth_writer.py
+  consumed_by_jobs: [calendar_coverage_checker.py, qmt_bridge_provider.py]
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: "五档 tick 深度（CH 实测 130143451 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.tick_depth_5
+  name_zh: 五档 tick 深度
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-QMT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-307
+  entity_name: c1_market.emotion_index
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_data/emotion_index_builder.py
+  consumed_by_jobs: [alt_data/emotion_index_replay.py]
+  domain_id: D_SENT
+  pit_policy: strict
+  format_summary: "情绪指数（CH 实测 8655 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.emotion_index
+  name_zh: 情绪指数
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "情绪"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-308
+  entity_name: c1_market.board_index_tick
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_data/board_index_supply.py
+  consumed_by_jobs: [alt_data/board_index_supply.py]
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: "板指 tick（CH 实测 1533258 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.board_index_tick
+  name_zh: 板指 tick
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-QMT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-309
+  entity_name: c1_market.sector_state
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: data/sector_state_pipeline.py
+  consumed_by_jobs: [l9_readiness_aggregator.py, scheduler.py]
+  domain_id: D_SECTOR
+  pit_policy: strict
+  format_summary: "板块状态（CH 实测 429901 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sector_state
+  name_zh: 板块状态
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [sector, market]
+  tags: ["数据", "板块"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-310
+  entity_name: c1_market.sector_preference
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: data/sector_state_pipeline.py
+  consumed_by_jobs: [signal_ashare/sector/sector_state_aggregator.py]
+  domain_id: D_SECTOR
+  pit_policy: strict
+  format_summary: "板块偏好（CH 实测 4 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sector_preference
+  name_zh: 板块偏好
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [sector, market]
+  tags: ["数据", "板块"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-311
+  entity_name: c1_market.sector_fund_flow
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: implementations/sector_fund_flow_collector.py
+  consumed_by_jobs: [policy_theme_mapper.py, sector_factor_manager.py]
+  domain_id: D_MFLOW
+  pit_policy: strict
+  format_summary: "板块资金流（CH 实测 6490 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sector_fund_flow
+  name_zh: 板块资金流
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [sector, market]
+  tags: ["数据", "板块"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-312
+  entity_name: c1_market.sector_constituent_snapshot
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_data/board_index_supply.py
+  consumed_by_jobs: [alt_data/board_index_supply.py]
+  domain_id: D_SECTOR
+  pit_policy: strict
+  format_summary: "板块成分快照（CH 实测 962741 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sector_constituent_snapshot
+  name_zh: 板块成分快照
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [sector, market]
+  tags: ["数据", "板块"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-313
+  entity_name: c1_market.sector_constituent_sw_history
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: scripts/governance/meta_question/wo_a2legs/backfill_sw_member_history.py
+  consumed_by_jobs: []
+  domain_id: D_SECTOR
+  pit_policy: strict
+  format_summary: "申万成分历史（CH 实测 46133 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sector_constituent_sw_history
+  name_zh: 申万成分历史
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [sector, market]
+  tags: ["数据", "板块"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）；grep 无 src 消费（research 用）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-314
+  entity_name: c1_backtest.regime_state_anchored
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: implementations/internal_compute_provider.py
+  consumed_by_jobs: [pf_alloc/allocation_inputs.py, regime/core/anchored_state_machine.py]
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "锚定状态机快照（CH 实测 2242 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.regime_state_anchored
+  name_zh: 锚定状态机快照
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-315
+  entity_name: c1_backtest.strategy_screen
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: pf_alloc/core/strategy_screener_3d.py
+  consumed_by_jobs: [strategy_pipeline/screen_source.py, frontend/dashboard/api_server.py]
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "策略筛选结果（CH 实测 1389 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.strategy_screen
+  name_zh: 策略筛选结果
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-316
+  entity_name: c1_market.limit_up_pool
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: implementations/limit_up_pool_collector.py
+  consumed_by_jobs: [sector_state_pipeline.py, daban_board_event_deriver.py]
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: "涨停池（CH 实测 1276 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.limit_up_pool
+  name_zh: 涨停池
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-317
+  entity_name: c3_fundamental.news_sentiment_score
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: scripts/governance/meta_question/wo_a2legs/backfill_news_sentiment.py
+  consumed_by_jobs: [scripts/governance/meta_question/wo_a2legs/build_news_sentiment_window.py]
+  domain_id: D_SENT
+  pit_policy: strict
+  format_summary: "新闻情感分（CH 实测 7733898 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c3_fundamental.news_sentiment_score
+  name_zh: 新闻情感分
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock, market]
+  tags: ["数据", "情绪"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §2.1）；消费方=同目录 build_news_sentiment_window.py（同目录已解析为 wo_a2legs）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-318
+  entity_name: c1_market.cftc_positioning
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_alt_provider.py
+  consumed_by_jobs: []
+  domain_id: D_POS
+  pit_policy: strict
+  format_summary: "CFTC 持仓（CH 实测 81270 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.cftc_positioning
+  name_zh: CFTC 持仓
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "仓位"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-319
+  entity_name: c1_market.agri_wholesale_index
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_alt_provider.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "农批指数（CH 实测 23254 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.agri_wholesale_index
+  name_zh: 农批指数
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-320
+  entity_name: c1_market.commodity_futures_main
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: apply_cross_asset_ddl.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "商品期货主连（CH 实测 189 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.commodity_futures_main
+  name_zh: 商品期货主连
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-321
+  entity_name: c1_market.commodity_spot_price
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: apply_cross_asset_ddl.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "商品现货价（CH 实测 1134 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.commodity_spot_price
+  name_zh: 商品现货价
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-322
+  entity_name: c1_market.ndrc_fuel_price
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_alt_provider.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "发改委油价（CH 实测 660 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.ndrc_fuel_price
+  name_zh: 发改委油价
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-323
+  entity_name: c1_market.road_freight_index
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_alt_provider.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "公路运价（CH 实测 86 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.road_freight_index
+  name_zh: 公路运价
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-324
+  entity_name: c1_market.gold_etf_holdings
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: apply_cross_asset_ddl.py
+  consumed_by_jobs: []
+  domain_id: D_POS
+  pit_policy: strict
+  format_summary: "黄金ETF持仓（CH 实测 2871 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.gold_etf_holdings
+  name_zh: 黄金ETF持仓
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "仓位"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-325
+  entity_name: c1_market.rate_decision_calendar
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_provider.py
+  consumed_by_jobs: [supply_sentinel.py]
+  domain_id: D_MACRO
+  pit_policy: partial
+  format_summary: "议息日历（CH 实测 6172 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.rate_decision_calendar
+  name_zh: 议息日历
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-326
+  entity_name: c1_market.macro_data_vintage
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: data/macro_vintage.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "宏观初值修正（CH 实测 16091 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.macro_data_vintage
+  name_zh: 宏观初值修正
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-327
+  entity_name: c1_market.futures_warehouse_receipt
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_alt_provider.py
+  consumed_by_jobs: [supply_sentinel.py]
+  domain_id: D_POS
+  pit_policy: strict
+  format_summary: "仓单（CH 实测 2920363 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.futures_warehouse_receipt
+  name_zh: 仓单
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "仓位"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-328
+  entity_name: c1_market.option_daily_stats
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: scripts/backfill_option_daily_stats.py
+  consumed_by_jobs: []
+  domain_id: D_MKT
+  pit_policy: partial
+  format_summary: "期权日统计（CH 实测 11544 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.option_daily_stats
+  name_zh: 期权日统计
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；SRC 回填核已核实（脚本在盘且走 akshare）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-329
+  entity_name: c3_fundamental.ex_dividend_event
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_MKT
+  pit_policy: partial
+  format_summary: "除权除息事件（CH 实测 57864 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c3_fundamental.ex_dividend_event
+  name_zh: 除权除息事件
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=c3_fundamental 批量管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-330
+  entity_name: c1_market.index_adjustment
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_MKT
+  pit_policy: partial
+  format_summary: "指数调整（CH 实测 15196 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.index_adjustment
+  name_zh: 指数调整
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=index 批量管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-331
+  entity_name: c1_market.sector_code_name_map
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: implementations/sector_code_bridge.py
+  consumed_by_jobs: []
+  domain_id: D_SECTOR
+  pit_policy: strict
+  format_summary: "板块码表（CH 实测 1198 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.sector_code_name_map
+  name_zh: 板块码表
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "板块"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-332
+  entity_name: c1_market.l9_readiness_daily
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: l9_readiness_aggregator.py
+  consumed_by_jobs: [pf_alloc/allocation_inputs.py]
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "L9 就绪度（CH 实测 156 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.l9_readiness_daily
+  name_zh: L9 就绪度
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-333
+  entity_name: c3_fundamental.ir_activity_extracted
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_FCT
+  pit_policy: partial
+  format_summary: "IR 活动抽取（CH 实测 30 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c3_fundamental.ir_activity_extracted
+  name_zh: IR 活动抽取
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "因子"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=LLM 抽取管道（与 DS-302 记录表分置）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-334
+  entity_name: c3_fundamental.irm_interactive_extracted
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_FCT
+  pit_policy: partial
+  format_summary: "IRM 问答抽取（CH 实测 74 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c3_fundamental.irm_interactive_extracted
+  name_zh: IRM 问答抽取
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "因子"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=LLM 抽取管道（与 DS-303 分置）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-335
+  entity_name: c1_market.account_nav_daily
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_PERF
+  pit_policy: strict
+  format_summary: "账户净值日（CH 实测 1 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.account_nav_daily
+  name_zh: 账户净值日
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "绩效"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=交易记录管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-336
+  entity_name: c1_market.execution_report
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_EXEC
+  pit_policy: strict
+  format_summary: "成交回报（CH 实测 1 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.execution_report
+  name_zh: 成交回报
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "执行"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=交易记录管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-337
+  entity_name: c1_backtest.sim_attribution_daily
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "归因日（CH 实测 122 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.sim_attribution_daily
+  name_zh: 归因日
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=c1_backtest sim 管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-338
+  entity_name: c1_backtest.sim_daily_report
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "仿真日报（CH 实测 256 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.sim_daily_report
+  name_zh: 仿真日报
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=c1_backtest sim 管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-339
+  entity_name: c1_backtest.sim_trade_log
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "仿真成交流水（CH 实测 85 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.sim_trade_log
+  name_zh: 仿真成交流水
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=c1_backtest sim 管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-340
+  entity_name: c1_backtest.cohort_daily_ledger
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: alt_data/cohort_daily_ledger.py
+  consumed_by_jobs: []
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "队列日账（CH 实测 221 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.cohort_daily_ledger
+  name_zh: 队列日账
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-341
+  entity_name: c1_backtest.hypothesis_precheck
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "假设预检（CH 实测 309 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_backtest.hypothesis_precheck
+  name_zh: 假设预检
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；produced_by_job=null：产线证据=c1_backtest 管道"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-342
+  entity_name: c1_market.daban_board_event
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: implementations/daban_board_event_deriver.py
+  consumed_by_jobs: [alt_data/emotion_index_builder.py]
+  domain_id: D_MKT
+  pit_policy: strict
+  format_summary: "打板事件（CH 实测 3106 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.daban_board_event
+  name_zh: 打板事件
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-ALT-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-343
+  entity_name: c1_market.alt_fx_rate_ecb
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: implementations/fx_ecb_provider.py
+  consumed_by_jobs: []
+  domain_id: D_MACRO
+  pit_policy: strict
+  format_summary: "ECB 汇率（CH 实测 93 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.alt_fx_rate_ecb
+  name_zh: ECB 汇率
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: 
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "宏观"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；ECB 直连，produced_by_source 留空（工单 §3 注）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-344
+  entity_name: c1_market.etf_benchmark
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: akshare_provider.py
+  consumed_by_jobs: [frontend/dashboard/api_server.py]
+  domain_id: D_MKT
+  pit_policy: strict
+  format_summary: "ETF 基准（CH 实测 2373 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.etf_benchmark
+  name_zh: ETF 基准
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "行情"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-345
+  entity_name: c1_market.market_pattern_certification
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: internal_compute_provider.py
+  consumed_by_jobs: [pattern_evidence_certifier.py]
+  domain_id: D_SIG
+  pit_policy: strict
+  format_summary: "形态认证（CH 实测 68 行，2026-10-01 system.tables）"
+  valid_since: '2026-10-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: c1_market.market_pattern_certification
+  name_zh: 形态认证
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-01'
+  updated_at: '2026-10-01'
+  owner: MOD-L00-004
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: true
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: 'N/A'
+  lookahead_test_method: 'N/A'
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [market]
+  tags: ["数据", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）"
+  code_symbol:
+  code_fingerprint:
 
 jobs:
 - job_id: JOB-001

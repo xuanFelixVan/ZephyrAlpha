@@ -687,7 +687,7 @@ tiers:
         entry_count: 102
         counting_rule: indicators 数组条目数
         status: draft
-        description: 技术指标唯一真源（SSoT）——5 大类（trend/momentum/volatility/volume/reversal）40 条 58 输出列 + 2026-08-14 补登 IND-COMP-001 Ichimoku 一目均衡表（composite 类，5 输出列）= 41 条，覆盖 1min~月线 9 周期（120min 由 60min 聚合）。Step1-8 全量闭环（2026-08-13，AI-REG-IND-001）。#ARCH-BREG-001 P1-A
+        description: 技术指标唯一真源（SSoT）——5 大类（trend/momentum/volatility/volume/reversal）40 条 58 输出列 + 2026-08-14 补登 IND-COMP-001 Ichimoku 一目均衡表（composite 类，5 输出列）= 102 条（与本块 entry_count=102 对齐，2026-10-01 修账；"41 条"为 2026-08-14 历史快照），覆盖 1min~月线 9 周期（120min 由 60min 聚合）。Step1-8 全量闭环（2026-08-13，AI-REG-IND-001）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-PAT-001
@@ -716,8 +716,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 342
-        counting_rule: 含 deprecated 全量（物理 yaml 条目数=datasets 数组，2026-09-21 实测；A14 生成器口径批 264→342）
+        entry_count: 334
+        counting_rule: 含 deprecated 全量（物理 yaml 条目数=datasets 数组，2026-09-21 实测；A14 生成器口径批 264→342）；2026-10-01 复测 datasets=334（W1 补注册 40 张后机械重算，与 check_registry_consistency 口径一致；三实体合计 474=sources 18+datasets 334+jobs 122，供总览参考）
         status: active
         description: 数据资产唯一真源（SSoT）——三实体模型（sources/datasets/jobs，对标 OpenLineage Source/Dataset/Job）。sources 15 个外部/内部数据源 + datasets 102 条 + jobs 82 条（DS-001~102/JOB-001~082 稳定编号；2026-08-14 v1.2.0 对标聚宽 JQData/quant666 补登 22 数据集+6 管道：市场约束/基本面/公司行动事件/资金面/中国宏观/申万行业）。S6 裁定改名扩展自 dataflow_graph_registry.yaml（registry_id/module_id 保留，稳定标识符不断）。#ARCH-BREG-001 P1-B
         owned_by: governance

@@ -78,7 +78,13 @@ nodes:
   algo_refs: []
   module_ref:
   red_reason: terminal
-  strategy_mounts: []
+  strategy_mounts:
+  - strategy_ref: STR-MULTIFACTOR-098
+    confidence: proposed   # 双窗及格但 BH-FDR 未过，candidate 留观
+    evidence: "IS SR=0.518/OOS SR=0.156 run=C4-OOS-2024-2026；CH strategy_screen 5行 oos_tested(CAND-5301c5d9d7c8)"
+  - strategy_ref: STR-MULTIFACTOR-099
+    confidence: proposed   # 双窗及格但 BH-FDR 未过，candidate 留观
+    evidence: "IS SR=0.397/OOS SR=0.404 run=C4-OOS-2024-2026；CH strategy_screen 5行 oos_tested(CAND-8664521af1a0)"
   materiality: normal
   decay_scan_frequency: semiannual
 
@@ -99,7 +105,10 @@ nodes:
   algo_refs: []
   module_ref:
   red_reason: terminal
-  strategy_mounts: []
+  strategy_mounts:
+  - strategy_ref: STR-VREV-001
+    confidence: proposed   # 家族替身证据：考试主体=同族代表（同台账键），卡级独立回测未跑
+    evidence: "家族替身 Sharpe=1.15 DSR=0.5309 run=SCR-C4-20260913-002056；CH strategy_screen 7行 oos_tested(CAND-e3da6fa71af1 同键)；挂 TDM-X-FLOW 离场信号"
   materiality: normal
   decay_scan_frequency: semiannual
 
@@ -120,7 +129,13 @@ nodes:
   algo_refs: []
   module_ref:
   red_reason: terminal
-  strategy_mounts: []
+  strategy_mounts:
+  - strategy_ref: STR-MULTIFACTOR-098
+    confidence: proposed   # 双窗及格但 BH-FDR 未过，candidate 留观
+    evidence: "IS SR=0.518/OOS SR=0.156 run=C4-OOS-2024-2026；CH strategy_screen 5行 oos_tested(CAND-5301c5d9d7c8)"
+  - strategy_ref: STR-MULTIFACTOR-099
+    confidence: proposed   # 双窗及格但 BH-FDR 未过，candidate 留观
+    evidence: "IS SR=0.397/OOS SR=0.404 run=C4-OOS-2024-2026；CH strategy_screen 5行 oos_tested(CAND-8664521af1a0)"
   materiality: normal
   decay_scan_frequency: semiannual
 
@@ -307,6 +322,15 @@ nodes:
   - {strategy_ref: STR-VREV-027, confidence: verified, evidence: 'auto_mount IS 2020-01-01..2023-12-31
       states=accumulation+capitulation; accumulation=+2.89(159d); capitulation=+2.90(73d);
       code=scripts/backtest/transl'}
+  - strategy_ref: STR-E-TIMING-001
+    confidence: verified
+    evidence: "三窗全绿 IS1.15/OOS0.83/S3 0.98 run=SCR-C4-OOS2-20260913；CH strategy_screen 7行 oos_tested(CAND-e3da6fa71af1)；sim_trade_log 17笔 sim_daily 2026-09-15~10-01 在考"
+  - strategy_ref: STR-MOMTREND-002
+    confidence: proposed   # 家族替身（pilot_002 MA5/10金叉）
+    evidence: "家族替身 IS Sharpe=1.08 run=SCR-C4-20260913-002056；CH strategy_screen 2行 screened_in(CAND-b1ab42050d68)"
+  - strategy_ref: STR-MOMTREND-019
+    confidence: proposed   # 家族替身（趋势交易5.0），替身 IS 负分但 CH 复考正分
+    evidence: "CH strategy_screen 7行 oos_tested(CAND-a4543012b464) max is_sharpe=0.795；替身 IS -0.308→以 CH 复考为准"
   materiality: critical
   decay_scan_frequency: monthly
 
@@ -1412,6 +1436,9 @@ nodes:
   - {strategy_ref: eventdriven-sleeve, confidence: proposed, evidence: null}
   - {strategy_ref: topn-momentum, confidence: proposed, evidence: null}
   - {strategy_ref: default-equity, confidence: proposed, evidence: null}
+  - strategy_ref: STR-VREV-001
+    confidence: proposed   # 家族替身证据：考试主体=同族代表（同台账键），卡级独立回测未跑
+    evidence: "家族替身 Sharpe=1.15 DSR=0.5309 run=SCR-C4-20260913-002056；CH strategy_screen 7行 oos_tested(CAND-e3da6fa71af1 同键)"
 
   # ── E-L3 血肉 v1.5（D28：8 树枝 14 节点；策略库 12 条选股规则上图；调研=RankGLU/Learning-to-Rank/Value-Screen 四层流水线/Progressive 5-Stage Funnel/三套 A股条件表）──
   # 两新增（Owner 确认）：05 顺位排序（全市场顺位：妖>龙>中军>核心>趋势>跟风+加分项）、06 环境开关（水温/情绪档→选股链启停，首板筛选器实证：两市成交<8000 亿首板链暂停）

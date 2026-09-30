@@ -1894,3 +1894,126 @@ modules:
   domain: D_TRADING
   wiring_class: pure_library
   wiring_status: exempt
+
+consumption_islands:
+- entity_id: MAC-CN-001
+  family: macro
+  wiring_status: unwired
+  value_score: 2.3
+  suggested_wiring_target: regime/regime_cycle_analyzer.py 或 plan_engine 隔夜链（CNS-04 宏观族总裁决）
+  booked_at: '2026-09-29'
+- entity_id: MAC-CN-002
+  family: macro
+  wiring_status: unwired
+  value_score: 2.3
+  suggested_wiring_target: regime/regime_cycle_analyzer.py 或 plan_engine 隔夜链（CNS-04 宏观族总裁决）
+  booked_at: '2026-09-29'
+- entity_id: MAC-CN-003
+  family: macro
+  wiring_status: unwired
+  value_score: 2.3
+  suggested_wiring_target: regime/regime_cycle_analyzer.py 或 plan_engine 隔夜链（CNS-04 宏观族总裁决）
+  booked_at: '2026-09-29'
+- entity_id: MAC-CN-010
+  family: macro
+  wiring_status: unwired
+  value_score: 2.3
+  suggested_wiring_target: regime/regime_cycle_analyzer.py 或 plan_engine 隔夜链（CNS-04 宏观族总裁决）
+  booked_at: '2026-09-29'
+- entity_id: STR-VREV-018
+  family: strategy
+  wiring_status: unwired
+  value_score: 2.3
+  suggested_wiring_target: TDM nodes[].strategy_mounts（族⑦→执行路径）
+  booked_at: '2026-09-29'
+- entity_id: STR-VREV-019
+  family: strategy
+  wiring_status: unwired
+  value_score: 2.3
+  suggested_wiring_target: TDM nodes[].strategy_mounts（族⑦→执行路径）
+  booked_at: '2026-09-29'
+- entity_id: FCT-EXP-001
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-EXP-003
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-EXP-004
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-EXP-005
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-FQ-005
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-FQ-006
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-GR-001
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-GR-002
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: FCT-QUAL-002
+  family: factor
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/pf_core/strategies/ 挂载 + TDM factor_refs（CNS-09）
+  booked_at: '2026-09-29'
+- entity_id: IND-CHIPS-001
+  family: indicator
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/factor/indicator_reader.py PIT 白名单 → factor/analysis/multifactor_synthesis.py（CNS-01）
+  booked_at: '2026-09-29'
+- entity_id: IND-CHIPS-002
+  family: indicator
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/factor/indicator_reader.py PIT 白名单 → factor/analysis/multifactor_synthesis.py（CNS-01）
+  booked_at: '2026-09-29'
+- entity_id: IND-CHIPS-003
+  family: indicator
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/factor/indicator_reader.py PIT 白名单 → factor/analysis/multifactor_synthesis.py（CNS-01）
+  booked_at: '2026-09-29'
+- entity_id: IND-CHIPS-004
+  family: indicator
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/factor/indicator_reader.py PIT 白名单 → factor/analysis/multifactor_synthesis.py（CNS-01）
+  booked_at: '2026-09-29'
+- entity_id: IND-CHIPS-005
+  family: indicator
+  wiring_status: unwired
+  value_score: 2.0
+  suggested_wiring_target: src/zephyr/factor/indicator_reader.py PIT 白名单 → factor/analysis/multifactor_synthesis.py（CNS-01）
+  booked_at: '2026-09-29'
+island_transitions: []
