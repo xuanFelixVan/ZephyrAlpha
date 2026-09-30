@@ -443,6 +443,56 @@ def _precommit_timeout_failopen() -> bool:
     return os.environ.get("ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN", "0").strip() == "1"
 
 
+# debt 棘轮基线（全流通夜战 A2 2026-09-30）：首扫全量入册、只降不升，净增 warn 升级拦截。
+# 审计族真源目录（T4-1 铁律：审计写永不回 tracked 区），与 *_foreign_staged.jsonl 同域。
+_PRECOMMIT_DEBT_BASELINE_RELPATH = ".runtime/gate_audit/precommit_global_debt_baseline.json"
+
+# 债务键锚定 token：证据行内首个仓库路径（行号不进键——行漂移不得虚报净增）。
+_DEBT_PATH_TOKEN_RE = re.compile(r"[A-Za-z0-9_\-.\\/]+\.(?:py|yaml|yml|md|json|csv|tsv|ps1|toml|cfg|ini|txt)\b")
+_DEBT_NOANCHOR = "<noanchor>"
+_DEBT_ANCHOR_STRIP_CHARS = "." + "/"  # lstrip 字符集（剥前导 ./），见 _precommit_debt_keys 内注记
+
+
+def _precommit_debt_ratchet_enabled() -> bool:
+    """debt 棘轮回退手柄：env ZEPHYR_PRECOMMIT_DEBT_RATCHET=0 → 恢复 warn-only 放行。
+
+    缺省 ON（全流通夜战 A2 2026-09-30）：precommit_channel_global_debt_warned 通道
+    197/250 趟恒 warn 放行——存量债只增不减。棘轮=首扫全量入基线（grandfather），
+    基线只降不升（消失即出册），净增键升级阻断（参照 fms_deadref_baseline 棘轮模式）。
+    """
+    return os.environ.get("ZEPHYR_PRECOMMIT_DEBT_RATCHET", "1").strip() != "0"
+
+
+def _precommit_evidence_text(seg_text: str) -> str:
+    """归因证据行：剥离修复提示样板（Fix:/->/python 命令行）。
+
+    样板上可能含批内生成器路径（如 GATE-21 的 Fix 指引），会造成 own 误归因
+    （实测假阳）；own-scope 归因与债务键提取共用同一真源——口径不漂移。
+    """
+    prefixes = ("fix:", "->", "python ", "pass [")  # pass 状态行同样非违规证据
+    return "\n".join(ln for ln in seg_text.splitlines() if not ln.strip().lower().startswith(prefixes))
+
+
+def _precommit_debt_keys(seg: dict) -> set[str]:
+    """foreign 失败段 → 稳定债务键集（棘轮基线锚）。
+
+    键粒度 = ``hook_id|文件锚``（证据行首个仓库路径 token，剥离修复提示样板与
+    own 归因同口径）；无路径证据行折叠为 ``hook_id|<noanchor>``（hook 级散文发现）。
+    """
+    hook = str(seg.get("hook_id") or "<unknown>")
+    keys: set[str] = set()
+    for ln in _precommit_evidence_text(str(seg.get("text") or "")).splitlines():
+        s = ln.strip()
+        if not s or s.startswith("- hook id:"):
+            continue
+        m = _DEBT_PATH_TOKEN_RE.search(s.replace("\\", "/"))
+        # STRIP_SET_DEBT_ANCHOR：lstrip 字符集语义（剥前导 '.' 与 '/'），非路径字面量——
+        # RELATIVE-PATH-LITERAL 对裸 "./" 字面量误报，提常量规避（A2 收编内容落地修，语义零变化）
+        anchor = m.group(0).lstrip(_DEBT_ANCHOR_STRIP_CHARS) if m else _DEBT_NOANCHOR
+        keys.add(f"{hook}|{anchor}")
+    return keys or {f"{hook}|{_DEBT_NOANCHOR}"}
+
+
 _PRECOMMIT_DELETED_MARK = "<deleted>"
 
 
@@ -1997,13 +2047,33 @@ class GitCommitGateway:
         except OSError:
             pass
 
+    def _count_recent_block_signature(self, signature: str, *, tail_lines: int = 400) -> int:
+        """堵点本尾窗同签名计数（A3 任务2 连击升级）——fail-open 异常计 0。"""
+        try:
+            p = Path(str(self.project_root)) / ".runtime" / "audit" / "commit_block_events.jsonl"
+            with p.open("r", encoding="utf-8", errors="replace") as f:
+                lines = f.readlines()[-tail_lines:]
+        except OSError:
+            return 0
+        n = 0
+        for ln in lines:
+            try:
+                rec = json.loads(ln)
+            except json.JSONDecodeError:
+                continue  # 半行写入/损坏行跳过
+            if isinstance(rec, dict) and rec.get("sig") == signature:
+                n += 1
+        return n
+
     def _audit_commit_block_event(self, session_id: str, blocked, existing: list[str], elapsed_ms: float) -> None:
         """堵点溯源审计①阻断事件（2026-09-13 极限红蓝对抗 D5，Owner 指令堵点可查可修）。
 
         阈值化设计（防日志爆炸——全量事件记录月万级必爆，只记异常）：
         仅在 gate 链**阻断**时写一行。记录：ts/session/阻断门禁/文件数/门禁链耗时/
-        失败详情摘要（200 字截断）。消费方：commit_perf_report.py 聚合 TOP 阻断门禁
-        与堵点趋势（溯源→修复闭环）。
+        失败详情全量（A3 任务2 治本：detail 不截断——BLUEPRINT-FORMAT 连击 47 事件/
+        最大 31 连击实证，违规清单 file:line 在消息尾部，[:200] 截断恒把病灶切掉，
+        溯源者看不到病灶=审计失去可行动性）。消费方：commit_perf_report.py 聚合 TOP
+        阻断门禁与堵点趋势（溯源→修复闭环）。
 
         gate_id 判定链（2026-09-13 UNKNOWN×6 治本）：status 映射 > message 正则。
         _check_gate_results 把专用门禁（HELD-OVERLAP/FOREIGN-CHANGE/COMMIT-SCOPE 等）
@@ -2011,23 +2081,37 @@ class GitCommitGateway:
         恒落 UNKNOWN（近 24h 实证 6/25 条归因失效，FOREIGN_CHANGE_VIOLATION 与
         COMMIT_SCOPE_VIOLATION 全被吞成 UNKNOWN，报表 TOP 失真）。status 是
         _check_gate_results 转换时的第一手信息源，映射即精确还原 gate_id。
+
+        连击升级（A3 任务2，st-circ-a3-20260930）：同签名（session+gate+detail 全文
+        sha1）二次阻断起事件带 repeat_count 与 escalated=true——重试环 31 连击类
+        （同病灶反复重投）从堵点本直接可见，维护班按 sig 聚合即得复发拓扑。
         """
+        import hashlib  # noqa: PLC0415
         import re  # noqa: PLC0415
 
         gate_id = _STATUS_GATE_ID.get(blocked.status)
         if gate_id is None:
-            m = re.search(r"门禁 ([A-Z\-]+) 阻断", blocked.message or "")
+            # 字符类必须含数字：R5-DIGIT-SUFFIX/GATE-20 等带数字门禁号此前被
+            # [A-Z\-]+ 截断失配（R5 在 "5" 处断掉→整条不匹配→恒落 UNKNOWN，
+            # 堵点本 2026-09-22/26/28 三笔 R5 阻断归因失效实证）——全流通夜战 A2 治本。
+            m = re.search(r"门禁 ([A-Z0-9_\-]+) 阻断", blocked.message or "")
             gate_id = m.group(1) if m else "UNKNOWN"
-        self._append_commit_anomaly_jsonl(
-            {
-                "session_id": session_id,
-                "event": "commit_blocked",
-                "gate_id": gate_id,
-                "files_count": len(existing),
-                "gate_chain_ms": round(elapsed_ms),
-                "detail": (blocked.message or "")[:200],
-            }
-        )
+        detail = blocked.message or ""
+        sig = hashlib.sha1(f"{session_id}|{gate_id}|{detail}".encode()).hexdigest()[:16]
+        repeat_count = self._count_recent_block_signature(sig) + 1
+        record: dict = {
+            "session_id": session_id,
+            "event": "commit_blocked",
+            "gate_id": gate_id,
+            "files_count": len(existing),
+            "gate_chain_ms": round(elapsed_ms),
+            "detail": detail,
+            "sig": sig,
+            "repeat_count": repeat_count,
+        }
+        if repeat_count >= 2:
+            record["escalated"] = True
+        self._append_commit_anomaly_jsonl(record)
 
     def _audit_commit_slow_event(self, session_id: str, existing: list[str], total_ms: float) -> None:
         """堵点溯源审计②慢提交事件（D5 补强，Owner 2026-09-13 裁定"超阈堵点才记"）。
@@ -2746,10 +2830,16 @@ class GitCommitGateway:
         precommit_preflight: tuple[dict[str, str], str | None] | None = None
         if _precommit_out_of_lock_enabled() and not merge_finalize:
             try:
-                if not self._precommit_head_guard_skip(existing):
-                    _snap = self._precommit_snapshot_blob_shas(existing)
-                    if _snap is not None:
-                        precommit_preflight = (_snap, self._run_precommit_channel(session_id, existing))
+                # S4-E 4→1 统一快照（2026-09-30，s4_e_b4_snapshot.md）：own 面内容捕获
+                # 收敛为 hash-object 批扫单点（原 #2 现物，先捕获一次）；head guard
+                # （原 #1 status 内容批扫）改由 `_snapshot_differs_from_head` 从快照对
+                # ls-tree 元数据派生，不再对同批文件做第二次全字节读。锁内两次复核
+                # （#3 ls-files -s 指纹、P2⑦ F′==F 重验）是「漂移→锁内重跑」安全语义
+                # 本体，一次不少。快照设施故障 → None → 本块整体跳过=回退锁内全量
+                # （D2 fail-safe 原样，守卫扫描也一并省去——判定不受影响）。
+                _snap = self._precommit_snapshot_blob_shas(existing)
+                if _snap is not None and not self._precommit_head_guard_skip(existing, snapshot=_snap):
+                    precommit_preflight = (_snap, self._run_precommit_channel(session_id, existing))
             except Exception:  # noqa: BLE001 — 前移编排异常=回退锁内全量（D2 fail-safe）
                 precommit_preflight = None
         _lock_timeout = lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT
@@ -3505,6 +3595,7 @@ class GitCommitGateway:
             rcs: list[int] = []
             try:
                 for chunk in chunks:
+                    meta: dict = {}  # S4-F 捕证出参（pid/create_time，缺席=None）
                     proc = run_subprocess_hidden(
                         [*cmd, *chunk],
                         capture_output=True,
@@ -3514,7 +3605,9 @@ class GitCommitGateway:
                         cwd=str(self.project_root),
                         env=env,
                         timeout=_PRECOMMIT_RUN_TIMEOUT_S,
+                        meta_out=meta,
                     )
+                    self._pc_proc_meta = dict(meta)  # 最后一次 spawn=被判定进程
                     rcs.append(proc.returncode)
                     outs.append((proc.stdout or "") + "\n" + (proc.stderr or ""))
             except subprocess.TimeoutExpired:
@@ -3562,18 +3655,24 @@ class GitCommitGateway:
             )
         return segs
 
-    def _precommit_head_guard_skip(self, files: list[str]) -> bool:
+    def _precommit_head_guard_skip(self, files: list[str], snapshot: dict[str, str] | None = None) -> bool:
         """D2 矩阵7 守卫：本提交文件相对 HEAD 零变化（worktree+staged 双面）→ 无可提交内容。
 
-        跳过锁外通道（锁内 step5 短路仍兜底返回 NOTHING_TO_COMMIT）。批量裸 pathspec 跑
-        `git status --porcelain`（git diff 不支持 --pathspec-from-file 实证 rc 129，且 diff
-        不显示未跟踪文件会漏判新建件；status 同覆盖暂存/工作树/未跟踪三态）；删除面保守
-        不跳，交通道与锁内正常流程判定。git 异常 fail-open（False=照跑通道，不多放行不少拦）。
+        跳过锁外通道（锁内 step5 短路仍兜底返回 NOTHING_TO_COMMIT）。
+        S4-E 4→1（2026-09-30，s4_e_b4_snapshot.md）：统一快照（hash-object 工作树
+        blob sha）优先对 `git ls-tree -r HEAD` 元数据派生零变化判定——替代原
+        `git status --porcelain` 内容批扫（消除对同批 own 文件的第二次全字节读）；
+        快照判绿时保留一次 status 兜底（status 面=staged∪工作树∪未跟踪∪ita，
+        ls-tree 面只有 tracked HEAD——index 漂移/未跟踪残留只有 status 看得见，
+        保守不放松）。删除面保守不跳；快照缺席（设施故障/回退路径）→ 原样走
+        status 批扫（现行语义）。git 异常 fail-open（False=照跑通道，不多放行不少拦）。
         """
         try:
             root = str(self.project_root)
             rel_existing, rel_deleted = self._precommit_rel_lists(files, root)
             if rel_deleted:
+                return False
+            if snapshot is not None and self._snapshot_differs_from_head(snapshot):
                 return False
             for i in range(0, len(rel_existing), 200):
                 batch = rel_existing[i : i + 200]
@@ -3583,6 +3682,33 @@ class GitCommitGateway:
             return True
         except Exception:  # noqa: BLE001 — 守卫异常不拦提交，照跑通道
             return False
+
+    def _snapshot_differs_from_head(self, snapshot: dict[str, str]) -> bool:
+        """S4-E：统一快照 vs HEAD 树派生「own 面有无可提交内容」（ls-tree 元数据单扫）。
+
+        `git ls-tree -r HEAD` 一次取全 HEAD 树 {path: blob_sha}（纯元数据，不读
+        工作树字节），casefold 匹配（与原 status :(icase) 忽略大小写语义对齐；
+        ls-tree 不支持 icase pathspec 魔法，实证 rc128）；任一快照文件 HEAD 缺席
+        或 sha 不一致 → True（有变化，跑通道）。设施故障 → True（fail-open：
+        证明不了零变化就不跳，不放松）。
+        """
+        try:
+            r = self.run_git(["git", "ls-tree", "-r", "HEAD"])
+            if r.returncode != 0:
+                return True
+            head_sha: dict[str, str] = {}
+            for line in r.stdout.splitlines():
+                meta, _, path = line.partition("\t")
+                parts = meta.split()
+                if len(parts) >= 3:
+                    head_sha.setdefault(path.replace("\\", "/").casefold(), parts[2])
+            for rel, sha in snapshot.items():
+                hit = head_sha.get(rel.casefold())
+                if hit is None or hit != sha:
+                    return True
+            return False
+        except Exception:  # noqa: BLE001 — 派生异常 fail-open 照跑通道
+            return True
 
     def _precommit_snapshot_blob_shas(self, files: list[str]) -> dict[str, str] | None:
         """D2 锁外内容快照：{rel_posix: blob_sha}，删除文件记 _PRECOMMIT_DELETED_MARK。
@@ -3659,6 +3785,9 @@ class GitCommitGateway:
         - pre-commit run 超时 → fail-closed 拒袋留处方（E4 2026-09-30：实测双超时
           1200s 后零校验放行 73/552 例，p90 尾巴主源；env
           ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1 回退 #341 fail-open）
+        - rc 落信号码区间（负值或 128..192）→ 瞬态拒袋（S4-F 2026-09-30：外部信号
+          误伤非违规；审计 event=precommit_channel_signalled 携 pid/create_time 供
+          与 reaper_kill.log join 定谳杀链）
         - pre-commit 自身不可用等其余基础设施故障 → warn + 审计 + 放行
           （可用性优先；flag OFF 是 Owner 停用手柄）
 
@@ -3703,9 +3832,11 @@ class GitCommitGateway:
 
         _ch_t0 = time.monotonic()
         self._pc_fast_ms = 0.0
+        self._pc_proc_meta: dict = {}  # S4-F 捕证面（pid/create_time，子进程缺席=None）
         output, rc, mutation, infra_error, skipped = self._precommit_run_scoped(
             env, root, rel_existing, rel_deleted, tmp_index
         )
+        _proc_meta = getattr(self, "_pc_proc_meta", None) or {}
         # 判定可由 rc/skipped/infra_error 三字段还原（失败归因仍归 _precommit_decide_failure），
         # 故此处不复制判定逻辑、只记耗时面——避免装表改动语义（宪法 §3 判据不漂移）。
         self._append_precommit_channel_stat(
@@ -3719,6 +3850,9 @@ class GitCommitGateway:
                 "rc": rc,
                 "skipped": skipped,
                 "infra_error": bool(infra_error),
+                # S4-F 捕证字段（全量记账，rc<128 也落——与 reaper_kill.log 时窗 join 判 H1/H2）
+                "pid": _proc_meta.get("pid"),
+                "create_time": _proc_meta.get("create_time"),
             }
         )
         if skipped:
@@ -3767,6 +3901,41 @@ class GitCommitGateway:
 
         if rc == 0:
             return None
+        # S4-F 判读面（全流通夜战 G2 2026-09-30）：信号码区间（POSIX 128+N 约定 128..192
+        # 或负值）=进程被外部信号终止。簿 §2.1 现场实验实证：repo 内全部既有杀器
+        # （reaper psutil.terminate=15 / taskkill=1 / proc.kill / subprocess 超时）无一
+        # 直产 143——143 只能来自 MSYS bash 信号层（H1 工具层收割）或经 msys 层的树级联
+        # （H2，待一夜捕证定谳）。归 infra 瞬态语义（同 E4 拒袋形态）：不喂 own/foreign
+        # 归因器（部分输出不参与归因，只落账）、不进真阻断统计、非违规措辞；退避重投。
+        # 与超时路径互斥：TimeoutExpired/FileNotFoundError 均带 infra_error，先行返回。
+        # 判据零变化：hook 集/归因器/阈值全不动（回滚=单 commit revert）。
+        if rc < 0 or 128 <= rc <= 192:
+            logger.warning(
+                "GitCommitGateway: pre-commit 进程被外部信号终止（rc=%d），瞬态拒袋（S4-F）: %.300s",
+                rc,
+                output or "",
+            )
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_signalled",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "rc": rc,
+                    "pid": _proc_meta.get("pid"),
+                    "create_time": _proc_meta.get("create_time"),
+                    "detail": (output or "")[:500],
+                }
+            )
+            return (
+                f"门禁 GATE-PRECOMMIT-RUN 瞬态拒袋: pre-commit 进程被外部信号终止（rc={rc}，"
+                "信号码区间——S4-F 实验实证非本仓杀器所产，判提交链外层信号误伤）。"
+                "非违规判定：hook 集/归因器未产出结论，部分输出不参与归因。"
+                "处方=瞬态：退避 5-10min 后 requeue 重投；连续发生=杀链误伤（H1 工具层/"
+                "H2 reaper 树级联），报维护班并附本事件 pid/create_time 与 reaper_kill.log "
+                "时窗 join。\n"
+                f"pid={_proc_meta.get('pid')} create_time={_proc_meta.get('create_time')}"
+            )
         return self._precommit_decide_failure(session_id, files, output, mutation, rel_existing, rel_deleted)
 
     def _precommit_run_scoped(
@@ -3856,6 +4025,7 @@ class GitCommitGateway:
         rcs: list[int] = []
         try:
             for chunk in chunks:
+                meta: dict = {}  # S4-F 捕证出参（Phase-A 短路正是 143 样本死点，簿 §1）
                 proc = run_subprocess_hidden(
                     [sys.executable, "-m", "pre_commit", "run", "--files", *chunk],
                     capture_output=True,
@@ -3865,7 +4035,9 @@ class GitCommitGateway:
                     cwd=str(self.project_root),
                     env=fa_env,
                     timeout=300,
+                    meta_out=meta,
                 )
+                self._pc_proc_meta = dict(meta)
                 rcs.append(proc.returncode)
                 outs.append((proc.stdout or "") + "\n" + (proc.stderr or ""))
                 if proc.returncode != 0:
@@ -3887,15 +4059,11 @@ class GitCommitGateway:
             return any(rel.lower() in norm for rel in (rel_existing + rel_deleted))
 
         failed = [s for s in GitCommitGateway._precommit_failed_segments(output) if s["failed"]]
-        # 归因只看证据行：剥离修复提示样板（Fix:/->/python 命令行）——样板上可能含批内
-        # 生成器路径（如 GATE-21 的 Fix 指引），会造成 own 误归因（实测假阳）
-        _HINT_PREFIXES = ("fix:", "->", "python ", "pass [")  # pass 状态行同样非违规证据
-
-        def _evidence(seg_text: str) -> str:
-            return "\n".join(ln for ln in seg_text.splitlines() if not ln.strip().lower().startswith(_HINT_PREFIXES))
-
-        own_failed = [s for s in failed if _own_hit(_evidence(s["text"]))]
-        foreign_failed = [s for s in failed if not _own_hit(_evidence(s["text"]))]
+        # 归因只看证据行：剥离修复提示样板（_precommit_evidence_text——与 debt 棘轮
+        # 键提取共用同一真源；样板上可能含批内生成器路径（如 GATE-21 的 Fix 指引），
+        # 会造成 own 误归因（实测假阳））
+        own_failed = [s for s in failed if _own_hit(_precommit_evidence_text(s["text"]))]
+        foreign_failed = [s for s in failed if not _own_hit(_precommit_evidence_text(s["text"]))]
         return own_failed, foreign_failed
 
     def _precommit_decide_failure(
@@ -3947,10 +4115,20 @@ class GitCommitGateway:
             )
 
         if foreign_failed:
-            # 存量/外来全局债：warn + 审计，不阻断无辜提交人（宪法 §3.1）
+            # 存量/外来全局债：warn + 审计，不阻断无辜提交人（宪法 §3.1）——
+            # 棘轮化（全流通夜战 A2 2026-09-30，参照 fms_deadref_baseline 模式）：
+            # 首扫全量入基线（grandfather）；基线只降不升（债务消失即出册）；
+            # 净增键（基线外新债）升级阻断——治 "warn 通道 197/250 趟恒放行→存量债
+            # 只增不减" 病根。回退手柄 env ZEPHYR_PRECOMMIT_DEBT_RATCHET=0。
+            hooks = [s["hook_id"] for s in foreign_failed]
+            baseline_meta: dict = {}
+            if _precommit_debt_ratchet_enabled():
+                block_msg, baseline_meta = self._precommit_debt_ratchet_decide(session_id, files, foreign_failed)
+                if block_msg is not None:
+                    return block_msg
             logger.warning(
                 "GitCommitGateway: pre-commit 通道发现与本提交无关的存量红（warn-only 放行）: %s",
-                [s["hook_id"] for s in foreign_failed],
+                hooks,
             )
             self._append_commit_anomaly_jsonl(
                 {
@@ -3958,10 +4136,133 @@ class GitCommitGateway:
                     "event": "precommit_channel_global_debt_warned",
                     "gate_id": "GATE-PRECOMMIT-RUN",
                     "files_count": len(files),
-                    "hooks": [s["hook_id"] for s in foreign_failed],
+                    "hooks": hooks,
+                    **baseline_meta,
                 }
             )
         return None
+
+    def _debt_baseline_path(self) -> Path:
+        """debt 棘轮基线落点（审计族真源目录，T4-1：永不回 tracked 区）。"""
+        return Path(str(self.project_root)) / ".runtime" / "gate_audit" / "precommit_global_debt_baseline.json"
+
+    def _load_debt_baseline(self) -> tuple[dict | None, bool]:
+        """读棘轮基线。返回 (data, corrupt)：缺席=(None, False)、损坏=(None, True)。"""
+        try:
+            p = self._debt_baseline_path()
+            if not p.is_file():
+                return None, False
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None, True
+        if not isinstance(data, dict) or not isinstance(data.get("keys"), dict):
+            return None, True
+        return data, False
+
+    def _save_debt_baseline(self, data: dict) -> bool:
+        """原子写基线（tmp+os.replace）；失败 fail-open 返回 False（可观测性不阻断主链）。"""
+        try:
+            from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+            p = self._debt_baseline_path()
+            p.parent.mkdir(parents=True, exist_ok=True)
+            data.setdefault("version", 1)
+            data["updated"] = now_utc().isoformat()
+            tmp = p.with_name(p.name + ".tmp")
+            tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True), encoding="utf-8")
+            os.replace(tmp, p)
+            return True
+        except OSError:
+            return False
+
+    def _precommit_debt_ratchet_decide(
+        self, session_id: str, files: list[str], foreign_failed: list[dict]
+    ) -> tuple[str | None, dict]:
+        """debt 棘轮判定：返回 (阻断消息|None, warn 事件补充字段)。
+
+        - 基线缺席：首扫全量入册（grandfather），本次 warn 放行 + 审计 baseline_created。
+        - 基线损坏：fail-open warn 放行 + 审计 corrupt——不自动重建（防静默重置棘轮）。
+        - 基线在册：净增键→阻断（棘轮永不升基线）；消失键→出册（只降不升，先落账再判定）。
+        """
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+        current: set[str] = set()
+        for seg in foreign_failed:
+            current |= _precommit_debt_keys(seg)
+        baseline, corrupt = self._load_debt_baseline()
+        if corrupt:
+            logger.warning(
+                "GitCommitGateway: debt 棘轮基线损坏，本次退回 warn-only（不自动重建，防棘轮静默重置）: %s",
+                self._debt_baseline_path(),
+            )
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_debt_baseline_corrupt",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                }
+            )
+            return None, {"debt_ratchet": "corrupt"}
+        if baseline is None:
+            data = {"keys": {k: now_utc().isoformat() for k in sorted(current)}}
+            persisted = self._save_debt_baseline(data)
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_debt_baseline_created",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "keys_count": len(current),
+                    "persisted": persisted,
+                }
+            )
+            return None, {"debt_ratchet": "baseline_created", "debt_keys": len(current)}
+        known = set(baseline.get("keys", {}))
+        net_new = current - known
+        stale = known - current
+        meta: dict = {
+            "debt_ratchet": "on",
+            "debt_keys": len(current),
+            "debt_baseline_hit": len(current & known),
+            "debt_net_new": len(net_new),
+        }
+        if stale:
+            for k in stale:
+                baseline["keys"].pop(k, None)
+            persisted = self._save_debt_baseline(baseline)
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_debt_baseline_shrunk",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "removed": len(stale),
+                    "persisted": persisted,
+                }
+            )
+        if net_new:
+            sample = sorted(net_new)[:10]
+            detail = "净增债务键: " + "; ".join(sample) + (" ..." if len(net_new) > 10 else "")
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_debt_ratchet_blocked",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "net_new_count": len(net_new),
+                    "net_new_keys": sorted(net_new)[:30],
+                }
+            )
+            return (
+                "门禁 GATE-PRECOMMIT-RUN 阻断: pre-commit 通道检出净增全局债（debt-ratchet 棘轮："
+                "基线只降不升，净增 warn 升级拦截——宪法 §3.1 存量债只增不减病根治本）\n"
+                f"{detail}\n"
+                "处方=修复本次净增违规后重投（基线内存量仍 warn 放行）；若属他会话在途/环境漂移，"
+                "退避 5-10min requeue 重投观察，仍复现报维护班；"
+                "回退手柄 env ZEPHYR_PRECOMMIT_DEBT_RATCHET=0 恢复 warn-only（须运维登记留痕）。"
+            ), meta
+        return None, meta
 
     def _resolve_commit_result(
         self,

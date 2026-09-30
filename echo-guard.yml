@@ -371,3 +371,12 @@ acknowledged:
   verdict: intentional
   stable_key: "scripts/audit/t0_gpu_condition_pack.py:_reg||scripts/governance/meta_question/wo008/generate_product_synonym_register.py:_pg"
   note: 存量同构对（同上 0033 死因既有暴露对之二），非本批引入（ADJ_t0_jiawei_versions §2.4 实测；Z-C1 前置①；st-menu-t1f2-20260930 F2 甲位批配套）
+
+- id: cg-gw-debt-ratchet-outoflock-20261001
+  verdict: intentional
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:_precommit_debt_ratchet_enabled||src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:_precommit_out_of_lock_enabled"
+  note: env 开关读取惯用样板对（缺省 ON、'0' 唯一 OFF 值，同文件 :498 同形态第三例），非逻辑克隆；debt 棘轮函数=全流通夜战 A2（st-circ-a2-20260930）原作，其会话心跳 2026-10-01 01:15 后停滞、8 袋全死，内容经 G1 车道（st-circ-g1-20260930）调度指令 FOREIGN→adopt 收编后落地连受阻，按宪法 RULE-CLONEGUARD 合理重复通道登记 acknowledged（登记者=收编车道，追责与复议面=A2 复活后续作）
+- id: cg-gw-debt-ratchet-shards-20261001
+  verdict: intentional
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:_precommit_debt_ratchet_enabled||src/zephyr/security/access_control/session_concurrency.py:_shards_enabled"
+  note: 跨文件 env 开关读取惯用样板对（session_concurrency 分片开关同形态），同上 A2 收编背景，非逻辑克隆；同批 RULE-CLONEGUARD acknowledged 登记
