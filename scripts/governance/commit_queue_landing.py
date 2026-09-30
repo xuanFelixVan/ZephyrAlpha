@@ -1165,18 +1165,6 @@ def _noop_absorption_verdict_inner(
     )
     if err:
         return f"{rel}: 自证读回无法判别（ours 侧 {err}）", ""
-    # 直通族先剔出再索引（W2-MERGE 车道 q-20260930-st-nightsweep2-merge-20260930-0001 死信治本，
-    # 2026-09-30）：热册 unique_key 标量元数据族在主合并路径（three_way_merge_registry_yaml）
-    # 是"先 _split_passthrough_and_drift 剔除后 _index_all_sides"，本判别器原顺序相反=索引先撞
-    # 「存在身份判不了的条目（非 dict/首字段非标量）」死信——merged==ours 的合法纯删/纯增袋
-    # 全量误死。本处与主合并同序对齐，零语义放宽：结构漂移 fail-closed 检查仍在
-    # _split_passthrough_and_drift 内先行执行，直通族本就不在条目合并语义空间。
-    passthrough, perr = _split_passthrough_and_drift(ours_families, theirs_families, base_families, rel)
-    if perr:
-        return f"{rel}: 自证读回无法判别（{perr}）", ""
-    for fam_map in (ours_families, theirs_families, base_families):
-        for pt_key in passthrough:
-            fam_map.pop(pt_key, None)
     ours_idx, theirs_idx, base_idx, err, _dedup = _index_all_sides(ours_families, theirs_families, base_families, rel)
     if err:
         return f"{rel}: 自证读回无法判别（{err}）", ""
@@ -3353,6 +3341,10 @@ def drain_queue_pool(
         "stale_cleared": 0,
         "cascade_marked": 0,
         "done_cleaned": 0,
+        # D1 §4.2：已落地件的内存级联索引 [(qid, base_head)]（落地序）。落账时锁内
+        # append（纯内存，不触 pending 盘）；波末 _run_pool_wave 统一交
+        # cq.mark_cascade_stale_batch 一次消费（每波一遍 O(N)，替代逐落地 O(N²) 扇出）。
+        "landed_index": [],
     }
     with cq.SerializerLease(root, timeout=lease_timeout) as lease:
         stats["recovered"] = len(cq._recover_orphans(root))
@@ -3473,6 +3465,13 @@ def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: di
         t.start()
     for t in threads:
         t.join()
+    # D1 §4.3：波末一次性批量化级联标记（每波一遍 O(N)；单一 batch 实现与串传送带
+    # 共用，禁新旧两版分叉）。本波内已被消费的命中已由 _pool_process_item 的索引
+    # 命中记账补计，两段合计与逐件即时标记口径全等（§5 差分矩阵机械检验）。
+    marked = cq.mark_cascade_stale_batch(root, stats.get("landed_index") or [])
+    if marked:
+        stats["cascade_marked"] += len(marked)
+        logger.info("[pool] 波末批级联标记 stale %d 件: %s", len(marked), marked)
     return shared["processed"]
 
 
@@ -3509,7 +3508,17 @@ def _pool_process_item(
     shared: dict,
 ) -> None:
     """单工单项：stale 重校验 → landing → done/dead 落账（drain_queue 单项语义的
-    线程安全移植；落账/级联/记账各段在 stats_lock 内串行化防交叉写）。
+    线程安全移植；D1 后锁内仅纯内存记账+索引 append，终态迁移/级联批标记/死信
+    通知全部出锁——processing_path 的独占由认领 rename（_pool_claim_item 原子
+    rename 即互斥点）保证，不依赖池级锁）。
+
+    D1 §4.4 认领判定与跨波兜底语义（§8 风险1 残余，显式在案）：基底越界判定入参=
+    「盘上 stale 旗 ∪ stats["landed_index"] 内存命中」，**任何 base 已被本波越过的
+    件，绝不允许未经重校验就落 dev**。批标记在波末才写盘 ⇒ 进程若死于波末 flush
+    前，未消费的 stale 旗不落盘：本波内由内存 index 兜住；跨波由下一波
+    `_recover_orphans` 回收 + 盘面影子重扫（上波已 flush 的影子仍在 pending/.stale/，
+    拾取侧 _read_item 双读注入）覆盖——旗「只在内存」的丢失面以波为界，与串传送带
+    的排空粒度一致。
     """
     item = cq._read_item(processing_path)
     if item is None:
@@ -3555,8 +3564,22 @@ def _pool_process_item(
     # _stale_revalidate_counted 转 LandingEnvironmentError 走既有 env 分支
     # （计数+耗尽升级死信），与 landing 内部环境失败同闸同语义。
     path_locks: list[threading.Lock] = []
+    # D1 §4.4：认领时刻基底判定入参 =「盘上 stale 旗 ∪ 本波内存 landed_index 命中」。
+    # 批标记延至波末写盘，盘旗对「同基底件已落盘之后才被认领」的件不再及时——内存
+    # 索引补位（不变式：任何 base 已被本波越过的件，绝不允许未经重校验就落 dev）。
+    idx_source = (
+        None if (item.get("meta") or {}).get("stale") else cq._cascade_index_hit(item, stats.get("landed_index"))
+    )
     try:
-        if (item.get("meta") or {}).get("stale"):
+        if (item.get("meta") or {}).get("stale") or idx_source is not None:
+            if idx_source is not None:
+                # 内存索引命中补 stale 视图（字段口径与 _merge_stale_view 影子注入一致：
+                # stale_by=落地序首因，审计溯源不因标记介质延迟写盘而丢；stale_at=此刻
+                # 墙钟，视图字段，白名单级易变位）。
+                meta = item.setdefault("meta", {})
+                meta["stale"] = True
+                meta.setdefault("stale_by", idx_source)
+                meta.setdefault("stale_at", cq._now_iso())
             still_ok, mismatched = _stale_revalidate_counted(item, _pool_head_reader(landing))
             if still_ok:
                 meta = item["meta"]
@@ -3625,29 +3648,40 @@ def _pool_process_item(
         # 也走 finally），单件账不因失败路径漏记——失败件恰恰最该有账。
         _emit_landing_phase_stat(landing, item, (time.monotonic() - _item_t0) * 1000)
 
+    # D1 §4.1/§4.5：终态迁移与死信通知全部出锁——processing_path 由认领 rename 独占
+    # （_pool_claim_item 原子 rename 即互斥），不需要池级锁保护；顺序保持「先写带
+    # landed_at/dead_at 的件，再 rename 到终态目录」（幂等重放依赖此原顺序）。
+    # 锁内只留纯内存记账（微秒级），停世界窗口归零。
+    if result.ok:
+        item["landed_at"] = cq._now_iso()
+        item["landed_id"] = result.landed_id
+        cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+        os.replace(processing_path, root / "done" / processing_path.name)
+    else:
+        item["dead_at"] = cq._now_iso()
+        item["dead_reason"] = result.reason
+        item["prescription"] = cq.dead_letter_prescription(result.reason)
+        item["owner_session"] = item.get("session_id") or ""
+        cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+        os.replace(processing_path, root / "dead" / processing_path.name)
     with stats_lock:
         if result.ok:
-            item["landed_at"] = cq._now_iso()
-            item["landed_id"] = result.landed_id
-            cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
-            os.replace(processing_path, root / "done" / processing_path.name)
             stats["done"] += 1
-            marked = cq._mark_cascade_stale(root, item)
-            if marked:
-                stats["cascade_marked"] += len(marked)
-                logger.info("[pool] qid=%s 落盘，级联标记 stale: %s", qid, marked)
+            # D1 §4.2：落地序内存级联索引（波末 batch 消费；锁内 append 纯内存）。
+            stats["landed_index"].append((qid, item.get("base_head")))
         else:
-            item["dead_at"] = cq._now_iso()
-            item["dead_reason"] = result.reason
-            item["prescription"] = cq.dead_letter_prescription(result.reason)
-            item["owner_session"] = item.get("session_id") or ""
-            cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
-            os.replace(processing_path, root / "dead" / processing_path.name)
             stats["dead"] += 1
-            logger.warning("[pool] qid=%s 进死信: %s", qid, result.reason)
-            cq._notify_task_board_dead_letter(item)
+        if idx_source is not None:
+            # D1 计数语义保持：索引命中=旧实现「落地临界区内即时标记」的口径。波末
+            # batch 只补计「仍留 pending」的命中；本波内已被后续认领消费的命中在此
+            # 补计（含死信支——旧口径命中件死信同样先计标记），两段合计与旧口径全等。
+            stats["cascade_marked"] += 1
         stats["processed_qids"].append(qid)
         shared["processed"] += 1
+    if not result.ok:
+        logger.warning("[pool] qid=%s 进死信: %s", qid, result.reason)
+        # D1 §4.5：task_board 死信联动出锁（旁路可观测性，失败不阻断排空，宁漏不误）。
+        cq._notify_task_board_dead_letter(item)
     _item_dur = time.monotonic() - _item_t0
     if _item_dur > cq._SLOW_ITEM_LEDGER_SECONDS:
         cq._ledger_slow_item(root, qid, item.get("session_id"), round(_item_dur, 1))

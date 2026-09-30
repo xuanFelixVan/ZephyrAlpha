@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（提交入队唯一入口）；B 段 Serializer 落盘执行体（专用 worktree 真落盘）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件
+# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新（注册表族共享路径例外：顶替前身份集纯加法合并前递，不可信合并拒绝压缩两袋保留——W-CASE st-zcloseout-20260928 lost-update 治本）；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件
 # [MODIFY-GUARD] 66 号备忘 §6 协议/schema 真源；08 号文 §4.2 Phase 0；CLI 子命令面（enqueue/status/drain）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -577,8 +577,105 @@ def _create_item_excl(path: Path, payload: bytes) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _compact_pending(queue_root: Path, session_id: str, new_paths: set[str]) -> list[str]:
+def _registry_merge_helpers() -> tuple[Callable[[str], bool], Callable[..., tuple[str | None, str]]]:
+    """compaction 合并前递真源（lazy import landing 模块——勿造第二套合并器/判据）。
+
+    返回 (is_registry_mergeable, three_way_merge_registry_yaml)。commit_queue 本体
+    保持 stdlib 顶层依赖（66 号 §6.1 刻意出入 #3，测试可全 tmp 隔离）：本导入仅在
+    compaction 遇共享路径需判注册表族时发生；导入失败由调用方 fail-closed 拒绝压缩
+    （两袋保留——不丢内容，只让 compaction 退化为 FIFO 先后落地）。
+    """
+    try:
+        from scripts.governance import commit_queue_landing as _landing
+    except ImportError:
+        # 直跑形态（python scripts/commit_queue.py，sys.path[0]=scripts/）：补仓根后重试
+        repo_root = str(Path(__file__).resolve().parents[1])
+        if repo_root not in sys.path:
+            sys.path.insert(0, repo_root)
+        from scripts.governance import commit_queue_landing as _landing
+    return _landing.is_registry_mergeable, _landing.three_way_merge_registry_yaml
+
+
+def _compact_merge_registry_overlap(queue_root: Path, overlapped: list[dict], incoming_entries: list[dict]) -> bool:
+    """W-CASE st-zcloseout-20260928 治本：共享注册表族路径的 compaction 安全闸。
+
+    背景（docs/_working/qoder_legacy_closeout/w_case_compaction_lost_update.md）：
+    同会话两袋各携同一注册表路径时，后袋快照只含自己的增量（两袋同基各自加条目），
+    盲目整快照顶替=前袋注册表行被静默驱逐（closeout_leaf_books 6 token 实证丢失）。
+
+    判据与动作：
+    - 共享路径命中注册表族（landing is_registry_mergeable 同源判据，禁第二套）→
+      身份集**纯加法合并前递**：委托三向合并器以 base=None、ours=survivor、theirs=victim
+      （基底侧无此文件 ⇒ 全部条目视作双侧行内各自新增）：theirs 独有身份=族尾插入、
+      ours 独有=保留（删除不镇压）、同键异容=「双侧各自新增且内容异」冲突拒绝。
+      即幸存快照身份集变为
+      survivor∪victim 独有增量，零删除、零改写；合并产物入 blobs 并**就地**改写
+      incoming 对应条目的 blob 指针（enqueue_item 落新项时自然携带，多 victim 顺序
+      累积合并）。
+    - 任一共享注册表路径不可信合并（解析失败/同键异容/结构漂移/删除通道/blob 缺失/
+      合并器不可达）→ 返回 False=拒绝压缩：被顶替袋完整保留（含其注册表条目），
+      与新袋按 FIFO 先后落地，交落地侧条目级三向合并理顺（既有机制，绝不静默覆盖）。
+    - 非注册表路径不在此闸内（快照整体替换=最终态语义不变，66 号 §4 裁定 2）。
+    """
+    try:
+        is_registry_mergeable, three_way = _registry_merge_helpers()
+    except Exception as exc:  # noqa: BLE001 — 合并真源不可达=fail-closed 拒绝压缩
+        logger.warning("[compaction] 合并真源不可达（%s）——共享路径拒绝压缩（fail-closed）", exc)
+        return False
+    incoming_by_path = {e.get("path"): e for e in incoming_entries if e.get("path")}
+    for vf in overlapped:
+        rel = vf.get("path") or ""
+        if not isinstance(rel, str) or not is_registry_mergeable(rel):
+            continue
+        inc = incoming_by_path.get(rel)
+        victim_ref = vf.get("blob_ref")
+        inc_ref = (inc or {}).get("blob_ref")
+        if (
+            vf.get("action") == "delete"
+            or (inc or {}).get("action") == "delete"
+            or not victim_ref
+            or not inc_ref
+            or inc is None
+        ):
+            logger.warning("[compaction] %s 注册表路径走删除通道或缺 blob——拒绝压缩", rel)
+            return False
+        try:
+            victim_text = (queue_root / victim_ref).read_text(encoding="utf-8")
+            survivor_text = (queue_root / inc_ref).read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            logger.warning("[compaction] %s blob 读取失败: %s——拒绝压缩", rel, exc)
+            return False
+        try:
+            # base=None（=基底侧无此文件）语义下全部条目视作双侧行内各自新增：同键同容
+            # =保留、victim 独有=族尾插入、幸存独有=保留（删除不镇压）、同键异容=「双侧
+            # 各自新增且内容异」冲突拒绝。恰为身份集并集纯加法（零删除零改写）——若传
+            # base=survivor 则同键异容会被判「theirs 改了、ours 没动」采纳改写（违反
+            # NO-modifications），故必须 None。
+            merged, conflict = three_way(None, survivor_text, victim_text, rel_path=rel)
+        except Exception as exc:  # noqa: BLE001 — 合并器任何意外=不可信 → 拒绝
+            logger.warning("[compaction] %s 合并器异常: %s——拒绝压缩", rel, exc)
+            return False
+        if merged is None:
+            logger.warning("[compaction] %s 合并前递失败: %s——拒绝压缩", rel, conflict)
+            return False
+        if merged != survivor_text:
+            sha = _store_blob(queue_root, merged.encode("utf-8"))
+            inc["blob_sha256"] = sha
+            inc["blob_ref"] = f"blobs/{sha}"
+    return True
+
+
+def _compact_pending(
+    queue_root: Path,
+    session_id: str,
+    new_paths: set[str],
+    incoming_entries: list[dict] | None = None,
+) -> list[str]:
     """同键覆盖：移除 pending 中被新项覆盖的同会话旧项/旧条目，返回 supersedes 链。
+
+    incoming_entries（enqueue_item 传入，历史直调缺省 None=原语义不变）：新项 blob
+    条目——共享注册表族路径在顶替前先做身份集纯加法合并前递/不可信拒绝压缩
+    （W-CASE st-zcloseout-20260928 lost-update 治本，详见 _compact_merge_registry_overlap）。
 
     调用时机：新项落盘**之前**（会话锁内）——故无需排除新项自身。
     语义（66 号 §6.2 + §4 裁定 2）：快照是完整内容非增量补丁，替换=最终态正确；
@@ -603,8 +700,15 @@ def _compact_pending(queue_root: Path, session_id: str, new_paths: set[str]) -> 
         overlapped = [f for f in files if f.get("path") in new_paths]
         if not overlapped:
             continue
-        remaining = [f for f in files if f.get("path") not in new_paths]
         old_qid = item.get("qid", candidate.stem)
+        # W-CASE st-zcloseout-20260928 治本：共享注册表族路径先合并前递（victim 独有
+        # 增量并入新袋快照）；不可信合并=拒绝压缩，两袋都保留交落地侧三向合并理顺。
+        if incoming_entries is not None and not _compact_merge_registry_overlap(
+            queue_root, overlapped, incoming_entries
+        ):
+            logger.warning("[compaction] qid=%s 共享注册表路径不可信合并——拒绝压缩，两袋保留", old_qid)
+            continue
+        remaining = [f for f in files if f.get("path") not in new_paths]
         if not remaining:
             # 整体覆盖：旧项所有 path 均被新项包含 → 移除旧项（其内容必然已被
             # 新快照包含，66 号 §4 裁定 2 审查论证）；supersedes 关系记在新项 meta。
@@ -1068,7 +1172,10 @@ def enqueue_item(
     #    该键短暂无 pending——blob 已入袋不丢内容，drain 空窗仅视为队列空（无害）。
     lock = _get_session_lock(session_id)
     with lock:
-        removed = _compact_pending(root, session_id, seen_paths)
+        # W-CASE st-zcloseout-20260928：传 blob_entries 供 compaction 对共享注册表路径
+        # 做身份集纯加法合并前递（victim 独有增量就地并入本袋条目，见
+        # _compact_merge_registry_overlap）；不可信合并=旧项保留不顶替。
+        removed = _compact_pending(root, session_id, seen_paths, blob_entries)
         # C1 合批去抖（同会话短窗并入 pending 前件；跨会话/跨 worktree 永不并）：
         # 放在 compaction 之后——同路径覆盖语义已由 compaction 处理，合批只吃
         # 互斥路径（重叠路径经 compaction 缩减后并入，文件集并集不变）。显式
@@ -1498,34 +1605,53 @@ def _merge_stale_view(path: Path, item: dict) -> dict:
 
 # ---------------------------------------------------------------------------
 # 依赖级联标记（66 号 §6.4 + 08 号文 §4.3 P1，2026-08-29 落地；矿③ MVP 改影子）
+# D1（st-commitspeed-d1-statslock 2026-09-30）批量化收口：mark_cascade_stale_batch
+# 一次 pending 扫描消费整条落地序索引（池车道波末一遍 O(N)，替代每落地一遍 O(N²)
+# 扇出并把 O(N) 段移出池级锁）；_mark_cascade_stale 收敛为其一元便捷包装——单一
+# 实现禁分叉：串传送带与池车道两路调用点共用同一判定体（D1_stats_lock.md §4.3）。
 # ---------------------------------------------------------------------------
 
 
-def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
-    """项 X 成功落盘后的级联标记：扫描 pending 剩余项，命中的写 stale 影子指令，返回命中 qid 列表。
+def _cascade_index_hit(item: dict, landed_index) -> str | None:
+    """D1 §4.4 认领判定 index 侧：本波内存级联索引是否命中本项。
 
-    命中条件（66 号 §6.4「级联标记」）：
-    - meta.depends_on 含 X.qid（显式依赖前置项）；或
-    - base_head 与 X.base_head 相同且均非空（base_head 经由 X——同基底入队，
-      X 落盘后目标分支 HEAD 已越过该基底，Y 的基底过龄）。
+    返回按落地序的第一个命中源 qid（无命中 None）。判据与 mark_cascade_stale_batch
+    逐字段同源（depends_on 含已落地 qid ∨ base_head 相等且均非空）；仅消费内存态，
+    零盘面 IO——批标记延迟写盘期间，认领时刻的基底越界判定由本函数补位。
+    """
+    meta = item.get("meta") or {}
+    for landed_qid, landed_base in landed_index or []:
+        if landed_qid in (meta.get("depends_on") or []):
+            return landed_qid
+        if landed_base and item.get("base_head") and item["base_head"] == landed_base:
+            return landed_qid
+    return None
 
-    stale 项不立即处置——排到队首时经 _revalidate_stale_base 重校验基底：
-    仍适用→清标放行，不适用→降死信候选（dead_reason=cascade_stale）。
-    矿③ MVP：袋 JSON **零改写**（append-only 不变量）——命中只 O_EXCL 写影子
-    pending/.stale/<qid>.json；影子已存在（袋旧位或旁路）=已标，不重标——保留
-    首个触发源（stale_by 审计首因）。读窗收窄语义保留（D4 第一层）：项已被认领
-    （rename→processing）则影子也不写——写了对已认领件不可见，徒增孤儿等清扫。
-    F1 飞行窗（redblu_robust.md §五）与影子并存裁定（考古合并 2026-09-26）：标记
-    介质以影子为准，F1 的认领 rename 飞行窗保护逻辑原样保留——影子写入后延时二扫，
-    目的侧（processing/done）落定 ⇒ 刚写的影子失去作用对象，就地清理（防 stale
-    视图错标已认领件；影子写不产 pending 幽灵，故 F1 的「幽灵 unlink」形态转化为
-    「影子 cleanup」，延时让渡与双查口径不变）。
-    口部随迁清理落账项自身影子（pool 车道 done 出口不经本仓 drain 面，在此覆盖）。
+
+def mark_cascade_stale_batch(root: Path, landed_index: list[tuple[str, object]]) -> list[str]:
+    """批量化级联标记：一次 pending 扫描，对 landed_index（(qid, base_head)，按落地序）
+    整体判定命中并写 stale 影子指令，返回命中 qid 列表。
+
+    语义 = 逐件版 `_mark_cascade_stale` 的循环合并（D1 手术单 §4.3）：
+    - 命中条件（66 号 §6.4「级联标记」）：meta.depends_on 含 index 中任一 qid
+      （显式依赖前置项）；或 base_head 与 index 中任一 base_head 相等且均非空
+      （base_head 经由该件——同基底入队，其落盘后目标分支 HEAD 已越过该基底）；
+    - **stale_by 首因口径：按落地序的第一个命中者**（同一落地项内 depends 优先于
+      base 计触发类型）——与逐件串行调用「先落者先标」逐字节一致；
+    - 已标（袋旧位/影子）不重标；影子 O_EXCL 写失败（并发先写）不计命中；
+    - 口部随迁清理 index 内全部落账项自身影子（pool 车道 done 出口不经本仓 drain
+      面，在此覆盖）。
+    F1 飞行窗（redblu_robust.md §五）原样保留：影子写入后延时二扫，processing/done
+    已见同名 ⇒ 影子失去作用对象，就地清理不计命中（防 stale 视图错标已认领件；
+    影子写不产 pending 幽灵，故「幽灵 unlink」形态转化为「影子 cleanup」，延时让渡
+    与双查口径不变）。读窗收窄（D4 第一层）：项已被认领（rename→processing）则
+    影子不写/不计——写了对已认领件不可见，徒增孤儿等清扫。
     仅 lease 持有者（单写者）调用；仅作用 pending（done/dead 是终态不触碰）。
     """
-    landed_qid = str(landed_item.get("qid", ""))
-    _cleanup_stale_shadow(root, landed_qid)
-    landed_base = landed_item.get("base_head")
+    if not landed_index:
+        return []
+    for landed_qid, _landed_base in landed_index:
+        _cleanup_stale_shadow(root, landed_qid)
     marked: list[str] = []
     for candidate in sorted((root / "pending").glob("q-*.json")):
         try:
@@ -1536,13 +1662,20 @@ def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
         meta = item.get("meta") or {}
         if meta.get("stale") or _stale_shadow_path(root, qid).exists():
             continue  # 已标（袋旧位/影子）——不重标，保留首个触发源
-        depends_hit = landed_qid in (meta.get("depends_on") or [])
-        base_hit = bool(landed_base) and bool(item.get("base_head")) and item["base_head"] == landed_base
-        if not (depends_hit or base_hit):
+        trigger_qid: str | None = None
+        trigger = ""
+        for landed_qid, landed_base in landed_index:
+            depends_hit = landed_qid in (meta.get("depends_on") or [])
+            base_hit = bool(landed_base) and bool(item.get("base_head")) and item["base_head"] == landed_base
+            if depends_hit or base_hit:
+                trigger_qid = landed_qid
+                trigger = "depends_on" if depends_hit else "base_head"
+                break  # 首因=落地序第一个命中者（逐件串行调用的先落者先标口径）
+        if trigger_qid is None:
             continue
         if not candidate.exists():
             continue  # 读窗内已被认领/移除——不再是 pending，stale 标记无从谈起（D4/F1 收窄）
-        if not _write_stale_shadow(root, qid, landed_qid, "depends_on" if depends_hit else "base_head"):
+        if not _write_stale_shadow(root, qid, trigger_qid, trigger):
             continue  # 影子已被并发写入（首个触发源胜出）——不计命中
         # F1 飞行窗二扫（保护逻辑保留，介质改影子）：影子写入瞬间认领 rename 可能恰在
         # 飞行中——源侧已 rename 走、目的侧尚未可见（Windows 杀软/索引器加宽可见性滞后），
@@ -1556,6 +1689,12 @@ def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
             continue
         marked.append(qid)
     return marked
+
+
+def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
+    """项 X 成功落盘后的级联标记（D1 起为一元便捷包装，直通 mark_cascade_stale_batch——
+    判定体单一实现禁分叉；独立调用方/既有测试的逐件口径经此保持零变化）。"""
+    return mark_cascade_stale_batch(root, [(str(landed_item.get("qid", "")), landed_item.get("base_head"))])
 
 
 def _note_rebased_registry(item: dict, paths: list[str]) -> None:
