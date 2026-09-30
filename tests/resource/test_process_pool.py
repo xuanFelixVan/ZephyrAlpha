@@ -418,3 +418,68 @@ class TestWmiDetachedProcessShim:
             shim = pp._WmiDetachedProcess(99999999)
             del shim
         assert not [w for w in caught if issubclass(w.category, ResourceWarning)]
+
+
+class TestRunSubprocessHiddenPopenForm:
+    """Popen 形态（meta_out 捕证）非 mock 直测——2026-10-01 提交链事故回归钉。
+
+    事故：Popen 形态初版把 subprocess.run 独参 timeout=/capture_output= 直接
+    透传 Popen → TypeError 批量死信（26 袋）。现有测试全部 mock 本包装器恰好
+    漏掉该回归面，故此处必须打真子进程。
+    """
+
+    def test_meta_out_accepts_run_style_kwargs(self):
+        """capture_output/timeout 等 run() 独参在 Popen 形态下语义全等。"""
+        import subprocess as sp
+
+        import zephyr.shared.infra.process_pool as pp
+
+        meta: dict = {}
+        r = pp.run_subprocess_hidden(
+            [sys.executable, "-c", "print('ok')"],
+            meta_out=meta,
+            capture_output=True,
+            timeout=60,
+        )
+        assert isinstance(r, sp.CompletedProcess)
+        assert r.returncode == 0
+        assert "ok" in (r.stdout or "")
+        assert isinstance(meta.get("pid"), int) and meta["pid"] > 0
+        assert isinstance(meta.get("create_time"), float) and meta["create_time"] > 0
+
+    def test_meta_out_timeout_raises_and_kills_child(self):
+        """超时语义与 run() 全等：TimeoutExpired 抛出且子进程被收尸。"""
+        import subprocess as sp
+
+        import pytest
+
+        import zephyr.shared.infra.process_pool as pp
+
+        meta: dict = {}
+        with pytest.raises(sp.TimeoutExpired):
+            pp.run_subprocess_hidden(
+                [sys.executable, "-c", "import time; time.sleep(60)"],
+                meta_out=meta,
+                capture_output=True,
+                timeout=3,
+            )
+        assert isinstance(meta.get("pid"), int) and meta["pid"] > 0
+        # 收尸验证：kill+communicate 后进程应已退出（NoSuchProcess=已收尸，即通过；
+        # psutil 缺席则跳过断言）
+        try:
+            import psutil  # noqa: PLC0415
+
+            try:
+                assert not psutil.Process(meta["pid"]).is_running()
+            except psutil.NoSuchProcess:
+                pass
+        except ImportError:
+            pass
+
+    def test_meta_out_none_keeps_run_path(self):
+        """缺省（meta_out=None）走 subprocess.run 原路径，行为零变化。"""
+        import zephyr.shared.infra.process_pool as pp
+
+        r = pp.run_subprocess_hidden([sys.executable, "-c", "print('plain')"], timeout=60)
+        assert r.returncode == 0
+        assert "plain" in (r.stdout or "")

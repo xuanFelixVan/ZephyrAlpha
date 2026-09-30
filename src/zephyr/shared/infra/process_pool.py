@@ -313,7 +313,7 @@ def _spawn_detached_via_wmi(
             pass
 
 
-def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+def run_subprocess_hidden(cmd: list[str], meta_out: dict | None = None, **kwargs) -> subprocess.CompletedProcess:
     """统一无窗口 subprocess.run 入口（TRAE-067 铁律2 落地）。
 
     与原 subprocess.run 行为一致，唯一区别：Windows 下加 CREATE_NO_WINDOW
@@ -322,6 +322,11 @@ def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProce
 
     Args:
         cmd: 命令列表（如 [sys.executable, "scripts/foo.py"]）
+        meta_out: S4-F 捕证出参（全流通夜战 G2 2026-09-30）——传入 dict 时经
+            Popen 形态捕获子进程 ``pid`` + ``create_time``（epoch 秒，psutil 存活
+            窗口读取）回填其中；语义与 subprocess.run 全等（超时 kill+收尸+抛
+            TimeoutExpired 复刻 run() 行为）。捕证失败置 None，永不抛出——可观测
+            性不阻断主链。None（缺省）时走 subprocess.run 原路径，行为零变化。
         **kwargs: 透传给 subprocess.run（capture_output/text/encoding/errors/cwd/env/timeout 等）
 
     Returns:
@@ -338,7 +343,33 @@ def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProce
         # 调用方可能已设 creationflags（如需 DETACHED_PROCESS）——不覆盖，
         # 仅在未设时注入 hidden flags
         kwargs.setdefault("creationflags", _hidden_creationflags())
-    return subprocess.run(cmd, **kwargs)
+    if meta_out is None:
+        return subprocess.run(cmd, **kwargs)
+    # Popen 形态（仅捕证调用方）： communicate 语义与 subprocess.run 等价
+    # （含超时 kill+收尸+re-raise）；psutil create_time 必须在存活窗口读——
+    # communicate 返回即已收尸，届时查 psutil 报 NoSuchProcess。
+    meta_out["pid"] = None
+    meta_out["create_time"] = None
+    if kwargs.pop("capture_output", False):
+        # capture_output 是 run() 独参——Popen 需翻译成 PIPE
+        kwargs.setdefault("stdout", subprocess.PIPE)
+        kwargs.setdefault("stderr", subprocess.PIPE)
+    timeout_s = kwargs.pop("timeout", None)  # timeout 亦是 run() 独参——给 communicate
+    proc = subprocess.Popen(cmd, **kwargs)  # noqa: S603 — cmd 由调用方构造（同 run()）
+    meta_out["pid"] = proc.pid
+    try:
+        import psutil  # noqa: PLC0415 — 捕证依赖延迟导入，缺席降级 None
+
+        meta_out["create_time"] = psutil.Process(proc.pid).create_time()
+    except Exception:  # noqa: BLE001 — 捕证失败置 None（时间戳缺席不阻断主链）
+        pass
+    try:
+        stdout, stderr = proc.communicate(timeout=timeout_s)
+        return subprocess.CompletedProcess(cmd, proc.returncode, stdout, stderr)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.communicate()
+        raise
 
 
 def spawn_python_hidden(
