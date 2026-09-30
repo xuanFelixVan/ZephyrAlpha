@@ -88,7 +88,7 @@ _WB_API_URL = "https://api.worldbank.org/v2"
 # HTTP 请求超时（秒）——海外站点设宽松些
 # FRED 响应较快（30s 够），世界银行 API 响应较慢（需 60s）
 _FRED_TIMEOUT = 30
-_WB_TIMEOUT = 60
+_WB_TIMEOUT = 200  # 09-30 实测 api.worldbank.org 响应 >60s（VPN/海外路由），60s 必超时；180s 直探 HTTP 200 实证后取 200
 
 
 # ============== FRED 关键序列（精选高价值，免费可得） ==============
