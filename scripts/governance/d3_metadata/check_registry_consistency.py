@@ -73,6 +73,7 @@ ROR_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry_consistency_contract.yaml"
 )
 from _shared.frontmatter import parse_frontmatter_from_file
+from _shared.registry_entry_count import parse_counting_rule
 from _shared.yaml_utils import load_yaml
 
 
@@ -485,6 +486,15 @@ def verify_entry_counts(roor_path: Path = ROOR_PATH) -> list[dict] | None:
             continue
         spec = ENTRY_SPECS.get(rid)
         if spec is None:
+            # CR-007 口径派生（2026-09-30）：ROOR 本条 counting_rule 即口径真源——
+            # ENTRY_SPECS 未登记但册面自述了可机械解析的口径时直接派生，
+            # 键白名单不再是唯一路径（ENTRY_SPECS 降级为覆写）。
+            rule_text = reg.get("counting_rule")
+            if isinstance(rule_text, str) and rule_text.strip():
+                parsed = parse_counting_rule(rule_text)
+                if parsed is not None:
+                    spec = (parsed[0], parsed[1], rule_text.strip())
+        if spec is None:
             rows.append(
                 {
                     "rid": rid,
@@ -544,6 +554,11 @@ def apply_roor_entry_count_updates(rows: list[dict], roor_path: Path = ROOR_PATH
     if not fixes:
         return []
     rule_texts = {rid: ENTRY_SPECS[rid][2] for rid in fixes if rid in ENTRY_SPECS}
+    # 口径派生行（ENTRY_SPECS 未登记、由 ROOR counting_rule 派生）——note 即口径文本，
+    # 缺 counting_rule 行时同样按口径补插
+    for rid, row in fixes.items():
+        if rid not in rule_texts and isinstance(row.get("note"), str) and row["note"].strip():
+            rule_texts[rid] = row["note"]
     text = roor_path.read_text(encoding="utf-8")
     lines = text.split("\n")
     rid_re = re.compile(r"^\s*-\s*registry_id:\s*(\S+)\s*$")
@@ -754,6 +769,40 @@ def compute_roor_summary(roor: dict) -> dict:
         "registries 段为准（该册才是扫描面真源，RULE-SSOT）；"
         "本 summary 不再重复手写扫描计数。",
     }
+
+
+def verify_roor_summary(roor_path: Path = ROOR_PATH) -> list[dict]:
+    """CR-007c 对账：summary 派生标量 ↔ tiers 实测再生值逐字段对账（恒只读）。
+
+    行字段：field / expected（册面声明值）/ actual（compute_roor_summary 机械再生值）/
+    verdict（MATCH | STALE）；七个派生字段逐一对账，手改 summary 数字必 STALE。
+    """
+    data = load_yaml(roor_path)
+    declared = data.get("summary") if isinstance(data, dict) else None
+    if not isinstance(declared, dict):
+        return [{"field": "summary", "expected": None, "actual": None, "verdict": "MISSING"}]
+    computed = compute_roor_summary(data)
+    rows: list[dict] = []
+    for field in (
+        "total_tiers",
+        "total_registries",
+        "by_tier",
+        "by_status",
+        "by_medium",
+        "broken",
+        "entries_carrying_tier_field",
+    ):
+        expected = declared.get(field)
+        actual = computed.get(field)
+        rows.append(
+            {
+                "field": field,
+                "expected": expected,
+                "actual": actual,
+                "verdict": "MATCH" if expected == actual else "STALE",
+            }
+        )
+    return rows
 
 
 def apply_roor_summary_update(roor_path: Path = ROOR_PATH) -> str:
