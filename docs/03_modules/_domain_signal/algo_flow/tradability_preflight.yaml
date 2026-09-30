@@ -37,4 +37,13 @@ algo_flow: |
     # - id: O2
     #   name_zh: 盘前裁决 dict
     #   intro: status=ok|absent + trade_date/checked/tradable/blocked/cage 建议价/vetoed_pool/notes（JSON 可序列化）
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A2
+    # I4 --> A3
+    # A3 --> A1
+    # A1 --> A2
+    # A2 --> O1
+    # A3 --> O2
     # [/ALGO_FLOW]

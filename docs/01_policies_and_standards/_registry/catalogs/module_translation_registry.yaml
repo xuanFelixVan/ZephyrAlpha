@@ -62167,6 +62167,14 @@ entries:
   desc_en: ''
   plain_zh: 清洗判净站还没开门，这把尺子先造好：以后 AI 和引擎各判各的，它按周算两边不一致的比例，对照预注册的百分之五上界报超没超，给老板复裁用。
   responsibility_layer: business
+- module_path: scripts/governance/wave1a/verified_promotion_check.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "VERIFIED 升态校验器"
+  name_en: "verified promotion precheck"
+  desc_zh: "wave1a 升 VERIFIED 前置三判据校验：artifact_paths 空锚判据①、现读缺锚判据②、rb 旗标判据③，输出 empty/missing/eligible/rb_anchor_required 四态与 REJECT/ELIGIBLE 判定"
+  desc_en: ""
+  plain_zh: "一张任务卡想升 VERIFIED 不能空口自称完成：这个校验器先看卡上有没有写交付物路径（没写就拒），再逐个打开这些路径确认文件真的在（不在就是伪锚，拒），最后看卡上是否带红蓝复核旗（带旗必须先复核，不许直升）。三条全过才放行，可用命令行批量读卡出四态清单"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

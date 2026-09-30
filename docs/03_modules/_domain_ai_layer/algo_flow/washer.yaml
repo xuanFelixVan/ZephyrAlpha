@@ -20,6 +20,7 @@ algo_flow: |
     # - id: P1
     #   name_zh: P1 注入消毒（LSG scan_input 前置，异常=injection_suspect 退回）
     #   name_en: sanitize_input
+    #   is_break: true
     #   code: wash_card
     # - id: P2
     #   name_zh: L2 本地预洗（route 缺席仍可本地工序；API 工序轨缺席 fail-closed）
@@ -28,6 +29,7 @@ algo_flow: |
     # - id: P3
     #   name_zh: 网关工序（注入式 GatewayFn；生产默认 lsg_gateway_call→LLMGateway.call 双扫描）
     #   name_en: gateway_steps
+    #   is_break: true
     #   code: lsg_gateway_call
     # - id: P4
     #   name_zh: P3 结构判收（剥 json 围栏→loads，两次破损=wash_failed 退回）
@@ -42,7 +44,7 @@ algo_flow: |
     # I1 -.->|断点| P1
     # I2 -.->|断点| P3
     # P1 --> P2
-    # P2 --> P3
+    # P2 -.->|断点| P3
     # P3 --> P4
     # P4 --> O1
     # [/ALGO_FLOW]

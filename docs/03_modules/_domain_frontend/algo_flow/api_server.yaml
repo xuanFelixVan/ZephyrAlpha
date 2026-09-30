@@ -29,3 +29,12 @@ algo_flow: |
     # - id: O1
     #   name: JSON 信封 {ok, count?, data, error?}（页契约形状；schedulegate=data.orders）
     #   code: -> dict[str, Any]
+    # 边:
+    # I1 --> P1
+    # P1 --> A1
+    # P1 --> P2
+    # P2 --> P3
+    # P2 --> O1
+    # P3 --> O1
+    # A1 --> O1
+    # [/ALGO_FLOW]
