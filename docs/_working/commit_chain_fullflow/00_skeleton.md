@@ -37,6 +37,24 @@ session: st-gate-rationalize-20260929
 - C 段（等待解锁）：生成器登记债（gate_registry.yaml/generate_gate_registry.py 他队 MM 中）、D1 stats_lock（landing.py MM 中）、hook 通道出锁（需与 Phase-A/B 重设计一并）、SessionRegistry 增量写（整表重写竞态已被本夜三连拒实证，日班专项）。
 - D 段：循环检查×2零 → 红蓝对抗 → 清理 → 终报。
 
+## 五、循环检查与红蓝终态（07:5x-08:1x）
+
+- **R1**：831 绿 / 1 红——test_roster_triggers_wired 断言陈旧（C98 一批 .py→*.py 名册口径），机械同步修复。
+- **R2**：2739 绿 / 3 红复判：①test_production_registry_clean=**真缺陷**（生产排程 data_slot 五槽同窗 11.5GB>mem_ceiling 10GB，at=2026-09-16，resource_schedule 门正确执法，D_DATA 域登记移交 Owner/数据班）；②test_cache_invalidated_on_mtime_or_size、③rb14_s7 双落地=**套件序 flake**（单跑均绿；s7 的 qid 双处理属 D4 幽灵 pending 已登记域，D1 手术同区）。
+- **红蓝**：pkg14 七场景+战役回归套件绿；新增对抗针全过（锁竞争冒烟 0.84s 行为正确/横幅尾读自检/gate-test 双分支/轮转超限翻代/短路零探测）。
+- **我的变更面结论：连续两轮零红**（R1 红即修、R2 三红全数为他会话面/数据面/flake，与本夜 8 笔提交无因果——逐笔归属核实过）。
+
+## 六、移交清单（日班，按优先序）
+
+1. **D1 stats_lock 手术**：landing.py 已解锁，手术单 commit_speedup_campaign/10_D1_D2/D1_stats_lock.md 完整（四小时单+红蓝矩阵 §5+§4.4 安全必要条件），需满上下文专班。
+2. **resource_schedule mem_ceiling 真违规**：data_slot 五槽同窗 11.5GB>10GB（resource_schedule_gate 实证），数据班降槽或扩顶，Owner 定。
+3. **生成器登记债**：gate_registry.yaml 仍 M（他队未完），generator+重生成须同批（防 manifest-drift 自爆）。
+4. **CREATE-GUARD p90 44.8s 尾**：热册并发写 cache-miss+IO 争用，注册表分片/预热专项。
+5. **SessionRegistry 整表重写竞态**：本夜 SESSION-REQUIRED 三连拒实证（瞬态 pid/MSYS pid 被收割），增量写/分片写专项；短期配方=真实 Windows pid 保活注册（e01 簿留档）。
+6. **B4 tracked 快照 4→1**：硬阻断安全门指纹语义，需专项+红蓝。
+7. **hook 通道出锁+Phase-A/B 重设计**：p50 44.3s 通道在全局锁内=最大单点，需与快败语义一并重构（首过率 9% 下 Phase-A 对红件净省）。
+8. **integrity chore 残留观察**：翻旗后 7 笔落地仍现 1 笔 chore(integrity)（07:59，疑翻旗前启动的老工位），下轮观测应归零。
+
 ## 四、施工红线（Owner 晨令）
 
 1. 不抹掉/不回退任何他会话成果与临时文件；同文件撞车=登记让位或排后。
