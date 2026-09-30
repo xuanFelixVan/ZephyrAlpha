@@ -57859,4 +57859,134 @@ creation_tokens:
   created_by: st-menu-t1b6-20260930
   capability: b6_source_search
   merge_evaluation: "内收 w5_1：矿卡 nb1_b6 的 b 档执行落卡（数据源搜索结论唯一真源），同域唯一新增无替代对象"
+- file: src/zephyr/data/quality/__init__.py
+  token: data-quality-sla-module---init---20260930
+  created_by: st-menu-t1b1-20260930
+  capability: data_quality_sla_module
+  merge_evaluation: "跨域不同对象：F127 退役包唯一 salvaging 件迁址（predictor 算法核零改动 git mv）+ 其唯一消费面（F08 归档链 manifest burn-rate 适配）+ 包门面；NB1-B1 裁定卡+Owner 本夜批文授权的融合，非同源新建；零替代既有条目（旧 token 条目随 git mv 由路径变更登记衔接）"
+- file: src/zephyr/data/quality/archive_sla_burnrate.py
+  token: data-quality-sla-module-archive-sla-burnrate-20260930
+  created_by: st-menu-t1b1-20260930
+  capability: data_quality_sla_module
+  merge_evaluation: "跨域不同对象：F127 退役包唯一 salvaging 件迁址（predictor 算法核零改动 git mv）+ 其唯一消费面（F08 归档链 manifest burn-rate 适配）+ 包门面；NB1-B1 裁定卡+Owner 本夜批文授权的融合，非同源新建；零替代既有条目（旧 token 条目随 git mv 由路径变更登记衔接）"
+- file: src/zephyr/data/quality/sla_breach_predictor.py
+  token: data-quality-sla-module-sla-breach-predictor-20260930
+  created_by: st-menu-t1b1-20260930
+  capability: data_quality_sla_module
+  merge_evaluation: "跨域不同对象：F127 退役包唯一 salvaging 件迁址（predictor 算法核零改动 git mv）+ 其唯一消费面（F08 归档链 manifest burn-rate 适配）+ 包门面；NB1-B1 裁定卡+Owner 本夜批文授权的融合，非同源新建；零替代既有条目（旧 token 条目随 git mv 由路径变更登记衔接）"
+- file: docs/_working/total_circulation_night/00_skeleton.md
+  token: night-campaign-work-book-00-skeleton-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s3_library_step2.md
+  token: night-campaign-work-book-s3-library-step2-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s4_a_single_pass.md
+  token: night-campaign-work-book-s4-a-single-pass-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s4_b_token_sim.md
+  token: night-campaign-work-book-s4-b-token-sim-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s4_c_p90_cache.md
+  token: night-campaign-work-book-s4-c-p90-cache-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s4_d_session_registry.md
+  token: night-campaign-work-book-s4-d-session-registry-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s4_e_b4_snapshot.md
+  token: night-campaign-work-book-s4-e-b4-snapshot-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s4_f_rc143.md
+  token: night-campaign-work-book-s4-f-rc143-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s5_fix_a.md
+  token: night-campaign-work-book-s5-fix-a-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s5_skeleton.md
+  token: night-campaign-work-book-s5-skeleton-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/total_circulation_night/s2_precision_a.md
+  token: night-campaign-work-book-s2-precision-a-20260930
+  created_by: st-circ-a2-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/03_modules/_domain_backtest/algo_flow/gpu_core.yaml
+  token: gpu-final7-algo-flow-gpu-core-20260930
+  created_by: st-gpu-final7-20260929
+  capability: backtest_gpu_rewrite
+  merge_evaluation: "ALGO_FLOW 外部真源伴生件（gpu_core P0 薄核出仓视图，同批落地零替代对象，净增一发）"
+- file: data/capability_cards/library_lookup.yaml
+  token: library-lookup-library-lookup-20260930
+  created_by: st-circ-a4-20260930
+  capability: library_lookup
+  merge_evaluation: "裁定#460 ②：MOD-LIB-003 查询总口渐进披露卡（第45张），字段纯派生自模块头 INVARIANTS/capability 册索引，零新真源；跨域不同对象不并（卡是披露面、模块是实现面）"
+- file: .github/copilot-instructions.md
+  token: circ-a4-copilot-instructions-20260930
+  created_by: st-circ-a4-20260930
+  capability: library_lookup
+  merge_evaluation: "裁定#460 ②：AI 入口指针集（AGENTS.md→llms.txt→FRONT_DOOR→lookup 总口→commit 正门），纯指针零内容真源，替代无（.github 首份 copilot 指引）；内收 w5_1：不并（跨域不同对象：入口引导非规则数据）"
+- file: docs/_working/total_circulation_night/s3_library_step2.md
+  token: circ-a4-library-step2-ledger-20260930
+  created_by: st-circ-a4-20260930
+  capability: library_lookup
+  merge_evaluation: "裁定#460 ② 施工簿（A4 车道四件套落地台账），task_bound 一次性战役件；零新真源，纯留痕"
+- file: docs/_working/total_circulation_night/s5_fix_b.md
+  token: night-campaign-work-book-s5-fix-b-20260930
+  created_by: st-circ-a8-20260930
+  capability: night_campaign_work_book
+  merge_evaluation: "内收 w5_1：战役施工簿（每车道一簿台账），同域唯一台账载体无替代对象；簿为任务期产物 ttl=task_bound"
+- file: docs/_working/disk_reorg_campaign/a7_sector_switch_validation.md
+  token: sector-switch-validation-a7-sector-switch-validation-20260930
+  created_by: st-storageswap-20260930
+  capability: sector_switch_validation
+  merge_evaluation: "T3切源前置校验一次性任务件（数据+断链地图），被a6工单§F+引用；与D_REPORTING模块跨域不同对象不并"
+- file: docs/_working/total_circulation_night/s1_dead_purge.md
+  token: total-circulation-night-s1-dead-purge-20260930
+  created_by: st-circ-a1-20260930
+  capability: total_circulation_night
+  merge_evaluation: "夜战工作簿族：会话级施工/挖矿台账（task_bound TTL），被 00_skeleton 总包协议消费，零生产真源不并"
+- file: docs/_working/total_circulation_night/s2_precision_b.md
+  token: total-circulation-night-s2-precision-b-20260930
+  created_by: st-circ-a1-20260930
+  capability: total_circulation_night
+  merge_evaluation: "夜战工作簿族：会话级施工/挖矿台账（task_bound TTL），被 00_skeleton 总包协议消费，零生产真源不并"
+- file: docs/_working/night_field_cleanup/COMMIT_CHECKLIST.md
+  token: night-field-cleanup-book-commit-checklist-20260930
+  created_by: st-nightclean-20260929
+  capability: night_field_cleanup_book
+  merge_evaluation: "夜战清滩作战文件族第三次保命提交（两次蒸发+一次重启，Owner 09-29/30 授权全案），非重复真源"
+- file: docs/_working/night_field_cleanup/MORNING_REPORT.md
+  token: night-field-cleanup-book-morning-report-20260930
+  created_by: st-nightclean-20260929
+  capability: night_field_cleanup_book
+  merge_evaluation: "夜战清滩作战文件族第三次保命提交（两次蒸发+一次重启，Owner 09-29/30 授权全案），非重复真源"
+- file: docs/_working/night_field_cleanup/PLAN.md
+  token: night-field-cleanup-book-plan-20260930
+  created_by: st-nightclean-20260929
+  capability: night_field_cleanup_book
+  merge_evaluation: "夜战清滩作战文件族第三次保命提交（两次蒸发+一次重启，Owner 09-29/30 授权全案），非重复真源"
+- file: docs/_working/night_fullflow_mine/00_master.md
+  token: night-fullflow-mine-book-00-master-20260930
+  created_by: st-nightclean-20260929
+  capability: night_fullflow_mine_book
+  merge_evaluation: "全流通夜战挖矿主线目录（内收引用 fullflow_mining 骨架真源不另立）"
 di_seam_exemptions: []
