@@ -334,13 +334,8 @@ def test_reconciler_guardrail_marker_present():
 
 
 # ── R-K wiring_registry 机器视图 ─────────────────────────────────────────────
-@pytest.mark.xfail(
-    strict=False,
-    reason="依赖 scripts/governance/d3_metadata/generate_wiring_registry.py——该件 git 全历史从未存在，"
-    "161fd5e9/e35049071f/c29118f805 三笔在案一致归 N 队袋落地（非测试缺陷、不删例、不弱断言）。"
-    "规格全文 defer 留痕：.runtime/tmp/st-zchief9-20260929/defers/lane-last.md"
-    "（st-zc9-lane-last-20260930 终验收官棒 2026-09-30）",
-)
+# xfail 已摘除转正（2026-09-30 st-zc9-lane-wgen：generate_wiring_registry.py 落地，
+# 本例 XPASS 实证后按 cb644a50f3 先例转正活测试）。
 def test_generator_books_islands_with_existing_vocabulary(tmp_path, monkeypatch):
     import importlib.util
 
