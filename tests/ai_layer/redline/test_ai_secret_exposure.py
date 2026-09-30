@@ -146,12 +146,18 @@ def test_assert_key_not_forbidden_gates_read_surface(tmp_path: Path) -> None:
         assert_key_not_forbidden(FORBIDDEN_KEY, registry_path=registry)
 
 
-def test_real_registry_today_has_no_field_yet() -> None:
-    """事实面（不粉饰）：现网 config/secret_registry.yaml 尚无该字段=字段待 Owner 落地前零拦截变化。"""
+def test_real_registry_f5_exposure_batch_landed() -> None:
+    """事实面（钉值翻转 2026-09-30 F5 通电批=裁定#450 载体，merge train 收编同批改）：
+    真册 per-key ai_exposure 标注已落（total=106），forbidden 恰 7 键。披露：merge2 原袋 q-0006 死于 REAL-KEY-REFERENCE-SCAN（键名字面量禁入代码面，硬阻断无逃生），本重落地按其判据改字面量清单钉为计数钉 7。原用例
+    test_real_registry_today_has_no_field_yet 自述处方"真册被写入须随 YAML 块落地同批改"=本改。"""
     report = load_ai_exposure_report(DEFAULT_REGISTRY_PATH)
     assert report.total_entries > 0
-    assert report.forbidden_keys == (), (
-        "真册已被写入 ai_exposure 字段——本用例须随 YAML 块落地同批改（钉值失效=有变化，不许静默）"
+    # REAL-KEY-REFERENCE-SCAN（NL-2）硬阻断键名字面量入代码面（原袋 q-0006 死因）——
+    # 字面量清单钉改计数钉 7：键名清单真源=config/secret_registry.yaml 本体（门白名单面），
+    # 7 键口径漂移（增删改）仍红禁静默，语义=集合计数守恒+malformed 零容忍不放松。
+    assert len(report.forbidden_keys) == 7, (
+        f"forbidden 键数漂移（实测 {len(report.forbidden_keys)}）——F5 批 7 键口径失真，禁静默；"
+        "键名清单真源=config/secret_registry.yaml ai_exposure: forbidden 七条"
     )
     assert report.malformed_values == ()
 
@@ -276,9 +282,10 @@ def test_two_read_sides_share_one_matcher(tmp_path: Path) -> None:
     assert key_matches_forbidden("", ("ZEPHYR_OWNER_*",)) is False
 
 
-def test_real_registry_today_creates_no_ledger(tmp_path: Path) -> None:
-    """现网真册零标注 → 不得在生产台账面凭空写一行（无状态可记），且自述 no_stamps_yet。"""
+def test_real_registry_f5_landed_guard_active_baselined(tmp_path: Path) -> None:
+    """事实面（钉值翻转 2026-09-30 F5 通电批=裁定#450 载体，merge train 收编同批改）：
+    真册标注生效 → guard_active（≥1 条 forbidden=真在拦）+ratchet baselined。
+    原用例 test_real_registry_today_creates_no_ledger 钉"零标注"前提随落批失效=本改。"""
     report = load_ai_exposure_report(DEFAULT_REGISTRY_PATH)
-    assert report.machine_check_state == STATE_OUTLET_ONLY
-    assert report.ratchet_state == "no_stamps_yet"
-    assert not Path(ase.DEFAULT_FORBIDDEN_LEDGER).exists()
+    assert report.machine_check_state == ase.STATE_GUARD_ACTIVE
+    assert report.ratchet_state == "baselined"
