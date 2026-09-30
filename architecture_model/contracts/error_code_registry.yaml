@@ -3755,6 +3755,11 @@ error_codes:
   module: zephyr.reporting.trading_review_engine
   file: src/zephyr/reporting/trading_review_engine.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-RPT-UNREGISTERED-TRADING-REVIEW 转正'
+- code: ZA-RPT-0038
+  class: ReportArchiveSinkError
+  module: zephyr.reporting.report_archive_sink
+  file: src/zephyr/reporting/report_archive_sink.py
+  introduced: '2026-09-30 补登: 报告归档持久化出口（F115 R1+R2 薄刀 d3f09834b8 系）——码在用未登记，总筹终验补登'
 
 # --- 2026-09-06 占位码转正批 SEC（Owner 批准 B17-②，取号=段内 max+1 顺延）---
 - code: ZA-SEC-0001
