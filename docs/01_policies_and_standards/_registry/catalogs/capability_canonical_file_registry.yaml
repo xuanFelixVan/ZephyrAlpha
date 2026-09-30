@@ -57834,4 +57834,14 @@ creation_tokens:
   created_by: st-nightsweep2-fin-20260930
   capability: nightsweep2_fin_final_report
   merge_evaluation: "跨域不同对象：夜总攻二终局报告（收尾验证车道交付物），与既有夜战资产零同真源重复"
+- file: docs/_working/night_sweep/f2_t0_three_versions.md
+  token: t0-three-version-comparison-ruling-zc1-f2-t0-three-versions-20260930
+  created_by: st-menu-t1f2-20260930
+  capability: t0-three-version-comparison-ruling-zc1
+  merge_evaluation: "跨域不同对象不并：本册=F2 车道裁定施工留痕，与 ADJ 案卷（材料汇编）互补非重复；t0_matrix/LEDGER 为战役台账不吸收车道册"
+- file: docs/_working/night_sweep/b_audit/b1_sixteen_dossier.md
+  token: nightsweep-t1b1-b1-dossier-b1-sixteen-dossier-20260930
+  created_by: st-menu-t1b1-20260930
+  capability: nightsweep_t1b1_b1_dossier
+  merge_evaluation: "跨域不同对象：T1-B1 车道 16 件逐件档案卡（Owner 批文要求的交付报告底稿），派生自 NB1-B1 裁定卡+逐件源码/git log/消费面实证，非同源新建；零替代既有条目"
 di_seam_exemptions: []
