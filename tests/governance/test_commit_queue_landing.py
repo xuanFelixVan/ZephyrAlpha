@@ -1965,3 +1965,47 @@ class TestIndexConvergenceRB1:
         stats = cq.drain_queue(queue_root, landing=landing)
         assert stats["done"] == 1
         assert all(not r["action"].startswith("index_") for r in _audit_records(queue_root))
+
+
+class TestNoopVerdictPassthroughOrder:
+    """读回判别器直通族顺序尺（W2-MERGE 车道 2026-09-30 死信治本）。
+
+    病根：_noop_absorption_verdict_inner 原顺序=_index_all_sides 先于
+    _split_passthrough_and_drift 剔除——热册 unique_key 标量元数据族（非 dict 块，
+    身份判不了）令 merged==ours 的合法袋（纯删/纯增，theirs==base 常态）在自证读回
+    撞「存在身份判不了的条目」死信；主合并路径同输入因先剔后索正常产出。
+    实弹死信=q-20260930-st-nightsweep2-merge-20260930-0001（module_translation_registry
+    wo001_003 三条净删，裁定册/翻译册同族形态全量同雷）。本尺先能红后转绿。
+    """
+
+    _REL = "module_translation_registry.yaml"
+
+    def test_pure_deletion_bag_with_scalar_unique_key_family_passes_verdict(self) -> None:
+        base = (
+            "unique_key: [module_path]\n"
+            "entries:\n"
+            "  - module_path: a.py\n"
+            "    name_zh: 甲\n"
+            "  - module_path: b.py\n"
+            "    name_zh: 乙\n"
+        )
+        ours = base.replace("  - module_path: a.py\n    name_zh: 甲\n", "")
+        theirs = base  # theirs==base：落地面零并发漂移（死信实测形态）
+        merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path=self._REL)
+        assert not err, err  # 空串=无错（合并器三返回约定）
+        assert merged == ours, "纯删袋三向合并须保留删除语义（merged==ours）"
+        verdict, _note = cql._noop_absorption_verdict(self._REL, base, ours, theirs)
+        assert verdict is None, f"直通族剔出后读回不得死信: {verdict}"
+
+    def test_pure_addition_bag_with_scalar_unique_key_family_passes_verdict(self) -> None:
+        base = "unique_key: [module_path]\nentries:\n  - module_path: a.py\n    name_zh: 甲\n"
+        ours = base.replace(
+            "    name_zh: 甲\n",
+            "    name_zh: 甲\n  - module_path: c.py\n    name_zh: 丙\n",
+        )
+        theirs = base
+        merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path=self._REL)
+        assert not err, err  # 空串=无错（合并器三返回约定）
+        assert merged == ours, "纯增袋三向合并须保留新增语义（merged==ours）"
+        verdict, _note = cql._noop_absorption_verdict(self._REL, base, ours, theirs)
+        assert verdict is None, f"直通族剔出后读回不得死信: {verdict}"

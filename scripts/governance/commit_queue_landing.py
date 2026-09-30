@@ -1165,6 +1165,18 @@ def _noop_absorption_verdict_inner(
     )
     if err:
         return f"{rel}: 自证读回无法判别（ours 侧 {err}）", ""
+    # 直通族先剔出再索引（W2-MERGE 车道 q-20260930-st-nightsweep2-merge-20260930-0001 死信治本，
+    # 2026-09-30）：热册 unique_key 标量元数据族在主合并路径（three_way_merge_registry_yaml）
+    # 是"先 _split_passthrough_and_drift 剔除后 _index_all_sides"，本判别器原顺序相反=索引先撞
+    # 「存在身份判不了的条目（非 dict/首字段非标量）」死信——merged==ours 的合法纯删/纯增袋
+    # 全量误死。本处与主合并同序对齐，零语义放宽：结构漂移 fail-closed 检查仍在
+    # _split_passthrough_and_drift 内先行执行，直通族本就不在条目合并语义空间。
+    passthrough, perr = _split_passthrough_and_drift(ours_families, theirs_families, base_families, rel)
+    if perr:
+        return f"{rel}: 自证读回无法判别（{perr}）", ""
+    for fam_map in (ours_families, theirs_families, base_families):
+        for pt_key in passthrough:
+            fam_map.pop(pt_key, None)
     ours_idx, theirs_idx, base_idx, err, _dedup = _index_all_sides(ours_families, theirs_families, base_families, rel)
     if err:
         return f"{rel}: 自证读回无法判别（{err}）", ""
