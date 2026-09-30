@@ -57844,4 +57844,14 @@ creation_tokens:
   created_by: st-menu-t1b1-20260930
   capability: nightsweep_t1b1_b1_dossier
   merge_evaluation: "跨域不同对象：T1-B1 车道 16 件逐件档案卡（Owner 批文要求的交付报告底稿），派生自 NB1-B1 裁定卡+逐件源码/git log/消费面实证，非同源新建；零替代既有条目"
+- file: config/macro_indicator_series_map.yaml
+  token: macro-indicator-series-map-macro-indicator-series-map-20260930
+  created_by: st-menu-t1b5-20260930
+  capability: macro-indicator-series-map
+  merge_evaluation: "跨域不同对象不并：MAC指标ID↔数据序列码唯一翻译层（注册表管定义/本表管取数映射），消费只走此层禁散落硬编码（NB1-B5 R1处方件）"
+- file: src/zephyr/regime/features/macro_regime_sensor.py
+  token: macro-regime-sensor-macro-regime-sensor-20260930
+  created_by: st-menu-t1b5-20260930
+  capability: macro-regime-sensor
+  merge_evaluation: "跨域不同对象不并：TDM-E-L1-S0 宏观环境传感器真消费模块（NB1-B5 R2-R3处方件，政策表态分析器不消费MAC数值实证在案）"
 di_seam_exemptions: []
