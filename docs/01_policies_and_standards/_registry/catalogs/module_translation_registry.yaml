@@ -62109,7 +62109,7 @@ entries:
   name_en: "cleaning anomaly hosting leg"
   desc_zh: "把 cleaning_anomaly_engine 五类检出按承载册 config/cleaning_anomaly_rules.yaml 挂进 L13 data_supply_sentinel 排班腿托管第三段：近窗按标的取帧只检不修，出报告+告警"
   desc_en: ""
-  plain_zh: "数据清洗有台能查跳变、量能异常、缺数的引擎，建好后一直没接上生产管道。这个组件把它接进每天早上六点五十的数据体检班次，按名单抽标的查一遍，发现可疑数据就写报告、发告警，但绝不直接改数据"
+  plain_zh: "把查跳变、量能异常、缺数的清洗引擎接进每日数据体检班次，按名单抽样只查不修，出报告并发告警"
   responsibility_layer: business
 - module_path: src/zephyr/data/divergence_stats.py
   domain_id: D_DATA
@@ -62117,7 +62117,7 @@ entries:
   name_en: "cross-source divergence stats"
   desc_zh: "把 cross_source_validator 的分歧结果归并为日期/表/分歧类型/计数四字段 jsonl 档案（同键覆盖 upsert），为裁定 #423 两周分歧率观察供数"
   desc_en: ""
-  plain_zh: "股票行情同时存在主备两个数据来源，两边偶尔对不上。这个组件每天把对不上的情况按类型数一数、记到账本里，连续记两周，用来决定哪些分歧值得请 AI 来评判"
+  plain_zh: "把主备数据源对不上的情况按类型计数记档，连续两周供观察，用来决定哪些分歧值得 AI 评判"
   responsibility_layer: business
 - module_path: src/zephyr/data/purity_adjudicator.py
   domain_id: D_DATA
@@ -62125,7 +62125,7 @@ entries:
   name_en: "data purity adjudicator"
   desc_zh: "裁定 #423 薄版：分歧集残余语义冲突经 LSG 正门（LLMGateway 内嵌 scan_input/scan_output）调免费额度引擎裁决，只产建议不改数，证据链 jsonl 落档+每日调用预算闸 fail-closed"
   desc_en: ""
-  plain_zh: "两份数据打架、规则又定不了谁对时，把这个争议连同双方证据交给 AI 评理。AI 每天最多评 20 次、评过的每一次都留完整底稿，结论只供人参考，绝不自动改数据"
+  plain_zh: "两份数据打架且规则定不了对错时，连证据交 AI 评理，每日限次、全留底稿、只出建议不改数"
   responsibility_layer: business
 - module_path: src/zephyr/sell_decision/core/s1_scan_orchestrator.py
   domain_id: D_SELL_DECISION
