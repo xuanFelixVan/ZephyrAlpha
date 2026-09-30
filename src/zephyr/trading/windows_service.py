@@ -1,5 +1,9 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.windows_service
+# [DEPRECATED] 2026-09-30 夜总攻 B11（Owner 已批退役）：SCM 未装实证（sc query ZephyrAlpha→1060）
+#   + 零运行时消费者双实证（仅 4 处字符串清单/注释头提及，无 import；99_skipped_for_owner #37 判据全文）。
+#   successor=ZephyrAlpha_* Windows 计划任务群+桌面壳自启动（本机开机链实证去向，99#37）。
+#   物理文件删除留 NB3 波（退役排班）；本批只标记不删。
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.trading.__init__
 # [CONSUMERS]

@@ -6131,6 +6131,7 @@ entries:
     ③双轨对账声明先行（SKEL 封矿条件裁定项就此补录）；
     ④时序张力归档：蓝图版刀1-4 已施工件（9098c65245）自本裁定生效起冻结为需求档案附件，不回退不扩写；
     ⑤裁定理由：第一性原理=复盘编排的真实消费方是既有事件链与总扳手，双轨已承载全部流量；蓝图完全体无消费方且与 Z-C4 收拢令同向收敛；100% AI 开发模式下禁止三套编排器并存。
+    ⑥F1 追认注记（merge train 收编并入，NF 分支拟立 #446 不另立新号）：2026-09-30 夜第二夜总攻 F 组令卡 F1 对本裁定的执行追认以本条为载体（同源不另取新号防同源重复立法，宪法 §4.2 内收）；L09 SKEL §四 引用面同批改指本条。
   related_files:
   - docs/_working/decision_map_campaign/links/L09_review/SKEL.md
   related_arch: ['#ARCH-367']
@@ -6444,4 +6445,113 @@ entries:
   - src/zephyr/backtest/core/batch_window_preflight.py
   related_arch: []
   related_rulings: ['裁定#431', '裁定#413', '裁定#435', '裁定#436']
+  superseded_by: null
+
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: "裁定#450"
+  title: AI 层通电批（F5）：秘钥册 per-key ai_exposure 标注+外扫宿主 L1_EXTERNAL_SCAN_HOST 双前置授权+L5 M4 首批白名单（原取 #436 撞号让号改编 #447，再遇 dev 在册 #447（NC 车道 C8 W-178 落冻）撞号二让改编 #450，循 #414/#415/#419→#420 先例）
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 夜第二夜总攻 F 组"挖矿后执行"令卡 F5 授权（st-nightsweep2-nf-20260930 执行登记）：
+    ①秘钥册 per-key ai_exposure 标注 106 条（forbidden×7/QMT_REAL 族+审计 HMAC+GRAFANA admin+CH_VM 密码+OKX secret+IFIND 密码；
+    conditional×15/审批令牌与防篡改 HMAC 等运行时待判别面；allowed×84/LLM 数据合法消费面）——执法面=ai_secret_exposure
+    （读取面断言+spawn 面并集由 C108 ac6bd10f0e 已接，本批=名单通电，combined 9 模式实证）；
+    ②外扫宿主计划任务（ZephyrAlpha_AIL1Scan，beat=register_ai_l1_scan_task.ps1，载荷 run_ai_l1_scan_tick）启用授权：
+    本条即 P2 裁定门（marker: L1_EXTERNAL_SCAN_HOST），schtasks 取证=注册前 AIL1Scan 零在册（2026-09-30 实测 0 项）；
+    P1 资源画像登记（resource_profile MANUAL_ENTITY_SEED 种子+再生）因注册表他会话在飞让路留卡，双前置齐前 ps1 拒注册为设计行为；
+    ③L5 M4 首批区域白名单=ai_eng+tooling（保守口径：低爆炸半径+卡证据；trading_algo 资金面显式排除），登记进
+    schedule_gate_policy maturity.m4_first_batch_whitelist，L5-#2 治理立案保留项随之销项。
+    编号核订：本条分支初编 #447 与 dev 在册 #447（NC 车道 C8 W-178 板块宇宙真源落冻）撞号，依 #419→#420 先例改号 #450 登记（claim_450 原子占号在案）；schedule_gate_policy 两处 stale #436 引用同批改指 #450。
+  related_files:
+  - config/secret_registry.yaml
+  - config/schedule_gate_policy.yaml
+  - scripts/register_ai_l1_scan_task.ps1
+  - scripts/ai_layer/run_ai_l1_scan_tick.py
+  - docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: "裁定#449"
+  title: "F56 kernel 三选一终局销账：选 c 葬——B7 超集 78982c4c81 为事实终态，kernel 字节封存死袋 blob"
+  date: '2026-09-30'
+  category: 架构
+  status: 'active'
+  summary: |-
+    F56 qmt_file_bridge kernel bridge_instruction_kernel.py 三选一（a/B7 判定核心改委托 kernel／
+    b/Owner 裁 ORPHAN 例外面／c/墓碑葬）正式销账=选 c：
+    (1) 事实终态=B7 超集件 78982c4c81（qmt_file_bridge_broker 自含 phantom_grace_s/cancel_hold_s
+    +18 测超集）已取代袋版适配器，仓内零消费者 kernel=ORPHAN-MODULE 硬拦无逃生（99_skipped #36 判据全文，
+    处方源=.runtime/tmp/st-zchief8-20260928/defers/lane-dbr.md defer-1）。
+    (2) 选 c 落地面已在库：edf0788dfb 墓碑收编+dd3b17f9fd 断腿重建（99#36 终局注记 2026-09-29）；
+    capability_canonical_file_registry.yaml merge_evaluation 注记同口径（"已退役(墓碑)：被 B7 实现
+    完全取代…字节封存 .runtime/commit_queue/blobs 死袋 q-20260927-st-c7-f56-20260927-0001
+    blob_sha256 索引（总筹裁定 c 葬法，Owner 2026-09-29 批）"）。
+    (3) 本裁定=2026-09-30 Owner 夜总攻 B 组批文（B13"选c葬"）对上述事实终态的正式追认销账；
+    99_skipped_for_owner #36 同批改"已裁"。kernel 物理件退役排班归 NB3 波（deprecated 标记已含于墓碑收编面）。
+    编号核订：初取 #438 与 dev 在册 #438（NC 车道 C9 三小件 706752aa00 落）撞号，依 #419→#420 先例改号 #449 登记（claim_449 原子占号在案），引用面（99_skipped #36）同批改指。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/fullconnect_campaign/99_skipped_for_owner.md
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  related_arch: ['#ARCH-TRD-A10']
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#439"
+  title: "W-163 ⚑补位批 8 项照册建议打包裁定（补-1/2/4/5/6/7/8/9；补-3 已由裁定#431 覆盖不重复）"
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 夜总攻 B17 批"照册建议"——按 93_owner_menu.md ⚑补位 A 组各条"唯一推荐"选项逐项落册
+    （菜单口径 7+2=D.1"7 项完全查无+2 项已呈缺详版"=补-1..9 全集）：
+    ①补-1 价格笼子相位判不出（#ARCH-355）采乙：先建相位判别器，判别器自证上线后再呈"拒单 vs 放行记红"
+    二选一；期间实盘路径继续"恒 UNKNOWN 原价通过"如实挂牌。
+    ②补-2 盘后退出码拆 0/4（C446）采甲：批"拆"，先出逐条受影响清单（读 exit 脚本+处理方式）再动契约，
+    消费方同批改同批验（38 条冻结契约=freeze_manifest 总规模口径，非逐条影响数）。
+    ③补-3 EV-02~06 施工令采甲（放行施工令+三件套逐项验收）——已由裁定#431 十六项授权清单明列覆盖，
+    本裁定不重复立案（DONE-CROSSCHECK）。
+    ④补-4 t0 甲位三版本分叉采甲：先出三版本 diff 表（三页对照+各自影响面）再呈圈定；不即时定版。
+    ⑤补-5 L09-C01 编排器收拢采甲：批"判据"不批"结果"——两版同窗对拍（同输入双排产台各跑一遍比回执与
+    副作用），实测差集回来再呈；≠实盘双编排（不同对象，#305/#308 近邻不顶替）。
+    ⑥补-6 emoreplay 交接采甲：判"未批"（裁定册 grep=0 册上查无），处方①原文+影响面一页纸捞回重呈，
+    捞回前不动手。
+    ⑦补-7 修宪入口采甲：不新建入口，复用现成通道（改规则 YAML/注册表走既有提交闸口+裁定登记+宪法
+    ≤300 行等长替换）；单立修宪门位与全资产净零增长原则冲突，不采。
+    ⑧补-8 时帽 single_job_wall_clock_cap_hours=12 采甲：追认口径"仅约束调度层单个 GPU 任务，不约束
+    长批任务"，暂不装牙齿；装牙齿另立施工件与统一跑批窗口同窗定（与 wall_clock_hours=59 折算需实测对账）。
+    ⑨补-9 AI 层 245 件批文采甲：不追认不推翻，补一张可复核批文（245 件清单+逐件入库理由+四临时禁门
+    CAPABILITY-OVERLAP/GATE-VOCAB/PERMANENT-SYSTEM-TRIGGER/ALGO-FLOW-LINK 归因）与绕门核查案卷同批出；
+    "245/678 两数并存不混"口径维持。
+  affected_files:
+  - docs/_working/total_command_closeout/93_owner_menu.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: ['#ARCH-355', '#ARCH-325', '#ARCH-310']
+  related_rulings: ['裁定#431', '裁定#305', '裁定#308']
+  superseded_by: null
+- ruling_id: "裁定#440"
+  title: "qmine 非标 severity 变体 22 条定性：纯展示面机械归一（Z-36 同向），中文量级字优先映射 canon"
+  date: '2026-09-30'
+  category: 治理
+  status: 'active'
+  summary: |-
+    architecture_issue_registry.yaml 805 条中非标 severity 变体 22 条（dossier_F_metaq_and_qmine 9-R3
+    机械实测：P1中×9、P0高×4、P0紧急×3、P1严重×2、medium×1、P2低×1、P0阻断×1、P4低×1；分布全貌
+    P0致命44/P1高321/P2中341/P3低77）定性如下（Owner 2026-09-30 夜总攻 B17 批"照册建议"）：
+    ①性质=纯展示面口径噪声，不动判定语义（01_adjudication_master Z-36 自裁同向："出映射表机械归一，
+    纯展示面，不动判定语义"）。
+    ②归一映射表（canon={P0致命,P1高,P2中,P3低}；中文量级字优先于数字码冲突）：
+    P1中→P2中（9）｜P0高→P1高（4）｜P0紧急→P0致命（3）｜P1严重→P1高（2）｜medium→P2中（1）｜
+    P2低→P3低（1）｜P0阻断→P0致命（1）｜P4低→P3低（1）。
+    ③执行=六册派生化生成器批次顺带（W-58 议题册 severity 变体归一施工件），生成器产出经 loader，
+    禁硬编码翻译字典；归一后非标变体余量=0 为收口判据。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/_working/total_command_closeout/dossier_F_metaq_and_qmine.md
+  related_arch: []
+  related_rulings: []
   superseded_by: null

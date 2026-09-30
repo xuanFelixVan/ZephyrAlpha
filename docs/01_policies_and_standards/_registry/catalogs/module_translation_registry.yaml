@@ -60907,30 +60907,6 @@ entries:
   desc_en: ""
   plain_zh: "规定题目只能按合法路径换状态（比如已登记→考试中→已作答），想跳步或走非法路径会被拦下并记账"
   responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/generate_source_line_register.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "源线谱机器可读册生成器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把写在文档里的那张数据源线路表自动转成机器能查的册子，题目引用的每条线能不能核对，就查这本册。"
-  responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/intake_batch.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "入题批前置校验器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "一批新问题正式入库前先扫一遍：五要素填没填齐、枚举合不合法、数据源在不在册，不合格就挡下并记下挡下的原因。"
-  responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/replay_audit_to_jsonl.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "审计账双轨回放器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把数据库里的审计记录重新灌一份到追加式文本账，让两本账能逐日核对，防止只有一本账时被发现不了漏记。"
-  responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/derived_dirty_ledger.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: "派生刷新意图账"

@@ -1541,4 +1541,30 @@ gaps:
     created: "2026-09-29"
     last_updated: "2026-09-29"
 
-last_updated: "2026-09-29"
+  # === 2026-09-30 夜总攻 B15 补挂（C120 收口复核：F06 六张已在案，本批只补 F06 未列 2 张）===
+  - id: "index_valuation_daily_v2_no_collector"
+    table: "c1_market.index_valuation_daily_v2"
+    gap_type: "empty_table"
+    start_date: "2026-09-30"
+    end_date: null
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"
+    root_cause: "表在册 0 行（2026-09-30 CH 实读）；src/zephyr/data 树零采集腿（无 provider/无 task config）；v2 后缀=旧 index_valuation 演进平行件，真源口径未立。F06 卷九张清单未列本表（2026-09-29），B15 复核补挂"
+    resolution_plan: "立项前先裁 v1/v2 表口径归属（净零原则：先并后建）；数据源候选=akshare 指数估值接口"
+    created: "2026-09-30"
+    last_updated: "2026-09-30"
+  - id: "reconciliation_differences_dual_empty_disease"
+    table: "c1_market.reconciliation_differences"
+    gap_type: "empty_table"
+    start_date: "2026-09-30"
+    end_date: null
+    date_column: "detected_at"
+    detection_threshold: 1
+    status: "open"
+    root_cause: "在册病根（00 册 W-36/02 册 X-40，src/zephyr/data/dual_source_guard.py:28 实锚）：DuckDB governance.db 与 c1_market.reconciliation_differences 两库皆空，对账差异双真源零落地面（2026-09-30 CH 实读 0 行复核）。F06 卷九张清单未列本表，B15 复核补挂"
+    resolution_plan: "先裁对账差异真源唯一归属（DuckDB vs CH，一盘一责）再建写入腿；禁双真源并行"
+    created: "2026-09-30"
+    last_updated: "2026-09-30"
+
+last_updated: "2026-09-30"
