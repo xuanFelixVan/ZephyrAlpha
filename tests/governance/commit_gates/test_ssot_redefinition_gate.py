@@ -497,3 +497,61 @@ class TestUnrelatedSymbolPasses:
         gate = make_ssot_redefinition_gate()
         passed, _ = gate.check(gw, [])
         assert passed  # 小写不是 SSoT 符号
+
+
+# ============================================================================
+# TestImportPrescription（A3 任务4，st-circ-a3r-20260930）——处方直给
+# ============================================================================
+
+
+class TestImportPrescription:
+    def test_blocked_message_carries_executable_import(self, setup_registry):
+        """阻断消息必须直给 `从 canonical import` 可执行处方（dotted module 机械派生）。"""
+        red_file = "src/zephyr/governance/semantic_audit/privacy.py"
+        gw = _make_mock_gateway([red_file], {red_file: ["class PIICategory(str):"]})
+        gate = make_ssot_redefinition_gate()
+        passed, detail = gate.check(gw, [])
+        assert not passed
+        assert "from zephyr.governance.rule_patterns import PIICategory" in detail, (
+            "处方必须是可执行 import 语句（dotted module，非路径）"
+        )
+        assert "处方" in detail
+
+    def test_canonical_to_module_dotted(self):
+        from zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate import _canonical_to_module
+
+        assert _canonical_to_module("src/zephyr/governance/rule_patterns.py") == "zephyr.governance.rule_patterns"
+        assert _canonical_to_module("src\\zephyr\\governance\\rule_patterns.py") == "zephyr.governance.rule_patterns"
+        assert _canonical_to_module("docs/odd.yaml") == "docs.odd.yaml"  # 非 src/ 前缀不去头，仅分隔符归一
+        assert _canonical_to_module("") == ""
+
+
+# ============================================================================
+# TestRepeatEscalation（A3 任务4）——同符号复读 ≥2 升级
+# ============================================================================
+
+
+class TestRepeatEscalation:
+    def test_same_symbol_two_files_escalates(self, setup_registry):
+        """同符号散落 ≥2 文件：消息头升级点名 + 逐条复读标记。"""
+        f1 = "src/zephyr/governance/semantic_audit/privacy.py"
+        f2 = "src/zephyr/gov_audit/kb_gate.py"
+        gw = _make_mock_gateway(
+            [f1, f2],
+            {f1: ["class PIICategory(str):"], f2: ["PIICategory = object"]},
+        )
+        gate = make_ssot_redefinition_gate()
+        passed, detail = gate.check(gw, [])
+        assert not passed
+        assert "升级" in detail, "同符号复读必须升级消息头"
+        assert "PIICategory" in detail
+        assert "复读×2" in detail, "复读条目必须带 ×N 标记"
+
+    def test_single_hit_not_escalated(self, setup_registry):
+        red_file = "src/zephyr/governance/semantic_audit/privacy.py"
+        gw = _make_mock_gateway([red_file], {red_file: ["class PIICategory(str):"]})
+        gate = make_ssot_redefinition_gate()
+        passed, detail = gate.check(gw, [])
+        assert not passed
+        assert "升级" not in detail, "单发不升级"
+        assert "复读" not in detail

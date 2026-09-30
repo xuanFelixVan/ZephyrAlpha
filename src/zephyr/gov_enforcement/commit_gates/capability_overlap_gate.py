@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查 staged .py 文件(AM filter)∩own-scope（2026-09-11 own-scope 推广：外来 staged 落审计不代查，None 退化全量）; 触碰税豁免（裁定#273）=阻断项源文件与 HEAD 去 docstring 后 AST 等价时不判给本批，读不到/解析不了即不豁免（fail-closed 照常阻断）; git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
+# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查 staged .py 文件(AM filter)∩own-scope（2026-09-11 own-scope 推广：外来 staged 落审计不代查，None 退化全量）; 触碰税豁免（裁定#273）=阻断项源文件与 HEAD 去 docstring 后 AST 等价时不判给本批，读不到/解析不了即不豁免（fail-closed 照常阻断）; 样板指纹排除（A3 任务3 st-circ-a3r-20260930）=__init__/main 重导出面（纯 import/别名直返体）与 ≤5 行薄 wrapper（去 docstring ≤2 语句纯委托）的克隆命中不判给本批（warn 留痕），读不到/解析不了 fail-closed 照常阻断; git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
 # [MODIFY-GUARD] gate_id="CAPABILITY-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -47,6 +47,7 @@ Usage::
 
 from __future__ import annotations
 
+import ast
 import logging
 import os
 import re
@@ -58,6 +59,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _build_own_scope,
     _is_cosmetic_only_change,
     _norm_rel,
+    _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -280,6 +282,87 @@ def _run_clone_guard_check(py_files: list[str]):
         return None
 
 
+# ── A3 任务3：样板指纹排除（st-circ-a3r-20260930，深挖矿处方）──────────────────
+# 病根：CloneGuard 对接线样板高频误报 extract 级——__init__.py/main.py 的重导出面
+# （import+别名直返）与 ≤5 行薄 wrapper（一行委托）形态天生相同，硬阻断打的是正常
+# 接线而非真重复。治本：阻断前按指纹排除这类样板；真逻辑克隆照常阻断。
+# fail-closed：读不到/解析不了/定位不到函数 → 不豁免，照常阻断（裁定#273 同款语义）。
+_BOILERPLATE_BASENAMES: frozenset[str] = frozenset({"__init__.py", "main.py"})
+_WRAPPER_MAX_LINES = 5
+
+
+def _is_reexport_body(body: list) -> bool:
+    """函数体（去 docstring 后）是否纯重导出形态：仅 import/pass/别名直返。"""
+    for s in body:
+        if isinstance(s, (ast.Import, ast.ImportFrom, ast.Pass)):
+            continue
+        if isinstance(s, ast.Return) and isinstance(s.value, (ast.Name, ast.Attribute)):
+            continue
+        return False
+    return True
+
+
+def _is_delegating_body(body: list) -> bool:
+    """函数体（去 docstring 后）是否纯委托形态：import/pass/别名或调用直返/单表达式调用。"""
+    for s in body:
+        if isinstance(s, (ast.Import, ast.ImportFrom, ast.Pass)):
+            continue
+        if isinstance(s, ast.Return) and isinstance(s.value, (ast.Name, ast.Attribute, ast.Call)):
+            continue
+        if isinstance(s, ast.Expr) and isinstance(s.value, ast.Call):
+            continue
+        return False
+    return True
+
+
+def _is_boilerplate_function(content: str, lineno: int, *, in_entry_surface: bool) -> bool:
+    """定位包含 lineno 的函数，判定样板形态（纯函数面，无 gateway 依赖）。
+
+    判据（任一命中即样板）：
+    ① main/__init__ 重导出面（in_entry_surface）：函数体纯 import/别名直返；
+    ② ≤5 行薄 wrapper：总跨度 ≤5 行且去 docstring 后 ≤2 语句纯委托体。
+
+    fail-closed：AST 解析不了 / 定位不到函数 → False（照常阻断）。
+    """
+    try:
+        tree = ast.parse(content)
+    except SyntaxError:
+        return False
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        end = getattr(node, "end_lineno", None) or node.lineno
+        if node.lineno <= lineno <= end:
+            body = list(node.body)
+            if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
+                body = body[1:]  # 去 docstring
+            if in_entry_surface and _is_reexport_body(body):
+                return True
+            span = end - node.lineno + 1
+            if span <= _WRAPPER_MAX_LINES and len(body) <= 2 and _is_delegating_body(body):
+                return True
+            return False
+    return False
+
+
+def _is_boilerplate_finding(gateway, finding) -> bool:
+    """CloneGuard finding 源函数是否样板形态（重导出面/薄 wrapper）。
+
+    fail-closed：staged 内容读不到 / AST 解析不了 / 定位不到函数 → False（照常阻断）。
+    """
+    rel = str(finding.source_file).replace("\\", "/")
+    in_entry_surface = rel.rsplit("/", 1)[-1] in _BOILERPLATE_BASENAMES
+    content = _read_staged_file(gateway, rel)
+    if content is None:
+        return False
+    lineno = 0
+    try:
+        lineno = int(getattr(finding, "source_lineno", 0) or 0)
+    except (TypeError, ValueError):
+        lineno = 0  # 形参异常按 0（定位不到函数 → fail-closed 照常阻断）
+    return _is_boilerplate_function(content, lineno, in_entry_surface=in_entry_surface)
+
+
 def make_capability_overlap_gate() -> GateSpec:
     """构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。
 
@@ -358,6 +441,24 @@ def make_capability_overlap_gate() -> GateSpec:
                     "其 %d 条既有克隆命中豁免（裁定#273），其余 %d 条照常阻断",
                     sum(1 for v in exempt_cache.values() if v),
                     len(cg_result.findings) - len(blocking),
+                    len(blocking),
+                )
+            if not blocking:
+                return True, ""
+            # 样板指纹排除（A3 任务3，st-circ-a3r-20260930）：__init__/main 重导出面
+            # 与 ≤5 行薄 wrapper 的克隆命中=接线形态误报，不判给本批（warn 留痕）；
+            # fail-closed（读不到/解析不了）照常阻断。真逻辑克隆零放松。
+            boilerplate = []
+            non_boilerplate = []
+            for f in blocking:
+                (boilerplate if _is_boilerplate_finding(gateway, f) else non_boilerplate).append(f)
+            if boilerplate:
+                blocking = non_boilerplate
+                logger.warning(
+                    "CAPABILITY-OVERLAP: %d 条克隆命中样板指纹排除（__init__/main 重导出面或≤%d行薄 wrapper，"
+                    "接线形态非真重复），其余 %d 条照常阻断",
+                    len(boilerplate),
+                    _WRAPPER_MAX_LINES,
                     len(blocking),
                 )
             if not blocking:

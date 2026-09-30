@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;registry 缺失/解析失败 fail-closed(阻断,除非 registry 本身在 staged 中正在修复);git diff 不可达 fail-open(logger.warning 告警检测器失效);own 化 2026-09-23(st-gslim P2):扫描范围=全暂存∩本 session,外来 staged warn+审计不阻断(_split_own_foreign)
+# [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;registry 缺失/解析失败 fail-closed(阻断,除非 registry 本身在 staged 中正在修复);git diff 不可达 fail-open(logger.warning 告警检测器失效);own 化 2026-09-23(st-gslim P2):扫描范围=全暂存∩本 session,外来 staged warn+审计不阻断(_split_own_foreign);阻断消息处方直给（A3 任务4 st-circ-a3r-20260930）=逐符号附 `from <canonical_module> import <符号>` 可执行处方+同符号复读≥2 处消息头升级点名（结构性分裂必须收敛）
 # [MODIFY-GUARD] gate_id="SSOT-REDEFINITION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -30,6 +30,9 @@ ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁
 - canonical 文件本身的定义豁免（合法定义）
 - tests/ 豁免（测试可能 mock/重定义）
 - import/注释行豁免
+- 阻断消息处方直给（A3 任务4，st-circ-a3r-20260930）：逐符号附 ``from <canonical_module>
+  import <符号>`` 可执行处方（dotted module 由 canonical 路径机械派生），同符号复读
+  ≥2 处消息头升级点名——结构性分裂必须收敛到唯一 canonical
 
 SSoT 符号筛选规则:
 - alias 匹配 Python 标识符 (``^[A-Za-z_][A-Za-z0-9_]*$``) 且含至少一个大写字母
@@ -177,10 +180,26 @@ def _compile_define_re(symbols) -> re.Pattern:
     return re.compile(rf"^class\s+({symbols_alt})\b|^({symbols_alt})\s*[:=]")
 
 
+def _canonical_to_module(canonical: str) -> str:
+    """canonical 文件路径 → dotted module（处方 import 语句用）。
+
+    ``src/zephyr/governance/rule_patterns.py`` → ``zephyr.governance.rule_patterns``；
+    非 src/ 前缀或无法解析时原样返回（处方退化为路径提示，不阻断格式）。
+    """
+    p = canonical.replace("\\", "/")
+    if p.startswith("src/"):
+        p = p[len("src/") :]
+    if p.endswith(".py"):
+        p = p[:-3]
+    if not p or p.startswith("/"):
+        return canonical
+    return p.replace("/", ".")
+
+
 def _scan_file_violations(
     gateway, py_file: str, symbol_to_canonical: dict[str, str], define_re: re.Pattern
-) -> list[str]:
-    """扫描单个 staged .py 文件的 added 行，返回违规列表。"""
+) -> list[tuple[str, str, str, str]]:
+    """扫描单个 staged .py 文件的 added 行，返回违规结构列表 (py_file, symbol, canonical, content)。"""
     try:
         file_diff = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file])
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -207,16 +226,41 @@ def _scan_file_violations(
         canonical = symbol_to_canonical.get(symbol, "")
         if canonical == py_file:
             continue  # 合法定义（canonical 文件本身）
-        violations.append(f"{py_file}: 重新定义 SSoT 符号 '{symbol}' (canonical: {canonical}) -> {content.strip()}")
+        violations.append((py_file, symbol, canonical, content.strip()))
     return violations
 
 
-def _format_violations(violations: list[str]) -> str:
-    """格式化违规详情为阻断消息。"""
-    return (
-        "SSoT 符号重复定义（硬阻断）：\n" + "\n".join(violations) + "\n-> 扩展现有 canonical 文件，勿重新定义。"
-        "查 capability_canonical_file_registry.yaml 找 canonical 文件。"
-    )
+def _format_violations(violations: list[tuple[str, str, str, str]]) -> str:
+    """格式化违规详情为阻断消息（A3 任务4 st-circ-a3r-20260930 治本）。
+
+    处方直给：每符号附 `从 canonical import` 的可执行 import 语句——溯源者不再需要
+    二跳查册。同符号复读 ≥2 处升级：消息头点名复读符号（结构性分裂必须收敛）。
+    """
+    symbol_counts: dict[str, int] = {}
+    for _f, symbol, _c, _content in violations:
+        symbol_counts[symbol] = symbol_counts.get(symbol, 0) + 1
+    lines = []
+    for py_file, symbol, canonical, content in violations:
+        repeat_tag = f"【复读×{symbol_counts[symbol]}】" if symbol_counts[symbol] >= 2 else ""
+        lines.append(f"{py_file}: 重新定义 SSoT 符号 '{symbol}'{repeat_tag} (canonical: {canonical}) -> {content}")
+    repeated = sorted((s, n) for s, n in symbol_counts.items() if n >= 2)
+    header = "SSoT 符号重复定义（硬阻断）：\n"
+    if repeated:
+        header = (
+            "SSoT 符号重复定义（硬阻断·升级：同符号复读 "
+            + ", ".join(f"'{s}'×{n}" for s, n in repeated)
+            + "——同一符号散落多处属结构性分裂，必须收敛到唯一 canonical 定义）\n"
+        )
+    imports = []
+    seen: set[tuple[str, str]] = set()
+    for _f, symbol, canonical, _content in violations:
+        key = (symbol, canonical)
+        if key in seen or not canonical:
+            continue
+        seen.add(key)
+        imports.append(f"   from {_canonical_to_module(canonical)} import {symbol}")
+    tail = "-> 处方：删除本重复定义，直接从 canonical 导入（勿重新定义，扩展现有文件）：\n" + "\n".join(imports)
+    return header + "\n".join(lines) + "\n" + tail + "。查 capability_canonical_file_registry.yaml 找 canonical。"
 
 
 def make_ssot_redefinition_gate() -> GateSpec:

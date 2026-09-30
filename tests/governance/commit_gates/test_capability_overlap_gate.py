@@ -21,6 +21,9 @@
   - tests/ 豁免
   - git diff 失败/异常 → fail-loud 仍 passed=True
   - registry 缺失/解析失败/非 dict → fail-loud 仍 passed=True
+- TestCosmeticTouchTaxExemption: 裁定#273 触碰税豁免（AST 等价 HEAD 不判给本批）
+- TestBoilerplateFingerprintExemption: 样板指纹排除（A3 任务3，__init__/main 重导出面
+  与 ≤5 行薄 wrapper 不判给本批；真逻辑/读不到/解析不了 fail-closed 照常阻断）
 
 注意：warn-only gate 永远返回 (True, "")——fail-closed 语义=告警而非阻断。
 REGISTRY_YAML 通过 monkeypatch 指向 tmp_path 文件，不读真实仓库。
@@ -310,9 +313,8 @@ class TestCosmeticTouchTaxExemption:
         return gw
 
     def _stub_blocking_findings(self, monkeypatch, sources):
-        from zephyr.clone_guard.orchestrator import CheckResult
-
         import zephyr.gov_enforcement.commit_gates.capability_overlap_gate as cog
+        from zephyr.clone_guard.orchestrator import CheckResult
 
         findings = []
         for src in sources:
@@ -372,3 +374,114 @@ class TestCosmeticTouchTaxExemption:
         assert passed is False
         assert "src/b.py" in msg
         assert "src/a.py" not in msg
+
+
+# ---------------------------------------------------------------------------
+# TestBoilerplateFingerprintExemption — A3 任务3（st-circ-a3r-20260930）样板指纹排除
+# ---------------------------------------------------------------------------
+class TestBoilerplateFingerprintExemption:
+    """__init__/main 重导出面与 ≤5 行薄 wrapper 的克隆命中=接线形态误报，不判给本批。
+
+    fail-closed 同步行测试：真逻辑函数/读不到/解析不了，一律照常硬阻断。
+    """
+
+    INIT_REEXPORT = '"""pkg"""\nfrom zephyr.x import impl as impl\n\n\ndef dup():\n    return impl\n'
+    MAIN_WRAPPER = '"""entry"""\n\n\ndef dup():\n    from zephyr.x import impl\n    return impl()\n'
+    THIN_WRAPPER = '"""m"""\n\n\ndef dup():\n    return _impl(1)\n'
+    REAL_LOGIC = (
+        '"""m"""\n\n\ndef dup():\n    total = 0\n    for i in range(10):\n        total += i * i\n    return total\n'
+    )
+
+    def _gw(self, staged_blobs, staged_names=None):
+        gw = MagicMock()
+        gw.project_root = _PROJECT_ROOT
+
+        def _run_git(cmd):
+            arg = cmd[-1]
+            if arg.startswith(":"):
+                text = staged_blobs.get(arg[1:])
+                return _MockResult(0, text) if text is not None else _MockResult(1, "")
+            if "--name-only" in cmd:
+                names = staged_names if staged_names is not None else sorted(staged_blobs)
+                return _MockResult(0, "\n".join(names))
+            return _MockResult(0, "")
+
+        gw.run_git = _run_git
+        return gw
+
+    def _stub_findings(self, monkeypatch, sources_with_lineno):
+        import zephyr.gov_enforcement.commit_gates.capability_overlap_gate as cog
+        from zephyr.clone_guard.orchestrator import CheckResult
+
+        findings = []
+        for src, lineno in sources_with_lineno:
+            f = MagicMock()
+            f.source_file, f.source_function, f.source_lineno = src, "dup", lineno
+            f.existing_file, f.existing_function, f.existing_lineno = "src/zephyr/other.py", "dup", 3
+            f.similarity, f.severity, f.clone_type = 1.0, "extract", "exact"
+            findings.append(f)
+        monkeypatch.setattr(
+            cog,
+            "_run_clone_guard_check",
+            lambda files: CheckResult(passed=False, findings=findings, checked_files=len(findings)),
+        )
+        return cog
+
+    def test_init_reexport_exempt(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_findings(monkeypatch, [("src/zephyr/pkg/__init__.py", 5)])
+        gw = self._gw({"src/zephyr/pkg/__init__.py": self.INIT_REEXPORT})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is True, f"__init__ 重导出面应豁免，被阻断: {msg}"
+
+    def test_main_reexport_exempt(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_findings(monkeypatch, [("src/zephyr/tools/main.py", 5)])
+        gw = self._gw({"src/zephyr/tools/main.py": self.MAIN_WRAPPER})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is True, f"main.py 重导出/委托面应豁免，被阻断: {msg}"
+
+    def test_thin_wrapper_any_file_exempt(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_findings(monkeypatch, [("src/zephyr/governance/adapter.py", 4)])
+        gw = self._gw({"src/zephyr/governance/adapter.py": self.THIN_WRAPPER})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is True, f"≤5 行薄 wrapper 应豁免，被阻断: {msg}"
+
+    def test_real_logic_still_blocks(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_findings(monkeypatch, [("src/zephyr/governance/heavy.py", 4)])
+        gw = self._gw({"src/zephyr/governance/heavy.py": self.REAL_LOGIC})
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is False, "真逻辑克隆不得被样板指纹豁免"
+        assert "heavy.py" in msg
+
+    def test_unreadable_source_fails_closed(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_findings(monkeypatch, [("src/zephyr/pkg/__init__.py", 1)])
+        gw = self._gw({}, staged_names=["src/zephyr/pkg/__init__.py"])  # staged 有名无 blob=读不到
+        passed, msg = make_capability_overlap_gate().check(gw, [])
+        assert passed is False, f"读不到源内容必须 fail-closed 照常阻断，却放行: {msg}"
+        assert "__init__.py" in msg
+
+    def test_unparseable_source_fails_closed(self, tmp_path, monkeypatch):
+        _point_registry_at(monkeypatch, tmp_path, "capabilities: []\n")
+        self._stub_findings(monkeypatch, [("src/zephyr/pkg/__init__.py", 1)])
+        gw = self._gw({"src/zephyr/pkg/__init__.py": "def dup(:"})
+        passed, _ = make_capability_overlap_gate().check(gw, [])
+        assert passed is False, "解析不了必须 fail-closed 照常阻断"
+
+    def test_unit_boilerplate_predicate(self):
+        """纯函数面：重导出体/薄 wrapper 判 True，真逻辑/解析失败判 False。"""
+        import ast
+
+        import zephyr.gov_enforcement.commit_gates.capability_overlap_gate as cog
+
+        assert cog._is_reexport_body(ast.parse("from x import y as y").body)
+        assert cog._is_reexport_body(ast.parse("def f():\n    import x\n    return x").body[0].body)
+        assert not cog._is_reexport_body(ast.parse("return 1 + 1").body)
+        assert cog._is_delegating_body(ast.parse("return _impl(1)").body)
+        assert not cog._is_delegating_body(ast.parse("return 1 + 1").body)
+        assert cog._is_boilerplate_function("def dup():\n    return _impl\n", 1, in_entry_surface=False)
+        assert cog._is_boilerplate_function("def dup():\n    from x import y\n    return y\n", 2, in_entry_surface=True)
+        assert not cog._is_boilerplate_function("def dup(:\n", 1, in_entry_surface=True)

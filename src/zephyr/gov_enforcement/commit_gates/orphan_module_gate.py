@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 src/ 路径 .py 模块在代码库中无任何 import 引用时阻断 commit（死代码，违反"新AI可发现性"原则）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测 src/ 路径新增文件（diff-filter=A + startswith src/，与 git grep 搜索范围 src/**/*.py 一致——治本 ARCH-TTL-DOC-001）；入口文件豁免（__main__/__init__/main/conftest/scripts/ 含 __main__ 块）；subprocess git grep 检测引用；超时/异常 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
+# [INVARIANTS] 硬阻断——staged 新增 src/ 路径 .py 模块在代码库中无任何 import 引用时阻断 commit（死代码，违反"新AI可发现性"原则）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测 src/ 路径新增文件（diff-filter=A + startswith src/，与 git grep 搜索范围 src/**/*.py 一致——治本 ARCH-TTL-DOC-001）；入口文件豁免（__main__/__init__/main/conftest/scripts/ 含 __main__ 块）；[CONSUMERS]/[DEPENDENCIES] 非空头引用证据豁免（A3 任务5 st-circ-a3r-20260930——头声明接线=活模块证据，动态加载/延迟接线不再误判孤儿）；subprocess git grep 检测引用；超时/异常 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="ORPHAN-MODULE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -49,7 +49,10 @@ orphan_module_gate.py — 孤儿模块（无 import 引用）阻断门禁（ORPH
    且只搜 git 追踪的文件（不搜 .gitignore 排除的文件）。
 4. **fail-open on grep error**：git grep 超时/异常不阻断，环境异常非违规。
 5. **入口文件豁免**：``__main__.py`` 等入口文件本就不被 import。
-6. **priority=89**：在 MODULE-ID-CONSISTENCY(88) 之后、FUNCTION-DUP(90) 之前。
+6. **[CONSUMERS]/[DEPENDENCIES] 头引用证据豁免**（A3 任务5，st-circ-a3r-20260930）：
+   模块头显式声明接线（消费方/依赖清单、非空值）= 已入架构接线面的活模块证据——
+   git grep 静态扫描覆盖不到的动态加载/延迟接线不再误判孤儿；裸空头不算证据。
+7. **priority=89**：在 MODULE-ID-CONSISTENCY(88) 之后、FUNCTION-DUP(90) 之前。
 
 Usage::
 
@@ -66,6 +69,7 @@ from __future__ import annotations
 import ast
 import logging
 import os
+import re
 import subprocess
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
@@ -83,6 +87,17 @@ _ENTRY_PATH_FRAGMENTS = ("scripts/", "bin/")
 
 # git grep 超时（秒）
 _GREP_TIMEOUT = 30
+
+# [CONSUMERS]/[DEPENDENCIES] 头引用证据（A3 任务5，st-circ-a3r-20260930）：
+# 模块头显式声明接线（消费方/依赖清单）= 已入架构接线面的活模块证据，git grep 静态
+# 扫描不到 import（如动态加载/延迟接线）不再误判孤儿。判据=头标签后带非空值
+# （裸空头不算证据）；真源与 [BLUEPRINT] 头族一致（施工 SOP 头部规范）。
+_REF_EVIDENCE_HEADER_RE = re.compile(r"^#\s*\[(CONSUMERS|DEPENDENCIES)\][ \t]+\S", re.MULTILINE)
+
+
+def _has_reference_evidence_header(content: str) -> bool:
+    """模块内容是否带非空 [CONSUMERS]/[DEPENDENCIES] 头（引用证据，豁免孤儿判定）。"""
+    return bool(_REF_EVIDENCE_HEADER_RE.search(content))
 
 
 def _is_entry_point(rel_path: str, content: str) -> bool:
@@ -232,6 +247,10 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> list[str] | 
 
         # 入口文件豁免
         if _is_entry_point(rel_name, content):
+            continue
+
+        # [CONSUMERS]/[DEPENDENCIES] 头引用证据豁免（A3 任务5）：头声明接线=活模块
+        if _has_reference_evidence_header(content):
             continue
 
         module_path, short_name = _compute_module_path(rel_name)

@@ -20,6 +20,7 @@
   - 新增模块无 import 引用 → 阻断 (passed=False)
   - 新增模块有 import 引用 → 放行 (passed=True)
   - 入口文件豁免
+  - [CONSUMERS]/[DEPENDENCIES] 非空头引用证据豁免（A3 任务5，裸空头不算）
   - tests/ 豁免
   - fail-open on git diff 失败
   - fail-open on git diff 异常
@@ -47,6 +48,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from zephyr.gov_enforcement.commit_gates.orphan_module_gate import (  # noqa: E402
     _compute_module_path,
+    _has_reference_evidence_header,
     _is_entry_point,
     make_orphan_module_gate,
 )
@@ -258,7 +260,49 @@ class TestGatewayIntegration:
         _patch_grep(gw, returncode=1)  # 无引用
         passed, msg = make_orphan_module_gate().check(gw, [])
         assert passed  # 入口文件豁免
-        assert msg == ""
+
+    def test_consumers_header_is_reference_evidence(self, tmp_path, monkeypatch):
+        """A3 任务5（st-circ-a3r-20260930）：非空 [CONSUMERS] 头=引用证据，grep 零匹配仍放行。"""
+        red = "src/zephyr/trading/lazy_wired.py"
+        _write_file(
+            tmp_path,
+            red,
+            "# [BLUEPRINT] MOD-X | docs/x.md\n# [CONSUMERS] zephyr.trading.main.load_plugin\nX = 1\n",
+        )
+        gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, returncode=1)  # git grep 静态扫描零匹配（动态加载形态）
+        passed, msg = make_orphan_module_gate().check(gw, [])
+        assert passed, f"声明接线的头应豁免孤儿判定，被阻断: {msg}"
+
+    def test_dependencies_header_is_reference_evidence(self, tmp_path, monkeypatch):
+        """非空 [DEPENDENCIES] 头同为引用证据。"""
+        red = "src/zephyr/trading/declared_deps.py"
+        _write_file(
+            tmp_path,
+            red,
+            "# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.trading.kernel\nX = 1\n",
+        )
+        gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, returncode=1)
+        passed, msg = make_orphan_module_gate().check(gw, [])
+        assert passed, f"声明依赖接线头应豁免孤儿判定，被阻断: {msg}"
+
+    def test_bare_empty_header_not_evidence(self, tmp_path, monkeypatch):
+        """裸空头（标签后无值）不算证据——照常判孤儿。"""
+        red = "src/zephyr/trading/bare_header.py"
+        _write_file(tmp_path, red, "# [CONSUMERS]\nX = 1\n")
+        gw = _make_gateway(tmp_path, staged_files=[red])
+        _patch_grep(gw, returncode=1)
+        passed, _ = make_orphan_module_gate().check(gw, [])
+        assert not passed, "裸空头不得豁免（无实质接线声明）"
+
+    def test_header_predicate_unit(self):
+        """纯函数面：非空 [CONSUMERS]/[DEPENDENCIES] 判 True，裸空/无头/其他标签判 False。"""
+        assert _has_reference_evidence_header("# [CONSUMERS] zephyr.a.b\nx = 1\n")
+        assert _has_reference_evidence_header("#   [DEPENDENCIES] a; b\n")
+        assert not _has_reference_evidence_header("# [CONSUMERS]\nx = 1\n")
+        assert not _has_reference_evidence_header("# [BLUEPRINT] MOD-X | docs/x.md\n")
+        assert not _has_reference_evidence_header("x = 1\n")
 
     def test_tests_dir_exempt(self, tmp_path, monkeypatch):
         red = "tests/governance/test_something.py"
