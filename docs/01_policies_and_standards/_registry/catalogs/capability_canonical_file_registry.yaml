@@ -57791,4 +57791,42 @@ creation_tokens:
   created_by: st-nightsweep2-nf2-20260930
   capability: night_sweep
   merge_evaluation: "ND-E6 评估卡文件化转登（已核销态，压缩窗后复核义务在账；零新增面=纯登记）"
+- file: docs/_working/registry_migration/11_wm1_72h_evaluation.md
+  token: wm1-evaluation-11-wm1-72h-evaluation-20260929
+  created_by: st-nightsweep2-nf-20260930
+  capability: wm1_evaluation
+- file: src/zephyr/data/cleaning_disagreement_stats.py
+  token: cleaning-disagreement-stats-cleaning-disagreement-stats-20260930
+  created_by: st-nightsweep2-nf-20260930
+  capability: cleaning_disagreement_stats
+- file: docs/_working/night_sweep/b_audit/nb1_b11_b15_b16_quick_review.md
+  token: nightsweep2-nb1-b-audit-cards-nb1-b11-b15-b16-quick-review-20260929
+  created_by: st-nightsweep2-nb1-20260930
+  capability: nightsweep2_nb1_b_audit_cards
+  merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
+- file: docs/_working/night_sweep/b_audit/nb1_b1_f127_vs_f08.md
+  token: nightsweep2-nb1-b-audit-cards-nb1-b1-f127-vs-f08-20260929
+  created_by: st-nightsweep2-nb1-20260930
+  capability: nightsweep2_nb1_b_audit_cards
+  merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
+- file: docs/_working/night_sweep/b_audit/nb1_b2_f128_data_security_wiring.md
+  token: nightsweep2-nb1-b-audit-cards-nb1-b2-f128-data-security-wiring-20260929
+  created_by: st-nightsweep2-nb1-20260930
+  capability: nightsweep2_nb1_b_audit_cards
+  merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
+- file: docs/_working/night_sweep/b_audit/nb1_b3_ml_serve_drift_monitor.md
+  token: nightsweep2-nb1-b-audit-cards-nb1-b3-ml-serve-drift-monitor-20260929
+  created_by: st-nightsweep2-nb1-20260930
+  capability: nightsweep2_nb1_b_audit_cards
+  merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
+- file: docs/_working/night_sweep/b_audit/nb1_b5_cn_macro_family.md
+  token: nightsweep2-nb1-b-audit-cards-nb1-b5-cn-macro-family-20260929
+  created_by: st-nightsweep2-nb1-20260930
+  capability: nightsweep2_nb1_b_audit_cards
+  merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
+- file: docs/_working/night_sweep/b_audit/nb1_b6_indicator_retirement_groups.md
+  token: nightsweep2-nb1-b-audit-cards-nb1-b6-indicator-retirement-groups-20260929
+  created_by: st-nightsweep2-nb1-20260930
+  capability: nightsweep2_nb1_b_audit_cards
+  merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
 di_seam_exemptions: []
