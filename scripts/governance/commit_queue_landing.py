@@ -1165,6 +1165,12 @@ def _noop_absorption_verdict_inner(
     )
     if err:
         return f"{rel}: 自证读回无法判别（ours 侧 {err}）", ""
+    passthrough, perr = _split_passthrough_and_drift(ours_families, theirs_families, base_families, rel)
+    if perr:
+        return f"{rel}: 自证读回无法判别（{perr}）", ""
+    for fam_map in (ours_families, theirs_families, base_families):  # 直通族剔出结构空间（主合并同序）
+        for k in passthrough:
+            fam_map.pop(k, None)
     ours_idx, theirs_idx, base_idx, err, _dedup = _index_all_sides(ours_families, theirs_families, base_families, rel)
     if err:
         return f"{rel}: 自证读回无法判别（{err}）", ""
