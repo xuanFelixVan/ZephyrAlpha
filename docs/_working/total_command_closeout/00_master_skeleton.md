@@ -50,7 +50,7 @@ completes_when: 11 份交接书的全部待办与待裁被归并进本册且无�
 | 编号 | 环节 | 态 | 出处 | 案卷 |
 |---|---|---|---|---|
 | W-10 | 六图役 94 件（.aidrafts/st-mapbuild-20260924，5 图本体+案卷+热册面） | 🔨 | 六图令§2/§3 | C |
-| W-11 | AI 层波2 169 件（.worktrees/st-ailayer-final-20260924） | 🔨 | 波2第五棒 | D |
+| W-11 | AI 层波2 169 件（.worktrees/st-ailayer-final-20260924）；另有 245 件批文批次（W-174 注记 2026-09-30：≠本行 169 件，不同批次不同数，两数并存不混；见 93 册 ⚑ 补-9） | 🔨 | 波2第五棒 | D |
 | W-12 | 全流通三批成品（lane_ff_door/books/replay + campaign_hold） | 🔨 | 全流通§6-T5 | A |
 | W-13 | CH 大声失败改造（ch_parts_monitor 三态探针 + CH-FINAL-GATE 判红） | 🔨 | 全流通§6-T6 | A,G |
 | W-14 | 审计修复账簿 §11–§13 入册（.aidrafts/st-audit-fix-20260924） | 🔨 | 全流通§6-T7 | A |
