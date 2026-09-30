@@ -57829,4 +57829,9 @@ creation_tokens:
   created_by: st-nightsweep2-nb1-20260930
   capability: nightsweep2_nb1_b_audit_cards
   merge_evaluation: "夜总攻2 B组退役候选挖矿裁定卡：各卡派生自既有 F-案卷/注册表/审计 CSV 单一真源的终审转译，非同源新建；与 F123-F132 案卷互补（彼=判据基线，本=Owner 三审终审+接法处方）；零替代既有条目"
+- file: docs/_working/night_sweep/99_nightsweep2_final_report.md
+  token: nightsweep2-fin-final-report-20260930
+  created_by: st-nightsweep2-fin-20260930
+  capability: nightsweep2_fin_final_report
+  merge_evaluation: "跨域不同对象：夜总攻二终局报告（收尾验证车道交付物），与既有夜战资产零同真源重复"
 di_seam_exemptions: []
