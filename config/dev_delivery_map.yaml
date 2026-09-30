@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
-generated_at: '2026-09-24T12:36:49+08:00'
+generated_at: '2026-09-30T08:30:35+08:00'
 ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md（§6
   封顶 28 环节）+ 八本作业簿（exec_evidence 口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph
   在册 module_id 投影面），禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。
@@ -150,19 +150,19 @@ exit_codes:
 gate_cluster:
   in_process:
     registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
-    total_gates_field: 99
-    entries_scanned: 99
-    files_trigger_entries: 26
+    total_gates_field: 104
+    entries_scanned: 104
+    files_trigger_entries: 25
     note_zh: priority 真源在代码 GateSpec、own_scope 册面无此字段（作业簿 05 溢出 O-C12）
   shell:
     registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
-    total_gates_field: 174
-    entries_scanned: 180
+    total_gates_field: 178
+    entries_scanned: 178
     by_enforcement_channel: &id004
-      commit-gate: 113
-      manual: 12
-      pre-commit: 55
-    own_scope_true_entries: 33
+      commit-gate: 99
+      manual: 28
+      pre-commit: 51
+    own_scope_true_entries: 57
     generated_by: scripts/governance/generators/generate_gate_registry.py
     note_zh: 字段值与条目实数双口径并列（total_gates 落后于列表=册内漂移，由生成器 --check 管）
   two_channel_overlap_note_zh: in-process ∩ pre-commit 实测=1 台（GATE-VOCAB 双执行），生成器注释「交集 0」已过期（作业簿 05 溢出 O-C10）
@@ -182,7 +182,7 @@ deadletter_class:
       source: scripts/commit_queue.py
       exists: true
       _DEAD_REASON_ENV_MARKERS: 18
-      _DEAD_REASON_ITEM_MARKERS: 11
+      _DEAD_REASON_ITEM_MARKERS: 18
 nodes:
 - node_id: D11-S01
   name_zh: 会话冷启动与开班检查
@@ -758,13 +758,13 @@ nodes:
     gate_registry_facts: &id006
       registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
       exists: true
-      total_gates_field: 99
-      entries_scanned: 99
+      total_gates_field: 104
+      entries_scanned: 104
       generated_by: null
       cluster_by_channel:
-        unspecified: 99
+        unspecified: 104
       own_scope_true_entries: 0
-      files_trigger_entries: 26
+      files_trigger_entries: 25
 - node_id: D11-C06
   name_zh: 暂存与提交本体
   stage: C
@@ -850,12 +850,12 @@ nodes:
     gate_registry_facts: &id007
       registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
       exists: true
-      total_gates_field: 174
-      entries_scanned: 180
+      total_gates_field: 178
+      entries_scanned: 178
       generated_by: scripts/governance/generators/generate_gate_registry.py
       cluster_by_channel: *id004
-      own_scope_true_entries: 33
-      files_trigger_entries: 73
+      own_scope_true_entries: 57
+      files_trigger_entries: 68
 - node_id: D11-C08
   name_zh: 入队即转活（快照入袋）
   stage: C
@@ -905,6 +905,8 @@ nodes:
       - check_dead_burst
       - classify_dead_reason
       - cleanup_done
+      - dead_archive_letters
+      - dead_letter_prescription
       - default_landing_stub
       - drain_queue
       - emit_dead_backlog_alert
@@ -1119,17 +1121,17 @@ nodes:
   machine_facts:
     queue_state_dirs: &id008
       pending:
-        exists: false
-        item_count: 0
+        exists: true
+        item_count: 1
       processing:
-        exists: false
-        item_count: 0
+        exists: true
+        item_count: 1
       done:
-        exists: false
-        item_count: 0
+        exists: true
+        item_count: 718
       dead:
-        exists: false
-        item_count: 0
+        exists: true
+        item_count: 689
 - node_id: D11-D01
   name_zh: 死信产生（不卡队）
   stage: D
@@ -1431,11 +1433,11 @@ nodes:
   red_reason: ghost_ref
   machine_facts:
     precommit_flag_pair:
-      code_key: gate_precommit_run_enabled
-      registered: false
-      in_roster: false
+      code_key: gate_precommit_run
+      registered: true
+      in_roster: true
       default_on: true
-      roster_keys_scanned: 15
+      roster_keys_scanned: 19
 edges:
 - - D11-S01
   - D11-S02
@@ -1541,7 +1543,7 @@ counts:
         🔨: 2
     module_id_scan:
       source: docs/03_modules/path_ownership_map.yaml
-      claims_scanned: 8064
+      claims_scanned: 8063
       nodes_with_module_id: 28
       nodes_with_module_ref: 28
       nodes_null_module_id: 2

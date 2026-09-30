@@ -380,7 +380,7 @@ def _preflight_flag_enabled() -> bool:
 
 
 # 裁定#341 方案②（2026-09-19 Owner 批）：落地前 staged 面 pre-commit run 常量
-_PRECOMMIT_RUN_FLAG = "gate_precommit_run_enabled"
+_PRECOMMIT_RUN_FLAG = "gate_precommit_run"
 _PRECOMMIT_RUN_TIMEOUT_S = 900
 # D3 两段式（st-commitchain-20260922）：Phase-A=全通道减慢尾（SKIP 反选，单次调用），
 # 首败短路；Phase-B=慢尾续跑（Rx-4 st-finaldel-crx3-20260929：Phase-A 已绿 ⇒ 快段已验，
