@@ -86,10 +86,8 @@ sys.path.insert(0, str(_PROJECT_ROOT / "scripts" / "governance" / "d3_metadata")
 
 from check_naming_convention import check_file as _check_naming  # noqa: E402
 
-from zephyr.shared.infra.process_pool import (
-    is_pid_alive,  # noqa: E402  僵尸锁检测真源唯一（TRAE-001 is_pid_alive 真源声明，禁止本地重复定义）
-)
 from zephyr.shared.infra.process_pool import (  # noqa: E402
+    is_pid_alive,  # noqa: E402  僵尸锁检测真源唯一（TRAE-001 is_pid_alive 真源声明，禁止本地重复定义）
     run_subprocess_hidden,  # trae_067 铁律2 统一无窗口 subprocess 入口（B5③ _is_git_tracked 用）
 )
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
@@ -197,7 +195,7 @@ def _is_stale(lock_dir: Path) -> bool:
                     return False
                 return True  # 会话已死（心跳超时/PID 亡/TTL 超）→ 锁 stale
             # info is None（registry 无此会话条目）：退化旧语义继续判定
-        except Exception:
+        except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
             pass  # registry 不可达时退回 PID+TTL 语义（fail-open，不误清活锁）
     # PID 已死 → 立即判 stale（零窗口期，治本 2026-06-30：TRAE-001 is_pid_alive 真源唯一）
     # 仅对无 session_id 的旧格式锁生效（裁定#252：带 session_id 的锁在上方已提前返回）
@@ -221,11 +219,47 @@ def _is_stale(lock_dir: Path) -> bool:
 # last_activity）才可回收；过期 + 活跃仍 DENIED（它随时会重 claim，禁抢）。
 _CLAIM_IDLE_RECLAIM_SECONDS = 1800.0
 
+# 队列在途保护扫根（2026-10-01 提交链治本）：与 .runtime/commit_queue 布局同源。
+# 模块级常量——测试经 monkeypatch 隔离，不打生产队列。
+_QUEUE_ROOT = REPO_ROOT / ".runtime" / "commit_queue"
+
+
+def _session_has_inflight_queue_bags(session_id: str) -> bool:
+    """会话是否有袋在提交队列 pending/processing 在途（C355 心跳豁免同源判据）。
+
+    只扫 _QUEUE_ROOT 两目录顶层 q-*.json 的 session_id（不含 .stale/ 存根——
+    已隔离袋不构成在途）；判定不了（目录缺席/单袋损坏/IO 异常）一律 False=
+    不保护，宁走老路不放大锁尸。
+    """
+    for sub in ("pending", "processing"):
+        try:
+            queue_dir = _QUEUE_ROOT / sub
+            if not queue_dir.is_dir():
+                continue
+            for bag_path in queue_dir.glob("q-*.json"):
+                try:
+                    bag = json.loads(bag_path.read_text(encoding="utf-8"))
+                except Exception:  # noqa: BLE001 — 单袋损坏/搬运中，跳过不当在途证据
+                    continue
+                if bag.get("session_id") == session_id:
+                    return True
+        except Exception:  # noqa: BLE001 — 队列目录不可达=保护设施缺席，不阻断回收
+            continue
+    return False
+
 
 def _claim_expired_and_idle(owner: dict[str, Any], info: Any) -> bool:
     """claim 自身已过期且其会话超静默窗无真实治理活动 → 可回收。"""
     expires_at = owner.get("expires_at")
     if expires_at is None or time.time() <= float(expires_at):
+        return False
+    sid = owner.get("session_id")
+    if sid and _session_has_inflight_queue_bags(str(sid)):
+        # 队列在途保护（C355 心跳豁免的 claim 层同构，2026-10-01 提交链治本）：
+        # 会话有袋在 pending/processing 排队时，过期+静默不构成弃置——排水等待常超
+        # TTL/静默窗（实测队头等待 45min vs 失败保留 claim 300s），第三方在此窗口
+        # 回收会让落地期 CLAIM-REQUIRED 判死（当晚 10 封死信实证）。真弃置仍由双
+        # 通道兜底：会话死=裁定#252 语义 stale+salvage 双证；袋死=幽灵闸#459 封印。
         return False
     last_activity = float(getattr(info, "last_activity", 0.0) or 0.0)
     return (time.time() - last_activity) > _CLAIM_IDLE_RECLAIM_SECONDS
@@ -255,7 +289,7 @@ def _audit_claim_reclaim(normalized: str, prev_owner: dict[str, Any], lines: lis
                 )
                 + chr(10)
             )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         pass  # 审计盘写失败不阻断回收（输出行已留痕）
 
 
@@ -265,7 +299,7 @@ def _read_owner(lock_dir: Path) -> dict[str, Any] | None:
         return None
     try:
         return json.loads(of.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return None
 
 
@@ -297,7 +331,7 @@ def _cleanup_stale(lock_dir: Path) -> bool:
     try:
         shutil.rmtree(lock_dir, ignore_errors=True)
         return True
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return False
 
 
@@ -306,7 +340,7 @@ def _load_registry() -> dict[str, Any]:
     if REGISTRY_PATH.is_file():
         try:
             return json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
             pass
     return {"version": "1.0.0", "locks": {}}
 
@@ -838,9 +872,9 @@ def cmd_cleanup(repo_root: str | Path | None = None, auto_salvage: bool = True) 
                 try:
                     if not _is_session_alive(SessionInfo.from_dict(d), now):
                         candidates.add(sid)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
                     continue
-        except Exception:
+        except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
             pass  # registry 不可达——claim 侧候选仍处理（降级不阻断 cleanup）
         for sid in sorted(candidates):
             try:
@@ -922,7 +956,7 @@ def _salvage_audit(record: dict[str, Any]) -> None:
         audit_path.parent.mkdir(parents=True, exist_ok=True)
         with open(audit_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + chr(10))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         pass
 
 
@@ -954,7 +988,7 @@ def _raw_session_entry(repo_root: Path, session_id: str) -> tuple[Any | None, bo
         if session_id not in data:
             return None, False
         return SessionInfo.from_dict(data[session_id]), True
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return None, False
 
 
@@ -976,7 +1010,7 @@ def _alive_sessions(repo_root: Path) -> list[Any] | None:
         data = SessionRegistry(repo_root).load()
         now = time.time()
         return [info for info in (SessionInfo.from_dict(d) for d in data.values()) if _is_session_alive(info, now)]
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return None
 
 
@@ -1011,7 +1045,7 @@ def _death_evidence(
             from zephyr.security.access_control.session_concurrency import _is_session_alive
 
             ev1 = not _is_session_alive(info, now)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
             ev1 = False  # 判活设施异常=无法证死（fail-closed，方向=防误收）
         ev1_desc = f"registry:{'dead' if ev1 else 'alive'}"
     else:
@@ -1122,7 +1156,7 @@ def _stash_claimed_paths(repo_root: Path, session_id: str, rel_paths: list[str])
             timeout=30,
         )
         return (ref.stdout.strip() if ref.returncode == 0 else "refs/stash"), changed
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return "", []
 
 
@@ -1153,7 +1187,7 @@ def _force_release_session_registry(repo_root: Path, session_id: str, info: Any 
             registry.release_files_batch(session_id, held)
         registry.unregister(session_id)
         return held
-    except Exception:
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return []
 
 
@@ -1279,6 +1313,45 @@ def shorten_claim_ttl(owner_id: str, file_paths: list[str], ttl_s: float) -> lis
                         locks[fp]["retention"] = "commit-failed-retained"
                 _save_registry(registry)
     return rewritten
+
+
+def renew_claim(owner_id: str, file_paths: list[str], ttl_s: float = DEFAULT_TTL_S) -> list[str]:
+    """队列在途续命原语（2026-10-01 提交链治本③，shorten_claim_ttl 镜像）。
+
+    把持有者对清单内文件的 claim 过期点拨到 now+ttl_s（缺省 30min）：供入队
+    通道（git_commit.py --enqueue）在长排队场景续租，排队等待不再必然耗尽
+    claim。与 _claim_expired_and_idle 的队列在途保护互补：保护挡第三方抢收，
+    本函数让 claim 自身活过等待。只动本持有者名下条目，他人 claim 不碰；
+    幂等可重复调用。
+
+    Returns:
+        实际续租的归一化路径列表（仅该持有者名下且锁存在的件）。
+    """
+    now = time.time()
+    renewed: list[str] = []
+    for fp in file_paths:
+        lock_dir = _lock_dir(fp)
+        owner = _read_owner(lock_dir)
+        if owner is None or owner.get("owner_id") != owner_id:
+            continue
+        owner["expires_at"] = now + ttl_s
+        owner["renewed_at"] = now  # 审计标记：区别于常规 acquire TTL
+        try:
+            _owner_file(lock_dir).write_text(json.dumps(owner, ensure_ascii=False, indent=2), encoding="utf-8")
+            renewed.append(_normalize_path(fp))
+        except OSError:
+            pass
+    if renewed:
+        with _registry_mutex() as acquired:
+            if acquired:
+                registry = _load_registry()
+                locks = registry.get("locks", {})
+                for fp in renewed:
+                    if fp in locks:
+                        locks[fp]["expires_at"] = now + ttl_s
+                        locks[fp]["renewed_at"] = now
+                _save_registry(registry)
+    return renewed
 
 
 def cmd_list(session_id: str | None = None) -> int:
@@ -1587,7 +1660,11 @@ def main() -> int:
         f = _validate_file_arg(args[1])
         if f is None:
             return 1
-        return cmd_acquire(f, args[2], AcquireOptions(task=task, skip_naming_check=skip_naming, ttl_minutes=ttl_minutes, session_id=bind_session))
+        return cmd_acquire(
+            f,
+            args[2],
+            AcquireOptions(task=task, skip_naming_check=skip_naming, ttl_minutes=ttl_minutes, session_id=bind_session),
+        )
 
     if cmd == "acquire-batch" and len(args) >= 2:
         ttl_minutes_b, err = _parse_ttl_opt(args)

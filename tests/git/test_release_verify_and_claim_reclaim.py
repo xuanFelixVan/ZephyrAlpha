@@ -41,6 +41,7 @@ def _load_git_commit():
 
 # ─────────────── lock_files.acquire：过期 claim 回收（T10②）───────────────
 
+
 @pytest.fixture
 def isolated(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(lock_files, "LOCK_ROOT", tmp_path / ".ailocks")
@@ -115,6 +116,7 @@ def test_expired_claim_with_active_session_still_denied_but_truthful(isolated, t
 
 # ─────────────── git_commit --release-only：回读校验（T10①）───────────────
 
+
 def _make_gw(tmp_path: Path, session_id: str, held: list[str], ailocks_owned: list[str]):
     """伪造 gateway：SessionRegistry held_files 可控；.ailocks registry.json 落 tmp。"""
     locks_dir = tmp_path / ".ailocks"
@@ -171,3 +173,61 @@ def test_release_verify_fails_when_session_registry_still_holds(tmp_path, monkey
     rc, lines = gc._release_and_verify(gw, "st-me", ["docs/y.yaml"])
     assert rc == 6
     assert any("session_registry=True" in ln for ln in lines)
+
+
+# ─────────── 队列在途保护 + renew_claim（2026-10-01 提交链治本）───────────
+
+
+def _seed_queue_bag(tmp_path: Path, rel_sub: str, session_id: str) -> Path:
+    """伪造一条队列在途袋（pending/processing 或 .stale 存根）。"""
+    queue_root = tmp_path / "cq"
+    bag_dir = queue_root / rel_sub
+    bag_dir.mkdir(parents=True, exist_ok=True)
+    bag = bag_dir / "q-20261001-st-x-0001.json"
+    bag.write_text(json.dumps({"qid": "q-20261001-st-x-0001", "session_id": session_id, "files": []}), encoding="utf-8")
+    return queue_root
+
+
+def test_expired_claim_with_inflight_queue_bag_not_reclaimable(tmp_path, monkeypatch, capsys):
+    """过期+静默超窗，但会话有袋在 pending 排队 → 不可回收（DENIED，无 RECLAIMED 审计）。"""
+    _fake_registry(monkeypatch, last_activity=time.time() - 7200)
+    _seed_expired_claim(tmp_path, "docs/hot_registry.yaml", "st-old", "st-old")
+    monkeypatch.setattr(lock_files, "_QUEUE_ROOT", _seed_queue_bag(tmp_path, "pending", "st-old"))
+    rc = lock_files.cmd_acquire("docs/hot_registry.yaml", "st-new")
+    assert rc == 1
+    out = capsys.readouterr().out
+    assert "RECLAIMED" not in out
+    audit = tmp_path / ".ailocks" / "reclaim_audit.jsonl"
+    assert not audit.exists()
+
+
+def test_expired_claim_stale_stub_bag_still_reclaimable(tmp_path, monkeypatch):
+    """袋只在 .stale/ 存根（已被隔离）不构成在途 → T10 回收语义不变。"""
+    _fake_registry(monkeypatch, last_activity=time.time() - 7200)
+    _seed_expired_claim(tmp_path, "docs/hot_registry.yaml", "st-old", "st-old")
+    monkeypatch.setattr(lock_files, "_QUEUE_ROOT", _seed_queue_bag(tmp_path, "pending/.stale", "st-old"))
+    rc = lock_files.cmd_acquire("docs/hot_registry.yaml", "st-new")
+    assert rc == 0
+
+
+def test_renew_claim_extends_expiry_and_skips_foreign(tmp_path, monkeypatch):
+    """renew_claim 只拨本持有者名下 claim，他会话条目不动，registry 同步。"""
+    monkeypatch.setattr(lock_files, "LOCK_ROOT", tmp_path / ".ailocks")
+    monkeypatch.setattr(lock_files, "REGISTRY_PATH", tmp_path / ".ailocks" / "registry.json")
+    assert lock_files.cmd_acquire("docs/mine.md", "sess-a") == 0
+    assert lock_files.cmd_acquire("docs/theirs.md", "sess-b") == 0
+    # 手工把 sess-a 的 claim 拨到过去（模拟排队耗尽）
+    past = time.time() - 3600
+    for rel in ("docs/mine.md", "docs/theirs.md"):
+        owner = json.loads((lock_files._lock_dir(rel) / "owner.json").read_text(encoding="utf-8"))
+        owner["expires_at"] = past
+        (lock_files._lock_dir(rel) / "owner.json").write_text(json.dumps(owner), encoding="utf-8")
+    renewed = lock_files.renew_claim("sess-a", ["docs/mine.md", "docs/theirs.md"], ttl_s=600.0)
+    assert renewed == ["docs/mine.md"]
+    mine = json.loads((lock_files._lock_dir("docs/mine.md") / "owner.json").read_text(encoding="utf-8"))
+    assert mine["expires_at"] > time.time()
+    theirs = json.loads((lock_files._lock_dir("docs/theirs.md") / "owner.json").read_text(encoding="utf-8"))
+    assert theirs["expires_at"] <= time.time()
+    reg = json.loads((tmp_path / ".ailocks" / "registry.json").read_text(encoding="utf-8"))
+    assert reg["locks"]["docs/mine.md"]["expires_at"] > time.time()
+    assert "renewed_at" in reg["locks"]["docs/mine.md"]
