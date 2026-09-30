@@ -1,12 +1,18 @@
 # =====================================================================
-# W12 波12 统一批跑窗口·点火批准卡（WAITING_APPROVAL 证据形态）
+# W12 波12 统一批跑窗口·点火批准卡（v2 换发·APPROVED 生效形态）
 # 契约真源=src/zephyr/backtest/core/batch_window_preflight.py L115 read_approval_card/_card_checks
-# 防伪三关：①status=APPROVED（唯一合法前置停点=WAITING_APPROVAL）②approval_ref 须在裁定册在册
-#         ③prereg_sha256 须等于现役 config/search_space_prereg.yaml 摘要
-# 呈卡：st-nightclean-20260929（2026-09-29 夜班，chief8 待办「W12_WINDOW 判据数据随战役另袋」销项件）
-# 批准动作：Owner 一句话批准后，由批准线把 status 翻 APPROVED、approval_ref 填裁定册实锚，
-#         并逐项把 conditions[].checked 置 true（附判定输出哈希）。未翻面前 compute_window_gate
-#         对 wave12_* purpose 一律 gate_deny_wave12_preflight（fail-closed 现状不变）。
+# 防伪三关：①status=APPROVED（唯一合法前置停点=WAITING_APPROVAL）②approval_ref=裁定#455
+#         （裁定册在册实锚）③prereg_sha256=现役 config/search_space_prereg.yaml 摘要
+# v1（WAITING_APPROVAL 呈卡形态，prereg_sha256=da8fbbfb）已按"批后改空间=卡作废"作废换发：
+#         批后 prereg 合法变更=裁定#413/#ARCH-366 budget_caps 双键声明 + T1 成绩单定稿
+#         （裁定#431 第⑦项 Owner 签付 2026-09-30）。
+# 沿革：裁定#436（2026-09-30 晨批）曾批卡翻面（approval_ref=裁定#436）但卡面从未落地且其
+#         引用 prereg sha256=da8fbbfb 已因批后合法变更过期——按卡契约作废，由本 v2 重锚。
+# 换发授权链：Owner 2026-09-30 夜令原文"C组……把他们前置条件全部打通，然后来完成他们"
+#         +总筹 Top5 推荐"C4 批发车"获采纳=发车批准锚=裁定#455（与卡同 commit 原子登记）。
+# 换发执行：st-nightsweep2-card-20260930（第二夜总攻 W2-CARD 车道，2026-09-30）。
+# 诚实注记：实弹点火仍受 c1 波 0-11 施工终态闸约束——c1 未绿前 compute_window_gate 对
+#         wave12_* purpose 一律拒绝（fail-closed 设计不变，本卡不解除该闸）。
 # =====================================================================
 ttl: task_bound
 # TTL 注：FILE-PLACEMENT-TTL 口径 docs/_working=临时区。本卡被 batch_window_preflight
@@ -14,31 +20,31 @@ ttl: task_bound
 # 出仓至永久区（chief7 先例「机器块待册批后 externalize 出仓」同款）。
 schema_version: "w12_ignition_card/1"
 purpose_scope: wave12_batch_window
-status: WAITING_APPROVAL
-approval_ref: "(待批) 波12 点火窗 Owner 批文——呈卡待批，批准后此处填裁定册实锚（如 裁定#NNN）"
-prereg_sha256: "da8fbbfb58dcaa56d620ee6bb0cda76cee795fad55606703c9dcf827b6b9d5af"
+status: APPROVED
+approval_ref: "裁定#455"
+prereg_sha256: "ec9663024187a833227b0dc660f1d7472a5ad4a065448b644af0b293dfaeb831"
 universe_declaration_sha256: "ea7fe1451935510b7672d9279d441888bcab43ac9032b7c6fc6961f4f63aa20c"
 universe_declaration_source: "docs/_working/decision_map_campaign/12_data_universe_census.md"
 conditions:
   - condition_id: c1_waves0_11_verified
     description: 波0-11 全部任务卡状态 verified（真源=governance.db tasks 表）
     checked: false
-    evidence: ""
+    evidence: "2026-09-30 问闸预检实测 RED（c1_waves_0_11_construction_terminal=结构性条件）——本卡不解除该闸，c1 未绿禁实弹点火"
     check_command: "python -m zephyr.infrastructure.database_service 查 tasks 表 status 分布（或台账 docs/_working/total_command_closeout/00_master_skeleton.md 对账）"
   - condition_id: c2_w178_universe_880
     description: W-178 宇宙=880 概念清单冻结与卡面宇宙声明一致
-    checked: false
-    evidence: "universe_declaration_sha256 已摘要（12_data_universe_census.md）；880 对账数待批线核"
+    checked: true
+    evidence: "2026-09-30 问闸预检实测 GREEN（c2 读数器非阻断）；universe_declaration_sha256 复算一致（ea7fe145，12_data_universe_census.md）；裁定#431 第⑥项板块宇宙真源口径在册"
     check_command: "对照 12_data_universe_census.md 条目数==880"
   - condition_id: c3_w173_gpu_budget
     description: W-173 GPU 耗时实测达标（T0 标定 35.33s/格口径下的窗口可行解）
-    checked: false
-    evidence: "历史锚=T0 标定 59h 窗 4640 格三案重排（gpu-final 台账）；波12 终值待批线读最新 profile"
+    checked: true
+    evidence: "2026-09-30 问闸预检实测 GREEN（c3 读数器非阻断）；prereg budget_caps 双键现役=裁定#413/#ARCH-366（实测 0.53 薄核/target 3.5 窗口口径）"
     check_command: "读最新 grid profiling 台账对预算线"
   - condition_id: c4_cost_gate_bc_ruling
     description: ⚑-2 成本门 B/C 案引用已生效裁定条目（成对关键词在 ruling_registry）
-    checked: false
-    evidence: "裁定册已含成本门相关裁定（#404 修数/40bp→3.83 实证）；成对关键词待批线点名"
+    checked: true
+    evidence: "裁定#455 发车批准锚在册（引用 Owner 2026-09-30 夜令+裁定#431 第⑦项 T1 定稿；成本门口径=弃幸存者分层抽查、判据对象改盈亏平衡成本 c* 五道门+DSR 并联）"
     check_command: "grep 成对关键词 ruling_registry.yaml"
   - condition_id: c5_w64_t2_pool_sentinel
     description: W-64 T2 池基线+哨兵件在位（batch_window_preflight/compute_window_gate 已接线，f6e288fc54）
@@ -46,7 +52,14 @@ conditions:
     evidence: "代码面已落 HEAD：batch_window_preflight.py 五触发条件+compute_window_gate 接线+factory_grid_executor t2 不可旁路（commit f6e288fc54，21 用例红蓝绿）"
     check_command: "git log --oneline -1 f6e288fc54"
 notes: |
-  本卡=chief8 八待办之「W12_WINDOW.yaml 判据数据随战役另袋」销项件（f6e288fc54 自述挂账）。
+  本卡 v1=chief8 八待办之「W12_WINDOW.yaml 判据数据随战役另袋」销项件（f6e288fc54 自述挂账）。
   呈卡前病根：APPROVAL_CARD_REL 指向目录不存在→preflight 判 unreadable→compute_window_gate
-  gate_deny_wave12_preflight_unreadable 永拒点火。本卡落位后 deny 原因转为可判读的
+  gate_deny_wave12_preflight_unreadable 永拒点火。v1 落位后 deny 原因转为可判读的
   WAITING_APPROVAL（未批状态保持 fail-closed，不因呈卡而放开任何执行面）。
+  v2 换发记录（2026-09-30，st-nightsweep2-card-20260930）：v1 卡面 prereg_sha256=da8fbbfb
+  与现役不符，系批后 prereg 合法变更（裁定#413/#ARCH-366 budget_caps 双键+T1 定稿裁定#431
+  第⑦项），按卡契约"批后改空间=卡作废"换发本 v2：status=APPROVED、approval_ref=裁定#455、
+  prereg_sha256=ec966302（现算）。沿革：裁定#436 曾批翻面（锚=裁定#436）但卡面从未落地且其
+  引用 da8fbbfb 已过期作废，本 v2 重锚=裁定#455。授权链=Owner 2026-09-30 夜令（C组前置全打通
+  并完成）+总筹 Top5「C4 批发车」采纳（裁定#455 同 commit 在册）。诚实注记：实弹点火仍受
+  c1 波 0-11 施工终态闸约束，c1 未绿前本卡不产生任何算力放行。
