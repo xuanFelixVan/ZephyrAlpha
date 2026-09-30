@@ -6326,3 +6326,29 @@ entries:
   related_arch: ['#ARCH-355', '#ARCH-368']
   related_rulings: ['裁定#431']
   superseded_by: null
+
+- ruling_id: "裁定#448"
+  title: GATE-MUT 整族退役批准（mutation_test_reconciliation 族；Owner F8 卡批）
+  date: '2026-09-30'
+  category: 流程
+  status: 'active'
+  summary: |-
+    Owner 2026-09-30 夜第二夜总攻 F 组令卡 F8 批（st-nightsweep2-nf-20260930 执行登记；载体=#ARCH-369）：
+    ①mutation_test_reconciliation 整族退役=mutation_test_reconciliation_registry.py（P3-T2 主件）+
+    verify_reconciliation_registry.py（P3-T1 oracle）+mutation_test_post_sync_validator.py（独立 oracle）
+    +false_negative_cases/reconciliation_registry_cases.yaml（数据伴生件，随族封存）；
+    ②退役依据=99_skipped #39 定性（半接线且 GATE-MUT 册查无、CI 面 run_all --ci 名义存在、事件面无立项），
+    Owner 择"整族退役"支；
+    ③:84 SSoT 路径假绿一行修已由 2026-09-27 告别补丁治愈在案（本批核验真源路径存在），退役以 deprecated
+    标记+successor 注记落 header/__manifest__（净删文件=另行物理删除批，本批先标记停用）；
+    ④successor: 无单点继任——回归职责由 tests/governance 既有套件与 review 门承接。
+    执行披露：标记面由补完车道 st-nightsweep2-nf2-20260930 采纳浮游在途件落地（四件 deprecated+successor
+    注记+本条同 commit 原子；:84 修 CROSSCHECK 实证已在 HEAD；物理删除留后续退役批）。
+  related_files:
+  - scripts/governance/meta/mutation_test_reconciliation_registry.py
+  - scripts/governance/meta/verify_reconciliation_registry.py
+  - scripts/governance/meta/mutation_test_post_sync_validator.py
+  - docs/_working/fullconnect_campaign/99_skipped_for_owner.md
+  related_arch: ['#ARCH-369']
+  related_rulings: []
+  superseded_by: null

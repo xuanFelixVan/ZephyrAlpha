@@ -14,6 +14,8 @@
 # [TESTS] 自身即测试（oracle: tests/governance/shared/test_post_sync_validation.py 36 场景）
 # [A_module] module_id=MOD-DATABASE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [STATUS] DEPRECATED 2026-09-30 裁定#448 整族退役（半接线定性：GATE-MUT 册查无/CI 名义存在/事件面无立项，99_skipped #39 Owner 择"整族退役"支）
+# [SUCCESSOR] 无单点继任——回归职责由 tests/governance 既有套件与 review 门承接；本批仅标记停用，物理删除留后续退役批
 """
 mutation_test_post_sync_validator.py — SSoT 变异测试（独立 oracle）
 
@@ -232,7 +234,7 @@ def _apply_mutation(source: str, mut: Mutation) -> tuple[str | None, str]:
     """
     count = source.count(mut.find)
     if count == 0:
-        return None, f"find 未命中（变异锚点已漂移，需同步维护变异目录）"
+        return None, "find 未命中（变异锚点已漂移，需同步维护变异目录）"
     if count > 1:
         return None, f"find 命中 {count} 处（非唯一，需扩大上下文）"
     return source.replace(mut.find, mut.replace), "ok"
@@ -323,12 +325,12 @@ def _finalize(report: RunReport, threshold: float) -> int:
         file=sys.stderr,
     )
     if report.survived:
-        print(f"\n  ⚠ SURVIVED 变异（oracle 盲区，建议补场景）：", file=sys.stderr)
+        print("\n  ⚠ SURVIVED 变异（oracle 盲区，建议补场景）：", file=sys.stderr)
         for r in report.survived:
             print(f"    [{r.mid}] {r.desc}", file=sys.stderr)
             print(f"          {r.detail}", file=sys.stderr)
     if report.setup_errors:
-        print(f"\n  ⚠ SETUP_ERROR 变异（锚点漂移，需同步变异目录）：", file=sys.stderr)
+        print("\n  ⚠ SETUP_ERROR 变异（锚点漂移，需同步变异目录）：", file=sys.stderr)
         for r in report.setup_errors:
             print(f"    [{r.mid}] {r.desc} — {r.detail}", file=sys.stderr)
 

@@ -7,6 +7,7 @@
 # ttl: task_bound
 # [DOMAIN] D_GOV_SCRIPTS
 # --- 治理锚定结束 ---
+# [STATUS] DEPRECATED 2026-09-30 裁定#448 整族退役伴生封存（verifier 族同步停用；物理删除留后续退役批）
 # P3-T1: ReconciliationRegistry 假阴性 case 库（D2 修复后由 validate_mutation_testing.load_cases 加载）
 #
 # verifier: meta/verify_reconciliation_registry.py（SCRIPTS_DIR 相对路径 = scripts/governance/meta/）
