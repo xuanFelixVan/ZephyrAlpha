@@ -50,7 +50,7 @@ updated: 2026-09-30
 |----|------|
 | 实盘人工通知/A1A3 | 夜总攻令卡原有 Owner 门位，维持 |
 | c1（波0-11 施工终态闸） | 实弹点火前置（裁定#455 链） |
-| B 组 NB1 待裁卡 | 六件挖矿裁定卡（0005 落地后）：B2 F128 翻案接线建议/B5 CN-MACRO R1-R5 复活/B6 三档分层等，均"保留+处方"型，执行待 Owner 批 |
+| B 组 NB1 待裁卡 | 六件挖矿裁定卡（0005 落地后）：B2 F128 翻案接线建议/B5 CN-MACRO R1-R5 复活/B6 三档分层等，均"保留+处方"型，执行待 Owner 批。**【2026-09-30 夜批复落册（st-menu-t1b6）】B6 三档已批已执行：a 档 CHIPS 5 条批接线（绑获利盘 D21——现况接线面未建，保持 candidate+登记"批文已下待其就绪"，数据腿 float_share 710 万行已活）；b 档（无持续数据源档）全网搜索=有源 32 条（9 族，其中 18 条真身已活）/无源 6 条冷归档（DS-002/040/056/057/070/075 deprecated+successor）；c 档批删 19 datasets+19 companion jobs（三步验证全过，快照 G:/zephyr_cold/retire_t1b6_20260930）——结论真源=b_audit/b6_source_search.md；macro 15 归 B5 卡不变 |
 | q-0006 白名单口径 | REAL-KEY-REFERENCE-SCAN 白名单（现仅 secret_registry.yaml+SECRETS.md）是否纳入"从真源派生断言"测试面=门改进候选，Owner/维护班裁 |
 
 ## 二、两轮分域读数（读数表）

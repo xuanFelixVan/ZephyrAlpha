@@ -653,15 +653,16 @@ sources:
   license_type: internal
   latency_profile:
   colocation_eligible: false
-  provides_datasets: [DS-003, DS-004, DS-005, DS-006, DS-007, DS-008, DS-009, 
-      DS-010, DS-011, DS-012, DS-013, DS-014, DS-015, DS-016, DS-017, DS-018, 
-      DS-019, DS-020, DS-021, DS-022, DS-023, DS-024, DS-025, DS-026, DS-027, 
-      DS-028, DS-029, DS-030, DS-031, DS-032, DS-033, DS-034, DS-035, DS-036, 
-      DS-037, DS-038, DS-039, DS-040, DS-041, DS-042, DS-043, DS-044, DS-045, 
-      DS-046, DS-047, DS-048, DS-049, DS-051, DS-052, DS-053, DS-054, DS-055, 
-      DS-056, DS-057, DS-058, DS-059, DS-060, DS-061, DS-062, DS-063, DS-064, 
-      DS-065, DS-066, DS-067, DS-068, DS-069, DS-070, DS-071, DS-072, DS-073, 
-      DS-074, DS-075, DS-076]
+  provides_datasets: [
+      DS-003, DS-004, DS-005, DS-006, DS-007, DS-008,
+      DS-009, DS-010, DS-011, DS-012, DS-013, DS-014,
+      DS-015, DS-016, DS-017, DS-018, DS-019, DS-020,
+      DS-021, DS-022, DS-023, DS-024, DS-025, DS-026,
+      DS-027, DS-028, DS-029, DS-030, DS-031, DS-032,
+      DS-033, DS-034, DS-035, DS-036, DS-037, DS-038,
+      DS-039, DS-040, DS-056, DS-057, DS-058, DS-059,
+      DS-065, DS-066, DS-067, DS-068, DS-069, DS-070,
+      DS-071, DS-072, DS-073, DS-074, DS-075, DS-076]
   env_config: 无
   module_id: MOD-L00-004
   doc_ref: 64_data_source_download_spec.md §4.1/§5.3/§5.4
@@ -820,10 +821,10 @@ datasets:
   module_id: MOD-MKT_DATA
   name: market_data.ohlc_bar
   name_zh: 聚合OHLC K线
-  status: candidate
+  status: deprecated
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-16'
+  updated_at: '2026-09-30'
   owner: MOD-MKT_DATA
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -837,9 +838,7 @@ datasets:
   applies_to: ["market"]
   tags: ["数据", "k线"]
   algorithm_status: "not_applicable"
-  evidence: "2026-08-16 JOB-084 实证：日线段退市股历史补齐——Baostock 源 337 只退市股 1,373,162 行落库 kline_daily（[ipoDate,outDate]
-    全历史不复权；抽验 000005 全史 8146 根至 2024-04-26 退市日、600200/300379 同验），derived ST 集无 K 线代码
-    249→5；分钟线段仍仅在市覆盖。已知缺口：北交所退市 5 只（baostock 无 BJ 覆盖）"
+  evidence: "b档无源冷归档(2026-09-30 Owner 批文:全网搜无数据源且producer缺;CH五库+本地两通道零数据实证) successor=kline_daily（c1_market 现役日 K，10131069 行） | 前证=2026-08-16 JOB-084 实证：日线段退市股历史补齐——Baostock 源 337 只退市股 1,373,162 行落库 kline_daily（[ipoDate,outDate] 全历史不复权；抽验 000005 全史 8146 根至 2024-04-26 退市日、600200/300379 同验），derived ST 集无 K 线代码"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-003
@@ -2196,10 +2195,10 @@ datasets:
   design_maturity: design
   name: factor_analysis.turnover_analyzer
   name_zh: 换手率分析报告
-  status: candidate
+  status: deprecated
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-09-30'
   owner: MOD-L02-001
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2213,7 +2212,7 @@ datasets:
   applies_to: []
   tags: ["流动性", "数据", "因子"]
   algorithm_status: "not_applicable"
-  evidence: ""
+  evidence: "b档无源冷归档(2026-09-30 Owner 批文:全网搜无数据源且producer缺;CH五库+本地两通道零数据实证) successor=stock_daily_basic.turnover_rate+kline_daily.turnover_rate"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-041
@@ -2736,10 +2735,10 @@ datasets:
   design_maturity: design
   name: data.realtime_push_manager
   name_zh: 实时推送数据流
-  status: candidate
+  status: deprecated
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-09-30'
   owner: MOD-L00-004
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2753,7 +2752,7 @@ datasets:
   applies_to: []
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: ""
+  evidence: "b档无源冷归档(2026-09-30 Owner 批文:全网搜无数据源且producer缺;CH五库+本地两通道零数据实证) successor=c1_market.tick_data(38.8 亿行)/tick_depth_5 实时链"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-057
@@ -2772,10 +2771,10 @@ datasets:
   design_maturity: design
   name: data.tick_data_manager
   name_zh: Tick数据管理记录
-  status: candidate
+  status: deprecated
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-09-30'
   owner: MOD-L00-004
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2789,7 +2788,7 @@ datasets:
   applies_to: []
   tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
-  evidence: ""
+  evidence: "b档无源冷归档(2026-09-30 Owner 批文:全网搜无数据源且producer缺;CH五库+本地两通道零数据实证) successor=c1_market.tick_data/tick_depth_5 活表"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-058
@@ -3240,10 +3239,10 @@ datasets:
   design_maturity: design
   name: portfolio.portfolio_aggregate
   name_zh: 组合汇总状态
-  status: candidate
+  status: deprecated
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-09-30'
   owner: MOD-PF-003
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -3257,7 +3256,7 @@ datasets:
   applies_to: []
   tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
-  evidence: ""
+  evidence: "b档无源冷归档(2026-09-30 Owner 批文:全网搜无数据源且producer缺;CH五库+本地两通道零数据实证) successor=c1_backtest.sim_pocket_daily/sim_attribution_daily/account_nav_daily"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-071
@@ -3420,10 +3419,10 @@ datasets:
   design_maturity: design
   name: risk.drawdown_metric
   name_zh: 回撤指标序列
-  status: candidate
+  status: deprecated
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-09-30'
   owner: MOD-RISK-001
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -3437,7 +3436,7 @@ datasets:
   applies_to: []
   tags: ["风控", "回撤", "数据", "指标", "绩效"]
   algorithm_status: "not_applicable"
-  evidence: ""
+  evidence: "b档无源冷归档(2026-09-30 Owner 批文:全网搜无数据源且producer缺;CH五库+本地两通道零数据实证) successor=c1_backtest.sim_daily_report/account_nav_daily 回撤语义"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-076

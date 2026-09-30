@@ -57854,4 +57854,9 @@ creation_tokens:
   created_by: st-menu-t1b5-20260930
   capability: macro-regime-sensor
   merge_evaluation: "跨域不同对象不并：TDM-E-L1-S0 宏观环境传感器真消费模块（NB1-B5 R2-R3处方件，政策表态分析器不消费MAC数值实证在案）"
+- file: docs/_working/night_sweep/b_audit/b6_source_search.md
+  token: b6-source-search-b6-source-search-2026-09-30
+  created_by: st-menu-t1b6-20260930
+  capability: b6_source_search
+  merge_evaluation: "内收 w5_1：矿卡 nb1_b6 的 b 档执行落卡（数据源搜索结论唯一真源），同域唯一新增无替代对象"
 di_seam_exemptions: []
