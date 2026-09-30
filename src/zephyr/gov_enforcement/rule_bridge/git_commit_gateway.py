@@ -4221,11 +4221,25 @@ class GitCommitGateway:
         known = set(baseline.get("keys", {}))
         net_new = current - known
         stale = known - current
+        # own/foreign 键级拆分（宪法 §3.1 own-diff 作用域落地，2026-10-01 提交链治本）：
+        # 仅 anchor 归一化后落在本提交 own 文件面内的净增键才阻断；外来 anchor/<noanchor>
+        # 净增降级 warn+审计不阻断无辜提交人（16 起连坐/7 会话实证），永不入基线。
+        own_norm = {os.path.normcase(str(f).replace("\\", "/")) for f in files}
+        own_net_new: set[str] = set()
+        foreign_net_new: set[str] = set()
+        for k in net_new:
+            anchor = k.split("|", 1)[1] if "|" in k else _DEBT_NOANCHOR
+            if anchor != _DEBT_NOANCHOR and os.path.normcase(anchor.replace("\\", "/")) in own_norm:
+                own_net_new.add(k)
+            else:
+                foreign_net_new.add(k)
         meta: dict = {
             "debt_ratchet": "on",
             "debt_keys": len(current),
             "debt_baseline_hit": len(current & known),
             "debt_net_new": len(net_new),
+            "debt_own_net_new": len(own_net_new),
+            "debt_foreign_net_new": len(foreign_net_new),
         }
         if stale:
             for k in stale:
@@ -4241,8 +4255,23 @@ class GitCommitGateway:
                     "persisted": persisted,
                 }
             )
-        if net_new:
-            sample = sorted(net_new)[:10]
+        if foreign_net_new:
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_debt_foreign_net_new_warned",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "foreign_net_new_count": len(foreign_net_new),
+                    "foreign_net_new_keys": sorted(foreign_net_new)[:30],
+                }
+            )
+            logger.warning(
+                "GitCommitGateway: debt 棘轮外来净增键 %d 个 warn 放行（own-diff 作用域，宪法 §3.1 外来 staged 不阻断无辜提交人）",
+                len(foreign_net_new),
+            )
+        if own_net_new:
+            sample = sorted(own_net_new)[:10]
             detail = "净增债务键: " + "; ".join(sample) + (" ..." if len(net_new) > 10 else "")
             self._append_commit_anomaly_jsonl(
                 {
@@ -4250,8 +4279,8 @@ class GitCommitGateway:
                     "event": "precommit_channel_debt_ratchet_blocked",
                     "gate_id": "GATE-PRECOMMIT-RUN",
                     "files_count": len(files),
-                    "net_new_count": len(net_new),
-                    "net_new_keys": sorted(net_new)[:30],
+                    "net_new_count": len(own_net_new),
+                    "net_new_keys": sorted(own_net_new)[:30],
                 }
             )
             return (
