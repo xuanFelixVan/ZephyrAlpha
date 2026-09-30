@@ -443,6 +443,19 @@ def _precommit_timeout_failopen() -> bool:
     return os.environ.get("ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN", "0").strip() == "1"
 
 
+_PRECOMMIT_DELETED_MARK = "<deleted>"
+
+
+def _precommit_out_of_lock_enabled() -> bool:
+    """D2 回退手柄：env ZEPHYR_PRECOMMIT_OUT_OF_LOCK=0 → 通道回锁内全量（缺省=锁外前移）。
+
+    出锁手术（2026-09-30，docs/_working/commit_chain_fullflow/11_channel_out_of_lock_surgery.md，
+    Owner 批 gate_survival_adjudication §8.8）：通道 p50 ~50s 占全局锁临界区大头，
+    锁外前移+锁内 staged 指纹复核后，等锁会话不再为通道停摆。
+    """
+    return os.environ.get("ZEPHYR_PRECOMMIT_OUT_OF_LOCK", "1").strip() != "0"
+
+
 def _precommit_config_hook_ids(project_root: str) -> tuple[str, ...]:
     """Rx-4：解析 .pre-commit-config.yaml 全部 hook id（Phase-B SKIP 反选=快段已验台的枚举真源）。
 
@@ -2724,6 +2737,21 @@ class GitCommitGateway:
             except Exception:  # noqa: BLE001 — 预跑编排异常=回退现行全量链
                 preflight_results = None
                 preflight_fp = None
+        # D2 出锁手术（2026-09-30，11_channel_out_of_lock_surgery.md；Owner 批 §8.8）：
+        # hook 通道锁外前移+锁内 staged 指纹复核。正确性根基=通道读面是 own-scope 临时
+        # 索引（工作树内容，GIT_INDEX_FILE 隔离），与共享 index 无写交互；锁内 step5.5
+        # 以 staged blob sha 集合复核，一致→采信锁外结果（单趟），漂移→锁内原地重跑
+        # （漂移=同批文件被改=旧语义下通道同样看到新内容，判定零放松）。快照/通道异常
+        # →precommit_preflight=None 回退现行锁内全量链（正确性永不依赖前移）。
+        precommit_preflight: tuple[dict[str, str], str | None] | None = None
+        if _precommit_out_of_lock_enabled() and not merge_finalize:
+            try:
+                if not self._precommit_head_guard_skip(existing):
+                    _snap = self._precommit_snapshot_blob_shas(existing)
+                    if _snap is not None:
+                        precommit_preflight = (_snap, self._run_precommit_channel(session_id, existing))
+            except Exception:  # noqa: BLE001 — 前移编排异常=回退锁内全量（D2 fail-safe）
+                precommit_preflight = None
         _lock_timeout = lock_wait_timeout if lock_wait_timeout is not None else _LOCK_TIMEOUT_DEFAULT
         _lock = _GlobalCommitLock(self.project_root, timeout=_lock_timeout)
         _lock_entered = False
@@ -2783,7 +2811,9 @@ class GitCommitGateway:
                     self._audit_commit_block_event(session_id, blocked, existing, (time.monotonic() - _gate_t0) * 1000)
                     _print_bottleneck_banner(self.project_root, context="post_commit")
                     return blocked
-                result = self._commit_locked(session_id, existing, full_message, gw_marker)
+                result = self._commit_locked(
+                    session_id, existing, full_message, gw_marker, precommit_fingerprint=precommit_preflight
+                )
         except GatewayError as e:
             # 2026-09-11 诊断性治本：此前 message 固定 "internal error" 吞掉真实异常，
             # 并发夜锁定排查困难（对齐 #ARCH-TOOL-HEALTH-V1 可诊断性精神）；status 语义不变。
@@ -2835,7 +2865,9 @@ class GitCommitGateway:
                 self._audit_commit_block_event(session_id, blocked, existing, (time.monotonic() - _gate_t0) * 1000)
                 _print_bottleneck_banner(self.project_root, context="post_commit")
                 return blocked
-            result = self._commit_locked(session_id, existing, full_message, gw_marker)
+            result = self._commit_locked(
+                session_id, existing, full_message, gw_marker, precommit_fingerprint=precommit_preflight
+            )
 
         _total_ms = (time.monotonic() - _commit_t0) * 1000
         if result.status == CommitStatus.OK and _total_ms > _SLOW_COMMIT_THRESHOLD_S * 1000:
@@ -3304,6 +3336,7 @@ class GitCommitGateway:
         files: list[str],
         full_message: str,
         gw_marker: str,
+        precommit_fingerprint: tuple[dict[str, str], str | None] | None = None,
     ) -> CommitResult:
         """持锁状态下执行 add -> commit（阶段3 移除 stash 隔离，worktree 物理隔离替代）。
 
@@ -3329,7 +3362,13 @@ class GitCommitGateway:
                 else:
                     # 4-6. 检查 staged 变更并 commit
                     result = self._resolve_commit_result(
-                        session_id, files, normal_files, full_message, pathspec_file, gw_marker
+                        session_id,
+                        files,
+                        normal_files,
+                        full_message,
+                        pathspec_file,
+                        gw_marker,
+                        precommit_fingerprint=precommit_fingerprint,
                     )
         finally:
             self._commit_locked_finalize(result, files, session_id, full_message, pathspec_file)
@@ -3523,6 +3562,77 @@ class GitCommitGateway:
             )
         return segs
 
+    def _precommit_head_guard_skip(self, files: list[str]) -> bool:
+        """D2 矩阵7 守卫：本提交文件相对 HEAD 零变化（worktree+staged 双面）→ 无可提交内容。
+
+        跳过锁外通道（锁内 step5 短路仍兜底返回 NOTHING_TO_COMMIT）。批量裸 pathspec 跑
+        `git status --porcelain`（git diff 不支持 --pathspec-from-file 实证 rc 129，且 diff
+        不显示未跟踪文件会漏判新建件；status 同覆盖暂存/工作树/未跟踪三态）；删除面保守
+        不跳，交通道与锁内正常流程判定。git 异常 fail-open（False=照跑通道，不多放行不少拦）。
+        """
+        try:
+            root = str(self.project_root)
+            rel_existing, rel_deleted = self._precommit_rel_lists(files, root)
+            if rel_deleted:
+                return False
+            for i in range(0, len(rel_existing), 200):
+                batch = rel_existing[i : i + 200]
+                r = self.run_git(["git", "status", "--porcelain", "--", *(f":(icase){rel}" for rel in batch)])
+                if r.returncode != 0 or r.stdout.strip():
+                    return False
+            return True
+        except Exception:  # noqa: BLE001 — 守卫异常不拦提交，照跑通道
+            return False
+
+    def _precommit_snapshot_blob_shas(self, files: list[str]) -> dict[str, str] | None:
+        """D2 锁外内容快照：{rel_posix: blob_sha}，删除文件记 _PRECOMMIT_DELETED_MARK。
+
+        git hash-object 与 git add 同走 clean/autocrlf 滤镜——快照 sha 与锁内 staged sha
+        （ls-files -s）同源可比。设施故障返回 None（调用方回退锁内全量通道）。
+        """
+        root = str(self.project_root)
+        rel_existing, rel_deleted = self._precommit_rel_lists(files, root)
+        fp: dict[str, str] = {rel: _PRECOMMIT_DELETED_MARK for rel in rel_deleted}
+        for i in range(0, len(rel_existing), 200):
+            batch = rel_existing[i : i + 200]
+            r = self.run_git(["git", "hash-object", "--", *batch])
+            if r.returncode != 0:
+                return None
+            shas = r.stdout.split()
+            if len(shas) != len(batch):
+                return None
+            fp.update(zip(batch, shas, strict=True))
+        return fp
+
+    def _precommit_staged_blob_shas(self, files: list[str]) -> dict[str, str] | None:
+        """D2 锁内 staged 指纹：{rel_posix: blob_sha}（ls-files -s；staged 删除=缺席）。"""
+        root = str(self.project_root)
+        rel_existing, _rel_deleted = self._precommit_rel_lists(files, root)
+        staged: dict[str, str] = {}
+        for i in range(0, len(rel_existing), 200):
+            batch = rel_existing[i : i + 200]
+            r = self.run_git(["git", "ls-files", "-s", "--", *batch])
+            if r.returncode != 0:
+                return None
+            for line in r.stdout.splitlines():
+                if "\t" not in line:
+                    continue
+                meta, path = line.split("\t", 1)
+                parts = meta.split()
+                if len(parts) >= 2:
+                    staged[path.replace("\\", "/")] = parts[1]
+        return staged
+
+    def _precommit_fingerprint_matches(self, snapshot: dict[str, str], files: list[str]) -> bool:
+        """D2 指纹复核：锁外快照 vs 当前 staged。任一差异/设施故障→False（锁内重跑兜底）。"""
+        staged = self._precommit_staged_blob_shas(files)
+        if staged is None:
+            return False
+        for rel, sha in snapshot.items():
+            if staged.get(rel, _PRECOMMIT_DELETED_MARK) != sha:
+                return False
+        return True
+
     def _run_precommit_channel(self, session_id: str, files: list[str]) -> str | None:
         """裁定#341 方案②（2026-09-19 Owner 批）：落地前对 staged 面跑 `pre-commit run`。
 
@@ -3559,6 +3669,10 @@ class GitCommitGateway:
           WORKTREE-REQUIRED gate（--allow-non-worktree 已裁决逃生）双重计数冲突
 
         merge 跳过：merge 携带分支侧已验提交（B4 分支侧审批转置属提交面语义）。
+
+        D2（2026-09-30 出锁手术）：本方法可在全局锁外调用（commit() 锁外前移+锁内
+        staged 指纹复核采信，见 commit() D2 注记）；不变式=通道内任何 run_git 不得
+        触发嵌套 _GlobalCommitLock（现核实通道内无取锁点）。
 
         Returns:
             None = 放行；str = 阻断原因（门禁 GATE-PRECOMMIT-RUN 阻断前缀）。
@@ -3857,6 +3971,7 @@ class GitCommitGateway:
         full_message: str,
         pathspec_file: str,
         gw_marker: str,
+        precommit_fingerprint: tuple[dict[str, str], str | None] | None = None,
     ) -> CommitResult:
         """步骤4-6：判断 no-pathspec -> 检查 staged 变更 -> pre-commit 通道 -> commit（rename 检测内置）。"""
         # 4. 判断是否需要无 pathspec commit（gitignored / staged rename）
@@ -3870,9 +3985,23 @@ class GitCommitGateway:
                 message="no staged changes in files_in_scope",
             )
         # 5.5 裁定#341 方案②（2026-09-19 Owner 批）：落地前 staged 面 pre-commit run
-        # （own-scope 临时索引，见 _run_precommit_channel；返回非 None = 阻断）
+        # （own-scope 临时索引，见 _run_precommit_channel；返回非 None = 阻断）。
+        # D2（2026-09-30）：锁外已跑通道且 staged 指纹一致 → 采信锁外结果（单趟）；
+        # 指纹漂移/未前移 → 锁内原地全量重跑（现行路径，判定零放松）。
         _pc_t0 = time.monotonic()
-        precommit_block = self._run_precommit_channel(session_id, files)
+        if precommit_fingerprint is not None and self._precommit_fingerprint_matches(precommit_fingerprint[0], files):
+            precommit_block = precommit_fingerprint[1]
+            self._append_commit_anomaly_jsonl(
+                {
+                    "event": "precommit_channel_adopted",
+                    "session_id": session_id,
+                    "files_count": len(files),
+                    "verdict": "pass" if precommit_block is None else "block",
+                    "in_lock_ms": round((time.monotonic() - _pc_t0) * 1000, 1),
+                }
+            )
+        else:
+            precommit_block = self._run_precommit_channel(session_id, files)
         # A1 装表：此前阻断审计恒写 0.0——本通道常是全链最贵一段（实测单件 ≥6 分钟），
         # 却在 24h 账面上表现为零成本，故三日无人从数据看见它（=提交等待调查 R1 遥测黑洞）。
         _pc_ms = (time.monotonic() - _pc_t0) * 1000
