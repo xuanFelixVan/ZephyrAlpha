@@ -939,6 +939,23 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
 
     base_head = resolve_base_head(wt)
     base_blobs = resolve_base_blobs(wt, base_head, rel_files)
+    # 队列在途续命（2026-10-01 提交链治本③）：入队即把本会话对目标文件的 claim
+    # 过期点拨长（缺省 2h，ZEPHYR_ENQUEUE_CLAIM_TTL_S 参数化）——实测排队等待可达
+    # 45min+，而失败保留 claim 仅 300s，等待中过期即遭第三方回收、落地期
+    # CLAIM-REQUIRED 判死（当晚 10 封死信实证）。与 lock_files 队列在途保护、
+    # 落地侧 claim_files 重 claim 三层互备。best-effort：claim 已失守不阻断入队
+    # （快照语义=入袋即完成，重 claim 由落地侧按队列项 session 承接）。
+    try:
+        import lock_files as _lf  # noqa: PLC0415 — 同 _retain_claims_after_failure 口径
+
+        _enqueue_ttl_s = float(os.environ.get("ZEPHYR_ENQUEUE_CLAIM_TTL_S", "7200"))
+        _renewed = _lf.renew_claim(args.session, rel_files, ttl_s=_enqueue_ttl_s)
+        print(
+            f"ENQUEUE-RENEW: claim 续租 {len(_renewed)}/{len(rel_files)} 件（ttl={_enqueue_ttl_s:.0f}s）",
+            file=sys.stderr,
+        )
+    except Exception as renew_exc:  # noqa: BLE001 — 续命失败不阻断入队
+        logger.warning("[enqueue] claim 续租失败（不阻断）: %s", renew_exc)
     item = enqueue_item(
         args.session,
         message,
@@ -1342,8 +1359,18 @@ def main() -> int:
         # 之前分流，避免"先报失败再入队"的混乱输出）。语义不兼容入队的通道
         # （reconciler-verify / merge_finalize）与显式 --no-auto-enqueue 维持原
         # exit 2；flag OFF 时行为与历史完全一致。
+        # A3 任务1（st-circ-a3-20260930）扩面：热册三连（FOREIGN-CHANGE/
+        # HELD-OVERLAP 专用 status + COMMIT_FAILED 带 HOT-FILE-BASE-FRESHNESS 标记）
+        # 同走自动改道——多会话并发期对热册（module_translation_registry/
+        # capability_canonical_file_registry）的互踩是结构性并发非物品违规，
+        # 队列落地侧空基线 claim+注册表三向合并结构性免疫这三类阻断（42/31/13 事件
+        # 实证集中打两册），改道即治本；退避由队列 B5 attempts 机制承担。
+        _contention_auto_enqueue = result.status in (
+            CommitStatus.FOREIGN_CHANGE_VIOLATION,
+            CommitStatus.HELD_OVERLAP_VIOLATION,
+        ) or (result.status is CommitStatus.COMMIT_FAILED and "HOT-FILE-BASE-FRESHNESS" in (result.message or ""))
         if (
-            result.status is CommitStatus.LOCK_TIMEOUT
+            (result.status is CommitStatus.LOCK_TIMEOUT or _contention_auto_enqueue)
             and not getattr(args, "no_auto_enqueue", False)
             and not args.reconciler_verify
             and not getattr(args, "merge_finalize", False)
@@ -1351,9 +1378,12 @@ def main() -> int:
             from zephyr.gov_enforcement.rule_bridge.gate_cache_preflight import flag_enabled  # noqa: PLC0415
 
             if flag_enabled("commit_queue_interactive"):
+                _reason = (
+                    "锁等待超时" if result.status is CommitStatus.LOCK_TIMEOUT else "热册并发阻断（结构性，非物品违规）"
+                )
                 print(
-                    "AUTO-ENQUEUE: 锁等待超时——自动改道快照入队（--no-auto-enqueue 可关闭；"
-                    f"锁详情: {result.message[:200]}）",
+                    f"AUTO-ENQUEUE: {_reason}——自动改道快照入队（--no-auto-enqueue 可关闭；"
+                    f"详情: {result.message[:200]}）",
                     file=sys.stderr,
                 )
                 return _enqueue_mode(args, files, message)
