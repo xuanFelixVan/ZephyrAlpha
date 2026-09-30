@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用 manual 触发模式（argparse.ArgumentParser / input() / __main__ + sys.argv 解析）但无事件订阅/自动触发注册时阻断 commit；tests/ 豁免；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open；本 gate 自身文件豁免（含检测模式字符串）；与 PERM-TRIGGER 互补——PERM-TRIGGER 检测时间触发，本 gate 检测 manual 触发；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用 manual 触发模式（argparse.ArgumentParser / input() / __main__ + sys.argv 解析）但无事件订阅/自动触发注册时阻断 commit；tests/ 豁免；新增文件（diff-filter=A）全文件检测，修改文件（AM）按裁定#458 收窄=仅判新增行所在顶层函数/类作用域（AST 定位，模块级行=全模块粗粒度；作用域内 AST 实证 manual 触发＋作用域无订阅才判死；AST 解析/定位失败 fail-open）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open；本 gate 自身文件豁免（含检测模式字符串）；与 PERM-TRIGGER 互补——PERM-TRIGGER 检测时间触发，本 gate 检测 manual 触发；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
 # [MODIFY-GUARD] gate_id="MANUAL-ONLY-PERMANENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -90,6 +90,9 @@ _M11_NOQA_PATTERN = re.compile(
     r"#\s*noqa:\s*m11-perm-manual-legitimate\s{2,}(\S.*)$",
     re.MULTILINE,
 )
+
+# unified=0 hunk 头（取新文件起始行号）：@@ -12,3 +45,7 @@
+_HUNK_HEADER_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
 
 # 事件订阅/自动触发相关属性名/方法名（与 PERM-TRIGGER 共享语义）
 _EVENT_REGISTRATION_ATTRS = frozenset({"subscribe", "register_handler"})
@@ -329,8 +332,56 @@ def _has_m11_exemption(content: str) -> bool:
     return False
 
 
+def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
+    """解析 --unified=0 diff 输出为 (新文件行号, 行文本) 列表（裁定#458 修改面收窄）。
+
+    hunk 头携带新文件行号；上下文行推进行号，删除行/``\\ No newline`` 不占新行号；
+    hunk 头之前（---/+++ 头部区）与不可解析 hunk 头后的内容不计（fail-open 倾向）。
+    """
+    added: list[tuple[int, str]] = []
+    new_lineno = 0
+    for line in diff_stdout.splitlines():
+        if line.startswith("@@"):
+            m = _HUNK_HEADER_RE.match(line)
+            new_lineno = int(m.group(1)) if m else 0
+            continue
+        if line.startswith("+++") or line.startswith("---"):
+            continue
+        if new_lineno <= 0:
+            continue
+        if line.startswith("+"):
+            added.append((new_lineno, line[1:]))
+            new_lineno += 1
+        elif line.startswith("-") or line.startswith("\\"):
+            continue
+        else:
+            new_lineno += 1  # 上下文行
+    return added
+
+
+def _find_enclosing_toplevel_scope(tree: ast.AST, lineno: int) -> ast.AST | None:
+    """定位行号所在顶层函数/类节点（粗粒度，裁定#458）；模块级行返回 None。
+
+    只扫 ``tree.body`` 顶层 FunctionDef/AsyncFunctionDef/ClassDef——嵌套定义归入
+    其顶层宿主作用域；装饰器行/模块级行（含 ``if __name__`` 守卫）返回 None。
+    """
+    for node in getattr(tree, "body", []):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            continue
+        end_lineno = getattr(node, "end_lineno", None) or node.lineno
+        if node.lineno <= lineno <= end_lineno:
+            return node
+    return None
+
+
 def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
-    """检测修改文件的 staged 新增行是否含 manual 触发且全文件无事件订阅。
+    """检测修改文件的 staged 新增行是否在其所在作用域内引入 manual 触发且该作用域无事件订阅。
+
+    裁定#458 ③（2026-09-30）修改面收窄：判死条件从"新增行文本命中 manual 模式＋
+    全文件无事件订阅"收窄为"新增行所在顶层函数/类作用域（AST 定位；模块级行=全模块
+    粗粒度）内存在 AST 实证 manual 触发且该作用域无事件/自动触发订阅"——存量脚本
+    （订阅在其余作用域）普通改行不再被整文件误杀；AST 解析/作用域定位失败 fail-open
+    放行（对齐本模块 ERROR_CONTRACT）。m11 合规豁免语义不变。
 
     P3-1.2 治本对齐（2026-08-02）：modified 文件同样适用 m11 合规豁免——
     合法 manual 触发 permanent 脚本（如 apply_depgraph.py / apply_dataflowgraph.py
@@ -344,40 +395,47 @@ def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str,
         diff_content = gateway.run_git(["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path])
         if diff_content.returncode != 0:
             return False
-        added_lines = [
-            line[1:] for line in diff_content.stdout.splitlines() if line.startswith("+") and not line.startswith("+++")
-        ]
+        added_lines = _parse_diff_added_lines(diff_content.stdout)
     except Exception:  # noqa: BLE001 — broad exception catch for fail-open
         return False
 
     if not added_lines:
         return False
 
-    # 文本模式快速检测 manual 触发模式
-    added_text = "\n".join(added_lines)
-    quick_hit = False
-    for line in added_text.splitlines():
+    # 文本模式快速检测 manual 触发模式（仅初筛；命中行携带行号进入作用域级判定）
+    hit_lines: list[tuple[int, str]] = []
+    for lineno, line in added_lines:
         stripped = line.strip()
         if stripped.startswith("#"):
             continue
         if "ArgumentParser" in line or "argparse." in line:
-            quick_hit = True
-            break
+            hit_lines.append((lineno, line))
+            continue
         if "input(" in line:
-            quick_hit = True
-            break
+            hit_lines.append((lineno, line))
+            continue
         if "__name__" in line and "__main__" in line:
-            quick_hit = True
-            break
-    if not quick_hit:
+            hit_lines.append((lineno, line))
+    if not hit_lines:
         return False
 
-    # 检查修改后全文件是否有事件订阅
+    # 裁定#458：AST 解析失败=作用域定位失败，fail-open 放行（原为判死，收窄）
     try:
         tree = ast.parse(content, filename=abs_path)
-        return not _detect_event_or_auto_trigger(tree)
-    except SyntaxError:
-        return True  # AST 解析失败，认为无事件订阅
+    except SyntaxError as e:
+        logger.warning(
+            "MANUAL-ONLY-PERMANENT gate 放行 %s (modified): AST 解析失败，无法定位新增行作用域(%s: %s)。",
+            abs_path,
+            type(e).__name__,
+            e,
+        )
+        return False
+
+    for lineno, _line in hit_lines:
+        scope_node = _find_enclosing_toplevel_scope(tree, lineno) or tree  # 模块级行=全模块粗粒度
+        if _detect_manual_trigger(scope_node) and not _detect_event_or_auto_trigger(scope_node):
+            return True  # 该作用域内 AST 实证 manual 触发且无事件/自动订阅：违规
+    return False
 
 
 def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -398,9 +456,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
         foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
         if foreign_staged:
-            _audit_foreign_staged(
-                gateway, session_id, foreign_staged, gate_name="MANUAL-ONLY-PERMANENT"
-            )
+            _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="MANUAL-ONLY-PERMANENT")
             logger.warning(
                 "MANUAL-ONLY-PERMANENT: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
                 len(foreign_staged),
