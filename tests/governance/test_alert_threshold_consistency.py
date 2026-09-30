@@ -177,13 +177,20 @@ class TestDesignEntriesExist:
         assert e["THD-DRIFT-003"]["value"] == "h=4σ"
 
     def test_entry_total_and_categories(self):
-        """总量与分类守卫：38 条 11 类（防误删条目无感流失；v1.4.0 +THD-ALERT-003/004）。"""
+        """总量与分类守卫（派生式+全字段校验）：下限锁死禁跌破、分类禁砍、核心字段完备。
+
+        v1.5.0（THD-ALERT-007）/v1.6.0（THD-TRD-001..004 trading 类）增补后硬编码
+        总量==42 已过时——每次合法增补都要改测试即漂移源，改派生式：
+        下限锁基线 + 分类⊇历史全集 + 逐条核心字段完备（新增类别/条目自动纳管）。
+        """
         e = _registry_entries()
-        # 42 条：38（v1.4.0 基线）+ THD-INTAKE-001..004（2026-09-18 冷库救回件落地第 4 批，
-        # 4fc94b60b6 纯插入，source_code=src/zephyr/ai_layer/intake/kpi.py 四条在案）
-        assert len(e) == 42
+        # 下限 42 条：38（v1.4.0 基线）+ THD-INTAKE-001..004（2026-09-18 冷库救回件落地第 4 批，
+        # 4fc94b60b6 纯插入，source_code=src/zephyr/ai_layer/intake/kpi.py 四条在案）；
+        # 增补只升不降——跌破即误删证据（防无感流失的本意保留）
+        assert len(e) >= 42
+        # 分类⊇历史 12 类（禁砍类；v1.6.0 新增 trading 由 ⊇ 自动纳管，不写死上限）
         cats = {entry["category"] for entry in e.values()}
-        assert cats == {
+        assert cats >= {
             "drawdown",
             "health",
             "gpu",
@@ -197,6 +204,25 @@ class TestDesignEntriesExist:
             "retirement",
             "ai_intake",
         }
+        # 全字段校验：核心键必备非空 + status 三值口径 + active 必有代码锚点
+        core_keys = (
+            "threshold_id",
+            "module_id",
+            "name",
+            "category",
+            "value",
+            "comparator",
+            "source_code",
+            "consumer",
+            "status",
+            "doc_ref",
+        )
+        for tid, entry in e.items():
+            for key in core_keys:
+                assert entry.get(key) not in (None, ""), f"{tid} 缺核心字段 {key}"
+            assert entry["status"] in {"active", "design", "pending_adjudication"}, tid
+            if entry["status"] == "active":
+                assert entry["source_code"], f"{tid} active 条目无代码锚点 source_code"
 
 
 # ── 红队：fail-closed 实证（统读后安全网，tracker #87 验收①）──────────────
