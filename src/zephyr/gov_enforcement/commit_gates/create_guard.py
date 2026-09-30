@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -146,6 +146,7 @@ import logging
 import os
 import re
 import time
+from itertools import pairwise
 
 import yaml
 
@@ -190,11 +191,49 @@ _ASCII_DOC_WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*")
 # 不作用于 stem/标识符探针——后者本身即功能语义面）
 _BIGRAM_STOPWORDS = frozenset(
     {
-        "this", "that", "with", "from", "these", "those", "will", "would", "could",
-        "have", "has", "had", "been", "being", "into", "over", "under", "about",
-        "above", "they", "them", "their", "there", "then", "than", "when", "where",
-        "which", "what", "while", "because", "should", "must", "not", "only",
-        "such", "also", "each", "other", "others", "either", "neither", "every",
+        "this",
+        "that",
+        "with",
+        "from",
+        "these",
+        "those",
+        "will",
+        "would",
+        "could",
+        "have",
+        "has",
+        "had",
+        "been",
+        "being",
+        "into",
+        "over",
+        "under",
+        "about",
+        "above",
+        "they",
+        "them",
+        "their",
+        "there",
+        "then",
+        "than",
+        "when",
+        "where",
+        "which",
+        "what",
+        "while",
+        "because",
+        "should",
+        "must",
+        "not",
+        "only",
+        "such",
+        "also",
+        "each",
+        "other",
+        "others",
+        "either",
+        "neither",
+        "every",
     }
 )
 
@@ -216,6 +255,9 @@ _PARSE_FAIL_AUDIT_REL = (".runtime", "audit", "create_guard_parse_fail.jsonl")
 # 对标 _diff_helpers._audit_foreign_staged）
 _MERGE_EVAL_FIELD = "merge_evaluation"
 _MERGE_EVAL_AUDIT_REL = (".runtime", "gate_audit", "create_guard_merge_evaluation.jsonl")
+
+# 判重腿散文级 warn 审计路径（裁定#456 两档化；同族通道对标 _MERGE_EVAL_AUDIT_REL）
+_KEYWORD_DUP_WARN_AUDIT_REL = (".runtime", "gate_audit", "create_guard_keyword_dup_warn.jsonl")
 
 
 def _read_registry_text(registry_path) -> str:
@@ -781,6 +823,37 @@ def _audit_merge_evaluation_missing(gateway, session_id: str | None, missing_fil
         logger.warning("CREATE-GUARD: merge_evaluation 审计写入失败: %s", _e, exc_info=True)
 
 
+def _audit_keyword_dup_warn(
+    gateway, session_id: str | None, warn_violations: list[tuple[str, str, str, list[str]]]
+) -> None:
+    """判重腿散文级命中 warn 审计（裁定#456 两档化；jsonl append 到 .runtime/gate_audit/；fail-open）。
+
+    - 沿用本文件既有审计通道惯例（对标 _audit_merge_evaluation_missing /
+      _diff_helpers._audit_foreign_staged）；find() 既有 lookup_audit 通道照旧自动
+      落每次探针查询行，本 jsonl 只补"warn 判定"记录，不新建日志体系。
+    - 时间戳用 now_utc（RULE-SCHEMA-TZ）；落 gateway.project_root（tmp 测试仓不触碰生产 .runtime/）。
+    """
+    try:
+        audit_path = gateway.project_root.joinpath(*_KEYWORD_DUP_WARN_AUDIT_REL)
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": now_utc().isoformat(),
+            "gate": "CREATE-GUARD",
+            "event": "keyword_dup_description_warn",
+            "ruling": "456",
+            "session_id": session_id or "?",
+            "warn_count": len(warn_violations),
+            "violations": [
+                {"file": rel, "capability_id": cap_id, "canonical": canon, "hit_tokens": tokens[:8]}
+                for rel, cap_id, canon, tokens in warn_violations[:50]
+            ],
+        }
+        with audit_path.open("a", encoding="utf-8") as _f:
+            _f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception as _e:  # noqa: BLE001 — 审计写失败 fail-open（warn-only 契约）
+        logger.warning("CREATE-GUARD: 判重 warn 审计写入失败: %s", _e, exc_info=True)
+
+
 def _warn_merge_evaluation(
     gateway,
     session_id: str | None,
@@ -1024,31 +1097,63 @@ def _build_keyword_probes(rel_path: str, tree: ast.Module) -> list[str]:
     for run in _CJK_RUN_RE.findall(first_para):
         _add(run)
     ascii_words = [
-        w.lower()
-        for w in _ASCII_DOC_WORD_RE.findall(first_para)
-        if len(w) >= 4 and w.lower() not in _BIGRAM_STOPWORDS
+        w.lower() for w in _ASCII_DOC_WORD_RE.findall(first_para) if len(w) >= 4 and w.lower() not in _BIGRAM_STOPWORDS
     ]
-    for prev, nxt in zip(ascii_words, ascii_words[1:]):
+    for prev, nxt in pairwise(ascii_words):
         if len(probes) >= _MAX_KEYWORD_PROBES:
             break
         _add(f"{prev} {nxt}")
     return probes[:_MAX_KEYWORD_PROBES]
 
 
-def _scan_file_for_keyword_dupes(lookup, rel: str, src: str, batch_paths: set[str], session_id: str | None) -> list[tuple[str, str, str, list[str]]]:
-    """单文件面：探针→find()→命中归并（返回该文件的违规条目列表；异常向上抛=外层 fail-closed）。
+def _probe_hits_identifier_fields(lookup, probe: str, entry: dict) -> bool:
+    """判定单条探针命中是否标识符级（capability_id/aliases/canonical_file 直击，裁定#456）。
 
+    find() 把五字段拼成单一 haystack 检索，返回条目不标注命中字段——本函数在
+    create_guard 侧用条目自身字段本地复检收窄：标识符三字段拼接面按 find() 同款
+    匹配语义（精确子串 OR _tokenize/_token_match token 包含，两者皆为
+    CapabilityLookup 既有静态件，只调用不改动 capability_lookup.py）复检：
+    - 标识符面命中 ⇒ 标识符级（维持硬拦）；
+    - 否则该命中只能来自 description/module_id（散文/派生面）⇒ 散文级（warn）。
+    lookup 无静态件（异构测试桩）时保守判标识符级——维持 #456 前硬拦原行为，
+    禁止因分类能力缺失而放水（fail-closed 对齐本检测哲学）。
+    """
+    ident_parts = [str(entry.get("capability_id", "") or "")]
+    ident_parts.extend(str(a) for a in (entry.get("aliases") or []) if a)
+    ident_parts.append(str(entry.get("canonical_file", "") or ""))
+    ident_haystack = " ".join(ident_parts).lower()
+    if not ident_haystack.strip():
+        return False
+    if probe.lower() in ident_haystack:
+        return True
+    try:
+        ascii_tokens, cjk_str = lookup._tokenize(probe)
+        return lookup._token_match(ascii_tokens, cjk_str, ident_haystack)
+    except AttributeError:
+        return True
+
+
+def _scan_file_for_keyword_dupes(
+    lookup, rel: str, src: str, batch_paths: set[str], session_id: str | None
+) -> tuple[list[tuple[str, str, str, list[str]]], list[tuple[str, str, str, list[str]]]]:
+    """单文件面：探针→find()→命中归并+两档分流（裁定#456）。
+
+    返回 (硬拦条目, warn条目) 双列表；条目形状同前 (rel, cap_id, canonical, 命中探针词)。
+    - 标识符级：该 capability 的命中探针中任一条直击 capability_id/aliases/canonical_file
+      ⇒ 硬拦（判死阈值与 #456 前全等）；
+    - 散文级：全部命中探针仅落在 description/module_id ⇒ warn 列（不阻断）。
     命中过滤：canonical 指向该文件自身或同批新建文件 ⇒ 自引用/同批登记，非重复信号。
-    逃生标记命中 ⇒ 该文件整体豁免（空列表）。语法错误 ⇒ 豁免（由其他 gate 检测）。
+    逃生标记命中 ⇒ 该文件整体豁免（双空列表）。语法错误 ⇒ 豁免（由其他 gate 检测）。
     """
     if _KEYWORD_DUP_MARKER_RE.search(src):
-        return []
+        return [], []
     try:
         tree = ast.parse(src)
     except (SyntaxError, ValueError):
-        return []
+        return [], []
     hits: dict[str, dict] = {}
     hit_tokens: dict[str, list[str]] = {}
+    ident_tokens: dict[str, list[str]] = {}
     for probe in _build_keyword_probes(rel, tree):
         for entry in lookup.find(probe, session_id=session_id):
             cap_id = str(entry.get("capability_id", "") or "")
@@ -1059,10 +1164,19 @@ def _scan_file_for_keyword_dupes(lookup, rel: str, src: str, batch_paths: set[st
                 continue
             hits.setdefault(cap_id, entry)
             hit_tokens.setdefault(cap_id, []).append(probe)
-    return [
-        (rel, cap_id, str(entry.get("canonical_file", "") or ""), sorted(set(hit_tokens[cap_id])))
-        for cap_id, entry in hits.items()
-    ]
+            if _probe_hits_identifier_fields(lookup, probe, entry):
+                ident_tokens.setdefault(cap_id, []).append(probe)
+    hard: list[tuple[str, str, str, list[str]]] = []
+    warn: list[tuple[str, str, str, list[str]]] = []
+    for cap_id, entry in hits.items():
+        item = (
+            rel,
+            cap_id,
+            str(entry.get("canonical_file", "") or ""),
+            sorted(set(hit_tokens[cap_id])),
+        )
+        (hard if ident_tokens.get(cap_id) else warn).append(item)
+    return hard, warn
 
 
 def _check_capability_keyword_overlap(
@@ -1077,9 +1191,16 @@ def _check_capability_keyword_overlap(
     对每个新建 .py：构建查询面探针（_build_keyword_probes），逐探针调用既有
     ``CapabilityLookup.find()``（检索面=capability_id+description+canonical_file+
     module_id+aliases，capability_lookup.py L924-930；禁重写匹配器）。
-    - 命中>0 ⇒ 硬阻断，消息逐条给出 capability_id / canonical（派生面，
-      canonical_override=其优先级 1 真源）/ 命中探针词 / 逃生标记确切字面量
-      ``# create-guard-not-dup: <一句话理由>``（带非空理由即按文件豁免本检测）。
+    - 裁定#456 两档化：命中按字段分级（_probe_hits_identifier_fields 本地复检，
+      复用 find() 同款 _tokenize/_token_match 静态件，不改 capability_lookup.py）——
+      命中字段∈{capability_id, aliases, canonical_file}（标识符级）⇒ 硬阻断，消息
+      逐条给出 capability_id / canonical（派生面，canonical_override=其优先级 1
+      真源）/ 命中探针词 / 逃生标记确切字面量 ``# create-guard-not-dup: <一句话理由>``
+      （带非空理由即按文件豁免本检测）；仅命中 description（散文面）⇒ 降为 warn：
+      logger.warning（含处方：逃生标记或 python -m zephyr.library.lookup 正查）+
+      _audit_keyword_dup_warn 落账（.runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，
+      fail-open），不阻断。硬拦与 warn 并存时硬拦优先短路（warn 留待阻断解除后的
+      下轮提交再浮出）。逃生标记豁免与判死阈值对标识符命中的行为零改动。
     - 命中=0 ⇒ 放行；漂移日志=find() 既有审计 .runtime/lookup_audit/<sid>.jsonl
       的 result_count=0 行（不新建日志文件）。
     - fail-closed：lookup 构造失败/find 异常 ⇒ 阻断（检测器失效禁止放行，对标 token
@@ -1099,9 +1220,10 @@ def _check_capability_keyword_overlap(
             f"禁止放行——检测器失效时漏放第二真源。"
             f"修复：确认 capability registry 可达后重试。"
         )
+    hard_violations: list[tuple[str, str, str, list[str]]] = []
+    warn_violations: list[tuple[str, str, str, list[str]]] = []
     try:
         batch_paths = set(new_py_files)
-        violations: list[tuple[str, str, str, list[str]]] = []
         for rel in new_py_files:
             abs_path = gateway.project_root / rel
             if not abs_path.exists():
@@ -1110,7 +1232,9 @@ def _check_capability_keyword_overlap(
                 src = abs_path.read_text(encoding="utf-8", errors="replace")
             except OSError:
                 continue  # 读不到由下游检测面兜底，此处不造新判据
-            violations.extend(_scan_file_for_keyword_dupes(lookup, rel, src, batch_paths, session_id))
+            _hard, _warn = _scan_file_for_keyword_dupes(lookup, rel, src, batch_paths, session_id)
+            hard_violations.extend(_hard)
+            warn_violations.extend(_warn)
     except Exception as _e:  # noqa: BLE001 — fail-closed：检测器失效禁止放行
         return False, (
             f"CREATE-GUARD 查功能关键词 fail-closed: CapabilityLookup 异常"
@@ -1118,10 +1242,10 @@ def _check_capability_keyword_overlap(
             f"禁止放行——检测器失效时漏放第二真源。"
             f"修复：确认 capability registry 可达后重试。"
         )
-    if violations:
+    if hard_violations:
         _lines = "; ".join(
             f"{rel} → capability_id={cap_id} | canonical_override={canon} | 命中词={tokens}"
-            for rel, cap_id, canon, tokens in violations
+            for rel, cap_id, canon, tokens in hard_violations
         )
         return False, (
             f"新建 .py 查功能关键词命中在册能力（波13·包13.1，判为第二真源）: {_lines}. "
@@ -1133,7 +1257,25 @@ def _check_capability_keyword_overlap(
             f"（例: '# create-guard-not-dup: 本模块只做 X 域只读展示，非 Y 能力的第二实现'；"
             f"可 grep 审计: git grep -rn '{_KEYWORD_DUP_MARKER}'）。"
             f"零命中漂移日志=find() 既有审计 .runtime/lookup_audit/<session_id>.jsonl 的 result_count=0 行，不新建日志。"
+            f"裁定#456 两档化：本条为标识符级命中（capability_id/aliases/canonical_file），维持硬拦；"
+            f"仅命中 description 散文面者降为 warn 不阻断。"
         )
+    if warn_violations:
+        _warn_lines = "; ".join(
+            f"{rel} → capability_id={cap_id} | canonical_override={canon} | 命中词={tokens}"
+            for rel, cap_id, canon, tokens in warn_violations
+        )
+        logger.warning(
+            "CREATE-GUARD warn(裁定#456 判重腿两档化): 新建 .py 探针仅命中在册能力 description 散文面"
+            "（非 capability_id/aliases/canonical_file 标识符级），降为警告不阻断: %s. "
+            "处方二选一：①确非重复→在该 .py 内任意注释行写逃生标记（逐字格式）"
+            "# create-guard-not-dup: <一句话理由>；②或先 python -m zephyr.library.lookup <关键词> 正查"
+            "在册能力，优先扩展 canonical 文件而非新建（RULE-CAPABILITY-LOOKUP）. "
+            "warn 记录已落账 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl"
+            "（find() 探针查询照旧落 .runtime/lookup_audit/<session_id>.jsonl）.",
+            _warn_lines,
+        )
+        _audit_keyword_dup_warn(gateway, session_id, warn_violations)
     return True, ""
 
 
