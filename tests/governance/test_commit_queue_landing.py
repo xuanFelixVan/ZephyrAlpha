@@ -2009,3 +2009,102 @@ class TestNoopVerdictPassthroughOrder:
         assert merged == ours, "纯增袋三向合并须保留新增语义（merged==ours）"
         verdict, _note = cql._noop_absorption_verdict(self._REL, base, ours, theirs)
         assert verdict is None, f"直通族剔出后读回不得死信: {verdict}"
+
+
+# ---------------------------------------------------------------------------
+# F3/EV-02+EV-04（15 号文蒸发治本处方残余，2026-09-30 F 组夜班落地）
+# ---------------------------------------------------------------------------
+
+
+class TestEv02PostExecIntegrityVerify:
+    """EV-02 执行后复核：危险命令（reset --hard/clean -fd）在飞期间 .git 链接被摘
+    （TOCTOU 窗）→ _verify_wt_integrity_post RuntimeError 中止（宁停勿伤）。"""
+
+    def _landing_on_fake_wt(self, tmp_path: Path) -> cql.WorktreeLanding:
+        landing = cql.WorktreeLanding.__new__(cql.WorktreeLanding)
+        landing.worktree_path = tmp_path / "worktree"
+        landing.worktree_path.mkdir(exist_ok=True)
+        return landing
+
+    def test_post_verify_raises_when_gitlink_missing(self, tmp_path: Path):
+        landing = self._landing_on_fake_wt(tmp_path)
+        with pytest.raises(RuntimeError, match=r"EV-02.*\.git"):
+            landing._verify_wt_integrity_post("reset --hard")
+
+    def test_post_verify_passes_when_intact(self, tmp_path: Path, monkeypatch):
+        landing = self._landing_on_fake_wt(tmp_path)
+        (landing.worktree_path / ".git").write_text("gitdir: elsewhere", encoding="utf-8")
+
+        class _FakeR:
+            returncode = 0
+            stdout = str(landing.worktree_path) + "\n"
+
+        monkeypatch.setattr(cql, "_run_git", lambda *a, **k: _FakeR())
+        landing._verify_wt_integrity_post("clean -fd")  # 不抛=过
+
+    def test_post_verify_raises_on_toplevel_drift(self, tmp_path: Path, monkeypatch):
+        landing = self._landing_on_fake_wt(tmp_path)
+        (landing.worktree_path / ".git").write_text("gitdir: elsewhere", encoding="utf-8")
+
+        class _FakeR:
+            returncode = 0
+            stdout = str(tmp_path / "elsewhere") + "\n"  # walk-up 命中外层仓形态
+
+        monkeypatch.setattr(cql, "_run_git", lambda *a, **k: _FakeR())
+        with pytest.raises(RuntimeError, match="toplevel"):
+            landing._verify_wt_integrity_post("reset --hard")
+
+    def test_sync_worktree_aborts_when_link_lost_midflight(self, tmp_path: Path, monkeypatch):
+        """缩比实验（15 号文验收口径）：reset 执行后摘链接 → 复核拦下，clean 不再执行。"""
+        landing = self._landing_on_fake_wt(tmp_path)
+        landing.target_branch = "dev"
+        (landing.worktree_path / ".git").write_text("gitdir: elsewhere", encoding="utf-8")
+        calls: list[str] = []
+
+        def _fake_git_wt(*args, **kwargs):
+            calls.append(args[0])
+            # 模拟 TOCTOU：reset 在飞后链接被外力摘除
+            (landing.worktree_path / ".git").unlink()
+
+        monkeypatch.setattr(landing, "_git_wt", _fake_git_wt)
+        with pytest.raises(RuntimeError, match="EV-02"):
+            landing._sync_worktree()
+        assert calls == ["reset"], f"reset 后必须中止，实际执行了 {calls}"
+
+
+class TestEv04WorktreeLinkSelfcheck:
+    """EV-04 启动自检：扫描 .worktrees/* 的 gitfile 指针目标存在性，断链登记告警+审计。"""
+
+    def test_healthy_links_zero_broken(self, tmp_path: Path):
+        wt = tmp_path / ".worktrees" / "ai-1"
+        wt.mkdir(parents=True)
+        target = tmp_path / ".git" / "worktrees" / "ai-1"
+        target.mkdir(parents=True)
+        (wt / ".git").write_text(f"gitdir: {target}", encoding="utf-8")
+        stats = cql._bootstrap_worktree_link_selfcheck(tmp_path)
+        assert stats["scanned"] == 1 and stats["broken"] == []
+
+    def test_broken_link_detected_and_audited(self, tmp_path: Path):
+        wt = tmp_path / ".worktrees" / "ai-2"
+        wt.mkdir(parents=True)
+        (wt / ".git").write_text("gitdir: ../no-such-target/worktrees/ai-2", encoding="utf-8")
+        stats = cql._bootstrap_worktree_link_selfcheck(tmp_path)
+        assert stats["broken"] == [str(wt)]
+        assert stats["audit_path"] and Path(stats["audit_path"]).exists()
+
+    def test_relative_pointer_and_dotgit_dir_shapes(self, tmp_path: Path):
+        # 相对指针可解析 → 健康
+        wt_rel = tmp_path / ".worktrees" / "ai-3"
+        wt_rel.mkdir(parents=True)
+        tgt = tmp_path / ".git" / "worktrees" / "ai-3"
+        tgt.mkdir(parents=True)
+        (wt_rel / ".git").write_text("gitdir: ../../.git/worktrees/ai-3", encoding="utf-8")
+        # .git 为目录（主仓形态）→ 跳过不计数
+        wt_dir = tmp_path / ".worktrees" / "ai-4"
+        (wt_dir / ".git").mkdir(parents=True)
+        stats = cql._bootstrap_worktree_link_selfcheck(tmp_path)
+        assert stats["scanned"] == 1 and stats["broken"] == []
+
+    def test_no_worktrees_dir_is_noop(self, tmp_path: Path):
+        stats = cql._bootstrap_worktree_link_selfcheck(tmp_path)
+        assert stats == {"scanned": 0, "broken": [], "audit_path": None}

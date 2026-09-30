@@ -1631,6 +1631,35 @@ class WorktreeLanding:
         logger.info("[landing] 专用 worktree 就位: %s (branch=%s)", wt, self.serializer_branch)
         return wt
 
+    def _verify_wt_integrity_post(self, phase: str) -> None:
+        """EV-02 执行后复核（15 号文处方残余落地，2026-09-30 F 组夜班）。
+
+        _git_wt 执行前硬校验关"入口门"；本复核关 TOCTOU 窗：git 调用在飞时 .git
+        链接被外力摘除/竞态破坏（2026-08-29 打穿事故形态的剩余通道）。危险命令
+        （reset --hard / clean -fd）执行后立即复测链接存在+toplevel 仍解析回自身，
+        不一致即 RuntimeError 中止本轮（走既有死信/环境分类链路）——宁停勿伤。
+        主仓 untracked 计数快照比对本实现不含：并发会话常态改写主区 untracked 数
+        （假阳性不可用），该观测面归 EV-01 黑匣子 5 分钟快照专职（内收不重复建）。
+        """
+        git_link = self.worktree_path / ".git"
+        if not git_link.exists():
+            logger.critical(
+                "[landing][EV-02] %s 执行后复核：worktree .git 链接丢失（TOCTOU 窗命中，中止防打穿主仓）: %s",
+                phase,
+                self.worktree_path,
+            )
+            raise RuntimeError(f"[landing][EV-02] {phase} 执行后复核：.git 链接丢失，中止（防打穿主仓）")
+        r = _run_git(self.worktree_path, ["rev-parse", "--show-toplevel"], check=False)
+        top = os.path.normcase(str(Path(r.stdout.strip()).resolve())) if r.returncode == 0 and r.stdout.strip() else ""
+        if r.returncode != 0 or top != os.path.normcase(str(self.worktree_path)):
+            logger.critical(
+                "[landing][EV-02] %s 执行后复核：toplevel 漂移/不可解析（rc=%s, top=%r，中止防打穿主仓）",
+                phase,
+                r.returncode,
+                top,
+            )
+            raise RuntimeError(f"[landing][EV-02] {phase} 执行后复核：toplevel 漂移（rc={r.returncode}），中止")
+
     @_timed_phase("sync")
     def _sync_worktree(self) -> None:
         """每项处理前同步：serializer 分支 reset --hard 到 dev HEAD + clean -fd。
@@ -1646,8 +1675,12 @@ class WorktreeLanding:
         仍失败降级 warning 继续——落盘 commit 是 pathspec 限定（仅本项文件），worktree
         残留 untracked 不可能混入提交，§11 #6 的防陈旧内容泄漏目的由 reset --hard +
         pathspec 双保险保持。reset --hard 失败仍然致命（真异常，照旧走死信/环境分类）。
+
+        EV-02（15 号文）：两条危险命令执行后各做一次 worktree 完整性复核
+        （_verify_wt_integrity_post），关 _git_wt 前置校验与命令在飞之间的 TOCTOU 窗。
         """
         self._git_wt("reset", "--hard", f"refs/heads/{self.target_branch}")
+        self._verify_wt_integrity_post("reset --hard")
         try:
             self._git_wt("clean", "-fd")
         except RuntimeError as exc:
@@ -1660,6 +1693,7 @@ class WorktreeLanding:
                     "[landing] clean -fd 重试仍失败，降级继续（pathspec 限定提交不受 worktree 残留影响）: %s",
                     exc2,
                 )
+        self._verify_wt_integrity_post("clean -fd")
 
     # ------------------------------------------------------------------
     # 幂等判定（66 号 §8：is-ancestor / done 记录 + 标记 grep 三重）
@@ -3306,6 +3340,68 @@ def _pool_claim_item(root: Path) -> Path | None:
     return None
 
 
+def _selfcheck_now_iso() -> str:
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    return now_utc().isoformat()
+
+
+def _bootstrap_worktree_link_selfcheck(repo_root: str | os.PathLike) -> dict:
+    """EV-04 serializer 启动自检：扫描会话 worktree 的 .git 链接完整性（只告警不阻断）。
+
+    15 号文 EV-04 处方后半（2026-09-30 F 组夜班落地）：2026-08-29 打穿事故的形态之一
+    是 worktree 目录在而 .git 链接丢失——landing 对自身专用 worktree 已有 _git_wt
+    前置校验+ensure_worktree 重建，本自检覆盖其余会话 worktree（.worktrees/*）：
+    每个含 .git 指针文件（gitfile，内容 gitdir: <path>）的目录，解析目标存在性；
+    断链=登记 warning+审计 jsonl（.runtime/gate_audit/），不删不改不阻断（只观测，
+    修复归各会话/归档流程）。返回统计供测试断言。
+    """
+    root = Path(repo_root)
+    wt_base = root / ".worktrees"
+    stats: dict = {"scanned": 0, "broken": [], "audit_path": None}
+    if not wt_base.is_dir():
+        return stats
+    for child in sorted(wt_base.iterdir()):
+        if not child.is_dir() or child.name.startswith("."):
+            continue
+        git_link = child / ".git"
+        if not git_link.exists() or git_link.is_dir():
+            continue  # 纯目录/主仓形态（.git 目录）不在本自检语义内
+        stats["scanned"] += 1
+        try:
+            content = git_link.read_text(encoding="utf-8", errors="replace").strip()
+        except OSError:
+            content = ""
+        if content.startswith("gitdir:"):
+            target = content.split(":", 1)[1].strip()
+            target_path = Path(target)
+            if not target_path.is_absolute():
+                target_path = child / target_path
+            if target_path.exists():
+                continue
+        stats["broken"].append(str(child))
+    if stats["broken"]:
+        logger.warning(
+            "[landing][EV-04] 启动自检：%d 个会话 worktree .git 链接断链: %s", len(stats["broken"]), stats["broken"]
+        )
+        try:
+            audit_dir = root / ".runtime" / "gate_audit"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            audit_path = audit_dir / "worktree_link_selfcheck.jsonl"
+            with open(audit_path, "a", encoding="utf-8") as f:
+                f.write(
+                    json.dumps(
+                        {"ts": _selfcheck_now_iso(), "scanned": stats["scanned"], "broken": stats["broken"]},
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
+            stats["audit_path"] = str(audit_path)
+        except OSError as exc:  # noqa: BLE001 — 审计面降级不阻断
+            logger.warning("[landing][EV-04] 自检审计写盘失败（不阻断）: %s", exc)
+    return stats
+
+
 def drain_queue_pool(
     queue_root: str | os.PathLike | None = None,
     *,
@@ -3330,6 +3426,8 @@ def drain_queue_pool(
     """
     root = cq.resolve_queue_root(queue_root)
     repo = Path(repo_root) if repo_root else cq._REPO_ROOT
+    # EV-04（15 号文）：serializer 启动自检会话 worktree .git 链接完整性（只告警不阻断）
+    _bootstrap_worktree_link_selfcheck(repo)
     k = max(1, int(workers) if workers is not None else resolve_pool_workers())
     if k <= 1:
         # 降级开关：与现行为逐字节一致（不进任何池化代码路径）
