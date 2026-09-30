@@ -3902,8 +3902,13 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
 
 
 def _cmd_status(args: argparse.Namespace) -> int:
-    if not args.no_bootstrap:
-        try_bootstrap_drain(args.queue_root)  # 66 号 §6.6：status 调用本身触发一次排空尝试
+    # 观测命令只读化（2026-10-01 提交链治本·C4）：默认不再自举排空——status 拿串行
+    # 锁后会把整条 pending 队列排空才返回（66 号 §6.6 的旧语义），高竞争期监控/
+    # 会话全被卡死（实测 90s 看门狗超时）。要顺带排空显式 --bootstrap（排空正门=
+    # drain 子命令/belt daemon）。queue_status 本体无锁只读（四态目录 glob+原子写
+    # 容忍），可观测性零阻断。
+    if getattr(args, "bootstrap", False):
+        try_bootstrap_drain(args.queue_root)
     report = queue_status(args.queue_root, session_id=args.session)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0
@@ -4102,9 +4107,9 @@ def main(argv: list[str] | None = None) -> int:
     p_enq.add_argument("--no-bootstrap", action="store_true", help="入队后不尝试自举排空")
     p_enq.set_defaults(func=_cmd_enqueue)
 
-    p_st = sub.add_parser("status", help="队列状态（触发一次排空尝试）")
+    p_st = sub.add_parser("status", help="队列状态（只读；--bootstrap 显式触发一次排空尝试）")
     p_st.add_argument("--session", default=None, help="按会话过滤")
-    p_st.add_argument("--no-bootstrap", action="store_true", help="不触发排空尝试")
+    p_st.add_argument("--bootstrap", action="store_true", help="顺带触发一次排空尝试（默认只读不排空）")
     p_st.set_defaults(func=_cmd_status)
 
     p_dr = sub.add_parser("drain", help="显式排空（拿不到 lease 则跳过 exit 0）")
