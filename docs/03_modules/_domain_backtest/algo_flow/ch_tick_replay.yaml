@@ -39,3 +39,10 @@ algo_flow: |
     #   name_en: tick_replay_frame
     #   intro: 与 MiniQmtQuoteProvider.fetch_historical duck-typed 同构返回；供 event_driven_engine.run_tick 回放
     #   code: fetch_historical 返回值
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A2 --> A4
+    # A4 --> O1
+    # [/ALGO_FLOW]

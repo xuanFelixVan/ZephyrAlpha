@@ -43,4 +43,15 @@ algo_flow: |
     # - id: O3
     #   name_zh: 读回 dict
     #   intro: status=ok（trade_date/stage/pool 行列表，JSON 已反序列化）|absent（no_pool_row/通道异常类型留痕）
+    # 边:
+    # I1 --> A1
+    # I2 --> A2
+    # I3 --> A4
+    # I3 --> A5
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O2
+    # A5 --> O1
+    # A5 --> O3
     # [/ALGO_FLOW]

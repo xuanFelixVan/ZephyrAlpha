@@ -44,3 +44,15 @@ algo_flow: |
     # - id: O1
     #   name: 排产队列投影（score 序工单行，含四读数挂起态）
     #   code: -> list[dict]
+    # 边:
+    # I1 --> P1
+    # I2 --> P2
+    # I3 --> P2
+    # P1 --> P2
+    # P2 --> P3
+    # P3 --> O1
+    # I1 --> A1
+    # A1 --> A2
+    # A3 --> A4
+    # A4 --> P1
+    # [/ALGO_FLOW]

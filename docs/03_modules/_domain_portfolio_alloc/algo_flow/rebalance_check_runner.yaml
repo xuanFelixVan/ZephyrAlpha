@@ -34,3 +34,12 @@ algo_flow: |
     # - id: O2
     #   name_zh: 巡检告警
     #   desc: 超阈时 Advisory 级告警，进既有告警面（不新建通道）
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A2 --> O1
+    # A3 --> O2
+    # [/ALGO_FLOW]

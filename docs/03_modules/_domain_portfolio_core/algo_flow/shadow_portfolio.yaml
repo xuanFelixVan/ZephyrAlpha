@@ -38,3 +38,14 @@ algo_flow: |
     #   name_zh: 组合对照报告
     #   name_en: dict[str, Any]
     #   desc: 聚合读数+守恒判定+degraded 计数，供 FAC-E9 归因链与前端只读消费
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A2
+    # A1 --> A2
+    # A2 --> A3
+    # A1 --> O1
+    # A2 --> O2
+    # A3 --> O1
+    # [/ALGO_FLOW]
