@@ -97,6 +97,11 @@ _EXIT_ERROR: int = 8
 
 _SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 
+# dloop 第二判据数据面（L09-C04 2026-09-29）：fetch_perf 被动记录通道落盘目录
+# （真源=zephyr.data.fetch_perf_recorder._DEFAULT_BASE_DIR，禁另起第二路径）。
+# 判据阈值/升级口径待 L09-C04 立项定版（defer 留痕）；当前只读作取证，不改 0/4/8 出口契约。
+_FETCH_PERF_DIR = _REPO_ROOT / ".runtime" / "fetch_perf"
+
 
 _DEFAULT_THRESHOLD_LAG_DAYS = get_int("decision_chain_sentinel.default_lag_days", 2)
 _DEFAULT_ALERT_LOG = _REPO_ROOT / ".runtime" / "logs" / "decision_chain_alert.jsonl"
@@ -146,6 +151,38 @@ def _default_alert_log() -> Path:
     import os
 
     return Path(os.environ.get(_ALERT_LOG_ENV) or _DEFAULT_ALERT_LOG)
+
+
+def _fetch_perf_evidence(fetch_perf_dir: Path | None = None) -> dict | None:
+    """dloop 第二判据数据面（L09-C04 2026-09-29）：读 fetch_perf 落盘近况作取证。
+
+    fetch_perf_recorder 每任务收尾落 fetch_perf_YYYYMMDD.jsonl（调度真实运行面，
+    禁新 DDL 故不入 CH）。第二判据的阈值/升级口径待 L09-C04 定版（defer 留痕），
+    当前只读不判：取最近一份日报的最后一条记录摘要素作 evidence 附加进 record；
+    空目录/缺文件/不可读一律返回 None——绝不影响主判据 0/4/8 出口契约（禁阻塞）。
+    """
+    base = Path(fetch_perf_dir) if fetch_perf_dir is not None else _FETCH_PERF_DIR
+    try:
+        if not base.is_dir():
+            return None
+        daily = sorted(base.glob("fetch_perf_*.jsonl"))
+        if not daily:
+            return None
+        last_line = ""
+        for line in daily[-1].read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                last_line = line
+        if not last_line:
+            return None
+        payload = json.loads(last_line)
+        return {
+            "source_file": daily[-1].name,
+            "ts": payload.get("ts"),
+            "task_id": payload.get("task_id"),
+            "status": payload.get("status"),
+        }
+    except (OSError, ValueError):
+        return None
 
 
 def _single_date(rows: list) -> date | None:
@@ -389,6 +426,9 @@ def main(argv: list[str] | None = None) -> int:
             threshold_lag_days=args.lag_days,
             alert_log=Path(args.alert_log) if args.alert_log else None,
         )
+        evidence = _fetch_perf_evidence(_FETCH_PERF_DIR)  # dloop 第二判据数据面（只读取证，L09-C04）
+        if evidence is not None:
+            record["fetch_perf_evidence"] = evidence
         return _EXIT_ALERT if record["type"] == "alert" else _EXIT_OK
     except Exception as e:  # noqa: BLE001 - fail-soft 收口: 单行记录不抛栈（ERROR_CONTRACT）
         message = f"{type(e).__name__}: {e}"[:_ERROR_MSG_CAP].replace("\n", " ")
