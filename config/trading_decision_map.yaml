@@ -5596,10 +5596,14 @@ state_matrix:
       confidence: proposed}
   - {node_id: TDM-E-L1, state: euphoria, mounted: [], confidence: proposed, 
       mounted_reason: pending-owner-adoption 亢奋段无挂载且无可挂的防御档：PP-001 sleeves 
-      里不存在防御型 sleeve，是否新设属 Owner 资金分配决策（风险登记 R2SIX 同源欠账）}
+      里不存在防御型 sleeve，是否新设属 Owner 资金分配决策（风险登记 R2SIX 同源欠账）；
+      C5 禁用标记 2026-09-30：T1 定稿 Top-12 候选全为长仓轮动（无防御 sleeve，方案件 
+      docs/_working/night_sweep/c_exam/state_matrix_fill_plan_v1.md §1-§2），本态对在册候选全部禁用（只标记不删除）}
   - {node_id: TDM-E-L1, state: distribution, mounted: [], confidence: proposed, 
       mounted_reason: pending-owner-adoption 派发段无挂载且无可挂的防御档：同上（PP-001 无防御型 
-      sleeve）；该段预算带 0%=禁新开仓、存量由 X 流信号驱动离场（见 portfolio_plan 注记 D98）}
+      sleeve）；该段预算带 0%=禁新开仓、存量由 X 流信号驱动离场（见 portfolio_plan 注记 D98）；
+      C5 禁用标记 2026-09-30：T1 定稿 Top-12 候选全为长仓轮动（无防御 sleeve，方案件同 euphoria 格），
+      本态对在册候选全部禁用（只标记不删除）}
     # L4 买卖点：打板只进点火确认后的三档（发酵=1进2主战场，高潮=警惕高开不追，退潮/冰点/修复不进）
   - {node_id: TDM-E-L4, state: ignition, mounted: [daban-sleeve], confidence: 
       proposed}
