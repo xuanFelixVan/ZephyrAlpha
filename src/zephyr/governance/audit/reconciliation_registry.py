@@ -10442,6 +10442,74 @@ def make_capability_lookup_health_reconciler(gateway: object) -> ReconcilerSpec:
 
         return False
 
+    def _extract_zero_hit_query_text(rec: object) -> str:
+        """单条审计记录的查询文本提取（dict/str 双形态兼容；非零命中/无文本=不点名）。"""
+        if not isinstance(rec, dict) or rec.get("result_count") != 0:
+            return ""
+
+        q = rec.get("query")
+
+        if isinstance(q, dict):
+            q = q.get("query") or q.get("keyword") or q.get("q") or ""
+
+        return str(q or "").strip()
+
+    def _read_session_zero_hit_queries(entry) -> list[str]:
+        """单 session audit log 的零命中查询清单（坏行/不可读跳过，不假绿不炸台）。"""
+        queries: list[str] = []
+
+        try:
+            lines = entry.read_text(encoding="utf-8").splitlines()
+        except OSError:
+            return queries
+
+        for line in lines:
+            line = line.strip()
+
+            if not line:
+                continue
+
+            try:
+                rec = json.loads(line)
+            except (json.JSONDecodeError, ValueError):
+                continue
+
+            qtext = _extract_zero_hit_query_text(rec)
+
+            if qtext:
+                queries.append(qtext)
+
+        return queries
+
+    def _read_zero_hit_queries() -> list[tuple[str, list[str]]]:
+        """读侧扫描全部 session 级 audit log，归集零命中查询（波13 件③）。
+
+        日志存在 ≠ 健康：result_count=0 的查询=AI 反查落空=能力缺口/孤岛信号，
+        必须按 session 点名（排除 bypass_audit.jsonl 与 ._ 健康检查桩——同一排除口径
+        于 _has_session_audit_logs，两分支不得漂移）。
+        """
+        out: list[tuple[str, list[str]]] = []
+
+        if not LOOKUP_AUDIT_DIR.is_dir():
+            return out
+
+        for entry in sorted(LOOKUP_AUDIT_DIR.iterdir()):
+            if entry.name == "bypass_audit.jsonl":
+                continue
+
+            if entry.name.startswith("._"):
+                continue  # 健康检查测试文件
+
+            if not (entry.is_file() and entry.suffix == ".jsonl"):
+                continue
+
+            queries = _read_session_zero_hit_queries(entry)
+
+            if queries:
+                out.append((entry.stem, queries))
+
+        return out
+
     def _reconcile(
         committed_files: list[str],
         session_id: str,
@@ -10525,6 +10593,23 @@ def make_capability_lookup_health_reconciler(gateway: object) -> ReconcilerSpec:
                 "且本次 commit 未使用 bypass——CAPABILITY-LOOKUP-REQUIRED gate 可能静默失效 "
                 "(AI 未调用能力反查但 gate 未阻断)。对标 G6 铁证（曾长期为空）。"
                 "MUST 检查 gate 是否正常工作 + AI 是否遵循 RULE-CAPABILITY-LOOKUP 铁律。"
+            )
+
+            logger.warning("[ESCALATION] %s", detail)
+
+            return ReconcileResult(action="warn", detail=detail)
+
+        # 3.5 读侧零命中点名（波13 件③：同一台加分支，不另起第二台）
+
+        zero_hits = _read_zero_hit_queries()
+
+        if zero_hits:
+            chunks = [f"{sid}: 零命中×{len(queries)}（{'、'.join(queries)}）" for sid, queries in zero_hits]
+            detail = (
+                "CAPABILITY-LOOKUP-HEALTH: 读侧审计发现零命中查询——"
+                "AI 反查落空=能力缺口/孤岛信号，按 session 点名："
+                + "；".join(chunks)
+                + "。MUST 评估是否补能力卡或在册登记豁免。"
             )
 
             logger.warning("[ESCALATION] %s", detail)
