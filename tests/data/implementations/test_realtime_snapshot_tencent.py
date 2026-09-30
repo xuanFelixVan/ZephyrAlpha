@@ -130,6 +130,34 @@ def test_fetch_realtime_snapshot_tencent_happy(monkeypatch: pytest.MonkeyPatch):
     assert res.last_key  # snapshot_time 断点键非空
 
 
+def test_fetch_realtime_snapshot_ts_is_shanghai_local(monkeypatch: pytest.MonkeyPatch):
+    """chgo 件3 移交缺陷回归尺：snapshot_time 必须是本地（Asia/Shanghai）墙钟而非 UTC。
+
+    now_utc 冻结在 2026-09-30T04:00:00Z，本地渲染应为 12:00:00（+8h）；若实现回退成
+    裸 strftime（UTC 墙钟直写 Asia/Shanghai 列）则本例转红（00:00 != 12:00）。
+    """
+    from datetime import datetime
+    from datetime import timezone as _tz
+
+    from zephyr.data.implementations import akshare_provider as ap
+
+    text = _qt_line("600519", "贵州茅台", "1243.88", "1236.00", "1244.01", "1228.10", "28218", "348872")
+
+    def fake_get(url, timeout=30, headers=None, params=None):
+        return SimpleNamespace(content=text.encode("gbk"))
+
+    provider = AkshareIngestProvider()
+    monkeypatch.setattr(provider, "_get_all_a_symbols", lambda ak, policy: ["600519"])
+    monkeypatch.setattr(provider, "_http_get", fake_get)
+    _fake_akshare_module(monkeypatch)
+    fixed = datetime(2026, 9, 30, 4, 0, 0, tzinfo=_tz.utc)
+    monkeypatch.setattr(ap, "now_utc", lambda: fixed)
+    results = list(provider._fetch_realtime_snapshot(_payload(), _policy()))
+    row = next(r for r in results[0].rows if r[1] == "600519.SH")
+    ts = str(row[0])
+    assert "12:00:00" in ts, f"snapshot_time 应为上海本地墙钟 12:00:00，实得 {ts}（UTC 直写回退）"
+
+
 def test_fetch_realtime_snapshot_chunking(monkeypatch: pytest.MonkeyPatch):
     """180 只代码 → 3 批请求（80+80+20）。"""
     codes = [f"{600000 + i}" for i in range(180)]

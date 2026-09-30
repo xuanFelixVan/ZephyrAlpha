@@ -5871,7 +5871,8 @@ class AkshareIngestProvider(IngestProviderBase):
             "amount",
             "data_source",
         ]
-        now_str = now_utc().strftime("%Y-%m-%d %H:%M:%S")
+        # timestamp：显式 UTC→本地时区转换（chgo 件3 移交缺陷修复：裸 strftime 写 UTC 墙钟进 Asia/Shanghai 列=-8h，违 RULE-SCHEMA-TZ；形态对齐同文件 index_quote 先例）
+        now_str = now_utc().astimezone().strftime("%Y-%m-%d %H:%M:%S")
         t0 = now_utc()
 
         try:
