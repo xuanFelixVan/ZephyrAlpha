@@ -37,12 +37,13 @@
  },
  "finalization": {
   "status": "FINALIZED_BY_OWNER_REF",
-  "ruling": "裁定#436",
+  "ruling": "裁定#446",
   "parent_ruling": "裁定#431 第⑦项",
   "date": "2026-09-30",
   "tally": "3698 valid + 2 auditable negatives (endogenous_zero_variance) = 3700 conserved",
   "pairing_evidence": "docs/_working/night_sweep/sw4_t1_repair_pairing_report.md",
   "net_value_hash_tri_proof": "342432347427",
-  "marked_by": "st-nightsweep2-nc-20260930"
+  "marked_by": "st-nightsweep2-nc-20260930",
+  "renumber_note": "原登#436撞号改号核订（#419→#420 先例），2026-09-30"
  }
 }

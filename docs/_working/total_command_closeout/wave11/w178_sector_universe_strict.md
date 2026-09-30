@@ -141,9 +141,14 @@ completes_when: "A/B/C/D/E 五段实测表齐 + 同目录 w178_universe_facts.ya
 
 ---
 
-## E. 跑批宇宙声明草案 `DRAFT_NOT_FROZEN`
+## E. 跑批宇宙声明草案 `FROZEN_BY_OWNER_REF`（2026-09-30 翻面，裁定#447）
 
 > 三轴（板块全集／股票池／图形信号族）。**只填已测事实＋标明未决**，等 W-178 定案由总包冻结；本件任何数值不得被引用为"已冻结宇宙"。
+> **翻面注记（st-nightsweep2-nc-20260930，2026-09-30）**：DRAFT_NOT_FROZEN → FROZEN_BY_OWNER_REF。
+> 冻结面=**真源定向**（选股宇宙=sector_constituent 595 tqcenter；概念 375=辅助展示，独立族不混行业口径；
+> 载体=同目录 `w178_truth_source_declaration.md` + 裁定#447 + 裁定#431⑥）。
+> **未决项不因翻面消失**（134 缺口/PIT 深度/2c-2b 集合差/轴 3 分母）：它们是数据客观缺口与未施工面，
+> 各自带处方推进，引用本节数值仍须带 measured_at。
 
 ```
 [universe v0-draft  DRAFT_NOT_FROZEN  measured_at=2026-09-26T18:05:5xZ(UTC)  channel=ch_probe+query_rows(tcp)]

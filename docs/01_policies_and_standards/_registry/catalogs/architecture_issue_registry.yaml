@@ -22640,3 +22640,36 @@ entries:
     （车道 st-w173-20260929，capability 反查 0 命中审计在案）。
   related_rulings: []
 
+- issue_id: '#ARCH-368'
+  title: '夜总攻二 C组考试链前置 Owner 载体（裁定#435/#436/#437 等）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-30'
+  last_updated: '2026-09-30'
+  owner: 'Owner（2026-09-30 裁定"C组看前置条件完成了没有；没完成的如果是你能施工的，你负责打通前置条件，然后完成他们"，总筹 st-nightsweep-chief-20260929 派发在案）'
+  description: >-
+    Owner 2026-09-30 夜总攻二裁定授权 C 组前置打通（声明通道合法追加/版本化，冻结判据零改值；
+    ruling_registry 写入=本夜 Owner 授权面）。本议题为裁定册写入的 [ARCH-APPROVAL:#ARCH-368]
+    gate 逃生标记+本登记双留痕载体（#ARCH-367 同款先例）。所涉袋：裁定#435（⚑-2② B案判据声明）、
+    #436（T1 定稿追认）、#437（W-178 板块宇宙真源落冻）及本夜 C 组后续裁定条目。
+    披露：本条目 2026-09-30 首登后遭他会话并发覆写冲掉一次（813→811），本条为重登（内容同首登）。
+  related_rulings: ['裁定#435', '裁定#446', '裁定#447']
+
+- issue_id: '#ARCH-369'
+  title: 'F 组夜总攻裁定册写入 Owner 批准载体（裁定#446 L09-C01 收拢令追认+#447 AI 层通电批落册）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-30'
+  last_updated: '2026-09-30'
+  owner: 'Owner（2026-09-30 夜第二夜总攻 F 组"挖矿后执行"令，卡 F1/F5 原文=会话在案）'
+  description: >-
+    Owner 2026-09-30 夜 F 组令授权裁定册两笔写入（st-nightsweep2-nf-20260930 执行）：
+    ①裁定#446=L09-C01 复盘编排器收拢判(b) 追认（批准链=#ARCH-367 ①+F 组令卡 F1；
+    编号沿革=nightclean 3f75191285e 原拟 #421 被 chief8 先占让号，同夜再遇他会话 #435 撞号二让改编 #446）；
+    ②裁定#447=AI 层通电批（秘钥册 per-key ai_exposure 标注 106 条+外扫宿主 L1_EXTERNAL_SCAN_HOST
+    授权+L5 M4 首批白名单 ai_eng/tooling，卡 F5）。
+    审批真源=Owner F 组令原文（会话在案），gate 逃生 [ARCH-APPROVAL:#ARCH-369] 标记+本登记双留痕
+    （#ARCH-368 载体语境限 C 组，F 组另立本条防范围借道）。所涉袋：裁定册 #446/#447 落册及其批准面变更文件。
+  related_rulings: ['裁定#446', '裁定#447']
