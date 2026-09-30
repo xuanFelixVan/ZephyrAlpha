@@ -9,8 +9,8 @@
 # 禁 AI 代签；confirmed 前消费方必须按 effective_hard_cap=0.0 处置（fail-closed 不建仓）。
 # 消费方：scripts/governance/check_trd_a20_a21_dual_gates.py（G7 判定+与代码常量漂移守卫）。
 schema_version: 1
-status: proposed            # proposed | confirmed（仅 Owner 签发后可改 confirmed）
-hard_cap: 0.60              # 总仓位硬顶（RLM-CONCENTRATION-002）
+status: confirmed           # proposed | confirmed（仅 Owner 签发后可改 confirmed）
+hard_cap: 0.30              # 总仓位硬顶（RLM-CONCENTRATION-002，裁定#429 2026-09-29 签发）
 transition:
   threshold: 0.60           # 最大隶属度阈值（低于=过渡带）
   factor_low: 0.5           # 过渡带折减系数带下缘（0.5-0.7 取保守）
@@ -23,6 +23,6 @@ budget_bands:               # 六段预算带（regime phase → 仓位区间）
   euphoria: [0.00, 0.30]    # 只卖不买
   distribution: [0.00, 0.00]
 owner_sign:
-  signed_by: ""             # Owner 签发人（confirmed 时必填）
-  signed_at: ""             # 签发日期（ISO 8601）
-  ruling_ref: ""            # 裁定登记号（RULE-RULING：确认记录须原子入册）
+  signed_by: "Owner（2026-09-29 数字确认0.30）"  # Owner 签发人（confirmed 时必填）
+  signed_at: "2026-09-29"   # 签发日期（ISO 8601）
+  ruling_ref: "裁定#429"        # 裁定登记号（RULE-RULING：确认记录须原子入册）

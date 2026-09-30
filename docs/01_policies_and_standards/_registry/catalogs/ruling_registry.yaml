@@ -6398,3 +6398,22 @@ entries:
   related_arch: ['#ARCH-369']
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#429"
+  title: "TRD G7 仓位硬顶签发：hard_cap 0.60→0.30（Owner 数字确认）"
+  date: '2026-09-29'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: |-
+    Owner 2026-09-29 数字确认签发：config/position_parameters.yaml G7 准入门总仓位硬顶
+    hard_cap 0.60→0.30，status proposed→confirmed，owner_sign 段落签（signed_by=Owner
+    （2026-09-29 数字确认0.30）、signed_at=2026-09-29、ruling_ref=裁定#429）。
+    签发纪律（yaml 头注）：禁 AI 代签——本条为 Owner 数字确认的登记载体（四类门位：
+    资金参数生产流转，Owner 门位批准后生效）；confirmed 前消费方按 effective_hard_cap=0.0
+    fail-closed 处置，签发后消费方按 0.30 生效。RULE-RULING：本条与 position_parameters.yaml
+    改动同 commit 原子（chiefzc-poscap3 车道重投 chiefzc-poscap2 死袋，前死=cascade_stale
+    工作区旧副本，已 reset --hard dev 对齐后重读真源重施改动）。
+  related_files:
+  - config/position_parameters.yaml
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
