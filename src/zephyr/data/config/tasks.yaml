@@ -2443,10 +2443,11 @@ tasks:
   capability: kline_sector
   symbols:
   extra:
-    description: "880xxx板块1分钟K线增量（mootdx TCP直连盘中实时获取，不依赖tdx客户端盘后下载）"
+    description: "880xxx板块1分钟K线增量（mootdx TCP直连盘中实时获取，不依赖tdx客户端盘后下载）【tdx 服务端 09-10 起协议拒答 K 线族已断供；替代源=kline_sector_intraday_from_constituents（scripts/ 根，Windows 计划任务 sector_eqw_intraday 每日 15:40，tilib/secktide 先例镜像）；本任务退役留观（收敛裁定甲，a7 §六）】"
     period: 1m
     count: 240
     include_industry_boards: true    # T6 §七-7：并入132条8803/8804行业板（SSoT=sector_code_bridge.TDX_INDUSTRY_BOARDS）
+
 
 - task_id: kline_sector_5min_incremental
   table: c1_market.kline_sector_intraday
@@ -3346,17 +3347,15 @@ tasks:
 - task_id: global_usdcnh_daily_incremental
   table: c1_market.kline_global
   source: akshare
-  schedule: daily_kline
+  schedule: daily_kline   # 盘后 16:30（CNH 近 24h 交易，同 HSI/N225/KOSPI 槽位可承接）
   incremental: true
   date_col: trade_date
   dependencies: []
   capability: forex_daily
-  symbols: ["USDCNH"]
-  fallback_sources: []
+  symbols: ["USDCNH"]     # 源=sina NewForexService.getDayKLine fx_susdcnh（绑死离岸码，禁 fx_susdcny 在岸）
+  fallback_sources: []    # fawaz 备选不自动切换（真离岸不可证 CNH≈CNY），留人工裁定
   extra:
-    disabled: true
-    disabled_reason: "登记跳过——免费日频历史源实证全失效（2026-08-30）：sina forex JSONP 404 / sina hf USDCNH 返回 null / 东财 push2his 不可达 / FRED 无 CNH 序列 / currencyscoop 需付费 key。有源后启用。"
-    description: "离岸人民币USDCNH日K（GAP-F-23 外盘8标的，清单#6；暂无源登记跳过）"
+    description: "离岸人民币USDCNH日K增量（sina getDayKLine fx_susdcnh 直连；GAP-F-23 外盘12标的最后一缺口，2026-10-01 挖矿翻案）"
 
 - task_id: pattern_event_incremental
   table: c1_market.market_pattern_event

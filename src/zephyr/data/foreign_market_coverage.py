@@ -48,6 +48,8 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any, Callable, Final
 
+from zephyr.data.table_registry import get_registry
+
 logger = logging.getLogger(__name__)
 
 __all__: Final = [
@@ -130,6 +132,10 @@ class ForeignCoverageReport:
 # 观察清单（12 标的；探测配置=GAP-F-D3 实证可探测表）
 # ------------------------------------------------------------------
 
+#: kline_global 全限定表名经 TableRegistry 派生（TABLE-NAME-REGISTRY：新增 added 行禁硬编码；
+#: 存量兄弟行字面量系 diff 基线 grandfathered，按宪法 §3.4 不代修）
+_TABLE_KLINE_GLOBAL: Final[str] = get_registry().table("market_kline_global")
+
 FOREIGN_WATCHLIST: Final[tuple[ForeignTarget, ...]] = (
     ForeignTarget("dow_jones", "道琼斯", "index", (TableProbeSpec("c1_market.us_index", ("DJI", ".DJI")),), ""),
     ForeignTarget("nasdaq", "纳斯达克", "index", (TableProbeSpec("c1_market.us_index", ("IXIC", ".IXIC")),), ""),
@@ -145,7 +151,7 @@ FOREIGN_WATCHLIST: Final[tuple[ForeignTarget, ...]] = (
         (TableProbeSpec("c1_market.macro_data", ("FRED_DXY",), "indicator_name", "report_date"),),
         "dxy_forex",
     ),
-    ForeignTarget("usdcnh", "离岸人民币", "forex", (), "usdcnh_forex"),
+    ForeignTarget("usdcnh", "离岸人民币", "forex", (TableProbeSpec(_TABLE_KLINE_GLOBAL, ("USDCNH",)),), "usdcnh_forex"),
     ForeignTarget("wti", "WTI原油", "commodity", (TableProbeSpec("c1_market.kline_global", ("CL",)),), "wti_commodity"),
     ForeignTarget("gold", "黄金", "commodity", (TableProbeSpec("c1_market.kline_global", ("GC",)),), "gold_commodity"),
     ForeignTarget(
@@ -158,8 +164,9 @@ FOREIGN_WATCHLIST: Final[tuple[ForeignTarget, ...]] = (
 )
 
 #: 缺口标的采集配置位（2026-08-30 接线落地：草案 hint 已按实证裁定修订为实绩口径——
-#: 5 只价格型落 c1_market.kline_global，DXY/美债10Y 走 macro_data FRED 既有通道，
-#: USDCNH 免费日频源全失效登记跳过；tasks.yaml 已登记，详见 .runtime/foreign8_wiring/20260830_report.md）
+#: 5 只价格型落 c1_market.kline_global，DXY/美债10Y 走 macro_data FRED 既有通道；
+#: USDCNH 于 2026-10-01 挖矿翻案接入 sina fx_susdcnh（forex_daily）；
+#: tasks.yaml 已登记，详见 .runtime/foreign8_wiring/20260830_report.md）
 FOREIGN_COLLECTOR_SLOTS: Final[dict[str, dict[str, str]]] = {
     "hsi_index": {
         "target": "恒生指数",
@@ -191,9 +198,9 @@ FOREIGN_COLLECTOR_SLOTS: Final[dict[str, dict[str, str]]] = {
     },
     "usdcnh_forex": {
         "target": "离岸人民币",
-        "provider_hint": "无可用免费日频历史源（sina forex JSONP 404 / hf null / 东财不可达 / FRED 无 CNH / currencyscoop 需付费 key）——登记跳过",
-        "capability_hint": "forex_daily（待有源后登记）",
-        "table_hint": "c1_market.kline_global（预留，symbol=USDCNH）",
+        "provider_hint": "sina NewForexService.getDayKLine(fx_susdcnh) 直连（2026-10-01 挖矿翻案：3102 行 2014-11-07 起真离岸三重验证；此前 404 系当日网络故障非源死）",
+        "capability_hint": "forex_daily（akshare_provider 已登记，绑死 fx_susdcnh 离岸码）",
+        "table_hint": "kline_global（全限定名经 _TABLE_KLINE_GLOBAL 派生，symbol=USDCNH）",
         "schedule_hint": "daily_kline",
     },
     "wti_commodity": {

@@ -455,6 +455,8 @@ _AKSHARE_CAPABILITIES = frozenset(
         "index_valuation_daily",
         # A22 / 44号备忘 §9.6 通道1（2026-08-29）：富时A50期货日K（新浪 futures_foreign_hist，CHA50CFD）
         "a50_futures_daily",
+        # GAP-F-23（2026-10-01 挖矿翻案）：离岸人民币 USDCNH 日K（新浪 forex getDayKLine，fx_susdcnh）
+        "forex_daily",
     }
 )
 
@@ -1096,6 +1098,8 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("index_valuation_daily", supports_symbols_null=True),
             # A22 / 44号备忘 §9.6 通道1：symbols=null 时取默认品种（CHA50CFD 当月连续）
             CapabilityContract("a50_futures_daily", supports_symbols_null=True),
+            # GAP-F-23（2026-10-01 挖矿翻案）：离岸人民币 USDCNH 日K（sina getDayKLine fx_susdcnh）
+            CapabilityContract("forex_daily", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -3686,7 +3690,9 @@ class AkshareIngestProvider(IngestProviderBase):
                 if df is None or len(df) == 0:
                     continue
                 for row in self._cffex_parse_contract_day(df, str(sym)):
-                    rows.append((day_iso, *row[1:]))
+                    # 修复（st-storageswap-20260930，M3 挖矿 CEF_mine.md）：诞生即坏 83ddfdf4f5d
+                    # 剥掉 symbol 致行 14 字段 vs 列清单 15 列 → 09-19 起每日死信；symbol=合约级 ORDER BY 键，恢复全行。
+                    rows.append((day_iso, *row))
         if not rows:
             yield FetchResult(
                 table=table,
@@ -11457,3 +11463,205 @@ class AkshareIngestProvider(IngestProviderBase):
                 elapsed_sec=time.monotonic() - t0,
                 rows_fetched=len(rows),
             )
+
+    # ---- GAP-F-23：离岸人民币 USDCNH 日频历史（forex_daily，2026-10-01 挖矿翻案）----
+
+    def _fetch_forex_daily(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """采集离岸人民币 USDCNH 日频历史K线（新浪 forex getDayKLine，fx_susdcnh）。
+
+        源：vip.stock.finance.sina.com.cn/forex/api/jsonp.php NewForexService.getDayKLine
+        （requests 直连，akshare 无此封装；单次全量返回 2014-11-07 起约 12 年日K，
+        JSONP 字段序=date/open/close/high/low）。真离岸三重验证与 12 源对比裁定：
+        docs/_working/fullscore_night/01_data_layer/usdcnh_free_sources.md。
+        陷阱：sina 同时有在岸 fx_susdcny——symbol 映射绑死 fx_susdcnh，未知 symbol
+        直接报错，禁改参混用在岸口径（"免费大源几乎全在岸"正是 2026-08-30 全灭根因）。
+        表名 fail-closed / 本地窗口过滤同 _fetch_a50_futures_daily 纪律（源单次全量
+        返回，ReplacingMergeTree 同键幂等）。
+        """
+        t0 = time.monotonic()
+        last_key = payload.end.isoformat()
+        table = payload.table
+        if not table:
+            yield FetchResult(
+                table="",
+                columns=list(_FOREX_DAILY_COLUMNS),
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error="forex_daily 需 tasks.yaml 显式指定 table（payload.table 为空，fail-closed）",
+            )
+            return
+
+        import requests  # 本地导入：模块头部已完成 Windows IE 代理绕过 patch
+
+        symbols = [str(s).strip().upper() for s in (payload.symbols or []) if str(s).strip()]
+        if not symbols:
+            symbols = list(_FOREX_DEFAULT_SYMBOLS)
+
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "https://finance.sina.com.cn",  # hq.sinajs.cn 无 Referer 即 Forbidden
+        }
+
+        for sym in symbols:
+            sina_code = _FOREX_SINA_SYMBOL_MAP.get(sym)
+            if sina_code is None:
+                yield FetchResult(
+                    table=table,
+                    columns=list(_FOREX_DAILY_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=(
+                        f"forex_daily 未知 symbol={sym}（仅支持 {dict(_FOREX_SINA_SYMBOL_MAP)}；禁混用在岸 fx_susdcny）"
+                    ),
+                )
+                continue
+
+            # 头部健康探针：实时端点须自标"离岸人民币"且报价日期近当日，失败快速报错不写库
+            try:
+                probe = requests.get(
+                    f"https://hq.sinajs.cn/list={sina_code}",
+                    timeout=15,
+                    headers=headers,
+                )
+                probe.raise_for_status()
+                probe_text = probe.content.decode("gbk", errors="replace")
+                if not check_sina_forex_realtime_health(probe_text):
+                    raise ValueError("探针未确认离岸人民币口径（缺'离岸人民币'标签或报价日期过旧）")
+            except Exception as e:  # noqa: BLE001 — 失败留痕不抛出（触发上层告警/重跑）
+                self._log.warning(f"forex_daily({sym}) 健康探针失败: {e}")
+                yield FetchResult(
+                    table=table,
+                    columns=list(_FOREX_DAILY_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"forex_daily 健康探针失败 {sina_code}: {e}",
+                )
+                continue
+
+            url = (
+                "https://vip.stock.finance.sina.com.cn/forex/api/jsonp.php/var%20t=/"
+                f"NewForexService.getDayKLine?symbol={sina_code}"
+            )
+            try:
+                resp = requests.get(url, timeout=15, headers=headers)
+                resp.raise_for_status()
+                records = parse_sina_forex_day_kline(resp.text)
+            except Exception as e:  # noqa: BLE001 — 失败留痕不抛出
+                self._log.warning(f"forex_daily({sym}) 日K抓取失败: {e}")
+                yield FetchResult(
+                    table=table,
+                    columns=list(_FOREX_DAILY_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"forex_daily 采集失败 getDayKLine({sina_code}): {e}",
+                )
+                continue
+            if not records:
+                yield FetchResult(
+                    table=table,
+                    columns=list(_FOREX_DAILY_COLUMNS),
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"forex_daily 空数据 symbol={sym} [{payload.start}~{payload.end}]",
+                )
+                continue
+
+            # 本地窗口过滤（源单次返回全历史，增量只取 [start, end] 闭区间）
+            start_str = payload.start.isoformat()
+            end_str = payload.end.isoformat()
+            rows: list[tuple] = []
+            for r in records:
+                d = r["date"]
+                if d < start_str or d > end_str:
+                    continue
+                # 源字段序 (date,open,close,high,low) → 表列 (date,symbol,open,high,low,close,0,0,source)
+                rows.append(
+                    (
+                        d,
+                        sym,
+                        r["open"],
+                        r["high"],
+                        r["low"],
+                        r["close"],
+                        0,  # 外汇无成交量
+                        0,  # 外汇无持仓量
+                        "sina_forex",
+                    )
+                )
+            yield FetchResult(
+                table=table,
+                columns=list(_FOREX_DAILY_COLUMNS),
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                rows_fetched=len(rows),
+            )
+
+
+# ==== GAP-F-23：forex_daily 常量与纯函数（离岸人民币 USDCNH 日K，新浪 forex JSONP）====
+
+#: 表列序（与 schemas/categories/kline/market_kline_global.py INSERT_COLUMNS 一致 9 列，
+#: 同 _A50_FUTURES_COLUMNS 同构）
+_FOREX_DAILY_COLUMNS: Final[tuple[str, ...]] = (
+    "trade_date",
+    "symbol",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "open_interest",
+    "data_source",
+)
+
+#: 默认品种（symbols=null 时）；sina 外汇码映射绑死离岸 fx_susdcnh——在岸 fx_susdcny 禁入
+#: （口径陷阱：离岸在岸价差常态 100+ pips，见 usdcnh_free_sources.md §二）
+_FOREX_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("USDCNH",)
+_FOREX_SINA_SYMBOL_MAP: Final[dict[str, str]] = {"USDCNH": "fx_susdcnh"}
+
+
+def parse_sina_forex_day_kline(text: str) -> list[dict]:
+    """解析新浪 NewForexService.getDayKLine JSONP 载荷（纯函数，可离线单测）。
+
+    载荷形如 ``var t=("date,open,close,high,low,|2014-11-07,6.11,6.11,6.11,6.11,|...")``：
+    首段为表头，其后按 ``|`` 分隔记录；字段序 (date, open, close, high, low)
+    ——close 在 high/low 之前（源方口径，2026-10-01 实测），映射表列时须重排。
+    坏记录（字段缺失/日期非法/数值 NaN）跳过不抛出。
+    """
+    m = re.search(r'var t=\("(.*)"\)', text, re.DOTALL)
+    if m is None:
+        return []
+    records: list[dict] = []
+    for seg in m.group(1).split("|"):
+        parts = [p for p in seg.split(",") if p != ""]
+        if len(parts) < 5 or parts[0] == "date" or not re.match(r"\d{4}-\d{2}-\d{2}$", parts[0]):
+            continue
+        open_, close_, high_, low_ = (safe_float_strict(x) for x in parts[1:5])
+        if open_ is None or close_ is None or high_ is None or low_ is None:
+            continue
+        records.append({"date": parts[0], "open": open_, "close": close_, "high": high_, "low": low_})
+    return records
+
+
+def check_sina_forex_realtime_health(text: str, today: datetime.date | None = None) -> bool:
+    """新浪 fx 实时探针健康判定（纯函数）。
+
+    须同时满足：GBK 解码文本含"离岸人民币"标签（源方自标口径）＋ 报文内最新日期
+    距今 ≤10 日历日（容忍长假停市，如国庆/春节周）。
+    """
+    if "离岸人民币" not in text:
+        return False
+    today = today if today is not None else datetime.date.today()
+    dates = re.findall(r"\d{4}-\d{2}-\d{2}", text)
+    if not dates:
+        return False
+    try:
+        latest = max(datetime.date.fromisoformat(d) for d in dates)
+    except ValueError:
+        return False
+    return abs((today - latest).days) <= 10
