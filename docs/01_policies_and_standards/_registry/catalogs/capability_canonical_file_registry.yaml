@@ -56961,6 +56961,11 @@ creation_tokens:
   created_by: st-gate-rationalize-20260929
   capability: commit_chain_fullflow
   merge_evaluation: "提交链路10环节挖矿簿之一(骨架/环节簿):唯一载体不并,与gate_survival_adjudication衔接不重不漏"
+- file: docs/_working/commit_chain_fullflow/11_channel_out_of_lock_surgery.md
+  token: commit-chain-fullflow-11-channel-out-of-lock-surgery-20260930
+  created_by: st-gate-rationalize-20260929
+  capability: commit_chain_fullflow
+  merge_evaluation: "D2通道出锁手术单:D1同款规格蓝图,替代adjudication§8.8一句话处方"
 - file: data/backtest_artifacts/runs/E4-BIZMINE-L1-IND-STAT-001-CORREL/verdict.md
   token: exam-verdict-docs-verdict-20260929
   created_by: st-nightsweep2-nd-20260930
@@ -57781,4 +57786,9 @@ creation_tokens:
   created_by: st-finaldel-c83-20260930
   capability: environment_switch_algo_flow
   merge_evaluation: "ALGO_FLOW 外部视图真源（GATE-ALGO-FLOW 处方出仓件，由 environment_switch.py docstring 内联块派生，唯一真源无重复面）"
+- file: docs/_working/night_sweep/e6_vm_assessment.md
+  token: night-sweep-e6-vm-assessment-20260930
+  created_by: st-nightsweep2-nf2-20260930
+  capability: night_sweep
+  merge_evaluation: "ND-E6 评估卡文件化转登（已核销态，压缩窗后复核义务在账；零新增面=纯登记）"
 di_seam_exemptions: []

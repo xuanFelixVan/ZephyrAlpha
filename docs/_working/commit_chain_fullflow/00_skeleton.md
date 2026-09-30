@@ -44,16 +44,18 @@ session: st-gate-rationalize-20260929
 - **红蓝**：pkg14 七场景+战役回归套件绿；新增对抗针全过（锁竞争冒烟 0.84s 行为正确/横幅尾读自检/gate-test 双分支/轮转超限翻代/短路零探测）。
 - **我的变更面结论：连续两轮零红**（R1 红即修、R2 三红全数为他会话面/数据面/flake，与本夜 8 笔提交无因果——逐笔归属核实过）。
 
-## 六、移交清单（日班，按优先序）
+## 六、移交清单（日班，按优先序）——**2026-09-30 上午续战更新**
 
-1. **D1 stats_lock 手术**：landing.py 已解锁，手术单 commit_speedup_campaign/10_D1_D2/D1_stats_lock.md 完整（四小时单+红蓝矩阵 §5+§4.4 安全必要条件），需满上下文专班。
-2. **resource_schedule mem_ceiling 真违规**：data_slot 五槽同窗 11.5GB>10GB（resource_schedule_gate 实证），数据班降槽或扩顶，Owner 定。
-3. **生成器登记债**：gate_registry.yaml 仍 M（他队未完），generator+重生成须同批（防 manifest-drift 自爆）。
-4. **CREATE-GUARD p90 44.8s 尾**：热册并发写 cache-miss+IO 争用，注册表分片/预热专项。
-5. **SessionRegistry 整表重写竞态**：本夜 SESSION-REQUIRED 三连拒实证（瞬态 pid/MSYS pid 被收割），增量写/分片写专项；短期配方=真实 Windows pid 保活注册（e01 簿留档）。
-6. **B4 tracked 快照 4→1**：硬阻断安全门指纹语义，需专项+红蓝。
-7. **hook 通道出锁+Phase-A/B 重设计**：p50 44.3s 通道在全局锁内=最大单点，需与快败语义一并重构（首过率 9% 下 Phase-A 对红件净省）。
-8. **integrity chore 残留观察**：翻旗后 7 笔落地仍现 1 笔 chore(integrity)（07:59，疑翻旗前启动的老工位），下轮观测应归零。
+Owner 追问"现在可以做吗"后续战（同日上午）执行结果：
+
+1. ~~D1 stats_lock 手术~~ **✅ 已落地 4bab350d**（分代理按单施工+总包复核：红证两针先红后绿、差分矩阵 16/16、k=1 字节锚绿、必绿清单 6 红全数归因外部附干净 worktree 证据；串路调用点偏离 1 处已披露=尾 flush 与 stats 全等数学不可兼得，经一元包装同 batch 实现）。**落地件=每落地件省 ~0.15s 串行停世界+消除 O(N²) 扫描扇出。**
+2. **resource_schedule 真违规——决策备忘升级**：碰撞已算清=23:35 同窗五槽（consensus_crosscheck 23:30/2.5G + cross_validation 23:15/2.0G + daily_alt_fx 23:35/2.0G + news_slow 每时 17/47 分/2.0G + nightly_financial 22:00 起 120min/3.0G）=11.5GB>ceiling 10GB。两案：A=挪 consensus_crosscheck 23:30→00:05（窗口降 9.0GB，需核对其对 cross_validation 产物的就绪依赖）；B=ceiling 10→12GB（RAM 64G 现用 62.6%，硬件余量足，但 ceiling 可能编码共享策略）。**决策权归数据班/Owner**——本总包不替数据域盲改生产 cron（T+1 就绪链风险>登记成本）。
+3. ~~生成器登记债~~ **✅ 已落地 7cdcaea9**（码+重生成同批：墓碑覆盖条件扩 enabled=false、stages 通道口径、3 实跑 hook 补登记+SCRIPTS-IMPORT-INTEGRITY 墓碑；统一册 178→181，三预期逐一核对+生成器套件 22 绿）。
+4. CREATE-GUARD p90 44.8s 尾——维持登记（热册并发写 cache-miss，需分片/预热设计专项）。
+5. SessionRegistry 增量写——维持登记（协调核心并发手术，短期配方=真实 Windows pid 保活注册已留档 e01）。
+6. B4 tracked 快照 4→1——维持登记（硬阻断安全门指纹语义，需专项+红蓝）。
+7. **hook 通道出锁——蓝图已立**：`11_channel_out_of_lock_surgery.md`（D1 同款规格：锚点/设计五条/红测两针/差分矩阵 8 例/风险回滚，估时 2.5h）——下一专班可机械执行。
+8. integrity chore 残留观察——继续（翻转后 7 笔落地 1 笔 chore，疑老工位，下轮观测应归零）。
 
 ## 四、施工红线（Owner 晨令）
 
