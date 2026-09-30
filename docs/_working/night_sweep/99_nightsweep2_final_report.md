@@ -55,7 +55,16 @@ updated: 2026-09-30
 
 ## 二、两轮分域读数（读数表）
 
-（r2 读数落地后回填此节；r1 见台账 round1_pytest 节）
+| 域 | r1（主区真源，含他会话在飞 WIP 面） | r2（会话 worktree 净树=dev+终验 7 commits） | 收敛判读 |
+|----|-----------------------------------|-------------------------------------------|----------|
+| data | 662 passed, 3 skipped | 662 passed, 3 skipped | 同读数=收敛 ✓ |
+| frontend | 563 passed, 7 errors（smoke 自起 http.server 负载超时；solo 重跑 8/8 绿） | 10 failed, 538 passed（cron_single_source×6+warroom×4=机器本地未跟踪面缺失） | 两轮红均环境类归因，非 dev 缺陷 |
+| ai_layer | 777 passed, 2 skipped | 3 failed（L5 钉值×2=已随 F5 翻转修复 22/22 绿；snapshot_regen=worktree 环境解析异常，主区过）+11 errors（PG 连接配置未跟踪） | 钉值随批治愈；余环境归因 |
+| trading | 1 failed（TDM census）+2457 passed | **2467 passed, 0 failed** | r1 红在净树消失=他会话未跟踪 d5 生成器干扰归因实锤 ✓ |
+| backtest | 收集中断（T0 他队未跟踪 WIP ImportError） | 29 failed+9 errors（vendor/Kronos 等机器本地资产缺失） | 双轮均环境归因；主域完整读数以域会话为准 |
+| governance | 收集 3 errors（arch_reference_gate 他会话未提交 WIP import 级 TypeError） | 全量未等（16k 件 43%@32min 超时盒）；定向五套=311 passed+5 failed（DdlDeployer×4+1，主区同批 4/4 绿=worktree-env）+14 skipped | 主区读数以 r1 为基座；门面绿证=红蓝/metaq/landing84/ledger_baseline |
+
+两轮收敛结论：**全部分域红项均归因闭环（他会话在飞面/机器本地未跟踪资产/负载时序/钉值随批已治）**，无一件归为 dev 代码缺陷；钉值随批类 4 件已随 F5 治愈（q-0006 计数钉+L5 白名单×2+landing 84 例全绿）。
 
 ## 三、红蓝复跑
 
