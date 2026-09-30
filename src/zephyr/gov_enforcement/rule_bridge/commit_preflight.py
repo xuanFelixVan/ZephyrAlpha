@@ -771,9 +771,26 @@ def _registration_ttl_findings(
 ) -> tuple[list[str], list[str]]:
     """② TTL 判定（files 驱动）——2026-09-30 起直连 ttl_gate 判定体：名册 TTL-METADATA
     standalone 已执行退役（判据由 DOC-HEADER-SUITE 同参转发承载），本预检引用改判定体
-    直连以脱钩名册在册状态；执行异常仍 degraded 不假红。"""
+    直连以脱钩名册在册状态；执行异常仍 degraded 不假红。
+
+    2026-09-30 st-c9-prfix 存在性分支（清偿 57ba32b227 集成面回归，宪法 M1.2
+    「预检设施异常才放行+审计」既有原则）：checker 脚本缺席（隔离仓/夹具仓）＝预检
+    设施不可用 → degraded 放行+审计留痕（与脱钩前名册 spec 缺席口径一致）；checker
+    在而判定失败＝真违规 → fail-closed 保持（57ba32b227 语义收紧在真实仓面完整保留）。
+    名册内 TTL-METADATA GateSpec 判定体（commit() 权威链）不受本分支影响，仍自带
+    fail-closed（ttl_gate.py [INVARIANTS]），纵深防御不减。"""
     try:
         from zephyr.gov_enforcement.commit_gates import ttl_gate  # noqa: PLC0415
+
+        check_script = (
+            Path(gateway.project_root) / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
+        )
+        if not check_script.is_file():
+            logger.warning(
+                "registration precheck TTL-METADATA checker 缺席（预检设施不可用，degraded 放行+审计留痕）: %s",
+                check_script,
+            )
+            return [], ["TTL-METADATA"]
 
         result = ttl_gate._check(gateway, list(files), session_id=session_id, commit_message=commit_message)
         passed, detail = (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
