@@ -48,11 +48,12 @@ class _ReadWriteLock:
         self._cond = threading.Condition(threading.Lock())
         self._readers = 0
         self._writer = False
+        self._writers_waiting = 0
 
     @contextmanager
     def read(self) -> Iterator[None]:
         with self._cond:
-            while self._writer:
+            while self._writer or self._writers_waiting > 0:  # DEFECT-3b: writer-preferring
                 self._cond.wait()
             self._readers += 1
         try:
@@ -66,9 +67,13 @@ class _ReadWriteLock:
     @contextmanager
     def write(self) -> Iterator[None]:
         with self._cond:
-            while self._writer or self._readers > 0:
-                self._cond.wait()
-            self._writer = True
+            self._writers_waiting += 1
+            try:
+                while self._writer or self._readers > 0:
+                    self._cond.wait()
+                self._writer = True
+            finally:
+                self._writers_waiting -= 1
         try:
             yield
         finally:

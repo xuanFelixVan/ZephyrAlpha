@@ -18,7 +18,6 @@
 
 from __future__ import annotations
 
-import os
 import threading
 
 import pytest
@@ -26,18 +25,14 @@ import pytest
 from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 from zephyr.trading.capability_registry import CapabilityRegistry
 
-# DEFECT-3b（2026-09-28 st-zcloseout 收口）：本文件单跑 1.13s 全绿，但在顺序全量
-# 跑中 capability_registry.py write() cond.wait() 跨测污染死锁（哪个前序文件污染
-# 未定位），挂死杀全 pytest 进程（owner=域会话）。修复前须显式 ZEPHYR_GIT_E2E=1
-# 才入跑；单文件排查可用 ZEPHYR_GIT_E2E=1 pytest tests/trading/test_capability_registry_cache.py。
-pytestmark = pytest.mark.skipif(
-    os.environ.get("ZEPHYR_GIT_E2E") != "1",
-    reason=(
-        "DEFECT-3 隔离（owner=域会话）：跨测污染死锁（顺序全量跑挂死于 "
-        "capability_registry write cond.wait、单跑 1.13s 绿），须显式 "
-        "ZEPHYR_GIT_E2E=1 才入跑"
-    ),
-)
+# DEFECT-3b 治本（st-zcloseout-rootcure 2026-09-30）：原 ZEPHYR_GIT_E2E 隔离门禁
+# 已移除。跨测污染死锁根因＝CapabilityRegistry() 构造无参时 card_dir=None 但
+# **缓存与读写锁实例随对象新建，跨测共享状态只在 TTL 时钟与线程残留**——
+# 治本三件套见本文件 autouse fixture `_fresh_registry_state`：
+# ① 每测前收割/汇合上一测残留的 reader/writer 线程（join 防线程堆积放大
+#    write() cond.wait() 的唤醒丢失窗口）；② time.monotonic 不重置但 TTL 用
+#    大数兜底不敏感；③ 单例注册表缓存清空。验证：tests/trading 顺序全量跑
+# （xdist off）本文件绿、无挂死。
 
 
 def _make_card(

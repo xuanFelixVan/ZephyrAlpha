@@ -50,19 +50,13 @@ from zephyr.gov_enforcement.rule_bridge.session_worktree import (
 )
 from zephyr.shared.io.paths import REPO_ROOT
 
-# DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：本文件跑真实
-# git worktree/reset --soft/stash push 流（tmp 仓注入靠 monkeypatch REPO_ROOT，
-# 任一未补丁 import 路径即伤宿主；campaign 台账点名本文件）。须显式
-# ZEPHYR_GIT_E2E=1 且密闭车道运行——见 docs/_working/qoder_legacy_closeout/
-# 00_orchestration 台账。
-pytestmark = pytest.mark.skipif(
-    os.environ.get("ZEPHYR_GIT_E2E") != "1",
-    reason=(
-        "DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：真实 git 外科 e2e "
-        "须显式 ZEPHYR_GIT_E2E=1 且密闭车道运行——见 "
-        "docs/_working/qoder_legacy_closeout/00_orchestration 台账"
-    ),
-)
+# DEFECT-5 根治注记（st-zcloseout-rootcure 2026-09-30）：原 `pytestmark =
+# skipif(ZEPHYR_GIT_E2E != "1")` 隔离门禁已移除——本文件沙箱注入收紧为三层防御：
+# ① tmp_path 独立迷你 git 仓（_isolated_repo，含 gate 源文件 stub）；② monkeypatch
+# 全部 root 缝（session_worktree + worktree_manager + worktree_pool 的 REPO_ROOT
+# 模块常量——原污染事故即"任一未补丁 import 路径伤宿主"，现缝集补全）；③ teardown
+# 宿主渗漏 tripwire（_assert_no_host_leak：sess-pytest* worktree/分支出现在真实
+# 仓根即红）。沙箱化后无需门禁。
 
 _TEST_SIDS = ["sess-pytest-A", "sess-pytest-B"]
 _TEST_FILE_A = "tests/governance/rule_bridge/_wt_marker_a.json"
@@ -264,19 +258,23 @@ def _isolated_repo(tmp_path_factory):
 def _clean_worktree_env(_isolated_repo, monkeypatch):
     """每个测试用临时仓库，monkeypatch REPO_ROOT 指向它，隔离主工作区。
 
-    patch session_worktree 模块 + 测试模块的 REPO_ROOT → 临时仓库；
-    测试前清理残留，测试后清理残留 + soft reset 回退测试 commit。
-    monkeypatch function 级自动还原（不影响其他测试模块）。
+    patch session_worktree + worktree_manager + worktree_pool 三个模块的
+    REPO_ROOT → 临时仓库（DEFECT-5 治本：缝集补全——worktree_pool 有独立的
+    `from zephyr.shared.io.paths import REPO_ROOT` 绑定，漏补即伤宿主）；
+    测试前清理残留，测试后清理残留 + soft reset 回退测试 commit + 宿主渗漏
+    tripwire。monkeypatch function 级自动还原（不影响其他测试模块）。
     """
     # 用模块对象 patch（字符串路径在 pytest 下不可靠）
     import sys
 
     import zephyr.gov_enforcement.rule_bridge.session_worktree as sw_mod
     import zephyr.gov_enforcement.rule_bridge.worktree_manager as wm_mod
+    import zephyr.gov_enforcement.rule_bridge.worktree_pool as wp_mod
 
     test_mod = sys.modules[__name__]
     monkeypatch.setattr(sw_mod, "REPO_ROOT", _isolated_repo)
     monkeypatch.setattr(wm_mod, "REPO_ROOT", _isolated_repo)
+    monkeypatch.setattr(wp_mod, "REPO_ROOT", _isolated_repo)
     monkeypatch.setattr(test_mod, "REPO_ROOT", _isolated_repo)
     orig_head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=_isolated_repo, capture_output=True, text=True
@@ -284,6 +282,29 @@ def _clean_worktree_env(_isolated_repo, monkeypatch):
     _cleanup_artifacts(_isolated_repo)
     yield
     _cleanup_artifacts(_isolated_repo, orig_head=orig_head)
+    _assert_no_host_leak()
+
+
+def _assert_no_host_leak() -> None:
+    """宿主渗漏 tripwire（DEFECT-5 防回归）：sess-pytest* 残留出现在真实仓根即红。
+
+    `zephyr.shared.io.paths.REPO_ROOT` 模块属性未被 patch（patch 只作用于
+    sw/wm/wp/test 模块的绑定），此处读到的是真实仓根（车道根）。任何通过
+    未补丁 import 路径逃逸的 git 外科都会在此暴露。
+    """
+    from zephyr.shared.io.paths import REPO_ROOT as real_root  # noqa: PLC0415 — 未 patch 的真源
+
+    real_root = Path(real_root)
+    for sid in [*_TEST_SIDS, "sess-pytest-abort-files", "sess-pytest-abort-stash"]:
+        leaked_wt = real_root / ".aidrafts" / sid
+        assert not leaked_wt.exists(), f"HOST LEAK: 测试 worktree 逃逸到真实仓根: {leaked_wt}"
+        r = subprocess.run(
+            ["git", "branch", "--list", f"session/{sid}"],
+            cwd=real_root,
+            capture_output=True,
+            text=True,
+        )
+        assert r.stdout.strip() == "", f"HOST LEAK: 测试分支逃逸到真实仓根: session/{sid}"
 
 
 def test_two_sessions_separate_worktrees():

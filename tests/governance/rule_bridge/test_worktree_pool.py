@@ -13,9 +13,17 @@
 权威依据：worktree_pool.py（P3.3 预创建池）、session_worktree.py（集成点）、
 worktree_manager.py（底层 git worktree 操作）
 
+DEFECT-5 治本（st-zcloseout-rootcure 2026-09-30）：本文件全量沙箱化——所有测试在
+``sandbox_repo`` fixture 于 pytest tmp_path 内 `git init` 的独立迷你仓上运行，
+WorktreePool/get_pool/session_worktree_* 全部走显式 root 参数注入（WorktreePool.__init__
+repo_root / get_pool(project_root) / session_worktree_start(project_root) 均为既有
+一等参数缝，零 monkeypatch 依赖），与宿主仓（REPO_ROOT/.aidrafts_pool/.aidrafts/
+session_registry/分支空间）零交集。teardown 双保险：沙箱残留清理 + 宿主渗漏 tripwire。
+原 ZEPHYR_GIT_E2E 隔离门禁（曾实测毁宿主车道）随之移除——沙箱化后无需门禁。
+
 测试组：
 - test_stats_empty: 空池 stats 返回 idle_count=0
-- test_prefetch_creates_worktree: prefetch(1) 在 .aidrafts_pool/ 创建 worktree
+- test_prefetch_creates_worktree: prefetch(1) 在沙箱 .aidrafts_pool/ 创建 worktree
 - test_lease_relocates_worktree: lease 将 pool worktree 移到 .aidrafts/{sid}/ + 分支重命名
 - test_lease_empty_returns_none: 空池 lease 返回 None（fall back 信号）
 - test_lease_then_prefetch_async_replenishes: lease 后 prefetch_async 补充池
@@ -35,21 +43,11 @@ from pathlib import Path
 import pytest
 
 from zephyr.gov_enforcement.rule_bridge.worktree_pool import WorktreePool, get_pool
-from zephyr.shared.io.paths import REPO_ROOT
 
-# DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：本文件对真实 REPO_ROOT
-# 做真实 git 外科（WorktreePool 预建/lease、worktree remove --force、branch -D、
-# 改写 .runtime/session_registry.json、真实 session_worktree_start/abort），
-# 全量跑曾致宿主 4030 文件被删+外来暂存+外来 reset。须显式 ZEPHYR_GIT_E2E=1 且
-# 密闭车道运行——见 docs/_working/qoder_legacy_closeout/00_orchestration 台账。
-pytestmark = pytest.mark.skipif(
-    os.environ.get("ZEPHYR_GIT_E2E") != "1",
-    reason=(
-        "DEFECT-5 隔离（2026-09-28 st-zcloseout 收口实测毁车道）：真实 git 外科 e2e "
-        "须显式 ZEPHYR_GIT_E2E=1 且密闭车道运行——见 "
-        "docs/_working/qoder_legacy_closeout/00_orchestration 台账"
-    ),
-)
+# DEFECT-5 根治注记：原 `pytestmark = skipif(ZEPHYR_GIT_E2E != "1")` 隔离门禁已移除
+# ——本文件已全量沙箱化（见模块 docstring「DEFECT-5 治本」段）：测试只触碰 pytest
+# tmp_path 内的独立迷你 git 仓，宿主仓零 git 外科。门禁移除后由 teardown tripwire
+# 防回归（_assert_no_host_leak）。
 
 _TEST_SID = "sess-pytest-pool-A"
 _TEST_SID_2 = "sess-pytest-pool-B"
@@ -70,8 +68,35 @@ def _force_rmtree(path: Path) -> None:
     shutil.rmtree(path, onerror=_on_error)
 
 
+def _sandbox_git(repo: Path, *args: str) -> subprocess.CompletedProcess:
+    """在沙箱仓执行 git 命令（失败 fail-loud，绝不指向沙箱外）。"""
+    r = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True)
+    assert r.returncode == 0, f"git {args} failed in sandbox {repo}: {r.stderr}"
+    return r
+
+
+def _assert_no_host_leak() -> None:
+    """宿主渗漏 tripwire（DEFECT-5 防回归）：测试 sid 绝不允许出现在真实仓根。
+
+    `zephyr.shared.io.paths.REPO_ROOT` 是模块属性真源（本文件零 monkeypatch），
+    沙箱注入全走显式参数——若此断言红，说明某条代码路径绕过参数缝逃逸到宿主。
+    """
+    from zephyr.shared.io.paths import REPO_ROOT as _REAL_ROOT
+
+    for sid in (_TEST_SID, _TEST_SID_2):
+        leaked_wt = Path(_REAL_ROOT) / ".aidrafts" / sid
+        assert not leaked_wt.exists(), f"HOST LEAK: 沙箱 session worktree 逃逸到宿主: {leaked_wt}"
+        leaked_branch = subprocess.run(
+            ["git", "rev-parse", "--verify", f"session/{sid}"],
+            cwd=_REAL_ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert leaked_branch.returncode != 0, f"HOST LEAK: 沙箱分支逃逸到宿主: session/{sid}"
+
+
 def _cleanup_pool_artifacts(repo: Path) -> None:
-    """清理 pool 测试残留：pool worktrees、session worktrees、分支。"""
+    """清理沙箱内 pool 测试残留：pool worktrees、session worktrees、分支。"""
     # 清理 pool 目录
     pool_dir = repo / ".aidrafts_pool"
     if pool_dir.exists():
@@ -153,32 +178,54 @@ def _cleanup_pool_artifacts(repo: Path) -> None:
 
 
 @pytest.fixture
-def clean_pool():
-    """每个测试前后清理 pool + session worktree 残留。"""
-    _cleanup_pool_artifacts(REPO_ROOT)
-    # 清理 get_pool singleton 缓存（避免上次测试状态污染）
-    # 直接 import 模块（避免 TEST-SOURCE-CONSISTENCY gate 误判 __init__.py 符号缺失）
-    import importlib
+def sandbox_repo(tmp_path):
+    """DEFECT-5 治本：每个测试一个独立迷你 git 仓（pytest tmp_path 内）。
 
-    wp_module = importlib.import_module("zephyr.gov_enforcement.rule_bridge.worktree_pool")
+    `git init` + user config + 初始 commit——WorktreePool 全流程（prefetch/lease/
+    move/branch -m/cleanup_stale）与 session_worktree 集成（显式 project_root 注入）
+    均在此仓内完成，与宿主仓 .aidrafts_pool/.aidrafts/session_registry/分支空间零交集。
+    teardown：清沙箱残留 → 清 pool singleton 缓存 → 宿主渗漏 tripwire。
+    """
+    repo = tmp_path / "wt_pool_sandbox"
+    repo.mkdir()
+    _sandbox_git(repo, "init")
+    _sandbox_git(repo, "config", "user.email", "test@zephyr.local")
+    _sandbox_git(repo, "config", "user.name", "Zephyr Test")
+    (repo / ".gitkeep").write_text("", encoding="utf-8")
+    # .aidrafts/ 预创建——宿主仓常态存在（session worktree 挂载点），`git worktree
+    # move` 的目标父目录必须存在，新建沙箱仓无此目录会导致 lease move 失败。
+    (repo / ".aidrafts").mkdir()
+    _sandbox_git(repo, "add", ".gitkeep")
+    _sandbox_git(repo, "commit", "--no-verify", "-m", "init")
+    yield repo
+
+    # teardown：清理 heartbeat daemon 残留进程（集成测试 start 会 spawn）
+    try:
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import kill_all_heartbeat_daemons
+
+        kill_all_heartbeat_daemons(repo)
+    except Exception:  # noqa: BLE001 — teardown best-effort
+        pass
+    _cleanup_pool_artifacts(repo)
+    # 清理 get_pool singleton 缓存（避免跨测试状态污染）
+    import zephyr.gov_enforcement.rule_bridge.worktree_pool as wp_module
+
     wp_module.pool_instances.clear()
-    yield
-    _cleanup_pool_artifacts(REPO_ROOT)
-    wp_module.pool_instances.clear()
+    _assert_no_host_leak()
 
 
-def test_stats_empty(clean_pool):
+def test_stats_empty(sandbox_repo):
     """空池 stats 返回 idle_count=0。"""
-    pool = WorktreePool(REPO_ROOT)
+    pool = WorktreePool(sandbox_repo)
     stats = pool.stats()
     assert stats["idle_count"] == 0
     assert stats["target_size"] >= 1
     assert "pool_dir" in stats
 
 
-def test_prefetch_creates_worktree(clean_pool):
-    """prefetch(1) 在 .aidrafts_pool/ 创建 1 个 worktree。"""
-    pool = WorktreePool(REPO_ROOT)
+def test_prefetch_creates_worktree(sandbox_repo):
+    """prefetch(1) 在沙箱 .aidrafts_pool/ 创建 1 个 worktree。"""
+    pool = WorktreePool(sandbox_repo)
     created = pool.prefetch(1)
     assert created == 1
 
@@ -188,19 +235,19 @@ def test_prefetch_creates_worktree(clean_pool):
     assert idle[0]["branch"].startswith("session/pool-")
     # worktree 目录物理存在
     assert Path(idle[0]["path"]).exists()
-    # 分支存在
+    # 分支存在（在沙箱仓验证）
     r = subprocess.run(
         ["git", "rev-parse", "--verify", idle[0]["branch"]],
-        cwd=REPO_ROOT,
+        cwd=sandbox_repo,
         capture_output=True,
         text=True,
     )
     assert r.returncode == 0
 
 
-def test_lease_relocates_worktree(clean_pool):
+def test_lease_relocates_worktree(sandbox_repo):
     """lease 将 pool worktree 移到 .aidrafts/{sid}/ + 分支重命名。"""
-    pool = WorktreePool(REPO_ROOT)
+    pool = WorktreePool(sandbox_repo)
     pool.prefetch(1)
     assert pool.stats()["idle_count"] == 1
 
@@ -211,14 +258,14 @@ def test_lease_relocates_worktree(clean_pool):
     # pool 空了
     assert pool.stats()["idle_count"] == 0
 
-    # session worktree 路径存在
-    session_wt = REPO_ROOT / ".aidrafts" / _TEST_SID
+    # session worktree 路径存在（沙箱内）
+    session_wt = sandbox_repo / ".aidrafts" / _TEST_SID
     assert session_wt.exists()
 
-    # session 分支存在
+    # session 分支存在（沙箱仓）
     r = subprocess.run(
         ["git", "rev-parse", "--verify", f"session/{_TEST_SID}"],
-        cwd=REPO_ROOT,
+        cwd=sandbox_repo,
         capture_output=True,
         text=True,
     )
@@ -226,8 +273,8 @@ def test_lease_relocates_worktree(clean_pool):
 
     # pool 分支已重命名（不再存在）
     r_pool_branch = subprocess.run(
-        ["git", "rev-parse", "--verify", "session/pool-*"],
-        cwd=REPO_ROOT,
+        ["git", "branch", "--list", "session/pool-*"],
+        cwd=sandbox_repo,
         capture_output=True,
         text=True,
     )
@@ -235,9 +282,9 @@ def test_lease_relocates_worktree(clean_pool):
     assert r_pool_branch.stdout.strip() == ""
 
 
-def test_lease_empty_returns_none(clean_pool):
+def test_lease_empty_returns_none(sandbox_repo):
     """空池 lease 返回 None（fall back 信号）。"""
-    pool = WorktreePool(REPO_ROOT)
+    pool = WorktreePool(sandbox_repo)
     # 确保池空
     assert pool.stats()["idle_count"] == 0
 
@@ -245,9 +292,9 @@ def test_lease_empty_returns_none(clean_pool):
     assert result is None
 
 
-def test_lease_then_prefetch_async_replenishes(clean_pool):
+def test_lease_then_prefetch_async_replenishes(sandbox_repo):
     """lease 后 prefetch_async 补充池（异步，需 wait）。"""
-    pool = WorktreePool(REPO_ROOT)
+    pool = WorktreePool(sandbox_repo)
     pool.prefetch(1)
 
     leased = pool.lease(_TEST_SID)
@@ -262,9 +309,9 @@ def test_lease_then_prefetch_async_replenishes(clean_pool):
     assert pool.stats()["idle_count"] == 1
 
 
-def test_cleanup_stale_removes_old(clean_pool):
+def test_cleanup_stale_removes_old(sandbox_repo):
     """cleanup_stale 清理超龄 worktree。"""
-    pool = WorktreePool(REPO_ROOT)
+    pool = WorktreePool(sandbox_repo)
     pool.prefetch(1)
     assert pool.stats()["idle_count"] == 1
 
@@ -280,8 +327,8 @@ def test_cleanup_stale_removes_old(clean_pool):
     assert pool.stats()["idle_count"] == 0
 
 
-def test_session_worktree_start_uses_pool(clean_pool):
-    """session_worktree_start 优先使用 pool lease。
+def test_session_worktree_start_uses_pool(sandbox_repo):
+    """session_worktree_start 优先使用 pool lease（DEFECT-5：显式 project_root 注入沙箱）。
 
     预填池后调 session_worktree_start，验证 worktree 来自 pool（不是直接创建）。
     判据：pool 空了（lease 消耗）+ session worktree 存在。
@@ -296,17 +343,19 @@ def test_session_worktree_start_uses_pool(clean_pool):
         session_worktree_start,
     )
 
-    # 预填池
-    pool = get_pool(REPO_ROOT)
+    # 预填池（沙箱仓）
+    pool = get_pool(sandbox_repo)
     pool.prefetch(1)
     assert pool.stats()["idle_count"] == 1
 
-    # 启动 session（应使用 pool lease）
-    r = session_worktree_start(_TEST_SID, allow_workspace_drift=True)
-    assert r.get("registered") is True
-    assert r.get("created") is True
+    # 启动 session（应使用 pool lease；DEFECT-5 核心：project_root=沙箱，非宿主）
+    r = session_worktree_start(_TEST_SID, project_root=sandbox_repo, allow_workspace_drift=True)
+    assert r.get("registered") is True, f"start 失败: {r}"
+    assert r.get("created") is True, f"start 失败: {r}"
     assert r.get("worktree_path", "")
     assert _TEST_SID in r["worktree_path"]
+    # worktree 必须落在沙箱内（非宿主渗漏）
+    assert str(sandbox_repo) in r["worktree_path"], f"worktree 逃逸出沙箱: {r['worktree_path']}"
 
     # pool 应已消耗（idle_count=0，但 prefetch_async 可能在后台补充）
     # 用 thread sync 等待 async prefetch 完成
@@ -314,9 +363,10 @@ def test_session_worktree_start_uses_pool(clean_pool):
     # lease 成功后 pool 立即空，prefetch_async 在后台
     assert stats["idle_count"] <= 1  # 0 或 1（async 已补充）
 
-    # session worktree 存在
-    session_wt = REPO_ROOT / ".aidrafts" / _TEST_SID
+    # session worktree 存在（沙箱内）
+    session_wt = sandbox_repo / ".aidrafts" / _TEST_SID
     assert session_wt.exists()
 
-    # 清理：abort session
-    session_worktree_abort(_TEST_SID)
+    # 清理：abort session（同样注入沙箱）
+    a = session_worktree_abort(_TEST_SID, project_root=sandbox_repo)
+    assert a.get("aborted"), f"abort 失败: {a}"

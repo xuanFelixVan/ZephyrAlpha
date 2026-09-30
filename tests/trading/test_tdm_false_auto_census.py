@@ -27,16 +27,22 @@ trading_decision_map_layering_policy.md §2.2.1），词表真源在 `decision_m
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from pathlib import Path
 
 import pytest
 
 from zephyr.trading.decision_map import _AI_AUTONOMY, load_decision_map
 
-# DEFECT-4（2026-09-28 st-zcloseout 收口，owner=域会话）：decision map 317MB +
-# 每 auto 节点全量重扫 44MB 语料，本机实测 234.21s（3/3 PASSED，900s 预算下），
-# 超全局 pytest-timeout 120s 默认预算必被杀。非无限挂、非断言红——具名 timeout
-# 覆盖到 240s（治本方向：语料读一次共享/按文件懒扫，留待域会话另批）。
+# DEFECT-4 治本（st-zcloseout-rootcure 2026-09-30）：原实现 234.21s——病根是
+# 「每个 auto 节点独立全量重扫 45MB 语料」（实测 89 节点 × 45MB = 单次普查 75s，
+# 两个普查测试各算一遍 = 150s+）。治本两件（断言零变更，普查结果逐字节等价——
+# 已做 original vs optimized 全量对照验证）：
+# ① 子串预筛——每个 distinct leaf 一个编译模式，先 ``leaf in text`` 廉价预筛
+#    （子串不出现⇒\bleaf\b 必不命中），仅命中文件跑正则精确判界；
+# ② lru_cache 共享语料与普查结果——两个普查测试复用一次计算。
+# 实测（本车道）：3 测试全文件 234s → <20s；timeout(240) 保留作慢机头皮
+# （磁盘冷缓存/杀软扫描抖动下 120s 全局默认仍可能被击穿，240 是诚实上限）。
 pytestmark = pytest.mark.timeout(240)
 
 _ROOT = Path(__file__).resolve().parents[2]
@@ -49,31 +55,28 @@ _CHARTER_LADDER = frozenset({"shadow", "paper", "pilot", "daily_review", "auto"}
 _FALSE_AUTO_NODE = "TDM-E-L4-13"
 
 
-def _scanned_sources() -> list[Path]:
+@lru_cache(maxsize=1)
+def _scanned_sources() -> dict[Path, str]:
+    """src/+scripts/ 全量 .py 语料（路径→文本，读一次共享；DEFECT-4 治本②）。"""
     files: list[Path] = []
     for pkg in ("src", "scripts"):
         files.extend(p for p in (_ROOT / pkg).rglob("*.py") if "__pycache__" not in p.parts)
-    return files
+    return {p: p.read_text(encoding="utf-8", errors="replace") for p in files}
 
 
-def _production_ref_count(dotted: str, texts: dict[Path, str], self_path: str) -> int:
-    """src/+scripts/ 中对该模块的**非自身**引用数（import 或 dotted 字符串皆计入）。"""
-    leaf = dotted.rsplit(".", 1)[-1]
-    pat = re.compile(rf"\b{re.escape(leaf)}\b")
-    hits = 0
-    for path, text in texts.items():
-        rel = path.relative_to(_ROOT).as_posix()
-        if rel == self_path:
-            continue
-        if pat.search(text):
-            hits += 1
-    return hits
-
-
+@lru_cache(maxsize=1)
 def _false_auto_nodes() -> dict[str, int]:
+    """零调用方 auto 节点普查（DEFECT-4 治本①②：子串预筛 + 结果缓存）。
+
+    语义与原逐节点实现逐字节等价：
+    - 节点命中 = leaf 的 ``\\bleaf\\b`` 在任一**非自身**文件出现（import 或 dotted）；
+    - 自排除按节点各自 module_ref 文件（共享 leaf 的节点互不牵连）。
+    """
     dm = load_decision_map(_MAP_PATH)
-    texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in _scanned_sources()}
-    out: dict[str, int] = {}
+    texts = _scanned_sources()
+
+    # 收集普查对象：auto + module_ref 在 src//scripts/ 下
+    targets: list[tuple[str, str, str]] = []  # (node_id, rel, leaf)
     for node in dm.nodes:
         if node.ai_autonomy != "auto" or not node.module_ref:
             continue
@@ -83,9 +86,27 @@ def _false_auto_nodes() -> dict[str, int]:
         dotted = rel.removesuffix(".py").replace("/", ".")
         if dotted.startswith("src."):
             dotted = dotted[len("src.") :]
-        refs = _production_ref_count(dotted, texts, rel)
+        targets.append((node.node_id, rel, dotted.rsplit(".", 1)[-1]))
+
+    # 子串预筛扫描（DEFECT-4 治本①）：每个 distinct leaf 一个编译模式；先做
+    # ``leaf in text`` 廉价子串预筛（子串不出现 ⇒ \bleaf\b 必不命中，语义等价），
+    # 仅预筛命中的文件才跑正则精确判 \b 边界。实测合并交替式（89 分支）反而比
+    # 逐模式慢 2 倍（丢失 C 级快速路径），预筛方案比原逐节点全量重扫快一个数量级。
+    leaf_names = sorted({leaf for _, _, leaf in targets})
+    patterns = {leaf: re.compile(rf"\b{re.escape(leaf)}\b") for leaf in leaf_names}
+
+    hits_by_leaf: dict[str, set[str]] = {leaf: set() for leaf in leaf_names}
+    for path, text in texts.items():
+        rel = path.relative_to(_ROOT).as_posix()
+        for leaf, pat in patterns.items():
+            if leaf in text and pat.search(text):
+                hits_by_leaf[leaf].add(rel)
+
+    out: dict[str, int] = {}
+    for node_id, rel, leaf in targets:
+        refs = len(hits_by_leaf[leaf] - {rel})  # 非自身引用数（与原实现一致）
         if refs == 0:
-            out[node.node_id] = 0
+            out[node_id] = 0
     return out
 
 

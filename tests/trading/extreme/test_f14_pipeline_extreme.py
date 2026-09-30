@@ -28,7 +28,6 @@
 
 from __future__ import annotations
 
-import os
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -548,17 +547,19 @@ class TestFeedbackLoopDetectionFailure:
         first = instances[0]
         assert all(inst is first for inst in instances)
 
-    # DEFECT-3a（2026-09-28 st-zcloseout 收口）：本测 windows_events select 无界等待，
-    # 确定性挂死且杀全 pytest 进程/worker（owner=域会话）。
-    @pytest.mark.skipif(
-        os.environ.get("ZEPHYR_GIT_E2E") != "1",
-        reason=(
-            "DEFECT-3 隔离（owner=域会话）：asyncio 无界等待确定性挂死（杀全 "
-            "pytest 进程/worker），修复前须显式 ZEPHYR_GIT_E2E=1 才入跑"
-        ),
-    )
-    def test_events_list_bounded_by_max_events(self, scheduler):
-        """蓝队验证：_events 有界（max_events 默认 1000）。"""
+    # DEFECT-3a 治本（st-zcloseout-rootcure 2026-09-30）：原 ZEPHYR_GIT_E2E 隔离
+    # 门禁已移除——挂死源（_periodic_checks 每 10 周期触发的 drift 引擎扫描：
+    # run_sync 600s 包裹的子进程管道读同步阻塞 windows_events 事件循环，asyncio
+    # 超时回调永不执行）与本测被测属性（_events 有界性）无关，已在测内实例级
+    # no-op 剔除并补齐真正的边界验证（压满 max_events+100 断言精确裁剪）。
+    def test_events_list_bounded_by_max_events(self, scheduler, monkeypatch):
+        """蓝队验证：_events 有界（max_events 默认 1000）。
+
+        挂死机理取证（2026-09-30 车道复现）：50 次 tick 在第 10/20/... 周期触发
+        drift 扫描 → asyncio.run 卡死在 windows_events select（同步阻塞不可取消）。
+        治本=测内剔除 drift 扫描（环境依赖子系统，非被测行为）+ 直接验证有界性。
+        """
+        monkeypatch.setattr(scheduler, "_run_drift_scan", lambda: None)
         assert scheduler.max_events == 1000
 
         for _ in range(50):
@@ -566,6 +567,17 @@ class TestFeedbackLoopDetectionFailure:
 
         events = scheduler.events(limit=50)
         assert len(events) <= 50
+
+        # 有界性主验证：压满 max_events+100 → 精确裁剪到 max_events，且 events()
+        # 返回的是最新事件（预算内到达，不挂死）
+        from zephyr.feedback_loop.scheduler import FLEPipelineEvent
+
+        for i in range(scheduler.max_events + 100):
+            scheduler._append_event(FLEPipelineEvent(run_id=f"bound-{i}", timestamp=0.0, phase="detect"))
+        assert len(scheduler._events) == scheduler.max_events
+        tail = scheduler.events(limit=50)
+        assert len(tail) == 50
+        assert tail[-1]["run_id"] == f"bound-{scheduler.max_events + 99}", "events(limit) 应返回最新事件（裁剪后尾部）"
 
     def test_health_report_returns_dict(self, scheduler):
         """蓝队验证：health_report() 返回字典。"""
