@@ -62191,6 +62191,199 @@ entries:
   desc_en: "equal-weight chained sector intraday bars"
   plain_zh: "以前板块每分钟的行情是从通达信服务器下载的现成饭；它连不上后这活儿改为自己算：把同一板块里每只股票每分钟的涨跌平均一下（一人一票），累乘出板块自己的价格线，五粗细周期一起出"
   responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "三图族提交门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "三图族提交门：提交时核对对应全景图与登记现状一致，不一致就拦下提交，防止地图和地盘脱节data_sup"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "三图族提交门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "三图族提交门：提交时核对对应全景图与登记现状一致，不一致就拦下提交，防止地图和地盘脱节dev_deli"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "三图族提交门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "三图族提交门：提交时核对对应全景图与登记现状一致，不一致就拦下提交，防止地图和地盘脱节trading_"
+  responsibility_layer: governance
+- module_path: scripts/backtest/cost_model.py
+  domain_id: D_BACKTEST
+  name_zh: "可插拔成本模型三档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "回测算收益时扣掉的交易成本计算器：默认用老三样固定费率（和以前逐位一致），可切换成用真实五档快照校准的滑点表，或按成交额占日成交比例算冲击成本，换档不改引擎"
+  responsibility_layer: business
+- module_path: src/zephyr/regime/features/macro_regime_sensor.py
+  domain_id: D_REGIME
+  name_zh: "宏观环境传感器"
+  name_en: "Macro Regime Sensor"
+  desc_zh: "消费宏观指标序列（利率/通胀/政策表态等），把宏观环境折叠为 regime 状态特征供策略与风控消费"
+  desc_en: ""
+  plain_zh: "这个模块负责看宏观经济环境：它按 macro_indicator_series_map 的映射把利率、通胀这类宏观指标序列读进来，折叠成市场所处的宏观状态标签，策略和风控拿这个标签决定该进攻还是防守。没有它，宏观状态就只能靠人拍脑袋，无法进入量化决策链。"
+  responsibility_layer: business
+- module_path: src/zephyr/data_security/wiring/audit_sink.py
+  domain_id: D_DATA_SEC
+  name_zh: "审计下沉线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这个模块是数据安全审计的接线层：把数据访问审计器产生的事件接到统一审计出口落盘，让敏感数据被谁看过、看过什么有账可查，而不是审计器空转没人收账。"
+  responsibility_layer: governance
+- module_path: src/zephyr/data_security/wiring/lsg_masking_front.py
+  domain_id: D_DATA_SEC
+  name_zh: "打码前置线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这个模块是敏感信息打码的前置接线层：数据进 LSG 安全网关前先把身份证号、账号这类敏感字段打码，保证大模型和日志看到的是脱敏数据，从源头防止敏感信息出户。"
+  responsibility_layer: governance
+- module_path: src/zephyr/data_security/wiring/data_exit_guard.py
+  domain_id: D_DATA_SEC
+  name_zh: "数据出门守卫线"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这个模块是数据出户守卫的接线层：任何数据要离开系统（出接口、出报表、出模型）都先过这道闸，不符合脱敏和授权规则的数据直接拦下，防数据泄露于出门最后一刻。"
+  responsibility_layer: governance
+- module_path: scripts/backtest/p1_conditional_tables.py
+  domain_id: D_BACKTEST
+  name_zh: "P1板块相位条件概率表生成器"
+  name_en: "P1 conditional probability table generator"
+  desc_zh: "按板块×相位分组计算条件概率表（n/胜率/Wilson下界/均值bp），支持v1↔v2宇宙白名单对比"
+  desc_en: ""
+  plain_zh: "把板块在不同行情阶段的历史涨跌表现统计成条件概率表：读只读的六段相位历史件，按板块乘相位分组算样本数、胜率、Wilson置信下界和平均涨幅四个数，样本不足30的格子标为不可考不并池，结果只写CSV不碰数据库，供P1考试对比两个股票池的差别"
+  responsibility_layer: business
+- module_path: scripts/backtest/t0_rule_engine.py
+  domain_id: D_BACKTEST
+  name_zh: "T0多周期买卖点规则引擎"
+  name_en: "T0 multi-period rule engine"
+  desc_zh: "预注册规则卡驱动的T0日内买卖点回测执行件，卡哈希逐批校验，复用t0_material_line数据面与成本判据"
+  desc_en: ""
+  plain_zh: "按预先注册好的规则卡跑T0日内多周期买卖点回测：读冻结的规则YAML卡驱动触发逻辑，数据面和成本判据全部复用现有材料线代码不重写，卡哈希写进manifest逐批校验防偷改，越闭卷切点直接报错停跑，产出parquet和yaml证据文件不落summary"
+  responsibility_layer: business
+- module_path: scripts/backtest/t0_state_match_matrix.py
+  domain_id: D_BACKTEST
+  name_zh: "T0状态匹配矩阵引擎"
+  name_en: "T0 state match matrix engine"
+  desc_zh: "T0买卖点按六段相位×周期×板块族×市值分位交叉统计四元组，排序只认Wilson LB，禁并格"
+  desc_en: ""
+  plain_zh: "把T0规则引擎跑出的买卖点按行情状态分组统计胜率：相位、分钟周期、板块族、市值分位做交叉格子，每格算样本数、原始胜率、Wilson置信下界和区间宽四个数，排序只认Wilson下界，样本不足30的格子如实标注不合并，防止小样本被美化成结论"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicator_factors/__init__.py
+  domain_id: D_FACTOR
+  name_zh: "技术指标因子换算包"
+  name_en: "technical indicator factors package"
+  desc_zh: "指标宽表→FCT-TECH因子值换算包入口（CNS-01接线批），惰性加载"
+  desc_en: ""
+  plain_zh: "技术指标变因子的换算包入口：把指标宽表里的技术指标按声明台账换算成注册因子值，指标读取全部走统一防前视读取器，只用当日截面数据零跨日信息，落仓前过七列Schema校验，供多因子合成和IC取证消费"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicator_factors/bridge.py
+  domain_id: D_FACTOR
+  name_zh: "指标因子换算桥"
+  name_en: "indicator-to-factor bridge"
+  desc_zh: "指标宽表→因子值换算主体：recipe驱动截面换算+z分数winsorize+OfflineStore落仓"
+  desc_en: ""
+  plain_zh: "指标宽表到因子值的换算桥：按台账逐个因子从指标读取器取当日截面，做z分数标准化并裁剪极端值到正负5个标准差，缺数记NULL不向前填充防止前视，落仓行必须通过仓库校验，是技术指标因子链路的主力执行件"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicator_factors/daily_job.py
+  domain_id: D_FACTOR
+  name_zh: "技术指标因子日快照件"
+  name_en: "daily factor snapshot job"
+  desc_zh: "调度事件唤醒的日频因子截面落仓件，幂等+失败不反噬唤醒链"
+  desc_en: ""
+  plain_zh: "每天把技术指标因子截面快照落一次仓：被调度器任务完成事件唤醒后读一次全市场当日截面，换算成因子值写入日仓，成功过的日子永久跳过保证幂等，自己出错只记告警不拖垮唤醒链，不建定时循环遵守事件触发纪律"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicator_factors/recipes.py
+  domain_id: D_FACTOR
+  name_zh: "技术指标因子换算台账"
+  name_en: "factor recipes ledger"
+  desc_zh: "factor_id→(indicator_id,column)+算子声明唯一真源，纯数据零逻辑"
+  desc_en: ""
+  plain_zh: "技术指标接因子的声明台账：每个因子对应哪个指标哪一列用什么换算算子都在这里登记，是整条换算链的唯一真源，纯数据零逻辑不抛错，非法声明由换算桥校验拦截，每列必须在该指标的注册输出清单里"
+  responsibility_layer: business
+- module_path: src/zephyr/data/cleaning_expectation_hosting.py
+  domain_id: D_DATA
+  name_zh: "清洗期望门控托管腿（第四段）"
+  name_en: "cleaning expectation gate hosting leg"
+  desc_zh: "R-M1-06 逐引擎接线收口台：期望套件校验+信号分级告警托管于 L13 排班腿"
+  desc_en: ""
+  plain_zh: "这东西每天跟着数据哨兵班次跑一遍：按账本抓近期数据，先核对表格样本是否符合期望套件，再逐只股票检查价格跳变和缺失率，发现问题就分级喊人。只看不改，绝不修改生产数据。"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/auction_strength.py
+  domain_id: D_FACTOR
+  name_zh: "竞价强度因子装配器"
+  name_en: "auction strength factor"
+  desc_zh: "BM-SEL-23-A-5因子输入装配：打分委托游资接力情绪引擎，零判据只装配"
+  desc_en: ""
+  plain_zh: "装配竞价强度因子的输入数据：打分逻辑完全复用现成的游资接力情绪引擎不重算，本件只负责把竞价量比昨收等原始字段按口径拼装好，量比基线只用严格早于当日的竞价日防前视，缺数据的股票返回空值不拍中性数冒充"
+  responsibility_layer: business
+- module_path: scripts/backtest/eval_auction_strength_ic.py
+  domain_id: D_FACTOR
+  name_zh: "竞价强度因子IC取证器"
+  name_en: "auction strength IC evaluator"
+  desc_zh: "因子注册条目evidence位IC回测取证（CNS-11验收面），Spearman截面秩相关"
+  desc_en: ""
+  plain_zh: "验证竞价强度因子有没有预测力：指定起止日期读竞价数据算因子值和次日涨幅做秩相关，产出逐日明细加汇总的可复核证据，截面太窄的日如实丢弃不凑数，只做取证不判盈亏"
+  responsibility_layer: business
+- module_path: src/zephyr/backtest/core/closed_book_gate.py
+  domain_id: D_BACKTEST
+  name_zh: "闭卷读取闸"
+  name_en: "closed book gate"
+  desc_zh: "HOLDOUT切点fail-closed前视拦截闸：研究模式越切点读库前抛错零SQL执行，考试模式必经exam_ticket"
+  desc_en: ""
+  plain_zh: "防止回测偷看未来数据的闭卷闸：从验证配置派生出保密切点，研究模式下读tick数据一旦越界在读库前就报错保证零次查询执行，闭卷考试必须持显式考卷工单并落审计行，没有切点真源直接报错不放行全窗口，堵住tick读口的前视泄露洞"
+  responsibility_layer: business
+- module_path: src/zephyr/backtest/regime_validation/chart_cell_materializer.py
+  domain_id: D_BACKTEST
+  name_zh: "图形胞格物化器"
+  name_en: "chart cell materializer"
+  desc_zh: "图形条件包→market_pattern_win_rate胞行物化，判据全委托条件包零自设"
+  desc_en: ""
+  plain_zh: "把图形形态条件包物化成可查的胜率表：按图形档、灰度、状态、板块族切格子，判据全部委托条件包自己不算数，全量重算重放靠数据库同键取最新保证幂等，读走统一读服务写走唯一写入通道，产出供胜率提供方查询消费"
+  responsibility_layer: business
+- module_path: src/zephyr/infrastructure/schema_migrations.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "DB Schema 迁移受控通道核心逻辑"
+  name_en: "DB schema migration runner core"
+  desc_zh: "读 schema_migrations 台账，对比 PG tracking 已应用记录，按序幂等应用迁移（dry-run/apply 两态）"
+  desc_en: ""
+  plain_zh: "给数据库改表结构装了一个带账本的施工队：每次改表都先记账、按顺序施工、干过的不再重复干，账本和数据库两边对不上就立刻停工报警。以前改表全靠手工重跑脚本，容易漏记和重复干活，现在有专人管账。"
+  responsibility_layer: infrastructure
+- module_path: scripts/governance/apply_schema_migrations.py
+  domain_id: D_GOVERNANCE
+  name_zh: "DB Schema 迁移通道 CLI"
+  name_en: "Schema migration CLI"
+  desc_zh: "apply_schema_migrations 命令行入口：--dry-run 预览/--apply 真应用，接 zephyr.infrastructure.schema_migrations"
+  desc_en: ""
+  plain_zh: "这是给数据库改表施工队准备的遥控器：不带开关按下只告诉你打算干哪些活（预览），带 --apply 开关按下才真开工。干一半停电也不怕，重来时它记得哪些已经干完。"
+  responsibility_layer: governance
+- module_path: scripts/backtest/reexam_cpcv_harness.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "CPCV 复考绞架"
+  name_en: "reexam CPCV harness"
+  desc_zh: "退役/在册策略重考执行件：sha256锁预注册卡+CPCV滚动考试+DSR判据全委托"
+  desc_en: ""
+  plain_zh: "这个脚本是对已上线的回测策略做复核考试用的：按 CPCV 交叉复证的方式把策略重新跑一遍，检查它此前的成绩是不是挑了好日子凑出来的，输出复核报告防止过拟合策略蒙混过关。"
+  responsibility_layer: governance
+- module_path: scripts/backtest/lane_f_grid_adapter.py
+  domain_id: D_BACKTEST
+  name_zh: "F车道网格配方适配器"
+  name_en: "Lane F Grid Recipe Adapter"
+  desc_zh: "把 F06 网格搜索产出的配方清单转译为可审假说并幂等登记进 E2 预审通道（factory_intake_pipeline:73 适配器欠账销项）。"
+  desc_en: "Translate F06 grid recipe manifests into auditable hypotheses with idempotent intake into the E2 precheck channel."
+  plain_zh: "它就像一个翻译官：网格搜索机器产出一堆配方参数卡，这个工具把每张卡改写成一句人能看懂的研究假设，交给考官审核，同样的卡不会被翻译两遍。"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

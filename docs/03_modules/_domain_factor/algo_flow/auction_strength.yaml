@@ -1,0 +1,29 @@
+# ALGO_FLOW 外部真源——auction_strength（factor 域，真源 src/zephyr/factor/auction_strength.py）
+# 2026-10-01 全流通清场落地批 P2-1 契约口径：docstring 内一行 external 锚，机器块落本册；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.factor.auction_strength
+source_of_truth: src/zephyr/factor/auction_strength.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 竞价快照终态（auction_snapshot argMax）+ pre_close（auction_book argMax）
+    #   code: fetch_auction_inputs
+    # 层: 处理
+    # - id: P1
+    #   name: 竞价量比装配（基线=严格早于当日的竞价日滚动，禁含当日；缺基线=None）
+    #   code: fetch_auction_inputs
+    # - id: P2
+    #   name: 打分委托（youzi_relay_emotion_engine.score_auction_strength，零判据只装配）
+    #   code: auction_strength_score
+    # 层: 输出
+    # - id: O1
+    #   name: 因子值行（rise_pct/volume_ratio/score），IC 取证与盘中等消费
+    #   code: attach_scores
+    # 边:
+    # I1 --> P1
+    # P1 --> P2
+    # P2 --> O1
+    # [/ALGO_FLOW]

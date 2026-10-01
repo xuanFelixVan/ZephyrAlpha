@@ -58951,4 +58951,144 @@ creation_tokens:
   capability: lane_f_grid_adapter
   merge_evaluation: "内收销项：factory_intake_pipeline.py:73 欠账销项，F 车道适配唯一实现"
 
+- file: docs/03_modules/_domain_backtest/algo_flow/chart_cell_materializer.yaml
+  token: backtest-algo-flow-chart-cell-materializer-20261001
+  created_by: st-ffchief-20261001
+  capability: backtest_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_backtest/algo_flow/closed_book_gate.yaml
+  token: backtest-algo-flow-closed-book-gate-20261001
+  created_by: st-ffchief-20261001
+  capability: backtest_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+  token: construction-workflow-map-gen-generate-construction-workflow-map-20261001
+  created_by: st-ffchief-20261001
+  capability: construction_workflow_map_gen
+  merge_evaluation: "全流通清场L07考古落地合并缺口：st-final-build波次案卷生成器自草稿树恢复，CCR仅config yaml token而脚本token佚失补登；消费方=对抗尺在袋，无同真源可派生，登记保留"
+- file: docs/_working/circulation_chief/logs/wave4d.md
+  token: circulation-chief-lane-log-wave4d-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation_chief_lane_log
+  merge_evaluation: "wave4-D 车道日志：同真源派生（车道执行留痕，无独立第二真源）；有消费（战役收口对账）；不并（车道唯一日志文件）"
+- file: docs/_working/circulation_chief/logs/wave4f.md
+  token: circulation-chief-lane-log-wave4f-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation_chief_lane_log
+  merge_evaluation: "车道任务日志=任务绑定工作件，随任务 TTL；同目录既有 wave4e/lane-* 先例同簇，非可合并真源（各车道独立留痕），不并"
+- file: docs/01_policies_and_standards/_registry/catalogs/schema_migrations.yaml
+  token: schema-migration-ledger-schema-migrations-20261001
+  created_by: st-ffchief-20261001
+  capability: schema_migration_ledger
+  merge_evaluation: "F123 P0 新号：schema 迁移通道台账本体（缺失通道新建），migration_registry.yaml 为异对象（ARCH-031 模块映射）不并，无同真源可派生条目"
+- file: scripts/governance/apply_schema_migrations.py
+  token: schema-migration-cli-apply-schema-migrations-20261001
+  created_by: st-ffchief-20261001
+  capability: schema_migration_cli
+  merge_evaluation: "F123 P0 新号：迁移通道 CLI 部署器（缺失通道新建），apply_*_ddl 散件为异对象（单脚本部署器）不并"
+- file: src/zephyr/infrastructure/schema_migrations.py
+  token: schema-migration-channel-schema-migrations-20261001
+  created_by: st-ffchief-20261001
+  capability: schema_migration_channel
+  merge_evaluation: "F123 P0 新号：迁移 runner 核心逻辑（缺失通道新建），verify_schema_health 为异对象（depgraph 专属健康校验）不并"
+- file: data/registers/metaq-io-2018/china_2018_153.matrix.json
+  token: metaq-io2018-register-china-2018-153matrix-20261001
+  created_by: st-ffchief-20261001
+  capability: metaq-io2018-register
+  merge_evaluation: "st-metaq-gc-20260924 283 问战役 WO-005/008 独占产物册：原路径 metaq_io_2018 触 R5 数字后缀门（_NN 禁令），改名 metaq-io-2018 语义不变非新真源，消费方 prepare_io_2018.py OUT 同步改"
+- file: data/registers/metaq-io-2018/china_2018_153.rda
+  token: metaq-io2018-register-china-2018-153-20261001
+  created_by: st-ffchief-20261001
+  capability: metaq-io2018-register
+  merge_evaluation: "st-metaq-gc-20260924 283 问战役 WO-005/008 独占产物册：原路径 metaq_io_2018 触 R5 数字后缀门（_NN 禁令），改名 metaq-io-2018 语义不变非新真源，消费方 prepare_io_2018.py OUT 同步改"
+- file: data/registers/metaq-io-2018/china_2020_153.matrix.json
+  token: metaq-io2018-register-china-2020-153matrix-20261001
+  created_by: st-ffchief-20261001
+  capability: metaq-io2018-register
+  merge_evaluation: "st-metaq-gc-20260924 283 问战役 WO-005/008 独占产物册：原路径 metaq_io_2018 触 R5 数字后缀门（_NN 禁令），改名 metaq-io-2018 语义不变非新真源，消费方 prepare_io_2018.py OUT 同步改"
+- file: data/registers/metaq-io-2018/china_2020_153.rda
+  token: metaq-io2018-register-china-2020-153-20261001
+  created_by: st-ffchief-20261001
+  capability: metaq-io2018-register
+  merge_evaluation: "st-metaq-gc-20260924 283 问战役 WO-005/008 独占产物册：原路径 metaq_io_2018 触 R5 数字后缀门（_NN 禁令），改名 metaq-io-2018 语义不变非新真源，消费方 prepare_io_2018.py OUT 同步改"
+- file: data/registers/metaq-io-2018/io_2018_alignment_report.json
+  token: metaq-io2018-register-io-2018-alignment-report-20261001
+  created_by: st-ffchief-20261001
+  capability: metaq-io2018-register
+  merge_evaluation: "st-metaq-gc-20260924 283 问战役 WO-005/008 独占产物册：原路径 metaq_io_2018 触 R5 数字后缀门（_NN 禁令），改名 metaq-io-2018 语义不变非新真源，消费方 prepare_io_2018.py OUT 同步改"
+- file: scripts/backtest/reexam_cpcv_harness.py
+  token: reexam-cpcv-harness-reexam-cpcv-harness-20261001
+  created_by: st-ffchief-20261001
+  capability: reexam_cpcv_harness
+  merge_evaluation: "全流通清场L16考古落地(MOD-BT-IBT-REEXAM/reexam_strategy_lane战役册在案)：唯一执行件无同真源可派生，LANE-REEXAM消费在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: docs/03_modules/_domain_factor/algo_flow/auction_strength.yaml
+  token: factor-algo-flow-auction-strength-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_factor/algo_flow/technical_indicator_factors.yaml
+  token: factor-algo-flow-technical-indicator-factors-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_factor/algo_flow/technical_indicator_factors__bridge.yaml
+  token: factor-algo-flow-technical-indicator-factors--bridge-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_factor/algo_flow/technical_indicator_factors__daily_job.yaml
+  token: factor-algo-flow-technical-indicator-factors--daily-job-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_factor/algo_flow/technical_indicator_factors_bridge.yaml
+  token: factor-algo-flow-technical-indicator-factors-bridge-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_factor/algo_flow/technical_indicator_factors_daily_job.yaml
+  token: factor-algo-flow-technical-indicator-factors-daily-job-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_factor/algo_flow/technical_indicator_factors_recipes.yaml
+  token: factor-algo-flow-technical-indicator-factors-recipes-20261001
+  created_by: st-ffchief-20261001
+  capability: factor_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_data/algo_flow/date_normalize.yaml
+  token: data-algo-flow-date-normalize-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_data/algo_flow/dual_source_guard.yaml
+  token: data-algo-flow-dual-source-guard-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_data/algo_flow/miniqmt_caliber_sentinel.yaml
+  token: data-algo-flow-miniqmt-caliber-sentinel-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_data/algo_flow/sector_line/index.md
+  token: data-algo-flow-index-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_data/algo_flow/wave3/date_normalize.yaml
+  token: data-algo-flow-wave3-date-normalize-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow_wave3
+  merge_evaluation: "ALGO_FLOW外置册P2-1契约(子目录避平铺硬限120)"
+- file: docs/03_modules/_domain_data/algo_flow/wave3/dual_source_guard.yaml
+  token: data-algo-flow-wave3-dual-source-guard-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow_wave3
+  merge_evaluation: "ALGO_FLOW外置册P2-1契约(子目录避平铺硬限120)"
+- file: docs/03_modules/_domain_data/algo_flow/wave3/miniqmt_caliber_sentinel.yaml
+  token: data-algo-flow-wave3-miniqmt-caliber-sentinel-20261001
+  created_by: st-ffchief-20261001
+  capability: data_algo_flow_wave3
+  merge_evaluation: "ALGO_FLOW外置册P2-1契约(子目录避平铺硬限120)"
 di_seam_exemptions: []
