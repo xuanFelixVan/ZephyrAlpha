@@ -62384,6 +62384,15 @@ entries:
   plain_zh: "它就像一个翻译官：网格搜索机器产出一堆配方参数卡，这个工具把每张卡改写成一句人能看懂的研究假设，交给考官审核，同样的卡不会被翻译两遍。"
   responsibility_layer: business
 
+- module_path: scripts/_archive/run_ollama_exam.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "Ollama入职考试运行脚本（已归档）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给AI员工跑入职考试的老脚本，考卷是Ollama本地模型的答题能力；现已退役归档，新考试走后继工具"
+  responsibility_layer: infrastructure
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

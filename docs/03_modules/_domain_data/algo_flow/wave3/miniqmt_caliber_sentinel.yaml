@@ -1,0 +1,23 @@
+# ALGO_FLOW 外部真源——miniqmt_caliber_sentinel（_domain_data 域 wave3 子册，真源 src/zephyr/data/miniqmt_caliber_sentinel.py）
+# 2026-10-01 全流通清场落地批 P2-1 契约口径：docstring 内一行 external 锚，机器块落本册（子目录避平铺容量硬限）；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.data.miniqmt_caliber_sentinel
+source_of_truth: src/zephyr/data/miniqmt_caliber_sentinel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 界内写域文件集（enforced files）+ 待修清单（PENDING_HANDOFF_FILES）
+    # 层: 处理
+    # - id: P1
+    #   name: 旧口径残留扫描（源退役后禁用 API 面命中即 finding）
+    #   code: find_old_caliber/scan_file/enforced_findings
+    # 层: 输出
+    # - id: O1
+    #   name: CaliberFinding 列表 + CLI 退出码（回退即红，界内清零为绿）
+    # 边:
+    # I1 --> P1
+    # P1 --> O1
+    # [/ALGO_FLOW]
