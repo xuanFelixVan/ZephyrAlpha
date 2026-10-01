@@ -1,0 +1,33 @@
+# [A_config] module_id=CFG-IBT-V2-POOL | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+# IBT-v2 考卷（池清单）。真源=CH c1_backtest.strategy_screen bothwin 及格集
+# （strategy_screen_query.py bothwin 只读实测：tested=85 / passed=14），非手抄名单。
+# 池被盗后按台账再生成的复原件；与背笼格式合同=ibt_runner._apply_pool_override（v1.1）逐字段对齐。
+schema_version: "1.1"
+ttl: task_bound
+pool_id: FRESH-V2-20261001
+campaign: fullscore_night/03_integrated_backtest
+created: '2026-10-01'
+created_by: st-fullscore-20260930
+members:
+  FACT-4f749668: c4_fact_4f749668.py
+  FACT-4228020a: c4_fact_4228020a.py
+  FACT-e293e217: c4_fact_e293e217.py
+  FACT-e831084c: c4_fact_e831084c.py
+  FACT-4b200528: c4_fact_4b200528.py
+  CAND-8d000bf3ccc3: c4_8d000bf3ccc3_pb_poe.py
+  CAND-e3da6fa71af1: c4_e3da6fa71af1_panic_rebound.py
+  CAND-29eb91dbaf60: c4_29eb91dbaf60_crash_dodge.py
+  CAND-dc5b80aa3614: c4_dc5b80aa3614_tsmall100.py
+  FACT-4db4c41e: c4_fact_4db4c41e.py
+  CAND-5301c5d9d7c8: c4_5301c5d9d7c8_small_cap_hl.py
+  CAND-8664521af1a0: c4_8664521af1a0_snake_cap.py
+  CAND-7f7e5f935dfc: c4_7f7e5f935dfc_dmi_timing.py
+  CAND-9ce75aa27ce5: c4_9ce75aa27ce5_bluechip_ma.py
+note: >-
+  IBT-v2 池=14 员（留任 8：5 FACT + 8d00/e3da/29eb；新进 6：dc5b/4db4c41e/5301/8664/7f7e/9ce7）。
+  复原依据=CH strategy_screen bothwin 及格集 tested=85/passed=14（2026-10-01 只读实测），与背笼交接记忆名单
+  14/14 逐一相符，无出入；FACT 族员数=6（含 4db4c41e）与 prereg 简报口径一致。剔除 7 有案
+  （c4ec6332c07f/4440d07f973f/eaddc3f9db4e/d06cab686cef/a4543012b464/bd42540f86e4/6a6ec8869ddb），
+  新窗翻转入局失败 2（4440d07f973f IS=-0.233、c72318f2da1c IS=-0.064，批 C4-OOS3-20261001）。
+  披露：FACT-4db4c41e 有裁定#322 旧窗死刑在案，#326 命 85 件全量重考，本池按 bothwin 机械台账纳入，
+  出处张力如实记入 fresh_pool_v2_notes.md，不替判据做主。对账全表=同目录 fresh_pool_v2_notes.md。
