@@ -944,3 +944,8 @@ exemptions:
   file: src/zephyr/gov_enforcement/registry_alignment.py
   line: 700
   reason: '产业链字典=registry catalog，vocab 段是被交叉校验的数据而非加载词表（st-nightsweep-sw16-20260929 代登记；noqa 随 registry_alignment.py 落地批引入，UNREGISTERED 闭环补账）'
+
+- category: business_subset
+  file: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+  line: 223
+  reason: '簿03反洗白域规则：handoff环节禁自证automated/inspection（比较verifiability词表值的业务判据，非词表成员枚举硬编码）（st-ffchief-20261001 收官手术代登记；0119/0120 死信批重投行号回准 231→223）'
