@@ -50,6 +50,33 @@ def test_get_service_secret_feishu_missing_returns_empty(
     assert get_service_secret("ZEPHYR_FEISHU_WEBHOOK", "feishu", required=False) == ""
 
 
+# ============ okx service 登记（2026-10-01 密钥搬家战役） ============
+# 同 F105 feishu 根因：ex_core/adapters/okx_broker.py 以 service="okx" 调
+# get_service_secret，未登记时 connect() 必抛 unknown service（读不到保险柜
+# 仓根 .env 的 OKX_* 值）。env_file 与 config/secret_registry.yaml 对齐=.env。
+
+
+def test_okx_service_registered_in_service_env_files() -> None:
+    """service="okx" 必须登记且指向仓根 .env（registry OKX_* 条目 env_file 对齐）。"""
+    assert secrets_module._SERVICE_ENV_FILES.get("okx") == ".env"
+
+
+def test_get_service_secret_okx_reads_env_through_module(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """okx 登记后经模块读取（env 优先命中即返回，不触真实保险柜文件）。"""
+    monkeypatch.setenv("OKX_SECRET_KEY", "fake-test-only-secret")
+    assert get_service_secret("OKX_SECRET_KEY", "okx") == "fake-test-only-secret"
+
+
+def test_get_service_secret_okx_passphrase_optional(monkeypatch: pytest.MonkeyPatch) -> None:
+    """OKX_PASSPHRASE required=False：env 未设置且映射指向 .env（含真实值时也不抛），
+    以假名键验证降级语义——用未登记真值的假键名避免读生产保险柜。"""
+    monkeypatch.delenv("ZEPHYR_OKX_TEST_PASSPHRASE", raising=False)
+    # ZEPHYR_OKX_TEST_PASSPHRASE 不在任何 .env 文件中 → required=False 返回空串
+    assert get_service_secret("ZEPHYR_OKX_TEST_PASSPHRASE", "okx", required=False) == ""
+
+
 def test_resolve_webhook_returns_override(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
     """显式 override 优先，不经 secret 通道。"""
     monkeypatch.setenv("ZEPHYR_FEISHU_WEBHOOK", "https://open.feishu.cn/hook/from-env")

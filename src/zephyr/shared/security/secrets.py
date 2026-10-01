@@ -240,6 +240,20 @@ def get_secret_fail_closed(key: str) -> str:
     return value
 
 
+def mask_identifier_tail(identifier: str | None, *, keep: int = 4) -> str:
+    """标识符脱敏：仅保留末 keep 位，其余以 * 遮蔽（券商账号进日志口径）。
+
+    短号（len <= keep）/ 空值 / None 一律全遮 ***——留尾反而等于原样泄露。
+    tests/scripts/test_run_post_settlement_disclosure.py::test_mask_identifier_tail_caliber 为口径尺。
+    """
+    if not identifier:
+        return "***"
+    text = str(identifier)
+    if len(text) <= keep:
+        return "***"
+    return "***" + text[-keep:]
+
+
 def sanitize_secret(name: str, value: str) -> str:
     """安全脱敏——仅暴露长度，绝不暴露原始值。
 
@@ -548,6 +562,11 @@ _SERVICE_ENV_FILES: Final[dict[str, str]] = {
     # F105 修复：security_event_bus 以 service="feishu" 调 get_service_secret，
     # 未登记前每次必抛 unknown service → 永远降级裸 os.environ 读取（信任绑定失效）。
     "feishu": "config/.env.feishu",
+    # OKX 密钥搬家（2026-10-01 通宵战役）：ex_core/adapters/okx_broker.py 以
+    # service="okx" 调 get_service_secret，未登记前 connect() 必抛 unknown service
+    # （同 F105 feishu 根因）。env_file 与 config/secret_registry.yaml 的 OKX_*
+    # 条目对齐=仓根 .env（包导入自动加载通道），非 config/.env.okx。
+    "okx": ".env",
 }
 
 
