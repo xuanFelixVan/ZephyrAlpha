@@ -51,6 +51,10 @@ class TestBandBoundariesAreReferencesNotInventions:
 
         spec = importlib.util.spec_from_file_location("_cp_drift_probe", cp_py)
         mod = importlib.util.module_from_spec(spec)
+        # Py3.12 dataclasses._is_type 查 sys.modules[cls.__module__]：动态加载不先挂载
+        # 即 AttributeError: 'NoneType' object has no attribute '__dict__'（R4/R5 旧债清偿；
+        # 挂载先例=algo_flow_link_gate.py L175 / translated_strategy_adapter.py L140）
+        sys.modules["_cp_drift_probe"] = mod
         spec.loader.exec_module(mod)
         assert tuple(mod._BAND_EDGES) == pack.EMOTION_B5_EDGES
         assert tuple(mod._BAND_LABELS) == pack.EMOTION_B5_LABELS
