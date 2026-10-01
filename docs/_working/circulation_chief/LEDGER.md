@@ -77,3 +77,14 @@ ttl: task_bound
 - 15:10 lane-f04 完工：1bd86833fd 清洗四引擎接线终章（P0#1 残余面销账，26+246 测绿）；wave4-E 完工回报（触发面 9169→5194 出清+F130 已墓碑零动作+F87 有活消费翻案不退役）
 - 15:20 总包死袋手术：-0033 净 message 重投（FORGED-GW 车道手写 GW 标记违规）；-0045 撇 gitignored logs 撇出七件真内容以 -0050 重袋（学费：campaign logs/ 是 .gitignore 区禁入袋）；-0022 done（S1 三袋链最终全落）
 - 15:20 pending 清零：原始 464 脏面+施工批次全排水（done 647，processing 仅余 1 慢袋）；在飞代理 7 路（datapipe/land-docs/land-code/wave4-B/D/F/G）
+- 15:4x 三车道齐收：wave4-B（F24 E5 去重挂 E4 归档段+阈值入真源 config/synergy_dedup.yaml；I-06 健康探针 run_one_shot_probe+任务实注册，冒烟逮真信号；41 测绿，袋 0054）/wave4-F（F72 导出腿挂 plan_execute 成功路径+诚实空文件语义+resource_sampler Join-Path 字面量抽取根修采样盲区；69 测绿，袋 0062）/wave4-G（F123 schema 迁移三件套 REG-SCHEMA-MIG-001+apply_schema_migrations.py+DatabaseService.migrate，0001_baseline 34 脚本指纹 e2e 实落；21 测绿，袋 0076；学费=batch_creation_tokens 目录前缀误插 50 条已外科清理）
+- 15:4x land-docs 战役文档 D1-D4/4 全落（9d987e6/32049f1/9738d98：72 件 skeleton+主文档+LEDGER token 77 条随批）
+- 16:0x wave4-D 收工：V5 register() 频率护栏（1860s 窗+降级语义+审计 JSONL+logical 继承，89/221/78/25 全过，袋 0066）/V4 实杀 6 僵尸守护+清 129 死 pid 心跳文件+27 held_files 全释放（含翻译册）/V1 metaq 定性读侧审计非 reconciler（修自相矛盾注释+豁免登记，任务不停）；遗留=mark_logical 授予无核验（W-29 扩权面）待后续件
+- 16:0x wave4-F 袋 0062 撇日志以 -0082 重袋（同 -0045 术式）
+- 16:2x datapipe 收工：三修全落（RepoRate 紧凑日期根因=拼参格式非上游变更 6d4177ec/毒丸隔离机制 f7bf5d72/journal 并发 msvcrt+原子替换 75947a5c）+四查结案（pf_alloc 自愈/hk_connect 裁定#257 已退/catchup 设计如此/估值 v2 零消费移交 Owner 净零门）
+- 16:2x wave4-B 袋落地 7fc7df27（E5 接线+健康探针+STARTUP 双载体头注）
+- 16:4x land-docs 收官：袋B 2 件+战役文档四批 73 件落 HEAD；token ~99 条 CAS 入册；死信 12 修；四袋在飞（0070 metaq 改名件/0071 机生索引/0072 袋A 残部/0081 ALGO_FLOW 卡纠偏）；四项 Owner 门位遗留规范移交（config 资源天花板/GOV-DOC-018/.rda 契约/logs 政策）
+- 16:4x wave4-D 袋落地 79eeda72（V5 护栏+V4 清理+V1 定性进主干）
+- 23:5x land-code 终报收讫：5 族 46 件落地（620+ 测绿基线）+17 类死因 30+ 次全根因修复+token17/词条18/ALGO_FLOW 册12；移交 2 袋+急报 44 条 staged 幻影删除
+- 00:1x 幻影删除确诊修复：44 条 staged-D 全部盘面在盘（零真缺）=共享索引陈旧快照幻影，restore --staged 全量复位（S7 红蓝新增向量=索引幻影检测）
+- 00:2x 总包接手移交 2 袋：reexam（token 原已在册，携双册重投 -0118）/wave 批B 13 件（11 token 在册携双册 -0119）；belt 在飞 4 载体 44 件消化中
