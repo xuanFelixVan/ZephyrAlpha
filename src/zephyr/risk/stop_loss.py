@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValueError(非法scope/限频); StateCorruptError→拒绝二次进入(fail-closed)
-# [TESTS] tests/risk/test_l04_risk_management.py; tests/risk/test_kill_switch_state_persistence.py
+# [TESTS] tests/risk/test_l04_risk_management.py; tests/risk/test_kill_switch_state_persistence.py; tests/risk/test_kill_switch_t1_bucket.py
 # [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -241,6 +241,41 @@ def _normalize_live_holdings(raw: dict) -> dict[str, float]:
     return normalized
 
 
+def _probe_available_qty(broker, symbol: str) -> float | None:
+    """可卖量三级探针链（ARCH-127 T+1 分桶）。
+
+    顺序：available_qty(symbol) → get_available_qty(symbol) → get_holdings()
+    柜台镜像行 available_qty 字段。真桥门面（qmt_file_bridge_broker）清算面
+    暴露名是 get_available_qty——只认 available_qty 会静默降级全量发单。
+    某级不存在（非 callable）或调用抛异常 → 落到下一级（单探针异常不遮蔽
+    后续探针/后续标的）；三级全不可用 → None（可卖量未知=既有全量发单行为，
+    清算不因探测阻断）。
+    """
+    import logging
+
+    _logger = logging.getLogger(__name__)
+
+    for probe_name in ("available_qty", "get_available_qty", "get_holdings"):
+        probe = getattr(broker, probe_name, None)
+        if not callable(probe):
+            continue
+        try:
+            if probe_name == "get_holdings":
+                row = (probe() or {}).get(symbol)
+                if isinstance(row, dict) and row.get("available_qty") is not None:
+                    return max(float(row["available_qty"]), 0.0)
+                continue  # 无 available_qty 字段的镜像形态=本级不可用
+            return max(float(probe(symbol)), 0.0)
+        except Exception as exc:  # noqa: BLE001 — 单探针异常降级下一级，不遮蔽后续
+            _logger.warning(
+                "KILL_SWITCH_AVAIL_PROBE_FAIL probe=%s symbol=%s error=%s",
+                probe_name,
+                symbol,
+                exc,
+            )
+    return None
+
+
 def _resolve_live_positions(broker, fallback_positions: dict) -> dict[str, float]:
     """以券商实时持仓为准（Qwen P0-3②：非调用方快照）。
 
@@ -323,6 +358,8 @@ def execute_kill_switch_liquidation(
         - cancel_errors: 撤单失败的 (order_id, error) 列表
         - liquidation_orders: 成功平仓的 symbol 列表
         - liquidation_errors: 平仓失败的 (symbol, error) 列表
+        - t_plus_1_rejected: T+1 锁定桶 (symbol, locked_qty) 列表（ARCH-127；
+            交易所当日买入约束而非执行失败，不计入 all_success=False，次日再清）
         - total_time_seconds: 总执行耗时
         - all_success: 是否全部成功
 
@@ -353,6 +390,7 @@ def execute_kill_switch_liquidation(
         "cancel_errors": [],
         "liquidation_orders": [],
         "liquidation_errors": [],
+        "t_plus_1_rejected": [],
         "total_time_seconds": 0.0,
         "all_success": True,
     }
@@ -441,7 +479,7 @@ def execute_kill_switch_liquidation(
                         event_id,
                         order_id,
                     )
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 单点撤单失败隔离计数，不阻断清算
                     result["cancel_errors"].append((order_id, str(exc)))
                     result["all_success"] = False
                     _logger.error(
@@ -474,21 +512,56 @@ def execute_kill_switch_liquidation(
                 for symbol, qty in batch:
                     try:
                         direction = "SELL" if qty > 0 else "BUY"
-                        broker.place_order(
-                            symbol=symbol,
-                            direction=direction,
-                            qty=abs(qty),
-                            order_type="MARKET",
-                        )
-                        result["liquidation_orders"].append(symbol)
-                        _logger.info(
-                            "KILL_SWITCH_LIQUIDATE_OK event_id=%s symbol=%s qty=%s direction=%s",
-                            event_id,
-                            symbol,
-                            abs(qty),
-                            direction,
-                        )
-                    except Exception as exc:
+                        full_qty = abs(qty)
+                        sell_qty = full_qty
+                        locked_qty = 0.0
+                        if qty > 0:
+                            # ARCH-127 T+1 分桶：多头按可卖量探针链分桶（当日买入
+                            # 锁定量次日再清）；空头 BUY 回补无 T+1 约束不分桶；
+                            # 探针全不可用=None=既有全量发单（不阻断清算）
+                            available = _probe_available_qty(broker, symbol)
+                            if available is not None:
+                                sell_qty = min(full_qty, available)
+                                locked_qty = round(full_qty - sell_qty, 6)
+                        if sell_qty > 0:
+                            broker.place_order(
+                                symbol=symbol,
+                                direction=direction,
+                                qty=sell_qty,
+                                order_type="MARKET",
+                            )
+                            result["liquidation_orders"].append(symbol)
+                            if locked_qty > 0:
+                                # 告警分化：部分锁定=可卖部分已清+锁定量留痕（非失败）
+                                _logger.warning(
+                                    "KILL_SWITCH_LIQUIDATE_PARTIAL_T1 event_id=%s symbol=%s "
+                                    "sold=%s t_plus_1_locked=%s (锁定部分次日再清)",
+                                    event_id,
+                                    symbol,
+                                    sell_qty,
+                                    locked_qty,
+                                )
+                            else:
+                                _logger.info(
+                                    "KILL_SWITCH_LIQUIDATE_OK event_id=%s symbol=%s qty=%s direction=%s",
+                                    event_id,
+                                    symbol,
+                                    abs(qty),
+                                    direction,
+                                )
+                        else:
+                            # 告警分化：全锁定零发单（当日买入，全部次日再清）
+                            _logger.warning(
+                                "KILL_SWITCH_LIQUIDATE_T1_FULL_LOCKED event_id=%s symbol=%s qty=%s "
+                                "(当日买入全锁定零发单, 次日再清)",
+                                event_id,
+                                symbol,
+                                full_qty,
+                            )
+                        if locked_qty > 0:
+                            # T+1 锁定是交易所约束而非执行失败：不计 all_success=False
+                            result["t_plus_1_rejected"].append((symbol, locked_qty))
+                    except Exception as exc:  # noqa: BLE001 — 单标的失败隔离计数，不阻断批次
                         result["liquidation_errors"].append((symbol, str(exc)))
                         result["all_success"] = False
                         _logger.error(

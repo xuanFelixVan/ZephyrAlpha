@@ -406,7 +406,7 @@ def _plan_fill(target: _FillTarget, holding: bool, cash: float, shares: float, p
     return signal, events, cash, shares
 
 
-def replay_one(cid: str, module_path: Path, day: str, run_id: str) -> dict:
+def replay_one(cid: str, module_path: Path, day: str, run_id: str, *, state_dir: Path | None = None) -> dict:
     """单候选重放：build() 尾行目标仓位→方案C 收盘成交（entry/exit/hold 标记市场）。"""
     spec = importlib.util.spec_from_file_location(f"simreplay_{cid.replace('-', '_')}", module_path)
     if spec is None or spec.loader is None:
@@ -434,6 +434,30 @@ def replay_one(cid: str, module_path: Path, day: str, run_id: str) -> dict:
     if not exists or (shares == 0 and cash <= 0 and target_pos == 0):
         cash, prev_equity = _OBSERVE_NOTIONAL, _OBSERVE_NOTIONAL
     holding = shares > 0
+
+    # ── 风控闸（[整装回测备战W1] 接线②）：六态机唯一仲裁，risk_blocked 不进重放成交 ──
+    risk = _evaluate_sim_risk(day, equity=prev_equity, state_dir=state_dir)
+    if not risk["allow_new_position"]:
+        liquidation = None
+        if risk["kill_switch_active"] or risk["state"] == "KILL":
+            liquidation = _apply_sim_kill_switch_liquidation(
+                day,
+                _SimPos(cid=cid, cash=cash, shares=shares, pos_symbol=pos_sym, px=px),
+                reason=f"E4 {risk['state']}",
+                state_dir=state_dir,
+                prev_equity=prev_equity,
+            )
+        return {
+            "cid": cid,
+            "target_position": target_pos,
+            "signal": "risk_blocked",
+            "module": module_path.name,
+            "events": 0,
+            "equity": round(cash + shares * px, 2),
+            "risk": risk,
+            "liquidation": liquidation,
+        }
+
     note = f"E4 观察档翻译件重放（{_OBSERVE_MODE} 平面，名义本金 {_OBSERVE_NOTIONAL:.0f} flat 非注册表）"
     fill = _FillTarget(
         day=day,
@@ -491,14 +515,18 @@ def _write_observe(pocket: list, events: list[list]) -> None:
             raise RuntimeError("观察事件落库未确认——fail-closed")
 
 
-def e4_replay(day: str, limit: int) -> dict:
-    """平面2：E4 观察档批量重放（单条失败收集不连坐；全失败才 fail-closed）。"""
+def e4_replay(day: str, limit: int, *, state_dir: Path | None = None) -> dict:
+    """平面2：E4 观察档批量重放（单条失败收集不连坐；全失败才 fail-closed）。
+
+    风控闸（[整装回测备战W1] 接线②）：逐候选过 _evaluate_sim_risk，拒绝者记
+    risk_blocked 不进重放成交；KILL 追加熔断清算台账行。
+    """
     cands = e4_candidates()[: max(limit, 0)]
     out: dict = {"replayed": [], "errors": [], "day": day}
     run_id = f"sim-observe-{_now_utc().strftime('%Y%m%d%H%M%S')}"
     for cid, module_path in cands:
         try:
-            res = replay_one(cid, module_path, day, run_id)
+            res = replay_one(cid, module_path, day, run_id, state_dir=state_dir)
             out["replayed"].append(res)
             subject = cid
             row = [
@@ -560,11 +588,13 @@ def _plan_position(cid: str) -> tuple[float, float, float, bool]:
     return (float(rows[0][0] or 0.0), float(rows[0][1] or 0.0), float(rows[0][2] or 0.0), True)
 
 
-def plan_execute(day: str) -> dict:
+def plan_execute(day: str, *, state_dir: Path | None = None) -> dict:
     """平面4：日计划姿态→SIM-PLAN-001 钱包模拟单（裁决 §表一执行体）。
 
     数据：000300（不追高阈值）+510300 收盘价（成交价，kline_etf_daily）。
     方案C 收盘价成交、账本同款成本模型；任何数据缺失→不下单并如实留痕。
+    风控闸（[整装回测备战W1]）：_evaluate_sim_risk 六态机唯一仲裁+kill switch
+    禁旁路；拒绝当日禁开仓，KILL 追加熔断清算台账行。
     """
     from zephyr.data.table_registry import get_registry  # noqa: PLC0415
 
@@ -600,6 +630,24 @@ def plan_execute(day: str) -> dict:
     rows3 = _q(SQL_PLAN_ETF_CLOSE.format(kline_etf=k_etf, day=day))
     px = float(rows3[0][0]) if rows3 and rows3[0][0] is not None else None
     has_px = px is not None and math.isfinite(px)
+
+    # ── 风控闸（[整装回测备战W1] 接线①）：六态机唯一仲裁，禁旁路 ──
+    risk = _evaluate_sim_risk(day, equity=prev_equity, state_dir=state_dir)
+    if not risk["allow_new_position"]:
+        return _sim_risk_blocked(
+            day,
+            _SimPos(
+                cid=PLAN_POCKET_ID,
+                cash=cash,
+                shares=shares,
+                pos_symbol=PLAN_SYMBOL if shares > 0 else "",
+                px=px,
+            ),
+            source="plan_execute",
+            subject=PLAN_POCKET_ID,
+            risk=risk,
+            state_dir=state_dir,
+        )
 
     action = _plan_decision(posture, holding, ret_1d, has_px)
     events: list[list] = []
@@ -1135,6 +1183,19 @@ def bridge_execute(
         return {**out, "executed": False, "why": "already_executed_idempotent_skip", "exit_code": 0}
     if dry_run:
         return {**out, "executed": False, "why": "dry_run_no_action", "would_submit": len(rows), "exit_code": 0}
+    # ── 两级风险闸（[整装回测备战W1] 接线③）：级1 kill switch 整批拒；
+    # 级2 六态机 defensive_only 拒新开仓（buy）、减险单（sell）放行 ──
+    gate = _bridge_risk_gate(rows, state_dir=state_dir)
+    out["risk_gate"] = {
+        "kill_switch_active": gate["kill_switch_active"],
+        "drawdown_state": gate["drawdown_state"],
+        "blocked_rows": len(gate["blocked_rows"]),
+    }
+    if gate["kill_switch_active"]:
+        return {**out, "executed": False, "why": "risk_blocked_kill_switch", "exit_code": 0}
+    rows = gate["allowed_rows"]
+    if not rows:
+        return {**out, "executed": False, "why": "risk_blocked_drawdown_halt", "exit_code": 0}
     order_manager = _new_paper_order_manager()  # 正门装配：禁裸 OrderManager()（F62/M7-06）
     order_manager.begin_signal_batch(f"{_BRIDGE_SIGNAL_BATCH_PREFIX}-{day}", day)  # R-L3 幂等键批次上下文
     try:
@@ -1153,6 +1214,275 @@ def bridge_execute(
     out["executed"] = True
     out["exit_code"] = 4 if failed else 0  # 0=全成；4=有单失败（任务契约）
     return out
+
+
+def _bridge_risk_gate(rows: list[dict], *, state_dir: Path | None = None) -> dict:
+    """bridge-execute 下单前两级风险闸（[整装回测备战W1] 三路径接线③）。
+
+    级1：kill switch 闩（DefaultRiskValidator.kill_switch_active，禁旁路）→ 整批拒；
+    级2：回撤六态机（DrawdownStateMachine）defensive_only（CRISIS/KILL）→ 拒新开仓
+    （buy），减险单（sell）放行——风险只减不增。
+
+    Returns:
+        {"kill_switch_active": bool, "drawdown_state": str,
+         "allowed_rows": list, "blocked_rows": list}
+    """
+    validator, machine = _assemble_sim_risk_layer(state_dir)
+    if validator.kill_switch_active:
+        return {
+            "kill_switch_active": True,
+            "drawdown_state": machine.current.value,
+            "allowed_rows": [],
+            "blocked_rows": list(rows),
+        }
+    if machine.defensive_only:
+        return {
+            "kill_switch_active": False,
+            "drawdown_state": machine.current.value,
+            "allowed_rows": [r for r in rows if r["action"] == "sell"],
+            "blocked_rows": [r for r in rows if r["action"] != "sell"],
+        }
+    return {
+        "kill_switch_active": False,
+        "drawdown_state": machine.current.value,
+        "allowed_rows": list(rows),
+        "blocked_rows": [],
+    }
+
+
+# ══ 风控接线（[整装回测备战W1]：三路径风控闸，装配同构 start_paper_session:442）══
+_SIM_PEAK_EQUITY_NS = "sim_peak_equity"  # 峰值权益 running max（回撤输入）
+
+
+def _assemble_sim_risk_layer(state_dir: Path | None = None):
+    """风控层装配（同构 scripts/start_paper_session.py assemble_risk_layer 两个不变量）。
+
+    DefaultRiskValidator=kill_switch_owner（熔断唯一仲裁，禁旁路）；DrawdownStateMachine=
+    回撤六态机唯一仲裁（load_or_none 启动恢复，None=冷启动 NORMAL）。两者共用同一
+    JsonStateStore——与订单级校验共享同一熔断闩，"风控桥放行/编排层熔断"双头禁绝。
+    """
+    from zephyr.risk.core.drawdown_state_machine import DrawdownStateMachine  # noqa: PLC0415
+    from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator  # noqa: PLC0415
+    from zephyr.shared.state_store import JsonStateStore  # noqa: PLC0415
+
+    store = JsonStateStore(state_dir or _BRIDGE_RISK_STATE_DIR)
+    validator = DefaultRiskValidator(state_store=store)
+    machine = DrawdownStateMachine(store)
+    machine.load_or_none()
+    return validator, machine
+
+
+def _sim_drawdown_pct(store, equity: float) -> float:
+    """回撤输入（峰值权益 running max，JsonStateStore 持久化；peak<=0 恒 0）。"""
+    rec = store.load(_SIM_PEAK_EQUITY_NS) or {}
+    try:
+        peak = max(float(rec.get("peak", 0.0)), float(equity))
+    except (TypeError, ValueError):
+        peak = float(equity)
+    rec["peak"] = peak
+    store.save(_SIM_PEAK_EQUITY_NS, rec)
+    if peak <= 0:
+        return 0.0
+    return max(0.0, 1.0 - float(equity) / peak)
+
+
+def _evaluate_sim_risk(
+    day: str,
+    *,
+    drawdown_pct: float | None = None,
+    equity: float | None = None,
+    state_dir: Path | None = None,
+) -> dict:
+    """组合级风控评估（plan-execute/e4-replay 共用，[整装回测备战W1] 接线①②）。
+
+    六态机唯一仲裁：drawdown_pct 提供时过日度评估（同日幂等）；equity 提供时以
+    峰值权益换算回撤。六态机 KILL → kill_switch_owner.trigger_kill_switch 合流
+    单一仲裁点（禁旁路）。 Returns{"kill_switch_active","state","position_cap",
+    "allow_new_position","drawdown_pct"}。
+    """
+    from zephyr.risk.core.drawdown_state_machine import DrawdownState  # noqa: PLC0415
+    from zephyr.shared.state_store import JsonStateStore  # noqa: PLC0415
+
+    validator, machine = _assemble_sim_risk_layer(state_dir)
+    if drawdown_pct is None and equity is not None:
+        drawdown_pct = _sim_drawdown_pct(JsonStateStore(state_dir or _BRIDGE_RISK_STATE_DIR), equity)
+    if drawdown_pct is not None:
+        machine.evaluate(trade_date=date.fromisoformat(day), drawdown_pct=drawdown_pct)
+    if machine.current is DrawdownState.KILL and not validator.kill_switch_active:
+        validator.trigger_kill_switch(reason=f"drawdown_state_machine=KILL day={day}")
+    kill_active = bool(validator.kill_switch_active)
+    allow_new = not (kill_active or machine.defensive_only)
+    return {
+        "kill_switch_active": kill_active,
+        "state": machine.current.value,
+        "position_cap": machine.position_cap,
+        "allow_new_position": allow_new,
+        "drawdown_pct": drawdown_pct,
+    }
+
+
+class _SimLedgerBroker:
+    """模拟盘清算台账 broker（execute_kill_switch_liquidation 下单面）。
+
+    模拟盘无实时券商：无 available_qty/get_holdings 探针能力=清算按台账快照
+    全量平（stop_loss 既有 legacy 路径）；place_order 只记成交回执，由
+    _apply_sim_kill_switch_liquidation 翻译为 _write_observe 台账行。
+    """
+
+    def __init__(self) -> None:
+        self.fills: list[dict] = []
+
+    def cancel_order(self, order_id: str) -> None:
+        pass
+
+    def place_order(self, symbol: str, direction: str, qty: float, order_type: str) -> None:
+        self.fills.append({"symbol": symbol, "direction": direction, "qty": float(qty), "order_type": order_type})
+
+
+@dataclasses.dataclass
+class _SimPos:
+    """模拟盘持仓快照（§5.150 长参数列表治本：风控清算族共用参数对象）。"""
+
+    cid: str
+    cash: float
+    shares: float
+    pos_symbol: str
+    px: float | None
+
+
+def _apply_sim_kill_switch_liquidation(
+    day: str,
+    pos: _SimPos,
+    *,
+    reason: str,
+    state_dir: Path | None = None,
+    prev_equity: float | None = None,
+) -> dict:
+    """KILL 熔断清算腿（[整装回测备战W1] 接线①②共用）。
+
+    execute_kill_switch_liquidation 平台账仓（复用 T+1 分桶+清算锁+幂等）→
+    台账行落 _write_observe（钱包行 signal=kill_switch_liquidation + exit 事件
+    行 reason 留痕）。px 缺失/非有限=fail-visible 不清算（不猜价），仍落零事件
+    钱包行如实留痕。
+    """
+    cid, cash, shares = pos.cid, pos.cash, pos.shares
+    pos_symbol, px = pos.pos_symbol, pos.px
+    from zephyr.risk.stop_loss import execute_kill_switch_liquidation  # noqa: PLC0415
+    from zephyr.shared.state_store import JsonStateStore  # noqa: PLC0415
+
+    run_id = f"kill-liq-{_now_utc().strftime('%Y%m%d%H%M%S')}"
+    tradable = px is not None and math.isfinite(px) and px > 0
+    events: list[list] = []
+    cash2, shares2 = cash, shares
+    report: dict = {}
+    if tradable and shares > 0:
+        broker = _SimLedgerBroker()
+        report = execute_kill_switch_liquidation(
+            broker,
+            {pos_symbol: shares} if pos_symbol else {},
+            open_orders={},
+            scope="position",
+            max_orders_per_second=15,
+            state_store=JsonStateStore(state_dir or _BRIDGE_RISK_STATE_DIR),
+        )
+        for fill in broker.fills:
+            proceeds = fill["qty"] * px * (1 - SELL_COST)
+            events.append(
+                [
+                    day,
+                    cid,
+                    fill["symbol"],
+                    "exit",
+                    fill["qty"],
+                    px,
+                    fill["qty"] * px * SELL_COST,
+                    proceeds,
+                    f"kill_switch_liquidation {reason}",
+                    _OBSERVE_MODE,
+                    run_id,
+                ]
+            )
+            cash2 += proceeds
+            shares2 -= fill["qty"]
+    pos_val = shares2 * px if (tradable and shares2 > 0) else 0.0
+    equity = cash2 + pos_val
+    delta = round(equity - prev_equity, 2) if prev_equity is not None else 0.0
+    pocket = [
+        day,
+        cid,
+        _OBSERVE_NOTIONAL,
+        round(cash2, 2),
+        pos_symbol if shares2 > 0 else "",
+        round(shares2, 2),
+        round(pos_val, 2),
+        round(equity, 2),
+        delta,
+        "kill_switch_liquidation" if events else "risk_blocked",
+        _OBSERVE_MODE,
+        run_id,
+        f"kill switch 熔断清算（{reason}）",
+    ]
+    _write_observe(pocket, events)
+    return {
+        "liquidated": bool(events),
+        "events": len(events),
+        "cash": round(cash2, 2),
+        "shares": round(shares2, 2),
+        "report_status": str(report.get("status", "")),
+        "t_plus_1_rejected": [list(t) for t in report.get("t_plus_1_rejected", [])],
+    }
+
+
+def _sim_risk_blocked(
+    day: str,
+    pos: _SimPos,
+    *,
+    source: str,
+    subject: str,
+    risk: dict,
+    state_dir: Path | None = None,
+) -> dict:
+    """风控拒绝分支（plan-execute 用）：KILL → 熔断清算；判定行 action=risk_blocked。"""
+    cid, cash, shares = pos.cid, pos.cash, pos.shares
+    pos_symbol, px = pos.pos_symbol, pos.px
+    liquidation = None
+    if risk.get("kill_switch_active") or risk.get("state") == "KILL":
+        liquidation = _apply_sim_kill_switch_liquidation(
+            day,
+            pos,
+            reason=f"state={risk.get('state')} kill_switch_active={risk.get('kill_switch_active')}",
+            state_dir=state_dir,
+            prev_equity=(cash + shares * px) if px is not None and math.isfinite(px) else None,
+        )
+    payload = {
+        "risk_blocked": True,
+        "posture": "risk_blocked",
+        "action": "risk_blocked",
+        "risk": risk,
+        "liquidation": liquidation,
+    }
+    row_out = [
+        date.fromisoformat(day),
+        source,
+        subject,
+        make_judgment_id(day, source, subject),
+        _now_utc().strftime("%Y-%m-%d %H:%M:%S"),
+        _cutoff_ts(day),
+        json.dumps(payload, ensure_ascii=False),
+        1.0,
+        "risk_layer:drawdown_state_machine; kill_switch:default_risk_validator",
+        f"riskblock-{_now_utc().strftime('%Y%m%d%H%M%S')}",
+        0,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        "",
+    ]
+    write_report_row(row_out)
+    return {"day": day, "executed": False, "why": "risk_blocked", "risk": risk, "liquidation": liquidation}
 
 
 def main() -> None:
