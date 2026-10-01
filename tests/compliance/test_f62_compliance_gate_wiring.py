@@ -390,3 +390,71 @@ def test_bare_order_manager_still_skips_gates() -> None:
     assert getattr(om, "_report_gate", None) is None
     assert _submit_one(om) == "brk-bare"
     assert broker.submit_order.call_count == 1
+
+
+# ---------------------------------------------------------------------
+# ⑤：G12 监管报告工件快照（W140 十二件表 DEFER 项落批——装配正门零注入收口）
+# ---------------------------------------------------------------------
+
+
+class TestRegulatoryReportSnapshotWiring:
+    def test_snapshot_logged_and_validated(self, tmp_path):
+        """装配正门产出报告工件：REGULATORY_REPORT_SNAPSHOT 落 tmp 证据链且 validate_report=True。"""
+        sps = _load_paper_session_module()
+        session = sps.assemble_session(
+            sps.parse_args([]),
+            _NavBroker(),
+            state_dir=tmp_path,
+            compliance_log_path=tmp_path / "compliance_log.jsonl",
+        )
+        assert isinstance(session, TradingSession)
+        snaps = [r for r in _gate_log_records(tmp_path) if r.get("event_type") == "REGULATORY_REPORT_SNAPSHOT"]
+        assert len(snaps) == 1
+        payload = snaps[0]["payload"]
+        assert payload["validate_report"] is True
+        assert payload["report_type"] == "programmatic_trading"
+        assert payload["report_id"].startswith("REG-PRO-")
+        assert payload["data_hash"] and len(payload["data_hash"]) == 64
+        assert snaps[0]["source"] == "start_paper_session"
+
+    def test_snapshot_carries_active_gate_posture(self, tmp_path):
+        """工件 risk_rules 面与 order_manager 五闸同源（快照反映真实执法姿态，非空壳）。"""
+        sps = _load_paper_session_module()
+        sps.assemble_session(
+            sps.parse_args([]),
+            _NavBroker(),
+            state_dir=tmp_path,
+            compliance_log_path=tmp_path / "compliance_log.jsonl",
+        )
+        snap = next(r for r in _gate_log_records(tmp_path) if r.get("event_type") == "REGULATORY_REPORT_SNAPSHOT")
+        rule_names = {rule["name"] for rule in sps._REGULATORY_SNAPSHOT_RISK_RULES}
+        assert {
+            "report_gate_first_report_then_trade",
+            "daily_declaration_block",
+            "manipulation_freeze",
+            "programmatic_registration",
+            "info_asymmetry_avoidance",
+        } <= rule_names
+
+    def test_snapshot_failure_does_not_block_assembly(self, tmp_path, monkeypatch):
+        """工件生成器失效吞没不阻断装配（非拒单闸）：生成抛异常，会话照常建成。"""
+        sps = _load_paper_session_module()
+
+        def _boom(self, *args, **kwargs):
+            raise RuntimeError("synthetic generator failure")
+
+        monkeypatch.setattr(sps.RegulatoryReportGenerator, "generate_programmatic_trading", _boom)
+        session = sps.assemble_session(
+            sps.parse_args([]),
+            _NavBroker(),
+            state_dir=tmp_path,
+            compliance_log_path=tmp_path / "compliance_log.jsonl",
+        )
+        assert isinstance(session, TradingSession)
+        log_file = tmp_path / "compliance_log.jsonl"
+        snaps = (
+            [r for r in _gate_log_records(tmp_path) if r.get("event_type") == "REGULATORY_REPORT_SNAPSHOT"]
+            if log_file.exists()
+            else []
+        )
+        assert snaps == []

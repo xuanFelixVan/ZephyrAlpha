@@ -58321,4 +58321,144 @@ creation_tokens:
   capability_id: map_family_trading_day_cycle_map_gate
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 
+- file: scripts/_archive/run_ollama_exam.py
+  token: ollama-exam-runner-archive-run-ollama-exam-20261001
+  created_by: st-ffchief-20261001
+  capability: ollama-exam-runner-archive
+  merge_evaluation: "同真源搬迁非新造：原路径删除与_archive新路径同袋，归档收编非第二真源"
+- file: docs/03_modules/MOD-CHAINPILE-METAQ/index.md
+  token: chainpile-metaq-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: chainpile-metaq-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_ai_layer/index.md
+  token: ai-layer-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: ai-layer-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_ai_layer/algo_flow/index.md
+  token: ai-layer-algoflow-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: ai-layer-algoflow-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_data/algo_flow/data/index.md
+  token: data-algoflow-data-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: data-algoflow-data-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_data/algo_flow/implementations/index.md
+  token: data-algoflow-impl-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: data-algoflow-impl-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_library/index.md
+  token: library-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: library-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_library/algo_flow/index.md
+  token: library-algoflow-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: library-algoflow-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_library/algo_flow/collectors/index.md
+  token: library-algoflow-collectors-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: library-algoflow-collectors-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_plan/index.md
+  token: plan-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: plan-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_plan/algo_flow/index.md
+  token: plan-algoflow-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: plan-algoflow-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_portfolio_alloc/algo_flow/index.md
+  token: pf-alloc-algoflow-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: pf-alloc-algoflow-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_reporting/report_archive_sink/index.md
+  token: reporting-arcsink-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: reporting-arcsink-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: scripts/backtest/t0_state_match_matrix.py
+  token: t0-state-match-matrix-t0-state-match-matrix-20261001
+  created_by: st-ffchief-20261001
+  capability: t0_state_match_matrix
+  merge_evaluation: "全流通清场L15/L14考古落地：唯一执行件无同真源可派生，消费方在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: docs/03_modules/_domain_reporting/review_trigger/index.md
+  token: reporting-reviewtrig-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: reporting-reviewtrig-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: scripts/backtest/p1_conditional_tables.py
+  token: p1-conditional-tables-script-p1-conditional-tables-20261001
+  created_by: st-ffchief-20261001
+  capability: p1_conditional_tables_script
+  merge_evaluation: "全流通清场L15/L14考古落地：唯一执行件无同真源可派生，消费方在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: docs/03_modules/_domain_strategy_pipeline/index.md
+  token: stratpipe-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: stratpipe-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/index.md
+  token: stratpipe-algoflow-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: stratpipe-algoflow-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出，非第二真源（总包 st-ffchief-20261001 L27 落地批代登记）"
+- file: docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/storage_map.md
+  token: infra-store-003-map-storage-map-20261001
+  created_by: st-ffchief-20261001
+  capability: infra-store-003-map
+  merge_evaluation: "MOD-INF-043 永久手册（INFRA-STORE-003 四盘存储地图）：AGENTS.md §7 已引用而真源未落地的登记债收偿，唯一真源非第二册"
+- file: docs/_working/fullflow_chief_20261001/skeleton/F_risk_compliance/F62.md
+  token: f62-risk-compliance-ledger-f62-20261001
+  created_by: st-ffchief-20261001
+  capability: f62_risk_compliance_ledger
+  merge_evaluation: "总包战役车道台账（挖矿六向账）：task_bound 工作区文件非能力真源，总册 00_skeleton.md 同袋承载索引，无第二真源"
+- file: docs/_working/qoder_legacy_closeout/F62_lane_ledger.md
+  token: f62-risk-compliance-ledger-f62-lane-ledger-20261001
+  created_by: st-ffchief-20261001
+  capability: f62_risk_compliance_ledger
+  merge_evaluation: "总包战役车道台账（挖矿六向账）：task_bound 工作区文件非能力真源，W140 同目录先例，R5 处方迁移落位，无第二真源"
+- file: docs/index.md
+  token: docs-root-index-index-20261001
+  created_by: st-ffchief-20261001
+  capability: docs-root-index
+  merge_evaluation: "机生目录索引册：tracked 生成器 generate_missing_index_md.py 口径产出 docs 树根索引，非第二真源（总包 L27 落地批）"
+- file: scripts/backtest/t0_rule_engine.py
+  token: t0-rule-engine-t0-rule-engine-20261001
+  created_by: st-ffchief-20261001
+  capability: t0_rule_engine
+  merge_evaluation: "全流通清场L15考古落地：唯一执行件无同真源可派生，消费方在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: docs/_working/fullflow_chief_20261001/skeleton/E_execution/f82_order_daemon_wiring.md
+  token: fullflow-chief-lane-ledger-f82-order-daemon-wiring-20261001
+  created_by: st-ffchief-20261001
+  capability: fullflow_chief_lane_ledger
+  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound"
+- file: src/zephyr/factor/technical_indicator_factors/__init__.py
+  token: technical-indicator-factors---init---20261001
+  created_by: st-ffchief-20261001
+  capability: technical_indicator_factors
+  merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: src/zephyr/factor/technical_indicator_factors/bridge.py
+  token: technical-indicator-factors-bridge-20261001
+  created_by: st-ffchief-20261001
+  capability: technical_indicator_factors
+  merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: src/zephyr/factor/technical_indicator_factors/daily_job.py
+  token: technical-indicator-factors-daily-job-20261001
+  created_by: st-ffchief-20261001
+  capability: technical_indicator_factors
+  merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: src/zephyr/factor/technical_indicator_factors/recipes.py
+  token: technical-indicator-factors-recipes-20261001
+  created_by: st-ffchief-20261001
+  capability: technical_indicator_factors
+  merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
 di_seam_exemptions: []

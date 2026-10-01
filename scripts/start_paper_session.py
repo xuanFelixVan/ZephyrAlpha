@@ -133,6 +133,7 @@ from zephyr.position.core.drawdown_controller import DrawdownController  # noqa:
 from zephyr.risk.core.drawdown_tracker import DrawdownTracker  # noqa: E402
 from zephyr.risk.core.tail_risk_monitor import TailRiskMonitor  # noqa: E402
 from zephyr.risk.core.var_calculator import VaRCalculator  # noqa: E402
+from zephyr.reporting.regulatory_report_generator import RegulatoryReportGenerator  # noqa: E402
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator  # noqa: E402
 from zephyr.shared.contracts.fill import Fill  # noqa: E402
 from zephyr.shared.contracts.order import Order  # noqa: E402
@@ -657,6 +658,61 @@ def _print_discipline_declaration(leg_status: dict[str, str]) -> None:
     )
 
 
+#: F62 G12 快照的风控规则面（order_manager 五闸+预警线，与 _check_compliance_gates 同源口径）
+_REGULATORY_SNAPSHOT_RISK_RULES = (
+    {"name": "report_gate_first_report_then_trade", "threshold": "broker_ack_all_required", "action": "BLOCK"},
+    {"name": "daily_declaration_warning", "threshold": 5000, "action": "WARNING"},
+    {"name": "daily_declaration_block", "threshold": 10000, "action": "BLOCK"},
+    {"name": "manipulation_freeze", "threshold": "is_frozen", "action": "BLOCK"},
+    {"name": "programmatic_registration", "threshold": "check_can_trade", "action": "BLOCK"},
+    {"name": "info_asymmetry_avoidance", "threshold": "avoid_symbols", "action": "BLOCK"},
+)
+
+
+def _emit_regulatory_report_snapshot(
+    compliance_logger: ComplianceLogger,
+    *,
+    broker_id: str,
+    strategy_id: str,
+    constraints: dict[str, Any],
+) -> None:
+    """F62 G12 接线（W140 十二件表 DEFER 项落批）：装配正门产出程序化交易报告工件快照。
+
+    RegulatoryReportGenerator（MOD-RPT-006）此前 ZERO HITS——工件生产器非拒单闸
+    （拒单保险丝=G01 ReportGate，已在 order_manager 闸链），自然消费点=报送管道；
+    报送动作本身人工（券商渠道），本快照=每次装配给 Owner 一份已过 validate_report
+    完整性自校验的报告底稿（report_id+data_hash 落 compliance_log 留痕）。
+    生成失败吞没不阻断装配（同 alert_sink 口径——工件失效不该拦开盘）。
+    """
+    try:
+        generator = RegulatoryReportGenerator()
+        report = generator.generate_programmatic_trading(
+            portfolio_id=broker_id,
+            reporting_period=str(datetime.now().year),
+            strategies=[{"name": strategy_id, "parameters": dict(constraints), "status": "paper_session"}],
+            risk_rules=[dict(rule) for rule in _REGULATORY_SNAPSHOT_RISK_RULES],
+        )
+        valid = generator.validate_report(report)
+        compliance_logger.log(
+            "REGULATORY_REPORT_SNAPSHOT",
+            "start_paper_session",
+            {
+                "report_id": report.report_id,
+                "report_type": report.report_type.value,
+                "reporting_period": report.reporting_period,
+                "data_hash": report.data_hash,
+                "validate_report": valid,
+                "strategy_id": strategy_id,
+            },
+        )
+        print(
+            f"[COMPLIANCE] 监管报告工件快照已产出并校验（G12 接线）：report_id={report.report_id}"
+            f" data_hash={report.data_hash[:8]} validate_report={valid}"
+        )
+    except Exception:  # noqa: BLE001 — 工件生成器失效不阻断装配（非拒单闸）
+        _logger.exception("监管报告工件快照生成失败（不阻断装配）")
+
+
 def assemble_session(
     args: argparse.Namespace,
     broker: object,
@@ -886,6 +942,14 @@ def assemble_session(
         "[COMPLIANCE] C-002 三道订单级合规闸已注入：先报告后交易(ReportGate) + "
         "日申报 5000 预警/1 万阻断(同一 CancelRateGuard 实例双注入) + "
         "盘中操纵冻结(ManipulationRealtimeMonitor，已 attach_order_manager 喂事件流)"
+    )
+    # F62 G12 接线：程序化交易报告工件快照（validate_report 自校验+compliance_log 留痕，
+    # 异常吞没不阻断——工件生产器非拒单闸，拒单保险丝在 order_manager 五闸链）
+    _emit_regulatory_report_snapshot(
+        compliance_logger,
+        broker_id=_BROKER_ID,
+        strategy_id=strategy_id,
+        constraints=constraints,
     )
     session.attach_pre_execution_gate(kill_switch_probe=lambda: validator.kill_switch_active)
     print(
