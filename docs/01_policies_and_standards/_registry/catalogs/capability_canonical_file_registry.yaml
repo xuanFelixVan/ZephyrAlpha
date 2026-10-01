@@ -58440,7 +58440,7 @@ creation_tokens:
   token: fullflow-chief-lane-ledger-f82-order-daemon-wiring-20261001
   created_by: st-ffchief-20261001
   capability: fullflow_chief_lane_ledger
-  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound"
+  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound（目录迁移 circulation_chief 后原路径条目按 HEAD 原样保留，防蒸发闸误伤）"
 - file: src/zephyr/factor/technical_indicator_factors/__init__.py
   token: technical-indicator-factors---init---20261001
   created_by: st-ffchief-20261001
@@ -58461,4 +58461,443 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: technical_indicator_factors
   merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: docs/_working/circulation_chief/skeleton/E_execution/f82_order_daemon_wiring.md
+  token: fullflow-chief-lane-ledger-f82-order-daemon-wiring-20261001
+  created_by: st-ffchief-20261001
+  capability: fullflow_chief_lane_ledger
+  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound"
+- file: src/zephyr/data/cleaning_expectation_hosting.py
+  token: cleaning-expectation-hosting-cleaning-expectation-hosting-20261001
+  created_by: st-ffchief-20261001
+  capability: cleaning_expectation_hosting
+  merge_evaluation: "F04断链接线第四段托管腿，R-M1-06四台收口，同域唯一实现非重复"
+- file: config/cleaning_expectations.yaml
+  token: cleaning-expectation-hosting-cleaning-expectations-20261001
+  created_by: st-ffchief-20261001
+  capability: cleaning_expectation_hosting
+  merge_evaluation: "期望判据册唯一真源，同域无第二册（R-M1-06收口）"
+- file: docs/_working/circulation_chief/skeleton/F_risk_compliance/F62.md
+  token: f62-lane-conclusion-card-f62-20261001
+  created_by: st-ffchief-20261001
+  capability: f62_lane_conclusion_card
+  merge_evaluation: "车道结论卡（验证闭合锚）：task_bound 工作区档案非能力真源，六向账真身在 qoder_legacy_closeout/F62_lane_ledger.md（同 commit 指针），无第二真源"
+- file: docs/_working/circulation_chief/skeleton/F_risk_compliance/SEG_F.md
+  token: f62-lane-conclusion-card-seg-f-20261001
+  created_by: st-ffchief-20261001
+  capability: f62_lane_conclusion_card
+  merge_evaluation: "车道结论卡（验证闭合锚）：task_bound 工作区档案非能力真源，六向账真身在 qoder_legacy_closeout/F62_lane_ledger.md（同 commit 指针），无第二真源"
+- file: docs/_working/circulation_chief/skeleton/00_W31_triage_changes.md
+  token: campaign-mining-doc-00-w31-triage-changes-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/00_skeleton.md
+  token: campaign-mining-doc-00-skeleton-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/F02.md
+  token: campaign-mining-doc-f02-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/F04.md
+  token: campaign-mining-doc-f04-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/F123.md
+  token: campaign-mining-doc-f123-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/F125.md
+  token: campaign-mining-doc-f125-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/F126.md
+  token: campaign-mining-doc-f126-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/F127.md
+  token: campaign-mining-doc-f127-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/A_data_supply/SEG_A.md
+  token: campaign-mining-doc-seg-a-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F129.md
+  token: campaign-mining-doc-f129-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F13.md
+  token: campaign-mining-doc-f13-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F14.md
+  token: campaign-mining-doc-f14-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F16.md
+  token: campaign-mining-doc-f16-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F17.md
+  token: campaign-mining-doc-f17-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F18.md
+  token: campaign-mining-doc-f18-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F19.md
+  token: campaign-mining-doc-f19-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F21.md
+  token: campaign-mining-doc-f21-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F22.md
+  token: campaign-mining-doc-f22-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F24.md
+  token: campaign-mining-doc-f24-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F27.md
+  token: campaign-mining-doc-f27-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F28.md
+  token: campaign-mining-doc-f28-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/F29.md
+  token: campaign-mining-doc-f29-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/B_strategy_factory/SEG_B.md
+  token: campaign-mining-doc-seg-b-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F131.md
+  token: campaign-mining-doc-f131-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F30.md
+  token: campaign-mining-doc-f30-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F31.md
+  token: campaign-mining-doc-f31-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F32.md
+  token: campaign-mining-doc-f32-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F33.md
+  token: campaign-mining-doc-f33-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F35.md
+  token: campaign-mining-doc-f35-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/F36.md
+  token: campaign-mining-doc-f36-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/C_knowledge/SEG_C.md
+  token: campaign-mining-doc-seg-c-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/D_tdm/F51.md
+  token: campaign-mining-doc-f51-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/D_tdm/SEG_D.md
+  token: campaign-mining-doc-seg-d-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/E_execution/F58.md
+  token: campaign-mining-doc-f58-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/E_execution/SEG_E.md
+  token: campaign-mining-doc-seg-e-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/E_execution/f82_order_daemon_wiring.md
+  token: campaign-mining-doc-f82-order-daemon-wiring-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/G_backtest/SEG_G.md
+  token: campaign-mining-doc-seg-g-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/H_promotion/F72.md
+  token: campaign-mining-doc-f72-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/H_promotion/F73.md
+  token: campaign-mining-doc-f73-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/H_promotion/F75.md
+  token: campaign-mining-doc-f75-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/H_promotion/SEG_H.md
+  token: campaign-mining-doc-seg-h-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/I_scheduler/F132.md
+  token: campaign-mining-doc-f132-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/I_scheduler/F82.md
+  token: campaign-mining-doc-f82-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/I_scheduler/F84.md
+  token: campaign-mining-doc-f84-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/I_scheduler/F85.md
+  token: campaign-mining-doc-f85-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/I_scheduler/SEG_I.md
+  token: campaign-mining-doc-seg-i-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F130.md
+  token: campaign-mining-doc-f130-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F86.md
+  token: campaign-mining-doc-f86-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F87.md
+  token: campaign-mining-doc-f87-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F92.md
+  token: campaign-mining-doc-f92-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F94.md
+  token: campaign-mining-doc-f94-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F95.md
+  token: campaign-mining-doc-f95-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/F96.md
+  token: campaign-mining-doc-f96-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/J_ai_layer/SEG_J.md
+  token: campaign-mining-doc-seg-j-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/K_governance_gates/F124.md
+  token: campaign-mining-doc-f124-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/K_governance_gates/F128.md
+  token: campaign-mining-doc-f128-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/K_governance_gates/SEG_K.md
+  token: campaign-mining-doc-seg-k-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/L_frontend/F112.md
+  token: campaign-mining-doc-f112-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/L_frontend/F115.md
+  token: campaign-mining-doc-f115-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/L_frontend/SEG_L.md
+  token: campaign-mining-doc-seg-l-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/M_crosscut/F120.md
+  token: campaign-mining-doc-f120-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/M_crosscut/F121.md
+  token: campaign-mining-doc-f121-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/M_crosscut/F122.md
+  token: campaign-mining-doc-f122-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/M_crosscut/SEG_M.md
+  token: campaign-mining-doc-seg-m-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/W3-3_transitions.md
+  token: campaign-mining-doc-w3-3-transitions-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/skeleton/W32_three_state_transitions.md
+  token: campaign-mining-doc-w32-three-state-transitions-20261001
+  created_by: st-ffchief-20261001
+  capability: campaign-mining-doc
+  merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: docs/_working/circulation_chief/00_orchestration.md
+  token: circulation-chief-doc-00-orchestration-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/LEDGER.md
+  token: circulation-chief-doc-ledger-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/automation_panorama.md
+  token: circulation-chief-doc-automation-panorama-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/data_pipelines_survey.md
+  token: circulation-chief-doc-data-pipelines-survey-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/logs/lane-datapipe.md
+  token: circulation-chief-doc-lane-datapipe-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/logs/lane-f04.md
+  token: circulation-chief-doc-lane-f04-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/logs/lane-land-docs.md
+  token: circulation-chief-doc-lane-land-docs-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/rulings.md
+  token: circulation-chief-doc-rulings-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/triage_untracked.md
+  token: circulation-chief-doc-triage-untracked-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/unstaged_map.md
+  token: circulation-chief-doc-unstaged-map-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（作战书/台账/裁定簿/考古册/车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: docs/_working/circulation_chief/logs/wave4e.md
+  token: circulation-chief-doc-wave4e-20261001
+  created_by: st-ffchief-20261001
+  capability: circulation-chief-doc
+  merge_evaluation: "总包战役主文档（车道日志）：战役工作区收编，非第二真源（st-ffchief-20261001 落地批）"
+- file: src/zephyr/factor/auction_strength.py
+  token: auction-strength-auction-strength-20261001
+  created_by: st-ffchief-20261001
+  capability: auction_strength
+  merge_evaluation: "全流通清场L17考古落地(SW14/FCT-INTRADAY-025 CONSUMERS注记归属)：唯一实现无同真源可派生，factor_registry注册位+IC取证消费在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: scripts/backtest/eval_auction_strength_ic.py
+  token: auction-strength-ic-eval-eval-auction-strength-ic-20261001
+  created_by: st-ffchief-20261001
+  capability: auction_strength_ic_eval
+  merge_evaluation: "全流通清场L17考古落地(SW14/FCT-INTRADAY-025 CONSUMERS注记归属)：唯一实现无同真源可派生，factor_registry注册位+IC取证消费在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: src/zephyr/backtest/core/closed_book_gate.py
+  token: closed-book-gate-closed-book-gate-20261001
+  created_by: st-ffchief-20261001
+  capability: closed_book_gate
+  merge_evaluation: "全流通清场L20考古落地(triage§6-4自裁=补册落地)：14字段齐备唯一实现无同真源可派生，消费方(ch_tick_replay/ch_tick_provider/pattern_win_rate_materialize)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: src/zephyr/backtest/regime_validation/chart_cell_materializer.py
+  token: chart-cell-materializer-chart-cell-materializer-20261001
+  created_by: st-ffchief-20261001
+  capability: chart_cell_materializer
+  merge_evaluation: "全流通清场L20考古落地(triage§6-4自裁=补册落地)：14字段齐备唯一实现无同真源可派生，消费方(ch_tick_replay/ch_tick_provider/pattern_win_rate_materialize)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
+- file: config/synergy_dedup.yaml
+  token: auto-scaffold-synergy_dedup_cfg-20261001
+  created_by: scaffold.py
+  capability: synergy_dedup_cfg
+- file: scripts/register_health_monitor_probe_task.ps1
+  token: auto-scaffold-health_monitor_probe_task-20261001
+  created_by: scaffold.py
+  capability: health_monitor_probe_task
+
 di_seam_exemptions: []
