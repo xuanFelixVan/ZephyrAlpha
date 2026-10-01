@@ -8,7 +8,7 @@ title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.1.0"
+version: "2.2.0"
 date: 2026-10-01
 topic: data_ops_sop
 ---
@@ -133,22 +133,26 @@ tasks.yaml 条目模板（字段以现有任务为准）：
 
 **铁律：每个新数据集必须登记 ≥1 个实际消费者并验证可查**——防"接而不通"（edb_data 表 0 行停止更新的教训）。接通后 **MUST 继续 §9A 六问挖掘**——"≥1 消费者"是最低线不是终点（情绪温度计六成分仅 C2 有消费、技术指标 81% 零消费两案在案）。
 
-## §9A 数据用途挖掘第〇问+六问（接通≠终点；六问=v2.0.0 Owner 原话立法，第〇问=v2.1.0 补挖增设）
+## §9A 数据用途挖掘：第〇问+十问（接通≠终点；十问=v2.2.0 账本闭包扫描立法）
 
 > **第〇问（前置体检，先于一切用途判断）——这数据活着吗？**①新鲜度：max(date) 实查（台账行数/最新日期是证据不是装饰）；②断供判定：对照 tasks.yaml 挂钩+supply_sentinel 阈值（"任务在"≠"管线活"，shareholder_incremental/edb_data 两案在案）；③质量/PIT 抽查：毒数据禁止接线（daily_valuation 全 0 空壳案——接消费者=喂毒药）；④体检不过→工单转 §10 运维修复，**用途挖掘挂起待数据复活**（先修管道再谈用途）。第〇问结论随六问记录同章节留痕。
 >
 > **定位**：§1-§8 答"数据进来"，§9 答"接到哪"，本节答"**还能用在哪**"。触发三个：①新数据过 §8 接通验收后 MUST；②存量数据按 §9C 批次回补；③T2 半年复审 / 新策略立项反查。方法论=mining_sop 六向寻路，产出按本节六问坐标系逐问入账；**查无也是结论，逐问留痕**（情绪温度计六成分仅 C2 有消费、技术指标 81% 零消费两案在案——"算完就躺"是系统性盲点）。
 
-六问记录写进当次施工文档"挖矿增补"章节（mining_sop §7 惯例）；接线结论回填对应注册册：
+十问记录写进当次施工文档"挖矿增补"章节（mining_sop §7 惯例）；**每张接线工单必填 owner（谁养它——责任跟人走，不跟数据走）**；接线结论回填对应注册册：
 
-| # | 六问 | 挖法 | 入账口 |
+| # | 十问 | 挖法 | 入账口 |
 |---|------|------|--------|
-| Q1 | 能产出哪些因子？ | 字段×变换枚举（量价/统计/横截面/事件/文本）→ 转 [factor_mining_sop](../mining_sop/factor_mining_sop_policy.md) S0-S7（regime 条件化必报） | factor_registry candidate 卡 |
-| Q2 | 哪些策略需要？ | 反查 strategy_registry 全卡（inputs/data_refs）+ TDM 十职能逐族扫（大盘/板块/个股/执行/持仓/离场/组合/资讯/推演/新市场） | 策略卡 data_refs 补挂 + TDM 节点 data_refs |
+| Q1 | 能产出哪些信号（因子/指标/形态/宏观读数/**派生数据集**）？ | 字段×变换枚举（量价/统计/横截面/事件/文本）→ 转 [factor_mining_sop](../mining_sop/factor_mining_sop_policy.md) S0-S7（regime 条件化必报）；派生数据集也算产出（入 data_asset_registry 新 DS 条目，先例 kline_index_calc/financial_derived/consensus_repaired/vintage） | 信号产出六本账：factor_registry + technical_indicator + chart_pattern + macro_indicator + regime_cycle + feature_adjudication；派生表入 data_asset_registry |
+| Q2 | 哪些策略需要它？ | 反查 strategy_registry 全卡（inputs/data_refs）+ TDM 十职能逐族扫（大盘/板块/个股/执行/持仓/离场/组合/资讯/推演/新市场）+ 选池面（universe_registry，股票池/币池/观察池筛选） | 策略卡 data_refs 补挂 + TDM 节点 data_refs + universe 条目 |
 | Q3 | 哪些模块需要？ | capability_lookup 反查 + grep 消费端 + §9D 消费普查 | data_asset_registry.consumed_by_jobs 回填 |
-| Q4 | 哪些环节需要？ | trading_day_cycle_map 44 环节四段（A盘前/B盘中/C盘后/D夜窗）逐段配 downstream_action | tasks.yaml 调度挂钩 + 环节契约骨架回写 |
+| Q4 | 哪些环节需要？ | trading_day_cycle_map 44 环节四段（A盘前/B盘中/C盘后/D夜窗）逐段配 downstream_action | tasks.yaml 调度挂钩 + 环节契约骨架回写 + **事件日历册（event_calendar_registry）挂历** |
 | Q5 | 哪些地图需要？ | TDM 决策图 / GOMAP / 产业链图（MOD-SIG-125）/ 概念板块图 / 骨架总图，逐图扫挂点 | 图谱节点挂链 / TDM data_refs |
-| Q6 | 还有哪些盲点？ | 六问查无记档 + 跨册状态汇总（指标册在位/因子册 skip/TDM DATA-GAP 三处状态无人汇总=盲点本体） | census 台账 → wiring_registry（§9D） |
+| Q6 | 还有哪些盲点？ | 十问查无记档 + 跨册状态汇总（指标册在位/因子册 skip/TDM DATA-GAP 三处状态无人汇总=盲点本体） | census 台账 → wiring_registry（§9D） |
+| Q7 | 验证面：回测/考试/对账要不要吃它？（v2.2.0） | 考试轴配考（exam_policy）+ 基准注册册扫基准位（如 etf_benchmark 之于溢价率因子）+ cross_source_validator 对账腿 + 回放窗口 | 验证族四本账：基准册 + validation_method + backtest_backlog + trial_ledger |
+| Q8 | 守卫面：谁盯它生死？（v2.2.0） | supply_sentinel 阈值行登记（**没阈值行=免检漏洞**，水库水位案）+ source_sla_tracker + 告警路由 + 风控阈值标定 | alert_threshold_registry + SLA 登记 + risk_limit_registry |
+| Q9 | 呈现面：人看的哪页？AI 看的哪段？（v2.2.0） | 前端 features 逐页扫认领（**假数据页=欠账**，cryptomarket 案）+ 日刊/作战室模板 + 盘前提示词注入契约区（us_index/MAC 先例）+ RAG/知识库喂食 | 前端 features 注册 + 日刊模板 + 提示词契约区 + knowledge 库 |
+| Q10 | 训练面：能当训练集/微调集/模式学习素材吗？（v2.2.0） | 训练语料/微调样本/模式学习素材评估（先例：sft train-eval、model_learning 任务-模型矩阵、fix_patterns 模式学习；市场数据侧现为规划态 DS-064/074） | model_registry + 训练数据集 DS 条目 |
 
 ## §9B 多用途展开矩阵（同一数据×应用面，强制逐格判定）
 
@@ -168,7 +172,8 @@ tasks.yaml 条目模板（字段以现有任务为准）：
 
 1. 消费普查台账（census）=孤岛事实源 → `scripts/governance/d3_metadata/generate_wiring_registry.py` 产机器视图 → 交总筹落 `wiring_registry.yaml`（wiring_status ∈ unwired/wired/exempt）——生成器禁直写登记册，`--check` 对账漂移≠0 即待入账。
 2. 超期门：`scripts/governance/check_wiring_orphan.py`——unwired 且登记超 90 天=orphan（`--strict` 拦截；defer_reason 非免死牌，超期须重评）。
-3. 复扫节奏：新数据接通后 / 存量批次每批收口后 / 半年 T2 复审，各跑一轮 census；unwired 实证 state=active 即自动记 wired 治愈事件。**检查单本身（第〇问+六问+12 面矩阵）挂入 T2 复审清单：每半年重挖一次问题集该不该增删**（2026-10-01 Owner 追问"万一是十个问题"立案补挖，裁定=六问锚定六本实体账不动、第〇问增设、其余候选被三态出口/§12 分层/Q3 模块覆盖）。
+3. 复扫节奏：新数据接通后 / 存量批次每批收口后 / 半年 T2 复审，各跑一轮 census；unwired 实证 state=active 即自动记 wired 治愈事件。**检查单本身（第〇问+十问+12 面矩阵）挂入 T2 复审清单：每半年重挖一次问题集该不该增删**（2026-10-01 Owner 四连追问立案，四轮挖矿 6→9→10 问全留痕，封矿判据=账本闭包而非轮数）。
+4. **新册对账机制（v2.2.0，结构自愈）**：ROOR 新立法注册册时自动触发"账本 vs 十问"对账——新数据可挂载账无问对应→提案新问；十问对当前 78 本册中 27 本数据可挂载账零悬空（2026-10-01 闭包扫描），此后新账本靠本条捕获，不靠人记忆。
 
 ## §10 运维常态与退役
 
@@ -206,10 +211,14 @@ esearch_reports\。分批搬运、hash 抽检 5%、原目录留 30 天双备份�
 15. 原文快照/原料是否已存冷库并登记 manifest？（冷热分离）
 16. 清洗数据是否只进 CH、未在冷库留第二工作副本？（禁双真源）
 
-## §14 一页检查单（增补 3 查，v2.0.0 用途挖掘）
-17. §9A 六问逐问跑过并留痕（查无也留痕）？
+## §14 一页检查单（增补 7 查：v2.0.0 三查+v2.2.0 四查）
+17. §9A 十问逐问跑过并留痕（查无也留痕）？
 18. §9B 矩阵逐应用面判定过（适用+不适用两态都留）？
 19. 接线回执已入账（consumed_by_jobs / factor 卡 / TDM data_refs / 图谱）+ §9D 复扫与 90 天门在岗？
+20. Q7 验证面：考试轴/基准/回放/对账腿登记过？（基准册+验证方法册+回测积压/试跑台账）
+21. Q8 守卫面：哨兵阈值行+SLA+告警路由登记过？（**没阈值行=免检漏洞**）
+22. Q9 呈现面：前端页面/日刊模板/提示词契约区/RAG 认领过？（**假数据页=欠账**）
+23. Q10 训练面：训练集/微调集/模式学习素材评估留痕？
 
 ## 修订记录
 
@@ -218,3 +227,4 @@ esearch_reports\。分批搬运、hash 抽检 5%、原目录留 30 天双备份�
 | 2026-09-18 | 1.0.0→1.1.0 | 初稿（§1-§11 接入前半环：挖矿→设计→接通→验收）+ §12 冷库分层增补 | 2026-09-17 数据线会话 |
 | 2026-10-01 | 2.0.0 | 后半环补全：§9A 六问用途挖掘（因子/策略/模块/环节/地图/盲点，逐问挖法+入账口）+ §9B 多用途展开矩阵（12 应用面，KDJ/猪价链两例）+ §9C 存量回补批次（census 473 岛为首批队列）+ §9D 接线闭环（census→wiring_registry→90 天门）；§9 路由表降级为初猜；§14 增补 3 查 | Owner"数据进来→六问用途挖掘→接线齐全无遗漏"SOP 指令；2026-09-30 全仓孤儿深审实证（473 孤岛/情绪六成分仅 C2 有消费/技术指标 81% 零消费） |
 | 2026-10-01 | 2.1.0 | §9A 增设第〇问前置体检（活/鲜/PIT/无毒，先于用途判断，体检不过→转 §10 修复+挖掘挂起）；§9D 检查单本身挂入 T2 半年复审 | Owner 追问"这套六问本身挖过矿吗？万一是十个问题"——补挖结论=六问锚定六本实体账不动、第〇问为实战暗规则转正、其余候选（成本分层/前端/风控等）已被三态出口/§12/Q3 覆盖 |
+| 2026-10-01 | 2.2.0 | §9A 六问扩**十问**（+Q7 验证面/+Q8 守卫面/+Q9 呈现面/+Q10 训练面），Q1 入账口宽化为信号产出六本账（含派生数据集）、Q4 加事件日历册；§9C 工单必填 owner；§9D 增新册对账机制（结构自愈）；§14 检查单 19→23 查 | Owner 四连追问"挖干了吗/最终态吗/就这些用途吗"——四轮挖矿 6→9→10 全留痕；封矿判据=**账本闭包**（78 本册实扫、27 本数据可挂载账零悬空）而非轮数/感觉；自愈=T2+新册对账+Q6 兜底三保险 |
