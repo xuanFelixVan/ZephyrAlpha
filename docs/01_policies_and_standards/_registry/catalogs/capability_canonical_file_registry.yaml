@@ -59091,4 +59091,9 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: data_algo_flow_wave3
   merge_evaluation: "ALGO_FLOW外置册P2-1契约(子目录避平铺硬限120)"
+- file: docs/_working/map_build/00_coverage_ledger_v1.md
+  token: panorama-map-census-00-coverage-ledger-v1-20261001
+  created_by: st-mapcensus-20260924
+  capability: panorama_map_census
+  merge_evaluation: "覆盖账本v1属既有map_build战役册族增量，同真源(GOMAP+六图机生YAML)统计账，无同域重复册"
 di_seam_exemptions: []
