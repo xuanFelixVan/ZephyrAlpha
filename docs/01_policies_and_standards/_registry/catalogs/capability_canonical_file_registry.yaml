@@ -59096,4 +59096,10 @@ creation_tokens:
   created_by: st-mapcensus-20260924
   capability: panorama_map_census
   merge_evaluation: "覆盖账本v1属既有map_build战役册族增量，同真源(GOMAP+六图机生YAML)统计账，无同域重复册"
+- file: scripts/_archive/check_version_drift.ps1
+  token: check-version-drift-check-version-drift-20261001
+  created_by: st-commitfix-20261001
+  capability: check_version_drift
+  merge_evaluation: "非新建：scripts/check_version_drift.ps1 平铺容量治理 git mv 原样迁移（零内容改动），fms_deadref_baseline 死引用基线在案退役件，净零"
+
 di_seam_exemptions: []
