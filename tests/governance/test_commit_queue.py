@@ -1518,6 +1518,47 @@ class TestRegistrationGate:
         cq._annotate_preflight_face_drift(bare, repo_root=repo)
         assert "preflight_face_drift" not in bare
 
+    def test_ttl_precheck_checker_absent_degraded_vs_present_violation_hard_reject(
+        self, queue_root: Path, tmp_path: Path
+    ) -> None:
+        """TTL 预检存在性判别尺（st-c9-prfix 清偿 57ba32b227 集成面回归，双面防回退）：
+        - checker 脚本缺席（隔离仓/夹具仓）＝预检设施不可用 → degraded 放行留痕
+          （与脱钩前名册 spec 缺席 degraded 口径一致，不得硬拒）；
+        - checker 在而判定失败（frontmatter 违规）＝真违规 → 入队口快败硬拒。
+        57ba32b227 直连 ttl_gate 判定体的语义收紧在真实仓面（checker 在）完整保留。"""
+        target_a = "docs/probe_ttl_checker_absent.md"
+        target_b = "docs/probe_ttl_violation.md"
+        repo = _repo_with_registry(tmp_path, registered=[target_a, target_b])
+        (repo / "docs").mkdir(exist_ok=True)
+        checker = repo / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
+        assert not checker.exists(), "夹具前置：隔离仓无 checker（face A 生效前提）"
+
+        # face A：checker 缺席 → degraded 放行（不硬拒），degraded 留袋不静默
+        (repo / target_a).write_bytes(b"no frontmatter body\n")
+        item = cq.enqueue_item(
+            "probe-ttl",
+            "checker absent",
+            [(target_a, b"no frontmatter body\n")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(worktree_root=str(repo)),
+        )
+        assert item["meta"]["registration_gate"]["findings"] == 0, "设施缺席不得产生 findings（硬拒=回归）"
+        assert "TTL-METADATA" in item["meta"]["registration_gate"]["degraded"], "degraded 必须留袋不静默"
+
+        # face B：checker 在且判违 → 快败硬拒（fail-closed 语义收紧保留）
+        checker.parent.mkdir(parents=True, exist_ok=True)
+        checker.write_text("import sys\nsys.stderr.write('stub ttl violation\\n')\nsys.exit(1)\n", encoding="utf-8")
+        (repo / target_b).write_bytes(b"violation body\n")
+        with pytest.raises(cq.QueueReject, match="登记三族入队预检拦截") as ei:
+            cq.enqueue_item(
+                "probe-ttl",
+                "checker present violation",
+                [(target_b, b"violation body\n")],
+                queue_root=queue_root,
+                options=cq.EnqueueOptions(worktree_root=str(repo)),
+            )
+        assert "[TTL-METADATA]" in str(ei.value), "处方必须点名门禁"
+
 
 # ---------------------------------------------------------------------------
 # RB2 治本：dead-archive 官方归档子命令（设计真源 docs/_working/root_cure_campaign/
