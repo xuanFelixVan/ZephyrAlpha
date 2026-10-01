@@ -90,8 +90,91 @@ on:
       - ".trae/**"
       - "_patches/**"
   workflow_dispatch:
+  schedule:
+    # nightly 全量回归窗口（#ARCH-084 配套，st-fullscore-20260930）：
+    # CI 真跑全量 pytest + coverage>=70 门禁 + tracked 区写入守护（ZEPHYR_TEST_GUARD_STRICT=1）
+    - cron: "0 18 * * *"  # UTC 18:00 = 北京时间次日 02:00 夜间窗口
 
 jobs:
+  full-regression:
+    name: Full pytest + coverage>=70 gate (nightly)
+    # Owner 目标（2026-09-30）：CI 真跑全量测试 + coverage>=70 门禁生效。
+    # 当前 coverage 基线待首次 nightly 实测（本机估算 <70，翻转条件=连续两晚实测 >=70
+    # 后由补测批删除本 job 的 continue-on-error 翻转为阻断）。
+    # 守护：tests/conftest.py _tracked_write_guard（#ARCH-084 治本第一刀）在 STRICT 下
+    # 检出测试对 tracked 区写入即转 fail——全量跑后 git status 必须与基线一致。
+    runs-on: windows-latest
+    timeout-minutes: 240
+    continue-on-error: true  # 报告模式上线：coverage 基线 <70（翻转条件见上）
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Full pytest with coverage + tracked-write guard (strict)
+        env:
+          ZEPHYR_TEST_GUARD_STRICT: "1"
+        run: python -m pytest tests/ -q --cov=zephyr --cov-report=xml --cov-fail-under=70 --timeout=600 -n 4
+
+      - name: Coverage gate summary
+        if: always()
+        run: |
+          python -c "import xml.etree.ElementTree as ET; r=ET.parse('coverage.xml').getroot(); print('coverage line-rate =', r.attrib.get('line-rate'))" || echo "coverage.xml missing (run failed before report)"
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-regression-coverage
+          path: |
+            coverage.xml
+            .runtime/tmp/test_guard/
+
+  mypy-scan:
+    name: mypy type scan (non-blocking baseline)
+    # 摸底模式（非阻断）：本机基线=mypy 1.20 被存量阻断两处——pyproject [mypy]
+    # warn_any_explicit 不被识别（配置与版本漂移）+ src/zephyr 下 agent-rbac、
+    # audit-trail 两个连字符非法包名。本 job 用最小 config 绕开摸真实错误量级，
+    # 输出做基线留档；错误清零/达标后由后续批翻转为阻断。
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install mypy
+        run: python -m pip install --upgrade mypy
+
+      - name: mypy baseline scan (exclude invalid package-name dirs)
+        run: |
+          printf '[mypy]\n' > mypy_ci_min.ini
+          python -m mypy src/zephyr --config-file mypy_ci_min.ini \
+            --exclude '(agent-rbac|audit-trail)' --ignore-missing-imports \
+            --no-error-summary > mypy_baseline.txt || true
+          echo "mypy error lines: $(wc -l < mypy_baseline.txt)"
+          head -50 mypy_baseline.txt || true
+
+      - name: Upload mypy baseline
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy-baseline
+          path: mypy_baseline.txt
+
   governance-sweep:
     name: Full Governance Regression
     runs-on: windows-latest

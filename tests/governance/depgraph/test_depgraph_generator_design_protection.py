@@ -7,6 +7,14 @@ DM-100026: 极端红蓝测试：depgraph生成器vs设计态保护
 - 修复外键约束：用真实域 D_GOVERNANCE 替代不存在的 D-TEST
 - 优化测试速度：去掉连续运行10次的冗余测试（1次足够验证 DELETE WHERE 子句）
 - 用 path 而非 node_id 固定值（避免与真实数据冲突）
+
+#ARCH-084 收编（2026-10-01，st-fullscore-20260930）：
+- DB_PATH（--output-db）重定向 tmp 沙箱，禁触真仓 data/databases/ 区；
+- PG depgraph 不可达时 pytest.skip（CI 无 PG 环境零错误收集）；
+- 隔离边界如实声明：本测试是 DM-100026 真 PG 集成钉——PG 侧 INSERT/DELETE
+  严格限 test/design_protection/% 前缀路径（LIKE 无前导通配，不可能命中真实
+  节点）+ 终态自清理；生成器对 PG 的重建属派生数据幂等再生（真源=repo 扫描），
+  全量 PG 沙箱需 config/.env.postgres.test（当前环境未配置）。
 """
 
 import subprocess
@@ -54,7 +62,11 @@ def red_team_tests():
     print("红方测试：尝试覆盖设计态节点")
     print("=" * 80)
 
-    conn = get_depgraph_pg_connection()
+    conn = None
+    try:
+        conn = get_depgraph_pg_connection()
+    except Exception as exc:  # noqa: BLE001 — CI/无 PG 环境降级 skip，不误报 error
+        pytest.skip(f"PG depgraph 不可达（真 PG 集成钉，无 PG 环境跳过）: {exc}")
     cursor = conn.cursor()
 
     # 先清理可能残留的旧测试数据
@@ -162,6 +174,15 @@ def main():
 def test_depgraph_generator_design_protection():
     """depgraph 生成器设计态保护验证——委托给 main()，pytest 收集入口。"""
     assert main() == 0
+
+
+@pytest.fixture(autouse=True)
+def _sandbox_output_db(monkeypatch, tmp_path):
+    """#ARCH-084 收编：--output-db 锚 tmp 沙箱（P2 迁移后该参数=PG 库名而非文件
+    路径，重定向零语义影响；防未来参数语义回摆时测试误写真仓 data/ 区）。"""
+    sandbox = tmp_path / "depgraph_sandbox.db"
+    sandbox.parent.mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr(sys.modules[__name__], "DB_PATH", sandbox)
 
 
 if __name__ == "__main__":

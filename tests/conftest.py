@@ -452,6 +452,231 @@ def _isolate_audit_key_eras(monkeypatch):
 # ---------------------------------------------------------------------------
 # 告警外推通道隔离（FF-16 / alert_webhook_dispatch 接线批）
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# #ARCH-084 治本第一刀（2026-10-01，st-fullscore-20260930）：tracked 区写入守护
+# 病根：全量 pytest 运行期 tracked 区被并发写入（docstring 追加/blueprint_registry
+# 误删/git add 注入 staged 三类实证，见 architecture_issue_registry #ARCH-084）。
+# 本守护=会话级 git status 两次+热点册（10 册）每测试 stat 快查/sha 升级比对，
+# 归因到测试粒度，warning 汇总；ZEPHYR_TEST_GUARD_STRICT=1 转硬 fail；
+# ZEPHYR_TEST_GUARD_OFF=1 关闭。报告落 .runtime/tmp/test_guard/report_<pid>.json。
+# ---------------------------------------------------------------------------
+import hashlib as _hashlib
+import json as _json
+import subprocess as _subprocess
+import warnings as _warnings
+from datetime import datetime as _datetime
+from datetime import timezone as _timezone
+
+
+def _datetime_now_iso() -> str:
+    return _datetime.now(_timezone.utc).isoformat(timespec="seconds")
+
+
+@pytest.fixture(autouse=True)
+def _tracked_write_guard_probe(request):
+    """autouse：每测试前后抽查热点注册表指纹（#ARCH-084 治本第一刀，2026-10-01）。
+
+    定位到测试粒度：本 probe 前后各扫一次热点册 stat 指纹（mtime_ns+size，零 sha 开销），
+    指纹漂移才升级算 sha 比对——sha 变=本测试 wrote tracked/热册文件，记肇事
+    （nodeid→文件集）。禁每测试跑 git status（性能红线）；git status 全量比对只在
+    会话级（_tracked_write_guard_session）做两次。
+    """
+    guard = _get_tracked_write_guard()
+    if guard is None:
+        yield
+        return
+    guard.mark(request.node.nodeid)
+    yield
+    guard.check(request.node.nodeid)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _tracked_write_guard_session(request):
+    """session 级：进入记 `git status --porcelain` 基线，退出比对+汇总肇事（#ARCH-084）。
+
+    报告双通道：warnings.warn 汇总（默认）+ .runtime/tmp/test_guard/report_<pid>.json
+    （ forensic 全量）。ZEPHYR_TEST_GUARD_STRICT=1 时检出肇事（可归因 tracked 写）
+    即 raise 转 fail——非严格模式 tracked 区漂移只 warn（并发会话脏区噪声不做归因，
+    归因只信热点册 sha 证据）。xdist 下每 worker 独立跑本 fixture（同一棵树，重复
+    报告可接受；per-test 归因在各 worker 内自洽）。
+    """
+    guard = _get_tracked_write_guard(create=_os.environ.get("ZEPHYR_TEST_GUARD_OFF") != "1")
+    if guard is None:
+        yield
+        return
+    yield
+    guard.finish(strict=_os.environ.get("ZEPHYR_TEST_GUARD_STRICT") == "1")
+
+
+class _TrackedWriteGuard:
+    """热点册指纹台账+肇事归因（纯进程内，无跨进程共享假设）。"""
+
+    #: 热册白名单（#ARCH-084 受害册+高频被写册；relpath 相对仓根）。
+    #: blueprint_registry.yaml 已派生退库（untracked），盯盘上存在性防误删复发。
+    HOT_REGISTRIES: tuple[str, ...] = (
+        "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+        "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml",
+        "docs/03_modules/blueprint_registry.yaml",
+        "docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md",
+        "AGENTS.md",
+    )
+
+    def __init__(self, root: Path):
+        self.root = root
+        self.hot_sha: dict[str, str | None] = {}
+        self._hot_stat: dict[str, tuple[int, int] | None] = {}
+        self.culprits: dict[str, set[str]] = {}
+        self.baseline_status: list[str] | None = None
+        self.final_status: list[str] | None = None
+        self._pending: set[str] = set()
+
+    # -- 基础探针 ----------------------------------------------------------
+    @staticmethod
+    def _sha256(path: Path) -> str | None:
+        try:
+            h = _hashlib.sha256()
+            with open(path, "rb") as fh:
+                for chunk in iter(lambda: fh.read(65536), b""):
+                    h.update(chunk)
+            return h.hexdigest()
+        except OSError:
+            return None
+
+    def _scan_hot(self) -> list[str]:
+        """扫热册：stat 指纹快查，漂移才算 sha。返回 sha 变更的 relpath 列表。"""
+        changed: list[str] = []
+        for rel in self.HOT_REGISTRIES:
+            path = self.root / rel
+            try:
+                st = path.stat()
+                sig: tuple[int, int] | None = (st.st_mtime_ns, st.st_size)
+            except OSError:
+                sig = None
+            if sig == self._hot_stat.get(rel):
+                continue
+            sha = None if sig is None else self._sha256(path)
+            self._hot_stat[rel] = sig
+            if sha != self.hot_sha.get(rel):
+                changed.append(rel)
+            self.hot_sha[rel] = sha
+        return changed
+
+    def mark(self, nodeid: str) -> None:
+        self._pending = set(self._scan_hot())
+
+    def check(self, nodeid: str) -> None:
+        after = set(self._scan_hot())
+        wrote = after - getattr(self, "_pending", set())
+        if wrote:
+            self.culprits.setdefault(nodeid, set()).update(wrote)
+
+    # -- 会话级 ------------------------------------------------------------
+    def _git_status(self) -> list[str] | None:
+        try:
+            proc = _subprocess.run(
+                ["git", "status", "--porcelain"],
+                cwd=str(self.root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=180,
+            )
+        except (OSError, _subprocess.TimeoutExpired):
+            return None
+        if proc.returncode != 0:
+            return None
+        # 只留 tracked 区行（?? untracked 不算 tracked 写；测试产 tmp 未忽略文件是合法噪音）
+        return sorted(ln for ln in proc.stdout.splitlines() if ln and not ln.startswith("??"))
+
+    def start(self) -> None:
+        for rel in self.HOT_REGISTRIES:
+            path = self.root / rel
+            try:
+                st = path.stat()
+                sig: tuple[int, int] | None = (st.st_mtime_ns, st.st_size)
+            except OSError:
+                sig = None
+            self._hot_stat[rel] = sig
+            self.hot_sha[rel] = None if sig is None else self._sha256(path)
+        self.baseline_status = self._git_status()
+
+    def finish(self, *, strict: bool = False) -> None:
+        self.final_status = self._git_status()
+        culprit_files = sorted({f for files in self.culprits.values() for f in files})
+        drift: list[str] = []
+        if self.baseline_status is not None and self.final_status is not None:
+            base, fin = set(self.baseline_status), set(self.final_status)
+            drift = sorted(fin - base) + sorted(f"{ln} [vanished]" for ln in sorted(base - fin))
+        self._emit_report(culprit_files, drift)
+        if culprit_files:
+            top = sorted(self.culprits.items(), key=lambda kv: -len(kv[1]))[:10]
+            detail = "; ".join(f"{nid} -> {sorted(files)[:4]}" for nid, files in top)
+            msg = (
+                f"#ARCH-084 tracked 区写入守护：检出 {len(self.culprits)} 个肇事测试/"
+                f"{len(culprit_files)} 个热册文件被写: {detail}"
+            )
+            _warnings.warn(msg, category=_TrackedWriteWarning, stacklevel=2)
+            if strict:
+                raise AssertionError(msg)
+        elif drift:
+            _warnings.warn(
+                f"#ARCH-084 会话级 tracked 区漂移（{len(drift)} 行，未归因到具体测试"
+                "——并发会话或收集期写入，详见 guard report json）: 前几条="
+                f"{drift[:5]}",
+                category=_TrackedWriteWarning,
+                stacklevel=2,
+            )
+
+    def _emit_report(self, culprit_files: list[str], drift: list[str]) -> None:
+        try:
+            report_dir = self.root / ".runtime" / "tmp" / "test_guard"
+            report_dir.mkdir(parents=True, exist_ok=True)
+            payload = {
+                "pid": _os.getpid(),
+                "finished_utc": _datetime_now_iso(),
+                "culprits": {k: sorted(v) for k, v in sorted(self.culprits.items())},
+                "culprit_files": culprit_files,
+                "tracked_drift_lines": drift[:200],
+                "drift_count": len(drift),
+            }
+            (report_dir / f"report_{_os.getpid()}.json").write_text(
+                _json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8"
+            )
+        except Exception:  # noqa: BLE001 — 报告落盘失败绝不阻断测试会话
+            pass
+
+
+class _TrackedWriteWarning(UserWarning):
+    """#ARCH-084 tracked 区写入守护告警（warnings 汇总通道）。"""
+
+
+_GUARD_SINGLETON: _TrackedWriteGuard | None = None
+
+
+def _get_tracked_write_guard(create: bool = True) -> _TrackedWriteGuard | None:
+    """惰性单例：guard 关闭/非 git 仓/初始化失败一律返回 None（守护永不阻断测试）。"""
+    global _GUARD_SINGLETON
+    if _GUARD_SINGLETON is not None:
+        return _GUARD_SINGLETON
+    if not create or _os.environ.get("ZEPHYR_TEST_GUARD_OFF") == "1":
+        return None
+    if not (_PROJECT_ROOT / ".git").exists():
+        return None
+    try:
+        guard = _TrackedWriteGuard(_PROJECT_ROOT)
+        guard.start()
+    except Exception:  # noqa: BLE001 — 守护初始化失败静默降级
+        return None
+    _GUARD_SINGLETON = guard
+    return _GUARD_SINGLETON
+
+
 @pytest.fixture(autouse=True)
 def _isolate_alert_webhook_sinks(tmp_path_factory, monkeypatch):
     """autouse：pytest 全域禁让告警外推通道写**真实**落点。
@@ -471,4 +696,3 @@ def _isolate_alert_webhook_sinks(tmp_path_factory, monkeypatch):
     iso = tmp_path_factory.mktemp("alert_webhook_iso")
     monkeypatch.setenv("ZEPHYR_ALERT_WEBHOOK_DIR", str(iso / "sinks"))
     monkeypatch.setenv("ZEPHYR_OPS_NOTIFICATION_DIR", str(iso / "ops_notifications"))
-
