@@ -55,6 +55,13 @@ from zephyr.backtest.run_archive import (
     write_step,
 )
 
+# GPU/CPU 双后端张量核（MOD-BT-233 P0 薄核）——真消费方 scripts/backtest/translated/_c4_engine.py
+# 在 scripts/ 面（ORPHAN-MODULE src 扫描面外），按 q-20260928 同款先例在 src 面声明引用边防孤儿误判。
+from zephyr.backtest.gpu_core import (
+    resolve_backend,
+    tensor_core,
+)
+
 if TYPE_CHECKING:
     from zephyr.backtest.core import batch_window_preflight  # noqa: F401
 
@@ -84,4 +91,7 @@ __all__ = [
     "load_meta",
     "log_iteration",
     "iter_run_ids",
+    # GPU/CPU 双后端张量核（MOD-BT-233）
+    "resolve_backend",
+    "tensor_core",
 ]
