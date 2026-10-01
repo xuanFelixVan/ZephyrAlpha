@@ -100,10 +100,12 @@ _GATE_REGISTRIES = (
     str(_REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"),
 )
 
-# 环节契约：17 个 Step 段（骨架 §1，D14-01~D14-17）+ 10 个 gap 节点（骨架 §1 红条目点名册
-# 的"文档说有实则没有"9 条 + 幽灵引用在册面 1 条）。增删须先回写骨架，禁在此自扩。
+# 环节契约：17 个 Step 段（骨架 §1，D14-01~D14-17）+ 11 个 gap 节点（骨架 §1 红条目点名册
+# 的"文档说有实则没有"族；D14-G10 已于 2026-10-02 依其 invalidation 条款作废——幽灵件
+# src/zephyr/shared/vocab 2026-09-26 复活落仓 a2e820034bd，回写注记=00_skeleton.md R-08）。
+# 增删须先回写骨架，禁在此自扩。
 STEP_UNIVERSE: tuple[str, ...] = tuple(f"D14-{i:02d}" for i in range(1, 18))
-GAP_NODES: tuple[str, ...] = tuple(f"D14-G{i:02d}" for i in range(1, 13))
+GAP_NODES: tuple[str, ...] = tuple(gid for gid in (f"D14-G{i:02d}" for i in range(1, 13)) if gid != "D14-G10")
 NODE_UNIVERSE: tuple[str, ...] = STEP_UNIVERSE + GAP_NODES
 
 REQUIRED_TOP = [
@@ -504,7 +506,7 @@ def validate_structure(
         nid = n.get("node_id", "<无 node_id>")
         ids.append(nid)
         if nid not in universe:
-            _err(errors, f"{nid}: 节点越出契约全集（17 Step 段 + 12 gap 显性化节点，骨架 §1 契约件，增删须先回写骨架）")
+            _err(errors, f"{nid}: 节点越出契约全集（17 Step 段 + 11 gap 显性化节点，骨架 §1 契约件，增删须先回写骨架）")
         # --- CV-L0：废止别名残留即红 ---
         for banned, canonical in BANNED_NODE_FIELDS.items():
             if banned in n:

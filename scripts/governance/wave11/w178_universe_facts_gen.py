@@ -10,7 +10,7 @@
 # [MATURITY] draft
 # [INVARIANTS] 只读 SELECT，禁一切 DDL/DML；每条读数双探测（ch_probe 标准探针 + query_rows）互证；
 #              探测失败必记 outcome=fail 并保留失败原文，禁降级为 0/空表；输出机生禁手改
-# [BLUEPRINT] MOD-DATA_SUPPLY | docs/03_modules/_domain_data/data_supply/blueprint.md | §w178_universe_facts
+# [BLUEPRINT] MOD-GOV_CODE_QUALITY | docs/_working/total_command_closeout/wave11/w178_truth_source_declaration.md | §w178_universe_facts
 # [MODIFY-GUARD] 判据口径（宇宙定义/LIKE 前缀/双探测要求）变更须同步案卷 w178_sector_universe_strict.md 与 92 册尺，禁单独放宽
 # [STABILITY] evolving
 # [SAFETY] L

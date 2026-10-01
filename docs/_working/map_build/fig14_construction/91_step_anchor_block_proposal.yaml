@@ -408,6 +408,7 @@ step_anchors:
     evidence:
       - '2026-09-24 骨架 §1 D14-10 行 + 簿02 §2：task_repo.py 常量与循环函数四锚链条实测在位'
       - '2026-09-25 本车道只读复跑：TEST-SOURCE-CONSISTENCY / TEST-RESIDUE-SSOT 两册在册；词表模块 zephyr.shared.vocab 不存在（D14-G10）'
+      - '2026-10-02 终局复跑：词表模块已于 2026-09-26 复活落仓（a2e820034bd 词表读取层落仓，market_state+EXTREME_STATE_ALIASES 实测在盘），D14-G10 幽灵断言失效按其 invalidation 条款作废（R-08 闭合）'
     module_ref: src/zephyr/governance/persistence/task_repo.py
     exec_evidence:
       - 复跑 grep -n 'CIRCULAR_ACCEPTANCE_ROUNDS' src/zephyr/governance/persistence/task_repo.py 命中常量与循环函数
@@ -821,21 +822,6 @@ gap_anchors:
     doc_refs:
       - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §8
       - docs/_working/map_build/fig14_construction/01_冷启动与设计段.md §9 WJ-R-02
-
-  - gap_id: D14-G10
-    host_step: D14-10
-    finding: R-08
-    name_zh: 官方状态词表模块不存在（双册同谎）
-    decision_question: 验收判据挂的词表模块存在吗？两册文档称"已建成"与磁盘事实差多少？
-    note_zh: 目录与常量在 .py 侧零命中；另一册自称已建成 ⇒ 属验收不通过级事故候选（本车道只点名不修，纠偏归词表立法线）
-    red_reason: ghost_ref
-    ghost_refs: [src/zephyr/shared/vocab]
-    evidence:
-      - '2026-09-24 骨架 R-08 + 簿02 §2：ls src/zephyr/shared/vocab → 不存在；EXTREME_STATE_ALIASES 在 .py 零命中'
-      - '2026-09-25 本车道只读复跑：同上'
-    doc_refs:
-      - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-08
-      - docs/_working/map_build/fig14_construction/02_施工与门禁段.md §2
 
   - gap_id: D14-G11
     host_step: D14-03

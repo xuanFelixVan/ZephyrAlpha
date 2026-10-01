@@ -120,7 +120,7 @@ owner: st-mapbuild-20260924
 | R-05 | 记录面不存在 | 准入记录写入 `module-id-registry.json admission_records` | L284（trae_032 L63/84/245/514/571/583、trae_056 L288 同源） | 全仓无 `module-id-registry.json`；近似面 `architecture_model/module_id_registry.yaml` 无 `admission_records` 字段（grep 零命中）⇒ MAD-001~005 四级筛选**留痕无处可落** |
 | R-06 | CLI 子命令不存在 ×4 | `session_worktree.py status/commit/mark-completed/cleanup` | L585/L615/L688/L722 | CLI 实测仅 `create/exec/merge/abort/list`（`scripts/session_worktree.py:651-685`）；`status`/`commit` 有库函数（`rule_bridge/session_worktree.py:7668/:4580`）但 CLI 未暴露；`mark-completed` 全仓零命中 |
 | R-07 | 命令契约错 | `lock_files.py release <sid>` | L685 | 实际 `release <file> <owner>`（`lock_files.py:1616`，需 ≥3 参）；意图命令=`release-all <owner>`（:1620）。照抄政策命令必失败 |
-| R-08 | 词表模块不存在 | `zephyr.shared.vocab.market_state` 四轴常量 + `EXTREME_STATE_ALIASES` | L441 | 无 `src/zephyr/shared/vocab/` 目录；`EXTREME_STATE_ALIASES` 仅出现在 3 份 MD（本 policy + vocab_legislation 两卷），零 .py 命中；而 `docs/_working/vocab_legislation/01_official_state_vocabulary.md:15` 自称"**W1 已建成**"——**双册同谎**，属验收不通过级事故候选（本车道只点名不修） |
+| R-08 | 词表模块不存在 | `zephyr.shared.vocab.market_state` 四轴常量 + `EXTREME_STATE_ALIASES` | L441 | 无 `src/zephyr/shared/vocab/` 目录；`EXTREME_STATE_ALIASES` 仅出现在 3 份 MD（本 policy + vocab_legislation 两卷），零 .py 命中；而 `docs/_working/vocab_legislation/01_official_state_vocabulary.md:15` 自称"**W1 已建成**"——**双册同谎**，属验收不通过级事故候选（本车道只点名不修）。**【已闭合 2026-10-02 回写】幽灵件 2026-09-26 复活落仓（a2e820034bd 词表读取层落仓，HEAD 已有 token+翻译在册而本体蒸发件按 blob 自证恢复）；2026-10-02 终局实测 `src/zephyr/shared/vocab/market_state.py` 在盘且 `EXTREME_STATE_ALIASES` 在册导出 ⇒ 本条幽灵断言失效，D14-G10 按其 invalidation 条款作废（图14 提案件 G10 条目同步移除+图重生成）** |
 | R-09 | 引用锚不存在 | `trae_002 §rule_eight` | L199 | `trae_002_anti_orphan_search_first.yaml` 的 sections 仅 `anti_orphan`/`search_first`，全文件无 `rule_eight` 字串 |
 | R-10 | 真源已 deprecated | Step 1 真源 `AI_review_instructions.md` | L180/L42/L68 | 文件在 `docs/_archive/`，frontmatter `status=deprecated`，文首 Owner 裁定"归档不删、后续不再更新"并指后继="本 SOP + 68 号审查流水线"；68 号设计文档亦已归档（实现 `code_review_ai.py` 活）⇒ Step 1 的 12 节审查清单**无现行真源** |
 | R-11 | 上游真源整体归档（最大面） | `01_design_memo_management_spec.md`（frontmatter `depends_on` 首位=L15，正文 L41/L52/L71/L487 引用）、`65_git_safety_governance.md`（Step 9 真源 L98/L573/L592）、`66_commit_queue_serialization.md`（Step 10 真源 L99/L608/L654）、`construction_progress_tracker.md`（Step 6 遗留项登记目标 L470）、`00_index_trading_decision.md`（Step 7 同步目标 L492/L498） | L15/L41/L98/L228/L470/L487/L492/L573/L608 | 五件**全部**于 2026-09-20 依裁定#384（WO-14 包①）迁至 `docs/_working/archive/2026-09/design_memos/`（该目录实测 49 件；`07.../design_memos/` 现仅剩 README.md + 16 号）；SOP v1.7.2（2026-09-15）早于归档 5 天，**未跟进**；blast radius：全仓 62 个文件仍引用旧 `07_trading_decision_architecture/design_memos` 路径 |
@@ -256,8 +256,8 @@ grep -oE '"--[a-z-]+"' scripts/governance/apply_depgraph.py | sort -u | grep -i 
 find . -name "module-id-registry.json" -not -path "./.git/*"             # 空=R-05
 grep -n "add_parser" scripts/session_worktree.py                          # create/exec/merge/abort/list=R-06
 grep -n 'cmd == "' scripts/lock_files.py | tr '\n' ' '                    # release 需 file+owner=R-07
-ls src/zephyr/shared/vocab 2>&1                                           # 不存在=R-08
-grep -rn "EXTREME_STATE_ALIASES" --include=*.py src scripts               # 空=R-08
+ls src/zephyr/shared/vocab 2>&1                                           # 2026-09-26 起在盘（R-08 已闭合，见红条目册回写注记）
+grep -rn "EXTREME_STATE_ALIASES" --include=*.py src scripts               # 2026-09-26 起命中 market_state.py（R-08 已闭合）
 
 # C4 锚实存（Step 3/4/8 的 yes 依据）
 grep -oE '"--[a-z-]+"' scripts/governance/apply_depgraph.py | sort -u | grep transition   # 两 flag 在

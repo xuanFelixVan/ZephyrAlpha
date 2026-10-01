@@ -5,7 +5,7 @@
 # [CONSUMERS] generate_domain_doc.py; scripts/governance/align_battle_map.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 纯 stdlib 解耦；不 import zephyr.*（便于 mutation testing）
+# [INVARIANTS] 模块级 import 纯 stdlib 解耦（+yaml）；不 import zephyr.*（便于 mutation testing）；# 函数体内懒加载 zephyr/_shared 例外（tbl_name/head_commit_time/anchor_label_bilingual，2026-10-02 CR-15 同批收内注记）
 # [MODIFY-GUARD] cleanup_stale_files 的 name_pattern 参数语义
 # [STABILITY] evolving
 # [SAFETY] L
@@ -37,6 +37,8 @@ warn_only: false
 import re
 import subprocess
 from pathlib import Path
+
+import yaml
 
 __all__ = ["cleanup_stale_files", "DB_DISPLAY_NAME", "idempotent_timestamp", "idempotent_date"]
 
@@ -150,3 +152,43 @@ def cleanup_stale_files(
             f.unlink()
             deleted.append(name)
     return deleted
+
+
+def head_commit_time(root: Path) -> str:
+    """时间戳唯一合法派生通道=HEAD 提交时间（壁钟取时函数禁用——RULE-SCHEMA-TZ）。"""
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        r = run_subprocess_hidden(["git", "show", "-s", "--format=%cI", "HEAD"], cwd=str(root), timeout=30)
+        v = (r.stdout or "").strip()
+        return v if v else "unobserved"
+    except Exception:  # noqa: BLE001 — git 不可达=unobserved 占位，两次运行仍逐字节等
+        return "unobserved"
+
+
+def tbl_name(category_id: str) -> str:
+    """按 category_id 从 TableRegistry 真源取全限定表名（#ARCH-CH-024 Phase 5）。
+
+    禁硬编码表名字符串绕过 business_data_categories.yaml 真源；懒加载避免
+    本模块被静态检视工具（无 src 运行环境）导入时强依赖 zephyr 包。
+    """
+    from zephyr.data.table_registry import get_registry
+
+    return get_registry().table(category_id)
+
+
+def anchor_label_bilingual(rel_path: str) -> str:
+    """中英标签必经既有翻译 loader（模块级真源=module_translation_registry）；查无=退回路径本身。"""
+    from _shared.module_translation_loader import get_module_translation
+
+    trans = get_module_translation(rel_path) or {}
+    zh = str(trans.get("name_zh") or "").strip()
+    en = str(trans.get("name_en") or "").strip()
+    if zh and en:
+        return f"{zh} / {en}"
+    return zh or en or rel_path
+
+
+def serialize_map_document(doc: dict, header: str) -> str:
+    """确定性序列化核心（键序=插入序，禁 sort_keys 打乱语义分组）——各图头注释由调用方给。"""
+    return header + yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=110)

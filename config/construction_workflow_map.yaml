@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
-generated_at: '2026-09-25T04:00:00+08:00'
+generated_at: '2026-10-02T02:37:16+08:00'
 anchor_source: proposal
 anchor_block_origin: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
 derived_from: docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md
@@ -693,6 +693,8 @@ nodes:
   evidence:
   - 2026-09-24 骨架 §1 D14-10 行 + 簿02 §2：task_repo.py 常量与循环函数四锚链条实测在位
   - 2026-09-25 本车道只读复跑：TEST-SOURCE-CONSISTENCY / TEST-RESIDUE-SSOT 两册在册；词表模块 zephyr.shared.vocab 不存在（D14-G10）
+  - 2026-10-02 终局复跑：词表模块已于 2026-09-26 复活落仓（a2e820034bd 词表读取层落仓，market_state+EXTREME_STATE_ALIASES 实测在盘），D14-G10
+    幽灵断言失效按其 invalidation 条款作废（R-08 闭合）
   module_id: MOD-TASK_SYSTEM
   module_ref: src/zephyr/governance/persistence/task_repo.py
   source_anchors:
@@ -733,8 +735,7 @@ nodes:
   red_findings:
   - R-08
   - WJ-R-19
-  gap_refs:
-  - D14-G10
+  gap_refs: []
   red_reason: null
   wiring_status: partial
   fallback: 无卡施工现无等价面（簿02 X-16 待裁），本段按 inspection 记不放宽
@@ -1712,58 +1713,6 @@ nodes:
   skeleton_verifiability: null
   ghost_refs:
   - web/frontend_map.yaml
-- node_id: D14-G10
-  name_zh: 官方状态词表模块不存在（双册同谎）
-  segment: 验收
-  node_type: gap
-  decision_question: 验收判据挂的词表模块存在吗？两册文档称"已建成"与磁盘事实差多少？
-  note_zh: 目录与常量在 .py 侧零命中；另一册自称已建成 ⇒ 属验收不通过级事故候选（本车道只点名不修，纠偏归词表立法线）
-  build_status: pending
-  confidence: verified
-  verified_scope: structure
-  evidence:
-  - 2026-09-24 骨架 R-08 + 簿02 §2：ls src/zephyr/shared/vocab → 不存在；EXTREME_STATE_ALIASES 在 .py 零命中
-  - 2026-09-25 本车道只读复跑：同上
-  module_id: null
-  module_ref: null
-  source_anchors:
-  - docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md#Step 5
-  doc_refs:
-  - docs/_working/map_build/fig14_construction/00_skeleton.md §1 红条目 R-08
-  - docs/_working/map_build/fig14_construction/02_施工与门禁段.md §2
-  data_refs: []
-  store_refs: []
-  runtime_refs: []
-  verifiability: manual
-  anchor_kind: none
-  exec_source: null
-  gates: []
-  executable: []
-  cli_anchors: []
-  docs: []
-  role: internal
-  handoff_to: []
-  order: 27
-  conditional: false
-  trigger_when: null
-  rollback_to: []
-  max_rounds_ref: null
-  red_findings:
-  - R-08
-  host_steps:
-  - D14-10
-  red_reason: ghost_ref
-  wiring_status: unwired_no_caller
-  fallback: null
-  invalidation: 对应政策锚被补齐/幽灵件复活 ⇒ 本 gap 节点作废，须回写骨架后重生成
-  policy_step: null
-  policy_anchor: null
-  sub_workflow: null
-  human_gate: null
-  skeleton_status: null
-  skeleton_verifiability: null
-  ghost_refs:
-  - src/zephyr/shared/vocab
 - node_id: D14-G11
   name_zh: 规则册符号锚不存在
   segment: 前置
@@ -1794,7 +1743,7 @@ nodes:
   docs: []
   role: internal
   handoff_to: []
-  order: 28
+  order: 27
   conditional: false
   trigger_when: null
   rollback_to: []
@@ -1845,7 +1794,7 @@ nodes:
   docs: []
   role: internal
   handoff_to: []
-  order: 29
+  order: 28
   conditional: false
   trigger_when: null
   rollback_to: []
@@ -1929,8 +1878,6 @@ edges:
   - D14-G08
 - - D14-08
   - D14-G09
-- - D14-10
-  - D14-G10
 - - D14-03
   - D14-G11
 - - D14-04
@@ -2091,7 +2038,7 @@ machine_facts:
     source: proposal
     origin: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
     step_anchors: 17
-    gap_anchors: 12
+    gap_anchors: 11
     loops_declared: 15
   policy_step_heads:
     count: 17
@@ -2143,13 +2090,13 @@ machine_facts:
     - inspection
     - manual
   gate_face:
-    gate_ids_scanned: 181
+    gate_ids_scanned: 185
     cited_gate_ids: 18
     unresolvable_gate_ids: []
   module_id_scan:
     nodes_with_module_id: 10
     nodes_with_module_ref: 10
-    nodes_null_module_id: 19
+    nodes_null_module_id: 18
   handoff_face:
     fig11_ids_scanned: 28
     handoff_nodes: 5
@@ -2169,41 +2116,42 @@ machine_facts:
     - docs/_archive
     - __pycache__
     - .runtime
-    referencing_files: 30
-    occurrences: 58
-    in_catalog_files: 6
-    in_catalog_occurrences: 13
+    referencing_files: 40
+    occurrences: 82
+    in_catalog_files: 7
+    in_catalog_occurrences: 15
     in_catalog_breakdown:
       docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml: 3
       docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml: 3
+      docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml: 2
       docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: 2
       docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml: 2
       docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: 1
       docs/01_policies_and_standards/_registry/catalogs/test_suite_registry.yaml: 2
 counts:
-  total_nodes: 29
+  total_nodes: 28
   total_steps: 17
-  total_gaps: 12
-  total_edges: 34
+  total_gaps: 11
+  total_edges: 33
   total_feedback: 7
   by_node_type:
-    gap: 12
+    gap: 11
     stage: 17
   by_verified_scope:
     None: 4
     production: 6
-    structure: 19
+    structure: 18
   by_verifiability:
     automated: 4
     inspection: 4
-    manual: 21
+    manual: 20
   by_build_status:
     built: 6
     partial: 7
-    pending: 16
+    pending: 15
   by_role:
     handoff: 5
-    internal: 24
+    internal: 23
   by_segment:
     判定: 3
     前置: 6
@@ -2212,7 +2160,7 @@ counts:
     施工: 1
     落地收尾: 7
     设计登记: 6
-    验收: 3
+    验收: 2
   by_skeleton_status:
     ✅: 6
     ⬜: 4

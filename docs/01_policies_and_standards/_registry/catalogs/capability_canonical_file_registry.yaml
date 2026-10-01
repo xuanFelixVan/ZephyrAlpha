@@ -47554,6 +47554,11 @@ creation_tokens:
   created_by: st-mapcensus-20260924
   capability: panorama_map_census
   merge_evaluation: "裁定#409配套一次性盘点件，同真源(alignment_checklist§3)可派生目录但census承载缺口判定语义非重复册，域空白无合并对象"
+- file: docs/_working/map_build/00_coverage_ledger_v1.md
+  token: panorama-map-census-00-coverage-ledger-v1-20261001
+  created_by: st-mapcensus-20260924
+  capability: panorama_map_census
+  merge_evaluation: "覆盖账本v1属既有map_build战役册族增量，同真源(GOMAP+六图机生YAML)统计账，无同域重复册"
 - file: data/capability_cards/ai_perceive_l1.yaml
   token: ai-perceive-l1-card-20260924
   created_by: st-ailayer-final-20260924
@@ -56436,6 +56441,16 @@ creation_tokens:
   created_by: st-nightsweep-sw11-20260929
   capability: backtest_algo_flow
   merge_evaluation: "ALGO_FLOW 外置真源（P2-1 既有机制面新增一模块条目，与 vectorized_engine.yaml 同族同真源管线，不立平行表）"
+- file: docs/03_modules/_domain_backtest/algo_flow/chart_cell_materializer.yaml
+  token: backtest-algo-flow-chart-cell-materializer-20261001
+  created_by: st-ffchief-20261001
+  capability: backtest_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
+- file: docs/03_modules/_domain_backtest/algo_flow/closed_book_gate.yaml
+  token: backtest-algo-flow-closed-book-gate-20261001
+  created_by: st-ffchief-20261001
+  capability: backtest_algo_flow
+  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
 - file: scripts/check_coverage.ps1
   token: auction-backfill-check-coverage-20260916
   created_by: st-auction-bridge-20260917
@@ -58305,22 +58320,6 @@ creation_tokens:
   created_by: st-storageswap-20260930
   capability: sector_intraday_from_constituents
   merge_evaluation: "收敛裁定甲主施工件：板块分钟线自产五周期727板（与方案J已收敛甲案）"
-- file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
-  token: mapfamily-data_supply_chain_map_gate-20261001
-  created_by: st-matrix-final-20260930
-  capability_id: map_family_data_supply_chain_map_gate
-  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
-- file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
-  token: mapfamily-dev_delivery_map_gate-20261001
-  created_by: st-matrix-final-20260930
-  capability_id: map_family_dev_delivery_map_gate
-  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
-- file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
-  token: mapfamily-trading_day_cycle_map_gate-20261001
-  created_by: st-matrix-final-20260930
-  capability_id: map_family_trading_day_cycle_map_gate
-  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
-
 - file: scripts/_archive/run_ollama_exam.py
   token: ollama-exam-runner-archive-run-ollama-exam-20261001
   created_by: st-ffchief-20261001
@@ -58436,17 +58435,17 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: t0_rule_engine
   merge_evaluation: "全流通清场L15考古落地：唯一执行件无同真源可派生，消费方在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
-- file: docs/_working/fullflow_chief_20261001/skeleton/E_execution/f82_order_daemon_wiring.md
+- file: docs/_working/circulation_chief/skeleton/E_execution/f82_order_daemon_wiring.md
   token: fullflow-chief-lane-ledger-f82-order-daemon-wiring-20261001
   created_by: st-ffchief-20261001
   capability: fullflow_chief_lane_ledger
-  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound（目录迁移 circulation_chief 后原路径条目按 HEAD 原样保留，防蒸发闸误伤）"
+  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound"
 - file: src/zephyr/factor/technical_indicator_factors/__init__.py
   token: technical-indicator-factors---init---20261001
   created_by: st-ffchief-20261001
   capability: technical_indicator_factors
   merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
-- file: src/zephyr/factor/technical_indicator_factors/bridge.py
+- file: src/zephyr/factor/technical_indicator_factors/factor_bridge.py
   token: technical-indicator-factors-bridge-20261001
   created_by: st-ffchief-20261001
   capability: technical_indicator_factors
@@ -58461,11 +58460,6 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: technical_indicator_factors
   merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
-- file: docs/_working/circulation_chief/skeleton/E_execution/f82_order_daemon_wiring.md
-  token: fullflow-chief-lane-ledger-f82-order-daemon-wiring-20261001
-  created_by: st-ffchief-20261001
-  capability: fullflow_chief_lane_ledger
-  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound"
 - file: src/zephyr/data/cleaning_expectation_hosting.py
   token: cleaning-expectation-hosting-cleaning-expectation-hosting-20261001
   created_by: st-ffchief-20261001
@@ -58816,6 +58810,27 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: campaign-mining-doc
   merge_evaluation: "W3 挖矿三代理 skeleton 产出+总包战役骨架册：docs/_working 战役工作区非永久真源，随战役落地收编（总包目录迁移令后新路径批量登记）"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
+  token: mapfamily-data_supply_chain_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability_id: map_family_data_supply_chain_map_gate
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
+  token: mapfamily-dev_delivery_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability_id: map_family_dev_delivery_map_gate
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
+  token: mapfamily-trading_day_cycle_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability_id: map_family_trading_day_cycle_map_gate
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+
+- file: docs/_working/fullflow_chief_20261001/skeleton/E_execution/f82_order_daemon_wiring.md
+  token: fullflow-chief-lane-ledger-f82-order-daemon-wiring-20261001
+  created_by: st-ffchief-20261001
+  capability: fullflow_chief_lane_ledger
+  merge_evaluation: "内收 w5_1：总包车道台账（每车道一册六向台账），同域唯一台账载体无替代对象；任务期产物 ttl=task_bound（目录迁移 circulation_chief 后原路径条目按 HEAD 原样保留，防蒸发闸误伤）"
 - file: docs/_working/circulation_chief/00_orchestration.md
   token: circulation-chief-doc-00-orchestration-20261001
   created_by: st-ffchief-20261001
@@ -58899,68 +58914,6 @@ creation_tokens:
   token: auto-scaffold-health_monitor_probe_task-20261001
   created_by: scaffold.py
   capability: health_monitor_probe_task
-
-- file: docs/_working/lane_c_chain_night/00_skeleton.md
-  token: lane-chain-night-00-skeleton-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/DELIVERY.md
-  token: lane-chain-night-delivery-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e10_data_health.md
-  token: lane-chain-night-e10-data-health-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e10_fix.md
-  token: lane-chain-night-e10-fix-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e11_lane_f_adapter.md
-  token: lane-chain-night-e11-lane-f-adapter-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e1_mine_repair.md
-  token: lane-chain-night-e1-mine-repair-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e2e3_ops_repair.md
-  token: lane-chain-night-e2e3-ops-repair-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e4_code_fix.md
-  token: lane-chain-night-e4-code-fix-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: docs/_working/lane_c_chain_night/e4_journal_surgery.md
-  token: lane-chain-night-e4-journal-surgery-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_chain_night
-  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
-- file: scripts/backtest/lane_f_grid_adapter.py
-  token: lane-f-grid-adapter-lane-f-grid-adapter-20261001
-  created_by: st-lanech-main-20261001
-  capability: lane_f_grid_adapter
-  merge_evaluation: "内收销项：factory_intake_pipeline.py:73 欠账销项，F 车道适配唯一实现"
-
-- file: docs/03_modules/_domain_backtest/algo_flow/chart_cell_materializer.yaml
-  token: backtest-algo-flow-chart-cell-materializer-20261001
-  created_by: st-ffchief-20261001
-  capability: backtest_algo_flow
-  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
-- file: docs/03_modules/_domain_backtest/algo_flow/closed_book_gate.yaml
-  token: backtest-algo-flow-closed-book-gate-20261001
-  created_by: st-ffchief-20261001
-  capability: backtest_algo_flow
-  merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
 - file: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
   token: construction-workflow-map-gen-generate-construction-workflow-map-20261001
   created_by: st-ffchief-20261001
@@ -59091,20 +59044,140 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: data_algo_flow_wave3
   merge_evaluation: "ALGO_FLOW外置册P2-1契约(子目录避平铺硬限120)"
-- file: docs/_working/map_build/00_coverage_ledger_v1.md
-  token: panorama-map-census-00-coverage-ledger-v1-20261001
-  created_by: st-mapcensus-20260924
-  capability: panorama_map_census
-  merge_evaluation: "覆盖账本v1属既有map_build战役册族增量，同真源(GOMAP+六图机生YAML)统计账，无同域重复册"
+- file: docs/_working/lane_c_chain_night/00_skeleton.md
+  token: lane-chain-night-00-skeleton-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/DELIVERY.md
+  token: lane-chain-night-delivery-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e10_data_health.md
+  token: lane-chain-night-e10-data-health-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e10_fix.md
+  token: lane-chain-night-e10-fix-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e11_lane_f_adapter.md
+  token: lane-chain-night-e11-lane-f-adapter-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e1_mine_repair.md
+  token: lane-chain-night-e1-mine-repair-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e2e3_ops_repair.md
+  token: lane-chain-night-e2e3-ops-repair-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e4_code_fix.md
+  token: lane-chain-night-e4-code-fix-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e4_journal_surgery.md
+  token: lane-chain-night-e4-journal-surgery-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: scripts/backtest/lane_f_grid_adapter.py
+  token: lane-f-grid-adapter-lane-f-grid-adapter-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_f_grid_adapter
+  merge_evaluation: "内收销项：factory_intake_pipeline.py:73 欠账销项，F 车道适配唯一实现"
 - file: scripts/_archive/check_version_drift.ps1
   token: check-version-drift-check-version-drift-20261001
   created_by: st-commitfix-20261001
   capability: check_version_drift
   merge_evaluation: "非新建：scripts/check_version_drift.ps1 平铺容量治理 git mv 原样迁移（零内容改动），fms_deadref_baseline 死引用基线在案退役件，净零"
+- file: docs/_working/fullflow_mining_20261001/98_挖矿总簿_精华重建版.md
+  token: fullflow-mining-20261001-98---20261001
+  created_by: st-matrix-final-20260930
+  capability: fullflow_mining_20261001
+  merge_evaluation: "总包挖矿战役交付物（作战卡+总簿+交接卡），非任何既有挖矿册第二真源——骨架真源=00_master_skeleton 继承引用"
+- file: docs/_working/fullflow_mining_20261001/99_交接卡.md
+  token: fullflow-mining-20261001-99--20261001
+  created_by: st-matrix-final-20260930
+  capability: fullflow_mining_20261001
+  merge_evaluation: "总包挖矿战役交付物（作战卡+总簿+交接卡），非任何既有挖矿册第二真源——骨架真源=00_master_skeleton 继承引用"
+- file: docs/_working/fullflow_mining_chief/98_挖矿总簿_精华重建版.md
+  token: fullflow-mining-chief-98---20261001
+  created_by: st-matrix-final-20260930
+  capability: fullflow_mining_chief
+  merge_evaluation: "总包挖矿战役交付物（作战卡+总簿+交接卡），目录改名去 R5 数字后缀（原 fullflow_mining_20261001），非既有挖矿册第二真源——骨架真源=00_master_skeleton 继承引用"
+- file: docs/_working/fullflow_mining_chief/99_交接卡.md
+  token: fullflow-mining-chief-99--20261001
+  created_by: st-matrix-final-20260930
+  capability: fullflow_mining_chief
+  merge_evaluation: "总包挖矿战役交付物（作战卡+总簿+交接卡），目录改名去 R5 数字后缀（原 fullflow_mining_20261001），非既有挖矿册第二真源——骨架真源=00_master_skeleton 继承引用"
 
+- file: src/zephyr/factor/technical_indicator_factors/bridge.py
+  token: technical-indicator-factors-bridge-20261001
+  created_by: st-ffchief-20261001
+  capability: technical_indicator_factors
+  merge_evaluation: "全流通清场L18考古落地(CNS-01接线包)：四件套唯一实现无同真源可派生，消费方(framework_composer/pipeline_events/eval_tech_indicator_ic)在册非零触发，无同域重复簇，净零=不新增规则gate，登记保留"
 - file: docs/03_modules/_domain_frontend/algo_flow/connection_matrix.yaml
   token: connection-matrix-algo-flow-connection-matrix-20260930
   created_by: st-matrix-final-20260930
   capability: connection_matrix_algo_flow
   merge_evaluation: "跨域不同对象不并：algo_flow 视图 yaml=连接矩阵组件的算法面机器视图（externalizer 生成物），非组件本体/生成器判据面第二实现"
+- file: docs/_working/branch_zero_takeover_20261002/00_orchestration.md
+  token: branch-zero-campaign-doc-00-orchestration-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "分支清零与接管显化战役档案册"
+- file: docs/_working/branch_zero_takeover_20261002/branches_ledger.md
+  token: branch-zero-campaign-doc-branches-ledger-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "分支清零与接管显化战役档案册"
+- file: docs/_working/branch_zero_takeover_20261002/problem_cures_ledger.md
+  token: branch-zero-campaign-doc-problem-cures-ledger-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "分支清零与接管显化战役档案册"
+- file: docs/_working/branch_zero_takeover/00_orchestration.md
+  token: branch-zero-campaign-doc-00-orchestration-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "分支清零与接管显化战役档案册（目录 R5 改名后重登记）"
+- file: docs/_working/branch_zero_takeover/branches_ledger.md
+  token: branch-zero-campaign-doc-branches-ledger-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "分支清零与接管显化战役档案册（目录 R5 改名后重登记）"
+- file: docs/_working/branch_zero_takeover/problem_cures_ledger.md
+  token: branch-zero-campaign-doc-problem-cures-ledger-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "分支清零与接管显化战役档案册（目录 R5 改名后重登记）"
+- file: scripts/governance/session_takeover_ledger.py
+  token: session-takeover-ledger-session-takeover-ledger-20261001
+  created_by: st-ffchief-20261002
+  capability: session_takeover_ledger
+  merge_evaluation: "跨域不同对象不并：接管台账为新建能力（capability_lookup 'takeover' 零命中），session_handoff_continuity 是交接包语义不同对象"
+- file: src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py
+  token: takeover-pending-gate-takeover-pending-gate-20261001
+  created_by: st-ffchief-20261002
+  capability: takeover_pending_gate
+  merge_evaluation: "跨域不同对象不并：接管显化 L3 门禁新建能力，held_overlap_gate 管活跃 claim 冲突不同对象"
+- file: docs/_working/branch_zero_takeover_20261002/t1_takeover_infra.md
+  token: branch-zero-takeover-t1-takeover-infra-20261001
+  created_by: st-ffchief-20261002
+  capability: branch-zero-takeover
+  merge_evaluation: "跨域不同对象不并：战役施工册族按车道分件，与总包任务书/问题清单册分工不同对象"
+- file: docs/_working/branch_zero_takeover/t1_takeover_infra.md
+  token: takeover-infra-design-doc-t1-takeover-infra-20261001
+  created_by: st-ffchief-20261002
+  capability: takeover-infra-design-doc
+  merge_evaluation: "接管显化基建施工册（T1 设计/接口/测试证据），战役唯一档案非第二真源"
 di_seam_exemptions: []
