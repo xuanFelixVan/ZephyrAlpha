@@ -312,7 +312,8 @@ def run(source: str, limit: int | None = None, dry_run: bool = False) -> dict:
     except Exception:  # noqa: BLE001 — 先验失败不阻断预审（fail-open）
         prior_note = ""
 
-    chat = OllamaChat(model=MODEL)
+    # 思考模型（qwen3:8b）复杂假说判定常超 60s 默认读超时（2026-10-01 实证 15/15 全打满）——调用侧提到 240s
+    chat = OllamaChat(model=MODEL, timeout_s=240.0)
     batch_id = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("E2-%Y%m%d-%H%M%S")
     rows: list[dict] = []
     for _, c in cands.iterrows():

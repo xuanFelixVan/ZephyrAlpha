@@ -14,7 +14,7 @@
 #     函数级惰性导入避开 fw_backtest 侧对本模块的相互引用);
 #   zephyr.infrastructure.database_service(reader 角色——日频产出者共用业务日解析，宪法 §9.1 禁裸连接)
 # [CONSUMERS] DataScheduler task_completed（调度器侧 wire_data_scheduler 注册）; c4_batch_screen 落账钩子;
-#   intake sim 流转钩子（emit_sim_wallet_due）; 管线 CLI（python -m zephyr.strategy_pipeline.pipeline_events emit/drain/status）
+#   intake sim 流转钩子（emit_sim_wallet_due）; 管线 CLI（python -m zephyr.strategy_pipeline.pipeline_events emit/drain/status/repair）
 # [STARTUP] imported（本包不建线程/不建调度器；事件持久化=JSONL 日志，恢复重放由 drain 完成）
 # [MATURITY] experimental
 # [INVARIANTS] 事件不丢：先落 journal 再处理，处理成功才出队；KillSwitch 非 normal 时 drain 停止且全量保留；
@@ -57,6 +57,13 @@
 #   日件幂等双闸=当日 UTC date-marker（消费成功才落）∨ 非 poison 同 kind 在队；月度档毒丸不堵队
 #   （毒丸不算已入队——sim_memo_monthly 从未正常轮转的病根修复，C2/X2）；
 #   OPTIONAL_DUE_KINDS 预埋派发缺失=逐出队跳过（不抛不占 attempts，实现由后续批次交付）；
+#   journal 原语并发与容错三治本（2026-10-01 E4，st-lanech-20261001）：_rewrite tmp 名唯一化
+#   （pid+uuid，多进程互踩=撕裂行/WinError32 治本，正解先例 confirm_gate/offline_store）；
+#   pending() 撕裂行容错（坏行跳过+ERROR 告警进程级去重，一行坏不再全队死，处置走 repair）；
+#   毒丸告警 CRITICAL（alert_webhook_dispatch 只转发 CRITICAL——ERROR 级断链修复）+CLI repair
+#   --list/--drop/--unpoison 处置正门（落改前自动 .bak-repair-<ts> 备份）；emit_sim_wallet_due
+#   幂等闸（同 kind+同 strategies 集合非 poison 在队=already_pending 跳过，毒丸不堵重发）；
+#   heavy drain 消费者缺位为显式裁定（重活只经显式 drain，语义保留不新增自动消费者）
 #   行数豁免（GOV-010 分层裁量 301-500 档）：本文件=事件层单抽象族高内聚（journal 原语/KillSwitch
 #   探针/告警/各 kind 执行体/调度器注册共享同一组路径常量与 fail-closed 语义），变更隔离面=事件层同批演化
 # [MODIFY-GUARD] tests/strategy_pipeline/test_pipeline_events.py
@@ -107,6 +114,7 @@
     python -m zephyr.strategy_pipeline.pipeline_events status          # 看积压
     python -m zephyr.strategy_pipeline.pipeline_events drain --all     # 全量消费（含重 kind）
     python -m zephyr.strategy_pipeline.pipeline_events emit c4_batch_due --payload '{}'
+    python -m zephyr.strategy_pipeline.pipeline_events repair --list   # 列毒丸（--drop/--unpoison <id> 处置，落改前自动备份）
 # [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/pipeline_events.yaml
 """
 
@@ -302,15 +310,46 @@ def record(kind: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
     return evt
 
 
+# 撕裂行告警进程级去重（drain/唤醒链每轮多次调 pending()——不去重=告警风暴；指纹=条数+首坏行前缀）
+_TORN_LINE_ALERTED: set[str] = set()
+
+
 def pending() -> list[dict[str, Any]]:
+    """journal 全量未消费事件（撕裂行容错，B2 治本）：坏行跳过+ERROR 出声（进程级去重），
+    一行坏不再全队死（实证：单行撕裂曾致 10 条在队事件 attempts 恒 0 无法消费）。坏行由
+    后续 _rewrite 出队/repair 重写时自然剪除（原件在 repair 自动备份中可回溯）；
+    返回签名不变（list[事件]）。"""
     if not JOURNAL.exists():
         return []
-    out = []
+    out: list[dict[str, Any]] = []
+    bad: list[str] = []
     for line in JOURNAL.read_text(encoding="utf-8").splitlines():
         line = line.strip()
-        if line:
+        if not line:
+            continue
+        try:
             out.append(json.loads(line))
+        except ValueError:
+            bad.append(line)
+    if bad:
+        log.error("journal 坏行 %d 条跳过（撕裂/半行 JSON，处置见 repair --list/--drop）: %s", len(bad), bad[0][:160])
+        fp = f"{len(bad)}:{bad[0][:120]}"
+        if fp not in _TORN_LINE_ALERTED:
+            _TORN_LINE_ALERTED.add(fp)
+            alert(
+                f"事件 journal 坏行 {len(bad)} 条已跳过（撕裂行容错 B2 治本：单行坏不再全队死，处置走 repair）:"
+                f" {JOURNAL.name}",
+                level="ERROR",
+            )
     return out
+
+
+def _journal_tmp_path() -> Path:
+    """唯一 tmp 名（pid+uuid 片段，B1 治本）：旧固定名 pending_events.jsonl.tmp 在多进程并发
+    _rewrite（DataScheduler 宿主/c4_batch_screen 钩子/CLI/intake 嵌套）下互踩=撕裂行+WinError 32。
+    正解先例=confirm_gate._atomic_write / factor/offline_store（pid.tmp 款）；同目录保证
+    os.replace 同盘原子性。"""
+    return JOURNAL.with_name(f"{JOURNAL.name}.{os.getpid()}-{uuid.uuid4().hex[:8]}.tmp")
 
 
 def _rewrite(events: list[dict[str, Any]]) -> None:
@@ -331,6 +370,48 @@ def _rewrite(events: list[dict[str, Any]]) -> None:
     finally:
         if tmp.exists():  # 写/替换中途失败不留残骸（成功时 tmp 已不存在）
             tmp.unlink(missing_ok=True)
+
+
+def _backup_journal(tag: str = "repair") -> Path | None:
+    """journal 原样字节备份到同目录 .bak-<tag>-<ts>-<uuid>（撕裂行/坏行原样保留，处置可逆）。"""
+    if not JOURNAL.exists():
+        return None
+    bak = JOURNAL.with_name(f"{JOURNAL.name}.bak-{tag}-{time.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:4]}")
+    bak.write_text(JOURNAL.read_text(encoding="utf-8"), encoding="utf-8")
+    return bak
+
+
+def repair(action: str, event_id: str | None = None) -> dict[str, Any]:
+    """毒丸/废件处置正门（B4' 治本，CLI `repair --list / --drop <id> / --unpoison <id>` 落此）。
+    - list：列毒丸（poison=True 事件），只读；
+    - drop：删除单条事件（毒丸或废件，不要求 poison）；
+    - unpoison：摘 poison 标记+attempts 归零（last_error 留档作审计痕迹），重放正门打通。
+    drop/unpoison 落改前自动备份 journal（_backup_journal，可逆性三步验证之可逆腿）；目标
+    不存在=零副作用不备份。重写仅含可解析好行——撕裂行借机剪除（原件在备份）。
+    读写窗口持 _byte_lock（P2a 并发语义对齐）。
+    """
+    if action == "list":
+        with _byte_lock(STATE_DIR / f"{JOURNAL.name}{JOURNAL_LOCK_SUFFIX}"):
+            poison = [e for e in pending() if e.get("poison")]
+        return {"n": len(poison), "poison_events": poison}
+    if action not in ("drop", "unpoison"):
+        raise ValueError(f"未知 repair 动作: {action}（合法=list/drop/unpoison）")
+    with _byte_lock(STATE_DIR / f"{JOURNAL.name}{JOURNAL_LOCK_SUFFIX}"):
+        evts = pending()
+        if not any(e["id"] == event_id for e in evts):
+            key = "dropped" if action == "drop" else "unpoisoned"
+            return {key: False, "why": "event_not_found", "event_id": event_id}
+        bak = _backup_journal()
+        if action == "drop":
+            kept = [e for e in evts if e["id"] != event_id]
+            _rewrite(kept)
+            return {"dropped": True, "event_id": event_id, "remaining": len(kept), "backup": str(bak or "")}
+        for e in evts:
+            if e["id"] == event_id:
+                e.pop("poison", None)
+                e["attempts"] = 0
+        _rewrite(evts)
+    return {"unpoisoned": True, "event_id": event_id, "backup": str(bak or "")}
 
 
 def _save_receipt(receipt: dict[str, Any]) -> None:
@@ -406,7 +487,8 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
 def drain(allow_heavy: bool = False, handler: Handler | None = None, max_events: int = 20) -> dict[str, Any]:
     """消费 journal：成功才出队/失败保留并计 attempts（一次 drain 只试一次，重试跨唤醒）/KillSwitch 停止全保留。
     allow_heavy=False（调度器唤醒默认）跳过重 kind 不计失败；=True（CLI/C4 进程）全量消费。
-    毒丸（attempts≥MAX_ATTEMPTS）事件留档不再自动消费（CLI status 可见，人工处置后删行）。
+    毒丸（attempts≥MAX_ATTEMPTS）事件留档不再自动消费（CLI status/repair --list 可见，
+    处置正门=repair --drop/--unpoison，B4' 治本）。
     """
     handler = handler or _default_handler
     processed: list[dict[str, Any]] = []
@@ -437,7 +519,7 @@ def drain(allow_heavy: bool = False, handler: Handler | None = None, max_events:
                 _rewrite([e for e in pending() if e["id"] != evt["id"]])
         except Exception as exc:  # noqa: BLE001  失败保留+计 attempts，本轮到此为止（重试跨唤醒）
             err = f"{type(exc).__name__}: {exc}"[:200]
-            with _byte_lock(lock_path):  # 计数窗口持闸
+            with _byte_lock(STATE_DIR / f"{JOURNAL.name}{JOURNAL_LOCK_SUFFIX}"):  # 计数窗口持闸
                 evts_now = pending()
                 for e in evts_now:
                     if e["id"] == evt["id"]:
@@ -445,7 +527,9 @@ def drain(allow_heavy: bool = False, handler: Handler | None = None, max_events:
                         e["last_error"] = err
                         if e["attempts"] >= MAX_ATTEMPTS:
                             e["poison"] = True
-                            alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}", level="ERROR")
+                            # CRITICAL 而非 ERROR（B4 治本）：alert_webhook_dispatch 只转发 CRITICAL
+                            # failure 文件——ERROR 级=只落盘不出网，毒丸（需人处置的致命态）到不了人
+                            alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}", level="CRITICAL")
                 _rewrite(evts_now)
             failed.append({"id": evt["id"], "kind": evt["kind"], "error": err})
             break
@@ -1202,7 +1286,20 @@ def emit_c4_batch_completed(batch: str, run_id: str, inserted: int) -> dict[str,
 def emit_sim_wallet_due(strategies: list[dict[str, Any]]) -> dict[str, Any]:
     """sim 流转入册后的开户通知钩子（intake 调用，c4 同款 record+立即轻消费）。
     payload=新 sim 条目 [{"strategy_id", "code_path"}]；失败留 journal 重放（开户幂等）。
+    幂等闸（B5 治本，scan_translated_backlog 同款查重模式）：journal 已有同 kind+同
+    strategies 集合（按 strategy_id 排序比较，与次序无关）的非 poison 未消费事件 → 不重复
+    入队返回 already_pending（防 DataScheduler 宿主/CLI/intake 嵌套多宿主并发同批重复发射；
+    毒丸不算已入队——月度档同款裁定，开户卡死可由新事件重开正门）。
     """
+    sig = tuple(sorted(str(s.get("strategy_id") or "") for s in strategies or []))
+    if any(
+        e["kind"] == "sim_wallet_due"
+        and not e.get("poison")
+        and tuple(sorted(str(s.get("strategy_id") or "") for s in (e.get("payload") or {}).get("strategies") or []))
+        == sig
+        for e in pending()
+    ):
+        return {"event": None, "drained": False, "already_pending": True}
     evt = record("sim_wallet_due", {"strategies": strategies})
     try:
         receipt = drain(allow_heavy=False)
@@ -1403,11 +1500,16 @@ def scan_c1_c2_backlog() -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:  # pragma: no cover — CLI 薄壳，逻辑全在函数
     import argparse
 
-    ap = argparse.ArgumentParser(description="strategy_pipeline 事件 CLI（emit/drain/status）")
+    ap = argparse.ArgumentParser(description="strategy_pipeline 事件 CLI（emit/drain/status/repair）")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status", help="查看积压事件与最近回执")
     d = sub.add_parser("drain", help="消费事件")
     d.add_argument("--all", action="store_true", help="含重 kind（c4_batch_due 自动批测）")
+    rp = sub.add_parser("repair", help="毒丸/废件处置正门（--list / --drop <id> / --unpoison <id>；落改前自动备份）")
+    rg = rp.add_mutually_exclusive_group(required=True)
+    rg.add_argument("--list", action="store_true", help="列出毒丸事件（只读）")
+    rg.add_argument("--drop", metavar="EVENT_ID", help="删除单条毒丸/废件事件")
+    rg.add_argument("--unpoison", metavar="EVENT_ID", help="摘 poison 标记+attempts 归零（重放正门）")
     e = sub.add_parser("emit", help="手工入队事件")
     e.add_argument(
         "kind",
@@ -1447,6 +1549,14 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover — CLI 薄�
         return 0
     if args.cmd == "drain":
         print(json.dumps(drain(allow_heavy=args.all), ensure_ascii=False, indent=1, default=str))
+        return 0
+    if args.cmd == "repair":
+        if args.list:
+            print(json.dumps(repair("list"), ensure_ascii=False, indent=1, default=str))
+        elif args.drop:
+            print(json.dumps(repair("drop", args.drop), ensure_ascii=False, indent=1, default=str))
+        else:
+            print(json.dumps(repair("unpoison", args.unpoison), ensure_ascii=False, indent=1, default=str))
         return 0
     evt = record(args.kind, json.loads(args.payload))
     print(json.dumps({"recorded": evt["id"]}, ensure_ascii=False))

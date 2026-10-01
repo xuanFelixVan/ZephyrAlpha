@@ -731,6 +731,209 @@ class TestCrisisGateShortCircuit:
         assert len(pe.pending()) == 1 and pe.pending()[0]["payload"]["trade_date"] == "2026-09-23"
 
 
+# ---------- E4 代码治本（st-lanech-20261001）：B1 tmp 唯一化 / B2 撕裂行容错 / B4 毒丸告警
+# CRITICAL / B4' repair 处置正门 / B5 emit_sim_wallet_due 幂等闸（病根真源=e4_journal_surgery.md）----------
+@pytest.fixture()
+def _torn_alert_reset():
+    """坏行告警进程级去重状态归零（测试互不遮蔽）。"""
+    pe._TORN_LINE_ALERTED.clear()
+    yield
+    pe._TORN_LINE_ALERTED.clear()
+
+
+class TestE4JournalTornLineTolerance:
+    """B2：pending() 逐行 json.loads 零容错病根治本——坏行跳过+ERROR 出声，一行坏不再全队死。"""
+
+    def test_pending_skips_torn_line_and_alerts(self, state, _torn_alert_reset, monkeypatch):
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        good1 = pe.record("c4_batch_completed", {"batch": "B1"})
+        with pe.JOURNAL.open("a", encoding="utf-8") as f:
+            f.write('{"id": "PIPE-TORN", "kind": "c4_ba\n')  # 撕裂半行（截断残骸，行尾留换行不吞后行）
+        good2 = pe.record("sim_wallet_due", {"strategies": []})
+        evts = pe.pending()  # 旧码此处抛 JSONDecodeError（一行坏全队死实证）
+        assert [e["id"] for e in evts] == [good1["id"], good2["id"]]
+        assert any(lv == "ERROR" and "坏行" in m for lv, m in alerts)
+
+    def test_pending_torn_alert_deduped_within_process(self, state, _torn_alert_reset, monkeypatch):
+        """drain/唤醒链每轮多次调 pending()——坏行告警进程级去重，不告警风暴。"""
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        with pe.JOURNAL.open("w", encoding="utf-8") as f:
+            f.write("{bad torn line}\n")
+        pe.pending()
+        pe.pending()
+        assert len([1 for lv, _ in alerts if lv == "ERROR"]) == 1
+
+    def test_drain_consumes_rest_despite_torn_line(self, state, _torn_alert_reset, monkeypatch):
+        """坏行不阻断消费；出队重写顺带剪除坏行（原件留备份/告警留痕）。"""
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
+        pe.record("c4_batch_completed", {"batch": "B1"})
+        with pe.JOURNAL.open("a", encoding="utf-8") as f:
+            f.write('{"torn": tru\n')
+        pe.record("c2_screen_due", {})
+        monkeypatch.setattr(pe, "kill_switch_clear", lambda: (True, "normal"))
+        r = pe.drain(handler=lambda e: {"ok": True})
+        assert len(r["processed"]) == 2 and r["pending_left"] == 0
+        assert "torn" not in pe.JOURNAL.read_text(encoding="utf-8")  # 坏行被重写剪除
+
+    def test_blank_lines_still_ignored(self, state):
+        pe.record("c4_batch_completed", {"batch": "B1"})
+        with pe.JOURNAL.open("a", encoding="utf-8") as f:
+            f.write("\n   \n")
+        assert len(pe.pending()) == 1  # 既有空行豁免语义不变
+
+
+class TestE4TmpNameUniqueness:
+    """B1：_rewrite 固定 tmp 名多进程互踩（撕裂行+WinError 32）治本——pid+uuid 唯一 tmp 名。"""
+
+    def test_tmp_name_contains_pid_and_uuid(self, state, monkeypatch):
+        monkeypatch.setattr(pe.os, "getpid", lambda: 424242)
+        p1 = pe._journal_tmp_path()
+        p2 = pe._journal_tmp_path()
+        assert "424242" in p1.name and p1.name.endswith(".tmp")
+        assert p1 != p2  # uuid 片段=同进程连续两次也不撞
+        assert p1.parent == pe.JOURNAL.parent  # 同目录（os.replace 同盘原子性前提）
+
+    def test_rewrite_leaves_no_tmp_on_success(self, state):
+        pe.record("c4_batch_completed", {})
+        pe._rewrite(pe.pending())
+        assert list(state.glob("*.tmp")) == []
+
+    def test_rewrite_cleans_tmp_on_replace_failure(self, state, monkeypatch):
+        """replace 撞车（模拟 WinError 32）→ tmp 残留清理，防句柄/废件堆积。
+
+        P2a 合并适配：dev 版 _rewrite 用 os.replace(tmp, JOURNAL)（非 Path.replace），
+        monkeypatch 目标同步换 os.replace。
+        """
+        pe.record("c4_batch_completed", {})
+        evts = pe.pending()
+
+        def boom(src, dst):
+            raise PermissionError(32, "simulated sharing violation")
+
+        monkeypatch.setattr(pe.os, "replace", boom)
+        with pytest.raises(PermissionError):
+            pe._rewrite(evts)
+        assert list(state.glob("*.tmp")) == []
+
+
+class TestE4RepairCli:
+    """B4'：毒丸处置正门——repair --list / --drop / --unpoison（落改前自动备份 .bak-repair-*）。"""
+
+    @staticmethod
+    def _make_poison(kind="c2_screen_due"):
+        evt = pe.record(kind, {})
+        evts = pe.pending()
+        for e in evts:  # 按 id 定向（journal 可能已有他事件，record=追加不回头）
+            if e["id"] == evt["id"]:
+                e["poison"] = True
+                e["attempts"] = pe.MAX_ATTEMPTS
+                e["last_error"] = "RuntimeError: ch down"
+        pe._rewrite(evts)
+        return evt
+
+    def test_repair_list_poison_only(self, state):
+        healthy = pe.record("c4_batch_completed", {})
+        poison = self._make_poison()
+        out = pe.repair("list")
+        assert out["n"] == 1 and [e["id"] for e in out["poison_events"]] == [poison["id"]]
+        assert healthy["id"] not in [e["id"] for e in out["poison_events"]]
+
+    def test_repair_drop_removes_single_event_with_backup(self, state):
+        keep = pe.record("c4_batch_completed", {})
+        poison = self._make_poison()
+        out = pe.repair("drop", poison["id"])
+        assert out["dropped"] is True and out["remaining"] == 1
+        assert [e["id"] for e in pe.pending()] == [keep["id"]]
+        baks = list(state.glob("*.bak-repair-*"))
+        assert len(baks) == 1 and poison["id"] in baks[0].read_text(encoding="utf-8")  # 备份含被删原件
+
+    def test_repair_drop_unknown_id_no_side_effect(self, state):
+        pe.record("c4_batch_completed", {})
+        out = pe.repair("drop", "PIPE-NONE")
+        assert out == {"dropped": False, "why": "event_not_found", "event_id": "PIPE-NONE"}
+        assert list(state.glob("*.bak-repair-*")) == []  # 无变更不备份
+
+    def test_repair_unpoison_resets_and_replayable(self, state, monkeypatch):
+        monkeypatch.setattr(pe, "kill_switch_clear", lambda: (True, "normal"))
+        poison = self._make_poison()
+        out = pe.repair("unpoison", poison["id"])
+        assert out["unpoisoned"] is True
+        e = pe.pending()[0]
+        assert "poison" not in e and e["attempts"] == 0  # 摘毒+attempts 归零（last_error 留档）
+        assert e["last_error"] == "RuntimeError: ch down"
+        r = pe.drain(handler=lambda ev: {"ok": True})  # 摘毒后重放正门打通
+        assert r["processed"] and r["pending_left"] == 0
+
+    def test_repair_cli_dispatch(self, state, capsys):
+        poison = self._make_poison()
+        assert pe.main(["repair", "--list"]) == 0
+        out = json.loads(capsys.readouterr().out)
+        assert [e["id"] for e in out["poison_events"]] == [poison["id"]]
+        assert pe.main(["repair", "--drop", poison["id"]]) == 0
+        capsys.readouterr()
+        assert pe.pending() == []
+
+    def test_repair_unknown_action_raises(self, state):
+        with pytest.raises(ValueError, match="repair 动作"):
+            pe.repair("rebuild")
+
+
+class TestE4EmitSimWalletIdempotency:
+    """B5：emit_sim_wallet_due 幂等闸——同 kind+同 strategies 集合未消费事件在队=跳过入队。"""
+
+    def test_duplicate_emit_skipped(self, state, monkeypatch):
+        monkeypatch.setattr(pe, "drain", lambda allow_heavy: {"processed": 1})
+        r1 = pe.emit_sim_wallet_due([{"strategy_id": "S1", "code_path": "a.py"}])
+        assert r1["drained"] is True
+        r2 = pe.emit_sim_wallet_due([{"strategy_id": "S1", "code_path": "a.py"}])
+        assert r2.get("already_pending") is True
+        assert len([e for e in pe.pending() if e["kind"] == "sim_wallet_due"]) == 1  # 只记一条
+
+    def test_same_strategy_set_different_order_deduped(self, state, monkeypatch):
+        monkeypatch.setattr(pe, "drain", lambda allow_heavy: {"processed": 1})
+        pe.emit_sim_wallet_due([{"strategy_id": "S1"}, {"strategy_id": "S2"}])
+        r2 = pe.emit_sim_wallet_due([{"strategy_id": "S2"}, {"strategy_id": "S1"}])
+        assert r2.get("already_pending") is True  # 集合比较与次序无关
+
+    def test_different_strategies_still_emits(self, state, monkeypatch):
+        monkeypatch.setattr(pe, "drain", lambda allow_heavy: {"processed": 1})
+        pe.emit_sim_wallet_due([{"strategy_id": "S1"}])
+        r2 = pe.emit_sim_wallet_due([{"strategy_id": "S1"}, {"strategy_id": "S2"}])
+        assert r2.get("already_pending") is None and r2["drained"] is True
+        assert len(pe.pending()) == 2
+
+    def test_poison_does_not_block_reemission(self, state, monkeypatch):
+        """毒丸不算"已入队"（月度档同款裁定）：开户卡死可由新事件重开正门。"""
+        monkeypatch.setattr(pe, "drain", lambda allow_heavy: {"processed": 1})
+        pe.emit_sim_wallet_due([{"strategy_id": "S1"}])
+        evts = pe.pending()
+        evts[0]["poison"] = True
+        pe._rewrite(evts)
+        r = pe.emit_sim_wallet_due([{"strategy_id": "S1"}])
+        assert r["drained"] is True and r.get("already_pending") is None
+        assert len([e for e in pe.pending() if e["kind"] == "sim_wallet_due"]) == 2
+
+
+class TestE4PoisonAlertCritical:
+    """B4：毒丸告警升级 CRITICAL——webhook 分发器只转发 CRITICAL（ERROR 级断链修复）。"""
+
+    def test_poison_alert_level_is_critical(self, state, monkeypatch):
+        alerts = []
+        monkeypatch.setattr(pe, "kill_switch_clear", lambda: (True, "normal"))
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        pe.record("c4_batch_completed", {})
+
+        def boom(e):
+            raise RuntimeError("ch down")
+
+        for _ in range(pe.MAX_ATTEMPTS):
+            pe.drain(handler=boom)
+        poison_alerts = [(lv, m) for lv, m in alerts if "毒丸留档" in m]
+        assert poison_alerts and poison_alerts[0][0] == "CRITICAL"  # 旧码=ERROR（webhook 不转发）
+
+
 class TestOrderDaemonSpawn:
     """F82 P0（st-circ-a7）：工单守护 spawn——journal 空=零成本跳过；非空才起守护；
     守护异常 WARN 不反噬。SchedulingJournal/OrderDaemon/policy 全注入桩（零生产 IO）。"""

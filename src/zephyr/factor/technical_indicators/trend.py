@@ -427,8 +427,11 @@ class TRIX(TechnicalIndicatorBase):
         close = data["close"]
         # TR = 三重 EMA（通达信标准，非 TEMA 公式）
         tr = _ema(_ema(_ema(close, n), n), n)
-        # TRIX = 100 × TR 变化率
-        trix = 100 * tr.pct_change()
+        # TRIX = 100 × TR 变化率；E10 数值防护（2026-10-01）：前值 TR=0（close 前段
+        # 0 链/1min 断层）→ 分母 0 → NaN 无值语义，禁 ±Inf（census trix 12 行实证）
+        prev_tr = tr.shift(1)
+        trix = (100 * tr.pct_change(fill_method=None)).where(np.isfinite(prev_tr) & (prev_tr != 0))
+        trix[~np.isfinite(trix)] = np.nan  # 终防护：残余非有限值不落列
         # TRMA = MA(TRIX)
         trma = trix.rolling(window=n).mean()
         return pd.DataFrame({"trix": trix, "trma": trma}, index=data.index)
@@ -592,8 +595,13 @@ class VORTEX(TechnicalIndicatorBase):
         vmn = (data["low"] - data["high"].shift(1)).abs()
         tr = _true_range(data["high"], data["low"], data["close"])
         tr_sum = tr.rolling(window=n).sum()
-        vip = vmp.rolling(window=n).sum() / tr_sum
-        vim = vmn.rolling(window=n).sum() / tr_sum
+        # E10 数值防护（2026-10-01）：ΣTR=0（close 缺失停牌段 TR 的 max(skipna)=H−L=0
+        # + H=L 窗）→ 分母 0 → NaN 无值语义，禁除零 ±Inf（census vip 2,619/vim 1,036 行实证）
+        valid = tr_sum > 0
+        vip = (vmp.rolling(window=n).sum() / tr_sum).where(valid)
+        vim = (vmn.rolling(window=n).sum() / tr_sum).where(valid)
+        vip[~np.isfinite(vip)] = np.nan  # 终防护：残余非有限值不落列
+        vim[~np.isfinite(vim)] = np.nan
         return pd.DataFrame({f"vip_{n}": vip, f"vim_{n}": vim}, index=data.index)
 
 
@@ -656,7 +664,16 @@ class SUPERTREND(TechnicalIndicatorBase):
 
 @TechnicalIndicatorRegistry.register
 class MCGINLEY(TechnicalIndicatorBase):
-    """McGinley 动态均线（McGinley Dynamic，14）。"""
+    """McGinley 动态均线（McGinley Dynamic，14）。
+
+    断层自愈（E1 夜修 2026-10-01）：价格单日大跌 >3.5 倍（如 44→12.6）时基期失效——
+    旧递推 prev 转负后钳位分支 max(ratio**4, 1e-12) 成为指数放大器（|prev| 每轮 ×~1e11），
+    约 25-30 个交易日后 float64 上溢产出 Inf 写入 md_14。现每轮递推前检查
+    prev 非有限或 ≤0 → 重置播种 prev=C[i]（与 NaN 播种同语义）；重置播种是
+    McGinley 递推的标准自愈（断层=旧基期不再代表现价水平）。
+    注意：断层 bar 当日单次递推可能产生一个有限的过渡异常值，次轮即重置回价格量纲；
+    输出前另有非有限→NaN 终防护兜底。
+    """
 
     meta = TechnicalIndicatorMeta(
         indicator_id="mcginley",
@@ -680,7 +697,9 @@ class MCGINLEY(TechnicalIndicatorBase):
         md = np.full(m, np.nan)
         prev = np.nan
         for i in range(m):
-            if np.isnan(prev):
+            # 播种/自愈：NaN（含预热首行、上游 NaN）或基期失效（非有限/≤0，断层或上溢产物）
+            # → 重置播种 prev=C[i]（与 NaN 播种同语义），防止钳位分支指数放大
+            if not np.isfinite(prev) or prev <= 0:
                 prev = c[i]
                 md[i] = prev
                 continue
@@ -688,6 +707,7 @@ class MCGINLEY(TechnicalIndicatorBase):
             denom = k * n * max(ratio**4, 1e-12)
             prev = prev + (c[i] - prev) / denom
             md[i] = prev
+        md[~np.isfinite(md)] = np.nan  # 终防护：任何残余非有限值不落列
         return pd.DataFrame({f"md_{n}": pd.Series(md, index=data.index)}, index=data.index)
 
 

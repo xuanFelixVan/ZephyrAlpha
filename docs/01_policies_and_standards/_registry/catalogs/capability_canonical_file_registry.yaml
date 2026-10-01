@@ -58900,4 +58900,55 @@ creation_tokens:
   created_by: scaffold.py
   capability: health_monitor_probe_task
 
+- file: docs/_working/lane_c_chain_night/00_skeleton.md
+  token: lane-chain-night-00-skeleton-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/DELIVERY.md
+  token: lane-chain-night-delivery-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e10_data_health.md
+  token: lane-chain-night-e10-data-health-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e10_fix.md
+  token: lane-chain-night-e10-fix-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e11_lane_f_adapter.md
+  token: lane-chain-night-e11-lane-f-adapter-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e1_mine_repair.md
+  token: lane-chain-night-e1-mine-repair-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e2e3_ops_repair.md
+  token: lane-chain-night-e2e3-ops-repair-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e4_code_fix.md
+  token: lane-chain-night-e4-code-fix-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: docs/_working/lane_c_chain_night/e4_journal_surgery.md
+  token: lane-chain-night-e4-journal-surgery-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_chain_night
+  merge_evaluation: "跨域不同对象不并：车道C病链+事件系统夜战施工簿唯一真源；20261001删除事故重建件"
+- file: scripts/backtest/lane_f_grid_adapter.py
+  token: lane-f-grid-adapter-lane-f-grid-adapter-20261001
+  created_by: st-lanech-main-20261001
+  capability: lane_f_grid_adapter
+  merge_evaluation: "内收销项：factory_intake_pipeline.py:73 欠账销项，F 车道适配唯一实现"
+
 di_seam_exemptions: []

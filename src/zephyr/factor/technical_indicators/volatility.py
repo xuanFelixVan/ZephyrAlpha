@@ -254,7 +254,11 @@ class PercentB(TechnicalIndicatorBase):
             return pd.DataFrame(columns=self.meta.output_columns)
         params = self.get_params(**kwargs)
         upper, _, lower = _boll_bands(data["close"], params["period"], params["nbdev"])
-        pctb = (data["close"] - lower) / (upper - lower)
+        band = upper - lower
+        # E10 数值防护（2026-10-01）：零带宽窗（一字板 close 常数，002916 1min 146 根实证）
+        # 无值语义 → NaN，禁浮点尘 ±Inf 与 0/0 平台依赖结果
+        pctb = ((data["close"] - lower) / band).where(band > 0)
+        pctb[~np.isfinite(pctb)] = np.nan  # 终防护：残余非有限值不落列
         return pd.DataFrame({"boll_pctb": pctb}, index=data.index)
 
 
@@ -544,7 +548,11 @@ class CVI(TechnicalIndicatorBase):
         ema_n, roc_n = int(params["ema_period"]), int(params["roc_period"])
         rng = data["high"] - data["low"]
         ema_rng = rng.ewm(span=ema_n, adjust=False).mean()
-        cvi = 100 * (ema_rng / ema_rng.shift(roc_n) - 1)
+        base = ema_rng.shift(roc_n)
+        # E10 数值防护（2026-10-01）：EMA 基期=0（前段 H=L 一字零区间，ema 链种子 0）
+        # → 分母 0 无值语义 → NaN，禁除零 ±Inf（census cvi 13,266 行实证）
+        cvi = (100 * (ema_rng / base - 1)).where(base > 0)
+        cvi[~np.isfinite(cvi)] = np.nan  # 终防护：残余非有限值不落列
         return pd.DataFrame({"cvi": cvi}, index=data.index)
 
 

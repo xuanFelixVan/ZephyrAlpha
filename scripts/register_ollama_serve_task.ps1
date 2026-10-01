@@ -14,6 +14,14 @@
 # no services.msc entry). House pattern (mirrors register_pattern_mining_task.ps1):
 # Task Scheduler AtLogOn trigger running "ollama serve" detached.
 #
+# E3 supply repair (2026-10-01): the logon-only task left the serve process unattended -
+# it died with LastTaskResult=15 and port 11434 stayed down with nobody to restart it.
+# Fix: RestartOnFailure (3 retries, 1 min apart). An AtStartup trigger was also tried and
+# REFUSED (0x80070005) - registering a boot-trigger task requires an elevated caller, and
+# with the InteractiveToken principal it could not start before user logon anyway, so
+# AtLogOn + RestartOnFailure + StartWhenAvailable is the effective coverage.
+# Port-conflict re-fires exit immediately; worst case is <=3 extra bounded retries.
+#
 # Idempotency: a second "ollama serve" bind fails on port 11434 and exits immediately,
 # so AtLogOn re-fires are harmless (no double-instance, no port squatting).
 #
@@ -65,11 +73,14 @@ $Action = New-ScheduledTaskAction -Execute $OllamaExe -Argument "serve"
 $Trigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
 $Settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) `
     -MultipleInstances IgnoreNew -StartWhenAvailable -AllowStartIfOnBatteries `
-    -DontStopIfGoingOnBatteries
+    -DontStopIfGoingOnBatteries -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
 # ExecutionTimeLimit zero = no limit (a server must not be killed by the scheduler).
+# RestartCount/Interval = RestartOnFailure: if the serve process dies with a non-zero
+# exit code, Task Scheduler pulls it back up (3 retries, 1 minute apart). A clean
+# exit (port already bound) does not count as a failure and does not restart.
 $Principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive
 
 Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
     -Settings $Settings -Principal $Principal -Force | Out-Null
-Write-Output "OK registered $TaskName (AtLogOn, no time limit, port-conflict self-exit = idempotent)"
+Write-Output "OK registered $TaskName (AtLogOn, RestartOnFailure 3x1min, no time limit, port-conflict self-exit = idempotent)"
 schtasks /query /tn $TaskName /fo LIST | Select-String "TaskName|Status"

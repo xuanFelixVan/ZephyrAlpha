@@ -104,6 +104,9 @@ class CORREL(TechnicalIndicatorBase):
         params = self.get_params(**kwargs)
         n = params["period"]
         correl = data["close"].rolling(window=n).corr(data["volume"])
+        # E10 数值防护（2026-10-01）：零方差窗（停牌/一字板）浮点尘 → ±Inf
+        # （census correl_30 78,220 行实证，常数 close c=0.3 即可复现）→ NaN 无值语义
+        correl[~np.isfinite(correl)] = np.nan
         return pd.DataFrame({f"correl_{n}": correl}, index=data.index)
 
 
@@ -269,7 +272,8 @@ class STDERR(TechnicalIndicatorBase):
         y = data["close"]
         slope, intercept, sum_xy = _rolling_linefit(y, n, with_sum_xy=True)
         ssr = (y * y).rolling(window=n).sum() - intercept * y.rolling(window=n).sum() - slope * sum_xy
-        stderr = np.sqrt(ssr / (n - 2))
+        # E10 附防（2026-10-01）：SSR 闭式消去浮点尘负值 → sqrt 警告；NaN 语义保持（非 12 列清单）
+        stderr = np.sqrt(ssr.where(ssr >= 0) / (n - 2))
         return pd.DataFrame({f"stderr_{n}": stderr}, index=data.index)
 
 

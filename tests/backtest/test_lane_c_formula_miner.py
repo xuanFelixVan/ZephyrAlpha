@@ -138,6 +138,44 @@ class TestIncrementalICFitness:
         assert np.isfinite(v)
 
 
+class TestResidualizeInfGuard:
+    """E1 夜修（2026-10-01）：真实 TI 基座列可含 Inf（上溢产物，如 md_14 断层 bug）。
+
+    旧 mask 只滤 NaN 不滤 Inf → Inf 行被送进 lstsq → LinAlgError 炸整批挖掘。
+    修复后：双侧全滤（x 侧 isfinite、baseline 侧 isfinite.all），Inf 行与 NaN 行同语义剔除。
+    """
+
+    def test_inf_baseline_rows_masked_out(self):
+        rng = np.random.default_rng(17)
+        base = rng.normal(size=(120, 2))
+        base[:20, 1] = np.inf  # 前 20 行基座含 Inf（修复前此处 lstsq 直接 LinAlgError）
+        x = base[:, 0] * 1.5 + rng.normal(scale=0.05, size=120)
+        resid = residualize(x, base)
+        assert np.isnan(resid[:20]).all()  # Inf 行被剔除记 NaN
+        assert np.isfinite(resid[20:]).all()  # 有限行正常残差化
+
+    def test_all_inf_baseline_falls_back_to_copy(self):
+        x = np.arange(50.0)
+        base = np.full((50, 2), np.inf)
+        out = residualize(x, base)  # 有效样本<10 → 退回 x.copy()（不崩）
+        assert np.allclose(out, x)
+        assert np.isfinite(out).all()
+
+
+class TestFitnessExceptionGuard:
+    """E1 夜修（2026-10-01）：单条公式验收崩溃只记 0 分，不炸整批挖掘（gplearn 兼容签名不变）。"""
+
+    def test_fitness_exception_returns_zero(self, monkeypatch):
+        import scripts.backtest.lane_c_formula_miner as miner
+
+        def _boom(x, baseline):
+            raise RuntimeError("injected residualize failure")
+
+        monkeypatch.setattr(miner, "residualize", _boom)
+        f = miner.make_incremental_ic_fitness(np.ones((30, 1)), np.arange(30.0))
+        assert f(np.arange(30.0), np.arange(30.0), np.ones(30)) == 0.0  # 修复前：RuntimeError 直接上抛
+
+
 class TestPanelOperators:
     """日期主序面板（每日 N=2 标的）合成数据上的分组语义验证。"""
 

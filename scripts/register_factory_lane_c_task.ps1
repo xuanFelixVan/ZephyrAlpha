@@ -12,13 +12,15 @@
 # 2026-09-14: dual-track / REG-IND-001 baseline / pop 1000 x 50 / whitelist governance).
 #
 # Architecture (mirrors register_pattern_mining_task.ps1 / register_paper_session_task.ps1):
-#   Task Scheduler ZephyrAlpha_FactoryLaneC (weekly Sat 10:00)
+#   Task Scheduler ZephyrAlpha_FactoryLaneC (weekdays Mon-Fri 20:00)
 #   -> powershell -File scripts\run_factory_lane_c.ps1
 #   -> lane_c_formula_miner.py mine (E0 gate + whitelist status checked inside, every run)
 #
 # Key design:
-# - Saturday 10:00 = non-trading day window (E0 gate allows heavy all day on holidays);
-#   manual fire any trading day after 15:30 works too: schtasks /run /tn ZephyrAlpha_FactoryLaneC
+# - Weekdays 20:00 (Owner plan-1, 2026-10-01; was weekly Sat 10:00) = after-close window
+#   on trading days (E0 gate heavy_ok after 15:30) and the trade calendar always has that
+#   date's row, which root-fixes gate_deny_calendar_unknown; manual fire stays available:
+#   schtasks /run /tn ZephyrAlpha_FactoryLaneC
 # - The E0 compute gate re-checks trade_calendar at every fire, so the trigger schedule is
 #   convenience only and never bypasses discipline.
 # - ExecutionTimeLimit=4h: production run est. 30-90min CPU single-thread.
@@ -36,12 +38,12 @@ $CurrentUser = "$env:USERDOMAIN\$env:USERNAME"
 
 $Action = New-ScheduledTaskAction -Execute "powershell.exe" `
     -Argument "-NoProfile -ExecutionPolicy Bypass -File $RepoRoot\scripts\run_factory_lane_c.ps1"
-$Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Saturday -At "10:00"
+$Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At "20:00"
 $Settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 4) `
     -MultipleInstances IgnoreNew -StartWhenAvailable
 $Principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive
 
 Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
     -Settings $Settings -Principal $Principal -Force | Out-Null
-Write-Output "OK registered $TaskName (weekly Sat 10:00, 4h limit)"
+Write-Output "OK registered $TaskName (weekdays Mon-Fri 20:00, 4h limit)"
 schtasks /query /tn $TaskName /fo LIST | Select-String "TaskName|Status|Next Run"

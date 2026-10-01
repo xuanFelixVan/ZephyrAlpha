@@ -47,6 +47,7 @@ import time
 from pathlib import Path
 from typing import Any, Final, Iterator
 
+import numpy as np
 import pandas as pd
 
 from zephyr.data.calendar import MarketCalendar, get_market_calendar
@@ -93,6 +94,34 @@ ALL_PERIODS: list[str] = [
     "5min",
     "1min",
 ]
+
+
+def sanitize_indicator_matrix(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+    """写链 isfinite 闸（E10 数据健康修复 2026-10-01）。
+
+    指标输出矩阵浮点列逐格检查，±Inf → NaN（NaN 入库=Nullable 合法值，
+    下游 dropna 链已有语义；±Inf 禁入 c1_market.technical_indicator）。
+    位置=写入路径统一收口点 _compute_all_indicators 出口；闸是兜底不是豁免——
+    算法面照修（复发根因=周末 full_refresh 周周重写 Inf，e10_data_health.md §5）。
+
+    Returns:
+        (清洗后 DataFrame, 拦截格数)。零拦截时原对象返回（零拷贝快路径）。
+    """
+    if df is None or df.empty:
+        return df, 0
+    float_cols = [c for c in df.columns if pd.api.types.is_float_dtype(df[c])]
+    if not float_cols:
+        return df, 0
+    block = df[float_cols].to_numpy(dtype=float)
+    mask = np.isinf(block)
+    n_fixed = int(mask.sum())
+    if n_fixed == 0:
+        return df, 0
+    out = df.copy()
+    block[mask] = np.nan
+    out[float_cols] = block
+    return out, n_fixed
+
 
 # 路由能力集（CAP-CONSISTENCY gate 模式1 识别）
 # fetch 按 payload.table 路由，gate 仅识别 _*_CAPABILITIES 变量 / capability=="xxx" 模式，
@@ -1818,6 +1847,13 @@ class InternalComputeProvider(IngestProviderBase):
 
         # 合并所有指标列
         merged = pd.concat(results, axis=1)
+        # E10 写链 isfinite 闸（2026-10-01）：出口统一收口，±Inf → NaN 后方可入行
+        merged, n_nonfinite = sanitize_indicator_matrix(merged)
+        if n_nonfinite:
+            self._log.warning(
+                "[isfinite-gate] 指标输出矩阵拦截 ±Inf %d 格 → NaN（写库前兜底，算法面另行修复）",
+                n_nonfinite,
+            )
         return merged
 
     def _build_row(self, bar_ts, symbol, period, row_data, columns) -> tuple:
@@ -1848,5 +1884,7 @@ class InternalComputeProvider(IngestProviderBase):
                 row.append("internal")
             else:
                 val = row_data.get(col) if hasattr(row_data, "get") else None
-                row.append(val if not (isinstance(val, float) and pd.isna(val)) else None)
+                # E10 写链 isfinite 闸（2026-10-01）标量兜底：非有限（NaN/±Inf）一律 None，
+                # 与矩阵级 sanitize_indicator_matrix 双保险（防绕过 _compute_all_indicators 的路径）
+                row.append(val if not (isinstance(val, float) and not np.isfinite(val)) else None)
         return tuple(row)

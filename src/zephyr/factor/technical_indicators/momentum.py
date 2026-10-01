@@ -179,7 +179,12 @@ class ROC(TechnicalIndicatorBase):
             return pd.DataFrame(columns=self.meta.output_columns)
         params = self.get_params(**kwargs)
         n = params["period"]
-        roc = (data["close"] / data["close"].shift(n) - 1) * 100
+        base = data["close"].shift(n)
+        # E10 数值防护（2026-10-01）：前收 0/非有限（1min 断层实证）→ 无值语义 NaN，
+        # 禁 C/0=±Inf（census roc_12 24 行实证，e10_data_health.md §6）
+        valid = np.isfinite(base) & (base != 0)
+        roc = ((data["close"] / base - 1) * 100).where(valid)
+        roc[~np.isfinite(roc)] = np.nan  # 终防护：当根 close 非有限同拦
         return pd.DataFrame({f"roc_{n}": roc}, index=data.index)
 
 
@@ -1357,7 +1362,10 @@ class CTI(TechnicalIndicatorBase):
         sum_x2 = n * (n - 1) * (2 * n - 1) / 6
         num = n * sum_xy - sum_x * sum_y
         den = np.sqrt((n * sum_x2 - sum_x**2) * (n * sum_y2 - sum_y**2).clip(lower=0))
-        cti = num / den
+        # E10 数值防护（2026-10-01）：零方差窗（停牌/一字板）den=0，浮点尘可产 ±Inf
+        # （census cti_12 96,689 行实证，常数 close c=0.1 即可复现）→ NaN 无值语义
+        cti = (num / den).where(den > 0)
+        cti[~np.isfinite(cti)] = np.nan  # 终防护：残余非有限值不落列
         return pd.DataFrame({f"cti_{n}": cti}, index=data.index)
 
 

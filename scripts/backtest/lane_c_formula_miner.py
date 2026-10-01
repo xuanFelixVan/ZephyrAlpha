@@ -211,13 +211,21 @@ def build_function_set(whitelist: dict, date_codes=None, symbol_codes=None) -> l
 
 
 def residualize(x: np.ndarray, baseline: np.ndarray) -> np.ndarray:
-    """对基座矩阵+截距做最小二乘残差（增量信息的线性剥离，NaN 行一致剔除）。"""
+    """对基座矩阵+截距做最小二乘残差（增量信息的线性剥离，非有限行双侧一致剔除）。
+
+    E1 夜修（2026-10-01）：真实 TI 基座列可含 Inf（上溢产物），旧 mask 只滤 NaN 会把 Inf 行
+    送进 lstsq → LinAlgError 炸整批。现 x 侧 isfinite(x)、baseline 侧 isfinite(baseline).all(axis=1)
+    双侧全滤（Inf 与 NaN 同语义剔除）；lstsq 奇异（LinAlgError）时放弃残差化退回 x.copy()，不炸批。
+    """
     mask = np.isfinite(x)
-    ok = mask & ~np.isnan(baseline).any(axis=1) if baseline.size else mask
+    ok = mask & np.isfinite(baseline).all(axis=1) if baseline.size else mask
     if ok.sum() < 10 or baseline.size == 0:
         return x.copy()
-    design = np.column_stack([baseline[ok], np.ones(ok.sum())])
-    coef, *_ = np.linalg.lstsq(design, x[ok], rcond=None)
+    design = np.column_stack([baseline[ok], np.ones(int(ok.sum()))])
+    try:
+        coef, *_ = np.linalg.lstsq(design, x[ok], rcond=None)
+    except np.linalg.LinAlgError:
+        return x.copy()
     out = x.copy()
     out[ok] = x[ok] - design @ coef
     out[~ok] = np.nan
@@ -233,12 +241,19 @@ def rank_ic(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def make_incremental_ic_fitness(baseline: np.ndarray, fwd: np.ndarray):
-    """gplearn 兼容 fitness（y, y_pred, w）：候选残差 vs 前向收益的 rank IC，越大越好。"""
+    """gplearn 兼容 fitness（y, y_pred, w）：候选残差 vs 前向收益的 rank IC，越大越好。
+
+    E1 夜修（2026-10-01）：单条公式验收异常（如极端值/维度畸变）只记 0 分，
+    不炸整批挖掘；签名保持 gplearn (y, y_pred, w) 兼容。
+    """
 
     def _fitness(y, y_pred, _w):
-        yp = np.asarray(y_pred, dtype=float)
-        yp[~np.isfinite(yp)] = np.nan
-        return rank_ic(residualize(yp, baseline), np.asarray(y, dtype=float))
+        try:
+            yp = np.asarray(y_pred, dtype=float)
+            yp[~np.isfinite(yp)] = np.nan
+            return rank_ic(residualize(yp, baseline), np.asarray(y, dtype=float))
+        except Exception:  # noqa: BLE001  单条公式验收失败降级 0 分，不炸整批挖掘
+            return 0.0
 
     return _fitness
 

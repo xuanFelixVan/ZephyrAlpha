@@ -168,7 +168,11 @@ class VR(TechnicalIndicatorBase):
         up_sum = up_vol.rolling(window=n).sum()
         down_sum = down_vol.rolling(window=n).sum()
         flat_sum = flat_vol.rolling(window=n).sum()
-        vr = 100 * (2 * up_sum + flat_sum) / (2 * down_sum + flat_sum)
+        # E10 数值防护（2026-10-01）：分母 0（26 窗全涨/停牌量 0）无值语义 → NaN，
+        # 禁除零 ±Inf（普查 vr_26 14,617 行 Inf 实证，e10_data_health.md §6）
+        denom = 2 * down_sum + flat_sum
+        vr = (100 * (2 * up_sum + flat_sum) / denom).where(denom > 0)
+        vr[~np.isfinite(vr)] = np.nan  # 终防护：残余非有限值不落列
         return pd.DataFrame({f"vr_{n}": vr}, index=data.index)
 
 
@@ -218,8 +222,15 @@ class PVT(TechnicalIndicatorBase):
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
         close, vol = data["close"], data["volume"]
-        pct_change = close.pct_change().fillna(0)
-        pvt = (vol * pct_change).cumsum()
+        # fill_method=None：NaN close（停牌/缺数）不再 pad（pandas 弃用默认；NaN bar
+        # 步进=NaN → 下方防护过滤为 0，语义等价"跳过无效 bar"）
+        pct_change = close.pct_change(fill_method=None).fillna(0)
+        # E10 数值防护（2026-10-01）：前收 0/断层 → pct_change=±Inf，单点毒化 cumsum
+        # 整条尾链（普查 60/120min 256.9 万行 Inf 实证）——步进非有限一律过滤为 0 再累积
+        steps = (vol * pct_change).to_numpy(dtype=float)
+        steps[~np.isfinite(steps)] = 0.0
+        pvt = pd.Series(steps, index=data.index).cumsum()
+        pvt[~np.isfinite(pvt)] = np.nan  # 终防护：极端巨值累积上溢不落列
         return pd.DataFrame({"pvt": pvt}, index=data.index)
 
 
@@ -400,9 +411,15 @@ class NVI(TechnicalIndicatorBase):
         self.validate(data)
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
-        ret = data["close"].pct_change()
+        ret = data["close"].pct_change(fill_method=None)  # NaN close 不 pad（E10，同 PVT）
         factor = (1 + ret).where(data["volume"] < data["volume"].shift(1), 1.0).fillna(1.0)
-        nvi = 100.0 * factor.cumprod()
+        # E10 数值防护（2026-10-01）：前收 0 → (1+ret)=±Inf 混入 cumprod 毒化尾链——
+        # 与 PVT/PVI 同型雷（普查 §3 "NVI 同型但现值干净"）；非有限/≤0（无效价产物）
+        # → 中性元 1.0（跳过该日），输出终防护非有限 → NaN
+        farr = factor.to_numpy(dtype=float)
+        farr[~(np.isfinite(farr) & (farr > 0))] = 1.0
+        nvi = 100.0 * pd.Series(farr, index=data.index).cumprod()
+        nvi[~np.isfinite(nvi)] = np.nan
         return pd.DataFrame({"nvi": nvi}, index=data.index)
 
 
@@ -425,9 +442,15 @@ class PVI(TechnicalIndicatorBase):
         self.validate(data)
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
-        ret = data["close"].pct_change()
+        ret = data["close"].pct_change(fill_method=None)  # NaN close 不 pad（E10，同 PVT）
         factor = (1 + ret).where(data["volume"] > data["volume"].shift(1), 1.0).fillna(1.0)
-        pvi = 100.0 * factor.cumprod()
+        # E10 数值防护（2026-10-01）：前收 0 → (1+ret)=±Inf 混入 cumprod 毒化尾链
+        # （688291 1min 2026-09-15 事件实证，964 行）；非有限/≤0（无效价产物）
+        # → 中性元 1.0（跳过该日），输出终防护非有限 → NaN
+        farr = factor.to_numpy(dtype=float)
+        farr[~(np.isfinite(farr) & (farr > 0))] = 1.0
+        pvi = 100.0 * pd.Series(farr, index=data.index).cumprod()
+        pvi[~np.isfinite(pvi)] = np.nan
         return pd.DataFrame({"pvi": pvi}, index=data.index)
 
 
