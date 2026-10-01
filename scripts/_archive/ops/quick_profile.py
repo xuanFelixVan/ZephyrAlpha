@@ -135,7 +135,7 @@ def _profile_from_passport(model_id: str, top_n: int) -> int:
     try:
         matcher = JobMatcher()
         profile.recommendations = matcher.match_top(profile, n=top_n)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 归档件：画像失败降级为笔记，不中断
         profile.notes.append(f"job_match_failed: {e}")
 
     _print_report(profile)
@@ -167,7 +167,7 @@ def _run_quick_exam(model_id: str, top_n: int) -> int:
         print(f"  护照已保存: {saved_path}")
         _print_report(profile)
         return 0
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 归档件：考试失败落 stderr 退出码
         print(f"ERROR: quick exam failed: {e}", file=sys.stderr)
         return 3
 

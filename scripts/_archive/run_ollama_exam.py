@@ -187,7 +187,7 @@ def main() -> None:
         try:
             result = run_exam(model, timeout_s=args.timeout)
             results.append(result)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 归档件原样保全：逐模型失败兜底入 results 不中断批量考试
             _log.error("Exam failed for %s: %s", model, exc)
             results.append(
                 {
