@@ -2285,6 +2285,16 @@ def drain_queue(
                 # 死信：附原因移 dead/，队列继续前进（DLQ 语义不堵队，66 号 §6.4）
                 item["dead_at"] = _now_iso()
                 item["dead_reason"] = result.reason
+                # 死信→堵点本桥接（2026-10-01 提交链治本·C8）：落地侧死因此前只落
+                # dead/ 袋不进 commit_block_events 账本（26 袋 Popen 缺席实证）。
+                try:
+                    from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+                        _emit_dead_letter_ledger,
+                    )
+
+                    _emit_dead_letter_ledger(root, qid, item, result.reason)
+                except Exception:  # noqa: BLE001 — 审计桥接失败不阻断死信主链
+                    pass
                 # E-4 TOCTOU 死信出口增信（chain_fullflow §3.7-(iii)）：登记面貌快照随袋
                 # 者（meta.preflight_face）与当前 HEAD 面貌比对，漂移=预检基础在入队后
                 # 过期——「不是你的内容错，是注册表面貌变了」一跳点明（观测级增信，

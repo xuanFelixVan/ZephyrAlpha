@@ -3595,7 +3595,13 @@ def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: di
     （项退回 pending 绝不死信，与 drain_queue 同语义）。
     """
     stats_lock = threading.Lock()
-    shared: dict = {"processed": 0, "env_aborted": False, "budget_left": budget}
+    # 平台互斥补丁（总集成验收 st-circ-integ-20261001，2026-10-01）：Windows 实测
+    # 并发同源 os.rename 300 轮 297 次「双方均成功」（本机 NTFS/MoveFileEx 语义，
+    # 微基准在案）——「原子 rename 即互斥」在此平台不成立，双工可同领同一 pending 件
+    # （in-process 可见面）→ 双落地。claimed 集=进程内认领去重第二道闸（rename 后
+    # stats_lock 内查重，先到者加工、后到者让位；env 失败/read 失败退回 pending 时
+    # 出册允许合法重领；集随波生命周期，跨波新 set 无残留）。
+    shared: dict = {"processed": 0, "env_aborted": False, "budget_left": budget, "claimed": set()}
     cq._recover_orphans(root)  # 波首回收（上一波死亡工的遗孤）
 
     def _worker(worker_id: int) -> None:
@@ -3640,6 +3646,18 @@ def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: di
                 # 处方互斥（前者=认领竞态治本，后者=无事可干属正常收工）。
                 _pool_wave_log(root, f"w{worker_id} exit=claim_none")
                 return
+            # 平台互斥补丁第二道闸（见 shared["claimed"] 注记）：Windows 双工同领去重
+            # ——先到者登记认领并施工，后到者让位（同路径同字节件，peer 持有施工权）。
+            with stats_lock:
+                _dup_claim = processing_path.name in shared["claimed"]
+                if not _dup_claim:
+                    shared["claimed"].add(processing_path.name)
+            if _dup_claim:
+                _pool_wave_log(root, f"w{worker_id} claim_dup_windows_race {processing_path.stem}（让位 peer）")
+                with stats_lock:
+                    if shared["budget_left"] is not None:
+                        shared["budget_left"] += 1  # 未消费预扣预算归还
+                continue
             try:
                 _pool_process_item(landing, root, processing_path, stats, stats_lock, shared)
             except Exception as exc:  # noqa: BLE001 — 同上：处理段异常不得杀工
@@ -3711,6 +3729,35 @@ class _PoolLedger:
     shared: dict
 
 
+def _emit_dead_letter_ledger(root: Path, qid: str, item: dict, reason: str) -> None:
+    """死信→堵点本桥接（2026-10-01 提交链治本·C8）。
+
+    落地侧死因（Popen TypeError / CLAIM_REQUIRED / 幽灵闸 / 路径锁超时）此前只落
+    dead/ 袋 JSON——账本 .runtime/audit/commit_block_events.jsonl 零捕获（26 袋
+    Popen 大屠杀账本缺席实证），维护班报表（commit_perf_report）因此看不见最大
+    死因谱。纯追加审计；任何 IO 异常静默吞掉（观测设施不阻断死信主链）。
+    """
+    try:
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        audit_path = root.parent / "audit" / "commit_block_events.jsonl"
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "session_id": item.get("session_id") or "",
+            "event": "queue_landing_dead",
+            "gate_id": "QUEUE-LANDING",
+            "qid": qid,
+            "files_count": len(item.get("files") or []),
+            "dead_reason": str(reason)[:200],
+            "requeue_count": (item.get("meta") or {}).get("requeue_count", 0),
+        }
+        with open(audit_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计失败静默，主链（死信落盘）不受影响
+        pass
+
+
 def _pool_env_failure_exit(
     root: Path,
     processing_path: Path,
@@ -3758,6 +3805,7 @@ def _pool_env_failure_exit(
         ledger.shared["env_aborted"] = True
         if ledger.shared["budget_left"] is not None:
             ledger.shared["budget_left"] += 1
+        ledger.shared.get("claimed", set()).discard(processing_path.name)  # 退回 pending=可合法重领
     logger.error("[pool] landing 环境失败，终止本波（项退回 pending，不死信）: %s", exc)
 
 
@@ -3792,6 +3840,7 @@ def _pool_process_item(
         with stats_lock:
             if shared["budget_left"] is not None:
                 shared["budget_left"] += 1
+            shared.get("claimed", set()).discard(processing_path.name)  # 退回 pending=可合法重领
         return
     qid = item.get("qid", processing_path.stem)
     # 幽灵会话存活闸·池工拾取点（裁定#459 延伸，st-circ-a1-20260930）：belt daemon
@@ -3809,6 +3858,7 @@ def _pool_process_item(
             stats["dead"] += 1
             stats["processed_qids"].append(qid)
             shared["processed"] += 1
+            shared.get("claimed", set()).discard(processing_path.name)  # 终态=认领权释放
         logger.warning("[pool] qid=%s 属主会话已死（幽灵），拾取存活闸拒绝落地，直落 dead/", qid)
         cq._notify_task_board_dead_letter(item)
         return
@@ -3829,6 +3879,7 @@ def _pool_process_item(
             stats["dead"] += 1
             stats["processed_qids"].append(qid)
             shared["processed"] += 1
+            shared.get("claimed", set()).discard(processing_path.name)  # 终态=认领权释放
         logger.warning(
             "[pool] qid=%s attempts=%d 耗尽，拾取即死信（队首止血）: %s",
             qid,
@@ -3914,6 +3965,7 @@ def _pool_process_item(
         item["dead_reason"] = result.reason
         item["prescription"] = cq.dead_letter_prescription(result.reason)
         item["owner_session"] = item.get("session_id") or ""
+        _emit_dead_letter_ledger(root, qid, item, result.reason)
         cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
         os.replace(processing_path, root / "dead" / processing_path.name)
     with stats_lock:
@@ -3930,6 +3982,7 @@ def _pool_process_item(
             stats["cascade_marked"] += 1
         stats["processed_qids"].append(qid)
         shared["processed"] += 1
+        shared.get("claimed", set()).discard(processing_path.name)  # 终态=认领权释放
     if not result.ok:
         logger.warning("[pool] qid=%s 进死信: %s", qid, result.reason)
         # D1 §4.5：task_board 死信联动出锁（旁路可观测性，失败不阻断排空，宁漏不误）。

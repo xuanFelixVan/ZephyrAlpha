@@ -21,6 +21,7 @@
 
 用法：python scripts/governance/commit_perf_report.py [--hours 24]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -52,7 +53,10 @@ def commit_mix(hours: int) -> tuple[Counter, int]:
     since = (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%S")
     r = subprocess.run(
         ["git", "log", f"--since={since}", "--format=%s"],
-        capture_output=True, text=True, encoding="utf-8", errors="ignore",
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="ignore",
         cwd=str(_REPO),
     )
     mix: Counter = Counter()
@@ -163,6 +167,53 @@ def aggregate_verdict(rows: list[tuple[str, str, str]]) -> str:
     return "绿"
 
 
+def dead_letter_digest(hours: int) -> Counter:
+    """死信死因谱（2026-10-01 提交链治本·C8）：dead/ 袋 JSON 的 dead_reason 家族
+    统计。此前落地侧死因（Popen TypeError/CLAIM/幽灵闸/路径锁）只落袋不进账本，
+    本节补齐维护班视野（配合 landing/queue 的 queue_landing_dead 账本桥接）。"""
+    root = Path(".runtime/commit_queue/dead")
+    if not root.is_dir():
+        return Counter()
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+    fam: Counter = Counter()
+
+    def _family(reason: str) -> str:
+        r = reason or ""
+        for kw, name in (
+            ("Popen", "Popen 形态 TypeError"),
+            ("CLAIM_REQUIRED", "CLAIM-REQUIRED"),
+            ("SESSION-REQUIRED", "SESSION-REQUIRED"),
+            ("ghost", "幽灵闸"),
+            ("路径锁", "路径锁超时"),
+            ("debt-ratchet", "debt-ratchet"),
+            ("HOT-FILE", "热册基线"),
+            ("stale", "stale 漂移"),
+            ("FOREIGN", "FOREIGN-CHANGE"),
+            ("TimeoutExpired", "墙钟超时"),
+            ("WinError233", "管道瞬断"),
+        ):
+            if kw in r:
+                return name
+        return "其他"
+
+    for f in root.glob("q-*.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 — 损坏袋跳过
+            continue
+        dead_at = str(d.get("dead_at") or "")
+        try:
+            dt = datetime.fromisoformat(dead_at)
+        except ValueError:
+            continue
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        if dt < cutoff:
+            continue
+        fam[_family(str(d.get("dead_reason") or ""))] += 1
+    return fam
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="提交性能与并发健康报表")
@@ -196,14 +247,27 @@ def main() -> int:
         gate_counter: Counter = Counter(ev.get("gate_id", "?") for ev in blocks)
         for gate_id, n in gate_counter.most_common(5):
             wastes = [ev.get("gate_chain_ms", 0) for ev in blocks if ev.get("gate_id") == gate_id]
-            print(f"  {gate_id}: {n} 次（门禁链耗时 P50={sorted(wastes)[len(wastes)//2]/1000:.0f}s 累计白跑 {sum(wastes)/1000:.0f}s）")
+            print(
+                f"  {gate_id}: {n} 次（门禁链耗时 P50={sorted(wastes)[len(wastes) // 2] / 1000:.0f}s 累计白跑 {sum(wastes) / 1000:.0f}s）"
+            )
     else:
         print("\n堵点事件（gate 链阻断）: 0 次")
+    dl = dead_letter_digest(args.hours)
+    if dl:
+        print(f"\n死信死因谱（近 {args.hours}h，dead/ 袋）: {sum(dl.values())} 封")
+        for name, n in dl.most_common(8):
+            print(f"  {name}: {n}")
+    else:
+        print(f"\n死信死因谱（近 {args.hours}h，dead/ 袋）: 0 封")
     if slows:
         totals = sorted(ev.get("total_ms", 0) for ev in slows)
-        print(f"慢提交（成功但超 60s 阈值）: {len(slows)} 次（P50={totals[len(totals)//2]/1000:.0f}s 最长 {totals[-1]/1000:.0f}s）")
+        print(
+            f"慢提交（成功但超 60s 阈值）: {len(slows)} 次（P50={totals[len(totals) // 2] / 1000:.0f}s 最长 {totals[-1] / 1000:.0f}s）"
+        )
         for ev in slows[-5:]:  # 最近 5 笔
-            print(f"  [{ev.get('timestamp','')[:19]}] {ev.get('session_id','?')} {ev.get('files_count',0)} 文件 {ev.get('total_ms',0)/1000:.0f}s")
+            print(
+                f"  [{ev.get('timestamp', '')[:19]}] {ev.get('session_id', '?')} {ev.get('files_count', 0)} 文件 {ev.get('total_ms', 0) / 1000:.0f}s"
+            )
 
     # B2 四维判级 + 与门聚合（病根：竞态 211/日时旧公式只看占比仍输出"绿"）
     blocks_per_day = _per_day(len(blocks), args.hours)
