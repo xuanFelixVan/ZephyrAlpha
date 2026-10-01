@@ -1,0 +1,6 @@
+recipe_id,death_layer,death_reason,values,degraded_dimensions,detail
+cell|euphoria|A3,eval,cell_below_sample_floor,"{'six_phase': 'euphoria', 'amp_bucket3': 'A3'}",,closed_book_days=14 < floor=30
+cell|unrouted|na,eval,cell_below_sample_floor,"{'six_phase': 'unrouted', 'amp_bucket3': 'na'}",six_phase,closed_book_days=12 < floor=30
+cell|euphoria|A2,eval,cell_below_sample_floor,"{'six_phase': 'euphoria', 'amp_bucket3': 'A2'}",,closed_book_days=9 < floor=30
+cell|euphoria|A1,eval,cell_below_sample_floor,"{'six_phase': 'euphoria', 'amp_bucket3': 'A1'}",,closed_book_days=8 < floor=30
+cell|ignition|A3,eval,cell_below_sample_floor,"{'six_phase': 'ignition', 'amp_bucket3': 'A3'}",,closed_book_days=1 < floor=30

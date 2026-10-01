@@ -1,0 +1,139 @@
+generated: '2026-09-24T00:15:15+00:00'
+sid: st-t0-matrix-20260924
+pack_version: grid_t0_conditional_v1
+rows: 1816
+date_span:
+- '2019-04-01'
+- '2026-09-21'
+axes:
+  condition_gate:
+  - t1_six_phase
+  - macro_gate_allow
+  - emotion_gate_allow
+  - dual_gate_allow
+  price_axis:
+  - t1_amp_bp
+  - t1_amp_bucket3
+  thermometer:
+  - emotion_index
+  - band5
+  - band3_emotion
+  - ok_n
+  macro:
+  - t1_dominant
+  - t1_vol_pct
+  - t1_vol_bucket3
+truth_sources:
+  six_phase: docs/_working/t0_matrix/six_phase_history_v1.csv（映射真源=scripts/backtest/auto_mount.py
+    R2SIX+phase_overlay+resolve_six_phase，零自定阈值）
+  emotion_thermometer: c1_market.emotion_index（stage=close_final；同键多版取 argMax(ingest_ts)）
+  macro_state: c1_backtest.regime_state_anchored
+  price_axis: c1_market.kline_index symbol=000300（GROUP BY trade_date 去重，振幅=(high-low)/open）
+band_definitions:
+  band5: 引用 docs/_working/emotion_line/emotion_index_skeleton_v0.md:60 展示层五档（≤0.2
+    冰点/≤0.4 降温/≤0.6 温和/≤0.8 升温/>0.8 沸点，该文档自记'仅展示层约定非门禁'）；英写标签与在途消费件 condition_package._BAND_LABELS
+    同值
+  band3_emotion: 引用 sector_state_aggregator 消费口径 low<0.40≤mid<0.70≤high
+  t1_vol_bucket3: 引用 t0_regime 卡 §3 frozen 边界 (0.328, 0.7)（L≤0.328<M≤0.700<H）
+  t1_amp_bucket3: 本包新轴，三桶边界=[116.75, 188.25] bp，由 2005-01-04..2025-09-09（5026 日：切点前全量可用史，早于闭卷窗起点
+    2019-01-04 的历史亦参与定档）振幅的 33.33/66.67 分位定，切点后数据未参与定档
+gpu_budget:
+  device: RTX 3090 24GB
+  window_hours: 59
+  pack_rows: 1816
+  pack_bytes_note: 本项=包内各件字数之和，不含本 meta 自身（meta 最后写盘）
+  pack_bytes_on_disk: 160721
+  vram_note: 输入包为逐日单表（1,816 日 × 18 列），显存零压力；每配置查表按 trade_date 索引 O(1)，预算瓶颈在回测前向次数不在此包
+  closed_book:
+    start: '2019-01-04'
+    cutoff: '2025-09-09'
+    rule: trade_date>cutoff 的行 closed_book_ok=0，只可作卷外观察，禁校正/调参/定档
+    rows_in_search_window: 1566
+    dual_gate_allow_days_in_window: 200
+    emotion_gate_unrouted_days_in_window: 689
+    macro_gate_unevaluable_days_in_window: 12
+    tri_state_note: 两张门列均可为空串=该轴当日不可评（跨长假 T-1 缺读、宏观态不路由）；空串既不计允许也不计禁做，双门列在任一轴不可评时恒
+      0
+    six_phase_distribution_in_window:
+      unrouted: 689
+      expansion: 322
+      distribution: 187
+      accumulation: 183
+      capitulation: 153
+      euphoria: 31
+      ignition: 1
+    amp_bucket_distribution_in_window:
+      A1: 756
+      A2: 511
+      A3: 287
+      na: 12
+  condition_cells:
+    definition: t1_six_phase × t1_amp_bucket3（闭卷窗内计数定可用）
+    total: 20
+    ge_floor_30d: 15
+    sample_floor_days: 30
+    min_days: 1
+    max_days: 360
+  negatives:
+    rows: 5
+    schema: recipe_id/death_layer/death_reason/values/degraded_dimensions/detail（承
+      factory_grid_executor NegativeRecord 契约：死亡层+死因缺失即非法）
+    promise: 不达 30 日地板的胞与零日相位如实入 negatives.csv 并计入 N_eff，禁删改（预注册纪律）
+  discipline:
+  - 公式冻结：emotion_index/六成分=v0.1.0 纯求值；六段相位=auto_mount 法定映射；搜索结果禁回改（改=作废重开新卡）
+  - closed_book_ok=0 段禁参与任何阈值选择/调参/定档，只允许事后观察披露
+  - 每条件胞闭卷窗内 <30 交易日不得进搜索空间（usable_as_dimension=0），不达地板日期下沉 conditional-free（禁凑 n、禁当独立样本）
+  - emotion_gate_allow 为空=该日情绪门不可评（宏观态未映射），禁当作禁做段计入对照，亦禁并入双门格
+  - 多重检验：进族格数须如实登记（裁定#325 判档表述，禁全绿）
+  - 本包禁放 summary.json——n_trial_ledger 会 glob grid_*/summary.json 自动计入 DSR 分母；输入包不是试次批次
+caveats:
+  six_phase_floor: 宏观腿 regime_snapshot_history 首日 2019-04-01，早此六段不可判（T0-CONDITIONAL-V2
+    卡 §2.2 覆盖硬限制）
+  unrouted_not_deny: r1/r2 震荡态在 R2SIX 无六段对应⇒不路由（auto_mount'宁漏勿误'），本包以 emotion_gate_allow
+    空值表达，禁误读为禁做
+  ignition_rarity: 全史仅 2 日路由到 ignition（实测）⇒'情绪上行三段'允许集实际由 expansion/euphoria 主导
+  vol_bucket_edges_NOT_closed_book_clean: '**已知越界并披露**：t1_vol_bucket3 与宏观门的 0.700
+    界均引用 t0_regime 卡 §3 frozen 边界，而其 IS 定档窗止于 **2026-05-31**（超本包闭卷切点 2025-09-09 约
+    8.5 个月）。本包无权改继承件常数（改=动判据），故如实登记为越界继承；若 GPU 侧要求严格闭卷，须由预注册线重定该组边界（实测切点前定档给 0.308/0.704，与
+    0.328/0.700 实质不同）'
+  dominant_is_VOL_BAND_not_trend: '**卡面语义与数据源实不符（红蓝 MAJOR-2）**：宏观门写作 dominant∈{r3,r12}（卡注''牛市趋势/突破态''），但真源
+    c1_backtest.regime_state_anchored 的 dominant 实测是**波动率风险四档**（r3⇔vol_pct≤0.30 最低波、r2≤0.60、r1≤0.80、r4>0.80），其模块自述明载『v2
+    定稿=波动率风险四档，无趋势项』，趋势双确认版已被否决；r10/r11/r12 是另一张表(regime_snapshot_history 七态 HMM)的编号，本表根本不存在。⇒
+    宏观门的『趋势支』实际选的是**最低波动日**，且与 vol>0.700 支天然互斥（via_both=0 是该状态机的**构造必然**，不是经验发现——本包前述结论据此降级）。消费侧若沿用
+    {r3,r12} 即沿用此误标，须由预注册线裁定是否换源/换态集'
+  macro_gate_dead_branch: 卡 §2.1 宏观门 OR 支 dominant∈{r3,r12}，但本包状态轴真源 regime_state_anchored
+    的 dominant 取值域实测=仅 {r1,r2,r3,r4} ⇒ **r12 分支在本数据源上永不可达**（搜索空间若按两支独立设计会得一个恒空维）
+  dual_gate_anatomy:
+    days_in_window: 1566
+    dual_gate_allow_days: 200
+    share: 0.1277
+    macro_branch_split:
+      via_vol_gt_0p700: 78
+      via_dominant_in_r3_r12: 122
+      via_both: 0
+      note: 两支在同源数据上互斥（via_both=0），双门可达性由两支并列贡献，非单支主导
+    six_phase_within_dual:
+      expansion: 178
+      euphoria: 22
+    t1_vol_pct_within_dual:
+      min: 0.004
+      median: 0.228
+      max: 1.0
+    cross_tab_dominant_x_six:
+      r4|capitulation: 142
+      r3|expansion: 113
+      r2|expansion: 113
+      r3|distribution: 86
+      r2|accumulation: 85
+      r3|accumulation: 62
+      r1|expansion: 58
+      r2|distribution: 48
+      r1|distribution: 45
+      r4|expansion: 38
+  two_macro_sources_warning: 两门读的是**两张不同 HMM 表**：宏观门=c1_backtest.regime_state_anchored（dominant
+    域实测仅 r1/r2/r3/r4），情绪门六段相位的宏观腿=c1_backtest.regime_snapshot_history（七态，含 r10/r11/r12）经
+    auto_mount.R2SIX 映射 ⇒ 双门不是同一根轴数两遍（交叉表见 dual_gate_anatomy.cross_tab_dominant_x_six），但**把
+    dominant 与 six_phase 当作同一状态轴的两级来设计搜索格会错**
+  amp_axis_note: 振幅取指数日线（000300）而非个股：本包答'哪些状态下市场给的振幅够不够 30bp 前置'，个股振幅属策略实现级另卡
+  emotion_index_defect_registered: emoreplay 报告 §5 D-1 记 C2_promotion 恒 1.0（CH join_use_nulls
+    伪值），daban 史达 120 观测后会抬升温度计——本包 ok_n 列如实带出成分可用性，未代修
