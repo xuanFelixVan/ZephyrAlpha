@@ -1,0 +1,29 @@
+# ALGO_FLOW 外部真源——chart_cell_materializer（backtest 域，真源 src/zephyr/backtest/regime_validation/chart_cell_materializer.py）
+# 2026-10-01 全流通清场落地批 P2-1 契约口径：docstring 内一行 external 锚，机器块落本册；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.backtest.regime_validation.chart_cell_materializer
+source_of_truth: src/zephyr/backtest/regime_validation/chart_cell_materializer.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: market_pattern_events 事件窗 + chart_condition_pack（真源 ChartPackRequest）
+    #   code: load_market_pattern_events/load_chart_condition_pack
+    # 层: 处理
+    # - id: P1
+    #   name: 胞 id 贴装与前视收益装配（kline_daily 收盘面板 shift(-w)）
+    #   code: attach_cell_ids/build_fwd_series
+    # - id: P2
+    #   name: 胞级行构造（判据全数委托条件包，本件零判据）
+    #   code: build_cell_stats_rows
+    # 层: 输出
+    # - id: O1
+    #   name: INSERT_COLUMNS 定序 → ch_writer 单线落 c1_market.market_pattern_win_rate
+    #   code: _insert_rows_default
+    # 边:
+    # I1 --> P1
+    # P1 --> P2
+    # P2 --> O1
+    # [/ALGO_FLOW]

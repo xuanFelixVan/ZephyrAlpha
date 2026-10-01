@@ -1,0 +1,30 @@
+# ALGO_FLOW 外部真源——closed_book_gate（backtest 域，真源 src/zephyr/backtest/core/closed_book_gate.py）
+# 2026-10-01 全流通清场落地批 P2-1 契约口径：docstring 内一行 external 锚，机器块落本册；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.backtest.core.closed_book_gate
+source_of_truth: src/zephyr/backtest/core/closed_book_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: tick 读数请求（ch_tick_replay/ChTickProvider fetch_historical）
+    # 层: 处理
+    # - id: P1
+    #   name: 切点派生（holdout_months+finalized_at+runner.holdout_cutoff，缺位即错）
+    #   code: resolve_closed_book_cutoff
+    # - id: P2
+    #   name: 研究模式越切点 fail-closed 拦截（读库前抛错，SQL 执行恒 0）
+    #   code: enforce_closed_book
+    # - id: P3
+    #   name: 闭卷考试模式 exam_ticket 校验 + CAS 审计行
+    # 层: 输出
+    # - id: O1
+    #   name: 放行窗口或 ClosedBookViolation/ClosedBookConfigError
+    # 边:
+    # I1 --> P1
+    # P1 --> P2
+    # P2 --> O1
+    # P3 --> O1
+    # [/ALGO_FLOW]
