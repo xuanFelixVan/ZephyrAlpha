@@ -26,6 +26,10 @@ ROUTE_MARKERS = (
     '@app.post("/api/schedulegate-confirm")',
 )
 GUARD_MARKER = 'if __name__ == "__main__":'
+# [FIX 2026-10-01 st-fullscore] mount("/") 曾落点在 AI 层路由之前：Starlette 按注册序
+# 匹配，mount 吞掉其后全部 /api 路由=前端 404（budget-advisories/schedulegate-* 自
+# 09-24）。断言 mount 必须位于全部路由标记之后（同一静态源序回归尺）。
+MOUNT_MARKER = 'app.mount("/", StaticFiles'
 
 
 def _source() -> str:
@@ -40,6 +44,16 @@ def test_route_block_defined_before_main_guard():
     for marker in ROUTE_MARKERS:
         assert marker in src, f"路由标记消失: {marker}"
         assert src.index(marker) < guard_pos, f"路由回退到守卫之后（C10 病灶复发）: {marker}"
+
+
+def test_static_mount_registered_after_all_routes():
+    src = _source()
+    assert MOUNT_MARKER in src, '静态 mount("/") 标记消失（静态页面通道失联？）'
+    mount_pos = src.index(MOUNT_MARKER)
+    for marker in ROUTE_MARKERS:
+        assert src.index(marker) < mount_pos, (
+            f"路由定义在 mount 之前被吞（Starlette 注册序匹配，前端 404 复发）: {marker}"
+        )
 
 
 def test_main_guard_tail_still_invokes_main():

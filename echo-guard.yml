@@ -380,3 +380,7 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:_precommit_debt_ratchet_enabled||src/zephyr/security/access_control/session_concurrency.py:_shards_enabled"
   note: 跨文件 env 开关读取惯用样板对（session_concurrency 分片开关同形态），同上 A2 收编背景，非逻辑克隆；同批 RULE-CLONEGUARD acknowledged 登记
+- id: cg-apiserver-load-20261001
+  verdict: intentional
+  stable_key: "src/zephyr/frontend/dashboard/api_server.py:_load||src/zephyr/frontend/dashboard/api_server.py:_load"
+  note: 4 处 _load(fname) 闭包存量同构（TDM refnames 等各 endpoint 段各自的 catalogs YAML 读取器，HEAD 存量 2389/2421/2504/2527 非本批引入）；合并需跨 4 个独立函数作用域提升 import+helper，超出 mount 吞路由修复批最小侵入边界；文件随批修改而暴露（st-fullscore-20260930），W3 收口批可立合并施工项
