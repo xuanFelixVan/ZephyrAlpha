@@ -41,7 +41,9 @@ sys.path.insert(0, str(ROOT / "scripts" / "backtest" / "translated"))
 
 import pandas as pd  # noqa: E402
 
-ART_ROOT = ROOT / "docs" / "_working" / "integrated_backtest" / "artifacts"
+ART_ROOT = (
+    ROOT / "docs" / "_working" / "integrated_backtest" / "artifacts_v2"
+)  # v2 重定向（prereg_v2 附录 B-3 一行披露；v1 artifacts/=只读对照物）
 PANEL_CACHE = ROOT / ".runtime" / "tmp" / "ibt_panels"
 
 # ---- 协议冻结常量（IBT-PROTOCOL-V1 §1/§2/§7；禁跑中改动） ----
