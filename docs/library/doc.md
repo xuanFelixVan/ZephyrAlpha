@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 文档馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：300｜馆内总数：5486
+- 条目数（本页列出）：300｜馆内总数：5521
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -28,6 +28,7 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/ai_capability_slot_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/ai_capability_slot_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/blueprint_refs_status_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/blueprint_refs_status_vocabulary.yaml |
+| DOC:docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/category_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/category_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/classification_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/classification_vocabulary.yaml |
 | DOC:docs/01_policies_and_standards/_registry/vocabularies/compliance_tags_vocabulary.yaml | doc | active | docs/01_policies_and_standards/_registry/vocabularies/compliance_tags_vocabulary.yaml |
@@ -310,6 +311,5 @@ doc_type: "index"
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/68_d_siglegacy.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/68_d_siglegacy.md |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/69_d_sigqc.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/69_d_sigqc.md |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/70_d_simulation.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/70_d_simulation.md |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/71_d_struct_scripts.md | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/71_d_struct_scripts.md |
 
-（仅列前 300 条，共 5486 条——全量请走总口查询）
+（仅列前 300 条，共 5521 条——全量请走总口查询）

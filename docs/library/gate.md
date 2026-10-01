@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 闸门馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：300｜馆内总数：307
+- 条目数（本页列出）：300｜馆内总数：310
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -100,6 +100,8 @@ doc_type: "index"
 | FILE:tests/gov_enforcement/read_side/test_fms_hygiene_gate.py | file | active | tests/gov_enforcement/read_side/test_fms_hygiene_gate.py |
 | FILE:tests/gov_enforcement/test_construction_governor_gate.py | file | active | tests/gov_enforcement/test_construction_governor_gate.py |
 | FILE:tests/gov_enforcement/test_create_guard_keyword_overlap_canary.py | file | active | tests/gov_enforcement/test_create_guard_keyword_overlap_canary.py |
+| FILE:tests/gov_enforcement/test_create_guard_lookup_singleton.py | file | active | tests/gov_enforcement/test_create_guard_lookup_singleton.py |
+| FILE:tests/gov_enforcement/test_create_guard_token_sim_shadow.py | file | active | tests/gov_enforcement/test_create_guard_token_sim_shadow.py |
 | FILE:tests/gov_enforcement/test_library_blood_flesh_gate.py | file | active | tests/gov_enforcement/test_library_blood_flesh_gate.py |
 | FILE:tests/gov_enforcement/test_state_vocab_registry_gate.py | file | active | tests/gov_enforcement/test_state_vocab_registry_gate.py |
 | FILE:tests/gov_enforcement/test_tag_vocab_gate.py | file | active | tests/gov_enforcement/test_tag_vocab_gate.py |
@@ -241,6 +243,7 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/zephyr_env_direct_access_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/zephyr_env_direct_access_gate.py |
 | MOD:src/zephyr/gov_enforcement/construction_governor_gate.py | module | active | src/zephyr/gov_enforcement/construction_governor_gate.py |
+| MOD:src/zephyr/gov_enforcement/derived_dirty_ledger.py | module | active | src/zephyr/gov_enforcement/derived_dirty_ledger.py |
 | MOD:src/zephyr/gov_enforcement/registry_alignment.py | module | active | src/zephyr/gov_enforcement/registry_alignment.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/__init__.py | module | active | src/zephyr/gov_enforcement/rule_bridge/__init__.py |
 | MOD:src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py | module | active | src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py |
@@ -308,8 +311,5 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_canary_manager.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_canary_manager.py |
 | MOD:src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_debt_auditor.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_debt_auditor.py |
 | MOD:src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_shadow_runner.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_shadow_runner.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py |
-| MOD:src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py | module | active | src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py |
 
-（仅列前 300 条，共 307 条——全量请走总口查询）
+（仅列前 300 条，共 310 条——全量请走总口查询）

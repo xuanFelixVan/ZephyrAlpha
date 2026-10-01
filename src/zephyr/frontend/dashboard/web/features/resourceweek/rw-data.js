@@ -2,24 +2,34 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-17T00:22:10+00:00",
+ "generated_at": "2026-09-30T21:50:05+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "d8a2635dedbe",
- "week_start": "2026-09-14",
+ "registry_sha256": "b51d741cc710",
+ "week_start": "2026-09-28",
  "days": [
-  "09-14 周一",
-  "09-15 周二",
-  "09-16 周三",
-  "09-17 周四",
-  "09-18 周五",
-  "09-19 周六",
-  "09-20 周日"
+  "09-28 周一",
+  "09-29 周二",
+  "09-30 周三",
+  "10-01 周四",
+  "10-02 周五",
+  "10-03 周六",
+  "10-04 周日"
  ],
  "total_entities": 80,
- "scheduled": 32,
+ "scheduled": 34,
  "block_conflicts": 0,
- "conflicts": [],
+ "conflicts": [
+  {
+   "reason_code": "sched_truth_drift",
+   "severity": "warn",
+   "task_ids": [
+    "data_slot_weekend_calibration"
+   ],
+   "detail": "真源漂移 window_expr: 注册表='00 3 * * 1' 真源重抽='00 3 * * 2'",
+   "at": null
+  }
+ ],
  "lanes": [
   {
    "task_id": "data_slot_auction_highfreq",
@@ -1515,8 +1525,18 @@ window.RW_VIEW_DATA = {
    "window_type": "cron",
    "window_expr": "16 9 1 * *",
    "est_duration_min": 60,
-   "slots": [],
-   "unscheduled": true
+   "slots": [
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       556,
+       616
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "data_slot_news_slow",
@@ -1920,8 +1940,18 @@ window.RW_VIEW_DATA = {
    "window_type": "cron",
    "window_expr": "0 4 1 * *",
    "est_duration_min": 30,
-   "slots": [],
-   "unscheduled": true
+   "slots": [
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       240,
+       270
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "dynamic_local_replay",
@@ -2038,8 +2068,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 6.0,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 0.0405,
+   "measured_p90_duration_min": 2,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2070,8 +2100,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": true,
    "peak_mem_gb": 2.7,
-   "measured_peak_mem_gb": 2.602,
-   "measured_p90_duration_min": 573,
+   "measured_peak_mem_gb": 8.109,
+   "measured_p90_duration_min": 1502,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2160,8 +2190,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 2.0,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 0.2014,
+   "measured_p90_duration_min": 0,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
@@ -2614,8 +2644,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 2.0,
-   "measured_peak_mem_gb": 0.0819,
-   "measured_p90_duration_min": 206,
+   "measured_peak_mem_gb": 0.394,
+   "measured_p90_duration_min": 123,
    "status": "active",
    "window_type": "cron",
    "window_expr": "0 10 * * 6",
@@ -2940,8 +2970,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 8.0,
-   "measured_peak_mem_gb": 0.3604,
-   "measured_p90_duration_min": 78,
+   "measured_peak_mem_gb": 11.5975,
+   "measured_p90_duration_min": 522,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
@@ -2956,8 +2986,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 1.0,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 0.4293,
+   "measured_p90_duration_min": 286,
    "status": "active",
    "window_type": "cron",
    "window_expr": "25 9 * * *",
@@ -3116,8 +3146,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.0,
-   "measured_p90_duration_min": 0,
+   "measured_peak_mem_gb": 0.3357,
+   "measured_p90_duration_min": 4,
    "status": "active",
    "window_type": "cron",
    "window_expr": "30 15 * * 1,2,3,4,5",
@@ -3178,8 +3208,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.1666,
-   "measured_p90_duration_min": 5,
+   "measured_peak_mem_gb": 0.2818,
+   "measured_p90_duration_min": 1,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
@@ -3194,8 +3224,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": null,
-   "measured_p90_duration_min": null,
+   "measured_peak_mem_gb": 0.1613,
+   "measured_p90_duration_min": 0,
    "status": "active",
    "window_type": "cron",
    "window_expr": "31 6 * * *",
@@ -3514,8 +3544,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.4321,
-   "measured_p90_duration_min": 347,
+   "measured_peak_mem_gb": 7.2681,
+   "measured_p90_duration_min": 5183,
    "status": "active",
    "window_type": "event",
    "window_expr": null,

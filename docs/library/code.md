@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 代码馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：300｜馆内总数：28530
+- 条目数（本页列出）：300｜馆内总数：29938
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -99,14 +99,17 @@ doc_type: "index"
 | FILE:config/capabilities.yaml | file | active | config/capabilities.yaml |
 | FILE:config/capacity_slo.yaml | file | active | config/capacity_slo.yaml |
 | FILE:config/chainmap_cluster_names.yaml | file | active | config/chainmap_cluster_names.yaml |
+| FILE:config/cleaning_anomaly_rules.yaml | file | active | config/cleaning_anomaly_rules.yaml |
 | FILE:config/cleaning_policy.yaml | file | active | config/cleaning_policy.yaml |
 | FILE:config/cleaning_rules.yaml | file | active | config/cleaning_rules.yaml |
 | FILE:config/comparison_policy.yaml | file | active | config/comparison_policy.yaml |
 | FILE:config/compression_policy.yaml | file | active | config/compression_policy.yaml |
+| FILE:config/construction_workflow_map.yaml | file | active | config/construction_workflow_map.yaml |
 | FILE:config/context_rules.yaml | file | active | config/context_rules.yaml |
 | FILE:config/crisis_gate.yaml | file | active | config/crisis_gate.yaml |
 | FILE:config/crypto_top50_usdt.yaml | file | active | config/crypto_top50_usdt.yaml |
 | FILE:config/data/survivorship_policy.yaml | file | active | config/data/survivorship_policy.yaml |
+| FILE:config/data_masking_policy.yaml | file | active | config/data_masking_policy.yaml |
 | FILE:config/data_supply_chain_map.yaml | file | active | config/data_supply_chain_map.yaml |
 | FILE:config/degradation_chain.yaml | file | active | config/degradation_chain.yaml |
 | FILE:config/dev_delivery_map.yaml | file | active | config/dev_delivery_map.yaml |
@@ -140,6 +143,7 @@ doc_type: "index"
 | FILE:config/iteration_guide_rules.yaml | file | active | config/iteration_guide_rules.yaml |
 | FILE:config/league_registry.yaml | file | active | config/league_registry.yaml |
 | FILE:config/llm_security_gateway.yaml | file | active | config/llm_security_gateway.yaml |
+| FILE:config/macro_indicator_series_map.yaml | file | active | config/macro_indicator_series_map.yaml |
 | FILE:config/mcp.json | file | active | config/mcp.json |
 | FILE:config/metrics_schema.yaml | file | active | config/metrics_schema.yaml |
 | FILE:config/model_digests.yaml | file | active | config/model_digests.yaml |
@@ -151,6 +155,8 @@ doc_type: "index"
 | FILE:config/obj_s_degradation.yaml | file | active | config/obj_s_degradation.yaml |
 | FILE:config/owner_offline_protocol.yaml | file | active | config/owner_offline_protocol.yaml |
 | FILE:config/paper_hedge.yaml | file | active | config/paper_hedge.yaml |
+| FILE:config/pattern_combo_rules.yaml | file | active | config/pattern_combo_rules.yaml |
+| FILE:config/position_parameters.yaml | file | active | config/position_parameters.yaml |
 | FILE:config/position_recipe_grid_schema.yaml | file | active | config/position_recipe_grid_schema.yaml |
 | FILE:config/qmt_environments.yaml | file | active | config/qmt_environments.yaml |
 | FILE:config/quality_sentinel_tables.yaml | file | active | config/quality_sentinel_tables.yaml |
@@ -175,6 +181,7 @@ doc_type: "index"
 | FILE:config/sli_registry.yaml | file | active | config/sli_registry.yaml |
 | FILE:config/source_cards/fx_ecb.yaml | file | active | config/source_cards/fx_ecb.yaml |
 | FILE:config/standards.yaml | file | active | config/standards.yaml |
+| FILE:config/strategy_card_lifecycle_map.yaml | file | active | config/strategy_card_lifecycle_map.yaml |
 | FILE:config/strategy_production_map.yaml | file | active | config/strategy_production_map.yaml |
 | FILE:config/switch_criteria.yaml | file | active | config/switch_criteria.yaml |
 | FILE:config/tech_stack_manifest.yaml | file | active | config/tech_stack_manifest.yaml |
@@ -304,12 +311,5 @@ doc_type: "index"
 | FILE:data/audit_trail/merkle_batches/batch-17609-20260526074213.json | file | active | data/audit_trail/merkle_batches/batch-17609-20260526074213.json |
 | FILE:data/audit_trail/merkle_batches/batch-17610-20260526074152.json | file | active | data/audit_trail/merkle_batches/batch-17610-20260526074152.json |
 | FILE:data/audit_trail/merkle_batches/batch-17709-20260526080750.json | file | active | data/audit_trail/merkle_batches/batch-17709-20260526080750.json |
-| FILE:data/audit_trail/merkle_batches/batch-17710-20260526080759.json | file | active | data/audit_trail/merkle_batches/batch-17710-20260526080759.json |
-| FILE:data/audit_trail/merkle_batches/batch-17809-20260526083326.json | file | active | data/audit_trail/merkle_batches/batch-17809-20260526083326.json |
-| FILE:data/audit_trail/merkle_batches/batch-17810-20260526083335.json | file | active | data/audit_trail/merkle_batches/batch-17810-20260526083335.json |
-| FILE:data/audit_trail/merkle_batches/batch-17909-20260526085929.json | file | active | data/audit_trail/merkle_batches/batch-17909-20260526085929.json |
-| FILE:data/audit_trail/merkle_batches/batch-17910-20260526085908.json | file | active | data/audit_trail/merkle_batches/batch-17910-20260526085908.json |
-| FILE:data/audit_trail/merkle_batches/batch-18009-20260526092501.json | file | active | data/audit_trail/merkle_batches/batch-18009-20260526092501.json |
-| FILE:data/audit_trail/merkle_batches/batch-18010-20260526092510.json | file | active | data/audit_trail/merkle_batches/batch-18010-20260526092510.json |
 
-（仅列前 300 条，共 28530 条——全量请走总口查询）
+（仅列前 300 条，共 29938 条——全量请走总口查询）

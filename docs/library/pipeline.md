@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 管线馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：89｜馆内总数：89
+- 条目数（本页列出）：91｜馆内总数：91
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -14,6 +14,7 @@ doc_type: "index"
 | FILE:scripts/construction/finalize_tasks.py | file | active | scripts/construction/finalize_tasks.py |
 | FILE:scripts/governance/_tasks/__init__.py | file | active | scripts/governance/_tasks/__init__.py |
 | FILE:scripts/governance/_tasks/list_phase0_tasks.py | file | active | scripts/governance/_tasks/list_phase0_tasks.py |
+| FILE:scripts/governance/_tasks/session_closeout_reconciler.py | file | active | scripts/governance/_tasks/session_closeout_reconciler.py |
 | FILE:scripts/governance/_tasks/task_show.py | file | active | scripts/governance/_tasks/task_show.py |
 | FILE:scripts/governance/_tasks/task_summary.py | file | active | scripts/governance/_tasks/task_summary.py |
 | FILE:scripts/register_aux_tasks.ps1 | file | active | scripts/register_aux_tasks.ps1 |
@@ -78,6 +79,7 @@ doc_type: "index"
 | TASK:schtasks:/ZephyrAlpha_LibraryLedgerBackup | task | active | schtasks:\ZephyrAlpha_LibraryLedgerBackup |
 | TASK:schtasks:/ZephyrAlpha_LibraryLedgerDrill | task | active | schtasks:\ZephyrAlpha_LibraryLedgerDrill |
 | TASK:schtasks:/ZephyrAlpha_MeasureCalibration | task | active | schtasks:\ZephyrAlpha_MeasureCalibration |
+| TASK:schtasks:/ZephyrAlpha_MetaqAuditReconcile | task | active | schtasks:\ZephyrAlpha_MetaqAuditReconcile |
 | TASK:schtasks:/ZephyrAlpha_NightlySentiment | task | active | schtasks:\ZephyrAlpha_NightlySentiment |
 | TASK:schtasks:/ZephyrAlpha_OllamaServe | task | active | schtasks:\ZephyrAlpha_OllamaServe |
 | TASK:schtasks:/ZephyrAlpha_PaperSession | task | active | schtasks:\ZephyrAlpha_PaperSession |
