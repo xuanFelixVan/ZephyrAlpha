@@ -1,0 +1,40 @@
+# ALGO_FLOW 外部真源——__init__（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py）
+# 2026-09-29 C97 悬空锚清偿补册：read_side 包 __init__ 原 P2-1 批量锚复制粘贴指向
+# fms_hygiene_gate yaml（LEDGER_chief3 §6.4 N-1 复制粘贴味实证），本次改指本册并补块。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.read_side.__init__
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 包命名空间请求
+    #   fields: 无公共形参/无逻辑（纯命名空间，ERROR_CONTRACT 契约头自述）
+    #   code: __init__.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 子模块静态锚定
+    #   name_en: import fms_ref_extractor / from fms_hygiene_gate import make_fms_hygiene_gate
+    #   intro: 读侧（docs 引用面）执法门子包公开面装配；与写侧（.py 代码面）门禁家族正交
+    #   inputs: I1
+    #   outputs: 共享提取器 + 门工厂可引符号
+    # - id: A2
+    #   name_zh: ② 包级导出封口
+    #   name_en: __all__ = ["make_fms_hygiene_gate", "fms_ref_extractor"]
+    #   intro: 公开面仅门工厂与共享提取器两符号（MODIFY-GUARD 契约头同口径）
+    #   inputs: A1
+    #   outputs: __all__ 导出表
+    # 层: 输出
+    # - id: O1
+    #   name_zh: read_side 包公开面
+    #   name_en: make_fms_hygiene_gate / fms_ref_extractor
+    #   intro: 供门禁注册链与基线生成器导入
+    #   downstream: zephyr.gov_enforcement.rule_bridge.gate_auto_registrar；scripts/governance/generators/generate_fms_deadref_baseline.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -1,0 +1,52 @@
+# ALGO_FLOW 外部真源——fms_hygiene_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py）
+# 2026-09-29 C97 悬空锚清偿补册：read_side 家族锚 born-dangling（P2-1 批量出仓漏配目标），
+# 本块按真源 docstring 契约头+函数清单标定（四查类口径 S1_reference_integrity 簿 §4.1）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.read_side.fms_hygiene_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: staged 文档文件集（own-scope）
+    #   fields: .md/.yaml/.yml；外来 staged 经 _split_own_foreign 剔除（宪法 §3）
+    #   code: _get_staged_doc_files
+    # - id: I2
+    #   name: 棘轮基线册 fms_deadref_baseline.yaml
+    #   fields: 存量死引用豁免面（monotonic_shrink）；缺失/损坏=豁免面为空（更严不更宽）
+    #   code: _load_baseline_refs（进程级缓存 _BASELINE_CACHE）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 新增引用提取（净增口径）
+    #   name_en: _new_refs_of_file
+    #   intro: 当前引用 − HEAD 引用 = 新增（dangling_reference_gate 先例）；共享提取器 fms_ref_extractor 单写者
+    #   inputs: I1
+    #   outputs: 文件→新增引用集
+    # - id: A2
+    #   name_zh: ② 四查类分类
+    #   name_en: _classify_new_ref
+    #   intro: HYGIENE-DEADREF-NEW（不存在且不在基线）/HYGIENE-ASCII-NEW（非 ASCII 无豁免）/HYGIENE-PERM-EPHEMERAL（永久侧引临时区，基线 B 类豁免）/HYGIENE-CAS-RESIDUE（.tmp 残渣，基线 E1 豁免）
+    #   inputs: A1 + I2
+    #   outputs: 查类→违规引用清单
+    # - id: A3
+    #   name_zh: ③ warn/block 裁决与审计
+    #   name_en: _check/_audit_findings
+    #   intro: FMS_HYGIENE_GATE_MODE=warn 起步（检出违规 passed=True+审计留痕），翻 block 判据=连零 20 笔（block_flip_eligible，OWNER-GATE）；git/IO 异常 fail-open；审计落 .runtime/gate_audit/fms_hygiene.jsonl
+    #   inputs: A2
+    #   outputs: (passed, detail)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec(FMS-HYGIENE, priority=138)
+    #   name_en: make_fms_hygiene_gate()
+    #   intro: 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]，注册进 commit 门禁链
+    #   downstream: zephyr.gov_enforcement.rule_bridge.gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A2
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

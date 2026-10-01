@@ -1,0 +1,60 @@
+# ALGO_FLOW 外部真源——generate_fms_deadref_baseline（_domain_library 域，真源 scripts/governance/generators/generate_fms_deadref_baseline.py）
+# 2026-09-29 C97 悬空锚清偿补册：原 P2-1 批量锚复制粘贴指向 read_side_fms_hygiene_gate.yaml
+# （LEDGER_chief3 §6.4 N-1 实证），本次改指本册并补块（兄弟件口径=同目录 generators/ 三件）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: scripts.governance.generators.generate_fms_deadref_baseline
+source_of_truth: scripts/governance/generators/generate_fms_deadref_baseline.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: docs 树 md/yaml 全量引用面
+    #   fields: 只读 rglob 扫描（skip-dirs 复用 FMS-HYGIENE 门同一 SSoT）
+    #   code: scan_doc_refs
+    # - id: I2
+    #   name: 旧基线册 + 挖矿 csv
+    #   fields: fms_deadref_baseline.yaml（first_seen 幂等继承）+ deadref_missing_2498.csv（现场对账）
+    #   code: load_existing_entries/load_csv_refs
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① git 跟踪集三元组
+    #   name_en: git_tracked_index
+    #   intro: (文件集, 祖先目录集, basename→路径索引)——存在性判定基准
+    #   inputs: I1
+    #   outputs: 跟踪集三元组
+    # - id: A2
+    #   name_zh: ② 存量分类（机械可复算）
+    #   name_en: classify_ref/_classify_all
+    #   intro: E1(.tmp)→盘面在册(活,不收录)→A(模板)→B(_working 分量)→E3(目录/无扩展名)→C(唯一命中可修,不进基线)→C2(低置信)→D(真死)
+    #   inputs: A1
+    #   outputs: ref→类别映射
+    # - id: A3
+    #   name_zh: ③ 棘轮校验 monotonic_shrink
+    #   name_en: _check_ratchet
+    #   intro: 新条目集 ⊆ 旧条目集否则 exit 1（净增长=门失效或基线被篡改）；盘面复活 ref（E4）自动消失自愈
+    #   inputs: A2 + I2
+    #   outputs: 棘轮判定
+    # - id: A4
+    #   name_zh: ④ 基线渲染与 CAS 落盘
+    #   name_en: build_baseline_doc/_build_entries/main
+    #   intro: entries 按 ref 排序（确定性输出）；唯一写动作=基线册本尊，safe_write_text CAS；与 csv 现场对账差异全量打印留痕
+    #   inputs: A3
+    #   outputs: 基线册全文
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 棘轮基线册
+    #   name_en: docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml
+    #   intro: 基线册唯一合法写者（宪法 §9.5 静态清单禁手工维护）
+    #   downstream: src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py（基线消费方）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A3
+    # I2 --> A4
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O1

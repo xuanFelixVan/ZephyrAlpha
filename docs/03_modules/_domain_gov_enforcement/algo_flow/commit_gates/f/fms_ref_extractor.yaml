@@ -1,0 +1,39 @@
+# ALGO_FLOW 外部真源——fms_ref_extractor（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/read_side/fms_ref_extractor.py）
+# 2026-09-29 C97 悬空锚清偿补册：read_side 家族锚 born-dangling（P2-1 批量出仓漏配目标），
+# 本块按真源 docstring 契约头+函数清单标定（门与基线生成器单写者共用提取器）。
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.read_side.fms_ref_extractor
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/read_side/fms_ref_extractor.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 文档文本内容
+    #   fields: md/yaml 原文（staged blob 或盘面读）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 四形态正则提取
+    #   name_en: extract_refs（_MD_LINK_RE/_BACKTICK_RE/_TABLE_CELL_RE/_BARE_TOKEN_RE）
+    #   intro: md_link/backtick/table_cell/bare 四形态（REF_FORM_*）；md_link 存在性判定归 DOC-REF-BROKEN（净零分工），bare 限已知顶层目录
+    #   inputs: I1
+    #   outputs: 候选 token 流
+    # - id: A2
+    #   name_zh: ② 过滤与归一
+    #   name_en: normalize_ref/is_template_form/is_cas_residue/is_ephemeral_target
+    #   intro: 剔 URL/相对路径/模板占位（尖括号/xxx/日期尾）/Git 托管残段；CAS 残渣（.tmp）与临时区分量（_working/.runtime/session_logs）打标不剔；token 归一化保门拦截键与基线收录键机械同字符串
+    #   inputs: A1
+    #   outputs: RefHit(token, form, line_no)
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 引用命中流（单写者共享面）
+    #   name_en: extract_refs -> Iterator[RefHit]
+    #   intro: 唯一提取口径——FMS-HYGIENE 门拦截键与基线生成器收录键同源，杜绝口径漂移（S1 簿硬约束）
+    #   downstream: src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py；scripts/governance/generators/generate_fms_deadref_baseline.py
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

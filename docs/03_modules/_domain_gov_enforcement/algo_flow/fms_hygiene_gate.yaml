@@ -1,0 +1,51 @@
+# ALGO_FLOW 外部真源——fms_hygiene_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.read_side.fms_hygiene_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/read_side/fms_hygiene_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: staged 面 own-scope 切分（_read_staged_file/_split_own_foreign 共享原语，外来 warn+审计不阻断）
+    #   fields: rel/wt_root/gateway
+    #   code: make_fms_hygiene_gate
+    # - id: I2
+    #   name: FMS deadref 基线册（棘轮底座，只增不减）
+    #   fields: 基线内引用集
+    #   code: _load_baseline
+    # 层: 处理
+    # - id: P1
+    #   name_zh: HYGIENE-DEADREF-NEW 棘轮（新增引用目标在 git 仓库态不存在且不在基线册）
+    #   name_en: deadref_new_ratchet
+    #   code: check_deadref_new
+    # - id: P2
+    #   name_zh: HYGIENE-ASCII-NEW（新增引用 token 含非 ASCII，S3 ASCII 政策配套）
+    #   name_en: ascii_new
+    #   code: check_ascii_new
+    # - id: P3
+    #   name_zh: HYGIENE-PERM-EPHEMERAL（永久侧新增引用指向临时区 _working/.runtime）
+    #   name_en: perm_ephemeral
+    #   code: check_perm_ephemeral
+    # - id: P4
+    #   name_zh: HYGIENE-CAS-RESIDUE（CAS 残渣形态判别，fms_ref_extractor 共享口径）
+    #   name_en: cas_residue
+    #   code: check_cas_residue
+    # 层: 输出
+    # - id: O1
+    #   name_zh: findings→FMS_HYGIENE_GATE_MODE(warn/block) 两段制裁决+审计落 .runtime/gate_audit/
+    #   name_en: verdict_and_audit
+    #   code: make_fms_hygiene_gate
+    # 边:
+    # I1 --> P1
+    # I1 --> P2
+    # I1 --> P3
+    # I1 --> P4
+    # I2 --> P1
+    # P1 --> O1
+    # P2 --> O1
+    # P3 --> O1
+    # P4 --> O1
+    # [/ALGO_FLOW]
