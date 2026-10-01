@@ -22690,3 +22690,19 @@ entries:
     （预案 #455 实测已被占，顺延 #460）+他会话旧基座覆写冲掉 7 条在册裁定（#429/#439/#440/
     #449/#450/#454/#455），本车道三向合并修复保真后纯增量落地（275=270+5）。
   related_rulings: ['裁定#460']
+
+- issue_id: '#ARCH-380'
+  title: '板块分钟线收敛裁定甲落地载体（.gitignore 双腿 runner 精确豁免）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-10-01'
+  last_updated: '2026-10-01'
+  owner: 'Owner（2026-10-01 凌晨总包令全文授权自裁自干至全部完成，总包 st-storageswap-20260930 依令裁定收敛方案甲）'
+  description: >-
+    Owner 凌晨总包令授权板块分钟线收敛施工（tdx 09-10 服务端协议拒答断供后的替代源收敛）。
+    本议题为 .gitignore 双 runner 精确豁免（sector_synth_eod_runner.ps1 转 dry-run 留观 +
+    sector_eqw_runner.ps1 新生产者 runner，收编入库增强追踪，sz_open_data 先例镜像）的
+    [ARCH-APPROVAL:#ARCH-380] gate 逃生标记+本登记双留痕载体（#ARCH-368/369/370 同款先例，
+    语境限本收敛车道防范围借道）。裁定依据=a7 sector_switch validation §六。
+  related_rulings: []
