@@ -111,6 +111,12 @@ def _release_singleton(root: Path) -> None:
 
 def _drain_once(project_root: Path) -> dict:
     """自举排空一轮（lease 被持=skipped 正常）。"""
+    root_str = str(project_root)
+    if root_str not in sys.path:
+        # 守护进程 sys.path[0] 未必是仓根（PYTHONSAFEPATH/服务化启动场景），
+        # 缺失时 scripts.governance.* 包导入必炸 ModuleNotFoundError（2026-10-01 实证：
+        # 旧守护 cwd 虽正但仍炸=路径注入不可依赖，必须显式补）。
+        sys.path.insert(0, root_str)
     from scripts.governance.commit_queue_landing import bootstrap_drain_with_landing  # noqa: PLC0415
 
     try:
