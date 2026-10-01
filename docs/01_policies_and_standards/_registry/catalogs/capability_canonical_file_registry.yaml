@@ -59102,4 +59102,9 @@ creation_tokens:
   capability: check_version_drift
   merge_evaluation: "非新建：scripts/check_version_drift.ps1 平铺容量治理 git mv 原样迁移（零内容改动），fms_deadref_baseline 死引用基线在案退役件，净零"
 
+- file: docs/03_modules/_domain_frontend/algo_flow/connection_matrix.yaml
+  token: connection-matrix-algo-flow-connection-matrix-20260930
+  created_by: st-matrix-final-20260930
+  capability: connection_matrix_algo_flow
+  merge_evaluation: "跨域不同对象不并：algo_flow 视图 yaml=连接矩阵组件的算法面机器视图（externalizer 生成物），非组件本体/生成器判据面第二实现"
 di_seam_exemptions: []

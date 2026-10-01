@@ -1,0 +1,37 @@
+# ALGO_FLOW 外部真源——connection_matrix（_domain_frontend 域，真源 src/zephyr/frontend/dashboard/components/connection_matrix.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.frontend.dashboard.components.connection_matrix
+source_of_truth: src/zephyr/frontend/dashboard/components/connection_matrix.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 生成器产物
+    #   fields: connection_matrix JSON 兄弟产物路径（+ CSV 同胞）；mtime 缓存键
+    #   code: docs/_working/decision_map_campaign_20260924/connection_matrix.json（generate_connection_matrix.py 只写产物）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 产物读侧缓存取数
+    #   name_en: artifact_fetch_with_mtime_cache
+    #   intro: 产物缺失→显式"未生成"占位（第二真源禁令：绝不现场重算）；mtime 变即失效重读
+    #   inputs: I1
+    #   outputs: ConnectionMatrixData
+    #   code: fetch_connection_matrix / _CACHE
+    # - id: A2
+    #   name_zh: 看板渲染
+    #   name_en: panel_render
+    #   intro: panel 可用→Panel 布局 payload（含 _layout）；panel 缺席→纯 dict（可测不炸）
+    #   inputs: ConnectionMatrixData
+    #   outputs: dict
+    #   code: render_connection_matrix
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 连接矩阵 Tab
+    #   name_en: connection_matrix_tab
+    #   intro: app_panel.tabs_spec「连接矩阵」页 payload，读侧零判据（判据全在生成器）
+    #   downstream: src/zephyr/frontend/dashboard/app_panel.py _tab_connection_matrix
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1

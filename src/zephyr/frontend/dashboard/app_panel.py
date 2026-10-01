@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.app_panel
 # [DOMAIN] D_FRONTEND
-# [DEPENDENCIES] panel; holoviews; plotly; plotly_resampler; datashader; bokeh; zephyr.frontend.dashboard.components.chart_factory; zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.backtest_performance; zephyr.frontend.dashboard.components.tick_replay; zephyr.frontend.dashboard.components.order_book; zephyr.frontend.dashboard.components.position_monitor; zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.fitness_functions; zephyr.frontend.dashboard.components.gate_statistics; zephyr.frontend.dashboard.components.knowledge_overview; zephyr.frontend.dashboard.components.olap_trend; zephyr.frontend.dashboard.components.task_progress; zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo; zephyr.ex_core.adapters.qmt_file_bridge_integration; zephyr.ex_core.order_manager
+# [DEPENDENCIES] panel; holoviews; plotly; plotly_resampler; datashader; bokeh; zephyr.frontend.dashboard.components.chart_factory; zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.backtest_performance; zephyr.frontend.dashboard.components.tick_replay; zephyr.frontend.dashboard.components.order_book; zephyr.frontend.dashboard.components.position_monitor; zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.fitness_functions; zephyr.frontend.dashboard.components.gate_statistics; zephyr.frontend.dashboard.components.connection_matrix; zephyr.frontend.dashboard.components.knowledge_overview; zephyr.frontend.dashboard.components.olap_trend; zephyr.frontend.dashboard.components.task_progress; zephyr.governance.persistence.sqlite_schema; zephyr.governance.persistence.task_repo; zephyr.ex_core.adapters.qmt_file_bridge_integration; zephyr.ex_core.order_manager
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -44,6 +44,7 @@ v3.5.0（45号作战手册 P1）: 新增「作战室」Tab（实盘组首位，�
     12. 交易面板        — trade_panel
     13. QMT桥健康      — qmt_bridge_health
     14. 图谱语料        — industry_graph
+    15. 连接矩阵        — connection_matrix（波 13 包 13.4，读生成物）
 
 启动方式:
     方式1 (panel serve, 推荐):
@@ -94,6 +95,10 @@ from zephyr.frontend.dashboard.components.backtest_results import (
     BacktestMetrics,
     BacktestResultData,
     render_backtest_results,
+)
+from zephyr.frontend.dashboard.components.connection_matrix import (
+    fetch_connection_matrix,
+    render_connection_matrix,
 )
 
 # 实验历史（v3.4.0, 51 号工作流 B：C1 回测历史 + 双净值对比，单一 JSON 源）
@@ -445,6 +450,15 @@ class DashboardPanelApp:
         payload = render_industry_graph(data)
         return payload.get("_layout") or pn.pane.Markdown("图谱语料渲染失败")
 
+    def _tab_connection_matrix(self) -> object:
+        """连接矩阵（波 13 包 13.4：数据源×因子×策略×决策地图的六类边差集看板）
+
+        面板只是生成物读侧——判据全在 generate_connection_matrix.py，此处零重算。
+        """
+        data = fetch_connection_matrix()
+        payload = render_connection_matrix(data)
+        return payload.get("_layout") or pn.pane.Markdown("连接矩阵渲染失败")
+
     # ===== Demo 数据（无 BacktestResult 注入时展示，证明仪表盘可运行）=====
 
     @staticmethod
@@ -455,7 +469,7 @@ class DashboardPanelApp:
     # ===== 组装 =====
 
     def build_tabs(self) -> object:
-        """构建 14 个 Tab 的 pn.Tabs 布局（v3.5.0 作战室居实盘组首位）"""
+        """构建 tabs_spec 全量 Tab 的 pn.Tabs 布局（Tab 数以 tabs_spec 为准，散文不背数）"""
         tabs_spec = [
             ("作战室", self._tab_warroom),
             ("任务进度", self._tab_task_progress),
@@ -471,6 +485,7 @@ class DashboardPanelApp:
             ("交易面板", self._tab_trade_panel),
             ("QMT桥健康", self._tab_qmt_bridge_health),
             ("图谱语料", self._tab_industry_graph),
+            ("连接矩阵", self._tab_connection_matrix),
         ]
         tab_objects = []
         for name, builder in tabs_spec:
@@ -563,8 +578,8 @@ if pn is not None:
         _DASHBOARD = create_dashboard()
         _DASHBOARD.servable()
     except (
-        Exception
-    ) as _e:  # pragma: no cover — servable 失败不阻断 import  # noqa: BLE001 — 5.135治标: broad exception catch
+        Exception  # noqa: BLE001 — 5.135治标: broad exception catch
+    ) as _e:  # pragma: no cover — servable 失败不阻断 import
         import sys
 
         print(f"[app_panel] servable 初始化警告: {_e}", file=sys.stderr)
