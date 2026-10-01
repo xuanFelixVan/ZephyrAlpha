@@ -939,6 +939,21 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
 
     base_head = resolve_base_head(wt)
     base_blobs = resolve_base_blobs(wt, base_head, rel_files)
+    # 会话存活保障（2026-10-02 提交链治本·C9）：幽灵闸（裁定#459）按心跳判袋主
+    # 生死，入队后会话若未注册/瞬态 pid 已亡/心跳停更，袋必死于落地闸——
+    # st-mapcensus-20260924 复用旧 sid 两连死实证（--claim-only 自动注册写入的是
+    # 瞬态 CLI pid，进程一退即判死）。此处机械兜底：session_worktree_start 幂等
+    # 重注册+拉起心跳 daemon（pid=0+live 心跳文件，C355 豁免=有袋在队不自退），
+    # 入队即活，不依赖施工 AI 记得手工注册流程。失败不阻断入队（快照语义不依赖）。
+    try:
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start  # noqa: PLC0415
+
+        _swr = session_worktree_start(session_id=args.session, allow_workspace_drift=True)
+        _sw_ok = isinstance(_swr, dict) and _swr.get("ok")
+        if not _sw_ok:
+            logger.warning("[enqueue] 会话存活保障未确认: %s", str(_swr)[:150])
+    except Exception as sess_exc:  # noqa: BLE001 — 存活保障失败不阻断入队
+        logger.warning("[enqueue] 会话存活保障失败（不阻断）: %s", sess_exc)
     # 队列在途续命（2026-10-01 提交链治本③）：入队即把本会话对目标文件的 claim
     # 过期点拨长（缺省 2h，ZEPHYR_ENQUEUE_CLAIM_TTL_S 参数化）——实测排队等待可达
     # 45min+，而失败保留 claim 仅 300s，等待中过期即遭第三方回收、落地期
