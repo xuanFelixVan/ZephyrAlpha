@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway ; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session, register_dependency, clear_dependency) ; zephyr.gov_enforcement.commit_gates.import_integrity_gate (_check_active_session_held_target, Phase 2.5) ; zephyr.governance.audit.reconcile_worker (SessionRegistry) ; zephyr.governance.audit.reconcile_runner (SessionRegistry)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] SessionRegistry S4-D 分片存储（2026-09-30）：主真源=.runtime/session_registry/<sid>.json 每会话一片（per-pid tmp+os.replace+WinError5 退避原语义），写只碰本会话片（整表重写竞态拆面治本——AI-NORTH-001 心跳互踩/WinError5 连锁/#ARCH-324 的结构性病根）；读侧聚合（损坏/缺失片跳过+审计，损失半径=单片），旧单表迁移窗双写为只读兼容副本（直读消费者 watchdog/write_audit_daemon/commit_queue/check_commit_message 不受扰），片目录缺席回退旧表；回退手柄 env ZEPHYR_SESSION_REGISTRY_SHARDS=0；公共 save()=merge-upsert 永不删（删除只能走 unregister/list_active 收割显式意图）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-002 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
+# [INVARIANTS] SessionRegistry S4-D 分片存储（2026-09-30）：主真源=.runtime/session_registry/<sid>.json 每会话一片（per-pid tmp+os.replace+WinError5 退避原语义），写只碰本会话片（整表重写竞态拆面治本——AI-NORTH-001 心跳互踩/WinError5 连锁/#ARCH-324 的结构性病根）；读侧聚合（损坏/缺失片跳过+审计，损失半径=单片），旧单表迁移窗双写为只读兼容副本（直读消费者 watchdog/write_audit_daemon/commit_queue/check_commit_message 不受扰），片目录缺席回退旧表；回退手柄 env ZEPHYR_SESSION_REGISTRY_SHARDS=0；公共 save()=merge-upsert 永不删（删除只能走 unregister/list_active 收割显式意图）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-002 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）；register 频率护栏（wave4-D V5 治本 2026-10-01）：同 session 活条目 _REREGISTER_MIN_INTERVAL_SECONDS（=idle 上限+2×30s）窗内重注册=降级执行（状态按实参重建+四时间锚 start_time/last_heartbeat/last_activity/last_register_ts 冻结+审计，防 keeper 循环伪造 last_activity 且窗不被刷延长），logical（请求参或既有条目）豁免 FULL 刷新、死条目放行=合法重启、既有条目 logical=True 重建时继承（防 mark_logical 随整体重建静默丢标）；频率锚=last_register_ts 独立字段（旧条目缺省 0.0=无锚放行）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -59,6 +59,7 @@ import re
 import threading
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 
@@ -171,6 +172,14 @@ _REAP_GRACE_SECONDS: int = 15 * 60
 # 治理操作（register/claim_file/register_dependency）刷新，heartbeat 不刷新；
 # daemon 检测 idle 超此上限自动退出 → 90s 后 registry 条目过期 → claim 自动释放。
 _ACTIVITY_IDLE_TIMEOUT_SECONDS: int = 1800
+# V5 register 频率护栏（wave4-D 治本，2026-10-01）：同 session 最小重注册间隔。
+# 病灶（W3-3 挖矿 SEG-K §V 实证）：register() 无频率护栏——keeper 循环可无限重
+# register 刷新 last_activity（伪造活性锚点），架空 #ARCH-HEARTBEAT-002 的 daemon
+# idle 自退（三类伪造同根）。值 = idle 上限 + 2×daemon 心跳节拍（30s×2）边际：
+# daemon 的 idle 检查以 30s 粒度轮询，任何被放行的重注册都必然晚于 idle 自退——
+# keeper 无法在窗内重置 last_activity 锚点，守护必先自退（心跳随后过期 → 条目
+# 判死 → 走"死条目放行"通道恢复正常重注册，伪造链断裂）。
+_REREGISTER_MIN_INTERVAL_SECONDS: int = _ACTIVITY_IDLE_TIMEOUT_SECONDS + 2 * 30
 _REGISTRY_PATH: str = ".runtime/session_registry.json"
 # S4-D 分片目录（全流通夜战 G2 2026-09-30）：每会话一片 <sid>.json——写只碰自己的片，
 # 整表重写竞态对象消失（而非给竞态加锁）。旧单表降级为只读兼容副本（迁移双写窗口）。
@@ -254,6 +263,10 @@ class SessionInfo:
     # 不因 idle>1800s 自退（活会话周期 re-register/mark_logical 即不被判死）；
     # 默认 False=维持 #ARCH-HEARTBEAT-002 僵尸 daemon 自退治本不变（opt-in，防活性反转回归）。
     logical: bool = False
+    # V5 register 频率护栏锚点（wave4-D 治本 2026-10-01）：最近一次被放行的 register
+    # 时间戳。独立于 last_activity——claim_file/register_dependency 刷新 last_activity
+    # 是合法治理操作，不应缩窄 register 自身的频率窗。旧条目缺字段=0.0=无锚（放行）。
+    last_register_ts: float = 0.0
 
     def to_dict(self) -> dict:
         return {
@@ -267,6 +280,7 @@ class SessionInfo:
             "task_files": self.task_files,
             "depends_on_sessions": self.depends_on_sessions,
             "logical": self.logical,
+            "last_register_ts": self.last_register_ts,
         }
 
     @classmethod
@@ -283,6 +297,7 @@ class SessionInfo:
             task_files=d.get("task_files") or [],
             depends_on_sessions=d.get("depends_on_sessions") or [],
             logical=bool(d.get("logical", False)),
+            last_register_ts=d.get("last_register_ts", 0.0),
         )
 
 
@@ -313,6 +328,33 @@ def _is_session_alive(info: SessionInfo, now: float) -> bool:
     if now - info.last_heartbeat > _HEARTBEAT_TIMEOUT_SECONDS:
         return False
     return True
+
+
+def _audit_register_rate_rejected(project_root: Path, session_id: str, prev: SessionInfo, window_seconds: int) -> None:
+    """register 频率护栏拒绝审计（wave4-D V5 治本，2026-10-01）：JSONL 落盘留痕。
+
+    追加写 ``<root>/.runtime/session_registry_audit/register_rate_guard.jsonl``
+    （独立目录——不与 ``session_registry/`` 分片目录混放，防分片 glob 聚合读误吞
+    审计文件）。写失败只 warn 不抛（审计是留痕面不是裁决面——拒绝本身已生效）。
+    成本对位：护栏拒绝路径免掉了原 register 的分片+旧表双写，审计单次追加写
+    不高于原路径 IO。
+    """
+    record = {
+        "ts": datetime.now(timezone.utc).isoformat(),  # noqa: m46-time — 审计留痕时间戳（对标 heartbeat_daemon _append_heartbeat_log 同模式）
+        "pid": os.getpid(),
+        "event": "register_rate_guard_rejected",
+        "session_id": session_id,
+        "entry_pid": prev.pid,
+        "entry_last_activity": prev.last_activity,
+        "min_interval_seconds": window_seconds,
+    }
+    try:
+        audit_dir = Path(project_root) / ".runtime" / "session_registry_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with (audit_dir / "register_rate_guard.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as e:
+        logger.warning("SessionRegistry: register rate-guard audit write failed: %s", e)
 
 
 class SessionRegistry:
@@ -509,19 +551,88 @@ class SessionRegistry:
                 heartbeat_daemon 不因 idle 自退；活会话周期 re-register 即不被判死。
                 注意 re-register 会整体重建条目（held_files 以显式实参为准），
                 已有 claim 的会话续注册请改用 mark_logical（零触碰 held_files）。
+
+        V5 频率护栏（wave4-D 治本，2026-10-01）：同 session 存在**活条目**且距上次
+        被放行的 register 不足 ``_REREGISTER_MIN_INTERVAL_SECONDS`` 时，本次 register
+        被**降级执行**——warning + 审计留痕 + 状态重建但活性锚冻结，堵死 keeper 循环
+        无限重 register 伪造 last_activity 的活性反转根（W3-3 挖矿 SEG-K §V）：
+
+        - 状态重建生效：pid / held_files / task_files / is_breaking_change / deps /
+          logical 按实参重建（保持 re-register 既有文档语义"整体重建条目"——同 sid
+          部分失败重跑/重新开工依赖此行为，held_files 以显式实参为准）；
+        - 活性锚冻结：start_time / last_heartbeat / last_activity / last_register_ts
+          四时间锚**全部不前移**——keeper 循环得不到任何活性续期，且窗自上次 FULL
+          register 起算、不被降级重注册刷延长。
+
+        两个放行通道（FULL register，四锚全部刷新）：
+          1. logical 豁免——请求参 logical=True 或既有条目 logical=True（mark_logical
+             已翻转）任一成立即放行：总包/chief 形态的周期 re-register 是 W-29 认可
+             的活性信号，心跳守护工作流不受影响；
+          2. 死条目放行——条目已判死（PID 死 / 心跳过期）的重注册=真实重启，
+             不在伪造面内（伪造的前提是条目还活着；守护在位时心跳持续新鲜，
+             死条目通道结构性关闭，窗守得住）。
+        频率锚=last_register_ts（独立于 last_activity：claim/register_dependency 刷新
+        last_activity 是合法治理操作，不缩窄 register 自身的频率窗）。
+
+        语义注记：既有条目 logical=True 时，重建条目**继承** logical=True（原行为
+        会随整体重建静默丢标——W-29 豁免随即失效、daemon 恢复 idle 自退，chief
+        工作流被隐性破坏；继承后 mark_logical 的零触碰语义跨重建保持）。
         """
         with self._lock:
+            now = time.time()  # noqa: m46-time — 注册时间戳（对标 register_dependency/claim_file 同模式）
+            existing = self._get_entry(session_id)
+            existing_logical = isinstance(existing, dict) and bool(existing.get("logical", False))
+            if isinstance(existing, dict) and not (logical or existing_logical):
+                prev = SessionInfo.from_dict(existing)
+                last_reg = float(existing.get("last_register_ts") or 0.0)
+                if (
+                    last_reg > 0.0
+                    and (now - last_reg) < _REREGISTER_MIN_INTERVAL_SECONDS
+                    and _is_session_alive(prev, now)
+                ):
+                    logger.warning(
+                        "SessionRegistry: re-register downgraded by rate guard session=%s "
+                        "window=%ds elapsed=%.1fs (entry alive, logical=False) — state "
+                        "rebuilt but liveness anchors frozen (keeper-loop last_activity "
+                        "forgery blocked; chief keepalive should use mark_logical)",
+                        session_id,
+                        _REREGISTER_MIN_INTERVAL_SECONDS,
+                        now - last_reg,
+                    )
+                    _audit_register_rate_rejected(
+                        self._project_root,
+                        session_id,
+                        prev,
+                        _REREGISTER_MIN_INTERVAL_SECONDS,
+                    )
+                    # 降级重建：状态字段按实参刷新，四时间锚原值透传（零活性续期）
+                    rebuilt = SessionInfo(
+                        session_id=session_id,
+                        pid=pid if pid is not None else os.getpid(),
+                        start_time=prev.start_time,
+                        held_files=held_files or [],
+                        last_heartbeat=prev.last_heartbeat,
+                        last_activity=prev.last_activity,
+                        is_breaking_change=is_breaking_change,
+                        task_files=task_files or [],
+                        depends_on_sessions=depends_on_sessions or [],
+                        logical=logical or existing_logical,
+                        last_register_ts=prev.last_register_ts,
+                    )
+                    self._write_own(session_id, rebuilt.to_dict())
+                    return rebuilt
             info = SessionInfo(
                 session_id=session_id,
                 pid=pid if pid is not None else os.getpid(),
-                start_time=time.time(),
+                start_time=now,
                 held_files=held_files or [],
-                last_heartbeat=time.time(),
-                last_activity=time.time(),
+                last_heartbeat=now,
+                last_activity=now,
                 is_breaking_change=is_breaking_change,
                 task_files=task_files or [],
                 depends_on_sessions=depends_on_sessions or [],
-                logical=logical,
+                logical=logical or existing_logical,
+                last_register_ts=now,
             )
             # S4-D：register 语义=覆盖本会话片——无需整表读，跨会话竞态面消失
             self._write_own(session_id, info.to_dict())

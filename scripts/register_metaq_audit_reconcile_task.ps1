@@ -12,9 +12,17 @@
 #   JSONL writer is wired (registry.py _write_audit -> _append_jsonl), but nothing runs it on a
 #   schedule. 20 section 4 row 6 nominates a quarterly window; the campaign acceptance needs a
 #   daily per-UTC-day event-count check (JSONL vs PG diff must stay 0), so this task tightens the
-#   cadence to daily while the campaign is open. Design law respected: this is an audit scan, NOT
-#   a reconciler, so the event-trigger-only rule (constitution 9.3) does not apply (precedent:
-#   ruling for ZephyrAlpha_GateFullTreeAudit uses the same reasoning).
+#   cadence to daily while the campaign is open.
+#
+# Exemption registration (wave4-D V1 qualification, 2026-10-01):
+#   This is a READ-SIDE AUDIT SCAN, NOT a reconciler: the checker is zero-write end to end
+#   (PG via get_depgraph_pg_connection(read_only=True) + JSONL read-only stream parse; diffs
+#   are reported as findings, never repaired in place). Constitution 9.3 event-trigger law
+#   governs reconcilers (auto-repair writeback), not zero-write audit scans -- precedent:
+#   register_gate_fulltree_audit_task.ps1 line 17 ("Audit-scan is NOT a reconciler").
+#   This header is the standing exemption record; wording kept self-consistent (wave4-D
+#   fixed the "reconciler is read-only" mislabel below -- the word "reconciler" was wrong,
+#   the read-only fact was right).
 #
 # Schedule carrier choice: the resource profile registry is GENERATED from four sources and the
 #   ps1 family is one of them (scripts/register_*.ps1). Landing this file here therefore makes the
@@ -24,7 +32,7 @@
 # Key design (mirrors register_gate_fulltree_audit_task.ps1 / register_config_check_task.ps1):
 # - pythonw.exe (GUI subsystem, zero console window)
 # - Daily 03:50 (after GateFullTreeAudit 03:30, before the 04:00 generator slot and clear of backup windows)
-# - MultipleInstances=Parallel: reconciler is read-only end to end (PG read_only + JSONL stream read)
+# - MultipleInstances=Parallel: audit scan is read-only end to end (PG read_only + JSONL stream read)
 # - ExecutionTimeLimit=15min: full-window multiset diff over ~1.5k rows is sub-minute; OS anti-zombie
 # - Idempotent non-destructive: Set-ScheduledTask in-place update (NEVER Unregister)
 # - stdout+stderr tee to tmp/metaq_audit_reconcile_report.log (same tmp/ report convention)
@@ -76,7 +84,7 @@ if ($existing) {
 } else {
     Register-ScheduledTask -TaskName $TaskName -Action $cmdAction -Trigger $dailyTrigger `
         -Settings $settings -Principal $principal `
-        -Description "Daily meta_question audit dual-track reconcile (PG vs JSONL per-UTC-day count + row multiset diff, read-only). WO-002 closeout; 20 policy section 4 row 6." | Out-Null
+        -Description "Daily meta_question dual-track audit scan (PG vs JSONL per-UTC-day count + row multiset diff, zero-write read-only; NOT a reconciler, 9.3 N/A). WO-002 closeout; 20 policy section 4 row 6." | Out-Null
     Write-Host "[OK] registered task $TaskName (daily 03:50)"
 }
 

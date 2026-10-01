@@ -20,6 +20,8 @@ import tempfile
 import time
 
 from zephyr.security.access_control.session_concurrency import (
+    _ACTIVITY_IDLE_TIMEOUT_SECONDS,
+    _REREGISTER_MIN_INTERVAL_SECONDS,
     CONFLICT_SCENARIOS,
     LOCK_TTL_SECONDS,
     ConcurrencyManager,
@@ -812,8 +814,11 @@ class TestS4DShardDifferentialMatrix:
             f"root = Path({str(tmp_path)!r})\n"
             "r = SessionRegistry(project_root=root)\n"
             "for i in range(20):\n"
-            "    r.register('sess-child', pid=0)\n"
-            "    r.heartbeat('sess-child')\n"
+            # V5 register 频率护栏（wave4-D）后同 sid 窗内重注册被拒——改 5 sid 轮转，
+            # 保留"跨进程并发 register 写不同片"的竞态覆盖面（零丢失语义不变）。
+            "    sid = f'sess-child-{i % 5}'\n"
+            "    r.register(sid, pid=0)\n"
+            "    r.heartbeat(sid)\n"
             "    time.sleep(0.005)\n"
             "print('CHILD_DONE')\n"
         )
@@ -829,7 +834,7 @@ class TestS4DShardDifferentialMatrix:
         assert "CHILD_DONE" in proc.stdout, f"子进程失败: {proc.stderr[-400:]}"
         for i in range(20):
             assert parent.heartbeat("sess-parent") is True  # 与子进程并发写
-        child_info = parent.get_session("sess-child")
+        child_info = parent.get_session("sess-child-0")
         parent_info = parent.get_session("sess-parent")
         assert child_info is not None, "子会话注册/心跳被父进程写回抹除（跨进程竞态）"
         assert parent_info is not None
@@ -849,3 +854,103 @@ class TestS4DShardDifferentialMatrix:
         )
         assert reg.unregister("sess-unreg") is False  # 幂等：已注销再注销=False
         assert reg.unregister("sess-ghost") is False
+
+
+class TestSessionRegistryRegisterRateGuard:
+    """V5 register 频率护栏三态测试（wave4-D 治本，2026-10-01）。
+
+    病灶（W3-3 挖矿 SEG-K §V）：register() 无频率护栏——keeper 循环可无限重
+    register 伪造 last_activity（三类伪造同根）。护栏语义（降级执行）：
+      - 活条目 + 窗内 + 非 logical → 状态重建生效 + 四时间锚冻结 + 审计留痕；
+      - logical（请求参或既有条目）豁免——总包/chief 周期 re-register 活性信号保留，
+        心跳守护工作流不受影响；
+      - 死条目放行——真实重启不受限。
+    """
+
+    _AUDIT_REL = (".runtime", "session_registry_audit", "register_rate_guard.jsonl")
+
+    def test_first_register_allowed_and_anchored(self, tmp_path):
+        """正常态：首次注册放行，last_register_ts 锚点落盘。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        info = reg.register("sess-guard-1", pid=0)
+        assert info.last_register_ts > 0.0
+        assert info.last_activity > 0.0
+        assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()
+
+    def test_over_frequency_re_register_downgraded_anchors_frozen(self, tmp_path):
+        """超频态：窗内活条目重注册被降级——四时间锚冻结（活性伪造被挡），状态重建生效。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        first = reg.register("sess-guard-2", pid=0)
+        second = reg.register("sess-guard-2", pid=0, held_files=["b.py"])  # 窗内重注册 → 降级
+        # 四时间锚全部不前移（keeper 循环得不到活性续期）
+        assert second.last_activity == first.last_activity
+        assert second.last_register_ts == first.last_register_ts
+        assert second.start_time == first.start_time
+        assert second.last_heartbeat == first.last_heartbeat
+        # 状态重建生效（re-register 既有文档语义：held_files 以显式实参为准）
+        assert second.held_files == ["b.py"]
+        stored = reg.get_session("sess-guard-2")
+        assert stored is not None
+        assert stored.last_activity == first.last_activity
+        assert stored.held_files == ["b.py"]
+
+    def test_over_frequency_rejection_audited(self, tmp_path):
+        """超频态：拒绝必须审计留痕（JSONL 单条，字段齐备）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-guard-3", pid=0)
+        reg.register("sess-guard-3", pid=0)
+        audit_file = tmp_path.joinpath(*self._AUDIT_REL)
+        assert audit_file.exists()
+        lines = [json.loads(x) for x in audit_file.read_text(encoding="utf-8").splitlines() if x.strip()]
+        assert len(lines) == 1
+        assert lines[0]["event"] == "register_rate_guard_rejected"
+        assert lines[0]["session_id"] == "sess-guard-3"
+        assert lines[0]["min_interval_seconds"] == _REREGISTER_MIN_INTERVAL_SECONDS
+
+    def test_logical_request_exempt(self, tmp_path):
+        """logical 豁免态①：请求参 logical=True（总包/chief keepalive）不被限流。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        first = reg.register("sess-guard-4", pid=0, logical=True)
+        second = reg.register("sess-guard-4", pid=0, logical=True)
+        assert second.last_register_ts >= first.last_register_ts
+        assert second.last_activity >= first.last_activity
+        assert second.logical is True
+        assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()
+
+    def test_existing_logical_entry_exempt(self, tmp_path):
+        """logical 豁免态②：既有条目经 mark_logical 翻转后，register 续注册放行。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        first = reg.register("sess-guard-5", pid=0)
+        assert reg.mark_logical("sess-guard-5", logical=True) is True
+        second = reg.register("sess-guard-5", pid=0)
+        assert second.last_register_ts >= first.last_register_ts
+        assert second.logical is True
+        assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()
+
+    def test_window_elapsed_re_register_allowed(self, tmp_path):
+        """窗满放行：距上次放行 register 超 _REREGISTER_MIN_INTERVAL_SECONDS 后重注册成功。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        first = reg.register("sess-guard-6", pid=os.getpid())  # 活 PID 保条目存活
+        data = reg.load()
+        data["sess-guard-6"]["last_register_ts"] = time.time() - (_REREGISTER_MIN_INTERVAL_SECONDS + 10)
+        reg.save(data)
+        second = reg.register("sess-guard-6", pid=os.getpid())
+        assert second.last_register_ts > first.last_register_ts
+        # noqa: m46-time — 新鲜度计时断言（非 schema 生成器）
+        assert time.time() - second.last_activity < 30
+        assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()
+
+    def test_dead_entry_re_register_allowed(self, tmp_path):
+        """死条目放行：条目判死（pid=0 心跳过期）后重注册=真实重启，不受限流。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        first = reg.register("sess-guard-7", pid=0)
+        data = reg.load()
+        data["sess-guard-7"]["last_heartbeat"] = time.time() - 200  # pid=0 → 心跳过期判死
+        reg.save(data)
+        second = reg.register("sess-guard-7", pid=0)
+        assert second.last_register_ts >= first.last_register_ts
+        assert not (tmp_path.joinpath(*self._AUDIT_REL)).exists()
+
+    def test_window_value_aligned_with_idle_timeout(self):
+        """窗值=self 强制：idle 上限 + 2×30s daemon 节拍——idle 自退必先于放行的重注册。"""
+        assert _REREGISTER_MIN_INTERVAL_SECONDS == _ACTIVITY_IDLE_TIMEOUT_SECONDS + 60
