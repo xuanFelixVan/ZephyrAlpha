@@ -23,12 +23,14 @@ Usage::
     python -m zephyr.library.lookup kline --kind table --owner-domain D_DATA --tags ch,行情
     python -m zephyr.library.lookup 融资融券            # G15-① 别名轴：→杠杆→margin_trading
     python -m zephyr.library.lookup --backtest --strategy my_strat --since 2026-09-01 --until 2026-09-22
+    python -m zephyr.library.lookup kline_1min --session st-xxx   # 审计留痕（裁定#460 ②，fail-open）
 # [ALGO_FLOW] external: docs/03_modules/_domain_library/algo_flow/lookup.yaml
 """
 
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 from typing import Any, Final
 
@@ -309,11 +311,16 @@ def _run_feeds_query(keyword: str, limit: int) -> int:
     return 0
 
 
-def _run_main_query(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
-    """主查询面：别名展开提示 + lookup_assets 结果表 + 墓碑去向升级提示。"""
+def _run_main_query(args: argparse.Namespace, parser: argparse.ArgumentParser) -> tuple[int, list[dict[str, Any]]]:
+    """主查询面：别名展开提示 + lookup_assets 结果表 + 墓碑去向升级提示。
+
+    Returns:
+        (退出码, 结果行列表)——退出码语义不变（0=有结果，1=无结果或用法错误）；
+        行列表供 main() 在 --session 审计留痕时取 result_count（裁定#460 ②）。
+    """
     if not args.query:
         parser.print_usage()
-        return 1
+        return 1, []
     limit = args.limit_pos if args.limit_pos is not None else args.limit
     limit = max(1, min(limit, 10000))
     tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else None
@@ -334,14 +341,39 @@ def _run_main_query(args: argparse.Namespace, parser: argparse.ArgumentParser) -
     )
     if not rows:
         print(f"(no results for {args.query!r})")
-        return 1
+        return 1, []
     for row in rows:
         print(f"{row['asset_id']}\t{row['kind']}\t{row['status']}\t{row['home']}{_tombstone_tail(row)}")
     # 墓碑卡升级：全结果无 active 命中但有 deceased 命中=路径已迁移，报去向而非死账
     if not any(r.get("status") == "active" for r in rows) and any(r.get("status") == "deceased" for r in rows):
         dead = next(r for r in rows if r.get("status") == "deceased")
         print(f"(moved: {dead['asset_id']} -> {_successor_display(dead)})")
-    return 0
+    return 0, rows
+
+
+def _write_cli_audit(session_id: str, query_payload: dict[str, Any], result_count: int) -> None:
+    """CLI 反查审计留痕（裁定#460 ②）：复用 capability_lookup.write_lookup_audit_log 现成通道。
+
+    与 CapabilityLookup.find（capability_lookup.py:941）同一落盘面
+    （.runtime/lookup_audit/<sid>.jsonl），tool="zephyr.library.lookup"——CAPABILITY-LOOKUP
+    审计链据此识别图书馆总口 CLI 路径的反查留痕。fail-open 双层：write_lookup_audit_log
+    自身吞写入异常仅告警，本侧再兜 import 失败等意外——审计故障绝不阻断查询主路径；
+    未提供 --session 时本函数不被调用（行为零变化）。
+    """
+    try:
+        from zephyr.governance.capability_lookup import (  # noqa: PLC0415 — 懒加载防循环依赖
+            write_lookup_audit_log,
+        )
+
+        write_lookup_audit_log(
+            session_id=session_id,
+            query=query_payload,
+            result_count=result_count,
+            capability_ids=[],
+            tool="zephyr.library.lookup",
+        )
+    except Exception as exc:  # noqa: BLE001 — fail-open：审计故障不阻断查询（ERROR_CONTRACT 不变）
+        logging.getLogger(__name__).warning("library.lookup: --session 审计留痕失败（fail-open）: %s", exc)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -352,6 +384,9 @@ def main(argv: list[str] | None = None) -> int:
 
     Returns:
         退出码：0=有结果，1=无结果或用法错误。
+
+    ``--session`` 提供时写 lookup audit 留痕（裁定#460 ②，fail-open 不阻断查询；
+    未提供时行为零变化）。
 
     """
     parser = argparse.ArgumentParser(prog="zephyr.library.lookup", description="图书馆总口查询（T5 两轴过滤器）")
@@ -369,15 +404,33 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--strategy", default=None, help="[backtest] 策略 ID 过滤")
     parser.add_argument("--since", default=None, help="[backtest] 起始日期 YYYY-MM-DD（含）")
     parser.add_argument("--until", default=None, help="[backtest] 截止日期 YYYY-MM-DD（含）")
+    parser.add_argument(
+        "--session",
+        default=None,
+        help="session 标识（裁定#460 ②：提供则写 lookup audit 留痕，fail-open；缺省行为零变化）",
+    )
     args = parser.parse_args(argv)
 
+    session_id = (args.session or "").strip()
     if args.backtest:
-        return _query_backtest(args.strategy, args.since, args.until, max(1, min(args.limit, 10000)))
-    if args.feeds:
-        return _run_feeds_query(args.feeds, max(1, min(args.limit, 10000)))
-    if args.query.startswith(_COMMIT_GUIDE_PREFIX):
-        return _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX) :])
-    return _run_main_query(args, parser)
+        rc = _query_backtest(args.strategy, args.since, args.until, max(1, min(args.limit, 10000)))
+        result_count = 1 if rc == 0 else 0
+        payload: dict[str, Any] = {"query": args.strategy, "face": "backtest"}
+    elif args.feeds:
+        rc = _run_feeds_query(args.feeds, max(1, min(args.limit, 10000)))
+        result_count = 1 if rc == 0 else 0
+        payload = {"query": args.feeds, "face": "feeds"}
+    elif args.query.startswith(_COMMIT_GUIDE_PREFIX):
+        rc = _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX) :])
+        result_count = 1 if rc == 0 else 0
+        payload = {"query": args.query, "face": "commit_guide"}
+    else:
+        rc, rows = _run_main_query(args, parser)
+        result_count = len(rows)
+        payload = {"query": args.query, "face": "main"}
+    if session_id:
+        _write_cli_audit(session_id, payload, result_count)
+    return rc
 
 
 if __name__ == "__main__":
