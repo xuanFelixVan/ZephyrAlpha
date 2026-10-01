@@ -13,7 +13,7 @@
  *           镜头自动适配主带（仅聚焦切换时，轮询重绘不打断手动平移缩放）；退出=Esc/双击空白/工具栏。 */
 (function () {
   'use strict';
-  var FAC = { data: null, ledger: null, th: null, sel: null, stamp: null, busy: false, dragDist: 0, focus: null, focusFit: null };
+  var FAC = { data: null, ledger: null, th: null, cand: null, exam: null, sel: null, stamp: null, busy: false, dragDist: 0, focus: null, focusFit: null };
   var API_BASE = 'http://127.0.0.1:8890';   /* 与 services/api.js 同源——app:// 模式下相对 fetch 会打到 app://api/factory 必断（tdm 同款坑） */
   /* 画布视图状态（交互规范=visualization_view_template.md §6.6，同 tdm）：滚轮缩放/拖动平移/双击重置/Ctrl+Shift+D 切模式 */
   var view = { z: 1, x: 0, y: 0, dragMode: true, fitted: false };
@@ -644,7 +644,10 @@
     }
     var scroll = box.scrollTop;   /* 30s 轮询重绘保持阅读位置（DDT 实证坑） */
     box.style.display = 'block';
-    box.innerHTML =
+    /* W-E3（2026-10-01）：抽屉 tab 化——「环节档案」=原有分区串原样搬运零改动；
+     * 「进货·考试」=车道候选聚合（/api/factory/candidates，lane_*_candidates.csv 真源）
+     * + C4 考试投影（/api/factory/exam，strategy_screen verdict 真源）；首次打开懒加载。 */
+    var mainHtml =
       '<div class="dr-name">' + esc(n.name || n.id) + '</div>' +
       '<div class="dr-id">' + esc(n.id) + ' · ' + esc(meta) + '</div>' +
       '<div class="dr-badges">' + stBdg + '</div>' +
@@ -665,7 +668,35 @@
       '<div class="sec">下游（它喂给谁）<span class="cnt">' + downs.length + '</span></div>' +
       (downs.length ? downs.map(function (u) { return nlink(u.x, u.t); }).join('') : '<div class="empty">—</div>') +
       '<div class="sec">设计备注（反馈环/裁定）</div>' + cms;
+    var intakeHtml =
+      '<div class="sec">车道候选（lane_*_candidates.csv 聚合）<span class="cnt" id="factory-cand-cnt"></span></div>' +
+      '<div id="factory-cand">' + candHtml(FAC.cand) + '</div>' +
+      '<div class="sec">C4 考试结果（strategy_screen：translated_c4 / oos_tested）<span class="cnt" id="factory-exam-cnt"></span></div>' +
+      '<div id="factory-exam">' + examHtml(FAC.exam) + '</div>';
+    box.innerHTML =
+      '<div style="display:flex;gap:6px;border-bottom:1px solid rgba(128,128,128,.25);margin-bottom:8px">' +
+        '<span class="ftab on" data-ftab="main" style="cursor:pointer;padding:4px 10px;font-size:12px;border-bottom:2px solid #7db4e8;font-weight:bold">环节档案</span>' +
+        '<span class="ftab" data-ftab="intake" style="cursor:pointer;padding:4px 10px;font-size:12px;color:#8a93a3">进货·考试</span>' +
+      '</div>' +
+      '<div id="factory-tab-main">' + mainHtml + '</div>' +
+      '<div id="factory-tab-intake" style="display:none">' + intakeHtml + '</div>';
     box.scrollTop = scroll;
+    /* tab 切换：纯显示切换不重拉真源（懒加载在首次切到「进货·考试」时触发一次） */
+    box.querySelectorAll('.ftab').forEach(function (el) {
+      el.addEventListener('click', function () {
+        box.querySelectorAll('.ftab').forEach(function (t) {
+          t.classList.toggle('on', t === el);
+          t.style.borderBottom = t === el ? '2px solid #7db4e8' : '2px solid transparent';
+          t.style.fontWeight = t === el ? 'bold' : 'normal';
+          t.style.color = t === el ? '' : '#8a93a3';
+        });
+        var showIntake = el.getAttribute('data-ftab') === 'intake';
+        var m = box.querySelector('#factory-tab-main'), it = box.querySelector('#factory-tab-intake');
+        if (m) m.style.display = showIntake ? 'none' : '';
+        if (it) it.style.display = showIntake ? '' : 'none';
+        if (showIntake) facLoadIntake();
+      });
+    });
     /* 上/下游导航行点击跳选——drawer 内闭环（同 tdm） */
     box.querySelectorAll('[data-jump]').forEach(function (el) {
       el.addEventListener('click', function () {
@@ -734,6 +765,77 @@
         });
     }
   }
+
+  /* ── W-E3（2026-10-01）「进货·考试」tab 真源渲染/懒加载（模块级：异步刷新复用）──
+   * 取数纪律：优先 ZK.api（services/api.js 绝对 BASE）；app:// 回退模式下裸相对 fetch 必断。 */
+  function escF(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  /* 车道候选聚合卡：真源 /api/factory/candidates（data/strategy_intake/lane_*_candidates.csv，mtime 缓存） */
+  function candHtml(cd) {
+    if (!cd) return '<div class="empty">查询中…</div>';
+    if (cd.ok === false) return '<div class="empty">' + escF(cd.reason || '聚合失败') + '</div>';
+    var html = (cd.lanes || []).map(function (l) {
+      return '<div class="cm"><b style="color:#c6cdd8">车道 ' + escF(l.lane) + '</b> · ' + l.rows + ' 条候选' +
+        (l.error ? ' <span class="bdg bdg-gray" title="' + escF(l.error) + '">解析失败</span>' : '') +
+        ' <span class="dim" style="font-size:10px">' + escF(l.file) + ' · ' + escF(l.mtime || '') + '</span></div>';
+    }).join('');
+    html += '<div class="axis-h" style="margin-top:6px">候选预览（每车道前 ' + (cd.preview_per_lane || 8) + ' 条）</div>';
+    html += (cd.items || []).map(function (it) {
+      return '<div class="cm"><b style="color:#c6cdd8">[' + escF(it.lane) + '] ' + escF(it.theme || '') + '</b> · ' +
+        escF(it.horizon || '—') + ' · ' + escF(it.universe || '—') +
+        '<div style="margin-top:4px">' + escF(it.hypothesis_zh || '') + '</div>' +
+        '<div class="dim" style="font-size:10px;margin-top:2px">' + escF(it.candidate_id) + ' · 出生 ' +
+        escF(it.birth_channel || '—') + '/' + escF(it.birth_batch || '—') + '</div></div>';
+    }).join('') || '<div class="empty">暂无候选行</div>';
+    return html;
+  }
+  /* C4 考试投影卡：真源 /api/factory/exam（c1_backtest.strategy_screen verdict IN translated_c4/oos_tested） */
+  function examHtml(ex) {
+    if (!ex) return '<div class="empty">查询中…</div>';
+    if (ex.ok === false) return '<div class="empty">' + escF(ex.reason || '台账不可达') + '</div>';
+    return (ex.rows || []).map(function (x) {
+      return '<div class="cm"><b style="color:#c6cdd8">' + escF(x.strategy_id) + '</b> · ' + escF(x.screen_batch) +
+        ' <span class="bdg ' + (x.verdict === 'oos_tested' ? 'bdg-partial' : 'bdg-gray') + '">' + escF(x.verdict) + '</span>' +
+        (x.is_sharpe != null ? ' · IS Sharpe ' + Number(x.is_sharpe).toFixed(2) : '') +
+        (x.oos_years_decay != null ? ' · 年衰减 ' + Number(x.oos_years_decay).toFixed(2) : '') + '</div>';
+    }).join('') || '<div class="empty">暂无考试过手行（空态不冒充失败；CH 不可达=显式降级）</div>';
+  }
+  /* tab 首开懒加载：全局数据（非节点级）只拉一次；过期/抽屉重开响应按 isConnected 丢弃 */
+  function facLoadIntake() {
+    var apiFn = (window.ZK && ZK.api) ? ZK.api.fetchJson : null;
+    function get(path) {
+      return apiFn ? apiFn(path, 10000) : fetch(API_BASE + path).then(function (r) { return r.json(); });
+    }
+    var box = document.getElementById('factory-drawer');
+    function paint(key, id, cntId, htmlFn, cntFn) {
+      var el = box && box.querySelector('#' + id);
+      var cnt = box && box.querySelector('#' + cntId);
+      if (el && el.isConnected) {
+        el.innerHTML = htmlFn(FAC[key]);
+        if (cnt && cntFn) cnt.textContent = cntFn(FAC[key]);
+      }
+    }
+    if (!FAC.cand) {
+      get('/api/factory/candidates').then(function (cd) {
+        FAC.cand = cd; paint('cand', 'factory-cand', 'factory-cand-cnt', candHtml, function (d) { return (d && d.total_rows != null) ? '共 ' + d.total_rows + ' 条' : ''; });
+      }).catch(function () {
+        FAC.cand = { ok: false, reason: '查询失败（面板 API 未启动?）' };
+        paint('cand', 'factory-cand', 'factory-cand-cnt', candHtml, null);
+      });
+    }
+    if (!FAC.exam) {
+      get('/api/factory/exam').then(function (ex) {
+        FAC.exam = ex; paint('exam', 'factory-exam', 'factory-exam-cnt', examHtml, function (d) { return (d && d.count != null) ? '共 ' + d.count + ' 行' : ''; });
+      }).catch(function () {
+        FAC.exam = { ok: false, reason: '查询失败（面板 API 未启动?）' };
+        paint('exam', 'factory-exam', 'factory-exam-cnt', examHtml, null);
+      });
+    }
+  }
+  window.facLoadIntake = facLoadIntake;   /* tab onclick 绑定入口（同 factoryFilter 暴露模式） */
 
   window.factoryFilter = function (q) {
     q = (q || '').trim().toLowerCase();

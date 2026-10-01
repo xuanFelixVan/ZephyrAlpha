@@ -2736,12 +2736,60 @@ def tdm_validation(node_id: str = "") -> dict[str, Any]:
 
 
 @app.get("/api/tdm/verdicts")
-def tdm_verdicts() -> dict[str, Any]:
+def tdm_verdicts(run_id: str = "") -> dict[str, Any]:
     """全节点当前验证态地图（只读）——画布噪音/衰减徽章数据源（PB-03，P2-2）。
 
     每节点取 verdict_at 最新一行的 verdict；空表/无记录=ok:true+空 map（画布无徽章）。
     消费者=web/features/tdm.js render()（节点卡片灰色系噪音/衰减标记）。
+    带可选 run_id 参数=按回测产物反查该 run 的验证台账行（W-E4 通宵战役 2026-10-01，
+    消费者=web/features/backtest/bt-live-tools.js 右屏「验证台账」区块；记录形状与
+    /api/tdm/validation records 逐字段同款）。CH 不可达=ok:false+reason（fail-visible，
+    不冒充"无记录"）。
     """
+    rid = (run_id or "").strip()
+    if rid:
+        sql = (
+            "SELECT node_id, run_id, snapshot_commit, window_start, window_end, validation_method,"
+            " triggers, hit_ratio, significance, verdict, verdict_at, notes"
+            " FROM c1_backtest.node_verdict WHERE run_id = %(rid)s"
+            " ORDER BY verdict_at DESC, window_end DESC LIMIT 20"
+        )
+        try:
+            raw_rows = _ch_exec(sql, {"rid": rid})
+        except Exception as exc:  # 台账不可达不冒充"该 run 未验证"——显式降级披露
+            logger.warning("tdm verdicts by-run query failed for %s: %s", rid, exc)
+            return {"ok": False, "reason": f"台账不可达: {exc}", "run_id": rid, "records": []}
+
+        def _fmt_d(d: date | datetime | None) -> str:
+            return d.strftime("%Y-%m-%d") if d else ""
+
+        def _fmt_ts(d: date | datetime | None) -> str:
+            return d.strftime("%Y-%m-%d %H:%M") if d else ""
+
+        records = [
+            {
+                "node_id": r[0],
+                "run_id": r[1],
+                "snapshot_commit": r[2],
+                "window_start": _fmt_d(r[3]),
+                "window_end": _fmt_d(r[4]),
+                "validation_method": r[5],
+                "triggers": r[6],
+                "hit_ratio": r[7],
+                "significance": r[8],
+                "verdict": r[9],
+                "verdict_at": _fmt_ts(r[10]),
+                "notes": r[11],
+            }
+            for r in raw_rows
+        ]
+        return {
+            "ok": True,
+            "run_id": rid,
+            "verdict": records[0]["verdict"] if records else "untested",
+            "records": records,
+            "record_count": len(records),
+        }
     sql = (
         "SELECT node_id, verdict, toString(verdict_at)"
         " FROM c1_backtest.node_verdict ORDER BY verdict_at DESC, window_end DESC"
@@ -3557,13 +3605,11 @@ def chainmap_cluster(
             node_rows = cur.fetchall()
             cur.execute(_SQL_CM_NODE_COMPS_BY_CHAIN, (ids,))
             ncomp = {r[0]: int(r[1]) for r in cur.fetchall()}
-            # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ entity_graph 股权参与方
-            # （原 ig_equity_edge 已退役 DROP，2026-09-29 裁定#424）。
+            # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ ig_equity_edge 参与方。
             # 方向按落位公司是 holder（控=对外投资）/held（被控=股东）判；UE 编码对手方 LEFT JOIN 编码表取名；
             # 簇级 LIMIT 防大簇失控（计数在前端按行累加，明细行每环节另截 _CM_EQUITY_ROWS_CAP）
             # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE）2026-09-27 切 entity_graph 六表现行版
-            # （150 万边）替代 ig_equity_edge(804 条，该表已退役 DROP 2026-09-29 裁定#424)；
-            # PERSON:/UNLISTED: 前缀契约按 entity_type 精确保持。
+            # （150 万边）替代 ig_equity_edge(804 条)；PERSON:/UNLISTED: 前缀契约按 entity_type 精确保持。
             from zephyr.frontend.dashboard.chainmap_equity_graph import cluster_equity_badge_rows
 
             eq_dicts = cluster_equity_badge_rows(conn, ids)
@@ -4573,8 +4619,7 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
     关系段：suppliers=to_symbol=本司（from 为供应商）；customers=from_symbol=本司（to 为客户）；
     collabs=预留段（J88 勘误后归 supply，当前恒空，字段保留兼容 ACC item1 五段契约）；
     对手方未上市 symbol='' 用 to_name/from_name 展示。
-    七域扩展（任务书项 3，2026-09-10）：equity=股权域（entity_graph 六表现行版拼装 holdings_in/held_by；
-    原 ig_equity_edge UNION 已退役 DROP，2026-09-29 裁定#424）；
+    七域扩展（任务书项 3，2026-09-10）：equity=股权域（ig_equity_edge UNION 拼装 holdings_in/held_by）；
     profile=基本盘/全球属性（stock_basic/daily_valuation.is_st/stock_profile_ths 实列，缺列如实
     missing_fields）；pending_domains=库中无实表域（news_keywords/aliases/facilities/calendar）留位
     标"建设中"禁编造。行情/股权/基本盘三段各自独立降级，互不拖垮图谱段。
@@ -5110,6 +5155,218 @@ if "pytest" not in sys.modules:
     threading.Thread(target=_heartbeat_loop, daemon=True, name="dashboard-heartbeat").start()
 
 
+# ═══════════════ 通宵战役四件只读路由（W-E1/E2/E3，2026-10-01，st-fullscore-20260930） ═══════════════
+# 纪律：全部只读投影；真源缺位/不可达=fail-visible 标 degraded/reason，禁演示假数据
+# （演示诚实纪律）；api_server 热文件最小侵入——只追加路由+helper，零重构。
+
+_RISK_STATE_REL: Final[str] = (
+    "data/runtime/trading_kill_switch_state.json"  # 真源=kill_switch_state_store.DEFAULT_STATE_RELATIVE
+)
+
+
+@app.get("/api/risk-status")
+def risk_status() -> dict[str, Any]:
+    """风控实况只读投影（W-E1，作战室风险卡真源）。
+
+    真源：trading_kill_switch_state.json（MOD-INF-016，trading 进程 KILL_SWITCHES
+    内存态的磁盘影子，trigger/reset 时落盘）。缺文件/损坏/超龄=degraded:true+error
+    原样透出（fail-visible），禁回退演示假数据。
+    回撤油门档（DrawdownController 五档）为 trading 进程内存态、无落盘影子——
+    本端点如实标 drawdown.available=false（前端保留演示样式但明示"离线/无数据"）。
+    消费者=web/features/warroom/wr-risk-cards.js（renderRiskExtraRows 真源接线）。
+    """
+    path = _REPO / "data" / "runtime" / "trading_kill_switch_state.json"
+    payload: dict[str, Any] = {
+        "ok": True,
+        "degraded": False,
+        "source": _RISK_STATE_REL,
+        "saved_at": None,
+        "age_seconds": None,
+        "kill_switches": {},
+        "active_levels": [],
+        "drawdown": {
+            "available": False,
+            "reason": "回撤油门档为 trading 进程内存态（DrawdownController），无落盘影子——无真源不造数",
+        },
+    }
+    if not path.exists():
+        payload["degraded"] = True
+        payload["error"] = f"熔断影子缺失（trading 进程未落盘或已清理）: {_RISK_STATE_REL}"
+        return payload
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        switches = {
+            str(k): {"active": bool((v or {}).get("active", False))} for k, v in (raw.get("switches") or {}).items()
+        }
+        payload["kill_switches"] = switches
+        payload["active_levels"] = sorted(k for k, v in switches.items() if v["active"])
+        saved_at = str(raw.get("saved_at") or "")
+        payload["saved_at"] = saved_at or None
+        if saved_at:
+            payload["age_seconds"] = max(0.0, (now_utc() - datetime.fromisoformat(saved_at)).total_seconds())
+    except Exception as exc:  # noqa: BLE001 — 损坏影子如实降级（同 rebuild_from_disk 容错语义）
+        payload["degraded"] = True
+        payload["error"] = f"熔断影子读取失败: {str(exc)[:200]}"
+    return payload
+
+
+@app.get("/api/regime/current")
+def regime_current() -> dict[str, Any]:
+    """7 态市场 regime 只读投影（W-E2，回测页动态权重 regime 日序辅助）。
+
+    词表真源=regime_detector.REGIME_STATES（MOD-REGIME-001，7 态 r1/r2/r3/r4/r10/r11/r12，
+    family=hmm/overlay 从 HMM_STATES/OVERLAY_STATES 投影，零硬编码词表）。
+    当前态/最近序列：无逐日持久化 regime 真源（T1 盘点结论，backtest 页文案同源
+    "日序生产=检测器离线回放另批立项"）→ current=null+recent_series=[]+degraded:true
+    fail-visible（前端按钮只填真序列，空序列不造假只显词表与状态）。
+    消费者=web/features/backtest/bt-live-tools.js（一键拉取当前 regime 按钮）。
+    """
+    try:
+        from zephyr.regime.core.regime_detector import HMM_STATES, OVERLAY_STATES, REGIME_STATES
+
+        states = [{"state": s, "family": "hmm" if s in HMM_STATES else "overlay"} for s in REGIME_STATES]
+    except Exception as exc:  # noqa: BLE001 — 词表真源不可用也是 fail-visible
+        return {"ok": False, "error": f"regime 词表真源不可用: {str(exc)[:200]}", "states": [], "recent_series": []}
+    return {
+        "ok": True,
+        "degraded": True,
+        "states": states,
+        "current": None,
+        "recent_series": [],
+        "reason": "7 态日序无持久化真源（检测器离线回放另批立项，当前由调用方供给）；本端点现只投影词表",
+    }
+
+
+_FACTORY_CANDIDATES_CACHE: dict[str, Any] = {
+    "mtime": 0.0,
+    "payload": None,
+}  # lane_* 聚合 mtime 缓存（同 /api/factory 模式）
+_FACTORY_CANDIDATES_PREVIEW_PER_LANE: Final[int] = 8  # 每车道预览行数（抽屉 tab 展示级，全量走台账 CSV 真源）
+
+
+def _factory_candidates_payload() -> dict[str, Any]:
+    """车道候选 CSV 聚合（只读，mtime 缓存）——真源=data/strategy_intake/lane_*_candidates.csv。
+
+    任一文件解析失败=该 lane 记 error 不拖垮其他车道；全失败=ok:false（fail-visible）。
+    """
+    intake = _REPO / "data" / "strategy_intake"
+    files = sorted(intake.glob("lane_*_candidates.csv"))
+    if not files:
+        return {
+            "ok": False,
+            "reason": "车道候选 CSV 缺失（data/strategy_intake/lane_*_candidates.csv 不存在）",
+            "lanes": [],
+            "items": [],
+        }
+    max_mtime = max(f.stat().st_mtime for f in files)
+    if _FACTORY_CANDIDATES_CACHE["payload"] and _FACTORY_CANDIDATES_CACHE["mtime"] == max_mtime:
+        return _FACTORY_CANDIDATES_CACHE["payload"]
+    lanes: list[dict[str, Any]] = []
+    items: list[dict[str, Any]] = []
+    fields = (
+        "candidate_id",
+        "theme",
+        "hypothesis_zh",
+        "mechanism_hint",
+        "horizon",
+        "universe",
+        "birth_channel",
+        "birth_batch",
+        "birth_source",
+    )
+    for f in files:
+        lane = f.name[len("lane_") : -len("_candidates.csv")].upper()
+        entry: dict[str, Any] = {
+            "lane": lane,
+            "file": f.name,
+            "rows": 0,
+            "mtime": datetime.fromtimestamp(f.stat().st_mtime, tz=timezone.utc).isoformat(" ", "seconds"),
+        }
+        try:
+            with f.open(encoding="utf-8-sig", newline="") as fh:  # utf-8-sig：产物带 BOM（实证）
+                reader = csv.DictReader(fh)
+                for i, row in enumerate(reader):
+                    entry["rows"] += 1
+                    if i < _FACTORY_CANDIDATES_PREVIEW_PER_LANE:
+                        items.append({"lane": lane, **{k: (row.get(k) or "").strip() for k in fields}})
+            entry["error"] = ""
+        except Exception as exc:  # noqa: BLE001 — 单车道坏文件不拖垮聚合
+            entry["error"] = f"解析失败: {str(exc)[:120]}"
+        lanes.append(entry)
+    payload = {
+        "ok": any(not ln.get("error") for ln in lanes),
+        "degraded": any(ln.get("error") for ln in lanes),
+        "lanes": lanes,
+        "total_rows": sum(ln["rows"] for ln in lanes),
+        "preview_per_lane": _FACTORY_CANDIDATES_PREVIEW_PER_LANE,
+        "items": items,
+    }
+    _FACTORY_CANDIDATES_CACHE["mtime"] = max_mtime
+    _FACTORY_CANDIDATES_CACHE["payload"] = payload
+    return payload
+
+
+@app.get("/api/factory/candidates")
+def factory_candidates() -> dict[str, Any]:
+    """车道候选聚合（只读）——lane_b/c/c2/chain/g 五车道 CSV 真源投影（W-E3）。
+
+    消费者=web/features/factory/factory.js 抽屉「进货·考试」tab（车道候选区）。
+    """
+    return _factory_candidates_payload()
+
+
+@app.get("/api/factory/exam")
+def factory_exam() -> dict[str, Any]:
+    """C4 考试结果投影（只读）——真源=c1_backtest.strategy_screen verdict IN (translated_c4, oos_tested)（W-E3）。
+
+    同 _FACTORY_NODE_FILTERS["FAC-E4"] 口径（考试过手=IS 成绩行+OOS 成绩行）；
+    CH 不可达=ok:false+reason（fail-visible，不冒充"无人参考"）。
+    消费者=web/features/factory/factory.js 抽屉「进货·考试」tab（考试结果区）。
+    """
+    sql = (
+        "SELECT strategy_id, screen_batch, verdict, is_sharpe, oos_years_decay"
+        " FROM c1_backtest.strategy_screen WHERE verdict IN ('translated_c4', 'oos_tested')"
+        " ORDER BY screen_batch DESC, strategy_id LIMIT 100"
+    )
+    try:
+        rows = _ch_exec(sql)
+    except Exception as exc:  # 台账不可达如实降级
+        logger.warning("factory exam query failed: %s", exc)
+        return {"ok": False, "reason": f"台账不可达: {exc}", "rows": [], "count": 0}
+    out = [
+        {
+            "strategy_id": r[0],
+            "screen_batch": r[1],
+            "verdict": r[2],
+            "is_sharpe": r[3],
+            "oos_years_decay": r[4],
+        }
+        for r in rows
+    ]
+    return {
+        "ok": True,
+        "degraded": False,
+        "rows": out,
+        "count": len(out),
+        "verdict_filter": ["translated_c4", "oos_tested"],
+        "limit": 100,
+    }
+
+
+# ── 静态页面一体化（W6-1，终极令 2026-09-19，Owner 已批：服务 2→1 故障面减半）────
+# 8890 单端口一体服务页面+数据。mount("/") 必须在全部 /api 路由注册之后（Starlette
+# 按注册序匹配：/api 先命中，其余路径落静态兜底）；html=True 使 / 与 /pages/xxx.html
+# 直出。api.js 的 BASE 仍为绝对地址 http://127.0.0.1:8890（同源，行为不变）；
+# serve_docs(8765) 回归文档本职，桌面壳入口切 8890（W6-2，tools/desktop/main.js）。
+from fastapi.staticfiles import StaticFiles  # noqa: E402
+
+_WEB_ROOT = Path(__file__).resolve().parent / "web"
+if _WEB_ROOT.is_dir():
+    app.mount("/", StaticFiles(directory=_WEB_ROOT, html=True), name="static-web")
+else:  # 仓库 web 目录缺失（异常场景）：纯 API 降级运行，页面通道消失须在日志可见
+    logger.warning("static web dir missing: %s — 8890 降级为纯 API（页面不服务）", _WEB_ROOT)
+
+
 # ── AI 层接线批路由（st-ailayer-final-20260924；promotion_advisories 同款降级惯例）──────────
 
 
@@ -5213,23 +5470,6 @@ def schedulegate_confirm(payload: dict[str, Any] | None = None) -> dict[str, Any
         }
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": f"confirm unavailable: {str(exc)[:180]}"}
-
-
-# ── 静态页面一体化（W6-1，终极令 2026-09-19，Owner 已批：服务 2→1 故障面减半）────
-# 8890 单端口一体服务页面+数据。mount("/") 必须在全部 /api 路由注册之后（Starlette
-# 按注册序匹配：/api 先命中，其余路径落静态兜底）；html=True 使 / 与 /pages/xxx.html
-# 直出。api.js 的 BASE 仍为绝对地址 http://127.0.0.1:8890（同源，行为不变）；
-# serve_docs(8765) 回归文档本职，桌面壳入口切 8890（W6-2，tools/desktop/main.js）。
-# [FIX 2026-10-01 st-fullscore] mount 原落点在本段 AI 层路由（budget-advisories/
-# schedulegate-*）之前=mount 按注册序吞掉其后全部 /api 路由（前端 404 自 09-24）；
-# 整块下移至全部路由注册之后（纯位置移动零语义），回归尺补 mount 序断言防复发。
-from fastapi.staticfiles import StaticFiles  # noqa: E402
-
-_WEB_ROOT = Path(__file__).resolve().parent / "web"
-if _WEB_ROOT.is_dir():
-    app.mount("/", StaticFiles(directory=_WEB_ROOT, html=True), name="static-web")
-else:  # 仓库 web 目录缺失（异常场景）：纯 API 降级运行，页面通道消失须在日志可见
-    logger.warning("static web dir missing: %s — 8890 降级为纯 API（页面不服务）", _WEB_ROOT)
 
 
 def main() -> None:

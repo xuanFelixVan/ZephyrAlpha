@@ -150,6 +150,8 @@ window.ZK_BUILD='20260915-1';
   }).then(function(){
     return loadJs('features/backtest/bt-battle-stage.js');   /* 策略所处环节（作战地图阶段树真源 /api/battle-map-flow，Owner 2026-09-04 一期） */
   }).then(function(){
+    return loadJs('features/backtest/bt-live-tools.js');   /* 回测页真源工具族（W-E2 一键拉取 regime + W-E4 验证台账区块，真源 /api/regime/current + /api/tdm/verdicts?run_id；2026-10-01 通宵战役） */
+  }).then(function(){
     return loadJs('features/services/sv-page.js');   /* 服务总闸页（启动编排：17 启动项四态灯+分级开关，真源 /api/services-status；2026-09-12 迁入 features/） */
   }).then(function(){
     return loadJs('features/datasrc/ds-page.js');   /* 数据源监管页（源清单健康探针真源+alerter 告警流水，真源 /api/sources-status；2026-09-12 迁入 features/） */

@@ -2564,7 +2564,7 @@ features:
   page: warroom
   module_id: wr-risk-cards
   file: features/warroom/wr-risk-cards.js
-  backend_ref: none:演示数据 FEED 表（相关净值/持仓状态/T1/节流/W5 日历/压力）
+  backend_ref: mixed:五级熔断/回撤油门行=api:/api/risk-status（trading_kill_switch_state.json 投影，W-E1 2026-10-01；油门档无落盘影子标「演示档」）；其余行=演示数据 FEED 表且逐行标「演示」
   status: active
 - id: F-LIVE-ORD-TICKET
   name: 盘中下单票据+日志过滤
@@ -2810,4 +2810,25 @@ features:
   module_id: resweek-view
   file: features/resourceweek/rw-engine.js
   backend_ref: [module:MOD-RESCHED-VIEW, registry:config/resource_profile_registry.yaml]
+  status: active
+- id: F-BT-REGIME-FETCH
+  name: 一键拉取当前 regime（动态权重日序辅助，7 态词表投影）
+  page: backtest
+  module_id: bt-live-tools
+  file: features/backtest/bt-live-tools.js
+  backend_ref: api:/api/regime/current   # 词表真源=MOD-REGIME-001 regime_detector.REGIME_STATES；无持久化 7 态日序（离线回放另批立项）=端点 degraded:true 显式披露，前端空序列不填不造假（W-E2 2026-10-01）
+  status: active
+- id: F-BT-VERDICT-PANEL
+  name: 回测验证台账区块（按 run_id 反查 node_verdict 判定书）
+  page: backtest
+  module_id: bt-live-tools
+  file: features/backtest/bt-live-tools.js
+  backend_ref: api:/api/tdm/verdicts?run_id   # 真源=c1_backtest.node_verdict（PB-04，与 /api/tdm/validation 记录形状同款）；台账不可达=ok:false 显式降级不冒充"未验证"（W-E4 2026-10-01）
+  status: active
+- id: F-FAC-INTAKE-TAB
+  name: 工厂抽屉「进货·考试」tab（车道候选聚合+C4 考试投影）
+  page: factory
+  module_id: factory-map
+  file: features/factory/factory.js
+  backend_ref: [api:/api/factory/candidates, api:/api/factory/exam]   # 候选真源=data/strategy_intake/lane_*_candidates.csv（mtime 缓存聚合）；考试真源=c1_backtest.strategy_screen verdict IN (translated_c4, oos_tested)（W-E3 2026-10-01，抽屉 tab 懒加载）
   status: active

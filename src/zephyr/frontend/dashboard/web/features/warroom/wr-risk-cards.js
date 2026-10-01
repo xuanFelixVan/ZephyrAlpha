@@ -1,7 +1,9 @@
 /* 功能模块：作战室风险卡族（wr-risk-cards）
  * 契约：页面引擎模块——全局函数族原样迁出（页面 onclick 直接绑定全局名，零改名）；
  *       非 registerFeature 组件（Tier-2 契约化待数据源接通时逐件做，见拆件清单 2026-09-12）。
- * 数据源：演示数据 FEED 表（相关净值/持仓状态/T1/节流/W5 日历/压力）
+ * 数据源：演示数据 FEED 表（相关净值/持仓状态/T1/节流/W5 日历/压力）；
+ *         W-E1（2026-10-01）：回撤油门/五级熔断行接 /api/risk-status 真源
+ *         （trading_kill_switch_state.json 磁盘影子投影；油门档无落盘影子=标演示档）。
  * 来源：2026-09-12 拆件批自 core/app1.js 原行段迁出（L3452-3587），逻辑零改动。
  * 验收单：ACC-F-WR-RISK-CARDS
  */
@@ -105,15 +107,62 @@ function renderT1Card(){
   box.innerHTML='<div class="l">T+0 可用底仓</div><div class="v">'+main.sellable_shares+' 股</div>'
     +'<div class="s">'+main.symbol.split('.')[0]+' 昨仓可卖（T+1 口径：昨仓−今日已卖）</div>';
 }
-/* 盘中实时风控区：BFE-26/30/31 各加一行（不独立成卡，Owner 边界项③裁定） */
+/* 盘中实时风控区：BFE-26/30/31 各加一行（不独立成卡，Owner 边界项③裁定）。
+ * W-E1（2026-10-01）：行挂 id 支持真源异步原位替换；演示诚实纪律——非真源数据行尾挂
+ * 「演示·离线」徽标，不冒充实况。 */
+var RISK_DEMO_BADGE=' <span class="badge b-warn" title="演示数据，非实况">演示</span>';
+/* 溯源徽标：真源行显数据落盘时刻；断线/缺源=红字明示（fail-visible） */
+function riskSrcBadge(live, savedAt, errText){
+  if(live){ var t=String(savedAt||'').replace('T',' ').slice(0,16); return ' <span class="badge b-pass" title="真源 /api/risk-status（trading_kill_switch_state.json 落盘 '+t+'）">真源</span>'; }
+  var tip=String(errText||'API 未达——演示数据非实况').replace(/"/g,'').replace(/</g,'');
+  return ' <span class="badge b-warn" title="'+tip+'">演示·离线</span>';
+}
+function riskThrottleRowHtml(f, badgeHtml){
+  var gearBadge=f.throttle_gear==='full'?'b-pass':(f.throttle_gear==='stop'?'b-bad':'b-warn');
+  return '<td>回撤油门刹车</td><td><span class="badge '+gearBadge+'">'+f.throttle_gear_zh+'</span> '+f.risk_level+' · 仓位上限 ×'+f.position_cap.toFixed(2)+badgeHtml+'</td>';
+}
+function riskKsRowHtml(activeLevels, badgeHtml){
+  var levels=activeLevels||[];
+  var body=levels.length
+    ?'<span class="badge b-bad">触发 '+levels.length+' 级</span> '+levels.join('、')
+    :'<span class="badge b-pass">无激活</span> <span class="dim">五级：POSITION_LIMIT/DAILY_LOSS/CIRCUIT_BREAKER/SECOND_LEVEL/API_TIMEOUT</span>';
+  return '<td>五级熔断</td><td>'+body+badgeHtml+'</td>';
+}
 function renderRiskExtraRows(){
   var tb=document.getElementById('risk-hard-table'); if(!tb)return;
-  var gearBadge=THROTTLE_FEED.throttle_gear==='full'?'b-pass':(THROTTLE_FEED.throttle_gear==='stop'?'b-bad':'b-warn');
   tb.insertAdjacentHTML('beforeend',
-    '<tr><td>回撤油门刹车</td><td><span class="badge '+gearBadge+'">'+THROTTLE_FEED.throttle_gear_zh+'</span> '+THROTTLE_FEED.risk_level+' · 仓位上限 ×'+THROTTLE_FEED.position_cap.toFixed(2)+'</td></tr>'
-    +'<tr><td>流动性监控</td><td>'+(LIQ_FEED.illiquid_symbols.length?'<span class="badge b-warn">'+LIQ_FEED.illiquid_symbols.length+' 票恶化</span> '+LIQ_FEED.illiquid_symbols.join('、'):'<span class="badge b-pass">正常</span>')+'</td></tr>'
-    +'<tr><td>尾部风险</td><td>'+(TAIL_FEED.alert_level==='none'?'<span class="badge b-pass">正常</span>':'<span class="badge b-warn">'+TAIL_FEED.alert_level+'</span>')+' ES '+(TAIL_FEED.expected_shortfall*100).toFixed(1)+'% · 跳跃 '+TAIL_FEED.jump_count+' 次</td></tr>');
+    '<tr id="risk-row-throttle">'+riskThrottleRowHtml(THROTTLE_FEED, riskSrcBadge(false))+'</tr>'
+    +'<tr id="risk-row-ks">'+riskKsRowHtml(null, riskSrcBadge(false))+'</tr>'
+    +'<tr><td>流动性监控</td><td>'+(LIQ_FEED.illiquid_symbols.length?'<span class="badge b-warn">'+LIQ_FEED.illiquid_symbols.length+' 票恶化</span> '+LIQ_FEED.illiquid_symbols.join('、'):'<span class="badge b-pass">正常</span>')+RISK_DEMO_BADGE+'</td></tr>'
+    +'<tr><td>尾部风险</td><td>'+(TAIL_FEED.alert_level==='none'?'<span class="badge b-pass">正常</span>':'<span class="badge b-warn">'+TAIL_FEED.alert_level+'</span>')+' ES '+(TAIL_FEED.expected_shortfall*100).toFixed(1)+'% · 跳跃 '+TAIL_FEED.jump_count+' 次'+RISK_DEMO_BADGE+'</td></tr>');
 }
+/* W-E1 真源接线：本文件先于 services/api.js 加载（loader 保序）——轮询等 ZK.api 就绪后
+ * 拉 /api/risk-status 原位替换；油门档无落盘影子永远标「演示档」，熔断行=真源态。 */
+(function riskLiveFetch(tries){
+  if(!(window.ZK&&ZK.api&&ZK.api.fetchJson)){
+    if((tries||0)<40) setTimeout(function(){ riskLiveFetch((tries||0)+1); },500);
+    return;
+  }
+  ZK.api.fetchJson('/api/risk-status',8000).then(function(r){
+    var tr=document.getElementById('risk-row-throttle'), ks=document.getElementById('risk-row-ks');
+    if(!tr||!ks||!r) return;
+    if(!r.ok){
+      var bad=riskSrcBadge(false,null,'API 响应异常');
+      tr.innerHTML=riskThrottleRowHtml(THROTTLE_FEED,bad);
+      ks.innerHTML=riskKsRowHtml(null,bad);
+      return;
+    }
+    var err=r.degraded?(r.error||'真源缺失/损坏'):'';
+    var ksBadge=r.degraded?' <span class="badge b-bad" title="'+String(err).replace(/"/g,'').replace(/</g,'')+'">离线·无数据</span>':riskSrcBadge(true,r.saved_at);
+    tr.innerHTML=riskThrottleRowHtml(THROTTLE_FEED,' <span class="badge b-warn" title="回撤油门档为 trading 进程内存态，无落盘影子——演示档非实况">演示档</span>');
+    ks.innerHTML=riskKsRowHtml(r.active_levels,ksBadge);
+  }).catch(function(){
+    var bad=riskSrcBadge(false,null,'API 未达（面板 8890 未启动?）');
+    var tr=document.getElementById('risk-row-throttle'), ks=document.getElementById('risk-row-ks');
+    if(tr) tr.innerHTML=riskThrottleRowHtml(THROTTLE_FEED,bad);
+    if(ks) ks.innerHTML=riskKsRowHtml(null,bad);
+  });
+})();
 /* 作战室 W5：BFE-27 日历仓位约束行 */
 function renderW5Calendar(){
   var tb=document.getElementById('w5-budget-table'); if(!tb)return;

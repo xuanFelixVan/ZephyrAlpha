@@ -384,3 +384,7 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/frontend/dashboard/api_server.py:_load||src/zephyr/frontend/dashboard/api_server.py:_load"
   note: 4 处 _load(fname) 闭包存量同构（TDM refnames 等各 endpoint 段各自的 catalogs YAML 读取器，HEAD 存量 2389/2421/2504/2527 非本批引入）；合并需跨 4 个独立函数作用域提升 import+helper，超出 mount 吞路由修复批最小侵入边界；文件随批修改而暴露（st-fullscore-20260930），W3 收口批可立合并施工项
+- id: cg-fullscore-factory-candidates-20261001
+  verdict: intentional
+  stable_key: "src/zephyr/frontend/dashboard/api_server.py:factory_ledger||src/zephyr/frontend/dashboard/api_server.py:factory_candidates"
+  note: 两条独立路由各自薄包装惯用样板（route wrapper→_impl：ledger 读 CH 台账聚合/candidates 读 lane_*_candidates.csv 聚合），业务真源与消费面不同（factory.js 台账区 vs 进货·考试 tab），结构相似=FastAPI 路由薄包装惯用法非逻辑克隆；登记者=整装回测备战 W3 前端批（st-fullscore-20260930）
