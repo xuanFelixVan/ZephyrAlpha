@@ -62175,6 +62175,14 @@ entries:
   desc_en: ""
   plain_zh: "一张任务卡想升 VERIFIED 不能空口自称完成：这个校验器先看卡上有没有写交付物路径（没写就拒），再逐个打开这些路径确认文件真的在（不在就是伪锚，拒），最后看卡上是否带红蓝复核旗（带旗必须先复核，不许直升）。三条全过才放行，可用命令行批量读卡出四态清单"
   responsibility_layer: governance
+- module_path: src/zephyr/shared/security/identifier_masking.py
+  domain_id: D_SHARED
+  name_zh: "标识符脱敏件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把券商账号这类敏感编号变成只有末几位能看的打码形式，短号和空号干脆全部打码，保证日志里绝不漏真号"
+  responsibility_layer: infrastructure
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
@@ -73396,3 +73404,11 @@ algo_submodules:
   desc_en: ""
   plain_zh: "把订单执行链各环节组装成模拟盘可跑整机的工厂入口：环境隔离只碰模拟盘，实盘接线留白等Owner门位"
   responsibility_layer: business
+- module_path: src/zephyr/shared/security/identifier_masking.py
+  domain_id: D_SHARED
+  name_zh: "标识符脱敏件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把券商账号这类敏感编号变成只有末几位能看的打码形式，短号和空号干脆全部打码，保证日志里绝不漏真号"
+  responsibility_layer: infrastructure

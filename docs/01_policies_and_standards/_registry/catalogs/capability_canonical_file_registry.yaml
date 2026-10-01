@@ -5142,6 +5142,22 @@ capabilities:
     考尺+scoring.py 判分）+考场适配 src/zephyr/ai_layer/comparator/venue_tool_bench.py（L4 同基准任务集版本号双跑）；测试=tests/ai_layer/tools/（78
     用例）；真源 DESIGN=docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md。canonical_override 显式钉定（suite.py=L4
     RULER_MODULES 指针锁定契约面；考尺缺席即拒考 fail-closed 绝不本地造考卷）。
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
+  token: mapfamily-data_supply_chain_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability: map_family_gates
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
+  token: mapfamily-dev_delivery_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability: map_family_gates
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
+  token: mapfamily-trading_day_cycle_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability: map_family_gates
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+
 creation_tokens:
 - file: src/zephyr/alt_data/emotion_index_replay.py
   token: emoreplay-revival-emotion-index-replay-20260926
@@ -58239,4 +58255,34 @@ creation_tokens:
   created_by: st-datasop-20260930
   capability: fullflow_mine_books
   merge_evaluation: "总包挖矿战役产出件（Owner令建），与既有SOP/审计册互补不重复"
+- file: docs/_working/total_circulation_night/99_delivery_report.md
+  token: night-campaign-work-book-99-delivery-report-20261001
+  created_by: st-circ-integ-20261001
+  capability: night_campaign_work_book
+  merge_evaluation: "总集成验收车道交付报告（task_bound，随 99 定稿入册）"
+- file: docs/_working/fullflow_mine/verify/V1_verification_report.md
+  token: fullflow-mine-books-v1-verification-report-20261001
+  created_by: st-datasop-20260930
+  capability: fullflow_mine_books
+  merge_evaluation: "总包挖矿战役产出件"
+- file: docs/_working/fullscore_night/03_integrated_backtest/fresh_pool_v2.yaml
+  token: fullscore-night-ibt-v2-fresh-pool-20261001
+  created_by: st-fullscore-20260930
+  capability: integrated_backtest_first_run
+  merge_evaluation: "IBT-v2 考卷池（被盗复原件，源=CH bothwin 台账 tested=85/passed=14）"
+- file: docs/_working/fullscore_night/03_integrated_backtest/fresh_pool_v2_notes.md
+  token: fullscore-night-ibt-v2-fresh-pool-notes-20261001
+  created_by: st-fullscore-20260930
+  capability: integrated_backtest_first_run
+  merge_evaluation: "IBT-v2 池对账 notes（三源对账 14/14 + 源数据形态披露）"
+- file: docs/_working/fullscore_night/03_integrated_backtest/blocked_v2_pool_missing.md
+  token: fullscore-night-ibt-v2-blocked-pool-missing-20261001
+  created_by: st-fullscore-20260930
+  capability: integrated_backtest_first_run
+  merge_evaluation: "IBT-v2 发车前置 BLOCKED 报告（前班产物，同批补登记 token）"
+- file: docs/_working/fullscore_night/03_integrated_backtest/v2_verdict.md
+  token: fullscore-night-ibt-v2-verdict-20261001
+  created_by: st-fullscore-20260930
+  capability: integrated_backtest_first_run
+  merge_evaluation: "IBT-v2 裁决书（HOLDOUT 已烧，FAIL 如实落档，禁改参重考）"
 di_seam_exemptions: []
