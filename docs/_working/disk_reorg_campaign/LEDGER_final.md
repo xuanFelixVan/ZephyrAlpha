@@ -712,3 +712,6 @@ P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_i
 - **预期**：CH 增量 ~50min→双写→vault diff（排除 worktrees 后大幅缩短）→~09:00-09:30 完成；明晨探针核验 BACKUP_CREATED 前移+inc.zip 刷新
 - 09-27 全天空窗定性：备份被 12:26 卡死轮阻塞+后续全 lock-skip——**数据无损**（CH 最后备份 09-26 16:14 的增量已在第二链），24h 节奏中断一日待今日轮补上
 【第二链日检 09-29】PASS*（inc=92,737,649,359B≈92.7G=09-28 08:07 修复后重跑轮增量同步 ✓ ratio=0.264；今晨 07:04 新备份 CH 完成，双写在飞预计 07:4x 刷新 chbackup2，下轮复核确认）——第 5/14 天。附注：state 见 05:57 一轮 failed（post-commit 触发）待审计班查；07:04 备份 total_size 351.7G 较前降 57G 与 .worktrees 排除无关（CH 数据在 VM 盘），幅度待观察
+【第二链日检 10-01】PASS（inc=111,391,573,754B≈111.4G=09-30 15:56 备份完成后 34 分钟同步 ✓ ratio=0.313；CH cadence 到期正常触发）——第 7/14 天（10-05 摘盘证据链）
+【灾备月演练 10-01 04:30 首射】实质通过（c1 表集 88/88 相等+c2 行方向+c3 内容指纹全绿；dump=0930 最新件恢复进 depgraph_drill 临时库后已清）；唯一 fail=c4 pg_restore_rc=1——stderr 全为良性警告（public schema 预存在+ALTER DEFAULT PRIVILEGES 权限），但 GBK locale stderr 被 decode 成 mojibake 致 restore_drill.py 良性正则不匹配→判 unknown。**P1 修复（下一班）：_classify_pg_restore_stderr 捕获处加 bytes 解码链（utf-8→gbk）或 stderr 采集加 PGCLIENTENCODING=UTF8**。restore.ps1 Do-Pg 同口径（rc 0/1 可接受）已对齐。
+【第二链日检 10-02】PASS*（inc=95,212,100,013B≈95.2G=10-01 06:1x 同步，含 09-29 增量 ✓ ratio=0.246；今晨 07:12 新备份完成仅 4 分钟，双写在飞预计 07:4x 刷新 chbackup2，下轮复核确认）——第 8/14 天（10-05 摘盘证据链）
