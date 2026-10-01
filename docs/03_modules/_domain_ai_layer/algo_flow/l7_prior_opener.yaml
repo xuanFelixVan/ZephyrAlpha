@@ -1,0 +1,43 @@
+# ALGO_FLOW 外部真源——l7_prior_opener（_domain_ai_layer 域，真源 src/zephyr/ai_layer/perceive/l7_prior_opener.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ai_layer.perceive.l7_prior_opener
+source_of_truth: src/zephyr/ai_layer/perceive/l7_prior_opener.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 开单请求（domain_id×mechanism_family×keyword_groups 组级词表）
+    #   fields: domain_id/mechanism_family/vein_id/trigger_ref/keyword_groups
+    #   code: open_l7_prior_order
+    # - id: I2
+    #   name: 当日 journal 只读扫描（l7_prior 占比判据输入）
+    #   fields: order_id/trigger
+    #   code: l7_prior_daily_share_state
+    # 层: 处理
+    # - id: P1
+    #   name_zh: 日占比闸（≤50%/日，超限拒开留痕非异常）
+    #   name_en: daily_share_gate
+    #   code: open_l7_prior_order
+    # - id: P2
+    #   name_zh: V3/V4 先验读取（prior_for 只读；越界由 priors 层拒收）
+    #   name_en: read_prior
+    #   code: HeritagePriors.prior_for
+    # - id: P3
+    #   name_zh: 排除词表组级过滤（保底 1 组）+拍平为 L1 扁平词表
+    #   name_en: exclude_and_flatten
+    #   code: apply_exclusion
+    # 层: 输出
+    # - id: O1
+    #   name_zh: trigger='l7_prior'+priority=prior_factor 任务单落 journal
+    #   name_en: emit_order
+    #   code: SearchOrderJournal.open_draft
+    # 边:
+    # I1 --> P1
+    # I2 --> P1
+    # P1 --> P2
+    # P2 --> P3
+    # P3 --> O1
+    # [/ALGO_FLOW]
