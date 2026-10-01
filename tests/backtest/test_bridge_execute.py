@@ -16,8 +16,11 @@
 # [TTL] task_bound
 # [TEST] tests/backtest/test_bridge_execute.py
 # 覆盖（任务契约五场景+契约边界）：正常执行/空文件/坏行跳过计数/幂等重跑/dry-run；
-#   另含 退出码 4（有单失败）/退出码 1（环境失败）/窗口闸/缺文件/限价推导纯函数。
-# 铁律：全程 paper/sim 语义——不连真实 QMT 终端、不连任何业务数据库、不写 data/ 生产路径。
+#   另含 退出码 4（有单失败）/退出码 1（环境失败）/窗口闸/缺文件/限价推导纯函数；
+#   CH 台账行写腿三态（09-23 版口径恒落行：成功写行/CH 失败不反噬/幂等不重记行）。
+# 铁律：全程 paper/sim 语义——不连真实 QMT 终端、不连任何业务数据库、不写 data/ 生产路径
+#   （CH 台账行写腿全 mock ch_writer，测试零真连库）。
+import json
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -112,13 +115,20 @@ def _write_orders(tmp_path: Path, lines: list[str]) -> Path:
 
 @pytest.fixture()
 def wired(monkeypatch):
-    """默认接线：窗口内+正门替身+桥替身（各测试可再覆盖/取用）。"""
+    """默认接线：窗口内+正门替身+桥替身+CH 台账行写 mock（零真连库；测试可再覆盖/取用）。"""
     om = _FakeOrderManager()
     assembly = _FakeAssembly()
+    ch_calls: list[tuple] = []
+
+    def _fake_write_tsv(table, columns, tsv_bytes, *args, **kwargs):
+        ch_calls.append((table, columns, tsv_bytes))
+        return True
+
+    monkeypatch.setattr("zephyr.data.ch_writer.write_tsv", _fake_write_tsv)
     monkeypatch.setattr(runner, "_now_cn", lambda: _IN_WINDOW)
     monkeypatch.setattr(runner, "_new_paper_order_manager", lambda: om)
     monkeypatch.setattr(runner, "_connect_bridge_world", lambda o, state_dir=None: (assembly, None))
-    return {"om": om, "assembly": assembly}
+    return {"om": om, "assembly": assembly, "ch_calls": ch_calls}
 
 
 # ---------- 纯函数 ----------
@@ -261,12 +271,100 @@ def test_bridge_execute_dry_run_touches_nothing(wired, tmp_path):
     assert list(receipts_dir.glob("*")) == []
 
 
+# ---------- CH 台账行写腿（09-23 版口径恒落行；R11 遗留补线三态） ----------
+
+
+def test_bridge_ledger_row_written_on_success(wired, tmp_path):
+    orders = _write_orders(
+        tmp_path, ["symbol,action,shares,limit_px", "510300.SH,buy,1100,4.604", "600000.SH,sell,100,4.00"]
+    )
+    out = runner.bridge_execute("2026-09-28", orders_file=str(orders), receipts_dir=tmp_path)
+    assert out["executed"] is True and out["exit_code"] == 0
+    assert out["ledger_row"] == "written"
+    assert len(wired["ch_calls"]) == 1
+    table, cols, blob = wired["ch_calls"][0]
+    assert table == "c1_backtest.sim_daily_report"  # schema TABLE_NAME 常量口径（TABLE-NAME-REGISTRY）
+    assert cols.startswith("(report_date, source, subject")  # 18 列判定台账同构
+    row = blob.decode("utf-8").rstrip("\n").split("\t")
+    assert row[1] == "plan_execute_bridge"  # 09-23 版口径 source（delivery_report_20260923 §3）
+    assert row[2] == out["batch_id"]  # subject=批次指纹（同键覆盖幂等键）
+    assert row[3] == f"SIMP-2026-09-28-plan_execute_bridge-{out['batch_id']}"
+    payload = json.loads(row[6])
+    assert payload["day"] == "2026-09-28"
+    assert payload["orders_total"] == 2 and payload["submitted"] == 2 and payload["failed"] == 0
+    assert payload["status_counts"] == {"submitted": 2}
+    assert payload["receipt_file"] == f"{out['batch_id']}.csv"
+
+
+def test_bridge_ledger_row_counts_failed_orders(tmp_path, monkeypatch):
+    """有单失败仍恒落台账行（09-23 版口径：失败可见如实计数）。"""
+    om = _FakeOrderManager(fail_symbols=("600000.SH",))
+    ch_rows: list[bytes] = []
+
+    def _fake_write_tsv(table, columns, tsv_bytes, *args, **kwargs):
+        ch_rows.append(tsv_bytes)
+        return True
+
+    monkeypatch.setattr("zephyr.data.ch_writer.write_tsv", _fake_write_tsv)
+    monkeypatch.setattr(runner, "_now_cn", lambda: _IN_WINDOW)
+    monkeypatch.setattr(runner, "_new_paper_order_manager", lambda: om)
+    monkeypatch.setattr(runner, "_connect_bridge_world", lambda o, state_dir=None: (_FakeAssembly(), None))
+    orders = _write_orders(tmp_path, ["510300.SH,buy,1100,4.604", "600000.SH,buy,100,4.00"])
+    out = runner.bridge_execute("2026-09-28", orders_file=str(orders), receipts_dir=tmp_path)
+    assert out["exit_code"] == 4
+    assert out["ledger_row"] == "written"  # 失败单不吞行
+    payload = json.loads(ch_rows[0].decode("utf-8").rstrip("\n").split("\t")[6])
+    assert payload["orders_total"] == 2 and payload["submitted"] == 1 and payload["failed"] == 1
+    assert payload["status_counts"]["failed"] == 1
+
+
+@pytest.mark.parametrize("mode", ["false", "raise"])
+def test_bridge_ledger_ch_failure_no_backfire(tmp_path, monkeypatch, mode):
+    """CH 行写失败不反噬主流程：文件回执仍是权威凭证，退出码与下单语义不变。"""
+    om = _FakeOrderManager()
+
+    if mode == "false":
+
+        def _fake_write_tsv(*args, **kwargs):
+            return False  # CH 写未确认
+
+    else:
+
+        def _fake_write_tsv(*args, **kwargs):
+            raise RuntimeError("ch down")  # 库面异常
+
+    monkeypatch.setattr("zephyr.data.ch_writer.write_tsv", _fake_write_tsv)
+    monkeypatch.setattr(runner, "_now_cn", lambda: _IN_WINDOW)
+    monkeypatch.setattr(runner, "_new_paper_order_manager", lambda: om)
+    monkeypatch.setattr(runner, "_connect_bridge_world", lambda o, state_dir=None: (_FakeAssembly(), None))
+    orders = _write_orders(tmp_path, ["510300.SH,buy,1100,4.604"])
+    out = runner.bridge_execute("2026-09-28", orders_file=str(orders), receipts_dir=tmp_path)
+    assert out["executed"] is True
+    assert out["ledger_row"] == "write_failed"  # 留痕不反噬
+    assert out["exit_code"] == 0  # 主流程退出码不变
+    assert Path(out["receipt"]).exists()  # 文件回执仍落盘=权威凭证
+    assert len(om.created) == 1
+
+
+def test_bridge_ledger_idempotent_no_duplicate_row(wired, tmp_path):
+    """同批重跑=回执存在早退，台账行不重复记（写侧幂等）。"""
+    orders = _write_orders(tmp_path, ["510300.SH,buy,1100,4.604"])
+    first = runner.bridge_execute("2026-09-28", orders_file=str(orders), receipts_dir=tmp_path)
+    assert first["ledger_row"] == "written"
+    assert len(wired["ch_calls"]) == 1
+    second = runner.bridge_execute("2026-09-28", orders_file=str(orders), receipts_dir=tmp_path)
+    assert second["why"] == "already_executed_idempotent_skip"
+    assert "ledger_row" not in second  # 早退路径不触台账写腿
+    assert len(wired["ch_calls"]) == 1  # 零重复记行
+
+
 # ---------- 契约边界：退出码 4/1、窗口闸、缺文件 ----------
 
 
 def test_bridge_execute_partial_failure_exit_4(tmp_path, monkeypatch):
     om = _FakeOrderManager(fail_symbols=("600000.SH",))
     assembly = _FakeAssembly()
+    monkeypatch.setattr("zephyr.data.ch_writer.write_tsv", lambda *a, **k: True)
     monkeypatch.setattr(runner, "_now_cn", lambda: _IN_WINDOW)
     monkeypatch.setattr(runner, "_new_paper_order_manager", lambda: om)
     monkeypatch.setattr(runner, "_connect_bridge_world", lambda o, state_dir=None: (assembly, None))

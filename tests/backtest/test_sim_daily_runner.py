@@ -19,6 +19,7 @@
 #       sim_paper_ledger.ensure_wallet 注册表 SSOT 卫兵（FIX-2 R5）。
 # 铁律：测试禁写生产路径——CH 写入函数全 monkeypatch，tmp_path 隔离。
 import importlib.util
+import json
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -266,6 +267,50 @@ def test_settle_unmappable_state_is_unresolvable(monkeypatch):
     out = runner.settle("2026-09-22")
     assert out["unresolvable"] == 1
     assert captured["row"][14] == "unresolvable" and captured["row"][15] is None
+
+
+def test_settle_bridge_ledger_row_self_consistent(monkeypatch):
+    """桥执行台账行（source=plan_execute_bridge）结算=回执自洽健康检查（单数=成交+失败）。"""
+
+    def _bridge_row(payload_json: str) -> list:
+        return [
+            "2026-09-28",
+            "plan_execute_bridge",
+            "bridge-2026-09-28-abc123",
+            "SIMP-X",
+            "asof",
+            "cut",
+            payload_json,
+            1.0,
+            "refs",
+            "run",
+            0,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            "",
+        ]
+
+    rows = [_bridge_row('{"orders_total": 2, "submitted": 1, "failed": 1}')]
+    monkeypatch.setattr(runner, "_q", lambda sql: rows)
+    monkeypatch.setattr(runner, "_row_by_id", lambda d, s, sub: rows[0])
+    captured = {}
+    monkeypatch.setattr(runner, "write_report_row", lambda row: captured.setdefault("row", row))
+    out = runner.settle("2026-09-29")
+    assert out["settled"] == 1
+    row = captured["row"]
+    assert row[14] == "replay_consistent" and row[15] == 1.0  # 1+1==2 自洽
+    assert row[11] is None and "batch_id" in json.loads(row[12])  # 结算快照带批次指纹
+
+    # 计数不自洽（缺字段/对不上）=0 分如实暴露
+    rows[0] = _bridge_row('{"orders_total": 2, "submitted": 2}')
+    captured.clear()
+    out = runner.settle("2026-09-29")
+    assert out["settled"] == 1
+    assert captured["row"][15] == 0.0  # failed 字段缺失不自洽=0 分
 
 
 # ---------- journal 探针时点感知（FIX-1） ----------

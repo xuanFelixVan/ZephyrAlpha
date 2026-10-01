@@ -44,7 +44,9 @@
 - bridge-execute：SimBridgeExecute 执行腿（F56 断腿重建，run_sim_bridge_execute_daily.ps1
   09:35/13:05 调用点）。链路=委托批次文件→解析（坏行跳过计数）→窗口闸→幂等预扫
   （批次指纹回执存在=SKIP 不重复下单）→正门装配（三闸 OrderManager+R-H5E-1 风控闸，
-  env=sim 恒定 real 恒不接=裁定#338⑤）→经 QMT 文件桥逐单执行→执行回执落盘（文件面）。
+  env=sim 恒定 real 恒不接=裁定#338⑤）→经 QMT 文件桥逐单执行→执行回执落盘（文件面）
+  →CH 台账行恒落（source=plan_execute_bridge，09-23 版口径=delivery_report_20260923 §3；
+  CH 写失败不反噬主流程——文件回执仍是权威凭证，R11 遗留补线）。
   退出码 0=成功/honest SKIP、4=有单失败、1=环境失败。处方=delivery_report_20260923 §3
   （限价=桥盘口 买=ask1/卖=bid1、quote mtime>900s 或零盘口=fail-visible 不下单）。
 """
@@ -898,6 +900,19 @@ def settle(day: str) -> dict:
                 "replay_consistent",
                 score,
             )
+        elif source == "plan_execute_bridge":
+            # 桥执行台账行结算=回执自洽健康检查（单数=成交+失败；字段缺失/负值=0 分如实暴露）
+            total = int(payload.get("orders_total", 0))
+            submitted = int(payload.get("submitted", -1))
+            failed = int(payload.get("failed", -1))
+            consistent = submitted >= 0 and failed >= 0 and submitted + failed == total
+            out_row = _settle_row(
+                old,
+                None,
+                {"batch_id": subject, "orders_total": total, "submitted": submitted, "failed": failed},
+                "replay_consistent",
+                1.0 if consistent else 0.0,
+            )
         elif source == "plan_execute":
             target = json.loads(old[6]).get("action")
             cash, shares, _prev, _exists = _plan_position(subject)
@@ -928,7 +943,8 @@ def settle(day: str) -> dict:
 
 # ══ bridge-execute（F56 断腿重建：SimBridgeExecute 执行腿，处方=delivery_report_20260923 §3）══
 # 语义：读委托批次文件→正门装配（三闸 OrderManager+R-H5E-1 风控闸）→env=sim 文件桥逐单执行→
-# 写执行回执（文件面）。退出码 0=成功/honest SKIP、4=有单失败、1=环境失败（装配/连接失败）。
+# 写执行回执（文件面）→CH 台账行恒落（source=plan_execute_bridge，失败不反噬）。退出码
+# 0=成功/honest SKIP、4=有单失败、1=环境失败（装配/连接失败）。
 _BRIDGE_DATA_DIR = _ROOT / "data" / "runtime" / "qmt_bridge"
 _BRIDGE_ORDERS_DIR = _BRIDGE_DATA_DIR / "orders"
 _BRIDGE_RECEIPTS_DIR = _BRIDGE_DATA_DIR / "receipts"
@@ -939,6 +955,7 @@ _BRIDGE_SIGNAL_BATCH_PREFIX = "plan-bridge"  # 幂等键批次号（处方 §3�
 _BRIDGE_TRADE_WINDOWS = ((dtime(9, 30), dtime(11, 25)), (dtime(13, 0), dtime(14, 55)))  # 处方 §3 窗口闸
 _BRIDGE_QUOTE_STALE_SECONDS = 900.0  # 处方：quote mtime>900s=fail-visible 不下单（禁旧价）
 _BRIDGE_RISK_STATE_DIR = _ROOT / "data" / "runtime" / "state"  # 与 start_paper_session 同源（kill switch SSoT）
+_BRIDGE_LEDGER_SOURCE = "plan_execute_bridge"  # 09-23 版台账行口径（delivery_report_20260923 §3：恒落台账行）
 
 
 class BridgeEnvError(RuntimeError):
@@ -1146,6 +1163,82 @@ def _write_bridge_receipt(path: Path, day: str, batch_id: str, receipts: list[di
         raise RuntimeError("执行回执落盘未确认——fail-closed（safe_write 拒写/回读不符，路径见 safe_write 审计）")
 
 
+def _bridge_ledger_row(day: str, batch_id: str, orders_name: str, receipt_path: Path, receipts: list[dict]) -> list:
+    """构造桥执行台账行（sim_daily_report 18 列口径，source=plan_execute_bridge）。
+
+    subject=批次指纹（ReplacingMergeTree ORDER BY (report_date,source,subject) 同键覆盖=
+    写侧幂等第二道闸）；payload 按 09-23 版口径记 批次指纹/日期/单数/成交数/失败数。
+    """
+    submitted = sum(1 for r in receipts if r["status"] == "submitted")
+    failed = len(receipts) - submitted
+    status_counts: dict[str, int] = {}
+    for r in receipts:
+        status_counts[r["status"]] = status_counts.get(r["status"], 0) + 1
+    now = _now_utc().strftime("%Y-%m-%d %H:%M:%S")
+    payload = json.dumps(
+        {
+            "batch_id": batch_id,
+            "day": day,
+            "orders_total": len(receipts),
+            "submitted": submitted,
+            "failed": failed,
+            "status_counts": status_counts,
+            "receipt_file": receipt_path.name,
+            "env": _BRIDGE_ENV,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    return [
+        date.fromisoformat(day),
+        _BRIDGE_LEDGER_SOURCE,
+        batch_id,
+        make_judgment_id(day, _BRIDGE_LEDGER_SOURCE, batch_id),
+        now,
+        now,  # input_cutoff=执行完成时点（桥执行非 PIT 判定，输入=委托文件+执行时盘口）
+        payload,
+        1.0,
+        f"orders:{orders_name};receipt:{receipt_path.name}",
+        f"bridge-exec-{_now_utc().strftime('%Y%m%d%H%M%S')}",
+        0,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        "",
+    ]
+
+
+def _write_bridge_ledger_row(
+    day: str, batch_id: str, orders_name: str, receipt_path: Path, receipts: list[dict]
+) -> str:
+    """CH 台账行写腿（09-23 版恒落行口径；R11 遗留"台账行接线待补"收口）。
+
+    失败语义：CH 行写失败不反噬主流程——文件回执仍是权威凭证（本函数绝不 raise），
+    logger.warning+返回 write_failed 留痕。幂等：同批重跑在回执存在性检查已早退
+    （不进本函数）+CH 同键覆盖（subject=批次指纹）双保险，不重复记行。
+    """
+    row = _bridge_ledger_row(day, batch_id, orders_name, receipt_path, receipts)
+    try:
+        from zephyr.data import ch_writer  # noqa: PLC0415  正门写通道（与既有写点同源）
+
+        ok = ch_writer.write_tsv(_T_REPORT, _COLS, _report_tsv(row).encode("utf-8"))
+    except Exception as exc:  # noqa: BLE001  台账写腿 best-effort：库面任何异常都不反噬执行主流程
+        logger.warning(
+            "bridge 台账行 CH 写异常（文件回执仍是权威凭证，batch=%s）: %s: %s",
+            batch_id,
+            type(exc).__name__,
+            str(exc)[:160],
+        )
+        return "write_failed"
+    if not ok:
+        logger.warning("bridge 台账行 CH 写未确认（文件回执仍是权威凭证，batch=%s）", batch_id)
+        return "write_failed"
+    return "written"
+
+
 def bridge_execute(
     day: str,
     orders_file: str | None = None,
@@ -1208,6 +1301,8 @@ def bridge_execute(
         assembly.disconnect_all()
     failed = sum(1 for r in receipts if r["status"] != "submitted")
     _write_bridge_receipt(receipt_path, day, batch_id, receipts)
+    # CH 台账行写腿（终态落回执后恒落行；失败不反噬——文件回执已是权威凭证）
+    out["ledger_row"] = _write_bridge_ledger_row(day, batch_id, path.name, receipt_path, receipts)
     out["submitted"] = len(receipts) - failed
     out["failed"] = failed
     out["receipts"] = receipts
