@@ -5145,17 +5145,17 @@ capabilities:
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
   token: mapfamily-data_supply_chain_map_gate-20261001
   created_by: st-matrix-final-20260930
-  capability: map_family_gates
+  capability_id: map_family_data_supply_chain_map_gate
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
   token: mapfamily-dev_delivery_map_gate-20261001
   created_by: st-matrix-final-20260930
-  capability: map_family_gates
+  capability_id: map_family_dev_delivery_map_gate
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
   token: mapfamily-trading_day_cycle_map_gate-20261001
   created_by: st-matrix-final-20260930
-  capability: map_family_gates
+  capability_id: map_family_trading_day_cycle_map_gate
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 
 creation_tokens:
@@ -56712,6 +56712,21 @@ creation_tokens:
   created_by: st-c9-secktide
   capability: data_supply_chain
   merge_evaluation: "kline_sector_intraday 断供治愈：tdx 真值腿服务端拒答后的 EOD 合成续供腿任务注册器（每日 15:50 sector_board_synth_eod，tilib 先例镜像）"
+- file: scripts/data/sector_synth_eod_runner.ps1
+  token: data-supply-chain-sector-synth-eod-runner-20261001
+  created_by: st-storageswap-20260930
+  capability: data_supply_chain
+  merge_evaluation: "secktide建件本役转dry-run留观模式（收敛裁定甲S12不注销），收编入库增强追踪"
+- file: scripts/data/sector_eqw_runner.ps1
+  token: sector-intraday-from-constituents-sector-eqw-runner-20261001
+  created_by: st-storageswap-20260930
+  capability: sector_intraday_from_constituents
+  merge_evaluation: "收敛裁定甲双腿runner之一：internal_eqw生产者计划任务runner（每日15:40）"
+- file: scripts/register_sector_eqw_task.ps1
+  token: sector-intraday-from-constituents-register-sector-eqw-task-20261001
+  created_by: st-storageswap-20260930
+  capability: sector_intraday_from_constituents
+  merge_evaluation: "收敛裁定甲注册器：sector_eqw_intraday幂等注册（secktide先例镜像）"
 - file: src/zephyr/reporting/report_archive_sink.py
   token: report-archive-sink-report-archive-sink-20260929
   created_by: st-c9-f115
@@ -58285,4 +58300,25 @@ creation_tokens:
   created_by: st-fullscore-20260930
   capability: integrated_backtest_first_run
   merge_evaluation: "IBT-v2 裁决书（HOLDOUT 已烧，FAIL 如实落档，禁改参重考）"
+- file: scripts/kline_sector_intraday_from_constituents.py
+  token: sector-intraday-from-constituents-kline-sector-intraday-from-constituents-20261001
+  created_by: st-storageswap-20260930
+  capability: sector_intraday_from_constituents
+  merge_evaluation: "收敛裁定甲主施工件：板块分钟线自产五周期727板（与方案J已收敛甲案）"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
+  token: mapfamily-data_supply_chain_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability_id: map_family_data_supply_chain_map_gate
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
+  token: mapfamily-dev_delivery_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability_id: map_family_dev_delivery_map_gate
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
+  token: mapfamily-trading_day_cycle_map_gate-20261001
+  created_by: st-matrix-final-20260930
+  capability_id: map_family_trading_day_cycle_map_gate
+  merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
+
 di_seam_exemptions: []

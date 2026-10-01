@@ -62183,6 +62183,14 @@ entries:
   desc_en: ""
   plain_zh: "把券商账号这类敏感编号变成只有末几位能看的打码形式，短号和空号干脆全部打码，保证日志里绝不漏真号"
   responsibility_layer: infrastructure
+- module_path: scripts/kline_sector_intraday_from_constituents.py
+  domain_id: D_DATA
+  name_zh: "板块分钟线自产"
+  name_en: "sector intraday from constituents"
+  desc_zh: "从成分股1分钟K线等权链式聚合自产880/881板块五周期分钟线（tdx断供替代源）"
+  desc_en: "equal-weight chained sector intraday bars"
+  plain_zh: "以前板块每分钟的行情是从通达信服务器下载的现成饭；它连不上后这活儿改为自己算：把同一板块里每只股票每分钟的涨跌平均一下（一人一票），累乘出板块自己的价格线，五粗细周期一起出"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

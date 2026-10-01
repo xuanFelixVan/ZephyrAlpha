@@ -607,6 +607,9 @@ scripts/data/*
 !scripts/data/sz_open_data/
 scripts/data/sz_open_data/*
 !scripts/data/sz_open_data/*.py
+# 豁免（2026-10-01 收敛裁定甲 #ARCH-380，a7 SS6）：板块分钟线双腿 runner 收编入库（sz_open_data 先例）
+!scripts/data/sector_synth_eod_runner.ps1
+!scripts/data/sector_eqw_runner.ps1
 # L1 上架流水线设备件收编（夜班战役 st-autolnk-20260917b 治本：前批 commit message
 # 写了"豁免两件"但 .gitignore 实未合入——两件长期脱管未跟踪，暴露于清扫风险。
 # 方向=收编入库增强追踪，非排除；先例=sz_open_data 同模式）
