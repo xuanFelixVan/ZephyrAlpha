@@ -3605,11 +3605,13 @@ def chainmap_cluster(
             node_rows = cur.fetchall()
             cur.execute(_SQL_CM_NODE_COMPS_BY_CHAIN, (ids,))
             ncomp = {r[0]: int(r[1]) for r in cur.fetchall()}
-            # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ ig_equity_edge 参与方。
+            # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE，2026-09-10）：簇内环节落位公司 ∩ entity_graph 股权参与方
+            # （原 ig_equity_edge 已退役 DROP，2026-09-29 裁定#424）。
             # 方向按落位公司是 holder（控=对外投资）/held（被控=股东）判；UE 编码对手方 LEFT JOIN 编码表取名；
             # 簇级 LIMIT 防大簇失控（计数在前端按行累加，明细行每环节另截 _CM_EQUITY_ROWS_CAP）
             # 股权批量聚合（F-CHAINMAP-EQUITY-BADGE）2026-09-27 切 entity_graph 六表现行版
-            # （150 万边）替代 ig_equity_edge(804 条)；PERSON:/UNLISTED: 前缀契约按 entity_type 精确保持。
+            # （150 万边）替代 ig_equity_edge(804 条，该表已退役 DROP 2026-09-29 裁定#424)；
+            # PERSON:/UNLISTED: 前缀契约按 entity_type 精确保持。
             from zephyr.frontend.dashboard.chainmap_equity_graph import cluster_equity_badge_rows
 
             eq_dicts = cluster_equity_badge_rows(conn, ids)
@@ -4619,7 +4621,8 @@ def chainmap_company(symbol: str = Query(..., min_length=2, max_length=24)) -> d
     关系段：suppliers=to_symbol=本司（from 为供应商）；customers=from_symbol=本司（to 为客户）；
     collabs=预留段（J88 勘误后归 supply，当前恒空，字段保留兼容 ACC item1 五段契约）；
     对手方未上市 symbol='' 用 to_name/from_name 展示。
-    七域扩展（任务书项 3，2026-09-10）：equity=股权域（ig_equity_edge UNION 拼装 holdings_in/held_by）；
+    七域扩展（任务书项 3，2026-09-10）：equity=股权域（entity_graph 六表现行版拼装 holdings_in/held_by；
+    原 ig_equity_edge UNION 已退役 DROP，2026-09-29 裁定#424）；
     profile=基本盘/全球属性（stock_basic/daily_valuation.is_st/stock_profile_ths 实列，缺列如实
     missing_fields）；pending_domains=库中无实表域（news_keywords/aliases/facilities/calendar）留位
     标"建设中"禁编造。行情/股权/基本盘三段各自独立降级，互不拖垮图谱段。
