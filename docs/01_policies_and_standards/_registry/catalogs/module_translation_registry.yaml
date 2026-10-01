@@ -60098,19 +60098,19 @@ entries:
   responsibility_layer: governance
 - module_path: src/zephyr/governance/registry_ledger/ledger_identity.py
   domain_id: D_GOVERNANCE
-  name_zh: "注册表条目身份键"
-  name_en: "Registry Entry Identity Key"
+  name_zh: "账本条目身份桥"
+  name_en: "Ledger Identity Bridge"
   desc_zh: "条目身份键唯一真源桥：门禁单键+token 复合升级，与合并器同规则防身份分叉"
-  desc_en: "Bridge to the canonical entry identity key with composite token suffix, shared by gate and merger"
-  plain_zh: "大白话：给每条注册表条目发身份证。规则只有一条：第一个字段是谁，它就是谁；有 token 的加上 token。门禁、合并器、账本三家认同一张证，不各发各的"
+  desc_en: "Bridge to the canonical entry identity key with token composite suffix shared by gate and merger"
+  plain_zh: "大白话：给每条登记发一张独一无二的身份证，名字规则和门卫手里那份一模一样，谁也造不出第二种叫法"
   responsibility_layer: governance
 - module_path: src/zephyr/governance/registry_ledger/ledger_schema.py
   domain_id: D_GOVERNANCE
-  name_zh: "注册表账本DDL聚合"
-  name_en: "Registry Ledger DDL Aggregate"
-  desc_zh: "聚合 schemas/categories/registry_ledger 四表 DDL 真源并声明 _schema_version 台账与不可变守卫定义"
-  desc_en: "Aggregates the four-table DDL truth source plus schema version and append-only guard definitions"
-  plain_zh: "大白话：账本四张表的图纸集。图纸只放在一个抽屉里，施工队照图施工，谁也不许手画"
+  name_zh: "账本 DDL 聚合"
+  name_en: "Ledger DDL Aggregate"
+  desc_zh: "registry_ledger 四表 DDL 常量按依赖序聚合+_schema_version 台账，幂等可重跑"
+  desc_en: "Aggregates registry_ledger table DDL constants in dependency order with idempotent version bookkeeping"
+  plain_zh: "大白话：把建账本四张表的图纸按先后顺序整理成一叠，照着念一遍就能把表建好，念一百遍也不会建错"
   responsibility_layer: governance
 - module_path: src/zephyr/governance/registry_ledger/__init__.py
   domain_id: D_GOVERNANCE
@@ -60867,22 +60867,6 @@ entries:
   desc_en: ""
   plain_zh: "以前只在你提交代码时检查有没有绕过数据库服务直连数据库，但程序跑起来之后直连是管不住的。这个门装上后，谁在运行中偷偷直连就会被记一笔账（严重的模式可以直接拒绝），走正规数据库服务的调用完全不受打扰。"
   responsibility_layer: infrastructure
-- module_path: src/zephyr/governance/registry_ledger/ledger_schema.py
-  domain_id: D_GOVERNANCE
-  name_zh: "账本 DDL 聚合"
-  name_en: "Ledger DDL Aggregate"
-  desc_zh: "registry_ledger 四表 DDL 常量按依赖序聚合+_schema_version 台账，幂等可重跑"
-  desc_en: "Aggregates registry_ledger table DDL constants in dependency order with idempotent version bookkeeping"
-  plain_zh: "大白话：把建账本四张表的图纸按先后顺序整理成一叠，照着念一遍就能把表建好，念一百遍也不会建错"
-  responsibility_layer: governance
-- module_path: src/zephyr/governance/registry_ledger/ledger_identity.py
-  domain_id: D_GOVERNANCE
-  name_zh: "账本条目身份桥"
-  name_en: "Ledger Identity Bridge"
-  desc_zh: "条目身份键唯一真源桥：门禁单键+token 复合升级，与合并器同规则防身份分叉"
-  desc_en: "Bridge to the canonical entry identity key with token composite suffix shared by gate and merger"
-  plain_zh: "大白话：给每条登记发一张独一无二的身份证，名字规则和门卫手里那份一模一样，谁也造不出第二种叫法"
-  responsibility_layer: governance
 - module_path: src/zephyr/governance/registry_ledger/identity.py
   domain_id: D_GOVERNANCE
   name_zh: "注册表条目身份键"
@@ -61172,11 +61156,11 @@ entries:
   responsibility_layer: governance
 - module_path: scripts/governance/wave1a/verified_promotion_check.py
   domain_id: D_GOV_CODE_QUALITY
-  name_zh: "交付核验升态尺"
-  name_en: ""
-  desc_zh: ""
+  name_zh: "VERIFIED 升态校验器"
+  name_en: "verified promotion precheck"
+  desc_zh: "wave1a 升 VERIFIED 前置三判据校验：artifact_paths 空锚判据①、现读缺锚判据②、rb 旗标判据③，输出 empty/missing/eligible/rb_anchor_required 四态与 REJECT/ELIGIBLE 判定"
   desc_en: ""
-  plain_zh: "自称完成的卡必须在仓库里找得到真东西才算数"
+  plain_zh: "一张任务卡想升 VERIFIED 不能空口自称完成：这个校验器先看卡上有没有写交付物路径（没写就拒），再逐个打开这些路径确认文件真的在（不在就是伪锚，拒），最后看卡上是否带红蓝复核旗（带旗必须先复核，不许直升）。三条全过才放行，可用命令行批量读卡出四态清单"
   responsibility_layer: governance
 - module_path: scripts/governance/wave1a/cross_session_view.py
   domain_id: D_GOV_CODE_QUALITY
@@ -61517,55 +61501,6 @@ entries:
   responsibility_layer: business
 - module_path: scripts/governance/wave1a/ch_read_shape_ruler.py
   domain_id: D_GOV_CODE_QUALITY
-  name_zh: "读数形状扫描尺"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "扫出把查询字符串按下标取值的调用点防首位数字冒充行数"
-  responsibility_layer: governance
-- module_path: scripts/governance/wave1a/store_liveness_probe.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "库存活普查器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "逐个数据库数清字节与引用者把零字节死库点名出来"
-  responsibility_layer: governance
-- module_path: scripts/governance/wave1b/claim_gate_repro.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "claim 门复算探针"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "只读复算 claim 门的路径归一与在册集合差，用来定性一次连死三袋的 claim 报错到底出自哪一面"
-  responsibility_layer: governance
-- module_path: scripts/governance/wave1b/dead_letter_prescriptions.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "死信处方生成器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把队列死信按死因聚成处方族并给出入队前可自检的清单，输出机读矩阵与案卷表"
-  responsibility_layer: governance
-- module_path: scripts/governance/wave3/recheck_empty_tables.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "recheck_empt"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "供recheck_empt使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用"
-  responsibility_layer: governance
-
-- module_path: scripts/governance/wave1b/dead_letter_prescriptions.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "dead_letter_"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把队列里 730 封死信按死因聚成处方族，逐族给出入队前可自检的命令与豁免位，输出机读矩阵与案卷表"
-  responsibility_layer: governance
-- module_path: scripts/governance/wave1a/ch_read_shape_ruler.py
-  domain_id: D_GOV_CODE_QUALITY
   name_zh: "ch_read_shap"
   name_en: ""
   desc_zh: ""
@@ -61587,6 +61522,22 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "为claim_gate_r所在波次产出可复算机读证据：把本窗实测口径固化成一条命令，人工命令行调用而非驻留调度"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1b/dead_letter_prescriptions.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "dead_letter_"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把队列里 730 封死信按死因聚成处方族，逐族给出入队前可自检的命令与豁免位，输出机读矩阵与案卷表"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave3/recheck_empty_tables.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "recheck_empt"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "供recheck_empt使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用"
   responsibility_layer: governance
 
 - module_path: src/zephyr/library/snapshot_store.py
@@ -61787,11 +61738,11 @@ entries:
   responsibility_layer: governance
 - module_path: src/zephyr/ex_core/bridge_instruction_kernel.py
   domain_id: D_EX_CORE
-  name_zh: "QMT桥接指令内核"
+  name_zh: "QMT桥接指令内核（已退役）"
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "把给券商下道的指令文件当邮差包逐封核对：正常签收就记账，发现幽灵单（从未见过却自称已成交）就按超时作废拒认，保证桥两端账本最终一致"
+  plain_zh: "把给券商下道的指令文件当邮差包逐封核对：正常签收就记账，发现幽灵单（从未见过却自称已成交）就按超时作废拒认，保证桥两端账本最终一致。已退役（CR-4/裁定#464）：被 qmt_file_bridge_broker 完全取代（78982c4c81 内建超集），本体归档 .runtime/tmp/campaign_trash_20261001，勿重建。"
   responsibility_layer: business
 - module_path: src/zephyr/governance/audit/library_new_module_reconciler.py
   domain_id: D_GOVERNANCE
@@ -62167,14 +62118,6 @@ entries:
   desc_en: ''
   plain_zh: 清洗判净站还没开门，这把尺子先造好：以后 AI 和引擎各判各的，它按周算两边不一致的比例，对照预注册的百分之五上界报超没超，给老板复裁用。
   responsibility_layer: business
-- module_path: scripts/governance/wave1a/verified_promotion_check.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "VERIFIED 升态校验器"
-  name_en: "verified promotion precheck"
-  desc_zh: "wave1a 升 VERIFIED 前置三判据校验：artifact_paths 空锚判据①、现读缺锚判据②、rb 旗标判据③，输出 empty/missing/eligible/rb_anchor_required 四态与 REJECT/ELIGIBLE 判定"
-  desc_en: ""
-  plain_zh: "一张任务卡想升 VERIFIED 不能空口自称完成：这个校验器先看卡上有没有写交付物路径（没写就拒），再逐个打开这些路径确认文件真的在（不在就是伪锚，拒），最后看卡上是否带红蓝复核旗（带旗必须先复核，不许直升）。三条全过才放行，可用命令行批量读卡出四态清单"
-  responsibility_layer: governance
 - module_path: src/zephyr/shared/security/identifier_masking.py
   domain_id: D_SHARED
   name_zh: "标识符脱敏件"

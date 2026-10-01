@@ -6652,3 +6652,161 @@ entries:
   related_arch: []
   related_rulings: ["Z-C1", "裁定#305"]
   superseded_by: null
+- ruling_id: "裁定#461"
+  title: "CR-1 死袋收编授权：总包收编已关会话已完成工作面"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    Owner 2026-10-01 总令「全部开工+工作区全净」=授权总包（st-ffchief-20261001）收编已关会话的
+    已完成工作面；ghost 袋 CLI 代投统一挂 st-ffchief-20261001（活会话）落地。
+  approved_paths: ["docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml", "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml", "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"]
+  expires_at: '2026-10-08'
+- ruling_id: "裁定#462"
+  title: "CR-2 zcloseout-0105 弃袋：4 件被 matrix 超集吸收"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    zcloseout-0105 袋 4 件全部被 matrix-final-0009（→-0005）超集吸收，原袋销账不重投。
+- ruling_id: "裁定#463"
+  title: "CR-3 垃圾归档：PID 28828 已死实证，CAS 残渣移 campaign_trash"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    PID 28828 已死实证（psutil），其 4 个 CAS .tmp + 1 个 blob 级等价 .bak 移
+    .runtime/tmp/campaign_trash_20261001/（可逆归档，非删除）。
+- ruling_id: "裁定#464"
+  title: "CR-4 废弃件 bridge_instruction_kernel.py 归档+CCR/翻译册双墓碑"
+  date: '2026-10-01'
+  category: 架构
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    bridge_instruction_kernel.py 被 qmt_file_bridge_broker 取代（CCR 墓碑+handoff 双证）→
+    物理移 campaign_trash+归档语义；同 commit 给 CCR 条目与翻译册词条打墓碑注记
+    （retired/successor=qmt_file_bridge_broker）。RULE-RULING 同 commit 原子。
+- ruling_id: "裁定#465"
+  title: "CR-5 hk_connect_flow 僵尸任务停用"
+  date: '2026-10-01'
+  category: 数据
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    HKEX 2024-08 源级终止（survey §2 实证），任务僵尸在册空转。裁定：schtasks disable（可逆）
+    +数据缺口登记不补历史；若 HKEX 复供再重评。
+- ruling_id: "裁定#466"
+  title: "CR-6 归档搬迁对收编（三脚本旧删新归同袋）"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    3 件脚本（grep_coverage/quick_profile/run_ollama_exam）旧删+新归同袋落地（git mv 语义补全）；
+    归档件 ruff noqa/format 最小面修复；token 随批。
+- ruling_id: "裁定#467"
+  title: "CR-7 数据产物 git 政策：小语义件入库/大二进制不入"
+  date: '2026-10-01'
+  category: 数据
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    小体积语义件（manifest/verdict/README/meta json）入库；大体二进制（.npy/.parquet/.rda/.pkl
+    结果件）不入 git：gitignore 政策+留盘（数据真源在盘/CH/冷库）。已 tracked 存量二进制不追溯。
+- ruling_id: "裁定#468"
+  title: "CR-8 session_start_commit.txt 入库（后被裁定#474 反转）"
+  date: '2026-10-01'
+  category: 治理
+  status: 'superseded'
+  superseded_by: "裁定#474"
+  session: st-ffchief-20261001
+  summary: |-
+    原裁 4 件 session_start_commit.txt 入库（考古证据链现用、生成脚本 tracked、33 件
+    retrospective 先例）。落地实测被 DIRECTORY-CONTRACT 拦，由裁定#474（CR-8'）反转。
+- ruling_id: "裁定#469"
+  title: "CR-9 争议件 top10 定谳（triage_untracked §6）"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    9 项定谳：①bridge_instruction_kernel 废弃归档+双册墓碑同 commit；②grep_coverage 以
+    _archive/ 根位为唯一归档位；③run_ollama_exam 归档版为准（blob 三向对比实证）；④closed_book/
+    chart_cell 补 token 落地；⑤grid 65 件按 CR-7 拆分；⑥session_start_commit.txt 按 CR-8（后反转）；
+    ⑦tmp.18376 PID 存活期不动；⑧test_c4_pit_red_injection 随 L16 落地；⑨t0 族 token 补登落地。
+- ruling_id: "裁定#470"
+  title: "CR-10 死袋 husk 处置：旧壳维持 dead 不再重投"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    -0001/-0002/-0003 为 -0004/-0005/-0006 重投链的旧壳（requeue 换号留痕），维持 dead 态，
+    S9 清账批量核销。
+- ruling_id: "裁定#471"
+  title: "CR-12 F72 供单源裁定：in-repo 自动生产（plan-execute 导出腿）"
+  date: '2026-10-01'
+  category: 架构
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    bridge-execute 委托批次文件 orders_<day>.csv 供单源三选一裁定=in-repo 自动生产：plan-execute
+    （SIM-PLAN-001 链）落导出腿，交易日 plan 执行后导出当日计划单；空单日诚实空文件；人工投放降级
+    为覆盖通道。理由：100% AI 开发前提下人工 SOP=单点依赖；sim 环境零资金风险；执行腿已有窗口闸/
+    幂等预扫/两级风控。配套补 sch_sim_bridge_execute 的 resource_profile 采样接线。
+- ruling_id: "裁定#472"
+  title: "CR-13 战役目录改名 fullflow_chief_20261001→circulation_chief（R5 合规）"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    R5-DIGIT-SUFFIX 实测两袋（-0013/-0021）死于数字后缀门 → 战役目录改名 circulation_chief，
+    75 件 staged 迁移重挂，六车道广播。
+- ruling_id: "裁定#473"
+  title: "CR-14 F62/F73/F82 骨架 P0 判词过期认定"
+  date: '2026-10-01'
+  category: 架构
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    W3-2/W3-3 实证：F62 合规门五闸链已注入（fa9ae365）、F73 晋升判据执行器已实跑
+    （judgment-2026-10.json 10-01 05:51 UTC）、F82 order_daemon 已接线（09-30 st-circ-a7）。
+    骨架原 P0 判词过期，lane 车道改验证口径。
+- ruling_id: "裁定#474"
+  title: "CR-8' session_logs 留盘不入库（反转裁定#468）"
+  date: '2026-10-01'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    落地实测被 DIRECTORY-CONTRACT 拦（session_logs/*.txt ∉ 目录契约 allowed 清单）。四件为运行时
+    簿记证据、价值低；扩目录契约=范围蔓延违内收原则。反转裁定#468：留盘不入 git（.gitignore 语义
+    同类）。
+- ruling_id: "裁定#475"
+  title: "CR-15 图14 D14-G10 幽灵复活作废：契约 12→11 槽收缩"
+  date: '2026-10-02'
+  category: 架构
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    图14 gap 节点 D14-G10（官方状态词表模块不存在/双册同谎）的幽灵件 src/zephyr/shared/vocab 已于
+    2026-09-26 复活落仓（a2e820034bd；词表立法线全链闭合），CV-GHOST 判复活即红，且节点自身
+    invalidation 条款明文"幽灵件复活⇒本 gap 节点作废，须回写骨架后重生成"。裁定按条款作废：
+    00_skeleton.md R-08 回写+91 提案件撤 G10+图重生成+校验器契约全集 GAP_NODES 收缩为 11 槽
+    （槽位号不回收复用）+对抗尺同步改判。保留已复活幽灵断言=图数据说谎；另造新断言=虚构缺口；
+    唯一诚实路径=条款既定作废程序，判据改动系机械执行节点自带失效条款非放宽。
+- ruling_id: "裁定#476"
+  title: "CR-16 死信袋 0118 销账（已被 0118v4 收官手术吸收）"
+  date: '2026-10-02'
+  category: 治理
+  status: 'active'
+  session: st-ffchief-20261001
+  summary: |-
+    q-20261001-st-ffchief-20261001-0118（reexam CPCV 族 3 件）已于 2026-10-02 01:53 由
+    b26627f715（收官手术·0118v4）携双册直投落地，工作区与 HEAD 逐字节一致（sha256 三件全同），
+    死袋记录维持 dead 态销账不重投。

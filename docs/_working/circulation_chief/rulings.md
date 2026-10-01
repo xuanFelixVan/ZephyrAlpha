@@ -39,3 +39,14 @@ docs/_working/fullflow_chief_20261001 → docs/_working/circulation_chief（R5-D
 
 ## CR-14 F62/F73/F82 判词过期认定（W3-2/W3-3 实证）
 F62 合规门五闸链已注入（order_manager.py:348/:371+sim_saga_assembly.py:163-177，fa9ae365）；F73 晋升判据执行器已实跑（league_judge+judgment-2026-10.json 10-01 05:51 UTC）；F82 order_daemon 已接线（scheduler.py:816-821→pipeline_events.py 三点，09-30 st-circ-a7）。骨架原 P0 判词过期，lane 车道改验证口径。
+## CR-8'（CR-8 反转裁定）session_logs 留盘不入库
+落地实测被 DIRECTORY-CONTRACT 拦（session_logs/*.txt ∉ 目录契约 allowed 清单）。四件为运行时簿记证据、价值低；扩目录契约=范围蔓延违内收原则。反转：留盘不入 git（ .gitignore 语义同类）。原 CR-8 作废存档。
+
+## CR-15 D14-G10 幽灵复活作废（图14 契约 12→11 槽收缩）
+图14 gap 节点 D14-G10（官方状态词表模块不存在/双册同谎）的幽灵件 src/zephyr/shared/vocab 已于 2026-09-26 复活落仓（a2e820034bd 词表读取层落仓；词表立法线全链闭合：01/02 卷+shared/vocab+state_vocab_registry_gate 在册），CV-GHOST 判其断言复活即红，且该节点自身 invalidation 条款明文"幽灵件复活⇒本 gap 节点作废，须回写骨架后重生成"。裁定：按条款作废——00_skeleton.md R-08 回写注记+91 提案件撤 G10 条目+图重生成（gaps 29→28 节点）+校验器契约全集 GAP_NODES 收缩为 11 槽（槽位号不回收复用）+对抗尺同步改判。理由：保留已复活幽灵断言=图数据说谎；另造新断言=虚构缺口；唯一诚实路径=条款既定的作废程序，判据改动系机械执行节点自带的失效条款非放宽。
+
+## CR-16 死信袋 0118 销账（已被 0118v4 收官手术吸收）
+q-20261001-st-ffchief-20261001-0118（reexam CPCV 族 3 件）已于 2026-10-02 01:53 由 b26627f715（收官手术·0118v4）携双册直投落地，工作区与 HEAD 逐字节一致（sha256 三件全同），死袋记录维持 dead 态销账不重投。
+
+## 终局并册记录（2026-10-02 final closeout）
+CR-1~CR-16 已并入 docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml：裁定#461(CR-1)/#462(CR-2)/#463(CR-3)/#464(CR-4)/#465(CR-5)/#466(CR-6)/#467(CR-7)/#468(CR-8,superseded)/#469(CR-9)/#470(CR-10)/#471(CR-12)/#472(CR-13)/#473(CR-14)/#474(CR-8'反转)/#475(CR-15)/#476(CR-16)。取号时册内最大=#460，16 连号无跳号；CR-8 按册铁律#9 记 superseded_by=#474。本簿自此冻结（历史档）。
