@@ -240,3 +240,50 @@ def test_s1_process_kill_orphan_revival_no_double_landing(sb_repo, sb_queue, tmp
     n = git_text(sb_repo, "log", "dev", "--oneline", "--", "s1/f0.txt")
     assert len(n.splitlines()) == 1, f"s1/f0.txt 落地次数 != 1（双落地）: {n}"
     assert git_text(sb_repo, "rev-parse", "refs/heads/dev") != dev_tip0
+
+
+# ── 蓝方 ⑤：Windows 双工同领去重（平台互斥补丁·st-circ-integ-20261001）─────────
+
+
+def test_s1_blue_windows_double_claim_second_yields_zero_double_landing(sb_repo, sb_queue, monkeypatch):
+    """Windows 实测（微基准 300 轮 297 次）：并发同源 os.rename 双方均成功——
+    「原子 rename 即互斥」在本平台不成立，双工可同领同一 pending 件 → 双落地。
+
+    平台互斥补丁=claimed 集第二道闸（rename 后 stats_lock 内查重，后到者让位）。
+    本尺确定性复现双领形态（不经竞态运气）：两工认领点返回同一路径，断言恰一落地。
+    """
+    import os
+
+    item = enqueue(sb_repo, sb_queue, "rb14-s1", "s1/f0.txt", "content 0\n", "rb14 s1 dup-claim")
+    qid = item["qid"]
+    dst = sb_queue / "processing" / f"{qid}.json"
+    dst.parent.mkdir(parents=True, exist_ok=True)
+
+    calls = {"n": 0}
+
+    def double_claim(root):  # noqa: ANN001
+        """前两次认领都「成功 rename」同一件——复刻 Windows 双成功形态（微基准实证：
+        并发同源 os.rename 双方均 OK）。第二次认领时源已被第一次搬走，按实测语义
+        重塑源后 replace（落 processing 同名同字节件），其后队空。"""
+        calls["n"] += 1
+        pend = sb_queue / "pending" / f"{qid}.json"
+        if calls["n"] <= 2:
+            if not pend.exists():
+                pend.write_bytes(dst.read_bytes() if dst.exists() else b"{}")
+            try:
+                os.replace(pend, dst)
+                return dst
+            except OSError:
+                return None
+        return None
+
+    monkeypatch.setattr(cql, "_pool_claim_item", double_claim)
+    monkeypatch.setattr(cql, "make_worker_landing", make_stub_landing_factory([]))
+
+    stats = cql.drain_queue_pool(sb_queue, repo_root=sb_repo, workers=2)
+
+    assert calls["n"] >= 2, "两工都必须到达认领点（复现双领形态）"
+    assert stats["done"] == 1, f"双工同领必须恰落地一次（后到者让位）: {stats}"
+    done_names = [p.name for p in (sb_queue / "done").glob("*.json")]
+    assert done_names == [f"{qid}.json"], f"done 零重名: {done_names}"
+    assert not list((sb_queue / "dead").glob("*.json")), "让位路径不得产生死信"
