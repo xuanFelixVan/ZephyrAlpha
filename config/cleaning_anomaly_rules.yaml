@@ -24,10 +24,11 @@
 #   **未知键=配置错上抛**（拼错键=检查静默空转——同族 _reject_unknown_keys 先例）。
 #   加新键必须先让代码读它。
 #
-# 引擎面台账（本批宣告，普查对账锚）：已接=wired 两台（cleaning_rule_engine 2026-09-26
-#   cleaning_rules_hosting；cleaning_anomaly_engine 2026-09-28 cleaning_anomaly_hosting）；
-#   接口位预留=reserved 两台：data_anomaly_alerter（六检测器，宿主同款托管待批）、
-#   expectation_governance（期望套件，判据册 suite YAML 零在盘）——预留≠已接。
+# 引擎面台账（普查对账锚）：已接=wired 四台（cleaning_rule_engine 2026-09-26
+#   cleaning_rules_hosting；cleaning_anomaly_engine 2026-09-28 cleaning_anomaly_hosting；
+#   expectation_governance+data_anomaly_alerter 2026-10-01 cleaning_expectation_hosting
+#   托管第四段，承载册=config/cleaning_expectations.yaml）——F04 清洗三引擎 P0 断链收口；
+#   purity_adjudicator（AI 判净）不属四台台账，#423 形态锁 standing_by_no_auto_feed（Owner 门）。
 schema_version: 1
 
 wiring:

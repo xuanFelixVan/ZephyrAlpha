@@ -2,10 +2,12 @@
 # [MODULE] zephyr.data.cleaning_engines
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] stdlib; zephyr.data.cleaning_rule_engine(惰性); zephyr.data_eng.cleaning_anomaly_engine(惰性); zephyr.data_eng.expectation_governance(惰性); zephyr.data_eng.data_anomaly_alerter(惰性)
-# [CONSUMERS] F04 C1 解锁后的接线方（现仅测试/诊断面；生产接线=Owner 门）
+# [CONSUMERS] F04 C1 接线方（2026-10-01 收口）：validate_expectations/evaluate_anomaly_signals
+#   生产消费方=zephyr.data.cleaning_expectation_hosting（L13 托管第四段，st-ffchief lane-f04）；
+#   run_dsl_rules/detect_frame_anomalies 见各 descriptor.consumer（第二/三段托管腿直调引擎本体）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 纯派发门面零判据值（判据值真源各引擎自带，宪法 RULE-SSOT）;engines_status 接线实况为静态声明须与 grep 复扫一致（虚标=事故）;三 data_eng 引擎本门面不构成生产接线（C1 解锁前调用方仅测试/诊断）;ai_adjudicate 只留接口位一律抛 OwnerGate（花钱点禁自作主张）
+# [INVARIANTS] 纯派发门面零判据值（判据值真源各引擎自带，宪法 RULE-SSOT）;engines_status 接线实况为静态声明须与 grep 复扫一致（虚标=事故）;四引擎生产接线态=本台账唯一事实源（2026-10-01 起 F04 四台全接，见各 descriptor.consumer）;ai_adjudicate 只留接口位一律抛 OwnerGate（花钱点禁自作主张）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -22,7 +24,7 @@ Cleaning Engines Facade — 清洗校验四引擎统一入口 (MOD-L00-004-R1 / 
 
 背景（F04 案卷 C1/C2/C6）: 清洗四引擎（DSL 规则引擎/清洗异常引擎/期望治理/
 数据异常告警器）API 各异、接线实况分裂——DSL 引擎已经 R-M1-06 读侧托管接线
-（cleaning_rules_hosting），其余三件零生产调用方挂 Owner 门。本门面提供：
+（cleaning_rules_hosting）。本门面提供：
 
     1. engines_status(): 四引擎静态台账（接线实况声明，与 grep 复扫对账）；
     2. 四个派发函数（run_dsl_rules/detect_frame_anomalies/validate_expectations/
@@ -30,8 +32,10 @@ Cleaning Engines Facade — 清洗校验四引擎统一入口 (MOD-L00-004-R1 / 
     3. ai_adjudicate(): C6 AI 判净站**接口位**——花钱点=OWNER-GATE，本件只留
        挂钩点（调用即抛 AiAdjudicationPendingOwnerGateError），不解锁不实现。
 
-红线: 本门面不改变任何引擎行为、不构成生产接线（C1 解锁前调用方=测试/诊断）；
-判据值一律在各引擎/配置真源，门面零判据（宪法 RULE-SSOT）。
+红线: 本门面不改变任何引擎行为；判据值一律在各引擎/配置真源，门面零判据
+（宪法 RULE-SSOT）。接线演进：2026-10-01 F04 P0 断链收口，四台全接
+（第二/三段托管腿直调引擎本体，validate/evaluate 两派发经本门面被
+cleaning_expectation_hosting 托管第四段生产消费）。
 
 SSoT: depgraph MOD-L00-004-R1
 Version: 0.1.0
@@ -93,24 +97,24 @@ _ENGINES: Final = (
         key="cleaning_anomaly_engine",
         module="zephyr.data_eng.cleaning_anomaly_engine",
         display_name="清洗异常引擎",
-        wired=False,
-        consumer="built-not-wired（F04 C1 挂 Owner 门）",
+        wired=True,
+        consumer="zephyr.data.cleaning_anomaly_hosting（L13 托管第三段，2026-09-28）",
         entry="detect_frame_anomalies",
     ),
     EngineDescriptor(
         key="expectation_governance",
         module="zephyr.data_eng.expectation_governance",
         display_name="期望治理门控",
-        wired=False,
-        consumer="built-not-wired（F04 C1 挂 Owner 门）",
+        wired=True,
+        consumer="zephyr.data.cleaning_expectation_hosting 经本门面 validate_expectations（L13 托管第四段，2026-10-01）",
         entry="validate_expectations",
     ),
     EngineDescriptor(
         key="data_anomaly_alerter",
         module="zephyr.data_eng.data_anomaly_alerter",
         display_name="数据异常告警器",
-        wired=False,
-        consumer="built-not-wired（F04 C1 挂 Owner 门）",
+        wired=True,
+        consumer="zephyr.data.cleaning_expectation_hosting 经本门面 evaluate_anomaly_signals（L13 托管第四段，2026-10-01）",
         entry="evaluate_anomaly_signals",
     ),
 )

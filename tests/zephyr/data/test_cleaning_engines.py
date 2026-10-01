@@ -36,13 +36,15 @@ class TestEnginesStatus:
         }
 
     def test_wiring_reality_declared(self):
-        """接线实况声明：DSL 引擎=已接线（hosting 读侧托管），其余三件 built-not-wired。"""
+        """接线实况声明：2026-10-01 F04 P0 断链收口，四台全接（grep 复扫口径）。"""
         by_key = {e.key: e for e in engines_status()}
         assert by_key["dsl_rule_engine"].wired is True
         assert "cleaning_rules_hosting" in by_key["dsl_rule_engine"].consumer
-        for key in ("cleaning_anomaly_engine", "expectation_governance", "data_anomaly_alerter"):
-            assert by_key[key].wired is False, f"{key} 接线实况声明漂移"
-            assert "Owner" in by_key[key].consumer
+        assert by_key["cleaning_anomaly_engine"].wired is True
+        assert "cleaning_anomaly_hosting" in by_key["cleaning_anomaly_engine"].consumer
+        for key in ("expectation_governance", "data_anomaly_alerter"):
+            assert by_key[key].wired is True, f"{key} 接线实况声明漂移"
+            assert "cleaning_expectation_hosting" in by_key[key].consumer
 
 
 class TestRunDslRules:

@@ -39,9 +39,9 @@
 #   节奏闸状态真源=报告文件名前 10 字符且**须验正文**（gate 自对+inspection_ran，防空文件催眠）;
 #   当前时间统一 now_utc() 入口（RULE-SCHEMA-TZ）；报告经 safe_write_text 落盘;
 #   引擎面宣告（四引擎接线台账）：本腿 wired=[cleaning_anomaly_engine]，此前已接
-#     cleaning_rule_engine（cleaning_rules_hosting 托管第二段）；**接口位预留**
-#     data_anomaly_alerter（六检测器，宿主同款托管待批）与 expectation_governance（期望套件，
-#     判据册 suite YAML 零在盘）——预留≠已接，普查器以此字段对账，禁据本件宣称四引擎全接
+#     cleaning_rule_engine（cleaning_rules_hosting 托管第二段）；2026-10-01 F04 P0 断链
+#     收口：expectation_governance+data_anomaly_alerter 由 cleaning_expectation_hosting
+#     托管第四段接成（四台全接，本件 RESERVED 归空，普查器以各腿 wired 字段对账）
 """清洗异常引擎排班托管腿（R-M1-06 逐引擎接线第二台；裁定 #423 F04 判净站前置体）。
 
 诞生背景（实证册 docs/_working/fullflow_mining/m1_data/wiring_C_cleaning.md §七"未完=如实报红"）：
@@ -139,9 +139,15 @@ _DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "cleaning_anomaly_rules.yaml"
 _ALLOWED_LEVELS: Final = frozenset({LEVEL_INFO, LEVEL_WARN, LEVEL_ERROR, LEVEL_CRITICAL})
 
 #: 引擎面接线台账（机读宣告：wired=已挂生产调用点；reserved=接口位预留未接，
-#: 普查器据此对账——禁据本件宣称四引擎全接）
-ENGINE_SLOTS_WIRED: Final = ("cleaning_rule_engine", "cleaning_anomaly_engine")
-ENGINE_SLOTS_RESERVED: Final = ("data_anomaly_alerter", "expectation_governance")
+#: 普查器据此对账）。2026-10-01 F04 P0 断链收口：后两台由 cleaning_expectation_hosting
+#: 托管第四段接成，本腿 RESERVED 归空（历史预留已清偿）。
+ENGINE_SLOTS_WIRED: Final = (
+    "cleaning_rule_engine",
+    "cleaning_anomaly_engine",
+    "expectation_governance",
+    "data_anomaly_alerter",
+)
+ENGINE_SLOTS_RESERVED: Final = ()
 
 #: 结论消费面实况的机读自述（禁把"能跑"写成"已执法"；同族 cleaning_rules_hosting 口径）
 ENFORCEMENT_STATE: Final = "advisory_only_half_wired"

@@ -189,7 +189,15 @@ def test_shipped_carrier_loads_and_declares_engine_slots() -> None:
     assert engines.price_jump_pct > 0
     assert targets and targets[0].table == TABLE
     assert "cleaning_anomaly_engine" in ENGINE_SLOTS_WIRED
-    assert set(ENGINE_SLOTS_RESERVED) == {"data_anomaly_alerter", "expectation_governance"}
+    # 2026-10-01 F04 P0 断链收口：后两台由 cleaning_expectation_hosting 托管第四段接成，
+    # 本腿 RESERVED 归空（历史预留清偿，普查对账口径）
+    assert set(ENGINE_SLOTS_WIRED) == {
+        "cleaning_rule_engine",
+        "cleaning_anomaly_engine",
+        "expectation_governance",
+        "data_anomaly_alerter",
+    }
+    assert ENGINE_SLOTS_RESERVED == ()
 
 
 # ---------------------------------------------------------------------------
