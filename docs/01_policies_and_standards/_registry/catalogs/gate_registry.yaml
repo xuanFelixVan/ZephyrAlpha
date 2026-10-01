@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-30T13:41:17Z'
+generated_at: '2026-10-01T20:20:31Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 181
+total_gates: 182
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -1880,6 +1880,17 @@ gates:
   name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY（CommitGate, priority=120）'
   entry: in-process (GitCommitGateway)
   description: TABLE-NAME-REGISTRY
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: TAKEOVER-PENDING
+  name: 'TAKEOVER-PENDING: TAKEOVER-PENDING（CommitGate, priority=160）'
+  entry: in-process (GitCommitGateway)
+  description: TAKEOVER-PENDING
   files_trigger: ''
   always_run: false
   category: commit_gate

@@ -301,6 +301,37 @@ class SessionInfo:
         )
 
 
+def _salvage_takeover_ledger(
+    project_root: Path | None, data: dict[str, dict], expired_sids: list[str], now: float
+) -> None:
+    """接管台账 L2 死亡显化钩子（st-ffchief-20261002，00_orchestration.md §2.2）。
+
+    判死处（list_active 的 expired 集合）best-effort 生成接管条目——死会话的
+    held_files/worktree/staging/在途袋/心跳残留显化给下一个 AI（接管台账+
+    TAKEOVER-PENDING 门禁的闭环前置）。best-effort 三重降级：import 失败只
+    warning（台账设施缺席不伤判死主流程）；单会话写账失败只 warning 继续；
+    永不抛异常（调用点在 registry 锁内，主流程优先）。
+    """
+    try:
+        try:
+            from scripts.governance.session_takeover_ledger import write_takeover_entry
+        except ImportError:
+            import sys as _sys
+
+            root_str = str(project_root) if project_root else os.getcwd()
+            if root_str not in _sys.path:
+                _sys.path.insert(0, root_str)
+            from scripts.governance.session_takeover_ledger import write_takeover_entry
+        root = project_root if project_root is not None else Path.cwd()
+        for sid in expired_sids:
+            try:
+                write_takeover_entry(root, sid, registry_entry=data.get(sid) or {}, now=now)
+            except Exception as e:  # noqa: BLE001 — 单会话显化失败不阻断判死主流程
+                logger.warning("SessionRegistry: takeover ledger write failed sid=%s: %s", sid, e)
+    except Exception as e:  # noqa: BLE001 — 台账设施缺席只降级不阻断
+        logger.warning("SessionRegistry: takeover ledger hook unavailable (fail-open): %s", e)
+
+
 def _is_session_alive(info: SessionInfo, now: float) -> bool:
     """判定 session 是否存活：PID liveness + 心跳新鲜度双判据。
 
@@ -806,6 +837,9 @@ class SessionRegistry:
             # 086d0e24 worker 证3 近期活跃宽限窗依赖记录存续，#119 治本）
             # S4-D：收割=删各会话自己的片（与写入同片原子，不碰他片）。
             if expired:
+                # L2 死亡显化（接管台账钩子，st-ffchief-20261002）：判死即生成接管条目
+                # （幂等 refresh；best-effort 永不阻断判死/收割主流程）
+                _salvage_takeover_ledger(self._project_root, data, expired, now)
                 reaped = 0
                 if _shards_enabled():
                     for sid in expired:

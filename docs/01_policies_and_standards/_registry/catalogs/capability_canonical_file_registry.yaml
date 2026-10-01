@@ -59180,4 +59180,9 @@ creation_tokens:
   created_by: st-ffchief-20261002
   capability: takeover-infra-design-doc
   merge_evaluation: "接管显化基建施工册（T1 设计/接口/测试证据），战役唯一档案非第二真源"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/takeover_pending_gate.yaml
+  token: takeover-gate-algoflow-takeover-pending-gate-20261001
+  created_by: st-ffchief-20261002
+  capability: takeover-gate-algoflow
+  merge_evaluation: "TAKEOVER-PENDING 门的算法面外置视图（externalizer 口径机生+AI 校准），非门本体第二真源"
 di_seam_exemptions: []

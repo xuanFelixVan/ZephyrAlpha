@@ -27,7 +27,7 @@ tier: tier_1_governance
 status: active
 version: 1.0.0
 created: '2026-07-21'
-last_updated: '2026-09-30'
+last_updated: '2026-10-01'
 unique_key: gate_id
 entry_schema:
   gate_id: string (required, unique) — gate 标识，与 GateSpec.gate_id 一致
@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 104
+total_gates: 105
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -736,4 +736,10 @@ gates:
   factory_function: make_fms_hygiene_gate
   source: in_process
   register_line: 0  # priority=138；2026-09-27 FMS 战役 B1（st-fms-chief-20260927）：读侧执法门四查类（DEADREF-NEW 棘轮/ASCII-NEW/PERM-EPHEMERAL/CAS-RESIDUE），own-scope，FMS_HYGIENE_GATE_MODE=warn 起步一行翻 block，与 DOC-REF-BROKEN 净零分工；测试 tests/gov_enforcement/read_side/test_fms_hygiene_gate.py
+  enabled: true
+- gate_id: TAKEOVER-PENDING
+  module_path: zephyr.gov_enforcement.commit_gates.takeover_pending_gate
+  factory_function: make_takeover_pending_gate
+  source: in_process
+  register_line: 0  # priority=160（治理簇尾 155/156/157 之后、REGISTRY-MASS-DELETION 200 之前）；2026-10-02 接管显化基建 T1（st-ffchief-20261002，Owner 亲点 00_orchestration.md §2.2 L3）：commit 文件命中 open 接管条目命中面（held_files+worktree dirty+staging files，真源=.runtime/takeover_ledger.jsonl 由 scripts/governance/session_takeover_ledger.py L1+L2 生成）即硬阻断并打印死亡证据+接管处方+--resolve 指引；tests/ 豁免；台账缺失/损坏行/模块不可达 fail-open；净零声明=新建能力（capability_lookup 'takeover' 零命中），无替代/合并条目；测试 tests/governance/test_session_takeover_ledger.py
   enabled: true
