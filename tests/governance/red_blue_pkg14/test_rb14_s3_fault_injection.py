@@ -110,6 +110,10 @@ def test_s3_red_env_failure_dead_lettered_by_old_semantics(sb_queue, tmp_path, m
     )
     assert sha256_file(QUEUE_SRC) == before, "产品文件被手术污染（红线）"
     monkeypatch.setattr(old, "_ATTEMPTS_BACKOFF_ENV", "ZEPHYR_RB14_UNUSED")  # 隔离 B5 计数面
+    # A1 瞬态截收网（_transient_env_failure_of，b7acad9ba1 落地）加入后，旧语义手术
+    # 副本须同步摘除这道第二截收网才是忠实旧码：否则 env 失败经文本标记再次改道
+    # requeue，红证失真（2026-10-01 总集成验收车道 st-circ-integ-20261001 发现并修）。
+    monkeypatch.setattr(old, "_transient_env_failure_of", lambda exc: False)
 
     q1 = _enqueue_scripted(sb_queue, "rb14-s3c", "ENVLOCK: 占锁件")
     landing = _FakeLanding()
