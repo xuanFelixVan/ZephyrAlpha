@@ -200,6 +200,8 @@ class TestRealLanding50Commits:
         shards = [range(0, 17), range(17, 34), range(34, 50)]  # 共 50 项
         # {qid: (path, content)}——入队快照真值，落盘后逐 commit 比对
         truth: dict[str, tuple[str, bytes]] = {}
+        # {qid: created_at}——到达时刻（B4 排队键真源；FIFO 期望序按此派生）
+        arrival: dict[str, str] = {}
         qids: list[str] = []
         errors: list[BaseException] = []
         lock = threading.Lock()
@@ -214,6 +216,7 @@ class TestRealLanding50Commits:
                     with lock:
                         qids.append(item["qid"])
                         truth[item["qid"]] = (path, content)
+                        arrival[item["qid"]] = str(item.get("created_at") or "")
                 except BaseException as exc:  # noqa: BLE001 - 测试收集一切异常
                     with lock:
                         errors.append(exc)
@@ -233,9 +236,22 @@ class TestRealLanding50Commits:
         commits = _dev_commits(tmp_repo)
         assert len(commits) == 50, "dev 新增 commit 数 == 入队数"
 
-        # FIFO 序：dev 拓扑序 == qid 单调序（66 号 §10）
+        # FIFO 序：dev 拓扑序 == 到达序（66 号 §10）。到达序按 B4/Rx-5 排队键真源
+        # _pick_head 同式派生：(created_at, qid) 升序——3 线程并发入队时 qid 字典序
+        # ≠ 到达序（跨会话交织），旧断言 sorted(qids) 把"qid 序"误当"到达序"，实为
+        # 单入队者近似，负载下线程交织即假红（2026-10-01 总集成验收车道复现：
+        # b 会话首件插在 a-0005/a-0006 之间，落盘序本身完美 FCFS）。
+        from datetime import datetime as _dt
+
+        def _arrival_key(q: str) -> tuple:
+            try:
+                return (_dt.fromisoformat(arrival[q]).timestamp(), q)
+            except (TypeError, ValueError):
+                return (0.0, q)
+
+        arrival_order = sorted(qids, key=_arrival_key)
         commit_qids = [_qid_of(msg) for _, msg in commits]
-        assert commit_qids == sorted(qids), "FIFO 破裂：dev commit 序 != qid 序"
+        assert commit_qids == arrival_order, "FIFO 破裂：dev commit 序 != 到达序(created_at,qid)"
 
         for sha, msg in commits:
             qid = _qid_of(msg)
