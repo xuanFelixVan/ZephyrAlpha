@@ -120,7 +120,7 @@ gates:
   register_line: 417
   enabled: true
 - gate_id: REFERENCE-INTEGRITY
-  files_trigger: ["docs/*.md", "docs/*.py", "docs/*.yaml", "docs/*.yml", "docs/*.json", "docs/*.txt"]  # P5 条件化(C98三批/st-finaldel-c98-20260930，台账#8)=docs/ 前缀收窄到门内 REFERENCE_TEXT_EXTS 六文本类型（消 png/二进制等非文本噪音触发，HEAD 实测 8641→8536；门内逐文件 exts 过滤不变=检出面零变化）；perf 方案§2.6 分级=内容扫描型/own-diff（门只核本次 commit files 的新增 §X.Y 引用）
+  files_trigger: ["docs/*.md", "docs/*.yaml", "docs/*.json"]  # P5 死触发清理(wave4-E/st-ffchief-20261001)=删 docs/*.py|*.txt|*.yml 三死模式（git ls-files 实测 docs/ 全树 .py/.txt/.yml 嵌套命中=0，永不触发=纯死重）；*.md|*.yaml|*.json 活模式保留（json 全树嵌套命中 2 件）；门内 REFERENCE_TEXT_EXTS 逐文件 exts 过滤不变=检出面零变化；perf 方案§2.6 分级=内容扫描型/own-diff（门只核本次 commit files 的新增 §X.Y 引用）
   module_path: zephyr.gov_enforcement.commit_gates.dangling_reference_gate
   factory_function: make_reference_integrity_gate
   source: in_process
@@ -164,7 +164,7 @@ gates:
   register_line: 427
   enabled: true
 - gate_id: UNSAFE-DICT-SPREAD
-  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消伪触发）；台内 staged .py added 行 own-scope 扫描不变（warn-only）
+  files_trigger: ["src/*.py", "scripts/*.py", "schemas/*.py", "sitecustomize.py"]  # P5 目录收窄(wave4-E/st-ffchief-20261001)=*.py 全域裸配→业务四径正向模式（fnmatch * 跨斜杠=任意深度全覆盖；tests/ 3971 件+.runtime/+docs/ 非业务面不再触发）；台内 staged .py added 行 own-scope 扫描不变（warn-only）
   module_path: zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate
   factory_function: make_unsafe_dict_spread_gate
   source: in_process
@@ -213,7 +213,7 @@ gates:
   register_line: 436
   enabled: true
 - gate_id: FILE-COPY
-  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消 x.py.md/.pyx 伪触发，HEAD 同窗实测零合法 .py 丢失）；台内只检 staged 新增 .py own-diff、无 .py 提交短路不变
+  files_trigger: ["src/*.py", "scripts/*.py", "schemas/*.py", "sitecustomize.py"]  # P5 目录收窄(wave4-E/st-ffchief-20261001)=*.py 全域裸配→业务四径正向模式（tests/+.runtime/+docs/ 非业务面不再触发，业务 .py 全覆盖含 schemas/+根 sitecustomize.py）；台内只检 staged 新增 .py own-diff、无 .py 提交短路不变
   module_path: zephyr.gov_enforcement.commit_gates.file_copy_gate
   factory_function: make_file_copy_gate
   source: in_process
@@ -269,7 +269,7 @@ gates:
   register_line: 448
   enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: FUNCTION-DUP
-  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消伪触发）；台内只检 staged 新增 .py own-diff（_split_own_foreign）不变
+  files_trigger: ["src/*.py", "scripts/*.py", "schemas/*.py", "sitecustomize.py"]  # P5 目录收窄(wave4-E/st-ffchief-20261001)=*.py 全域裸配→业务四径正向模式（tests/+.runtime/+docs/ 非业务面不再触发）；台内只检 staged 新增 .py own-diff（_split_own_foreign）不变
   module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
   factory_function: make_function_dup_gate
   source: in_process
@@ -333,7 +333,7 @@ gates:
   register_line: 459
   enabled: true
 - gate_id: COMPLEXITY-GUARD
-  files_trigger: ["*.py"]  # P5 收窄(C98一批/st-finaldel-c98-20260930)=.py 裸子串→*.py fnmatch（消伪触发）；三子台均 staged .py own-diff-only（新增函数判定）不变
+  files_trigger: ["src/*.py", "scripts/*.py", "schemas/*.py", "sitecustomize.py"]  # P5 目录收窄(wave4-E/st-ffchief-20261001)=*.py 全域裸配→业务四径正向模式（tests/+.runtime/+docs/ 非业务面不再触发）；三子台均 staged .py own-diff-only（新增函数判定）不变
   module_path: zephyr.gov_enforcement.commit_gates.high_complexity_gate
   factory_function: make_complexity_guard_gate
   source: in_process

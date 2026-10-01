@@ -915,11 +915,8 @@ gates:
   description: REFERENCE-INTEGRITY
   files_trigger:
   - docs/*.md
-  - docs/*.py
   - docs/*.yaml
-  - docs/*.yml
   - docs/*.json
-  - docs/*.txt
   always_run: false
   category: commit_gate
   status: active
@@ -1110,7 +1107,10 @@ gates:
   entry: in-process (GitCommitGateway)
   description: FILE-COPY
   files_trigger:
-  - '*.py'
+  - src/*.py
+  - scripts/*.py
+  - schemas/*.py
+  - sitecustomize.py
   always_run: false
   category: commit_gate
   status: active
@@ -1193,7 +1193,10 @@ gates:
   entry: in-process (GitCommitGateway)
   description: FUNCTION-DUP
   files_trigger:
-  - '*.py'
+  - src/*.py
+  - scripts/*.py
+  - schemas/*.py
+  - sitecustomize.py
   always_run: false
   category: commit_gate
   status: active
@@ -1250,7 +1253,10 @@ gates:
   entry: in-process (GitCommitGateway)
   description: COMPLEXITY-GUARD
   files_trigger:
-  - '*.py'
+  - src/*.py
+  - scripts/*.py
+  - schemas/*.py
+  - sitecustomize.py
   always_run: false
   category: commit_gate
   status: active
@@ -1955,7 +1961,10 @@ gates:
   entry: in-process (GitCommitGateway)
   description: UNSAFE-DICT-SPREAD
   files_trigger:
-  - '*.py'
+  - src/*.py
+  - scripts/*.py
+  - schemas/*.py
+  - sitecustomize.py
   always_run: false
   category: commit_gate
   status: active

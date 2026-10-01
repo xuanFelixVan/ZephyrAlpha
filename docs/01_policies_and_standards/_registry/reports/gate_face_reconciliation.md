@@ -11,19 +11,19 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 
 | 字段 | 值 |
 |---|---|
-| generated_at | 2026-09-27T06:15:33+00:00 |
-| head_commit | 5306c714c3d97a4a83d981419d6b8722a0b00ad2 |
+| generated_at | 2026-10-01T06:52:24+00:00 |
+| head_commit | 6d1283c73b61635303909799a112b0a86cf28605 |
 | generator | `scripts/governance/generate_gate_face_reconciliation.py` |
 | roster | `docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml` |
 | roster_entries | 104 |
 | roster_declared_total_gates | 104 |
-| enabled | 100 |
-| disabled | 4 |
-| loaded_in_process | 100 |
+| enabled | 96 |
+| disabled | 8 |
+| loaded_in_process | 96 |
 | load_aggregate_error | none |
-| trigger_conditional | 29 |
-| trigger_always_run | 71 |
-| red_count | 71 |
+| trigger_conditional | 24 |
+| trigger_always_run | 72 |
+| red_count | 72 |
 
 ## 三列主表（行=名册每台门；行序=名册物理序）
 
@@ -36,61 +36,61 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | COMMIT-SCOPE | enabled=true | 1 | —（空） | 0 | no |
 | SESSION-REQUIRED | enabled=true | 1 | —（空） | 0 | no |
 | CLAIM-REQUIRED | enabled=true | 1 | —（空） | 0 | no |
-| CAPABILITY-OVERLAP | enabled=false | 0 | —（空） | 0 | no |
+| CAPABILITY-OVERLAP | enabled=true | 1 | —（空） | 0 | no |
 | DIRECTORY-CONTRACT | enabled=true | 1 | —（空） | 0 | no |
-| TTL-METADATA | enabled=true | 1 | —（空） | 0 | no |
-| FILE-PLACEMENT-TTL | enabled=true | 1 | —（空） | 0 | no |
+| TTL-METADATA | enabled=false | 0 | —（空） | 0 | no |
+| FILE-PLACEMENT-TTL | enabled=false | 0 | —（空） | 0 | no |
 | CREATE-GUARD | enabled=true | 1 | —（空） | 0 | no |
-| RULE-EXECUTION-PAIRING | enabled=true | 1 | `docs/01_policies_and_standards/rules/`(87), `rule_`(377) | 460 | no |
-| REFERENCE-INTEGRITY | enabled=true | 1 | `docs/`(8286) | 8286 | no |
-| RULE-FOUR-WAY-ALIGN | enabled=true | 1 | `docs/01_policies_and_standards/rules/`(87), `rule_`(377) | 460 | no |
+| RULE-EXECUTION-PAIRING | enabled=true | 1 | `docs/01_policies_and_standards/rules/`(87), `rule_`(385) | 468 | no |
+| REFERENCE-INTEGRITY | enabled=true | 1 | `docs/*.md`(4507), `docs/*.yaml`(4108), `docs/*.json`(2) | 8617 | no |
+| RULE-FOUR-WAY-ALIGN | enabled=true | 1 | `docs/01_policies_and_standards/rules/`(87), `rule_`(385) | 468 | no |
 | RULING-COMMIT-VERIFIED | enabled=true | 1 | —（空） | 0 | no |
-| R5-DIGIT-SUFFIX | enabled=true | 1 | `docs/`(8286), `scripts/`(1354), `src/`(4033), `data/`(976) | 14101 | no |
+| R5-DIGIT-SUFFIX | enabled=true | 1 | `docs/`(8722), `scripts/`(1399), `src/`(4068), `data/`(1188) | 14810 | no |
 | TRANSLATION-COVERAGE | enabled=true | 1 | —（空） | 0 | no |
 | ENCODING-SAFETY | enabled=true | 1 | —（空） | 0 | no |
 | SSOT-REDEFINITION | enabled=true | 1 | —（空） | 0 | no |
-| UNSAFE-DICT-SPREAD | enabled=true | 1 | `.py`(8943) | 8943 | no |
+| UNSAFE-DICT-SPREAD | enabled=true | 1 | `src/*.py`(3795), `scripts/*.py`(1162), `schemas/*.py`(236), `sitecustomize.py`(1) | 5194 | no |
 | PURE-SHIM | enabled=true | 1 | —（空） | 0 | no |
 | PURE-ASSERTION | enabled=true | 1 | —（空） | 0 | no |
 | NOQA-VALIDATION | enabled=true | 1 | —（空） | 0 | no |
 | NO-DOMAIN-NAME-ZH-DIRECT-ACCESS | enabled=true | 1 | —（空） | 0 | no |
 | DATETIME-NOW-FORBIDDEN | enabled=true | 1 | —（空） | 0 | no |
-| GATE-VOCAB | enabled=false | 0 | —（空） | 0 | no |
+| GATE-VOCAB | enabled=true | 1 | —（空） | 0 | no |
 | SNAPSHOT-DRIFT | enabled=true | 1 | —（空） | 0 | no |
-| FILE-COPY | enabled=true | 1 | `.py`(8943) | 8943 | no |
+| FILE-COPY | enabled=true | 1 | `src/*.py`(3795), `scripts/*.py`(1162), `schemas/*.py`(236), `sitecustomize.py`(1) | 5194 | no |
 | ID-UNIQUENESS | enabled=true | 1 | `.pre-commit-config.yaml`(1) | 1 | no |
-| EXEMPT-ZONE-FM | enabled=true | 1 | —（空） | 0 | no |
-| MODULE-ID-CONSISTENCY | enabled=true | 1 | —（空） | 0 | no |
-| PERMANENT-SYSTEM-TRIGGER | enabled=false | 0 | —（空） | 0 | no |
+| EXEMPT-ZONE-FM | enabled=false | 0 | —（空） | 0 | no |
+| MODULE-ID-CONSISTENCY | enabled=false | 0 | —（空） | 0 | no |
+| PERMANENT-SYSTEM-TRIGGER | enabled=true | 1 | —（空） | 0 | no |
 | MSG-EXPOSURE | enabled=true | 1 | —（空） | 0 | no |
 | EMPTY-HANDLER | enabled=true | 1 | —（空） | 0 | no |
 | ORPHAN-MODULE | enabled=true | 1 | —（空） | 0 | no |
-| DOC-REF-BROKEN | enabled=true | 1 | —（空） | 0 | no |
-| FUNCTION-DUP | enabled=true | 1 | `.py`(8943) | 8943 | no |
-| NO-BARE-GETENV | enabled=true | 1 | `.env`(1), `secret`(36), `credential`(6), `token`(16), `password`(0), `api_key`(0), `private_key`(1) | 60 | no |
+| DOC-REF-BROKEN | enabled=false | 0 | —（空） | 0 | no |
+| FUNCTION-DUP | enabled=true | 1 | `src/*.py`(3795), `scripts/*.py`(1162), `schemas/*.py`(236), `sitecustomize.py`(1) | 5194 | no |
+| NO-BARE-GETENV | enabled=true | 1 | —（空） | 0 | no |
 | MSG-STYLE | enabled=true | 1 | —（空） | 0 | no |
 | NO-UPWARD-IMPORT | enabled=true | 1 | —（空） | 0 | no |
 | NO-HARDCODED-URL | enabled=true | 1 | —（空） | 0 | no |
-| MAP-ALIGNMENT | enabled=true | 1 | `docs/02_enterprise_architecture/`(53), `docs/03_modules/`(4797), `alignment_checklist`(1) | 4851 | no |
+| MAP-ALIGNMENT | enabled=true | 1 | `src/zephyr/governance/depgraph_schema.py`(1), `src/zephyr/governance/persistence/dataflowgraph_schema.py`(1), `src/zephyr/governance/persistence/decisiongraph_schema.py`(1), `scripts/governance/apply_depgraph.py`(1), `scripts/governance/apply_dataflowgraph.py`(1), `scripts/governance/apply_decisiongraph.py`(1), `scripts/governance/generate_project_depgraph.py`(1), `docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml`(1), `scripts/governance/d5_architecture/generators/align_panoramas.py`(1), `docs/03_modules/*.md`(1429) | 1438 | no |
 | NO-BARE-SQL | enabled=true | 1 | —（空） | 0 | no |
 | CH-BATCH-SIZE | enabled=true | 1 | —（空） | 0 | no |
 | CH-FINAL-GATE | enabled=true | 1 | —（空） | 0 | no |
-| CH-VERSION-COL | enabled=true | 1 | `schema`(345), `ddl`(37) | 382 | no |
-| COMPLEXITY-GUARD | enabled=true | 1 | `.py`(8943) | 8943 | no |
+| CH-VERSION-COL | enabled=true | 1 | `schema`(347), `ddl`(37) | 384 | no |
+| COMPLEXITY-GUARD | enabled=true | 1 | `src/*.py`(3795), `scripts/*.py`(1162), `schemas/*.py`(236), `sitecustomize.py`(1) | 5194 | no |
 | ALGO-NOTE-SYNC | enabled=true | 1 | —（空） | 0 | no |
-| ALGO-FLOW-LINK | enabled=false | 0 | —（空） | 0 | no |
-| META-TESTS-COVERAGE | enabled=true | 1 | `tests/`(3901) | 3901 | no |
+| ALGO-FLOW-LINK | enabled=true | 1 | —（空） | 0 | no |
+| META-TESTS-COVERAGE | enabled=true | 1 | `src/zephyr/gov_enforcement/commit_gates/`(125) | 125 | no |
 | TEST-SOURCE-CONSISTENCY | enabled=true | 1 | —（空） | 0 | no |
-| BLUEPRINT-FORMAT | enabled=true | 1 | —（空） | 0 | no |
-| GATE-DOMAIN-FK | enabled=true | 1 | `.py`(8943) | 8943 | no |
-| BLUEPRINT-HEADER | enabled=true | 1 | —（空） | 0 | no |
+| BLUEPRINT-FORMAT | enabled=false | 0 | —（空） | 0 | no |
+| GATE-DOMAIN-FK | enabled=true | 1 | `*.py`(9159) | 9159 | no |
+| BLUEPRINT-HEADER | enabled=false | 0 | —（空） | 0 | no |
 | CAP-CONSISTENCY | enabled=true | 1 | —（空） | 0 | no |
 | NO-IMPORT-SIDE-EFFECT | enabled=true | 1 | —（空） | 0 | no |
-| DEPGRAPH-FRESHNESS | enabled=true | 1 | `src/`(4033), `scripts/`(1354), `depgraph`(45) | 5414 | no |
-| RECONCILER-HEALTH | enabled=true | 1 | `governance`(2543) | 2543 | no |
-| SCRIPTS-IMPORT-INTEGRITY | enabled=true | 1 | `scripts/`(1354) | 1354 | no |
+| DEPGRAPH-FRESHNESS | enabled=true | 1 | `src/`(4068), `scripts/`(1399) | 5467 | no |
+| RECONCILER-HEALTH | enabled=true | 1 | —（空） | 0 | no |
+| SCRIPTS-IMPORT-INTEGRITY | enabled=false | 0 | `scripts/*.py`(1162) | 1162 | no |
 | GIT-CALL-BUDGET | enabled=true | 1 | —（空） | 0 | no |
-| BARE-SUBPROCESS | enabled=true | 1 | `.env`(1), `secret`(36), `credential`(6), `token`(16), `password`(0), `api_key`(0), `private_key`(1) | 60 | no |
+| BARE-SUBPROCESS | enabled=true | 1 | —（空） | 0 | no |
 | UNDEFINED-NAME | enabled=true | 1 | —（空） | 0 | no |
 | IMPORT-INTEGRITY | enabled=true | 1 | —（空） | 0 | no |
 | CAPABILITY-LOOKUP-REQUIRED | enabled=true | 1 | —（空） | 0 | no |
@@ -100,8 +100,8 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | DERIVATION-ANNOTATION | enabled=true | 1 | —（空） | 0 | no |
 | RELATIVE-PATH-LITERAL | enabled=true | 1 | —（空） | 0 | no |
 | CONSUMERS-ACCURACY | enabled=true | 1 | `capability_canonical`(1) | 1 | no |
-| SCHEMA-FILE-EXISTS | enabled=true | 1 | `schema`(345) | 345 | no |
-| ASYNCIO-RUN-IN-CONTEXT | enabled=true | 1 | `.py`(8943) | 8943 | no |
+| SCHEMA-FILE-EXISTS | enabled=true | 1 | `schema`(347) | 347 | no |
+| ASYNCIO-RUN-IN-CONTEXT | enabled=true | 1 | `src/zephyr/*.py`(3795) | 3795 | no |
 | MUTABLE-CONST-WITHOUT-FINAL | enabled=true | 1 | —（空） | 0 | no |
 | OPEN-WITHOUT-WITH | enabled=true | 1 | —（空） | 0 | no |
 | ZEPHYR-ENV-DIRECT-ACCESS | enabled=true | 1 | —（空） | 0 | no |
@@ -111,23 +111,23 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | WORKTREE-REQUIRED | enabled=true | 1 | —（空） | 0 | no |
 | TEST-RESIDUE-SSOT | enabled=true | 1 | —（空） | 0 | no |
 | SECRET-REGISTRY-CONSISTENCY | enabled=true | 1 | —（空） | 0 | no |
-| NO-SECRET-HARDCODE | enabled=true | 1 | `.env`(1), `secret`(36), `credential`(6), `token`(16), `password`(0), `api_key`(0), `private_key`(1) | 60 | no |
-| RECONCILER-FILE-OPS | enabled=true | 1 | `governance`(2543) | 2543 | no |
+| NO-SECRET-HARDCODE | enabled=true | 1 | —（空） | 0 | no |
+| RECONCILER-FILE-OPS | enabled=true | 1 | `src/zephyr/governance/`(336), `src/zephyr/gov_enforcement/`(300), `scripts/governance/`(729), `scripts/backup/`(19) | 1384 | no |
 | REGISTRY-CODE-ANCHOR | enabled=true | 1 | —（空） | 0 | no |
 | STASH-ACCUMULATION | enabled=true | 1 | —（空） | 0 | no |
 | TABLE-NAME-REGISTRY | enabled=true | 1 | —（空） | 0 | no |
 | GATE-ERRCODE-CONSISTENCY | enabled=true | 1 | `architecture_model/contracts/`(3) | 3 | no |
 | HOT-FILE-BASE-FRESHNESS | enabled=true | 1 | —（空） | 0 | no |
-| STATE-VOCAB-REGISTRY | enabled=true | 1 | `src/`(4033), `.py`(8943) | 9215 | no |
-| TAG-VOCAB | enabled=true | 1 | `library`(119), `catalogs/`(86) | 204 | no |
-| BLOOD-FLESH | enabled=true | 1 | `.py`(8943) | 8943 | no |
+| STATE-VOCAB-REGISTRY | enabled=true | 1 | `src/zephyr/shared/vocab/`(2), `docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml`(1), `added:*.py`(0) | 3 | no |
+| TAG-VOCAB | enabled=true | 1 | `library`(138), `catalogs/`(86) | 223 | no |
+| BLOOD-FLESH | enabled=true | 1 | `src/zephyr/*.py`(3795), `scripts/*.py`(1162), `docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml`(1) | 4958 | no |
 | FRONTEND-TRUTH-SOURCE | enabled=true | 1 | —（空） | 0 | no |
 | BUSINESS-REGISTRY | enabled=true | 1 | —（空） | 0 | no |
 | REGISTRY-MASS-DELETION | enabled=true | 1 | —（空） | 0 | no |
 | REGISTRY-YAML-PARSE | enabled=true | 1 | —（空） | 0 | no |
 | SPLIT-COORDINATION | enabled=true | 1 | —（空） | 0 | no |
 | SYNTAX-VALIDATION | enabled=true | 1 | —（空） | 0 | no |
-| RESOURCE-SCHEDULE | enabled=true | 1 | `tasks.yaml`(1), `config/`(124) | 124 | no |
+| RESOURCE-SCHEDULE | enabled=true | 1 | `tasks.yaml`(1), `config/`(131) | 131 | no |
 | REAL-KEY-REFERENCE-SCAN | enabled=true | 1 | —（空） | 0 | no |
 | TASK-ORDER-DOCS-LOCK | enabled=true | 1 | —（空） | 0 | no |
 | CONSTITUTION-LINE-LIMIT | enabled=true | 1 | —（空） | 0 | no |
@@ -145,9 +145,8 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | COMMIT-SCOPE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | SESSION-REQUIRED | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | CLAIM-REQUIRED | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| CAPABILITY-OVERLAP | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | DIRECTORY-CONTRACT | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| TTL-METADATA | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| FILE-PLACEMENT-TTL | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | CREATE-GUARD | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | RULING-COMMIT-VERIFIED | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | TRANSLATION-COVERAGE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
@@ -158,13 +157,13 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | NOQA-VALIDATION | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | NO-DOMAIN-NAME-ZH-DIRECT-ACCESS | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | DATETIME-NOW-FORBIDDEN | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| GATE-VOCAB | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | SNAPSHOT-DRIFT | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| EXEMPT-ZONE-FM | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| MODULE-ID-CONSISTENCY | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| PERMANENT-SYSTEM-TRIGGER | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | MSG-EXPOSURE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | EMPTY-HANDLER | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | ORPHAN-MODULE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| DOC-REF-BROKEN | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| NO-BARE-GETENV | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | MSG-STYLE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | NO-UPWARD-IMPORT | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | NO-HARDCODED-URL | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
@@ -172,12 +171,13 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | CH-BATCH-SIZE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | CH-FINAL-GATE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | ALGO-NOTE-SYNC | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| ALGO-FLOW-LINK | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | TEST-SOURCE-CONSISTENCY | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| BLUEPRINT-FORMAT | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
-| BLUEPRINT-HEADER | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | CAP-CONSISTENCY | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | NO-IMPORT-SIDE-EFFECT | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| RECONCILER-HEALTH | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | GIT-CALL-BUDGET | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| BARE-SUBPROCESS | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | UNDEFINED-NAME | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | IMPORT-INTEGRITY | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | CAPABILITY-LOOKUP-REQUIRED | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
@@ -194,6 +194,7 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 | WORKTREE-REQUIRED | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | TEST-RESIDUE-SSOT | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | SECRET-REGISTRY-CONSISTENCY | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
+| NO-SECRET-HARDCODE | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | REGISTRY-CODE-ANCHOR | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | STASH-ACCUMULATION | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
 | TABLE-NAME-REGISTRY | R2-trigger-empty-always-run | files_trigger 空=每链全跑（1A.3 悬案②同款） |
@@ -214,10 +215,14 @@ regenerate: python scripts/governance/generate_gate_face_reconciliation.py
 
 | gate_id | 进程内实载 |
 |---|---|
-| CAPABILITY-OVERLAP | 0 |
-| GATE-VOCAB | 0 |
-| PERMANENT-SYSTEM-TRIGGER | 0 |
-| ALGO-FLOW-LINK | 0 |
+| TTL-METADATA | 0 |
+| FILE-PLACEMENT-TTL | 0 |
+| EXEMPT-ZONE-FM | 0 |
+| MODULE-ID-CONSISTENCY | 0 |
+| DOC-REF-BROKEN | 0 |
+| BLUEPRINT-FORMAT | 0 |
+| BLUEPRINT-HEADER | 0 |
+| SCRIPTS-IMPORT-INTEGRITY | 0 |
 
 > 本表=只读报告件：禁据此改任何门禁 enabled 态（flag 翻转=Owner 门位）；
 > 判据真源=docs/_working/total_command_closeout/10_wave_plan.md §1A.3。
