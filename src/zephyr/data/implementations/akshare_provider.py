@@ -1344,7 +1344,14 @@ class AkshareIngestProvider(IngestProviderBase):
         return pd.concat(dfs, ignore_index=True)
 
     def _fetch_repo_rates(self, policy) -> pd.DataFrame:
-        """获取回购定盘利率（FR001/FR007/FR014/FDR001/FDR007/FDR014，日频）。"""
+        """获取回购定盘利率（FR001/FR007/FR014/FDR001/FDR007/FDR014，日频）。
+
+        日期必须传紧凑 YYYYMMDD：akshare repo_rate_hist 内部按
+        start_date[:4]/[4:6]/[6:] 切片拼参，传 %Y-%m-%d 会被拼成
+        "2026--0-9-01"，chinamoney FrrHis 接口对非法日期返回空/兜底
+        records，pd.DataFrame 后无 frValueMap 列 → KeyError('frValueMap')
+        （2026-10-01 修，此前 macro_data_incremental 单日 215 连败根因）。
+        """
         import akshare as ak
 
         end = datetime.date.today()
@@ -1352,8 +1359,8 @@ class AkshareIngestProvider(IngestProviderBase):
         return self._call_with_policy(
             ak.repo_rate_hist,
             policy,
-            start_date=start.strftime("%Y-%m-%d"),
-            end_date=end.strftime("%Y-%m-%d"),
+            start_date=start.strftime("%Y%m%d"),
+            end_date=end.strftime("%Y%m%d"),
         )
 
     def _fetch_cn_bond_yield(self, policy) -> pd.DataFrame:
