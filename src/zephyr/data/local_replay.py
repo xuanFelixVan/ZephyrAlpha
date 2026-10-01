@@ -5,7 +5,8 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 本地落盘文件原子写入（先写.tmp再rename）; manifest追加模式（JSONL）; 回灌成功后删除文件+manifest条目; 回灌失败保留文件等下次重试; 回灌使用manifest保存的cols_clause(不重新查询表列,防列数不匹配); 回灌传create_fallback=False防重复落盘
+# [INVARIANTS] 本地落盘文件原子写入（先写.tmp再rename）; manifest追加模式（JSONL）; 回灌成功后删除文件+manifest条目; 回灌失败保留文件等下次重试;
+#   毒丸隔离（P2b 2026-10-01）：同文件连续失败≥POISON_QUARANTINE_THRESHOLD 且 CH 可达（文件级结构性失败）→ 搬 _quarantine_<date>/ 留证+manifest 除名，防单文件无限重试堵队（technical_indicator 0921 批次卡死 10 天病根）; 回灌使用manifest保存的cols_clause(不重新查询表列,防列数不匹配); 回灌传create_fallback=False防重复落盘
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -230,6 +231,64 @@ def _file_key(value: object) -> str:
     return str(value).replace("\\", "/")
 
 
+# 毒丸隔离阈值（2026-10-01 lane-datapipe P2b 治本）：同一文件连续失败 N 次（CH 可达=
+# 文件级结构性失败，非全局断连）即搬 _quarantine_<date>/ 留证+manifest 除名，
+# 不再无限重试堵队。病根实证：technical_indicator 单文件（36 万行 0921 批次）
+# 自 2026-09-21 起每 30 分钟一炸（cols_clause=null → 活表序截 206 列 vs writer
+# 序错位，回灌结构性必败），remaining=1 卡死 10 天+启动时曾积压 36 万文件。
+# 恢复路径=重算非回灌（同键数据由重算脚本 ReplacingMergeTree 幂等覆盖）。
+POISON_QUARANTINE_THRESHOLD = 20
+
+
+def _ch_reachable() -> bool:
+    """CH 可达性一次性轻探针（毒丸隔离判据：CH 可达时失败才可能是文件级结构性失败）。
+
+    全局断连（VM/CH 不可达）期间所有回灌都会失败，若照算失败数会误伤整批
+    正常文件——探针不可达时不计数隔离，等 CH 恢复自然重试。
+    读侧走 ch_reader（裁定 #ARCH-CH-007：禁 ch_writer.query 直读，FINAL 强制统一收口）；
+    SELECT 1 无表无 FINAL 语义，靠 `strip()=="1"` 区分可达/失败（ch_reader 失败返回 ""）。
+    """
+    try:
+        from . import ch_reader
+
+        return ch_reader.query("SELECT 1", timeout=5).strip() == "1"
+    except Exception:  # noqa: BLE001 — 探针失败=不可达，返回 False 不抛
+        return False
+
+
+def _quarantine_poison(entry: dict, reason: str) -> bool:
+    """毒丸文件隔离：搬 `_quarantine_<yyyymmdd>/` 留证 + README 追加台账 + manifest 除名准备。
+
+    返回 True=文件已隔离（调用方应从 manifest 除名）；False=搬移 IO 失败
+    （条目保留继续计数，下轮再试隔离）。目录名不带双下划线 → _adopt_orphans
+    的 `<table_dir>/<file>` 布局判定不收编隔离件（另有显式 startswith 防御）。
+    """
+    try:
+        qdir = _FALLBACK_DIR / f"_quarantine_{time.strftime('%Y%m%d')}"
+        file_path = _FALLBACK_DIR / entry["file"]
+        if file_path.exists():
+            qdir.mkdir(parents=True, exist_ok=True)
+            dest = qdir / Path(entry["file"]).name
+            os.replace(str(file_path), str(dest))
+            with open(qdir / "README.txt", "a", encoding="utf-8") as f:
+                f.write(
+                    f"{time.strftime('%Y-%m-%d %H:%M:%S')} 毒丸自动隔离: {entry.get('file')} "
+                    f"table={entry.get('table')} rows={entry.get('rows')} "
+                    f"连续失败 {entry.get('failures')} 次（CH 可达=文件级结构性失败，非全局断连）。"
+                    f"末次原因: {reason}\n"
+                )
+        log.error(
+            "local_replay: 毒丸隔离 %s（连续失败 %d 次，移入 %s 留证，manifest 除名；恢复路径=人工排查/重算，非回灌）",
+            entry.get("file"),
+            entry.get("failures"),
+            qdir.name,
+        )
+        return True
+    except Exception as e:  # noqa: BLE001 — 隔离失败不炸回灌主流程
+        log.error("local_replay: 毒丸隔离失败 %s: %s", entry.get("file"), e)
+        return False
+
+
 def _write_manifest(entries: list[dict], exclude_files: frozenset = frozenset()) -> None:
     """重写 manifest（线程安全 + 跨进程合并写，防丢更新）。
 
@@ -303,14 +362,18 @@ def _adopt_orphans() -> int:
         parts = rel.split("/")
         if len(parts) != 2 or "__" not in parts[0]:
             continue  # 不符合 <table_dir>/<file>.tsv 布局的文件不收编（留人工判断）
+        if parts[0].startswith("_quarantine"):
+            continue  # 毒丸隔离区（P2b）永不收编回灌——隔离即判回灌结构性必败
         table = parts[0].replace("__", ".", 1)
-        adopted.append({
-            "table": table,
-            "cols_clause": None,
-            "file": rel,
-            "rows": sum(1 for _ in open(p, "rb")),  # noqa: r144-open  单行只读计数行内表达式，无法 with 包装，句柄即用即弃
-            "ts": time.strftime("%Y%m%d_%H%M%S") + "_adopted",
-        })
+        adopted.append(
+            {
+                "table": table,
+                "cols_clause": None,
+                "file": rel,
+                "rows": sum(1 for _ in open(p, "rb")),  # noqa: r144-open  单行只读计数行内表达式，无法 with 包装，句柄即用即弃
+                "ts": time.strftime("%Y%m%d_%H%M%S") + "_adopted",
+            }
+        )
     if adopted:
         log.warning(
             "local_fallback: 收编 %d 个孤儿兜底文件进 manifest（manifest 曾丢失/重置，数据找回）",
@@ -318,16 +381,19 @@ def _adopt_orphans() -> int:
         )
         lock_path = _manifest_fs_lock()
         try:
-            with _manifest_lock:
-                with open(_MANIFEST_PATH, "a", encoding="utf-8") as f:
-                    for e in adopted:
-                        f.write(json.dumps(e, ensure_ascii=False) + "\n")
+            with _manifest_lock, open(_MANIFEST_PATH, "a", encoding="utf-8") as f:
+                for e in adopted:
+                    f.write(json.dumps(e, ensure_ascii=False) + "\n")
         finally:
             _manifest_fs_unlock(lock_path)
     return len(adopted)
 
-def _replay_one_file(entry: dict, ch_writer_mod) -> str:
-    """回灌单个文件。返回 'replayed' / 'failed' / 'skipped'。"""
+
+def _replay_one_file(entry: dict, ch_writer_mod, err_out: list | None = None) -> str:
+    """回灌单个文件。返回 'replayed' / 'failed' / 'skipped'。
+
+    err_out（可选）：传入 list 时把末次失败原因追加进去（毒丸隔离台账用），不改变返回值契约。
+    """
     file_path = _FALLBACK_DIR / entry["file"]
     if not file_path.exists():
         log.warning("local_replay: 文件不存在，跳过: %s", entry["file"])
@@ -379,9 +445,13 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
             log.info("local_replay: %s 回灌成功 (%d 行)", entry["file"], entry.get("rows", 0))
             return "replayed"
         log.warning("local_replay: %s 回灌失败，保留待重试", entry["file"])
+        if err_out is not None:
+            err_out.append(f"write_tsv 返回 False（HTTP API 失败/列序不匹配）file={entry['file']}")
         return "failed"
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.error("local_replay: %s 回灌异常: %s", entry["file"], e)
+        if err_out is not None:
+            err_out.append(f"{type(e).__name__}: {e}"[:300])
         return "failed"
 
 
@@ -416,6 +486,7 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
     remaining_entries: list[dict] = []
     replayed_files: set[str] = set()
     processed = 0
+    err_sink: list = []  # 本批末次失败原因（毒丸隔离台账用，P2b）
 
     for table_entries in by_table.values():
         if processed >= max_files:
@@ -425,7 +496,8 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
             if processed >= max_files:
                 remaining_entries.append(entry)
                 continue
-            status = _replay_one_file(entry, ch_writer)
+            err_sink.clear()
+            status = _replay_one_file(entry, ch_writer, err_out=err_sink)
             if status == "replayed":
                 result["replayed"] += 1
                 replayed_files.add(entry.get("file"))
@@ -440,6 +512,18 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
                 replayed_files.add(entry.get("file"))
             elif status == "failed":
                 result["failed"] += 1
+                entry["failures"] = int(entry.get("failures", 0)) + 1
+                if entry["failures"] >= POISON_QUARANTINE_THRESHOLD:
+                    # 毒丸隔离判据（P2b）：连续失败达阈值且 CH 可达=文件级结构性失败。
+                    # 本批已有成功=CH 必可达（免探针）；否则轻探一次——全局断连不隔离
+                    # （避免长断连误伤整批正常文件），等恢复自然重试。
+                    if result["replayed"] > 0 or _ch_reachable():
+                        if _quarantine_poison(entry, (err_sink[-1] if err_sink else "未知")):
+                            replayed_files.add(entry.get("file"))  # =从 manifest 除名
+                            result.setdefault("quarantined", 0)
+                            result["quarantined"] += 1
+                            processed += 1
+                            continue
                 remaining_entries.append(entry)
             processed += 1
 
@@ -504,9 +588,7 @@ def replay_catchup(
         for k in ("replayed", "failed", "skipped"):
             total[k] += r.get(k, 0)
         if r.get("replayed", 0) == 0 and r.get("skipped", 0) == 0:
-            log.warning(
-                "local_replay: 追平中止——本轮零进展（剩余 %d 条全部 failed）", r.get("remaining", 0)
-            )
+            log.warning("local_replay: 追平中止——本轮零进展（剩余 %d 条全部 failed）", r.get("remaining", 0))
             break
     log.info(
         "local_replay: 追平结束 — %d 轮 成功 %d, 失败 %d, 跳过 %d（%.0fs）",

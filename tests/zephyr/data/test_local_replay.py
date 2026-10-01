@@ -171,6 +171,90 @@ class TestReplayOneFile:
 
         assert status == "failed"
 
+    def test_replay_failure_feeds_err_sink(self, tmp_path, monkeypatch):
+        """P2b：失败原因进 err_out（毒丸隔离台账用），返回值契约不变。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {"table": "c1_market.test", "file": "data.tsv", "rows": 1}
+        mock_cw = MagicMock()
+        mock_cw.write_tsv.return_value = False
+        sink: list = []
+
+        assert _replay_one_file(entry, mock_cw, err_out=sink) == "failed"
+        assert sink and "data.tsv" in sink[-1]
+
+    def test_quarantine_poison_moves_file_and_writes_readme(self, tmp_path, monkeypatch):
+        """P2b：毒丸隔离搬 _quarantine_<date>/ + README 留证，隔离区不被收编。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {"table": "c1_market.test", "file": "data.tsv", "rows": 1, "failures": 20}
+
+        assert local_replay._quarantine_poison(entry, "write_tsv False") is True
+        assert not tsv_path.exists()
+        qdirs = list(tmp_path.glob("_quarantine_*"))
+        assert len(qdirs) == 1
+        moved = list(qdirs[0].glob("data.tsv"))
+        assert len(moved) == 1 and moved[0].read_bytes() == b"v1\n"
+        readme = (qdirs[0] / "README.txt").read_text(encoding="utf-8")
+        assert "毒丸自动隔离" in readme and "write_tsv False" in readme
+
+    def test_replay_batch_quarantines_at_threshold(self, tmp_path, monkeypatch):
+        """P2b 回归：连续失败达阈值且 CH 可达 → 文件隔离 + manifest 归零（防单文件堵队）。
+
+        病根：technical_indicator 单文件 0921 批次结构性必败，remaining=1 卡死
+        10 天。修后：第 threshold 次失败即隔离留证，积压清零。
+        """
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", tmp_path / "_manifest.jsonl")
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        (tmp_path / "_manifest.jsonl").write_text(
+            '{"table": "c1_market.test", "cols_clause": null, "file": "data.tsv", "rows": 1, "ts": "x", "failures": 19}\n',
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(local_replay, "_ch_reachable", lambda: True)  # CH 可达=文件级失败
+
+        r = local_replay.replay_batch(max_files=10)
+
+        assert r["quarantined"] == 1 and r["failed"] == 1
+        assert r["remaining"] == 0
+        assert not tsv_path.exists()  # 已搬隔离区
+        assert list(tmp_path.glob("data.tsv")) == []
+        assert local_replay.backlog_file_count() == 0  # manifest 归零（堵队解除）
+
+    def test_replay_batch_no_quarantine_when_ch_down(self, tmp_path, monkeypatch):
+        """P2b 反向：CH 全局断连时不隔离（避免长断连误伤整批正常文件）。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", tmp_path / "_manifest.jsonl")
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        (tmp_path / "_manifest.jsonl").write_text(
+            '{"table": "c1_market.test", "cols_clause": null, "file": "data.tsv", "rows": 1, "ts": "x", "failures": 99}\n',
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(local_replay, "_ch_reachable", lambda: False)
+
+        r = local_replay.replay_batch(max_files=10)
+
+        assert "quarantined" not in r
+        assert tsv_path.exists()  # 文件保留等 CH 恢复
+        assert r["remaining"] == 1
+
+    def test_adopt_orphans_skips_quarantine(self, tmp_path, monkeypatch):
+        """P2b 防御：_quarantine* 目录内文件永不被孤儿收编回灌。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", tmp_path / "_manifest.jsonl")
+        qdir = tmp_path / "_quarantine_20261001"
+        qdir.mkdir()
+        (qdir / "poison.tsv").write_bytes(b"v1\n")
+
+        adopted = local_replay._adopt_orphans()
+
+        assert adopted == 0
+        assert local_replay.backlog_file_count() == 0
+
     def test_cols_clause_from_manifest(self, tmp_path, monkeypatch):
         """回灌时使用 manifest 保存的 cols_clause（裁定 #ARCH-CH-013 Phase 3 根因修复）。
 
@@ -487,9 +571,7 @@ class TestManifestKeyNormalization:
                 "ts": "20260915_171712_adopted",
             },
         ]
-        manifest_path.write_text(
-            "\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8"
-        )
+        manifest_path.write_text("\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8")
         monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
 
         with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
