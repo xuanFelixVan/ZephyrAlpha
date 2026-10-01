@@ -3,7 +3,7 @@
 # [DOMAIN] D_DATA
 # [TTL] permanent
 # 派生物（#183）：由 generate_policies.py 从 data_sources_registry.yaml 派生
-# 真源：architecture_model/data/data_sources_registry.yaml v2.4.0
+# 真源：architecture_model/data/data_sources_registry.yaml v2.6.0
 # 禁止手工修改此文件——改真源后由 reconciler 自动重生
 # policy_registry.py 的 maybe_reload 会在 mtime 变化时热更新
 
@@ -203,18 +203,18 @@ qweather:
   extra:
     requires_vpn: false
     note: 国内服务不需 VPN；QWeather key 免费注册（1000次/天）；写入 c1_market.weather_data，每日积累
-alt_fx_ecb:
+eastmoney_datacenter:
   rpm: 30
   concurrency: 1
   max_retries: 3
   backoff: exponential
-  initial_wait_sec: 3.0
-  retry_on:
-  - ConnectionError
-  - TimeoutError
-  - '500'
-  - '502'
-  - '503'
-  - '504'
-  extra:
-    note: 免 key 海外源（frankfurter.app ECB 镜像），代理探测同 fred 模式；每批 3 货币对×日频，体量小
+irm:
+  rpm: 30
+  concurrency: 1
+  max_retries: 3
+  backoff: exponential
+hyperliquid:
+  rpm: 240
+  concurrency: 1
+  max_retries: 3
+  backoff: exponential
