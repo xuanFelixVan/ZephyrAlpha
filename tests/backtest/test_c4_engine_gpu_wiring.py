@@ -98,6 +98,11 @@ def _weights(px, k=0):
     return wd
 
 
+def _core_stats(s: dict) -> dict:
+    """剥除 L2-B 守卫披露键（backend/guard_reason）——核面（零漂移）与披露面分离断言用。"""
+    return {k: v for k, v in s.items() if k not in ("backend", "guard_reason")}
+
+
 def test_cpu_backend_bitexact_hoisted(synth):
     """backend=cpu：hoisted/pre_tensor 与原路径逐位一致（零漂移红线）。"""
     w = _weights(synth)
@@ -106,7 +111,10 @@ def test_cpu_backend_bitexact_hoisted(synth):
     s1, n1 = eng.run_backtest_full(w, synth, backend="cpu", pre_tensor=pre)
     s2, n2 = eng.run_backtest_full(w, synth, pre_tensor=pre)
     assert np.array_equal(n0.values, n1.values) and s0 == s1
-    assert np.array_equal(n0.values, n2.values) and s0 == s2
+    # 缺省（backend=None→auto）：核面逐位零漂移；披露面按机器档位在案（GPU 机=守卫原因码）
+    assert np.array_equal(n0.values, n2.values) and _core_stats(s0) == _core_stats(s2)
+    assert s2["backend"] == "cpu"
+    assert s2["guard_reason"] in ("", eng._GUARD_SMALL_PANEL)
     assert np.array_equal(eng.daily_net_returns(w, synth, backend="cpu", pre_tensor=pre).values, n0.values)
     assert eng.run_backtest(w, synth, backend="cpu") == s0
 
@@ -143,7 +151,9 @@ def test_fastpath_ineligible_falls_back_bitexact(synth):
     w_short = w.iloc[10:]
     s2, n2 = eng.run_backtest_full(w_short, synth, backend="cpu")
     s3, n3 = eng.run_backtest_full(w_short, synth)
-    assert np.array_equal(n2.values, n3.values) and s2 == s3
+    # 核面零漂移（逐位）+ L2-B 披露面：索引错位=资格否决（守卫先于尺寸判定）
+    assert np.array_equal(n2.values, n3.values) and _core_stats(s2) == _core_stats(s3)
+    assert s3["backend"] == "cpu" and s3["guard_reason"] == eng._GUARD_INELIGIBLE
 
 
 @pytest.mark.skipif(gpu_core is None or not gpu_core.HAS_GPU, reason="cupy/CUDA 不可用（GPU 用例跳过）")
@@ -166,13 +176,14 @@ def test_gpu_parity_within_1e12(synth):
 
 @pytest.mark.skipif(gpu_core is None or not gpu_core.HAS_GPU, reason="cupy/CUDA 不可用（守卫用例按 CPU 恒等断言恒跑）")
 def test_auto_small_panel_no_gpu_drift(synth, monkeypatch):
-    """auto 档尺寸守卫：小面板（<_GPU_AUTO_MIN_CELLS）输出与显式 cpu 逐位一致。"""
+    """auto 档尺寸守卫：小面板（<_GPU_AUTO_MIN_CELLS）输出与显式 cpu 逐位一致（L2-B 披露在案）。"""
     monkeypatch.delenv("ZEPHYR_COMPUTE_BACKEND", raising=False)
     w = _weights(synth)
     assert w.size < eng._GPU_AUTO_MIN_CELLS
     s0, n0 = eng.run_backtest_full(w, synth, backend="cpu")
     s1, n1 = eng.run_backtest_full(w, synth)  # backend=None → auto
-    assert np.array_equal(n0.values, n1.values) and s0 == s1
+    assert np.array_equal(n0.values, n1.values) and _core_stats(s0) == _core_stats(s1)
+    assert s1["backend"] == "cpu" and s1["guard_reason"] == eng._GUARD_SMALL_PANEL
 
 
 def test_resolve_backend_values(monkeypatch):

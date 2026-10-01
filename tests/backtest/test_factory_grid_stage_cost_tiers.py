@@ -53,6 +53,7 @@ ENGINE = Path("scripts/backtest/translated/_c4_engine.py")
 FULL_TIERS = [0, 5, 10, 20, 40]
 
 # 缺省（未启用档位扫描）manifest 列序基准——零漂移硬验收的逐列对照
+# （L2-C st-fullscore-20260930 起基准含 backend/degrade 两列——后端/守卫披露随出生证落盘）
 BASELINE_MANIFEST_COLS = [
     "recipe_id",
     "prefix_key",
@@ -62,6 +63,8 @@ BASELINE_MANIFEST_COLS = [
     "max_drawdown",
     "avg_turnover",
     "net_days",
+    "backend",
+    "degrade",
     "values_json",
 ]
 BASELINE_SUMMARY_KEYS = {
@@ -81,6 +84,7 @@ BASELINE_SUMMARY_KEYS = {
     "net_returns_file",
     "n_trials_effective",
     "n_eff_meta",
+    "engine",
 }
 
 

@@ -156,6 +156,17 @@ class GridEvalOutcome:
     max_drawdown: float | None = None
     avg_turnover: float | None = None
     net_days: int = 0
+    backend: str = ""  # L2-C：实际计算后端（gpu|cpu；引擎 stats 披露透传，空=引擎旧版）
+    degrade: str = ""  # L2-C：守卫/降级结构化原因码（空=未降级；=引擎 stats guard_reason）
+
+
+class _GPUWaveFailure(RuntimeError):
+    """L2-C：GPU 波失败（fail-closed 信号）——整波弃置并重跑 CPU，禁半成品混合后端批次。"""
+
+
+#: --engine 三态（L2-C）：cpu=恒 pandas 原路；gpu=显式张量核（无视尺寸守卫，波败 fail-closed
+#: 重跑 CPU）；auto=按 env/守卫逐格解析（缺省=缺省行为）。非法值=ValueError。
+_VALID_ENGINES: tuple[str, ...] = ("cpu", "gpu", "auto")
 
 
 def _load_engine():
@@ -689,7 +700,7 @@ def stratified_sample(expansion, n_samples: int, seed: int, stratify_dims: tuple
     return picked[:n_samples]
 
 
-def run_batch(
+def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun 三参演进（存量批次主入口，参数对象重构归批F账非本批）
     n_samples: int,
     seed: int,
     start: str,
@@ -699,13 +710,55 @@ def run_batch(
     stratify_dims: tuple[str, ...] = (),
     *,
     cost_gate_tiers_bp: tuple[float, ...] | None = None,
+    engine: str = "auto",
+    engine_degrade: str = "",
+    _gpu_rerun: bool = False,
 ) -> dict:
     """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。
 
     cost_gate_tiers_bp（T3 方案①）: None（缺省）=现行行为逐位零漂移；传入档位集时
     每成功格点追加 per-point 成本档位扫描（manifest 增 cost 两列/summary 增两键），
     扫描异常=gate 层阴性（fail-closed，禁静默跳过）。
+    engine（L2-C 三态）: "cpu"=恒 pandas 原路；"gpu"=显式张量核（无视 auto 尺寸守卫，
+    波败 fail-closed 整波重跑 CPU）；"auto"=缺省（env/逐格尺寸守卫解析，语义不变）。
+    GPU 波失败=整波弃置重跑 CPU（_GPUWaveFailure，禁半成品混合后端批次），
+    summary 以 engine/engine_degrade 披露；manifest 增 backend/degrade 两列。
+    _gpu_rerun=内部递归护栏（重跑波不再进包装段，防无限递归）。
     """
+    if engine not in _VALID_ENGINES:
+        raise ValueError(f"engine 须为 {'|'.join(_VALID_ENGINES)}，得到 {engine!r}")
+    if not _gpu_rerun:
+        try:
+            return run_batch(
+                n_samples,
+                seed,
+                start,
+                end,
+                smoke=smoke,
+                subspace=subspace,
+                stratify_dims=stratify_dims,
+                cost_gate_tiers_bp=cost_gate_tiers_bp,
+                engine=engine,
+                _gpu_rerun=True,
+            )
+        except _GPUWaveFailure as exc:
+            import logging as _lg
+
+            _lg.getLogger(__name__).warning("GPU 波失败 fail-closed 整波重跑 CPU（禁半成品混合后端）: %s", exc)
+            return run_batch(
+                n_samples,
+                seed,
+                start,
+                end,
+                smoke=smoke,
+                subspace=subspace,
+                stratify_dims=stratify_dims,
+                cost_gate_tiers_bp=cost_gate_tiers_bp,
+                engine="cpu",
+                engine_degrade=f"gpu_wave_failed_rerun_cpu:{exc}",
+                _gpu_rerun=True,
+            )
+    # ——以下=单波单趟主体——
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
     (
@@ -719,6 +772,16 @@ def run_batch(
         prep_px_tensor,
         run_backtest_full_with_tiers,
     ) = _load_engine()
+    # L2-C 波级后端面：cpu=恒 pandas；gpu=显式张量核；auto=None（逐格守卫解析，缺省语义）。
+    # gpu_wave=本波实际可能驶入 GPU（显式 gpu，或 auto 解析为 gpu）——决定波败是否触发整波重跑。
+    # 探测走 gpu_core.resolve_backend（与引擎 _resolve_engine_backend 同一真源委托）；
+    # gpu_core 缺件=本波恒 CPU（gpu_wave=False，波败走原 per-recipe 阴性路径）。
+    _wave_backend: str | None = None if engine == "auto" else engine
+    try:
+        from zephyr.backtest.gpu_core import resolve_backend as _gpu_resolve
+    except ImportError:
+        _gpu_resolve = None
+    gpu_wave = _gpu_resolve is not None and _gpu_resolve(_wave_backend) == "gpu"
     compiler = GridCompiler.from_yaml(SCHEMA_PATH)
     expansion = compiler.compile(DEFAULT_CONTEXT)
     recipes_all = list(expansion.recipes)
@@ -826,17 +889,27 @@ def run_batch(
             # 成本门场景升级 run_backtest_full_with_tiers 单趟三产物（同 (weights,px)
             # 原第二趟 net_returns_by_tiers 免除，三产物与两调逐位一致）。
             nets_by_tier = None
-            if cost_gate_tiers_bp is not None:
-                stats, net, nets_by_tier = run_backtest_full_with_tiers(
-                    weights, closes_g, tuple(cost_gate_tiers_bp), pre_tensor=pre_tensor
-                )
-            else:
-                stats, net = run_backtest_full(weights, closes_g, pre_tensor=pre_tensor)
+            # L2-C: engine 透传（cpu=恒 pandas / gpu=显式张量核 / auto=None 逐格守卫解析）；
+            # GPU 波内调用失败=fail-closed 信号（整波弃置重跑 CPU，禁半成品混合后端批次），
+            # CPU 波内失败维持原 per-recipe 阴性路径（语义零漂移）。
+            try:
+                if cost_gate_tiers_bp is not None:
+                    stats, net, nets_by_tier = run_backtest_full_with_tiers(
+                        weights, closes_g, tuple(cost_gate_tiers_bp), backend=_wave_backend, pre_tensor=pre_tensor
+                    )
+                else:
+                    stats, net = run_backtest_full(weights, closes_g, backend=_wave_backend, pre_tensor=pre_tensor)
+            except Exception as exc:  # noqa: BLE001
+                if gpu_wave:
+                    raise _GPUWaveFailure(f"{r.recipe_id}: {type(exc).__name__}: {exc}") from exc
+                raise
             if len(net.dropna()) < 60 or float(net.std()) == 0:
                 raise RuntimeError(f"insufficient_net:{len(net)}")
             sharpe = stats["sharpe"]
             nets_for_neff[r.recipe_id] = [float(v) for v in net.values]
             nets_archive[r.recipe_id] = net  # 带日期索引归档（values-only 落盘=产物不自描述，归因读端实证缺陷）
+        except _GPUWaveFailure:
+            raise  # L2-C：GPU 波败信号直通批次级 fail-closed（整波重跑 CPU）
         except Exception as exc:  # noqa: BLE001
             negatives.append(
                 NegativeRecord(
@@ -890,6 +963,8 @@ def run_batch(
                 max_drawdown=stats["max_drawdown"],
                 avg_turnover=stats["avg_turnover_1side"],
                 net_days=len(net),
+                backend=str(stats.get("backend", "")),  # L2-C：实际后端披露透传（引擎旧版=空串）
+                degrade=str(stats.get("guard_reason") or ""),  # L2-C：守卫原因码（空=未降级）
             )
         )
 
@@ -969,7 +1044,11 @@ def run_batch(
         "net_returns_file": net_returns_file,
         "n_trials_effective": n_eff,
         "n_eff_meta": n_eff_meta,
+        "engine": engine,  # L2-C：三态引擎披露（cpu|gpu|auto）
     }
+    if engine_degrade:
+        # L2-C：GPU 波败 fail-closed 整波重跑 CPU 的披露键（空=未发生降级）
+        summary["engine_degrade"] = engine_degrade
     if cost_gate_tiers_bp is not None:
         # T3 方案①: 仅档位扫描启用时披露（缺省路径 summary 逐键零漂移）
         summary["cost_gate_tiers_bp"] = [float(t) for t in cost_gate_tiers_bp]
@@ -1216,6 +1295,12 @@ def main() -> int:
         help="跳过 E0 日历窗问闸（仅 --smoke 管线联通允许；正式跑批禁用；波12 点火类 stage=t2 无效）",
     )
     ap.add_argument(
+        "--engine",
+        default="auto",
+        choices=list(_VALID_ENGINES),
+        help="计算引擎三态（L2-C）：cpu=恒 pandas 原路；gpu=显式张量核（波败 fail-closed 整波重跑 CPU）；auto=env/尺寸守卫解析（缺省）",
+    )
+    ap.add_argument(
         "--verify-counts",
         action="store_true",
         help="只读对账尺：网格产物身份集计数 vs 台账逐批对照（禁任何写）；缺账批显式点名（P0-6）",
@@ -1255,6 +1340,7 @@ def main() -> int:
         subspace=subspace,
         stratify_dims=stratify,
         cost_gate_tiers_bp=stage_tiers,
+        engine=args.engine,
     )
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0

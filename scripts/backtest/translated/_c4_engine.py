@@ -482,12 +482,19 @@ def apply_fillability_gate(weights: pd.DataFrame, gate_limits: bool = True) -> p
 # 快路径前提=等形对齐（gpu_core 只吃已对齐 (T,S) 等形数组，reindex 索引语义留在本件 pandas 侧）；
 # CPU 后端恒走本件原 pandas 路径（零漂移红线，gpu_core 仅作 GPU 快路径）；
 # gpu_core 缺件（P0 未落地环境）=cpu 回退，原路径零影响。
-# auto 档尺寸守卫：串行闸循环 GPU 下=T 次小 kernel（kernel-launch 税），面板小时 GPU 反输
-# （T=1622 实测：S=1037 gpu 0.41s vs hoisted-cpu 0.10s；S=5217 gpu 0.93s vs 0.61s 反超
-# ——p1_wiring_benchmark.md）→ auto 只在实测赢面区（格数≥_GPU_AUTO_MIN_CELLS）走 gpu，
-# 小面板 auto=cpu-hoisted（最快）；显式 backend="gpu" 无视守卫（调用方自担）。
-_GPU_AUTO_MIN_CELLS: int = 8_000_000
+# auto 档尺寸守卫：小面板 gpu 输 hoisted-cpu（kernel-launch 税）——L2-A RawKernel 融合闸
+# （st-fullscore-20260930 重建批）把 T 次小 kernel 收敛为 1 次 launch 后，gpu 赢面区整体
+# 下移约一个数量级（原 8e6=8M cells 守卫按 T 次串行小 kernel 时代的实测钉定，退役）；
+# 重校准=5e5（L2-B，单维 cells，cols 维常量同步退役——RawKernel 后 cols 不再是独立瓶颈维）。
+# 显式 backend="gpu" 无视守卫（调用方自担）。
+_GPU_AUTO_MIN_CELLS: int = 500_000
 _VALID_BACKEND_OPTS = ("gpu", "cpu", "auto")
+
+# L2-B 守卫/后端披露键（stats 增 backend/guard_reason 两键——落 manifest backend/degrade 列，
+# 机械可审计禁静默）：guard_reason 空=守卫未介入；非空=本次回测被守卫挡回 CPU 的结构化原因码。
+_GUARD_SMALL_PANEL: str = "auto_guard_below_min_cells"
+_GUARD_INELIGIBLE: str = "fastpath_ineligible"
+_LAST_BACKEND_GUARD: dict[str, str] = {"backend": "cpu", "guard_reason": ""}
 
 
 def _resolve_engine_backend(backend: str | None) -> str:
@@ -567,12 +574,22 @@ def _backtest_core(
     （零漂移红线）；"gpu"=gpu_core 张量核（仅等形对齐格点，否则原路径）。
     pre_tensor（L1 hoist）：prep_px_tensor 产出 (closes, rets) 批级共享，免逐格重算；
     仅 CPU 原路径消费（GPU 核内含等价张量面）。
+    L2-B：实际后端与守卫判定记入 _LAST_BACKEND_GUARD（消费见 _stats_from_net 的
+    backend/guard_reason 披露键；同步执行流内紧邻消费，无跨线程读）。
     """
-    if _resolve_engine_backend(backend) == "gpu" and _gpu_fastpath_eligible(weights, px_close):
-        # auto 档尺寸守卫：小面板 gpu 输 hoisted-cpu（kernel-launch 税，实测见上注）——
-        # 仅显式 backend="gpu" 绕过；auto/env 解析出的 gpu 落在赢面区外=回 pandas。
+    be = _resolve_engine_backend(backend)
+    if be == "gpu" and _gpu_fastpath_eligible(weights, px_close):
+        # auto 档尺寸守卫：小面板 gpu 输 hoisted-cpu（kernel-launch 税，L2-A 后阈值重校准
+        # 8e6→5e5，见常量注）——仅显式 backend="gpu" 绕过；auto/env 解析出的 gpu 落在
+        # 赢面区外=回 pandas。
         if backend == "gpu" or weights.size >= _GPU_AUTO_MIN_CELLS:
+            _LAST_BACKEND_GUARD.update(backend="gpu", guard_reason="")
             return _backtest_core_gpu(weights, px_close, gate_limits, backend)
+        _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason=_GUARD_SMALL_PANEL)
+    elif be == "gpu":
+        _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason=_GUARD_INELIGIBLE)
+    else:
+        _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason="")
     if pre_tensor is not None:
         closes, rets = pre_tensor
     else:
@@ -585,23 +602,61 @@ def _backtest_core(
     return gross, turnover
 
 
-def _net_line(gross: pd.Series, turnover: pd.Series, slippage_bp: float | None) -> pd.Series:
+_COST_MODEL_ADAPTER: list[Any] = []  # 进程级缓存（适配器无状态，file-location 装载一次）
+
+
+def _cost_model_adapter() -> Any:
+    """scripts/backtest/cost_model.py 适配器（W1-4 可插拔成本档，默认 legacy 零漂移）。
+    file-location 装载：本件常被当顶层模块导入（GPU 接线测试直插 translated 到
+    sys.path，scripts 包根不可达），故按 __file__ 相对路径装载，进程缓存一次。"""
+    if not _COST_MODEL_ADAPTER:
+        import importlib.util
+
+        _cm = Path(__file__).resolve().parent.parent / "cost_model.py"
+        spec = importlib.util.spec_from_file_location("_c4_cost_model_adapter", _cm)
+        assert spec is not None and spec.loader is not None
+        _mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(_mod)
+        _COST_MODEL_ADAPTER.append(_mod)
+    return _COST_MODEL_ADAPTER[0]
+
+
+def _net_line(
+    gross: pd.Series,
+    turnover: pd.Series,
+    slippage_bp: float | None,
+    *,
+    cost_model: Any = None,
+) -> pd.Series:
     """冻结土规成本线（佣金 2.5bp 双边+印花 10bp 卖+滑点档双边）——与原
     run_backtest/daily_net_returns 内联式同序同精度；改档=标量乘（五档 <0.1ms 实测，
-    gpu_rewrite/hotspot_census.md §二 L2-c）。"""
-    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
-    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
-    return gross - cost
+    gpu_rewrite/hotspot_census.md §二 L2-c）。
+    cost_model（W1-4 可插拔档，scripts/backtest/cost_model.py）：None=按环境变量
+    ZEPHYR_C4_COST_MODEL 选档（缺席/legacy→None=下方 verbatim 冻结土规路径，逐位
+    不变=零漂移红线）；非 None→标量 κ=cost_model.round_trip_bps(slippage_bp=...)
+    注入（calibrated=标定分层滑点档 / participation=冲击档），成本式形状不变。"""
+    if cost_model is None:
+        cost_model = _cost_model_adapter().resolve_from_env()
+    if cost_model is None:
+        slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
+        cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
+        return gross - cost
+    return gross - turnover * (cost_model.round_trip_bps(slippage_bp=slippage_bp)) / 10000.0
 
 
-def _stats_from_net(net: pd.Series, turnover: pd.Series, weights: pd.DataFrame) -> dict[str, Any]:
+def _stats_from_net(
+    net: pd.Series, turnover: pd.Series, weights: pd.DataFrame, *, backend_info: dict[str, str] | None = None
+) -> dict[str, Any]:
     """net/turnover→stats 摘要（run_backtest/run_backtest_full/run_backtest_full_with_tiers
-    三处同式收敛一处，内收声明；表达式同序同精度=逐位一致）。"""
+    三处同式收敛一处，内收声明；表达式同序同精度=逐位一致）。
+    backend_info（L2-B 守卫披露）：传 _LAST_BACKEND_GUARD 时 stats 增 backend/guard_reason
+    两键（backend=实际后端 gpu|cpu；guard_reason=守卫结构化原因码，空=未介入）——
+    消费方=factory manifest backend/degrade 列；缺省 None=不增键（纯函数兼容存量直调）。"""
     equity = (1.0 + net).cumprod()
     years = max(len(net) / 244.0, 1e-9)
     sharpe = float(net.mean() / net.std() * np.sqrt(244)) if net.std() > 0 else 0.0
     mdd = float((equity / equity.cummax() - 1.0).min())
-    return {
+    stats: dict[str, Any] = {
         "days": int(len(net)),
         "sharpe": round(sharpe, 3),
         "ann_return": round(float(equity.iloc[-1] ** (1 / years) - 1.0), 4),
@@ -610,6 +665,10 @@ def _stats_from_net(net: pd.Series, turnover: pd.Series, weights: pd.DataFrame) 
         "equity_final": round(float(equity.iloc[-1]), 4),
         "hold_days_pct": round(float((weights.sum(axis=1) > 0).mean()), 3),
     }
+    if backend_info is not None:
+        stats["backend"] = backend_info.get("backend", "cpu")
+        stats["guard_reason"] = backend_info.get("guard_reason") or ""
+    return stats
 
 
 def run_backtest(
@@ -634,7 +693,7 @@ def run_backtest(
     """
     gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
     net = _net_line(gross, turnover, slippage_bp)
-    return _stats_from_net(net, turnover, weights)
+    return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD)
 
 
 def daily_net_returns(
@@ -673,7 +732,7 @@ def run_backtest_full(
     backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。"""
     gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
     net = _net_line(gross, turnover, slippage_bp)
-    return _stats_from_net(net, turnover, weights), net.fillna(0.0)
+    return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD), net.fillna(0.0)
 
 
 def run_backtest_full_with_tiers(
@@ -692,7 +751,7 @@ def run_backtest_full_with_tiers(
     两函数各自输出逐位一致）。backend/pre_tensor 语义见 _backtest_core。"""
     gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
     net = _net_line(gross, turnover, None)
-    stats = _stats_from_net(net, turnover, weights)
+    stats = _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD)
     nets_by_tier = {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
     return stats, net.fillna(0.0), nets_by_tier
 
