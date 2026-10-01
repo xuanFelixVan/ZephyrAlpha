@@ -187,6 +187,14 @@ filterwarnings = [
     "error",
     "ignore::DeprecationWarning",
     "ignore::PendingDeprecationWarning",
+    # #ARCH-084 会话级漂移噪声归还 guard 原语义：tracked-write guard 非严格模式对
+    # 「未归因漂移（并发会话写入）」只 warn 不罚（conftest.py 明文"并发会话脏区噪声
+    # 不做归因"），本文件全局 error 过滤曾把它误升为 teardown ERROR——belt 落地窗
+    # 内跑套件即复现（2026-10-01 总集成验收 st-circ-integ-20261001 发现）。按消息
+    # 前缀过滤（tests 非包、类别路径不可导入）：只豁免漂移噪声变体，肇事归因变体
+    # （"#ARCH-084 tracked 区写入守护：检出 N 个肇事测试"）仍 error；strict=1 的
+    # AssertionError 防罚语义零放松。
+    "ignore:#ARCH-084 会话级 tracked 区漂移",
 ]
 
 [tool.coverage.run]
