@@ -77,6 +77,72 @@ class TestJournal:
         evts = pe.pending()
         assert len(evts) == 1 and evts[0]["payload"]["batch"] == "B1"
 
+    def test_rewrite_unique_tmp_no_leftover(self, state):
+        """P2a 回归（st-ffchief-20261001）：_rewrite 用 pid+uuid 唯一 tmp 且零残骸。
+
+        病根：原固定 pending_events.jsonl.tmp 多进程共用 → WinError 5/32/2
+        （当日 scheduler_run.log 三种错混发）。修后：成功路径 tmp 已被
+        os.replace 消费、失败路径 finally 清理——盘上任何时刻不残留 *.tmp。
+        """
+        pe.record("c4_batch_completed", {"batch": "B1"})
+        evts = pe.pending()
+        for _ in range(3):  # 多轮重写（模拟多消费轮次）
+            pe._rewrite([e for e in evts if e["kind"] != "c4_batch_completed"])
+            assert pe.pending() == []
+        leftovers = [p.name for p in state.glob("*.tmp")]
+        assert leftovers == [], f"tmp 残骸: {leftovers}"
+        assert (state / "pending_events.jsonl").read_text(encoding="utf-8") == ""
+
+    def test_journal_lock_mutex_and_timeout(self, state):
+        """P2a 回归：串化闸互斥（同进程第二句柄锁同区间必须等待/失败）。
+
+        Windows 字节区间锁对不同句柄互斥（跨进程语义的进程内等价）：
+        持闸期间第二 handle 对同一字节 LK_NBLCK 必 OSError；释放后
+        pe._byte_lock 可正常获取（证明锁域无 stale）。
+        """
+        lock_path = state / "pending_events.jsonl.gate.lock"
+        with pe._byte_lock(lock_path):
+            import msvcrt
+
+            with open(lock_path, "a+b") as probe:
+                probe.seek(0)
+                with pytest.raises(OSError):
+                    msvcrt.locking(probe.fileno(), msvcrt.LK_NBLCK, 1)
+        # 释放后可再获取（OS 自动释放，无 stale 锁）
+        with pe._byte_lock(lock_path):
+            pass
+
+    def test_record_under_concurrent_drain_no_tmp_collision(self, state, monkeypatch):
+        """P2a 回归：record（持闸 append）与 drain（持闸 rewrite）交错零 WinError。"""
+        import threading
+
+        monkeypatch.setattr(pe, "kill_switch_clear", lambda: (True, "normal"))
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
+        pe.record("c4_batch_completed", {"batch": "B1"})
+        errors: list[Exception] = []
+
+        def recorder():
+            for i in range(20):
+                try:
+                    pe.record("c2_screen_due", {"sig": i})
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(exc)
+
+        def drainer():
+            for _ in range(20):
+                try:
+                    pe.drain(handler=lambda e: {"ok": True})
+                except Exception as exc:  # noqa: BLE001
+                    errors.append(exc)
+
+        t1, t2 = threading.Thread(target=recorder), threading.Thread(target=drainer)
+        t1.start(), t2.start()
+        t1.join(), t2.join()
+        assert errors == [], f"并发窗口异常: {errors[:3]}"
+        # 全部 record 的行要么在盘、要么已被 drain 消费（零丢失由末态账目核对）
+        r = pe.drain(handler=lambda e: {"ok": True})
+        assert r["pending_left"] == 0
+
     def test_drain_success_dequeues(self, state, monkeypatch):
         pe.record("c4_batch_completed", {"batch": "B1"})
         seen = []
@@ -685,7 +751,7 @@ class TestOrderDaemonSpawn:
         self._fake_journal(monkeypatch, [])
         import zephyr.ai_layer.scheduling.order_daemon as od
 
-        def _no_daemon(journal, policy):
+        def _no_daemon(journal, policy, sink=None):
             raise AssertionError("空 journal 不得起守护")
 
         monkeypatch.setattr(od, "OrderDaemon", _no_daemon)
@@ -702,8 +768,9 @@ class TestOrderDaemonSpawn:
         calls = {}
 
         class FakeDaemon:
-            def __init__(self, journal, policy):
+            def __init__(self, journal, policy, sink=None):
                 calls["policy"] = policy
+                calls["sink"] = sink
 
             def process_once(self):
                 calls["ran"] = True
@@ -716,6 +783,7 @@ class TestOrderDaemonSpawn:
         monkeypatch.setattr(mat, "load_gate_policy", lambda: {"stub": True})
         r = pe.maybe_drain_order_daemon(task_id="kline_daily", success=True)
         assert r["action"] == "drained" and r["processed"] == 1 and calls["ran"]
+        assert calls["sink"] is not None, "F82 lane-f82：spawn 必须挂落库 sink（dry-run=工单蒸发断链）"
         assert any(lv == "INFO" and "ORDER-DAEMON" in m for lv, m in alerts)
 
     def test_daemon_failure_alerts_and_never_raises(self, monkeypatch):
@@ -729,7 +797,7 @@ class TestOrderDaemonSpawn:
         monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
         self._fake_journal(monkeypatch, [FakeEvent()])
 
-        def boom(journal, policy):
+        def boom(journal, policy, sink=None):
             raise RuntimeError("policy 缺节")
 
         monkeypatch.setattr(od, "OrderDaemon", boom)
@@ -741,13 +809,74 @@ class TestOrderDaemonSpawn:
     def test_failed_task_and_poison_only_journal_skip(self, monkeypatch):
         import zephyr.ai_layer.scheduling.order_daemon as od
 
-        def _no_daemon(journal, policy):
+        def _no_daemon(journal, policy, sink=None):
             raise AssertionError("毒丸 journal 不得起守护")
 
         monkeypatch.setattr(od, "OrderDaemon", _no_daemon)
         assert pe.maybe_drain_order_daemon(task_id="daily_kline", success=False)["action"] == "skipped_failed_task"
         self._fake_journal(monkeypatch, [type("E", (), {"poison": True})()])
         assert pe.maybe_drain_order_daemon(task_id="daily_kline", success=True)["action"] == "journal_empty"
+
+    # ---- F82 lane-f82（2026-10-01）：sink 落库冒烟——journal 事件→守护→orders.jsonl ----
+    # 模拟边界：工单=任务书文本对象（非交易订单），全 tmp 注入零生产路径零券商零下单。
+
+    @staticmethod
+    def _emit_winner(journal, experiment_id: str) -> None:
+        from zephyr.ai_layer.scheduling.scheduling_events import KIND_EVOLUTION_WINNER_DUE
+
+        journal.emit(
+            KIND_EVOLUTION_WINNER_DUE,
+            {
+                "verdict": "win",
+                "domain_id": "governance",
+                "evidence_ref": f"{experiment_id}#verdict",
+                "experiment_id": experiment_id,
+                "criteria_hash": "a" * 64,
+                "title": f"F82 冒烟工单 {experiment_id}",
+                "compute_class": "local",
+            },
+        )
+
+    def test_winner_event_lands_work_order_in_store(self, state, tmp_path, monkeypatch):
+        """胜者事件→守护消费→工单落 orders.jsonl（sink 缺省 dry-run 的断链后半段治本回归）。"""
+        import json
+
+        import zephyr.ai_layer.scheduling.scheduling_events as se
+        from zephyr.ai_layer.scheduling.scheduling_events import SchedulingJournal
+
+        journal = SchedulingJournal(state_dir=tmp_path / "ai_scheduling")
+        self._emit_winner(journal, "EX-F82-demo")
+        monkeypatch.setattr(se, "SchedulingJournal", lambda: journal)
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+
+        r = pe.maybe_drain_order_daemon(task_id="daily_kline", success=True)
+
+        assert r["action"] == "drained" and r["processed"] == 1 and r["pending_left"] == 0
+        orders_path = tmp_path / "ai_scheduling" / "orders.jsonl"
+        assert orders_path.exists(), "工单必须落库（dry-run=断链后半段复发）"
+        order = json.loads(orders_path.read_text(encoding="utf-8").splitlines()[0])
+        assert order["order_id"].startswith("WO-") and order["state"] == "pending"
+        assert order["domain_id"] == "governance" and order["experiment_id"] == "EX-F82-demo"
+
+    def test_same_day_second_winner_gets_next_seq(self, state, tmp_path, monkeypatch):
+        """同日第二胜者序号+1（handle_winner 硬编码 seq=1 的互踩丢单回归）。"""
+        import zephyr.ai_layer.scheduling.scheduling_events as se
+        from zephyr.ai_layer.scheduling.scheduling_events import SchedulingJournal
+
+        journal = SchedulingJournal(state_dir=tmp_path / "ai_scheduling")
+        self._emit_winner(journal, "EX-F82-1")
+        self._emit_winner(journal, "EX-F82-2")
+        monkeypatch.setattr(se, "SchedulingJournal", lambda: journal)
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
+
+        r = pe.maybe_drain_order_daemon(task_id="daily_kline", success=True)
+
+        assert r["action"] == "drained" and r["processed"] == 2
+        orders_path = tmp_path / "ai_scheduling" / "orders.jsonl"
+        ids = [o.split('"order_id": "')[1].split('"')[0] for o in orders_path.read_text(encoding="utf-8").splitlines()]
+        day = ids[0].split("-")[1]
+        assert ids == [f"WO-{day}-001", f"WO-{day}-002"], f"同日序号必须递增不互踩：{ids}"
 
 
 class TestTailFailIsolation:

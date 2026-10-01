@@ -8,6 +8,8 @@
 #   zephyr.pf_alloc.crisis_gate(危机闸 L1 判定——只调 crisis_block_check 不改其文件，fail-closed);
 #   zephyr.ai_layer.scheduling.{scheduling_events,order_daemon,maturity}(F82 工单守护 spawn——
 #     import 复用非修改，journal 非空才起守护；守护语义真源在其本件);
+#   zephyr.ai_layer.scheduling.confirm_gate(F82 lane-f82 工单落库 sink=OrderFileStore 复用——
+#     spawn 缺省 dry-run，工单落 orders.jsonl 快照仓; sink 语义真源在其本件);
 #   zephyr.strategy_pipeline.fw_backtest(import 复用 ensure_regime_snapshot——regime 日序供给，
 #     函数级惰性导入避开 fw_backtest 侧对本模块的相互引用);
 #   zephyr.infrastructure.database_service(reader 角色——日频产出者共用业务日解析，宪法 §9.1 禁裸连接)
@@ -110,11 +112,14 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
+import os
 import sys
 import time
 import uuid
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
@@ -124,6 +129,9 @@ ROOT = Path(__file__).resolve().parents[3]
 STATE_DIR = ROOT / ".runtime/strategy_pipeline"
 JOURNAL = STATE_DIR / "pending_events.jsonl"
 RECEIPT = STATE_DIR / "last_receipt.json"
+# journal 串化锁文件（2026-10-01 lane-datapipe P2a）：只创建永不删除（删=拆散互斥域，
+# confirm_gate GATE_LOCK_SUFFIX 先例同款）
+JOURNAL_LOCK_SUFFIX = ".gate.lock"
 MAX_ATTEMPTS = 3
 # 轻 kind=调度器唤醒钩子可消费（有界耗时/只读或幂等写）；重 kind=批测级耗时，只经显式 drain
 # sim_deviation_monthly 裁定（C2/X2 自裁留痕）：偏离报告为分钟级子进程（月频），归轻 kind 走
@@ -237,8 +245,49 @@ def alert(message: str, level: str = "WARN") -> None:
 
 
 # ---------- journal 原语 ----------
+@contextlib.contextmanager
+def _byte_lock(lock_path: Path) -> Iterator[None]:
+    """journal 读-改-写临界区的跨进程字节排他锁（st-ffchief-20261001 P2a，总包补丁②修订）。
+
+    - Windows（生产平台）：``msvcrt.locking(LK_LOCK)`` 由 OS 每 1s 重试、约 10s 后
+      OSError → TimeoutError 上抛（fail-closed，对齐本件 ERROR_CONTRACT）
+    - POSIX 分支：**零锁直通**（不 import fcntl——IMPORT-INTEGRITY gate 判悬空 import，
+      总包裁定 2026-10-01 补丁①；POSIX 侧并发正确性由唯一 tmp 后缀+``os.replace``
+      原子替换兜底，非生产平台）
+    - 进程崩溃/被杀 → OS 关句柄自动释放，无 stale 锁；锁文件只创建永不删除
+      （先例=confirm_gate._byte_lock/gov_audit._cross_process_append_lock）
+
+    病根实证（2026-10-01）：DataScheduler 唤醒 drain、CLI drain、c4/intake 落账钩子
+    多进程并发消费同一 pending_events.jsonl，固定名 .jsonl.tmp 互踩 → WinError
+    5/32/2 反复（当日 scheduler_run.log 三种错混发）。锁只包"读 journal→改→原子
+    替换"毫秒级窗口，handler 子进程一律在锁外执行（重活不持锁）。
+    """
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(lock_path, "a+b") as fh:  # 句柄生命周期=锁生命周期（unlock 后即关，OPEN-WITHOUT-WITH 合规）
+        locked = False
+        if os.name == "nt":
+            import msvcrt
+
+            try:
+                fh.seek(0)
+                msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 1)
+                locked = True
+            except OSError as exc:
+                raise TimeoutError(f"pipeline_events journal 串化闸未获取：{lock_path}") from exc
+        # POSIX：零锁直通（见 docstring 裁定，防悬空 fcntl import）
+        try:
+            yield
+        finally:
+            if locked:
+                try:
+                    fh.seek(0)
+                    msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+                except OSError:
+                    pass
+
+
 def record(kind: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
-    """事件先落盘（唯一真源），返回事件对象。"""
+    """事件先落盘（唯一真源），返回事件对象。串化闸内 append（防与 _rewrite 替换互踩丢事件）。"""
     evt = {
         "id": f"PIPE-{time.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}",
         "kind": kind,
@@ -246,9 +295,10 @@ def record(kind: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
         "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "attempts": 0,
     }
-    STATE_DIR.mkdir(parents=True, exist_ok=True)
-    with JOURNAL.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(evt, ensure_ascii=False) + "\n")
+    with _byte_lock(STATE_DIR / f"{JOURNAL.name}{JOURNAL_LOCK_SUFFIX}"):
+        STATE_DIR.mkdir(parents=True, exist_ok=True)
+        with JOURNAL.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(evt, ensure_ascii=False) + "\n")
     return evt
 
 
@@ -264,10 +314,23 @@ def pending() -> list[dict[str, Any]]:
 
 
 def _rewrite(events: list[dict[str, Any]]) -> None:
+    """journal 全量重写：tmp 名带 pid+uuid 唯一 + ``os.replace`` 原子替换。
+
+    2026-10-01 P2a 治本：原固定 ``pending_events.jsonl.tmp`` 多进程共用＝
+    WinError 5（拒绝访问）/32（共享冲突）/2（tmp 被他进程 replace 消费后找不到）
+    三种错反复的直接根因（confirm_gate OrderFileStore 同病先例，其修法注记
+    "tmp 文件名带 pid+uuid 唯一……＝丢单＋Windows os.replace PermissionError 根因"）。
+    调用方须持 ``_byte_lock``（读-改-写全程串化防丢更新；本函数不再自行加锁以支持
+    锁内组合调用）。
+    """
     STATE_DIR.mkdir(parents=True, exist_ok=True)
-    tmp = JOURNAL.with_suffix(".jsonl.tmp")
-    tmp.write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in events), encoding="utf-8")
-    tmp.replace(JOURNAL)
+    tmp = JOURNAL.with_name(f"{JOURNAL.name}.{os.getpid()}.{uuid.uuid4().hex[:8]}.tmp")
+    try:
+        tmp.write_text("".join(json.dumps(e, ensure_ascii=False) + "\n" for e in events), encoding="utf-8")
+        os.replace(tmp, JOURNAL)
+    finally:
+        if tmp.exists():  # 写/替换中途失败不留残骸（成功时 tmp 已不存在）
+            tmp.unlink(missing_ok=True)
 
 
 def _save_receipt(receipt: dict[str, Any]) -> None:
@@ -350,35 +413,40 @@ def drain(allow_heavy: bool = False, handler: Handler | None = None, max_events:
     failed: list[dict[str, Any]] = []
     skipped: list[dict[str, Any]] = []
     stop_reason = None
+    lock_path = STATE_DIR / f"{JOURNAL.name}{JOURNAL_LOCK_SUFFIX}"
     for _ in range(max_events):
         ok, why = kill_switch_clear()
         if not ok:
             stop_reason = why
             break
-        evts = pending()
-        evt = next(
-            (e for e in evts if not e.get("poison") and not (e["kind"] in HEAVY_KINDS and not allow_heavy)), None
-        )
-        if evt is None:
-            for e in evts:
-                if e.get("poison"):
-                    skipped.append({"id": e["id"], "kind": e["kind"], "why": "poison_held"})
-            break
+        with _byte_lock(lock_path):  # 选取窗口持闸（毫秒级，P2a）
+            evts = pending()
+            evt = next(
+                (e for e in evts if not e.get("poison") and not (e["kind"] in HEAVY_KINDS and not allow_heavy)), None
+            )
+            if evt is None:
+                for e in evts:
+                    if e.get("poison"):
+                        skipped.append({"id": e["id"], "kind": e["kind"], "why": "poison_held"})
+                break
+        # handler 在锁外执行：pf_alloc/批测等子进程分钟级，持闸=整条管线串化+他进程 10s 锁超时
         try:
             result = handler(evt)
             processed.append({"id": evt["id"], "kind": evt["kind"], "result": result})
-            _rewrite([e for e in pending() if e["id"] != evt["id"]])  # 成功才出队
+            with _byte_lock(lock_path):  # 出队窗口持闸（成功才出队；他进程已先行出队=删空集幂等）
+                _rewrite([e for e in pending() if e["id"] != evt["id"]])
         except Exception as exc:  # noqa: BLE001  失败保留+计 attempts，本轮到此为止（重试跨唤醒）
             err = f"{type(exc).__name__}: {exc}"[:200]
-            evts_now = pending()
-            for e in evts_now:
-                if e["id"] == evt["id"]:
-                    e["attempts"] = int(e.get("attempts", 0)) + 1
-                    e["last_error"] = err
-                    if e["attempts"] >= MAX_ATTEMPTS:
-                        e["poison"] = True
-                        alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}", level="ERROR")
-            _rewrite(evts_now)
+            with _byte_lock(lock_path):  # 计数窗口持闸
+                evts_now = pending()
+                for e in evts_now:
+                    if e["id"] == evt["id"]:
+                        e["attempts"] = int(e.get("attempts", 0)) + 1
+                        e["last_error"] = err
+                        if e["attempts"] >= MAX_ATTEMPTS:
+                            e["poison"] = True
+                            alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}", level="ERROR")
+                _rewrite(evts_now)
             failed.append({"id": evt["id"], "kind": evt["kind"], "error": err})
             break
     receipt = {
@@ -1042,7 +1110,41 @@ def maybe_record_auction_hit(task_id: object = None, success: bool = True, **_kw
 # 无生产 spawn 点（仅 DDL 脚本引用），胜者→任务书→施工队事件链断；守护本体
 # （单例锁 PID+TTL+僵尸检测 / last_read_offset 断点续读 / 毒丸留档）齐备于
 # zephyr.ai_layer.scheduling.order_daemon，缺的只是"谁在事件到达后唤它一轮"。
+# F82 续段（2026-10-01 st-ffchief-20261001 lane-f82）：spawn 缺省 dry-run（工单只进回执即
+# 蒸发=断链后半段）→挂 OrderFileStore 落库 sink（当日序号防同日多胜者互踩）；生产边
+# L4 胜者落库→evolution_winner_due 由 comparator.compare_events.maybe_emit_evolution_winner
+# 同批补齐（台账=docs/_working/circulation_chief/skeleton/E_execution/f82_order_daemon_wiring.md）。
 ORDER_DAEMON_PREFIX = "[ORDER-DAEMON]"
+
+
+def _order_store_sink(journal: object) -> Callable[[dict[str, Any]], None]:
+    """工单落库 sink（F82 lane-f82）：OrderFileStore 快照仓+当日序号分配。
+
+    守护缺省 sink=dry-run（order_daemon blueprint："缺省=dry-run 只回执不落库"）——
+    spawn 只跑不落=工单蒸发，Owner 永远无单可确认。本 sink 落 orders.jsonl
+    （confirm_gate.OrderFileStore="已建守护链路"快照落点；PG ai_work_order sink 属
+    后续工单，confirm_gate 头注在册如实声明）。幂等可停：upsert 按 order_id 原地替换；
+    序号=落库前按仓内当日已有单数推导（process_once 单例锁内串化，重放安全）；sink
+    失败上抛→journal 事务语义保留事件（attempts+1 跨唤醒重试，禁静默降级）。
+    journal 鸭子类型（只 getattr state_dir；Any→object=GATE-ANY-ABUSE P2a 收编件合规化，
+    2026-10-01 lane-datapipe 改，行为零变）。
+    """
+
+    def _sink(order: dict[str, Any]) -> None:
+        from zephyr.ai_layer.scheduling.confirm_gate import OrderFileStore  # noqa: PLC0415
+        from zephyr.ai_layer.scheduling.order_daemon import next_order_id  # noqa: PLC0415
+
+        store = OrderFileStore(state_dir=getattr(journal, "state_dir", None))
+        parts = str(order.get("order_id") or "").split("-")
+        if len(parts) == 3 and parts[0] == "WO":
+            # handle_winner 硬编码 seq=1：同日多胜者原样 upsert 会互踩同号（后者覆盖前者
+            # =丢单），按仓内当日已有单数+1 重排序号
+            prefix = f"WO-{parts[1]}-"
+            seq = sum(1 for o in store.load_orders() if str(o.get("order_id") or "").startswith(prefix)) + 1
+            order["order_id"] = next_order_id(parts[1], seq)
+        store.upsert(order)
+
+    return _sink
 
 
 def maybe_drain_order_daemon(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
@@ -1066,7 +1168,8 @@ def maybe_drain_order_daemon(task_id: object = None, success: bool = True, **_kw
         journal = SchedulingJournal()
         if not any(not e.poison for e in journal.pending()):
             return {"action": "journal_empty"}
-        receipt = OrderDaemon(journal, load_gate_policy()).process_once()
+        # F82 lane-f82：挂落库 sink（缺省 dry-run=工单蒸发）；sink 异常走下方同兜底
+        receipt = OrderDaemon(journal, load_gate_policy(), sink=_order_store_sink(journal)).process_once()
         alert(
             f"{ORDER_DAEMON_PREFIX} 工单守护消费 processed={len(receipt.get('processed', []))} "
             f"failed={len(receipt.get('failed', []))} pending_left={receipt.get('pending_left')}",
