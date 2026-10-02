@@ -170,6 +170,54 @@ def _get_exclude_path_parts() -> tuple[str, ...]:
     return fresh.EXCLUDE_PATH_PARTS
 
 
+_GATE_SELFDOC_ID = "GIT-DANGEROUS"
+_GATE_SELFDOC_LINE_LIMIT = 10
+
+
+def _gate_selfdoc_frontmatter(content: str) -> bool:
+    """frontmatter gate_selfdoc: GIT-DANGEROUS（宪法 GATE-SELFDOC，2026-10-02 接门实现）。"""
+    if not content.startswith("---"):
+        return False
+    end = content.find(chr(10) + "---", 3)
+    if end == -1:
+        return False
+    for ln in content[:end].splitlines():
+        s = ln.strip()
+        if s.startswith("gate_selfdoc:") and _GATE_SELFDOC_ID in s.split(":", 1)[1]:
+            return True
+    return False
+
+
+def _apply_gate_selfdoc(filepath: Path, content: str, findings: list[dict]) -> list[dict]:
+    """GATE-SELFDOC 豁免（宪法 GATE-SELFDOC 统一拆写规范，2026-10-02 门侧实现）：
+
+    列禁令的清洁册声明豁免：①frontmatter gate_selfdoc: GIT-DANGEROUS；
+    ②行级 [GATE-SELFDOC:GIT-DANGEROUS] 标记。各限 <=10 违规行，超限照拦；
+    标记须门 id 精确匹配（禁通配）。
+    """
+    if not findings:
+        return findings
+    marked_lines = {
+        i + 1 for i, ln in enumerate(content.splitlines()) if "[GATE-SELFDOC:" + _GATE_SELFDOC_ID + "]" in ln
+    }
+    kept: list[dict] = []
+    dropped = 0
+    fm = _gate_selfdoc_frontmatter(content)
+    for f in findings:
+        line_no = int(f.get("line") or 0)
+        if line_no in marked_lines:
+            dropped += 1
+            if dropped <= _GATE_SELFDOC_LINE_LIMIT:
+                continue
+            kept.append(f)
+            continue
+        if fm and dropped < _GATE_SELFDOC_LINE_LIMIT:
+            dropped += 1
+            continue
+        kept.append(f)
+    return kept
+
+
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
     findings = []
@@ -190,8 +238,7 @@ def scan_file(filepath: Path) -> list[dict]:
                     "matched": match.group(0)[:120],
                 }
             )
-    return findings
-    "扫描单个文件并返回发现列表."
+    return _apply_gate_selfdoc(filepath, content, findings)
 
 
 def scan_files(file_names: list[str]) -> tuple[list[dict], int, int]:

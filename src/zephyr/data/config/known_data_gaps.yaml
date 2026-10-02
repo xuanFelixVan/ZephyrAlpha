@@ -1240,7 +1240,9 @@ gaps:
     resolution_actual: "2026-09-20 全部落地并验收（报告 docs/_working/data_fix_campaign/
       p1_valuation_repair_report.md）：①表重建+原子换名（旧表整体冷备
       index_valuation_daily_quar_20260920，8125 行；非交易日 7 行先导出
-      F:/db_dumps/zephyr_quarantine/20260920_valuation_repair/ 后剔除）；②compute 全史读
+      F:/db_dumps/zephyr_quarantine/20260920_valuation_repair/ 后剔除；
+      ——该冷备已于 2026-10-02 按隔离通道到期 DROP（13 天超窗+重建验收绿+零消费方+
+      F 盘导出件仍存，裁定=st-construct-20261002 深挖批）；②compute 全史读
       算修复（含 CPI/10Y 国债读窗同步修正）；③index_valuation_daily_compute_daily 日频腿
       上线（CLI 实跑成功，8118 行秒级）。红蓝对抗三项全过（version 仲裁/反向竞争红证/
       携带版收口/撤样净零）。"
@@ -1543,13 +1545,16 @@ gaps:
 
   # === 2026-09-30 夜总攻 B15 补挂（C120 收口复核：F06 六张已在案，本批只补 F06 未列 2 张）===
   - id: "index_valuation_daily_v2_no_collector"
-    table: "c1_market.index_valuation_daily_v2"
+    table: "c1_market.index_valuation_daily_v2_quar_20261002"
     gap_type: "empty_table"
     start_date: "2026-09-30"
     end_date: null
     date_column: "trade_date"
     detection_threshold: 1
-    status: "open"
+    status: "retired_quarantine"
+    # 2026-10-02 净零退役执行（处方=终报 §7 第 5 项 / #311+#328 rename 隔离 7 天通道）：
+    # v2 已 RENAME 为 *_quar_20261002（CH 实读 0 行+全仓零写入方+零消费方复核在案），
+    # 2026-10-09 隔离期满后 DROP；建腿若立项=Owner 门（v1/v2 口径归属+akshare 候选源）。
     root_cause: "表在册 0 行（2026-09-30 CH 实读）；src/zephyr/data 树零采集腿（无 provider/无 task config）；v2 后缀=旧 index_valuation 演进平行件，真源口径未立。F06 卷九张清单未列本表（2026-09-29），B15 复核补挂"
     resolution_plan: "立项前先裁 v1/v2 表口径归属（净零原则：先并后建）；数据源候选=akshare 指数估值接口"
     created: "2026-09-30"

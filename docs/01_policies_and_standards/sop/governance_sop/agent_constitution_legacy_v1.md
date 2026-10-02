@@ -2,6 +2,7 @@
 module_id: SOP-CONSTITUTION-LEGACY-V1
 doc_type: policy
 ttl: permanent
+gate_selfdoc: GIT-DANGEROUS
 title: AI Agent 宪法 v1 归档（1639 行全文，2026-09-12 被 L0 替换）
 status: archived
 superseded_by: agent_constitution_l0.md
@@ -403,15 +404,15 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | 一次性运维/诊断/迁移脚本 | A 类·非永久 | trae_060 §6 not_applies_to |
 | 测试夹具/常量 | A 类·非规则数据 | trae_060 §6 not_applies_to |
 
-> **常驻守护服务（watchdog 三服务 + 死人开关 + 工作区漂移看门狗，C 类·永久系统）**：五个 Task Scheduler 任务构成 7×24 守护体系（前四个=数据层，漂移看门狗=治理执行域），均经一次性脚本注册（前四个经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/register_guard_tasks.ps1)，漂移看门狗经 register_drift_watchdog_task.ps1，AtLogOn 事件触发 + 5min repeat 兜底）。前 3 服务（watchdog 三服务）`MultipleInstances=Parallel`（#ARCH-BOOT-001 治本）：脚本级 PID 锁+心跳为单实例 SSoT，Task Scheduler 退化为无脑周期触发器（IgnoreNew 会阻断僵尸 guard 接管，导致 08-06/08-07 两交易日 intraday 停摆）。watchdog 的 5min repeat + 15s sleep 轮询属 **OS 进程监管时间退避例外**（非 reconciler 事件触发约束范围，对标 #ARCH-CH-PROBE-GUARD "5min repeat 属兜底"先例）。四层防御+心跳接管细节见 [`boot_autostart_architecture.md §3/§8`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/boot_autostart_architecture.md)。
+> **常驻守护服务（watchdog 三服务 + 死人开关 + 工作区漂移看门狗，C 类·永久系统）**：五个 Task Scheduler 任务构成 7×24 守护体系（前四个=数据层，漂移看门狗=治理执行域），均经一次性脚本注册（前四个经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/tasks/register/register_guard_tasks.ps1)，漂移看门狗经 register_drift_watchdog_task.ps1，AtLogOn 事件触发 + 5min repeat 兜底）。前 3 服务（watchdog 三服务）`MultipleInstances=Parallel`（#ARCH-BOOT-001 治本）：脚本级 PID 锁+心跳为单实例 SSoT，Task Scheduler 退化为无脑周期触发器（IgnoreNew 会阻断僵尸 guard 接管，导致 08-06/08-07 两交易日 intraday 停摆）。watchdog 的 5min repeat + 15s sleep 轮询属 **OS 进程监管时间退避例外**（非 reconciler 事件触发约束范围，对标 #ARCH-CH-PROBE-GUARD "5min repeat 属兜底"先例）。四层防御+心跳接管细节见 [`boot_autostart_architecture.md §3/§8`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/boot_autostart_architecture.md)。
 >
 > | 服务 | Task Scheduler 任务名 | guard 脚本 | 说明 |
 > |------|----------------------|-----------|------|
-> | 数据调度器 | ZephyrAlpha_DataScheduler | [`start_scheduler.ps1`](file:///d:/ZephyrAlpha/scripts/start_scheduler.ps1) | 数据集成器调度（日频/增量任务编排） |
-> | Tick 订阅器 | ZephyrAlpha_TickSubscriber | [`start_tick_subscriber.ps1`](file:///d:/ZephyrAlpha/scripts/start_tick_subscriber.ps1) | 实时行情订阅（盘中 tick→Redis/WAL） |
-> | CH 健康探针 | ZephyrAlpha_CHHealthProbe | [`start_ch_health_probe.ps1`](file:///d:/ZephyrAlpha/scripts/start_ch_health_probe.ps1) | CH 连通性监控（3s TCP+HTTP 双通道探测） |
-> | 死人开关 | ZephyrAlpha_DeadmanSwitch | [`deadman_switch.ps1`](file:///d:/ZephyrAlpha/scripts/deadman_switch.ps1) | 心跳陈旧监控（一次性任务，5min fire，任一 heartbeat >10min 飞书+EventLog 告警） |
-> | 工作区漂移看门狗 | ZephyrAlpha_WorktreeDriftWatchdog | [`register_drift_watchdog_task.ps1`](file:///d:/ZephyrAlpha/scripts/register_drift_watchdog_task.ps1)（声明式注册；无 guard 脚本，pythonw 直起 daemon） | tracked 漂移周期扫描（#99② 退避治本：RestartCount=3+RestartInterval=10min 固化任务定义，单实例 SSoT=daemon 字节锁，双触发器 5min repeat） |
+> | 数据调度器 | ZephyrAlpha_DataScheduler | [`start_scheduler.ps1`](file:///d:/ZephyrAlpha/scripts/installers/start_scheduler.ps1) | 数据集成器调度（日频/增量任务编排） |
+> | Tick 订阅器 | ZephyrAlpha_TickSubscriber | [`start_tick_subscriber.ps1`](file:///d:/ZephyrAlpha/scripts/installers/start_tick_subscriber.ps1) | 实时行情订阅（盘中 tick→Redis/WAL） |
+> | CH 健康探针 | ZephyrAlpha_CHHealthProbe | [`start_ch_health_probe.ps1`](file:///d:/ZephyrAlpha/scripts/installers/start_ch_health_probe.ps1) | CH 连通性监控（3s TCP+HTTP 双通道探测） |
+> | 死人开关 | ZephyrAlpha_DeadmanSwitch | [`deadman_switch.ps1`](file:///d:/ZephyrAlpha/scripts/installers/deadman_switch.ps1) | 心跳陈旧监控（一次性任务，5min fire，任一 heartbeat >10min 飞书+EventLog 告警） |
+> | 工作区漂移看门狗 | ZephyrAlpha_WorktreeDriftWatchdog | [`register_drift_watchdog_task.ps1`](file:///d:/ZephyrAlpha/scripts/tasks/register/register_drift_watchdog_task.ps1)（声明式注册；无 guard 脚本，pythonw 直起 daemon） | tracked 漂移周期扫描（#99② 退避治本：RestartCount=3+RestartInterval=10min 固化任务定义，单实例 SSoT=daemon 字节锁，双触发器 5min repeat） |
 >
 > **死人开关（#ARCH-BOOT-002 E，2026-08-08 治本）**：watchdog 三服务的四层防御闭合了 guard 级僵尸接管，但**未闭合系统级失效**——若 3 服务全死，心跳文件陈旧但无人读。治本：`deadman_switch.ps1` 是无状态一次性任务（非 while-true guard，无僵尸风险），每 5min fire 读 3 个心跳文件，任一陈旧 >10min 即飞书+EventLog+本地日志三通道告警（30min 冷却防刷屏）。独立性第一性原理：监控者不属被监控 3 服务之一，只读心跳；用 `.ps1` 而非 `.py`——若 Python 栈崩溃 `.py` 监控会跟着死。
 >
@@ -835,7 +836,7 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
   - **目录名禁 test_ 前缀**：tests/ 下子目录名禁止 `test_` 前缀（`test_code_dedup_engine/` 已改名 `code_dedup_engine/`）。`test_` 前缀只用于文件名。
   - **迁移状态**：ARCH-029 全部治本完成——1699/1699 文件已迁移（100%），tests/ 根目录扁平 test_*.py 清零，84 个功能域子目录。session3 路线B 全量治本：批次1 commit 6fc3c755（471文件 governance/feedback/audit/llm_security）；批次2 commit 218a870a（291文件 34个子目录）。分类方法：AST import 自动匹配 533 + AI 语义分析 229（BLUEPRINT 优先）。维度混合清理（session4）：批次1 commit 556a845c 消除 6 个测试类型维度目录（integration/e2e/adversarial/red_blue/benchmarks/performance，96文件）；批次2+3 commit b25d9a46 消除 unit/ 目录（25子目录合并+132平铺文件分类迁移，548文件）。至此 tests/ 下 7 个测试类型维度目录全部消除，全部按功能域归类。漂移源 `validate_test_directory_structure.py` 与本条冲突+虚假引用 GOV-DOC-002，已删除（session3 commit）。
   - **强制方式**：文档约定（本条目）+ code review + **GATE-NO-TESTS-UNIT 硬阻断门禁**。
-  - **自动化 guard**（ARCH-029 漂移种子防复发，2026-07-01 添加）：[`.pre-commit-config.yaml`](file:///d:/ZephyrAlpha/.pre-commit-config.yaml) `id: gate-no-tests-unit`，pygrep hook 检测活跃代码/文档中 `tests/unit/` 旧路径重引入，检测到即 exit 1 拒绝提交。豁免：`_archive/`、`scripts/_archive/`、`scripts/.*/_archive/`、`session_logs/`、`data/`、`reports/`、历史规则文件(`trae_028/034`)、`.pre-commit-config.yaml`、`AGENTS.md` 自身（文档真源需描述旧路径）。每次 `git commit` 自动触发，无需手工干预。治本依据：并发 session 不知情回退已修复文件（commit 021c2274 后被回退为 tests/unit/），证明无 guard 时漂移会重新发生。
+  - **自动化 guard**（ARCH-029 漂移种子防复发，2026-07-01 添加）：[`.pre-commit-config.yaml`](file:///d:/ZephyrAlpha/.pre-commit-config.yaml) `id: gate-no-tests-unit`，pygrep hook 检测活跃代码/文档中 `tests/unit`（尾斜杠省略：ABS-27 字面量改写防误扫 2026-10-02） 旧路径重引入，检测到即 exit 1 拒绝提交。豁免：`_archive/`、`scripts/_archive/`、`scripts/.*/_archive/`、`session_logs/`、`data/`、`reports/`、历史规则文件(`trae_028/034`)、`.pre-commit-config.yaml`、`AGENTS.md` 自身（文档真源需描述旧路径）。每次 `git commit` 自动触发，无需手工干预。治本依据：并发 session 不知情回退已修复文件（commit 021c2274 后被回退为 tests/unit），证明无 guard 时漂移会重新发生。
 
 - **代码重复检测门禁**（GATE-DEDUP，2026-07-06 新增，阶段1 manual）→ 病根：`code_dedup` 引擎 64 文件（MOD-INF-017）有蓝图背书+测试覆盖+capability 登记，但生产侧去重管线未接通——`ct_deduplication.py` handler 引用不存在的 `zephyr.governance.scanner`，静默吞错返回空列表（P2-10 审计发现）。[ARCH-027 §3b](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 裁定"管线未接通"是合法保留理由，但必须三阶段强制接入，禁止永久 silent fail：
   - **阶段1（当前，manual）**：[`.pre-commit-config.yaml`](file:///d:/ZephyrAlpha/.pre-commit-config.yaml) `id: gate-dedup`，`stages: [manual]`——手动 `pre-commit run gate-dedup` 可用，不阻断常规 commit。委托 [`verify_dedup.py`](file:///d:/ZephyrAlpha/scripts/pre_commit/verify_dedup.py) → [`zephyr.governance.code_dedup.cli verify`](file:///d:/ZephyrAlpha/src/zephyr/gov_code_quality/code_dedup/cli.py)，AST 级函数粒度重复检测（incremental/full scan mode）。退出码：0=PASS / 1=WARN / 2=ERROR。
