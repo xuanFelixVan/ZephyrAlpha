@@ -1,0 +1,61 @@
+# ALGO_FLOW external truth - coordination_state_board (_domain_gov_enforcement, truth source src/zephyr/gov_enforcement/rule_bridge/coordination_state_board.py)
+# 2026-10-02 st-construct-20261002: relocation wave triggered ALGO-FLOW gate, drafter machine-drafted block placed in external storage (details pending calibration by maintenance class)
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.rule_bridge.coordination_state_board
+source_of_truth: src/zephyr/gov_enforcement/rule_bridge/coordination_state_board.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: p 参数
+    #   fields: 待校准
+    #   code: p
+    # - id: I2
+    #   name: paths 参数
+    #   fields: 待校准
+    #   code: paths
+    # - id: I3
+    #   name: raw 参数
+    #   fields: 待校准
+    #   code: raw
+    # - id: I4
+    #   name: argv 参数
+    #   fields: 待校准
+    #   code: argv
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 待校准特征
+    #   name_en: feature_tbd
+    #   intro: 待校准（AI读代码确认）
+    #   formula: 待校准
+    #   code: 待校准
+    #   registry: factor_registry: 待查
+    #   is_break: true
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 待校准算法步骤
+    #   name_en: tbd
+    #   intro: 待校准算法步骤
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 待校准输出 None
+    #   name_en: None
+    #   intro: 待校准
+    #   downstream: 待校准
+    # - id: O2
+    #   name_zh: 待校准输出 bool
+    #   name_en: bool
+    #   intro: 待校准
+    #   downstream: 待校准
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 -.->|断点| F1
+    # I2 -.->|断点| F1
+    # I3 -.->|断点| F1
+    # I4 -.->|断点| F1
+    # F1 --> A1
+    # A1 --> O1

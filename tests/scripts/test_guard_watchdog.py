@@ -3,9 +3,9 @@
 """Unit tests for guard watchdog heartbeat logic (fix #ARCH-BOOT-001).
 
 These tests mirror the lock-block heartbeat logic in:
-  - scripts/start_scheduler.ps1
-  - scripts/start_tick_subscriber.ps1
-  - scripts/start_ch_health_probe.ps1   (added fix #ARCH-BOOT-001 Phase 2, 2026-08-07)
+  - scripts/installers/start_scheduler.ps1
+  - scripts/installers/start_tick_subscriber.ps1
+  - scripts/installers/start_ch_health_probe.ps1   (added fix #ARCH-BOOT-001 Phase 2, 2026-08-07)
 
 The PowerShell guard is not directly callable from pytest, so the heartbeat
 format parsing and stale-detection are reimplemented here in pure Python with

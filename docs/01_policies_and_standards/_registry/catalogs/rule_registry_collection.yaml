@@ -1075,3 +1075,7 @@ items:
   name: service_layer_owners.yaml
   node_type: config
   status: active
+- file: scripts/tasks/run/run_deepseek_v4_exam.py
+  name: run_deepseek_v4_exam.py
+  node_type: script
+  status: active

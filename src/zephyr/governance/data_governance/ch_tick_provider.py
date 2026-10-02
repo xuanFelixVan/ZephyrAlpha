@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.data_governance.ch_tick_provider
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.data.ch_writer(只读,延迟加载); pandas
-# [CONSUMERS] scripts/run_backtest.py(mode=tick); StrategyRunner.run_tick_backtest(provider 注入)
+# [CONSUMERS] scripts/tasks/run/run_backtest.py(mode=tick); StrategyRunner.run_tick_backtest(provider 注入)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只读 c1_market.tick_data; PIT(tick 只取 start~end 窗口); 列名适配 EDE 18 字段契约
@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-BT-CHTP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/data_governance/ch_tick_provider.yaml
 CH Tick Provider——从 c1_market.tick_data 读历史 tick，适配 EDE/tick_replay 的
 fetch_historical(interval="tick") 契约（MiniQmtQuoteProvider 的 CH 替身）。
 

@@ -28,7 +28,7 @@ process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Sc
 第一性原理设计：
 1. 不依赖创建者自觉清理（AI 会话会异常死亡）——由 OS（Task Scheduler）每 10 分钟触发。
 2. 不做常驻进程（守护进程自身也是残留风险源，递归问题）——one-shot：scan→判定→kill→exit。
-   模式先例：scripts/deadman_switch.ps1（#ARCH-BOOT-002 E）。
+   模式先例：scripts/installers/deadman_switch.ps1（#ARCH-BOOT-002 E）。
 3. 「什么是垃圾」靠外部可观测量：父进程死活（孤儿）、年龄、资源占用、cmdline 特征。
 4. 白名单优于黑名单：合法永久进程是小而稳定的可枚举集合，宁宽勿窄（fail-safe：
    本进程故障退化为「不清理」，绝不退化为「误杀」）。
@@ -64,7 +64,7 @@ kill 日志可归因字段（data/runtime/reaper_kill.log，处方 P-12 / 2026-0
   体量策略沿用既有 retention=permanent（registry_of_logs LOG-TRD-001），本模块不做任何轮转/删除。
 
 收割职责三面互标（排班表 v2 §2.3 C-13，2026-09-17；另两面 =
-zephyr.shared.infra.process_incubator / scripts/start_scheduler.ps1，各自文件头有镜像注）：
+zephyr.shared.infra.process_incubator / scripts/installers/start_scheduler.ps1，各自文件头有镜像注）：
 - 判定权三分互斥：incubator=**事前拒生**（spawn 前水位门禁，只管"要不要再生"，对活进程零动作）；
   start_scheduler.ps1=**锁维自清**（stale lock/心跳过期时只清自己 $BizModule=zephyr.data.scheduler
   的孤儿子嗣，作用域=本守卫子嗣，非全项目）；本件=**事后收割**（全项目特征维：孤儿/超龄/失控/幽灵）。

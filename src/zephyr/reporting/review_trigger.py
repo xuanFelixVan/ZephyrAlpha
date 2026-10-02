@@ -25,7 +25,7 @@ F115 R1 触发链薄刀：review_orchestrator.py:48 铁律"run_daily/run_weekly/
 
   - trigger_daily_review(): 缺失的"调用方"函数。组装最小 AuditRequest + 契约
     快照/指标（上游持仓/净值/限额真源未接线——空输入显式标注，同
-    scripts/run_post_settlement.py _build_audit_fn 先例，不伪装完整审计），
+    scripts/tasks/run/run_post_settlement.py _build_audit_fn 先例，不伪装完整审计），
     驱动真实 ReviewOrchestrator.run_daily 全链（审计→日摘要→归档）；
   - build_default_orchestrator(): 真实依赖装配（DailyAuditor + RiskReportEngine +
     ReportPublisher+JsonlArchiveSink→data/reports/ 归档落盘）；
@@ -66,7 +66,7 @@ from zephyr.shared.contracts.risk_metrics import RiskMetricsReport
 
 _logger = logging.getLogger(__name__)
 
-#: 模拟盘组合默认 ID（与 scripts/run_post_settlement.py 同一口径）
+#: 模拟盘组合默认 ID（与 scripts/tasks/run/run_post_settlement.py 同一口径）
 _PAPER_PORTFOLIO_ID: Final = "PAPER-DEFAULT"
 
 

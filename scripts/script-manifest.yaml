@@ -262,46 +262,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: run_backtest.py
-  path: run_backtest.py
-  description: BTRUN 标准回测 CLI（2026-09-01 设立，治本"产物曲线为空"问题）
-  domain: test
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: run_boot_sla_probe.py
-  path: run_boot_sla_probe.py
-  description: from __future__ import annotations
-  domain: run_boot_sla_probe.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: run_deepseek_v4_exam.py
-  path: run_deepseek_v4_exam.py
-  description: DeepSeek V4 入职考试运行脚本
-  domain: run_deepseek_v4_exam.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: run_post_settlement.py
-  path: run_post_settlement.py
-  description: '----'
-  domain: run_post_settlement.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: run_qwen3_baseline_exam.py
-  path: run_qwen3_baseline_exam.py
-  description: 验收口径：基线成绩入库 data/model_profiles/（ModelRouter.load_benchmark_from_disk
-  domain: run_qwen3_baseline_exam.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: scaffold.py
   path: scaffold.py
   description: 所有新文件 MUST 通过本脚本创建，禁止直接用 IDE Write/SearchReplace 写入新文件。
@@ -9154,6 +9114,46 @@ scripts:
   path: strategy_factory/run_s_owner_002_exam.py
   description: 'Usage:'
   domain: strategy_factory
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tasks/run/run_backtest.py
+  path: tasks/run/run_backtest.py
+  description: BTRUN 标准回测 CLI（2026-09-01 设立，治本"产物曲线为空"问题）
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tasks/run/run_boot_sla_probe.py
+  path: tasks/run/run_boot_sla_probe.py
+  description: from __future__ import annotations
+  domain: tasks
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tasks/run/run_deepseek_v4_exam.py
+  path: tasks/run/run_deepseek_v4_exam.py
+  description: DeepSeek V4 入职考试运行脚本
+  domain: tasks
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tasks/run/run_post_settlement.py
+  path: tasks/run/run_post_settlement.py
+  description: '----'
+  domain: tasks
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tasks/run/run_qwen3_baseline_exam.py
+  path: tasks/run/run_qwen3_baseline_exam.py
+  description: 验收口径：基线成绩入库 data/model_profiles/（ModelRouter.load_benchmark_from_disk
+  domain: tasks
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60

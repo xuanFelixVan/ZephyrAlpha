@@ -20,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 _SCRIPTS = Path(__file__).resolve().parents[2] / "scripts"
-PS1 = _SCRIPTS / "deadman_switch.ps1"
+PS1 = _SCRIPTS / "installers" / "deadman_switch.ps1"
 
 
 def _make_sandbox(tmp_path: Path) -> Path:

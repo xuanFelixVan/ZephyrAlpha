@@ -2207,7 +2207,7 @@ tools:
   organ: hand
   family: 执行
   kind: script
-  entry_path: scripts\run_backtest.py
+  entry_path: scripts\tasks\run\run_backtest.py
   module_id: null
   blueprint_ref: null
   capability_card_ref: null
@@ -2230,7 +2230,7 @@ tools:
   organ: hand
   family: 观测
   kind: script
-  entry_path: scripts\run_boot_sla_probe.py
+  entry_path: scripts\tasks\run\run_boot_sla_probe.py
   module_id: null
   blueprint_ref: null
   capability_card_ref: null
@@ -2253,7 +2253,7 @@ tools:
   organ: hand
   family: 执行
   kind: script
-  entry_path: scripts\run_deepseek_v4_exam.py
+  entry_path: scripts\tasks\run\run_deepseek_v4_exam.py
   module_id: null
   blueprint_ref: null
   capability_card_ref: null
@@ -2276,7 +2276,7 @@ tools:
   organ: hand
   family: 执行
   kind: script
-  entry_path: scripts\run_post_settlement.py
+  entry_path: scripts\tasks\run\run_post_settlement.py
   module_id: null
   blueprint_ref: null
   capability_card_ref: null
@@ -2299,7 +2299,7 @@ tools:
   organ: hand
   family: 执行
   kind: script
-  entry_path: scripts\run_qwen3_baseline_exam.py
+  entry_path: scripts\tasks\run\run_qwen3_baseline_exam.py
   module_id: null
   blueprint_ref: null
   capability_card_ref: null

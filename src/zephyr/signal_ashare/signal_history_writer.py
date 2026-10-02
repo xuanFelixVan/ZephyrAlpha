@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.signal_history_writer
 # [DOMAIN] D_SIGNAL
 # [DEPENDENCIES] schemas.categories.market.market_signal_history(DDL/INSERT_COLUMNS 真源); zephyr.data.ch_writer(client,延迟加载)
-# [CONSUMERS] scripts/run_backtest.py(管道A strategy_weight); scripts/compute_signals.py(管道B factor_synth)
+# [CONSUMERS] scripts/tasks/run/run_backtest.py(管道A strategy_weight); scripts/compute_signals.py(管道B factor_synth)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 列序以 schemas INSERT_COLUMNS 为唯一真源; DEC-INV-002 本模块只写表不触发任何 order; meta 必须携带血缘(DLG-001)
@@ -16,6 +16,7 @@
 # [TTL] permanent
 # [ARCH-REF] #BT-PIPELINE-001 阶段三（Owner 2026-09-01 批准调研报告）
 """
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal_ashare/algo_flow/signal_history_writer.yaml
 信号历史写入管道（c1_market.market_signal_history，一张窄表两管道）。
 
 管道 A（strategy_weight）：BTRUN 回测最新一期权重面板——策略视角（系统想不想持有）。

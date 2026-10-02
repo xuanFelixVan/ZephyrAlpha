@@ -84,7 +84,7 @@
      （绝不拿 nav_baseline 猜本金：那是峰值锚点，当 static 锚会把
      「绝对破产防护」偷换成「会话内回撤防护」）。
  10. VaR 回测校准闭环 + 盘前基线持久化（36 号 §3.10/§3.11 + §3.18 阶段 2/6，
-     H5-P0 双端死链清偿）：产端 scripts/run_post_settlement.py 日终调
+     H5-P0 双端死链清偿）：产端 scripts/tasks/run/run_post_settlement.py 日终调
      DailyAuditor.run_var_backtest_from_store 把定级报告落
      backtest_store（var_backtest_report_YYYY-MM-DD 命名空间，同一
      JsonStateStore 根）；本层启动时（state_store 已注入）读最近一份定级，
@@ -1431,7 +1431,7 @@ class RiskLayerOrchestrator:
     def _consume_var_calibration_verdict(self) -> dict[str, Any] | None:
         """启动消费盘后产端落库的 VaR 回测定级（唯一落地口=apply_var_backtest_action）。
 
-        产端：scripts/run_post_settlement.py → DailyAuditor.run_var_backtest_from_store
+        产端：scripts/tasks/run/run_post_settlement.py → DailyAuditor.run_var_backtest_from_store
         → VarBacktestStore.save_backtest_report（同一 JsonStateStore 根的
         ``var_backtest_report_YYYY-MM-DD`` 命名空间）。本方法只在构造期跑一次，
         且绝不自行改风控态——所有动作经 §3.10 三档执行者分发（熔断单一仲裁点

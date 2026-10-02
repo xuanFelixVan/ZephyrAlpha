@@ -2,7 +2,7 @@
 # [MODULE] zephyr.backtest.core.cost_attribution
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.backtest.core.cost_model_calibration（标定表与证据披露）
-# [CONSUMERS] zephyr.backtest.io.result_repository.build_artifact_from_data（唯一注入点，落盘 artifact 的 metrics["cost_attribution"]，调用方=scripts/run_backtest.py + pf_core/strategy_engine/framework_composer.py S11 整装回测）; tests/backtest/test_cost_attribution.py
+# [CONSUMERS] zephyr.backtest.io.result_repository.build_artifact_from_data（唯一注入点，落盘 artifact 的 metrics["cost_attribution"]，调用方=scripts/tasks/run/run_backtest.py + pf_core/strategy_engine/framework_composer.py S11 整装回测）; tests/backtest/test_cost_attribution.py
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数无 I/O 无墙钟; 费率字面量一律由调用方注入（本件零费率字面量，真源在 matching_logic）; 佣金分量重构 MUST 与 trade.commission 逐笔对账（相对偏差>容差即告警，不得静默改口径）; 顶地板判定用同一 max(比例佣金, 下限) 口径; 成本合计=佣金+滑点+冲击（印花/过户已含在上报佣金内，禁重复相加）; 冲击应计腿= max(引擎实测, 标定档)——实测只可抬高不可清零（任何入参组合都不得使 impact_cost_total 归零），实测另记 impact_cost_measured_total 作 as-run 披露; 任一关键量不可算 → 产出 ALERT 而非省略字段（沉默禁令）; 空 trade_log 显式抛错（不返回零值假象）

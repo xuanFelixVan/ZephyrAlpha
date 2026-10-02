@@ -301,6 +301,11 @@ class SessionInfo:
         )
 
 
+# R2-F1：软判死（pid=0 仅心跳过期、未达台账 idle 阈值）跳过写台账的一次性审计去重
+# （进程内集合，防 list_active 热路径重复刷屏；进程重启后重新留痕一次）。
+_LEDGER_SOFT_EXPIRE_AUDITED: set[str] = set()
+
+
 def _salvage_takeover_ledger(
     project_root: Path | None, data: dict[str, dict], expired_sids: list[str], now: float
 ) -> None:
@@ -314,16 +319,47 @@ def _salvage_takeover_ledger(
     """
     try:
         try:
-            from scripts.governance.session_takeover_ledger import write_takeover_entry
+            from scripts.governance.session_takeover_ledger import (
+                DEATH_IDLE_SECONDS,
+                write_takeover_entry,
+            )
         except ImportError:
             import sys as _sys
 
             root_str = str(project_root) if project_root else os.getcwd()
             if root_str not in _sys.path:
                 _sys.path.insert(0, root_str)
-            from scripts.governance.session_takeover_ledger import write_takeover_entry
+            from scripts.governance.session_takeover_ledger import (
+                DEATH_IDLE_SECONDS,
+                write_takeover_entry,
+            )
         root = project_root if project_root is not None else Path.cwd()
         for sid in expired_sids:
+            # R2-F1 治本（2026-10-02 第四夜红蓝审查）：判死口径与台账判据对齐。
+            # list_active 的判死是"会话活性"判据（pid=0 逻辑会话心跳 90s 即判死），
+            # 而接管台账是"资源需接管"判据（idle > 7200s 或注册表除名）。二者混用
+            # 会把 idle 仅 4~100s 的活会话写进死亡台账（实测 st-c10-final3 idle=4s
+            # 仍挂 open 条目）→ TAKEOVER-PENDING 门回头咬住活会话自己的提交，
+            # 接管人照处方回收心跳/worktree 会误杀在途面。此处补闸：
+            # 仅"注册表已无此 sid（除名/被收割）"或"idle 超阈值"或"pid>0 且进程确认已死"
+            # 三类硬证据才显化；pid=0 仅心跳过期=软证据，不写台账（等超阈值/除名）。
+            info = data.get(sid)
+            if isinstance(info, dict):
+                _la = float(info.get("last_activity") or 0.0)
+                _pid = int(info.get("pid") or 0)
+                _age_ok = bool(_la) and (now - _la) > DEATH_IDLE_SECONDS
+                _pid_dead = _pid > 0 and not is_pid_alive(_pid)
+                if not (_age_ok or _pid_dead):
+                    if sid not in _LEDGER_SOFT_EXPIRE_AUDITED:
+                        _LEDGER_SOFT_EXPIRE_AUDITED.add(sid)
+                        logger.warning(
+                            "SessionRegistry: takeover ledger skipped sid=%s "
+                            "(soft-expire only: idle=%.0fs <= %ss, pid=0 no hard death evidence)",
+                            sid,
+                            (now - _la) if _la else -1.0,
+                            DEATH_IDLE_SECONDS,
+                        )
+                    continue
             try:
                 write_takeover_entry(root, sid, registry_entry=data.get(sid) or {}, now=now)
             except Exception as e:  # noqa: BLE001 — 单会话显化失败不阻断判死主流程
@@ -613,6 +649,20 @@ class SessionRegistry:
             now = time.time()  # noqa: m46-time — 注册时间戳（对标 register_dependency/claim_file 同模式）
             existing = self._get_entry(session_id)
             existing_logical = isinstance(existing, dict) and bool(existing.get("logical", False))
+            # wave4-D 遗留收口（2026-10-02 st-construct-20261002）：logical=True 形态核验——
+            # W-29 扩权（免 pid 判死+FULL register 放行）只授予总包/chief 形态会话；
+            # 证据 = sid 命中 chief 形态词 OR 该 sid 心跳文件新鲜（心跳守护真实在岗）。
+            # 核验不过 → 降级 logical=False + warning（fail-open：不阻断注册本体，只不给扩权；
+            # 与 V5 降级哲学同向）。既有条目已 logical 的走继承通道，不重复核验。
+            if logical and not existing_logical and not self._verify_chief_form(session_id):
+                logger.warning(
+                    "SessionRegistry: logical=True downgraded (chief-form verification "
+                    "failed) session=%s — no chief-pattern sid and no fresh heartbeat "
+                    "daemon; register proceeds with logical=False (fail-open, "
+                    "W-29 escalation requires chief form)",
+                    session_id,
+                )
+                logical = False
             if isinstance(existing, dict) and not (logical or existing_logical):
                 prev = SessionInfo.from_dict(existing)
                 last_reg = float(existing.get("last_register_ts") or 0.0)
@@ -676,6 +726,26 @@ class SessionRegistry:
                 logical,
             )
             return info
+
+    _CHIEF_FORM_TOKENS = ("chief", "cmd", "commander", "construct", "master", "totalpack")
+
+    def _verify_chief_form(self, session_id: str) -> bool:
+        """W-29 形态核验（wave4-D 收口，2026-10-02）：logical=True 只授予总包/chief 形态。
+
+        证据二选一：① sid 命中 chief 形态词（st-chief*/st-cmd*/st-construct* 等命名惯例）；
+        ② 该 sid 心跳文件 mtime < 120s（心跳守护真实在岗——守护是 chief 工作流的
+        结构性配套）。只读判定，零写副作用。
+        """
+        sid = (session_id or "").lower()
+        if any(tok in sid for tok in self._CHIEF_FORM_TOKENS):
+            return True
+        hb = self._project_root / ".runtime" / "sessions" / session_id / "heartbeat.jsonl"
+        try:
+            if hb.exists() and (time.time() - hb.stat().st_mtime) < 120.0:  # noqa: m46-time - mtime age compare (same waiver semantics as register)
+                return True
+        except OSError:
+            return False
+        return False
 
     def mark_logical(self, session_id: str, *, logical: bool = True) -> bool:
         """W-29：原地翻转逻辑会话标志（零触碰 held_files/last_activity/心跳——防判死又不丢 claim）。

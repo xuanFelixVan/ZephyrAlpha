@@ -34,7 +34,7 @@
 # DISABLED state - verified no resident trading production process is running today, so an
 # enabled watchdog would auto-start a process that is not running (= production behavior
 # change). Disabled preserves one-click recovery; enabling is an Owner-window action.
-# Usage: powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
+# Usage: powershell -ExecutionPolicy Bypass -File scripts\tasks\register\register_guard_tasks.ps1
 # Verify: schtasks /query /tn ZephyrAlpha_DataScheduler & schtasks /query /tn ZephyrAlpha_TickSubscriber
 
 $ErrorActionPreference = "Stop"
@@ -64,7 +64,7 @@ $settings = New-ScheduledTaskSettingsSet `
 $principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
 
 foreach ($svc in $services) {
-    $ps1Path = Join-Path $RepoRoot ("scripts\" + $svc.Script)
+    $ps1Path = Join-Path $RepoRoot ("scripts\installers\" + $svc.Script)
     if (-not (Test-Path $ps1Path)) { throw "Guard script not found: $ps1Path" }
 
     # No-flash launch (#ARCH-BOOT-WINDOW-FLASH, 2026-09-08): powershell.exe is console-subsystem;
@@ -111,7 +111,7 @@ foreach ($svc in $services) {
 # existing task is left completely untouched (never Unregister, never Set) so whatever state
 # the Owner has since chosen (including Enabled) is preserved.
 $tradingSvc = @{ TaskName = "ZephyrAlpha_TradingWatchdog"; Script = "start_trading.ps1" }
-$tradingPs1 = Join-Path $RepoRoot ("scripts\" + $tradingSvc.Script)
+$tradingPs1 = Join-Path $RepoRoot ("scripts\installers\" + $tradingSvc.Script)
 if (-not (Test-Path $tradingPs1)) { throw "Guard script not found: $tradingPs1" }
 
 if (Get-ScheduledTask -TaskName $tradingSvc.TaskName -ErrorAction SilentlyContinue) {

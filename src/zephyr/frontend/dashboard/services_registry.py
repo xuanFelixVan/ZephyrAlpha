@@ -103,7 +103,14 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
         "name": "数据调度器",
         "desc": "8 个数据源的下载总管：每天自动下 K 线/财务/新闻/板块进数据库（61 个任务）",
         "detect": {"type": "heartbeat", "file": "scheduler.heartbeat", "task": "ZephyrAlpha_DataScheduler"},
-        "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_scheduler.ps1"],
+        "start": [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "scripts/installers/start_scheduler.ps1",
+        ],
         "stop": {
             "how": "heartbeat",
             "task": "ZephyrAlpha_DataScheduler",
@@ -128,7 +135,7 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
             "-ExecutionPolicy",
             "Bypass",
             "-File",
-            "scripts/start_tick_subscriber.ps1",
+            "scripts/installers/start_tick_subscriber.ps1",
         ],
         "stop": {
             "how": "heartbeat",

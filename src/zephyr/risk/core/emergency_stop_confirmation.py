@@ -31,7 +31,7 @@ kill switch 本体（MOD-INF-016）已建；本模块补齐**紧急操作二次�
      verify_audit_trail() 委托锚定链离线校验（D_GOV_AUDIT 消费）。
 
 纪律：本模块只做确认门禁与留痕，不执行任何停止/平仓动作（执行归编排层+
-MOD-INF-016）；与 scripts/deadman_switch.ps1 的联动演练留 Owner 窗口。
+MOD-INF-016）；与 scripts/installers/deadman_switch.ps1 的联动演练留 Owner 窗口。
 依据: blueprint.md（MOD-RK-36）§3 核心规则；蓝图 MOD-INF-001 §30.1.5
 Version: 0.1.0
 

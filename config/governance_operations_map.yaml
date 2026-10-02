@@ -1635,7 +1635,7 @@ families:
     family: L1_monitor
     wiring: suspect_orphan
   - module: scripts.run_boot_sla_probe
-    path: scripts/run_boot_sla_probe.py
+    path: scripts/tasks/run/run_boot_sla_probe.py
     domain: D_GOVERNANCE
     maturity: testing
     family: L1_monitor

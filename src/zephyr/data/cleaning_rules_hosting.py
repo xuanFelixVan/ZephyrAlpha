@@ -418,7 +418,7 @@ def _evaluate_table(executor: QueryExecutor, book: TableRulebook, *, ref: date, 
         entry["rows_read"] = len(rows)
         # rb2 §二.10 实测绕过：0 行（表空/口径错/窗口写歪）被当"已巡检且干净"。
         # 零样本=无对象可判，不是"判干净"——单列 no_samples，读数面据此降级（家法同
-        # scripts/run_post_settlement.py 的"零样本必打 WARNING＋落台账"）。
+        # scripts/tasks/run/run_post_settlement.py 的"零样本必打 WARNING＋落台账"）。
         entry["no_samples"] = len(rows) == 0
         entry["rows_kept_in_memory"] = len(clean)
         entry["stats"] = stats

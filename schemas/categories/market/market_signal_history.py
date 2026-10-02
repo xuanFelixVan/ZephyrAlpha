@@ -2,7 +2,7 @@
 # [MODULE] schemas.categories.market.market_signal_history
 # [DOMAIN] D_SIGNAL
 # [DEPENDENCIES] 无（DDL-as-Code 真源文件）
-# [CONSUMERS] apply_*_ddl（Owner 窗口执行）；zephyr.signal.signal_history_writer；scripts/run_backtest.py；scripts/compute_signals.py
+# [CONSUMERS] apply_*_ddl（Owner 窗口执行）；zephyr.signal.signal_history_writer；scripts/tasks/run/run_backtest.py；scripts/compute_signals.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] market_signal_history 表 DDL 唯一真源；本文件仅供 apply DDL 引用，禁止直接执行建表

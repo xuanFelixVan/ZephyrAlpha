@@ -62426,6 +62426,47 @@ entries:
   desc_en: ""
   plain_zh: "run_qwen3_baseline_exam.py — qwen3:8b 本地推理质量基线考试（10号文 §4 Phase 2.4）。验收口径：基线成绩入库 data/model_profiles/（ModelRouter.load_benchmark_from_disk默认消费目录）。"
   responsibility_layer: governance
+- module_path: scripts/installers/start_scheduler.ps1
+  domain_id: D_DATA
+  name_zh: 启动调度器
+  name_en: start_scheduler
+  desc_zh: 启动调度器模块
+  desc_en: ''
+  plain_zh: 启动调度器，调度器的调度器，按时间或优先级安排任务执行。
+  responsibility_layer: business
+- module_path: scripts/installers/start_tick_subscriber.ps1
+  domain_id: D_DATA
+  name_zh: 启动逐笔订阅器
+  name_en: start_tick_subscriber
+  desc_zh: 启动滴答subscriber模块
+  desc_en: ''
+  plain_zh: 启动逐笔订阅器，start_tick_subscriber.ps1的订阅器，订阅接收数据。
+  responsibility_layer: business
+- module_path: scripts/installers/start_ch_health_probe.ps1
+  domain_id: D_DATA
+  name_zh: 启动ChHealthProbe
+  name_en: Start Ch Health Probe
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 脚本的启动 ch 健康探针 ps1包：把启动 ch 健康探针 ps1相关的模块聚拢在一起，对外提供统一的引用入口。
+  responsibility_layer: business
+- module_path: tests/security/test_session_registry_chief_form.py
+  domain_id: D_SECURITY
+  name_zh: "W29形态核验单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "测试总包形态核验：chief 名或活心跳才给逻辑会话扩权，否则自动降级"
+  responsibility_layer: governance
+- module_path: scripts/governance/chaos_drill/rb4_target.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "红蓝审查接管门咬合靶子"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一个只用来验证接管未完成时门禁会不会拦住提交的临时靶文件，审查结束就删掉"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
