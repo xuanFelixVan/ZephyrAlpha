@@ -1,0 +1,22 @@
+---
+ttl: permanent
+title: E5 协同去重判据值预注册册
+doc_type: config
+---
+# E5 协同去重判据值预注册册（F24 接线，st-ffchief-20261001）
+# 真源: corr_threshold 判据值唯一真源=本册；代码签名默认档仅兜底非生产面，
+#   生产链（f06_e4_wfa_exam E5 挂点）一律经 load_synergy_threshold 读本册
+#   （缺册/非法 fail-closed 拒考——裁定#325 假绿防线同款，禁静默回落代码默认档）。
+# 消费方: scripts/backtest/f06_e4_wfa_exam.py（E4→E6 归档段 E5 挂点）
+# 净零声明（宪法 §4.1）: 本册替代=MOD-BT-086 synergy_dedup 硬编码默认档 0.70 的
+#   "判据值"身份（值不变、出处迁移入册）；不新增判据语义，不另立第二阈值。
+# 变更纪律（F24 风险条）: 去重只标注 redundant_of 不删行；改本值前须跑一轮历史回放
+#   比对（去重前后 E6 台账差异报告）并经 Owner 定案；禁直接改值上线。
+schema_version: 1.0.0
+doc_type: synergy_dedup_config
+title: E5 协同去重判据值预注册参数
+created: '2026-10-01'
+session: st-ffchief-20261001
+synergy_dedup:
+  # 相关系数聚类阈值（|ρ| >= 阈值 判同簇；簇首=Sharpe 最高——MOD-BT-086 不变量）
+  corr_threshold: 0.70

@@ -1,0 +1,99 @@
+---
+module_id: REG-SCHEMA-MIG-001
+ttl: permanent
+title: DB Schema 迁移台账（版本化/幂等/断点续跑）
+doc_type: register
+---
+# [A_config] module_id=REG-SCHEMA-MIG-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# DB Schema 迁移台账（F123 P0 新号，st-ffchief-20261001 wave4-G 施工）
+# 背景：项目长期无 DB schema 迁移 runner，历次 DDL 全靠手工 apply_*_ddl.py 重放，
+#       无版本化/幂等/失败留痕。本台账 + scripts/governance/apply_schema_migrations.py
+#       + DatabaseService.migrate() 构成受控迁移通道三件套。
+# 正名声明：本册与 migration_registry.yaml（REG-MIGRATION-001，ARCH-031 模块迁移映射册，
+#       frozen）完全正交——那册管 old_path→new_path 文件迁移映射，本册管 DB schema DDL
+#       版本化迁移。禁把本册条目写入该 frozen 册，亦禁反向引用（MODIFY-GUARD）。
+# SSOT 分工：PG schema_migration.applied_migrations = "是否已应用"运行时机械真源；
+#       本册 migrations 段 = 迁移定义真源（id/描述/DDL 指纹）；applied_history 段 =
+#       runner 机生审计镜像（禁手工维护），仅人读对账用。
+# ========================================================================
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-SCHEMA-MIG-001
+name: DB Schema Migration Ledger
+name_zh: DB Schema 迁移台账
+description: >-
+  DB schema DDL 变更受控通道的迁移台账（SSoT）。登记迁移条目三要素：migration_id
+  （字典序即应用序）、描述、ddl_fingerprint（DDL 指纹，sha256: 前缀）。运行时已应用
+  状态以 PG depgraph 实例 schema_migration.applied_migrations 表为机械真源
+  （migration_id PK/checksum/batch_id/applied_at TIMESTAMPTZ/applied_by）；
+  本册 applied_history 段为 runner 落库成功后机生回写的审计镜像。
+  消费者=scripts/governance/apply_schema_migrations.py（CLI）与
+  zephyr.infrastructure.schema_migrations（核心逻辑，DatabaseService.migrate() 薄封装）。
+owner: MOD-INF-002
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-10-01'
+last_updated: '2026-10-01'
+related_arch: 'F123 / st-ffchief-20261001 wave4-G'
+creation_token: w4g-schema-migration-20261001
+merge_evaluation: >-
+  全资产净零声明（裁定#375）：本册是 F123 处方新建的缺失通道本体（P0 新号），
+  非同域重复——替代物是"手工改 apply_*_ddl.py+重放"的不可审计实践（无册可并；
+  migration_registry.yaml 为异对象不并，正交见上）。
+unique_key:
+- migration_id
+entry_count: 1
+
+entry_schema:
+  migration_id: str            # 四位序号_小写slug（如 0001_baseline），字典序=应用序，禁复用
+  title: str                   # 一句话标题
+  description: str             # 变更内容与动机
+  kind: str                    # baseline（只记指纹不执行）/ ddl（statements 内联 DDL）/ script（command 子进程隔离执行既有部署脚本）
+  target: str                  # none / postgresql / clickhouse（tracking 台账恒在 PG depgraph 实例）
+  statements: list[str]        # kind=ddl 时必填，按序执行的 DDL 语句（须幂等写法 IF NOT EXISTS）
+  command: list[str]           # kind=script 时必填，干净进程子命令（[python, script, args...]，cwd=仓根）
+  ddl_fingerprint: str         # sha256:<hex>；kind=ddl 时=sha256(join(statements,"\n"))，runner 应用时机械复核，漂移拒跑
+  baseline_script_count: int   # kind=baseline 专用：基线盘点脚本数
+
+# ---- tracking 台账（运行时机械真源）----
+tracking:
+  backend: postgresql
+  instance: depgraph（连接经 zephyr.governance.depgraph_schema.get_depgraph_pg_connection 唯一入口）
+  access_recipe: superuser 部署器配方（照 apply_meta_question_ddl.py / registry_ledger/deploy.py 先例；depgraph_reader 业务角色无 CREATE/INSERT 权限是预期环境事实）——两文件在 DEPGRAPH-WRITE-PATH 白名单内
+  schema: schema_migration
+  table: applied_migrations
+  columns: migration_id TEXT PRIMARY KEY / checksum TEXT NOT NULL / batch_id TEXT NOT NULL / applied_at TIMESTAMPTZ NOT NULL DEFAULT now() / applied_by TEXT NOT NULL
+  idempotency: 已在册（migration_id 命中）→ 跳过；命中但 checksum 与本册 ddl_fingerprint 不符 → MigrationDriftError 硬拒（漂移检测，fail-closed）
+
+# ---- baseline 指纹算法（可复算）----
+baseline_manifest:
+  algorithm: >-
+    sha256 over UTF-8 文本，文本=sorted(scripts/ 递归 glob 'apply_*ddl*.py'，排除 __pycache__)
+    逐行 f"{relpath_posix}:{sha256(file_bytes)}" + 尾部换行
+  script_count: 34
+  computed_at: '2026-10-01T15:20:00+00:00'
+
+# ---- 迁移条目（字典序=应用序）----
+migrations:
+- migration_id: 0001_baseline
+  title: Baseline - scattered DDL current state
+  description: >-
+    首条迁移：把既有 34 个散落 apply_*_ddl.py 的 DDL 现状登记为基线（F123 处方第 4 条）。
+    kind=baseline：不执行任何 DDL，仅在 runner 首次 --apply 时向 PG tracking 表记录
+    现状指纹，作为后续版本化迁移的序起点。历史 DDL 的实际幂等性仍由各脚本自负
+    （F123 风险注记），本通道只对今后新增迁移负责。
+  kind: baseline
+  target: none
+  statements: []
+  command: []
+  ddl_fingerprint: sha256:decfa003e1db9c0229c16c1110bc7b1b80195401fcc28e59fe7aa12b3fad26f6
+  baseline_script_count: 34
+
+# ---- 已应用批次审计镜像（runner 机生回写，禁手工维护）----
+applied_history:
+  - batch_id: batch-20261001T073645Z
+    applied_at: '2026-10-01T07:36:45.615850+00:00'
+    migrations: [0001_baseline]
+

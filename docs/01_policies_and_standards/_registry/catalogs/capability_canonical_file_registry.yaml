@@ -59185,4 +59185,14 @@ creation_tokens:
   created_by: st-ffchief-20261002
   capability: takeover-gate-algoflow
   merge_evaluation: "TAKEOVER-PENDING 门的算法面外置视图（externalizer 口径机生+AI 校准），非门本体第二真源"
+- file: docs/_working/branch_zero_takeover/adjudications_final.md
+  token: branch-zero-campaign-doc-adjudications-final-20261002
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "战役裁定书与治本清单册续编"
+- file: docs/_working/circulation_chief/99_final_report.md
+  token: branch-zero-campaign-deliverable-99-final-report-20261002
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-deliverable
+  merge_evaluation: "总包战役交付物收口补投（各车道晚期成品， ensquare 非第二真源）"
 di_seam_exemptions: []
