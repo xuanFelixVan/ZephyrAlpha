@@ -59424,4 +59424,32 @@ creation_tokens:
   capability: commit_speedup
   merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/branch_zero_takeover/construct/pending_owner.md
+- file: docs/_working/branch_zero_takeover/construct/99_final_report.md
+  token: construct-final-report-99-final-report-20261002
+  created_by: st-construct-20261002
+  capability: construct_final_report
+  token: construct_pending_owner-20261002
+  created_by: st-construct-20261002
+  capability: construct_pending_owner
+  token: algo-flow-ch-tick-provider-20261002
+  created_by: st-construct-20261002
+  capability: algo_flow_ch_tick_provider
+  token: algo-flow-csb-external-yaml-20261002
+  created_by: st-construct-20261002
+  capability: algo_flow_coordination_state_board
+  token: session-chief-form-test-test-session-registry-chief-form-20261002
+  created_by: st-construct-20261002
+  capability: session_chief_form_test
+  token: belt-daemon-watchdog-belt-watchdog-20261002
+  created_by: st-construct-20261002
+  capability: belt_daemon_watchdog
+  token: config-check-task-registrar-register-config-check-task-20261002
+  created_by: st-construct-20261002
+  capability: config_check_task_registrar
+  token: commit-speedup-rb-robust-20260926
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
