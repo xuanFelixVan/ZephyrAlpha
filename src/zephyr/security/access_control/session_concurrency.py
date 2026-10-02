@@ -267,6 +267,12 @@ class SessionInfo:
     # 时间戳。独立于 last_activity——claim_file/register_dependency 刷新 last_activity
     # 是合法治理操作，不应缩窄 register 自身的频率窗。旧条目缺字段=0.0=无锚（放行）。
     last_register_ts: float = 0.0
+    # 回魂治理（2026-10-03 deadletter-cure 战役 / 第四夜审查延伸）：
+    # reincarnation_count = FULL register 把既有条目的四锚重置为新时刻的次数。
+    # 0=正常新生/降级重建；>0=fw.WARNING 级嫌疑（同一 sid 反复"重投胎"）。
+    # 新增 adjoint 面判据、区分"新会话"与"老会话回魂"的唯一锚点——旧模型只能靠
+    # 时间锚相等与否反推，可审计性差到抓不住 keeper 循环。
+    reincarnation_count: int = 0
 
     def to_dict(self) -> dict:
         return {
@@ -281,6 +287,7 @@ class SessionInfo:
             "depends_on_sessions": self.depends_on_sessions,
             "logical": self.logical,
             "last_register_ts": self.last_register_ts,
+            "reincarnation_count": self.reincarnation_count,
         }
 
     @classmethod
@@ -298,6 +305,7 @@ class SessionInfo:
             depends_on_sessions=d.get("depends_on_sessions") or [],
             logical=bool(d.get("logical", False)),
             last_register_ts=d.get("last_register_ts", 0.0),
+            reincarnation_count=int(d.get("reincarnation_count", 0) or 0),
         )
 
 
@@ -422,6 +430,46 @@ def _audit_register_rate_rejected(project_root: Path, session_id: str, prev: Ses
             fh.write(json.dumps(record, ensure_ascii=False) + "\n")
     except OSError as e:
         logger.warning("SessionRegistry: register rate-guard audit write failed: %s", e)
+
+
+def _audit_register_reanimation(
+    project_root: Path, session_id: str, prev: SessionInfo, now: float, prev_reincarnation: int
+) -> None:
+    """回魂降级审计（2026-10-03 deadletter-cure 治本）：JSONL 落盘留痕。
+
+    对齐 ``_audit_register_rate_rejected`` 的同构审计面，写
+    ``<root>/.runtime/session_registry_audit/register_reanimation.jsonl``（独立目录，
+    不与 session_registry/ 分片混放）。
+
+    为什么必须留痕：回魂行为的取证成本极高——旧模型下只能靠"四锚相等"的时间差分
+    反推（c10 keeper 取证耗时整晚）。本函数把判据五项证据（pid / held / task /
+    heartbeat / age）连同 before/after 时间锚一次性落盘，下一轮排查从"反推"降级为
+    "查表"。写失败只 warn 不抛（审计是留痕面不是裁决面——降级本身已生效）。
+    """
+    record = {
+        "ts": datetime.now(timezone.utc).isoformat(),  # noqa: m46-time — 审计留痕时间戳（对标 register_rate_guard 同款豁免模式）
+        "pid": os.getpid(),
+        "event": "register_reanimation_blocked",
+        "session_id": session_id,
+        "evidence": {
+            "entry_pid": prev.pid,
+            "held_files_count": len(prev.held_files or []),
+            "task_files_count": len(prev.task_files or []),
+            "fresh_heartbeat": False,
+            "entry_age_seconds": round(now - prev.start_time, 1) if prev.start_time > 0 else None,
+        },
+        "start_time_before": prev.start_time,
+        "last_activity_before": prev.last_activity,
+        "reincarnation_count_before": prev_reincarnation,
+        "anchors_frozen": True,
+    }
+    try:
+        audit_dir = Path(project_root) / ".runtime" / "session_registry_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with (audit_dir / "register_reanimation.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as e:
+        logger.warning("SessionRegistry: reanimation audit write failed: %s", e)
 
 
 class SessionRegistry:
@@ -666,7 +714,20 @@ class SessionRegistry:
             if isinstance(existing, dict) and not (logical or existing_logical):
                 prev = SessionInfo.from_dict(existing)
                 last_reg = float(existing.get("last_register_ts") or 0.0)
-                if (
+                # 回魂闸（2026-10-03 deadletter-cure 治本）：即便条目**已判死**
+                # （原 ``_is_session_alive`` 为 False 会整段跳过护栏 → 走 FULL 重置），
+                # 只要命中回魂判据就**同样降级**。堵死"节拍拉到 >90s 即合法"的
+                # 护栏绕过——这是 c10 keeper 循环连续 1202 次伪造活性的唯一入口。
+                reanimating = self._is_reanimation(prev, now)
+                if reanimating:
+                    _audit_register_reanimation(
+                        self._project_root,
+                        session_id,
+                        prev,
+                        now,
+                        int(existing.get("reincarnation_count", 0) or 0),
+                    )
+                if reanimating or (
                     last_reg > 0.0
                     and (now - last_reg) < _REREGISTER_MIN_INTERVAL_SECONDS
                     and _is_session_alive(prev, now)
@@ -699,9 +760,12 @@ class SessionRegistry:
                         depends_on_sessions=depends_on_sessions or [],
                         logical=logical or existing_logical,
                         last_register_ts=prev.last_register_ts,
+                        # 降级重建不算"投胎"——沿用既有计数（回魂次数是 FULL 重置的次数）
+                        reincarnation_count=prev.reincarnation_count,
                     )
                     self._write_own(session_id, rebuilt.to_dict())
                     return rebuilt
+            prev_reincarnation = int(existing.get("reincarnation_count", 0) or 0) if isinstance(existing, dict) else 0
             info = SessionInfo(
                 session_id=session_id,
                 pid=pid if pid is not None else os.getpid(),
@@ -714,6 +778,8 @@ class SessionRegistry:
                 depends_on_sessions=depends_on_sessions or [],
                 logical=logical or existing_logical,
                 last_register_ts=now,
+                # FULL 重置 = 投胎一次（既有条目被换上新时间戳；新会话=0）
+                reincarnation_count=prev_reincarnation + 1 if isinstance(existing, dict) else 0,
             )
             # S4-D：register 语义=覆盖本会话片——无需整表读，跨会话竞态面消失
             self._write_own(session_id, info.to_dict())
@@ -728,6 +794,77 @@ class SessionRegistry:
             return info
 
     _CHIEF_FORM_TOKENS = ("chief", "cmd", "commander", "construct", "master", "totalpack")
+
+    # 回魂判据参数（2026-10-03 deadletter-cure 战役治本）
+    # _MAX_SESSION_LIFETIME_SECONDS：单个 session 的合理寿命上限（老幽灵判据）。
+    # _REINCARNATION_LIMIT：**主判据**——同一 sid 的 FULL 重置（=投胎）次数上限。
+    #   为什么以"次数"而非"年龄"为主判据：年龄锚 start_time 会被 FULL 重置覆盖，
+    #   保活循环恰好靠不断重置它来维持"年轻"（实测四只 c10 条目被判那一刻
+    #   age=0.0h，纯年龄判据直接失守——循环论证）。而 reincarnation_count 只在
+    #   FULL 路径自增、且降级路径透传不自增，**是保活循环自己抹不掉的反证**。
+    #   取 5：正常会话窗内重注册一律走降级（计数不变），一夜内很难 FULL 5 次；
+    #   保活循环实测节拍 ~105s，几分钟即越阈。
+    _MAX_SESSION_LIFETIME_SECONDS: float = 6 * 3600.0
+    _REINCARNATION_LIMIT: int = 5
+    # 心跳新鲜窗（与 _verify_chief_form 同口径 120s，复用为"外部活性佐证"窗口）。
+    _REANIMATION_HEARTBEAT_WINDOW: float = 120.0
+
+    def _has_fresh_heartbeat(self, session_id: str, window_seconds: float | None = None) -> bool:
+        """外部活性佐证：该 sid 的心跳文件是否新鲜（心跳守护真实在岗）。
+
+        从 ``_verify_chief_form`` 抽出可复用的心跳探测（同一 evidence 语义同OWnicators，
+        避免两处口径漂移）：``.runtime/sessions/<sid>/heartbeat.jsonl`` 的 mtime 在窗内。
+        只读，零副作用；文件缺失/OSError → False（无佐证）。
+        """
+        win = window_seconds if window_seconds is not None else self._REANIMATION_HEARTBEAT_WINDOW
+        hb = self._project_root / ".runtime" / "sessions" / session_id / "heartbeat.jsonl"
+        try:
+            if hb.exists() and (time.time() - hb.stat().st_mtime) < win:  # noqa: m46-time - mtime age compare
+                return True
+        except OSError:
+            return False
+        return False
+
+    def _is_reanimation(self, prev: SessionInfo, now: float) -> bool:
+        """回魂判据（2026-10-03 治本）：本次 FULL register 是不是"老条目投胎"。
+
+        病根（第四夜延伸 c10 keeper 实证）：V5 频率护栏的第三条门
+        ``_is_session_alive(prev, now)`` 在条目判死时**整段跳过护栏** → 走 FULL 分支
+        把 start_time/last_heartbeat/last_activity/last_register_ts 四锚无条件重置为
+        now。保活循环只需把节拍拉到 > ``_HEARTBEAT_TIMEOUT_SECONDS``(90s)，即可让条目
+        周期性"死→放行→续命→再死"，实测节拍 ~105s、连续 1202 次、永不判死——呈现
+        "看起来在干活但没有工作面"的假活方波。
+
+        判据（前三条是"无一例外"的硬前提，第四条二选一）：
+          ① ``pid <= 0`` —— 无进程绑定的逻辑会话（有真进程则一律认为真活）
+          ② held_files 与 task_files **皆空** —— 没干活、没持股
+          ③ **无外部活性佐证** —— 心跳文件不新鲜（守护不在岗）
+          ④ 投胎次数 ``reincarnation_count >= _REINCARNATION_LIMIT``
+             **或** 条目年龄 > ``_MAX_SESSION_LIFETIME_SECONDS``
+
+        为什么 ④ 以"投胎次数"为主、年龄为辅（关键设计，勿退化成纯年龄）：
+        年龄锚 start_time 会被 FULL 重置覆盖，而保活循环的续命手段恰恰就是不断
+        重置它——纯年龄判据会被自己绕过去（实测四只 c10 条目判定时 age=0.0h，
+        纯年龄完全失守）。reincarnation_count 在 FULL 路径自增、降级路径透传，
+        **只有真实重名 opener 会增长**，是保活循环自己抹不掉的反证。
+
+        为什么安全（不误杀）：真实 pid=0 会话只要满足任一"在干活"信号即放行——
+        持 claim（②不成立）、心跳守护在岗（③不成立）、有真进程（①不成立）。
+        且判定成立时**仍走 status 重建**（pid/held_files/task_files/deps/logical 按实参
+        刷新），只冻结四时间锚；想续期请走合法通道：claim（刷新 last_activity）或
+        heartbeat_daemon（刷新 last_heartbeat）。光刷 register 不给续期。
+        """
+        if (prev.pid or 0) > 0:
+            return False
+        if (prev.held_files or []) or (prev.task_files or []):
+            return False
+        if self._has_fresh_heartbeat(prev.session_id):
+            return False
+        if prev.reincarnation_count >= self._REINCARNATION_LIMIT:
+            return True
+        if prev.start_time > 0.0 and (now - prev.start_time) > self._MAX_SESSION_LIFETIME_SECONDS:
+            return True
+        return False
 
     def _verify_chief_form(self, session_id: str) -> bool:
         """W-29 形态核验（wave4-D 收口，2026-10-02）：logical=True 只授予总包/chief 形态。

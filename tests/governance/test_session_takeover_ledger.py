@@ -552,7 +552,12 @@ def test_sweep_absorbs_crlf_normalized_and_keeps_real_diff(tmp_path: Path) -> No
         encoding="utf-8",
     )
 
+    # 2026-10-03 契约变更：清算默认零写（对齐 blob_gc --archive 的安全哲学），
+    # 显式 execute=True 才真正搬迁。先钉"默认不动盘"，再钉"执行后正确分诊"。
     assert ledger._cmd_sweep_absorbed(main) == 0
+    assert (dead / "q-crlf-case.json").exists(), "默认 dry-run 不得动盘"
+
+    assert ledger._cmd_sweep_absorbed(main, execute=True) == 0
     assert not (dead / "q-crlf-case.json").exists()
     arch = main / ".runtime" / "commit_queue" / "dead_archive" / "absorbed" / "q-crlf-case.json"
     assert arch.exists(), "CRLF 行尾差死信必须被吸收"

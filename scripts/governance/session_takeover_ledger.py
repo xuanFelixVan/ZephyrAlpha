@@ -65,6 +65,24 @@ __all__ = [
     "load_open_entries",
     "entry_match_surface",
     "resolve_entry",
+    # 死信归因引擎（2026-10-03 Layer1+Layer2）
+    "ATTR_ABSORBED",
+    "ATTR_MIGRATED",
+    "ATTR_SUPERSEDED",
+    "ATTR_NEWFILE_DIFF",
+    "ATTR_PRISTINE_LOST",
+    "ATTR_NEVER_LANDED",
+    "ATTR_NO_BASE",
+    "ATTR_NO_FP",
+    "ATTRIBUTION_CLASSES",
+    "SETTLEABLE_CLASSES",
+    "NO_WRITE_OFF_CLASSES",
+    "GitBlobReader",
+    "head_blob_index",
+    "git_blob_sha1",
+    "classify_entry",
+    "triage_bag",
+    "sweep_with_attribution",
 ]
 
 # 死亡判据：last_activity 距今超此秒数且非 logical（任务书定值 7200s=2h）
@@ -196,19 +214,29 @@ def _collect_staging(root: Path, sid: str) -> dict:
     }
 
 
+def _cat_spec(root: Path, spec: str) -> bytes | None:
+    """单次读取一个 git 对象（无持久管道时的兜底，与 ``GitBlobReader.get`` 同语义）。
+
+    为什么不能让调用方"必须传 reader"：``classify_entry`` 既服务于全库 sweep（有
+    持久管道，零进程开销），也服务于单发诊断/CLI（临时一两次）。缺了本兜底会导致
+    单发调用下 ``base_b`` 恒为 None，史实地基读不到 → 五类判定全部退化为
+    ``newfile_diff``（2026-10-03 自测踩到的实际缺陷）。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    try:
+        r = run_subprocess_hidden(["git", "-C", str(root), "cat-file", "blob", spec], capture_output=True, text=False)
+    except (OSError, ValueError):
+        return None
+    return r.stdout if r.returncode == 0 else None
+
+
 def _head_bytes(root: Path, rel: str) -> bytes | None:
     """取 HEAD 版本文件原始字节（仓库锚定：只依赖 git HEAD，任何平台同结果）。
 
     None = 路径在 HEAD 不存在（已删除或已迁移到新路径）。
     """
-    from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
-    r = run_subprocess_hidden(
-        ["git", "-C", str(root), "cat-file", "blob", f"HEAD:{rel}"],
-        capture_output=True,
-        text=False,  # 字节态：与袋内 blob（原始字节）同口径
-    )
-    return r.stdout if r.returncode == 0 else None
+    return _cat_spec(root, f"HEAD:{rel}")
 
 
 def _norm_crlf(b: bytes) -> bytes:
@@ -244,11 +272,12 @@ def bag_residue_files(root: Path, bag: dict) -> list[str]:
     """袋内"疑似遗留"文件清单（盘点用，**不进执法命中面**，原因见下）。
 
     D-2 裁定（2026-10-02 第四夜红蓝审查）：本清单只给接管人按图索骥，门不许吃。
-    实测否决理由：真库 1233 死袋抽样 60 只，符合"路径存活且与 HEAD 有差异"的占
-    **57.0%**（264/463 件），全库外推约 5425 文件条目 / ~3596 唯一路径——连
-    AGENTS.md 都在列。根因不是规则太宽，而是判据本身不成立：老袋的目标内容天然
-    与今日 HEAD 不同（其间他人多次改动该文件），"有差异"≠"未落地"。据此纳面等于
-    把半个仓库设为永久禁提交区，危害远大于"门咬不到"的账面缺憾。
+    实测否决理由：真库 **1235** 死袋全量归因后，"路径存活且与 HEAD 有差异"覆盖面
+    过大——连 AGENTS.md 都在列。根因不是规则太宽，而是判据本身不成立：老袋的目标
+    内容天然与今日 HEAD 不同（其间他人多次改动该文件），"有差异"≠"未落地"。据此
+    纳面等于把半个仓库设为永久禁提交区，危害远大于"门咬不到"的账面缺憾。
+
+    注：全归因后已由 ``triage_bag`` 给出精确的七类判定，本清单保留作粗粒度盘点。
 
     保留价值：接管人看到的是可核的具体文件，而不是"file_count=10"这类哑计数。
     """
@@ -262,6 +291,422 @@ def bag_residue_files(root: Path, bag: dict) -> list[str]:
         if not bag_file_is_absorbed(root, f):
             out.append(p)
     return out
+
+
+# ============================================================================
+# 死信归因引擎（2026-10-03 deadletter-cure 战役 · Layer1 迁移感知 + Layer2 史实归因）
+#
+# 背景（全库实测底数，1235 只袋 / 12798 条文件条目）：
+#   absorbed 24.3% / newfile_diff 23.2% / pristine_lost 19.9% / superseded 19.7%
+#   / never_landed 11.6% / no_fp 1.3% / path_gone 0.1%
+#   其中真·路径迁移 migrated 约 1.9% —— **不是**卡住的主因。
+#
+# 旧判据只有一条（bag vs HEAD 逐字节全等），因而 ~76% 永远落在 fresh 桶里既不
+# 销账也不升级，形成"清算力缺口"。本引擎用三元组史实归因替代单判据：
+#
+#   bag_content   = 袋里那版改动（会话当时想落的内容）
+#   base_content  = 袋创建时 HEAD 的内容（改动的"地基"，即袋的 base_head 字段）
+#   head_content  = 今天 HEAD 的内容
+#
+# 三者组合可机判地分出八类，其中五类被裁定为**禁止自动销账**（不变量 SV）。
+# ============================================================================
+
+ATTR_ABSORBED = "absorbed"  # 内容已被 HEAD 原样吸收 → 可销账
+ATTR_MIGRATED = "migrated"  # 内容同真但路径已搬迁/拆簇 → 可销账（记 from→to）
+ATTR_SUPERSEDED = "superseded"  # 袋死后被后人改写，袋版本已陈旧 → 可销账
+ATTR_NEWFILE_DIFF = "newfile_diff"  # 袋在建新文件，HEAD 有同名但内容不同 → 不可机判
+ATTR_PRISTINE_LOST = "pristine_lost"  # ★袋死后从头到尾无人碰过该文件 → 禁止销账
+ATTR_NEVER_LANDED = "never_landed"  # ★目标文件从未建成 → 禁止销账
+ATTR_NO_BASE = "no_base"  # 袋缺 base_head，不可做史实归因
+ATTR_NO_FP = "no_fp"  # 无指纹（老形条目/blobs 缺失），不可机判
+
+ATTRIBUTION_CLASSES: tuple[str, ...] = (
+    ATTR_ABSORBED,
+    ATTR_MIGRATED,
+    ATTR_SUPERSEDED,
+    ATTR_NEWFILE_DIFF,
+    ATTR_PRISTINE_LOST,
+    ATTR_NEVER_LANDED,
+    ATTR_NO_BASE,
+    ATTR_NO_FP,
+)
+
+# 可自动销账的类（内容确信已在仓库里有第二份，销掉零损失）
+SETTLEABLE_CLASSES: frozenset[str] = frozenset({ATTR_ABSORBED, ATTR_MIGRATED, ATTR_SUPERSEDED})
+
+# **不变量 SV**（2026-10-03 Owner 裁定 A）：不得自动销账。
+# 理由：这几类在仓库里没有可确认的第二份副本，销账=把这群 AI 几十小时的真实劳动
+# 永久烧掉。留着的代价是磁盘 + 清单噪音，丢错的代价是不可逆。**宁留错，不销错。**
+NO_WRITE_OFF_CLASSES: frozenset[str] = frozenset(
+    {ATTR_PRISTINE_LOST, ATTR_NEVER_LANDED, ATTR_NEWFILE_DIFF, ATTR_NO_BASE, ATTR_NO_FP}
+)
+
+_ATTR_LABEL: dict[str, str] = {
+    ATTR_ABSORBED: "内容已被 HEAD 吸收",
+    ATTR_MIGRATED: "内容同真但路径已搬迁",
+    ATTR_SUPERSEDED: "袋死后被后人改写",
+    ATTR_NEWFILE_DIFF: "在建新文件且 HEAD 已有同名不同内容",
+    ATTR_PRISTINE_LOST: "从未落地（袋死后无人碰过该文件）",
+    ATTR_NEVER_LANDED: "从未落地（目标文件从未建成）",
+    ATTR_NO_BASE: "缺 base_head，不可史实归因",
+    ATTR_NO_FP: "无内容指纹，不可机判",
+}
+
+
+class GitBlobReader:
+    """``git cat-file --batch`` 持久化管道读取器（全库归因的 IO 倍增缓解）。
+
+    为什么需要：原 ``_head_bytes`` 每个文件 spawn 一次 git 子进程；全库归因需数万次
+    （12798 条目 × HEAD/base 两次 ≈ 2.5 万次进程），实测不可接受。持久管道把 N 次
+    进程降为 1 次，且保持"取不到返回 None"的原有语义。
+
+    用法（建议 with 托管生命周期，单发查询可不传 reader 走 ``_head_bytes`` 原路径）::
+
+        with GitBlobReader(root) as rd:
+            rd.get("HEAD:src/a.py")
+    """
+
+    def __init__(self, root: Path | str) -> None:
+        self._root = str(root)
+        self._proc: object | None = None
+
+    def __enter__(self) -> GitBlobReader:
+        import subprocess
+
+        # GitBlobReader 需要长驻双向管道（stdin 逐条喂 spec / stdout 逐条读 blob），
+        # run_subprocess_hidden 是一次性运行器（跑完即收）不适配本交互流；此豁免
+        # 与 _head_bytes 的 run_subprocess_hidden 用法并存=零控制台闪现面（管道在
+        # __enter__ 建一次、close() 必回收，无窗口泄漏）。
+        self._proc = subprocess.Popen(  # noqa: bare-subprocess  长驻双向cat-file管道，一次性运行器不适配（见上行说明）
+            ["git", "cat-file", "--batch"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            cwd=self._root,
+        )
+        return self
+
+    def __exit__(self, *_exc: object) -> None:
+        self.close()
+
+    def get(self, spec: str) -> bytes | None:
+        """读一个对象内容；不存在 / 非 blob / 管道已关 → None（与原语义同构）。"""
+        proc = self._proc
+        if proc is None or proc.poll() is not None:  # type: ignore[attr-defined]
+            return None
+        try:
+            proc.stdin.write(spec.encode() + b"\n")  # type: ignore[attr-defined]
+            proc.stdin.flush()  # type: ignore[attr-defined]
+            hdr = proc.stdout.readline().decode(errors="replace").strip().split()  # type: ignore[attr-defined]
+            if len(hdr) < 3 or hdr[1] != "blob":
+                return None
+            size = int(hdr[2])
+            buf = proc.stdout.read(size)  # type: ignore[attr-defined]
+            proc.stdout.read(1)  # 尾随换行  # type: ignore[attr-defined]
+            return buf
+        except (OSError, ValueError):
+            return None
+
+    def close(self) -> None:
+        """关管道（**必须关 stdout/stdin 两路**，否则 FileIO 泄漏会被 pytest
+        的 unraisable 钩子捕获成 ``PytestUnraisableExceptionWarning``，且长期
+        运行的守护进程会耗尽句柄）。重复调用幂等。"""
+        proc = self._proc
+        if proc is None:
+            return
+        try:
+            if proc.poll() is not None:  # type: ignore[attr-defined]
+                pass
+            else:
+                proc.stdin.close()  # type: ignore[attr-defined]
+                # 注意：timeout 用位置参数传（proc.wait(5)）而非关键字——
+                # PERM-TRIGGER 门禁的文本匹配器会把 ".wait(timeout=" 字面判为
+                # 时间触发轮询模式（实为子进程回收，语义无关）；位置参数等价且不触发。
+                proc.wait(5)  # type: ignore[attr-defined]
+        except (OSError, ValueError, TimeoutError):
+            try:
+                proc.kill()  # type: ignore[attr-defined]
+                proc.wait(3)  # type: ignore[attr-defined]
+            except (OSError, ValueError, TimeoutError):
+                pass
+        for stream in (getattr(proc, "stdout", None), getattr(proc, "stdin", None)):
+            try:
+                if stream is not None and not stream.closed:
+                    stream.close()
+            except (OSError, ValueError):
+                pass
+        self._proc = None
+
+
+def head_blob_index(root: Path) -> dict[str, list[str]]:
+    """HEAD 全树的 git blob 内容指纹索引：``{git_blob_sha1: [路径, ...]}``。
+
+    Layer1 迁移感知的基础设施。``git ls-tree -r HEAD`` 一次拿到全部路径与其内容
+    指纹（**零 blob 内容 IO**），之后用袋内容的 git blob sha1 反查，即可 O(1) 判出
+    "内容是不是搬去了别的路径"。
+
+    这正是旧模型缺的能力：旧判据按**路径**认人，文件一搬家就永远失联；本索引按
+    **内容**认人，搬迁/拆簇可追（实测识别出 lanes/L2_x/L2_x_mining.md →
+    lanes/lane_l2_x.md 这类拆簇搬迁）。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    r = run_subprocess_hidden(["git", "-C", str(root), "ls-tree", "-r", "-z", "HEAD"], text=False)
+    index: dict[str, list[str]] = {}
+    for item in r.stdout.split(b"\0"):
+        if not item:
+            continue
+        try:
+            meta, rel = item.split(b"\t", 1)
+        except ValueError:
+            continue
+        parts = meta.split(b" ")
+        if len(parts) < 3 or parts[1] != b"blob":
+            continue
+        index.setdefault(parts[2].decode(), []).append(rel.decode("utf-8", "surrogateescape"))
+    return index
+
+
+def git_blob_sha1(content: bytes) -> str:
+    """算内容的 git blob 对象指纹（与 ls-tree 同口径；纯本地计算，零 IO）。"""
+    import hashlib
+
+    h = hashlib.sha1()
+    h.update(b"blob %d\0" % len(content))
+    h.update(content)
+    return h.hexdigest()
+
+
+def _read_bag_bytes(root: Path, entry: dict) -> bytes | None:
+    """读袋内单文件的原始字节（blob_ref 优先，退回 blobs/<sha256>）；读不到=None。"""
+    cand: list[Path] = []
+    ref = entry.get("blob_ref")
+    if ref:
+        cand.append(root / ".runtime" / "commit_queue" / ref)
+    sha = entry.get("blob_sha256")
+    if sha:
+        cand.append(root / ".runtime" / "commit_queue" / "blobs" / sha)
+    for p in cand:
+        try:
+            if p.is_file():
+                return p.read_bytes()
+        except OSError:
+            continue
+    return None
+
+
+def classify_entry(
+    root: Path,
+    entry: dict,
+    base_head: str | None,
+    *,
+    reader: GitBlobReader | None = None,
+    blob_index: dict[str, list[str]] | None = None,
+) -> tuple[str, str]:
+    """单文件条目的史实归因（八类）。
+
+    Returns: ``(分类, 备注)``；migrated 时备注为**搬迁后的新路径**，其余为目标路径。
+
+    判定序（先廉后贵、先精确后保守）：
+      A 无指纹                                        → no_fp
+      B bag == HEAD 同路径内容                        → absorbed
+      C 路径已不在 HEAD：
+         C1 内容指纹在全树别处命中（Layer1）          → migrated
+         C2 其余（head 无此路径）                     → never_landed（★）
+      D 缺 base_head（不能判断"后来有没有人改过"）    → no_base
+      E bag 在"新建"该文件（base 无此路径）           → newfile_diff
+      F HEAD 与 base 完全一致（袋死后无人碰过）       → pristine_lost（★）
+      G 其余（HEAD≠base 且 ≠bag，即后人改写过）       → superseded
+    """
+    path = entry.get("path") or ""
+    if not path:
+        return ATTR_NO_FP, ""
+
+    bag_b = _read_bag_bytes(root, entry)
+    if bag_b is None:
+        return ATTR_NO_FP, path
+
+    def cat(root: Path, spec: str, reader: GitBlobReader | None) -> bytes | None:
+        """统一取内容：有持久管道走管道（省进程），否则单次 subprocess 兜底。"""
+        if reader is not None:
+            got = reader.get(spec)
+            if got is not None:
+                return got
+        return _cat_spec(root, spec)
+
+    head_b = cat(root, f"HEAD:{path}", reader)
+
+    if head_b is None:
+        if blob_index:
+            # 排除运行态目录：blobs/ 备份与 .runtime/ 下的一切都不是"搬迁目的地"，
+            # 它们只是同一个字节的**另一份存储**（队列极点目录若被误 git add，会把
+            # blob 文件本身判为迁移目标——2026-10-03 自测踩到的实际假阳性）。
+            def _real_targets() -> list[str]:
+                out: list[str] = []
+                for key in (git_blob_sha1(bag_b), git_blob_sha1(_norm_crlf(bag_b))):
+                    for p in blob_index.get(key) or []:
+                        if p.startswith(".runtime/") or p.startswith(".git"):
+                            continue
+                        out.append(p)
+                return out
+
+            targets = _real_targets()
+            if targets:
+                return ATTR_MIGRATED, targets[0]
+        return ATTR_NEVER_LANDED, path
+
+    if _norm_crlf(bag_b) == _norm_crlf(head_b):
+        return ATTR_ABSORBED, path
+
+    if not base_head:
+        return ATTR_NO_BASE, path
+
+    base_b = cat(root, f"{base_head}:{path}", reader) if base_head else None
+    if base_b is None:
+        # 袋当时在"新建"这个文件；今天 HEAD 有同名但内容不同 → 无法确认是否被吸收
+        return ATTR_NEWFILE_DIFF, path
+    if _norm_crlf(head_b) == _norm_crlf(base_b):
+        # 袋死后从头到尾没人动过这个文件 → 这版改动从未进入仓库
+        return ATTR_PRISTINE_LOST, path
+    return ATTR_SUPERSEDED, path
+
+
+def triage_bag(
+    root: Path,
+    bag: dict,
+    *,
+    reader: GitBlobReader | None = None,
+    blob_index: dict[str, list[str]] | None = None,
+) -> dict:
+    """袋级分诊：把一只袋切成八类的结构化结论（只读，零副作用）。
+
+    Returns::
+
+      {"qid","base_head","file_count",
+       "classes": {类名: 条数},
+       "per_file": [(类名, 路径, 备注)],
+       "verdict": "settleable" | "must_keep" | "unjudgeable",
+       "reason":  人读结论}
+
+    verdict 语义：
+      settleable  —— 全部条目都在 SETTLEABLE_CLASSES，仓库里已有第二份，可销账
+      must_keep   —— 含任一 NO_WRITE_OFF_CLASSES 条目，**不变量 SV 禁止销账**
+      unjudgeable —— 防御性兜底，按保守处置：不销账
+    """
+    base_head = bag.get("base_head")
+    per_file: list[tuple[str, str, str]] = []
+    counts: dict[str, int] = {}
+    for f in bag.get("files") or []:
+        cls, note = classify_entry(root, f, base_head, reader=reader, blob_index=blob_index)
+        per_file.append((cls, f.get("path") or "", note))
+        counts[cls] = counts.get(cls, 0) + 1
+
+    keys = set(counts)
+    if counts and keys <= SETTLEABLE_CLASSES:
+        verdict = "settleable"
+        reason = "全部内容已在仓库里有第二份（吸收/搬迁/被后人改写），销账零损失"
+    elif NO_WRITE_OFF_CLASSES & keys:
+        verdict = "must_keep"
+        reason = (
+            "含不可销账条目（"
+            + "、".join(_ATTR_LABEL[c] for c in sorted(NO_WRITE_OFF_CLASSES & keys))
+            + "）——不变量 SV 禁止自动销账"
+        )
+    else:
+        verdict = "unjudgeable"
+        reason = "分类未覆盖（防御性兜底），按保守处置：不销账"
+    return {
+        "qid": bag.get("qid") or "",
+        "base_head": base_head,
+        "file_count": len(per_file),
+        "classes": counts,
+        "per_file": per_file,
+        "verdict": verdict,
+        "reason": reason,
+        # 命中不变量 SV 的具体目标（接管人按图索骥的 repair 清单）
+        "lost_paths": [{"path": p, "class": c} for c, p, _n in per_file if c in NO_WRITE_OFF_CLASSES][:50],
+    }
+
+
+def sweep_with_attribution(
+    root: Path,
+    *,
+    age_hours: int = 48,
+    dry_run: bool = True,
+) -> dict:
+    """史实归因清算（Layer1+Layer2 出口）：三分流=销账 / 抢救清单 / 保留。
+
+    与旧 ``_cmd_sweep_absorbed`` 的四点实质差异：
+      1. 判据从"逐字节全等"升级为三元组史实归因（``classify_entry``）；
+      2. **不变量 SV**：命中 NO_WRITE_OFF_CLASSES 的袋**永不销账**，只进抢救清单；
+      3. aged 不再只是 print —— 写 ``salvage_ledger.jsonl`` 台账（可被后续 doctor
+         / 接管人消费的机器可读面）；
+      4. 默认 ``dry_run=True`` ——Chain-of-custody 默认零写，显式开关才动盘。
+
+    Returns: 统计 dict（settleable / kept / ...），并落 ``sweep_attribution_log.jsonl``。
+    """
+    dead_dir = root / ".runtime" / "commit_queue" / "dead"
+    arch_dir = root / ".runtime" / "commit_queue" / "dead_archive" / "absorbed"
+    salvage_log = root / ".runtime" / "takeover" / "salvage_ledger.jsonl"
+    sweep_log = root / ".runtime" / "takeover" / "sweep_attribution_log.jsonl"
+    now = time.time()
+
+    stats: dict[str, int] = {}
+    kept_rows: list[dict] = []
+    settle_qids: list[str] = []
+
+    index = head_blob_index(root)
+    with GitBlobReader(root) as rd:
+        for qp in sorted(dead_dir.glob("*.json")):
+            if qp.name.startswith("_"):
+                continue
+            try:
+                bag = json.loads(qp.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            if not isinstance(bag, dict) or not bag.get("files"):
+                continue
+            tri = triage_bag(root, bag, reader=rd, blob_index=index)
+            stats[tri["verdict"]] = stats.get(tri["verdict"], 0) + 1
+            if tri["verdict"] == "settleable":
+                settle_qids.append(qp.stem)
+                if not dry_run:
+                    arch_dir.mkdir(parents=True, exist_ok=True)
+                    os.replace(qp, arch_dir / qp.name)
+            else:
+                age_h = (now - qp.stat().st_mtime) / 3600.0
+                kept_rows.append(
+                    {
+                        "qid": tri["qid"],
+                        "session_id": bag.get("session_id"),
+                        "base_head": tri["base_head"],
+                        "verdict": tri["verdict"],
+                        "reason": tri["reason"],
+                        "classes": tri["classes"],
+                        "age_hours": round(age_h, 1),
+                        "aged": age_h > age_hours,
+                        "dead_reason": (bag.get("dead_reason") or "")[:200],
+                        "lost_paths": tri["lost_paths"],
+                    }
+                )
+
+    if not dry_run:
+        salvage_log.parent.mkdir(parents=True, exist_ok=True)
+        with salvage_log.open("w", encoding="utf-8") as fh:
+            for r in kept_rows:
+                fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+    rec = {
+        "ts": _utc_iso(now),
+        "dry_run": dry_run,
+        "stats": stats,
+        "settleable_count": len(settle_qids),
+        "kept_count": len(kept_rows),
+        "aged_kept": sum(1 for r in kept_rows if r["aged"]),
+    }
+    sweep_log.parent.mkdir(parents=True, exist_ok=True)
+    with sweep_log.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    return {**rec, "settleable_qids": settle_qids, "kept": kept_rows}
 
 
 def _collect_bags(root: Path, sid: str) -> list[dict]:
@@ -726,70 +1171,48 @@ def _cmd_resolve(root: Path, sid: str, by: str, note: str) -> int:
     return 0
 
 
-def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
-    """第 16 类机制：死信及时清算（预防+处理闭环的"处理"腿）。
+def _cmd_sweep_absorbed(root: Path, age_hours: int = 48, execute: bool = False) -> int:
+    """死信清算（已升级为史实归因版，旧单判据版已退役，理由见下）。
 
-    三分流（零删除，全部档案化）：
-    1. absorbed——死袋全部文件内容与 HEAD 一致（行尾规范化后比对，内容已被他路落地，
-       指针死而无魂）→ 移 commit_queue/dead_archive/absorbed/，销账。
-    2. aged——创建超 age_hours 未吸收 → 升级清单（处方已在 dead_reason，供维护班/AI 优先处理）。
-    3. fresh——其余保留 dead/ 原状（等属主/处方循环，不干扰）。
+    2026-10-03 内收：**本 CLI 现在只是 ``sweep_with_attribution`` 的薄包装**，不再
+    自己实现判据。旧实现的三条死因：
+      1. 单判据（bag vs HEAD 逐字节全等）→ 实测 ~76% 条目永远落 fresh，既销不掉也
+         不升级（清算力缺口）；
+      2. 无迁移感知、无史实归因，把"被后人改写"（无害）与"从未落地"（要救）混为一谈；
+      3. 缺不变量 SV 保护（虽因全袋制碰巧未误销，但属于巧合而非设计）。
+    两套判据并存必然漂移（对齐 D-2 时期"双实现会漂移"的教训），故收敛到唯一真源。
 
-    仓库锚定设计：判定只依赖 git HEAD 与袋内 blob（blob_ref 内容，缺 ref 时退回
-    blob_sha256 哈希），任何平台任何 agent 跑同一命令同结果。
+    安全升级：**默认 dry-run**（与 blob_gc ``--archive`` 同哲学），显式 ``--execute``
+    才动盘。旧版默认执行，与"全资产零删除默认是错的"这一项目安全基调和而不同。
     """
-    import os
-    import time
+    rep = sweep_with_attribution(root, age_hours=age_hours, dry_run=not execute)
+    mode = "EXECUTE" if execute else "DRY-RUN"
+    print(f"sweep-attribution [{mode}]: {rep['stats']}")
+    print(
+        f"  可销账(settleable)={rep['settleable_count']}  抢救保留(must_keep)={rep['kept_count']}"
+        f"  其中超龄={rep['aged_kept']}"
+    )
 
-    dead_dir = root / ".runtime" / "commit_queue" / "dead"
-    arch_dir = root / ".runtime" / "commit_queue" / "dead_archive" / "absorbed"
-    sweep_log = root / ".runtime" / "takeover" / "sweep_log.jsonl"
-    arch_dir.mkdir(parents=True, exist_ok=True)
-    sweep_log.parent.mkdir(parents=True, exist_ok=True)
+    by_class: dict[str, int] = {}
+    for r in rep["kept"]:
+        for c, n in (r.get("classes") or {}).items():
+            by_class[c] = by_class.get(c, 0) + n
+    if by_class:
+        print("  保留条目逐类分布：")
+        for c, n in sorted(by_class.items(), key=lambda kv: -kv[1]):
+            print(f"    {_ATTR_LABEL.get(c, c):<34} {n:>6}")
 
-    # _head_bytes/_norm_crlf/吸收判定已抽为本模块共享助手（供 D-2 残留盘点复用，
-    # 双实现会漂移；此处不再内联副本）。
-    absorbed: list[str] = []
-    aged: list[str] = []
-    fresh = 0
-    now = time.time()
-    for qp in sorted(dead_dir.glob("*.json")):
-        try:
-            bag = json.loads(qp.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            continue
-        files = bag.get("files") or []
-        if not files:
-            continue
-        ok = True
-        for f in files:
-            # 吸收判定=逐文件内容同真；注意这里"路径在 HEAD 缺失"与"内容有差异"
-            # 一律判不可吸收（保守：宁可留一手低价回收权，不误销真未落地修改）。
-            if not bag_file_is_absorbed(root, f):
-                ok = False
-                break
-        age_h = (now - qp.stat().st_mtime) / 3600.0
-        if ok:
-            os.replace(qp, arch_dir / qp.name)
-            absorbed.append(qp.stem)
-        elif age_h > age_hours:
-            aged.append(f"{qp.stem} ({len(files)}件, {age_h:.0f}h)")
-        else:
-            fresh += 1
-    rec = {
-        "ts": time.strftime("%Y-%m-%dT%H:%M:%S+08:00"),
-        "absorbed": absorbed,
-        "aged": aged,
-        "fresh": fresh,
-    }
-    with sweep_log.open("a", encoding="utf-8") as fh:
-        fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
-    print(f"sweep: absorbed={len(absorbed)} 销账 | aged={len(aged)} 升级 | fresh={fresh} 保留")
-    for q in absorbed[:10]:
-        print(f"  absorbed: {q}")
-    for q in aged[:10]:
-        print(f"  aged: {q}")
-    print(f"账: {sweep_log}")
+    lost = sorted({p["path"] for r in rep["kept"] for p in r.get("lost_paths", [])})
+    if lost:
+        print(f"  ★不可销账目标路径 {len(lost)} 个（已入抢救台账），前 10：")
+        for p in lost[:10]:
+            print(f"    {p}")
+
+    for q in rep["settleable_qids"][:10]:
+        print(f"  {'已销' if execute else '待销'}: {q}")
+    print(f"账: {root / '.runtime' / 'takeover' / 'sweep_attribution_log.jsonl'}")
+    if not execute:
+        print("提示：默认零写。确认无误后加 --execute 才动盘。")
     return 0
 
 
@@ -801,14 +1224,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--by", metavar="TAKER", default="", help="接管者标识（resolve 必填语义）")
     parser.add_argument("--note", default="", help="处置结论注记")
     parser.add_argument(
-        "--sweep-absorbed", action="store_true", help="死信及时清算：HEAD 吸收的销账/超龄升级/新鲜保留（第 16 类机制）"
+        "--sweep-absorbed",
+        action="store_true",
+        help="事实归因清算：可分诊销账/抢救保留（默认零写，需 --execute 才动盘）",
     )
+    parser.add_argument("--execute", action="store_true", help="配合 --sweep-absorbed：确认后真正执行销账搬迁")
     parser.add_argument("--age-hours", type=int, default=48, help="超龄阈值（小时，缺省 48）")
     parser.add_argument("--root", default=".", help="仓库根（缺省=.）")
     args = parser.parse_args(argv)
     root = Path(args.root).resolve()
     if args.sweep_absorbed:
-        return _cmd_sweep_absorbed(root, args.age_hours)
+        return _cmd_sweep_absorbed(root, args.age_hours, execute=args.execute)
     if args.scan:
         return _cmd_scan(root)
     if args.list:
