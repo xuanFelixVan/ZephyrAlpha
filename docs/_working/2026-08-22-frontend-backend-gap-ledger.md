@@ -205,3 +205,4 @@ ttl: task_bound
 - [st-redblue-review-20261002] F2 修复进度锚：scan-CLI 孤儿崩溃已修（11 测绿），门咬合测试进行中。
 - [st-redblue-review-20261002] 门咬合复测载体二（F3 修复后 belt 已换血，此处提交应被 TAKEOVER-PENDING 拦截）。
 - [st-redblue-review-20261002] 直连咬合载体三：预期 TAKEOVER-PENDING 在锁内链硬阻断。
+- [st-redblue-review-20261002] 干净咬合载体四：F3双层+F5修复+belt换血后，预期 TAKEOVER-PENDING 以正确命中面拦截。
