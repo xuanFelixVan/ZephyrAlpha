@@ -11134,3 +11134,6 @@ entries:
 - ref: 防御0.6/价值0.3/动量0.1
   category: D
   first_seen: '2026-09-27'
+- ref: scripts/tasks/register/register_metaq_audit_reconcile_task.ps1
+  category: D
+  first_seen: '2026-09-27'

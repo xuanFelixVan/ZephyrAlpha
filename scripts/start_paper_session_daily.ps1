@@ -7,7 +7,7 @@
 # [A_module] module_id=MOD-SCRIPT-start_paper_session_daily | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # start_paper_session_daily.ps1 - ZephyrAlpha_PaperSession wrapper
-# (A6 ; scripts/register_paper_session_task.ps1 , run_post_settlement_daily.ps1 )
+# (A6 ; scripts/tasks/register/register_paper_session_task.ps1 , run_post_settlement_daily.ps1 )
 #
 # (one-shot per fire, while-true PID -- Daily 09:25 +
 # LiveStrategyAdapter ):
@@ -21,7 +21,7 @@
 # Exit codes: 0= ( SKIP / QMT SKIP / --service ),
 # 0=python --service exit 1 (//) 2 ()--.
 #
-# Deploy: scripts/register_paper_session_task.ps1 ( DISABLED, 92 D3 ).
+# Deploy: scripts/tasks/register/register_paper_session_task.ps1 ( DISABLED, 92 D3 ).
 # Manual dry-run: powershell -ExecutionPolicy Bypass -File scripts\start_paper_session_daily.ps1
 
 $ErrorActionPreference = "Stop"

@@ -776,7 +776,7 @@ nodes:
   note_zh: 计划任务拉起包装脚本 → 常驻适配器；日历闸在包装层而非槽层
   module_id: MOD-L06-001
   source_anchors:
-  - scripts/register_paper_session_task.ps1:67
+  - scripts/tasks/register/register_paper_session_task.ps1:67
   - scripts/start_paper_session_daily.ps1
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-12
@@ -813,10 +813,10 @@ nodes:
   gap_refs: []
   mechanism: B_windows_task
   dloop_stages: []
-  module_ref: scripts/register_paper_session_task.ps1:67
-  module_label_bilingual: scripts/register_paper_session_task.ps1
+  module_ref: scripts/tasks/register/register_paper_session_task.ps1:67
+  module_label_bilingual: scripts/tasks/register/register_paper_session_task.ps1
   exec_evidence:
-  - '复跑: grep -n ''09:25\|Daily'' scripts/register_paper_session_task.ps1 → 触发器声明面在册'
+  - '复跑: grep -n ''09:25\|Daily'' scripts/tasks/register/register_paper_session_task.ps1 → 触发器声明面在册'
   - '复跑（主区只读）: grep -n ''START\|SKIP'' .runtime/logs/paper_session.log → 交易日 09:25 起、非交易日 SKIP(is_trading_day=False)、QMT
     未开 SKIP 三态留痕各在案'
   machine_facts:
@@ -1205,8 +1205,8 @@ nodes:
   note_zh: 独立 ps1 注册的计划任务（完全不在 APScheduler 视野内）；差分需段内至少 1 快照
   module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_anchors:
-  - scripts/register_counter_trend_feeder_tasks.ps1:11
-  - scripts/register_counter_trend_feeder_tasks.ps1:80
+  - scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:11
+  - scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:80
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-19
   - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
@@ -1243,11 +1243,11 @@ nodes:
   gap_refs: []
   mechanism: B_windows_task
   dloop_stages: []
-  module_ref: scripts/register_counter_trend_feeder_tasks.ps1:80
-  module_label_bilingual: scripts/register_counter_trend_feeder_tasks.ps1
+  module_ref: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:80
+  module_label_bilingual: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   exec_evidence:
   - '复跑（主区只读）: tail -6 logs/fundflow_collect.log → 逐拍采集行业数与落库行数同为正'
-  - '复跑（骨架 §7 A-4）: grep -n ''New-ScheduledTaskTrigger'' scripts/register_counter_trend_feeder_tasks.ps1 → 五拍时点在声明面'
+  - '复跑（骨架 §7 A-4）: grep -n ''New-ScheduledTaskTrigger'' scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 → 五拍时点在声明面'
   machine_facts:
     schtasks_facts:
       query_available: true
@@ -1483,7 +1483,7 @@ nodes:
   module_id: MOD-L06-001
   source_anchors:
   - src/zephyr/ex_core/live_strategy_adapter.py
-  - scripts/register_paper_session_task.ps1:47
+  - scripts/tasks/register/register_paper_session_task.ps1:47
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-24
   - docs/_working/map_build/fig13_daycycle/07_dloop十六段解剖.md
@@ -1603,8 +1603,8 @@ nodes:
   note_zh: 独立 ps1 注册计划任务 → 分钟K补拉落行情表
   module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   source_anchors:
-  - scripts/register_counter_trend_feeder_tasks.ps1:14
-  - scripts/register_counter_trend_feeder_tasks.ps1:86
+  - scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:14
+  - scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:86
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-26
   - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
@@ -1640,10 +1640,10 @@ nodes:
   gap_refs: []
   mechanism: B_windows_task
   dloop_stages: []
-  module_ref: scripts/register_counter_trend_feeder_tasks.ps1:86
-  module_label_bilingual: scripts/register_counter_trend_feeder_tasks.ps1
+  module_ref: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:86
+  module_label_bilingual: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   exec_evidence:
-  - '复跑: grep -n ''IndexMinuteEOD'' scripts/register_counter_trend_feeder_tasks.ps1 → tn 声明面'
+  - '复跑: grep -n ''IndexMinuteEOD'' scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 → tn 声明面'
   - '复跑（主区只读）: tail -4 logs/index_minute_eod.log → 末次拉取根数与源标注在案，上一行为源失败降级记录（降级腿亦有留痕=真在跑的第二证）'
   machine_facts:
     schtasks_facts:
@@ -1713,10 +1713,10 @@ nodes:
   note_zh: 计划任务 → 结算管线（系统侧核对 + 日终审计）；柜台侧真实结算单为 🌑-3（模拟账户无经纪商文件）
   module_id: MOD-TRADING-003
   source_anchors:
-  - scripts/register_post_settlement_task.ps1:42
-  - scripts/register_post_settlement_task.ps1:26
+  - scripts/tasks/register/register_post_settlement_task.ps1:42
+  - scripts/tasks/register/register_post_settlement_task.ps1:26
   - src/zephyr/trading/post_settlement_pipeline.py:43
-  - scripts/run_post_settlement.py
+  - scripts/tasks/run/run_post_settlement.py
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-28
   - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
@@ -1758,7 +1758,7 @@ nodes:
   module_ref: src/zephyr/trading/post_settlement_pipeline.py:43
   module_label_bilingual: '"盘后结算对账每日 15'
   exec_evidence:
-  - '复跑: grep -n ''StartWhenAvailable\|15:30'' scripts/register_post_settlement_task.ps1 → 硬时点与补火设置在声明面（同值另有一处代码常量=INV-1
+  - '复跑: grep -n ''StartWhenAvailable\|15:30'' scripts/tasks/register/register_post_settlement_task.ps1 → 硬时点与补火设置在声明面（同值另有一处代码常量=INV-1
     撞车面，见 node note）'
   - '复跑（主区只读）: tail -20 data/runtime/post_settlement_last_run.log → 当日 trade_date、audit_status=OK、errors 空、exit_code=0
     四件同 in'
@@ -2601,8 +2601,8 @@ nodes:
   note_zh: ps1 注册守护族：单实例唯一真源=脚本级 PID 锁 + 心跳判定（计划任务必须不参与单实例决策）；看门狗一台按裁定注册于禁用态
   module_id: MOD-L00-004
   source_anchors:
-  - scripts/register_guard_tasks.ps1:46
-  - scripts/register_guard_tasks.ps1:33
+  - scripts/tasks/register/register_guard_tasks.ps1:46
+  - scripts/tasks/register/register_guard_tasks.ps1:33
   - scripts/deadman_switch.ps1:138
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-42
@@ -2644,7 +2644,7 @@ nodes:
   gap_refs: []
   mechanism: B_windows_task
   dloop_stages: []
-  module_ref: scripts/register_guard_tasks.ps1:20
+  module_ref: scripts/tasks/register/register_guard_tasks.ps1:20
   module_label_bilingual: 注册守卫任务 / register_guard_tasks
   exec_evidence: []
   machine_facts:
@@ -3584,80 +3584,80 @@ machine_facts:
     register_scripts:
       script_count: 21
       register_scripts:
-      - scripts/register_aux_tasks.ps1
-      - scripts/register_c4_exam_task.ps1
-      - scripts/register_config_check_task.ps1
-      - scripts/register_counter_trend_feeder_tasks.ps1
-      - scripts/register_drift_watchdog_task.ps1
-      - scripts/register_f06_grid_task.ps1
-      - scripts/register_factory_lane_c_task.ps1
-      - scripts/register_gate_fulltree_audit_task.ps1
-      - scripts/register_guard_tasks.ps1
-      - scripts/register_library_ledger_backup_task.ps1
-      - scripts/register_measure_calibration_task.ps1
-      - scripts/register_ollama_serve_task.ps1
-      - scripts/register_paper_session_task.ps1
-      - scripts/register_pattern_mining_task.ps1
-      - scripts/register_post_settlement_task.ps1
+      - scripts/tasks/register/register_aux_tasks.ps1
+      - scripts/tasks/register/register_c4_exam_task.ps1
+      - scripts/tasks/register/register_config_check_task.ps1
+      - scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
+      - scripts/tasks/register/register_drift_watchdog_task.ps1
+      - scripts/tasks/register/register_f06_grid_task.ps1
+      - scripts/tasks/register/register_factory_lane_c_task.ps1
+      - scripts/tasks/register/register_gate_fulltree_audit_task.ps1
+      - scripts/tasks/register/register_guard_tasks.ps1
+      - scripts/tasks/register/register_library_ledger_backup_task.ps1
+      - scripts/tasks/register/register_measure_calibration_task.ps1
+      - scripts/tasks/register/register_ollama_serve_task.ps1
+      - scripts/tasks/register/register_paper_session_task.ps1
+      - scripts/tasks/register/register_pattern_mining_task.ps1
+      - scripts/tasks/register/register_post_settlement_task.ps1
       - scripts/register_process_reaper_task.ps1
-      - scripts/register_resource_morning_report_task.ps1
-      - scripts/register_resource_regen_check_task.ps1
-      - scripts/register_resource_sampler_scan_task.ps1
-      - scripts/register_resource_sampler_writeback_task.ps1
-      - scripts/register_resource_view_publish_task.ps1
+      - scripts/tasks/register/register_resource_morning_report_task.ps1
+      - scripts/tasks/register/register_resource_regen_check_task.ps1
+      - scripts/tasks/register/register_resource_sampler_scan_task.ps1
+      - scripts/tasks/register/register_resource_sampler_writeback_task.ps1
+      - scripts/tasks/register/register_resource_view_publish_task.ps1
       declaring_scripts:
         scripts/deadman_switch.ps1:
         - ZephyrAlpha_DeadmanSwitch
         scripts/qmt_watchdog.ps1:
         - ZephyrAlpha_QMTWatchdog
-        scripts/register_aux_tasks.ps1:
+        scripts/tasks/register/register_aux_tasks.ps1:
         - ZephyrAlpha_RSSHub
         - ZephyrAlpha_TraeCacheCleanup
-        scripts/register_c4_exam_task.ps1:
+        scripts/tasks/register/register_c4_exam_task.ps1:
         - ZephyrAlpha_C4Exam
-        scripts/register_config_check_task.ps1:
+        scripts/tasks/register/register_config_check_task.ps1:
         - ZephyrAlpha_ConfigCheck
-        scripts/register_counter_trend_feeder_tasks.ps1:
+        scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:
         - ZephyrAlpha_IndexMinuteEOD
         - ZephyrAlpha_IntradayFundFlow
-        scripts/register_drift_watchdog_task.ps1:
+        scripts/tasks/register/register_drift_watchdog_task.ps1:
         - ZephyrAlpha_WorktreeDriftWatchdog
-        scripts/register_f06_grid_task.ps1:
+        scripts/tasks/register/register_f06_grid_task.ps1:
         - ZephyrAlpha_F06Grid
-        scripts/register_factory_lane_c_task.ps1:
+        scripts/tasks/register/register_factory_lane_c_task.ps1:
         - ZephyrAlpha_FactoryLaneC
-        scripts/register_gate_fulltree_audit_task.ps1:
+        scripts/tasks/register/register_gate_fulltree_audit_task.ps1:
         - ZephyrAlpha_GateFullTreeAudit
-        scripts/register_guard_tasks.ps1:
+        scripts/tasks/register/register_guard_tasks.ps1:
         - ZephyrAlpha_CHHealthProbe
         - ZephyrAlpha_DataScheduler
         - ZephyrAlpha_DeadmanSwitch
         - ZephyrAlpha_TickSubscriber
         - ZephyrAlpha_TradingWatchdog
-        scripts/register_library_ledger_backup_task.ps1:
+        scripts/tasks/register/register_library_ledger_backup_task.ps1:
         - ZephyrAlpha_LibraryLedgerBackup
         - ZephyrAlpha_LibraryLedgerDrill
-        scripts/register_measure_calibration_task.ps1:
+        scripts/tasks/register/register_measure_calibration_task.ps1:
         - ZephyrAlpha_MeasureCalibration
-        scripts/register_ollama_serve_task.ps1:
+        scripts/tasks/register/register_ollama_serve_task.ps1:
         - ZephyrAlpha_OllamaServe
-        scripts/register_paper_session_task.ps1:
+        scripts/tasks/register/register_paper_session_task.ps1:
         - ZephyrAlpha_PaperSession
-        scripts/register_pattern_mining_task.ps1:
+        scripts/tasks/register/register_pattern_mining_task.ps1:
         - ZephyrAlpha_PatternMining
-        scripts/register_post_settlement_task.ps1:
+        scripts/tasks/register/register_post_settlement_task.ps1:
         - ZephyrAlpha_PostSettlement
         scripts/register_process_reaper_task.ps1:
         - ZephyrAlpha_ProcessReaper
-        scripts/register_resource_morning_report_task.ps1:
+        scripts/tasks/register/register_resource_morning_report_task.ps1:
         - ZephyrAlpha_ResourceMorningReport
-        scripts/register_resource_regen_check_task.ps1:
+        scripts/tasks/register/register_resource_regen_check_task.ps1:
         - ZephyrAlpha_ResourceRegenCheck
-        scripts/register_resource_sampler_scan_task.ps1:
+        scripts/tasks/register/register_resource_sampler_scan_task.ps1:
         - ZephyrAlpha_ResourceSamplerScan
-        scripts/register_resource_sampler_writeback_task.ps1:
+        scripts/tasks/register/register_resource_sampler_writeback_task.ps1:
         - ZephyrAlpha_ResourceSamplerWriteback
-        scripts/register_resource_view_publish_task.ps1:
+        scripts/tasks/register/register_resource_view_publish_task.ps1:
         - ZephyrAlpha_ResourceViewPublish
         scripts/start_ch_health_probe.ps1:
         - ZephyrAlpha_CHHealthProbe

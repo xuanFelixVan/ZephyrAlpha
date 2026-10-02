@@ -93,9 +93,12 @@ schedules:
     executor: default
     description: "盘后事件层——分析师预期/财报快报/审计/分红配股/质押/披露计划"
 
-  # L6.5 研报明细层：20:30 周一至周五（全市场逐股拉取约 2h，独立时段不与 daily_event 抢池）
+  # L6.5 研报明细层：20:00 周一至周五（2026-10-02 RESOURCE-SCHEDULE 错峰：原 20:30 起跑
+  # 2h 至 22:30，与 nightly_financial[22:00]/factory_lane_c[20:00+240min]/news_slow/event_driven
+  # 同窗并发内存和 10.5GB>10GB 天花板，前移至 20:00 使其 22:00 准点退场，该窗峰值回落 8GB；
+  # 与 daily_event[19:00+45min 同池] 仍保有 15 分钟错峰间隙）（全市场逐股拉取约 2h）
   research_nightly:
-    cron: "30 20 * * 0-4"
+    cron: "00 20 * * 0-4"
     executor: default
     max_instances: 1
     description: "研报明细层——research_report_detail_incremental（东财研报中心全字段含预测期EPS/PE；历史已回补 14.7 万行，日度仅补增量窗口）"

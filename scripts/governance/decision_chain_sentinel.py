@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.decision_chain_sentinel
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.infrastructure.database_service(懒加载); zephyr.shared.utils.time_utils; zephyr.data.table_registry; schemas.categories.decision_daily(表名真源)
-# [CONSUMERS] schtasks ZephyrAlpha_DecisionChainSentinel(每日 09:40 盘前, scripts/register_decision_chain_sentinel_task.ps1 注册); data/runtime/process_reaper_keep.txt(防误杀条目 decision_chain_sentinel)
+# [CONSUMERS] schtasks ZephyrAlpha_DecisionChainSentinel(每日 09:40 盘前, scripts/tasks/register/register_decision_chain_sentinel_task.ps1 注册); data/runtime/process_reaper_keep.txt(防误杀条目 decision_chain_sentinel)
 # [STARTUP] scheduled_task
 # [MATURITY] trial
 # [INVARIANTS] 只读检测禁修数: CH 访问唯一入口=DatabaseService.get_clickhouse_conn(reader)禁裸连接(宪法§9.1), 本件禁任何 DB 写;

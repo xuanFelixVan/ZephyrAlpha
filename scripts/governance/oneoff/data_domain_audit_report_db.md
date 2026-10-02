@@ -143,8 +143,8 @@
 | scripts/ml/run_sentiment_batch.py | D_DATA | None | production | generated |  | L1_foundation | script |  | MOD-NLP-PIPELINE | MOD-NLP-PIPELINE |
 | scripts/ops/ch_health_probe.py | D_DATA | None | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
 | scripts/ops/verify_alert_channels.py | D_DATA | None | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
-| scripts/register_aux_tasks.ps1 | D_DATA | None | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
-| scripts/register_guard_tasks.ps1 | D_DATA | DATA-SCRIPT | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
+| scripts/tasks/register/register_aux_tasks.ps1 | D_DATA | None | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
+| scripts/tasks/register/register_guard_tasks.ps1 | D_DATA | DATA-SCRIPT | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
 | scripts/start_ch_health_probe.ps1 | D_DATA | None | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
 | scripts/start_scheduler.ps1 | D_DATA | DATA-SCRIPT | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
 | scripts/start_tick_subscriber.ps1 | D_DATA | DATA-SCRIPT | production | generated |  | L0_infrastructure | script |  | MOD-L00-004 | MOD-L00-004 |
@@ -782,8 +782,8 @@
 | tests/db/test_db_integrity.py | src/zephyr/feedback_loop/gates/db_integrity.py | D_DATA | D_FBL_VERIFICATION | test_depends | active | 1 |  |
 | tests/db/test_db_bridge.py | src/zephyr/feedback_loop/db_bridge.py | D_DATA | D_FEEDBACK_LOOP | test_depends | active | 1 |  |
 | scripts/deadman_switch.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
-| scripts/register_aux_tasks.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
-| scripts/register_guard_tasks.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
+| scripts/tasks/register/register_aux_tasks.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
+| scripts/tasks/register/register_guard_tasks.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
 | scripts/start_ch_health_probe.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
 | scripts/start_scheduler.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
 | scripts/start_tick_subscriber.ps1 | scripts/__init__.py | D_DATA | D_GOVERNANCE | config_depends | active | 1 |  |
@@ -3451,4 +3451,4 @@
 | tests/zephyr/data/test_wal_codec.py | src/zephyr/data/wal_codec/__init__.py | D_SHARED | D_DATA | test_depends | active | 1 |  |
 | tests/zephyr/data/test_wal_codec.py | src/zephyr/data/__init__.py | D_SHARED | D_DATA | test_depends | active | 1 |  |
 | tests/zephyr/data/test_wal_codec.py | src/zephyr/data/ch_writer.py | D_SHARED | D_DATA | test_depends | active | 1 |  |
-| scripts/run_post_settlement.py | src/zephyr/data/trading_calendar.py | D_TRADING | D_DATA | import_depends | active | 1 |  |
+| scripts/tasks/run/run_post_settlement.py | src/zephyr/data/trading_calendar.py | D_TRADING | D_DATA | import_depends | active | 1 |  |

@@ -528,7 +528,7 @@ def stock_search(q: str = Query(..., min_length=1), limit: int = Query(20, ge=1,
 
 # ── 回测三接口（#BT-PIPELINE-001）：list / detail / run ──────────────────────
 # 数据源：data/backtest_artifacts/*.json（BTRUN CLI 强制时序落盘产物）。
-# run 走 scripts/run_backtest.py run_one（与 CLI 同一入口，页面/命令行行为一致）。
+# run 走 scripts/tasks/run/run_backtest.py run_one（与 CLI 同一入口，页面/命令行行为一致）。
 _BT_ARTIFACTS_DIR = _REPO / "data" / "backtest_artifacts"
 
 

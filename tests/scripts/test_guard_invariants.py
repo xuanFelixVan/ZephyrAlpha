@@ -34,8 +34,8 @@ GUARD_SCRIPTS = [
     SCRIPTS / "start_tick_subscriber.ps1",
     SCRIPTS / "start_ch_health_probe.ps1",
 ]
-REGISTER_GUARD = SCRIPTS / "register_guard_tasks.ps1"
-REGISTER_AUX = SCRIPTS / "register_aux_tasks.ps1"
+REGISTER_GUARD = SCRIPTS / "tasks" / "register" / "register_guard_tasks.ps1"
+REGISTER_AUX = SCRIPTS / "tasks" / "register" / "register_aux_tasks.ps1"
 
 
 def _non_comment_lines(path: Path) -> list[str]:

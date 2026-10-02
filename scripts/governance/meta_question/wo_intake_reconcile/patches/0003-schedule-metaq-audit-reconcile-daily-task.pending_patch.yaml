@@ -1,13 +1,13 @@
 # 待落地补丁（原 .patch 因 scripts/ 目录契约改此形态，diff 正文零改动）
 apply_cmd: python scripts/governance/meta_question/apply_pending_patch.py scripts/governance/meta_question/wo_intake_reconcile/patches/0003-schedule-metaq-audit-reconcile-daily-task.pending_patch.yaml
 apply_prerequisite: q-...-0022（对账器所在袋）落 HEAD 之后施加
-diff: 'diff --git a/scripts/register_metaq_audit_reconcile_task.ps1 b/scripts/register_metaq_audit_reconcile_task.ps1
+diff: 'diff --git a/scripts/tasks/register/register_metaq_audit_reconcile_task.ps1 b/scripts/tasks/register/register_metaq_audit_reconcile_task.ps1
 
   new file mode 100644
 
   --- /dev/null
 
-  +++ b/scripts/register_metaq_audit_reconcile_task.ps1
+  +++ b/scripts/tasks/register/register_metaq_audit_reconcile_task.ps1
 
   @@ -0,0 +1,86 @@
 

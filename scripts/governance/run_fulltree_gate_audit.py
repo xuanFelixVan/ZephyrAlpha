@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.run_fulltree_gate_audit
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants
-# [CONSUMERS] scripts/register_gate_fulltree_audit_task.ps1 (ZephyrAlpha_GateFullTreeAudit scheduled task); Owner manual runs
+# [CONSUMERS] scripts/tasks/register/register_gate_fulltree_audit_task.ps1 (ZephyrAlpha_GateFullTreeAudit scheduled task); Owner manual runs
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 审计只读（零工作区写入，报告落 tmp/）；审计扫描非 reconciler，不违宪法 §9.3 事件触发律（裁定#354 明示）

@@ -169,12 +169,12 @@ class TestLiveSystemEvidence:
 class TestServeTaskPreconditionPin:
     """机器化前置钉（2026-09-16 Ollama 依赖定性）：注册脚本的版本地板与本守卫同源。
 
-    `scripts/register_ollama_serve_task.ps1` 在注册 ZephyrAlpha_OllamaServe 常驻任务前
+    `scripts/tasks/register/register_ollama_serve_task.ps1` 在注册 ZephyrAlpha_OllamaServe 常驻任务前
     自检 `ollama --version`，<= 地板即 throw（附本守卫 --upgrade 一条命令）。两处阈值
     若漂移，本测试即红——把"记得升级 Ollama"的人工待办转成断言，不再靠口头。
     """
 
-    PS1_PATH = REPO_ROOT / "scripts" / "register_ollama_serve_task.ps1"
+    PS1_PATH = REPO_ROOT / "scripts" / "tasks" / "register" / "register_ollama_serve_task.ps1"
 
     def _ps1_text(self) -> str:
         assert self.PS1_PATH.exists(), "注册脚本消失——Ollama 常驻服务失去版本前置"

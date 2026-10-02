@@ -7,7 +7,7 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-10-02T09:18:55Z'
+generated_at: '2026-10-02T11:24:03Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器四源全量再生；条目禁手工增删）
@@ -661,7 +661,7 @@ entities:
   est_duration_min: 120
   exclusive_group: []
   window_type: cron
-  window_expr: 30 20 * * 1-5
+  window_expr: 00 20 * * 1-5
   schedule_truth_source: src/zephyr/data/config/schedule.yaml
   trading_sensitive: false
   measured:
@@ -1318,7 +1318,7 @@ entities:
   samples_uri: .runtime/logs/resource_samples/ops_bdpan_tick_watch.jsonl
   status: orphaned_source
   notes_zh: bdpan tick 兜底回灌守望 bdpan_tick_watch.py（实测每日 08:00；tick_drain 族）；[生成器] 真源消失，待 Owner 裁定删除；[生成器] 真源消失，待 Owner 裁定删除；[生成器]
-    真源消失，待 Owner 裁定删除；[生成器] 真源消失，待 Owner 裁定删除
+    真源消失，待 Owner 裁定删除；[生成器] 真源消失，待 Owner 裁定删除；[生成器] 真源消失，待 Owner 裁定删除；[生成器] 真源消失，待 Owner 裁定删除
 - task_id: ops_board_index_realtime
   module_id: null
   map_node_id: null
@@ -1532,7 +1532,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: null
-  schedule_truth_source: scripts/register_ai_l1_scan_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_ai_l1_scan_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1553,7 +1553,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 30 7 * * *
-  schedule_truth_source: scripts/register_budget_report_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_budget_report_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1575,7 +1575,7 @@ entities:
   - mine_vs_exam
   window_type: cron
   window_expr: 0 14 * * 6
-  schedule_truth_source: scripts/register_c4_exam_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_c4_exam_task.ps1
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.0817
@@ -1595,7 +1595,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_guard_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_guard_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1616,7 +1616,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 5 8 * * *
-  schedule_truth_source: scripts/register_config_check_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_config_check_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1637,7 +1637,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_guard_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_guard_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1658,7 +1658,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_guard_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_guard_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1679,7 +1679,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 40 9 * * *
-  schedule_truth_source: scripts/register_decision_chain_sentinel_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_decision_chain_sentinel_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1700,7 +1700,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 0 23 * * 6
-  schedule_truth_source: scripts/register_f06_grid_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_f06_grid_task.ps1
   trading_sensitive: true
   measured:
     peak_mem_gb: null
@@ -1722,7 +1722,7 @@ entities:
   - mine_vs_exam
   window_type: cron
   window_expr: 0 20 * * 1,2,3,4,5
-  schedule_truth_source: scripts/register_factory_lane_c_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_factory_lane_c_task.ps1
   trading_sensitive: true
   measured:
     peak_mem_gb: 0.394
@@ -1742,7 +1742,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 30 3 * * *
-  schedule_truth_source: scripts/register_gate_fulltree_audit_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_gate_fulltree_audit_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.3108
@@ -1762,7 +1762,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: null
-  schedule_truth_source: scripts/register_health_monitor_probe_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_health_monitor_probe_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1783,7 +1783,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 10 15 * * *
-  schedule_truth_source: scripts/register_counter_trend_feeder_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1804,7 +1804,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 5 10 * * *|5 11 * * *|35 13 * * *|35 14 * * *|5 15 * * *
-  schedule_truth_source: scripts/register_counter_trend_feeder_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1826,7 +1826,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 17 6 * * 6
-  schedule_truth_source: scripts/register_measure_calibration_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_measure_calibration_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1847,7 +1847,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 50 3 * * *
-  schedule_truth_source: scripts/register_metaq_audit_reconcile_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_metaq_audit_reconcile_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.3081
@@ -1867,7 +1867,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 0 18 * * 6
-  schedule_truth_source: scripts/register_model_exam_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_model_exam_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1888,7 +1888,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 0 8 * * 6
-  schedule_truth_source: scripts/register_model_intel_scan_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_model_intel_scan_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1910,7 +1910,7 @@ entities:
   - gpu_default
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_ollama_serve_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_ollama_serve_task.ps1
   trading_sensitive: true
   measured:
     peak_mem_gb: 11.5975
@@ -1931,7 +1931,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 25 9 * * *
-  schedule_truth_source: scripts/register_paper_session_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_paper_session_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.4293
@@ -1952,7 +1952,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 1 9 * * *
-  schedule_truth_source: scripts/register_pattern_mining_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_pattern_mining_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -1973,7 +1973,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 30 15 * * 1,2,3,4,5
-  schedule_truth_source: scripts/register_post_settlement_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_post_settlement_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.3357
@@ -2013,7 +2013,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 31 6 * * *
-  schedule_truth_source: scripts/register_resource_morning_report_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_resource_morning_report_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: 0.1613
@@ -2033,7 +2033,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_resource_regen_check_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_resource_regen_check_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2055,7 +2055,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_resource_sampler_scan_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_resource_sampler_scan_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2076,7 +2076,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 40 5 * * *
-  schedule_truth_source: scripts/register_resource_sampler_writeback_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_resource_sampler_writeback_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2097,7 +2097,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 50 5 * * *
-  schedule_truth_source: scripts/register_resource_view_publish_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_resource_view_publish_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2118,7 +2118,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_aux_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_aux_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2139,7 +2139,7 @@ entities:
   exclusive_group: []
   window_type: cron
   window_expr: 35 9 * * *|5 13 * * *
-  schedule_truth_source: scripts/register_sim_bridge_execute_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_sim_bridge_execute_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2160,7 +2160,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_guard_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_guard_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2181,7 +2181,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_guard_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_guard_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2201,7 +2201,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_aux_tasks.ps1
+  schedule_truth_source: scripts/tasks/register/register_aux_tasks.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: null
@@ -2222,7 +2222,7 @@ entities:
   exclusive_group: []
   window_type: event
   window_expr: null
-  schedule_truth_source: scripts/register_drift_watchdog_task.ps1
+  schedule_truth_source: scripts/tasks/register/register_drift_watchdog_task.ps1
   trading_sensitive: false
   measured:
     peak_mem_gb: 9.6481

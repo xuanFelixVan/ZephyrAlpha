@@ -62360,6 +62360,72 @@ entries:
   plain_zh: "上一个 AI 死后留下的东西都记在接管台账里，这个门禁就是台账的执法手：谁想提交代码，只要碰的文件在台账那份遗产清单上，提交就当场被拦下来，拦的时候把清单和每样东西的处理办法直接打印到眼前，不看完不处理就不让过。按办法处理完、用 resolve 销了账，门就自动开了。台账本身坏了或不在的时候它不添乱，放行并记警告。"
   responsibility_layer: governance
 
+- module_path: scripts/tasks/register/register_aux_tasks.ps1
+  domain_id: D_DATA
+  name_zh: 注册aux任务
+  name_en: register_aux_tasks
+  desc_zh: 注册aux任务模块
+  desc_en: ''
+  plain_zh: 注册aux任务，register_aux_tasks.ps1的注册表，登记和查询已注册的条目。
+  responsibility_layer: business
+- module_path: scripts/tasks/register/register_guard_tasks.ps1
+  domain_id: D_DATA
+  name_zh: 注册守卫任务
+  name_en: register_guard_tasks
+  desc_zh: 注册守卫任务模块
+  desc_en: ''
+  plain_zh: 注册守卫任务，守卫的注册表，登记和查询已注册的条目。
+  responsibility_layer: business
+- module_path: scripts/tasks/register/register_drift_watchdog_task.ps1
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: 注册漂移看门狗任务
+  name_en: register_drift_watchdog_task
+  desc_zh: 注册漂移看门狗任务模块（#99② RestartOnFailure 退避治本）
+  desc_en: ''
+  plain_zh: 注册漂移看门狗任务，工作区漂移看门狗的 Task Scheduler 任务声明式幂等注册（RestartCount=3+RestartInterval=10min
+    退避固化），防止故障时连环拉起实例堆积。
+  responsibility_layer: governance
+- module_path: scripts/tasks/run/run_deepseek_v4_exam.py
+  domain_id: D_GOVERNANCE
+  name_zh: 运行deepseekv4exam
+  name_en: run_deepseek_v4_exam
+  desc_zh: DeepSeek V4 入职考试运行脚本
+  desc_en: ''
+  plain_zh: DeepSeek V4 入职考试运行脚本
+  responsibility_layer: governance
+- module_path: scripts/tasks/run/run_post_settlement.py
+  domain_id: D_TRADING
+  name_zh: 盘后结算对账 CLI
+  name_en: Post Settlement Pipeline CLI
+  desc_zh: 57号文GAP-3运营入口：串系统侧Fill（data/fills JSONL）+券商侧结算记录→SettlementReconciler对账→DailyAuditor日终审计，QMT离线降级仅系统侧+标注；exit
+    0/3/1=OK或SKIPPED/DRIFT/ERROR
+  desc_en: ''
+  plain_zh: 每天下午三点半之后，人手动跑一下这个命令，它就把今天系统记下的成交单和券商那边的结算单摆在一起逐笔对账，再做一遍日终体检。对不上会大字报出来（价格差、数量差、整笔缺失），整笔缺失的单独列清单。券商终端没开机也不硬对，只数一遍系统自己的单子并明确标注'今天没和券商对上'。只看不写，不动数据库。
+  responsibility_layer: business
+- module_path: scripts/tasks/run/run_boot_sla_probe.py
+  domain_id: D_GOVERNANCE
+  name_zh: Boot SLA连跑探针
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 循环执行start_brain.py --once共20次，自动收集boot耗时并算P99，判定是否小于10秒达标
+  responsibility_layer: governance
+- module_path: scripts/tasks/run/run_backtest.py
+  domain_id: D_BACKTEST
+  name_zh: "BTRUN 标准回测 CLI"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "BTRUN 标准回测 CLI（2026-09-01 设立，治本\"产物曲线为空\"问题）治本动机data/backtest_artifacts/ 早期 5 件产物 equity_curve/trade_log 全空——sink_backtest_result 四时序是可选参数，早期跑批没传。本 CLI 把\"跑回测 → 从 engine.last_portfolio 取净值/成交 → 强制传入 sink →落盘\" 固化为唯一标准入口，任何路径（CLI/API）发起都走 run_one。"
+  responsibility_layer: business
+- module_path: scripts/tasks/run/run_qwen3_baseline_exam.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "验收口径"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "run_qwen3_baseline_exam.py — qwen3:8b 本地推理质量基线考试（10号文 §4 Phase 2.4）。验收口径：基线成绩入库 data/model_profiles/（ModelRouter.load_benchmark_from_disk默认消费目录）。"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

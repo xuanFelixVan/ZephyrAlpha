@@ -2,7 +2,7 @@
 # [MODULE] scripts.backup.library_ledger_backup
 # [DOMAIN] D_INFRASTRUCTURE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.library.snapshot_store (备份成功尾步刷快照，懒加载)
-# [CONSUMERS] schtasks ZephyrAlpha_LibraryLedgerBackup/ZephyrAlpha_LibraryLedgerDrill; scripts/register_library_ledger_backup_task.ps1
+# [CONSUMERS] schtasks ZephyrAlpha_LibraryLedgerBackup/ZephyrAlpha_LibraryLedgerDrill; scripts/tasks/register/register_library_ledger_backup_task.ps1
 # [STARTUP] scheduled_task
 # [MATURITY] production
 # [INVARIANTS] 全程只读 PG（get_depgraph_pg_connection 默认 read_only）；备份=双链落位（G:/backup 主 + F:/zephyr_cold 镜像）；滚动保留 30 天且每月 1 日留档不清；恢复演练=纯 Python CSV 流式核验（零 PG 写、零裸 duckdb）产出 PASS/FAIL 报告；快照刷新挂 backup 成功尾步（既有 schtasks 事件链，零新增计划任务）且 fail-open——快照故障不得改备份退出码

@@ -37,7 +37,7 @@
 # DEADMAN_DASHBOARD_PORT dashboard port to probe (default 8890)
 # DEADMAN_DASHBOARD_STALE_MIN dashboard heartbeat stale threshold minutes (default 10)
 #
-# Deploy: registered by scripts/register_guard_tasks.ps1 (4th task ZephyrAlpha_DeadmanSwitch).
+# Deploy: registered by scripts/tasks/register/register_guard_tasks.ps1 (4th task ZephyrAlpha_DeadmanSwitch).
 # Manual run: powershell -ExecutionPolicy Bypass -File scripts\deadman_switch.ps1
 
 $ErrorActionPreference = "Stop"

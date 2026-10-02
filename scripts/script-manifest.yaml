@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-09-29'
-total_scripts: 1141
+generated_at: '2026-10-02'
+total_scripts: 1229
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -50,6 +50,14 @@ scripts:
   path: backfill_etf_hfq_for_pcr.py
   description: 背景：c1_market.kline_daily_hfq 的 ETF 通配 universe 外（hfq 增量任务=股票口径），
   domain: backfill_etf_hfq_for_pcr.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backfill_option_daily_stats.py
+  path: backfill_option_daily_stats.py
+  description: 数据源：交易所官方每日统计（akshare option_daily_stats_sse/szse，免费无 token）。
+  domain: backfill_option_daily_stats.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -160,7 +168,7 @@ scripts:
   dimensions: []
 - name: generate_manifest.py
   path: generate_manifest.py
-  description: import os
+  description: import io
   domain: generator
   execution_plane: warm-path
   status: registered
@@ -186,6 +194,14 @@ scripts:
   path: git_guard.py
   description: Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。
   domain: git_guard.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: kline_sector_intraday_from_constituents.py
+  path: kline_sector_intraday_from_constituents.py
+  description: 背景：tdx 外部服务器断供，kline_sector_intraday 1m 自 09-30 全断（行业腿更早，
+  domain: kline_sector_intraday_from_constituents.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -218,14 +234,6 @@ scripts:
   path: print_exam_summary.py
   description: import json
   domain: print_exam_summary.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: quick_profile.py
-  path: quick_profile.py
-  description: 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。
-  domain: quick_profile.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -274,14 +282,6 @@ scripts:
   path: run_deepseek_v4_exam.py
   description: DeepSeek V4 入职考试运行脚本
   domain: run_deepseek_v4_exam.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: run_ollama_exam.py
-  path: run_ollama_exam.py
-  description: Ollama 入职考试运行脚本
-  domain: run_ollama_exam.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -464,7 +464,7 @@ scripts:
   dimensions: []
 - name: ai_layer/run_ai_l1_scan_tick.py
   path: ai_layer/run_ai_l1_scan_tick.py
-  description: 计划任务动作行的真身（见 ``scripts/register_ai_l1_scan_task.ps1``——该 ps1 属 T3 双前置
+  description: 计划任务动作行的真身（见 ``scripts/tasks/register/register_ai_l1_scan_task.ps1``——该 ps1 属 T3 双前置
   domain: scanner
   execution_plane: warm-path
   status: registered
@@ -718,6 +718,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: audit/pcr_e4_exam.py
+  path: audit/pcr_e4_exam.py
+  description: 假设（预注册，2026-09-22 冻结）：
+  domain: audit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: audit/t0_ceiling_capacity_exam.py
   path: audit/t0_ceiling_capacity_exam.py
   description: 上帝视角可达价差 = 当日先出现最低价、后出现最高价时的 (high/low−1)。
@@ -870,6 +878,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/cost_accounting_ruler.py
+  path: backtest/cost_accounting_ruler.py
+  description: 四件红证的机读固化（对账尺只量不改，数值改动=⚑-2 B案生效后另波）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/cost_model.py
+  path: backtest/cost_model.py
+  description: 只做一件事：给 ``_c4_engine._net_line`` 提供三档成本口径，默认档=旧冻结常数
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/crisis_drill_monthly.py
   path: backtest/crisis_drill_monthly.py
   description: 痛点（wo2_blackswan_workbook §4）：无"历史区间+当前持仓"一键重放件，Owner 危机
@@ -889,6 +913,14 @@ scripts:
 - name: backtest/dsr_recalc_backfill.py
   path: backtest/dsr_recalc_backfill.py
   description: A2 台账 N 回填：num_trials 历史批 NULL → 按 run_id 考证值回填（考证口径=
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/eval_auction_strength_ic.py
+  path: backtest/eval_auction_strength_ic.py
+  description: 对 factor_registry 注册条目的 evidence 位产出可复核证据：
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1150,6 +1182,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/lane_f_grid_adapter.py
+  path: backtest/lane_f_grid_adapter.py
+  description: 背景：F 车道进货活（factory_grid_executor 由 ZephyrAlpha_F06Grid 计划任务驱动，落
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/lane_g_stomach_intake.py
   path: backtest/lane_g_stomach_intake.py
   description: 原理（骨架 §1 工段⑥ + §4 P1"⑥号车道"工单）：AI 层胃（L3 intel_harvester，MOD-AUTO-L3-001）
@@ -1158,9 +1198,57 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backtest/league_archive.py
+  path: backtest/league_archive.py
+  description: 每组参赛时打包 manifest.yaml → data/backtest_artifacts/league/archive/<GROUP>-<YYYYMMDD>/：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/league_judge.py
+  path: backtest/league_judge.py
+  description: champion（A 组）vs challenger（B 组）成对判定三态：promote（挑战者上位建议）/ eliminate（淘汰）/
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/league_monthly_snapshot.py
+  path: backtest/league_monthly_snapshot.py
+  description: sim_pocket_daily 按组拉成员 equity 序列 → 组内对比表 → data/backtest_artifacts/league/
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/league_registry.py
+  path: backtest/league_registry.py
+  description: 联赛生命周期轴（骨架 v1.1）：模拟竞争（A/B）站的组织台账。组席位 A~G 任意扩展；
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/league_restore.py
+  path: backtest/league_restore.py
+  description: 读参赛档案 manifest.yaml → 核对当前 git/因子/数据截止日与三指纹（代码 git hash+因子定义+数据
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: backtest/mcts_expression_search.py
   path: backtest/mcts_expression_search.py
   description: MCTS 四步循环：UCB 选择→随机扩展→增量 IC 评估（复用 155 residualize+rank_ic）→
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/p1_conditional_tables.py
+  path: backtest/p1_conditional_tables.py
+  description: python scripts/backtest/p1_conditional_tables.py
   domain: test
   execution_plane: warm-path
   status: registered
@@ -1187,6 +1275,14 @@ scripts:
   description: 消费已有件零重建：data/strategy_intake/promotion_advisories/*.json（MOD-BT-199 产出）
   domain: test
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/reexam_cpcv_harness.py
+  path: backtest/reexam_cpcv_harness.py
+  description: python scripts/backtest/reexam_cpcv_harness.py --batch p1_translated_jq_outpool --limit 30
+  domain: test
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -1289,6 +1385,30 @@ scripts:
 - name: backtest/strategy_screen_query.py
   path: backtest/strategy_screen_query.py
   description: 背景：955 行台账=597 份原文（C2 批筛入/筛出）+358 个唯一策略（C4 批翻译/挂起）。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/t0_material_line.py
+  path: backtest/t0_material_line.py
+  description: 设计真源（判据零改动，口径引用不重写）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/t0_rule_engine.py
+  path: backtest/t0_rule_engine.py
+  description: 规则 YAML 卡预注册制（17 号文 §三.1：买卖点=指标规则卡预注册禁主观盘感）：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backtest/t0_state_match_matrix.py
+  path: backtest/t0_state_match_matrix.py
+  description: 判据口径（引用不重写）：
   domain: test
   execution_plane: warm-path
   status: registered
@@ -2430,6 +2550,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ch/backfill_rzrq_history.py
+  path: ch/backfill_rzrq_history.py
+  description: 缺口：c1_market.margin_trading 现库仅 2026-07-20 起（ifind 源，188,494 行），C5 杠杆成分
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/build_anchored_state_history.py
   path: ch/build_anchored_state_history.py
   description: 把 000300 收盘价经特征锚定四态状态机（零拟合）重建为
@@ -2750,6 +2878,62 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/backfill_bse_minute_history.py
+  path: data/backfill_bse_minute_history.py
+  description: 背景（2026-09-15 排查报告 docs/_working/archive/2026-09/2026-09-15-kline1min-valuation-coverage-investigation.md）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_etf60min_depth.py
+  path: data/backfill_etf60min_depth.py
+  description: 背景（工单 datavein/2026-09-17 + st-datatail-20260923 夜窗卡）：c1_market.kline_etf_60min
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_lof_minute_history.py
+  path: data/backfill_lof_minute_history.py
+  description: 注：9/17 后随 miniQMT 退役本工具自然失效，保留供审计。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_reservoir_level_full.py
+  path: data/backfill_reservoir_level_full.py
+  description: 大表纪律（DDL BLUEPRINT 预注册）：首刷限近窗，全史报批后专项执行——本次即该专项。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_sector880_history.py
+  path: data/backfill_sector880_history.py
+  description: 背景（数据总览 v2 二批 B2，2026-09-11）：表内 1d 段 312 个交易日断档——任务 2026-07-30
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_sector881_history.py
+  path: data/backfill_sector881_history.py
+  description: 背景（2026-09-25）：kline_sector_880 天生只装 880 家族 469 码；881 行业族 128 码在
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/backfill_stock_daily_basic.py
+  path: data/backfill_stock_daily_basic.py
+  description: 'python scripts/data/backfill_stock_daily_basic.py --symbols 000852          # 试点'
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/backfill_technical_indicator_dwm.py
   path: data/backfill_technical_indicator_dwm.py
   description: c1_market.technical_indicator 的 daily/weekly/monthly 数据起点=2026-08（调度闭环日），
@@ -2758,9 +2942,49 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/backfill_tick_depth5.py
+  path: data/backfill_tick_depth5.py
+  description: 用法（在仓库根，Python 3.12 + PYTHONPATH=src）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/bdpan_tick_watch.py
   path: data/bdpan_tick_watch.py
   description: 7 天缺口（20260703/0607/0608/0609/0609?/20260805/20260806）：上游 bdpan 分享按月归档
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/board_index_realtime.py
+  path: data/board_index_realtime.py
+  description: import sys, os, time, argparse
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/collect_index_minute_eod.py
+  path: data/collect_index_minute_eod.py
+  description: 'python scripts/data/collect_index_minute_eod.py              # 回补当日'
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/collect_sector_fund_flow.py
+  path: data/collect_sector_fund_flow.py
+  description: 'python scripts/data/collect_sector_fund_flow.py --once           # 采集一张快照'
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/fill_gaps_tushare.py
+  path: data/fill_gaps_tushare.py
+  description: 已验证的映射（对 2026-09-08 已有数据反查确认）：
   domain: data
   execution_plane: warm-path
   status: registered
@@ -2790,6 +3014,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/miniqmt_midreport_backfill_20260630.py
+  path: data/miniqmt_midreport_backfill_20260630.py
+  description: 数据源：miniQMT xtdata（Owner 终端，带真公告日 m_anntime——小样已验证 600519=20260815）。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/night_probe.py
+  path: data/night_probe.py
+  description: from zephyr.data import ch_reader
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/onboard_source.py
   path: data/onboard_source.py
   description: 一条命令上架一个免费数据源：probe（沙箱试拉零落库）→ apply（DDL 建表+首批回补+Windows 任务登记）
@@ -2814,6 +3054,62 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/pattern_catalog_sync.py
+  path: data/pattern_catalog_sync.py
+  description: candlestick_scanner.py 已实现 CDL 61 + extras 16（共 77 条 PAT-CANDLE 目录）。
+  domain: sync
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_event_backfill.py
+  path: data/pattern_event_backfill.py
+  description: 用 MOD-SIG-091 统一图形引擎对全市场日线（2021-09-01 起）做全量回扫，
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_event_incremental.py
+  path: data/pattern_event_incremental.py
+  description: 滚动窗口调用回填扫描器：只扫最近 N 个日历日的 K 线事件，幂等可重叠。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_evidence_backfill.py
+  path: data/pattern_evidence_backfill.py
+  description: 读 c1_market.market_pattern_win_rate（基础名粒度），按 SEED 映射把统计摘要
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/pattern_win_rate_materialize.py
+  path: data/pattern_win_rate_materialize.py
+  description: 从 c1_market.market_pattern_event × c1_market.kline_daily 计算前视窗口命中
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/refresh_881_names.py
+  path: data/refresh_881_names.py
+  description: 背景：sector_constituent 表的 881 系列 sector_name 长期为代码占位符
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/repair_kline5min_tz_deprecated_update_key.py
+  path: data/repair_kline5min_tz_deprecated_update_key.py
+  description: 背景：2026-06-22 ~ 2026-07-15 共 17 个交易日，kline_5min 的 trade_time 被整体
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/repair_kline_degraded_pull.py
   path: data/repair_kline_degraded_pull.py
   description: 背景（93 备忘 §14.10 同族）：miniQMT 接口对重拉请求【按请求灰度间歇性】返回劣化数据
@@ -2830,6 +3126,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/run_nightly_sentiment.py
+  path: data/run_nightly_sentiment.py
+  description: 用法（在仓库根，Python 3.12）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/run_sector_snapshot.py
+  path: data/run_sector_snapshot.py
+  description: 用法：python scripts/data/run_sector_snapshot.py
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/source_health_patrol.py
   path: data/source_health_patrol.py
   description: 对 config/source_cards/*.yaml 全卡跑 onboard_source.verify 只读对账（行数+最新日+任务态），
@@ -2838,9 +3150,33 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: data/synth_board_index.py
+  path: data/synth_board_index.py
+  description: 方案真源：docs/_working/board_synthesis/2026-09-15-board-index-synthesis-plan.md §1/§4。
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/synth_board_minute.py
+  path: data/synth_board_minute.py
+  description: 合成口径（方案 J §1 + TDX 停牌口径）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: data/tilib_dwm_shard_runner.py
   path: data/tilib_dwm_shard_runner.py
   description: 背景（Code 241 内存总闸阵亡治本，原 .runtime/tmp 临时版 st-data-fix-20260921）：
+  domain: data
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: data/verify_final.py
+  path: data/verify_final.py
+  description: import io
   domain: data
   execution_plane: warm-path
   status: registered
@@ -2950,9 +3286,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/apply_meta_question_ddl.py
+  path: governance/apply_meta_question_ddl.py
+  description: 设计真源：``docs/_working/chain_piling_campaign/infra_mining/30_blindspot_audit.md`` §C（schema 收口 R1-R4）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/apply_resource_plan.py
   path: governance/apply_resource_plan.py
   description: Owner 目标②（AI 重排班并更新模块）的执行机构。裁定 R-A：排班写回走真源不走表——
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/apply_schema_migrations.py
+  path: governance/apply_schema_migrations.py
+  description: 读台账（REG-SCHEMA-MIG-001）→ 对比 PG depgraph 实例 tracking 表已应用记录 →
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3030,6 +3382,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/check_meta_question_batch.py
+  path: governance/check_meta_question_batch.py
+  description: 校验对象：docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/check_meta_question_status_band.py
   path: governance/check_meta_question_status_band.py
   description: 从 PG ``meta_question.meta_question`` 只读拉取 status 分布（全程零写），对照健康带判档：
@@ -3062,9 +3422,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/check_trd_a20_a21_dual_gates.py
+  path: governance/check_trd_a20_a21_dual_gates.py
+  description: 设计真源：docs/_working/live_readiness/admission_gate_design.md §1/§3（判定矩阵逐字落地）；
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/check_wiring_orphan.py
   path: governance/check_wiring_orphan.py
   description: 职责：扫描 wiring_registry.yaml，检出「登记超期未接线」模块，防架上当品烂尾。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/chief_lease.py
+  path: governance/chief_lease.py
+  description: '自动降格语义（裁定#415，册载 2026-09-28）::'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3262,6 +3638,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/lane_leases.py
+  path: governance/lane_leases.py
+  description: lane_leases.py — 路径租约登记+分配器（S5② 动态车道 v1，影子模式）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/lane_leases_gate.py
+  path: governance/lane_leases_gate.py
+  description: lane_leases_gate.py — 租约影子审计门（WARN-only，永不阻断）
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/migrate_to_metadata_tables.py
   path: governance/migrate_to_metadata_tables.py
   description: 将 PRODUCTION_PROTECTED_FIELDS(14) + EDGES_PROTECTED_FIELDS(9) 从 nodes/edges
@@ -3409,6 +3801,14 @@ scripts:
 - name: governance/session_startup_health_check.py
   path: governance/session_startup_health_check.py
   description: 'AI session 启动时运行的核心工具健康度检查。对应裁定 #ARCH-TOOL-HEALTH-V1 Phase 6'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/session_takeover_ledger.py
+  path: governance/session_takeover_ledger.py
+  description: 病根：会话中途死亡 → 暂存区/worktree/claim/死袋全成无主黑箱，下一个 AI 要重新考古。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4014,6 +4414,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/backfill_roor_reg_annotation.py
+  path: governance/d3_metadata/backfill_roor_reg_annotation.py
+  description: 病灶（F92 原问题账本处方）：ROOR（docs/registry_of_registries.yaml）76+ 册中约 40 册
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/backfill_ttl_metadata.py
   path: governance/d3_metadata/backfill_ttl_metadata.py
   description: 对 docs/ + src/ + scripts/ + tests/ 下所有有头部的文件（6 格式），按
@@ -4150,6 +4558,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/generate_wiring_registry.py
+  path: governance/d3_metadata/generate_wiring_registry.py
+  description: 治本对象 = test_consumption_census_redproof R-K（wiring_registry 机器视图）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/inventory_blanked_canonical_fields.py
   path: governance/d3_metadata/inventory_blanked_canonical_fields.py
   description: 对 ``module_translation_registry.yaml`` 与
@@ -4163,6 +4579,14 @@ scripts:
   description: schema v2.1 裁定：code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码
   domain: governance
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d3_metadata/reconcile_gate_rosters.py
+  path: governance/d3_metadata/reconcile_gate_rosters.py
+  description: reconcile_gate_rosters.py — 门禁名册三方对账生成器（T14 治本：三册不同步取证）
+  domain: governance
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -4750,9 +5174,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/generate_connection_matrix.py
+  path: governance/d5_architecture/generators/generate_connection_matrix.py
+  description: 大白话：把"谁该连谁"和"谁真的连上了"摆到同一张表上，逐条给证据，然后只数一个
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/generate_constraint_violations.py
   path: governance/d5_architecture/generators/generate_constraint_violations.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_construction_workflow_map.py
+  path: governance/d5_architecture/generators/generate_construction_workflow_map.py
+  description: 域（骨架一句话）：一个施工任务从"冷启动+文档审查"到"验收+全景图转正"的任务序与每步的
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4798,6 +5238,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/generate_data_supply_chain_map.py
+  path: governance/d5_architecture/generators/generate_data_supply_chain_map.py
+  description: 战役=全景图六图战役 图12（骨架与作业簿真源=``docs/_working/map_build/fig12_datachain/``）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/generators/generate_dataflow_diagram.py
   path: governance/d5_architecture/generators/generate_dataflow_diagram.py
   description: 依据：ARCH-051 裁定（2026-07-06）
@@ -4817,6 +5265,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_design_vs_production.py
   path: governance/d5_architecture/generators/generate_design_vs_production.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_dev_delivery_map.py
+  path: governance/d5_architecture/generators/generate_dev_delivery_map.py
+  description: 域（骨架一句话）：代码从会话诞生到落地 dev 主区的全部"开发时"流水线环节（不含运行时
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4889,6 +5345,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_policies.py
   path: governance/d5_architecture/generators/generate_policies.py
   description: 真源：architecture_model/data/data_sources_registry.yaml
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+  path: governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+  description: 域（骨架 §1 一句话）：一个交易日从夜窗闭合到次日交接，**什么时点必须发生什么、谁给它让路、
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -5078,9 +5542,25 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/validators/validate_construction_steps.py
+  path: governance/d5_architecture/validators/validate_construction_steps.py
+  description: 形态照抄 validate_dev_delivery_map.py（图 11 定稿母版）/validate_strategy_production_map.py
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/validators/validate_cross_references.py
   path: governance/d5_architecture/validators/validate_cross_references.py
   description: v2.0.0 — 2026-05-03
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/validators/validate_data_supply_chain_map.py
+  path: governance/d5_architecture/validators/validate_data_supply_chain_map.py
+  description: 形态照图9 母版与图11 已定稿件（``validate_dev_delivery_map``）：``validate_structure(data, root=None,
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -5105,6 +5585,14 @@ scripts:
 - name: governance/d5_architecture/validators/validate_deprecated_dependents.py
   path: governance/d5_architecture/validators/validate_deprecated_dependents.py
   description: 对标：LFC-001（退役前所有引用该 module_id 的文件已迁移）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/validators/validate_dev_delivery_map.py
+  path: governance/d5_architecture/validators/validate_dev_delivery_map.py
+  description: 形态照抄 validate_strategy_production_map.py（图 9 母版）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -5193,6 +5681,14 @@ scripts:
 - name: governance/d5_architecture/validators/validate_static_manifest_drift.py
   path: governance/d5_architecture/validators/validate_static_manifest_drift.py
   description: validate_static_manifest_drift.py — GATE-21 静态清单漂移阻断
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+  path: governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+  description: 本图不是 DAG：三类对象 = 状态（13）+ 合法迁移（17）+ 禁止边（13）。禁止边是本图一半价值，
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -5945,6 +6441,70 @@ scripts:
 - name: governance/data_quality/check_tick_duplication.py
   path: governance/data_quality/check_tick_duplication.py
   description: 本脚本是 2026-07-16 tick_data 21 个月数据误删事故的治本工具之一。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/__init__.py
+  path: governance/data_supply/__init__.py
+  description: 'Built in the st-final-build-20260926 lane. Everything here is a read-only cross-check:'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/ch_probe.py
+  path: governance/data_supply/ch_probe.py
+  description: 大白话：以前每个人每条判据读数都手写一遍探测，结果审计员自己把 TSV 字符串按字符
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/check_wave3_rulers.py
+  path: governance/data_supply/check_wave3_rulers.py
+  description: 'Usage:'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/false_green_crosscheck.py
+  path: governance/data_supply/false_green_crosscheck.py
+  description: Z-16 口径原文：交叉尺＝**回执与真值互证**（``rows_written`` 记回执 + 独立读最终真值/最新业务日），
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/no_cache_endorsement.py
+  path: governance/data_supply/no_cache_endorsement.py
+  description: 判据＝"用于下结论的读数，必须是当场读出来的"。两条腿，各自都能红：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/strict_truth_reader.py
+  path: governance/data_supply/strict_truth_reader.py
+  description: W-180 红线在本件的落实（三条全部机械可验）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/supply_conservation.py
+  path: governance/data_supply/supply_conservation.py
+  description: EV-03 的病＝"工人干完活、货单上也有记录，但仓库里那件东西不见了"；药＝**回执与真值互证**。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/data_supply/supply_sources.py
+  path: governance/data_supply/supply_sources.py
+  description: 内收纪律（Z-16「禁造第二套」/ 波 3.3「内收不造第二套」）：本件不新建任何阈值册，
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -7246,6 +7806,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/standards_governance/__init__.py
+  path: governance/standards_governance/__init__.py
+  description: '__all__: list[str] = ["generate_standard_family_registry"]'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/standards_governance/generate_standard_family_registry.py
   path: governance/standards_governance/generate_standard_family_registry.py
   description: 治本对象 = 全流通战役 lane-J 立案 req_tdchainJ_02（#306 红队条款①的可执行判据载体）：
@@ -7329,6 +7897,102 @@ scripts:
 - name: governance/vms/vms_version_sync_check.py
   path: governance/vms/vms_version_sync_check.py
   description: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave10/wave10_asset_base_audit.py
+  path: governance/wave10/wave10_asset_base_audit.py
+  description: 三簇 x 三列（实存模块数 / 是否在 HEAD / 是否被生产路径消费）机读表，外加：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave11/w178_universe_facts_gen.py
+  path: governance/wave11/w178_universe_facts_gen.py
+  description: 大白话：把"板块宇宙到底有多大、谁有行情没成分、两套口径差多少"一次测清楚，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1a/build_delivery_cards.py
+  path: governance/wave1a/build_delivery_cards.py
+  description: 入口 = TaskRepository.create_and_ready()/create()（GOV-TASK-001 v3.2.0 强制校验）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1a/ch_read_shape_ruler.py
+  path: governance/wave1a/ch_read_shape_ruler.py
+  description: 大白话：`ch_reader.query()` / `ch_writer.query()` / `query_table()` 返回的是 **TSV 字符串**。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1a/cross_session_view.py
+  path: governance/wave1a/cross_session_view.py
+  description: 三个视图：按 session_id 汇总 / 按 blocked_by 出阻塞链 / 按 verification_status 分布。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1a/store_liveness_probe.py
+  path: governance/wave1a/store_liveness_probe.py
+  description: 大白话：把仓库 data/ 下每个"打不开、没内容、或长期没人写"的 .db 拖出来晒一遍，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1a/verified_promotion_check.py
+  path: governance/wave1a/verified_promotion_check.py
+  description: 大白话：一张卡自称"完成"想升 VERIFIED，空口无凭。本尺对着卡面做三判据硬校验：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1b/claim_gate_repro.py
+  path: governance/wave1b/claim_gate_repro.py
+  description: 三条断言（对应案卷 §B / §C / §E②）：
+  domain: governance
+  execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1b/dead_letter_census.py
+  path: governance/wave1b/dead_letter_census.py
+  description: 只读对象：.runtime/commit_queue/**（dead/done/pending/processing/blobs 零写）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave1b/dead_letter_prescriptions.py
+  path: governance/wave1b/dead_letter_prescriptions.py
+  description: 只读输入：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave2/lane_inventory.py
+  path: governance/wave2/lane_inventory.py
+  description: import argparse
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/wave3/recheck_empty_tables.py
+  path: governance/wave3/recheck_empty_tables.py
+  description: 大白话：`ch_reader.count()` 出错时**返回 0**（`src/zephyr/data/ch_reader.py:131` 契约原文
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -7875,6 +8539,14 @@ scripts:
   description: '[BLUEPRINT] MOD-ARCH-002 | scripts/governance/list_phase0_tasks.py | §1.11'
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/session_closeout_reconciler.py
+  path: governance/_tasks/session_closeout_reconciler.py
+  description: 病根：宪法 §2.9 收尾序列五步全是会话自觉驱动；会话死亡后无人释放 claim/清暂存残影/
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -8454,6 +9126,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: sector_line/build_gpu_input_pack.py
+  path: sector_line/build_gpu_input_pack.py
+  description: '用法: python scripts/sector_line/build_gpu_input_pack.py --out-dir data/strategy_intake/grid_<ts> [--generated-at ISO]'
+  domain: sector_line
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: sector_line/freeze_baseline.py
+  path: sector_line/freeze_baseline.py
+  description: from __future__ import annotations
+  domain: sector_line
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: strategy_factory/run_s_owner_001_exam.py
   path: strategy_factory/run_s_owner_001_exam.py
   description: '防复试图救: 默认 out 目录已含 summary.json 时退出（--force 仅供诊断重算，产物另存时间戳目录）。'
@@ -8674,6 +9362,14 @@ scripts:
   path: tests/verify_calibration_nll.py
   description: 构造 3 组 mock 数据：
   domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/run_ollama_exam.py
+  path: _archive/run_ollama_exam.py
+  description: Ollama 入职考试运行脚本
+  domain: _archive
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -9129,6 +9825,14 @@ scripts:
 - name: _archive/ops/fill_blueprint_ids.py
   path: _archive/ops/fill_blueprint_ids.py
   description: import os
+  domain: _archive
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/ops/quick_profile.py
+  path: _archive/ops/quick_profile.py
+  description: 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。
   domain: _archive
   execution_plane: warm-path
   status: registered

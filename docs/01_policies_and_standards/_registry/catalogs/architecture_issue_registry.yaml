@@ -12891,7 +12891,7 @@ entries:
     - 'scripts/start_scheduler.ps1（Write-Heartbeat 函数 + 锁超时判定 + 轮询 HasExited + finally 清理心跳，commit b4c7c841）'
     - 'scripts/start_tick_subscriber.ps1（同步改造，heartbeat 文件名 tick_subscriber.heartbeat，commit b4c7c841）'
     - 'scripts/start_ch_health_probe.ps1（Phase 2 心跳改造，镜像 scheduler/tick，commit e8cf841c）'
-    - 'scripts/register_guard_tasks.ps1（Phase 1 MultipleInstances IgnoreNew→Parallel，commit e8cf841c）'
+    - 'scripts/tasks/register/register_guard_tasks.ps1（Phase 1 MultipleInstances IgnoreNew→Parallel，commit e8cf841c）'
     - 'tests/scripts/test_guard_watchdog.py（4 项单测 + 三服务参数化扩展，commit b4c7c841/e8cf841c）'
     - 'tests/scripts/test_guard_invariants.py（Phase 3 不变式回归测试，新建，commit e8cf841c）'
     - 'docs/03_modules/_domain_data/boot_autostart_architecture.md（§3 四层防御 + §8.5 施工验证 + §8.6 战略补强）'
@@ -12936,7 +12936,7 @@ entries:
     - 'scripts/start_tick_subscriber.ps1（D+F: 同步改造，已落地）'
     - 'scripts/start_ch_health_probe.ps1（D+F: 同步改造，已落地）'
     - 'scripts/deadman_switch.ps1（E: 新建死人开关一次性任务脚本，已落地）'
-    - 'scripts/register_guard_tasks.ps1（E: 注册第 4 个任务 ZephyrAlpha_DeadmanSwitch，已落地）'
+    - 'scripts/tasks/register/register_guard_tasks.ps1（E: 注册第 4 个任务 ZephyrAlpha_DeadmanSwitch，已落地）'
     - 'tests/scripts/test_guard_invariants.py（D/E/F: 不变式测试 TestAtomicHeartbeatWrite/TestDeadmanSwitch*/TestWaitForExitRootCauseDocumented，已落地）'
     - 'docs/03_modules/_domain_data/boot_autostart_architecture.md（§8.6 战略补强说明，已更新为已落地）'
     - 'AGENTS.md（watchdog 服务表新增死人开关行 + 死人开关架构说明段落）'
@@ -16978,7 +16978,7 @@ entries:
       start_paper_session 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*），
       --dry-run 只连不下单。
   impact:
-  - 'scripts/run_post_settlement.py（新建，MOD-SCRIPT-run_post_settlement，D_TRADING，[MATURITY] testing；exit 0=OK/SKIPPED、3=DRIFT、1=ERROR）'
+  - 'scripts/tasks/run/run_post_settlement.py（新建，MOD-SCRIPT-run_post_settlement，D_TRADING，[MATURITY] testing；exit 0=OK/SKIPPED、3=DRIFT、1=ERROR）'
   - 'scripts/start_paper_session.py（新建，MOD-SCRIPT-start_paper_session，D_EX_CORE，[MATURITY] testing；有界保活循环 PERM-TRIGGER 合规+m11 豁免）'
   - 'tests/scripts/test_run_post_settlement.py + tests/scripts/test_start_paper_session.py（新建，mock 注入点+exit 码矩阵+tmp 隔离）'
   - 'depgraph node_id=10306212（run_post_settlement，file）+10306213（start_paper_session，file），build_status planned→generated→testing 两跳合规'
@@ -18067,7 +18067,7 @@ entries:
     （QMT 无法自动登录实证），进程级自愈 RTO<5min 对齐宪章约束五。
   impact:
     - 'scripts/start_trading.ps1（新建，纯 ASCII 无 BOM 纯 LF，INJ-007 合规）'
-    - 'scripts/register_guard_tasks.ps1（+TradingWatchdog 注册块，Disabled 幂等）'
+    - 'scripts/tasks/register/register_guard_tasks.ps1（+TradingWatchdog 注册块，Disabled 幂等）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/57_daily_cycle_sop.md（§2 注记）'
   fix_phase: '已落地（2026-08-22）：PSParser 0 错误+单实例锁实证（替身二次启动 1022ms 秒退）+未真实拉起 trading 进程（生产变更禁令）；执行注册/启用=Owner 窗口'
   status: decided

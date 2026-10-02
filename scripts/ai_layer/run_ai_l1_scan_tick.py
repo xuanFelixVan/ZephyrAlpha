@@ -3,7 +3,7 @@
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts/ai_layer/gen_search_veins.py（同目录兄弟模块，幂等矿脉再生生成器）;
 #                zephyr.ai_layer.perceive.search_orders（SearchOrderJournal.expire_due）
-# [CONSUMERS] scripts/register_ai_l1_scan_task.ps1（Windows 计划任务宿主，节拍=OS 任务计划程序）
+# [CONSUMERS] scripts/tasks/register/register_ai_l1_scan_task.ps1（Windows 计划任务宿主，节拍=OS 任务计划程序）
 # [STARTUP] scheduled_task
 # [MATURITY] new
 # [INVARIANTS] 本件=L1 施工项 7「外扫节拍宿主」的被调 tick：①矿脉再生（gen_search_veins，幂等，
@@ -25,7 +25,7 @@
 # [TTL] permanent
 """run_ai_l1_scan_tick — L1 外扫节拍宿主 tick（施工项 7，AI2 车道 2026-09-26）。
 
-计划任务动作行的真身（见 ``scripts/register_ai_l1_scan_task.ps1``——该 ps1 属 T3 双前置
+计划任务动作行的真身（见 ``scripts/tasks/register/register_ai_l1_scan_task.ps1``——该 ps1 属 T3 双前置
 门控件，**资源画像登记 + 裁定登记** 齐备并经 Owner 点头启用前不得注册运行）。
 
 用法::

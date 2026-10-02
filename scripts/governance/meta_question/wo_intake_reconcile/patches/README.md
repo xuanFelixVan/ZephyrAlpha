@@ -50,7 +50,7 @@
 - **验证**：`python scripts/governance/check_meta_question_status_band.py --selftest` → `SELFTEST: 10/10 通过`。
 
 ### 0003-schedule-metaq-audit-reconcile-daily-task.patch
-- **目标**：**新建** `scripts/register_metaq_audit_reconcile_task.ps1`（83 行，纯 ASCII 已通过字节校验）
+- **目标**：**新建** `scripts/tasks/register/register_metaq_audit_reconcile_task.ps1`（83 行，纯 ASCII 已通过字节校验）
 - **改什么**：对账器进排班。载体=Windows 计划任务 `ZephyrAlpha_MetaqAuditReconcile`，每日 03:50 跑
   `pythonw scripts/governance/check_meta_question_audit_reconcile.py --days 1`，stdout/stderr 落
   `tmp/metaq_audit_reconcile_report.log`（`run_fulltree_gate_audit.py` 的 tmp/ 报告先例）。

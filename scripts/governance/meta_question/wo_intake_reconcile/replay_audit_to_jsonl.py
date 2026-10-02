@@ -6,7 +6,7 @@
 #                zephyr.governance.meta_question.meta_question_registry (AUDIT_WHAT_VOCAB 词表真源，越词表行拒放)；
 #                .runtime/chain_piling/meta_question_audit.jsonl（补账目标，追加不改写）
 # [CONSUMERS] scripts/governance/check_meta_question_audit_reconcile.py（回放后逐日/逐行差集必归零）;
-#             scripts/register_metaq_audit_reconcile_task.ps1（每日排班发现差异后的人工/自动补账臂）
+#             scripts/tasks/register/register_metaq_audit_reconcile_task.ps1（每日排班发现差异后的人工/自动补账臂）
 # [STARTUP] manual
 # [MATURITY] new
 # [INVARIANTS] 默认 dry-run（--apply 才落盘，宪法 §9.7 破坏性操作三步验证的"可逆性"面：追加账只增不改）；

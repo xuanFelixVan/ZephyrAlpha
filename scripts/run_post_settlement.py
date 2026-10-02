@@ -1,8 +1,8 @@
-# [BLUEPRINT] MOD-SCRIPT-run_post_settlement | scripts/run_post_settlement.py | §
+# [BLUEPRINT] MOD-SCRIPT-run_post_settlement | scripts/tasks/run/run_post_settlement.py | §
 # [MODULE] scripts.run_post_settlement
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] stdlib；zephyr.trading.post_settlement_pipeline（流水线真源）；zephyr.trading.settlement_reconciliation（SettlementReconciler）；zephyr.trading.broker_settlement_adapter（fetch_broker_settlement_records 券商侧适配）；zephyr.ex_core.fill_handler（query_fills_by_date 读取口径）；zephyr.risk.core.daily_auditor（DailyAuditor.audit + run_var_backtest_from_store）；zephyr.risk.core.backtest_store（VarBacktestStore 门面，VaR 定级归档）；zephyr.shared.state_store（JsonStateStore 风控状态根）；zephyr.data.trading_calendar（is_trading_day 交易日回推）；zephyr.ex_core.adapters.miniqmt_broker（QMT 模拟盘连接，延迟 import 可降级）；zephyr.position.live_nav_recorder（GAP-F-29 净值腿，延迟 import）；zephyr.data.ch_writer（净值落库正门）；schemas.categories.market.market_account_nav_daily（INSERT 列真源）
-# [CONSUMERS] 57 号文 §3 收盘结算管线触发入口（人工 CLI 保留；挂调度已获 Owner 2026-09-15 全自动指令批准——计划任务 ZephyrAlpha_PostSettlement 工作日 15:30 经 scripts/register_post_settlement_task.ps1 注册，幂等只读不变）
+# [CONSUMERS] 57 号文 §3 收盘结算管线触发入口（人工 CLI 保留；挂调度已获 Owner 2026-09-15 全自动指令批准——计划任务 ZephyrAlpha_PostSettlement 工作日 15:30 经 scripts/tasks/register/register_post_settlement_task.ps1 注册，幂等只读不变）
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 对账/审计步保持只读（reconciliation_differences 落库由 recon_runner 负责，本脚本不重复写）；唯一业务 DB 写副作用=GAP-F-29 日终净值腿（st-c9-emptyfill 接线：account_nav_daily 单表，ch_writer 正门 TSV，资产数=QMT 模拟账户实时快照禁编造，基准缺失 NULL 降级；失败大声留痕并吞没、永不改退出码矩阵，broker 离线则整步不跑）；VaR 回测定级为本脚本状态写副作用且只写既有风控状态根(data/runtime/state)的 var_backtest_report_* 归档——状态根/盘前基线缺失即整步跳过且绝不 mkdir 造目录，本步异常与结论永不改退出码，定级动作不在本脚本执行（§3.10 唯一执行者=编排层 apply_var_backtest_action）；QMT 不在线降级为仅系统侧+显式标注（不伪造"券商侧为空"的假比对）；对账不一致必打印 C 类异常清单+exit 3（不静默）；步骤异常 exit 1；幂等（同 trade_date 重跑无副作用——净值表 ReplacingMergeTree 按 trade_date 同键替换）
@@ -27,7 +27,7 @@
 
 功能
 ----
-``python scripts/run_post_settlement.py [trade_date]``（YYYY-MM-DD；缺省=最近交易日，
+``python scripts/tasks/run/run_post_settlement.py [trade_date]``（YYYY-MM-DD；缺省=最近交易日，
 用 zephyr.data.trading_calendar.is_trading_day 从今天回推，含今天——盘后语义，
 上午跑请显式传前一交易日）：
 
@@ -56,8 +56,8 @@ exit code 矩阵（57 号文 §3 验收口径）
 
 生产调用示例（写进 tracker 用）::
 
-    python scripts/run_post_settlement.py 2026-08-21
-    python scripts/run_post_settlement.py            # 缺省=最近交易日（盘后语义）
+    python scripts/tasks/run/run_post_settlement.py 2026-08-21
+    python scripts/tasks/run/run_post_settlement.py            # 缺省=最近交易日（盘后语义）
 """
 
 from __future__ import annotations
