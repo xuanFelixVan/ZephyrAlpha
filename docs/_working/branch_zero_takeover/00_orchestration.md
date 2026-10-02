@@ -59,3 +59,13 @@ completes_when: 分支清零执行完毕+接管台账三件套落地+验收两�
 - **战役二治本基建：T1 三件套全落 HEAD**（session_takeover_ledger.py+TAKEOVER-PENDING 门+salvage 钩子；10 测+邻接 70 绿；红蓝=伪造会话注入被 V5 护栏正确拒绝）；T2 十五类治本清单册成
 - 队列 0/0；幻影删除 0；接管台账 --list 实战产出首条真实信号（c10-f56ch 静默显化）
 - 裁定：本战役 CR 沿用 circulation_chief 序（#461~#476 已并册），分支清零与接管基建裁定补录待下批
+
+
+## 6. Owner 追加令执行：末 15 条逐条手工判定（10-02 晨）
+
+四维全scan 后判定：13 条已并入 dev 零独特 commit（价值全在主干）；唯一未并入=chief4 的 16 行，核验=兄弟车道 chief6 已以更优注释落地同内容（_MANUAL_DERIVED_TOTAL_PAIRS+validator CHECKS 双处在案）→判 superseded。
+
+执行（含 worktree 前置清退 9 棵，脏面全档案化 campaign_trash/worktree_salvage/）：
+- 直删 12：5 条死/完节会话分支（commitfix/mapcensus/ffchief-20261001/chief7/backup-cold——全部已并入）+3 条 worktree 占用已并入分支（c7-autofix/chief7w）+chief4（tag 已在）+chief3-baseline detached 树
+- 保留 8：dev｜serializer×5（belt 落地必要功能）｜session/st-chief7-20260928（收官自动机在飞，自删后二轮清）｜session/st-ffchief-20261002（现役）
+- 旧会话 st-ffchief-20261001 守护停+注册除名（全部落地，会话干净关闭）
