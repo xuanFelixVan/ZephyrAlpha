@@ -69,3 +69,14 @@ completes_when: 分支清零执行完毕+接管台账三件套落地+验收两�
 - 直删 12：5 条死/完节会话分支（commitfix/mapcensus/ffchief-20261001/chief7/backup-cold——全部已并入）+3 条 worktree 占用已并入分支（c7-autofix/chief7w）+chief4（tag 已在）+chief3-baseline detached 树
 - 保留 8：dev｜serializer×5（belt 落地必要功能）｜session/st-chief7-20260928（收官自动机在飞，自删后二轮清）｜session/st-ffchief-20261002（现役）
 - 旧会话 st-ffchief-20261001 守护停+注册除名（全部落地，会话干净关闭）
+
+
+## 7. 混沌演训终判（Owner 三问实弹作答，10-02 晨）
+
+- R1 并发：10 车道并发注册→claim→写→gateway enqueue，全落零丢失 ✓
+- R2 死亡：5 车道处死模拟——慢死亡被接管台账全逮（c10 五车道 13 条死袋处方实出）；瞬时死亡揪出孤儿侦测缺口→_scan_orphan_resources 9b3359eccf 当日补齐 ✓
+- R3 门禁：TAKEOVER-PENDING/幽灵闸/C-2 预检/V5 护栏全数实弹拦截在案 ✓
+- R4 闭环：接管→裁定→resolve→落地全链通 ✓
+- R5 清算：--sweep-absorbed 首跑 aged 708 显化/三分流自洽 ✓
+- R6 基线：幻影 0/队列排空/分支 8/无主资源 0 ✓
+- 红队注入（伪造会话）被 V5 护栏正确拒绝=蓝队胜 ✓
