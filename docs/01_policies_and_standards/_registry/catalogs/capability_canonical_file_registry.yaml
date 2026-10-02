@@ -5549,11 +5549,11 @@ creation_tokens:
   token: "f06-e2e-test-20260916"
   created_by: "st-f06combo-20260915"
   capability: "position_recipe_grid_compile"
-- file: "scripts/run_f06_grid.ps1"
+- file: "scripts/tasks/run/run_f06_grid.ps1"
   token: "f06-grid-runner-20260916"
   created_by: "st-f06combo-20260915"
   capability: "position_recipe_grid_compile"
-- file: "scripts/register_f06_grid_task.ps1"
+- file: "scripts/tasks/register/register_f06_grid_task.ps1"
   token: "f06-grid-register-20260916"
   created_by: "st-f06combo-20260915"
   capability: "position_recipe_grid_compile"
@@ -6431,7 +6431,7 @@ creation_tokens:
   token: auto-knowledge-taxonomy-vocab-20260830
   created_by: AI-WAVE5
   capability: knowledge_taxonomy
-- file: scripts/run_boot_sla_probe.py
+- file: scripts/tasks/run/run_boot_sla_probe.py
   token: auto-boot-sla-probe-20260830
   created_by: greatwall_20260830
   capability: system_telemetry_health_probe
@@ -6479,15 +6479,15 @@ creation_tokens:
   token: auto-session-output-manifest-20260830
   created_by: greatwall_20260830
   capability: session_output_manifest
-- file: scripts/register_paper_session_task.ps1
+- file: scripts/tasks/register/register_paper_session_task.ps1
   token: auto-register-paper-session-task-20260830
   created_by: greatwall_20260830
   capability: task_scheduler_registration
-- file: scripts/start_paper_session_daily.ps1
+- file: scripts/installers/start_paper_session_daily.ps1
   token: auto-start-paper-session-daily-20260830
   created_by: greatwall_20260830
   capability: paper_session_daily_launch
-- file: scripts/register_pattern_mining_task.ps1
+- file: scripts/tasks/register/register_pattern_mining_task.ps1
   token: auto-register-pattern-mining-task-20260830
   created_by: greatwall_20260830
   capability: task_scheduler_registration
@@ -6711,7 +6711,7 @@ creation_tokens:
   token: auto-recon-runner-20260821
   created_by: AI-P0-G3567
   capability: backtest_vs_sim_reconciliation
-- file: scripts/run_post_settlement_daily.ps1
+- file: scripts/tasks/run/run_post_settlement_daily.ps1
   token: auto-run-post-settlement-daily-ps1-20260822
   created_by: AI-P0BATCH-001
   capability: daily_cycle_sop
@@ -6771,7 +6771,7 @@ creation_tokens:
   token: auto-commit-queue-landing-20260821
   created_by: AI-P0-6-005
   capability: commit_queue_serialization
-- file: scripts/run_post_settlement.py
+- file: scripts/tasks/run/run_post_settlement.py
   token: auto-run-post-settlement-20260821
   created_by: AI-P0-GAP23
   capability: daily_cycle_sop
@@ -7135,15 +7135,15 @@ creation_tokens:
   token: auto-ddl-truth-c1-l2-tick-20260728
   created_by: session-sess-29488-20260728171405
   capability: ddl_truth_source_c1
-- file: scripts/register_guard_tasks.ps1
+- file: scripts/tasks/register/register_guard_tasks.ps1
   token: auto-register-guard-tasks-20260723
   created_by: session-sess-41368-20260723000636
   capability: data_service_watchdog
-- file: scripts/deadman_switch.ps1
+- file: scripts/installers/deadman_switch.ps1
   token: auto-deadman-switch-20260808
   created_by: session-g22-v150-review
   capability: deadman_switch_monitor
-- file: scripts/register_drift_watchdog_task.ps1
+- file: scripts/tasks/register/register_drift_watchdog_task.ps1
   token: auto-register-drift-watchdog-task-20260817
   created_by: session-AI-GOVA-001
   capability: worktree_drift_watchdog
@@ -9559,7 +9559,7 @@ creation_tokens:
   token: auto-factor-casebook-blueprint-20260822
   created_by: AI-P2-ALG03
   capability: factor_casebook
-- file: scripts/start_trading.ps1
+- file: scripts/installers/start_trading.ps1
   token: auto-start-trading-20260822
   created_by: AI-P2-INT03
   capability: trading_watchdog
@@ -12527,7 +12527,7 @@ creation_tokens:
   token: tdm-final-handover-20260907
   created_by: sess-35944-20260907153514
   capability: tdm_handover_report
-- file: scripts/run_ttl_rejudge_daily.ps1
+- file: scripts/tasks/run/run_ttl_rejudge_daily.ps1
   token: auto-ttl-rejudge-hidden-20260908
   created_by: st-bridge-p01-20260908
   capability: ttl_rejudge_daily_hidden_launcher
@@ -13326,15 +13326,15 @@ creation_tokens:
   token: factory-backend-lane-c-formula-miner-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: scripts/run_factory_lane_c.ps1
+- file: scripts/tasks/run/run_factory_lane_c.ps1
   token: factory-backend-run-factory-lane-c-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: scripts/register_factory_lane_c_task.ps1
+- file: scripts/tasks/register/register_factory_lane_c_task.ps1
   token: factory-backend-register-factory-lane-c-task-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: scripts/register_ollama_serve_task.ps1
+- file: scripts/tasks/register/register_ollama_serve_task.ps1
   token: factory-backend-register-ollama-serve-task-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
@@ -13378,11 +13378,11 @@ creation_tokens:
   token: factory-backend-graph-enrich-staging-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: scripts/run_c4_exam.ps1
+- file: scripts/tasks/run/run_c4_exam.ps1
   token: factory-backend-run-c4-exam-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
-- file: scripts/register_c4_exam_task.ps1
+- file: scripts/tasks/register/register_c4_exam_task.ps1
   token: factory-backend-register-c4-exam-task-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
@@ -27234,7 +27234,7 @@ creation_tokens:
   token: f06-dsr-recalc-2026-09-15-dsr-recalc-report-20260915
   created_by: st-f06dsr-shift2-20260915
   capability: f06_dsr_recalc
-- file: scripts/register_counter_trend_feeder_tasks.ps1
+- file: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   token: counter-trend-feeder-register-2026-09-15
   created_by: st-circmv-synthcw-20260915
   capability: board_index_synthesis
@@ -27308,11 +27308,11 @@ creation_tokens:
   token: resource-schedule-panorama-resource-schedule-panorama-plan-v1-20260915
   created_by: st-schedmap-20260916
   capability: resource_schedule_panorama
-- file: scripts/register_resource_sampler_scan_task.ps1
+- file: scripts/tasks/register/register_resource_sampler_scan_task.ps1
   token: resource-schedule-panorama-register-resource-sampler-scan-task-20260916
   created_by: st-resched-fix-20260916
   capability: resource_schedule_panorama
-- file: scripts/register_resource_sampler_writeback_task.ps1
+- file: scripts/tasks/register/register_resource_sampler_writeback_task.ps1
   token: resource-schedule-panorama-register-resource-sampler-writeback-task-20260916
   created_by: st-resched-fix-20260916
   capability: resource_schedule_panorama
@@ -28484,11 +28484,11 @@ creation_tokens:
   token: resource-schedule-regen-tasks-test-resource-schedule-regen-check-20260916
   created_by: st-govmap-20260915
   capability: resource_schedule_regen_tasks
-- file: scripts/register_resource_regen_check_task.ps1
+- file: scripts/tasks/register/register_resource_regen_check_task.ps1
   token: resource-schedule-regen-tasks-register-resource-regen-check-task-20260916
   created_by: st-govmap-20260915
   capability: resource_schedule_regen_tasks
-- file: scripts/register_resource_view_publish_task.ps1
+- file: scripts/tasks/register/register_resource_view_publish_task.ps1
   token: resource-schedule-regen-tasks-register-resource-view-publish-task-20260916
   created_by: st-govmap-20260915
   capability: resource_schedule_regen_tasks
@@ -29456,7 +29456,7 @@ creation_tokens:
   token: auction-backfill-run-all-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/audit_data_utilization.ps1
+- file: scripts/_archive/audit_data_utilization.ps1
   token: auction-backfill-audit-data-utilization-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -29952,11 +29952,11 @@ creation_tokens:
   token: auction-backfill-check-naming-convention-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_risk_memos.ps1
+- file: scripts/checks/check_risk_memos.ps1
   token: auction-backfill-check-risk-memos-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_risk_memos2.ps1
+- file: scripts/checks/check_risk_memos2.ps1
   token: auction-backfill-check-risk-memos2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -30052,23 +30052,23 @@ creation_tokens:
   token: auction-backfill-dm90971-add-test-headers-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/ensure_ai_wrapper_injection.ps1
+- file: scripts/installers/ensure_ai_wrapper_injection.ps1
   token: auction-backfill-ensure-ai-wrapper-injection-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/find_35_sections.ps1
+- file: scripts/_archive/find_35_sections.ps1
   token: auction-backfill-find-35-sections-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/find_55_last_rev.ps1
+- file: scripts/_archive/find_55_last_rev.ps1
   token: auction-backfill-find-55-last-rev-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/find_insert_points.ps1
+- file: scripts/_archive/find_insert_points.ps1
   token: auction-backfill-find-insert-points-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/fix_all_drifts_v3.ps1
+- file: scripts/_archive/fix_all_drifts_v3.ps1
   token: auction-backfill-fix-all-drifts-v3-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -30080,11 +30080,11 @@ creation_tokens:
   token: auction-backfill-fix-orphan-all-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/fix_structured_drifts.ps1
+- file: scripts/_archive/fix_structured_drifts.ps1
   token: auction-backfill-fix-structured-drifts-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/fix_structured_drifts_v2.ps1
+- file: scripts/_archive/fix_structured_drifts_v2.ps1
   token: auction-backfill-fix-structured-drifts-v2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32312,11 +32312,11 @@ creation_tokens:
   token: auction-backfill-launch-hidden-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/list_all_memos.ps1
+- file: scripts/_archive/list_all_memos.ps1
   token: auction-backfill-list-all-memos-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/list_versions.ps1
+- file: scripts/_archive/list_versions.ps1
   token: auction-backfill-list-versions-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32408,7 +32408,7 @@ creation_tokens:
   token: auction-backfill-print-exam-summary-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/qmt_watchdog.ps1
+- file: scripts/installers/qmt_watchdog.ps1
   token: auction-backfill-qmt-watchdog-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32424,11 +32424,11 @@ creation_tokens:
   token: auction-backfill-regime-breadth-thrust-walkforward-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/register_aux_tasks.ps1
+- file: scripts/tasks/register/register_aux_tasks.ps1
   token: auction-backfill-register-aux-tasks-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/register_post_settlement_task.ps1
+- file: scripts/tasks/register/register_post_settlement_task.ps1
   token: auction-backfill-register-post-settlement-task-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32448,11 +32448,11 @@ creation_tokens:
   token: auction-backfill-rollback-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/run_backtest.py
+- file: scripts/tasks/run/run_backtest.py
   token: auction-backfill-run-backtest-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/run_deepseek_v4_exam.py
+- file: scripts/tasks/run/run_deepseek_v4_exam.py
   token: auction-backfill-run-deepseek-v4-exam-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32460,7 +32460,7 @@ creation_tokens:
   token: auction-backfill-run-ollama-exam-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/run_qwen3_baseline_exam.py
+- file: scripts/tasks/run/run_qwen3_baseline_exam.py
   token: auction-backfill-run-qwen3-baseline-exam-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32468,7 +32468,7 @@ creation_tokens:
   token: auction-backfill-scaffold-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/scan_algo_gaps.ps1
+- file: scripts/_archive/scan_algo_gaps.ps1
   token: auction-backfill-scan-algo-gaps-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32480,15 +32480,15 @@ creation_tokens:
   token: auction-backfill-script-manifest-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/search_31.ps1
+- file: scripts/_archive/search_31.ps1
   token: auction-backfill-search-31-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/search_40_passive.ps1
+- file: scripts/_archive/search_40_passive.ps1
   token: auction-backfill-search-40-passive-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/search_barzykin.ps1
+- file: scripts/_archive/search_barzykin.ps1
   token: auction-backfill-search-barzykin-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32500,7 +32500,7 @@ creation_tokens:
   token: auction-backfill-setup-git-guard-aliases-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/start_ch_health_probe.ps1
+- file: scripts/installers/start_ch_health_probe.ps1
   token: auction-backfill-start-ch-health-probe-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32508,11 +32508,11 @@ creation_tokens:
   token: auction-backfill-start-paper-sessionpytmp35264-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/start_scheduler.ps1
+- file: scripts/installers/start_scheduler.ps1
   token: auction-backfill-start-scheduler-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/start_tick_subscriber.ps1
+- file: scripts/installers/start_tick_subscriber.ps1
   token: auction-backfill-start-tick-subscriber-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32624,7 +32624,7 @@ creation_tokens:
   token: auction-backfill-verify-sentiment-hidden-driver-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/verify_zero_drift.ps1
+- file: scripts/_archive/verify_zero_drift.ps1
   token: auction-backfill-verify-zero-drift-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -32740,11 +32740,11 @@ creation_tokens:
   token: resource-schedule-v2-generate-resource-morning-report-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
-- file: scripts/register_resource_morning_report_task.ps1
+- file: scripts/tasks/register/register_resource_morning_report_task.ps1
   token: resource-schedule-v2-register-resource-morning-report-task-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
-- file: scripts/register_measure_calibration_task.ps1
+- file: scripts/tasks/register/register_measure_calibration_task.ps1
   token: resource-schedule-v2-register-measure-calibration-task-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
@@ -36310,6 +36310,22 @@ creation_tokens:
   capability: commit_speedup
   merge_evaluation: "红蓝对抗治理组报告（task_bound 随役），证据面归档"
 - file: docs/_working/commit_speedup_campaign/70_redblue/redblue_robust.md
+- file: scripts/tasks/register/register_config_check_task.ps1
+- file: scripts/installers/belt_watchdog.ps1
+- file: tests/security/test_session_registry_chief_form.py
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/coordination_state_board.yaml
+  token: algo-flow-csb-external-yaml-20261002
+  created_by: st-construct-20261002
+  capability: algo_flow_coordination_state_board
+  token: session-chief-form-test-test-session-registry-chief-form-20261002
+  created_by: st-construct-20261002
+  capability: session_chief_form_test
+  token: belt-daemon-watchdog-belt-watchdog-20261002
+  created_by: st-construct-20261002
+  capability: belt_daemon_watchdog
+  token: config-check-task-registrar-register-config-check-task-20261002
+  created_by: st-construct-20261002
+  capability: config_check_task_registrar
   token: commit-speedup-rb-robust-20260926
   created_by: st-commitspeed-tbl-20260924
   capability: commit_speedup
@@ -40544,7 +40560,7 @@ creation_tokens:
   token: final3-campaign-p6-autostart-record-20260920
   created_by: st-maxexec-20260920
   capability: final3_campaign
-- file: scripts/register_desktop_shell_startup.ps1
+- file: scripts/tasks/register/register_desktop_shell_startup.ps1
   token: final3-campaign-register-desktop-shell-startup-20260920
   created_by: st-maxexec-20260920
   capability: final3_campaign
@@ -41262,7 +41278,7 @@ creation_tokens:
   token: rule-audit-construction-run-fulltree-gate-audit-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
-- file: scripts/register_gate_fulltree_audit_task.ps1
+- file: scripts/tasks/register/register_gate_fulltree_audit_task.ps1
   token: rule-audit-construction-register-gate-fulltree-audit-task-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
@@ -45782,15 +45798,15 @@ creation_tokens:
   token: budget-page-budget-20260922
   created_by: st-ailayer-p1-20260923
   capability: budget-page
-- file: scripts/register_model_intel_scan_task.ps1
+- file: scripts/tasks/register/register_model_intel_scan_task.ps1
   token: model-intel-scan-task-register-model-intel-scan-task-20260922
   created_by: st-ailayer-p1-20260923
   capability: model-intel-scan-task
-- file: scripts/register_model_exam_task.ps1
+- file: scripts/tasks/register/register_model_exam_task.ps1
   token: model-exam-task-register-model-exam-task-20260922
   created_by: st-ailayer-p1-20260923
   capability: model-exam-task
-- file: scripts/register_budget_report_task.ps1
+- file: scripts/tasks/register/register_budget_report_task.ps1
   token: budget-report-task-register-budget-report-task-20260922
   created_by: st-ailayer-p1-20260923
   capability: budget-report-task
@@ -45907,11 +45923,11 @@ creation_tokens:
   token: "ibt-cf-search-space-prereg-20260923"
   created_by: "st-ibt-remedy-cf-20260923"
   capability: "ibt_remediation"
-- file: scripts/run_sim_bridge_execute_daily.ps1
+- file: scripts/tasks/run/run_sim_bridge_execute_daily.ps1
   token: sim-bridge-execute-schedule-run-sim-bridge-execute-daily-20260922
   created_by: st-sim-launch-20260923
   capability: sim_bridge_execute_schedule
-- file: scripts/register_sim_bridge_execute_task.ps1
+- file: scripts/tasks/register/register_sim_bridge_execute_task.ps1
   token: sim-bridge-execute-schedule-register-sim-bridge-execute-task-20260922
   created_by: st-sim-launch-20260923
   capability: sim_bridge_execute_schedule
@@ -47259,7 +47275,7 @@ creation_tokens:
   created_by: st-library-final-20260924
   capability: library_ledger_backup
   merge_evaluation: "图书馆账本双链备份+恢复演练，backup_pg_architecture 架构表之外的业务账本备份缺口，跨域不同对象不并"
-- file: scripts/register_library_ledger_backup_task.ps1
+- file: scripts/tasks/register/register_library_ledger_backup_task.ps1
   token: library-ledger-backup-register-library-ledger-backup-task-20260923
   created_by: st-library-final-20260924
   capability: library_ledger_backup
@@ -50678,7 +50694,7 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: macro_vintage
   merge_evaluation: "跨域不同对象→不并（裁定#375"
-- file: scripts/register_metaq_audit_reconcile_task.ps1
+- file: scripts/tasks/register/register_metaq_audit_reconcile_task.ps1
   token: metaq-schedule-register-metaq-audit-reconcile-task-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq_schedule
@@ -51533,7 +51549,7 @@ creation_tokens:
   created_by: st-cmd-20260924
   capability: decision_chain_sentinel_l09c04
   merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：决策链哨兵"
-- file: scripts/register_decision_chain_sentinel_task.ps1
+- file: scripts/tasks/register/register_decision_chain_sentinel_task.ps1
   token: decision-chain-sentinel-l09c04-register-decision-chain-sentinel-task-20260925
   created_by: st-cmd-20260924
   capability: decision_chain_sentinel_l09c04
@@ -53770,7 +53786,7 @@ creation_tokens:
   created_by: st-chief4x-know-20260927
   capability: mod-data-l9agg
   merge_evaluation: "部署范式复用apply_decision_daily_ddl单表件先例,禁在apply_market_tables_ddl大册追加造成双域混杂;DDL真源单点在schemas"
-- file: scripts/register_tilib_backfill_task.ps1
+- file: scripts/tasks/register/register_tilib_backfill_task.ps1
   token: tilib-night-backfill-register-tilib-backfill-task-20260926
   created_by: st-ec3-water
   capability: tilib_night_backfill
@@ -55319,7 +55335,7 @@ creation_tokens:
   created_by: st-zcloseout-20260928
   capability: wave13_coordinator_integration
   merge_evaluation: "st-zmaster2 遗产 dd60ae13 接管袋：写手字段级蒸发治本案卷落档，同袋带 token，零既有条目可合并"
-- file: scripts/register_ai_l1_scan_task.ps1
+- file: scripts/tasks/register/register_ai_l1_scan_task.ps1
   token: ai-l1-scan-task-registrar-register-ai-l1-scan-task-20260927
   created_by: st-chiefzc-rescue-20260928
   capability: ai_l1_scan_task_registrar
@@ -56451,15 +56467,15 @@ creation_tokens:
   created_by: st-ffchief-20261001
   capability: backtest_algo_flow
   merge_evaluation: "全流通清场落地批P2-1 ALGO_FLOW外置册：内联块出仓契约(§4.16),算法公共面单一真源,非第二真源"
-- file: scripts/check_coverage.ps1
+- file: scripts/checks/check_coverage.ps1
   token: auction-backfill-check-coverage-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_coverage2.ps1
+- file: scripts/checks/check_coverage2.ps1
   token: auction-backfill-check-coverage2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_specific_versions.ps1
+- file: scripts/checks/check_specific_versions.ps1
   token: auction-backfill-check-specific-versions-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -56467,7 +56483,7 @@ creation_tokens:
   token: auction-backfill-check-version-drift-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/check_version_drift_v2.ps1
+- file: scripts/checks/check_version_drift_v2.ps1
   token: auction-backfill-check-version-drift-v2-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
@@ -56722,7 +56738,7 @@ creation_tokens:
   created_by: st-c9-f02
   capability: onboarding_wizard
   merge_evaluation: "内收判定：向导=纯编排壳，十环零散件全复用既有真源（apply_*_ddl/validate_tasks_yaml/两册一表），不新造接数逻辑；capability_lookup 反查空命中无重复轮子"
-- file: scripts/register_sector_synth_task.ps1
+- file: scripts/tasks/register/register_sector_synth_task.ps1
   token: data-supply-chain-register-sector-synth-task-20260929
   created_by: st-c9-secktide
   capability: data_supply_chain
@@ -56737,7 +56753,7 @@ creation_tokens:
   created_by: st-storageswap-20260930
   capability: sector_intraday_from_constituents
   merge_evaluation: "收敛裁定甲双腿runner之一：internal_eqw生产者计划任务runner（每日15:40）"
-- file: scripts/register_sector_eqw_task.ps1
+- file: scripts/tasks/register/register_sector_eqw_task.ps1
   token: sector-intraday-from-constituents-register-sector-eqw-task-20261001
   created_by: st-storageswap-20260930
   capability: sector_intraday_from_constituents
@@ -58910,7 +58926,7 @@ creation_tokens:
   token: auto-scaffold-synergy_dedup_cfg-20261001
   created_by: scaffold.py
   capability: synergy_dedup_cfg
-- file: scripts/register_health_monitor_probe_task.ps1
+- file: scripts/tasks/register/register_health_monitor_probe_task.ps1
   token: auto-scaffold-health_monitor_probe_task-20261001
   created_by: scaffold.py
   capability: health_monitor_probe_task
@@ -59160,6 +59176,16 @@ creation_tokens:
   created_by: st-ffchief-20261002
   capability: branch-zero-campaign-doc
   merge_evaluation: "分支清零与接管显化战役档案册（目录 R5 改名后重登记）"
+- file: docs/_working/branch_zero_takeover/adjudications_final.md
+  token: branch-zero-campaign-doc-adjudications-final-20261002
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "战役裁定书与治本清单册续编"
+- file: docs/_working/branch_zero_takeover/all_problems_ledger.md
+  token: branch-zero-campaign-doc-all-problems-ledger-20261002
+  created_by: st-ffchief-20261002
+  capability: branch-zero-campaign-doc
+  merge_evaluation: "全量问题治本台账册（域一组五）"
 - file: scripts/governance/session_takeover_ledger.py
   token: session-takeover-ledger-session-takeover-ledger-20261001
   created_by: st-ffchief-20261002
@@ -59185,28 +59211,15 @@ creation_tokens:
   created_by: st-ffchief-20261002
   capability: takeover-gate-algoflow
   merge_evaluation: "TAKEOVER-PENDING 门的算法面外置视图（externalizer 口径机生+AI 校准），非门本体第二真源"
-- file: docs/_working/branch_zero_takeover/adjudications_final.md
-  token: branch-zero-campaign-doc-adjudications-final-20261002
-  created_by: st-ffchief-20261002
-  capability: branch-zero-campaign-doc
-  merge_evaluation: "战役裁定书与治本清单册续编"
 - file: docs/_working/circulation_chief/99_final_report.md
   token: branch-zero-campaign-deliverable-99-final-report-20261002
   created_by: st-ffchief-20261002
   capability: branch-zero-campaign-deliverable
   merge_evaluation: "总包战役交付物收口补投（各车道晚期成品， ensquare 非第二真源）"
-- file: "scripts/tasks/run/run_f06_grid.ps1"
-  token: "f06-grid-runner-20260916"
-  created_by: "st-f06combo-20260915"
-  capability: "position_recipe_grid_compile"
 - file: "scripts/tasks/register/register_f06_grid_task.ps1"
   token: "f06-grid-register-20260916"
   created_by: "st-f06combo-20260915"
   capability: "position_recipe_grid_compile"
-- file: scripts/tasks/run/run_boot_sla_probe.py
-  token: auto-boot-sla-probe-20260830
-  created_by: greatwall_20260830
-  capability: system_telemetry_health_probe
 - file: scripts/tasks/register/register_paper_session_task.ps1
   token: auto-register-paper-session-task-20260830
   created_by: greatwall_20260830
@@ -59215,14 +59228,6 @@ creation_tokens:
   token: auto-register-pattern-mining-task-20260830
   created_by: greatwall_20260830
   capability: task_scheduler_registration
-- file: scripts/tasks/run/run_post_settlement_daily.ps1
-  token: auto-run-post-settlement-daily-ps1-20260822
-  created_by: AI-P0BATCH-001
-  capability: daily_cycle_sop
-- file: scripts/tasks/run/run_post_settlement.py
-  token: auto-run-post-settlement-20260821
-  created_by: AI-P0-GAP23
-  capability: daily_cycle_sop
 - file: scripts/tasks/register/register_guard_tasks.ps1
   token: auto-register-guard-tasks-20260723
   created_by: session-sess-41368-20260723000636
@@ -59231,24 +59236,12 @@ creation_tokens:
   token: auto-register-drift-watchdog-task-20260817
   created_by: session-AI-GOVA-001
   capability: worktree_drift_watchdog
-- file: scripts/tasks/run/run_ttl_rejudge_daily.ps1
-  token: auto-ttl-rejudge-hidden-20260908
-  created_by: st-bridge-p01-20260908
-  capability: ttl_rejudge_daily_hidden_launcher
-- file: scripts/tasks/run/run_factory_lane_c.ps1
-  token: factory-backend-run-factory-lane-c-20260913
-  created_by: st-facbe-20260914
-  capability: factory_backend
 - file: scripts/tasks/register/register_factory_lane_c_task.ps1
   token: factory-backend-register-factory-lane-c-task-20260913
   created_by: st-facbe-20260914
   capability: factory_backend
 - file: scripts/tasks/register/register_ollama_serve_task.ps1
   token: factory-backend-register-ollama-serve-task-20260914
-  created_by: st-facbe-20260914
-  capability: factory_backend
-- file: scripts/tasks/run/run_c4_exam.ps1
-  token: factory-backend-run-c4-exam-20260914
   created_by: st-facbe-20260914
   capability: factory_backend
 - file: scripts/tasks/register/register_c4_exam_task.ps1
@@ -59283,18 +59276,6 @@ creation_tokens:
   token: auction-backfill-register-post-settlement-task-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_backfill
-- file: scripts/tasks/run/run_backtest.py
-  token: auction-backfill-run-backtest-20260916
-  created_by: st-auction-bridge-20260917
-  capability: auction_backfill
-- file: scripts/tasks/run/run_deepseek_v4_exam.py
-  token: auction-backfill-run-deepseek-v4-exam-20260916
-  created_by: st-auction-bridge-20260917
-  capability: auction_backfill
-- file: scripts/tasks/run/run_qwen3_baseline_exam.py
-  token: auction-backfill-run-qwen3-baseline-exam-20260916
-  created_by: st-auction-bridge-20260917
-  capability: auction_backfill
 - file: scripts/tasks/register/register_resource_morning_report_task.ps1
   token: resource-schedule-v2-register-resource-morning-report-task-20260917
   created_by: st-govmap-20260915
@@ -59303,16 +59284,6 @@ creation_tokens:
   token: resource-schedule-v2-register-measure-calibration-task-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
-- file: docs/_working/commit_speedup_campaign/70_redblue/redblue_robust.md
-- file: scripts/tasks/register/register_config_check_task.ps1
-  token: config-check-task-registrar-register-config-check-task-20261002
-  created_by: st-construct-20261002
-  capability: config_check_task_registrar
-  token: commit-speedup-rb-robust-20260926
-  created_by: st-commitspeed-tbl-20260924
-  capability: commit_speedup
-  merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
-# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 - file: scripts/tasks/register/register_desktop_shell_startup.ps1
   token: final3-campaign-register-desktop-shell-startup-20260920
   created_by: st-maxexec-20260920
@@ -59333,10 +59304,6 @@ creation_tokens:
   token: budget-report-task-register-budget-report-task-20260922
   created_by: st-ailayer-p1-20260923
   capability: budget-report-task
-- file: scripts/tasks/run/run_sim_bridge_execute_daily.ps1
-  token: sim-bridge-execute-schedule-run-sim-bridge-execute-daily-20260922
-  created_by: st-sim-launch-20260923
-  capability: sim_bridge_execute_schedule
 - file: scripts/tasks/register/register_sim_bridge_execute_task.ps1
   token: sim-bridge-execute-schedule-register-sim-bridge-execute-task-20260922
   created_by: st-sim-launch-20260923
@@ -59380,11 +59347,11 @@ creation_tokens:
   token: auto-scaffold-health_monitor_probe_task-20261001
   created_by: scaffold.py
   capability: health_monitor_probe_task
-- file: docs/_working/branch_zero_takeover/all_problems_ledger.md
-  token: branch-zero-campaign-doc-all-problems-ledger-20261002
-  created_by: st-ffchief-20261002
-  capability: branch-zero-campaign-doc
-  merge_evaluation: "全量问题治本台账册（域一组五）"
+- file: docs/_working/commit_speedup_campaign/70_redblue/redblue_robust.md
+  token: commit-speedup-rb-robust-20260926
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
 - file: docs/_working/branch_zero_takeover/review_findings.md
   token: redblue-review-audit-review-findings-20261002
   created_by: st-redblue-review-20261002
