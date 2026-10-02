@@ -13,14 +13,14 @@ status: active
 generated_by: zephyr.ai_layer.tools.inventory_generator
 maintenance: auto
 counting_rule: tools 数组条目数（五源全量再生；条目禁手工增删）
-total_tools: 122
+total_tools: 131
 source_counts:
-  capability_cards: 35
+  capability_cards: 45
   mcp_servers: 14
   session_skills: 23
   builtin_tools: 2
-  script_entries: 48
-content_sha256: ec5f2445666afd1752dc06fd420d1e7b8ad19bd33208b12983358820bddaa315
+  script_entries: 47
+content_sha256: 743d0924b2d683fd2cdabe03fec70d697cd5868b5483edfdec8ea0a67acdeb3f
 operations_note: 运营态字段（usage/failure/latency/last_used/stat_source）本表恒 null——真源=DB ai_tools.tool_usage_stats（OBJ_T
   C2），不虚构计量
 extraction_warnings:
@@ -45,7 +45,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 会话内建工具（无仓内入口文件，manual 通道）
@@ -68,7 +68,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 会话内建工具（无仓内入口文件，manual 通道）
@@ -91,7 +91,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -114,7 +114,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -137,7 +137,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -160,7 +160,76 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:ai_cleaning_l3
+  name: AI Cleaning L3 Data Cleaning Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\ai_cleaning_l3.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: ai_cleaning_l3.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:ai_comparator_l4
+  name: AI Comparator L4 Comparison Exam Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\ai_comparator_l4.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: ai_comparator_l4.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:ai_heritage_l7
+  name: AI Heritage L7 Heredity Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\ai_heritage_l7.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: ai_heritage_l7.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -183,7 +252,76 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:ai_perceive_l1
+  name: AI Perceive L1 Perception Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\ai_perceive_l1.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: ai_perceive_l1.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:ai_scheduling_l5
+  name: AI Scheduling L5 Schedule Gate Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\ai_scheduling_l5.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: ai_scheduling_l5.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:ai_switch_l6
+  name: AI Switch L6 A/B Switch Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\ai_switch_l6.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: ai_switch_l6.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -206,7 +344,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -229,7 +367,30 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:library-lookup
+  name: Library Lookup
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\library_lookup.yaml
+  module_id: MOD-LIB-003
+  blueprint_ref: null
+  capability_card_ref: library_lookup.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -252,7 +413,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -275,7 +436,76 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:obj_m_models
+  name: OBJ_M Models Object Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\obj_m_models.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: obj_m_models.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:obj_s_redline
+  name: OBJ_S Redline Perimeter Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\obj_s_redline.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: obj_s_redline.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
+- tool_id: card:obj_t_tools
+  name: OBJ_T Tools Object Pack
+  organ: eye
+  family: null
+  kind: card
+  entry_path: data\capability_cards\obj_t_tools.yaml
+  module_id: MOD-INF-037
+  blueprint_ref: null
+  capability_card_ref: obj_t_tools.yaml
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -298,7 +528,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -321,7 +551,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -344,7 +574,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -367,7 +597,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -390,7 +620,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -413,7 +643,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -436,7 +666,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -459,7 +689,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -482,7 +712,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -505,7 +735,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -528,7 +758,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -551,7 +781,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -574,7 +804,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -597,7 +827,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -620,7 +850,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -643,7 +873,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -666,7 +896,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -689,7 +919,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -712,7 +942,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -735,7 +965,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -758,7 +988,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -781,7 +1011,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -804,7 +1034,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -827,7 +1057,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -850,7 +1080,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -873,7 +1103,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     note: 卡≠运行态：索引件，capability_id 聚合（DESIGN §2.3）
@@ -896,7 +1126,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 2
@@ -922,7 +1152,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 5
@@ -947,7 +1177,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 8
@@ -973,7 +1203,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 7
@@ -999,7 +1229,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 4
@@ -1025,7 +1255,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: trial
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     in_mcp_json: false
@@ -1049,7 +1279,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 4
@@ -1074,7 +1304,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: trial
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     in_mcp_json: false
@@ -1098,7 +1328,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 1
@@ -1124,7 +1354,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 2
@@ -1150,7 +1380,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 5
@@ -1176,7 +1406,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 6
@@ -1202,7 +1432,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 5
@@ -1228,7 +1458,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     tool_count: 5
@@ -1255,7 +1485,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1278,7 +1508,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1301,7 +1531,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1324,7 +1554,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1347,7 +1577,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1370,7 +1600,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1393,7 +1623,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1416,7 +1646,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1439,7 +1669,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1462,7 +1692,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1485,7 +1715,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1508,7 +1738,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1531,7 +1761,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1554,7 +1784,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1577,7 +1807,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1600,7 +1830,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1623,7 +1853,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1646,7 +1876,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1669,7 +1899,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1692,7 +1922,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1715,7 +1945,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1738,7 +1968,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1761,7 +1991,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1784,7 +2014,30 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
+  review_at: null
+  meta:
+    delete_class_source: null
+- tool_id: script:kline_sector_intraday_from_constituents
+  name: kline_sector_intraday_from_constituents
+  organ: hand
+  family: 执行
+  kind: script
+  entry_path: scripts\kline_sector_intraday_from_constituents.py
+  module_id: null
+  blueprint_ref: null
+  capability_card_ref: null
+  safety_level: null
+  delete_class: null
+  usage_30d: null
+  failure_rate_30d: null
+  latency_p50_s: null
+  last_used_at: null
+  stat_source: null
+  model_affinity: []
+  resource_profile_ref: null
+  status: active
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1807,7 +2060,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1830,7 +2083,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1853,7 +2106,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1876,30 +2129,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
-  review_at: null
-  meta:
-    delete_class_source: null
-- tool_id: script:quick_profile
-  name: quick_profile
-  organ: hand
-  family: 执行
-  kind: script
-  entry_path: scripts\quick_profile.py
-  module_id: null
-  blueprint_ref: null
-  capability_card_ref: null
-  safety_level: null
-  delete_class: null
-  usage_30d: null
-  failure_rate_30d: null
-  latency_p50_s: null
-  last_used_at: null
-  stat_source: null
-  model_affinity: []
-  resource_profile_ref: null
-  status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1922,7 +2152,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1945,7 +2175,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1968,7 +2198,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -1991,7 +2221,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2014,7 +2244,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2037,30 +2267,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
-  review_at: null
-  meta:
-    delete_class_source: null
-- tool_id: script:run_ollama_exam
-  name: run_ollama_exam
-  organ: hand
-  family: 执行
-  kind: script
-  entry_path: scripts\run_ollama_exam.py
-  module_id: null
-  blueprint_ref: null
-  capability_card_ref: null
-  safety_level: null
-  delete_class: null
-  usage_30d: null
-  failure_rate_30d: null
-  latency_p50_s: null
-  last_used_at: null
-  stat_source: null
-  model_affinity: []
-  resource_profile_ref: null
-  status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2083,7 +2290,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2106,7 +2313,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2129,7 +2336,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2152,7 +2359,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2175,7 +2382,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2198,7 +2405,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2221,7 +2428,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2244,7 +2451,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2267,7 +2474,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2290,7 +2497,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2313,7 +2520,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2336,7 +2543,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     delete_class_source: null
@@ -2359,7 +2566,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: android-emulator
@@ -2384,7 +2591,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: browser-use
@@ -2409,7 +2616,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: browser-use
@@ -2434,7 +2641,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: computer-use
@@ -2459,7 +2666,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: document-skills
@@ -2484,7 +2691,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: document-skills
@@ -2509,7 +2716,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: document-skills
@@ -2534,7 +2741,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: document-skills
@@ -2559,7 +2766,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: documents
@@ -2584,7 +2791,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: ios-simulator
@@ -2609,7 +2816,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: pdf
@@ -2634,7 +2841,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: plugin-creator
@@ -2659,7 +2866,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: presentations
@@ -2684,7 +2891,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: restore-legacy-sessions
@@ -2709,7 +2916,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: skill-creator
@@ -2734,7 +2941,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: spreadsheets
@@ -2759,7 +2966,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
@@ -2784,7 +2991,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
@@ -2809,7 +3016,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
@@ -2834,7 +3041,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
@@ -2859,7 +3066,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
@@ -2884,7 +3091,7 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
@@ -2909,10 +3116,10 @@ tools:
   model_affinity: []
   resource_profile_ref: null
   status: active
-  registered_at: '2026-09-22T23:11:59.783545+00:00'
+  registered_at: '2026-09-30T22:14:35.137902+00:00'
   review_at: null
   meta:
     plugin: zcode-guide
     plugin_version: 0.3.0
     scan_root: C:\Users\fanzi\.zcode\cli\plugins\cache
-generated_at: '2026-09-22T23:11:59.783545+00:00'
+generated_at: '2026-09-30T22:14:35.137902+00:00'

@@ -100,12 +100,15 @@ schedules:
     max_instances: 1
     description: "研报明细层——research_report_detail_incremental（东财研报中心全字段含预测期EPS/PE；历史已回补 14.7 万行，日度仅补增量窗口）"
 
-  # L6.9 一致预期管线双向验证层：23:30 周一至周五（跑在 19:00 同花顺快照 + 20:30 研报增量 +
-  # consensus_daily_build 重建全部完成后）。独立真源互查：自建聚合 vs 同花顺快照——秩相关/
-  # 新鲜度/结构断言/PIT 零修正率，结果落 c1_market.cross_validation_log，异常经 Alerter 告警。
+  # L6.9 一致预期管线双向验证层：00:30 周二至周六（2026-10-02 RESOURCE-SCHEDULE 错峰：
+  # 原 23:30 与 nightly_financial[22:00+120min]/factory_lane_c[20:00+240min]/news_slow/
+  # cross_validation 同窗并发内存和 13.5GB>10GB 天花板，后移 1h 跨午夜后该窗峰值 9.5GB；
+  # 仍跑在 19:00 同花顺快照 + 20:30 研报增量 + consensus_daily_build 重建全部完成后）。
+  # 独立真源互查：自建聚合 vs 同花顺快照——秩相关/新鲜度/结构断言/PIT 零修正率，结果落
+  # c1_market.cross_validation_log，异常经 Alerter 告警。
   # 2026-09-14 源污染事件治本配套（设计档案=policies/expectation_consumption_design_policy.md §9）。
   consensus_crosscheck:
-    cron: "30 23 * * 0-4"
+    cron: "30 0 * * 1-5"
     executor: default
     max_instances: 1
     description: "一致预期管线双向验证——自建聚合 vs 同花顺快照每日对答案（独立真源互查，非数据下载层）"
@@ -172,13 +175,14 @@ schedules:
     executor: default
     description: "每日完整性巡检层——动态发现全表检测当日数据是否达标，不达标告警"
 
-  # L11.5 多源交叉校验层：23:15 周一至周五（integrity_check 23:00 之后错峰；
-  # F04 断链接线 2026-09-27，st-chief4x-promo2-20260927）。CrossSourceValidator 内容级
+  # L11.5 多源交叉校验层：00:15 周二至周六（2026-10-02 RESOURCE-SCHEDULE 错峰：原 23:15
+  # 与 nightly_financial/factory_lane_c/news_slow 同窗并发内存和超 10GB 天花板，后移 1h
+  # 跨午夜，integrity_check 23:00 之后错峰的依赖设计不变）。CrossSourceValidator 内容级
   # QMT 主源 vs TDX 备源 tick 比对（校验器头注 CONSUMERS=run_schedule("cross_validation")）。
   # 与 L11 行数阈值巡检分工：本层=内容级两源一致性（价格/成交量/缺失标的），
   # 只校验不阻断，结果落 c1_market.cross_validation_log，fail 经 Alerter 告警。
   cross_validation:
-    cron: "15 23 * * 0-4"
+    cron: "15 0 * * 1-5"
     executor: default
     max_instances: 1
     description: "多源交叉校验层——QMT 主源 vs TDX 备源 tick 内容级比对（价格/成交量/缺失标的），结果落 cross_validation_log"
