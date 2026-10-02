@@ -342,29 +342,31 @@ def _scan_orphan_resources(root: Path, now: float) -> list[dict]:
             sid = child.name
             if sid in seen or sid in entries or _sid_live(sid):
                 continue
-            dirty = 0
-            for _dirpath, _dirnames, filenames in os.walk(child):
-                dirty += len(filenames)
-                if dirty > 500:
-                    break
+            wt_info = _worktree_dirty(root, f".aidrafts/{sid}")
+            if not wt_info.get("exists"):
+                # 目录在两次迭代间被移除：退回轻量计数，不丢孤儿信号
+                dirty = 0
+                for _dirpath, _dirnames, filenames in os.walk(child):
+                    dirty += len(filenames)
+                    if dirty > 500:
+                        break
+                wt_info = {"path": f".aidrafts/{sid}", "exists": True, "dirty_count": dirty, "dirty_files": []}
             seen.add(sid)
             found.append(
                 {
-                    "session_id": sid,
-                    "death_evidence": f"orphan_resources: .aidrafts/{sid} 在盘而注册表无此会话（瞬时死亡/被除名）",
-                    "held_files": [],
-                    "worktrees": [{"path": str(child), "exists": True, "file_count": dirty}],
-                    "staging": {"path": str(root / ".runtime" / "sessions" / sid / "staging"), "file_count": 0},
-                    "bags": [],
-                    "heartbeat_files": [str(p) for p in (root / ".runtime" / "locks").glob(f"heartbeat_{sid}.pid")],
-                    "impacted_modules": [],
-                    "prescription": [
-                        f"孤儿资源树 .aidrafts/{sid}（{dirty} 文件）：先按需抢救内容再 git worktree remove --force",
-                        "接管完成后：python scripts/governance/session_takeover_ledger.py --resolve "
-                        f"{sid} --by <接管者>",
-                    ],
+                    "sid": sid,
+                    "death_evidence": {
+                        "reason": f"orphan_resources: .aidrafts/{sid} 在盘而注册表无此会话（瞬时死亡/被除名）",
+                        "threshold_seconds": DEATH_IDLE_SECONDS,
+                    },
+                    "resources": {
+                        "held_files": [],
+                        "worktrees": [wt_info],
+                        "staging": {"path": str(root / ".runtime" / "sessions" / sid / "staging"), "file_count": 0},
+                        "bags": [],
+                        "heartbeat_files": [str(p) for p in (root / ".runtime" / "locks").glob(f"heartbeat_{sid}.pid")],
+                    },
                     "last_activity": 0,
-                    "logical": False,
                 }
             )
     return found
@@ -567,9 +569,18 @@ def _cmd_scan(root: Path) -> int:
         print(f"scan: no dead sessions (threshold={DEATH_IDLE_SECONDS}s)")
         return 0
     for d in dead:
-        e = write_takeover_entry(
-            root, d["sid"], resources=d["resources"], death_evidence=d["death_evidence"], registry_entry=d["entry"]
-        )
+        # 孤儿补漏条目与主路径条目同构（sid/resources/death_evidence）；此处 .get 防御
+        # 旧形键（session_id/扁平资源）以保证历史/异形来源不炸整扫
+        sid = d.get("sid") or d.get("session_id")
+        if not sid:
+            continue
+        resources = d.get("resources")
+        if resources is None:
+            resources = {k: d[k] for k in ("held_files", "worktrees", "staging", "bags", "heartbeat_files") if k in d}
+        evidence = d.get("death_evidence")
+        if isinstance(evidence, str):
+            evidence = {"reason": evidence, "threshold_seconds": DEATH_IDLE_SECONDS}
+        e = write_takeover_entry(root, sid, resources=resources, death_evidence=evidence, registry_entry=d.get("entry"))
         print(
             f"entry sid={e['sid']} status={e['status']} refresh={e['refresh_count']} "
             f"modules={','.join(e['impacted_modules']) or '-'} "
@@ -587,7 +598,9 @@ def _cmd_list(root: Path) -> int:
         return 0
     for r in rows:
         res = r.get("resources", {})
-        print(f"sid={r.get('sid')} ts={r.get('ts')} reason={r.get('death_evidence', {}).get('reason', '-')}")
+        ev = r.get("death_evidence")
+        reason = ev.get("reason", "-") if isinstance(ev, dict) else (ev or "-")
+        print(f"sid={r.get('sid')} ts={r.get('ts')} reason={reason}")
         print(f"  modules: {','.join(r.get('impacted_modules') or []) or '-'}")
         print(
             f"  resources: held={len(res.get('held_files') or [])} "

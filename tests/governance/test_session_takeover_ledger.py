@@ -133,6 +133,41 @@ def test_scan_detects_dead_skips_alive_and_logical(fake_root: Path) -> None:
     assert "logical" not in ev["reason"]
 
 
+def test_orphan_scan_entry_isomorphic_and_cli_end_to_end(fake_root: Path, capsys: pytest.CaptureFixture) -> None:
+    """回归（2026-10-02 红蓝审查 F2）：孤儿条目在场时 --scan/--list CLI 端到端不崩且落册。
+
+    原缺陷：_scan_orphan_resources 曾产 session_id 键+扁平资源+字符串证据，
+    _cmd_scan 读 d["sid"] 即 KeyError → 整个 scan 崩溃零落册；字符串证据再使
+    _cmd_list 的 .get('reason') 崩；孤儿 worktree 缺 dirty_files → 门匹配面恒空。
+    本测钉死同构四要件：sid 键 / dict 证据 / resources 包裹 / worktree dirty_files。
+    """
+    orphan_sid = "st-orphan-hardcrash-9"
+    (fake_root / ".aidrafts" / orphan_sid).mkdir(parents=True, exist_ok=True)
+    (fake_root / ".aidrafts" / orphan_sid / "wip.py").write_text("x = 1\n", encoding="utf-8")
+
+    dead = ledger.scan_dead_sessions(fake_root, now=NOW)
+    orphan = [d for d in dead if d.get("sid") == orphan_sid]
+    assert len(orphan) == 1, "孤儿必须被 _scan_orphan_resources 捕获"
+    o = orphan[0]
+    assert isinstance(o["death_evidence"], dict), "证据必须为 dict（--list 可渲染）"
+    assert set(o["resources"]) == {"held_files", "worktrees", "staging", "bags", "heartbeat_files"}
+    assert o["resources"]["worktrees"][0]["dirty_files"], "worktree 必须带 dirty_files（门咬合面）"
+
+    assert ledger._cmd_scan(fake_root) == 0, "孤儿在场时 scan CLI 不得崩（原缺陷现场）"
+    entries = {e["sid"]: e for e in ledger.load_open_entries(fake_root)}
+    e = entries[orphan_sid]
+    assert e["status"] == "open"
+    assert "orphan_resources" in e["death_evidence"]["reason"]
+    rx = "\n".join(e["prescription"])
+    assert "worktree remove" in rx and "--resolve" in rx
+    assert ledger.entry_match_surface(e) & {"src/zephyr/data/foo.py", "docs/x.md"}
+
+    assert ledger._cmd_list(fake_root) == 0, "孤儿条目在场时 list CLI 不得崩"
+    assert orphan_sid in capsys.readouterr().out
+    assert ledger._cmd_resolve(fake_root, orphan_sid, "taker-x", "review regression") == 0
+    assert all(x["sid"] != orphan_sid for x in ledger.load_open_entries(fake_root))
+
+
 def test_write_entry_idempotent_refresh(fake_root: Path) -> None:
     first = ledger.write_takeover_entry(fake_root, DEAD_SID, now=NOW)
     assert first["refresh_count"] == 0
@@ -252,6 +287,63 @@ def test_gate_fail_open_on_broken_ledger(fake_root: Path) -> None:
     spec = _gate(fake_root)
     passed, detail = spec.check(SimpleNamespace(project_root=str(fake_root)), ["src/zephyr/data/foo.py"])
     assert (passed, detail) == (True, "")
+
+
+def test_gate_blocks_via_main_ledger_from_linked_worktree(tmp_path: Path) -> None:
+    """回归（2026-10-02 红蓝审查 F3）：serializer worktree 根网关必须锚主仓台账咬合。
+
+    原缺陷：落地网关 project_root=专用 worktree，台账住主仓 .runtime/（gitignored
+    不入 worktree 检出）——门按 worktree 根读恒空，queue landing 全量静默放行
+    （T1 落地即失效，咬合实弹 BITE_RC=0 实证）。治本=anchor_main_root 锚主仓根
+    （approval_resolver #ARCH-324 同款处方）。
+    """
+    import subprocess
+
+    main = tmp_path / "main"
+    main.mkdir()
+
+    def _g(*args: str) -> None:
+        subprocess.run(["git", *args], cwd=str(main), check=True, capture_output=True)
+
+    _g("init", "-q", ".")
+    _g("config", "user.email", "t@t.local")
+    _g("config", "user.name", "t")
+    (main / "seed.txt").write_text("seed\n", encoding="utf-8")
+    _g("add", "seed.txt")
+    _g("commit", "-m", "seed")
+    wt = tmp_path / "landing-wt"
+    _g("worktree", "add", str(wt), "-b", "landing-wt")
+
+    (main / ".runtime").mkdir()
+    entry = {
+        "ts": "unit",
+        "ts_epoch": 1.0,
+        "sid": "st-dead-lane",
+        "status": "open",
+        "refresh_count": 0,
+        "death_evidence": {"reason": "unit-f3", "threshold_seconds": ledger.DEATH_IDLE_SECONDS},
+        "resources": {
+            "held_files": [],
+            "worktrees": [
+                {"path": ".aidrafts/st-dead-lane", "exists": True, "dirty_count": 1, "dirty_files": ["docs/x.md"]}
+            ],
+            "staging": {"file_count": 0},
+            "bags": [],
+            "heartbeat_files": [],
+        },
+        "impacted_modules": [],
+        "prescription": ["接管完成后 --resolve st-dead-lane"],
+    }
+    (main / ".runtime" / "takeover_ledger.jsonl").write_text(
+        json.dumps(entry, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+    spec = make_takeover_pending_gate()
+    gateway = SimpleNamespace(project_root=str(wt))
+    passed, detail = spec.check(gateway, ["docs/x.md"])
+    assert passed is False, "worktree 根网关必须经主仓台账阻断（F3 原缺陷现场）"
+    assert "st-dead-lane" in detail
+    assert spec.check(gateway, ["docs/other.md"]) == (True, "")
 
 
 # ---------------------------------------------------------------------------

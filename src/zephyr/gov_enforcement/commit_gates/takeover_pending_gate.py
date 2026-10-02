@@ -104,8 +104,19 @@ def make_takeover_pending_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 定位仓库根（gateway 真源，缺省 cwd）
+        # 1. 定位仓库根（gateway 真源，缺省 cwd）。
+        # F3 治本（2026-10-02 红蓝审查）：serializer 落地网关 project_root=专用
+        # worktree，而台账住主仓 .runtime/（gitignored 不入 worktree 检出）——
+        # 按 worktree 根读恒空=queue landing 全量静默放行（T1 落地即失效实证）。
+        # 经 anchor_main_root 锚主仓根再读（approval_resolver #ARCH-324 同款处方；
+        # 非 worktree 根原样返回，pytest tmp 隔离库不受影响）。
         root = Path(str(getattr(gateway, "project_root", ".") or ".")).resolve()
+        try:
+            from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415 — 延迟 import 防循环
+
+            root = anchor_main_root(root)
+        except Exception:  # noqa: BLE001 — 锚设施异常退回原根（保持 fail-open 面不变）
+            logger.warning("TAKEOVER-PENDING gate: anchor_main_root 不可用，退回 gateway 根。", exc_info=True)
 
         # 2. 载入 open 条目（fail-open：台账设施不可达=检测器失效）
         try:
