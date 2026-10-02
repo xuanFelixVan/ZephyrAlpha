@@ -625,12 +625,13 @@ def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
     """第 16 类机制：死信及时清算（预防+处理闭环的"处理"腿）。
 
     三分流（零删除，全部档案化）：
-    1. absorbed——死袋全部文件 blob 与 HEAD 逐字节一致（内容已被他路落地，指针死而无魂）
-       → 移 commit_queue/dead_archive/absorbed/，销账。
+    1. absorbed——死袋全部文件内容与 HEAD 一致（行尾规范化后比对，内容已被他路落地，
+       指针死而无魂）→ 移 commit_queue/dead_archive/absorbed/，销账。
     2. aged——创建超 age_hours 未吸收 → 升级清单（处方已在 dead_reason，供维护班/AI 优先处理）。
     3. fresh——其余保留 dead/ 原状（等属主/处方循环，不干扰）。
 
-    仓库锚定设计：判定只依赖 git HEAD 与袋内 blob_sha256，任何平台任何 agent 跑同一命令同结果。
+    仓库锚定设计：判定只依赖 git HEAD 与袋内 blob（blob_ref 内容，缺 ref 时退回
+    blob_sha256 哈希），任何平台任何 agent 跑同一命令同结果。
     """
     import hashlib
     import os
@@ -642,15 +643,22 @@ def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
     arch_dir.mkdir(parents=True, exist_ok=True)
     sweep_log.parent.mkdir(parents=True, exist_ok=True)
 
-    def _head_hash(rel: str) -> str | None:
+    def _head_bytes(rel: str) -> bytes | None:
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
         r = run_subprocess_hidden(
             ["git", "-C", str(root), "cat-file", "blob", f"HEAD:{rel}"],
             capture_output=True,
-            text=False,  # 字节态：与袋内 blob_sha256（原始字节哈希）同口径
+            text=False,  # 字节态：与袋内 blob（原始字节）同口径
         )
-        return hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None
+        return r.stdout if r.returncode == 0 else None
+
+    def _norm_crlf(b: bytes) -> bytes:
+        # F4 治本（2026-10-02 红蓝审查）：落地管线 git add 对文本做 CRLF→LF 规范化，
+        # 袋内原始字节（CRLF）与 HEAD（LF）逐字节永不一致 → CRLF 系死信永久不可吸收
+        # （chaos2-st-01-0002 实测：265 vs 259 字节纯行尾差）。双侧同规范化后比对：
+        # 只等价行尾差异，其余任何差异照旧不吸收（重投也只会 NOTHING_TO_COMMIT，语义安全）。
+        return b.replace(b"\r\n", b"\n")
 
     absorbed: list[str] = []
     aged: list[str] = []
@@ -666,7 +674,18 @@ def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
             continue
         ok = True
         for f in files:
-            if _head_hash(f["path"]) != f.get("blob_sha256"):
+            head_b = _head_bytes(f["path"])
+            if head_b is None:
+                ok = False
+                break
+            blob_ref = f.get("blob_ref")
+            blob_p = root / ".runtime" / "commit_queue" / blob_ref if blob_ref else None
+            if blob_p is not None and blob_p.is_file():
+                same = _norm_crlf(blob_p.read_bytes()) == _norm_crlf(head_b)
+            else:
+                # 无 blob_ref（旧袋）：退回哈希等值（原始字节口径）
+                same = hashlib.sha256(head_b).hexdigest() == f.get("blob_sha256")
+            if not same:
                 ok = False
                 break
         age_h = (now - qp.stat().st_mtime) / 3600.0

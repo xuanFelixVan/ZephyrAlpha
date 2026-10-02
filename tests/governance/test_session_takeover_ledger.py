@@ -405,3 +405,71 @@ def test_cli_scan_list_resolve(fake_root: Path, capsys: pytest.CaptureFixture) -
 def test_scan_and_write_real_constants_match_contract() -> None:
     """判死阈值契约：任务书定值 7200s，被 gate/文档引用禁漂移。"""
     assert ledger.DEATH_IDLE_SECONDS == 7200
+
+
+def test_sweep_absorbs_crlf_normalized_and_keeps_real_diff(tmp_path: Path) -> None:
+    """回归（2026-10-02 红蓝审查 F4）：行尾规范化吸收 + 真差异不吸收。
+
+    原缺陷：落地管线 git add 对文本 CRLF→LF 规范化，而 absorbed 判据=袋 blob
+    原始字节哈希==HEAD 原始字节哈希——CRLF 系死信永久不可吸收（chaos2-st-01-0002
+    实测 265 vs 259 字节纯行尾差）。治本=双侧 CRLF 规范化后比对。
+    """
+    import hashlib
+    import subprocess
+
+    main = tmp_path / "main"
+    main.mkdir()
+    lf_body = "line1" + chr(10) + "line2" + chr(10)
+
+    def _g(*args: str) -> None:
+        subprocess.run(["git", *args], cwd=str(main), check=True, capture_output=True)
+
+    _g("init", "-q", ".")
+    _g("config", "user.email", "t@t.local")
+    _g("config", "user.name", "t")
+    (main / "a.txt").write_text(lf_body, encoding="utf-8", newline="")
+    _g("add", "a.txt")
+    _g("commit", "-m", "seed")
+
+    dead = main / ".runtime" / "commit_queue" / "dead"
+    dead.mkdir(parents=True)
+    crlf_body = lf_body.replace(chr(10), chr(13) + chr(10))
+    crlf_sha = hashlib.sha256(crlf_body.encode("utf-8")).hexdigest()
+    blobs = main / ".runtime" / "commit_queue" / "blobs"
+    blobs.mkdir(parents=True)
+    (blobs / crlf_sha).write_bytes(crlf_body.encode("utf-8"))
+    # CRLF 袋：内容语义上已在 HEAD（git add 落地会规范化成 LF）——必须判 absorbed
+    (dead / "q-crlf-case.json").write_text(
+        json.dumps(
+            {
+                "qid": "q-crlf-case",
+                "session_id": "st-x",
+                "files": [
+                    {
+                        "path": "a.txt",
+                        "blob_sha256": crlf_sha,
+                        "blob_ref": f"blobs/{crlf_sha}",
+                        "action": "modify",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    # 真差异袋：HEAD 无此文件——必须保留（fresh/aged，不吸收）
+    (dead / "q-real-diff.json").write_text(
+        json.dumps(
+            {
+                "qid": "q-real-diff",
+                "session_id": "st-x",
+                "files": [{"path": "missing.txt", "blob_sha256": "0" * 64, "action": "modify"}],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    assert ledger._cmd_sweep_absorbed(main) == 0
+    assert not (dead / "q-crlf-case.json").exists()
+    arch = main / ".runtime" / "commit_queue" / "dead_archive" / "absorbed" / "q-crlf-case.json"
+    assert arch.exists(), "CRLF 行尾差死信必须被吸收"
+    assert (dead / "q-real-diff.json").exists(), "真差异死信不得吸收"
