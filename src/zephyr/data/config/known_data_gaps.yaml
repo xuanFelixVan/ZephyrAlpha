@@ -1554,7 +1554,7 @@ gaps:
     status: "retired_quarantine"
     # 2026-10-02 净零退役执行（处方=终报 §7 第 5 项 / #311+#328 rename 隔离 7 天通道）：
     # v2 已 RENAME 为 *_quar_20261002（CH 实读 0 行+全仓零写入方+零消费方复核在案），
-    # 2026-10-09 隔离期满后 DROP；建腿若立项=Owner 门（v1/v2 口径归属+akshare 候选源）。
+    # 2026-10-03 Owner 令提前 DROP（空壳零数据，删无可失）；数据真源=index_valuation_daily（8132 行，PE/PB/股息率/CAPE/ERP/破净率/巴菲特指标，compute 日频腿在产）。建腿若立项=Owner 门（v1/v2 口径归属+akshare 候选源）。
     root_cause: "表在册 0 行（2026-09-30 CH 实读）；src/zephyr/data 树零采集腿（无 provider/无 task config）；v2 后缀=旧 index_valuation 演进平行件，真源口径未立。F06 卷九张清单未列本表（2026-09-29），B15 复核补挂"
     resolution_plan: "立项前先裁 v1/v2 表口径归属（净零原则：先并后建）；数据源候选=akshare 指数估值接口"
     created: "2026-09-30"
