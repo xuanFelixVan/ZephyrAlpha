@@ -715,3 +715,4 @@ P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_i
 【第二链日检 10-01】PASS（inc=111,391,573,754B≈111.4G=09-30 15:56 备份完成后 34 分钟同步 ✓ ratio=0.313；CH cadence 到期正常触发）——第 7/14 天（10-05 摘盘证据链）
 【灾备月演练 10-01 04:30 首射】实质通过（c1 表集 88/88 相等+c2 行方向+c3 内容指纹全绿；dump=0930 最新件恢复进 depgraph_drill 临时库后已清）；唯一 fail=c4 pg_restore_rc=1——stderr 全为良性警告（public schema 预存在+ALTER DEFAULT PRIVILEGES 权限），但 GBK locale stderr 被 decode 成 mojibake 致 restore_drill.py 良性正则不匹配→判 unknown。**P1 修复（下一班）：_classify_pg_restore_stderr 捕获处加 bytes 解码链（utf-8→gbk）或 stderr 采集加 PGCLIENTENCODING=UTF8**。restore.ps1 Do-Pg 同口径（rc 0/1 可接受）已对齐。
 【第二链日检 10-02】PASS*（inc=95,212,100,013B≈95.2G=10-01 06:1x 同步，含 09-29 增量 ✓ ratio=0.246；今晨 07:12 新备份完成仅 4 分钟，双写在飞预计 07:4x 刷新 chbackup2，下轮复核确认）——第 8/14 天（10-05 摘盘证据链）
+【第二链日检 10-03】PASS（inc=140,788,033,747B≈140.8G=10-02 07:12 备份完成同步 ✓ ratio=0.365；今日 06:00 轮在飞 CH CREATING_BACKUP 进行中=24h cadence 补齐在途）——第 9/14 天（10-05 摘盘证据链）
