@@ -154,7 +154,7 @@ def _worktree_dirty(root: Path, wt_rel: str) -> dict:
     info: dict = {"path": wt_rel, "exists": True}
     try:
         # BARE-SUBPROCESS 治本：走 sanctioned 包装器 run_subprocess_hidden（隐藏窗体+超时语义同款）
-        from src.zephyr.shared.infra.process_pool import run_subprocess_hidden
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
         proc = run_subprocess_hidden(
             ["git", "-C", str(wt), "status", "--porcelain"],
@@ -557,6 +557,79 @@ def _cmd_resolve(root: Path, sid: str, by: str, note: str) -> int:
     return 0
 
 
+def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
+    """第 16 类机制：死信及时清算（预防+处理闭环的"处理"腿）。
+
+    三分流（零删除，全部档案化）：
+    1. absorbed——死袋全部文件 blob 与 HEAD 逐字节一致（内容已被他路落地，指针死而无魂）
+       → 移 commit_queue/dead_archive/absorbed/，销账。
+    2. aged——创建超 age_hours 未吸收 → 升级清单（处方已在 dead_reason，供维护班/AI 优先处理）。
+    3. fresh——其余保留 dead/ 原状（等属主/处方循环，不干扰）。
+
+    仓库锚定设计：判定只依赖 git HEAD 与袋内 blob_sha256，任何平台任何 agent 跑同一命令同结果。
+    """
+    import hashlib
+    import os
+    import time
+
+    dead_dir = root / ".runtime" / "commit_queue" / "dead"
+    arch_dir = root / ".runtime" / "commit_queue" / "dead_archive" / "absorbed"
+    sweep_log = root / ".runtime" / "takeover" / "sweep_log.jsonl"
+    arch_dir.mkdir(parents=True, exist_ok=True)
+    sweep_log.parent.mkdir(parents=True, exist_ok=True)
+
+    def _head_hash(rel: str) -> str | None:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        r = run_subprocess_hidden(
+            ["git", "-C", str(root), "cat-file", "blob", f"HEAD:{rel}"],
+            capture_output=True,
+            text=False,  # 字节态：与袋内 blob_sha256（原始字节哈希）同口径
+        )
+        return hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None
+
+    absorbed: list[str] = []
+    aged: list[str] = []
+    fresh = 0
+    now = time.time()
+    for qp in sorted(dead_dir.glob("*.json")):
+        try:
+            bag = json.loads(qp.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        files = bag.get("files") or []
+        if not files:
+            continue
+        ok = True
+        for f in files:
+            if _head_hash(f["path"]) != f.get("blob_sha256"):
+                ok = False
+                break
+        age_h = (now - qp.stat().st_mtime) / 3600.0
+        if ok:
+            os.replace(qp, arch_dir / qp.name)
+            absorbed.append(qp.stem)
+        elif age_h > age_hours:
+            aged.append(f"{qp.stem} ({len(files)}件, {age_h:.0f}h)")
+        else:
+            fresh += 1
+    rec = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S+08:00"),
+        "absorbed": absorbed,
+        "aged": aged,
+        "fresh": fresh,
+    }
+    with sweep_log.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    print(f"sweep: absorbed={len(absorbed)} 销账 | aged={len(aged)} 升级 | fresh={fresh} 保留")
+    for q in absorbed[:10]:
+        print(f"  absorbed: {q}")
+    for q in aged[:10]:
+        print(f"  aged: {q}")
+    print(f"账: {sweep_log}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="接管台账：死亡会话资源显化 L1+L2（scan/list/resolve）")
     parser.add_argument("--scan", action="store_true", help="扫死亡会话生成/更新 open 条目（幂等）")
@@ -564,9 +637,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--resolve", metavar="SID", help="迁移该 sid 的 open 条目到 resolved/")
     parser.add_argument("--by", metavar="TAKER", default="", help="接管者标识（resolve 必填语义）")
     parser.add_argument("--note", default="", help="处置结论注记")
+    parser.add_argument(
+        "--sweep-absorbed", action="store_true", help="死信及时清算：HEAD 吸收的销账/超龄升级/新鲜保留（第 16 类机制）"
+    )
+    parser.add_argument("--age-hours", type=int, default=48, help="超龄阈值（小时，缺省 48）")
     parser.add_argument("--root", default=".", help="仓库根（缺省=.）")
     args = parser.parse_args(argv)
     root = Path(args.root).resolve()
+    if args.sweep_absorbed:
+        return _cmd_sweep_absorbed(root, args.age_hours)
     if args.scan:
         return _cmd_scan(root)
     if args.list:
