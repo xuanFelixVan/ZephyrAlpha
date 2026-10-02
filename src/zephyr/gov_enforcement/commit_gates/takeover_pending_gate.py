@@ -131,9 +131,26 @@ def make_takeover_pending_gate() -> GateSpec:
         if not open_entries:
             return True, ""
 
-        # 3. 归一化 commit 文件为 repo-relative posix，逐条目求命中
+        # 3. 归一化 commit 文件为 repo-relative posix，逐条目求命中。
+        # F3 第二层治本（2026-10-02 红蓝审查）：锁内链 entrypoint commit() 已把 files
+        # 归一为**绝对路径**（_filter_existing_files 返回 abs），直比 as_posix 永失配
+        # （HELD-OVERLAP 同类门均做 abs→rel 归一）。相对化锚=gateway 自身 project_root
+        # （serializer 落地=worktree 内暂存，相对 worktree 即 repo 布局；主区直连=主仓根）；
+        # 台账读取仍用上方 anchor_main_root 锚定的主仓根——两锚分工。
+        gw_root = Path(str(getattr(gateway, "project_root", ".") or ".")).resolve()
+
         def _norm(f: str) -> str:
-            return Path(f).as_posix()
+            p = Path(f)
+            if not p.is_absolute():
+                p = gw_root / p
+            try:
+                rp = p.resolve()
+                try:
+                    return rp.relative_to(gw_root).as_posix()
+                except ValueError:
+                    return rp.as_posix()
+            except OSError:
+                return p.as_posix()
 
         commit_files = {_norm(f) for f in files or []}
         commit_files = {f for f in commit_files if not is_test_exempt(f)}

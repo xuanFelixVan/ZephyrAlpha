@@ -151,7 +151,11 @@ def test_orphan_scan_entry_isomorphic_and_cli_end_to_end(fake_root: Path, capsys
     o = orphan[0]
     assert isinstance(o["death_evidence"], dict), "证据必须为 dict（--list 可渲染）"
     assert set(o["resources"]) == {"held_files", "worktrees", "staging", "bags", "heartbeat_files"}
-    assert o["resources"]["worktrees"][0]["dirty_files"], "worktree 必须带 dirty_files（门咬合面）"
+    wt0 = o["resources"]["worktrees"][0]
+    assert wt0["dirty_files"], "孤儿必须带 dirty_files（接管人可读面）"
+    # F5：普通目录（非 worktree）只盘自身文件，禁吸主仓脏面
+    assert wt0.get("non_worktree_dir") is True
+    assert all(f.startswith(f".aidrafts/{orphan_sid}/") for f in wt0["dirty_files"])
 
     assert ledger._cmd_scan(fake_root) == 0, "孤儿在场时 scan CLI 不得崩（原缺陷现场）"
     entries = {e["sid"]: e for e in ledger.load_open_entries(fake_root)}
@@ -160,7 +164,7 @@ def test_orphan_scan_entry_isomorphic_and_cli_end_to_end(fake_root: Path, capsys
     assert "orphan_resources" in e["death_evidence"]["reason"]
     rx = "\n".join(e["prescription"])
     assert "worktree remove" in rx and "--resolve" in rx
-    assert ledger.entry_match_surface(e) & {"src/zephyr/data/foo.py", "docs/x.md"}
+    assert ledger.entry_match_surface(e) & {f".aidrafts/{orphan_sid}/wip.py"}
 
     assert ledger._cmd_list(fake_root) == 0, "孤儿条目在场时 list CLI 不得崩"
     assert orphan_sid in capsys.readouterr().out
@@ -344,6 +348,11 @@ def test_gate_blocks_via_main_ledger_from_linked_worktree(tmp_path: Path) -> Non
     assert passed is False, "worktree 根网关必须经主仓台账阻断（F3 原缺陷现场）"
     assert "st-dead-lane" in detail
     assert spec.check(gateway, ["docs/other.md"]) == (True, "")
+    # F3 第二层：锁内链 commit() 传**绝对路径**（worktree 内暂存文件）——必须同样咬合
+    abs_hit = str(wt / "docs" / "x.md")
+    passed2, detail2 = spec.check(gateway, [abs_hit])
+    assert passed2 is False, "绝对路径（锁内链实参形态）必须归一后咬合"
+    assert "st-dead-lane" in detail2
 
 
 # ---------------------------------------------------------------------------
@@ -473,3 +482,40 @@ def test_sweep_absorbs_crlf_normalized_and_keeps_real_diff(tmp_path: Path) -> No
     arch = main / ".runtime" / "commit_queue" / "dead_archive" / "absorbed" / "q-crlf-case.json"
     assert arch.exists(), "CRLF 行尾差死信必须被吸收"
     assert (dead / "q-real-diff.json").exists(), "真差异死信不得吸收"
+
+
+def test_orphan_plain_dir_never_absorbs_main_repo_dirty(tmp_path: Path) -> None:
+    """F5 专项（2026-10-02 红蓝审查）：.aidrafts 普通目录孤儿禁吸主仓 git 脏面。
+
+    原缺陷：普通目录在主仓内跑 git status 报出主仓全量脏文件=错误归因，
+    门命中面爆炸误咬无辜 commit（orphansim 实测吸入 400+ 主仓脏文件）。
+    """
+    import subprocess
+
+    main = tmp_path / "main"
+    main.mkdir()
+
+    def _g(*args: str) -> None:
+        subprocess.run(["git", *args], cwd=str(main), check=True, capture_output=True)
+
+    _g("init", "-q", ".")
+    _g("config", "user.email", "t@t.local")
+    _g("config", "user.name", "t")
+    (main / "tracked.txt").write_text("v1" + chr(10), encoding="utf-8")
+    _g("add", "tracked.txt")
+    _g("commit", "-m", "seed")
+    (main / "tracked.txt").write_text("v2-dirty" + chr(10), encoding="utf-8")  # 主仓脏面
+
+    orphan = main / ".aidrafts" / "st-plain-orphan"
+    orphan.mkdir(parents=True)
+    (orphan / "own_wip.py").write_text("x = 1" + chr(10), encoding="utf-8")
+
+    found = ledger._scan_orphan_resources(main, now=1_800_000_000.0)
+    hit = [e for e in found if e["sid"] == "st-plain-orphan"]
+    assert len(hit) == 1
+    wt = hit[0]["resources"]["worktrees"][0]
+    assert wt["non_worktree_dir"] is True
+    assert wt["dirty_files"] == [".aidrafts/st-plain-orphan/own_wip.py"]
+    surface = ledger.entry_match_surface(hit[0])
+    assert "tracked.txt" not in surface, "主仓脏文件不得进入孤儿命中面"
+    assert surface == {".aidrafts/st-plain-orphan/own_wip.py"}

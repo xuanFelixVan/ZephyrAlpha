@@ -342,15 +342,33 @@ def _scan_orphan_resources(root: Path, now: float) -> list[dict]:
             sid = child.name
             if sid in seen or sid in entries or _sid_live(sid):
                 continue
-            wt_info = _worktree_dirty(root, f".aidrafts/{sid}")
-            if not wt_info.get("exists"):
-                # 目录在两次迭代间被移除：退回轻量计数，不丢孤儿信号
+            if (child / ".git").is_file():
+                # 真 linked worktree：git status 脏面即本孤儿工作面
+                wt_info = _worktree_dirty(root, f".aidrafts/{sid}")
+            else:
+                # F5 治本（2026-10-02 红蓝审查）：普通目录（非 worktree）在主仓内跑
+                # git status 会报出主仓全量脏面=错误归因（命中面爆炸误咬无辜 commit，
+                # orphansim 实测吸入 400+ 主仓脏文件）——只盘孤儿目录自身文件
+                # （.aidrafts/<sid>/ 前缀=gitignored 路径，门不会误咬，接管人可读）。
+                own: list[str] = []
                 dirty = 0
-                for _dirpath, _dirnames, filenames in os.walk(child):
-                    dirty += len(filenames)
+                for dirpath, _dirnames, filenames in os.walk(child):
+                    for fn in filenames:
+                        dirty += 1
+                        if len(own) < 50:
+                            try:
+                                own.append((Path(dirpath) / fn).resolve().relative_to(root.resolve()).as_posix())
+                            except ValueError:
+                                pass
                     if dirty > 500:
                         break
-                wt_info = {"path": f".aidrafts/{sid}", "exists": True, "dirty_count": dirty, "dirty_files": []}
+                wt_info = {
+                    "path": f".aidrafts/{sid}",
+                    "exists": True,
+                    "dirty_count": dirty,
+                    "dirty_files": own,
+                    "non_worktree_dir": True,
+                }
             seen.add(sid)
             found.append(
                 {
