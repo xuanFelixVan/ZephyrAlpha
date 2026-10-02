@@ -320,6 +320,56 @@ def _prescription(sid: str, resources: dict) -> list[str]:
     return rx
 
 
+def _scan_orphan_resources(root: Path, now: float) -> list[dict]:
+    """瞬时死亡补漏：注册表已无名字、但资源还在的会话（硬崩/强杀/被除名场景）。
+
+    信号源（不依赖注册表）：.aidrafts/<sid> 树 + .runtime/sessions/<sid>/ 心跳目录。
+    返回与 scan_dead_sessions 同构的条目（death_evidence=orphan_resources）。
+    """
+    entries = _load_registry(root)
+    found: list[dict] = []
+    seen: set[str] = set()
+
+    def _sid_live(sid: str) -> bool:
+        e = entries.get(sid)
+        return bool(e) and (now - (e.get("last_activity") or 0) < DEATH_IDLE_SECONDS)
+
+    aidrafts = root / ".aidrafts"
+    if aidrafts.is_dir():
+        for child in sorted(aidrafts.iterdir()):
+            if not child.is_dir() or child.name.startswith("lane_") or child.name.startswith("ff_"):
+                continue
+            sid = child.name
+            if sid in seen or sid in entries or _sid_live(sid):
+                continue
+            dirty = 0
+            for _dirpath, _dirnames, filenames in os.walk(child):
+                dirty += len(filenames)
+                if dirty > 500:
+                    break
+            seen.add(sid)
+            found.append(
+                {
+                    "session_id": sid,
+                    "death_evidence": f"orphan_resources: .aidrafts/{sid} 在盘而注册表无此会话（瞬时死亡/被除名）",
+                    "held_files": [],
+                    "worktrees": [{"path": str(child), "exists": True, "file_count": dirty}],
+                    "staging": {"path": str(root / ".runtime" / "sessions" / sid / "staging"), "file_count": 0},
+                    "bags": [],
+                    "heartbeat_files": [str(p) for p in (root / ".runtime" / "locks").glob(f"heartbeat_{sid}.pid")],
+                    "impacted_modules": [],
+                    "prescription": [
+                        f"孤儿资源树 .aidrafts/{sid}（{dirty} 文件）：先按需抢救内容再 git worktree remove --force",
+                        "接管完成后：python scripts/governance/session_takeover_ledger.py --resolve "
+                        f"{sid} --by <接管者>",
+                    ],
+                    "last_activity": 0,
+                    "logical": False,
+                }
+            )
+    return found
+
+
 def scan_dead_sessions(root: str | Path, *, now: float | None = None) -> list[dict]:
     """扫死亡会话并收集资源清单（只读，不写台账）。
 
@@ -343,7 +393,8 @@ def scan_dead_sessions(root: str | Path, *, now: float | None = None) -> list[di
                     "resources": collect_resources(root, sid, entry, now=now),
                 }
             )
-    dead.sort(key=lambda d: float(d["entry"].get("last_activity") or 0.0))
+    dead.sort(key=lambda e: e.get("last_activity") or 0)
+    dead.extend(_scan_orphan_resources(root, now))
     return dead
 
 
