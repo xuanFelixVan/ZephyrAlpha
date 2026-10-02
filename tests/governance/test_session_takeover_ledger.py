@@ -88,12 +88,34 @@ def fake_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     staging.mkdir(parents=True)
     (staging / "a.yaml").write_text("a: 1", encoding="utf-8")
     (staging / "b.md").write_text("b", encoding="utf-8")
-    # 死袋 1 只（session_id 匹配）
+    # 死袋 1 只（session_id 匹配），3 文件三种命运——D-2 裁定 narrow-gate 判据：
+    #   residue.py  ——HEAD 有、内容不同 → 活残留，纳入口径
+    #   absorbed.py ——HEAD 有、内容仅差 CRLF → 已吸收，不纳（防过咬）
+    #   gone_path.py——HEAD 无此路径（已删/已迁移） → 不纳
     dead_dir = root / ".runtime" / "commit_queue" / "dead"
     dead_dir.mkdir(parents=True)
+    blobs = root / ".runtime" / "commit_queue" / "blobs"
+    blobs.mkdir(parents=True)
+    (blobs / "diff.blob").write_bytes(b"alpha = 1\r\n")
+    (blobs / "same.blob").write_bytes(b"beta = 1\r\n")
     (dead_dir / f"q-unit-{DEAD_SID}.json").write_text(
-        json.dumps({"qid": f"q-unit-{DEAD_SID}", "session_id": DEAD_SID, "files": [{"path": "x"}]}),
+        json.dumps(
+            {
+                "qid": f"q-unit-{DEAD_SID}",
+                "session_id": DEAD_SID,
+                "files": [
+                    {"path": "residue.py", "blob_ref": "blobs/diff.blob"},
+                    {"path": "absorbed.py", "blob_ref": "blobs/same.blob"},
+                    {"path": "gone_path.py", "blob_ref": "blobs/diff.blob"},
+                ],
+            }
+        ),
         encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        ledger,
+        "_head_bytes",
+        lambda r, rel: {"residue.py": b"alpha = 9\n", "absorbed.py": b"beta = 1\n"}.get(rel),
     )
     # ghost 心跳残留（pid 判死 monkeypatch 后注记为 ghost）
     sess = root / ".runtime" / "sessions" / DEAD_SID
@@ -213,7 +235,14 @@ def test_entry_fields_and_resources(fake_root: Path) -> None:
         }
     ]
     assert res["staging"]["file_count"] == 2
-    assert res["bags"] == [{"qid": f"q-unit-{DEAD_SID}", "state": "dead", "file_count": 1}]
+    assert res["bags"] == [
+        {
+            "qid": f"q-unit-{DEAD_SID}",
+            "state": "dead",
+            "file_count": 3,
+            "residue_files": ["residue.py"],
+        }
+    ]
     assert any("pid_dead=ghost" in h for h in res["heartbeat_files"])
     # 影响域推断：held+worktree dirty 文件按顶级目录收敛（src/zephyr/<pkg> 与 docs/<seg> 两规则）
     assert entry["impacted_modules"] == ["docs/x.md", "src/zephyr/data"]
@@ -565,3 +594,135 @@ def test_orphan_plain_dir_never_absorbs_main_repo_dirty(tmp_path: Path) -> None:
     surface = ledger.entry_match_surface(hit[0])
     assert "tracked.txt" not in surface, "主仓脏文件不得进入孤儿命中面"
     assert surface == {".aidrafts/st-plain-orphan/own_wip.py"}
+
+
+# ---------------------------------------------------------------------------
+# D-2 裁定（2026-10-02 第四夜红蓝审查）：袋内遗留=盘点信息，不上执法命中面
+# ---------------------------------------------------------------------------
+
+
+def test_bag_residue_files_narrow_scope(fake_root: Path) -> None:
+    """盘点口径实测：3 件路径里只有 1 件是"路径存活且与 HEAD 仍有差异"。"""
+    bag = json.loads(
+        (fake_root / ".runtime" / "commit_queue" / "dead" / f"q-unit-{DEAD_SID}.json").read_text(encoding="utf-8")
+    )
+    assert len(bag["files"]) == 3
+    assert ledger.bag_residue_files(fake_root, bag) == ["residue.py"]
+
+
+def test_residue_is_inventory_only_not_enforced() -> None:
+    """裁定钉子：袋内遗留文件进台账盘点，但绝不进 TAKEOVER-PENDING 命中面。
+
+    否决纳面的实测据：真库 1233 死袋抽样 60 只，符合"路径存活且内容有差异"的占
+    **57.0%**（264/463），全库外推约 5425 条目 / ~3596 唯一路径（含 AGENTS.md）
+    会被永久冻结——老袋目标内容天然不等于今日 HEAD，据此纳面即仓库级事故。
+    """
+    entry = {
+        "sid": DEAD_SID,
+        "resources": {
+            "held_files": ["scripts/keep.py"],
+            "bags": [{"qid": "q-unit", "state": "dead", "residue_files": ["residue.py"]}],
+        },
+    }
+    assert ledger.entry_match_surface(entry) == {"scripts/keep.py"}, "袋残留不得上执法面"
+    # 但盘点面必须还查得到：接管人不至于只看到一个哑 file_count
+    assert entry["resources"]["bags"][0]["residue_files"] == ["residue.py"]
+
+
+def test_gate_does_not_bite_bag_residue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """防御后回归：哪怕日后有人把袋残留加回命中面，这条会立刻变红。"""
+    entry = {
+        "ts": "unit",
+        "ts_epoch": 1.0,
+        "sid": "st-dead-other",
+        "status": "open",
+        "refresh_count": 0,
+        "death_evidence": {"reason": "unit-d2", "threshold_seconds": ledger.DEATH_IDLE_SECONDS},
+        "resources": {
+            "held_files": ["scripts/keep.py"],
+            "worktrees": [],
+            "staging": {"file_count": 0},
+            "bags": [{"qid": "q-unit", "state": "dead", "residue_files": ["residue.py"]}],
+            "heartbeat_files": [],
+        },
+        "impacted_modules": [],
+        "prescription": ["接管完成后 --resolve st-dead-other"],
+    }
+    root = tmp_path
+    (root / ".runtime").mkdir(parents=True)
+    (root / ".runtime" / "takeover_ledger.jsonl").write_text(
+        json.dumps(entry, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(ledger, "load_open_entries", lambda r: [entry])
+
+    gw = SimpleNamespace(project_root=str(root))
+    spec = make_takeover_pending_gate()
+    assert spec.check(gw, ["residue.py"], session_id="st-self") == (True, "")
+    passed, detail = spec.check(gw, ["scripts/keep.py"], session_id="st-self")
+    assert passed is False and "st-dead-other" in detail, "held_files 面照旧咬合"
+
+
+# ---------------------------------------------------------------------------
+# D-2 裁定（2026-10-02 第四夜红蓝审查）：袋内遗留=盘点信息，不上执法命中面
+# ---------------------------------------------------------------------------
+
+
+def test_bag_residue_files_narrow_scope(fake_root: Path) -> None:
+    """盘点口径实测：3 件路径里只有 1 件是"路径存活且与 HEAD 仍有差异"。"""
+    bag = json.loads(
+        (fake_root / ".runtime" / "commit_queue" / "dead" / f"q-unit-{DEAD_SID}.json").read_text(encoding="utf-8")
+    )
+    assert len(bag["files"]) == 3
+    assert ledger.bag_residue_files(fake_root, bag) == ["residue.py"]
+
+
+def test_residue_is_inventory_only_not_enforced() -> None:
+    """裁定钉子：袋内遗留文件进台账盘点，但绝不进 TAKEOVER-PENDING 命中面。
+
+    否决纳面的实测据：真库 1233 死袋抽样 60 只，符合"路径存活且内容有差异"的占
+    **57.0%**（264/463），全库外推约 5425 条目 / ~3596 唯一路径（含 AGENTS.md）
+    会被永久冻结——老袋目标内容天然不等于今日 HEAD，据此纳面即仓库级事故。
+    """
+    entry = {
+        "sid": DEAD_SID,
+        "resources": {
+            "held_files": ["scripts/keep.py"],
+            "bags": [{"qid": "q-unit", "state": "dead", "residue_files": ["residue.py"]}],
+        },
+    }
+    assert ledger.entry_match_surface(entry) == {"scripts/keep.py"}, "袋残留不得上执法面"
+    # 但盘点面必须还查得到：接管人不至于只看到一个哑 file_count
+    assert entry["resources"]["bags"][0]["residue_files"] == ["residue.py"]
+
+
+def test_gate_does_not_bite_bag_residue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """防御后回归：哪怕日后有人把袋残留加回命中面，这条会立刻变红。"""
+    entry = {
+        "ts": "unit",
+        "ts_epoch": 1.0,
+        "sid": "st-dead-other",
+        "status": "open",
+        "refresh_count": 0,
+        "death_evidence": {"reason": "unit-d2", "threshold_seconds": ledger.DEATH_IDLE_SECONDS},
+        "resources": {
+            "held_files": ["scripts/keep.py"],
+            "worktrees": [],
+            "staging": {"file_count": 0},
+            "bags": [{"qid": "q-unit", "state": "dead", "residue_files": ["residue.py"]}],
+            "heartbeat_files": [],
+        },
+        "impacted_modules": [],
+        "prescription": ["接管完成后 --resolve st-dead-other"],
+    }
+    root = tmp_path
+    (root / ".runtime").mkdir(parents=True)
+    (root / ".runtime" / "takeover_ledger.jsonl").write_text(
+        json.dumps(entry, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(ledger, "load_open_entries", lambda r: [entry])
+
+    gw = SimpleNamespace(project_root=str(root))
+    spec = make_takeover_pending_gate()
+    assert spec.check(gw, ["residue.py"], session_id="st-self") == (True, "")
+    passed, detail = spec.check(gw, ["scripts/keep.py"], session_id="st-self")
+    assert passed is False and "st-dead-other" in detail, "held_files 面照旧咬合"

@@ -6469,7 +6469,7 @@ entries:
   related_files:
   - config/secret_registry.yaml
   - config/schedule_gate_policy.yaml
-  - scripts/register_ai_l1_scan_task.ps1
+  - scripts/tasks/register/register_ai_l1_scan_task.ps1
   - scripts/ai_layer/run_ai_l1_scan_tick.py
   - docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md
   related_arch: []
@@ -6810,3 +6810,44 @@ entries:
     q-20261001-st-ffchief-20261001-0118（reexam CPCV 族 3 件）已于 2026-10-02 01:53 由
     b26627f715（收官手术·0118v4）携双册直投落地，工作区与 HEAD 逐字节一致（sha256 三件全同），
     死袋记录维持 dead 态销账不重投。
+- ruling_id: "裁定#477"
+  title: "CR-17 撤销错判：D-1 非 Owner 裁定件；并实录跨会话 staged hunk 静默吸收事故"
+  date: '2026-10-02'
+  category: 治理
+  status: 'active'
+  session: st-rb4ruling-20261002
+  summary: |-
+    撤销第四夜红蓝审查把 D-1 判为"Owner 待裁定"的错判：三个相关死袋的真实死因是审查者自身代码违规
+    ——_confirm_daemon_alive 首版用墙上时钟+轮询睡眠，同时撞 DATETIME-NOW-FORBIDDEN 与
+    PERMANENT-SYSTEM-TRIGGER 两门，而两门均已当场给出可执行处方（改单调时钟忙等，本文件既有先例
+    _run_git_with_retry）。门既有明确处方即非待裁定件，裁定为"退回执行人自修"，已由 489777c60e 落地。
+    附带立此说明事实：同一 .py 文件的 staged hunk 会被任何把它列入 `--files` 的他人提交整批带走
+    （git commit 按路径提交索引全量内容，无按 session 切分语义）——本次 SessionRegistry 判死闸本体即由
+    st-construct-20261002 的 53 件批量 commit 50ea976902 静默吸收，导致"修复半落地"（本体在 HEAD、
+    配套回归与台账同真改写未跟进），既非所有人知情也不可归结。裁：此类吸收构成的事故由被动吸收舱的
+    后续补齐批负责查漏接合，不追责任、不回退他人已落地 commit。
+- ruling_id: "裁定#478"
+  title: "CR-18 D-2 否决：死袋文件不得纳入 TAKEOVER-PENDING 命中面，降格为盘点信息"
+  date: '2026-10-02'
+  category: 治理
+  status: 'active'
+  session: st-rb4ruling-20261002
+  summary: |-
+    第四夜审查曾报"9 条 open 条目命中面=0、30+ 在途死袋咬不到"为 P0 缺口。深查否之：真库现存 1233 只
+    死袋、涉及 3390 唯一路径（其中 2987 条在 HEAD 存活）；再按"路径存活且内容与 HEAD 有差异"的窄口径
+    抽样 60 只实测残留率仍达 57.0%（264/463），全库外推约 5425 条目 / ~3596 唯一路径会被永久封禁，且
+    含 AGENTS.md 与热册（单一热册被 272 只袋引用）。根因是判据本身不成立：老袋目标内容天然不等于今日
+    HEAD（其间他人多次改动同文件），"有差异"推不出"未落地"。裁决：纳面（含窄口径纳面）危害量级远大于
+    "账面咬不到"的遗憾，予以否决——袋文件只作为台账盘点信息（resources.bags[].residue_files）供接管人
+    按图索骥，永不进 entry_match_surface；由 tests/governance/test_session_takeover_ledger.py
+    ::test_residue_is_inventory_only_not_enforced 与 ::test_gate_does_not_bite_bag_residue 钉死，
+    日后任何人加回命中面即变红。真正的病根另判：1232/1233 只袋因数路径迁移（拆簇/搬迁）而结构性不可
+    吸收，属"清算力缺口"非"咬合缺口"，登记 Owner 待办，需给 sweep 加迁移感知（重名检定+映射回收）方能收敛。
+  related_files: []
+  affected_files:
+  - scripts/governance/session_takeover_ledger.py
+  - src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py
+  - tests/governance/test_session_takeover_ledger.py
+  related_arch: []
+  related_rulings: ["裁定#477"]  # 本册路径的写入授权另承裁定#461 approved_paths（有效期 2026-10-08），此处不重复开面
+  superseded_by: null

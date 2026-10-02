@@ -159,6 +159,8 @@ def make_takeover_pending_gate() -> GateSpec:
 
         hits: list[tuple[dict, list[str]]] = []
         for entry in open_entries:
+            # D-2 裁定（2026-10-02）：袋内文件只入台账盘点、不进门牙咬合面
+            # （过咬实测数据见 ledger.bag_residue_files 文档串）。此处只读标准面。
             surface = ledger.entry_match_surface(entry)
             matched = sorted(commit_files & surface)
             if matched:

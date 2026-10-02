@@ -196,6 +196,74 @@ def _collect_staging(root: Path, sid: str) -> dict:
     }
 
 
+def _head_bytes(root: Path, rel: str) -> bytes | None:
+    """取 HEAD 版本文件原始字节（仓库锚定：只依赖 git HEAD，任何平台同结果）。
+
+    None = 路径在 HEAD 不存在（已删除或已迁移到新路径）。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    r = run_subprocess_hidden(
+        ["git", "-C", str(root), "cat-file", "blob", f"HEAD:{rel}"],
+        capture_output=True,
+        text=False,  # 字节态：与袋内 blob（原始字节）同口径
+    )
+    return r.stdout if r.returncode == 0 else None
+
+
+def _norm_crlf(b: bytes) -> bytes:
+    """行尾规范化（CRLF→LF）。
+
+    F4 治本（2026-10-02 红蓝审查）：落地管线 git add 对文本做 CRLF→LF 规范化，
+    袋内原始字节（CRLF）与 HEAD（LF）逐字节永不一致 → 未规范化时 CRLF 系内容
+    永不可判定为"已被 HEAD 吸收"（chaos2-st-01-0002 实测：265 vs 259 纯行尾差）。
+    双侧同规范化后比对：只等价行尾差异，其余任何差异照旧不算吸收。
+    """
+    return b.replace(b"\r\n", b"\n")
+
+
+def bag_file_is_absorbed(root: Path, f: dict) -> bool:
+    """袋内单文件是否已被 HEAD 吸收（内容同真，行尾差异等价）。
+
+    blob_ref 在盘时逐字节比对；无 ref 的旧袋退回 sha256 等值（原始字节口径）。
+    HEAD 无此路径 → False（不叫吸收，叫"路径消失"）。
+    """
+    import hashlib
+
+    head_b = _head_bytes(root, f.get("path") or "")
+    if head_b is None:
+        return False
+    blob_ref = f.get("blob_ref")
+    blob_p = root / ".runtime" / "commit_queue" / blob_ref if blob_ref else None
+    if blob_p is not None and blob_p.is_file():
+        return _norm_crlf(blob_p.read_bytes()) == _norm_crlf(head_b)
+    return hashlib.sha256(head_b).hexdigest() == f.get("blob_sha256")
+
+
+def bag_residue_files(root: Path, bag: dict) -> list[str]:
+    """袋内"疑似遗留"文件清单（盘点用，**不进执法命中面**，原因见下）。
+
+    D-2 裁定（2026-10-02 第四夜红蓝审查）：本清单只给接管人按图索骥，门不许吃。
+    实测否决理由：真库 1233 死袋抽样 60 只，符合"路径存活且与 HEAD 有差异"的占
+    **57.0%**（264/463 件），全库外推约 5425 文件条目 / ~3596 唯一路径——连
+    AGENTS.md 都在列。根因不是规则太宽，而是判据本身不成立：老袋的目标内容天然
+    与今日 HEAD 不同（其间他人多次改动该文件），"有差异"≠"未落地"。据此纳面等于
+    把半个仓库设为永久禁提交区，危害远大于"门咬不到"的账面缺憾。
+
+    保留价值：接管人看到的是可核的具体文件，而不是"file_count=10"这类哑计数。
+    """
+    out: list[str] = []
+    for f in bag.get("files") or []:
+        p = f.get("path")
+        if not p:
+            continue
+        if _head_bytes(root, p) is None:
+            continue
+        if not bag_file_is_absorbed(root, f):
+            out.append(p)
+    return out
+
+
 def _collect_bags(root: Path, sid: str) -> list[dict]:
     """在途袋盘点：commit_queue/{pending,processing,dead}/*.json 中 session_id 匹配 sid。"""
     out: list[dict] = []
@@ -210,11 +278,17 @@ def _collect_bags(root: Path, sid: str) -> list[dict]:
             except (OSError, ValueError):
                 continue
             if isinstance(data, dict) and data.get("session_id") == sid:
+                # D-2 裁定（2026-10-02 第四夜红蓝审查）：原实现只记 file_count，
+                # 导致命中面恒为 0（表面看是"门不执法"，实则是"没给门喂靶"）。
+                # 但也不能全量喂——实测 1233 死袋涉及 3390 唯一路径、其中 2987 条
+                # 在 HEAD 存活，全纳=把半个仓库设为永久禁提交区（热册一条就占 272
+                # 袋）。故只纳"活残留"（路径存活且内容仍有差异），见 bag_residue_files。
                 out.append(
                     {
                         "qid": data.get("qid", bag.stem),
                         "state": state,
                         "file_count": len(data.get("files") or []),
+                        "residue_files": bag_residue_files(root, data),
                     }
                 )
     return out
@@ -548,6 +622,8 @@ def entry_match_surface(entry: dict) -> set[str]:
         surface.update(wt.get("dirty_files") or [])
     staging = entry.get("resources", {}).get("staging") or {}
     surface.update(staging.get("files") or [])
+    # 注：袋内文件（resources.bags[].residue_files）**故意不入面**——D-2 裁定，
+    # 见 bag_residue_files 文档串内的实测否决数据。台账列出=让人看见；门去咬=事故。
     return {Path(f).as_posix() for f in surface if f}
 
 
@@ -662,7 +738,6 @@ def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
     仓库锚定设计：判定只依赖 git HEAD 与袋内 blob（blob_ref 内容，缺 ref 时退回
     blob_sha256 哈希），任何平台任何 agent 跑同一命令同结果。
     """
-    import hashlib
     import os
     import time
 
@@ -672,23 +747,8 @@ def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
     arch_dir.mkdir(parents=True, exist_ok=True)
     sweep_log.parent.mkdir(parents=True, exist_ok=True)
 
-    def _head_bytes(rel: str) -> bytes | None:
-        from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
-        r = run_subprocess_hidden(
-            ["git", "-C", str(root), "cat-file", "blob", f"HEAD:{rel}"],
-            capture_output=True,
-            text=False,  # 字节态：与袋内 blob（原始字节）同口径
-        )
-        return r.stdout if r.returncode == 0 else None
-
-    def _norm_crlf(b: bytes) -> bytes:
-        # F4 治本（2026-10-02 红蓝审查）：落地管线 git add 对文本做 CRLF→LF 规范化，
-        # 袋内原始字节（CRLF）与 HEAD（LF）逐字节永不一致 → CRLF 系死信永久不可吸收
-        # （chaos2-st-01-0002 实测：265 vs 259 字节纯行尾差）。双侧同规范化后比对：
-        # 只等价行尾差异，其余任何差异照旧不吸收（重投也只会 NOTHING_TO_COMMIT，语义安全）。
-        return b.replace(b"\r\n", b"\n")
-
+    # _head_bytes/_norm_crlf/吸收判定已抽为本模块共享助手（供 D-2 残留盘点复用，
+    # 双实现会漂移；此处不再内联副本）。
     absorbed: list[str] = []
     aged: list[str] = []
     fresh = 0
@@ -703,18 +763,9 @@ def _cmd_sweep_absorbed(root: Path, age_hours: int = 48) -> int:
             continue
         ok = True
         for f in files:
-            head_b = _head_bytes(f["path"])
-            if head_b is None:
-                ok = False
-                break
-            blob_ref = f.get("blob_ref")
-            blob_p = root / ".runtime" / "commit_queue" / blob_ref if blob_ref else None
-            if blob_p is not None and blob_p.is_file():
-                same = _norm_crlf(blob_p.read_bytes()) == _norm_crlf(head_b)
-            else:
-                # 无 blob_ref（旧袋）：退回哈希等值（原始字节口径）
-                same = hashlib.sha256(head_b).hexdigest() == f.get("blob_sha256")
-            if not same:
+            # 吸收判定=逐文件内容同真；注意这里"路径在 HEAD 缺失"与"内容有差异"
+            # 一律判不可吸收（保守：宁可留一手低价回收权，不误销真未落地修改）。
+            if not bag_file_is_absorbed(root, f):
                 ok = False
                 break
         age_h = (now - qp.stat().st_mtime) / 3600.0

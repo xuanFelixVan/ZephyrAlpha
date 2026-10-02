@@ -162,6 +162,52 @@ def _normalize_rel(path: str) -> str:
     return normalized
 
 
+def _to_repo_rel(path: str, project_root: str | Path | None = None) -> str:
+    """命中路径归一为仓库相对 posix（D-3 治本，见 resolve_approval 内注）。
+
+    已是相对（或无法从任何已知根剥离）时退回原归一化结果，保持历史行为不变。
+    """
+    normalized = _normalize_rel(str(path))
+    looks_abs = normalized.startswith("/") or (len(normalized) > 1 and normalized[1] == ":")
+    if not looks_abs:
+        return normalized
+    # 顺序有讲究：先认**提交所在工作区根**（project_root），REPO_ROOT 兜底。反序会在
+    # tmp 根位于仓库内部时（pytest tmp_path 实测落在 REPO_ROOT/.runtime/tmp/下）
+    # 剥出 .runtime/tmp/... 而不是工作区相对路径。
+    roots: list[Path] = []
+    if project_root is not None:
+        try:
+            roots.append(anchor_main_root(Path(project_root)).resolve())
+        except Exception:  # noqa: BLE001 — 锚设施异常退回单一根，仍可尝试主仓根
+            pass
+    roots.append(REPO_ROOT)
+    try:
+        candidate = Path(normalized).resolve()
+    except OSError:
+        return normalized
+    for root in roots:
+        try:
+            rel = candidate.relative_to(root.resolve()).as_posix()
+        except ValueError:
+            continue
+        # serializer 落地工作树镜像主仓布局：命中路径可能是工作树内的绝对路径
+        # （实测：D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w0\docs\...\xxx.yaml），
+        # 剥到仓位根后要再剥一层 <repo>/.runtime/commit_queue/worktrees/<slot>/ 前缀，
+        # 才是它在主仓里的真实相对位置。
+        return _strip_worktree_prefix(rel)
+    return normalized
+
+
+def _strip_worktree_prefix(rel: str) -> str:
+    """剥 serializer 落地工作树前缀（<...>/worktrees/<slot>/ → 主仓相对路径）。"""
+    marker = "".join([".", "runtime/commit_queue/worktrees/"])
+    if not rel.startswith(marker):
+        return rel
+    parts = rel.split("/")
+    # .runtime / commit_queue / worktrees / <slot> / <真实相对路径>
+    return "/".join(parts[4:]) if len(parts) > 4 else rel
+
+
 def _path_covered(rel_path: str, patterns: list[str]) -> bool:
     """approved_paths 覆盖判定——fnmatch 模式 + 目录前缀双语义。
 
@@ -251,6 +297,14 @@ def resolve_approval(
         （gate 侧保持既有 fail-open 降级语义）。
     """
     try:
+        # D-3 治本（2026-10-02 第四夜红蓝审查，第三/四次复发）：preflight 与锁内链
+        # 传进来的是**绝对路径**（Windows 盘符 + 反斜杠，见 PROTECTED-PATHS 阻断
+        # detail 原文），而 approved_paths 一律以仓库相对 posix 登记（裁定#461/#478
+        # 皆然）——不归一则裁定通道在真实流水线里恒不命中，受保护路径事实上"有授权
+        # 也审批不过"，逼人走 ZEPHYR_PROTECTED_PATHS_BYPASS 逃生。与 HELD-OVERLAP
+        # （F3/C1 同款 abs→rel 失配）同一家族。归一后按既有模式/前缀语义照旧判定。
+        files_hit = [_to_repo_rel(f, project_root) for f in files_hit]
+
         # 通道定位：marker 提取（沿用既有正则语义，SSoT 复用）
         marker_id: str | None = None
         if commit_message:

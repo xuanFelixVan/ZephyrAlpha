@@ -205,3 +205,70 @@ class TestVerdictContract:
         v = resolve_approval([_RULES_HIT], "x [ARCH-APPROVAL:ARCH-FAKE-1]", tmp_path)
         assert v.approved is True
         assert v.source == SOURCE_RULING
+
+
+class TestAbsolutePathNormalization:
+    """D-3 治本回归（2026-10-02 第四夜红蓝审查）：绝对路径形态下裁定通道不得失能。
+
+    病根：preflight 与锁内链传绝对路径（Windows 盘符+反斜杠，见 PROTECTED-PATHS
+    阻断 detail 原文），approved_paths 却一律以仓库相对 posix 登记 → 裁定通道在
+    真实流水线里恒不命中，受保护路径"有授权也审批不过"，实逼人走 BYPASS 逃生。
+    与 HELD-OVERLAP（F3/C1 同款 abs→rel 失配）同一家族。
+    """
+
+    def test_absolute_win_path_resolves_to_ruling_approval(self, tmp_path):
+        _make_ruling_registry(tmp_path, [_ruling()])
+        abs_hit = str((tmp_path / _RULES_HIT).resolve()).replace("/", "\\")
+        v = resolve_approval([abs_hit], None, tmp_path)
+        assert v.approved is True, "绝对路径必须归一后命中裁定 approved_paths"
+        assert v.source == SOURCE_RULING
+
+    def test_unauthorized_absolute_path_still_blocked(self, tmp_path):
+        _make_ruling_registry(tmp_path, [_ruling()])
+        other = str((tmp_path / "docs" / "elsewhere.md").resolve())
+        v = resolve_approval([other], None, tmp_path)
+        assert v.approved is False and v.source == SOURCE_NONE, "归一不得放大授权面"
+
+    def test_relative_path_behavior_unchanged(self, tmp_path):
+        _make_ruling_registry(tmp_path, [_ruling()])
+        v = resolve_approval([_RULES_HIT], None, tmp_path)
+        assert v.approved is True and v.source == SOURCE_RULING
+
+
+class TestAbsolutePathNormalization:
+    """D-3 治本回归（2026-10-02 第四夜红蓝审查）：绝对路径形态下裁定通道不得失能。
+
+    病根：preflight 与锁内链传绝对路径（Windows 盘符+反斜杠，见 PROTECTED-PATHS
+    阻断 detail 原文），approved_paths 却一律以仓库相对 posix 登记 → 裁定通道在
+    真实流水线里恒不命中，受保护路径"有授权也审批不过"，实逼人走 BYPASS 逃生。
+    与 HELD-OVERLAP（F3/C1 同款 abs→rel 失配）同一家族。
+    """
+
+    def test_absolute_win_path_resolves_to_ruling_approval(self, tmp_path):
+        _make_ruling_registry(tmp_path, [_ruling()])
+        abs_hit = str((tmp_path / _RULES_HIT).resolve()).replace("/", "\\")
+        v = resolve_approval([abs_hit], None, tmp_path)
+        assert v.approved is True, "绝对路径必须归一后命中裁定 approved_paths"
+        assert v.source == SOURCE_RULING
+
+    def test_unauthorized_absolute_path_still_blocked(self, tmp_path):
+        _make_ruling_registry(tmp_path, [_ruling()])
+        other = str((tmp_path / "docs" / "elsewhere.md").resolve())
+        v = resolve_approval([other], None, tmp_path)
+        assert v.approved is False and v.source == SOURCE_NONE, "归一不得放大授权面"
+
+    def test_relative_path_behavior_unchanged(self, tmp_path):
+        _make_ruling_registry(tmp_path, [_ruling()])
+        v = resolve_approval([_RULES_HIT], None, tmp_path)
+        assert v.approved is True and v.source == SOURCE_RULING
+
+    def test_serializer_landing_worktree_path_normalized(self, tmp_path):
+        """serializer 落地工作树路径也要归一：命中绝对路径实测形如
+        <repo>/.runtime/commit_queue/worktrees/w0/docs/.../ruling_registry.yaml，
+        只有剥掉工作树仓位前缀才是它在主仓里的真实相对位置。
+        """
+        _make_ruling_registry(tmp_path, [_ruling()])
+        wt_hit = tmp_path / ".runtime" / "commit_queue" / "worktrees" / "w0" / _RULES_HIT
+        v = resolve_approval([str(wt_hit)], None, tmp_path)
+        assert v.approved is True, "落地工作树内的命中路径必须剥到主仓相对再判定"
+        assert v.source == SOURCE_RULING
