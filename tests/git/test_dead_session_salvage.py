@@ -44,9 +44,7 @@ _D3_METADATA = _REPO / "scripts" / "governance" / "d3_metadata"
 if str(_D3_METADATA) not in sys.path:
     sys.path.insert(0, str(_D3_METADATA))
 
-_LOCK_FILES_PATH = Path(
-    os.environ.get("ZEPHYR_G1_SURGERY_LOCK_FILES", str(_REPO / "scripts" / "lock_files.py"))
-)
+_LOCK_FILES_PATH = Path(os.environ.get("ZEPHYR_G1_SURGERY_LOCK_FILES", str(_REPO / "scripts" / "lock_files.py")))
 
 
 def _load_lock_files():
@@ -70,7 +68,11 @@ def lf(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
 def _git(repo: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess:
     r = subprocess.run(
-        ["git", *args], cwd=str(repo), capture_output=True, text=True, timeout=60,
+        ["git", *args],
+        cwd=str(repo),
+        capture_output=True,
+        text=True,
+        timeout=60,
     )
     if check and r.returncode != 0:
         raise AssertionError(f"git {' '.join(args)} failed: {r.stderr}")
@@ -375,3 +377,19 @@ def test_cleanup_no_salvage_flag_skips(lf, tmp_git_repo: Path) -> None:
 
     assert sid in SessionRegistry(tmp_git_repo).load()
 
+
+def test_confirm_daemon_alive_surfaces_silent_spawn_death(monkeypatch: pytest.MonkeyPatch) -> None:
+    """回归（2026-10-02 第四夜红蓝审查 R2-F2）：spawn 返回 pid ≠ daemon 真活着。
+
+    实证：WMI 通道失败降级 Popen（留父 job 内）时父进程退出连坐杀死 daemon，
+    注册接口却照旧报 ok=True + heartbeat_daemon_pid 非空 → 会话 90s 后静默判死，
+    提交门只报 "SESSION-REQUIRED 未注册"，Owner 无从归因。此处钉住"短窗确认"。
+    """
+    from zephyr.gov_enforcement.rule_bridge import session_worktree as sw
+
+    assert sw._confirm_daemon_alive(None) is False
+    assert sw._confirm_daemon_alive(0) is False
+    monkeypatch.setattr(sw, "is_pid_alive", lambda pid: False)
+    assert sw._confirm_daemon_alive(999999999, grace_seconds=0.3) is False
+    monkeypatch.setattr(sw, "is_pid_alive", lambda pid: True)
+    assert sw._confirm_daemon_alive(4242, grace_seconds=0.3) is True

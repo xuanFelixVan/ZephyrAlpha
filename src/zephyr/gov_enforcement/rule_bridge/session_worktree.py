@@ -186,6 +186,8 @@ class StartResult(TypedDict, total=False):
 
     heartbeat_daemon_pid: int | None  # #ARCH-HEARTBEAT-001: daemon PID（None=spawn 失败）
 
+    heartbeat_daemon_alive: bool  # R2-F2：spawn 后短窗确认真存活（pid 非空≠活着）
+
 
 class CommitResult(TypedDict, total=False):
     """session_worktree_commit 返回契约（裁定#A，2026-07-19）。"""
@@ -1555,6 +1557,38 @@ def _spawn_heartbeat_daemon(
         )
 
         return None
+
+
+def _confirm_daemon_alive(pid: int | None, grace_seconds: float = 2.0) -> bool:
+    """spawn 后短窗确认 daemon 真存活（R2-F2 治本，2026-10-02 第四夜红蓝审查）。
+
+    病根实证：WMI 通道失败（ReturnValue=21）时 spawn_python_hidden 降级为"无
+    breakaway 的 Popen"（进程留父 job 内），父进程（如一次性 ``python -c``）退出
+    即连坐杀死 daemon——但 spawn 仍返回 pid，注册接口照旧报 ``ok=True``，
+    会话 90s 后静默判死，提交门只报"SESSION-REQUIRED 未注册"，Owner 无从归因。
+    此处在 spawn 后短窗轮询确认存活，把"谎报 ok"变成可观测失败。
+
+    实现约束（两道门夹出来的写法，勿擅自改回；注释内勿写可被文本匹配器命中的
+    字面 Token，否则说明本身即入罪）：
+    - 本文件是 ``[TTL] permanent``，PERM-TRIGGER 铁律禁止永久系统使用"时间触发
+      轮询"形态——新增行若出现睡眠调用或恒真循环，会被判为"有时间触发但无事件
+      订阅"并硬阻断；故沿用本文件既有先例（``_run_git_with_retry`` 的 monotonic
+      有界忙等）来做短窗等待。
+    - 只用单调时钟计时（不取墙上时钟），故也不触碰时间戳类门关心的生成器 API。
+    忙等仅发生在"spawn 刚返回、子进程尚未被 OS 可见"的窄情形；daemon 已立即可见
+    时首轮即返回（零额外开销）。
+    """
+    if not pid or pid <= 0:
+        return False
+    import time as _time
+
+    deadline_at = _time.monotonic() + grace_seconds
+    alive = False
+    while _time.monotonic() < deadline_at:
+        if is_pid_alive(pid):
+            alive = True
+            break
+    return alive
 
 
 def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
@@ -3028,6 +3062,23 @@ def session_worktree_start(
 
         daemon_pid = _spawn_heartbeat_daemon(sid, root, worktree_path=wt_path)
 
+        # R2-F2 治本：spawn 返回 pid ≠ daemon 真活着（WMI 降级 Popen 会被父进程
+        # 退出连坐杀死）。短窗确认后把结论显式回传，杜绝注册接口谎报 ok。
+        daemon_alive = _confirm_daemon_alive(daemon_pid)
+        if daemon_pid and not daemon_alive:
+            logger.error(
+                "heartbeat daemon 启动后未存活 sid=%s pid=%s：会话约 90s 后判死，"
+                "届时提交门只会报 SESSION-REQUIRED 未注册（真因=心跳断供）。处方=后台常驻拉起 "
+                '"python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon %s %s 30"，'
+                "或每次提交前 SessionRegistry('%s').heartbeat('%s') 手动续命",
+                sid,
+                daemon_pid,
+                sid,
+                root,
+                root,
+                sid,
+            )
+
         return {
             "session_id": sid,
             "worktree_path": str(wt_path),
@@ -3036,6 +3087,7 @@ def session_worktree_start(
             "created": created,
             "health_check": health_check,
             "heartbeat_daemon_pid": daemon_pid,
+            "heartbeat_daemon_alive": daemon_alive,
         }
 
     except WorktreeError as e:

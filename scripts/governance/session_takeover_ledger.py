@@ -252,7 +252,18 @@ def _death_evidence(entry: dict, now: float) -> dict:
         "logical": bool(entry.get("logical", False)),
         "threshold_seconds": DEATH_IDLE_SECONDS,
     }
-    reasons = [f"last_activity idle {evidence['last_activity_age_seconds']}s > {DEATH_IDLE_SECONDS}s"]
+    # R2-F1 治本（2026-10-02 第四夜红蓝审查）：reason 必须与真实判据同真——
+    # 原实现无条件写 "idle Xs > 7200s"，而判死钩子（pid=0 会话心跳 90s 过期）
+    # 会在 idle=4s 时照样生成该文案，台账自述判据与实际判据矛盾（审计不可信，
+    # 接管人照处方回收会误杀活会话）。未达阈值时改述真实判据来源。
+    age = evidence["last_activity_age_seconds"]
+    if age > DEATH_IDLE_SECONDS:
+        reasons = [f"last_activity idle {age}s > {DEATH_IDLE_SECONDS}s"]
+    else:
+        reasons = [
+            f"last_activity idle {age}s <= {DEATH_IDLE_SECONDS}s"
+            f"（未达台账阈值，判死依据=注册表除名或 PID 已死，非 idle 阈值）"
+        ]
     if alive is False:
         reasons.append(f"pid {pid} dead")
     elif alive is None and pid > 0:

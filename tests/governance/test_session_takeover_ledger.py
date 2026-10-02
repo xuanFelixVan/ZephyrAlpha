@@ -394,6 +394,52 @@ def test_list_active_death_hook_writes_ledger(tmp_path: Path, monkeypatch: pytes
     assert ev["last_activity_age_seconds"] > 7200
 
 
+def test_death_hook_skips_soft_expire_pid0_session(tmp_path: Path) -> None:
+    """回归（2026-10-02 第四夜红蓝审查 R2-F1）：软判死不得污染接管台账。
+
+    实锤背景：pid=0 逻辑会话仅"心跳 90s 过期"即被 list_active 判死，原钩子无条件
+    写台账，导致 idle=4~100s 的活会话挂 open 条目（reason 还谎称 >7200s），
+    回头被 TAKEOVER-PENDING 门咬住自己的提交。判死(活性)≠需接管(资源)，此处闸住。
+    """
+
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+    root = tmp_path
+    SOFT_SID = "st-soft-expire-unit"
+    reg = SessionRegistry(root)
+    shard = root / ".runtime" / "session_registry"
+    shard.mkdir(parents=True, exist_ok=True)
+    now = time.time()
+    (shard / f"{SOFT_SID}.json").write_text(
+        json.dumps(
+            {
+                "session_id": SOFT_SID,
+                "pid": 0,  # 逻辑会话：无硬死亡证据
+                "start_time": now - 300,
+                "held_files": [str(root / "src/zephyr/data/soft.py")],
+                "last_heartbeat": now - 200,  # 心跳 90s 过期 → list_active 判死
+                "last_activity": now - 100,  # 但 idle 仅 100s，远未达 7200s
+                "logical": False,
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    active = reg.list_active()
+    assert all(i.session_id != SOFT_SID for i in active)  # 判死主流程不变
+    assert ledger.load_open_entries(root) == []  # 台账不得被软判死污染
+
+
+def test_death_evidence_reason_truthful_when_below_threshold() -> None:
+    """回归（R2-F1）：未达阈值时 reason 不得谎称 "> 7200s"（审计可信性）。"""
+    now = time.time()
+    ev = ledger._death_evidence({"last_activity": now - 100.0, "pid": 0}, now)
+    assert "<= 7200s" in ev["reason"]
+    assert "> 7200s" not in ev["reason"]
+    ev2 = ledger._death_evidence({"last_activity": now - 80000.0, "pid": 0}, now)
+    assert "> 7200s" in ev2["reason"]
+
+
 # ---------------------------------------------------------------------------
 # CLI 冒烟：--scan / --list / --resolve
 # ---------------------------------------------------------------------------
