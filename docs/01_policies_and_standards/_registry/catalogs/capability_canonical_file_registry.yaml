@@ -59496,4 +59496,28 @@ creation_tokens:
   token: commitmap-cure-f2-label-candidates-20261003
   created_by: st-commitmap-chief-20261003
   capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f3_consumer_detail.csv
+  token: commitmap-cure-f3-consumer-detail-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f3_double_zero_list.csv
+  token: commitmap-cure-f3-double-zero-list-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f3_trigger_evidence.csv
+  token: commitmap-cure-f3-trigger-evidence-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f3_trigger_evidence_readme.md
+  token: commitmap-cure-f3-trigger-evidence-readme-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f3_zero_trigger_candidates.csv
+  token: commitmap-cure-f3-zero-trigger-candidates-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+  token: commitmap-cure-f4-casebook-mount-plan-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
 di_seam_exemptions: []
