@@ -6882,6 +6882,7 @@ entries:
   related_rulings: ["裁定#461", "裁定#478"]
   superseded_by: null
 - ruling_id: "裁定#480"
+  status: active
   session: st-commitmap-chief-20261003
   summary: |-
     Owner 2026-10-03 夜批复「全部按照你的建议开始施工」——提交链治本战役一次性授权包全批（呈批件
