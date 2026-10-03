@@ -59484,4 +59484,16 @@ creation_tokens:
   token: commitmap-cure-f2-label-candidates-20261003
   created_by: st-commitmap-chief-20261003
   capability: commitmap_cure
+- file: docs/_working/commitmap_cure/00_design_basis.md
+  token: commitmap-cure-00-design-basis-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/01_review_adjudications.md
+  token: commitmap-cure-01-review-adjudications-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f2_label_candidates.csv
+  token: commitmap-cure-f2-label-candidates-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
 di_seam_exemptions: []
