@@ -6,7 +6,9 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] SessionRegistry S4-D 分片存储（2026-09-30）：主真源=.runtime/session_registry/<sid>.json 每会话一片（per-pid tmp+os.replace+WinError5 退避原语义），写只碰本会话片（整表重写竞态拆面治本——AI-NORTH-001 心跳互踩/WinError5 连锁/#ARCH-324 的结构性病根）；读侧聚合（损坏/缺失片跳过+审计，损失半径=单片），旧单表迁移窗双写为只读兼容副本（直读消费者 watchdog/write_audit_daemon/commit_queue/check_commit_message 不受扰），片目录缺席回退旧表；回退手柄 env ZEPHYR_SESSION_REGISTRY_SHARDS=0；公共 save()=merge-upsert 永不删（删除只能走 unregister/list_active 收割显式意图）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；last_activity 独立活性锚点（#ARCH-HEARTBEAT-002 治本 2026-07-23：仅 register/claim_file/register_dependency 刷新，heartbeat 不刷新，daemon 检测 idle 超 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s 自动退出，消除僵尸 daemon 永久保活死 session 的活性反转）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）；register 频率护栏（wave4-D V5 治本 2026-10-01）：同 session 活条目 _REREGISTER_MIN_INTERVAL_SECONDS（=idle 上限+2×30s）窗内重注册=降级执行（状态按实参重建+四时间锚 start_time/last_heartbeat/last_activity/last_register_ts 冻结+审计，防 keeper 循环伪造 last_activity 且窗不被刷延长），logical（请求参或既有条目）豁免 FULL 刷新、死条目放行=合法重启、既有条目 logical=True 重建时继承（防 mark_logical 随整体重建静默丢标）；频率锚=last_register_ts 独立字段（旧条目缺省 0.0=无锚放行）
+# [INVARIANTS] 裁定#480 C-2 活性合流（2026-10-03）：liveness_verdict=单一活性裁决表（纯只读折算，8 套活性机制零改动继续在岗作数据源——内收式合流非重写）；优先级 P1 接管待决 TAKEOVER-PENDING(dead) > P2 回魂违规 REINCARNATION-VIOLATION(ghost，重注册窗内非 logical 反复投胎) > P3 幽灵无主 GHOST-NO-SHARD(ghost，注册表无片+无心跳>90s) > P4 判死 PID-DEAD/TTL-EXPIRED/HEARTBEAT-STALE(dead，③15m 墓碑宽限折入 reason) > P5 降级 RATE-GUARD-DOWNGRADED/DAEMON-IDLE-OVERDUE(degraded，④1860s 降级窗/④b1800s 守护自退) > P6 存活 REGISTRY-FRESH(alive)；阈值全部复用既有常量（90/900/1800/1860/3600）且同向边界（> 判违规，恰等于阈值=未越界）；唯一结论=state+authoritative_signal，低级命中仅作 reasons 旁证不改变结论
 # [MODIFY-GUARD]
+# [MODIFY-GUARD] 2026-10-03 sid=st-sB-surgery-20261003 裁定#480 C-2 活性合流施工：新增 liveness_verdict 单一裁决表（纯只读折算，8 机制内部逻辑零改动、继续在岗作数据源）；裁决优先级/信号面/四态语义变更须与 tests/governance/test_liveness_verdict_20261003.py 同批，禁止反向改动既有函数签名/行为
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -43,12 +45,14 @@ __all__ = [
     "ConcurrencyManager",
     "ConflictType",
     "LockLevel",
+    "LivenessVerdict",
     "SessionConflictDetector",
     "SessionHandoff",
     "SessionInfo",
     "SessionRegistry",
     "ZephyrLock",
     "detect_mtime_conflict",
+    "liveness_verdict",
 ]
 
 import hashlib
@@ -1452,3 +1456,299 @@ class SessionConflictDetector:
                 if self._registry.claim_file(session_id, fp):
                     allocated.append(fp)
         return allocated
+
+
+# ---------------------------------------------------------------------------
+# 裁定#480 C-2 活性合流（2026-10-03，sid=st-sB-surgery-20261003）：单一活性裁决表
+#
+# 病根：8 套活性机制（①注册 SessionRegistry 分片②心跳 90s 窗③收割 15m 墓碑宽限
+# ④V5 重注册降级窗 1860s ④b 守护自退 1800s ⑤回魂闸 ⑥ghost 拾取闸⑦接管自拦截）
+# 同问一件事"这个会话还活着吗"却互相打架（战役期间自己吃自己 19 次）。
+# 治本（内收式，非重写）：本段**只新增**一张只读裁决表 liveness_verdict，把 8 信号
+# 按固定优先级折算成唯一结论；8 机制内部逻辑零改动，继续作为数据源在岗。
+# ---------------------------------------------------------------------------
+
+# 审计目录名（与 _audit_register_rate_rejected/_audit_register_reanimation 写入面同名）
+_VERDICT_AUDIT_DIRNAME: str = "session_registry_audit"
+# 接管台账路径（scripts/governance/session_takeover_ledger.py 的 _LEDGER_REL 同真源，
+# 直读不 import——裁决表是消费面，零 import 零写副作用，台账缺失=无信号 fail-open）
+_VERDICT_TAKEOVER_LEDGER_REL: str = ".runtime/takeover_ledger.jsonl"
+
+
+@dataclass(frozen=True)
+class LivenessVerdict:
+    """单一活性裁决结论（裁定#480 C-2）。
+
+    state 四态（大白话）：
+      - ``alive``    ：各活性判据全过（心跳新鲜 / PID 在岗且 TTL 内）；
+      - ``degraded`` ：还活着但活性锚已弱（V5 降级重建冻结中 / 守护超期未自退）；
+      - ``dead``     ：判死（PID 死 / 心跳超窗 / TTL 兜底 / 接管台账立案压倒）；
+      - ``ghost``    ：无主幽灵（注册表无片+无心跳 / 回魂违规反复投胎）。
+
+    reasons 按裁决优先级排序（``reasons[0]`` 即获胜级的大白话解释，Owner 可读；
+    低优先级命中作为旁证追加，不改变结论）。authoritative_signal 为获胜级的
+    机制信号名（稳定字符串，供程序消费，勿做展示翻译）。
+    """
+
+    session_id: str
+    state: str
+    reasons: list[str] = field(default_factory=list)
+    authoritative_signal: str = ""
+    checked_at: float = 0.0
+
+
+def _verdict_read_entry(root: Path, session_id: str) -> dict | None:
+    """只读读会话注册条目（S4-D 读语义镜像：片优先、旧表兜底、kill-switch 尊重）。
+
+    与 ``SessionRegistry._get_entry`` 同语义但零写副作用（不实例化、不 mkdir）——
+    裁决表是消费面不是写入面。损坏片/损坏表=无条目（单片跳过同语义，损失半径=单片）。
+    """
+    if _shards_enabled():
+        shard = root / ".runtime" / _REGISTRY_SHARDS_DIRNAME / SessionRegistry._shard_filename(session_id)
+        try:
+            if shard.exists():
+                content = shard.read_text(encoding="utf-8")
+                if content.strip():
+                    data = json.loads(content)
+                    if isinstance(data, dict):
+                        return data
+        except (OSError, ValueError):
+            pass  # 损坏片跳过 → 旧表兜底（读侧聚合同语义）
+    try:
+        legacy_path = root / _REGISTRY_PATH
+        if legacy_path.exists():
+            content = legacy_path.read_text(encoding="utf-8")
+            if content.strip():
+                data = json.loads(content)
+                if isinstance(data, dict):
+                    got = data.get(session_id)
+                    return got if isinstance(got, dict) else None
+    except (OSError, ValueError):
+        return None
+    return None
+
+
+def _verdict_heartbeat_file_age(root: Path, session_id: str, now: float) -> float | None:
+    """心跳文件（.runtime/sessions/<sid>/heartbeat.jsonl）距今秒数；缺失/不可读=None。
+
+    与 ``SessionRegistry._has_fresh_heartbeat`` 同路径同证据族，但返回年龄而非布尔
+    ——裁决表 90s（ghost 判据）与 120s（回魂外部佐证窗）两个窗口都要用同一份数。
+    """
+    hb = root / ".runtime" / "sessions" / session_id / "heartbeat.jsonl"
+    try:
+        if hb.exists():
+            return max(now - hb.stat().st_mtime, 0.0)
+    except OSError:
+        return None
+    return None
+
+
+def _verdict_last_audit_event(root: Path, filename: str, session_id: str) -> dict | None:
+    """读 .runtime/session_registry_audit/<filename> 中该 sid 最近一条事件（只读）。
+
+    损坏行跳过（审计是留痕面不是裁决面，单行损坏不致命——与台账 _read_lines 同哲学）。
+    """
+    path = root / ".runtime" / _VERDICT_AUDIT_DIRNAME / filename
+    try:
+        if not path.exists():
+            return None
+        last: dict | None = None
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(rec, dict) and rec.get("session_id") == session_id:
+                last = rec  # 顺序扫描取最后一条（append-only 语义下最后=最新）
+        return last
+    except OSError:
+        return None
+
+
+def _verdict_iso_epoch(value: object) -> float | None:
+    """审计记录 ts（UTC ISO8601 字符串，_utc_iso 同格式）→ epoch 秒；缺失/畸形=None。"""
+    try:
+        dt = datetime.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.timestamp()
+
+
+def _verdict_takeover_open(root: Path, session_id: str) -> dict | None:
+    """接管台账（⑦ takeover_pending_gate L3 门禁同源数据面）该 sid 的 open 条目。
+
+    直读 jsonl（load_open_entries 同格式），取最后一条 open（同 sid 多行以最新为准）；
+    台账缺失/损坏=无信号（fail-open，与死亡显化钩子三重降级哲学一致）。
+    """
+    path = root / _VERDICT_TAKEOVER_LEDGER_REL
+    try:
+        if not path.exists():
+            return None
+        open_row: dict | None = None
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(row, dict) and row.get("sid") == session_id and row.get("status") == "open":
+                open_row = row
+        return open_row
+    except OSError:
+        return None
+
+
+def liveness_verdict(session_id: str, *, now: float | None = None) -> LivenessVerdict:
+    """单一活性裁决表（裁定#480 C-2 活性合流）——8 机制信号只读折算成唯一结论。
+
+    纯读函数：不写任何文件、不 mkdir、不改任何机制状态；8 机制继续在岗，本表只
+    消费它们的数据面（①分片注册表②③注册表心跳字段④④⑤审计 JSONL⑥心跳文件
+    ⑦接管台账/PID 探测）。
+
+    优先级（高→低；首个命中级定 state 与 authoritative_signal，低级命中仍进
+    reasons 作旁证——唯一结论=state+authoritative_signal，不因旁证漂移）：
+
+      P1 接管待决 TAKEOVER-PENDING          → dead（⑦ 台账 open 条目压倒一切）
+      P2 回魂违规 REINCARNATION-VIOLATION   → ghost（⑤ 重注册窗内非 logical 反复投胎）
+      P3 幽灵无主 GHOST-NO-SHARD            → ghost（⑥ 注册表无片+无心跳>90s）
+      P4 判死 PID-DEAD / TTL-EXPIRED /
+         HEARTBEAT-STALE                    → dead（①PID+TTL 双轨/②90s 心跳窗；
+                                                ③15m 墓碑宽限状态折入 reason）
+      P5 降级 RATE-GUARD-DOWNGRADED /
+         DAEMON-IDLE-OVERDUE                → degraded（④V5 1860s 窗/④b1800s 自退）
+      P6 存活 REGISTRY-FRESH                → alive
+
+    边界与既有判据严格同向（全部 ``>`` 判违规，恰等于阈值=未越界）：心跳 90s
+    （_is_session_alive 同口径）、TTL 3600s、idle 1800s、降级窗 1860s（V5 护栏
+    ``(now - last_reg) < 窗`` 同口径——恰好窗长=窗已过、不再降级）。
+    """
+    t = time.time() if now is None else float(now)  # noqa: m46-time — 裁决时刻（缺省实参取当下，对标 register 同模式）
+    root = anchor_main_root(Path.cwd())
+    entry = _verdict_read_entry(root, session_id)
+    hb_age = _verdict_heartbeat_file_age(root, session_id, t)
+    hb_file_fresh = hb_age is not None and hb_age <= _HEARTBEAT_TIMEOUT_SECONDS
+    pid_e = int(entry.get("pid") or 0) if entry else 0
+
+    state: str | None = None
+    signal: str = ""
+    reasons: list[str] = []
+
+    # ---- P1 接管待决（⑦ 接管自拦截：L3 门禁与死亡显化钩子同源台账）----
+    if _verdict_takeover_open(root, session_id) is not None:
+        state, signal = "dead", "TAKEOVER-PENDING"
+        reasons.append(
+            "接管待决：接管台账里还有这个会话的未处置 open 条目（它已被死亡显化钩子立案）——"
+            "在有人按台账处方接管并 resolve 之前，一律当死会话对待，别信它自己的任何活性信号"
+        )
+
+    # ---- P2 回魂违规（⑤ 回魂闸：重注册窗内非 logical 反复投胎）----
+    reanim_event = _verdict_last_audit_event(root, "register_reanimation.jsonl", session_id)
+    reanim_recent = False
+    if reanim_event is not None:
+        ts = _verdict_iso_epoch(reanim_event.get("ts"))
+        reanim_recent = ts is not None and (t - ts) < _REREGISTER_MIN_INTERVAL_SECONDS
+    static_reanim = bool(
+        entry
+        and pid_e <= 0
+        and not (entry.get("held_files") or [])
+        and not (entry.get("task_files") or [])
+        and not (hb_age is not None and hb_age < SessionRegistry._REANIMATION_HEARTBEAT_WINDOW)
+        and (
+            int(entry.get("reincarnation_count") or 0) >= SessionRegistry._REINCARNATION_LIMIT
+            or (
+                float(entry.get("start_time") or 0.0) > 0.0
+                and (t - float(entry.get("start_time") or 0.0)) > SessionRegistry._MAX_SESSION_LIFETIME_SECONDS
+            )
+        )
+    )
+    if reanim_recent or static_reanim:
+        if state is None:
+            state, signal = "ghost", "REINCARNATION-VIOLATION"
+        reasons.append(
+            "回魂违规：这个会话条目在反复投胎（降级窗内非 logical 重注册被回魂闸拦截，或投胎"
+            "次数已超上限）——典型保活循环体征，看着在干活其实没有工作面；活性锚已被冻结，按幽灵处理"
+        )
+
+    # ---- P3 ghost 无主（⑥ ghost 拾取闸口径：注册表无片+无心跳>90s）----
+    if entry is None and not hb_file_fresh:
+        if state is None:
+            state, signal = "ghost", "GHOST-NO-SHARD"
+        reasons.append(
+            "幽灵会话：注册表里没有它的分片（旧表也没有），心跳文件缺失或已超 90s——"
+            "没有任何在岗证据，按 ghost 拾取口径直接归无主"
+        )
+
+    # ---- P4 判死（①PID+TTL 双轨 / ②90s 心跳窗；③ 墓碑宽限折入 reason）----
+    if entry is not None:
+        hb_stale = t - float(entry.get("last_heartbeat") or 0.0)
+        grace_over = hb_stale > _REAP_GRACE_SECONDS
+        grace_note = (
+            "已超 15 分钟收割宽限，物理记录将被/已被收割"
+            if grace_over
+            else "尚在 15 分钟墓碑宽限内（判死已成事实，记录暂留供 worker 证3 与死亡显化钩子消费）"
+        )
+        if pid_e > 0:
+            if not is_pid_alive(pid_e):
+                if state is None:
+                    state, signal = "dead", "PID-DEAD"
+                reasons.append(f"进程已死：条目绑定的 pid={pid_e} 已不存在（PID 轨零窗口判死）；{grace_note}")
+            elif hb_stale > _SESSION_TTL_SECONDS:
+                if state is None:
+                    state, signal = "dead", "TTL-EXPIRED"
+                reasons.append(f"心跳超 TTL：pid>0 双判据的 3600s 兜底已过（心跳距今 {hb_stale:.0f}s）；{grace_note}")
+        elif hb_stale > _HEARTBEAT_TIMEOUT_SECONDS:
+            if state is None:
+                state, signal = "dead", "HEARTBEAT-STALE"
+            reasons.append(f"心跳停止：pid=0 逻辑会话心跳距今 {hb_stale:.0f}s 已超 90s 窗；{grace_note}")
+
+    # ---- P5 降级（④ V5 降级窗 1860s / ④b 守护自退 1800s）----
+    if entry is not None:
+        guard_event = _verdict_last_audit_event(root, "register_rate_guard.jsonl", session_id)
+        if guard_event is not None:
+            ts = _verdict_iso_epoch(guard_event.get("ts"))
+            if ts is not None and (t - ts) < _REREGISTER_MIN_INTERVAL_SECONDS:
+                if state is None:
+                    state, signal = "degraded", "RATE-GUARD-DOWNGRADED"
+                reasons.append(
+                    "降级重建中：1860s 重注册窗内被 V5 频率护栏降级过（四个时间锚冻结中）——"
+                    "会话还活着但活性不被续期；真在干活请走 claim/mark_logical 合法通道"
+                )
+        la = float(entry.get("last_activity") or 0.0)
+        if (
+            pid_e <= 0
+            and not bool(entry.get("logical", False))
+            and la > 0.0
+            and (t - la) > _ACTIVITY_IDLE_TIMEOUT_SECONDS
+        ):
+            if state is None:
+                state, signal = "degraded", "DAEMON-IDLE-OVERDUE"
+            reasons.append(
+                f"守护超期未退：距上次真实治理操作已 {(t - la):.0f}s 超 1800s 自退线，"
+                "心跳守护按设计早该自己退出——活性锚没随真实操作刷新，按降级对待"
+            )
+
+    # ---- P6 存活（以上全未命中）----
+    if state is None:
+        state, signal = "alive", "REGISTRY-FRESH"
+        if entry is None:
+            reasons.append("存活（旁证）：注册表暂无条目但心跳文件新鲜（90s 内）——守护在岗，下次治理操作会懒注册")
+        elif pid_e > 0:
+            reasons.append(f"存活：pid={pid_e} 进程在岗且心跳在 3600s TTL 内（PID+TTL 双判据全过）")
+        else:
+            reg_hb_age = t - float(entry.get("last_heartbeat") or 0.0)
+            reasons.append(f"存活：pid=0 逻辑会话心跳新鲜（注册表心跳距今 {reg_hb_age:.0f}s，未超 90s 窗）")
+
+    return LivenessVerdict(
+        session_id=session_id,
+        state=state,
+        reasons=reasons,
+        authoritative_signal=signal,
+        checked_at=t,
+    )
