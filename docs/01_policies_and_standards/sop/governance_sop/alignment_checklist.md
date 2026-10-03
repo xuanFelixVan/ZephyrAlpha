@@ -7,8 +7,8 @@ title: 全项目对齐清单——全图全库+代码文档三层对齐规则（
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
-date: 2026-09-15
+version: "1.7.0"
+date: 2026-10-03
 topic: full_project_alignment_checklist
 scope: global
 depends_on:
@@ -62,7 +62,7 @@ related_modules:
 
 ## 3. 第一层：全景图对齐（全图全库对齐之"图"）
 
-> 全景图现 10 张：depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map/trading_decision_map/industry_chain_map + 策略生产全景图（strategy_production_map，2026-09-13 九图升级：E0-E9 供给端全景 `config/strategy_production_map.yaml`，D38"新图必挂总线"同源——结构校验器/对抗测试先行落地 681a7fc806，FACTORY-MAP gate+本挂轴同批闭环）+ 治理运行地图（governance_operations_map，2026-09-15 十图升级 #ARCH-312：治理运行时流水线骨架机生+人工语义层，`config/governance_operations_map.yaml`，D38"新图必挂总线"同源挂轴）
+> 全景图现 11 张：depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map/trading_decision_map/industry_chain_map + 策略生产全景图（strategy_production_map，2026-09-13 九图升级：E0-E9 供给端全景 `config/strategy_production_map.yaml`，D38"新图必挂总线"同源——结构校验器/对抗测试先行落地 681a7fc806，FACTORY-MAP gate+本挂轴同批闭环）+ 治理运行地图（governance_operations_map，2026-09-15 十图升级 #ARCH-312：治理运行时流水线骨架机生+人工语义层，`config/governance_operations_map.yaml`，D38"新图必挂总线"同源挂轴）+ 数据供给链图（data_supply_chain_map，图 12，2026-10-03 十一图升级 st-vm12surg-20261003：外部源→采集→入库→衍生→冷备→对账修复双层图 `config/data_supply_chain_map.yaml` schema 0.3，D38 同源挂轴——validator/DATA-SUPPLY-CHAIN-MAP gate/对抗测试/挂轴同批闭环，gate 补件兑现生成器 [CONSUMERS] 自 09-25 的幽灵声明）
 
 | 图名 | 真源 | 对齐 key | 对齐规则 | 对齐时机 | 对齐工具 | 失败处置 |
 |---|---|---|---|---|---|---|
@@ -76,18 +76,20 @@ related_modules:
 
 **全图统一验证命令（单命令跑全图+注册表层+代码文档抽查）**：
 ```powershell
-python scripts/governance/d5_architecture/generators/align_all.py  # 全图全库统一入口：图 1-5 自动 + 图 6/7 校验内嵌 + 第五节注册表层满贯（19 文件/21 段+字典FK+CAND 转正链+治理双向）+ 第六节文档抽查 + 第七节产业链图 8 + 第八节策略工厂图 9 + 第九节治理运行地图图 10，硬>0=exit 1
+python scripts/governance/d5_architecture/generators/align_all.py  # 全图全库统一入口：图 1-5 自动 + 图 6/7 校验内嵌 + 第五节注册表层满贯（19 文件/21 段+字典FK+CAND 转正链+治理双向）+ 第六节文档抽查 + 第七节产业链图 8 + 第八节策略工厂图 9 + 第九节治理运行地图图 10 + 第十节数据供给链图 12，硬>0=exit 1
 python scripts/governance/d5_architecture/generators/check_frontend_map.py  # 图 6 单独跑（快速诊断用）
 python scripts/governance/d5_architecture/generators/check_decision_map.py  # 图 7 单独跑（快速诊断用）
 python scripts/industry_graph/graph_quality_check.py --json -  # 图 8 数据层单独跑（引擎判定权）
 python scripts/governance/d5_architecture/validators/validate_strategy_production_map.py  # 图 9 单独跑（结构+仓储存在性全量，快速诊断用）
+python scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py  # 图 12 单独跑（结构全量+血肉分阶段，快速诊断用）
 ```
 
 | **industry_chain_map**（产业链全景图，图 8，2026-09-11 八图升级） | PG industry_chain 表组 + `config/chainmap_cluster_names.yaml` | chain_id（节点经锚点链挂 module_id，MOD 总线两跳） | git 侧：字典↔DDL↔引擎三方同 commit 同步（结构四边）+簇名词表 sanity；数据层：S1-S21 合格线引擎体检（判定权=graph_quality_check，AI 只修复不判定） | align_all 第 7 节恒跑 / 链数据 apply 后 / 触及 git 侧工件 commit 时 | [graph_quality_check.py](../../../scripts/industry_graph/graph_quality_check.py)（数据层）+ **INDUSTRY-CHAIN-MAP gate（priority=141）**（git 侧硬阻断）+ [check_registry_code_anchor 同源共享核心 registry_alignment](../../../src/zephyr/gov_enforcement/registry_alignment.py) | git 侧违规→阻断 commit；数据层违规→引擎判定+align_all 报告（长城专项清欠中，非 advisory 清零后升硬） |
 | **strategy_production_map**（策略生产全景图/策略工厂，图 9，2026-09-13 九图升级） | `config/strategy_production_map.yaml`（git YAML 真源） | node_id（FAC-*） | 结构十项校验（字段完整性/边引用闭合/E0-E9 层位/laws/产品清单/built 必有代码锚/lane 归属/未声明反馈环/自环/store_refs 三要素）error>0=阻断；仓储存在性（磁盘路径+CH 表）error=硬、CH 连接异常=warn、待定入库位=warn | commit 前（触发式 gate：图 YAML/校验器变更）/ align_all 第 8 节 | [validate_strategy_production_map.py](../../../scripts/governance/d5_architecture/validators/validate_strategy_production_map.py) 校验器 + **FACTORY-MAP gate（commit 自动阻断，priority=142）**（校验单一真源=validate_structure 动态复用；仓储存在性归 align_all/CLI，CH 环境异常不误伤提交） | 结构 error>0→阻断 commit；仓储缺失→align_all 硬报告 |
 | **governance_operations_map**（治理运行地图，图 10，2026-09-15 十图升级 #ARCH-312） | `config/governance_operations_map.yaml`（git YAML 真源，机生，生成器=[generate_governance_map.py](../../../../scripts/governance/generate_governance_map.py)） | module_id（机生层）/ import spec（人工层） | 机生层 families 与生成器 scan() 重建逐模块比对（忽略 generated_at/counts）；人工层 mounts/disconnected import spec 磁盘实存（已删墓碑凭 note 豁免计软）+GOM-L0..L6 层位合法+disconnected 必带 note | commit 前 / align_all 第九节 | align_all 第九节（免独立校验器/免 gate，触发率实证后再议） | error>0 阻断（align_all exit 1）；已删墓碑 warn 待清理 |
+| **data_supply_chain_map**（数据供给链图，图 12，2026-10-03 十一图升级 st-vm12surg-20261003） | `config/data_supply_chain_map.yaml`（git YAML 真源，双层：机生层全量重建+人工语义层 existing-wins，生成器=[generate_data_supply_chain_map.py](../../../scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py)） | node_id（DSC-*）+ module_id（MOD 总线） | CV-L0/BUS/**BLOOD**/DUAL/FACET/GAP/WAIT 结构校验 error>0=阻断（血肉四字段 purpose_tag/casebooks/trigger_facts/consumers 分阶段：blood_stage=f1_pending 缺键降 warn／f2_done 转硬——挂图 SOP §4）；落地即挂图 warn 腿（触及数据域蓝图的 commit 其 MOD 号未挂图→留痕不拦，F2 血肉满+覆盖账本绿后随裁定翻硬） | commit 前（触发式 gate：图 YAML+生成器+校验器+tasks/schedule/scheduler+资产册+path_ownership+数据域蓝图族）/ align_all 第十节 | [validate_data_supply_chain_map.py](../../../scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py) 校验器 + **DATA-SUPPLY-CHAIN-MAP gate（经 MAP-ALIGNMENT 聚合台 subs 接入）**（校验单一真源=validate_structure 动态复用）+ 对抗测试 [test_data_supply_chain_map_gate.py](../../../tests/governance/commit_gates/test_data_supply_chain_map_gate.py) | 结构 error>0→阻断 commit；血肉未满（f1_pending）→warn 注记放行；图 YAML 损坏→fail-closed |
 
-**硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）；全景图 git 侧工件违规（FRONTEND-MAP/DECISION-MAP/INDUSTRY-CHAIN-MAP/FACTORY-MAP gate）；治理运行地图 error>0（align_all 第九节，图 10 行）
+**硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）；全景图 git 侧工件违规（FRONTEND-MAP/DECISION-MAP/INDUSTRY-CHAIN-MAP/FACTORY-MAP/**DATA-SUPPLY-CHAIN-MAP** gate）；治理运行地图 error>0（align_all 第九节，图 10 行）；数据供给链图结构 error>0（align_all 第十节，图 12 行）
 
 ## 4. 第二层：注册表对齐
 
@@ -235,6 +237,7 @@ python scripts/governance/d5_architecture/validators/validate_strategy_productio
 | 2026-09-11 | 1.4.0 | **八图满贯（全图全库对齐施工批）**：①§3 新增图 8 产业链全景图行（chain_id 轴+INDUSTRY-CHAIN-MAP gate 141+graph_quality_check 引擎判定）；②§4.1 BUSINESS-REGISTRY gate 6→19 文件/21 段满贯扩容（基线 1463 条目 100% 实证，逻辑真源=registry_alignment.py 三方同源）；③§4.4 rule_catalog 行工具落地四边 checker 真源链接；④新增 §4.6 字典/Schema 类（两本字段字典 FK/结构四边）；⑤§6/§7 时机矩阵与处置表补三行；⑥depgraph 存在性 SQL 治本（nodes.module_id 列不存在→blueprint_id，原子检查自上线恒 fail-open）；⑦406 条域级占位锚正名（MOD-FACTOR→MOD-L02-001 等 7 组）+FCT-SENT-028 inputs FK 修复+字典补 3 字段 | 四方对齐机制升级为全图全库对齐的 Owner 指令；实施细节见收尾报告 |
 | 2026-09-15 | 1.6.0 | **十图升级（GOMAP 转正，#ARCH-312）**：①§3 新增图 10 治理运行地图行（module_id/import spec 双轴：机生层与生成器 scan() 重建比对+人工层 mounts/disconnected 路径实存+层位合法+disconnected 必带 note；工具=align_all 第九节，免独立校验器/免 gate，触发率实证后再议）；②计数命名合规清理（#ARCH-ALIGN-NAMING-001）：frontmatter 标题/§3 标题去"九图满贯"改"全图全库对齐"，引言/§3 数量改"现 10 张"动态口径，硬阻断条件行去计数命名；③统一验证命令块更新（align_all 加第九节图 10） | Owner 2026-09-15 放行 GOMAP 转正为全景图体系图 10（battle_map 定位措辞同步升级，语义与机制零变更）；实施细节见收尾报告 |
 | 2026-09-19 | —（§11 节增；frontmatter 版本/日期行按“只增节不改行”约束未动，下次全量修订时一并升版） | 新增 §11 全景图唯一性裁定（Owner 2026-09-19） | W4-5 TDM 唯一地图裁定落地（final3 战役）；裁定号补登归 00_master_directive §X-0 裁定登记批 |
+| 2026-10-03 | 1.7.0 | **十一图升级（图 12 数据供给链图挂轴，st-vm12surg-20261003 手术批）**：①§3 新增图 12 行（node_id+module_id 双轴：CV 规则族结构校验+血肉四字段 blood_stage 分阶段+落地即挂图 warn 腿；工具=validate_data_supply_chain_map+DATA-SUPPLY-CHAIN-MAP gate 经 MAP-ALIGNMENT 聚合台 subs，优先级 146）+引言计数 10→11；②gate 补件=兑现生成器 [CONSUMERS] 自 2026-09-25 声明的幽灵消费方（文档说有实则没有型缺陷治本）；③schema 0.2→0.3（挂图 SOP §4 四字段进 L1 菜单，加性迁移语义层继承）；④对抗测试 13 例含 6 能红（伪造枚举/自造标签/production 缺 trigger_facts/图例越界/YAML 损坏 fail-closed/触发式 skip） | 挂图 SOP（vertical_map_mounting_policy.md 2026-10-03 立）向纵轴地图家族通用化落地第一图；血肉填充（F2 批）与目的标签 Owner 终审随后 |
 
 ## 11. 全景图唯一性裁定（Owner 2026-09-19）
 
