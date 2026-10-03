@@ -1024,3 +1024,16 @@ entries:
     en: one-off work sequencing (verbal use only, no standing table)
     zh: 排程（动词性用法，禁作表名）
     description: 裁定#388（2026-09-21）——战役级一次性任务排序活动（如「四路遗留排程总包」），产出总台账+派工单，事毕即废；项目无常驻「排程表」，常驻者唯排班（业务）与排期（资源）两族
+  - category: tdm_coverage_status
+    en: mounted
+    zh: 已挂
+    description: 人口 module_id ∈ TDM 挂载面（module_id 集 ∪ module_ref 折算模块集）
+  - category: tdm_coverage_status
+    en: unmounted_orphan
+    zh: 未挂孤儿
+    description: 人口 module_id ∉ 挂载面（红区，初挂草案输入全集）
+  - category: tdm_coverage_status
+    en: cross_domain_mount
+    zh: 跨域挂载
+    description: 挂载面 id 属域 ∉ 23 交易域人口域集（外域模块伸手进交易流程）
+  # ───────── edge_type：决策/数据流边类型（decision + dataflow 共享）─────────

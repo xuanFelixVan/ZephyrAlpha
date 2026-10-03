@@ -59616,4 +59616,14 @@ creation_tokens:
   created_by: st-vm12surg-20261003
   capability: vertical_map
   merge_evaluation: "F2血肉批施工模板=挂图SOP七步流水线步3-6的执行载体，随schema0.3手术批同批落地"
+- file: docs/_working/tdm_mount/B_coverage_ledger_v1.md
+  token: tdm-mount-b-coverage-ledger-v1-20261003
+  created_by: st-tdm-mount-flash-20261003
+  capability: tdm_mount
+  merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件（A清单/B账本/C初挂草案/D confidence草案）为总筹裁决输入，账本为活体真源"
+- file: docs/_working/tdm_mount/B_coverage_ledger_v1.yaml
+  token: tdm-mount-b-coverage-ledger-v1-20261003
+  created_by: st-tdm-mount-flash-20261003
+  capability: tdm_mount
+  merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件（A清单/B账本/C初挂草案/D confidence草案）为总筹裁决输入，账本为活体真源"
 di_seam_exemptions: []
