@@ -228,3 +228,63 @@ class TestParamsAndAnalyze:
         r1 = m.analyze(*args)
         r2 = m.analyze(*args)
         assert r1 == r2
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 宏观敏感度投影（L08-WO-2：MacroRegimeSensor→caution_factor/tier 附注位）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestMacroProjection:
+    @pytest.fixture(autouse=True)
+    def _hermetic_macro(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """全文件气密：缺省 live 读数桩化（不触真传感器/CH），既有用例零感知。"""
+        monkeypatch.setattr(
+            "zephyr.regime.style_regime_model._default_macro_reading",
+            lambda: {"caution_factor": 0.85, "tier": "cautious", "weather_score": 32.0},
+        )
+
+    _ARGS = ([0.03, 0.02], [0.01, 0.01], [0.02, 0.02], [0.01, 0.01])
+
+    def test_a_sensor_ok_macro_attached(self) -> None:
+        """a 传感器正常（注入桩）→ 合成包含宏观项（caution_factor/tier 附注）。"""
+        reading = _model(macro_reading_provider=lambda: {"caution_factor": 1.1, "tier": "cautious"}).analyze(
+            *self._ARGS
+        )
+        assert reading.macro_caution_factor == pytest.approx(1.1)
+        assert reading.macro_tier == "cautious"
+        # 注入优先于缺省桩：缺省桩 0.85 未被采用
+        assert reading.macro_caution_factor != pytest.approx(0.85)
+
+    def test_a2_default_provider_used_when_not_injected(self) -> None:
+        """未注入 → 走缺省读数（本文件已桩化=live 惰性位被调用的证据）。"""
+        reading = _model().analyze(*self._ARGS)
+        assert reading.macro_caution_factor == pytest.approx(0.85)
+        assert reading.macro_tier == "cautious"
+
+    def test_b_sensor_exception_degrades(self) -> None:
+        """b 传感器异常 → 降级置 None，风格合成照常产出（不阻断）。"""
+
+        def _boom() -> dict[str, object]:
+            raise RuntimeError("sensor down")
+
+        reading = _model(macro_reading_provider=_boom).analyze(*self._ARGS)
+        assert reading.macro_caution_factor is None
+        assert reading.macro_tier is None
+        assert reading.current is StyleState.LARGE_VALUE  # 主合成不受影响
+
+    def test_b2_bad_reading_degrades(self) -> None:
+        """读数非法（非 Mapping/NaN caution）→ 同降级置 None。"""
+        r1 = _model(macro_reading_provider=lambda: "not-a-mapping").analyze(*self._ARGS)  # type: ignore[arg-type,return-value]
+        assert r1.macro_caution_factor is None and r1.macro_tier is None
+        r2 = _model(macro_reading_provider=lambda: {"caution_factor": float("nan"), "tier": "no_data"}).analyze(
+            *self._ARGS
+        )
+        assert r2.macro_caution_factor is None
+        assert r2.macro_tier == "no_data"  # tier 合法字符串照附注，caution 非有限→None
+
+    def test_no_macro_fields_default_none(self) -> None:
+        """直接构造 StyleReading（旧调用方）→ 宏观字段默认 None（向后兼容）。"""
+        from dataclasses import fields
+
+        assert {f.name for f in fields(StyleReading)} >= {"macro_caution_factor", "macro_tier"}

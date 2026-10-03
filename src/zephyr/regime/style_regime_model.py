@@ -1,11 +1,12 @@
 # [BLUEPRINT] MOD-REGIME-014 | docs/03_modules/_domain_regime/style_regime_model/blueprint.md
 # [MODULE] zephyr.regime.style_regime_model
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] 无（风格序列/规则分档/防抖纯内存；hmm_runner 与参数映射全注入）
+# [DEPENDENCIES] 无（风格序列/规则分档/防抖纯内存；hmm_runner/macro_reading_provider 与参数映射全注入；
+#                 L08-WO-2 宏观敏感度惰性挂 MacroRegimeSensor，异常降级零硬依赖）
 # [CONSUMERS] 运行时装配批（风格参数档查找 / MOD-SIG-130 三维矩阵风格轴复用）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 风格序列=大小盘收益差+价值成长收益差(等长非空有限); 风格态词表闭合(大盘价值|大盘成长|小盘价值|小盘成长); hmm_runner 未注入降级规则分档(差值正负+幅度阈值，带内未决); HMM 输出标签须词表内且等长; 切换确认=连续N期同向防抖(未决期不破旧态); 参数映射4态必填全; 同输入必同输出
+# [INVARIANTS] 风格序列=大小盘收益差+价值成长收益差(等长非空有限); 风格态词表闭合(大盘价值|大盘成长|小盘价值|小盘成长); hmm_runner 未注入降级规则分档(差值正负+幅度阈值，带内未决); HMM 输出标签须词表内且等长; 切换确认=连续N期同向防抖(未决期不破旧态); 参数映射4态必填全; 宏观投影=注入优先/缺省 live 惰性读数/任何异常降级置 None 不阻断(L08-WO-2); 同输入必同输出
 # [MODIFY-GUARD] docs/03_modules/_domain_regime/style_regime_model/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -86,6 +87,20 @@ def size_axis_of(state: StyleState) -> SizeAxis:
     return SizeAxis.SMALL
 
 
+def _default_macro_reading() -> Mapping[str, object]:
+    """L08-WO-2 宏观敏感度 live 读数：MacroRegimeSensor.score()（as_of=None 现值面）。
+
+    先例=llm_premarket_analysis（080fdfec WO-1 同款接法）：惰性导入+异常透传，
+    降级责任在调用方（analyze 合成入口捕获后降级置 None，不阻断风格合成）。
+    测试经 macro_reading_provider 注入桩，不打真传感器。
+    """
+    # 目标模块=他会话 st-menu-w3h-20260930 沙盘在途件（盘上已存在、未 merge 进 HEAD）；
+    # WO-2 消费侧先行接线，运行时 import 可达——行级豁免随其 merge 后可摘。
+    from zephyr.regime.features import macro_regime_sensor  # noqa: import-integrity  他会话沙盘在途件未merge
+
+    return macro_regime_sensor.MacroRegimeSensor().score()
+
+
 @dataclass(frozen=True)
 class StyleParams:
     """风格→策略参数档（frozen）。"""
@@ -109,7 +124,8 @@ class StyleReading:
 
     raw_states 元素为 None 表示该期未决（规则降级下双差值之一落在幅度
     阈值带内）；confirmed_states 为防抖确认序列（与输入等长，前导未决
-    期回填首个确认态）。
+    期回填首个确认态）。宏观敏感度两字段（L08-WO-2）为附注位：传感器
+    正常=caution_factor/tier 现值；异常/缺省不可得=None（降级不阻断）。
     """
 
     size_spread: tuple[float, ...]
@@ -119,6 +135,8 @@ class StyleReading:
     current: StyleState
     params: StyleParams
     used_hmm: bool
+    macro_caution_factor: float | None = None  # L08-WO-2 MacroRegimeSensor 月级谨慎度因子
+    macro_tier: str | None = None  # L08-WO-2 supportive/neutral/cautious 档位
 
 
 class StyleRegimeModel:
@@ -131,6 +149,7 @@ class StyleRegimeModel:
         hmm_runner: Callable[[tuple[float, ...], tuple[float, ...]], Sequence[str]] | None = None,
         magnitude_threshold: float = 0.005,
         confirm_periods: int = 3,
+        macro_reading_provider: Callable[[], Mapping[str, object]] | None = None,
     ) -> None:
         if not math.isfinite(magnitude_threshold) or magnitude_threshold < 0.0:
             raise StyleRegimeError(f"幅度阈值非法: {magnitude_threshold!r}（须 ≥0 有限）")
@@ -148,6 +167,7 @@ class StyleRegimeModel:
         self._hmm_runner = hmm_runner
         self._magnitude = magnitude_threshold
         self._confirm_periods = confirm_periods
+        self._macro_reading_provider = macro_reading_provider  # L08-WO-2 注入优先；None=缺省 live 惰性
 
     # ── 风格序列构建 ─────────────────────────────────────────────────────
 
@@ -256,6 +276,29 @@ class StyleRegimeModel:
         first = next(x for x in confirmed if x is not None)
         return tuple(x if x is not None else first for x in confirmed)
 
+    # ── 宏观敏感度投影（L08-WO-2：MacroRegimeSensor→caution_factor/tier） ────
+
+    def _macro_projection(self) -> tuple[float | None, str | None]:
+        """宏观读数 → (caution_factor, tier)；注入优先，缺省 live 惰性，异常降级 (None, None)。
+
+        降级契约（仿 llm_premarket_analysis WO-1）：传感器任何异常/读数非法=本项
+        降级置 None 不阻断风格合成（风格态判定不依赖宏观项，宏观仅附注位）。
+        """
+        try:
+            reading = (self._macro_reading_provider or _default_macro_reading)()
+            if not isinstance(reading, Mapping):
+                raise TypeError(f"macro reading 须为 Mapping: {type(reading).__name__}")
+            caution = reading.get("caution_factor")
+            tier = reading.get("tier")
+            caution_f = float(caution) if isinstance(caution, (int, float)) and not isinstance(caution, bool) else None
+            if caution_f is None or not math.isfinite(caution_f):
+                _log.warning("宏观 caution_factor 不可用，降级置 None: %r", caution)
+                caution_f = None
+            return caution_f, str(tier) if tier is not None else None
+        except Exception as exc:  # noqa: BLE001 — 传感器异常=降级跳过不炸（WO-2 降级契约）
+            _log.warning("宏观传感器读数异常，降级跳过（风格合成不含宏观项）: %s", exc)
+            return None, None
+
     # ── 参数映射查询 ───────────────────────────────────────────────────────
 
     def params_for(self, state: StyleState) -> StyleParams:
@@ -284,6 +327,7 @@ class StyleRegimeModel:
         raw, used_hmm = self.identify_raw(size_spread, value_spread)
         confirmed = self.confirm(raw)
         current = confirmed[-1]
+        macro_caution, macro_tier = self._macro_projection()
         return StyleReading(
             size_spread=size_spread,
             value_spread=value_spread,
@@ -292,4 +336,6 @@ class StyleRegimeModel:
             current=current,
             params=self.params_for(current),
             used_hmm=used_hmm,
+            macro_caution_factor=macro_caution,
+            macro_tier=macro_tier,
         )
