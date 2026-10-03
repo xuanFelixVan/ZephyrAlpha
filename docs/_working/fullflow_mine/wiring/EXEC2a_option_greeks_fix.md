@@ -57,5 +57,8 @@ _load_option_symbols_from_kline(CH)→OK → _get_option_detail_safe(QMT)→None
 ## 6. 变更清单
 
 - `src/zephyr/data/implementations/miniqmt_provider.py`（+模块级常量/日历兜底/缓存读写 3 函数；+4 方法；`from pathlib import Path` 导入）
-- `data/runtime/process_reaper_keep.txt`（长批防误杀登记 2 行）
-- 本报告 + creation_token 登记（CREATE-GUARD）
+- `data/runtime/process_reaper_keep.txt`（长批防误杀登记 2 行，git-ignored 运行件）
+- 本报告（已登记 creation_token `wiring-reports-exec2a-option-greeks-fix-20261003`）
+- 提交：`84bb7f8d`（2 files，git log -1 --name-only 核实无搭便车外来件）
+
+移交注：capability_canonical_file_registry.yaml 的 token 登记行已落盘（batch_creation_tokens.py 正常写入），因该册同文件携带他批 5.7 万行 staged 重生成内容，本批不携带，留待下一重生成批入库（投影册未拒收，属批次拆分）。
