@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # S04 · D 段 交易决策消费链（F37-F52，✅14 🔨1 ⬜1）

@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.2.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # 全流通数据挖矿接线战役——总包台账（st-datasop-20260930）

@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 > 本批次已入账：commit e405020493，generate_wiring_registry --check rc=0

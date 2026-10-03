@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # L8 宏观/大宗/海外族 数据用途挖矿作业簿

@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # L07 另类数据族数据用途挖矿作业簿（深圳环境气象+台风+航运+评论+FX）

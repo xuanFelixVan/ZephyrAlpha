@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # L06 车道：情绪/涨停/T0 信号族数据用途挖矿

@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # L10b 回测库（c1_backtest 16 表）+ 治理库（governance.db 45 表）+ data/ 目录挖矿作业簿

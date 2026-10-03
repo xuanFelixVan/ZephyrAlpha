@@ -6,7 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # L12 孤儿技术指标 115 + 孤儿因子 126 三分法挖矿作业簿
