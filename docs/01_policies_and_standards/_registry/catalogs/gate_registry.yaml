@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-10-01T20:20:31Z'
+generated_at: '2026-10-03T21:12:09Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 182
+total_gates: 184
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -922,6 +922,18 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: DATA-SUPPLY-CHAIN-MAP
+  name: 'DATA-SUPPLY-CHAIN-MAP: 图12（数据供给链图）结构校验门（DATA-SUPPLY-CHAIN-MAP，经 MAP-ALIGNMENT
+    聚合台）（CommitGate, priority=146）'
+  entry: in-process (GitCommitGateway)
+  description: 图12（数据供给链图）结构校验门（DATA-SUPPLY-CHAIN-MAP，经 MAP-ALIGNMENT 聚合台）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: DATETIME-NOW-FORBIDDEN
   name: 'DATETIME-NOW-FORBIDDEN: DATETIME-NOW-FORBIDDEN（CommitGate, priority=34）'
@@ -2114,6 +2126,21 @@ gates:
   category: serialization
   status: active
   source: commit-gateway
+  enforcement_channel: commit-gateway
+- gate_id: GATE-PRECOMMIT-RUN
+  name: 'GATE-PRECOMMIT-RUN: 落地前 own-scope pre-commit run 通道（超时 fail-closed，E4 治本）'
+  entry: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_run_precommit_channel（in-process
+    机制，非独立钩子）
+  description: 裁定#341 方案②落地前校验通道：GIT_INDEX_FILE 临时索引 own-scope pre-commit run（SKIP=gate-commit-gw,gate-worktree-required；own
+    归因阻断/存量债 warn+审计）。E4 治本（10aca61f22c 2026-09-30）：超时 fail-closed 拒袋留处方（瞬态负载退避 requeue，回退手柄
+    env ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1）；非超时设施故障 fail-open（可用性优先）；hook 改写文件复跑仍变异=fail-closed（提交内容与校验内容不一致）。own_scope=True
+    依 P4 注记（own-scope 临时索引面板）。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gateway
+  own_scope: true
   enforcement_channel: commit-gateway
 - gate_id: GATE-SCHEMA-HEALTH
   name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'

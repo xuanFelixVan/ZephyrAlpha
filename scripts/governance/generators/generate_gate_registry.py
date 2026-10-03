@@ -519,6 +519,30 @@ MANUAL_GATES: list[dict] = [
         "enforcement_channel": "in-process",
     },
     {
+        # GATE-PRECOMMIT-RUN 实名登记（登记债，st-tclose-gateops-20261004 补登 2026-10-04）：
+        # 落地前校验通道（P4）内联于 git_commit_gateway.py 的 _run_precommit_channel，
+        # 既非 .pre-commit-config.yaml 钩子亦非 commit_gates/ 独立 GateSpec 文件——
+        # 生成器三源合并会漏（先例=上方 COMMIT-CRITICAL-SECTION-LOCK 裁定#347/#372）。
+        # 实役语义（10aca61f22c E4 治本 2026-09-30）：超时=fail-closed 拒袋留处方
+        # （回退手柄 env ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1 恢复 #341 fail-open）；
+        # 非超时设施故障维持 fail-open；hook 改写文件复跑后仍变异=fail-closed。
+        "gate_id": "GATE-PRECOMMIT-RUN",
+        "name": "GATE-PRECOMMIT-RUN: 落地前 own-scope pre-commit run 通道（超时 fail-closed，E4 治本）",
+        "entry": "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_run_precommit_channel（in-process 机制，非独立钩子）",
+        "description": "裁定#341 方案②落地前校验通道：GIT_INDEX_FILE 临时索引 own-scope pre-commit run"
+        "（SKIP=gate-commit-gw,gate-worktree-required；own 归因阻断/存量债 warn+审计）。"
+        "E4 治本（10aca61f22c 2026-09-30）：超时 fail-closed 拒袋留处方（瞬态负载退避 requeue，"
+        "回退手柄 env ZEPHYR_PRECOMMIT_TIMEOUT_FAILOPEN=1）；非超时设施故障 fail-open（可用性优先）；"
+        "hook 改写文件复跑仍变异=fail-closed（提交内容与校验内容不一致）。"
+        "own_scope=True 依 P4 注记（own-scope 临时索引面板）。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "active",
+        "source": "commit-gateway",
+        "own_scope": True,
+    },
+    {
         "gate_id": "GATE-SCHEMA-HEALTH",
         "name": "GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）",
         "entry": "N/A (merged into GATE-C2, see redirect_to)",
