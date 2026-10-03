@@ -1,0 +1,2428 @@
+# 图9 策略工厂 F3 实测事实抽取（trigger_facts + consumers）
+# 会话: st-map9-f3-20261003 | 日期: 2026-10-03 | 前置门: fac9_01_mount_candidates.yaml 已在 HEAD（db394dfb23，已验证）
+# 纪律: 全程零 DB 连接/零裸 SQL——DB 计数只落查询处方（db_prescriptions 节），交总筹代跑
+# consumers 口径: 语料=src/scripts/tests/config 的 py+yaml；已剔除 6 张地图文件（挂载指针不算消费）；tests 单列不计入 live 判据
+ttl: task_bound
+completes_when: 总筹消化本 facts 并入挂载批（F2/内收对审）后，本件转归档
+census_of: fac9_01_mount_candidates.yaml (HEAD db394dfb23)
+counts:
+  scope_rows: 330
+  scanned_with_py_path: 256
+  no_py_path_unscanned: 74
+  consumers_zero: 89
+  consumers_tests_only: 62
+  consumers_weak_le2: 64
+  consumers_live_ge3: 41
+  db_prescriptions: 8
+trigger_facts:
+  strategy_intake: {"raw_manifest": {"rows": 598, "source": "wc -l data/strategy_intake/raw_manifest.csv"}, "screen_c2": {"rows": 598, "source": "wc -l data/strategy_intake/screen_c2.csv"}, "lane_b_candidates": {"rows": 16, "source": "wc -l data/strategy_intake/lane_b_candidates.csv"}, "lane_c_candidates": {"rows": 17, "source": "wc -l data/strategy_intake/lane_c_candidates.csv"}, "lane_c2_candidates": {"rows": 9, "source": "wc -l data/strategy_intake/lane_c2_candidates.csv"}, "lane_chain_candidates": {"rows": 11, "source": "wc -l data/strategy_intake/lane_chain_candidates.csv"}, "lane_f_candidates": {"rows": 3701, "source": "wc -l data/strategy_intake/lane_f_candidates.csv"}, "lane_g_candidates": {"rows": 1, "source": "wc -l data/strategy_intake/lane_g_candidates.csv"}, "lane_g_seen_urls": {"rows": 6, "source": "wc -l data/strategy_intake/lane_g_seen_urls.csv"}, "three_high_candidates": {"rows": 41, "source": "wc -l data/strategy_intake/three_high_candidates.csv"}, "translated_manifest": {"rows": 6, "source": "wc -l data/strategy_intake/translated_manifest.csv"}, "constructed_manifest": {"rows": 2, "source": "wc -l data/strategy_intake/constructed_manifest.csv"}, "c4_deferrals": {"rows": 322, "source": "wc -l data/strategy_intake/c4_deferrals.csv"}, "f06_survivors": {"rows": 2, "source": "wc -l data/strategy_intake/f06_survivors.csv"}, "normalized_files": {"rows": 6, "source": "ls data/strategy_intake/normalized/"}, "grid_batches": {"rows": 29, "source": "ls -d data/strategy_intake/grid_*"}, "grid_manifest_rows_total": {"rows": 24667, "source": "cat data/strategy_intake/grid_*/manifest.csv | wc -l（29 批合并，含表头）"}, "grid_negatives_rows_total": {"rows": 51, "source": "cat data/strategy_intake/grid_*/negatives.csv | wc -l（含表头）"}, "conditional_tables_rows": {"rows": 4436, "source": "cat data/strategy_intake/conditional_tables/*.csv | wc -l（5 文件，含表头）"}, "promotion_advisories": {"rows": 1, "source": "ls data/strategy_intake/promotion_advisories/"}}
+  backtest_artifacts: {"runs_batch_dirs": {"rows": 191, "source": "find data/backtest_artifacts/runs -maxdepth 1 -type d（含 runs 自身 -1；前缀 SCR-C4×31/SCR-DEV×54/SCR-SIMGOV×53/SCR-OUTPOST×20/SCR-LIFE×3/VAL-×24/E4-×4/其它×5）"}, "bt_run_json": {"rows": 60, "source": "ls data/backtest_artifacts/bt-*.json"}, "bt_fw_run_json": {"rows": 27, "source": "ls data/backtest_artifacts/bt-fw-*.json"}, "bt_tick_run_json": {"rows": 2, "source": "ls data/backtest_artifacts/bt-tick-*.json"}, "fw_auto": {"rows": 6, "source": "ls data/backtest_artifacts/fw-auto"}, "drills": {"rows": 4, "source": "ls data/backtest_artifacts/drills"}, "t0_rule_engine_files": {"rows": 266, "source": "ls data/backtest_artifacts/t0_rule_engine"}, "league_files": {"rows": 4, "source": "find data/backtest_artifacts/league -type f"}, "translated_py_on_disk": {"rows": 90, "source": "ls scripts/backtest/translated/*.py（对比 map 挂号 35 验收集+backlog）"}}
+  runtime_state: {"strategy_pipeline_journal_lines": {"rows": 1, "source": "wc -l .runtime/strategy_pipeline/pending_events.jsonl（事件排水后近空）"}, "daily_decision_marker": {"rows": 1, "source": "ls .runtime/strategy_pipeline/"}, "logs_total_files": {"rows": 577, "source": "ls .runtime/logs/ | wc -l（18M）"}, "logs_factory_lane": {"rows": 3, "source": "ls .runtime/logs/ | grep -cE 'factory|lane_|f06'"}, "logs_grid": {"rows": 5, "source": "ls .runtime/logs/grid*"}, "logs_paper_session": {"rows": 1, "source": "ls .runtime/logs/paper*"}, "logs_c4_exam": {"rows": 1, "source": "ls .runtime/logs/c4*"}}
+  registries: {"strategy_registry_entries": {"rows": 161, "source": "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（yaml 解析计数）；lifecycle: candidate=151/backtest=8/sim=2；status: active=19/candidate=139/deprecated=3"}, "trial_ledger_entries": {"rows": 8, "source": "docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml（yaml entries 计数，MOD-BT-200 消费面）"}, "factor_casebook_db": {"rows": 0, "source": "find data -name 'factor_casebook*' 零命中——册有蓝图无实例（§3 病历完备性红证据）"}}
+db_prescriptions:
+
+  - table: c1_backtest.strategy_screen
+    prescription: "SELECT count() AS rows, uniqExact(strategy_id) AS strategies, max(screen_batch) AS latest_batch FROM c1_backtest.strategy_screen"
+    note: "E4 考试成绩主台账（FAC-E4 store_refs 真源）；近 30 天触发电=加 WHERE created_at >= now()-INTERVAL 30 DAY（列名以 DESC TABLE 实勘为准）"
+  - table: c1_backtest.hypothesis_precheck
+    prescription: "SELECT count() AS rows, countIf(verdict='pass') AS pass_cnt, countIf(verdict!='pass') AS reject_cnt FROM c1_backtest.hypothesis_precheck"
+    note: E2 预审判定台账（MOD-BT-091/152/153）；列名 verdict 以 DESC TABLE 实勘为准
+  - table: c1_backtest.sim_daily_report
+    prescription: "SELECT count() AS rows, uniqExact(trade_date) AS days FROM c1_backtest.sim_daily_report"
+    note: E7 模拟盘日刊台账（MOD-BT-223 表结构）
+  - table: c1_backtest.regime_snapshot_history
+    prescription: SELECT count() AS rows FROM c1_backtest.regime_snapshot_history
+    note: MOD-REGIME-001 消费证据位（E8 元分配输入）
+  - table: c1_backtest.alloc_budget_daily
+    prescription: "SELECT count() AS rows, uniqExact(trade_date) AS days FROM c1_backtest.alloc_budget_daily"
+    note: E8 sleeve 落库（PP-001 三件套，batch_plan_json.sleeve 读面=SQL_SLEEVE_DAY_SLICE）
+  - table: c1_backtest.decision_daily
+    prescription: SELECT count() AS rows FROM c1_backtest.decision_daily
+    note: MOD-BT-212 日度决策快照表
+  - table: n_trials（trial_ledger_registry.yaml）
+    prescription: "磁盘册已计（entries=8）；若需 CH 侧核对其 summary.json 源，查 data/strategy_intake/grid_*/summary.json 文件数"
+    note: MOD-BT-200 为文件册非 CH 表
+  - table: factor_casebook（SQLite data/databases/factor_casebook.db）
+    prescription: "盘面无实例（find 零命中）；若建成后：SELECT verdict, count() FROM cases GROUP BY verdict"
+    note: 册蓝图 MOD-L02-027；当前=零触发实证
+modules:
+- module_id: MOD-BT-151
+  stage: E0
+  py_paths: ["scripts/backtest/compute_window_gate.py"]
+  consumers_total: 9
+  consumers_non_test_total: 8
+  buckets: {"config": 2, "scripts": 3, "src": 3, "tests": 1}
+  consumers_top20: ["config/comparison_policy.yaml", "config/resource_profile_registry.yaml", "scripts/backtest/factory_grid_executor.py", "scripts/backtest/t1_t2_handover.py", "scripts/governance/generators/generate_resource_profile_registry.py", "src/zephyr/backtest/__init__.py", "src/zephyr/backtest/core/batch_window_preflight.py", "src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py", "tests/model/test_exam_trigger_scheduler.py"]
+- module_id: MOD-BT-154
+  stage: E1
+  py_paths: ["scripts/backtest/factory_intake_pipeline.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/lane_g_stomach_intake.py"]
+- module_id: MOD-BT-035
+  stage: E1A
+  py_paths: ["scripts/backtest/intake_load_screen_c2.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-150
+  stage: E1B
+  py_paths: ["scripts/backtest/lane_b_idea_generator.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-155
+  stage: E1C
+  py_paths: ["scripts/backtest/lane_c_formula_miner.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-090
+  stage: E1D
+  py_paths: ["scripts/backtest/three_high_screen.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/governance/meta_question/wo007/build_ckg_prior_tier.py"]
+- module_id: MOD-BT-084
+  stage: E1E
+  py_paths: ["scripts/backtest/lane_e_quantile_baseline.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-AUTO-E1G-001
+  stage: E1G
+  py_paths: ["scripts/backtest/lane_g_stomach_intake.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/automation/intel_harvester.py"]
+- module_id: MOD-BT-091
+  stage: E2
+  py_paths: ["scripts/backtest/hypothesis_precheck.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-041..075
+  stage: E3
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-039
+  stage: E4
+  py_paths: ["scripts/backtest/translated/_c4_engine.py"]
+  consumers_total: 98
+  consumers_non_test_total: 92
+  buckets: {"config": 0, "scripts": 89, "src": 3, "tests": 6}
+  consumers_top20: ["scripts/backtest/cost_accounting_ruler.py", "scripts/backtest/exam_cost_reexam.py", "scripts/backtest/reexam_cpcv_harness.py", "scripts/backtest/translated/_valuation_engine.py", "scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py", "scripts/backtest/translated/c4_091fee38cd01_alpha022.py", "scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py", "scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py", "scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py", "scripts/backtest/translated/c4_21af8c66c15e_small_cap.py", "scripts/backtest/translated/c4_25028ae0c266_high_div5y.py", "scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py", "scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py", "scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py", "scripts/backtest/translated/c4_311220235636_slater_value.py", "scripts/backtest/translated/c4_311220235636_zulu_value.py", "scripts/backtest/translated/c4_40ca0da1a3ca_value55.py", "scripts/backtest/translated/c4_40ca0da1a3ca_value_improved.py", "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py", "scripts/backtest/translated/c4_4879b2c6f2bb_div_value.py"]
+- module_id: MOD-BT-086
+  stage: E5
+  py_paths: ["src/zephyr/pf_alloc/core/synergy_dedup.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_synergy_dedup.py"]
+- module_id: MOD-BT-078
+  stage: E6
+  py_paths: ["scripts/backtest/strategy_screen_query.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 1, "src": 1, "tests": 0}
+  consumers_top20: ["scripts/backtest/strategy_lifecycle_advisor.py", "src/zephyr/frontend/dashboard/api_server.py"]
+- module_id: MOD-BT-225
+  stage: E7
+  py_paths: ["src/zephyr/strategy_pipeline/paper_outpost.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/strategy_pipeline/pipeline_events.py", "tests/strategy_pipeline/test_paper_outpost.py"]
+- module_id: MOD-PA-002..024
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-003
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-004
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-007
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-013
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-014
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-015
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-022
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-002
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PA-006
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-RK-16
+  stage: E9
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-001
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/cost_model_calibration.py"]
+  consumers_total: 14
+  consumers_non_test_total: 9
+  buckets: {"config": 0, "scripts": 1, "src": 8, "tests": 5}
+  consumers_top20: ["scripts/backtest/eval_exp_expectations.py", "src/zephyr/backtest/core/cost_attribution.py", "src/zephyr/backtest/core/matching_engine.py", "src/zephyr/backtest/core/matching_logic.py", "src/zephyr/backtest/io/result_repository.py", "src/zephyr/strategy_factory/owner_band_t/__init__.py", "src/zephyr/strategy_factory/owner_band_t/costs.py", "src/zephyr/strategy_factory/owner_regime_switcher/__init__.py", "src/zephyr/strategy_factory/owner_regime_switcher/costs.py", "tests/backtest/test_bt_financial_correctness_p0.py", "tests/backtest/test_cost_attribution.py", "tests/backtest/test_cost_model_calibration.py", "tests/backtest/test_cost_model_wiring.py", "tests/scripts/test_build_consensus_daily_repaired.py"]
+- module_id: MOD-BT-006
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-018
+  stage: E6
+  py_paths: ["src/zephyr/backtest/services/decay_monitor.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_decay_monitor.py"]
+- module_id: MOD-BT-019
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/report_generator.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_report_generator.py"]
+- module_id: MOD-BT-020
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/cache_manager.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/backtest/services/param_analyzer.py", "tests/backtest/test_cache_manager.py", "tests/backtest/test_param_analyzer.py"]
+- module_id: MOD-BT-021
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/param_analyzer.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_param_analyzer.py"]
+- module_id: MOD-BT-022
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/data_quality_checker.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/backtest/services/anomaly_diagnoser.py", "tests/backtest/test_anomaly_diagnoser.py", "tests/backtest/test_data_quality_checker.py"]
+- module_id: MOD-BT-023
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/anomaly_diagnoser.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_anomaly_diagnoser.py"]
+- module_id: MOD-BT-024
+  stage: E5
+  py_paths: ["src/zephyr/backtest/services/result_comparator.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_result_comparator.py"]
+- module_id: MOD-BT-027
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/layered_validation_pipeline.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_layered_validation_pipeline.py"]
+- module_id: MOD-BT-028
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/strategy_cpcv_matrix.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 1}
+  consumers_top20: ["scripts/backtest/reexam_cpcv_harness.py", "tests/backtest/test_strategy_cpcv_matrix.py"]
+- module_id: MOD-BT-032
+  stage: E4
+  py_paths: ["scripts/backtest/print_regime_history.py"]
+  consumers_total: 3
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 0, "src": 3, "tests": 0}
+  consumers_top20: ["src/zephyr/plan_engine/daily_loop_master_switch.py", "src/zephyr/strategy_pipeline/fw_backtest.py", "src/zephyr/strategy_pipeline/pipeline_events.py"]
+- module_id: MOD-BT-033
+  stage: E4
+  py_paths: ["scripts/backtest/compare_state_dualrun.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-034
+  stage: E4
+  py_paths: ["scripts/backtest/validate_p0_cost.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-036
+  stage: E3
+  py_paths: ["scripts/backtest/translated/pilot_001_ml_multifactor.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-037
+  stage: E3
+  py_paths: ["scripts/backtest/translated/pilot_002_ma_cross.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-038
+  stage: E3
+  py_paths: ["scripts/backtest/translated/pilot_003_zscore_meanrev.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-041
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py"]
+  consumers_total: 2
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 2}
+  consumers_top20: ["tests/strategy_pipeline/test_intake.py", "tests/strategy_pipeline/test_screen_source.py"]
+- module_id: MOD-BT-042
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_4440d07f973f_ultrashort.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/strategy_pipeline/test_intake.py"]
+- module_id: MOD-BT-043
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_b37f550ba2af_gftd.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-044
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_99873fd0bc17_macd_single.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-045
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-046
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_9c0424f53fe4_zscore_meanrev5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-047
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_e2e7f033d97c_kd_cross.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-048
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_c30a620e114d_boll_break.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-049
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_c21459b71a42_boll_np.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-050
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_c7a8ddbab748_ma10_ma5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-051
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-052
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-053
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_f284270f0ef0_macd_timing.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-054
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-055
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_6485e4cd0844_kdj_timing.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-056
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_5efe26d1992e_rsrs_timing.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-057
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_eaddc3f9db4e_rsrs_r2.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-058
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_d06cab686cef_rsrs_opt.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-059
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-060
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-061
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_a4543012b464_trend5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-062
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-063
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-064
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_6a6ec8869ddb_momentum62.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-065
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-066
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_9c0136ec8f42_kucoffee_trend.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-067
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-068
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-069
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_6cb29d4d9ba8_mom_rev_300.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-070
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_c4ec6332c07f_trend_score.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-071
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_091fee38cd01_alpha022.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-072
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_93aa8f5a2bdd_multi_period.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-073
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_fdbc279fba99_rps_oinl.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-074
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-075
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_ea8b60272c03_300etf_1060.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-076
+  stage: E4
+  py_paths: ["scripts/backtest/c4_batch_screen.py"]
+  consumers_total: 50
+  consumers_non_test_total: 50
+  buckets: {"config": 1, "scripts": 48, "src": 1, "tests": 0}
+  consumers_top20: ["config/search_space_prereg.yaml", "scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py", "scripts/backtest/translated/c4_091fee38cd01_alpha022.py", "scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py", "scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py", "scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py", "scripts/backtest/translated/c4_21af8c66c15e_small_cap.py", "scripts/backtest/translated/c4_25028ae0c266_high_div5y.py", "scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py", "scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py", "scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py", "scripts/backtest/translated/c4_311220235636_slater_value.py", "scripts/backtest/translated/c4_311220235636_zulu_value.py", "scripts/backtest/translated/c4_40ca0da1a3ca_value55.py", "scripts/backtest/translated/c4_40ca0da1a3ca_value_improved.py", "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py", "scripts/backtest/translated/c4_4879b2c6f2bb_div_value.py", "scripts/backtest/translated/c4_5efe26d1992e_rsrs_timing.py", "scripts/backtest/translated/c4_6485e4cd0844_kdj_timing.py", "scripts/backtest/translated/c4_68cc0a6b40ba_value_select.py"]
+- module_id: MOD-BT-077
+  stage: E4
+  py_paths: ["tests/backtest/test_c4_batch_smoke.py"]
+  consumers_total: 86
+  consumers_non_test_total: 86
+  buckets: {"config": 0, "scripts": 86, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/backfill_stock_indicator_daily_basic.py", "scripts/backtest/c4_batch_screen.py", "scripts/backtest/sim_paper_ledger.py", "scripts/backtest/translated/_c4_engine.py", "scripts/backtest/translated/_valuation_engine.py", "scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py", "scripts/backtest/translated/c4_091fee38cd01_alpha022.py", "scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py", "scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py", "scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py", "scripts/backtest/translated/c4_21af8c66c15e_small_cap.py", "scripts/backtest/translated/c4_25028ae0c266_high_div5y.py", "scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py", "scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py", "scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py", "scripts/backtest/translated/c4_311220235636_slater_value.py", "scripts/backtest/translated/c4_311220235636_zulu_value.py", "scripts/backtest/translated/c4_40ca0da1a3ca_value55.py", "scripts/backtest/translated/c4_40ca0da1a3ca_value_improved.py", "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py"]
+- module_id: MOD-BT-080
+  stage: MAP
+  py_paths: ["scripts/governance/d5_architecture/validators/validate_strategy_production_map.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py", "tests/governance/commit_gates/test_strategy_factory_map_gate.py"]
+- module_id: MOD-BT-081
+  stage: MAP
+  py_paths: ["tests/backtest/test_strategy_production_map_adversarial.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/governance/d5_architecture/validators/validate_strategy_production_map.py"]
+- module_id: MOD-BT-082
+  stage: E8
+  py_paths: ["src/zephyr/pf_alloc/core/vol_target_allocator.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/pf_alloc/test_vol_target_allocator.py"]
+- module_id: MOD-BT-083
+  stage: E7
+  py_paths: ["scripts/ch/apply_sim_pocket_daily_ddl.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-088
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_68cc0a6b40ba_value_select.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-092
+  stage: E3
+  py_paths: ["scripts/backtest/panic_rebound_depth.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-094
+  stage: E7
+  py_paths: ["scripts/backtest/sim_governance.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 0}
+  consumers_top20: ["src/zephyr/strategy_pipeline/promotion_advisory.py"]
+- module_id: MOD-BT-096
+  stage: E3
+  py_paths: ["scripts/backtest/translated/_valuation_engine.py"]
+  consumers_total: 27
+  consumers_non_test_total: 27
+  buckets: {"config": 0, "scripts": 27, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/translated/c4_backlog2_mktcap5.py", "scripts/backtest/translated/c4_backlog2_wiz_largecap.py", "scripts/backtest/translated/c4_backlog3_div_roe5.py", "scripts/backtest/translated/c4_backlog3_growth_peg4.py", "scripts/backtest/translated/c4_backlog3_mclean_rev_accel.py", "scripts/backtest/translated/c4_backlog3_mclean_screen.py", "scripts/backtest/translated/c4_backlog3_novice_value5.py", "scripts/backtest/translated/c4_backlog3_pb_range_lowdebt.py", "scripts/backtest/translated/c4_backlog3_peg_ebit_tiny.py", "scripts/backtest/translated/c4_backlog3_peg_ebit_tiny2.py", "scripts/backtest/translated/c4_backlog3_peg_growth_tiny.py", "scripts/backtest/translated/c4_backlog3_roe_up_pb_low.py", "scripts/backtest/translated/c4_backlog3_value_roa5.py", "scripts/backtest/translated/c4_backlog3_value_roa5_v2.py", "scripts/backtest/translated/c4_backlog3_wiz61_growth_quality.py", "scripts/backtest/translated/c4_backlog3_wiz63_growth_pb2.py", "scripts/backtest/translated/c4_valuation_div_high.py", "scripts/backtest/translated/c4_valuation_pb_low.py", "scripts/backtest/translated/c4_valuation_pe_low.py", "scripts/backtest/translated/c4_valuation_pe_pb_double.py"]
+- module_id: MOD-BT-102
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_bd42540f86e4_pe_pb.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-103
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_311220235636_slater_value.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 2, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/translated/c4_40ca0da1a3ca_value55.py", "scripts/backtest/translated/c4_68cc0a6b40ba_value_select35.py"]
+- module_id: MOD-BT-104
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_68cc0a6b40ba_value_select35.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-105
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_40ca0da1a3ca_value55.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-130
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-156
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_8664521af1a0_snake_cap.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-157
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_e8017cc1adc5_cheap_stock.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-160
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_pe_low.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-161
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_pb_low.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-162
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_div_high.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-163
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_pe_pb_double.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-164
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_pe_zz500.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-165
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_v2_pretty50_div.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-166
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_v2_pb_lowturn.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-167
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_v2_wiz_value1.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-168
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_v2_wiz_citics.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-169
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_v2_div_steady5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-170
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_valuation_v2_div_nopeg.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-172
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog2_mktcap5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-173
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_wiz63_growth_pb2.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-174
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_wiz61_growth_quality.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-175
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_pb_range_lowdebt.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-176
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_roe_up_pb_low.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-177
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_peg_ebit_tiny.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-178
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_peg_growth_tiny.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-179
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_peg_ebit_tiny2.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-180
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_growth_peg4.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-181
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_value_roa5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-182
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_value_roa5_v2.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-183
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_div_roe5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-184
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_mclean_screen.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-185
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_mclean_rev_accel.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-186
+  stage: E3
+  py_paths: ["scripts/backtest/translated/c4_backlog3_novice_value5.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-187
+  stage: E2
+  py_paths: ["src/zephyr/strategy_pipeline/bh_fdr.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/strategy_pipeline/intake.py", "tests/strategy_pipeline/test_bh_fdr.py", "tests/strategy_pipeline/test_redblue.py"]
+- module_id: MOD-BT-188
+  stage: E6
+  py_paths: ["src/zephyr/strategy_pipeline/lifecycle_fsm.py"]
+  consumers_total: 8
+  consumers_non_test_total: 4
+  buckets: {"config": 1, "scripts": 0, "src": 3, "tests": 4}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/strategy_pipeline/intake.py", "src/zephyr/strategy_pipeline/paper_outpost.py", "src/zephyr/strategy_pipeline/promotion_advisory.py", "tests/shared/lifecycle/test_registry_state_vocab.py", "tests/strategy_pipeline/test_intake.py", "tests/strategy_pipeline/test_lifecycle_fsm.py", "tests/strategy_pipeline/test_redblue.py"]
+- module_id: MOD-BT-189
+  stage: E6
+  py_paths: ["src/zephyr/strategy_pipeline/intake.py"]
+  consumers_total: 10
+  consumers_non_test_total: 7
+  buckets: {"config": 0, "scripts": 1, "src": 6, "tests": 3}
+  consumers_top20: ["scripts/backtest/sim_paper_ledger.py", "src/zephyr/pf_alloc/allocation_inputs.py", "src/zephyr/strategy_pipeline/bh_fdr.py", "src/zephyr/strategy_pipeline/lifecycle_fsm.py", "src/zephyr/strategy_pipeline/pipeline_events.py", "src/zephyr/strategy_pipeline/registry_writer.py", "src/zephyr/strategy_pipeline/screen_source.py", "tests/backtest/test_sim_paper_ledger.py", "tests/strategy_pipeline/test_intake.py", "tests/strategy_pipeline/test_redblue.py"]
+- module_id: MOD-BT-190
+  stage: E3
+  py_paths: ["src/zephyr/strategy_pipeline/pipeline_events.py"]
+  consumers_total: 28
+  consumers_non_test_total: 19
+  buckets: {"config": 0, "scripts": 2, "src": 17, "tests": 9}
+  consumers_top20: ["scripts/backtest/c4_batch_screen.py", "scripts/backtest/sim_governance.py", "src/zephyr/ai_layer/heritage/heritage_events.py", "src/zephyr/ai_layer/intake/intake_events.py", "src/zephyr/data/l9_readiness_aggregator.py", "src/zephyr/data/scheduler.py", "src/zephyr/plan_engine/close_verifier.py", "src/zephyr/plan_engine/daily_loop_master_switch.py", "src/zephyr/plan_engine/daily_plan.py", "src/zephyr/plan_engine/intraday_l1_tracker.py", "src/zephyr/plan_engine/judgment_ledger.py", "src/zephyr/plan_engine/judgment_settler.py", "src/zephyr/plan_engine/next_day_forecaster.py", "src/zephyr/plan_engine/scenario_classifier.py", "src/zephyr/risk/paper_hedge_leg.py", "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py", "src/zephyr/strategy_pipeline/fw_backtest.py", "src/zephyr/strategy_pipeline/intake.py", "src/zephyr/strategy_pipeline/promotion_advisory.py", "tests/pf_alloc/test_pf_alloc_event_wiring.py"]
+- module_id: MOD-BT-191
+  stage: E4
+  py_paths: ["src/zephyr/strategy_pipeline/screen_source.py"]
+  consumers_total: 6
+  consumers_non_test_total: 5
+  buckets: {"config": 0, "scripts": 1, "src": 4, "tests": 1}
+  consumers_top20: ["scripts/backtest/sim_promotion_memo.py", "src/zephyr/ai_layer/comparator/venue_c4.py", "src/zephyr/strategy_pipeline/intake.py", "src/zephyr/strategy_pipeline/paper_outpost.py", "src/zephyr/strategy_pipeline/promotion_advisory.py", "tests/strategy_pipeline/test_screen_source.py"]
+- module_id: MOD-BT-192
+  stage: E6
+  py_paths: ["src/zephyr/strategy_pipeline/registry_writer.py"]
+  consumers_total: 5
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 1, "src": 1, "tests": 3}
+  consumers_top20: ["scripts/backtest/sim_promotion_memo.py", "src/zephyr/strategy_pipeline/intake.py", "tests/strategy_pipeline/test_intake.py", "tests/strategy_pipeline/test_redblue.py", "tests/strategy_pipeline/test_registry_writer.py"]
+- module_id: MOD-BT-193
+  stage: E1D
+  py_paths: ["scripts/backtest/graph_enrich_staging.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 2, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/ch/irm_extract_batch.py", "scripts/governance/meta_question/wo007/build_ckg_prior_tier.py"]
+- module_id: MOD-BT-194
+  stage: E4
+  py_paths: ["scripts/backtest/distribution_forecast_eval.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-195
+  stage: E1E
+  py_paths: ["scripts/backtest/kronos_adapter.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-196
+  stage: E8
+  py_paths: ["src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py"]
+  consumers_total: 4
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 2}
+  consumers_top20: ["src/zephyr/pf_core/strategy_engine/framework_composer.py", "src/zephyr/strategy_pipeline/fw_backtest.py", "tests/backtest/test_h3h4_cash_pit_exec_chain.py", "tests/pf_core/test_translated_strategy_adapter.py"]
+- module_id: MOD-BT-197
+  stage: E4
+  py_paths: ["scripts/backtest/factory_grid_anova.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_f06_e2e_pipeline.py"]
+- module_id: MOD-BT-198
+  stage: E4
+  py_paths: ["src/zephyr/strategy_pipeline/fw_backtest.py"]
+  consumers_total: 11
+  consumers_non_test_total: 6
+  buckets: {"config": 0, "scripts": 2, "src": 4, "tests": 5}
+  consumers_top20: ["scripts/backtest/auto_mount.py", "scripts/backtest/generate_framework_plan_from_tdm.py", "src/zephyr/backtest/core/decision_gate.py", "src/zephyr/pf_core/strategy_engine/framework_composer.py", "src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py", "src/zephyr/strategy_pipeline/pipeline_events.py", "tests/backtest/test_c4_pit_universal_gate.py", "tests/backtest/test_h3h4_cash_pit_exec_chain.py", "tests/pf_alloc/test_pf_alloc_event_wiring.py", "tests/strategy_pipeline/test_fw_backtest.py", "tests/strategy_pipeline/test_pipeline_events.py"]
+- module_id: MOD-BT-199
+  stage: E7
+  py_paths: ["src/zephyr/strategy_pipeline/promotion_advisory.py"]
+  consumers_total: 13
+  consumers_non_test_total: 10
+  buckets: {"config": 0, "scripts": 1, "src": 9, "tests": 3}
+  consumers_top20: ["scripts/backtest/sim_governance.py", "src/zephyr/frontend/dashboard/api_server.py", "src/zephyr/frontend/dashboard/web/features/manifest.yaml", "src/zephyr/frontend/dashboard/web/frontend_map.yaml", "src/zephyr/shared/lifecycle/registry_state_vocab.py", "src/zephyr/signal_ashare/strategy_signal/strategy_decay_certifier.py", "src/zephyr/strategy_pipeline/lifecycle_fsm.py", "src/zephyr/strategy_pipeline/morning_digest.py", "src/zephyr/strategy_pipeline/paper_outpost.py", "src/zephyr/strategy_pipeline/pipeline_events.py", "tests/frontend/test_promotion_advisory_api.py", "tests/strategy_pipeline/test_morning_digest.py", "tests/strategy_pipeline/test_promotion_advisory.py"]
+- module_id: MOD-BT-200
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/n_trial_ledger.py"]
+  consumers_total: 14
+  consumers_non_test_total: 8
+  buckets: {"config": 0, "scripts": 7, "src": 1, "tests": 6}
+  consumers_top20: ["scripts/backtest/c4_batch_screen.py", "scripts/backtest/dsr_recalc_backfill.py", "scripts/backtest/exam_cost_reexam.py", "scripts/backtest/f06_e4_wfa_exam.py", "scripts/backtest/factory_grid_executor.py", "scripts/backtest/reexam_cpcv_harness.py", "scripts/governance/meta_question/wo_b2_e1c/e1c_ledger.py", "src/zephyr/backtest/core/metrics.py", "tests/backtest/test_f06_e2e_pipeline.py", "tests/backtest/test_n_trial_ledger.py", "tests/backtest/test_n_trial_ledger_t0_family.py", "tests/backtest/test_rb_stats_validator_teeth.py", "tests/backtest/test_reexam_cpcv_harness.py", "tests/backtest/test_trial_ledger_batch_record.py"]
+- module_id: MOD-BT-201
+  stage: E7
+  py_paths: ["scripts/backtest/forward_post.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/sim_daily_runner.py"]
+- module_id: MOD-BT-202
+  stage: E1C
+  py_paths: ["scripts/backtest/mcts_expression_search.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-203
+  stage: E1D
+  py_paths: ["scripts/backtest/graph_enrich_ingest.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/governance/meta_question/wo007/build_ckg_prior_tier.py"]
+- module_id: MOD-BT-204
+  stage: E1E
+  py_paths: ["scripts/backtest/kronos_finetune_pkl_prep.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: MOD-BT-211
+  stage: E4
+  py_paths: ["scripts/backtest/f06_e4_wfa_exam.py"]
+  consumers_total: 5
+  consumers_non_test_total: 4
+  buckets: {"config": 2, "scripts": 0, "src": 2, "tests": 1}
+  consumers_top20: ["config/exam_scale_cost_gate.yaml", "config/synergy_dedup.yaml", "src/zephyr/backtest/regime_validation/condition_package.py", "src/zephyr/backtest/regime_validation/exam_cost_gate.py", "tests/backtest/test_cost_gate_tier_wiring.py"]
+- module_id: MOD-BT-212
+  stage: E6
+  py_paths: ["schemas/categories/decision_daily.py"]
+  consumers_total: 4
+  consumers_non_test_total: 4
+  buckets: {"config": 0, "scripts": 2, "src": 2, "tests": 0}
+  consumers_top20: ["scripts/ch/apply_decision_daily_ddl.py", "scripts/governance/decision_chain_sentinel.py", "src/zephyr/frontend/dashboard/components/warroom.py", "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py"]
+- module_id: MOD-BT-213
+  stage: E6
+  py_paths: ["src/zephyr/strategy_pipeline/daily_gate_snapshot.py"]
+  consumers_total: 6
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 4}
+  consumers_top20: ["src/zephyr/signal_ashare/core/candidate_pool_snapshot.py", "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py", "tests/strategy_pipeline/test_daily_gate_snapshot_l2.py", "tests/strategy_pipeline/test_daily_gate_snapshot_l5.py", "tests/strategy_pipeline/test_daily_gate_snapshot_pool.py", "tests/strategy_pipeline/test_decision_orchestrator.py"]
+- module_id: MOD-BT-214
+  stage: E6
+  py_paths: ["src/zephyr/strategy_pipeline/daily_decision_orchestrator.py"]
+  consumers_total: 8
+  consumers_non_test_total: 4
+  buckets: {"config": 0, "scripts": 1, "src": 3, "tests": 4}
+  consumers_top20: ["scripts/governance/check_trd_a20_a21_dual_gates.py", "src/zephyr/plan_engine/daily_loop_master_switch.py", "src/zephyr/strategy_pipeline/daily_gate_snapshot.py", "src/zephyr/strategy_pipeline/pipeline_events.py", "tests/plan_engine/test_daily_loop_master_switch.py", "tests/strategy_pipeline/test_decision_orchestrator.py", "tests/strategy_pipeline/test_pipeline_events.py", "tests/zephyr/data/test_silent_latch_before_delivery.py"]
+- module_id: MOD-BT-215
+  stage: E9
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-218
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-222
+  stage: E7
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-223
+  stage: E7
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-226
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-228
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-231
+  stage: E1
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-232
+  stage: E7
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-BT-233
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-INF-016
+  stage: ""
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: SH-DB-001
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-LLM_SECURITY
+  stage: ""
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-INF-034
+  stage: ""
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-INF-035
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-RESCHED-GATE
+  stage: E0
+  py_paths: ["src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py"]
+  consumers_total: 12
+  consumers_non_test_total: 8
+  buckets: {"config": 0, "scripts": 4, "src": 4, "tests": 4}
+  consumers_top20: ["scripts/governance/generators/generate_resource_morning_report.py", "scripts/governance/generators/generate_resource_profile_registry.py", "scripts/governance/generators/generate_resource_week_view.py", "scripts/ops/schedule_overview.py", "src/zephyr/gov_enforcement/commit_gates/__init__.py", "src/zephyr/governance/audit/schedule_consistency_reconciler.py", "src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py", "src/zephyr/infrastructure/system_telemetry/resource_sampler.py", "tests/governance/commit_gates/test_resource_schedule_gate.py", "tests/infrastructure/test_resource_schedule_alerts.py", "tests/infrastructure/test_resource_schedule_e2e.py", "tests/infrastructure/test_resource_schedule_regen_check.py"]
+- module_id: MOD-RESCHED-PROFILE
+  stage: E0
+  py_paths: ["scripts/governance/generators/generate_resource_profile_registry.py"]
+  consumers_total: 6
+  consumers_non_test_total: 6
+  buckets: {"config": 1, "scripts": 1, "src": 4, "tests": 0}
+  consumers_top20: ["config/resource_profile_registry.yaml", "scripts/governance/apply_resource_plan.py", "src/zephyr/ai_layer/scheduling/router.py", "src/zephyr/ai_layer/scheduling/seed_writer.py", "src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py", "src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py"]
+- module_id: MOD-RESCHED-SAMPLER
+  stage: E0
+  py_paths: ["src/zephyr/infrastructure/system_telemetry/resource_sampler.py"]
+  consumers_total: 10
+  consumers_non_test_total: 6
+  buckets: {"config": 1, "scripts": 2, "src": 3, "tests": 4}
+  consumers_top20: ["config/governance_operations_map.yaml", "scripts/governance/generators/generate_resource_morning_report.py", "scripts/governance/generators/generate_resource_profile_registry.py", "src/zephyr/infrastructure/system_telemetry/__init__.py", "src/zephyr/infrastructure/system_telemetry/measure_calibration.py", "src/zephyr/orchestrator/global_state_aggregator.py", "tests/infrastructure/system_telemetry/test_measure_calibration.py", "tests/infrastructure/test_resource_sampler.py", "tests/infrastructure/test_resource_schedule_e2e.py", "tests/orchestrator/test_global_state_aggregator.py"]
+- module_id: MOD-RESCHED-ALERT
+  stage: E0
+  py_paths: ["src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py"]
+  consumers_total: 8
+  consumers_non_test_total: 5
+  buckets: {"config": 1, "scripts": 2, "src": 2, "tests": 3}
+  consumers_top20: ["config/governance_operations_map.yaml", "scripts/governance/generators/generate_resource_profile_registry.py", "scripts/governance/generators/generate_resource_week_view.py", "src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py", "src/zephyr/infrastructure/system_telemetry/alerts/__init__.py", "tests/infrastructure/test_resource_schedule_alerts.py", "tests/infrastructure/test_resource_schedule_e2e.py", "tests/infrastructure/test_resource_schedule_regen_check.py"]
+- module_id: MOD-DATA-072
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-L00-021
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-DATA-069
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_data/auto_backfiller"
+  stage: E4
+  py_paths: ["src/zephyr/data/auto_backfiller.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data/__init__.py", "tests/zephyr/data/test_auto_backfiller.py"]
+- module_id: "dir:_domain_data/source_sla_tracker"
+  stage: E4
+  py_paths: ["src/zephyr/data/source_sla_tracker.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/data/test_source_sla_tracker.py"]
+- module_id: "dir:_domain_data/market_breadth_collector"
+  stage: E1
+  py_paths: ["src/zephyr/data/market_breadth_collector.py"]
+  consumers_total: 4
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 3}
+  consumers_top20: ["src/zephyr/data/implementations/miniqmt_provider.py", "tests/integration/test_phase2_premarket_intraday_e2e.py", "tests/zephyr/data/test_auction_book_tick.py", "tests/zephyr/data/test_market_breadth_snapshot.py"]
+- module_id: "dir:_domain_data/sector_intraday_aggregator"
+  stage: E1D
+  py_paths: ["src/zephyr/data/sector_intraday_aggregator.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data/intraday_sentiment_loop.py", "tests/zephyr/data/test_sector_intraday_aggregator.py"]
+- module_id: "dir:_domain_data/sector_report_builder"
+  stage: E1D
+  py_paths: ["src/zephyr/data/sector_report_builder.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/signal_ashare/mainline_candidates.py", "tests/integration/test_phase2_premarket_intraday_e2e.py", "tests/zephyr/data/test_sector_report_builder.py"]
+- module_id: "dir:_domain_data/multi_timeframe_fusion"
+  stage: E4
+  py_paths: ["src/zephyr/data/multi_timeframe_fusion.py"]
+  consumers_total: 5
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 0, "src": 3, "tests": 2}
+  consumers_top20: ["src/zephyr/data/__init__.py", "src/zephyr/data/calendar/ashare.py", "src/zephyr/data/calendar/base.py", "tests/zephyr/data/calendar/test_market_calendar.py", "tests/zephyr/data/test_multi_timeframe_fusion.py"]
+- module_id: "dir:_domain_data/reference_data_manager"
+  stage: E4
+  py_paths: ["src/zephyr/data/reference_data_manager.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data/__init__.py", "tests/zephyr/data/test_reference_data_manager.py"]
+- module_id: "dir:_domain_data/tushare_news_connector"
+  stage: E1G
+  py_paths: ["src/zephyr/data/implementations/tushare_news_connector.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/data/implementations/test_tushare_news_connector.py"]
+- module_id: "dir:_domain_data/financial_parser"
+  stage: E1D
+  py_paths: ["src/zephyr/data/financial_parser.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data/__init__.py", "tests/zephyr/data/test_financial_parser.py"]
+- module_id: "dir:_domain_data/data_compression_archiver"
+  stage: ""
+  py_paths: ["src/zephyr/data/data_compression_archiver.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/data/test_data_compression_archiver.py"]
+- module_id: MOD-MKT-001
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-MKT-002
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-MKT-003
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-MKT-004
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-MKT-005
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-MKT-006
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-MKT-007
+  stage: E1
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_infrastructure_runtime/database_layer"
+  stage: E4
+  py_paths: ["src/zephyr/infra_runtime/database_layer.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/infra_runtime/__init__.py", "tests/infra_runtime/test_database_layer.py"]
+- module_id: MOD-INF-063
+  stage: ""
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_infrastructure_runtime/resource_scheduler"
+  stage: E0
+  py_paths: ["src/zephyr/infra_runtime/resource_scheduler.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 1}
+  consumers_top20: ["src/zephyr/infra_runtime/__init__.py", "src/zephyr/infra_runtime/runtime_admission.py", "tests/infra_runtime/test_resource_scheduler.py"]
+- module_id: MOD-INF-066
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-INF-001
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-INF-069
+  stage: E0
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-INF-045
+  stage: E1B
+  py_paths: ["scripts/ops/download_models.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "dir:_domain_infrastructure_operations/strategy_canary_release"
+  stage: E7
+  py_paths: ["src/zephyr/infrastructure/strategy_canary_release.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/infrastructure/process_lifecycle/test_strategy_canary_release.py"]
+- module_id: MOD-INF-015
+  stage: ""
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_infrastructure_operations/strategic_message_bus"
+  stage: ""
+  py_paths: ["src/zephyr/infrastructure/a2a_protocol/strategic_message_bus.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/infrastructure/test_strategic_message_bus.py"]
+- module_id: MOD-INF-OPS-ALERT-FEED
+  stage: ""
+  py_paths: ["src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py"]
+  consumers_total: 16
+  consumers_non_test_total: 12
+  buckets: {"config": 3, "scripts": 1, "src": 8, "tests": 4}
+  consumers_top20: ["config/alert_rules.yaml", "config/governance_operations_map.yaml", "config/resource_optimization.yaml", "scripts/governance/generators/generate_resource_morning_report.py", "src/zephyr/data/alert_webhook_dispatch.py", "src/zephyr/data/implementations/breadth_freshness_alerts.py", "src/zephyr/ex_core/adapters/qmt_file_bridge_integration.py", "src/zephyr/frontend/dashboard/api_server.py", "src/zephyr/infrastructure/capacity_assurance/host_resource_governor.py", "src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py", "src/zephyr/risk/core/survival_line_monitor.py", "src/zephyr/signal_ashare/strategy_signal/strategy_decay_certifier.py", "tests/data/test_alert_webhook_dispatch.py", "tests/frontend/test_ops_alert_feed.py", "tests/scripts/test_generate_resource_morning_report.py", "tests/signal_ashare/strategy_signal/test_strategy_decay_certifier.py"]
+- module_id: "dir:_domain_infrastructure_operations/wal_checkpoint_monitor"
+  stage: E4
+  py_paths: ["src/zephyr/infra_ops/wal_checkpoint_monitor.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/infra_ops/__init__.py", "tests/infra_ops/test_wal_checkpoint_monitor.py"]
+- module_id: "dir:_domain_ml_serve/codegen_model_adapter"
+  stage: E3
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_ml_serve/deep_review_model_adapter"
+  stage: E2
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_ml_serve/model_drift_monitor"
+  stage: E6
+  py_paths: ["src/zephyr/gov_drift/detector_core/model_drift_monitor.py"]
+  consumers_total: 4
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/governance/__init__.py", "tests/governance/test_alert_threshold_consistency.py", "tests/model/test_model_drift_monitor.py"]
+- module_id: "dir:_domain_machine_learning_train/ml_model_factory"
+  stage: E1E
+  py_paths: ["src/zephyr/ml_train/ml_model_factory.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_ml_model_factory.py"]
+- module_id: "dir:_domain_machine_learning_train/kan_density_head"
+  stage: E1E
+  py_paths: ["src/zephyr/ml_train/implementations/kan_density_head.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/implementations/test_kan_density_head.py"]
+- module_id: "dir:_domain_machine_learning_train/patchtst_density_encoder"
+  stage: E1E
+  py_paths: ["src/zephyr/ml_train/implementations/patchtst_density_encoder.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_patchtst_density_encoder.py"]
+- module_id: "dir:_domain_machine_learning_train/qnn_two_stage"
+  stage: E1E
+  py_paths: ["src/zephyr/ml_train/implementations/qnn_two_stage.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_qnn_two_stage.py"]
+- module_id: "dir:_domain_machine_learning_train/model_version_registry"
+  stage: E1E
+  py_paths: ["src/zephyr/ml_train/core/model_version_registry.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/ml_train/core/__init__.py", "tests/ml_train/test_model_version_registry.py"]
+- module_id: "dir:_domain_machine_learning_train/research_data_manager"
+  stage: E1
+  py_paths: ["src/zephyr/ml_train/research_data_manager.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_research_data_manager.py"]
+- module_id: "dir:_domain_machine_learning_train/research_data_sandbox"
+  stage: E1
+  py_paths: ["src/zephyr/ml_train/research_data_sandbox.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_research_data_sandbox.py"]
+- module_id: "dir:_domain_machine_learning_train/ts_augmentation"
+  stage: E1E
+  py_paths: ["src/zephyr/ml_train/implementations/ts_augmentation.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/implementations/test_ts_augmentation.py"]
+- module_id: "dir:_domain_machine_learning_train/decision_annotation_dataset"
+  stage: E9
+  py_paths: ["src/zephyr/ml_train/decision_annotation_dataset.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_decision_annotation_dataset.py"]
+- module_id: "dir:_domain_machine_learning_train/reproducibility_manager"
+  stage: E4
+  py_paths: ["src/zephyr/ml_train/reproducibility_manager.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_reproducibility_manager.py"]
+- module_id: "dir:_domain_machine_learning_train/research_asset_versioning"
+  stage: ""
+  py_paths: ["src/zephyr/ml_train/research_asset_versioning.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/ml_train/test_research_asset_versioning.py"]
+- module_id: "dir:_domain_intelligence/local_llm_pool"
+  stage: E1B
+  py_paths: ["src/zephyr/intelligence/local_llm_pool.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/intelligence/gguf_model_manager.py", "tests/intelligence/test_gguf_model_manager.py", "tests/intelligence/test_local_llm_pool.py"]
+- module_id: "dir:_domain_intelligence/api_llm_pool"
+  stage: E1B
+  py_paths: ["src/zephyr/intelligence/api_llm_pool.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/intelligence/test_api_llm_pool.py"]
+- module_id: "dir:_domain_intelligence/llm_agent_router"
+  stage: ""
+  py_paths: ["src/zephyr/intelligence/llm_agent_router.py"]
+  consumers_total: 4
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 3}
+  consumers_top20: ["src/zephyr/intelligence/model_routing/runtime_assembly.py", "tests/ex_sor/test_sor_agent.py", "tests/intelligence/model_routing/test_runtime_assembly.py", "tests/intelligence/test_llm_agent_router.py"]
+- module_id: MOD-INT-AISA
+  stage: E1G
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_intelligence/news_symbol_linker"
+  stage: E1G
+  py_paths: ["src/zephyr/intelligence/news_symbol_linker.py"]
+  consumers_total: 4
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 2}
+  consumers_top20: ["src/zephyr/intelligence/news_chain_node_linker.py", "src/zephyr/intelligence/nightly_sentiment_window.py", "tests/intelligence/test_news_symbol_linker.py", "tests/intelligence/test_nightly_sentiment_window.py"]
+- module_id: "dir:_domain_intelligence/nightly_sentiment_window"
+  stage: E1G
+  py_paths: ["src/zephyr/intelligence/nightly_sentiment_window.py"]
+  consumers_total: 6
+  consumers_non_test_total: 5
+  buckets: {"config": 0, "scripts": 1, "src": 4, "tests": 1}
+  consumers_top20: ["scripts/data/run_nightly_sentiment.py", "src/zephyr/data/scheduler.py", "src/zephyr/intelligence/news_llm_scorer.py", "src/zephyr/intelligence/news_sentiment_analyzer.py", "src/zephyr/intelligence/news_symbol_linker.py", "tests/intelligence/test_nightly_sentiment_window.py"]
+- module_id: "dir:_domain_intelligence/llm_fundamental_analysis"
+  stage: E1D
+  py_paths: ["src/zephyr/intelligence/llm_fundamental_analysis.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/intelligence/test_llm_fundamental_analysis.py"]
+- module_id: "dir:_domain_intelligence/llm_research_agent"
+  stage: E1
+  py_paths: ["src/zephyr/intelligence/llm_research_agent.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/intelligence/test_llm_research_agent.py"]
+- module_id: "dir:_domain_intelligence/universal_fact_ledger"
+  stage: E1G
+  py_paths: ["src/zephyr/intelligence/universal_fact_ledger.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/intelligence/test_universal_fact_ledger.py"]
+- module_id: "dir:_domain_intelligence/event_chain_causal_graph"
+  stage: E1D
+  py_paths: ["src/zephyr/intelligence/event_chain_causal_graph.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/intelligence/test_event_chain_causal_graph.py"]
+- module_id: "dir:_domain_intelligence/llm_market_interpreter"
+  stage: E1
+  py_paths: ["src/zephyr/intelligence/llm_market_interpreter.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/intelligence/test_llm_market_interpreter.py"]
+- module_id: "dir:_domain_alt_data/sentiment_engine"
+  stage: E1
+  py_paths: ["src/zephyr/alt_data/sentiment_engine.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_sentiment_engine.py"]
+- module_id: "dir:_domain_alt_data/alt_data_signal_extractor"
+  stage: E1
+  py_paths: ["src/zephyr/alt_data/alt_data_signal_extractor.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_alt_data_signal_extractor.py"]
+- module_id: "dir:_domain_alt_data/concept_factor_mapper"
+  stage: E1
+  py_paths: ["src/zephyr/alt_data/concept_factor_mapper.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_concept_factor_mapper.py"]
+- module_id: "dir:_domain_alt_data/research_report_collector"
+  stage: E1G
+  py_paths: ["src/zephyr/alt_data/research_report_collector.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_research_report_collector.py"]
+- module_id: "dir:_domain_alt_data/social_sentiment_collector"
+  stage: E1A
+  py_paths: ["src/zephyr/alt_data/social_sentiment_collector.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_social_sentiment_collector.py"]
+- module_id: "dir:_domain_alt_data/web_scraper_engine"
+  stage: E1A
+  py_paths: ["src/zephyr/alt_data/web_scraper_engine.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_web_scraper_engine.py"]
+- module_id: "dir:_domain_alt_data/filing_nlp_engine"
+  stage: E1D
+  py_paths: ["src/zephyr/alt_data/filing_nlp_engine.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_filing_nlp_engine.py"]
+- module_id: "dir:_domain_alt_data/policy_expectation_analyzer"
+  stage: E1G
+  py_paths: ["src/zephyr/alt_data/policy_expectation_analyzer.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/alt_data/test_policy_expectation_analyzer.py"]
+- module_id: "dir:_domain_alt_data/policy_theme_mapper"
+  stage: E1D
+  py_paths: ["src/zephyr/alt_data/policy_theme_mapper.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/frontend/dashboard/api_server.py", "tests/alt_data/test_policy_theme_mapper.py"]
+- module_id: "dir:_domain_alt_data/alt_source_health_manager"
+  stage: ""
+  py_paths: ["src/zephyr/alt_data/alt_source_health_manager.py"]
+  consumers_total: 4
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/alt_data/alt_source_bootstrap.py", "tests/alt_data/test_alt_source_health_manager.py", "tests/zephyr/data/test_alt_sources.py"]
+- module_id: "dir:_domain_alt_data/alt_data_catalog"
+  stage: ""
+  py_paths: ["src/zephyr/alt_data/alt_data_catalog.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/alt_data/alt_source_bootstrap.py", "tests/alt_data/test_alt_data_catalog.py", "tests/zephyr/data/test_alt_sources.py"]
+- module_id: MOD-SIG-137
+  stage: E2
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIG-141
+  stage: E2
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_fundamental_signal/trace_context_store"
+  stage: E2
+  py_paths: ["src/zephyr/signal_fundamental/audit/trace_context_store.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/signal_fundamental/audit/__init__.py", "tests/signal_fundamental/audit/test_trace_context_store.py"]
+- module_id: "dir:_domain_signal_quality/signal_degradation_monitor"
+  stage: E6
+  py_paths: ["src/zephyr/signal_quality/signal_degradation_monitor.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 1, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["config/governance_operations_map.yaml", "tests/signal_quality/test_signal_degradation_monitor.py"]
+- module_id: "dir:_domain_signal_quality/signal_dedup"
+  stage: E5
+  py_paths: ["src/zephyr/signal_quality/signal_dedup.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/signal_quality/test_signal_dedup.py"]
+- module_id: "dir:_domain_signal_quality/signal_quality_benchmark"
+  stage: E4
+  py_paths: ["src/zephyr/signal_quality/signal_quality_benchmark.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/signal_quality/test_signal_quality_benchmark.py"]
+- module_id: "dir:_domain_signal_quality/signal_explainability_guarantor"
+  stage: E6
+  py_paths: ["src/zephyr/signal_quality/signal_explainability_guarantor.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/signal_quality/test_signal_explainability_guarantor.py"]
+- module_id: MOD-REGIME-002
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-REGIME-005
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-REGIME-016
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-REGIME-006
+  stage: E1
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-REGIME-011
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_regime/style_regime_model"
+  stage: E8
+  py_paths: ["src/zephyr/regime/style_regime_model.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py", "tests/regime/test_style_regime_model.py", "tests/signal_ashare/strategy_signal/test_strategy_matrix_3d.py"]
+- module_id: "dir:_domain_regime/cross_sectional_features"
+  stage: E8
+  py_paths: ["src/zephyr/regime/cross_sectional_features.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/regime/regime_feature_builder.py", "tests/regime/test_cross_sectional_features.py"]
+- module_id: "dir:_domain_regime/market_forecast_fusion"
+  stage: E8
+  py_paths: ["src/zephyr/regime/market_forecast_fusion.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/regime/test_market_forecast_fusion.py"]
+- module_id: MOD-SIM-002
+  stage: E7
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIM-005
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIM-012
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIM-021
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIM-022
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIM-023
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-SIM-024
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_simulation/overfitting_protection_gate"
+  stage: E4
+  py_paths: ["src/zephyr/simulation/overfitting_protection_gate.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/simulation/test_overfitting_protection_gate.py"]
+- module_id: MOD-TRADING-012
+  stage: E7
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-TRADING-002
+  stage: E9
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-TRADING-004
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_trading/reference_data_manager"
+  stage: E4
+  py_paths: ["src/zephyr/data/reference_data_manager.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data/__init__.py", "tests/zephyr/data/test_reference_data_manager.py"]
+- module_id: MOD-L02-027
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_factor/auto_feature_discoverer"
+  stage: E1C
+  py_paths: ["src/zephyr/research/auto_feature_discoverer.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/research/test_auto_feature_discoverer.py"]
+- module_id: "dir:_domain_factor/gp_strategy_discovery"
+  stage: E1C
+  py_paths: ["src/zephyr/research/gp_strategy_discovery.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/research/test_gp_strategy_discovery.py"]
+- module_id: "dir:_domain_factor/llm_evolutionary_search"
+  stage: E1C
+  py_paths: ["src/zephyr/research/llm_evolutionary_search.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/research/test_llm_evolutionary_search.py"]
+- module_id: "dir:_domain_factor/factor_vote_mining"
+  stage: E1C
+  py_paths: ["src/zephyr/research/factor_vote_mining.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/research/test_factor_vote_mining.py"]
+- module_id: "dir:_domain_factor/signature_feature_extractor"
+  stage: E3
+  py_paths: ["src/zephyr/factor/signature_feature_extractor.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/factor/test_signature_feature_extractor.py"]
+- module_id: "dir:_domain_factor/factor_model_co_evaluator"
+  stage: E4
+  py_paths: ["src/zephyr/research/factor_model_co_evaluator.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/research/test_factor_model_co_evaluator.py"]
+- module_id: "dir:_domain_factor/factor_lifecycle_runner"
+  stage: E6
+  py_paths: ["src/zephyr/factor/analysis/factor_lifecycle_runner.py"]
+  consumers_total: 3
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 2}
+  consumers_top20: ["src/zephyr/data/implementations/internal_compute_provider.py", "tests/factor/test_factor_lifecycle_runner.py", "tests/factor/test_red_blue_lifecycle.py"]
+- module_id: "dir:_domain_factor/strategy_iteration_upgrader"
+  stage: E9
+  py_paths: ["src/zephyr/research/strategy_iteration_upgrader.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/research/test_strategy_iteration_upgrader.py"]
+- module_id: "dir:_domain_fbl_detectors/distribution_drift_monitor"
+  stage: E6
+  py_paths: ["src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/feedback_loop/detectors/drift/__init__.py", "tests/drift/test_distribution_drift_monitor.py"]
+- module_id: MOD-PF-001
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PF-002
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PF-006
+  stage: E8
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: MOD-PF-008
+  stage: E7
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_portfolio_core/rebalance_cost_analyzer"
+  stage: E8
+  py_paths: ["src/zephyr/pf_core/core/rebalance_cost_analyzer.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/pf_core/test_rebalance_cost_analyzer.py"]
+- module_id: "dir:_domain_portfolio_core/strategy_capacity_estimator"
+  stage: E8
+  py_paths: ["src/zephyr/pf_core/core/strategy_capacity_estimator.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/pf_core/core/__init__.py", "tests/pf_core/test_strategy_capacity_estimator.py"]
+- module_id: "dir:_domain_portfolio_core/funnel_portfolio_adjudicator"
+  stage: E8
+  py_paths: ["src/zephyr/pf_core/core/funnel_portfolio_adjudicator.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/pf_core/core/__init__.py", "tests/pf_core/test_funnel_portfolio_adjudicator.py"]
+- module_id: "dir:_domain_portfolio_core/exposure_manager"
+  stage: E8
+  py_paths: ["src/zephyr/pf_core/core/exposure_manager.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/pf_core/core/__init__.py", "tests/pf_core/test_exposure_manager.py"]
+- module_id: "dir:_domain_portfolio_core/strategy_factory"
+  stage: E8
+  py_paths: ["src/zephyr/pf_core/core/strategy_factory.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/pf_core/core/__init__.py", "tests/pf_core/test_strategy_factory.py"]
+- module_id: "dir:_domain_execution_sim/almgren_chriss_impact_model"
+  stage: E7
+  py_paths: ["src/zephyr/execution_simulation/almgren_chriss_impact_model.py"]
+  consumers_total: 5
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 0, "src": 3, "tests": 2}
+  consumers_top20: ["src/zephyr/backtest/core/matching_engine.py", "src/zephyr/backtest/implementations/vectorized_engine.py", "src/zephyr/execution_simulation/__init__.py", "tests/backtest/test_bt_financial_correctness_p0.py", "tests/execution_simulation/test_almgren_chriss_impact_model.py"]
+- module_id: "dir:_domain_data_eng/cold_data_archive_manager"
+  stage: ""
+  py_paths: ["src/zephyr/data_eng/cold_data_archive_manager.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data_eng/__init__.py", "tests/data_eng/test_cold_data_archive_manager.py"]
+- module_id: "dir:_domain_data_eng/data_anomaly_alerter"
+  stage: E4
+  py_paths: ["src/zephyr/data_eng/data_anomaly_alerter.py"]
+  consumers_total: 6
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 0, "src": 3, "tests": 3}
+  consumers_top20: ["src/zephyr/data/cleaning_engines.py", "src/zephyr/data/cleaning_expectation_hosting.py", "src/zephyr/data_eng/__init__.py", "tests/zephyr/data/test_cleaning_engines.py", "tests/zephyr/data/test_data_anomaly_alerter.py", "tests/zephyr/data/test_silent_latch_before_delivery.py"]
+- module_id: "dir:_domain_data_eng/data_lake_manager"
+  stage: E4
+  py_paths: ["src/zephyr/data_eng/data_lake_manager.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/data_eng/__init__.py", "tests/data_eng/test_data_lake_manager.py"]
+- module_id: "dir:_domain_data_eng/gpu_resource_manager"
+  stage: E0
+  py_paths: ["src/zephyr/data_eng/gpu_resource_manager.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/data_eng/__init__.py", "tests/data_eng/test_gpu_resource_manager.py"]
+- module_id: "dir:_domain_data_eng/quality_sla_breach_predictor"
+  stage: E4
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "dir:_domain_security_llm/spectral_guard"
+  stage: ""
+  py_paths: ["src/zephyr/security/llm_defense/spectral_guard.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/security/llm_defense/test_spectral_guard.py"]
+- module_id: "code:scripts/backtest/league_judge.py"
+  stage: E7
+  py_paths: ["scripts/backtest/league_judge.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "code:scripts/backtest/league_registry.py"
+  stage: E7
+  py_paths: ["scripts/backtest/league_registry.py"]
+  consumers_total: 4
+  consumers_non_test_total: 4
+  buckets: {"config": 1, "scripts": 3, "src": 0, "tests": 0}
+  consumers_top20: ["config/league_registry.yaml", "scripts/backtest/league_archive.py", "scripts/backtest/league_judge.py", "scripts/backtest/league_monthly_snapshot.py"]
+- module_id: "code:scripts/backtest/league_archive.py"
+  stage: E7
+  py_paths: ["scripts/backtest/league_archive.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 2, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/league_registry.py", "scripts/backtest/league_restore.py"]
+- module_id: "code:scripts/backtest/league_monthly_snapshot.py"
+  stage: E7
+  py_paths: ["scripts/backtest/league_monthly_snapshot.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 2, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/league_archive.py", "scripts/backtest/league_registry.py"]
+- module_id: "code:scripts/backtest/league_restore.py"
+  stage: E7
+  py_paths: ["scripts/backtest/league_restore.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 2, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/backtest/league_archive.py", "scripts/backtest/league_registry.py"]
+- module_id: "code:src/zephyr/pf_core/core/shadow_portfolio.py"
+  stage: E9
+  py_paths: ["src/zephyr/pf_core/core/shadow_portfolio.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/pf_core/test_shadow_portfolio.py"]
+- module_id: "code:scripts/backtest/weight_ssot.py"
+  stage: E8
+  py_paths: ["scripts/backtest/weight_ssot.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_weight_ssot_single_authority.py"]
+- module_id: "code:scripts/backtest/sim_paper_ledger.py"
+  stage: E7
+  py_paths: ["scripts/backtest/sim_paper_ledger.py"]
+  consumers_total: 7
+  consumers_non_test_total: 6
+  buckets: {"config": 0, "scripts": 3, "src": 3, "tests": 1}
+  consumers_top20: ["scripts/backtest/sim_attribution_report.py", "scripts/backtest/sim_daily_runner.py", "scripts/backtest/sim_platform_journal.py", "src/zephyr/pf_alloc/allocation_config.py", "src/zephyr/pf_alloc/allocation_orchestrator.py", "src/zephyr/pf_alloc/crisis_gate.py", "tests/pf_alloc/test_crisis_gate.py"]
+- module_id: "code:scripts/backtest/sim_platform_journal.py"
+  stage: E7
+  py_paths: ["scripts/backtest/sim_platform_journal.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 1, "src": 1, "tests": 0}
+  consumers_top20: ["scripts/backtest/sim_daily_runner.py", "src/zephyr/strategy_pipeline/pipeline_events.py"]
+- module_id: "code:scripts/backtest/sim_promotion_memo.py"
+  stage: E7
+  py_paths: ["scripts/backtest/sim_promotion_memo.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_sim_promotion_memo.py"]
+- module_id: "code:scripts/backtest/strategy_lifecycle_advisor.py"
+  stage: E6
+  py_paths: ["scripts/backtest/strategy_lifecycle_advisor.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "code:scripts/backtest/sector_prereg_exam_runner.py"
+  stage: E4
+  py_paths: ["scripts/backtest/sector_prereg_exam_runner.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/script-manifest.yaml"]
+- module_id: "code:scripts/backtest/reexam_cpcv_harness.py"
+  stage: E4
+  py_paths: ["scripts/backtest/reexam_cpcv_harness.py"]
+  consumers_total: 1
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 0}
+  consumers_top20: ["scripts/script-manifest.yaml"]
+- module_id: "code:scripts/backtest/exam_cost_reexam.py"
+  stage: E4
+  py_paths: ["scripts/backtest/exam_cost_reexam.py"]
+  consumers_total: 2
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 0}
+  consumers_top20: ["config/exam_scale_cost_gate.yaml", "src/zephyr/backtest/regime_validation/exam_cost_gate.py"]
+- module_id: "code:scripts/backtest/dsr_recalc_backfill.py"
+  stage: E4
+  py_paths: ["scripts/backtest/dsr_recalc_backfill.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 1}
+  consumers_top20: ["src/zephyr/backtest/core/n_trial_ledger.py", "src/zephyr/simulation/deflated_sharpe_calculator.py", "tests/backtest/test_dsr_recalc_backfill.py"]
+- module_id: "code:scripts/backtest/replay_drill.py"
+  stage: E4
+  py_paths: ["scripts/backtest/replay_drill.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "code:scripts/backtest/crisis_drill_monthly.py"
+  stage: E7
+  py_paths: ["scripts/backtest/crisis_drill_monthly.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "code:scripts/backtest/condition_attribution.py"
+  stage: E9
+  py_paths: ["scripts/backtest/condition_attribution.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 1}
+  consumers_top20: ["src/zephyr/backtest/regime_validation/chart_condition_consumer.py", "src/zephyr/backtest/regime_validation/chart_condition_package.py", "tests/backtest/test_chart_condition_package.py"]
+- module_id: "code:scripts/backtest/factory_grid_executor.py"
+  stage: E1F
+  py_paths: ["scripts/backtest/factory_grid_executor.py"]
+  consumers_total: 10
+  consumers_non_test_total: 6
+  buckets: {"config": 1, "scripts": 1, "src": 4, "tests": 4}
+  consumers_top20: ["config/search_space_prereg.yaml", "scripts/audit/t0_gpu_condition_pack.py", "src/zephyr/backtest/core/batch_window_preflight.py", "src/zephyr/backtest/gpu_core.py", "src/zephyr/backtest/regime_validation/chart_condition_consumer.py", "src/zephyr/backtest/regime_validation/condition_package.py", "tests/backtest/test_c4_engine_gpu_wiring.py", "tests/backtest/test_f06_e2e_pipeline.py", "tests/backtest/test_l2_gpu_landing.py", "tests/backtest/test_t1_t2_handover.py"]
+- module_id: "code:scripts/backtest/lane_f_grid_adapter.py"
+  stage: E1F
+  py_paths: ["scripts/backtest/lane_f_grid_adapter.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "code:src/zephyr/pf_alloc/core/forward_stop_loss.py"
+  stage: E8
+  py_paths: ["src/zephyr/pf_alloc/core/forward_stop_loss.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 1, "src": 0, "tests": 1}
+  consumers_top20: ["scripts/backtest/panic_rebound_depth.py", "tests/pf_alloc/test_forward_stop_loss.py"]
+- module_id: "code:src/zephyr/pf_alloc/core/risk_budget_allocator.py"
+  stage: E8
+  py_paths: ["src/zephyr/pf_alloc/core/risk_budget_allocator.py"]
+  consumers_total: 3
+  consumers_non_test_total: 2
+  buckets: {"config": 1, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["config/governance_operations_map.yaml", "src/zephyr/pf_alloc/core/sector_distribution_comparator.py", "tests/pf_alloc/test_risk_budget_allocator.py"]
+- module_id: "code:src/zephyr/pf_alloc/core/sector_distribution_comparator.py"
+  stage: E8
+  py_paths: ["src/zephyr/pf_alloc/core/sector_distribution_comparator.py"]
+  consumers_total: 0
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 0}
+  consumers_top20: []
+- module_id: "code:src/zephyr/pf_alloc/core/tail_hedge_signal.py"
+  stage: E8
+  py_paths: ["src/zephyr/pf_alloc/core/tail_hedge_signal.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/pf_alloc/test_tail_hedge_signal.py"]
+- module_id: "code:src/zephyr/data/trading_calendar.py"
+  stage: E0
+  py_paths: ["src/zephyr/data/trading_calendar.py"]
+  consumers_total: 16
+  consumers_non_test_total: 12
+  buckets: {"config": 0, "scripts": 3, "src": 9, "tests": 4}
+  consumers_top20: ["scripts/backtest/sim_daily_runner.py", "scripts/backtest/sim_platform_journal.py", "scripts/ops/ch_health_probe.py", "src/zephyr/data/__init__.py", "src/zephyr/data/calendar/ashare.py", "src/zephyr/data/scheduler.py", "src/zephyr/ex_core/daban_pit_safety.py", "src/zephyr/ex_core/pre_execution_checker.py", "src/zephyr/pf_core/strategies/daban_sleeve_strategy.py", "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py", "src/zephyr/strategy_pipeline/paper_outpost.py", "src/zephyr/trading/post_settlement_pipeline.py", "tests/zephyr/data/calendar/test_market_calendar.py", "tests/zephyr/data/test_cross_validation_wiring.py", "tests/zephyr/data/test_pf_alloc_rebalance_check_wiring.py", "tests/zephyr/data/test_trading_calendar.py"]
+- module_id: "af:vectorized_engine"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/implementations/vectorized_engine.py"]
+  consumers_total: 51
+  consumers_non_test_total: 31
+  buckets: {"config": 0, "scripts": 10, "src": 21, "tests": 20}
+  consumers_top20: ["scripts/backtest/ibt/ibt_redblue.py", "scripts/backtest/ibt/ibt_runner.py", "scripts/tests/dump_c1_repro_artifacts.py", "scripts/tests/repro_c1.py", "scripts/tests/repro_c1_deadzone.py", "scripts/tests/run_c1_shrinkage_validation.py", "scripts/tests/smoke_test_ede_e2e.py", "scripts/tests/smoke_test_ede_path_a.py", "scripts/tests/smoke_test_ede_path_a_multi.py", "scripts/tests/validate_overlay_gated.py", "src/zephyr/backtest/__init__.py", "src/zephyr/backtest/core/cost_model_calibration.py", "src/zephyr/backtest/core/data_handler.py", "src/zephyr/backtest/core/decision_gate.py", "src/zephyr/backtest/core/matching_engine.py", "src/zephyr/backtest/core/metrics.py", "src/zephyr/backtest/core/overfitting_detector.py", "src/zephyr/backtest/core/portfolio.py", "src/zephyr/backtest/core/walk_forward.py", "src/zephyr/backtest/implementations/__init__.py"]
+- module_id: "af:event_driven_engine"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/implementations/event_driven_engine.py"]
+  consumers_total: 11
+  consumers_non_test_total: 10
+  buckets: {"config": 0, "scripts": 1, "src": 9, "tests": 1}
+  consumers_top20: ["scripts/tests/smoke_test_ede_e2e.py", "src/zephyr/backtest/core/data_handler.py", "src/zephyr/backtest/core/decision_gate.py", "src/zephyr/backtest/core/matching_engine.py", "src/zephyr/backtest/core/overfitting_detector.py", "src/zephyr/backtest/core/tick_replay.py", "src/zephyr/backtest/core/walk_forward.py", "src/zephyr/backtest/implementations/__init__.py", "src/zephyr/backtest/implementations/ch_tick_replay.py", "src/zephyr/pf_core/strategy_engine/strategy_runner.py", "tests/backtest/test_event_driven_engine.py"]
+- module_id: "af:walk_forward"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/walk_forward.py"]
+  consumers_total: 4
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 0, "src": 3, "tests": 1}
+  consumers_top20: ["src/zephyr/backtest/implementations/event_driven_engine.py", "src/zephyr/backtest/implementations/vectorized_engine.py", "src/zephyr/strategy_pipeline/fw_backtest.py", "tests/backtest/test_walk_forward.py"]
+- module_id: "af:purged_kfold"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/purged_kfold.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_purged_kfold.py"]
+- module_id: "af:cpcv"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/cpcv.py"]
+  consumers_total: 5
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 1, "src": 2, "tests": 2}
+  consumers_top20: ["scripts/backtest/reexam_cpcv_harness.py", "src/zephyr/backtest/core/strategy_cpcv_matrix.py", "src/zephyr/regime/validation/overfitting_guard.py", "tests/backtest/test_cpcv.py", "tests/regime/validation/test_overfitting_guard.py"]
+- module_id: "af:matching_engine"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/matching_engine.py"]
+  consumers_total: 14
+  consumers_non_test_total: 6
+  buckets: {"config": 0, "scripts": 1, "src": 5, "tests": 8}
+  consumers_top20: ["scripts/backtest/ibt/ibt_runner.py", "src/zephyr/backtest/core/cost_model_calibration.py", "src/zephyr/backtest/core/matching_logic.py", "src/zephyr/backtest/implementations/event_driven_engine.py", "src/zephyr/backtest/implementations/vectorized_engine.py", "src/zephyr/shared/utils/market_units.py", "tests/backtest/test_bt_financial_correctness_p0.py", "tests/backtest/test_cost_friction_night001.py", "tests/backtest/test_cost_model_wiring.py", "tests/backtest/test_lane_k_market_caliber_locks.py", "tests/backtest/test_limit_price_rounding_night001.py", "tests/backtest/test_matching_engine.py", "tests/backtest/test_stk_limit_matching.py", "tests/backtest/test_toy_reconciliation_night001.py"]
+- module_id: "af:tick_replay"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/tick_replay.py"]
+  consumers_total: 9
+  consumers_non_test_total: 7
+  buckets: {"config": 0, "scripts": 0, "src": 7, "tests": 2}
+  consumers_top20: ["src/zephyr/backtest/implementations/ch_tick_replay.py", "src/zephyr/backtest/implementations/event_driven_engine.py", "src/zephyr/governance/data_governance/miniqmt_provider.py", "src/zephyr/pf_core/intraday_surge_fall_strategy.py", "src/zephyr/pf_core/orderbook_imbalance_strategy.py", "src/zephyr/pf_core/strategy_engine/tick_strategy_base.py", "src/zephyr/pf_core/vwap_reversion_strategy.py", "tests/backtest/test_event_driven_engine.py", "tests/backtest/test_tick_replay_data_handler.py"]
+- module_id: "af:data_handler"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/data_handler.py"]
+  consumers_total: 9
+  consumers_non_test_total: 6
+  buckets: {"config": 0, "scripts": 0, "src": 6, "tests": 3}
+  consumers_top20: ["src/zephyr/backtest/core/pit_manager.py", "src/zephyr/data/ch_reader.py", "src/zephyr/data/data_service.py", "src/zephyr/data/pit_query.py", "src/zephyr/governance/data_governance/miniqmt_provider.py", "src/zephyr/strategy_factory/owner_band_t/data_loader.py", "tests/backtest/test_data_handler_pit.py", "tests/backtest/test_tick_replay_data_handler.py", "tests/backtest/x2_adjfactor_red_proof.py"]
+- module_id: "af:pit_manager"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/pit_manager.py"]
+  consumers_total: 5
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 0, "src": 2, "tests": 3}
+  consumers_top20: ["src/zephyr/backtest/core/data_handler.py", "src/zephyr/data/pit_query.py", "tests/backtest/test_pit_leakage_future_date.py", "tests/backtest/test_pit_manager.py", "tests/zephyr/data/test_trading_calendar.py"]
+- module_id: "af:decision_gate"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/decision_gate.py"]
+  consumers_total: 10
+  consumers_non_test_total: 5
+  buckets: {"config": 0, "scripts": 1, "src": 4, "tests": 5}
+  consumers_top20: ["scripts/backtest/f06_e4_wfa_exam.py", "src/zephyr/backtest/core/strategy_validation_pipeline.py", "src/zephyr/backtest/implementations/event_driven_engine.py", "src/zephyr/backtest/implementations/vectorized_engine.py", "src/zephyr/strategy_pipeline/fw_backtest.py", "tests/backtest/test_decision_gate.py", "tests/backtest/test_decision_gate_regime.py", "tests/backtest/test_f06_e4_wfa_exam.py", "tests/backtest/test_strategy_validation_pipeline.py", "tests/governance/test_alert_threshold_consistency.py"]
+- module_id: "af:exam_cost_gate"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/regime_validation/exam_cost_gate.py"]
+  consumers_total: 11
+  consumers_non_test_total: 7
+  buckets: {"config": 0, "scripts": 6, "src": 1, "tests": 4}
+  consumers_top20: ["scripts/backtest/calibrate_cost_tier_redblue.py", "scripts/backtest/exam_cost_reexam.py", "scripts/backtest/f06_e4_wfa_exam.py", "scripts/backtest/factory_grid_executor.py", "scripts/backtest/reexam_cpcv_harness.py", "scripts/backtest/t1_t2_handover.py", "src/zephyr/backtest/regime_validation/__init__.py", "tests/backtest/test_cost_gate_tier_wiring.py", "tests/backtest/test_exam_cost_gate.py", "tests/backtest/test_factory_grid_stage_cost_tiers.py", "tests/backtest/test_reexam_cpcv_harness.py"]
+- module_id: "af:cost_attribution"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/cost_attribution.py"]
+  consumers_total: 5
+  consumers_non_test_total: 3
+  buckets: {"config": 0, "scripts": 0, "src": 3, "tests": 2}
+  consumers_top20: ["src/zephyr/backtest/core/cost_model_calibration.py", "src/zephyr/backtest/io/result_repository.py", "src/zephyr/strategy_pipeline/fw_backtest.py", "tests/backtest/test_cost_attribution.py", "tests/backtest/test_h3h4_cash_pit_exec_chain.py"]
+- module_id: "af:scheduler"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/services/scheduler.py"]
+  consumers_total: 2
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 2}
+  consumers_top20: ["tests/backtest/test_scheduler.py", "tests/factor/test_backtest_factor_e2e.py"]
+- module_id: "af:overfitting_detector"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/overfitting_detector.py"]
+  consumers_total: 10
+  consumers_non_test_total: 6
+  buckets: {"config": 0, "scripts": 1, "src": 5, "tests": 4}
+  consumers_top20: ["scripts/backtest/f06_e4_wfa_exam.py", "src/zephyr/backtest/core/decision_gate.py", "src/zephyr/backtest/core/overfitting_adjudicator.py", "src/zephyr/backtest/core/strategy_validation_pipeline.py", "src/zephyr/backtest/implementations/event_driven_engine.py", "src/zephyr/backtest/implementations/vectorized_engine.py", "tests/backtest/test_decision_gate.py", "tests/backtest/test_overfitting_detector.py", "tests/backtest/test_rb_stats_validator_teeth.py", "tests/backtest/test_strategy_validation_pipeline.py"]
+- module_id: "af:closed_book_gate"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/closed_book_gate.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_closed_book_tick_gate.py"]
+- module_id: "af:strategy_validation_pipeline"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/strategy_validation_pipeline.py"]
+  consumers_total: 5
+  consumers_non_test_total: 2
+  buckets: {"config": 0, "scripts": 2, "src": 0, "tests": 3}
+  consumers_top20: ["scripts/backtest/eval_f2_narrow_backtest.py", "scripts/backtest/f06_e4_wfa_exam.py", "tests/backtest/test_f06_e4_wfa_exam.py", "tests/backtest/test_rb_stats_validator_teeth.py", "tests/backtest/test_strategy_validation_pipeline.py"]
+- module_id: "af:preflight_checker"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/core/preflight_checker.py"]
+  consumers_total: 1
+  consumers_non_test_total: 0
+  buckets: {"config": 0, "scripts": 0, "src": 0, "tests": 1}
+  consumers_top20: ["tests/backtest/test_preflight_checker.py"]
+- module_id: "af:e2_stationary_bootstrap"
+  stage: E4
+  py_paths: ["src/zephyr/backtest/regime_validation/e2_stationary_bootstrap.py"]
+  consumers_total: 2
+  consumers_non_test_total: 1
+  buckets: {"config": 0, "scripts": 0, "src": 1, "tests": 1}
+  consumers_top20: ["src/zephyr/backtest/regime_validation/__init__.py", "tests/backtest/test_e2_stationary_bootstrap.py"]
+- module_id: "cfg:factor_mining_whitelist"
+  stage: E1C
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "cfg:search_space_prereg"
+  stage: E1C
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "cfg:synergy_dedup"
+  stage: E5
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "cfg:ai_search_veins"
+  stage: E1G
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+- module_id: "cfg:ai_source_registry"
+  stage: E1G
+  py_paths: []
+  consumers_total: null
+  note: "证据无 py 路径指针，未扫（cfg:/域册/纯册面）"
+zero_consumer_modules:
+  - MOD-BT-035  # C2 粗筛成绩灌表（车道A挂点） stage=E1A
+  - MOD-BT-150  # AI生成车道B stage=E1B
+  - MOD-BT-155  # 公式挖掘机gplearn轨 stage=E1C
+  - MOD-BT-084  # 车道E分位数回归分布预测基线 stage=E1E
+  - MOD-BT-091  # 假说预审逻辑门 stage=E2
+  - MOD-BT-033  # 新旧状态双轨对照器 stage=E4
+  - MOD-BT-034  # P0 成本验证件 stage=E4
+  - MOD-BT-036  # C3 试点第 1 条 SVR 多因子（挂起） stage=E3
+  - MOD-BT-037  # C3 试点第 2 条 MA 金叉死叉 stage=E3
+  - MOD-BT-038  # C3 试点第 3 条 zscore 均值回归 stage=E3
+  - MOD-BT-043  # "C4 翻译 043: GFTD 指标择时" stage=E3
+  - MOD-BT-044  # "C4 翻译 044: MACD 单因子多头——金叉日轮换" stage=E3
+  - MOD-BT-045  # "C4 翻译 045: 蓝筹&均线——MA5>MA20 多头持有前 5" stage=E3
+  - MOD-BT-046  # "C4 翻译 046: 5 股固定池 zscore 均值回归" stage=E3
+  - MOD-BT-047  # "C4 翻译 047: KD 指标金叉死叉择时" stage=E3
+  - MOD-BT-048  # "C4 翻译 048: 布林带突破（talib BBANDS）" stage=E3
+  - MOD-BT-049  # "C4 翻译 049: 布林带1（手写 numpy 版）" stage=E3
+  - MOD-BT-050  # "C4 翻译 050: 高于 MA10 买入低于 MA20 卖出" stage=E3
+  - MOD-BT-051  # "C4 翻译 051: 5 日线穿十日线" stage=E3
+  - MOD-BT-052  # "C4 翻译 052: 多均线择时" stage=E3
+  - MOD-BT-053  # "C4 翻译 053: MACD 大盘择时" stage=E3
+  - MOD-BT-054  # "C4 翻译 054: DMI 大盘择时" stage=E3
+  - MOD-BT-055  # "C4 翻译 055: Stoch(KDJ) 大盘择时" stage=E3
+  - MOD-BT-056  # "C4 翻译 056: RSRS 大盘择时（标准版）" stage=E3
+  - MOD-BT-057  # "C4 翻译 057: RSRS 大盘择时（R² 加权 M=1100）" stage=E3
+  - MOD-BT-058  # "C4 翻译 058: RSRS 大盘择时优化" stage=E3
+  - MOD-BT-059  # "C4 翻译 059: RSRS 指标择时（60 分钟线版）" stage=E3
+  - MOD-BT-060  # "C4 翻译 060: 双股价差 zscore 轮动" stage=E3
+  - MOD-BT-061  # "C4 翻译 061: 趋势交易 5.0" stage=E3
+  - MOD-BT-062  # "C4 翻译 062: 回踩均线搏反弹" stage=E3
+  - MOD-BT-063  # "C4 翻译 063: MACD 多周期共振" stage=E3
+  - MOD-BT-064  # "C4 翻译 064: \"动量\"策略实为低动量反转" stage=E3
+  - MOD-BT-065  # "C4 翻译 065: MA 死叉+MACD 临界+低开变体" stage=E3
+  - MOD-BT-066  # "C4 翻译 066: 苦咖啡——120 日强趋势周频双持" stage=E3
+  - MOD-BT-067  # "C4 翻译 067: 躲大跌股债切换" stage=E3
+  - MOD-BT-068  # "C4 翻译 068: 恐慌反弹持有 19 日" stage=E3
+  - MOD-BT-069  # "C4 翻译 069: 反转效应月频 25 只" stage=E3
+  - MOD-BT-070  # "C4 翻译 070: 趋与势量化定义——势分分位带择时" stage=E3
+  - MOD-BT-071  # "C4 翻译 071: WorldQuant Alpha#22 月频前 5" stage=E3
+  - MOD-BT-072  # "C4 翻译 072: 多期限均线因子 OLS 预测选股" stage=E3
+  - MOD-BT-073  # "C4 翻译 073: 欧奈尔 RPS 相对强度选股" stage=E3
+  - MOD-BT-074  # "C4 翻译 074: CGO 处置效应因子" stage=E3
+  - MOD-BT-075  # "C4 翻译 075: 沪深300ETF 10/60 双均线" stage=E3
+  - MOD-BT-083  # sim 表部署脚本 stage=E7
+  - MOD-BT-088  # 精选价值十强 stage=E3
+  - MOD-BT-092  # 恐慌反弹策略深度化 stage=E3
+  - MOD-BT-102  # C4 翻译 stage=E3
+  - MOD-BT-104  # Slater精选35 stage=E3
+  - MOD-BT-105  # Slater价值55改进版 stage=E3
+  - MOD-BT-130  # 小市值高低波动选股 stage=E3
+  - MOD-BT-156  # 蛇皮走位小市值 stage=E3
+  - MOD-BT-157  # 便宜股PB破净高股息 stage=E3
+  - MOD-BT-160  # 低PE月频前20等权（HS300） stage=E3
+  - MOD-BT-161  # 低PB月频前20等权 stage=E3
+  - MOD-BT-162  # 高股息率月频前20等权 stage=E3
+  - MOD-BT-163  # PE+PB复合排名双因子 stage=E3
+  - MOD-BT-164  # 中证500低PE月频前20等权 stage=E3
+  - MOD-BT-165  # 漂亮 50 复现·高股息率旬频前 10 等权 stage=E3
+  - MOD-BT-166  # 原文口径 stage=E3
+  - MOD-BT-167  # 向导式价值分析 stage=E3
+  - MOD-BT-168  # 中信证券向导·低 PB 月频前 20 等权 stage=E3
+  - MOD-BT-169  # 超稳股息率+均线·高股息率月频前 5 等权 stage=E3
+  - MOD-BT-170  # 高股息率 stage=E3
+  - MOD-BT-172  # 价值投资策略 stage=E3
+  - MOD-BT-173  # "向导式·成长四门+PB>2 月频市值前 20" stage=E3
+  - MOD-BT-174  # 向导式成长股精选·五门市值前 20 stage=E3
+  - MOD-BT-175  # 低估值+低负债·PB 区间门市值前 20 stage=E3
+  - MOD-BT-176  # ROE 改善+低 PB·前 10 stage=E3
+  - MOD-BT-177  # PEG+EBIT+小市值·前 5 stage=E3
+  - MOD-BT-178  # PEG+成长+小市值·前 4 stage=E3
+  - MOD-BT-179  # PEG+EBIT 小市值优化·前 5 stage=E3
+  - MOD-BT-180  # 业绩增长+PEG·前 4 stage=E3
+  - MOD-BT-181  # 大市值价值投资·破净高 ROA 前 5 stage=E3
+  - MOD-BT-182  # 大市值价值投资优化·破净高 ROA 前 5 stage=E3
+  - MOD-BT-183  # 菜场大妈·高股息高 ROE 前 5 stage=E3
+  - MOD-BT-184  # 穿越牛熊价值精选·麦克连六门近似 stage=E3
+  - MOD-BT-185  # 柯林·麦克连成长价值·营收增长门近似 stage=E3
+  - MOD-BT-186  # 新手价值五门·月频市值前 20 stage=E3
+  - MOD-BT-194  # 分布预测双标准考尺（PIT+锐度+pinball） stage=E4
+  - MOD-BT-195  # Kronos 基线适配器 stage=E1E
+  - MOD-BT-202  # MCTS 第三轨搜索 stage=E1C
+  - MOD-BT-204  # Kronos 微调 pkl 适配层 stage=E1E
+  - MOD-INF-045  # 嵌入/模型下载器——LLM 供给（E1B/E2 生成力） stage=E1B
+  - "code:scripts/backtest/league_judge.py"  # A/B联赛成对晋升判据执行器 stage=E7
+  - "code:scripts/backtest/strategy_lifecycle_advisor.py"  # 策略 lifecycle 流转建议器 stage=E6
+  - "code:scripts/backtest/replay_drill.py"  # 复现演练器（病历/质量） stage=E4
+  - "code:scripts/backtest/crisis_drill_monthly.py"  # 月度危机演练件 stage=E7
+  - "code:scripts/backtest/lane_f_grid_adapter.py"  # F 车道网格配方适配器 stage=E1F
+  - "code:src/zephyr/pf_alloc/core/sector_distribution_comparator.py"  # 板块分布比较选优 stage=E8
+tests_only_consumer_modules:
+  - MOD-BT-086  # stage=E5
+  - MOD-BT-018  # stage=E6
+  - MOD-BT-019  # stage=E4
+  - MOD-BT-021  # stage=E4
+  - MOD-BT-023  # stage=E4
+  - MOD-BT-024  # stage=E5
+  - MOD-BT-027  # stage=E4
+  - MOD-BT-041  # stage=E3
+  - MOD-BT-042  # stage=E3
+  - MOD-BT-082  # stage=E8
+  - MOD-BT-197  # stage=E4
+  - "dir:_domain_data/source_sla_tracker"  # stage=E4
+  - "dir:_domain_data/tushare_news_connector"  # stage=E1G
+  - "dir:_domain_data/data_compression_archiver"  # stage=
+  - "dir:_domain_infrastructure_operations/strategy_canary_release"  # stage=E7
+  - "dir:_domain_infrastructure_operations/strategic_message_bus"  # stage=
+  - "dir:_domain_machine_learning_train/ml_model_factory"  # stage=E1E
+  - "dir:_domain_machine_learning_train/kan_density_head"  # stage=E1E
+  - "dir:_domain_machine_learning_train/patchtst_density_encoder"  # stage=E1E
+  - "dir:_domain_machine_learning_train/qnn_two_stage"  # stage=E1E
+  - "dir:_domain_machine_learning_train/research_data_manager"  # stage=E1
+  - "dir:_domain_machine_learning_train/research_data_sandbox"  # stage=E1
+  - "dir:_domain_machine_learning_train/ts_augmentation"  # stage=E1E
+  - "dir:_domain_machine_learning_train/decision_annotation_dataset"  # stage=E9
+  - "dir:_domain_machine_learning_train/reproducibility_manager"  # stage=E4
+  - "dir:_domain_machine_learning_train/research_asset_versioning"  # stage=
+  - "dir:_domain_intelligence/api_llm_pool"  # stage=E1B
+  - "dir:_domain_intelligence/llm_fundamental_analysis"  # stage=E1D
+  - "dir:_domain_intelligence/llm_research_agent"  # stage=E1
+  - "dir:_domain_intelligence/universal_fact_ledger"  # stage=E1G
+  - "dir:_domain_intelligence/event_chain_causal_graph"  # stage=E1D
+  - "dir:_domain_intelligence/llm_market_interpreter"  # stage=E1
+  - "dir:_domain_alt_data/sentiment_engine"  # stage=E1
+  - "dir:_domain_alt_data/alt_data_signal_extractor"  # stage=E1
+  - "dir:_domain_alt_data/concept_factor_mapper"  # stage=E1
+  - "dir:_domain_alt_data/research_report_collector"  # stage=E1G
+  - "dir:_domain_alt_data/social_sentiment_collector"  # stage=E1A
+  - "dir:_domain_alt_data/web_scraper_engine"  # stage=E1A
+  - "dir:_domain_alt_data/filing_nlp_engine"  # stage=E1D
+  - "dir:_domain_alt_data/policy_expectation_analyzer"  # stage=E1G
+  - "dir:_domain_signal_quality/signal_dedup"  # stage=E5
+  - "dir:_domain_signal_quality/signal_quality_benchmark"  # stage=E4
+  - "dir:_domain_signal_quality/signal_explainability_guarantor"  # stage=E6
+  - "dir:_domain_regime/market_forecast_fusion"  # stage=E8
+  - "dir:_domain_simulation/overfitting_protection_gate"  # stage=E4
+  - "dir:_domain_factor/auto_feature_discoverer"  # stage=E1C
+  - "dir:_domain_factor/gp_strategy_discovery"  # stage=E1C
+  - "dir:_domain_factor/llm_evolutionary_search"  # stage=E1C
+  - "dir:_domain_factor/factor_vote_mining"  # stage=E1C
+  - "dir:_domain_factor/signature_feature_extractor"  # stage=E3
+  - "dir:_domain_factor/factor_model_co_evaluator"  # stage=E4
+  - "dir:_domain_factor/strategy_iteration_upgrader"  # stage=E9
+  - "dir:_domain_portfolio_core/rebalance_cost_analyzer"  # stage=E8
+  - "dir:_domain_security_llm/spectral_guard"  # stage=
+  - "code:src/zephyr/pf_core/core/shadow_portfolio.py"  # stage=E9
+  - "code:scripts/backtest/weight_ssot.py"  # stage=E8
+  - "code:scripts/backtest/sim_promotion_memo.py"  # stage=E7
+  - "code:src/zephyr/pf_alloc/core/tail_hedge_signal.py"  # stage=E8
+  - "af:purged_kfold"  # stage=E4
+  - "af:scheduler"  # stage=E4
+  - "af:closed_book_gate"  # stage=E4
+  - "af:preflight_checker"  # stage=E4
+weak_consumer_modules_le2:
+  - MOD-BT-154  # non_test=1 stage=E1
+  - MOD-BT-090  # non_test=1 stage=E1D
+  - MOD-AUTO-E1G-001  # non_test=1 stage=E1G
+  - MOD-BT-078  # non_test=2 stage=E6
+  - MOD-BT-225  # non_test=1 stage=E7
+  - MOD-BT-020  # non_test=1 stage=E4
+  - MOD-BT-022  # non_test=1 stage=E4
+  - MOD-BT-028  # non_test=1 stage=E4
+  - MOD-BT-080  # non_test=1 stage=MAP
+  - MOD-BT-081  # non_test=1 stage=MAP
+  - MOD-BT-094  # non_test=1 stage=E7
+  - MOD-BT-103  # non_test=2 stage=E3
+  - MOD-BT-187  # non_test=1 stage=E2
+  - MOD-BT-192  # non_test=2 stage=E6
+  - MOD-BT-193  # non_test=2 stage=E1D
+  - MOD-BT-196  # non_test=2 stage=E8
+  - MOD-BT-201  # non_test=1 stage=E7
+  - MOD-BT-203  # non_test=1 stage=E1D
+  - MOD-BT-213  # non_test=2 stage=E6
+  - "dir:_domain_data/auto_backfiller"  # non_test=1 stage=E4
+  - "dir:_domain_data/market_breadth_collector"  # non_test=1 stage=E1
+  - "dir:_domain_data/sector_intraday_aggregator"  # non_test=1 stage=E1D
+  - "dir:_domain_data/sector_report_builder"  # non_test=1 stage=E1D
+  - "dir:_domain_data/reference_data_manager"  # non_test=1 stage=E4
+  - "dir:_domain_data/financial_parser"  # non_test=1 stage=E1D
+  - "dir:_domain_infrastructure_runtime/database_layer"  # non_test=1 stage=E4
+  - "dir:_domain_infrastructure_runtime/resource_scheduler"  # non_test=2 stage=E0
+  - "dir:_domain_infrastructure_operations/wal_checkpoint_monitor"  # non_test=2 stage=E4
+  - "dir:_domain_ml_serve/model_drift_monitor"  # non_test=2 stage=E6
+  - "dir:_domain_machine_learning_train/model_version_registry"  # non_test=1 stage=E1E
+  - "dir:_domain_intelligence/local_llm_pool"  # non_test=1 stage=E1B
+  - "dir:_domain_intelligence/llm_agent_router"  # non_test=1 stage=
+  - "dir:_domain_intelligence/news_symbol_linker"  # non_test=2 stage=E1G
+  - "dir:_domain_alt_data/policy_theme_mapper"  # non_test=1 stage=E1D
+  - "dir:_domain_alt_data/alt_source_health_manager"  # non_test=2 stage=
+  - "dir:_domain_alt_data/alt_data_catalog"  # non_test=1 stage=
+  - "dir:_domain_fundamental_signal/trace_context_store"  # non_test=1 stage=E2
+  - "dir:_domain_signal_quality/signal_degradation_monitor"  # non_test=1 stage=E6
+  - "dir:_domain_regime/style_regime_model"  # non_test=1 stage=E8
+  - "dir:_domain_regime/cross_sectional_features"  # non_test=1 stage=E8
+  - "dir:_domain_trading/reference_data_manager"  # non_test=1 stage=E4
+  - "dir:_domain_factor/factor_lifecycle_runner"  # non_test=1 stage=E6
+  - "dir:_domain_fbl_detectors/distribution_drift_monitor"  # non_test=2 stage=E6
+  - "dir:_domain_portfolio_core/strategy_capacity_estimator"  # non_test=1 stage=E8
+  - "dir:_domain_portfolio_core/funnel_portfolio_adjudicator"  # non_test=1 stage=E8
+  - "dir:_domain_portfolio_core/exposure_manager"  # non_test=1 stage=E8
+  - "dir:_domain_portfolio_core/strategy_factory"  # non_test=1 stage=E8
+  - "dir:_domain_data_eng/cold_data_archive_manager"  # non_test=1 stage=
+  - "dir:_domain_data_eng/data_lake_manager"  # non_test=1 stage=E4
+  - "dir:_domain_data_eng/gpu_resource_manager"  # non_test=2 stage=E0
+  - "code:scripts/backtest/league_archive.py"  # non_test=2 stage=E7
+  - "code:scripts/backtest/league_monthly_snapshot.py"  # non_test=2 stage=E7
+  - "code:scripts/backtest/league_restore.py"  # non_test=2 stage=E7
+  - "code:scripts/backtest/sim_platform_journal.py"  # non_test=2 stage=E7
+  - "code:scripts/backtest/sector_prereg_exam_runner.py"  # non_test=1 stage=E4
+  - "code:scripts/backtest/reexam_cpcv_harness.py"  # non_test=1 stage=E4
+  - "code:scripts/backtest/exam_cost_reexam.py"  # non_test=2 stage=E4
+  - "code:scripts/backtest/dsr_recalc_backfill.py"  # non_test=2 stage=E4
+  - "code:scripts/backtest/condition_attribution.py"  # non_test=2 stage=E9
+  - "code:src/zephyr/pf_alloc/core/forward_stop_loss.py"  # non_test=1 stage=E8
+  - "code:src/zephyr/pf_alloc/core/risk_budget_allocator.py"  # non_test=2 stage=E8
+  - "af:pit_manager"  # non_test=2 stage=E4
+  - "af:strategy_validation_pipeline"  # non_test=2 stage=E4
+  - "af:e2_stationary_bootstrap"  # non_test=1 stage=E4
