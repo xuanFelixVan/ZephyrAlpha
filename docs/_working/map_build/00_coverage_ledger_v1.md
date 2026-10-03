@@ -41,3 +41,9 @@ owner: ZephyrAlpha-Owner
 
 格式：`module_id | 纵轴归属图 | wiring_status | 缺口动作`。本 v1 留空待 join checker——
 禁止手工填表（宪法 §9.5），表由生成器产出。
+## 5. 宇宙口径终批补记（2026-10-03，裁定#481）
+
+Owner 已批：主账=src/zephyr .py（__init__. 并入父包，非空者计）+scripts .py+frontend
+js/html ≈5,200；辅账=tests（跟随被测对象）+docs（图书馆管）；全仓 19,281 禁作分母。
+GOMAP counts=运行时视图口径并行保留。**#9 join checker 的分母自此法定**，归属总表
+施工可开工（设计稿见 20 号文件）。

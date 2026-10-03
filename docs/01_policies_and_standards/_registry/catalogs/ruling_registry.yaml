@@ -6906,3 +6906,22 @@ entries:
   related_arch: []
   related_rulings: ["裁定#479", "裁定#478"]
   superseded_by: null
+- ruling_id: "裁定#481"
+  title: 覆盖账本宇宙口径钉死（记账单元定义+主辅账切分）
+  date: '2026-10-03'
+  category: 架构
+  status: decided
+  summary: |-
+    Owner 2026-10-03 批准（对话 st-mapcensus 纵轴覆盖战役）：纵向全景图"全包含"验收的
+    记账宇宙钉死为——主账=src/zephyr .py（__init__.py 空壳并入父包，非空者计）+
+    scripts .py + frontend js/html ≈5,200 干活文件，逐个必须可答"在哪条纵向图服役或被
+    在役模块依赖（闭包）"，两不沾=孤儿判罚（入图或退役）直至清零；辅账=tests/（4,014，
+    跟随被测对象，测试隔离规则管辖）+docs（图书馆在册管辖），记数不追责。19,281 全仓
+    文件禁作分母（家属禁入部队）。本裁定=join checker（施工清单#9）的法定分母，
+    归属总表 schema 与边界 case 依设计稿执行；GOMAP counts 口径（442 import 级模块）
+    保留为运行时视图口径，与本裁定记账口径并行不悖、互不覆盖。
+  related_files:
+  - docs/_working/map_build/00_coverage_ledger_v1.md
+  related_arch: []
+  related_rulings: ['裁定#409']
+  superseded_by: null
