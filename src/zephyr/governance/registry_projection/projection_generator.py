@@ -151,13 +151,27 @@ def _write_rendered(project_root: Path, physical_path: str, rendered: str) -> No
     for attempt in range(_CAS_RETRIES):
         expected_base = content_sha256(target.read_text(encoding="utf-8")) if target.exists() else None
         try:
-            safe_write_text(target, rendered, expected_base_sha256=expected_base, repo_root=project_root, newline="\n")
+            safe_write_text(
+                target,
+                rendered,
+                expected_base_sha256=expected_base,
+                repo_root=project_root,
+                newline="\n",
+                # 本生成器是投影册唯一合法写者（无渲染即无写）：render 全量重打=PG wins 的
+                # 设计内行为，drift 证据/identity 增减已另行记账；W4 mass-edit 守卫针对的是
+                # 人工/意外整册删行（emomine 4772 行事故），生成器带逃生旗不解除守卫对其他写者
+                allow_mass_edit=True,
+            )
             return
         except Exception as exc:  # noqa: BLE001 — CAS 冲突退避重试
             if attempt == _CAS_RETRIES - 1:
                 _ledger_record_drift(physical_path, added=0, removed=0, detail=f"cas_dead_letter: {type(exc).__name__}")
-                logger.error("投影写盘 CAS 三连冲突（两生成器并发=违规信号，人工分诊）: %s", physical_path)
-                raise ProjectionUnavailable("CAS 三连冲突死信") from exc
+                logger.error(
+                    "投影写盘三连失败（真实异常=%s，CAS 并发/守卫拒写需分诊）: %s",
+                    type(exc).__name__,
+                    physical_path,
+                )
+                raise ProjectionUnavailable(f"CAS 三连冲突死信（{type(exc).__name__}）") from exc
             continue
 
 

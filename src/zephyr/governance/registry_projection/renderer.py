@@ -119,7 +119,9 @@ def render_field(key: str, value: object, indent: int) -> list[str]:
         return [f"{pad}{key}:"] + [f"{pad}- {_emit_scalar_value(v)}" for v in value]
     if isinstance(value, (dict, list)):
         sub = _dump_subtree(value)
-        return [f"{pad}{key}:"] + [f"{pad}{line}" for line in sub]
+        # dict 子树必须比键再进 2 格才是合法嵌套映射（list 的 dash 序列在键同级合法）；
+        # 2026-10-03 治本：此前只垫 pad → dict 值子键漏成条目兄弟键（overlay_mode 拍扁=dataflowgraph 假键同根因）
+        return [f"{pad}{key}:"] + [f"{pad}  {line}" if isinstance(value, dict) else f"{pad}{line}" for line in sub]
     return [f"{pad}{key}: {_emit_scalar_value(value, key=key)}"]
 
 

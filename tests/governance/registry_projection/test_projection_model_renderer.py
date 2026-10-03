@@ -150,3 +150,49 @@ def test_bundle_bad_shape_raises_unavailable():
 def test_merge_evaluation_always_quoted():
     r = render(_snap())
     assert 'merge_evaluation: "同文件多 token（复合键实证）"' in r
+
+
+def test_dict_valued_field_roundtrip_b3_20261003():
+    """回归（B3 实弹诊断）：dict 值子树必须嵌套 2 格——拍扁=子键漏成条目兄弟键。
+
+    根因实况：overlay_mode 的 {name_zh, description(多行)} 被 0 缩进发射成同级键，
+    回读 overlay_mode=None 且 name_zh 污染条目键集（TRANSLATION/CAND 两册同根因）。
+    """
+    text = (
+        "schema_version: 1.1.0\n"
+        "title: 字典值册\n"
+        "entries:\n"
+        "- id: e1\n"
+        "  overlay_mode:\n"
+        "    name_zh: 叠加态模式\n"
+        '    description: "多行\\n说明"\n'
+        "  status: active\n"
+        "trailing: []\n"
+    )
+    snap = snapshot_from_yaml(text, registry_id="REG-T-001", physical_path="docs/x.yaml")
+    rendered = render(snap)
+    self_check(rendered, snap)  # 修复前在此抛 SemanticMismatch
+    entry = yaml.safe_load(rendered)["entries"][0]
+    assert set(entry) == {"id", "overlay_mode", "status"}
+    assert entry["overlay_mode"]["name_zh"] == "叠加态模式"
+    assert entry["overlay_mode"]["description"] == "多行\n说明"
+
+
+def test_nested_dict_no_sibling_key_leak_b3_20261003():
+    """回归（CAND 册实弹）：嵌套 dict 的键不得漏成条目级键（dataflowgraph 假键案）。"""
+    text = (
+        "schema_version: 1.1.0\n"
+        "title: 嵌套册\n"
+        "entries:\n"
+        "- id: e2\n"
+        "  graphs:\n"
+        "    dataflowgraph: bm-1\n"
+        "    decisiongraph: bm-2\n"
+        "  name: 候选甲\n"
+    )
+    snap = snapshot_from_yaml(text, registry_id="REG-T-002", physical_path="docs/y.yaml")
+    rendered = render(snap)
+    self_check(rendered, snap)
+    entry = yaml.safe_load(rendered)["entries"][0]
+    assert set(entry) == {"id", "graphs", "name"}
+    assert entry["graphs"] == {"dataflowgraph": "bm-1", "decisiongraph": "bm-2"}
