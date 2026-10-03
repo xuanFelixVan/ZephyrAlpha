@@ -515,7 +515,15 @@ class TestPoolDrainSurvivalGate:
     @staticmethod
     def _pool_stats() -> tuple[dict, dict, threading.Lock]:
         return (
-            {"done": 0, "dead": 0, "processed_qids": [], "stale_cleared": 0, "cascade_marked": 0, "landed_index": []},
+            {
+                "done": 0,
+                "dead": 0,
+                "processed_qids": [],
+                "stale_cleared": 0,
+                "cascade_marked": 0,
+                "successors_rebuilt": 0,
+                "landed_index": [],
+            },
             {"processed": 0, "env_aborted": False, "budget_left": None},
             threading.Lock(),
         )

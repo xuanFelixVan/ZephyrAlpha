@@ -65,3 +65,35 @@ title: "W-M1 注册表迁移波0 施工总包 — 台账 LEDGER（总指挥 30 �
 - 双轨首个真实漂移观测（2026-09-25 23:0x，机制验证案例）：REG-MODULE-TRANSLATION-001 抓到 2 条 pg_only（t0_rule_engine/t0_state_match_matrix 翻译行，13:10 我方对账回填、其后被做T战役会话从 YAML 侧移走）——按 insert-only 纪律 PG 只记账不删，连续三轮观测稳定（不增长不收敛=他方在途改动的忠实镜像）。这正是设计要的行为：对账器把"谁在何时与账本分叉"忠实显影，处置权留给属主会话。REG-CAPCAN-001 同期 10 条 backfill 亦为他方 YAML 新增行的正常吸收。七册中 5 册恒 PASS、2 册漂移均为他方在途 WIP 镜像，双轨机制实战可用性得到确认。
 - 旗恢复+运维教训（2026-10-02 01:5x）：dual_track.enabled 旗被 .runtime 运行时 TTL 清扫吃掉（旗为非 git 运行时资产无保护），已重新挂上。教训入册：双轨旗属"必须长期存活的运行时状态"，后续转正批应把旗检查纳入 reconcile CLI 自身（旗缺失=CLI 自动补挂并告警），消除对手工/外部清理的脆弱性。另有 .runtime/tmp 2 个 w3h_spec json 非我方产物不动。
 
+## 6. 转正执行班（st-wm1-cutover-20261003，2026-10-03）B1 归属分发
+
+- reconcile 报告=`.runtime/registry_ledger/reconcile_20261003_163521.json`：pg_only 合计 **195**（CAPCAN 156 / TRANSLATION 35 / DOC 3 / ARCH-ISSUE 1；ERRCODE/CAND/RULING 恒 PASS，RULING 侧 3 条 yaml_only 已自动 backfill 吸收）。较 Owner 归因时点（111=110 镜像+1 回填）增量 84 条同为 belt_daemon 对属主在途 YAML 编辑的持续镜像，性质同源。
+- created_by 分布：belt_daemon 113 + st-wm1-wave0-20260924 82（Phase 0 导入/回填期行，其后被属主从 YAML 侧移走）。
+- **关键字分发（令面三桶）**：
+  - `question_mining` → **16 条**（CAPCAN creation_tokens，docs/_working/question_mining_campaign/* 的 metaq-question-mining-* token 行）→ 归问题挖矿战役；
+  - `du881` → **1 条**（data/strategy_intake/du881_verdict_case/p1_v1_universe_469codes.yaml）→ 归 du881 战役；
+  - `t0_*` → **2 条**（scripts/backtest/t0_rule_engine.py、t0_state_match_matrix.py，token=l2-bench-probe-20261001-*）→ 归做T战役（docs/_working/t0_matrix/）；
+  - 其余 **176 条** → 明细快照=`.runtime/tmp/wm1_pg_only_detail_20261003.json`（family/entry_key/created_by/created_at/payload_head 五字段），汇总挂 §呈批。
+- **机械定性（与 Owner"110 镜像+1 回填、零内容冲突"归因一致）**：底层文件已删 133 条（临时脚本清理时代 token 行：auction-backfill-*/auto-*-202608xx/090x 等）；同文件换 token/路径的改名残影 39 条（auction_strength 换 token、sla_breach_predictor→data_eng 新路径、cost_model→cost_model_calibration 等，新旧两侧核验新行都在）；.tmp 写盘残尸 2 条；文件在盘而册行全无 22 条（heal 守护重排/战役自查删除，内容层异议归各属主）。特殊核验：#ARCH-362 与 DOC 3 条在 HEAD+盘面双侧均无=合法落地删除；t0 两文件在盘在用，退 PG 后如需复登记一行 API 即回（事件表全史可查）。
+- **B1 结论**：195 条全部按"合法删除镜像"进 B2 退役（不 retire 则 B3 render 会把它们复活回 YAML）；三条我方改名残影中 generator.py token 行 wave0 终局已退（entry_pk=10706，authority_ref=42bdec7baa，event 23536）不重复退，schema.py/identity.py 两条翻译行（entry_pk=18410/18409）随 C4（YAML 侧先行除名）后退役。CAPCAN 侧 schema.py/identity.py 旧 token 行（10697/10698）两侧同在=clean_match 非本批面，挂 §呈批残留观察。
+
+## 7. 转正执行班 §B2 退役台账 + §呈批（2026-10-03）
+
+### §B2 退役台账（已执行）
+
+- **C4 先行**（防对账回填复活）：module_translation_registry.yaml 外科切除 schema.py/identity.py 两条旧 module_path 行（L60870-60885 共 16 行整，块界断言+扫描器复验：旧键归零、新名 ledger_identity/registry_ledger_ddl 两行无损）。
+- **B2 退役**：意图 API `api.retire` 执行 **197 条**（195 pg_only+2 翻译残影），全部带 `authority_ref=WM1-CUTOVER-B2-20261003`，reason=双轨 insert-only 镜像的合法删除对齐+cutover 前 PG==YAML 一致性恢复，evidence=reconcile_20261003_163521.json。事件号 65140-65335（196 新写；首条双跑幂等 OK_NOOP 短路）；SQL 复核=本会话 retire 事件 197/197 全带 authority_ref。tombstone 语义行保留永不物理删，需要复登记一行 API 即回。
+- **终验**：reconcile_20261003_165937.json = **Phase 0 PASS 七册全绿**（yaml=pg 逐册相等，pg_only=0，backfilled=0，mismatch=0）。判据①②达成。
+
+### §呈批（代呈不施工，等 Owner/属主表态）
+
+1. **C3 降级呈批（noqa_exempt_registry.yaml"退役豁免条目清理（基线 33→1）"）**：语义不可机械定位，本班不猜着删门禁豁免册（机械判定禁凭记忆+破坏性操作三步验证）。实勘四个口径全对不上 33：catalogs 册=30 marker；config/governance 册=195 豁免/5 类（business_subset 76/no_vocab_source 77/threshold_var 32/arch_concept 9/test_fixture 1）；死文件豁免=0；行窗 stale=39 但含行号漂移噪音不可直接判死。全仓唯一"33"命中=11 号评估卷 REG-CAPCAN-001 pg_only=33（72h 时点）——**属 B1/B2 面不属 noqa，若令面本意即此则已由本批消化，请 Owner 确认销案或给 33 条清单真源后再施工**。
+2. **D1 单文件袋静默蒸发**：单文件提交袋在队列窗口内文件消失且无告警（历史上与 reset --hard/clean 特征蒸发事故同族）。建议处方：袋落库时把 blob 清单+哈希写进队列项 manifest，requeue/落地前先验 blob 存在性，缺失即转死信分诊而非静默。
+3. **D2 僵尸租约 PID 复用骗过存活检查**：死会话租约的 PID 被系统复用给无关进程后，`is_pid_alive` 判活误真，租约永不过期挡道。建议处方：判活键升级为 PID+进程启动时间（或会话心跳 token）双因子，孤儿资源侦测（9b3359eccf）已有基座可挂。
+4. **D3 队列楔死慢项无墙钟硬顶**：慢项无总时长上限，9-23 曾现 53 分钟零吞吐（锁等待 300s×门禁链 311-393s 循环空转）。建议处方：每项墙钟预算（如 2×基线时长），超时转 dead-letter 带分诊报告，防单项吃满队列。
+5. **CAPCAN 残留观察**：schema.py/identity.py 两条**旧 token 行**（entry_pk=10697/10698，registry-migration-*-20260923）YAML 与 PG 两侧同在=clean_match，非 pg_only 非本批面；文件本体已改名不存在。建议随 B3 render 归一（render 会按 PG 侧重打，若 B3 前不处置则现态会原样投影）或下一退役批带 authority_ref 处置，呈 Owner 定。
+
+### §补记（2026-10-03 收尾）
+
+- **测试夹具跨批同步修复（披露）**：双轮验收首轮 86+1 红——`test_commit_belt_daemon.py::TestPoolDrainSurvivalGate` KeyError 'successors_rebuilt'。根因=st-deadletter-cure 今日批 2b28c6fbf1 给池化死信出口加 `successors_rebuilt` 计数时同步了自家 9 用例与 drain_queue_pool 规范初始化，漏了 belt_daemon 更老的测试夹具 `_pool_stats()`（生产面安全实证：daemon 经 bootstrap_drain_with_landing→drain_queue_pool 规范路径，键齐全）。本班修复=夹具一行补 `"successors_rebuilt": 0`（镜像 canonical 形态），修复后**双轮 87 passed ×2 全绿**。归属说明：缺陷体=他会话今日落地批的连带面，修因为本班验收门被挡，一行最小面+此处显性披露。
+- **终验补跑**：token 登记（B3 施工单 CREATE-GUARD）在 165937 终验之后，补跑 reconcile_20261003_171440.json=PASS（CAPCAN backfilled=1=本班新 token 行按设计吸收，pg_only 保持 0）。交接态=PG==YAML 七册全等。

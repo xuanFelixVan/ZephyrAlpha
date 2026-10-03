@@ -59462,4 +59462,9 @@ creation_tokens:
   created_by: st-deadletter-cure-20261003
   capability: D_GOV_CODE_QUALITY
   merge_evaluation: "死信急诊分诊台：手续五族诊断/处方/铁闸执行，与triage_bag内容归因互补"
+- file: docs/_working/registry_migration/B3_execution_sheet.md
+  token: wm1-cutover-b3-execution-sheet-20261003
+  created_by: st-wm1-cutover-20261003
+  capability: wm1_cutover
+  merge_evaluation: "W-M1 转正班 B3 施工单单件登记（同目录既有 LEDGER/设计族已各具 token，本件纯增量无替代对象）"
 di_seam_exemptions: []
