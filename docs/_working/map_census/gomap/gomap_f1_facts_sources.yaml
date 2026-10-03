@@ -1,0 +1,142 @@
+schema_version: '0.1'
+ttl: task_bound
+completes_when: GOMAP 挂血肉战役（F2 血肉批+手术批+存量清算）施工验收落 HEAD 后本表转归档
+census_id: GOMAP-F1-FACTS-SOURCES-001
+session: st-gomap-f1-20261003
+generated_at: '2026-10-03T15:30:01+00:00'
+title: GOMAP 图10 挂血肉 F1 盘点·表3 治理域可机生计数真源清点
+note_zh: 纯机械实勘（2026-10-03 主区只读）。trigger_facts 可得性口径：yes=常态计数可机生（文件/行数/JSON 字段）；partial=事件驱动落点（有事件才有行）；no=无持久落点（运行时内存闸/纯定义册）。抽样时点=盘点会话当时，计数随时间漂移属正常。
+sources:
+- sid: FS-01
+  name_zh: 提交队列台账
+  path: .runtime/commit_queue/
+  extractable_fields:
+  - done 袋数
+  - dead 袋数
+  - dead_archive
+  - blobs
+  - health_alert_state.json
+  - belt_daemon.heartbeat(pid/wall_ts)
+  sample_command: ls .runtime/commit_queue/done | wc -l
+  sample_output: done=508 dead=1257（2026-10-03 23:07 实测）
+  trigger_facts: 'yes'
+- sid: FS-02
+  name_zh: process_reaper 巡检审计
+  path: .runtime/process_reaper/last_run.json
+  extractable_fields:
+  - timestamp
+  - scanned
+  - whitelist_hits
+  - killed[]
+  - reported[](pid/reason/cmdline)
+  sample_command: python -c "import json;d=json.load(open('.runtime/process_reaper/last_run.json'));print(d['scanned'],d['whitelist_hits'],len(d['killed']))"
+  sample_output: 2026-10-03 23:07:27 scanned 19 whitelist 13 killed 0
+  trigger_facts: 'yes'
+- sid: FS-03
+  name_zh: 治理审计 jsonl 族
+  path: .runtime/audit/（24 件）
+  extractable_fields:
+  - gate_execution_stats.jsonl(2673行)
+  - commit_block_events.jsonl
+  - lock_wait_events.jsonl
+  - write_audit.jsonl
+  - preflight_events.jsonl
+  - emergency_track.jsonl
+  - bottleneck_ledger.jsonl
+  - kill_switch_orchestrator.jsonl
+  - worktree_drift_watchdog.jsonl
+  sample_command: wc -l .runtime/audit/gate_execution_stats.jsonl
+  sample_output: '2673'
+  trigger_facts: 'yes'
+- sid: FS-04
+  name_zh: gate 外来/专项审计
+  path: .runtime/gate_audit/（101 件）
+  extractable_fields:
+  - '*_foreign_staged.jsonl（各 gate 外来 staged warn）'
+  - create_guard_* warn/shadow
+  - allow_overlap_usage.jsonl
+  sample_command: ls .runtime/gate_audit/ | wc -l
+  sample_output: '101'
+  trigger_facts: 'yes'
+- sid: FS-05
+  name_zh: 能力反查审计
+  path: .runtime/lookup_audit/<sid>.jsonl
+  extractable_fields:
+  - 每会话一文件
+  - tool/query/result_count/rule_ids/library_dedup
+  sample_command: wc -l .runtime/lookup_audit/st-gomap-f1-20261003.jsonl
+  sample_output: 5（本会话冷启动反查实证）
+  trigger_facts: 'yes'
+- sid: FS-06
+  name_zh: 会话注册与心跳
+  path: .runtime/session_registry.json + .runtime/session_registry_audit/
+  extractable_fields:
+  - session_id/pid/held_files/last_heartbeat/is_breaking_change/task_files
+  sample_command: python -c "import json;print(len(json.load(open('.runtime/session_registry.json'))))"
+  sample_output: 10 sessions
+  trigger_facts: 'yes'
+- sid: FS-07
+  name_zh: 工作区告警
+  path: .runtime/workspace_alerts/
+  extractable_fields:
+  - stash_notice.json（编辑被 stash 保存告警）
+  sample_command: ls .runtime/workspace_alerts/
+  sample_output: stash_notice.json
+  trigger_facts: partial
+- sid: FS-08
+  name_zh: drift watchdog 心跳
+  path: .runtime/drift_watchdog/watchdog.jsonl
+  extractable_fields:
+  - ts/pid/status/reason（跳过/执行判定）
+  sample_command: wc -l .runtime/drift_watchdog/watchdog.jsonl
+  sample_output: '33490'
+  trigger_facts: 'yes'
+- sid: FS-09
+  name_zh: reconciler 运行报告
+  path: .runtime/reconcile_reports/（987 件）
+  extractable_fields:
+  - 逐次报告 JSON（algo_flow_reverse_orphan_* 等）
+  sample_command: ls .runtime/reconcile_reports/ | wc -l
+  sample_output: '987'
+  trigger_facts: partial
+- sid: FS-10
+  name_zh: claim 锁注册面
+  path: .ailocks/registry.json
+  extractable_fields:
+  - 'locks{file: owner_id/task/timestamp/ttl_s}'
+  sample_command: python -c "import json;print(len(json.load(open('.ailocks/registry.json'))['locks']))"
+  sample_output: 9 locks
+  trigger_facts: 'yes'
+- sid: FS-11
+  name_zh: git 会话审计 trail
+  path: git log [GW:<sid>] 标记 + .runtime/session_closeout/
+  extractable_fields:
+  - commit GW 标记（会话归属）
+  - session_closeout/state.json
+  sample_command: git log --format=%h --grep='\[GW:st-gomap-f1-20261003\]' | wc -l
+  sample_output: 本会话提交后计数（提交前=0）
+  trigger_facts: 'yes'
+- sid: FS-12
+  name_zh: 告警规则定义册
+  path: config/alert_rules.yaml
+  extractable_fields:
+  - rules[]（ALERT-SYS-001 起，module_id=MOD-INF-015，version 0.1.0 scaffold）
+  sample_command: 'grep -c "- id: ALERT-" config/alert_rules.yaml'
+  sample_output: 规则条目可数；消费面=TelemetryFacade.alerting（scaffold，无执行计数落点）
+  trigger_facts: 'no'
+- sid: FS-13
+  name_zh: 资源守卫
+  path: src/zephyr/gov_drift/resource_guard.py
+  extractable_fields:
+  - 运行时内存/资源闸（dataclass 实现）
+  sample_command: grep -c 'jsonl' src/zephyr/gov_drift/resource_guard.py
+  sample_output: 0（无持久事件落点）
+  trigger_facts: 'no'
+- sid: FS-14
+  name_zh: GPU 资源管理器
+  path: src/zephyr/data_eng/gpu_resource_manager.py
+  extractable_fields:
+  - GPU 池化管理
+  sample_command: grep -c 'jsonl' src/zephyr/data_eng/gpu_resource_manager.py
+  sample_output: 0（无持久事件落点）
+  trigger_facts: 'no'

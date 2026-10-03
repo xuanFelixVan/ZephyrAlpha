@@ -1,0 +1,135 @@
+schema_version: '0.1'
+ttl: task_bound
+completes_when: GOMAP 挂血肉战役（F2 血肉批+手术批+存量清算）施工验收落 HEAD 后本表转归档
+census_id: GOMAP-F1-GAP-MATRIX-001
+session: st-gomap-f1-20261003
+generated_at: '2026-10-03T15:30:01+00:00'
+title: GOMAP 图10 挂血肉 F1 盘点·表1 现状矩阵（7环节×4字段）
+source_map:
+  map: config/governance_operations_map.yaml
+  map_schema_version: '0.1'
+  map_id: GOMAP-001
+  map_name_zh: 治理运行地图
+  map_generated_at: '2026-10-02T02:26:55.916376+00:00'
+  sop: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md
+legend_layer:
+  purpose_tag_legend: absent
+  note_zh: 图10 册顶无 §2 目的标签图例层（top keys 无 legend/purpose_tags 节）——血肉挂载 SOP §2 图例层未建
+counts_bottomline:
+  total_modules: 448
+  wired: 246
+  wired_dynamic: 15
+  wired_by_header: 93
+  suspect_orphans: 94
+  balance: 448 = 246 + 15 + 93 + 94 ✓（实测复核=底数，零差异）
+  mounts_total: 47
+matrix:
+- layer_id: GOM-L0
+  name_zh: 孵化
+  mechanisms: 77
+  mounts: 8
+  disconnected_notes: 1
+  wiring_wired: 31
+  wiring_wired_dynamic: 7
+  wiring_wired_by_header: 14
+  wiring_suspect_orphan: 25
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+- layer_id: GOM-L1
+  name_zh: 运行监控
+  mechanisms: 140
+  mounts: 13
+  disconnected_notes: 1
+  wiring_wired: 83
+  wiring_wired_dynamic: 1
+  wiring_wired_by_header: 35
+  wiring_suspect_orphan: 21
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+- layer_id: GOM-L2
+  name_zh: 资源水位
+  mechanisms: 66
+  mounts: 6
+  disconnected_notes: 2
+  wiring_wired: 28
+  wiring_wired_dynamic: 3
+  wiring_wired_by_header: 10
+  wiring_suspect_orphan: 25
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+- layer_id: GOM-L3
+  name_zh: 熔断降级
+  mechanisms: 22
+  mounts: 8
+  disconnected_notes: 4
+  wiring_wired: 16
+  wiring_wired_dynamic: 1
+  wiring_wired_by_header: 2
+  wiring_suspect_orphan: 3
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+- layer_id: GOM-L4
+  name_zh: 收割清理
+  mechanisms: 42
+  mounts: 3
+  disconnected_notes: 1
+  wiring_wired: 22
+  wiring_wired_dynamic: 2
+  wiring_wired_by_header: 8
+  wiring_suspect_orphan: 10
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+- layer_id: GOM-L5
+  name_zh: 自愈对账
+  mechanisms: 97
+  mounts: 6
+  disconnected_notes: 0
+  wiring_wired: 63
+  wiring_wired_dynamic: 1
+  wiring_wired_by_header: 23
+  wiring_suspect_orphan: 10
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+- layer_id: GOM-L6
+  name_zh: 复盘审计
+  mechanisms: 4
+  mounts: 3
+  disconnected_notes: 0
+  wiring_wired: 3
+  wiring_wired_dynamic: 0
+  wiring_wired_by_header: 1
+  wiring_suspect_orphan: 0
+  purpose_tag: absent
+  casebooks: absent
+  trigger_facts: absent
+  consumers: absent
+malformed_module_ids:
+  count: 4
+  disposition: 登记不修（归 chief schema0.3 手术批）
+  items:
+  - module: t0_gpu_condition_pack（scripts
+    family: L2_resource
+    path: scripts/audit/t0_gpu_condition_pack.py
+  - module: '#'
+    family: L5_selfheal
+    path: scripts/governance/repair/concurrent_write_test.py
+  - module: module_id=MOD-GOV-wave1a-ch_probe
+    family: L1_monitor
+    path: scripts/governance/data_supply/ch_probe.py
+  - module: module_id=MOD-GOV-wave1a-store_liveness_probe
+    family: L1_monitor
+    path: scripts/governance/wave1a/store_liveness_probe.py
+note_zh: 纯机械盘点零判读。实测与任务卡底数逐项一致：schema 0.1／mounts 47／448=246+15+93+94／4字段(purpose_tag/casebooks/trigger_facts/consumers) 在
+  7 layer 与 448 family 条目两级全缺／图例层缺。四字段缺席口径：字段键在条目 dict 中不存在（非空值，是键缺席）。

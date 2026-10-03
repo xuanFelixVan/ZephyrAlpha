@@ -6,7 +6,7 @@
 # [CONSUMERS] config/governance_operations_map.yaml; 治理全景图前端页(规划中)
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 机器层(families)全量重建; 人工层(pipeline/out_of_scope_refs/effective_from)原样保留; 静态计数只进 counts 字段不进散文; --dry-run 零写入
+# [INVARIANTS] 机器层(families)全量重建(schema 0.3 起含 purpose_tag 机贴/consumers/trigger_facts); 人工层(pipeline/out_of_scope_refs/effective_from/legend/legend_note_zh/tag_rules/casebooks_legend_zh)原样保留; 静态计数只进 counts 字段不进散文; --dry-run 零写入
 # [MODIFY-GUARD] config/governance_operations_map.yaml
 # [STABILITY] evolving
 # [SAFETY] L
@@ -32,11 +32,24 @@
    17 件全落在本图治理域之外(2026-09-16 量),故不预设排除谓词——真进图再按词表裁定
 
 输出: config/governance_operations_map.yaml
-  - families        机器层:族→模块清单(每次全量重建)
-  - pipeline        人工层:GOM-L0..L6 流水线挂载(生成器保留不动)
+  - families        机器层:族→模块清单(每次全量重建;schema 0.3 起每条含
+    purpose_tag(由 tag_rules 机贴)/consumers+consumers_count(AST import 证据面)/
+    trigger_facts(运行痕迹计数,执行类真源见 _FACT_SOURCES))
+  - legend          人工层:SOP §2 图例(标签枚举+大白话一句;Owner 冻结后机贴不改名)
+  - tag_rules       人工层:purpose_tag 贴签规则(selector=family=X|module=~re,多规则并集)
+  - pipeline        人工层:GOM-L0..L6 流水线挂载+casebooks 病历挂载(生成器保留不动)
   - out_of_scope_refs 人工层:域外治理真源引用(生成器保留不动)
   - effective_from  人工层:首次落定 '2026-09-15'(生成器保留,防重跑漂移)
   - ttl             permanent(对齐 TDM 头部惯例)
+
+schema 0.3(2026-10-04 挂血肉手术批,法源=vertical_map_mounting_policy §2/§3/§4/§5):
+  0.1→0.3 对齐纵轴地图家族模板(图9/图11 schema 0.3 同款节拍),四字段同名同义进 L1 菜单。
+  module_id 净化:[MODULE] 头值非合法点分标识符(含 '='/'#'/全角等垃圾捕获)一律回退
+  路径派生 spec——2026-10-03 F1 实证四形态畸形 id 病根。
+  trigger_facts 口径=运行痕迹计数(点分 id/posix 路径/stem 三形态在执行类真源文本中
+  出现次数,真源锚定主仓 .runtime——观测数据主仓锚定铁律),非严格执行语义——深度判读
+  证据位=F2 事实表(map_census/gomap);alert_rules scaffold/resource_guard/gpu_monitor
+  无持久落点(F1 表3),其零计数属源缺口非零触发。
 
 CLI:
     python scripts/governance/generate_governance_map.py            # 生成/刷新
@@ -56,7 +69,7 @@ from typing import Any
 import yaml
 
 from zephyr.shared.io.file_utils import safe_write_text
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import MAIN_REPO_ROOT, REPO_ROOT
 from zephyr.shared.utils.time_utils import now_utc
 
 OUTPUT_PATH = REPO_ROOT / "config" / "governance_operations_map.yaml"
@@ -101,6 +114,21 @@ _HEADER_RE = {
     "ttl": re.compile(r"#\s*\[TTL\]\s*(\S+)"),
 }
 
+_MODULE_ID_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*")
+
+
+def _sanitize_module_id(header_val: str | None, spec: str) -> str:
+    """[MODULE] 头值净化:非合法点分标识符一律回退路径派生 spec。
+
+    2026-10-03 F1 实证病根(表1 note 四形态):'module_id=MOD-GOV-...'/'#'/
+    't0_gpu_condition_pack（scripts' 等全来自旧逻辑 `header.get("module") or spec`
+    无条件采信头值。module_id 是挂载对账/覆盖账本的稳定匹配键,必须是合法点分标识符。
+    """
+    if header_val and _MODULE_ID_RE.fullmatch(header_val):
+        return header_val
+    return spec
+
+
 _OUT_OF_SCOPE_DEFAULTS = [
     {
         "name_zh": "提交门禁体系",
@@ -128,6 +156,56 @@ _PIPELINE_DEFAULT = {
         {"id": "GOM-L6", "name_zh": "复盘审计", "desc_zh": "审计日志/状态面板/治理复盘", "mounts": []},
     ]
 }
+
+# SOP §2 图例默认种子(人工层;Owner 终审冻结后改名=改本表+重跑,冻结态标在 legend_note_zh)
+_LEGEND_DEFAULT: tuple[dict[str, str], ...] = (
+    {"tag": "birth_registry", "name_zh": "谁生谁死有登记", "desc_zh": "进程出生走统一产房,退休走登记销户,不留无名进程"},
+    {
+        "tag": "alive_proof",
+        "name_zh": "你还活着吗",
+        "desc_zh": "心跳/探针/看门狗互检:证明系统活着,死了立刻有人知道,不是等 Owner 发现",
+    },
+    {"tag": "resource_alert", "name_zh": "资源见底前要喊", "desc_zh": "内存/盘/GPU/上下文预算到线前告警,不是爆了再哭"},
+    {
+        "tag": "emergency_brake",
+        "name_zh": "紧急刹车人人可拉",
+        "desc_zh": "kill_switch/熔断:出大事一刀切停,宁错停不狂奔",
+    },
+    {"tag": "reaper_duty", "name_zh": "垃圾要有人收", "desc_zh": "孤儿/僵尸/临时残留定期收割,系统才不会淹死自己"},
+    {"tag": "self_heal", "name_zh": "坏了要自己好", "desc_zh": "reconciler 事件触发对不上就修,禁定时空转"},
+    {"tag": "review_ledger", "name_zh": "事后要翻旧账", "desc_zh": "干过的事有账可查,犯过的病有病历可翻"},
+    {"tag": "no_duplicate", "name_zh": "一个模块别干两人的活", "desc_zh": "同标签多钉=重复建设显影位,该并就并"},
+    {"tag": "orphan_claim", "name_zh": "孤儿要认领或销户", "desc_zh": "没人认领也没人消费的模块,要么上户口要么退役"},
+    {"tag": "ledger_match", "name_zh": "账实要对得上", "desc_zh": "wiring 四态:说接了线就得真有线,机扫重跑不漂移"},
+)
+
+_LEGEND_NOTE_DEFAULT = "草案待 Owner 终审冻结(2026-10-04 呈批 10 条);冻结后机贴不改名(SOP §2.2)。"
+
+# purpose_tag 贴签规则默认种子(人工层;族默认全覆盖+跨切标签叠加,多规则命中取并集,
+# 规则序即贴签序;说不出标签=越域挂载嫌疑回炉 SOP §2.4,untagged 计数进 counts)
+_TAG_RULES_DEFAULT: tuple[dict[str, Any], ...] = (
+    {"selector": "family=L0_lifecycle", "tags": ["birth_registry"]},
+    {"selector": "family=L1_monitor", "tags": ["alive_proof"]},
+    {"selector": "family=L2_resource", "tags": ["resource_alert"]},
+    {"selector": "family=L3_fuse", "tags": ["emergency_brake"]},
+    {"selector": "family=L4_reap", "tags": ["reaper_duty"]},
+    {"selector": "family=L5_selfheal", "tags": ["self_heal"]},
+    {"selector": "family=L6_audit", "tags": ["review_ledger"]},
+    {"selector": "module=~orphan|wiring", "tags": ["orphan_claim"]},
+    {"selector": "module=~duplicate|clone", "tags": ["no_duplicate"]},
+    {"selector": "module=~generate_governance_map|script_manifest|registry_sync", "tags": ["ledger_match"]},
+)
+
+# 人工语义层保留键全集(生成器重建机器层时原样搬回)
+_HUMAN_KEYS = (
+    "pipeline",
+    "out_of_scope_refs",
+    "effective_from",
+    "legend",
+    "legend_note_zh",
+    "tag_rules",
+    "casebooks_legend_zh",
+)
 
 
 def classify_family(text: str) -> str | None:
@@ -350,6 +428,106 @@ def _wiring_tier(c: dict[str, Any], idx: dict[str, Any]) -> str:
     return "suspect_orphan"
 
 
+def _to_repo_posix(f: str | Path) -> str:
+    """绝对文件路径 → 仓内 posix 相对路径(worktree 内即 worktree 相对;越仓退文件名)。"""
+    p = Path(f)
+    try:
+        return p.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return p.name
+
+
+def _parse_selector(sel: str) -> tuple[str, str]:
+    """selector 形态解析:family=<族名> | module=<正则>(可带 ~ 前缀,解析时剥掉)。"""
+    if sel.startswith("family="):
+        return "family", sel.split("=", 1)[1]
+    if sel.startswith("module="):
+        arg = sel[len("module=") :]
+        return "module_re", arg[1:] if arg.startswith("~") else arg
+    raise ValueError(f"未知 selector 形态(合法=family=X|module=<re>): {sel}")
+
+
+def _apply_purpose_tags(families: dict[str, Any], tag_rules: list[dict[str, Any]]) -> int:
+    """按 tag_rules 给每条 family 条目机贴 purpose_tag(多规则命中取并集,规则序稳定)。
+
+    返回未贴上台数——族默认规则必须全覆盖,untagged>0 即 tag_rules 有洞(SOP §2.4 回炉信号)。
+    """
+    rules: list[tuple[str, re.Pattern[str] | None, str, list[str]]] = []
+    for r in tag_rules:
+        kind, arg = _parse_selector(r["selector"])
+        rules.append((kind, re.compile(arg) if kind == "module_re" else None, arg, list(r["tags"])))
+    untagged = 0
+    for mods in families.values():
+        for m in mods:
+            tags: list[str] = []
+            for kind, rx, arg, tl in rules:
+                hit = bool(rx.search(m["module"])) if kind == "module_re" else m["family"] == arg
+                if hit:
+                    tags.extend(t for t in tl if t not in tags)
+            if tags:
+                m["purpose_tag"] = tags
+            else:
+                untagged += 1
+    return untagged
+
+
+# 运行痕迹真源(执行类,与 F1 表3 map_census/gomap 对齐,禁另立口径;锚定主仓 .runtime)
+_FACT_SOURCES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("commit_queue_ledger", (".runtime/commit_queue/done/*.json", ".runtime/commit_queue/dead/*.json")),
+    ("runtime_audit", (".runtime/audit/*.jsonl",)),
+    ("gate_audit", (".runtime/gate_audit/*.jsonl",)),
+    ("lookup_audit", (".runtime/lookup_audit/*.jsonl",)),
+    ("drift_watchdog", (".runtime/drift_watchdog/*.jsonl",)),
+    ("reconcile_reports", (".runtime/reconcile_reports/*.json",)),
+    ("reaper_last_run", (".runtime/process_reaper/last_run.json",)),
+)
+# 未入 v1 的源(声明留痕,防"零计数"被误读为零触发):session_registry/ailocks=状态面非执行;
+# workspace_alerts=事件稀疏 partial;git GW trail=子进程重扫 deferred;
+# alert_rules scaffold/resource_guard/gpu_monitor=无持久落点(F1 表3 no 三件,模块恒零属源缺口)
+
+
+def _load_fact_corpora() -> dict[str, dict[str, Any]]:
+    """执行类真源 → 逐源语料(name→{files,text});真源缺席即 files=0,不伪造不报错。"""
+    corpora: dict[str, dict[str, Any]] = {}
+    for name, patterns in _FACT_SOURCES:
+        texts: list[str] = []
+        for pat in patterns:
+            for f in sorted(MAIN_REPO_ROOT.glob(pat)):
+                try:
+                    texts.append(f.read_text(encoding="utf-8", errors="replace"))
+                except OSError:
+                    continue
+        corpora[name] = {"files": len(texts), "text": "\n".join(texts)}
+    return corpora
+
+
+def _module_key_forms(m: dict[str, Any]) -> list[str]:
+    """计数键形态:点分 module/posix 路径/文件 stem(去重保序;多形态防假零,F3 孪生核验同源)。"""
+    forms = [m["module"], m["path"], PurePosixPath(m["path"]).stem]
+    return [f for f in dict.fromkeys(forms) if f]
+
+
+def _count_trigger_facts(families: dict[str, Any], corpora: dict[str, dict[str, Any]]) -> None:
+    """逐条目机生 trigger_facts={total,by_source}:模块各形态在执行类真源文本中的出现次数。
+
+    计数=多形态 alternation 正则(长形优先)非重叠匹配数——stem 落在路径 span 内不
+    重复计;str.count 逐形态求和会双计(F3 孪生形态去重口径的计数侧对应物)。
+    """
+    for mods in families.values():
+        for m in mods:
+            forms = _module_key_forms(m)
+            if not forms:
+                m["trigger_facts"] = {"total": 0, "by_source": {}}
+                continue
+            rx = re.compile("|".join(re.escape(f) for f in sorted(forms, key=len, reverse=True)))
+            by_source: dict[str, int] = {}
+            for name, corp in corpora.items():
+                n = sum(1 for _ in rx.finditer(corp["text"]))
+                if n:
+                    by_source[name] = n
+            m["trigger_facts"] = {"total": sum(by_source.values()), "by_source": by_source}
+
+
 def scan() -> dict[str, Any]:
     """scan implementation."""
     files = _iter_py_files()
@@ -366,7 +544,7 @@ def scan() -> dict[str, Any]:
         spec = _import_spec(p)
         candidates.append(
             {
-                "module": header.get("module") or spec,
+                "module": _sanitize_module_id(header.get("module"), spec),
                 "path": rel,
                 "domain": header.get("domain", ""),
                 "maturity": header.get("maturity", ""),
@@ -381,6 +559,10 @@ def scan() -> dict[str, Any]:
     modules: dict[str, Any] = {}
     for c in candidates:
         c["wiring"] = _wiring_tier(c, idx)
+        importers, dynamic = _wiring_evidence(c, idx)
+        consumers = sorted(_to_repo_posix(f) for f in importers | dynamic)
+        c["consumers_count"] = len(consumers)
+        c["consumers"] = consumers[:5]
         c.pop("_spec")
         c.pop("_key")
         c.pop("_consumers_header")
@@ -413,11 +595,18 @@ def build_document(dry_run: bool) -> dict[str, Any]:
     if OUTPUT_PATH.exists():
         try:
             existing = yaml.safe_load(OUTPUT_PATH.read_text(encoding="utf-8")) or {}
-            human_keys = {k: existing[k] for k in ("pipeline", "out_of_scope_refs", "effective_from") if k in existing}
+            human_keys = {k: existing[k] for k in _HUMAN_KEYS if k in existing}
         except (OSError, yaml.YAMLError):
             human_keys = {}
+    legend = human_keys.get("legend") or [dict(e) for e in _LEGEND_DEFAULT]
+    legend_note = human_keys.get("legend_note_zh") or _LEGEND_NOTE_DEFAULT
+    tag_rules = human_keys.get("tag_rules") or [dict(r) for r in _TAG_RULES_DEFAULT]
+    untagged = _apply_purpose_tags(families, tag_rules)
+    corpora = _load_fact_corpora()
+    _count_trigger_facts(families, corpora)
+    facts_sources = {name: {"files": corp["files"]} for name, corp in corpora.items()}
     doc: dict[str, Any] = {
-        "schema_version": "0.1",
+        "schema_version": "0.3",
         "map_id": "GOMAP-001",
         "name_zh": "治理运行地图",
         "ttl": "permanent",
@@ -425,12 +614,21 @@ def build_document(dry_run: bool) -> dict[str, Any]:
         "generator": "scripts/governance/generate_governance_map.py",
         "generated_at": now_utc().isoformat(),
         "ssot_note_zh": (
-            "骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;"
-            "pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留"
+            "骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑"
+            "(schema 0.3 起含 purpose_tag/consumers/trigger_facts 三机生字段);"
+            "pipeline/out_of_scope_refs/effective_from/legend/legend_note_zh/tag_rules/"
+            "casebooks_legend_zh 为人工语义层,生成器保留"
             "(effective_from 首次落定 '2026-09-15',防重跑漂移)。"
             "模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。"
+            "trigger_facts=运行痕迹计数(真源=facts_sources 各执行类,缺席即 files=0;"
+            "无持久落点模块的零计数属源缺口非零触发,口径见生成器 docstring)。"
         ),
-        "counts": _build_counts(families),
+        "counts": {**_build_counts(families), "untagged": untagged},
+        "legend": legend,
+        "legend_note_zh": legend_note,
+        "tag_rules": tag_rules,
+        "casebooks_legend_zh": human_keys.get("casebooks_legend_zh", ""),
+        "facts_sources": facts_sources,
         "out_of_scope_refs": human_keys.get("out_of_scope_refs", _OUT_OF_SCOPE_DEFAULTS),
         "pipeline": human_keys.get("pipeline", _PIPELINE_DEFAULT),
         "families": families,
@@ -448,6 +646,11 @@ def main() -> int:
     summary = ", ".join(f"{fam}={len(mods)}" for fam, mods in sorted(doc["families"].items()))
     print(f"families: {summary}")
     print(f"counts: {doc['counts']}")
+    zeros = sum(1 for mods in doc["families"].values() for m in mods if m["trigger_facts"]["total"] == 0)
+    print(f"trigger_zero: {zeros}/{doc['counts']['total_modules']} (含无落点源缺口模块)")
+    print(f"facts_sources: {{{', '.join(f'{k}=files={v["files"]}' for k, v in doc['facts_sources'].items())}}}")
+    if doc["counts"].get("untagged"):
+        print(f"untagged: {doc['counts']['untagged']} (tag_rules 未全覆盖,SOP §2.4 回炉)")
     orphans = [m["path"] for mods in doc["families"].values() for m in mods if m["wiring"] == "suspect_orphan"]
     if orphans:
         print("suspect_orphans:")

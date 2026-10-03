@@ -1,0 +1,113 @@
+schema_version: '0.1'
+ttl: task_bound
+completes_when: GOMAP 挂血肉战役（F2 血肉批+手术批+存量清算）施工验收落 HEAD 后本表转归档
+census_id: GOMAP-F1-CASEBOOKS-001
+session: st-gomap-f1-20261003
+generated_at: '2026-10-03T15:30:01+00:00'
+title: GOMAP 图10 挂血肉 F1 盘点·表4 治理域永久病历册清点
+note_zh: SOP §3 口径：册=有登记身份的设施（module_id/册号），散文散页不算；本表如实登记身份形态（有 module_id=册籍，路径身份+ttl=task_bound 者为战役簇文档，够不够格挂图归 chief 判读）。挂载建议位=按主题词对
+  7 环节机械匹配（不确定标 unknown）。一岗多流程合法（SOP §1.4/§3.4）：跨域册在图11 已有 f4 建议挂载位，GOMAP 复用=第二处引用，禁复制内容（INV-1）。
+map_mount_scan:
+  scanned_maps:
+  - config/governance_operations_map.yaml
+  - config/dev_delivery_map.yaml
+  - config/trading_day_cycle_map.yaml
+  - config/data_supply_chain_map.yaml
+  - config/trading_decision_map.yaml
+  - config/strategy_production_map.yaml
+  - config/strategy_card_lifecycle_map.yaml
+  - config/construction_workflow_map.yaml
+  pattern: all_problems_ledger|death_cases|salvage_ledger|review_findings|MEMORY|casebook
+  result: 八图全部 0 引用——casebooks 字段在任何图册均未落地（含图11：f4/f5 方案态）
+casebooks:
+- cb_id: CB-01
+  name_zh: 死因案例册（提交撞墙死因→处方）
+  identity: module_id=CFG-COMMIT-DEATH-CASES-001（doc_type=register, ttl=permanent, registry_id 同号）
+  path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+  topic_zh: 提交死因→处方蒸馏（21 cases，提交指路指南生成器第三真源）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L6 复盘审计
+  match_basis: 主题词：死因/案例/复盘
+- cb_id: CB-02
+  name_zh: 堵点本五域（all_problems_ledger）
+  identity: 路径身份（无 module_id，ttl=task_bound，session=st-ffchief-20261002）
+  path: docs/_working/branch_zero_takeover/all_problems_ledger.md
+  topic_zh: 35 类提交链堵点五域总册（盘面 33，册面口径 35 偏差 -2）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L5 自愈对账
+  match_basis: 主题词：堵点/问题/治本（自愈语义）
+- cb_id: CB-03
+  name_zh: 抢救台账（死信袋抢救）
+  identity: 路径身份（无 module_id，ttl=task_bound，session=st-deadletter-cure-20261003）
+  path: docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md
+  topic_zh: 死信袋抢救（底数 1235 袋/12798 文件条目）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L4 收割清理
+  match_basis: 主题词：死信/抢救/处置（收割语义）
+- cb_id: CB-04
+  name_zh: 审查发现卷一+卷二（review_findings）
+  identity: 路径身份（无 module_id，ttl=task_bound）
+  path: docs/_working/branch_zero_takeover/review_findings.md + review_findings_round2.md
+  topic_zh: 红蓝审查发现（卷一 17 单元+卷二 12 编号单元=29）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L6 复盘审计
+  match_basis: 主题词：审查/发现/复盘
+- cb_id: CB-05
+  name_zh: 挖矿地图册（治理模块挖矿 SOP 地图）
+  identity: 路径身份（无 module_id）
+  path: docs/_working/2026-09-15-governance-module-mining-sop-map.md
+  topic_zh: 治理域模块挖矿方法论地图（矿区/挖掘序）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L0 孵化
+  match_basis: 主题词：挖矿/新模块发现（孵化语义）
+- cb_id: CB-06
+  name_zh: branch_zero_takeover 战役总册簇
+  identity: 路径身份（无 module_id，ttl=task_bound）
+  path: docs/_working/branch_zero_takeover/（00_orchestration/adjudications_final/problem_cures_ledger/branches_ledger/t1_takeover_infra/chaos_drill_plan
+    等 12 件）
+  topic_zh: 分支清零+接管显化基建战役病历（分支终态/混沌演训）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: unknown
+  match_basis: 分支管理/接管属开发时域，与运行时 7 环节无主题词命中
+- cb_id: CB-07
+  name_zh: commitmap_cure 战役簇（提交地图治本·挂图 SOP 首役）
+  identity: 路径身份（无 module_id，ttl=task_bound；含 f4_casebook_mount_plan/f5_* 四字段装配五件）
+  path: docs/_working/commitmap_cure/（00-05 + f2-f5 共 19 件）
+  topic_zh: 提交地图治本战役病历+四字段装配产出（f5 四表=图11 血肉数据层）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: unknown
+  match_basis: 提交域属图11（开发时），与运行时 7 环节无主题词命中；其方法论产出服务全图
+- cb_id: CB-08
+  name_zh: 记忆教训索引（MEMORY.md）
+  identity: 路径身份（仓外 ZCode 记忆库索引）
+  path: C:/Users/fanzi/.zcode/cli/memories/projects/zephyralpha-88c39a4848e315f8/memory/MEMORY.md
+  topic_zh: 跨战役教训索引（chief f4 五本之五；GOMAP 域相关条目=图10 血肉填充战役线）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L6 复盘审计
+  match_basis: 主题词：教训/复盘
+- cb_id: CB-09
+  name_zh: 死信治本战役簇（deadletter_cure_20261003）
+  identity: 路径身份（无 module_id，ttl=task_bound）
+  path: docs/_working/deadletter_cure_20261003/（00_skeleton/10_mining/20_design/30_construction/40_acceptance 五段；10_mining/salvage_ledger.json）
+  topic_zh: 死信治本战役病历（挖矿/设计/施工/验收全弧线）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: GOM-L4 收割清理
+  match_basis: 主题词：死信（收割语义）
+- cb_id: CB-10
+  name_zh: 全流通三夜总包档案（circulation_chief）
+  identity: 路径身份（无 module_id，ttl=task_bound）
+  path: docs/_working/circulation_chief/（13 车道战役档案+logs/salvage.md）
+  topic_zh: 全流通清场三夜战役病历（分支终态/接管基建/混沌演训）
+  currently_mounted_by: 未挂载（八图册 yaml grep 册名/路径 0 引用，2026-10-03 实勘；图11 建议挂载方案在 docs/_working/commitmap_cure/f4_casebook_mount_plan.md
+    §0，方案态未回写图册）
+  gomap_suggested_layer: unknown
+  match_basis: 总包战役跨域拼盘，无单一环节主题词命中

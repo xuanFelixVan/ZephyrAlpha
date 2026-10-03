@@ -1,0 +1,1615 @@
+schema_version: '0.1'
+ttl: task_bound
+completes_when: GOMAP 挂血肉战役（F2 血肉批+手术批+存量清算）施工验收落 HEAD 后本表转归档
+census_id: GOMAP-F1-ORPHAN-LEDGER-001
+session: st-gomap-f1-20261003
+generated_at: '2026-10-03T15:30:01+00:00'
+title: GOMAP 图10 挂血肉 F1 盘点·表2 suspect_orphan 机械台账（94台）
+criteria_zh: 机械口径零判读：四形态引用计数（full_dotted/bare_stem 于 .py；GATE-大写/kebab 于 .py+.yaml）×语料(scripts/src/tests/config/docs/data)；net=排除清单效应面后净计数（清单面=8 个全量登记册，实测 91-94/94 台被整体收录：图10自身/token册/module_translation_registry/path_ownership_map/inventory_blanked报告/script-manifest×2/scripts_registry——命中=登记自引用非消费证据）。__init__.py
+  包身份 stem=父目录名（非 '__init__' 泛名，2026-10-03 补丁重算 8 台）。depgraph 在册=PG nodes.path 精确匹配（DatabaseService 只读连接）。mtime 取主区工作树（worktree checkout 会重置 mtime 不可用）。分类：never_committed=git 无 commit；zero_import=有 commit
+  且 net 引用全零；has_evidence=net>0。depgraph 在册不参与分类（94 台中大量在册，若计入则分类退化为全 has_evidence 失去信息量），在册情况单列字段供判读。已知缺陷（登记不修，判读归 chief）：①包名泛名歧义——lifecycle/health_monitor 等包名与通用词/跨包同名同形，bare 计数含同名歧义命中（如 shared/lifecycle
+  net=1747 含他包同名引用）；②裸名命中不含 md 文档面（语料限 py+yaml，文档引用面留 chief）；③GATE- 前缀形态仅匹配 GATE-<大写KEBAB> 全形，digest 变体未枚举。
+bucket_counts:
+  has_evidence: 88
+  zero_import: 6
+total: 94
+balance: 表2 行数 94 = suspect_orphans 底数 94 ✓
+entries:
+- module: scripts.arch_guard.fitness_functions.check_kill_switch_latency
+  path: scripts/arch_guard/fitness_functions/check_kill_switch_latency.py
+  domain: D_AUTONOMY_PERM
+  family: L3_fuse
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16102081
+    build_status: generated
+  last_commit: 5756905e649|2026-09-15
+  mtime_main: 2026-09-15 14:06
+  bucket: has_evidence
+- module: scripts.governance.meta.manage_kill_switch
+  path: scripts/governance/meta/manage_kill_switch.py
+  domain: D_AUTONOMY_PERM
+  family: L3_fuse
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103366
+    build_status: generated
+  last_commit: 90803ed466f|2026-09-02
+  mtime_main: 2026-09-02 10:24
+  bucket: has_evidence
+- module: zephyr.infrastructure.kill_switch_sim
+  path: src/zephyr/infrastructure/kill_switch_sim.py
+  domain: D_INFRA_RUNTIME
+  family: L3_fuse
+  maturity: production
+  hits_full_dotted_py: 11
+  hits_bare_stem_py: 17
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 28
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099182
+    build_status: production
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: scripts.governance.d12_ai_hallucination.validate_session_budget
+  path: scripts/governance/d12_ai_hallucination/validate_session_budget.py
+  domain: D_GOV_SCRIPTS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 2
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103018
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: scripts.governance.d5_architecture.check_budget_health
+  path: scripts/governance/d5_architecture/check_budget_health.py
+  domain: D_GOV_SCRIPTS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 0
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 0
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103095
+    build_status: generated
+  last_commit: 5127e5e9664|2026-08-19
+  mtime_main: 2026-08-18 23:02
+  bucket: zero_import
+- module: scripts.governance.meta.manage_error_budget
+  path: scripts/governance/meta/manage_error_budget.py
+  domain: D_GOV_SCRIPTS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 2
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103363
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: zephyr.autonomy_core.context.complexity_budget
+  path: src/zephyr/autonomy_core/context/complexity_budget.py
+  domain: D_AUTONOMY_CORE
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 14
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 4
+  net_full_bare_py: 15
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16096892
+    build_status: production
+  last_commit: a1322846354|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.autonomy_core.context.context_budget_tracker
+  path: src/zephyr/autonomy_core/context/context_budget_tracker.py
+  domain: D_AUTONOMY_CORE
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 9
+  hits_bare_stem_py: 12
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 21
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16096897
+    build_status: production
+  last_commit: a1322846354|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.detectors.reliability.blast_radius_budget
+  path: src/zephyr/feedback_loop/detectors/reliability/blast_radius_budget.py
+  domain: D_FBL_DETECTORS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098131
+    build_status: production
+  last_commit: a929def12f9|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.cognitive.cognitive_load_budget
+  path: src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_load_budget.py
+  domain: D_FBL_DIAGNOSERS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 6
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 9
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098145
+    build_status: production
+  last_commit: a929def12f9|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.cognitive.meta_guard_latency_budget
+  path: src/zephyr/feedback_loop/diagnosers/cognitive/meta_guard_latency_budget.py
+  domain: D_FBL_DIAGNOSERS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098154
+    build_status: production
+  last_commit: a929def12f9|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.error_budget
+  path: src/zephyr/feedback_loop/error_budget.py
+  domain: D_FEEDBACK_LOOP
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 4
+  hits_bare_stem_py: 24
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 8
+  net_full_bare_py: 28
+  net_gate_kebab_py_yaml: 3
+  depgraph:
+    node_id: 16098026
+    build_status: production
+  last_commit: 00ad51e18bc|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.gates.config_complexity_budget
+  path: src/zephyr/feedback_loop/gates/config_complexity_budget.py
+  domain: D_FBL_VERIFICATION
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 8
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098270
+    build_status: production
+  last_commit: bbcf448f0e1|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.governance.context_governance.context_budget
+  path: src/zephyr/governance/context_governance/context_budget.py
+  domain: D_GOVERNANCE
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 15
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 3
+  net_full_bare_py: 16
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098476
+    build_status: production
+  last_commit: c13602d3403|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.governance.ops_governance.budget_profile_manager
+  path: src/zephyr/governance/ops_governance/budget_profile_manager.py
+  domain: D_OPS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 5
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098599
+    build_status: production
+  last_commit: 5c3221ab89a|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.governance.ops_governance.cost_budget
+  path: src/zephyr/governance/ops_governance/cost_budget.py
+  domain: D_OPS
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 4
+  hits_bare_stem_py: 17
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 21
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098611
+    build_status: production
+  last_commit: 5c3221ab89a|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.governance.ops_governance.self_budget_tracker
+  path: src/zephyr/governance/ops_governance/self_budget_tracker.py
+  domain: D_GOV_OPS_RESILIENCE
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 5
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098631
+    build_status: production
+  last_commit: 5c3221ab89a|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.budget_forecaster
+  path: src/zephyr/infrastructure/capacity_assurance/budget_forecaster.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 5
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099335
+    build_status: production
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.contracts
+  path: src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: ''
+  hits_full_dotted_py: 10
+  hits_bare_stem_py: 2225
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 3666
+  net_full_bare_py: 2235
+  net_gate_kebab_py_yaml: 3017
+  depgraph:
+    node_id: 16099351
+    build_status: generated
+  last_commit: f7de0297341|2026-09-18
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.cross_module_integration
+  path: src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 10
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 10
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099336
+    build_status: generated
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.risk_mitigation
+  path: src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 11
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 4
+  net_full_bare_py: 11
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099339
+    build_status: generated
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.schema
+  path: src/zephyr/infrastructure/capacity_assurance/schema.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 2903
+  hits_gate_upper_py_yaml: 38
+  hits_kebab_py_yaml: 3710
+  net_full_bare_py: 2903
+  net_gate_kebab_py_yaml: 3569
+  depgraph:
+    node_id: 16099338
+    build_status: generated
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.sli_instrumentation
+  path: src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 4
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099340
+    build_status: generated
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.capacity_assurance.tech_stack
+  path: src/zephyr/infrastructure/capacity_assurance/tech_stack.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 8
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 8
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099343
+    build_status: generated
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.hot_plane_budget
+  path: src/zephyr/infrastructure/hot_plane_budget.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099181
+    build_status: production
+  last_commit: 79fc49e89fd|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.warm_plane_budget
+  path: src/zephyr/infrastructure/warm_plane_budget.py
+  domain: D_INFRA_RUNTIME
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099194
+    build_status: production
+  last_commit: b4fcad72913|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.integration.budget_enforcer.__init__
+  path: src/zephyr/integration/budget_enforcer/__init__.py
+  domain: ''
+  family: L2_resource
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 120
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 92
+  net_full_bare_py: 120
+  net_gate_kebab_py_yaml: 86
+  depgraph:
+    node_id: 16099526
+    build_status: generated
+  last_commit: d3063df0749|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.integration.budget_enforcer.degradation_spiral_detector
+  path: src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py
+  domain: D_INTEGRATION
+  family: L2_resource
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099528
+    build_status: generated
+  last_commit: d3063df0749|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: scripts.governance.generate_gate_face_reconciliation
+  path: scripts/governance/generate_gate_face_reconciliation.py
+  domain: D_GOV_SCRIPTS
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 4
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16102952
+    build_status: generated
+  last_commit: bfdd84a4402|2026-09-27
+  mtime_main: 2026-09-29 22:52
+  bucket: has_evidence
+- module: scripts.governance.repair.apply_verification_results
+  path: scripts/governance/repair/apply_verification_results.py
+  domain: ''
+  family: L5_selfheal
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 0
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 0
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103471
+    build_status: generated
+  last_commit: d51b3ddf651|2026-08-18
+  mtime_main: 2026-08-18 16:57
+  bucket: zero_import
+- module: scripts.governance.repair.concurrent_commit_test
+  path: scripts/governance/repair/concurrent_commit_test.py
+  domain: D_GOV_SCRIPTS
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103473
+    build_status: generated
+  last_commit: 2076200044a|2026-08-20
+  mtime_main: 2026-08-20 13:56
+  bucket: has_evidence
+- module: '#'
+  path: scripts/governance/repair/concurrent_write_test.py
+  domain: '#'
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 1735
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1737
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103476
+    build_status: generated
+  last_commit: 7777108f76e|2026-09-15
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: scripts.governance.repair.p2_pg_concurrent_test
+  path: scripts/governance/repair/p2_pg_concurrent_test.py
+  domain: ''
+  family: L5_selfheal
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 5
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103478
+    build_status: generated
+  last_commit: eeeb7016e8a|2026-08-21
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: scripts.governance.repair.red_blue_test
+  path: scripts/governance/repair/red_blue_test.py
+  domain: D_GOV_AUDIT
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103475
+    build_status: generated
+  last_commit: 2076200044a|2026-08-20
+  mtime_main: 2026-08-20 05:12
+  bucket: has_evidence
+- module: scripts.governance.repair.rollback_depgraph
+  path: scripts/governance/repair/rollback_depgraph.py
+  domain: D_GOV_AUDIT
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103477
+    build_status: generated
+  last_commit: 2076200044a|2026-08-20
+  mtime_main: 2026-08-20 05:12
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.self_health_monitor
+  path: src/zephyr/feedback_loop/diagnosers/health/self_health_monitor.py
+  domain: D_FBL_DIAGNOSERS
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098186
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.reliability.capacity_aware_repair
+  path: src/zephyr/feedback_loop/diagnosers/reliability/capacity_aware_repair.py
+  domain: D_FBL_DIAGNOSERS
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 6
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 9
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098189
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.gates.blueprint_code_reconciler
+  path: src/zephyr/feedback_loop/gates/blueprint_code_reconciler.py
+  domain: D_FBL_VERIFICATION
+  family: L5_selfheal
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 8
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098273
+    build_status: production
+  last_commit: bbcf448f0e1|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: scripts.fix_orphan_all
+  path: scripts/fix_orphan_all.py
+  domain: D_GOVERNANCE
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 0
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 0
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16102030
+    build_status: generated
+  last_commit: 9c039f956be|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: zero_import
+- module: scripts.governance._sync.fix_orphan_deps
+  path: scripts/governance/_sync/fix_orphan_deps.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 0
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 0
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103569
+    build_status: generated
+  last_commit: 2076200044a|2026-08-20
+  mtime_main: 2026-08-20 05:12
+  bucket: zero_import
+- module: scripts.governance.check_wiring_orphan
+  path: scripts/governance/check_wiring_orphan.py
+  domain: ''
+  family: L4_reap
+  maturity: ''
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16102934
+    build_status: production
+  last_commit: 2c2fe430d7d|2026-09-05
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: scripts.governance.cleanup_stash
+  path: scripts/governance/d1_structure/cleanup_stash.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 4
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103033
+    build_status: generated
+  last_commit: 2076200044a|2026-08-20
+  mtime_main: 2026-08-20 05:12
+  bucket: has_evidence
+- module: scripts.governance.d1_structure.detect_orphan_py
+  path: scripts/governance/d1_structure/detect_orphan_py.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103031
+    build_status: generated
+  last_commit: 3522eb8c6da|2026-09-27
+  mtime_main: 2026-09-26 20:44
+  bucket: has_evidence
+- module: scripts.governance.d5_architecture.checkers.check_orphan_outputs
+  path: scripts/governance/d5_architecture/checkers/check_orphan_outputs.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103123
+    build_status: generated
+  last_commit: 2076200044a|2026-08-20
+  mtime_main: 2026-08-20 05:12
+  bucket: has_evidence
+- module: scripts.governance.fix_orphan_exports
+  path: scripts/governance/d7_code/fix_orphan_exports.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 0
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 0
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103277
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: zero_import
+- module: scripts.governance.governance.d9_knowledge.detect_orphan_documents
+  path: scripts/governance/d9_knowledge/detect_orphan_documents.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 2
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103307
+    build_status: generated
+  last_commit: 83d17084e48|2026-08-03
+  mtime_main: 2026-08-03 15:07
+  bucket: has_evidence
+- module: scripts.governance.meta.benchmark.test_fixtures.orphan_file_without_module_registration
+  path: scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103396
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.reliability.zombie_fle_detector
+  path: src/zephyr/feedback_loop/diagnosers/reliability/zombie_fle_detector.py
+  domain: D_FBL_DIAGNOSERS
+  family: L4_reap
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 6
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 9
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098220
+    build_status: production
+  last_commit: 00ad51e18bc|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: scripts.governance.meta.validate_environment_health
+  path: scripts/governance/meta/validate_environment_health.py
+  domain: D_GOV_SCRIPTS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103384
+    build_status: generated
+  last_commit: 90803ed466f|2026-09-02
+  mtime_main: 2026-09-02 10:24
+  bucket: has_evidence
+- module: scripts.governance.meta.validate_script_system_health
+  path: scripts/governance/meta/validate_script_system_health.py
+  domain: D_GOV_SCRIPTS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103388
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: scripts.governance.vms_cron_monitor
+  path: scripts/governance/vms/vms_cron_monitor.py
+  domain: D_GOV_SCRIPTS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103486
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: scripts.governance.vms_health_check
+  path: scripts/governance/vms/vms_health_check.py
+  domain: D_GOV_SCRIPTS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103484
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: zephyr.ops.ch_health_probe
+  path: scripts/ops/ch_health_probe.py
+  domain: D_DATA
+  family: L1_monitor
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 20
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 4
+  net_full_bare_py: 20
+  net_gate_kebab_py_yaml: 2
+  depgraph:
+    node_id: 16103625
+    build_status: generated
+  last_commit: 8d0cf26117e|2026-09-16
+  mtime_main: 2026-09-16 08:20
+  bucket: has_evidence
+- module: scripts.ops.e2e_ch_alert_probe
+  path: scripts/ops/e2e_ch_alert_probe.py
+  domain: ''
+  family: L1_monitor
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 0
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 0
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103621
+    build_status: generated
+  last_commit: 8bfc06b783e|2026-08-21
+  mtime_main: 2026-09-18 12:29
+  bucket: zero_import
+- module: zephyr.autonomy_core.context.context_health_score
+  path: src/zephyr/autonomy_core/context/context_health_score.py
+  domain: D_AUTONOMY_CORE
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16096900
+    build_status: production
+  last_commit: a1322846354|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.autonomy_core.skills.skill_telemetry
+  path: src/zephyr/autonomy_core/skills/skill_telemetry.py
+  domain: D_AUTONOMY_CORE
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 4
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16096979
+    build_status: production
+  last_commit: a1322846354|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.detectors.correlation.external_health
+  path: src/zephyr/feedback_loop/detectors/correlation/external_health.py
+  domain: D_FBL_DETECTORS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 5
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098100
+    build_status: production
+  last_commit: 0f69556ce8f|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.detectors.reliability.ebpf_monitor
+  path: src/zephyr/feedback_loop/detectors/reliability/ebpf_monitor.py
+  domain: D_FBL_DETECTORS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098133
+    build_status: production
+  last_commit: a929def12f9|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.dr_resilience_metrics
+  path: src/zephyr/feedback_loop/diagnosers/health/dr_resilience_metrics.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098171
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.fle_self_slo_metrics
+  path: src/zephyr/feedback_loop/diagnosers/health/fle_self_slo_metrics.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098173
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.global_health_map
+  path: src/zephyr/feedback_loop/diagnosers/health/global_health_map.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098175
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.memory_self_check
+  path: src/zephyr/feedback_loop/diagnosers/health/memory_self_check.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098181
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.model_health
+  path: src/zephyr/feedback_loop/diagnosers/health/model_health.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098177
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.self_benchmark
+  path: src/zephyr/feedback_loop/diagnosers/health/self_benchmark.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 18
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 3
+  net_full_bare_py: 20
+  net_gate_kebab_py_yaml: 1
+  depgraph:
+    node_id: 16098178
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.diagnosers.health.self_llm_observability
+  path: src/zephyr/feedback_loop/diagnosers/health/self_llm_observability.py
+  domain: D_FBL_DIAGNOSERS
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 6
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 8
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098180
+    build_status: production
+  last_commit: 6a1fc60812e|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.gates.scope_creep_monitor
+  path: src/zephyr/feedback_loop/gates/scope_creep_monitor.py
+  domain: D_FBL_VERIFICATION
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 8
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098303
+    build_status: production
+  last_commit: 2a7f9d304ca|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.infrastructure.health_monitor
+  path: src/zephyr/infrastructure/health_monitor/__init__.py
+  domain: D_INFRA_RUNTIME
+  family: L1_monitor
+  maturity: ''
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 101
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 22
+  net_full_bare_py: 104
+  net_gate_kebab_py_yaml: 16
+  depgraph:
+    node_id: 16099364
+    build_status: generated
+  last_commit: 5d8250f6a6e|2026-09-18
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.infrastructure.system_telemetry.otel_instrumentation
+  path: src/zephyr/infrastructure/system_telemetry/otel_instrumentation.py
+  domain: D_AUTONOMY_CORE
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099475
+    build_status: production
+  last_commit: b4fcad72913|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.security.llm_defense.llm_security.poisoning_monitor
+  path: src/zephyr/security/llm_defense/llm_security/poisoning_monitor.py
+  domain: D_AUTONOMY_CORE
+  family: L1_monitor
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16100815
+    build_status: production
+  last_commit: 8e5789e0eb8|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: scripts.governance.d5_architecture.lifecycle.detect_retirement_candidates
+  path: scripts/governance/d5_architecture/lifecycle/detect_retirement_candidates.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103182
+    build_status: generated
+  last_commit: d28db50080c|2026-09-27
+  mtime_main: 2026-09-29 22:52
+  bucket: has_evidence
+- module: scripts.governance.d5_architecture.lifecycle.retire_module
+  path: scripts/governance/d5_architecture/lifecycle/retire_module.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 7
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 3
+  net_full_bare_py: 7
+  net_gate_kebab_py_yaml: 2
+  depgraph:
+    node_id: 16103180
+    build_status: generated
+  last_commit: d28db50080c|2026-09-27
+  mtime_main: 2026-09-29 22:52
+  bucket: has_evidence
+- module: scripts.governance.d5_architecture.validators.lifecycle.__init__
+  path: scripts/governance/d5_architecture/validators/lifecycle/__init__.py
+  domain: ''
+  family: L0_lifecycle
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 550
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1540
+  net_full_bare_py: 550
+  net_gate_kebab_py_yaml: 1201
+  depgraph:
+    node_id: 16103227
+    build_status: generated
+  last_commit: 0a19ecd58db|2026-07-16
+  mtime_main: 2026-08-28 05:21
+  bucket: has_evidence
+- module: scripts.governance.d5_architecture.validators.lifecycle.validate_lifecycle_refs
+  path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103225
+    build_status: generated
+  last_commit: d9a09b27644|2026-09-22
+  mtime_main: 2026-09-20 16:28
+  bucket: has_evidence
+- module: scripts.governance.d8_doc_sync.validate_document_lifecycle
+  path: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103304
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: scripts.governance.meta.session_startup_check
+  path: scripts/governance/meta/session_startup_check.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 5
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103374
+    build_status: generated
+  last_commit: 3c7da5d372e|2026-08-03
+  mtime_main: 2026-08-03 11:13
+  bucket: has_evidence
+- module: scripts.governance.meta.trace_finding_lifecycle
+  path: scripts/governance/meta/trace_finding_lifecycle.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 1
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 1
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16103377
+    build_status: generated
+  last_commit: 90803ed466f|2026-09-02
+  mtime_main: 2026-09-02 10:24
+  bucket: has_evidence
+- module: zephyr.feedback_loop.detectors.reliability.flag_lifecycle
+  path: src/zephyr/feedback_loop/detectors/reliability/flag_lifecycle.py
+  domain: D_FBL_DETECTORS
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098136
+    build_status: production
+  last_commit: a929def12f9|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.feedback_loop.gates.flag_lifecycle_manager
+  path: src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py
+  domain: D_FBL_VERIFICATION
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 6
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 9
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098280
+    build_status: production
+  last_commit: bbcf448f0e1|2026-09-16
+  mtime_main: 2026-09-23 06:29
+  bucket: has_evidence
+- module: zephyr.governance.lifecycle_governance.__init__
+  path: src/zephyr/governance/lifecycle_governance/__init__.py
+  domain: ''
+  family: L0_lifecycle
+  maturity: ''
+  hits_full_dotted_py: 3
+  hits_bare_stem_py: 69
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 72
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16098574
+    build_status: generated
+  last_commit: 1bddf919373|2026-09-18
+  mtime_main: 2026-09-18 12:29
+  bucket: has_evidence
+- module: zephyr.infrastructure.lifecycle
+  path: src/zephyr/infrastructure/lifecycle/__init__.py
+  domain: D_INFRA_RUNTIME
+  family: L0_lifecycle
+  maturity: ''
+  hits_full_dotted_py: 13
+  hits_bare_stem_py: 544
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1534
+  net_full_bare_py: 557
+  net_gate_kebab_py_yaml: 1195
+  depgraph:
+    node_id: 16099373
+    build_status: generated
+  last_commit: 5d8250f6a6e|2026-09-18
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.execution.data_lifecycle
+  path: src/zephyr/orchestrator/execution/data_lifecycle.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 13
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 3
+  net_full_bare_py: 14
+  net_gate_kebab_py_yaml: 1
+  depgraph:
+    node_id: 16099809
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle
+  path: src/zephyr/orchestrator/lifecycle/__init__.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: ''
+  hits_full_dotted_py: 28
+  hits_bare_stem_py: 548
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1538
+  net_full_bare_py: 576
+  net_gate_kebab_py_yaml: 1199
+  depgraph:
+    node_id: 16099848
+    build_status: generated
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.housekeeping
+  path: src/zephyr/orchestrator/lifecycle/housekeeping.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 8
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 26
+  net_full_bare_py: 9
+  net_gate_kebab_py_yaml: 19
+  depgraph:
+    node_id: 16099837
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.incident_postmortem
+  path: src/zephyr/orchestrator/lifecycle/incident_postmortem.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099843
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.rolling_upgrade
+  path: src/zephyr/orchestrator/lifecycle/rolling_upgrade.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099842
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.session_conflict
+  path: src/zephyr/orchestrator/lifecycle/session_conflict.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099844
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.startup_sequencer
+  path: src/zephyr/orchestrator/lifecycle/startup_sequencer.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 3
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 4
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099841
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.state_propagation
+  path: src/zephyr/orchestrator/lifecycle/state_propagation.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 2
+  hits_bare_stem_py: 4
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099845
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.state_synchronizer
+  path: src/zephyr/orchestrator/lifecycle/state_synchronizer.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 10
+  hits_bare_stem_py: 14
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 24
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099850
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.system_transfer
+  path: src/zephyr/orchestrator/lifecycle/system_transfer.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099847
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.orchestrator.lifecycle.teardown_manager
+  path: src/zephyr/orchestrator/lifecycle/teardown_manager.py
+  domain: D_ORCHESTRATOR
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 2
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 3
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099852
+    build_status: production
+  last_commit: 36de8a4cf51|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.pf_alloc.strategy_lifecycle_event
+  path: src/zephyr/pf_alloc/strategy_lifecycle_event.py
+  domain: D_PF_ALLOC
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 18
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 2
+  net_full_bare_py: 18
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16099869
+    build_status: generated
+  last_commit: e4610104851|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.shared.lifecycle.__init__
+  path: src/zephyr/shared/lifecycle/__init__.py
+  domain: ''
+  family: L0_lifecycle
+  maturity: ''
+  hits_full_dotted_py: 0
+  hits_bare_stem_py: 548
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1538
+  net_full_bare_py: 548
+  net_gate_kebab_py_yaml: 1199
+  depgraph:
+    node_id: 16101086
+    build_status: generated
+  last_commit: 3c24057df22|2026-09-16
+  mtime_main: 2026-09-23 06:30
+  bucket: has_evidence
+- module: zephyr.trading.windows_service
+  path: src/zephyr/trading/windows_service.py
+  domain: D_INFRA_RUNTIME
+  family: L0_lifecycle
+  maturity: production
+  hits_full_dotted_py: 1
+  hits_bare_stem_py: 5
+  hits_gate_upper_py_yaml: 0
+  hits_kebab_py_yaml: 1
+  net_full_bare_py: 6
+  net_gate_kebab_py_yaml: 0
+  depgraph:
+    node_id: 16101962
+    build_status: generated
+  last_commit: 9f32c9011b8|2026-09-30
+  mtime_main: 2026-09-30 12:07
+  bucket: has_evidence
