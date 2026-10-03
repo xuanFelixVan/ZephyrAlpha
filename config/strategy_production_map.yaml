@@ -28,12 +28,12 @@ markets: [cn_a]
 purpose_legend:
   - {tag: 重活夜里干, one_liner_zh: 交易日白天只许干轻活，重算力全排收盘后和休市日，闸门说了算}
   - {tag: 进货带出生证, one_liner_zh: 每个策略想法进来都登记从哪条车道来的、原文在哪，出事能倒查}
-  - {tag: 不讲通不花钱, one_liner_zh: 经济学上讲不通的想法直接死在预审，一分回测算力都不给它花}
+  - {tag: 策略不讲通不花钱, one_liner_zh: 经济学上讲不通的想法直接死在预审，一分回测算力都不给它花}
   - {tag: 外来经翻译成标准件, one_liner_zh: 别人家的策略要翻成咱们的标准件才能进厂，翻得对不对有验收集管着}
-  - {tag: 考试咽喉说了算, one_liner_zh: 及不及格只有考试能判，做策略的永远不许给自己打分}
-  - {tag: 加池子才准入, one_liner_zh: 单策略好看不算数，加进组合能涨分才让进}
-  - {tag: 在库按月体检, one_liner_zh: 入库的策略持续体检，不行了就挂牌降级，结论回灌进货方向}
-  - {tag: 上岗前先实习, one_liner_zh: 过了考试的策略先用真行情跑模拟盘，不达标退回重修}
+  - {tag: 策略及格说了算, one_liner_zh: 及不及格只有考试能判，做策略的永远不许给自己打分}
+  - {tag: 策略加池子才准入, one_liner_zh: 单策略好看不算数，加进组合能涨分才让进}
+  - {tag: 在库策略按月体检, one_liner_zh: 入库的策略持续体检，不行了就挂牌降级，结论回灌进货方向}
+  - {tag: 新策略上岗先实习, one_liner_zh: 过了考试的策略先用真行情跑模拟盘，不达标退回重修}
   - {tag: 钱跟着确定性走, one_liner_zh: 资金怎么分是算出来的：风险预算、回撤限额、体制状态说了算，不许拍脑袋}
   - {tag: 赚亏拆开看, one_liner_zh: 实盘每一分赚亏都拆得开来源（择时/选股/成本），拆完的教训回灌下次判断}
   - {tag: 病历有人翻, one_liner_zh: 每本台账病历册都挂在流程上：考了几次、死过几个、怎么修好的，查得到}
@@ -113,7 +113,7 @@ nodes:
     algo_note_zh: 聚宽/掘金等社区策略爬取与入库（C1 人工版已收 597 条）；扩容爬虫候选 Scrapling
     compute_class: local
     data_refs: [data/strategy_intake/raw_manifest.csv]
-    module_ref: MOD-BT-035
+    module_ref: scripts/backtest/strategy_intake_inventory.py
     build_status: built
     design_refs:
       - Scrapling 自适应爬虫 github.com/D4Vinci/Scrapling（扩容候选）
@@ -298,7 +298,7 @@ nodes:
       是否拆 E4a 免回测快筛（AlphaEval 式五维，省时 25%+）+E4b 全量=开放决策点 7
     compute_class: local
     data_refs: [c1_market.kline_daily_hfq, c1_market.stk_limit, c1_market.kline_index]
-    module_ref: MOD-BT-039
+    module_ref: MOD-BT-027
     build_status: built
     design_refs:
       - DSR 原论文 davidhbailey.com/dhbpapers/deflated-sharpe.pdf
@@ -421,6 +421,3762 @@ nodes:
       - Brinson-Fachler 方法 neoxam.com/datahub/performance-attribution-brinson-fachler-method-explained/
     store_refs:
       - {artifact: 归因报告, location: 待定（E9 施工时定）, key: portfolio_id+期间, retention: 永久}
+
+# ==== mechanism 挂载层（F2 机生 st-map9-f2-20261003；真源=fac9_01_mount_candidates.yaml，
+#      一机制一节点；骨架 16 节点不动；trigger_facts/consumers 待 F3 回填）====
+# -- E0 组（15 件）--
+  - node_id: FAC-E0-M-001
+    parent_node: FAC-E0
+    name_zh: 算力调度闸门
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-BT-151
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-002
+    parent_node: FAC-E0
+    name_zh: 批次窗口预检（Batch Window Preflight）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-BT-226
+    build_status: pending
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-003
+    parent_node: FAC-E0
+    name_zh: GPU Core（回测 GPU 薄核）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-BT-233
+    build_status: pending
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-004
+    parent_node: FAC-E0
+    name_zh: 资源优化引擎——GPU 监控/进程池化/自愈
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-RESOURCE_OPTIMIZATION_ENGINE
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-005
+    parent_node: FAC-E0
+    name_zh: 系统大脑三层运行时——节律调度与工厂夜批同机竞争算力
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-INF-035
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-006
+    parent_node: FAC-E0
+    name_zh: 排班冲突检测闸（互斥组/内存天花板/E0 三查）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-RESCHED-GATE
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-007
+    parent_node: FAC-E0
+    name_zh: 资源画像注册表+生成器（排班真源）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-RESCHED-PROFILE
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-008
+    parent_node: FAC-E0
+    name_zh: 资源实测采样器
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-RESCHED-SAMPLER
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-009
+    parent_node: FAC-E0
+    name_zh: 排班冲突告警桥
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-RESCHED-ALERT
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-010
+    parent_node: FAC-E0
+    name_zh: 资源调度器
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: "dir:_domain_infrastructure_runtime/resource_scheduler"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-011
+    parent_node: FAC-E0
+    name_zh: NSSM+5 进程架构与 Supervisor（工厂夜批宿主）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-INF-066
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-012
+    parent_node: FAC-E0
+    name_zh: SLI/SLO+Token Budget——算力容量守护
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-INF-001
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-013
+    parent_node: FAC-E0
+    name_zh: GPU 上岗热交换模型（两档显存画像）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-INF-069
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-014
+    parent_node: FAC-E0
+    name_zh: GPU 资源管理
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: "dir:_domain_data_eng/gpu_resource_manager"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E0-M-015
+    parent_node: FAC-E0
+    name_zh: 交易日历（E0 闸门数据源）
+    purpose_tag: 重活夜里干
+    stage: E0
+    node_type: mechanism
+    module_ref: "code:src/zephyr/data/trading_calendar.py"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1 组（12 件）--
+  - node_id: FAC-E1-M-001
+    parent_node: FAC-E1
+    name_zh: 进货编排流水线
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-154
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-002
+    parent_node: FAC-E1
+    name_zh: 进货台账对账核验器（病历对账）
+    purpose_tag: 病历有人翻
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-231
+    build_status: pending
+    impact_note_zh: 质量
+    casebooks: [进货台账]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-003
+    parent_node: FAC-E1
+    name_zh: 市场宽度采集
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_data/market_breadth_collector"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-004
+    parent_node: FAC-E1
+    name_zh: 集合竞价数据（拍卖强度假说原料）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-MKT-007
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-005
+    parent_node: FAC-E1
+    name_zh: 研究数据管理
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/research_data_manager"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-006
+    parent_node: FAC-E1
+    name_zh: 研究数据沙箱
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/research_data_sandbox"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-007
+    parent_node: FAC-E1
+    name_zh: LLM 研究代理
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/llm_research_agent"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-008
+    parent_node: FAC-E1
+    name_zh: LLM 市场解读
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/llm_market_interpreter"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-009
+    parent_node: FAC-E1
+    name_zh: 情绪引擎（进货原料）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/sentiment_engine"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-010
+    parent_node: FAC-E1
+    name_zh: 另类数据信号抽取
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/alt_data_signal_extractor"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-011
+    parent_node: FAC-E1
+    name_zh: 概念-因子映射
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/concept_factor_mapper"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1-M-012
+    parent_node: FAC-E1
+    name_zh: 时间周期分析（日历效应→进货方向参考）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-REGIME-006
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1A 组（3 件）--
+  - node_id: FAC-E1A-M-001
+    parent_node: FAC-E1A
+    name_zh: C2 粗筛成绩灌表（车道A挂点）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-035
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1A-M-002
+    parent_node: FAC-E1A
+    name_zh: 社媒情绪采集
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/social_sentiment_collector"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1A-M-003
+    parent_node: FAC-E1A
+    name_zh: 网页爬取引擎（车道A 扩容底座）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/web_scraper_engine"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1B 组（4 件）--
+  - node_id: FAC-E1B-M-001
+    parent_node: FAC-E1B
+    name_zh: AI生成车道B
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-150
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1B-M-002
+    parent_node: FAC-E1B
+    name_zh: 嵌入/模型下载器——LLM 供给（E1B/E2 生成力）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-INF-045
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1B-M-003
+    parent_node: FAC-E1B
+    name_zh: 本地 LLM 池——E1B/E2/E1G 生成力（经 LSG）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/local_llm_pool"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1B-M-004
+    parent_node: FAC-E1B
+    name_zh: API LLM 池——同上（外部档）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/api_llm_pool"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1C 组（8 件）--
+  - node_id: FAC-E1C-M-001
+    parent_node: FAC-E1C
+    name_zh: 公式挖掘机gplearn轨
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-155
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-002
+    parent_node: FAC-E1C
+    name_zh: MCTS 第三轨搜索
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-202
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-003
+    parent_node: FAC-E1C
+    name_zh: 自动特征发现器
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/auto_feature_discoverer"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-004
+    parent_node: FAC-E1C
+    name_zh: GP 策略发现
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/gp_strategy_discovery"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-005
+    parent_node: FAC-E1C
+    name_zh: LLM 进化搜索
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/llm_evolutionary_search"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-006
+    parent_node: FAC-E1C
+    name_zh: 因子投票挖掘
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/factor_vote_mining"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-007
+    parent_node: FAC-E1C
+    name_zh: 公式挖掘算子白名单
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "cfg:factor_mining_whitelist"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1C-M-008
+    parent_node: FAC-E1C
+    name_zh: 搜索空间预注册
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "cfg:search_space_prereg"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1D 组（10 件）--
+  - node_id: FAC-E1D-M-001
+    parent_node: FAC-E1D
+    name_zh: 产业链三高筛选车道
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-090
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-002
+    parent_node: FAC-E1D
+    name_zh: 图谱增补暂存器（绝不写 ig_fact 正图）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-193
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-003
+    parent_node: FAC-E1D
+    name_zh: 图谱入图器（入图需 Owner 审核另批）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-203
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-004
+    parent_node: FAC-E1D
+    name_zh: 板块盘中聚合
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_data/sector_intraday_aggregator"
+    build_status: built
+    impact_note_zh: 效率
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-005
+    parent_node: FAC-E1D
+    name_zh: 板块报告构建
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_data/sector_report_builder"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-006
+    parent_node: FAC-E1D
+    name_zh: 财报解析（E1D 三高财务支柱原料）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_data/financial_parser"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-007
+    parent_node: FAC-E1D
+    name_zh: LLM 基本面分析（车道D 原料）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/llm_fundamental_analysis"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-008
+    parent_node: FAC-E1D
+    name_zh: 事件链因果图（产业链情报）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/event_chain_causal_graph"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-009
+    parent_node: FAC-E1D
+    name_zh: 公告 NLP 引擎
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/filing_nlp_engine"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1D-M-010
+    parent_node: FAC-E1D
+    name_zh: 政策主题映射
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/policy_theme_mapper"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1E 组（9 件）--
+  - node_id: FAC-E1E-M-001
+    parent_node: FAC-E1E
+    name_zh: 车道E分位数回归分布预测基线
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-084
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-002
+    parent_node: FAC-E1E
+    name_zh: Kronos 基线适配器
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-195
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-003
+    parent_node: FAC-E1E
+    name_zh: Kronos 微调 pkl 适配层
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-BT-204
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-004
+    parent_node: FAC-E1E
+    name_zh: ML 模型工厂——车道E 模型基线生产线
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/ml_model_factory"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-005
+    parent_node: FAC-E1E
+    name_zh: KAN 密度头——分布预测家族（车道E 深化）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/kan_density_head"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-006
+    parent_node: FAC-E1E
+    name_zh: PatchTST 密度编码器——分布预测家族
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/patchtst_density_encoder"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-007
+    parent_node: FAC-E1E
+    name_zh: QNN 两阶段——分布预测家族候选
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/qnn_two_stage"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-008
+    parent_node: FAC-E1E
+    name_zh: 模型版本注册表（版本台账）
+    purpose_tag: 病历有人翻
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/model_version_registry"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [模型版本注册表]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1E-M-009
+    parent_node: FAC-E1E
+    name_zh: 时序增广
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/ts_augmentation"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1F 组（2 件）--
+  - node_id: FAC-E1F-M-001
+    parent_node: FAC-E1
+    name_zh: 网格批次执行器（F 车道）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/factory_grid_executor.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1F-M-002
+    parent_node: FAC-E1
+    name_zh: F 车道网格配方适配器
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/lane_f_grid_adapter.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E1G 组（10 件）--
+  - node_id: FAC-E1G-M-001
+    parent_node: FAC-E1G
+    name_zh: 车道G-全网搜索进货（胃点菜）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-AUTO-E1G-001
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-002
+    parent_node: FAC-E1G
+    name_zh: 新闻连接器（E1D 图谱增补/E1G 原料）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_data/tushare_news_connector"
+    build_status: built
+    impact_note_zh: 效率
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-003
+    parent_node: FAC-E1G
+    name_zh: AI 舆情分析器（TDM 亦引，情报原料）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: MOD-INT-AISA
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-004
+    parent_node: FAC-E1G
+    name_zh: 新闻-标的关联
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/news_symbol_linker"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-005
+    parent_node: FAC-E1G
+    name_zh: 夜间舆情窗口
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/nightly_sentiment_window"
+    build_status: built
+    impact_note_zh: 效率
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-006
+    parent_node: FAC-E1G
+    name_zh: 全域事实台账（进货证据位，病历性设施）
+    purpose_tag: 病历有人翻
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_intelligence/universal_fact_ledger"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [全域事实台账]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-007
+    parent_node: FAC-E1G
+    name_zh: 研报采集（货源）
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/research_report_collector"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-008
+    parent_node: FAC-E1G
+    name_zh: 政策预期分析
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "dir:_domain_alt_data/policy_expectation_analyzer"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-009
+    parent_node: FAC-E1G
+    name_zh: AI 搜索矿脉配置
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "cfg:ai_search_veins"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E1G-M-010
+    parent_node: FAC-E1G
+    name_zh: AI 源注册表
+    purpose_tag: 进货带出生证
+    stage: E1
+    node_type: mechanism
+    module_ref: "cfg:ai_source_registry"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E2 组（6 件）--
+  - node_id: FAC-E2-M-001
+    parent_node: FAC-E2
+    name_zh: 假说预审逻辑门
+    purpose_tag: 病历有人翻
+    stage: E2
+    node_type: mechanism
+    module_ref: MOD-BT-091
+    build_status: built
+    casebooks: [预审判定台账]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E2-M-002
+    parent_node: FAC-E2
+    name_zh: 假发现率门（BH-FDR，全图三铁律②执法件）
+    purpose_tag: 策略不讲通不花钱
+    stage: E2
+    node_type: mechanism
+    module_ref: MOD-BT-187
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E2-M-003
+    parent_node: FAC-E2
+    name_zh: 深审模型适配器——E2 预审复核力
+    purpose_tag: 策略不讲通不花钱
+    stage: E2
+    node_type: mechanism
+    module_ref: "dir:_domain_ml_serve/deep_review_model_adapter"
+    build_status: pending
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E2-M-004
+    parent_node: FAC-E2
+    name_zh: 负面否决器——候选池一票否决（E2 同构质量门）
+    purpose_tag: 策略不讲通不花钱
+    stage: E2
+    node_type: mechanism
+    module_ref: MOD-SIG-137
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E2-M-005
+    parent_node: FAC-E2
+    name_zh: 顺位排序置信键
+    purpose_tag: 策略不讲通不花钱
+    stage: E2
+    node_type: mechanism
+    module_ref: MOD-SIG-141
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E2-M-006
+    parent_node: FAC-E2
+    name_zh: 溯源上下文库（预审证据位）
+    purpose_tag: 策略不讲通不花钱
+    stage: E2
+    node_type: mechanism
+    module_ref: "dir:_domain_fundamental_signal/trace_context_store"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E3 组（78 件）--
+  - node_id: FAC-E3-M-001
+    parent_node: FAC-E3
+    name_zh: C4 翻译件族（35 条验收集）
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-041..075
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-002
+    parent_node: FAC-E3
+    name_zh: C3 试点第 1 条 SVR 多因子（挂起）
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-036
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-003
+    parent_node: FAC-E3
+    name_zh: C3 试点第 2 条 MA 金叉死叉
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-037
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-004
+    parent_node: FAC-E3
+    name_zh: C3 试点第 3 条 zscore 均值回归
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-038
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-005
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 041: BIAS_QL 乖离率金叉死叉"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-041
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-006
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 042: MA 死叉+MACD 临界+高开 1 日轮换"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-042
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-007
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 043: GFTD 指标择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-043
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-008
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 044: MACD 单因子多头——金叉日轮换"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-044
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-009
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 045: 蓝筹&均线——MA5>MA20 多头持有前 5"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-045
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-010
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 046: 5 股固定池 zscore 均值回归"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-046
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-011
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 047: KD 指标金叉死叉择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-047
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-012
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 048: 布林带突破（talib BBANDS）"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-048
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-013
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 049: 布林带1（手写 numpy 版）"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-049
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-014
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 050: 高于 MA10 买入低于 MA20 卖出"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-050
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-015
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 051: 5 日线穿十日线"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-051
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-016
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 052: 多均线择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-052
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-017
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 053: MACD 大盘择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-053
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-018
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 054: DMI 大盘择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-054
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-019
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 055: Stoch(KDJ) 大盘择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-055
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-020
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 056: RSRS 大盘择时（标准版）"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-056
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-021
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 057: RSRS 大盘择时（R² 加权 M=1100）"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-057
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-022
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 058: RSRS 大盘择时优化"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-058
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-023
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 059: RSRS 指标择时（60 分钟线版）"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-059
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-024
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 060: 双股价差 zscore 轮动"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-060
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-025
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 061: 趋势交易 5.0"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-061
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-026
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 062: 回踩均线搏反弹"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-062
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-027
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 063: MACD 多周期共振"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-063
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-028
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 064: \"动量\"策略实为低动量反转"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-064
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-029
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 065: MA 死叉+MACD 临界+低开变体"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-065
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-030
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 066: 苦咖啡——120 日强趋势周频双持"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-066
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-031
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 067: 躲大跌股债切换"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-067
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-032
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 068: 恐慌反弹持有 19 日"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-068
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-033
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 069: 反转效应月频 25 只"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-069
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-034
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 070: 趋与势量化定义——势分分位带择时"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-070
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-035
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 071: WorldQuant Alpha#22 月频前 5"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-071
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-036
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 072: 多期限均线因子 OLS 预测选股"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-072
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-037
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 073: 欧奈尔 RPS 相对强度选股"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-073
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-038
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 074: CGO 处置效应因子"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-074
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-039
+    parent_node: FAC-E3
+    name_zh: "C4 翻译 075: 沪深300ETF 10/60 双均线"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-075
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-040
+    parent_node: FAC-E3
+    name_zh: 精选价值十强
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-088
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-041
+    parent_node: FAC-E3
+    name_zh: 恐慌反弹策略深度化
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-092
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-042
+    parent_node: FAC-E3
+    name_zh: _valuation_engine
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-096
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-043
+    parent_node: FAC-E3
+    name_zh: C4 翻译
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-102
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-044
+    parent_node: FAC-E3
+    name_zh: Slater价值精选
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-103
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-045
+    parent_node: FAC-E3
+    name_zh: Slater精选35
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-104
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-046
+    parent_node: FAC-E3
+    name_zh: Slater价值55改进版
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-105
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-047
+    parent_node: FAC-E3
+    name_zh: 小市值高低波动选股
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-130
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-048
+    parent_node: FAC-E3
+    name_zh: 蛇皮走位小市值
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-156
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-049
+    parent_node: FAC-E3
+    name_zh: 便宜股PB破净高股息
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-157
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-050
+    parent_node: FAC-E3
+    name_zh: 低PE月频前20等权（HS300）
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-160
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-051
+    parent_node: FAC-E3
+    name_zh: 低PB月频前20等权
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-161
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-052
+    parent_node: FAC-E3
+    name_zh: 高股息率月频前20等权
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-162
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-053
+    parent_node: FAC-E3
+    name_zh: PE+PB复合排名双因子
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-163
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-054
+    parent_node: FAC-E3
+    name_zh: 中证500低PE月频前20等权
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-164
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-055
+    parent_node: FAC-E3
+    name_zh: 漂亮 50 复现·高股息率旬频前 10 等权
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-165
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-056
+    parent_node: FAC-E3
+    name_zh: 原文口径
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-166
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-057
+    parent_node: FAC-E3
+    name_zh: 向导式价值分析
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-167
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-058
+    parent_node: FAC-E3
+    name_zh: 中信证券向导·低 PB 月频前 20 等权
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-168
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-059
+    parent_node: FAC-E3
+    name_zh: 超稳股息率+均线·高股息率月频前 5 等权
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-169
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-060
+    parent_node: FAC-E3
+    name_zh: 高股息率
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-170
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-061
+    parent_node: FAC-E3
+    name_zh: 价值投资策略
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-172
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-062
+    parent_node: FAC-E3
+    name_zh: "向导式·成长四门+PB>2 月频市值前 20"
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-173
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-063
+    parent_node: FAC-E3
+    name_zh: 向导式成长股精选·五门市值前 20
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-174
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-064
+    parent_node: FAC-E3
+    name_zh: 低估值+低负债·PB 区间门市值前 20
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-175
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-065
+    parent_node: FAC-E3
+    name_zh: ROE 改善+低 PB·前 10
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-176
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-066
+    parent_node: FAC-E3
+    name_zh: PEG+EBIT+小市值·前 5
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-177
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-067
+    parent_node: FAC-E3
+    name_zh: PEG+成长+小市值·前 4
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-178
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-068
+    parent_node: FAC-E3
+    name_zh: PEG+EBIT 小市值优化·前 5
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-179
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-069
+    parent_node: FAC-E3
+    name_zh: 业绩增长+PEG·前 4
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-180
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-070
+    parent_node: FAC-E3
+    name_zh: 大市值价值投资·破净高 ROA 前 5
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-181
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-071
+    parent_node: FAC-E3
+    name_zh: 大市值价值投资优化·破净高 ROA 前 5
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-182
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-072
+    parent_node: FAC-E3
+    name_zh: 菜场大妈·高股息高 ROE 前 5
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-183
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-073
+    parent_node: FAC-E3
+    name_zh: 穿越牛熊价值精选·麦克连六门近似
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-184
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-074
+    parent_node: FAC-E3
+    name_zh: 柯林·麦克连成长价值·营收增长门近似
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-185
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-075
+    parent_node: FAC-E3
+    name_zh: 新手价值五门·月频市值前 20
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-186
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-076
+    parent_node: FAC-E3
+    name_zh: 管线事件持久化与消费编排
+    purpose_tag: 病历有人翻
+    stage: E3
+    node_type: mechanism
+    module_ref: MOD-BT-190
+    build_status: built
+    casebooks: [翻译件台账]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-077
+    parent_node: FAC-E3
+    name_zh: 代码生成模型适配器——E3 翻译/车道B/C2 生成力
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: "dir:_domain_ml_serve/codegen_model_adapter"
+    build_status: pending
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E3-M-078
+    parent_node: FAC-E3
+    name_zh: 签名特征抽取
+    purpose_tag: 外来经翻译成标准件
+    stage: E3
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/signature_feature_extractor"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E4 组（82 件）--
+  - node_id: FAC-E4-M-001
+    parent_node: FAC-E4
+    name_zh: C4 翻译共享引擎（E4 挂点，名实错位见报告）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-039
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-002
+    parent_node: FAC-E4
+    name_zh: 成本模型标定真源
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-001
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-003
+    parent_node: FAC-E4
+    name_zh: data_handler 数据来源手
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-006
+    build_status: pending
+    impact_note_zh: 速度
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-004
+    parent_node: FAC-E4
+    name_zh: ⑤ 数值格式化辅助
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-019
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-005
+    parent_node: FAC-E4
+    name_zh: ④ 命中率统计快照
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-020
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-006
+    parent_node: FAC-E4
+    name_zh: ⑤ 报告组装与缓存
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-021
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-007
+    parent_node: FAC-E4
+    name_zh: ⑤ 报告聚合判定
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-022
+    build_status: built
+    casebooks: [回测run档案图书馆]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-008
+    parent_node: FAC-E4
+    name_zh: ④ 诊断报告聚合
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-023
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-009
+    parent_node: FAC-E4
+    name_zh: 分层验证管道(C-003)
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-027
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-010
+    parent_node: FAC-E4
+    name_zh: 策略级CPCV打分矩阵
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-028
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-011
+    parent_node: FAC-E4
+    name_zh: P0 印教材（regime 历史印证材料）
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-032
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [试验台账红证]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-012
+    parent_node: FAC-E4
+    name_zh: 新旧状态双轨对照器
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-033
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [试验台账红证]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-013
+    parent_node: FAC-E4
+    name_zh: P0 成本验证件
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-034
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [试验台账红证]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-014
+    parent_node: FAC-E4
+    name_zh: C4 快筛批测入口
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-076
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-015
+    parent_node: FAC-E4
+    name_zh: C4 批测冒烟守卫
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-077
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-016
+    parent_node: FAC-E4
+    name_zh: 台账数据源（及格集/p 值/相关矩阵）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-191
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-017
+    parent_node: FAC-E4
+    name_zh: 分布预测双标准考尺（PIT+锐度+pinball）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-194
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-018
+    parent_node: FAC-E4
+    name_zh: 网格结构知识方差分解
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-197
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-019
+    parent_node: FAC-E4
+    name_zh: 整装回测自动触发件
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-198
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-020
+    parent_node: FAC-E4
+    name_zh: N 试次账本（FDR 预算证据位，病历册）
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-200
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [N试次账本]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-021
+    parent_node: FAC-E4
+    name_zh: F06 幸存者 WFA 正考（F 车道考卷）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-211
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-022
+    parent_node: FAC-E4
+    name_zh: EXP 六因子 IC 出证编排
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-218
+    build_status: pending
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-023
+    parent_node: FAC-E4
+    name_zh: P0-6 试验台账批末记账红证（病历页）
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-BT-228
+    build_status: pending
+    impact_note_zh: 质量
+    casebooks: [试验台账红证]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-024
+    parent_node: FAC-E4
+    name_zh: 数据库集成蓝图（SQLite治理+PG架构）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: SH-DB-001
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-025
+    parent_node: FAC-E4
+    name_zh: 跨境双活传输层
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-DATA-072
+    build_status: built
+    impact_note_zh: 速度
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-026
+    parent_node: FAC-E4
+    name_zh: 调度对账补跑器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-L00-021
+    build_status: built
+    impact_note_zh: 速度
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-027
+    parent_node: FAC-E4
+    name_zh: 轻量 Instrument Master（15字段标的集）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-DATA-069
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-028
+    parent_node: FAC-E4
+    name_zh: 自动补数器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data/auto_backfiller"
+    build_status: built
+    impact_note_zh: 速度
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-029
+    parent_node: FAC-E4
+    name_zh: 数据源 SLA 追踪器（供数时效设施）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data/source_sla_tracker"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-030
+    parent_node: FAC-E4
+    name_zh: 多周期融合
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data/multi_timeframe_fusion"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-031
+    parent_node: FAC-E4
+    name_zh: 参考数据管理
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data/reference_data_manager"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-032
+    parent_node: FAC-E4
+    name_zh: 数据压缩归档（存储面）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data/data_compression_archiver"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-033
+    parent_node: FAC-E4
+    name_zh: 行情源注册表
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-MKT-001
+    build_status: built
+    impact_note_zh: "速度|质量"
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-034
+    parent_node: FAC-E4
+    name_zh: 行情源抽象基类
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-MKT-002
+    build_status: built
+    impact_note_zh: "速度|质量"
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-035
+    parent_node: FAC-E4
+    name_zh: 行情连接器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-MKT-003
+    build_status: built
+    impact_note_zh: "速度|质量"
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-036
+    parent_node: FAC-E4
+    name_zh: 多源主备切换（供数连续性）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-MKT-004
+    build_status: built
+    impact_note_zh: 速度
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-037
+    parent_node: FAC-E4
+    name_zh: 行情源自动加载
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-MKT-005
+    build_status: built
+    impact_note_zh: 效率
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-038
+    parent_node: FAC-E4
+    name_zh: 行情原始数据缓存（回测速度因子）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-MKT-006
+    build_status: built
+    impact_note_zh: 速度
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-039
+    parent_node: FAC-E4
+    name_zh: 数据库层（CH=回测主考卷存储，速度因子）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_infrastructure_runtime/database_layer"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-040
+    parent_node: FAC-E4
+    name_zh: Redis 共享状态层
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-INF-063
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-041
+    parent_node: FAC-E4
+    name_zh: WAL checkpoint 监控（入库写放大守护）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_infrastructure_operations/wal_checkpoint_monitor"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-042
+    parent_node: FAC-E4
+    name_zh: 复现管理器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/reproducibility_manager"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-043
+    parent_node: FAC-E4
+    name_zh: 信号质量基准
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_signal_quality/signal_quality_benchmark"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-044
+    parent_node: FAC-E4
+    name_zh: 场景生成器（蒙特卡洛压测）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-SIM-005
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-045
+    parent_node: FAC-E4
+    name_zh: 仿真结果分析器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-SIM-012
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-046
+    parent_node: FAC-E4
+    name_zh: 参数鲁棒性测试器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-SIM-021
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-047
+    parent_node: FAC-E4
+    name_zh: 未来函数检测器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-SIM-022
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-048
+    parent_node: FAC-E4
+    name_zh: Sharpe 计算修正器（非正态+DSR）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-SIM-023
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-049
+    parent_node: FAC-E4
+    name_zh: DSR 计算器（多重测试偏差修正）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-SIM-024
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-050
+    parent_node: FAC-E4
+    name_zh: 过拟合防护门
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_simulation/overfitting_protection_gate"
+    build_status: built
+    casebooks: [过拟合裁定档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-051
+    parent_node: FAC-E4
+    name_zh: 公司行动处理器（复权口径质量因子）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-TRADING-004
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-052
+    parent_node: FAC-E4
+    name_zh: 参考数据管理（trading 域）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_trading/reference_data_manager"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图12 data_supply_chain_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-053
+    parent_node: FAC-E4
+    name_zh: 因子研究案例库（成功/失败→修复病历本，data/databases/factor_casebook.db）
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: MOD-L02-027
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [因子研究案例库]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-054
+    parent_node: FAC-E4
+    name_zh: 因子模型共评器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/factor_model_co_evaluator"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-055
+    parent_node: FAC-E4
+    name_zh: 冷数据归档管理
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data_eng/cold_data_archive_manager"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-056
+    parent_node: FAC-E4
+    name_zh: 数据异常告警
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data_eng/data_anomaly_alerter"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-057
+    parent_node: FAC-E4
+    name_zh: 数据湖管理
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data_eng/data_lake_manager"
+    build_status: built
+    impact_note_zh: 速度
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-058
+    parent_node: FAC-E4
+    name_zh: 质量 SLA 违约预测
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "dir:_domain_data_eng/quality_sla_breach_predictor"
+    build_status: pending
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-059
+    parent_node: FAC-E4
+    name_zh: 板块预注册考试跑批器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/sector_prereg_exam_runner.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-060
+    parent_node: FAC-E4
+    name_zh: CPCV 重考 harness
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/reexam_cpcv_harness.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-061
+    parent_node: FAC-E4
+    name_zh: 考试成本重考件
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/exam_cost_reexam.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-062
+    parent_node: FAC-E4
+    name_zh: DSR 重算回填
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/dsr_recalc_backfill.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-063
+    parent_node: FAC-E4
+    name_zh: 复现演练器（病历/质量）
+    purpose_tag: 病历有人翻
+    stage: E4
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/replay_drill.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [复现演练档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-064
+    parent_node: FAC-E4
+    name_zh: 向量化回测引擎
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:vectorized_engine"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-065
+    parent_node: FAC-E4
+    name_zh: 事件驱动回测引擎
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:event_driven_engine"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-066
+    parent_node: FAC-E4
+    name_zh: WFO 滚动前推
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:walk_forward"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-067
+    parent_node: FAC-E4
+    name_zh: Purged K-Fold（清洗K折）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:purged_kfold"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-068
+    parent_node: FAC-E4
+    name_zh: CPCV 组合纯合成
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:cpcv"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-069
+    parent_node: FAC-E4
+    name_zh: 撮合引擎（Tick 级）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:matching_engine"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-070
+    parent_node: FAC-E4
+    name_zh: Tick 回放引擎
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:tick_replay"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-071
+    parent_node: FAC-E4
+    name_zh: 数据处理器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:data_handler"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-072
+    parent_node: FAC-E4
+    name_zh: PIT 点时管理器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:pit_manager"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-073
+    parent_node: FAC-E4
+    name_zh: 决策门控
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:decision_gate"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-074
+    parent_node: FAC-E4
+    name_zh: 考试成本门
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:exam_cost_gate"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-075
+    parent_node: FAC-E4
+    name_zh: 成本归因
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:cost_attribution"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-076
+    parent_node: FAC-E4
+    name_zh: 回测调度器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:scheduler"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-077
+    parent_node: FAC-E4
+    name_zh: 过拟合检测器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:overfitting_detector"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-078
+    parent_node: FAC-E4
+    name_zh: 闭卷闸
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:closed_book_gate"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-079
+    parent_node: FAC-E4
+    name_zh: 策略验证管线
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:strategy_validation_pipeline"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-080
+    parent_node: FAC-E4
+    name_zh: 批测预检器
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:preflight_checker"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-081
+    parent_node: FAC-E4
+    name_zh: 平稳自助法
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: "af:e2_stationary_bootstrap"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E4-M-082
+    parent_node: FAC-E4
+    name_zh: 闭卷读取闸（module_id 冲突待改号）
+    purpose_tag: 策略及格说了算
+    stage: E4
+    node_type: mechanism
+    module_ref: src/zephyr/backtest/core/closed_book_gate.py
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E5 组（4 件）--
+  - node_id: FAC-E5-M-001
+    parent_node: FAC-E5
+    name_zh: 策略协同去重器
+    purpose_tag: 策略加池子才准入
+    stage: E5
+    node_type: mechanism
+    module_ref: MOD-BT-086
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E5-M-002
+    parent_node: FAC-E5
+    name_zh: ④ 差异报告组装
+    purpose_tag: 策略加池子才准入
+    stage: E5
+    node_type: mechanism
+    module_ref: MOD-BT-024
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E5-M-003
+    parent_node: FAC-E5
+    name_zh: 信号去重
+    purpose_tag: 策略加池子才准入
+    stage: E5
+    node_type: mechanism
+    module_ref: "dir:_domain_signal_quality/signal_dedup"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E5-M-004
+    parent_node: FAC-E5
+    name_zh: 协同去重基准因子配置
+    purpose_tag: 策略加池子才准入
+    stage: E5
+    node_type: mechanism
+    module_ref: "cfg:synergy_dedup"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E6 组（14 件）--
+  - node_id: FAC-E6-M-001
+    parent_node: FAC-E6
+    name_zh: 策略台账查询器
+    purpose_tag: 病历有人翻
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-078
+    build_status: built
+    casebooks: [考试成绩+判定书台账]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-002
+    parent_node: FAC-E6
+    name_zh: ④ 4级告警判定
+    purpose_tag: 病历有人翻
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-018
+    build_status: built
+    casebooks: [衰减死因册]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-003
+    parent_node: FAC-E6
+    name_zh: 策略生命周期状态机
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-188
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-004
+    parent_node: FAC-E6
+    name_zh: 自动入库编排器
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-189
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-005
+    parent_node: FAC-E6
+    name_zh: 策略注册表条目追加写入器
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-192
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-006
+    parent_node: FAC-E6
+    name_zh: 日度决策快照表（decision_daily DDL+schema）
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-212
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-007
+    parent_node: FAC-E6
+    name_zh: 分层参与门快照采集器
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-213
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-008
+    parent_node: FAC-E6
+    name_zh: 日度编排器
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: MOD-BT-214
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-009
+    parent_node: FAC-E6
+    name_zh: 模型漂移监控（Kronos 等基线模型衰减位）
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: "dir:_domain_ml_serve/model_drift_monitor"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-010
+    parent_node: FAC-E6
+    name_zh: 信号降级监控（衰减族）
+    purpose_tag: 病历有人翻
+    stage: E6
+    node_type: mechanism
+    module_ref: "dir:_domain_signal_quality/signal_degradation_monitor"
+    build_status: built
+    casebooks: [衰减死因册]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-011
+    parent_node: FAC-E6
+    name_zh: 信号可解释性保证
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: "dir:_domain_signal_quality/signal_explainability_guarantor"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-012
+    parent_node: FAC-E6
+    name_zh: 因子生命周期 runner
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/factor_lifecycle_runner"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-013
+    parent_node: FAC-E6
+    name_zh: 分布漂移监控（衰减信号源）
+    purpose_tag: 病历有人翻
+    stage: E6
+    node_type: mechanism
+    module_ref: "dir:_domain_fbl_detectors/distribution_drift_monitor"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [衰减死因册]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E6-M-014
+    parent_node: FAC-E6
+    name_zh: 策略 lifecycle 流转建议器
+    purpose_tag: 在库策略按月体检
+    stage: E6
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/strategy_lifecycle_advisor.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E7 组（22 件）--
+  - node_id: FAC-E7-M-001
+    parent_node: FAC-E7
+    name_zh: 模拟盘前哨考核器（Paper Outpost）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-225
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-002
+    parent_node: FAC-E7
+    name_zh: sim 表部署脚本
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-083
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-003
+    parent_node: FAC-E7
+    name_zh: 模拟盘治理建议生成器
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-094
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [模拟盘病历族]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-004
+    parent_node: FAC-E7
+    name_zh: 转正建议包
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-199
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-005
+    parent_node: FAC-E7
+    name_zh: E7 前哨对账器（名实冲突见报告：battle 表作 Closed Book Gate）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-201
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-006
+    parent_node: FAC-E7
+    name_zh: 模拟盘日链接电执行体（sim_daily_runner 桥执行腿）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-222
+    build_status: pending
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-007
+    parent_node: FAC-E7
+    name_zh: 模拟盘判定台账表结构（病历册）
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-223
+    build_status: pending
+    impact_note_zh: 质量
+    casebooks: [模拟盘病历族]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-008
+    parent_node: FAC-E7
+    name_zh: 转正建议晨报摘要渲染器（Morning Digest）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-BT-232
+    build_status: pending
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-009
+    parent_node: FAC-E7
+    name_zh: 策略灰度发布（Shadow Canary——E7→E8 上新安全阀）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: "dir:_domain_infrastructure_operations/strategy_canary_release"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-010
+    parent_node: FAC-E7
+    name_zh: 策略仿真器（沙箱+信号模拟）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-SIM-002
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-011
+    parent_node: FAC-E7
+    name_zh: 日终处理器（E7 对账 NAV/PnL 确认手）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-TRADING-012
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-012
+    parent_node: FAC-E7
+    name_zh: mSPRT 冠军挑战者序贯晋升
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: MOD-PF-008
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-013
+    parent_node: FAC-E7
+    name_zh: Almgren-Chriss 冲击模型（E7 滑点/容量实测参考）
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: "dir:_domain_execution_sim/almgren_chriss_impact_model"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-014
+    parent_node: FAC-E7
+    name_zh: A/B联赛成对晋升判据执行器
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/league_judge.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-015
+    parent_node: FAC-E7
+    name_zh: 联赛注册表（赛马计分板）
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/league_registry.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [联赛档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-016
+    parent_node: FAC-E7
+    name_zh: 联赛档案打包器（病历册）
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/league_archive.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [联赛档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-017
+    parent_node: FAC-E7
+    name_zh: 联赛月度快照
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/league_monthly_snapshot.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [联赛档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-018
+    parent_node: FAC-E7
+    name_zh: 联赛复原器
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/league_restore.py"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: [联赛档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-019
+    parent_node: FAC-E7
+    name_zh: 模拟盘钱包账本
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/sim_paper_ledger.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-020
+    parent_node: FAC-E7
+    name_zh: 模拟盘平台日刊生成器（病历）
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/sim_platform_journal.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [模拟盘病历族]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-021
+    parent_node: FAC-E7
+    name_zh: sim 转正建议书生成器
+    purpose_tag: 新策略上岗先实习
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/sim_promotion_memo.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E7-M-022
+    parent_node: FAC-E7
+    name_zh: 月度危机演练件
+    purpose_tag: 病历有人翻
+    stage: E7
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/crisis_drill_monthly.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: [复现演练档案]
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E8 组（34 件）--
+  - node_id: FAC-E8-M-001
+    parent_node: FAC-E8
+    name_zh: 多策略资金分配件族（E8 装配线）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-002..024
+    build_status: pending
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-002
+    parent_node: FAC-E8
+    name_zh: 多策略资金分配器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-003
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-003
+    parent_node: FAC-E8
+    name_zh: 策略相关性门禁
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-004
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-004
+    parent_node: FAC-E8
+    name_zh: Regime元分配器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-007
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-005
+    parent_node: FAC-E8
+    name_zh: 最大回撤限制分配器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-013
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-006
+    parent_node: FAC-E8
+    name_zh: 策略筛选三维评估器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-014
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-007
+    parent_node: FAC-E8
+    name_zh: 体制条件BMA信号权重
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-015
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-008
+    parent_node: FAC-E8
+    name_zh: 前瞻风险预算分配器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-022
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-009
+    parent_node: FAC-E8
+    name_zh: 信号合成器（多策略加权投票）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-002
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-010
+    parent_node: FAC-E8
+    name_zh: 分批建仓引擎
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PA-006
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-011
+    parent_node: FAC-E8
+    name_zh: Regime检测器（12态灰度概率）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-REGIME-001
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map（编制）+本图 E8 消费
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-012
+    parent_node: FAC-E8
+    name_zh: 再平衡调度器（四触发源）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PF-003
+    build_status: built
+    impact_note_zh: 效率
+    home_map: "本图 E8+交易日循环挂槽（05:45 巡检）"
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-013
+    parent_node: FAC-E8
+    name_zh: 波动率目标化仓位计算器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-BT-082
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-014
+    parent_node: FAC-E8
+    name_zh: STR 翻译件面板适配器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-BT-196
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-015
+    parent_node: FAC-E8
+    name_zh: Regime 特征管道（E8 元分配输入）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-REGIME-002
+    build_status: built
+    impact_note_zh: 效率
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-016
+    parent_node: FAC-E8
+    name_zh: 筹码分布引擎
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-REGIME-005
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-017
+    parent_node: FAC-E8
+    name_zh: 大盘指数传感器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-REGIME-016
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-018
+    parent_node: FAC-E8
+    name_zh: 波动率体制预警
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-REGIME-011
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-019
+    parent_node: FAC-E8
+    name_zh: 风格体制模型
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_regime/style_regime_model"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-020
+    parent_node: FAC-E8
+    name_zh: 截面特征
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_regime/cross_sectional_features"
+    build_status: built
+    impact_note_zh: 效率
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-021
+    parent_node: FAC-E8
+    name_zh: 市场预测融合
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_regime/market_forecast_fusion"
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-022
+    parent_node: FAC-E8
+    name_zh: 策略引擎（生命周期状态机+四维决策）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PF-001
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-023
+    parent_node: FAC-E8
+    name_zh: 组合优化器（风险预算主+均值方差备选）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PF-002
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-024
+    parent_node: FAC-E8
+    name_zh: 约束求解器（7 约束链+拥挤检测）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: MOD-PF-006
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-025
+    parent_node: FAC-E8
+    name_zh: 再平衡成本收益分析
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_portfolio_core/rebalance_cost_analyzer"
+    build_status: built
+    impact_note_zh: 效率
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-026
+    parent_node: FAC-E8
+    name_zh: 策略容量估计器（资金分配输入）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_portfolio_core/strategy_capacity_estimator"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-027
+    parent_node: FAC-E8
+    name_zh: 漏斗组合裁决器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_portfolio_core/funnel_portfolio_adjudicator"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-028
+    parent_node: FAC-E8
+    name_zh: 敞口管理
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_portfolio_core/exposure_manager"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-029
+    parent_node: FAC-E8
+    name_zh: 策略装配工厂（portfolio_core 内 strategy_factory）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "dir:_domain_portfolio_core/strategy_factory"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-030
+    parent_node: FAC-E8
+    name_zh: 权重唯一真源与写图权柄闸
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/weight_ssot.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-031
+    parent_node: FAC-E8
+    name_zh: 前瞻概率止损模块
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "code:src/zephyr/pf_alloc/core/forward_stop_loss.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-032
+    parent_node: FAC-E8
+    name_zh: 前瞻风险预算分配器（PA-022 真身）
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "code:src/zephyr/pf_alloc/core/risk_budget_allocator.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-033
+    parent_node: FAC-E8
+    name_zh: 板块分布比较选优
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "code:src/zephyr/pf_alloc/core/sector_distribution_comparator.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E8-M-034
+    parent_node: FAC-E8
+    name_zh: 尾部对冲信号生成器
+    purpose_tag: 钱跟着确定性走
+    stage: E8
+    node_type: mechanism
+    module_ref: "code:src/zephyr/pf_alloc/core/tail_hedge_signal.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- E9 组（8 件）--
+  - node_id: FAC-E9-M-001
+    parent_node: FAC-E9
+    name_zh: 绩效归因引擎（Brinson三因子+因子/风险归因）
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: MOD-PF-007
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图9+图7 双图引用（trading_decision_map 亦引）
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-002
+    parent_node: FAC-E9
+    name_zh: 风险归因复用件（MOD-RK-16）
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: MOD-RK-16
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 风控域（无纵向图，_domain_risk 编制）
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-003
+    parent_node: FAC-E9
+    name_zh: E2 收益归因（sim_attribution_report，residual 战役）
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: MOD-BT-215
+    build_status: pending
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-004
+    parent_node: FAC-E9
+    name_zh: 决策标注数据集
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: "dir:_domain_machine_learning_train/decision_annotation_dataset"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-005
+    parent_node: FAC-E9
+    name_zh: 盈亏计算器（E9 归因原料手）
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: MOD-TRADING-002
+    build_status: built
+    impact_note_zh: 质量
+    home_map: 图7 trading_decision_map
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-006
+    parent_node: FAC-E9
+    name_zh: 策略迭代升级器（归因→回灌执行件）
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: "dir:_domain_factor/strategy_iteration_upgrader"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-007
+    parent_node: FAC-E9
+    name_zh: 影子组合对照引擎（Perold 四分解）
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: "code:src/zephyr/pf_core/core/shadow_portfolio.py"
+    build_status: built
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-E9-M-008
+    parent_node: FAC-E9
+    name_zh: 条件胞归因
+    purpose_tag: 赚亏拆开看
+    stage: E9
+    node_type: mechanism
+    module_ref: "code:scripts/backtest/condition_attribution.py"
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+# -- MAP 组（2 件）--
+  - node_id: FAC-MAP-M-001
+    parent_node: FAC-E0
+    name_zh: 策略工厂图结构校验器（FACTORY-MAP 本图守卫）
+    purpose_tag: 图有人守
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-BT-080
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
+  - node_id: FAC-MAP-M-002
+    parent_node: FAC-E0
+    name_zh: 本图对抗测试件
+    purpose_tag: 图有人守
+    stage: E0
+    node_type: mechanism
+    module_ref: MOD-BT-081
+    build_status: built
+    impact_note_zh: 质量
+    casebooks: []
+    trigger_facts: null  # pending-facts（F3 车道回填）
+    consumers: null  # pending-facts（F3 车道回填）
 
 edges:
   - [FAC-E0, FAC-E1]
