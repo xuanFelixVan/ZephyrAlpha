@@ -62493,6 +62493,15 @@ entries:
   plain_zh: "大白话：动手新建文件前先查三处有没有别人做到一半的同类文件——git暂存区、其他会话的工作副本、提交失败死信袋，找到就提醒先看再做别重复造；只查不改任何东西，查不到也不报错。"
   responsibility_layer: governance
 
+- module_path: scripts/generate_map_coverage_ledger.py
+  domain_id: D_TRADING
+  name_zh: "TDM覆盖账本机生器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把二十三个交易相关域的模块清单和交易决策全景图挂载的模块做双向对账，自动分出已挂、没挂的孤儿和从外域伸进交易流程的三类名单，产出覆盖账本供总筹对审和初挂草案用"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

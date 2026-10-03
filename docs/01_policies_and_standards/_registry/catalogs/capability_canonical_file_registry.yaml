@@ -59722,4 +59722,19 @@ creation_tokens:
   created_by: st-mapreg-20261003
   capability: panorama_map_census
   merge_evaluation: "mapreg转正批3份判定报告(e36d0ff70f残留核查/图13重叠判定/九图L0缺口)"
+- file: scripts/generate_map_coverage_ledger.py
+  token: tdm-mount-generate-map-coverage-ledger-20261003
+  created_by: st-tdm-mount-flash-20261003
+  capability: tdm_mount
+  merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件为总筹裁决输入，账本为活体真源"
+- file: docs/_working/tdm_mount/C_mount_draft_v1.md
+  token: tdm-mount-c-mount-draft-v1-20261003
+  created_by: st-tdm-mount-flash-20261003
+  capability: tdm_mount
+  merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件为总筹裁决输入，账本为活体真源"
+- file: docs/_working/tdm_mount/D_confidence_draft_v1.md
+  token: tdm-mount-d-confidence-draft-v1-20261003
+  created_by: st-tdm-mount-flash-20261003
+  capability: tdm_mount
+  merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件为总筹裁决输入，账本为活体真源"
 di_seam_exemptions: []
