@@ -6,12 +6,12 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-01
-topic: fullflow_mine_20261001
+topic: fullflow_mine
 ---
 
 # 全环节骨架总册（122 环节 / 13 段）
 
-> **一句话**：全项目"环节"只有一套骨架——**122 环节 / 13 段（F01-F122，结构轴）**；交易日时钟轴 44 环节（D13-01..44，四段）是同一批资产的时序投影，去重后**零新增环节**。全项目环节总数=**122**。
+> **一句话**：全项目"环节"只有一套骨架——**122 环节 / 13 段（F01-F122，结构轴）**；交易日时钟轴 44 环节（D13-01..44，四段）是同一批资产的时序投影，去重后**零新增环节**。全项目环节总数=**122**（时钟轴 44=同资产投影，不入总数）。
 > **来源五处（全读，内收不发明）**：①docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md（F01-F122 唯一真源）②docs/_working/total_circulation_night/s5_skeleton.md（A5 三态核验簿，2026-09-30）③docs/_working/map_build/fig13_daycycle/00_skeleton.md（44 环节四段时钟轴）④config/trading_day_cycle_map.yaml（机生 48 节点）+trading_decision_map.yaml（TDM 182）+governance_operations_map.yaml（GOMAP 446）⑤调度面 schedule.yaml/tasks.yaml+resource_profile_registry.yaml+schtasks 实测。
 > **状态符号**：✅=通（锚点在 HEAD 且有运行/消费实证）｜🔨=断（实件在但链断/停摆，P0-P2 断级）｜⬜=未建（登记态/设计态）。口径=A5 核验簿 2026-09-30。
 
@@ -24,16 +24,16 @@ topic: fullflow_mine_20261001
 | 机生图缺口标记 | D13-G01..G04 | 4 | gap 节点非环节，不计 |
 | 决策节点（环节下层判定单元） | TDM 182（E128/P18/X19/F13/C4） | 182 | 非"环节"，挂在 D 段各 F 环节下 |
 | 治理模块（实现层） | GOMAP 446 模块 / 7 层（L0 孵化76·L1 监控139·L2 资源66·L3 熔断22·L4 收割42·L5 自愈97·L6 审计4；wired 246+15+91 / suspect_orphan 94） | 446 | 非"环节"，是 F 环节的实现模块 |
-| 执行实体（调度面） | schedule.yaml **32 槽**（17 挂载/15 空槽）+tasks.yaml **272 任务**；resource_profile_registry **101 实体**（cron56/manual29/event15/dynamic1）；schtasks Zephyr\* **49 个**（Running 4/Disabled 6/Ready 39） | — | 非"环节"，是 F76/F77 的实体清单 |
+| 执行实体（调度面） | schedule.yaml **32 槽**（17 挂载/15 空槽）+tasks.yaml **272 任务**；resource_profile_registry **102 实体**（cron57/manual29/event15/dynamic1，机生 10-02）；schtasks Zephyr\* **65 个**（10-02 实测；10-04 复测 50=Ready39/Running7/Disabled4） | — | 非"环节"，是 F76/F77 的实体清单 |
 
-**三态计数（A5 口径，2026-09-30）**：✅ 通 **96** ｜ 🔨 断 **20**（P0×3、P1×8、P2×9）｜ ⬜ 未建 **6**。
+**三态计数（A5 口径 2026-09-30；10-04 F73 翻账后）**：✅ 通 **97** ｜ 🔨 断 **19**（P0×2、P1×8、P2×9）｜ ⬜ 未建 **6**。
 
 ## 二、去重说明（多源命中合并记录）
 
 1. **total_circulation_night/s5_skeleton.md 与 fullflow_mining/00_全环节总册.md**：同一套 F01-F122——前者是后者的三态判定+断链处方层，非第二骨架，合并为一套 F 编号。
 2. **fig13 44 环节**：时钟轴投影，44 格逐一挂回 F 编号（例 D13-12/24→F72、D13-28/29→F57、D13-32→F71/F37、D13-21→F38、D13-42→F79/F81），本册不重复立档，只在 §四给对照。
 3. **trading_day_cycle_map.yaml 48 节点** = 44 stage（D13 同构机生，wiring：wired 24/partial 14/unwired_no_caller 6/unwired_slot_hollow 4）+4 gap，不是新环节。
-4. **调度面数字漂移顺带发现**：fig13 骨架时点（09-24）schedule=29 槽/271 任务 → 10-01 实测 **32 槽/272 任务**（新槽 cross_validation、lane_g_intake_sweep、pf_alloc_rebalance_check，三槽均零任务挂载=编排空槽）；resource_profile_registry 81（09-24）→**101 实体**（机生 total_entities=101）。时段数字以机生 registry 为准，勿背数。
+4. **调度面数字漂移顺带发现**：fig13 骨架时点（09-24）schedule=29 槽/271 任务 → 10-01 实测 **32 槽/272 任务**（新槽 cross_validation、lane_g_intake_sweep、pf_alloc_rebalance_check，三槽均零任务挂载=编排空槽）；resource_profile_registry 81（09-24）→101→**102 实体**（机生 total_entities=102，10-02：新增 sch_sim_bridge_execute）。时段数字以机生 registry 为准，勿背数。
 5. **F70 口径修正**（A5）：模拟撮合与回测引擎是"同源旁路"（simulation 不 import backtest，同读 CH 直供），原 DAG"F65→F70"边作废。
 
 ## 三、环节总表（122 行，结构轴唯一账本）
@@ -84,7 +84,7 @@ topic: fullflow_mine_20261001
 | F33 | L9 状态快照 | ✅ | regime_state_anchored 当日 09:20 | F38 | F34 |
 | F34 | L9 知识汇聚 | ✅ | trading_decision_map.yaml:5131（翻绿） | F30-F33 | F35/D 段 |
 | F35 | L9 一问一考 | 🔨P1 | TDM-E-L9-D/E；D2/E2 null | F34 | F23/回灌 |
-| F36 | L9 治理横切 | 🔨P2 | TDM-E-L9-Z；metaq reconcile 停 09-26 | 全 L9 | 治理层 |
+| F36 | L9 治理横切 | 🔨P2 | TDM-E-L9-Z；metaq reconcile 停 09-26→已复：ZephyrAlpha_MetaqAuditReconcile 每日 03:50 result=0（10-04 实测） | 全 L9 | 治理层 |
 
 ### S04 D 段·TDM 消费链（F37-F52，✅14 🔨1 ⬜1）
 | # | 环节 | 态 | 来源锚 | 消费←上游 | 产出→下游 |
@@ -137,18 +137,18 @@ topic: fullflow_mine_20261001
 | F70 | 模拟撮合与偏差检测 | ✅ | look_ahead_bias_detector 等（同源旁路口径） | F65 同源 CH | F72 |
 | F71 | AutoRuntime Core | ✅ | python -m zephyr.trading | 全链 | 全链 |
 
-### S08 H 段·模拟盘→转正链（F72-F75，✅3 🔨1）
+### S08 H 段·模拟盘→转正链（F72-F75，✅4）
 | # | 环节 | 态 | 来源锚 | 消费←上游 | 产出→下游 |
 |---|---|---|---|---|---|
 | F72 | 模拟盘日跑四件 | ✅ | sch_paper_session 13:15+sim 三表当日写 | F25/F70 | F73/F74 |
-| F73 | A/B 联赛分仓 | 🔨P0 | league_registry+蓝图在；判分/踢馆执行件缺 | F72 | F74 |
+| F73 | A/B 联赛分仓 | ✅ | league_judge（msprt+BHY，3992e4b0）；judgment-2026-09/10 两期判分书实跑产出 10-01；残留=eliminate 踢馆首轮月度实跑证据 | F72 | F74 |
 | F74 | 转正汇总器 | ✅ | promotion_advisory.py（MOD-BT-199 全量；**全链唯一人工门**） | F72/F73 | Owner 门位→实盘 |
 | F75 | 生命周期 FSM | ✅ | lifecycle_fsm/intake/registry_writer | F23-F27 | REG-STR-001 |
 
 ### S09 I 段·调度常驻链（F76-F85，✅7 🔨3）
 | # | 环节 | 态 | 来源锚 | 消费←上游 | 产出→下游 |
 |---|---|---|---|---|---|
-| F76 | Windows 计划任务群 | ✅ | schtasks 49 个+registry 101 实体 | — | 全链 |
+| F76 | Windows 计划任务群 | ✅ | schtasks 65 个（10-02 实测）+registry 102 实体 | — | 全链 |
 | F77 | 数据调度常驻 | ✅ | scheduler.py；当日灌水 | F76 | F01 |
 | F78 | belt daemon | ✅ | commit_belt_daemon（registry:1534） | F76 | 提交链 |
 | F79 | reaper 水位监控 | ✅ | process_reaper 23:46 样本 | F76 | 全链安全 |
@@ -231,7 +231,7 @@ topic: fullflow_mine_20261001
 |---|---|---|
 | P0-1 | F82 order_daemon | 全仓无 spawn→pipeline_events 挂 evolution_winner_due 事件消费（禁 cron） |
 | P0-2 | F27+F48 E8/C1 | alloc_budget_daily 停 09-28→补日历驱动任务+补跑 09-29/30 |
-| P0-3 | F73 A/B 联赛 | 判分/踢馆件缺→最小判分器读 league_registry 对跑 sim_pocket，喂 F74 |
+| P0-3 | F73 A/B 联赛 | ✅已翻账（10-04）：league_judge 3992e4b0 落地+judgment-2026-09/10 判分书实跑产出；残留=eliminate 踢馆首轮月度实跑证据（转月度档观察） |
 | P1-4 | F16/F17/F18/F20 车道 | 五车道停摆→逐车道挂回 resource_profile；F20 挂 intel inbox 事件 |
 | P1-5 | F92 原问题账本 | entry_count=0→F35 产物接入库闸+恢复 sch_metaq_audit_reconcile |
 | P1-6 | F38 宏观传感器 | macro_regime_sensor+macro_indicator_series_map 两实体不在 HEAD→按 token 落地 |
