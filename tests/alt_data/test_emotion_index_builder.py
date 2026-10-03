@@ -136,3 +136,40 @@ def test_percentile_math():
 def test_unknown_stage_rejected():
     with pytest.raises(ValueError):
         eib.build_emotion_index("2026-09-22", stage="auction_v99", reader=_ok_reader())
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# C1/C2 事件级供给点（L05b-W2：board_index_supply 供给面优先，异常降级直连）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class TestDabanEventSupply:
+    def test_supply_face_resolution(self, monkeypatch):
+        """供给面正常 → C1/C2 查询走 resolve_table 派生表名（供给家族归口）。"""
+        import zephyr.alt_data.board_index_supply as bis
+
+        monkeypatch.setattr(
+            bis,
+            "resolve_table",
+            lambda cid, resolver=None: "sentinel.events" if cid == bis.CATEGORY_DABAN_BOARD_EVENT else "x",
+        )
+        reader = _ok_reader()
+        row = eib.build_emotion_index("2026-09-22", reader=reader)
+        assert row is not None
+        event_sqls = [s for s in reader.calls if "sentinel.events" in s]
+        assert len(event_sqls) == 2  # C1 limitup 聚合 + C2 晋级率自连接，两查皆走供给面
+
+    def test_supply_face_degrades_to_registry(self, monkeypatch):
+        """供给面异常（品类未注册 KeyError 等）→ 降级 TableRegistry 直连，情绪链照常产出。"""
+        import zephyr.alt_data.board_index_supply as bis
+
+        def _boom(cid, resolver=None):
+            raise KeyError(cid)
+
+        monkeypatch.setattr(bis, "resolve_table", _boom)
+        reader = _ok_reader()
+        row = eib.build_emotion_index("2026-09-22", reader=reader)
+        assert row is not None  # 降级不拖垮主链
+        assert not any("sentinel" in s for s in reader.calls)
+        # 直连表名=TableRegistry 同源解析（非硬编码）
+        assert any(eib._TBL_DABAN in s for s in reader.calls)

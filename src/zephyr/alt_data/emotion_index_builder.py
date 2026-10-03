@@ -231,15 +231,32 @@ def _sub_component(
     return row
 
 
+def _daban_event_table() -> str:
+    """C1/C2 事件级表名：board_index_supply 供给面优先（L05b-W2 实接，CTR-P1-018 消费登记）。
+
+    供给面（板指供给家族唯一取数入口，TableRegistry 品类派生 fail-closed）异常时
+    降级 TableRegistry 直连（同名同源零语义差，仅绕过供给面归口）——降级不拍假值
+    不抛错拖垮情绪链（本模块缺源降级契约同款）。
+    """
+    try:
+        from zephyr.alt_data import board_index_supply  # 惰性 import：供给面反向 import 本件，防环
+
+        return board_index_supply.resolve_table(board_index_supply.CATEGORY_DABAN_BOARD_EVENT)
+    except Exception as e:  # noqa: BLE001 — 供给面缺源降级契约（禁拖垮情绪链）
+        log.warning("board_index_supply 事件级供给解析失败，降级 TableRegistry 直连: %s: %s", type(e).__name__, e)
+        return _TBL_DABAN
+
+
 def _build_components(reader: _Reader, day: str, c1c4_day: str) -> list[dict[str, Any]]:
     """六成分原值+分位（close_final: c1c4_day==day；pre_open: c1c4_day=T-1）。"""
     start = _window_start(day)
     c1c4_start = _window_start(c1c4_day)
     comps: list[dict[str, Any]] = []
+    tbl_daban = _daban_event_table()  # C1/C2 事件级供给点（L05b-W2：供给面优先，异常降级直连）
 
     lu = _query_df(
         reader,
-        _SQL_LIMITUP_DAILY.format(tbl=_TBL_DABAN, start=c1c4_start, day=c1c4_day),
+        _SQL_LIMITUP_DAILY.format(tbl=tbl_daban, start=c1c4_start, day=c1c4_day),
         ["trade_date", "touched", "sealed", "max_consec"],
     )
     lu_dates = lu["trade_date"] if not lu.empty else pd.Series(dtype=str)
@@ -260,7 +277,7 @@ def _build_components(reader: _Reader, day: str, c1c4_day: str) -> list[dict[str
         )
     )
 
-    pr = _query_df(reader, _SQL_PROMOTION.format(tbl=_TBL_DABAN, start=start, day=day), ["d", "promo"])
+    pr = _query_df(reader, _SQL_PROMOTION.format(tbl=tbl_daban, start=start, day=day), ["d", "promo"])
     pr_dates = pr["d"] if not pr.empty else pd.Series(dtype=str)
     promo = _col_float(pr, "promo")
     pr_val = _asof_series(promo, pr_dates, day)

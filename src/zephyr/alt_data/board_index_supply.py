@@ -4,7 +4,8 @@
 # [DEPENDENCIES] stdlib; pandas; zephyr.data.table_registry (get_registry, 禁硬编码表名);
 #                zephyr.alt_data.emotion_index_builder (_query_df/_Reader 单源共享, 免 extract 级克隆)
 # [CONSUMERS] strategy_pipeline 做T 6.1 龙头-跟风扩散 / 6.2 板块内补涨 (L1 1 分钟主力层);
-#             emotion_index_builder C1/C2 (事件级 L4, 注册见 CTR-P1-018, 价格面不接入)
+#             emotion_index_builder C1/C2 (事件级 L4, 注册见 CTR-P1-018, 价格面不接入;
+#             L05b-W2 已实接: _daban_event_table() 经 resolve_table 品类派生, 2026-10-04 EXEC-4)
 # [STARTUP] imported
 # [MATURITY] experimental
 # [INVARIANTS] 消费面只读禁写库（供给落表=S3 写通道单写通道）；三层供给语义=自算(L1)主力、
@@ -70,6 +71,7 @@ __all__: list[str] = [
     "CATEGORY_L1_BOARD_MINUTE",
     "CATEGORY_VENDOR_BOARD_TICK",
     "CATEGORY_SECTOR_CONSTITUENT",
+    "CATEGORY_DABAN_BOARD_EVENT",
     "resolve_table",
     "fetch_self_comp_minute",
     "fetch_vendor_minute",
@@ -85,6 +87,7 @@ SOURCE_VENDOR = "vendor"  # L2 厂商（对账兜底，可断）
 CATEGORY_L1_BOARD_MINUTE = "market_board_index_1min"
 CATEGORY_VENDOR_BOARD_TICK = "market_board_index_tick"
 CATEGORY_SECTOR_CONSTITUTENT = "market_sector_constituent_snapshot"
+CATEGORY_DABAN_BOARD_EVENT = "market_daban_board_event"  # L4 事件层（情绪门 C1/C2 供给品类，L05b-W2 实接）
 
 # L1 列契约（设计 §3 L1 输出列，逐一对应，禁增删）
 BOARD_INDEX_CONTRACT_COLUMNS: list[str] = [
