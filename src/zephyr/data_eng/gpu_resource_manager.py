@@ -1,3 +1,5 @@
+# [RESERVE-B1] 储备观察期：2026-10-04 起 90 天（至 2027-01-02），期满 Owner 终删（批文=B1）。
+# [RESERVE-B1] 依据：docs/_working/night_sweep/b_audit/b1_sixteen_dossier.md（GPU 队领地交叉未裁，NB1-B1 不代裁）
 # [BLUEPRINT] MOD-DATENG-005 | docs/03_modules/_domain_data_eng/gpu_resource_manager/blueprint.md
 # [MODULE] zephyr.data_eng.gpu_resource_manager
 # [DOMAIN] D_DATA_ENG

@@ -1,3 +1,5 @@
+# [RESERVE-B1] 储备观察期：2026-10-04 起 90 天（至 2027-01-02），期满 Owner 终删（批文=B1）。
+# [RESERVE-B1] 依据：docs/_working/night_sweep/b_audit/b1_sixteen_dossier.md（四引擎台账接口位预留，判据册零在盘待批）
 # [BLUEPRINT] MOD-DATA_ENG | (pending)
 # [MODULE] zephyr.data_eng.expectation_governance
 # [DOMAIN] D_DATA_ENG

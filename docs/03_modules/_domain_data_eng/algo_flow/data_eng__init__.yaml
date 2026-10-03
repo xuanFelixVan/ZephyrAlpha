@@ -1,8 +1,10 @@
 # ALGO_FLOW 外部真源——__init__（_domain_data_eng 域，真源 src/zephyr/data_eng/__init__.py）
 # 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
 # external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+# B1 净删 2026-10-04：包内 9 件已删、1 件融合迁 zephyr.data.quality、5 件储备——门面公共面随之收窄为 5 符号。
 doc_type: architecture_view
 ttl: permanent
+lifecycle: retained
 module: src.zephyr.data_eng.__init__
 source_of_truth: src/zephyr/data_eng/__init__.py
 algo_flow: |
@@ -10,21 +12,21 @@ algo_flow: |
     # 层: 输入
     # - id: I1
     #   name: 包内子模块公共符号
-    #   fields: import 再导出符号: CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance
-    #   code: __init__.py import L31
+    #   fields: import 再导出符号: CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance, IncrementalUpdateEngine, GpuResourceManager
+    #   code: __init__.py import
     # 层: 算法
     # - id: A1
     #   name_zh: ① 包公共面再导出
     #   name_en: __init__ re-export
-    #   intro: 再导出 CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance（共 3 符号）
-    #   desc: __init__ import L31；__all__ 0 项（AST 事实）
+    #   intro: 再导出 CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance, IncrementalUpdateEngine, GpuResourceManager（共 5 符号，后两件守卫式）
+    #   desc: B1 净删后收窄面；__all__ 5 项（AST 事实）
     #   inputs: I1
     #   outputs: __all__ 公共符号表
     # 层: 输出
     # - id: O1
-    #   name_zh: 公共 API 面（3 符号）
+    #   name_zh: 公共 API 面（5 符号）
     #   name_en: __all__
-    #   intro: CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance
+    #   intro: CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance, IncrementalUpdateEngine, GpuResourceManager
     #   downstream: 见模块头 [CONSUMERS]
     # [/ALGO_FLOW]
     #

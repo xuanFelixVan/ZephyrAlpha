@@ -5,6 +5,9 @@ doc_type: architecture_view
 ttl: permanent
 module: src.zephyr.data_eng.gpu_resource_manager
 source_of_truth: src/zephyr/data_eng/gpu_resource_manager.py
+reserve: true
+observation_until: "2027-01-02"
+# [RESERVE-B1] 储备观察期 2026-10-04 起 90 天，期满 Owner 终删（批文=B1，dossier=b1_sixteen_dossier.md）
 algo_flow: |
     # [ALGO_FLOW]
     # 层: 输入

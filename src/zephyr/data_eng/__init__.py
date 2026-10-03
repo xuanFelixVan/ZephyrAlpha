@@ -33,15 +33,14 @@ except ImportError:
 # [TTL] permanent
 
 """
-[DORMANT] 未启用占位模板，勿当实现引用；2026-08-22 STR-01 标注，架构审查报告 §3.2
-[DEPRECATED] 2026-09-29 夜战 SW5（st-nightsweep-sw5-20260929）依 F127 案卷
-    （docs/_working/fullconnect_campaign/a_data_foundation/16_f127_data_eng_engineering.md）
-    定罪：全包生产面零 import（AST PROD=0）、零自动化触发、零消费接缝 → 退役标记。
-    successor：冷储归档唯一现役真源 = scripts/ch/archiver.py（F08 链，F:/zephyr_cold）；
-    本包 cold_data_archive_manager 自称另立 SQLite 归档索引，属并行第二实现，
-    收敛方向（保 F08 删本包 / 或反Replace）涉生产归档链路 = OWNER-GATE 登记，
-    物理净删未执行（等 Owner 门位裁定后才可动）。
-    恢复条件：若 Owner 判"保留待接线"，撤销本标记并按 F127 缺1 逐件红样接入。
+[RETIRE-EXECUTED] B1 净删 2026-10-04 物理面落地（Owner 批文原文"你挖矿确定是没用的
+    就可以删除…"留痕于档案卡；菜单=99_owner_gate_menu B1 项，批文=T1B1 台账）。
+    已删 9 件（3 实体+6 空占位）+3 测试；9 张 algo_flow yaml 同批镜像退役；
+    quality_sla_breach_predictor 融合迁 zephyr.data.quality；储备 5 件观察期 90 天。
+    successor：冷储归档唯一现役真源 = scripts/ch/archiver.py（F08 链，F:/zephyr_cold，
+    INFRA-STORE-003 一盘一责）。
+    恢复条件：储备件期满处置走 Owner 门位；删除件复活走 git 历史
+    （快照=G:/zephyr_cold/retire_c267_20260930/F127_data_eng）。
 
 
 # 边:
@@ -59,35 +58,17 @@ __all__.append("DataAnomalyAlerter")
 
 __all__.append("IncrementalUpdateEngine")
 
-# NOTE(P2W02 DIGEST 波2): data_eng 波2 五件套（MOD-DATENG-002/003/004/005/006）
-# 同上守卫式导入（目标类落地即自愈，缺载不包门面断链）。
-try:
-    from zephyr.data_eng.cold_data_archive_manager import ColdDataArchiveManager
-except ImportError:
-    ColdDataArchiveManager = None  # type: ignore[assignment]
-try:
-    from zephyr.data_eng.quality_sla_breach_predictor import QualitySlaBreachPredictor
-except ImportError:
-    QualitySlaBreachPredictor = None  # type: ignore[assignment]
-try:
-    from zephyr.data_eng.stream_processing_engine import StreamProcessingEngine
-except ImportError:
-    StreamProcessingEngine = None  # type: ignore[assignment]
+# NOTE(B1 净删 2026-10-04): F127 退役包物理面落地（Owner 批文=B1，档案卡=
+# docs/_working/night_sweep/b_audit/b1_sixteen_dossier.md；G 盘快照
+# retire_c267_20260930/F127_data_eng 十二件 sha256 留证）。冷归档/湖管理/流处理
+# 三实体+api/core/models/services/infrastructure/_extensions 六空占位已 git rm；
+# quality_sla_breach_predictor 融合迁址 zephyr.data.quality（唯一 salvaging 件）。
+# 储备五件保留（[RESERVE-B1] 头注），观察期 90 天至 2027-01-02。
+# NOTE(P2W02 DIGEST 波2): 守卫式导入模式保留（缺载不包门面断链），退役后仅剩
+# gpu_resource_manager 一件守卫位。
 try:
     from zephyr.data_eng.gpu_resource_manager import GpuResourceManager
 except ImportError:
     GpuResourceManager = None  # type: ignore[assignment]
-try:
-    from zephyr.data_eng.data_lake_manager import DataLakeManager
-except ImportError:
-    DataLakeManager = None  # type: ignore[assignment]
-
-__all__.append("ColdDataArchiveManager")
-
-__all__.append("QualitySlaBreachPredictor")
-
-__all__.append("StreamProcessingEngine")
 
 __all__.append("GpuResourceManager")
-
-__all__.append("DataLakeManager")
