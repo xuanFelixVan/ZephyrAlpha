@@ -211,6 +211,17 @@ def _scan_file_violations(gateway, rel_file: str) -> list[str]:
         for compiled_re, label, severity in _SECRET_PATTERNS_DEEP:
             m = compiled_re.search(content)
             if m:
+                # 2026-10-03 手术①误伤修（裁定#480 C-3）：Token 模式会咬变量名含 TOKEN 的
+                # 常量赋值（FAMILY_CREATION_TOKEN=…案，前人被迫改名绕行）。值形豁免：
+                # ①值=公开 slug 形（creation_token/auto-xxx 标记，无密钥熵）
+                # ②值与标识符自我指涉（NAME="NAME"）。密钥真身（sk-/AKIA/ghp_/高熵）不受影响
+                if label == "Token 硬编码":
+                    val = m.group(0).rsplit("=", 1)[-1].strip().strip("'\"").strip()
+                    if re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9_.]+)+", val):
+                        continue
+                    lhs = m.group(0).split("=", 1)[0].strip().rstrip(":").strip()
+                    if val and val.upper() == lhs.upper():
+                        continue
                 violations.append(f"  {rel_file}:{line_no} [{severity}] {label}: {m.group(0)[:80]}")
                 break  # 同一行只报一个模式，避免噪音
     return violations
@@ -228,7 +239,9 @@ def make_secret_hardcode_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         staged_files = _collect_staged_files(gateway)
         # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
-        staged_files = _split_own_foreign(gateway, staged_files, files, kwargs.get("session_id"), gate_name="NO-SECRET-HARDCODE")[0]
+        staged_files = _split_own_foreign(
+            gateway, staged_files, files, kwargs.get("session_id"), gate_name="NO-SECRET-HARDCODE"
+        )[0]
         if not staged_files:
             return True, ""
         if not staged_files:

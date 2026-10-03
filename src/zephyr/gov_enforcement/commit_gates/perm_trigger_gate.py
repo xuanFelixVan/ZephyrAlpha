@@ -172,7 +172,12 @@ def _detect_time_trigger_in_text(text: str) -> bool:
         for ident in _TIME_TRIGGER_IDENTIFIERS:
             if ident in line:
                 return True
-        if ".wait(timeout=" in line:
+        # 2026-10-03 手术①误伤修（裁定#480 C-3）：带数值 timeout 的 .wait(timeout=N) 是
+        # 有界等待（子进程收割正确姿势），非定时器/轮询——只拦裸 .wait()/timeout=None，
+        # 及 while 轮询行内的事件超时等待（原判据真目标）
+        if ".wait()" in line or ".wait(timeout=None)" in line:
+            return True
+        if ".wait(timeout=" in line and ("while" in line or ".poll(" in line):
             return True
     return False
 
@@ -233,7 +238,10 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
         staged_files = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "PERMANENT-SYSTEM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
+            "PERMANENT-SYSTEM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return [], ""
 
@@ -389,6 +397,7 @@ def make_permanent_system_trigger_gate() -> GateSpec:
     - PERMANENT-SYSTEM-TRIGGER（本文件 _check_impl）
     - MANUAL-ONLY-PERMANENT（manual_only_permanent_gate._check_impl）
     """
+
     def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         failures: list[str] = []
         subs = [
@@ -401,6 +410,7 @@ def make_permanent_system_trigger_gate() -> GateSpec:
                     fn = _check
                 else:
                     import importlib  # noqa: PLC0415
+
                     fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
             except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
                 failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
@@ -411,4 +421,5 @@ def make_permanent_system_trigger_gate() -> GateSpec:
         if failures:
             return False, "\n".join(failures)
         return True, ""
+
     return GateSpec(gate_id="PERMANENT-SYSTEM-TRIGGER", check=_union_check, priority=82)
