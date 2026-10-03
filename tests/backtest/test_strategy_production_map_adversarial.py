@@ -215,3 +215,97 @@ def test_good_map_data_refs_all_exist():
     d = copy.deepcopy(_GOOD)
     errors, _ = check_stores(d, root=_REPO)
     assert not any("数据" in e for e in errors)
+
+
+# ---- v0.3 mechanism 挂载层（2026-10-03 挂图升级批；vertical_map_mounting_policy §4/§5） ----
+
+
+def _v03(legend: bool = True, **mech_overrides) -> dict:
+    """v0.3 好图基底：真图 + schema 0.3 + 一条图例 + 一个合法 mechanism 节点。"""
+    d = copy.deepcopy(_GOOD)
+    d["schema_version"] = "0.3"
+    if legend:
+        d["purpose_legend"] = [{"tag": "考试咽喉说了算", "one_liner_zh": "及不及格只有考试能判"}]
+    mech = {
+        "node_id": "FAC-E4-M-BT-200",
+        "parent_node": "FAC-E4",
+        "name_zh": "对抗机制件",
+        "purpose_tag": "考试咽喉说了算",
+        "stage": "E4",
+        "node_type": "mechanism",
+        "module_ref": "scripts.backtest.adversarial_mech",
+        "build_status": "built",
+        "casebooks": [],
+        "trigger_facts": None,
+        "consumers": None,
+    }
+    mech.update(mech_overrides)
+    d["nodes"].append(mech)
+    return d
+
+
+def test_v03_mechanism_node_passes_without_explicit_edge():
+    # mechanism 靠 parent_node 隐式边连通：不写显式边也不得判孤立
+    assert validate_structure(_v03()) == []
+
+
+def test_mechanism_in_v02_rejected():
+    d = copy.deepcopy(_GOOD)
+    d["nodes"].append(_v03()["nodes"][-1])
+    assert any("不支持 mechanism" in e for e in validate_structure(d))
+
+
+def test_legend_in_v02_rejected():
+    d = copy.deepcopy(_GOOD)
+    d["purpose_legend"] = [{"tag": "图例", "one_liner_zh": "0.2 图不得带图例层"}]
+    assert any("purpose_legend 须 schema_version 0.3+" in e for e in validate_structure(d))
+
+
+def test_mechanism_missing_purpose_tag_rejected():
+    d = _v03(purpose_tag=None)
+    assert any("缺必填字段 purpose_tag" in e for e in validate_structure(d))
+
+
+def test_mechanism_unknown_purpose_tag_rejected():
+    d = _v03(purpose_tag="图例里没有的标签")
+    assert any("purpose_tag 不在 purpose_legend" in e for e in validate_structure(d))
+
+
+def test_mechanism_without_legend_rejected():
+    d = _v03(legend=False)
+    assert any("缺 purpose_legend" in e for e in validate_structure(d))
+
+
+def test_mechanism_dangling_parent_rejected():
+    d = _v03(parent_node="FAC-E不存在")
+    assert any("parent_node 不存在" in e for e in validate_structure(d))
+
+
+def test_mechanism_under_mechanism_rejected():
+    d = _v03()
+    child = copy.deepcopy(d["nodes"][-1])
+    child["node_id"] = "FAC-E4-M-BT-201"
+    child["parent_node"] = "FAC-E4-M-BT-200"
+    d["nodes"].append(child)
+    assert any("必须挂 stage/lane 主干" in e for e in validate_structure(d))
+
+
+def test_mechanism_stage_mismatch_rejected():
+    d = _v03(stage="E3")
+    assert any("stage 与 parent 不一致" in e for e in validate_structure(d))
+
+
+def test_mechanism_missing_flesh_field_rejected():
+    d = _v03()
+    d["nodes"][-1].pop("trigger_facts")
+    assert any("缺血肉字段 trigger_facts" in e for e in validate_structure(d))
+
+
+def test_mechanism_missing_module_ref_rejected():
+    d = _v03(module_ref=None)
+    assert any("缺必填字段 module_ref" in e for e in validate_structure(d))
+
+
+def test_v02_good_map_unchanged_still_passes():
+    # 向后兼容铁律：真图（0.2）不升版本也必须原样通过
+    assert validate_structure(copy.deepcopy(_GOOD)) == []

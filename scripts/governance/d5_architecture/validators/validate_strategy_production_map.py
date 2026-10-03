@@ -11,7 +11,11 @@
 # [INVARIANTS] 台账只读（本工具禁写）；结构错误=exit 1，警告（待定入库位）不阻断；
 #   检查项=字段完整性/边引用闭合/层位合法/laws 存在/反馈环声明/自环拒绝/built 必有锚/
 #   lane 必带归属/store_refs 三要素/连通性（孤立分量含 built|partial 拒）/data_refs
-#   存在性（c1_ 表 EXISTS+路径存在；待定与非可校形态=警告）；判噪音规则=v0.2 schema 真源
+#   存在性（c1_ 表 EXISTS+路径存在；待定与非可校形态=警告）；
+#   v0.3 增=mechanism 挂载层（parent_node 必挂 stage/lane 主干且 stage 同源、
+#   purpose_tag 必在 purpose_legend 图例、casebooks/trigger_facts/consumers 三血肉
+#   字段强制在场可空占位、连通性吃 parent 隐式边）；判噪音规则=v0.2/v0.3 schema 真源
+#   （0.2 图禁 mechanism 节点与 purpose_legend）
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -19,11 +23,17 @@
 # [TESTS] tests/backtest/test_strategy_production_map_adversarial.py
 # [A_module] module_id=MOD-BT-080 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""策略生产全景图结构校验器——v0.2 schema 的字段完整性/边闭合/层位/laws/仓储存在性校验。
+"""策略生产全景图结构校验器——v0.2/v0.3 schema 的字段完整性/边闭合/层位/laws/仓储存在性校验。
 
 对照 TDM decision_map validate 的工厂版：本工具只读校验 config/strategy_production_map.yaml，
 不修改任何文件。结构错误（缺字段/断边/非法层位/built 无锚等）exit 1；
 "待定"入库位为警告不阻断（对应施工前占位声明）。
+
+v0.3（2026-10-03 挂图升级批，vertical_map_mounting_policy §4/§5）：新增 mechanism
+挂载层节点（一机制一节点，parent_node 挂 stage/lane 主干，骨架 16 节点不动）+
+purpose_legend 图例（Owner 终审冻结，机贴不改名）+ 三血肉字段强制在场
+（casebooks/trigger_facts/consumers，null/[]=显式占位合法，缺键=违规）。
+v0.2 图完全向后兼容（无 mechanism 节点即旧行为）。
 """
 
 from __future__ import annotations
@@ -60,15 +70,37 @@ REQUIRED_NODE = [
     "design_refs",
     "store_refs",
 ]
+REQUIRED_MECH = [
+    "node_id",
+    "parent_node",
+    "name_zh",
+    "purpose_tag",
+    "stage",
+    "node_type",
+    "module_ref",
+    "build_status",
+]
+MECH_FLESH_FIELDS = ["casebooks", "trigger_facts", "consumers"]
 COMPUTE_CLASSES = {"local", "local_gpu", "api", "mixed"}
 BUILD_STATUS = {"built", "pending", "partial"}
-NODE_TYPES = {"stage", "lane"}
+NODE_TYPES = {"stage", "lane", "mechanism"}
 STAGES = [f"E{i}" for i in range(10)]
 
 
 def _err(errors: list[str], msg: str) -> None:
     """_err implementation."""
     errors.append(msg)
+
+
+def _ver(s: str) -> tuple[int, ...]:
+    """'0.3' -> (0, 3)；不可解析 -> (-1,)（比较恒小于任何合法版本）。"""
+    out: list[int] = []
+    for part in str(s).split("."):
+        try:
+            out.append(int(part))
+        except ValueError:
+            return (-1,)
+    return tuple(out) if out else (-1,)
 
 
 def validate_structure(data: dict) -> list[str]:
@@ -79,6 +111,12 @@ def validate_structure(data: dict) -> list[str]:
             _err(errors, f"缺顶层必填键: {k}")
     if errors:
         return errors
+    version_raw = str(data.get("schema_version", ""))
+    if _ver(version_raw) <= (-1,):
+        _err(errors, f"schema_version 非法（须 N.M 形态）: {version_raw!r}")
+    supports_mech = _ver(version_raw) >= (0, 3)
+    if not supports_mech and "purpose_legend" in data:
+        _err(errors, "purpose_legend 须 schema_version 0.3+（0.2 图无图例层）")
     if not data.get("laws"):
         _err(errors, "laws（全图铁律）不得为空")
     if not data.get("products"):
@@ -89,31 +127,78 @@ def validate_structure(data: dict) -> list[str]:
         if s not in layers:
             _err(errors, f"缺标准环节层位: {s}")
 
+    # purpose_legend（v0.3 图例层：Owner 终审冻结后机贴不改名）
+    legend = data.get("purpose_legend") or []
+    legend_tags: list[str] = []
+    for i, entry in enumerate(legend):
+        if not isinstance(entry, dict) or not entry.get("tag") or not entry.get("one_liner_zh"):
+            _err(errors, f"purpose_legend[{i}] 缺 tag/one_liner_zh")
+        else:
+            legend_tags.append(str(entry["tag"]))
+    if len(legend_tags) != len(set(legend_tags)):
+        _err(errors, "purpose_legend 标签重名")
+
     nodes = data.get("nodes", [])
     ids: list[str] = []
+    nodes_by_id: dict[str, dict] = {}
     for n in nodes:
         nid = n.get("node_id", "<无 node_id>")
         ids.append(nid)
-        for f in REQUIRED_NODE:
-            if f not in n or n[f] in (None, ""):
-                _err(errors, f"{nid}: 缺必填字段 {f}")
+        if nid and nid not in nodes_by_id:
+            nodes_by_id[nid] = n
+
+    mech_nodes: list[dict] = []
+    for n in nodes:
+        nid = n.get("node_id", "<无 node_id>")
+        ntype = n.get("node_type")
         if n.get("stage") not in STAGES:
             _err(errors, f"{nid}: stage 非法 {n.get('stage')!r}")
-        if n.get("node_type") not in NODE_TYPES:
-            _err(errors, f"{nid}: node_type 非法 {n.get('node_type')!r}")
-        if n.get("node_type") == "lane" and not n.get("lane"):
-            _err(errors, f"{nid}: lane 节点必须带 lane 归属")
-        if n.get("compute_class") not in COMPUTE_CLASSES:
-            _err(errors, f"{nid}: compute_class 非法 {n.get('compute_class')!r}")
         if n.get("build_status") not in BUILD_STATUS:
             _err(errors, f"{nid}: build_status 非法 {n.get('build_status')!r}")
-        if n.get("build_status") == "built" and not n.get("module_ref"):
-            _err(errors, f"{nid}: built 节点必须有 module_ref 代码锚")
-        if len(str(n.get("decision_question", ""))) > 120:
-            _err(errors, f"{nid}: decision_question 超 120 字")
-        for sr in n.get("store_refs", []):
-            if not sr.get("artifact") or not sr.get("location") or not sr.get("retention"):
-                _err(errors, f"{nid}: store_refs 条目缺 artifact/location/retention")
+        if ntype not in NODE_TYPES:
+            _err(errors, f"{nid}: node_type 非法 {ntype!r}")
+            continue
+        if ntype == "mechanism":
+            if not supports_mech:
+                _err(errors, f"{nid}: schema {version_raw} 不支持 mechanism 节点（须 0.3+）")
+            mech_nodes.append(n)
+            for f in REQUIRED_MECH:
+                if f not in n or n[f] in (None, ""):
+                    _err(errors, f"{nid}: 缺必填字段 {f}")
+            for f in MECH_FLESH_FIELDS:
+                if f not in n:
+                    _err(errors, f"{nid}: 缺血肉字段 {f}（占位可 null/[]，缺键不可）")
+            parent = nodes_by_id.get(str(n.get("parent_node")))
+            if parent is None:
+                _err(errors, f"{nid}: parent_node 不存在: {n.get('parent_node')!r}")
+            else:
+                if parent.get("node_type") not in ("stage", "lane"):
+                    _err(errors, f"{nid}: parent_node 必须挂 stage/lane 主干，实际 {parent.get('node_type')}")
+                if parent.get("stage") != n.get("stage"):
+                    _err(errors, f"{nid}: stage 与 parent 不一致（mechanism 须与主干同环节）")
+            if legend_tags and n.get("purpose_tag") and str(n["purpose_tag"]) not in legend_tags:
+                _err(errors, f"{nid}: purpose_tag 不在 purpose_legend 图例: {n.get('purpose_tag')!r}")
+            for sr in n.get("store_refs") or []:
+                if not sr.get("artifact") or not sr.get("location") or not sr.get("retention"):
+                    _err(errors, f"{nid}: store_refs 条目缺 artifact/location/retention")
+        else:
+            for f in REQUIRED_NODE:
+                if f not in n or n[f] in (None, ""):
+                    _err(errors, f"{nid}: 缺必填字段 {f}")
+            if ntype == "lane" and not n.get("lane"):
+                _err(errors, f"{nid}: lane 节点必须带 lane 归属")
+            if n.get("compute_class") not in COMPUTE_CLASSES:
+                _err(errors, f"{nid}: compute_class 非法 {n.get('compute_class')!r}")
+            if n.get("build_status") == "built" and not n.get("module_ref"):
+                _err(errors, f"{nid}: built 节点必须有 module_ref 代码锚")
+            if len(str(n.get("decision_question", ""))) > 120:
+                _err(errors, f"{nid}: decision_question 超 120 字")
+            for sr in n.get("store_refs", []):
+                if not sr.get("artifact") or not sr.get("location") or not sr.get("retention"):
+                    _err(errors, f"{nid}: store_refs 条目缺 artifact/location/retention")
+
+    if mech_nodes and not legend:
+        _err(errors, "存在 mechanism 节点但缺 purpose_legend 图例（v0.3 须图例先行）")
 
     if len(ids) != len(set(ids)):
         _err(errors, "node_id 存在重复")
@@ -150,10 +235,17 @@ def validate_structure(data: dict) -> list[str]:
     # 连通性 pass（审计 F-AUDIT-BLIND-05 处方 B1：此前不查连通性，
     # 孤立 built 节点长期放行）。弱连通分量 DFS：非主分量中含 built/partial
     # 节点即报错（纯 pending 占位岛不拦，对应施工前声明）。
+    # v0.3：mechanism 节点不吃显式边，parent_node 即隐式双向边。
     adj: dict[str, list[str]] = {i: [] for i in valid_ids}
     for a, b in seen_edges:
         adj[a].append(b)
         adj[b].append(a)
+    for n in mech_nodes:
+        nid = n.get("node_id")
+        parent = str(n.get("parent_node"))
+        if nid in valid_ids and parent in valid_ids:
+            adj[nid].append(parent)
+            adj[parent].append(nid)
     live_nodes = {n.get("node_id") for n in nodes if n.get("build_status") in ("built", "partial")} & valid_ids
     visited: set[str] = set()
     components: list[set[str]] = []
@@ -195,7 +287,7 @@ def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[
     root = root or Path.cwd()
     seen_targets: set[str] = set()
     for n in data.get("nodes", []):
-        for sr in n.get("store_refs", []):
+        for sr in n.get("store_refs") or []:
             loc = str(sr.get("location", ""))
             if loc not in seen_targets:
                 seen_targets.add(loc)
@@ -214,7 +306,7 @@ def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[
     # data_refs 全仓无校验——c1_market.news_data 全 CH 不存在也长年 GREEN）。
     seen_data_refs: set[str] = set()
     for n in data.get("nodes", []):
-        for dr in n.get("data_refs", []):
+        for dr in n.get("data_refs") or []:
             dr = str(dr)
             if dr in seen_data_refs:
                 continue
