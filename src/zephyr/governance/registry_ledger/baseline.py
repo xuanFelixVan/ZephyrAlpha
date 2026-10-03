@@ -62,6 +62,16 @@ ROOR_PATH = "docs/registry_of_registries.yaml"
 DEFAULT_SESSION = "st-wm1-wave0-20260924"
 IMPORT_REASON = "Phase 0 baseline import from YAML (W-M1 wave0 gate)"
 RECONCILE_REASON = "dual-track reconcile yaml-to-pg (W-M1 Phase 1)"
+
+# [SQL] W-M1 ledger SQL 真源集中（参数化查询）——reconcile 复活路径（2026-10-03 B3 实弹治本）
+_SQL_REACTIVATE_SELECT = (
+    "SELECT entry_pk, version, status FROM {table} WHERE registry_id=%s AND family_key=%s AND entry_key=%s"
+)
+_SQL_REACTIVATE_UPDATE = (
+    "UPDATE {table} "
+    "SET status='active', payload=%s, payload_sha256=%s, version=%s, "
+    "updated_by=%s, updated_at=now() WHERE entry_pk=%s"
+)
 PUBLISH_REASON = "snapshot publish after registry landing (W-M1)"
 
 # P0 第一波七册（09_wm1_master_plan.md §二 A-1 名单）：只登记 registry_id，
@@ -583,6 +593,43 @@ def reconcile_registry(
                 pg_row = pg_map.get(key)
                 if pg_row is None:
                     fk, ek = key
+                    # 复活优先（2026-10-03 B3 实弹诊断）：同键墓碑行存在时裸 INSERT 撞
+                    # uq_registry_entry——盘面回真场景（截短波后 HEAD 复原）必须复活：
+                    # UPDATE status='active'+version+1+事件留痕，不新增第二行
+                    cur.execute(
+                        _SQL_REACTIVATE_SELECT.format(table=_t("registry_entry", schema)),
+                        (rid, fk, ek),
+                    )
+                    existing = cur.fetchone()
+                    if existing is not None:
+                        entry_pk, old_version, old_status = existing
+                        new_version = int(old_version) + 1
+                        cur.execute(
+                            _SQL_REACTIVATE_UPDATE.format(table=_t("registry_entry", schema)),
+                            (_jsonb(payload), sha, new_version, session_id, entry_pk),
+                        )
+                        event_id = _record_event(
+                            cur,
+                            registry_id=rid,
+                            family_key=fk,
+                            entry_key=ek,
+                            action="reconcile_reactivate",
+                            actor_session=session_id,
+                            actor_kind="system",
+                            base_version=int(old_version),
+                            after_version=new_version,
+                            payload_after=payload,
+                            reason=RECONCILE_REASON,
+                            detail={"kind": "reactivated_from_tombstone", "prev_status": str(old_status)},
+                            schema=schema,
+                        )
+                        cur.execute(
+                            f"UPDATE {_t('registry_entry', schema)} SET last_event_id=%s WHERE entry_pk=%s",  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
+                            (event_id, entry_pk),
+                        )
+                        report["backfilled"] += 1
+                        report["events_written"] += 1
+                        continue
                     cur.execute(
                         f"INSERT INTO {_t('registry_entry', schema)} "  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
                         "(registry_id, family_key, entry_key, payload, payload_sha256, "

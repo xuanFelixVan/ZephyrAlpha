@@ -105,3 +105,29 @@ title: "W-M1 注册表迁移波0 施工总包 — 台账 LEDGER（总指挥 30 �
 - **终态 reconcile_20261003_173403.json=PASS 七册全绿**（CAPCAN backfilled=1=他会话新 token 行正常吸收，pg_only 恒 0）。
 - **验收⑤零改动核实**：parse_gate 状态文件 `.runtime/projection/` 不存在=未生成 ✓；ROOR 本班零写入 ✓（盘面 staged +16/-5 为 st-ffchief-20261001 wave4-G 的 REG-SCHEMA-MIG-001 登记在途件，非本班，未触碰）。意外归因闭环：REG-DOC-001 pg_only 中 schema_migrations.yaml 一条=该文件升级为独立册（即上述在途登记）被从 rule_catalog 目录摘除，回溯印证"合法删除镜像"定性。
 - **claim 全释放**与终报见会话收尾序列。
+
+## §B3 执行记录（5.3 总筹 st-commitmap-chief-20261003，2026-10-03 20:05）——切换收缩，诚实交付
+
+**终态：七册 reconcile 全 PASS 零漂移（reconcile_20261003_200500.json，backfilled=0/pg_only=0/mismatch=0/clean 全等）；PG=盘面(HEAD) 完全一致镜像；武装未开启（状态文件隔离 .runtime/projection/*.quarantine-*）；ROOR 翻转与 PD-2 补登延期。**
+
+### 已落地（本役四件治本）
+1. PD-1 state v2 map 化（a2bf45b761）：七册并挂键控+v1 兼容+CAS 重试——armed_initial 七册实弹通过
+2. 渲染器 dict 值子树缩进治本（09ca271063）：overlay_mode 拍扁/CAND 假键同根因，两回归测试钉死；生成器写盘带 allow_mass_edit 逃生旗（唯一合法写者语义）+死信文案报真实异常类
+3. reconcile 墓碑复活治本（本批 baseline.py）：同键墓碑行裸 INSERT 撞 uq_registry_entry → 改复活路径（UPDATE+version+事件），实弹复活 16 真身
+4. PD-3 双轨旗摘除（dual_track.enabled→.retired-20261003 存档）；PD-4 随之作废
+
+### 事故链（三凶手，全诊断到根）
+1. **post-commit reconcile_worker 用进程内存里的旧渲染器**在切换窗内重写注册册（截短+拍扁）——施工单"广播让道"三前置漏了"等 worker 清零"（执行序缺陷，我方责任）；19:14/19:44 两 worker 至 19:56 才处决，期间三次污染盘面
+2. **gate publish 的 import 对缺席行做退役同步**：截短盘面同步进 PG 时把 2000+ 好行退役，reconcile 再把 mangled 键回填成新行——两机制级联放大
+3. **render↔scan 往返保真未达切换标准**：normalize 形态 scan 认不全（TRANSLATION 8761→1262/ARCH 815→814/RULING 294→41/CAPCAN 丢 383）——self_check 语义等值通过但 identity 不稳定，此为切换硬前置缺口
+
+### 三轮恢复退役账
+round1 2122（authority B3-recovery-20261003）→ round2 2122（-round2）→ round3 2124（-final，含 render 再污染回填）；真身复活 16（reconcile_reactivate 事件可查）。坑点：每轮 render 从坏快照重写盘面→回填新脏，直到 worker 清零+状态隔离后才真正收敛。
+
+### wave-2 工作包（B3 余项，施工单四节仍有效）
+1. **render↔scan 往返保真门**：判据=渲染产物再 scan 逐键等价（identity 稳定），过门才允许武装+动盘
+2. 过门后：ROOR 七册 maintenance→pg_ledger 翻转 + PD-2 三册补登 + 武装 + 红蓝（改一行投影→commit 被拦→还原过）
+3. C4 余项随 wave-2（B2 两条退役在 PG 事件史在案，Phase 1 期 yaml=真源已按规则复活，冲突留 wave-2 定夺）
+
+### 学费三则
+printf 重定向写中文 commit message=乱码（message 文件一律 Write 工具）；切换窗前置必须含"post-commit worker 清零"（队列空≠worker 空）；render 动盘前必须先过"渲染后 scan 等价"自检（语义等值≠identity 稳定）
