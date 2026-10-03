@@ -1,0 +1,79 @@
+---
+ttl: task_bound
+completes_when: 总筹/chief 消费本报告（三红处置+呈批裁决）后本件退役
+title: 图12 F2·覆盖账本三红对账报告（SOP §5 步6 机生）
+owner: st-vm12f2-20261003
+session: st-vm12f2-20261003
+date: "2026-10-04"
+---
+
+# F2 覆盖账本三红对账报告
+
+## §0 执行链回执（§3 全链验证）
+
+| 步 | 结果 |
+|---|---|
+| 前置闸 | f2_blood_template.md 在（chief 2026-10-04 00:34 下发）；schema_version='0.3'+blood_stage:f1_pending+purpose_tags:[] 实读✓；validator 基线 exit0/warns=200（预期）✓；Owner 终审回执=模板 §0.3 已批✓ |
+| 四字段写入 | 43/43 节点四键全落（.runtime/tmp/vmap12f2/merge_blood.py，safe_write_text CAS）；gap 15 格 purpose_tag=null 合法；9 标签逐字冻结入图头 |
+| 翻闸 | blood_stage: f1_pending→f2_done（唯一一次） |
+| 生成器 | generate_data_supply_chain_map.py --as-of 2026-10-04 重跑；语义层逐键保真对拍=**0 漂移**（22 个语义键×43 节点 vs 备份 .runtime/tmp/vmap12f2/map_before_regen.yaml）；counts 刷新 nodes_with_module_id=27（手术批 E-2 已挂 HA/HC） |
+| validator | exit 0，**errors=0 且 warns=0**（基线 200 warn 全消） |
+| 对抗测试 | tests/governance/commit_gates/test_data_supply_chain_map_gate.py：**10/13 绿**；3 败=相位瞬态夹具（写死"真实图=f1_pending 缺血肉"），非产品缺陷——逐条处方见 f2z_escalations E-11；能红用例 10 个在场（自造标签/缺键/图例越界/fail-closed 等） |
+| gate 实弹 | 触及图 yaml 的提交走正门：MAP-ALIGNMENT 内 DATA-SUPPLY-CHAIN-MAP 子检查绿（gate _check ok=True，本批 enqueue 提交即实弹载体） |
+
+## §1 三红对账
+
+### 红1 孤儿（该挂没挂：表A 高置信 12 条 × 图挂载面）＝**8**
+
+| 机制 | 判定 | 处置 |
+|---|---|---|
+| sla_tracker(MOD-DATA-066) | 退出候选 | E-3 已裁退役（Owner 2026-10-04），casebook_registry outside_registry 注记"永久不授册号"——非孤儿 |
+| error_classifier | 半挂（文述在册） | DSC-SRC fallback 段已述其判据语义（config/data_supply_chain_map.yaml DSC-SRC fallback kind=switch_source），缺硬锚→E-13 |
+| source_circuit_breaker | 孤儿 | E-13（机制挂载批，需生成器 _HUMAN 层） |
+| tick_redis+h1_redis_hot | 孤儿 | E-13 |
+| ch_parts_monitor | 孤儿 | E-13 |
+| multi_timeframe_fusion | 孤儿 | E-13 |
+| news_collector+news_taxonomy | 孤儿 | E-13 |
+| market_breadth_collector | 孤儿 | E-13 |
+| sector_intraday_aggregator | 孤儿 | E-13 |
+| database_service | 孤儿 | E-13 |
+
+红1 计数口径：sla_tracker 退出、error_classifier 文述在册不计，净孤儿机制族=8。全部处置=E-13 呈批（挂载权在生成器 _HUMAN/机制挂载批，四字段批无权动总线号——裁定二"existing-wins 不得覆盖"）。
+
+### 红2 抄写（复制非引用）＝**0**
+
+机械扫描：casebooks/consumers 全部条目须带标识符标记（code:/TDM:/SPM:/registry:/flow:/pass-through/ref:/indirect:/CASEBOOK-）。命中 3 条长路径 ref: 指针（>60 字符长度阈值误中）——标记符齐全=纯指针非正文，判 0。
+
+### 红3 未挂病历＝**0**
+
+| 表B 判定 | 本批落点 |
+|---|---|
+| CASEBOOK-001 data/failures（合格） | ✅ 挂 8 格：DSC-13/19/20（registry 点名）+DSC-07/08+GAP-MACRO/CONSENSUSCHAIN/L2TICK（#outage 断供段，E-8 裁定） |
+| known_data_gaps.yaml（合格，module_id 身份） | 指针在册=DSC-16/DSC-14 source_anchor（SOP §3 规2 达标）；无 CASEBOOK 册号→E-12 上户口建议 |
+| integrator_progress.db（合格） | 指针在册=DSC-20 module_ref(progress_store.py)+trigger_facts evidence 引用；无册号→E-12 |
+| archive_manifest.jsonl（合格） | 指针在册=DSC-10B freshness_evidence+DSC-10A；无册号→E-12 |
+| data/sla 台账（停更） | E-3 已裁退役——**禁挂**（outside_registry"永久不授册号"）✓合裁定 |
+| corrupted_parts_audit（应建未建） | E-7 未裁决保持开放（DSC-19 trigger_facts 已注记）→留 E-7 呈批 |
+| 断供事故台账（不存在） | E-8 已裁：断供案落 CASEBOOK-001 outage_ 命名段——本批已按裁挂 #outage 5 格✓ |
+
+## §2 四字段覆盖计数（=counts 机生键，重跑生成器输出）
+
+| 键 | 值 | 对拍 |
+|---|---|---|
+| nodes_with_purpose_tag | **28** | =非 gap 节点数 28 ✓精确（模板 §3.2 判据） |
+| nodes_with_casebooks | 8 | gap 格合法携带（registry 口径 break_detect 族+outage 断供段） |
+| nodes_with_trigger_facts | 42 | 43−1（DSC-GAP-TERMINUS 终点格 null 合法，键在） |
+| nodes_with_consumers | 35 | 8 空格全=合法空（FB 回灌腿未接/14D 零消费显影/17 互验自证/REPLAY/MIRROR/CODEBACKUP/ARCHIVE-AUDIT/TERMINUS） |
+
+> 模板 §3.2"counts 四覆盖键应=非 gap 节点数"按字段语义分读：purpose_tag=精确 28；casebooks/trigger_facts/consumers 对 gap 格合法携带（validator 注释 :551-552 明文"gap 格常是在等消费方与缺口病历的合法宿主"），计数含 gap 属设计内。
+
+## §3 production 节点 trigger_facts 零缺口声明
+
+production=10（DSC-01/02/03/04/05/10B/11/13/17/20）：trigger_facts 10/10 非空，as_of=2026-10-04 统一口径；机数证据 5 条（task_runs 7 日窗逐槽计数/freshness 探针/案卷日历闭合 3 案卷=3 交易日）；verdict 分布=alive 10、dead 0、insufficient_window 0（production 全 alive）。
+
+## §4 非 production 节点 verdict 分布（机械复算 2026-10-04）
+
+alive 15 / dead 14 / insufficient_window 13 / null 1（DSC-GAP-TERMINUS 终点格）——合计 43。
+- dead 14=DSC-08/14D/15 + GAP-NEWSGHOST/MACRO/DUPGUARD/CONSENSUSCHAIN/NAV/EXECEP/FFVAL/FFSIG/RECDIFF/L2TICK/CODEBACKUP（每条带期望>1 计数缺席证据链，11卷/90账/机数三源）。
+- insufficient_window 13=DSC-SRC/FB/06/09/21/10A/12/HC/14/16 + GAP-REPLAY/MIRROR/ARCHIVE-AUDIT（人工门位/测量腿未接/计数腿未接族——SOP v1.1.0 补丁1"期望≤1 且计数缺席禁判死"逐条适用）。
+- production 10/10 全 alive（机数复跑验证，verdict 零缺口）。

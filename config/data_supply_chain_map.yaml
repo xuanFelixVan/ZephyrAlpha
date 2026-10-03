@@ -3,7 +3,36 @@
 # 人工语义层（nodes/edges/laws/segments/boundary）existing-wins；machine/counts 每次重建
 # 血肉源：docs/_working/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）
 # 纪律：INV-1 只存标识符与指针｜挂槽≠在跑｜空串≠无数据｜production 必带 freshness_evidence｜缺口不冒充 built｜双轴与骨架 §1 同源（production 数==✅ 数）
-schema_version: '0.2'
+schema_version: '0.3'
+blood_stage: f2_done
+purpose_tags:
+- id: fresh_check
+  label: 数据还新鲜吗
+  plain_zh: 每张业务表都有"最后一天"——这族机制天天核对它停没停在昨天，停了就报警。
+- id: break_detect
+  label: 坏了谁发现
+  plain_zh: 数据断了、缺了、烂了，得有东西第一时间喊出来，不能等下游用的时候才炸。
+- id: break_repair
+  label: 坏了谁修回
+  plain_zh: 发现问题只是第一步——这族机制负责把缺的补回来、把坏的修回去。
+- id: can_rollback
+  label: 坏了能不能回滚
+  plain_zh: 删错表、写坏库的时候，冷库和备份是唯一能让你说"还好有备份"的东西。
+- id: schedule_complete
+  label: 该来的数据来了没
+  plain_zh: 每天该跑的任务都跑了吗——拿"应跑清单"对"打卡记录"，漏一个都能数出来。
+- id: lineage
+  label: 东西从哪来的
+  plain_zh: 每行数据都能说清来自哪家源、走哪条通道——源出问题知道找谁。
+- id: source_fallback
+  label: 源不可靠怎么办
+  plain_zh: 外部源说断就断——备胎源、熔断器、先落盘再入库，都是为了断供当天数据不断。
+- id: no_double_write
+  label: 别把同一行写两遍
+  plain_zh: 重跑不可怕，可怕的是重跑把数据翻倍——幂等加判重，保证跑十遍还是一份。
+- id: ledger_readable
+  label: 账本要能翻
+  plain_zh: 每笔采集、每次失败都留底账——出了事能翻账，没出事能对账。
 map_id: DSCMAP-012
 name_zh: 数据供给链图
 nickname: 图12 数据供给链
@@ -16,9 +45,15 @@ ssot_note_zh: '双层图：machine 层（含每节点 machine 子块）由生成
   INV-1：节点只存标识符与指针（task_id/槽名/MOD-*/文件路径/表名），禁复制真源条目正文。
 
   字段分层（六图终局卷 §1 裁定一）：L0 统一名 note_zh/doc_refs/source_anchors/data_refs/store_refs/runtime_refs/module_id/module_ref/build_status/confidence/verified_scope/decision_question/node_type/segment；L1
-  纵轴层取用 slot_source/slot_refs/wiring_status/downstream_action/fallback/invalidation/gap_refs/red_reason；L2 图12 专属层字段清单=task_family（任务归簇）/facets（分面腿）/gaps（叶层缺陷台账：anchor+symptom+pointer+实测时点，是
-  gap_refs 的明细面）/freshness_evidence（max(date)+近窗计数+滞后交易日数+通道+verdict+FINAL 双版）。三个旧注解别名与 degradation/data_anchors/silent_failover/detection_only
-  等旧名一律废止，残留即 CV-L0 红。
+  纵轴层取用 slot_source/slot_refs/wiring_status/downstream_action/fallback/invalidation/gap_refs/red_reason/purpose_tag/casebooks/trigger_facts/consumers（后四者=挂图
+  SOP §4 新增标准字段，schema 0.3 起入菜单；gap 节点挂四字段合法且 module_id 保持 null——gap 格常是『在等的消费方』与『缺口病历』的合法宿主）；L2 图12 专属层字段清单=task_family（任务归簇）/facets（分面腿）/gaps（叶层缺陷台账：anchor+symptom+pointer+实测时点，是
+  gap_refs 的明细面）/freshness_evidence（max(date)+近窗计数+滞后交易日数+通道+verdict+FINAL 双版）。
+
+  trigger_facts 与 freshness_evidence 的关系（同语义必同名裁定一）：trigger_facts=L1 汇总位（dict：as_of+evidence+计数域按节点自选），freshness_evidence=L2
+  数据域明细（max(date)/近窗/滞后交易日）——前者汇总后者，禁在 trigger_facts 里重复 freshness 明细字段。
+
+  blood_stage 口径：f1_pending=血肉四字段未填（validator 降 warn 不拦）；f2_done=血肉满（非 gap 节点缺 purpose_tag/四字段键缺=error；production 节点 trigger_facts
+  必非空）。三个旧注解别名与 degradation/data_anchors/silent_failover/detection_only 等旧名一律废止，残留即 CV-L0 红。
 
   双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §1 行级 ✅（本批 10 个，多了算谎少了算欠），structure=仅结构性事实已核（含 3 个分面行与 ⬜/🔨 行）；分面行永不成 production（行级
   ✅ 仅当全腿 ✅）。
@@ -42,6 +77,8 @@ boundary:
   - 派生算法本体（因子/形态/板块聚合口径）→ 各算法域；本图节点只挂「驱动＋落库」运营面
   - 提交自愈环台账 reconcile_execution_log → 图11；与本环节近亲命名，禁按名字相似认领证据（列名集双向核对）
   - D12-21 之外的决策用途（这些资产被谁怎么用）→ 图9/图15；本图只画生产供给环
+  - 表结构生命周期（DDL-as-Code：scripts/ch/apply_*_ddl 约 27 台+verify_schema_truth 表结构演进对账）→ 架构/depgraph 治理域——结构演进不产数据，五段链只画数据的产出/新鲜/保全/修复（st-vm12surg-20261003
+    E-5 裁定：判出域不新设格，生产者与五段运营面不同域）
   terminal_declared:
   - DSC-15
   terminal_provable:
@@ -145,6 +182,15 @@ nodes:
       exists: true
       label: 提供器基类 / provider_base
     executors_missing: []
+  purpose_tag: lineage
+  casebooks: []
+  consumers:
+  - pass-through:23源/271任务全分母
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§0
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 熔断留痕旁证=data/failures/_circuit_breaker_fred族163件(ls 2026-10-03)；sla_tracker已退役(E-3)禁挂
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-01
   name_zh: 盘后批量采集（日K/估值/资金/事件/财务/静态/校准族）
   segment: S1_collect
@@ -264,6 +310,21 @@ nodes:
       exists: true
       label: 提供器基类 / provider_base
     executors_missing: []
+  purpose_tag: lineage
+  casebooks: []
+  consumers:
+  - TDM:DS-150等16表/约64点
+  - SPM:276/56
+  - code:backtest/core/matching_engine.py:1171
+  - code:factor/fundamentals.py:24
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 机数integrator_progress.db task_runs(ro-uri)：7日窗480笔/6槽(daily_event119/daily_capital118/daily_kline93/weekend_calibration69/monthly_static60/nightly_financial21)；期望=任务级961(36×7+42×7+43×7+10×7+44×1+21×0月腿窗内0发)；freshness
+      kline_daily lag=0双证；tasks.yaml 271/270 duplicate口径(E-4未修照录)
+    expected_runs_window: 961
+    observed_runs: 480
+    zero_trigger_verdict: alive
 - node_id: DSC-02
   name_zh: 盘中实时/竞价采集（Tick/L2/Greeks/分钟K/880板块/集合竞价）
   segment: S1_collect
@@ -386,6 +447,20 @@ nodes:
       exists: true
       label: tick→分钟K线 CH 内自拼
     executors_missing: []
+  purpose_tag: lineage
+  casebooks: []
+  consumers:
+  - TDM:DS-170等6表/15点
+  - code:owner_band_t/data_loader.py:21/79
+  - code:backtest/implementations/ch_tick_replay.py:20
+  - code:backtest/core/cost_model_calibration.py:120/159
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 机数integrator_progress.db task_runs(ro-uri)：7日窗879笔(auction_highfreq290/intraday_minute280/intraday_realtime274/pre_market35)；盘中循环节拍无静态档期→期望腿不设；tick_data
+      max lag=0
+    observed_runs: 879
+    zero_trigger_verdict: alive
 - node_id: DSC-03
   name_zh: 事件驱动采集（新闻/宏观/研报/另类/加密；口径=数据源事件）
   segment: S1_collect
@@ -517,6 +592,17 @@ nodes:
       exists: true
       label: 内部计算数据源 Provider
     executors_missing: []
+  purpose_tag: lineage
+  casebooks: []
+  consumers:
+  - TDM:DS-104/DS-107×5
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 机数integrator_progress.db task_runs(ro-uri)：7日窗20247笔(event_driven20100/news_slow88/daily_crypto47/research_nightly7/daily_alt_fx5)；task_progress
+      news族last_run=2026-10-03T17:01Z实时在跑；failures news族约3400件=高失败率旁证
+    observed_runs: 20247
+    zero_trigger_verdict: alive
 - node_id: DSC-GAP-NEWSGHOST
   name_zh: 幽灵引用：c1_market.news_data（库名前缀写错，真身 c3_fundamental.news_data）
   segment: S1_collect
@@ -565,6 +651,14 @@ nodes:
     pointer: config/strategy_production_map.yaml:76（FAC-E1 进货）＋本车道直查复跑
     note_zh: Code 60 不存在；真身=c3_fundamental.news_data。存在性判据用直查抛错，不依赖 system.tables 枚举面（本役纪律）
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - SPM:76(FAC-E1)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 幽灵库名引用：c1_market.news_data在CH 247表不存在,真身c3_fundamental.news_data 7,930,454行新鲜(11卷§1D)
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-MACRO
   name_zh: 运行事故：macro_data 0 字节部件装载失败致读链不可达（探测器口径外）
   segment: S1_collect
@@ -618,6 +712,15 @@ nodes:
     pointer: data/failures/20260925_macro_data_incremental_145625.json（本车道实读）
     note_zh: 当日该任务仍失败（源侧 SSL EOF，非部件问题）——两码事，禁混判
   machine: {}
+  purpose_tag: null
+  casebooks:
+  - CASEBOOK-001#outage
+  consumers:
+  - indirect:契约面13个(11卷§4-N2)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: macro_data 0字节部件装载失败读链不可达(探测器口径外)；failures macro_data_incremental族1,026件病域旁证(ls 2026-10-03)
+    zero_trigger_verdict: dead
 - node_id: DSC-04
   name_zh: ClickHouse 写入通道（两条二级降级）
   segment: S2_ingest
@@ -696,6 +799,15 @@ nodes:
       exists: true
       label: 数据清洗规则引擎 / Cleaning Rule Engine
     executors_missing: []
+  purpose_tag: no_double_write
+  casebooks: []
+  consumers:
+  - pass-through:40表全集经其写通道
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§0
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 写随采集无独立任务面(计数腿=产物侧)：kline_daily freshness lag=0(09-25探针)；二级降级+local_fallback在产(quarantine 20261001/20261003两区ls)
+    zero_trigger_verdict: alive
 - node_id: DSC-05
   name_zh: 实时 WAL 落盘排空（tick 先段落盘→异步 drain）
   segment: S2_ingest
@@ -764,6 +876,16 @@ nodes:
       exists: true
       label: '批量聚合写入器（MOD-L00-004 §18.3 裁定 #ARCH-CH-003 / buffered_writer'
     executors_missing: []
+  purpose_tag: source_fallback
+  casebooks: []
+  consumers:
+  - code:ch_tick_replay.py:20
+  - code:cost_model_calibration.py:120/159
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: WAL双表tick_data/tick_depth_5 max=2026-09-24 lag=0(09-25探针)；缓冲任务32笔带buffer(机生)
+    zero_trigger_verdict: alive
 - node_id: DSC-FB
   name_zh: local_fallback 汇聚（TSV + manifest + 回灌器一套两用途）
   segment: S2_ingest
@@ -809,6 +931,13 @@ nodes:
       exists: true
       label: 本地replay / local_replay
     executors_missing: []
+  purpose_tag: source_fallback
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 回灌排空测量腿未接(GAP-REPLAY)——期望未知计数缺席，禁判死(SOP v1.1.0补丁1)
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-06
   name_zh: 幂等写与判重（引擎语义 + 全字段判重正门）
   segment: S2_ingest
@@ -867,6 +996,14 @@ nodes:
       exists: true
       label: ch读取器 / ch_reader
     executors_missing: []
+  purpose_tag: no_double_write
+  casebooks: []
+  consumers:
+  - pass-through:全部入库幂等声明
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 判重正门在册但聚合对照腿不可用(GAP-DUPGUARD/WB12-09:Code42一跑必红被吞0)；ad-hoc CLI无节拍
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-DUPGUARD
   name_zh: 缺口：判重器聚合对照腿不可用（准入闸半假绿）
   segment: S2_ingest
@@ -917,6 +1054,14 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-5(b)
     note_zh: 脚本硬编码主区 src 并插 sys.path → 在 worktree 里跑会加载主区代码，判重结论与被审仓不同源
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - pass-through:全部入库幂等声明
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 判重器聚合对照腿结构不可用(WB12-09:Code42必红被吞成0,行号级因果链)
+    zero_trigger_verdict: dead
 - node_id: DSC-07
   name_zh: 技术指标 / 多周期重采样
   segment: S3_derive
@@ -1041,6 +1186,17 @@ nodes:
         factor_feature_value: 0
         factor_signal: 0
       note_zh: 命中数全 0 ⇒ 该批表的生产者不在 tasks.yaml 面内（DSC-21 立行的机械尺）
+  purpose_tag: schedule_complete
+  casebooks:
+  - CASEBOOK-001#outage
+  consumers:
+  - code:factor/indicator_reader.py:20/45
+  - registry:TI册:26
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 指标腿产物新鲜(max=09-24)但末写11:41不落任何档期(WB12-10)=节拍盲区显影位；kline_sector_intraday自09-11断供案→CASEBOOK-001#outage段
+    zero_trigger_verdict: alive
 - node_id: DSC-08
   name_zh: 财务 / 一致预期派生（PIT 双守卫）
   segment: S3_derive
@@ -1123,6 +1279,21 @@ nodes:
     executors_missing: []
     internal_task_ids: *id001
     process_in_product_tables: *id002
+  purpose_tag: schedule_complete
+  casebooks:
+  - CASEBOOK-001#outage
+  consumers:
+  - TDM:DS-232
+  - code:factor/fundamentals.py:24
+  - code:factor/expectations.py:19
+  - registry:factor_registry:277/12394/12433
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 一致预期腿停摆：consensus_daily max=2026-09-14停10日(6,797,719行实测11卷§1B)——期望>1且计数缺席判死；financial_derived max=06-30正常档期
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-09
   name_zh: 形态 / 情绪 / 板块状态衍生
   segment: S3_derive
@@ -1234,6 +1405,15 @@ nodes:
     executors_missing: []
     internal_task_ids: *id001
     process_in_product_tables: *id002
+  purpose_tag: schedule_complete
+  casebooks: []
+  consumers:
+  - code:backtest/regime_validation/condition_package.py:52/53
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: sector_pre_open/close_final=调度器特殊槽(task_runs零行=计数腿未接)；emotion max=09-24新鲜/板块腿两缺陷(WB12-12:trade_date倒挂+sector_preference全表1行)
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-21
   name_zh: 任务表外进程内派生生产（工厂/回测/组合域直写 CH）
   segment: S3_derive
@@ -1315,6 +1495,17 @@ nodes:
     executors_missing: []
     internal_task_ids: *id001
     process_in_product_tables: *id002
+  purpose_tag: schedule_complete
+  casebooks: []
+  consumers:
+  - code:regime_snapshot_history×6消费文件
+  - code:backtest/core/n_trial_ledger.py:411
+  - SPM:314
+  - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/§4-N1
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 任务表外进程内生产(不走tasks/schedule=打卡集合照不到)；产物读数regime_snapshot 09-24/strategy_screen 09-22；C态5表中4表栽此域(11卷§4-N1)
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-CONSENSUSCHAIN
   name_zh: 断链：research_report→consensus_daily 预期重建链停摆
   segment: S3_derive
@@ -1362,6 +1553,16 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-B
     note_zh: max=09-14（停 10 日）；消费侧受损=因子族食旧（expectations.py/factor_registry 在册锚）
   machine: {}
+  purpose_tag: null
+  casebooks:
+  - CASEBOOK-001#outage
+  consumers:
+  - code:factor/expectations.py:19
+  - registry:factor_registry共识族
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: research_report停6日+consensus停10日且派生差4日=派生本身停(11卷§1B)
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-NAV
   name_zh: 等未产表：c1_market.account_nav_daily（三消费方在等，写器零接线）
   segment: S3_derive
@@ -1410,6 +1611,18 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑同值）
     note_zh: 本车道 fail-visible 复跑：max(trade_date)=1970-01-01、count=0＝哨兵值而非数据
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - SPM:357(FAC-E8)
+  - SPM:380(FAC-E9)
+  - code:ops_alert_feed.py:39
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 表在0行(max=1970哨兵)+写器live_nav_recorder全仓零调用方(11卷§1C)——期望7计数0判死
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-EXECEP
   name_zh: 等未产表：c1_market.execution_report（实盘链未接，仅 sim 钩子）
   segment: S3_derive
@@ -1457,6 +1670,17 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C（本车道复跑）
     note_zh: count=1、max(toDate(ingest_ts))=2026-09-18＝sim 链路偶发、实盘链路零供给
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - SPM:334
+  - SPM:380
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 表在1行(09-18)+生产端仅sim桥可选接线+近7日1行(11卷§1C)——实盘链死
+    expected_runs_window: 7
+    observed_runs: 1
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-FFVAL
   name_zh: 等未产表：c1_market.factor_feature_value（DDL 未 apply，表不存在）
   segment: S3_derive
@@ -1505,6 +1729,18 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: 工厂在线面整体悬空；子类=DDL 未 apply（与 factor_signal 同因不同件）
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - code:factor/feature_store_writer.py:125
+  - code:factor/offline_store.py:25
+  - code:ufl_deterministic_layer.py:226
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: CH表不存在(247表实测)+DDL真源在仓未apply(建表待批Owner窗口)——工厂在线面整体悬空
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-FFSIG
   name_zh: 等未产表：c1_market.factor_signal（默认落点未建表）
   segment: S3_derive
@@ -1552,6 +1788,16 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C
     note_zh: 未建表＋默认落点悬空
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - code:factor/core/batch_output/buffer.py:25/78/87
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: CH表不存在+契约在仓(shared/contracts/factor_signal.py)——默认落点悬空
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-HA
   name_zh: 交接 A：派生表出图（→ TDM 因子 / 工厂 / 图13 消费）
   segment: S3_derive
@@ -1565,8 +1811,8 @@ nodes:
   downstream_action: none
   fallback: []
   invalidation: null
-  module_id: null
-  module_ref: null
+  module_id: MOD-L00-004
+  module_ref: src/zephyr/data/ch_reader.py
   source_anchors:
   - file:docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
   - c1_market.technical_indicator
@@ -1601,6 +1847,14 @@ nodes:
   facets: []
   gaps: []
   machine: {}
+  purpose_tag: lineage
+  casebooks: []
+  consumers:
+  - pass-through:派生表经ch_reader出图→TDM/工厂/图13
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 交接格：出图面消费证据即DSC-07/08/09/21产出消费面
+    zero_trigger_verdict: alive
 - node_id: DSC-10A
   name_zh: 手动 CLI 归档（archiver 五子命令 export→verify→drop）
   segment: S4_coldstore
@@ -1658,6 +1912,16 @@ nodes:
       exists: true
       label: 三阶段原子操作
     executors_missing: []
+  purpose_tag: can_rollback
+  casebooks: []
+  consumers:
+  - flow:冷库侧archive_manifest记账
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 手动CLI五子命令(人工门位)：期望≤1且计数缺席=insufficient_window禁判死(SOP v1.1.0补丁1)
+    expected_runs_window: 0
+    observed_runs: 0
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-10B
   name_zh: 滚动归档事件触发器（backup-success hook，五重安全阀）
   segment: S4_coldstore
@@ -1748,6 +2012,14 @@ nodes:
       exists: true
       label: ''
     executors_missing: []
+  purpose_tag: can_rollback
+  casebooks: []
+  consumers:
+  - flow:审计面(terminal_provable实锚)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 事件触发(backup-success hook五重安全阀)：backup_log日发(06:47北京)+archive_manifest mtime 09-28(本会话ls)——hook活而归档条件未触发
+    zero_trigger_verdict: alive
 - node_id: DSC-GAP-ARCHIVE-AUDIT
   name_zh: 缺口：冷档案零周期抽检 + 从未端到端 restore 验证
   segment: S4_coldstore
@@ -1793,6 +2065,13 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.5
     note_zh: 本车道实跑 Get-ScheduledTaskInfo：LastRun 为空、LastTaskResult=267011（从未运行）
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 冷档案零周期抽检+从未端到端restore验证——期望面未建,禁判死判未建
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-11
   name_zh: 灾备双链备份（CH 增量 + 版本化代码快照 + VM，F→G 镜像）
   segment: S4_coldstore
@@ -1887,6 +2166,14 @@ nodes:
       exists: true
       label: 备份配置 / Backup Config
     executors_missing: []
+  purpose_tag: can_rollback
+  casebooks: []
+  consumers:
+  - flow:恢复侧restore.ps1/restore_drill.py
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: backup_log max=2026-09-24T22:47Z(北京09-25 06:47)日发；schtasks DailyBackup 09-24 06:00 Result=0(cons12§3)；今晨代码快照腿failed(GAP-CODEBACKUP)
+    zero_trigger_verdict: alive
 - node_id: DSC-GAP-CODEBACKUP
   name_zh: 断供：今晨备份的代码快照腿 status=failed
   segment: S4_coldstore
@@ -1933,6 +2220,13 @@ nodes:
     pointer: backup_report_20260925_060007.json（本车道实读）
     note_zh: prev_snapshot=20260924、rotated=[]⇒09-25 快照未成，回退窗口只剩 09-24 一份
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 今晨备份代码快照腿status=failed(节点note;backup_log主腿正常max 09-24)
+    zero_trigger_verdict: dead
 - node_id: DSC-12
   name_zh: 冷热分层 / 压缩决策（契约驱动，结构上不可能产数 ✅）
   segment: S4_coldstore
@@ -1968,7 +2262,7 @@ nodes:
   - docs/_working/map_build/fig12_datachain/00_skeleton.md §1 D12-12
   - docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md
   gap_refs: []
-  red_reason: unwired
+  red_reason: contract_sourced
   confidence: verified
   verified_scope: structure
   evidence:
@@ -1999,6 +2293,14 @@ nodes:
       exists: true
       label: 行情数据压缩归档器
     executors_missing: []
+  purpose_tag: can_rollback
+  casebooks: []
+  consumers:
+  - flow:rolling_archive_reconciler读契约限量
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 契约决策件无运行面(WB12-17:真源=data_retention_contract.yaml,裁定#383 storage_tiering纸面退役)
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-HB
   name_zh: 交接 B：主库热数据 → 冷备段（超线分区 + 当日备份回执）
   segment: S4_coldstore
@@ -2040,6 +2342,14 @@ nodes:
   facets: []
   gaps: []
   machine: {}
+  purpose_tag: can_rollback
+  casebooks: []
+  consumers:
+  - flow:DSC-10B/11产出侧
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 交接格：超线分区+当日备份回执面
+    zero_trigger_verdict: alive
 - node_id: DSC-HC
   name_zh: 交接 C：冷库/备份件 → 恢复侧
   segment: S4_coldstore
@@ -2053,8 +2363,8 @@ nodes:
   downstream_action: none
   fallback: []
   invalidation: null
-  module_id: null
-  module_ref: null
+  module_id: MOD-INF-043
+  module_ref: scripts/ch/_recovery_drill.py
   source_anchors:
   - file:scripts/ch/archiver.py
   - file:scripts/backup/restore.ps1
@@ -2086,6 +2396,14 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §1.7/§2.5
     note_zh: 归档件从未被端到端 restore 验证覆盖；VM 导入演练因盘容量留档跳过
   machine: {}
+  purpose_tag: can_rollback
+  casebooks: []
+  consumers:
+  - flow:灾时恢复+演练
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 恢复演练件在册(restore_drill/_recovery_drill)但GAP-ARCHIVE-AUDIT=零周期抽检+从未端到端restore
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-L2TICK
   name_zh: 断供：l2_tick / suspend 双 0 行（L2 权限=💰-4 花钱可解）
   segment: S1_collect
@@ -2141,6 +2459,16 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/01_采集三段与源熔断.md §2
     note_zh: 三任务同写一表、0 行＝从未产数
   machine: {}
+  purpose_tag: null
+  casebooks:
+  - CASEBOOK-001#outage
+  consumers:
+  - code:cost_model_calibration族(L2腿)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: l2_tick/suspend双0行；L2权限=💰-4花钱可解(外部采购未做)——断供案outage段
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-REPLAY
   name_zh: 不可证：local_fallback 回灌是否真排空过（测量腿未接）
   segment: S2_ingest
@@ -2186,6 +2514,13 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §1 下
     note_zh: 登记侧滞后＋测量样本零落点＝排空与否无读据（残余 🌑-1 两点之一）
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 回灌排空测量腿未接——期望未知计数缺席,禁判死(SOP v1.1.0补丁1本条 适用范例)
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-MIRROR
   name_zh: P0：g_mirror 的 ch_vm_backup 目标防护只在未提交工作树里成立
   segment: S4_coldstore
@@ -2231,6 +2566,13 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/04_冷备灾备与分层.md §2.3（99_pending_owner.md 已在报）
     note_zh: WB12-44 P0；本车道 09-25 报告实读 g_mirror.targets 只余 zephyr_cold 一项且 robocopy_exit=1/status=ok
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: g_mirror ch_vm_backup目标防护只在未提交工作树成立(P0)——验证腿未落地
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-13
   name_zh: 完整性巡检 + 新鲜度哨兵（四检核器，只检测不回补）
   segment: S5_recon
@@ -2339,6 +2681,19 @@ nodes:
       exists: true
       label: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性） / alerter
     executors_missing: []
+  purpose_tag: break_detect
+  casebooks:
+  - CASEBOOK-001
+  consumers:
+  - flow:catchup_guard对账基准
+  - flow:CLI status
+  - flow:alerter告警件
+  - ref:同卷§2/90_writeback_inventory.md
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 23:00 cron日发：task_progress[integrity_check_daily].last_run=09-24T15:01Z(09-25探针)；data/failures按日告警双证且今日仍产(20261003_*)；四检核器只检测不回补
+    expected_runs_window: 7
+    zero_trigger_verdict: alive
 - node_id: DSC-14
   name_zh: 缺口回补三通道（行数缺口 / 档期打卡 / 已知缺口台账）
   segment: S5_recon
@@ -2450,6 +2805,15 @@ nodes:
       exists: true
       label: 调度对账补跑器
     executors_missing: []
+  purpose_tag: break_repair
+  casebooks: []
+  consumers:
+  - flow:补跑动作(经DSC-20留痕)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: catchup_guard槽在schedule且scheduler有分派分支(机生)；run计数腿未接(task_runs零行)——期望7计数缺席部分腿,禁判死
+    expected_runs_window: 7
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-14D
   name_zh: 第四通道：事件自动回填（auto_backfiller）——建好未接线
   segment: S5_recon
@@ -2514,6 +2878,15 @@ nodes:
       exists: true
       label: 自动回填器
     executors_missing: []
+  purpose_tag: break_repair
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 第四通道建好未接线：re-export+测试而已,wiring_registry以pure_library/exempt合法绕过接线门(WB12-14)——零触发判死成立(死因=未接线)
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-15
   name_zh: 日终三账对账（回测 vs 模拟盘 L1/L2/L3）——未接线
   segment: S5_recon
@@ -2592,6 +2965,16 @@ nodes:
       exists: true
       label: 盘后全量对账器 / EOD Reconciler
     executors_missing: []
+  purpose_tag: break_detect
+  casebooks: []
+  consumers:
+  - registry:backtest_backlog.yaml:1222(按空表降级)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: eod_reconciliation槽hollow(机生)+15:40无分派分支+零生产调用方(WB12-15 P0三证)——期望7计数0判死
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-GAP-TERMINUS
   name_zh: 缺口：域终点（数据达标 PASS）今天不可证
   segment: S5_recon
@@ -2642,6 +3025,10 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/05_对账修复六环.md §末A OBS-WF-8
     note_zh: 图级问题非环节级问题：挂槽≠在跑须进封矿判据，否则图13 的 15:40 槽会以同形态被误标
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers: []
+  trigger_facts: null
 - node_id: DSC-GAP-RECDIFF
   name_zh: 等未产表：reconciliation_differences（消费方已按空表设计降级）
   segment: S5_recon
@@ -2689,6 +3076,16 @@ nodes:
     pointer: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-C/§4-N5
     note_zh: 本车道经 DatabaseService 治理库只读复跑 count=0；0 行不可读成全对，等价于从未跑过
   machine: {}
+  purpose_tag: null
+  casebooks: []
+  consumers:
+  - registry:backtest_backlog.yaml:1222
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 表在0行+生产者=DSC-15未接线(WB12-15)；消费方已按空表设计降级(11卷§4-N5)
+    expected_runs_window: 7
+    observed_runs: 0
+    zero_trigger_verdict: dead
 - node_id: DSC-16
   name_zh: 坏数据修复与回补器族（手动/留盘为主）
   segment: S5_recon
@@ -2754,6 +3151,14 @@ nodes:
       exists: true
       label: C4 历史修复核心 / c4_history_repair
     executors_missing: []
+  purpose_tag: break_repair
+  casebooks: []
+  consumers:
+  - flow:修复需求方(手动)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 修复器族手动/留盘为主(人工门位期望≤1禁判死)；政策§3七个回补器中4个UNTRACKED只在主区(WB12-18)；known_data_gaps.yaml=输入锚(无册号,上户口缺口呈f2z)
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-17
   name_zh: 一致预期管线双向互验（自建聚合 vs 同花顺快照）
   segment: S5_recon
@@ -2832,6 +3237,14 @@ nodes:
       exists: true
       label: 一致预期管线双向验证器 / consensus_crosscheck
     executors_missing: []
+  purpose_tag: break_detect
+  casebooks: []
+  consumers: []
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 23:30 cron夜发：cross_validation_log max=2026-09-25、1,588行、末写与cron精确吻合(WB12-13两簿独立取证)
+    expected_runs_window: 7
+    zero_trigger_verdict: alive
 - node_id: DSC-18
   name_zh: CH 存储维护 OPTIMIZE / 合并（周度 OS 任务）
   segment: S5_recon
@@ -2902,6 +3315,15 @@ nodes:
       exists: true
       label: ''
     executors_missing: []
+  purpose_tag: no_double_write
+  casebooks: []
+  consumers:
+  - flow:CH引擎合并维护(ReplacingMergeTree幂等前提)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: schtasks ZephyrAlpha-CH-OptimizeMerge-Weekly周发：09-20 03:30 Result=0(cons12§3复现)；OPTIMIZE=引擎键判重的落地维护腿
+    expected_runs_window: 1
+    zero_trigger_verdict: alive
 - node_id: DSC-19
   name_zh: 破损 part 自愈探测器（CHECKSUM 隔离环，进程内常驻）
   segment: S5_recon
@@ -2963,6 +3385,15 @@ nodes:
       exists: true
       label: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler
     executors_missing: []
+  purpose_tag: break_detect
+  casebooks:
+  - CASEBOOK-001
+  consumers:
+  - pass-through:全部CH读消费者(读路径可用性前提)
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 进程内300s常驻(scheduler.py:1067定义/:2373启动实调)：CHECKSUM事件零触发自2026-07-16=探测腿零命中非机制死亡；审计腿corrupted_parts_audit.jsonl应建未建(E-7呈批)——期望=事件级稀疏,计数缺席禁判死
+    zero_trigger_verdict: alive
 - node_id: DSC-20
   name_zh: 任务级对账（档期应跑集合 vs task_runs 打卡集合差四计数）
   segment: S5_recon
@@ -3050,6 +3481,17 @@ nodes:
       exists: true
       label: 统一进度存储（MOD-L00-004 §7）。 / progress_store
     executors_missing: []
+  purpose_tag: schedule_complete
+  casebooks:
+  - CASEBOOK-001
+  consumers:
+  - flow:catchup_guard基准+CLI+告警三族
+  trigger_facts:
+    as_of: '2026-10-04'
+    evidence: 15:00交易日日发：task_runs=integrator_progress.db task_runs(ro-uri) 210,944行/max=2026-10-03T14:12Z/近24h 4,406笔；7日窗task_reconcile案卷3件=恰好3交易日(09-28..30,10-01起国庆)节拍闭合；09-23读数应跑185/成功146/漏跑20/失败19(cons12§2)
+    expected_runs_window: 3
+    observed_runs: 3
+    zero_trigger_verdict: alive
 edges:
 - from: DSC-SRC
   to: DSC-01
@@ -3343,6 +3785,10 @@ counts:
   gaps_registered: 69
   proposed_semantics: 1
   verified_semantics: 42
+  nodes_with_purpose_tag: 28
+  nodes_with_casebooks: 8
+  nodes_with_trigger_facts: 42
+  nodes_with_consumers: 35
   gap_nodes: 15
   built_nodes: 13
   pending_nodes: 17
@@ -3352,10 +3798,10 @@ counts:
   facet_nodes: 4
   stage_nodes: 22
   skeleton_ok_rows: 10
-  nodes_with_module_id: 25
+  nodes_with_module_id: 27
   gap_ref_edges: 17
 machine:
-  as_of: null
+  as_of: '2026-10-04'
   sources:
     tasks_yaml:
       path: src/zephyr/data/config/tasks.yaml
@@ -3368,7 +3814,7 @@ machine:
       incremental_true: 163
       fallback_nonempty: 39
       schedule_disabled: 4
-      with_date_col: 197
+      with_date_col: 198
       tasks_with_buffer: 32
       dep_edges: 66
       tasks_with_deps: 43
@@ -3418,12 +3864,13 @@ machine:
         weekend_backfill: 1
     schedule_yaml:
       path: src/zephyr/data/config/schedule.yaml
-      slots_total: 29
+      slots_total: 32
       slots:
       - auction_highfreq
       - calendar_coverage_check
       - catchup_guard
       - consensus_crosscheck
+      - cross_validation
       - daily_alt_fx
       - daily_backfill
       - daily_capital
@@ -3438,10 +3885,12 @@ machine:
       - intraday_minute
       - intraday_realtime
       - intraday_sector
+      - lane_g_intake_sweep
       - monthly_static
       - news_slow
       - nightly_financial
       - nightly_sentiment
+      - pf_alloc_rebalance_check
       - post_auction
       - pre_market
       - research_nightly
@@ -3450,7 +3899,7 @@ machine:
       - weekend_backfill
       - weekend_calibration
       executors:
-        default: 20
+        default: 23
         heavy: 5
         realtime: 2
         intraday_minute: 1
@@ -3459,12 +3908,15 @@ machine:
       - calendar_coverage_check
       - catchup_guard
       - consensus_crosscheck
+      - cross_validation
       - daily_backfill
       - data_supply_sentinel
       - dloop_post
       - eod_reconciliation
       - integrity_check
+      - lane_g_intake_sweep
       - nightly_sentiment
+      - pf_alloc_rebalance_check
       - post_auction
       - sector_close_final
       - sector_pre_open
@@ -3476,12 +3928,15 @@ machine:
       - calendar_coverage_check
       - catchup_guard
       - consensus_crosscheck
+      - cross_validation
       - daily_backfill
       - daily_kline
       - data_supply_sentinel
       - dloop_post
       - integrity_check
+      - lane_g_intake_sweep
       - nightly_sentiment
+      - pf_alloc_rebalance_check
       - sector_close_final
       - sector_pre_open
       - weekend_backfill
@@ -3492,14 +3947,13 @@ machine:
       path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
       declared:
         sources: 18
-        datasets: 293
+        datasets: 334
         jobs: 122
       actual:
         sources: 18
-        datasets: 294
+        datasets: 334
         jobs: 122
-      drift:
-        datasets: 1
+      drift: {}
     skeleton_status:
       path: docs/_working/map_build/fig12_datachain/00_skeleton.md
       rows_scanned: 22
@@ -3521,10 +3975,10 @@ machine:
       - DSC-20
     module_id_projection:
       path: docs/03_modules/path_ownership_map.yaml
-      claims_scanned: 8064
-      nodes_with_module_id: 25
-      nodes_with_module_ref: 25
-      nodes_null_module_id: 18
+      claims_scanned: 8063
+      nodes_with_module_id: 27
+      nodes_with_module_ref: 27
+      nodes_null_module_id: 16
     process_in_product: *id002
   source_task_labels:
     akshare: AKShare
