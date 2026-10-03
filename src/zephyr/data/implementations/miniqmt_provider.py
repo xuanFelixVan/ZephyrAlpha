@@ -39,6 +39,7 @@ import math
 import re
 import time
 from decimal import ROUND_HALF_UP, Decimal
+from pathlib import Path
 from typing import Iterator
 
 from .. import ch_reader
@@ -425,6 +426,67 @@ def _solve_iv(S, K, T, r, market_price, opt_type):
         elif sigma > 5:
             sigma = 5
     return None
+
+
+# EXEC2a-P0-OPTION-SINA-META（2026-10-04）：QMT 模拟环境期权合约册冻结（09-24 起活跃
+# 合约 get_instrument_detail 全量 None、板块表无 10 月后新合约、trading_contract_list 空）
+# → option_greeks/option_iv_surface 静默 SUCCESS 0 行断供 11 天（fetch_perf 取证）。
+# 降级真源：新浪/上交所期权目录（与 option_kline 主源 akshare_sina 同族）：
+# option_sse_greeks_sina 单合约快照的 交易代码（510050C2610M02700：标的/购沽/到期月/行权价）
+# + 行权价 字段；月度到期日走 option_sse_expire_day_sina（月度合约=每月第 4 个周三，
+# 无周内差异；API 缺席时按第 4 周三日历兜底）。合约静态属性（行权价/类型/到期日）一经
+# 挂牌不变 → 落盘持久缓存 .runtime/cache/option_sina_contract_meta.json，仅对未缓存代码
+# 发 HTTP；解析失败记 negative 标记（3 天 TTL 防把 API 抖动误判成永久退市）。
+_OPTION_SINA_META_JSON = Path(__file__).resolve().parents[4] / ".runtime" / "cache" / "option_sina_contract_meta.json"
+_OPTION_SINA_NEGATIVE_TTL_DAYS = 3
+_OPTION_SINA_UL_NAMES = {"510050": "50ETF", "510300": "300ETF", "510500": "500ETF", "588000": "科创50ETF"}
+_OPTION_SINA_TRADE_CODE_RE = re.compile(r"^(\d{6})([CP])(\d{4})[A-Z](\d{5})$")
+
+
+def _sse_fourth_wednesday(yyyymm: str) -> str:
+    """上证 ETF 期权到期日规则兜底：当月第 4 个周三（YYYYMMDD）。"""
+    y, m = int(yyyymm[:4]), int(yyyymm[4:6])
+    d = datetime.date(y, m, 1)
+    first_wed = d + datetime.timedelta(days=(2 - d.weekday()) % 7)
+    return (first_wed + datetime.timedelta(days=21)).strftime("%Y%m%d")
+
+
+def _load_sina_meta_store() -> dict:
+    """读新浪期权合约元数据持久缓存（损坏/缺席返回空骨架）。"""
+    import json
+
+    try:
+        raw = _OPTION_SINA_META_JSON.read_text(encoding="utf-8")
+        store = json.loads(raw)
+        if isinstance(store, dict):
+            store.setdefault("positive", {})
+            store.setdefault("negative", {})
+            store.setdefault("months", {})
+            return store
+    except FileNotFoundError:
+        pass
+    except Exception as e:  # noqa: BLE001 — 缓存损坏视同空缓存，重抓自愈
+        logging.getLogger(__name__).warning(f"option sina meta 缓存损坏，重建: {e}")
+    return {"positive": {}, "negative": {}, "months": {}}
+
+
+def _save_sina_meta_store(store: dict) -> None:
+    """原子写缓存（merge 磁盘最新，防 iv/greeks 双任务并发互覆盖）。"""
+    import json
+    import os
+
+    try:
+        merged = _load_sina_meta_store()
+        for section in ("positive", "negative", "months"):
+            disk = merged.get(section) or {}
+            disk.update(store.get(section) or {})
+            merged[section] = disk
+        _OPTION_SINA_META_JSON.parent.mkdir(parents=True, exist_ok=True)
+        tmp = _OPTION_SINA_META_JSON.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(merged, ensure_ascii=False), encoding="utf-8")
+        os.replace(tmp, _OPTION_SINA_META_JSON)
+    except Exception as e:  # noqa: BLE001 — 缓存写失败不阻断主链路
+        logging.getLogger(__name__).warning(f"option sina meta 缓存写入失败（忽略）: {e}")
 
 
 def _parse_option_expiry(expiry) -> datetime.date | None:
@@ -2384,8 +2446,6 @@ class MiniQmtIngestProvider(IngestProviderBase):
         Returns:
             dict: {Underlying, ExercisePrice, EndDelivDate, OptType} 或 None
         """
-        import re
-
         from xtquant import xtdata
 
         detail = self._call_with_policy(
@@ -2393,9 +2453,15 @@ class MiniQmtIngestProvider(IngestProviderBase):
             policy,
             opt_code,
         )
-        if not detail:
-            return None
+        if detail:
+            return self._parse_qmt_option_detail(detail, opt_code)
+        # EXEC2a-P0-OPTION-SINA-META：QMT 合约册冻结/无期权权限时降级新浪目录真源，
+        # 保 greeks/iv_surface 计算链在 QMT 期权环境失效期不断供（价格源本就降级
+        # _load_option_close_from_ch，此处补齐缺失的合约静态元数据半边）。
+        return self._get_sina_option_meta(opt_code, policy)
 
+    def _parse_qmt_option_detail(self, detail: dict, opt_code: str) -> dict | None:
+        """解析 QMT get_instrument_detail 返回为期权详情统一形状。"""
         name = detail.get("InstrumentName", "")
         product_id = detail.get("ProductID", "")
         expire_date = detail.get("ExpireDate", "")
@@ -2429,6 +2495,98 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "EndDelivDate": str(expire_date) if expire_date else "",
             "OptType": opt_type,
             "ExchangeID": exchange,  # #ARCH-FUTURES-OPTION-EXCHANGE-FILL
+        }
+
+    def _get_sina_option_meta(self, opt_code: str, policy) -> dict | None:
+        """QMT 合约册失效时的期权合约元数据降级源（新浪/上交所目录）。
+
+        与 _parse_qmt_option_detail 返回同一形状 {Underlying, ExercisePrice,
+        EndDelivDate, OptType, ExchangeID}。合约静态属性一经挂牌不变 → 持久缓存
+        命中零 HTTP；仅未缓存代码走 option_sse_greeks_sina 单合约快照（交易代码
+        编码 标的/购沽/到期月，行权价取官方 字段 值）。解析失败记 negative 标记
+        （_OPTION_SINA_NEGATIVE_TTL_DAYS 天内不重试，防 API 抖动被误判永久退市）。
+        """
+        bare = opt_code.split(".")[0]
+        store = _load_sina_meta_store()
+        cached = store["positive"].get(bare)
+        if cached:
+            return self._sina_meta_row_to_detail(cached)
+        neg_ts = str(store["negative"].get(bare, ""))
+        if neg_ts:
+            try:
+                age = datetime.datetime.now() - datetime.datetime.fromisoformat(neg_ts)
+                if age < datetime.timedelta(days=_OPTION_SINA_NEGATIVE_TTL_DAYS):
+                    return None
+            except ValueError:
+                pass
+        row = self._fetch_sina_option_meta(bare, store)
+        if row is None:
+            store["negative"][bare] = datetime.datetime.now().isoformat(timespec="seconds")
+            _save_sina_meta_store(store)
+            return None
+        store["positive"][bare] = row
+        store["negative"].pop(bare, None)
+        _save_sina_meta_store(store)
+        return self._sina_meta_row_to_detail(row)
+
+    def _fetch_sina_option_meta(self, bare: str, store: dict) -> dict | None:
+        """抓单合约元数据：option_sse_greeks_sina 快照 → 交易代码/行权价 解析。"""
+        try:
+            import akshare as ak
+
+            snap = ak.option_sse_greeks_sina(symbol=bare)
+            kv = dict(zip(snap["字段"].astype(str), snap["值"].astype(str)))
+        except Exception as e:  # noqa: BLE001 — 网络/接口异常视同本合约元数据缺席
+            self._log.debug(f"_fetch_sina_option_meta({bare}) 失败: {e}")
+            return None
+        m = _OPTION_SINA_TRADE_CODE_RE.match(str(kv.get("交易代码", "")).strip())
+        strike = self.safe_float(kv.get("行权价"))
+        if not m or strike is None or strike <= 0:
+            self._log.warning(f"_fetch_sina_option_meta({bare}) 交易代码/行权价解析失败: {kv.get('交易代码')} / {kv.get('行权价')}")
+            return None
+        ul6, call_flag, yymm, _strike_pad = m.groups()
+        expiry = self._sina_month_expiry("20" + yymm, ul6, store)
+        if not expiry:
+            return None
+        return {
+            "ul": f"{ul6}.SH",  # 新浪 SSE 目录仅上交所标的（510050/510300/510500/588000）
+            "strike": strike,
+            "expiry": expiry,  # YYYYMMDD，与 QMT ExpireDate 形状一致
+            "opt_type": "call" if call_flag.upper() == "C" else "put",
+            "exch": "SHO",
+            "ts": datetime.datetime.now().isoformat(timespec="seconds"),
+        }
+
+    def _sina_month_expiry(self, month: str, ul6: str, store: dict) -> str:
+        """月度合约到期日：option_sse_expire_day_sina 优先，第 4 周三日历兜底。"""
+        key = f"{month}|{ul6}"
+        cached = store["months"].get(key)
+        if cached:
+            return str(cached)
+        exp_str = ""
+        name = _OPTION_SINA_UL_NAMES.get(ul6)
+        if name:
+            try:
+                import akshare as ak
+
+                got, _days_left = ak.option_sse_expire_day_sina(trade_date=month, symbol=name)
+                exp_str = str(got).replace("-", "") if got else ""
+            except Exception as e:  # noqa: BLE001 — 接口缺席走日历兜底
+                self._log.debug(f"_sina_month_expiry({month},{name}) 失败: {e}")
+        if len(exp_str) != 8 or not exp_str.isdigit():
+            exp_str = _sse_fourth_wednesday(month)  # 上证 ETF 期权=当月第 4 个周三
+        store["months"][key] = exp_str
+        return exp_str
+
+    @staticmethod
+    def _sina_meta_row_to_detail(row: dict) -> dict:
+        """缓存行 → 与 QMT 解析同形状的期权详情 dict。"""
+        return {
+            "Underlying": row["ul"],
+            "ExercisePrice": row["strike"],
+            "EndDelivDate": row["expiry"],
+            "OptType": 1 if row["opt_type"] == "call" else 0,
+            "ExchangeID": row["exch"],
         }
 
     def _load_option_symbols_from_kline(
