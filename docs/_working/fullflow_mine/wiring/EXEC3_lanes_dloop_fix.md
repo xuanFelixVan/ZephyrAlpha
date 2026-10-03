@@ -101,6 +101,41 @@ date: 2026-10-04
 | 扩大面 | pytest tests/plan_engine/ | **754 passed** |
 | 跨套件 | pytest tests/ -k 相关词（消费方六件：ignition_gate/factory_intake/exam_trigger/sleeve_provenance/judgment_ledger/resource_profile） | **168 passed + 3 failed**；3 失败全在 `test_generate_resource_profile_registry.py`（槽位 33 vs 26）——根因=他会话在途改动（`schedule.yaml`/`generate_resource_profile_registry.py`/`resource_profile_registry.yaml` 主区未提交 M 态），与本次 diff 零交集，按"他会话在途不代修"拆批留痕 |
 | E0 闸复算 | check_gate('lane_c_gp_mine','local_gpu',10-02 20:00) | allowed=True / gate_allow_off_hours |
+| 门禁过闸 | git_commit.py 两批 | 批1过 PERM-TRIGGER（首版 time.sleep 重试被门裁，改立即有界重试）/ruff；批2连过 CloneGuard extract 归并+ALGO-FLOW 锚补建+ruff-format+ANY-1 收紧四道补课门 |
+
+## 四.1、提交过闸补课记录（門裁定即改，无绕行）
+
+1. **PERM-TRIGGER**：首版重试带 `time.sleep(1.0)`——永久系统禁 Timer/sleep-loop 铁律，
+   改 1 首查+2 补试**立即**重试（无 sleep），fail-closed 语义不变。
+2. **CloneGuard CAPABILITY-OVERLAP（extract 级）**：`auction_hit_recorder._parse_tsv/_table`
+   与 `overnight_boundary_reviser` 逐字节克隆——按门处方归并：本件改为
+   `from ...overnight_boundary_reviser import OvernightBoundaryReviser, _parse_tsv` +
+   `_table = OvernightBoundaryReviser._table` 别名（调用点零改，行为零漂移）。
+   plan_engine 全族同类克隆（_parse_tsv×5/_table×6）属独立去重批，未扩面。
+3. **GATE-ALGO-FLOW**：`next_day_forecaster.py` 系 416 全量扫后新建漏网件（HEAD 即无标记）
+   ——补 docstring 尾 `# [ALGO_FLOW] external:` 锚 + 机生外置块
+   `docs/03_modules/_domain_plan/algo_flow/next_day_forecaster.yaml`（drafter 脚手架，
+   "待校准"占位=出厂口径；CREATE-GUARD token 已登记 capability_canonical_file_registry
+   （algo_flow_views 档），登记行随共享热册他会话批次落地）。
+4. **GATE-ANY-ABUSE（ANY-1）**：`_safe_float(v: Any)` 裸 Any 收紧为
+   `float | str | bytes | None`（行为零漂移）。
+5. **COMMIT_SCOPE**：plan_engine 测试件被判 D_AUDITTEST——按宪法 §2.4 门+自家测试同批
+   合法，`--allow-multi-domain` 留痕（[GW:…:multi-domain]）。
+
+## 四.2、commit 清单与归属核实
+
+| commit | 内容 | git log -1 --name-only 核实 |
+|---|---|---|
+| `a879fb0785` | lane_c E0 闸瞬时故障治本（compute_window_gate + 测试 3 回归） | 2 文件，纯本批 |
+| `20eb48f828` | D13-20/D13-44 治本 + 回归 9 例 + 报告 + algo_flow 外置件 | 8 文件，纯本批（[GW:multi-domain] 留痕） |
+
+## 四.3、协调留痕（如实）
+
+- 共享 sid（st-datasop-20260930）下收尾用了 `lock_files.py release-all`——连带释放了
+  同 sid 并行 EXEC 件（news_* 等）的 claim。属自愈性摩擦（各件可即时重 acquire），
+  非 FIFO 破坏；后续会话收尾应改用 `git_commit.py --release-only --files <本批清单>`。
+- 提交窗口与他会话并发（f4b2c6029d/68f440daeb/7f8ad2f806/fbff1eda80 等交错落地），
+  两次 LOCK_TIMEOUT 重试自愈；`--allow-tracked-drift` 备而未用（最终批过闸未触发）。
 
 ## 五、移交 EXEC-1（任务挂载需求，tasks.yaml/schedule.yaml 归其批）
 
@@ -112,10 +147,12 @@ date: 2026-10-04
 3. **D13-20 增强项（可选）**：若要 10:00 实时命中（而非 16:45 回看补判），需新增
    交易日 10:05 盘中槽——现有修复已保证产物必有，实时性属增量。
 
-## 六、涉及文件（8）
+## 六、涉及文件（10，两 commit 已落地）
 
-- `scripts/backtest/compute_window_gate.py`（重试+留痕）
-- `src/zephyr/plan_engine/daily_loop_master_switch.py`（auction_hit 回看补判/next_day 状态透出）
-- `src/zephyr/plan_engine/auction_hit_recorder.py`（late_eval 留痕位）
-- `src/zephyr/plan_engine/next_day_forecaster.py`（use_ranges 虫/概率和精确）
-- tests 三件 + `tests/plan_engine/test_auction_hit_recorder.py`（回归 11 例，tmp_path 隔离）
+- `scripts/backtest/compute_window_gate.py`（重试+留痕）→ a879fb0785
+- `src/zephyr/plan_engine/daily_loop_master_switch.py`（auction_hit 回看补判/next_day 状态透出）→ 20eb48f828
+- `src/zephyr/plan_engine/auction_hit_recorder.py`（late_eval 留痕位/_parse_tsv+_table 归并/_safe_float 收紧）→ 20eb48f828
+- `src/zephyr/plan_engine/next_day_forecaster.py`（use_ranges 虫/概率和精确/ALGO_FLOW 锚）→ 20eb48f828
+- `docs/03_modules/_domain_plan/algo_flow/next_day_forecaster.yaml`（新，机生外置块）→ 20eb48f828
+- tests 四件（回归 11 例，tmp_path 隔离）→ 随两批
+- `docs/_working/fullflow_mine/wiring/EXEC3_lanes_dloop_fix.md`（本报告）→ 20eb48f828
