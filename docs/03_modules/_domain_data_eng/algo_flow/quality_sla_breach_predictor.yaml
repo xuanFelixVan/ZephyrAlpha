@@ -1,10 +1,13 @@
-# ALGO_FLOW 外部真源——quality_sla_breach_predictor（_domain_data_eng 域，真源 src/zephyr/data_eng/quality_sla_breach_predictor.py）
+# ALGO_FLOW 外部真源——quality_sla_breach_predictor（B1 融合迁址：真源 src/zephyr/data/quality/sla_breach_predictor.py，原 src/zephyr/data_eng/ 同名件 2026-10-04 随 F127 净删退役）
 # 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
 # external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+# B1 融合（2026-10-04，git 历史留档）：预测核零算法改动随迁，本块图面继续有效；锚已改挂新址。
 doc_type: architecture_view
 ttl: permanent
-module: src.zephyr.data_eng.quality_sla_breach_predictor
-source_of_truth: src/zephyr/data_eng/quality_sla_breach_predictor.py
+module: src.zephyr.data.quality.sla_breach_predictor
+source_of_truth: src/zephyr/data/quality/sla_breach_predictor.py
+lifecycle: fused
+successor: src/zephyr/data/quality/sla_breach_predictor.py
 algo_flow: |
     # [ALGO_FLOW]
     # 层: 输入
