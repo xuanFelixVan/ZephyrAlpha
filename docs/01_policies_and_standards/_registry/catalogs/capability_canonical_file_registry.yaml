@@ -59707,4 +59707,19 @@ creation_tokens:
   created_by: st-map9-f3-20261003
   capability: map9_f3_facts
   merge_evaluation: "跨域不同对象不并：图9 F3 facts 抽取两件（实测 yaml+车道报告），map_census 家族新图 F 车道实例，非 F1 census 第二实现"
+- file: docs/_working/map_build/10_e36d0ff70f_residue_check.md
+  token: panorama-map-census-10-e36d0ff70f-residue-check-20261003
+  created_by: st-mapreg-20261003
+  capability: panorama_map_census
+  merge_evaluation: "mapreg转正批3份判定报告(e36d0ff70f残留核查/图13重叠判定/九图L0缺口)"
+- file: docs/_working/map_build/11_fig13_overlap_verdict.md
+  token: panorama-map-census-11-fig13-overlap-verdict-20261003
+  created_by: st-mapreg-20261003
+  capability: panorama_map_census
+  merge_evaluation: "mapreg转正批3份判定报告(e36d0ff70f残留核查/图13重叠判定/九图L0缺口)"
+- file: docs/_working/map_build/12_map_frontmatter_gap.md
+  token: panorama-map-census-12-map-frontmatter-gap-20261003
+  created_by: st-mapreg-20261003
+  capability: panorama_map_census
+  merge_evaluation: "mapreg转正批3份判定报告(e36d0ff70f残留核查/图13重叠判定/九图L0缺口)"
 di_seam_exemptions: []
