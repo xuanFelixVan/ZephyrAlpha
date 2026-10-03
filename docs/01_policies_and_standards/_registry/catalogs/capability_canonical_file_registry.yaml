@@ -59581,4 +59581,34 @@ creation_tokens:
   created_by: st-vm12f1-20261003
   capability: vmap12_flesh
   merge_evaluation: "纯盘点新增料册：挂图SOP升级图12供料（四表+呈批），无同真源旧条目可并；替代方式=不产新册则总筹无料可裁"
+- file: docs/_working/map_build/fig13_daycycle/11_mount_candidates.csv
+  token: fig13-flesh-11-mount-candidates-20261003
+  created_by: st-fig13-chief-20261003
+  capability: fig13_flesh
+  merge_evaluation: "跨域不同对象不并：图13挂血肉三表=F5装配供料件，图11/图12同族表各属其图不共用；纯新增只读扫描产物零替代"
+- file: docs/_working/map_build/fig13_daycycle/12_casebook_matrix_d13.yaml
+  token: fig13-flesh-12-casebook-matrix-d13-20261003
+  created_by: st-fig13-chief-20261003
+  capability: fig13_flesh
+  merge_evaluation: "跨域不同对象不并：图13挂血肉三表=F5装配供料件，图11/图12同族表各属其图不共用；纯新增只读扫描产物零替代"
+- file: docs/_working/map_build/fig13_daycycle/13_consumers_scan_d13.csv
+  token: fig13-flesh-13-consumers-scan-d13-20261003
+  created_by: st-fig13-chief-20261003
+  capability: fig13_flesh
+  merge_evaluation: "跨域不同对象不并：图13挂血肉三表=F5装配供料件，图11/图12同族表各属其图不共用；纯新增只读扫描产物零替代"
+- file: docs/_working/map_census/fac9_01_mount_candidates.yaml
+  token: map9-f1-census-fac9-01-mount-candidates-20261003
+  created_by: st-map9-f1-20261003
+  capability: map9_f1_census
+  merge_evaluation: "跨域不同对象不并：图9 F1 清点三件套（候选表/标签候选/车道报告），map_census 家族新图实例，非既有 census 第二实现"
+- file: docs/_working/map_census/fac9_01_report.md
+  token: map9-f1-census-fac9-01-report-20261003
+  created_by: st-map9-f1-20261003
+  capability: map9_f1_census
+  merge_evaluation: "跨域不同对象不并：图9 F1 清点三件套（候选表/标签候选/车道报告），map_census 家族新图实例，非既有 census 第二实现"
+- file: docs/_working/map_census/fac9_02_tag_candidates.md
+  token: map9-f1-census-fac9-02-tag-candidates-20261003
+  created_by: st-map9-f1-20261003
+  capability: map9_f1_census
+  merge_evaluation: "跨域不同对象不并：图9 F1 清点三件套（候选表/标签候选/车道报告），map_census 家族新图实例，非既有 census 第二实现"
 di_seam_exemptions: []

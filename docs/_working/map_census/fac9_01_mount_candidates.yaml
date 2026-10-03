@@ -1,0 +1,4055 @@
+# 图9 策略工厂 全量血缘候选挂载表（F1 清点机生）
+# 会话: st-map9-f1-20261003 | 日期: 2026-10-03 | 判据: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md §1
+# 性质: 纯只读盘点候选表（非地图本体；挂载裁决归总筹/Owner）。机制级身份=module_id 或 slug(code:/dir:/af:/cfg:)，INV-1 只存指针。
+ttl: task_bound
+completes_when: 图9 挂血肉批（F2+）消费本清点并落挂载后，本件转归档
+census_of: strategy_production_map (config/strategy_production_map.yaml, 16 nodes)
+counts:
+  total: 449
+  by_verdict: {1: 181, 2: 61, 3: 88, 4: 3, 反面: 116}
+  by_stage: {E0: 15, E1: 12, E1A: 3, E1B: 4, E1C: 8, E1D: 10, E1E: 9, E1F: 2, E1G: 10, E2: 6, E3: 78, E4: 78, E5: 4, E6: 14, E7: 22, E8: 34, E9: 8, MAP: 2, （未定）: 130}
+  by_confidence: {high: 154, low: 166, medium: 129}
+  by_currently_visible: {否: 421, 打包: 4, 是: 24}
+rows:
+
+- module_id: MOD-BT-151
+  name_zh: 算力调度闸门
+  verdict: 1
+  stage: E0
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E0 + code:scripts/backtest/compute_window_gate.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-154
+  name_zh: 进货编排流水线
+  verdict: 1
+  stage: E1
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1 + code:scripts/backtest/factory_intake_pipeline.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-035
+  name_zh: C2 粗筛成绩灌表（车道A挂点）
+  verdict: 1
+  stage: E1A
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1A + code:scripts/backtest/intake_load_screen_c2.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-150
+  name_zh: AI生成车道B
+  verdict: 1
+  stage: E1B
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1B + code:scripts/backtest/lane_b_idea_generator.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-155
+  name_zh: 公式挖掘机gplearn轨
+  verdict: 1
+  stage: E1C
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1C + code:scripts/backtest/lane_c_formula_miner.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-090
+  name_zh: 产业链三高筛选车道
+  verdict: 1
+  stage: E1D
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1D + code:scripts/backtest/three_high_screen.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-084
+  name_zh: 车道E分位数回归分布预测基线
+  verdict: 1
+  stage: E1E
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1E + code:scripts/backtest/lane_e_quantile_baseline.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-AUTO-E1G-001
+  name_zh: 车道G-全网搜索进货（胃点菜）
+  verdict: 1
+  stage: E1G
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E1G + code:scripts/backtest/lane_g_stomach_intake.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-091
+  name_zh: 假说预审逻辑门
+  verdict: 1
+  stage: E2
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E2 + code:scripts/backtest/hypothesis_precheck.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-041..075
+  name_zh: C4 翻译件族（35 条验收集）
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E3 module_ref 区间 + code:scripts/backtest/translated/c4_*.py 35 件"
+  confidence: high
+  currently_visible: 打包
+- module_id: MOD-BT-039
+  name_zh: C4 翻译共享引擎（E4 挂点，名实错位见报告）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E4 module_ref + code:scripts/backtest/translated/_c4_engine.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-086
+  name_zh: 策略协同去重器
+  verdict: 1
+  stage: E5
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E5 + code:src/zephyr/pf_alloc/core/synergy_dedup.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-078
+  name_zh: 策略台账查询器
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E6 + code:scripts/backtest/strategy_screen_query.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-225
+  name_zh: 模拟盘前哨考核器（Paper Outpost）
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E7 + code:src/zephyr/strategy_pipeline/paper_outpost.py"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-002..024
+  name_zh: 多策略资金分配件族（E8 装配线）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 module_ref 区间 + bp:docs/03_modules/_domain_portfolio_alloc/"
+  confidence: high
+  currently_visible: 打包
+- module_id: MOD-PA-003
+  name_zh: 多策略资金分配器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-004
+  name_zh: 策略相关性门禁
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-007
+  name_zh: Regime元分配器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-013
+  name_zh: 最大回撤限制分配器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-014
+  name_zh: 策略筛选三维评估器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-015
+  name_zh: 体制条件BMA信号权重
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-022
+  name_zh: 前瞻风险预算分配器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note 点名 + bp:docs/03_modules/_domain_portfolio_alloc/ 或 code:src/zephyr/pf_alloc/core/"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-PA-002
+  name_zh: 信号合成器（多策略加权投票）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_alloc/signal_synthesis_combiner/blueprint.md"
+  confidence: high
+  currently_visible: 打包
+- module_id: MOD-PA-006
+  name_zh: 分批建仓引擎
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md"
+  confidence: medium
+  currently_visible: 打包
+- module_id: MOD-PF-007
+  name_zh: 绩效归因引擎（Brinson三因子+因子/风险归因）
+  verdict: 4
+  stage: E9
+  impact: 质量
+  home_map: 图9+图7 双图引用（trading_decision_map 亦引）
+  evidence: "map:config/strategy_production_map.yaml#FAC-E9 + bp:docs/03_modules/_domain_portfolio_core/performance_attribution_engine/blueprint.md"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-REGIME-001
+  name_zh: Regime检测器（12态灰度概率）
+  verdict: 4
+  stage: E8
+  impact: 质量
+  home_map: 图7 trading_decision_map（编制）+本图 E8 消费
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 + bp:docs/03_modules/_domain_regime/regime_detector/blueprint.md + map:config/trading_decision_map.yaml"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-RK-16
+  name_zh: 风险归因复用件（MOD-RK-16）
+  verdict: 2
+  stage: E9
+  impact: 质量
+  home_map: 风控域（无纵向图，_domain_risk 编制）
+  evidence: "map:config/strategy_production_map.yaml#FAC-E9 algo_note（风险归因复用 MOD-RK-16）"
+  confidence: medium
+  currently_visible: 是
+- module_id: MOD-PF-003
+  name_zh: 再平衡调度器（四触发源）
+  verdict: 4
+  stage: E8
+  impact: 效率
+  home_map: "本图 E8+交易日循环挂槽（05:45 巡检）"
+  evidence: "map:config/strategy_production_map.yaml#FAC-E8 algo_note + bp:docs/03_modules/_domain_portfolio_core/rebalance_scheduler/blueprint.md"
+  confidence: high
+  currently_visible: 是
+- module_id: MOD-BT-001
+  name_zh: 成本模型标定真源
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-001→src/zephyr/backtest/core/cost_model_calibration.py + tr_name:src/zephyr/backtest/core/cost_model_calibration.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-003
+  name_zh: 编号面孤儿（仅 depgraph downstream 引用，无实体蓝图）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-003→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-006
+  name_zh: data_handler 数据来源手
+  verdict: 2
+  stage: E4
+  impact: 速度
+  home_map: 图12 data_supply_chain_map
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-006→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-009
+  name_zh: 编号面孤儿（仅 depgraph target 引用）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-009→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-017
+  name_zh: services/__init__ 包命名空间声明，非机制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-017→src/zephyr/backtest/services/__init__.py + tr_name:src/zephyr/backtest/services/__init__.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-018
+  name_zh: ④ 4级告警判定
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-018→src/zephyr/backtest/services/decay_monitor.py + tr_name:src/zephyr/backtest/services/decay_monitor.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-019
+  name_zh: ⑤ 数值格式化辅助
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-019→src/zephyr/backtest/services/report_generator.py + tr_name:src/zephyr/backtest/services/report_generator.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-020
+  name_zh: ④ 命中率统计快照
+  verdict: 3
+  stage: E4
+  impact: 速度
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-020→src/zephyr/backtest/services/cache_manager.py + tr_name:src/zephyr/backtest/services/cache_manager.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-021
+  name_zh: ⑤ 报告组装与缓存
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-021→src/zephyr/backtest/services/param_analyzer.py + tr_name:src/zephyr/backtest/services/param_analyzer.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-022
+  name_zh: ⑤ 报告聚合判定
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-022→src/zephyr/backtest/services/data_quality_checker.py + tr_name:src/zephyr/backtest/services/data_quality_checker.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-023
+  name_zh: ④ 诊断报告聚合
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-023→src/zephyr/backtest/services/anomaly_diagnoser.py + tr_name:src/zephyr/backtest/services/anomaly_diagnoser.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-024
+  name_zh: ④ 差异报告组装
+  verdict: 3
+  stage: E5
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-024→src/zephyr/backtest/services/result_comparator.py + tr_name:src/zephyr/backtest/services/result_comparator.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-025
+  name_zh: 编号面考古未达（无实体蓝图/代码路径）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-025→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-026
+  name_zh: nan_processor——Owner 裁定退归，锚点已移除（docs 退归注记）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-026→未登记"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-027
+  name_zh: 分层验证管道(C-003)
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-027→src/zephyr/backtest/services/layered_validation_pipeline.py + tr_name:src/zephyr/backtest/services/layered_validation_pipeline.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-028
+  name_zh: 策略级CPCV打分矩阵
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-028→src/zephyr/backtest/core/strategy_cpcv_matrix.py + tr_name:src/zephyr/backtest/core/strategy_cpcv_matrix.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-031
+  name_zh: "币圈影子表部署——markets=[cn_a] 边界排除（图9 boundary）"
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-031→scripts/ch/apply_crypto_shadow_tables_ddl.py + tr_name:scripts/ch/apply_crypto_shadow_tables_ddl.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-032
+  name_zh: P0 印教材（regime 历史印证材料）
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-032→scripts/backtest/print_regime_history.py + tr_name:scripts/backtest/print_regime_history.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-033
+  name_zh: 新旧状态双轨对照器
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-033→scripts/backtest/compare_state_dualrun.py + tr_name:scripts/backtest/compare_state_dualrun.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-034
+  name_zh: P0 成本验证件
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-034→scripts/backtest/validate_p0_cost.py + tr_name:scripts/backtest/validate_p0_cost.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-036
+  name_zh: C3 试点第 1 条 SVR 多因子（挂起）
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-036→scripts/backtest/translated/pilot_001_ml_multifactor.py + tr_name:scripts/backtest/translated/pilot_001_ml_multifactor.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-037
+  name_zh: C3 试点第 2 条 MA 金叉死叉
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-037→scripts/backtest/translated/pilot_002_ma_cross.py + tr_name:scripts/backtest/translated/pilot_002_ma_cross.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-038
+  name_zh: C3 试点第 3 条 zscore 均值回归
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-038→scripts/backtest/translated/pilot_003_zscore_meanrev.py + tr_name:scripts/backtest/translated/pilot_003_zscore_meanrev.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-041
+  name_zh: "C4 翻译 041: BIAS_QL 乖离率金叉死叉"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-041→scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py + tr_name:scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-042
+  name_zh: "C4 翻译 042: MA 死叉+MACD 临界+高开 1 日轮换"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-042→scripts/backtest/translated/c4_4440d07f973f_ultrashort.py + tr_name:scripts/backtest/translated/c4_4440d07f973f_ultrashort.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-043
+  name_zh: "C4 翻译 043: GFTD 指标择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-043→scripts/backtest/translated/c4_b37f550ba2af_gftd.py + tr_name:scripts/backtest/translated/c4_b37f550ba2af_gftd.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-044
+  name_zh: "C4 翻译 044: MACD 单因子多头——金叉日轮换"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-044→scripts/backtest/translated/c4_99873fd0bc17_macd_single.py + tr_name:scripts/backtest/translated/c4_99873fd0bc17_macd_single.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-045
+  name_zh: "C4 翻译 045: 蓝筹&均线——MA5>MA20 多头持有前 5"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-045→scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py + tr_name:scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-046
+  name_zh: "C4 翻译 046: 5 股固定池 zscore 均值回归"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-046→scripts/backtest/translated/c4_9c0424f53fe4_zscore_meanrev5.py + tr_name:scripts/backtest/translated/c4_9c0424f53fe4_zscore_meanrev5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-047
+  name_zh: "C4 翻译 047: KD 指标金叉死叉择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-047→scripts/backtest/translated/c4_e2e7f033d97c_kd_cross.py + tr_name:scripts/backtest/translated/c4_e2e7f033d97c_kd_cross.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-048
+  name_zh: "C4 翻译 048: 布林带突破（talib BBANDS）"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-048→scripts/backtest/translated/c4_c30a620e114d_boll_break.py + tr_name:scripts/backtest/translated/c4_c30a620e114d_boll_break.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-049
+  name_zh: "C4 翻译 049: 布林带1（手写 numpy 版）"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-049→scripts/backtest/translated/c4_c21459b71a42_boll_np.py + tr_name:scripts/backtest/translated/c4_c21459b71a42_boll_np.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-050
+  name_zh: "C4 翻译 050: 高于 MA10 买入低于 MA20 卖出"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-050→scripts/backtest/translated/c4_c7a8ddbab748_ma10_ma5.py + tr_name:scripts/backtest/translated/c4_c7a8ddbab748_ma10_ma5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-051
+  name_zh: "C4 翻译 051: 5 日线穿十日线"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-051→scripts/backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py + tr_name:scripts/backtest/translated/c4_e40a0a1bcda8_ma5_ma10.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-052
+  name_zh: "C4 翻译 052: 多均线择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-052→scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py + tr_name:scripts/backtest/translated/c4_2e4d39a3f50b_multi_ma.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-053
+  name_zh: "C4 翻译 053: MACD 大盘择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-053→scripts/backtest/translated/c4_f284270f0ef0_macd_timing.py + tr_name:scripts/backtest/translated/c4_f284270f0ef0_macd_timing.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-054
+  name_zh: "C4 翻译 054: DMI 大盘择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-054→scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py + tr_name:scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-055
+  name_zh: "C4 翻译 055: Stoch(KDJ) 大盘择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-055→scripts/backtest/translated/c4_6485e4cd0844_kdj_timing.py + tr_name:scripts/backtest/translated/c4_6485e4cd0844_kdj_timing.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-056
+  name_zh: "C4 翻译 056: RSRS 大盘择时（标准版）"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-056→scripts/backtest/translated/c4_5efe26d1992e_rsrs_timing.py + tr_name:scripts/backtest/translated/c4_5efe26d1992e_rsrs_timing.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-057
+  name_zh: "C4 翻译 057: RSRS 大盘择时（R² 加权 M=1100）"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-057→scripts/backtest/translated/c4_eaddc3f9db4e_rsrs_r2.py + tr_name:scripts/backtest/translated/c4_eaddc3f9db4e_rsrs_r2.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-058
+  name_zh: "C4 翻译 058: RSRS 大盘择时优化"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-058→scripts/backtest/translated/c4_d06cab686cef_rsrs_opt.py + tr_name:scripts/backtest/translated/c4_d06cab686cef_rsrs_opt.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-059
+  name_zh: "C4 翻译 059: RSRS 指标择时（60 分钟线版）"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-059→scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py + tr_name:scripts/backtest/translated/c4_12286499cb19_rsrs_60m.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-060
+  name_zh: "C4 翻译 060: 双股价差 zscore 轮动"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-060→scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py + tr_name:scripts/backtest/translated/c4_06d4cf3d7dcc_pairs_zscore.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-061
+  name_zh: "C4 翻译 061: 趋势交易 5.0"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-061→scripts/backtest/translated/c4_a4543012b464_trend5.py + tr_name:scripts/backtest/translated/c4_a4543012b464_trend5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-062
+  name_zh: "C4 翻译 062: 回踩均线搏反弹"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-062→scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py + tr_name:scripts/backtest/translated/c4_1970782c2adb_ma_pullback.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-063
+  name_zh: "C4 翻译 063: MACD 多周期共振"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-063→scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py + tr_name:scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-064
+  name_zh: "C4 翻译 064: \"动量\"策略实为低动量反转"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-064→scripts/backtest/translated/c4_6a6ec8869ddb_momentum62.py + tr_name:scripts/backtest/translated/c4_6a6ec8869ddb_momentum62.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-065
+  name_zh: "C4 翻译 065: MA 死叉+MACD 临界+低开变体"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-065→scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py + tr_name:scripts/backtest/translated/c4_2b351fd05d5f_ultrashort_lowopen.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-066
+  name_zh: "C4 翻译 066: 苦咖啡——120 日强趋势周频双持"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-066→scripts/backtest/translated/c4_9c0136ec8f42_kucoffee_trend.py + tr_name:scripts/backtest/translated/c4_9c0136ec8f42_kucoffee_trend.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-067
+  name_zh: "C4 翻译 067: 躲大跌股债切换"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-067→scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py + tr_name:scripts/backtest/translated/c4_29eb91dbaf60_crash_dodge.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-068
+  name_zh: "C4 翻译 068: 恐慌反弹持有 19 日"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-068→scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py + tr_name:scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-069
+  name_zh: "C4 翻译 069: 反转效应月频 25 只"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-069→scripts/backtest/translated/c4_6cb29d4d9ba8_mom_rev_300.py + tr_name:scripts/backtest/translated/c4_6cb29d4d9ba8_mom_rev_300.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-070
+  name_zh: "C4 翻译 070: 趋与势量化定义——势分分位带择时"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-070→scripts/backtest/translated/c4_c4ec6332c07f_trend_score.py + tr_name:scripts/backtest/translated/c4_c4ec6332c07f_trend_score.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-071
+  name_zh: "C4 翻译 071: WorldQuant Alpha#22 月频前 5"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-071→scripts/backtest/translated/c4_091fee38cd01_alpha022.py + tr_name:scripts/backtest/translated/c4_091fee38cd01_alpha022.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-072
+  name_zh: "C4 翻译 072: 多期限均线因子 OLS 预测选股"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-072→scripts/backtest/translated/c4_93aa8f5a2bdd_multi_period.py + tr_name:scripts/backtest/translated/c4_93aa8f5a2bdd_multi_period.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-073
+  name_zh: "C4 翻译 073: 欧奈尔 RPS 相对强度选股"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-073→scripts/backtest/translated/c4_fdbc279fba99_rps_oinl.py + tr_name:scripts/backtest/translated/c4_fdbc279fba99_rps_oinl.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-074
+  name_zh: "C4 翻译 074: CGO 处置效应因子"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-074→scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py + tr_name:scripts/backtest/translated/c4_14d3e787ea4b_cgo_factor.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-075
+  name_zh: "C4 翻译 075: 沪深300ETF 10/60 双均线"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-075→scripts/backtest/translated/c4_ea8b60272c03_300etf_1060.py + tr_name:scripts/backtest/translated/c4_ea8b60272c03_300etf_1060.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-076
+  name_zh: C4 快筛批测入口
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-076→scripts/backtest/c4_batch_screen.py + tr_name:scripts/backtest/c4_batch_screen.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-077
+  name_zh: C4 批测冒烟守卫
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-077→tests/backtest/test_c4_batch_smoke.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-079
+  name_zh: placeholder 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-079→tests/backtest/test_strategy_screen_query.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-080
+  name_zh: 策略工厂图结构校验器（FACTORY-MAP 本图守卫）
+  verdict: 3
+  stage: MAP
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-080→scripts/governance/d5_architecture/validators/validate_strategy_production_map.py + tr_name:scripts/governance/d5_architecture/validators/validate_strategy_production_map.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-081
+  name_zh: 本图对抗测试件
+  verdict: 3
+  stage: MAP
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-081→tests/backtest/test_strategy_production_map_adversarial.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-082
+  name_zh: 波动率目标化仓位计算器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-082→src/zephyr/pf_alloc/core/vol_target_allocator.py + tr_name:src/zephyr/pf_alloc/core/vol_target_allocator.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-083
+  name_zh: sim 表部署脚本
+  verdict: 3
+  stage: E7
+  impact: 效率
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-083→scripts/ch/apply_sim_pocket_daily_ddl.py + tr_name:scripts/ch/apply_sim_pocket_daily_ddl.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-085
+  name_zh: TDM v1.3 元数据回填器——图7 域工具，与本图无关
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-085→scripts/governance/upgrade_tdm_v13_metadata.py + tr_name:scripts/governance/upgrade_tdm_v13_metadata.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-087
+  name_zh: 祖鲁六条选股——策略产品非机制（不挂产品挂机器）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-087→scripts/backtest/translated/c4_311220235636_zulu_value.py + tr_name:scripts/backtest/translated/c4_311220235636_zulu_value.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-088
+  name_zh: 精选价值十强
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-088→scripts/backtest/translated/c4_68cc0a6b40ba_value_select.py + tr_name:scripts/backtest/translated/c4_68cc0a6b40ba_value_select.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-089
+  name_zh: 车道E分布预测增强件
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-089→scripts/backtest/lane_e_enhanced.py + tr_name:scripts/backtest/lane_e_enhanced.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-092
+  name_zh: 恐慌反弹策略深度化
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-092→scripts/backtest/panic_rebound_depth.py + tr_name:scripts/backtest/panic_rebound_depth.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-093
+  name_zh: TSmall100 微盘三正——sim 联赛参赛产品非机制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-093→scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py + tr_name:scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-094
+  name_zh: 模拟盘治理建议生成器
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-094→scripts/backtest/sim_governance.py + tr_name:scripts/backtest/sim_governance.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-095
+  name_zh: 持仓 95 只大容量小市值——联赛参赛产品非机制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-095→scripts/backtest/translated/c4_65ae80c577c9_small_cap95.py + tr_name:scripts/backtest/translated/c4_65ae80c577c9_small_cap95.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-096
+  name_zh: _valuation_engine
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-096→scripts/backtest/translated/_valuation_engine.py + tr_name:scripts/backtest/translated/_valuation_engine.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-097
+  name_zh: placeholder/decision 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-097→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-098
+  name_zh: placeholder 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-098→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-099
+  name_zh: placeholder 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-099→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-100
+  name_zh: placeholder/decision 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-100→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-101
+  name_zh: placeholder/decision 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-101→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-102
+  name_zh: C4 翻译
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-102→scripts/backtest/translated/c4_bd42540f86e4_pe_pb.py + tr_name:scripts/backtest/translated/c4_bd42540f86e4_pe_pb.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-103
+  name_zh: Slater价值精选
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-103→scripts/backtest/translated/c4_311220235636_slater_value.py + tr_name:scripts/backtest/translated/c4_311220235636_slater_value.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-104
+  name_zh: Slater精选35
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-104→scripts/backtest/translated/c4_68cc0a6b40ba_value_select35.py + tr_name:scripts/backtest/translated/c4_68cc0a6b40ba_value_select35.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-105
+  name_zh: Slater价值55改进版
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-105→scripts/backtest/translated/c4_40ca0da1a3ca_value55.py + tr_name:scripts/backtest/translated/c4_40ca0da1a3ca_value55.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-130
+  name_zh: 小市值高低波动选股
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-130→scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py + tr_name:scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-133
+  name_zh: 编号面考古未达（module_id 声明孤立）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-133→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-140
+  name_zh: 编号面考古未达（module_id 声明孤立）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-140→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-152
+  name_zh: 预审判定台账表结构
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-152→schemas/categories/backtest/backtest_hypothesis_precheck.py + tr_name:schemas/categories/backtest/backtest_hypothesis_precheck.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-153
+  name_zh: 预审台账建表工具
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-153→scripts/ch/apply_hypothesis_precheck_ddl.py + tr_name:scripts/ch/apply_hypothesis_precheck_ddl.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-156
+  name_zh: 蛇皮走位小市值
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-156→scripts/backtest/translated/c4_8664521af1a0_snake_cap.py + tr_name:scripts/backtest/translated/c4_8664521af1a0_snake_cap.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-157
+  name_zh: 便宜股PB破净高股息
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-157→scripts/backtest/translated/c4_e8017cc1adc5_cheap_stock.py + tr_name:scripts/backtest/translated/c4_e8017cc1adc5_cheap_stock.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-158
+  name_zh: 智能体挖矿二轨
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-158→scripts/backtest/lane_c2_agentic_miner.py + tr_name:scripts/backtest/lane_c2_agentic_miner.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-159
+  name_zh: 公式轨考卷桥
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-159→scripts/backtest/factor_strategy_template.py + tr_name:scripts/backtest/factor_strategy_template.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-160
+  name_zh: 低PE月频前20等权（HS300）
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-160→scripts/backtest/translated/c4_valuation_pe_low.py + tr_name:scripts/backtest/translated/c4_valuation_pe_low.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-161
+  name_zh: 低PB月频前20等权
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-161→scripts/backtest/translated/c4_valuation_pb_low.py + tr_name:scripts/backtest/translated/c4_valuation_pb_low.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-162
+  name_zh: 高股息率月频前20等权
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-162→scripts/backtest/translated/c4_valuation_div_high.py + tr_name:scripts/backtest/translated/c4_valuation_div_high.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-163
+  name_zh: PE+PB复合排名双因子
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-163→scripts/backtest/translated/c4_valuation_pe_pb_double.py + tr_name:scripts/backtest/translated/c4_valuation_pe_pb_double.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-164
+  name_zh: 中证500低PE月频前20等权
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-164→scripts/backtest/translated/c4_valuation_pe_zz500.py + tr_name:scripts/backtest/translated/c4_valuation_pe_zz500.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-165
+  name_zh: 漂亮 50 复现·高股息率旬频前 10 等权
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-165→scripts/backtest/translated/c4_valuation_v2_pretty50_div.py + tr_name:scripts/backtest/translated/c4_valuation_v2_pretty50_div.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-166
+  name_zh: 原文口径
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-166→scripts/backtest/translated/c4_valuation_v2_pb_lowturn.py + tr_name:scripts/backtest/translated/c4_valuation_v2_pb_lowturn.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-167
+  name_zh: 向导式价值分析
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-167→scripts/backtest/translated/c4_valuation_v2_wiz_value1.py + tr_name:scripts/backtest/translated/c4_valuation_v2_wiz_value1.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-168
+  name_zh: 中信证券向导·低 PB 月频前 20 等权
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-168→scripts/backtest/translated/c4_valuation_v2_wiz_citics.py + tr_name:scripts/backtest/translated/c4_valuation_v2_wiz_citics.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-169
+  name_zh: 超稳股息率+均线·高股息率月频前 5 等权
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-169→scripts/backtest/translated/c4_valuation_v2_div_steady5.py + tr_name:scripts/backtest/translated/c4_valuation_v2_div_steady5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-170
+  name_zh: 高股息率
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-170→scripts/backtest/translated/c4_valuation_v2_div_nopeg.py + tr_name:scripts/backtest/translated/c4_valuation_v2_div_nopeg.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-171
+  name_zh: 自动挂图器
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-171→scripts/backtest/auto_mount.py + tr_name:scripts/backtest/auto_mount.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-172
+  name_zh: 价值投资策略
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-172→scripts/backtest/translated/c4_backlog2_mktcap5.py + tr_name:scripts/backtest/translated/c4_backlog2_mktcap5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-173
+  name_zh: "向导式·成长四门+PB>2 月频市值前 20"
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-173→scripts/backtest/translated/c4_backlog3_wiz63_growth_pb2.py + tr_name:scripts/backtest/translated/c4_backlog3_wiz63_growth_pb2.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-174
+  name_zh: 向导式成长股精选·五门市值前 20
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-174→scripts/backtest/translated/c4_backlog3_wiz61_growth_quality.py + tr_name:scripts/backtest/translated/c4_backlog3_wiz61_growth_quality.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-175
+  name_zh: 低估值+低负债·PB 区间门市值前 20
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-175→scripts/backtest/translated/c4_backlog3_pb_range_lowdebt.py + tr_name:scripts/backtest/translated/c4_backlog3_pb_range_lowdebt.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-176
+  name_zh: ROE 改善+低 PB·前 10
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-176→scripts/backtest/translated/c4_backlog3_roe_up_pb_low.py + tr_name:scripts/backtest/translated/c4_backlog3_roe_up_pb_low.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-177
+  name_zh: PEG+EBIT+小市值·前 5
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-177→scripts/backtest/translated/c4_backlog3_peg_ebit_tiny.py + tr_name:scripts/backtest/translated/c4_backlog3_peg_ebit_tiny.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-178
+  name_zh: PEG+成长+小市值·前 4
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-178→scripts/backtest/translated/c4_backlog3_peg_growth_tiny.py + tr_name:scripts/backtest/translated/c4_backlog3_peg_growth_tiny.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-179
+  name_zh: PEG+EBIT 小市值优化·前 5
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-179→scripts/backtest/translated/c4_backlog3_peg_ebit_tiny2.py + tr_name:scripts/backtest/translated/c4_backlog3_peg_ebit_tiny2.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-180
+  name_zh: 业绩增长+PEG·前 4
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-180→scripts/backtest/translated/c4_backlog3_growth_peg4.py + tr_name:scripts/backtest/translated/c4_backlog3_growth_peg4.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-181
+  name_zh: 大市值价值投资·破净高 ROA 前 5
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-181→scripts/backtest/translated/c4_backlog3_value_roa5.py + tr_name:scripts/backtest/translated/c4_backlog3_value_roa5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-182
+  name_zh: 大市值价值投资优化·破净高 ROA 前 5
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-182→scripts/backtest/translated/c4_backlog3_value_roa5_v2.py + tr_name:scripts/backtest/translated/c4_backlog3_value_roa5_v2.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-183
+  name_zh: 菜场大妈·高股息高 ROE 前 5
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-183→scripts/backtest/translated/c4_backlog3_div_roe5.py + tr_name:scripts/backtest/translated/c4_backlog3_div_roe5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-184
+  name_zh: 穿越牛熊价值精选·麦克连六门近似
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-184→scripts/backtest/translated/c4_backlog3_mclean_screen.py + tr_name:scripts/backtest/translated/c4_backlog3_mclean_screen.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-185
+  name_zh: 柯林·麦克连成长价值·营收增长门近似
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-185→scripts/backtest/translated/c4_backlog3_mclean_rev_accel.py + tr_name:scripts/backtest/translated/c4_backlog3_mclean_rev_accel.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-186
+  name_zh: 新手价值五门·月频市值前 20
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-186→scripts/backtest/translated/c4_backlog3_novice_value5.py + tr_name:scripts/backtest/translated/c4_backlog3_novice_value5.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-187
+  name_zh: 假发现率门（BH-FDR，全图三铁律②执法件）
+  verdict: 1
+  stage: E2
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-187→src/zephyr/strategy_pipeline/bh_fdr.py + tr_name:src/zephyr/strategy_pipeline/bh_fdr.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-188
+  name_zh: 策略生命周期状态机
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-188→src/zephyr/strategy_pipeline/lifecycle_fsm.py + tr_name:src/zephyr/strategy_pipeline/lifecycle_fsm.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-189
+  name_zh: 自动入库编排器
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-189→src/zephyr/strategy_pipeline/intake.py + tr_name:src/zephyr/strategy_pipeline/intake.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-190
+  name_zh: 管线事件持久化与消费编排
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-190→src/zephyr/strategy_pipeline/pipeline_events.py + tr_name:src/zephyr/strategy_pipeline/pipeline_events.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-191
+  name_zh: 台账数据源（及格集/p 值/相关矩阵）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-191→src/zephyr/strategy_pipeline/screen_source.py + tr_name:src/zephyr/strategy_pipeline/screen_source.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-192
+  name_zh: 策略注册表条目追加写入器
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-192→src/zephyr/strategy_pipeline/registry_writer.py + tr_name:src/zephyr/strategy_pipeline/registry_writer.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-193
+  name_zh: 图谱增补暂存器（绝不写 ig_fact 正图）
+  verdict: 1
+  stage: E1D
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-193→scripts/backtest/graph_enrich_staging.py + tr_name:scripts/backtest/graph_enrich_staging.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-194
+  name_zh: 分布预测双标准考尺（PIT+锐度+pinball）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-194→scripts/backtest/distribution_forecast_eval.py + tr_name:scripts/backtest/distribution_forecast_eval.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-195
+  name_zh: Kronos 基线适配器
+  verdict: 1
+  stage: E1E
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-195→scripts/backtest/kronos_adapter.py + tr_name:scripts/backtest/kronos_adapter.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-196
+  name_zh: STR 翻译件面板适配器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-196→src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py + tr_name:src/zephyr/pf_core/strategy_engine/translated_strategy_adapter.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-197
+  name_zh: 网格结构知识方差分解
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-197→scripts/backtest/factory_grid_anova.py + tr_name:scripts/backtest/factory_grid_anova.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-198
+  name_zh: 整装回测自动触发件
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-198→src/zephyr/strategy_pipeline/fw_backtest.py + tr_name:src/zephyr/strategy_pipeline/fw_backtest.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-199
+  name_zh: 转正建议包
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-199→src/zephyr/strategy_pipeline/promotion_advisory.py + tr_name:src/zephyr/strategy_pipeline/promotion_advisory.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-200
+  name_zh: N 试次账本（FDR 预算证据位，病历册）
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-200→src/zephyr/backtest/core/n_trial_ledger.py + tr_name:src/zephyr/backtest/core/n_trial_ledger.py"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-201
+  name_zh: E7 前哨对账器（名实冲突见报告：battle 表作 Closed Book Gate）
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-201→scripts/backtest/forward_post.py + tr_name:scripts/backtest/forward_post.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-202
+  name_zh: MCTS 第三轨搜索
+  verdict: 1
+  stage: E1C
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-202→scripts/backtest/mcts_expression_search.py + tr_name:scripts/backtest/mcts_expression_search.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-203
+  name_zh: 图谱入图器（入图需 Owner 审核另批）
+  verdict: 1
+  stage: E1D
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-203→scripts/backtest/graph_enrich_ingest.py + tr_name:scripts/backtest/graph_enrich_ingest.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-204
+  name_zh: Kronos 微调 pkl 适配层
+  verdict: 1
+  stage: E1E
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-204→scripts/backtest/kronos_finetune_pkl_prep.py + tr_name:scripts/backtest/kronos_finetune_pkl_prep.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-210
+  name_zh: placeholder 行（design/planned 无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-210→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-211
+  name_zh: F06 幸存者 WFA 正考（F 车道考卷）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-211→scripts/backtest/f06_e4_wfa_exam.py + tr_name:scripts/backtest/f06_e4_wfa_exam.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-212
+  name_zh: 日度决策快照表（decision_daily DDL+schema）
+  verdict: 3
+  stage: E6
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-212→schemas/categories/decision_daily.py + tr_name:schemas/categories/decision_daily.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-213
+  name_zh: 分层参与门快照采集器
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-213→src/zephyr/strategy_pipeline/daily_gate_snapshot.py + tr_name:src/zephyr/strategy_pipeline/daily_gate_snapshot.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-214
+  name_zh: 日度编排器
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-214→src/zephyr/strategy_pipeline/daily_decision_orchestrator.py + tr_name:src/zephyr/strategy_pipeline/daily_decision_orchestrator.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-215
+  name_zh: E2 收益归因（sim_attribution_report，residual 战役）
+  verdict: 1
+  stage: E9
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-215→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-218
+  name_zh: EXP 六因子 IC 出证编排
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-218→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-219
+  name_zh: 编号面考古未达（capability 引用孤立）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-219→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-222
+  name_zh: 模拟盘日链接电执行体（sim_daily_runner 桥执行腿）
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-222→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-223
+  name_zh: 模拟盘判定台账表结构（病历册）
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-223→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-224
+  name_zh: F26 E7 前哨销账工作项——已落地销账，非机制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-224→未登记"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-BT-226
+  name_zh: 批次窗口预检（Batch Window Preflight）
+  verdict: 1
+  stage: E0
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-226→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-228
+  name_zh: P0-6 试验台账批末记账红证（病历页）
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-228→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-BT-231
+  name_zh: 进货台账对账核验器（病历对账）
+  verdict: 3
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-231→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-232
+  name_zh: 转正建议晨报摘要渲染器（Morning Digest）
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-232→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-233
+  name_zh: GPU Core（回测 GPU 薄核）
+  verdict: 1
+  stage: E0
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-233→未登记"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-BT-234
+  name_zh: placeholder 行（无实体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "own_map:docs/03_modules/path_ownership_map.yaml MOD-BT-234→未登记"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-016
+  name_zh: Shared+Core 跨层共享基建（280 py）
+  verdict: 3
+  stage: ""
+  impact: "速度|效率"
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/shared_core/blueprint.md + code:src/zephyr/shared/"
+  confidence: low
+  currently_visible: 否
+- module_id: SH-DB-001
+  name_zh: 数据库集成蓝图（SQLite治理+PG架构）
+  verdict: 3
+  stage: E4
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/database/blueprint.md + code:src/zephyr/governance/persistence/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-LLM_SECURITY
+  name_zh: LLM Security Gateway（LSG）——E1B/E2/E1G/翻译全部 LLM 调用必经
+  verdict: 3
+  stage: ""
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/large_language_model_security/blueprint.md + code:src/zephyr/security/llm_defense/llm_security/"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-INF-034
+  name_zh: 模型画像器——LLM 路由推荐（E1B/E3 生成件选型间接）
+  verdict: 3
+  stage: ""
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/model_profiler/blueprint.md + code:src/zephyr/intelligence/model_profiling/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
+  name_zh: 资源优化引擎——GPU 监控/进程池化/自愈
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md + code:src/zephyr/trading/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-035
+  name_zh: 系统大脑三层运行时——节律调度与工厂夜批同机竞争算力
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md + code:src/zephyr/trading/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-RESCHED-GATE
+  name_zh: 排班冲突检测闸（互斥组/内存天花板/E0 三查）
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/resource_schedule_gate/blueprint.md + code:src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-RESCHED-PROFILE
+  name_zh: 资源画像注册表+生成器（排班真源）
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/resource_profile_registry/blueprint.md + code:scripts/governance/generators/generate_resource_profile_registry.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-RESCHED-SAMPLER
+  name_zh: 资源实测采样器
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/resource_sampler/blueprint.md + code:src/zephyr/infrastructure/system_telemetry/resource_sampler.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-RESCHED-ALERT
+  name_zh: 排班冲突告警桥
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/resource_schedule_alerts/blueprint.md + code:src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-GATE_ENGINE
+  name_zh: G0-G7 任务门禁——提交期治理门，工厂运行时零消费（预扫候选经验证降级）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/gate_engine/blueprint.md + code:src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ + src/zephyr/gov_enforcement/commit_gates/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-030
+  name_zh: 红蓝对抗验证器——治理验证域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/red_blue_validator/blueprint.md + code:src/zephyr/security/adversarial_validation/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-CLONE_GUARD
+  name_zh: 克隆防御——代码治理域，与策略生产无关
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/clone_guard/blueprint.md + code:src/zephyr/clone_guard/"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-INF-009
+  name_zh: M1-M11 AI 施工管线——治理流
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/pipeline/blueprint.md + code:src/zephyr/integration/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-039
+  name_zh: Agent 编排——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md + code:src/zephyr/orchestrator/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-027
+  name_zh: 审计编排——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md + code:src/zephyr/governance/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-031
+  name_zh: 自动修复引擎——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md + code:src/zephyr/infrastructure/auto_fix_engine/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-033
+  name_zh: 行为审计——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md + code:src/zephyr/gov_drift/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-028
+  name_zh: 语义审计——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/semantic_auditor/blueprint.md + code:src/zephyr/governance/semantic_audit/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-029
+  name_zh: 孤儿判定——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/orphan_judge/blueprint.md + code:src/zephyr/security/access_control/orphan_judge/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-036
+  name_zh: 模型能力考试——AI 运营域（非策略考试）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/model_capability_exam/blueprint.md + code:src/zephyr/infrastructure/model_capability_exam/ + src/zephyr/intelligence/model_evaluation/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-013
+  name_zh: MCP 服务管理——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md + code:src/zephyr/integration/mcp/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-PROC-INCUBATOR
+  name_zh: 进程孵化入口——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/process_incubator/blueprint.md + code:src/zephyr/shared/infra/process_incubator.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-CONTEXT_ENGINE
+  name_zh: 上下文引擎——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/context_engine/blueprint.md + code:src/zephyr/autonomy_core/context/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-CD-001
+  name_zh: 灰度发布基建——交付域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/cd_pipeline/blueprint.md + code:scripts/ops/shadow_canary_deploy.py + .github/workflows/deploy.yml"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-FEEDBACK_LOOP
+  name_zh: AI 自我改进闭环——同名陷阱：与策略衰减回灌(E6→E1)无关
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_cross_layer/feedback_loop/blueprint.md + code:src/zephyr/feedback_loop/"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-L00-001
+  name_zh: 数据接入域母册（编制表本体，非机制）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data/blueprint.md + code:src/zephyr/data/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-DATA-072
+  name_zh: 跨境双活传输层
+  verdict: 2
+  stage: E4
+  impact: 速度
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/transport/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-L00-021
+  name_zh: 调度对账补跑器
+  verdict: 2
+  stage: E4
+  impact: 速度
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/catchup_guard/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-DATA-069
+  name_zh: 轻量 Instrument Master（15字段标的集）
+  verdict: 2
+  stage: E4
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/instrument_master/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_data/auto_backfiller"
+  name_zh: 自动补数器
+  verdict: 2
+  stage: E4
+  impact: 速度
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/auto_backfiller/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/source_sla_tracker"
+  name_zh: 数据源 SLA 追踪器（供数时效设施）
+  verdict: 3
+  stage: E4
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data/source_sla_tracker/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_data/market_breadth_collector"
+  name_zh: 市场宽度采集
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/market_breadth_collector/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/sector_intraday_aggregator"
+  name_zh: 板块盘中聚合
+  verdict: 2
+  stage: E1D
+  impact: 效率
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/sector_intraday_aggregator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/sector_report_builder"
+  name_zh: 板块报告构建
+  verdict: 2
+  stage: E1D
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/sector_report_builder/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/multi_timeframe_fusion"
+  name_zh: 多周期融合
+  verdict: 2
+  stage: E4
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/multi_timeframe_fusion/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/reference_data_manager"
+  name_zh: 参考数据管理
+  verdict: 2
+  stage: E4
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/reference_data_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/tushare_news_connector"
+  name_zh: 新闻连接器（E1D 图谱增补/E1G 原料）
+  verdict: 2
+  stage: E1G
+  impact: 效率
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/tushare_news_connector/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/intraday_sentiment_loop"
+  name_zh: 盘中舆情环——盘中=TDM 做T 线，日频工厂不消费
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data/intraday_sentiment_loop/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_data/financial_parser"
+  name_zh: 财报解析（E1D 三高财务支柱原料）
+  verdict: 2
+  stage: E1D
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_data/financial_parser/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data/data_compression_archiver"
+  name_zh: 数据压缩归档（存储面）
+  verdict: 3
+  stage: ""
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data/data_compression_archiver/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-MKT-001
+  name_zh: 行情源注册表
+  verdict: 2
+  stage: E4
+  impact: "速度|质量"
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/vendor_registry/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-MKT-002
+  name_zh: 行情源抽象基类
+  verdict: 2
+  stage: E4
+  impact: "速度|质量"
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/vendor_base/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-MKT-003
+  name_zh: 行情连接器
+  verdict: 2
+  stage: E4
+  impact: "速度|质量"
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/connectors/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-MKT-004
+  name_zh: 多源主备切换（供数连续性）
+  verdict: 2
+  stage: E4
+  impact: 速度
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/failover/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-MKT-005
+  name_zh: 行情源自动加载
+  verdict: 2
+  stage: E4
+  impact: 效率
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/autoload/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-MKT-006
+  name_zh: 行情原始数据缓存（回测速度因子）
+  verdict: 2
+  stage: E4
+  impact: 速度
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/raw_data_cache/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-MKT-007
+  name_zh: 集合竞价数据（拍卖强度假说原料）
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_mkt_data/auction_data_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/database_layer"
+  name_zh: 数据库层（CH=回测主考卷存储，速度因子）
+  verdict: 3
+  stage: E4
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/database_layer/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-063
+  name_zh: Redis 共享状态层
+  verdict: 3
+  stage: ""
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/redis_state_layer_ssot/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/resource_scheduler"
+  name_zh: 资源调度器
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/resource_scheduler/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-066
+  name_zh: NSSM+5 进程架构与 Supervisor（工厂夜批宿主）
+  verdict: 3
+  stage: E0
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/process_supervisor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-065
+  name_zh: Tick<10ms 热平面——图9 boundary 明排高频/做市
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/hot_plane/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/warm_plane"
+  name_zh: 温平面——执行域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/warm_plane/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-064
+  name_zh: P3 交易核心进程规格——执行域编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/trading_core_process/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/signal_engine_process"
+  name_zh: 信号引擎进程——TDM 执行编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/signal_engine_process/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/ml_pipeline_process"
+  name_zh: ML 管线进程——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/ml_pipeline_process/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-TASK_SYSTEM
+  name_zh: 任务卡系统——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md + code:src/zephyr/governance/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-038
+  name_zh: 通用状态机引擎——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md + code:src/zephyr/shared/lifecycle/state_machine.py"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-002
+  name_zh: RI 运行时集成——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md + code:src/zephyr/shared/ + src/zephyr/infrastructure/ + src/zephyr/governance/lifecycle_governance/"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/latency_budget_allocator"
+  name_zh: 延迟预算分配——高频域（boundary 排除）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/latency_budget_allocator/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/shared_memory_zero_copy"
+  name_zh: 共享内存零拷贝——高频域（boundary 排除）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/shared_memory_zero_copy/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/ha_sla_framework"
+  name_zh: HA/SLA 框架——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/ha_sla_framework/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_runtime/cold_plane_isolation"
+  name_zh: 冷平面隔离——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_runtime/cold_plane_isolation/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-001
+  name_zh: SLI/SLO+Token Budget——算力容量守护
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md + code:src/zephyr/infrastructure/capacity_assurance/"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-069
+  name_zh: GPU 上岗热交换模型（两档显存画像）
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/gpu_hot_swap_model/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-045
+  name_zh: 嵌入/模型下载器——LLM 供给（E1B/E2 生成力）
+  verdict: 3
+  stage: E1B
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/model_downloader/blueprint.md + code:scripts/ops/download_models.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/strategy_canary_release"
+  name_zh: 策略灰度发布（Shadow Canary——E7→E8 上新安全阀）
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/strategy_canary_release/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-INF-015
+  name_zh: 全系统遥测
+  verdict: 3
+  stage: ""
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md + code:src/zephyr/infrastructure/system_telemetry/"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/strategic_message_bus"
+  name_zh: 战略消息总线
+  verdict: 3
+  stage: ""
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/strategic_message_bus/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-OPS-ALERT-FEED
+  name_zh: 运营告警供给线
+  verdict: 3
+  stage: ""
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/ops_alert_feed/blueprint.md + code:src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/wal_checkpoint_monitor"
+  name_zh: WAL checkpoint 监控（入库写放大守护）
+  verdict: 3
+  stage: E4
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/wal_checkpoint_monitor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-026
+  name_zh: 资产盘点——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md + code:src/zephyr/infrastructure/asset_inventory/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-025
+  name_zh: A2A 协议——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md + code:src/zephyr/infrastructure/a2a_protocol/"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure/incident_responder"
+  name_zh: 事件响应——运维域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure/incident_responder/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure/ops_incident_aggregate"
+  name_zh: 事件聚合——运维域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure/ops_incident_aggregate/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure/asset_inventory"
+  name_zh: 资产盘点（infrastructure 侧）——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure/asset_inventory/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/cascade_failure_simulator"
+  name_zh: 级联失效仿真——运维域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/cascade_failure_simulator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/config_center"
+  name_zh: 配置中心——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/config_center/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/latency_attributor"
+  name_zh: 延迟归因——高频域（boundary 排除）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/latency_attributor/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/loki_log_pipeline"
+  name_zh: 日志管线——运维域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/loki_log_pipeline/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/observability_triad"
+  name_zh: 可观测三件套——运维域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/observability_triad/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/reproducibility_packager"
+  name_zh: 复现打包——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/reproducibility_packager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/runtime_topology_visualizer"
+  name_zh: 拓扑可视化——旁观资产
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/runtime_topology_visualizer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/storage_cost_calculator"
+  name_zh: 存储成本计算——旁观资产
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/storage_cost_calculator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INF-043
+  name_zh: 灾备备份——全系统旁观基建
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md + code:scripts/backup/"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_infrastructure_operations/agent_call_tracer"
+  name_zh: Agent 调用追踪——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_infrastructure_operations/agent_call_tracer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_ml_serve/codegen_model_adapter"
+  name_zh: 代码生成模型适配器——E3 翻译/车道B/C2 生成力
+  verdict: 2
+  stage: E3
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_ml_serve/codegen_model_adapter/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_ml_serve/deep_review_model_adapter"
+  name_zh: 深审模型适配器——E2 预审复核力
+  verdict: 2
+  stage: E2
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_ml_serve/deep_review_model_adapter/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_ml_serve/model_drift_monitor"
+  name_zh: 模型漂移监控（Kronos 等基线模型衰减位）
+  verdict: 3
+  stage: E6
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_ml_serve/model_drift_monitor/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_ml_serve/model_compression_accelerator"
+  name_zh: 模型压缩加速——平台域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_ml_serve/model_compression_accelerator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-L11-001
+  name_zh: ML 平台域母册（编制表本体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/blueprint.md + code:src/zephyr/ml_train/"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/ml_model_factory"
+  name_zh: ML 模型工厂——车道E 模型基线生产线
+  verdict: 2
+  stage: E1E
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/ml_model_factory/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/kan_density_head"
+  name_zh: KAN 密度头——分布预测家族（车道E 深化）
+  verdict: 2
+  stage: E1E
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/kan_density_head/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/patchtst_density_encoder"
+  name_zh: PatchTST 密度编码器——分布预测家族
+  verdict: 2
+  stage: E1E
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/patchtst_density_encoder/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/qnn_two_stage"
+  name_zh: QNN 两阶段——分布预测家族候选
+  verdict: 2
+  stage: E1E
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/qnn_two_stage/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/model_version_registry"
+  name_zh: 模型版本注册表（版本台账）
+  verdict: 3
+  stage: E1E
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/model_version_registry/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/research_data_manager"
+  name_zh: 研究数据管理
+  verdict: 2
+  stage: E1
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/research_data_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/research_data_sandbox"
+  name_zh: 研究数据沙箱
+  verdict: 3
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/research_data_sandbox/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/ts_augmentation"
+  name_zh: 时序增广
+  verdict: 3
+  stage: E1E
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/ts_augmentation/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/decision_annotation_dataset"
+  name_zh: 决策标注数据集
+  verdict: 3
+  stage: E9
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/decision_annotation_dataset/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/reproducibility_manager"
+  name_zh: 复现管理器
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/reproducibility_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/research_asset_versioning"
+  name_zh: 研究资产版本化
+  verdict: 3
+  stage: ""
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/research_asset_versioning/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/continual_learning_antiforget"
+  name_zh: 持续学习防遗忘——研究雷达
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/continual_learning_antiforget/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_machine_learning_train/decision_tree_decision_architecture"
+  name_zh: 决策树架构文档——判据类内容非机制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_machine_learning_train/decision_tree_decision_architecture/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/local_llm_pool"
+  name_zh: 本地 LLM 池——E1B/E2/E1G 生成力（经 LSG）
+  verdict: 2
+  stage: E1B
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/local_llm_pool/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/api_llm_pool"
+  name_zh: API LLM 池——同上（外部档）
+  verdict: 2
+  stage: E1B
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/api_llm_pool/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/llm_agent_router"
+  name_zh: LLM 路由器
+  verdict: 3
+  stage: ""
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/llm_agent_router/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-INT-AISA
+  name_zh: AI 舆情分析器（TDM 亦引，情报原料）
+  verdict: 2
+  stage: E1G
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/news_symbol_linker"
+  name_zh: 新闻-标的关联
+  verdict: 2
+  stage: E1G
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_intelligence/news_symbol_linker/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/nightly_sentiment_window"
+  name_zh: 夜间舆情窗口
+  verdict: 2
+  stage: E1G
+  impact: 效率
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_intelligence/nightly_sentiment_window/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/llm_fundamental_analysis"
+  name_zh: LLM 基本面分析（车道D 原料）
+  verdict: 2
+  stage: E1D
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/llm_fundamental_analysis/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/llm_research_agent"
+  name_zh: LLM 研究代理
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/llm_research_agent/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/universal_fact_ledger"
+  name_zh: 全域事实台账（进货证据位，病历性设施）
+  verdict: 3
+  stage: E1G
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/universal_fact_ledger/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/event_chain_causal_graph"
+  name_zh: 事件链因果图（产业链情报）
+  verdict: 2
+  stage: E1D
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/event_chain_causal_graph/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/llm_market_interpreter"
+  name_zh: LLM 市场解读
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/llm_market_interpreter/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/llm_self_evaluation"
+  name_zh: LLM 自评——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/llm_self_evaluation/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/agent_memory_architecture"
+  name_zh: Agent 记忆架构——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/agent_memory_architecture/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/episodic_memory_store"
+  name_zh: 情景记忆库——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/episodic_memory_store/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/human_trust_model"
+  name_zh: 人的信任模型——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/human_trust_model/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_intelligence/reflexion_agent"
+  name_zh: Reflexion 反思代理——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_intelligence/reflexion_agent/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/sentiment_engine"
+  name_zh: 情绪引擎（进货原料）
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/sentiment_engine/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/alt_data_signal_extractor"
+  name_zh: 另类数据信号抽取
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/alt_data_signal_extractor/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/concept_factor_mapper"
+  name_zh: 概念-因子映射
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/concept_factor_mapper/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/research_report_collector"
+  name_zh: 研报采集（货源）
+  verdict: 2
+  stage: E1G
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/research_report_collector/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/social_sentiment_collector"
+  name_zh: 社媒情绪采集
+  verdict: 2
+  stage: E1A
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/social_sentiment_collector/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/web_scraper_engine"
+  name_zh: 网页爬取引擎（车道A 扩容底座）
+  verdict: 2
+  stage: E1A
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/web_scraper_engine/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/filing_nlp_engine"
+  name_zh: 公告 NLP 引擎
+  verdict: 2
+  stage: E1D
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/filing_nlp_engine/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/policy_expectation_analyzer"
+  name_zh: 政策预期分析
+  verdict: 2
+  stage: E1G
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/policy_expectation_analyzer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/policy_theme_mapper"
+  name_zh: 政策主题映射
+  verdict: 2
+  stage: E1D
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/policy_theme_mapper/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/geopolitical_risk_analyzer"
+  name_zh: 地缘风险分析——研究雷达观察项
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/geopolitical_risk_analyzer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/alt_data_compliance_reviewer"
+  name_zh: 另类数据合规审查——合规域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/alt_data_compliance_reviewer/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/alt_data_privacy_protector"
+  name_zh: 隐私保护——合规域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/alt_data_privacy_protector/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/alt_source_health_manager"
+  name_zh: 另类数据源健康管理
+  verdict: 3
+  stage: ""
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/alt_source_health_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/alt_data_catalog"
+  name_zh: 另类数据目录
+  verdict: 3
+  stage: ""
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/alt_data_catalog/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-SIG-137
+  name_zh: 负面否决器——候选池一票否决（E2 同构质量门）
+  verdict: 2
+  stage: E2
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_fundamental_signal/negative_veto/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-SIG-141
+  name_zh: 顺位排序置信键
+  verdict: 2
+  stage: E2
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_fundamental_signal/selection_confidence/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_fundamental_signal/pead_event_model"
+  name_zh: PEAD 事件模型——信号域=TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_fundamental_signal/pead_event_model/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_fundamental_signal/trace_context_store"
+  name_zh: 溯源上下文库（预审证据位）
+  verdict: 3
+  stage: E2
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_fundamental_signal/trace_context_store/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_signal_quality/signal_degradation_monitor"
+  name_zh: 信号降级监控（衰减族）
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_signal_quality/signal_degradation_monitor/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_signal_quality/signal_dedup"
+  name_zh: 信号去重
+  verdict: 3
+  stage: E5
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_signal_quality/signal_dedup/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_signal_quality/signal_quality_benchmark"
+  name_zh: 信号质量基准
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_signal_quality/signal_quality_benchmark/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_signal_quality/signal_explainability_guarantor"
+  name_zh: 信号可解释性保证
+  verdict: 3
+  stage: E6
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_signal_quality/signal_explainability_guarantor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-REGIME-002
+  name_zh: Regime 特征管道（E8 元分配输入）
+  verdict: 2
+  stage: E8
+  impact: 效率
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-REGIME-005
+  name_zh: 筹码分布引擎
+  verdict: 2
+  stage: E8
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/chip_distribution_engine/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-REGIME-016
+  name_zh: 大盘指数传感器
+  verdict: 2
+  stage: E8
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/index_sensor/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-REGIME-006
+  name_zh: 时间周期分析（日历效应→进货方向参考）
+  verdict: 2
+  stage: E1
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/regime_cycle_analyzer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-REGIME-011
+  name_zh: 波动率体制预警
+  verdict: 2
+  stage: E8
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/volatility_regime_alerter/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_regime/style_regime_model"
+  name_zh: 风格体制模型
+  verdict: 2
+  stage: E8
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/style_regime_model/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_regime/cross_sectional_features"
+  name_zh: 截面特征
+  verdict: 2
+  stage: E8
+  impact: 效率
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/cross_sectional_features/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_regime/market_forecast_fusion"
+  name_zh: 市场预测融合
+  verdict: 2
+  stage: E8
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_regime/market_forecast_fusion/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_regime/volatility_squeeze_breakout"
+  name_zh: 波动挤压突破——战术信号=TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_regime/volatility_squeeze_breakout/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-L13-001
+  name_zh: 实验平台域母册（编制表本体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/blueprint.md + code:src/zephyr/simulation/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-SIM-002
+  name_zh: 策略仿真器（沙箱+信号模拟）
+  verdict: 2
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/strategy_simulator/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-SIM-003
+  name_zh: 风控仿真器——risk 域编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/risk_simulator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-SIM-005
+  name_zh: 场景生成器（蒙特卡洛压测）
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/scenario_generator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-SIM-012
+  name_zh: 仿真结果分析器
+  verdict: 3
+  stage: E4
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/result_analyzer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-SIM-021
+  name_zh: 参数鲁棒性测试器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/parameter_robustness_tester/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-SIM-022
+  name_zh: 未来函数检测器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/look_ahead_bias_detector/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-SIM-023
+  name_zh: Sharpe 计算修正器（非正态+DSR）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/sharpe_calculator_fixer/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-SIM-024
+  name_zh: DSR 计算器（多重测试偏差修正）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/deflated_sharpe_calculator/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_simulation/overfitting_protection_gate"
+  name_zh: 过拟合防护门
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/overfitting_protection_gate/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_simulation/quality_assurance_selfdrive"
+  name_zh: QA 自驾——治理域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_simulation/quality_assurance_selfdrive/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-TRADING-012
+  name_zh: 日终处理器（E7 对账 NAV/PnL 确认手）
+  verdict: 2
+  stage: E7
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_trading/eod_processor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-TRADING-002
+  name_zh: 盈亏计算器（E9 归因原料手）
+  verdict: 2
+  stage: E9
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_trading/pnl_calculator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-TRADING-004
+  name_zh: 公司行动处理器（复权口径质量因子）
+  verdict: 2
+  stage: E4
+  impact: 质量
+  home_map: 图7 trading_decision_map
+  evidence: "bp:docs/03_modules/_domain_trading/corporate_action_processor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_trading/reference_data_manager"
+  name_zh: 参考数据管理（trading 域）
+  verdict: 2
+  stage: E4
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "bp:docs/03_modules/_domain_trading/reference_data_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-TRADING-003
+  name_zh: 结算对账——交易日循环图编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/settlement_reconciliation/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-TRADING-008
+  name_zh: 策略异常退出——TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/strategy_abnormal_exit/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-TRADING-011
+  name_zh: 人工指令通道——TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/manual_instruction_channel/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-TRIG-001
+  name_zh: 扳机清单注册——TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/trigger_registry/blueprint.md + code:src/zephyr/trading/trigger_registry.py"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-TRADING-015
+  name_zh: 交易决策地图加载器——图7 本体基建
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/decision_map/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-TDMVAL-001
+  name_zh: TDM 节点验证 runner——图7 本体基建
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/validation/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_trading/three_way_reconciliation"
+  name_zh: 三方对账——TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/three_way_reconciliation/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_trading/settlement_record_aggregate"
+  name_zh: 结算记录聚合——TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/settlement_record_aggregate/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_trading/trading_order_aggregate"
+  name_zh: 订单聚合——TDM 编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_trading/trading_order_aggregate/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-L02-001
+  name_zh: 因子工厂域母册（编制表本体；域本身=本图 E3/E5 近亲）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/blueprint.md + code:src/zephyr/factor/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-L02-027
+  name_zh: 因子研究案例库（成功/失败→修复病历本，data/databases/factor_casebook.db）
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/casebook/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_factor/auto_feature_discoverer"
+  name_zh: 自动特征发现器
+  verdict: 1
+  stage: E1C
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/auto_feature_discoverer/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_factor/gp_strategy_discovery"
+  name_zh: GP 策略发现
+  verdict: 1
+  stage: E1C
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/gp_strategy_discovery/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_factor/llm_evolutionary_search"
+  name_zh: LLM 进化搜索
+  verdict: 1
+  stage: E1C
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/llm_evolutionary_search/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_factor/factor_vote_mining"
+  name_zh: 因子投票挖掘
+  verdict: 1
+  stage: E1C
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/factor_vote_mining/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_factor/signature_feature_extractor"
+  name_zh: 签名特征抽取
+  verdict: 1
+  stage: E3
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/signature_feature_extractor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_factor/factor_model_co_evaluator"
+  name_zh: 因子模型共评器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/factor_model_co_evaluator/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_factor/factor_lifecycle_runner"
+  name_zh: 因子生命周期 runner
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/factor_lifecycle_runner/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_factor/strategy_iteration_upgrader"
+  name_zh: 策略迭代升级器（归因→回灌执行件）
+  verdict: 1
+  stage: E9
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_factor/strategy_iteration_upgrader/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_fbl_detectors/distribution_drift_monitor"
+  name_zh: 分布漂移监控（衰减信号源）
+  verdict: 3
+  stage: E6
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_fbl_detectors/distribution_drift_monitor/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_feedback_loop/meta_harness_optimizer"
+  name_zh: AI 元自优化——同名陷阱：与策略衰减回灌(E6→E1)无关
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_feedback_loop/meta_harness_optimizer/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_feedback_loop/module_matcher"
+  name_zh: 模块匹配器——AI 自改闭环组件
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_feedback_loop/module_matcher/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: "dir:_domain_feedback_loop/skill_library"
+  name_zh: 技能库——AI 自改闭环组件
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_feedback_loop/skill_library/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-L09-001
+  name_zh: 研究创新域母册（编制表本体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_research/blueprint.md + code:src/zephyr/backtest/\"  # ARCH-MIGRATION-CLOSE(2026-07-16): 空壳目录。实际实现已迁移至 src/zephyr/backtest/（core/engine_base.py + implementations/vectorized_engine.py），见 §0.1 与 §16.7 迁移说明"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-L05-001
+  name_zh: 组合构建域母册（编制表本体）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/blueprint.md + code:src/zephyr/pf_core/"
+  confidence: low
+  currently_visible: 否
+- module_id: MOD-PF-001
+  name_zh: 策略引擎（生命周期状态机+四维决策）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/strategy_engine/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-PF-002
+  name_zh: 组合优化器（风险预算主+均值方差备选）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/portfolio_optimizer/blueprint.md"
+  confidence: high
+  currently_visible: 否
+- module_id: MOD-PF-006
+  name_zh: 约束求解器（7 约束链+拥挤检测）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/constraint_solver/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: MOD-PF-008
+  name_zh: mSPRT 冠军挑战者序贯晋升
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/msprt_champion_challenger/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_core/rebalance_cost_analyzer"
+  name_zh: 再平衡成本收益分析
+  verdict: 3
+  stage: E8
+  impact: 效率
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/rebalance_cost_analyzer/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_core/strategy_capacity_estimator"
+  name_zh: 策略容量估计器（资金分配输入）
+  verdict: 3
+  stage: E8
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/strategy_capacity_estimator/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_core/funnel_portfolio_adjudicator"
+  name_zh: 漏斗组合裁决器
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/funnel_portfolio_adjudicator/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_core/exposure_manager"
+  name_zh: 敞口管理
+  verdict: 3
+  stage: E8
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/exposure_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_core/rl_portfolio_execution"
+  name_zh: RL 组合执行——execution 域编制
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/rl_portfolio_execution/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_core/strategy_factory"
+  name_zh: 策略装配工厂（portfolio_core 内 strategy_factory）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_core/strategy_factory/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_execution_sim/almgren_chriss_impact_model"
+  name_zh: Almgren-Chriss 冲击模型（E7 滑点/容量实测参考）
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_execution_sim/almgren_chriss_impact_model/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_orchestrator/agent_coordination_skill"
+  name_zh: Agent 协调技能——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_orchestrator/agent_coordination_skill/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_orchestrator/global_state_aggregator"
+  name_zh: 全局状态聚合——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_orchestrator/global_state_aggregator/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_orchestrator/layered_command_chain"
+  name_zh: 分层指挥链——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_orchestrator/layered_command_chain/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_orchestrator/task_orchestration_skill"
+  name_zh: 任务编排技能——AI 运营域
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_orchestrator/task_orchestration_skill/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_data_eng/cold_data_archive_manager"
+  name_zh: 冷数据归档管理
+  verdict: 3
+  stage: ""
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data_eng/cold_data_archive_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data_eng/data_anomaly_alerter"
+  name_zh: 数据异常告警
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data_eng/data_anomaly_alerter/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data_eng/data_lake_manager"
+  name_zh: 数据湖管理
+  verdict: 3
+  stage: E4
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data_eng/data_lake_manager/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data_eng/gpu_resource_manager"
+  name_zh: GPU 资源管理
+  verdict: 3
+  stage: E0
+  impact: 速度
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data_eng/gpu_resource_manager/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_data_eng/quality_sla_breach_predictor"
+  name_zh: 质量 SLA 违约预测
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data_eng/quality_sla_breach_predictor/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_data_eng/stream_processing_engine"
+  name_zh: 流处理引擎——盘中域（日频工厂不消费）
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_data_eng/stream_processing_engine/blueprint.md"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_security_llm/spectral_guard"
+  name_zh: Spectral Guard（LLM 防线组成件）
+  verdict: 3
+  stage: ""
+  impact: 质量
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_security_llm/spectral_guard/blueprint.md"
+  confidence: medium
+  currently_visible: 否
+- module_id: "dir:_domain_alt_data/alt_data_connector"
+  name_zh: alt_data_connector
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_alt_data/alt_data_connector/blueprint.md（在域面但未逐册判定——本表 v1 缺口，见报告）"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_backtest/layered_validation_pipeline"
+  name_zh: layered_validation_pipeline
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/layered_validation_pipeline/blueprint.md（在域面但未逐册判定——本表 v1 缺口，见报告）"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_backtest/strategy_cpcv_matrix"
+  name_zh: strategy_cpcv_matrix
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/strategy_cpcv_matrix/blueprint.md（在域面但未逐册判定——本表 v1 缺口，见报告）"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_alloc/regime_bma_weighting"
+  name_zh: regime_bma_weighting
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_alloc/regime_bma_weighting/blueprint.md（在域面但未逐册判定——本表 v1 缺口，见报告）"
+  confidence: low
+  currently_visible: 否
+- module_id: "dir:_domain_portfolio_alloc/strategy_screener_3d"
+  name_zh: strategy_screener_3d
+  verdict: 反面
+  stage: ""
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_portfolio_alloc/strategy_screener_3d/blueprint.md（在域面但未逐册判定——本表 v1 缺口，见报告）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/league_judge.py"
+  name_zh: A/B联赛成对晋升判据执行器
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/league_judge.py + tr_name（翻译册 name_zh）"
+  confidence: high
+  currently_visible: 否
+- module_id: "code:scripts/backtest/league_registry.py"
+  name_zh: 联赛注册表（赛马计分板）
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/league_registry.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/league_archive.py"
+  name_zh: 联赛档案打包器（病历册）
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/league_archive.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/league_monthly_snapshot.py"
+  name_zh: 联赛月度快照
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/league_monthly_snapshot.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/league_restore.py"
+  name_zh: 联赛复原器
+  verdict: 3
+  stage: E7
+  impact: 效率
+  home_map: ""
+  evidence: "code:scripts/backtest/league_restore.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:src/zephyr/pf_core/core/shadow_portfolio.py"
+  name_zh: 影子组合对照引擎（Perold 四分解）
+  verdict: 1
+  stage: E9
+  impact: ""
+  home_map: ""
+  evidence: "code:src/zephyr/pf_core/core/shadow_portfolio.py + tr_name（翻译册 name_zh）"
+  confidence: high
+  currently_visible: 否
+- module_id: "code:scripts/backtest/weight_ssot.py"
+  name_zh: 权重唯一真源与写图权柄闸
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/weight_ssot.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/sim_paper_ledger.py"
+  name_zh: 模拟盘钱包账本
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/sim_paper_ledger.py + tr_name（翻译册 name_zh）"
+  confidence: high
+  currently_visible: 否
+- module_id: "code:scripts/backtest/sim_platform_journal.py"
+  name_zh: 模拟盘平台日刊生成器（病历）
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/sim_platform_journal.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/sim_promotion_memo.py"
+  name_zh: sim 转正建议书生成器
+  verdict: 1
+  stage: E7
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/sim_promotion_memo.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/strategy_lifecycle_advisor.py"
+  name_zh: 策略 lifecycle 流转建议器
+  verdict: 1
+  stage: E6
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/strategy_lifecycle_advisor.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/sector_prereg_exam_runner.py"
+  name_zh: 板块预注册考试跑批器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/sector_prereg_exam_runner.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/reexam_cpcv_harness.py"
+  name_zh: CPCV 重考 harness
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/reexam_cpcv_harness.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/exam_cost_reexam.py"
+  name_zh: 考试成本重考件
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/exam_cost_reexam.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/dsr_recalc_backfill.py"
+  name_zh: DSR 重算回填
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/dsr_recalc_backfill.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/replay_drill.py"
+  name_zh: 复现演练器（病历/质量）
+  verdict: 3
+  stage: E4
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/replay_drill.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/crisis_drill_monthly.py"
+  name_zh: 月度危机演练件
+  verdict: 3
+  stage: E7
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/crisis_drill_monthly.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/condition_attribution.py"
+  name_zh: 条件胞归因
+  verdict: 3
+  stage: E9
+  impact: 质量
+  home_map: ""
+  evidence: "code:scripts/backtest/condition_attribution.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:scripts/backtest/factory_grid_executor.py"
+  name_zh: 网格批次执行器（F 车道）
+  verdict: 1
+  stage: E1F
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/factory_grid_executor.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:scripts/backtest/lane_f_grid_adapter.py"
+  name_zh: F 车道网格配方适配器
+  verdict: 1
+  stage: E1F
+  impact: ""
+  home_map: ""
+  evidence: "code:scripts/backtest/lane_f_grid_adapter.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:src/zephyr/pf_alloc/core/forward_stop_loss.py"
+  name_zh: 前瞻概率止损模块
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "code:src/zephyr/pf_alloc/core/forward_stop_loss.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:src/zephyr/pf_alloc/core/risk_budget_allocator.py"
+  name_zh: 前瞻风险预算分配器（PA-022 真身）
+  verdict: 1
+  stage: E8
+  impact: ""
+  home_map: ""
+  evidence: "code:src/zephyr/pf_alloc/core/risk_budget_allocator.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "code:src/zephyr/pf_alloc/core/sector_distribution_comparator.py"
+  name_zh: 板块分布比较选优
+  verdict: 3
+  stage: E8
+  impact: 质量
+  home_map: ""
+  evidence: "code:src/zephyr/pf_alloc/core/sector_distribution_comparator.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:src/zephyr/pf_alloc/core/tail_hedge_signal.py"
+  name_zh: 尾部对冲信号生成器
+  verdict: 3
+  stage: E8
+  impact: 质量
+  home_map: ""
+  evidence: "code:src/zephyr/pf_alloc/core/tail_hedge_signal.py + tr_name（翻译册 name_zh）"
+  confidence: low
+  currently_visible: 否
+- module_id: "code:src/zephyr/data/trading_calendar.py"
+  name_zh: 交易日历（E0 闸门数据源）
+  verdict: 2
+  stage: E0
+  impact: 质量
+  home_map: 图12 data_supply_chain_map
+  evidence: "code:src/zephyr/data/trading_calendar.py + tr_name（翻译册 name_zh）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:vectorized_engine"
+  name_zh: 向量化回测引擎
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/vectorized_engine.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:event_driven_engine"
+  name_zh: 事件驱动回测引擎
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/event_driven_engine.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:walk_forward"
+  name_zh: WFO 滚动前推
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:purged_kfold"
+  name_zh: Purged K-Fold（清洗K折）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/purged_kfold.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:cpcv"
+  name_zh: CPCV 组合纯合成
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/cpcv.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:matching_engine"
+  name_zh: 撮合引擎（Tick 级）
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/matching_engine.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:tick_replay"
+  name_zh: Tick 回放引擎
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/tick_replay.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:data_handler"
+  name_zh: 数据处理器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/data_handler.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:pit_manager"
+  name_zh: PIT 点时管理器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/pit_manager.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:decision_gate"
+  name_zh: 决策门控
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/decision_gate.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:exam_cost_gate"
+  name_zh: 考试成本门
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/exam_cost_gate.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:cost_attribution"
+  name_zh: 成本归因
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/cost_attribution.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:scheduler"
+  name_zh: 回测调度器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/scheduler.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:overfitting_detector"
+  name_zh: 过拟合检测器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/overfitting_detector.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:closed_book_gate"
+  name_zh: 闭卷闸
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/closed_book_gate.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:strategy_validation_pipeline"
+  name_zh: 策略验证管线
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/strategy_validation_pipeline.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:preflight_checker"
+  name_zh: 批测预检器
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/preflight_checker.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "af:e2_stationary_bootstrap"
+  name_zh: 平稳自助法
+  verdict: 1
+  stage: E4
+  impact: ""
+  home_map: ""
+  evidence: "bp:docs/03_modules/_domain_backtest/algo_flow/e2_stationary_bootstrap.yaml（ALGO_FLOW 外部真源）"
+  confidence: medium
+  currently_visible: 否
+- module_id: "cfg:factor_mining_whitelist"
+  name_zh: 公式挖掘算子白名单
+  verdict: 3
+  stage: E1C
+  impact: 质量
+  home_map: ""
+  evidence: "map:FAC-E1C data_refs（算子约束真源，白名单已 active）"
+  confidence: high
+  currently_visible: 否
+- module_id: "cfg:search_space_prereg"
+  name_zh: 搜索空间预注册
+  verdict: 3
+  stage: E1C
+  impact: 质量
+  home_map: ""
+  evidence: config/search_space_prereg.yaml（防乱写代码 prereg 铁律）
+  confidence: high
+  currently_visible: 否
+- module_id: "cfg:synergy_dedup"
+  name_zh: 协同去重基准因子配置
+  verdict: 3
+  stage: E5
+  impact: 质量
+  home_map: ""
+  evidence: config/synergy_dedup.yaml（正交化基准面）
+  confidence: high
+  currently_visible: 否
+- module_id: "cfg:ai_search_veins"
+  name_zh: AI 搜索矿脉配置
+  verdict: 3
+  stage: E1G
+  impact: 质量
+  home_map: ""
+  evidence: config/ai_search_veins.yaml（E1G 胃点菜消费面，引用本图 13 件）
+  confidence: medium
+  currently_visible: 否
+- module_id: "cfg:ai_source_registry"
+  name_zh: AI 源注册表
+  verdict: 3
+  stage: E1G
+  impact: 质量
+  home_map: ""
+  evidence: config/ai_source_registry.yaml（Kronos 等源登记）
+  confidence: medium
+  currently_visible: 否
