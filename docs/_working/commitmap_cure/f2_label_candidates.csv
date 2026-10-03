@@ -1,0 +1,209 @@
+机制名,类型,文件或ID,主标签,一句话理由,D11环节,置信度
+GATE-PROTECTED-PATHS,gate,scripts/governance/d6_security/check_protected_paths.py,「宁可留错不可删错」,宪法等受保护基础设施文件的写入拦截=档案安全第一道,D11-C07,高
+GATE-WORKTREE-REQUIRED,gate,scripts/governance/d11_compliance/validate_worktree_required.py,「这块地在谁手里」,主区直改=越界施工，渐进软门禁把人赶回自己 worktree 地盘,D11-C07,高
+GATE-ALGO-FLOW,gate,scripts/governance/d5_architecture/checkers/check_algo_flow.py,「新文件上户口」,src 模块必须带 ALGO_FLOW 头标记=模块头手续之一,D11-C07,高
+GATE-PYTEST-CONFIG-DRIFT,gate,scripts/governance/d7_code/compare_pytest_configs.py,「账本必须对得上」,pyproject 与 py.ini 两份 pytest 配置必须说法一致,D11-C07,高
+GATE-ARCH,gate,scripts/governance/d5_architecture/checkers/check_architecture_gates.py,「账本必须对得上」,全量架构检查=架构账本与代码现实对账,D11-C05,高
+GATE-NAMING,gate,scripts/governance/d3_metadata/check_naming_convention.py,「代码的底线体面」,新增重名拦截=命名洁癖增量执法,D11-C07,高
+GATE-NAMING-AUDIT,gate,scripts/governance/run_gate_chain.py,「代码的底线体面」,全仓命名健康审计=存量洁癖逐步清零不拦提交,D11-C05,高
+GATE-DOC-NODE-ID,gate,scripts/governance/d3_metadata/check_doc_node_id_hardcode.py,「别拿假地址骗我」,文档禁写易变物理 ID=不许把会变的地址写死,D11-C07,高
+GATE-ID-UNIQ,gate,scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py,「新文件上户口」,hook 身份唯一防互相覆盖=登记不重号,D11-C07,中
+GATE-INTEGRITY,gate,scripts/governance/meta/validate_rules_integrity.py,「账本必须对得上」,规则文件 golden hash 对账=册子被篡改立刻现形,D11-C07,中
+GATE-12,gate,scripts/governance/d3_metadata/validate_blueprint_provenance.py,「新文件上户口」,蓝图真源准入=进门先登记出处 Provenance,D11-C07,中
+GATE-TRIPLE-ALIGN,gate,src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py,「账本必须对得上」,蓝图、代码、依赖图三方必须说法一致,D11-C07,高
+GATE-FRONTMATTER,gate,scripts/governance/d3_metadata/check_frontmatter_metadata.py,「新文件上户口」,新文档必须带 ttl/doc_type=上户口,D11-C07,高
+GATE-FRONTMATTER-AUDIT,gate,scripts/governance/run_gate_chain.py,「新文件上户口」,存量文档户口普查，缺 ttl 逐步补齐,D11-C05,高
+GATE-VOCAB,gate,scripts/governance/run_gate_chain.py,「账本必须对得上」,词表真源唯一，硬编码与派生漂移都算两处说法打架,D11-C07,高
+GATE-16,gate,scripts/governance/d3_metadata/validate_architecture.py,「账本必须对得上」,架构契约 machine_check=契约与代码对账,D11-C07,高
+GATE-17,gate,scripts/governance/d1_structure/detect_orphan_py.py,「新文件上户口」,根目录黑户 .py 清理=上户口执法位,D11-C07,高
+GATE-NESTED-FLAT-PREFIX,gate,scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py,「代码的底线体面」,目录容量与前缀簇约束=结构洁癖,D11-C07,中
+GATE-SRC-NO-DATA,gate,scripts/governance/d5_architecture/checkers/check_src_no_data.py,「账本必须对得上」,数据真源唯一在 data/，src 放数据=第二真源,D11-C07,高
+GATE-DIRECTORY-CONTRACT,gate,scripts/governance/d1_structure/check_directory_contract.py,「新文件上户口」,每类文件住哪由目录契约说了算=户籍契约,D11-C07,高
+GATE-VMS-SSOT,gate,scripts/governance/d5_architecture/checkers/check_vms_ssot.py,「账本必须对得上」,VMS 真源唯一，governance 副本防复发,D11-C07,高
+GATE-SCHEMA-TRUTH,gate,scripts/ch/verify_schema_truth.py,「账本必须对得上」,DDL 真源与 CH 实际表结构对账，漂移即拦,D11-C07,高
+GATE-SYMBOL-CONVENTION,gate,scripts/ch/lint_symbol_convention.py,「代码的底线体面」,securities 表必带 exchange+symbol_canonical 列=约定 lint,D11-C07,中
+GATE-ZR,gate,gate_registry.yaml#GATE-ZR,「代码的底线体面」,任何残留物不得入库=零残留洁癖,D11-C07,中
+GATE-SSOT-CODE,gate,scripts/governance/run_gate_chain.py,「账本必须对得上」,module_path/文件名/shim 三类重复真源收敛,D11-C07,高
+GATE-TEST,gate,gate_registry.yaml#GATE-TEST,「代码的底线体面」,测试必须收得起来结构对=质量底线,D11-C07,中
+GATE-TEST-SYMBOL,gate,scripts/governance/check_test_symbol_validity.py,「别拿假地址骗我」,测试 import 不存在的符号=引用假地址,D11-C07,高
+GATE-ERRCODE,gate,gate_registry.yaml#GATE-ERRCODE,「账本必须对得上」,error_code 注册表与代码双向对账,D11-C07,高
+GATE-REG-BL,gate,scripts/governance/run_gate_chain.py,「账本必须对得上」,注册审计基线差分+索引同步=登记账实一致,D11-C07,高
+GATE-BP-PLACE,gate,scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py,「新文件上户口」,蓝图物理位置与归属链校验=住址登记,D11-C05,中
+GATE-SCRIPT-Q,gate,scripts/governance/run_gate_chain.py,「代码的底线体面」,脚本八维质量+禁本地重定义 _shared API=底线,D11-C07,高
+GATE-ADM,gate,scripts/governance/d11_compliance/validate_manifest_admission.py,「新文件上户口」,新脚本 Manifest 准入审核=准迁证制度,D11-C07,高
+GATE-21,gate,scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py,「账本必须对得上」,机生清单与磁盘版漂移即拦=账本对得上,D11-C07,高
+GATE-20,gate,scripts/governance/d7_code/detect_direct_llm_calls.py,「代码的底线体面」,LLM 裸调拦截=调用必经 LSG 红线,D11-C07,高
+GATE-SILENT-DEGRADATION,gate,scripts/governance/d7_code/detect_silent_degradation.py,「死也要死得明白」,降级路径必须写日志=坏了不能悄无声息,D11-C07,高
+GATE-RETURN-CONTRACT,gate,scripts/governance/audit_return_contract_usage.py,「账本必须对得上」,返回契约禁读不保证存在的键=供需两账一致,D11-C07,中
+GATE-WORKTREE-OPS-TELEMETRY,gate,scripts/governance/audit_worktree_ops_telemetry.py,「宁可留错不可删错」,擦除操作必须同函数留痕=销账留审计,D11-C07,高
+GATE-MCP,gate,scripts/governance/d3_metadata/validate_tool_contracts_consistency.py,「账本必须对得上」,tool_contracts 与代码注册一致=契约对账,D11-C07,高
+GATE-C2,gate,scripts/governance/run_gate_chain.py,「账本必须对得上」,契约、物理路径、schema 三件一致性合并执法,D11-C07,高
+GATE-CODEGEN-IDEMPOTENT,gate,scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py,「账本必须对得上」,生成器重跑产物与磁盘零 diff=可复算对账,D11-C07,高
+GATE-CANONICAL-YAML-DRIFT,gate,scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py,「账本必须对得上」,canonical YAML 防改回陈旧值=防账本回退,D11-C07,高
+GATE-ENCODING,gate,scripts/governance/d7_code/check_encoding.py,「代码的底线体面」,BOM/mojibake 硬拦=编码洁癖,D11-C07,高
+GATE-COMMIT-GW,gate,scripts/governance/d11_compliance/validate_commit_gateway.py,「你是谁」,裸 commit 拦回网关=每笔提交留 [GW:] 名,D11-C01,高
+GATE-NO-TESTS-UNIT,gate,scripts/governance/d7_code/check_no_tests_unit.py,「账本必须对得上」,tests/unit 旧路径禁回潮=路径真源唯一,D11-C07,中
+GATE-DEDUP,gate,scripts/pre_commit/verify_dedup.py,「账本必须对得上」,AST 级重复函数检测=同源重复必并,D11-C05,中
+GATE-DEBT-BRIDGE,gate,scripts/governance/d7_code/scan_debt.py,「代码的底线体面」,dataclass 布尔冗余等债务防复发=底线,D11-C07,高
+GATE-ANY-ABUSE,gate,scripts/governance/d7_code/check_any_abuse.py,「代码的底线体面」,裸 Any 滥用拦截=类型洁癖,D11-C07,高
+GATE-ALGO-QUALITY,gate,scripts/governance/d5_architecture/checkers/check_algo_quality.py,「代码的底线体面」,算法糊弄六类 pattern 检测=不许交糊弄账,D11-C07,高
+GATE-GEN-NO-REALTIME-TIME,gate,scripts/governance/d11_compliance/check_generator_no_realtime_time.py,「代码的底线体面」,生成器禁 now/time.time=输出可复现底线,D11-C07,高
+GATE-NO-COMMIT-DERIVED,gate,scripts/governance/d11_compliance/check_no_commit_derived.py,「账本必须对得上」,派生产物禁入库=真源唯一派生机生,D11-C07,高
+GATE-MODULE-LIFECYCLE,gate,scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py,「死也要死得明白」,模块退役必须走完手续=死也要死得明白,D11-C07,中
+ALGO-FLOW-LINK,gate,gate_registry.yaml#ALGO-FLOW-LINK,「别拿假地址骗我」,ALGO_FLOW external 锚链接必须真实存在,D11-C05,高
+ALGO-NOTE-SYNC,gate,gate_registry.yaml#ALGO-NOTE-SYNC,「账本必须对得上」,算法锚与大白话翻译同步绑定=两账一致,D11-C05,高
+ARCH-REFERENCE,gate,gate_registry.yaml#ARCH-REFERENCE,「别拿假地址骗我」,原意=#ARCH 悬空引用检测=假地址；deprecated 重定向至 REFERENCE-INTEGRITY,D11-C05,高
+ASYNCIO-RUN-IN-CONTEXT,gate,gate_registry.yaml#ASYNCIO-RUN-IN-CONTEXT,「代码的底线体面」,asyncio 调用域纪律=异步底线,D11-C05,高
+NO-BARE-GETENV,gate,gate_registry.yaml#NO-BARE-GETENV,「代码的底线体面」,密钥禁裸 getenv=必走 secrets.py 红线,D11-C05,高
+NO-BARE-SQL,gate,gate_registry.yaml#NO-BARE-SQL,「代码的底线体面」,裸 SQL 禁止=必走 DatabaseService 红线,D11-C05,高
+BARE-SUBPROCESS,gate,gate_registry.yaml#BARE-SUBPROCESS,「代码的底线体面」,裸 subprocess 禁止=封装红线,D11-C05,高
+GATE-BATTLE-MAP-ALIGNMENT,gate,gate_registry.yaml#GATE-BATTLE-MAP-ALIGNMENT,「账本必须对得上」,原意=作战地图对齐；deprecated 重定向至 MAP-ALIGNMENT,D11-C05,高
+BLUEPRINT-HEADER,gate,gate_registry.yaml#BLUEPRINT-HEADER,「新文件上户口」,原意=A_module 头声明=模块头手续；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,高
+BLUEPRINT-AMODULE-CROSS-CHECK,gate,gate_registry.yaml#BLUEPRINT-AMODULE-CROSS-CHECK,「新文件上户口」,原意=蓝图与 A_module 交叉校验；deprecated 重定向至 BLUEPRINT-HEADER,D11-C05,中
+DOC-HEADER-SUITE,gate,gate_registry.yaml#DOC-HEADER-SUITE,「新文件上户口」,文档头七台合一=户口本格式总执法（ttl/doc_type/module_id/断链等）,D11-C05,高
+BLUEPRINT-NODE-ID-HARDCODE,gate,gate_registry.yaml#BLUEPRINT-NODE-ID-HARDCODE,「别拿假地址骗我」,蓝图禁硬编码物理 ID=假地址,D11-C05,高
+BUSINESS-REGISTRY,gate,gate_registry.yaml#BUSINESS-REGISTRY,「新文件上户口」,业务资产入库必须登记=入库户口,D11-C05,高
+CAP-CONSISTENCY,gate,gate_registry.yaml#CAP-CONSISTENCY,「账本必须对得上」,capability 册间一致性对账,D11-C05,中
+CAPABILITY-LOOKUP-REQUIRED,gate,gate_registry.yaml#CAPABILITY-LOOKUP-REQUIRED,「你是谁」,施工前能力反查留审计=干活前先备案留名,D11-C05,中
+CAPABILITY-OVERLAP,gate,gate_registry.yaml#CAPABILITY-OVERLAP,「账本必须对得上」,能力重叠检测=重复建设收敛回唯一,D11-C05,中
+CH-BATCH-SIZE,gate,gate_registry.yaml#CH-BATCH-SIZE,「代码的底线体面」,CH 写入批量纪律=操作底线,D11-C05,中
+CH-FINAL-GATE,gate,gate_registry.yaml#CH-FINAL-GATE,「代码的底线体面」,CH 终态操作纪律=操作底线,D11-C05,中
+CH-VERSION-COL,gate,gate_registry.yaml#CH-VERSION-COL,「代码的底线体面」,CH 版本列约定=DDL 底线,D11-C05,中
+CLAIM-REQUIRED,gate,gate_registry.yaml#CLAIM-REQUIRED,「这块地在谁手里」,提交前必须持有文件 claim=没领地不准动土,D11-C05,高
+COMMIT-SCOPE,gate,gate_registry.yaml#COMMIT-SCOPE,「别人犯错别连坐我」,跨域提交须显式 --allow-multi-domain 留痕=各扫门前雪,D11-C05,高
+CONSUMERS-ACCURACY,gate,gate_registry.yaml#CONSUMERS-ACCURACY,「账本必须对得上」,消费者登记必须准确=供需账实一致,D11-C05,高
+CREATE-GUARD,gate,gate_registry.yaml#CREATE-GUARD,「新文件上户口」,新建文件必须带 creation_token=准生证,D11-C05,高
+REFERENCE-INTEGRITY,gate,gate_registry.yaml#REFERENCE-INTEGRITY,「别拿假地址骗我」,悬空引用合并簇（#ARCH/裁定/AGENTS 条款）=假地址总执法,D11-C05,高
+DATETIME-NOW-FORBIDDEN,gate,gate_registry.yaml#DATETIME-NOW-FORBIDDEN,「代码的底线体面」,禁 datetime.now=时区确定性底线,D11-C05,高
+DECISION-MAP,gate,gate_registry.yaml#DECISION-MAP,「账本必须对得上」,原意=决策图对齐；deprecated 重定向至 MAP-ALIGNMENT,D11-C05,高
+DEPGRAPH-FRESHNESS,gate,gate_registry.yaml#DEPGRAPH-FRESHNESS,「新文件上户口」,依赖图必须保鲜（改名/新增后重建）=户口常新,D11-C05,中
+DEPGRAPH-ENFORCEMENT,gate,gate_registry.yaml#DEPGRAPH-ENFORCEMENT,「新文件上户口」,新文件/改名必须登记依赖图=先登记后施工强制位,D11-C05,中
+DEPGRAPH-WRITE-PATH,gate,gate_registry.yaml#DEPGRAPH-WRITE-PATH,「新文件上户口」,原意=depgraph 写路径白名单；deprecated 重定向至 DEPGRAPH-ENFORCEMENT,D11-C05,中
+DERIVATION-ANNOTATION,gate,gate_registry.yaml#DERIVATION-ANNOTATION,「账本必须对得上」,派生关系必须标注=真源派生链可追溯,D11-C05,中
+DERIVED-FILE-DELETION-PROTECTION,gate,gate_registry.yaml#DERIVED-FILE-DELETION-PROTECTION,「宁可留错不可删错」,派生文件删除保护=防误删,D11-C05,中
+DIRECTORY-CONTRACT,gate,gate_registry.yaml#DIRECTORY-CONTRACT,「新文件上户口」,in-process 版目录契约=户籍契约,D11-C05,高
+DOC-REF-BROKEN,gate,gate_registry.yaml#DOC-REF-BROKEN,「别拿假地址骗我」,原意=文档相对路径断裂检测；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,高
+GATE-DOMAIN-FK,gate,gate_registry.yaml#GATE-DOMAIN-FK,「账本必须对得上」,功能域注册表外键引用必须成立=册间对账,D11-C05,中
+NO-DOMAIN-NAME-ZH-DIRECT-ACCESS,gate,gate_registry.yaml#NO-DOMAIN-NAME-ZH-DIRECT-ACCESS,「账本必须对得上」,域名中文翻译禁直取必走 loader=翻译真源唯一,D11-C05,中
+EMPTY-HANDLER,gate,gate_registry.yaml#EMPTY-HANDLER,「代码的底线体面」,空 handler 拦截=不许交空壳,D11-C05,高
+ENCODING-SAFETY,gate,gate_registry.yaml#ENCODING-SAFETY,「代码的底线体面」,in-process 编码安全=编码洁癖,D11-C05,高
+GATE-ERRCODE-CONSISTENCY,gate,gate_registry.yaml#GATE-ERRCODE-CONSISTENCY,「账本必须对得上」,error_code 真源对账 in-process 版,D11-C05,高
+EXEMPT-ZONE-FM,gate,gate_registry.yaml#EXEMPT-ZONE-FM,「新文件上户口」,原意=豁免区 frontmatter 校验；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,中
+FILE-COPY,gate,gate_registry.yaml#FILE-COPY,「账本必须对得上」,整文件复制检测=拷贝即第二真源,D11-C05,中
+FILE-PLACEMENT-TTL,gate,gate_registry.yaml#FILE-PLACEMENT-TTL,「新文件上户口」,原意=文件放置 TTL 三重校验；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,中
+FOLDER-CAPACITY-HARD-LIMIT,gate,gate_registry.yaml#FOLDER-CAPACITY-HARD-LIMIT,「代码的底线体面」,目录容量硬限=结构卫生（裁定#120 不放宽）,D11-C05,中
+FOREIGN-CHANGE-DETECTION,gate,gate_registry.yaml#FOREIGN-CHANGE-DETECTION,「别人犯错别连坐我」,外来 staged 变更甄别=他人违规不连坐提交人,D11-C05,高
+FORGED-GW-MARKER,gate,gate_registry.yaml#FORGED-GW-MARKER,「你是谁」,[GW:] 标记防伪=身份不可伪造,D11-C06,高
+FRONTEND-MAP,gate,gate_registry.yaml#FRONTEND-MAP,「账本必须对得上」,原意=前端全景图对齐；deprecated 重定向至 MAP-ALIGNMENT,D11-C05,高
+FRONTEND-TRUTH-SOURCE,gate,gate_registry.yaml#FRONTEND-TRUTH-SOURCE,「账本必须对得上」,前端真源唯一性校验,D11-C05,中
+FUNCTION-DUP,gate,gate_registry.yaml#FUNCTION-DUP,「账本必须对得上」,函数级克隆检测=同源重复必并（CloneGuard 族）,D11-C05,中
+GIT-CALL-BUDGET,gate,gate_registry.yaml#GIT-CALL-BUDGET,「快而不漏」,提交链 git 调用预算=提速不失控,D11-C05,高
+NO-GOD-CLASS,gate,gate_registry.yaml#NO-GOD-CLASS,「代码的底线体面」,原意=God Class 检测；deprecated 重定向至 COMPLEXITY-GUARD,D11-C05,高
+NO-HARDCODED-URL,gate,gate_registry.yaml#NO-HARDCODED-URL,「代码的底线体面」,URL 硬编码拦截=配置红线,D11-C05,高
+HELD-OVERLAP,gate,gate_registry.yaml#HELD-OVERLAP,「这块地在谁手里」,地盘冲突不硬闯=HELD-OVERLAP 必须走协调,D11-C05,高
+COMPLEXITY-GUARD,gate,gate_registry.yaml#COMPLEXITY-GUARD,「代码的底线体面」,复杂度合并执法（God Class+长参数+高复杂度）,D11-C05,高
+HOT-FILE-BASE-FRESHNESS,gate,gate_registry.yaml#HOT-FILE-BASE-FRESHNESS,「账本必须对得上」,热册写入 CAS base 必须对准盘面=并发覆盖防线,D11-C05,高
+ID-UNIQUENESS,gate,gate_registry.yaml#ID-UNIQUENESS,「新文件上户口」,注册表身份 ID 唯一=户口不重号,D11-C05,中
+NO-UPWARD-IMPORT,gate,gate_registry.yaml#NO-UPWARD-IMPORT,「账本必须对得上」,禁止向上导入=分层依赖与图一致,D11-C05,中
+IMPORT-INTEGRITY,gate,gate_registry.yaml#IMPORT-INTEGRITY,「别拿假地址骗我」,import 目标必须真实可导入=引用不骗人,D11-C05,高
+INDUSTRY-CHAIN-MAP,gate,gate_registry.yaml#INDUSTRY-CHAIN-MAP,「账本必须对得上」,原意=产业链图工件对齐；deprecated 重定向至 MAP-ALIGNMENT,D11-C05,高
+BLOOD-FLESH,gate,gate_registry.yaml#BLOOD-FLESH,「账本必须对得上」,骨架血肉覆盖对账=该长的肉没长就红,D11-C05,中
+STATE-VOCAB-REGISTRY,gate,gate_registry.yaml#STATE-VOCAB-REGISTRY,「账本必须对得上」,状态词表 SSoT 登记=状态值说法归一,D11-C05,高
+TAG-VOCAB,gate,gate_registry.yaml#TAG-VOCAB,「账本必须对得上」,标签词表 SSoT=标签不私造,D11-C05,高
+NO-LONG-PARAM-LIST,gate,gate_registry.yaml#NO-LONG-PARAM-LIST,「代码的底线体面」,原意=长参数列表检测；deprecated 重定向至 COMPLEXITY-GUARD,D11-C05,高
+MANUAL-ONLY-PERMANENT,gate,gate_registry.yaml#MANUAL-ONLY-PERMANENT,「你还活着吗」,原意=永久系统 manual 无订阅检测；deprecated 重定向至 PERMANENT-SYSTEM-TRIGGER,D11-C05,中
+MCP-VERSION-FIELD,gate,gate_registry.yaml#MCP-VERSION-FIELD,「账本必须对得上」,MCP 契约版本字段一致=契约对账,D11-C05,中
+MODULE-ID-CONSISTENCY,gate,gate_registry.yaml#MODULE-ID-CONSISTENCY,「新文件上户口」,原意=module_id 三声明轨道一致=模块ID手续；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,高
+MSG-EXPOSURE,gate,gate_registry.yaml#MSG-EXPOSURE,「代码的底线体面」,报错信息暴露面管控=信息卫生,D11-C05,中
+MSG-STYLE,gate,gate_registry.yaml#MSG-STYLE,「代码的底线体面」,报错风格规范=消息洁癖,D11-C05,高
+MUTABLE-CONST-WITHOUT-FINAL,gate,gate_registry.yaml#MUTABLE-CONST-WITHOUT-FINAL,「代码的底线体面」,可变常量须 Final 标注=类型底线,D11-C05,高
+NEW-FILE-DEPGRAPH-ENFORCEMENT,gate,gate_registry.yaml#NEW-FILE-DEPGRAPH-ENFORCEMENT,「新文件上户口」,原意=新 py 未登记 depgraph 拦截；deprecated 重定向至 DEPGRAPH-ENFORCEMENT,D11-C05,高
+NO-IMPORT-SIDE-EFFECT,gate,gate_registry.yaml#NO-IMPORT-SIDE-EFFECT,「代码的底线体面」,导入副作用禁止=模块加载纪律,D11-C05,高
+NOQA-VALIDATION,gate,gate_registry.yaml#NOQA-VALIDATION,「代码的底线体面」,noqa 必须对应真实违规=豁免不可滥用,D11-C05,高
+OPEN-WITHOUT-WITH,gate,gate_registry.yaml#OPEN-WITHOUT-WITH,「代码的底线体面」,裸 open 拦截=资源管理底线,D11-C05,高
+ORPHAN-MODULE,gate,gate_registry.yaml#ORPHAN-MODULE,「新文件上户口」,孤儿模块检测=黑户模块现形,D11-C05,高
+MAP-ALIGNMENT,gate,gate_registry.yaml#MAP-ALIGNMENT,「账本必须对得上」,全图对齐合并簇=册图与现实对账总执法,D11-C05,高
+PERMANENT-SYSTEM-TRIGGER,gate,gate_registry.yaml#PERMANENT-SYSTEM-TRIGGER,「你还活着吗」,永久系统必须有事件触发器=四要素生命体征（禁 cron/Timer）,D11-C05,中
+GATE-PRECOMMIT-OFFLINE,gate,gate_registry.yaml#GATE-PRECOMMIT-OFFLINE,「快而不漏」,pre-commit 离线快检=安检快但项不漏,D11-C05,高
+PROTECTED-PATHS,gate,gate_registry.yaml#PROTECTED-PATHS,「宁可留错不可删错」,受保护路径 in-process 层拦截=档案安全,D11-C05,高
+PURE-ASSERTION,gate,gate_registry.yaml#PURE-ASSERTION,「代码的底线体面」,纯断言测试检测=测试不许糊弄,D11-C05,高
+PURE-SHIM,gate,gate_registry.yaml#PURE-SHIM,「账本必须对得上」,纯 re-export shim 禁止=纯转发不创造价值算重复真源,D11-C05,高
+R5-DIGIT-SUFFIX,gate,gate_registry.yaml#R5-DIGIT-SUFFIX,「新文件上户口」,数字后缀目录/命名 R5 纪律=户籍命名规则,D11-C05,中
+FMS-HYGIENE,gate,gate_registry.yaml#FMS-HYGIENE,「新文件上户口」,FMS 文件管理卫生=户籍制度执法,D11-C05,中
+RECONCILER-FILE-OPS,gate,gate_registry.yaml#RECONCILER-FILE-OPS,「宁可留错不可删错」,reconciler 文件操作安全约束=自动修复不许变成自动销毁,D11-C05,中
+RECONCILER-HEALTH,gate,gate_registry.yaml#RECONCILER-HEALTH,「你还活着吗」,reconciler 健康检查=对账守卫自己也要活着,D11-C05,高
+REGISTRY-CODE-ANCHOR,gate,gate_registry.yaml#REGISTRY-CODE-ANCHOR,「账本必须对得上」,注册表条目与代码锚定=册子条目有活体,D11-C05,高
+REGISTRY-MASS-DELETION,gate,gate_registry.yaml#REGISTRY-MASS-DELETION,「宁可留错不可删错」,注册表净删必须 allow 标记过最高审=宁可留错不可删错,D11-C05,高
+REGISTRY-YAML-PARSE,gate,gate_registry.yaml#REGISTRY-YAML-PARSE,「账本必须对得上」,注册表结构硬化（悬挂键/重复根键）=账本格式合法,D11-C05,中
+RELATIVE-PATH-LITERAL,gate,gate_registry.yaml#RELATIVE-PATH-LITERAL,「别拿假地址骗我」,相对路径字面量检测=路径禁凭记忆,D11-C05,高
+RENAME-DEPGRAPH-SYNC,gate,gate_registry.yaml#RENAME-DEPGRAPH-SYNC,「新文件上户口」,原意=改名后 depgraph 重建强制；deprecated 重定向至 DEPGRAPH-ENFORCEMENT,D11-C05,高
+RESOURCE-SCHEDULE,gate,gate_registry.yaml#RESOURCE-SCHEDULE,「账本必须对得上」,排班冲突检测=班表账对得上,D11-C05,中
+RULE-EXECUTION-PAIRING,gate,gate_registry.yaml#RULE-EXECUTION-PAIRING,「账本必须对得上」,规则与执行配对=立法与执法一对一,D11-C05,中
+RULE-FOUR-WAY-ALIGN,gate,gate_registry.yaml#RULE-FOUR-WAY-ALIGN,「账本必须对得上」,规则四向对齐=规则体系账实一致,D11-C05,高
+RULING-COMMIT-VERIFIED,gate,gate_registry.yaml#RULING-COMMIT-VERIFIED,「账本必须对得上」,裁定登记与 commit 原子核验=裁定账对得上,D11-C05,高
+RULING-REFERENCE,gate,gate_registry.yaml#RULING-REFERENCE,「别拿假地址骗我」,原意=裁定号悬空引用；deprecated 重定向至 REFERENCE-INTEGRITY,D11-C05,高
+SCHEMA-FILE-EXISTS,gate,gate_registry.yaml#SCHEMA-FILE-EXISTS,「别拿假地址骗我」,schema 引用文件必须存在=假地址拦截,D11-C05,高
+SCRIPTS-IMPORT-INTEGRITY,gate,gate_registry.yaml#SCRIPTS-IMPORT-INTEGRITY,「别拿假地址骗我」,原意=_shared 符号未 import 检测；已退役并入 UNDEFINED-NAME,D11-C05,高
+NO-SECRET-HARDCODE,gate,gate_registry.yaml#NO-SECRET-HARDCODE,「代码的底线体面」,密钥硬编码拦截=三道 gate 红线,D11-C05,高
+SECRET-REGISTRY-CONSISTENCY,gate,gate_registry.yaml#SECRET-REGISTRY-CONSISTENCY,「账本必须对得上」,密钥册与代码一致=密钥账对得上,D11-C05,高
+SESSION-REQUIRED,gate,gate_registry.yaml#SESSION-REQUIRED,「你还活着吗」,提交必须挂活会话=死人不能替你说话,D11-C05,高
+SNAPSHOT-DRIFT,gate,gate_registry.yaml#SNAPSHOT-DRIFT,「账本必须对得上」,快照漂移检测=快照账对得上,D11-C05,高
+SPLIT-COORDINATION,gate,gate_registry.yaml#SPLIT-COORDINATION,「这块地在谁手里」,拆分与编辑并存须走协议=动土期间锁地盘,D11-C05,中
+SSOT-REDEFINITION,gate,gate_registry.yaml#SSOT-REDEFINITION,「账本必须对得上」,SSoT 重定义拦截=真源不许有第二个,D11-C05,高
+STASH-ACCUMULATION,gate,gate_registry.yaml#STASH-ACCUMULATION,「死也要死得明白」,stash 堆积显化=工作面不能无声淤死,D11-C05,中
+FACTORY-MAP,gate,gate_registry.yaml#FACTORY-MAP,「账本必须对得上」,原意=策略生产图对齐；deprecated 重定向至 MAP-ALIGNMENT,D11-C05,高
+SYNTAX-VALIDATION,gate,gate_registry.yaml#SYNTAX-VALIDATION,「代码的底线体面」,语法校验=最低底线,D11-C05,高
+TABLE-NAME-REGISTRY,gate,gate_registry.yaml#TABLE-NAME-REGISTRY,「新文件上户口」,表名必须登记=表户口,D11-C05,高
+TAKEOVER-PENDING,gate,gate_registry.yaml#TAKEOVER-PENDING,「你还活着吗」,接管显化未闭环前拦提交=死会话遗产交接不蒙混,D11-C05,中
+TEST-RESIDUE-SSOT,gate,gate_registry.yaml#TEST-RESIDUE-SSOT,「账本必须对得上」,测试残留前缀真源 SSoT 管控=残留账对得上,D11-C05,中
+TEST-SOURCE-CONSISTENCY,gate,gate_registry.yaml#TEST-SOURCE-CONSISTENCY,「账本必须对得上」,测试与源一致=测试账对得上,D11-C05,高
+META-TESTS-COVERAGE,gate,gate_registry.yaml#META-TESTS-COVERAGE,「账本必须对得上」,门禁元测试覆盖=执法者自己也要被考,D11-C05,中
+TRANSLATION-COVERAGE,gate,gate_registry.yaml#TRANSLATION-COVERAGE,「新文件上户口」,新 .py 必须登记大白话简介=户口本翻译栏,D11-C05,高
+TTL-METADATA,gate,gate_registry.yaml#TTL-METADATA,「新文件上户口」,原意=TTL 元数据硬阻断；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,高
+UNDEFINED-NAME,gate,gate_registry.yaml#UNDEFINED-NAME,「别拿假地址骗我」,未定义符号 F821=引用假地址,D11-C05,高
+UNSAFE-DICT-SPREAD,gate,gate_registry.yaml#UNSAFE-DICT-SPREAD,「代码的底线体面」,dict spread 安全=编码底线,D11-C05,高
+VOCAB-CHAIN,gate,gate_registry.yaml#VOCAB-CHAIN,「账本必须对得上」,原意=SSoT 词表路径硬编码；deprecated 重定向至 GATE-VOCAB,D11-C05,高
+WORKTREE-REQUIRED,gate,gate_registry.yaml#WORKTREE-REQUIRED,「这块地在谁手里」,in-process 层 worktree 领地强制,D11-C05,高
+ZEPHYR-ENV-DIRECT-ACCESS,gate,gate_registry.yaml#ZEPHYR-ENV-DIRECT-ACCESS,「代码的底线体面」,env 直取拦截=配置与密钥走规范通道,D11-C05,高
+DANGLING-REFERENCE,gate,gate_registry.yaml#DANGLING-REFERENCE,「别拿假地址骗我」,原意=AGENTS 条款悬空引用；deprecated 重定向至 REFERENCE-INTEGRITY,D11-C05,高
+PERM-TRIGGER,gate,gate_registry.yaml#PERM-TRIGGER,「你还活着吗」,原意=时间触发无订阅检测；deprecated 重定向至 PERMANENT-SYSTEM-TRIGGER,D11-C05,中
+VOCAB-HARDCODE,gate,gate_registry.yaml#VOCAB-HARDCODE,「账本必须对得上」,原意=新 py 词表硬编码；deprecated 重定向至 GATE-VOCAB,D11-C05,高
+DEPGRAPH-PRE-REGISTRATION,gate,gate_registry.yaml#DEPGRAPH-PRE-REGISTRATION,「新文件上户口」,原意=depgraph planned 到 production 流转；deprecated 重定向至 DEPGRAPH-ENFORCEMENT,D11-C05,中
+GATE-PANORAMA-ALIGNMENT,gate,gate_registry.yaml#GATE-PANORAMA-ALIGNMENT,「账本必须对得上」,原意=三图模块对齐；deprecated 重定向至 MAP-ALIGNMENT,D11-C05,高
+BLUEPRINT-AMODULE-CONSISTENCY,gate,gate_registry.yaml#BLUEPRINT-AMODULE-CONSISTENCY,「新文件上户口」,原意=A_module 头格式一致；deprecated 重定向链至 DOC-HEADER-SUITE,D11-C05,高
+NO-HIGH-COMPLEXITY,gate,gate_registry.yaml#NO-HIGH-COMPLEXITY,「代码的底线体面」,原意=高循环复杂度检测；deprecated 重定向至 COMPLEXITY-GUARD,D11-C05,高
+COMMIT-CRITICAL-SECTION-LOCK,gate,gate_registry.yaml#COMMIT-CRITICAL-SECTION-LOCK,「这块地在谁手里」,commit 临界区全局锁=提交领地互斥（裁定#347/#372）,D11-C04,高
+GATE-SCHEMA-HEALTH,gate,gate_registry.yaml#GATE-SCHEMA-HEALTH,「账本必须对得上」,原意=depgraph schema 健康度；deprecated 合并至 GATE-C2,D11-C05,高
+DATA-TASK-COMPLETENESS,gate,gate_registry.yaml#DATA-TASK-COMPLETENESS,「账本必须对得上」,原意=数据任务完整性；已退役（零触发零消费）,D11-C05,高
+ISSUE-RESOLVED-INTEGRITY,gate,gate_registry.yaml#ISSUE-RESOLVED-INTEGRITY,「账本必须对得上」,原意=issue 标记真实性=账实一致；已退役（零触发零消费）,D11-C05,高
+LIBRARY-COVERAGE,gate,gate_registry.yaml#LIBRARY-COVERAGE,「新文件上户口」,原意=馆藏覆盖观察闸=该登记的都登记；已退役（零触发零消费）,D11-C05,高
+BLUEPRINT-FORMAT,gate,gate_registry.yaml#BLUEPRINT-FORMAT,「新文件上户口」,原意=BLUEPRINT 头 module_id 格式=模块ID手续；deprecated 重定向至 DOC-HEADER-SUITE,D11-C05,高
+GATE-DETECT-GIT-DANGEROUS,gate,scripts/governance/d6_security/detect_git_dangerous.py,「宁可留错不可删错」,危险 git 命令（clean -fd/reset --hard）拦截=抹除面闸门,D11-C07,高
+GATE-DETECT-SHELL-DANGEROUS,gate,scripts/governance/d6_security/detect_shell_dangerous.py,「宁可留错不可删错」,危险 shell 命令（rm -rf 等）拦截=抹除面闸门,D11-C07,高
+GATE-DETECT-PERMANENT-DELETION,gate,scripts/governance/d6_security/detect_permanent_file_deletion.py,「宁可留错不可删错」,ttl:permanent 文件删除拦截=删东西必须过最高审,D11-C07,高
+
+活性①注册（SessionRegistry 分片登记）,registry,src/zephyr/security/access_control/session_concurrency.py register+S4-D 分片,「你还活着吗」,进场登记身份且分片存储，活性判定/收割/接管全以它为底账,D11-S01,高
+活性②心跳90s,daemon,heartbeat_daemon.py:100（30s 刷新）+ session_concurrency.py:157 _HEARTBEAT_TIMEOUT_SECONDS=90,「你还活着吗」,守护每 30s 打心跳，90s 无心跳判死并自动释放 held_files,D11-S03,高
+活性③收割15m,registry,session_concurrency.py:166 _REAP_GRACE_SECONDS=15*60,「你还活着吗」,死记录先转墓碑、宽限 15 分钟才物理删除，兼顾 worker 宽限窗,D11-S03,高
+活性④降级窗30m,registry,session_concurrency.py wave4-D V5 _REREGISTER_MIN_INTERVAL_SECONDS=1860（idle1800+2×30s）,「你还活着吗」,V5 重注册降级窗=窗内重注册降级执行防 keeper 循环伪造活性（"降级"真身；总筹改判 2026-10-03）,D11-S03,高
+活性④b守护自退窗30m,registry,session_concurrency.py:174 _ACTIVITY_IDLE_TIMEOUT_SECONDS=1800,「你还活着吗」,idle 超 30 分钟守护自退，防僵尸 daemon 假保活（活性反转治本 #ARCH-HEARTBEAT-002；总拆独立行 2026-10-03）,D11-S03,高
+活性⑤回魂闸,registry,session_concurrency.py:805-812 _REINCARNATION_LIMIT=5+寿命6h 老幽灵判据+:438 回魂降级审计,「你还活着吗」,死会话重注册=回魂，投胎次数+寿命双判据堵保活循环,D11-S01,高
+活性⑥ghost拾取闸,daemon,src/zephyr/trading/process_reaper.py 幽灵判据（ghost_suspects.json 连续3轮确认）,「你还活着吗」,死会话留下的幽灵进程连续 3 轮确认后才收割，防误杀也不放过,D11-S08,中
+活性⑦接管自拦截,script,scripts/governance/session_takeover_ledger.py+session_concurrency.py:320 死亡显化钩子+commit_gates/takeover_pending_gate.py,「你还活着吗」,死会话遗产判死即显化入接管台账，下一个会话不接盘不发货,D11-S03,中
+
+手续①creation_token 登记,registry,CREATE-GUARD token 登记册（batch_creation_tokens 维护）,「新文件上户口」,新建文件先领准生证，无 token=黑户门禁见一次拦一次,D11-S02,高
+手续②大白话简介登记,registry,module_translation_registry.yaml（TRANSLATION-COVERAGE 强制）,「新文件上户口」,新 .py 必须用大白话登记自己是谁，Owner 看得懂,D11-S02,高
+手续③依赖图登记,registry,apply_depgraph.py --add-design-node（RULE-DEPGRAPH）,「新文件上户口」,先登记后施工=进图才有户口,D11-S02,高
+手续④模块头声明,registry,蓝图/[ALGO_FLOW] 头（DOC-HEADER-SUITE 强制位）,「新文件上户口」,模块必须带声明头=门口挂名牌,D11-S02,中
+手续⑤模块ID登记,registry,module_id 三声明轨道一致（DOC-HEADER-SUITE 强制位）,「新文件上户口」,模块身份证号三处一致，防重号防假名,D11-S02,中
+
+工具①batch_creation_tokens,script,scripts/governance/d3_metadata/batch_creation_tokens.py,「新文件上户口」,token 批量登记工具=发准生证的窗口,D11-S02,高
+工具②add_module_translation,script,scripts/governance/d3_metadata/add_module_translation.py,「新文件上户口」,大白话登记工具=翻译栏登记窗口,D11-S02,高
+工具③apply_depgraph,script,scripts/governance/apply_depgraph.py,「新文件上户口」,依赖图设计节点登记工具=上户口登记窗口,D11-S02,高
+工具④generate_project_depgraph,script,scripts/governance/generate_project_depgraph.py,「新文件上户口」,依赖图全量重建工具（改名后 --force）=户籍重誊窗口,D11-S02,高
+
+守护件①belt 传送带,daemon,src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py,「快而不漏」,常驻盯队事件触发自动排水=队列不淤积提速,D11-C09,高
+守护件②commit_queue 队列,script,scripts/commit_queue.py（四态台账）,「死也要死得明白」,死信不卡队+死因分类+requeue 复活=死得明白的承载主体,D11-C08,高
+守护件③serializer 串行器,daemon,scripts/commit_queue.py:769 SerializerLease+config/flags.yaml:94,「这块地在谁手里」,单写者租约=同一时刻只有一个人动 dev 地盘,D11-C09,中
+守护件④reaper 收割者,daemon,src/zephyr/trading/process_reaper.py+计划任务,「你还活着吗」,其存活是写操作前提+事后收割孤儿/幽灵/失控进程,D11-S01,高
+守护件⑤process_pool k=4 池,daemon,commit_queue_landing.py:1938 drain_queue_pool+worktrees/w0-w3,「快而不漏」,四池并行投机+落地仍串行单写者=快而不漏的落地形态,D11-C09,高
