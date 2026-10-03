@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate; zephyr.gov_enforcement.commit_gates.high_complexity_gate; zephyr.gov_enforcement.commit_gates.import_integrity_gate; zephyr.gov_enforcement.commit_gates.bare_subprocess_gate; zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate; zephyr.gov_enforcement.commit_gates.capability_overlap_gate
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate / import_integrity_gate / bare_subprocess_gate / consumers_accuracy_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似；_make_noqa_pattern + _extract_noqa_lines 消除 import_integrity_gate / bare_subprocess_gate 的 noqa 提取克隆（#ARCH-FORCE-MERGE-DEDUP-001）；_module_to_file_candidates 消除 import_integrity_gate / consumers_accuracy_gate 的模块路径转换克隆；_matches_any_prefix 消除 _is_project_module / _is_abstract_code 的前缀判断同构克隆；_is_cosmetic_only_change 用「去 docstring 后 AST 指纹」机械判定零可执行语义变更（裁定#273 触碰税豁免），读不到/解析不了一律判非 cosmetic（fail-closed 照常送检）
+# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate / import_integrity_gate / bare_subprocess_gate / consumers_accuracy_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似；_make_noqa_pattern + _extract_noqa_lines 消除 import_integrity_gate / bare_subprocess_gate 的 noqa 提取克隆（#ARCH-FORCE-MERGE-DEDUP-001）；_module_to_file_candidates 消除 import_integrity_gate / consumers_accuracy_gate 的模块路径转换克隆；_matches_any_prefix 消除 _is_project_module / _is_abstract_code 的前缀判断同构克隆；_is_cosmetic_only_change 用「去 docstring 后 AST 指纹」机械判定零可执行语义变更（裁定#273 触碰税豁免），读不到/解析不了一律判非 cosmetic（fail-closed 照常送检）；_audit_foreign_staged 三态（裁定#480 手术④顺路修复）：外来 staged=活会话在途（held_files∪task_files 归因命中，维持现状不代修）｜无主外来（不在任何活跃 session 双集——属主无活跃片/孤儿文件）审计附 ownerless_files+可顺路修处方（--adopt-prior-work 语义认领后随批修复+台账留痕）｜registry 不可读=分类不可判维持两态（fail-safe 不误开处方）；只改文案与判级，不自动改任何外来文件（宪法 §3.4 owner 责任制保留）
 # [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None, _read_head_file(gateway,str)->str|None, _collect_function_names(str)->set[str], _make_noqa_pattern(str)->re.Pattern, _extract_noqa_lines(str,re.Pattern)->set[int], _module_to_file_candidates(str)->list[str], _matches_any_prefix(str,tuple)->bool, _ast_semantic_fingerprint(str)->str|None, _is_cosmetic_only_change(gateway,str)->bool
 # [STABILITY] stable
 # [SAFETY] L
@@ -555,33 +555,74 @@ def _build_own_scope(gateway, files: list[str] | None, session_id: str | None) -
     return scope or None
 
 
-def _attribute_foreign(gateway, session_id: str | None, foreign_staged: list[str]) -> dict[str, str]:
-    """外来 staged 文件尽力归因（other_held_files 只读；匹配不上标 unknown）。"""
-    attribution: dict[str, str] = {}
+def _attribute_foreign(gateway, session_id: str | None, foreign_staged: list[str]) -> dict[str, str] | None:
+    """外来 staged 文件尽力归因（活跃 session 只读；匹配不上不标）。
+
+    裁定#480 手术④（顺路修复三态）判据面：归因集=活跃 session 的
+    ``held_files ∪ task_files`` 双集（.runtime/session_registry/ 活跃片聚合，
+    list_active 只回活跃片)——归因命中=活会话在途；未命中=无主外来
+    （属主 session 无活跃片/孤儿文件）。
+
+    Returns:
+        {norm_path: 属主 sid} 归因映射；registry 不可读/异常 → None
+        （分类不可判——调用方 fail-safe 维持两态现状，不误开顺路修处方）。
+    """
     try:
         registry = getattr(gateway, "_registry", None)
         if registry is None:
-            return {}
+            return None
         foreign_norm = {_norm_rel(gateway, f) for f in foreign_staged}
+        attribution: dict[str, str] = {}
         for info in registry.list_active():
             if session_id and info.session_id == session_id:
                 continue
-            for held in info.held_files or []:
+            for held in list(info.held_files or []) + list(info.task_files or []):
                 norm = _norm_rel(gateway, held)
                 if norm in foreign_norm:
-                    attribution[norm] = info.session_id
+                    attribution.setdefault(norm, info.session_id)
+        return attribution
     except Exception:  # noqa: BLE001 — 归因失败不影响审计主流程
         logger_ss.debug("foreign attribution failed (non-blocking)", exc_info=True)
-    return attribution
+        return None
 
 
-def _audit_foreign_staged(gateway, session_id: str | None, foreign_staged: list[str], *, gate_name: str) -> None:
+# 无主外来「可顺路修」处方文案（裁定#480 手术④——只改文案与判级，不自动改外来文件；
+# 宪法 §3.4 owner 责任制保留：活会话在途不代修）。
+_OWNERLESS_PRESCRIPTION = (
+    "无主外来（不在任何活跃 session 的 task_files/held_files，属主无活跃片）→ 可顺路修："
+    "按 --adopt-prior-work 语义认领后随本批修复并在 gate_audit 台账留痕；"
+    "活会话在途文件维持现状不代修（owner 责任制，宪法 §3.4）。"
+)
+
+
+def _audit_foreign_staged(
+    gateway, session_id: str | None, foreign_staged: list[str], *, gate_name: str
+) -> dict[str, list[str]] | None:
     """外来 session staged 文件落审计（jsonl append；fail-open：写失败不阻断）。
 
     审计文件名由 gate_name 派生（NO-HIGH-COMPLEXITY → no_high_complexity_foreign_staged.jsonl），
     各 gate 各写各的审计（IMPORT-INTEGRITY 派生名与历史文件名一致，行为兼容）。
     对标 protected_paths_gate._audit_bypass（.runtime/gate_audit/ 惯例）。
+
+    三态（裁定#480 手术④「顺路修复三态」）：外来 staged = 活会话在途（归因命中，
+    维持现状不代修）｜无主外来（属主 session 已死/孤儿文件——不在任何活跃 session
+    的 task_files/held_files）→ 审计记录 ownerless_files + prescription 处方
+    （--adopt-prior-work 语义认领后随批修复+台账留痕）；registry 不可读 →
+    分类不可判，维持两态现状（fail-safe 不误开处方）。只改文案与判级，
+    不自动改任何外来文件。
+
+    Returns:
+        {"in_flight": [...], "ownerless": [...]}（normcase 归一路径）分类摘要，
+        供 _split_own_foreign warn 文案复用；registry 不可读 → None。
     """
+    attribution = _attribute_foreign(gateway, session_id, foreign_staged)
+    states: dict[str, list[str]] | None = None
+    if attribution is not None:
+        foreign_norm = {_norm_rel(gateway, f) for f in foreign_staged}
+        states = {
+            "in_flight": sorted(foreign_norm & set(attribution)),
+            "ownerless": sorted(foreign_norm - set(attribution)),
+        }
     try:
         root = Path(getattr(gateway, "project_root", "."))
         audit_dir = root / ".runtime" / "gate_audit"
@@ -593,12 +634,17 @@ def _audit_foreign_staged(gateway, session_id: str | None, foreign_staged: list[
             "session_id": session_id or "?",
             "foreign_count": len(foreign_staged),
             "foreign_files": foreign_staged[:50],
-            "attribution": _attribute_foreign(gateway, session_id, foreign_staged),
+            "attribution": attribution if attribution is not None else {},
         }
+        if states is not None:
+            record["states"] = states
+            if states["ownerless"]:
+                record["ownerless_prescription"] = _OWNERLESS_PRESCRIPTION
         with (audit_dir / fname).open("a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + chr(10))
     except Exception:  # noqa: BLE001 — 审计失败不阻断（check ERROR_CONTRACT）
         logger_ss.debug("foreign staged audit write failed (non-blocking)", exc_info=True)
+    return states
 
 
 _SRC_ZEPHYR_PREFIX = "src/zephyr/"
@@ -641,12 +687,18 @@ def _split_own_foreign(
         logger_ss.debug("own-scope split failed (fallback to full scan)", exc_info=True)
         return list(staged or []), []
     if foreign:
-        _audit_foreign_staged(gateway, session_id, foreign, gate_name=gate_name)
+        states = _audit_foreign_staged(gateway, session_id, foreign, gate_name=gate_name)
+        prescription = ""
+        if states is not None and states["ownerless"]:
+            # 裁定#480 手术④：无主外来（属主无活跃片/孤儿文件）附「可顺路修」处方；
+            # 活会话在途（in_flight）维持现状不代修（owner 责任制，宪法 §3.4）。
+            prescription = " " + _OWNERLESS_PRESCRIPTION
         logger_ss.warning(
-            "%s: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+            "%s: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s%s",
             gate_name,
             len(foreign),
             ", ".join(foreign[:5]) + ("..." if len(foreign) > 5 else ""),
+            prescription,
         )
     return own, foreign
 

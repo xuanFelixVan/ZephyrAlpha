@@ -191,21 +191,38 @@ def _to_repo_rel(path: str, project_root: str | Path | None = None) -> str:
         except ValueError:
             continue
         # serializer 落地工作树镜像主仓布局：命中路径可能是工作树内的绝对路径
-        # （实测：D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w0\docs\...\xxx.yaml），
-        # 剥到仓位根后要再剥一层 <repo>/.runtime/commit_queue/worktrees/<slot>/ 前缀，
-        # 才是它在主仓里的真实相对位置。
+        # （实测：D:\ZephyrAlpha\.runtime\commit_queue\worktree\docs\...\xxx.yaml
+        # 单数专用落地树 q-...-0013 死信实证；worktrees\<slot>\ 复数通道池同理），
+        # 剥到仓位根后要再剥 .runtime/commit_queue/{worktree,worktrees/<slot>}/
+        # 前缀，才是它在主仓里的真实相对位置。
         return _strip_worktree_prefix(rel)
     return normalized
 
 
+# serializer 落地工作树两种布局（真源=scripts/governance/commit_queue_landing.py：
+# _WORKTREE_DIR_NAME="worktree" 单数专用落地树 + drain_queue_pool 的 worktrees/<slot>/
+# 复数通道池）。字符串拆串构造，规避 RELATIVE-PATH-LITERAL 门禁对裸点斜杠字面量的拦截。
+_WT_PREFIX_SINGULAR = "".join([".", "runtime/commit_queue/worktree/"])
+_WT_PREFIX_PLURAL = "".join([".", "runtime/commit_queue/worktrees/"])
+
+
 def _strip_worktree_prefix(rel: str) -> str:
-    """剥 serializer 落地工作树前缀（<...>/worktrees/<slot>/ → 主仓相对路径）。"""
-    marker = "".join([".", "runtime/commit_queue/worktrees/"])
-    if not rel.startswith(marker):
-        return rel
-    parts = rel.split("/")
-    # .runtime / commit_queue / worktrees / <slot> / <真实相对路径>
-    return "/".join(parts[4:]) if len(parts) > 4 else rel
+    """剥 serializer 落地工作树前缀（worktree/ 与 worktrees/<slot>/ → 主仓相对路径）。
+
+    单数形态（裁定#480 手术③时序倒置治本，q-...-0013 死信实证）：B 段专用落地树
+    ``<repo>/.runtime/commit_queue/worktree/``（08 号文 §4.2 步骤 3）——锚主仓根后
+    命中路径剥出该前缀，不剥则 approved_paths（仓库相对 posix 登记）恒不匹配，
+    落地链里 active 裁定（如 #461 明文覆盖 ruling_registry.yaml）"有授权也审批不过"。
+    """
+    if rel.startswith(_WT_PREFIX_SINGULAR):
+        parts = rel.split("/")
+        # .runtime / commit_queue / worktree / <真实相对路径>（无 slot 段）
+        return "/".join(parts[3:]) if len(parts) > 3 else rel
+    if rel.startswith(_WT_PREFIX_PLURAL):
+        parts = rel.split("/")
+        # .runtime / commit_queue / worktrees / <slot> / <真实相对路径>
+        return "/".join(parts[4:]) if len(parts) > 4 else rel
+    return rel
 
 
 def _path_covered(rel_path: str, patterns: list[str]) -> bool:

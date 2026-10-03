@@ -60,6 +60,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
     _is_cosmetic_only_change,
     _is_exempt_line,
     _parse_diff_with_line_numbers,
+    _split_own_foreign,
 )
 
 
@@ -511,7 +512,11 @@ class _StubGateway:
 
     def run_git(self, cmd):
         arg = cmd[-1]
-        text, ok = (self._head, self._head is not None) if arg.startswith("HEAD:") else (self._staged, self._staged is not None)
+        text, ok = (
+            (self._head, self._head is not None)
+            if arg.startswith("HEAD:")
+            else (self._staged, self._staged is not None)
+        )
         return _Res(0 if ok else 1, text or "")
 
 
@@ -548,3 +553,81 @@ class TestIsCosmeticOnlyChange:
 
     def test_unparseable_staged_is_not_cosmetic(self):
         assert _is_cosmetic_only_change(_StubGateway(head=self.HEAD, staged="def f(:"), "src/zephyr/a.py") is False
+
+
+# ---------------------------------------------------------------------------
+# TestForeignStagedTriState — 裁定#480 手术④「顺路修复三态」回归（2026-10-03）
+# ---------------------------------------------------------------------------
+
+
+class _SessionInfoStub:
+    """SessionRegistry.list_active() 条目最小桩（held_files ∪ task_files 判据面）。"""
+
+    def __init__(self, session_id, held_files=None, task_files=None):
+        self.session_id = session_id
+        self.held_files = held_files or []
+        self.task_files = task_files or []
+
+
+class _RegistryStub:
+    def __init__(self, infos):
+        self._infos = infos
+
+    def list_active(self):
+        return list(self._infos)
+
+
+class _OwnScopeGateway:
+    """own-scope 拆分最小依赖面：project_root + 可选 _registry。"""
+
+    def __init__(self, project_root, registry=None):
+        self.project_root = str(project_root)
+        if registry is not None:
+            self._registry = registry
+
+
+class TestForeignStagedTriState:
+    """三态：活会话在途（不代修）｜无主外来（可顺路修处方）｜registry 不可读（两态现状）。"""
+
+    def _audit_records(self, root, gate):
+        import json
+
+        path = root / ".runtime" / "gate_audit" / (gate.lower().replace("-", "_") + "_foreign_staged.jsonl")
+        return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+
+    def test_ownerless_foreign_gets_prescription(self, tmp_path, caplog):
+        """无主外来（不在任何活跃 session 的 task_files/held_files）→ 处方文案+台账留痕。"""
+        import logging
+        import os as _os
+
+        registry = _RegistryStub([_SessionInfoStub("other-alive", held_files=["src/held_by_alive.py"])])
+        gw = _OwnScopeGateway(tmp_path, registry)
+        staged = ["own.py", "src/held_by_alive.py", "src/orphan.py"]
+        with caplog.at_level(logging.WARNING, logger="zephyr.gov_enforcement.commit_gates._diff_helpers"):
+            own, foreign = _split_own_foreign(gw, staged, ["own.py"], "me", gate_name="TRISTATE-PROBE")
+        assert own == ["own.py"] and len(foreign) == 2
+        (rec,) = self._audit_records(tmp_path, "TRISTATE-PROBE")
+        states = rec["states"]
+        assert _os.path.normcase("src/held_by_alive.py") in states["in_flight"]
+        assert _os.path.normcase("src/orphan.py") in states["ownerless"]
+        assert "--adopt-prior-work" in rec["ownerless_prescription"]
+        assert "--adopt-prior-work" in caplog.text, "warn 文案须附可顺路修处方"
+
+    def test_task_files_also_attribute_in_flight(self, tmp_path):
+        """task_files 持有同样构成归因（活会话在途，不误开处方）。"""
+        registry = _RegistryStub([_SessionInfoStub("builder", task_files=["src/wip_build.py"])])
+        gw = _OwnScopeGateway(tmp_path, registry)
+        own, foreign = _split_own_foreign(
+            gw, ["own.py", "src/wip_build.py"], ["own.py"], "me", gate_name="TRISTATE-TASK"
+        )
+        (rec,) = self._audit_records(tmp_path, "TRISTATE-TASK")
+        assert rec["states"]["ownerless"] == []
+        assert "ownerless_prescription" not in rec
+
+    def test_registry_unavailable_keeps_two_state(self, tmp_path):
+        """registry 不可读（无 _registry）→ 分类不可判，维持两态现状（fail-safe）。"""
+        gw = _OwnScopeGateway(tmp_path)  # 无 _registry
+        own, foreign = _split_own_foreign(gw, ["own.py", "src/stray.py"], ["own.py"], "me", gate_name="TRISTATE-NOREG")
+        assert own == ["own.py"] and foreign == ["src/stray.py"]
+        (rec,) = self._audit_records(tmp_path, "TRISTATE-NOREG")
+        assert "states" not in rec and "ownerless_prescription" not in rec

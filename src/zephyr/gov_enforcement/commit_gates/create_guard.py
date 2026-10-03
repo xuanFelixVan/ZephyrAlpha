@@ -719,17 +719,28 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
     B1 撕裂读重试（2026-09-16）：并发写窗口存在瞬态撕裂读，yaml.safe_load 包
     3 次重试（0.3s 退避）。重试耗尽仍 fail-closed（不变量不动——防删 registry
     绕过 token 检查），但消息区分「设施故障（非违规）」并落审计留痕。
+
+    裁定#480 手术③同型治本（时序倒置）：registry 盘面读取先经 anchor_main_root
+    锚主仓根——serializer 落地链（专用 worktree reset 到 dev 基底）与 session
+    worktree 内，project_root 盘面是基底/陈旧版，会话入队前在主区登记的
+    creation_token 不在 worktree 盘面上 → "登记完即可提交"被破坏成"须先行批"
+    （q-...-0013 死信同族）。主区盘面才是登记完成的即时真源（与
+    approval_resolver._registry_path #ARCH-324 先例同款锚定）；主区不可达时
+    逐级回退 project_root 盘面 → REGISTRY_YAML，行为面只宽不窄。
     """
     from zephyr.governance.capability_lookup import REGISTRY_YAML
+    from zephyr.shared.io.paths import anchor_main_root
 
-    _registry_yaml = (
-        gateway.project_root
-        / "docs"
-        / "01_policies_and_standards"
-        / "_registry"
-        / "catalogs"
-        / "capability_canonical_file_registry.yaml"
+    _rel_parts = (
+        "docs",
+        "01_policies_and_standards",
+        "_registry",
+        "catalogs",
+        "capability_canonical_file_registry.yaml",
     )
+    _registry_yaml = anchor_main_root(Path(gateway.project_root)).joinpath(*_rel_parts)
+    if not _registry_yaml.exists():
+        _registry_yaml = Path(gateway.project_root).joinpath(*_rel_parts)  # 旧路径（worktree 自带册时兼容）
     if not _registry_yaml.exists():
         _registry_yaml = REGISTRY_YAML  # 回退到全局真源
 
