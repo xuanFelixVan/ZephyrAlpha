@@ -285,7 +285,16 @@ class TestPoolPathAttempts:
         proc = root / "processing" / f"{item['qid']}.json"
         proc.write_text(json.dumps(item, ensure_ascii=False), encoding="utf-8")
         landing.repo_root = tmp_path
-        stats: dict = {"dead": 0, "done": 0, "processed_qids": [], "stale_cleared": 0, "cascade_marked": 0}
+        # successors_rebuilt：池工 B5/幽灵死信出口经 _pool_seal_dead_letter 后继重建
+        # （2026-10-03 挖矿治本）新增的 stats 键——生产初始化真源=cql:3548，本桩同步跟上
+        stats: dict = {
+            "dead": 0,
+            "done": 0,
+            "processed_qids": [],
+            "stale_cleared": 0,
+            "cascade_marked": 0,
+            "successors_rebuilt": 0,
+        }
         shared: dict = {"processed": 0, "budget_left": None, "env_aborted": False}
         cql._pool_process_item(landing, root, proc, stats, threading.Lock(), shared)
         return root, stats, shared

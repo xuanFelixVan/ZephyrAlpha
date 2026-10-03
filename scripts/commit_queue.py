@@ -90,6 +90,7 @@ CLI
   python scripts/commit_queue.py requeue <qid> [--worktree-root DIR] [--no-bootstrap]
   python scripts/commit_queue.py cleanup [--done-ttl-days N]
   python scripts/commit_queue.py dead-archive [--days N] [--no-verify-landed] [--execute] [--json]
+  python scripts/commit_queue.py backfill-base-head [--repo-root DIR] [--execute] [--json]
   python scripts/commit_queue.py health [--no-alert]
 
 B 段接口预留点（2026-08-21 B 段已接通）
@@ -2454,8 +2455,149 @@ def _bump_recurrence(root: Path, signature: str, *, owner: str, first_dead_at: s
         "owner_sessions": owners,
     }
     signatures[signature] = new_entry
-    _atomic_write(path, json.dumps({"signatures": signatures}, ensure_ascii=False, indent=2).encode("utf-8"))
+    # 合并写（车道 C 2026-10-03）：保留 state 顶层兄弟键面（session_lanes 等）——
+    # 原样只写 {"signatures": …} 会把同文件其它计数面整键抹掉（红队 P2-6 同病类：
+    # 状态文件整包覆盖吞掉邻居的日期键，此处吞掉的是车道复发计数面）
+    state["signatures"] = signatures
+    _atomic_write(path, json.dumps(state, ensure_ascii=False, indent=2).encode("utf-8"))
     return new_entry
+
+
+# ---------------------------------------------------------------------------
+# 车道复发告警（车道 C 2026-10-03）：同 (session_id, 死因族, 首个文件路径) 组合
+# 被同一道门禁反复挡回（生产实测最多 11 版）却无告警、死信默默堆积——把"默默死
+# 11 版"变成"第 3 版当场喊人"。与 _bump_recurrence 的语义分工：recurrence 按
+# **死因签名**聚合（跨会话同根因熔断），此处按 **属主会话×文件路径**聚合（同一
+# 会话在同一文件上反复撞同一堵墙——签名维度对它结构性失明：死因文本头嵌 qid/
+# 路径，11 版被拆成 11 个不同签名键，恰好是本告警缺口的病根）。
+# ---------------------------------------------------------------------------
+
+#: 车道复发显著告警阈值：累计第 3 次死亡（首次达到时告警，非每次）
+_SESSION_LANE_ALERT_THRESHOLD = 3
+
+
+def _session_lane_key(item: dict) -> str:
+    """车道复发键 = "属主会话|死因族|首个文件路径"——同会话同文件反复死的稳定键。
+
+    为什么不用 dead_signature（family:死因头）：死因头部特征嵌 qid/路径等易变细节，
+    同一门禁反复挡回的各版袋签名互不相同（聚合面被文本噪声击穿）；family+首路径对
+    "同会话同文件反复撞同一堵墙"是跨版稳定的最细可用粒度。
+    """
+    owner = str(item.get("owner_session") or item.get("session_id") or "")
+    family = str(item.get("dead_letter_family") or "")
+    files = item.get("files") or []
+    first_path = str(files[0].get("path") or "") if files and isinstance(files[0], dict) else ""
+    return f"{owner}|{family}|{first_path}"
+
+
+def _bump_session_lane(root: Path, lane_key: str, *, first_dead_at: str) -> dict:
+    """车道复发计数 +1 并持久化到 dead/_recurrence_state.json 的 session_lanes 键面。
+
+    与 _bump_recurrence 同文件同口径持久化（合并写互不覆盖）；返回该键条目
+    {count, first_dead_at, alerted}。状态缺失/损坏按零起算（红队 P2 口径：计数
+    丢失只损失一次告警时机，绝不误伤封印主流程）。调用方负责 _ensure_dirs。
+    """
+    path = _recurrence_state_path(root)
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(state, dict):
+            state = {}
+    except (OSError, ValueError):
+        state = {}
+    lanes = state.get("session_lanes")
+    if not isinstance(lanes, dict):
+        lanes = {}
+    entry = lanes.get(lane_key)
+    if not isinstance(entry, dict):
+        entry = {}
+    try:
+        count = int(entry.get("count") or 0) + 1
+    except (TypeError, ValueError):
+        count = 1
+    new_entry = {
+        "count": count,
+        "first_dead_at": entry.get("first_dead_at") or first_dead_at or "",
+        "alerted": bool(entry.get("alerted")),
+    }
+    lanes[lane_key] = new_entry
+    state["session_lanes"] = lanes
+    _atomic_write(path, json.dumps(state, ensure_ascii=False, indent=2).encode("utf-8"))
+    return new_entry
+
+
+def _mark_session_lane_alerted(root: Path, lane_key: str) -> None:
+    """置 alerted 幂等位（同一组合只成功告警一次）。
+
+    写失败/状态损坏=放弃置位，下次复发补告——宁多喊不静默（告警送达失败不应
+    被幂等位吞掉，与 emit_dead_backlog_alert 冷却态"打标失败不写状态"同口径）。
+    """
+    path = _recurrence_state_path(root)
+    try:
+        state = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(state, dict):
+            return
+        lanes = state.get("session_lanes")
+        if not isinstance(lanes, dict) or not isinstance(lanes.get(lane_key), dict):
+            return
+        lanes[lane_key]["alerted"] = True
+        _atomic_write(path, json.dumps(state, ensure_ascii=False, indent=2).encode("utf-8"))
+    except (OSError, ValueError):
+        pass
+
+
+def _alert_session_lane_stall(lane_key: str, entry: dict, item: dict) -> bool:
+    """车道复发显著告警：logger.warning + task_board 专 task 打标。
+
+    通道选型（车道 C 2026-10-03）：复用 emit_dead_backlog_alert 的 task_board 专
+    task 挂载点模式（_DEADLETTER_WATCH_TASK_ID 幂等自建 + tag_dead_letter 打
+    deadletter 标签）——_notify_task_board_dead_letter 依赖袋 meta.task_id（历史
+    死袋几乎全无此键），backlog 告警的总量阈值/冷却窗口语义又不匹配"特定组合第
+    3 次"；专 task 打标是唯一不依赖袋侧字段、又有现成幂等锚点的通道（不发明
+    新通道）。板不可达 fail-open 不阻断封印主流程（宁漏不误，口径同
+    _notify_task_board_dead_letter）。
+
+    返回 True=打标成功（调用方据此置 alerted 位）；False=未送达（下次复发补告）。
+    """
+    count = int(entry.get("count") or 0)
+    reason = (
+        f"session_lane_stall: 同一 (会话, 死因族, 路径) 组合 {lane_key} 累计死亡 {count} 次"
+        f"（阈值 {_SESSION_LANE_ALERT_THRESHOLD}）——该会话该文件被同一道门禁反复挡回，"
+        f"请人工介入根因，勿继续盲 requeue。样本 qid={item.get('qid', '?')}"
+    )
+    logger.warning("[dead] 车道复发告警: %s", reason)
+    try:
+        from scripts import task_board as tb
+
+        conn = tb._connect(tb._resolve_board_db())
+        try:
+            if tb._get_task(conn, _DEADLETTER_WATCH_TASK_ID) is None:
+                tb.ensure_task(
+                    conn,
+                    _DEADLETTER_WATCH_TASK_ID,
+                    title="提交队列死信积压告警（自动维护勿关闭）",
+                    description=(
+                        "commit_queue 死信积压/车道复发统一挂载点（66 号 §6.4 通道）。"
+                        "处置入口：python scripts/commit_queue.py health"
+                    ),
+                    actor="commit_queue",
+                )
+            rc = tb.tag_dead_letter(
+                conn,
+                _DEADLETTER_WATCH_TASK_ID,
+                qid=str(item.get("qid") or "lane-stall"),
+                reason=reason,
+                owner=str(item.get("owner_session") or ""),
+                actor="commit_queue",
+            )
+        finally:
+            conn.close()
+        if rc != 0:
+            logger.warning("[dead] 车道复发告警打标跳过: rc=%s（任务不存在/已完成/metadata 损坏）", rc)
+            return False
+    except Exception as exc:  # noqa: BLE001 — 板不可达不阻断封印主流程（宁漏不误）
+        logger.warning("[dead] 车道复发告警 task_board 联动失败（忽略）: %s", exc)
+        return False
+    return True
 
 
 def _iter_eviction_successors(root: Path, dead_qid: str, dead_paths: set):
@@ -2512,9 +2654,11 @@ def _seal_dead_letter(queue_root: str | os.PathLike, item: dict) -> list[str]:
     ① 归属五件套（_seal_dead_letter_attribution）——新死信当场可查属主与归因签名；
     ② 同签名第 _RECURRENCE_FUSE_LIMIT 封 ⇒ recurrence_fused=true + 根因工序单落
        dead/_root_cause/<签名slug>.json（含属主集合与首死时）；requeue 面拒盲重投；
+    ②' 同 (session, 死因族, 首路径) 组合第 _SESSION_LANE_ALERT_THRESHOLD 次死亡 ⇒
+       车道复发显著告警（车道 C 2026-10-03：第 3 版当场喊人，alerted 位幂等一次）；
     ③ _rebuild_successors_after_eviction 后继重建（失败袋摘除后其链不停摆）。
     袋体落盘由调用方负责（drain 死信出口已有 _atomic_write+rename 链）；本函数只做
-    item 原地封印 + 旁路状态（复发表/工序单/影子）。返回后继重建标记的 qid 清单。
+    item 原地封印 + 旁路状态（复发表/车道表/工序单/影子）。返回后继重建标记的 qid 清单。
     """
     root = resolve_queue_root(queue_root)
     _ensure_dirs(root)
@@ -2527,6 +2671,15 @@ def _seal_dead_letter(queue_root: str | os.PathLike, item: dict) -> list[str]:
         first_dead_at=str(item.get("first_dead_at") or ""),
     )
     count = int(entry.get("count") or 0)
+    # 车道复发计数与告警（车道 C）：计数面独立于签名复发（签名被死因文本噪声击穿，
+    # 见 _session_lane_key docstring）；告警失败不置位、下次复发补告（宁多喊不静默）。
+    # 计数只落 dead/_recurrence_state.json 不写袋体——cascade_diff 差分尺钉死死袋
+    # 字段集与 HEAD 基线零漂移，袋体新字段须走该尺基线评审，此处旁路状态文件足够
+    lane_key = _session_lane_key(item)
+    lane_entry = _bump_session_lane(root, lane_key, first_dead_at=str(item.get("first_dead_at") or ""))
+    if int(lane_entry.get("count") or 0) >= _SESSION_LANE_ALERT_THRESHOLD and not lane_entry.get("alerted"):
+        if _alert_session_lane_stall(lane_key, lane_entry, item):
+            _mark_session_lane_alerted(root, lane_key)
     item["recurrence_count"] = count
     if count >= _RECURRENCE_FUSE_LIMIT:
         item["recurrence_fused"] = True
@@ -3784,6 +3937,199 @@ def check_dead_burst(
 # CLI
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# backfill-base-head（车道 C 2026-10-03）：F-AUDIT-QUEUE-04 修正前（2026-09-24）
+# 交互正门不传 base_head ⇒ 103 只死袋缺基底，史实归因结构性失效（落地器只能走
+# _legacy_base_drift_reason 时间基底判定）。本子命令对 dead/ 存量袋做史证回填。
+# ---------------------------------------------------------------------------
+
+_BACKFILL_LOG_LIMIT = 500  # 单路径 git log 候选上界（一次性工具的子进程预算护栏，
+# 超出记失败不硬扫——正常"最接近 created_at 的匹配"都在前几条）
+_BACKFILL_SCAN_LIMIT = 200  # 单路径逐候选验树上界（同上，防病态长历史拖死回填）
+_BACKFILL_LSTREE_CHUNK = 50  # ls-tree pathspec 分块（Windows 命令行长度上限，同 _LSTREE_CHUNK）
+
+
+def _backfill_git(repo_root: Path, args: list[str]) -> tuple[int, str]:
+    """回填专用 git 执行（run_subprocess_hidden 统一无窗口入口，trae_067 铁律2）。
+
+    只在 CLI 层使用——队列层零 git 依赖不变（66 号 §6.1 刻意出入 #3）。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    r = run_subprocess_hidden(["git", *args], cwd=str(repo_root), timeout=120)
+    return r.returncode, (r.stdout or "").strip()
+
+
+def _backfill_base_from_blobs(repo_root: Path, blob_specs: list[tuple[str, str]], created_dt: datetime) -> str | None:
+    """分支①（blob 史证，优先）：逐路径找「树中该 blob 且不晚于 created_at、最接近
+    created_at」的候选 commit，多文件时取能命中最多文件的候选（任务书口径）。
+
+    为什么限定不晚于 created_at：基底是袋创建时刻之前就存在的树——晚于袋创建的
+    commit 在史实上不可能是袋基底，采信即造史。git log 默认新→旧倒序，所以每路径
+    从新往旧扫到首个匹配即停（它恰是"最接近 created_at 的那个"）。
+    """
+    candidates: dict[str, datetime] = {}
+    for path, blob in blob_specs:
+        rc, out = _backfill_git(
+            repo_root, ["log", "--all", f"-n{_BACKFILL_LOG_LIMIT}", "--format=%H%x09%cI", "--", path]
+        )
+        if rc != 0:
+            continue  # 该路径取不到历史 ⇒ 无候选（不猜，与 resolve_base_blobs 宁缺毋滥同口径）
+        scanned = 0
+        for line in out.splitlines():
+            sha, sep, ctime_s = line.partition("\t")
+            if not sep:
+                continue
+            try:
+                ctime = datetime.fromisoformat(ctime_s)
+            except ValueError:
+                continue
+            if ctime > created_dt:
+                continue  # 晚于袋创建：跳过继续往旧找（不 break——log 含晚段在前）
+            scanned += 1
+            if scanned > _BACKFILL_SCAN_LIMIT:
+                break
+            rc2, blob_at = _backfill_git(repo_root, ["rev-parse", f"{sha}:{path}"])
+            if rc2 == 0 and blob_at == blob:
+                candidates[sha] = ctime
+                break
+    if not candidates:
+        return None
+    # 多文件共识评分：候选池（各路径的最优命中并集）里取命中最多文件者，平局取与
+    # created_at 最接近者——单文件袋天然退化为"唯一候选"。
+    want = dict(blob_specs)
+    paths = list(want)
+    best_sha: str | None = None
+    best_score: tuple[int, float] | None = None
+    for sha, ctime in candidates.items():
+        hits = 0
+        for i in range(0, len(paths), _BACKFILL_LSTREE_CHUNK):
+            rc, out = _backfill_git(repo_root, ["ls-tree", sha, "--", *paths[i : i + _BACKFILL_LSTREE_CHUNK]])
+            if rc != 0:
+                continue  # 该块取不到 ⇒ 块内不计命中（宁少勿猜）
+            for line in out.splitlines():
+                meta, sep, p = line.partition("\t")
+                parts = meta.split()
+                if sep and len(parts) == 3 and parts[1] == "blob" and want.get(p) == parts[2]:
+                    hits += 1
+        score = (hits, -abs((created_dt - ctime).total_seconds()))
+        if best_score is None or score > best_score:
+            best_sha, best_score = sha, score
+    return best_sha
+
+
+def _backfill_base_from_time(repo_root: Path, item: dict) -> str | None:
+    """分支②（时间基底，兜底）：袋 created_at 时点的 dev HEAD。
+
+    created_at 原样传 git（ISO8601 带 +08:00 偏移 git 原生可解析，不做时区换算——
+    换算错一次就把基底指到别的 commit 上）。dev 无早于该时刻的 commit → None。
+    """
+    created = str(item.get("created_at") or "")
+    if not created:
+        return None
+    rc, out = _backfill_git(repo_root, ["rev-list", "-n", "1", f"--before={created}", "dev"])
+    return (out or None) if rc == 0 else None
+
+
+def _backfill_pick_base_head(repo_root: Path, item: dict, created_dt: datetime) -> tuple[str | None, str]:
+    """单袋基底择取（自上而下优先）：blob 史证 → created_at 时间基底。
+
+    返回 (base_head 或 None, method 或失败原因)。分支①不可证时落②兜底——rev-list
+    时间点位可复现，仍优于"结构性失效的 _legacy 时间基底判定"（至少 base→dev 的
+    diff 有了确定锚点）；两个分支都拿不到才判失败。
+    """
+    blob_specs = [
+        (str(f.get("path") or ""), str(f.get("base_blob") or ""))
+        for f in (item.get("files") or [])
+        if isinstance(f, dict) and f.get("path") and f.get("base_blob")
+    ]
+    blob_note = ""
+    if blob_specs:
+        sha = _backfill_base_from_blobs(repo_root, blob_specs, created_dt)
+        if sha:
+            return sha, "base_blob"
+        blob_note = "base_blob 无不晚于 created_at 的树匹配，"
+    sha = _backfill_base_from_time(repo_root, item)
+    if sha:
+        return sha, "created_at"
+    return None, f"{blob_note}created_at 时间基底亦不可得（dev 无早于创建时刻的 commit 或分支缺失）"
+
+
+def backfill_base_heads(
+    queue_root: str | os.PathLike | None = None,
+    repo_root: str | os.PathLike | None = None,
+    *,
+    execute: bool = False,
+) -> dict:
+    """死袋 base_head 史证回填（车道 C 2026-10-03）。
+
+    只回填 dead/：史实归因（dead-archive 落地校验）只消费死袋；在途袋的基底缺口
+    由入队正门治本（QUEUE-04 已修），回填工具动在途袋反而与 drain 竞态。
+
+    安全口径（对齐 dead-archive）：只改 base_head 一个字段（增量写回，_atomic_write
+    原子替换，其余字段逐字节保留 json 重排语义）；已有值跳过（幂等，重跑零变化）；
+    缺省 dry-run 零写盘，execute=True 才写。
+
+    返回 {"backfilled": [{qid, base_head, method}], "skipped": [qid],
+    "failed": [{qid, reason}], "execute": bool}。
+    """
+    root = resolve_queue_root(queue_root)
+    repo = Path(repo_root) if repo_root else _REPO_ROOT
+    result: dict = {"backfilled": [], "skipped": [], "failed": [], "execute": execute}
+    dead_dir = root / "dead"
+    if not dead_dir.exists():
+        return result
+    for entry in sorted(dead_dir.glob("q-*.json")):
+        qid = entry.stem
+        try:
+            item = json.loads(entry.read_text(encoding="utf-8"))
+            if not isinstance(item, dict):
+                raise ValueError("袋 JSON 非 object")
+        except (OSError, ValueError) as exc:
+            result["failed"].append({"qid": qid, "reason": f"袋 JSON 不可读: {exc}"})
+            continue
+        if item.get("base_head"):
+            result["skipped"].append(qid)
+            continue
+        try:
+            created_dt = datetime.fromisoformat(str(item.get("created_at") or ""))
+        except ValueError:
+            result["failed"].append({"qid": qid, "reason": "created_at 缺失/不可解析（两分支都依赖时序约束）"})
+            continue
+        if created_dt.tzinfo is None:
+            created_dt = (
+                created_dt.astimezone()
+            )  # 历史脏值按本地时区解释（生产=+08），否则与 git %cI 的 aware 时间比会抛 TypeError
+        base_head, method = _backfill_pick_base_head(repo, item, created_dt)
+        if not base_head:
+            result["failed"].append({"qid": qid, "reason": method})
+            continue
+        if execute:
+            item["base_head"] = base_head
+            try:
+                _atomic_write(entry, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            except OSError as exc:
+                result["failed"].append({"qid": qid, "reason": f"写回失败: {exc}"})
+                continue
+        result["backfilled"].append({"qid": qid, "base_head": base_head, "method": method})
+    return result
+
+
+def _cmd_backfill_base_head(args: argparse.Namespace) -> int:
+    result = backfill_base_heads(args.queue_root, repo_root=args.repo_root, execute=args.execute)
+    print(
+        f"BACKFILL-BASE-HEAD: backfilled={len(result['backfilled'])} "
+        f"skipped={len(result['skipped'])} failed={len(result['failed'])} "
+        f"execute={result['execute']}（缺省 dry-run 零写盘，--execute 才写回袋 JSON）"
+    )
+    for row in result["backfilled"][:10]:
+        print(f"  PLAN {row['qid']}: base_head={row['base_head'][:12]}… method={row['method']}")
+    for row in result["failed"][:10]:
+        print(f"  FAIL {row['qid']}: {row['reason']}")
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
 
 def _read_files_from_worktree(worktree_root: Path, relpaths: list[str]) -> list[tuple[str, bytes]]:
     """CLI 层：从工作区读文件完整内容（66 号 §6.1 v0.4.0：读工作区文件非 git index，
@@ -4176,6 +4522,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_hl.add_argument("--no-alert", action="store_true", help="只打印快照，不执行积压告警判定")
     p_hl.set_defaults(func=_cmd_health)
+
+    p_bf = sub.add_parser(
+        "backfill-base-head",
+        help="dead/ 存量袋 base_head 史证回填（缺省 dry-run 零写盘，--execute 才写；已有值跳过=幂等）",
+    )
+    p_bf.add_argument("--repo-root", default=None, help="git 仓根（默认仓库根）——blob 史证/时间基底来源")
+    p_bf.add_argument("--execute", action="store_true", help="写回袋 JSON（缺省 dry-run 只打印计划零盘面变化）")
+    p_bf.add_argument("--json", action="store_true", help="机器可读输出（backfilled/skipped/failed 清单）")
+    p_bf.set_defaults(func=_cmd_backfill_base_head)
 
     args = parser.parse_args(argv)
     return args.func(args)

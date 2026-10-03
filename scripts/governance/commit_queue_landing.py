@@ -3542,6 +3542,10 @@ def drain_queue_pool(
         "processed_qids": [],
         "stale_cleared": 0,
         "cascade_marked": 0,
+        # 死信摘除后继重建计数（波 1B 1.7b 口径，2026-10-03 挖矿治本）：与
+        # cq.drain_queue 的 stats 同键同义——池化四死信出口接 _seal_dead_letter
+        # 后，后继重建扇出量对账面可见（此前池化死信不封印 ⇒ 此键恒缺席）。
+        "successors_rebuilt": 0,
         "done_cleaned": 0,
         # D1 §4.2：已落地件的内存级联索引 [(qid, base_head)]（落地序）。落账时锁内
         # append（纯内存，不触 pending 盘）；波末 _run_pool_wave 统一交
@@ -3758,6 +3762,43 @@ def _emit_dead_letter_ledger(root: Path, qid: str, item: dict, reason: str) -> N
         pass
 
 
+# 池化封印进程内互斥锁（2026-10-03 死信挖矿治本）：_bump_recurrence 对
+# dead/_recurrence_state.json 是「读-改-写」，k 工并发裸奔会丢更新（同签名计数
+# 少加 ⇒ 熔断延迟）。串行通道单线程天然安全；池化四出口经 _pool_seal_dead_letter
+# 共享助手在锁内串行调用。跨进程互斥由 SerializerLease 承担（池与串行同 lease）。
+_POOL_SEAL_LOCK = threading.Lock()
+
+
+def _pool_seal_dead_letter(root: Path, item: dict) -> list[str]:
+    """池化死信封印共享出口（波 1B 1.7b/c 口径对齐，2026-10-03 死信挖矿治本）。
+
+    复用 cq._seal_dead_letter 唯一真源（归属五件套 + 同签名复发熔断 + 根因工序单
+    + 后继重建），绝不复制实现（双实现漂移禁令）。池化两点适配：
+    - 进程内互斥：见 _POOL_SEAL_LOCK 注释；
+    - best-effort 降级：封印是治理附加面（死信袋必落 dead/ 不依赖封印成败），
+      任何异常只 warning + 降级做纯内存归属五件套注入（cq._seal_dead_letter_
+      attribution，无 IO 不会失败在盘上——归属仍可查，只是复发计数/工序单缺席），
+      与 _notify_task_board_dead_letter「宁漏不误」同哲学。返回后继重建标记的
+      qid 清单（消费方计入 stats.successors_rebuilt）。
+    """
+    try:
+        with _POOL_SEAL_LOCK:
+            return cq._seal_dead_letter(root, item)
+    except Exception as exc:  # noqa: BLE001 — 封印失败不阻断死信主链（治理附加面）
+        logger.warning(
+            "[pool] qid=%s 死信封印失败（best-effort 降级：仅归属五件套，无复发计数/工序单）: %s",
+            item.get("qid", "?"),
+            exc,
+        )
+        try:
+            cq._seal_dead_letter_attribution(item)
+        except Exception as exc2:  # noqa: BLE001 — 纯内存注入最后的兜底也不许炸死信路径
+            logger.warning(
+                "[pool] qid=%s 归属五件套降级注入失败（袋落 dead/ 无封印字段）: %s", item.get("qid", "?"), exc2
+            )
+        return []
+
+
 def _pool_env_failure_exit(
     root: Path,
     processing_path: Path,
@@ -3781,14 +3822,17 @@ def _pool_env_failure_exit(
                 f"landing 环境失败: {exc}",
             )
     if dead is not None:
+        # 死信封印（2026-10-03 挖矿治本）：dead_reason 先落定（签名派生依赖），
+        # 封印在锁外完成（item 由认领 rename 独占，互斥不依赖池级锁；锁内只留
+        # 落盘+纯内存记账，D1「停世界窗口归零」口径不变）。
+        item["dead_at"] = cq._now_iso()
+        item["dead_reason"] = dead.reason
+        _rebuilt = _pool_seal_dead_letter(root, item)
         with ledger.lock:
-            item["dead_at"] = cq._now_iso()
-            item["dead_reason"] = dead.reason
-            item["prescription"] = cq.dead_letter_prescription(dead.reason)
-            item["owner_session"] = item.get("session_id") or ""
             cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
             os.replace(processing_path, root / "dead" / processing_path.name)
             ledger.stats["dead"] += 1
+            ledger.stats["successors_rebuilt"] += len(_rebuilt)
             ledger.stats["processed_qids"].append(qid)
             ledger.shared["processed"] += 1
         logger.error("[pool] qid=%s 环境失败重试耗尽，升级死信（防活锁）: %s", qid, dead.reason)
@@ -3850,12 +3894,15 @@ def _pool_process_item(
     _ghost_sid = str(item.get("session_id") or "")
     if cq._session_ghost_dead(_ghost_sid, runtime_root=root.parent):
         cq._mark_ghost_dead_fields(item, _ghost_sid)
-        item["prescription"] = cq.dead_letter_prescription(item["dead_reason"])  # pool 死信出口同处方口径
-        item["owner_session"] = _ghost_sid
+        # 死信封印唯一出口（2026-10-03 挖矿治本）：与串行 ghost 出口
+        # （commit_queue.py drain 拾取点）同链——归属五件套+复发熔断+后继重建，
+        # 不再手写 prescription/owner_session 两字段（治理面脱节的病根）。
+        _rebuilt = _pool_seal_dead_letter(root, item)
         with stats_lock:
             cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
             os.replace(processing_path, root / "dead" / processing_path.name)
             stats["dead"] += 1
+            stats["successors_rebuilt"] += len(_rebuilt)
             stats["processed_qids"].append(qid)
             shared["processed"] += 1
             shared.get("claimed", set()).discard(processing_path.name)  # 终态=认领权释放
@@ -3869,14 +3916,15 @@ def _pool_process_item(
     if cq._attempts_backoff_enabled() and cq._item_attempts(item) >= cq._ATTEMPTS_DEAD_THRESHOLD:
         item["dead_at"] = cq._now_iso()
         item["dead_reason"] = cq._attempts_exhausted_reason(item)
-        # 红队 R2-P1-2：pool 死信出口与 drain 单工支同源补处方（k=4 为默认生产形态，
-        # 三出口缺处方＝M3.3 交付在合并态脱节）。
-        item["prescription"] = cq.dead_letter_prescription(item["dead_reason"])
-        item["owner_session"] = item.get("session_id") or ""
+        # 死信封印唯一出口（2026-10-03 挖矿治本）：与串行 B5 出口同链（归属
+        # 五件套+复发熔断+后继重建），替代红队 R2-P1-2 的手写处方补丁——处方/
+        # 属主由封印统一注入，k=4 生产形态与单工口径全等。
+        _rebuilt = _pool_seal_dead_letter(root, item)
         cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
         os.replace(processing_path, root / "dead" / processing_path.name)
         with stats_lock:
             stats["dead"] += 1
+            stats["successors_rebuilt"] += len(_rebuilt)
             stats["processed_qids"].append(qid)
             shared["processed"] += 1
             shared.get("claimed", set()).discard(processing_path.name)  # 终态=认领权释放
@@ -3963,9 +4011,10 @@ def _pool_process_item(
     else:
         item["dead_at"] = cq._now_iso()
         item["dead_reason"] = result.reason
-        item["prescription"] = cq.dead_letter_prescription(result.reason)
-        item["owner_session"] = item.get("session_id") or ""
         _emit_dead_letter_ledger(root, qid, item, result.reason)
+        # 死信封印唯一出口（2026-10-03 挖矿治本）：与串行通用死信出口同链
+        # （审计桥接先行、封印随后、再落盘——顺序对齐 cq.drain_queue 死信支）。
+        _rebuilt = _pool_seal_dead_letter(root, item)
         cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
         os.replace(processing_path, root / "dead" / processing_path.name)
     with stats_lock:
@@ -3975,6 +4024,7 @@ def _pool_process_item(
             stats["landed_index"].append((qid, item.get("base_head")))
         else:
             stats["dead"] += 1
+            stats["successors_rebuilt"] += len(_rebuilt)
         if idx_source is not None:
             # D1 计数语义保持：索引命中=旧实现「落地临界区内即时标记」的口径。波末
             # batch 只补计「仍留 pending」的命中；本波内已被后续认领消费的命中在此

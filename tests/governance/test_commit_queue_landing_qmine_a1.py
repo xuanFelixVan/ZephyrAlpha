@@ -282,7 +282,17 @@ def _run_pool_single(tmp_path: Path, item: dict, landing) -> tuple[Path, dict, d
     cq._ensure_dirs(root)
     proc = root / "processing" / f"{item['qid']}.json"
     proc.write_text(json.dumps(item, ensure_ascii=False), encoding="utf-8")
-    stats: dict = {"dead": 0, "done": 0, "processed_qids": [], "stale_cleared": 0, "cascade_marked": 0}
+    # successors_rebuilt/landed_index：池工 env 失败退回与成功落地出口（2026-10-03
+    # 挖矿治本）新增的 stats 键——生产初始化真源=cql:3548，本桩同步跟上
+    stats: dict = {
+        "dead": 0,
+        "done": 0,
+        "processed_qids": [],
+        "stale_cleared": 0,
+        "cascade_marked": 0,
+        "successors_rebuilt": 0,
+        "landed_index": [],
+    }
     shared: dict = {"processed": 0, "budget_left": None, "env_aborted": False}
     cql._pool_process_item(landing, root, proc, stats, threading.Lock(), shared)
     return root, stats, shared

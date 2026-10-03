@@ -59457,4 +59457,9 @@ creation_tokens:
   created_by: st-deadletter-cure-20261003
   capability: D_GOV_CODE_QUALITY
   merge_evaluation: "1235只死袋全量归因台账+Owner三问裁定章，死信链路唯一纸质真源"
+- file: scripts/governance/dead_letter_doctor.py
+  token: d-gov-code-quality-dead-letter-doctor-20261003
+  created_by: st-deadletter-cure-20261003
+  capability: D_GOV_CODE_QUALITY
+  merge_evaluation: "死信急诊分诊台：手续五族诊断/处方/铁闸执行，与triage_bag内容归因互补"
 di_seam_exemptions: []
