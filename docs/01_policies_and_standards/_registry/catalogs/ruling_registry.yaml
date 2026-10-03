@@ -6881,3 +6881,27 @@ entries:
   related_arch: []
   related_rulings: ["裁定#461", "裁定#478"]
   superseded_by: null
+- ruling_id: "裁定#480"
+  session: st-commitmap-chief-20261003
+  summary: |-
+    Owner 2026-10-03 夜批复「全部按照你的建议开始施工」——提交链治本战役一次性授权包全批（呈批件
+    docs/_working/commitmap_cure/04_ruling_package.md 六节）：A 增设12号安全标签「别把钥匙留在门口」
+    （≈10+台从⑨改挂）；B C3 销案（基线33无机械真源，唯一命中已被B1/B2消化）；C 四分处置授权
+    留178/退4（GATE-DETECT三兄弟哑火未接线+防护真源已覆盖、ISSUE-RESOLVED销案）/并17（活性合流8套+
+    上户口合一4台5手续+门禁身份一本账零交集收敛）/修6；D 手术批放行（误伤修复/活性合流/合一+时序倒置/
+    顺路修复三态/先查再建reuse_scan/入口强制位+八袋重放8→1金标准）；E 附项（堵点本计数改33+R2-F4跳号
+    补处置说明）；F 存量清算时点预告（销账手刹保留=届时单独确认）。
+  affected_files:
+  - docs/_working/commitmap_cure/04_ruling_package.md
+  - docs/_working/commitmap_cure/03_disposition_table.csv
+  approved_paths:
+  - "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
+  - "docs/_working/commitmap_cure/*"
+  - "src/zephyr/gov_enforcement/commit_gates/*"
+  - "src/zephyr/security/access_control/session_concurrency.py"
+  - "src/zephyr/governance/capability_lookup.py"
+  - "scripts/governance/d3_metadata/*"
+  expires_at: '2026-11-03'
+  related_arch: []
+  related_rulings: ["裁定#479", "裁定#478"]
+  superseded_by: null
