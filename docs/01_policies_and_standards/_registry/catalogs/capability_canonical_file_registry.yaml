@@ -59551,4 +59551,34 @@ creation_tokens:
   created_by: st-tdm-mount-flash-20261003
   capability: tdm_mount
   merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件（A清单/B账本/C初挂草案/D confidence草案）为总筹裁决输入，账本为活体真源"
+- file: src/zephyr/governance/audit/reuse_scan.py
+  token: surgery-c-reuse-scan-20261003
+  created_by: st-sC-surgery-20261003
+  capability: surgery_c
+  merge_evaluation: "裁定#480 C-2 新能力对象：三源同类半成品扫描（git status盘面/活跃worktree/死信袋）此前无任何真源覆盖，跨域不同对象不并；纯只读零写"
+- file: docs/_working/vmap12_flesh/f1a_mechanism_mounts.yaml
+  token: vmap12-flesh-f1a-mechanism-mounts-20261003
+  created_by: st-vm12f1-20261003
+  capability: vmap12_flesh
+  merge_evaluation: "纯盘点新增料册：挂图SOP升级图12供料（四表+呈批），无同真源旧条目可并；替代方式=不产新册则总筹无料可裁"
+- file: docs/_working/vmap12_flesh/f1b_casebooks.yaml
+  token: vmap12-flesh-f1b-casebooks-20261003
+  created_by: st-vm12f1-20261003
+  capability: vmap12_flesh
+  merge_evaluation: "纯盘点新增料册：挂图SOP升级图12供料（四表+呈批），无同真源旧条目可并；替代方式=不产新册则总筹无料可裁"
+- file: docs/_working/vmap12_flesh/f1c_facts.yaml
+  token: vmap12-flesh-f1c-facts-20261003
+  created_by: st-vm12f1-20261003
+  capability: vmap12_flesh
+  merge_evaluation: "纯盘点新增料册：挂图SOP升级图12供料（四表+呈批），无同真源旧条目可并；替代方式=不产新册则总筹无料可裁"
+- file: docs/_working/vmap12_flesh/f1d_purpose_tags.yaml
+  token: vmap12-flesh-f1d-purpose-tags-20261003
+  created_by: st-vm12f1-20261003
+  capability: vmap12_flesh
+  merge_evaluation: "纯盘点新增料册：挂图SOP升级图12供料（四表+呈批），无同真源旧条目可并；替代方式=不产新册则总筹无料可裁"
+- file: docs/_working/vmap12_flesh/f1z_escalations.md
+  token: vmap12-flesh-f1z-escalations-20261003
+  created_by: st-vm12f1-20261003
+  capability: vmap12_flesh
+  merge_evaluation: "纯盘点新增料册：挂图SOP升级图12供料（四表+呈批），无同真源旧条目可并；替代方式=不产新册则总筹无料可裁"
 di_seam_exemptions: []

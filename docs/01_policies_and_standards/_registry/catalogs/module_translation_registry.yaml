@@ -62476,6 +62476,23 @@ entries:
   plain_zh: "给死信袋看病的分诊台：先诊断死因分五族，能补手续的按铁闸补（只动登记册不改代码、同种病只救一次、救完走正门重投），治不了的出处方给人看"
   responsibility_layer: governance
 
+- module_path: scripts/governance/register_asset.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "新资产上户口合一命令"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "大白话：新建资产时一条命令跑完五道手续（登记户口token、写大白话简介、登记设计节点、重建依赖图、校验模块头），全部调用既有工具不重写逻辑；哪步失败就停下并告诉你已办完哪几步，还能用--skip跳过个别步骤但会留痕。"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/audit/reuse_scan.py
+  domain_id: D_GOVERNANCE
+  name_zh: "先查再建半成品扫描器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "大白话：动手新建文件前先查三处有没有别人做到一半的同类文件——git暂存区、其他会话的工作副本、提交失败死信袋，找到就提醒先看再做别重复造；只查不改任何东西，查不到也不报错。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
