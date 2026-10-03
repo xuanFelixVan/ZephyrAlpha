@@ -62,7 +62,9 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  同目录脚本相对 import（_GOV_DIR 已注入 sys.path L62），静态解析不可达
+from _common import (
+    DB_DISPLAY_NAME,  # noqa: E402  # noqa: import-integrity  同目录脚本相对 import（_GOV_DIR 已注入 sys.path L62），静态解析不可达
+)
 from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
@@ -302,10 +304,10 @@ BUILT_PANORAMAS: list[dict] = [
         "description": "已退役（2026-08-02）：旧生成器 generate_trading_flow_diagram.py + 旧叙事 trading_flow_narrative.yaml + 9 旧 MD + 7 旧 HTML 全部删除。4 横切叙事段迁移至 module_translation_registry.yaml §battle_map_cross_cutting。被 PAN-BATTLE-MAP-01 完全取代。",
         "status": "retired",
     },
-    # --- 07_trading_decision_architecture/battle_map/（第四全景图 battle_map 真源） ---
+    # --- 07_trading_decision_architecture/battle_map/（battle_map 真源，横向·覆盖切片 裁定#483） ---
     {
         "panorama_id": "PAN-BATTLE-MAP-01",
-        "name": "交易决策作战地图（battle_map 第四全景图）",
+        "name": "交易决策作战地图（battle_map·横向覆盖切片）",
         "category": "作战地图",
         "category_id": "battle_map",
         "family": "业务图族",  # 三族归类（2026-09-15 #ARCH-312）：业务图族/技术图族/治理图族
@@ -314,7 +316,7 @@ BUILT_PANORAMAS: list[dict] = [
         "generator": "generate_battle_map_diagram.py",
         "output_path": "07_trading_decision_architecture/battle_map/",
         "artifact_path": "07_trading_decision_architecture/battle_map/battle_map_panorama.md",
-        "description": "交易决策作战地图（第四全景图 battle_map），以决策环节为节点串联 depgraph/decisiongraph/候选池/蓝图，6件套标准 + 双向锚点查找；取代 PAN-BUILT-21 旧 trading_flow 视图（battle_map_panorama.md §四 取代声明）",
+        "description": "交易决策作战地图（battle_map，横向覆盖切片/挂载面，裁定#483）：模块作战使命与落地覆盖索引，6件套标准 + 双向锚点查找；生命周期格子仅为索引键，流程叙事真源=TDM/策略工厂；取代 PAN-BUILT-21 旧 trading_flow 视图（battle_map_panorama.md §四 取代声明）",
     },
     # --- config/（治理运行地图 GOMAP 第十全景图，2026-09-15 十图升级 #ARCH-312 转正） ---
     {
@@ -1023,8 +1025,7 @@ def _generate_stats_section(built: list[dict], pending: list[dict], db_stats: di
     lines.append(f"| 待建全景图总数 | {len(pending)} |")
     lines.append(f"| 全景图总数 | {len(built) + len(pending)} |")
     lines.append(
-        f"| 已建覆盖率（分母=待建+现役已建，退役项剔除） | "
-        f"{len(active) / (len(active) + len(pending)) * 100:.1f}% |"
+        f"| 已建覆盖率（分母=待建+现役已建，退役项剔除） | {len(active) / (len(active) + len(pending)) * 100:.1f}% |"
     )
     lines.append("")
 

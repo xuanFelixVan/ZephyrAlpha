@@ -6945,3 +6945,48 @@ entries:
   related_arch: []
   related_rulings: ['裁定#481', '裁定#409']
   superseded_by: null
+- ruling_id: "裁定#483"
+  title: battle_map 定性改判横向·覆盖切片——全景图纵横判据从轴形状升级为叙事所有权（Owner 批A全批）
+  date: '2026-10-04'
+  category: 治理架构
+  status: active
+  summary: |-
+    Owner 2026-10-04 对话直批选项A（呈批件 docs/_working/bm_reclass_ruling/01_ruling_package.md，
+    st-bm-reclass-20261004 拟文；#482 已被图13互挂批占用故顺延本号，撞号跳号重登惯例）。
+    一、定性改判：battle_map 从"纵向贯穿（流程图）"改判"横向·覆盖切片（挂载面）"——它
+    退出流程叙事图族，流程话语权归 TDM（动作流程唯一真源）/策略工厂（E0-E9 生产流）；
+    battle_map 专职回答"每个生命周期环节由哪些模块/候选承载、落地没有"。改判理由三：
+    ①一句话流程测试不过（其流程轴为交易生命周期通名：研究→训练→回测→仿真→选股五段
+    已被策略工厂认领，买入→卖出→仓位→风控→执行段已被 TDM 认领，对账段与图12 部分重叠，
+    整轴无独占领地）；②定位书 V0.9.0（2026-09-16）已全文自认"全生命周期装配挂载"本质、
+    注册册口径未跟=存量漂移；③改判即消解与 TDM 定位声明（"凡同等职责文档一律合并"）的
+    叙事层冲突，一域一图（裁定#409）准入冲突不存在。
+    二、判据立法：全景图纵横判据从轴形状（有 step 轴=纵向）升级为叙事所有权——纵向图=
+    拥有"一句话流程"叙事真源（TDM/策略工厂/GOMAP/图11交付/图12数据供给/图13交易日循环）；
+    横向图=按对象轴切片的索引/覆盖层（depgraph 结构/dataflowgraph 实体/decisiongraph
+    决策/blueprint 模块内/battle_map 使命覆盖）。配套条款：生命周期格子仅为索引键/分组
+    维度，展示顺序≠叙事所有权（策略行 battle_map_ref、前端 bt-battle-stage、api_server
+    /battle_map_flow 按阶段渲染属覆盖格子排序展示，不构成流程图定性）；battle_map 环节表
+    维持 2026-08-12 起冻结不再扩张；模块使命/落地覆盖查询以 battle_map 为准。
+    三、施工面（同批落地）：①battle_map_positioning.md V0.9.0→V0.10.0 九处（frontmatter/
+    标题/责任范围/定位裁定/§一句话/§三 v9.0注记/§9.1/§17.1判据句/§17.1表行）；②
+    generate_panorama_registry.py PAN-BATTLE-MAP-01 条目 name/description 改横向口径并
+    再生 panorama_registry.md（gitignore 派生件）；③alignment_checklist.md §3 battle_map
+    行轴标注"纵（作战环节，flow_stage 分域）"→"横（覆盖切片：生命周期格子=索引键，
+    对齐轴仍 step_id）"（该行系 st-mapreg 任务2 9da8856dba 当日新鲜再入的旧口径，随批归一）。
+    四、明确不动（边界）：trae_080_panorama_alignment.yaml 的"第五图/五图"对齐机制枚举与
+    step_id 对齐轴（对齐轴≠叙事权，对齐机制零变化）；PG battle_map_* 三表/anchors 数据/
+    apply_battle_map.py/align_battle_map.py/battle_map_alignment_gate/generate_battle_map_
+    diagram.py/12 阶段人类视图；历史文书（裁定#231/#261/battle_map_coverage_ruling_
+    20260915.md 时点快照）。裁定#231 判活四依据（运行时三处消费+门禁在岗+anchors 回填+
+    全覆盖补丁）不受本裁定影响。五、后置项：轴归一手术（BM 340 环节→TDM 184 节点词汇
+    收敛+运行时消费迁移）另立项候批——改判后它从"身份问题"降级为"词汇收敛卫生问题"，
+    优先级后置。
+  related_files:
+  - docs/_working/bm_reclass_ruling/01_ruling_package.md
+  - docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md
+  - scripts/governance/d5_architecture/generators/generate_panorama_registry.py
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  related_arch: ['#ARCH-312']
+  related_rulings: ['裁定#231', '裁定#261', '裁定#409', '裁定#482']
+  superseded_by: null

@@ -2,24 +2,24 @@
 ttl: permanent
 doc_type: architecture_view
 status: draft
-version: "0.9.0"
-date: 2026-09-16
+version: "0.10.0"
+date: 2026-10-04
 ---
 
-# 交易决策作战地图能力定位书（第五全景图 / battle_map）
+# 交易决策作战地图能力定位书（全景图族·横向覆盖切片 / battle_map）
 
-> 版本：V0.9.0（措辞升级：钱怎么赚→全生命周期装配挂载）| 2026-09-16
+> 版本：V0.10.0（定性改判：纵向贯穿→横向·覆盖切片，判据=叙事所有权，裁定#483）| 2026-10-04
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
-> **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第五全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
+> **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目全景图族成员，横向·覆盖切片（挂载面）——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
 
-> **定位裁定**：`07_` 背后有第五全景图 `battle_map` 作真源，`07_` MD 是它的派生人类视图。全景图共五个：depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map。
+> **定位裁定**：`07_` 背后有全景图 `battle_map` 作真源，`07_` MD 是它的派生人类视图。全景图族五成员：depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map；纵横定性判据=叙事所有权（裁定#483），battle_map 归**横向·覆盖切片**——流程叙事真源=TDM/策略工厂，本图管模块使命与落地覆盖。
 
 ---
 
 ## 一、作战地图是什么？（一句话）
 
-**交易决策作战地图（battle_map）是项目的第五全景图——一张以"决策环节"为节点、以"全生命周期装配挂载"为流程主线、把 decisiongraph / depgraph / 候选池 / 蓝图 / 数据流按业务流程串联起来的索引层真源图。**
+**交易决策作战地图（battle_map）是全景图族的横向覆盖切片（挂载面，裁定#483）——以"决策环节"为索引格子、以"全生命周期装配挂载"为职责主线、把 decisiongraph / depgraph / 候选池 / 蓝图 / 数据流的节点按生命周期格子编排的使命覆盖索引：回答每个环节/模块"谁承载、落地没有"。流程叙事真源=TDM/策略工厂，本图环节表仅为挂载格子（维持 2026-08-12 起冻结）。**
 
 它回答的问题不是"决策怎么分层"（那是 decisiongraph 的事），也不是"模块依赖谁"（那是 depgraph 的事），而是：
 
@@ -59,7 +59,7 @@ date: 2026-09-16
 
 > 本节摘录草图 [交易决策架构.md](../../../_archive/架构图/交易决策架构.md) §1.1（交易决策架构唯一真源）和 §1.8（数据流主动脉与正向闭环）的关键内容，作为作战地图定位的系统背景。作战地图的每个环节都落在下列架构层和数据流上——看环节时能对到"它在第几层、在数据流哪一跳"。
 >
-> **v9.0 统一架构**：系统架构图 + 决策流全景图合并为唯一真源。上半部分为系统架构（L0-L6 + 横切层），下半部分为决策流全景图（选股→买入→卖出→仓位→支撑）。作战地图（第五全景图）是决策流全景图的索引层真源——它把决策流的每个环节挂载到具体模块/候选/蓝图章节。
+> **v9.0 统一架构**：系统架构图 + 决策流全景图合并为唯一真源。上半部分为系统架构（L0-L6 + 横切层），下半部分为决策流全景图（选股→买入→卖出→仓位→支撑）。作战地图是决策流全景图的覆盖索引层（横向·覆盖切片，裁定#483）——它把决策流的每个环节挂载到具体模块/候选/蓝图章节。
 
 ### 3.1 L0-L6 分层架构（草图 §1.1）
 
@@ -408,9 +408,9 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 
 ## 九、与全景图对齐体系的关系
 
-### 9.1 第五全景图
+### 9.1 覆盖索引层（全景图族成员）
 
-battle_map 和 depgraph / dataflowgraph / decisiongraph / blueprint.md 并列，是第五个全景图。**图名 `battlemap`**（对标 depgraph/dataflowgraph/decisiongraph 的 Xgraph 复合形式），**表前缀 `battle_map_*`**（对标 `decision_*` 的"全词_功能"形式）。在 `panorama_registry` 登记为 `PAN-BATTLE-MAP-01`。
+battle_map 和 depgraph / dataflowgraph / decisiongraph / blueprint.md 并列，是全景图族成员（横向·覆盖切片，裁定#483）。**图名 `battlemap`**（对标 depgraph/dataflowgraph/decisiongraph 的 Xgraph 复合形式），**表前缀 `battle_map_*`**（对标 `decision_*` 的"全词_功能"形式）。在 `panorama_registry` 登记为 `PAN-BATTLE-MAP-01`。
 
 ### 9.2 两套对齐，正交不冲突
 
@@ -628,7 +628,7 @@ battle_map_steps:
 
 ### 17.1 五张全景图定位
 
-battle_map 是项目第五全景图。前三图（depgraph/dataflowgraph/decisiongraph）是横向切片（按 module/decision/entity 轴），blueprint.md 是模块级蓝图（按 module_id 轴），作战地图是纵向贯穿（按业务流程 step 轴），它把前四图的节点按"选股→买入→卖出→仓位→执行→对账"6 阶段重新编排成端到端作战链条。
+全景图纵横判据=**叙事所有权**（裁定#483）：纵向图拥有"一句话流程"叙事真源（TDM=交易决策流/策略工厂=策略生产流/GOMAP=治理运行时/图11交付/图12数据供给/图13交易日循环，一域一图裁定#409）；横向图按对象轴切片做索引（depgraph=结构切片/dataflowgraph=实体切片/decisiongraph=决策切片/blueprint.md=模块内蓝图/**battle_map=使命覆盖切片**）。battle_map 是横向覆盖切片（挂载面）：生命周期格子仅为索引键/分组维度，展示顺序≠叙事所有权（策略行 `battle_map_ref`、前端 bt-battle-stage 按阶段渲染属覆盖格子的排序展示，不构成流程图定性）；它把前四图的节点按"选股→买入→卖出→仓位→执行→对账"生命周期编排成覆盖格子，供"模块→作战位"与"环节→落地状态"双向查询。
 
 | 全景图 | 真源 | 关注轴 | 回答的问题 |
 |---|---|---|---|
@@ -636,7 +636,7 @@ battle_map 是项目第五全景图。前三图（depgraph/dataflowgraph/decisio
 | 数据流全景图 dataflowgraph | PostgreSQL `dataflow_*` | entity/job | "数据怎么流？谁消费谁产出？" |
 | 决策流全景图 decisiongraph | PostgreSQL `decision_*` | decision_id | "决策怎么编排？谁触发谁？" |
 | 模块蓝图 blueprint.md | 蓝图文件 frontmatter | module_id | "模块怎么设计？接口契约/施工指引是什么？" |
-| **作战地图 battle_map** | PostgreSQL `battle_map_*` + YAML 叙事 | **step_id** | "业务作战环节怎么串？每环节靠哪些模块落地？" |
+| **作战地图 battle_map** | PostgreSQL `battle_map_*` + YAML 叙事 | **step_id** | "每个生命周期环节由哪些模块/候选承载？落地没有？" |
 
 详见 §一、§九。
 
@@ -782,6 +782,7 @@ battle_map 是项目第五全景图。前三图（depgraph/dataflowgraph/decisio
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.10.0 | 2026-10-04 | 定性改判（裁定#483，Owner 批A）：①纵横判据从轴形状升级为**叙事所有权**——纵向图=拥有一句话流程叙事真源（TDM/策略工厂/GOMAP/图11/12/13），横向图=按对象轴切片做索引；battle_map 改判**横向·覆盖切片（挂载面）**，生命周期格子仅为索引键，展示顺序≠叙事所有权；②§一/§三/§9.1/§17.1 同口径九处（frontmatter/标题/责任范围/定位裁定/一句话/v9.0注记/§9.1/§17.1判据句/§17.1表行）；③环节表维持 2026-08-12 起冻结不再扩张；流程叙事真源=TDM/策略工厂；④trae_080 对齐枚举与 step_id 对齐轴不动（对齐轴≠叙事权，对齐机制零变化）；⑤配套施工：generate_panorama_registry.py PAN-BATTLE-MAP-01 条目+再生、alignment_checklist §3 battle_map 行轴标注改横。 |
 | V0.9.0 | 2026-09-16 | 措辞升级、语义不变：①全文"钱怎么赚/赚钱流程"口径→"全生命周期装配挂载"（L22/L26/L37/L50/L51/L220 共 6 处，L51 为工单 5 处外同口径尾项；全景图战役收口批③）；②存量版本号漏改修正——V0.8.0 批次（2026-08-07 acquisition 徽标）仅加本表史条未改 frontmatter，本次 frontmatter 0.7.0→0.9.0（跳过 0.8.0 防版本号复用）；③不改 battle_map_coverage_ruling_20260915.md（历史裁定书，其 V0.7 引用为时点快照）。 |
 | V0.8.0 | 2026-08-07 | acquisition 徽标 + 五态展示修正：①§十 标题"四态"→"五态"（表格已列 5 态但标题漏改）；②§十一 "四类 classDef"→"五类 classDef" + 新增 acquisition 徽标条目（设计态环节节点卡成熟度行下方显示 `（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`，模板 §4.13）；③L207 "三态"→"五态"；④同步 `visualization_view_template.md` V1.6（§4.13 acquisition 徽标章节 + §7.5 数据真源 + §4.7 五态 classDef 扩展）；⑤acquisition 字段分层 SSoT：设计态 depgraph `nodes_metadata.acquisition_method/source`（DDL CHECK）+ 候选态 `candidate_module_registry.yaml`（草稿层），107 决策表全量导入。 |
 | V0.7.0 | 2026-08-04 | 新增 BM-INV-007 孤儿模块反向检测：①§8.4 不变量列表加 BM-INV-007（业务域 depgraph 模块无任何锚点指向=造出来没用上）；②`align_battle_map.py` 加 `_business_domain_whitelist()`（业务域白名单=所有 flow_stage 的 allowed 域并集，运行时从 YAML 取，零硬编码）+ `_business_modules_depgraph()`（采集业务域节点）+ 已锚定集合反查（target_graph=depgraph 的 target_id，blueprint_id/path 宽松匹配）；③报告加第 7 节孤儿模块 + 业务域模块统计行 + 处置建议顺移第 8 节；④§17.3.3 表加 BM-INV-007 行；⑤AGENTS.md/battlemap_schema.py 同步。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"。君子协定 warn-only，不硬阻断。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等）天然排除。 |
