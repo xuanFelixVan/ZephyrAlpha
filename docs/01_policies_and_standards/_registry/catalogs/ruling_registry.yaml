@@ -6925,3 +6925,23 @@ entries:
   related_arch: []
   related_rulings: ['裁定#409']
   superseded_by: null
+- ruling_id: "裁定#482"
+  title: 图13 与 W4-4 排班资源总视图（1aa88be859）维持独立互挂引用（不并）
+  date: '2026-10-04'
+  category: 架构
+  status: decided
+  summary: |-
+    Owner 2026-10-04 批准（Flash st-mapreg 任务4 报告 81415df608 判定+GLM-5.3 终审）：
+    图13 交易日循环图与 W4-4「排班三表一入口」资源总视图判"跨域不同对象→不并"（w5_1
+    第四判据）。定量依据：数据面高交集（图13 挂 29/32 槽 90.6%、267/271 任务 98.5%，
+    系三表同源双投影）但功能面零交集——资源档位总览/三表一致性对账/GATE-SCHEDULE-
+    CONSISTENCY(826) 属排期族容量与执法，图13 属流程导航，且图13 生成器直读三表为
+    原料，并入=图吸收自身数据源读侧入口（循环依赖）。处置=互挂引用不迁移：图13
+    边界声明处注明资源视图指 826 族，schedule_overview 注明流程导航指图13。
+    施工清单#8 销账。附勘误采纳：图13 实测 48 节点（44 业务+4 缺口），旧记 53 不复现。
+  related_files:
+  - docs/_working/map_build/11_fig13_overlap_verdict.md
+  - config/trading_day_cycle_map.yaml
+  related_arch: []
+  related_rulings: ['裁定#481', '裁定#409']
+  superseded_by: null
