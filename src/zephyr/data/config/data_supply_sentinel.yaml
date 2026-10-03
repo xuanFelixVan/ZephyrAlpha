@@ -275,6 +275,43 @@ tables:
     max_lag_days: 5
     past_only: true
 
+  # --- 断供速赢批补盲四行（2026-10-04 st-datasop-20260930，实测锚=当日 CH 只读核验）---
+  # 深圳口岸月度流量：月频，月频档 45 天（工单口径）；实测 max(month)=2025-07-01 且
+  # ingest_ts=09-30 在写 → 任务活、源端 15 个月未发布新月度数据，本行点亮即真红=对的方向
+  # （红指向源端停发，禁为过检把档位掰到 400 天）。
+  - table: c1_market.alt_sz_port_monthly
+    date_col: month
+    max_lag_days: 45
+    past_only: true
+    leg_name: "月度业务月"
+
+  # 深圳统计月报长表：月频 45 天档；实测 max(report_date)=2025-06-01 且 ingest_ts=09-30 在写
+  # → 同上，任务活源停更，真红指向深圳统计局发布侧。
+  - table: c1_market.alt_sz_stat_monthly
+    date_col: report_date
+    max_lag_days: 45
+    past_only: true
+    leg_name: "月报业务月"
+
+  # 期货持仓：日频（task=intraday_realtime 槽，收盘后汇总落当日行），trading_days/3
+  # （工单日频口径：连续 4 个交易日零行即红，周末/长假不假红）；实测停于 09-23，
+  # 本行点亮即真红——akshare 主源/miniqmt fallback 双通道 09-24 起零产出待查。
+  - table: c1_market.futures_position
+    date_col: trade_date
+    max_lag_days: 3
+    lag_basis: trading_days
+    past_only: true
+    leg_name: "持仓日行"
+
+  # 生猪现货价格指数：周度数据日度拉取（task 自述），distinct 周实测连续（09-07..09-28
+  # 每周有行）→ 阈值按周频发布周期定 12 天（CFTC 周频档先例=一个发布周期+余量），
+  # 日历日口径（发布不随交易日历，周末也可能更新）。
+  - table: c1_market.hog_spot_index
+    date_col: trade_date
+    max_lag_days: 12
+    past_only: true
+    leg_name: "周度指数行"
+
   # --- 全流通战役 · 日终对账（R-015 / 车道 st-ff-dag-20260918）---
   # execution_report 生产者已接通（commit eef42ae008，普查 BRK-020 的"建了没接线"半边已闭合），
   # 本行补六向⑤"哨兵在岗"。阈值取 10 天而非 3 天：本表按**成交事件**产行，无成交日不落行
