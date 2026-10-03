@@ -59611,4 +59611,9 @@ creation_tokens:
   created_by: st-map9-f1-20261003
   capability: map9_f1_census
   merge_evaluation: "跨域不同对象不并：图9 F1 清点三件套（候选表/标签候选/车道报告），map_census 家族新图实例，非既有 census 第二实现"
+- file: docs/_working/vmap12_flesh/f2_blood_template.md
+  token: vertical-map-f2-blood-template-20261003
+  created_by: st-vm12surg-20261003
+  capability: vertical_map
+  merge_evaluation: "F2血肉批施工模板=挂图SOP七步流水线步3-6的执行载体，随schema0.3手术批同批落地"
 di_seam_exemptions: []
