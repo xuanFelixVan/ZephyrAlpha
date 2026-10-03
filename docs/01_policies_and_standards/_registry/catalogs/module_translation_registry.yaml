@@ -49750,11 +49750,11 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/data/source_sla_tracker.py
   domain_id: D_DATA
-  name_zh: 数据源可用性SLA追踪器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 给每个数据源记考勤：可用率、延迟中位数和尾延迟、失败原因分布，出日报周报并判定是否达标。
+  name_zh: "源SLA追踪器（已退役）"
+  name_en: "Source SLA Tracker (retired)"
+  desc_zh: "已退役2026-10-04：功能被supply_sentinel表侧停更检测+error_classifier+源熔断彻底代替，纸面退役文件在盘未摘禁新增调用"
+  desc_en: "Retired 2026-10-04: superseded by supply_sentinel family"
+  plain_zh: "曾经想给外部数据源记服务质量成绩单的哨兵，但两年没人给它喂数据也没人看它的报告，且同样的活已被在岗的断供哨兵干了——2026-10-04批准注销，代码留档不再使用"
   responsibility_layer: business
 - module_path: tests/data/test_source_sla_tracker.py
   domain_id: D_DATA
@@ -61866,11 +61866,11 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py
   domain_id: D_GOV_CODE_QUALITY
-  name_zh: 数据供给链图结构门禁
-  name_en: data supply chain map gate
-  desc_zh: 校验 config/data_supply_chain_map.yaml 图12结构合法性（节点/边/域引用闭合）
-  desc_en: ''
-  plain_zh: 这张门禁像地图审查员：数据供给链全景图（图12）每次改动，它就逐节点检查图里的箭头和地名是否真实存在、有没有断链，防止一张画错的地图把后续施工带沟里。
+  name_zh: "数据供给链图门禁"
+  name_en: "Data Supply Chain Map Gate"
+  desc_zh: "图12数据供给链图的结构校验提交门禁：图YAML被裸改或出现断链/越域挂载/INV-1抄写/血肉键缺失时在commit时硬拦"
+  desc_en: "Commit gate validating the data supply chain map YAML structure"
+  plain_zh: "仓库里有一张画数据从哪来怎么存的地图（图12）。这个门禁守着地图：谁提交改动时把地图改坏了（比如画了不存在的环节、抄了别的册子的内容、该填的格子没填），提交就被拦下来，防止地图和实际系统对不上"
   responsibility_layer: governance
 - module_path: src/zephyr/gov_enforcement/commit_gates/dev_delivery_map_gate.py
   domain_id: D_GOV_CODE_QUALITY
@@ -62475,7 +62475,6 @@ entries:
   desc_en: ""
   plain_zh: "给死信袋看病的分诊台：先诊断死因分五族，能补手续的按铁闸补（只动登记册不改代码、同种病只救一次、救完走正门重投），治不了的出处方给人看"
   responsibility_layer: governance
-
 - module_path: scripts/governance/register_asset.py
   domain_id: D_GOV_SCRIPTS
   name_zh: "新资产上户口合一命令"
@@ -62492,7 +62491,6 @@ entries:
   desc_en: ""
   plain_zh: "大白话：动手新建文件前先查三处有没有别人做到一半的同类文件——git暂存区、其他会话的工作副本、提交失败死信袋，找到就提醒先看再做别重复造；只查不改任何东西，查不到也不报错。"
   responsibility_layer: governance
-
 - module_path: scripts/generate_map_coverage_ledger.py
   domain_id: D_TRADING
   name_zh: "TDM覆盖账本机生器"
@@ -62501,6 +62499,46 @@ entries:
   desc_en: ""
   plain_zh: "把二十三个交易相关域的模块清单和交易决策全景图挂载的模块做双向对账，自动分出已挂、没挂的孤儿和从外域伸进交易流程的三类名单，产出覆盖账本供总筹对审和初挂草案用"
   responsibility_layer: business
+- module_path: scripts/governance/d5_architecture/generators/generate_map_coverage_attribution.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "六图归属总表生成器"
+  name_en: "map coverage attribution generator"
+  desc_zh: "裁定#481分母执行件：六图挂载键归一×依赖闭包→全模块归属总表（direct/derived/orphan三态+四档判级）"
+  desc_en: ""
+  plain_zh: "给全仓库干活的文件逐个点名：你在哪张纵向图服役、还是被谁带着干活、还是没人管的孤儿——一张总表算清楚"
+  responsibility_layer: governance
+- module_path: src/zephyr/data/quality/sla_breach_predictor.py
+  domain_id: D_DATA
+  name_zh: "质量SLA违约预测器"
+  name_en: "Quality SLA Breach Predictor"
+  desc_zh: "最小二乘趋势外推+错误预算消耗双线预测数据质量SLO违约时间窗，Google SRE式burn-rate分级提前告警"
+  desc_en: ""
+  plain_zh: "质量SLA违约预言家：拿历史达成率画趋势线，再算错误预算烧多快，两条线合起来算出还会不会违约、大概什么时候违约，提前分级拉警报。"
+  responsibility_layer: business
+- module_path: src/zephyr/data/quality/archive_sla_burnrate.py
+  domain_id: D_DATA
+  name_zh: "归档SLA耗速巡检件"
+  name_en: "Archive SLA Burnrate Inspector"
+  desc_zh: "读F08冷归档链manifest台账按时间窗统计归档新鲜度达成率，喂给SLA预测核做burn-rate分级，附运维手动巡检CLI"
+  desc_en: ""
+  plain_zh: "归档新鲜度查账先生：翻冷归档链自己记的manifest流水账，按最近几个时间窗算归档按时完成的比率，喂给预测器判断SLA快不快烧穿，也留了个手动查账命令行。"
+  responsibility_layer: business
+- module_path: src/zephyr/data/quality/__init__.py
+  domain_id: D_DATA
+  name_zh: "数据质量子包门面"
+  name_en: "Data Quality Package Facade"
+  desc_zh: "zephyr.data.quality包门面：re-export SLA违约预测器五符号与归档耗速巡检入口，判据值零持有"
+  desc_en: ""
+  plain_zh: "质量小包的大门：把违约预测和归档查账两个家伙的看家符号转口出去，别的代码进这个门一次就能拿全全套，门自己不藏任何判据。"
+  responsibility_layer: business
+- module_path: src/zephyr/intelligence/news_score_daily.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "逐条新闻情绪分日更"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天早上自动把昨天的新闻逐条打情绪分存进 news_sentiment_score 表，漏了的日子自动补，也能手动补任意历史区间，断了能接着跑"
+  responsibility_layer: ai
 
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
