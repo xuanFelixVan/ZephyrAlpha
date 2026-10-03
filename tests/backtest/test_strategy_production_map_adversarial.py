@@ -220,12 +220,22 @@ def test_good_map_data_refs_all_exist():
 # ---- v0.3 mechanism 挂载层（2026-10-03 挂图升级批；vertical_map_mounting_policy §4/§5） ----
 
 
+def _v02() -> dict:
+    """0.2 控制组基底：真图已升 0.3 后仍可构造无图例的 0.2 图（用例不得耦合真图当前版本）。"""
+    d = copy.deepcopy(_GOOD)
+    d["schema_version"] = "0.2"
+    d.pop("purpose_legend", None)
+    return d
+
+
 def _v03(legend: bool = True, **mech_overrides) -> dict:
     """v0.3 好图基底：真图 + schema 0.3 + 一条图例 + 一个合法 mechanism 节点。"""
     d = copy.deepcopy(_GOOD)
     d["schema_version"] = "0.3"
     if legend:
         d["purpose_legend"] = [{"tag": "考试咽喉说了算", "one_liner_zh": "及不及格只有考试能判"}]
+    else:
+        d.pop("purpose_legend", None)
     mech = {
         "node_id": "FAC-E4-M-BT-200",
         "parent_node": "FAC-E4",
@@ -250,13 +260,13 @@ def test_v03_mechanism_node_passes_without_explicit_edge():
 
 
 def test_mechanism_in_v02_rejected():
-    d = copy.deepcopy(_GOOD)
+    d = _v02()
     d["nodes"].append(_v03()["nodes"][-1])
     assert any("不支持 mechanism" in e for e in validate_structure(d))
 
 
 def test_legend_in_v02_rejected():
-    d = copy.deepcopy(_GOOD)
+    d = _v02()
     d["purpose_legend"] = [{"tag": "图例", "one_liner_zh": "0.2 图不得带图例层"}]
     assert any("purpose_legend 须 schema_version 0.3+" in e for e in validate_structure(d))
 
@@ -307,5 +317,5 @@ def test_mechanism_missing_module_ref_rejected():
 
 
 def test_v02_good_map_unchanged_still_passes():
-    # 向后兼容铁律：真图（0.2）不升版本也必须原样通过
-    assert validate_structure(copy.deepcopy(_GOOD)) == []
+    # 向后兼容铁律：0.2 形态图（无 mechanism 无图例）必须原样通过
+    assert validate_structure(_v02()) == []

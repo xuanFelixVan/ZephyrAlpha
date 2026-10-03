@@ -1,4 +1,4 @@
-# 策略生产全景图（strategy_production_map，昵称"策略工厂"）v0.2 结构稿
+# 策略生产全景图（strategy_production_map，昵称"策略工厂"）v0.3 血肉挂载版
 # 图 9：生产级全景图第二张（图 7 交易决策全景图=消费端，本图=供给端）
 # 状态：增长轨已落图（2026-09-13 九图挂轴批）——四关验收件齐备：结构校验器+对抗测试
 #       （681a7fc806）+ FACTORY-MAP gate（priority=142 触发式硬阻断）+ 九图挂轴
@@ -7,13 +7,37 @@
 # 设计来源：docs/_working/2026-09-13-strategy-factory-pipeline-discussion.md（v1-v10，五轮检索+Owner 2025-09 笔记）
 # 字段约定：TDM 字段集 + 工厂四件（build_status/store_refs/lane/gate_refs）+ 本次新增
 #           （design_refs 设计出处/compute_class 算力档），v9.1+v0.2 定稿
+# v0.3（2026-10-03 挂图升级批，vertical_map_mounting_policy §2/§4/§5 域实例化）：
+#   purpose_legend=Owner 一轮终审冻结（2026-10-03，12 条全原样通过），冻结后机贴不改名
+#   （加标签=廉价扩展；改名/合并=裁定级操作须全量重贴）；
+#   mechanism 挂载层（一机制一节点，parent_node 挂 stage/lane 主干，骨架 16 节点不动）
+#   由 F2 机生，候选真源=docs/_working/map_census/fac9_01_mount_candidates.yaml（449 行）；
+#   facts 抽取源映射（F3 车道）=strategy_intake csv 行数／backtest_artifacts 台账计数／
+#   translated+constructed manifest 计数／src 消费面 grep；DB 内计数列处方由总筹代跑；
+#   病历册清单（15 本+建议挂载环节）=fac9_01_report.md §六；完备性=F4 覆盖账本三红校验
 
-schema_version: '0.2'
+schema_version: '0.3'
 map_id: strategy_production_map
 name_zh: 策略生产全景图
 nickname: 策略工厂
 effective_from: '2026-09-13'
 markets: [cn_a]
+
+# 目的标签图例（SOP §2；Owner 2026-10-03 终审冻结原文；标签贴机制=它在本图的岗位意义，
+# 判据2/3 伸手件按其服务的环节贴；同标签多钉=重复簇显影位，内收对审入口）
+purpose_legend:
+  - {tag: 重活夜里干, one_liner_zh: 交易日白天只许干轻活，重算力全排收盘后和休市日，闸门说了算}
+  - {tag: 进货带出生证, one_liner_zh: 每个策略想法进来都登记从哪条车道来的、原文在哪，出事能倒查}
+  - {tag: 不讲通不花钱, one_liner_zh: 经济学上讲不通的想法直接死在预审，一分回测算力都不给它花}
+  - {tag: 外来经翻译成标准件, one_liner_zh: 别人家的策略要翻成咱们的标准件才能进厂，翻得对不对有验收集管着}
+  - {tag: 考试咽喉说了算, one_liner_zh: 及不及格只有考试能判，做策略的永远不许给自己打分}
+  - {tag: 加池子才准入, one_liner_zh: 单策略好看不算数，加进组合能涨分才让进}
+  - {tag: 在库按月体检, one_liner_zh: 入库的策略持续体检，不行了就挂牌降级，结论回灌进货方向}
+  - {tag: 上岗前先实习, one_liner_zh: 过了考试的策略先用真行情跑模拟盘，不达标退回重修}
+  - {tag: 钱跟着确定性走, one_liner_zh: 资金怎么分是算出来的：风险预算、回撤限额、体制状态说了算，不许拍脑袋}
+  - {tag: 赚亏拆开看, one_liner_zh: 实盘每一分赚亏都拆得开来源（择时/选股/成本），拆完的教训回灌下次判断}
+  - {tag: 病历有人翻, one_liner_zh: 每本台账病历册都挂在流程上：考了几次、死过几个、怎么修好的，查得到}
+  - {tag: 图有人守, one_liner_zh: 这张图自己有校验器和对抗测试守着，谁改坏了结构当场拦下}
 
 # 全图三铁律（讨论稿 §三 定稿，全节点强制）
 laws:
