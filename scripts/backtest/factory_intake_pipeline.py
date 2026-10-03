@@ -70,13 +70,14 @@ _LANE_SPECS = [
         "compute_class": "local_gpu",
         "intake": "data/strategy_intake/lane_c_candidates.csv",
     },
-    # F-06 组合层网格（2.4 接线，2026-09-15）：intake=最新 grid 批次 manifest（执行器 MOD-BT-196 落盘）。
-    # recipe 行非因子假说——E2 消费器需按 recipe_id/values_json 解析（跨线协作项，E2 侧适配器待挂）。
+    # F-06 组合层网格（2.4 接线，2026-09-15）：执行器 MOD-BT-196 落盘 grid_*/manifest.csv；
+    # E2 侧适配器 lane_f_grid_adapter（2026-09-30 挂接，销原"适配器待挂"欠账）把 recipe 行
+    # 转译成假说候选卸 lane_f_candidates.csv（幂等），本编排函数级接续后幂等消费。
     {
         "lane": "F",
         "name": "f06_grid_recipes",
         "compute_class": "local",
-        "intake": "data/strategy_intake/grid_latest_manifest.csv",
+        "intake": "data/strategy_intake/lane_f_candidates.csv",
     },
     # 车道G 全网搜索进货（⑥号车道，夜班战役 2026-09-17）：消化 L3 胃收件箱→假说卸台账。
     # 干活在 lane_g_stomach_intake 自身 CLI（车道干完活即卸台账，本编排只幂等消费）。
@@ -183,6 +184,17 @@ def run_pipeline(
         pass
     # 车道I 产业链候选：csv=挖矿班直产（无车道模块），存在才消费（T8 2026-09-18）
     intake_sources["I"] = _ROOT / "data" / "strategy_intake" / "lane_chain_candidates.csv"
+    # 车道F：F-06 grid 配方适配（E11 2026-09-30 挂接，销 :74 跨线欠账）——适配器解析最新
+    # grid 批次 manifest 转译卸 lane_f_candidates.csv（幂等），台账存在才入消费面；fail-open
+    # 不阻断其余车道（进货是增益不是依赖，同 feedback_prior 语义）。
+    try:
+        from scripts.backtest import lane_f_grid_adapter
+
+        report["lanes"]["F_grid_adapter"] = lane_f_grid_adapter.run_intake(dry_run=dry_run)
+        if lane_f_grid_adapter._INTAKE_CSV.exists():
+            intake_sources["F"] = lane_f_grid_adapter._INTAKE_CSV
+    except Exception as exc:  # noqa: BLE001 — F 适配器故障留痕不阻断进货主链（fail-open 出声）
+        report["lanes"]["F_grid_adapter"] = {"error": f"{type(exc).__name__}: {exc}"[:200]}
     for lane, src in intake_sources.items():
         if not Path(src).exists():
             continue
@@ -230,7 +242,9 @@ def auto_construct(
     """E2→E3 排产自动流转：过审公式候选 → E4 考卷件（机械翻译桥）+ 台账清单。
 
     只处理公式轨（C/C2——台账含 expression 列）；假说轨（D/B）走 C3 翻译专项
-    （MOD-BT-190 hypothesis_translator）。幂等：manifest 已登记的候选跳过。
+    （MOD-BT-190 hypothesis_translator）；车道F 配方台账可显式 --lanes F 接入——
+    recipe 行无 expression 列，如实落 skipped_no_expr（F06 正考走 f06_e4_wfa_exam
+    MOD-BT-211 专项，不经公式翻译桥）。幂等：manifest 已登记的候选跳过。
     """
     import pandas as pd
 
@@ -258,7 +272,16 @@ def auto_construct(
         "dry_run": dry_run,
     }
     for lane in lanes:
-        src = _ROOT / "data" / "strategy_intake" / {"C": "lane_c_candidates.csv", "C2": "lane_c2_candidates.csv"}[lane]
+        src = (
+            _ROOT
+            / "data"
+            / "strategy_intake"
+            / {
+                "C": "lane_c_candidates.csv",
+                "C2": "lane_c2_candidates.csv",
+                "F": "lane_f_candidates.csv",
+            }[lane]
+        )
         if not src.exists():
             continue
         df = pd.read_csv(src, encoding="utf-8-sig")
