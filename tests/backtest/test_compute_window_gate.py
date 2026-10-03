@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-BT-151 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """FAC-E0 算力闸门纯函数核单测——窗档分类/判决理由码/权重映射，零 IO 零网络。"""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -97,8 +98,7 @@ class TestGateDecision:
         assert not d["allowed"] and d["reason_code"] == REASON_DENY_CALENDAR_UNKNOWN
 
     def test_reason_codes_closed_set(self):
-        codes = {REASON_ALLOW_LIGHT, REASON_ALLOW_OFFHOURS,
-                 REASON_DENY_TRADING_HOURS, REASON_DENY_CALENDAR_UNKNOWN}
+        codes = {REASON_ALLOW_LIGHT, REASON_ALLOW_OFFHOURS, REASON_DENY_TRADING_HOURS, REASON_DENY_CALENDAR_UNKNOWN}
         assert len(codes) == 4
 
 
@@ -110,6 +110,62 @@ class TestNodeClassWeight:
 
     def test_unknown_class_fails_closed_to_heavy(self):
         assert needs_heavy_window("quantum") is True
+
+
+class TestFetchIsTradingDay:
+    """EXEC-3 2026-10-04 回归（FactoryLaneC 10-02 20:00 rc=3 复盘）：CH 瞬时不可达
+    原与"日历真缺行"同判 None 且零留痕零重试，重算力整夜被拒。本组用 canned 客户端
+    验证有界重试与确定性缺行不重试（零真实 IO）。"""
+
+    def test_transient_failure_retries_then_succeeds(self, monkeypatch: pytest.MonkeyPatch):
+        from datetime import date as _date
+
+        from scripts.backtest.compute_window_gate import fetch_is_trading_day
+
+        calls = {"n": 0}
+
+        class _Flaky:
+            def execute(self, sql, params):
+                calls["n"] += 1
+                if calls["n"] < 3:
+                    raise ConnectionError("ch blip")
+                return [(0,)]
+
+        monkeypatch.setattr("zephyr.data.ch_writer.get_client_strict", lambda: _Flaky())
+        assert fetch_is_trading_day(_date(2026, 10, 2)) is False
+        assert calls["n"] == 3
+
+    def test_missing_row_is_deterministic_no_retry(self, monkeypatch: pytest.MonkeyPatch):
+        from datetime import date as _date
+
+        from scripts.backtest.compute_window_gate import fetch_is_trading_day
+
+        calls = {"n": 0}
+
+        class _Empty:
+            def execute(self, sql, params):
+                calls["n"] += 1
+                return []
+
+        monkeypatch.setattr("zephyr.data.ch_writer.get_client_strict", lambda: _Empty())
+        assert fetch_is_trading_day(_date(2026, 10, 2)) is None
+        assert calls["n"] == 1  # 日历真缺行=确定性答案，不重试
+
+    def test_persistent_failure_returns_none_after_bounded_retries(self, monkeypatch: pytest.MonkeyPatch):
+        from datetime import date as _date
+
+        from scripts.backtest.compute_window_gate import fetch_is_trading_day
+
+        calls = {"n": 0}
+
+        class _Down:
+            def execute(self, sql, params):
+                calls["n"] += 1
+                raise ConnectionError("ch down")
+
+        monkeypatch.setattr("zephyr.data.ch_writer.get_client_strict", lambda: _Down())
+        assert fetch_is_trading_day(_date(2026, 10, 2)) is None
+        assert calls["n"] == 3  # 1 首查 + 2 补试（立即重试无 sleep，PERM-TRIGGER 铁律），fail-closed 语义不变
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -41,12 +41,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
 from datetime import date, datetime
 from datetime import time as dtime
 from zoneinfo import ZoneInfo
 
 from zephyr.data.table_registry import TableRegistry
+
+log = logging.getLogger(__name__)
 
 _TZ = ZoneInfo("Asia/Shanghai")
 CLOSE_BUFFER = dtime(15, 30)  # 收盘缓冲：15:30 后视为盘后
@@ -131,17 +134,28 @@ SQL_CAL_DAY = (
 
 
 def fetch_is_trading_day(d: date) -> bool | None:
-    """CH 日历单日查询（SSE 口径；日历未覆盖/通道故障返回 None → 上层 fail-closed）。"""
-    try:
-        from zephyr.data.ch_writer import get_client_strict
+    """CH 日历单日查询（SSE 口径；日历未覆盖/通道故障返回 None → 上层 fail-closed）。
 
-        cli = get_client_strict()
-        rows = cli.execute(SQL_CAL_DAY, {"d": d})
-        if not rows:
-            return None
-        return bool(rows[0][0])
-    except Exception:  # noqa: BLE001 — 日历不可达 → None（fail-closed 由 gate_decision 落码）
-        return None
+    2026-10-04 治本（FactoryLaneC 10-02 20:00 rc=3 复盘，EXEC-3）：CH 瞬时不可达
+    （备份窗/连接抖动）原与"日历真缺行"同判 None 且零留痕，重算力整夜被拒无重试。
+    本修：①吞异常前 log 留痕；②通道异常立即有界重试（1 首查+2 补试，无 sleep——
+    永久系统禁 Timer/sleep-loop 铁律，PERM-TRIGGER 门裁定；秒级抖动可吸收，长故
+    障仍 fail-closed）。日历真缺行（rows 空）是确定性答案，不重试。
+    """
+    for attempt in range(3):
+        try:
+            from zephyr.data.ch_writer import get_client_strict
+
+            cli = get_client_strict()
+            rows = cli.execute(SQL_CAL_DAY, {"d": d})
+            if not rows:
+                return None
+            return bool(rows[0][0])
+        except Exception as exc:  # noqa: BLE001 — 留痕后重试；末次仍败 → None（fail-closed 由 gate_decision 落码）
+            log.warning(
+                "trade_calendar 查询失败（attempt=%d/3 date=%s）: %s: %s", attempt + 1, d, type(exc).__name__, exc
+            )
+    return None
 
 
 def needs_ignition_check(purpose: str) -> bool:
