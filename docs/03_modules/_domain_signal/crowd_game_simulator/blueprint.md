@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-114
+module_id: MOD-SIG-114
 module_name: crowd_game_simulator
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-101
+module_id: MOD-SIG-101
 module_name: sentiment_price_divergence
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

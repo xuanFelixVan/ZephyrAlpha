@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-125
+module_id: MOD-SIG-125
 module_name: industry_chain_graph
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

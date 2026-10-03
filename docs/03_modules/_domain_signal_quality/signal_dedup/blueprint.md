@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIGQC-003
+module_id: MOD-SIGQC-003
 module_name: signal_dedup
 domain: D_SIGQC
 doc_type: blueprint

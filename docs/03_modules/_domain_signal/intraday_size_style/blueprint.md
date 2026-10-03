@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-120
+module_id: MOD-SIG-120
 module_name: intraday_size_style
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

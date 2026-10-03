@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-149
+module_id: MOD-SIG-149
 module_name: pattern_lifecycle
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

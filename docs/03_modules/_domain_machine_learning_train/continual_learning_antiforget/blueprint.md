@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-018
+module_id: MOD-ML-018
 module_name: continual_learning_antiforget
 domain: D_ML_TRAIN
 doc_type: blueprint

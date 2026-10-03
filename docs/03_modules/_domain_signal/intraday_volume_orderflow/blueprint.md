@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-093
+module_id: MOD-SIG-093
 module_name: intraday_volume_orderflow
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

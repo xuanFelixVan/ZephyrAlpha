@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-TRADING-009
+module_id: MOD-TRADING-009
 module_name: trading_order_aggregate
 domain: D_TRADING
 doc_type: blueprint

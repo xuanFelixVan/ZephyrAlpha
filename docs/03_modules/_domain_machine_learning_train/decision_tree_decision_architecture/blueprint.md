@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-016
+module_id: MOD-ML-016
 module_name: decision_tree_decision_architecture
 domain: D_ML_TRAIN
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-086
+module_id: MOD-SIG-086
 module_name: selection_funnel_skeleton
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-108
+module_id: MOD-SIG-108
 module_name: multi_factor_timing_overlay
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

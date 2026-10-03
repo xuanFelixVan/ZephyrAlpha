@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-006
+module_id: MOD-FAC-006
 module_name: llm_evolutionary_search
 domain: D_FACTOR
 doc_type: blueprint

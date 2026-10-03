@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FACTORY-002
+module_id: MOD-FACTORY-002
 module_name: module_mapper
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

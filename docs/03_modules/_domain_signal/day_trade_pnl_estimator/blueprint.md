@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-132
+module_id: MOD-SIG-132
 module_name: day_trade_pnl_estimator
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

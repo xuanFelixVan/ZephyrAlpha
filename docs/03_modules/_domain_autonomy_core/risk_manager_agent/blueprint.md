@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-007
+module_id: MOD-AU-007
 module_name: risk_manager_agent
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

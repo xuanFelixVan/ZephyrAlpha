@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-BT-028
+module_id: MOD-BT-028
 module_name: strategy_cpcv_matrix
 domain: D_BACKTEST
 doc_type: blueprint

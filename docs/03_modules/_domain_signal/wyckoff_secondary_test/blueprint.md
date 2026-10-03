@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-116
+module_id: MOD-SIG-116
 module_name: wyckoff_secondary_test
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-096
+module_id: MOD-SIG-096
 module_name: relative_strength_screener
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

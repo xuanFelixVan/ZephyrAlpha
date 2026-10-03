@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-061
+module_id: MOD-SIG-061
 module_name: mainline_candidates
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

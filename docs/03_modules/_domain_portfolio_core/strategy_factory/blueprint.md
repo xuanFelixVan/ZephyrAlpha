@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PF-009
+module_id: MOD-PF-009
 module_name: strategy_factory
 domain: D_PF_CORE
 doc_type: blueprint

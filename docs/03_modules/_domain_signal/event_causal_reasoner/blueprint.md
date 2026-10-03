@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-112
+module_id: MOD-SIG-112
 module_name: event_causal_reasoner
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

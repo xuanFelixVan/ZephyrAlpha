@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-088
+module_id: MOD-SIG-088
 module_name: risk_event_consumer
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

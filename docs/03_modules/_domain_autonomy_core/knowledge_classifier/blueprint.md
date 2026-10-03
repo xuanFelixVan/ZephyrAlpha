@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FACTORY-001
+module_id: MOD-FACTORY-001
 module_name: knowledge_classifier
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

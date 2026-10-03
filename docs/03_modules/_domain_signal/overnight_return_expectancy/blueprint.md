@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-107
+module_id: MOD-SIG-107
 module_name: overnight_return_expectancy
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

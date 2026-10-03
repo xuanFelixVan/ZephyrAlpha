@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-003
+module_id: MOD-FAC-003
 module_name: gp_strategy_discovery
 domain: D_FACTOR
 doc_type: blueprint

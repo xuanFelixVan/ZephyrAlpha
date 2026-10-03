@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-006
+module_id: MOD-PLAN-006
 module_name: boundary_revision_engine
 domain: D_PLAN
 doc_type: blueprint

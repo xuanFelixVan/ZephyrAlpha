@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-011
+module_id: MOD-AU-011
 module_name: t0_trader_agent
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

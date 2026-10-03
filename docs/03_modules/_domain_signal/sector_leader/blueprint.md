@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-062
+module_id: MOD-SIG-062
 module_name: sector_leader
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

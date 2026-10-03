@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-005
+module_id: MOD-AU-005
 module_name: autonomy_level_registry
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

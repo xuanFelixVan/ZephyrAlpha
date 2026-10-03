@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-VOTE_REVIEW_SHELL
+module_id: MOD-VOTE_REVIEW_SHELL
 module_name: vote_review_shell
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

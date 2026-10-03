@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-012
+module_id: MOD-AU-012
 module_name: non_ai_boundary_guard
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

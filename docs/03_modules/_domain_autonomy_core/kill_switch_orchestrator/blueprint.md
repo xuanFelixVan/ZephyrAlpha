@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-002
+module_id: MOD-AU-002
 module_name: kill_switch_orchestrator
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

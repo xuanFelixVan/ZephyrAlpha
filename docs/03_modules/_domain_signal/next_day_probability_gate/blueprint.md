@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-104
+module_id: MOD-SIG-104
 module_name: next_day_probability_gate
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

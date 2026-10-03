@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-021
+module_id: MOD-ML-021
 module_name: research_data_sandbox
 domain: D_ML_TRAIN
 doc_type: blueprint

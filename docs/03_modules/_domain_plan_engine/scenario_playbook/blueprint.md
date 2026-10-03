@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-019
+module_id: MOD-PLAN-019
 module_name: scenario_playbook
 domain: D_PLAN
 doc_type: blueprint

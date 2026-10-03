@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-087
+module_id: MOD-SIG-087
 module_name: signal_factory
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

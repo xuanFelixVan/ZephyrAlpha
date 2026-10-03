@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-090
+module_id: MOD-SIG-090
 module_name: t0_trading_pipeline
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

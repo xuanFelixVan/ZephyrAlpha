@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-010
+module_id: MOD-AU-010
 module_name: timing_analyst_agent
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

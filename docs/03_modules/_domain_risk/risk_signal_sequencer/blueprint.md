@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-RK-41
+module_id: MOD-RK-41
 module_name: risk_signal_sequencer
 domain: D_RISK
 doc_type: blueprint

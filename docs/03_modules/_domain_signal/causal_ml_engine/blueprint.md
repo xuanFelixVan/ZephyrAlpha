@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-127
+module_id: MOD-SIG-127
 module_name: causal_ml_engine
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

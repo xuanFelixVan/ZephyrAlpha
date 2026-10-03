@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-129
+module_id: MOD-SIG-129
 module_name: volume_regime_adaptive
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

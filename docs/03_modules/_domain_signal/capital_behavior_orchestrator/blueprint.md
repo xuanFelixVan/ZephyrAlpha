@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-088
+module_id: MOD-SIG-088
 module_name: capital_behavior_orchestrator
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

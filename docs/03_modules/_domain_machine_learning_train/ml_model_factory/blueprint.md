@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-013
+module_id: MOD-ML-013
 module_name: ml_model_factory
 domain: D_ML_TRAIN
 doc_type: blueprint

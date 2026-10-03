@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-100
+module_id: MOD-SIG-100
 module_name: false_breakout_trap_detector
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-007
+module_id: MOD-FAC-007
 module_name: strategy_iteration_upgrader
 domain: D_FACTOR
 doc_type: blueprint

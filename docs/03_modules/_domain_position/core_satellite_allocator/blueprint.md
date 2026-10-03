@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-POS-025
+module_id: MOD-POS-025
 module_name: core_satellite_allocator
 domain: D_POSITION
 doc_type: blueprint

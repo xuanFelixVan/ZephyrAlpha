@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-145
+module_id: MOD-SIG-145
 module_name: pattern_event_stats
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

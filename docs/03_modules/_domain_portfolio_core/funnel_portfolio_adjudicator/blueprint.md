@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PF-010
+module_id: MOD-PF-010
 module_name: funnel_portfolio_adjudicator
 domain: D_PF_CORE
 doc_type: blueprint

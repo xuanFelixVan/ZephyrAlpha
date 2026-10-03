@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-106
+module_id: MOD-SIG-106
 module_name: sell_news_overdraft_detector
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-REGIME-013
+module_id: MOD-REGIME-013
 module_name: volatility_squeeze_breakout
 domain: D_REGIME
 doc_type: blueprint

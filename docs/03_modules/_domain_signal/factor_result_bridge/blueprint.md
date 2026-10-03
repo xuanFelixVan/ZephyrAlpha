@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-087
+module_id: MOD-SIG-087
 module_name: factor_result_bridge
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

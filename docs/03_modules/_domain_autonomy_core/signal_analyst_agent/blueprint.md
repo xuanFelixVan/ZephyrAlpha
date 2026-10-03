@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-009
+module_id: MOD-AU-009
 module_name: signal_analyst_agent
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

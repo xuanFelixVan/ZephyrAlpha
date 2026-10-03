@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIGQC-006
+module_id: MOD-SIGQC-006
 module_name: signal_explainability_guarantor
 domain: D_SIGQC
 doc_type: blueprint

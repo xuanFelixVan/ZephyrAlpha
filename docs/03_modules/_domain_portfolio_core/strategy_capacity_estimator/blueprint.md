@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PF-012
+module_id: MOD-PF-012
 module_name: strategy_capacity_estimator
 domain: D_PF_CORE
 doc_type: blueprint

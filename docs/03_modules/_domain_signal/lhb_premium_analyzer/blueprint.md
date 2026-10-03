@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-057
+module_id: MOD-SIG-057
 module_name: lhb_premium_analyzer
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

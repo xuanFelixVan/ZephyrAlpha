@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-117
+module_id: MOD-SIG-117
 module_name: overnight_conduction_model
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

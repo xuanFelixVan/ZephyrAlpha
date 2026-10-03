@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-L02-LIFECYCLE
+module_id: MOD-L02-LIFECYCLE
 module_name: factor_lifecycle_runner
 domain: D_FACTOR
 doc_type: blueprint

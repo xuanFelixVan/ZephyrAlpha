@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-111
+module_id: MOD-SIG-111
 module_name: trace_context_store
 domain: D_FUNDAMENTAL_SIGNAL
 doc_type: blueprint

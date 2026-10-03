@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-RK-043
+module_id: MOD-RK-043
 module_name: var_data_prefetcher
 domain: D_RISK
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-REGIME-007
+module_id: MOD-REGIME-007
 module_name: cross_sectional_features
 domain: D_REGIME
 doc_type: blueprint

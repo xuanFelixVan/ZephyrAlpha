@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-EXSIM-001
+module_id: MOD-EXSIM-001
 module_name: almgren_chriss_impact_model
 domain: D_EXEC_SIM
 doc_type: blueprint

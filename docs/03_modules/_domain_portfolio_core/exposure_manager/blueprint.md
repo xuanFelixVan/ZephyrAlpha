@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PF-011
+module_id: MOD-PF-011
 module_name: exposure_manager
 domain: D_PF_CORE
 doc_type: blueprint

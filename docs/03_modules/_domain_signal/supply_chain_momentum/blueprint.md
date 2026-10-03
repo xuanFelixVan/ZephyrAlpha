@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-118
+module_id: MOD-SIG-118
 module_name: supply_chain_momentum
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-001
+module_id: MOD-AU-001
 module_name: autonomy_boundary_gate
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

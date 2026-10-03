@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-023
+module_id: MOD-PLAN-023
 module_name: premarket_workflow_engine
 domain: D_PLAN
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-RK-042
+module_id: MOD-RK-042
 module_name: hedge_execution_skill
 domain: D_RISK
 doc_type: blueprint

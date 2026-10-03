@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-002
+module_id: MOD-FAC-002
 module_name: signature_feature_extractor
 domain: D_FACTOR
 doc_type: blueprint

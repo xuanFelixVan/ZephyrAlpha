@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-004
+module_id: MOD-FAC-004
 module_name: factor_vote_mining
 domain: D_FACTOR
 doc_type: blueprint

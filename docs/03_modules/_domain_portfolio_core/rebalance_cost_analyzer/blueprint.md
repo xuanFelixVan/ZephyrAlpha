@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PF-014
+module_id: MOD-PF-014
 module_name: rebalance_cost_analyzer
 domain: D_PF_CORE
 doc_type: blueprint

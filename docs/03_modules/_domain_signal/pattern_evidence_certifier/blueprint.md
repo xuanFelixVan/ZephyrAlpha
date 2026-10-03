@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-148
+module_id: MOD-SIG-148
 module_name: pattern_evidence_certifier
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

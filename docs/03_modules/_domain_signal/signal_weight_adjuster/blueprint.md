@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-131
+module_id: MOD-SIG-131
 module_name: signal_weight_adjuster
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

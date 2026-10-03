@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIM-028
+module_id: MOD-SIM-028
 module_name: overfitting_protection_gate
 domain: D_SIMULATION
 doc_type: blueprint

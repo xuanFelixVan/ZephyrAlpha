@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-RK-045
+module_id: MOD-RK-045
 module_name: var_query_builder
 domain: D_RISK
 doc_type: blueprint

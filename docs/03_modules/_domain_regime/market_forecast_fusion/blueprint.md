@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-REGIME-012
+module_id: MOD-REGIME-012
 module_name: market_forecast_fusion
 domain: D_REGIME
 doc_type: blueprint

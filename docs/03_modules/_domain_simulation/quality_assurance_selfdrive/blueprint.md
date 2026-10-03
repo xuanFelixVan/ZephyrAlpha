@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AUDITTEST-001
+module_id: MOD-AUDITTEST-001
 module_name: quality_assurance_selfdrive
 domain: D_AUDITTEST
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-006
+module_id: MOD-AU-006
 module_name: per_agent_gate
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

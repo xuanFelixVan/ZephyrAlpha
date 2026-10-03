@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-EX-064
+module_id: MOD-EX-064
 module_name: execution_param_optimizer
 domain: D_EX_CORE
 doc_type: blueprint

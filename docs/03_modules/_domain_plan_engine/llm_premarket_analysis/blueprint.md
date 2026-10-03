@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-007
+module_id: MOD-PLAN-007
 module_name: llm_premarket_analysis
 domain: D_PLAN
 doc_type: blueprint

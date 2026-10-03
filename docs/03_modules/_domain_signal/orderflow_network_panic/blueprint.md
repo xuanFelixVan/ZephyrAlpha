@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-121
+module_id: MOD-SIG-121
 module_name: orderflow_network_panic
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

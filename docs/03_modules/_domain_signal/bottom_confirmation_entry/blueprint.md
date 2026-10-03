@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-103
+module_id: MOD-SIG-103
 module_name: bottom_confirmation_entry
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

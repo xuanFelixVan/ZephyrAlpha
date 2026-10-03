@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-089
+module_id: MOD-SIG-089
 module_name: auction_microstructure_analyzer
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

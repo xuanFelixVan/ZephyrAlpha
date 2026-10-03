@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-004
+module_id: MOD-PLAN-004
 module_name: overnight_boundary_reviser
 domain: D_PLAN
 doc_type: blueprint

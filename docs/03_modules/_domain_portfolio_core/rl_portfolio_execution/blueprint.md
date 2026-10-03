@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PF-013
+module_id: MOD-PF-013
 module_name: rl_portfolio_execution
 domain: D_PF_CORE
 doc_type: blueprint

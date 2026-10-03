@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-133
+module_id: MOD-SIG-133
 module_name: shared_kernel_sync
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

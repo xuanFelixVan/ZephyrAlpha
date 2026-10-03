@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-DT-001
+module_id: MOD-DT-001
 module_name: market_twin_simulator
 domain: D_DIGITAL_TWIN
 doc_type: blueprint

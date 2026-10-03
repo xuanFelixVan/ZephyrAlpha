@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-022
+module_id: MOD-ML-022
 module_name: research_asset_versioning
 domain: D_ML_TRAIN
 doc_type: blueprint

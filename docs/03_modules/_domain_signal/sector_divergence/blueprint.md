@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-060
+module_id: MOD-SIG-060
 module_name: sector_divergence
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

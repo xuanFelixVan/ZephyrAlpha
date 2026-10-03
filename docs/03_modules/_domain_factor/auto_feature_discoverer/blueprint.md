@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-001
+module_id: MOD-FAC-001
 module_name: auto_feature_discoverer
 domain: D_FACTOR
 doc_type: blueprint

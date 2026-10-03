@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-119
+module_id: MOD-SIG-119
 module_name: sector_crowding_launch
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

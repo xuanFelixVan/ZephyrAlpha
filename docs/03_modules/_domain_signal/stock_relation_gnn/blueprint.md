@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-126
+module_id: MOD-SIG-126
 module_name: stock_relation_gnn
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

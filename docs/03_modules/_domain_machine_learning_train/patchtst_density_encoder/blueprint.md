@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-011
+module_id: MOD-ML-011
 module_name: patchtst_density_encoder
 domain: D_ML_TRAIN
 doc_type: blueprint

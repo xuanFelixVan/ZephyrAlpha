@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-063
+module_id: MOD-SIG-063
 module_name: similar_day_inference
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

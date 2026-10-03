@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-110
+module_id: MOD-SIG-110
 module_name: pead_event_model
 domain: D_FUNDAMENTAL_SIGNAL
 doc_type: blueprint

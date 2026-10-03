@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-109
+module_id: MOD-SIG-109
 module_name: strategy_cross_vote_funnel
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

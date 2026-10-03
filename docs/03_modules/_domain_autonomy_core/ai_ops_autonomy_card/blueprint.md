@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-013
+module_id: MOD-AU-013
 module_name: ai_ops_autonomy_card
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

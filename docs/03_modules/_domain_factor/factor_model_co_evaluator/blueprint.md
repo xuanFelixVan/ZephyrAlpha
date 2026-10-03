@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-FAC-005
+module_id: MOD-FAC-005
 module_name: factor_model_co_evaluator
 domain: D_FACTOR
 doc_type: blueprint

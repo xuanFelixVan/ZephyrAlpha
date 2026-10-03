@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIGQC-004
+module_id: MOD-SIGQC-004
 module_name: signal_degradation_monitor
 domain: D_SIGQC
 doc_type: blueprint

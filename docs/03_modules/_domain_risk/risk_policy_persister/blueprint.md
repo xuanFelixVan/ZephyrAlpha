@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-RK-044
+module_id: MOD-RK-044
 module_name: risk_policy_persister
 domain: D_RISK
 doc_type: blueprint

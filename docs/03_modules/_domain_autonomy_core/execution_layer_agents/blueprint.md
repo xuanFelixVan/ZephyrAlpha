@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-EXE-AGENTS
+module_id: MOD-EXE-AGENTS
 module_name: execution_layer_agents
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

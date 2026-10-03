@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-098
+module_id: MOD-SIG-098
 module_name: sector_momentum_persistence
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

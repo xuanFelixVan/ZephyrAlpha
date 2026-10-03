@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-017
+module_id: MOD-ML-017
 module_name: kan_density_head
 domain: D_ML_TRAIN
 doc_type: blueprint

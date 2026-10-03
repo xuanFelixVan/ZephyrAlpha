@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-TRADING-013
+module_id: MOD-TRADING-013
 module_name: three_way_reconciliation
 domain: D_TRADING
 doc_type: blueprint

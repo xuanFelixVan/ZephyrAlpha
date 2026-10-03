@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-150
+module_id: MOD-SIG-150
 module_name: strategy_decay_certifier
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

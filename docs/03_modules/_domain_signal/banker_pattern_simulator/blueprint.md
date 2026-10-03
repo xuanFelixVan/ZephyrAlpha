@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-113
+module_id: MOD-SIG-113
 module_name: banker_pattern_simulator
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

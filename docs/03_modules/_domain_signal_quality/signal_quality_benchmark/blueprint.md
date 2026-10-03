@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIGQC-005
+module_id: MOD-SIGQC-005
 module_name: signal_quality_benchmark
 domain: D_SIGQC
 doc_type: blueprint

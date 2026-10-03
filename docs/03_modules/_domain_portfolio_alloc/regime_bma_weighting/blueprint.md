@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PA-015
+module_id: MOD-PA-015
 module_name: regime_bma_weighting
 domain: D_PF_ALLOC
 doc_type: blueprint

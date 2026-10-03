@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-005
+module_id: MOD-PLAN-005
 module_name: scenario_planner
 domain: D_PLAN
 doc_type: blueprint

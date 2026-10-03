@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-102
+module_id: MOD-SIG-102
 module_name: limit_up_potential_scorer
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

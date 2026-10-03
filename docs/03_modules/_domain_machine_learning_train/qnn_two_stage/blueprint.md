@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-010
+module_id: MOD-ML-010
 module_name: qnn_two_stage
 domain: D_ML_TRAIN
 doc_type: blueprint

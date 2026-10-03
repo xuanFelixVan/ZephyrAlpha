@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-REGIME-014
+module_id: MOD-REGIME-014
 module_name: style_regime_model
 domain: D_REGIME
 doc_type: blueprint

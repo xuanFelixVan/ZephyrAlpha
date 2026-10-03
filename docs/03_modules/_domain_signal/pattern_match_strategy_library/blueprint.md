@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-105
+module_id: MOD-SIG-105
 module_name: pattern_match_strategy_library
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

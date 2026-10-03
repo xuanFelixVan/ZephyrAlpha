@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-123
+module_id: MOD-SIG-123
 module_name: event_conditional_density
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

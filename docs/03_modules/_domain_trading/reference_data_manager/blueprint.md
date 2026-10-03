@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-TRADING-014
+module_id: MOD-TRADING-014
 module_name: reference_data_manager
 domain: D_TRADING
 doc_type: blueprint

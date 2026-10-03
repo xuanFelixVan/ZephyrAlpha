@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-146
+module_id: MOD-SIG-146
 module_name: pattern_series_transform
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

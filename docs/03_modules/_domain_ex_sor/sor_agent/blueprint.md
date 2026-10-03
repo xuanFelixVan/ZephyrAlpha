@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-XS-015
+module_id: MOD-XS-015
 module_name: sor_agent
 domain: D_EX_SOR
 doc_type: blueprint

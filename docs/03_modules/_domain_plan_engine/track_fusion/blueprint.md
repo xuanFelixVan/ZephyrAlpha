@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-020
+module_id: MOD-PLAN-020
 module_name: track_fusion
 domain: D_PLAN
 doc_type: blueprint

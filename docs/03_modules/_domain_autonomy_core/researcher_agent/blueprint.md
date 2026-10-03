@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-AU-008
+module_id: MOD-AU-008
 module_name: researcher_agent
 domain: D_AUTONOMY_CORE
 doc_type: blueprint

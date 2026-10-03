@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-147
+module_id: MOD-SIG-147
 module_name: pattern_signal_runtime
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

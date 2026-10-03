@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-POS-024
+module_id: MOD-POS-024
 module_name: position_adjudication_center
 domain: D_POSITION
 doc_type: blueprint

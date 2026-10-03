@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-130
+module_id: MOD-SIG-130
 module_name: strategy_matrix_3d
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

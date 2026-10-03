@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ML-012
+module_id: MOD-ML-012
 module_name: model_version_registry
 domain: D_ML_TRAIN
 doc_type: blueprint

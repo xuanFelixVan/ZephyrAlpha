@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-058
+module_id: MOD-SIG-058
 module_name: futures_basis_monitor
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

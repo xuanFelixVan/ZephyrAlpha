@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-128
+module_id: MOD-SIG-128
 module_name: tcp_rm_conformal
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

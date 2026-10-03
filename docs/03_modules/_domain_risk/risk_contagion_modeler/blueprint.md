@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-RK-046
+module_id: MOD-RK-046
 module_name: risk_contagion_modeler
 domain: D_RISK
 doc_type: blueprint

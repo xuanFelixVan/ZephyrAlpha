@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-095
+module_id: MOD-SIG-095
 module_name: multi_indicator_divergence
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

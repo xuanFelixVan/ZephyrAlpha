@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-124
+module_id: MOD-SIG-124
 module_name: fake_move_distribution
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

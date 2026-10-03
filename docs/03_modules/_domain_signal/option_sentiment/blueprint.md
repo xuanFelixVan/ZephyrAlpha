@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-059
+module_id: MOD-SIG-059
 module_name: option_sentiment
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

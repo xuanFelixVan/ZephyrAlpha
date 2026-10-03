@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-BT-027
+module_id: MOD-BT-027
 module_name: layered_validation_pipeline
 domain: D_BACKTEST
 doc_type: blueprint

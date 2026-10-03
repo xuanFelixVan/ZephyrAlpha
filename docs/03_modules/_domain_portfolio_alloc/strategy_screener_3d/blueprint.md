@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PA-014
+module_id: MOD-PA-014
 module_name: strategy_screener_3d
 domain: D_PF_ALLOC
 doc_type: blueprint

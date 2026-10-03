@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-094
+module_id: MOD-SIG-094
 module_name: wyckoff_accumulation_signal
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-122
+module_id: MOD-SIG-122
 module_name: calendar_effects_model
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

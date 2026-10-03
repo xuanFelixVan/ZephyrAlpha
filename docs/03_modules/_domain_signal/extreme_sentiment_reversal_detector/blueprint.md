@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-099
+module_id: MOD-SIG-099
 module_name: extreme_sentiment_reversal_detector
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-TRADING-010
+module_id: MOD-TRADING-010
 module_name: settlement_record_aggregate
 domain: D_TRADING
 doc_type: blueprint

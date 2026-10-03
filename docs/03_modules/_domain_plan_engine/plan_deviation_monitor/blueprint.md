@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-PLAN-022
+module_id: MOD-PLAN-022
 module_name: plan_deviation_monitor
 domain: D_PLAN
 doc_type: blueprint

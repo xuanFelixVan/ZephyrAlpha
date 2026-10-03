@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-115
+module_id: MOD-SIG-115
 module_name: pattern_to_signal_mapper
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

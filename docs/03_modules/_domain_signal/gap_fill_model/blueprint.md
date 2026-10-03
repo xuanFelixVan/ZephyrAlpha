@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-092
+module_id: MOD-SIG-092
 module_name: gap_fill_model
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint

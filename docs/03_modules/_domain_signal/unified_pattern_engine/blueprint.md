@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-SIG-091
+module_id: MOD-SIG-091
 module_name: unified_pattern_engine
 domain: D_ASHARE_SIGNAL
 doc_type: blueprint
