@@ -2498,7 +2498,26 @@ class WorktreeLanding:
         if self._index_matches(new_sha, rel):
             return "index_already"
         if not self._index_matches(old_sha, rel):
-            return "index_skip_staged_wip"
+            # 2026-10-03 裁定#480 C-3 陈旧影子放宽（本日 4 案实证）：index 既非 new 也非 old，
+            # 但其 staged blob 被 git 历史某提交包含（=祖先版残影，内容在历史有副本）→ 清除零损失。
+            # 判据必须验「提交可达」而非对象库存在（git add 即造对象，未提交 WIP 会误判）——
+            # 有意 WIP 的内容不在任何历史提交里，仍走 skip_staged_wip 保护
+            staged_ls = self._git_repo("ls-files", "--cached", "--", rel, check=False)
+            parts = staged_ls.stdout.split()
+            blob_sha = parts[1] if staged_ls.returncode == 0 and len(parts) > 1 else ""
+            reach = (
+                self._git_repo("log", "--all", "--find-object", blob_sha, "-n", "1", "--format=%H", check=False)
+                if blob_sha
+                else None
+            )
+            if not (blob_sha and reach is not None and reach.returncode == 0 and reach.stdout.strip()):
+                return "index_skip_staged_wip"
+            if mode != "live":
+                return "index_shadow_clear"
+            r2 = self._git_repo("restore", "--staged", "--source", new_sha, "--", rel, check=False)
+            if r2.returncode != 0:
+                return "index_error"
+            return "index_shadow_clear"
         if mode != "live":
             return "index_shadow_clear"
         r = self._git_repo("restore", "--staged", "--source", new_sha, "--", rel, check=False)
