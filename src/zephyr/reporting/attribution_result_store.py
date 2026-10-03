@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-RPT-037 | 待统筹登记（54号 BM-REC-02-B 归因结果落库+查询，§3.5 两层归因持久化）
 # [MODULE] zephyr.reporting.attribution_result_store
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] zephyr.reporting.reconciliation_schema(DDL真源); zephyr.reporting.attribution(求和不变量复用); zephyr.shared.contracts.performance_attribution_report(CTR-P1-009); zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection)
-# [CONSUMERS] 归因报告生成链路(54号 BM-REC-02-B); 55号复盘(归因结果消费)
+# [DEPENDENCIES] zephyr.reporting.reconciliation_schema(DDL真源); zephyr.reporting.attribution(求和不变量复用); zephyr.reporting.attribution_calculator(L10b-W1 归因计算消费); zephyr.shared.contracts.performance_attribution_report(CTR-P1-009); zephyr.shared.io.paths(DB_PATH SSoT); zephyr.shared.io.sqlite_factory(get_db_connection); zephyr.shared.event_bus(事件腿,延迟 import)
+# [CONSUMERS] 归因报告生成链路(54号 BM-REC-02-B); 55号复盘(归因结果消费); boot_hooks._subscribe_eventbus_consumers(L10b-W1 结算完成事件腿)
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] append-only仅INSERT(INSERT OR IGNORE同幂等键跳过保首条); SQL参数化+常量(NO-BARE-SQL); db_path默认None走DB_PATH SSoT(测试注入临时库); DDL真源=reconciliation_schema.get_ddl("attribution_results")不复制副本; 数值落库=repr保原文字符串(防浮点二次失真); 只消费不改对账内核
@@ -34,6 +34,12 @@ D_REPORTING — 归因结果落库 + 查询接口（54 号 BM-REC-02-B 残余清
   4. query_attribution_results / get_attribution_by_key——组合过滤查询接口
      （保原文字符串不回解析，调用方自行 float()——防浮点二次失真，同
      prediction_log_writer 契约）。
+  5. 结算完成事件腿（L10b-W1 接线）：订阅 ``post_settlement.recon.swept``
+     （盘后对账+审计 sweep 完成回执），run_daily_attribution 以
+     attribution_calculator（MOD-RPT-036，本模块落库前端的计算真源）算单日
+     firm 层归因后落库——attribution_calculator 的首个生产调用方；依赖经
+     register_attribution_deps 装配注入，未装配=UNWIRED 不伪跑，归因失败
+     =DEGRADED 显式态不逃逸总线（异常隔离）。
 
 落库库位：governance.db（DB_PATH SSoT，对齐 reconciliation_differences 落
 治理库先例，见 trading/recon_runner.py）。本模块只消费既有表/内核，不改
@@ -45,15 +51,17 @@ SettlementReconciler/PositionReconciler/DailyAuditor。
 from __future__ import annotations
 
 import logging
+import threading
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Final, Mapping
+from typing import Callable, Final, Mapping
 
 from zephyr.reporting.attribution import (
     INVARIANT_TOLERANCE_BPS,
     validate_strategy_pnl_invariant,
 )
+from zephyr.reporting.attribution_calculator import build_linked_attribution_report
 from zephyr.reporting.reconciliation_schema import SCHEMA_VERSION, get_ddl
 from zephyr.shared.contracts.performance_attribution_report import (
     PerformanceAttributionReport,
@@ -65,6 +73,8 @@ _logger = logging.getLogger(__name__)
 
 __all__: Final = [
     "ATTRIBUTION_LAYERS",
+    "AttributionDeps",
+    "DailyAttributionInputs",
     "LAYER_FIRM",
     "LAYER_STRATEGY",
     "TwoLayerPersistResult",
@@ -72,7 +82,11 @@ __all__: Final = [
     "get_attribution_by_key",
     "persist_two_layer_attribution",
     "query_attribution_results",
+    "register_attribution_deps",
+    "reset_attribution_bridge_state",
+    "run_daily_attribution",
     "store_attribution_report",
+    "subscribe_eventbus",
 ]
 
 # ── 两层归因层位枚举（54 号 §3.5：firm=组合层账户 ID / strategy=策略层策略 ID）──
@@ -374,3 +388,137 @@ def get_attribution_by_key(
         return dict(row) if row is not None else None
     finally:
         conn.close()
+
+
+# ── 结算完成事件腿（L10b-W1：attribution_calculator 首个生产调用方） ─────────────
+# 自然触发点=``post_settlement.recon.swept``（post_settlement_pipeline 幂等日终
+# sweep 完成回执，对账+审计落地后）：事件 → run_daily_attribution（单日 firm 层
+# 归因计算 → attribution_results 落库）。归因输入经 register_attribution_deps
+# 由装配批注入（input_provider）；未装配=UNWIRED 显式态不伪跑（语义同
+# SweepDeps UNWIRED，禁拍假值）。归因/落库任何异常=DEGRADED 显式态+告警，
+# 不逃逸总线不拖垮盘后主链（异常隔离契约）。幂等=idempotency_key 确定性派生
+# （attribution:{portfolio_id}:{trade_date}），事件重放零副作用。
+
+
+@dataclass(frozen=True)
+class DailyAttributionInputs:
+    """单日 firm 层归因输入单（装配批经 input_provider 注入；板块级 BHB 口径）。"""
+
+    portfolio_id: str
+    portfolio_weights: Mapping[str, float]
+    benchmark_weights: Mapping[str, float]
+    portfolio_returns: Mapping[str, float]
+    benchmark_returns: Mapping[str, float]
+    transaction_cost_drag: float = 0.0
+
+
+@dataclass(frozen=True)
+class AttributionDeps:
+    """归因事件腿依赖装配单（input_provider None=UNWIRED 不伪跑）。"""
+
+    input_provider: Callable[[str], DailyAttributionInputs] | None = None
+    db_path: str | Path | None = None
+    alert_sink: Callable[[str, str], None] | None = None
+
+
+_bridge_lock = threading.Lock()
+_registered_attribution_deps: AttributionDeps | None = None
+_attribution_subscribed = False
+_attribution_handler: Callable[[object], None] | None = None
+
+
+def register_attribution_deps(deps: AttributionDeps | None) -> None:
+    """注册/注销归因事件腿依赖（运行时装配批注入；None=注销回 UNWIRED 态）。"""
+    global _registered_attribution_deps
+    if deps is not None and not isinstance(deps, AttributionDeps):
+        raise ValueError(f"deps 须为 AttributionDeps 或 None: {type(deps).__name__}")
+    with _bridge_lock:
+        _registered_attribution_deps = deps
+
+
+def run_daily_attribution(trade_date: str, *, deps: AttributionDeps | None = None) -> dict[str, object]:
+    """结算完成事件 → 单日 firm 层归因 → attribution_results 落库（异常隔离）。
+
+    流程：input_provider(trade_date) 取板块级输入单 →
+    build_linked_attribution_report（单期 Carino 链接，residual 门禁随报告）→
+    ensure 建表 + store_attribution_report（幂等键确定性派生）。
+
+    Returns:
+        status ∈ OK / UNWIRED（依赖未装配或日期空，不伪跑）/ DEGRADED（归因或
+        落库失败，error 留因）；任何异常在本函数内消化，不逃逸调用方/总线。
+    """
+    day = (trade_date or "").strip()
+    effective = deps if deps is not None else _registered_attribution_deps
+    if not day or effective is None or effective.input_provider is None:
+        return {"trade_date": day, "status": "UNWIRED"}
+    try:
+        inputs = effective.input_provider(day)
+        linked = build_linked_attribution_report(
+            portfolio_id=inputs.portfolio_id,
+            period_start=day,
+            period_end=day,
+            idempotency_key=f"attribution:{inputs.portfolio_id}:{day}",
+            period_inputs=[
+                {
+                    "portfolio_weights": inputs.portfolio_weights,
+                    "benchmark_weights": inputs.benchmark_weights,
+                    "portfolio_returns": inputs.portfolio_returns,
+                    "benchmark_returns": inputs.benchmark_returns,
+                }
+            ],
+            transaction_cost_drag=inputs.transaction_cost_drag,
+        )
+        ensure_attribution_results_table(effective.db_path)
+        row_id = store_attribution_report(linked.report, layer=LAYER_FIRM, db_path=effective.db_path)
+        return {"trade_date": day, "status": "OK", "row_id": row_id, "residual_quality": linked.residual_quality}
+    except Exception as exc:  # noqa: BLE001 — 归因失败不影响主流程（L10b-W1 异常隔离）
+        _logger.error("日终归因落库失败（DEGRADED 不逃逸）: date=%s %r", day, exc)
+        if effective.alert_sink is not None:
+            try:
+                effective.alert_sink(day, f"日终归因失败: {exc!r}")
+            except Exception:  # noqa: BLE001 — 告警出口失败二次吞没
+                _logger.exception("attribution alert_sink 调用失败（已吞没）")
+        return {"trade_date": day, "status": "DEGRADED", "error": repr(exc)}
+
+
+def subscribe_eventbus() -> None:
+    """订阅 post_settlement.recon.swept（幂等；boot_hooks 统一调用，L10b-W1 事件腿）。"""
+    global _attribution_subscribed, _attribution_handler
+    with _bridge_lock:
+        if _attribution_subscribed:
+            _logger.debug("attribution event bridge already subscribed, skipping (idempotent)")
+            return
+        _attribution_subscribed = True
+
+    from zephyr.shared.event_bus import bus  # 延迟 import（同 post_settlement_pipeline 先例）
+    from zephyr.trading.post_settlement_pipeline import TOPIC_RECON_SWEPT  # 延迟 import 免重包链
+
+    def _on_recon_swept(event: object) -> None:
+        payload = getattr(event, "payload", None) or {}
+        raw_date = payload.get("trade_date")
+        status = payload.get("status")
+        # UNWIRED/ERROR sweep 不归因；REPLAYED 靠幂等键兜底重复（INSERT OR IGNORE）
+        if not isinstance(raw_date, str) or not raw_date.strip() or status not in ("OK", "REPLAYED"):
+            return
+        result = run_daily_attribution(raw_date)
+        _logger.info("日终归因事件腿完成: date=%s status=%s", raw_date, result.get("status"))
+
+    bus.subscribe(TOPIC_RECON_SWEPT, _on_recon_swept)
+    _attribution_handler = _on_recon_swept
+
+
+def reset_attribution_bridge_state() -> None:
+    """清空进程内装配与订阅（测试隔离专用；生产勿调）。"""
+    global _registered_attribution_deps, _attribution_subscribed, _attribution_handler
+    with _bridge_lock:
+        _registered_attribution_deps = None
+        if _attribution_handler is not None:
+            try:
+                from zephyr.shared.event_bus import bus
+                from zephyr.trading.post_settlement_pipeline import TOPIC_RECON_SWEPT
+
+                bus.unsubscribe(TOPIC_RECON_SWEPT, _attribution_handler)
+            except Exception:  # noqa: BLE001 — 测试清理不外抛
+                _logger.debug("attribution handler unsubscribe failed (ignored)", exc_info=True)
+        _attribution_handler = None
+        _attribution_subscribed = False

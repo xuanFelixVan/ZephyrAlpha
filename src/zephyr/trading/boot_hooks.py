@@ -204,6 +204,7 @@ def _subscribe_eventbus_consumers() -> None:
       8. F6  drift_bridge           — gate_blocked/task_completed
       9. auto_task_generator        — task_completed（自动任务生成，非架构文档生成器）
       10. premarket_checker         — premarket.check.requested（MOD-EX-063 盘前检查器）
+      11. attribution_result_store  — post_settlement.recon.swept（L10b-W1 结算完成归因事件腿）
     注：架构文档生成器（23 个 generate_*.py）的自动触发不走 EventBus——见
     _subscribe_governance_regeneration()，启动时调 reconcile_stale() 按 mtime 扫描
     兜底；DB 真源变更由 apply_*.py 内联 reconcile_async() 实时触发。
@@ -230,6 +231,9 @@ def _subscribe_eventbus_consumers() -> None:
         # 订阅 post_settlement.recon.requested——宪法 §9.3 reconciler 事件触发
         # （时钟腿=ZephyrAlpha_PostSettlement 计划任务退役归 Owner 门位）。
         ("post_settlement_pipeline", "zephyr.trading.post_settlement_pipeline"),
+        # L10b-W1 归因事件腿（2026-10-04 EXEC-4）：sweep 完成回执 → 单日归因
+        # → attribution_results 落库（UNWIRED 不伪跑/DEGRADED 不逃逸总线）。
+        ("attribution_result_store", "zephyr.reporting.attribution_result_store"),
     ]
 
     succeeded = 0
@@ -616,7 +620,9 @@ def _init_kill_switch_orchestrator() -> None:
         domains = sorted(orch._domains.keys()) if hasattr(orch, "_domains") else []
         logger.info("KillSwitchOrchestrator booted: system=%s domains=%s", orch._system is not None, domains)
     except Exception as exc:  # noqa: BLE001 — 启动链不因编排器故障失败
-        logger.warning("KillSwitchOrchestrator boot failed (kill switches remain independently usable): %s", exc, exc_info=True)
+        logger.warning(
+            "KillSwitchOrchestrator boot failed (kill switches remain independently usable): %s", exc, exc_info=True
+        )
         return
 
     try:
@@ -628,7 +634,9 @@ def _init_kill_switch_orchestrator() -> None:
             "KillSwitch 响应策略层已注册（唯一权威 dispatcher，16号文 §3.4 三级映射）：level_1/2/3 → 编排器 route_incident"
         )
     except Exception as exc:  # noqa: BLE001 — 策略层注册失败不得阻断编排器已完成的注册
-        logger.warning("KillSwitchResponseLayer 注册失败（五域开关仍各自可用，但失去三级裁决入口）: %s", exc, exc_info=True)
+        logger.warning(
+            "KillSwitchResponseLayer 注册失败（五域开关仍各自可用，但失去三级裁决入口）: %s", exc, exc_info=True
+        )
 
 
 def register_boot_hooks(

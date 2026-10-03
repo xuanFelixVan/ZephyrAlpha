@@ -244,3 +244,165 @@ class TestFailClosed:
     def test_invalid_layer_filter(self, tmp_db: Path) -> None:
         with pytest.raises(ValueError, match="layer"):
             query_attribution_results(layer="bogus", db_path=tmp_db)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 结算完成事件腿（L10b-W1：事件 → 归因计算 → attribution_results 落库）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _inputs(portfolio_id: str = "PF-FIRM", drag: float = 0.001) -> store.DailyAttributionInputs:
+    """板块级 BHB 输入单（两板块，基准/组合权重和各=1，守恒口径可验算）。"""
+    return store.DailyAttributionInputs(
+        portfolio_id=portfolio_id,
+        portfolio_weights={"成长": 0.6, "价值": 0.4},
+        benchmark_weights={"成长": 0.5, "价值": 0.5},
+        portfolio_returns={"成长": 0.02, "价值": 0.01},
+        benchmark_returns={"成长": 0.015, "价值": 0.008},
+        transaction_cost_drag=drag,
+    )
+
+
+def _deps(db: Path, provider=..., alert_calls: list | None = None) -> store.AttributionDeps:
+    """事件腿装配单（tmp 库注入；provider 缺省=正常桩，alert_calls 捕获告警）。"""
+    if alert_calls is None:
+        alert_calls = []
+
+    def _alert(day: str, message: str) -> None:
+        alert_calls.append((day, message))
+
+    if provider is ...:
+        provider = lambda day: _inputs()  # noqa: E731 — 测试桩
+    return store.AttributionDeps(input_provider=provider, db_path=db, alert_sink=_alert)
+
+
+class TestRunDailyAttribution:
+    def test_unwired_without_deps(self, tmp_db: Path) -> None:
+        """依赖未装配 → UNWIRED 显式态不伪跑（零落库，禁拍假值）。"""
+        store.reset_attribution_bridge_state()
+        result = store.run_daily_attribution("2026-10-04")
+        assert result["status"] == "UNWIRED"
+        assert query_attribution_results(db_path=tmp_db) == []
+
+    def test_ok_computes_and_persists(self, tmp_db: Path) -> None:
+        """装配齐全 → OK：BHB 计算+落库，幂等键确定性派生，列契约吻合。"""
+        store.reset_attribution_bridge_state()
+        store.register_attribution_deps(_deps(tmp_db))
+        result = store.run_daily_attribution("2026-10-04")
+        assert result["status"] == "OK"
+        assert result["residual_quality"] == "PASS"  # 单期 BHB 守恒 → residual 浮点精度级
+        rows = query_attribution_results(portfolio_id="PF-FIRM", layer="firm", db_path=tmp_db)
+        assert len(rows) == 1
+        row = rows[0]
+        assert row["period"] == "2026-10-04"
+        assert row["idempotency_key"] == "attribution:PF-FIRM:2026-10-04"
+        assert row["invariant_status"] is None  # 单层落库不挂两层不变量态
+        # total_return = 几何超额收益 (1+R_p)/(1+R_b)−1 − drag（Carino 链接口径）
+        r_p = 0.6 * 0.02 + 0.4 * 0.01
+        r_b = 0.5 * 0.015 + 0.5 * 0.008
+        assert float(row["total_return"]) == pytest.approx((1 + r_p) / (1 + r_b) - 1 - 0.001)
+
+    def test_idempotent_replay_keeps_first(self, tmp_db: Path) -> None:
+        """同日重跑（事件重放）→ 幂等键同键跳过保首条。"""
+        store.reset_attribution_bridge_state()
+        store.register_attribution_deps(_deps(tmp_db))
+        first = store.run_daily_attribution("2026-10-04")
+        second = store.run_daily_attribution("2026-10-04")
+        assert first["status"] == "OK" and second["status"] == "OK"
+        assert first["row_id"] == second["row_id"]
+        assert len(query_attribution_results(db_path=tmp_db)) == 1
+
+    def test_degraded_provider_raises_isolated(self, tmp_db: Path) -> None:
+        """归因输入异常 → DEGRADED 显式态+告警，不逃逸主流程。"""
+        store.reset_attribution_bridge_state()
+        alerts: list[tuple[str, str]] = []
+
+        def _boom(day: str) -> store.DailyAttributionInputs:
+            raise RuntimeError("provider down")
+
+        store.register_attribution_deps(_deps(tmp_db, provider=_boom, alert_calls=alerts))
+        result = store.run_daily_attribution("2026-10-04")
+        assert result["status"] == "DEGRADED"
+        assert "provider down" in result["error"]
+        assert alerts and alerts[0][0] == "2026-10-04"
+        assert query_attribution_results(db_path=tmp_db) == []
+
+    def test_degraded_bad_weights_isolated(self, tmp_db: Path) -> None:
+        """非法权重（BHB fail-closed）→ DEGRADED 不抛 ValueError 出函数。"""
+        store.reset_attribution_bridge_state()
+        bad = store.DailyAttributionInputs(
+            portfolio_id="PF-BAD",
+            portfolio_weights={"成长": -0.5},  # 负权重 fail-closed
+            benchmark_weights={"成长": 0.5},
+            portfolio_returns={"成长": 0.02},
+            benchmark_returns={"成长": 0.015},
+        )
+        store.register_attribution_deps(
+            store.AttributionDeps(input_provider=lambda day: bad, db_path=tmp_db, alert_sink=None)
+        )
+        result = store.run_daily_attribution("2026-10-04")
+        assert result["status"] == "DEGRADED"
+        assert "负权重" in result["error"]
+
+    def test_register_rejects_wrong_type(self, tmp_db: Path) -> None:
+        with pytest.raises(ValueError, match="AttributionDeps"):
+            store.register_attribution_deps("not-deps")  # type: ignore[arg-type]
+        store.reset_attribution_bridge_state()
+
+
+class TestAttributionEventLeg:
+    def test_swept_event_triggers_attribution(self, tmp_db: Path) -> None:
+        """sweep 完成回执（status=OK）→ 事件腿自动归因落库。"""
+        store.reset_attribution_bridge_state()
+        store.register_attribution_deps(_deps(tmp_db))
+        store.subscribe_eventbus()
+        from zephyr.shared.event_bus import bus
+        from zephyr.trading.post_settlement_pipeline import TOPIC_RECON_SWEPT
+
+        bus.emit(TOPIC_RECON_SWEPT, {"trade_date": "2026-10-04", "status": "OK"})
+        rows = query_attribution_results(portfolio_id="PF-FIRM", db_path=tmp_db)
+        assert len(rows) == 1
+        store.reset_attribution_bridge_state()  # 退订防跨测试残留
+
+    def test_unwired_sweep_skipped(self, tmp_db: Path) -> None:
+        """UNWIRED/ERROR sweep 或缺日期 → 事件腿不归因。"""
+        store.reset_attribution_bridge_state()
+        store.register_attribution_deps(_deps(tmp_db))
+        store.subscribe_eventbus()
+        from zephyr.shared.event_bus import bus
+        from zephyr.trading.post_settlement_pipeline import TOPIC_RECON_SWEPT
+
+        for payload in (
+            {"trade_date": "2026-10-04", "status": "UNWIRED"},
+            {"trade_date": "2026-10-04", "status": "ERROR"},
+            {"status": "OK"},
+            {},
+        ):
+            bus.emit(TOPIC_RECON_SWEPT, payload)
+        assert query_attribution_results(db_path=tmp_db) == []
+        store.reset_attribution_bridge_state()
+
+    def test_subscribe_is_idempotent(self, tmp_db: Path) -> None:
+        """重复 subscribe_eventbus → 单 handler，事件重放零重复落库。"""
+        store.reset_attribution_bridge_state()
+        store.register_attribution_deps(_deps(tmp_db))
+        store.subscribe_eventbus()
+        store.subscribe_eventbus()  # 幂等
+        from zephyr.shared.event_bus import bus
+        from zephyr.trading.post_settlement_pipeline import TOPIC_RECON_SWEPT
+
+        bus.emit(TOPIC_RECON_SWEPT, {"trade_date": "2026-10-04", "status": "OK"})
+        assert len(query_attribution_results(db_path=tmp_db)) == 1  # 幂等键+单 handler 双保险
+        store.reset_attribution_bridge_state()
+
+    def test_reset_unsubscribes(self, tmp_db: Path) -> None:
+        """reset 后事件不再触发归因（退订防跨测试叠加双跑）。"""
+        store.reset_attribution_bridge_state()
+        store.register_attribution_deps(_deps(tmp_db))
+        store.subscribe_eventbus()
+        store.reset_attribution_bridge_state()
+        from zephyr.shared.event_bus import bus
+        from zephyr.trading.post_settlement_pipeline import TOPIC_RECON_SWEPT
+
+        bus.emit(TOPIC_RECON_SWEPT, {"trade_date": "2026-10-04", "status": "OK"})
+        assert query_attribution_results(db_path=tmp_db) == []
