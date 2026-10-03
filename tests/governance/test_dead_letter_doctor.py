@@ -168,7 +168,7 @@ def test_scan_classifies_five_families_env_and_untreatable(sandbox: Path) -> Non
     _mk_five_family_zoo(sandbox)
     report = dld.diagnose(sandbox)
     fam = report["families"]
-    assert fam[dld.FAMILY_CREATION_TOKEN]["count"] == 1  # 已重投袋排除
+    assert fam[dld.FAMILY_CREATE_GUARD]["count"] == 1  # 已重投袋排除
     assert fam[dld.FAMILY_PLAIN_ZH]["count"] == 1
     assert fam[dld.FAMILY_R5_SUFFIX]["count"] == 1
     assert fam[dld.FAMILY_VOCAB]["count"] == 1
@@ -182,7 +182,7 @@ def test_scan_classifies_five_families_env_and_untreatable(sandbox: Path) -> Non
     assert report["healable_ratio"] == round(5 / 7, 4)
     assert report["auto_healable_count"] == 2
     # 代表 qid 指向真袋（可按图索骥）
-    assert fam[dld.FAMILY_CREATION_TOKEN]["samples"] == ["q-20261003-st-alpha-20261003-0001"]
+    assert fam[dld.FAMILY_CREATE_GUARD]["samples"] == ["q-20261003-st-alpha-20261003-0001"]
 
 
 def test_scan_counts_corrupt_bag_as_untreatable(sandbox: Path) -> None:
@@ -191,7 +191,7 @@ def test_scan_counts_corrupt_bag_as_untreatable(sandbox: Path) -> None:
     report = dld.diagnose(sandbox)
     assert report["total_dead"] == 2
     assert report["families"][dld.FAMILY_UNTREATABLE]["count"] == 1
-    assert report["families"][dld.FAMILY_CREATION_TOKEN]["count"] == 1
+    assert report["families"][dld.FAMILY_CREATE_GUARD]["count"] == 1
 
 
 def test_classify_family_reuses_commit_queue_env_truth() -> None:
@@ -236,7 +236,7 @@ def test_prescribe_writes_json_and_audit(sandbox: Path) -> None:
     out = sandbox / dld._PRESCRIPTIONS_DIRNAME / "q-20261003-st-alpha-20261003-0001.json"
     assert out.is_file()
     on_disk = json.loads(out.read_text(encoding="utf-8"))
-    assert on_disk["family"] == dld.FAMILY_CREATION_TOKEN
+    assert on_disk["family"] == dld.FAMILY_CREATE_GUARD
     assert on_disk["qid"] == "q-20261003-st-alpha-20261003-0001"
     # 闸一/闸二/闸三 note 必须在处方里显化
     assert "闸一" in on_disk["gate_one_note"] and "闸二" in on_disk["gate_two_note"]
