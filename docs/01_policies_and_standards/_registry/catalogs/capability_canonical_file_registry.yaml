@@ -59536,4 +59536,14 @@ creation_tokens:
   token: commitmap-cure-05-workspace-wip-manifest-20261003
   created_by: st-commitmap-chief-20261003
   capability: commitmap_cure
+- file: scripts/governance/register_asset.py
+  token: surgery-c-register-asset-20261003
+  created_by: st-sC-surgery-20261003
+  capability: surgery_c
+  merge_evaluation: "裁定#480 C-2 合一编排件：五道手续全部委托既有四工具零重写（同真源可派生故不复制逻辑），替代会话手工五步串接；无既有同类单命令入口"
+- file: src/zephyr/governance/reuse_scan.py
+  token: surgery-c-reuse-scan-20261003
+  created_by: st-sC-surgery-20261003
+  capability: surgery_c
+  merge_evaluation: "裁定#480 C-2 新能力对象：三源同类半成品扫描（git status盘面/活跃worktree/死信袋）此前无任何真源覆盖，跨域不同对象不并；纯只读零写"
 di_seam_exemptions: []
