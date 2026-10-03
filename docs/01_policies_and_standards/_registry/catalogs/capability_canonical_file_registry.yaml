@@ -59546,4 +59546,9 @@ creation_tokens:
   created_by: st-sC-surgery-20261003
   capability: surgery_c
   merge_evaluation: "裁定#480 C-2 新能力对象：三源同类半成品扫描（git status盘面/活跃worktree/死信袋）此前无任何真源覆盖，跨域不同对象不并；纯只读零写"
+- file: docs/_working/tdm_mount/A_blueprint_id_unification.md
+  token: tdm-mount-a-blueprint-id-unification-20261003
+  created_by: st-tdm-mount-flash-20261003
+  capability: tdm_mount
+  merge_evaluation: "净零申报：替代 docs/_working/map_census/00_panorama_map_census_v1.md 手工普查段（原册留作历史快照）；TDM血肉挂载四件（A清单/B账本/C初挂草案/D confidence草案）为总筹裁决输入，账本为活体真源"
 di_seam_exemptions: []
