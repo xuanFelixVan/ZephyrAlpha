@@ -118,7 +118,7 @@ def test_stage_fail_open_continues(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(dloop, "_stage_warroom", lambda d, p: (_ for _ in ()).throw(RuntimeError("注入失败:warroom")))
     monkeypatch.setattr("zephyr.plan_engine.daily_plan.maybe_emit_daily_plan", lambda **k: {"action": "ok"})
     monkeypatch.setattr(
-        "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast", lambda **k: {"action": "ok"}
+        "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast", lambda **k: {"action": "emitted"}
     )
     monkeypatch.setattr("zephyr.strategy_pipeline.pipeline_events.maybe_emit_pf_alloc_daily", lambda **k: {"rc": 0})
     monkeypatch.setattr(
@@ -146,3 +146,71 @@ def test_stage_fail_open_continues(monkeypatch: pytest.MonkeyPatch) -> None:
     assert out["stages"]["settle"]["status"] == "ok"
     assert out["summary"]["error"] == 1
     assert out["summary"]["ok"] >= 12
+
+
+# ── D13-20/D13-44 回归（EXEC-3 2026-10-04，fig13 簿09 Y-4）──────────────────────
+
+
+def test_auction_hit_stage_late_eval_at_1615_circle(monkeypatch: pytest.MonkeyPatch) -> None:
+    """D13-20 回归：16:45 dloop_post 圈（走势窗已闭合）不再恒 skipped——回看补判
+    照常落库且 late_eval=True 留痕（判定输入恒≤10:00，PIT 口径不变）。"""
+    from datetime import datetime as _dt
+    from zoneinfo import ZoneInfo as _zi
+
+    captured: dict = {}
+
+    def fake_record(trade_date, *, late_eval=False, **kw):
+        captured["trade_date"] = trade_date
+        captured["late_eval"] = late_eval
+
+        class _Out:
+            hit = True
+
+        return _Out()
+
+    monkeypatch.setattr("zephyr.plan_engine.auction_hit_recorder.record_auction_hit", fake_record)
+    now = _dt(2026, 10, 2, 16, 45, tzinfo=_zi("Asia/Shanghai"))  # 16:45 圈时刻
+    out = dloop._stage_auction_hit("2026-10-02", now=now)
+    assert out["status"] == "ok"
+    assert out["late_eval"] is True
+    assert out["hit"] is True
+    assert captured == {"trade_date": "2026-10-02", "late_eval": True}
+
+
+def test_auction_hit_stage_still_skips_before_window_close(monkeypatch: pytest.MonkeyPatch) -> None:
+    """窗未闭合（<10:00，走势数据未齐）仍 skipped——不提前判定（PIT 卫生保留）。"""
+    from datetime import datetime as _dt
+    from zoneinfo import ZoneInfo as _zi
+
+    called: list = []
+    monkeypatch.setattr(
+        "zephyr.plan_engine.auction_hit_recorder.record_auction_hit", lambda *a, **k: called.append(k) or a
+    )
+    now = _dt(2026, 10, 2, 9, 0, tzinfo=_zi("Asia/Shanghai"))
+    out = dloop._stage_auction_hit("2026-10-02", now=now)
+    assert out["status"] == "skipped"
+    assert out["reason"] == "auction_window_not_closed"
+    assert called == []  # 零落库
+
+
+def test_next_day_stage_surfaces_handover_gap(monkeypatch: pytest.MonkeyPatch) -> None:
+    """D13-44 回归：发射钩子 data_insufficient 段状态如实计 error（原硬编码 ok 是
+    断供真静默位）——dloop_post 圈 summary.error>0 即触发告警（缺口可见）。"""
+    monkeypatch.setattr(
+        "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast",
+        lambda **k: {"action": "data_insufficient", "trade_date": "2026-10-02", "reason": "历史统计样本为空"},
+    )
+    out = dloop._stage_next_day("2026-10-02")
+    assert out["status"] == "error"
+    assert out["action"] == "data_insufficient"
+    assert "日界交接缺口" in out["error"]
+
+
+def test_next_day_stage_ok_actions(monkeypatch: pytest.MonkeyPatch) -> None:
+    """emitted/already_emitted/skipped_wake_point 三态仍 ok（不误报）。"""
+    monkeypatch.setattr(
+        "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast",
+        lambda **k: {"action": "already_emitted", "trade_date": "2026-10-02"},
+    )
+    out = dloop._stage_next_day("2026-10-02")
+    assert out["status"] == "ok"

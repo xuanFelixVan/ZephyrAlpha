@@ -299,3 +299,40 @@ def test_to_dict_json_serializable(tmp_db: Path) -> None:
     json.dumps(payload, ensure_ascii=False)
     assert payload["trade_date"] == TRADE_DATE
     assert payload["actual_scenario"] == "FLAT_OPEN_REAL_UP"
+
+
+# ── D13-20 回归（EXEC-3 2026-10-04）：盘后回看补判留痕 ──
+
+
+def test_late_eval_annotation_persisted(tmp_db: Path) -> None:
+    """late_eval=True → annotation 留痕且落库 payload 相同口径（输入恒≤10:00）。"""
+    _seed_plan(tmp_db, "FLAT_OPEN_REAL_UP")
+    verdict = record_auction_hit(
+        TRADE_DATE,
+        ch_client=_make_ch(_index_tsv(), _etf_tsv()),
+        db_path=tmp_db,
+        auction=_auction(),
+        late_eval=True,
+    )
+    assert verdict.status == "ok"
+    assert any("盘后回看补判" in a for a in verdict.annotations)
+    rows = query_predictions(
+        trade_date=TRADE_DATE,
+        module=MODULE_LOG_NAME,
+        prediction_type=PREDICTION_TYPE_AUCTION_HIT,
+        db_path=tmp_db,
+    )
+    assert len(rows) == 1
+    assert json.loads(rows[0]["payload_json"])["phase"] == "intraday_1000"
+
+
+def test_late_eval_default_off_no_annotation(tmp_db: Path) -> None:
+    """默认 late_eval=False（实时窗路径）不带补判 annotation——既有口径零漂移。"""
+    verdict = record_auction_hit(
+        TRADE_DATE,
+        ch_client=_make_ch(_index_tsv(), _etf_tsv()),
+        db_path=tmp_db,
+        auction=_auction(),
+    )
+    assert verdict.status == "ok"
+    assert all("盘后回看补判" not in a for a in verdict.annotations)

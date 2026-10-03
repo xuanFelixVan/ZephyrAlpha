@@ -52,6 +52,7 @@ from __future__ import annotations
 import json
 import sys
 from collections.abc import Callable
+from datetime import datetime
 from datetime import time as dtime
 from pathlib import Path
 from typing import Any, Final
@@ -195,11 +196,31 @@ def _stage_daily_plan(data_date: str) -> dict[str, Any]:
     }
 
 
+#: next_day 段视为 ok 的钩子 action（其余=日界交接缺口，error 出声→dloop_post 告警）
+_NEXT_DAY_OK_ACTIONS: Final[tuple[str, ...]] = ("emitted", "already_emitted", "skipped_wake_point")
+
+
 def _stage_next_day(data_date: str) -> dict[str, Any]:
+    """T 日次日判定发射（D13-44 日界交接棒）：钩子 action 透出，缺口不再静默。
+
+    2026-10-04 EXEC-3 治本（fig13 簿09：编排层 status 硬编码 ok 是断供真静默位
+    之一）——data_insufficient/emit_not_committed/error 现如实计 error，16:45
+    dloop_post 圈 summary.error>0 即 ERROR 告警（交接缺口告警可见）。
+    """
     from zephyr.plan_engine.next_day_forecaster import maybe_emit_next_day_forecast
 
     out = maybe_emit_next_day_forecast(task_id=_WAKE_DAILY, success=True)
-    return {"status": "ok", "detail": str(out)[:300], "note": "钩子内建 trade_date 查重幂等"}
+    action = str(out.get("action", "unknown"))
+    status = "ok" if action in _NEXT_DAY_OK_ACTIONS else "error"
+    res: dict[str, Any] = {
+        "status": status,
+        "action": action,
+        "detail": str(out)[:300],
+        "note": "钩子内建 trade_date 查重幂等",
+    }
+    if status == "error":
+        res["error"] = f"日界交接缺口：next_day 发射未落地（action={action}）"
+    return res
 
 
 def _stage_pf_alloc(data_date: str) -> dict[str, Any]:
@@ -319,26 +340,33 @@ def _stage_sentiment_loop(data_date: str) -> dict[str, Any]:
     }
 
 
-def _stage_auction_hit(data_date: str) -> dict[str, Any]:
-    """竞价命中 10:00 判定（MOD-PLAN-015）：本地 10:00-10:30 窗闸（PIT 卫生）。
+def _stage_auction_hit(data_date: str, *, now: datetime | None = None) -> dict[str, Any]:
+    """竞价命中 10:00 判定（MOD-PLAN-015）：10:00-10:30 实时窗 + 走势窗闭合后回看补判。
 
-    窗外=skipped（竞价三细节注入位 None→degraded 语义内建）；幂等=prediction_log
-    内容 hash 保首条（同日重跑零重行）。
+    PIT 语义：判定输入全部以数据时间戳为界（recorder SQL 恒 ≤trend_window_end
+    10:00），墙钟窗只是"走势数据是否已闭合"的判据。2026-10-04 EXEC-3 治本
+    （D13-20 结构性失效，fig13 簿09）：唯一自动触发=16:45 dloop_post 圈恒落
+    10:00-10:30 窗外→全 skipped→命中格永无产物。本修：≥10:30 回看补判照常
+    落库（late_eval 留痕，判定口径不变），<10:00 数据未闭合仍 skipped。
+    幂等=prediction_log 内容 hash 保首条（同日重跑零重行）。
+
+    now: 判定时刻注入（None=真实墙钟；测试/手动补跑注入用，调度派发不传）。
     """
     from datetime import datetime as _dt
 
     from zephyr.plan_engine.auction_hit_recorder import record_auction_hit
 
-    now_local = _dt.now(_SHANGHAI).timetz().replace(tzinfo=None)
-    if not (_AUCTION_WINDOW[0] <= now_local < _AUCTION_WINDOW[1]):
+    now_local = (now or _dt.now(_SHANGHAI)).astimezone(_SHANGHAI).timetz().replace(tzinfo=None)
+    if now_local < _AUCTION_WINDOW[0]:
         return {
             "status": "skipped",
-            "reason": "outside_auction_window",
+            "reason": "auction_window_not_closed",
             "window": "10:00-10:30 Asia/Shanghai",
             "now": str(now_local),
         }
-    out = record_auction_hit(data_date)
-    return {"status": "ok", "hit": getattr(out, "hit", None), "detail": str(out)[:300]}
+    late = now_local >= _AUCTION_WINDOW[1]
+    out = record_auction_hit(data_date, late_eval=late)
+    return {"status": "ok", "hit": getattr(out, "hit", None), "late_eval": late, "detail": str(out)[:300]}
 
 
 def _stage_similar_day(data_date: str) -> dict[str, Any]:

@@ -24,6 +24,7 @@
 # [TESTS] tests/plan_engine/test_next_day_forecaster.py
 # [A_module] module_id=MOD-PLAN-029 | layer=module | stability=testing | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [ALGO_FLOW] external: docs/03_modules/_domain_plan/algo_flow/next_day_forecaster.yaml
 """next_day_forecaster — 次日概率件（判定台账标准 v0.1 §六任务 2）。
 
 T 日收盘数据入库后（daily_kline SUCCESS=自然唤醒），翻历史账找与今天同条件的
@@ -61,6 +62,8 @@ inputs_hash=sha256("D|close|volume|advance|decline|bucket|n_history")[:16]——
 依据: docs/_working/trading_vision/2026-09-16-judgment-ledger-standard.md §三表2/§六
 SSoT: depgraph node 14570139（MOD-PLAN-029）
 Version: 0.1.0
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_plan/algo_flow/next_day_forecaster.yaml
 """
 
 from __future__ import annotations
@@ -101,14 +104,14 @@ SUBJECT: Final = "index:000300.SH"
 
 # ── v0 规则参数（单点声明；调参=改这里+跑测试）──
 RULE_PARAMS: Final[dict[str, float]] = {
-    "ret_band": 0.003,     # T 日涨跌桶带宽（±0.3% 之外才算方向日）
-    "vol_low": 0.8,        # 量能桶下阈（缩量）
-    "vol_high": 1.2,       # 量能桶上阈（放量）
-    "vol_lookback": 20,    # 量比窗口（交易日）
+    "ret_band": 0.003,  # T 日涨跌桶带宽（±0.3% 之外才算方向日）
+    "vol_low": 0.8,  # 量能桶下阈（缩量）
+    "vol_high": 1.2,  # 量能桶上阈（放量）
+    "vol_lookback": 20,  # 量比窗口（交易日）
     "laplace_alpha": 5.0,  # Laplace 平滑伪计数（防小样本 0/1 极端概率）
-    "min_bucket_n": 20,    # 桶最小样本（不足退化全样本基线）
-    "conf_n_full": 60.0,   # 置信饱和样本量（n≥60 → conf=cap）
-    "conf_cap": 0.9,       # 置信上限（v0 不给满置信）
+    "min_bucket_n": 20,  # 桶最小样本（不足退化全样本基线）
+    "conf_n_full": 60.0,  # 置信饱和样本量（n≥60 → conf=cap）
+    "conf_cap": 0.9,  # 置信上限（v0 不给满置信）
 }
 
 _INDEX_TABLE: Final = "c1_market.kline_index"
@@ -124,9 +127,7 @@ _KLINE_SQL: Final = (
 # 模式不带前导 '|'——trade_date 是 inputs_ref 首键（首键前无分隔符，'%|key|%' 永远
 # miss=幂等失效三连发事故修复 2026-09-17）；尾 '|' 防日期前缀误配（15 不吃 15X）。
 _SQL_ALREADY_EMITTED = (
-    "SELECT count() "
-    "FROM {table} "
-    "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%trade_date:{day}|%'"
+    "SELECT count() FROM {table} WHERE module_id = '{module_id}' AND inputs_ref LIKE '%trade_date:{day}|%'"
 )
 
 
@@ -134,7 +135,6 @@ _SQL_ALREADY_EMITTED = (
 #    不复制（CLONE-GUARD AGG-40410b77 治本），生产走 DatabaseService reader，§9.1）──
 
 from zephyr.plan_engine.judgment_settler import _reader_execute  # noqa: PLC2701
-
 
 # ── 纯函数（判定核心，数据注入可单测）──
 
@@ -180,7 +180,7 @@ def build_day_features(rows: Sequence[tuple]) -> dict[str, float]:
     if prev_close <= 0:
         raise ValueError("前收非正（数据异常，禁打分）")
     ret = close / prev_close - 1.0
-    vol_hist = [float(r[5]) for r in rows[-(lookback + 1):-1]]
+    vol_hist = [float(r[5]) for r in rows[-(lookback + 1) : -1]]
     vol_mean = sum(vol_hist) / len(vol_hist)
     if vol_mean <= 0:
         raise ValueError("历史均量非正（数据异常，禁打分）")
@@ -251,7 +251,7 @@ def cond_prob_from_history(
         if prev_c <= 0 or float(cur[4]) <= 0 or float(cur[5]) <= 0:
             continue
         c_ret = float(cur[4]) / prev_c - 1.0
-        vol_mean_i = sum(float(r[5]) for r in rows[i - lookback:i]) / lookback
+        vol_mean_i = sum(float(r[5]) for r in rows[i - lookback : i]) / lookback
         if vol_mean_i <= 0:
             continue
         c_vr = float(cur[5]) / vol_mean_i
@@ -266,9 +266,13 @@ def cond_prob_from_history(
     if not all_rets:
         raise ValueError("历史统计样本为空（禁编造分布）")
     same = next_rets.get(f"{rb}:{vb}", [])
+    same_rng = next_ranges.get(f"{rb}:{vb}", [])
     fallback = len(same) < int(params["min_bucket_n"])
     use_rets = same if not fallback else all_rets
-    use_ranges = same if not fallback else all_ranges
+    # 2026-10-04 EXEC-3 治本（D13-44 根因，fig13 簿09 Y-4）：原 `use_ranges = same`
+    # 把同桶【收益】列表喂给振幅字段，expected_range_pct 实为均值次日收益，负值被
+    # judgment_ledger ≥0 校验 fail-closed 拒发（30 交易日杀率 70% 实测）。
+    use_ranges = same_rng if not fallback else all_ranges
     n = len(use_rets)
 
     alpha = float(params["laplace_alpha"])
@@ -292,10 +296,16 @@ def cond_prob_from_history(
     var = sum((r - mean) ** 2 for r in use_rets) / n
     expected_vol_pct = round(math.sqrt(var) * 100.0, 3)
     expected_range_pct = round(sum(use_ranges) / len(use_ranges) * 100.0, 3) if use_ranges else 0.0
+    # 六位舍入余差归最大分量：三分量独立 round(6) 可致和≠1 超 ledger 1e-6 容差被
+    # fail-closed 拒发（D13-44 第二杀手，fig13 簿09 Y-4；余差 |δ|≤1.5e-6，最大
+    # 分量 ≥1/3，吸收后仍稳在 [0,1]）。
+    _probs = [round(p, 6) for p in (p_up, p_flat, p_down)]
+    _residual = round(1.0 - sum(_probs), 6)
+    _probs[_probs.index(max(_probs))] = round(max(_probs) + _residual, 6)
     return {
-        "p_up": round(p_up, 6),
-        "p_flat": round(p_flat, 6),
-        "p_down": round(p_down, 6),
+        "p_up": _probs[0],
+        "p_flat": _probs[1],
+        "p_down": _probs[2],
         "quantiles": quantiles,
         "expected_vol_pct": expected_vol_pct,
         "expected_range_pct": expected_range_pct,
@@ -308,11 +318,18 @@ def cond_prob_from_history(
 
 def inputs_hash_of(feat: dict[str, float], stats: dict[str, Any]) -> str:
     """当日输入指纹（sha256 截断 16 hex）：同输入必同指纹，输入变=指纹变。"""
-    raw = "|".join([
-        feat["trade_date"], f"{feat['close']:.4f}", f"{feat['volume']:.0f}",
-        f"{feat['advance']:.0f}", f"{feat['decline']:.0f}",
-        stats["ret_bucket"], stats["vol_bucket"], str(stats["n"]),
-    ])
+    raw = "|".join(
+        [
+            feat["trade_date"],
+            f"{feat['close']:.4f}",
+            f"{feat['volume']:.0f}",
+            f"{feat['advance']:.0f}",
+            f"{feat['decline']:.0f}",
+            stats["ret_bucket"],
+            stats["vol_bucket"],
+            str(stats["n"]),
+        ]
+    )
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
 
 

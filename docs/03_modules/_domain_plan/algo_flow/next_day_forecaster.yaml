@@ -1,0 +1,83 @@
+# ALGO_FLOW 外部真源——next_day_forecaster（_domain_plan 域，真源 src/zephyr/plan_engine/next_day_forecaster.py）
+# P2-1 契约：docstring 内联块只留 external 锚，机器块落本件；
+# drafter 脚手架（2026-10-04 EXEC-3，占位'待校准'=drafter 出厂口径，校准属算法地图批）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.plan_engine.next_day_forecaster
+source_of_truth: src/zephyr/plan_engine/next_day_forecaster.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: sorted_vals 参数
+    #   fields: 待校准
+    #   code: sorted_vals
+    # - id: I2
+    #   name: q 参数
+    #   fields: 待校准
+    #   code: q
+    # - id: I3
+    #   name: rows 参数
+    #   fields: 待校准
+    #   code: rows
+    # - id: I4
+    #   name: feat 参数
+    #   fields: 待校准
+    #   code: feat
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 待校准特征
+    #   name_en: feature_tbd
+    #   intro: 待校准（AI读代码确认）
+    #   formula: 待校准
+    #   code: 待校准
+    #   registry: factor_registry: 待查
+    #   is_break: true
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 1. T 日特征（kline_index 000300 日线）： - ret =
+    #   name_en: tbd
+    #   intro: 1. T 日特征（kline_index 000300 日线）： - ret = close/prev_close - 
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # - id: A2
+    #   name_zh: 2. 条件桶（3×3=9 桶）：ret_bucket∈{up,flat,down
+    #   name_en: tbd
+    #   intro: 2. 条件桶（3×3=9 桶）：ret_bucket∈{up,flat,down}（±RET_BAND 带宽）× vol
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # - id: A3
+    #   name_zh: 3. 历史同桶次日收益序列（全量可用历史，trade_date 截断于 T 日之
+    #   name_en: tbd
+    #   intro: 3. 历史同桶次日收益序列（全量可用历史，trade_date 截断于 T 日之前——PIT）→ - p_up/p_fl
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # - id: A4
+    #   name_zh: 4. confidence = min(n/CONF_N_FULL, CONF_
+    #   name_en: tbd
+    #   intro: 4. confidence = min(n/CONF_N_FULL, CONF_CAP)；fallback 时折半（样本
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 待校准输出 EmitResult
+    #   name_en: EmitResult
+    #   intro: 待校准
+    #   downstream: 待校准
+    # - id: O2
+    #   name_zh: 待校准输出 dict[str, Any]
+    #   name_en: dict[str, Any]
+    #   intro: 待校准
+    #   downstream: 待校准
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 -.->|断点| F1
+    # I2 -.->|断点| F1
+    # I3 -.->|断点| F1
+    # I4 -.->|断点| F1
+    # F1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O1

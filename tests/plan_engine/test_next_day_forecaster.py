@@ -43,15 +43,14 @@ from zephyr.plan_engine import judgment_settler as js
 from zephyr.plan_engine import next_day_forecaster as nf
 from zephyr.plan_engine.next_day_forecaster import (
     NextDayForecaster,
-    build_day_features,
     bucket_of,
+    build_day_features,
     cond_prob_from_history,
     emit_for_trade_date,
     inputs_hash_of,
     maybe_emit_next_day_forecast,
     percentile,
 )
-
 
 # ── percentile ──
 
@@ -158,7 +157,8 @@ def test_cond_prob_normalized_and_laplace() -> None:
     # Laplace 手算对账：p_up=(n_up+α)/(N+3α)
     assert st["p_up"] == pytest.approx(
         (st["n"] * st["p_up"] * 0 + _n_up(rows, feat) + nf.RULE_PARAMS["laplace_alpha"])
-        / (st["n"] + 3 * nf.RULE_PARAMS["laplace_alpha"]))
+        / (st["n"] + 3 * nf.RULE_PARAMS["laplace_alpha"])
+    )
     # 分位单调有序
     q = st["quantiles"]
     assert q["q10"] <= q["q25"] <= q["q50"] <= q["q75"] <= q["q90"]
@@ -171,8 +171,9 @@ def _n_up(rows: list[tuple], feat: dict[str, float]) -> int:
     band = float(nf.RULE_PARAMS["ret_band"])
     st = cond_prob_from_history(rows, feat)
     # 反解：p_up*(N+3α)-α = n_up
-    return round(st["p_up"] * (st["n"] + 3 * float(nf.RULE_PARAMS["laplace_alpha"]))
-                 - float(nf.RULE_PARAMS["laplace_alpha"]))
+    return round(
+        st["p_up"] * (st["n"] + 3 * float(nf.RULE_PARAMS["laplace_alpha"])) - float(nf.RULE_PARAMS["laplace_alpha"])
+    )
 
 
 def test_cond_prob_pit_truncation() -> None:
@@ -185,8 +186,7 @@ def test_cond_prob_pit_truncation() -> None:
     for i in range(1, 6):  # 未来 5 日（trade_date 大于 T 日）
         d = f"2026-12-{i:02d}"
         px = px * 1.05  # 剧烈上涨的未来
-        future.append((d, round(px, 2), round(px * 1.01, 2), round(px * 0.99, 2),
-                       round(px, 2), 10**9, 4000, 1000))
+        future.append((d, round(px, 2), round(px * 1.01, 2), round(px * 0.99, 2), round(px, 2), 10**9, 4000, 1000))
     padded = rows + future
     after = cond_prob_from_history(padded, feat)  # feat 仍是原 T 日
     assert after["p_up"] == base["p_up"]  # 未来数据禁入样本——判定不变
@@ -251,8 +251,7 @@ def test_emit_fields_complete() -> None:
     rows = _kline_rows()
     day = str(rows[-1][0])
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(nf, "_reader_execute",
-                   lambda sql: rows if "SELECT trade_date" in sql else [(0,)])
+        mp.setattr(nf, "_reader_execute", lambda sql: rows if "SELECT trade_date" in sql else [(0,)])
         import zephyr.plan_engine.judgment_ledger as jl
 
         mp.setattr(jl.ch_writer, "write_tsv_outcome", cap)
@@ -263,8 +262,20 @@ def test_emit_fields_complete() -> None:
     assert columns.count(",") == 11
     cells = data.decode("utf-8").rstrip("\n").split("\t")
     assert len(cells) == 12
-    (jid, module_id, model_version, asof, cutoff, horizon, subject,
-     payload_raw, confidence, inputs_ref, run_id, synthetic) = cells
+    (
+        jid,
+        module_id,
+        model_version,
+        asof,
+        cutoff,
+        horizon,
+        subject,
+        payload_raw,
+        confidence,
+        inputs_ref,
+        run_id,
+        synthetic,
+    ) = cells
     assert module_id == "MOD-PLAN-029" and model_version == "v0-hist"
     assert horizon == "next_day" and subject == "index:000300.SH"
     assert synthetic == "0" and asof == cutoff  # 日线收盘口径：数据齐才触发
@@ -306,15 +317,13 @@ def test_hook_idempotent_same_trade_date() -> None:
             # 真实 LIKE 语义：提取 pattern，对真实格式 inputs_ref 做通配匹配
             # （此前 fake 用宽子串判断=假绿，放跑了 '%|key|%' 首键 miss 事故——红蓝修复）
             pattern = sql.split("LIKE '")[1].split("'")[0]
-            sample_ref = (f"trade_date:{day}|inputs_hash:c81cba763bebf69b"
-                          f"|bucket:down:low|n:470|fallback:0|")
+            sample_ref = f"trade_date:{day}|inputs_hash:c81cba763bebf69b|bucket:down:low|n:470|fallback:0|"
             return [(1,)] if _sql_like_match(pattern, sample_ref) else [(0,)]
         return rows
 
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr(nf, "_reader_execute", fake_reader)
-        mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date",
-                   lambda: day)
+        mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date", lambda: day)
         out = maybe_emit_next_day_forecast(task_id="daily_kline:20260729", success=True)
     assert out == {"action": "already_emitted", "trade_date": day}  # 事件重放零副作用
     # 修复断言：pattern 必须匹配首键在前的真实 inputs_ref（防回归 '%|key|%' 写法）
@@ -322,10 +331,10 @@ def test_hook_idempotent_same_trade_date() -> None:
 
 
 def test_hook_wake_point_matching() -> None:
-    assert maybe_emit_next_day_forecast(task_id="kline_etf_60min_incremental",
-                                        success=True) == {"action": "skipped_wake_point"}
-    assert maybe_emit_next_day_forecast(task_id="daily_kline:20260729",
-                                        success=False)["action"] == "skipped_wake_point"
+    assert maybe_emit_next_day_forecast(task_id="kline_etf_60min_incremental", success=True) == {
+        "action": "skipped_wake_point"
+    }
+    assert maybe_emit_next_day_forecast(task_id="daily_kline:20260729", success=False)["action"] == "skipped_wake_point"
 
 
 def test_hook_t_day_not_ready_data_insufficient() -> None:
@@ -339,14 +348,14 @@ def test_hook_t_day_not_ready_data_insufficient() -> None:
 
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr(nf, "_reader_execute", fake_reader)
-        mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date",
-                   lambda: day)
+        mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date", lambda: day)
         out = maybe_emit_next_day_forecast(task_id="kline_index_incremental", success=True)
     assert out["action"] == "data_insufficient"  # fail-closed 漏判，不瞎判不反噬
 
 
 def test_hook_resolve_failure_never_raises() -> None:
     with pytest.MonkeyPatch.context() as mp:
+
         def boom() -> str:
             raise RuntimeError("ch down")
 
@@ -369,8 +378,7 @@ def test_hook_emitted_happy_path() -> None:
 
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr(nf, "_reader_execute", fake_reader)
-        mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date",
-                   lambda: day)
+        mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date", lambda: day)
         import zephyr.plan_engine.judgment_ledger as jl
 
         mp.setattr(jl.ch_writer, "write_tsv_outcome", cap)
@@ -387,15 +395,14 @@ def _emit_one_row() -> dict[str, Any]:
     rows = _kline_rows()
     day = str(rows[-1][0])
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(nf, "_reader_execute",
-                   lambda sql: rows if "SELECT trade_date" in sql else [(0,)])
+        mp.setattr(nf, "_reader_execute", lambda sql: rows if "SELECT trade_date" in sql else [(0,)])
         import zephyr.plan_engine.judgment_ledger as jl
 
         mp.setattr(jl.ch_writer, "write_tsv_outcome", cap)
         emit_for_trade_date(day, asof_ts=_fixed_ts())
     cols = [c.strip("() \t") for c in cap.rows[0][1].split(",")]
     cells = cap.rows[0][2].decode("utf-8").rstrip("\n").split("\t")
-    return dict(zip(cols, cells))
+    return dict(zip(cols, cells, strict=False))
 
 
 def test_ledger_roundtrip_settler_backfills_next_day() -> None:
@@ -414,8 +421,9 @@ def test_ledger_roundtrip_settler_backfills_next_day() -> None:
     assert backfill["realized_label"] == "up"  # ±0.1% 带宽
     payload = json.loads(row["payload"])
     expected_brier = sum(
-        (p - o) ** 2 for p, o in zip(
-            (payload["p_up"], payload["p_flat"], payload["p_down"]), (1.0, 0.0, 0.0)))
+        (p - o) ** 2
+        for p, o in zip((payload["p_up"], payload["p_flat"], payload["p_down"]), (1.0, 0.0, 0.0), strict=False)
+    )
     assert backfill["brier_score"] == pytest.approx(expected_brier, abs=1e-9)
     assert backfill["log_loss"] == pytest.approx(-math.log(payload["p_up"]))
     assert backfill["calibration_bucket"].startswith("0.")
@@ -427,3 +435,47 @@ def test_facade_contract() -> None:
     assert f.module_id == "MOD-PLAN-029" and f.model_version == "v0-hist"
     st = f.forecast(_kline_rows())
     assert abs(st["p_up"] + st["p_flat"] + st["p_down"] - 1.0) < 1e-9
+
+
+# ── D13-44 回归（EXEC-3 2026-10-04，fig13 簿09 Y-4）──────────────────────────
+
+
+def _downtrend_rows(n: int = 42) -> list[tuple]:
+    """合止单边下行等量序列：每日 ret=-1%（down 桶）、量恒定（mid 桶）、次日
+    振幅恒 +2.02%（hi=cl*1.01, lo=cl*0.99）。全部历史同桶且 n≥min_bucket_n
+    （非 fallback）——正中 use_ranges 误接同桶收益列表的案发病灶。"""
+    rows: list[tuple] = []
+    px = 4000.0
+    for i in range(n):
+        cl = px * 0.99
+        hi = cl * 1.01
+        lo = cl * 0.99
+        d = f"2026-{1 + i // 28:02d}-{1 + i % 28:02d}"
+        rows.append((d, round(px, 2), round(hi, 2), round(lo, 2), round(cl, 2), 10**9, 1000, 4000))
+        px = cl
+    return rows
+
+
+def test_cond_prob_range_uses_same_bucket_ranges_not_returns() -> None:
+    """D13-44 主杀回归：expected_range_pct 须来自同桶【振幅】序列（正），而非同桶
+    【收益】均值（本例 -1%，旧虫下喂成负值被 ledger ≥0 校验 fail-closed 拒发，
+    30 交易日杀率 70% 实测）。"""
+    rows = _downtrend_rows(42)  # 采样对数 = 42-21 = 20 ≥ min_bucket_n → 非 fallback
+    feat = build_day_features(rows)
+    st = cond_prob_from_history(rows, feat)
+    assert st["fallback"] is False
+    assert st["n"] >= nf.RULE_PARAMS["min_bucket_n"]
+    assert st["p_down"] > st["p_up"]  # 下行同桶：旧虫会把收益均值(-1%)喂进振幅字段
+    assert st["expected_range_pct"] == pytest.approx(2.02, abs=5e-4)
+
+
+def test_cond_prob_prob_sum_exact_across_seeds() -> None:
+    """D13-44 第二杀回归：三分量六位舍入后和须精确=1（远紧于 ledger 1e-6 容差）；
+    原独立 round(6) 在部分分布下超容差被拒发。30 个种子扫描分布空间。"""
+    for seed in range(1, 31):
+        rows = _kline_rows(n=60, seed=seed)
+        feat = build_day_features(rows)
+        st = cond_prob_from_history(rows, feat)
+        total = st["p_up"] + st["p_flat"] + st["p_down"]
+        assert abs(total - 1.0) <= 1e-12, f"seed={seed} 和漂移 {total!r}"
+        assert all(0.0 < v < 1.0 for v in (st["p_up"], st["p_flat"], st["p_down"]))

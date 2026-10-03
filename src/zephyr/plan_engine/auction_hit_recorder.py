@@ -105,20 +105,23 @@ _SQL_ETF_MINUTE_AGG: Final = (
 )
 
 
-def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
-    """把 ch_reader.query 返回的 TSV 字符串解析成行列表（ncols 不足跳过该行）。"""
-    if not tsv or not tsv.strip():
-        return []
-    rows: list[list[str]] = []
-    for line in tsv.strip().split("\n"):
-        vals = line.rstrip("\r").split("\t")
-        if len(vals) >= ncols:
-            rows.append(vals)
-    return rows
+# ── 共享基础设施（CAPABILITY-OVERLAP 2026-10-04 EXEC-3 归并：_parse_tsv/_table 原
+#    与 overnight_boundary_reviser 逐字节克隆（extract 级必须合并），改为单点导入；
+#    行为零漂移——两处实现本就相同。plan_engine 全族同类克隆（scenario_planner 等
+#    另 4 处 _parse_tsv）属独立去重批，不在本车道扩面。）──
+
+from zephyr.plan_engine.overnight_boundary_reviser import OvernightBoundaryReviser, _parse_tsv
+
+_table = OvernightBoundaryReviser._table
 
 
-def _safe_float(v: Any) -> float | None:
-    """安全转 float；失败返回 None（供降级判定）。"""
+def _safe_float(v: float | str | bytes | None) -> float | None:
+    """安全转 float；失败/NaN/Inf 返回 None（供降级判定）。
+
+    入参域=float|str|bytes|None（TSV 单元格 str、判定参数 float、None 短路）。
+    GATE-ANY-ABUSE（ANY-1）2026-10-04：原裸 Any 收紧为本联合，行为零漂移
+    （越域对象本就走 TypeError→None 降级路径）。
+    """
     if v is None:
         return None
     try:
@@ -193,17 +196,7 @@ class AuctionHitVerdict:
 
 
 # ── 数据加载（CH 注入/mocked；口径与 008 一致）──
-
-
-def _table(category_id: str, fallback: str) -> str:
-    """按 category_id 解析全限定表名；注册表不可用降级 fallback（fail-open）。"""
-    try:
-        from zephyr.data.table_registry import get_registry
-
-        return get_registry().table(category_id)
-    except Exception as exc:  # noqa: BLE001 — fail-open：表名解析失败不阻塞主流程
-        log.warning("表名解析失败 %s，降级 %s: %s", category_id, fallback, exc)
-        return fallback
+# _table 已归并至 overnight_boundary_reviser 单点（见共享基础设施注），别名保持调用点零改。
 
 
 def _query(ch: Callable[[str], str] | None, sql: str, channel: str) -> str:
@@ -311,6 +304,7 @@ def record_auction_hit(
     auction: AuctionVerification | None = None,
     config: AuctionHitConfig | None = None,
     asof_ts: str | None = None,
+    late_eval: bool = False,
 ) -> AuctionHitVerdict:
     """盘中命中分支判定+落库主入口（MOD-PLAN-015，10:00 判定时点语义）。
 
@@ -318,6 +312,10 @@ def record_auction_hit(
     预测行算 hit → auction_hit 族落库（prediction_log，幂等保首条，payload 携
     phase/命中格/开盘走势/竞价三细节透传/direction_void 契约字段）。任一数据
     缺失→对应 skipped:* 状态，不写库不抛异常。
+
+    PIT 语义：判定输入全部以数据时间戳为界（指数日线 ≤T、走势窗 SQL 恒
+    [09:30,10:00)），与执行时刻无关——走势窗闭合后的盘后回看（late_eval=True）
+    与 10:00 实时判定读同一批行，结论相同仅落库时刻不同，annotation 留痕区分。
 
     Args:
         trade_date: 交易日（非法即拒，fail-closed）。
@@ -327,6 +325,8 @@ def record_auction_hit(
         auction: MOD-PLAN-005 竞价三细节产出（注入透传；None=竞价段未执行）。
         config: 判定口径配置（None=设计默认值）。
         asof_ts: 判定时点 ISO8601；None=落库当前 UTC。
+        late_eval: 盘后回看补判标记（10:00-10:30 实时窗错过，D13-20 治本
+            2026-10-04 EXEC-3；True 时 annotation 留痕，判定口径不变）。
 
     Returns:
         AuctionHitVerdict（任何数据/通道异常降级为对应 status，不外抛）。
@@ -396,6 +396,8 @@ def record_auction_hit(
         auction is not None and auction.fake_ratio is not None and auction.fake_ratio > cfg.fake_ratio_void
     )
     annotations: list[str] = [f"盘中命中格={actual}（{PHASE_INTRADAY} 判定）"]
+    if late_eval:
+        annotations.append("盘后回看补判（10:00-10:30 实时窗错过；输入数据恒≤10:00，PIT 与实时判定同口径）")
     if direction_void:
         annotations.append(
             f"D3 撤单比 fake_ratio={auction.fake_ratio:.2f}>{cfg.fake_ratio_void}（虚假申报），"
