@@ -73,7 +73,7 @@
      - `src/zephyr/data/scheduler.py`：`_run_special_schedule` 硬编码分支面（零任务槽是否真跑的唯一判据）
      - `src/zephyr/plan_engine/daily_loop_master_switch.py`：`PHASE_STAGES` 实扫段集（AST 字面量，不 import）
      - `src/zephyr/data/trading_calendar.py`：`TRADING_DAY_GUARDED_SCHEDULES` 日历守卫归属面
-     - `scripts/register_*.ps1` 声明面 + Windows 计划任务只读查询面（Get-ScheduledTask，禁写操作）
+     - `scripts/register_*.ps1` + `scripts/tasks/register/register_*.ps1` 声明面 + Windows 计划任务只读查询面（Get-ScheduledTask，禁写操作）
      - `data/runtime/*.disabled` 服务总闸实存面（不存在=开着，存在=停用）
      - **骨架 §2 状态列实扫**（✅/🔨/⬜ 四张表逐环节取列——verified_scope 双轴的唯一同源口径）
      - **depgraph 在册 module_id 投影面**（path_ownership_map.yaml claim_type=depgraph_node 的
@@ -137,7 +137,7 @@ _DLOOP_REL = "src/zephyr/plan_engine/daily_loop_master_switch.py"
 _CALENDAR_REL = "src/zephyr/data/trading_calendar.py"
 _CATCHUP_REL = "src/zephyr/data/catchup_guard.py"
 _REGISTRY_REL = "config/resource_profile_registry.yaml"
-_REGISTER_GLOB = "scripts/register_*.ps1"
+_REGISTER_GLOB_DUAL = [("scripts", "register_*.ps1"), ("scripts/tasks/register", "register_*.ps1")]
 # depgraph 派生在册投影（claim_type=depgraph_node 的 路径→MOD-* 面；生成器只读，禁自造号）
 _PATH_OWNERSHIP = "docs/03_modules/path_ownership_map.yaml"
 # TDM 交叉引用真源（tdm_refs 的在册 node_id 面）
@@ -410,8 +410,8 @@ N: dict[str, dict[str, Any]] = {
         gate="无前置",
         nrg="",
         fb="无人接：登录只能人做（🌑 点名项，图不编造出处）",
-        ref="scripts/qmt_watchdog.ps1:28",
-        anc=["scripts/qmt_watchdog.ps1:28", "scripts/qmt_watchdog.ps1:11"],
+        ref="scripts/installers/qmt_watchdog.ps1:28",
+        anc=["scripts/installers/qmt_watchdog.ps1:28", "scripts/installers/qmt_watchdog.ps1:11"],
         run=["data/runtime/qmt_watchdog.log"],
         ev=["骨架 §2 D13-07 行：留痕末六行=连续三交易日两拍均 OK 且带 pid（§2 表内实查）"],
         obs="交易日每日 2 拍",
@@ -463,8 +463,8 @@ N: dict[str, dict[str, Any]] = {
         ref=None,
         anc=[
             "docs/_archive/57_daily_cycle_sop.md",
-            "scripts/qmt_watchdog.ps1:43",
-            "scripts/start_paper_session_daily.ps1:61",
+            "scripts/installers/qmt_watchdog.ps1:43",
+            "scripts/installers/start_paper_session_daily.ps1:61",
             "src/zephyr/data/scheduler.py:1701",
         ],
         doc=["docs/_archive/57_daily_cycle_sop.md", _EXT_BOOK],
@@ -540,8 +540,11 @@ N: dict[str, dict[str, Any]] = {
         gate="D13-07 判 QMT 进程在 + 今日为交易日",
         nrg="",
         fb="D13-42 三路守护的心跳腿（陈旧则 schtasks 重跑）",
-        ref="scripts/register_paper_session_task.ps1:67",
-        anc=["scripts/register_paper_session_task.ps1:67", "scripts/start_paper_session_daily.ps1"],
+        ref="scripts/tasks/register/register_paper_session_task.ps1:67",
+        anc=[
+            "scripts/tasks/register/register_paper_session_task.ps1:67",
+            "scripts/installers/start_paper_session_daily.ps1",
+        ],
         run=[".runtime/logs/paper_session.log"],
         ev=[
             "骨架 §2 D13-12 行：当日 09:25:03 起 + 非交易日 SKIP(is_trading_day=False) + QMT 未开 SKIP "
@@ -681,10 +684,10 @@ N: dict[str, dict[str, Any]] = {
         gate="无前置",
         nrg="",
         fb="无（错过即缺拍，段内差分退化）",
-        ref="scripts/register_counter_trend_feeder_tasks.ps1:80",
+        ref="scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:80",
         anc=[
-            "scripts/register_counter_trend_feeder_tasks.ps1:11",
-            "scripts/register_counter_trend_feeder_tasks.ps1:80",
+            "scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:11",
+            "scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:80",
         ],
         run=["logs/fundflow_collect.log"],
         ev=["骨架 §2 D13-19 行：留痕两拍各 90 个行业、落库各 90 行 + 表侧 max 为当日（三证齐）"],
@@ -796,7 +799,10 @@ N: dict[str, dict[str, Any]] = {
         nrg="",
         fb="D13-42 DeadmanSwitch 陈旧重跑",
         ref="src/zephyr/ex_core/live_strategy_adapter.py",
-        anc=["src/zephyr/ex_core/live_strategy_adapter.py", "scripts/register_paper_session_task.ps1:47"],
+        anc=[
+            "src/zephyr/ex_core/live_strategy_adapter.py",
+            "scripts/tasks/register/register_paper_session_task.ps1:47",
+        ],
         run=[".runtime/logs/paper_session.log", "data/fills/"],
         ev=[
             "骨架 §2 D13-24 行：保活至 15:05 收口、exit_code=0、slot started/slots_running=1 三证在案",
@@ -841,10 +847,10 @@ N: dict[str, dict[str, Any]] = {
         gate="收盘（交易所时钟）",
         nrg="",
         fb="无（缺则下跌段探测器无料）",
-        ref="scripts/register_counter_trend_feeder_tasks.ps1:86",
+        ref="scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:86",
         anc=[
-            "scripts/register_counter_trend_feeder_tasks.ps1:14",
-            "scripts/register_counter_trend_feeder_tasks.ps1:86",
+            "scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:14",
+            "scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:86",
         ],
         run=["logs/index_minute_eod.log"],
         ev=["骨架 §2 D13-26 行：末次拉取根数与源标注留痕在案，上一行为源失败降级记录"],
@@ -888,10 +894,10 @@ N: dict[str, dict[str, Any]] = {
         fb="QMT 离线→显式降级为仅系统侧核对（不伪造）",
         ref="src/zephyr/trading/post_settlement_pipeline.py:43",
         anc=[
-            "scripts/register_post_settlement_task.ps1:42",
-            "scripts/register_post_settlement_task.ps1:26",
+            "scripts/tasks/register/register_post_settlement_task.ps1:42",
+            "scripts/tasks/register/register_post_settlement_task.ps1:26",
             "src/zephyr/trading/post_settlement_pipeline.py:43",
-            "scripts/run_post_settlement.py",
+            "scripts/tasks/run/run_post_settlement.py",
         ],
         run=["data/runtime/post_settlement_last_run.log"],
         ev=[
@@ -1217,11 +1223,11 @@ N: dict[str, dict[str, Any]] = {
         gate="无前置（贯穿全日）",
         nrg="",
         fb="心跳陈旧→计划任务重跑",
-        ref="scripts/register_guard_tasks.ps1:20",
+        ref="scripts/tasks/register/register_guard_tasks.ps1:20",
         anc=[
-            "scripts/register_guard_tasks.ps1:46",
-            "scripts/register_guard_tasks.ps1:33",
-            "scripts/deadman_switch.ps1:138",
+            "scripts/tasks/register/register_guard_tasks.ps1:46",
+            "scripts/tasks/register/register_guard_tasks.ps1:33",
+            "scripts/installers/deadman_switch.ps1:138",
         ],
         run=[".runtime/"],
         ev=[
@@ -1503,7 +1509,7 @@ EXEC: dict[str, list[str]] = {
     ],
     "D13-07": [
         "复跑（主区只读）: tail -6 data/runtime/qmt_watchdog.log → 连续交易日两拍 OK 且带 pid",
-        "复跑: grep -n 'New-ScheduledTaskTrigger' scripts/qmt_watchdog.ps1 → 两拍时点在注册声明面",
+        "复跑: grep -n 'New-ScheduledTaskTrigger' scripts/installers/qmt_watchdog.ps1 → 两拍时点在注册声明面",
     ],
     "D13-08": [
         "复跑（主区只读）: ls -1 logs/source_health_*.log → 逐日一份在盘（簿 03 纠正「连续每日」口径："
@@ -1518,12 +1524,12 @@ EXEC: dict[str, list[str]] = {
     "D13-12": [
         "复跑（主区只读）: grep -n 'START\\|SKIP' .runtime/logs/paper_session.log → 交易日 09:25 起、"
         "非交易日 SKIP(is_trading_day=False)、QMT 未开 SKIP 三态留痕各在案",
-        "复跑: grep -n '09:25\\|Daily' scripts/register_paper_session_task.ps1 → 触发器声明面在册",
+        "复跑: grep -n '09:25\\|Daily' scripts/tasks/register/register_paper_session_task.ps1 → 触发器声明面在册",
     ],
     "D13-19": [
         "复跑（主区只读）: tail -6 logs/fundflow_collect.log → 逐拍采集行业数与落库行数同为正",
         "复跑（骨架 §7 A-4）: grep -n 'New-ScheduledTaskTrigger' "
-        "scripts/register_counter_trend_feeder_tasks.ps1 → 五拍时点在声明面",
+        "scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 → 五拍时点在声明面",
     ],
     "D13-21": [
         "复跑（骨架 §7 C 组，必按上海日聚合）: judgment_intraday_market_state 按 "
@@ -1538,12 +1544,12 @@ EXEC: dict[str, list[str]] = {
     "D13-26": [
         "复跑（主区只读）: tail -4 logs/index_minute_eod.log → 末次拉取根数与源标注在案，"
         "上一行为源失败降级记录（降级腿亦有留痕=真在跑的第二证）",
-        "复跑: grep -n 'IndexMinuteEOD' scripts/register_counter_trend_feeder_tasks.ps1 → tn 声明面",
+        "复跑: grep -n 'IndexMinuteEOD' scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 → tn 声明面",
     ],
     "D13-28": [
         "复跑（主区只读）: tail -20 data/runtime/post_settlement_last_run.log → 当日 trade_date、"
         "audit_status=OK、errors 空、exit_code=0 四件同 in",
-        "复跑: grep -n 'StartWhenAvailable\\|15:30' scripts/register_post_settlement_task.ps1 → "
+        "复跑: grep -n 'StartWhenAvailable\\|15:30' scripts/tasks/register/register_post_settlement_task.ps1 → "
         "硬时点与补火设置在声明面（同值另有一处代码常量=INV-1 撞车面，见 node note）",
     ],
     "D13-30": [
@@ -2641,6 +2647,11 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
         "markets": ["cn_a"],
         "generator": "scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py",
         "generated_at": as_of,
+        "ops_tool_ref": {
+            "tool": "scripts/ops/schedule_overview.py",
+            "gate": "GATE-SCHEDULE-CONSISTENCY(priority=826)",
+            "note_zh": "资源容量/互斥窗/三表一致性归排班族工具（裁定#482 互挂引用：数据层同源三表、视图层正交不并）",
+        },
         "ssot_note_zh": (
             "环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节四段）+ 十本作业簿"
             "（簿 10=外部对标三扫：表A 七条逐条落 L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入"

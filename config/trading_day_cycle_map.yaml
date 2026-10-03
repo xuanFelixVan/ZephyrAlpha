@@ -9,7 +9,11 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
-generated_at: '2026-09-24T12:36:49+08:00'
+generated_at: '2026-10-04T01:53:46+08:00'
+ops_tool_ref:
+  tool: scripts/ops/schedule_overview.py
+  gate: GATE-SCHEDULE-CONSISTENCY(priority=826)
+  note_zh: 资源容量/互斥窗/三表一致性归排班族工具（裁定#482 互挂引用：数据层同源三表、视图层正交不并）
 ssot_note_zh: '环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节四段）+ 十本作业簿（簿 10=外部对标三扫：表A 七条逐条落
   L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入不自裁）；machine_facts/trigger_surfaces 层每次全量重扫可执行真相源（排班槽面/任务挂载 join/特殊槽分支面/PHASE_STAGES
   实扫/日历守卫面/计划任务只读查询面/服务总闸实存面/骨架状态列实扫/depgraph 在册 module_id 投影面），禁手工维护。
@@ -484,8 +488,8 @@ nodes:
   note_zh: 独立 ps1 脚本判进程存活并写留痕；不覆盖自动登录（🌑-1）
   module_id: MOD-SCRIPT-run_post_settlement
   source_anchors:
-  - scripts/qmt_watchdog.ps1:28
-  - scripts/qmt_watchdog.ps1:11
+  - scripts/installers/qmt_watchdog.ps1:28
+  - scripts/installers/qmt_watchdog.ps1:11
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-07
   - docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
@@ -521,10 +525,10 @@ nodes:
   gap_refs: []
   mechanism: B_windows_task
   dloop_stages: []
-  module_ref: scripts/qmt_watchdog.ps1:28
-  module_label_bilingual: scripts/qmt_watchdog.ps1
+  module_ref: scripts/installers/qmt_watchdog.ps1:28
+  module_label_bilingual: scripts/installers/qmt_watchdog.ps1
   exec_evidence:
-  - '复跑: grep -n ''New-ScheduledTaskTrigger'' scripts/qmt_watchdog.ps1 → 两拍时点在注册声明面'
+  - '复跑: grep -n ''New-ScheduledTaskTrigger'' scripts/installers/qmt_watchdog.ps1 → 两拍时点在注册声明面'
   - '复跑（主区只读）: tail -6 data/runtime/qmt_watchdog.log → 连续交易日两拍 OK 且带 pid'
   machine_facts:
     schtasks_facts:
@@ -532,7 +536,7 @@ nodes:
       registered:
         ZephyrAlpha_QMTWatchdog: true
       declared_in_register_scripts:
-        ZephyrAlpha_QMTWatchdog: true
+        ZephyrAlpha_QMTWatchdog: false
 - node_id: D13-08
   name_zh: 十源健康探针（归档 57 号 C3 腿）
   segment: A
@@ -597,8 +601,8 @@ nodes:
   module_id: null
   source_anchors:
   - docs/_archive/57_daily_cycle_sop.md
-  - scripts/qmt_watchdog.ps1:43
-  - scripts/start_paper_session_daily.ps1:61
+  - scripts/installers/qmt_watchdog.ps1:43
+  - scripts/installers/start_paper_session_daily.ps1:61
   - src/zephyr/data/scheduler.py:1701
   doc_refs:
   - docs/_archive/57_daily_cycle_sop.md
@@ -777,7 +781,7 @@ nodes:
   module_id: MOD-L06-001
   source_anchors:
   - scripts/tasks/register/register_paper_session_task.ps1:67
-  - scripts/start_paper_session_daily.ps1
+  - scripts/installers/start_paper_session_daily.ps1
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-12
   - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
@@ -825,7 +829,7 @@ nodes:
       registered:
         ZephyrAlpha_PaperSession: true
       declared_in_register_scripts:
-        ZephyrAlpha_PaperSession: true
+        ZephyrAlpha_PaperSession: false
 - node_id: D13-13
   name_zh: 竞价后档位一次性聚合（情绪指数竞价档）
   segment: B
@@ -1247,14 +1251,15 @@ nodes:
   module_label_bilingual: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
   exec_evidence:
   - '复跑（主区只读）: tail -6 logs/fundflow_collect.log → 逐拍采集行业数与落库行数同为正'
-  - '复跑（骨架 §7 A-4）: grep -n ''New-ScheduledTaskTrigger'' scripts/tasks/register/register_counter_trend_feeder_tasks.ps1 → 五拍时点在声明面'
+  - '复跑（骨架 §7 A-4）: grep -n ''New-ScheduledTaskTrigger'' scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
+    → 五拍时点在声明面'
   machine_facts:
     schtasks_facts:
       query_available: true
       registered:
         ZephyrAlpha_IntradayFundFlow: true
       declared_in_register_scripts:
-        ZephyrAlpha_IntradayFundFlow: true
+        ZephyrAlpha_IntradayFundFlow: false
 - node_id: D13-20
   name_zh: 竞价命中判定（日内唯一带墙钟窗闸的段）
   segment: B
@@ -1533,7 +1538,7 @@ nodes:
       registered:
         ZephyrAlpha_PaperSession: true
       declared_in_register_scripts:
-        ZephyrAlpha_PaperSession: true
+        ZephyrAlpha_PaperSession: false
 - node_id: D13-25
   name_zh: 板块状态盘后定格（真源态）
   segment: C
@@ -1651,7 +1656,7 @@ nodes:
       registered:
         ZephyrAlpha_IndexMinuteEOD: true
       declared_in_register_scripts:
-        ZephyrAlpha_IndexMinuteEOD: true
+        ZephyrAlpha_IndexMinuteEOD: false
 - node_id: D13-27
   name_zh: 盘中持仓对账事件入口（与 D13-29 分工）
   segment: C
@@ -1770,7 +1775,7 @@ nodes:
       registered:
         ZephyrAlpha_PostSettlement: true
       declared_in_register_scripts:
-        ZephyrAlpha_PostSettlement: true
+        ZephyrAlpha_PostSettlement: false
 - node_id: D13-29
   name_zh: 日终三账核对（柜台/内部/持仓 L1+L2+L3）
   segment: C
@@ -2603,7 +2608,7 @@ nodes:
   source_anchors:
   - scripts/tasks/register/register_guard_tasks.ps1:46
   - scripts/tasks/register/register_guard_tasks.ps1:33
-  - scripts/deadman_switch.ps1:138
+  - scripts/installers/deadman_switch.ps1:138
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-42
   - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
@@ -2657,11 +2662,11 @@ nodes:
         ZephyrAlpha_TickSubscriber: true
         ZephyrAlpha_TradingWatchdog: true
       declared_in_register_scripts:
-        ZephyrAlpha_DataScheduler: true
-        ZephyrAlpha_DeadmanSwitch: true
+        ZephyrAlpha_DataScheduler: false
+        ZephyrAlpha_DeadmanSwitch: false
         ZephyrAlpha_ProcessReaper: true
-        ZephyrAlpha_TickSubscriber: true
-        ZephyrAlpha_TradingWatchdog: true
+        ZephyrAlpha_TickSubscriber: false
+        ZephyrAlpha_TradingWatchdog: false
 - node_id: D13-43
   name_zh: 交易日历闸门（本图不变量载体：事件触发禁定时器）
   segment: D
@@ -3186,6 +3191,16 @@ machine_facts:
         calendar_guarded: false
         in_catchup_universe: false
         idle_slot: false
+      cross_validation:
+        slot: cross_validation
+        executor: default
+        cadence_class: trading_weekday
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: true
+        in_catchup_universe: false
+        idle_slot: false
       daily_alt_fx:
         slot: daily_alt_fx
         executor: default
@@ -3326,6 +3341,16 @@ machine_facts:
         calendar_guarded: false
         in_catchup_universe: true
         idle_slot: false
+      lane_g_intake_sweep:
+        slot: lane_g_intake_sweep
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
       monthly_static:
         slot: monthly_static
         executor: default
@@ -3360,6 +3385,16 @@ machine_facts:
         slot: nightly_sentiment
         executor: default
         cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
+      pf_alloc_rebalance_check:
+        slot: pf_alloc_rebalance_check
+        executor: default
+        cadence_class: trading_weekday
         declared: true
         effective_task_count: 0
         special_branch_exists: true
@@ -3436,7 +3471,7 @@ machine_facts:
         calendar_guarded: false
         in_catchup_universe: true
         idle_slot: false
-    slot_total: 29
+    slot_total: 32
     catchup_universe:
       source: src/zephyr/data/catchup_guard.py
       exists: true
@@ -3483,11 +3518,14 @@ machine_facts:
     - calendar_coverage_check
     - catchup_guard
     - consensus_crosscheck
+    - cross_validation
     - daily_backfill
     - data_supply_sentinel
     - dloop_post
     - integrity_check
+    - lane_g_intake_sweep
     - nightly_sentiment
+    - pf_alloc_rebalance_check
     - sector_close_final
     - sector_pre_open
     - weekend_backfill
@@ -3496,6 +3534,7 @@ machine_facts:
       exists: true
       guarded_slots:
       - auction_highfreq
+      - cross_validation
       - daily_backfill
       - daily_capital
       - daily_event
@@ -3513,6 +3552,7 @@ machine_facts:
         - regime_freshness
         - warroom
         - daily_plan
+        - position_checkup
         - llm_premarket
         intraday:
         - intraday_l1
@@ -3533,6 +3573,7 @@ machine_facts:
         - regime_freshness
         - warroom
         - daily_plan
+        - position_checkup
         - llm_premarket
         - next_day
         - pf_alloc
@@ -3557,6 +3598,7 @@ machine_facts:
       - llm_premarket
       - next_day
       - pf_alloc
+      - position_checkup
       - regime_freshness
       - sentiment_loop
       - settle
@@ -3574,6 +3616,7 @@ machine_facts:
       - llm_premarket
       - next_day
       - pf_alloc
+      - position_checkup
       - regime_freshness
       - sentiment_loop
       - settle
@@ -3582,121 +3625,14 @@ machine_facts:
       dispatch_stage_sync: true
       sync_outliers: []
     register_scripts:
-      script_count: 21
+      script_count: 1
       register_scripts:
-      - scripts/tasks/register/register_aux_tasks.ps1
-      - scripts/tasks/register/register_c4_exam_task.ps1
-      - scripts/tasks/register/register_config_check_task.ps1
-      - scripts/tasks/register/register_counter_trend_feeder_tasks.ps1
-      - scripts/tasks/register/register_drift_watchdog_task.ps1
-      - scripts/tasks/register/register_f06_grid_task.ps1
-      - scripts/tasks/register/register_factory_lane_c_task.ps1
-      - scripts/tasks/register/register_gate_fulltree_audit_task.ps1
-      - scripts/tasks/register/register_guard_tasks.ps1
-      - scripts/tasks/register/register_library_ledger_backup_task.ps1
-      - scripts/tasks/register/register_measure_calibration_task.ps1
-      - scripts/tasks/register/register_ollama_serve_task.ps1
-      - scripts/tasks/register/register_paper_session_task.ps1
-      - scripts/tasks/register/register_pattern_mining_task.ps1
-      - scripts/tasks/register/register_post_settlement_task.ps1
       - scripts/register_process_reaper_task.ps1
-      - scripts/tasks/register/register_resource_morning_report_task.ps1
-      - scripts/tasks/register/register_resource_regen_check_task.ps1
-      - scripts/tasks/register/register_resource_sampler_scan_task.ps1
-      - scripts/tasks/register/register_resource_sampler_writeback_task.ps1
-      - scripts/tasks/register/register_resource_view_publish_task.ps1
       declaring_scripts:
-        scripts/deadman_switch.ps1:
-        - ZephyrAlpha_DeadmanSwitch
-        scripts/qmt_watchdog.ps1:
-        - ZephyrAlpha_QMTWatchdog
-        scripts/tasks/register/register_aux_tasks.ps1:
-        - ZephyrAlpha_RSSHub
-        - ZephyrAlpha_TraeCacheCleanup
-        scripts/tasks/register/register_c4_exam_task.ps1:
-        - ZephyrAlpha_C4Exam
-        scripts/tasks/register/register_config_check_task.ps1:
-        - ZephyrAlpha_ConfigCheck
-        scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:
-        - ZephyrAlpha_IndexMinuteEOD
-        - ZephyrAlpha_IntradayFundFlow
-        scripts/tasks/register/register_drift_watchdog_task.ps1:
-        - ZephyrAlpha_WorktreeDriftWatchdog
-        scripts/tasks/register/register_f06_grid_task.ps1:
-        - ZephyrAlpha_F06Grid
-        scripts/tasks/register/register_factory_lane_c_task.ps1:
-        - ZephyrAlpha_FactoryLaneC
-        scripts/tasks/register/register_gate_fulltree_audit_task.ps1:
-        - ZephyrAlpha_GateFullTreeAudit
-        scripts/tasks/register/register_guard_tasks.ps1:
-        - ZephyrAlpha_CHHealthProbe
-        - ZephyrAlpha_DataScheduler
-        - ZephyrAlpha_DeadmanSwitch
-        - ZephyrAlpha_TickSubscriber
-        - ZephyrAlpha_TradingWatchdog
-        scripts/tasks/register/register_library_ledger_backup_task.ps1:
-        - ZephyrAlpha_LibraryLedgerBackup
-        - ZephyrAlpha_LibraryLedgerDrill
-        scripts/tasks/register/register_measure_calibration_task.ps1:
-        - ZephyrAlpha_MeasureCalibration
-        scripts/tasks/register/register_ollama_serve_task.ps1:
-        - ZephyrAlpha_OllamaServe
-        scripts/tasks/register/register_paper_session_task.ps1:
-        - ZephyrAlpha_PaperSession
-        scripts/tasks/register/register_pattern_mining_task.ps1:
-        - ZephyrAlpha_PatternMining
-        scripts/tasks/register/register_post_settlement_task.ps1:
-        - ZephyrAlpha_PostSettlement
         scripts/register_process_reaper_task.ps1:
         - ZephyrAlpha_ProcessReaper
-        scripts/tasks/register/register_resource_morning_report_task.ps1:
-        - ZephyrAlpha_ResourceMorningReport
-        scripts/tasks/register/register_resource_regen_check_task.ps1:
-        - ZephyrAlpha_ResourceRegenCheck
-        scripts/tasks/register/register_resource_sampler_scan_task.ps1:
-        - ZephyrAlpha_ResourceSamplerScan
-        scripts/tasks/register/register_resource_sampler_writeback_task.ps1:
-        - ZephyrAlpha_ResourceSamplerWriteback
-        scripts/tasks/register/register_resource_view_publish_task.ps1:
-        - ZephyrAlpha_ResourceViewPublish
-        scripts/start_ch_health_probe.ps1:
-        - ZephyrAlpha_CHHealthProbe
-        scripts/start_scheduler.ps1:
-        - ZephyrAlpha_DataScheduler
-        scripts/start_tick_subscriber.ps1:
-        - ZephyrAlpha_TickSubscriber
-        scripts/start_trading.ps1:
-        - ZephyrAlpha_TradingWatchdog
       declared_task_names:
-      - ZephyrAlpha_C4Exam
-      - ZephyrAlpha_CHHealthProbe
-      - ZephyrAlpha_ConfigCheck
-      - ZephyrAlpha_DataScheduler
-      - ZephyrAlpha_DeadmanSwitch
-      - ZephyrAlpha_F06Grid
-      - ZephyrAlpha_FactoryLaneC
-      - ZephyrAlpha_GateFullTreeAudit
-      - ZephyrAlpha_IndexMinuteEOD
-      - ZephyrAlpha_IntradayFundFlow
-      - ZephyrAlpha_LibraryLedgerBackup
-      - ZephyrAlpha_LibraryLedgerDrill
-      - ZephyrAlpha_MeasureCalibration
-      - ZephyrAlpha_OllamaServe
-      - ZephyrAlpha_PaperSession
-      - ZephyrAlpha_PatternMining
-      - ZephyrAlpha_PostSettlement
       - ZephyrAlpha_ProcessReaper
-      - ZephyrAlpha_QMTWatchdog
-      - ZephyrAlpha_RSSHub
-      - ZephyrAlpha_ResourceMorningReport
-      - ZephyrAlpha_ResourceRegenCheck
-      - ZephyrAlpha_ResourceSamplerScan
-      - ZephyrAlpha_ResourceSamplerWriteback
-      - ZephyrAlpha_ResourceViewPublish
-      - ZephyrAlpha_TickSubscriber
-      - ZephyrAlpha_TradingWatchdog
-      - ZephyrAlpha_TraeCacheCleanup
-      - ZephyrAlpha_WorktreeDriftWatchdog
     registered_schtasks:
       available: true
       reason: ''
@@ -3706,7 +3642,6 @@ machine_facts:
       - ZephyrAlpha_BoardIndexRealtime
       - ZephyrAlpha_C4Exam
       - ZephyrAlpha_C4Exam_Full0916
-      - ZephyrAlpha_C4Exam_OneShot0915
       - ZephyrAlpha_CHHealthProbe
       - ZephyrAlpha_ConfigCheck
       - ZephyrAlpha_DataScheduler
@@ -3716,13 +3651,14 @@ machine_facts:
       - ZephyrAlpha_F06Grid
       - ZephyrAlpha_FactoryLaneC
       - ZephyrAlpha_FactoryLaneC_Full0916
-      - ZephyrAlpha_FactoryLaneC_OneShot0915
       - ZephyrAlpha_GateFullTreeAudit
+      - ZephyrAlpha_HealthMonitorProbe
       - ZephyrAlpha_IndexMinuteEOD
       - ZephyrAlpha_IntradayFundFlow
       - ZephyrAlpha_LibraryLedgerBackup
       - ZephyrAlpha_LibraryLedgerDrill
       - ZephyrAlpha_MeasureCalibration
+      - ZephyrAlpha_MetaqAuditReconcile
       - ZephyrAlpha_NightlySentiment
       - ZephyrAlpha_OllamaServe
       - ZephyrAlpha_PaperSession
@@ -3757,7 +3693,7 @@ machine_facts:
         present: false
     registry_entities:
       exists: true
-      total_entity_ids: 81
+      total_entity_ids: 102
       referenced_entity_ids:
       - data_slot_intraday_minute
       - ops_qmt_watchdog
@@ -3776,6 +3712,7 @@ machine_facts:
         calendar_coverage_check: []
         catchup_guard: []
         consensus_crosscheck: []
+        cross_validation: []
         daily_alt_fx:
         - alt_fx_ecb_daily_incremental
         daily_backfill: []
@@ -3873,6 +3810,7 @@ machine_facts:
         - daily_valuation_incremental
         - emotion_index_close_final
         - etf_nav_refresh
+        - global_usdcnh_daily_incremental
         - index_valuation_daily_compute_daily
         - index_valuation_daily_incremental
         - kline_cb_incremental
@@ -3886,7 +3824,6 @@ machine_facts:
         - kline_sector_880_resample
         - kline_sector_incremental
         - kline_weekly_hfq_incremental
-        - option_daily_stats_daily
         - option_kline_incremental
         - pattern_event_incremental
         - pattern_evidence_certify
@@ -3950,6 +3887,7 @@ machine_facts:
         - kline_sector_30min_incremental
         - kline_sector_5min_incremental
         - kline_sector_60min_incremental
+        lane_g_intake_sweep: []
         monthly_static:
         - calendar_event_refresh
         - concept_sector_refresh
@@ -3986,6 +3924,7 @@ machine_facts:
         - top10_circulating_shareholders_incremental
         - top10_shareholders_incremental
         nightly_sentiment: []
+        pf_alloc_rebalance_check: []
         post_auction: []
         pre_market:
         - a50_futures_daily_incremental
@@ -4270,7 +4209,7 @@ machine_facts:
       reason_zh: 同上（默认落点悬空）
   module_id_roster:
     source: docs/03_modules/path_ownership_map.yaml
-    claims_scanned: 8010
+    claims_scanned: 8009
     note_zh: existence ∈ {未实现, deprecated} 的在册条目不采信；未被覆盖的路径退回源文件 [BLUEPRINT] 头声明（须磁盘实存）。在册面存在性与磁盘实存漂移时以磁盘为准并在环节
       note 记事实（本车道不改 depgraph）。
   tdm_roster_scanned: true
@@ -4301,8 +4240,8 @@ counts:
     unwired_slot_hollow: 4
     wired: 24
   machine:
-    slot_total: 29
-    special_branch_total: 11
+    slot_total: 32
+    special_branch_total: 14
     idle_slot_total: 2
     idle_slots:
     - eod_reconciliation
@@ -4311,10 +4250,10 @@ counts:
     double_slot_task_total: 1
     dangling_total: 16
     dangling_unclaimed: []
-    calendar_guarded_slot_total: 9
-    dloop_stage_universe: 16
-    register_script_total: 21
-    task_declaring_script_total: 27
+    calendar_guarded_slot_total: 10
+    dloop_stage_universe: 17
+    register_script_total: 1
+    task_declaring_script_total: 1
     schtasks_query_available: true
     service_flag_present: []
     skeleton_status_scan:

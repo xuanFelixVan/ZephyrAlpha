@@ -6,6 +6,7 @@
 #   zephyr.gov_enforcement.commit_gates.resource_schedule_gate（expand_windows cron 展开——零二次 cron 实现）;
 #   zephyr.governance.audit.reconciliation_registry（ReconciliationRegistry——reconciler status 查询）
 # [CONSUMERS] AI 冷启动排班总览（W4-4 一条命令出三表总览）; docs/_working/resource_schedule/ 战役件
+# [MAP_REF] config/trading_day_cycle_map.yaml（图13 交易日循环，map_id=trading_day_cycle_map）——流程导航/上下游看图13，资源容量看本工具族（裁定#482 互挂引用）
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 排班三表物理不合并（Owner 裁定）：本 CLI 是读侧总览唯一入口，禁写三表真源;
