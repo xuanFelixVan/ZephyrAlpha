@@ -1,0 +1,20267 @@
+---
+ttl: task_bound
+completes_when: 夜巡台账抢救归档使命完成（c1核销与追溯证据已可查，随本战役归档保留）
+---
+# cand_head
+
+> [等值证据封装] 原件为 .yaml 台账。2026-10-04 凌晨投影割接过渡期：新 .yaml 的 creation_token 无法落 HEAD（REGISTRY-YAML-PARSE 投影指纹门武装于未播种账本+意图API未接线，详见 full_circulation_closeout_20261004/99_delivery.md 呈报），故按目录契约以 .md 等值封装（yaml 原文逐字节内嵌于代码栅栏，可逆向提取）。全量188件原件冷库：F:/zephyr_cold/night_sweep_ledgers_raw_20261004/
+
+```yaml
+# [A_config] module_id=CFG-candidate-module-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+module_id: REG-CAND-001
+ttl: permanent
+title: 候选模块登记表
+doc_type: register
+registry_id: REG-CAND-001
+name: 候选模块登记表
+description: >-
+  候选模块（点子库）唯一真源（SSoT）。结构化存储"待开发/过度工程"候选模块，
+  使其可检索/可定位/可追溯/可晋升。治本"草稿散乱+设计态污染"痛点——
+  候选不进 depgraph 设计态（违反设计准入一问标准+稀释信号），而是登记在此候选库，
+  真实需求出现时通过设计准入一问标准过滤后晋升到 depgraph 设计态。
+  对标敏捷 Product Backlog vs Sprint Backlog / 量化 Alpha Idea Pipeline vs Production Strategy Library。
+owner: MOD-GOV-029
+tier: tier_1_governance
+status: active
+version: 1.1.3
+created: '2026-07-31'
+last_updated: '2026-08-31'
+# 2026-08-31: 94号 Q1 裁定修订（Owner）——交易所主备对调：OKX（主，已全链落地）+ 币安（备，待开发）；CAND-CRYPTO-002/005 条目 description/prerequisites/trigger_signals/tech_notes/acquisition_source 联动同步
+# 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
+# 2026-08-26: +8 条 CAND-CRYPTO 族（数字货币量化战线启动批，Owner 2026-08-26 裁定启动，设计真源 94_crypto_quant_expansion.md §5；P0×4/P1×3/P2×1，W0 地基=001 市场日历抽象；族内查重 2026-08-26 全量检索零命中）
+# 2026-08-26: +CAND-CRYPTO-009（跨境网络双活传输层，外部材料审查批，Owner 裁定，94号 v0.2.0 §7.2 设计真源——低学历勇闯量化系列：第三篇网络坑 7 图+回测中篇 25 页；CAND-CRYPTO-002 联动补录制端 6 要点引用）【本行曾因并发覆写丢失，2026-08-26 补回】
+# 2026-08-26: +CAND-CRYPTO-010（币圈宏观情绪面板，行业调查批，Owner 拍板 94号 Q1-Q6 联动，94号 v1.0.0；003 tech_notes 扩充多空比+清算热图+Deribit 期权、004 tech_notes 扩充资金流三网关——鲸鱼地址/稳定币流动/交易所储备）
+# 2026-08-26: R1 循环审查联动（94号 v1.1.0 §7.5/§7.6，AI_review_instructions 方式）：005 acquisition 首选变更币安官方 agent skills/MCP（交易所官方工具包成生产基建：Kraken CLI 2025-11/币安 skills 2026-03/OKX MCP 2026-03）+002 tech_notes 补数据韧性五件套对照（DolphinDB 机构参考架构）+003 tech_notes 补资金费 carry 费束缚公式 breakeven≈fee÷funding-rate（机构 2025-2026 主力策略，Phase 2 首个候选方向）
+# 2026-08-25: +6 条（新闻情感三层模型讨论批 2026-08-25-news-sentiment-upgrade-discussion.md §8，Owner 拍板 Q1~Q5）【曾被并发覆写丢失，2026-08-26 自 bcfaa597 补回】
+# 2026-08-26: +2 条（2025 年语料塌陷治理批：CAND-DAT-023 研报专项补采器+CAND-DAT-024 category 打标治理，Owner 指令即开工）
+# 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
+# 2026-08-20: +40 条（AI-NIGHT-001 阶段3 未来工程-大型登记批，tracker #223 承接，均不施工附触发条件）
+# 2026-08-21: +CAND-FBL-002（FLE 自卫门禁激活专项，#61 挂起转正）+CAND-GOVDRIFT-001（drift_events 容量保留，任务1 残余）（AI-RESIDUAL-001）
+# 2026-08-21: +CAND-REGSYNC-001（AGENTS.md 速查区数字动态化，tracker #41/#83 裁定承接，P0-6① warn-only MVP 已落地+fix-in-place 升级路径登记）
+# 2026-08-23: +383 条(场外草稿深挖批 AUD-DRAFT-001: 依赖图+架构图 42 文档 11828 条目全量对账,806 候选深挖裁定=做; P0=37/P1=125/P2=221, 真源 .runtime/audit_20260823/construction_backlog_dig.tsv)
+# 2026-08-22: +4 条 44号全组（CAND-SIG-023 M1/新建 CAND-PLAN 族-001 M2·002 M3/CAND-RPT-005 M4，44号 §11 裁定二缓办条件达成，Owner 长城任务指令晋升即施工，92号清单派单真源）
+
+# ============================================================
+# 设计原则
+# ============================================================
+# 1. 候选库是"点子池"，不是"项目库"——depgraph 设计态是"将要开发的模块"，
+#    候选库是"可能开发也可能不开发的想法"。两者严格分开。
+# 2. 全景定位：每个候选在 depgraph/dataflowgraph/decisiongraph/blueprint 全景
+#    都写清位置（或明确标 has_position: false）。晋升时直接用。
+# 3. 一问标准：仅记录 q1已实现/重复（裁定 2026-08-04，原 q2/q3/q4 灰度已废），blocking_question 标明是否卡在 q1。
+# 4. 晋升流程：deferred → trigger_signals 命中 → 重新过一问 → apply_depgraph
+#    --add-design-node + --add-edge → sync_panorama_module → align_panoramas → promoted。
+# 5. SSoT 分类：候选库是治理注册表（规则数据），真源是本 YAML，不进 PostgreSQL。
+# [历史标注 2026-08-04] 本文件个别候选条目的注释中仍保留"四问X挂"字样（如"四问②挂""四问①挂"），
+# 属历史登记时的标注习惯。其中 q2/q3/q4 判定已于 2026-08-04 废弃（收敛为一问标准），
+# 但这些条目的 deferred/rejected 状态不变——其核心依据为双源对比证据（结构事实），非纯 q2/q3/q4 灰度判断。
+# q1（已实现/重复）相关的"四问①挂"标注语义不变，仅术语更新为"一问标准 q1"。
+# 6. acquisition 字段（2026-08-07）：候选态记录"怎么搞到手"意向（self_build/opensource/
+#    borrow/deprecate），晋升到 depgraph 设计态时迁移到 nodes_metadata.acquisition_method/
+#    acquisition_source（apply_depgraph --add-design-node 后跟 --update-module-metadata
+#    PATH acquisition_method=xxx acquisition_source=yyy）。枚举与 depgraph DDL CHECK 对齐。
+
+unique_key:
+- id
+
+entry_schema:
+  id: str                         # CAND-{DOMAIN}-{SEQ}
+  name: str                        # 模块名（中英）
+  aliases: list[str]               # 别名，防重复登记
+  domain: str                      # 所属域
+  domain_status: enum              # active/skeleton/dead
+  domain_node_count: int           # 登记时该域 depgraph 节点数
+  sub_layer: str                  # 子层定位
+  panorama_position: obj          # 全景定位(depgraph/dataflowgraph/decisiongraph/blueprint)
+  description: str
+  capability: str                 # 对标能力 C-XXX
+  problem_it_solves: str          # 解决什么痛点
+  trigger_signals: list[str]      # 什么情况下会需要它
+  keywords: list[str]
+  upstream_deps: list[obj]
+  downstream_consumers: list[obj]
+  contracts_to_produce: list[obj]
+  contracts_to_consume: list[obj]
+  prerequisites: list[obj]
+  design_admission: obj
+  status: enum                    # candidate/deferred/rejected/approved/promoted
+  priority: enum                  # P0/P1/P2
+  created_at: date
+  last_reviewed_at: date
+  promoted_to: str
+  source_draft: str
+  source_section: str
+  original_id: str
+  estimated_complexity: enum      # S/M/L/XL
+  estimated_effort: str
+  tech_notes: str
+  risks: list[str]
+  alternatives: str               # 替代方案：不做这个怎么办
+  tags: list[str]
+  search_terms: list[str]
+  related_candidates: list[str]
+  enables: list[str]              # 做了这个，哪些候选可行
+  blocked_by: list[str]
+  next_review_date: date
+  review_frequency: enum          # quarterly/half_yearly/yearly
+  last_review_outcome: str
+  acquisition_method: enum          # self_build/opensource/borrow/deprecate，与 depgraph nodes_metadata DDL CHECK 对齐
+  acquisition_source: str           # 开源候选名/借鉴组件名/空（如 Kedro/MLflow/hmmlearn）；🔄后置标记追加"(后置)"
+
+# ============================================================
+# 候选条目
+# ============================================================
+# [PURGE 2026-08-05] 移除 5283 个 CAND-HARVEST-* 条目到归档文件 candidate_module_registry_harvest_archive.yaml（主 registry 瘦身）。手工候选 38 条保留。
+entries:
+  # ----------------------------------------------------------
+  # CAND-OBS-001: 模块级可观测性打点契约 MVP（candidate——经一问：复用 MOD-INF-082 门面非新建采集引擎）
+  # 来源: design_memos/observability_contract_todo.md（对手系统三段式打点对标，Owner 2026-08-28 裁定开工）
+  # ----------------------------------------------------------
+- id: CAND-OBS-001
+  name: "模块级可观测性打点契约 MVP（Observability Instrumentation Contract）"
+  aliases: ["打点契约", "三段式延迟打点", "observability contract", "metrics contract MVP"]
+  domain: D_INFRA_TELEMETRY
+  domain_status: active
+  domain_node_count: 1
+  sub_layer: "infrastructure/system_telemetry"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 MOD-INF-015/082（system_telemetry/observability_triad）——新增 StageTimer 分段计时器+health 端点助手，采集面复用既有门面"}
+    dataflowgraph: {has_position: false, note: "遥测基础设施，非业务数据流"}
+    decisiongraph: {has_position: false, note: "遥测基础设施，非业务决策"}
+    blueprint: {has_position: true, note: "契约文档落 design_memos/observability_contract_todo.md（MVP 版转正）；试点 tick_subscriber"}
+  description: >-
+    定义模块级打点契约（MUST 指标 requests_total/latency_seconds/errors_total、分层延迟阶段拆分
+    <action>_duration_seconds、结构化日志格式 trace_id 贯通、GET /health 端点约定），并在
+    system_telemetry 落地轻量助手（StageTimer 分段计时 + health_payload 构造），试点 tick_subscriber。
+    采集底座零新建——复用 MOD-INF-082 ObservabilityTriad（counter/gauge/render_prometheus/哈希链日志）。
+  capability: "observability_instrumentation"
+  problem_it_solves: "50 个模块各自用不同打点格式后再统一的返工成本；对手系统（BalletHip）三段式延迟打点缺口"
+  trigger_signals:
+    - "已触发：tick_subscriber 数据管道+QMT 桥交易链路在跑生产级流程（文档 §五 时机条件达成）"
+    - "首个模块进生产"
+  keywords: ["observability", "metrics", "latency", "打点", "契约", "prometheus", "health", "三段式"]
+  upstream_deps:
+    - {path: "src/zephyr/infrastructure/system_telemetry/observability_triad.py", note: "MOD-INF-082 采集门面（复用不重建）"}
+  downstream_consumers:
+    - {path: "src/zephyr/data/tick_subscriber.py", note: "MVP 试点消费方"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "observability_triad 只有 counter/gauge 原子接口，无分段计时器/health 助手/契约命名规约——本件是契约层+轻量助手，非重复"}
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'shared/observability/stage_timer.py + metrics_server.py /health 契约 + tick_subscriber 试点'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：MVP 已施工完毕（2026-08-28，observability_contract_todo.md 结案注记在案）"
+  priority: P2
+  created_at: '2026-08-28'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: ""
+  source_draft: "design_memos/observability_contract_todo.md"
+  source_section: "§三 待定义内容 + §五 实施时机"
+  original_id: "GOV-071"
+  estimated_complexity: S
+  tech_notes: >-
+    边界：不碰 Prometheus/Grafana 重基建部署；StageTimer 语义=单事务多阶段计时
+    （begin/end 阶段 + 汇总），每阶段输出 {stage}_duration_seconds；health 端点返回
+    {status, uptime_seconds}；结构化日志补 trace_id。试点=tick_subscriber（L00 数据接入，
+    阶段拆分 WS recv→parse→quality_gate→emit）。
+
+- id: CAND-GOVAUDIT-001
+  name: "死进程 reconciler 告警自动消音(Dead-Worker Alert Auto-Ack)"
+  aliases: ["死进程告警自动降级", "dead worker alert auto-ack", "RECONCILE-WORKER-STALE 自愈闭环补全"]
+  domain: D_GOV_AUDIT
+  domain_status: active
+  domain_node_count: 1
+  sub_layer: "governance/audit/reconcile_runner"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展既有节点 src/zephyr/governance/audit/reconcile_runner.py 的 _persist_stale_state 死进程分支"}
+    dataflowgraph: {has_position: false, note: "治理审计内部状态,无业务数据流"}
+    decisiongraph: {has_position: false, note: "治理审计内部状态,无业务决策"}
+    blueprint: {has_position: true, note: "归属治理审计蓝图(reconcile_runner 既有责任)"}
+  description: >-
+    当 reconciler worker 被外部硬杀(作业对象/WMI 回退/手动 kill)时,
+    _persist_stale_state 死进程分支本应记 clean 自愈消音,但实测 2026-08-14 出现
+    3 条 critical_warn 残留(pid=35928/38192 均 DEAD 但告警未消),需人工 ack。
+    增强: 让死进程告警在收割确认后自动写 clean 配对记录,无需人工 ack。
+  capability: ""
+  problem_it_solves: "消除'进程已死但 critical_warn 残留'的告警噪音,减少人工 ack 操作,避免告警疲劳淹没真威胁"
+  trigger_signals:
+    - "再次出现'进程已死但 RECONCILE-WORKER-STALE critical_warn 未自动消音'案例(当前 3 例/单日,属偶发)"
+    - "告警横幅因死进程残留导致真告警被淹没的投诉"
+  keywords: ["reconcile", "worker", "stale", "告警消音", "auto-ack", "死进程", "critical_warn", "self-heal"]
+  upstream_deps:
+    - {path: "src/zephyr/governance/audit/reconcile_runner.py", note: "_persist_stale_state 死进程分支(L407-424)扩展点"}
+  downstream_consumers:
+    - {path: "src/zephyr/governance/audit/reconciliation_registry.py", note: "acknowledge_critical_warns 消费方——本增强落地后人工 ack 调用频率应下降"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "现有 _persist_stale_state 死进程分支(L407-424)有 clean 路径但 2026-08-14 实测未覆盖硬杀场景(3 例残留),属部分实现而非重复——增强既有节点非新建"}
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'reconcile_runner.py 死进程孤儿分支自愈 + reconciliation_registry 自动 ack'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：死进程告警自动消音已落地"
+  priority: P2
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-14'
+  promoted_to: ""
+  source_draft: "2026-08-14 会话: 遗留 WARN 清理调研(reconcile_runner.py L355-438 取证)"
+  source_section: "遗留 WARN 调查结论"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: >-
+    病根假设: 死进程分支 clean 写入依赖 reconciler 收割路径被执行,但 worker 被外部硬杀时
+    收割逻辑可能未触发(如 sweep_stale_workers 未跑/status file 读取时机错过)。
+    治本方向: 在 _persist_stale_state 死进程判定后强制落 clean 记录(幂等,dedup_set 已存在),
+    或在 banner 查询侧对 PID 已死的 critical_warn 自动降级为 info。需先复现验证收割路径为何未走。
+  risks:
+    - "若误判活进程为死进程,会漏消音真威胁——必须严格以 _is_pid_alive 取证为准"
+    - "改动治理告警链路,需回归测试覆盖死/活两分支"
+  alternatives: "维持现状人工 ack(成本低,偶发场景可接受)——本增强仅在复发频率升高时晋升"
+  tags: ["治理", "告警", "自愈", "reconciler", "体验优化", "低优先"]
+  search_terms: ["死进程告警", "dead worker alert", "reconcile stale 残留", "auto ack"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-14'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记(2026-08-14): 属体验优化非缺陷,人工 ack 出口已合规可用。待复发频率证据再评估晋升"
+
+  # ----------------------------------------------------------
+  # CAND-RSK-014: 黑天鹅模式库（deferred，四问②挂）
+  # ----------------------------------------------------------
+- id: CAND-RSK-014
+  name: "Black Swan Pattern Library / 黑天鹅模式库"
+  aliases: ["黑天鹅库", "BlackSwanLibrary", "极端事件模式识别"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 12
+  sub_layer: "分析引擎"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-RSK-014
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-RSK-005"]
+        downstream: ["MOD-RSK-017"]
+      insertion_description: "插入 D_RISK §2 分析引擎区,在 RK-05 VaR 之后、RK-17 KillSwitch 之前"
+      target_edges:
+      - {from: "MOD-RSK-005", to: "MOD-RSK-014", type: runtime, reason: "VaR极值→黑天鹅匹配"}
+      - {from: "MOD-RSK-014", to: "MOD-RSK-017", type: runtime, reason: "命中→KillSwitch触发"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "行情数据 → VaR计算 → [黑天鹅模式匹配] → KillSwitch触发"
+      upstream_data: ["NormalizedMarketData", "VaR极值序列"]
+      downstream_data: ["BlackSwanAlert事件"]
+      insertion_description: "在 D_RISK 数据流中段,VaR输出之后"
+    decisiongraph:
+      has_position: true
+      target_layer: "L4"
+      target_track: "risk"
+      decision_frequency: event_driven
+      decision_path: "RiskMonitor → VaR → [黑天鹅模式匹配] → KillSwitch决策"
+      insertion_description: "在 L4 风控决策层,VaR决策之后、KillSwitch决策之前"
+    blueprint:
+      has_position: true
+      target_ref: "11-D-RISK-风控域.md §2 分析引擎 RK-14"
+      design_maturity: design
+  description: "极端事件模式识别+历史重放+预案匹配+黑天鹅事件分类+自动根因分析"
+  capability: C-038
+  problem_it_solves: "实盘遭遇极端行情(如2015股灾/2020疫情底)时,现有VaR/止损无法应对尾部风险"
+  trigger_signals:
+  - "实盘出现单日跌幅>5%的极端行情"
+  - "VaR Calculator 进入 Phase3 Basel III 验证阶段"
+  - "用户主动要求黑天鹅预案功能"
+  keywords: ["黑天鹅", "tail_risk", "极端事件", "模式匹配", "历史重放"]
+  upstream_deps:
+  - {contract: CTR-001, from_domain: D_DATA, dep_type: H, availability: available, note: "行情数据喂入历史重放"}
+  - {contract: "E-RK-01", from_domain: D_RISK, dep_type: E, availability: available, note: "RiskLimitBreached触发匹配"}
+  downstream_consumers:
+  - {consumer: "MOD-RSK-017", contract: "触发信号", note: "命中→KillSwitch清仓"}
+  contracts_to_produce:
+  - {id: "E-RK-05(拟定)", name: "BlackSwanPatternMatched"}
+  contracts_to_consume:
+  - {id: CTR-001, note: "行情数据"}
+  prerequisites:
+  - {condition: "D_DATA历史数据完整(2008/2015/2020)", check: "c1_market有2008-至今日线", met: true}
+  - {condition: "RK-05 VaR Calculator Phase2+", check: "MOD-RSK-005=production", met: false, note: "当前仅Phase1"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["MOD-RSK-005", "MOD-RSK-015"], evidence: "grep无现成实现"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md"
+  source_section: "§1.2 分析引擎 RK-14"
+  original_id: "RK-14"
+  estimated_complexity: L
+  estimated_effort: "15人天"
+  tech_notes: "历史事件模式库+模式匹配引擎+预案触发器"
+  risks: ["历史模式可能无法覆盖未来新型黑天鹅(过拟合)", "预案触发需人工确认防误杀"]
+  alternatives: "靠 RK-05 VaR 压力测试 + 人工判断。代价:极端行情响应慢"
+  tags: ["过度工程", "P1规划", "A股特色", "尾部风险", "待需求驱动"]
+  search_terms: ["black swan", "黑天鹅", "extreme event", "tail risk pattern"]
+  related_candidates: ["CAND-RSK-015"]
+  enables: ["CAND-RSK-020"]
+  blocked_by: []
+  next_review_date: '2027-01-31'
+  review_frequency: half_yearly
+  last_review_outcome: "首次登记,待VaR Phase2就绪或实盘极端行情时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-SIGLEGACY-001: D_SIGLEGACY 死域（rejected，四问③挂）
+  # ----------------------------------------------------------
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIGLEGACY-001
+  name: "D_SIGLEGACY 多策略引擎"
+  aliases: ["多策略编排", "MultiStrategyEngine"]
+  domain: D_SIGLEGACY
+  domain_status: dead
+  domain_node_count: 0
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "死域,0节点,无位置"}
+    dataflowgraph: {has_position: false, note: "死域,无数据流位置"}
+    decisiongraph: {has_position: false, note: "死域,无决策位置"}
+    blueprint: {has_position: false, note: "死域,无蓝图"}
+  description: "原设计的多策略编排引擎"
+  capability: ""
+  problem_it_solves: "(已解决)多策略编排已由 D_PF_CORE PC-01 承担"
+  trigger_signals: []
+  keywords: ["多策略", "策略编排", "死域"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-L05-001"], evidence: "D_PF_CORE已实现多策略"}
+    blocking_question: none    # 原q3已废(裁定2026-08-04)
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "D:\\临时工作区\\依赖图\\(已删除)D_SIGLEGACY域.md"
+  source_section: "全文档"
+  original_id: "D-SIGLEGACY-*"
+  estimated_complexity: ""
+  tech_notes: "死域,保留登记仅为防误重新设计"
+  alternatives: "已由 D_PF_CORE MOD-L05-001 承担"
+  tags: ["死域", "重复功能", "rejected", "防误重新设计"]
+  search_terms: ["multi strategy", "多策略", "策略编排", "siglegacy"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认死域。除非D_PF_CORE多策略出现重大缺口,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-PTC-001: Pre-Trade Checker / 盘前检查器（rejected，四问①挂——重复实现）
+  # 来源: application_flows.md 审查 (2026-07-30)
+  # ----------------------------------------------------------
+- id: CAND-PTC-001
+  name: "Pre-Trade Checker / 盘前统一检查器"
+  aliases: ["盘前检查", "PreTradeChecker", "下单前校验", "UnifiedPreTradeValidator"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 12
+  sub_layer: "L1 事前风控"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: "MOD-RSK-PTC (勿新增——已由组合实现)"
+      target_build_status: production
+      target_neighbors:
+        upstream: ["MOD-RSK-003"]
+        downstream: ["MOD-EX-002"]
+      insertion_description: "拟插入 D_RISK L1 事前风控区,但已由 risk_validator+risk_validation_bridge+position_limit_checker 三件组合承接,无需新增独立节点"
+      target_edges: []
+      note: "一问标准 q1挂:重复实现。全景位置仅作'若强行实现会插哪'的参考,实际不新增节点"
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "下单请求 → [盘前检查] → 风控放行/拒绝"
+      upstream_data: ["OrderRequest", "PositionSnapshot", "RiskLimitConfig"]
+      downstream_data: ["OrderApproved事件", "OrderRejected事件"]
+      insertion_description: "在 D_EX_CORE 下单链路入口,已有 risk_validation_bridge 承接"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      target_track: "execution"
+      decision_frequency: intraday
+      decision_path: "下单 → [盘前检查] → 放行/拒绝决策"
+      insertion_description: "L6 执行层入口,已由组合实现"
+    blueprint:
+      has_position: true
+      target_ref: "11-D-RISK-风控域.md §1 L1 事前风控"
+      design_maturity: production
+  description: "盘前统一检查器:下单前校验持仓限额/资金/合规/黑名单等,返回放行或拒绝"
+  capability: ""
+  problem_it_solves: "下单前需统一校验风控约束,避免违规下单"
+  trigger_signals:
+  - "risk_validation_bridge 出现性能瓶颈或校验漏项"
+  - "新增合规规则需统一入口"
+  keywords: ["盘前检查", "pre_trade", "下单校验", "风控前置", "事前风控"]
+  upstream_deps:
+  - {contract: CTR-001, from_domain: D_DATA, dep_type: H, availability: available, note: "持仓快照"}
+  downstream_consumers:
+  - {consumer: "MOD-EX-002", contract: "OrderApproved", note: "放行→执行"}
+  contracts_to_produce: []
+  contracts_to_consume:
+  - {id: CTR-001, note: "行情/持仓数据"}
+  prerequisites:
+  - {condition: "risk_validation_bridge 出现缺口", check: "grep 验证现有承接完整性", met: false, note: "当前组合完整承接,无缺口"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-RSK-risk_validator", "MOD-RSK-risk_validation_bridge", "MOD-RSK-position_limit_checker"], evidence: "三件组合已完整实现盘前校验链路,grep 确认覆盖持仓/资金/合规/黑名单"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "application_flows.md (2026-07-30 一问标准审查)"
+  source_section: "§Pre-Trade Checker 候选"
+  original_id: "PTC"
+  estimated_complexity: M
+  estimated_effort: ""
+  tech_notes: "独立 Pre-Trade Checker 是重复造轮子;现有 risk_validator+risk_validation_bridge+position_limit_checker 三件组合已覆盖"
+  risks: ["硬新增独立模块会导致双真源:同一校验逻辑两处维护"]
+  alternatives: "维持现有 risk_validation_bridge 组合。代价:无,组合已完整"
+  tags: ["重复功能", "rejected", "已实现组合", "防重复造轮子"]
+  search_terms: ["pre trade check", "盘前检查", "pre trade validator", "下单前校验"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q1已实现。除非 risk_validation_bridge 组合出现重大缺口,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-WFO-001: Walk-Forward Optimizer / 滚动前进优化器（deferred，四问②挂——无需求驱动）
+  # 来源: 量化经典过度工程模块 (2026-07-31)
+  # ----------------------------------------------------------
+- id: CAND-WFO-001
+  name: "Walk-Forward Optimizer / 滚动前进优化器"
+  aliases: ["滚动优化", "WalkForwardOpt", "WF Optimization", "前推回测优化"]
+  domain: D_BACKTEST
+  domain_status: active
+  domain_node_count: 8
+  sub_layer: "L2 参数优化"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-BT-WFO
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-BT-001"]
+        downstream: ["MOD-BT-003"]
+      insertion_description: "插入 D_BACKTEST §2 参数优化区,在 BT-01 基础回测之后、BT-03 策略挑选之前"
+      target_edges:
+      - {from: "MOD-BT-001", to: "MOD-BT-WFO", type: runtime, reason: "回测结果→滚动优化"}
+      - {from: "MOD-BT-WFO", to: "MOD-BT-003", type: runtime, reason: "优化参数→策略挑选"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "历史数据 → 基础回测 → [滚动前进优化] → 稳健参数集"
+      upstream_data: ["HistoricalBarData", "BacktestResult"]
+      downstream_data: ["RobustParameterSet", "OverfitReport"]
+      insertion_description: "在 D_BACKTEST 数据流中段,回测输出之后"
+    decisiongraph:
+      has_position: true
+      target_layer: "L1"
+      target_track: "backtest"
+      decision_frequency: daily
+      decision_path: "回测 → [滚动前进优化] → 参数稳健性决策"
+      insertion_description: "L1 离线决策层,回测之后"
+    blueprint:
+      has_position: true
+      target_ref: "13-D-BACKTEST-回测域.md §2 参数优化 WFO"
+      design_maturity: design
+  description: "Walk-Forward 滚动优化:训练窗固定、测试窗前推,评估参数稳健性防过拟合,产出样本外表现曲线"
+  capability: ""
+  problem_it_solves: "回测参数过拟合风险——单一全样本优化容易拟合历史噪声,实盘表现衰退"
+  trigger_signals:
+  - "实盘策略表现与回测显著背离(过拟合迹象)"
+  - "用户主动要求参数稳健性验证"
+  - "D_BACKTEST 进入 Phase2 参数优化阶段"
+  keywords: ["滚动优化", "walk_forward", "过拟合", "参数稳健性", "样本外"]
+  upstream_deps:
+  - {contract: CTR-001, from_domain: D_DATA, dep_type: H, availability: available, note: "历史数据"}
+  - {contract: "CTR-BT-01", from_domain: D_BACKTEST, dep_type: H, availability: available, note: "回测结果喂入"}
+  downstream_consumers:
+  - {consumer: "MOD-BT-003", contract: "RobustParameterSet", note: "稳健参数→策略挑选"}
+  contracts_to_produce:
+  - {id: "CTR-BT-WFO(拟定)", name: "RobustParameterSet"}
+  contracts_to_consume:
+  - {id: CTR-001, note: "历史数据"}
+  prerequisites:
+  - {condition: "D_BACKTEST 基础回测稳定", check: "MOD-BT-001=production", met: true}
+  - {condition: "实盘出现过拟合迹象", check: "回测 vs 实盘表现背离", met: false, note: "当前无明显过拟合"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep 无 walk_forward 实现"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "量化经典过度工程模块清单"
+  source_section: "§参数稳健性 WFO"
+  original_id: "WFO"
+  estimated_complexity: L
+  estimated_effort: "12人天"
+  tech_notes: "滚动窗口管理+参数优化器+样本外统计检验+过拟合报告"
+  risks: ["滚动窗口选择本身可能引入偏差", "计算量大需并行化"]
+  alternatives: "靠 D_BACKTEST 基础回测 + 人工参数审查。代价:过拟合风险不可量化"
+  tags: ["过度工程", "deferred", "学术架构", "防过拟合", "待需求驱动"]
+  search_terms: ["walk forward", "滚动优化", "walk forward optimization", "参数稳健"]
+  related_candidates: ["CAND-RSK-014"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-01-31'
+  review_frequency: half_yearly
+  last_review_outcome: "首次登记,待实盘出现过拟合迹象或 D_BACKTEST Phase2 启动时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-AISA-001: AI Sentiment Analyzer / AI 舆情分析器（candidate，四问待评估）
+  # 来源: A股政策驱动需求 (2026-07-31)
+  # ----------------------------------------------------------
+- id: CAND-AISA-001
+  name: "AI Sentiment Analyzer / AI 舆情分析器"
+  aliases: ["舆情分析", "SentimentAnalyzer", "新闻情绪", "政策舆情", "AI舆情"]
+  domain: D_INTELLIGENCE
+  domain_status: active
+  domain_node_count: 5
+  sub_layer: "L2 非结构化数据"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-INT-AISA
+      target_build_status: design
+      target_neighbors:
+        upstream: ["MOD-INT-001"]
+        downstream: ["MOD-SIG-002"]
+      insertion_description: "插入 D_INTELLIGENCE §2 非结构化区,在 INT-01 数据采集之后、SIG-02 信号生成之前(拟定,待一问标准确认)"
+      target_edges:
+      - {from: "MOD-INT-001", to: "MOD-INT-AISA", type: runtime, reason: "新闻/公告→舆情分析"}
+      - {from: "MOD-INT-AISA", to: "MOD-SIG-002", type: runtime, reason: "舆情分数→信号"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "新闻/公告/研报 → [AI舆情分析] → 舆情分数信号"
+      upstream_data: ["NewsText", "AnnouncementText", "ResearchReport"]
+      downstream_data: ["SentimentScore", "SentimentEvent"]
+      insertion_description: "在 D_INTELLIGENCE 数据流中段,非结构化输入之后(拟定)"
+    decisiongraph:
+      has_position: true
+      target_layer: "L2"
+      target_track: "intelligence"
+      decision_frequency: event_driven
+      decision_path: "数据采集 → [AI舆情分析] → 舆情信号决策"
+      insertion_description: "L2 情报层,数据采集之后(拟定)"
+    blueprint:
+      has_position: true
+      target_ref: "57-D-INTELLIGENCE-智能域.md §2 非结构化 AISA"
+      design_maturity: design
+  description: "AI 舆情分析:对新闻/公告/研报做 NLP 情绪打分,产出舆情分数与事件信号,辅助 A 股政策驱动行情判断"
+  capability: ""
+  problem_it_solves: "A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后"
+  trigger_signals:
+  - "实盘出现政策驱动的板块异动但信号系统未捕获"
+  - "用户主动要求舆情辅助决策"
+  - "D_INTELLIGENCE 进入 Phase2 非结构化扩展"
+  keywords: ["舆情", "sentiment", "NLP", "政策驱动", "新闻情绪", "AI分析"]
+  upstream_deps:
+  - {contract: "CTR-INT-01", from_domain: D_INTELLIGENCE, dep_type: H, availability: available, note: "非结构化数据采集"}
+  downstream_consumers:
+  - {consumer: "MOD-SIG-002", contract: "SentimentScore", note: "舆情→信号"}
+  contracts_to_produce:
+  - {id: "CTR-INT-AISA(拟定)", name: "SentimentScore"}
+  contracts_to_consume:
+  - {id: "CTR-INT-01", note: "新闻/公告文本"}
+  prerequisites:
+  - {condition: "D_INTELLIGENCE 数据采集稳定", check: "MOD-INT-001=production", met: true}
+  - {condition: "确认非AI可替代", check: "四问q4裁定", met: true, note: "2026-08-18裁定:舆情分数需固化信号产出供回测/信号系统消费,AI运行时重分析无法进入自动化管道(26号备忘录G28裁定点对齐)"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "2026-08-18 全仓 grep 实证：舆情聚合信号层缺失（sentiment_aggregator 规划未建）；MOD-SIG-025 为价格行为情绪周期，nlp_inference 为单条推理层，均非等价节点"}
+    blocking_question: answered
+    result: approved
+  status: promoted
+  priority: P1
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-08-18'
+  promoted_to: "MOD-INT-AISA news_sentiment_analyzer（src/zephyr/intelligence/news_sentiment_analyzer.py，2026-08-18 AI-AISA-001 MVP 施工，#ARCH-AISA-001，merge 2df795a8c8）"
+  source_draft: "A股政策驱动需求讨论"
+  source_section: "§舆情辅助决策"
+  original_id: "AISA"
+  estimated_complexity: L
+  estimated_effort: "20人天"
+  tech_notes: "NLP 情绪模型+事件抽取+prompt 工程+舆情分数聚合。关键决策:自建模块 vs 依赖 TRAE AI 运行时理解"
+  risks: ["舆情数据源合规性", "NLP 模型漂移需定期重训", "若 TRAE AI 可替代则建模块属过度工程"]
+  alternatives: "依赖 TRAE AI 运行时做舆情理解(不建模块)。代价:无固化信号产出,每次需 AI 重新分析"
+  tags: ["candidate", "待一问标准评估", "A股特色", "政策驱动", "AI替代待定"]
+  search_terms: ["sentiment", "舆情", "news sentiment", "政策舆情", "NLP情绪"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-10-31'
+  review_frequency: quarterly
+  last_review_outcome: "2026-08-18 Owner 派单转正（施工线新四路 AI-AISA-001）：数据基础盘点缺口小（复用 news_data 多源主表+news_collector+nlp_inference），MVP=规则法打分桩+窗口聚合+事件信号+LLM 扩展口；29 测试两轮全绿；五登记链完成；#ARCH-AISA-001 立项；merge 后转 promoted"
+
+  # ----------------------------------------------------------
+  # CAND-BACL-001: Broker ACL 三层架构（rejected，四问②挂——无重构驱动）
+  # 来源: governance_views.md 审查 (2026-07-30)
+  # ----------------------------------------------------------
+- id: CAND-BACL-001
+  name: "Broker ACL 三层架构重构 / 经纪商访问控制分层"
+  aliases: ["BrokerACL三层", "经纪商权限分层", "Broker访问控制重构", "三层ACL"]
+  domain: D_INTEGRATION
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "L1 适配层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: "MOD-INT-BACL (勿新增——现有2 adapter够用)"
+      target_build_status: production
+      target_neighbors:
+        upstream: ["MOD-INT-001"]
+        downstream: ["MOD-EX-003"]
+      insertion_description: "拟重构 D_INTEGRATION L1 适配层为三层ACL,但现有2 adapter平铺已满足,无重构驱动"
+      target_edges: []
+      note: "位置仅作'若强行重构会变成哪样'的参考"
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "下单 → [ACL权限校验] → 经纪商适配 → 执行"
+      upstream_data: ["OrderRequest", "BrokerCredential"]
+      downstream_data: ["BrokerAuthenticatedOrder"]
+      insertion_description: "现有2 adapter平铺已承接,重构无新增数据流价值"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      target_track: "execution"
+      decision_frequency: intraday
+      decision_path: "下单 → [ACL校验] → 经纪商选择 → 执行"
+      insertion_description: "L6 执行层,现有结构已覆盖"
+    blueprint:
+      has_position: true
+      target_ref: "21-D-INTEGRATION-集成域.md §1 适配层"
+      design_maturity: production
+  description: "将经纪商访问控制重构为三层ACL(认证/授权/审计分层),提升安全与可扩展性"
+  capability: ""
+  problem_it_solves: "多经纪商接入时权限管理散乱,理论上有分层重构价值"
+  trigger_signals:
+  - "经纪商数量超过5个且权限规则出现冲突"
+  - "合规审计要求 ACL 分层留痕"
+  keywords: ["ACL", "经纪商", "访问控制", "权限分层", "broker", "重构"]
+  upstream_deps:
+  - {contract: "CTR-INT-01", from_domain: D_INTEGRATION, dep_type: H, availability: available, note: "经纪商凭证"}
+  downstream_consumers:
+  - {consumer: "MOD-EX-003", contract: "AuthenticatedOrder", note: "已认证订单→执行"}
+  contracts_to_produce: []
+  contracts_to_consume:
+  - {id: "CTR-INT-01", note: "经纪商凭证"}
+  prerequisites:
+  - {condition: "现有2 adapter出现权限管理瓶颈", check: "经纪商数量与冲突检测", met: false, note: "当前2 adapter平铺够用,无瓶颈"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-INT-broker_adapter_qmt", "MOD-INT-broker_adapter_akshare"], evidence: "现有2 adapter平铺已实现经纪商访问控制"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "governance_views.md (2026-07-30 一问标准审查)"
+  source_section: "§Broker ACL 三层候选"
+  original_id: "BACL"
+  estimated_complexity: M
+  estimated_effort: ""
+  tech_notes: "三层ACL重构属过度设计;现有2 broker adapter平铺(qmt+akshare)已满足访问控制需求"
+  risks: ["强行重构会破坏现有稳定适配层,引入新缺陷"]
+  alternatives: "维持现有2 adapter平铺。代价:无,已满足需求"
+  tags: ["过度工程", "rejected", "无重构驱动", "防过度设计"]
+  search_terms: ["broker acl", "经纪商权限", "访问控制分层", "三层 acl"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q2无重构驱动。除非经纪商数量超5个且权限规则冲突,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-PC-001: Policy Compiler / 策略编译器（rejected，四问④挂——AI 替代）
+  # 来源: 四问过滤审查 (2026-07-30)
+  # ----------------------------------------------------------
+- id: CAND-PC-001
+  name: "Policy Compiler / 策略编译器"
+  aliases: ["策略编译", "PolicyCompiler", "规则编译器", "RuleCompiler", "DSL编译"]
+  domain: D_GOV_RULE
+  domain_status: active
+  domain_node_count: 7
+  sub_layer: "L2 规则引擎"
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: "不建代码模块,规则→检查器翻译由 TRAE AI 运行时胜任,无需独立编译器节点"
+    dataflowgraph:
+      has_position: false
+      note: "AI替代,无独立数据流节点;翻译由 AI 运行时完成"
+    decisiongraph:
+      has_position: false
+      note: "AI替代,无决策层节点"
+    blueprint:
+      has_position: false
+      note: "AI替代,不建蓝图模块;翻译逻辑由 TRAE AI prompt 承载"
+  description: "策略编译器:将高层策略 DSL 编译为可执行检查器代码,实现规则→检查器自动翻译"
+  capability: ""
+  problem_it_solves: "策略规则到检查器代码的翻译需自动化,避免手工编写检查器"
+  trigger_signals:
+  - "规则数量爆炸且频繁变更,人工编写检查器成本高"
+  - "TRAE AI 翻译能力不足(当前未出现)"
+  keywords: ["策略编译", "policy_compiler", "DSL", "规则翻译", "检查器生成"]
+  upstream_deps:
+  - {contract: "CTR-GOV-01", from_domain: D_GOV_RULE, dep_type: H, availability: available, note: "策略 DSL"}
+  downstream_consumers:
+  - {consumer: "MOD-RSK-checkers", contract: "CompiledChecker", note: "编译产物→检查器(拟)"}
+  contracts_to_produce: []
+  contracts_to_consume:
+  - {id: "CTR-GOV-01", note: "策略 DSL"}
+  prerequisites:
+  - {condition: "TRAE AI 翻译能力不足", check: "AI 规则→检查器翻译测试", met: false, note: "当前 TRAE AI 可胜任规则翻译"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep 无 policy_compiler 实现"}
+    blocking_question: none    # 原q4已废(裁定2026-08-04)
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "一问标准审查 (2026-07-30)"
+  source_section: "§Policy Compiler 候选"
+  original_id: "PC"
+  estimated_complexity: XL
+  estimated_effort: ""
+  tech_notes: "AI替代:规则→检查器翻译由 TRAE AI 运行时胜任,建独立编译器属过度工程。翻译逻辑由 AI prompt 承载,无需代码模块固化"
+  risks: ["硬造编译器会与 TRAE AI 能力重叠,双真源维护"]
+  alternatives: "依赖 TRAE AI 运行时做规则→检查器翻译。代价:无固化产物,但 AI 翻译足够可靠"
+  tags: ["AI替代", "rejected", "过度工程", "语义理解类", "防硬造编译器"]
+  search_terms: ["policy compiler", "策略编译", "rule compiler", "dsl 编译", "规则翻译器"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q4 AI替代。除非 TRAE AI 翻译能力显著退化,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-DR-001: Offsite Backup / 异地备份（rejected，用户推翻 overruled_by_user）
+  # 来源: #ARCH-CH-032 (2026-07-24 用户裁定推翻)
+  # ----------------------------------------------------------
+- id: CAND-DR-001
+  name: "Offsite Backup / 异地备份"
+  aliases: ["异地备份", "OffsiteBackup", "离线备份", "云备份", "3-2-1备份", "异地副本"]
+  domain: D_INFRA_RECOVERY
+  domain_status: active
+  domain_node_count: 55
+  sub_layer: "L2 备份策略"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: "MOD-IR-OFFSITE (勿实现——用户推翻)"
+      target_build_status: deprecated
+      target_neighbors:
+        upstream: ["MOD-IR-001"]
+        downstream: []
+      insertion_description: "拟插入 D_INFRA_RECOVERY L2 备份策略区,作为本地 restic 备份的异地副本,但用户已裁定推翻勿实现"
+      target_edges: []
+      note: "用户推翻(overruled_by_user #ARCH-CH-032)。位置仅作'若实现会插哪'的参考,实际勿实现"
+    dataflowgraph:
+      has_position: true
+      target_node_type: sink
+      data_flow_path: "本地备份 → [异地副本同步] → 云存储/异地介质"
+      upstream_data: ["LocalBackupSnapshot", "BackupConfig"]
+      downstream_data: ["OffsiteBackupReplica"]
+      insertion_description: "在 D_INFRA_RECOVERY 备份数据流末端,本地备份之后(拟定,用户推翻)"
+    decisiongraph:
+      has_position: true
+      target_layer: "L1"
+      target_track: "disaster_recovery"
+      decision_frequency: daily
+      decision_path: "备份调度 → [异地副本决策] → 同步/跳过"
+      insertion_description: "L1 灾备决策层,用户已推翻此决策路径"
+    blueprint:
+      has_position: true
+      target_ref: "05-D-INFRA-RECOVERY-恢复域.md §2 备份策略"
+      design_maturity: deprecated
+  description: "异地/离线备份:在本地外接盘备份之外,增加异地副本(云存储/异地介质),满足 3-2-1 备份原则"
+  capability: ""
+  problem_it_solves: "audit 7.7 发现本地 restic 备份与主库同物理站点,不满足 3-2-1 备份原则的异地要求"
+  trigger_signals:
+  - "系统升级为多用户/多站点场景(当前单用户)"
+  - "用户主动要求异地备份(当前已明确否决)"
+  - "本地外接盘备份出现可靠性问题"
+  keywords: ["异地备份", "offsite", "3-2-1", "云备份", "灾备", "overruled"]
+  upstream_deps:
+  - {contract: "CTR-IR-01", from_domain: D_INFRA_RECOVERY, dep_type: H, availability: available, note: "本地备份快照"}
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume:
+  - {id: "CTR-IR-01", note: "本地备份快照"}
+  prerequisites:
+  - {condition: "多用户/多站点场景出现", check: "用户场景确认", met: false, note: "当前单用户回测期,用户已明确不预埋异地"}
+  - {condition: "云存储凭证/账号配置", check: "offsite_repository 配置", met: false, note: "backup_config.yaml offsite_repository 段已删除(#ARCH-CH-032)"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "backup.ps1 从未实现 offsite/restic copy 逻辑,grep 零引用;offsite_repository 配置段已删除"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: rejected
+    overrule_ref: "#ARCH-CH-032"
+    overrule_by: user
+    overrule_date: '2026-07-24'
+  status: rejected
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "architecture_issue_registry.yaml #ARCH-CH-032"
+  source_section: "异地/离线备份推翻"
+  original_id: "ARCH-CH-032"
+  estimated_complexity: M
+  estimated_effort: ""
+  tech_notes: "overruled_by_user 案例。用户裁定:单用户回测期仅本地外接盘备份足够,不引入异地/云存储/3-2-1备份铁律。实盘/异地等未来需求由用户自行规划,当前不预埋。已执行:backup_config.yaml 删除 offsite_repository 配置段"
+  risks: ["重新提议异地备份会违背用户已裁定决策;云存储凭证/账号属于过度工程"]
+  alternatives: "本地外接盘备份(F:\\restic-zephyr,主库+外接盘=2份)。代价:无,用户已确认足够"
+  tags: ["overruled_by_user", "rejected", "防重新提议", "灾备", "用户裁定"]
+  search_terms: ["offsite backup", "异地备份", "3-2-1 备份", "云备份", "离线副本"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "rejected,overruled_by_user #ARCH-CH-032。除非场景升级为多用户/多站点,否则不再评估"
+  # ----------------------------------------------------------
+  # CAND-EX-001: 富途/IB券商适配器（deferred，四问②挂，MiniQMT已够用）
+  # 来源: D_EX_CORE蓝图 §1.6 GAP-L06-002
+  # ----------------------------------------------------------
+- id: CAND-EX-001
+  name: "Futu/IB Broker Adapters / 富途IB券商适配器"
+  aliases: ["富途适配器", "IB适配器", "futu_broker", "ib_broker", "多券商接入"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 24
+  sub_layer: "adapters 券商适配层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-EX-016
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-EX-006"]
+        downstream: []
+      insertion_description: "插入 D_EX_CORE adapters 区,与 MiniQmtBroker 并列"
+      target_edges:
+      - {from: "MOD-EX-006", to: "MOD-EX-016", type: runtime, reason: "订单路由→富途/IB执行"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: sink
+      data_flow_path: "订单 → [富途/IB适配器] → 券商API → 成交回报"
+      upstream_data: ["OrderRequest", "BrokerConfig"]
+      downstream_data: ["ExecutionReport(CTR-P1-007)"]
+      insertion_description: "在 D_EX_CORE 执行流末端,与 SimulationBroker/MiniQmtBroker 并列"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      target_track: "execution"
+      decision_frequency: intraday_realtime
+      decision_path: "订单决策 → 路由选择 → [富途/IB执行] → 成交确认"
+      insertion_description: "L6 执行层,券商路由决策"
+    blueprint:
+      has_position: true
+      target_ref: "06-D-EX-CORE-执行核心域.md §4.2 GAP-L06-002 adapters/futu_broker.py"
+      design_maturity: design
+  description: "富途/IB券商适配器:对接富途OpenAPI/IB TWS API,实现真实券商下单/查询/撤单,与MiniQmtBroker并列可动态注册"
+  capability: "C-025"
+  problem_it_solves: "实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器"
+  trigger_signals:
+  - "实盘扩展到港股/美股/期货市场(MiniQMT仅覆盖A股)"
+  - "用户主动要求接入富途/IB券商"
+  - "MiniQMT渠道出现不可用需备用券商"
+  keywords: ["券商适配器", "futu", "IB", "多券商", "broker adapter"]
+  upstream_deps:
+  - {contract: "CTR-P1-004", from_domain: D_EX_CORE, dep_type: H, availability: available, note: "OrderRequest订单请求"}
+  downstream_consumers:
+  - {consumer: "D_REPORTING", contract: "ExecutionReport", note: "执行报告产出(依赖GAP-L06-003先实现)"}
+  contracts_to_produce:
+  - {id: "CTR-P1-007(共享)", name: "ExecutionReport"}
+  contracts_to_consume:
+  - {id: "CTR-P1-004", note: "OrderRequest"}
+  prerequisites:
+  - {condition: "ExecutionReport(GAP-L06-003)已实现", check: "execution_report.py存在", met: false, note: "P0缺口未填,优先于本候选"}
+  - {condition: "富途/IB API凭证配置", check: "broker_config.yaml", met: false}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["MOD-EX-006"], evidence: "现有SimulationBroker+MiniQmtBroker,grep无futu/ib_broker"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_execution_core/blueprint.md"
+  source_section: "§1.6 GAP-L06-002, §4.2 adapters/futu_broker.py Phase 3 待施工"
+  original_id: "GAP-L06-002"
+  estimated_complexity: L
+  estimated_effort: "12人天/券商"
+  tech_notes: "对接富途OpenD/IB TWS API;实现register_broker()动态注册;复用ExecutionEngine提交逻辑"
+  risks: ["券商API版本变更需持续维护", "需真实账户测试"]
+  alternatives: "MiniQMT渠道(已施工,覆盖A股实盘)。代价:无法接入港股/美股/期货"
+  tags: ["扩展", "多券商", "待需求驱动", "P1规划", "实盘扩展"]
+  search_terms: ["futu broker", "ib broker", "富途适配器", "券商接入", "multi broker"]
+  related_candidates: ["CAND-EX-002"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-01-31'
+  review_frequency: half_yearly
+  last_review_outcome: "首次登记,待非MiniQMT渠道需求或实盘扩展时重新评估"
+  # ----------------------------------------------------------
+  # CAND-EX-002: 多线程订单处理（deferred，四问②挂，单线程够用）
+  # 来源: D_EX_CORE蓝图 §1.6 GAP-L06-001
+  # ----------------------------------------------------------
+- id: CAND-EX-002
+  name: "Multi-threaded Order Processing / 多线程订单处理"
+  aliases: ["并发订单", "ThreadPool订单", "订单多线程"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 24
+  sub_layer: "execution_engine 执行引擎核心"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-EX-017
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-EX-001"]
+        downstream: ["MOD-EX-006"]
+      insertion_description: "重构 execution_engine.py 内部,从单线程改为ThreadPoolExecutor"
+      target_edges:
+      - {from: "MOD-EX-001", to: "MOD-EX-017", type: runtime, reason: "订单提交→线程池分发"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "订单请求 → [线程池并发处理] → 券商提交 → 成交回报聚合"
+      upstream_data: ["OrderRequest批次"]
+      downstream_data: ["ExecutionReport批次"]
+      insertion_description: "在 execution_engine 内部,提交环节改为并发"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      target_track: "execution"
+      decision_frequency: intraday_realtime
+      decision_path: "订单批次 → [并发调度] → 多线程提交 → 汇总"
+      insertion_description: "L6 执行层并发调度"
+    blueprint:
+      has_position: true
+      target_ref: "06-D-EX-CORE-执行核心域.md §1.6 GAP-L06-001, §4.2 execution_engine.py Phase 2"
+      design_maturity: design
+  description: "多线程订单处理:execution_engine 从单线程升级为 ThreadPoolExecutor + 锁,支持并发订单提交"
+  capability: "C-024"
+  problem_it_solves: "高频/批量下单时单线程订单处理成为瓶颈(并发>10)"
+  trigger_signals:
+  - "并发订单数持续>10"
+  - "订单提交延迟>100ms"
+  - "实盘策略数量增长到需批量下单"
+  keywords: ["多线程", "并发", "ThreadPool", "订单并发", "GIL"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "ExecutionReport(GAP-L06-003)已实现", check: "execution_report.py存在", met: false, note: "并发产出报告依赖它"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "execution_engine.py 当前单线程,grep无ThreadPool/concurrent.futures"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_execution_core/blueprint.md"
+  source_section: "§1.6 GAP-L06-001, §4.2 v2.1.0 待施工"
+  original_id: "GAP-L06-001"
+  estimated_complexity: M
+  estimated_effort: "8人天"
+  tech_notes: "ThreadPoolExecutor + 线程锁;注意MiniQmtBroker的线程安全性(QMT SDK可能非线程安全)"
+  risks: ["券商SDK线程安全问题", "锁粒度过粗影响吞吐"]
+  alternatives: "单线程顺序提交(当前实现)。代价:并发>10时延迟增加"
+  tags: ["扩展", "性能", "待需求驱动", "并发", "P1规划"]
+  search_terms: ["multi-thread", "并发订单", "thread pool", "concurrent orders"]
+  related_candidates: ["CAND-EX-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-01-31'
+  review_frequency: half_yearly
+  last_review_outcome: "首次登记,待并发订单>10或提交延迟>100ms时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-EX-003: Redis幂等性存储（rejected，四问①挂——已由MOD-INF-016实现）
+  # 来源: orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)
+  # ----------------------------------------------------------
+- id: CAND-EX-003
+  name: "Redis幂等性存储 / Redis Idempotency Store"
+  aliases: ["redis_idempotency", "MOD-EX-004", "订单幂等去重", "RedisIdempotencyStore"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 41
+  sub_layer: "L2 执行核心-横切幂等"
+  panorama_position:
+    depgraph:
+      has_position: false
+      target_module_id: "MOD-EX-004 (已弃用 2026-08-05)"
+      target_build_status: deprecated
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "原拟 ex_core/redis_idempotency/ 目录模块,但幂等是横切基础设施(D_SHARED),需求已由 MOD-INF-016 完全覆盖,不新增节点"
+      target_edges: []
+      note: "一问标准 q1挂:重复实现。depgraph 入边0/出边0/锚点0,零消费者"
+  description: "Redis-backed 订单幂等去重存储,防重复下单/断线重连重复"
+  capability: ""
+  problem_it_solves: "下单幂等性(INV-007),防重复扣减/重复创建"
+  trigger_signals:
+  - "MOD-INF-016 出现跨进程去重缺口且 SQLite 后端不足以支撑"
+  keywords: ["幂等", "idempotency", "redis", "去重", "INV-007"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "MOD-INF-016 SQLiteIdempotencyStore 出现跨进程缺口", check: "grep 确认 MOD-INF-016 覆盖", met: false, note: "MOD-INF-016 已 production,含 IdempotencyStore/TTL/状态机,对标 Stripe"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-INF-016 (shared/infra/idempotency.py)"], evidence: "IdempotencyStore/SQLiteIdempotencyStore/build_idempotency_key 已production;repository_interface INVARIANT save幂等;idempotency_key 已内联5处"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P3
+  created_at: '2026-08-05'
+  last_reviewed_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)"
+  source_section: "§D_EX_CORE四模块裁决"
+  original_id: "MOD-EX-004"
+  estimated_complexity: S
+  estimated_effort: ""
+  tech_notes: "幂等是横切基础设施(D_SHARED)非D_EX_CORE业务模块;未来若需Redis后端,应作MOD-INF-016的RedisIdempotencyStore增强,非新建域模块"
+  risks: ["硬新增会导致双真源:幂等逻辑两处维护;且放错域(D_EX_CORE而非D_SHARED)"]
+  alternatives: "维持 MOD-INF-016 + repository_interface save幂等。代价:无,已完整覆盖"
+  tags: ["重复功能", "rejected", "已实现组合", "防过度设计", "AI模式补全"]
+  search_terms: ["redis idempotency", "幂等存储", "order dedup", "MOD-EX-004"]
+  related_candidates: ["CAND-EX-004", "CAND-EX-005", "CAND-EX-006"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q1已实现(MOD-INF-016)。除非 shared/infra/idempotency 出现跨进程去重缺口需Redis后端,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-EX-004: 蓝图Implementer（rejected，四问②挂——自我指涉元模块无驱动）
+  # 来源: orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)
+  # ----------------------------------------------------------
+- id: CAND-EX-004
+  name: "蓝图Implementer / Blueprint Implementer"
+  aliases: ["blueprint_implementer", "MOD-EX-037", "蓝图实现器"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 41
+  sub_layer: "L2 执行核心-元工具"
+  panorama_position:
+    depgraph:
+      has_position: false
+      target_module_id: "MOD-EX-037 (已弃用 2026-08-05)"
+      target_build_status: deprecated
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "原拟 ex_core/blueprint_implementer.py,但'实现蓝图的模块'是自我指涉元概念,非执行业务模块,不新增节点"
+      target_edges: []
+      note: "depgraph 入边0/出边0/锚点0"
+  description: "从蓝图自动生成执行核心代码的元工具"
+  capability: ""
+  problem_it_solves: "(无具体业务问题——自我指涉元概念)"
+  trigger_signals: []
+  keywords: ["blueprint", "implementer", "代码生成", "元工具"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "无具体触发条件", check: "无", met: false, note: "依赖(OMS/引擎/路由)早已production,该模块却从未动工,证明无驱动力"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "无等价节点,但也无需求"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: rejected
+  status: rejected
+  priority: P3
+  created_at: '2026-08-05'
+  last_reviewed_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)"
+  source_section: "§D_EX_CORE四模块裁决"
+  original_id: "MOD-EX-037"
+  estimated_complexity: M
+  estimated_effort: ""
+  tech_notes: "自我指涉元概念(实现蓝图的模块),非执行业务模块,不属于D_EX_CORE业务域;AI模式补全产物"
+  risks: ["元模块循环依赖/职责模糊;无消费者永驻planned制造噪音"]
+  alternatives: "不实现。代价:无,无任何模块需要它"
+  tags: ["过度工程", "rejected", "自我指涉", "防过度设计", "AI模式补全"]
+  search_terms: ["blueprint implementer", "蓝图实现", "MOD-EX-037"]
+  related_candidates: ["CAND-EX-003", "CAND-EX-005", "CAND-EX-006"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q2无驱动(自我指涉元模块)。除非出现明确的'蓝图→代码'自动化需求且无现有工具,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-EX-005: 值对象模块（rejected，四问①挂——Pydantic已强制）
+  # 来源: orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)
+  # ----------------------------------------------------------
+- id: CAND-EX-005
+  name: "执行域值对象 / Execution Value Objects"
+  aliases: ["value_objects", "MOD-EX-051", "ex_core值对象"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 41
+  sub_layer: "L2 执行核心-DDD模式"
+  panorama_position:
+    depgraph:
+      has_position: false
+      target_module_id: "MOD-EX-051 (已弃用 2026-08-05)"
+      target_build_status: deprecated
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "原拟 ex_core/value_objects.py,但Pydantic V2已全局强制(KBG-0040),Order/Fill/Position已定义于shared.contracts,纯DDD仪式"
+      target_edges: []
+      note: "一问标准 q1挂:重复实现(已被Pydantic+shared.contracts覆盖)"
+  description: "执行域DDD值对象集合(OrderId/Quantity/Price等不可变对象)"
+  capability: ""
+  problem_it_solves: "(无——Pydantic BaseModel原生提供值对象语义)"
+  trigger_signals: []
+  keywords: ["value object", "值对象", "DDD", "immutable"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "无", check: "grep shared/contracts", met: false, note: "Order/Fill/PositionSnapshot 已为 Pydantic V2 BaseModel"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["Pydantic V2 BaseModel (KBG-0040)", "shared.contracts.{order,fill,position}"], evidence: "项目全局强制Pydantic V2;值对象语义原生支持,无需独立模块"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P3
+  created_at: '2026-08-05'
+  last_reviewed_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)"
+  source_section: "§D_EX_CORE四模块裁决"
+  original_id: "MOD-EX-051"
+  estimated_complexity: S
+  estimated_effort: ""
+  tech_notes: "Python+Pydantic栈原生支持值对象,独立value_objects.py是教科书DDD仪式;AI模式补全产物"
+  risks: ["硬新增会导致类型双真源:shared.contracts与value_objects.py两处定义"]
+  alternatives: "维持 shared.contracts Pydantic 模型。代价:无"
+  tags: ["过度工程", "rejected", "DDD仪式", "防过度设计", "AI模式补全"]
+  search_terms: ["value objects", "值对象", "MOD-EX-051", "ex_core值对象"]
+  related_candidates: ["CAND-EX-003", "CAND-EX-004", "CAND-EX-006"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q1已实现(Pydantic V2强制)。除非放弃Pydantic转纯dataclass,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-EX-006: 执行域工厂模块（rejected，四问①挂——aggregate_root_manager已承担）
+  # 来源: orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)
+  # ----------------------------------------------------------
+- id: CAND-EX-006
+  name: "执行域工厂 / Execution Factory"
+  aliases: ["factory", "MOD-EX-052", "ex_core工厂"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 41
+  sub_layer: "L2 执行核心-DDD模式"
+  panorama_position:
+    depgraph:
+      has_position: false
+      target_module_id: "MOD-EX-052 (已弃用 2026-08-05)"
+      target_build_status: deprecated
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "原拟 ex_core/factory.py,但aggregate_root_manager(MOD-EX-049,production)已承担Facade/构建入口,Python用__init__/classmethod构造"
+      target_edges: []
+      note: "一问标准 q1挂:重复实现(已被aggregate_root_manager覆盖)"
+  description: "执行域DDD工厂,创建复杂聚合根"
+  capability: ""
+  problem_it_solves: "(无——aggregate_root_manager已是Facade构建入口)"
+  trigger_signals: []
+  keywords: ["factory", "工厂", "DDD", "aggregate creation"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "无", check: "grep aggregate_root_manager", met: false, note: "MOD-EX-049 已production,整合FillHandler/PositionTracker/Repository"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-EX-049 (aggregate_root_manager.py)"], evidence: "aggregate_root_manager已承担Facade/构建入口('把订单仓储/成交处理/持仓跟踪拧成一股绳');Python用__init__/classmethod构造"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P3
+  created_at: '2026-08-05'
+  last_reviewed_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "orphan_module_checklist.md [C] D_EX_CORE四模块架构师裁决 (2026-08-05)"
+  source_section: "§D_EX_CORE四模块裁决"
+  original_id: "MOD-EX-052"
+  estimated_complexity: S
+  estimated_effort: ""
+  tech_notes: "Python无需独立Factory模块;aggregate_root_manager已服务Facade/构建;AI模式补全产物"
+  risks: ["硬新增会导致构建逻辑双真源:aggregate_root_manager与factory.py两处"]
+  alternatives: "维持 aggregate_root_manager。代价:无"
+  tags: ["过度工程", "rejected", "DDD仪式", "防过度设计", "AI模式补全"]
+  search_terms: ["factory", "工厂", "MOD-EX-052", "ex_core工厂"]
+  related_candidates: ["CAND-EX-003", "CAND-EX-004", "CAND-EX-005"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q1已实现(aggregate_root_manager)。除非aggregate_root_manager重构移除Facade职责,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-SIG-002: ML驱动信号合成（deferred，四问②挂，因子数不足）
+  # 来源: D_SIGNAL蓝图 §1.6 GAP-002
+  # ----------------------------------------------------------
+- id: CAND-SIG-002
+  name: "ML-driven Signal Synthesizer / ML驱动信号合成"
+  aliases: ["ML信号合成", "IC加权合成", "ml_signal_synthesizer"]
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 4
+  sub_layer: "synthesizer 合成器层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-SIG-002
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-SIG-001"]
+        downstream: []
+      insertion_description: "插入 D_SIGNAL synthesizer 区,扩展 SignalSynthesizerBase"
+      target_edges:
+      - {from: "MOD-SIG-001", to: "MOD-SIG-002", type: runtime, reason: "因子→ML合成→信号"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "多因子 → [ML加权合成] → 综合信号"
+      upstream_data: ["FactorScores", "IC序列"]
+      downstream_data: ["CompositeSignal"]
+      insertion_description: "在 D_SIGNAL 合成环节,替代当前IC加权占位"
+    decisiongraph:
+      has_position: true
+      target_layer: "L2"
+      target_track: "signal"
+      decision_frequency: daily
+      decision_path: "因子打分 → [ML权重学习] → 信号合成 → 选股"
+      insertion_description: "L2 信号决策层,ML权重学习"
+    blueprint:
+      has_position: true
+      target_ref: "10-D-SIGNAL-信号域.md §1.6 GAP-002, §4.2 ml_signal_synthesizer.py Phase ∞ 规划"
+      design_maturity: design
+  description: "ML驱动信号合成:用机器学习模型学习因子IC权重,替代当前IC加权占位实现"
+  capability: "C-012"
+  problem_it_solves: "因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系"
+  trigger_signals:
+  - "因子数量>50(当前不足,需D_FACTOR扩展)"
+  - "IC加权占位实现的信号质量不达标(IC<0.03)"
+  - "用户主动要求ML驱动选股"
+  keywords: ["ML合成", "IC加权", "信号合成", "机器学习", "因子权重"]
+  upstream_deps:
+  - {contract: "CTR-003", from_domain: D_FACTOR, dep_type: H, availability: available, note: "因子打分"}
+  downstream_consumers:
+  - {consumer: "D_PF_CORE", contract: "CompositeSignal", note: "组合构建消费"}
+  contracts_to_produce:
+  - {id: "CTR-008(共享)", name: "CompositeSignal"}
+  contracts_to_consume:
+  - {id: "CTR-003", note: "因子打分"}
+  prerequisites:
+  - {condition: "因子数>50", check: "D_FACTOR因子清单", met: false, note: "当前因子不足"}
+  - {condition: "D_ML_TRAIN训练管线就绪", check: "ML_TRAIN模块", met: false}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["MOD-SIG-001"], evidence: "当前DefaultSignalAggregator仅IC加权占位,grep无ml_signal_synthesizer"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_signal/blueprint.md"
+  source_section: "§1.6 GAP-002, §4.2 ml_signal_synthesizer.py Phase ∞ 规划"
+  original_id: "GAP-002"
+  estimated_complexity: L
+  estimated_effort: "20人天"
+  tech_notes: "需D_ML_TRAIN训练管线;模型可选LightGBM/线性回归;注意过拟合(需SIM-18过拟合检测)"
+  risks: ["过拟合风险(需回测验证)", "因子数不足时ML权重不稳定"]
+  alternatives: "IC加权占位(当前实现)。代价:无法捕捉因子非线性关系"
+  tags: ["扩展", "ML", "待需求驱动", "因子驱动", "P2规划"]
+  search_terms: ["ml signal", "ml合成", "ic weighting", "machine learning signal"]
+  related_candidates: ["CAND-FAC-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "首次登记,待因子数>50或IC加权信号质量不达标时重新评估"
+  # ----------------------------------------------------------
+  # CAND-FAC-001: FactorCache（deferred，四问②挂，因子数不足）
+  # 来源: D_FACTOR蓝图 §1.6 GAP-L02-001
+  # ----------------------------------------------------------
+- id: CAND-FAC-001
+  name: "Factor Cache / 因子缓存"
+  aliases: ["因子缓存", "FactorCache", "因子预计算"]
+  domain: D_FACTOR
+  domain_status: active
+  domain_node_count: 86
+  sub_layer: "cache 缓存层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-FAC-001
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-FAC-003"]
+        downstream: ["MOD-FAC-002"]
+      insertion_description: "插入 D_FACTOR cache 层,因子计算与消费之间"
+      target_edges:
+      - {from: "MOD-FAC-003", to: "MOD-FAC-001", type: runtime, reason: "因子计算结果→缓存"}
+      - {from: "MOD-FAC-001", to: "MOD-FAC-002", type: runtime, reason: "缓存→因子消费"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "因子计算 → [缓存] → 因子消费(命中则跳过重算)"
+      upstream_data: ["FactorResult"]
+      downstream_data: ["CachedFactor"]
+      insertion_description: "在 D_FACTOR 数据流中段,计算与消费之间"
+    decisiongraph:
+      has_position: true
+      target_layer: "L1"
+      target_track: "factor"
+      decision_frequency: daily
+      decision_path: "因子请求 → [缓存命中判断] → 命中返回/未命中计算"
+      insertion_description: "L1 因子层缓存决策"
+    blueprint:
+      has_position: true
+      target_ref: "02-D-FACTOR-因子域.md §1.6 GAP-L02-001, §4.2 factor_cache.py Phase 3"
+      design_maturity: design
+  description: "因子缓存:缓存因子计算结果,避免重复计算,降低计算延迟"
+  capability: "C-006"
+  problem_it_solves: "因子数量增长后,每日全量重算导致计算延迟>50ms"
+  trigger_signals:
+  - "因子数量>10(当前不足)"
+  - "因子计算延迟>50ms"
+  - "回测频繁调用相同因子"
+  keywords: ["因子缓存", "cache", "预计算", "性能优化", "FactorCache"]
+  upstream_deps: []
+  downstream_consumers:
+  - {consumer: "D_SIGNAL", contract: "FactorResult", note: "信号合成消费因子"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无factor_cache,当前每次重算"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_factor/blueprint.md"
+  source_section: "§1.6 GAP-L02-001, §4.2 factor_cache.py Phase 3 待施工"
+  original_id: "GAP-L02-001"
+  estimated_complexity: S
+  estimated_effort: "5人天"
+  tech_notes: "LRU缓存+磁盘持久化;注意因子时效性(T+1数据当日有效)"
+  risks: ["缓存失效策略不当导致脏数据"]
+  alternatives: "每次重算(当前实现)。代价:因子多时延迟增加"
+  tags: ["扩展", "性能", "待需求驱动", "缓存", "P2规划"]
+  search_terms: ["factor cache", "因子缓存", "预计算", "factor precompute"]
+  related_candidates: ["CAND-SIG-002"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "首次登记,待因子>10或计算延迟>50ms时重新评估"
+  # ----------------------------------------------------------
+  # CAND-SIM-002: 实验队列调度（deferred，四问②挂，并发实验不足）
+  # 来源: D_SIMULATION蓝图 §1.6 GAP-002
+  # ----------------------------------------------------------
+- id: CAND-SIM-002
+  name: "Experiment Queue Scheduler / 实验队列调度"
+  aliases: ["实验队列", "并发实验调度", "experiment_scheduler"]
+  domain: D_SIMULATION
+  domain_status: active
+  domain_node_count: 10
+  sub_layer: "scheduler 调度层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-SIM-002
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-SIM-001"]
+        downstream: []
+      insertion_description: "插入 D_SIMULATION scheduler 区,实验管线之前"
+      target_edges:
+      - {from: "MOD-SIM-001", to: "MOD-SIM-002", type: runtime, reason: "实验请求→队列调度→管线"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "实验请求 → [优先级队列] → 并发执行 → 结果归集"
+      upstream_data: ["ExperimentConfig批次"]
+      downstream_data: ["ScheduledExperiment"]
+      insertion_description: "在 D_SIMULATION 数据流入口,管线之前"
+    decisiongraph:
+      has_position: true
+      target_layer: "L1"
+      target_track: "simulation"
+      decision_frequency: on_demand
+      decision_path: "实验请求 → [优先级排序] → 资源分配 → 调度执行"
+      insertion_description: "L1 实验层调度决策"
+    blueprint:
+      has_position: true
+      target_ref: "13-D-SIMULATION-仿真域.md §1.6 GAP-002, §4.2 v3.0.0 待施工"
+      design_maturity: design
+  description: "实验队列调度:支持实验优先级排序+并发执行调度,当前为单次顺序执行"
+  capability: "C-015"
+  problem_it_solves: "并发实验>10时,顺序执行导致等待时间长"
+  trigger_signals:
+  - "并发实验数>10"
+  - "实验等待时间>1小时"
+  - "用户要求实验优先级排序"
+  keywords: ["实验队列", "调度", "并发实验", "优先级", "scheduler"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无experiment_scheduler,当前顺序执行"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_simulation/blueprint.md"
+  source_section: "§1.6 GAP-002, §4.2 v3.0.0 待施工"
+  original_id: "GAP-002"
+  estimated_complexity: M
+  estimated_effort: "8人天"
+  tech_notes: "优先级队列+资源池;注意实验间资源隔离(GPU/CPU)"
+  risks: ["资源竞争死锁", "长实验阻塞短实验"]
+  alternatives: "顺序执行(当前实现)。代价:并发实验>10时等待时间长"
+  tags: ["扩展", "性能", "待需求驱动", "并发", "P2规划"]
+  search_terms: ["experiment queue", "实验队列", "并发调度", "experiment scheduler"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "首次登记,待并发实验>10时重新评估"
+  # ----------------------------------------------------------
+  # CAND-BT-001: 回测v2.0辅助模块（deferred，四问②挂，按需开发）
+  # 来源: D_BACKTEST蓝图 §1.6 v2.0备忘
+  # ----------------------------------------------------------
+- id: CAND-BT-001
+  name: "Backtest v2.0 Auxiliary Modules / 回测v2.0辅助模块"
+  aliases: ["回测辅助", "scheduler/decay_monitor/report_generator/cache_manager", "bt辅助模块"]
+  domain: D_BACKTEST
+  domain_status: active
+  domain_node_count: 27
+  sub_layer: "辅助模块层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-BT-009
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-BT-001"]
+        downstream: []
+      insertion_description: "插入 D_BACKTEST 辅助区,核心引擎之后"
+      target_edges:
+      - {from: "MOD-BT-001", to: "MOD-BT-009", type: runtime, reason: "回测引擎→辅助模块"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "回测结果 → [调度/衰减监控/报告/缓存] → 增强输出"
+      upstream_data: ["BacktestResult"]
+      downstream_data: ["BacktestReport", "DecayMetrics"]
+      insertion_description: "在 D_BACKTEST 数据流后段,结果产出之后"
+    decisiongraph:
+      has_position: true
+      target_layer: "L3"
+      target_track: "backtest"
+      decision_frequency: on_demand
+      decision_path: "回测完成 → [辅助模块调度] → 报告/监控输出"
+      insertion_description: "L3 回测层辅助决策"
+    blueprint:
+      has_position: true
+      target_ref: "12-D-BACKTEST-回测域.md §1.6 v2.0备忘, 按需开发"
+      design_maturity: design
+  description: "回测v2.0辅助模块:scheduler(调度)+decay_monitor(衰减监控)+report_generator(报告)+cache_manager(缓存)4个辅助模块"
+  capability: "C-014"
+  problem_it_solves: "回测需批量调度/衰减监控/自动报告/结果缓存时,无对应辅助模块"
+  trigger_signals:
+  - "回测需批量调度多策略(当前单策略)"
+  - "需自动生成回测报告(当前手动)"
+  - "因子/信号衰减需监控"
+  - "回测结果需缓存避免重算"
+  keywords: ["回测辅助", "scheduler", "decay", "report", "cache", "v2.0"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无scheduler/decay_monitor/report_generator/cache_manager in backtest"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_backtest/blueprint.md"
+  source_section: "§1.6 v2.0辅助模块未实现,低优先级备忘"
+  original_id: "v2.0-aux"
+  estimated_complexity: M
+  estimated_effort: "10人天(4模块)"
+  tech_notes: "4个独立辅助模块;可独立实现,按需启用"
+  risks: ["辅助模块与核心引擎耦合需控制"]
+  alternatives: "当前手动单策略回测。代价:无批量调度/自动报告/衰减监控"
+  tags: ["扩展", "辅助", "待需求驱动", "v2.0备忘", "P2规划"]
+  search_terms: ["backtest auxiliary", "回测辅助", "scheduler", "decay monitor", "report generator"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "首次登记,待回测需批量调度/自动报告时重新评估"
+  # ----------------------------------------------------------
+  # CAND-DAT-001: DataFrame→Pydantic迁移（deferred，四问②挂，dataclass够用）
+  # 来源: D_DATA蓝图 §1.6 GAP-L00-003
+  # ----------------------------------------------------------
+- id: CAND-DAT-001
+  name: "DataFrame to Pydantic Migration / DataFrame迁移Pydantic"
+  aliases: ["Pydantic迁移", "DataFrame迁移", "KBG-0040迁移"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 175
+  sub_layer: "models 数据模型层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-DAT-001
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-DAT-002"]
+        downstream: ["MOD-DAT-003"]
+      insertion_description: "重构 D_DATA models 层,DataFrame→Pydantic BaseModel"
+      target_edges:
+      - {from: "MOD-DAT-002", to: "MOD-DAT-001", type: refactor, reason: "数据模型迁移"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "原始数据 → [Pydantic校验] → 标准化数据"
+      upstream_data: ["RawDataFrame"]
+      downstream_data: ["ValidatedPydanticModel"]
+      insertion_description: "在 D_DATA 数据流入口,校验环节"
+    decisiongraph:
+      has_position: true
+      target_layer: "L1"
+      target_track: "data"
+      decision_frequency: daily
+      decision_path: "数据获取 → [Pydantic校验] → 标准化存储"
+      insertion_description: "L1 数据层校验决策"
+    blueprint:
+      has_position: true
+      target_ref: "01-D-DATA-数据域.md §1.6 GAP-L00-003, §4.2 v2.0.0 待施工"
+      design_maturity: design
+  description: "DataFrame→Pydantic迁移:将数据层输出从pandas DataFrame迁移到Pydantic V2 BaseModel,满足KBG-0040规范"
+  capability: "C-001"
+  problem_it_solves: "DataFrame无运行时类型校验,下游D_FACTOR消费端要求Pydantic强类型契约"
+  trigger_signals:
+  - "D_FACTOR消费端明确要求Pydantic(KBG-0040强制)"
+  - "DataFrame导致下游类型错误频发"
+  - "数据契约需严格校验"
+  keywords: ["Pydantic", "DataFrame迁移", "KBG-0040", "数据模型", "类型校验"]
+  upstream_deps: []
+  downstream_consumers:
+  - {consumer: "D_FACTOR", contract: "DataModel", note: "因子消费端要求Pydantic"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "D_FACTOR消费端确认要求Pydantic", check: "factor_base.py类型注解", met: false}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "D_DATA当前用DataFrame+dataclass,grep无Pydantic BaseModel输出"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_data/blueprint.md"
+  source_section: "§1.6 GAP-L00-003, §4.2 v2.0.0 待施工"
+  original_id: "GAP-L00-003"
+  estimated_complexity: L
+  estimated_effort: "15人天"
+  tech_notes: "全量迁移DataFrame→Pydantic;注意性能(Pydantic V2比DataFrame慢);需回归测试"
+  risks: ["性能回退(Pydantic校验开销)", "迁移范围大可能引入bug"]
+  alternatives: "DataFrame+dataclass(当前实现)。代价:无运行时类型校验,下游类型错误难发现"
+  tags: ["重构", "迁移", "待需求驱动", "KBG-0040", "P2规划"]
+  search_terms: ["pydantic migration", "dataframe迁移", "KBG-0040", "数据模型迁移"]
+  related_candidates: ["CAND-FAC-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "首次登记,待D_FACTOR强制要求Pydantic或KBG-0040强制时重新评估"
+  # ----------------------------------------------------------
+  # CAND-INT-001: ONNX推理优化（deferred，四问②挂，PyTorch够用）
+  # 来源: D_INTEGRATION蓝图 §3
+  # ----------------------------------------------------------
+- id: CAND-INT-001
+  name: "ONNX Inference Optimization / ONNX推理优化"
+  aliases: ["ONNX后端", "推理加速", "onnx_runtime"]
+  domain: D_INTEGRATION
+  domain_status: active
+  domain_node_count: 71
+  sub_layer: "inference 推理层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-INT-001
+      target_build_status: planned
+      target_neighbors:
+        upstream: ["MOD-INT-002"]
+        downstream: []
+      insertion_description: "重构 D_INTEGRATION inference 后端,PyTorch→ONNX"
+      target_edges:
+      - {from: "MOD-INT-002", to: "MOD-INT-001", type: refactor, reason: "推理后端切换"}
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "模型输入 → [ONNX推理] → 预测输出"
+      upstream_data: ["ModelInput", "ONNXModel"]
+      downstream_data: ["PredictionResult"]
+      insertion_description: "在 D_INTEGRATION 推理环节,替代PyTorch后端"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      target_track: "integration"
+      decision_frequency: intraday_realtime
+      decision_path: "模型输入 → [ONNX推理] → 预测"
+      insertion_description: "L6 集成层推理决策"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_integration/blueprint.md §3 ONNX推理优化 待施工"
+      design_maturity: design
+  description: "ONNX推理优化:将ML模型推理后端从PyTorch切换到ONNX Runtime,实现2-3x加速"
+  capability: "C-030"
+  problem_it_solves: "PyTorch推理延迟高,实盘盘中推理成为瓶颈"
+  trigger_signals:
+  - "PyTorch推理延迟>50ms(盘中)"
+  - "模型推理成为实盘性能瓶颈"
+  - "需部署到资源受限环境(ONNX更轻量)"
+  keywords: ["ONNX", "推理优化", "加速", "onnx_runtime", "推理后端"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "ML模型已训练并稳定", check: "D_ML_TRAIN模型产出", met: false, note: "当前无稳定ML模型"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "grep无onnx_runtime,当前PyTorch后端"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-07-31'
+  last_reviewed_at: '2026-07-31'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_integration/blueprint.md"
+  source_section: "§3 ONNX推理优化 待施工"
+  original_id: "INT-onnx"
+  estimated_complexity: M
+  estimated_effort: "8人天"
+  tech_notes: "PyTorch→ONNX导出;onnxruntime推理;注意算子兼容性"
+  risks: ["ONNX算子不支持某些PyTorch操作", "精度损失需验证"]
+  alternatives: "PyTorch后端(当前实现)。代价:推理延迟较高"
+  tags: ["扩展", "性能", "待需求驱动", "ONNX", "P2规划"]
+  search_terms: ["onnx", "推理优化", "inference optimization", "onnx runtime"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-07-31'
+  review_frequency: yearly
+  last_review_outcome: "首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-PFALLOC-001: Min-Variance & Risk-Parity 再平衡模式（deferred，形态=补方法非建模块）
+  # 来源: 实盘缺口挖掘 P1 + 源码实证 default_equity_strategy.py L57-127
+  # 修正记录: 原 P1 登记为独立策略文件节点 MOD-PF-004/MOD-PF-005（min_variance_strategy.py/
+  #   risk_parity_strategy.py），经源码验证为错误形态——min_variance/risk_parity 是
+  #   DefaultEquityStrategy.RebalanceMode 枚举值(L60-61)，实现应是 _alloc 方法(L151/162同级)，
+  #   当前 else 分支 fallback 到 equal_weight(L127)。两错误节点已软删除(deprecated)，
+  #   gap 改录候选库（补方法到既有 production 节点，不建新模块）。
+  # ----------------------------------------------------------
+- id: CAND-PFALLOC-001
+  name: "Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式"
+  aliases: ["min_variance", "risk_parity", "最小方差", "风险平价", "RebalanceMode", "MIN_VARIANCE", "RISK_PARITY", "_min_variance_alloc", "_risk_parity_alloc"]
+  domain: D_PF_ALLOC
+  domain_status: active
+  domain_node_count: 5
+  sub_layer: "组合分配 DefaultEquityStrategy 再平衡逻辑"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-L05-001
+        # 2026-08-03 架构事实: node_id 是 depgraph DB 自增主键, 每次 generate_project_depgraph
+        # 或 apply_depgraph 触发的 regenerate 会重建 nodes_metadata 并重新分配 node_id,
+        # 因此 node_id 易变(本会话内已漂移 7714457→8315813→8339715), 不可作长期引用键.
+        # 定位节点 MUST 以 target_node_path 为准(path 稳定), target_node_id 仅供参考且可能过期.
+      target_node_id: 7714457
+      target_node_path: src/zephyr/pf_core/default_equity_strategy.py
+      target_build_status: production
+      target_neighbors:
+        upstream: []
+        downstream: ["D_EXECUTION_CORE (CTR-004 Order)"]
+      insertion_description: "不建新节点——在既有 default_equity_strategy.py 的 DefaultEquityStrategy 类内补 _min_variance_alloc()/_risk_parity_alloc() 方法，与 _equal_weight_alloc()(L151)/_signal_weight_alloc()(L162) 同级；并在 L122-127 的 if/elif 补 MIN_VARIANCE/RISK_PARITY 分支(当前 else fallback 到 equal_weight)"
+      target_edges: []
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "SynthesizedSignal + RiskLimits → [DefaultEquityStrategy.generate_target_weights 按 RebalanceMode 分发] → 目标权重 dict → CTR-004 Order"
+      upstream_data: ["CTR-P1-015 SynthesizedSignal", "CTR-003 RiskLimits"]
+      downstream_data: ["CTR-004 Order (目标权重)"]
+      insertion_description: "在 D_PF_ALLOC 权重计算环节,补两条权重计算分支"
+    decisiongraph:
+      has_position: true
+      target_layer: "L5"
+      target_track: "portfolio"
+      decision_frequency: end_of_day
+      decision_path: "信号合成 → [RebalanceMode 分发: min_variance/risk_parity] → 目标权重 → 订单"
+      insertion_description: "L5 组合层权重决策,补两种分配算法分支"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_portfolio_core/blueprint.md §4.2 RebalanceMode 枚举(L289) + §4.1 generate_target_weights(L267)"
+      design_maturity: design
+  description: "在 DefaultEquityStrategy 内实现 RebalanceMode.MIN_VARIANCE 与 RISK_PARITY 两种权重分配算法:最小方差(组合方差最小化,需协方差矩阵+scipy.optimize)与风险平价(各资产风险贡献均衡,迭代求解)。当前枚举值已定义但 _alloc 方法缺失,else 分支 fallback 到 equal_weight。"
+  capability: "C-024"
+  problem_it_solves: "实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化分配方法——当前 min_variance/risk_parity 模式静默 fallback 到 equal_weight,实盘分配与预期不符"
+  trigger_signals:
+  - "实盘需启用 min_variance/risk_parity 分配模式"
+  - "回测对比需 min-variance/risk-parity 基准"
+  - "RebalanceMode 枚举值被实际调用且非 fallback"
+  keywords: ["最小方差", "风险平价", "min_variance", "risk_parity", "RebalanceMode", "组合分配", "权重优化"]
+  upstream_deps:
+  - {contract: "CTR-P1-015", from_domain: D_SIGNAL, dep_type: H, availability: available, note: "SynthesizedSignal 输入"}
+  - {contract: "CTR-003", from_domain: D_RISK, dep_type: H, availability: available, note: "RiskLimits 风控约束"}
+  downstream_consumers:
+  - {consumer: "MOD-L06-001 (ExecutionEngine)", contract: "CTR-004 Order", note: "目标权重→委托"}
+  contracts_to_produce: []
+  contracts_to_consume:
+  - {id: "CTR-P1-015", note: "SynthesizedSignal"}
+  - {id: "CTR-003", note: "RiskLimits"}
+  prerequisites:
+  - {condition: "协方差矩阵计算可用(历史收益率)", check: "D_DATA 历史日线数据", met: true, note: "c1_market 有日线"}
+  - {condition: "scipy.optimize 可用", check: "依赖 scipy", met: true, note: "scipy 已在依赖"}
+  - {condition: "DefaultEquityStrategy.generate_target_weights 分发逻辑稳定", check: "L122-127 if/elif", met: true}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["7714457 (default_equity_strategy.py)"], evidence: "枚举值已定义(L60-61)但 _min_variance_alloc/_risk_parity_alloc 方法不存在,L127 else fallback 到 equal_weight——部分实现(占位),实际未生效"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-08-01'
+  last_reviewed_at: '2026-08-01'
+  promoted_to: ""
+  source_draft: "实盘缺口挖掘 P1 (2026-07-31) + 源码实证 default_equity_strategy.py"
+  source_section: "L57-127 RebalanceMode 枚举与 generate_target_weights 分发"
+  original_id: "PFALLOC-rebalance-modes"
+  estimated_complexity: M
+  estimated_effort: "5人天"
+  tech_notes: "实现:1) _min_variance_alloc(): w=argmin wᵀΣw s.t. Σw=1, scipy.optimize.minimize(SLSQP);2) _risk_parity_alloc(): 迭代使各资产风险贡献均衡;3) 在 generate_target_weights L122-127 补 elif MIN_VARIANCE/RISK_PARITY 分支移除 else fallback;4) 单测覆盖。注意:不建新文件/新节点,补方法到既有 DefaultEquityStrategy 类(节点 7714457)"
+  risks: ["协方差矩阵估计噪声大需 shrinkage", "风险平价迭代不收敛需 fallback", "与 signal_weight 模式语义边界需厘清"]
+  alternatives: "维持 equal_weight/signal_weight。代价:无法执行 min-variance/risk-parity 分配,实盘分配策略受限"
+  tags: ["实盘缺口", "P1", "补方法非建模块", "组合分配", "已修正错误登记", "deferred"]
+  search_terms: ["min variance", "risk parity", "最小方差", "风险平价", "rebalance mode", "default equity strategy"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-30'
+  review_frequency: quarterly
+  last_review_outcome: "首次登记(修正错误登记后)。原误登记为独立策略文件节点 MOD-PF-004/MOD-PF-005,源码验证为枚举方法级缺口后软删除节点并改录候选。待实盘需启用 min-variance/risk-parity 分配时晋升为 DefaultEquityStrategy 代码补丁(非新 depgraph 节点)"
+
+  # ----------------------------------------------------------
+  # CAND-FAC-002: FactorMeta Pydantic 迁移（deferred，形态=既有文件 refactor 非建模块）
+  # 来源: 实盘缺口挖掘 P1 + 源码实证 factor_base.py L49-50
+  # ----------------------------------------------------------
+- id: CAND-FAC-002
+  name: "FactorMeta Pydantic Migration / FactorMeta Pydantic迁移"
+  aliases: ["FactorMeta", "factor_meta", "Pydantic迁移", "KBG-0040", "@dataclass→BaseModel", "factor_base重构"]
+  domain: D_FACTOR
+  domain_status: active
+  domain_node_count: 37
+  sub_layer: "因子元数据 FactorMeta 数据模型"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-L02-001
+      target_node_id: 7712833
+      target_node_path: src/zephyr/factor/factor_base.py
+      target_build_status: production
+      target_neighbors:
+        upstream: []
+        downstream: ["D_SIGNAL (FactorSignal 消费 FactorMeta)"]
+      insertion_description: "不建新节点——在既有 factor_base.py 内将 FactorMeta 从 @dataclass(frozen=True)(L49-50) 重构为 Pydantic V2 BaseModel,符合 KBG-0040 强制约束"
+      target_edges: []
+    dataflowgraph:
+      has_position: true
+      target_node_type: transform
+      data_flow_path: "因子定义 → [FactorMeta @dataclass→BaseModel] → 因子元数据序列化/校验 → D_SIGNAL 消费"
+      upstream_data: ["因子定义参数"]
+      downstream_data: ["FactorMeta (Pydantic BaseModel)"]
+      insertion_description: "在 D_FACTOR 因子元数据环节,数据模型格式迁移"
+    decisiongraph:
+      has_position: true
+      target_layer: "L2"
+      target_track: "factor"
+      decision_frequency: n_a
+      decision_path: "N/A — 数据模型 refactor,非决策流"
+      insertion_description: "L2 因子层元数据结构(非决策)"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_factor/blueprint.md FactorMeta 数据模型 (factor_base.py L49-50)"
+      design_maturity: design
+  description: "将 factor_base.py 的 FactorMeta 从 @dataclass(frozen=True)(L49-50) 迁移到 Pydantic V2 BaseModel,符合 KBG-0040(强制 Pydantic V2 BaseModel,禁止 @dataclass)。迁移含:字段类型注解、frozen 等价配置(frozen=True via model_config)、序列化/校验行为对齐、下游 FactorSignal 消费兼容性验证。"
+  capability: "C-012"
+  problem_it_solves: "FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统其余 Pydantic 数据模型不一致,序列化/校验行为不统一"
+  trigger_signals:
+  - "KBG-0040 Pydantic 强制门禁启用(当前君子协定)"
+  - "FactorMeta 序列化/校验出现 @dataclass 与 Pydantic 行为差异"
+  - "下游 FactorSignal 消费需 Pydantic 校验能力"
+  keywords: ["FactorMeta", "Pydantic", "dataclass", "KBG-0040", "迁移", "factor_base", "数据模型"]
+  upstream_deps: []
+  downstream_consumers:
+  - {consumer: "D_SIGNAL (FactorSignal)", contract: "FactorMeta", note: "信号消费因子元数据"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "KBG-0040 强制启用或 FactorMeta 序列化出现兼容问题", check: "门禁状态", met: false, note: "当前 KBG-0040 为君子协定"}
+  - {condition: "下游 FactorSignal 消费方对 @dataclass→BaseModel 兼容性验证", check: "FactorSignal 单测", met: false}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["7712833 (factor_base.py)"], evidence: "factor_base.py L49-50 @dataclass class FactorMeta,未迁移 Pydantic;grep 无 BaseModel"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-08-01'
+  last_reviewed_at: '2026-08-01'
+  promoted_to: ""
+  source_draft: "实盘缺口挖掘 P1 (2026-07-31) + 源码实证 factor_base.py"
+  source_section: "L49-50 @dataclass class FactorMeta"
+  original_id: "FAC-factormeta-pydantic"
+  estimated_complexity: S
+  estimated_effort: "2人天"
+  tech_notes: "实现:1) FactorMeta 从 @dataclass(frozen=True)→Pydantic BaseModel,model_config=frozen;2) 字段类型注解对齐;3) 验证序列化(dict()/json)与 @dataclass asdict 行为一致;4) 下游 FactorSignal 消费兼容单测;5) 不建新文件/新节点,refactor 既有 factor_base.py(节点 7712833)"
+  risks: ["@dataclass asdict 与 Pydantic model_dump 序列化差异", "frozen 行为需 model_config 配置", "下游 FactorSignal 隐式依赖 dataclass 行为"]
+  alternatives: "维持 @dataclass。代价:违反 KBG-0040,与系统 Pydantic 统一性不一致"
+  tags: ["实盘缺口", "P1", "refactor非建模块", "数据模型", "KBG-0040", "deferred"]
+  search_terms: ["factormeta", "pydantic migration", "dataclass to basemodel", "kbg-0040", "factor base"]
+  related_candidates: ["CAND-FAC-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-30'
+  review_frequency: quarterly
+  last_review_outcome: "首次登记。待 KBG-0040 强制启用或 FactorMeta 序列化出现兼容问题时晋升为 factor_base.py refactor 补丁(非新 depgraph 节点)"
+- id: CAND-RISK001-001
+  name: "MOD-RISK-001 drawdown_tracker(重复陈旧登记)"
+  aliases: ["drawdown_tracker目录节点", "MOD-RISK-001"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 8
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7445494"}
+    dataflowgraph: {has_position: false, note: "陈旧登记,无数据流位置"}
+    decisiongraph: {has_position: false, note: "陈旧登记,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,真源蓝图在MOD-RK-011"}
+  description: "depgraph中blueprint_id=MOD-RISK-001、path=src/zephyr/risk/drawdown_tracker/(目录形式)的陈旧节点,与正确的MOD-RK-011(core/drawdown_tracker.py)重复"
+  capability: ""
+  problem_it_solves: "(已解决)drawdown_tracker回撤追踪已由MOD-RK-011(节点7855094 stable)正确承担"
+  trigger_signals: []
+  keywords: ["drawdown_tracker", "MOD-RISK-001", "重复陈旧", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: ["POS-001(已重定向→risk_limits)", "EX-035(已重定向→risk_validator)"]
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-011(节点7855094)"], evidence: "drawdown_tracker已由core/drawdown_tracker.py(MATURITY production)实现,depgraph节点7855094 stable"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-02'
+  promoted_to: ""
+  source_draft: "docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md"
+  source_section: "全文档(MOD-RK-011定义)"
+  original_id: "MOD-RISK-001"
+  estimated_complexity: ""
+  tech_notes: "双源对比:设计文档(drawdown_tracker=MOD-RK-011,65_d_risk.md) vs depgraph(节点7445494 blueprint_id=MOD-RISK-001+path=目录形式均错误,节点7855094 MOD-RK-011 stable为正确登记).POS-001重定向→risk_limits(7914542),EX-035重定向→risk_validator(7914544 KillSwitch状态管理核心).软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production)"
+  tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "blueprint_id错误"]
+  search_terms: ["mod-risk-001", "drawdown_tracker目录", "重复陈旧节点"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-02'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认重复陈旧登记。真源drawdown_tracker=MOD-RK-011(节点7855094).除非MOD-RK-011出现重大缺口,否则不再评估MOD-RISK-001"
+
+  # ----------------------------------------------------------
+  # CAND-RSK011-001: MOD-RSK-011 drawdown_realtime_tracker 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-02 | 与 CAND-RISK001-001 同类(第3个 drawdown 重复节点)
+  # ----------------------------------------------------------
+- id: CAND-RSK011-001
+  name: "MOD-RSK-011 drawdown_realtime_tracker(重复幽灵节点)"
+  aliases: ["MOD-RSK-011", "drawdown_realtime_tracker"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 8
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7741060"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,真源蓝图在MOD-RK-011(docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md)"}
+  description: "depgraph中blueprint_id=MOD-RSK-011、path=src/zephyr/risk/drawdown_realtime_tracker.py的设计态节点,该文件不存在(幽灵),与正确的MOD-RK-011(core/drawdown_tracker.py)重复。前缀RSK非规范RK。"
+  capability: "C-032"
+  problem_it_solves: "(已解决)回撤实时追踪已由MOD-RK-011(节点7855094 stable+production)正确承担,20个单元测试通过"
+  trigger_signals: []
+  keywords: ["drawdown", "realtime_tracker", "MOD-RSK-011", "重复幽灵", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-011(节点7855094)"], evidence: "drawdown_tracker已由core/drawdown_tracker.py(MATURITY production)实现,depgraph节点7855094 stable+production,20测试通过(tests/risk/test_drawdown_tracker.py)"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-02'
+  promoted_to: ""
+  source_draft: "D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md"
+  source_section: "§1 RK-11 Drawdown Real-Time Tracker(设计文档只定义一个回撤追踪器)"
+  original_id: "MOD-RSK-011"
+  estimated_complexity: ""
+  tech_notes: "双源对比:设计文档(11-D-RISK-风控域.md §1只定义RK-11一个回撤追踪器) vs depgraph(MOD-RK-011节点7855094 stable+production已实现同功能;MOD-RSK-011节点7741060 path=src/zephyr/risk/drawdown_realtime_tracker.py文件不存在=幽灵,前缀RSK非规范RK,无blueprint无代码)。此为第3个drawdown重复节点(前两个:MOD-RK-011=正确实现,MOD-RISK-001=目录形式陈旧已rejected见CAND-RISK001-001)。软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production,20测试通过)"
+  tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "前缀错误"]
+  search_terms: ["mod-rsk-011", "drawdown_realtime_tracker", "重复幽灵节点"]
+  related_candidates: ["CAND-RISK001-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-02'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认重复幽灵节点。真源drawdown_tracker=MOD-RK-011(节点7855094).与CAND-RISK001-001同类(第3个drawdown重复),除非MOD-RK-011出现重大缺口,否则不再评估MOD-RSK-011"
+
+  # ==========================================================
+  # 弃用流程第②步批量补登（2026-08-04，孤儿模块排查 [B] 处置）
+  # 来源: orphan_module_checklist.md [B] deprecated 弃用（9 个）
+  # 已完成第①步(apply_depgraph.py 软删除 build_status→deprecated)的 9 个节点中，
+  # MOD-RISK-001/MOD-RSK-011 已有 rejected 条目（见上 CAND-RISK001-001/CAND-RSK011-001），
+  # 以下补登其余 7 个的 rejected 条目（防未来误重新设计）。
+  # node_id 为查询时快照，可能漂移；稳定引用以 path/blueprint_id 为准。
+  # ==========================================================
+
+  # ----------------------------------------------------------
+  # CAND-EX015-001: MOD-EX-015 execution_report 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-04 | execution_report 已由 MOD-INF-016 承接
+  # ----------------------------------------------------------
+- id: CAND-EX015-001
+  name: "MOD-EX-015 execution_report(重复幽灵节点)"
+  aliases: ["MOD-EX-015", "execution_report", "执行报告"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 17
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7678370,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-015/不存在"}
+  description: "depgraph中blueprint_id=MOD-EX-015、path=src/zephyr/ex_core/execution_report.py的设计态节点,该文件不存在(幽灵),execution_report已由MOD-INF-016(trading_contracts/execution/execution_report.py)实现"
+  capability: ""
+  problem_it_solves: "(已解决)执行报告已由MOD-INF-016正确承接,3处实现(trading/shared/contracts)"
+  trigger_signals: []
+  keywords: ["execution_report", "MOD-EX-015", "重复幽灵", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-INF-016(trading_contracts/execution/execution_report.py,节点8616268 stable)"], evidence: "execution_report已由MOD-INF-016实现,3处:trading/trading_contracts/execution/execution_report.py(stable)+shared/contracts/execution/execution_report.py(generated)+shared/contracts/execution_report.py(generated)"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7678370(path=src/zephyr/ex_core/execution_report.py)"
+  source_section: "孤儿模块排查[B]"
+  original_id: "MOD-EX-015"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点7678370 blueprint_id=MOD-EX-015 path=src/zephyr/ex_core/execution_report.py文件不存在=幽灵) vs depgraph正确实现(MOD-INF-016 节点8616268 src/zephyr/trading/trading_contracts/execution/execution_report.py stable).execution_report应在trading/shared contracts层,非ex_core独立模块.软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-INF-016(节点8616268,src/zephyr/trading/trading_contracts/execution/execution_report.py,stable)"
+  tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点"]
+  search_terms: ["mod-ex-015", "execution_report", "执行报告幽灵节点"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认重复幽灵节点。真源execution_report=MOD-INF-016(节点8616268 trading_contracts/execution/execution_report.py stable).除非MOD-INF-016出现重大缺口,否则不再评估MOD-EX-015"
+
+  # ----------------------------------------------------------
+  # CAND-PF004-001: MOD-PF-004 min_variance_strategy 错误形态登记（rejected，非独立模块）
+  # 弃用时间: 2026-08-04 | min_variance 是 RebalanceMode 枚举值，应为 DefaultEquityStrategy 方法
+  # 关联: 真正 gap 已录 CAND-PFALLOC-001(deferred,补_min_variance_alloc方法)
+  # ----------------------------------------------------------
+- id: CAND-PF004-001
+  name: "MOD-PF-004 min_variance_strategy(错误形态登记)"
+  aliases: ["MOD-PF-004", "min_variance_strategy", "最小方差策略"]
+  domain: D_PF_CORE
+  domain_status: active
+  domain_node_count: 5
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7684068,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "错误形态,无独立数据流位置"}
+    decisiongraph: {has_position: false, note: "错误形态,无独立决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-PF-004/不存在"}
+  description: "depgraph中blueprint_id=MOD-PF-004、path=src/zephyr/pf_core/strategies/min_variance_strategy.py的节点,经源码验证为错误形态——min_variance是DefaultEquityStrategy.RebalanceMode枚举值(L60-61),应为_min_variance_alloc方法(L151同级),非独立策略模块"
+  capability: ""
+  problem_it_solves: "(错误形态)min_variance分配逻辑应为DefaultEquityStrategy._min_variance_alloc方法,真正gap见CAND-PFALLOC-001(deferred)"
+  trigger_signals: []
+  keywords: ["min_variance_strategy", "MOD-PF-004", "错误形态", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["MOD-L05-001(default_equity_strategy.py)"], evidence: "min_variance是RebalanceMode枚举值(L60-61)非独立模块,_alloc方法缺失(L127 else fallback equal_weight).节点为错误形态登记,文件不存在(幽灵).真正gap=补_min_variance_alloc方法,已录CAND-PFALLOC-001(deferred)"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7684068(path=src/zephyr/pf_core/strategies/min_variance_strategy.py)"
+  source_section: "孤儿模块排查[B]+源码实证default_equity_strategy.py L57-127"
+  original_id: "MOD-PF-004"
+  estimated_complexity: ""
+  tech_notes: "源码实证:DefaultEquityStrategy.RebalanceMode枚举(L60-61)含MIN_VARIANCE值,generate_target_weights(L122-127)按RebalanceMode分发,当前else fallback到equal_weight(L127).min_variance应是_min_variance_alloc方法(L151同级),非独立策略文件.原误登记为独立模块MOD-PF-004已软删除(deprecated).真正gap见CAND-PFALLOC-001(deferred,补方法到既有production节点).软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "CAND-PFALLOC-001(deferred,补_min_variance_alloc方法到DefaultEquityStrategy)+MOD-L05-001(default_equity_strategy.py,production)"
+  tags: ["错误形态", "deprecated", "rejected", "防误重新设计", "幽灵节点", "枚举值误登记为模块"]
+  search_terms: ["mod-pf-004", "min_variance_strategy", "错误形态登记"]
+  related_candidates: ["CAND-PFALLOC-001", "CAND-PF005-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认错误形态登记。min_variance是RebalanceMode枚举值非独立模块,应为DefaultEquityStrategy._min_variance_alloc方法.真正gap见CAND-PFALLOC-001(deferred).除非CAND-PFALLOC-001方案变更,否则不再评估MOD-PF-004为独立模块"
+
+  # ----------------------------------------------------------
+  # CAND-PF005-001: MOD-PF-005 risk_parity_strategy 错误形态登记（rejected，非独立模块）
+  # 弃用时间: 2026-08-04 | risk_parity 是 RebalanceMode 枚举值，应为 DefaultEquityStrategy 方法
+  # 关联: 真正 gap 已录 CAND-PFALLOC-001(deferred,补_risk_parity_alloc方法)
+  # ----------------------------------------------------------
+- id: CAND-PF005-001
+  name: "MOD-PF-005 risk_parity_strategy(错误形态登记)"
+  aliases: ["MOD-PF-005", "risk_parity_strategy", "风险平价策略"]
+  domain: D_PF_CORE
+  domain_status: active
+  domain_node_count: 5
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7684069,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "错误形态,无独立数据流位置"}
+    decisiongraph: {has_position: false, note: "错误形态,无独立决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-PF-005/不存在"}
+  description: "depgraph中blueprint_id=MOD-PF-005、path=src/zephyr/pf_core/strategies/risk_parity_strategy.py的节点,经源码验证为错误形态——risk_parity是DefaultEquityStrategy.RebalanceMode枚举值(L60-61),应为_risk_parity_alloc方法(L162同级),非独立策略模块"
+  capability: ""
+  problem_it_solves: "(错误形态)risk_parity分配逻辑应为DefaultEquityStrategy._risk_parity_alloc方法,真正gap见CAND-PFALLOC-001(deferred)"
+  trigger_signals: []
+  keywords: ["risk_parity_strategy", "MOD-PF-005", "错误形态", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: ["MOD-L05-001(default_equity_strategy.py)"], evidence: "risk_parity是RebalanceMode枚举值(L60-61)非独立模块,_alloc方法缺失(L127 else fallback equal_weight).节点为错误形态登记,文件不存在(幽灵).真正gap=补_risk_parity_alloc方法,已录CAND-PFALLOC-001(deferred)"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7684069(path=src/zephyr/pf_core/strategies/risk_parity_strategy.py)"
+  source_section: "孤儿模块排查[B]+源码实证default_equity_strategy.py L57-127"
+  original_id: "MOD-PF-005"
+  estimated_complexity: ""
+  tech_notes: "源码实证:DefaultEquityStrategy.RebalanceMode枚举(L60-61)含RISK_PARITY值,generate_target_weights(L122-127)按RebalanceMode分发,当前else fallback到equal_weight(L127).risk_parity应是_risk_parity_alloc方法(L162同级),非独立策略文件.原误登记为独立模块MOD-PF-005已软删除(deprecated).真正gap见CAND-PFALLOC-001(deferred,补方法到既有production节点).与CAND-PF004-001同类.软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "CAND-PFALLOC-001(deferred,补_risk_parity_alloc方法到DefaultEquityStrategy)+MOD-L05-001(default_equity_strategy.py,production)"
+  tags: ["错误形态", "deprecated", "rejected", "防误重新设计", "幽灵节点", "枚举值误登记为模块"]
+  search_terms: ["mod-pf-005", "risk_parity_strategy", "错误形态登记"]
+  related_candidates: ["CAND-PFALLOC-001", "CAND-PF004-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认错误形态登记。risk_parity是RebalanceMode枚举值非独立模块,应为DefaultEquityStrategy._risk_parity_alloc方法.真正gap见CAND-PFALLOC-001(deferred).与CAND-PF004-001同类,除非CAND-PFALLOC-001方案变更,否则不再评估MOD-PF-005为独立模块"
+
+  # ----------------------------------------------------------
+  # CAND-RSK009-001: MOD-RSK-009 ashare_stop_loss_rule_engine 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-04 | A股止损规则引擎已由 MOD-RK-09 承接（前缀 RSK 非规范 RK）
+  # ----------------------------------------------------------
+- id: CAND-RSK009-001
+  name: "MOD-RSK-009 ashare_stop_loss_rule_engine(重复幽灵节点)"
+  aliases: ["MOD-RSK-009", "ashare_stop_loss_rule_engine", "A股止损亏损规则引擎"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 8
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7741058,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-RSK-009/不存在"}
+  description: "depgraph中blueprint_id=MOD-RSK-009、path=src/zephyr/risk/ashare_stop_loss_rule_engine.py的设计态节点,该文件不存在(幽灵),与正确的MOD-RK-09(core/ashare_stop_loss_engine.py)重复。前缀RSK非规范RK。"
+  capability: ""
+  problem_it_solves: "(已解决)A股止损规则引擎已由MOD-RK-09(节点8615658 stable)正确承担"
+  trigger_signals: []
+  keywords: ["ashare_stop_loss", "MOD-RSK-009", "重复幽灵", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-09(节点8615658)"], evidence: "ashare_stop_loss_engine已由core/ashare_stop_loss_engine.py实现,depgraph节点8615658 stable,有测试tests/risk/test_ashare_stop_loss_engine.py"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7741058(path=src/zephyr/risk/ashare_stop_loss_rule_engine.py)"
+  source_section: "孤儿模块排查[B]"
+  original_id: "MOD-RSK-009"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点7741058 blueprint_id=MOD-RSK-009 path=src/zephyr/risk/ashare_stop_loss_rule_engine.py文件不存在=幽灵,前缀RSK非规范RK,无blueprint无代码) vs depgraph正确实现(MOD-RK-09 节点8615658 src/zephyr/risk/core/ashare_stop_loss_engine.py stable+tests/risk/test_ashare_stop_loss_engine.py).commit 4a943705bf新增RK-09/RK-10.与CAND-RSK011-001同类(RSK前缀幽灵).软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-RK-09(节点8615658,src/zephyr/risk/core/ashare_stop_loss_engine.py,stable)"
+  tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "前缀错误"]
+  search_terms: ["mod-rsk-009", "ashare_stop_loss_rule_engine", "重复幽灵节点"]
+  related_candidates: ["CAND-RSK011-001", "CAND-RSK010-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认重复幽灵节点。真源ashare_stop_loss_engine=MOD-RK-09(节点8615658 core/ashare_stop_loss_engine.py stable).与CAND-RSK011-001同类(RSK前缀幽灵),除非MOD-RK-09出现重大缺口,否则不再评估MOD-RSK-009"
+
+  # ----------------------------------------------------------
+  # CAND-RSK010-001: MOD-RSK-010 ashare_systemic_risk_detector 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-04 | A股系统性风险检测器已由 MOD-RK-10 承接（前缀 RSK 非规范 RK）
+  # ----------------------------------------------------------
+- id: CAND-RSK010-001
+  name: "MOD-RSK-010 ashare_systemic_risk_detector(重复幽灵节点)"
+  aliases: ["MOD-RSK-010", "ashare_systemic_risk_detector", "A股Systemic风险检测器"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 8
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7741059,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-RSK-010/不存在"}
+  description: "depgraph中blueprint_id=MOD-RSK-010、path=src/zephyr/risk/ashare_systemic_risk_detector.py的设计态节点,该文件不存在(幽灵),与正确的MOD-RK-10(core/ashare_systemic_risk_detector.py)重复。前缀RSK非规范RK。"
+  capability: ""
+  problem_it_solves: "(已解决)A股系统性风险检测器已由MOD-RK-10(节点8615660 stable)正确承担"
+  trigger_signals: []
+  keywords: ["ashare_systemic_risk", "MOD-RSK-010", "重复幽灵", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-10(节点8615660)"], evidence: "ashare_systemic_risk_detector已由core/ashare_systemic_risk_detector.py实现,depgraph节点8615660 stable,有测试tests/risk/test_ashare_systemic_risk_detector.py"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7741059(path=src/zephyr/risk/ashare_systemic_risk_detector.py)"
+  source_section: "孤儿模块排查[B]"
+  original_id: "MOD-RSK-010"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点7741059 blueprint_id=MOD-RSK-010 path=src/zephyr/risk/ashare_systemic_risk_detector.py文件不存在=幽灵,前缀RSK非规范RK,无blueprint无代码) vs depgraph正确实现(MOD-RK-10 节点8615660 src/zephyr/risk/core/ashare_systemic_risk_detector.py stable+tests/risk/test_ashare_systemic_risk_detector.py).commit 4a943705bf新增RK-09/RK-10.与CAND-RSK011-001同类(RSK前缀幽灵).软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-RK-10(节点8615660,src/zephyr/risk/core/ashare_systemic_risk_detector.py,stable)"
+  tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "前缀错误"]
+  search_terms: ["mod-rsk-010", "ashare_systemic_risk_detector", "重复幽灵节点"]
+  related_candidates: ["CAND-RSK011-001", "CAND-RSK009-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认重复幽灵节点。真源ashare_systemic_risk_detector=MOD-RK-10(节点8615660 core/ashare_systemic_risk_detector.py stable).与CAND-RSK011-001同类(RSK前缀幽灵),除非MOD-RK-10出现重大缺口,否则不再评估MOD-RSK-010"
+
+  # ----------------------------------------------------------
+  # CAND-TESTA-001: test_trigger_A 测试触发器误登记（rejected，非业务模块）
+  # 弃用时间: 2026-08-04 | 无 blueprint_id，文件不存在，错误登记为 test_module 节点
+  # ----------------------------------------------------------
+- id: CAND-TESTA-001
+  name: "test_trigger_A(测试触发器误登记)"
+  aliases: ["test_trigger_A", "测试触发器A"]
+  domain: D_ALT_DATA
+  domain_status: active
+  domain_node_count: 3
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7073601,node_type=test_module,无blueprint_id,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "测试触发器,无数据流位置"}
+    decisiongraph: {has_position: false, note: "测试触发器,无决策位置"}
+    blueprint: {has_position: false, note: "无blueprint_id,非业务模块"}
+  description: "depgraph中path=test_trigger_A.py的test_module节点(节点7073601),无blueprint_id,文件不存在(幽灵),错误登记为模块节点。gate_reason='另类数据域设计模块已废弃'。"
+  capability: ""
+  problem_it_solves: "(无)测试触发器,非业务决策模块,无实际功能"
+  trigger_signals: []
+  keywords: ["test_trigger_A", "测试触发器", "误登记", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "测试触发器非业务功能,无需实现。该节点为错误登记(无blueprint_id+文件不存在)"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7073601(path=test_trigger_A.py)"
+  source_section: "孤儿模块排查[B]"
+  original_id: "test_trigger_A"
+  estimated_complexity: ""
+  tech_notes: "depgraph节点7073601,node_type=test_module,path=test_trigger_A.py文件不存在(幽灵),无blueprint_id,无blueprint_path.错误登记为模块节点(test_module非业务模块).gate_reason='另类数据域设计模块已废弃'.软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "无(测试触发器不应为depgraph业务节点)"
+  tags: ["误登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "测试触发器", "无blueprint_id"]
+  search_terms: ["test_trigger_a", "测试触发器a", "误登记节点"]
+  related_candidates: ["CAND-TESTB-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认测试触发器误登记。test_trigger_A无blueprint_id+文件不存在,非业务模块,不应为depgraph业务节点.除非有明确测试需求,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-TESTB-001: test_trigger_B 测试触发器误登记（rejected，非业务模块）
+  # 弃用时间: 2026-08-04 | 无 blueprint_id，文件不存在，错误登记为 test_module 节点
+  # ----------------------------------------------------------
+- id: CAND-TESTB-001
+  name: "test_trigger_B(测试触发器误登记)"
+  aliases: ["test_trigger_B", "测试触发器B"]
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  domain_node_count: 3
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7073602,node_type=test_module,无blueprint_id,path文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "测试触发器,无数据流位置"}
+    decisiongraph: {has_position: false, note: "测试触发器,无决策位置"}
+    blueprint: {has_position: false, note: "无blueprint_id,非业务模块"}
+  description: "depgraph中path=test_trigger_B.py的test_module节点(节点7073602),无blueprint_id,文件不存在(幽灵),错误登记为模块节点。gate_reason='A股信号域设计模块已废弃'。"
+  capability: ""
+  problem_it_solves: "(无)测试触发器,非业务决策模块,无实际功能"
+  trigger_signals: []
+  keywords: ["test_trigger_B", "测试触发器", "误登记", "deprecated"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "测试触发器非业务功能,无需实现。该节点为错误登记(无blueprint_id+文件不存在)"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-04'
+  promoted_to: ""
+  source_draft: "depgraph 节点7073602(path=test_trigger_B.py)"
+  source_section: "孤儿模块排查[B]"
+  original_id: "test_trigger_B"
+  estimated_complexity: ""
+  tech_notes: "depgraph节点7073602,node_type=test_module,path=test_trigger_B.py文件不存在(幽灵),无blueprint_id,无blueprint_path.错误登记为模块节点(test_module非业务模块).gate_reason='A股信号域设计模块已废弃'.与CAND-TESTA-001同类.软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "无(测试触发器不应为depgraph业务节点)"
+  tags: ["误登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "测试触发器", "无blueprint_id"]
+  search_terms: ["test_trigger_b", "测试触发器b", "误登记节点"]
+  related_candidates: ["CAND-TESTA-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-04'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认测试触发器误登记。test_trigger_B无blueprint_id+文件不存在,非业务模块,不应为depgraph业务节点.与CAND-TESTA-001同类,除非有明确测试需求,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-EX004-001: MOD-EX-004 redis幂等性 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-05 | 幂等机制已由 MOD-INF-016 shared/infra/idempotency.py 承接（上移至基础设施层）
+  # ----------------------------------------------------------
+- id: CAND-EX004-001
+  name: "MOD-EX-004 redis幂等性(重复幽灵节点)"
+  aliases: ["MOD-EX-004", "redis_idempotency", "redis幂等性"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 17
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点7451165,path=src/zephyr/ex_core/redis_idempotency/文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-004/不存在"}
+  description: "depgraph中blueprint_id=MOD-EX-004、path=src/zephyr/ex_core/redis_idempotency/的设计态节点,该目录不存在(幽灵)。幂等机制已由shared/infra/idempotency.py(MOD-INF-016,291行,RedisIdempotencyGateway+IdempotencyKey)上移至基础设施层通用承接。"
+  capability: ""
+  problem_it_solves: "(已解决)订单幂等性去重已由shared/infra/idempotency.py承接"
+  trigger_signals: []
+  keywords: ["redis_idempotency", "MOD-EX-004", "重复幽灵", "deprecated", "功能上移"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-INF-016(节点8640073)"], evidence: "shared/infra/idempotency.py 291行,RedisIdempotencyGateway类+is_already_processed/handle_execution方法,stable,有测试tests/infrastructure/test_infra_idempotency.py.幂等机制已上移至基础设施层"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "depgraph 节点7451165(path=src/zephyr/ex_core/redis_idempotency/)"
+  source_section: "孤儿模块排查[B-补充]"
+  original_id: "MOD-EX-004"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点7451165 blueprint_id=MOD-EX-004 path=src/zephyr/ex_core/redis_idempotency/目录不存在=幽灵,build_status=deprecated) vs depgraph正确实现(MOD-INF-016 节点8640073 src/zephyr/shared/infra/idempotency.py stable 291行+RedisIdempotencyGateway).D_EX_CORE早期架构骨架模块,功能演进中上移至基础设施层.软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-INF-016(节点8640073,src/zephyr/shared/infra/idempotency.py,stable,291行)"
+  tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "功能上移"]
+  search_terms: ["mod-ex-004", "redis_idempotency", "重复幽灵节点"]
+  related_candidates: ["CAND-EX037-001", "CAND-EX051-001", "CAND-EX052-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认重复幽灵节点。幂等机制已由shared/infra/idempotency.py(MOD-INF-016)承接.文件不存在+功能已上移基础设施层.软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-EX037-001: MOD-EX-037 蓝图Implementer 概念错误节点（rejected，四问①④挂——功能无需求+幽灵）
+  # 弃用时间: 2026-08-05 | D_EX_CORE 做订单执行，不需要"把蓝图转代码"功能（概念错误）
+  # ----------------------------------------------------------
+- id: CAND-EX037-001
+  name: "MOD-EX-037 蓝图Implementer(概念错误节点)"
+  aliases: ["MOD-EX-037", "blueprint_implementer", "BlueprintImplementer", "蓝图Implementer"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 17
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点8005455,path=src/zephyr/ex_core/blueprint_implementer.py文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-037/不存在"}
+  description: "depgraph中blueprint_id=MOD-EX-037、path=src/zephyr/ex_core/blueprint_implementer.py的设计态节点,该文件不存在(幽灵)。D_EX_CORE(执行核心域)承载订单执行决策,不需要把设计蓝图自动转代码的BlueprintImplementer功能——概念错误。rg全项目搜blueprint_implementer/BlueprintImplementer 0结果,execute_blueprint/implement_blueprint动词 0结果。"
+  capability: ""
+  problem_it_solves: "(无真实痛点)D_EX_CORE做订单执行,不存在把蓝图转代码的需求"
+  trigger_signals: []
+  keywords: ["blueprint_implementer", "MOD-EX-037", "概念错误", "deprecated", "幽灵节点"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "rg全项目搜blueprint_implementer/BlueprintImplementer 0结果,execute_blueprint/implement_blueprint动词 0结果。该功能无任何实现也无任何消费者,属概念错误非功能缺失"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "depgraph 节点8005455(path=src/zephyr/ex_core/blueprint_implementer.py)"
+  source_section: "孤儿模块排查[B-补充]"
+  original_id: "MOD-EX-037"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点8005455 blueprint_id=MOD-EX-037 path=src/zephyr/ex_core/blueprint_implementer.py文件不存在=幽灵,build_status=deprecated) vs 全项目搜索(rg blueprint_implementer 0结果,rg execute_blueprint 0结果)。gate_reason标注依赖OMS+引擎+路由+报告,但D_EX_CORE做订单执行不需要蓝图转代码功能——早期架构骨架设想残留,概念错误。软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "无(D_EX_CORE不需要蓝图转代码功能)"
+  tags: ["概念错误", "deprecated", "rejected", "防误重新设计", "幽灵节点", "架构骨架残留"]
+  search_terms: ["mod-ex-037", "blueprint_implementer", "蓝图implementer"]
+  related_candidates: ["CAND-EX004-001", "CAND-EX051-001", "CAND-EX052-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认概念错误节点。D_EX_CORE做订单执行不需要蓝图转代码功能,全项目0引用,文件不存在=幽灵。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-EX051-001: MOD-EX-051 值对象 分散实现幽灵节点（rejected，四问①挂——功能已分散实现）
+  # 弃用时间: 2026-08-05 | 值对象模式已分散在 trading_contracts dataclass 内联实现
+  # ----------------------------------------------------------
+- id: CAND-EX051-001
+  name: "MOD-EX-051 值对象(分散实现幽灵节点)"
+  aliases: ["MOD-EX-051", "value_objects", "ValueObjects", "值对象"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 17
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点8005444,path=src/zephyr/ex_core/value_objects.py文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-051/不存在"}
+  description: "depgraph中blueprint_id=MOD-EX-051、path=src/zephyr/ex_core/value_objects.py的设计态节点,该文件不存在(幽灵)。值对象(Value Object,不可变数据对象)模式已分散在trading_contracts各dataclass内联实现(如trading_contracts/order.py的OrderId/Order),无需独立模块集中管理。"
+  capability: ""
+  problem_it_solves: "(已解决)值对象已分散在trading_contracts的dataclass实现"
+  trigger_signals: []
+  keywords: ["value_objects", "MOD-EX-051", "分散实现", "deprecated", "幽灵节点"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["trading_contracts/order.py"], evidence: "trading_contracts/order.py有OrderId/Order等dataclass(frozen=True不可变值对象),shared/contracts/下亦有大量dataclass/Pydantic BaseModel.值对象模式已分散在各contracts内联实现,无集中模块需求"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "depgraph 节点8005444(path=src/zephyr/ex_core/value_objects.py)"
+  source_section: "孤儿模块排查[B-补充]"
+  original_id: "MOD-EX-051"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点8005444 blueprint_id=MOD-EX-051 path=src/zephyr/ex_core/value_objects.py文件不存在=幽灵,build_status=deprecated) vs 现有实现(trading_contracts/order.py的OrderId/Order dataclass+shared/contracts/下大量dataclass)。值对象是DDD概念,但项目实际演进中已在各contracts内联实现,无需独立集中模块。D_EX_CORE早期架构骨架残留。软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "trading_contracts/order.py(OrderId/Order等)+shared/contracts/下dataclass(分散实现)"
+  tags: ["分散实现", "deprecated", "rejected", "防误重新设计", "幽灵节点", "架构骨架残留"]
+  search_terms: ["mod-ex-051", "value_objects", "值对象"]
+  related_candidates: ["CAND-EX004-001", "CAND-EX037-001", "CAND-EX052-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认分散实现。值对象已分散在trading_contracts/shared/contracts的dataclass内联实现,文件不存在=幽灵。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-EX052-001: MOD-EX-052 工厂 分散实现幽灵节点（rejected，四问①挂——功能已分散实现）
+  # 弃用时间: 2026-08-05 | 工厂模式已分散在 shared/contracts/core/factories.py + trading_contracts/factories.py 实现
+  # ----------------------------------------------------------
+- id: CAND-EX052-001
+  name: "MOD-EX-052 工厂(分散实现幽灵节点)"
+  aliases: ["MOD-EX-052", "factory", "Factory", "工厂"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 17
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),节点8005445,path=src/zephyr/ex_core/factory.py文件不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-052/不存在"}
+  description: "depgraph中blueprint_id=MOD-EX-052、path=src/zephyr/ex_core/factory.py的设计态节点,该文件不存在(幽灵)。工厂模式(对象创建解耦)已分散在shared/contracts/core/factories.py(248行,OrderFactory/ExecutionReportFactory)和trading_contracts/factories.py(252行)实现,无需D_EX_CORE下独立工厂模块。"
+  capability: ""
+  problem_it_solves: "(已解决)工厂模式已分散在shared/contracts/core/factories.py和trading_contracts/factories.py实现"
+  trigger_signals: []
+  keywords: ["factory", "MOD-EX-052", "分散实现", "deprecated", "幽灵节点"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["shared/contracts/core/factories.py", "trading_contracts/factories.py"], evidence: "shared/contracts/core/factories.py 248行有OrderFactory/ExecutionReportFactory,trading_contracts/factories.py 252行有ModelFactory等.工厂模式已分散在各模块内联实现,module_onboarding_scanner.py亦有factory_create逻辑.无集中D_EX_CORE工厂需求"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "depgraph 节点8005445(path=src/zephyr/ex_core/factory.py)"
+  source_section: "孤儿模块排查[B-补充]"
+  original_id: "MOD-EX-052"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点8005445 blueprint_id=MOD-EX-052 path=src/zephyr/ex_core/factory.py文件不存在=幽灵,build_status=deprecated) vs 现有实现(shared/contracts/core/factories.py 248行+trading_contracts/factories.py 252行+module_onboarding_scanner.py factory_create)。工厂模式是通用架构模式,项目实际演进中已分散在各模块内联实现,无需D_EX_CORE下独立集中工厂。D_EX_CORE早期架构骨架残留。软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "shared/contracts/core/factories.py(248行,OrderFactory/ExecutionReportFactory)+trading_contracts/factories.py(252行,分散实现)"
+  tags: ["分散实现", "deprecated", "rejected", "防误重新设计", "幽灵节点", "架构骨架残留"]
+  search_terms: ["mod-ex-052", "factory", "工厂"]
+  related_candidates: ["CAND-EX004-001", "CAND-EX037-001", "CAND-EX051-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认分散实现。工厂已由shared/contracts/core/factories.py(248行)+trading_contracts/factories.py(252行)分散实现,文件不存在=幽灵。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-L00007-001: MOD-L00-007 存储 功能已由buffered_writer承接（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-05 | 第一性原理裁定: 存储抽象功能已由 MOD-L00-004 buffered_writer 承接
+  # 裁定依据: docs/03_modules/_domain_data/blueprint.md L145 storage列为C轨占位,C轨占位代码已清理(2026-07-01);
+  #          buffered_writer.py(MOD-L00-004裁定#ARCH-CH-003攒批写入层即存储抽象)在Provider和ch_writer之间插入缓冲层;
+  #          ch_writer.py/ch_reader.py/wal_codec/已分层实现存储后端读写;YAGNI原则+100%AI开发减抽象层原则
+  # ----------------------------------------------------------
+- id: CAND-L00007-001
+  name: "MOD-L00-007 存储(功能已由buffered_writer承接)"
+  aliases: ["MOD-L00-007", "storage", "Storage", "存储层", "统一存储抽象层"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 30
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),node_id=7684066,path=src/zephyr/data/storage/目录不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/_domain_data/blueprint.md L145 storage列为C轨占位"}
+  description: "depgraph中blueprint_id=MOD-L00-007、path=src/zephyr/data/storage/的设计态节点,该目录不存在(幽灵)。存储抽象功能已由buffered_writer.py(MOD-L00-004,裁定#ARCH-CH-003攒批写入层即存储抽象)在Provider和ch_writer之间承接。ch_writer/ch_reader/wal_codec/已分层实现存储后端读写。蓝图自身已将storage列为C轨占位(代码已清理2026-07-01)。第一性原理裁定:YAGNI(当前只用ClickHouse无换后端需求)+100%AI开发减抽象层原则(每层抽象都是AI认知负担,planned节点是幻觉温床)。"
+  capability: ""
+  problem_it_solves: "(已解决)存储抽象已由buffered_writer(MOD-L00-004)承接,后端读写已由ch_writer/ch_reader分层实现"
+  trigger_signals: []
+  keywords: ["storage", "MOD-L00-007", "C轨占位", "deprecated", "功能已承接", "YAGNI", "第一性原理"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-L00-004(buffered_writer.py)"], evidence: "buffered_writer.py(MOD-L00-004)在Provider和ch_writer之间插入缓冲层(裁定#ARCH-CH-003攒批写入层即存储抽象)。ch_writer.py(36990字节)+ch_reader.py+wal_codec/已分层实现存储后端。蓝图L145 storage列为C轨占位,代码已清理(2026-07-01)。17处调用ch_writer但多经buffered_writer解耦。"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "depgraph 节点7684066(path=src/zephyr/data/storage/)"
+  source_section: "孤儿模块排查[C-裁定] 第一性原理架构裁定"
+  original_id: "MOD-L00-007"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点7684066 blueprint_id=MOD-L00-007 path=src/zephyr/data/storage/目录不存在=幽灵,build_status=deprecated 2026-08-05软删除) vs 现有实现(buffered_writer.py MOD-L00-004 #ARCH-CH-003 + ch_writer/ch_reader/wal_codec 分层存储)。第一性原理:存储抽象层理论价值=解耦后端,但当前只用CH无换后端需求(YAGNI);100%AI开发下每层抽象=认知负担+幻觉温床;未来真要换后端应基于MOD-L00-004扩展而非复活MOD-L00-007。注意:MOD-L00-007 blueprint_id下另有backup_tick_poller.py(generated/production)节点未动。软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-L00-004(buffered_writer.py,裁定#ARCH-CH-003攒批写入层即存储抽象)+ch_writer.py/ch_reader.py(分层存储后端读写)"
+  tags: ["功能已承接", "deprecated", "rejected", "防误重新设计", "幽灵节点", "C轨占位", "YAGNI", "第一性原理裁定", "AI开发减抽象层"]
+  search_terms: ["mod-l00-007", "storage", "存储层", "统一存储抽象层"]
+  related_candidates: ["CAND-L00008-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认功能已承接。存储抽象已由buffered_writer(MOD-L00-004裁定#ARCH-CH-003)承接,后端读写已由ch_writer/ch_reader分层实现。蓝图L145 storage列为C轨占位代码已清理。第一性原理裁定:YAGNI+AI开发减抽象层。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-L00008-001: MOD-L00-008 缓存 功能已上移至H1_REDIS_HOT（rejected，四问①挂——功能已实现+功能上移）
+  # 弃用时间: 2026-08-05 | 第一性原理裁定: 缓存功能已由 MOD-H1_REDIS_HOT 承接,属"功能上移至基础设施层"案例
+  # 裁定依据: tick_redis_cache.py blueprint_id=MOD-H1_REDIS_HOT domain=D_INFRA_RUNTIME(production);
+  #          h1_redis_hot.md(27972字节)在_cross_layer/database/sub_blueprints/下=跨层基础设施;
+  #          功能上移至基础设施层(与MOD-EX-004幂等性上移shared/infra同类);保留=双真源风险
+  # ----------------------------------------------------------
+- id: CAND-L00008-001
+  name: "MOD-L00-008 缓存(功能已上移至H1_REDIS_HOT)"
+  aliases: ["MOD-L00-008", "cache", "Cache", "缓存层", "D_DATA缓存"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 30
+  sub_layer: ""
+  panorama_position:
+    depgraph: {has_position: false, note: "已软删除(deprecated),node_id=7684067,path=src/zephyr/data/cache/目录不存在=幽灵"}
+    dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+    decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+    blueprint: {has_position: false, note: "无独立蓝图,功能已由MOD-H1_REDIS_HOT承接(D_INFRA_RUNTIME)"}
+  description: "depgraph中blueprint_id=MOD-L00-008、path=src/zephyr/data/cache/的设计态节点,该目录不存在(幽灵)。缓存功能已由tick_redis_cache.py(MOD-H1_REDIS_HOT,D_INFRA_RUNTIME,production)承接——blueprint_id=MOD-H1_REDIS_HOT,domain=D_INFRA_RUNTIME,蓝图h1_redis_hot.md(27972字节)在_cross_layer/database/sub_blueprints/下=跨层基础设施。功能已从D_DATA业务域上移至D_INFRA_RUNTIME基础设施层(与MOD-EX-004幂等性上移shared/infra同类)。保留MOD-L00-008=双真源风险(AI不确定用哪个)。第一性原理裁定:功能上移是正确架构演进方向,保留旧域规划=幻觉温床。"
+  capability: ""
+  problem_it_solves: "(已解决)缓存已由MOD-H1_REDIS_HOT(D_INFRA_RUNTIME)承接,是CP-01 SLO<10ms和CP-02降级的核心基础设施"
+  trigger_signals: []
+  keywords: ["cache", "MOD-L00-008", "功能上移", "deprecated", "H1_REDIS_HOT", "双真源风险", "第一性原理"]
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-H1_REDIS_HOT(tick_redis_cache.py)"], evidence: "tick_redis_cache.py blueprint_id=MOD-H1_REDIS_HOT domain=D_INFRA_RUNTIME production。h1_redis_hot.md(27972字节)在_cross_layer/database/sub_blueprints/。PIPELINE批量写入tick:{symbol}:latest,best-effort(Redis故障不阻断WAL主路径)。功能从D_DATA上移至D_INFRA_RUNTIME基础设施层(与MOD-EX-004幂等性上移shared/infra同类)。"}
+    blocking_question: q1
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-05'
+  promoted_to: ""
+  source_draft: "depgraph 节点7684067(path=src/zephyr/data/cache/)"
+  source_section: "孤儿模块排查[C-裁定] 第一性原理架构裁定"
+  original_id: "MOD-L00-008"
+  estimated_complexity: ""
+  tech_notes: "双源对比:depgraph(节点7684067 blueprint_id=MOD-L00-008 path=src/zephyr/data/cache/目录不存在=幽灵,build_status=deprecated 2026-08-05软删除) vs 现有实现(tick_redis_cache.py blueprint_id=MOD-H1_REDIS_HOT domain=D_INFRA_RUNTIME production,功能已上移至基础设施层)。第一性原理:缓存功能上移至D_INFRA_RUNTIME是正确架构演进(H1热缓存是CP-01 SLO<10ms和CP-02降级核心基础设施);保留MOD-L00-008(D_DATA缓存层)=双真源(AI不确定用MOD-L00-008还是MOD-H1_REDIS_HOT);与MOD-EX-004幂等性上移shared/infra同类。tick_redis_cache.py blueprint_id不改(它从来不是MOD-L00-008的实现,属H1_REDIS_HOT体系)。软删除非硬删,保留deprecated状态防误恢复"
+  alternatives: "MOD-H1_REDIS_HOT(tick_redis_cache.py,D_INFRA_RUNTIME,production,PIPELINE批量写入+best-effort降级)"
+  tags: ["功能上移", "deprecated", "rejected", "防误重新设计", "幽灵节点", "双真源风险", "第一性原理裁定", "功能上移至基础设施层"]
+  search_terms: ["mod-l00-008", "cache", "缓存层", "d_data缓存"]
+  related_candidates: ["CAND-L00007-001", "CAND-EX004-001"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-05'
+  review_frequency: yearly
+  last_review_outcome: "rejected,确认功能已上移。缓存已由MOD-H1_REDIS_HOT(tick_redis_cache.py D_INFRA_RUNTIME production)承接,功能上移至基础设施层(与MOD-EX-004同类)。保留=双真源风险。tick_redis_cache.py blueprint_id不改(从来属H1_REDIS_HOT体系)。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-H1FS-001: H1 Factor Source / 信号端因子截面读取适配器（rejected，四问①②挂——功能已实现+无消费者）
+  # 来源: depgraph 幽灵节点审查 (2026-08-02, TRAE-083 双源对比+四问过滤)
+  # ----------------------------------------------------------
+- id: CAND-H1FS-001
+  name: "H1 Factor Source / H1 因子截面读取适配器"
+  aliases: ["h1_factor_source", "H1FactorSource", "信号端因子读取", "因子截面读取适配层"]
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  domain_node_count: 8
+  sub_layer: "H1 热缓存读端"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: "MOD-H1_REDIS_HOT (勿新增——读端已由 H1RedisReader 覆盖)"
+      target_build_status: deprecated
+      target_neighbors:
+        upstream: ["MOD-H1_REDIS_HOT"]
+        downstream: ["D-SIGNAL (尚未存在)"]
+      insertion_description: "拟作为 H1 读端适配层,但 H1RedisReader.get_online_features + h1_integration.create_h1_reader 已覆盖读功能"
+      target_edges: []
+      note: "一问标准 q1挂:功能已实现。depgraph node 7964707 已软删除(deprecated)"
+    dataflowgraph:
+      has_position: true
+      target_node_type: read
+      data_flow_path: "H1 Redis feature:{symbol} → [h1_factor_source] → 信号端"
+      upstream_data: ["factor cross section"]
+      downstream_data: ["signal input factors"]
+      insertion_description: "读端已被 H1RedisReader 承接"
+    decisiongraph:
+      has_position: false
+    blueprint:
+      has_position: true
+      target_ref: "h1_redis_hot.md §9 (D-SIGNAL 读端 = H1RedisReader.get_online_features)"
+      design_maturity: production
+  description: "信号端读 H1 因子截面的适配层,拟封装 H1RedisReader 提供批量截面读"
+  capability: ""
+  problem_it_solves: "(无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖"
+  trigger_signals:
+  - "D_SIGNAL 信号域实际启动且需要批量多 symbol 截面读(PIPELINE)且 get_online_features 单标的不够用"
+  keywords: ["h1_factor_source", "因子截面读取", "信号端适配", "H1 读端"]
+  upstream_deps:
+  - {contract: H1-feature-read, from_domain: D_INFRA_RUNTIME, dep_type: H, availability: available, note: "H1RedisReader.get_online_features"}
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "D_SIGNAL 信号域启动且有批量读需求", check: "src/zephyr/signal 目录存在且批量读性能不达标", met: false, note: "信号域尚未存在"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: ["MOD-H1-reader", "MOD-H1-integration"], evidence: "H1RedisReader.get_online_features + h1_integration.create_h1_reader 已覆盖读端,蓝图 §11 E2E 验证 avg=0.20ms < 5ms SLA"}
+    blocking_question: none    # 原q2已废(裁定2026-08-04)
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-02'
+  last_reviewed_at: '2026-08-02'
+  promoted_to: ""
+  source_draft: "depgraph 幽灵节点 7964707 (上一会话 AI 自行登记,无文档背书)"
+  source_section: "TRAE-083 双源对比审查"
+  original_id: "h1_factor_source"
+  estimated_complexity: S
+  estimated_effort: ""
+  tech_notes: "双源对比:设计文档(h1_redis_hot.md §9 D-SIGNAL读端=H1RedisReader.get_online_features,§11 H1全部完成E2E avg0.20ms;candidate_module_registry 无条目;D_FACTOR.md 零匹配) vs depgraph(node7964707 build_status=planned design_maturity=design 从未施工).q1功能已实现(H1RedisReader+create_h1_reader覆盖).depgraph node 7964707 已软删除→deprecated(附 design_evidence 审计)"
+  risks: ["硬建会导致幽灵节点复活+读端双真源(H1RedisReader 与 h1_factor_source 两处维护)"]
+  alternatives: "信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过一问标准"
+  tags: ["幽灵节点", "rejected", "功能已实现", "无消费者", "防过度工程", "防误重新设计"]
+  search_terms: ["h1_factor_source", "H1FactorSource", "信号端因子读取", "因子截面适配"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-02'
+  review_frequency: yearly
+  last_review_outcome: "rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估"
+- id: CAND-SELL-001
+  name: Trade-Level Circuit Breaker / 连续亏损熔断
+  aliases:
+  - TradeLevelCircuitBreaker
+  - 连续亏损熔断
+  domain: D_SELL_DECISION
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: 横切
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 42_sell_flow §3.10 伪代码已定型但 §2.4 自标"未登记"，无 depgraph 节点
+  description: >-
+    连续亏损交易级熔断（42_sell_flow §3.10）：连续 N 笔亏损触发减仓系数
+    （consecutive_loss_threshold=2 / reduction_factor=0.25 / min_scale=0.25 /
+    reset_on_win=True），A 股适配打板 N=2、多因子 N=3。MVP 未施工（§3.10 裁定：
+    无实盘证据前不建）。
+  capability: ''
+  problem_it_solves: 连续小亏单笔不触发日度熔断但积累可观亏损的回撤场景
+  trigger_signals:
+  - G04 首批策略按策略类型参数校准产出（42 §7 三项待定问题的同一依赖）
+  - 实盘证据：连续小亏不触发日度熔断但积累可观亏损（42 §3.10 裁定原文）
+  keywords:
+  - 连续亏损熔断
+  - TradeLevelCircuitBreaker
+  - 42_sell_flow §3.10
+  upstream_deps:
+  - G04 首批 3 策略参数校准（20_first_batch_strategies）
+  downstream_consumers:
+  - 35_drawdown_protocol（回撤 Protocol 联动，42 §3.10）
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - G04 参数校准产出 + 实盘亏损形态证据（双条件，缺一不可）
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-14'
+  promoted_to: ''
+  source_draft: 42_sell_flow.md §3.10
+  source_section: §3.10 连续亏损熔断
+  original_id: ''
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: 伪代码已定型（42 §3.10 L500-530）；MVP 可选施工裁定见 §3.10 末段
+  risks:
+  - 触发条件挂在 G04 校准（无负责方跟踪）上，可能长期沉睡——已由 00_index G04 跟踪行缓解
+  alternatives: 日度熔断（已建，35 号回撤 Protocol 四级阈值）覆盖单日大亏，不覆盖连续小亏积累
+  tags:
+  - 孤儿决策补登
+  - layer:横切
+  search_terms:
+  - 连续亏损熔断
+  - TradeLevelCircuitBreaker
+  - circuit breaker
+  related_candidates: []
+  enables: []
+  blocked_by:
+  - G04 首批策略参数校准未产出
+  next_review_date: ''
+  review_frequency: quarterly
+  last_review_outcome: 2026-08-14 补登（#ARCH-SELL-001 遗留项治本，原"只在 spec 里存在"的孤儿决策）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-BUY-001
+  name: External Order Monitoring / 外部指令盯盘
+  aliases:
+  - BM-BUY-06
+  domain: D_BUY
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: 横切
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-BUY-06，未登记 depgraph
+  description: 候选态环节 BM-BUY-06（外部指令盯盘）的骨架候选，承载 acquisition 决策。详情见 battle_map_06_buy_flow.md:641
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-BUY-06
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'trading/manual_instruction_channel.py（MOD-TRADING-011）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：跨条目覆盖核销（superseded-by CAND-TRD-003）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_06_buy_flow.md:641
+  source_section: ''
+  original_id: BM-BUY-06
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:横切
+  search_terms:
+  - BM-BUY-06
+  - 外部指令盯盘
+  - External Order Monitoring
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-MLT-001
+  name: Experiment Tracking & Auto-Promotion / 实验追踪与自动晋升
+  aliases:
+  - BM-MT-02
+  domain: D_ML_TRAIN
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L11
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-MT-02，未登记 depgraph
+  description: 候选态环节 BM-MT-02（实验追踪与自动晋升）的骨架候选，承载 acquisition 决策。详情见 battle_map_02_model_training.md:266
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-MT-02
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_02_model_training.md:266
+  source_section: ''
+  original_id: BM-MT-02
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L11
+  search_terms:
+  - BM-MT-02
+  - 实验追踪与自动晋升
+  - Experiment Tracking & Auto-Promotion
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/MLflow
+  acquisition_method: opensource
+  acquisition_source: MLflow
+- id: CAND-MLT-002
+  name: AutoML & Hyperparameter Optimization / AutoML与超参优化
+  aliases:
+  - BM-MT-03
+  domain: D_ML_TRAIN
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L11
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-MT-03，未登记 depgraph
+  description: 候选态环节 BM-MT-03（AutoML与超参优化）的骨架候选，承载 acquisition 决策。详情见 battle_map_02_model_training.md:370
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-MT-03
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_02_model_training.md:370
+  source_section: ''
+  original_id: BM-MT-03
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L11
+  search_terms:
+  - BM-MT-03
+  - AutoML与超参优化
+  - AutoML & Hyperparameter Optimization
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/Optuna
+  acquisition_method: opensource
+  acquisition_source: Optuna
+- id: CAND-MLT-003
+  name: Factor Discovery & Causal Discovery / 因子发现与因果发现
+  aliases:
+  - BM-MT-04
+  domain: D_ML_TRAIN
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L11
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-MT-04，未登记 depgraph
+  description: 候选态环节 BM-MT-04（因子发现与因果发现）的骨架候选，承载 acquisition 决策。详情见 battle_map_02_model_training.md:405
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-MT-04
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_02_model_training.md:405
+  source_section: ''
+  original_id: BM-MT-04
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L11
+  search_terms:
+  - BM-MT-04
+  - 因子发现与因果发现
+  - Factor Discovery & Causal Discovery
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/CausalNex
+  acquisition_method: borrow
+  acquisition_source: CausalNex
+- id: CAND-MLT-004
+  name: Drift Detection & Adaptive Retraining / 漂移检测与自适应重训练
+  aliases:
+  - BM-MT-05
+  domain: D_ML_TRAIN
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L11
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-MT-05，未登记 depgraph
+  description: 候选态环节 BM-MT-05（漂移检测与自适应重训练）的骨架候选，承载 acquisition 决策。详情见 battle_map_02_model_training.md:441
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-MT-05
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_02_model_training.md:441
+  source_section: ''
+  original_id: BM-MT-05
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L11
+  search_terms:
+  - BM-MT-05
+  - 漂移检测与自适应重训练
+  - Drift Detection & Adaptive Retraining
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/evidently
+  acquisition_method: borrow
+  acquisition_source: evidently
+- id: CAND-MLT-005
+  name: Continual Learning Anti-Forgetting (EWC + Pseudo-Replay) / 持续学习防遗忘（EWC+伪回放）
+  aliases:
+  - BM-MT-05-A
+  domain: D_ML_TRAIN
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L11
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-MT-05-A，未登记 depgraph
+  description: 候选态环节 BM-MT-05-A（持续学习防遗忘（EWC+伪回放））的骨架候选，承载 acquisition 决策。详情见 battle_map_02_model_training.md:473
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-MT-05-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_02_model_training.md:473
+  source_section: ''
+  original_id: BM-MT-05-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L11
+  search_terms:
+  - BM-MT-05-A
+  - 持续学习防遗忘（EWC+伪回放）
+  - Continual Learning Anti-Forgetting (EWC + Pseudo-Replay)
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/AvalancheLIB
+  acquisition_method: borrow
+  acquisition_source: AvalancheLIB
+- id: CAND-RSK-015
+  name: Liquidity Risk Monitoring / 流动性风险监控
+  aliases:
+  - BM-RC-04-E
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-04-E，未登记 depgraph
+  description: 候选态环节 BM-RC-04-E（流动性风险监控）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:940
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-04-E
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'risk/core/liquidity_monitor.py detect_liquidity_spiral（MOD-RK-08 扩展，+18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：流动性螺旋检测三因子合成"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:940
+  source_section: ''
+  original_id: BM-RC-04-E
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-04-E
+  - 流动性风险监控
+  - Liquidity Risk Monitoring
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RSK-016
+  name: Loss Limit Forced Halt / 亏损限额强制停盘
+  aliases:
+  - BM-RC-05-C
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-05-C，未登记 depgraph
+  description: 候选态环节 BM-RC-05-C（亏损限额强制停盘）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:1100
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-05-C
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'risk/core/ashare_stop_loss_engine.py（MOD-RK-09 production，38 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：INV-003 三级限额与 spec 全等"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:1100
+  source_section: ''
+  original_id: BM-RC-05-C
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-05-C
+  - 亏损限额强制停盘
+  - Loss Limit Forced Halt
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RSK-017
+  name: Crowding Detection / 拥挤度检测
+  aliases:
+  - BM-RC-06-D
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-06-D，未登记 depgraph
+  description: 候选态环节 BM-RC-06-D（拥挤度检测）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:1262
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-06-D
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:1262
+  source_section: ''
+  original_id: BM-RC-06-D
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-06-D
+  - 拥挤度检测
+  - Crowding Detection
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/CrowdingFactor库 (后置)
+  acquisition_method: borrow
+  acquisition_source: CrowdingFactor库 (后置)
+- id: CAND-RSK-018
+  name: Independent Risk Metric Calculation / 独立风险指标计算
+  aliases:
+  - BM-RC-11-A
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-11-A，未登记 depgraph
+  description: 候选态环节 BM-RC-11-A（独立风险指标计算）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:1652
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-11-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: rejected
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：源环节弃用转 rejected：battle_map_09 BM-RC-11-A 有效状态=弃用态（deprecated）；能力面由 MOD-RK-25 risk_data_pipeline + var_calculator + tail_risk_monitor + stress_test_engine 承载。"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:1652
+  source_section: ''
+  original_id: BM-RC-11-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-11-A
+  - 独立风险指标计算
+  - Independent Risk Metric Calculation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RSK-019
+  name: Risk Report Generation / 风险报告生成
+  aliases:
+  - BM-RC-11-B
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-11-B，未登记 depgraph
+  description: 候选态环节 BM-RC-11-B（风险报告生成）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:1683
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-11-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'reporting/risk_report_engine.py（MOD-RPT-008 production，37 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：能力落 D_REPORTING 域承接"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:1683
+  source_section: ''
+  original_id: BM-RC-11-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-11-B
+  - 风险报告生成
+  - Risk Report Generation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/—
+  acquisition_method: borrow
+  acquisition_source: ''
+- id: CAND-RSK-020
+  name: Extreme Events & Black Swan / 极端事件与黑天鹅
+  aliases:
+  - BM-RC-12
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-12，未登记 depgraph
+  description: 候选态环节 BM-RC-12（极端事件与黑天鹅）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:396
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-12
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:396
+  source_section: ''
+  original_id: BM-RC-12
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-12
+  - 极端事件与黑天鹅
+  - Extreme Events & Black Swan
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RSK-021
+  name: Cross-Market Contagion Model / 跨市场传导与传染模型
+  aliases:
+  - BM-RC-12-B
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-12-B，未登记 depgraph
+  description: 候选态环节 BM-RC-12-B（跨市场传导与传染模型）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:1745
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-12-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:1745
+  source_section: ''
+  original_id: BM-RC-12-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-12-B
+  - 跨市场传导与传染模型
+  - Cross-Market Contagion Model
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/networkx + Diebold-Yilmaz (后置)
+  acquisition_method: borrow
+  acquisition_source: networkx + Diebold-Yilmaz (后置)
+- id: CAND-RSK-022
+  name: Liquidity Crisis Simulation / 流动性危机模拟
+  aliases:
+  - BM-RC-12-C
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L4
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RC-12-C，未登记 depgraph
+  description: 候选态环节 BM-RC-12-C（流动性危机模拟）的骨架候选，承载 acquisition 决策。详情见 battle_map_09_risk_control.md:1776
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RC-12-C
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'risk/core/liquidity_crisis_scenarios.py（MOD-RK-047，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：流动性危机情景族（三维+全员出逃）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_09_risk_control.md:1776
+  source_section: ''
+  original_id: BM-RC-12-C
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L4
+  search_terms:
+  - BM-RC-12-C
+  - 流动性危机模拟
+  - Liquidity Crisis Simulation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RES-001
+  name: Feature Store & PIT Correctness / 特征存储与PIT正确性
+  aliases:
+  - BM-RES-01-B
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-01-B，未登记 depgraph
+  description: 候选态环节 BM-RES-01-B（特征存储与PIT正确性）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:368
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-01-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'factor/offline_store.py + feature_store_writer.py + backtest/core/pit_manager.py（61 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：能力已自建落地（未走 Feast），候选漂移未核销"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:368
+  source_section: ''
+  original_id: BM-RES-01-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-01-B
+  - 特征存储与PIT正确性
+  - Feature Store & PIT Correctness
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/Feast
+  acquisition_method: opensource
+  acquisition_source: Feast
+- id: CAND-RES-002
+  name: Research Data Sandbox / 研究数据沙箱（含🆕联邦学习门禁：数据不出域的联邦学习需过安全门禁审批）
+  aliases:
+  - BM-RES-01-C
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-01-C，未登记 depgraph
+  description: 候选态环节 BM-RES-01-C（研究数据沙箱（含🆕联邦学习门禁：数据不出域的联邦学习需过安全门禁审批））的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:399
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-01-C
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/research_data_sandbox.py（MOD-ML-021，16 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:399
+  source_section: ''
+  original_id: BM-RES-01-C
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-01-C
+  - 研究数据沙箱（含🆕联邦学习门禁：数据不出域的联邦学习需过安全门禁审批）
+  - Research Data Sandbox
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/DVC
+  acquisition_method: borrow
+  acquisition_source: DVC
+- id: CAND-RES-003
+  name: Research Asset Versioning / 研究资产版本化
+  aliases:
+  - BM-RES-01-D
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-01-D，未登记 depgraph
+  description: 候选态环节 BM-RES-01-D（研究资产版本化）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:430
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-01-D
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/research_asset_versioning.py（17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码（未走 DVC）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:430
+  source_section: ''
+  original_id: BM-RES-01-D
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-01-D
+  - 研究资产版本化
+  - Research Asset Versioning
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/DVC
+  acquisition_method: opensource
+  acquisition_source: DVC
+- id: CAND-RES-004
+  name: Experiment Logging & Comparison / 实验记录与对比
+  aliases:
+  - BM-RES-02-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-02-A，未登记 depgraph
+  description: 候选态环节 BM-RES-02-A（实验记录与对比）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:498
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-02-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'experiment_tracking/（4 文件 77 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码（未走 MLflow）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:498
+  source_section: ''
+  original_id: BM-RES-02-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-02-A
+  - 实验记录与对比
+  - Experiment Logging & Comparison
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/MLflow
+  acquisition_method: opensource
+  acquisition_source: MLflow
+- id: CAND-RES-005
+  name: Reproducibility Management / 可复现性管理
+  aliases:
+  - BM-RES-02-B
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-02-B，未登记 depgraph
+  description: 候选态环节 BM-RES-02-B（可复现性管理）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:529
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-02-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/reproducibility_manager.py（MOD-ML-020，16 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:529
+  source_section: ''
+  original_id: BM-RES-02-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-02-B
+  - 可复现性管理
+  - Reproducibility Management
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/MLflow+DVC
+  acquisition_method: opensource
+  acquisition_source: MLflow+DVC
+- id: CAND-RES-006
+  name: Experiment Anomaly Detection / 实验异常检测
+  aliases:
+  - BM-RES-02-C
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-02-C，未登记 depgraph
+  description: 候选态环节 BM-RES-02-C（实验异常检测）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:560
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-02-C
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/experiment_anomaly_detector.py（MOD-ML-023，10 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：实验异常检测（突变/漂移/停滞三检测器）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:560
+  source_section: ''
+  original_id: BM-RES-02-C
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-02-C
+  - 实验异常检测
+  - Experiment Anomaly Detection
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/MLflow
+  acquisition_method: borrow
+  acquisition_source: MLflow
+- id: CAND-RES-007
+  name: Reproducibility Pack Generation / 复现包生成
+  aliases:
+  - BM-RES-02-D
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-02-D，未登记 depgraph
+  description: 候选态环节 BM-RES-02-D（复现包生成）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:591
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-02-D
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: rejected
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:591
+  source_section: ''
+  original_id: BM-RES-02-D
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-02-D
+  - 复现包生成
+  - Reproducibility Pack Generation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-050（复现包第三方定位弃用）），对应 battle_map 环节已标 deprecated
+  acquisition_method: opensource
+  acquisition_source: MLflow
+- id: CAND-RES-008
+  name: Hypothesis Management & Finding Distillation / 假设管理与研究发现沉淀
+  aliases:
+  - BM-RES-03
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-03，未登记 depgraph
+  description: 候选态环节 BM-RES-03（假设管理与研究发现沉淀）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:627
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-03
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:627
+  source_section: ''
+  original_id: BM-RES-03
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-03
+  - 假设管理与研究发现沉淀
+  - Hypothesis Management & Finding Distillation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RES-009
+  name: Hypothesis Lifecycle Management / 假设生命周期管理
+  aliases:
+  - BM-RES-03-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-03-A，未登记 depgraph
+  description: 候选态环节 BM-RES-03-A（假设生命周期管理）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:658
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-03-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'research/evidence/hypothesis_registry.py（42 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：假设生命周期状态机已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:658
+  source_section: ''
+  original_id: BM-RES-03-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-03-A
+  - 假设生命周期管理
+  - Hypothesis Lifecycle Management
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RES-010
+  name: Research Finding Knowledge Base / 研究发现知识库
+  aliases:
+  - BM-RES-03-B
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-03-B，未登记 depgraph
+  description: 候选态环节 BM-RES-03-B（研究发现知识库）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:689
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-03-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_artifact_store.py 族（22+24+28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：D_KNOWLEDGE 族承接，D1 合并纪律"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:689
+  source_section: ''
+  original_id: BM-RES-03-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-03-B
+  - 研究发现知识库
+  - Research Finding Knowledge Base
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/Qdrant/Chroma
+  acquisition_method: borrow
+  acquisition_source: Qdrant/Chroma
+- id: CAND-RES-011
+  name: Research Catalog & Search Engine / 研究目录与搜索引擎
+  aliases:
+  - BM-RES-03-C
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-03-C，未登记 depgraph
+  description: 候选态环节 BM-RES-03-C（研究目录与搜索引擎）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:720
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-03-C
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/research_catalog.py（MOD-KNW-012，28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:720
+  source_section: ''
+  original_id: BM-RES-03-C
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-03-C
+  - 研究目录与搜索引擎
+  - Research Catalog & Search Engine
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/Qdrant
+  acquisition_method: opensource
+  acquisition_source: Qdrant
+- id: CAND-RES-012
+  name: Research Workflow Orchestration / 研究工作流编排
+  aliases:
+  - BM-RES-04
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-04，未登记 depgraph
+  description: 候选态环节 BM-RES-04（研究工作流编排）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:756
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-04
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:756
+  source_section: ''
+  original_id: BM-RES-04
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-04
+  - 研究工作流编排
+  - Research Workflow Orchestration
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/Prefect
+  acquisition_method: opensource
+  acquisition_source: Prefect
+- id: CAND-RES-013
+  name: DAG Orchestration & Task Scheduling / DAG编排与任务调度
+  aliases:
+  - BM-RES-04-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-04-A，未登记 depgraph
+  description: 候选态环节 BM-RES-04-A（DAG编排与任务调度）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:787
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-04-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/research_workflow_engine.py（MOD-KNW-014，26 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：DAG 编排已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:787
+  source_section: ''
+  original_id: BM-RES-04-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-04-A
+  - DAG编排与任务调度
+  - DAG Orchestration & Task Scheduling
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/Prefect/Airflow
+  acquisition_method: opensource
+  acquisition_source: Prefect/Airflow
+- id: CAND-RES-014
+  name: Notebook & Collaboration / Notebook与协作
+  aliases:
+  - BM-RES-05
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-05，未登记 depgraph
+  description: 候选态环节 BM-RES-05（Notebook与协作）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:823
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-05
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:823
+  source_section: ''
+  original_id: BM-RES-05
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-05
+  - Notebook与协作
+  - Notebook & Collaboration
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/JupyterHub
+  acquisition_method: opensource
+  acquisition_source: JupyterHub
+- id: CAND-RES-015
+  name: Notebook Integration & One-Click to Production / Notebook集成与一键转生产
+  aliases:
+  - BM-RES-05-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-05-A，未登记 depgraph
+  description: 候选态环节 BM-RES-05-A（Notebook集成与一键转生产）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:854
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-05-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:854
+  source_section: ''
+  original_id: BM-RES-05-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-05-A
+  - Notebook集成与一键转生产
+  - Notebook Integration & One-Click to Production
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/Papermill
+  acquisition_method: opensource
+  acquisition_source: Papermill
+- id: CAND-RES-016
+  name: Research Collaboration Hub / 研究协作中心
+  aliases:
+  - BM-RES-05-B
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-05-B，未登记 depgraph
+  description: 候选态环节 BM-RES-05-B（研究协作中心）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:885
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-05-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: rejected
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:885
+  source_section: ''
+  original_id: BM-RES-05-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-05-B
+  - 研究协作中心
+  - Research Collaboration Hub
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-017（研究协作中心弃用，单人无团队）），对应 battle_map 环节已标 deprecated
+  acquisition_method: borrow
+  acquisition_source: ''
+- id: CAND-RES-017
+  name: Research Information Barrier / 研究信息隔离墙
+  aliases:
+  - BM-RES-05-C
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-05-C，未登记 depgraph
+  description: 候选态环节 BM-RES-05-C（研究信息隔离墙）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:916
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-05-C
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: rejected
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:916
+  source_section: ''
+  original_id: BM-RES-05-C
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-05-C
+  - 研究信息隔离墙
+  - Research Information Barrier
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-018（研究信息隔离墙弃用，个人资金无MNPI）），对应 battle_map 环节已标 deprecated
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RES-018
+  name: LLM Research Assistant / LLM研究助手
+  aliases:
+  - BM-RES-06-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-06-A，未登记 depgraph
+  description: 候选态环节 BM-RES-06-A（LLM研究助手）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:985
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-06-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_research_agent.py（26 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：CAND-AISA-017 已转正承接"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:985
+  source_section: ''
+  original_id: BM-RES-06-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-06-A
+  - LLM研究助手
+  - LLM Research Assistant
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/LangChain
+  acquisition_method: borrow
+  acquisition_source: LangChain
+- id: CAND-RES-019
+  name: Paper Tracking / 论文追踪
+  aliases:
+  - BM-RES-06-B
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-06-B，未登记 depgraph
+  description: 候选态环节 BM-RES-06-B（论文追踪）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:1016
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-06-B
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/paper_tracker.py（25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：CAND-KNW-016 已转正承接"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:1016
+  source_section: ''
+  original_id: BM-RES-06-B
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-06-B
+  - 论文追踪
+  - Paper Tracking
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/arxiv-daily
+  acquisition_method: opensource
+  acquisition_source: arxiv-daily
+- id: CAND-RES-020
+  name: Strategy Evolution & Factor Mining / 策略进化与因子挖掘
+  aliases:
+  - BM-RES-07-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L0
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-07-A，未登记 depgraph
+  description: 候选态环节 BM-RES-07-A（策略进化与因子挖掘）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:1084
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-07-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'research/ 全家桶（gp_strategy_discovery/llm_evolutionary_search 等，163 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：策略进化+因子挖掘已落码；错误模式学习由 skill_trajectory_miner 承接"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:1084
+  source_section: ''
+  original_id: BM-RES-07-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L0
+  search_terms:
+  - BM-RES-07-A
+  - 策略进化与因子挖掘
+  - Strategy Evolution & Factor Mining
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/(后置)
+  acquisition_method: self_build
+  acquisition_source: (后置)
+- id: CAND-RES-021
+  name: Knowledge Cleaning & Structuring / 知识清洗与结构化
+  aliases:
+  - BM-RES-08
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L1
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-08，未登记 depgraph
+  description: 候选态环节 BM-RES-08（知识清洗与结构化）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:169
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-08
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'module_factory/knowledge_classifier.py 族（MOD-FACTORY-001，28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：13号文架构吸收"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:169
+  source_section: ''
+  original_id: BM-RES-08
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L1
+  search_terms:
+  - BM-RES-08
+  - 知识清洗与结构化
+  - Knowledge Cleaning & Structuring
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/LangChain
+  acquisition_method: borrow
+  acquisition_source: LangChain
+- id: CAND-RES-022
+  name: Knowledge Cleaning Pipeline / 知识清洗流水线
+  aliases:
+  - BM-RES-08-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: S1
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-08-A，未登记 depgraph
+  description: 候选态环节 BM-RES-08-A（知识清洗流水线）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:1115
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-08-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'module_factory 清洗链（MOD-FACTORY-001/002，53 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：13号文架构吸收"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:1115
+  source_section: ''
+  original_id: BM-RES-08-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:S1
+  search_terms:
+  - BM-RES-08-A
+  - 知识清洗流水线
+  - Knowledge Cleaning Pipeline
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/LangChain
+  acquisition_method: borrow
+  acquisition_source: LangChain
+- id: CAND-RES-023
+  name: Knowledge Classification & Strategy Extraction / 知识分类与策略提取
+  aliases:
+  - BM-RES-09
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L1
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-09，未登记 depgraph
+  description: 候选态环节 BM-RES-09（知识分类与策略提取）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:200
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-09
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'module_factory/knowledge_classifier.py（MOD-FACTORY-001）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：知识分类+策略分流已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:200
+  source_section: ''
+  original_id: BM-RES-09
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L1
+  search_terms:
+  - BM-RES-09
+  - 知识分类与策略提取
+  - Knowledge Classification & Strategy Extraction
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/LangChain
+  acquisition_method: borrow
+  acquisition_source: LangChain
+- id: CAND-RES-024
+  name: Knowledge Type Classification System / 知识类型分类体系
+  aliases:
+  - BM-RES-09-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: S2
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-09-A，未登记 depgraph
+  description: 候选态环节 BM-RES-09-A（知识类型分类体系）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:1146
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-09-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'module_factory/knowledge_classifier.py（MOD-FACTORY-001）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：受控词表分类体系已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:1146
+  source_section: ''
+  original_id: BM-RES-09-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:S2
+  search_terms:
+  - BM-RES-09-A
+  - 知识类型分类体系
+  - Knowledge Type Classification System
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/LangChain
+  acquisition_method: borrow
+  acquisition_source: LangChain
+- id: CAND-RES-025
+  name: Module Mapping & Factory Matching / 模块映射与工厂匹配
+  aliases:
+  - BM-RES-10
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L1
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-10，未登记 depgraph
+  description: 候选态环节 BM-RES-10（模块映射与工厂匹配）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:231
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-10
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'module_factory/module_mapper.py（MOD-FACTORY-002，25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：模块映射已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:231
+  source_section: ''
+  original_id: BM-RES-10
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L1
+  search_terms:
+  - BM-RES-10
+  - 模块映射与工厂匹配
+  - Module Mapping & Factory Matching
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RES-026
+  name: Module Factory Architecture / 模块工厂架构
+  aliases:
+  - BM-RES-10-A
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: S3
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-10-A，未登记 depgraph
+  description: 候选态环节 BM-RES-10-A（模块工厂架构）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:1177
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-10-A
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'module_factory 包 + 62号生命周期门禁'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：架构已落（Phase 1 两环节 53 测）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:1177
+  source_section: ''
+  original_id: BM-RES-10-A
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:S3
+  search_terms:
+  - BM-RES-10-A
+  - 模块工厂架构
+  - Module Factory Architecture
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-RES-027
+  name: Multimodal Knowledge Acquisition / 多模态知识采集
+  aliases:
+  - BM-RES-11
+  domain: D_RESEARCH
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L1
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-RES-11，未登记 depgraph
+  description: 候选态环节 BM-RES-11（多模态知识采集）的骨架候选，承载 acquisition 决策。详情见 battle_map_01_research_incubation.md:305
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-RES-11
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_01_research_incubation.md:305
+  source_section: ''
+  original_id: BM-RES-11
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L1
+  search_terms:
+  - BM-RES-11
+  - 多模态知识采集
+  - Multimodal Knowledge Acquisition
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/LangChain
+  acquisition_method: borrow
+  acquisition_source: LangChain
+- id: CAND-SIG-003
+  name: Signal Factory Sub-Stage Pipeline / 信号工厂子阶段流水线
+  aliases:
+  - BM-SEL-02-J
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-A
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-02-J，未登记 depgraph
+  description: 候选态环节 BM-SEL-02-J（信号工厂子阶段流水线）的骨架候选，承载 acquisition 决策。详情见 battle_map_05_stock_selection.md:1774
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-02-J
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/signal_factory.py（MOD-SIG-087，15 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：九阶段生命周期已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_05_stock_selection.md:1774
+  source_section: ''
+  original_id: BM-SEL-02-J
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L2-A
+  search_terms:
+  - BM-SEL-02-J
+  - 信号工厂子阶段流水线
+  - Signal Factory Sub-Stage Pipeline
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-004
+  name: Multi-Strategy Voting & Weighting / 多策略投票与加权
+  aliases:
+  - BM-SEL-02-K
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-A
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-02-K，未登记 depgraph
+  description: 候选态环节 BM-SEL-02-K（多策略投票与加权）的骨架候选，承载 acquisition 决策。详情见 battle_map_05_stock_selection.md:1805
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-02-K
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/strategy_vote_integrator.py（MOD-SIG-134，26 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：投票整合（相关性惩罚+2/3 同向阈值）"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_05_stock_selection.md:1805
+  source_section: ''
+  original_id: BM-SEL-02-K
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L2-A
+  search_terms:
+  - BM-SEL-02-K
+  - 多策略投票与加权
+  - Multi-Strategy Voting & Weighting
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-005
+  name: Signal Aggregator Architecture / 信号聚合器架构
+  aliases:
+  - BM-SEL-02-L
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-A
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-02-L，未登记 depgraph
+  description: 候选态环节 BM-SEL-02-L（信号聚合器架构）的骨架候选，承载 acquisition 决策。详情见 battle_map_05_stock_selection.md:1836
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-02-L
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_fundamental/gen/implementations/default_signal_aggregator.py aggregate_portfolio（MOD-L03-001 扩展，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：组合级输出+直属测试补齐"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_05_stock_selection.md:1836
+  source_section: ''
+  original_id: BM-SEL-02-L
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L2-A
+  search_terms:
+  - BM-SEL-02-L
+  - 信号聚合器架构
+  - Signal Aggregator Architecture
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-006
+  name: Main Force Behavior Self-Iteration Deduction / 主力行为自迭代推演
+  aliases:
+  - BM-SEL-05-D
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-B
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-05-D，未登记 depgraph
+  description: 候选态环节 BM-SEL-05-D（主力行为自迭代推演）的骨架候选，承载 acquisition 决策。详情见 battle_map_05_stock_selection.md:2022
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-05-D
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'capital_behavior_orchestrator + fake_move_distribution + institutional_behavior_analyzer（17+24+27 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三件覆盖"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_05_stock_selection.md:2022
+  source_section: ''
+  original_id: BM-SEL-05-D
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L2-B
+  search_terms:
+  - BM-SEL-05-D
+  - 主力行为自迭代推演
+  - Main Force Behavior Self-Iteration Deduction
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/(后置)
+  acquisition_method: self_build
+  acquisition_source: (后置)
+- id: CAND-SIG-007
+  name: Market Maker Behavior Recognition & Simulation / 庄家行为识别与模拟
+  aliases:
+  - BM-SEL-05-E
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-B
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-05-E，未登记 depgraph
+  description: 候选态环节 BM-SEL-05-E（庄家行为识别与模拟）的骨架候选，承载 acquisition 决策。详情见 battle_map_05_stock_selection.md:2053
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-05-E
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/banker_pattern_simulator.py（MOD-SIG-113 production，20 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：C-035 六阶段识别+沙盒已落码"
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_05_stock_selection.md:2053
+  source_section: ''
+  original_id: BM-SEL-05-E
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L2-B
+  search_terms:
+  - BM-SEL-05-E
+  - 庄家行为识别与模拟
+  - Market Maker Behavior Recognition & Simulation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-008
+  name: Multi-Party Game Simulation / 多方博弈模拟
+  aliases:
+  - BM-SEL-05-F
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-B
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-05-F，未登记 depgraph
+  description: 候选态环节 BM-SEL-05-F（多方博弈模拟）的骨架候选，承载 acquisition 决策。详情见 battle_map_05_stock_selection.md:2084
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-05-F
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: rejected
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_05_stock_selection.md:2084
+  source_section: ''
+  original_id: BM-SEL-05-F
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L2-B
+  search_terms:
+  - BM-SEL-05-F
+  - 多方博弈模拟
+  - Multi-Party Game Simulation
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-037（多方博弈纳什均衡模拟弃用）），对应 battle_map 环节已标 deprecated
+  acquisition_method: borrow
+  acquisition_source: Axelrod
+- id: CAND-PFALLOC-002
+  name: Multi-Strategy Cross Voting / 多策略交叉投票
+  aliases:
+  - BM-SEL-20
+  domain: D_PF_ALLOC
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L3
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SEL-20，未登记 depgraph
+  description: 候选态环节 BM-SEL-20（多策略交叉投票）的骨架候选，承载 acquisition 决策。详情见 battle_map_08_position_management.md:554
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SEL-20
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: rejected
+  status: rejected
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-15'
+  promoted_to: ''
+  source_draft: battle_map_08_position_management.md:554
+  source_section: ''
+  original_id: BM-SEL-20
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: 'rejected 2026-08-15（AI-XCUT-001 按 60_cross_cutting_cleanup §3.3 与 30_multi_strategy_concurrency §7.3 裁定落地）：跨策略投票层随统一优化器（Model A 前身方案）被否决而消失——Model A 独立账本下 sleeve 自然叠加即等价多策略共识（S1 给 5%+S2 给 5%=10%），投票权重 meta-参数=回测/调参/衰减监控纯技术债。同概念 archive 条目 CAND-HARVEST-3225 已 rejected（2026-08-05），本条目系 2026-08-07 acquisition 补登的同名复活候选，按既裁定同步 rejected 防幽灵施工。'
+  risks: []
+  alternatives: 'Model A 自然叠加（30_multi_strategy_concurrency §2.3）——多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器'
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L3
+  search_terms:
+  - BM-SEL-20
+  - 多策略交叉投票
+  - Multi-Strategy Cross Voting
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: '2026-08-15 rejected（60号 §3.3 跨策略投票降级裁定，AI-XCUT-001 落地；原补登：register_candidate_acquisitions.py，acquisition=borrow/scikit-learn VotingClassifier 后置）'
+  acquisition_method: borrow
+  acquisition_source: scikit-learn VotingClassifier (后置)
+- id: CAND-SIM-003
+  name: Market Simulator / 市场仿真器
+  aliases:
+  - BM-SIM-01
+  domain: D_SIMULATION
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L13
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 候选态环节 BM-SIM-01，未登记 depgraph
+  description: 候选态环节 BM-SIM-01（市场仿真器）的骨架候选，承载 acquisition 决策。详情见 battle_map_04_simulation_validation.md:110
+  capability: ''
+  problem_it_solves: ''
+  trigger_signals: []
+  keywords:
+  - BM-SIM-01
+  - 候选态环节补登
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-07'
+  last_reviewed_at: '2026-08-07'
+  promoted_to: ''
+  source_draft: battle_map_04_simulation_validation.md:110
+  source_section: ''
+  original_id: BM-SIM-01
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: ''
+  tags:
+  - 候选态环节补登
+  - acquisition导入
+  - layer:L13
+  search_terms:
+  - BM-SIM-01
+  - 市场仿真器
+  - Market Simulator
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 复核：ABIDES 订单簿仿真部分已裁定弃用（#ARCH-OE-034），本条目仅保留市场仿真器基础入口（market-sim 轻量路线）；原登记"由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/ABIDES+market-sim"
+  acquisition_method: opensource
+  acquisition_source: market-sim（已移除 ABIDES，#ARCH-OE-034）
+
+# ----------------------------------------------------------
+# 作战地图全景审查转入（2026-08-12，#ARCH-OE-013~055 裁定）
+# ----------------------------------------------------------
+- id: CAND-RPT-001
+  name: Regulatory Report Automation / 监管报告自动生成
+  aliases:
+  - BM-REC-02-F
+  domain: D_REPORTING
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-REC-02-F 转候选（#ARCH-OE-020），未登记 depgraph
+  description: 程序化交易报告/异常交易自报/持仓/绩效四类监管报送自动生成。当前手动填报已够用（激活门槛 GATE-002=AUM≥1000万，个人资金现实不符）。
+  capability: ''
+  problem_it_solves: AUM 达到监管报送量级后手动填报工作量大且易错
+  trigger_signals:
+  - '账户 AUM≥1000 万（GATE-002 激活）'
+  - '监管开放个人程序化交易自动化报送接口'
+  - '跨市场交易（GATE-003 激活）'
+  keywords:
+  - 监管报告
+  - 程序化交易报备
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: MOD-RPT-006 stable，当前手动填报
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-A8
+  source_section: ''
+  original_id: BM-REC-02-F
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 手动填报指引文档（保留）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-REC-02-F
+  - 监管报告
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-020）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-TRD-001
+  name: Multi-Account Manager / 多账户分仓管理
+  aliases:
+  - BM-REC-05
+  domain: D_TRADING
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-REC-05 转候选（#ARCH-OE-021），未登记 depgraph
+  description: 按各账户 AUM 分仓+独立风控/独立PnL/独立报告的多账户管理体系。当前双账户（实盘+QMT模拟）用本地账本配置隔离即可。
+  capability: ''
+  problem_it_solves: 账户数超过 2 个或出现代客理财场景时的分仓核算
+  trigger_signals:
+  - '账户数量 >2'
+  - '出现代客理财/多资金管理需求'
+  keywords:
+  - 多账户
+  - 分仓
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: D-TRADING-05 未开发
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-A9
+  source_section: ''
+  original_id: BM-REC-05
+  estimated_complexity: L
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 双账户本地账本配置隔离（并入 #ARCH-GAP-002 设计）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-REC-05
+  - 多账户分仓
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-021，用户确认）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-010
+  name: KG-GNN Inference Suite / 知识图谱GNN推演族
+  aliases:
+  - BM-SEL-11
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-D
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-SEL-11 转候选（#ARCH-OE-036），未登记 depgraph
+  description: RGCN/TGN/GAT 图神经网络三件套+供应链 GNN+Causal RL（v9.0 门禁项）。研究级图学习设施，单卡 24GB 与单人验证带宽难以支撑。
+  capability: ''
+  problem_it_solves: 事件沿产业链/供应链图谱的学习式传导推演
+  trigger_signals:
+  - 'Wind 产业链数据库（6631 节点/11 级）落地且图谱遍历式传导（普通图查询）验证有效后仍需学习式推演'
+  keywords:
+  - GNN
+  - 知识图谱
+  - Causal RL
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全部 planned，无代码
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-D4
+  source_section: ''
+  original_id: BM-SEL-11
+  estimated_complexity: XL
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 普通图谱遍历（非 GNN）即可承接产业链事件传导（见 #ARCH-OE-053 RC-12-B 拆分）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-SEL-11
+  - GNN
+  - 知识图谱
+  related_candidates:
+  - CAND-RSK-021
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-036）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-PFALLOC-003
+  name: Copula-GARCH Covariance & Core-Satellite / 高阶协方差与核心-卫星框架
+  aliases:
+  - BM-POS-02 部分
+  domain: D_PORTFOLIO
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L3.5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-POS-02 部分能力转候选（#ARCH-OE-041），环节主体保留
+  description: Copula-GARCH 协方差建模+核心-卫星仓位管理框架。30-80 只持仓下协方差工程保留（Ledoit-Wolf 收缩/因子模型），本条目仅承载高阶学术选型。
+  capability: ''
+  problem_it_solves: 多 sleeve 并行且持仓数较大时的尾部相关结构与仓位分层
+  trigger_signals:
+  - '多 sleeve 并行上线且组合持仓 >50 只'
+  - '收缩估计/因子模型协方差在实盘归因中表现不足'
+  keywords:
+  - Copula-GARCH
+  - 核心-卫星
+  - 协方差
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: MOD-POS-011 planned
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-E1
+  source_section: ''
+  original_id: BM-POS-02
+  estimated_complexity: L
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: Ledoit-Wolf 收缩估计/因子模型协方差（行业标准，保留在 BM-POS-02 主体）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-POS-02
+  - Copula-GARCH
+  - 核心-卫星
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-041，30-80 只修正后部分保留）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-FBL-001
+  name: Meta-Level Iteration & Second-Order Optimization / 元级迭代与二阶优化
+  aliases:
+  - BM-REC-03-D
+  - C-041
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-REC-03-D 转候选（#ARCH-OE-052），未登记 depgraph
+  description: C-041 十五个优化维度的元优化+二阶反馈（优化"优化策略的方法"）。研究性质浓、验证困难，单人系统奢侈品。
+  capability: ''
+  problem_it_solves: 优化方法本身的自进化
+  trigger_signals:
+  - '单层反馈闭环（因子/信号/模型层）稳定运行 ≥6 个月且产出可度量收益'
+  keywords:
+  - 元优化
+  - 二阶优化
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 待开发（planned，D_FEEDBACK_LOOP 域）
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-F4
+  source_section: ''
+  original_id: BM-REC-03-D
+  estimated_complexity: XL
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 单层反馈闭环（BM-REC-03-A/B/C 已建）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-REC-03-D
+  - 元级迭代
+  - 二阶优化
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-052）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-011
+  name: Density Prediction Alternative Model Zoo / 密度预测备选模型族
+  aliases:
+  - BM-SEL-13 部分
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-D
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-SEL-13 未入选模型族转候选（#ARCH-OE-035），环节主体收敛单一路线
+  description: Mamba/SSM+xLSTM+KAN+QNN+归一化流/扩散等密度预测备选模型族。主路线收敛为轻量密度头或 Kronos-mini 二选一（91_density_prediction.md），本条目承载备选族。
+  capability: ''
+  problem_it_solves: 主路线模型验证不达标时的备选模型储备
+  trigger_signals:
+  - '主路线（轻量密度头/Kronos-mini）IS→WFA→OOS 验证不达标'
+  keywords:
+  - Mamba
+  - xLSTM
+  - KAN
+  - QNN
+  - 扩散模型
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全部 planned，无代码
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-D3
+  source_section: ''
+  original_id: BM-SEL-13
+  estimated_complexity: XL
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 轻量密度头或 Kronos-mini 单一路线（BM-SEL-13 主体保留）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-SEL-13
+  - 密度预测
+  - 模型族
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-035）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SEAT-001
+  name: 龙虎榜席位形态分析 / LHB Seat Pattern Analysis
+  aliases:
+  - 席位形态
+  - seat pattern
+  - 龙虎榜分析
+  - seat_registry 消费模块
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2 信号层
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: SSoT 注册表已建（seat_registry.yaml REG-SEAT-001，15 席位条目，2026-08-14），分析模块代码未开发
+    dataflowgraph:
+      has_position: true
+      note: DS-080 market_data.lhb_detail + JOB-076 ingest.akshare_lhb 已登记 data_asset_registry（2026-08-14）
+    decisiongraph:
+      has_position: false
+      note: 晋升后服务 L2 买入信号决策（席位溢价/跟买胜率）
+    blueprint:
+      has_position: false
+      note: 待晋升时定位
+  description: >-
+    基于龙虎榜每日披露数据识别席位形态：知名游资/机构席位上榜跟踪、席位联动（多家关联席位同买）、
+    席位溢价回测（上榜次日/3日超额）、跟买信号生成。与 chart_pattern_registry 正交——
+    图形形态管"怎么买"（价格形态），本模块管"谁在买"（结构化披露数据）。
+  capability: ''
+  problem_it_solves: A股短线交易中"跟主力/跟游资"是核心 alpha 来源，但席位身份/胜率/风格无结构化管理，人工复盘不可持续
+  trigger_signals:
+  - 'JOB-076 龙虎榜日线管道落地并积累 ≥3 个月历史数据'
+  - '打板/连板策略（strategy_registry daban 类 59 条中）回测需要席位维度增强特征'
+  keywords:
+  - 龙虎榜
+  - 席位
+  - 游资
+  - 机构专用
+  - 席位溢价
+  - 跟买
+  upstream_deps:
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml', note: 'REG-SEAT-001 席位 SSoT（已建，15 条）'}
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml', note: 'DS-080 lhb_detail 数据集 + JOB-076 接入管道（已登记，candidate）'}
+  downstream_consumers:
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml', note: 'daban 类策略席位增强特征'}
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml', note: '席位溢价因子（seat_premium_1d/3d）候选'}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {item: 'DS-080 龙虎榜日线数据', status: registered_candidate, note: '数据源 AKShare stock_lhb_detail_em 已确认可用（免费/学术用途，实盘需商业源合规确认）；JOB-076 接入代码待写'}
+  - {item: '席位历史胜率回测回填', status: pending, note: 'seat_registry 15 条目的 history_win_rate/avg_premium 字段当前为 null，需积累数据后回测回填'}
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全项目无席位形态分析代码（grep 无命中）；SSoT 注册表+数据资产登记已完成（2026-08-14）
+    blocking_question: none
+    result: candidate
+  status: promoted
+  priority: P1
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-18'
+  promoted_to: "MOD-SIG-056 seat_pattern_analyzer（src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py，2026-08-18 AI-SEAT-001 MVP 施工，#ARCH-120）"
+  source_draft: 2026-08-14 图形形态循环审查会话——「龙虎榜席位形态」裁定为新建表（CAND 候选，与图形形态表正交）
+  source_section: ''
+  original_id: ''
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: >-
+    前提条件已确认：①数据源可用——AKShare stock_lhb_detail_em（东财龙虎榜，交易日收盘后更新）；
+    ②SSoT 已建——seat_registry.yaml 15 席位（机构2/游资6/量化2/北向1/散户2/其他2）+ 六维分析框架；
+    ③数据资产已登记——DS-080/JOB-076。开工路径：先写 JOB-076 接入（akshare_provider 扩展），
+    积累历史后回测回填席位胜率，再实现席位形态识别（上榜跟踪/联动/溢价）挂入信号层。
+    无日线龙虎榜数据则席位形态无意义——数据管道是第一里程碑。
+  risks:
+  - 'AKShare 学术用途 license——实盘前 MUST 法律确认或采购商业源（同 SRC-AKSHARE-001 compliance 约束）'
+  - '东财反爬限流（3 次跳过策略）可能导致历史回补不完整'
+  - '席位营业部归属随时间漂移（游资换席位），需定期人工维护 seat_registry'
+  alternatives: 不做席位形态则用现有 A股游资图形形态（chart_pattern_registry PAT-STRUCT 系列）间接近似，丢失"谁在买"维度
+  tags:
+  - 龙虎榜
+  - A股特色
+  - 另类数据
+  - 信号增强
+  search_terms:
+  - 龙虎榜席位
+  - seat pattern
+  - lhb
+  - 游资跟踪
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-14'
+  review_frequency: quarterly
+  last_review_outcome: '2026-08-18 晋升闭环：AI-SEAT-001 施工（#ARCH-120）——MOD-SIG-056 三件套落码（A1 席位身份识别 seat_registry 精确/别名匹配+A2 类型共现联动+A3 跟随信号基准 50 加减分 0-100 三档，独食判定加 buyer_count≥3 前置防假阳性），17 测试两轮全绿+蓝图 v0.1.0；维度3/4/6 裁至 v0.2（MVP 不引跨域依赖）；v0.1 禁消费胜率 null 字段（数据纪律）；遗留=阈值回测校准/provider 词表统一（tracker #133/#134）'
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-CYCLE-001
+  name: 时间周期分析（Gann 江恩/周年日/统计周期） / Regime Cycle Analysis
+  aliases:
+  - Gann 时间周期
+  - 江恩周期
+  - 周年日效应
+  - regime_cycle_registry 消费模块
+  domain: D_REGIME
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: regime 层（时间窗口维度）
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: SSoT 注册表已建（regime_cycle_registry.yaml REG-CYCLE-001，12 周期条目，2026-08-14），识别算法代码未开发；条目 module_id 预留 MOD-REGIME-002
+    dataflowgraph:
+      has_position: true
+      note: 输入 DS-002 market_data.ohlc_bar（日线 OHLCV，已有）——无新增数据依赖
+    decisiongraph:
+      has_position: false
+      note: 晋升后服务 regime 层时间窗口调整（变盘窗口前降仓/收紧）
+    blueprint:
+      has_position: false
+      note: 待晋升时定位（regime 域蓝图）
+  description: >-
+    时间/价格/几何/统计周期识别：Gann 江恩时间周期（30/60/90/120/180/360 交易日+周年日）、
+    江恩价格分割与几何角度线、FFT/自相关/周期聚类统计周期。输出"何时可能变盘"的时间窗口信号。
+    与 regime（市场状态多谨慎）和 emotion_cycle 五阶段（sleeve 内 alpha 择时）正交——本模块管时间窗口。
+  capability: ''
+  problem_it_solves: regime/风控调整目前只看价格与波动状态，无时间维度前瞻（变盘窗口盲视），Gann 周年日等 A股游资关注的时间节点未结构化
+  trigger_signals:
+  - 'regime 层需要时间窗口维度增强（变盘前主动降仓）'
+  - '打板/情绪策略回测发现时间聚集效应（月末/季末/周年）需建模'
+  keywords:
+  - Gann
+  - 江恩
+  - 时间周期
+  - 周年日
+  - FFT
+  - 周期检测
+  - 变盘窗口
+  upstream_deps:
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml', note: 'REG-CYCLE-001 周期 SSoT（已建，12 条：Gann 时间6+价格2+几何2+统计2）'}
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml', note: 'DS-002 ohlc_bar 日线行情（已有，无新增数据依赖）'}
+  downstream_consumers:
+  - {path: 'regime 层模块', note: '时间窗口置信度→regime 节流参数调整'}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {item: '日线 OHLCV 行情数据', status: available, note: 'DS-002 已有——本候选无新增数据前提，可直接开工'}
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全项目无 Gann/周期识别代码（grep 无命中）；SSoT 注册表已建（2026-08-14）
+    blocking_question: none
+    result: candidate
+  status: promoted
+  priority: P2
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-18'
+  promoted_to: MOD-REGIME-006
+  source_draft: 2026-08-14 图形形态循环审查会话——「Gann 时间周期/周年日」裁定为新建表（CAND 候选）
+  source_section: ''
+  original_id: ''
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: >-
+    前提条件已确认：仅需日线 OHLCV（DS-002 已有），无新增数据依赖，可直接开工。
+    SSoT 已建——regime_cycle_registry.yaml 12 条目（CYC-TIME-001~006 Gann 30/60/90/120/180/360日+周年日、
+    CYC-PRICE-001~002 价格分割/时间价格平衡、CYC-GEO-001~002 江恩角度线/四方图、CYC-STAT-001~002 FFT/自相关聚类）。
+    开工建议顺序：统计周期（FFT/自相关，subjectivity low）先行验证，Gann 规则法（medium）次之，
+    几何类（high）最后。subjectivity 高条目回测 MUST 参数敏感性扫描防过拟合。
+  risks:
+  - 'Gann 类方法学术证据弱——MUST 严格 OOS/WFA 验证，置信度不达标不挂 regime 节流'
+  - '周期参数过拟合风险（多周期并行试探）——需 Bonferroni/多重检验校正'
+  alternatives: 不做时间周期则 regime 维持纯状态驱动（现状），丢失变盘窗口前瞻维度
+  tags:
+  - 周期分析
+  - Gann
+  - regime
+  - 择时
+  search_terms:
+  - Gann 时间周期
+  - 江恩
+  - 周年日
+  - cycle detection
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-14'
+  review_frequency: quarterly
+  last_review_outcome: '2026-08-18 晋升闭环：AI-CYCLE-001 施工（#ARCH-122）——MVP 两件套落码（日历效应统计月末/月初/节后 Welch t+Bonferroni 检验族=4 + 周年日效应显著高低点 ±5 日窗口 |日收益| 检验），模块=src/zephyr/regime/regime_cycle_analyzer.py（MOD-REGIME-006，24 单测两轮全绿）；域归属修正 D_SIGNAL(deprecated 遗留域)→D_REGIME；Gann 固定间隔/几何类列扩展口 EXT-G/EXT-GEO 不落码（证据强度不足不过度工程）；边界钉死=辅助参考信号非独立交易信号（is_advisory_only 恒 True，不显著 confidence=0 下游禁消费，未过 WFA 禁挂 regime 节流）；遗留=真数据实证回填 evidence+WFA 验证+节流接线（蓝图 §9）'
+  acquisition_method: self_build
+  acquisition_source: ''
+
+  # ----------------------------------------------------------
+  # CAND-MKTDATA-001: CSI300/CSI800 成分股 PIT 快照序列接入（deferred，K3 登记——回测两指数池实证前 MUST）
+  # 来源: 62_business_registry_construction.md §14 K3（2026-08-16 用户授权裁定登记）
+  # ----------------------------------------------------------
+- id: CAND-MKTDATA-001
+  name: "指数成分股 PIT 快照接入(Index Constituent PIT Snapshots)"
+  aliases: ["成分股历史快照", "index constituents PIT", "csi300/csi800 成分文件"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/datasets/index_constituents"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 mkt_data 域数据接入（akshare_provider 既有节点）"}
+    dataflowgraph: {has_position: true, note: "数据源→data/index_constituents/csi300.csv+csi800.csv（PIT 快照序列）"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图（universe_registry components_ref 兑现）"}
+  description: >-
+    universe_registry 的 UNI-INDEX-001（CSI300）/UNI-INDEX-002（CSI800）components_ref
+    指向 data/index_constituents/csi300.csv / csi800.csv，但该目录从未落盘
+    （2026-08-12 Glob 实证，E5 审计级硬错误，YAML 已诚实标注 pit=false/survivorship_free=false）。
+    施工：接入中证指数官方季度调整历史成分文件（PIT 快照序列，非单当前快照），
+    或用 akshare index_stock_cons 历史接口按调仓日重建 PIT 成分；
+    落盘后回改 YAML 三字段为 true/include/true。
+  capability: ""
+  problem_it_solves: "消除'universe 条目声称指数池但成分文件不存在'的悬空引用——回测 CSI300/CSI800 实证前无此数据=幸存者偏差+成分前视"
+  trigger_signals:
+    - "multifactor 或任何策略需回测 CSI300/CSI800 指数池实证"
+    - "E5 审计将 pit=false 标注升级为阻断项"
+  keywords: ["universe", "index constituents", "PIT", "csi300", "csi800", "成分股", "幸存者偏差"]
+  upstream_deps:
+    - {path: "src/zephyr/data/implementations/akshare_provider.py", note: "index_stock_cons 历史接口扩展点"}
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml", note: "UNI-INDEX-001/002 components_ref 消费方"}
+  downstream_consumers:
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml", note: "BMK-INDEX-001/002 underlying_universe 依赖"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "akshare index_stock_cons 历史接口可用性验证", note: "按调仓日重建 PIT 序列的可行性先行验证"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "data/index_constituents/ 目录不存在（2026-08-12 Glob 实证），无任何成分股文件落盘"}
+    blocking_question: null
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "62_business_registry_construction.md §14 K3"
+  source_section: "待定问题 K3"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: >-
+    MVP 阶段 multifactor 回测用 UNI-RULE-001 全A可交易池替代（已标 pit=true），本项不阻塞。
+    施工要点：PIT 快照序列（非单当前快照）防成分前视；中证官方季度调整文件或
+    akshare 历史接口二选一（62 号 K3 处理方向①②）。
+  risks:
+    - "akshare 历史成分接口覆盖区间不足时需混用官方文件，两源对账成本高"
+  alternatives: "维持 UNI-RULE-001 全A池（MVP 默认）——本项仅在需要 CSI300/CSI800 严格实证时晋升"
+  tags: ["数据", "universe", "PIT", "指数成分", "回测前置"]
+  search_terms: ["成分股", "csi300", "csi800", "PIT 快照", "index constituents"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-16'
+  review_frequency: yearly
+  last_review_outcome: "deferred 登记（2026-08-16 用户授权裁定）：MVP 用 UNI-RULE-001 替代，回测两指数池实证前 MUST 晋升"
+  acquisition_method: self_build
+  acquisition_source: "akshare index_stock_cons 历史接口 / 中证指数官方季度调整成分文件"
+
+  # ----------------------------------------------------------
+  # CAND-MKTDATA-002: 板块推送池 universe 条目（deferred，K5 登记——22 号行业轮动落地时触发）
+  # 来源: 62_business_registry_construction.md §14 K5（2026-08-16 用户授权裁定登记）
+  # ----------------------------------------------------------
+- id: CAND-MKTDATA-002
+  name: "板块推送池 Universe(Sector Push-Pool Universe)"
+  aliases: ["板块推送池", "sector push pool", "UNI-SECTOR-001"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/universe/sector"
+  panorama_position:
+    depgraph: {has_position: false, note: "universe_registry 条目扩展，非独立模块"}
+    dataflowgraph: {has_position: true, note: "板块指数（880xxx/881xxx，582 只）→ universe 板块层池"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 universe_registry 蓝图（板块层池登记）"}
+  description: >-
+    22 号行业轮动策略有"板块推送池"（880xxx/881xxx，582 只板块指数，22 号 §5.1）——
+    板块层 universe 而非个股池。universe_registry 当前 5 条全为个股池，板块层无登记。
+    施工：补 UNI-SECTOR-001（universe_type=rule_based，component 为板块指数非个股）。
+  capability: ""
+  problem_it_solves: "板块层 universe 无登记——行业轮动策略施工时无板块池真源可引用"
+  trigger_signals:
+    - "22 号行业轮动策略（sector_rotation）施工推进"
+    - "板块层回测需求出现"
+  keywords: ["universe", "sector", "板块推送池", "行业轮动", "880xxx", "881xxx"]
+  upstream_deps:
+    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_industry_rotation.md", note: "§5.1 板块推送池定义源（582 只板块指数）"}
+  downstream_consumers:
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml", note: "UNI-SECTOR-001 条目落点"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "universe_registry 5 条全为个股池（2026-08-16 核验），板块层无条目"}
+    blocking_question: null
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "62_business_registry_construction.md §14 K5"
+  source_section: "待定问题 K5"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: "板块指数成分非个股——universe schema 的 component_count/filter_rules 按板块指数口径填写；22 号 §5.1 为定义真源"
+  risks: []
+  alternatives: "MVP 阶段不施工（62 号 K5 原裁定）——22 号策略落地时再裁定"
+  tags: ["数据", "universe", "板块", "行业轮动", "低优先"]
+  search_terms: ["板块推送池", "sector universe", "UNI-SECTOR-001"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-16'
+  review_frequency: yearly
+  last_review_outcome: "deferred 登记（2026-08-16 用户授权裁定）：可选扩展非阻塞，22 号行业轮动策略落地时晋升"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+  # ----------------------------------------------------------
+  # CAND-AUTONOMYCORE-001: Skill 内容库建设（candidate，#ARCH-096 裁定 2026-08-16）
+  # 来源: AI-TDEBT-001 测试债清偿——tests/autonomy/test_pipeline_bridge_integration.py
+  #   5 项 xfail 锚定的 skill 内容（SKILL.md）出生即桩，裁定登记候选库、xfail 保留作规格书
+  # ----------------------------------------------------------
+- id: CAND-AUTONOMYCORE-001
+  name: "Skill Content Library / 技能内容库"
+  aliases: ["skill内容库", "SKILL.md库", "技能内容文件", "skill-registry内容层"]
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "autonomy_core/skills 内容层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-INF-019
+      target_build_status: production
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "非新模块——为既有 MOD-INF-019（pipeline_bridge）/skill_loader 补齐内容层（SKILL.md 文件+registry 条目），不涉及拓扑变更"
+      target_edges: []
+    dataflowgraph:
+      has_position: false
+    decisiongraph:
+      has_position: false
+    blueprint:
+      has_position: true
+      target_ref: "src/zephyr/autonomy_core/skills/skill-registry.yaml"
+      design_maturity: production
+  description: "为自治管线 skill 注入机制补齐内容层：skill-registry.yaml 当前仅 2 条 domain 桩条目（database-specialist/master-blueprint）且 path 指向的 SKILL.md 全部不存在，role 类清空。建设内容包括 role 类技能（architect/implementer/auditor 等）与 domain 类技能的完整条目及其 SKILL.md 正文，使 PipelineSkillBridge.inject_for_task 的 loaded=True 路径真实可达"
+  capability: ""
+  problem_it_solves: "skill 注入机制（MOD-INF-019 已 production）有骨架无内容——stage→role 映射、关键词→domain 映射的逻辑已闭环，但无实际技能正文可加载，注入结果恒为空壳，自治管线丢失领域上下文增强能力"
+  trigger_signals:
+  - "自治管线（idea→construction→audit）实际启用且注入空壳被证实削弱产出质量"
+  - "用户明确要求 AI 会话按角色/领域加载技能正文"
+  - "SKILL-DOM-DBS-001/SKILL-ROL-* 等锚定 ID 的需求场景出现"
+  keywords: ["skill", "技能注入", "SKILL.md", "pipeline_bridge", "role", "domain", "自治管线"]
+  upstream_deps:
+  - {contract: "MOD-INF-019 PipelineSkillBridge/SkillLoader", from_domain: D_AUTONOMY_CORE, dep_type: H, availability: available, note: "加载机制已 production，内容层直接可被消费"}
+  downstream_consumers:
+  - {consumer: "tests/autonomy/test_pipeline_bridge_integration.py", contract: "5 项 xfail 用例", note: "内容库建成后去 xfail 即验收"}
+  contracts_to_produce:
+  - {id: "skill-registry.yaml 完整条目集", name: "role 类+domain 类技能条目及 SKILL.md 正文"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "加载机制就绪", check: "MOD-INF-019=production", met: true}
+  - {condition: "真实需求场景出现", check: "", met: false, note: "当前无消费方证明内容库的业务价值——xfail 保留作规格书即为等待信号"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "grep 全仓无既有 SKILL.md 内容库（仅 2 桩条目），无重复"}
+    blocking_question: none
+    result: pass
+  status: candidate
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "AI-TDEBT-001 测试债清偿 #ARCH-096 裁定书（docs/_archive/2026-08-16-test-debt-leftover-adjudication.md）"
+  source_section: "§ARCH-096 skill 内容库恢复或退役"
+  original_id: "ARCH-096"
+  estimated_complexity: M
+  estimated_effort: "5-10人天（role×3~5 + domain×N 条目+正文撰写）"
+  tech_notes: "建设时须与 skill_loader 的加载契约对齐：path 相对 skills/ 目录、references 列表、L1/L2 tier 语义；role 类条目需覆盖 pipeline stage 映射表（idea→architect/construction→implementer/audit→auditor）。退役备选：若长期无 trigger 命中，反向裁定删除 skill-registry.yaml 桩条目+xfail 测试，机制降级为预留接口"
+  risks: ["内容撰写质量依赖领域知识，AI 生成的 SKILL.md 可能泛化无实操价值", "长期无消费方则沦为死内容，需年检复核"]
+  alternatives: "退役路径：删除桩条目与 xfail 测试，PipelineSkillBridge 保留机制但文档声明内容层未建。代价：自治管线永久缺失技能注入维度"
+  tags: ["candidate", "ARCH-096", "自治管线", "skill", "内容层缺失"]
+  search_terms: ["skill content", "SKILL.md", "技能内容库", "pipeline skill bridge", "role skill"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-16'
+  review_frequency: quarterly
+  last_review_outcome: "2026-08-16 登记（#ARCH-096 裁定）：机制已 production、内容出生即桩，登记候选等待 trigger；xfail 测试保留作验收规格书"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+  # ----------------------------------------------------------
+  # CAND-AUTONOMYCORE-002: FHS 引擎实现（candidate，2026-08-16 双轮审查深挖④裁定）
+  # 来源: docs/_archive/2026-08-16-dual-review-adjudication.md §三 D1 / §六 CAND 登记
+  # ----------------------------------------------------------
+- id: CAND-AUTONOMYCORE-002
+  name: "FHS 引擎 / Filtered Historical Simulation（GARCH 残差重采样 VaR）"
+  aliases: ["FHS", "fhs_engine", "Filtered Historical Simulation", "GARCH残差重采样", "should_switch_to_fhs"]
+  domain: D_RISK
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "risk/core"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-RK-05
+      target_build_status: production
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "非新模块——为既有 VaR 体系（MOD-RK-05 var_calculator）补第三方法 fhs（GARCH(1,1) 标准化残差重采样×条件波动率预测），与 parametric/historical 并列参与取 max；不涉及拓扑变更"
+      target_edges: []
+    dataflowgraph:
+      has_position: false
+    decisiongraph:
+      has_position: false
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_risk/var_calculator/blueprint.md"
+      design_maturity: planned
+  description: "实现 memo 36 §3.16 的 FHS 施工规约：GARCH(1,1) 拟合收益序列→标准化残差→重采样→乘条件波动率预测产出 FHS VaR；配套 should_switch_to_fhs() 三触发条件（Christoffersen 独立性失败 / 连续 2 次 E-backtesting red / 盘中重算显著连续 3 日）+ FHS_COOLDOWN_DAYS=10 冷却期 + FHS_PERMANENTLY_DISABLED 升级路径。memo 36 §3.10 RECALIBRATE 动作 4 已由可执行语气修正为'未施工（远期候选）'（2026-08-16 AI-RFIX-001）"
+  capability: ""
+  problem_it_solves: "Christoffersen 独立性失败（A 股波动率聚集下超限聚集）时历史模拟法无自相关破缺手段——FHS 用 GARCH 残差重采样破自相关，是 memo 36 §3.9.1 独立性失败分支的既定首选动作；当前该分支指向不存在代码（D1 漂移），登记本候选使远期晋升有锚点"
+  trigger_signals:
+  - "回测出现 Christoffersen LR_ind reject（独立性失败）且 §3.10 动作 1/2（扩窗口/切方法）无法消除"
+  - "连续 2 次回测 E-backtesting red（累积证据表明波动率有时变结构）"
+  - "风控接线批（AI-RWIRE-001）merge 后 RiskOrchestrator 建成，动作 4 有执行者"
+  keywords: ["FHS", "GARCH", "Filtered Historical Simulation", "残差重采样", "VaR", "独立性失败"]
+  upstream_deps:
+  - {contract: "MOD-RK-05 VaRCalculator / MOD-RK-15 TailRiskMonitor", from_domain: D_RISK, dep_type: H, availability: available, note: "FHS 作为第三方法并入 conservative_max 取大链"}
+  - {contract: "arch 库（GARCH 拟合）", from_domain: 外部依赖, dep_type: H, availability: missing, note: "需新增依赖 arch（CPU 即可）"}
+  downstream_consumers:
+  - {consumer: "RiskOrchestrator（未建，AI-RWIRE-001 接线批）", contract: "memo 36 §3.10 动作 4 执行者", note: "fhs_engine.enable() 调用点"}
+  contracts_to_produce:
+  - {id: "fhs_engine.enable()/disable() + should_switch_to_fhs()", name: "FHS 引擎开关与切换判定接口"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "独立性失败真实发生", check: "var_backtester.christoffersen() lr_ind_p<0.05 且 kupiec_p>=0.05", met: false, note: "当前无证据表明历史模拟法独立性失败——无需求不施工"}
+  - {condition: "RiskOrchestrator 建成", check: "AI-RWIRE-001 风控接线批 merge", met: false}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "2026-08-16 grep src 全库 fhs|garch|should_switch_to_fhs|FHS_COOLDOWN 零匹配（双轮审查实证），无重复建设"}
+    blocking_question: none
+    result: pass
+  status: promoted
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-18'
+  promoted_to: "MOD-RK-26 fhs_engine（src/zephyr/risk/core/fhs_engine.py，2026-08-18 AI-FHS-001 MVP 施工，#ARCH-121）"
+  source_draft: "双轮审查差异比对与裁定书（docs/_archive/2026-08-16-dual-review-adjudication.md）"
+  source_section: "§三 深挖④ / §六 CAND 登记"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "3-5人天（arch 依赖接入+GARCH(1,1) MLE 拟合+独立性失败三触发判定+10 日冷却期防抖+小样本守卫）"
+  tech_notes: "依赖 arch 库（GARCH(1,1) MLE，CPU）；施工时对齐 memo 36 §3.16 规约（含 FHS_COOLDOWN_DAYS=10 冷却期防抖 + 累计 3 次失败 FHS_PERMANENTLY_DISABLED）；GARCH 不收敛→回退 historical+标记 FHS 不可用；60 日小样本 GARCH 拟合稳定性需最小样本守卫（同 POT 小样本族问题）"
+  risks: ["GARCH 小样本（60 日）拟合不稳定，ξ 抽样方差大", "arch 库新增外部依赖", "长期无 trigger 命中则维持候选态，memo §3.10 动作 4 保持未施工标注"]
+  alternatives: "不施工：独立性失败时仅用 §3.10 动作 1（扩窗口至 120/250）+ 动作 2（切方法）应对——memo §3.10 触发映射已修正为该实际口径"
+  tags: ["candidate", "FHS", "GARCH", "VaR", "risk", "远期"]
+  search_terms: ["FHS", "Filtered Historical Simulation", "fhs_engine", "GARCH 残差重采样", "should_switch_to_fhs"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-16'
+  review_frequency: quarterly
+  last_review_outcome: "2026-08-18 转正（Owner 派单 AI-FHS-001，#ARCH-121）：MVP 落码 src/zephyr/risk/core/fhs_engine.py（MOD-RK-26，evolving）——GARCH(1,1) 自研 QMLE（SLSQP 不引 arch 库）+标准化残差重采样+FHS VaR/ES 输出+HS 对照，27 用例两轮全绿；并列方法论独立模块不集成 var_calculator（避让 R3 审查线）。未做：should_switch_to_fhs 三触发/FHS_COOLDOWN_DAYS=10 冷却期/FHS_PERMANENTLY_DISABLED/RiskOrchestrator enable 接线（远期编排层）；原 prerequisites 两条（独立性失败真实发生/RiskOrchestrator 建成）未满足即施工=Owner 裁定提前备料，启用仍按 memo 36 §3.10 动作 4 触发链"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+  # ----------------------------------------------------------
+  # CAND-WORKTREE-001: 退役脏工作区强制 patch 存证 + 派生活水三分类器（candidate，裁定书 Z1+Z2 2026-08-16）
+  # 来源: 140 外来 WIP 调查裁定书 §4.4（docs/_archive/2026-08-16-test-debt-leftover-adjudication.md）
+  # ----------------------------------------------------------
+- id: CAND-WORKTREE-001
+  name: "Worktree 退役存证与派生分类 / retire-evidence+derived-classifier"
+  aliases: ["退役存证", "retire patch 存证", "派生活水分类器", "脏工作区三分类"]
+  domain: D_GOVERNANCE
+  domain_status: active
+  description: >-
+    session_worktree retire 流程补强（Z1）：脏文件 >0 时先生成
+    .runtime/quarantine/<sid>-retire-<ts>.patch 全量 diff 存证再删目录，
+    成分自动三分类（派生活水/CRLF 幻影/实质）写入退役审计；
+    Z2 配套工具化：retire/merge 甄别脚本内置"AUTO 块数字 diff 自动判派生"
+    分类器（EOL 归一化+dev HEAD 比对+AUTO-END 标记段定位）。
+    防"外来 WIP 悬案"复发（140 staged 事件：81 CRLF 幻影+51 实质调查成本）。
+  source_draft: "140 外来 WIP 调查裁定书 §4.4 Z1/Z2（2026-08-16-test-debt-leftover-adjudication.md）"
+  source_section: "§4.4 治本立项 Z1/Z2"
+  original_id: "Z1+Z2"
+  status: promoted
+  priority: P2
+  next_review_date: '2026-11-16'
+  review_frequency: quarterly
+  last_review_outcome: "2026-08-17 晋升闭环：AI-GOVA-001 施工 merge（8307cbe89f→4e9eedf54b）——Z1 脏工作区强制 patch 存证 refs/quarantine+Z2 派生活水/CRLF 幻影/实质三分类器内聚 session_worktree.py（abort/sweep 双挂载），13 新测试两轮全绿"
+  acquisition_method: self_build
+
+  # ----------------------------------------------------------
+  # CAND-DAEMON-001: heartbeat daemon 失锚自退（candidate，裁定书 Z3 2026-08-16）
+  # 来源: 同上裁定书 §4.4 Z3——孤儿 daemon 制造假活性（2 个两天残留实证）
+  # ----------------------------------------------------------
+- id: CAND-DAEMON-001
+  name: "Heartbeat Daemon 失锚自退 / orphan-daemon-self-exit"
+  aliases: ["daemon 失锚自退", "孤儿心跳", "heartbeat watchdog 锚定"]
+  domain: D_GOVERNANCE
+  domain_status: active
+  description: >-
+    heartbeat daemon 启动时注册所属 worktree 路径，watchdog 周期核对路径存活，
+    worktree 目录消失（退役/删除）后 daemon 失锚自动退出。
+    根治"孤儿 daemon 制造假活性"——2026-08-16 实证 2 个两天残留 daemon
+    （ifind-retire/baostock-harden）+1 个僵尸 backup.ps1 直杀，13 个随退役失锚自退。
+  source_draft: "140 外来 WIP 调查裁定书 §4.4 Z3（2026-08-16-test-debt-leftover-adjudication.md）"
+  source_section: "§4.4 治本立项 Z3"
+  original_id: "Z3"
+  status: promoted
+  priority: P2
+  next_review_date: '2026-11-16'
+  review_frequency: quarterly
+  last_review_outcome: "2026-08-17 晋升闭环：AI-GOVA-001 施工 merge（8307cbe89f→4e9eedf54b）——heartbeat_daemon 失锚自退（周期核对 worktree 目录/session registry 锚，失锚自动退出），3 新测试全绿"
+  acquisition_method: self_build
+
+# ----------------------------------------------------------
+# CAND-DAT-002: 新闻快讯 2024-08~2026-06 历史回补（deferred，源可及性未证实）
+# 来源: 2026-08-16 冷热分层裁定批实证（bdpan 止 2024-07 + 直播 2026-07 起步）
+# ----------------------------------------------------------
+- id: CAND-DAT-002
+  name: "News Flash 2024-08~2026-06 Backfill / 新闻快讯缺口回补"
+  aliases: ["news断档回补", "新闻历史回补", "2024-2026新闻缺口"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 175
+  sub_layer: "ingestion 数据接入层"
+  panorama_position:
+    depgraph:
+      has_position: false
+    dataflowgraph:
+      has_position: true
+      target_node_type: source
+      data_flow_path: "历史新闻源（待调研） → news_data 回补 → 事件驱动回测可验证"
+      upstream_data: ["sina7x24_archive(候选)", "cls_archive(候选)", "tushare_anns(公告替代)"]
+      downstream_data: ["c3_fundamental.news_data"]
+      insertion_description: "news_data 2024-08~2026-06 缺口段回补源"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      decision_path: "新闻事件 → 事件驱动信号 → 回测验证（2024-08~2026-06 窗口当前不可信）"
+      insertion_description: "L6 事件层缺口段信号源补全"
+    blueprint:
+      has_position: true
+      target_ref: "data_retention_contract.yaml L6 note + data_asset_registry DS-104"
+      design_maturity: design
+  description: "news_data 2024-08~2026-06 共 23 个月覆盖薄（月千级 vs 健康月 8 万级）：bdpan 历史包止于 2024-07，全量多源直播 2026-07 才上线。事件驱动策略该窗口回测存在新闻盲区。需先调研可及历史源（新浪 7x24 深分页/财联社归档/tushare 公告替代），再施工回补。"
+  capability: "news_data"
+  problem_it_solves: "事件驱动回测 2024-08~2026-06 窗口新闻盲区——策略有效性验证缺关键证据链"
+  trigger_signals:
+  - "事件驱动策略回测窗口需覆盖 2024-08~2026-06"
+  - "确认可及历史新闻源（深分页/API 归档/采购）"
+  - "爆冷/ST 案例研究需要该窗口新闻证据（裁定 A 研究价值链）"
+  keywords: ["news_data", "历史回补", "断档", "backfill", "事件驱动"]
+  upstream_deps: []
+  downstream_consumers:
+  - {consumer: "event_driven_strategy", contract: "news_data", note: "事件驱动策略回测"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "历史新闻源可及性调研结论（深分页可行性/量级/限速）", check: "源调研探针报告", met: false}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "tasks.yaml 仅 event_driven 直播任务，无历史回补任务；kline_5min_history_backfill 已退役无 news 对应物"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "2026-08-16 冷热分层裁定批实证（DS-104 缺口注记）"
+  source_section: "data_asset_registry DS-104 format_summary"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "源调研 1 天 + 施工 3 人天（若源可及）"
+  tech_notes: "写入必须过 news_dedup + ReplacingMergeTree 幂等；回补后对相关分区跑 optimize_merge.py 物理去重"
+  risks: ["历史源不存在或限速致回补不可行", "公告(anns)与快讯语义不同不可替代"]
+  alternatives: "接受缺口并靠 DS-104 注记约束回测窗口（当前状态）。代价：事件驱动策略 23 个月证据链永久缺失"
+  tags: ["数据回补", "新闻", "事件驱动", "待源调研", "P2规划"]
+  search_terms: ["news backfill", "新闻回补", "2024-2026 断档", "news_data gap"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-16'
+  review_frequency: yearly
+  last_review_outcome: "首次登记——源可及性未证实，待事件驱动回测需求触发"
+
+# ----------------------------------------------------------
+# CAND-SEC-001: Whistleblower Agent MVP（举报人机制）（deferred，2026-08-18 裁定降级远期 P4）
+# 来源: 00_index §3.3 Agent 安全设计项 + 16 号文 §3.9 MVP 候选设计 / §6 Q5 选项 c
+# ----------------------------------------------------------
+- id: CAND-SEC-001
+  name: "Whistleblower Agent MVP / 举报人机制（独立监控 Agent）"
+  aliases: ["举报人机制", "whistleblower", "Whistleblower Agent", "举报 Agent", "独立监控 Agent"]
+  domain: D_SECURITY
+  domain_status: active
+  domain_node_count: 171
+  sub_layer: "security/access_control Agent 安全监控层"
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: "全仓实测无实现（whistleblower/举报人零命中，16 号文 §6 Q5 2026-08-17 复核）；晋升时新建设计态节点"
+    dataflowgraph:
+      has_position: false
+      note: "举报事件流→加密落盘→仅 Trader 可解密，无业务数据流"
+    decisiongraph:
+      has_position: false
+      note: "不参与任何业务决策"
+    blueprint:
+      has_position: true
+      target_ref: "00_index §3.3 Agent 安全设计项 + 16 号文 §3.9 举报人机制 MVP 候选设计"
+      design_maturity: design
+  description: >-
+    独立 Whistleblower Agent：唯一职责是监控其他 Agent 的可疑行为（串谋/隐写/越权），
+    不参与任何业务逻辑；身份对其他 Agent 保密（防串谋者识别与规避监控者）；
+    可直接向人类报告、绕过正常通信渠道；举报记录加密存储、仅 Trader 可解密查看。
+    2026-08-18 Owner 裁定：降级远期（P4）——当前多 Agent 规模小，
+    collusion_detector+ai_agent_monitor 已覆盖主要面；
+    激活前提=多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评口子）。
+  capability: ""
+  problem_it_solves: "可见监控者可能被串谋者识别与规避——保密身份的独立举报人是 Agent 对抗性监控的最后一环；当前多 Agent 规模小，该缺口不阻塞（16 号文 §6 Q5 裁定依据）"
+  trigger_signals:
+  - "多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评结论）——激活前提"
+  - "串谋/隐写检测出现漏报实证（现有监控者被识别或规避）"
+  - "16 号文 §6 Q5 重评裁定采纳补实现（选项 a）"
+  keywords: ["whistleblower", "举报人", "串谋检测", "collusion", "Agent 安全", "covert monitoring", "加密举报"]
+  upstream_deps:
+  - {contract: "multi_agent_collusion_detector / ai_agent_monitor 安全事件流", from_domain: D_SECURITY, dep_type: S, availability: available, note: "16 号文统一事件 schema 落地后可直接消费"}
+  downstream_consumers:
+  - {consumer: "Owner/Trader（人类）", contract: "加密举报记录（仅 Trader 可解密查看）", note: "绕过正常通信渠道直报"}
+  contracts_to_produce:
+  - {id: "whistleblower_report 加密记录格式", name: "举报记录加密落盘契约（仅 Trader 可解密）"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "多 Agent 自治编排架构落地", check: "61 号备忘 §5.2 第三阶段重评结论", met: false, note: "2026-08-18 裁定明确的激活前提"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "16 号文 §6 Q5：全仓检索 whistleblower/举报人零命中（2026-08-17 复核），无重复建设"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-18'
+  last_reviewed_at: '2026-08-18'
+  promoted_to: ""
+  source_draft: "00_index §3.3 Agent 安全设计项 + 16 号文 §3.9 举报人机制 MVP 候选设计（16_ai_security_ops.md）"
+  source_section: "00_index §3.3 / 16 号文 §3.9 / 16 号文 §6 Q5"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "3-5 人天（独立监控循环+加密落盘+直报告警通道）"
+  tech_notes: "身份保密=对其他 Agent 不可见（不出现在 Agent 注册/发现面）；直报通道绕过 A2A/事件总线等正常信道；举报记录加密存储（仅 Trader 私钥可解密）；施工时与 16 号文统一事件 schema 对齐消费侧；自身行为仍须落审计链（保密≠免审计）"
+  risks: ["身份保密与可审计性的张力（自身行为也须落审计链）", "直报通道被滥用为绕过正常治理的后门——须 human_gated 且仅告警语义", "多 Agent 编排长期不落地则维持候选态"]
+  alternatives: "不施工（当前状态）：collusion_detector（频率+通道）+ ai_agent_monitor（三路评分）覆盖主要串谋面（16 号文 §6 Q5 选项 b/c 依据）。代价：监控者被识别/规避场景无对抗性补位"
+  tags: ["candidate", "whistleblower", "举报人", "Agent 安全", "串谋检测", "远期"]
+  search_terms: ["whistleblower", "举报人机制", "Whistleblower Agent", "collusion monitor", "covert reporting"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-18'
+  review_frequency: yearly
+  last_review_outcome: "2026-08-18 Owner 裁定（裁定 9 联动，16 号文 §6 Q5 选项 c 采纳）：降级远期（P4）登记候选——激活前提=多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评）"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+# --- CAND-GOVTEST-001: test_all_scripts mega-item parametrize 拆分（B1 治本 C 方案候选，2026-08-19 登记） ---
+- id: CAND-GOVTEST-001
+  name: test_all_scripts mega-item parametrize 拆分 / xdist 调度友好化
+  aliases:
+  - mega-item 拆分
+  - test_all_scripts 拆分
+  - xdist 尾部堆积治本
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: tests/governance/integration 测试基础设施
+  panorama_position:
+    depgraph:
+      has_position: true
+      note: 改造对象 tests/governance/integration/test_all_scripts.py 已在图（MOD-TEST-276）
+    blueprint:
+      has_position: true
+      target_ref: MOD-TEST-276 / docs/03_modules/_domain_governance/blueprint.md
+  problem: >-
+    B1 工单（2026-08-19）：tests/governance -n 4 末段 93% 假挂起的头号嫌疑=test_all_scripts
+    4 个 class 各是一个巨型单 item（内部 ThreadPoolExecutor(8) 跑几十~100+ 脚本子进程，
+    合法最坏 12 分钟级），xdist --dist=load 逐 item 分发时 mega-item 独占 worker 堆积尾部。
+    今晚已落地兜底链（pyproject 全局 timeout=120 + 本文件模块级 timeout=900 豁免），
+    挂起已不可能（最坏=900s 后 fail 留 traceback），但尾部耗时仍不可预期。
+  proposal: >-
+    把"一个 test 内部 8 线程跑 100 脚本"改为按脚本 parametrize 的小 item
+    （@pytest.mark.parametrize 逐脚本生成），让 load 调度天然均摊到 4 个 worker；
+    配套保留分层 fixture（quick/critical/integration/full 标记入 item 级 marker）。
+    预期收益：-n 4 尾部耗时从 12 分钟级降到 60s 级（单脚本 timeout 上界），耗时可预期。
+  status: promoted
+  promoted_to: 'tests/governance/integration/test_all_scripts.py parametrize 拆分'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：mega-class 拆分为按脚本参数化（2045 item 收集）"
+  priority: P2
+  source: 'B1 工单治本方案 C（2026-08-19 AI-00 审计侧登记；兜底链 A 已落地，本候选非阻断）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+
+# --- CAND-GOVTEST-002: ruff format 全量一次性成型（2273 文件 diff 海啸，需专项冻结窗口） ---
+- id: CAND-GOVTEST-002
+  name: ruff format 全量一次性成型（gate ruff-format 存量清零）
+  aliases:
+  - ruff format 大爆炸
+  - 全仓格式化收口
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 代码风格基线
+  problem: >-
+    ruff-format 门禁存量 2273 文件 would-reformat（新老基线在册）。一次性 ruff format
+    全量落地是零语义变更但 diff 海啸（2273 文件），会与一切在途分支产生文本冲突，
+    且触发全量门禁级联——必须在无并发施工的规划冻结窗口执行，并提前通告所有 AI 会话。
+  proposal: >-
+    择窗口期：①通告冻结（无在途 session/分支）；②ruff format 全量单 commit；
+    ③两轮全量回归验证；④后续新文件 format 由门禁增量守住（已在守）。
+    2026-08-19 循环审计 R1 已完成 ruff check 安全修复 1914 处（九批落地），
+    format 仅剩风格统一价值，不阻断功能正确性，故登记候选不连夜强推。
+    2026-08-19 连带更新：#ARCH-130 P0-A 治本（A+B+C 三件套）已落地——A 模板自正
+    （import 语义级并集/类型现代化直出/_extract_hand_maintained 两状态机 bug），
+    B 管线兜底（生成后 ruff 六码 --fix 逐文件），C 防回潮门禁
+    （gate-codegen-idempotent 已注册 pre-commit）。生成器输出与 ruff 修复批
+    结构性冲突已消除，重跑 diff=零。format 大爆炸与本项无冲突，仍按原计划择窗。
+  status: promoted
+  promoted_to: 'ruff format 全量一次性成型落地（2026-09-02 冻结窗口 freeze-gw 会话，578 文件 12 批 commits 69069b9a..91f4c676，ruff format --check 存量清零 7577/7577）'
+  priority: P3
+  source: '循环审计 R1 杠杆#4（2026-08-19 AI-00 登记）'
+  created: '2026-08-19'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  last_review_outcome: '2026-09-02 冻结窗口（freeze-gw 会话）执行完毕：ruff format . 578 文件重排/6999 未动，零语义变更；两轮全量回归（81 批×2 + 超时批 240 文件单文件两轮 + 27 红文件 HEAD 基线对照）实证零 format 诱发红——18 遗留红基线同红、3 reconcile 赛跑沉降后转绿、5 超时批内红基线同红、4 慢性挂死基线实证（存量债清单见结案报告 docs/_working/reports/2026-09-02-freeze-window-completion-report.md）；后续新文件 format 由 ruff-format 门禁增量守住。'
+
+# --- CAND-GOVTEST-003: ALGO_FLOW 标记 2186 模块批量补登（drafter 分批+抽查） ---
+- id: CAND-GOVTEST-003
+  name: ALGO_FLOW docstring 标记 2186 模块批量补登（GATE-ALGO-FLOW 存量清零）
+  aliases:
+  - ALGO_FLOW 补齐
+  - algo_flow_drafter 批量回填
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 算法全景真源
+  problem: >-
+    GATE-ALGO-FLOW 存量 2186 模块缺 # ALGO_FLOW docstring 标记（新老基线在册，merge 批净增 2）。
+    批量草稿可由 scripts/governance/_shared/algo_flow_drafter.py 生成，但 2186 模块的
+    草稿质量需分批落地+人工/模型抽查（算法流程描述错误会污染算法全景真源）。
+  proposal: >-
+    每批 200 模块：drafter 生成 → 抽查 10% 质量（算法步骤语义正确性）→ 门禁验证 → commit。
+    约 11 批收敛。属体量工程非阻断债，登记候选排期。
+    2026-08-19 连带更新：#ARCH-130 P0-A 治本发现 S4 接管态 __init__.py（含 ALGO_FLOW）
+    与生成器骨架重建存在结构性冲突——生成器无法复刻 S4 注入的 docstring 内 ALGO_FLOW
+    排版。已采"检测即跳过"策略（generate_directory_init 遇 ALGO_FLOW 直接 SKIP），
+    S4 接管文件的幂等性由 S4 reconciler 负责。本项批量补登 ALGO_FLOW 时注意：
+    已接管文件不应再被生成器骨架重建覆盖。
+  status: promoted
+  priority: P3
+  source: '循环审计 R1 杠杆#8（2026-08-19 AI-00 登记）'
+  created: '2026-08-19'
+  last_updated: '2026-08-31'
+  promoted_to: '算法全景真源存量清零（2026-08-31 长城任务 13 commits，有效清单 2663 模块补登 2623）'
+  last_reviewed_at: '2026-08-31'
+  last_review_outcome: "2026-08-31 长城任务（algoflow-gw 会话）12 批次 + 1 矫正批全量落地：严格 AST 代码事实提取生成器（非 drafter 虚构草稿），行号不动点收敛，每批 10% 抽查复核（累计 0 语义错误）。存量 2764→40：31 文件 ruff 语义债（BLE001/F821/RUF007/RUF008）不可自动修复留 Owner 裁定，9 文件为并发会话在飞 WIP（GATE-ALGO-FLOW 硬门禁将强制其归属会话补登）。结案报告 docs/_working/reports/2026-08-31-algoflow-completion-report.md。后续：Owner 裁定①落地——F821 未定义名 35 处已全量清零（commit 900ce788b6，含 7 处真实运行时 bug 修复），残余 BLE001/B905 等风格债随门禁触碰自然清偿"
+# --- CAND-GATEMECH-001: 门禁"内容绿但 files-modified 标 Failed"聚合语义修订 ---
+- id: CAND-GATEMECH-001
+  name: pre-commit 门禁聚合语义修订（files-modified 与内容判定解耦）
+  aliases:
+  - files-modified 伪报治本
+  - 门禁聚合语义修订
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    循环审计 R1~R3 实证：手动全量跑 pre-commit 时，门禁内容全绿（0 findings/PASSED）
+    却因"files were modified by this hook"被聚合层标 Failed——受害者轮转
+    （merge-marker/DOC-NODE-ID/TRIPLE-ALIGN/shell-dangerous/FRONTMATTER/VOCAB 等），
+    结构性源头=reconciler 波次运行期写 tracked 文件撞上复跑采样（§6.5#6）。
+    Failed 标签与内容判定混淆致审计轮次噪音，真实回归易被淹没。
+  proposal: >-
+    聚合层二分：内容判定（findings/exit code）与 files-modified（hook 副作用）分列呈现，
+    全量复审以内容判定为准；files-modified 降级为干扰标注而非 Failed。
+    实施点=pre-commit 输出聚合器（ai00_precommit 复跑链）+报告模板。
+  status: promoted
+  promoted_to: 'governance/run_gate_chain.py 报告二分（19 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：内容判定 vs hook 副作用分列"
+  priority: P2
+  source: '循环审计 R3 终轮移交清单 4①（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-002: 危险命令双检测器 0-findings 却 exit 1 聚合缺陷 ---
+- id: CAND-GATEMECH-002
+  name: 危险命令双检测器（git/shell-dangerous）0-findings 聚合 exit 1 缺陷治本
+  aliases:
+  - git-dangerous exit 1 伪报
+  - 双检测器聚合缺陷
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    R1~R3 连续三轮实证：detect_git_dangerous（0 findings×15 批）/detect_shell_dangerous
+    （0 findings×12 批）内容全绿却聚合 exit 1 标 Failed。分批执行器对"每批 0 findings"
+    的聚合逻辑缺陷（疑任一批次非零 exit 或批计数误传即标红）。
+    R1 杠杆#5 已治本上下文豁免 105+185 存量伪报，残余聚合层缺陷未修。
+  proposal: >-
+    复核分批聚合器退出码逻辑：全批 0 findings 必须 exit 0；
+    补聚合层单测（0-findings 多批/单批、混合 findings 批三态）。
+  status: promoted
+  promoted_to: 'governance/run_gate_chain.py severity 聚合（19 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：末位覆盖缺陷修复（ERROR 2>FINDINGS 1>PASS 0）"
+  priority: P2
+  source: '循环审计 R3 终轮移交清单 4②（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-003: 派生物入 golden hash 锚定清单致 INTEGRITY 赛跑 ---
+- id: CAND-GATEMECH-003
+  name: GATE-INTEGRITY golden hash 锚定清单剔除可再生派生物（script_manifest 赛跑断根）
+  aliases:
+  - INTEGRITY 赛跑断根
+  - golden hash 派生物摘除
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 完整性校验
+  problem: >-
+    R3 终轮实证：script_manifest.yaml 派生再生（hash 1cf189a8→07023da9）撞上复跑采样
+    瞬间报 TAMPERED——派生物在 golden hash 锚定清单内，每次 reconciler 再生窗口期
+    INTEGRITY 必红（赛跑），需 reconciler 自愈波次重注册才回绿。结构性缺陷非偶发。
+  proposal: >-
+    两路裁定：①摘除锚定——可再生派生物（script_manifest.yaml 等）移出 golden hash
+    清单，完整性保护聚焦手写规则文件；②再生+注册原子化——派生器与 validate_rules_
+    integrity.py --register 同事务执行，消除窗口期。建议①优先（派生物本不该锚定，
+    与"派生产物禁入 git"同哲学）。
+  status: promoted
+  promoted_to: 'governance/meta/validate_rules_integrity.py 锚定清单摘除派生物'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：script_manifest.yaml 移出锚定清单（GATE-21 兜底）"
+  priority: P2
+  source: '循环审计 R3 终轮移交清单 4③（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-004: gates 只读化或派生写迁出 gate 链 ---
+- id: CAND-GATEMECH-004
+  name: pre-commit gate 链只读化（或派生写迁出 gate 运行期）
+  aliases:
+  - gate 链只读化
+  - 派生写迁出 gate 链
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    §6.5#6 结构性源头：gate/reconciler 运行期写 tracked 文件（hook 运行期 tracked
+    写入），既触发 files-modified 伪报族（CAND-GATEMECH-001 受害面），又与 INTEGRITY
+    赛跑（CAND-GATEMECH-003）同根。T4-2 drift watchdog 已能捕获但仅告警不阻断。
+  proposal: >-
+    两路裁定：①gate 只读化——gate 链执行期禁写 tracked 区（违反即红，现有 watchdog
+    告警升硬）；②派生写统一迁 post-commit 波次（gate 链内零写入）。
+    涉全部门禁执行路径，需影响面评估后专项施工。
+  status: promoted
+  promoted_to: 'git_commit_gateway.py TRACKED-DRIFT-READONLY 归因升硬 + gate_tracked_write_allowlist.yaml 真源 + gate-17 摘 --fix（2026-09-02 冻结窗口 freeze-gw，commit 6dc5ea84，5 新测）'
+  priority: P3
+  source: '循环审计 R3 终轮移交清单 4④（2026-08-19 AI-00 建议登记，统筹承接）'
+  created: '2026-08-19'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  last_review_outcome: '2026-09-02 冻结窗口（freeze-gw 会话）组合路线落地：①带白名单归因的只读化升硬（指纹 diff → 文件级归因 → 未归因硬阻断；纯升硬会误伤 reconcile 派生波次，今日实测批间撞窗）；A 类清零（gate-17 --fix 摘除，唯一 hook 内 tracked 删除器）；连带治本 codegen 检查器 stdin GBK 管道 bug + importlinter 生成器静默吞写失败。残余拆分登记：B 类窗口纪律=CAND-GATEMECH-008，C 类遥测迁移=CAND-GATEMECH-009。结案报告 docs/_working/reports/2026-09-02-freeze-window-completion-report.md。'
+# --- CAND-GATEMECH-005: 网关批次收尾仪式（批量批自动联动 C2 freeze+INTEGRITY 重钉） ---
+- id: CAND-GATEMECH-005
+  name: 网关批次收尾仪式——ruff/codegen 批量批自动联动 C2 freeze + INTEGRITY 重钉
+  aliases:
+  - 批次收尾仪式
+  - 批量批联动冻结
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 提交通道
+  problem: >-
+    ruff 六码安全修复批（692172844a 等 24 文件）/codegen 批量批落码后，契约快照与
+    rules_integrity_db 黄金哈希不会自动跟进——C2 契约漂移与 INTEGRITY 赛跑双双
+    滞留到下一审计周期才暴露（#ARCH-130 实证：25 文件契约漂移+script_manifest hash 赛跑）。
+    批次施工者需手工记得跑 generate_contracts.py + --freeze + --register，无机制约束。
+  proposal: >-
+    网关在 commit 后检测批次特征（同规则码批量修复 / codegen 产物批量生成）→
+    自动触发收尾仪式链：generate_contracts.py → check_contract_code_drift.py --freeze →
+    validate_rules_integrity.py --register，三步原子化联动。消除"批次合法变更→
+    快照/基线滞后"的结构性漂移窗口。
+  status: promoted
+  promoted_to: 'governance/gateway_post_commit_ritual.py（MOD-GOV-059，17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：网关批次收尾三步原子联动"
+  priority: P2
+  source: '2026-08-19 Owner 裁定 P1-2①（#ARCH-130 施工令）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-006: 迁移脚本登记制（migrate_*.sql 与 _DDL_* 常量一致性门禁） ---
+- id: CAND-GATEMECH-006
+  name: 迁移脚本登记制——migrate_*.sql 与 _DDL_* 常量一致性纳入门禁
+  aliases:
+  - 迁移脚本登记制
+  - DDL 常量漂移门禁
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 迁移框架
+  problem: >-
+    11_add_gate_blocker_fields.sql（2026-08-01 18e710b798）只落 DB 未回写
+    depgraph_schema._DDL_* 常量真源→blocker_status/gate_reason 死列漂移 9 项滞留 18 天
+    才被审计发现（#ARCH-130 实证）。migrate_*.sql 落地与 _DDL_* 常量更新无一致性门禁，
+    漂移在落地瞬间即产生。
+  proposal: >-
+    pre-commit 门禁：migrate_*.sql 新增/修改时，强制核对 _DDL_MAP 常量是否同步更新
+    （AST 比对 ALTER TABLE 列清单 vs parse_ddl_columns 声明列）。漂移拦截前移到
+    落地瞬间，消除"只落 DB 不回写"的结构性通道。
+  status: promoted
+  promoted_to: 'depgraph_schema.py _MIGRATIONS DDL-as-Code + verify_schema_health.py（GATE-SCHEMA-HEALTH）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：结构性覆盖核销（散置 migrate_*.sql 已零存在）"
+  priority: P2
+  source: '2026-08-19 Owner 裁定 P1-2②（#ARCH-130 施工令）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+# --- CAND-GATEMECH-007: 测试有效性门禁（测试引用不存在的真源符号检测） ---
+- id: CAND-GATEMECH-007
+  name: 测试有效性门禁——检测"测试引用不存在的真源符号"（超前孤儿测试断根）
+  aliases:
+  - 测试有效性门禁
+  - 孤儿测试检测
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 测试治理
+  problem: >-
+    test_warn_in_main_workspace（4eff7f2769）引用 _warn_worktree_isolation/WORKTREE-ISOLATION
+    符号在源码与 git 全史零命中——超前孤儿测试滞留存量红基线 18 天（AI-00 移交清单 5
+    实证，裁定删除整文件）。测试引用的符号不存在时无门禁拦截，失效期望持续污染回归基线。
+  proposal: >-
+    pre-commit 门禁：AST 扫描测试文件 import/引用符号，比对真源模块 __all__/函数定义——
+    引用不存在符号即红（防超前孤儿测试+接口漂移双场景）。与 test_schema_stability
+    互补（前者守数据结构快照，本候选守符号存在性）。
+  status: promoted
+  promoted_to: 'governance/check_test_symbol_validity.py（MOD-GOV-058，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：孤儿测试符号检测门禁（增量守门注册，存量 39 处待清）"
+  priority: P2
+  source: '2026-08-19 Owner 裁定 P1-2③（#ARCH-130 施工令）'
+  created: '2026-08-19'
+  last_updated: '2026-08-19'
+
+# --- CAND-GATEMECH-008: reconciler 派生写窗口纪律（与 gate/测试采样窗口互斥） ---
+- id: CAND-GATEMECH-008
+  name: reconciler 派生写窗口纪律——B 类派生波次与 gate 指纹窗口/测试采样互斥
+  aliases:
+  - 派生写窗口纪律
+  - reconcile 写入互斥
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 门禁执行框架
+  problem: >-
+    CAND-GATEMECH-004 拆分残余（2026-09-02 冻结窗口实证）：B 类派生写已迁
+    post-commit 波次，但波次无窗口纪律——2026-09-02 冻结窗口实测批 N 的
+    reconcile 波次与批 N+1 的 gate 指纹窗口重叠（hook_tracked_drift 328 条 +
+    freeze-gw 会话亲证），且 reconcile worker 挂死频发（pid 20636 运行 3547s 超阈、
+    pid 45476 卡 GATE-RUNTIME-CLEANUP 心跳停滞），派生缓存入库依赖下一波次
+    反复追赶（本窗手工补账 6+5 批）。
+  proposal: >-
+    方向：①reconcile worker 写 tracked 前取"写窗口锁"（与 gateway gate 段互斥，
+    对标 _GlobalCommitLock 的读者-写者化）；或 ②派生写全部纳入 commit-queue
+    serializer 单写者时序；附带 reconcile worker 挂死治理（GATE-RUNTIME-CLEANUP
+    慢/挂死因排查 + 卡死 worker 自动收割后的波次补跑机制）。
+    落地前由 gate_tracked_write_allowlist.yaml 白名单归因兜底（warn 不阻断）。
+  status: candidate
+  priority: P3
+  source: 'CAND-GATEMECH-004 冻结窗口拆分残余（2026-09-02 freeze-gw 登记）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
+  last_reviewed_at: '2026-09-02'
+  review_note: '2026-09-02 登记：004 主路线（归因升硬）已落地，本项为 B 类窗口纪律残余；白名单过渡期内不阻断提交链。2026-09-02 进展：GATE-RUNTIME-CLEANUP 挂死根因已治本（同日 freeze-followup 批）——os.walk 无剪枝遍历 commit_queue 全仓副本+tmp 15 万过期文件逐文件 guard_remove 审计落盘；修复=walk 剪枝（commit_queue/_wt_/__pycache__）+单批删除上限 2000 渐进收敛，+2 回归测试；残余=worker 级超时/心跳硬治理与窗口纪律。'
+
+# --- CAND-GATEMECH-009: 运行时遥测 tracked 数据文件退库/迁 .runtime ---
+- id: CAND-GATEMECH-009
+  name: C 类运行时遥测 tracked 数据文件退库或迁 .runtime（法外写入清零）
+  aliases:
+  - 运行时遥测退库
+  - tracked 数据文件清退
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 运行时数据治理
+  problem: >-
+    CAND-GATEMECH-004 拆分残余（2026-09-02 漂移快照实证）：运行服务/测试期
+    append tracked 数据文件——data/cache/decision_audit_chain.ndjson（×4）、
+    data/compliance_log/compliance_log.jsonl（×3，compliance_log.py）、
+    data/metrics/kill_switch_probes.jsonl（×2，kill_switch_sim.py）、
+    data/databases/governance_metadata/red_blue_report.json（×2）、
+    data/budget/shutdown_snapshot.json（budget_engine.py）——违反 T4-1 铁律
+    （审计写永不回 tracked 区）的存量面；撞 gate 窗口即触发漂移事件。
+  proposal: >-
+    逐文件裁定：①写路径迁 .runtime/（改 METRICS_DIR 等常量 + 读方兼容层）；
+    或 ②退库（git rm --cached + .gitignore 登记，评估历史消费者）。
+    迁移一件即从 gate_tracked_write_allowlist.yaml 摘除一件——白名单条目数
+    即本残余的燃尽指标。.gitignore 裸词模式锚定（meta/ 等 6 模式致 ruff 扫描
+    盲区，52 tracked .py 漏网实证）同属本族，.gitignore 属受保护路径须 Owner 审批。
+  status: candidate
+  priority: P3
+  source: 'CAND-GATEMECH-004 冻结窗口拆分残余（2026-09-02 freeze-gw 登记）'
+  created: '2026-09-02'
+  last_updated: '2026-09-03'
+  last_reviewed_at: '2026-09-03'
+  review_note: '2026-09-02 登记：迁移需逐文件评估读方兼容，未在本窗施工；白名单 C 类条目即待办清单。2026-09-03 进展（#ARCH-308 B2，Owner 当案授权）：5 件遥测全部走方案②退库（git rm --cached + .gitignore 4 条新增 + data/cache/ 既有规则），写入方在盘继续追加、不再入 git 跟踪面；gate_tracked_write_allowlist.yaml C 类条目清零（燃尽指标归零）。残余：.gitignore 裸词模式锚定族未动，待后续裁定。'
+
+# ============================================================
+# AI-NIGHT-001 阶段3 未来工程-大型登记批（2026-08-20，tracker #223 承接）
+# 来源：design_memos 全量审查三包（pack1/pack2/pack3）未来工程-大型 ≈39 条，
+# 合并同族后 40 条登记；均不施工，附排期触发条件。格式从简（GATEMECH 族惯例）。
+# ============================================================
+- id: CAND-GOVAUDIT-002
+  name: 审查机制运营族——队列节奏/存量回补优先级/红队场景库（68号 §5）
+  aliases: [审查运营三件套]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 审查流水线运营
+  problem: 审查队列节奏/存量回补优先级清单/红队场景库物理形态三运营项待触发条件（首批 3~5 批完成后/增量队列清空时/红队场景 ≥10 条）。
+  proposal: 触发条件达成后按 68 号 §5 框架立项；2026-08-20 已在 68 号 memo 登记运营口径与默认建议。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 68号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-GOVAUDIT-003
+  name: 归因引擎双实现收敛（54号 §6 置顶，待 Owner 裁定基底后施工）
+  aliases: [attribution 双实现收敛, default_attribution_engine 退役]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 对账归因
+  problem: reporting/default_attribution_engine.py 全桩（三方法 return 0.0）与 pf_core/core/performance_attribution_engine.py（真实 BHB）双实现冲突未收敛，须 Owner 裁定基底/canonical/契约接线方向。
+  proposal: Owner 裁定后收敛施工=未来工程-小型（桩实现退役或接线 canonical）；裁定前维持现状不消费桩实现。【Owner 终裁 2026-08-24（A1③）】整体暂缓：待 CTR-P1-007 ExecutionReport 数据契约建成后，以 pf_core BHB 真算法（performance_attribution_engine）为基底收敛，reporting 空壳（default_attribution_engine）退役；契约建成前维持现状不消费桩实现。
+  status: deferred
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节（待 Owner 裁定项）；2026-08-24 Owner 终裁（A1③）'
+  created: '2026-08-20'
+  last_updated: '2026-08-24'
+- id: CAND-RSK-023
+  name: 机构级数据维度管道与评分（10号 §4.7.6/§4.8.5/§4.11.10/§4.12.10）
+  aliases: [IV/COT/信用利差/期权异动/CAPE/巴菲特指标/Margin Debt/Put-Call 数据管道]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: regime 特征层
+  problem: 机构级数据维度（期权 IV/COT 持仓/信用利差/CAPE 等 8 类）无数据管道，regime 检测器高分位维度缺失。
+  proposal: 新数据基础设施级；当前生产形态不依赖其通过验证。触发=regime 检测器维度不足实证或对应数据源采购落地。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 10号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-024
+  name: regime 检测器备查升级路径包（10号 §9：HSMM/Student-t/Wasserstein/层次 HMM 等 15 法）
+  aliases: [regime 检测器远期升级包]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: regime 检测引擎
+  problem: 4 态 HMM 当前满足生产；15 种升级路径（HMM 引擎重写级/新基础设施级）维持备查。
+  proposal: 触发=4 态 HMM 实证失效（walk-forward 持续不达标）或对应基础设施因他项落地；逐法独立评估，不打包施工。【2026-08-24 长城任务六-1 P-3 复核裁定=远期】Student-t 厚尾发射变体成本收益分析：收益端=A2 已过（OOS/IS=1.042）无失效痛点、memo90 评 Student-t 只解 emission 不解 label-switching、3 overlay 已覆盖极端行情节流；成本端=ν 标定不稳+重过 A2 不退化硬约束+全治理流程；边际收益≈0 于有痛点驱动项之外——维持备查包不施工，触发条件（walk-forward 持续不达标）未达前不重估。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 10号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-24'
+- id: CAND-RSK-025
+  name: Kill Switch L3 看门狗独立进程（35号 §6.11）
+  aliases: [watchdog 独立进程, kill switch 第三层]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 风控基础设施
+  problem: L3 看门狗需独立进程基础设施（主进程崩溃时仍能触发全清），当前 L1/L2 覆盖主路径。
+  proposal: 新基础设施级；触发=实盘上线窗口（SHADOW→LIVE 迁移批），与 53 号迁移路径同批评估。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 35号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-026
+  name: L2 broker 端 bracket 单（35号 §6.11，外部依赖登记）
+  aliases: [broker bracket 第二层]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 执行层风控
+  problem: L2 broker 端 bracket 依赖 miniQMT 能力（券商端止损单），能力未确认。
+  proposal: 外部依赖；触发=miniQMT bracket 能力确认（Owner/券商窗口）。
+  status: deferred
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 35号节（外部依赖）'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-027
+  name: BOCPD 概率型 kill switch（53号④，≥200 笔 PnL 先验校准）
+  aliases: [贝叶斯变点 kill switch]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 风控算法
+  problem: 概率型 kill switch（BOCPD 变点检测）需 ≥200 笔实盘 PnL 先验校准，数据未积累。
+  proposal: 触发=实盘 PnL 样本 ≥200 笔；先验校准方案随 36 号 VaR 校准批同评。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 53号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-028
+  name: C10 偏度/峰度分布感知仓位（31号 §2.3.3）
+  aliases: [分布感知 sizing]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 仓位算法
+  problem: 依赖 BM-SEL-13 密度 PDF 高阶矩基础设施（远期路线）。
+  proposal: 触发=密度预测基础设施落地（91 号路线 Phase 推进）；当前 Kelly 口径满足生产。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 31号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-029
+  name: 密度感知止损/止盈（42号⑤）
+  aliases: [density-aware stop]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: 卖出决策
+  problem: 同依赖 BM-SEL-13 密度 PDF；MVP 四族止损止盈已 production 覆盖主路径。
+  proposal: 触发=密度预测验证通过（91 号 BM-SEL-15 激活条件同源）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 42号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RSK-030
+  name: regime 演进大型组——AH-HMM 元体制门控/LVI 强平级联/ProRealCode 16 事件 FSM（14号 §5a）
+  aliases: [regime 演进三大型]
+  domain: D_RISK
+  domain_status: active
+  sub_layer: regime 检测引擎
+  problem: 三项演进方向均为多模块/新基础设施级。
+  proposal: 触发=对应痛点实证（元体制误判/强平级联事件/事件 FSM 需求）；逐项独立立项。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 14号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-012
+  name: 3 个 sleeve 策略类（20号①：daban/multifactor/event_driven 组装策略类）
+  aliases: [sleeve 策略类三件套, 首批上线最后一公里]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 策略组装层
+  problem: 首批上线主链路最后一公里，跨 signal/position/pf_core 多模块组装；依赖 G08/G09/G10 细节定型与 G05 标准接口。
+  proposal: 触发=G08/G09/G10 定型（首批策略回测校准完成）；与 CAND-SIG-013 统一接口同批。晋升依据（2026-08-21）：G05/G08/G09/G10 全定型触发条件命中，tracker 总账 P0-4① 施工落地——3 个 sleeve 组装策略类落成（src/zephyr/pf_core/strategies/{daban,multifactor,event_driven}_sleeve_strategy.py，[MATURITY] testing 宪章B-007 封顶），strategy_registry.yaml 登记 STR-DABAN-022/STR-MULTIFACTOR-096/STR-EVENT-001。
+  status: promoted
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 20号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-21'
+- id: CAND-SIG-013
+  name: SelectionResult 统一接口（21号①，与 20号① 同源主链路）
+  aliases: [选股统一接口]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 选股引擎
+  problem: L0/L1/L2-C 三层 production 但无统一 SelectionResult 接口（仅局部 StockSelectionResult）。
+  proposal: 触发=G05 标准接口定型；与 sleeve 策略类同批施工。晋升依据（2026-08-21）：G05 标准接口定型触发条件命中，tracker 总账 P0-4① 施工落地——SelectionResult 统一接口契约落成（src/zephyr/shared/contracts/selection_result.py，CTR-P1-018 手工维护，[MATURITY] testing 宪章B-007 封顶），签名对齐 21号 §3.5 L224-235 + v1.1.1 L241-261。
+  status: promoted
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-21'
+- id: CAND-SIG-014
+  name: 信号工厂九子阶段流水线+信号聚合器（21号⑥）
+  aliases: [信号工厂]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 信号层
+  problem: 新信号层基础设施；激活条件=信号冲突实例 ≥3 例（未触发）。
+  proposal: 触发=信号冲突实例实证积累达标；当前 TriggerList+硬边界承载。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-015
+  name: LLM alpha 挖掘闭环（21号⑦：Hubble/AlphaEvolve/XAlpha 等八框架评估）
+  aliases: [LLM alpha 挖掘]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 离线研发基础设施
+  problem: 离线研发基础设施级，远期。
+  proposal: 触发=首批策略实盘稳定 + 因子工厂产能瓶颈实证；逐框架评估不打包。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-016
+  name: Cross-Sectional LSTM baseline（21号⑧）
+  aliases: [截面 LSTM]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: ML 因子层
+  problem: 远期 ML 基础设施；重评条件=因子工厂稳定 6+ 月。
+  proposal: 触发=重评条件达成；当前规则/IC 加权路径覆盖。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-017
+  name: BM-SEL-12 分布特征工程（Signature 路径签名，21号⑨）
+  aliases: [Signature 路径签名]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 特征工程
+  problem: signatory 依赖+密度预测配套，远期。
+  proposal: 触发=密度预测基础设施落地（91 号路线）；与 CAND-SIM-007 共形预测同评。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 21号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-018
+  name: BM-SEL-19 事件驱动分布筛选漏斗（26号⑥，MOD-SIG-049）
+  aliases: [事件驱动筛选漏斗]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 事件驱动策略
+  problem: 依赖知识图谱 BM-SEL-11 design 态+NLP 管道就绪，依赖链未闭合。
+  proposal: 触发=NLP 管道 Phase 8 验收通过+知识图谱落地；当前 event_score 公式族已函数级承载。
+  status: promoted
+  promoted_to: 'signal_ashare/event_driven_screener.py（MOD-SIG-049）+ intelligence/event_funnel.py（MOD-INT_EVENT_FUNNEL，13+33 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：BM-SEL-19 双件落码（归并裁定另挂架构议题）"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 26号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-019
+  name: 打板 Phase 5 ML 栈（24号⑧：CatBoost 破板/Siamese LOB/Du 混合/QFCQT/Hawkes/速度域签名）
+  aliases: [打板 ML 栈]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 打板策略
+  problem: ML 基础设施级，远期；规则层四引擎已 production。
+  proposal: 触发=首批实盘 3-6 月样本积累+规则层边际收益枯竭实证。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 24号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-020
+  name: 多因子 Phase 4 ML 栈+LLM 语义去重+因果验证（25号⑥）
+  aliases: [多因子 ML 栈]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 多因子策略
+  problem: 远期 ML/基础设施；各有重评条件。
+  proposal: 触发=对应重评条件达成（因子工厂稳定/语义重复实证/因果需求实例）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 25号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-021
+  name: 事件驱动远期组（26号⑦a：Hawkes 自激发/CNN 可视化盈余/LLM 动态知识图谱/Data Funnel）
+  aliases: [事件驱动远期四件]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 事件驱动策略
+  problem: §5 暂缓项，各有重评条件。
+  proposal: 触发=对应重评条件达成；当前规则层事件评分族覆盖。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 26号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIG-022
+  name: 价值反转/动量趋势两策略重启（27号①，第二批策略）
+  aliases: [第二批策略重启]
+  domain: D_SIGNAL
+  domain_status: active
+  sub_layer: 策略层
+  problem: 主动暂缓非缺口；重启条件=首批 3 策略实盘 ≥3 月+复盘 ≥12 期+因子衰减基线。
+  proposal: 触发=重启条件满足；重启时施工 alpha 信号定稿+财报 PIT 面板深加工+全市场时序扫描+相关性实测。
+  status: deferred
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 27号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-BT-002
+  name: Phase 5 决策门控（11号⑨，BM-BT-07 适配）
+  aliases: [回测决策门控 Phase5]
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: 回测验证
+  problem: 依赖首批策略层就绪（sleeve 策略类落地）。
+  proposal: 触发=首批策略层就绪；届时 DecisionGate 接入 regime/shrinkage 判定（DSR 注入点已就位）。
+  status: promoted
+  promoted_to: 'backtest/core/decision_gate.py regime/shrinkage 双闸注入（17 测，tests/backtest 969 全绿）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：Phase 5 决策门控接入 regime 适配+收缩稳定性双闸（降格语义=人工复核不直接拒；ZA-BT-0027/0028 补登）"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 11号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-004
+  name: 五态降级机执行侧动作接线（53号②，tracker #112）
+  aliases: [rollback 执行侧接线]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 模拟实盘迁移
+  problem: 撤单/阻断/减仓/平仓执行侧动作接交易运行时；待 SHADOW 阶段（评估循环侧已接线 #204 闭环）。
+  proposal: 触发=SHADOW 阶段开启；评估循环侧（禁新开仓/清算联动）已落地，执行侧动作随 paper matching 整合批施工。
+  status: candidate
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 53号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-005
+  name: propagator 传播子滑点模型（53号⑦）
+  aliases: [传播子滑点]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 撮合模型
+  problem: 需逐笔订单流+L2 接入。
+  proposal: 触发=L2 数据管道落地；当前 volume-aware 冲击模型已函数级承载。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 53号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-006
+  name: CRPS 密度预测验证（52号③，03-E）
+  aliases: [CRPS 验证]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 回测验证
+  problem: 重评=regime 密度预测上线（91 号路线）。
+  proposal: 触发=密度预测上线；B2 离散 CRPS 分析函数已就位可直接消费。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 52号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-SIM-007
+  name: BM-SEL-14 共形预测 Phase 0（91号①，slow unweighted+RWC 变体）
+  aliases: [共形预测 Phase0]
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: 密度预测
+  problem: 栈收敛待 90 号 P-2 裁定（Conformal 栈选型）。
+  proposal: 触发=90 号 P-2 裁定落地（待 Owner）；仓内 conformal_prediction.py 简易骨架可复用。
+  status: deferred
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 91号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RPT-002
+  name: regime-conditional/MCR-CCR 归因（54号⑩，Phase 2/2.5）
+  aliases: [高级归因族]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 绩效归因
+  problem: Phase 2/2.5 高级归因；Shapley 已函数级落地（2026-08-20 包P）。
+  proposal: 触发=首批实盘 12 月数据+基础归因消费稳定。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RPT-003
+  name: Merkle/VCP v1.2 审计轨迹升级（54号⑫）
+  aliases: [审计轨迹升级]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 审计轨迹
+  problem: 远期审计基础设施。
+  proposal: 触发=审计合规需求升级或外部审计要求。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RPT-004
+  name: 微信入站指令解析（54号⑭，归 buy_flow 域）
+  aliases: [微信入站指令]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 指令通道
+  problem: 出站实发后评估；入站指令解析涉交易安全边界。
+  proposal: 触发=WeChat 出站实发稳定+入站需求实证；须安全评审（指令白名单+二次确认）。
+  status: promoted
+  promoted_to: 'frontend/implementations/wechat_bot_handler.py（production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：安全边界全落码（白名单+二次确认）"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 54号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-006
+  name: Champion-Challenger mSPRT 晋升通道（61号①）
+  aliases: [mSPRT 晋升通道]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 策略生命周期
+  problem: 需先裁定 MLflow 退役后的载体（experiment_tracking 包为候选承载）。
+  proposal: 触发=载体裁定（建议 experiment_tracking，2026-08-20 五零件 adapter 已就位）+首批策略上线。
+  status: promoted
+  promoted_to: 'governance/lifecycle_governance/msprt_promotion_channel.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：61号文波4 已落码（c9d0b346）"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-007
+  name: Drift Observatory 四层编排（61号②）
+  aliases: [漂移观测台]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 策略生命周期
+  problem: 随首批上线后监控批。
+  proposal: 触发=首批策略上线；CUSUM/PSI 漂移监控函数级组件已就位可编排。
+  status: promoted
+  promoted_to: 'governance/lifecycle_governance/drift_observatory_orchestrator.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：61号文波4 已落码"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-008
+  name: BM-MT-02-A/B 灰度+影子+对抗鲁棒性（61号⑤，MLOps Level 2）
+  aliases: [MLOps Level2 灰度影子]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 模型运维
+  problem: MLOps Level 2 批。
+  proposal: 触发=ML 模型首批上线（当前无生产 ML 模型）。
+  status: promoted
+  promoted_to: 'gray_release_shadow_deployer.py（MOD-ML-004）+ adversarial_robustness_validator.py（MOD-ML-005）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：双件 production"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 61号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-009
+  name: NLP Phase 5 RLSP（13号②，带护栏 RL 实验）
+  aliases: [RLSP 强化学习 sentiment]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: NLP 管道
+  problem: RL 训练基础设施+GPU 实验管线；memo 已定其为可选护栏实验。
+  proposal: 触发=SFT 路径验收后仍有缺口实证+GPU 管线就绪。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 13号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-MLT-010
+  name: DCC-GARCH 时变相关（23号⑦，第二阶段）
+  aliases: [DCC-GARCH]
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: 相关性建模
+  problem: arch 库两步估计；Markov-switching DCC 已裁定拒绝。
+  proposal: 触发=静态相关矩阵实证不足（策略 ≥4 且 PnL 样本 ≥6 月）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 23号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-PFALLOC-004
+  name: Alpha 半衰期定理/双曲衰减拥挤度建模（23号⑧）
+  aliases: [alpha 半衰期拥挤度]
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: 组合分配
+  problem: 远期；需首批实盘 12 月数据。
+  proposal: 触发=首批实盘 12 月数据积累；当前 decay_monitor+CUSUM 覆盖。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 23号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-FAC-003
+  name: 因子量化落码+IC 实证回填（29号①=62号①，tracker #56）
+  aliases: [因子落码批, IC 回填]
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: 因子工厂
+  problem: factor_registry 140 条 candidate 待落码+experiment_registry 跑批回填 IC/IR；依赖回测跑批基础设施。
+  proposal: 触发=回测跑批基础设施就绪（walkforward/CPCV 已函数级就位）+Owner 排期；建议按因子族分批。
+  status: promoted
+  promoted_to: 'factor_registry.yaml IC 回填（commit 2a16988d）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：长城批已闭环（4/4 code-anchored + 143 条 NL 裁定）"
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack2 29号节/pack3 62号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RES-028
+  name: BM-SEL-15 Survival 止盈止损（91号③，AFT）
+  aliases: [生存分析止盈止损]
+  domain: D_RESEARCH
+  domain_status: active
+  sub_layer: 密度预测应用
+  problem: 激活=密度预测验证通过。
+  proposal: 触发=密度预测验证通过（91 号路线）；survival_line_monitor 简易骨架已在库。
+  status: promoted
+  promoted_to: 'signal_ashare/survival_time_predictor.py（MOD-SIG-045 production，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：AFT 本体已落码（KM+Weibull MLE）"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 91号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-RES-029
+  name: 板块 lead-lag network/ML 转折点检测/相关性聚类（22号⑪，第四阶段）
+  aliases: [板块研究远期三件]
+  domain: D_RESEARCH
+  domain_status: active
+  sub_layer: 板块研究
+  problem: 第四阶段远期；规则层 10 项已函数级落地（2026-08-20 包B）。
+  proposal: 触发=规则层实证不足+板块数据积累 ≥12 月。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 22号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-DAT-003
+  name: 轨 A/轨 B 合流（15号⑤，轨 B miniQMT connector）
+  aliases: [双轨合流]
+  domain: D_DATA
+  domain_status: active
+  sub_layer: 数据特征层
+  problem: 多厂商抽象实现；既定裁定=需求真实出现前维持双轨。
+  proposal: 触发=第二数据轨真实需求出现（多厂商接入）。
+  status: candidate
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack1 15号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-GOVTEST-004
+  name: commit queue 本体 MVP（66号①，提交队列串行化）
+  aliases: [commit queue MVP]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: git 安全治理
+  problem: 队列目录协议+enqueue/status/drain CLI+入队自举排空+专用 worktree 落盘+compaction+_commit_auto 改道入队；大工程量单项。
+  proposal: 触发=Owner 排期（66号 §10 验收：3 会话 50 提交零丢失/零搭便车/FIFO 序）；当前 GitCommitGateway+锁承载主路径。
+  status: promoted
+  promoted_to: 'scripts/commit_queue.py（MOD-GOV-046）+ governance/commit_queue_landing.py（MOD-GOV-047）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：commit queue MVP 已上线运行（flag 08-22 翻开）"
+  priority: P1
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-GOVTEST-005
+  name: commit queue P1 级联+P2 监控（66号②③，随 MVP 验收后）
+  aliases: [commit queue 扩展]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: git 安全治理
+  problem: P1 级联标记+死信重入队+done TTL+worktree 强制升硬联动；P2 监控接入+temp-index+多分支评估。
+  proposal: 触发=CAND-GOVTEST-004 MVP 验收通过。
+  status: promoted
+  promoted_to: 'commit_queue.py P1 三件套（级联/死信 requeue/TTL 清理）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1 主体核销；P2 监控残余另行登记"
+  priority: P2
+  source: '2026-08-20 AI-NIGHT-001 阶段3 审查 pack3 66号节'
+  created: '2026-08-20'
+  last_updated: '2026-08-20'
+- id: CAND-FBL-002
+  name: FLE 自卫门禁激活专项（44 门，#61 挂起转正登记）
+  aliases: [FLE gates 启用, fle_self_defense 注册条目再生, FLE self-defense gates activation]
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  sub_layer: 反馈环自愈安全网
+  problem: >-
+    scheduler_safety.dispatch_fle_gates 消费 _registry.yaml 的 fle_self_defense 条目——
+    2026-05-19 7ed644a288 注册表重写丢失 43 条目（82→43）至今 0 条，FLE 调度安全网空转 3 个月。
+    激活=新功能上线三修复+一评审（探针 .runtime/_b8_probe_fle_gates.py 实证 48 文件）：
+    ①sync_fle_gates 再生条目须先修——不跳过 _ 前缀聚合模块会产出 FLE--* 畸形 ID（4 件）；
+    ②类名推导修复——gate_id 连字符 vs split("_") 致精确命中 0/48，fallback 抓字母序首个
+    public 类（如 ActionContext）语义未定；③_evaluate_gate_method evaluate 分支 list 语义反转——
+    L 系 17 门返回 violations 列表，空列表（干净）→bool=False 误阻断、非空（有违规）→True 放行；
+    另 data_quality_gate.validate("fle_action") 单参误调预计 False 阻断。消费链 scheduler.py:629
+    任一 False 即压制 FLE Act 自愈动作——阻断语义真实存在，门禁必须语义诚实方可启用。
+  proposal: >-
+    触发=Owner 排期+三修复落地+44 门逐门契约评审完成+FLE Act 自治主链临近上线（第三期）。
+    灰度路径：L 系 17 门语义统一修正后作首批子集。裁定书
+    docs/_working/archive/2026-08/reviews/2026-08-21-fle-gates-activation-adjudication.md（维持挂起结论+实证矩阵）。
+  status: candidate
+  priority: P2
+  source: '2026-08-21 残余四项专项批 任务4（#61 挂起项转正）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
+- id: CAND-GOVDRIFT-001
+  name: drift_events 容量保留与冷热分层（blueprint §17 >2GB 触发）
+  aliases: [drift_events 冷热分层, drift_events retention, 90天热数据归档, drift archive delete]
+  domain: D_GOV_DRIFT
+  domain_status: active
+  sub_layer: 治理观测事件流运维
+  problem: >-
+    trend_analyzer 回迁 SSoT 后 archive_old_data 改 export-only（2026-08-21 子裁定：读方不得
+    DELETE SSoT，一写方原则+tamper_proof drift_events_no_delete trigger 终局一致）——
+    drift_events 长期增长无保留策略承接。blueprint §17 设计口径="DB>2GB → VACUUM+归档+冷热分层"；
+    当前 386 行无容量压力。保留动作须 trigger-aware 设计（trigger 装上后任何 DELETE 须走豁免
+    通道或迁归档表），属治理动作非读方侧效应。
+  proposal: >-
+    触发=governance.db drift_events 体量逼近阈值（如 >10 万行或库 >2GB）或 tamper_proof
+    trigger 启用前排期；设计=归档表/分区+trigger-aware 删除豁免通道。
+  status: candidate
+  priority: P2
+  source: '2026-08-21 残余四项专项批 任务1 trend_analyzer 回迁子裁定残余登记'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
+# --- CAND-REGSYNC-001: AGENTS.md 速查区数字动态化（tracker #41/#83 裁定承接，GATE-REGISTRY-SYNC 增强） ---
+- id: CAND-REGSYNC-001
+  name: AGENTS.md 速查区数字动态化（#41/#83 裁定承接，GATE-REGISTRY-SYNC 增强）
+  aliases: [AGENTS.md 速查表数字漂移检测, agents_cheatsheet_drift_reconciler, GATE-AGENTS-CHEATSHEET-SYNC, 速查区硬编码数字漂移]
+  domain: D_GOV_DOCS
+  domain_status: active
+  sub_layer: 文档同步校验（d8_doc_sync reconciler 插件族）
+  problem: >-
+    AGENTS.md 速查表硬编码数字反复漂移：179→341 能力计数事故、18 业务表计数失真史、
+    当前实证 L539 能力计数写"2026-08-15 时点 347 条"而 capability 注册表实测 359 条
+    （漂移 12 条）。tracker #41/#83 裁定长效方案=reconciler 动态化，但 CAND 登记一直未落
+    （裁定尾巴丢失，本批补登）。
+  proposal: >-
+    分两档：①warn-only 检测（done，2026-08-21 P0-6① 落地）——
+    scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py 插件式注册进
+    git_commit_gateway._register_default_reconcilers，post-commit 检测速查区硬编码数字
+    （18 表体系总数+18 行明细+告警阈值+能力计数）与 ROOR/capability 注册表真值漂移，
+    只 warn 不重写 AGENTS.md；②升级路径=fix-in-place 自动重写速查区（严格锚点圈定重写区
+    +CRLF 保尺寸+幂等 diff），触发条件=warn 档稳定运行 ≥2 周且 Owner 批准 PROTECTED-PATHS
+    通道（AGENTS.md 属保护区，#83 人工回填当年需 Owner 审批通道；并发会话期 reconciler
+    auto-commit 已引发 TRACKED-DRIFT 风暴，故 MVP 不做自动重写）。
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "既有 GATE-REGISTRY-SYNC/master_index 派生缓存只覆盖 catalogs/ 目录漂移，不覆盖 AGENTS.md 速查区数字；metric_count_drift_reconciler 同型（INV-11 只 warn 不 auto-fix）但校验面为 dashboard 指标数描述，与本场景不重复"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: '2026-08-21 P0-6① 施工批（tracker #41/#83 裁定承接——裁定尾巴 CAND 登记补落）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
+# --- CAND-BT-003: 向量化回测逐笔 trade_log 产出（57 号文 GAP-5 登记） ---
+- id: CAND-BT-003
+  name: 向量化回测引擎逐笔 trade_log 产出（57 号文 GAP-5）
+  aliases: [vectorized trade_log, 向量化逐笔成交, BacktestResult 明细]
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: 回测引擎产出层
+  problem: >-
+    向量化路径 BacktestResult（CTR-P1-016）只有 15 个汇总字段无逐笔成交明细——56 号文
+    不变量 I4「逐笔可得」在向量化引擎不满足（EDE 路径有 BacktestFill/trades_log）。
+    对账 L1 逐笔 diff 若要以向量化结果为基准则缺明细源。
+  proposal: >-
+    触发=对账 L1 需以向量化回测为基准日级比对（当前口径=EDE tick 路径出 fills，向量化
+    用于因子筛选快速层，不对账——56 号文 §2 架构行已定此分工）；施工=引擎调仓点生成
+    TradeRecord 序列填充 BacktestSinkData.trade_log（改造点=DefaultBacktestEngine
+    调仓执行段），量约 80-120 行。
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [zephyr.backtest.core.portfolio trades_log], evidence: "EDE 路径 portfolio.trades_log 已有逐笔（L315）；向量化路径分工=筛选层不对账，缺口仅在跨层复用时成立"}
+    blocking_question: 向量化产出是否会被用做对账基准
+    result: candidate
+  status: candidate
+  priority: P2
+  source: '2026-08-21 P0-5 日循环 SOP 彩排发现（57 号文 §7 GAP-5 登记转化）'
+  created: '2026-08-21'
+  last_updated: '2026-08-21'
+
+# --- CAND-SIG-023: 大盘情绪实时分析升级（44号 M1 全组十增量） ---
+- id: CAND-SIG-023
+  name: 大盘情绪实时分析升级（44号 M1 全组：加速度/护盘检测/量能外推/大幅回撤/破板追踪/期指基差/期权三件套/板块分歧度）
+  aliases: [情绪实时分析升级, M1 增量组, MOD-SIG-025 增量]
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: 信号层
+  problem: >-
+    MOD-SIG-025 已有 7 维快照式分析，缺：涨跌加速度/护盘失真检测/剩余走势推演/实时调度回路/
+    量能盘中预测/大幅回撤个股数/昨日破板今表现/期指基差情绪/期权情绪三件套/板块分歧度十增量
+    （44 号 §1 Owner 三问核查发现）。
+  proposal: >-
+    2026-08-22 Owner 长城任务指令晋升即施工——按 92 号施工顺序清单执行：波 3 M1 情绪增量包
+    （①②a/b⑤⑥⑦）→波 4（⑧⑨⑩）→波 5（③④数据期件带降级兜底）；FCT-sentiment 12 条随模块
+    完工走 ROOR 登记挂 CAND-FAC-003 IC 回填链。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 v1.2.1 §7/§11 裁定二（M1 挂 CAND-SIG 族）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波3-6.1/波4-7.1/7.3/7.4/波5-8.1/8.2（production 启用 2026-08-29 Owner 批准 B5，B-007 转态）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# --- CAND-PLAN-001: 盘中次日预案边界修正（44号 M2，D_PLAN 域首条目） ---
+- id: CAND-PLAN-001
+  name: 盘中次日预案边界修正（44号 M2：boundary_revision 通道，14:00/14:45 双时点）
+  aliases: [边界修正, M2, boundary_revision]
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: 预案层
+  problem: >-
+    MOD-PLAN-001 边界盘后静态生成，盘中无动态修正通道——盘中情绪显著恶化/改善无法反映到
+    当晚边界档位（44 号 §1 核查缺口②）。不重启 BM-SEL-04 点预测（90 号 §7），走边界修正替代。
+  proposal: >-
+    2026-08-22 Owner 指令晋升——92 号清单波 5-8.3：boundary_revision_engine 新建+
+    MOD-PLAN-001/003 增量；防抖 15min/当日各 1 次冷却/仅当日有效；修正事件写 prediction_log。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 §7/§11 裁定二（M2 挂新建 CAND-PLAN 族）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波5-8.3（testing 封顶，B-007）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# --- CAND-PLAN-002: 盘前综合预判升级（44号 M3 全组九增量） ---
+- id: CAND-PLAN-002
+  name: 盘前综合预判升级（44号 M3 全组：外盘四通道/新闻情绪/多情景方案/日韩/龙虎榜溢价/期指三时点/资金面四件套/事件日历/LLM 盘前分析）
+  aliases: [盘前综合预判, M3 增量组, MOD-PLAN-002 增量]
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: 预案层
+  problem: >-
+    MOD-PLAN-002 只"加载昨夜边界"无"今晨用外盘+新闻+盘后数据修正边界"环节（44 号 §1 核查
+    缺口③）；外盘映射/龙虎榜溢价/资金面/事件日历数据均已在库未消费。
+  proposal: >-
+    2026-08-22 Owner 指令晋升——92 号清单：波 3（M3-①a⑤⑦⑧+接口评估）→波 4（M3-③ 多情景
+    +竞价三细节）→波 5（M3-② 新闻情绪/M3-④ 日韩评估/M3-⑨ LLM 核心件）；M3-⑨ LLM 接线
+    留阶段三 llm_runtime_gateway 就绪后（92 号 D5 裁定）。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 §7/§11 裁定二（M3 挂新建 CAND-PLAN 族）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波3-6.2/6.3/6.4、波4-7.11、波5-8.4/8.5/8.6（production 启用 2026-08-29 Owner 批准 B5，B-007 转态）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# --- CAND-RPT-005: 日志与实验追踪体系（44号 M4 四缺口） ---
+- id: CAND-RPT-005
+  name: 日志与实验追踪体系（44号 M4：日志总账索引/预测输出统一落库/LLM 落库/日志调参闭环）
+  aliases: [日志总账, registry_of_logs, prediction_log, M4]
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: 可观测层
+  problem: >-
+    已有 7 件日志设施但缺：①100+日志总索引（AI 进项目即可发现）②每日预测类输出统一落库
+    （每天预测了什么可回查可验证）③LLM 输出落库 ④日志→参数校准反馈闭环（44 号 §12.1）。
+  proposal: >-
+    2026-08-22 Owner 指令晋升——92 号清单：波 4-7.12（registry_of_logs 轻量登记表 warn-only
+    MVP，AGENTS.md 联动走 Owner 审批通道）+波 4-7.13（prediction_log 表+统一写入器）+
+    波 5-8.7（调参闭环触发器骨架，样本量守卫 <30 不触发）。
+  status: promoted
+  priority: P1
+  source: '2026-08-21 44号 §12.1（与 §7 三条同批缓办条件已达成）；2026-08-22 Owner 指令晋升'
+  created: '2026-08-22'
+  last_updated: '2026-08-22'
+  promoted_to: "92号清单 波4-7.12/7.13、波5-8.7（testing 封顶，B-007）"
+  last_reviewed_at: '2026-08-22'
+  last_review_outcome: "Owner 指令晋升，阶段二施工"
+
+# ----------------------------------------------------------
+# CAND-SEC-002: access_control 合规矩阵与纵深防御查询族（deferred，92号清单 §5.6 STR-02）
+# 来源: 92号清单 §5.6 + docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1
+# ----------------------------------------------------------
+- id: CAND-SEC-002
+  name: "access_control 合规矩阵与纵深防御查询族（compliance_matrix + defense_depth）"
+  aliases: ["合规矩阵", "compliance matrix", "纵深防御", "defense in depth", "MOD-INF-018 查询桩族"]
+  domain: D_SECURITY
+  domain_status: active
+  domain_node_count: 171
+  sub_layer: "security/access_control 合规矩阵/纵深防御查询层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      note: "两文件已作为 MOD-INF-018 组成模块在图（stub 态）；蓝图模块表自标 stub (pending ARCH-036)"
+    dataflowgraph:
+      has_position: false
+      note: "无活数据流——CONSUMERS 全为 phantom（文件头实证）"
+    decisiongraph:
+      has_position: false
+      note: "不参与任何业务决策"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md 模块表（stub pending ARCH-036）"
+      design_maturity: design
+  description: >-
+    compliance_matrix.py（compliant_items / get_by_reg_id / non_compliant_items，3 处
+    raise NotImplementedError）与 defense_depth.py（all_enabled / get_layer /
+    get_layer_by_level，3 处）共 6 处活 stub。提案：多账户/多用户上线时按蓝图
+    ARCH-036 口径实现合规矩阵查询与纵深防御层查询；当前单人单信任域无 RBAC
+    查询需求，维持 stub+deferred。文件头 [MATURITY] production 与 stub docstring
+    的漂移已登记归档报告 §四，晋升或统筹裁定时联动修正。
+  capability: ""
+  problem_it_solves: "多账户/多用户形态下合规条目查询（按 reg_id / 合规态过滤）与纵深防御层状态查询缺实现；当前单信任域无消费者，缺口不阻塞（92号清单 §5.6 口径）"
+  trigger_signals:
+  - "多账户/多用户上线（92号清单 §5.6 激活前提）"
+  - "ARCH-036 裁定补实现"
+  - "出现合规审计/防御层状态查询的真实消费者"
+  keywords: ["compliance_matrix", "defense_depth", "RBAC", "合规矩阵", "纵深防御", "NotImplementedError", "stub"]
+  upstream_deps:
+  - {contract: "MOD-INF-018 RBAC 核心（a2a_check/capability_check/approver_check 已实现）", from_domain: D_SECURITY, dep_type: S, availability: available, note: "治本三模块 2026-07-18 已落地，可作实现范式"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "compliance_matrix 查询接口", name: "合规条目查询契约（compliant/non_compliant/by_reg_id）"}
+  - {id: "defense_depth 查询接口", name: "纵深防御层查询契约（all_enabled/get_layer/get_layer_by_level）"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "多账户/多用户上线", check: "92号清单 §5.6 激活前提", met: false, note: "单人单信任域无 RBAC 需求"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "2026-08-22 实证：全仓无合规矩阵/纵深防御查询的等价实现，6 处均为本族 stub"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-22'
+  last_reviewed_at: '2026-08-22'
+  promoted_to: ""
+  source_draft: "92号清单 §5.6 NotImplementedError 分类处置（STR-02）"
+  source_section: "docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1 #1-#6"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "2-4 人天（6 个查询函数 + 矩阵/层数据定义 + 单测；范式可照 a2a_check 治本模式）"
+  tech_notes: "实现时照 a2a_check/capability_check/approver_check 治本范式（测试契约先行）；文件头 MATURITY 需从 production 更正为与实际成熟度一致（漂移见归档报告 §四）；stub 常量（COMPLIANCE_MATRIX/DEFENSE_DEPTH=None）需替换为真实数据定义"
+  risks: ["长期 deferred 致蓝图 stub 表与 depgraph 运营态漂移扩大", "多账户上线时若未同步晋升则 RBAC 查询面缺口外露"]
+  alternatives: "维持 stub（当前状态）：单人单信任域无消费者，零运行时代价。代价：蓝图 §1.1 autogen 索引'✅ 已实现'与模块表'stub'自相矛盾的漂移存续"
+  tags: ["candidate", "deferred", "RBAC", "access_control", "stub", "92号清单"]
+  search_terms: ["compliance_matrix", "defense_depth", "compliant_items", "get_layer_by_level", "NotImplementedError"]
+  related_candidates: ["CAND-SEC-003"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-22'
+  review_frequency: yearly
+  last_review_outcome: "首次登记（2026-08-22 STR-02）——92号清单 §5.6 裁定 deferred：单人单信任域无 RBAC 需求，触发条件=多账户/多用户上线"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+# ----------------------------------------------------------
+# CAND-SEC-003: access_control 运行时桩族（环境/会话/密钥/反模式守卫）（deferred，92号清单 §5.6 STR-02）
+# 来源: 92号清单 §5.6 + docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1
+# ----------------------------------------------------------
+- id: CAND-SEC-003
+  name: "access_control 运行时桩族（environment_manager + session_lifecycle + secrets_lifecycle + anti_pattern_guard）"
+  aliases: ["环境管理", "会话生命周期", "密钥生命周期", "反模式守卫", "MOD-INF-018 运行时桩族"]
+  domain: D_SECURITY
+  domain_status: active
+  domain_node_count: 171
+  sub_layer: "security/access_control 运行时环境与守卫层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      note: "四文件已作为 MOD-INF-018 组成模块在图（stub 态）；蓝图模块表自标 stub (pending ARCH-036)"
+    dataflowgraph:
+      has_position: false
+      note: "无活数据流——CONSUMERS 全为 phantom（文件头实证）"
+    decisiongraph:
+      has_position: false
+      note: "不参与任何业务决策"
+    blueprint:
+      has_position: true
+      target_ref: "docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md 模块表（stub pending ARCH-036）+ §on_session_lifecycle（30/60m 软硬过期+滑动续期设计稿）"
+      design_maturity: design
+  description: >-
+    environment_manager.py（get_env / switch_env，2 处）、session_lifecycle.py
+    （get_state_def，1 处）、secrets_lifecycle.py（auto_clean_build，1 处）、
+    guards/anti_pattern_guard.py（benchmark_before_optimize / check_lock_before_write /
+    scan_silent_ignore，3 处）共 7 处活 stub。提案：多账户/多用户上线时按蓝图
+    ARCH-036 及 §on_session_lifecycle 设计稿实现环境切换、会话状态定义、密钥
+    自动清理与反模式守卫扫描；当前单人单信任域无需求，维持 stub+deferred。
+    文件头 MATURITY 漂移已登记归档报告 §四。
+  capability: ""
+  problem_it_solves: "多账户/多用户形态下的运行环境切换、会话状态机定义、密钥轮换清理及提交前反模式守卫（先 benchmark 后优化/写前查锁/静默忽略扫描）缺实现；当前单信任域无消费者，缺口不阻塞（92号清单 §5.6 口径）"
+  trigger_signals:
+  - "多账户/多用户上线（92号清单 §5.6 激活前提）"
+  - "ARCH-036 裁定补实现"
+  - "安全治理扫描基建需求出现（anti_pattern_guard 三函数的消费场景）"
+  keywords: ["environment_manager", "session_lifecycle", "secrets_lifecycle", "anti_pattern_guard", "RBAC", "stub", "NotImplementedError"]
+  upstream_deps:
+  - {contract: "zephyr.shared.lifecycle.state_machine（MOD-INF-038 统一状态机基类）", from_domain: D_SHARED, dep_type: S, availability: available, note: "session_lifecycle 的 StateDef 应复用统一状态机，蓝图 CONSUMERS 已列 MOD-INF-018(rbac)"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "environment_manager 环境切换接口", name: "get_env/switch_env 契约"}
+  - {id: "session_lifecycle 状态定义接口", name: "会话状态机 StateDef 契约（对齐蓝图 §on_session_lifecycle）"}
+  - {id: "secrets_lifecycle 清理接口", name: "auto_clean_build 契约（ROTATION_DAYS/SECRET_MIN_BITS 等常量需真实化）"}
+  - {id: "anti_pattern_guard 扫描接口", name: "提交前反模式守卫三检查契约"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "多账户/多用户上线", check: "92号清单 §5.6 激活前提", met: false, note: "单人单信任域无 RBAC 需求"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "2026-08-22 实证：全仓无环境切换/会话状态定义/密钥清理/反模式守卫的等价实现，7 处均为本族 stub"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-22'
+  last_reviewed_at: '2026-08-22'
+  promoted_to: ""
+  source_draft: "92号清单 §5.6 NotImplementedError 分类处置（STR-02）"
+  source_section: "docs/_working/reports/2026-08-22-notimplementederror-classification.md 族 A1 #7-#13"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "3-5 人天（7 个函数 + 状态/常量真实化 + 单测；session_lifecycle 复用 MOD-INF-038 状态机基类）"
+  tech_notes: "session_lifecycle 实现须复用 zephyr.shared.lifecycle.state_machine 统一基类（禁止第 12 套自研状态机）；蓝图 §on_session_lifecycle 已有 30/60m 软硬过期+滑动窗口续期设计稿可直接对接；secrets_lifecycle 三个 stub 常量（REVOKE_TIMEOUT_SECONDS/ROTATION_DAYS/SECRET_MIN_BITS=None）需真实化；anti_pattern_guard 与提交门禁链（G7/pre-commit）集成点需在实现期评估；文件头 MATURITY 漂移更正联动归档报告 §四"
+  risks: ["长期 deferred 致蓝图/depgraph 漂移扩大", "密钥生命周期属敏感面——晋升施工时需安全评审先行", "反模式守卫与既有 pre-commit/G7 门禁职责重叠风险（实现期先过一问）"]
+  alternatives: "维持 stub（当前状态）：单人单信任域无消费者，零运行时代价；反模式检查部分由现有门禁脚本（check_algo_quality.py 等）覆盖。代价：蓝图设计稿长期不落码"
+  tags: ["candidate", "deferred", "RBAC", "access_control", "session", "secrets", "stub", "92号清单"]
+  search_terms: ["environment_manager", "switch_env", "get_state_def", "auto_clean_build", "anti_pattern_guard", "NotImplementedError"]
+  related_candidates: ["CAND-SEC-002"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-22'
+  review_frequency: yearly
+  last_review_outcome: "首次登记（2026-08-22 STR-02）——92号清单 §5.6 裁定 deferred：单人单信任域无 RBAC 需求，触发条件=多账户/多用户上线"
+  acquisition_method: self_build
+  acquisition_source: ''
+# ----------------------------------------------------------
+# CAND-GOVSEC-001: 治理进程删除操作硬护栏+全进程仪表化（P0 安全事件防复发，2026-08-23 src 误删取证）
+# 来源: docs/_working/reports/2026-08-23-src-accidental-deletion-forensics.md（src/zephyr 2936 文件被物理删除，已从 HEAD 恢复零损失）
+# ----------------------------------------------------------
+- id: CAND-GOVSEC-001
+  name: "治理进程删除操作硬护栏 + 全进程 in-process 仪表化（src 误删防复发）"
+  aliases: ["删除硬护栏", "rmtree 硬断言", "junction 穿透防护", "治理进程仪表化", "ops_guard 推广"]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: "governance/worktree 生命周期与删除操作安全层"
+  description: >-
+    2026-08-23 凌晨 src/zephyr 2936 文件被物理删除（git HEAD 完整，已恢复零损失）。
+    取证结论：肇事指令走未仪表化通道（主仓 session 经 python 一次性脚本渐进式 FS 删除），
+    全部 reconciler/commit_queue 护栏零触发（ops_guard block=0）。同型代码级隐患：
+    ①worktree_manager._wt_path 对 session_id 零消毒 + _force_rmtree（session_id='../src' 即 rmtree(src)）；
+    ②commit_queue_landing.rmtree 无"必须落在 .runtime 内"硬断言；③worktree sweep 无 junction/reparse-point
+    检测（Windows shutil.rmtree 穿透 junction 删目标）；④ops_guard in-process 护栏仅装 reconcile_worker，
+    git_commit/session_worktree CLI/drain/pytest 等治理入口未装。提案四件套：
+    ①删除前三件套硬断言（resolve 后 is_relative_to 预期前缀 + 拒绝 reparse point + session_id 白名单字符集）；
+    ②ops_guard.install_inprocess_enforcement() 推广到全部治理入口进程；③sweep 删除遥测前置（删除发起前落
+    worktree_ops_log 含调用栈）；④worker 并发闸门改文件锁互斥。附带修 GATE-GIT-GUARD-BYPASS same-sha reset 误报。
+  capability: ""
+  problem_it_solves: "治理/工具的批量删除操作（rmtree/reset/clean）当前存在'能删主仓 src 而无护栏拦截'的结构缺口——一旦 session_id 污染/路径解析错/junction 穿透/进程未装护栏，即物理删除源码树且无审计。本次已实证一起（零损失纯运气=HEAD 完整）。"
+  trigger_signals:
+  - "本起 src 误删已实证（2026-08-23）——非假想风险"
+  - "任何治理入口新增批量删除/worktree 清理能力前必须先把本项护栏落地"
+  keywords: ["rmtree", "git clean", "reset --hard", "worktree", "session_id 消毒", "junction", "reparse point", "ops_guard", "删除护栏", "误删"]
+  upstream_deps:
+  - {contract: "ops_guard.install_inprocess_enforcement（现有，仅 reconcile_worker 装）", from_domain: D_GOVERNANCE, dep_type: S, availability: available, note: "推广面=git_commit/session_worktree/drain/pytest conftest"}
+  - {contract: "worktree_ops_log.jsonl 遥测（现有）", from_domain: D_GOVERNANCE, dep_type: S, availability: available, note: "需前置到删除发起前"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "rmtree 三件套硬断言助手", name: "safe_rmtree(path, allowed_prefix)：resolve+is_relative_to+reparse 检测+字符集白名单"}
+  - {id: "治理进程护栏装配清单", name: "需装 in-process 护栏的入口进程枚举+conftest 注入"}
+  contracts_to_consume: []
+  estimated_complexity: M
+  estimated_effort: "2-3 人天（4 处删除点硬断言 + ops_guard 推广 4-5 入口 + 遥测前置 + 并发文件锁 + 误报修正 + 单测）"
+  tech_notes: "优先落地 ①（删除硬断言）——它是唯一能在肇事指令发出瞬间物理阻断的层；②③④ 是观测/覆盖面补强。junction 检测 Windows 用 GetFileAttributes FILE_ATTRIBUTE_REPARSE_POINT（ctypes 或 pywin32）。GATE-GIT-GUARD-BYPASS 误报修正对比 reflog 前后 sha 即可。"
+  risks: ["硬断言加严可能误伤合法 worktree 清理（需配套白名单测试）", "ops_guard 推广到 pytest 可能拉长测试启动", "junction 检测在跨盘符/符号链接场景需边界测试"]
+  alternatives: "维持现状（纯观测护栏）：已实证拦不住未仪表化通道的删除。代价：下次误删未必有 HEAD 可恢复（若删的是未提交内容则不可逆）"
+  tags: ["candidate", "P0", "security", "governance", "worktree", "rmtree", "误删", "取证"]
+  search_terms: ["_force_rmtree", "_wt_path", "ensure_worktree", "session_worktree_sweep", "shutil.rmtree", "ops_guard", "FILE_ATTRIBUTE_REPARSE_POINT"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-09-23'
+  review_frequency: monthly
+  last_review_outcome: "四件套已落地（2026-08-23 批1-4）；两步走闭环（2026-08-26 批5）：观测期 42h 零误伤（333 万 allow/402 would_block 全量归因=测试噪音两族）后四治理入口翻硬拦（git_commit/session_worktree CLI/commit_queue drain/sweep 库入口），pytest 裁定永久 audit-only 观测哨；批5a 误报族修复（相对路径 cwd resolve+_skill_cache 白名单）；safe_rmtree 直通 bulk_delete_approved+授权留痕；_enforce_file_ops 仓外 housekeeping 豁免；日志洪峰治本另见 #ARCH-258（audit_jsonl_writer 分级落盘+轮转）。事件登记 #ARCH-257 resolved。残余盲区续案=CAND-GOVSEC-002"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+# ----------------------------------------------------------
+# CAND-GOVSEC-002: 删除护栏残余盲区装补丁（批5b 翻硬拦后审查发现的覆盖面续案）
+# 来源: 2026-08-26 批5 翻硬拦前全面审查（调研B 删除路径全覆盖排查报告）
+# ----------------------------------------------------------
+- id: CAND-GOVSEC-002
+  name: "删除护栏残余盲区装补丁（常驻进程/pre-commit 钩子群/ad-hoc 库调用/spawn 子进程）"
+  aliases: ["ops_guard 盲区", "删除护栏覆盖面", "常驻进程仪表化", "pre-commit 删除审计"]
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: "governance/删除操作安全层（覆盖面扩展）"
+  description: >-
+    批5b 翻硬拦前全面审查（2026-08-26）发现 ops_guard in-process 补丁（monkey-patch 不跨
+    进程传播）仍有四类盲区，全部为"有删除能力+独立进程+零补丁零审计"：
+    ①交易常驻进程（ZephyrAlpha_TradingWatchdog 当前 DISABLED 一键可启用）——
+    gov_audit/retention.py:199 物理删审计日志、log_rotation.py、tiered_storage.py、
+    auto_fix_engine/shadow_workspace.py、fix_safety.py、staging_area.py（os.remove×10+）、
+    pipeline_lock.py、rollback_* 系列全量 rmtree，启用即裸奔（下一个 8-23 温床）；
+    ②pre-commit 钩子进程群——每次 commit 由 pre-commit 框架新起 Python 进程实删
+    （d6_security/retire_tmp_artifacts.py --apply、generate_derived_files.py、
+    check_naming_convention.py 等），gateway 父进程补丁不传播；
+    ③AI 会话 ad-hoc 库调用——session_worktree_start/merge/abort 库层删除
+    （worktree_manager._force_rmtree/worktree_pool rmtree）仅 sweep 入口自装补丁，
+    start/merge/abort 入口没有；
+    ④heartbeat_daemon 等 spawn 子进程（独立解释器，补丁不继承）。
+    边界说明：git.exe/shell 子命令删除（git clean/worktree remove/Remove-Item）为 Python
+    monkey-patch 原理性不可达，归 git_guard/git_safety_wrapper 层管辖，不在本项范围。
+  capability: ""
+  problem_it_solves: "翻硬拦只覆盖已装补丁的入口进程——盲区进程的删除操作既无审计也无阻断，8-23 型事件若改道盲区路径（尤其交易常驻进程启用后）仍可无痕删仓。"
+  trigger_signals:
+  - "ZephyrAlpha_TradingWatchdog 计划任务启用前必须完成 ①（启用即上线）"
+  - "任何新登记常驻进程/计划任务时复查本清单"
+  keywords: ["ops_guard", "install_inprocess_enforcement", "常驻进程", "pre-commit", "TradingWatchdog", "删除护栏", "盲区"]
+  upstream_deps:
+  - {contract: "ops_guard.install_inprocess_enforcement / _audit_only（批5 已 production）", from_domain: D_GOVERNANCE, dep_type: S, availability: available, note: "直接复用装配模式"}
+  downstream_consumers: []
+  contracts_to_produce:
+  - {id: "盲区进程装配清单", name: "①交易进程 boot 装配点（auto_runtime_core boot_hooks）②pre-commit 钩子 conftest 式装配（框架入口 env/站点自定义）③库层 merge/abort 入口自装 ④spawn 子进程 env 继承装配"}
+  contracts_to_consume: []
+  estimated_complexity: M
+  estimated_effort: "1-2 人天（四装配点 + 各 1 红队用例 + 观测期）"
+  tech_notes: "①优先（交易进程启用即上线，retention.py 删审计日志=自毁取证链）；装配模式沿用批5b：先 audit-only 观测期零误伤后翻硬拦；②pre-commit 进程装配可用 sitecustomize/环境变量注入（框架新起进程无 CLI 钩子点），或接受 audit-only 永久（钩子删除目标=tmp/非保护区为主）；③库层入口装法与 sweep L2331 同型；④spawn 子进程经 env ZEPHYR_OPS_GUARD_AUDIT_ONLY 继承+入口装补丁。"
+  risks: ["交易进程装配补丁可能影响交易时延敏感路径（判定为纳秒级纯比对，风险低但需观测）", "pre-commit 进程装补丁可能与钩子自身临时文件清理冲突（仓外豁免已覆盖，批5b 实证）"]
+  alternatives: "维持盲区：交易进程启用后 retention/auto_fix 删除零护栏——风险不可接受（自毁审计链 = 8-23 型事件连取证能力都失去）"
+  tags: ["candidate", "P1", "security", "governance", "ops_guard", "覆盖面"]
+  search_terms: ["install_inprocess_enforcement", "TradingWatchdog", "retention.py", "pre-commit", "heartbeat_daemon", "_force_rmtree"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-09-26'
+  review_frequency: monthly
+  last_review_outcome: "2026-08-26 批5d 登记（批5b 翻硬拦前全面审查产物）；优先级①交易进程＞③库层 ad-hoc＞②pre-commit 群＞④spawn 子进程"
+  acquisition_method: self_build
+  acquisition_source: ''
+
+- id: CAND-PLAN-003
+  name: 预案三维归因统计+Brier 校准（GAP-F-07）
+  aliases: ['情景归因', 'Brier 校准', 'reliability curve']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 预案质量度量层
+  description: 作战室 W0 质量闭环——scenario_planner 落库接通 prediction_log（载体现成），盘后真值回写 9 格实际情景；三维归因统计器（情景分支×维度×信号源边际）；Brier 校准计算器（二值/多分类+分桶 reliability curve+ECE）。
+  capability: scenario_plan_recorder / scenario_attribution_stats / brier_calibration
+  problem_it_solves: 预案说了什么、实际走了什么、概率准不准，无可回查对账链
+  keywords: ['scenario', 'attribution', 'brier', 'calibration', 'prediction_log']
+  upstream_deps: ['MOD-PLAN-005']
+  downstream_consumers: ['作战室 W0', 'GAP-F-01']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-008/009/010，testing），#ARCH-172'
+- id: CAND-PLAN-004
+  name: 结构化今日交易计划输出（GAP-F-09）
+  aliases: ['今日交易计划', 'daily trade plan']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 决策链末端
+  description: 决策链最后一棒规则模板生成（非 LLM）：拟买 min(boundary.max_add×档位缩放, firm 8% 硬顶)折算整手；拟卖止盈/减仓双条件规则；一句话逻辑参数化中文模板。
+  capability: daily_trade_plan
+  problem_it_solves: 决策链产出不可直接执行——缺人可读的今日计划（拟买/拟卖+方向/数量/参考价/逻辑）
+  keywords: ['daily plan', 'trade plan', 'warroom']
+  upstream_deps: ['MOD-PLAN-001']
+  downstream_consumers: ['作战室 W6', 'GAP-F-26']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-011，testing），#ARCH-172'
+- id: CAND-PLAN-005
+  name: 候选股边界批量计算（GAP-F-02）
+  aliases: ['批量边界', 'batch boundary']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 批量调度层
+  description: TomorrowBoundary 单 symbol 已 prod → 批量调度管线（单 SQL 批量取数+线程池≤8+ok/error/no_data 分桶留痕）+复用 prediction_log 落库，供作战室 W2/W2b 取用。
+  capability: batch_boundary_runner
+  problem_it_solves: 边界计算一次一只无法支撑候选清单级盘前准备
+  keywords: ['tomorrow boundary', 'batch', 'candidate']
+  upstream_deps: ['MOD-PLAN-001']
+  downstream_consumers: ['作战室 W2/W2b']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-012，testing），#ARCH-172'
+
+- id: CAND-SIG-024
+  name: 主线概率综合评分（GAP-F-12）
+  aliases: ['主线概率', 'mainline probability']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 板块层
+  description: RRG 象限+接力阶段+资金持续性+梯队完整度四因子合成主线概率（0~100）；静态权重 MVP，config.weight_overrides 留动态化接口位；缺维重归一。
+  capability: mainline_probability
+  problem_it_solves: 板块是否主线无可量化综合分，作战室主线层缺锚
+  keywords: ['mainline', 'sector', 'rrg', 'probability']
+  upstream_deps: ['MOD-SIG-060', 'MOD-SIG-061', 'MOD-SIG-062']
+  downstream_consumers: ['作战室主线层', 'GAP-F-06', 'GAP-F-30']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-064，testing），#ARCH-177'
+- id: CAND-SIG-025
+  name: 持仓×板块语境关联查询（GAP-F-30）
+  aliases: ['持仓板块语境']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 查询层
+  description: 持仓（调用方显式供给）×sector_constituent SCD-2 时点归属×主线概率×板内角色关联查询；两源独立降级，缺持仓 fail-closed。
+  capability: position_sector_context
+  problem_it_solves: 持仓页看不到每只票的板块语境（主线排名/龙头跟风）
+  keywords: ['position', 'sector', 'context']
+  upstream_deps: ['MOD-SIG-064', 'MOD-SIG-062']
+  downstream_consumers: ['持仓页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-065，testing），#ARCH-177'
+- id: CAND-DAT-004
+  name: 涨停池明细字段扩充（GAP-F-13）
+  aliases: ['涨停池明细', 'limit_up_pool']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: data 采集层
+  description: 新建 c1_market.limit_up_pool 明细表承接 stock_zt_pool_em 全量字段（封单比/首封/封住时长/炸板次数/连板/行业）；本批落采集器+解析层，DDL 建表/品类登记/tasks.yaml 接线三件为 Owner 窗口待办。
+  capability: limit_up_pool_collector
+  problem_it_solves: 梯队个股明细（封单比/首封/封住时间/开板次数）无存储
+  keywords: ['limit up', 'pool', 'collector']
+  upstream_deps: ['akshare stock_zt_pool_em']
+  downstream_consumers: ['作战室梯队层', '板块详情页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 采集器+解析层建成（testing）；DDL 四件 Owner 窗口待办，#ARCH-177'
+- id: CAND-PFALLOC-005
+  name: 相关性净额查询接口+前端接线（GAP-F-04）
+  aliases: ['相关性净额']
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: frontend services 查询层
+  description: 组合域相关性约束（已 prod）结论级查询接口 query_correlation_netting + 持仓页相关性净额卡 mock 渲染接线。
+  capability: dashboard_feeds
+  problem_it_solves: 后端相关性净额能力前端不可见
+  keywords: ['correlation', 'netting', 'dashboard']
+  upstream_deps: ['组合域相关性约束模块']
+  downstream_consumers: ['持仓页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（dashboard_feeds.py，testing）'
+- id: CAND-FE-001
+  name: 指标/形态渲染器全量接入（GAP-F-32，持续工程）
+  aliases: ['渲染器接入']
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: dashboard 渲染层
+  description: 41 指标+256 形态注册表全量接入 mockup 渲染层；2026-08-23 实证 39→65/256（目录 39 项全绿）；余量按族续接（DL 族 13 条为模型锚点不做前端规则渲染）。
+  capability: dashboard_renderers
+  problem_it_solves: 注册表指标/形态前端渲染覆盖率不足
+  keywords: ['renderer', 'indicator', 'chart pattern']
+  upstream_deps: ['technical_indicator_registry', 'chart_pattern_registry']
+  downstream_consumers: ['dashboard 各页']
+  estimated_complexity: 中
+  acquisition_method: in_progress
+  last_review_outcome: '2026-08-23 65/256（+26），持续工程'
+
+- id: CAND-PLAN-006
+  name: 交易域多空辩论四角色链实例化（GAP-F-03）
+  aliases: ['多空辩论', 'trading debate']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 决策层
+  description: 牛/熊研究员→交易员→风控四角色链，复用 agent_debate 裁决引擎（零 LLM 调用，全注入位）；D3 fake_ratio>0.6 进攻方案风控自动 VETO。
+  capability: trading_debate
+  problem_it_solves: 作战室 W4 辩论台无交易域实例
+  keywords: ['debate', 'warroom']
+  upstream_deps: ['agent_debate']
+  downstream_consumers: ['作战室 W4', 'GAP-F-44']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-013，testing），#ARCH-184'
+- id: CAND-SIG-026
+  name: 作战池生成器（GAP-F-06）
+  aliases: ['作战池']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 作战池
+  description: 主线板块龙头（064/062）×个股催化剂交集→2~3 票；空交集不强行出池。
+  capability: war_pool_generator
+  problem_it_solves: 每日作战焦点无生成器
+  keywords: ['war pool', 'catalyst']
+  upstream_deps: ['MOD-SIG-064', 'MOD-SIG-062']
+  downstream_consumers: ['作战室', 'GAP-F-05']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-066，testing），#ARCH-184'
+- id: CAND-PLAN-007
+  name: 禁做清单生成器（GAP-F-05）
+  aliases: ['禁做清单', 'sit-out list']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 风控规则层
+  description: blackout 事件禁交易+当日止损禁反手+跌停不撬板+池外不碰四源合成 sit-out list。
+  capability: sit_out_list
+  problem_it_solves: 预案外操作无事前拦截清单
+  keywords: ['sit out', 'blackout']
+  upstream_deps: ['event_calendar', 'GAP-F-06']
+  downstream_consumers: ['作战室 W5', '复盘页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-014，testing），#ARCH-184'
+- id: CAND-PLAN-008
+  name: 竞价命中分支判定持久化（GAP-F-08）
+  aliases: ['竞价命中']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 盘中判定层
+  description: 盘中 10:00 判定 9 格预案命中格+竞价三细节，prediction_log auction_hit 族幂等落库；复用 MOD-PLAN-008 判定口径。
+  capability: auction_hit_recorder
+  problem_it_solves: 预案命中无盘中持久化，W0/W3/复盘页无数据
+  keywords: ['auction', 'hit', 'scenario']
+  upstream_deps: ['MOD-PLAN-008', 'auction_snapshot/auction_book']
+  downstream_consumers: ['作战室 W0/W3', '复盘页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-015，testing），#ARCH-184'
+- id: CAND-SIG-027
+  name: 筛选漏斗 L1-L6 全链计数（GAP-F-11）
+  aliases: ['漏斗计数']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 漏斗观测层
+  description: 决策链每层命中明细结构化（进/出/通过率/剔除理由），只读适配 046/047/048/049 产出。
+  capability: screening_funnel_report
+  problem_it_solves: 漏斗各层无量化观测，无法回答"票在哪层被踢"
+  keywords: ['funnel', 'screening']
+  upstream_deps: ['MOD-SIG-046', 'MOD-SIG-047', 'MOD-SIG-048', 'MOD-SIG-049']
+  downstream_consumers: ['盘中实时页决策链']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-067，testing），#ARCH-184'
+- id: CAND-SIG-028
+  name: 涨停原因归因（GAP-F-14）
+  aliases: ['涨停归因']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 归因层
+  description: news_data×涨停股 join：个股新闻直命中/板块主题聚合双条件联动/无明确归因三级封闭。
+  capability: limit_up_reason_attribution
+  problem_it_solves: 板块页梯队缺"涨停原因"列
+  keywords: ['limit up', 'attribution', 'news']
+  upstream_deps: ['news_data', 'limit_up_down']
+  downstream_consumers: ['板块页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-070，testing）'
+- id: CAND-SIG-029
+  name: 大盘分时贡献度拆解（GAP-F-15）
+  aliases: ['贡献度拆解']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 指数层
+  description: 分钟级板块-指数贡献管线：板块分钟收益×权重分摊指数涨跌，恒等式残差留痕。
+  capability: index_contribution_decomposition
+  problem_it_solves: 大盘涨跌拆不到板块贡献
+  keywords: ['index', 'contribution', 'intraday']
+  upstream_deps: ['板块分钟线', '指数分钟线']
+  downstream_consumers: ['大盘页', 'GAP-F-16']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-071，testing）'
+- id: CAND-NLP-001
+  name: 新闻双标签生成器（GAP-F-21）
+  aliases: ['新闻双标签', '预期差']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: nlp 标签层
+  description: 可预测性标签（日历+资金痕迹）+预期差标签（实际 vs analyst_forecast 一致预期锚）双封闭集合；GAP-F-D1 实测锚可用（53,918 行/2,519 标的/约 1 月窗）。
+  capability: news_dual_tagging
+  problem_it_solves: 新闻缺"可预测性/预期差"结构化标签
+  keywords: ['news', 'predictability', 'expectation gap']
+  upstream_deps: ['analyst_forecast', 'event_calendar']
+  downstream_consumers: ['新闻页', '复盘页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-NLP-DUALTAG-001，testing）'
+- id: CAND-DAT-005
+  name: 外盘 12 标的覆盖核查与补齐（GAP-F-23）
+  aliases: ['外盘覆盖']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: data 覆盖核查层
+  description: 12 标的库内覆盖只读核查（covered/stale/missing 三态）；实测覆盖 4/12 缺口 8/12；FOREIGN_COLLECTOR_SLOTS 配置位备好，采集接线走 tasks.yaml+CTR（Owner 窗口）。
+  capability: foreign_market_coverage
+  problem_it_solves: 外盘标的覆盖不清，跨市场传导数据底座不全
+  keywords: ['foreign market', 'coverage']
+  upstream_deps: ['us_index', 'fred_provider']
+  downstream_consumers: ['跨市场传导传感器', 'GAP-F-24']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 核查器建成（MOD-DAT-foreign_coverage，testing）；采集接线 Owner 窗口，#ARCH-185'
+- id: CAND-SIG-030
+  name: 做T点位算法+信号回验管线（GAP-F-25）
+  aliases: ['做T点位']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 日内层
+  description: 做T点位三族（回踩均价/偏离回归/量价背离）+MOD-SIG-024 适配腿 MVP；10/30 分钟命中回验统计（信号方向回验，成本归执行层）。
+  capability: t0_point_analysis
+  problem_it_solves: 做T 无点位算法与命中回验
+  keywords: ['t0', 'intraday', 'hit rate']
+  upstream_deps: ['MOD-SIG-024']
+  downstream_consumers: ['T分析页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-068，testing）'
+- id: CAND-RPT-006
+  name: 告警聚合器（GAP-F-28）
+  aliases: ['告警聚合']
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: reporting 告警层
+  description: 风控事件+数据质量门+回测完成三源→统一告警流+四级严重度+通知管理器渠道派发；告警 id 确定性哈希幂等。
+  capability: alert_aggregation
+  problem_it_solves: 三类告警散落无统一流
+  keywords: ['alert', 'aggregation', 'severity']
+  upstream_deps: ['风控事件源', 'MOD-L08-001']
+  downstream_consumers: ['通知渠道', '风控实时页']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-RPT-030，testing）'
+- id: CAND-SIG-031
+  name: 指数级多指标共振综合评分（GAP-F-31）
+  aliases: ['共振评分']
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: signal_ashare 指数层
+  description: 七族投票（MACD/KDJ/RSI/量能/均线/BOLL/趋势）加权合成买/卖/中性+置信度+共振 x/7；置信度=启发式映射非校准概率（只画栏杆不算命）。
+  capability: index_resonance_scoring
+  problem_it_solves: 指数级多空共振无综合分
+  keywords: ['resonance', 'index', 'indicator voting']
+  upstream_deps: ['技术指标注册表七族']
+  downstream_consumers: ['大盘页']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-SIG-069，testing）'
+- id: CAND-MLT-011
+  name: 密度预测主路线模型 MVP（GAP-F-34）
+  aliases: ['密度预测', 'density head']
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: ml_train 密度头
+  description: 轻量密度头 sklearn HGB quantile（lightgbm 缺失降级，#ARCH-186）；predict_quantiles 输出 q10~q90 单调修正序列+pinball/coverage 校准指标，供 GAP-F-01 W2 概率分布。
+  capability: prediction_family
+  problem_it_solves: 作战室 W2 概率分布无模型产出
+  keywords: ['density', 'quantile', 'ml']
+  upstream_deps: ['DS-074']
+  downstream_consumers: ['GAP-F-01']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 MVP 建成（MOD-ML-DENSITY，testing 封顶，B-009）'
+- id: CAND-MLT-012
+  name: ML 外围三候选骨架（GAP-F-35：舆情SFT/打板分类/席位形态）
+  aliases: ['ML三候选']
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: ml_train 候选骨架
+  description: 三候选训练管线骨架+特征接口位+校验门；train 恒抛 ZA-MLT-0003（B-007 人工闸门）；配套 MOD-ML-001~004/007/009 训练基础设施六件同批建成。
+  capability: ml_candidate_skeleton
+  problem_it_solves: ML 候选模型无训练管线骨架与治理闸门
+  keywords: ['sft', 'classifier', 'skeleton']
+  upstream_deps: ['MOD-ML-001', 'DS-074/DS-080']
+  downstream_consumers: ['model_registry']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 骨架建成（testing）；真训练待 B-007+数据积累'
+
+- id: CAND-SIM-008
+  name: '蒙特卡洛路径模拟引擎（个股级 20 日路径分布+胜率+90% 置信上下限，GBM/重采样）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '蒙特卡洛路径模拟引擎（个股级 20 日路径分布+胜率+90% 置信上下限，GBM/重采样）'
+  capability: MOD-SIG-074
+  problem_it_solves: '蒙特卡洛路径模拟引擎（个股级 20 日路径分布+胜率+90% 置信上下限，GBM/重采样）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-074（testing，2026-08-23）（GAP-F-36）'
+
+- id: CAND-SIG-033
+  name: '缠论笔/段/中枢自动识别（包含处理→分型→严格笔→线段→中枢三级链）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '缠论笔/段/中枢自动识别（包含处理→分型→严格笔→线段→中枢三级链）'
+  capability: MOD-SIG-072
+  problem_it_solves: '缠论笔/段/中枢自动识别（包含处理→分型→严格笔→线段→中枢三级链）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-072（testing，2026-08-23）（GAP-F-37）'
+
+- id: CAND-FAC-004
+  name: '因子相似度聚类器（IC 相关矩阵+层次/DBSCAN+组内代表排名）'
+  aliases: []
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: ''
+  description: '因子相似度聚类器（IC 相关矩阵+层次/DBSCAN+组内代表排名）'
+  capability: MOD-L02_ANA_cluster
+  problem_it_solves: '因子相似度聚类器（IC 相关矩阵+层次/DBSCAN+组内代表排名）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-L02_ANA_cluster（testing，2026-08-23）（GAP-F-38）'
+
+- id: CAND-SIG-032
+  name: '个股级信号强度合成器（MACD/RSI/量能/均线/AI NLP 五维 0~100）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '个股级信号强度合成器（MACD/RSI/量能/均线/AI NLP 五维 0~100）'
+  capability: MOD-SIG-073
+  problem_it_solves: '个股级信号强度合成器（MACD/RSI/量能/均线/AI NLP 五维 0~100）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-073（testing，2026-08-23）（GAP-F-39）'
+
+- id: CAND-RPT-007
+  name: 'AI 复盘结语生成器（LLM 模型网关抽象+战报模板注入+降级兜底）'
+  aliases: []
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: ''
+  description: 'AI 复盘结语生成器（LLM 模型网关抽象+战报模板注入+降级兜底）'
+  capability: MOD-RPT-009_summary
+  problem_it_solves: 'AI 复盘结语生成器（LLM 模型网关抽象+战报模板注入+降级兜底）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-RPT-009_summary（testing，2026-08-23）（GAP-F-40）'
+
+- id: CAND-SIG-034
+  name: '跨资产比价衍生计算（金银比/金油比/铜金比/金铜比+z-score+宏观标注）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '跨资产比价衍生计算（金银比/金油比/铜金比/金铜比+z-score+宏观标注）'
+  capability: MOD-SIG-075
+  problem_it_solves: '跨资产比价衍生计算（金银比/金油比/铜金比/金铜比+z-score+宏观标注）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-075（testing，2026-08-23）（GAP-F-41）'
+
+- id: CAND-PLAN-009
+  name: '证据链决策数据结构（thesis/catalyst/invalidation/evidence_for/evidence_against 五字段强制+填充校验）'
+  aliases: []
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: ''
+  description: '证据链决策数据结构（thesis/catalyst/invalidation/evidence_for/evidence_against 五字段强制+填充校验）'
+  capability: MOD-SIG-076
+  problem_it_solves: '证据链决策数据结构（thesis/catalyst/invalidation/evidence_for/evidence_against 五字段强制+填充校验）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-SIG-076（testing，2026-08-23）（GAP-F-42）'
+
+- id: CAND-FAC-005
+  name: 'LLM 因子挖掘流水线（论文搜索→PDF→LLM 假说→沙箱→入因子库草稿）'
+  aliases: []
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: ''
+  description: 'LLM 因子挖掘流水线（论文搜索→PDF→LLM 假说→沙箱→入因子库草稿）'
+  capability: MOD-EVIDENCE_CHAIN_mining
+  problem_it_solves: 'LLM 因子挖掘流水线（论文搜索→PDF→LLM 假说→沙箱→入因子库草稿）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-EVIDENCE_CHAIN_mining（testing，2026-08-23）（GAP-F-43）'
+
+- id: CAND-PLAN-010
+  name: '交易域多 Analyst Agent 五角色实例化（GAP-F-03 扩展，复用 trading_debate）'
+  aliases: []
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: ''
+  description: '交易域多 Analyst Agent 五角色实例化（GAP-F-03 扩展，复用 trading_debate）'
+  capability: MOD-PLAN-013_agents
+  problem_it_solves: '交易域多 Analyst Agent 五角色实例化（GAP-F-03 扩展，复用 trading_debate）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 MOD-PLAN-013_agents（testing，2026-08-23）（GAP-F-44）'
+
+- id: CAND-SIG-035
+  name: '板块属性标注规则库（进攻/防御/平衡三分类）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '静态映射表+config/sector_attribute_mapping.yaml 真源；与 sector_attribute_labels.yaml（两族 rs_ratio 专用）粒度边界已留痕'
+  capability: src/zephyr/signal_ashare/sector/sector_attribute_rules.py
+  problem_it_solves: '板块属性标注规则库（进攻/防御/平衡三分类）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-18）'
+
+- id: CAND-SIG-036
+  name: '昨日涨停今表现+炸板率统计（日频任务）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'MOD-SIG-025 YesterdayLimitUpPerformance 消费侧的生产侧补齐'
+  capability: src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py
+  problem_it_solves: '昨日涨停今表现+炸板率统计（日频任务）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-19）'
+
+- id: CAND-SIG-037
+  name: '板块量能异动检测（成交额 vs N 日均值偏离度）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '板块量能异动检测（成交额 vs N 日均值偏离度）'
+  capability: src/zephyr/signal_ashare/sector/sector_volume_anomaly.py
+  problem_it_solves: '板块量能异动检测（成交额 vs N 日均值偏离度）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-20）'
+
+- id: CAND-SIG-038
+  name: '逆势榜 4 卡（分钟级逆势上涨/资金流入/率先反弹/最抗跌）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: '资金流入卡为注入位（板块级分钟资金流源未接，接入后仅换注入）'
+  capability: src/zephyr/signal_ashare/counter_trend_board.py
+  problem_it_solves: '逆势榜 4 卡（分钟级逆势上涨/资金流入/率先反弹/最抗跌）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-16）'
+
+- id: CAND-SIG-039
+  name: '板块详情补充维度（TDX 周期定位状态机+拉升原因聚合）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'analyst_forecast 约 1 个月覆盖窗限制已内建超窗守卫（GAP-F-D1）'
+  capability: src/zephyr/signal_ashare/sector/sector_detail_enricher.py
+  problem_it_solves: '板块详情补充维度（TDX 周期定位状态机+拉升原因聚合）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-17）'
+
+- id: CAND-REGIME-001
+  name: '四指数分市场分析组合卡（regime/情绪/预判）'
+  aliases: []
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: ''
+  description: 'MOD-REGIME-008+MOD-SIG-037 复用组合层；L14 四指数（含科创综指 000680）'
+  capability: src/zephyr/regime/index_market_brief.py
+  problem_it_solves: '四指数分市场分析组合卡（regime/情绪/预判）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-10）'
+
+- id: CAND-NLP-002
+  name: '新闻影响评估分级（A/B/C）+热点聚类（主题计数）'
+  aliases: []
+  domain: D_DATA
+  domain_status: active
+  sub_layer: ''
+  description: '新闻影响评估分级（A/B/C）+热点聚类（主题计数）'
+  capability: src/zephyr/nlp/news_impact_grader.py
+  problem_it_solves: '新闻影响评估分级（A/B/C）+热点聚类（主题计数）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-22）'
+
+- id: CAND-SIG-040
+  name: '跨市场传导规则判定层（对 A 股影响引擎，12 标的×6 通道）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'CAND-RSK-021 语义落码：MOD-SIG-038 系数层的规则判定姊妹层；行业通道 MVP 预留'
+  capability: src/zephyr/signal_ashare/foreign_impact_judge.py
+  problem_it_solves: '跨市场传导规则判定层（对 A 股影响引擎，12 标的×6 通道）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-24）'
+
+- id: CAND-PLAN-011
+  name: '执行偏差归因器（计划 vs 实际六类归因）'
+  aliases: []
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: ''
+  description: '消费 MOD-PLAN-011 计划产出；实际侧 ExecutionRecord 消费方映射 CTR-005'
+  capability: src/zephyr/plan_engine/execution_deviation_attributor.py
+  problem_it_solves: '执行偏差归因器（计划 vs 实际六类归因）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-26）'
+
+- id: CAND-POS-001
+  name: '实盘净值曲线序列（miniQMT 模拟净值源先行）'
+  aliases: []
+  domain: D_POSITION
+  domain_status: active
+  sub_layer: ''
+  description: 'CTR-P1-008 券商未接；account_nav_daily 表 DDL 草稿见本片段 ddl_draft（禁直建）'
+  capability: src/zephyr/position/live_nav_recorder.py
+  problem_it_solves: '实盘净值曲线序列（miniQMT 模拟净值源先行）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-29）'
+
+- id: CAND-SIG-041
+  name: '趋势线/压力支撑自动识别（分形聚类+双锚点连线）'
+  aliases: []
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: ''
+  description: 'regime_detector 颗粒度核查裁定=无点位级输出→独立新建（裁定见 GAP7 报告）'
+  capability: src/zephyr/signal_ashare/trendline_sr_detector.py
+  problem_it_solves: '趋势线/压力支撑自动识别（分形聚类+双锚点连线）'
+  keywords: []
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: ''
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成 built_testing（GAP-F-33）'
+
+- id: CAND-CMP-001
+  name: '行为审计专职引擎（MOD-INF-033 转候选库）'
+  aliases: ['behavioral_auditor', '行为审计器']
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: compliance 行为审计层
+  description: 'backlog 实测：behavioral_auditor/ 仅 __init__ 壳（gov_drift 40+ 子模块符号再导出聚合， 非独立行为审计引擎）；行为采样/信任检查职能已由 gov_code_quality/code_dedup/ behavioral_trust_checker.py + behavioral_sampler.py 部分承载。行为审计专职引擎 边际价值低，14.4 按派单不补代码转候选库待裁定。'
+  capability: behavioral_auditor
+  problem_it_solves: '行为审计专职引擎边际价值评估后待定'
+  keywords: ['behavioral', 'audit']
+  upstream_deps: []
+  downstream_consumers: []
+  estimated_complexity: 中
+  acquisition_method: candidate
+  status: rejected
+  last_review_outcome: '2026-08-24 Owner 终裁（A2②）：不立项 behavioral_auditor 专职引擎，维持现状关闭（#ARCH-191 同闭）'
+
+- id: CAND-PLAN-012
+  name: '情景概率分布模型（GAP-F-01，作战室 W2 九格概率）'
+  aliases: ['情景概率', 'scenario probability', 'W2矩阵']
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: plan_engine 预案概率层
+  description: '三层融合（基础率经验频率/8态马尔可夫条件映射/密度头分位数准蒙特卡洛折算）合成 9 格概率分布+置信度+降级留痕，供作战室 W2 与 Brier 校准消费。'
+  capability: scenario_probability_model
+  problem_it_solves: 'W2 九宫格无概率分布模型产出'
+  keywords: ['scenario', 'probability', 'warroom']
+  upstream_deps: ['MOD-PLAN-008', 'MOD-SIG-037', 'MOD-ML-DENSITY']
+  downstream_consumers: ['作战室 W2', 'MOD-PLAN-010']
+  estimated_complexity: 高
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-23 已建成（MOD-PLAN-017，testing），#ARCH-193'
+
+
+# ----------------------------------------------------------
+# 2026-08-23 场外草稿深挖批 AUD-DRAFT-001: +383 条(裁定=做; P0=37/P1=125/P2=221; 真源=.runtime/audit_20260823/construction_backlog_dig.tsv)
+# ----------------------------------------------------------
+- id: CAND-TESTA-002
+  name: D-ALT-02 SentimentEngine
+  aliases:
+  - D-ALT-02 SentimentEngine
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 情绪指标量化+历史分位数+冰点/过热判定 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: 雪球/东财情绪指标+FinBERT情感打分;pandas-ta。场内现状: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py。最小施工形态:
+    建统一SentimentEngine:聚合价量情绪(复用sentiment_cycle)+社媒/新闻情感分,252日滚动历史分位数+冰点<10分位/过热>90分位判定,输出入C-014与筛选漏斗。依赖前置:
+    D_ALT_DATA;D_ASHARE_SIGNAL;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/sentiment_engine.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00112
+  source_section: §功能域模块·D-ALT-DATA
+- id: CAND-TESTA-003
+  name: D-ALT-04 FilingNLPEngine
+  aliases:
+  - D-ALT-04 FilingNLPEngine
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 财报/公告NLP解析+事件提取+影响评分 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: FinGPT/FinBERT财报解析;akshare/巨潮公告接口。场内现状: 部分:src/zephyr/nlp/nlp_inference.py。最小施工形态:
+    公告采集(巨潮/交易所免费源)+文本解析+事件类型分类(业绩预告/减持/定增/诉讼等)+影响评分[-1,1],LLM抽取结果写事件库供事件注入与基本面信号消费。依赖前置: D_ALT_DATA;D_INTELLIGENCE;D_FUNDAMENTAL_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/nlp/nlp_inference.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/filing_nlp_engine.py（MOD-ALT-003，29 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W14）——canonical=MOD-ALT-003 filing_nlp_engine（spec 全等，其蓝图 §0 已预先声明归并）；公告采集残留语归 announcement_provider"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00113
+  source_section: §功能域模块·D-ALT-DATA
+- id: CAND-TESTA-004
+  name: D-ALT-19 PolicyThemeMapper
+  aliases:
+  - D-ALT-19 PolicyThemeMapper
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 政策主题映射+政策影响评估 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: 政策库+LLM主题分类(FinGPT式)。场内现状: 部分:src/zephyr/nlp/news_impact_grader.py。最小施工形态:
+    政策主题库(货币/产业/监管等)+LLM主题归类+主题→申万行业映射表+影响半衰期参数,输出主题热度与受益/受损清单入信号。依赖前置: D_ALT_DATA;D_INTELLIGENCE;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/nlp/news_impact_grader.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/policy_theme_mapper.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00123
+  source_section: §功能域模块·D-ALT-DATA
+- id: CAND-TESTA-005
+  name: 37 概念因子映射引擎
+  aliases:
+  - 概念因子映射
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: P1✅：Excel→解析分号分隔概念字段→构建股票↔概念映射字典+逆向索引+质量校验；统计验证替代主观题材分类
+  proposal: '深挖裁定=做(P1)。业界对标: 同花顺/东财概念板块成分映射；akshare concept board接口。场内现状: 部分：src/zephyr/data/implementations/akshare_provider.py。最小施工形态:
+    股票↔概念映射字典+逆向索引(概念→成分)+质量校验(成分数合理性/更新及时性)+映射变更PIT记录(effective_date)+Excel分号概念字段解析兼容层，输出供signal_ashare与板块因子(86)消费。依赖前置:
+    D_ALT_DATA;D_DATA;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/implementations/akshare_provider.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/concept_factor_mapper.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00596
+  source_section: §1 子模块清单
+- id: CAND-TESTA-006
+  name: 另类数据源（社交情绪/数字足迹/供应链）
+  aliases:
+  - 另类数据源
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 雪球/股吧/微博财经大V/招聘专利/工商海关；成本纳入C-044治理
+  proposal: '深挖裁定=做(P1)。业界对标: akshare/efinance提供股吧人气等免费另类数据,qlib支持自定义因子接入。场内现状: 部分:src/zephyr/alt_data(空壳)。最小施工形态:
+    股吧/雪球人气日频采集器落ClickHouse并接入既有情绪分析管道。依赖前置: src/zephyr/alt_data;data/ch_writer.py;intelligence/news_sentiment_analyzer.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/alt_data(空壳)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/social_sentiment_collector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01341
+  source_section: §2.1
+- id: CAND-TESTA-007
+  name: §29.12 另类数据源扩展
+  aliases:
+  - 另类数据源扩展
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 专业机构Alpha差异化来源；4类按A股可行性排序：①社交媒体情绪（可行性高成本低：雪球热帖情感/东财股吧散户情绪/微博大V观点→C-014情感因子，爬虫+LLM情感分析）②上市公司数字足迹（中：招聘职位量/官网流量/专利商标→预判扩张收缩）③产业链供应链数据（中：工商变更/司法诉讼/海关进出口→企查查天眼查API）④卫星遥感（低成本高远期：港口AIS/停车场卫星图）；融合点4处：C-001数据接入新数据源/C-027因子池（另类因子IC阈值\
+  proposal: '深挖裁定=做(P1)。业界对标: akshare（股吧/新闻接口可直接复用）/Tushare；商业对标Datayes另类数据。场内现状: 部分：src/zephyr/alt_data/。最小施工形态:
+    按可行性序实施：雪球热帖/东财股吧/微博情绪采集+LLM情感打分入C-014；招聘/官网/专利数字足迹；企查查天眼查工商司法（可选付费API，配额入C-044)；统一走C-001接入契约与质量门控；卫星遥感仅留接口位。依赖前置:
+    D_ALT_DATA;D_DATA;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/alt_data/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/social_sentiment_collector.py（MOD-ALT-001，30 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：社媒面归并核销；残留面（数字足迹/卫星）留后续批"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W15）——社媒面与 MOD-ALT-001 全等归并；数字足迹/产业链付费 API/卫星接口位=残留面留后续批"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01842
+  source_section: §29.12
+- id: CAND-TESTA-008
+  name: D-ALT-DATA-03 Web Scraper Engine网页爬取引擎
+  aliases:
+  - D-ALT-DATA-03 Web Scraper Engine网页爬取引擎
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: ✅能建；定向爬取新闻/公告/社交媒体→结构化提取
+  proposal: '深挖裁定=做(P1)。业界对标: akshare/tushare免费源+scrapy/playwright定向爬取是vnpy/qlib生态通行路线。场内现状: 部分:src/zephyr/data/news_dedup.py;src/zephyr/alt_data/(空壳域)。最小施工形态:
+    新闻/公告/社交定向爬取+结构化提取+去重落ClickHouse。依赖前置: D_DATA scheduler(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/news_dedup.py;src/zephyr/alt_data/(空壳域)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/web_scraper_engine.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-ALT-DATA-03
+  original_id: B10-02195
+  source_section: §30.2.4
+- id: CAND-TESTA-009
+  name: D-ALT-DATA-04 Filing NLP Engine监管文件NLP
+  aliases:
+  - D-ALT-DATA-04 Filing NLP Engine监管文件NLP
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: ✅能建；SEC/A股年报公告提取结构化信息
+  proposal: '深挖裁定=做(P1)。业界对标: 公告NLP=FinBERT/规则抽取+LLM结构化，范围限A股公告(SEC属美股剔除)。场内现状: 部分:src/zephyr/nlp/news_dual_tagger.py;src/zephyr/signal_fundamental/。最小施工形态:
+    巨潮公告文本→LLM/规则结构化(业绩/增减持/问询函)入事件表。依赖前置: B10-02195。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/nlp/news_dual_tagger.py;src/zephyr/signal_fundamental/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/filing_nlp_engine.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-ALT-DATA-04
+  original_id: B10-02196
+  source_section: §30.2.4
+- id: CAND-TESTA-010
+  name: 另类数据源
+  aliases:
+  - 另类数据源
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: tushare新闻快讯(待开通)/iFind 7×24新闻监控/研究报告/公司公告/舆情监控/AI产业链分析/情绪监控面板(涨停/封板率/炸板率/连板高度/赚钱效应)/板块热度排行/企业司法监管数据/主播音频流(本地ASR
+    Whisper，需C-029调度)
+  proposal: '深挖裁定=做(P1)。业界对标: akshare/tushare/iFind新闻舆情；本地Whisper ASR。场内现状: 部分：src/zephyr/data/news_collector.py。最小施工形态:
+    另类数据补齐：情绪监控面板(涨停/封板率/炸板率/连板高度复用limit_up_pool)+板块热度+企业司法(天眼查tyc可选)+Whisper音频流转文本留接口(C-029调度)，统一走C-001接入契约。依赖前置:
+    D_ALT_DATA;D_DATA;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/news_collector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/ 族（limit_up_pool_collector + MOD-ALT-004 聚合）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：逐面归并核销；残留面（司法 tyc/Whisper）留后续批"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W15）——逐面归并：情绪面板数据层 limit_up_pool 已建+聚合判定归 SentimentEngine+板块热度已建；司法 tyc/Whisper ASR=残留面"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04069
+  source_section: §2.2
+- id: CAND-TESTA-011
+  name: D-ALT-10 AltDataCatalog
+  aliases:
+  - D-ALT-10 AltDataCatalog
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 另类数据目录+元数据管理 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: feast特征目录/DataHub式元数据目录。场内现状: 无。最小施工形态: 轻量数据目录(SQLite):source_id/类型/更新频率/质量分/成本配额/接入状态,注册-审批-下线生命周期,与C-001接入契约对齐。依赖前置:
+    D_ALT_DATA;D_DATA_GOV。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/alt_data_catalog.py（MOD-ALT-008，17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-024 同为 AltDataCatalog（B1/B5 两稿重登），canonical=CAND-TESTA-024→MOD-ALT-008 alt_data_catalog（标签+血缘+FTS5 检索含其生命周期语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00117
+  source_section: §功能域模块·D-ALT-DATA
+- id: CAND-TESTA-012
+  name: 72 Research Report Collector
+  aliases:
+  - 72 Research Report Collector
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: P1✅：研究报告+新闻事件+宏观经济数据采集+NLP提取+事件标注+Filing NLP Engine(公告文本结构化提取:标题/摘要/关键数据/事件类型)
+  proposal: '深挖裁定=做(P2)。业界对标: 东财研报中心/巨潮公告采集+LLM要点抽取；finBERT事件检测。场内现状: 部分：src/zephyr/data/news_collector.py。最小施工形态:
+    研报元数据采集(东财研报中心:标题/评级/目标价/机构/日期)+评级变动事件标注入事件总线+标的映射复用news_symbol_linker，正文结构化复用B13-04280 Filing NLP产物。依赖前置:
+    D_ALT_DATA;D_INTELLIGENCE;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/news_collector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/research_report_collector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA
+  original_id: B1-00628
+  source_section: §1 子模块清单
+- id: CAND-TESTA-013
+  name: D-ALT-DATA-21 A-Share Policy Expectation Analyzer A股政策预期分析
+  aliases:
+  - D-ALT-DATA-21 A-Share Policy Expectation Analyzer A股政策预期分析
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: ✅能建；窗口指导检测+预期管理协同+信息优势交易检测
+  proposal: '深挖裁定=做(P2)。业界对标: 政策预期分析=政策文本NLP+事件日历，业界以政策指数/关键词监测落地。场内现状: 部分:src/zephyr/data/policy_registry.py(stable/production)。最小施工形态:
+    窗口指导关键词库+政策事件日历+预期偏离打分。依赖前置: B10-02195。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/policy_registry.py(stable/production)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/policy_expectation_analyzer.py（MOD-ALT-010，25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-026 同为 A股政策预期分析（B10/B5 两稿重登），canonical=CAND-TESTA-026→MOD-ALT-010（LLM 预期打分+国家队识别含其窗口指导/事件日历语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA-21
+  original_id: B10-02200
+  source_section: §30.2.4
+- id: CAND-TESTA-014
+  name: D-ALT-DATA-02 Sentiment Engine
+  aliases:
+  - D-ALT-DATA-02 Sentiment Engine
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 情绪信号引擎(新闻情绪finBERT+社交媒体情绪+管理层语调+Bayesian聚合);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: FinBERT中文金融情绪+Bayesian多源聚合。场内现状: 部分：src/zephyr/nlp/sentiment_aggregator.py。最小施工形态:
+    三路情绪(新闻finBERT/社媒/管理层语调)→Bayesian聚合(源可靠度先验)→统一情绪分数+置信度入C-014情感通道，盘后批处理盘中缓存。依赖前置: D_ALT_DATA;D_INTELLIGENCE;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/nlp/sentiment_aggregator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/sentiment_engine.py（MOD-ALT-004，24 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-004 sentiment_engine 同为 D-ALT-02（B13 稿重登），canonical=src/zephyr/alt_data/sentiment_engine.py（三路情绪+Bayesian 聚合语义已在）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04279
+  source_section: §17.3
+- id: CAND-TESTA-015
+  name: D-ALT-DATA-04 Filing NLP Engine
+  aliases:
+  - D-ALT-DATA-04 Filing NLP Engine
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 财务公告NLP引擎(年报/季报/公告结构化提取+风险事件检测+管理层讨论分析);✅能建,Ollama qwen3:8b本地LLM
+  proposal: '深挖裁定=做(P2)。业界对标: 本地LLM(qwen3:8b)公告抽取；finBERT事件检测。场内现状: 无。最小施工形态: 公告NLP管道：风险事件检测(诉讼/减持/违规问询模板+LLM)+MD&A管理层讨论要点抽取+结构化事件入事件总线，复用B13-04263
+    PDF解析产物。依赖前置: D_ALT_DATA;D_INTELLIGENCE;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/filing_nlp_engine.py（MOD-ALT-003）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-003 filing_nlp_engine 同为 D-ALT-04（B13 稿重登），canonical=src/zephyr/alt_data/filing_nlp_engine.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04280
+  source_section: §17.3
+- id: CAND-TESTA-016
+  name: D-ALT-DATA-14 Alt-Data Compliance Reviewer
+  aliases:
+  - D-ALT-DATA-14 Alt-Data Compliance Reviewer
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 另类数据合规审查器(采集合规审查+数据源尽调+使用许可验证+隐私影响评估);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 数据源ToS审查清单+Presidio隐私影响评估；另类数据尽调框架。场内现状: 无。最小施工形态: 数据源合规台账：采集方式/ToS条款/许可范围/隐私影响四要素登记+上线前审查清单+定期复核提醒，结论入reference_data元数据。依赖前置:
+    D_ALT_DATA;D_COMPLIANCE;D_DATA_GOV。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_compliance_reviewer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04283
+  source_section: §17.3
+- id: CAND-TESTA-017
+  name: D-ALT-DATA-19 Policy Theme Mapper
+  aliases:
+  - D-ALT-DATA-19 Policy Theme Mapper
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 政策主题映射器(政策文本采集+主题提取+产业映射+政策影响评估+主题生命力评估);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: BERTopic/LLM主题抽取+产业链映射。场内现状: 无。最小施工形态: 政策采集(国务院/部委/交易所RSS)→LLM主题提取→产业链/行业映射(挂B13-04099产业图谱)→主题生命力(提及衰减)评估，输出主题热度信号。依赖前置:
+    D_ALT_DATA;D_INTELLIGENCE;D_KNOWLEDGE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/policy_theme_mapper.py（MOD-ALT-005，27 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 MOD-ALT-005 policy_theme_mapper 同为 D-ALT-19（B13 稿重登），canonical=src/zephyr/alt_data/policy_theme_mapper.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04284
+  source_section: §17.3
+- id: CAND-TESTA-018
+  name: D-ALT-DATA-22 A-Share Event Causal Reasoner
+  aliases:
+  - D-ALT-DATA-22 A-Share Event Causal Reasoner
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: A股事件因果推理引擎(事件征兆分析+事件连锁逻辑树+政策地缘趋势+隔夜外盘影响);✅能建,NetworkX因果图+LLM辅助
+  proposal: '深挖裁定=做(P2)。业界对标: NetworkX因果图+DoWhy；LLM辅助事件链推理。场内现状: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
+    事件因果图：事件节点+传导边(行业/供应链/情绪)+征兆检测器输出挂接+隔夜外盘影响打分，LLM辅助生成逻辑树人工审核后入图，结论仅作信号输入。依赖前置: D_ALT_DATA;D_ASHARE_SIGNAL;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/event_causal_reasoner.py（MOD-SIG-112，18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W05 已建归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTB-029（W05 波）同为 D-ALT-22 事件因果推理（B13/B1/B10 三稿重登），canonical=CAND-TESTB-029（DoWhy 反事实校验为最宽 spec，W05 施工），本波不施工"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04286
+  source_section: §17.3
+- id: CAND-TESTA-019
+  name: D-ALT-DATA-31 另类数据源健康度与降级管理器
+  aliases:
+  - D-ALT-DATA-31 另类数据源健康度与降级管理器
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 数据源健康评分+自动降级(vendor failover+健康探针)为数据基础设施惯例。场内现状: 部分:src/zephyr/market_data/failover/manager.py（行情源故障转移有，另类数据源未覆盖）。最小施工形态:
+    另类数据源(社媒/新闻/工商)健康度评分(成功率/新鲜度/延迟滑动窗口)+自动降级阶梯(降权→切源→标记停用)+恢复探测，质量事件接入数据接入契约与告警。依赖前置: D_ALT_DATA;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/market_data/failover/manager.py（行情源故障转移有，另类数据源未覆盖）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_source_health_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04617
+  source_section: §8.3.2
+- id: CAND-TESTA-020
+  name: D-ALT-DATA-14 Alt-Data Compliance Reviewer（另类数据合规审查器）
+  aliases:
+  - D-ALT-DATA-14 Alt-Data Compliance Reviewer（另类数据合规审查器）
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 另类数据采集合规准入(授权链/robots/个保法)为数据采购惯例。场内现状: 无。最小施工形态: 另类数据源合规审查：来源授权与robots核查+个人信息风险识别+商用许可登记，输出合规白名单与禁用源清单，审查记录留痕。依赖前置:
+    D_ALT_DATA;D_COMPLIANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'alt_data/alt_data_compliance_reviewer.py（MOD-ALT-015，24 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-TESTA-016 同为 D-ALT-DATA-14 合规审查器（B13/B14 两稿重登），canonical=CAND-TESTA-016→MOD-ALT-015（四要素台账+审查清单+复核提醒含其授权/robots/许可语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04664
+  source_section: §8.3.5
+- id: CAND-TESTA-021
+  name: D-ALT-DATA-17 Alt-Data Privacy Protector（另类数据隐私保护器）
+  aliases:
+  - D-ALT-DATA-17 Alt-Data Privacy Protector（另类数据隐私保护器）
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Microsoft Presidio式PII识别与脱敏。场内现状: 部分:src/zephyr/gov_audit/privacy.py（隐私组件有，另类数据管道未接入）。最小施工形态:
+    另类数据PII识别(手机号/身份证/姓名)+入库前脱敏+最小化留存策略+访问审计，复用gov_audit/privacy组件。依赖前置: D_ALT_DATA;D_DATA_SEC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/privacy.py（隐私组件有，另类数据管道未接入）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_privacy_protector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04665
+  source_section: §8.3.5
+- id: CAND-TESTA-022
+  name: D-ALT-DATA-01 AltDataConnector
+  aliases:
+  - D-ALT-DATA-01 AltDataConnector
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 统一另类数据接入层：新闻API/社交API/公告API/产业链数据源统一接入+格式适配+增量同步+断点续传+API密钥管理；P0；对标C-001(◐)；覆盖§2.3非结构化数据库
+  proposal: '深挖裁定=做(P2)。业界对标: AkShare新闻/公告免费接口+统一connector框架（增量游标+断点续传）。场内现状: 部分:src/zephyr/data/connectors/。最小施工形态:
+    统一另类数据接入层：新闻/公告/社交连接器（AkShare/巨潮RSS免费源优先）+格式适配+增量同步游标+断点续传+API密钥加密存储，落alt_data原始层并登记source_health。依赖前置:
+    D_ALT_DATA;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/connectors/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_connector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA
+  original_id: B5-07081
+  source_section: §1
+- id: CAND-TESTA-023
+  name: D-ALT-DATA-05 AltDataSignalExtractor
+  aliases:
+  - D-ALT-DATA-05 AltDataSignalExtractor
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 另类数据信号提取与输出(唯一输出网关)：特征工程+IC测试+衰减分析+信号组合+正交化+统一输出格式→D-SIGNAL/D-FACTOR；P1；对标C-020(○)
+  proposal: '深挖裁定=做(P2)。业界对标: alphalens IC测试+Barra式正交化（行业/市值中性）。场内现状: 无。最小施工形态: AltData信号输出网关：特征工程+IC测试（复用ic_ir_calc)+衰减分析（复用ic_decay)+正交化（对行业/市值回归取残差）+统一CTR-002
+    FactorSignal输出至D-SIGNAL/D-FACTOR。依赖前置: D_ALT_DATA;D_FACTOR;D_ASHARE_SIGNAL;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_signal_extractor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA
+  original_id: B5-07085
+  source_section: §1
+- id: CAND-TESTA-024
+  name: D-ALT-DATA-09 AltDataCatalog
+  aliases:
+  - D-ALT-DATA-09 AltDataCatalog
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 另类数据目录：元数据+标签+血缘+搜索；P2
+  proposal: '深挖裁定=做(P2)。业界对标: OpenMetadata式数据目录（元数据+血缘+搜索）。场内现状: 无。最小施工形态: 另类数据目录：数据源/数据集元数据登记+标签+血缘挂lineage_tracker+SQLite
+    FTS5检索，质量分引用数据质量门控输出。依赖前置: D_ALT_DATA;D_DATA_GOV。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/alt_data_catalog.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA
+  original_id: B5-07089
+  source_section: §1
+- id: CAND-TESTA-025
+  name: D-ALT-DATA-12 GeopoliticalRiskAnalyzer
+  aliases:
+  - D-ALT-DATA-12 GeopoliticalRiskAnalyzer
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: 地缘政治风险：事件采集+风险评分+制裁筛查；P2
+  proposal: '深挖裁定=做(P2)。业界对标: GDELT免费地缘事件源+风险评分+公开制裁名单筛查。场内现状: 部分:src/zephyr/intelligence/event_geopolitical_map.py。最小施工形态:
+    地缘风险分析器：事件采集（免费新闻/RSS)+风险评分（复用event_geopolitical_map国家/商品传导）+公开制裁名单比对筛查，输出风险事件入事件总线仅作信号输入。依赖前置: D_ALT_DATA;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/intelligence/event_geopolitical_map.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/geopolitical_risk_analyzer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA
+  original_id: B5-07092
+  source_section: §1
+- id: CAND-TESTA-026
+  name: D-ALT-DATA-16 ASharePolicyExpectationAnalyzer
+  aliases:
+  - D-ALT-DATA-16 ASharePolicyExpectationAnalyzer
+  domain: D_ALT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/alt_data/
+  problem: A股政策预期：窗口指导+预期管理+信息优势+国家队识别；P2
+  proposal: '深挖裁定=做(P2)。业界对标: LLM政策文本分析+事件驱动预期差策略。场内现状: 无。最小施工形态: 政策预期分析器：监管/交易所公开表态采集+LLM预期倾向打分+国家队持仓变动识别（季报公开数据+ETF份额异动）+预期差信号输出仅作信号输入，人工审核后入信号域。依赖前置:
+    D_ALT_DATA;D_ASHARE_SIGNAL;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/alt_data/policy_expectation_analyzer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA
+  original_id: B5-07096
+  source_section: §1
+- id: CAND-TESTB-002
+  name: C-028 信号工厂
+  aliases:
+  - 信号工厂
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 信号9阶段全生命周期+密度预测增强信号输出 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: qlib信号;freqtrade策略信号。场内现状: 无。最小施工形态: SignalFactory:9阶段状态机+信号注册表+conditional_density_predictor增强输出(分位数/置信度),信号质量(SIGQC)与拥挤度挂接,产出入漏斗。依赖前置:
+    D_ASHARE_SIGNAL;D_FACTOR;D_SIGQC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/signal_factory.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00149
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-TESTB-003
+  name: C-011 资金行为分析
+  aliases:
+  - 资金行为分析
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 七类主力画像+六阶段识别+动态推演+自迭代修正 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: 东财资金流/龙虎榜分析;订单流研究。场内现状: 部分:src/zephyr/signal_ashare/institutional_behavior_analyzer.py。最小施工形态:
+    七类主力画像(北向/公募/私募/游资/量化/散户/产业资本)+六阶段(吸筹/拉升/派发等)识别+推演状态机+预测-复盘自迭代修正,输出合力方向入C-014。依赖前置: D_ASHARE_SIGNAL;D_MKT_DATA;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/institutional_behavior_analyzer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/capital_behavior_orchestrator.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00152
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-TESTB-004
+  name: 开盘竞价微结构分析模型
+  aliases:
+  - 开盘竞价微结构分析模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 竞价信息提取/行为分类/信号生成 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: 集合竞价微结构研究;LOB分析。场内现状: 部分:src/zephyr/plan_engine/auction_hit_recorder.py。最小施工形态:
+    竞价三件套:9:15-9:25量价特征提取(虚拟撮合/撤单率/封单变化)+行为分类(抢筹/诱多/压价)+竞价信号输出,接入盘前计划与打板监控。依赖前置: D_ASHARE_SIGNAL;D_MKT_DATA;D_PLAN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/auction_hit_recorder.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/auction_microstructure_analyzer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00171
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-TESTB-005
+  name: C-012 做T日内套利
+  aliases:
+  - 日内套利
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 独立做T信号管线+盘中即时反应决策引擎 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: A股底仓T+0;vnpy日内策略。场内现状: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py。最小施工形态:
+    做T管线:信号(t0_point_analyzer)→决策(底仓/价差/次数硬约束)→执行(t_trade_coordinator)→当日复盘,全链路延迟预算与失败回滚。依赖前置: D_ASHARE_SIGNAL;D_EX_CORE;D_POSITION;D_SELL_DECISION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/t0_trading_pipeline.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00191
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-TESTB-006
+  name: 统一图形识别引擎(D-FACTOR-97)
+  aliases:
+  - 统一图形识别
+  - 统一图形识别引擎(D-FACTOR-97)
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 1个统一引擎替代20+独立图形识别模块；输入OHLCV多时间级别；算法DTW/CNN/Transformer/规则引擎；输出图形类型+置信度+关键点位+预测方向+历史胜率；覆盖反转/持续/趋势/支撑阻力/缠论/波浪6类图形；归属L1因子计算层+L2-A信号层
+  proposal: '深挖裁定=做(P1)。业界对标: TA-Lib CDL蜡烛形态+tslearn DTW模板匹配+缠论开源实现；CNN/Transformer形态分类为可选档。场内现状: 部分:src/zephyr/signal_ashare/chanlun_structure.py。最小施工形态:
+    统一图形识别引擎：OHLCV多级别输入→统一PatternEvent契约（图形类型+置信度+关键点位+预测方向+历史胜率），规则引擎优先（缠论/支撑阻力/经典反转持续6类）+DTW模板匹配，收编chanlun_structure/seat_pattern_analyzer散件，CNN/Transformer列后续档。依赖前置:
+    D_FACTOR;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-FACTOR
+  original_id: B1-01010
+  source_section: §10.2 图形识别
+- id: CAND-TESTB-007
+  name: 模块3 缺口回补概率模型（Gap Fill Probability Model）
+  aliases:
+  - 模块3 缺口回补概率模型（Gap Fill Probability Model）
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 缺口标准化(Gap Size=(Open-Close_prev)/ATR_14)+分级(Tiny<0.3x/Small/Medium/Large>1.2x)+回补概率查表(Tiny=77.8%/Large=8.2%)+回补时间分布+部分回补(25/50/75/100%)+MAE止损；归属L1+L2-A+L2-C
+  proposal: '深挖裁定=做(P1)。业界对标: 缺口统计查表法为trading literature常见构造，无重库依赖。场内现状: 无。最小施工形态: 1个模块 src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py，核心类GapFillProbabilityModel，输入OHLC+ATR14，输出缺口标准化分级(Tiny/Small/Medium/Large)+回补概率查表+部分回补分布+MAE止损参考。依赖前置:
+    D_DATA;D_FACTOR(ATR指标)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/gap_fill_model.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01359
+  source_section: §3模块3
+- id: CAND-TESTB-008
+  name: 模块5 日内量能结构与订单流分析模型
+  aliases:
+  - 日内量能结构与订单流分析模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: Volume Profile(HVN/LVN/Value Area 70%/POC)+CVD买卖压力追踪(背离/确认/斜率)+VPIN知情交易概率(>μ+1.5σ)；归属L1+L2-A
+  proposal: '深挖裁定=做(P1)。业界对标: vnpy orderflow模块提供Volume Profile/CVD,VPIN为Easley-O''Hara经典知情交易度量。场内现状: 无。最小施工形态:
+    分钟K聚合Volume Profile(POC/VA70%)+CVD背离追踪+50桶VPIN日频输出因子。依赖前置: data/tick_subscriber.py;data/tick_redis_cache.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01361
+  source_section: §3模块5
+- id: CAND-TESTB-009
+  name: 模块6 Wyckoff吸筹阶段与底部确认模型
+  aliases:
+  - 吸筹阶段与底部确认模型
+  - 模块6 Wyckoff吸筹阶段与底部确认模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: Accumulation 4子阶段(PS/SC/AR/ST)+Spring弹簧+VPIN确认+CVD买方压力+Granger因果检验避免因果倒置；对标民生金工WSS费后年化25.04%；归属L1+L2-B+L2-A
+  proposal: '深挖裁定=做(P1)。业界对标: Wyckoff吸筹量化在民生金工WSS等研报有公开费后年化25%对标。场内现状: 部分:src/zephyr/regime/features/wyckoff_engine.py。最小施工形态:
+    消费wyckoff_engine阶段评分叠加CVD确认生成吸筹买点信号并做Granger因果防倒置。依赖前置: regime/features/wyckoff_engine.py;模块5 CVD(B10-01361)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/features/wyckoff_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/wyckoff_accumulation_signal.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01362
+  source_section: §3模块6
+- id: CAND-TESTB-010
+  name: 模块7 多指标背离检测模型
+  aliases:
+  - 多指标背离检测模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 价格-动量背离(RSI/MACD)+价格-量能背离(CVD)+背离程度量化+背离次数(3次顶背离反转概率>70%)+多级别递进(5min→日线级联概率>60%)+背离化解；归属L1+L2-A
+  proposal: '深挖裁定=做(P1)。业界对标: pandas-ta/TA-Lib指标族+峰谷对位背离检测为常见技术信号做法。场内现状: 部分:src/zephyr/sell_decision/core/sell_signal_collector.py。最小施工形态:
+    RSI/MACD/CVD背离检测器(峰谷对位+背离程度量化+5min→日线级联概率)。依赖前置: 模块5 CVD(B10-01361);factor指标库。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/sell_decision/core/sell_signal_collector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/multi_indicator_divergence.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01363
+  source_section: §3模块7
+- id: CAND-TESTB-011
+  name: 模块9 多维度相对强弱筛选模型
+  aliases:
+  - 多维度相对强弱筛选模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 区间RS(>1.2)+结构强弱(均线多头+突破前高)+单日Alpha(>1%)+IC加权综合RS评分+52周新高接近度(>0.95)+新高突破确认(放量>1.5x)；归属L1+选股流
+  proposal: '深挖裁定=做(P1)。业界对标: qlib Alpha158动量族+O''Neil RS评级为相对强弱筛选业界做法。场内现状: 部分:src/zephyr/signal_ashare/quant_short_term_strength_engine.py。最小施工形态:
+    区间RS+结构强弱+52周新高接近度(>0.95)+放量突破确认合成RS评分接入精筛。依赖前置: signal_ashare/quant_short_term_strength_engine.py;signal_ashare/fine_scoring_engine.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/quant_short_term_strength_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/screening/relative_strength_screener.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01365
+  source_section: §3模块9
+- id: CAND-TESTB-012
+  name: 模块10 动量领导因子与涨停板生态模型
+  aliases:
+  - 动量领导因子与涨停板生态模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 截面动量排名+领导力系数(Granger>0.3)+IR>1.0；A股特有：连板高度因子+炸板率因子(<17%强回暖/>30%强分歧)+封板时间因子+中位股断层检测(二进三成功率<30%)；领导-跟随建模(跟涨概率>60%+滞后<10min)+反包强度+次日溢价率；目标IC>0.03,ICIR>0.5；归属L1+L2-B+L3
+  proposal: '深挖裁定=做(P1)。业界对标: 连板高度/炸板率/封单强度为A股游资生态因子(国盛/开源金工研报)。场内现状: 部分:src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py。最小施工形态:
+    连板高度+封板时间+梯队断层因子与Granger领导-跟随系数(>0.3)。依赖前置: c1_market.limit_up_down表;limit_up_followthrough;lhb_premium_analyzer。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/limit_up/limit_up_followthrough.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/limit_up/limit_up_ecosystem_leadership.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01366
+  source_section: §3模块10
+- id: CAND-TESTB-013
+  name: 模块11 动量层级与板块持续性模型
+  aliases:
+  - 动量层级与板块持续性模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 动量广度(>60%=主线/<30%=投机)+动量层级分布+连板层级因子(5-3-2-1梯队)+层级稳定性(CV<0.3)；Momentum Persistence Score(>0.7持续)+资金流持续性(连续3天)+分歧恢复速度(1-2天=强)+板块-指数共振度(ρ>0.6)；归属L1+L2-C+L3
+  proposal: '深挖裁定=做(P1)。业界对标: 行业动量(Moskowitz&Grinblatt)+市场广度为板块持续性标准度量。场内现状: 部分:src/zephyr/signal_ashare/mainline_probability.py。最小施工形态:
+    动量广度(>60%主线)+连板梯队分布+Momentum Persistence Score+资金流3日持续性。依赖前置: mainline_candidates;data/market_breadth_collector.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/mainline_probability.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sector/sector_momentum_persistence.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01367
+  source_section: §3模块11
+- id: CAND-TESTB-014
+  name: 模块14 极端情绪反转与恐慌底部检测模型
+  aliases:
+  - 极端情绪反转与恐慌底部检测模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 情绪冰点(≤22%分位)+指数冰点(RSI<30)+双冰点确认(≤2天修复概率>70%)+Capitulation Detector(SVM+200+特征,AUC=0.89)+Shakeout
+    vs真破位区分(收回比例>50%/<20%)；归属L1+L2-C+L3
+  proposal: '深挖裁定=做(P1)。业界对标: 情绪极值反转+Capitulation事件分类为金工情绪研究常见主题。场内现状: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py。最小施工形态:
+    双冰点确认规则+Capitulation打分卡(跌幅/量能/广度)+收回比例(>50%/<20%)区分shakeout与真破位。依赖前置: market_sentiment_analyzer;youzi_relay_emotion_engine。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sentiment/sentiment_cycle.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sentiment/extreme_sentiment_reversal_detector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01369
+  source_section: §3模块14
+- id: CAND-TESTB-015
+  name: 模块15 假突破与诱多检测模型
+  aliases:
+  - 假突破与诱多检测模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 突破确认(收盘突破+放量>1.5x)+假突破判定(N=3日回落)+假突破率(A股约40-50%)+失败速度(<1日极弱)；诱多特征(缩量突破+CVD背离+尾盘突破)；归属L1+L2-A+模块27联动
+  proposal: '深挖裁定=做(P1)。业界对标: 假突破率统计(A股约40-50%)与诱多识别为技术信号研报常见主题。场内现状: 部分:src/zephyr/sell_decision/core/breakout_failure_detector.py。最小施工形态:
+    假突破判定(N=3日回落)+诱多特征评分+假突破率滚动统计供买入侧防伪。依赖前置: sell_decision/core/breakout_failure_detector.py;模块5 CVD(B10-01361)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/sell_decision/core/breakout_failure_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/false_breakout_trap_detector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01370
+  source_section: §3模块15
+- id: CAND-TESTB-016
+  name: 模块16 情绪-价格背离指数模型（Sentiment-Price Divergence Index）
+  aliases:
+  - 模块16 情绪-价格背离指数模型（Sentiment-Price Divergence Index）
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: SDI=ΔSentiment_z-ΔPrice_z(\
+  proposal: '深挖裁定=做(P1)。业界对标: 情绪/价格z-score差分背离为技术分析常见构造。场内现状: 部分:src/zephyr/signal_ashare/sector/sector_divergence.py。最小施工形态:
+    1个模块 src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py，核心类SentimentPriceDivergence，输入情绪指数与价格的z分差，输出SDI值+背离方向+置信度。依赖前置:
+    D_ASHARE_SIGNAL(market_sentiment_analyzer)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sector/sector_divergence.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sentiment/sentiment_price_divergence.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01371
+  source_section: §3模块16
+- id: CAND-TESTB-017
+  name: 模块33 IC加权多因子涨停板潜力评分模型
+  aliases:
+  - 加权多因子涨停板潜力评分模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 7因子IC验证(连板高度/封单强度/板块动量/筹码集中度/龙虎榜/量能配合/市场情绪,IC>0.03,ICIR>0.5)+IC加权(w_i=IC_i/Σ\
+  proposal: '深挖裁定=做(P1)。业界对标: qlib IC加权多因子+涨停预测为A股打板研究主流做法。场内现状: 部分:src/zephyr/ml_train/implementations/limit_up_classifier.py。最小施工形态:
+    7因子(连板高度/封单/板块动量/筹码/龙虎榜/量能/情绪)IC验证后IC加权评分。依赖前置: factor/analysis/ic_ir_calc.py;lhb_premium_analyzer;strength_ic_weight_calibrator。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/implementations/limit_up_classifier.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/limit_up/limit_up_potential_scorer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01380
+  source_section: §3模块33
+- id: CAND-TESTB-018
+  name: 模块35 开盘竞价微结构分析模型
+  aliases:
+  - 开盘竞价微结构分析模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 竞价信息提取(虚拟开盘价轨迹5秒/虚拟匹配量/订单不平衡>2x/价格偏离>2%+匹配量>20%)+行为分类(早晚下单/撤单率/冰山单)+信号生成(高开强度/弱转强>3%/竞价陷阱>5%但量<10%)；A股9:20-9:25不可撤单阶段信息含量最高；归属L1+L2-A+L3
+  proposal: '深挖裁定=做(P1)。业界对标: A股竞价9:20-9:25不可撤单段信息含量最高为金工共识。场内现状: 部分:src/zephyr/plan_engine/auction_hit_recorder.py。最小施工形态:
+    竞价虚拟开盘轨迹+订单不平衡(>2x)+弱转强(>3%)/竞价陷阱信号(9:20后段加权)。依赖前置: auction_snapshot/auction_book表;plan_engine/scenario_planner.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/auction_hit_recorder.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/auction_microstructure_analyzer.py（MOD-SIG-089，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W04 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W04）——canonical=MOD-SIG-089 auction_microstructure_analyzer（七族特征+行为四族覆盖 spec 全项）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01382
+  source_section: §3模块35
+- id: CAND-TESTB-019
+  name: 模块58 统一技术图形识别引擎（Unified Technical Pattern Recognition Engine）
+  aliases:
+  - 模块58 统一技术图形识别引擎（Unified Technical Pattern Recognition Engine）
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 关键决策：1个统一引擎替代20+独立模块(反模式)；图形模式库6类(反转/持续/趋势/支撑阻力/缠论/波浪)+统一算法(DTW/CNN 23种/Transformer/规则引擎)+多时间级别(5min~月线)+输出(图形类型+置信度+关键点位+预测方向+历史胜率)；对标Chan&Wong
+    CNN>85%；归属L1+L2-A
+  proposal: '深挖裁定=做(P1)。业界对标: Chan&Wong CNN图形识别；pandas-ta规则引擎；DTW序列匹配。场内现状: 部分:src/zephyr/signal_ashare/chanlun_structure.py。最小施工形态:
+    1个模块 src/zephyr/signal_ashare/pattern_engine.py，核心类UnifiedPatternEngine，输入5min~月线K线，输出图形类型+置信度+关键点位+预测方向+历史胜率；先规则引擎+DTW落地，CNN/Transformer后置。依赖前置:
+    D_FACTOR;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W04 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W04）——canonical=MOD-SIG-091 unified_pattern_engine（蓝图 §0 canonical 声明既定兑现）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01391
+  source_section: §3模块58
+- id: CAND-TESTB-020
+  name: 模块17 多维度底部确认与右侧入场模型
+  aliases:
+  - 多维度底部确认与右侧入场模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 5维底部确认信号体系(价格RSI<30+布林下轨/量能萎缩<50%+放量反弹/Smart Money净流入+逆势资金流/情绪≤22%分位/Wyckoff Spring/ST,IC加权)；右侧入场=确认信号≥3个+突破前日高点；止损=底部最低价-1×ATR；归属L2-A+L3
+  proposal: '深挖裁定=做(P1)。业界对标: 右侧入场+多维底部确认为趋势跟随经典做法。场内现状: 部分:src/zephyr/regime/features/wyckoff_engine.py。最小施工形态:
+    5维信号(价格RSI/量能萎缩+放量反弹/Smart Money资金流/情绪分位/Wyckoff Spring)≥3确认+突破前日高入场+ATR止损联动。依赖前置: wyckoff_engine;market_sentiment_analyzer;模块5资金流(B10-01361)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/features/wyckoff_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/bottom_confirmation_entry.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01414
+  source_section: §4模块17
+- id: CAND-TESTB-021
+  name: 模块29 次日上涨概率统一门槛模块
+  aliases:
+  - 次日上涨概率统一门槛
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 密度预测积分法P(r>0)+8态求和法+混合融合+Platt Scaling校准；概率门槛：新开仓≥65%/正T≥55%/反T≤45%(跌>55%)/加仓≥60%/抄底≥70%；动态调整(牛-5%/熊+5%/放量-5%/缩量+10%/利好落地前+10%/黑天鹅+15%/变盘日+5%/情绪>60°+5%)；门槛=决策链第一道门(不过则不进入L2-A→L2-B→L3→L3.5→L4)；拦截需输出原因(对标Man
+    Group)；拦截统计回测门槛合理性；对标Kelly临界条件/Jane Street贝叶斯/FinMatic/FinMatic RL校准
+  proposal: '深挖裁定=做(P1)。业界对标: Platt Scaling概率校准(sklearn)+置信门槛决策为量化通用做法。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py。最小施工形态:
+    动作分档概率门槛校验器(新开仓≥65%/加仓≥60%/抄底≥70%等)+牛熊量能动态偏移+拦截原因输出与统计回写。依赖前置: next_day_8state_forecast;conditional_density_predictor;plan_engine/brier_calibration.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/next_day_probability_gate.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01415
+  source_section: §4模块29
+- id: CAND-TESTB-022
+  name: 模块44 量化模式匹配与执行策略库
+  aliases:
+  - 量化模式匹配与执行策略库
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 模式编码特征向量+DTW模式匹配历史相似案例+历史胜率(胜率<50%剔除)+IC验证(IC<0.03无预测力)；买点模式库4种(逆势低吸/突破买入放量>1.5x/回踩买入/竞价弱转强,胜率>50-55%+IC>0.03)；卖点模式库3种(CVD背离卖出/ATR止损机械执行/逻辑失效无条件执行)；归属L2-A+L3+L4
+  proposal: '深挖裁定=做(P1)。业界对标: tslearn/dtaidistance DTW模式匹配+历史胜率门控为模式识别标准做法。场内现状: 无。最小施工形态: 买点4模式+卖点3模式特征向量库+DTW历史案例匹配+胜率>50%与IC>0.03双门控。依赖前置:
+    factor/analysis/ic_ir_calc.py;历史案例库。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/pattern_match_strategy_library.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01416
+  source_section: §4模块44
+- id: CAND-TESTB-023
+  name: 模块28 利好落地变利空（预期透支）模块
+  aliases:
+  - 利好落地变利空
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 事件可预测性分类5类(政策/地缘/业绩/行业高-中可预测→预期透支逻辑；黑天鹅不可预测→不适用)；预期透支度4维：价格透支度(累计涨幅/历史均值>120%=严重)+时间透支度(提前天数)+资金透支度(净流入>5日成交额)+情绪透支度(讨论热度峰值)；判定3档(>120%落地≤3天→落地前减仓清仓)；事件时间轴5阶段(早期潜伏T-30~T-15悄悄建仓/中期发酵T-15~T-5加速拉升/晚期冲刺T-5~T-1诱多/落地日T=0出货/落地后持续下跌)；补充指标：抢跑度(前20日涨幅>30%)/概率剩余空间/完美定价度/IV溢价度(>150%→IV
+    Crush)/稀释风险(现金跑道/储架注册)/散户逆向交易强度/竞品动态；判定增加"小盘+低机构持仓→PEAD更强"；归属L2-D+L2-C(日历约束升级)+L2-A(落地日卖出信号)
+  proposal: '深挖裁定=做(P1)。业界对标: sell-the-news(利好兑现)效应为事件驱动经典研究主题。场内现状: 无。最小施工形态: 事件5类可预测性+透支度4维(价格/时间/资金/情绪)+时间轴5阶段标注+落地前减仓信号。依赖前置:
+    intelligence/event_*事件源;情绪数据。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sentiment/sell_news_overdraft_detector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01453
+  source_section: §7模块28
+- id: CAND-TESTB-024
+  name: 模块13 隔夜收益预测与开仓期望值模型
+  aliases:
+  - 隔夜收益预测与开仓期望值模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: E[次日收益]=P(涨)×E(涨幅)-P(跌)×E(跌幅)，E>0才参与；期望值门槛E>0.5%开仓；盈亏比>1.5；成本优势=开仓价vs支撑距离>2ATR；踏空成本量化=P(错过)×E(错过收益)；归属L3+模块29联动
+  proposal: '深挖裁定=做(P1)。业界对标: 期望值决策框架(P×E)+隔夜收益研究为开仓评估标准方法。场内现状: 无。最小施工形态: E[次日收益]=P涨×E涨-P跌×E跌(复用密度/8态预测)+E>0.5%门槛+盈亏比>1.5+成本优势>2ATR+踏空成本量化。依赖前置:
+    conditional_density_predictor;next_day_8state_forecast;模块29(B10-01415)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/overnight_return_expectancy.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01464
+  source_section: §8模块13
+- id: CAND-TESTB-025
+  name: 模块57 多因子叠加择时模型
+  aliases:
+  - 多因子叠加择时模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 择时信号库6源(情绪极端反转模块1/14/体制转换模块19/波动率突破模块51/日历效应模块55/量能体制模块23/北向模块50)；叠加方法=IC加权(模块48)/BMA/共振检测(≥3独立信号同向=高置信)；对标Rapach&Zhou
+    2013；归属决策编排器+模块48联动
+  proposal: '深挖裁定=做(P1)。业界对标: Rapach&Zhou(2013)组合预测+IC加权叠加为择时研究经典方法。场内现状: 无。最小施工形态: 6源择时信号库(情绪反转/体制转换/波动突破/日历/量能/北向)+IC加权或BMA叠加+≥3同向共振高置信标记。依赖前置:
+    各择时模块;strength_ic_weight_calibrator。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/multi_factor_timing_overlay.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01482
+  source_section: 决策编排器模块57
+- id: CAND-TESTB-026
+  name: 筛选漏斗第五层：多策略交叉（60秒级，→~30）
+  aliases:
+  - 筛选漏斗第五
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 策略A价值反转YES/NO权重30%+策略B动量趋势25%+策略C事件驱动20%+C-034推演方向(额外投票方)+C-036合力方向(额外投票方)+C-021市场状态约束(不允许→否决买入)
+  proposal: '深挖裁定=做(P1)。业界对标: 多策略投票集成(Lean alpha ensemble)为信号合成常规做法。场内现状: 无。最小施工形态: 策略A价值30%/B动量25%/C事件20%三席YES/NO投票+C-034/C-036额外投票方+市场状态否决门。依赖前置:
+    signal_ashare/fine_scoring_engine.py;signal_ashare/event_driven_screener.py;各策略信号。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/strategy_cross_vote_funnel.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01504
+  source_section: §13
+- id: CAND-TESTB-027
+  name: D-SIGNAL-158 因子计算结果消费桥接器
+  aliases:
+  - 因子计算结果消费桥接器
+  - D-SIGNAL-158 因子计算结果消费桥接器
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: D-FACTOR→D-SIGNAL因子结果消费桥接;✅能建;📐ALPHA-SIGNAL-DOMAIN-001已建设(部分)
+  proposal: '深挖裁定=做(P1)。业界对标: 契约驱动消费(版本化schema)+anti-corruption layer。场内现状: 部分：src/zephyr/signal_fundamental/pipeline.py。最小施工形态:
+    消费桥接器：经CTR-002适配器(B13-04308)取因子结果+版本兼容+is_degraded透传(B13-04305)+消费审计，信号侧不再直连因子存储。依赖前置: D_ASHARE_SIGNAL;D_FACTOR;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_fundamental/pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/factor_result_bridge.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04307
+  source_section: §17.12
+- id: CAND-TESTB-028
+  name: D-SIGNAL-99 Risk Event E-RK-01 Consumer Handler（风险事件消费处理器）
+  aliases:
+  - D-SIGNAL-99 Risk Event E-RK-01 Consumer Handler（风险事件消费处理器）
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: ✅能建，有蓝图MOD-L03-001未建设；跨域运维事件传递与协调，运维架构从"单域自治"升级"全域协同"关键
+  proposal: '深挖裁定=做(P1)。业界对标: Redis Streams消费者组+幂等消费+DLQ。场内现状: 部分:src/zephyr/shared/event_bus.py（事件总线有，E-RK-01消费处理器缺）。最小施工形态:
+    E-RK-01消费处理器：Redis Streams消费组订阅风险事件，幂等键去重+DLQ兜底，触发信号降级/撤销/权重调整并回执，消费滞后监控告警。依赖前置: D_ASHARE_SIGNAL;D_RISK;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/event_bus.py（事件总线有，E-RK-01消费处理器缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/risk_event_consumer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04728
+  source_section: §8.3.13
+- id: CAND-TESTB-029
+  name: D-ALT-22 AShareEventCausalReasoner
+  aliases:
+  - D-ALT-22 AShareEventCausalReasoner
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: A股事件因果推理+事件链分析 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: EconML/DoWhy因果推断;事件研究法。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
+    事件类型→传导边模板(产业链上下游/同业/供应链)+DoWhy反事实校验+事件链时序存储,输出事件影响路径与强度,与B10-01858因果深化共用底座。依赖前置: D_ASHARE_SIGNAL;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/event_causal_reasoner.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00125
+  source_section: §功能域模块·D-ALT-DATA
+- id: CAND-TESTB-030
+  name: C-035 庄家行为模式识别与模拟
+  aliases:
+  - 庄家行为模式识别与模拟
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 庄家操纵六阶段子模式识别+反庄策略模拟 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: 龙虎榜席位分析(游资席位库)。场内现状: 部分:src/zephyr/ml_train/implementations/seat_pattern_classifier.py。最小施工形态:
+    六阶段子模式(建仓/洗盘/拉升/出货等)识别器+反庄策略沙盒模拟(仅回测/模拟环境),输出风险警示与回避清单,识别结论不直接下单。依赖前置: D_ASHARE_SIGNAL;D_ML_TRAIN;D_SIMULATION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/implementations/seat_pattern_classifier.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/banker_pattern_simulator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00168
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-TESTB-031
+  name: C-036 群体博弈模拟
+  aliases:
+  - 群体博弈模拟
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 多方博弈建模(北向/公募/游资/散户)→合力方向 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: ABM多智能体博弈;资金流派别分析。场内现状: 无。最小施工形态: 轻量博弈推演:四类玩家行为规则库(历史统计先验)+合力方向/分歧度输出,盘后运行供C-014与漏斗降权使用,输出标注推断性质。依赖前置:
+    D_ASHARE_SIGNAL;D_SIMULATION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/crowd_game_simulator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00169
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-TESTB-032
+  name: 统一技术图形识别引擎
+  aliases:
+  - 统一技术图形识别
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: DTW/CNN/Transformer图形识别 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: pandas-ta形态;tslearn DTW;CNN形态识别。场内现状: 部分:src/zephyr/signal_ashare/chanlun_structure.py。最小施工形态:
+    统一PatternEngine:规则形态(缠论/头肩/旗形)+DTW模板匹配为Phase1,CNN/Transformer为Phase2盘后训练,统一输出形态事件与置信度。依赖前置: D_ASHARE_SIGNAL;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W05 重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W05）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B1-00172/B1-01010 同条目两稿），canonical=src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py（规则+DTW Phase1 已在，CNN/Transformer 两稿均明示后续档）；CAND-FAC-023（W07 波）同此归并"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00172
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-TESTB-033
+  name: 97 形态→信号转化
+  aliases:
+  - 信号转化
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: FAC-ASHARE，⛔受限(GATE-97-01)
+  proposal: '深挖裁定=做(P2)。业界对标: 形态识别输出→交易信号映射（TA-Lib CDL形态+信号封装）。场内现状: 部分:src/zephyr/signal_ashare/chanlun_structure.py。最小施工形态:
+    形态→信号转化层：统一PatternEvent（图形类型+置信度+关键点位+预测方向+历史胜率）→方向/强度/止损位映射，历史胜率加权，输出CTR-002兼容FactorSignal。依赖前置:
+    B1-01010;D_ASHARE_SIGNAL;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/chanlun_structure.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-FACTOR
+  original_id: B1-00849
+  source_section: §1.2 子模块
+- id: CAND-TESTB-034
+  name: GNN股票关系建模
+  aliases:
+  - 股票关系建模
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: RGCN/TGN/GAT聚合邻居信息→密度预测增强
+  proposal: '深挖裁定=做(P2)。业界对标: RGCN/GAT股票关系建模有学术与qlib社区先例，单机用PyG/DGL内存小图。场内现状: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py(设计态)。最小施工形态:
+    完成supply_chain_gnn并扩展RGCN/GAT邻居聚合增强密度预测，禁Neo4j用内存图。依赖前置: B10-02202。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/stock_relation_gnn.py（MOD-SIG-126 production，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-049 同为 GNN 股票关系建模（B10-01197/01830 三稿重登之一），canonical=CAND-TESTB-049→MOD-SIG-126 stock_relation_gnn（基类 3 邻接图+GAT/GCN 聚合含其 RGCN 语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01197
+  source_section: §1.1
+- id: CAND-TESTB-035
+  name: Causal ML
+  aliases:
+  - Causal ML
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: DML因子因果筛选+Causal Forest异质性+DoWhy反事实推演+因果发现
+  proposal: '深挖裁定=做(P2)。业界对标: DoWhy+EconML+CausalForest，因果发现在量化界用于因子筛选与反事实推演。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py(设计态)。最小施工形态:
+    完成causal_inference_engine：DML因子筛选+反事实推演，盘前预计算因果图供B10-01178消费。依赖前置: 无。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/causal_ml_engine.py（MOD-SIG-127 production，25 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-051 同为 Causal ML（B10-01198/01858 三稿重登之一），canonical=CAND-TESTB-051→MOD-SIG-127 causal_ml_engine（DML+CausalForest+DoWhy+因果发现含其语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01198
+  source_section: §1.1
+- id: CAND-TESTB-036
+  name: 模块18 Wyckoff二次测试与动量延续模型
+  aliases:
+  - 二次测试与动量延续模型
+  - 模块18 Wyckoff二次测试与动量延续模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 事件形态量化(MACD柱定义波段+似然度+概率坍缩+时序向量)+Secondary Test识别(缩量测试)+Markup延续/Markdown识别+WSS评分(费后年化25.04%)+动量延续(回调<38.2%概率>60%)vs反转(>61.8%)；归属L1+L2-B+L3
+  proposal: '深挖裁定=做(P2)。业界对标: Wyckoff二次测试+斐波那契回调概率为价格行为量化常见做法。场内现状: 部分:src/zephyr/regime/features/wyckoff_engine.py。最小施工形态:
+    ST缩量确认+Markup延续/Markdown识别+回调38.2%/61.8%历史概率表。依赖前置: regime/features/wyckoff_engine.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/features/wyckoff_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/wyckoff_secondary_test.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01372
+  source_section: §3模块18
+- id: CAND-TESTB-037
+  name: 模块21 隔夜全球市场传导与事件影响评估模型
+  aliases:
+  - 隔夜全球市场传导与事件影响评估模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 隔夜传导系数(β>0.5显著)+传导衰减(30分钟内消化)+波动率传导(VIX>5%)；事件分类(政策/地缘/数据/黑天鹅×预期内外)+CAR事件研究法+影响持续时间(预期内1-2天/预期外5-10天)；归属L1+L2-C
+  proposal: '深挖裁定=做(P2)。业界对标: 事件研究法(CAR)+跨市场传导系数为隔夜影响评估标准方法。场内现状: 部分:src/zephyr/signal_ashare/cross_market_conduction_sensor.py。最小施工形态:
+    隔夜β传导系数+30分钟衰减检验+事件四分类×预期内外影响时长统计。依赖前置: cross_market_conduction_sensor;data/foreign_market_coverage.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/cross_market_conduction_sensor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/overnight_conduction_model.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01375
+  source_section: §3模块21
+- id: CAND-TESTB-038
+  name: 模块22 产业链传导与供应链动量模型
+  aliases:
+  - 产业链传导与供应链动量模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 产业链关系图(投入产出表/公告)+传导时滞(Granger 1-5日)+传导强度(R²>5%)+上游领先信号(Cohen&Frazzini供应链动量)+传导异常(>2σ)；归属L1+L2-A
+  proposal: '深挖裁定=做(P2)。业界对标: Cohen&Frazzini(2008)供应链动量为资产定价经典异象。场内现状: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py。最小施工形态:
+    产业链邻接表+上游动量因子(客户/供应商收益领先1-5日)+传导强度R2>5%筛选。依赖前置: supply_chain_gnn;产业链数据源(投入产出表/公告)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/supply_chain_momentum.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01376
+  source_section: §3模块22
+- id: CAND-TESTB-039
+  name: 模块40 板块拥挤度与启动条件量化模型
+  aliases:
+  - 板块拥挤度与启动条件量化模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 拥挤度指标(持仓相关性+换手率+融资余额占比,>90%分位=过热)+过热预警(拥挤>90%+动量衰减>30%→回撤概率>60%)+启动条件(RS<1.0突破>1.2+资金转正,3日确认)；归属L1+L2-C
+  proposal: '深挖裁定=做(P2)。业界对标: 拥挤度(换手/融资占比/相关性分位)为MSCI及金工研报常用过热度量。场内现状: 部分:src/zephyr/risk/core/crowding_monitor.py。最小施工形态:
+    板块拥挤度(换手率+融资余额占比+持仓相关性>90%分位)+过热预警+启动3日确认。依赖前置: risk/core/crowding_monitor.py;data/sector_*系列。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/crowding_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/sector/sector_crowding_launch.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01384
+  source_section: §3模块40
+- id: CAND-TESTB-040
+  name: 模块45 分时微结构分析与大小盘风格检测模型
+  aliases:
+  - 分时微结构分析与大小盘风格检测模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: Size Factor(大盘-小盘收益)+风格轮动速度+持续性(>5天)；分时微结构：日内动量(前半小时预测后半小时,Gao 2018)+VWAP偏差+分时量能分布+分时ADX>25；归属L1+L2-C
+  proposal: '深挖裁定=做(P2)。业界对标: Gao et al(2018)日内动量+风格轮动速度为学术与金工常用主题。场内现状: 部分:src/zephyr/signal_ashare/market_cap_tier.py。最小施工形态:
+    大盘-小盘收益差Size因子+风格持续性(>5天)统计+前半小时动量预测后半小时。依赖前置: market_cap_tier;指数分钟K。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/market_cap_tier.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/intraday_size_style.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01385
+  source_section: §3模块45
+- id: CAND-TESTB-041
+  name: 模块52 跨资产订单流网络与亏钱效应扩散模型
+  aliases:
+  - 跨资产订单流网络与亏钱效应扩散模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 跨资产OFI网络(Granger因果选择同伴+Transformer注意力+领先滞后+联动强度ρ>0.6)+亏钱效应扩散(大幅回撤率>30%+Moran's I>0.3空间聚集+恐慌传播<30分钟+跨板块1-2日)；对标OF-MATNet；归属L1+L2-A+L3
+  proposal: '深挖裁定=做(P2)。业界对标: OF-MATNet等订单流网络论文+Moran''s I空间聚集为学术前沿做法。场内现状: 无。最小施工形态: 大幅回撤事件(>30%)+板块内Moran''s
+    I>0.3聚集+恐慌传导时滞(Granger 1-2日)统计。依赖前置: 板块成分与分钟数据;data/market_breadth_collector.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/orderflow_network_panic.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01388
+  source_section: §3模块52
+- id: CAND-TESTB-042
+  name: 模块55 A股日历效应与关键节点量化模型
+  aliases:
+  - 股日历效应与关键节点量化模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 日历效应统计验证(月度效应/周内效应/节假日效应/财报季PEAD/交割日联动模块53)；节点数量由数据决定非人为15个；归属L1+L2-C
+  proposal: '深挖裁定=做(P2)。业界对标: 日历效应(月度/周内/节假日)为市场异象经典研究主题。场内现状: 部分:src/zephyr/data/trading_calendar.py。最小施工形态:
+    月度/周内/节假日/交割日效应滚动统计检验(t检验+分年稳健性)输出效应日历。依赖前置: data/trading_calendar.py;data/implementations/calendar_event_derivations.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/trading_calendar.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/calendar_effects_model.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01390
+  source_section: §3模块55
+- id: CAND-TESTB-043
+  name: B3 事件驱动条件分布预测 🟡未来开通
+  aliases:
+  - 事件驱动条件分布预测
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: f(r\
+  proposal: '深挖裁定=做(P2)。业界对标: 事件条件密度预测为学术延伸,qlib密度预测可作底座。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py。最小施工形态:
+    事件类型作条件变量扩展conditional_density_predictor输出事件条件分布(盘后批≤100只)。依赖前置: signal_ashare/conditional_density_predictor.py;intelligence/event_*事件源;NLP事件分类。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/conditional_density_predictor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/event_conditional_density.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01412
+  source_section: ''
+- id: CAND-TESTB-044
+  name: 模块27 主力假动作与筹码派发识别模块
+  aliases:
+  - 主力假动作与筹码派发识别
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 假动作模式库6种(假拉升真出货/假突破真派发/假吸筹真对倒/假洗盘真出货/假护盘真诱多/假反弹真派发,各含表面行为+底层矛盾信号)；量化信号7维(主动买入占比>65%真拉升/<40%假拉升、底部筹码变化、大单净流入、量能持续性、板块跟涨率>50%/<20%、龙虎榜验证、拉升时间早盘真/尾盘假)；主力行为细分5类(出货/做T/调仓/加仓/观望)；Spoofing指标6个(CER>95%/100ms窗口、撤单速度、大单存续<100ms、订单簿深度突变率、滑点代理、队列跳变)；新增冰山订单+分层挂单识别；Spoof概率>85%→暂停追涨；归属L2-B(C-034出货判定后精细化)
+  proposal: '深挖裁定=做(P2)。业界对标: 主力行为识别与订单簿spoofing检测为金工与学术(GNN+TCN)研究方向。场内现状: 部分:src/zephyr/compliance/trading_compliance_detector.py。最小施工形态:
+    假动作6模式规则库+7维信号(主动买入占比/大单净流入/板块跟涨率/拉升时段等)打分>85%暂停追涨。依赖前置: 龙虎榜与资金流数据;tick数据。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/trading_compliance_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01425
+  source_section: §5模块27
+- id: CAND-TESTB-045
+  name: 模块23 量能体制自适应策略模型
+  aliases:
+  - 量能体制自适应策略模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 量能分类=成交量/20日均量(缩量<0.7x/平量0.7-1.3x/放量>1.3x,极端<5%或>95%分位)；量能×体制3×3策略矩阵(趋势/均值回归/混沌×缩量/平量/放量)；归属L2-C+L3
+  proposal: '深挖裁定=做(P2)。业界对标: 量能三态分类(vol/MA20分档)为量价分析常规做法。场内现状: 部分:src/zephyr/signal_ashare/sector/sector_volume_anomaly.py。最小施工形态:
+    个股缩量/平量/放量三态(20日均量比0.7/1.3分档)+量能×体制策略查找表参数回测填充。依赖前置: regime输出;backtest回测。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/sector/sector_volume_anomaly.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/volume_regime_adaptive.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01445
+  source_section: §6模块23
+- id: CAND-TESTB-046
+  name: GNN股票关系建模消费（v3.6）
+  aliases:
+  - 股票关系建模消费
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 消费知识图谱图结构输出关系嵌入增强密度预测（§29.6）
+  proposal: '深挖裁定=做(P2)。业界对标: 图嵌入增强预测为学术常见做法,qlib亦有图模型探索。场内现状: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py。最小施工形态:
+    图关系统计特征(度/中心性/社区归属)作嵌入特征接conditional_density_predictor。依赖前置: supply_chain_gnn;conditional_density_predictor。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/stock_relation_gnn.py（MOD-SIG-126）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：v3.6 重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-049 同为 GNN 关系建模消费（v3.6 稿），canonical=CAND-TESTB-049→MOD-SIG-126（图统计特征作嵌入接密度预测语义并入基类节点特征面）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01451
+  source_section: §7头
+- id: CAND-TESTB-047
+  name: Causal ML深度补充（v3.6）
+  aliases:
+  - 深度补充
+  - Causal ML深度补充（v3.6）
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 定性因果推演→定量因果推断(DML/Causal Forest/DoWhy/因果发现)（§29.18）
+  proposal: '深挖裁定=做(P2)。业界对标: econml DML/CausalForest+DoWhy为因果ML标准开源栈。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
+    econml DML单模型试跑(因子→收益处理效应估计)+DoWhy因果图证伪检验。依赖前置: causal_inference_engine;econml/dowhy库。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/causal_ml_engine.py（MOD-SIG-127）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：v3.6 重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-051 同为 Causal ML 深度补充（v3.6 稿），canonical=CAND-TESTB-051→MOD-SIG-127"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01452
+  source_section: §7头
+- id: CAND-TESTB-048
+  name: 模块56 量能×体制×风格三维策略矩阵模型
+  aliases:
+  - 风格三维策略矩阵模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 3维(量能模块23×市场体制模块19×风格模块32)=3×3×2=18格子策略查找表(仓位/选股方向/持仓周期/止损k×ATR)，参数由历史回测优化；归属L3
+  proposal: '深挖裁定=做(P2)。业界对标: 体制条件化策略查找表(regime-conditional playbook)为金工常见形态。场内现状: 无。最小施工形态: 3×3×2=18格查找表(仓位/选股方向/持仓周期/止损k)由历史回测逐格填参。依赖前置:
+    模块23(B10-01445);regime体制;模块32(B10-01447);backtest。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01467
+  source_section: §8模块56
+- id: CAND-TESTB-049
+  name: §29.6 图神经网络GNN股票关系建模
+  aliases:
+  - 股票关系建模
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 当前密度预测=单标的条件分布f(r_i
+  proposal: '深挖裁定=做(P2)。业界对标: HIST/FinGAT股票关系图网络研究线；可挂qlib自定义模型。场内现状: 部分：src/zephyr/signal_ashare/supply_chain_gnn.py。最小施工形态:
+    抽象StockRelationGNN基类：行业/供应链/相关性3种邻接图构建+GAT/GCN邻居聚合+输出并入密度预测特征；盘后训练盘中推理分离。依赖前置: D_ASHARE_SIGNAL;D_ML_TRAIN;D_ML_SERVE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/supply_chain_gnn.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/stock_relation_gnn.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01830
+  source_section: §29.6
+- id: CAND-TESTB-050
+  name: §29.16-5 TCP-RM时序保形预测增强（v8.2合并自§29.26）
+  aliases:
+  - 时序保形预测增强
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 金融时序非平稳违反可交换假设→TCP-RM残差记忆：分位预测器+Robbins-Monro在线保形校准（α_{t+1}=α_t+γ_t·(1-α)，γ默认0.01）；S&P500/Bitcoin/Gold近标称覆盖95%，危机窗口及时扩展；DDCI双反馈升级（实际反馈+估计反馈抑制过度扩展→更稳定更窄）；CP-VaR等价回测（CP覆盖检验↔VaR回测Kupiec
+    POF/Christoffersen CC/动态二元检验+Geometric Conformal Backtesting+Diebold-Mariano，需≥250观测）；3集成点（替换校准层<100行/增回测模块<200行复用VaR代码/DDCI升级<150行）；约束：γ随波动率体制调整/须保持有限样本有效性不可牺牲覆盖换窄区间
+  proposal: '深挖裁定=做(P2)。业界对标: MAPIE/conformal-ml生态；TCP-RM(arXiv）在线保形校准。场内现状: 部分：src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py。最小施工形态:
+    增Robbins-Monro在线校准层（γ默认0.01随波动率体制调整，保持有限样本有效性）+DDCI双反馈升级+CP-VaR回测模块（Kupiec POF/Christoffersen CC/Diebold-Mariano,≥250观测，复用VaR代码）。依赖前置:
+    D_ASHARE_SIGNAL;D_BACKTEST。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/tcp_rm_conformal.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01854
+  source_section: §29.16
+- id: CAND-TESTB-051
+  name: §29.18 Causal ML深度补充
+  aliases:
+  - 深度补充
+  - §29.18 Causal ML深度补充
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 相关性≠因果性，IC≠因果作用；①DML因子因果效应估计（Double/Debiased ML Neyman正交√n一致；因子池≈60个按因果效应排序：高IC低因果=过拟合噪音谨慎用，低IC高因果=被掩盖真信号重点关注；C-027末位淘汰改"IC衰减+因果效应衰减"综合指标）②Causal
+    Forest异质性处理效应（同一事件对不同股票效应不同→τ̂_i>0增仓/<0减仓/≈0不动；替代§14事件→持仓映射）③DoWhy反事实推演（建模→识别→估计→反驳4步；盘中北向情景/事后归因/压力测试增强C-040；C-016提供因果图→DoWhy消费→影响L3）④因果发现（PC/LiNGAM/NOTEARS每周运行更新图谱，新边须人工审核防伪因果）；EconML/DoWhy/Causal-Learn/CausalNex
+  proposal: '深挖裁定=做(P2)。业界对标: EconML/DoWhy/causal-learn/CausalNex（条目自带）。场内现状: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
+    ①DML(Neyman正交）估计约60因子因果效应，C-027末位淘汰改IC衰减+因果衰减综合指标②CausalForest事件异质效应→增减仓映射③DoWhy反事实（北向情景/压力测试增强C-040)④PC/LiNGAM因果发现每周运行+新边人工审核。依赖前置:
+    D_ASHARE_SIGNAL;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/ml_forecast/causal_ml_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01858
+  source_section: §29.18
+- id: CAND-TESTB-052
+  name: D-ALT-DATA-22 A-Share Event Causal Reasoner A股事件因果推理
+  aliases:
+  - D-ALT-DATA-22 A-Share Event Causal Reasoner A股事件因果推理
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: ✅能建；事件征兆分析+事件连锁逻辑树+隔夜外盘影响
+  proposal: '深挖裁定=做(P2)。业界对标: 事件驱动+因果逻辑树，业界以事件库+规则链为主，隔夜外盘映射是A股特色。场内现状: 部分:src/zephyr/signal_ashare/screening/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py。最小施工形态:
+    事件征兆规则+连锁逻辑树+隔夜外盘影响映射接入foreign_impact_judge。依赖前置: causal_inference_engine(部分)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/screening/event_driven_screener.py;causal_inference_engine.py;foreign_impact_judge.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/event_causal_reasoner.py（MOD-SIG-112，18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-029（W05 已建）同为 D-ALT-22 事件因果推理（B10/B1/B13 三稿重登），canonical=MOD-SIG-112 event_causal_reasoner"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA-22
+  original_id: B10-02201
+  source_section: §30.2.4
+- id: CAND-TESTB-053
+  name: D-ALT-DATA-29 A-Share Industry Chain Knowledge Graph A股产业链知识图谱
+  aliases:
+  - D-ALT-DATA-29 A-Share Industry Chain Knowledge Graph A股产业链知识图谱
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: ✅能建；半导体/算力全产业链图谱+传导路径
+  proposal: '深挖裁定=做(P2)。业界对标: 产业链图谱业界多用Neo4j，单机改用NetworkX/SQLite边表(硬边界禁Neo4j)。场内现状: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py(设计态);schemas/categories/fundamental_industry_class.py。最小施工形态:
+    产业链节点/边SQLite表+传导路径查询，不引入图数据库。依赖前置: B10-02195。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py(设计态);schemas/categories/fundamental_industry_class.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/industry_chain_graph.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA-29
+  original_id: B10-02202
+  source_section: §30.2.4
+- id: CAND-TESTB-054
+  name: 技能：signal-weight-adjust 信号权重调整
+  aliases:
+  - 技能：signal-weight-adjust 信号权重调整
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 信号Agent技能
+  proposal: '深挖裁定=做(P2)。业界对标: 信号融合动态权重(IC加权/Bayesian更新)。场内现状: 部分：src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py。最小施工形态:
+    signal-weight-adjust技能：按滚动IC/胜率/回撤动态调整信号权重，调整幅度限幅(单次不超过20%)+理由落审计+支持一键回滚上一版权重；盘后批处理更新盘中冻结。依赖前置: D_ASHARE_SIGNAL;D_SIGQC;D_PF_ALLOC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/strategy_signal/signal_weight_adjuster.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02593
+  source_section: §5.2
+- id: CAND-TESTB-055
+  name: 技能：day-trade-pnl-estimate 做T盈亏预估
+  aliases:
+  - 技能：day-trade-pnl-estimate 做T盈亏预估
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 做T Agent技能
+  proposal: '深挖裁定=做(P2)。业界对标: T+0做T成本模型(佣金/印花税/滑点/冲击成本)。场内现状: 部分：src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py。最小施工形态:
+    day-trade-pnl-estimate技能：候选做T对(买价/卖价/数量)经成本模型(佣金+印花税+滑点+冲击成本)出净盈亏预估+置信度，阈值过滤后提案；实际成交回写校准预估偏差。依赖前置:
+    D_ASHARE_SIGNAL;D_EX_SOR;D_SELL_DECISION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02600
+  source_section: §5.2
+- id: CAND-TESTB-056
+  name: 模块27：主力假动作与筹码派发识别模块
+  aliases:
+  - 主力假动作与筹码派发识别
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 缺失功能：区分真拉升vs假拉升、真突破vs假突破、真吸筹vs假吸筹；本质是行为与意图背离；建议归属L2-B主力行为层（C-034出货判定后的精细化扩展）
+  proposal: '深挖裁定=做(P2)。业界对标: Wyckoff派发识别+主力资金流行为分析（东财式资金流指标）。场内现状: 部分:src/zephyr/regime/features/chip_distribution_engine.py。最小施工形态:
+    主力假动作识别：价量背离+筹码峰移动+资金流持续性三维打分，区分真拉升/假拉升/真突破/假突破/真吸筹/假吸筹，输出FakeMoveWarning（方向+置信度+证据链），复用chip_distribution_engine与institutional_behavior_analyzer，仅作信号输入不直连交易。依赖前置:
+    D_ASHARE_SIGNAL;D_REGIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/features/chip_distribution_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/fake_move_distribution.py（MOD-SIG-124 production，24 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 CAND-TESTB-044（W05 已建）同为 模块27 主力假动作识别（B11/B10 两稿重登），canonical=MOD-SIG-124 fake_move_distribution（三维打分语义入 7 维打分）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A6合规架构
+  original_id: B11-02750
+  source_section: §1.2后模块27
+- id: CAND-TESTB-057
+  name: 日内量能结构与订单流分析模型
+  aliases:
+  - 日内量能结构与订单流分析模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 基于Volume Profile/CVD/VPIN的日内量能结构分析(当前缺失)；建议归属L1因子层+L2-A信号层
+  proposal: '深挖裁定=做(P2)。业界对标: Volume Profile/CVD/VPIN订单流分析；3秒tick近似(非L2逐笔)。场内现状: 无。最小施工形态: 日内量能三指标：Volume
+    Profile(价格×量分布)+CVD(主动买卖差累积)+VPIN(3s tick volume bucket近似)，输出因子入L1+信号入L2-A，标注非L2精度。依赖前置: D_ASHARE_SIGNAL;D_FACTOR;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/intraday_volume_orderflow.py（MOD-SIG-093，13 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W06 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 P1 已建 intraday_volume_orderflow 同为日内量能结构与订单流分析，canonical=src/zephyr/signal_ashare/intraday_t0/intraday_volume_orderflow.py（Volume Profile/CVD/VPIN 近似语义已在）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04053
+  source_section: §1 模块5
+- id: CAND-TESTB-058
+  name: 开盘竞价微结构分析模型
+  aliases:
+  - 开盘竞价微结构分析模型
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: 9:15-9:25开盘竞价微结构分析(当前完全缺失)；建议用XGBoost/LSTM预测虚拟成交价方向；归属L1因子层+L2-A信号层+L3策略工厂
+  proposal: '深挖裁定=做(P2)。业界对标: XGBoost/LSTM竞价方向预测；A股竞价微结构研究线。场内现状: 部分：src/zephyr/plan_engine/auction_hit_recorder.py。最小施工形态:
+    竞价特征(撤单率/匹配量曲线/价格台阶)+XGBoost方向预测基线(LSTM二期)，输出竞价强度信号入L2-A+L3策略工厂，数据依赖B13-04251。依赖前置: D_ASHARE_SIGNAL;D_FACTOR;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/plan_engine/auction_hit_recorder.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/auction_microstructure_analyzer.py（MOD-SIG-089）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：B13 稿重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W06）——与 P1 已建 auction_microstructure_analyzer 同为开盘竞价微结构分析（B13/B1 两稿），canonical=src/zephyr/signal_ashare/auction_microstructure_analyzer.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04064
+  source_section: §1 模块35
+- id: CAND-TESTB-059
+  name: D-SIGNAL-101 Strategy Shared Kernel Synchronizer（策略共享内核同步器）
+  aliases:
+  - D-SIGNAL-101 Strategy Shared Kernel Synchronizer（策略共享内核同步器）
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_ashare/
+  problem: ✅能建，有蓝图MOD-L03-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: DDD共享内核(Shared Kernel)模式+版本化同步。场内现状: 无。最小施工形态: 策略共享内核同步器：公共参数/市场状态/特征缓存单一真源+版本号，变更广播+消费者一致性校验，防多策略读旧版本。依赖前置:
+    D_ASHARE_SIGNAL;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_ashare/shared_kernel_sync.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04730
+  source_section: §8.3.13
+- id: CAND-AUDITTES-001
+  name: C-025 质量保障自驱动
+  aliases:
+  - 质量保障自驱动
+  domain: D_AUDITTEST
+  domain_status: active
+  sub_layer: tests/
+  problem: 测试自生成+偏差自诊断+性能回归自检测+数据准确率验证 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Great Expectations数据校验+hypothesis测试自生成。场内现状: 部分:src/zephyr/simulation/look_ahead_bias_detector.py。最小施工形态:
+    契约变更触发测试骨架自生成+look_ahead偏差自诊断接线+性能回归基线比对+数据准确率抽检。依赖前置: src/zephyr/simulation/look_ahead_bias_detector.py；tests(架构契约测试基座)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/simulation/look_ahead_bias_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/simulation/quality_assurance_selfdrive.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00260
+  source_section: §功能域模块·D-OPS
+- id: CAND-AUTONOMYCORE-003
+  name: 风控Agent(RiskManager)
+  aliases:
+  - 风控Agent(RiskManager)
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 实时风控计算+限额监控+熔断触发 ✅
+  proposal: '深挖裁定=做(P0)。业界对标: vnpy RiskManager;Lean风控框架。场内现状: 部分:src/zephyr/risk/core/agent_risk_monitor.py。最小施工形态:
+    RiskManager角色:实时读risk引擎限额/回撤/VaR状态,生成熔断建议与复盘说明,触发trading_kill_switch仅经确定性校验路径,建议与执行双记录入审计。依赖前置: D_AUTONOMY_CORE;D_RISK;D_TRADING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/agent_risk_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/agents/risk_manager_agent.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00240
+  source_section: §功能域模块·D-AUTONOMY
+- id: CAND-AUTONOMYCORE-004
+  name: Agent自治边界（Level 0-3四级自治模型）
+  aliases:
+  - Agent自治边界（Level 0-3四级自治模型）
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 四级自治+三区边界（ai_modifiable/human_gated/immutable）
+  proposal: '深挖裁定=做(P0)。业界对标: 自治分级类比自动驾驶L0-L4+LangGraph human-in-the-loop审批层级。场内现状: 部分：src/zephyr/autonomy_core/autonomy_boundary_gate.py。最小施工形态:
+    四级自治注册表：每Agent角色声明自治级别(L0纯规则/L1建议/L2审批后执行/L3自主)入Agent Card，级别对三区映射(human_gated/immutable不可降级)，运行时autonomy_boundary_gate按级别拦截，越级行为触发kill_switch并写审计。依赖前置:
+    D_AUTONOMY_CORE;D_AUTONOMY_PERM;D_GOVERNANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/autonomy_core/autonomy_boundary_gate.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/autonomy_level_registry.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02454
+  source_section: §0边界声明/§4
+- id: CAND-AUTONOMYCORE-005
+  name: 单Agent门控层（Per-Agent Gate）
+  aliases:
+  - 单Agent门控层（Per-Agent Gate）
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: Agent内置规则，延迟<0.1ms，Trader所有，存Agent Card
+  proposal: '深挖裁定=做(P0)。业界对标: OpenAI Guardrails/NeMo Guardrails每Agent前置规则门控。场内现状: 部分：src/zephyr/trading/task_gate.py。最小施工形态:
+    Per-Agent Gate：规则集(允许动作/禁止动作/限额/时段)内嵌Agent Card，门控为纯内存规则匹配(<0.1ms无IO)，DENY写安全事件总线；与A2A检查网关(B11-02516)双层分工：本层管单Agent自约束，网关管跨Agent通信。依赖前置:
+    D_AUTONOMY_CORE;D_TRADING;D_SECURITY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/trading/task_gate.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/per_agent_gate.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02462
+  source_section: §0.3/§3.6.1
+- id: CAND-AUTONOMYCORE-006
+  name: 研究Agent(Researcher)
+  aliases:
+  - 研究Agent(Researcher)
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 因子研究+策略回测+实验管理 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: qlib RD-Agent;LangGraph多Agent。场内现状: 部分:src/zephyr/autonomy_core/agents/。最小施工形态:
+    Researcher角色卡:因子假设→C-027工厂实验→C-003回测门禁→experiment_tracking登记,产出研究报告经人工门禁后入库。依赖前置: D_AUTONOMY_CORE;D_FACTOR;D_BACKTEST。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/autonomy_core/agents/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/agents/researcher_agent.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00238
+  source_section: §功能域模块·D-AUTONOMY
+- id: CAND-AUTONOMYCORE-007
+  name: 信号Agent(SignalAnalyst)
+  aliases:
+  - 信号Agent(SignalAnalyst)
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 信号生成+质量评估+衰减检测 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: qlib信号模型;freqtrade信号评估。场内现状: 部分:src/zephyr/plan_engine/trading_analyst_agents.py。最小施工形态:
+    SignalAnalyst角色:汇总C-028信号工厂输出,IC衰减与拥挤度质量评估,异常信号降级建议,输出入漏斗不直接下单。依赖前置: D_AUTONOMY_CORE;D_ASHARE_SIGNAL;D_SIGQC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/trading_analyst_agents.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/agents/signal_analyst_agent.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00241
+  source_section: §功能域模块·D-AUTONOMY
+- id: CAND-AUTONOMYCORE-008
+  name: 择时Agent(TimingAnalyst)
+  aliases:
+  - 择时Agent(TimingAnalyst)
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 买卖时机判断+执行策略选择 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: backtrader择时;qlib执行时序。场内现状: 部分:src/zephyr/plan_engine/trading_analyst_agents.py。最小施工形态:
+    TimingAnalyst角色:综合C-021状态+C-014预测+t0_point_analyzer,给出开/加/减仓时机与执行策略(市价/限价/拆单)建议,经风控校验后生效。依赖前置: D_AUTONOMY_CORE;D_REGIME;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/trading_analyst_agents.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/agents/timing_analyst_agent.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00242
+  source_section: §功能域模块·D-AUTONOMY
+- id: CAND-AUTONOMYCORE-009
+  name: 做TAgent(T0Trader)
+  aliases:
+  - 做TAgent(T0Trader)
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 日内做T信号+即时执行决策 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: vnpy日内策略;A股底仓T+0。场内现状: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py。最小施工形态:
+    T0Trader角色:底仓不变硬约束+T+1可卖校验(t1_sellable)+做T信号即时裁决,单笔价差/次数限额,与C-012管线对接。依赖前置: D_AUTONOMY_CORE;D_POSITION;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/intraday_t0/t0_point_analyzer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/agents/t0_trader_agent.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00244
+  source_section: §功能域模块·D-AUTONOMY
+- id: CAND-AUTONOMYCORE-010
+  name: D-AUTONOMY-33 Non-AI Boundary Guard
+  aliases:
+  - D-AUTONOMY-33 Non-AI Boundary Guard
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: ✅P0；AI/non-AI边界守卫+权重≤30%
+  proposal: '深挖裁定=做(P1)。业界对标: AI护栏=决策占比计量+超限阻断，guardrails思路的门禁化实现。场内现状: 部分:src/zephyr/orchestrator/governance/autonomy_guard.py;src/zephyr/risk/core/ai_agent_monitor.py。最小施工形态:
+    AI/非AI决策权重计量器+超过30%自动阻断，挂autonomy_guard。依赖前置: 决策溯源(D_GOV_AUDIT已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/orchestrator/governance/autonomy_guard.py;src/zephyr/risk/core/ai_agent_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/non_ai_boundary_guard.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-AUTONOMY-33
+  original_id: B10-02362
+  source_section: §30.5.2
+- id: CAND-AUTONOMYCORE-011
+  name: 研究Agent（Researcher）
+  aliases:
+  - 研究Agent（Researcher）
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 策略研究、因子发现、知识图谱构建；Level 2；C-006/C-016/C-024；D-RESEARCH+D-KNOWLEDGE；API优先
+  proposal: '深挖裁定=做(P1)。业界对标: LangGraph/CrewAI Researcher角色+Semantic Scholar/arXiv论文API。场内现状: 部分：src/zephyr/research/factor_mining_pipeline.py。最小施工形态:
+    Researcher Agent：Agent Card声明Level 2自治+human_gated产出；技能集=因子提案(复用factor_mining_pipeline)+策略代码生成(模板+沙箱校验)+知识图谱构建(入D_KNOWLEDGE
+    collection)+论文搜索(arXiv/Semantic Scholar免费API)；产出仅提案不直接上线，经因子治理门禁。依赖前置: D_AUTONOMY_CORE;D_FACTOR;D_KNOWLEDGE;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/research/factor_mining_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'autonomy_core/agents/researcher_agent.py（MOD-AU-008）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：GP1 裁定口径核销（#ARCH-285）"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W12）——canonical=MOD-AU-008 researcher_agent（P1 R1 已建，蓝图 §0 已声明）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02483
+  source_section: §1.2
+- id: CAND-AUTONOMYCORE-012
+  name: 择时Agent（Timer）
+  aliases:
+  - 择时Agent（Timer）
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: 买卖点择时、信号触发判定；Level 1；C-012/C-013；D-EX-CORE+D-SIGNAL；规则引擎+本地LLM辅助
+  proposal: '深挖裁定=做(P1)。业界对标: 规则引擎+本地LLM辅助的信号触发/择时框架(qlib信号层)。场内现状: 部分：src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py。最小施工形态:
+    Timer Agent：Level 1(建议级)Agent Card；技能=择时决策(买卖点规则引擎复用intraday_buy_sell_point_analyzer/chanlun_structure，本地LLM仅做解释不打分)+触发评估(复用trigger_registry条件单触发判定)；输出接信号质量控制与人工确认回路。依赖前置:
+    D_AUTONOMY_CORE;D_ASHARE_SIGNAL;D_SIGQC;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/intraday_t0/intraday_buy_sell_point_analyzer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'autonomy_core/agents/timing_analyst_agent.py（MOD-AU-010）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：GP1 裁定口径核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W12）——canonical=MOD-AU-010 timing_analyst_agent：L1 建议级/择时融合裁决/人工确认回路三要素全等；触发评估面 MOD-TRIG-001 production，买卖点归 MOD-SIG-024/068，无独立缺口"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02487
+  source_section: §1.3
+- id: CAND-AUTONOMYCORE-013
+  name: C-008 AI自治运维能力卡片（A1§12.2迁移）
+  aliases:
+  - 自治运维能力卡片
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: P0运维保障：自监控→自诊断→自修复→自保障(交易时段99%由AI维护)；跨模块约束B-014(禁AI自动重启交易时段核心进程)/B-015(禁AI自动升级交易时段依赖库)/B-016(禁AI自动清理未归档交易日志审计)；C-008=运行时保障(不崩溃)vs
+    C-023=性能优化(跑更快)；以§3为准
+  proposal: '深挖裁定=做(P1)。业界对标: AIOps自治闭环(Gartner)+STRATUS(NeurIPS2025)TNR事务性无回归修复。场内现状: 部分:src/zephyr/feedback_loop/self_diagnosis.py（另有infrastructure/auto_fix_engine/与health_monitor散件）。最小施工形态:
+    自监控→自诊断→自修复→自保障闭环：7类检测源+规则/关联/LLM/因果四路诊断+AUT-001~008修复策略库(A-L1~L4分级)+TNR可撤销修复(restore快照+恶化自动回滚)+故障模式库Learn；B-014/015/016禁区硬编码。依赖前置:
+    D_AUTONOMY_CORE;D_INFRA_OPS;D_OPS;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/self_diagnosis.py（另有infrastructure/auto_fix_engine/与health_monitor散件）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/autonomy_core/ai_ops_autonomy_card.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04565
+  source_section: §3.5
+- id: CAND-AUTONOMYCORE-014
+  name: 路由Agent(Router)
+  aliases:
+  - 路由Agent(Router)
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: LLM/API路由+成本优化+降级策略 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: LiteLLM/OpenRouter式LLM路由。场内现状: 部分:src/zephyr/integration/llm_bridge.py。最小施工形态:
+    Router角色:任务类型→本地/API模型路由表,token成本预算与失败降级链,路由决策记录供成本复盘。依赖前置: D_AUTONOMY_CORE;D_INTELLIGENCE;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/integration/llm_bridge.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'integration/ai_service_route_matrix.py（MOD-INT-AIROUTE）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W13 已建归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 W13 已建 MOD-INT-AIROUTE ai_service_route_matrix 同为 LLM 路由+成本+降级链（Router Agent 角色化封装语义=路由表+选路留痕已在），canonical=src/zephyr/integration/ai_service_route_matrix.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00246
+  source_section: §功能域模块·D-AUTONOMY
+- id: CAND-AUTONOMYCORE-015
+  name: D-RESEARCH-11 LLM Research Agent LLM研究助手
+  aliases:
+  - D-RESEARCH-11 LLM Research Agent LLM研究助手
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_core/
+  problem: ✅能建；规划器+工具调用+反思循环+记忆管理
+  proposal: '深挖裁定=做(P2)。业界对标: LLM研究Agent=ReAct规划+工具调用+记忆，LangGraph/AutoGPT模式。场内现状: 部分:src/zephyr/autonomy_core/agents/algorithm_agent_entry.py;src/zephyr/orchestrator/。最小施工形态:
+    研究任务ReAct循环+工具白名单+记忆写KB。依赖前置: B10-02187(已有);model_router(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/autonomy_core/agents/algorithm_agent_entry.py;src/zephyr/orchestrator/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_research_agent.py（MOD-INT-RESEARCH-AGENT）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-AISA-017 同为 D-RESEARCH-11 LLM 研究助手（B10/B6 两稿跨域重登），canonical=CAND-AISA-017→MOD-INT-RESEARCH-AGENT（W04 波漏处理，本波补施工）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH-11
+  original_id: B10-02220
+  source_section: §30.2.6
+- id: CAND-AUTPERM-001
+  name: 场内模块归位(11个代码目录)
+  aliases:
+  - 场内模块归位
+  domain: D_AUTONOMY_PERM
+  domain_status: active
+  sub_layer: src/zephyr/autonomy_perm/
+  problem: agent_rbac/87、audit_trail/~50、auto_fix_engine/~30、behavioral_auditor/~70、budget_enforcer/~40、escalation_engine/~100、rollback/~75、llm_security/~30、semantic_auditor/~6、orphan_judge/~2、red_blue_validator/~6——全部可归位，无孤儿模块；agent_rbac/87是PERM域最大代码资产（2026-08-27 口径勘定：orphan_judge 实测25、escalation_engine 实测20、budget_enforcer 本包实测2[~40口径疑指ops_governance预算族~38]、agent_rbac 实测84+orphan_judge嵌套25=109、llm_security 实测39、rollback 实测58、audit_trail 壳2/实体gov_audit 64、behavioral_auditor 壳1/实体gov_drift 67、semantic_auditor 20+散布~5、red_blue_validator 壳1/实体adversarial_validation 25）
+  proposal: '深挖裁定=做(P2)。业界对标: 代码归位迁移(单体仓库模块重组)。场内现状: 已有:tests/agent_rbac/+src/zephyr/security/access_control/。最小施工形态:
+    agent_rbac/audit_trail/auto_fix_engine等11目录归位PERM域+db_nodes域映射刷新+导入路径修正。依赖前置: D-AUTONOMY-PERM域边界裁定。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 已有:tests/agent_rbac/+src/zephyr/security/access_control/'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——归位迁移属重组专项（11 目录移动+导入路径修正+域映射刷新），非新建模块且与并发会话冲突面大，登记留待专项批次（需停机窗口与 Owner 确认），本波不施工 | 2026-08-27 Owner 终裁执行记录：逻辑归位已落地（#ARCH-276）——architecture_model/index.yaml D_AUTONOMY_PERM 补 scope_paths 11 目录映射+domains 行描述刷新+本条目口径勘定；物理迁移降 P3 可选远期项（停机窗口+并发清零后 Owner 通知启动）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-27'
+  source_draft: D-AUTONOMY-PERM
+  original_id: B7-09463
+  source_section: §2.1.2
+- id: CAND-WFO-002
+  name: C-003 自动回测与仿真
+  aliases:
+  - 自动回测与仿真
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: src/zephyr/backtest/
+  problem: 策略/因子/信号验证算力管道+V1~V5分层验证 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: backtrader/Lean验证管道+Great Expectations分层校验。场内现状: 部分:src/zephyr/backtest。最小施工形态:
+    策略/因子/信号提交触发V1单元→V5全链路分层验证，自动跑回测+过拟合门禁+报告归档。依赖前置: src/zephyr/backtest；src/zephyr/simulation；src/zephyr/regime/validation/overfitting_guard.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/backtest'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/backtest/services/layered_validation_pipeline.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00258
+  source_section: §功能域模块·D-OPS
+- id: CAND-WFO-003
+  name: 第五层：多策略交叉验证
+  aliases:
+  - 多策略交叉验证
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: src/zephyr/backtest/
+  problem: 多策略交叉验证→~30只
+  proposal: '深挖裁定=做(P1)。业界对标: 多策略交叉验证=CPCV(Combinatorial Purged CV, Lopez de Prado)策略级打分。场内现状: 部分:src/zephyr/backtest/core/cpcv.py。最小施工形态:
+    策略级CPCV打分矩阵→多策略交集筛选~30只候选。依赖前置: cpcv(已有);策略池(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/backtest/core/cpcv.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/backtest/core/strategy_cpcv_matrix.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01272
+  source_section: §1.1
+- id: CAND-WFO-004
+  name: D-RESEARCH-05 Reproducibility Manager（可复现性管理器）
+  aliases:
+  - D-RESEARCH-05 Reproducibility Manager（可复现性管理器）
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: src/zephyr/backtest/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: MLflow/DVC式实验可复现(seed+环境+数据快照三要素)。场内现状: 部分:src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py（构建级可复现有，研究实验级缺）。最小施工形态:
+    实验可复现包：随机种子+依赖锁+数据快照哈希+参数版本四要素登记，一键重跑校验结果一致性(容差内)，与experiment_tracking联动。依赖前置: D_BACKTEST;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py（构建级可复现有，研究实验级缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/reproducibility_manager.py（MOD-ML-020）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-MLT-028（W07 已建）同为 D-RESEARCH-05 可复现性管理（B14/B13/B10 三稿重登），canonical=MOD-ML-020 reproducibility_manager（种子+hash校验+复现报告含其四要素语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04646
+  source_section: §8.3.3
+- id: CAND-WFO-005
+  name: D-RESEARCH-12 Research Data Sandbox（研究数据沙箱）
+  aliases:
+  - D-RESEARCH-12 Research Data Sandbox（研究数据沙箱）
+  domain: D_BACKTEST
+  domain_status: active
+  sub_layer: src/zephyr/backtest/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Point-in-Time数据沙箱防前视为量化研究惯例。场内现状: 部分:src/zephyr/feedback_loop/verifiers/dry_run_sandbox.py（执行沙箱非研究数据沙箱）。最小施工形态:
+    研究数据沙箱：PIT快照数据集只读挂载+特征/标签时间戳校验+产出标记research=True隔离实盘数据流，防前视泄露。依赖前置: D_BACKTEST;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/verifiers/dry_run_sandbox.py（执行沙箱非研究数据沙箱）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/research_data_sandbox.py（MOD-ML-021）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-MLT-029（W07 已建）同为 D-RESEARCH-12 研究数据沙箱（B14/B13 两稿重登），canonical=MOD-ML-021 research_data_sandbox（PIT 只读视图语义入只读视图+评审回写）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04682
+  source_section: §8.3.7
+- id: CAND-CMP-002
+  name: §10.8.1.2合规引擎架构图
+  aliases:
+  - 合规引擎架构图
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: DSL规则解析器→规则版本管理器(不可变历史+当前活跃)→实时评估器(<1ms)+批量审计器(盘后)→C-004风控引擎(订单前检查)/C-002执行域(订单执行+Wash Trade检查+执行后审计)/合规报告域(定期报送)
+  proposal: '深挖裁定=做(P0)。业界对标: OPA(Rego DSL规则解析+版本化）+SEC 15c3-5盘前自查门禁。场内现状: 部分:src/zephyr/compliance/。最小施工形态:
+    合规引擎：DSL规则解析器+规则版本管理器（不可变历史+当前活跃指针）+实时评估器（Pre-Trade同步调用，Hard Block拒单/Soft Block转人工审批/Warning放行）+盘后批量审计器；规则命中落compliance_log并T+1归档，与pre_execution_checker及C-004风控引擎接线，收编现有检测散件为规则包。依赖前置:
+    D_COMPLIANCE;D_EX_CORE;D_RISK;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/compliance_rule_engine.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-COMPLIANCE
+  original_id: B5-07849
+  source_section: §10.8.1.2
+- id: CAND-CMP-003
+  name: 合规证据链生成器
+  aliases:
+  - 合规证据链
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: 合规证据自动采集+链式存储 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: 不可变证据存储(WORM)+哈希链。场内现状: 部分:src/zephyr/compliance/compliance_log.py。最小施工形态:
+    委托/成交/决策快照自动采集→哈希链式落盘(复用compliance_log append-only)+检索导出。依赖前置: src/zephyr/compliance/compliance_log.py；src/zephyr/compliance/behavioral_auditor(哈希链)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/compliance_log.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/evidence_chain_generator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00312
+  source_section: §功能域模块·D-COMPLIANCE
+- id: CAND-CMP-004
+  name: 合规漂移检测器
+  aliases:
+  - 合规漂移
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: 合规配置漂移检测+自动纠正 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: driftctl/OPA配置漂移检测思想。场内现状: 部分:src/zephyr/feedback_loop/forensic/guard_configuration_drift_monitor.py。最小施工形态:
+    合规参数基线快照+周期比对漂移告警+自动纠正建议(人工确认)。依赖前置: src/zephyr/compliance/compliance_report_registry.py；配置中心(B1-00203)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/forensic/guard_configuration_drift_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'compliance/compliance_drift_detector.py（MOD-CMP-016）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W10）——与 CAND-CMP-007 同为合规漂移检测器（B1/B14 两稿重登），canonical=CAND-CMP-007→MOD-CMP-016（AL-P3 告警+证据快照+整改任务含其基线快照/纠正建议语义，配置中心 MOD-INF-091 已为其供基线）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00314
+  source_section: §功能域模块·D-COMPLIANCE
+- id: CAND-CMP-005
+  name: 模块54 信息不对称期与操纵行为检测模型
+  aliases:
+  - 信息不对称期与操纵行为检测模型
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: 空窗期(披露间隔>90天,11月-次年4月30日)异常检测(z>2)；操纵检测：幌骗(偏离≥2%+申报量≥10%+5秒撤单≥80%)/对敲(间隔≤5秒+偏离≤1%+占比≥5%)/尾盘操纵(最后5分钟>2%+量集中)；沪深北2025.7细则+ESMA
+    MABUM(GNN+TCN+联邦学习)；归属L2-B+L4(操纵标的回避)
+  proposal: '深挖裁定=做(P2)。业界对标: 沪深北异常交易细则+学术操纵检测(GNN+TCN)为业界方向。场内现状: 部分:src/zephyr/compliance/trading_compliance_detector.py。最小施工形态:
+    空窗期(11月-4月30日)异常波动z>2扫描+操纵嫌疑评分生成回避名单供漏斗第一层排除。依赖前置: compliance/trading_compliance_detector.py;signal_ashare/tiered_screening_filter.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/trading_compliance_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/info_asymmetry_manipulation_detector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01426
+  source_section: §5模块54
+- id: CAND-CMP-006
+  name: D-COMPLIANCE-16 Compliance Policy-as-Code Engine（合规策略即代码引擎）
+  aliases:
+  - D-COMPLIANCE-16 Compliance Policy-as-Code Engine（合规策略即代码引擎）
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: ✅能建，有蓝图MOD-L10-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: OPA/Rego策略即代码(声明式规则+版本化+加载即生效)。场内现状: 部分:src/zephyr/governance/compliance_gate_a6/compliance_manager.py（合规管理器有，策略即代码引擎缺）。最小施工形态:
+    合规规则声明式DSL(YAML)+版本管理+规则回放验证(历史交易重放比对)+非交易时段热加载，规则库复用gov_rule仓，变更须人工审批。依赖前置: D_COMPLIANCE;D_GOV_RULE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/governance/compliance_gate_a6/compliance_manager.py（合规管理器有，策略即代码引擎缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/compliance_policy_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04651
+  source_section: §8.3.4
+- id: CAND-CMP-007
+  name: M66-NEW-03 合规漂移检测器
+  aliases: []
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 声明vs运行时配置漂移检测(drift detection)为合规工程惯例。场内现状: 部分:src/zephyr/gov_drift/config_consistency.py（配置一致性检查有，合规漂移专项缺）。最小施工形态:
+    合规漂移检测：合规规则声明与运行时生效参数/代码路径定期比对，漂移→AL-P3告警+证据快照+整改任务，仅非交易时段运行。依赖前置: D_COMPLIANCE;D_GOV_DRIFT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/config_consistency.py（配置一致性检查有，合规漂移专项缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/compliance_drift_detector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04656
+  source_section: §8.3.4
+- id: CAND-CMP-008
+  name: M36-S05 监管变更追踪器
+  aliases: []
+  domain: D_COMPLIANCE
+  domain_status: active
+  sub_layer: src/zephyr/compliance/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: RegTech监管变更管理(规则变更跟踪+影响域映射)。场内现状: 部分:src/zephyr/feedback_loop/detectors/reliability/regulatory_audit.py（监管审计检测有，变更追踪缺）。最小施工形态:
+    监管变更追踪：证监会/交易所公告采集+NLP变更抽取+影响域映射→合规规则评审任务，人工确认后入Policy-as-Code规则库。依赖前置: D_COMPLIANCE;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/detectors/reliability/regulatory_audit.py（监管审计检测有，变更追踪缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/compliance/regulatory_change_tracker.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04671
+  source_section: §8.3.5
+- id: CAND-CONTRACT-001
+  name: D-SIGNAL-163 CTR-002消费契约适配器
+  aliases:
+  - D-SIGNAL-163 CTR-002消费契约适配器
+  domain: D_CONTRACTS
+  domain_status: active
+  sub_layer: src/zephyr/shared/contracts
+  problem: CTR-002 FactorSignal Schema验证+版本兼容+变更响应;✅能建
+  proposal: '深挖裁定=做(P1)。业界对标: JSON Schema版本兼容(semver)+契约测试(pact思路)。场内现状: 部分：src/zephyr/shared/contracts/factor_signal.py。最小施工形态:
+    消费适配器：schema版本协商(major不兼容即拒)+字段缺失/新增容忍策略+契约变更事件订阅，信号消费方统一经适配器取数。依赖前置: D_CONTRACTS;D_FACTOR;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/shared/contracts/factor_signal.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/contracts/ctr002_consumer_adapter.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04308
+  source_section: §17.12
+- id: CAND-CONTRACT-002
+  name: D-EX-CORE-55 多契约生产适配器
+  aliases:
+  - 多契约生产
+  - D-EX-CORE-55 多契约生产适配器
+  domain: D_CONTRACTS
+  domain_status: active
+  sub_layer: src/zephyr/shared/contracts
+  problem: CTR-004/005/006三个契约Schema定义+版本演进+消费者注册;✅能建
+  proposal: '深挖裁定=做(P1)。业界对标: 多契约schema注册+版本演进(Schema Registry单机化)。场内现状: 部分：src/zephyr/shared/contracts/。最小施工形态:
+    三契约schema注册表：版本演进规则(major/minor)+消费者注册(谁消费哪个版本)+兼容性CI校验，生产侧统一经适配器发布。依赖前置: D_CONTRACTS;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/shared/contracts/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ex_core/multi_contract_adapter.py（MOD-EX-055）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W16 实证归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W16）——canonical=MOD-EX-055 multi_contract_adapter（stable/production，CTR-004/005/006 注册+版本演进+变更通知全覆盖；深挖批'未收口'被实证推翻）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04317
+  source_section: §17.14
+- id: CAND-CONTRACT-003
+  name: D-SIGNAL-158 二元结论补充
+  aliases:
+  - 二元结论补充
+  - D-SIGNAL-158 二元结论补充
+  domain: D_CONTRACTS
+  domain_status: active
+  sub_layer: src/zephyr/shared/contracts
+  problem: ✅能建：因子→信号数据流已在D-FACTOR Engine中实现，增量改进：增加CTR-002契约验证；📐蓝图编号ALPHA-SIGNAL-DOMAIN-001已建设(部分)
+  proposal: '深挖裁定=做(P1)。业界对标: 契约强制验证（JSON Schema+错误契约）。场内现状: 部分:src/zephyr/factor/core/ctr002_producer/。最小施工形态:
+    CTR-002生产侧契约验证：FactorSignal字段完整性/取值域/时间戳PIT校验，违约阻断+错误契约返回，验证指标入telemetry，与消费侧版本适配器共用同一Schema源。依赖前置:
+    D_CONTRACTS;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/factor/core/ctr002_producer/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/contracts/ctr002_producer_validator.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-SIGNAL
+  original_id: B2-05118
+  source_section: §1.1
+- id: CAND-DAT-006
+  name: 03 Storage
+  aliases:
+  - 03 Storage
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: P0✅：冷热分层存储(热Redis<10ms/温DuckDB+Parquet<1s/冷归档Parquet<30s)+缓存(LRU/LFU/TTL)+分区(日线按年/分钟按月)+备份+性能监控+容量预警+SLA监控+元数据(zalpha_market_data.db)+Event
+    Store(Parquet追加+幂等+CQRS读端DuckDB视图+日快照+5分钟增量快照)+Feature Store(离线Parquet+在线Redis HSET+Registry SQLite四维索引)+UFL确定性事实层(is_deterministic=True追加式不可修改)+D→E盘双副本(实时AOF/每小时Parquet/每小时模型)+RTO/RPO分级(L1<5min/≤1s~L6<240min/≤24h)+数据恢复流程(Redis≤1s/Parquet≤1h/D盘全故障≤4h)+WAL
+    Checkpoint监控；产出CTR-001查询接口
+  proposal: '深挖裁定=做(P0)。业界对标: 冷热分层(Redis热/DuckDB或CH温/Parquet冷)+Event Store CQRS；feast Feature Store。场内现状:
+    部分：src/zephyr/data/ch_writer.py。最小施工形态: 冷热分层TTL自动迁移(热Redis→温CH→冷Parquet归档)+日线按年/分钟按月分区+UFL追加式事实层(is_deterministic=True禁改校验)+D/E双副本一致性校验+RTO/RPO分级恢复演练脚本，复用现有CH/Redis/backup不重建。依赖前置:
+    D_DATA;D_DATA_ENG;D_INFRA_RECOVERY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/ch_writer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/storage_tiering.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00584
+  source_section: §1 子模块清单
+- id: CAND-DAT-007
+  name: 数据清洗规则引擎
+  aliases:
+  - 数据清洗规则
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: C-022自进化阈值
+  proposal: '深挖裁定=做(P0)。业界对标: Great Expectations规则+滚动分位自适应阈值为数据质量门控业界形态。场内现状: 部分:src/zephyr/data/quality_gate.py。最小施工形态:
+    规则DSL+阈值滚动分位自进化(上下护栏+超限人工审批)接入quality_gate并输出拦截报告。依赖前置: data/quality_gate.py;gov_enforcement/rule_enforcement/quality_gate.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/quality_gate.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/cleaning_rule_engine.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01347
+  source_section: §2.1
+- id: CAND-DAT-008
+  name: 数据服务接口层
+  aliases:
+  - 数据服务接口
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 实时查询(Redis GET<5ms)/PIT回测(DuckDB AS OF JOIN+双时态)/决策输入(因子+信号→L3策略层)/审计追溯(血缘+事件→合规报告+分级留存)
+  proposal: '深挖裁定=做(P0)。业界对标: CQRS读端(Redis)+PIT AS OF JOIN；feast online/offline serving。场内现状: 部分：src/zephyr/data/pit_query.py。最小施工形态:
+    DataService门面：实时查询(Redis GET<5ms)+PIT回测(AS OF JOIN+双时态)+决策输入打包(因子+信号→L3契约)+审计追溯(血缘+事件→合规报告)，四能力统一入口与SLA。依赖前置:
+    D_DATA;D_MKT_DATA;D_FACTOR;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/pit_query.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/data_service.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04033
+  source_section: §0.2
+- id: CAND-DAT-009
+  name: C-001 多源数据接入
+  aliases:
+  - 多源数据接入
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: miniQMT+iFind+另类数据源→事件总线→分层时序存储 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: akshare/Tushare/miniQMT;vnpy数据接入。场内现状: 部分:src/zephyr/data/provider_base.py。最小施工形态:
+    按三源互补落地miniQMT+iFind+免费源接入契约:能力声明→事件总线→热(Redis)/温(CH)/冷(Parquet)分层,质量门控拦截并联动backfill_checker。依赖前置:
+    D_DATA;D_MKT_DATA;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/provider_base.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'provider 体系/调度/回填/quality_gate/storage_tiering 全 production'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（08-25 豁免不施工裁定，新建即重复）"
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W08）——iFind 2026-08-14 已整体退役（#ARCH-DATA-IFIND-RETIRE-001，主源转正 akshare/tushare）；provider 体系/调度/回填/交叉校验/quality_gate 全 production；event_bus 已建；分层存储已由 storage_tiering 收口。新建即重复"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00099
+  source_section: §功能域模块·D-DATA
+- id: CAND-DAT-010
+  name: D-INT-16 DataFormatTransformer
+  aliases:
+  - D-INT-16 DataFormatTransformer
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 多格式支持+Schema映射+格式验证 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: pandera/Great Expectations式schema校验。场内现状: 部分:src/zephyr/data/normalizers/。最小施工形态:
+    Schema注册表驱动的格式转换器:源格式→NormalizedMarketData契约,pandera式字段校验+单位/时区归一,失败样本隔离入质量门控。依赖前置: D_DATA;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/normalizers/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/normalizers/format_transformer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00343
+  source_section: §功能域模块·D-INTEGRATION
+- id: CAND-DAT-011
+  name: 86 板块因子数据管理器
+  aliases:
+  - 板块因子数据
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: P1✅：题材/概念/行业/同花顺板块分钟线+日线+成分股+板块轮动；板块数据→统计因子
+  proposal: '深挖裁定=做(P1)。业界对标: 通达信880板块指数+同花顺板块；板块轮动统计因子。场内现状: 部分：src/zephyr/data/sector_kline_downloader.py。最小施工形态:
+    板块日线/分钟线覆盖完整性校验+板块成分映射挂接(37产出)+板块轮动因子(相对强度/排名变化/资金流入)计算入因子库+板块数据质量评分，复用sector_*采集器不重建。依赖前置: D_DATA;D_FACTOR;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/sector_kline_downloader.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/sector_factor_manager.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00598
+  source_section: §1 子模块清单
+- id: CAND-DAT-012
+  name: 96 Sina+Tencent Real-Time
+  aliases:
+  - 96 Sina+Tencent Real-Time
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: P1🚧：新浪财经+腾讯财经免费实时行情API；门禁：API稳定性验证+数据使用合规审批
+  proposal: '深挖裁定=做(P1)。业界对标: 新浪hq.sinajs/腾讯qt.gtimg免费快照；akshare现货接口同源封装。场内现状: 部分：src/zephyr/data/redundant_source/。最小施工形态:
+    实现SourceProvider接口的新浪/腾讯快照适配器(3-5s轮询+限速+超时熔断)+字段映射CTR-001+接入SourceSwitcher优先级末位+与QMT价格偏差交叉校验告警。依赖前置:
+    D_DATA;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/redundant_source/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/redundant_source/sina_tencent_provider.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00602
+  source_section: §1 子模块清单
+- id: CAND-DAT-013
+  name: 交易所公告/新闻源
+  aliases:
+  - 交易所公告
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: HTTP爬虫/RSS
+  proposal: '深挖裁定=做(P1)。业界对标: 巨潮/交易所RSS+HTTP采集后落库为qlib/akshare式新闻管道常规形态。场内现状: 部分:src/zephyr/data/news_collector.py。最小施工形态:
+    巨潮/交易所公告RSS与HTTP采集器写fund_news_data表并走news_dedup去重。依赖前置: data/news_collector.py;data/news_dedup.py;data/ch_writer.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/news_collector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/implementations/announcement_provider.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01344
+  source_section: §2.1
+- id: CAND-DAT-014
+  name: §29.2-7 自动回填（Automated Backfilling）
+  aliases:
+  - §29.2-7 自动回填（Automated Backfilling）
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 新因子上线/公式升级/数据源修复触发；按日期分片多进程并行+GPU加速；随机抽样10%验证；完成后自动更新血缘+触发模型重训练（auto-retrain）
+  proposal: '深挖裁定=做(P1)。业界对标: feast/数据平台backfill为标准能力。场内现状: 部分:src/zephyr/data/backfill_checker.py。最小施工形态:
+    1个模块 src/zephyr/data/auto_backfiller.py，核心类AutoBackfiller，输入触发事件(新因子/公式升级/数据源修复)，按日期分片多进程回填+10%随机抽样验证+更新血缘并触发auto-retrain。依赖前置:
+    D_DATA;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/backfill_checker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/auto_backfiller.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01815
+  source_section: §29.2
+- id: CAND-DAT-015
+  name: D-DATA-08 Reference Data Manager
+  aliases:
+  - D-DATA-08 Reference Data Manager
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 参考数据管理(GICS/申万行业分类+指数成分+多源ID映射+变更事件发布);✅能建,SQLite reference_data表
+  proposal: '深挖裁定=做(P1)。业界对标: OpenFIGI式证券主数据/MDM；akshare申万行业+指数成分接口。场内现状: 部分：src/zephyr/data/instrument_master.py。最小施工形态:
+    SQLite reference_data表族：行业分类(GICS+申万)/指数成分(PIT effective_date)/多源ID映射(miniqmt↔tushare↔akshare)/变更事件走事件总线发布，复用instrument_master最小字段集。依赖前置:
+    D_DATA;D_MKT_DATA;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/instrument_master.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/reference_data_manager.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04240
+  source_section: §17.1
+- id: CAND-DAT-016
+  name: D-DATA-25 Multi-Timeframe Data Fusion
+  aliases:
+  - D-DATA-25 Multi-Timeframe Data Fusion
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 多时间尺度数据融合(跨频率对齐+时间戳统一+前向填充+频率转换+融合质量评分);✅能建,resample()接口1min~1d
+  proposal: '深挖裁定=做(P1)。业界对标: pandas/polars resample；qlib多频对齐。场内现状: 部分：src/zephyr/data/kline_resampler.py。最小施工形态:
+    resample()统一接口1min~1d：交易日历对齐+时间戳归一(bar close)+ffill上限(≤3根)+融合质量评分(覆盖率/对齐误差)输出quality_flag。依赖前置: D_DATA;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/kline_resampler.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/multi_timeframe_fusion.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04249
+  source_section: §17.1
+- id: CAND-DAT-017
+  name: D-DATA-80 Financial Parser
+  aliases:
+  - D-DATA-80 Financial Parser
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 财务报告解析器(年报/季报/快报PDF→结构化+XBRL解析+指标标准化);✅能建,Ollama qwen3:8b+正则
+  proposal: '深挖裁定=做(P1)。业界对标: Arelle(XBRL解析)+pdfplumber/LLM表格抽取；巨潮财报管道。场内现状: 无。最小施工形态: 财报解析管道：巨潮PDF下载+pdfplumber表格抽取+XBRL(Arelle)解析+指标标准化映射到c3财务表，本地qwen3:8b兜底非标准格式，解析置信度入quality_flag。依赖前置:
+    D_DATA;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/financial_parser.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04263
+  source_section: §17.1
+- id: CAND-DAT-018
+  name: D-DATA-08 数据压缩与归档
+  aliases:
+  - 数据压缩与归档
+  - D-DATA-08 数据压缩与归档
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 冷热分层+Parquet归档 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Parquet+DuckDB冷热分层。场内现状: 部分:src/zephyr/gov_audit/tiered_storage.py。最小施工形态:
+    行情热(Redis/CH)→温(CH分区)→冷(Parquet按年月分区+snappy压缩),归档任务入scheduler,DuckDB直查冷层。依赖前置: D_DATA;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/tiered_storage.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/data_compression_archiver.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00106
+  source_section: §功能域模块·D-DATA
+- id: CAND-DAT-019
+  name: tushare 新闻数据源(待开通)
+  aliases:
+  - 新闻数据源
+  - tushare 新闻数据源(待开通)
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 新闻快讯9源聚合+历史数据补充验证；状态待开通(见A-011)
+  proposal: '深挖裁定=做(P2)。业界对标: tushare新闻快讯API；akshare新闻接口。场内现状: 部分：src/zephyr/data/implementations/tushare_provider.py。最小施工形态:
+    开通tushare新闻权限后：news快讯接口接入news_collector管道+与现有源去重(news_dedup)+历史数据回补校验，走C-001接入契约与质量门控。依赖前置: D_DATA;D_ALT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/implementations/tushare_provider.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/implementations/tushare_news_connector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04043
+  source_section: §1.1
+- id: CAND-DAT-020
+  name: D-INFRA-321 数据源可用性SLA追踪器
+  aliases:
+  - D-INFRA-321 数据源可用性SLA追踪器
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 各数据源历史可用率+延迟统计+SLA达标率;✅能建,与D-DATA-78合并实现
+  proposal: '深挖裁定=做(P2)。业界对标: Prometheus SLI/SLO(sloth)+可用率报表。场内现状: 部分：src/zephyr/data/source_health_check.py。最小施工形态:
+    SLA追踪器：按源聚合可用率/延迟P50P99/失败原因分布→日周报+SLA达标率看板，数据取自fetch_perf_recorder与heartbeat_monitor。依赖前置: D_DATA;D_MKT_DATA;D_REPORTING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/source_health_check.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data/source_sla_tracker.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04332
+  source_section: §17.18
+- id: CAND-DATENG-001
+  name: 85 Cleaning & Anomaly Engine
+  aliases:
+  - 85 Cleaning & Anomaly Engine
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: P1✅：自动化数据清洗+异常检测+标记+自动修复+人工审核
+  proposal: '深挖裁定=做(P0)。业界对标: 规则+z-score/缺失率异常检测+自动修复(cleanlab思路)；Great Expectations清洗规则。场内现状: 部分：src/zephyr/data/integrity_checker.py。最小施工形态:
+    清洗规则库(价格跳变/复权断点/重复bar/量能异常/缺失模式)+自动修复策略(跨源仲裁/前值填充≤3根/剔除并标quality_flag)+修复审计日志+人工审核队列，多维异常告警路由复用B13-04267。依赖前置:
+    D_DATA_ENG;D_DATA;D_FBL_DETECTORS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/integrity_checker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/cleaning_anomaly_engine.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00606
+  source_section: §1 子模块清单
+- id: CAND-DATENG-002
+  name: 92 Great Expectations Governance
+  aliases:
+  - 92 Great Expectations Governance
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: P1✅：GE自动化数据质量检查+修复+验证+质量闭环+可执行数据契约执行层
+  proposal: '深挖裁定=做(P0)。业界对标: Great Expectations期望套件+可执行数据契约；轻量替代Pandera/Soda。场内现状: 部分：src/zephyr/data/quality_gate.py。最小施工形态:
+    期望套件YAML(schema/非空/值域/分布/时效/跨表完整性)+验证器接入质量门控(阻断/降级/告警三档)+验证报告存档可追溯+与CTR-001契约字段联动，轻量自研不引GE重依赖。依赖前置:
+    D_DATA_ENG;D_DATA;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/quality_gate.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/expectation_governance.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00607
+  source_section: §1 子模块清单
+- id: CAND-DATENG-003
+  name: 91 Incremental Update Engine
+  aliases:
+  - 91 Incremental Update Engine
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: P1✅：仅更新变化的数据+变更检测+增量同步+数据一致性校验+增量因子计算(incremental_compute()滑动窗口避免全量重算)
+  proposal: '深挖裁定=做(P1)。业界对标: Airbyte水位线增量同步+滑动窗口增量计算；CDC变更检测。场内现状: 部分：src/zephyr/data/scheduler.py。最小施工形态:
+    统一变更检测(水位线/updated_at/行数哈希)+增量结果抽样全量对账(偏差告警)+增量因子注册表(incremental_compute挂调度，窗口状态持久化)，复用scheduler不重写同步逻辑。依赖前置:
+    D_DATA_ENG;D_DATA;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/scheduler.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/incremental_update_engine.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA
+  original_id: B1-00635
+  source_section: §1 子模块清单
+- id: CAND-DATENG-004
+  name: D-DATA-112 Data Anomaly Alerter
+  aliases:
+  - D-DATA-112 Data Anomaly Alerter
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: 数据异常告警器(多维度异常检测+告警分级+路由+抑制);✅能建
+  proposal: '深挖裁定=做(P1)。业界对标: Great Expectations异常检测+Alert路由；Alertmanager抑制规则。场内现状: 部分：src/zephyr/data/alerter.py。最小施工形态:
+    多维异常检测(跳变z-score/缺失率/量价背离/跨源偏差)+告警分级+路由复用alerter+抑制规则(同源同因合并/维护窗口静默)，输出接数据质量门控。依赖前置: D_DATA_ENG;D_DATA;D_FBL_DETECTORS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data/alerter.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/data_anomaly_alerter.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04267
+  source_section: §17.1
+- id: CAND-DATENG-005
+  name: D-INFRA-34 Cold Data Archive Manager
+  aliases:
+  - D-INFRA-34 Cold Data Archive Manager
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: 冷数据归档存储+归档策略/压缩/检索/清理+生命周期;✅能建,auto_archive_scheduler()
+  proposal: '深挖裁定=做(P2)。业界对标: 分层存储(热CH/温Parquet/冷归档)+zstd压缩；Iceberg expire式生命周期。场内现状: 部分：src/zephyr/gov_audit/tiered_storage.py。最小施工形态:
+    冷数据归档：CH老分区→Parquet(zstd)归档目录+归档索引(SQLite)+按策略清理+归档检索只读接口，auto_archive_scheduler挂scheduler。依赖前置: D_DATA_ENG;D_DATA;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/gov_audit/tiered_storage.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/cold_data_archive_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04331
+  source_section: §17.18
+- id: CAND-DATENG-006
+  name: M45-NEW-04 质量SLA违约预测器
+  aliases: []
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Google SRE burn-rate告警+SLO违约趋势预测。场内现状: 部分:src/zephyr/infrastructure/sla/sla_monitor.py（SLA监控有，违约预测缺）。最小施工形态:
+    质量SLA违约预测：基于历史达成率与消耗速率趋势外推(数据新鲜度/完整性/信号产出SLO)，预测违约提前告警+建议处置窗口。依赖前置: D_DATA_ENG;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/sla/sla_monitor.py（SLA监控有，违约预测缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/quality_sla_breach_predictor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04723
+  source_section: §8.3.12
+- id: CAND-DATENG-007
+  name: D-DATA-ENG-06 StreamProcessingEngine
+  aliases:
+  - D-DATA-ENG-06 StreamProcessingEngine
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: 流处理引擎：实时计算+窗口聚合+事件时间对齐+水位线+背压控制；P1；对标C-001(◐)
+  proposal: '深挖裁定=做(P2)。业界对标: Flink/Bytewax单机流处理（窗口聚合+水位线+背压）。场内现状: 部分:src/zephyr/data/kline_resampler.py。最小施工形态:
+    轻量单机流处理引擎：事件时间滚动/会话窗口聚合+水位线与迟到数据处理，背压复用现有backpressure契约，消费event_bus/tick_subscriber流，输出实时聚合指标落ClickHouse供盘中监控与实时因子。依赖前置:
+    D_DATA_ENG;D_MKT_DATA;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/kline_resampler.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/stream_processing_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA-ENG
+  original_id: B5-07234
+  source_section: §1
+- id: CAND-DATENG-008
+  name: D-DATA-ENG-11 GPUResourceManager
+  aliases:
+  - D-DATA-ENG-11 GPUResourceManager
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: GPU资源管理器：PyTorch CUDA内存分区+时段优先调度+显存预算管理+OOM防护；P1；源自R-100
+  proposal: '深挖裁定=做(P2)。业界对标: pynvml/K8s device plugin单机化GPU调度。场内现状: 部分:src/zephyr/trading/gpu_monitor.py。最小施工形态:
+    GPU资源管理器：CUDA显存分区与预算管理（训练/推理配额），盘中推理优先/盘后训练的时段优先调度，显存水位监控+OOM防护（超限降级CPU)，收编gpu_monitor指标入telemetry。依赖前置:
+    D_DATA_ENG;D_ML_TRAIN;D_ML_SERVE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/gpu_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/gpu_resource_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA-ENG
+  original_id: B5-07239
+  source_section: §1
+- id: CAND-DATENG-009
+  name: D-DATA-ENG-12 DataLakeManager
+  aliases:
+  - D-DATA-ENG-12 DataLakeManager
+  domain: D_DATA_ENG
+  domain_status: active
+  sub_layer: src/zephyr/data_eng/
+  problem: 数据湖管理+分层存储(热/温/冷)+生命周期；P2暂不入骨架
+  proposal: '深挖裁定=做(P2)。业界对标: 数据湖热温冷分层+生命周期管理。场内现状: 无。最小施工形态: 数据湖分层管理：热层（ClickHouse近30天）/温层（本地Parquet)/冷层（归档目录ZSTD压缩）三层策略，数据迁移调度+保留策略执行+自动压缩归档，与scripts/backup备份策略对齐，冷热分离统一收口。依赖前置:
+    D_DATA_ENG;D_DATA;D_INFRA_OPS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_eng/data_lake_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA-ENG
+  original_id: B5-07240
+  source_section: §1
+- id: CAND-DATGOV-001
+  name: M8-S01 血缘解析器
+  aliases:
+  - 血缘解析器
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；契约血缘解析，提取数据流转关系
+  proposal: '深挖裁定=做(P1)。业界对标: OpenLineage/Marquez契约解析。场内现状: 部分：src/zephyr/data_governance/core/lineage_tracker.py。最小施工形态:
+    解析CTR契约与模块头[CONSUMERS]/[DEPENDENCIES]注解，自动抽取source→transformation→target边入lineage_tracker；幂等与环检测复用现有实现。依赖前置:
+    D_DATA_GOV;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data_governance/core/lineage_tracker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/core/lineage_parser.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02313
+  source_section: §30.4.3
+- id: CAND-DATGOV-002
+  name: M8-S02 静态分析器
+  aliases:
+  - 静态
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；代码/SQL静态分析提取血缘
+  proposal: '深挖裁定=做(P1)。业界对标: sqlglot血缘解析；OpenLineage静态抓取。场内现状: 无。最小施工形态: 基于ast解析Python读写调用+sqlglot解析SQL表级血缘，输出统一边格式入lineage_tracker；离线批跑不占盘中资源。依赖前置:
+    D_DATA_GOV。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/core/static_lineage_analyzer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02314
+  source_section: §30.4.3
+- id: CAND-DATGOV-003
+  name: M8-S03 动态采集器
+  aliases:
+  - 动态采集器
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；运行时血缘动态采集
+  proposal: '深挖裁定=做(P1)。业界对标: OpenLineage runtime facets;Marquez运行时采集。场内现状: 无。最小施工形态: 在数据接入/因子计算/信号生成关键路径插桩emit血缘事件（轻量异步写，fail-open不阻塞交易主链路），盘后汇总入lineage_tracker。依赖前置:
+    D_DATA_GOV;D_DATA;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/core/runtime_lineage_collector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02315
+  source_section: §30.4.3
+- id: CAND-DATGOV-004
+  name: M8-NEW-02 Column-Level Lineage Analyzer
+  aliases:
+  - M8-NEW-02 Column-Level Lineage Analyzer
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: 列级血缘分析(字段级转换逻辑追踪);✅能建,SQL AST解析器
+  proposal: '深挖裁定=做(P1)。业界对标: sqlglot列级血缘；OpenLineage/Marquez。场内现状: 部分：src/zephyr/data_governance/core/lineage_tracker.py。最小施工形态:
+    sqlglot AST解析SQL/视图抽取列级血缘(源列→转换表达式→目标列)，DAG入lineage_tracker，提供字段级影响面查询API供变更评审。依赖前置: D_DATA_GOV;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data_governance/core/lineage_tracker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/core/column_lineage_analyzer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04276
+  source_section: §17.2
+- id: CAND-DATGOV-005
+  name: M8-NEW-09 Metaxy Record-Level Tracker
+  aliases:
+  - M8-NEW-09 Metaxy Record-Level Tracker
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: 记录级特征血缘(字段级依赖DAG+自动血缘);✅能建(基础版),Parquet元数据记录source_file+transform
+  proposal: '深挖裁定=做(P1)。业界对标: Metaxy记录级特征血缘；feast registry元数据。场内现状: 部分：src/zephyr/data_governance/core/lineage_tracker.py。最小施工形态:
+    Parquet元数据扩展：每特征批次记录source_file/transform/code_version/computed_at，写sidecar元数据表，支持单条因子值反查原始行情行，与B13-04144离线仓7列Schema联动。依赖前置:
+    D_DATA_GOV;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/data_governance/core/lineage_tracker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/core/record_lineage_tracker.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04278
+  source_section: §17.2
+- id: CAND-DATGOV-006
+  name: 130~136 DDD聚合根与生命周期
+  aliases:
+  - 聚合根与生命周期
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: P2✅：聚合根(MarketData/Instrument)生命周期管理+仓储接口+值对象(Bar/OHLCV/FinancialReport)+恢复演练验证+跨域保留归档策略协调+仿真回测数据生命周期+风控审计数据归档
+  proposal: '深挖裁定=做(P2)。业界对标: DDD聚合根/仓储模式；数据保留策略(retention)治理。场内现状: 部分：src/zephyr/ex_core/aggregate_root_manager.py。最小施工形态:
+    MarketData/Instrument轻量聚合(值对象Bar/OHLCV/FinancialReport为dataclass)+仓储接口对齐现有ch_reader/pit_query+跨域保留归档策略协调表(TTL/归档目标/演练频次登记)+年度恢复演练，不建完整DDD分层。依赖前置:
+    D_DATA_GOV;D_DATA;D_INFRA_RECOVERY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/ex_core/aggregate_root_manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/market_data_aggregates.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA
+  original_id: B1-00648
+  source_section: §1 子模块清单
+- id: CAND-DATGOV-007
+  name: M8-S07 变更检测器
+  aliases:
+  - 变更
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；血缘变更检测与影响分析
+  proposal: '深挖裁定=做(P2)。业界对标: DataHub impact analysis。场内现状: 无。最小施工形态: 血缘图快照diff：新增/删除边检测+下游影响集合计算+变更报告；接入gov_drift检测器注册表统一调度。依赖前置:
+    D_DATA_GOV;D_GOV_DRIFT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/lineage_change_detector.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02319
+  source_section: §30.4.3
+- id: CAND-DATGOV-008
+  name: M8-NEW-01 OpenLineage集成
+  aliases:
+  - M8-NEW-01 OpenLineage集成
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；OpenLineage标准血缘集成
+  proposal: '深挖裁定=做(P2)。业界对标: OpenLineage+Marquez是业界血缘标准，单机以SQLite/JSONL对齐其事件模型即可。场内现状: 部分:src/zephyr/data_governance/core/lineage_tracker.py(stable);src/zephyr/autonomy_core/skills/skill_lineage.py。最小施工形态:
+    lineage_tracker事件模型对齐OpenLineage规范并导出JSONL。依赖前置: 无。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data_governance/core/lineage_tracker.py(stable);src/zephyr/autonomy_core/skills/skill_lineage.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/openlineage_exporter.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: M8-NEW-01
+  original_id: B10-02320
+  source_section: §30.4.3
+- id: CAND-DATGOV-009
+  name: M8-NEW-02 列级血缘
+  aliases:
+  - 列级血缘
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；列级粒度血缘追踪
+  proposal: '深挖裁定=做(P2)。业界对标: OpenLineage column-level facets。场内现状: 无。最小施工形态: 血缘边模型扩展column映射字段（source_col→target_col)，由M8-S02静态分析器填充；查询接口支持列级上下游。依赖前置:
+    D_DATA_GOV。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/column_lineage_tracker.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02321
+  source_section: §30.4.3
+- id: CAND-DATGOV-010
+  name: M8-NEW-05 AI-ML血缘
+  aliases: []
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；AI/ML管线血缘追踪
+  proposal: '深挖裁定=做(P2)。业界对标: mlflow lineage;DataHub ML管线血缘。场内现状: 部分：src/zephyr/ml_train/training_dataset_manager/manager.py。最小施工形态:
+    串接训练数据集版本→特征版本→模型版本→线上预测血缘边，复用experiment_tracking适配器落边入lineage_tracker。依赖前置: D_DATA_GOV;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/ml_train/training_dataset_manager/manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/ml_lineage_tracker.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02324
+  source_section: §30.4.3
+- id: CAND-DATGOV-011
+  name: M8-NEW-07 自动发现
+  aliases:
+  - 自动发现
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅P0；数据资产自动发现与注册
+  proposal: '深挖裁定=做(P2)。业界对标: DataHub ingestion自动发现框架。场内现状: 部分：src/zephyr/infrastructure/asset_inventory/。最小施工形态:
+    扫描ClickHouse表/因子注册表/信号注册表自动生成数据资产卡片入metadata_registry；定时增量更新。依赖前置: D_DATA_GOV;D_INFRA_OPS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/asset_inventory/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_governance/asset_auto_discovery.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02326
+  source_section: §30.4.3
+- id: CAND-DATGOV-012
+  name: M8-S07 血缘变更检测器
+  aliases:
+  - 血缘变更
+  domain: D_DATA_GOV
+  domain_status: active
+  sub_layer: src/zephyr/data_governance/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: OpenLineage/Marquez数据血缘+变更diff。场内现状: 部分:src/zephyr/data_governance/core/lineage_tracker.py（血缘追踪有，变更检测缺）。最小施工形态:
+    血缘变更检测：血缘图周期快照+diff(新增/删除/改向边)+变更影响域分析+下游依赖方通知。依赖前置: D_DATA_GOV;D_GOVERNANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data_governance/core/lineage_tracker.py（血缘追踪有，变更检测缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'data_governance/lineage_change_detector.py（MOD-DATA_GOV-010）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W02）——与 CAND-DATGOV-007 同为 M8-S07 血缘变更检测器（快照diff+影响分析+下游通知语义完全重合），REVIREW 归并 canonical=CAND-DATGOV-007→MOD-DATA_GOV-010 lineage_change_detector"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04648
+  source_section: §8.3.3
+- id: CAND-DATSEC-001
+  name: AI脱敏管道
+  aliases:
+  - 脱敏管道
+  domain: D_DATA_SEC
+  domain_status: active
+  sub_layer: src/zephyr/data_security/
+  problem: 原始数据→分类识别→脱敏处理→审计记录;L4禁发仅统计摘要/L3金额标的泛化("大额/标的A")/L2允许因子定义+回测统计禁发原始因子值序列/L1无要求;每次LLM调用记录脱敏前后对比
+  proposal: '深挖裁定=做(P2)。业界对标: Microsoft Presidio分级脱敏；LLM输出过滤(Guardrails)。场内现状: 部分：src/zephyr/gov_audit/privacy.py。最小施工形态:
+    分级脱敏管道：L4禁发仅统计摘要/L3金额标的泛化/L2因子定义+统计禁发原值序列/L1无要求，每次LLM调用记录脱敏前后对比入审计链，与B13-04295共用策略表。依赖前置: D_DATA_SEC;D_SECURITY_LLM;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/gov_audit/privacy.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_security/ai_masking_pipeline.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04183
+  source_section: §14.4
+- id: CAND-DATSEC-002
+  name: D-SECURITY-01 Data Access Auditor
+  aliases:
+  - D-SECURITY-01 Data Access Auditor
+  domain: D_DATA_SEC
+  domain_status: active
+  sub_layer: src/zephyr/data_security/
+  problem: 数据访问审计器(细粒度访问日志+查询模式分析+异常访问检测+敏感数据追踪);✅能建;📐MOD-INF-020已建设(部分)
+  proposal: '深挖裁定=做(P2)。业界对标: 访问审计日志+UEBA异常访问检测；OpenMetadata访问审计。场内现状: 部分：src/zephyr/security/access_control/。最小施工形态:
+    数据访问审计：CH/SQLite/Parquet访问日志统一采集+查询模式基线+异常访问(非常用表/大批量导出)检测+敏感数据访问追踪，写gov_audit链。依赖前置: D_DATA_SEC;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/security/access_control/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_security/data_access_auditor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04294
+  source_section: §17.8
+- id: CAND-DATSEC-003
+  name: D-SECURITY-02 Data Masking Engine
+  aliases:
+  - D-SECURITY-02 Data Masking Engine
+  domain: D_DATA_SEC
+  domain_status: active
+  sub_layer: src/zephyr/data_security/
+  problem: 数据脱敏引擎(静态/动态脱敏+格式保留加密FPE+差分隐私噪声注入);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Microsoft Presidio(静态/动态脱敏)+FPE(ff3)+diffprivlib差分隐私。场内现状: 部分：src/zephyr/gov_audit/privacy.py。最小施工形态:
+    脱敏引擎：格式保留加密(身份证/账号)+动态脱敏(按查询角色)+差分隐私噪声(统计输出ε可配)，与B13-04183 AI脱敏管道共用策略表。依赖前置: D_DATA_SEC;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/gov_audit/privacy.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/data_security/data_masking_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04295
+  source_section: §17.8
+- id: CAND-DIGITALT-001
+  name: §29.23 数字孪生市场仿真（v5.1新增）
+  aliases:
+  - 数字孪生市场仿真
+  domain: D_DIGITAL_TWIN
+  domain_status: active
+  sub_layer: src/zephyr/digital_twin/
+  problem: '"向前看"验证vs C-003"向后看"；TwinMarket（ICLR 2025 Workshop最佳论文+NeurIPS 2025）：LLM多智能体BDI认知模型（信念→愿望→意图）+订单驱动撮合（限价/市价/集合竞价）+动态社交网络（羊群/信息级联/情绪传染），复现波动率聚集/肥尾/交易量自相关；4应用场景（A策略上线前前瞻性压力测试"2026可能发生的股灾"/B市场状态切换事前推演为C-005提供情景模拟器/C多策略交互效应检测/D
+    C-038黑天鹅模式生成器从被动等到主动发现）；QuantAgents（EMNLP 2025 Findings四智能体：模拟交易分析师+风控+新闻+经理，双重奖励+多轮会议）；3 Phase（规则ABM纯CPU盘后→LLM增强Qwen2.5-7B
+    GPU~8GB→与C-003/C-038/C-040集成）；约束4条（不可替代C-003历史回测/标simulated=True/不可用于实盘决策仅验证压测/LLM行为写入加密审计链§20.14决策三）'
+  proposal: '深挖裁定=做(P2)。业界对标: ABIDES多智能体市场仿真；TwinMarket(ICLR/NeurIPS 2025)。场内现状: 部分：src/zephyr/digital_twin/。最小施工形态:
+    Phase1规则ABM纯CPU盘后（复现波动率聚集/肥尾/量自相关）→Phase2 Qwen2.5-7B增强（GPU约8GB)→Phase3与C-003/C-038/C-040集成；输出标simulated=True仅用于验证压测不可实盘，行为写入加密审计链。依赖前置:
+    D_DIGITAL_TWIN;D_SIMULATION;D_BACKTEST。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/digital_twin/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/digital_twin/market_twin_simulator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01864
+  source_section: §29.23
+- id: CAND-EXSIM-001
+  name: 模拟器关联-R-118 Liquidity & Slippage Simulator
+  aliases:
+  - 模拟器关联-R-118 Liquidity & Slippage Simulator
+  domain: D_EXEC_SIM
+  domain_status: active
+  sub_layer: src/zephyr/execution_simulation/
+  problem: Almgren-Chriss市场冲击模型+滑点模拟；为EX-CORE-12/14提供模拟执行环境
+  proposal: '深挖裁定=做(P2)。业界对标: Almgren-Chriss市场冲击模型（临时/永久冲击分解）。场内现状: 部分:src/zephyr/simulation/volume_aware_impact.py。最小施工形态:
+    Almgren-Chriss冲击建模：临时冲击+永久冲击参数化模型与冲击衰减曲线，基于免费分钟成交额做参数估计，sqrt冲击作默认档复用volume_aware_impact，为执行仿真与回测提供冲击成本真源。依赖前置:
+    D_EXEC_SIM;D_EX_SOR;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/simulation/volume_aware_impact.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/execution_simulation/almgren_chriss_impact_model.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-EX-CORE
+  original_id: B3-06286
+  source_section: §10
+- id: CAND-EX-007
+  name: D-TRADING-05 Pre-Market Checker盘前检查器
+  aliases:
+  - D-TRADING-05 Pre-Market Checker盘前检查器
+  domain: D_EX_CORE
+  domain_status: active
+  sub_layer: src/zephyr/ex_core/
+  problem: ✅能建；限额检查/合规预检/数据完整性/系统就绪
+  proposal: '深挖裁定=做(P0)。业界对标: 盘前检查=限额/数据完整性/系统就绪，机构OMS与vnpy RiskManager标配。场内现状: 部分:src/zephyr/ex_core/pre_execution_checker.py(设计态);src/zephyr/plan_engine/premarket_constraint_loader.py。最小施工形态:
+    完成pre_execution_checker实现并接入boot_hooks，覆盖限额/合规预检/数据完整性/系统就绪。依赖前置: risk_limits(已有);data quality_gate(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/pre_execution_checker.py(设计态);src/zephyr/plan_engine/premarket_constraint_loader.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ex_core/premarket_checker.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-TRADING-05
+  original_id: B10-02209
+  source_section: §30.2.5
+- id: CAND-EX-008
+  name: 执行策略选择器（v8.0）
+  aliases:
+  - 执行策略选择器
+  domain: D_EX_CORE
+  domain_status: active
+  sub_layer: src/zephyr/ex_core/
+  problem: TWAP/VWAP/IS/POV按流动性/紧迫度自动选
+  proposal: '深挖裁定=做(P1)。业界对标: TWAP/VWAP/IS/POV按流动性/紧迫度自动选择是执行算法标配(Lean/vnpy均有)。场内现状: 部分:src/zephyr/ex_core/execution_strategy_selector.py(设计态)。最小施工形态:
+    完成execution_strategy_selector：流动性/紧迫度→TWAP/VWAP/POV映射。依赖前置: order_splitter(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/execution_strategy_selector.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ex_core/execution_strategy_selector.py（MOD-EX-062 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W12）——canonical=MOD-EX-062（production/stable，TSV 设计态注记过期）；POV/紧迫度面被门禁降级不变量显式排除，扩面须另起裁定"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01219
+  source_section: §1.1
+- id: CAND-EX-009
+  name: 执行质量分析（C-046 TCA）
+  aliases:
+  - 执行质量分析
+  domain: D_EX_CORE
+  domain_status: active
+  sub_layer: src/zephyr/ex_core/
+  problem: 交易成本分析
+  proposal: '深挖裁定=做(P1)。业界对标: TCA=滑点/冲击成本归因，pyfolio/alphalens式分析链。场内现状: 部分:src/zephyr/ex_core/execution_tca.py(设计态)。最小施工形态:
+    完成execution_tca：成交vs基准价滑点/冲击成本报告。依赖前置: settlement_reconciliation(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/execution_tca.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'reporting/default_tca_engine.py（MOD-L07-001 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（TCA 四桶+多基准）"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W13）——canonical=MOD-L07-001（production，滑点+IS 四桶含冲击成本+多基准）+MOD-L06-001（ex_core 侧滑点产出）功能全等；execution_tca.py 不存在（TSV 注记过期）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01221
+  source_section: §1.1
+- id: CAND-EX-010
+  name: C-026 执行运营自优化
+  aliases:
+  - 执行运营自优化
+  domain: D_EX_CORE
+  domain_status: active
+  sub_layer: src/zephyr/ex_core/
+  problem: 下单算法+风控阈值+熔断恢复+竞价策略+运营规则自优化 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: optuna/freqtrade hyperopt参数自优化。场内现状: 部分:src/zephyr/ex_core/performance_monitor.py。最小施工形态:
+    周期任务读取TCA与成交质量，optuna搜索下单算法参数与运营规则，人工确认后生效(不自动改风控硬阈值)。依赖前置: src/zephyr/reporting/default_tca_engine.py；src/zephyr/ex_core/performance_monitor.py；optuna。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/performance_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ex_core/execution_param_optimizer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00218
+  source_section: §功能域模块·D-EXECUTION
+- id: CAND-EX-011
+  name: 执行运营自优化（C-026）
+  aliases:
+  - 执行运营自优化
+  domain: D_EX_CORE
+  domain_status: active
+  sub_layer: src/zephyr/ex_core/
+  problem: 执行运营参数自优化
+  proposal: '深挖裁定=做(P2)。业界对标: 执行参数自优化=optuna轻量调参闭环。场内现状: 部分:src/zephyr/trading/resource_optimization.py。最小施工形态:
+    执行参数(拆单/等待)optuna自优化，以TCA反馈为目标函数。依赖前置: B10-01221。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/resource_optimization.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ex_core/execution_param_optimizer.py（MOD-EX-064）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：EX-010 已 promoted 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 CAND-EX-010 同为 C-026 执行运营自优化（B10/B1 两稿重登），canonical=CAND-EX-010→MOD-EX-064（optuna+TCA 目标+人工确认含其拆单/等待参数语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01222
+  source_section: §1.1
+- id: CAND-SOR-001
+  name: 路由Agent（SOR）
+  aliases:
+  - 路由Agent（SOR）
+  domain: D_EX_SOR
+  domain_status: active
+  sub_layer: src/zephyr/ex_sor/
+  problem: 智能路由、拆单策略、滑点控制；Level 0；C-026/C-046；D-EX-SOR；无LLM纯规则
+  proposal: '深挖裁定=做(P1)。业界对标: 券商算法交易SOR智能路由(纯规则零LLM低延迟)。场内现状: 部分：src/zephyr/ex_core/order_splitter.py。最小施工形态:
+    SOR Agent：Level 0纯规则(禁LLM调用写入门控)；技能=智能路由(通道选择/盘口流动性评估)+拆单策略(复用order_splitter：冰山/TWAP/量比拆单)；滑点实际vs预估回写反馈循环；所有决策可回放。依赖前置:
+    D_EX_SOR;D_EX_CORE;D_FEEDBACK_LOOP。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/ex_core/order_splitter.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ex_sor/core/sor_agent.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02491
+  source_section: §1.4
+- id: CAND-FAC-006
+  name: D-SIGNAL-77 因子可用性监控器
+  aliases:
+  - 因子可用性
+  - D-SIGNAL-77 因子可用性监控器
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 因子覆盖率+缺失比例(缺失>50%→is_degraded)+三级阈值(80%/50%/20%)+缺失告警;✅能建,合并D-SIGNAL-77/93
+  proposal: '深挖裁定=做(P0)。业界对标: Great Expectations覆盖率/缺失率阈值门控。场内现状: 无。最小施工形态: 因子可用性监控：覆盖率+缺失比例逐日计算，三级阈值触发is_degraded+缺失告警(复用B13-04267路由)，降级状态写FactorSignal元数据供下游降权，合并D-SIGNAL-77/93。依赖前置:
+    D_FACTOR;D_DATA_ENG;D_SIGQC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/factor_availability_monitor.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04305
+  source_section: §17.12
+- id: CAND-FAC-007
+  name: D-SIGNAL-77 因子可用性监控器（合并定义）
+  aliases:
+  - 因子可用性
+  - D-SIGNAL-77 因子可用性监控器（合并定义）
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: ✅能建：合并D-SIGNAL-77因子覆盖率计算器和D-SIGNAL-93因子缺失比例计算器(覆盖率=1-缺失率)；三级阈值80%/50%/20%；在Feature Registry中增加coverage_check()，统计ONLINE状态因子占比
+  proposal: '深挖裁定=做(P0)。业界对标: 因子覆盖率质量门控（三级阈值告警）。场内现状: 无。最小施工形态: 因子可用性监控器：合并覆盖率/缺失率定义（覆盖率=1-缺失率），统计注册因子ONLINE状态占比，三级阈值80%/50%/20%分级告警，低于20%阻断信号合成，复用factor_monitor_report契约与数据告警路由。依赖前置:
+    D_FACTOR;D_SIGQC;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'factor/factor_availability_monitor.py（production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（80-50-20 三级阈值并入）"
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  review_note: "# REVIEW: 重复定义已合并 canonical=CAND-FAC-006（src/zephyr/factor/factor_availability_monitor.py，覆盖率=1-缺失率合并口径/ONLINE 占比/80-50-20 三级阈值/<20% 阻断已并入），禁止建两份（2026-08-25，W1b）"
+  source_draft: D-SIGNAL
+  original_id: B2-05116
+  source_section: §1.1
+- id: CAND-FAC-008
+  name: C-027 因子工厂
+  aliases:
+  - 因子工厂
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 因子9阶段全生命周期+FactorMAD投票因子挖掘 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: qlib因子库/Alpha158;gplearn因子挖掘。场内现状: 无。最小施工形态: FactorFactory:9阶段(假设/生成/验证/入库/监控/迭代/退役)状态机+注册表+FactorMAD多Agent投票挖掘,产出必经C-003回测门禁与IC/因果双重验证。依赖前置:
+    D_FACTOR;D_BACKTEST;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/factor_factory.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00143
+  source_section: §功能域模块·D-FACTOR
+- id: CAND-FAC-009
+  name: C-009 因子与信号生产管线
+  aliases:
+  - 因子与信号生产管线
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 盘前全量+盘中增量双模计算，7000+标的×N_max-4因子 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: qlib工作流;feast特征存储。场内现状: 部分:src/zephyr/factor/feature_store_writer.py。最小施工形态:
+    双模管线:盘前全量批算(多进程)+盘中增量(事件驱动),因子值落feature_store并广播,算力预算与超时降级,7000+标的×N_max-4因子容量规划。依赖前置: D_FACTOR;D_ASHARE_SIGNAL;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/factor/feature_store_writer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/factor_production_pipeline.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00144
+  source_section: §功能域模块·D-FACTOR
+- id: CAND-FAC-010
+  name: 92 87-Alpha
+  aliases:
+  - 92 87-Alpha
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: FAC-ASHARE，⛔受限(GATE-92-01)
+  proposal: '深挖裁定=做(P1)。业界对标: WorldQuant 101 Alphas公式库/GTJA 191因子（开源alpha191实现）。场内现状: 无。最小施工形态: 87个Alpha公式库：ts算子集（rank/delay/delta/correlation/decay_linear/ts_sum等）+87公式逐个实现+PIT合规+逐个IC/IR验证（复用ic_ir_calc)+入因子注册与feature_store。依赖前置:
+    D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/wq_alpha_87.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-FACTOR
+  original_id: B1-00847
+  source_section: §1.2 子模块
+- id: CAND-FAC-011
+  name: UFL确定性事实层（v8.1）
+  aliases:
+  - 确定性事实
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: Feature Store子集，is_deterministic=True（§29.24）
+  proposal: '深挖裁定=做(P1)。业界对标: feast特征库以标记/视图管理特征子集，确定性事实层=加is_deterministic标记。场内现状: 部分:src/zephyr/factor/feature_store_writer.py(stable/production)。最小施工形态:
+    feature_store加is_deterministic标记+确定性查询视图。依赖前置: feature_store_writer(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/factor/feature_store_writer.py(stable/production)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/ufl_deterministic_layer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01176
+  source_section: §1.1
+- id: CAND-FAC-012
+  name: 因果因子验证层（v8.0）
+  aliases:
+  - 因果因子验证
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: DoWhy/DML区分相关vs因果→因果因子加权提升；消费L2-D预计算因果图（盘前）
+  proposal: '深挖裁定=做(P1)。业界对标: DoWhy+EconML(DML)区分相关与因果是业界标准组合。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_factor_validator.py(设计态)。最小施工形态:
+    完成causal_factor_validator：DoWhy/DML筛因果因子→加权入因子库。依赖前置: causal_inference_engine(部分，见B10-01198)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_factor_validator.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'causal_factor_validator.py + causal_inference_engine.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（重模型线 25号 BM-SEL-02-M 裁定远期）"
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W07）——causal_factor_validator（MOD-SIG-054 production）+causal_inference_engine（MOD-SIG-042 production）已覆盖筛因果→加权入库；DoWhy/DML 被 25 号 memo BM-SEL-02-M 裁定远期 Phase 4"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01178
+  source_section: §1.1
+- id: CAND-FAC-013
+  name: 模块48 动态信号权重模型（Bayesian Model Averaging）
+  aliases:
+  - 模块48 动态信号权重模型（Bayesian Model Averaging）
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 信号预测力评估(IC>0.03有效/ICIR>0.5稳定/IC衰减>50%权重降0/体制条件IC)；动态权重(BMA w_i∝P(Data\
+  proposal: '深挖裁定=做(P1)。业界对标: Hoeting 1999 BMA；Rapach&Zhou 2013预测组合；Man Group实践。场内现状: 部分:src/zephyr/signal_ashare/strength_ic_weight_calibrator.py。最小施工形态:
+    1个模块 src/zephyr/factor/analysis/bma_signal_weighter.py，核心类BmaSignalWeighter，输入各信号IC/ICIR/IC衰减/体制条件IC，输出BMA动态权重(平滑α=0.9)+一致性置信度(低+低=不操作)。依赖前置:
+    D_FACTOR(ic_ir_calc/ic_decay);D_REGIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/strength_ic_weight_calibrator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/analysis/bma_signal_weighter.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01481
+  source_section: §9模块48
+- id: CAND-FAC-014
+  name: 工厂三兄弟
+  aliases:
+  - 工厂三兄弟
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: C-027因子工厂→C-028信号工厂→C-006策略工厂；定义与C-029角色区分详见§1.8
+  proposal: '深挖裁定=做(P1)。业界对标: qlib工作流/模型管理工厂范式；vnpy策略模板工厂。场内现状: 无。最小施工形态: 定义FactorFactory/SignalFactory/StrategyFactory三基类：统一create/register/版本管理/门禁挂接，分别承接C-027/C-028/C-006，与C-029角色区分写入契约文档。依赖前置:
+    D_FACTOR;D_ASHARE_SIGNAL;D_PF_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'factor_factory.py + signal_factory.py + strategy_factory.py（MOD-PF-009）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（统一基类=重抽象重复）"
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W07）——spec 即三工厂总称：factor_factory（C-027）/signal_factory（C-028）已建，StrategyFactory（C-006）归后续波；新建基类=重抽象重复"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01801
+  source_section: §28
+- id: CAND-FAC-015
+  name: 离线存储Offline Store
+  aliases:
+  - 离线存储Offline Store
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: Parquet按日/月分区(daily+intraday+snapshots三目录);7列Schema(trade_date/symbol/factor_name/value/version/computed_at/quality_flag);延迟~100ms;ML训练/回测/因子评估/PIT验证
+  proposal: '深挖裁定=做(P1)。业界对标: feast(feature store)+Parquet/DuckDB离线仓；pyarrow分区。场内现状: 部分：src/zephyr/factor/feature_store_writer.py。最小施工形态:
+    建Parquet离线仓：按日/月分区三目录，7列Schema(trade_date/symbol/factor_name/value/version/computed_at/quality_flag)，DuckDB读取API供ML训练/回测/因子评估/PIT验证，与CH写入器的单写/双写归属写成裁定。依赖前置:
+    D_FACTOR;D_BACKTEST;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/factor/feature_store_writer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/offline_store.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04144
+  source_section: §11.1.1
+- id: CAND-FAC-016
+  name: 74 AI Auto Feature Discoverer
+  aliases:
+  - 74 AI Auto Feature Discoverer
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: P1✅：AI自动特征发现+特征评估+特征选择
+  proposal: '深挖裁定=做(P2)。业界对标: tsfresh/Featuretools DFS自动特征工程+IC筛选；qlib Alpha158模板库。场内现状: 部分：src/zephyr/factor/factor_base.py。最小施工形态:
+    价量变换算子模板库(窗口/差分/比率/统计量笛卡尔组合)+批量生成候选+IC/IR/相关性初筛+TopN候选清单输出，人工确认后入因子DAG不自动上架。依赖前置: D_FACTOR;D_ML_TRAIN;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/factor/factor_base.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/research/auto_feature_discoverer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA
+  original_id: B1-00630
+  source_section: §1 子模块清单
+- id: CAND-FAC-017
+  name: R&D-Agent-Quant联合优化（v8.2）
+  aliases:
+  - R&D-Agent-Quant联合优化（v8.2）
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 第15维度，因子↔模型双向评估（§29.14新增3.6）
+  proposal: '深挖裁定=做(P2)。业界对标: 微软RD-Agent开源框架同款理念(因子↔模型协同进化)。场内现状: 部分:src/zephyr/research/factor_mining_pipeline.py。最小施工形态:
+    1个模块 src/zephyr/research/factor_model_coevolution.py，核心类FactorModelCoEvaluator，输入因子IC序列+模型样本外表现，输出双向评估报告与淘汰/迭代建议。依赖前置:
+    D_FACTOR;D_ML_TRAIN;B10-01845。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/factor_mining_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/research/factor_model_co_evaluator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01230
+  source_section: §1.1
+- id: CAND-FAC-018
+  name: §29.8 签名方法（Signature Methods/Rough Path Theory）
+  aliases:
+  - §29.8 签名方法（Signature Methods/Rough Path Theory）
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 路径迭代积分生成唯一层次特征张量，区分"先涨再跌"vs"先跌再涨"；4应用：①替代/增强§3.5手工特征工程（1阶=增量/2阶=两变量交互/3阶=三变量交互，劣势维度爆炸需截断）②路径→收益密度预测（Log-signature→MLP/MDN)③极端事件检测（签名偏离正常空间→黑天鹅前兆，与C-038离散模式匹配互补）④回测加速（签名提取~1ms+线性推理~0.01ms)；截断2-4阶（4阶d=3时120维）；signatory/iisignature/esig
+  proposal: '深挖裁定=做(P2)。业界对标: signatory/iisignature/esig成熟开源库。场内现状: 无。最小施工形态: 1个模块 src/zephyr/factor/analysis/signature_features.py，核心类SignatureFeatureExtractor，输入多变量路径，输出截断2-4阶log-signature特征向量(维度受控)。依赖前置:
+    D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/factor/signature_feature_extractor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01834
+  source_section: §29.8
+- id: CAND-FAC-019
+  name: §29.14 自动策略发现（Automated Strategy Discovery）
+  aliases:
+  - §29.14 自动策略发现（Automated Strategy Discovery）
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: ①遗传规划GP（因子+算术+条件运算进化信号公式，适应度IC/Sharpe/方向准确率，输出可解释公式；gplearn/DEAP）②符号回归SR（同时搜索公式结构+参数发现非线性关系；PySR
+    GPU加速）③安全约束（须过C-003完整验证Purged K-Fold+Walk-Forward+Permutation Test/模拟盘≥1周/归属§20.1策略类型目录/公式长度≤20token防过拟合/不可自动上线需人工审批B-007）；与C-006关系=上游供应商非替代
+  proposal: '深挖裁定=做(P2)。业界对标: gplearn/DEAP(GP)+PySR(符号回归GPU加速)开源成熟。场内现状: 部分:src/zephyr/research/factor_mining_pipeline.py。最小施工形态:
+    1个模块 src/zephyr/research/gp_strategy_discovery.py，核心类GpStrategyDiscoverer，输入因子库+算术/条件算子，以适应度IC/Sharpe进化输出可解释信号公式；强制过Purged
+    K-Fold+Walk-Forward+Permutation Test且人工审批后方可入库。依赖前置: D_FACTOR;D_BACKTEST。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/factor_mining_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/research/gp_strategy_discovery.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01844
+  source_section: §29.14
+- id: CAND-FAC-020
+  name: §29.14-3.5 多智能体辩论因子挖掘（FactorMAD，ICAIF 2025）
+  aliases:
+  - §29.14-3.5 多智能体辩论因子挖掘（FactorMAD，ICAIF 2025）
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 清华+Microsoft；生成Agent+挑战Agent多轮结构化辩论收敛鲁棒因子（语义空间优化vs GP/SR公式空间搜索）；⚠️NeurIPS 2025 spotlight"Debate
+    or Vote"发现多数投票贡献MAD大部分增益辩论本身不显著提升→先实现3-5 Agent投票性能不足再升级辩论；技术：本地Qwen-7B INT4生成+DeepSeek V4 Flash挑战；辩论因子须过IC验证+样本外测试
+  proposal: '深挖裁定=做(P2)。业界对标: 清华+微软ICAIF 2025；NeurIPS 2025 spotlight：先投票(3-5 Agent)性能不足再升级辩论。场内现状: 部分:src/zephyr/research/factor_mining_pipeline.py。最小施工形态:
+    1个模块 src/zephyr/research/factor_vote_mining.py，核心类FactorVoteMiner，3-5个本地Qwen-7B INT4生成Agent独立产出因子→多数投票选优(<1分钟/因子)，输出候选因子须过IC验证+样本外测试。依赖前置:
+    D_INTELLIGENCE(LLM设施);D_FACTOR;B10-01844。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/factor_mining_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/research/factor_vote_mining.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01845
+  source_section: §29.14
+- id: CAND-FAC-021
+  name: §29.32 LLM进化式策略搜索（v6.0新增）
+  aliases:
+  - 进化式策略搜索
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: LLM作变异算子（理解策略语义后生成有意义变体vs GP随机交叉/变异）；①MadEvolve（arXiv 2605.23007，UW-Madison+Event Horizon，AlphaEvolve范式首应用于量化交易：种群管理精英保留+多样性注入→LLM变异三角色Exploit低温度保守"让策略好5%"/Explore高温度TOP-5池随机变异/Crossover-Genesis合并父代或每5代从零生成→回测评估→适应度排序；关键发现：联合进化特征+策略优于分步/p-hacking概率须严格评估/LLM语义变异>GP随机交叉）②QuantaAlpha（arXiv
+    2602.07085v3，SUFE+PKU：质量多样性QD特征图4维度策略类型/风险特征/换手率/收益特征维持多样化策略集合+假设驱动LLM生成因子假设→可控构造→评估→自进化；CSI300/CSI500验证进化因子池优于静态池）③3集成点（§29.14
+    GP变异算子替换为LLM变异/C-027因子工厂LLM假设驱动因子挖掘/§29.21学习系统LLM进化作知识注入加速器）④安全约束5条（须C-003三重门禁/p-hacking概率须评估用MadEvolve第7节方法/不可自动上线B-007/进化种群≤20防API成本失控对齐约束三QPS=20/仅盘后运行不占盘中资源）
+  proposal: '深挖裁定=做(P2)。业界对标: AlphaEvolve/OpenEvolve;gplearn(GP基线）;MadEvolve/QuantaAlpha。场内现状: 无。最小施工形态:
+    LLM变异三角色（Exploit/Explore/Crossover-Genesis)+种群≤20+仅盘后运行不占盘中；进化输出必经C-003三重门禁+p-hacking概率评估（MadEvolve第7节方法）+人工裁决，严禁全自动上线以对齐30号文§5。依赖前置:
+    D_FACTOR;D_AUTONOMY_CORE;D_BACKTEST。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/research/llm_evolutionary_search.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01877
+  source_section: §29.32
+- id: CAND-FAC-022
+  name: D-RESEARCH-17 Strategy Iteration Upgrader策略迭代升级
+  aliases:
+  - D-RESEARCH-17 Strategy Iteration Upgrader策略迭代升级
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: ✅能建；基于归因的权重调整+新因子挖掘+策略迭代
+  proposal: '深挖裁定=做(P2)。业界对标: 归因驱动迭代=alphalens归因+因子挖掘(qlib/gplearn)。场内现状: 部分:src/zephyr/research/evidence/iteration_guide.py;src/zephyr/research/factor_mining_pipeline.py。最小施工形态:
+    归因→权重调整建议+新因子候选生成，产物入hypothesis_registry。依赖前置: B10-02219(已有);factor_mining_pipeline(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/evidence/iteration_guide.py;src/zephyr/research/factor_mining_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/research/strategy_iteration_upgrader.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH-17
+  original_id: B10-02221
+  source_section: §30.2.6
+- id: CAND-FAC-023
+  name: 统一技术图形识别引擎
+  aliases:
+  - 统一技术图形识别
+  domain: D_FACTOR
+  domain_status: active
+  sub_layer: src/zephyr/factor/
+  problem: 1个统一引擎替代20+独立图形识别模块；输入OHLCV多时间级别，算法DTW/CNN/Transformer，输出图形类型+置信度+关键点位；归属L1因子层+L2-A信号层
+  proposal: '深挖裁定=做(P2)。业界对标: tslearn DTW形态匹配；CNN/Transformer图形识别研究线。场内现状: 部分：src/zephyr/signal_ashare/chanlun_structure.py。最小施工形态:
+    统一引擎一期：规则+DTW形态库(头肩/三角/旗形)多时间级别扫描+置信度+关键点位输出；CNN/Transformer二期；输出入L1因子/L2-A信号。依赖前置: D_FACTOR;D_ASHARE_SIGNAL;D_MKT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/chanlun_structure.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/unified_pattern_engine.py（MOD-SIG-091）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W05 同族归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 P1 已建 MOD-SIG-091 unified_pattern_engine 同为统一技术图形识别引擎（B13/B1 两稿），canonical=src/zephyr/signal_ashare/strategy_signal/unified_pattern_engine.py（W05 已裁定同族归并）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04082
+  source_section: §3 模块58
+- id: CAND-FBLDETEC-001
+  name: §29.5 特征漂移与概念漂移检测
+  aliases:
+  - 特征漂移与概念漂移检测
+  domain: D_FBL_DETECTORS
+  domain_status: active
+  sub_layer: src/zephyr/feedback_loop/detectors/
+  problem: 漂移检测="事前"预警 vs C-007 IC衰减监控="事后"；三漂移独立检测触发不同响应
+  proposal: '深挖裁定=做(P1)。业界对标: alibi-detect/evidently漂移检测；mlflow模型监控。场内现状: 部分：src/zephyr/feedback_loop/detectors/drift/concept_drift.py。最小施工形态:
+    扩展drift检测器族：feature_drift(PSI/KL/MDD)+concept_drift+label_drift三路独立阈值与差异化响应（降级/重训/告警），与C-007 IC衰减（事后）职责切分写入契约。依赖前置:
+    D_FBL_DETECTORS;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/feedback_loop/detectors/drift/concept_drift.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01824
+  source_section: §29.5
+- id: CAND-FBLVERIF-001
+  name: D-RESEARCH-05 Reproducibility Manager可复现性管理
+  aliases:
+  - D-RESEARCH-05 Reproducibility Manager可复现性管理
+  domain: D_FBL_VERIFICATION
+  domain_status: active
+  sub_layer: src/zephyr/feedback_loop/verifiers/
+  problem: ✅能建；环境快照+依赖锁定+种子管理+结果校验
+  proposal: '深挖裁定=做(P2)。业界对标: mlflow/wandb可复现=环境快照+依赖锁定+种子管理三件套。场内现状: 部分:src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py;src/zephyr/feedback_loop/forensic/deterministic_replay.py。最小施工形态:
+    环境快照+种子登记+结果校验CLI，复用deterministic_replay。依赖前置: experiment_tracking(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py;src/zephyr/feedback_loop/forensic/deterministic_replay.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/reproducibility_manager.py（MOD-ML-020）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-MLT-028（W07 已建）同为 D-RESEARCH-05 可复现性管理（B10/B13/B14 三稿重登），canonical=MOD-ML-020 reproducibility_manager"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH-05
+  original_id: B10-02218
+  source_section: §30.2.6
+- id: CAND-FBL-003
+  name: 持续学习抗遗忘（v6.0）
+  aliases:
+  - 持续学习抗遗忘
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  sub_layer: src/zephyr/feedback_loop/
+  problem: EWC+伪回放（§29.35）
+  proposal: '深挖裁定=做(P2)。业界对标: EWC+伪回放是持续学习标准方案(Avalanche框架同思路)。场内现状: 部分:src/zephyr/feedback_loop/evolution/ewc_kb_review.py。最小施工形态:
+    EWC正则+伪回放样本库挂训练管线。依赖前置: ml_train(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/evolution/ewc_kb_review.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/continual_learning_antiforget.py（MOD-ML-018 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W14）——与 CAND-MLT-025（W07 已建）同为持续学习抗遗忘（B10-01228/01881 两稿），canonical=MOD-ML-018 continual_learning_antiforget（EWC+回放+回滚含其伪回放语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01228
+  source_section: §1.1
+- id: CAND-FBL-004
+  name: Module Matcher(模块匹配器)
+  aliases:
+  - Module Matcher(模块匹配器)
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  sub_layer: src/zephyr/feedback_loop/
+  problem: 提取知识包功能需求→按capability_tags搜索→LLM语义相似度判断→输出EXACT/PARTIAL/NO_MATCH；阈值：>0.85=EXACT、0.5~0.85=PARTIAL
+  proposal: '深挖裁定=做(P2)。业界对标: sentence-transformers语义相似度+阈值路由。场内现状: 无。最小施工形态: capability_tags注册表+embedding相似度计算+EXACT(>0.85)/PARTIAL(0.5~0.85)/NO_MATCH三档判定输出。依赖前置:
+    技能库(B12-03612)/知识库(D-KNOWLEDGE)/LLM网关。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/module_matcher.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A8学习系统架构
+  original_id: B12-03549
+  source_section: §6.1
+- id: CAND-FBL-005
+  name: 技能库(Skill Library,Voyager模式)
+  aliases:
+  - 技能库(Skill Library,Voyager模式)
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  sub_layer: src/zephyr/feedback_loop/
+  problem: 成功模块的代码片段/策略模板/因子公式结构化存储；新任务优先从技能库检索复用加速收敛（v4.0新增）
+  proposal: '深挖裁定=做(P2)。业界对标: Voyager技能库(代码片段向量检索复用)。场内现状: 无。最小施工形态: 技能条目schema(代码片段/策略模板/因子公式)+向量索引+新任务检索复用接口。依赖前置:
+    知识库(B12-03637)/embedding服务。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/skill_library.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A8学习系统架构
+  original_id: B12-03612
+  source_section: §9.1
+- id: CAND-FBL-006
+  name: Meta-Harness元优化器(Strategy Arena 2026)
+  aliases:
+  - Meta-Harness元优化器(Strategy Arena 2026)
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  sub_layer: src/zephyr/feedback_loop/
+  problem: 优化学习系统自身超参数（变异率/匹配阈值/审核策略）：A/B测试→保留更优配置→递归优化；"改进改进能力"而非优化策略本身（v4.0新增）
+  proposal: '深挖裁定=做(P2)。业界对标: Optuna/Vizier式配置搜索+A/B实验框架。场内现状: 无。最小施工形态: 学习超参A/B实验台+优胜配置保留+递归优化护栏(仅调学习参数不动策略)。依赖前置:
+    experiment_tracking/技能库。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/feedback_loop/meta_harness_optimizer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A8学习系统架构
+  original_id: B12-03617
+  source_section: §9.1
+- id: CAND-FE-002
+  name: D-FRONTEND-08 Alert Visualization（告警可视化）
+  aliases:
+  - D-FRONTEND-08 Alert Visualization（告警可视化）
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建，有蓝图MOD-L08-001未建设
+  proposal: '深挖裁定=做(P1)。业界对标: Grafana Alerting+Alertmanager告警分级收敛展示为标配。场内现状: 部分:src/zephyr/frontend/dashboard/app.py（仪表盘骨架与alert_manager后端有，告警中心可视化缺）。最小施工形态:
+    告警中心面板：AL-P1~P4分级实时列表+6维收敛视图(时间/空间/根因/抑制/升级/静默)+MTTR与日均告警统计+确认率/误报率追踪，复用alert_router数据源。依赖前置: D_FRONTEND;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/frontend/dashboard/app.py（仪表盘骨架与alert_manager后端有，告警中心可视化缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/dashboard/components/alert_center.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04625
+  source_section: §8.3.2
+- id: CAND-FE-003
+  name: D-FE-08 AlertVisualization
+  aliases:
+  - D-FE-08 AlertVisualization
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: 告警可视化+告警收敛展示 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Grafana Alerting式告警展示与收敛。场内现状: 部分:src/zephyr/reporting/alert_aggregator.py。最小施工形态:
+    dashboard告警面板:按source/rule聚合收敛,时间线+严重级筛选,告警风暴期折叠为摘要卡,数据源复用alert_aggregator。依赖前置: D_FRONTEND;D_REPORTING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/reporting/alert_aggregator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'frontend/dashboard/components/alert_center.py（MOD-FE-003）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：前端领土归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W11）——与 P1 已建 MOD-FE-003 alert_center 同为 D-FE-08 告警面板（收敛视图+分级列表+筛选语义已在），canonical=src/zephyr/frontend/dashboard/components/alert_center.py；风暴折叠摘要卡属呈现层细节归页面设计批"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00135
+  source_section: §功能域模块·D-FRONTEND
+- id: CAND-FE-004
+  name: D-FE-13 NotificationRouter
+  aliases:
+  - D-FE-13 NotificationRouter
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: 通知路由+微信/飞书推送 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Alertmanager路由;企业微信/飞书webhook。场内现状: 部分:src/zephyr/shared/alerts/alert_senders.py。最小施工形态:
+    通道适配(企业微信/飞书webhook,密钥入secrets管理)+严重级→通道路由表+静默时段+未确认升级,与alert_manager挂接。依赖前置: D_FRONTEND;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/alerts/alert_senders.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/notification_router.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00138
+  source_section: §功能域模块·D-FRONTEND
+- id: CAND-FE-005
+  name: D-FE-15 EndToEndTraceVisualizer
+  aliases:
+  - D-FE-15 EndToEndTraceVisualizer
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: 端到端追踪可视化+调用链展示 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Jaeger/Tempo追踪UI;OpenTelemetry。场内现状: 部分:src/zephyr/shared/observability/tracing.py。最小施工形态:
+    前端trace查询页:trace_id检索+span瀑布图+跨模块耗时标注,数据源自本地OTLP导出文件,只读展示不改追踪链路。依赖前置: D_FRONTEND;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/observability/tracing.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'frontend/trace_waterfall_view.py（MOD-FE-009）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：前端领土归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W11）——与 CAND-FE-010 同为端到端追踪可视化（B1/B14 两稿重登），canonical=CAND-FE-010→MOD-FE-009（四视图+Redis聚合+慢链路高亮含其 trace 检索/瀑布图语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00139
+  source_section: §功能域模块·D-FRONTEND
+- id: CAND-FE-006
+  name: M5-S07 图可视化渲染器
+  aliases:
+  - 图可视化渲染器
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建；依赖图渲染+布局+交互
+  proposal: '深挖裁定=做(P2)。业界对标: Graphviz/D3.js/Cytoscape.js依赖图渲染。场内现状: 部分：src/zephyr/governance/persistence/depgraph_reader.py。最小施工形态:
+    依赖图DAG渲染：dagre布局+节点状态着色+点击钻取详情；数据源复用depgraph_reader。依赖前置: D_FRONTEND;D_GOVERNANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/governance/persistence/depgraph_reader.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/graph_view_renderer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02408
+  source_section: §30.6.4
+- id: CAND-FE-007
+  name: M6-S07 映射可视化器
+  aliases:
+  - 映射可视化器
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建；业务域↔技术模块映射可视化
+  proposal: '深挖裁定=做(P2)。业界对标: D3.js矩阵图/桑基图。场内现状: 无。最小施工形态: 业务域×DB域映射矩阵/桑基图视图，数据源取architecture_model/index.yaml与db_nodes快照。依赖前置:
+    D_FRONTEND;D_GOVERNANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/domain_mapping_view.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02409
+  source_section: §30.6.4
+- id: CAND-FE-008
+  name: M7-S06 流可视化器
+  aliases:
+  - 流可视化器
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建；价值流端到端依赖可视化
+  proposal: '深挖裁定=做(P2)。业界对标: D3.js流程图；bpmn-js泳道。场内现状: 无。最小施工形态: 价值流（数据→因子→信号→执行→组合）端到端泳道视图+依赖高亮；与M5/M6共用渲染底座。依赖前置:
+    D_FRONTEND。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/value_stream_view.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02410
+  source_section: §30.6.4
+- id: CAND-FE-009
+  name: M8-S08 血缘可视化器
+  aliases:
+  - 血缘可视化器
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建；数据血缘DAG可视化
+  proposal: '深挖裁定=做(P2)。业界对标: Marquez/OpenLineage血缘DAG UI。场内现状: 无。最小施工形态: 血缘DAG渲染（上下游高亮/变更影响范围着色），数据源lineage_tracker；与M5-S07共用渲染底座。依赖前置:
+    D_FRONTEND;D_DATA_GOV。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/lineage_view_renderer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02413
+  source_section: §30.6.4
+- id: CAND-FE-010
+  name: D-FRONTEND-15 End-to-End Trace Visualizer（端到端追踪可视化）
+  aliases:
+  - D-FRONTEND-15 End-to-End Trace Visualizer（端到端追踪可视化）
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建，有蓝图MOD-L08-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: Jaeger/Grafana Tempo端到端追踪瀑布图为标准形态。场内现状: 部分:src/zephyr/infrastructure/system_telemetry/otel_instrumentation.py（OTel采集有，链路渲染缺）。最小施工形态:
+    跨进程Trace瀑布图：交易主链路(Tick→Order)/数据链/AI运维链/GPU推理链四视图，TraceID经Redis trace:{id}聚合，支持采样率配置与慢链路高亮。依赖前置: D_FRONTEND;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/system_telemetry/otel_instrumentation.py（OTel采集有，链路渲染缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/trace_waterfall_view.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04627
+  source_section: §8.3.2
+- id: CAND-FE-011
+  name: M36-S07 合规仪表盘
+  aliases: []
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: GRC合规仪表盘(规则命中/整改任务/证据完整度)。场内现状: 部分:src/zephyr/compliance/compliance_report_registry.py（报告登记有，仪表盘缺）。最小施工形态:
+    合规仪表盘：规则命中率/审查异常清单/证据链完整度/整改任务看板，数据源复用compliance_report_registry与审查引擎。依赖前置: D_FRONTEND;D_COMPLIANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/compliance_report_registry.py（报告登记有，仪表盘缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/compliance_dashboard.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04672
+  source_section: §8.3.5
+- id: CAND-FE-012
+  name: API Gateway Proxy D-FRONTEND-22
+  aliases:
+  - API Gateway Proxy D-FRONTEND-22
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: P0；前后端唯一接触点(INV-006)——所有前端请求经此代理到D-INTEGRATION网关
+  proposal: '深挖裁定=做(P2)。业界对标: 前端BFF/反向代理(FastAPI+httpx)。场内现状: 部分:src/zephyr/frontend/implementations/default_approval_gateway.py。最小施工形态:
+    前端请求统一代理转发至D-INTEGRATION网关+鉴权+限流+路由表。依赖前置: D-INTEGRATION网关。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/frontend/implementations/default_approval_gateway.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/frontend_api_proxy.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-FRONTEND
+  original_id: B9-10703
+  source_section: §0.1新增子模块
+- id: CAND-FE-013
+  name: Feishu Bot D-FRONTEND-24
+  aliases:
+  - Feishu Bot D-FRONTEND-24
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: P1；飞书机器人——EXT-004 REST Webhook+审批通知+告警推送(备选渠道)；对标C-015
+  proposal: '深挖裁定=做(P2)。业界对标: 飞书自定义机器人webhook(开放平台标准)。场内现状: 部分:src/zephyr/shared/contracts/external/ext_004.py。最小施工形态:
+    EXT-004 REST Webhook sender+审批通知模板+告警推送(作为微信备选渠道)。依赖前置: D-SHARED alerts。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/contracts/external/ext_004.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/feishu_bot_sender.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-FRONTEND
+  original_id: B9-10705
+  source_section: §0.1新增子模块
+- id: CAND-FE-014
+  name: WeChat Bot D-FRONTEND-25
+  aliases:
+  - WeChat Bot D-FRONTEND-25
+  domain: D_FRONTEND
+  domain_status: active
+  sub_layer: src/zephyr/frontend/
+  problem: P1；微信机器人——接收外部用户盯盘/查询/下单指令+系统回复(C-013/C-019主渠道)
+  proposal: '深挖裁定=做(P2)。业界对标: 企业微信机器人回调(wecom双向消息)。场内现状: 部分:src/zephyr/shared/alerts/alert_senders.py。最小施工形态:
+    企业微信回调接收+指令鉴权+盯盘/查询指令解析+回复渲染(下单指令二次确认)。依赖前置: D-SECURITY指令鉴权。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/alerts/alert_senders.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/frontend/implementations/wechat_bot_handler.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-FRONTEND
+  original_id: B9-10706
+  source_section: §0.1新增子模块
+- id: CAND-FUNDAMEN-001
+  name: 模块49 财报季事件驱动与PEAD模型
+  aliases:
+  - 财报季事件驱动与
+  - 模块49 财报季事件驱动与PEAD模型
+  domain: D_FUNDAMENTAL_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_fundamental/
+  problem: SUE=(实际EPS-预期EPS)/预期EPS；SUE>0漂移向上持续1-3个月；SUE>2σ→后续20日平均收益>3%；对标Bernard&Thomas 1989；归属L2-A+L3
+  proposal: '深挖裁定=做(P1)。业界对标: PEAD(Bernard&Thomas 1989)为经典异象,alphalens事件研究可复用。场内现状: 部分:src/zephyr/data/implementations/calendar_event_derivations.py。最小施工形态:
+    SUE=(实际EPS-一致预期)/一致预期分档+20日漂移收益统计+财报季持仓标记。依赖前置: calendar_event_derivations;akshare盈利预测免费接口。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/implementations/calendar_event_derivations.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_fundamental/pead_event_model.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01417
+  source_section: §4模块49
+- id: CAND-FUNDAMEN-002
+  name: D-SIGNAL-100 二元结论补充
+  aliases:
+  - 二元结论补充
+  - D-SIGNAL-100 二元结论补充
+  domain: D_FUNDAMENTAL_SIGNAL
+  domain_status: active
+  sub_layer: src/zephyr/signal_fundamental/
+  problem: ✅能建：与§9数据血缘对齐，在信号输出中嵌入trace_id，SQLite存储追踪上下文
+  proposal: '深挖裁定=做(P1)。业界对标: OpenTelemetry式trace上下文贯穿+数据血缘追踪。场内现状: 部分:src/zephyr/signal_fundamental/audit/signal_audit_logger.py。最小施工形态:
+    信号输出嵌入trace_id：SynthesizedSignal/FactorSignal契约增加trace_id贯穿字段，SQLite追踪上下文表（trace_id→因子批次/信号/订单），与lineage_tracker对接支持单笔信号反查因子值与原始行情。依赖前置:
+    D_CONTRACTS;D_DATA_GOV;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_fundamental/audit/signal_audit_logger.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_fundamental/audit/trace_context_store.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-SIGNAL
+  original_id: B2-05117
+  source_section: §1.1
+- id: CAND-WORKTREE-002
+  name: MOD-INF-040 DepMap Engine
+  aliases:
+  - MOD-INF-040 DepMap Engine
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: architecture_model/
+  problem: 分层存储AST依赖扫描引擎;✅能建,Python AST解析器;📋未建设
+  proposal: '深挖裁定=做(P2)。业界对标: Python AST依赖扫描+分层存储；自研depgraph(PG)。场内现状: 部分：src/zephyr/governance/depgraph_schema.py。最小施工形态:
+    AST依赖扫描引擎：全仓import解析→分层(L0/L1/L2)存储→与depgraph库diff→循环依赖/越层调用报告，接CI门禁。依赖前置: D_GOVERNANCE;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/governance/depgraph_schema.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/governance/depmap_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04303
+  source_section: §17.11
+- id: CAND-WORKTREE-003
+  name: Policy Manager D-GOVERNANCE-01
+  aliases:
+  - Policy Manager D-GOVERNANCE-01
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: architecture_model/
+  problem: P0，✅部分在governance/；治理策略管理+策略CRUD+版本管理+持久化；GOV-*体系
+  proposal: '深挖裁定=做(P2)。业界对标: OPA/Rego策略即代码+版本化。场内现状: 部分:src/zephyr/governance/resilience_governance/policy_sandbox.py。最小施工形态:
+    GOV-*策略CRUD+版本管理+持久化存储+策略状态机。依赖前置: Registration Engine(D-GOVERNANCE-13)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/governance/resilience_governance/policy_sandbox.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/governance/gov_policy_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-GOVERNANCE
+  original_id: B9-10877
+  source_section: §1
+- id: CAND-GOVAUDIT-004
+  name: M48-S01 审计追踪依赖构建器
+  aliases: []
+  domain: D_GOV_AUDIT
+  domain_status: active
+  sub_layer: src/zephyr/gov_audit/
+  problem: ✅能建，有蓝图MOD-INF-020未建设
+  proposal: '深挖裁定=做(P2)。业界对标: SLSA provenance式全链审计追踪(需求→代码→测试→部署)。场内现状: 部分:src/zephyr/gov_audit/merkle_audit.py（审计链组件有，追踪依赖图构建缺）。最小施工形态:
+    审计追踪依赖图：决策→代码→测试→部署全链可追溯，缺口自动检测与补齐建议，图数据供合规证据包复用。依赖前置: D_GOV_AUDIT;D_GOVERNANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/merkle_audit.py（审计链组件有，追踪依赖图构建缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_audit/audit_trace_graph_builder.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04667
+  source_section: §8.3.5
+- id: CAND-REGSYNC-002
+  name: XS-15 API Doc Auto Version Syncer（API文档自动版本同步器）
+  aliases:
+  - XS-15 API Doc Auto Version Syncer（API文档自动版本同步器）
+  domain: D_GOV_DOCS
+  domain_status: active
+  sub_layer: docs/02_enterprise_architecture/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: OpenAPI+CI文档自动同步为接口治理惯例。场内现状: 部分:src/zephyr/shared/api/api_index.py（API索引有，文档版本同步器缺）。最小施工形态:
+    扫描API版本号与接口签名变更→自动更新接口文档与changelog→差异超阈值提醒人工确认，挂Git钩子非交易时段运行。依赖前置: D_GOV_DOCS;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/api/api_index.py（API索引有，文档版本同步器缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/governance/docs/api_doc_version_syncer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04654
+  source_section: §8.3.4
+- id: CAND-GOVDRIFT-002
+  name: D-GOV-15 AIConstructionGovernor
+  aliases:
+  - D-GOV-15 AIConstructionGovernor
+  domain: D_GOV_DRIFT
+  domain_status: active
+  sub_layer: src/zephyr/gov_drift/
+  problem: AgenticDrift防护+HB-GOV-10 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Agent行为漂移监控(LangSmith式观测)。场内现状: 部分:src/zephyr/gov_drift/。最小施工形态: 新增Agentic维度检测器注册进drift调度:Agent行为基线(调用模式/工具使用分布)+偏离告警+HB-GOV-10式人工确认纠正流。依赖前置:
+    D_GOV_DRIFT;D_AUTONOMY_CORE;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'gov_drift/agent_stability_index.py（MOD-GOV-055 production）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W12）——与 CAND-GOVDRIFT-003 同为 Agent 行为漂移检测（B1/B11 两稿），canonical=CAND-GOVDRIFT-003→MOD-GOV-055（ASI 可落子集含其调用模式/工具分布基线语义；人工确认纠正流复用 drift 调度既有通道）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00284
+  source_section: §功能域模块·D-GOVERNANCE
+- id: CAND-GOVDRIFT-003
+  name: Agent Drift量化检查器
+  aliases:
+  - Agent Drift量化检查器
+  domain: D_GOV_DRIFT
+  domain_status: active
+  sub_layer: src/zephyr/gov_drift/
+  problem: ASI 12维度指标监控（响应一致性/工具使用模式/推理路径稳定性/Agent间一致率）；周频（盘后）；告警
+  proposal: '深挖裁定=做(P2)。业界对标: arXiv:2601.04170 Agent Stability Index(ASI)12维复合指标+driftbase类Agent可观测工具。场内现状:
+    部分:src/zephyr/gov_drift/。最小施工形态: 实现ASI可落子集：响应语义一致性（embedding余弦）+工具调用序列Levenshtein稳定性+推理路径编辑距离+多Agent一致率，50交互滚动窗，ASI<0.75连续3窗告警，周频盘后跑并落gov_drift事件。依赖前置:
+    src/zephyr/gov_drift/drift_engine.py;src/zephyr/infrastructure/a2a_protocol/（交互trace);src/zephyr/security/security_event_bus.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_drift/agent_stability_index.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A2治理架构
+  original_id: B11-03056
+  source_section: §7.1
+- id: CAND-GOVENFOR-001
+  name: 阈值拆分检测器
+  aliases:
+  - 阈值拆分
+  domain: D_GOV_ENFORCEMENT
+  domain_status: active
+  sub_layer: src/zephyr/gov_enforcement/rule_enforcement/
+  problem: 检测AI是否拆分交易绕过审批；实时；阻断+告警
+  proposal: '深挖裁定=做(P0)。业界对标: 反化整为零=AML结构化交易(smurfing)检测的滑动窗口累计思路。场内现状: 无。最小施工形态: 交易意图先登记；滑动窗(30分钟+当日两档)对同标的同方向订单累计数量/金额与审批阈值比对；单笔均低于阈值但累计≥阈值80%即判拆分，阻断后续单+强制升级审批+告警落ai_audit_logger哈希链。依赖前置:
+    src/zephyr/frontend/implementations/default_approval_gateway.py;src/zephyr/trading/stop_gate.py;src/zephyr/trading/ai_audit_logger.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_enforcement/rule_enforcement/threshold_split_detector.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A2治理架构
+  original_id: B11-03054
+  source_section: §7.1
+- id: CAND-GOVENFOR-002
+  name: D-GOVERNANCE-15 AI Construction Governor
+  aliases:
+  - D-GOVERNANCE-15 AI Construction Governor
+  domain: D_GOV_ENFORCEMENT
+  domain_status: active
+  sub_layer: src/zephyr/gov_enforcement/rule_enforcement/
+  problem: ✅能建；AI施工门禁+公式Hash+回归截断
+  proposal: '深挖裁定=做(P2)。业界对标: AI施工门禁=公式Hash+回归截断，fitness function/ArchUnit思路。场内现状: 部分:src/zephyr/orchestrator/contracts/construction_guide.py;src/zephyr/gov_enforcement/commit_gates/。最小施工形态:
+    施工门禁挂GatePipeline：产物公式Hash校验+回归截断。依赖前置: gate_pipeline(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/orchestrator/contracts/construction_guide.py;src/zephyr/gov_enforcement/commit_gates/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_enforcement/construction_governor_gate.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-GOVERNANCE-15
+  original_id: B10-02423
+  source_section: §30.6.5
+- id: CAND-PC-002
+  name: D-GOV-06 StandardsManager
+  aliases:
+  - D-GOV-06 StandardsManager
+  domain: D_GOV_RULE
+  domain_status: active
+  sub_layer: src/zephyr/gov_rule/
+  problem: 方法论约束+硬边界 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: ADR+fitness functions方法论约束。场内现状: 部分:src/zephyr/governance/rule_patterns.py。最小施工形态:
+    硬边界目录(编号/约束语句/校验脚本锚点/违反响应),与gov_enforcement门禁挂接,边界变更须人工门禁。依赖前置: D_GOV_RULE;D_GOV_ENFORCEMENT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/governance/rule_patterns.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/gov_rule/standards_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00289
+  source_section: §功能域模块·D-GOVERNANCE
+- id: CAND-PC-003
+  name: Standards Manager D-GOVERNANCE-06
+  aliases:
+  - Standards Manager D-GOVERNANCE-06
+  domain: D_GOV_RULE
+  domain_status: active
+  sub_layer: src/zephyr/gov_rule/
+  problem: P1，✅部分在GOV-STD；标准管理+元标准(PS-STD/PS-REG)+标准宪法+合规检查；PS-STD-000
+  proposal: '深挖裁定=做(P2)。业界对标: 标准即代码(合规规则注册表模式)。场内现状: 部分:src/zephyr/gov_enforcement/rule_enforcement/task_types.py。最小施工形态:
+    标准注册+元标准(PS-STD/PS-REG)定义+标准宪法+合规检查接口。依赖前置: D-GOVERNANCE Policy Manager。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_enforcement/rule_enforcement/task_types.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'gov_rule/standards_manager.py（MOD-GOV-057）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W12）——与 CAND-PC-002 同为 D-GOV-06 StandardsManager（B9/B1 两稿重登），canonical=CAND-PC-002→MOD-GOV-057（硬边界目录+校验锚点+人工门禁含其标准注册/元标准语义，PS-STD/PS-REG 元标准入元数据字段）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-GOVERNANCE
+  original_id: B9-10882
+  source_section: §1
+- id: CAND-INFRASTR-001
+  name: 配置中心
+  aliases:
+  - 配置
+  domain: D_INFRASTRUCTURE
+  domain_status: active
+  sub_layer: src/zephyr/shared/contracts/
+  problem: 统一配置管理与热更新+参数版本管理+审计+回滚 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Nacos/Apollo配置中心(单机可用pydantic-settings+watchdog热更新)。场内现状: 部分:src/zephyr/infrastructure/config/app_config.py。最小施工形态:
+    统一配置注册表(YAML/DB)+参数版本快照+变更审计日志+回滚API，整合现有热更新守卫。依赖前置: src/zephyr/infrastructure/config/app_config.py；src/zephyr/feedback_loop/resilience/config_hot_reload_guard.py；src/zephyr/feedback_loop/gates/config_go。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/config/app_config.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/config/config_center.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00203
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-INFRAA2A-001
+  name: A2A检查网关
+  aliases:
+  - 检查网关
+  domain: D_INFRA_A2A
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/a2a_protocol/
+  problem: 身份校验（Agent ID+层级签名）→能力匹配→边界检查→PASS/DENY/GATED三态（GATED挂起转人工审批）
+  proposal: '深挖裁定=做(P0)。业界对标: OWASP ASI01-10覆盖+身份/能力/边界三段校验网关。场内现状: 部分：src/zephyr/security/access_control/a2a_check.py。最小施工形态:
+    A2A检查网关：身份校验(Agent ID+层级签名复用agent_signer)到能力匹配(对Agent Card能力集)到边界检查(三区/四级自治)到PASS/DENY/GATED三态；GATED挂起写审批队列转人工；OWASP
+    ASI01-10逐条映射测试用例；热路径<1ms。依赖前置: D_INFRA_A2A;D_SECURITY;D_AUTONOMY_PERM。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/security/access_control/a2a_check.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/a2a_protocol/a2a_check_gateway.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02516
+  source_section: §3.1
+- id: CAND-INFRAA2A-002
+  name: 战略层消息总线（Strategic Bus）
+  aliases:
+  - 战略层消息总线（Strategic Bus）
+  domain: D_INFRA_A2A
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/a2a_protocol/
+  problem: 战略层Agent间通信总线
+  proposal: '深挖裁定=做(P2)。业界对标: 分层事件总线(Kafka/NATS topic分层)，单机用Redis Stream/进程内总线。场内现状: 部分：src/zephyr/shared/event_bus.py。最小施工形态:
+    三层逻辑总线：在现有event_bus上划strategic.*/tactical.*/execution.*三层topic命名空间+发布订阅权限按Agent层级校验；跨层消息强制流经A2A检查网关；层内直连层间留痕，战术层/执行层总线作为同机制实例合并施工。依赖前置:
+    D_INFRA_A2A;D_SHARED;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/shared/event_bus.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/a2a_protocol/strategic_message_bus.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02493
+  source_section: §1.1
+- id: CAND-INFRAOPS-001
+  name: 横切层四件套
+  aliases:
+  - 横切层四件套
+  domain: D_INFRA_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infra_ops/
+  problem: Redis共享状态（13命名空间/AOF+RDB混合）+GPU调度（上岗+热交换，盘中推理8-10GB/盘后训练16-18GB）+监控（Prom+OTel，RED+USE+SLO，4级告警+6维收敛）+灾备（3-2-1-1-0+D→E，robocopy每小时增量，RTO<5min/RPO≤1s）
+  proposal: '深挖裁定=做(P0)。业界对标: Prometheus+Grafana单机可轻量替代(VictoriaMetrics单二进制)；3-2-1备份律。场内现状: 部分:src/zephyr/shared/state_store_redis.py（四件各有散件：gpu_monitor/system_telemetry/scripts/backup）。最小施工形态:
+    四件套契约收口：Redis命名空间与持久化参数入SSOT+GPU上岗热交换模型(盘中推理8-10GB/盘后训练16-18GB/热备恢复<5s)+监控RED+USE+SLO指标登记与4级告警+灾备3-2-1-1-0核验清单(E:不可变副本+季度演练)。依赖前置:
+    D_INFRA_OPS;D_INFRA_RUNTIME;D_INFRA_RECOVERY;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/state_store_redis.py（四件各有散件：gpu_monitor/system_telemetry/scripts/backup）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/gpu_hot_swap_model.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04517
+  source_section: §0.3
+- id: CAND-INFRAOPS-002
+  name: D-SIGNAL-140 策略灰度发布
+  aliases:
+  - 策略灰度发布
+  - D-SIGNAL-140 策略灰度发布
+  domain: D_INFRA_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infra_ops/
+  problem: ✅能建，有蓝图MOD-L03-001未建设
+  proposal: '深挖裁定=做(P1)。业界对标: Argo Rollouts金丝雀思路单机化(config驱动分阶段灰度)。场内现状: 部分:src/zephyr/ml_train/gray_release_shadow_deployer.py（设计态；另有orchestrator/fault_tolerance/canary_manager.py）。最小施工形态:
+    策略级灰度发布：config/canary.yaml驱动1-5%→25-50%→100%三阶段，6维验证(功能/性能/错误率/资源/风控完整性/数据一致性)，失败<10s配置回滚，交易时段禁启动(HC-05)。依赖前置:
+    D_INFRA_OPS;D_ASHARE_SIGNAL;D_RISK。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/gray_release_shadow_deployer.py（设计态；另有orchestrator/fault_tolerance/canary_manager.py）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/strategy_canary_release.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04678
+  source_section: §8.3.6
+- id: CAND-INFRAOPS-003
+  name: D-DATA-64 WAL Checkpoint Monitor
+  aliases:
+  - D-DATA-64 WAL Checkpoint Monitor
+  domain: D_INFRA_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infra_ops/
+  problem: SQLite WAL检查点监控器(WAL文件大小监控+checkpoint频率优化+写入压力预警);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: SQLite WAL运维(PRAGMA wal_checkpoint)+Prometheus exporter。场内现状: 无。最小施工形态:
+    SQLite WAL监控：wal文件大小/checkpoint耗时/写入速率采集+阈值预警+自动PASSIVE/TRUNCATE checkpoint策略，挂现有telemetry。依赖前置: D_INFRA_OPS;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_ops/wal_checkpoint_monitor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04268
+  source_section: §17.1
+- id: CAND-INFRAOPS-004
+  name: D-INFRA-345 存储成本量化核算器
+  aliases:
+  - 存储成本量化核算器
+  - D-INFRA-345 存储成本量化核算器
+  domain: D_INFRA_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infra_ops/
+  problem: 热/温/冷各层存储成本/TB自动计算与对比;✅能建,cost_calculator()
+  proposal: '深挖裁定=做(P2)。业界对标: 分层存储成本核算($/TB)+infracost思路。场内现状: 部分：src/zephyr/infrastructure/cost_tracker.py。最小施工形态:
+    存储成本核算器：按层统计占用/TB单价(本地盘折旧折算)/月成本，cost_calculator()输出对比报表，归档策略(B13-04331)收益量化。依赖前置: D_INFRA_OPS;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/cost_tracker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_ops/storage_cost_calculator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04333
+  source_section: §17.18
+- id: CAND-INFRAOPS-005
+  name: M10-S06 运行时依赖可视化器
+  aliases: []
+  domain: D_INFRA_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infra_ops/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Kiali/Backstage服务拓扑图单机化简版。场内现状: 部分:src/zephyr/governance/depgraph_schema.py（静态依赖图有，运行时进程拓扑缺）。最小施工形态:
+    运行时依赖拓扑：P1~P5/Redis/GPU/miniQMT/iFind节点+心跳状态着色+数据流边标注(Pub/Sub/KV/List)，随健康检查实时刷新，输出至仪表盘。依赖前置: D_INFRA_OPS;D_FRONTEND。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/governance/depgraph_schema.py（静态依赖图有，运行时进程拓扑缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_ops/runtime_topology_visualizer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04635
+  source_section: §8.3.2
+- id: CAND-INFRAOPS-006
+  name: Loki日志聚合
+  aliases:
+  - 日志聚合
+  - Loki日志聚合
+  domain: D_INFRA_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infra_ops/
+  problem: 本地单实例；接收JSON结构化日志（Agent决策/自治边界检查/风控否决/异常事件）；LogQL查询；热数据30天冷数据导出Parquet
+  proposal: '深挖裁定=做(P2)。业界对标: Grafana Loki本地单实例+LogQL查询。场内现状: 部分:src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py。最小施工形态:
+    Loki本地单实例：docker-compose加Loki服务，JSON结构化日志（Agent决策/自治边界检查/风控否决/异常事件）推送管道，LogQL查询接入Grafana数据源，热数据30天保留+冷数据导出Parquet，日志脱敏复用gov_audit/privacy。依赖前置:
+    D_INFRA_OPS;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_ops/loki_log_pipeline.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-INFRA-OPS
+  original_id: B8-10662
+  source_section: A7§15.1
+- id: CAND-DR-002
+  name: M15-S02 级联失效仿真器
+  aliases: []
+  domain: D_INFRA_RECOVERY
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/rollback/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Chaos Monkey/Litmus混沌工程单机化(进程终止/网络注入)。场内现状: 部分:src/zephyr/gov_drift/chaos_injector.py（混沌注入器有，级联失效场景仿真缺）。最小施工形态:
+    单机级联失效仿真：进程崩溃→Redis中断→GPU失效组合场景脚本化，失效传播路径记录+恢复时间测量，安全护栏(仅非交易时段+备份确认+30min超时终止)。依赖前置: D_INFRA_RECOVERY;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_drift/chaos_injector.py（混沌注入器有，级联失效场景仿真缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/rollback/cascade_failure_simulator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04693
+  source_section: §8.3.9
+- id: CAND-H1FS-002
+  name: NSSM+5进程架构
+  aliases:
+  - 进程架构
+  - NSSM+5进程架构
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: Windows单机(i7-12700KF/64GB/RTX3090)：进程守护(NSSM+自研Supervisor)含优先级控制/进程守护/自动重启/日志管理/启停编排，下挂P1~P5五进程+Redis共享状态层+RTX3090
+    GPU调度层
+  proposal: '深挖裁定=做(P0)。业界对标: NSSM/WinSW Windows服务化+supervisord式进程守护。场内现状: 部分:src/zephyr/trading/windows_service.py（另有health_monitor/lifecycle_manager/startup_sequencer散件）。最小施工形态:
+    NSSM注册P1~P5五进程开机自启+自研Supervisor：启动数值升序/关闭降序(P3先于P1关闭、P1先于Redis关闭)+分级心跳hb:{process}(P3 2s/10s)+崩溃自动重启(交易时段P3禁自动重启HC-01仅告警)+日志托管。依赖前置:
+    D_INFRA_RUNTIME;D_SHARED;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/windows_service.py（另有health_monitor/lifecycle_manager/startup_sequencer散件）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/process_supervisor.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04521
+  source_section: §1.1
+- id: CAND-H1FS-003
+  name: P3 交易核心进程（trading_core）
+  aliases:
+  - 交易核心进程
+  - P3 交易核心进程（trading_core）
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 优先级15：风控检查/订单构建/miniQMT下单/持仓同步；D-RISK+D-EX-CORE；核8-11，8GB
+  proposal: '深挖裁定=做(P0)。业界对标: 交易核心进程CPU独占/禁swap为低延迟惯例。场内现状: 部分:src/zephyr/trading/__main__.py（交易运行时散件有，独立交易核心进程未收口）。最小施工形态:
+    trading_core独立进程：风控检查/订单构建/miniQMT下单/持仓同步，核8-11独占+8GB禁swap+风控NN常驻显存2GB+hb 2s/10s，HC-01任何时段不自动重启仅告警。依赖前置:
+    D_INFRA_RUNTIME;D_EX_CORE;D_RISK。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/__main__.py（交易运行时散件有，独立交易核心进程未收口）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/trading_core_process_spec.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04524
+  source_section: §1.1.1
+- id: CAND-H1FS-004
+  name: Redis共享状态层（Redis 7.x单实例）
+  aliases:
+  - Redis共享状态层（Redis 7.x单实例）
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: '三层：实时数据层(TTL驱动tick/signal/factor/market_state)/状态协调层(持久化position/order/strategy/account)/运维控制层(Pub/Sub
+    cmd/alert/config/degrade)；TTL: tick=5s/signal=60s/factor=300s；混合持久化RDB每小时+AOF每秒fsync(交易时段)；AOF重放优先+RDB基线加速(纯AOF~3min→混合<15s)；maxmemory
+    8GB硬限/稳态≈4GB/volatile-ttl淘汰'
+  proposal: '深挖裁定=做(P0)。业界对标: Redis官方RDB+AOF混合持久化(everysec)+volatile-ttl淘汰为单实例状态层标准配置，Pub/Sub+Stream+KV分工成熟。场内现状:
+    部分:src/zephyr/shared/state_store_redis.py（另有infrastructure/h1_redis_hot/与redis_config.py散件）。最小施工形态:
+    收口13命名空间三层结构与TTL矩阵(tick=5s/signal=60s/factor=300s)+RDB每小时+AOF everysec混合持久化配置+maxmemory 8GB/volatile-ttl+AOF重放优先混合恢复(<15s)runbook与一致性校验。依赖前置:
+    D_INFRA_RUNTIME;D_SHARED;D_INFRA_RECOVERY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/state_store_redis.py（另有infrastructure/h1_redis_hot/与redis_config.py散件）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/redis_state_layer_ssot.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04531
+  source_section: §1.2
+- id: CAND-H1FS-005
+  name: Hot平面（<10ms）
+  aliases: []
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 交易系统生命线：Tick风控检查→订单风控检查→下单执行miniQMT，任何延迟超标可致风控失效或错失时机
+  proposal: '深挖裁定=做(P0)。业界对标: 低延迟热路径隔离(CPU pinning/零GC/LMAX Disruptor思路)。场内现状: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py（平面标记与warm_hot_gate有，10ms隔离预算未落地）。最小施工形态:
+    Hot平面落地：Tick→风控→下单10ms端到端预算(2/3/5ms分解)+核8-11独占+P3禁磁盘IO+miniQMT连接独占+Redis本地读路径+预算超限熔断告警。依赖前置: D_INFRA_RUNTIME;D_RISK;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py（平面标记与warm_hot_gate有，10ms隔离预算未落地）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/hot_plane_budget.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04542
+  source_section: §2.2
+- id: CAND-H1FS-006
+  name: P2 信号引擎进程（signal_engine）
+  aliases:
+  - 信号引擎进程
+  - P2 信号引擎进程（signal_engine）
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 优先级20：因子计算/信号生成/策略路由/市场状态判定；D-FACTOR+D-SIGNAL；核4-7，16GB
+  proposal: '深挖裁定=做(P1)。业界对标: 多进程隔离+CPU亲和(SetProcessAffinityMask)。场内现状: 部分:src/zephyr/runtime/intraday_main.py（盘中主循环有，独立信号进程未拆）。最小施工形态:
+    signal_engine独立进程：因子计算/信号生成/策略路由/市场状态判定，核4-7亲和+16GB内存预算+hb:signal 5s/30s+产出经signal:* Pub/Sub分发。依赖前置:
+    D_INFRA_RUNTIME;D_FACTOR;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/runtime/intraday_main.py（盘中主循环有，独立信号进程未拆）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/signal_engine_process_spec.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04523
+  source_section: §1.1.1
+- id: CAND-H1FS-007
+  name: Warm平面（10ms~1s）
+  aliases:
+  - Warm平面（10ms~1s）
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 信号生成和策略决策——Alpha产生核心路径
+  proposal: '深挖裁定=做(P1)。业界对标: hot/warm/cold时延分层为流式系统惯例。场内现状: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py。最小施工形态:
+    Warm平面：增量因子200ms/信号聚合300ms/路由裁决500ms预算+11种市场状态路由表入配置，产出经signal:*+market:state单向传Hot。依赖前置: D_INFRA_RUNTIME;D_ASHARE_SIGNAL;D_REGIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/warm_plane_budget.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04547
+  source_section: §2.3
+- id: CAND-H1FS-008
+  name: §29.1 多进程隔离与运行时架构
+  aliases:
+  - 多进程隔离与运行时架构
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 已迁移至A9运维架构§8.4（NSSM+自研Supervisor+5进程P1-P5+CPU亲和+内存预算+Redis 12命名空间+GPU 6时段参数表+异常处理+热交换）；A1独有保留：共享内存零拷贝方案（multiprocessing.shared_memory，42万条因子值传递约0.01ms
+    vs gRPC约3-15ms）
+  proposal: '深挖裁定=做(P2)。业界对标: vnpy多进程+Queue;Arrow Plasma共享内存零拷贝。场内现状: 部分：src/zephyr/shared/infra/process_pool.py。最小施工形态:
+    用multiprocessing.shared_memory实现42万条因子值零拷贝传递（目标约0.01ms vs gRPC 3-15ms)，含生命周期管理/命名空间隔离/超限降级Redis；不重复A9进程隔离建设。依赖前置:
+    D_INFRA_RUNTIME;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/shared/infra/process_pool.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/shared_memory_zero_copy.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01807
+  source_section: §29.1
+- id: CAND-H1FS-009
+  name: D-INFRA-46 高性能高可用保障框架
+  aliases:
+  - 高性能高可用保障框架
+  - D-INFRA-46 高性能高可用保障框架
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: ✅P1；SLA保障+故障自动切换+健康检查
+  proposal: '深挖裁定=做(P2)。业界对标: NSSM/supervisor进程守护；Prometheus式健康检查（单机范围，不上集群）。场内现状: 部分：src/zephyr/trading/health_monitor.py。最小施工形态:
+    汇总sla_targets.yaml为SLA注册表+健康检查编排（ch_health_probe/health_monitor)+进程级自动重启切换（复用A9 NSSM/Supervisor)；严格单机范围不做集群。依赖前置:
+    D_INFRA_RUNTIME;D_OPS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/trading/health_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/ha_sla_framework.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02366
+  source_section: §30.5.3
+- id: CAND-H1FS-010
+  name: MOD-INF-012 Database Layer
+  aliases:
+  - MOD-INF-012 Database Layer
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 数据库层(SQLite+DuckDB+PostgreSQL统一存储抽象);✅能建;📐已建设(部分)
+  proposal: '深挖裁定=做(P2)。业界对标: SQLAlchemy式多后端抽象；DuckDB+SQLite+PG统一连接管理。场内现状: 部分：src/zephyr/infrastructure/database_service.py。最小施工形态:
+    database_service补DuckDB连接池与统一查询门面，收编var_calculator等直调点；PG/SQLite/CH现状不变，仅做接口归一。依赖前置: D_INFRA_RUNTIME;D_SHARED。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/database_service.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/database_layer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04299
+  source_section: §17.11
+- id: CAND-H1FS-011
+  name: P5 ML管线进程（ml_pipeline）
+  aliases:
+  - 管线进程
+  - P5 ML管线进程（ml_pipeline）
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 优先级40(最低)：模型推理调度/离线训练/GPU显存管理/模型版本管理；D-ML-TRAIN+D-ML-SERVE；核16-19，20GB
+  proposal: '深挖裁定=做(P2)。业界对标: 训练/推理进程时分复用单GPU。场内现状: 部分:src/zephyr/ml_train/trainer_base.py（训练组件有，独立ML管线进程未拆）。最小施工形态:
+    ml_pipeline独立进程：推理调度/离线训练/显存管理/模型版本，核16-19+20GB预算，优先级40最低交易时段资源退让，GPU夜间时分互斥。依赖前置: D_INFRA_RUNTIME;D_ML_TRAIN;D_ML_SERVE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/trainer_base.py（训练组件有，独立ML管线进程未拆）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/ml_pipeline_process.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04526
+  source_section: §1.1.1
+- id: CAND-H1FS-012
+  name: Cold平面（>1s）
+  aliases:
+  - Cold平面（>1s）
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: 所有非实时任务(训练/回测/研究)，核心约束=不可污染Hot/Warm平面
+  proposal: '深挖裁定=做(P2)。业界对标: Cold平面资源配额(Windows Job Object限流思路)。场内现状: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py。最小施工形态:
+    Cold平面隔离：核16-19/内存≤20GB/IO BelowNormal/iFind≤5QPS令牌桶，Cold→Warm仅经config:*(30s轮询)，Cold→Hot禁直连，盘中产出入待激活队列盘后应用。依赖前置:
+    D_INFRA_RUNTIME;D_ML_TRAIN;D_BACKTEST。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/cold_plane_isolation.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04550
+  source_section: §2.4
+- id: CAND-H1FS-013
+  name: M56-S02 延迟预算分配器
+  aliases: []
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Google SRE延迟预算分解(端到端SLO→各阶段预算)。场内现状: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py（平面标记有，预算分配器缺）。最小施工形态:
+    延迟预算分配：Hot<10ms/Warm<1s端到端预算分解至各阶段并登记SSOT，各进程上报实际耗时，超预算阶段告警。依赖前置: D_INFRA_RUNTIME;D_INFRA_TELEMETRY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/contracts/core/runtime_plane_tag.py（平面标记有，预算分配器缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/latency_budget_allocator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04701
+  source_section: §8.3.10
+- id: CAND-H1FS-014
+  name: IR-06 资源调度器
+  aliases:
+  - 资源
+  domain: D_INFRA_RUNTIME
+  domain_status: active
+  sub_layer: src/zephyr/infra_runtime/
+  problem: P1；CPU核心亲和性绑定/内存预算/三平面资源隔离/QPS限流；A9§2.5；对照MOD-INF-016/shared/infra/limiter、shared/resilience/
+  proposal: '深挖裁定=做(P2)。业界对标: cgroup式资源隔离+CPU亲和+令牌桶限流。场内现状: 部分:src/zephyr/shared/infra/limiter.py+src/zephyr/trading/runtime_config.py。最小施工形态:
+    CPU核心亲和绑定+内存预算强制+Cold/Warm/Hot三平面资源隔离+QPS限流统一入口。依赖前置: D-INFRA-RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/infra/limiter.py+src/zephyr/trading/runtime_config.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infra_runtime/resource_scheduler.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-INFRA-RUNTIME
+  original_id: B7-09926
+  source_section: §2
+- id: CAND-INFRATEL-001
+  name: 可复现性包生成器
+  aliases:
+  - 可复现性包
+  domain: D_INFRA_TELEMETRY
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: 实验环境+数据+代码打包+版本锁定 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: mlflow Projects可复现打包(代码+环境+数据锁定)。场内现状: 无。最小施工形态: 实验一键打包:代码commit+参数+数据快照指针+依赖锁→可回放包。依赖前置:
+    src/zephyr/experiment_tracking/experiment_tracker.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/reproducibility_packager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00401
+  source_section: §功能域模块·D-RESEARCH
+- id: CAND-INFRATEL-002
+  name: 可观测性三支柱
+  aliases:
+  - 可观测性三支柱
+  domain: D_INFRA_TELEMETRY
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: Traces（OTel SDK+W3C TraceContext，SQLite热7天+Parquet冷7年）/Metrics（Prometheus格式+Redis时序，历史5年）/Logs（JSON结构化不可变追加，审计≥7年）
+  proposal: '深挖裁定=做(P2)。业界对标: OpenTelemetry三支柱(Traces/Metrics/Logs)+冷热分层存储。场内现状: 部分：src/zephyr/shared/observability/tracing.py。最小施工形态:
+    三支柱整合：Traces用OTel SDK+W3C TraceContext跨Agent/跨层贯通；Metrics统一Prometheus格式+Redis时序；Logs JSON结构化不可变追加；热数据SQLite
+    7天+冷数据Parquet归档7年；与gov_audit审计链对接。依赖前置: D_INFRA_TELEMETRY;D_SHARED;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/shared/observability/tracing.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/observability_triad.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02678
+  source_section: §15.1
+- id: CAND-INFRATEL-003
+  name: M74-NEW-06 AI Agent调用链追踪器
+  aliases:
+  - M74-NEW-06 AI Agent调用链追踪器
+  domain: D_INFRA_TELEMETRY
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: LangSmith/LangFuse式LLM/Agent调用链追踪。场内现状: 部分:src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_tracing.py（A2A追踪有，Agent调用链专项缺）。最小施工形态:
+    Agent调用链Span模型(意图→工具调用→LLM→决策输出)关联OTel TraceID，异常/超预算调用高亮，调用链落审计供回放。依赖前置: D_INFRA_TELEMETRY;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_tracing.py（A2A追踪有，Agent调用链专项缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/agent_call_tracer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04637
+  source_section: §8.3.2
+- id: CAND-INFRATEL-004
+  name: M56-S03 延迟归因器
+  aliases: []
+  domain: D_INFRA_TELEMETRY
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Dapper/OpenTelemetry span延迟归因。场内现状: 部分:src/zephyr/ex_core/performance_monitor.py（执行性能监控有，链路级归因缺）。最小施工形态:
+    延迟归因：基于OTel Span对Tick→信号→订单链路分段统计，定位最大贡献阶段，慢链路样本留存+周报。依赖前置: D_INFRA_TELEMETRY;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/performance_monitor.py（执行性能监控有，链路级归因缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/latency_attributor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04702
+  source_section: §8.3.10
+- id: CAND-BACL-002
+  name: D-INT-26 FailoverCoordinator
+  aliases:
+  - D-INT-26 FailoverCoordinator
+  domain: D_INTEGRATION
+  domain_status: active
+  sub_layer: src/zephyr/integration/
+  problem: 三源互补自动切换+Kill-Switch联动 ✅
+  proposal: '深挖裁定=做(P0)。业界对标: 多数据源failover;Sentinel式自动切换。场内现状: 部分:src/zephyr/data/source_circuit_breaker.py。最小施工形态:
+    FailoverCoordinator:三源优先级+质量分动态切换,切换事件广播;全部源降级超阈值时联动trading_kill_switch进入只读/禁开仓,切换与联动入审计。依赖前置: D_INTEGRATION;D_DATA;D_TRADING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/data/source_circuit_breaker.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/integration/failover_coordinator.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00329
+  source_section: §功能域模块·D-INTEGRATION
+- id: CAND-BACL-003
+  name: D-INT-10 ExternalSystemConnector
+  aliases:
+  - D-INT-10 ExternalSystemConnector
+  domain: D_INTEGRATION
+  domain_status: active
+  sub_layer: src/zephyr/integration/
+  problem: 券商API+数据源API ✅
+  proposal: '深挖裁定=做(P1)。业界对标: vnpy gateway;Lean券商接口。场内现状: 部分:src/zephyr/market_data/vendor_registry.py。最小施工形态:
+    统一Connector契约:能力声明(行情/交易/另类)+健康检查+配额管理并挂接source_circuit_breaker,券商(miniQMT通道)与数据源统一登记。依赖前置: D_INTEGRATION;D_MKT_DATA;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/market_data/vendor_registry.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/integration/external_system_connector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00326
+  source_section: §功能域模块·D-INTEGRATION
+- id: CAND-BACL-004
+  name: D-INT-05 APIDocumentation
+  aliases:
+  - D-INT-05 APIDocumentation
+  domain: D_INTEGRATION
+  domain_status: active
+  sub_layer: src/zephyr/integration/
+  problem: OpenAPI 3.0+自动生成 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: FastAPI OpenAPI 3.0自动生成。场内现状: 部分:src/zephyr/shared/contracts/。最小施工形态: 从contracts/api路由注解生成OpenAPI
+    yaml,CI校验契约漂移,输出至docs供MCP/前端消费。依赖前置: D_INTEGRATION;D_CONTRACTS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/contracts/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/integration/api_documentation_generator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00337
+  source_section: §功能域模块·D-INTEGRATION
+- id: CAND-BACL-005
+  name: 集成架构 v6.0(A10)
+  aliases:
+  - 集成架构
+  domain: D_INTEGRATION
+  domain_status: active
+  sub_layer: src/zephyr/integration/
+  problem: 架构图A10，回答"内外系统怎么接、怎么隔离？外部故障怎么不传染内部？"，定义外部系统交互矩阵/集成风格/接口契约治理/数据源故障降级/MCP协议集成/隔离策略
+  proposal: '深挖裁定=做(P2)。业界对标: OpenAPI/Pact消费者驱动契约+故障降级矩阵。场内现状: 部分:src/zephyr/integration/(mcp/,llm_bridge.py,ports.py)。最小施工形态:
+    外部系统交互矩阵契约注册表+数据源故障降级策略声明+隔离规则配置化。依赖前置: D-INFRA-RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/integration/(mcp/,llm_bridge.py,ports.py)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/integration/integration_matrix_registry.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A10集成架构
+  original_id: B14-04736
+  source_section: 文档头
+- id: CAND-BACL-006
+  name: AI服务交互矩阵
+  aliases:
+  - 服务交互矩阵
+  domain: D_INTEGRATION
+  domain_status: active
+  sub_layer: src/zephyr/integration/
+  problem: 本地LLM(RTX3090,策略代码生成/因子发现/日常推理,电力成本,L1最高)/DeepSeek V4 Pro API(复杂推理/交叉验证,L2)/TAE GLM-5.1 API(中文场景,L2)/Claude
+    API(英文场景/代码审查,L2)/Whisper本地(音频ASR,L1)/MCP Server(JSON-RPC 2.0双向,L2)
+  proposal: '深挖裁定=做(P2)。业界对标: LLM网关分级路由(LiteLLM式成本/延迟画像路由)。场内现状: 部分:src/zephyr/integration/llm_bridge.py。最小施工形态:
+    AI服务分级路由表(本地LLM/API/ASR/MCP)+成本延迟画像+故障降级链。依赖前置: D-ML-SERVE/LLM网关。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/integration/llm_bridge.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/integration/ai_service_route_matrix.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A10集成架构
+  original_id: B14-04762
+  source_section: §1.3.1
+- id: CAND-INTEGRAT-001
+  name: D-INT-01 APIGateway
+  aliases:
+  - D-INT-01 APIGateway
+  domain: D_INTEGRATION_GATEWAY
+  domain_status: active
+  sub_layer: src/zephyr/integration/mcp/
+  problem: 统一入口+路由+认证+限流+熔断+脱敏+审计+合规+AI Gateway ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Kong/Envoy;LiteLLM AI Gateway。场内现状: 部分:src/zephyr/shared/api/api_index.py。最小施工形态:
+    单进程轻量网关:请求路由表+token认证+limiter/circuit_breaker挂接+脱敏过滤器+访问审计,AI Gateway面复用llm_gateway_protocol,严禁引入Kong/Envoy。依赖前置:
+    D_INTEGRATION_GATEWAY;D_SHARED;D_SECURITY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/api/api_index.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/integration/api_gateway.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00322
+  source_section: §功能域模块·D-INTEGRATION
+- id: CAND-AISA-002
+  name: D-ALT-11 LLMMarketInterpreter
+  aliases:
+  - D-ALT-11 LLMMarketInterpreter
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: LLM市场解读+新闻/研报/社交媒体分析 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: FinGPT/FinRobot多源解读;LangGraph编排。场内现状: 部分:src/zephyr/intelligence/news_sentiment_analyzer.py。最小施工形态:
+    三路输入(新闻/研报摘要/社媒)→本地LLM盘后+API盘中双模解读,输出结构化(主题/情感/影响标的/置信度),仅作信号输入不直接下单,结论入审计链。依赖前置: D_INTELLIGENCE;D_ALT_DATA;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/intelligence/news_sentiment_analyzer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_market_interpreter.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00118
+  source_section: §功能域模块·D-ALT-DATA
+- id: CAND-AISA-003
+  name: §29.11 大语言模型Agent基本面分析
+  aliases:
+  - 大语言模型
+  - §29.11 大语言模型Agent基本面分析
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 多Agent架构：Agent-财报（营收增速/利润质量/现金流）+Agent-新闻（政策利好/行业风险）+Agent-综合（多空建议+置信度）；LLM定性+模型定量加权融合；融合点4处（C-014替代浅层NLP/C-016事件注入/§13筛选漏斗第四层/C-013自然语言指令解析）；部署：本地Qwen2.5-7B/14B量化版盘后离线+API（DeepSeek/GPT-4/Claude）盘中实时<5秒+混合
+  proposal: '深挖裁定=做(P1)。业界对标: FinGPT/FinRobot多Agent财报分析；LangGraph多Agent编排。场内现状: 部分：src/zephyr/plan_engine/llm_premarket_analysis.py。最小施工形态:
+    三Agent（财报质量/新闻政策/综合裁决带置信度）+4融合点（C-014情感/C-016事件注入/漏斗第四层/C-013指令解析）；本地Qwen2.5量化版盘后离线+API盘中<5s；结论仅作信号输入不直接下单。依赖前置:
+    D_INTELLIGENCE;D_ASHARE_SIGNAL;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/plan_engine/llm_premarket_analysis.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_fundamental_analysis.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01840
+  source_section: §29.11
+- id: CAND-AISA-004
+  name: Agent记忆架构
+  aliases:
+  - 记忆架构
+  - Agent记忆架构
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 四层记忆模型+五阶段流水线
+  proposal: '深挖裁定=做(P1)。业界对标: 四层记忆(工作/情景/语义/程序)参考MemGPT/Letta认知架构。场内现状: 部分：src/zephyr/autonomy_core/context/memory_bank.py。最小施工形态:
+    四层记忆模型：工作记忆(会话/上下文窗口)到情景记忆(轨迹+反思，见B11-02613)到语义记忆(知识/规则入D_KNOWLEDGE)到程序记忆(SKILL.md+scripts版本化)；五阶段流水线接口统一，各层TTL/淘汰策略声明式配置。依赖前置:
+    D_INTELLIGENCE;D_KNOWLEDGE;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/autonomy_core/context/memory_bank.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/agent_memory_architecture.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02457
+  source_section: §0边界声明/§7
+- id: CAND-AISA-005
+  name: LLM Agent路由
+  aliases:
+  - LLM Agent路由
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 本地/API分时分任务路由+成本控制，级联控制器
+  proposal: '深挖裁定=做(P1)。业界对标: LiteLLM Router/FrugalGPT成本感知路由+本地vLLM与API混合。场内现状: 部分：src/zephyr/infrastructure/pipeline/llm_gateway.py。最小施工形态:
+    LLM路由层：任务分类(规则优先)到模型选择(成本-性能权衡复用ModelRouter)到成本控制(日预算+自动降级本地)三级流水线；分时策略(盘中本地优先/盘后API深度)；路由决策+成本落审计，延迟预算Stage1<50ms/Stage2<10ms/Stage3<5ms。依赖前置:
+    D_INTELLIGENCE;D_INFRA_RUNTIME;D_SECURITY_LLM。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/pipeline/llm_gateway.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_agent_router.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02458
+  source_section: §0边界声明/§8
+- id: CAND-AISA-006
+  name: 情景记忆（自反Agent内）
+  aliases:
+  - 情景记忆
+  - 情景记忆（自反Agent内）
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 轨迹存储（输入→行动→结果→反思）+相似任务Top-K检索+LRU淘汰保留1000条+Redis Hash+FAISS向量索引（MVP轻量，SQLite FTS5补充）
+  proposal: '深挖裁定=做(P1)。业界对标: Reflexion轨迹记忆+向量Top-K检索(Generative Agents)。场内现状: 部分：src/zephyr/intelligence/reflexion/roles.py。最小施工形态:
+    情景记忆存储：轨迹Schema(输入-行动-结果-反思)落Redis Hash+向量入FAISS；相似任务Top-K检索供新任务上下文注入；LRU淘汰保留1000条+90天转SQLite归档；与四层记忆架构(B11-02457)接口对齐。依赖前置:
+    D_INTELLIGENCE;D_KNOWLEDGE;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/intelligence/reflexion/roles.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/episodic_memory_store.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02613
+  source_section: §6.1
+- id: CAND-AISA-007
+  name: 本地LLM池
+  aliases: []
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: Qwen2.5-7B（主力）+DeepSeek-7B（备选）+本地微调模型，AWQ 4-bit量化~4GB，盘中显存~6GB含KV cache，延迟1-5s
+  proposal: '深挖裁定=做(P1)。业界对标: Ollama/vLLM本地7B部署+AWQ 4bit量化。场内现状: 部分：src/zephyr/integration/local_model/ollama_chat.py。最小施工形态:
+    本地LLM池：主力Qwen2.5-7B+备选DeepSeek-7B注册表；AWQ 4bit模型加载/卸载管理；显存预算门(盘中不超过6GB含KV cache，超限拒载并降级API池)；与gpu_monitor联动；延迟/成功率入模型画像。依赖前置:
+    D_INTELLIGENCE;D_INFRA_RUNTIME;D_ML_SERVE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/integration/local_model/ollama_chat.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/local_llm_pool.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02628
+  source_section: §8.1
+- id: CAND-AISA-008
+  name: API LLM池
+  aliases: []
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: DeepSeek V4 Pro/GLM-5.1/Claude，按token计费，延迟2-10s
+  proposal: '深挖裁定=做(P1)。业界对标: LiteLLM proxy多API池+token计费+故障转移。场内现状: 部分：src/zephyr/infrastructure/pipeline/llm_gateway.py。最小施工形态:
+    API LLM池：provider池注册(模型/价格/限额/超时)+token计费台账(按Agent/任务归集入cost_tracker)+池健康度(成功率/延迟)驱动调度+预算超限自动降级本地池；密钥走secrets管理不落盘。依赖前置:
+    D_INTELLIGENCE;D_INFRA_RUNTIME;D_SECURITY_LLM。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/pipeline/llm_gateway.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/api_llm_pool.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02629
+  source_section: §8.1
+- id: CAND-AISA-009
+  name: C-031 AI协作策略与人机信任模型
+  aliases:
+  - 协作策略与人机信任模型
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 置信度分层决策+信任度模型+否决学习 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: HITL信任校准，无成熟开源锚点(置信度校准研究)。场内现状: 部分:src/zephyr/risk/core/risk_veto_engine.py。最小施工形态:
+    置信度分层(自动执行/需确认/禁止)+人工否决记录学习，周期校准人机信任分。依赖前置: src/zephyr/risk/core/risk_veto_engine.py；src/zephyr/plan_engine。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/risk_veto_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/human_trust_model.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00221
+  source_section: §功能域模块·D-REPORTING
+- id: CAND-AISA-010
+  name: LLM自评估（v6.0）
+  aliases:
+  - 自评估
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: Judge+交叉验证（§29.37）
+  proposal: '深挖裁定=做(P2)。业界对标: LLM-as-Judge+交叉验证是业界主流(OpenAI evals/RAGAS)。场内现状: 部分:src/zephyr/intelligence/model_evaluation/;scripts/run_deepseek_v4_exam.py。最小施工形态:
+    Judge打分+多模型交叉验证挂model_evaluation。依赖前置: model_router(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/intelligence/model_evaluation/;scripts/run_deepseek_v4_exam.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_self_evaluation.py（MOD-INT-LLM-SELFEVAL，20 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：08-26 P2-W04 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-AISA-013 同为 LLM 自评估与交叉验证（B10-01235/01883 两稿重登），canonical=CAND-AISA-013→MOD-INT-LLM-SELFEVAL（Judge 三维+CoT 自校验+三模型投票含其语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01235
+  source_section: §1.1
+- id: CAND-AISA-011
+  name: 模块41 事件链推理与因果图模型
+  aliases:
+  - 事件链推理与因果图模型
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 事件节点(政策/行业数据/公告/海外)+因果边(Granger因果)+贝叶斯网络条件概率P(B\
+  proposal: '深挖裁定=做(P2)。业界对标: pgmpy贝叶斯网络+Granger因果为事件链推理标准工具。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py。最小施工形态:
+    事件节点表+Granger因果边+贝叶斯网络P(B|A)条件概率查询接口。依赖前置: causal_inference_engine;intelligence/event_*事件源。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/event_chain_causal_graph.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01448
+  source_section: ''
+- id: CAND-AISA-012
+  name: §29.24 神经符号融合推理（v5.1新增）
+  aliases:
+  - 神经符号融合推理
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 符号约束+神经学习统一推理框架；VeNRA（arXiv 2603.04663，2026.03）首次金融零幻觉：①UFL Universal Fact Ledger严格类型确定性事实账本（{entity,attribute,value,timestamp,source,confidence=1.0}，数值/枚举/关系3类型；UFL⊂Feature
+    Store仅管确定性事实不含ML预测；追加式不可修改）②Double-Lock双重锚定（Lock1实体锚定：LLM输出实体须在UFL存在否则拒绝；Lock2数值锚定：数值须从UFL检索不可生成→消除"净收入vs净销售额"数值幻觉）③VeNRA
+    Sentinel 3B SLM幻觉检测器（输入Python执行轨迹，单token判定HALLUCINATE/VALID，延迟<50ms适合盘中；对抗模拟训练）；融合点3处（§7图谱因果边→§4.5密度预测损失约束项/§29.11
+    LLM Agent→UFL+Double-Lock/§29.18因果效应→神经网络约束项）；约束5条（UFL事实须确定性数据源/Double-Lock拒绝不可降级为无锚定推理须修正重提/约束强度3档可配防过度/Sentinel误报率<5%）
+  proposal: '深挖裁定=做(P2)。业界对标: VeNRA(arXiv)；知识图谱约束解码/Guardrails输出护栏。场内现状: 部分：src/zephyr/intelligence/venra_double_lock_anchor.py。最小施工形态:
+    建UFL追加式事实账本（{entity,attribute,value,timestamp,source,confidence=1.0},3类型）+Double-Lock双重锚定（拒绝不可降级须修正重提）+3B
+    Sentinel单token幻觉判定（<50ms盘中可用）；约束强度3档可配，Sentinel误报率<5%。依赖前置: D_INTELLIGENCE;D_KNOWLEDGE;D_SECURITY_LLM。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/intelligence/venra_double_lock_anchor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'intelligence/universal_fact_ledger.py（MOD-INT-FACT-LEDGER，21 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 CAND-AISA-014 同为 §29.24 VeNRA 神经符号融合（B10-01865/01952 两稿重登），canonical=CAND-AISA-014→MOD-INT-FACT-LEDGER（UFL+DoubleLock 单模块具体 spec 含其 Sentinel 语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01865
+  source_section: §29.24
+- id: CAND-AISA-013
+  name: §29.37 LLM自评估与交叉验证（v6.0新增）
+  aliases:
+  - 自评估与交叉验证
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: 与Sentinel互补：Sentinel检"事实性幻觉"硬伤，自评估检"逻辑性错误"软伤；①LLM-as-Judge范式（强模型DeepSeek V4/GPT-4o评估弱模型Qwen-7B输出：事实准确性/逻辑一致性/风险合理性3维度；成本低于人工覆盖高于规则；约束三QPS=20须预留配额）②Chain-of-Thought自校验（生成推理链→反向验证每步→标记不一致；Double-Lock锚定数值CoT锚定逻辑）③多LLM交叉验证（Qwen-7B+DeepSeek+GPT-4o独立分析同一标的→投票/加权；一致性高置信度高，一致性低标"争议标的"降权或人工审核；对齐§1.1多策略投票共振）④3集成点（§29.11五层防御链：Double-Lock→Sentinel→Spectral→LLM-as-Judge→人工审核/C-004风控多LLM判断不一致→提高风控阈值更保守/§29.24
+    CoT+Double-Lock+Spectral前置过滤三重保障降Judge成本）⑤安全约束4条（LLM-as-Judge不可替代人工审核仅辅助筛选/API成本纳入C-044/CoT推理链写入加密审计链§20.14决策三/结论不可直接触发交易须经C-047）
+  proposal: '深挖裁定=做(P2)。业界对标: LLM-as-Judge(MT-Bench范式）;SelfCheckGPT自校验。场内现状: 部分：src/zephyr/intelligence/model_profiling/exam_judge.py。最小施工形态:
+    LLM-as-Judge三维评分（事实/逻辑/风险，预留QPS=20配额）+CoT推理链反向自校验+三模型独立分析投票，低一致性标争议标的降权或人工审核；结论不可直接触发交易须经C-047,CoT链写入审计链。依赖前置:
+    D_INTELLIGENCE;D_SECURITY_LLM。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/intelligence/model_profiling/exam_judge.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_self_evaluation.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01883
+  source_section: §29.37
+- id: CAND-AISA-014
+  name: §29.24-1 VeNRA架构（arXiv 2603.04663)
+  aliases:
+  - §29.24-1 VeNRA架构（arXiv 2603.04663)
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: ①Universal Fact Ledger(UFL）严格类型确定性事实账本{entity/attribute/value/timestamp/source/confidence=1.0}，UFL⊂Feature
+    Store（仅确定性事实不含ML预测，追加式不可修改）②Double-Lock Grounding：Lock1实体锚定（UFL中存在否则拒绝）+Lock2数值锚定（必须从UFL检索不可生成）→消除数值幻觉③VeNRA
+    Sentinel 3B SLM幻觉检测器（Python执行轨迹→单token判定<50ms，对抗模拟训练）；关系：UFL增强C-001确定性事实层/Double-Lock增强§29.11输出校验/Sentinel增强C-004幻觉检测维度/对抗模拟增强§20.14决策七红白对抗L2
+  proposal: '深挖裁定=做(P2)。业界对标: arXiv 2603.04663；Double-Lock数值锚定消除数值幻觉。场内现状: 部分:src/zephyr/intelligence/sentinel_hallucination_detector.py。最小施工形态:
+    1个模块 src/zephyr/intelligence/fact_ledger.py，核心类UniversalFactLedger(追加式{entity/attribute/value/timestamp/source}事实账本)+DoubleLockGrounding校验器，LLM输出实体不存在或数值非检索自UFL即拒绝。依赖前置:
+    D_INTELLIGENCE;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/intelligence/sentinel_hallucination_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/universal_fact_ledger.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01952
+  source_section: §29.24
+- id: CAND-AISA-015
+  name: D-ALT-DATA-11 LLM Market Interpreter LLM市场解读
+  aliases:
+  - D-ALT-DATA-11 LLM Market Interpreter LLM市场解读
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: ✅能建；Prompt编排+上下文管理+多模型路由+事实校验
+  proposal: '深挖裁定=做(P2)。业界对标: LLM投研解读=Prompt编排+多模型路由+事实校验抑制幻觉。场内现状: 部分:src/zephyr/plan_engine/llm_premarket_analysis.py;src/zephyr/shared/contracts/llm_gateway_protocol.py。最小施工形态:
+    市场解读prompt模板+模型路由+事实校验，产物回写KB。依赖前置: model_router(已有);B10-02187(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/llm_premarket_analysis.py;src/zephyr/shared/contracts/llm_gateway_protocol.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_market_interpreter.py（MOD-INT-MKT-INTERPRETER，14 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 llm_market_interpreter（MOD-INT-MKT-INTERPRETER）同为 D-ALT-DATA-11（B10 稿重登），canonical=src/zephyr/intelligence/llm_market_interpreter.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ALT-DATA-11
+  original_id: B10-02198
+  source_section: §30.2.4
+- id: CAND-AISA-016
+  name: D-ALT-DATA-11 LLM Market Interpreter
+  aliases:
+  - D-ALT-DATA-11 LLM Market Interpreter
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: LLM市场解读(Prompt编排+上下文管理+多模型路由+事实校验);✅能建;📋MOD-INF-042未建设(Ollama已部署)
+  proposal: '深挖裁定=做(P2)。业界对标: LiteLLM多模型路由+Guardrails事实校验；LangGraph prompt编排。场内现状: 部分：src/zephyr/plan_engine/llm_premarket_analysis.py。最小施工形态:
+    市场解读服务：prompt模板注册+上下文预算管理+本地/API多模型路由+关键事实(数字/标的)回查校验，输出仅作信号输入不直接下单。依赖前置: D_INTELLIGENCE;D_ALT_DATA;D_SECURITY_LLM。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/plan_engine/llm_premarket_analysis.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'intelligence/llm_market_interpreter.py（MOD-INT-MKT-INTERPRETER）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W04）——与 P1 已建 llm_market_interpreter（MOD-INT-MKT-INTERPRETER）同为 D-ALT-DATA-11（B13 稿重登），canonical=src/zephyr/intelligence/llm_market_interpreter.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04282
+  source_section: §17.3
+- id: CAND-AISA-017
+  name: LLM研究助手 D-RESEARCH-11 LLM Research Agent
+  aliases:
+  - LLM研究助手 D-RESEARCH-11 LLM Research Agent
+  domain: D_INTELLIGENCE
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/
+  problem: P1；规划器+工具调用+反思循环+记忆管理+多Agent协作；Ollama+qwen3:8b；幻觉风险披露
+  proposal: '深挖裁定=做(P2)。业界对标: LangGraph/AutoGen式Agent（规划+工具调用+反思循环）+Ollama本地模型。场内现状: 部分:src/zephyr/research/factor_mining_pipeline.py。最小施工形态:
+    LLM研究助手：规划器+工具注册（检索/计算/数据库）+反思循环+记忆挂vector_memory，本地qwen3:8b优先，关键数字/标的强制事实回查，仅辅助研究不直连交易。依赖前置: D_INTELLIGENCE;D_ORCHESTRATOR;D_KNOWLEDGE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/factor_mining_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/intelligence/llm_research_agent.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH
+  original_id: B6-08553
+  source_section: §1
+- id: CAND-KNW-001
+  name: D-KNOW-01 FinancialKnowledgeGraph
+  aliases:
+  - D-KNOW-01 FinancialKnowledgeGraph
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 六类金融知识图谱+实体关系+事件链 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Neo4j(越界禁用)/FinKG;轻量可用SQLite邻接表。场内现状: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py。最小施工形态:
+    SQLite/邻接表轻量图谱:六类实体+关系表,增删查+子图抽取接口,向supply_chain_gnn与事件因果供边,单机内存约束下图规模≤百万边。依赖前置: D_KNOWLEDGE;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/supply_chain_gnn.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/financial_knowledge_graph.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00126
+  source_section: §功能域模块·D-KNOWLEDGE
+- id: CAND-KNW-002
+  name: D-KNOW-06 KBEngine
+  aliases:
+  - D-KNOW-06 KBEngine
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 知识库引擎+知识CRUD+版本管理 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: LlamaIndex式知识库;向量库CRUD。场内现状: 部分:src/zephyr/integration/vector_memory/。最小施工形态:
+    统一KBEngine门面:八Collection通用CRUD+条目版本号+变更审计+按版本回滚,写操作对齐gov_audit审计链。依赖前置: D_KNOWLEDGE;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/integration/vector_memory/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/kb_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00128
+  source_section: §功能域模块·D-KNOWLEDGE
+- id: CAND-KNW-003
+  name: D-KNOW-11 KnowledgeQualityAssessor
+  aliases:
+  - D-KNOW-11 KnowledgeQualityAssessor
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 知识质量评估+来源评分+过期检测 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: RAGAS式知识质量评估。场内现状: 部分:src/zephyr/gov_audit/kb_gate.py。最小施工形态: 来源可信度分级+引用频次+时效衰减模型,过期/低分知识自动降权或标记复审,质量分写回KBEngine元数据。依赖前置:
+    D_KNOWLEDGE;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/gov_audit/kb_gate.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_quality_assessor.py（MOD-KNW-002，29 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：08-26 P2-W03 归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-013 同为 D-KNOW-11 知识质量评估（三稿重登之一），canonical=CAND-KNW-013→MOD-KNW-002（四维评分+隔离降权+复核队列为最宽 spec，含其来源分级/时效衰减语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00131
+  source_section: §功能域模块·D-KNOWLEDGE
+- id: CAND-KNW-004
+  name: D-KNOWLEDGE-02 Factor Knowledge Base因子知识库
+  aliases:
+  - D-KNOWLEDGE-02 Factor Knowledge Base因子知识库
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: ✅能建；因子定义+因子关系+因子历史
+  proposal: '深挖裁定=做(P2)。业界对标: 业界以feast特征库+qlib因子库做因子元数据管理，知识化层用SQLite FTS即可。场内现状: 部分:src/zephyr/factor/casebook/casebook.py。最小施工形态:
+    因子定义/关系/历史三表挂入vector_memory knowledge集合，复用已有KB引擎。依赖前置: B10-02185(已有);D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/factor/casebook/casebook.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/factor_knowledge_base.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-KNOWLEDGE-02
+  original_id: B10-02181
+  source_section: §30.2.3
+- id: CAND-KNW-005
+  name: D-KNOWLEDGE-03 Strategy Knowledge Base策略知识库
+  aliases:
+  - D-KNOWLEDGE-03 Strategy Knowledge Base策略知识库
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: ✅能建；策略定义+策略表现+策略教训
+  proposal: '深挖裁定=做(P2)。业界对标: mlflow/wandb以实验追踪承载策略表现，策略卡模式是业界通行做法。场内现状: 部分:src/zephyr/experiment_tracking/adapters/strategy_runner_adapter.py。最小施工形态:
+    策略卡(定义+表现+教训)入vector_memory decisions集合，表现字段从experiment_tracking回填。依赖前置: B10-02185(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/experiment_tracking/adapters/strategy_runner_adapter.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/strategy_knowledge_base.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-KNOWLEDGE-03
+  original_id: B10-02182
+  source_section: §30.2.3
+- id: CAND-KNW-006
+  name: D-KNOWLEDGE-11 Knowledge Quality Assessor知识质量评估
+  aliases:
+  - D-KNOWLEDGE-11 Knowledge Quality Assessor知识质量评估
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: ✅能建；过时检测+冲突检测+可信度评分
+  proposal: '深挖裁定=做(P2)。业界对标: 知识质量=新鲜度/一致性/可信度三维度，业界RAGAS思路迁移。场内现状: 部分:src/zephyr/feedback_loop/collectors/knowledge_freshness.py;src/zephyr/orchestrator/quality/knowledge_freshness.py。最小施工形态:
+    过时检测+冲突检测+可信度评分三打分器挂KB引擎定时扫描。依赖前置: B10-02185(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/collectors/knowledge_freshness.py;src/zephyr/orchestrator/quality/knowledge_freshness.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_quality_assessor.py（MOD-KNW-002）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-013 同为 D-KNOW-11 知识质量评估（三稿重登之二），canonical=CAND-KNW-013→MOD-KNW-002（其三打分器语义被四维评分覆盖）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-KNOWLEDGE-11
+  original_id: B10-02190
+  source_section: §30.2.3
+- id: CAND-KNW-007
+  name: D-KNOWLEDGE-17 AI Auto Knowledge Extractor AI自动知识提取
+  aliases:
+  - D-KNOWLEDGE-17 AI Auto Knowledge Extractor AI自动知识提取
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: ✅能建；wandb实验报告+研究笔记+策略代码的AI自动提取
+  proposal: '深挖裁定=做(P2)。业界对标: LLM抽取实验报告/笔记入KB是RAG运营标配。场内现状: 部分:src/zephyr/feedback_loop/collectors/knowledge_capture.py;knowledge_packaging.py。最小施工形态:
+    实验报告/研究笔记/策略代码经LLM抽取后写KB的批处理管线。依赖前置: B10-02185(已有);model_router。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/collectors/knowledge_capture.py;knowledge_packaging.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/ai_knowledge_extractor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-KNOWLEDGE-17
+  original_id: B10-02191
+  source_section: §30.2.3
+- id: CAND-KNW-008
+  name: 知识库(Knowledge Base)
+  aliases:
+  - 知识库(Knowledge Base)
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 横切层：知识存储（RawKnowledgePacket/StructuredKnowledgeFragment/ClassifiedKnowledgePackage/ModuleMappingResult/NewModule版本化/TrialResult，6类阶段产出不可变）+6维知识索引（来源/作者/类型/目标层级/时间/效果）
+  proposal: '深挖裁定=做(P2)。业界对标: 版本化知识工件参考MLflow Artifact不可变存储+多维索引。场内现状: 部分:src/zephyr/research/evidence/。最小施工形态:
+    6类知识产出(RawPacket→TrialResult)不可变schema+版本化存储+来源/作者/类型/层级/时间/效果6维索引。依赖前置: D-KNOWLEDGE域/sqlite存储。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/evidence/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/knowledge_artifact_store.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A8学习系统架构
+  original_id: B12-03637
+  source_section: §10.1
+- id: CAND-KNW-009
+  name: RAG管道
+  aliases: []
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 文档分块→Embedding→ChromaDB/Faiss检索→生成(研报/公告智能问答)
+  proposal: '深挖裁定=做(P2)。业界对标: LangChain/LlamaIndex RAG；ChromaDB/FAISS+本地LLM。场内现状: 部分：src/zephyr/integration/vector_memory/。最小施工形态:
+    RAG问答管道：检索(hybrid)+重排+本地qwen生成+引用溯源(chunk id回链源文档)，研报/公告语料入库走统一ingest。依赖前置: D_KNOWLEDGE;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/integration/vector_memory/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/rag_pipeline.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04034
+  source_section: §0.2
+- id: CAND-KNW-010
+  name: 知识图谱五类图谱体系
+  aliases:
+  - 知识图谱五类图谱体系
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 公司图谱(~1万实体~5万关系,✅近期)/产业图谱(23.8万实体55.1万关系,100+产业链,⚠️近期)/供应链图谱(~5千实体~2万关系,⚠️近期)/宏观因果链(~500实体~2千关系,iFind+LLM,📋中期)/地缘政治图谱(~200实体~1千关系,新闻+LLM,📋中期)
+  proposal: '深挖裁定=做(P2)。业界对标: NetworkX单机图(238K实体可行)；LLM辅助实体/关系抽取。场内现状: 部分：src/zephyr/signal_ashare/supply_chain_gnn.py。最小施工形态:
+    五类图谱统一建：NetworkX+SQLite持久化(节点/边/属性)，LLM辅助抽取+人工审核入图，近期公司/产业/供应链三图先行，宏观/地缘中期，提供邻居/路径查询API。依赖前置: D_KNOWLEDGE;D_ASHARE_SIGNAL;D_ALT_DATA;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_ashare/supply_chain_gnn.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/financial_knowledge_graph.py（MOD-KNW-003，35 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-001 同为金融知识图谱（五类/六类枚举姊妹稿），canonical=CAND-KNW-001→MOD-KNW-003 financial_knowledge_graph（六类实体关系表+子图+邻居/路径 API 含其语义，LLM 抽取审核入图接口并入施工）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04099
+  source_section: §6.1
+- id: CAND-KNW-011
+  name: D-AUTONOMY-05 Knowledge & Memory
+  aliases:
+  - D-AUTONOMY-05 Knowledge & Memory
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 5层记忆架构(FAISS/SQLite+FTS5/知识图谱/Git仓库/RAG检索);✅能建;📐MOD-KB-001+MOD-INF-011已建设(部分)
+  proposal: '深挖裁定=做(P2)。业界对标: FAISS+SQLite FTS5+RAG五层记忆；MemGPT分层记忆思路。场内现状: 部分：src/zephyr/integration/vector_memory/。最小施工形态:
+    五层记忆收口：FAISS(语义)+SQLite FTS5(全文)+知识图谱(挂B13-04099)+Git仓库(决策/蓝图源文件)+RAG统一检索编排，缺层补齐而非重建。依赖前置: D_KNOWLEDGE;D_AUTONOMY_CORE;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/integration/vector_memory/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/layered_memory_orchestrator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04342
+  source_section: §17.21
+- id: CAND-KNW-012
+  name: D-AUTONOMY-187 8-Collection Unified Schema Manager
+  aliases:
+  - D-AUTONOMY-187 8-Collection Unified Schema Manager
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 8大Collection各自Schema定义+版本+迁移+跨Collection查询;✅能建;📐MOD-INF-011已建设(部分)
+  proposal: '深挖裁定=做(P2)。业界对标: Collection schema注册+迁移(alembic思路)；向量库多collection管理。场内现状: 部分：src/zephyr/integration/vector_memory/collection_schemas.py。最小施工形态:
+    8大Collection schema版本注册+迁移脚本(向量重建/元数据回填)+破坏性变更CI检测，跨Collection查询沿用cross_collection_retriever。依赖前置:
+    D_KNOWLEDGE;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/integration/vector_memory/collection_schemas.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/collection_schema_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04346
+  source_section: §17.21
+- id: CAND-KNW-013
+  name: D-KNOWLEDGE-11 Knowledge Quality Assessor（知识质量评估器）
+  aliases:
+  - D-KNOWLEDGE-11 Knowledge Quality Assessor（知识质量评估器）
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: ✅能建，有蓝图MOD-KB-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: Ragas式知识质量评估(忠实度/时效/来源可信度多维评分)。场内现状: 部分:src/zephyr/feedback_loop/collectors/knowledge_freshness.py（新鲜度采集有，综合质量评估器缺）。最小施工形态:
+    知识条目四维评分(准确性/时效性/来源可信度/引用频次)入vector_memory元数据，低分条目隔离降权+定期复核队列，评分变化写审计。依赖前置: D_KNOWLEDGE;D_FEEDBACK_LOOP。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/collectors/knowledge_freshness.py（新鲜度采集有，综合质量评估器缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/knowledge_quality_assessor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04624
+  source_section: §8.3.2
+- id: CAND-KNW-014
+  name: 核心聚合 ResearchProject
+  aliases:
+  - 核心聚合 ResearchProject
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 研究项目核心聚合
+  proposal: '深挖裁定=做(P2)。业界对标: MLflow Projects式研究项目聚合。场内现状: 部分:src/zephyr/research/。最小施工形态: ResearchProject聚合根：project_id/状态机（active/archived)+关联假设/证据/实验/因子产出，SQLite持久化，与hypothesis_registry/evidence_chain/experiment_tracking联动。依赖前置:
+    D_KNOWLEDGE;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/research_project_aggregate.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH
+  original_id: B6-08533
+  source_section: §0
+- id: CAND-KNW-015
+  name: 研究目录 D-RESEARCH-06 Research Catalog
+  aliases:
+  - 研究目录 D-RESEARCH-06 Research Catalog
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: P1；搜索引擎+标签系统+引用图谱+推荐器+访问控制；语义搜索/LLM自动摘要
+  proposal: '深挖裁定=做(P2)。业界对标: MLflow Registry检索+LLM语义搜索/自动摘要。场内现状: 无。最小施工形态: 研究目录：研究资产元数据索引+标签系统+SQLite
+    FTS5检索+引用关系表，语义检索挂vector_memory，访问控制沿用L1-L4数据分级。依赖前置: D_KNOWLEDGE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/research_catalog.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH
+  original_id: B6-08548
+  source_section: §1
+- id: CAND-KNW-016
+  name: 论文追踪器 D-RESEARCH-07 Paper Tracker
+  aliases:
+  - 论文追踪器 D-RESEARCH-07 Paper Tracker
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: P3；爬取器(arXiv/SSRN)+去重(标题/DOI)+摘要生成+引用分析+趋势检测
+  proposal: '深挖裁定=做(P2)。业界对标: arXiv API（免费）+Zotero式文献管理；LLM摘要。场内现状: 无。最小施工形态: 论文追踪器：arXiv API按主题订阅+标题/DOI去重+Ollama本地摘要+与factor_mining_pipeline假设提取对接+关键词频次趋势检测。依赖前置:
+    D_KNOWLEDGE;D_INTELLIGENCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/paper_tracker.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH
+  original_id: B6-08549
+  source_section: §1
+- id: CAND-KNW-017
+  name: 研究工作流引擎 D-RESEARCH-09 Research Workflow Engine
+  aliases:
+  - 研究工作流引擎 D-RESEARCH-09 Research Workflow Engine
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: P1；DAG编排器+任务调度+依赖管理+重试策略(自动重试+退避)+并行执行+通知；对标Airflow/Prefect；工作流审计/模型上线门禁
+  proposal: '深挖裁定=做(P2)。业界对标: Airflow/Prefect式DAG编排（单机复用现有scheduler）。场内现状: 部分:src/zephyr/infrastructure/queue/task_scheduler.py。最小施工形态:
+    研究工作流引擎轻量版：复用task_scheduler+pipeline DAG，研究工作流模板（因子挖掘→IC验证→注册→灰度）+重试退避+审计留痕，因子/模型上线门禁挂abs001_gate。依赖前置:
+    D_KNOWLEDGE;D_INFRA_RUNTIME;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/queue/task_scheduler.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/knowledge/research_workflow_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-RESEARCH
+  original_id: B6-08551
+  source_section: §1
+- id: CAND-KNW-018
+  name: 核心聚合 KnowledgeEntity
+  aliases:
+  - 核心聚合 KnowledgeEntity
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: 知识域核心Aggregate
+  proposal: '深挖裁定=做(P2)。业界对标: 知识图谱实体聚合(版本不可变工件)。场内现状: 部分:src/zephyr/research/evidence/。最小施工形态: KnowledgeEntity聚合根+版本不可变不变量+6类知识产出schema挂载。依赖前置:
+    KB Engine(D-KNOWLEDGE-06)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/research/evidence/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/knowledge_artifact_store.py（MOD-KNW-004，22 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-008 同为 6 类知识产出不可变 schema+版本化存储，canonical=CAND-KNW-008→MOD-KNW-004 knowledge_artifact_store（聚合根不变量与 6 类 schema 挂载语义并入）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-KNOWLEDGE
+  original_id: B6-08956
+  source_section: §0
+- id: CAND-KNW-019
+  name: D-KNOWLEDGE-06 KB Engine
+  aliases:
+  - D-KNOWLEDGE-06 KB Engine
+  domain: D_KNOWLEDGE
+  domain_status: active
+  sub_layer: src/zephyr/integration/vector_memory/
+  problem: P0✅已有；知识库引擎+CRUD+版本管理+搜索+FTS5；zephyr/kb/
+  proposal: '深挖裁定=做(P2)。业界对标: SQLite FTS5全文搜索+版本化CRUD。场内现状: 部分:src/zephyr/integration/vector_memory/sqlite_metadata_store.py。最小施工形态:
+    KB引擎归位D-KNOWLEDGE:CRUD+版本管理+FTS5搜索+知识条目schema。依赖前置: D-SHARED database。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/integration/vector_memory/sqlite_metadata_store.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'knowledge/kb_engine.py（MOD-KNW-001，28 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：B6 稿重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W03）——与 CAND-KNW-002 同为 D-KNOW-06 KB Engine（B6/B1 两稿重登），canonical=CAND-KNW-002→MOD-KNW-001 kb_engine（spec 含其 CRUD+版本+FTS5 全语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-KNOWLEDGE
+  original_id: B6-08977
+  source_section: §1
+- id: CAND-MKTDATA-003
+  name: D-DATA-32 A-Share Auction Data Manager
+  aliases:
+  - D-DATA-32 A-Share Auction Data Manager
+  domain: D_MKT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/market_data/
+  problem: ✅P0；A股集合竞价数据管理
+  proposal: '深挖裁定=做(P1)。业界对标: 集合竞价数据=09:15-09:25快照采集，tushare/akshare有免费盘口源。场内现状: 部分:schemas/categories/market_auction.py;market_auction_book.py;src/zephyr/plan_engine/auction_hit_recorder.py。最小施工形态:
+    竞价时段采集任务+ClickHouse表落地+命中率回放。依赖前置: D_DATA scheduler(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:schemas/categories/market_auction.py;market_auction_book.py;src/zephyr/plan_engine/auction_hit_recorder.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/market_data/auction_data_manager.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-DATA-32
+  original_id: B10-02234
+  source_section: §30.3.1
+- id: CAND-MKTDATA-004
+  name: D-DATA-32 A-Share Auction Data Manager
+  aliases:
+  - D-DATA-32 A-Share Auction Data Manager
+  domain: D_MKT_DATA
+  domain_status: active
+  sub_layer: src/zephyr/market_data/
+  problem: A股集合竞价数据管理(9:15-9:25/14:57-15:00竞价快照+竞价量价+竞价委托);✅能建,auction_snapshot Parquet
+  proposal: '深挖裁定=做(P1)。业界对标: miniQMT xtdata竞价快照；通达信竞价数据采集。场内现状: 部分：schemas/categories/market_auction.py。最小施工形态:
+    miniQMT竞价时段快照采集任务(9:15-9:25逐3秒+14:57-15:00)+auction_snapshot落CH/Parquet+竞价量价/虚拟撮合价量字段校验，供竞价微结构模型(B13-04064)消费。依赖前置:
+    D_MKT_DATA;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：schemas/categories/market_auction.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'market_data/auction_data_manager.py（MOD-MKT-007）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W16）——canonical=MOD-MKT-007 auction_data_manager（同号 D-DATA-32 同一建设项；miniQMT 源/3 秒节奏/尾盘竞价/字段校验四面已并入）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A3数据架构
+  original_id: B13-04251
+  source_section: §17.1
+- id: CAND-MLS-001
+  name: D-ML-SERVE 推理域
+  aliases:
+  - 推理域
+  - D-ML-SERVE 推理域
+  domain: D_ML_SERVE
+  domain_status: active
+  sub_layer: src/zephyr/ml_serve/
+  problem: 模型推理、模型生命周期管理、漂移监控、LLM网关（Warm平面H=3在线推理，延迟目标P50<50ms）；L13推理层；L1🔵骨架；P1；服务域（为其他域提供模型推理服务，自身不承载业务逻辑）；核心Aggregate
+    AGG-008 Model（不变量：至多一个active版本；active⇒approval_ts≠None）；核心事件E-OP-02 ModelDriftDetected；INV-011执行：owner_domain=D-ML-SERVE，执行影子验证门禁
+  proposal: '深挖裁定=做(P1)。业界对标: ONNX Runtime推理+影子/金丝雀发布(KServe/Seldon)。场内现状: 部分:src/zephyr/ml_serve/(骨架)+src/zephyr/ml_train/gray_release_shadow_deployer.py。最小施工形态:
+    模型生命周期管理(active版本唯一+approval_ts不变量)+影子验证门禁(INV-011)+E-OP-02漂移检测+LLM网关。依赖前置: P50<50ms推理运行时/D-ML-TRAIN/D-INFRA-RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_serve/(骨架)+src/zephyr/ml_train/gray_release_shadow_deployer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_serve/core/model_drift_monitor.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-ML-SERVE
+  original_id: B4-06990
+  source_section: §0
+- id: CAND-MLS-002
+  name: §29.28 模型压缩与推理加速（v5.1新增）
+  aliases:
+  - 模型压缩与推理加速
+  domain: D_ML_SERVE
+  domain_status: active
+  sub_layer: src/zephyr/ml_serve/
+  problem: ①量化技术：INT8（推荐首选：2x压缩精度损失<1%吞吐2.5x，适用QNN/GNN/RL；PyTorch Quantization/ONNX Runtime/Intel Neural
+    Compressor；需校准数据集从C-003回测数据抽）/INT4-NF4（谨慎：8x压缩损失3-5%单token延迟或增30%，适用LLM 7B显存14GB→4GB；GPTQ/AWQ/llama.cpp；量化后须重过VeNRA
+    Double-Lock测试）/FP8（新兴：<0.5%损失但RTX 4090不支持FP8 Tensor Core暂不可用）②推理引擎：ONNX Runtime（推荐跨平台统一QNN/GNN/RL）/TensorRT（GPU最快比ONNX快20-30%作升级路径）/llama.cpp-vLLM（LLM专用）③知识蒸馏（Qwen2.5-7B教师→0.5B学生→Sentinel推理<10ms；大QNN
+    4层128→小QNN 2层64→2x加速；蒸馏后须C-003验证）④3 Phase集成（ONNX+INT8→llama.cpp+INT4→蒸馏）；约束5条（量化后须C-003完整验证CRPS/Sharpe/最大回撤不显著降/校准数据集从训练集抽防泄漏/ONNX与PyTorch输出数值误差<1e-5/LLM
+    INT4后重过Double-Lock幻觉率不升/推理引擎切换不破坏决策管
+  proposal: '深挖裁定=做(P2)。业界对标: ONNX Runtime/TensorRT/llama.cpp;GPTQ/AWQ量化。场内现状: 部分：src/zephyr/feedback_loop/evolution/knowledge_distillation.py。最小施工形态:
+    Phase1 ONNX Runtime+INT8(QNN/GNN/RL，校准集从训练集抽防泄漏，与PyTorch数值误差<1e-5)→Phase2 llama.cpp+INT4(LLM 14GB→4GB，量化后重过Double-Lock)→Phase3知识蒸馏（7B→0.5B
+    Sentinel<10ms)；每阶段须C-003完整验证不显著降CRPS/Sharpe/MaxDD。依赖前置: D_ML_SERVE;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/feedback_loop/evolution/knowledge_distillation.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_serve/model_compression_accelerator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01872
+  source_section: §29.28
+- id: CAND-MLS-003
+  name: D-ML-46 M3 Code Generation Model Adapter
+  aliases:
+  - D-ML-46 M3 Code Generation Model Adapter
+  domain: D_ML_SERVE
+  domain_status: active
+  sub_layer: src/zephyr/ml_serve/
+  problem: ✅P0；M3代码生成适配DeepSeek-V4-Pro
+  proposal: '深挖裁定=做(P2)。业界对标: 多模型适配=统一chat协议+成本/配额路由(litellm模式)，API订阅非付费数据边界。场内现状: 部分:src/zephyr/orchestrator/governance/model_registry.py;scripts/run_deepseek_v4_exam.py。最小施工形态:
+    model_router注册DeepSeek-V4-Pro代码生成profile+成本计量。依赖前置: model_registry(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/orchestrator/governance/model_registry.py;scripts/run_deepseek_v4_exam.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_serve/codegen_model_adapter.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ML-46
+  original_id: B10-02296
+  source_section: §30.4.1
+- id: CAND-MLS-004
+  name: D-ML-47 M7 Deep Review Model Adapter
+  aliases:
+  - D-ML-47 M7 Deep Review Model Adapter
+  domain: D_ML_SERVE
+  domain_status: active
+  sub_layer: src/zephyr/ml_serve/
+  problem: ✅P0；M7深度审查适配GLM-5.1
+  proposal: '深挖裁定=做(P2)。业界对标: 深度审查模型适配同litellm统一协议+能力矩阵路由。场内现状: 部分:src/zephyr/orchestrator/governance/model_registry.py;config/ai_capability_matrix.yaml。最小施工形态:
+    model_router注册GLM-5.1深度审查profile+考试校准。依赖前置: model_registry(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/orchestrator/governance/model_registry.py;config/ai_capability_matrix.yaml'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_serve/deep_review_model_adapter.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-ML-47
+  original_id: B10-02297
+  source_section: §30.4.1
+- id: CAND-MLT-013
+  name: A1 聚焦贝叶斯损失函数（Focused Bayesian Loss）★当前即做
+  aliases:
+  - A1 聚焦贝叶斯损失函数（Focused Bayesian Loss）★当前即做
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: Duke/Monash 2024；左尾加权对数似然w(r)=2.0(r<VaR_5%)；Phase 1即可用；改动<50行；聚焦训练→校准验证→通过才上线
+  proposal: '深挖裁定=做(P0)。业界对标: Duke/Monash 2024左尾加权对数似然。场内现状: 部分:src/zephyr/ml_train/core/sample_weights.py。最小施工形态:
+    在ml_train/implementations/density_quantile_trainer.py损失层加左尾加权w(r)=2.0(r<VaR_5%)，<50行改动+聚焦训练→校准验证→通过才上线。依赖前置:
+    D_ML_TRAIN(density_quantile_trainer);D_RISK(VaR)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/core/sample_weights.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/density_quantile_trainer.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01407
+  source_section: §4.5.1-A1
+- id: CAND-MLT-014
+  name: A2 分位数神经网络两阶段架构（QNN Two-Stage）★当前即做
+  aliases:
+  - A2 分位数神经网络两阶段架构（QNN Two-Stage）★当前即做
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: UBS Quant Hub 2025；Stage1剥离市场共性(跨标的复用)+Stage2市场缩放因子(体制切换几分钟重训)；Phase 2采用
+  proposal: '深挖裁定=做(P1)。业界对标: UBS Quant Hub 2025两阶段QNN：跨标的共性剥离+市场缩放因子。场内现状: 部分:src/zephyr/ml_train/implementations/density_quantile_trainer.py。最小施工形态:
+    1个模块 src/zephyr/ml_train/implementations/qnn_two_stage.py，核心类TwoStageQnn，Stage1跨标的共性分位数网络+Stage2市场缩放头，输入特征矩阵输出条件分位数。依赖前置:
+    D_ML_TRAIN;D_REGIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/implementations/density_quantile_trainer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/qnn_two_stage.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01408
+  source_section: §4.5.1-A2
+- id: CAND-MLT-015
+  name: §29.7 Transformer时序架构密度预测增强
+  aliases:
+  - §29.7 Transformer时序架构密度预测增强
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 金融时序Transformer 4家族：①Informer(AAAI 2021最佳论文，ProbSparse O(L·logL)，60天×60因子=3600维）②PatchTST(ICLR
+    2023,patchify+通道独立+自监督预训练）③TimesNet(ICLR 2023,1D→2D卷积捕捉周期模式）④iTransformer(ICLR 2024，变量维attention替代手动交互项）；Phase2：PatchTST作QNN
+    Stage1前置特征提取器；Phase3：完整Transformer密度预测
+  proposal: '深挖裁定=做(P1)。业界对标: Informer(AAAI21)/PatchTST(ICLR23)/TimesNet(ICLR23)/iTransformer(ICLR24)均开源。场内现状:
+    无。最小施工形态: 1个模块 src/zephyr/ml_train/implementations/patchtst_density_encoder.py，核心类PatchtstDensityEncoder(patchify+通道独立)，输入60天×60因子时序，输出密度预测前置特征；先PatchTST单家族落地。依赖前置:
+    D_ML_TRAIN(density_quantile_trainer)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/patchtst_density_encoder.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01831
+  source_section: §29.7
+- id: CAND-MLT-016
+  name: D-ML-TRAIN 训练域
+  aliases:
+  - 训练域
+  - D-ML-TRAIN 训练域
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 模型训练、因子发现、实验管理、元学习（Cold平面H=2离线批处理）；L11模型层；L1🔵骨架；P1；可选增强域（因子域和信号域可以不用ML独立运行）；核心Aggregate AGG-008
+    Model+ENT-006 ModelVersion；核心事件E-ML-01 ModelTrained/E-RS-03 ModelValidated；INV-011执行：TRAIN产出模型必须经SERVE影子验证后方可进Warm
+  proposal: '深挖裁定=做(P1)。业界对标: MLflow实验管理+模型注册。场内现状: 部分:src/zephyr/ml_train/(trainer_base.py,meta_learning_rsi.py,gray_release_shadow_deployer.py)+src/zephyr/experiment_tracking/。最小施工形态:
+    AGG-008 Model+ENT-006 ModelVersion聚合+实验管理归一+因子发现流水线+ModelTrained/ModelValidated事件+INV-011影子验证对接。依赖前置:
+    D-DATA/D-FACTOR/D-ML-SERVE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/(trainer_base.py,meta_learning_rsi.py,gray_release_shadow_deployer.py)+src/zephyr/experiment_tracking/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/core/model_version_registry.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-ML-TRAIN
+  original_id: B4-06880
+  source_section: §0
+- id: CAND-MLT-017
+  name: C-029 ML模型工厂
+  aliases:
+  - 模型工厂
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: GPU调度+模型全生命周期+LLM Agent+灰度发布+对抗鲁棒性 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: mlflow Model Registry+灰度发布。场内现状: 部分:src/zephyr/ml_train/gray_release_shadow_deployer.py。最小施工形态:
+    模型注册表+全生命周期状态机+灰度发布编排+对抗鲁棒门禁+GPU任务队列整合。依赖前置: src/zephyr/ml_train/gray_release_shadow_deployer.py；src/zephyr/ml_train/adversarial_robustness_validator.py；src/zephyr/trading/gpu_consensus_scheduler。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/gray_release_shadow_deployer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/ml_model_factory.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00253
+  source_section: §功能域模块·D-ML
+- id: CAND-MLT-018
+  name: 71 交易决策标注数据集
+  aliases:
+  - 交易决策标注数据集
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: P2🚧：用户交易决策标注+画图标注+反馈数据采集+存储+标注；替代记录主观交易思维；门禁：交互UI系统就绪(D-UI域)
+  proposal: '深挖裁定=做(P2)。业界对标: Label Studio式标注+样本版本管理(DVC思路)。场内现状: 部分：src/zephyr/ml_train/training_dataset_manager/manager.py。最小施工形态:
+    决策标注schema(decision_id/标的/时点/理由/情绪标签/图表引用/结果回填)+SQLite标注库+CLI/表单录入MVP(待D-UI就绪迁前端)+导出SFT样本与复盘数据集，挂training_dataset_manager版本。依赖前置:
+    D_ML_TRAIN;D_FRONTEND;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/ml_train/training_dataset_manager/manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/decision_annotation_dataset.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA
+  original_id: B1-00631
+  source_section: §1 子模块清单
+- id: CAND-MLT-019
+  name: 95 金融时序数据增强
+  aliases:
+  - 金融时序数据增强
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: P2✅：轻量增强(时间扭曲/幅度缩放/切片混合/Jittering/Permutation)+GAN/VAE增强(TimeGAN/RTSGAN)+FWT检索增强扩散(港科大2025)+GBM-Diffusion(乘性噪声替代加性)+生成数据质量管理(KS
+    test/增强比例≤30%/synthetic=True标注)
+  proposal: '深挖裁定=做(P2)。业界对标: tsaug轻量增强(jitter/scaling/warp)；TimeGAN(ydata-synthetic)研究线。场内现状: 无。最小施工形态:
+    轻量增强库(jittering/幅度缩放/时间扭曲/切片混合/Permutation)+增强样本synthetic=True标注+KS test分布质量门+训练混入比例≤30%硬约束，GAN/VAE增强不建留研究评估。依赖前置:
+    D_ML_TRAIN;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/ts_augmentation.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-DATA
+  original_id: B1-00639
+  source_section: §1 子模块清单
+- id: CAND-MLT-020
+  name: xLSTM长程记忆（v6.0）
+  aliases:
+  - 长程记忆
+  - xLSTM长程记忆（v6.0）
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 第三时序架构（§29.34）
+  proposal: '深挖裁定=做(P2)。业界对标: xLSTM为2024新时序架构(官方xlstm repo)，与HMM/Transformer互补。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py(设计态)。最小施工形态:
+    完成xlstm_long_memory实现并接入密度/时序预测训练管线。依赖前置: ml_train管线(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/xlstm_long_memory.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'signal_ashare/xlstm_long_memory.py（MOD-SIG-053）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（真训练属 B-007 人工窗口）"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——canonical=MOD-SIG-053 xlstm_long_memory（接口契约+EMA 占位实现+单测已在 production）；真训练/真推理属 B-007 Owner 人工窗口（RLSP GPU 真训练排除项），本波不施工"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01187
+  source_section: §1.1
+- id: CAND-MLT-021
+  name: 策略数字孪生（v8.0）
+  aliases:
+  - 策略数字孪生
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 每策略实时镜像副本→策略健康评估+衰减预警
+  proposal: '深挖裁定=做(P2)。业界对标: 策略镜像/健康评估=paper-live偏差监控，业界以影子盘实现。场内现状: 部分:src/zephyr/ml_train/strategy_digital_twin.py(设计态)。最小施工形态:
+    完成strategy_digital_twin：实时镜像副本+健康评分+衰减预警。依赖前置: decay_monitor(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ml_train/strategy_digital_twin.py(设计态)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/strategy_digital_twin.py（MOD-ML-006）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——canonical=MOD-ML-006 strategy_digital_twin（镜像推演+权益曲线/回撤/Sharpe 已在 production）+decay_monitor（衰减预警已在）；健康评分为二者组合面，不独立施工"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01246
+  source_section: §1.1
+- id: CAND-MLT-022
+  name: 模块46 决策树与强化学习交易决策架构
+  aliases:
+  - 决策树与强化学习交易决策架构
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 23个决策节点标准化流程→数据驱动替代；决策树学习(特征工程=各模块输出/CART/RF/GBM/特征重要性/CCP剪枝)；RL优化(状态=市场状态向量/动作=买卖持有+仓位/奖励=Sharpe/Sortino/PPO/SAC)；可解释性(SHAP值/决策路径可视化/关键节点人工干预接口)；对标Man
+    Group AlphaGPT/Kinlay RL最优执行(beat TWAP)；归属决策编排器+L4(人工干预)
+  proposal: '深挖裁定=做(P2)。业界对标: FinRL(PPO/SAC)+SHAP可解释为RL交易学界主流。场内现状: 无。最小施工形态: GBM决策树学习历史决策日志(特征=模块输出/标签=事后收益)+SHAP解释+关键节点人工干预接口;RL(PPO)离线评估后再议。依赖前置:
+    决策日志数据;backtest仿真环境。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/decision_tree_decision_architecture.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01480
+  source_section: 决策编排器模块46
+- id: CAND-MLT-023
+  name: §29.19 金融时序数据增强（Financial Time Series Data Augmentation）
+  aliases:
+  - §29.19 金融时序数据增强（Financial Time Series Data Augmentation）
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 尾部事件样本太少→生成模型合成逼真假数据扩充训练集；①TimeGAN/QuantGAN（潜空间对抗训练+监督损失；QuantGAN用WGAN-GP；合成须过3检验：KS分布/自相关结构/预测一致性样本外不退化）②条件扩散样本内增强（后向生成"给定起始状态→完整一天行情"/过渡生成"两状态间插值路径"；须保持波动率聚集/杠杆效应/微观结构噪音/日内周期；与§4.5.1-B2同架构不同任务头）③轻量增强立即可用（时间扭曲ε∈[-0.3,0.3]/幅度缩放c~U(0.5,1.5)且波动率不超历史P99/切片混合拼接点须C-021标注市场状态切换点；所有增强样本标augmented=True训练权重0.5）④生成数据质量管理（真伪判别AUC≈0.5/下游性能降≤5%/尾部P0.1/P99.9
+    KS检验/增强比例≤30%）；3 Phase（轻量<100行→GAN盘后GPU→条件扩散双GPU）
+  proposal: '深挖裁定=做(P2)。业界对标: TimeGAN/QuantGAN(ydata-synthetic)+轻量扭曲增强；与§4.5.1-B2同架构。场内现状: 部分:src/zephyr/simulation/scenario_generator.py。最小施工形态:
+    1个模块 src/zephyr/ml_train/implementations/ts_augmentation.py，核心类TsAugmentor，输入训练矩阵，轻量增强(时间扭曲ε∈[-0.3,0.3]/幅度缩放c~U(0.5,1.5)/切片混合)输出标augmented=True且训练权重0.5的扩充样本。依赖前置:
+    D_ML_TRAIN;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/simulation/scenario_generator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/implementations/ts_augmentation.py（MOD-ML-015）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 CAND-MLT-019 同为 §29.19 金融时序数据增强（B10-01859/B1-00639/B10-01940 三稿重登之一），canonical=CAND-MLT-019→MOD-ML-015 ts_augmentation（KS 质量门+≤30% 混入硬约束含其 augmented=True/权重0.5 语义）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01859
+  source_section: §29.19
+- id: CAND-MLT-024
+  name: §29.33 KAN Kolmogorov-Arnold网络（v6.0新增）
+  aliases:
+  - §29.33 KAN Kolmogorov-Arnold网络（v6.0新增）
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 可学习B样条激活替代固定激活（ReLU/GELU)，Kolmogorov-Arnold表示定理；参数效率高（对RTX 3090显存友好）+可解释（样条可视化）；金融验证：VIX预测（Cho
+    arXiv 2502.00980，少参数达MLP竞争精度+符号化封闭形式表达均值回归杠杆效应）；KAN vs LSTM（Rather arXiv 2511.18613：LSTM所有预测时域精度显著优于KAN，KAN优势计算效率→定位"可解释辅助"非"精度主力"）；多层混合MTL（CSDN
+    2026.05：Transformer+BiGRU+KAN，R²=0.98）；3集成点（KAN替代QNN Stage1 MLP层/§29.18 KAN符号化因果函数增强可解释/KAN输出层+Mamba-Transformer特征提取混合架构）；安全约束4条（替换MLP须C-003验证CRPS不显著降/样条阶数≤4对齐§29.8截断2-4阶/符号化结果人工审核/不可自动上线B-007）
+  proposal: '深挖裁定=做(P2)。业界对标: pykan/efficient-kan开源；VIX预测验证参数效率高；定位可解释辅助非精度主力。场内现状: 无。最小施工形态: 1个模块 src/zephyr/ml_train/implementations/kan_density_head.py，核心类KanDensityHead(可学习B样条激活,阶数≤4)，替换QNN
+    Stage1 MLP层，须过C-003验证CRPS不显著降。依赖前置: D_ML_TRAIN;B10-01408。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/implementations/kan_density_head.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01878
+  source_section: §29.33
+- id: CAND-MLT-025
+  name: §29.35 持续学习抗遗忘框架（v6.0新增）
+  aliases:
+  - 持续学习抗遗忘框架
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: §29.5解决"何时适应"本节解决"如何适应而不遗忘"；①灾难性遗忘问题（牛市数据微调后熊市预测能力下降；市场状态切换每种状态不同分布，旧状态回归时模型失效）②抗遗忘3类方法：正则化（EWC
+    Fisher信息矩阵加权重要参数少更新/MAS参数重要性=输出敏感度无需标签/SI在线重要性累积开销最小）/回放（经验回放每市场状态保留代表性N条/伪回放用§29.19生成模型合成旧数据与数据增强天然协同）/架构（Progressive
+    Networks新状态=新列旧列冻结零遗忘但列数须控制/PackNet参数子集分配）③3集成点（§29.5在线适应+EWC约束允许更多参数更新但不遗忘/§29.19-30伪回放抗遗忘无额外开发量/C-029模型工厂版本管理+遗忘检测触发回滚）④安全约束4条（微调后旧状态数据验证性能降≤5%/Fisher计算入盘后批处理不占盘中/回放缓冲≤1000条内存约束/回滚机制须C-004风控验证）
+  proposal: '深挖裁定=做(P2)。业界对标: Avalanche持续学习框架；EWC/MAS/SI经典三法。场内现状: 部分：src/zephyr/feedback_loop/evolution/ewc_kb_review.py。最小施工形态:
+    正则化（EWC Fisher盘后批处理）+经验回放（每市场状态代表样本，缓冲≤1000条内存约束）+微调后旧状态数据验证性能降≤5%；回滚机制经C-004风控验证。依赖前置: D_ML_TRAIN;D_FBL_DETECTORS。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/feedback_loop/evolution/ewc_kb_review.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/continual_learning_antiforget.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01881
+  source_section: §29.35
+- id: CAND-MLT-026
+  name: §29.19 金融时序数据增强
+  aliases:
+  - 金融时序数据增强
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 尾部事件样本太少瓶颈；与§4.5.1-B2区别：B2预测未来（前向），数据增强扩充历史（后向/插值/变体）；①TimeGAN(NeurIPS 2019嵌入网络+对抗+监督损失）/QuantGAN(WGAN-GP金融特化）→增强C-038黑天鹅库/体制转换检测/鲁棒密度预测；合成数据须过分布检验KS+自相关检验+预测一致性检验②条件扩散样本内增强（后向生成/过渡生成；保持波动率聚集/杠杆效应/微观噪音/日内周期）③轻量增强：时间扭曲（ε∈[-0.3,0.3])/幅度缩放（c~U(0.5,1.5)缩放后波动率≤历史P99)/切片混合（拼接点须市场状态切换点）；所有增强样本augmented=True标签训练权重0.5④生成数据质量管理（真伪判别AUC≈0.5/下游任务性能降≤5%/极端值KS检验/增强比例≤30%）
+  proposal: '深挖裁定=做(P2)。业界对标: TimeGAN/QuantGAN;ydata-synthetic。场内现状: 无。最小施工形态: 先落地轻量增强三法（时间扭曲ε±0.3/幅度缩放后波动率≤P99/切换点切片混合）+augmented=True标签（训练权重0.5，增强比例≤30%)+质量门（真伪AUC≈0.5/KS检验/下游性能降≤5%);TimeGAN/条件扩散二期增强C-038黑天鹅库。依赖前置:
+    D_ML_TRAIN;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ml_train/implementations/ts_augmentation.py（MOD-ML-015）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三稿重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W07）——与 CAND-MLT-019 同为 §29.19 金融时序数据增强（三稿重登之二），canonical=CAND-MLT-019→MOD-ML-015"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01940
+  source_section: §29.19
+- id: CAND-MLT-027
+  name: D-RESEARCH-01 Research Data Manager
+  aliases:
+  - D-RESEARCH-01 Research Data Manager
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 研究数据管理(数据集版本化Git-like+血缘+质量评分+搜索发现+访问控制+生命周期);✅能建;📐MOD-L09-001已建设(部分)
+  proposal: '深挖裁定=做(P2)。业界对标: DVC/LakeFS数据版本化；HuggingFace datasets血缘。场内现状: 部分：src/zephyr/ml_train/training_dataset_manager/manager.py。最小施工形态:
+    研究数据管理：数据集快照(manifest+hash)+血缘挂lineage_tracker+质量评分(复用数据质量门控)+元数据检索+保留策略。依赖前置: D_ML_TRAIN;D_DATA_GOV;D_KNOWLEDGE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/ml_train/training_dataset_manager/manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/research_data_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04336
+  source_section: §17.20
+- id: CAND-MLT-028
+  name: D-RESEARCH-05 Reproducibility Manager
+  aliases:
+  - D-RESEARCH-05 Reproducibility Manager
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 可复现性管理(环境快照+依赖锁定+种子管理+结果校验+复现报告);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: MLflow运行快照+pip-tools依赖锁定+种子管理。场内现状: 部分：src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py。最小施工形态:
+    可复现性管理：环境快照(python/pip lock/关键lib版本)+全局种子登记+结果hash校验+复现报告生成，与experiment_tracking集成。依赖前置: D_ML_TRAIN;D_FEEDBACK_LOOP。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/feedback_loop/verifiers/build_reproducibility_verifier.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/reproducibility_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04338
+  source_section: §17.20
+- id: CAND-MLT-029
+  name: D-RESEARCH-12 Research Data Sandbox
+  aliases:
+  - D-RESEARCH-12 Research Data Sandbox
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 研究数据沙箱(隔离研究环境+数据/代码/资源隔离);✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 目录隔离+只读挂载；venv/conda环境隔离。场内现状: 部分：src/zephyr/governance/resilience_governance/engine_sandbox.py。最小施工形态:
+    轻量研究沙箱：独立工作目录+生产数据只读视图+资源配额(CPU/内存)+产出回写需评审，复用engine_sandbox隔离原语。依赖前置: D_ML_TRAIN;D_DATA_GOV;D_SECURITY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/governance/resilience_governance/engine_sandbox.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/research_data_sandbox.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04339
+  source_section: §17.20
+- id: CAND-MLT-030
+  name: D-RESEARCH-18 Research Asset Versioning
+  aliases:
+  - D-RESEARCH-18 Research Asset Versioning
+  domain: D_ML_TRAIN
+  domain_status: active
+  sub_layer: src/zephyr/intelligence/model_evaluation/
+  problem: 研究资产(因子/模型/策略)版本化管理与跨项目复用;✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: MLflow model registry+DVC；因子/策略SemVer。场内现状: 部分：src/zephyr/reporting/report_version_manager.py。最小施工形态:
+    研究资产版本化：三类资产统一SemVer+不可变版本记录(复用report_version_manager模式)+复用索引(按资产/版本/指标检索)。依赖前置: D_ML_TRAIN;D_FACTOR;D_REPORTING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/reporting/report_version_manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/ml_train/research_asset_versioning.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04341
+  source_section: §17.20
+- id: CAND-OPS-001
+  name: 运维域 D-OPS
+  aliases:
+  - 运维域
+  domain: D_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: 系统怎么跑；核心层L12；成熟度🔧部分开发(6/14子模块已有代码,8个待建)；核心Aggregate=OpsIncident；核心事件E-OP-01/02/03；横切支撑层P1；与D-AUTONOMY关系=自治管AI行为运维管系统运行；与D-INFRA关系=基础设施管硬件网络运维管怎么跑；激活前提=D-AUTONOMY就绪+D-INFRA部分就绪
+  proposal: '深挖裁定=做(P2)。业界对标: Google SRE SLO运维+OpenTelemetry四流。场内现状: 部分:src/zephyr/infrastructure/system_telemetry/+src/zephyr/governance/ops_governance/。最小施工形态:
+    OpsIncident核心聚合+运维事件三件套+待建子模块骨架(事件响应/资产盘点等)。依赖前置: D-INFRA-RUNTIME/D-AUTONOMY-CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/system_telemetry/+src/zephyr/governance/ops_governance/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-OPS
+  original_id: B9-11460
+  source_section: §0
+- id: CAND-OPS-002
+  name: OPS-03 事件响应器(骨架)
+  aliases:
+  - 事件响应器
+  domain: D_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: P0~P2分级+自动处置+升级+自治闭环(Detect→Diagnose→Remediate→Learn)；P1；对标A9§3 AI自治运维闭环；场内对照MOD-INF-010(feedback_loop/)
+  proposal: '深挖裁定=做(P2)。业界对标: AIOps自治闭环Detect-Diagnose-Remediate-Learn。场内现状: 部分:src/zephyr/feedback_loop/+src/zephyr/orchestrator/lifecycle/incident_postmortem.py。最小施工形态:
+    事件分级(P0~P2)+自动处置策略表+升级规则+处置结果回写学习。依赖前置: OPS-01遥测/D-FEEDBACK-LOOP。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/+src/zephyr/orchestrator/lifecycle/incident_postmortem.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/incident_responder.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-OPS
+  original_id: B9-11645
+  source_section: §2骨架
+- id: CAND-OPS-003
+  name: OPS-06 资产盘点器(骨架)
+  aliases:
+  - 资产盘点器
+  domain: D_OPS
+  domain_status: active
+  sub_layer: src/zephyr/infrastructure/system_telemetry/
+  problem: unified_asset_index+健康评分+孤儿率+依赖图；P1；对标A9§5.1 RTO/RPO分级；场内对照MOD-INF-026(asset_inventory/)
+  proposal: '深挖裁定=做(P2)。业界对标: CMDB资产盘点+依赖图(业界CMDB/Backstage catalog)。场内现状: 部分:src/zephyr/infrastructure/registry_governance.py。最小施工形态:
+    unified_asset_index+资产健康评分+孤儿率统计+依赖图生成。依赖前置: db_nodes注册表/orphan扫描器。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/infrastructure/registry_governance.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/infrastructure/system_telemetry/asset_inventory.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-OPS
+  original_id: B9-11648
+  source_section: §2骨架
+- id: CAND-ORCH-001
+  name: Agent分层指挥链（战略到战术到执行）
+  aliases:
+  - 分层指挥链
+  - Agent分层指挥链（战略到战术到执行）
+  domain: D_ORCHESTRATOR
+  domain_status: active
+  sub_layer: src/zephyr/orchestrator/
+  problem: 三层指挥链将宏观战略决策与微观执行操作解耦
+  proposal: '深挖裁定=做(P1)。业界对标: 分层指挥链(军事C2式三层解耦)+LangGraph分层agent。场内现状: 部分：src/zephyr/autonomy_core/agents/__init__.py。最小施工形态:
+    三层指挥链：战略层(组合/风控目标)到战术层(信号/择时)到执行层(订单/路由)委托协议(任务包Schema+结果上报Schema)；层间通信强制A2A网关；指挥链关系入Agent注册表，越层直连拒绝并告警。依赖前置:
+    D_ORCHESTRATOR;D_AUTONOMY_CORE;D_INFRA_A2A。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/autonomy_core/agents/__init__.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/orchestrator/layered_command_chain.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A7-Agent架构
+  original_id: B11-02451
+  source_section: §0边界声明/§1
+- id: CAND-ORCH-002
+  name: 全局状态聚合器
+  aliases:
+  - 全局状态聚合器
+  domain: D_ORCHESTRATOR
+  domain_status: active
+  sub_layer: src/zephyr/orchestrator/
+  problem: 跨域统一状态视图(持仓/市场/风控/策略/资金/系统) ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Lean Algorithm集中状态对象/freqtrade RPC状态视图。场内现状: 部分:src/zephyr/trading/status_dashboard.py。最小施工形态:
+    只读聚合服务定时采集持仓/资金/风控/策略/市场/系统健康，产出统一StateSnapshot JSON供面板与告警消费。依赖前置: src/zephyr/trading/health_monitor.py；src/zephyr/trading/pnl_calculator.py；src/zephyr/position。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/status_dashboard.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/orchestrator/global_state_aggregator.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00201
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-ORCH-003
+  name: 技能：task-orchestration 任务编排
+  aliases:
+  - 技能：task-orchestration 任务编排
+  domain: D_ORCHESTRATOR
+  domain_status: active
+  sub_layer: src/zephyr/orchestrator/
+  problem: 编排Agent技能
+  proposal: '深挖裁定=做(P2)。业界对标: LangGraph Supervisor/CrewAI流程编排。场内现状: 部分：src/zephyr/orchestrator/agent_orchestrator.py。最小施工形态:
+    task-orchestration技能封装：任务分解到DAG生成(复用work_dag)到波次调度到失败重试/DLQ；技能契约(SKILL.md+输入输出Schema)入skill_registry，产出编排计划需human_gated确认。依赖前置:
+    D_ORCHESTRATOR;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/orchestrator/agent_orchestrator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/orchestrator/task_orchestration_skill.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02579
+  source_section: §5.2
+- id: CAND-ORCH-004
+  name: 技能：agent-coordination Agent协调
+  aliases:
+  - 技能：agent-coordination Agent协调
+  domain: D_ORCHESTRATOR
+  domain_status: active
+  sub_layer: src/zephyr/orchestrator/
+  problem: 编排Agent技能
+  proposal: '深挖裁定=做(P2)。业界对标: AutoGen GroupChat/CrewAI多Agent协调模式。场内现状: 部分：src/zephyr/infrastructure/a2a_protocol/multi_agent.py。最小施工形态:
+    agent-coordination技能封装：分工协议(按Agent Card能力匹配)+冲突仲裁(投票/优先级)+共识触发(复用multi_model_consensus)；协调记录落审计，跨Agent调用走A2A网关。依赖前置:
+    D_ORCHESTRATOR;D_INFRA_A2A。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/infrastructure/a2a_protocol/multi_agent.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/orchestrator/agent_coordination_skill.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02580
+  source_section: §5.2
+- id: CAND-PFALLOC-006
+  name: PA-13 MaxDDLimit Allocation Strategist最大回撤限制分配器
+  aliases:
+  - PA-13 MaxDDLimit Allocation Strategist最大回撤限制分配器
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: src/zephyr/pf_alloc/
+  problem: ✅能建；MaxDDLimit分配+最大回撤约束动态调整
+  proposal: '深挖裁定=做(P0)。业界对标: 回撤约束资金分配=机构风险预算标准实践。场内现状: 部分:src/zephyr/position/core/drawdown_controller.py。最小施工形态:
+    1个模块 src/zephyr/pf_alloc/core/maxdd_limit_allocator.py，核心类MaxDdLimitAllocator，输入各策略回撤预算+当前回撤(drawdown_tracker)，输出资金分配权重+超限降档/暂停。依赖前置:
+    D_RISK(drawdown_tracker);D_PF_ALLOC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/drawdown_controller.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_alloc/core/maxdd_limit_allocator.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02101
+  source_section: §30.1.4
+- id: CAND-PFALLOC-007
+  name: C-042 策略容量建模
+  aliases:
+  - 策略容量建模
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: src/zephyr/pf_alloc/
+  problem: 每条策略AUM容量上限 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: 资管业以ADV占比+冲击成本曲线估策略容量，开源锚点弱(可参alphalens衰减分析)。场内现状: 部分:src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py。最小施工形态:
+    基于ADV占比+冲击成本模型估算每策略AUM容量上限，产出capacity表供资金分配器消费。依赖前置: src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py；src/zephyr/market_data(成交量ADV)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'pf_core/core/strategy_capacity_estimator.py（MOD-PF-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（ADV+冲击+容量上限）"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W09）——与 P1 已建 MOD-PF-012 strategy_capacity_estimator 同为策略容量估算（C-042/PC-17 三稿重登之一），canonical=src/zephyr/pf_core/core/strategy_capacity_estimator.py（ADV+冲击+容量上限语义已在，capacity 表消费接线归运行时装配批）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00193
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-PFALLOC-008
+  name: PC-17 Strategy Capacity Estimator策略容量估计器
+  aliases:
+  - PC-17 Strategy Capacity Estimator策略容量估计器
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: src/zephyr/pf_alloc/
+  problem: ✅能建；AUM容量上限+利用率+流动性约束容量
+  proposal: '深挖裁定=做(P2)。业界对标: 机构策略容量=AUM×参与率×冲击曲线反推实践。场内现状: 无。最小施工形态: 1个模块 src/zephyr/pf_alloc/core/strategy_capacity.py，核心类StrategyCapacityEstimator，输入策略换手率+标的流动性+冲击曲线，输出AUM容量上限+当前利用率。依赖前置:
+    D_RISK(liquidity_monitor);D_PF_ALLOC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'pf_core/core/strategy_capacity_estimator.py（MOD-PF-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：B10/B14 重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W09）——与 P1 已建 MOD-PF-012 同为 PC-17 Strategy Capacity Estimator（B10/B14 同条目两稿），canonical=src/zephyr/pf_core/core/strategy_capacity_estimator.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02086
+  source_section: §30.1.3
+- id: CAND-PFALLOC-009
+  name: PA-02 Strategy Screening 3D Evaluator策略筛选三维评估器
+  aliases:
+  - PA-02 Strategy Screening 3D Evaluator策略筛选三维评估器
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: src/zephyr/pf_alloc/
+  problem: ✅能建；收益风险清晰性+参数稳定性+天然互补性
+  proposal: '深挖裁定=做(P2)。业界对标: 量化私募策略入库评审三维(收益风险/参数稳定/互补性)实践。场内现状: 部分:src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py。最小施工形态:
+    1个模块 src/zephyr/pf_alloc/core/strategy_screener.py，核心类StrategyScreening3d，输入策略回测指标+参数敏感性+与现有策略相关性，输出入库三维评分。依赖前置:
+    D_BACKTEST;D_PF_ALLOC。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_alloc/core/strategy_screener_3d.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02090
+  source_section: §30.1.4
+- id: CAND-PFALLOC-010
+  name: 动态信号权重模型（Dynamic Signal Weighting via Bayesian Model Averaging）
+  aliases:
+  - 动态信号权重模型（Dynamic Signal Weighting via Bayesian Model Averaging）
+  domain: D_PF_ALLOC
+  domain_status: active
+  sub_layer: src/zephyr/pf_alloc/
+  problem: 架构现状=完全缺失；跨模块动态信号权重机制，不同模块矛盾信号时按各信号当前市场体制下历史预测精度动态分配权重（BMA/Dynamic Conditional Correlation）；建议归属=决策编排器
+  proposal: '深挖裁定=做(P2)。业界对标: 贝叶斯模型平均（BMA)+DCC动态条件相关+mixture-of-experts门控为动态信号权重主流范式。场内现状: 部分:src/zephyr/pf_alloc/core/signal_synthesis_combiner.py。最小施工形态:
+    决策编排器内增加regime条件BMA权重：按市场体制分组滚动250日估计各信号历史预测精度，权重后验归一（Σ=1），权重变更落审计日志。依赖前置: src/zephyr/pf_alloc/core/signal_synthesis_combiner.py;src/zephyr/regime/（体制识别）;src/zephyr/factor/analysis/ic_ir_calc.py(IC统计）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/pf_alloc/core/signal_synthesis_combiner.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_alloc/core/regime_bma_weighting.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A2治理架构
+  original_id: B11-02963
+  source_section: §1.5后模块48
+- id: CAND-PF004-002
+  name: C-006 策略工厂
+  aliases:
+  - 策略工厂
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: 策略10阶段全生命周期+自动发现(GP/SR/LLM/FactorMAD) ✅
+  proposal: '深挖裁定=做(P1)。业界对标: gplearn/qlib策略挖掘;LLM策略生成。场内现状: 无。最小施工形态: StrategyFactory:10阶段状态机+策略注册表+自动发现四通道(GP/SR/LLM/FactorMAD),产出必经C-003三重门禁+p-hacking评估+人工裁决,严禁全自动上线。依赖前置:
+    D_PF_CORE;D_FACTOR;D_BACKTEST;D_AUTONOMY_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_core/core/strategy_factory.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00189
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-PF004-003
+  name: 筛选漏斗第六层：组合优化（→N≤10）
+  aliases:
+  - 筛选漏斗第六
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: 行业分散(±10%/⑪±15%/绝对30%)+市值分散+风险预算(波动率/MaxDD)+风格暴露≤±0.3σ+相关性corr<0.7+C-042策略容量+C-045拥挤度降权+C-036合力偏空→整体降仓；最终下单N≤10只
+  proposal: '深挖裁定=做(P1)。业界对标: riskfolio-lib/cvxpy组合优化；qlib组合分析。场内现状: 部分：src/zephyr/pf_core/core/portfolio_optimizer.py。最小施工形态:
+    新增funnel第六层裁决器：行业±10%/绝对30%+市值分散+波动率与MaxDD风险预算+风格暴露≤±0.3σ+corr<0.7过滤+C-045拥挤度降权+C-036合力偏空整体降仓，输出N≤10目标持仓清单。依赖前置:
+    D_PF_CORE;D_ASHARE_SIGNAL;D_RISK。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/pf_core/core/portfolio_optimizer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_core/core/funnel_portfolio_adjudicator.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01505
+  source_section: §13
+- id: CAND-PF004-004
+  name: 敞口管理器 PC-07 Exposure Manager
+  aliases:
+  - 敞口管理器 PC-07 Exposure Manager
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: P1，②受限：行业敞口(GICS/申万31行业)+因子暴露(Barra风格)+集中度监控+行业轮动信号；门禁=行业分类+Barra风格因子数据需D-FACTOR就绪
+  proposal: '深挖裁定=做(P1)。业界对标: Barra风格因子暴露模型(MSCI Barra),statsmodels自建。场内现状: 部分:src/zephyr/risk/core/concentration_monitor.py+src/zephyr/pf_core/core/constraint_solver.py。最小施工形态:
+    申万31行业敞口+Barra风格因子暴露计算+集中度阈值告警+行业轮动信号输出。依赖前置: D-FACTOR就绪/D-DATA行业分类。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/concentration_monitor.py+src/zephyr/pf_core/core/constraint_solver.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_core/core/exposure_manager.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-PF-CORE
+  original_id: B3-05543
+  source_section: §1.2
+- id: CAND-PF004-005
+  name: 策略容量估算器 PC-08 Strategy Capacity Estimator
+  aliases:
+  - 策略容量估算器 PC-08 Strategy Capacity Estimator
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: P1，②受限：AUM容量上限+策略容量利用率+流动性约束容量+容量告警(容量预警线=估算容量×80%)+扩容建议；容量公式=f(ADV,参与率上限,换手率,冲击成本容忍度)(Grinold
+    & Kahn)；门禁=流动性微观结构数据需D-DATA就绪
+  proposal: '深挖裁定=做(P1)。业界对标: Grinold&Kahn容量公式f(ADV,参与率,换手,冲击成本)。场内现状: 无。最小施工形态: 容量估算器(ADV/参与率上限/换手率/冲击成本容忍度)+容量利用率+80%预警线告警+扩容建议。依赖前置:
+    D-DATA流动性微观结构数据。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_core/core/strategy_capacity_estimator.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-PF-CORE
+  original_id: B3-05544
+  source_section: §1.2
+- id: CAND-PF004-006
+  name: §29.9 强化学习组合优化与订单执行
+  aliases:
+  - 强化学习组合优化与订单执行
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: 3场景：①RL组合优化（状态=持仓+因子暴露+C-021+C-014，动作=仓位调整量，奖励=Sharpe/Sortino-换手惩罚，Constrained RL Lagrangian，PPO/SAC；风险预算=基础保证下限，RL=框架内微调，输出不可超硬上限）②RL最优执行（增强Almgren-Chriss，DQN/PPO，不可偏离AC轨迹超阈值）③RL做T（增强C-012，底仓不变/风控检查硬约束）
+  proposal: '深挖裁定=做(P2)。业界对标: qlib RL（订单执行）;FinRL（组合强化学习）。场内现状: 无。最小施工形态: 三场景分立：RL组合优化（Constrained RL
+    Lagrangian PPO/SAC，风险预算硬上限不可越）/RL最优执行（增强Almgren-Chriss，偏离AC轨迹超阈值熔断）/RL做T（底仓不变+风控硬约束）；统一经C-003回测门禁。依赖前置:
+    D_PF_CORE;D_EX_SOR;D_ML_TRAIN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_core/rl_portfolio_execution.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01835
+  source_section: §29.9
+- id: CAND-PF004-007
+  name: PC-10 Rebalance Cost Analyzer再平衡成本分析器
+  aliases:
+  - PC-10 Rebalance Cost Analyzer再平衡成本分析器
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: ✅能建；显性(佣金/印花税)+隐性(冲击/价差)+税收+机会成本
+  proposal: '深挖裁定=做(P2)。业界对标: pyfolio/alphalens交易成本分析思路。场内现状: 部分:src/zephyr/position/core/rebalance_engine.py。最小施工形态:
+    1个模块 src/zephyr/pf_core/core/rebalance_cost_analyzer.py，核心类RebalanceCostAnalyzer，输入调仓前后持仓清单+成交记录，输出显性/隐性/税收/机会成本拆解报告。依赖前置:
+    D_POSITION(rebalance_engine);D_EX_CORE(execution_report)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/rebalance_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/pf_core/core/rebalance_cost_analyzer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-02079
+  source_section: §30.1.3
+- id: CAND-PF004-008
+  name: PC-17 Strategy Capacity Estimator（策略容量估算器）
+  aliases:
+  - PC-17 Strategy Capacity Estimator（策略容量估算器）
+  domain: D_PF_CORE
+  domain_status: active
+  sub_layer: src/zephyr/pf_core/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Grinold容量分析(ADV占比+冲击成本模型)。场内现状: 部分:src/zephyr/risk/core/liquidity_monitor.py（流动性监控有，策略容量估算缺）。最小施工形态:
+    策略容量估算：标的ADV+历史成交占比+冲击成本模型估算各策略AUM上限，超容量预警+降仓建议，容量参数入策略台账。依赖前置: D_PF_CORE;D_RISK。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/liquidity_monitor.py（流动性监控有，策略容量估算缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'pf_core/core/strategy_capacity_estimator.py（MOD-PF-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W09）——与 P1 已建 MOD-PF-012 同为 PC-17（B14 稿），canonical=src/zephyr/pf_core/core/strategy_capacity_estimator.py"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04716
+  source_section: §8.3.11
+- id: CAND-PLAN-013
+  name: C-005 多情景对策
+  aliases:
+  - 多情景对策
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: src/zephyr/plan_engine/
+  problem: 情景预案模板+盘中自动匹配触发 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: 情景预案剧本库;情景规划。场内现状: 部分:src/zephyr/plan_engine/scenario_planner.py。最小施工形态:
+    预案模板库(情景→操作边界/持仓动作/风控升级)+盘中实时匹配(状态/事件触发)+执行确认流,预案命中率复盘入scenario_probability_model更新。依赖前置: D_PLAN;D_REGIME;D_RISK。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/scenario_planner.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/plan_engine/scenario_playbook.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00190
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-PLAN-014
+  name: 四轨融合器（Multi-Track Fusion，v8.0）
+  aliases:
+  - 四轨融合器（Multi-Track Fusion，v8.0）
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: src/zephyr/plan_engine/
+  problem: 轨道4(应急)>轨道3(人工)>轨道1/2(自动)；1+2同向→强共振/单轨→中等/冲突→L6审查；AI发现轨信号必须经L6审查
+  proposal: '深挖裁定=做(P1)。业界对标: 项目特有设计；近似Lean Alpha Model多信号合成裁决。场内现状: 部分:src/zephyr/position/core/position_sizing_engine.py。最小施工形态:
+    1个模块 src/zephyr/plan_engine/track_fusion.py，核心类MultiTrackFusion，输入轨道1/2自动信号+轨道3人工指令+轨道4应急指令，按应急>人工>自动优先级裁决输出统一目标仓位/信号，冲突时升L6审查。依赖前置:
+    D_PLAN;D_POSITION;D_SELL_DECISION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/position_sizing_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/plan_engine/track_fusion.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01212
+  source_section: §1.1
+- id: CAND-PLAN-015
+  name: D-TRADING-15 A-Share Pre-Market Standardized Workflow A股盘前标准化工作流
+  aliases:
+  - D-TRADING-15 A-Share Pre-Market Standardized Workflow A股盘前标准化工作流
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: src/zephyr/plan_engine/
+  problem: ✅能建；08:00-09:15三段式+分钟级编排+进度追踪
+  proposal: '深挖裁定=做(P1)。业界对标: 盘前SOP分钟级编排单人项目用work_dag即可承载，无需独立BPM引擎。场内现状: 部分:src/zephyr/plan_engine/premarket_constraint_loader.py;llm_premarket_analysis.py;src/zephyr/trading/boot_hooks.py。最小施工形态:
+    08:00-09:15三段式DAG挂trading work_dag+进度追踪落state_store。依赖前置: B10-02209。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/premarket_constraint_loader.py;llm_premarket_analysis.py;src/zephyr/trading/boot_hooks.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/plan_engine/premarket_workflow.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-TRADING-15
+  original_id: B10-02213
+  source_section: §30.2.5
+- id: CAND-PLAN-016
+  name: 模块38 交易计划偏差检测与异常机会评估模型
+  aliases:
+  - 交易计划偏差检测与异常机会评估模型
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: src/zephyr/plan_engine/
+  problem: 计划偏差检测(实际vs盘前计划偏离>2σ;有利偏差持有/不利纠错)；异常机会评估(信号z-score>3σ=极强;E>0.5%才参与;计划外仓位≤总仓位20%)；归属决策编排器
+  proposal: '深挖裁定=做(P2)。业界对标: 交易计划偏差监控为OMS最佳执行合规实践。场内现状: 部分:src/zephyr/plan_engine/execution_deviation_attributor.py。最小施工形态:
+    盘中计划偏差实时监控+计划外强信号评估(z>3σ且E>0.5%且计划外仓位≤20%)。依赖前置: plan_engine/daily_trade_plan.py;execution_deviation_attributor。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/execution_deviation_attributor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/plan_engine/plan_deviation_monitor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01479
+  source_section: 决策编排器模块38
+- id: CAND-PLAN-017
+  name: D-TRADING-15 A-Share Pre-Market Standardized Workflow Engine（A股盘前标准化工作流引擎）
+  aliases:
+  - D-TRADING-15 A-Share Pre-Market Standardized Workflow Engine（A股盘前标准化工作流引擎）
+  domain: D_PLAN
+  domain_status: active
+  sub_layer: src/zephyr/plan_engine/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: ansible-like runbook自动化盘前SOP。场内现状: 部分:src/zephyr/plan_engine/premarket_constraint_loader.py（盘前组件有，标准工序编排缺）。最小施工形态:
+    盘前标准工序编排(数据同步→隔夜复盘→情绪扫描→预案生成→盘前检查→就绪确认)，工序失败阻断+人工接管点+耗时统计，复用plan_engine组件。依赖前置: D_PLAN;D_TRADING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/plan_engine/premarket_constraint_loader.py（盘前组件有，标准工序编排缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/plan_engine/premarket_workflow_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04681
+  source_section: §8.3.7
+- id: CAND-POS-002
+  name: C-047 仓位管理唯一裁决中心
+  aliases:
+  - 仓位管理唯一裁决
+  domain: D_POSITION
+  domain_status: active
+  sub_layer: src/zephyr/position/
+  problem: 四层架构(组合+策略+标的+动态)仓位裁决，全系统唯一权威 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: Lean PortfolioConstructionModel+riskfolio-lib组合构建。场内现状: 部分:src/zephyr/position/core/position_sizing_engine.py。最小施工形态:
+    四层(组合/策略/标的/动态)仓位裁决单一入口，汇聚现有sizing/limit_enforcer/risk_budget_allocator，产出唯一权威目标仓位并阻断旁路下单。依赖前置: src/zephyr/position/core/position_sizing_engine.py；src/zephyr/position/core/position_limit_enforcer.py；src/zephyr/position/core/position_risk_budget_a。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/position_sizing_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/position_adjudication_center.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00194
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-POS-003
+  name: 资金与现金管理（D-TRADING）
+  aliases:
+  - 资金与现金管理
+  - 资金与现金管理（D-TRADING）
+  domain: D_POSITION
+  domain_status: active
+  sub_layer: src/zephyr/position/
+  problem: 现金储备+机会储备+T+1可用资金规划+逆回购+出入金调度
+  proposal: '深挖裁定=做(P1)。业界对标: vnpy/券商API国债逆回购自动化为A股现金增强常规做法。场内现状: 部分:src/zephyr/position/core/cash_manager.py。最小施工形态:
+    cash_manager扩展逆回购标的池与节假日逆回购排程并建出入金台账。依赖前置: position/core/cash_manager.py;券商通道(ex_core/adapters/miniqmt_broker.py)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/cash_manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/cash_manager.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01307
+  source_section: §1.1
+- id: CAND-POS-004
+  name: 日历约束层（v8.0）
+  aliases:
+  - 日历约束
+  domain: D_POSITION
+  domain_status: active
+  sub_layer: src/zephyr/position/
+  problem: 交割日效应(前2天后1天,波动升级1档,止损放宽1-2%,仓位下调5-10%,TWAP替代VWAP)+财报季约束(前3天禁止新建仓+强制评估)+节假日效应(节前2天节后1天,现金比例+5-15%,参与率<10%)+月末/季末效应
+  proposal: '深挖裁定=做(P1)。业界对标: 事件日历约束仓位为A股金工常规风控(交割/财报/节假日效应)。场内现状: 部分:src/zephyr/position/core/calendar_position_constraint.py。最小施工形态:
+    扩展MOD-POS-017加入交割日/节假日效应参数(仓位下调5-10%+现金抬升)并联动执行算法TWAP切换。依赖前置: position/core/calendar_position_constraint.py;data/manual_calendar_events.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/calendar_position_constraint.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/calendar_position_constraint.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01316
+  source_section: §1.1
+- id: CAND-POS-005
+  name: 模块24 核心-卫星仓位管理模型
+  aliases:
+  - 卫星仓位管理模型
+  domain: D_POSITION
+  domain_status: active
+  sub_layer: src/zephyr/position/
+  problem: Core-Satellite：核心仓位Kelly长期最优+卫星≤总仓位30%；核心ATR止损k=3-4x/卫星k=1.5-2x；卫星做T(价格>VWAP+1ATR卖部分/<VWAP-1ATR买回)+换仓(RS排名变化触发)；对标CFA
+    Institute；归属L3+L4
+  proposal: '深挖裁定=做(P1)。业界对标: Core-Satellite核心卫星为CFA Institute推荐组合结构。场内现状: 无。最小施工形态: 核心仓Kelly长期+卫星仓≤30%帽+卫星VWAP±1ATR做T规则+RS排名换仓触发。依赖前置:
+    position/core/position_sizing_engine.py;sell_decision/core/t_trade_coordinator.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/position/core/core_satellite_allocator.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01465
+  source_section: §8模块24
+- id: CAND-CYCLE-002
+  name: C-021 市场状态判定
+  aliases:
+  - 市场状态判定
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: src/zephyr/regime/
+  problem: 3×3×3立方体+2叠加态=29种状态实时判定→仓位上限+策略激活 ✅
+  proposal: '深挖裁定=做(P0)。业界对标: hmmlearn HMM regime;规则立方体引擎。场内现状: 部分:src/zephyr/regime/core/regime_detector.py。最小施工形态:
+    29态判定引擎:三轴(趋势/波动/流动性)各3档立方体+2叠加态,输出仓位上限+策略激活矩阵+状态转换确认防抖动,与C-004风控/计划引擎硬挂接。依赖前置: D_REGIME;D_ASHARE_SIGNAL;D_RISK。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/core/regime_detector.py'
+    blocking_question: null
+    result: candidate
+  status: rejected
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：W3 裁定豁免不施工转 rejected：29 态前身被 BIC+A2 实证否决（OOS/IS 0.34<0.7），能力面已由 4 态 HMM（MOD-REGIME-001 production 59 测）覆盖，另建=双真源。留证伪记录防 29 态路线复活。"
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，W3 裁定）——①29 态前身 9 态网格已被 BIC+A2 实证否决（OOS/IS 0.34<0.7），29 态属证伪方向加细；②仓位上限+策略激活的归属=MOD-REGIME-001→MOD-PA-007→StrategyBook 链（2026-09-16 裁定#257② 勘误：该链为纸面链从未装配——MOD-PA-007 零生产调用方（PFA-1 实证），本条豁免理由中『production 链已覆盖』表述不成立，豁免结论本身维持（不另建模块），接线随 G15→G14 编排件立项触发（挂起条件见 regime_meta_allocator blueprint §7.3.1）；③三轴无新信息源；④防抖已由 strong_confirm FSM 覆盖；⑤硬标签化恰是被证伪路线，overlay 扩展亦无信息增量"
+  source_draft: 跨域(元文档)
+  original_id: B1-00153
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-CYCLE-003
+  name: 模块2 波动率体制转换与关键时点预警模型
+  aliases:
+  - 波动率体制转换与关键时点预警模型
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: src/zephyr/regime/
+  problem: GARCH(1,1)波动率预测+波动率压缩检测(RV_5d/RV_20d<0.5)+HMM体制转换概率(P>0.6)+波动率突变预警(>1.5)；日历效应量化(交割日/节假日/数据公布日/财报季PEAD)；归属L1+L2-C+模块51联动
+  proposal: '深挖裁定=做(P0)。业界对标: arch包GARCH波动预测+hmmlearn体制识别为学术界标准组合。场内现状: 部分:src/zephyr/regime/core/regime_detector.py。最小施工形态:
+    arch包GARCH(1,1)日频波动预测+RV_5d/RV_20d压缩标记+波动突变告警接overlay_signals_builder。依赖前置: regime/overlay_signals_builder.py;arch库。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/core/regime_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/regime/volatility_regime_alerter.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01358
+  source_section: §3模块2
+- id: CAND-CYCLE-004
+  name: C-014 大盘预测
+  aliases:
+  - 大盘预测
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: src/zephyr/regime/
+  problem: 三层融合(系统内部+主播信号+动态加权)+8态叠加模型 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: HMM+集成时序预测。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py。最小施工形态:
+    三层融合:系统内部模型+外部主播信号采集打分+滚动准确率动态加权,输出次日8态分布与置信度,预测日志入prediction_log_writer供复盘加权更新。依赖前置: D_REGIME;D_ASHARE_SIGNAL;D_ALT_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/regime/market_forecast_fusion.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00154
+  source_section: §功能域模块·D-SIGNAL
+- id: CAND-CYCLE-005
+  name: 模块51 波动率压缩与突破模型
+  aliases:
+  - 波动率压缩与突破模型
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: src/zephyr/regime/
+  problem: 压缩量化(RV_5d/RV_20d<0.5+布林带宽标准化+持续>5天+分位数<10%)+突破方向预测(价格位置/IV期限结构倒挂/GARCH预测/量能方向)+突破确认(RV_5d>1.5×RV_20d+放量>1.5x+3日维持)；归属L1+L2-A+模块2联动
+  proposal: '深挖裁定=做(P1)。业界对标: 波动率压缩-突破(TTM Squeeze)+RV比为经典波动率交易模式。场内现状: 无。最小施工形态: RV_5d/RV_20d<0.5+布林带宽分位<10%压缩标记+突破方向概率+3日维持确认。依赖前置:
+    regime特征;模块2(B10-01358)联动。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/regime/volatility_squeeze_breakout.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01387
+  source_section: §3模块51
+- id: CAND-CYCLE-006
+  name: 模块32 市场风格体制识别模型
+  aliases:
+  - 市场风格体制识别模型
+  domain: D_REGIME
+  domain_status: active
+  sub_layer: src/zephyr/regime/
+  problem: Size风格(大盘-小盘收益)+Value/Growth风格+HMM从资金流自动识别(数据驱动非人为二分)；风格-策略映射：机构市(大盘+价值)→趋势票3-10日波段ATR k=3-4x/游资市(小盘+成长)→连板票1-3日k=1.5-2x；归属L2-C+L3
+  proposal: '深挖裁定=做(P2)。业界对标: Fama-French风格因子+HMM体制识别为风格研究标准方法。场内现状: 部分:src/zephyr/signal_ashare/market_cap_tier.py。最小施工形态:
+    大小盘与价值成长收益差风格序列+HMM风格态识别+风格→策略参数(持仓周期/止损k)映射表。依赖前置: regime/regime_detector.py;market_cap_tier。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/market_cap_tier.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/regime/style_regime_model.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01447
+  source_section: §6模块32
+- id: CAND-RPT-008
+  name: C-030 决策可解释性与溯源
+  aliases:
+  - 决策可解释性与溯源
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: src/zephyr/reporting/
+  problem: 决策溯源链+密度感知溯源+密度感知置信度调整 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: OpenLineage溯源+SHAP可解释。场内现状: 部分:src/zephyr/signal_fundamental/audit/decision_snapshot.py。最小施工形态:
+    决策链ID贯穿信号→计划→订单→成交落库可查询，附因子贡献摘要；密度感知置信度调整复用density_quantile训练器。依赖前置: src/zephyr/signal_fundamental/audit/decision_snapshot.py；src/zephyr/ml_train/implementations/density_quantile_trainer.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_fundamental/audit/decision_snapshot.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/reporting/decision_trace_chain.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00220
+  source_section: §功能域模块·D-REPORTING
+- id: CAND-RPT-009
+  name: D-REPORTING-15 A-Share Trading Review Engine（A股交易审查引擎）
+  aliases:
+  - D-REPORTING-15 A-Share Trading Review Engine（A股交易审查引擎）
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: src/zephyr/reporting/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 交易所异常交易监控指引(撤单率/自成交/拉抬打压)+日终审查报告为券商合规惯例。场内现状: 部分:src/zephyr/compliance/trading_compliance_detector.py（行为检测器有，审查报告引擎缺）。最小施工形态:
+    日终交易审查引擎：撤单率/申报速率/自成交/拉抬打压模式扫描→审查报告(异常标的+证据+处置建议)，联动trading_compliance_detector与cancel_rate_guard数据。依赖前置:
+    D_REPORTING;D_COMPLIANCE;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/trading_compliance_detector.py（行为检测器有，审查报告引擎缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/reporting/trading_review_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04662
+  source_section: §8.3.5
+- id: CAND-RPT-010
+  name: D-REPORTING-14 Strategy Explainability Reporter
+  aliases:
+  - D-REPORTING-14 Strategy Explainability Reporter
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: src/zephyr/reporting/
+  problem: P1✅可建；策略可解释性报告器（SHAP+LIME双归因+可解释性门控）
+  proposal: '深挖裁定=做(P2)。业界对标: SHAP+LIME双归因可解释性。场内现状: 无。最小施工形态: SHAP+LIME双归因报告生成+可解释性门控(低可解释性策略降权/拦截)+报告发布对接。依赖前置:
+    D-ML-SERVE模型/D-REPORTING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/reporting/strategy_explainability_reporter.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-REPORTING
+  original_id: B4-06655
+  source_section: §1.2
+- id: CAND-RSK-031
+  name: C-004 自适应风控
+  aliases:
+  - 自适应风控
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 三层体系(预判+监控+熔断)+B-001~B-006硬边界 ✅
+  proposal: '深挖裁定=做(P0)。业界对标: riskfolio-lib风险预算;三层风控体系。场内现状: 部分:src/zephyr/risk/risk_manager.py。最小施工形态:
+    三层联动:盘前预判(sit_out/限额下发)+盘中监控(VaR/回撤/流动性)+熔断分级(降仓/禁开仓/kill switch),B-001~B-006硬边界注册StandardsManager并单测锚定,参数随C-021状态自适应。依赖前置:
+    D_RISK;D_TRADING;D_REGIME;D_POSITION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/risk_manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/adaptive_risk_coordinator.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00174
+  source_section: §功能域模块·D-RISK
+- id: CAND-RSK-032
+  name: C-038 黑天鹅模式库
+  aliases:
+  - 黑天鹅模式库
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 7种模式(BS-001~007)事前匹配→提前降仓 ✅
+  proposal: '深挖裁定=做(P0)。业界对标: CCAR式压力情景库;历史危机模式匹配。场内现状: 部分:src/zephyr/risk/core/stress_test_engine.py。最小施工形态:
+    7种黑天鹅模式特征模板(暴跌/熔断/流动性枯竭/地缘冲击等)+当前市场特征事前相似度匹配,超阈值提前降仓并触发C-004升级,匹配记录入审计。依赖前置: D_RISK;D_BACKTEST;D_REGIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/stress_test_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/black_swan_pattern_library.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00175
+  source_section: §功能域模块·D-RISK
+- id: CAND-RSK-033
+  name: C-045 拥挤度检测
+  aliases:
+  - 拥挤度检测
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 因子/策略拥挤度+深度增强(策略逻辑相似度+去杠杆+悖论防护) ✅
+  proposal: '深挖裁定=做(P0)。业界对标: Barra式因子拥挤度。场内现状: 部分:src/zephyr/risk/core/crowding_monitor.py。最小施工形态: 深度增强:策略逻辑指纹相似度(复用clone_guard)+拥挤度超阈自动降杠杆/降仓+拥挤-回撤正反馈悖论防护(熔断式退出),与漏斗第六层降权挂接。依赖前置:
+    D_RISK;D_FACTOR;D_PF_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/crowding_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/crowding_response_engine.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00178
+  source_section: §功能域模块·D-RISK
+- id: CAND-RSK-034
+  name: 自适应风控①预判层
+  aliases:
+  - 自适应风控
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 含C-038/C-040；前瞻性VaR/CVaR(条件PDF)+共形VaR(覆盖率数学保证)
+  proposal: '深挖裁定=做(P0)。业界对标: 前瞻VaR/CVaR+共形预测(MAPIE)覆盖率数学保证是业界前沿标准。场内现状: 部分:src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py;conformal_predictor.py;src/zephyr/risk/core/var_intraday_recalc.py。最小施工形态:
+    条件PDF VaR/CVaR+共形VaR接入risk限额与var_intraday_recalc。依赖前置: conditional_density_predictor(部分)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_ashare/ml_forecast/adaptive_conformal_tcp_rm_ddci.py;conformal_predictor.py;src/zephyr/risk/core/var_intraday_recalc.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/adaptive_risk_forecast.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01216
+  source_section: §1.1
+- id: CAND-RSK-035
+  name: 自适应风控②监控层
+  aliases:
+  - 自适应风控
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 含C-032/C-045+流动性风险监控+相关性体制监控；v8.2 C-045深度增强(策略逻辑相似度+去杠杆原型+悖论防护)
+  proposal: '深挖裁定=做(P0)。业界对标: 流动性+相关性体制监控是风险仪表盘标配，riskfolio-lib提供相关性聚类。场内现状: 部分:src/zephyr/risk/core/liquidity_crisis_manager.py;ashare_systemic_risk_detector.py;src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py。最小施工形态:
+    流动性风险+相关性体制监控挂风险仪表盘并接告警。依赖前置: D_REGIME(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/liquidity_crisis_manager.py;ashare_systemic_risk_detector.py;src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/adaptive_risk_monitor.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01217
+  source_section: §1.1
+- id: CAND-RSK-036
+  name: B1 Copula-GARCH联合分布建模 ★当前即做(≤50只)
+  aliases:
+  - B1 Copula-GARCH联合分布建模 ★当前即做(≤50只)
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 多标的联合分布F=C(F_1..F_N)捕捉联合尾部依赖("多只同时暴跌")；DCC-GARCH推荐；ML+Copula混合架构(边缘分布由密度预测提供)；持仓≤50只RTX3090可(50只DCC≈5分钟盘后/盘中1秒)，>50只需双RTX4090；前提：Phase
+    1跑稳+相关性体制监控验证+5年日频数据
+  proposal: '深挖裁定=做(P0)。业界对标: DCC-GARCH+Copula经典组合尾部依赖建模；riskfolio-lib有copula支持。场内现状: 部分:src/zephyr/position/core/correlation_regime_monitor.py。最小施工形态:
+    1个模块 src/zephyr/risk/core/copula_garch_joint.py，核心类CopulaGarchJointModel，输入≤50标的收益率+边缘密度预测，输出联合尾部依赖矩阵+联合VaR/ES；DCC盘后批算。依赖前置:
+    D_POSITION(covariance_estimator/correlation_regime_monitor);D_ASHARE_SIGNAL(conditional_density_predictor)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/position/core/correlation_regime_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/copula_garch_joint.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01410
+  source_section: §4.5.1-B1
+- id: CAND-RSK-037
+  name: 模块37 系统性风险分级预警与尾部风险管理模型
+  aliases:
+  - 系统性风险分级预警与尾部风险管理模型
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 5级预警：绿(VaR_95%<2%正常)/黄(2-4%或连续2日亏>1%→新开仓减半)/橙(4-6%或单日亏>2%→禁新开仓+减仓30%)/红(>6%或单日亏>4%→全线减仓50%+只平不开)/黑(CVaR>10%或流动性危机→全部清仓)；对标Basel
+    III逆周期资本缓冲；归属L4
+  proposal: '深挖裁定=做(P0)。业界对标: Basel III逆周期缓冲思想+VaR/CVaR分级为风险预警标准框架。场内现状: 部分:src/zephyr/risk/core/ashare_systemic_risk_detector.py。最小施工形态:
+    5级状态机(VaR95/CVaR+单日亏+连续2日亏阈值)联动减仓/禁开/清仓与kill switch。依赖前置: risk/core/var_calculator.py;risk/core/drawdown_tracker.py;trading/trading_contracts/risk/trading_kill_switch.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/ashare_systemic_risk_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/systemic_risk_alert_state_machine.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01476
+  source_section: §9模块37
+- id: CAND-RSK-038
+  name: 模块43 ATR动态止损与Bayesian参数优化模型
+  aliases:
+  - 模块43 ATR动态止损与Bayesian参数优化模型
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: ATR=Average(TR,14)；Stop=Entry±k×ATR(日内k=1.5-2x/波段3-4x)；追踪止损只上移不下移；参数优化=Grid Search/Bayesian优化(高斯过程,更高效)/Walk-Forward验证/体制自适应(趋势k=3-4/均值回归k=1.5-2,ADX>25标准k)；止盈=Entry+m×ATR(m=1.5-2倍k,盈亏比>1.5)+分批止盈(1/3@1R+1/3@2R+1/3追踪)+时间止损(N日未达1R平仓)；对标Wilder
+    1978/LuxAlgo/amhieu 2025；归属L4+L3
+  proposal: '深挖裁定=做(P0)。业界对标: Wilder 1978 ATR止损经典；LuxAlgo ATR trailing同款。场内现状: 部分:src/zephyr/sell_decision/core/strategy_specific_stop_framework.py。最小施工形态:
+    扩展为 src/zephyr/risk/atr_stop_engine.py，核心类AtrStopEngine，输入Entry+ATR14+体制自适应k(趋势3-4/均值回归1.5-2)，输出初始止损/追踪止损(只上移)/分批止盈1/3@1R+1/3@2R+1/3追踪/时间止损价位。依赖前置:
+    D_FACTOR(volatility ATR);D_SELL_DECISION(stop framework)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/sell_decision/core/strategy_specific_stop_framework.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/atr_stop_engine.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01478
+  source_section: §9模块43
+- id: CAND-RSK-039
+  name: D-RISK-115 紧急停止安全确认
+  aliases:
+  - 紧急停止安全确认
+  - D-RISK-115 紧急停止安全确认
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: ✅能建；蓝图MOD-INF-001部分建设；紧急操作二次确认与审计日志
+  proposal: '深挖裁定=做(P0)。业界对标: vnpy/Lean kill switch；运维dead-man switch。场内现状: 部分：src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py。最小施工形态:
+    紧急停止/强平类操作接入双锁二次确认（复用MOD-INF-049 VenraDoubleLockAnchor)+确认留痕入加密审计链+操作人身份核验；与scripts/deadman_switch.ps1联动演练。依赖前置:
+    D_RISK;D_TRADING;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/emergency_stop_confirmation.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02123
+  source_section: §30.1.5
+- id: CAND-RSK-040
+  name: 42 交易绩效归因与策略退化检测模型
+  aliases:
+  - 交易绩效归因与策略退化检测模型
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 架构现状完全缺失；核心逻辑：绩效监控不只是看盈亏而是Performance Attribution+Strategy Degradation Detection，因子IC衰减=策略退化需自动检测并降权；建议归属L4风控层+模块48（动态信号权重联动）
+  proposal: '深挖裁定=做(P0)。业界对标: Brinson归因(1986 FAJ)+IC衰减退化检测(Man Group AlphaGPT实践)。场内现状: 部分:src/zephyr/reporting/attribution.py+src/zephyr/pf_core/core/performance_attribution_engine.py+src/zephyr/factor/analysis/ic_decay.py。最小施工形态:
+    统一绩效归因(Brinson配置/选择/交互+因子/风险归因)+IC衰减60日均线>50%退化判定+拥挤度联动+自动降权至0写回信号权重。依赖前置: D-FACTOR(IC)/D-RISK/D-REPORTING。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/reporting/attribution.py+src/zephyr/pf_core/core/performance_attribution_engine.py+src/zephyr/factor/analysis/ic_decay.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/performance_attribution_degradation.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-ML-TRAIN
+  original_id: B4-06959
+  source_section: §四十二
+- id: CAND-RSK-041
+  name: PC-14 Factor Exposure Manager因子敞口管理器
+  aliases:
+  - PC-14 Factor Exposure Manager因子敞口管理器
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: ✅能建；风格/行业/国家因子敞口+Barra风险模型
+  proposal: '深挖裁定=做(P1)。业界对标: Barra USE3/CNE5风险模型；riskfolio-lib因子敞口。场内现状: 部分:src/zephyr/risk/core/risk_decomposition.py。最小施工形态:
+    1个模块 src/zephyr/risk/core/factor_exposure_manager.py，核心类FactorExposureManager，输入持仓+风格/行业因子载荷，输出组合因子敞口矩阵+敞口超限预警。依赖前置:
+    D_FACTOR;D_POSITION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/risk_decomposition.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/core/factor_exposure_manager.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02083
+  source_section: §30.1.3
+- id: CAND-RSK-042
+  name: ATR动态止损与Bayesian参数优化模型(模块43)
+  aliases:
+  - ATR动态止损与Bayesian参数优化模型(模块43)
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 基于波动率的动态止损+参数优化框架(当前缺失)；Stop=Entry±k×ATR，k经Bayesian优化；高波动放宽低波动收紧；归属L4风控层+L3策略工厂
+  proposal: '深挖裁定=做(P1)。业界对标: ATR吊灯止损+Optuna贝叶斯调参。场内现状: 部分:src/zephyr/risk/implementations/default_stop_loss_engine.py。最小施工形态:
+    止损k值贝叶斯优化层：Optuna对ATR倍数k按品种/波动regime寻优，高波动放宽低波动收紧，walk-forward验证防过拟合，优化结果回写default_stop_loss_engine参数并留审计，与ashare_stop_loss_engine模式联动。依赖前置:
+    D_RISK;D_BACKTEST;D_REGIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/implementations/default_stop_loss_engine.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'risk/atr_stop_engine.py（MOD-RK-35 production，17 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：ATR+Bayesian 优化全落地；P1W13 归并注记在案"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W13）——canonical=MOD-RK-35（在码 k×ATR14+体制自适应 k+GP/EI 贝叶斯优化全评估点留痕）；spec 残余（Optuna/walk-forward/回写/联动）=装配面"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A4风险架构
+  original_id: B13-04440
+  source_section: §3.3后 模块43
+- id: CAND-RSK-043
+  name: 信息不对称期与操纵行为检测模型(模块54)
+  aliases:
+  - 信息不对称期与操纵行为检测模型
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: '"庄股操作识别"量化框架(当前完全缺失)；ESMA MABUM(2025)GNN+TCN+联邦学习检测操纵+沪深交易所2025.7量化标准；归属L2-B主力行为层+L4风控层'
+  proposal: '深挖裁定=做(P1)。业界对标: ESMA操纵检测思路（GNN降为统计档）+沪深异常交易监控指标。场内现状: 无。最小施工形态: 庄股操纵回避检测器：对倒放量/尾盘异动/价量背离/换手异常/筹码高度集中五类统计特征→操纵风险评分→回避名单输出至风控（禁开仓）与信号域降权，仅用免费行情，检测日志落盘可审计。依赖前置:
+    D_RISK;D_ASHARE_SIGNAL;D_COMPLIANCE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/manipulation_avoidance_detector.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A4风险架构
+  original_id: B13-04455
+  source_section: §6.1 模块54
+- id: CAND-RSK-044
+  name: 买入后即时验证与快速纠错模型（Post-Entry Instant Validation & Quick Correction Model）
+  aliases:
+  - 买入后即时验证与快速纠错模型（Post-Entry Instant Validation & Quick Correction Model）
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 场外补充(架构现状完全缺失)：买入后5-15分钟Intraday Momentum验证(Gao et al.2018 JF)；5min跌破买入价>1%且放量→观察/15min跌破分时均线反弹无力→减仓50%/30min反向>2ATR→全部止损；建议归属L4风控层+模块43(ATR止损联动)
+  proposal: '深挖裁定=做(P1)。业界对标: Gao et al.(2018 JF)日内动量研究+A股交易台分时均线/ATR止损为常用纪律。场内现状: 部分:src/zephyr/risk/stop_loss.py（止损/打板退出体系有，买入后即时验证窗口缺）。最小施工形态:
+    买入后T+5/15/30min三档验证器：5min跌破买价>1%且放量→观察标记；15min跌破分时均线反弹无力→减仓50%；30min反向>2ATR→全部止损；与stop_loss/ATR止损联动，动作写审计链。依赖前置:
+    D_RISK;D_SELL_DECISION;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/stop_loss.py（止损/打板退出体系有，买入后即时验证窗口缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/post_entry_instant_validator.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04546
+  source_section: §2.2后(36.1/36.2)
+- id: CAND-RSK-045
+  name: D-SIGNAL-72 Risk-Signal Interaction Sequencer（风险信号交互排序器）
+  aliases:
+  - D-SIGNAL-72 Risk-Signal Interaction Sequencer（风险信号交互排序器）
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: ✅能建，有蓝图MOD-L03-001未建设
+  proposal: '深挖裁定=做(P1)。业界对标: 定序器/全序广播保证风控事件优先于信号生效。场内现状: 部分:src/zephyr/ex_core/risk_layer_orchestrator.py（风控层编排有，风险-信号交互定序缺）。最小施工形态:
+    风险-信号交互定序：定义风控veto/降级事件优先于新信号生效的全序规则，乱序检测+冲突仲裁，保证风控不可被信号绕过，顺序违规写审计。依赖前置: D_RISK;D_ASHARE_SIGNAL;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/risk_layer_orchestrator.py（风控层编排有，风险-信号交互定序缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/risk_signal_sequencer.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04732
+  source_section: §8.3.13
+- id: CAND-RSK-046
+  name: 技能：hedge-execution 独立对冲执行
+  aliases:
+  - 技能：hedge-execution 独立对冲执行
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 风控Agent技能
+  proposal: '深挖裁定=做(P2)。业界对标: 期现对冲执行(股指期货/ETF)+基差监控触发。场内现状: 无。最小施工形态: hedge-execution技能：对冲需求输入(敞口/比例)到标的映射(股指期货/ETF)到腿单生成走执行层Agent到对冲有效性回写；默认human_gated，单笔对冲需风控Agent+人工双确认。依赖前置:
+    D_RISK;D_EX_CORE;D_CROSS_ASSET。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/hedge_execution_skill.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02591
+  source_section: §5.2
+- id: CAND-RSK-047
+  name: D-DATA-44 VaR Compute Data Prefetcher
+  aliases:
+  - D-DATA-44 VaR Compute Data Prefetcher
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: VaR计算数据预取器(DuckDB读Parquet预取+缓冲区+I/O瓶颈监控);✅能建,DuckDB异步IO预取
+  proposal: '深挖裁定=做(P2)。业界对标: DuckDB异步IO+Parquet扫描下推；polars streaming预取。场内现状: 无。最小施工形态: DuckDB读Parquet预取器：持仓相关收益率序列批量预取+内存环形缓冲+prefetch命中率/IO耗时指标，与B13-04313查询构建器共用缓存。依赖前置:
+    D_RISK;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/var_data_prefetcher.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04254
+  source_section: §17.1
+- id: CAND-RSK-048
+  name: D-RISK-49 Risk Policy Persister
+  aliases:
+  - D-RISK-49 Risk Policy Persister
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: 风控策略SQLite持久化+版本管理(risk_policy+risk_limit+risk_policy_version表);✅能建;📐MOD-L04-001已建设(部分)
+  proposal: '深挖裁定=做(P2)。业界对标: 策略版本表(flyway思路)+热加载；风控规则GitOps。场内现状: 部分：src/zephyr/risk/risk_limits.py。最小施工形态:
+    风控策略SQLite持久化：三表DDL+版本递增不可变+激活版本热加载+与risk_limits契约双向同步校验。依赖前置: D_RISK;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/risk/risk_limits.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/risk_policy_persister.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04311
+  source_section: §17.13
+- id: CAND-RSK-049
+  name: D-RISK-82 VaR DuckDB历史模拟查询构建器
+  aliases:
+  - D-RISK-82 VaR DuckDB历史模拟查询构建器
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: VaR用DuckDB历史模拟复用数据域Parquet+查询构建/优化/缓存;✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: DuckDB SQL/谓词下推+查询结果缓存(防击穿stampede)。场内现状: 部分：src/zephyr/risk/core/var_calculator.py。最小施工形态:
+    历史模拟查询构建器：窗口/标的/频段参数化SQL生成+谓词下推+结果缓存(键=持仓hash+窗口)，与B13-04254预取器共用缓冲。依赖前置: D_RISK;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/risk/core/var_calculator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/var_query_builder.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04313
+  source_section: §17.13
+- id: CAND-RSK-050
+  name: M15-S01 风险传播建模器
+  aliases: []
+  domain: D_RISK
+  domain_status: active
+  sub_layer: src/zephyr/risk/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: Diebold-Yilmaz溢出指数/传染网络建模。场内现状: 部分:src/zephyr/risk/core/ashare_systemic_risk_detector.py（系统性风险检测有，传播网络建模缺）。最小施工形态:
+    风险传播网络：板块/个股相关性+产业链边建图，冲击传导路径模拟与传染评分，评分入风控参考与减仓依据，盘后运行。依赖前置: D_RISK;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/risk/core/ashare_systemic_risk_detector.py（系统性风险检测有，传播网络建模缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/risk/risk_contagion_modeler.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04692
+  source_section: §8.3.9
+- id: CAND-SEC-004
+  name: 密钥层级管理
+  aliases:
+  - 密钥层级管理
+  domain: D_SECURITY
+  domain_status: active
+  sub_layer: src/zephyr/security/access_control/orphan_judge/
+  problem: 加密体系核心（密钥泄露等同加密失效）：三层密钥层级+Shamir秘密共享+后量子密码迁移路线，确保密钥全生命周期安全
+  proposal: '深挖裁定=做(P0)。业界对标: 密钥层级=KMS信封加密(主密钥-KEK-DEK)+HashiCorp Vault;Shamir SSSS与NIST PQC为机构级可选。场内现状:
+    部分:src/zephyr/security/access_control/key_hierarchy.py(stub)+src/zephyr/security/access_control/secrets_lifecycle.py(stub)+config/secret_registry.yaml。最小施工形态:
+    三层密钥层级落地：主密钥存系统密钥环/环境变量→KEK→DEK按域派发+90天轮换+密钥使用审计落哈希链+启动完整性自检；裁剪Shamir分片与后量子迁移(单人单机无分片托管场景)。依赖前置: config/secret_registry.yaml;src/zephyr/security/access_control/key_hierarchy.py;src/zephyr/trading/ai_audit_logger.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/security/access_control/key_hierarchy.py(stub)+src/zephyr/security/access_control/secrets_lifecycle.py(stub)+config/secret_registry.yaml'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/access_control/key_hierarchy.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A5安全架构
+  original_id: B12-03842
+  source_section: §4
+- id: CAND-SEC-005
+  name: 数据脱敏引擎
+  aliases:
+  - 数据脱敏
+  domain: D_SECURITY
+  domain_status: active
+  sub_layer: src/zephyr/security/access_control/orphan_judge/
+  problem: 外部API传输脱敏+策略/持仓/因子数据过滤 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Microsoft Presidio数据脱敏。场内现状: 部分:src/zephyr/security/access_control/guards/output_guard.py。最小施工形态:
+    外发API payload字段级过滤(持仓/策略/因子白名单)+PII/凭证掩码，统一出口拦截。依赖前置: src/zephyr/security/access_control/guards/output_guard.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/security/access_control/guards/output_guard.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/outbound_data_sanitizer.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00372
+  source_section: §功能域模块·D-SECURITY
+- id: CAND-SEC-006
+  name: SIEM安全信息与事件管理
+  aliases:
+  - 安全信息与事件管理
+  - SIEM安全信息与事件管理
+  domain: D_SECURITY
+  domain_status: active
+  sub_layer: src/zephyr/security/access_control/orphan_judge/
+  problem: 日志集中收集（所有域日志集中）+跨域关联分析（发现跨域攻击链）+预定义告警规则+ML异常检测告警；告警分级=P0(critical)/P1(high)/P2(elevated)/P3(normal)/系统级紧急（global_critical，所有Agent暂停）；告警路由=P0/P1/系统级立即通知人类，P2/P3每日汇总
+  proposal: '深挖裁定=做(P2)。业界对标: SIEM=Splunk/Elastic集中收集+Sigma规则跨域关联+分级告警路由。场内现状: 部分:src/zephyr/security/security_event_bus.py。最小施工形态:
+    跨域安全事件关联规则引擎：Sigma风格yaml规则5-10条(同主体/同会话滑动时间窗多域事件聚合，如注入→越权→数据导出链)，命中提升严重度并复用security_event_bus路由；ML异常检测裁剪不做。依赖前置:
+    src/zephyr/security/security_event_bus.py;src/zephyr/gov_drift/correlation_engine.py(关联思路复用);config/alert_rules.yaml。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/security/security_event_bus.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/siem_correlation_engine.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A5安全架构
+  original_id: B12-03820
+  source_section: §2.6
+- id: CAND-SEC-007
+  name: §15.1 供应链安全模块补全（22项全能建）
+  aliases:
+  - 供应链安全模块补全
+  domain: D_SECURITY
+  domain_status: active
+  sub_layer: src/zephyr/security/access_control/orphan_judge/
+  problem: D-SECURITY-28 L0供应链SHA256验证器（pip hash+requirements.txt锁定）/D-SECURITY-31 代码安全自动扫描器（SAST Bandit/Semgrep
+    CI/CD）/D-SECURITY-32 依赖漏洞自动检测器（CVE比对Safety/pip-audit，蓝图MOD-INF-014已建设）/M1-NEW-07 对抗性依赖注入检测器（monkey-patching和运行时依赖篡改）/M3-S01
+    SBOM生成器（CycloneDX JSON）/M3-S02 漏洞扫描器（CVE/NVD比对）/M3-S03 许可证合规扫描器（GPL传染性）/M3-S04 依赖锁定器（pip-compile+hash）/M3-S05
+    供应链事件监控器（GitHub Advisory）/M3-S06 依赖图可视化器（pipdeptree）/M3-S07 依赖健康评分器/M3-S08 依赖替换推荐器/M3-NEW-01 AI依赖风险预测器/M3-NEW-02
+    依赖许可证传染分析器/M3-NEW-03 供应链依赖完整性验证器/M3-NEW-04 供应链攻击面评估器/M3-NEW-05 依赖版本冲突检测器/M3-NEW-06 供应链合规报告生成器/M3-NEW-07
+    依赖元数据可信验证器/M3-NEW-08 供应链零信任验证器/M3-NEW-09 依赖行为基线
+  proposal: '深挖裁定=做(P2)。业界对标: 供应链安全=CycloneDX/SPDX SBOM+SLSA/in-toto溯源+pip-audit CVE+GitLeaks密钥扫描。场内现状:
+    部分:src/zephyr/feedback_loop/gates/cve_scanner.py+src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py+scripts/governance/d11_complia。最小施工形态:
+    CycloneDX JSON SBOM生成器(cyclonedx-bom离线生成并归档data/audit_trail)+pip-licenses许可证扫描(GPL/AGPL传染性告警入CI)+SBOM与CVE扫描结果关联；依赖健康评分/攻击模拟等余项裁剪。依赖前置:
+    requirements.txt(依赖锁定);src/zephyr/feedback_loop/gates/cve_scanner.py;.github/workflows/governance.yml。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/feedback_loop/gates/cve_scanner.py+src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py+scripts/governance/d11_compliance/validate_frozen_requirements.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/supply_chain_security_scanner.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A5安全架构
+  original_id: B12-03993
+  source_section: §15.1
+- id: CAND-SECLLM-001
+  name: §29.24-7 Spectral Guardrails注意力拓扑谱分析幻觉检测（v7.0，arXiv 2602.08082）
+  aliases:
+  - §29.24-7 Spectral Guardrails注意力拓扑谱分析幻觉检测（v7.0，arXiv 2602.08082）
+  domain: D_SECURITY_LLM
+  domain_status: active
+  sub_layer: src/zephyr/security/llm_defense/
+  problem: 训练无关：注意力矩阵视作动态图→Laplacian谱属性→幻觉时谱能量分散（幻觉=注意力热力学相变）；Llama 3.1 8B上97.7% recall（多特征）/86.1% recall+81.0%
+    precision（均衡），单层谱特征L26 Smoothness 98.2% recall；与Sentinel互补（Sentinel监督学习检已知模式/Spectral训练无关检未知模式）；五层防御链：Double-Lock数值锚定→Sentinel事实幻觉（监督）→Spectral事实幻觉（训练无关）→LLM-as-Judge逻辑校验→人工审核；约束3条（recall优先precision金融漏检代价高/"Loud
+    Liar"现象需针对Qwen/DeepSeek分别校准阈值/谱分析开销<10ms不阻塞决策路径）
+  proposal: '深挖裁定=做(P2)。业界对标: arXiv 2602.08082训练无关谱分析(Llama 3.1 8B上97.7% recall)，无成熟开源需自研。场内现状: 部分:src/zephyr/intelligence/sentinel_hallucination_detector.py。最小施工形态:
+    1个模块 src/zephyr/security/llm_defense/spectral_guard.py，核心类SpectralGuard，输入LLM注意力矩阵，Laplacian谱能量特征输出幻觉评分；recall优先+针对Qwen/DeepSeek分别校准阈值。依赖前置:
+    D_SECURITY_LLM;D_INTELLIGENCE(sentinel)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/intelligence/sentinel_hallucination_detector.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/security/llm_defense/spectral_guard.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A1交易决策架构
+  original_id: B10-01868
+  source_section: §29.24
+- id: CAND-SELL-002
+  name: 模块36 买入后即时验证与快速纠错模型
+  aliases:
+  - 买入后即时验证与快速纠错模型
+  domain: D_SELL_DECISION
+  domain_status: active
+  sub_layer: src/zephyr/sell_decision/
+  problem: 买入后5分钟(跌破买入价>1%且放量→观察)/15分钟(跌破分时均线反弹无力→减仓50%)/30分钟(反向>2ATR→全部止损)；对标Gao 2018 Intraday Momentum(前半小时预测后续)；归属L4+模块43联动
+  proposal: '深挖裁定=做(P1)。业界对标: Gao(2018)日内动量+执行后快速纠错为OMS监控常见做法。场内现状: 无。最小施工形态: 三时点校验规则(跌破买价1%放量观察/破分时均线减50%/反向2ATR清仓)接卖出信号收集器。依赖前置:
+    分时数据;sell_decision/core/sell_signal_collector.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'risk/post_entry_instant_validator.py（MOD-RK-40，18 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：spec 全等归并；MATURITY=design 待运行时装配批接线"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W22）——canonical=MOD-RK-40 post_entry_instant_validator（R3 #ARCH-240 预告裁定，spec 全等）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-01475
+  source_section: §9模块36
+- id: CAND-SHARED-001
+  name: C-044 成本治理
+  aliases:
+  - 成本治理
+  domain: D_SHARED
+  domain_status: active
+  sub_layer: src/zephyr/shared/shared_services/
+  problem: API调用成本治理+QPS动态分配 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: 令牌桶限流+API成本计量(OpenTelemetry计费)。场内现状: 部分:src/zephyr/shared/capacity_governance/cost_estimator.py。最小施工形态:
+    外部API调用计量+成本预算+QPS动态分配令牌桶，超预算自动降级。依赖前置: src/zephyr/shared/capacity_governance/cost_estimator.py；src/zephyr/ex_sor/api/api_rate_limiter.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/capacity_governance/cost_estimator.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/capacity_governance/api_cost_governor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00308
+  source_section: §功能域模块·D-COMPLIANCE
+- id: CAND-SHARED-002
+  name: D-INT-12 MessageQueue
+  aliases:
+  - D-INT-12 MessageQueue
+  domain: D_SHARED
+  domain_status: active
+  sub_layer: src/zephyr/shared/shared_services/
+  problem: Redis Stream异步通信+可靠投递 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: Redis Streams可靠消息(消费组/重放)。场内现状: 部分:src/zephyr/shared/event_bus.py。最小施工形态:
+    Redis Streams承载事件总线:stream+consumer group+ACK重试+DLQ对接dlq.py,保留进程内快路径,严禁引入Kafka。依赖前置: D_SHARED;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/shared/event_bus.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/redis_stream_message_queue.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00341
+  source_section: §功能域模块·D-INTEGRATION
+- id: CAND-SHARED-003
+  name: D-INFRA-132 缓存一致性管理器
+  aliases:
+  - 缓存一致性
+  - D-INFRA-132 缓存一致性管理器
+  domain: D_SHARED
+  domain_status: active
+  sub_layer: src/zephyr/shared/shared_services/
+  problem: 多层缓存一致性维护+缓存失效策略+版本控制;✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: 多层缓存一致性(cache-aside+版本戳)；Redis失效广播。场内现状: 部分：src/zephyr/shared/io/cache_invalidation.py。最小施工形态:
+    缓存一致性管理器：分层缓存注册+失效策略(TTL/事件失效/版本戳)+写穿/写回策略裁定+一致性巡检，收编现有两个cache_invalidation。依赖前置: D_SHARED;D_INFRA_RUNTIME。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/shared/io/cache_invalidation.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/shared/io/cache_consistency_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04324
+  source_section: §17.17
+- id: CAND-SIGQC-001
+  name: D-SIGNAL-156 二元结论补充
+  aliases:
+  - 二元结论补充
+  - D-SIGNAL-156 二元结论补充
+  domain: D_SIGQC
+  domain_status: active
+  sub_layer: src/zephyr/signal_quality/
+  problem: ✅能建：与§10质量检查流水线对齐，增加signal_quality_degradation_detector()；信号域告警复用D-DATA-112 Data Anomaly Alerter告警路由
+  proposal: '深挖裁定=做(P0)。业界对标: 信号质量降级检测+Prometheus式告警分级路由。场内现状: 部分:src/zephyr/signal_quality/degradation_monitor_base.py。最小施工形态:
+    信号质量降级检测器：IC滑窗衰减/覆盖率骤降/方向一致性漂移多维检测+三级降级分级，重度降级阻断信号下发，告警复用D-DATA-112 alerter路由，检测日志入signal_audit。依赖前置:
+    D_SIGQC;D_FACTOR;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_quality/degradation_monitor_base.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/degradation_detector.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-SIGNAL
+  original_id: B2-05120
+  source_section: §1.1
+- id: CAND-SIGQC-002
+  name: 技能：signal-dedup 信号去重
+  aliases:
+  - 技能：signal-dedup 信号去重
+  domain: D_SIGQC
+  domain_status: active
+  sub_layer: src/zephyr/signal_quality/
+  problem: 信号Agent技能（相似度>0.9合并）
+  proposal: '深挖裁定=做(P2)。业界对标: 嵌入相似度去重(cosine>0.9合并)+时间窗去重。场内现状: 部分：src/zephyr/factor/analysis/correlation_dedup.py。最小施工形态:
+    signal-dedup技能：信号指纹(标的/方向/逻辑标签/参数桶)+相似度>0.9合并保留最高置信度+时间窗(默认当日)去重；去重决策落审计供串谋检测复查，接信号质量控制域。依赖前置: D_SIGQC;D_ASHARE_SIGNAL;D_FACTOR。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/factor/analysis/correlation_dedup.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_dedup.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A7-Agent架构
+  original_id: B11-02594
+  source_section: §5.2
+- id: CAND-SIGQC-003
+  name: D-SIGNAL-156 信号质量退化监控
+  aliases:
+  - 信号质量退化监控
+  - D-SIGNAL-156 信号质量退化监控
+  domain: D_SIGQC
+  domain_status: active
+  sub_layer: src/zephyr/signal_quality/
+  problem: 信号质量指标持续低于阈值自动监控和告警;✅能建,复用D-DATA-112告警路由
+  proposal: '深挖裁定=做(P2)。业界对标: 信号质量SLO+自动告警；evidently质量监控思路。场内现状: 部分：src/zephyr/signal_quality/。最小施工形态:
+    信号退化监控：质量指标(命中率/IC/衰减)滚动跟踪+阈值判定+自动告警复用B13-04267路由+降级信号标记联动消费端降权。依赖前置: D_SIGQC;D_ASHARE_SIGNAL;D_DATA_ENG。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/signal_quality/'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_degradation_monitor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04309
+  source_section: §17.12
+- id: CAND-SIGQC-004
+  name: D-SIGNAL-157 信号质量基准对比
+  aliases:
+  - 信号质量基准对比
+  - D-SIGNAL-157 信号质量基准对比
+  domain: D_SIGQC
+  domain_status: active
+  sub_layer: src/zephyr/signal_quality/
+  problem: ✅能建，有蓝图MOD-L03-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: 信号质量vs基准(历史基线/buy-hold)对比为因子评估惯例。场内现状: 部分:src/zephyr/signal_quality/degradation_monitor_base.py（退化监控有，基准对比缺）。最小施工形态:
+    信号质量基准对比：当前信号IC/覆盖率/稳定性vs滚动历史基线与基准策略，偏离超阈告警+周度对比报告。依赖前置: D_SIGQC;D_ASHARE_SIGNAL。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_quality/degradation_monitor_base.py（退化监控有，基准对比缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_quality_benchmark.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04630
+  source_section: §8.3.2
+- id: CAND-SIGQC-005
+  name: D-SIGNAL-211 Signal Agent Explainability Guarantor
+  aliases:
+  - D-SIGNAL-211 Signal Agent Explainability Guarantor
+  domain: D_SIGQC
+  domain_status: active
+  sub_layer: src/zephyr/signal_quality/
+  problem: 信号决策可解释性强制保障；✅能建
+  proposal: '深挖裁定=做(P2)。业界对标: SHAP式特征贡献+决策理由链强制。场内现状: 部分:src/zephyr/signal_fundamental/audit/decision_snapshot.py。最小施工形态:
+    可解释性强制契约：信号输出必须携带理由链（触发因子+规则命中+置信度依据），缺失即阻断+告警，解释字段入decision_snapshot与signal_audit链，支持事后回放。依赖前置: D_SIGQC;D_ASHARE_SIGNAL;D_GOV_AUDIT。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/signal_fundamental/audit/decision_snapshot.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/signal_quality/signal_explainability_guarantor.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: D-SIGNAL
+  original_id: B2-05485
+  source_section: §13.1
+- id: CAND-SIM-009
+  name: C-033 过拟合系统性防护
+  aliases:
+  - 过拟合系统性防护
+  domain: D_SIMULATION
+  domain_status: active
+  sub_layer: src/zephyr/simulation/
+  problem: 因子/策略/信号/ML模型全生命周期四层防护 ✅
+  proposal: '深挖裁定=做(P2)。业界对标: López de Prado deflated Sharpe/PBO+walkforward CV。场内现状: 部分:src/zephyr/regime/validation/overfitting_guard.py。最小施工形态:
+    四层防护统一门禁：因子(IC衰减/多重检验)+策略(deflated SR/PBO)+信号(walkforward)+ML(OOS/对抗)，拦截上线。依赖前置: src/zephyr/simulation/deflated_sharpe_calculator.py；src/zephyr/regime/validation/overfitting_guard.py；src/zephyr/regime/validation/e1_walkforward_cv.p。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/regime/validation/overfitting_guard.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/simulation/overfitting_protection_gate.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: 跨域(元文档)
+  original_id: B1-00261
+  source_section: §功能域模块·D-OPS
+- id: CAND-TRD-002
+  name: D-SIGNAL-150 策略异常退出处理
+  aliases:
+  - 策略异常退出处理
+  - D-SIGNAL-150 策略异常退出处理
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: ✅P0；策略异常安全退出+仓位清理
+  proposal: '深挖裁定=做(P0)。业界对标: Lean算法异常liquidate;vnpy策略停止回收。场内现状: 部分：src/zephyr/trading/finalizer.py。最小施工形态:
+    策略异常时编排：冻结新信号→按优先级撤单/平仓→仓位清理核对→状态置EXITED→告警与审计留痕；覆盖崩溃/超时/风控触发三路径，与finalizer/stop_gate集成。依赖前置: D_TRADING;D_RISK;D_POSITION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/trading/finalizer.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/strategy_abnormal_exit_orchestrator.py
+  priority: P0
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A1交易决策架构
+  original_id: B10-02264
+  source_section: §30.3.3
+- id: CAND-TRD-003
+  name: C-013 外部指令盯盘
+  aliases:
+  - 外部指令盯盘
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 人工买入/卖出/调仓指令通道 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: OMS手工单通道。场内现状: 无。最小施工形态: 人工指令通道:指令schema(标的/方向/数量/时限)+录入接口(CLI/前端)+必经C-004风控与盘前边界校验+执行回报对账,指令全程审计。依赖前置:
+    D_TRADING;D_EX_CORE;D_RISK;D_FRONTEND。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/manual_instruction_channel.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00192
+  source_section: §功能域模块·D-PORTFOLIO
+- id: CAND-TRD-004
+  name: 盘前检查器
+  aliases:
+  - 盘前检查器
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 交易前系统就绪检查+依赖验证 ✅
+  proposal: '深挖裁定=做(P1)。业界对标: 交易系统preflight checklist惯例。场内现状: 部分:src/zephyr/trading/health_monitor.py。最小施工形态:
+    盘前就绪清单(数据新鲜度/券商连接/资金/风控参数/时钟)逐项验证，失败阻断开市自动交易。依赖前置: src/zephyr/trading/health_monitor.py；src/zephyr/trading/boot_hooks.py；src/zephyr/data/scheduler.py。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/health_monitor.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ex_core/premarket_checker.py（MOD-EX-063）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销（已接线 boot_hooks）"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W22）——canonical=MOD-EX-063 premarket_checker（四道关覆盖就绪清单+boot_hooks 已接线）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: 跨域(元文档)
+  original_id: B1-00382
+  source_section: §功能域模块·D-TRADING
+- id: CAND-TRD-005
+  name: D-TRADING-04 EOD Processor日终处理器
+  aliases:
+  - D-TRADING-04 EOD Processor日终处理器
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: ✅能建；价格快照+NAV计算+P&L确认+风险重估
+  proposal: '深挖裁定=做(P1)。业界对标: 日终处理=NAV/P&L确认+风险重估，qlib/vnpy均以EOD job落地。场内现状: 部分:src/zephyr/trading/post_settlement_pipeline.py(15:30对账+日终审计已建，NAV/价格快照缺)。最小施工形态:
+    价格快照+NAV/P&L确认+风险重估挂post_settlement_pipeline 15:30链。依赖前置: settlement_reconciliation(已有);risk重估(已有)。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/post_settlement_pipeline.py(15:30对账+日终审计已建，NAV/价格快照缺)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/eod_processor.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-TRADING-04
+  original_id: B10-02208
+  source_section: §30.2.5
+- id: CAND-TRD-006
+  name: D-TRADING-05 Pre-Market Checker（盘前检查器）
+  aliases:
+  - D-TRADING-05 Pre-Market Checker（盘前检查器）
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P1)。业界对标: 交易台盘前readiness checklist+K8s就绪探针思路。场内现状: 部分:src/zephyr/compliance/discipline_must_do_checker.py（纪律必做检查有，系统就绪Go/NoGo裁决缺）。最小施工形态:
+    盘前就绪检查：进程心跳/miniQMT连接/iFind连通/资金持仓对账/日历时段校验/风控参数加载→Go/NoGo裁决+阻断清单输出，NoGo禁开仓仅告警。依赖前置: D_TRADING;D_INFRA_RUNTIME;D_PLAN。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/compliance/discipline_must_do_checker.py（纪律必做检查有，系统就绪Go/NoGo裁决缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'ex_core/premarket_checker.py（MOD-EX-063）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P1W22 重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W22）——canonical=MOD-EX-063（头部即 D-TRADING-05 MVP，Go/NoGo=ready、阻断清单=failed_checks）"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04680
+  source_section: §8.3.7
+- id: CAND-TRD-007
+  name: D-TRADING-04 EOD Processor（日终处理器）
+  aliases:
+  - D-TRADING-04 EOD Processor（日终处理器）
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: ✅能建
+  proposal: '深挖裁定=做(P1)。业界对标: 券商日终批处理(EOD reconciliation)runbook。场内现状: 部分:src/zephyr/trading/settlement_reconciliation.py（对账/收盘定价/日审散件有，EOD统一编排缺）。最小施工形态:
+    日终工序编排：收盘价获取→miniQMT持仓资金对账→当日PnL与净值归档→合规审查触发→报告生成→备份与日志归档，失败告警+断点续跑。依赖前置: D_TRADING;D_REPORTING;D_INFRA_RECOVERY。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/settlement_reconciliation.py（对账/收盘定价/日审散件有，EOD统一编排缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'trading/eod_processor.py（MOD-TRADING-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：归并核销；残留子缺口（断点续跑/合规触发/备份归档）见 P1W23"
+  review_note: "# REVIEW: 归并不施工（2026-08-25，P1W23）——同号 D-TRADING-04 同名同域，canonical=CAND-TRD-005 eod_processor（W22 先建，git 实证口径逐字吻合）；独有子缺口（断点续跑/合规触发/备份归档）留归并注记"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: A9运维架构
+  original_id: B14-04718
+  source_section: §8.3.11
+- id: CAND-TRD-008
+  name: 交易运营域 D-TRADING (TRD)
+  aliases:
+  - 交易运营域 D-TRADING (TRD)
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 交易后流程自动闭环——外部指令到结算对账全生命周期运营；L3策略决策层+L4风控执行层+交易运营；安全等级M；P1（4●+1◐=5能力，负载🟡中）；⬜未开发
+  proposal: '深挖裁定=做(P1)。业界对标: 机构OMS/EMS交易后结算对账流程。场内现状: 部分:src/zephyr/trading/(settlement_reconciliation.py,post_settlement_pipeline.py,recon_runner.py)。最小施工形态:
+    交易运营状态机(指令→执行→结算→对账)+TradingOrder/SettlementRecord聚合落地+运营事件。依赖前置: D-EX-CORE/D-POSITION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/(settlement_reconciliation.py,post_settlement_pipeline.py,recon_runner.py)'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'trading 包 MOD-TRADING-002~013 族'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：豁免核销（域级条目无独立施工单元）"
+  review_note: "# REVIEW: 豁免不施工（2026-08-25，P1W23）——problem 为域级描述无独立最小施工单元，trading 包已承载（MOD-TRADING-002~012），聚合部分归并 MOD-TRADING-009/010"
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-TRADING
+  original_id: B6-08086
+  source_section: §0
+- id: CAND-TRD-009
+  name: 核心聚合 AGG-TRD-01 TradingOrder
+  aliases:
+  - 核心聚合 AGG-TRD-01 TradingOrder
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 交易订单核心聚合
+  proposal: '深挖裁定=做(P1)。业界对标: OMS订单生命周期聚合(状态机+幂等)。场内现状: 部分:src/zephyr/ex_core/order_manager.py。最小施工形态:
+    TradingOrder聚合根+订单状态机+幂等键+订单领域事件发布。依赖前置: D-EX-CORE order_manager。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/ex_core/order_manager.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/trading_order_aggregate.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-TRADING
+  original_id: B6-08087
+  source_section: §0
+- id: CAND-TRD-010
+  name: 核心聚合 AGG-TRD-02 SettlementRecord
+  aliases:
+  - 核心聚合 AGG-TRD-02 SettlementRecord
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 结算记录核心聚合
+  proposal: '深挖裁定=做(P1)。业界对标: 券商结算对账(日终清算文件核对)。场内现状: 部分:src/zephyr/trading/settlement_reconciliation.py。最小施工形态:
+    SettlementRecord聚合+对账差异分类+差异处理工单事件。依赖前置: broker_settlement_adapter。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/settlement_reconciliation.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/settlement_record_aggregate.py
+  priority: P1
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-25'
+  source_draft: D-TRADING
+  original_id: B6-08088
+  source_section: §0
+- id: CAND-TRD-011
+  name: D-TRADING-02 Reconciliation Engine
+  aliases:
+  - D-TRADING-02 Reconciliation Engine
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 交易/持仓/资金三向对账+异常分类+自动匹配+未匹配项管理;✅能建;📋MOD-L07-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: 三向对账(交易/持仓/资金)；自动匹配+未匹配项工单。场内现状: 部分：src/zephyr/trading/settlement_reconciliation.py。最小施工形态:
+    三向对账收口：券商资金流水对账(佣金/印花税/利息逐笔)+异常分类(价格/数量/费用/缺失)+自动匹配规则+未匹配项台账与跟进，复用现有两向引擎。依赖前置: D_TRADING;D_POSITION;D_EX_CORE。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/trading/settlement_reconciliation.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/three_way_reconciliation.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04352
+  source_section: §17.23
+- id: CAND-TRD-012
+  name: D-TRADING-04 EOD Processor
+  aliases:
+  - D-TRADING-04 EOD Processor
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: 日终批处理(价格快照+NAV计算+P&L确认+风险重估+报告生成);✅能建;📋MOD-L07-001未建设
+  proposal: '深挖裁定=做(P2)。业界对标: 日终批处理编排(Airflow思路，单机用scheduler)；NAV/P&L日结。场内现状: 部分：src/zephyr/trading/post_settlement_pipeline.py。最小施工形态:
+    EOD编排器：15:30后串行任务链(价格快照/NAV计算/P&L确认/VaR重估/日报生成)，失败断点续跑，产出EODCompleted事件。依赖前置: D_TRADING;D_REPORTING;D_RISK;D_POSITION。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分：src/zephyr/trading/post_settlement_pipeline.py'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'trading/eod_processor.py（MOD-TRADING-012）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：P2-W08 重登归并核销"
+  review_note: "# REVIEW: 归并不施工（2026-08-26，P2-W08）——与 P1 已建 MOD-TRADING-011 eod_processor 同为 D-TRADING-04（B13/B14 两稿），canonical=src/zephyr/trading/eod_processor.py（15:30 任务链+断点续跑已在）"
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A3数据架构
+  original_id: B13-04353
+  source_section: §17.23
+- id: CAND-TRD-013
+  name: D-TRADING-14 Reference Data Manager（主数据管理）
+  aliases:
+  - D-TRADING-14 Reference Data Manager（主数据管理）
+  domain: D_TRADING
+  domain_status: active
+  sub_layer: src/zephyr/trading/
+  problem: ✅能建，为监控提供参考数据
+  proposal: '深挖裁定=做(P2)。业界对标: 证券主数据管理(MDM)单机简化为SQLite SSOT+Redis缓存。场内现状: 部分:src/zephyr/trading/trading_contracts/market/instrument.py（合约模型有，统一主数据服务缺）。最小施工形态:
+    主数据服务：代码/名称/行业分类/涨跌停规则/ST与退市标记/交易日历统一SSOT，日终刷新+版本号，监控与风控经API引用禁各自维护副本。依赖前置: D_TRADING;D_DATA。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '深挖场内对账: 部分:src/zephyr/trading/trading_contracts/market/instrument.py（合约模型有，统一主数据服务缺）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: src/zephyr/trading/reference_data_manager.py
+  priority: P2
+  source: 2026-08-23 场外草稿深挖批(AUD-DRAFT-001, .runtime/audit_20260823/construction_backlog_dig.tsv 裁定=做)
+  created: '2026-08-23'
+  last_updated: '2026-08-26'
+  source_draft: A9运维架构
+  original_id: B14-04639
+  source_section: §8.3.2
+
+- id: CAND-RPT-011
+  name: '偏离归因分解 H-A~D（55号 §6）'
+  aliases: ['偏离归因分解']
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: reporting 归因层
+  description: '计划 vs 实际偏离四层归因（H-A 滑点/H-B 数据滞后/H-C 前瞻残留/H-D 延迟差异，battle_map BM-BT-05-H 口径），与 risk/core/deviation_attribution.py 并存不互替。'
+  capability: deviation_attribution_decomposition
+  problem_it_solves: '战报偏离缺结构化四层归因'
+  keywords: ['deviation', 'attribution']
+  upstream_deps: ['MOD-PLAN-011']
+  downstream_consumers: ['复盘页', '战报']
+  estimated_complexity: 中
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-24 已建成（MOD-RPT-031，testing），#ARCH-201'
+- id: CAND-RPT-012
+  name: '复盘模板引擎外化注册位（55号 §6）'
+  aliases: ['复盘模板外化']
+  domain: D_REPORTING
+  domain_status: active
+  sub_layer: reporting 模板层
+  description: 'ai_review_summary 模板迁出代码常量至 config/review_templates.yaml 注册位，版本可切换+默认回退，一致性测试锁防双真源漂移。'
+  capability: review_template_registry
+  problem_it_solves: '复盘模板硬编码不可版本化'
+  keywords: ['template', 'review']
+  upstream_deps: ['MOD-RPT-009']
+  downstream_consumers: ['战报']
+  estimated_complexity: 低
+  acquisition_method: constructed
+  last_review_outcome: '2026-08-24 已建成（MOD-RPT-032，testing），#ARCH-201'
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-001~008: 数字货币量化战线启动批（2026-08-26 Owner 裁定启动）
+  # 设计真源: 94_crypto_quant_expansion.md §5（域级复用矩阵 §3 / 横切改造点 §4 / 施工波次 §6）
+  # 族内查重: 2026-08-26 全量检索"数字货币/crypto/BTC/永续/资金费/CCXT/币安"零命中
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-001: 市场日历抽象（W0 第一地基——7×24 连续日历 vs A股断点日历）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-001
+  name: "市场日历抽象(Market Calendar Abstraction)"
+  aliases: ["market_calendar", "交易日历接口", "7x24 日历", "连续市场日历"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "data/calendar"
+  panorama_position:
+    depgraph: {has_position: false, note: "新增横切接口层，晋升时新建节点（A股日历实现=现有交易日历逻辑收编）"}
+    dataflowgraph: {has_position: true, note: "scheduler/K线聚合/回测时间轴/PIT asof 的时间口径上游"}
+    decisiongraph: {has_position: false, note: "横切基础设施，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-DATA 蓝图横切扩展（94号 §4.1）"}
+  description: >-
+    现有 scheduler（调度）、K线聚合（120min 由 60min 两根聚合等）、回测时间轴、PIT asof 口径
+    全部隐式假设 A股断点日历（交易日历+午间休市+隔夜断点+节假日）。数字货币 7×24 连续，
+    接入前必须抽象 market_calendar 接口：定义"什么时间有交易、K线如何切分"的策略对象，
+    A股实现=现有交易日历逻辑收编，币实现=7×24 连续日历。所有时间相关计算改为注入日历。
+    硬门槛：A股现有逻辑零行为变化（纯加接口层，回归测试全绿才算完）。
+  capability: ""
+  problem_it_solves: "时间体系是双市场同内核的最深影响面——不抽象则币接入时 if/else 散落全代码库，SSOT 铁律破产"
+  trigger_signals:
+    - "Owner 启动数字货币战线施工（2026-08-26 已命中）"
+    - "94号备忘 W0 波次派单"
+  keywords: ["market_calendar", "交易日历", "7x24", "K线聚合", "PIT", "scheduler", "时间轴"]
+  upstream_deps:
+    - {path: "src/zephyr/data/scheduler.py", note: "调度器现有 A股历假设的主要改造点"}
+  downstream_consumers:
+    - {path: "src/zephyr/backtest", note: "回测时间轴注入日历"}
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml", note: "9周期 K线聚合口径（币侧新增 4h 周期候选）"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "A股现有时间相关代码盘点", note: "scheduler/K线聚合/回测时间轴/PIT asof 四类消费点清单，改造面摸底"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/data/calendar/ 包已落（base/ashare/crypto/__init__），scheduler/fusion/pit_query 注入式改造完成，26 测试全绿（2026-08-26 W0 施工）"}
+    blocking_question: null
+    result: promoted
+  status: promoted
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-27'
+  promoted_to: "src/zephyr/data/calendar/"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.1 市场日历抽象"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: >-
+    实现策略=抽象接口+按市场注入实现（策略模式），禁止业务代码 if/else 判市场。
+    A股零行为变化为回归门槛；币侧 7×24 连续日历顺带支持 4h 周期（现有 9 周期未含）。
+  risks:
+    - "改造面摸底遗漏会导致币侧时间口径错乱（K线错切/调度错点）——W0 必须先做全量消费点盘点"
+  alternatives: "币侧单独写一套时间逻辑——拒绝（SSOT 破产，双份维护）"
+  tags: ["数字货币", "横切", "时间体系", "地基", "P0"]
+  search_terms: ["market calendar", "市场日历", "7x24", "连续交易", "crypto calendar"]
+  related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-006", "CAND-CRYPTO-007"]
+  enables: ["CAND-CRYPTO-002", "CAND-CRYPTO-005", "CAND-CRYPTO-006", "CAND-CRYPTO-007"]
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "promoted（2026-08-27）：W0 施工闭环——calendar/ 包+scheduler/fusion/pit_query 注入式改造落盘，26 新测试+130 受影响面零回归，全量回归约 46,452 passed"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-002: 交易所行情 provider（W1——币可"看"）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-002
+  name: "数字货币交易所行情接入(Crypto Exchange Market Data Provider)"
+  aliases: ["crypto provider", "交易所 WebSocket 接入", "币安行情", "OKX 行情"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/connectors/crypto"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 _domain_mkt_data 的 connectors/vendor_base 体系，新增 crypto provider 节点"}
+    dataflowgraph: {has_position: true, note: "交易所 WS/REST → WAL → CH/DuckDB 分层存储（沿用现有管道）"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图 connectors 扩展"}
+  description: >-
+    新建数字货币交易所行情 provider：WebSocket 实时订阅（K线/成交/深度）+ REST 历史补数，
+    接入现有 vendor_base/故障转移体系与 WAL→CH/DuckDB 分层存储管道。
+    复用 provider_base 抽象与 quality_gate 质量门禁；断线重连/断点续传沿用现有韧性纪律。
+    交易所选型待 94号开放问题 Q1（币安/OKX/Bybit，以 Owner 账户为准）。
+  capability: ""
+  problem_it_solves: "数字货币战线无任何行情来源——数据地基不建，因子/回测/策略全是空中楼阁"
+  trigger_signals:
+    - "CAND-CRYPTO-001 市场日历抽象落地"
+    - "94号开放问题 Q1 交易所选型 Owner 拍板"
+  keywords: ["crypto", "WebSocket", "行情接入", "provider", "binance", "okx", "K线"]
+  upstream_deps:
+    - {path: "src/zephyr/data/provider_base.py", note: "provider 抽象基类复用"}
+    - {path: "docs/03_modules/_domain_mkt_data/vendor_base/blueprint.md", note: "vendor 体系接入规范"}
+  downstream_consumers:
+    - {path: "src/zephyr/data/ch_writer.py", note: "落库管道沿用"}
+    - {path: "src/zephyr/data/quality_gate.py", note: "质量门禁沿用"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q1 交易所选型", note: "Owner 拍板后确定 API 体系（REST/WS 限频/鉴权）"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/data/implementations/okx_provider.py 已落（公开 REST /candles+/history-candles，分页 300 条/页，限频 10/s），19 测试两轮全绿+147 受影响面零回归（2026-08-28 W1 施工）"}
+    blocking_question: null
+    result: promoted
+  status: promoted
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/data/implementations/okx_provider.py"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: L
+  tech_notes: >-
+    WS 7×24 长连接需心跳/重连/sequence 校验（防丢帧）；REST 补数按限频预算排调度。
+    历史 K线首批回填区间 Owner 定（建议 BTC/ETH 现货 3 年起，对齐 MVP universe=主流币）。
+    录制端设计参考（94号 §7.1，已验证实战）：录制窗口>名义窗口（提前预热6步+延迟退出）、
+    "socket已连接≠ready"（订阅完成+首条真实数据+初始快照才算就绪）、快照基准+Delta绝对量语义、
+    make-before-break连接轮换、多证据独立保留互校（Snapshot/Delta/BBO/成交/参考价）、
+    双时间戳event_time+recorded_time；真源 docs/_working/低学历勇闯量化/ PM回测上篇13页。
+    传输侧双线路与热切换由 CAND-CRYPTO-009 承接。
+    数据韧性五件套对照（2026-08-26 R1，DolphinDB 机构参考架构）：双写按键去重/断连重试+本地缓存+恢复重载/
+    流表与库状态周期监控告警/OHLC 前日完整性周期校验+缺失重取——与现有 wal_writer+quality_gate+auto_backfiller 同构，施工时逐项对照勾选。
+  risks:
+    - "WS 长连接 7×24 稳定性（断线静默丢帧）——sequence 缺口检测+自动 REST 补洞为必备"
+    - "交易所计划内维护窗口（定期升级停服）——维护日历跟踪+预期内断流标注，不误报质量事故（2026-08-26 R3）"
+  alternatives: "付费聚合源（Kaiko/CryptoQuant）——MVP 阶段免费直连（94号 Q4 建议），质量门禁不达标再升级"
+  tags: ["数字货币", "数据接入", "行情", "P0"]
+  search_terms: ["crypto market data", "binance websocket", "okx api", "交易所行情"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-003", "CAND-CRYPTO-009"]
+  enables: ["CAND-CRYPTO-003", "CAND-CRYPTO-007"]
+  blocked_by: ["CAND-CRYPTO-001"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "promoted（2026-08-28）：W1 施工闭环——okx_provider.py 公开 REST K 线补数落盘，19 测试两轮全绿+147 受影响面零回归，depgraph node_id=10865681"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-003: 永续合约专属数据（Phase 2——资金费率/OI/基差/爆仓）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-003
+  name: "永续合约专属数据接入(Perpetual Swap Data Suite)"
+  aliases: ["资金费率数据", "funding rate", "持仓量 OI", "基差数据", "爆仓数据"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/datasets/perp"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 crypto provider（CAND-CRYPTO-002）的数据集族"}
+    dataflowgraph: {has_position: true, note: "funding_rate/open_interest/basis/liquidation 四类新表 → 因子域消费"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图（币特有数据资产）"}
+  description: >-
+    永续合约（Perpetual Swap，无到期日期货，靠资金费率锚定现货价）的四类专属数据：
+    资金费率（funding rate，多空每 8 小时互付的持仓成本）、持仓量 OI（Open Interest）、
+    基差（合约-现汇价差）、爆仓数据（liquidation）。币圈最核心的特有 alpha 源，
+    也是 Phase 2 合约交易与杠杆风控的前置输入。
+  capability: ""
+  problem_it_solves: "永续是币圈主力品种，其专属数据（资金费率/OI/基差/爆仓）既是 alpha 源又是合约风控输入，现货体系完全无对应物"
+  trigger_signals:
+    - "94号 Q3 Phase 2 启动条件达成（建议现货实盘 track record 3 个月+）"
+    - "CAND-CRYPTO-002 行情接入落地"
+  keywords: ["perpetual", "funding rate", "open interest", "basis", "liquidation", "永续", "资金费率"]
+  upstream_deps:
+    - {path: "candidate CAND-CRYPTO-002", note: "行情 provider 落地后扩展数据集"}
+  downstream_consumers:
+    - {path: "src/zephyr/factor", note: "币特有因子（资金费率因子等）输入"}
+    - {path: "candidate CAND-CRYPTO-008", note: "杠杆风控的资金费率/爆仓价输入"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "CAND-CRYPTO-002 落地", note: "provider 体系就绪"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/data/implementations/okx_swap_provider.py 已落（公开 REST 四端点：funding-rate-history 分页 100 条/页 + open-interest + mark-price + index-tickers 基差衍生，无需签名，限频 10/s），33 测试全绿（2026-08-28 施工）；status 保持 candidate 待 Phase 2 门禁"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.4 杠杆与资金费率"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: "四类数据均走交易所公共 API（无需鉴权）；爆仓数据部分交易所仅 WS 推送无历史回填，需落地即开始积累。2026-08-26 行业调查扩充：加多空比（long/short ratio）与清算热图（liquidation heatmap——亮区=杠杆堆积对价格有磁吸效应，止损应放危险区外、入场可围绕强平区规划）——CoinGlass 聚合口径可直接对标；高 OI+高资金费=过度杠杆回调预警；期权维度（Deribit 基差年化/PCR/IV 偏度）同 Phase 2 评估。
+    2026-08-26 R1 补充（机构主力策略方向）：资金费率 delta-neutral carry（多现货+空永续 1x，8 小时收资金费，
+    2025 均值 0.015%/8h 同比+50%）定为 Phase 2 首个候选策略方向；费束缚公式 breakeven hold ≈ fee ÷ funding-rate——
+    短持有被费吃掉（Meridian 实证），carry 仓位有最小持有期约束，进 cost_model 与仓位域设计。
+    2026-08-28 施工补充：okx_swap_provider.py 落地（资金费率历史/OI/标记价格/基差四类采集，公开端点无需签名）；
+    Phase 2 晋升 trigger 条件量化——spot_track_record >= 3_months（现货实盘 track record 满 3 个月）方可启动晋升评估，在此之前 status 保持 candidate"
+  risks:
+    - "爆仓数据无历史回填——接入越晚历史缺口越大，可考虑 Phase 1 末期提前挂采集（只采集不消费）"
+  alternatives: "第三方聚合（Coinglass 类）——免费额度有限，交易所原生 API 优先"
+  tags: ["数字货币", "数据接入", "永续合约", "Phase2", "P1"]
+  search_terms: ["funding rate", "open interest", "perpetual swap data", "资金费率", "爆仓数据", "long short ratio", "liquidation heatmap", "多空比", "清算热图"]
+  related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-008"]
+  enables: ["CAND-CRYPTO-008"]
+  blocked_by: ["CAND-CRYPTO-002"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 保持（2026-08-28）：okx_swap_provider.py 施工完成（资金费率/OI/基差/标记价格，33 测试全绿），q1_implemented=true；Phase 2 门禁未达（trigger: spot_track_record >= 3_months），不 promoted"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-004: 链上数据接入（P2 增强——alt_data 新源）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-004
+  name: "链上数据接入(On-Chain Data Feed)"
+  aliases: ["链上数据", "on-chain", "交易所净流入", "活跃地址", "MVRV"]
+  domain: D_ALT_DATA
+  domain_status: skeleton
+  domain_node_count: 0
+  sub_layer: "alt_data/onchain"
+  panorama_position:
+    depgraph: {has_position: false, note: "alt_data 域新增数据源节点（空白域激活切入点）"}
+    dataflowgraph: {has_position: true, note: "链上指标 → alt_data 管道 → 因子/情绪消费"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-ALT-DATA 蓝图（币特有另类数据）"}
+  description: >-
+    数字货币特有的另类数据源：交易所净流入（exchange netflow，币进出交易所=潜在卖压信号）、
+    活跃地址、MVRV/SOPR 等链上估值指标。只读不交互（不签名不上链，94号 §7 不做什么）。
+    接入现有 alt_data 管道（与新闻/情绪同管道），PIT 门控沿用。
+  capability: ""
+  problem_it_solves: "链上数据是币圈独有的基本面维度（A股无对应物），缺它则币版因子体系只剩价格量能一条腿"
+  trigger_signals:
+    - "币版现货策略首批上线后出现因子维度不足"
+    - "94号 W4 波次后评估"
+  keywords: ["on-chain", "exchange netflow", "MVRV", "active addresses", "链上", "另类数据"]
+  upstream_deps: []
+  downstream_consumers:
+    - {path: "src/zephyr/factor", note: "链上因子输入"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "骨架完成（2026-08-28）：src/zephyr/data/implementations/onchain_provider.py（Glassnode 交易所净流入/活跃地址 + CryptoQuant 稳定币流动，3 capabilities，无 key 走确定性 mock 序列 is_mock=1）+ tests/zephyr/data/test_onchain_provider.py（28 用例通过）；付费 key 注入接口 get_service_secret 已预留（glassnode/cryptoquant 服务已登记 secret_registry）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: "源选型：Glassnode/CryptoQuant 付费 API vs 免费自建（区块链浏览器 API 限频紧）——P2 阶段再评。2026-08-26 行业调查扩充（资金流三网关口径）：①鲸鱼地址跟踪（Smart Money 标签地址积累行为+大额转账预警，Nansen 为行业标准，Whale Alert 铸造/大额异动告警）②稳定币流动（交易所稳定币储备=干火药购买力，新铸造=扩张前兆，USDT 场外溢价=亚洲资金入场）③交易所储备金（储备多年新低=供应挤压看涨，急升=获利了结预警）。
+    2026-08-26 R2 补充（8 年回测实证）：MVRV Z-Score（<1=历史深熊抄底区/>5=顶部区，2015/2018/2022 底验证）与 NVT
+    （币圈「市盈率」=价格/链上转账活跃度）为币版宏观因子中少数实证有效维度，列入首批链上因子清单；
+    纪律：任何主动因子须先过买入持有基准门（12 策略组合实证主动大多跑不赢持有）。
+    2026-08-28 骨架落地补充：trigger 条件新增 paid_api_key_configured——GLASSNODE_API_KEY / CRYPTOQUANT_API_KEY
+    配置后 onchain_provider 自动从 mock 序列切换真实端点（is_mock 1→0），付费指标（MVRV/SOPR）扩展挂此后置条件"
+  risks:
+    - "付费源成本高/免费源限频紧——先以 1~2 个核心指标（交易所净流入优先）验证增量价值再扩"
+  alternatives: "MVP 阶段纯价格量能+情绪因子——本项为增强非地基"
+  tags: ["数字货币", "另类数据", "链上", "P2"]
+  search_terms: ["on-chain data", "exchange netflow", "MVRV", "链上数据", "whale tracking", "stablecoin flows", "鲸鱼地址", "稳定币流动", "交易所储备"]
+  related_candidates: ["CAND-CRYPTO-002"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：P2 增强项，现货策略跑通后评估晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-005: 数字货币执行适配器（W3——币可"交易"）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-005
+  name: "数字货币执行适配器(Crypto Execution Adapter)"
+  aliases: ["交易所执行器", "CCXT 适配器", "crypto broker adapter", "币安下单"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "ex_core/adapters/crypto"
+  panorama_position:
+    depgraph: {has_position: true, note: "EX-CORE 域新增交易所适配器节点（与 QMT 执行器平级，OMS 内核不动）"}
+    dataflowgraph: {has_position: true, note: "订单 → 适配器 → 交易所私有 API → 回执/成交回报"}
+    decisiongraph: {has_position: false, note: "执行通道，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-EX-CORE 蓝图（Broker ACL 边界内，INV-005 沿用）"}
+  description: >-
+    新建数字货币交易所执行适配器：订单状态机 + 回执确认（下单后隔 1~2 秒查委托，
+    查到写回执、查不到重试并标记疑似丢单——QMT 教训直接沿用）+ 密钥管理。
+    OMS 内核不动，Broker ACL 铁律（INV-005：仅 D-EX-CORE 可调用）不变。
+    走 53号 5 态 FSM 同一路径（纸面→模拟→实盘小资金）。
+  capability: ""
+  problem_it_solves: "无执行通道则数字货币只能回测不能交易——QMT 执行器是 A股券商专属不可复用"
+  trigger_signals:
+    - "94号 Q1 交易所选型拍板 + W2 回测环境就绪"
+    - "币版策略回测通过需上模拟盘"
+  keywords: ["execution", "ccxt", "order", "adapter", "回执确认", "丢单重试"]
+  upstream_deps:
+    - {path: "src/zephyr/ex_core", note: "OMS 内核复用，适配器按 ports 接口实现"}
+    - {path: "docs/_working/archive/2026-09/design_memos/40_execution_broker.md", note: "执行对接范式与回执教训真源"}
+  downstream_consumers:
+    - {path: "src/zephyr/trading", note: "trading conductor 经 EX-CORE 下单，通道无感"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q1 交易所选型", note: "API 密钥体系/限频/私有端点确定"}
+    - {item: "CAND-CRYPTO-006 规则参数化", note: "下单校验规则包先行"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/ex_core/adapters/okx_broker.py 已落（OKX V5 私有 REST API 对接，HMAC-SHA256 签名+幂等+回执确认+规则包注入），15 测试两轮全绿+1591 受影响面零回归（2026-08-28 W3 施工）"}
+    blocking_question: null
+    result: promoted
+  status: promoted
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/ex_core/adapters/okx_broker.py"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: L
+  tech_notes: >-
+    2026-08-26 R1 调查更新：交易所官方 agent 工具包已成生产基建（Kraken 开源 Rust CLI 134 命令+MCP+paper 模式 2025-11；
+    币安 7 个 agent skills——订单执行/钱包情报/聪明钱跟踪/合约风险筛查 2026-03；OKX Agent Trade Kit 开源 MCP 2026-03）。
+    首选评估=币安官方 agent skills/MCP（官方维护+原生 paper 模式，与 A10 集成架构 MCP 路线一致）；
+    CCXT 降为备选兼容层（统一多家 API 的开源库，薄适配减少逐所对接成本）。
+    密钥走 secret_registry 体系（API key 权限最小化+禁提现+IP 白名单）；回执确认机制参数化（查询间隔/重试次数按交易所调）。
+    2026-08-28 施工落地：OKX V5 私有 REST API 原生对接（非 CCXT），回执确认沿用 QMT 教训（隔 1.5 秒查委托，3 次重试疑似丢单）。
+  risks:
+    - "交易所 API 限频与私有 WS 稳定性——订单回报双通道（WS 推送+REST 轮询兜底）"
+  alternatives: "逐所原生 API 直连——CCXT 统一层更省，但关键路径（下单/回执）必要时原生补强"
+  tags: ["数字货币", "执行", "P0"]
+  search_terms: ["crypto execution", "ccxt adapter", "binance order", "交易所执行", "binance agent skills", "kraken cli", "mcp"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
+  enables: []
+  blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-006"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "promoted（2026-08-28）：W3 施工闭环——okx_broker.py OKX V5 私有 REST API 对接（HMAC-SHA256 签名+幂等+回执确认+CryptoRulePack 注入），15 测试两轮全绿+1591 受影响面零回归"
+  acquisition_method: opensource
+  acquisition_source: "OKX V5 原生 REST API（主所，2026-08-28 施工落地）；币安官方 agent skills/MCP（备用所待开发首选评估，2026-08-26 R1）；ccxt（备选兼容层）；Kraken Rust CLI（次选参照）"
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-006: 交易规则参数化（W2——规则集可插拔）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-006
+  name: "交易规则可插拔参数化(Pluggable Trading Rule Packs)"
+  aliases: ["交易规则包", "step_size", "tick_size", "无涨跌停", "T+0 规则"]
+  domain: D_EX_CORE
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "ex_core/rules"
+  panorama_position:
+    depgraph: {has_position: true, note: "board_lot/price_cage 重构为规则包加载器+A股规则包收编，新增币规则包"}
+    dataflowgraph: {has_position: false, note: "订单校验内部机制"}
+    decisiongraph: {has_position: false, note: "执行约束，无业务决策"}
+    blueprint: {has_position: true, note: "归属 D-EX-CORE 蓝图（94号 §4.3）"}
+  description: >-
+    A股规则（board_lot 整手 100 股、price_cage 涨跌停价格笼子）硬编码于 ex_core；
+    币规则完全不同：step_size（最小下单量步进）/tick_size（最小报价单位）按交易对各异、
+    无涨跌停（部分所有短时价格保护带）、T+0。裁定：规则引擎改为可插拔规则包——
+    每市场一份，订单校验按标的所属市场加载。A股行为零变化为回归门槛。
+  capability: ""
+  problem_it_solves: "交易规则硬编码=币订单无法通过现有校验（整手/涨跌停口径全错），且双市场 if/else 违反 SSoT"
+  trigger_signals:
+    - "CAND-CRYPTO-001 市场日历抽象落地"
+    - "94号 W2 波次派单"
+  keywords: ["board_lot", "price_cage", "step_size", "tick_size", "T+0", "规则包"]
+  upstream_deps:
+    - {path: "src/zephyr/ex_core/board_lot.py", note: "整手规则改造点"}
+    - {path: "src/zephyr/ex_core/price_cage.py", note: "价格笼子改造点"}
+  downstream_consumers:
+    - {path: "src/zephyr/ex_core", note: "订单校验链消费规则包"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "src/zephyr/ex_core/rules/ 已落（base/ashare/crypto 三包+工厂），A股规则委托 board_lot/price_cage 真源零行为变化；PreExecutionChecker market_calendar 注入式改造完成（#262），37 测试两轮全绿+1576 受影响面零回归（2026-08-28 W2 施工）"}
+    blocking_question: null
+    result: promoted
+  status: promoted
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/ex_core/rules/"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.3 交易规则可插拔"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: "step_size/tick_size 元数据随 CAND-CRYPTO-002 行情接入落地（交易所 exchangeInfo 接口提供）；T+1→T+0 结算周期参数同源改造"
+  risks:
+    - "A股规则收编时的行为漂移——回归测试全绿+灰度对照双门槛"
+  alternatives: "币侧独立校验链——拒绝（SSoT 破产）"
+  tags: ["数字货币", "交易规则", "横切", "P0"]
+  search_terms: ["trading rules", "step size", "tick size", "price cage", "交易规则包"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-005"]
+  enables: ["CAND-CRYPTO-005"]
+  blocked_by: ["CAND-CRYPTO-001"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "promoted（2026-08-28）：W2 施工闭环——ex_core/rules/ 规则包抽象+ASHare/Crypto 双包+PreExecutionChecker 日历注入（#262），37 测试两轮全绿+1576 受影响面零回归"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-007: 币版回测三件套实例（W2——币可"测"）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-007
+  name: "币版回测三件套实例(Crypto Backtest Environment Trio)"
+  aliases: ["币版 universe", "币版 benchmark", "币版 cost_model", "maker/taker 费率模型"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "registry_instances/crypto"
+  panorama_position:
+    depgraph: {has_position: false, note: "注册表条目扩展（universe/benchmark/cost_model 三注册表新增币版实例），非独立模块"}
+    dataflowgraph: {has_position: true, note: "币版三件套 → 回测环境装配（52号范式沿用）"}
+    decisiongraph: {has_position: false, note: "配置资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属三注册表蓝图（62号机制复用）"}
+  description: >-
+    回测环境三件套（universe/benchmark/cost_model）的币版实例登记：
+    universe=币交易池（MVP 建议 BTC+ETH 现货，94号 Q2 待拍板）；benchmark=BTC 指数类基准；
+    cost_model=maker/taker 双边费率（挂/吃单异价）+滑点模型，Phase 2 追加资金费率持仓成本。
+    注册表机制与回测装配全复用，只新增实例条目——回测环境先于被测对象（项目惯例）。
+  capability: ""
+  problem_it_solves: "无币版三件套则回测环境装不起来——A股三件套实例（沪深300/全A池/印花税佣金）口径全不适用"
+  trigger_signals:
+    - "CAND-CRYPTO-002 行情接入落地（universe 成分有数据源）"
+    - "94号 Q2 universe 范围拍板"
+  keywords: ["universe", "benchmark", "cost_model", "maker/taker", "回测三件套"]
+  upstream_deps:
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml", note: "universe 实例落点"}
+    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md", note: "注册表机制真源"}
+  downstream_consumers:
+    - {path: "src/zephyr/backtest", note: "回测装配消费三件套"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q2 universe 范围", note: "MVP=BTC+ETH 或市值前 N"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "三注册表币版实例已登记：universe_registry UNI-CRYPTO-001（BTC+ETH MVP 池，market: crypto）、benchmark_registry BMK-CRYPTO-001（BTC 买入持有基准）、cost_model_registry CST-CRYPTO-001（maker/taker 费率），2026-08-28 登记"}
+    blocking_question: null
+    result: promoted
+  status: promoted
+  priority: P1
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "universe_registry UNI-CRYPTO-001; benchmark_registry BMK-CRYPTO-001; cost_model_registry CST-CRYPTO-001"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: "cost_model 需支持 maker/taker 异价（A股无此概念）；费率按交易所 VIP 档位参数化。2026-08-26 R3 补充：universe 构建纪律=含已下架（delisting）币历史——币圈下架频繁，只收录当前在市币=幸存者偏差（INV-014 互证，与 A股退市股处理同口径）。2026-08-26 市场归属标注联动（94号 §4.5）：三件套币版实例条目必带 market: crypto 字段（universe/benchmark/cost_model 属分市场八表；无 market 字段=共用条目），防 AI 拿错同名实例。**前置动作（逻辑闭环必需，Owner 2026-08-26 会话确认）**：A股存量八表条目须先回填 market: ashare——否则「无字段=共用」约定会把存量 A股条目误判为共用；回填为纯字段批量补充（零代码逻辑），须在 W2 币版条目登记前完成（可提前至 W0/W1 顺手做）"
+  risks: []
+  alternatives: "暂用 A股 cost_model 近似——拒绝（费率结构本质不同，回测失真）"
+  tags: ["数字货币", "回测", "注册表", "P1"]
+  search_terms: ["crypto universe", "maker taker fee", "cost model", "回测三件套"]
+  related_candidates: ["CAND-CRYPTO-001", "CAND-CRYPTO-002"]
+  enables: ["CAND-CRYPTO-008"]
+  blocked_by: ["CAND-CRYPTO-001", "CAND-CRYPTO-002"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "promoted（2026-08-28）：三件套币版实例已登记三注册表，W2 波次闭环"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-008: 合约仓位与杠杆风控扩展（Phase 2）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-008
+  name: "合约仓位与杠杆风控扩展(Leverage & Liquidation Risk Extension)"
+  aliases: ["爆仓价模型", "维持保证金", "杠杆风控", "资金费率持仓成本"]
+  domain: D_POSITION
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "position/leverage"
+  panorama_position:
+    depgraph: {has_position: false, note: "POSITION/RISK 域扩展节点，晋升时新建（VO-012 Side 已预留 SHORT/COVER）"}
+    dataflowgraph: {has_position: true, note: "杠杆持仓 → 爆仓价/维持保证金监控 → 风控否决链"}
+    decisiongraph: {has_position: true, note: "杠杆仓位裁决进 C-047 裁决链"}
+    blueprint: {has_position: true, note: "归属 D-POSITION/D-RISK 蓝图（94号 §4.4）"}
+  description: >-
+    Phase 2 永续合约交易的仓位与风控扩展：爆仓价（liquidation price，保证金不足时强制平仓价）、
+    维持保证金率监控、杠杆倍数约束、资金费率计入持仓成本。回撤 Protocol 同构升级——
+    杠杆把同等价格波动放大 N 倍，四级阈值（8/15/20/25%）触发速度快一个量级。
+  capability: ""
+  problem_it_solves: "杠杆持仓无爆仓价/维持保证金模型=实盘必爆——现货风控体系不覆盖杠杆维度"
+  trigger_signals:
+    - "94号 Q3 Phase 2 启动条件达成"
+    - "CAND-CRYPTO-003 永续数据 + CAND-CRYPTO-007 三件套就绪"
+  keywords: ["leverage", "liquidation", "margin", "爆仓价", "维持保证金", "资金费率"]
+  upstream_deps:
+    - {path: "src/zephyr/position", note: "仓位裁决中心扩展点"}
+    - {path: "docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md", note: "回撤 Protocol 升级对象"}
+  downstream_consumers:
+    - {path: "src/zephyr/risk", note: "风控否决链消费杠杆风险指标"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "94号 Q3 Phase 2 拍板", note: "现货 track record 后启动"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "2026-08-28 施工落地 src/zephyr/risk/core/leverage_risk_model.py（爆仓价多/空公式、维持保证金率交易所阶梯、资金费率持仓成本、margin ratio/distance to liquidation 风险指标，44 tests green）"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P1
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-26'
+  promoted_to: ""
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§4.4 杠杆与资金费率"
+  original_id: ""
+  estimated_complexity: L
+  tech_notes: "爆仓价公式按交易所档位（维持保证金率阶梯）；风控模块先于策略模块施工（风险优先原则，同 A股回撤 Protocol 优先级裁定）；晋升 trigger 补充 \"CAND-CRYPTO-003 promoted\"（永续资金费率/爆仓数据输入就绪后晋升）"
+  risks:
+    - "杠杆下回撤 Protocol 参数全面失真——必须重新校准，禁止沿用现货阈值"
+  alternatives: "Phase 1 不做杠杆（现货 only）——本项仅随 Phase 2 启动"
+  tags: ["数字货币", "风控", "杠杆", "Phase2", "P1"]
+  search_terms: ["liquidation price", "maintenance margin", "leverage risk", "爆仓价"]
+  related_candidates: ["CAND-CRYPTO-003", "CAND-CRYPTO-007"]
+  enables: []
+  blocked_by: ["CAND-CRYPTO-007"]
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26）：Phase 2 启动线，003/007 就绪+Q3 拍板后晋升"
+  acquisition_method: self_build
+  acquisition_source: ""
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-009: 跨境网络双活传输层（W1——境内→境外交易所双线路+热切换）
+  # 来源: 2026-08-26 外部材料审查批（低学历勇闯量化系列 54 图全量审查，Owner 裁定补登）
+  # 设计真源: 94_crypto_quant_expansion.md §7.2（v0.2.0）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-009
+  name: "跨境网络双活传输层(Cross-Border Dual-Path Transport)"
+  aliases: ["跨境双线路", "主备传输", "Cloudflare Tunnel 备用线路", "Caddy 直连", "热切换状态机"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/transport"
+  panorama_position:
+    depgraph: {has_position: true, note: "mkt_data 域传输层节点，位于 crypto provider（CAND-CRYPTO-002）与落库管道之间；执行回传（CAND-CRYPTO-005）共用"}
+    dataflowgraph: {has_position: true, note: "境外交易所 WS/REST ↔ 双线路（直连主/CF Tunnel 备）↔ 境内边缘 WAL ↔ 后端"}
+    decisiongraph: {has_position: false, note: "传输基础设施，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图传输层（94号 §7.2 设计真源）"}
+  description: >-
+    境内基建↔境外交易所的双线路传输层：主线路=HTTPS 直连（Caddy TLS 终结+DNS-01 证书+
+    来源 IP 白名单），备用=Cloudflare Tunnel（Access Service Token 鉴权、cloudflared
+    隧道、不暴露源站）；控制面走 CF、数据面正常直连、异常自动降级 CF。
+    热切换状态机三条纪律（外部实战血泪教训，94号 §7.2）：①失败+吞吐+积压三感知，
+    不能只看连接存活（5 秒桶积压 ~24 个≈2 分钟即主动绕开"活着但跟不上"的主线路）；
+    ②切回用纯时间驱动 60s 探测，不依赖"积压=0"等发送中永远达不到的静态条件；
+    ③积压计数器饱和递减防无符号下溢（0-1→2^64 曾误判天文数字积压反造 GB 级真实积压）。
+    内核层 BBR 拥塞控制+fq 公平队列（跨境丢包防拥塞窗口坍缩）。
+    配合双层 WAL（边缘/后端故障域分离）：双线路全断时数据留边缘 WAL 指数退避重试。
+  capability: ""
+  problem_it_solves: "境内→境外交易所链路晚高峰 TCP 积压/丢包是实盘刚需风险——行情断流=瞎、撤单传不到=资损；单线路无降级=单点，94号 v0.1.0 遗漏此层（v0.2.0 补）"
+  trigger_signals:
+    - "CAND-CRYPTO-002 行情接入施工启动（WS 长连接跨境承载需求出现）"
+    - "94号 W1 波次派单"
+  keywords: ["cross-border", "dual-path", "cloudflare tunnel", "caddy", "failover", "BBR", "双活", "热切换"]
+  upstream_deps:
+    - {path: "docs/_working/低学历勇闯量化/", note: "设计参考真源：第三篇网络坑 7 图 + 回测中篇传输 25 页（已验证实战）"}
+  downstream_consumers:
+    - {path: "candidate CAND-CRYPTO-002", note: "行情 WS 长连接跨境承载"}
+    - {path: "candidate CAND-CRYPTO-005", note: "执行下单/回执回传共用双线路"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "Cloudflare Zero Trust 账号与隧道配置", note: "免费层即可；域名+DNS-01 证书准备"}
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "骨架完成（2026-08-28，AI-CAL-001）：src/zephyr/data/transport/cross_border_dual.py 落盘——cloudflared 配置 YAML 生成+双线路热切换状态机（三感知切备/60s 时间驱动切回/饱和递减），tests/zephyr/data/transport/test_cross_border_dual.py 覆盖；登记前盘点（2026-08-26）：项目原无跨境双活层"}
+    blocking_question: null
+    result: candidate
+  status: promoted
+  priority: P0
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-09-16'
+  promoted_to: "MOD-DATA-072 跨境网络双活传输层（src/zephyr/data/transport/，blueprint=docs/03_modules/_domain_data/transport/blueprint.md；2026-09-16 裁定#262 后续路径执行批 st-transport-20260916 转正；实际落位域 D_DATA——按代码头 [DOMAIN] 与 depgraph 实占，登记域 D_MKT_DATA 为候选期规划位）"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§7.2 跨境网络双活与传输加工"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: >-
+    关键教训写死进设计：自动切换不能只看连接存活（必须同时感知失败/吞吐/积压）；
+    自动切回不能依赖传输中永远达不到的静态条件（纯时间驱动探测）；
+    计数器一律饱和递减最低到零。数据面全量走 CF 的代理流量成本实测约 150GB/月——故控制面/数据面分离。
+    两线路保护的是"后端入口和跨境路径"不是两套后端；后端主机不可用靠边缘 WAL 而非网络切换。
+    晋升/施工 trigger 条件：cloudflare_account_configured（Cloudflare Zero Trust 账号与隧道配置就绪，免费层即可）。
+  risks:
+    - "CF ipv4 网络境内可达性不稳定——接入宜用 ipv6（外部实战经验）"
+    - "家用宽带 PPPoE 动态 IP——域名+DDNS 方案或 CF 隧道规避"
+  alternatives: "单线路直连+断线重连——拒绝（晚高峰跨境积压是常态非异常，无降级=反复断流）"
+  tags: ["数字货币", "网络", "双活", "传输", "P0"]
+  search_terms: ["cross-border transport", "cloudflare tunnel", "caddy https", "failover", "跨境网络", "双线路"]
+  related_candidates: ["CAND-CRYPTO-002", "CAND-CRYPTO-005"]
+  enables: ["CAND-CRYPTO-002", "CAND-CRYPTO-005"]
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记（2026-08-26 Owner 裁定，外部材料审查批）：W1 波次与 002 同行，002 施工启动即晋升；2026-09-16 转正 MOD-DATA-072（裁定#262 后续路径：blueprint_id 欠账落位批，depgraph 双节点绑定实证后转 promoted）"
+  acquisition_method: self_build
+  acquisition_source: "Caddy（开源）+ Cloudflare Zero Trust（免费层）"
+
+  # ----------------------------------------------------------
+  # CAND-CRYPTO-010: 币圈宏观情绪面板（W4/Phase 2——恐惧贪婪/BTC占比/ETF/USDT溢价/事件日历）
+  # 来源: 2026-08-26 行业调查批（Owner 拍板 94号 Q1-Q6 联动）
+  # 设计真源: 94_crypto_quant_expansion.md §5 候选 010 + §9 Q6 裁定（v1.0.0）
+  # ----------------------------------------------------------
+- id: CAND-CRYPTO-010
+  name: "币圈宏观情绪面板(Crypto Macro Sentiment Panel)"
+  aliases: ["恐惧贪婪指数", "fear greed index", "BTC 占比", "btc dominance", "ETF 流量", "USDT 场外溢价", "币圈事件日历"]
+  domain: D_ALT_DATA
+  domain_status: skeleton
+  domain_node_count: 0
+  sub_layer: "alt_data/macro_sentiment"
+  panorama_position:
+    depgraph: {has_position: false, note: "alt_data 域新增轻量采集节点（日频级），晋升时新建；币版 regime_cycle/event_calendar 的输入上游"}
+    dataflowgraph: {has_position: true, note: "alternative.me API/ETF 流/场外溢价/解锁日历 → alt_data 管道 → 币版 regime 与情绪因子消费"}
+    decisiongraph: {has_position: true, note: "宏观情绪作为币版 regime 节流输入（对标 A股 regime 分工：市场级风险节流非 alpha 择时）"}
+    blueprint: {has_position: true, note: "归属 D-ALT-DATA 蓝图（94号 §5 候选 010）"}
+  description: >-
+    币圈宏观情绪与事件日历采集面板（轻量日频级）：
+    ①恐惧贪婪指数（Fear & Greed Index，alternative.me 免费 API——六因子加权：波动率 25%/
+    市场动量成交量 25%/社交媒体 15%/调查 15%/BTC 占比 10%/谷歌趋势 10%，0-100 极端恐惧到极端贪婪）；
+    ②BTC 占比（BTC Dominance——避险轮动/山寨季信号，兼为恐惧贪婪成分）；
+    ③ETF 流量（现货 ETF 净流入流出=机构资金风向标）；
+    ④USDT 场外溢价（亚洲资金入场指标）；
+    ⑤事件日历（减半/大额解锁/宏观发布——大额解锁=确定性抛压事件，币版 regime_cycle/
+    event_calendar 输入，与 A股特殊交易日数据资产 17 号同构）。
+    定位=市场级风险节流输入（regime 分工边界：非 alpha 择时，与项目"情绪周期 vs regime"铁律一致）。
+  capability: ""
+  problem_it_solves: "币版 regime/情绪体系无宏观输入源——A股有政策日历/北向/两融，币圈对应物是恐惧贪婪/BTC占比/ETF流/稳定币/解锁日历，缺它则币版风险节流瞎跑"
+  trigger_signals:
+    - "W4 币版策略首批定义启动（ regime 输入需求出现）"
+    - "94号 Q6 裁定落地（2026-08-26 已命中）"
+  keywords: ["fear greed index", "btc dominance", "etf flows", "usdt premium", "token unlock", "halving", "恐惧贪婪", "占比", "解锁日历"]
+  upstream_deps: []
+  downstream_consumers:
+    - {path: "src/zephyr/regime", note: "币版 regime 节流输入（远期）"}
+    - {path: "src/zephyr/factor", note: "宏观情绪因子（Phase 2）"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: true, equivalent_nodes: [], evidence: "2026-08-28 骨架落地：src/zephyr/data/implementations/sentiment_panel_provider.py（恐惧贪婪 alternative.me 实采 + BTC 占比 CMC 实采 + ETF 流量/USDT 场外溢价数据源骨架）+ tests/zephyr/data/test_sentiment_panel_provider.py 24 测试 green（原 2026-08-26 盘点：alt_data 域无币圈宏观情绪源，恐惧贪婪指数等为币圈特有，A股侧无对应物）"}
+    blocking_question: null
+    result: promoted
+  status: promoted
+  priority: P2
+  created_at: '2026-08-26'
+  last_reviewed_at: '2026-08-28'
+  promoted_to: "src/zephyr/data/implementations/sentiment_panel_provider.py"
+  source_draft: "94_crypto_quant_expansion.md"
+  source_section: "§5 新建候选清单 + §9 Q6 裁定"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: >-
+    全部轻量日频采集：alternative.me 免费 API（无需 key）+ ETF 流公开数据（Farside/SoSoValue 类）
+    + 解锁日历（TokenUnlocks 类公开表）。2026 行业实证：恐惧贪婪六因子口径（alternative.me 官方）、
+    资金流三网关（CryptoQuant/Glassnode 口径，重维度归 CAND-CRYPTO-004）、衍生品四维（归 CAND-CRYPTO-003）——
+    本条目只承接宏观情绪与日历，不重复 003/004 的维度（治理纪律 D1 能合并不新建）。
+    2026-08-26 R2 补充（稳定币 depeg 监控，币版资金载体风险）：信号=USDT/USDC 多场所持续折价（vs $1 偏差>0.5% 告警）+
+    铸造销毁流突变+传染五联动（资金费率/OI/清算量/借贷利用率/稳定币池同时异动）；实践口径=发行方敞口≤30%+
+    赎回路径季度测试；风险阈值实例归 risk_limit 币版注册表，本面板提供日频信号源。
+    2026-08-28 施工补充：provider 骨架落地（sentiment_panel_provider.py，四能力路由+统一行格式
+    metric/trade_date/value/value_classification/source/extra），trigger 条件追加 "CAND-CRYPTO-007 promoted"
+    （回测三件套就绪后，宏观情绪输入接入币版 regime/回测校准，本条目由 candidate 晋升）。
+    2026-08-28 晋升：CAND-CRYPTO-007 已 promoted，trigger 条件达成，本条目翻 promoted。
+  risks:
+    - "免费源稳定性（alternative.me 限频/ETF 流来源变更）——日频采集+失败降级标注即可，不进决策硬链"
+  alternatives: "MVP 阶段 regime 仅用价格量价输入——本项为增强非地基（P2，可提前 W4 低成本先跑）"
+  tags: ["数字货币", "另类数据", "宏观情绪", "事件日历", "P2"]
+  search_terms: ["fear greed index", "btc dominance", "etf flows", "usdt premium", "token unlock calendar", "恐惧贪婪指数", "比特币占比", "解锁日历"]
+  related_candidates: ["CAND-CRYPTO-004"]
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-26'
+  review_frequency: yearly
+  last_review_outcome: "promoted（2026-08-28）：CAND-CRYPTO-007 已 promoted，trigger 条件达成，W4/Phase 2 提前启用"
+  acquisition_method: self_build
+  acquisition_source: "alternative.me 免费 API + 公开 ETF 流/解锁日历源"
+- id: CAND-NLP-003
+  name: 新闻情感主体范围轴（v3 prompt scope 字段）
+  aliases: ['sentiment scope axis', '主体范围轴']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 个股/板块级利好利空直接进日级市场级聚合，口径污染（"某公司中标"被当大盘情绪）
+  proposal: 'Owner 拍板=做(Q1，讨论稿 §8)。最小施工形态: nlp_inference SYSTEM_PROMPT 升 v3 加 scope 字段(market/sector/stock)+金标集补标+评估不掉 F1 后切换；sentiment_aggregator 日级聚合按 scope=market 过滤。注意: 实施越晚，已跑 v2 全量数据重跑成本越高。依赖前置: MOD-NLP-INFERENCE-001。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: nlp_inference.py v2 prompt 无 scope 字段'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'nlp/nlp_inference.py v3 scope + sentiment_aggregator scope 过滤（MOD-NLP-INFERENCE-001 扩展，+23 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：v3 prompt scope 字段（默认仍 v2 灰度切换）"
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
+  created: '2026-08-25'
+  last_updated: '2026-08-26'
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q1
+  source_section: §8
+- id: CAND-NLP-004
+  name: '新闻可预测性字段（predictability: scheduled/unscheduled）'
+  aliases: ['可预测性标签', 'predictability field']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 可预期事件（财报/解禁/政策会）与突发黑天鹅混在一个标签流里，无法支撑"提前埋伏 vs 落地应对"两种用法
+  proposal: 'Owner 拍板=做(Q2 A 先行，§8)。MVP: nlp_inference prompt 输出加 predictability 字段(scheduled/unscheduled)；正解=CAND-DAT-021 日历 join，日历上线后此字段退役。依赖前置: MOD-NLP-INFERENCE-001。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: nlp_inference.py 无 predictability 字段'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'nlp/news_dual_tagger.py（MOD-NLP-DUALTAG-001）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：语义已被双标签器覆盖（原 MVP 路径被取代）"
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
+  created: '2026-08-25'
+  last_updated: '2026-08-26'
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q2A
+  source_section: §8
+- id: CAND-DAT-021
+  name: event_calendar 前瞻填充器（未来 60 日可预见事件）
+  aliases: ['前瞻事件日历填充', 'scheduled events forward filler']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 可预见事件（财报季/解禁/宏观发布/行业事件）无前瞻结构化入库，"提前埋伏两个月后新闻"的诉求无数据支撑
+  proposal: 'Owner 拍板=做(Q2-B 正解，§8)。最小施工形态: event_calendar 注册表前瞻填充器——未来 60 日财报/解禁/政策会议/行业事件结构化入库，新闻流入库时与日历 join 自动打 predictability+关联事件标。PIT 纪律: 只登记当时已公告的事件。依赖前置: event_calendar 注册表。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: event_calendar 注册表有机制无前瞻填充器'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'data/event_calendar_filler.py（MOD-DATA-068，19 测，CH 冒烟 191 条）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：前瞻事件日历填充（披露+解禁+宏观规则）"
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
+  created: '2026-08-25'
+  last_updated: '2026-08-26'
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q2B
+  source_section: §8
+- id: CAND-RES-030
+  name: 高位利好落地事件研究（利好出尽实证）
+  aliases: ['买预期卖事实实证', 'sell-the-news event study']
+  domain: D_RESEARCH
+  domain_status: active
+  sub_layer: research/事件研究
+  problem: "新闻反着看/利好出尽缺 A股实证分布——高位+大利好落地后平均涨跌未知，L3 消化层规则无阈值依据，直接拍规则有过拟合风险"
+  proposal: 'Owner 拍板=做(Q3 实证先行，§8)。事件研究法: 以 12 万条情感打分产物为事件源，筛"板块事前 20 日涨幅高分位+强利好"，统计落地后 1/3/5/10 日异常收益分布；产出 priced-in 阈值规则供 L3 消化层使用。依赖前置: 12 万条 v2 批次完成。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无高位利好事件研究产物'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'research/sell_news_event_study.py（MOD-RES-001，9 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：高位利好落地事件研究（CAR 分布+priced_in 判定）"
+  priority: P1
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
+  created: '2026-08-25'
+  last_updated: '2026-08-26'
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q3
+  source_section: §8
+- id: CAND-DAT-022
+  name: publish_time 口径审计（发布时间 vs 入库时间）
+  aliases: ['新闻时间戳口径审计', 'publish_time audit']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 新闻库 publish_time 口径未审计——若是入库时间则回测隐性未来函数，动摇全量回测可信度地基；另含 2025 年采集缺口（全年仅 3.7 万条）核查
+  proposal: 'Owner 拍板=高优先级(Q4，§8)。最小施工形态: 抽样比对 publish_time 与 crawl_time/源站时间，出口径结论+偏差分布；若混入入库时间，出修复方案（重采或时间戳回推）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无 publish_time 口径审计产物'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'scripts/audit_news_publish_time.py（MOD-DATA-067，27 测）'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：桶B施工完毕：publish_time 口径审计——真实审计结论 DISTRUSTED（报告 .runtime/news_publish_time_audit_20260830.md）"
+  priority: P1
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
+  created: '2026-08-25'
+  last_updated: '2026-08-26'
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q4
+  source_section: §8
+- id: CAND-NLP-005
+  name: SFT 银标复核流水线（微调教材生产线）
+  aliases: ['银标流水线', 'silver label pipeline']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 微调轨(SFT/LoRA)无教材——金标仅 200 条，SFT 需数千条标注
+  proposal: 'Owner 拍板=条件触发(Q5，§8)。启动条件=①银标攒够约 3000 条 ②零样本基线回测验证有效。最小施工形态: 12 万条零样本产物分层抽样→人工复核改错成银标→训练集→LoRA 微调→另注册模型名(不动共用基座)→金标复测打败 F1 0.787 才换岗。依赖前置: 12 万条 v2 批次完成。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无银标数据集/微调管线'
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  source: 2026-08-25 新闻情感三层模型讨论批（Owner 拍板 Q1~Q5）【2026-08-26 自 bcfaa597 补回】
+  created: '2026-08-25'
+  last_updated: '2026-08-26'
+  source_draft: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/2026-08-25-news-sentiment-upgrade-discussion.md
+  original_id: NEWSUP-Q5
+  source_section: §8
+- id: CAND-DAT-023
+  name: 2025 年研报专项补采器（全 A 逐股东财研报回溯）
+  aliases: ['2025 研报补采', 'research report 2025 backfill']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: 2025 年新闻语料塌陷（全年仅 3.7 万条 vs 邻居年份 17 万~108 万，采集缺口）；实测东财研报源可回溯 2025 全年（茅台 771 条至 2017-08）
+  proposal: 'Owner 指令即开工（2026-08-26）。最小施工形态: 全 A ~5000 只逐只调 stock_research_report_em→过滤 2025→news_dedup 去重→写 news_data（category=research_report 打标，配合 CAND-DAT-024）；预估 15~25 万条/采集约 2 小时；补采后过情感打分（插队或接危机回填后）。注: 媒体快讯类 2025 免费源无历史不可补（付费源另议）；巨潮公告接口当前 500 待恢复。依赖前置: akshare_provider._fetch_research_report 解析件/news_dedup。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: akshare_provider 有 research_report 增量采集无 2025 专项回溯'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'scripts/ch/backfill_research_report_2025.py'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：已施工（断点续作+限速+幂等）"
+  priority: P1
+  source: 2026-08-26 2025 年语料塌陷治理批（Owner 指令）
+  created: '2026-08-26'
+  last_updated: '2026-08-26'
+  source_draft: ''
+  original_id: NEWS2025-BF1
+  source_section: ''
+- id: CAND-DAT-024
+  name: news_data category 打标治理（公告/研报/宏观数据/新闻四分）
+  aliases: ['category 打标', '研报新闻分离', '四类分类法']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: '库内实为四类异质内容混存混算——公告（巨潮 98 万条法定披露）、研报（53 万条卖方观点多头偏见）、宏观数据（akshare_economic_baidu 等纯数据条目）、媒体新闻（财联社/证券时报等）；category 列虚设（99.99% general），研报多头腔+公告程序性内容污染日级市场情绪聚合。注: 政策不是源类型而是内容维度（跨源），正交处理——regime 已有 _POLICY_KEYWORDS 关键词旗标，不走 category'
+  proposal: 'Owner 裁定（2026-08-26）: 逻辑分离不搬表，category 按源确定映射（无需模型）: akshare_research_report→research_report、巨潮/cninfo/交易所公告→announcement、akshare_economic_baidu 类数据源→macro_data、其余媒体源→news。最小施工形态: ①存量刷标 ALTER TABLE UPDATE category by source 映射（全库 828 万条；空 source 27 万条先归 news 并记 CAND-DAT-022 审计）；②新采集一律带标；③sentiment_aggregator 日级聚合按 category 分开统计（媒体情绪/研报情绪两条曲线）。富字段（评级/目标价/PDF）需求出现时再评独立表（alt_data research_report_collector 模型预留）。依赖前置: sentiment_aggregator。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: news_data.category 全库 8,289,333 条 general/50 财经/30 公告，列虚设'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  promoted_to: 'scripts/ch/tag_news_category.py + data/news_taxonomy.py + sentiment_aggregator 四类分桶'
+  last_reviewed_at: '2026-08-30'
+  last_review_outcome: "2026-08-30 候选库核销批（176 条全量核查，四路实证）：三件套全落"
+  priority: P1
+  source: 2026-08-26 2025 年语料塌陷治理批（Owner 指令）
+  created: '2026-08-26'
+  last_updated: '2026-08-26'
+  source_draft: ''
+  original_id: NEWS2025-BF2
+  source_section: ''
+- id: CAND-DAT-025
+  name: news_data 引擎级去重设计（ReplacingMergeTree 折叠审查+历史冗余清扫）
+  aliases: ['news_data 引擎去重', 'multi-version dedup engine design']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: news_data 保留多版本行（ReplacingMergeTree 未按 news_id 折叠——实证：研报 3.5x、2025 年 2.1x、情感语料 12.8% 冗余）；读侧已三层去重治标（collect_news/批次内/聚合），但表体持续膨胀、查询变慢、写入侧仍有再插风险
+  proposal: '实证登记（2026-08-26 CAND-NLP-006 施工中发现）。最小施工形态: ①审查表 ORDER BY 键与版本列（疑含 ingest_ts/crawl_time 致同 news_id 不折叠），出键设计裁定；②一次性历史冗余清扫（OPTIMIZE FINAL 或按 news_id 留最新版本 sweep 脚本）；③写入侧统一预检规约（各 provider 写前查已有 news_id，参照 backfill_research_report_2025 的 load_existing_news_ids 修复样例）。依赖前置: ch_writer/ch_reader。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 读侧三层去重已建（collect_news/run_sentiment_batch/run_research_rating_batch），引擎级修复无'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  priority: P1
+  source: 2026-08-26 多版本冗余实证批（CAND-NLP-006 施工发现）
+  created: '2026-08-26'
+  last_updated: '2026-08-28'
+  source_draft: ''
+  original_id: NEWS-DEDUP-ENG-001
+  source_section: ''
+- id: CAND-DAT-026
+  name: news/announcement publish_time 8h 偏移专项（时区防线二期）
+  aliases: ['新闻公告时间戳 8h 偏移', 'publish_time tz phase-2']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/data/
+  problem: news 类别 98.4%（6,619,975/6,727,116 行）、announcement 类别 100%（982,538 行）的 publish_time 系统性偏早 8 小时（16:00:00 指纹——北京日期 D 记为 D-1 16:00）；业务后果：回测前视偏差（D 日信息 D-1 收盘后可见，信号前移一日 IC 虚高）+日级归日错一天；look_ahead_bias_detector 无法检出（查代码未来函数，不查库内时间戳语义）。另含 research_report 35 个全老批 stuck id 同款指纹
+  proposal: '实证登记（2026-08-27 CAND-DAT-025 施工侦察发现，67 号设计备忘 §4）。最小施工形态: ①白盒验证引擎/键健康后（CAND-DAT-025 已建判据），按 rebuild_news_data 同款换表法对 news/announcement 行 +8h 修正（16:00 指纹行 publish_time+8h，纯日期语义归位）；②同步修正消费侧日级聚合（情感/公告事件日历重算）；③research_report 35 个 stuck id 一并 +8h。依赖前置: rebuild_news_data（已建成）、tag_news_category（已建成）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: apply_timezone_migration 为一期（类型标注+业务列偏移），本专项为二期（news/announcement 存量数据修正），无重复节点'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  priority: P0
+  source: 2026-08-27 news_data 去重侦察批（67 号设计备忘 §4 关联发现）
+  created: '2026-08-28'
+  last_updated: '2026-08-28'
+  source_draft: ''
+  original_id: NEWS-TZ-PHASE2-001
+  source_section: ''
+- id: CAND-NLP-006
+  name: 研报结构化评级分析轨（评级提取/变动/目标价/盈利修正）
+  aliases: ['研报评级分析轨', 'analyst rating extraction track']
+  domain: D_DATA
+  domain_status: active
+  sub_layer: src/zephyr/nlp/
+  problem: 通用情感分对研报信息量≈0（卖方多头偏见压缩分布，90%+正面挤在 0.8）；机构需要的是结构化评级信号（评级/上调下调/目标价空间/盈利预测修正）——当前无此管线
+  proposal: 'Owner 裁定方向（2026-08-26 讨论，可降级）。最小施工形态: ①规则优先——东财评级已结构化在 summary 字段（"评级:买入"），规则映射 买入+1/增持+0.6/中性0/减持-0.6/卖出-1 + 评级变动检测（同股同机构相邻报告对比）+ 首次覆盖旗标；②LLM 补位——目标价/盈利预测修正等非结构化部分从 title+content 提取；③产出 research_report 桶的评级分布/上调下调家数/目标价隐含空间日级指标，与媒体情绪分线（不喂 bad_news_flat）。依赖前置: news_taxonomy 四分（已建成）、per_category 分桶（已建成）。'
+  design_admission:
+    q1_implemented:
+      result: false
+      equivalent_nodes: []
+      evidence: '场内对账: 无研报评级结构化提取管线（现有=通用情感打分一路）'
+    blocking_question: null
+    result: candidate
+  status: promoted
+  priority: P2
+  source: 2026-08-26 研报分析方式讨论批（Owner 提出"研报不应按新闻情感打分"）
+  created: '2026-08-26'
+  last_updated: '2026-08-28'
+  source_draft: ''
+  original_id: RR-RATING-001
+  source_section: ''
+
+# --- CAND-GOVTEST-006: 存量遗留红 24 测试文件 + 4 慢性挂死测试专项（冻结窗口实证非 format 诱发；2026-09-05 AI-00 审计重编号——原占用 CAND-GOVTEST-004 与 commit queue MVP 条目（2026-08-20 先用者）撞号，沿 MOD-RK-048 先例改号） ---
+- id: CAND-GOVTEST-006
+  name: 存量遗留红测试 24 文件 + 慢性挂死 4 文件专项清偿
+  aliases:
+  - 遗留红专项
+  - 慢性挂死测试族
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 测试健康度
+  problem: >-
+    2026-09-02 冻结窗口两轮全量回归实证（3211 测试文件分批×2）：24 个存量红测试文件
+    与 format 无关的存量债——代表族：test_business_g04（assert 67==70 硬编码对账漂移）、
+    test_index_constituent_scd2 ×4、test_naming_e2e ×10、test_create_guard 批上下文赛跑族、
+    boot_hooks/f3_auto_integration 服务器引导族；另有 4 个慢性挂死测试（超时基线实证）。
+    遗留红稀释回归信号（真回归易被淹没），慢性挂死拖长全量回归时长。
+  proposal: >-
+    分族诊断：①硬编码断言族逐一核对真源后修断言或修代码（先判真伪）；
+    ②赛跑族改确定性等待（对标 conftest.py numpy 预加载先例）；③服务器引导族
+    固化端口/fixture 隔离；④挂死族加超时断+拆分。每族先出真伪判定表再动手。
+  status: candidate
+  priority: P2
+  source: '2026-09-02 冻结窗口双专项结案报告 §三（GOVTEST-002 两轮回归实证台账）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
+
+# --- CAND-GOVTEST-005: 测试身份泄漏入主仓历史（"initial [GW:sess-initial]" 事件） ---
+- id: CAND-GOVTEST-005
+  name: 测试上下文 commit 泄漏主仓——tests 身份穿透隔离边界实证堵源
+  aliases:
+  - 测试泄漏 commit
+  - sess-initial 事件
+  domain: D_GOVERNANCE
+  domain_status: active
+  sub_layer: 测试隔离
+  problem: >-
+    2026-09-02 11:44 实证：commit ee40160919（message="initial [GW:sess-initial]"）进入
+    主仓主线，内容=4 个派生文件（path_ownership_map 16240 行 churn 等）。身份文本唯一
+    出处=tests/governance/test_post_commit_guard_no_verify_threshold.py
+    _make_initial_commit（fixture tmp_path 隔离在册）。同一 queue 项
+    q-20260902-freeze-gw-0001 已于 11:18 以正确 message 落账（c284589d），
+    26 分钟后同内容被测试身份二次落账——测试执行期（冻结窗口全量回归时段）测试
+    上下文穿透隔离边界触达真实仓库。若此类泄漏携带破坏性内容（reset/删除），后果不可控。
+  proposal: >-
+    排查方向：①全量回归时段该测试的执行日志（tmp_path 是否真隔离/cwd 是否漂移/
+    git init 是否失败回退父仓）；②commit_queue/serializer 在测试并发下的 payload 污染
+    （message 默认值从何处读入）；③治本建议：网关侧拒收可疑测试身份（session_id 匹配
+    sess-initial/sess-test-* 模式 + 非 claim 注册 → 硬阻断），或测试侧 commit 前缀强制
+    命名空间隔离。先复现再修。
+  status: candidate
+  priority: P1
+  source: '2026-09-02 冻结窗口结案报告 §4⑥ + 本会话取证（ee40160919/c284589d 双commit 对账）'
+  created: '2026-09-02'
+  last_updated: '2026-09-02'
+```
