@@ -59467,4 +59467,9 @@ creation_tokens:
   created_by: st-wm1-cutover-20261003
   capability: wm1_cutover
   merge_evaluation: "W-M1 转正班 B3 施工单单件登记（同目录既有 LEDGER/设计族已各具 token，本件纯增量无替代对象）"
+- file: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md
+  token: vertical-map-mounting-sop-20261003
+  created_by: st-vmount-sop-20261003
+  capability: vertical_map_mounting_sop
+  merge_evaluation: 新方法论入驻mining_sop族(sop/README规则2)；纵向地图挂图标准，与上游skeleton_mining_policy分工=骨架vs血肉，TDM layering_policy为图专属实例非重复
 di_seam_exemptions: []
