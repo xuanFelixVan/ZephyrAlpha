@@ -62467,6 +62467,15 @@ entries:
   plain_zh: "一个只用来验证接管未完成时门禁会不会拦住提交的临时靶文件，审查结束就删掉"
   responsibility_layer: governance
 
+- module_path: scripts/governance/dead_letter_doctor.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "死信急诊分诊台"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给死信袋看病的分诊台：先诊断死因分五族，能补手续的按铁闸补（只动登记册不改代码、同种病只救一次、救完走正门重投），治不了的出处方给人看"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
