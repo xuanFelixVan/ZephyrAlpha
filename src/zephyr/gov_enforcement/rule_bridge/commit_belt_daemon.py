@@ -414,7 +414,8 @@ def _projection_drift_probe(project_root: Path) -> None:
         from zephyr.governance.registry_projection.state import load_state
 
         root = Path(project_root)
-        state = load_state(root)
+        rid, phys = default_registry()  # 探针职责面=默认册（v2 多册在挂时其余册归各自 render 流）
+        state = load_state(root, registry_path=phys)
         if state is None:
             _dualtrack_reconcile_if_armed(root)  # W-M1 Phase 1：双轨对账探针（旗文件启用）
             return  # 投影未武装（cutover 前）：PG-wins 自愈零行为
@@ -430,7 +431,6 @@ def _projection_drift_probe(project_root: Path) -> None:
         if local_match and (now - last) < _PROJECTION_PROBE_COOLDOWN_S:
             return  # 本地干净+冷却窗内：不进生成器（防每事件重渲）
         _projection_last_probe["t"] = now
-        rid, phys = default_registry()
         projection_run(root, mode="render", registry_id=rid, physical_path=phys, actor_session="belt_daemon")
     except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
         logger.warning("projection drift probe 异常（下一事件重试）", exc_info=True)

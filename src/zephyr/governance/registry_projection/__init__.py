@@ -37,6 +37,7 @@ from zephyr.governance.registry_projection.renderer import SemanticMismatch, ren
 from zephyr.governance.registry_projection.state import (
     ProjectionState,
     classify,
+    load_all,
     load_state,
     save_state,
     state_path,
@@ -50,6 +51,7 @@ __all__: Final = [
     "canonicalize",
     "classify",
     "entry_identity_key",
+    "load_all",
     "load_state",
     "render",
     "save_state",

@@ -113,7 +113,11 @@ _PROJECTION_STATE_REL = ".runtime/projection/registry_projection_state.json"
 
 
 def _projection_tamper_issue(gateway, watch_file: str) -> str | None:
-    """投影私改判别（返回问题文案或 None=通过/不适用）。永不抛异常。"""
+    """投影私改判别（返回问题文案或 None=通过/不适用）。永不抛异常。
+
+    状态文件双形态（PD-1 v2）：v2 map（registries 键控多册）逐条目匹配本册；
+    v1 单册平铺兼容。本册无条目=别册（fail-open 零行为）。
+    """
     try:
         import json
 
@@ -124,10 +128,24 @@ def _projection_tamper_issue(gateway, watch_file: str) -> str | None:
         if not state_file.exists():
             return None  # 未武装：投影管理未启用，零行为
         state = json.loads(state_file.read_text(encoding="utf-8"))
-        state_registry = str(state.get("registry_path", ""))
-        if not state_registry or _norm_rel(gateway, state_registry) != _norm_rel(gateway, watch_file):
-            return None  # 状态文件登记的是别册
-        expected = state.get("content_sha256")
+        entry: dict | None = None
+        registries = state.get("registries")
+        if isinstance(registries, dict) and registries:
+            for key, value in registries.items():
+                if not isinstance(value, dict):
+                    continue
+                candidate = str(value.get("registry_path") or key)
+                if candidate and _norm_rel(gateway, candidate) == _norm_rel(gateway, watch_file):
+                    entry = value
+                    break
+            if entry is None:
+                return None  # v2 在挂但本册无条目：别册/未武装本册
+        else:
+            state_registry = str(state.get("registry_path", ""))
+            if not state_registry or _norm_rel(gateway, state_registry) != _norm_rel(gateway, watch_file):
+                return None  # 状态文件登记的是别册
+            entry = state
+        expected = entry.get("content_sha256")
         if not expected:
             return None  # 状态损坏 → fail-open（daemon 层兜底抓）
         staged_text = _read_staged_file(gateway, watch_file)

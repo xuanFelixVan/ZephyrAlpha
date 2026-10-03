@@ -309,7 +309,7 @@ def run(
     if read_err is not None:
         return read_err
 
-    state = load_state(root)
+    state = load_state(root, registry_path=phys)  # v2 按册取条目（PD-1）：他册在挂不影响本册武装判定
     if state is None and mode != "render":
         # 未武装（状态文件不存在=投影管理未启用）：零行为，执法层同步 fail-open
         return ProjectionReport(ok=True, quadrant="unmanaged", detail={"armed": False})
