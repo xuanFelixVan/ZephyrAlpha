@@ -645,3 +645,9 @@ data/c4_pdf_cache/
 # validate_rules_integrity.py --register/--fold 全量重算可达；机器每笔提交后重写，
 # 跟踪态=写入→还原死循环温床（2026-07-22 教训）。工作树保留，git rm --cached 同批落地。
 scripts/governance/meta/rules_integrity_db.json
+
+# 回测运行产物禁入库（2026-10-03 deadletter-cure 裁定）：nav/trades/run_summary
+# 属可再生成运行结果（NIGHT_STATE.md §三"源数据已捞可再生成"），非成果文档；
+# composed_panel.pkl 等 pickle 是二进制污染。曾在误弹 stash 中被 staged 21 件。
+docs/_working/integrated_backtest/artifacts_v2/
+*.pkl

@@ -6851,3 +6851,33 @@ entries:
   related_arch: []
   related_rulings: ["裁定#477"]  # 本册路径的写入授权另承裁定#461 approved_paths（有效期 2026-10-08），此处不重复开面
   superseded_by: null
+- ruling_id: "裁定#479"
+  title: "死信根治批文档落地授权：.gitignore 回测产物规则 + 热册蒸发修复同批 + 归因台账"
+  date: '2026-10-03'
+  category: 治理
+  status: 'active'
+  session: st-deadletter-cure-20261003
+  summary: |-
+    Owner 2026-10-03 晨间三连决策之「批」。三项授权合一：
+    ① .gitignore 追加回测运行产物禁入规则（docs/_working/integrated_backtest/artifacts_v2/ 与 *.pkl）
+    ——依据：NIGHT_STATE.md §三明言源数据已捞可再生成，nav/trades/run_summary 属运行结果非成果文档，
+    composed_panel.pkl 426KB pickle 是二进制污染；曾在误弹 stash（a50ed2c4）中被 staged 21 件。
+    ② capability_canonical_file_registry.yaml 同批落地——含本役增量修复（ch_tick_provider/pending_owner
+    两空壳条目蒸发 B23 同型，从 HEAD 增量补回 40 行+2 空壳行，差集归零验证）+ dead_letter_salvage_ledger
+    token 登记；其暂存区混有他会话 heal 重排（净删 80 行），经 Owner 批示授权随批落地（allow-mass-deletion
+    标记随 message 留痕，重排系 heal 机制合法去重非人工删除）。
+    ③ docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md（1235 只死袋全量归因
+    台账+Owner 三问裁定章）——token 已登记于同批热册，满足"同批或先行落地"。
+  affected_files:
+  - .gitignore
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md
+  approved_paths:
+  - ".gitignore"
+  - "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
+  - "docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md"
+  - "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
+  expires_at: '2026-11-03'
+  related_arch: []
+  related_rulings: ["裁定#461", "裁定#478"]
+  superseded_by: null

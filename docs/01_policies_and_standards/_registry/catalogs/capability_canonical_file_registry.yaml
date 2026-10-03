@@ -59452,4 +59452,9 @@ creation_tokens:
   capability: commit_speedup
   merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md
+  token: d-gov-code-quality-dead-letter-salvage-ledger-20261003-20261002
+  created_by: st-deadletter-cure-20261003
+  capability: D_GOV_CODE_QUALITY
+  merge_evaluation: "1235只死袋全量归因台账+Owner三问裁定章，死信链路唯一纸质真源"
 di_seam_exemptions: []
