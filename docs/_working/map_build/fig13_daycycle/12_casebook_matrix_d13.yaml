@@ -1,0 +1,175 @@
+# =============================================================================
+# st-fig13-flesh-20261003 · 件2：图13 病历挂载矩阵（casebooks 字段供料）
+# 方法=F4 病历挂载平移（docs/_working/commitmap_cure/f4_casebook_mount_plan.md）；
+# 法源=挂图SOP vertical_map_mounting_policy.md §3/§4（casebooks=L1 菜单四标准字段之一）。
+# 红线执行：五本病历纯读零改写；本件只存 册码#章码 指针（INV-1），禁抄条目正文；
+# gap 节点按 F4 先例不挂病历；与交易日无关的章不挂并记理由；判据拿不准=low+分歧呈批禁自裁。
+# 章码对章方式：逐本实际打开对章名（禁凭猜），对章锚见 chapter_basis 段。
+# =============================================================================
+ttl: task_bound
+session: st-fig13-flesh-20261003
+date: '2026-10-03'
+title: 图13 病历挂载矩阵（五本永久病历本 × D13-01..44 + D13-G01..04）
+completes_when: 总筹复核采纳并随生成器四字段手术把 casebooks 回写图13渲染后，本件转施工输入归档
+
+# ── §0 五本登记身份 → 挂载计数（完备性自检数据源） ─────────────────────────────
+books:
+  - book_code: DCS
+    name: 死因案例册 death_cases_registry
+    identity: module_id=CFG-COMMIT-DEATH-CASES-001（owner=MOD-INF-005，ttl permanent，提交指路指南生成器第三真源）
+    path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+    chapter_system: 21 cases 按 6 死因族（手续/通道/真源/结构/队列/审批，F4 §2.1 已蒸馏）
+    mounted_nodes: [D13-32]
+    entry_count: 21
+  - book_code: AP
+    name: 堵点本 all_problems_ledger（五域五章）
+    identity: 路径身份 docs/_working/branch_zero_takeover/all_problems_ledger.md（ttl task_bound，session=st-ffchief-20261002）
+    path: docs/_working/branch_zero_takeover/all_problems_ledger.md
+    chapter_system: 五域=五章（域一会话生命周期/域二提交链/域三belt队列/域四档案安全/域五文档档案，33 条实测）
+    mounted_nodes: [D13-01, D13-42]
+    entry_count: 33
+  - book_code: SV
+    name: 抢救台账 dead_letter_salvage_ledger_20261003
+    identity: 路径身份 docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md（ttl task_bound，session=st-deadletter-cure-20261003）
+    path: docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md
+    chapter_system: 9 章（§0三句话/§1底数/§2抢救目标/§3死因/§4方案四层/§5口径/§6三问/裁定ABC/治未病+施工序）
+    mounted_nodes: [D13-01]
+    entry_count: 1235
+  - book_code: RV
+    name: 审查发现 review_findings（卷一）+ review_findings_round2（卷二）
+    identity: 路径身份 docs/_working/branch_zero_takeover/review_findings{,_round2}.md（ttl task_bound）
+    path: docs/_working/branch_zero_takeover/review_findings.md；docs/_working/branch_zero_takeover/review_findings_round2.md
+    chapter_system: 卷一 3 章（向量/缺口F1-F6/观察）+ 卷二 4 章（缺口R2-F*/观察I-*/待裁定/裁定#477/#478）
+    mounted_nodes: [D13-42]
+    entry_count: 29
+  - book_code: MEM
+    name: 记忆教训索引 MEMORY.md（ZCode 记忆库，仓外路径）
+    identity: 仓外 C:/Users/fanzi/.zcode/cli/memories/projects/zephyralpha-88c39a4848e315f8/memory/MEMORY.md（索引口径，F4 §2.5 同源）
+    path: C:/Users/fanzi/.zcode/cli/memories/projects/zephyralpha-88c39a4848e315f8/memory/MEMORY.md
+    chapter_system: 本图特设 9 主题簇（MEM-F13#*，见 chapter_basis；与 F4 的 10 交链簇不混用——域不同簇不同）
+    mounted_nodes_count: 24
+    entry_count: 376
+
+# ── §1 挂载矩阵：环节 → casebooks 字段建议值（48 格全列；[] = 无挂载建议） ────
+# 格式=册码#章码 列表，只指针禁抄内容；low 标记=跨域类比挂载（分歧呈批，见 divergences）。
+matrix:
+  D13-01: {casebooks: [AP#域二, SV#底数, SV#方案, MEM-F13#断供补数, MEM-F13#守护判活与误杀], low: [AP#域二, SV#底数, SV#方案],
+           rationale: 补跑自愈=错过档期积压的急诊分诊同构位；remediation_break_zh 自陈"晨间重启风暴腰斩长批"=长批误杀同族}
+  D13-02: {casebooks: [MEM-F13#断供补数], low: [], rationale: 断供哨兵=断供史主读者（SectorSnapshot 断供自09-15、tick 7缺口日等教训的值守位）}
+  D13-03: {casebooks: [], low: [], rationale: 无病历交集（检出即蒸发，历史无事故记录入五册）}
+  D13-04: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-05: {casebooks: [MEM-F13#币圈与另类], low: [], rationale: 币圈表头修复教训（ghost 池历史同域）}
+  D13-06: {casebooks: [], low: [], rationale: suspend 断链在图面 gap 在案，五册无对应病历条目}
+  D13-07: {casebooks: [MEM-F13#计划任务静默], low: [], rationale: 机制B 计划任务静默窗两轮治零教训直接覆盖（pythonw 铁律）}
+  D13-08: {casebooks: [], low: [], rationale: 无病历交集（触发者待定位=图照出的洞，尚无病历）}
+  D13-09: {casebooks: [MEM-F13#盘前探针], low: [MEM-F13#盘前探针], rationale: 09:40 决策链哨兵在册而图13无格——探针病历挂本门邻近位，格位归属待裁（与件1分歧联动）}
+  D13-10: {casebooks: [], low: [], rationale: sector_pre_open 滞后在图面 gap 在案；断供补数簇挂 D13-02/35 已覆盖读面}
+  D13-11: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-12: {casebooks: [MEM-F13#模拟盘与做T, MEM-F13#计划任务静默], low: [], rationale: PaperSession 拉起腿=结算/保活复活战与静默窗教训共同覆盖位}
+  D13-13: {casebooks: [], low: [], rationale: 无病历交集（假通道嫌疑在图面 gap 在案）}
+  D13-14: {casebooks: [MEM-F13#时区与假绿], low: [], rationale: 分钟K族=时区坑（-8h/UTC asof_ts）历史重灾区}
+  D13-15: {casebooks: [MEM-F13#时区与假绿], low: [], rationale: 同上}
+  D13-16: {casebooks: [MEM-F13#时区与假绿], low: [], rationale: 同上}
+  D13-17: {casebooks: [], low: [], rationale: 幽灵引用病历归图12改册面（gap_refs 自证），本格不重复挂}
+  D13-18: {casebooks: [], low: [], rationale: 同 D13-17}
+  D13-19: {casebooks: [MEM-F13#计划任务静默], low: [], rationale: 机制B 五快照计划任务=静默窗教训覆盖位}
+  D13-20: {casebooks: [], low: [], rationale: 恒 skipped 在图面 gap 在案，五册无对应条目}
+  D13-21: {casebooks: [MEM-F13#时区与假绿], low: [], rationale: judgment 表 asof_ts UTC/上海日差 8h 误判断供教训直接覆盖}
+  D13-22: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-23: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-24: {casebooks: [MEM-F13#模拟盘与做T], low: [], rationale: BoardIndexRealtime 修复=做T原料断供教训（成交回路原料位）}
+  D13-25: {casebooks: [], low: [], rationale: 同 D13-10}
+  D13-26: {casebooks: [MEM-F13#计划任务静默], low: [], rationale: 机制B 计划任务=静默窗教训覆盖位}
+  D13-27: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-28: {casebooks: [MEM-F13#结算复活, MEM-F13#计划任务静默], low: [], rationale: PostSettlement 复活战（注册脚本 >> 喂 python 先天死胎→真重定向）+静默窗=双教训主挂位}
+  D13-29: {casebooks: [], low: [], rationale: 三账核对历史病（文档滞后/恒空表）在图面 gap 与 G03 在案，五册无条目}
+  D13-30: {casebooks: [MEM-F13#时区与假绿], low: [], rationale: kline 时区修复下半场+repair_kline_tz 教训覆盖}
+  D13-31: {casebooks: [], low: [], rationale: ⬜ 格无现役执行体，尚无运行病历}
+  D13-32: {casebooks: [DCS#队列], low: [DCS#队列], rationale: dloop 假绿专段（簿06）与 DEATH-017"回执成功≠真落地"同族先例——跨域类比呈批}
+  D13-33: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-34: {casebooks: [], low: [], rationale: 无病历交集（305 安全态=设计态非病史）}
+  D13-35: {casebooks: [MEM-F13#断供补数], low: [], rationale: 补下载=补数族教训主消费者（fill_gap134 估值逐日补数等）}
+  D13-36: {casebooks: [MEM-F13#断供补数], low: [], rationale: 研报长批补数同族}
+  D13-37: {casebooks: [MEM-F13#断供补数], low: [], rationale: 夜间财务层=股东户数断供两月案同族（哨兵盲区教训读面）}
+  D13-38: {casebooks: [MEM-F13#断供补数], low: [], rationale: 完整性巡检=断供检出位（只检不修，修复腿归 D13-01/35）}
+  D13-39: {casebooks: [MEM-F13#移窗与口径], low: [], rationale: 方案A试投后精确回滚（consensus 23:30→00:05 双真源）直接病历}
+  D13-40: {casebooks: [], low: [], rationale: 无病历交集}
+  D13-41: {casebooks: [MEM-F13#日历与周窗], low: [], rationale: 周窗 dow 双口径事故+周日 QMT 不可达=时钟事故族病历}
+  D13-42: {casebooks: [AP#域一, RV2#缺口, RV2#观察, MEM-F13#守护判活与误杀, MEM-F13#计划任务静默], low: [],
+           rationale: 守护三路=判活/心跳/误杀病历最大交汇位（R2-F1/F2+I-1+域一#1-#6+keeper 舰队误杀史）}
+  D13-43: {casebooks: [MEM-F13#日历与周窗], low: [], rationale: T1 问闸假期 bug 治本教训直接覆盖}
+  D13-44: {casebooks: [MEM-F13#时区与假绿], low: [], rationale: judgment_next_day_forecast asof_ts 时区坑+断供判读教训覆盖}
+  D13-G01: {casebooks: [], low: [], rationale: gap 节点按 F4 先例不挂病历（缺口件无运行史；其病经由 D13-32/38 同簇可达）}
+  D13-G02: {casebooks: [], low: [], rationale: 同上（execution_report 断供病经由 D13-24/27/29 可达）}
+  D13-G03: {casebooks: [], low: [], rationale: 同上（reconciliation_differences 恒空经由 D13-29 可达）}
+  D13-G04: {casebooks: [], low: [], rationale: 同上（幽灵引用改册面归图12）}
+
+# ── §2 章码依据（逐本实际打开对章名；MEM 簇码=本图特设，逐簇列代表条目） ──────
+chapter_basis:
+  DCS#队列: {source: 'death_cases_registry.yaml cases DEATH-016/017/018（QUEUE-MECHANICS/SESSION-REQUIRED 族）',
+             semantic: 吸收型死信/worktree 假回执/基底冲突="回执成功≠事实发生"病族——与图13 law"槽位挂着≠真在跑"及簿06 假绿专段同构}
+  AP#域一: {source: 'all_problems_ledger.md ## 域一：会话生命周期（#1-#6）',
+            semantic: 鸡生蛋注册/后台树回收/pid 判活/孤儿侦测=守护判活同族（D13-42 守护三路读面）}
+  AP#域二: {source: 'all_problems_ledger.md ## 域二：提交链（#7 落地门超时误杀合法长链，CR-16 900→2400s）',
+            semantic: 长批被时限误杀=与 D13-01"补跑被重启风暴腰斩"同构（跨域类比，low）}
+  SV#底数: {source: 'dead_letter_salvage_ledger_20261003.md ## 1. 全量底数（1235 袋/12798 条目归因）',
+            semantic: 积压不清算的灾难底数=补跑族（D13-01 档期对账）治"错过积压"的反面教材（跨域类比，low）}
+  SV#方案: {source: 'dead_letter_salvage_ledger_20261003.md ## 4. 根治方案：急诊+分诊台四层',
+            semantic: 迁移感知/史实归因/治愈通道/防再生四层分诊范式=补跑宇宙设计的方法论同构（跨域类比，low）}
+  RV2#缺口: {source: 'review_findings_round2.md ## C. 接管显化基建（R2-F1 判死口径错位）+ ## F. 红队深挖（R2-F2 心跳守护假活）',
+             semantic: 判死口径与心跳假活=守护三路判活直接病历}
+  RV2#观察: {source: 'review_findings_round2.md ## I. 观察项根因（I-1 pid=0 判死口径，与 R2-F1 同物异号）',
+             semantic: 同上观察面}
+  MEM-F13#断供补数: {representative: [brokentasks-verdict-fix-20260924（BdpanTickWatch 删+tick 7缺口日补齐/SectorSnapshot 95124行补断供自09-15/PostSettlement 复活）, commitchain-d2-outoflock-20260930（#456 判重两档/#457 on_demand）, st-finaldel-valfill-20260930（fill_gap134 估值逐日补数 8475 行）],
+                     semantic: 断供→发现→补数全链教训，哨兵/补跑/批次群/巡检四格共读}
+  MEM-F13#结算复活: {representative: [brokentasks-verdict-fix-20260924（PostSettlement 注册脚本 `>>` 喂 python 先天死胎→conhost+cmd 真重定向，8f0e5feb，15:30 首次正式实弹）],
+                     semantic: 结算管线接线死胎与复活全记录}
+  MEM-F13#模拟盘与做T: {representative: [brokentasks-verdict-fix-20260924（BoardIndexRealtime 修=做T原料，绝对路径+自退出常驻）, st-t0-matrix-20260924（做T矩阵）],
+                     semantic: 模拟盘会话与原料断供教训}
+  MEM-F13#计划任务静默: {representative: [schedtask-silence-probe-window-20260923（计划任务9个静默两轮治零/pythonw 铁律=生子的父进程禁 pythonw/pre_commit 闪窗根治）],
+                     semantic: 机制B（Windows 计划任务）族共同病历——D13-07/12/19/26/28/42 六格共读}
+  MEM-F13#守护判活与误杀: {representative: [st-c10-fin4（w3h_keeper：两波 keeper 死因=process_reaper 扫描误杀，袋落地期间 keeper 必须在岗）, vmount-sop-batch-three-defects-20261003（自判死自接管/两段判活）, zchief8-night-war（keeper winpid 注册）, st-construct-20261002（晨间重启风暴腰斩长批 keep 名册起源）],
+                     semantic: reaper/心跳/keep 名册=守护三路与补跑长批共同病历}
+  MEM-F13#时区与假绿: {representative: [market-data-tz-repair-phase2-20260914（时区修复下半场+tick 三天补齐）, finaldel-chief-campaign-20260929（换源逮住 -8h 时区缺陷回滚）, chief7-night-war（判落地必直读 git show=回执≠事实）, gpu-final-overnight-20260924（net_returns 丢日期索引缺陷修）],
+                     semantic: 时区/日期索引/假绿判读=分钟K族与 judgment 表族共同病历}
+  MEM-F13#日历与周窗: {representative: [decision-map-campaign-20260925（T1 问闸假期 bug 治本）, storage-audit-three-drives-20260927（周末维护窗与 QMT 不可达窗排程约束）],
+                     semantic: 日历闸与周窗排程教训}
+  MEM-F13#移窗与口径: {representative: [gate-survival-adjudication-20260929（方案A试投后精确回滚：consensus 23:30→00:05 双真源验收全绿但提交被宽口径门拦）],
+                     semantic: 一致预期槽移窗全记录（含"图面 23:30 vs 册面 00:30"漂移的史源）}
+  MEM-F13#币圈与另类: {representative: [finaldel-chief-campaign-20260929（币圈表头）],
+                     semantic: 币圈日线族教训（ghost 池历史同域）}
+  MEM-F13#盘前探针: {representative: [decision-map-campaign-20260925（决策链哨兵 ZephyrAlpha_DecisionChainSentinel 每日 09:40 盘前只读探针，TRD-A01/L09-C04）],
+                     semantic: 09:40 盘前探针在册而图13无格——格位缺席病历（low，归属待裁）}
+
+# ── §3 完备性自检表（SOP §3 规2：每本 ≥1 环节；mounted=挂载节点数，非章挂数） ──
+completeness:
+  DCS: {mounted: 1, nodes: [D13-32], verdict: '✅（跨域类比 low，呈批项）'}
+  AP: {mounted: 2, nodes: [D13-01, D13-42], verdict: '✅（域二挂 D13-01 为类比 low；域一挂 D13-42 为同族）'}
+  SV: {mounted: 1, nodes: [D13-01], verdict: '✅（跨域类比 low，呈批项；章挂数=2：底数+方案）'}
+  RV: {mounted: 1, nodes: [D13-42], verdict: '✅（RV2 两章同族，章挂数=2；RV1 三章与交易日无交不挂，理由=全卷提交链审查向量，无运行时序病）'}
+  MEM: {mounted: 24, nodes: '见 matrix 非空项（除 D13-32 外全部带 MEM 簇）', verdict: '✅'}
+  matrix_total_nodes: 48
+  nodes_with_mounts: 25
+  nodes_without_mounts: 23
+  no_mount_reasons: '全部逐格写 rationale（无交集 17 格+gap 4 格按 F4 先例+同簇覆盖 2 格）'
+
+# ── §4 只挂本不挂病例 + SOP 四判据对照 ────────────────────────────────────────
+self_check:
+  only_books_not_cases: '本矩阵进图字段者=册码#章码字符串+路径指针（INV-1）；条目号（DEATH-017/R2-F1/#456 等）仅为本件人类可读章界注记，不进图字段'
+  gap_nodes_unmounted: 'G01-G04 按 F4 先例不挂，病历经由宿主环节同簇可达（逐格注记）'
+  sop_four_criteria: '判据3（影响速质效设施）为主通道——五本全是"环节病了查档案"的设施；跨域类比三笔（DCS/AP#域二/SV）=判据拿不准照记 low 呈批，未自裁'
+
+# ── §5 分歧与呈批清单（逐条，勿吞） ──────────────────────────────────────────
+divergences:
+  - id: DIV-CB-1
+    point: DCS#队列 挂 D13-32、AP#域二(#7) 与 SV#底数/方案 挂 D13-01 为跨域类比挂载（提交链病历→交易日运行域）
+    ask: 总筹复裁"方法论同构"是否构成 SOP 判据3 合法挂载；若否，DCS/SV 两本在图13 无合法挂载位，完备性铁律与域正交冲突须 Owner 表态
+  - id: DIV-CB-2
+    point: MEM 簇码为本图特设（MEM-F13#*9 簇），与 F4 的 MEM#1-10 交链簇不共享
+    ask: 图家族 MEM 簇码是否统一命名空间（防两图同名异义）
+  - id: DIV-CB-3
+    point: MEM 仓外绝对路径指针合规性（F4 §5-4 同题未决，本件沿F4口径先挂后裁）
+    ask: 同 F4 §5-4
+  - id: DIV-CB-4
+    point: 决策链哨兵（09:40 盘前只读探针）在资源册在册而图13 无格，其病历暂挂 D13-09 邻近位（low）
+    ask: 图13 是否该有 09:40 格（与件1分歧"盘前探针格位缺席"同源，一处裁两处销）
