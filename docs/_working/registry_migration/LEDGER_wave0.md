@@ -97,3 +97,11 @@ title: "W-M1 注册表迁移波0 施工总包 — 台账 LEDGER（总指挥 30 �
 
 - **测试夹具跨批同步修复（披露）**：双轮验收首轮 86+1 红——`test_commit_belt_daemon.py::TestPoolDrainSurvivalGate` KeyError 'successors_rebuilt'。根因=st-deadletter-cure 今日批 2b28c6fbf1 给池化死信出口加 `successors_rebuilt` 计数时同步了自家 9 用例与 drain_queue_pool 规范初始化，漏了 belt_daemon 更老的测试夹具 `_pool_stats()`（生产面安全实证：daemon 经 bootstrap_drain_with_landing→drain_queue_pool 规范路径，键齐全）。本班修复=夹具一行补 `"successors_rebuilt": 0`（镜像 canonical 形态），修复后**双轮 87 passed ×2 全绿**。归属说明：缺陷体=他会话今日落地批的连带面，修因为本班验收门被挡，一行最小面+此处显性披露。
 - **终验补跑**：token 登记（B3 施工单 CREATE-GUARD）在 165937 终验之后，补跑 reconcile_20261003_171440.json=PASS（CAPCAN backfilled=1=本班新 token 行按设计吸收，pg_only 保持 0）。交接态=PG==YAML 七册全等。
+
+### §落地与收尾（2026-10-03 17:3x）
+
+- **袋1 落地 91ef6dd4c8e**（LEDGER+B3 施工单+CAPCAN+测试夹具修 4 件，`git log -1 --name-only` 归属核实）；翻译册被落地侧 skipped_dirty 保护性跳过→袋2 q-0002 补投被判 noop（"袋与 dev 语义等价"——判定基面含索引态，HEAD 实际仍带旧行）→直连被 CLAIM-REQUIRED 拦：**st-f1-distill-20261003 活跃会话（心跳 3.3s）持有翻译册/LEDGER/CAPCAN 三文件 claim**。按勿对抗纪律停手：C4 内容三重保险（工作树==袋blob ddee9cdb 逐字节实证+双袋 blob 在库+PG 侧 197 条 tombstone 事件），待 st-f1-distill 落地时快照机制顺带吸收，或其释放后一键补投（命令与本行存档）。复活窗口风险评估：仅当工作树翻译册被 reset 回 HEAD 才会复活两行，届时 reconcile 会 backfill 告警，197 事件+本节=5 分钟重治。
+- **C2 完成**：旧 belt daemon PID 43228（13:34 起飞=驻留换血前代码）17:31:38 Stop-Process，新 PID 92964 于 17:32:21 自启（43s，PT1M 窗内）——裁定#281 流程闭环，新进程吃 HEAD（含双轨探针+91ef6dd 全部落地内容）。
+- **终态 reconcile_20261003_173403.json=PASS 七册全绿**（CAPCAN backfilled=1=他会话新 token 行正常吸收，pg_only 恒 0）。
+- **验收⑤零改动核实**：parse_gate 状态文件 `.runtime/projection/` 不存在=未生成 ✓；ROOR 本班零写入 ✓（盘面 staged +16/-5 为 st-ffchief-20261001 wave4-G 的 REG-SCHEMA-MIG-001 登记在途件，非本班，未触碰）。意外归因闭环：REG-DOC-001 pg_only 中 schema_migrations.yaml 一条=该文件升级为独立册（即上述在途登记）被从 rule_catalog 目录摘除，回溯印证"合法删除镜像"定性。
+- **claim 全释放**与终报见会话收尾序列。
