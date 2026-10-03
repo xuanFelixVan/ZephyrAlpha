@@ -1,0 +1,87 @@
+---
+ttl: task_bound
+completes_when: Owner 一轮终审冻结入图头后本件退役（SOP §2 冻结流程：总筹起草→Owner 终审→机贴不改名）
+title: 图12 F1表D·目的标签候选表（10 条草案，候选非定稿）
+owner: st-vm12f1-20261003
+session: st-vm12f1-20261003
+date: "2026-10-03"
+status_note: 本表只是候选——总筹精炼后呈 Owner 终审冻结；验收标准=Owner 不看注释能懂（SOP §2 规2）
+---
+
+# F1 表D：目的标签候选表（图12 数据供给链域，10 条）
+
+> 方向依据：任务书五问（数据还新鲜吗/坏了谁发现/坏了谁修回/坏了能不能回滚/该来的数据来了没）+ SOP §2（8~12 条、一句大白话、同标签多钉=重复簇显影位）。
+
+tags:
+
+- id: fresh_check
+  label: 数据还新鲜吗
+  plain_zh: 每张业务表都有"最后一天"——这族机制天天核对它停没停在昨天，停了就报警。
+  pre_mount: DSC-13（四检核器）、DSC-20（档期对账）、freshness_evidence 通道（图头 L2 自有字段）
+  confidence: 高
+
+- id: break_detect
+  label: 坏了谁发现
+  plain_zh: 数据断了、缺了、烂了，得有东西第一时间喊出来，不能等下游用的时候才炸。
+  pre_mount: DSC-13、DSC-19（破损 part 探测）、DSC-20、supply_sentinel.py、ch_parts_monitor.py（表A §2.1 漏挂候选）
+  confidence: 高
+
+- id: break_repair
+  label: 坏了谁修回
+  plain_zh: 发现问题只是第一步——这族机制负责把缺的补回来、把坏的修回去。
+  pre_mount: DSC-14（三通道）、DSC-14D（第四通道未接线）、DSC-16（修复器族）、scripts/data 回补族（表A §2.2）
+  confidence: 高
+  note: DSC-14D 检测≠修复红线（laws 自证）：detect_only 无下游补跑通道须登记缺口。
+
+- id: can_rollback
+  label: 坏了能不能回滚
+  plain_zh: 删错表、写坏库的时候，冷库和备份是唯一能让你说"还好有备份"的东西。
+  pre_mount: DSC-10A、DSC-10B、DSC-11、DSC-HC（恢复侧）、data_retention_contract.yaml
+  confidence: 高
+
+- id: schedule_complete
+  label: 该来的数据来了没
+  plain_zh: 每天该跑的任务都跑了吗——拿"应跑清单"对"打卡记录"，漏一个都能数出来。
+  pre_mount: DSC-20（task_runs 打卡集合差四计数）、DSC-13（calendar_coverage_checker 腿）
+  confidence: 高
+
+- id: lineage
+  label: 东西从哪来的
+  plain_zh: 每行数据都能说清来自哪家源、走哪条通道——源出问题知道找谁。
+  pre_mount: DSC-SRC（provider 归一+源能力契约）、data_asset_registry.yaml
+  confidence: 高
+
+- id: source_fallback
+  label: 源不可靠怎么办
+  plain_zh: 外部源说断就断——备胎源、熔断器、先落盘再入库，都是为了断供当天数据不断。
+  pre_mount: DSC-SRC（fallback 两 kind）、DSC-FB（本地汇聚回灌）、DSC-05（WAL）、source_circuit_breaker/error_classifier/redundant_source 族（表A §2.1/2.2）
+  confidence: 高
+  note: 熔断纯内存不持久=事后无法证明熔过没有（🌑-4 residual）——本标签是重复簇显影位候选。
+
+- id: no_double_write
+  label: 别把同一行写两遍
+  plain_zh: 重跑不可怕，可怕的是重跑把数据翻倍——幂等加判重，保证跑十遍还是一份。
+  pre_mount: DSC-04（引擎语义）、DSC-06（判重正门）
+  confidence: 高
+  note: GAP-DUPGUARD 准入闸半假绿——本标签当前有一格是虚的。
+
+- id: schema_shape
+  label: 表结构别走样
+  plain_zh: 表长什么样由代码说了算——库里的实际结构必须和代码登记的是同一张图纸。
+  pre_mount: DDL-as-Code 族（scripts/ch/apply_*_ddl 约 27 台，无节点归属=f1z E-5）、verify_schema_truth.py
+  confidence: 低（落点待总筹裁：新格 or 并 DSC-04）
+
+- id: ledger_readable
+  label: 账本要能翻
+  plain_zh: 每笔采集、每次失败都留底账——出了事能翻账，没出事能对账。
+  pre_mount: data/integrator_progress.db（task_runs）、data/failures/ 案卷库、data/sla/（停更）、archive_manifest.jsonl——即表B §1.1 四合格本+§1.2 停更本
+  confidence: 高
+  note: 本标签与 casebooks 字段语义最贴近（病历挂载=让账本被翻）。
+
+## 自审
+
+- **条数**：10 条（SOP 建议 8~12 带内）。
+- **大白话自检**：每条一句、无门禁术语、无模块名进 label；Owner 终审是唯一验收（本表 draft 性质）。
+- **低置信单独标出**：schema_shape（落点无归属格）1 条；其余 9 条高置信。
+- **重复簇显影位预判**（SOP §2 规3）：source_fallback 与 break_detect 在 DSC-13/DSC-SRC 双钉、break_repair 与 schedule_complete 在 DSC-14/DSC-20 交界——机贴后同标签多钉处即内收对审入口，属设计预期非缺陷。
+- **没做**：未机贴（冻结前禁贴，SOP §2 规2 流程顺序）；未动图 YAML（硬边界）。

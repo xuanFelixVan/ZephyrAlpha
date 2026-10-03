@@ -1,0 +1,52 @@
+---
+ttl: task_bound
+completes_when: 总筹消费本表（病历挂载裁定回写图12 casebooks 字段）后本件退役
+title: 图12 F1表B·病历本候选表（SOP §3 四机规）
+owner: st-vm12f1-20261003
+session: st-vm12f1-20261003
+date: "2026-10-03"
+inv1_note: 只存册标识符/路径/判定词与指针，禁抄病历正文
+---
+
+# F1 表B：病历本候选表（图12 数据域）
+
+> 判据来源：vertical_map_mounting_policy.md §3 四机规（①病历本是设施须有登记身份 ②每本永久病历本必须被 ≥1 环节挂载 ③只挂本不挂病例 ④引用不复制）。
+> 册身份三查=有登记id（module_id/册号）/稳定路径/更新机制。
+
+## §1 候选病历本逐本判定
+
+### 1.1 合格（三查全过，建议挂载）
+
+- **known_data_gaps.yaml**（src/zephyr/data/config/known_data_gaps.yaml）：册身份=module_id MOD-GOV_BACKFILL_CHECKER（frontmatter :3）+ttl permanent（:9）+更新机制=登记制（文件头"AI 发现面登记"约定）；置信=高。建议挂载：DSC-14（缺口回补第三通道"已知缺口台账"本体）+DSC-16（修复器族输入）——一岗多流程合法。图内现状：已被 DSC-16 引为 source_anchor（casebooks 字段建立后升级为病历挂载）。
+- **data/failures/ 对账案卷库**：册身份=稳定路径+机械命名约定（`YYYYMMDD_taskid_seq.json`）+更新机制=事件驱动（integrity_checker 每日检核逐案落盘）；规模 as_of 2026-10-03=15,134 件（ls|wc -l 实测），其中 task_reconcile 案卷 33 件（ls|grep -c 实测），今日新案在产（20261003_strategy_pipeline_*）；置信=高。**无登记 id=身份缺口**→ f1z E-6 建议升 CASEBOOK-* 册号。建议挂载：DSC-13+DSC-20。**孤儿病历**：图12 全节点 68 文件引用面中零引用（复跑表A §2 判定基线命令可证）。
+- **data/integrator_progress.db（task_runs/task_progress 两表）**：执行台账；册身份=schema 真源在码（src/zephyr/data/progress_store.py，cons12 卷 §2 锚 :8/:23）+路径稳定+事件驱动更新；读数 as_of 2026-10-03=task_runs 210,944 行、max(started_at)=2026-10-03T14:12:04Z、近 24h 4,406 笔、task_progress 280 行（sqlite ro-uri 实测，命令见表C）；置信=高。建议挂载：DSC-20（档期应跑集合对打卡集合的对账基准）+DSC-01/02/03（采集三段执行留痕）+DSC-13（检核进度腿）——一岗多流程。**孤儿病历**（图内零直引，仅 progress_store.py 被 DSC-20 引为模块锚）。
+- **F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl**：归档总清单；册身份=契约锚（data_retention_contract.yaml INV-RET-002，rolling_archive_reconciler 事件链）+冷库稳定路径+事件驱动（backup-success hook）；盘面 786,853 字节、mtime 2026-09-28 17:10（ls 实测 2026-10-03）；置信=高。建议挂载：DSC-10B（本册即其产出与 terminal_provable 实锚，config/data_supply_chain_map.yaml boundary.terminal_provable 含 DSC-10B）+DSC-10A。
+
+### 1.2 停更/缺失病历（挂载候选成立，但先修设施）
+
+- **data/sla/ 源SLA台账**：16 件 JSON（report_id/rto/rpo/breaches 结构，抽样 SLA-20260818-173548.json 实读）；**停更实证：最新件 SLA-20260826-180754.json，至 2026-10-03 停更 38 天**；生产机制 source_sla_tracker.py 全仓零外部调用方（grep 实测）→ 机制+台账双停摆，内收嫌疑见 f1z E-3；挂载建议=DSC-SRC（若 Owner 裁保留并复活）；置信=事实高/挂载建议中。
+- **corrupted_parts_audit.jsonl（DSC-19 破损 part 自愈审计腿）**：**应建未建**——data/local_fallback/corrupted_parts_audit.jsonl 不存在（ls 实测 2026-10-03；与 11_消费端需求反查.md §2"审计文件在主区不存在"双证）；成因=机制自 2026-07-16 上线零触发（cons12 §2）；病历本缺失格 → f1z E-7。若未来首触发，建议挂 DSC-19。
+- **断供事故台账**：**不存在**。SectorSnapshot 09-15 断供案（修复 95,124 行补齐，断供自 09-15）仅有会话级处置记录无书面台账；kline_sector_intraday 09-11 断供案有散页（docs/_working/archive/2026-09/2026-09-15-kline1min-valuation-coverage-investigation.md，frontmatter ttl: task_bound 实读）；consensus_daily 停 10 日案在 11 卷 §1B。三案皆"病例有页无本"→ f1z E-8 建议设数据域断供台账或约定入 data/failures 案卷。
+
+### 1.3 判不合格（候选起点核销，防复扫误捞）
+
+- **all_problems_ledger.md（堵点本）**：docs/_working/branch_zero_takeover/all_problems_ledger.md，ttl=task_bound（frontmatter :2 实读），33 类问题全会话生命周期/提交链/belt/门禁/档案安全五域，**数据域条目=0**（通读 72 行全卷实测）→ 非图12 病历本；fig11 已挂它（f4_casebook_mount_plan.md §2.2），一岗多流程不跨到图12。
+- **data_asset_registry.yaml**：资产注册册非病历本（无病案语义）→ 不挂；顺带记事实：machine 层自证 declared datasets=293 vs actual=294（drift 1，config/data_supply_chain_map.yaml machine.asset_registry.drift）。
+- **fig12 五簿+90 溢出账+11 消费反查卷**（docs/_working/map_build/fig12_datachain/）：ttl 全 task_bound=挖矿作业簿非永久病历 → 不挂；其结论已作节点字段（图头 :4 自证）。
+- **data/local_fallback/ 运行态目录**（TSV 段落+quarantine_20261001/20261003 两隔离区，ls 实测）：运行数据面非病历本 → 不挂。
+
+## §2 孤儿病历清单（§3 规2：够格但从未被任何环节挂载）
+
+1. data/failures/ 对账案卷库（够格：稳定路径+活跃更新+机械约定；图内零引用）。
+2. data/integrator_progress.db 执行台账（够格：schema 在码+今日仍在写；图内仅模块锚无册挂载）。
+3. data/sla/ 源SLA台账（够格但停更 38 天——"孤儿+停更"双重身份）。
+4. archive_manifest.jsonl（半孤儿：freshness_evidence 引过其 max 读数，非册级挂载）。
+
+> 严格口径注：图12 casebooks 字段尚未建立（schema 0.2 无此字段），故"从未被挂载"对全体病历本成立；§2 所列=按"图内零指针"更严口径判出的真孤儿，其余合格本（known_data_gaps/archive_manifest）已有节点级指针。
+
+## 自审
+
+- **扫了**：任务书点名六族候选起点全部落位（堵点本=核销、all_problems=零数据域、data/failures=合格孤儿、SLA=停更、archive_manifest=合格、断供案=有页无本）；另补扫 known_data_gaps.yaml、integrator_progress.db、data/local_fallback/、data_asset_registry、fig12 作业簿族、design_memos 引用（67 号备忘引用存在于 scripts/ch/rebuild_news_data.py docstring，但 docs/_working/design_memos/ 与 docs/design_memos/ 目录均未定位到——引用漂移记入 f1z E-10）。
+- **没扫到**：PG 侧台账面（depgraph/meta_question 等架构库）未扫——属图16/治理域，本图边界外；data/ 根下其余运行目录（未全列）只抽验了点名族。
+- **置信度分布**：合格 4 本（高）/停更缺失 3 类（事实高、处置建议中）/不合格 4 类（高）。
+- **孤儿病历数**：4（§2）。

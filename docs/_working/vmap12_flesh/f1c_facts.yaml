@@ -1,0 +1,199 @@
+---
+ttl: task_bound
+completes_when: 总筹消费本表（trigger_facts/consumers 两字段候选回写图12）后本件退役
+title: 图12 F1表C·facts抽取表（每节点 trigger_facts+consumers）
+owner: st-vm12f1-20261003
+session: st-vm12f1-20261003
+date: "2026-10-03"
+inv1_note: 只存计数/标识符/指针，禁抄真源正文；每条带口径与 as_of
+---
+
+# F1 表C：facts 抽取表（43 节点全覆盖）
+
+> 口径声明：
+> - **trigger_facts 口径**＝任务执行留痕计数：图12 machine 层（config/data_supply_chain_map.yaml machine 块，生成器口径，探针 as_of=2026-09-25 L-REGEN12 只读复跑）＋本会话 2026-10-03 复测（命令附每条）；schedule.yaml 槽名与任务数皆机生投影。
+> - **consumers 口径**＝docs/_working/map_build/fig12_datachain/11_消费端需求反查.md（L-CONS12 四类消费者实测 174 点/40 表，CH 读数时点 2026-09-24/25）按生产者环节归到节点；四态=满足/滞后但可用/在等没在产/幽灵。
+> - gap/交接格 trigger_facts=null 合法（无任务面），只带证据指针。
+
+nodes_facts:
+
+  DSC-SRC:
+    trigger_facts: 分母=23 源/271 任务/192 目标表（machine.tasks_yaml 机生）；fallback_nonempty=39、schedule_disabled=4；熔断器纯内存不持久=重启即复位（节点 fallback.residual 自证，🌑-4）；熔断留痕旁证=data/failures/ _circuit_breaker_fred 族 163 件（ls 统计 2026-10-03）。
+    consumers: 间接=全下游（源面无表消费）；源健康测量腿 data/sla/ 停更 38 天（表B §1.2）。
+
+  DSC-01:
+    trigger_facts: 6 槽 196 任务=daily_capital 43+daily_event 42+daily_kline 36+monthly_static 21+nightly_financial 10+weekend_calibration 44（machine.nodes[DSC-01].slots 机生）；monthly_static 档期级执行不可证（WB12-08 分面）；freshness kline_daily max=2026-09-24 lag=0（as_of 09-25 探针）。
+    consumers: 16 表/约 64 TDM 点+2 代码点+2 SPM 点（11卷 §1A：kline_daily TDM31、money_flow TDM6、stk_limit TDM×15+matching_engine:1171+SPM:276、daily_valuation DS-123、index_valuation DS-141、concept_board DS-117、sector_constituent/concept_sector 月档期×3、weather DS-198、alt 三族 DS-230/231/237、financial_indicator DS-208、shareholder_count DS-218、kline_daily_hfq/kline_index、stock_daily_basic chips.py:22、trade_calendar SPM:56）。
+
+  DSC-02:
+    trigger_facts: 4 槽 39 任务=intraday_minute 16+intraday_realtime 16+auction_highfreq 2+intraday_sector 5（machine 机生）；freshness tick_data max=2026-09-24 lag=0（as_of 09-25）；realtime_snapshot 供数形态疑点=全表仅 T 日 01:00-07:40 段、盘中零行（11卷 §1B/N4，复裁在案）。
+    consumers: 6 表/TDM 15 点+代码 4+SPM 1（kline_sector TDM14、kline_etf_60min owner_band data_loader:21/79、tick_data ch_tick_replay:20、tick_depth_5 cost_model_calibration:120/159、market_breadth_snapshot DS-108、realtime_snapshot SPM:334 B态滞后）。
+
+  DSC-03:
+    trigger_facts: 5 槽 22 任务=event_driven 11+news_slow 2+research_nightly 2+daily_crypto 6+daily_alt_fx 1（machine 机生）；freshness c3_fundamental.news_data max=2026-09-25T23:17+08 lag=0（as_of 09-25，含未来污染与 WB12-33 相合）；失败病域=failures news_rss/news_data 族各约 1,700 件+macro_data 1,026+macro_fred 986+news_cls 947（ls 统计 2026-10-03）。
+    consumers: 2 表/TDM 6 点（news_data DS-104 */3 高频、news_sentiment_window DS-107×5）。
+
+  DSC-04:
+    trigger_facts: 通道节点（写随采集发生）；freshness kline_daily max=2026-09-24 lag=0（as_of 09-25）；两条二级降级+local_fallback 汇聚在产（data/local_fallback/ 目录活，quarantine 两区 10-01/10-03 ls 实测）。
+    consumers: 间接=40 表全集经其写入（pass-through，INV-1 不展开）；直接消费=下游 ch_reader 读面。
+
+  DSC-05:
+    trigger_facts: WAL 双表 tick_data/tick_depth_5 max=2026-09-24 lag=0（as_of 09-25，tasks 无行与 WB12-23 相合）；缓冲任务 32 笔带 buffer（machine.tasks_yaml.tasks_with_buffer）。
+    consumers: 盘中腿 2 表/代码 2 点（tick_data ch_tick_replay:20、tick_depth_5 cost_model_calibration:120/159）。
+
+  DSC-FB:
+    trigger_facts: 回灌排空测量腿未接（GAP-REPLAY 定性）；目录在产=data/local_fallback/ 活跃（quarantine 20261001/20261003 两区 ls 实测 2026-10-03）。
+    consumers: null（回灌消费方=CH 表本身，消费证据即 GAP-REPLAY 缺口）。
+
+  DSC-06:
+    trigger_facts: 判重正门在册（scripts/governance/data_quality/check_tick_duplication.py）；聚合对照腿不可用=准入闸半假绿（GAP-DUPGUARD，WB12-09：Code 42 一跑必红且红被吞成 0）。
+    consumers: 间接=全部入库幂等声明（判重是入库写通道的质检腿）。
+
+  DSC-07:
+    trigger_facts: freshness technical_indicator max=2026-09-24（as_of 09-25，限定"末写 11:41 不落任何档期"WB12-10）；kline_sector_intraday 自 09-11 断供+周月线停 9 日（WB12-10 实证，断供案散页见表B §1.2）。
+    consumers: 1 表/代码 2 点+册 1（factor/indicator_reader.py:20/45+TI 册:26）。
+
+  DSC-08:
+    trigger_facts: 一致预期腿停 10 日=consensus_daily max=2026-09-14（11卷 §1B 实测 6,797,719 行；repaired 1,563,996 行同步停）；financial_derived max=06-30（Q2 期正常档期）；研报上游停 6 日（GAP-CONSENSUSCHAIN：派生比上游还差 4 日=派生本身停）。
+    consumers: 3 表/TDM 1+代码约 7+册 2（financial_derived DS-232+fundamentals.py:24；consensus_daily expectations.py:19+factor_registry:277/:12394/:12433；repaired EXP-FACTOR-EVAL-004）——消费侧受损实锤（B态）。
+
+  DSC-09:
+    trigger_facts: freshness emotion_index max=2026-09-24 lag=0（as_of 09-25）；板块腿两缺陷=stage trade_date 倒挂+sector_preference 全表 1 行（WB12-12）→ 整体不可✅。
+    consumers: 2 表/代码 2 点（emotion_index condition_package.py:52、alt_regime_signal :53）。
+
+  DSC-21:
+    trigger_facts: 任务表外进程内生产（不走 tasks/schedule）；regime_snapshot_history max=2026-09-24、strategy_screen max=2026-09-22（11卷 §1A 实测）；nav 写器零接线（live_nav_recorder 全仓零调用方，GAP-NAV 同源事实）。
+    consumers: 2 表在产/代码 7+SPM 1（regime_snapshot_history 6 消费文件、strategy_screen n_trial_ledger:411+SPM:314）；**C 态 5 表中 4 表栽此域**（11卷 §4-N1：无归属簇=消费缺口主源头）。
+
+  DSC-HA:
+    trigger_facts: null（交接格）；出图面=派生表→TDM 因子/工厂/图13。
+    consumers: 经 40 表全集间接（DSC-07/08/09/21 产出的消费面即其出图面）。
+
+  DSC-10A:
+    trigger_facts: 手动 CLI 五子命令 export→verify→drop（scripts/ch/archiver.py 在册）；无周期触发（人工门位）。
+    consumers: 流程内=冷库侧（archive_manifest.jsonl 记账）。
+
+  DSC-10B:
+    trigger_facts: 事件触发（backup-success hook，五重安全阀+契约限量 3）；archive_manifest.jsonl 716,572 字节、mtime 2026-09-24 10:07（cons12 实测）→2026-09-28 17:10（本会话 ls 复测）；freshness max=2026-09-24T02:07:50Z lag=1（as_of 09-25 探针）。
+    consumers: 流程内+审计面（terminal_provable 实锚，config/data_supply_chain_map.yaml boundary）。
+
+  DSC-11:
+    trigger_facts: freshness system.backup_log max=2026-09-24T22:47:25Z（=北京 09-25 06:47，as_of 09-25）；schtasks 实证 DailyBackup 09-24 06:00:01 Result=0（cons12 §3 🌑-2 全撤复现）；今晨代码快照腿 status=failed（GAP-CODEBACKUP）。
+    consumers: 流程内=恢复侧（restore.ps1/restore_drill.py）；灾备消费=灾时才用（设计如此）。
+
+  DSC-12:
+    trigger_facts: null（契约决策件永不可能新鲜度✅，WB12-17 判词）；真源=data_retention_contract.yaml。
+    consumers: 流程内=滚动归档器读契约限量（rolling_archive_reconciler）。
+
+  DSC-HB:
+    trigger_facts: 交接格；超线分区+当日备份回执面。
+    consumers: 流程内=DSC-10B/11 产出侧。
+
+  DSC-HC:
+    trigger_facts: 交接格；恢复演练件在册（scripts/backup/restore_drill.py depgraph_drill 四条件、scripts/ch/_recovery_drill.py 非破坏性）；GAP-ARCHIVE-AUDIT=零周期抽检+从未端到端 restore。
+    consumers: 流程内=灾时恢复+演练。
+
+  DSC-13:
+    trigger_facts: task_progress[integrity_check_daily].last_run=2026-09-24T15:01:36Z（=北京 23:01 与 23:00 cron 秒合，as_of 09-25）；data/failures/ 按日告警双证（WB12-07）；本会话复测 failures 今日仍产（20261003_*，ls 2026-10-03）；四检核器只检测不回补。
+    consumers: 下游三族=catchup_guard 对账基准+CLI status+告警件（cons12 §2 WB12-03 论据）；alerter 已挂本格。
+
+  DSC-14:
+    trigger_facts: catchup_guard 槽在 schedule 且 scheduler 有分派分支（machine.schedule_yaml.slots+scheduler_dispatch.dispatched_slots 含 catchup_guard）；known_data_gaps.yaml 台账在册（表B §1.1）。
+    consumers: 流程内=补跑动作本身（补跑完成后由 DSC-20 案卷留痕）。
+
+  DSC-14D:
+    trigger_facts: 第四通道建好未接线（re-export+测试而已，wiring_registry 以 pure_library/exempt 合法绕过接线门，WB12-14）→ trigger_facts=0 执行。
+    consumers: null（零消费——内收嫌疑候选，总筹四分处置裁）。
+
+  DSC-15:
+    trigger_facts: eod_reconciliation 槽 hollow（machine.scheduler_dispatch.slots_hollow 机生）+15:40 槽无分派分支+零生产调用方（WB12-15 P0 图级三证）→ trigger_facts=0 执行。
+    consumers: reconciliation_differences 消费方已按"永远为空"设计降级（backtest_backlog.yaml:1222，11卷 §4-N5）。
+
+  DSC-16:
+    trigger_facts: 修复回补器族手动/留盘为主；政策 §3 七个回补器中 4 个 UNTRACKED 只在主区磁盘（WB12-18）。
+    consumers: 流程内=修复需求方（手动触发）；known_data_gaps 台账为其输入（表B §1.1）。
+
+  DSC-17:
+    trigger_facts: freshness c1_market.cross_validation_log max=2026-09-25、1,588 行、末写 23:30 北京与 cron 精确吻合（WB12-13 两簿独立取证；as_of 09-25 探针）。
+    consumers: null（互验器，产出即自证；无外部表消费——诚实记 null 非"无消费即退役"自动判）。
+
+  DSC-18:
+    trigger_facts: schtasks ZephyrAlpha-CH-OptimizeMerge-Weekly 09-20 03:30 Result=0（cons12 §3 复现）→ 周度实跑留痕成立。
+    consumers: 流程内=CH 引擎合并维护（ReplacingMergeTree 幂等前提，laws 自证）。
+
+  DSC-19:
+    trigger_facts: 零触发自 2026-07-16 上线（cons12 §2"零触发在册探测器"）；审计腿 corrupted_parts_audit.jsonl 不存在（本会话 ls+cons12 双证，表B §1.2）。
+    consumers: 间接=全部 CH 读消费者（40 表读路径可用性前提，cons12 §2 论据）——失效模式=读侧挂起/空返。
+
+  DSC-20:
+    trigger_facts: task_runs 台账 as_of 2026-10-03=210,944 行、max(started_at)=2026-10-03T14:12:04Z、近 24h 4,406 笔（sqlite ro-uri 复跑命令：python -c "import sqlite3;con=sqlite3.connect('file:data/integrator_progress.db?mode=ro',uri=True);print(con.execute('select count(*),max(started_at) from task_runs').fetchone())"）；对比 cons12 as_of 09-24=186,290 行（9 日 +24,654）；当日案卷 33 件（data/failures/*task_reconcile*）；09-23 案卷读数=应跑 185/成功 146/漏跑 20/失败 19（cons12 §2）。
+    consumers: 下游三族同 DSC-13（catchup_guard 基准+CLI+告警）。
+
+  # ---- gap 格（trigger_facts=null 合法，证据指针代替）----
+
+  DSC-GAP-NEWSGHOST:
+    trigger_facts: null。证据=SPM:76 引用 c1_market.news_data 在 CH 247 表不存在、真身 c3_fundamental.news_data 7,930,454 行新鲜（11卷 §1D）。
+    consumers: 1（SPM:76 FAC-E1——改册面即消）。
+
+  DSC-GAP-MACRO:
+    trigger_facts: null。证据=macro_data 0 字节部件装载失败（节点 note）；failures macro_data_incremental 族 1,026 件病域旁证（ls 2026-10-03）。
+    consumers: 探测器口径外（13 个契约/间接引用面，11卷 §4-N2 同族）。
+
+  DSC-GAP-DUPGUARD:
+    trigger_facts: null。证据=WB12-09 判重器聚合腿 Code 42 必红被吞（11卷/90账）。
+    consumers: 全部入库幂等声明（同 DSC-06 间接面）。
+
+  DSC-GAP-CONSENSUSCHAIN:
+    trigger_facts: null。证据=研报停 6 日+consensus 停 10 日且派生差 4 日（DSC-08 trigger_facts 同源）。
+    consumers: 因子共识族（expectations.py+factor_registry 多锚，B态受损面）。
+
+  DSC-GAP-NAV:
+    trigger_facts: null。证据=表在 0 行（max=1970 哨兵）、写器零调用方（11卷 §1C）。
+    consumers: 3（SPM:357 FAC-E8+SPM:380 FAC-E9+ops_alert_feed.py:39）。
+
+  DSC-GAP-EXECEP:
+    trigger_facts: null。证据=表在 1 行（09-18）、生产端仅 sim 桥可选接线、近 7 日 1 行（11卷 §1C）。
+    consumers: 2（SPM:334/380）。
+
+  DSC-GAP-FFVAL:
+    trigger_facts: null。证据=CH 表不存在（247 表实测）、DDL 真源在仓未 apply（11卷 §1C）。
+    consumers: 3（feature_store_writer.py:125+offline_store.py:25+ufl_deterministic_layer.py:226——工厂在线面整体悬空）。
+
+  DSC-GAP-FFSIG:
+    trigger_facts: null。证据=CH 表不存在、契约在仓（11卷 §1C）。
+    consumers: 3 点 1 件（factor/core/batch_output/buffer.py:25/78/87 默认落点）。
+
+  DSC-GAP-RECDIFF:
+    trigger_facts: null。证据=表在 0 行、生产者=DSC-15 未接线（11卷 §1C）。
+    consumers: 1（backtest_backlog.yaml:1222，按空表降级容忍）。
+
+  DSC-GAP-L2TICK:
+    trigger_facts: null。证据=l2_tick/suspend 双 0 行、L2 权限=💰-4 花钱可解（节点 note）。
+    consumers: 成本模型标定面（tick_depth_5 五档深度的 L2 腿，cost_model_calibration 同族）。
+
+  DSC-GAP-REPLAY:
+    trigger_facts: null。证据=回灌排空测量腿未接（GAP 定义）。
+    consumers: null。
+
+  DSC-GAP-MIRROR:
+    trigger_facts: null。证据=g_mirror ch_vm_backup 目标防护只在未提交工作树成立（P0，节点 note）。
+    consumers: null（防护面缺失=灾备链风险格）。
+
+  DSC-GAP-CODEBACKUP:
+    trigger_facts: null。证据=今晨备份代码快照腿 status=failed（节点 note；backup_log 主腿正常 max 09-24）。
+    consumers: null。
+
+  DSC-GAP-ARCHIVE-AUDIT:
+    trigger_facts: null。证据=冷档案零周期抽检+从未端到端 restore 验证（GAP 定义；恢复演练件在册未成周期）。
+    consumers: null。
+
+  DSC-GAP-TERMINUS:
+    trigger_facts: null。证据=DSC-15 未接线⇒"对账 PASS"终点不可证（boundary.terminal_gap 显性化）。
+    consumers: null。
+
+## 自审
+
+- **扫了**：43 节点全覆盖（22 stage+4 facet 族并入所属行+15 gap+2 handoff）；trigger_facts 全部带口径（机生 machine 层 as_of 09-25 / 本会话复测 as_of 10-03，两时点并行标注）；consumers 全部复用 11 卷实测（174 点/40 表按生产者环节归格，未重跑 CH 探针——CH 读数时点 09-24/25 已注明，未冒充新鲜）。
+- **没扫到/未做**：①未重跑 40 表 freshness（本批纯盘点+CH 探针需 env 注入，11 卷卷尾已注明复跑件 .runtime/tmp/cons12/stage2_ch.json 可复跑）；②PG 侧消费点（ig_fact/DS-224）11 卷自证为空白腿，本表沿用其空白并如实记；③pf_alloc/plan_engine/ex_core 读点 11 卷 §6 欠①同款未扩口径（扩了会改分母，留总筹定口径）。
+- **置信度分布**：机生/实测支撑=高（DSC-01/02/03/05/10B/11/13/17/20 九节点 freshness+全 gap 证据链）；实测转录=高（consumers 全部 11 卷四态带 file:line）；复测件=高（task_runs/failures/sla/manifest 四件 10-03 实测）；其余 stage 节点 facts=机生转录中高。
+- **两时点差值发现**：task_runs 9 日 +24,654 行（供给环活着）；data/failures 今日仍在产（检核环活着）；data/sla 停更 38 天+sla_tracker 零消费（源健康监测环死了，f1z E-3）。

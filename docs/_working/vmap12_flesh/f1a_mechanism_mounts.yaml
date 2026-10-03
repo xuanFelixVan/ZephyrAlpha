@@ -1,0 +1,94 @@
+---
+ttl: task_bound
+completes_when: 总筹消费本表（挂载裁定回写图12/内收对审四分处置）后本件退役
+title: 图12 F1表A·机制挂载候选表（SOP §1 四判据）
+owner: st-vm12f1-20261003
+session: st-vm12f1-20261003
+date: "2026-10-03"
+inv1_note: 本表只存标识符/指针/判定词，禁抄真源条目正文；每条带 file:line 或可复跑命令锚
+---
+
+# F1 表A：机制挂载候选表（图12 数据供给链域）
+
+> 判据来源：docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md §1 四判据（为流程而生/伸进本流程的手/影响速度效率质量的设施/一岗多流程合法）。
+> 现状基线：config/data_supply_chain_map.yaml counts（机生）：nodes=43、nodes_with_module_id=25、gap_nodes=15。
+> 核心问题两问：①剩余 18 个未挂节点该不该挂；②域内机制有没有漏挂。
+
+## §1 剩余18未挂节点判定
+
+### 1.1 十五个 gap 节点：module_id 不挂=合法（高置信）
+
+判据：docs/_working/map_build/03_final_blueprint_and_schema.md §2 裁定二规2「无实现代码的节点（纯结构、终点聚合、gap 节点）⇒ module_id: null 且 red_reason 必填」。
+15 个=DSC-GAP-NEWSGHOST/MACRO/DUPGUARD/CONSENSUSCHAIN/NAV/EXECEP/FFVAL/FFSIG/ARCHIVE-AUDIT/CODEBACKUP/L2TICK/REPLAY/MIRROR/TERMINUS/RECDIFF（config/data_supply_chain_map.yaml counts.gap_nodes=15 机生）。
+**但**：新四字段层（casebooks/consumers/trigger_facts/purpose_tag）对 gap 节点合法且正该挂——在等消费方与缺口病历正是要挂到 gap 格上（表B/表C 已逐格给料）。gap 格 module_id 禁挂≠四字段禁挂。
+
+### 1.2 三个真候选（15 gap 之外的全部余量）
+
+- DSC-12 冷热分层/压缩决策：build_status=partial、module_id=null 合法——真源=契约非模块（docs/_working/map_build/fig12_datachain/90_writeback_inventory.md WB12-17：storage_tiering.py 经裁定#383 纸面退役、data_compression_archiver.py 零调用方，真源=data_retention_contract.yaml）。**缺**：节点面无 red_reason/invalidation 注记"决策件真源=契约"→ 见 f1z E-1。
+- DSC-HA 交接A（派生表出图）：module_id/module_ref 全空。建议候选=MOD-L00-004（读侧出口的手=src/zephyr/data/ch_reader.py，全图 40 表消费的物理入口）。判据2，影响因子=效率，置信=中（handoff 格挂模块先例缺）→ f1z E-2。
+- DSC-HC 交接C（冷库/备份件→恢复侧）：module_id 空但 source_anchors 已指 scripts/backup/restore.ps1+restore_drill.py+scripts/ch/_recovery_drill.py（config/data_supply_chain_map.yaml 节点 DSC-HC source_anchors；其中 scripts/ch/_recovery_drill.py 所有权=MOD-INF-043，docs/03_modules/path_ownership_map.yaml ownership 实查）。建议=MOD-INF-043，判据2，置信=中高 → f1z E-2。
+
+## §2 域内漏挂机制候选
+
+> 枚举源：docs/03_modules/_domain_data/ 15 子目录+根册、_domain_data_security/ 4 目录、docs/03_modules/path_ownership_map.yaml ownership 8095 条、scripts/script-manifest.yaml 1229 条（domain=ch 52+data 39+backup 4+sector_line 2）、src/zephyr/data/ 69 文件面、src/zephyr/infrastructure/、config/tasks.yaml 机生投影。
+> 判定基线：图内 68 个已引用文件面（复跑：解析 config/data_supply_chain_map.yaml 全节点 module_ref/executors/source_anchors 并集）；下列=枚举面中**未被任何节点引用**者（即漏挂候选），或已引用但模块号未挂者。
+
+### 2.1 高置信漏挂（判据1 为流程而生 / 判据2 已被图文引用却未挂）
+
+- source_sla_tracker.py（MOD-DATA-066，src/zephyr/data/source_sla_tracker.py）→ DSC-SRC；判据3；影响=质量；置信=挂载候选高。**双发现**：全仓 grep 零外部调用方（grep -rln source_sla_tracker src/zephyr scripts 仅自身）+台账 data/sla/ 停更（最新 SLA-20260826-180754.json）→ 机制本身入内收嫌疑，见 f1z E-3。
+- source_circuit_breaker.py → DSC-SRC；判据2（DSC-SRC fallback 段已描述 circuit_break 机制但模块未挂，config/data_supply_chain_map.yaml DSC-SRC fallback kind=circuit_break）；影响=可用性；置信=高。
+- error_classifier.py → DSC-SRC；判据2（DSC-SRC fallback 段换源判据"error_classifier 判 unrecoverable 即换 fallback_sources"，同上 :98-99）；影响=质量；置信=高。
+- tick_redis_cache.py + src/zephyr/infrastructure/h1_redis_hot/*（MOD-H1_REDIS_HOT）→ DSC-02+DSC-05（一岗多流程合法）；判据3 速度因子（盘中热路径）；接线实证：tick_subscriber.py/data_service.py/runtime/intraday_main.py/ex_sor/core/market_context_provider.py 有调用（grep 实测 2026-10-03）；置信=高。
+- ch_parts_monitor.py → DSC-19；判据3；影响=质量/可用性；病域实证：data/failures/ ch_data_parts_explosion 族 508 件（ls|sed 统计 2026-10-03）；置信=高。
+- multi_timeframe_fusion.py（MOD-DAT-MTF-FUSION）→ DSC-07；判据1（重采样/多周期同族）；置信=高（族归属）/接线未验（中，见自审）。
+- news_collector.py + news_taxonomy.py → DSC-03；判据1（事件采集族内部，news_dedup.py 已挂同格）；置信=高。
+- market_breadth_collector.py（MOD-DATA-062）→ DSC-02；判据1（market_breadth_snapshot 生产者，消费反查 §1 A态 DS-108 实证表在产）；置信=高。
+- sector_intraday_aggregator.py（MOD-DATA-061）→ DSC-02+DSC-09（一岗多流程：盘中采集与板块衍生两段各挂一手）；判据1；置信=中高。
+- src/zephyr/infrastructure/database_service.py → 判据2"伸进本流程的手"：全链读写唯一真源通道（宪法 §7 表）；建议挂 DSC-04 并以一岗多流程注记其余节点经它；置信=候选高/落点建议中 → 随 E-2 同批裁。
+
+### 2.2 中置信漏挂（判据3 设施，接线/活性未全验）
+
+- intraday_sentiment_loop.py（MOD-DATA-063）→ DSC-02+DSC-09；盘中情绪环；判据1。
+- sector_snapshot_collector.py + sector_ranking_engine.py + scripts/data/run_sector_snapshot.py → DSC-02；判据1/3（09-15 断供案当事机制，断供自 09-15、修复 95,124 行补齐——修复案无书面台账，见 f1z E-8）。
+- dual_source_guard.py + src/zephyr/data/redundant_source/*（MOD-L00-005/MOD-L00-007：source_switcher/heartbeat_monitor/recovery/sqlite_fallback/sina_tencent_provider/backup_tick_poller）→ DSC-SRC；判据3 冗余源族；接线存疑（docs/03_modules/_domain_data/redundant_source_blueprint.md 在册但活性未验）。
+- cross_source_validator.py → DSC-17+DSC-SRC；判据3 源间互验。
+- alert_webhook_dispatch.py → DSC-13；判据3（alerter.py 已挂 DSC-13，派发腿未挂）。
+- task_queue.py → DSC-01；判据3 调度队列。
+- event_calendar_filler.py（MOD-DATA-068）→ DSC-01+DSC-14；判据1/3 日历补全。
+- instrument_master.py（MOD-DATA-069）→ DSC-01（monthly_static/参考数据族）；判据1。
+- reference_data_manager.py（MOD-DAT-REF-DATA）→ DSC-01；判据1 参考数据。
+- onboarding_wizard.py + scripts/data/onboard_source.py（MOD-AUTO-L1-001）→ DSC-SRC；判据3 新源上架设施。
+- speed_tester.py + fetch_perf_recorder.py → DSC-SRC；判据3 源速度测量（DSC-SRC decision_question"供到什么档期/停供定性"的直接测量腿）。
+- cleaning 族五件（cleaning_engines/cleaning_anomaly_hosting/cleaning_disagreement_stats/cleaning_expectation_hosting/cleaning_rules_hosting；仅 cleaning_rule_engine.py 已挂 DSC-04）→ DSC-04；判据3 清洗设施族。
+- quality_sentinel.py + purity_adjudicator.py + divergence_stats.py + quarantine_manifest.py → DSC-06；判据3 质量哨兵族。
+- trading_calendar.py + manual_calendar_events.py → DSC-01；判据1 日历族（calendar_coverage_checker.py 已挂 DSC-13 互补）。
+- macro_vintage.py → DSC-03+DSC-08；判据1 宏观 vintage 族。
+- foreign_market_coverage.py（MOD-DAT-foreign_coverage）→ DSC-03（crypto/外盘族）；判据1。
+- scripts/data/ 回补修复族（backfill_*约15台+repair_*3台+fill_gaps_tushare/wipe_tick3days 等；script-manifest domain=data 实测 39 台中的修复回补子族）→ DSC-16；判据3（c4_history_repair.py 已挂同格，手动回补脚本族未挂）。
+
+### 2.3 明确不挂（越域嫌疑/已退役——SOP §1 反面清单，留判定防复扫误捞）
+
+- northbound_hold_analysis.py（分析域→图9 消费侧）
+- pit_query.py（PIT 读侧查询→消费域）
+- sector_line（docs/03_modules/_domain_data/algo_flow/sector_line/，blueprint_id=MOD-L00-001，GPU 板块建模→算法域；config 边界 out_of_domain"派生算法本体→各算法域"）
+- MOD-DATSEC-001/002/003（ai_masking_pipeline/data_access_auditor/data_masking_engine，src/zephyr/data_security/ 三件已实现）：读侧脱敏与访问审计→消费/安全域；图12 boundary"本图只画生产供给环"→ 不挂；若总筹认为 access_auditor 属"数据保全"可复裁（低置信，本表不荐）。
+- financial_parser.py（MOD-DAT-FIN-PARSER）：WB12-16 已判"不在产数路径"（90_writeback_inventory.md）→ 不挂。
+- storage_tiering.py：裁定#383 纸面退役；已作为 DSC-12 source_anchor 存在（历史锚），不新增挂载。
+- transport（MOD-DATA-072，src/zephyr/data/transport/cross_border_dual.py）：跨境双通道=采集外围传输件，与图12 环节无直接边，判据四问不过→ 不挂（低置信观察项）。
+
+### 2.4 任务面与脚本面归簇（汇总行，逐台不展开=INV-1）
+
+- config/tasks.yaml 271 任务/270 唯一 id/23 源/192 目标表：已由 machine 层 task_family（L2）归簇挂 DSC-01/02/03 采集三段——无漏挂；异常=cohort_ledger_daily 重复 id（machine.tasks_yaml.duplicate_task_ids 机生自证）→ f1z E-4。
+- scripts/script-manifest.yaml domain=ch 52 台中 apply_*_ddl 族约 27 台（DDL-as-Code 表结构演进）：图12 无归属格 → f1z E-5 建议新格或并入 DSC-04。
+- script-manifest domain=data 39+ch 52 中 import_*/synth_*/一次性个案工具（约 10 台）：纯个案不挂（SOP §1 反面"纯个案不上图"）。
+
+## §3 一岗多流程标注（本表内同机制多挂合法项）
+
+tick_redis_cache/h1_redis_hot（DSC-02+05）、sector_intraday_aggregator（DSC-02+09）、intraday_sentiment_loop（DSC-02+09）、dual_source_guard/redundant_source（DSC-SRC+DSC-01）、cross_source_validator（DSC-17+DSC-SRC）、event_calendar_filler（DSC-01+14）、macro_vintage（DSC-03+08）、database_service（DSC-04+全节点引用注记）、known_data_gaps.yaml（DSC-14+16，详见表B）。
+
+## 自审
+
+- **扫了**：_domain_data 15 子目录+根册 5 文件、_domain_data_security 4 目录（3 个 MOD-DATSEC 号，frontmatter 无号者经 path_ownership_map 补全）、path_ownership_map ownership 8095 条（数据域相关路径全量归组）、script-manifest 1229 条（domain=ch/data/backup/sector_line 97 台逐台过目）、src/zephyr/data/ 69 文件名全列、src/zephyr/infrastructure/ 顶层 40 项、图12 全节点 68 文件引用面反差集、tasks.yaml machine 投影。
+- **没扫到/未验**：①src/zephyr/infrastructure/ 子目录只到顶层（auto_diagnostics/health_monitor/maintenance 等未逐台判）；②各中置信件的运行时接线未逐一 grep 调用方（只验了 tick_redis/sla_tracker 两件）；③_id001/id002 锚（internal_task_ids/process_in_product）为 YAML anchor 未展开核对；④图13/图9 侧是否有同机制挂载（一岗多流程他图面）未扫。
+- **置信度分布**：高 12 条 / 中高 2 条 / 中 15 条 / 低中 3 条（不含 §1 判定与 §2.3 不挂清单）；高置信占比 12/32≈38%。
+- **任务书偏差**：任务书"22 模块"实为 15 子目录（22=骨架 §1 行级数）；"security 5 模块"实为 4 目录/3 模块号——枚举面漂移见 f1z E-10。
