@@ -59520,4 +59520,20 @@ creation_tokens:
   token: commitmap-cure-f4-casebook-mount-plan-20261003
   created_by: st-commitmap-chief-20261003
   capability: commitmap_cure
+- file: docs/_working/commitmap_cure/02_audit_workpaper.md
+  token: commitmap-cure-02-audit-workpaper-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/03_disposition_table.csv
+  token: commitmap-cure-03-disposition-table-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/04_ruling_package.md
+  token: commitmap-cure-04-ruling-package-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/05_workspace_wip_manifest.yaml
+  token: commitmap-cure-05-workspace-wip-manifest-20261003
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
 di_seam_exemptions: []
