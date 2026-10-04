@@ -1,0 +1,160 @@
+ttl: task_bound
+session: st-mapcb-survey-20261005
+date: '2026-10-05'
+title: 八图 casebooks（病历挂载）现状对账·GOMAP 样板对照矩阵（纯只读盘点·零施工零判读）
+completes_when: chief 消费差距分类后随 casebooks 族治理批转归档
+method_note: yaml.safe_load 机械解析 + grep 实证 + 生成器 --dry-run 只读实跑（四台均有零写入契约）；全文零判读，判定权归 chief
+snapshot_note: 盘面=2026-10-05T01:10+08:00 工作树（dev 尖 71f32aae35）；config/dev_delivery_map.yaml 带 21 行在途漂移（generated_at/gate 计数，casebooks 内容与 HEAD 零差已 grep 留证）；config/trading_day_cycle_map.yaml 盘读时点已无未提交差
+template:
+  file: config/governance_operations_map.yaml
+  nickname: GOMAP（样板·裁定#485 同期落地）
+  shape:
+    map_level_legend: casebooks_legend_zh（册码→真源路径图例，F4 同款指针制，INV-1 只存指针禁复制正文）
+    carrier_level: pipeline.layers[].casebooks（册码#章码 指针列表）
+    gap_registration: casebooks_note_zh（病历缺口显式登记，SOP §3 规2 反面台账）
+  generator:
+    file: scripts/governance/generate_governance_map.py
+    preservation: 机器层(families)全量重建；人工层(pipeline/out_of_scope_refs/legend/casebooks_legend_zh)原样保留（[INVARIANTS] 原文）；--dry-run 零写入
+    casebook_mentions: 5
+  codes_in_use: [DCS, AP, SV, RV1, RV2, MM]
+codebook_true_sources:
+  registry: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  registry_inventory: CASEBOOK-001..008（数据对账案卷库/堵点本/死信抢救台账/审查发现两卷/记忆教训索引/known_data_gaps/integrator_progress task_runs/archive_manifest）
+  outside_registry:
+    - 提交撞墙死因案例册（identity=module_id:CFG-COMMIT-DEATH-CASES-001，禁双重身份不入册）
+    - data/sla/ 源 SLA 台账（已退役，永久不授号）
+  letter_code_bindings_note: 字母册码与正典册号的对应关系散见 GOMAP 图例文本与 casebook_registry 各条 scope_zh（AP=CASEBOOK-002/SV=003/RV1·RV2=004/MEM=005/DCS=outside_registry），无结构化映射键
+  sop: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md（挂图SOP §3/§4）
+maps:
+  - map: trading_decision_map
+    file: config/trading_decision_map.yaml
+    q1_has_field: false
+    q2_shape: 无（casebook/case_book/病案/病历/ledger_refs 全零；头注 INV-1 指针族仅 strategy/factor/data/module 四层，无病历族）
+    q3_mounts: {nodes_mounted: 0, pointers: 0, identifiers: []}
+    q4_generator:
+      generator: 无（真源=本册 SSOT 手维；全仓无 generate_trading_decision_map.py）
+      preservation: 不适用（手工挂载即可存活）
+      validator: scripts/governance/d5_architecture/generators/check_decision_map.py（校验器面未查 casebooks）
+    q5_gap_form: 无
+    classification: 无字段
+  - map: data_supply_chain_map
+    file: config/data_supply_chain_map.yaml
+    q1_has_field: true
+    q2_shape: 节点级 casebooks 列表·指针语法（册码#章码）；43 键中 8 非空 + 35 空列表占位；无册级图例键、无 casebooks_note_zh
+    q3_mounts:
+      nodes_mounted: 8
+      pointers: 8
+      identifiers: [CASEBOOK-001, CASEBOOK-001#outage]
+      identifier_note: 全挂正典册号 CASEBOOK-001（数据对账案卷库 data/failures/，registry#1）；另一发现=casebook_registry 内 CASEBOOK-006/007/008 三册 scope_zh 记有「图12 casebooks 挂载」建议/授号（DSC-14/16/19/20），图面 casebooks 实挂 0 次（grep 计数 0，如实记档）
+    q4_generator:
+      generator: scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py
+      casebook_mentions: 0
+      preservation: 非机生——落盘后 existing-wins 键级保留手改（头注 37-38 行+merge 合成 3246 行），层存活依赖 existing-wins；validator BLOOD_FIELDS 认字段（validate_data_supply_chain_map.py:207-208,552,570）
+      dry_run_evidence: '--dry-run 实跑 counts.nodes=43 复现、registry_drift: none'
+    q5_gap_form: 部分（字段在、指针语法同构；册号编码异构+图例缺位+非机生）
+    classification: 异构编码
+  - map: strategy_card_lifecycle_map
+    file: config/strategy_card_lifecycle_map.yaml
+    q1_has_field: false
+    q2_shape: 无
+    q3_mounts: {nodes_mounted: 0, pointers: 0, identifiers: []}
+    q4_generator:
+      generator: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+      casebook_mentions: 0
+      preservation: 全量重建+头注「本文件禁手改后不回生成（counts 一致性判红）」→ 若挂载必须先改生成器，手改必被抹
+      validator: validate_strategy_card_lifecycle_map.py 0 casebook 提及
+    q5_gap_form: 无
+    classification: 无字段
+  - map: strategy_production_map
+    file: config/strategy_production_map.yaml
+    q1_has_field: true
+    q2_shape: mechanism 节点级 casebooks 列表·自由名台账（值=中文名，无 # 章码分隔、无册号）；324 键中 26 非空 + 298 空列表占位；无册级图例键
+    q3_mounts:
+      nodes_mounted: 26
+      pointers: 26
+      identifiers: [联赛档案, 试验台账红证, 模拟盘病历族, 衰减死因册, 复现演练档案, 进货台账, 模型版本注册表, 全域事实台账, 预审判定台账, 翻译件台账, 回测run档案图书馆, N试次账本, 过拟合裁定档案, 因子研究案例库, 考试成绩+判定书台账]
+      identifier_note: 14 种自由名（含×4/×3/×2 重复），零一对应 casebook_registry 正典册号
+    q4_generator:
+      generator: 无（全 scripts 无 writer，仅 consumer/validator 引用；手维）
+      preservation: 手维即存活；validator validate_strategy_production_map.py v0.3 MECH_FLESH_FIELDS=[casebooks,trigger_facts,consumers] 三血肉字段强制在场可空占位（缺键=违规，头注 33-35 行+83 行）→ validator 守护在岗
+      dry_run_evidence: 无生成器不可实跑
+    q5_gap_form: 异构（自由名编码非指针制、无图例、无册号绑定）
+    classification: 异构编码
+  - map: trading_day_cycle_map
+    file: config/trading_day_cycle_map.yaml
+    q1_has_field: true
+    q2_shape: 节点级 casebooks 列表·册码#章码指针（含 low=跨域类比括注）；51 键中 25 非空 + 26 空列表占位；无册级图例键（册码说明散在头注散文与生成器内联常量）
+    q3_mounts:
+      nodes_mounted: 25
+      pointers: 35
+      identifiers: [MEM-F13, AP, SV, RV2, DCS]
+      distribution: {MEM-F13: 28, AP: 2, SV: 2, RV2: 2, DCS: 1}
+      identifier_note: MEM-F13=图13特设 9 主题簇（件2 12_casebook_matrix_d13.yaml:49 chapter_system，与 F4 的 10 交链簇不混用）；宿主册=CASEBOOK-005 记忆教训索引
+      truth_source_file: docs/_working/map_build/fig13_daycycle/12_casebook_matrix_d13.yaml
+    q4_generator:
+      generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+      casebook_mentions: 6
+      preservation: '机生——CASEBOOKS_ADOPTED 采纳矩阵内联（:381 注释+:2838 emission+"casebooks": [] if is_gap else...）；counts.nodes_with_casebooks(:3110)；重跑幂等'
+      dry_run_evidence: --dry-run 实跑 nodes=51 复现；validator validate_trading_day_cycle_map.py 1 casebook 提及
+    q5_gap_form: 达标偏部分（指针制+机生+完备性与样板同构；缺册级结构化图例键 casebooks_legend_zh）
+    classification: 已达标
+  - map: construction_workflow_map
+    file: config/construction_workflow_map.yaml
+    q1_has_field: false
+    q2_shape: 无
+    q3_mounts: {nodes_mounted: 0, pointers: 0, identifiers: []}
+    q4_generator:
+      generator: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+      casebook_mentions: 0
+      preservation: 全量重建+头注「本文件禁手改后不回生成」；真源=政策 MD 内嵌机读锚块（anchor_source=proposal）→ 若挂载必须先改生成器
+      validator: validate_construction_steps.py 0 casebook 提及
+    q5_gap_form: 无
+    classification: 无字段
+  - map: macro_indicator_series_map
+    file: config/macro_indicator_series_map.yaml
+    q1_has_field: false
+    q2_shape: 无
+    q3_mounts: {nodes_mounted: 0, pointers: 0, identifiers: []}
+    q4_generator:
+      generator: 无（手维；全 scripts 无 writer，唯一读者=src/zephyr/regime/features/macro_regime_sensor.py）
+      preservation: 形态注记——本册实为「宏观指标 ID↔数据序列码」翻译映射表（头注自述），无 nodes/pipeline 流程结构，病历挂载语义是否适用=形态级问题，判读归 chief
+      validator: 无专属 validator
+    q5_gap_form: 无（形态不适用）
+    classification: 无字段
+  - map: dev_delivery_map
+    file: config/dev_delivery_map.yaml
+    q1_has_field: true
+    q2_shape: 三层齐备——册级 casebooks_index（law_zh 挂载铁律+machine_input 真源件+books 六册码清单+gap_unmounted_note_zh 缺口注记）+ 节点级 casebooks 指针列表（28 非空+2 null=D11-G01/G02 骨架外缺口件显式不挂）+ counts.casebooks_books=6/nodes_with_casebooks=28 计数字段
+    q3_mounts:
+      nodes_mounted: 28
+      pointers: 81
+      identifiers: [AP, DCS, MEM, RV1, RV2, SV]
+      distribution: {MEM: 28, AP: 19, DCS: 14, RV1: 8, SV: 8, RV2: 4}
+      truth_source_file: docs/_working/commitmap_cure/f5_casebooks_mount.yaml（f4_casebook_mount_plan.md §1 矩阵逐字，INV-1 引用不复制）
+    q4_generator:
+      generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
+      casebook_mentions: 17
+      preservation: 机生——读 _F5_CASEBOOKS 挂载册→casebooks_by_node+books 推导（:1401,:1470-1480）；validator validate_dev_delivery_map.py 12 casebook 提及；重跑幂等
+      dry_run_evidence: --dry-run 实跑 blood=gates_mounted:191 labels:12 casebooks_books:6 复现
+    q5_gap_form: 达标（图例+指针+机生+计数+缺口登记五件齐；图例键名 casebooks_index≠样板 casebooks_legend_zh=键名级异构注记）
+    classification: 已达标
+summary:
+  classification_counts: {已达标: 2, 异构编码: 2, 无字段: 4}
+  达标: [dev_delivery_map, trading_day_cycle_map]
+  异构编码:
+    - data_supply_chain_map（字段名同=casebooks、语法同=册码#章码，但编码用 registry 正典册号非字母册码，且无册级图例、非机生仅 existing-wins 存活）
+    - strategy_production_map（字段名同=casebooks，编码=自由名台账，无 # 章码、无册号、无图例；手维但 validator 强制在场）
+  无字段: [trading_decision_map, strategy_card_lifecycle_map, construction_workflow_map, macro_indicator_series_map]
+  heterogeneous_coding_list:
+    - {map: dev_delivery_map, fields: casebooks(节点级)+casebooks_index(册级图例)+counts 计数, coding: 册码#章码·字母册码族 AP/DCS/MEM/RV1/RV2/SV}
+    - {map: trading_day_cycle_map, fields: casebooks(节点级), coding: 册码#章码·MEM-F13 图13特设簇+字母册码混用}
+    - {map: data_supply_chain_map, fields: casebooks(节点级), coding: 册码#章码·registry 正典册号 CASEBOOK-001}
+    - {map: strategy_production_map, fields: casebooks(mechanism 节点级), coding: 自由名台账·无章码无册号}
+  cross_cutting_facts:
+    - 八图无一持有样板键名 casebooks_legend_zh；唯 dev_delivery_map 以异名键 casebooks_index 承担同功能（册级图例）
+    - 样板缺口登记键 casebooks_note_zh 四本有字段图全未使用（DD 以 casebooks_index.gap_unmounted_note_zh 异名承担）
+    - casebook_registry 八正典册中仅 CASEBOOK-001/002/003/004/005 有图面挂载；006/007/008 零图面实挂（registry scope_zh 却记有图12挂载建议/授号——建议面与实挂面差=事实留证）
+    - 字母册码→正典册号对应关系全仓无结构化映射键（散在 GOMAP 图例散文与 registry scope_zh）
+    - 生成器保留性三态：机生（DD/TDC）＞existing-wins 手改存活（DSC）＞全量重建必抹（SCL/CWM，挂载须先改生成器）；TDM/SP/MIS 无生成器手维
+    - capability_lookup 反查 casebooks/map_census 及 sanity 词全零命中（审计已留痕，机制在岗但能力卡族缺位——如实记档）
+one_line_conclusion: 八图四态——dev_delivery/trading_day_cycle 两图已达标（指针制+机生幂等），data_supply_chain/strategy_production 两图字段在但编码异构（正典册号 vs 自由名台账），trading_decision/strategy_card_lifecycle/construction_workflow/macro_indicator_series 四图零字段（后两者挂载须先改全量重建型生成器，macro 册形态本身非流程图），且全八图无一使用样板册级图例键名 casebooks_legend_zh。
