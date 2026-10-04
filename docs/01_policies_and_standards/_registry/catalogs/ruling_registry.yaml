@@ -6990,3 +6990,32 @@ entries:
   related_arch: ['#ARCH-312']
   related_rulings: ['裁定#231', '裁定#261', '裁定#409', '裁定#482']
   superseded_by: null
+- ruling_id: "裁定#484"
+  title: 图9 红1 十一件呈裁批——LSG 挂 E2，其余十件判不上图（Owner"按建议办"全批）
+  date: '2026-10-04'
+  category: 治理架构
+  status: active
+  summary: |-
+    Owner 2026-10-04 对话直批"按建议办"（呈裁清单=st-map9-f4-20261004 验收件
+    docs/_working/map_census/fac9_04_acceptance.md §二红1；F4 会话拟文本号）。
+    ①MOD-LLM_SECURITY（LSG 安全网关）挂图9 E2（新节点 FAC-E2-M-007）——判据：
+    F3/F4 实测全仓 157 文件引用（AI 进货/预审/翻译/搜索必经安检门），说得出
+    "工厂的 AI 活儿全走这道门"的大白话（SOP §2 验收标准）。
+    ②其余十件判不上图（反面，真源留底座册/图12，不删任何实体）：
+    MOD-INF-016 Shared+Core／MOD-INF-034 模型画像器／MOD-INF-015 全系统遥测／
+    strategic_message_bus 战略消息总线／MOD-INF-OPS-ALERT-FEED 运营告警供给线／
+    research_asset_versioning 研究资产版本化／llm_agent_router LLM 路由器／
+    alt_source_health_manager 另类数据源健康管理／alt_data_catalog 另类数据目录／
+    spectral_guard Spectral Guard（⊂LSG 不重复记账）。判据=说不出"专属于策略
+    工厂"大白话的全厂横切设施不上本图。红1 清零。
+    ③随批销账：图9 车道A 挂点修正（MOD-BT-035→strategy_intake_inventory.py，
+    F1 名实挂账#2 销账；成果源=死会话 st-sC-surgery-20261003 worktree 验尸吸收，
+    接管台账 resolved 在案）。F2 名实三挂账余二（BT-201 双源考古、E1D ig_fact
+    data_ref 形态）仍 open。
+  affected_files:
+  - config/strategy_production_map.yaml
+  - docs/_working/map_census/fac9_04_census_ledger.yaml
+  - docs/_working/map_census/fac9_04_acceptance.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#409']
+  superseded_by: ''

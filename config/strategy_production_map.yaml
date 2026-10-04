@@ -1463,6 +1463,40 @@ nodes:
     trigger_facts: null  # pending-facts（F3 车道回填）
     consumers: null  # pending-facts（F3 车道回填）
 # -- E3 组（78 件）--
+  - node_id: FAC-E2-M-007
+    parent_node: FAC-E2
+    name_zh: LLM Security Gateway（AI 安检门）
+    purpose_tag: 策略不讲通不花钱
+    stage: E2
+    node_type: mechanism
+    module_ref: MOD-LLM_SECURITY
+    build_status: built
+    casebooks: []
+    trigger_facts:
+      observed: 156
+      metric: "全仓引用文件数（AI 进货/预审/翻译/搜索必经安检门，F4 裁定#484 补扫）"
+      source: "rg llm_security|LSGSecurityGateway|llm_defense（src/scripts/tests/config，剔地图指针）"
+    consumers:  # 共156；截 top20
+    - "scripts/_archive/governance/create_depgraph_task_cards.py"
+    - "scripts/_archive/migration/migrate_security_split.py"
+    - "scripts/a2a_full_verification.py"
+    - "scripts/construction/_e2e_deep.py"
+    - "scripts/construction/demo_e2e_pipeline.py"
+    - "scripts/governance/_archive/one_off/create_alignment_tasks.py"
+    - "scripts/governance/_archive/one_off/fix_n06_scope.py"
+    - "scripts/governance/d11_compliance/verify_key_imports.py"
+    - "scripts/governance/d6_security/detect_shell_dangerous.py"
+    - "scripts/governance/d7_code/detect_direct_llm_calls.py"
+    - "scripts/governance/d7_code/detect_private_key.py"
+    - "scripts/governance/migrate_sqlite_to_pg/07_fix_5_violations.sql"
+    - "scripts/governance/oneoff/_fix_remaining_en.py"
+    - "scripts/governance/oneoff/data_domain_audit_report_db.md"
+    - "scripts/governance/repair/apply_verification_results.py"
+    - "scripts/governance/reports/findings-full-20260826.jsonl"
+    - "scripts/setup_dev_env.py"
+    - "src/zephyr/AGENTS.md"
+    - "src/zephyr/__init__.py"
+    - "src/zephyr/ai_layer/cleaning/washer.py"
   - node_id: FAC-E3-M-001
     parent_node: FAC-E3
     name_zh: C4 翻译件族（35 条验收集）

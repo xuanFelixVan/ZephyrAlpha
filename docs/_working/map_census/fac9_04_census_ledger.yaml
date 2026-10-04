@@ -13,56 +13,56 @@ counts:
   consumers_measured_zero: 83
   casebooks_mounted_nodes: 26
   casebooks_mounted_books: 15
-  red1_orphans: 11
+  red1_orphans: 0  # 裁定#484 已裁：1 挂 E2 + 10 判反面（原 11 件清单见下，disposition 已更新）
   red2_copying: 0
   red3_unmounted_casebooks: 0
-  validator: "PASS exit=0 nodes=339 edges=16 (3 WARN 均为主干自注待定旧项)"
+  validator: "PASS exit=0 nodes=340 edges=16 (3 WARN 均为主干自注待定旧项；+FAC-E2-M-007 LSG)"
 red1_orphans:
-  # 全部=F2 回执申报的「呈总筹 11 件」——非漏挂，是挂否待裁；处置=Owner/总筹裁定后或挂或改判反面
+  # 裁定#484（2026-10-04 Owner"按建议办"）：MOD-LLM_SECURITY 挂 E2（FAC-E2-M-007），其余十件判不上图（反面，真源留底座册/图12）
   - module_id: MOD-INF-016
     verdict: "3"
     name_zh: "Shared+Core 跨层共享基建（280 py）"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: MOD-LLM_SECURITY
     verdict: "3"
     name_zh: "LLM Security Gateway（LSG）——F3 补扫 97 文件引用，判据3 高置信"
-    disposition: 呈总筹
+    disposition: "已挂 E2（FAC-E2-M-007，裁定#484）"
   - module_id: MOD-INF-034
     verdict: "3"
     name_zh: "模型画像器"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: MOD-INF-015
     verdict: "3"
     name_zh: "全系统遥测"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: "dir:_domain_infrastructure_operations/strategic_message_bus"
     verdict: "3"
     name_zh: "战略消息总线"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: MOD-INF-OPS-ALERT-FEED
     verdict: "3"
     name_zh: "运营告警供给线"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: "dir:_domain_machine_learning_train/research_asset_versioning"
     verdict: "3"
     name_zh: "研究资产版本化"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: "dir:_domain_intelligence/llm_agent_router"
     verdict: "3"
     name_zh: "LLM 路由器"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: "dir:_domain_alt_data/alt_source_health_manager"
     verdict: "3"
     name_zh: "另类数据源健康管理"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: "dir:_domain_alt_data/alt_data_catalog"
     verdict: "3"
     name_zh: "另类数据目录"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
   - module_id: "dir:_domain_security_llm/spectral_guard"
     verdict: "3"
     name_zh: "Spectral Guard"
-    disposition: 呈总筹
+    disposition: "反面（不上图，裁定#484；真源留底座册/图12）"
 red2_copying:
   method: "机制节点全部标量字段 >200 字符扫描 + 跨节点重复长文本(前80字符指纹)对碰"
   long_text_nodes: 0
