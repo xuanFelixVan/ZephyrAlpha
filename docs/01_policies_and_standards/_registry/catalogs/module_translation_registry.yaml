@@ -67345,3 +67345,19 @@ entries:
   plain_zh: 数据域的板块快照收集器：定期采集板块行情快照并落盘，供复盘和分析使用。
   domain_id: D_DATA
   responsibility_layer: business
+- module_path: scripts/governance/card_review_automation.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "任务卡两轮预审自动化"
+  name_en: "Card Review Automation"
+  desc_zh: "任务卡工单制接口②：自动跑两轮 batch_review 并出具 verify 就绪度报告，恒不代盖章"
+  desc_en: ""
+  plain_zh: "给施工车道用的收尾工具：对一张任务卡自动连续做两轮七维度预审，第一轮有问题就停，最后告诉你这张卡能不能进入核销（verify）。它只出报告不代你盖章，盖章要人工或车道确认后自己调 verify，防止机器自己给自己验收。"
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/generators/generate_panorama_master_map.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "全景总图生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "读全景总图真源yaml，校验节点集与全景图目录双闭、每图文件实存、边端点闭合，全绿才渲染出mermaid总图（图的索引）。新图先登记图目录再进总图，双跑逐字节幂等。"
+  responsibility_layer: governance
