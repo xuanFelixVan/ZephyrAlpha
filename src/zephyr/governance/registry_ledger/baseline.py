@@ -16,10 +16,14 @@
 # [CONSUMERS] scripts/governance/registry_migration/wave0_phase0_gate.py (CLI);
 #   belt daemon dual-track 探针（W-M1 Phase 1 双轨对账通道）
 # [INVARIANTS] 身份键唯一真源=entry_composite_key（与门禁/合并器同源，永不复制逻辑）；
-#   条目切分唯一真源=_split_registry_entries（yaml.compose 行号法）；导入幂等
-#   （ON CONFLICT DO NOTHING，重跑零新事件）；双轨对账=insert-only（YAML→PG 补登记，
-#   同键异内容/PG 独有条目只记 reconcile_drift 事件绝不覆写——Phase 1 期 YAML 仍是
-#   commit 真源，PG wins 自愈归 cutover 后，届时由投影生成器接管）
+#   身份声明制（册头 unique_key 声明优先，无声明退位置首标量）=st-sI-identity-20261004
+#   手术1（f10 §6.1）；条目切分唯一真源=_split_registry_entries（yaml.compose 行号法）；
+#   导入幂等（ON CONFLICT DO NOTHING，重跑零新事件）；双轨对账=insert-only
+#   （YAML→PG 补登记，同键异内容/PG 独有条目只记 reconcile_drift 事件绝不覆写——
+#   Phase 1 期 YAML 仍是 commit 真源，PG wins 自愈归 cutover 后，届时由投影生成器接管）；
+#   同内容 rekey 迁移绝不插第二行（B3 重复行放大器封死）
+# [MODIFY-GUARD] 新建 2026-09-24 st-wm1-wave0-20260924（W-M1 波0⑤⑥施工件）；
+#   2026-10-04 st-sI-identity-20261004 身份声明制+bundle 身份置首+写前冒烟+rekey（F10 治本）
 # [ERROR_CONTRACT] 扫描/DB 异常原样上抛由 CLI 折入报告；单条目身份不可判=passthrough
 #   计数不入条目表（W2 合并器同判据，防纯标量族死信）
 # [TESTS] tests/governance/test_registry_ledger_baseline.py
@@ -47,6 +51,10 @@ from pathlib import Path
 
 import psycopg2
 
+# 身份声明制真源委托（st-sI-identity-20261004 手术1）：声明解析+逐族适用性
+# 真源=commit_queue_landing（QMine A1 件③），gate 侧已封装入口——账本/门禁/合并器
+# 三方同一声明口径，永不复制逻辑
+from zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate import _declared_fields_by_family
 from zephyr.governance.registry_ledger.api import (
     _open_default_conn as _open_writer_conn,
 )
@@ -71,6 +79,21 @@ _SQL_REACTIVATE_UPDATE = (
     "UPDATE {table} "
     "SET status='active', payload=%s, payload_sha256=%s, version=%s, "
     "updated_by=%s, updated_at=now() WHERE entry_pk=%s"
+)
+# [SQL] 身份声明制批（st-sI-identity-20261004，F10 治本）：SQL 常量集中化（NOQA 密度治理）
+_SQL_CATALOG_UNIQUE_KEY_FIELDS = "SELECT unique_key_fields FROM {table} WHERE registry_id=%s"
+_SQL_CATALOG_PHYS_PATH = "SELECT physical_path FROM {table} WHERE registry_id=%s"
+_SQL_CATALOG_DECL_BACKFILL = (
+    "UPDATE {table} SET unique_key_fields=%s WHERE registry_id=%s AND unique_key_fields IS DISTINCT FROM %s::jsonb"
+)
+_SQL_SNAPSHOT_LATEST_BUNDLE = (
+    "SELECT snapshot_version, content_sha256, bundle FROM {table} "
+    "WHERE registry_id=%s ORDER BY snapshot_version DESC LIMIT 1"
+)
+_SQL_ENTRY_KEY_EXISTS = "SELECT 1 FROM {table} WHERE registry_id=%s AND family_key=%s AND entry_key=%s"
+_SQL_ENTRY_REKEY = (
+    "UPDATE {table} SET entry_key=%s, updated_by=%s, updated_at=now() "
+    "WHERE registry_id=%s AND family_key=%s AND entry_key=%s AND version=%s"
 )
 PUBLISH_REASON = "snapshot publish after registry landing (W-M1)"
 
@@ -158,17 +181,22 @@ def load_roor_index(repo_root: Path) -> dict[str, dict]:
     return index
 
 
-def _family_statistics(families: dict) -> tuple[dict, int, list]:
-    """族统计：每族 dict 条目数/passthrough 数/身份清单（供扫描报告与主族判定）。"""
+def _family_statistics(families: dict, declared: dict[object, tuple[str, ...]] | None = None) -> tuple[dict, int, list]:
+    """族统计：每族 dict 条目数/passthrough 数/身份清单（供扫描报告与主族判定）。
+
+    declared=身份声明计划（{族键: 声明字段元组}，None=位置口径）——身份键串按册内
+    unique_key 声明推导（st-sI-identity-20261004 手术1：身份与字段位置解耦）。
+    """
     family_stats: dict = {}
     total_dict_entries = 0
     all_identities: list = []
     for fam_key, fam in families.items():
+        fields = (declared or {}).get(fam_key)
         dict_entries = 0
         passthrough = 0
         identities: list = []
         for blk in fam.blocks:
-            key = entry_composite_key(blk.data) if isinstance(blk.data, dict) else None
+            key = entry_composite_key(blk.data, fields) if isinstance(blk.data, dict) else None
             if key is None:
                 passthrough += 1
             else:
@@ -205,6 +233,9 @@ def scan_registry_file(repo_root: Path, physical_path: str) -> dict:
     header = (
         {k: v for k, v in (full or {}).items() if not isinstance(v, (list, dict))} if isinstance(full, dict) else {}
     )
+    # unique_key 声明本体是 list/dict 形态——头部标量过滤会漏收，显式并回（手术1b）
+    if isinstance(full, dict) and "unique_key" in full:
+        header["unique_key"] = full["unique_key"]
     families, err = _split_registry_entries(text)
     if err:
         raise ValueError(f"{physical_path}: {err}")
@@ -215,7 +246,9 @@ def scan_registry_file(repo_root: Path, physical_path: str) -> dict:
     if not registry_id:
         raise ValueError(f"{physical_path}: registry_id unresolved (YAML header ∪ ROOR 均无)")
 
-    family_stats, total_dict_entries, _ = _family_statistics(families)
+    # 身份声明制（st-sI-identity-20261004）：册头 unique_key 声明 → 逐族适用计划
+    declared = _declared_fields_by_family(text, full)
+    family_stats, total_dict_entries, _ = _family_statistics(families, declared)
     primary = max(
         ((k, v) for k, v in family_stats.items() if v["entries"] > 0),
         key=lambda kv: kv[1]["entries"],
@@ -224,29 +257,53 @@ def scan_registry_file(repo_root: Path, physical_path: str) -> dict:
     return {
         "registry_id": registry_id,
         "physical_path": physical_path,
-        "header": {k: header[k] for k in ("schema_version", "module_id", "status", "version", "date") if k in header},
+        # unique_key 进 header 面（手术1b：原头部键白名单漏收 → catalog 种子恒 None，
+        # f10 §6.1 实证盲区）；声明本体（list/dict）保留原形态供种子落库
+        "header": {
+            k: header[k]
+            for k in ("schema_version", "module_id", "status", "version", "date", "unique_key")
+            if k in header
+        },
         "maintenance": roor_row.get("maintenance", "manual"),
         "family_stats": family_stats,
         "primary_family": primary[0],
         "extra_families": {k: v["entries"] + v["passthrough"] for k, v in family_stats.items() if k != primary[0]},
         "identity_mode": _identity_mode(families),
+        "declared_identity_families": sorted(str(k) for k in declared),
         "entries_total": total_dict_entries,
         "passthrough_total": sum(v["passthrough"] for v in family_stats.values()),
     }
 
 
-def _iter_scan_entries(repo_root: Path, physical_path: str):
-    """产出 (family_key, entry_key, payload)；身份不可判的条目跳过（passthrough）。"""
+def _scan_declared_plan(repo_root: Path, physical_path: str) -> dict[object, tuple[str, ...]]:
+    """盘面册头 unique_key 声明计划（零 DB 依赖；读失败=空计划退位置口径）。"""
+    import yaml  # noqa: PLC0415
+
+    try:
+        text = (repo_root / physical_path).read_text(encoding="utf-8")
+        return _declared_fields_by_family(text, yaml.safe_load(text))
+    except Exception:  # noqa: BLE001 — 声明面不可读=无声明，fail-open 退现状
+        return {}
+
+
+def _iter_scan_entries(repo_root: Path, physical_path: str, declared: dict[object, tuple[str, ...]] | None = None):
+    """产出 (family_key, entry_key, payload)；身份不可判的条目跳过（passthrough）。
+
+    declared=身份声明计划（None=现场自解析盘面声明；{} 显式空=位置口径）。
+    """
     from scripts.governance.commit_queue_landing import _split_registry_entries  # noqa: PLC0415
 
     text = (repo_root / physical_path).read_text(encoding="utf-8")
+    if declared is None:
+        declared = _scan_declared_plan(repo_root, physical_path)
     families, err = _split_registry_entries(text)
     if err:
         raise ValueError(f"{physical_path}: {err}")
     for fam_key, fam in families.items():
+        fields = declared.get(fam_key)
         for blk in fam.blocks:
             data = blk.data
-            key = entry_composite_key(data) if isinstance(data, dict) else None
+            key = entry_composite_key(data, fields) if isinstance(data, dict) else None
             if key is None:
                 continue
             yield (fam_key or "(root)", key, data)
@@ -256,7 +313,13 @@ def _iter_scan_entries(repo_root: Path, physical_path: str):
 
 
 def _seed_catalog(cur: object, scan: dict, *, schema: str = SCHEMA_NAME) -> bool:
-    """catalog 种子（INSERT ON CONFLICT DO NOTHING）；返回是否新插。"""
+    """catalog 种子（INSERT ON CONFLICT DO NOTHING）；返回是否新插。
+
+    手术1b（st-sI-identity-20261004）：原头部键白名单漏收 unique_key → 种子恒 None
+    （f10 §6.1 实证盲区）。现声明随扫描落库；既有行声明列空缺时回填（IS DISTINCT
+    FROM 幂等，重跑零抖动）——api/publish 消费面由此取声明口径。
+    """
+    unique_key_decl = scan["header"].get("unique_key")
     cur.execute(
         f"INSERT INTO {_t('registry_catalog', schema)} "  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
         "(registry_id, physical_path, family_key, extra_families, identity_mode, "
@@ -269,12 +332,20 @@ def _seed_catalog(cur: object, scan: dict, *, schema: str = SCHEMA_NAME) -> bool
             scan["primary_family"],
             json.dumps(scan["extra_families"]),
             scan["identity_mode"],
-            json.dumps(scan["header"].get("unique_key")) if scan["header"].get("unique_key") else None,
+            json.dumps(unique_key_decl, ensure_ascii=False) if unique_key_decl is not None else None,
             scan["maintenance"],
             json.dumps(scan["header"].get("entry_schema")) if scan["header"].get("entry_schema") else None,
         ),
     )
-    return cur.fetchone() is not None
+    newly_seeded = cur.fetchone() is not None
+    if not newly_seeded and unique_key_decl is not None:
+        decl_json = json.dumps(unique_key_decl, ensure_ascii=False)
+        # jsonb 语义等值比较（::text 会因 jsonb 键序规范化恒不等 → 每跑必写，非幂等）
+        cur.execute(
+            _SQL_CATALOG_DECL_BACKFILL.format(table=_t("registry_catalog", schema)),
+            (decl_json, scan["registry_id"], decl_json),
+        )
+    return newly_seeded
 
 
 def import_baseline(
@@ -409,6 +480,81 @@ def _projection_context_from_disk(
     return header_lines, trailing, ledger_revision
 
 
+def _declared_plan_from_conn(registry_id: str, schema: str, c: object) -> dict[object, tuple[str, ...]]:
+    """catalog 声明列 → 逐族计划（盘面声明缺位时的回退面；空/退化=空计划）。"""
+    try:
+        with c.cursor() as cur:
+            cur.execute(
+                _SQL_CATALOG_UNIQUE_KEY_FIELDS.format(table=_t("registry_catalog", schema)),
+                (registry_id,),
+            )
+            row = cur.fetchone()
+    except Exception:  # noqa: BLE001 — catalog 面不可读=空计划（fail-open 退位置口径）
+        return {}
+    if not row or not row[0]:
+        return {}
+    raw = row[0]
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except Exception:  # noqa: BLE001
+            return {}
+    plan: dict[object, tuple[str, ...]] = {}
+    if isinstance(raw, list):
+        if raw and all(isinstance(f, str) and f for f in raw):
+            plan["*"] = tuple(raw)
+    elif isinstance(raw, dict):
+        for fam, fields in raw.items():
+            if isinstance(fields, list) and fields and all(isinstance(f, str) and f for f in fields):
+                plan[str(fam)] = tuple(fields)
+    return plan
+
+
+def _identity_first_pairs(payload: dict, fields: tuple[str, ...] | None) -> list[list]:
+    """payload → 有序 [key,value] 对数组，声明身份字段置首（手术2：bundle 保全字段原序）。
+
+    PG jsonb 按（键长,字节序）重排键序——render 照 bundle 序发射后重扫"位置首字段"
+    换人 → 身份键串漂移（f10 §3.1 键序链主犯）。身份字段置首使 render 后重扫（含
+    位置口径消费面）恒取同一首字段；其余字段维持 payload 原序（渲染=盘面形最大化）。
+    无声明=原序直通（行为零变化）。
+    """
+    pairs = [[str(k), v] for k, v in payload.items()]
+    if not fields:
+        return pairs
+    field_set = set(fields)
+    head = [[f, payload[f]] for f in fields if f in payload]
+    rest = [pair for pair in pairs if pair[0] not in field_set]
+    return head + rest
+
+
+def _bundle_render_skeleton(bundle: object) -> tuple | None:
+    """bundle → 渲染骨架指纹（声明计划/头部/尾部/条目键序；None=旧形态/不可比）。
+
+    手术2 noop 幂等扩展用：manifest sha 序不敏感（payload 键排序哈希），键序/声明
+    前进不可见——骨架指纹补位（值不比，只比影响渲染形态与身份口径的结构面）。
+    """
+    if isinstance(bundle, str):
+        try:
+            bundle = json.loads(bundle)
+        except Exception:  # noqa: BLE001 — 不可解析=不可比
+            return None
+    if not isinstance(bundle, dict) or "sections" not in bundle:
+        return None
+    try:
+        key_order = tuple(
+            (str(sec["root_key"]), tuple(tuple(str(k) for k, _v in entry) for entry in sec["entries"]))
+            for sec in bundle["sections"]
+        )
+    except Exception:  # noqa: BLE001 — 结构异常=不可比
+        return None
+    return (
+        json.dumps(bundle.get("unique_key_fields") or {}, sort_keys=True, ensure_ascii=False),
+        tuple(str(line) for line in bundle.get("header_lines") or []),
+        tuple((str(k), repr(v)) for k, v in bundle.get("trailing_scalars") or []),
+        key_order,
+    )
+
+
 def publish_snapshot(
     registry_id: str,
     *,
@@ -422,10 +568,14 @@ def publish_snapshot(
 
     bundle 契约=读端 snapshot_from_bundle 结构形态（WM1_24h_evaluation §3.1 统一，
     2026-09-30）：{registry_id, header_lines[], sections[{root_key,entries[[k,v]...]}],
-    trailing_scalars[[k,v]...], ledger_revision, snapshot_version, content_sha256}——
-    条目=有序 [key,value] 对数组（jsonb 数组保序+重复键可表达）；头部/尾部 verbatim
-    由 _projection_context_from_disk 从盘上 YAML 提取（repo_root 提供时）。
-    content_sha 仍按 manifest 哈希（noop 幂等语义不变）。
+    trailing_scalars[[k,v]...], ledger_revision, snapshot_version, content_sha256,
+    unique_key_fields{family:[field]}}——条目=有序 [key,value] 对数组（jsonb 数组
+    保序+重复键可表达）；头部/尾部 verbatim 由 _projection_context_from_disk 从盘上
+    YAML 提取（repo_root 提供时）。content_sha 仍按 manifest 哈希（noop 幂等语义不变）。
+
+    手术2（st-sI-identity-20261004，f10 §3.1 键序链治本）：条目对构建时声明身份字段
+    置首——PG jsonb（键长,字节序）重排不再抢占位置首字段，render 后重扫恒同键；
+    unique_key_fields=已解析逐族声明计划随 bundle 固化（读端零再解析）。
     """
     owned = conn is None
     c = conn or _open_writer_conn()
@@ -443,27 +593,40 @@ def publish_snapshot(
                 json.dumps(manifest, sort_keys=True, ensure_ascii=False).encode("utf-8")
             ).hexdigest()
             cur.execute(
-                f"SELECT snapshot_version, content_sha256 FROM {_t('registry_snapshot', schema)} "  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
-                "WHERE registry_id=%s ORDER BY snapshot_version DESC LIMIT 1",
+                _SQL_SNAPSHOT_LATEST_BUNDLE.format(table=_t("registry_snapshot", schema)),
                 (registry_id,),
             )
             latest = cur.fetchone()
-            if latest and latest[1] == content_sha:
-                c.commit()
-                return {
-                    "registry_id": registry_id,
-                    "noop": True,
-                    "snapshot_version": int(latest[0]),
-                    "entry_count": len(rows),
-                }
+            # noop 幂等扩展（手术2）：manifest 同 sha 且**渲染骨架**（声明计划/头部/
+            # 尾部/条目键序）不变才 noop——条目内容不变而声明或键序前进（身份声明制
+            # 落地窗口）必须出新版，否则旧 bundle 永远缺 unique_key_fields/身份置序，
+            # render 侧 PG-wins 会把盘面声明私改回滚（v15→v16 窗口实证推演）。
             parent = int(latest[0]) if latest else None
             new_version = (int(latest[0]) + 1) if latest else 1
+            # 身份声明计划（手术1/2，st-sI-identity-20261004）：盘面册头声明优先，
+            # catalog 声明列回退；计划随 bundle 落显式键（读端零再解析）
+            declared: dict[object, tuple[str, ...]] = {}
+            if repo_root is not None:
+                try:
+                    with c.cursor() as dcur:  # 独立游标（禁遮蔽外层 cur：with 退出关闭会废掉外层名）
+                        dcur.execute(
+                            _SQL_CATALOG_PHYS_PATH.format(table=_t("registry_catalog", schema)),
+                            (registry_id,),
+                        )
+                        prow = dcur.fetchone()
+                    if prow and prow[0]:
+                        declared = _scan_declared_plan(Path(repo_root), str(prow[0]))
+                except Exception:  # noqa: BLE001 — 声明面失败=空计划（位置口径，快照仍可发布）
+                    declared = {}
+            if not declared:
+                declared = _declared_plan_from_conn(registry_id, schema, c)
             # 结构化 bundle（读端 snapshot_from_bundle 契约，WM1_24h_evaluation §3.1 统一）：
-            # 条目按 family_key 分节段，条目=有序 [key,value] 对数组（jsonb 数组保序）
+            # 条目按 family_key 分节段，条目=有序 [key, value] 对数组（jsonb 保序）；
+            # 手术2：声明身份字段置首（jsonb 键序重排不再抢占位置首字段→render 后重扫同键）
             sections: dict[str, list] = {}
             for fk, ek, payload, _sha in rows:
                 if isinstance(payload, dict):
-                    pairs = [[str(k), v] for k, v in payload.items()]
+                    pairs = _identity_first_pairs(payload, declared.get(str(fk)) or declared.get("*"))
                 else:  # 非.dict payload 保底整值一条（import 面只收 dict，防御位）
                     pairs = [[str(ek), payload]]
                 sections.setdefault(str(fk), []).append(pairs)
@@ -478,7 +641,21 @@ def publish_snapshot(
                 "ledger_revision": ledger_revision,
                 "snapshot_version": new_version,
                 "content_sha256": content_sha,
+                # 声明计划随快照固化（读端 snapshot.unique_key_fields；旧读端忽略未知键）
+                "unique_key_fields": {str(fk): list(fields) for fk, fields in declared.items()},
             }
+            if (
+                latest
+                and latest[1] == content_sha
+                and _bundle_render_skeleton(latest[2]) == _bundle_render_skeleton(bundle)
+            ):
+                c.commit()
+                return {
+                    "registry_id": registry_id,
+                    "noop": True,
+                    "snapshot_version": int(latest[0]),
+                    "entry_count": len(rows),
+                }
             cur.execute(
                 f"INSERT INTO {_t('registry_snapshot', schema)} "  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
                 "(registry_id, snapshot_version, parent_snapshot_version, manifest, bundle, "
@@ -535,6 +712,66 @@ def publish_snapshot(
 # ── 双轨对账（Phase 1：YAML→PG insert-only + drift 事件） ───────────────────────
 
 
+SMOKE_SAMPLE_SIZE = 50
+
+
+def _identity_smoke(repo_root: Path, physical_path: str, declared: dict[object, tuple[str, ...]]) -> dict:
+    """写前身份稳定性冒烟（手术4，st-sI-identity-20261004；f10 §6.5）。
+
+    盘面抽样 ≤50 条 render-in-memory → 重扫比对身份键串 + 声明族撞并计数——
+    不稳定只告警不阻断（报告行 identity_smoke_*）；零 DB 依赖零写盘。
+    B3 病灶形态（jsonb 键序重排→位置首字段换人→身份坍缩）在此现形。
+    """
+    from zephyr.governance.registry_projection.model import ProjectionSnapshot, Section, snapshot_from_yaml
+    from zephyr.governance.registry_projection.renderer import render
+
+    report = {"identity_smoke_sampled": 0, "identity_smoke_unstable": 0, "identity_smoke_examples": []}
+    try:
+        text = (repo_root / physical_path).read_text(encoding="utf-8")
+        snap = snapshot_from_yaml(text, registry_id="smoke", physical_path=physical_path)
+        sampled: list[Section] = []
+        for sec in snap.sections:
+            if len(sec.entries) <= SMOKE_SAMPLE_SIZE:
+                sampled.append(sec)
+                continue
+            step = len(sec.entries) / SMOKE_SAMPLE_SIZE  # 确定性等距抽样（无随机）
+            picked = [sec.entries[int(i * step)] for i in range(SMOKE_SAMPLE_SIZE)]
+            sampled.append(Section(root_key=sec.root_key, entries=picked))
+        mini = ProjectionSnapshot(
+            registry_id="smoke", physical_path=physical_path, header_lines=[], sections=sampled, trailing_scalars=[]
+        )
+        from scripts.governance.commit_queue_landing import _split_registry_entries  # noqa: PLC0415
+
+        rescan, err = _split_registry_entries(render(mini))
+        if err:
+            report["identity_smoke_unstable"] = -1
+            report["identity_smoke_examples"] = [f"render rescan error: {err[:120]}"]
+            return report
+        for sec in sampled:
+            fields = declared.get(sec.root_key) or declared.get("*")
+            rescan_ids = [
+                entry_composite_key(bdata, fields) if isinstance((bdata := blk.data), dict) else None
+                for blk in (rescan.get(sec.root_key).blocks if rescan.get(sec.root_key) else [])
+            ]
+            for idx, entry in enumerate(sec.entries):
+                report["identity_smoke_sampled"] += 1
+                expected = entry_composite_key(dict(entry), fields)
+                got = rescan_ids[idx] if idx < len(rescan_ids) else None
+                problems = []
+                if expected != got:
+                    problems.append(f"drift {expected!r}->{got!r}")
+                if fields and expected is not None and rescan_ids.count(expected) > 1:
+                    problems.append(f"collapse {expected!r}")
+                if problems:
+                    report["identity_smoke_unstable"] += 1
+                    if len(report["identity_smoke_examples"]) < 5:
+                        report["identity_smoke_examples"].append(f"{sec.root_key}[{idx}]: " + "; ".join(problems))
+    except Exception as exc:  # noqa: BLE001 — 冒烟自身故障=不可判（-1 告警行，不阻断）
+        report["identity_smoke_unstable"] = -1
+        report["identity_smoke_examples"] = [f"smoke error: {type(exc).__name__}: {str(exc)[:120]}"]
+    return report
+
+
 def reconcile_registry(
     repo_root: Path,
     physical_path: str,
@@ -545,16 +782,35 @@ def reconcile_registry(
 ) -> dict:
     """双轨对账一册。PG 缺=补登记（reconcile_drift 事件）；同键异内容/PG 独有=只记事件
     绝不覆写（Phase 1 期 YAML 是 commit 真源，处置归人/后续波次）。幂等：干净册重跑
-    零新事件零新行。zero_unexplained_drift=True 是对账门 PASS 的机械判据。"""
+    零新事件零新行。zero_unexplained_drift=True 是对账门 PASS 的机械判据。
+
+    st-sI-identity-20261004 手术4（f10 §6.5 B3 放大器封堵）：
+    - 写前身份稳定性冒烟：抽样 ≤50 键 render-in-memory 比对，不稳定=告警行不阻断；
+    - 同内容 rekey 迁移：yaml 新键 ⇄ pg 旧键 canonical sha 相等（内容同一）时
+      UPDATE 迁键（事件留痕），绝不插入第二行——键口径升级窗口零重复行注入。
+    """
     scan = scan_registry_file(repo_root, physical_path)
     rid = scan["registry_id"]
+    declared = _scan_declared_plan(repo_root, physical_path)
+    smoke = _identity_smoke(repo_root, physical_path, declared)
+    if smoke["identity_smoke_unstable"]:
+        import logging  # noqa: PLC0415
+
+        logging.getLogger(__name__).warning(
+            "reconcile 身份稳定性冒烟不稳（%s %s）: sampled=%s unstable=%s examples=%s",
+            rid,
+            physical_path,
+            smoke["identity_smoke_sampled"],
+            smoke["identity_smoke_unstable"],
+            smoke["identity_smoke_examples"],
+        )
     # first-wins 对齐 DB（ON CONFLICT DO NOTHING=首条占坑）：同身份多条=历史脏数据
     # （align-dirty §3.14-R1 在案形态），对账以首条为锚；后条差异数=identity_collisions
     # 呈报不静默改（P-2 呈报制）。
     yaml_map: dict[tuple[str, str], tuple[str, dict]] = {}
     collisions = 0
     collision_diff = 0
-    for family_key, entry_key, payload in _iter_scan_entries(repo_root, physical_path):
+    for family_key, entry_key, payload in _iter_scan_entries(repo_root, physical_path, declared):
         key = (family_key, entry_key)
         sha = canonical_payload_sha256(payload)
         if key in yaml_map:
@@ -576,7 +832,9 @@ def reconcile_registry(
         "clean_match": 0,
         "identity_collisions": collisions,
         "identity_collisions_diff_payload": collision_diff,
+        "rekeyed_identity": 0,
         "events_written": 0,
+        **smoke,
     }
     try:
         with c.cursor() as cur:
@@ -588,6 +846,50 @@ def reconcile_registry(
             pg_rows = cur.fetchall()
             report["pg_entries"] = len(pg_rows)
             pg_map = {(fk, ek): (sha, int(ver), payload) for fk, ek, sha, ver, payload in pg_rows}
+
+            # 写前同内容 rekey 迁移（手术4，f10 §3.3/§6.5 B3 放大器封堵）：键口径升级/
+            # 漂移窗口，yaml 新键与 pg 旧键指向同一内容（canonical sha 相等且唯一落点）时
+            # UPDATE 迁键+事件留痕，绝不 INSERT 第二行——同键异内容（真冲突）永不 rekey。
+            yaml_keys_by_sha: dict[tuple[str, str], list[tuple[str, str]]] = {}
+            for yk, (sha, _p) in yaml_map.items():
+                yaml_keys_by_sha.setdefault((yk[0], sha), []).append(yk)
+            for pg_key in [k for k in pg_map if k not in yaml_map]:
+                fk_old, ek_old = pg_key
+                sha_old, ver_old, _payload_old = pg_map[pg_key]
+                candidates = [yk for yk in yaml_keys_by_sha.get((fk_old, sha_old), ()) if yk not in pg_map]
+                if len(candidates) != 1:
+                    continue
+                yk_new = candidates[0]
+                cur.execute(
+                    _SQL_ENTRY_KEY_EXISTS.format(table=_t("registry_entry", schema)),
+                    (rid, yk_new[0], yk_new[1]),
+                )
+                if cur.fetchone() is not None:  # 目标键已存任何态行（含墓碑）→ 不迁，留 pg_only 通道
+                    continue
+                cur.execute(
+                    _SQL_ENTRY_REKEY.format(table=_t("registry_entry", schema)),
+                    (yk_new[1], session_id, rid, fk_old, ek_old, ver_old),
+                )
+                if cur.rowcount != 1:
+                    continue  # 并发改写=放弃迁移，走既有 pg_only 呈报
+                _record_event(
+                    cur,
+                    registry_id=rid,
+                    family_key=fk_old,
+                    entry_key=yk_new[1],
+                    action="reconcile_rekey",
+                    actor_session=session_id,
+                    actor_kind="system",
+                    base_version=ver_old,
+                    after_version=ver_old,
+                    payload_after=yaml_map[yk_new][1],
+                    reason=RECONCILE_REASON,
+                    detail={"kind": "identity_key_migration", "old_entry_key": ek_old, "same_payload_sha256": sha_old},
+                    schema=schema,
+                )
+                pg_map[yk_new] = pg_map.pop(pg_key)
+                report["rekeyed_identity"] += 1
+                report["events_written"] += 1
 
             for key, (sha, payload) in yaml_map.items():
                 pg_row = pg_map.get(key)
