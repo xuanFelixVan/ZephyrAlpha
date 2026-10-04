@@ -58846,4 +58846,134 @@ creation_tokens:
   created_by: st-sH-f8family-20261004
   capability: f8_family
   merge_evaluation: "死信处方补卡（ALGO-FLOW-LINK 断锚治本）：同真源 src docstring 的外部投影，同域同对象"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/trading_day_cycle_map_gate.yaml
+  token: trading-day-cycle-map-trading-day-cycle-map-gate-algo-flow-card-20261004
+  capability: trading_day_cycle_map
+  created_by: st-tclose-fig13reg-20261004
+  merge_evaluation: "图13转正批 gate 通道配套 ALGO_FLOW 卡（P2-1 出仓管线 externalize_algo_flow 机械产物，与既有 commit_gates 卡同形零新能力面，净零——替代 docstring 内联块逐字节副本位）"
+- file: docs/_working/full_circulation_closeout_20261004/MORNING_HANDOFF.md
+  token: fullcirc-closeout-morning-handoff-20261004
+  capability: fullcirc_closeout
+  created_by: st-tclose-20261004
+  merge_evaluation: "晨班三命令收尾件：注册册袋唯一剩余路径的操作手册，净零"
+- file: docs/_working/fullcirc_closeout_chief/00_skeleton.md
+  token: fullcirc-closeout-chief-00-skeleton-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：总骨架+八图状态表+对齐三律，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/01_lane_a_nightsweep_verdict.md
+  token: fullcirc-closeout-chief-01-lane-a-nightsweep-verdict-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：车道A裁定书，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/02_lane_b_commitfix_verdict.md
+  token: fullcirc-closeout-chief-02-lane-b-commitfix-verdict-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：车道B裁定书，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/03_lane_c_datachain_verdict.md
+  token: fullcirc-closeout-chief-03-lane-c-datachain-verdict-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：车道C裁定书，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/04_lane_d_lanech_verdict.md
+  token: fullcirc-closeout-chief-04-lane-d-lanech-verdict-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：车道D裁定书，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/05_lane_e_maps_verdict.md
+  token: fullcirc-closeout-chief-05-lane-e-maps-verdict-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：车道E裁定书，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/90_execution_log.md
+  token: fullcirc-closeout-chief-90-execution-log-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：追加式执行台账，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/99_delivery.md
+  token: fullcirc-closeout-chief-99-delivery-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：端到端终报四清单，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/MORNING_HANDOFF.md
+  token: fullcirc-closeout-chief-morning-handoff-20261004
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-20261004
+  merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：晨班三命令收尾件，替代四份过时交接令口径，净零"
+- file: docs/_working/fullflow_mine/HANDOVER_FINAL.md
+  token: fullflow-mine-handover-final-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班施工产出件（Owner夜令），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/index.md
+  token: fullflow-mine-index-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件/目录索引 token 幂等补登"
+- file: docs/_working/fullflow_mine/lanes/index.md
+  token: fullflow-mine-lanes-index-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件/目录索引 token 幂等补登"
+- file: docs/_working/fullflow_mine/skeleton/index.md
+  token: fullflow-mine-skeleton-index-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件/目录索引 token 幂等补登"
+- file: docs/_working/fullflow_mine/verify/index.md
+  token: fullflow-mine-verify-index-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件/目录索引 token 幂等补登"
+- file: docs/_working/fullflow_mine/wiring/EXEC1r_quickwins.md
+  token: fullflow-mine-exec1r-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班施工产出件（Owner夜令），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/wiring/EXEC2a_option_greeks_fix.md
+  token: fullflow-mine-exec2a-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班施工产出件（Owner夜令），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/wiring/EXEC2b_news_score.md
+  token: fullflow-mine-exec2b-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班施工产出件（Owner夜令），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/wiring/EXEC2b_news_score_fix.md
+  token: fullflow-mine-exec2bfix-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件/目录索引 token 幂等补登"
+- file: docs/_working/fullflow_mine/wiring/EXEC3_lanes_dloop_fix.md
+  token: fullflow-mine-exec3-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班施工产出件（Owner夜令），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/wiring/EXEC4_wire_report.md
+  token: fullflow-mine-exec4-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班施工产出件（Owner夜令），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/wiring/index.md
+  token: fullflow-mine-wiring-index-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件/目录索引 token 幂等补登"
+- file: docs/_working/map_census/fac9_02_mount_writeback.md
+  token: map9-f2-writeback-fac9-02-mount-writeback-20261004
+  created_by: st-map9-f2-20261003
+  capability: map9_f2_writeback
+  merge_evaluation: "跨域不同对象不并：图9 F2 挂载回填回执件（F2 会话成品，F4 会话代寄归档），map_census 家族实例，非既有件第二实现"
+- file: docs/_working/map_census/gomap/index.md
+  token: map9-f2-writeback-index-20261004
+  created_by: st-map9-f2-20261003
+  capability: map9_f2_writeback
+  merge_evaluation: "跨域不同对象不并：图9 F2 挂载回填回执件（F2 会话成品，F4 会话代寄归档），map_census 家族实例，非既有件第二实现"
+- file: docs/_working/map_census/index.md
+  token: map9-f2-writeback-index-20261004
+  created_by: st-map9-f2-20261003
+  capability: map9_f2_writeback
+  merge_evaluation: "跨域不同对象不并：图9 F2 挂载回填回执件（F2 会话成品，F4 会话代寄归档），map_census 家族实例，非既有件第二实现"
 di_seam_exemptions: []
