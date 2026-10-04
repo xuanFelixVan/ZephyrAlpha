@@ -4,15 +4,15 @@ name_zh: 治理运行地图
 ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-10-03T17:29:59.065350+00:00'
+generated_at: '2026-10-04T14:51:48.267771+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑(schema 0.3 起含 purpose_tag/consumers/trigger_facts 三机生字段);pipeline/out_of_scope_refs/effective_from/legend/legend_note_zh/tag_rules/casebooks_legend_zh
   为人工语义层,生成器保留(effective_from 首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。trigger_facts=运行痕迹计数(真源=facts_sources
   各执行类,缺席即 files=0;无持久落点模块的零计数属源缺口非零触发,口径见生成器 docstring)。
 counts:
-  total_modules: 449
+  total_modules: 450
   wired: 246
   wired_dynamic: 15
-  wired_by_header: 94
+  wired_by_header: 95
   suspect_orphans: 94
   untagged: 0
 legend:
@@ -78,20 +78,22 @@ tag_rules:
 - selector: module=~generate_governance_map|script_manifest|registry_sync
   tags:
   - ledger_match
-casebooks_legend_zh: 册码真源(F4 同款指针制,INV-1 只存指针禁复制正文):DCS=死因案例册 CFG-COMMIT-DEATH-CASES-001(module_id 身份);AP=堵点本五域 docs/_working/branch_zero_takeover/all_problems_ledger.md;SV=抢救台账 docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md;RV1/RV2=审查发现两卷 docs/_working/branch_zero_takeover/review_findings{,_round2}.md;MM=治理挖矿地图册 docs/_working/2026-09-15-governance-module-mining-sop-map.md(路径身份,上户口批统一授册号)。一岗多流程合法:DCS/AP/SV/RV 与图11 共挂,编制表一份多处引用。
+casebooks_legend_zh: 册码真源(F4 同款指针制,INV-1 只存指针禁复制正文):DCS=死因案例册 CFG-COMMIT-DEATH-CASES-001(module_id 身份);AP=堵点本五域 docs/_working/branch_zero_takeover/all_problems_ledger.md;SV=抢救台账
+  docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md;RV1/RV2=审查发现两卷 docs/_working/branch_zero_takeover/review_findings{,_round2}.md;MM=治理挖矿地图册
+  docs/_working/2026-09-15-governance-module-mining-sop-map.md(路径身份,上户口批统一授册号)。一岗多流程合法:DCS/AP/SV/RV 与图11 共挂,编制表一份多处引用。
 facts_sources:
   commit_queue_ledger:
-    files: 1779
+    files: 1212
   runtime_audit:
     files: 19
   gate_audit:
     files: 94
   lookup_audit:
-    files: 671
+    files: 704
   drift_watchdog:
     files: 1
   reconcile_reports:
-    files: 952
+    files: 1043
   reaper_last_run:
     files: 1
 out_of_scope_refs:
@@ -119,9 +121,9 @@ pipeline:
     - zephyr.infrastructure.runtime.startup_shutdown
     - zephyr.trading.auto_runtime_core._OllamaProcessManager
     casebooks:
-    - 'AP#域一'
-    - 'RV2#缺口(R2-F2)'
-    - 'MM#全册'
+    - AP#域一
+    - RV2#缺口(R2-F2)
+    - MM#全册
     disconnected:
     - mod: 双轨并存
       note_zh: process_pool 与 process_lifecycle_gateway 两套孵化入口(M1 合并候选,见挖矿地图 §5)
@@ -143,9 +145,9 @@ pipeline:
     - zephyr.risk.core.drawdown_watchdog
     - zephyr.integration.vector_memory.index_health_monitor
     casebooks:
-    - 'AP#域一'
-    - 'RV2#观察(I-2)'
-    - 'RV2#缺口(R2-F1)'
+    - AP#域一
+    - RV2#观察(I-2)
+    - RV2#缺口(R2-F1)
     disconnected:
     - mod: zephyr.infrastructure.health_monitor.health_aggregator
       note_zh: 已删(2026-09-15 R1：CONFIRMED-DEAD 零外部 import，活聚合器=system_telemetry 版)
@@ -164,8 +166,9 @@ pipeline:
     - config/alert_rules.yaml
     - config/gguf_vram_budget.yaml
     casebooks:
-    - 'AP#域三'
-    casebooks_note_zh: 兼挂 AP#域三(目录容量/scratch 残渣=容量水位病);资源域专属病历册缺位=候选缺口,随上户口批呈批(候选=resource_guard/gpu_monitor 事件落点成册,兼治 F1 表3 无落点三件之二)
+    - AP#域三
+    casebooks_note_zh: 兼挂 AP#域三(目录容量/scratch 残渣=容量水位病);资源域专属病历册缺位=候选缺口,随上户口批呈批(候选=resource_guard/gpu_monitor 事件落点成册,兼治 F1
+      表3 无落点三件之二)
     disconnected:
     - mod: zephyr.infrastructure.hot_plane_budget
       note_zh: 未反查到消费方(A5)
@@ -186,7 +189,8 @@ pipeline:
     - zephyr.governance.resilience_governance.emergency_track_guardian
     - zephyr.autonomy_core.killswitch_response_levels
     casebooks: []
-    casebooks_note_zh: 病历缺口显式登记(SOP §3 规2 反面台账)——熔断/kill_switch 域无永久病历册:.runtime/audit/kill_switch_orchestrator.jsonl 是 facts 流非病历本(散页不成册);候选=事件流归档成册随上户口批呈批
+    casebooks_note_zh: 病历缺口显式登记(SOP §3 规2 反面台账)——熔断/kill_switch 域无永久病历册:.runtime/audit/kill_switch_orchestrator.jsonl 是 facts
+      流非病历本(散页不成册);候选=事件流归档成册随上户口批呈批
     disconnected:
     - mod: zephyr.autonomy_core.kill_switch_orchestrator
       note_zh: 普查记载已陈旧并更正——A3/裁定#254 已于 2026-09-16 接线（boot_hooks._init_kill_switch_orchestrator 注册系统级＋skills/trading/rollback/capacity
@@ -209,8 +213,8 @@ pipeline:
     - zephyr.trading.orphan_detector
     - zephyr.gov_drift.orphan_scanner
     casebooks:
-    - 'AP#域四'
-    - 'SV#底数'
+    - AP#域四
+    - SV#底数
     disconnected:
     - mod: zephyr.governance.security_governance.ghost_scan
       note_zh: 已删(2026-09-15 R4：与 reaper scan_ghost_windows 重复，零活引用)
@@ -225,10 +229,10 @@ pipeline:
     - zephyr.governance.audit.reconcile_runner
     - zephyr.governance.audit.reconciliation_registry
     casebooks:
-    - 'SV#方案'
-    - 'SV#裁定'
-    - 'DCS#队列'
-    - 'AP#域三'
+    - SV#方案
+    - SV#裁定
+    - DCS#队列
+    - AP#域三
   - id: GOM-L6
     name_zh: 复盘审计
     desc_zh: 审计日志/状态面板/治理复盘
@@ -237,9 +241,9 @@ pipeline:
     - zephyr.trading.ai_audit_logger
     - scripts.ops_guard
     casebooks:
-    - 'RV1#全卷'
-    - 'RV2#全卷'
-    - 'AP#域五'
+    - RV1#全卷
+    - RV2#全卷
+    - AP#域五
 families:
   L3_fuse:
   - module: scripts.arch_guard.fitness_functions.check_kill_switch_latency
@@ -253,9 +257,9 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 112
+      total: 111
       by_source:
-        runtime_audit: 6
+        runtime_audit: 5
         gate_audit: 106
   - module: scripts.governance.meta.manage_kill_switch
     path: scripts/governance/meta/manage_kill_switch.py
@@ -268,9 +272,8 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 3
+      total: 2
       by_source:
-        runtime_audit: 1
         gate_audit: 2
   - module: zephyr.autonomy_core.kill_switch_orchestrator
     path: src/zephyr/autonomy_core/kill_switch_orchestrator.py
@@ -285,11 +288,11 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 3163
+      total: 3958
       by_source:
-        commit_queue_ledger: 3
-        runtime_audit: 24
-        gate_audit: 3132
+        commit_queue_ledger: 1
+        runtime_audit: 35
+        gate_audit: 3918
         lookup_audit: 4
   - module: zephyr.autonomy_core.killswitch_response_levels
     path: src/zephyr/autonomy_core/killswitch_response_levels.py
@@ -337,11 +340,11 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 247
+      total: 350
       by_source:
-        commit_queue_ledger: 31
-        runtime_audit: 94
-        gate_audit: 121
+        commit_queue_ledger: 12
+        runtime_audit: 108
+        gate_audit: 229
         lookup_audit: 1
   - module: zephyr.gov_enforcement.rule_enforcement.circuit_breaker
     path: src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py
@@ -358,11 +361,11 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 743
+      total: 2563
       by_source:
-        commit_queue_ledger: 5
-        runtime_audit: 56
-        gate_audit: 678
+        commit_queue_ledger: 3
+        runtime_audit: 59
+        gate_audit: 2497
         lookup_audit: 4
   - module: zephyr.governance.intelligence_governance.provider_failover
     path: src/zephyr/governance/intelligence_governance/provider_failover.py
@@ -411,11 +414,11 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 743
+      total: 2563
       by_source:
-        commit_queue_ledger: 5
-        runtime_audit: 56
-        gate_audit: 678
+        commit_queue_ledger: 3
+        runtime_audit: 59
+        gate_audit: 2497
         lookup_audit: 4
   - module: zephyr.infrastructure.capacity_assurance.kill_switch
     path: src/zephyr/infrastructure/capacity_assurance/kill_switch.py
@@ -430,13 +433,13 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 8722
+      total: 9880
       by_source:
-        commit_queue_ledger: 36
-        runtime_audit: 327
-        gate_audit: 8278
+        commit_queue_ledger: 17
+        runtime_audit: 337
+        gate_audit: 9427
         lookup_audit: 47
-        reconcile_reports: 34
+        reconcile_reports: 52
   - module: zephyr.infrastructure.kill_switch_sim
     path: src/zephyr/infrastructure/kill_switch_sim.py
     domain: D_INFRA_RUNTIME
@@ -448,10 +451,10 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 9
+      total: 22
       by_source:
         runtime_audit: 2
-        gate_audit: 7
+        gate_audit: 20
   - module: zephyr.infrastructure.pipeline.circuit_breaker_manager
     path: src/zephyr/infrastructure/pipeline/circuit_breaker_manager.py
     domain: D_INFRA_RUNTIME
@@ -483,13 +486,13 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 8722
+      total: 9880
       by_source:
-        commit_queue_ledger: 36
-        runtime_audit: 327
-        gate_audit: 8278
+        commit_queue_ledger: 17
+        runtime_audit: 337
+        gate_audit: 9427
         lookup_audit: 47
-        reconcile_reports: 34
+        reconcile_reports: 52
   - module: zephyr.market_data.failover
     path: src/zephyr/market_data/failover/__init__.py
     domain: D_MKT_DATA
@@ -501,13 +504,13 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.market_data.failover.manager
     path: src/zephyr/market_data/failover/manager.py
     domain: D_MKT_DATA
@@ -520,13 +523,13 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 26623
+      total: 36157
       by_source:
-        commit_queue_ledger: 123
-        runtime_audit: 876
-        gate_audit: 25395
+        commit_queue_ledger: 101
+        runtime_audit: 1125
+        gate_audit: 34683
         lookup_audit: 202
-        reconcile_reports: 27
+        reconcile_reports: 46
   - module: zephyr.security.access_control.kill_switch
     path: src/zephyr/security/access_control/kill_switch.py
     domain: D_SECURITY
@@ -543,13 +546,13 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 8722
+      total: 9880
       by_source:
-        commit_queue_ledger: 36
-        runtime_audit: 327
-        gate_audit: 8278
+        commit_queue_ledger: 17
+        runtime_audit: 337
+        gate_audit: 9427
         lookup_audit: 47
-        reconcile_reports: 34
+        reconcile_reports: 52
   - module: zephyr.security.adversarial_validation.circuit_breaker
     path: src/zephyr/security/adversarial_validation/circuit_breaker.py
     domain: D_SECURITY
@@ -564,11 +567,11 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 743
+      total: 2563
       by_source:
-        commit_queue_ledger: 5
-        runtime_audit: 56
-        gate_audit: 678
+        commit_queue_ledger: 3
+        runtime_audit: 59
+        gate_audit: 2497
         lookup_audit: 4
   - module: zephyr.sell_decision.core.trade_level_circuit_breaker
     path: src/zephyr/sell_decision/core/trade_level_circuit_breaker.py
@@ -598,11 +601,11 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 743
+      total: 2563
       by_source:
-        commit_queue_ledger: 5
-        runtime_audit: 56
-        gate_audit: 678
+        commit_queue_ledger: 3
+        runtime_audit: 59
+        gate_audit: 2497
         lookup_audit: 4
   - module: zephyr.trading.trading_contracts.risk.kill_switch_state_store
     path: src/zephyr/trading/trading_contracts/risk/kill_switch_state_store.py
@@ -617,13 +620,13 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 2028
+      total: 2371
       by_source:
         commit_queue_ledger: 1
         runtime_audit: 26
-        gate_audit: 1989
+        gate_audit: 2326
         lookup_audit: 1
-        reconcile_reports: 11
+        reconcile_reports: 17
   - module: zephyr.trading.trading_contracts.risk.trading_kill_switch
     path: src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py
     domain: D_TRADING
@@ -637,9 +640,9 @@ families:
     purpose_tag:
     - emergency_brake
     trigger_facts:
-      total: 1008
+      total: 1007
       by_source:
-        commit_queue_ledger: 2
+        commit_queue_ledger: 1
         runtime_audit: 7
         gate_audit: 999
   L2_resource:
@@ -655,10 +658,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1379
+      total: 1378
       by_source:
-        commit_queue_ledger: 8
-        runtime_audit: 113
+        commit_queue_ledger: 9
+        runtime_audit: 111
         gate_audit: 1258
   - module: scripts.governance.d12_ai_hallucination.validate_session_budget
     path: scripts/governance/d12_ai_hallucination/validate_session_budget.py
@@ -671,9 +674,8 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.d5_architecture.check_budget_health
     path: scripts/governance/d5_architecture/check_budget_health.py
     domain: D_GOV_SCRIPTS
@@ -685,9 +687,8 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 2
+      total: 1
       by_source:
-        runtime_audit: 1
         gate_audit: 1
   - module: scripts.governance.meta.manage_error_budget
     path: scripts/governance/meta/manage_error_budget.py
@@ -700,9 +701,8 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: zephyr.autonomy_core.context.complexity_budget
     path: src/zephyr/autonomy_core/context/complexity_budget.py
     domain: D_AUTONOMY_CORE
@@ -807,9 +807,9 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 105
+      total: 101
       by_source:
-        runtime_audit: 10
+        runtime_audit: 6
         gate_audit: 95
   - module: zephyr.feedback_loop.forensic.guard_complexity_budget
     path: src/zephyr/feedback_loop/forensic/guard_complexity_budget.py
@@ -856,10 +856,11 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 21
+      total: 41
       by_source:
+        commit_queue_ledger: 7
         runtime_audit: 2
-        gate_audit: 6
+        gate_audit: 19
         lookup_audit: 13
   - module: zephyr.gov_enforcement.commit_gates.git_call_budget_gate
     path: src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py
@@ -872,11 +873,11 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 16
+      total: 17
       by_source:
         runtime_audit: 2
         gate_audit: 3
-        lookup_audit: 11
+        lookup_audit: 12
   - module: zephyr.governance.context_governance.context_budget
     path: src/zephyr/governance/context_governance/context_budget.py
     domain: D_GOVERNANCE
@@ -907,11 +908,11 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 19
+      total: 20
       by_source:
         runtime_audit: 7
         gate_audit: 6
-        reconcile_reports: 6
+        reconcile_reports: 7
   - module: zephyr.governance.ops_governance.budget_engine
     path: src/zephyr/governance/ops_governance/budget_engine.py
     domain: D_OPS
@@ -1072,10 +1073,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 13
+      total: 26
       by_source:
         runtime_audit: 2
-        gate_audit: 8
+        gate_audit: 21
         lookup_audit: 3
   - module: zephyr.infrastructure.budget_enforcement
     path: src/zephyr/infrastructure/budget_enforcement/__init__.py
@@ -1090,13 +1091,13 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.budget_enforcement.rbac_bridge
     path: src/zephyr/infrastructure/budget_enforcement/rbac_bridge.py
     domain: D_INFRA_RUNTIME
@@ -1109,11 +1110,11 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 3301
+      total: 3302
       by_source:
         runtime_audit: 8
         gate_audit: 3287
-        reconcile_reports: 6
+        reconcile_reports: 7
   - module: zephyr.infrastructure.capacity_assurance
     path: src/zephyr/infrastructure/capacity_assurance/__init__.py
     domain: D_INFRA_RUNTIME
@@ -1126,13 +1127,13 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.capacity_assurance.budget_forecaster
     path: src/zephyr/infrastructure/capacity_assurance/budget_forecaster.py
     domain: D_INFRA_RUNTIME
@@ -1159,13 +1160,13 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.capacity_assurance.contracts.batch1_infra
     path: src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py
     domain: D_INFRA_RUNTIME
@@ -1226,11 +1227,11 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 12
+      total: 13
       by_source:
         runtime_audit: 4
         gate_audit: 5
-        reconcile_reports: 3
+        reconcile_reports: 4
   - module: zephyr.infrastructure.capacity_assurance.cross_module_integration
     path: src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py
     domain: D_INFRA_RUNTIME
@@ -1273,9 +1274,9 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 41
+      total: 39
       by_source:
-        runtime_audit: 8
+        runtime_audit: 6
         gate_audit: 33
   - module: zephyr.infrastructure.capacity_assurance.schema
     path: src/zephyr/infrastructure/capacity_assurance/schema.py
@@ -1288,13 +1289,13 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 98479
+      total: 99251
       by_source:
-        commit_queue_ledger: 236
-        runtime_audit: 8566
-        gate_audit: 89370
-        lookup_audit: 218
-        reconcile_reports: 89
+        commit_queue_ledger: 176
+        runtime_audit: 7939
+        gate_audit: 90766
+        lookup_audit: 221
+        reconcile_reports: 149
   - module: zephyr.infrastructure.capacity_assurance.sli_instrumentation
     path: src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py
     domain: D_INFRA_RUNTIME
@@ -1321,9 +1322,9 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 136
+      total: 135
       by_source:
-        runtime_audit: 3
+        runtime_audit: 2
         gate_audit: 133
   - module: zephyr.infrastructure.capacity_assurance.token_budget
     path: src/zephyr/infrastructure/capacity_assurance/token_budget.py
@@ -1357,11 +1358,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1204
+      total: 1231
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 12
-        gate_audit: 1190
+        gate_audit: 1219
   - module: zephyr.infrastructure.hot_plane_budget
     path: src/zephyr/infrastructure/hot_plane_budget.py
     domain: D_INFRA_RUNTIME
@@ -1373,10 +1373,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 5
+      total: 18
       by_source:
         runtime_audit: 2
-        gate_audit: 3
+        gate_audit: 16
   - module: zephyr.infrastructure.rollback.budget_tracker
     path: src/zephyr/infrastructure/rollback/budget_tracker.py
     domain: D_INFRA_RECOVERY
@@ -1457,10 +1457,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 68
+      total: 81
       by_source:
         runtime_audit: 4
-        gate_audit: 64
+        gate_audit: 77
   - module: zephyr.integration.budget_enforcer.__init__
     path: src/zephyr/integration/budget_enforcer/__init__.py
     domain: ''
@@ -1472,13 +1472,13 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.integration.budget_enforcer.degradation_spiral_detector
     path: src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py
     domain: D_INTEGRATION
@@ -1539,11 +1539,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1004
+      total: 1003
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 22
-        gate_audit: 978
+        gate_audit: 979
         lookup_audit: 2
   - module: zephyr.position.core.budget_change_handler
     path: src/zephyr/position/core/budget_change_handler.py
@@ -1557,9 +1556,8 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1280
+      total: 1279
       by_source:
-        commit_queue_ledger: 1
         runtime_audit: 11
         gate_audit: 1268
   - module: zephyr.position.core.position_risk_budget_allocator
@@ -1605,11 +1603,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1004
+      total: 1003
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 22
-        gate_audit: 978
+        gate_audit: 979
         lookup_audit: 2
   - module: zephyr.shared.capacity_governance.budget_aware_prompt
     path: src/zephyr/shared/capacity_governance/budget_aware_prompt.py
@@ -1659,10 +1656,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 3
+      total: 16
       by_source:
         runtime_audit: 2
-        gate_audit: 1
+        gate_audit: 14
   - module: zephyr.shared.resilience.error_budget_tracker
     path: src/zephyr/shared/resilience/error_budget_tracker.py
     domain: D_SHARED
@@ -1708,8 +1705,9 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 98
+      total: 105
       by_source:
+        commit_queue_ledger: 7
         runtime_audit: 4
         gate_audit: 94
   - module: zephyr.trading.resource_optimization
@@ -1726,11 +1724,10 @@ families:
     purpose_tag:
     - resource_alert
     trigger_facts:
-      total: 1249
+      total: 1381
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 42
-        gate_audit: 1205
+        runtime_audit: 41
+        gate_audit: 1340
   L5_selfheal:
   - module: scripts.backup.backup_reconciler
     path: scripts/backup/backup_reconciler.py
@@ -1744,9 +1741,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1181
+      total: 1178
       by_source:
-        runtime_audit: 207
+        runtime_audit: 204
         gate_audit: 974
   - module: scripts.ch.apply_consensus_daily_repaired_ddl
     path: scripts/ch/apply_consensus_daily_repaired_ddl.py
@@ -1759,9 +1756,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 10
+      total: 4
       by_source:
-        runtime_audit: 10
+        runtime_audit: 4
   - module: scripts.ch.build_consensus_daily_repaired
     path: scripts/ch/build_consensus_daily_repaired.py
     domain: D_FACTOR
@@ -1773,10 +1770,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 481
+      total: 473
       by_source:
-        commit_queue_ledger: 1
-        runtime_audit: 25
+        runtime_audit: 18
         gate_audit: 455
   - module: scripts.ch.repair_etf_minute_tz_split
     path: scripts/ch/repair_etf_minute_tz_split.py
@@ -1789,9 +1785,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1393
+      total: 1387
       by_source:
-        runtime_audit: 22
+        runtime_audit: 16
         gate_audit: 1371
   - module: scripts.ch.rolling_archive_reconciler
     path: scripts/ch/rolling_archive_reconciler.py
@@ -1804,10 +1800,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 634
+      total: 631
       by_source:
-        commit_queue_ledger: 1
-        runtime_audit: 5
+        runtime_audit: 3
         gate_audit: 628
   - module: scripts.governance._tasks.session_closeout_reconciler
     path: scripts/governance/_tasks/session_closeout_reconciler.py
@@ -1820,10 +1815,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 546
+      total: 503
       by_source:
-        commit_queue_ledger: 51
-        runtime_audit: 399
+        commit_queue_ledger: 9
+        runtime_audit: 398
         gate_audit: 94
         lookup_audit: 2
   - module: scripts.governance.audit_llm_registry_reconciliation
@@ -1837,9 +1832,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 4
+      total: 3
       by_source:
-        runtime_audit: 1
         gate_audit: 3
   - module: scripts.governance.check_meta_question_audit_reconcile
     path: scripts/governance/check_meta_question_audit_reconcile.py
@@ -1852,9 +1846,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1402
+      total: 1406
       by_source:
-        runtime_audit: 274
+        runtime_audit: 278
         gate_audit: 1128
   - module: scripts.governance.d3_metadata.reconcile_gate_rosters
     path: scripts/governance/d3_metadata/reconcile_gate_rosters.py
@@ -1867,10 +1861,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 51
+      total: 28
       by_source:
-        commit_queue_ledger: 22
-        runtime_audit: 2
+        commit_queue_ledger: 1
         gate_audit: 27
   - module: scripts.governance.d5_architecture.syncers.blueprint_frontmatter_reconciler
     path: scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py
@@ -1883,9 +1876,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 22
+      total: 15
       by_source:
-        runtime_audit: 14
+        runtime_audit: 7
         gate_audit: 8
   - module: scripts.governance.d8_doc_sync.agents_cheatsheet_drift_reconciler
     path: scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
@@ -1899,12 +1892,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 296
+      total: 327
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 20
-        gate_audit: 231
-        lookup_audit: 43
+        runtime_audit: 13
+        gate_audit: 270
+        lookup_audit: 44
   - module: scripts.governance.d8_doc_sync.algo_flow_translation_reconciler
     path: scripts/governance/d8_doc_sync/algo_flow_translation_reconciler.py
     domain: D_GOV_SCRIPTS
@@ -1917,9 +1909,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 16
+      total: 14
       by_source:
-        runtime_audit: 3
+        runtime_audit: 1
         gate_audit: 13
   - module: scripts.governance.d8_doc_sync.metric_count_drift_reconciler
     path: scripts/governance/d8_doc_sync/metric_count_drift_reconciler.py
@@ -1933,9 +1925,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 8
+      total: 6
       by_source:
-        runtime_audit: 2
         gate_audit: 6
   - module: scripts.governance.d8_doc_sync.readme_version_sync_reconciler
     path: scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py
@@ -1949,9 +1940,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 4
+      total: 2
       by_source:
-        runtime_audit: 2
         gate_audit: 2
   - module: scripts.governance.d8_doc_sync.requirements_version_sync_reconciler
     path: scripts/governance/d8_doc_sync/requirements_version_sync_reconciler.py
@@ -1965,9 +1955,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 9
+      total: 7
       by_source:
-        runtime_audit: 2
         gate_audit: 6
         lookup_audit: 1
   - module: scripts.governance.generate_gate_face_reconciliation
@@ -1983,8 +1972,7 @@ families:
     trigger_facts:
       total: 113
       by_source:
-        commit_queue_ledger: 4
-        runtime_audit: 40
+        runtime_audit: 44
         gate_audit: 69
   - module: scripts.governance.meta.mutation_test_reconciliation_registry
     path: scripts/governance/meta/mutation_test_reconciliation_registry.py
@@ -1997,10 +1985,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 486
+      total: 482
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 5
+        runtime_audit: 3
         gate_audit: 479
   - module: scripts.governance.meta.verify_reconciliation_registry
     path: scripts/governance/meta/verify_reconciliation_registry.py
@@ -2013,9 +2000,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 6
+      total: 4
       by_source:
-        runtime_audit: 3
+        runtime_audit: 1
         gate_audit: 3
   - module: scripts.governance.meta_question.wo001_003.generate_source_line_register
     path: scripts/governance/meta_question/wo_intake_reconcile/generate_source_line_register.py
@@ -2028,9 +2015,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 548
+      total: 551
       by_source:
-        runtime_audit: 91
+        runtime_audit: 94
         gate_audit: 457
   - module: scripts.governance.meta_question.wo001_003.intake_batch
     path: scripts/governance/meta_question/wo_intake_reconcile/intake_batch.py
@@ -2043,9 +2030,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 488
+      total: 491
       by_source:
-        runtime_audit: 14
+        runtime_audit: 17
         gate_audit: 474
   - module: scripts.governance.meta_question.wo001_003.replay_audit_to_jsonl
     path: scripts/governance/meta_question/wo_intake_reconcile/replay_audit_to_jsonl.py
@@ -2058,10 +2045,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 518
+      total: 521
       by_source:
         commit_queue_ledger: 4
-        runtime_audit: 18
+        runtime_audit: 21
         gate_audit: 496
   - module: scripts.governance.reconcile_chain_refs
     path: scripts/governance/reconcile_chain_refs.py
@@ -2074,9 +2061,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 94
+      total: 92
       by_source:
-        runtime_audit: 23
+        runtime_audit: 21
         gate_audit: 71
   - module: scripts.governance.reconcile_generators
     path: scripts/governance/reconcile_generators.py
@@ -2094,10 +2081,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 408
+      total: 397
       by_source:
-        commit_queue_ledger: 4
-        runtime_audit: 23
+        commit_queue_ledger: 1
+        runtime_audit: 15
         gate_audit: 380
         lookup_audit: 1
   - module: scripts.governance.repair.apply_verification_results
@@ -2111,9 +2098,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.repair.audit_design_completeness
     path: scripts/governance/repair/audit_design_completeness.py
     domain: D_GOV_AUDIT
@@ -2125,9 +2111,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 3
+      total: 2
       by_source:
-        runtime_audit: 1
         gate_audit: 2
   - module: scripts.governance.repair.concurrent_commit_test
     path: scripts/governance/repair/concurrent_commit_test.py
@@ -2140,9 +2125,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 3
+      total: 2
       by_source:
-        runtime_audit: 1
         gate_audit: 2
   - module: scripts.governance.repair.concurrent_write_test
     path: scripts/governance/repair/concurrent_write_test.py
@@ -2155,9 +2139,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 497
+      total: 496
       by_source:
-        runtime_audit: 5
+        runtime_audit: 4
         gate_audit: 492
   - module: scripts.governance.repair.p2_pg_concurrent_test
     path: scripts/governance/repair/p2_pg_concurrent_test.py
@@ -2170,9 +2154,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 16
+      total: 15
       by_source:
-        runtime_audit: 1
         gate_audit: 15
   - module: scripts.governance.repair.red_blue_test
     path: scripts/governance/repair/red_blue_test.py
@@ -2185,9 +2168,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.repair.rollback_depgraph
     path: scripts/governance/repair/rollback_depgraph.py
     domain: D_GOV_AUDIT
@@ -2199,9 +2181,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 3
+      total: 2
       by_source:
-        runtime_audit: 1
         gate_audit: 2
   - module: scripts.governance.scheduled_task_reconcile
     path: scripts/governance/scheduled_task_reconcile.py
@@ -2214,10 +2195,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 103
+      total: 105
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 28
+        commit_queue_ledger: 1
+        runtime_audit: 31
         gate_audit: 73
   - module: zephyr.feedback_loop.diagnosers.health.self_health_monitor
     path: src/zephyr/feedback_loop/diagnosers/health/self_health_monitor.py
@@ -2328,13 +2309,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 42645
+      total: 45044
       by_source:
-        commit_queue_ledger: 277
-        runtime_audit: 12609
-        gate_audit: 28321
-        lookup_audit: 634
-        reconcile_reports: 804
+        commit_queue_ledger: 122
+        runtime_audit: 9625
+        gate_audit: 33483
+        lookup_audit: 659
+        reconcile_reports: 1155
   - module: zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
     path: src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py
     domain: D_GOV_ENFORCEMENT
@@ -2347,11 +2328,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 27
+      total: 28
       by_source:
         runtime_audit: 2
         gate_audit: 1
-        lookup_audit: 24
+        lookup_audit: 25
   - module: zephyr.gov_enforcement.commit_gates.reconciler_health_gate
     path: src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py
     domain: D_GOV_CODE_QUALITY
@@ -2363,12 +2344,12 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 112
+      total: 113
       by_source:
         commit_queue_ledger: 1
         runtime_audit: 6
         gate_audit: 90
-        lookup_audit: 15
+        lookup_audit: 16
   - module: zephyr.governance.architecture_governance.blueprint_reconciler
     path: src/zephyr/governance/architecture_governance/blueprint_reconciler.py
     domain: D_GOVERNANCE
@@ -2413,9 +2394,8 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 16
+      total: 15
       by_source:
-        commit_queue_ledger: 1
         runtime_audit: 3
         gate_audit: 12
   - module: zephyr.governance.audit.cross_layer_contract_signature_reconciler
@@ -2447,11 +2427,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 54
+      total: 55
       by_source:
         runtime_audit: 3
         gate_audit: 10
-        lookup_audit: 41
+        lookup_audit: 42
   - module: zephyr.governance.audit.dead_queue_retirement_reconciler
     path: src/zephyr/governance/audit/dead_queue_retirement_reconciler.py
     domain: D_GOV_AUDIT
@@ -2464,11 +2444,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1101
+      total: 1691
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 30
-        gate_audit: 1069
+        commit_queue_ledger: 1
+        runtime_audit: 32
+        gate_audit: 1658
   - module: zephyr.governance.audit.error_pattern_consumer_reconciler
     path: src/zephyr/governance/audit/error_pattern_consumer_reconciler.py
     domain: D_GOV_AUDIT
@@ -2531,13 +2511,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 903
+      total: 906
       by_source:
-        commit_queue_ledger: 37
-        runtime_audit: 309
+        commit_queue_ledger: 10
+        runtime_audit: 327
         gate_audit: 533
         lookup_audit: 2
-        reconcile_reports: 22
+        reconcile_reports: 34
   - module: zephyr.governance.audit.reconcile_runner
     path: src/zephyr/governance/audit/reconcile_runner.py
     domain: D_GOV_AUDIT
@@ -2569,11 +2549,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1282
+      total: 1275
       by_source:
-        commit_queue_ledger: 1
-        runtime_audit: 1253
-        gate_audit: 24
+        runtime_audit: 677
+        gate_audit: 594
         lookup_audit: 4
   - module: zephyr.governance.audit.reconciliation_registry
     path: src/zephyr/governance/audit/reconciliation_registry.py
@@ -2581,7 +2560,7 @@ families:
     maturity: production
     family: L5_selfheal
     wiring: wired
-    consumers_count: 39
+    consumers_count: 40
     consumers:
     - scripts/backup/backup_reconciler.py
     - scripts/governance/d8_doc_sync/agents_cheatsheet_drift_reconciler.py
@@ -2591,12 +2570,28 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 2264
+      total: 2215
       by_source:
-        commit_queue_ledger: 56
-        runtime_audit: 175
+        commit_queue_ledger: 13
+        runtime_audit: 169
         gate_audit: 2019
         lookup_audit: 14
+  - module: zephyr.governance.audit.registry_entry_counts_reconciler
+    path: src/zephyr/governance/audit/registry_entry_counts_reconciler.py
+    domain: D_GOV_AUDIT
+    maturity: testing
+    family: L5_selfheal
+    wiring: wired_by_header
+    consumers_count: 0
+    consumers: []
+    purpose_tag:
+    - self_heal
+    trigger_facts:
+      total: 734
+      by_source:
+        commit_queue_ledger: 25
+        runtime_audit: 7
+        gate_audit: 702
   - module: zephyr.governance.audit.remediation_progress_reconciler
     path: src/zephyr/governance/audit/remediation_progress_reconciler.py
     domain: D_GOV_AUDIT
@@ -2643,8 +2638,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 6
+      total: 7
       by_source:
+        commit_queue_ledger: 1
         gate_audit: 6
   - module: zephyr.governance.audit.translation_coverage_reconciler
     path: src/zephyr/governance/audit/translation_coverage_reconciler.py
@@ -2658,11 +2654,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 52
+      total: 53
       by_source:
         runtime_audit: 2
         gate_audit: 12
-        lookup_audit: 38
+        lookup_audit: 39
   - module: zephyr.governance.audit.workspace_hygiene_reconciler
     path: src/zephyr/governance/audit/workspace_hygiene_reconciler.py
     domain: D_GOV_AUDIT
@@ -2678,11 +2674,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 55
+      total: 622
       by_source:
-        runtime_audit: 7
-        gate_audit: 12
-        lookup_audit: 36
+        runtime_audit: 9
+        gate_audit: 576
+        lookup_audit: 37
   - module: zephyr.governance.consumption.consumption_census_reconciler
     path: src/zephyr/governance/consumption/consumption_census_reconciler.py
     domain: D_GOVERNANCE
@@ -2695,9 +2691,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 48
+      total: 43
       by_source:
-        commit_queue_ledger: 7
+        commit_queue_ledger: 2
         runtime_audit: 23
         gate_audit: 15
         reconcile_reports: 3
@@ -2751,13 +2747,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 42645
+      total: 45044
       by_source:
-        commit_queue_ledger: 277
-        runtime_audit: 12609
-        gate_audit: 28321
-        lookup_audit: 634
-        reconcile_reports: 804
+        commit_queue_ledger: 122
+        runtime_audit: 9625
+        gate_audit: 33483
+        lookup_audit: 659
+        reconcile_reports: 1155
   - module: zephyr.infrastructure.auto_fix_engine
     path: src/zephyr/infrastructure/auto_fix_engine/__init__.py
     domain: D_INFRA_RUNTIME
@@ -2771,13 +2767,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.auto_fix_engine.__main__
     path: src/zephyr/infrastructure/auto_fix_engine/__main__.py
     domain: D_INFRA_RUNTIME
@@ -2789,10 +2785,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 2881
+      total: 3030
       by_source:
-        commit_queue_ledger: 47
-        runtime_audit: 2019
+        commit_queue_ledger: 15
+        runtime_audit: 2200
         gate_audit: 814
         lookup_audit: 1
   - module: zephyr.infrastructure.auto_fix_engine.alignment_syncer
@@ -2946,13 +2942,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 128985
+      total: 176748
       by_source:
-        commit_queue_ledger: 386
-        runtime_audit: 2832
-        gate_audit: 124481
-        lookup_audit: 367
-        reconcile_reports: 919
+        commit_queue_ledger: 202
+        runtime_audit: 3205
+        gate_audit: 171838
+        lookup_audit: 370
+        reconcile_reports: 1133
   - module: zephyr.infrastructure.auto_fix_engine.escalation_bridge
     path: src/zephyr/infrastructure/auto_fix_engine/escalation_bridge.py
     domain: D_INFRA_RUNTIME
@@ -3084,11 +3080,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 8
+      total: 96
       by_source:
         commit_queue_ledger: 1
-        runtime_audit: 4
-        gate_audit: 3
+        runtime_audit: 6
+        gate_audit: 89
   - module: zephyr.infrastructure.auto_fix_engine.fix_safety
     path: src/zephyr/infrastructure/auto_fix_engine/fix_safety.py
     domain: D_INFRA_RUNTIME
@@ -3189,13 +3185,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 8432
+      total: 9746
       by_source:
-        commit_queue_ledger: 36
-        runtime_audit: 164
-        gate_audit: 8126
+        commit_queue_ledger: 27
+        runtime_audit: 246
+        gate_audit: 9360
         lookup_audit: 59
-        reconcile_reports: 47
+        reconcile_reports: 54
   - module: zephyr.infrastructure.auto_fix_engine.scaffold_registrar
     path: src/zephyr/infrastructure/auto_fix_engine/scaffold_registrar.py
     domain: D_INFRA_RUNTIME
@@ -3260,13 +3256,13 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 13767
+      total: 15622
       by_source:
-        commit_queue_ledger: 11
-        runtime_audit: 276
-        gate_audit: 13380
+        commit_queue_ledger: 3
+        runtime_audit: 277
+        gate_audit: 15232
         lookup_audit: 6
-        reconcile_reports: 94
+        reconcile_reports: 104
   - module: zephyr.library.library_regen_reconciler
     path: src/zephyr/library/library_regen_reconciler.py
     domain: D_GOVERNANCE
@@ -3279,9 +3275,9 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 2844
+      total: 2827
       by_source:
-        commit_queue_ledger: 20
+        commit_queue_ledger: 3
         runtime_audit: 29
         gate_audit: 2795
   - module: zephyr.orchestrator.execution.reconciliation_loop
@@ -3311,11 +3307,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 1416
+      total: 1767
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 22
-        gate_audit: 1380
+        gate_audit: 1733
         lookup_audit: 12
   - module: zephyr.reporting.reconciliation_schema
     path: src/zephyr/reporting/reconciliation_schema.py
@@ -3329,10 +3324,10 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 26
+      total: 39
       by_source:
         runtime_audit: 4
-        gate_audit: 22
+        gate_audit: 35
   - module: zephyr.trading.settlement_reconciliation
     path: src/zephyr/trading/settlement_reconciliation.py
     domain: D_TRADING
@@ -3347,11 +3342,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 557
+      total: 556
       by_source:
-        commit_queue_ledger: 3
+        commit_queue_ledger: 1
         runtime_audit: 8
-        gate_audit: 546
+        gate_audit: 547
   - module: zephyr.trading.three_way_reconciliation
     path: src/zephyr/trading/three_way_reconciliation.py
     domain: D_TRADING
@@ -3363,11 +3358,11 @@ families:
     purpose_tag:
     - self_heal
     trigger_facts:
-      total: 144
+      total: 547
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 25
-        gate_audit: 117
+        commit_queue_ledger: 1
+        runtime_audit: 26
+        gate_audit: 520
   L4_reap:
   - module: scripts.fix_orphan_all
     path: scripts/fix_orphan_all.py
@@ -3381,9 +3376,8 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance._sync.fix_orphan_deps
     path: scripts/governance/_sync/fix_orphan_deps.py
     domain: D_GOV_SCRIPTS
@@ -3396,9 +3390,8 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.check_wiring_orphan
     path: scripts/governance/check_wiring_orphan.py
     domain: ''
@@ -3411,10 +3404,9 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 19
+      total: 9
       by_source:
-        commit_queue_ledger: 10
-        runtime_audit: 1
+        commit_queue_ledger: 1
         gate_audit: 8
   - module: scripts.governance.cleanup_stash
     path: scripts/governance/d1_structure/cleanup_stash.py
@@ -3427,10 +3419,8 @@ families:
     purpose_tag:
     - reaper_duty
     trigger_facts:
-      total: 3
+      total: 1
       by_source:
-        commit_queue_ledger: 1
-        runtime_audit: 1
         gate_audit: 1
   - module: scripts.governance.d1_structure.detect_orphan_py
     path: scripts/governance/d1_structure/detect_orphan_py.py
@@ -3444,10 +3434,9 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 1768
+      total: 1699
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 81
+        runtime_audit: 14
         gate_audit: 1685
   - module: scripts.governance.d5_architecture.checkers.check_orphan_outputs
     path: scripts/governance/d5_architecture/checkers/check_orphan_outputs.py
@@ -3461,9 +3450,8 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.fix_orphan_exports
     path: scripts/governance/d7_code/fix_orphan_exports.py
     domain: D_GOV_SCRIPTS
@@ -3476,9 +3464,8 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.d8_doc_sync.algo_flow_reverse_orphan_reconciler
     path: scripts/governance/d8_doc_sync/algo_flow_reverse_orphan_reconciler.py
     domain: D_GOV_SCRIPTS
@@ -3492,10 +3479,10 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 415
+      total: 383
       by_source:
-        commit_queue_ledger: 35
-        runtime_audit: 32
+        commit_queue_ledger: 10
+        runtime_audit: 25
         gate_audit: 348
   - module: scripts.governance.governance.d9_knowledge.detect_orphan_documents
     path: scripts/governance/d9_knowledge/detect_orphan_documents.py
@@ -3509,9 +3496,9 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 241
+      total: 5
       by_source:
-        runtime_audit: 241
+        runtime_audit: 5
   - module: scripts.governance.meta.benchmark.test_fixtures.orphan_file_without_module_registration
     path: scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py
     domain: D_GOV_SCRIPTS
@@ -3524,9 +3511,8 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.meta_question.wo_a2legs.register_reaper_keep
     path: scripts/governance/meta_question/wo_a2legs/register_reaper_keep.py
     domain: D_GOV_SCRIPTS
@@ -3538,9 +3524,9 @@ families:
     purpose_tag:
     - reaper_duty
     trigger_facts:
-      total: 207
+      total: 211
       by_source:
-        runtime_audit: 11
+        runtime_audit: 15
         gate_audit: 196
   - module: zephyr.feedback_loop.diagnosers.reliability.zombie_fle_detector
     path: src/zephyr/feedback_loop/diagnosers/reliability/zombie_fle_detector.py
@@ -3589,12 +3575,11 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 3372
+      total: 3358
       by_source:
-        commit_queue_ledger: 15
         runtime_audit: 39
         gate_audit: 3296
-        lookup_audit: 22
+        lookup_audit: 23
   - module: zephyr.infrastructure.auto_fix_engine.zombie_cleaner
     path: src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py
     domain: D_INFRA_RUNTIME
@@ -3624,13 +3609,13 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.security.access_control.orphan_judge.__main__
     path: src/zephyr/security/access_control/orphan_judge/__main__.py
     domain: D_SECURITY
@@ -3644,10 +3629,10 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 2881
+      total: 3030
       by_source:
-        commit_queue_ledger: 47
-        runtime_audit: 2019
+        commit_queue_ledger: 15
+        runtime_audit: 2200
         gate_audit: 814
         lookup_audit: 1
   - module: zephyr.security.access_control.orphan_judge.cascade_analyzer
@@ -3681,9 +3666,9 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 79
+      total: 140
       by_source:
-        runtime_audit: 74
+        runtime_audit: 135
         gate_audit: 5
   - module: zephyr.security.access_control.orphan_judge.db
     path: src/zephyr/security/access_control/orphan_judge/db.py
@@ -3699,13 +3684,13 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 151371
+      total: 162835
       by_source:
-        commit_queue_ledger: 10835
-        runtime_audit: 97761
-        gate_audit: 42413
-        lookup_audit: 76
-        reconcile_reports: 286
+        commit_queue_ledger: 7051
+        runtime_audit: 96827
+        gate_audit: 58511
+        lookup_audit: 79
+        reconcile_reports: 367
   - module: zephyr.security.access_control.orphan_judge.decision_table
     path: src/zephyr/security/access_control/orphan_judge/decision_table.py
     domain: D_SECURITY
@@ -3830,13 +3815,13 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 5212
+      total: 5323
       by_source:
-        commit_queue_ledger: 47
-        runtime_audit: 318
-        gate_audit: 4720
+        commit_queue_ledger: 4
+        runtime_audit: 317
+        gate_audit: 4845
         lookup_audit: 3
-        reconcile_reports: 124
+        reconcile_reports: 154
   - module: zephyr.security.access_control.orphan_judge.kb_bridge
     path: src/zephyr/security/access_control/orphan_judge/kb_bridge.py
     domain: D_SECURITY
@@ -3886,13 +3871,13 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 8432
+      total: 9746
       by_source:
-        commit_queue_ledger: 36
-        runtime_audit: 164
-        gate_audit: 8126
+        commit_queue_ledger: 27
+        runtime_audit: 246
+        gate_audit: 9360
         lookup_audit: 59
-        reconcile_reports: 47
+        reconcile_reports: 54
   - module: zephyr.security.access_control.orphan_judge.orphan_collector
     path: src/zephyr/security/access_control/orphan_judge/orphan_collector.py
     domain: D_SECURITY
@@ -3939,11 +3924,11 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 3301
+      total: 3302
       by_source:
         runtime_audit: 8
         gate_audit: 3287
-        reconcile_reports: 6
+        reconcile_reports: 7
   - module: zephyr.security.access_control.orphan_judge.reference_graph_engine
     path: src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py
     domain: D_SECURITY
@@ -3993,11 +3978,10 @@ families:
     - reaper_duty
     - orphan_claim
     trigger_facts:
-      total: 4576
+      total: 4603
       by_source:
-        commit_queue_ledger: 4
-        runtime_audit: 74
-        gate_audit: 4498
+        runtime_audit: 75
+        gate_audit: 4528
   - module: zephyr.security.access_control.orphan_judge.safety_fence
     path: src/zephyr/security/access_control/orphan_judge/safety_fence.py
     domain: D_SECURITY
@@ -4100,13 +4084,13 @@ families:
     purpose_tag:
     - reaper_duty
     trigger_facts:
-      total: 3019
+      total: 3066
       by_source:
-        commit_queue_ledger: 86
-        runtime_audit: 735
-        gate_audit: 2108
+        commit_queue_ledger: 41
+        runtime_audit: 441
+        gate_audit: 2458
         lookup_audit: 26
-        reconcile_reports: 64
+        reconcile_reports: 100
   L1_monitor:
   - module: scripts.governance.architecture_health_dashboard
     path: scripts/governance/architecture_health_dashboard.py
@@ -4120,12 +4104,12 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 107
+      total: 163
       by_source:
-        commit_queue_ledger: 6
-        runtime_audit: 68
+        commit_queue_ledger: 4
+        runtime_audit: 125
         gate_audit: 5
-        lookup_audit: 28
+        lookup_audit: 29
   - module: scripts.governance.audit_worktree_ops_telemetry
     path: scripts/governance/audit_worktree_ops_telemetry.py
     domain: D_GOV_SCRIPTS
@@ -4137,9 +4121,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 44
+      total: 9
       by_source:
-        runtime_audit: 38
+        runtime_audit: 3
         gate_audit: 6
   - module: scripts.governance.verify_schema_health
     path: scripts/governance/d11_compliance/verify_schema_health.py
@@ -4152,10 +4136,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 11
+      total: 235
       by_source:
-        runtime_audit: 1
-        gate_audit: 10
+        runtime_audit: 7
+        gate_audit: 228
   - module: scripts.governance.data_supply.ch_probe
     path: scripts/governance/data_supply/ch_probe.py
     domain: D_GOV_CODE_QUALITY
@@ -4167,10 +4151,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1110
+      total: 1122
       by_source:
-        commit_queue_ledger: 170
-        runtime_audit: 406
+        commit_queue_ledger: 113
+        runtime_audit: 475
         gate_audit: 520
         lookup_audit: 11
         reconcile_reports: 3
@@ -4185,11 +4169,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1218
+      total: 1558
       by_source:
-        runtime_audit: 40
-        gate_audit: 1084
-        reconcile_reports: 94
+        runtime_audit: 33
+        gate_audit: 1421
+        reconcile_reports: 104
   - module: scripts.governance.git_health_smoke
     path: scripts/governance/git_health_smoke.py
     domain: D_GOV_SCRIPTS
@@ -4201,9 +4185,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 4
+      total: 3
       by_source:
-        runtime_audit: 1
         gate_audit: 3
   - module: scripts.governance.meta.governance_watchdog
     path: scripts/governance/meta/governance_watchdog.py
@@ -4216,9 +4199,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 6
+      total: 3
       by_source:
-        runtime_audit: 3
         gate_audit: 2
         lookup_audit: 1
   - module: scripts.governance.meta.validate_environment_health
@@ -4232,9 +4214,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3
+      total: 2
       by_source:
-        runtime_audit: 1
         gate_audit: 2
   - module: scripts.governance.meta.validate_script_system_health
     path: scripts/governance/meta/validate_script_system_health.py
@@ -4247,9 +4228,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.meta_question.wo006.probe_source_c_ths
     path: scripts/governance/meta_question/wo006/probe_source_c_ths.py
     domain: D_GOVERNANCE
@@ -4261,9 +4241,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 791
+      total: 795
       by_source:
-        runtime_audit: 11
+        runtime_audit: 15
         gate_audit: 780
   - module: scripts.governance.meta_question.wo_a2legs._probe
     path: scripts/governance/meta_question/wo_a2legs/_probe.py
@@ -4276,12 +4256,12 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 21836
+      total: 10107
       by_source:
-        commit_queue_ledger: 415
-        runtime_audit: 17287
-        gate_audit: 4042
-        lookup_audit: 87
+        commit_queue_ledger: 342
+        runtime_audit: 4285
+        gate_audit: 5387
+        lookup_audit: 88
         reconcile_reports: 5
   - module: scripts.governance.meta_question.wo_a2legs.probe_backfill_sources
     path: scripts/governance/meta_question/wo_a2legs/probe_backfill_sources.py
@@ -4294,9 +4274,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 244
+      total: 248
       by_source:
-        runtime_audit: 10
+        runtime_audit: 14
         gate_audit: 234
   - module: scripts.governance.meta_question.wo_a2legs.probe_sector_name_sources
     path: scripts/governance/meta_question/wo_a2legs/probe_sector_name_sources.py
@@ -4324,9 +4304,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 238
+      total: 242
       by_source:
-        runtime_audit: 10
+        runtime_audit: 14
         gate_audit: 228
   - module: scripts.governance.meta_question.wo_a2legs.probe_unmatched_880_identity
     path: scripts/governance/meta_question/wo_a2legs/probe_unmatched_880_identity.py
@@ -4339,9 +4319,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 222
+      total: 226
       by_source:
-        runtime_audit: 10
+        runtime_audit: 14
         gate_audit: 212
   - module: scripts.governance.session_startup_health_check
     path: scripts/governance/session_startup_health_check.py
@@ -4356,9 +4336,8 @@ families:
     trigger_facts:
       total: 63
       by_source:
-        runtime_audit: 1
         gate_audit: 25
-        lookup_audit: 37
+        lookup_audit: 38
   - module: scripts.governance.vms_cron_monitor
     path: scripts/governance/vms/vms_cron_monitor.py
     domain: D_GOV_SCRIPTS
@@ -4370,9 +4349,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 39
+      total: 38
       by_source:
-        runtime_audit: 1
         gate_audit: 38
   - module: scripts.governance.vms_health_check
     path: scripts/governance/vms/vms_health_check.py
@@ -4385,9 +4363,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 38
+      total: 37
       by_source:
-        runtime_audit: 1
         gate_audit: 37
   - module: scripts.governance.wave1a.store_liveness_probe
     path: scripts/governance/wave1a/store_liveness_probe.py
@@ -4400,10 +4377,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 623
+      total: 662
       by_source:
         commit_queue_ledger: 189
-        runtime_audit: 157
+        runtime_audit: 196
         gate_audit: 274
         lookup_audit: 1
         reconcile_reports: 2
@@ -4418,9 +4395,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3
+      total: 1
       by_source:
-        runtime_audit: 2
         gate_audit: 1
   - module: zephyr.ops.ch_health_probe
     path: scripts/ops/ch_health_probe.py
@@ -4433,11 +4409,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 15255
+      total: 2261
       by_source:
-        commit_queue_ledger: 6
-        runtime_audit: 15007
-        gate_audit: 207
+        commit_queue_ledger: 4
+        runtime_audit: 1896
+        gate_audit: 326
         lookup_audit: 35
   - module: scripts.ops.e2e_ch_alert_probe
     path: scripts/ops/e2e_ch_alert_probe.py
@@ -4450,9 +4426,8 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 74
+      total: 72
       by_source:
-        runtime_audit: 2
         gate_audit: 72
   - module: scripts.run_boot_sla_probe
     path: scripts/run_boot_sla_probe.py
@@ -4465,11 +4440,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 185
+      total: 424
       by_source:
-        commit_queue_ledger: 9
+        commit_queue_ledger: 1
         runtime_audit: 9
-        gate_audit: 167
+        gate_audit: 414
   - module: scripts.run_boot_sla_probe
     path: scripts/tasks/run/run_boot_sla_probe.py
     domain: D_GOVERNANCE
@@ -4481,11 +4456,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 185
+      total: 424
       by_source:
-        commit_queue_ledger: 9
+        commit_queue_ledger: 1
         runtime_audit: 9
-        gate_audit: 167
+        gate_audit: 414
   - module: zephyr.alt_data.alt_source_health_manager
     path: src/zephyr/alt_data/alt_source_health_manager.py
     domain: D_ALT_DATA
@@ -4498,10 +4473,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 45
+      total: 226
       by_source:
-        runtime_audit: 4
-        gate_audit: 38
+        runtime_audit: 14
+        gate_audit: 209
         lookup_audit: 3
   - module: zephyr.autonomy_core.context.context_health_score
     path: src/zephyr/autonomy_core/context/context_health_score.py
@@ -4581,10 +4556,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 8
+      total: 25
       by_source:
-        runtime_audit: 2
-        gate_audit: 6
+        runtime_audit: 6
+        gate_audit: 19
   - module: zephyr.feedback_loop.detectors.drift.distribution_drift_monitor
     path: src/zephyr/feedback_loop/detectors/drift/distribution_drift_monitor.py
     domain: D_FBL_DETECTORS
@@ -4644,13 +4619,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.feedback_loop.diagnosers.health.action_composition_health_monitor
     path: src/zephyr/feedback_loop/diagnosers/health/action_composition_health_monitor.py
     domain: D_FBL_DIAGNOSERS
@@ -4837,10 +4812,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 4
+      total: 126
       by_source:
-        runtime_audit: 2
-        gate_audit: 2
+        runtime_audit: 12
+        gate_audit: 114
   - module: zephyr.feedback_loop.diagnosers.reliability.system_entropy_monitor
     path: src/zephyr/feedback_loop/diagnosers/reliability/system_entropy_monitor.py
     domain: D_FBL_DIAGNOSERS
@@ -4917,9 +4892,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 494
+      total: 491
       by_source:
-        commit_queue_ledger: 5
+        commit_queue_ledger: 2
         runtime_audit: 10
         gate_audit: 479
   - module: zephyr.frontend.dashboard.components.qmt_bridge_health
@@ -4935,10 +4910,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 151
+      total: 166
       by_source:
-        runtime_audit: 6
-        gate_audit: 144
+        runtime_audit: 8
+        gate_audit: 157
         lookup_audit: 1
   - module: zephyr.gov_audit.self_monitor
     path: src/zephyr/gov_audit/self_monitor.py
@@ -4969,13 +4944,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3743
+      total: 3734
       by_source:
         commit_queue_ledger: 16
-        runtime_audit: 114
+        runtime_audit: 99
         gate_audit: 3611
         lookup_audit: 1
-        reconcile_reports: 1
+        reconcile_reports: 7
   - module: zephyr.gov_drift.detector_core.model_drift_monitor
     path: src/zephyr/gov_drift/detector_core/model_drift_monitor.py
     domain: D_GOV_DRIFT
@@ -4988,13 +4963,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 94
+      total: 114
       by_source:
         commit_queue_ledger: 1
         runtime_audit: 4
         gate_audit: 29
         lookup_audit: 6
-        reconcile_reports: 54
+        reconcile_reports: 74
   - module: zephyr.gov_enforcement.rule_bridge.heartbeat_daemon
     path: src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py
     domain: D_GOV_ENFORCEMENT
@@ -5008,11 +4983,12 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 64663
+      total: 16646
       by_source:
-        commit_queue_ledger: 11
-        runtime_audit: 64523
+        commit_queue_ledger: 5
+        runtime_audit: 16510
         gate_audit: 129
+        reaper_last_run: 2
   - module: zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog
     path: src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py
     domain: D_GOV_ENFORCEMENT
@@ -5026,11 +5002,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 12672
+      total: 8607
       by_source:
-        commit_queue_ledger: 7
-        runtime_audit: 11079
-        gate_audit: 1586
+        runtime_audit: 4999
+        gate_audit: 3608
   - module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_health
     path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_health.py
     domain: D_GOV_DRIFT
@@ -5043,9 +5018,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 516
+      total: 513
       by_source:
-        commit_queue_ledger: 4
+        commit_queue_ledger: 1
         runtime_audit: 114
         gate_audit: 398
   - module: zephyr.governance.architecture_governance.blueprint_bloat_monitor
@@ -5095,11 +5070,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 803
+      total: 805
       by_source:
         commit_queue_ledger: 3
         runtime_audit: 5
-        gate_audit: 795
+        gate_audit: 797
   - module: zephyr.governance.data_governance.exchange_reg_monitor
     path: src/zephyr/governance/data_governance/exchange_reg_monitor.py
     domain: D_GOVERNANCE
@@ -5160,10 +5135,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 12
+      total: 25
       by_source:
         runtime_audit: 2
-        gate_audit: 10
+        gate_audit: 23
   - module: zephyr.infrastructure.a2a_protocol.layer2_communication.trigger_monitor
     path: src/zephyr/infrastructure/a2a_protocol/layer2_communication/trigger_monitor.py
     domain: D_INFRA_A2A
@@ -5176,10 +5151,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 5
+      total: 18
       by_source:
         runtime_audit: 2
-        gate_audit: 3
+        gate_audit: 16
   - module: zephyr.infrastructure.asset_inventory.telemetry
     path: src/zephyr/infrastructure/asset_inventory/telemetry.py
     domain: D_INFRA_RUNTIME
@@ -5193,12 +5168,12 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 6069
+      total: 6374
       by_source:
-        commit_queue_ledger: 7
-        runtime_audit: 430
-        gate_audit: 5504
-        lookup_audit: 128
+        commit_queue_ledger: 4
+        runtime_audit: 330
+        gate_audit: 5911
+        lookup_audit: 129
   - module: zephyr.infrastructure.health_monitor
     path: src/zephyr/infrastructure/health_monitor/__init__.py
     domain: D_INFRA_RUNTIME
@@ -5210,13 +5185,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.quality.quality_monitor
     path: src/zephyr/infrastructure/quality/quality_monitor.py
     domain: D_INFRA_RUNTIME
@@ -5229,10 +5204,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 238
+      total: 251
       by_source:
         runtime_audit: 4
-        gate_audit: 234
+        gate_audit: 247
   - module: zephyr.infrastructure.sla.sla_monitor
     path: src/zephyr/infrastructure/sla/sla_monitor.py
     domain: D_INFRA_RUNTIME
@@ -5246,10 +5221,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 64
+      total: 77
       by_source:
         runtime_audit: 2
-        gate_audit: 51
+        gate_audit: 64
         lookup_audit: 11
   - module: zephyr.infrastructure.system_telemetry
     path: src/zephyr/infrastructure/system_telemetry/__init__.py
@@ -5262,13 +5237,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225935
+      total: 249632
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5935
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6865
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry._trace_bridge
     path: src/zephyr/infrastructure/system_telemetry/_trace_bridge.py
     domain: D_INFRA_RUNTIME
@@ -5282,10 +5257,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 53
+      total: 66
       by_source:
         runtime_audit: 2
-        gate_audit: 51
+        gate_audit: 64
   - module: zephyr.infrastructure.system_telemetry.agent_call_tracer
     path: src/zephyr/infrastructure/system_telemetry/agent_call_tracer.py
     domain: D_INFRA_TELEMETRY
@@ -5297,10 +5272,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 66
+      total: 79
       by_source:
         runtime_audit: 2
-        gate_audit: 64
+        gate_audit: 77
   - module: zephyr.infrastructure.system_telemetry.ai_behavior
     path: src/zephyr/infrastructure/system_telemetry/ai_behavior/__init__.py
     domain: D_INFRA_TELEMETRY
@@ -5313,13 +5288,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.ai_behavior.event_sink
     path: src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py
     domain: D_INFRA_RUNTIME
@@ -5333,9 +5308,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3796
+      total: 2805
       by_source:
-        runtime_audit: 3748
+        runtime_audit: 2757
         gate_audit: 48
   - module: zephyr.infrastructure.system_telemetry.alerts
     path: src/zephyr/infrastructure/system_telemetry/alerts/__init__.py
@@ -5352,13 +5327,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.alerts.ops_alert_feed
     path: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py
     domain: ''
@@ -5375,13 +5350,12 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 526
+      total: 561
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 27
-        gate_audit: 485
+        runtime_audit: 29
+        gate_audit: 514
         lookup_audit: 1
-        reconcile_reports: 11
+        reconcile_reports: 17
   - module: zephyr.infrastructure.system_telemetry.alerts.resource_schedule_alerts
     path: src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py
     domain: D_INFRA_TELEMETRY
@@ -5396,11 +5370,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 576
+      total: 867
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 45
-        gate_audit: 529
+        runtime_audit: 46
+        gate_audit: 819
+        lookup_audit: 2
   - module: zephyr.infrastructure.system_telemetry.archive
     path: src/zephyr/infrastructure/system_telemetry/archive/__init__.py
     domain: D_INFRA_TELEMETRY
@@ -5414,13 +5388,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.archive.cold_stub
     path: src/zephyr/infrastructure/system_telemetry/archive/cold_stub.py
     domain: D_INFRA_RUNTIME
@@ -5434,10 +5408,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 51
+      total: 222
       by_source:
-        runtime_audit: 2
-        gate_audit: 49
+        runtime_audit: 10
+        gate_audit: 212
   - module: zephyr.infrastructure.system_telemetry.asset_inventory
     path: src/zephyr/infrastructure/system_telemetry/asset_inventory.py
     domain: D_OPS
@@ -5449,11 +5423,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1893
+      total: 2555
       by_source:
-        commit_queue_ledger: 8
-        runtime_audit: 77
-        gate_audit: 1805
+        commit_queue_ledger: 4
+        runtime_audit: 87
+        gate_audit: 2461
         lookup_audit: 3
   - module: zephyr.infrastructure.system_telemetry.auto_bootstrap
     path: src/zephyr/infrastructure/system_telemetry/auto_bootstrap.py
@@ -5469,9 +5443,9 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3800
+      total: 2807
       by_source:
-        runtime_audit: 3747
+        runtime_audit: 2754
         gate_audit: 53
   - module: zephyr.infrastructure.system_telemetry.contract_metrics
     path: src/zephyr/infrastructure/system_telemetry/contract_metrics.py
@@ -5486,10 +5460,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 50
+      total: 76
       by_source:
         runtime_audit: 2
-        gate_audit: 48
+        gate_audit: 74
   - module: zephyr.infrastructure.system_telemetry.facade
     path: src/zephyr/infrastructure/system_telemetry/facade.py
     domain: D_INFRA_RUNTIME
@@ -5506,10 +5480,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 55
+      total: 81
       by_source:
         runtime_audit: 2
-        gate_audit: 53
+        gate_audit: 79
   - module: zephyr.infrastructure.system_telemetry.health
     path: src/zephyr/infrastructure/system_telemetry/health/__init__.py
     domain: D_INFRA_TELEMETRY
@@ -5523,13 +5497,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.health_aggregator
     path: src/zephyr/infrastructure/system_telemetry/health_aggregator.py
     domain: D_INFRA_RUNTIME
@@ -5543,10 +5517,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 75
+      total: 101
       by_source:
         runtime_audit: 2
-        gate_audit: 68
+        gate_audit: 94
         lookup_audit: 5
   - module: zephyr.infrastructure.system_telemetry.health_probes
     path: src/zephyr/infrastructure/system_telemetry/health_probes.py
@@ -5561,10 +5535,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 50
+      total: 76
       by_source:
         runtime_audit: 2
-        gate_audit: 48
+        gate_audit: 74
   - module: zephyr.infrastructure.system_telemetry.incident_responder
     path: src/zephyr/infrastructure/system_telemetry/incident_responder.py
     domain: D_OPS
@@ -5576,10 +5550,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 50
+      total: 63
       by_source:
         runtime_audit: 2
-        gate_audit: 48
+        gate_audit: 61
   - module: zephyr.infrastructure.system_telemetry.latency_attributor
     path: src/zephyr/infrastructure/system_telemetry/latency_attributor.py
     domain: D_INFRA_TELEMETRY
@@ -5591,10 +5565,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 55
+      total: 68
       by_source:
         runtime_audit: 2
-        gate_audit: 53
+        gate_audit: 66
   - module: zephyr.infrastructure.system_telemetry.logs
     path: src/zephyr/infrastructure/system_telemetry/logs/__init__.py
     domain: D_INFRA_RUNTIME
@@ -5607,13 +5581,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.logs.structured_sink
     path: src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py
     domain: D_INFRA_RUNTIME
@@ -5627,11 +5601,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 48
+      total: 60
       by_source:
-        commit_queue_ledger: 1
         runtime_audit: 6
-        gate_audit: 41
+        gate_audit: 54
   - module: zephyr.infrastructure.system_telemetry.measure_calibration
     path: src/zephyr/infrastructure/system_telemetry/measure_calibration.py
     domain: D_INFRA_RUNTIME
@@ -5644,11 +5617,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 23
+      total: 295
       by_source:
         commit_queue_ledger: 3
-        runtime_audit: 15
-        gate_audit: 5
+        runtime_audit: 13
+        gate_audit: 279
   - module: zephyr.infrastructure.system_telemetry.metrics
     path: src/zephyr/infrastructure/system_telemetry/metrics/__init__.py
     domain: D_INFRA_TELEMETRY
@@ -5661,13 +5634,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.metrics.blueprint_metrics
     path: src/zephyr/infrastructure/system_telemetry/metrics/blueprint_metrics.py
     domain: D_INFRA_RUNTIME
@@ -5713,10 +5686,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 63
+      total: 76
       by_source:
         runtime_audit: 2
-        gate_audit: 61
+        gate_audit: 74
   - module: zephyr.infrastructure.system_telemetry.ops_incident_aggregate
     path: src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
     domain: D_OPS
@@ -5729,10 +5702,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 48
+      total: 61
       by_source:
         runtime_audit: 2
-        gate_audit: 46
+        gate_audit: 59
   - module: zephyr.infrastructure.system_telemetry.otel_instrumentation
     path: src/zephyr/infrastructure/system_telemetry/otel_instrumentation.py
     domain: D_AUTONOMY_CORE
@@ -5761,13 +5734,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.reproducibility_packager
     path: src/zephyr/infrastructure/system_telemetry/reproducibility_packager.py
     domain: D_INFRA_TELEMETRY
@@ -5779,10 +5752,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 52
+      total: 65
       by_source:
         runtime_audit: 2
-        gate_audit: 50
+        gate_audit: 63
   - module: zephyr.infrastructure.system_telemetry.resource_sampler
     path: src/zephyr/infrastructure/system_telemetry/resource_sampler.py
     domain: D_INFRA_RUNTIME
@@ -5798,13 +5771,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3650
+      total: 3587
       by_source:
-        commit_queue_ledger: 14
-        runtime_audit: 252
-        gate_audit: 3377
+        commit_queue_ledger: 12
+        runtime_audit: 156
+        gate_audit: 3406
         lookup_audit: 6
-        reconcile_reports: 1
+        reconcile_reports: 7
   - module: zephyr.infrastructure.system_telemetry.schema
     path: src/zephyr/infrastructure/system_telemetry/schema/__init__.py
     domain: D_INFRA_TELEMETRY
@@ -5818,13 +5791,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.traces
     path: src/zephyr/infrastructure/system_telemetry/traces/__init__.py
     domain: D_INFRA_TELEMETRY
@@ -5837,13 +5810,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.system_telemetry.traces.span_stub
     path: src/zephyr/infrastructure/system_telemetry/traces/span_stub.py
     domain: D_INFRA_RUNTIME
@@ -5857,10 +5830,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3747
+      total: 2763
       by_source:
-        runtime_audit: 3744
-        gate_audit: 3
+        runtime_audit: 2747
+        gate_audit: 16
   - module: zephyr.infrastructure.system_telemetry.watchdog
     path: src/zephyr/infrastructure/system_telemetry/watchdog.py
     domain: D_INFRA_RUNTIME
@@ -5874,13 +5847,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 13496
+      total: 9510
       by_source:
-        commit_queue_ledger: 38
-        runtime_audit: 11229
-        gate_audit: 2192
+        commit_queue_ledger: 23
+        runtime_audit: 5071
+        gate_audit: 4336
         lookup_audit: 10
-        reconcile_reports: 27
+        reconcile_reports: 70
   - module: zephyr.integration.mcp.telemetry_server
     path: src/zephyr/integration/mcp/telemetry_server.py
     domain: D_INTEGRATION
@@ -5941,11 +5914,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 158
+      total: 657
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 22
-        gate_audit: 133
+        commit_queue_ledger: 1
+        runtime_audit: 26
+        gate_audit: 629
         lookup_audit: 1
   - module: zephyr.position.core.correlation_regime_monitor
     path: src/zephyr/position/core/correlation_regime_monitor.py
@@ -5993,10 +5966,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 9
+      total: 22
       by_source:
         runtime_audit: 2
-        gate_audit: 7
+        gate_audit: 20
   - module: zephyr.reporting.prediction_calibration_monitor
     path: src/zephyr/reporting/prediction_calibration_monitor.py
     domain: D_REPORTING
@@ -6009,10 +5982,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 8
+      total: 21
       by_source:
         runtime_audit: 2
-        gate_audit: 6
+        gate_audit: 19
   - module: zephyr.risk.core.adaptive_risk_monitor
     path: src/zephyr/risk/core/adaptive_risk_monitor.py
     domain: D_RISK
@@ -6058,11 +6031,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1458
+      total: 1457
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 8
-        gate_audit: 1447
+        gate_audit: 1448
         lookup_audit: 1
   - module: zephyr.risk.core.concentration_monitor
     path: src/zephyr/risk/core/concentration_monitor.py
@@ -6075,11 +6047,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1555
+      total: 1554
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 15
-        gate_audit: 1538
+        gate_audit: 1539
   - module: zephyr.risk.core.crowding_monitor
     path: src/zephyr/risk/core/crowding_monitor.py
     domain: D_RISK
@@ -6092,11 +6063,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1631
+      total: 1630
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 18
-        gate_audit: 1611
+        gate_audit: 1612
   - module: zephyr.risk.core.drawdown_watchdog
     path: src/zephyr/risk/core/drawdown_watchdog.py
     domain: D_RISK
@@ -6127,11 +6097,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1654
+      total: 3473
       by_source:
-        commit_queue_ledger: 6
-        runtime_audit: 25
-        gate_audit: 1623
+        commit_queue_ledger: 2
+        runtime_audit: 28
+        gate_audit: 3443
   - module: zephyr.risk.core.operational_risk_monitor
     path: src/zephyr/risk/core/operational_risk_monitor.py
     domain: D_RISK
@@ -6144,11 +6114,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1303
+      total: 1302
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 7
-        gate_audit: 1294
+        gate_audit: 1295
   - module: zephyr.risk.core.strategy_deviation_monitor
     path: src/zephyr/risk/core/strategy_deviation_monitor.py
     domain: D_RISK
@@ -6160,12 +6129,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1259
+      total: 1260
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 7
-        gate_audit: 1191
-        lookup_audit: 59
+        gate_audit: 1192
+        lookup_audit: 61
   - module: zephyr.risk.core.survival_line_monitor
     path: src/zephyr/risk/core/survival_line_monitor.py
     domain: D_RISK
@@ -6178,11 +6146,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 183
+      total: 188
       by_source:
         runtime_audit: 2
         gate_audit: 134
-        reconcile_reports: 47
+        reconcile_reports: 52
   - module: zephyr.risk.core.tail_risk_monitor
     path: src/zephyr/risk/core/tail_risk_monitor.py
     domain: D_RISK
@@ -6198,11 +6166,10 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 1176
+      total: 1175
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 7
-        gate_audit: 1165
+        gate_audit: 1166
         lookup_audit: 2
   - module: zephyr.security.adversarial_validation.async_monitor
     path: src/zephyr/security/adversarial_validation/async_monitor.py
@@ -6305,8 +6272,9 @@ families:
     maturity: production
     family: L1_monitor
     wiring: wired
-    consumers_count: 3
+    consumers_count: 4
     consumers:
+    - scripts/lock_files.py
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
     - src/zephyr/infrastructure/git_batcher.py
     - src/zephyr/shared/io/__init__.py
@@ -6331,13 +6299,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 33315
+      total: 19384
       by_source:
-        commit_queue_ledger: 202
-        runtime_audit: 23453
-        gate_audit: 8998
-        lookup_audit: 352
-        reconcile_reports: 310
+        commit_queue_ledger: 70
+        runtime_audit: 8433
+        gate_audit: 10150
+        lookup_audit: 363
+        reconcile_reports: 368
   - module: zephyr.shared.lifecycle.health_discovery
     path: src/zephyr/shared/lifecycle/health_discovery.py
     domain: D_SHARED
@@ -6432,11 +6400,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 131
+      total: 561
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 26
-        gate_audit: 102
+        commit_queue_ledger: 1
+        runtime_audit: 30
+        gate_audit: 529
         lookup_audit: 1
   - module: zephyr.signal_quality.degradation_monitor_base
     path: src/zephyr/signal_quality/degradation_monitor_base.py
@@ -6470,11 +6438,11 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 165
+      total: 576
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 36
-        gate_audit: 127
+        commit_queue_ledger: 1
+        runtime_audit: 30
+        gate_audit: 545
   - module: zephyr.trading.health_monitor
     path: src/zephyr/trading/health_monitor.py
     domain: D_INFRA_RUNTIME
@@ -6489,13 +6457,13 @@ families:
     purpose_tag:
     - alive_proof
     trigger_facts:
-      total: 3743
+      total: 3734
       by_source:
         commit_queue_ledger: 16
-        runtime_audit: 114
+        runtime_audit: 99
         gate_audit: 3611
         lookup_audit: 1
-        reconcile_reports: 1
+        reconcile_reports: 7
   L0_lifecycle:
   - module: scripts.governance.d5_architecture.lifecycle.detect_retirement_candidates
     path: scripts/governance/d5_architecture/lifecycle/detect_retirement_candidates.py
@@ -6508,10 +6476,9 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 153
+      total: 151
       by_source:
-        commit_queue_ledger: 5
-        runtime_audit: 16
+        runtime_audit: 19
         gate_audit: 132
   - module: scripts.governance.d5_architecture.lifecycle.retire_module
     path: scripts/governance/d5_architecture/lifecycle/retire_module.py
@@ -6524,10 +6491,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 195
+      total: 200
       by_source:
-        commit_queue_ledger: 47
-        runtime_audit: 16
+        commit_queue_ledger: 49
+        runtime_audit: 19
         gate_audit: 132
   - module: scripts.governance.d5_architecture.validators.lifecycle.__init__
     path: scripts/governance/d5_architecture/validators/lifecycle/__init__.py
@@ -6540,13 +6507,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: scripts.governance.d5_architecture.validators.lifecycle.validate_lifecycle_refs
     path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
     domain: D_GOV_SCRIPTS
@@ -6560,7 +6527,7 @@ families:
     trigger_facts:
       total: 928
       by_source:
-        runtime_audit: 1
+        commit_queue_ledger: 1
         gate_audit: 927
   - module: scripts.governance.d5_architecture.validators.lifecycle.validate_module_lifecycle
     path: scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
@@ -6573,10 +6540,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 570
+      total: 567
       by_source:
-        commit_queue_ledger: 10
-        runtime_audit: 55
+        commit_queue_ledger: 4
+        runtime_audit: 58
         gate_audit: 505
   - module: scripts.governance.d5_architecture.validators.validate_strategy_card_lifecycle_map
     path: scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
@@ -6589,11 +6556,12 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 371
+      total: 390
       by_source:
-        commit_queue_ledger: 161
-        runtime_audit: 190
-        gate_audit: 20
+        commit_queue_ledger: 131
+        runtime_audit: 236
+        gate_audit: 21
+        reconcile_reports: 2
   - module: scripts.governance.d8_doc_sync.validate_document_lifecycle
     path: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
     domain: D_GOV_SCRIPTS
@@ -6605,9 +6573,8 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.meta.session_startup_check
     path: scripts/governance/meta/session_startup_check.py
     domain: D_GOV_SCRIPTS
@@ -6619,9 +6586,8 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 1
-      by_source:
-        runtime_audit: 1
+      total: 0
+      by_source: {}
   - module: scripts.governance.meta.trace_finding_lifecycle
     path: scripts/governance/meta/trace_finding_lifecycle.py
     domain: D_GOV_SCRIPTS
@@ -6633,9 +6599,8 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 3
+      total: 2
       by_source:
-        runtime_audit: 1
         gate_audit: 2
   - module: zephyr.autonomy_core.skills.skill_lifecycle
     path: src/zephyr/autonomy_core/skills/skill_lifecycle.py
@@ -6729,9 +6694,9 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 22701
+      total: 19858
       by_source:
-        runtime_audit: 8060
+        runtime_audit: 5217
         gate_audit: 14641
   - module: zephyr.gov_enforcement.rule_bridge.worktree_lifecycle
     path: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py
@@ -6810,11 +6775,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 28
+      total: 155
       by_source:
-        runtime_audit: 4
-        gate_audit: 6
-        lookup_audit: 18
+        runtime_audit: 13
+        gate_audit: 122
+        lookup_audit: 20
   - module: zephyr.governance.lifecycle_governance.__init__
     path: src/zephyr/governance/lifecycle_governance/__init__.py
     domain: ''
@@ -6826,13 +6791,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.governance.lifecycle_governance.ai_behavior_baseline
     path: src/zephyr/governance/lifecycle_governance/ai_behavior_baseline.py
     domain: D_GOVERNANCE
@@ -6893,10 +6858,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 11
+      total: 24
       by_source:
         runtime_audit: 4
-        gate_audit: 7
+        gate_audit: 20
   - module: zephyr.governance.lifecycle_governance.msprt_promotion_channel
     path: src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py
     domain: D_GOVERNANCE
@@ -6926,12 +6891,12 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 19
+      total: 25
       by_source:
         runtime_audit: 2
         gate_audit: 5
         lookup_audit: 1
-        reconcile_reports: 11
+        reconcile_reports: 17
   - module: zephyr.governance.lifecycle_governance.post_live_verification
     path: src/zephyr/governance/lifecycle_governance/post_live_verification.py
     domain: D_GOVERNANCE
@@ -6959,11 +6924,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 36
+      total: 38
       by_source:
         runtime_audit: 4
         gate_audit: 31
-        lookup_audit: 1
+        lookup_audit: 3
   - module: zephyr.governance.lifecycle_governance.rollback_state_machine
     path: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
     domain: D_GOVERNANCE
@@ -6977,11 +6942,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 2796
+      total: 2810
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 9
-        gate_audit: 2785
+        gate_audit: 2801
   - module: zephyr.governance.lifecycle_governance.strategy_archive
     path: src/zephyr/governance/lifecycle_governance/strategy_archive.py
     domain: D_GOVERNANCE
@@ -7010,11 +6974,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 63
+      total: 67
       by_source:
         runtime_audit: 2
         gate_audit: 1
-        lookup_audit: 60
+        lookup_audit: 64
   - module: zephyr.governance.lifecycle_governance.transition
     path: src/zephyr/governance/lifecycle_governance/transition.py
     domain: D_GOVERNANCE
@@ -7026,13 +6990,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 631
+      total: 2572
       by_source:
-        commit_queue_ledger: 64
-        runtime_audit: 109
-        gate_audit: 357
+        commit_queue_ledger: 46
+        runtime_audit: 111
+        gate_audit: 2285
         lookup_audit: 10
-        reconcile_reports: 91
+        reconcile_reports: 120
   - module: zephyr.governance.meta_question.exam_loop.exam_lifecycle
     path: src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py
     domain: D_GOVERNANCE
@@ -7083,11 +7047,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 24150
+      total: 21347
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 8076
-        gate_audit: 16071
+        runtime_audit: 5233
+        gate_audit: 16113
         lookup_audit: 1
   - module: zephyr.infrastructure.a2a_protocol.prompt_lifecycle
     path: src/zephyr/infrastructure/a2a_protocol/prompt_lifecycle.py
@@ -7117,13 +7080,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 11968
+      total: 16278
       by_source:
-        commit_queue_ledger: 368
-        runtime_audit: 1487
-        gate_audit: 9825
-        lookup_audit: 63
-        reconcile_reports: 225
+        commit_queue_ledger: 308
+        runtime_audit: 1671
+        gate_audit: 13900
+        lookup_audit: 75
+        reconcile_reports: 324
   - module: zephyr.infrastructure.lifecycle
     path: src/zephyr/infrastructure/lifecycle/__init__.py
     domain: D_INFRA_RUNTIME
@@ -7135,13 +7098,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.infrastructure.lifecycle.scope_guard
     path: src/zephyr/infrastructure/lifecycle/scope_guard.py
     domain: D_INFRA_RUNTIME
@@ -7186,11 +7149,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 1440
+      total: 1467
       by_source:
-        commit_queue_ledger: 2
         runtime_audit: 14
-        gate_audit: 1424
+        gate_audit: 1453
   - module: zephyr.infrastructure.rollback.s3_snapshot_lifecycle
     path: src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py
     domain: D_INFRA_RECOVERY
@@ -7234,11 +7196,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 28
+      total: 155
       by_source:
-        runtime_audit: 4
-        gate_audit: 6
-        lookup_audit: 18
+        runtime_audit: 13
+        gate_audit: 122
+        lookup_audit: 20
   - module: zephyr.orchestrator.lifecycle
     path: src/zephyr/orchestrator/lifecycle/__init__.py
     domain: D_ORCHESTRATOR
@@ -7250,13 +7212,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.orchestrator.lifecycle.housekeeping
     path: src/zephyr/orchestrator/lifecycle/housekeeping.py
     domain: D_ORCHESTRATOR
@@ -7480,7 +7442,7 @@ families:
     maturity: production
     family: L0_lifecycle
     wiring: wired
-    consumers_count: 142
+    consumers_count: 145
     consumers:
     - scripts/automation/flowthrough_verifier.py
     - scripts/backup/restore_drill.py
@@ -7490,11 +7452,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 2969
+      total: 2952
       by_source:
-        commit_queue_ledger: 56
-        runtime_audit: 81
-        gate_audit: 2828
+        commit_queue_ledger: 27
+        runtime_audit: 80
+        gate_audit: 2841
         lookup_audit: 4
   - module: zephyr.shared.lifecycle.__init__
     path: src/zephyr/shared/lifecycle/__init__.py
@@ -7507,13 +7469,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 225778
+      total: 249586
       by_source:
-        commit_queue_ledger: 539
-        runtime_audit: 5778
-        gate_audit: 219081
+        commit_queue_ledger: 466
+        runtime_audit: 6819
+        gate_audit: 241863
         lookup_audit: 22
-        reconcile_reports: 358
+        reconcile_reports: 416
   - module: zephyr.shared.lifecycle.daemon_registry
     path: src/zephyr/shared/lifecycle/daemon_registry.py
     domain: D_INFRA_RUNTIME
@@ -7544,13 +7506,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 5930
+      total: 6877
       by_source:
-        commit_queue_ledger: 29
-        runtime_audit: 4391
-        gate_audit: 1422
+        commit_queue_ledger: 6
+        runtime_audit: 3635
+        gate_audit: 3106
         lookup_audit: 11
-        reconcile_reports: 77
+        reconcile_reports: 119
   - module: zephyr.shared.lifecycle.lazy_loader
     path: src/zephyr/shared/lifecycle/lazy_loader.py
     domain: D_INFRA_RUNTIME
@@ -7563,10 +7525,10 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 6
+      total: 19
       by_source:
         runtime_audit: 2
-        gate_audit: 4
+        gate_audit: 17
   - module: zephyr.shared.lifecycle.registry_state_vocab
     path: src/zephyr/shared/lifecycle/registry_state_vocab.py
     domain: D_GOVERNANCE
@@ -7580,9 +7542,9 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 40
+      total: 36
       by_source:
-        commit_queue_ledger: 10
+        commit_queue_ledger: 6
         runtime_audit: 9
         gate_audit: 20
         lookup_audit: 1
@@ -7602,13 +7564,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 13767
+      total: 15622
       by_source:
-        commit_queue_ledger: 11
-        runtime_audit: 276
-        gate_audit: 13380
+        commit_queue_ledger: 3
+        runtime_audit: 277
+        gate_audit: 15232
         lookup_audit: 6
-        reconcile_reports: 94
+        reconcile_reports: 104
   - module: zephyr.shared.lifecycle.ttl_cleanup_engine
     path: src/zephyr/shared/lifecycle/ttl_cleanup_engine.py
     domain: D_SHARED
@@ -7651,11 +7613,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 305
+      total: 728
       by_source:
-        commit_queue_ledger: 2
-        runtime_audit: 50
-        gate_audit: 253
+        commit_queue_ledger: 1
+        runtime_audit: 47
+        gate_audit: 680
   - module: zephyr.strategy_pipeline.lifecycle_fsm
     path: src/zephyr/strategy_pipeline/lifecycle_fsm.py
     domain: D_BACKTEST
@@ -7670,13 +7632,13 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 403
+      total: 401
       by_source:
-        commit_queue_ledger: 18
+        commit_queue_ledger: 10
         runtime_audit: 25
         gate_audit: 345
         lookup_audit: 4
-        reconcile_reports: 11
+        reconcile_reports: 17
   - module: zephyr.trading.action_dispatcher._file_lifecycle_manager
     path: src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py
     domain: D_TRADING
@@ -7689,9 +7651,9 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 9
+      total: 10
       by_source:
-        reconcile_reports: 9
+        reconcile_reports: 10
   - module: zephyr.trading.boot_hooks
     path: src/zephyr/trading/boot_hooks.py
     domain: D_INFRA_RUNTIME
@@ -7704,11 +7666,11 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 511
+      total: 527
       by_source:
-        commit_queue_ledger: 10
-        runtime_audit: 20
-        gate_audit: 481
+        commit_queue_ledger: 5
+        runtime_audit: 24
+        gate_audit: 498
   - module: zephyr.trading.lifecycle_manager
     path: src/zephyr/trading/lifecycle_manager.py
     domain: D_INFRA_RUNTIME
@@ -7723,11 +7685,10 @@ families:
     trigger_facts:
       total: 216
       by_source:
-        commit_queue_ledger: 1
         runtime_audit: 10
         gate_audit: 195
         lookup_audit: 1
-        reconcile_reports: 9
+        reconcile_reports: 10
   - module: zephyr.trading.stop_gate
     path: src/zephyr/trading/stop_gate.py
     domain: D_INFRA_RUNTIME
@@ -7773,13 +7734,12 @@ families:
     purpose_tag:
     - birth_registry
     trigger_facts:
-      total: 67
+      total: 50
       by_source:
-        commit_queue_ledger: 23
         runtime_audit: 2
         gate_audit: 30
         lookup_audit: 1
-        reconcile_reports: 11
+        reconcile_reports: 17
   L6_audit:
   - module: scripts.ops_guard
     path: scripts/ops_guard.py
@@ -7797,13 +7757,13 @@ families:
     purpose_tag:
     - review_ledger
     trigger_facts:
-      total: 245
+      total: 582
       by_source:
-        commit_queue_ledger: 23
-        runtime_audit: 42
-        gate_audit: 44
-        lookup_audit: 51
-        reconcile_reports: 85
+        commit_queue_ledger: 15
+        runtime_audit: 27
+        gate_audit: 394
+        lookup_audit: 52
+        reconcile_reports: 94
   - module: zephyr.shared.ai_guards.ai_audit_guard
     path: src/zephyr/shared/ai_guards/ai_audit_guard.py
     domain: D_SHARED
