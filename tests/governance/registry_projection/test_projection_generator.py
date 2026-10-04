@@ -10,6 +10,9 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -17,6 +20,7 @@ import pytest
 from zephyr.governance.registry_projection.pg_source import ProjectionUnavailable
 from zephyr.governance.registry_projection.projection_generator import run
 from zephyr.governance.registry_projection.state import ProjectionState, load_state, save_state
+from zephyr.shared.io.paths import REPO_ROOT
 
 REG_REL = "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
 
@@ -151,3 +155,28 @@ def test_gate_unarmed_passes(tmp_path):
     )
     passed, msg = gate.check(gw, [], session_id="normal")
     assert passed
+
+
+CLI_SCRIPT = REPO_ROOT / "scripts" / "governance" / "registry_projection" / "registry_projection_generator.py"
+
+
+def test_cli_smoke_check_and_render_run_standalone(tmp_path):
+    """CLI 独立可运行 smoke（2026-10-04 st-tdm-infrafix2）。
+
+    病灶：子进程直跑 CLI 时 sys.path 无仓根，registry_ledger_ddl 裸导的仓根包
+    schemas.* 被 site-packages 同名残缺命名空间包抢注 → ModuleNotFoundError。
+    断言：--check 与 --render 子进程独立启动均正常退出且无 ModuleNotFoundError。
+    """
+    snap_file = _setup(tmp_path)
+    for mode in ("--check", "--render"):
+        proc = subprocess.run(
+            [sys.executable, str(CLI_SCRIPT), mode, "--snapshot-file", snap_file, "--project-root", str(tmp_path)],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+        )
+        assert "ModuleNotFoundError" not in (proc.stderr or ""), f"{mode} 启动断链: {proc.stderr[-500:]}"
+        assert proc.returncode == 0, f"{mode} 退出码 {proc.returncode}: {proc.stdout[-500:]} {proc.stderr[-500:]}"

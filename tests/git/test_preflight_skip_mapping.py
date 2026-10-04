@@ -18,6 +18,10 @@
 2026-09-18 实弹（st-flashspeed）：--allow-overlap 已传入但预检仍 SESSION-REQUIRED
 假阳性快败——gate 锁内认 allow_overlap 逃生（session_required_gate.py L70），
 预检映射漏配。修复=allow_overlap → skip SESSION-REQUIRED。锁内权威判定不变。
+
+2026-10-04 同族修（st-tdm-infrafix2）：CLAIM-REQUIRED gate 锁内同认 allow_overlap
+逃生（claim_required_gate.py L59-61），预检漏映射致带旗假阳性快败（本日三次实战）。
+修复=allow_overlap → skip CLAIM-REQUIRED。
 """
 
 from __future__ import annotations
@@ -27,9 +31,11 @@ from types import SimpleNamespace
 from scripts.git_commit import _preflight_skip_set
 
 
-def test_allow_overlap_skips_session_required():
+def test_allow_overlap_skips_session_and_claim_required():
     args = SimpleNamespace(allow_overlap=True)
-    assert "SESSION-REQUIRED" in _preflight_skip_set(args)
+    skip = _preflight_skip_set(args)
+    assert "SESSION-REQUIRED" in skip
+    assert "CLAIM-REQUIRED" in skip
 
 
 def test_no_flags_skips_nothing():
@@ -56,4 +62,10 @@ def test_all_flags_full_mapping():
         allow_overlap=True,
     )
     skip = _preflight_skip_set(args)
-    assert {"WORKTREE-REQUIRED", "COMMIT-SCOPE", "FILE-PLACEMENT-TTL", "SESSION-REQUIRED"} == set(skip)
+    assert {
+        "WORKTREE-REQUIRED",
+        "COMMIT-SCOPE",
+        "FILE-PLACEMENT-TTL",
+        "SESSION-REQUIRED",
+        "CLAIM-REQUIRED",
+    } == set(skip)

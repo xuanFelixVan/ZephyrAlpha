@@ -34,6 +34,11 @@ from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  canonical 常量，禁本地重定义（SSOT）
 
+# 仓根注入（2026-10-04 st-tdm-infrafix2）：registry_ledger_ddl 裸导仓根顶层包
+# schemas.*，而 site-packages 有同名残缺命名空间包（无 categories）——脚本独立
+# 运行时 sys.path 无仓根即被抢注 → ModuleNotFoundError。仓根须在 src 之前。
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
@@ -45,6 +50,7 @@ EXIT_DEGRADED = 3
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="注册表投影生成器（YAML := render(账本快照)）")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--check", action="store_true", help="零写判漂移（影子期/验收通道）")

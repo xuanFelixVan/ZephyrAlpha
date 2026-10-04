@@ -645,7 +645,10 @@ def _preflight_skip_set(args) -> frozenset[str]:
         # 认 allow_overlap 逃生（session_required_gate.py L70），预检漏映射导致
         # 带旗仍假阳性快败——违反 commit_preflight MODIFY-GUARD「escape_flag/skip_gates
         # 映射与 argparse 旗标一一对应」。锁内权威判定不变。
+        # CLAIM-REQUIRED 同族修（2026-10-04 st-tdm-infrafix2）：claim_required_gate.py
+        # L59-61 锁内认 allow_overlap 逃生，预检漏映射致带旗假阳性快败（本日三次实战）。
         skip.add("SESSION-REQUIRED")
+        skip.add("CLAIM-REQUIRED")
     return frozenset(skip)
 
 
