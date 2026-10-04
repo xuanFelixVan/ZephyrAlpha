@@ -34,3 +34,29 @@ gates:
     consumers: null
     evidence: docs/_working/commitmap_cure/f3_trigger_evidence_readme.md:217
     rationale: AGENTS.md ≤300 行硬上限断言（NL-3，宪法 §6）=上下文预算洁癖，⑨号兜底（无更贴切标签，回炉候选留档）
+  GATE-PRECOMMIT-RUN:
+    label_name: 「门禁快而不漏」
+    node_id: D11-C07
+    trigger_count: 839
+    consumers: null
+    evidence: docs/_working/commitmap_cure/f3_trigger_evidence_readme.md:217
+    rationale: own-scope pre-commit run 通道执行门本体（超时 fail-closed，E4 治本）=提速不漏检，⑪号本体案；2026-10-04 晨 7b36199c6c 实名入 shell 册（F3 假零触发案主角补户口），F7 V5 红1 处置（总筹 2026-10-04 裁定补挂）
+  TRADING-DAY-CYCLE-MAP:
+    label_name: 「账本必须对得上」
+    node_id: D11-C07
+    trigger_count: 0
+    consumers: null
+    evidence: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:1947
+    rationale: 图13（交易日循环全景图）结构校验门（经 MAP-ALIGNMENT 聚合台）=图册与机生现实对账，⑧号；新入册未满证据窗 trigger_count=0 显式留缺（随一本账收敛批补 facts）
+  DATA-SUPPLY-CHAIN-MAP:
+    label_name: 「账本必须对得上」
+    node_id: D11-C07
+    trigger_count: 0
+    consumers: null
+    evidence: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:926
+    rationale: 图12（数据供给链图）结构校验门（经 MAP-ALIGNMENT 聚合台）=图册与机生现实对账，⑧号；新入册未满证据窗 trigger_count=0 显式留缺（随一本账收敛批补 facts）
+addendum_note_20261004: >-
+  第二批补挂（F7 V5 红1 处置）：三台均为 shell 册冻结（182 台）后新入册者（册今值 185），非巡查漏挂。
+  挂载面终值 188=两册并集齐平。治本主轨不变=裁定#480 C-3 门禁身份一本账收敛批 + MOUNT 登记时挂载
+  声明（新门禁入册即上图，从机制上消灭"新黑户"尾巴）。
+

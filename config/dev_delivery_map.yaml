@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
-generated_at: '2026-10-04T10:52:08+08:00'
+generated_at: '2026-10-04T00:40:00+08:00'
 ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md（§6
   封顶 28 环节）+ 八本作业簿（exec_evidence 口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph
   在册 module_id 投影面），禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。
@@ -1165,25 +1165,26 @@ nodes:
     「宁可留错不可删错」: 5
     「文件在谁手里」: 1
     「新文件上户口」: 7
-    「账本必须对得上」: 18
+    「账本必须对得上」: 20
     「代码的底线体面」: 11
     「别拿假地址骗我」: 2
     「别把钥匙留在门口」: 2
     「死信也要死得明白」: 2
+    「门禁快而不漏」: 1
   casebooks:
   - AP#域二
   - DCS#手续+通道+真源+审批
   - MEM#3
   - RV1#缺口(F6)
   trigger_facts:
-    gates: 48
-    total_triggers_30d: 1323
+    gates: 51
+    total_triggers_30d: 2162
     zero_trigger_gates:
     - GATE-DETECT-GIT-DANGEROUS
     - GATE-DETECT-SHELL-DANGEROUS
     - GATE-DETECT-PERMANENT-DELETION
   consumers:
-    gates: 48
+    gates: 51
     gates_with_consumers: 48
     sample_consumers:
     - .pre-commit-config.yaml
@@ -1526,16 +1527,16 @@ nodes:
     queue_state_dirs: &id008
       pending:
         exists: true
-        item_count: 1
+        item_count: 2
       processing:
         exists: true
         item_count: 1
       done:
         exists: true
-        item_count: 498
+        item_count: 474
       dead:
         exists: true
-        item_count: 631
+        item_count: 664
   purpose_tags: {}
   casebooks:
   - AP#域三
@@ -2037,8 +2038,8 @@ counts:
     wired: 22
   blood:
     purpose_labels: 12
-    gates_mounted: 185
-    addendum_gates: 3
+    gates_mounted: 188
+    addendum_gates: 6
     zero_trigger_candidate_gates: 10
     casebooks_books: 6
     nodes_with_casebooks: 28
