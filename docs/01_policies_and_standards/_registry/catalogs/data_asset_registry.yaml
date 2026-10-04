@@ -7018,13 +7018,13 @@ datasets:
     2026-09-01，2026-09-03 system.parts）
   valid_since: "2010-08-01"
   module_id: MOD-L00-004
-  design_maturity: production
+  design_maturity: deprecated
   name: c1_market.kline_lof_15min
   name_zh: LOF 15 分 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7043,7 +7043,7 @@ datasets:
   - 行情
   - 高频
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-E2）：CH 表已 DROP SYNC；DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/；删前活消费 grep 复核：无生产调度/查询链消费（采集任务随批停用），残留引用仅离线诊断/回补工具。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-164
@@ -7061,13 +7061,13 @@ datasets:
     2026-09-01，2026-09-03 system.parts）
   valid_since: "2019-01-01"
   module_id: MOD-L00-004
-  design_maturity: production
+  design_maturity: deprecated
   name: c1_market.kline_lof_1min
   name_zh: LOF 1 分 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7086,7 +7086,7 @@ datasets:
   - 行情
   - 高频
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-E2）：CH 表已 DROP SYNC；DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/；删前活消费 grep 复核：无生产调度/查询链消费（采集任务随批停用），残留引用仅离线诊断/回补工具。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-165
@@ -7104,13 +7104,13 @@ datasets:
     2026-09-01，2026-09-03 system.parts）
   valid_since: "2010-08-01"
   module_id: MOD-L00-004
-  design_maturity: production
+  design_maturity: deprecated
   name: c1_market.kline_lof_30min
   name_zh: LOF 30 分 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7129,7 +7129,7 @@ datasets:
   - 行情
   - 高频
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-E2）：CH 表已 DROP SYNC；DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/；删前活消费 grep 复核：无生产调度/查询链消费（采集任务随批停用），残留引用仅离线诊断/回补工具。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-166
@@ -7147,13 +7147,13 @@ datasets:
     2026-09-01，2026-09-03 system.parts）
   valid_since: "2010-08-01"
   module_id: MOD-L00-004
-  design_maturity: production
+  design_maturity: deprecated
   name: c1_market.kline_lof_5min
   name_zh: LOF 5 分 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7172,7 +7172,7 @@ datasets:
   - 行情
   - 高频
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-E2）：CH 表已 DROP SYNC；DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/；删前活消费 grep 复核：无生产调度/查询链消费（采集任务随批停用），残留引用仅离线诊断/回补工具。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-167
@@ -7190,13 +7190,13 @@ datasets:
     2026-09-01，2026-09-03 system.parts）
   valid_since: "2010-08-01"
   module_id: MOD-L00-004
-  design_maturity: production
+  design_maturity: deprecated
   name: c1_market.kline_lof_60min
   name_zh: LOF 60 分 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7215,7 +7215,7 @@ datasets:
   - 行情
   - 高频
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-E2）：CH 表已 DROP SYNC；DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/；删前活消费 grep 复核：无生产调度/查询链消费（采集任务随批停用），残留引用仅离线诊断/回补工具。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-168
@@ -12766,13 +12766,13 @@ datasets:
   format_summary: "期权日统计（CH 实测 11544 行，2026-10-01 system.tables）"
   valid_since: '2026-10-01'
   module_id: MOD-L00-004
-  design_maturity: production
+  design_maturity: deprecated
   name: c1_market.option_daily_stats
   name_zh: 期权日统计
-  status: active
+  status: retired
   version: 1.0.0
   created_at: '2026-10-01'
-  updated_at: '2026-10-01'
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -12786,7 +12786,7 @@ datasets:
   applies_to: [market]
   tags: ["数据", "行情"]
   algorithm_status: not_applicable
-  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；SRC 回填核已核实（脚本在盘且走 akshare）"
+  evidence: "2026-10-01 W1 补注册批：CH 行数实测+消费方 grep 证据（src 路径见工单 §3）；SRC 回填核已核实（脚本在盘且走 akshare）；2026-10-05 Owner 批退役（EXEC-E2）：CH 表已 DROP SYNC；DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/；删前活消费 grep 复核：无生产调度/查询链消费（采集任务随批停用），残留引用仅离线诊断/回补工具。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-329
