@@ -116,11 +116,16 @@ def _ledger_record_drift(physical_path: str, *, added: int, removed: int, detail
         logger.debug("registry_drift 记账失败（不阻断）", exc_info=True)
 
 
-def _entry_index(snapshot: ProjectionSnapshot, root_key: str) -> dict[tuple[str, str], list[tuple[str, object]]]:
-    from zephyr.governance.registry_projection.model import entry_identity_key
+def _entry_index(snapshot: ProjectionSnapshot, root_key: str) -> dict[tuple[str, ...], list[tuple[str, object]]]:
+    from zephyr.governance.registry_projection.model import _IDENTITY_SORT_KEY, entry_identity_key
 
     sec = snapshot.section(root_key)
-    return {} if sec is None else {entry_identity_key(e): e for e in sec.entries}
+    if sec is None:
+        return {}
+    # 身份声明制（st-sI-identity-20261004）：册声明字段优先，无声明退 legacy
+    # (file,token) 映射（creation_tokens 排序键同构，行为零变化）
+    fields = snapshot.declared_fields_for(root_key) or _IDENTITY_SORT_KEY.get(root_key)
+    return {entry_identity_key(e, fields): e for e in sec.entries}
 
 
 def _identity_deltas(old: ProjectionSnapshot, new: ProjectionSnapshot, root_key: str) -> tuple[int, int]:

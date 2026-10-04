@@ -169,17 +169,20 @@ def _entry_identity_keys(text: str) -> set[str] | None:
     except Exception:  # noqa: BLE001 — 解析失败 fail-open（交 syntax 类 gate）
         return None
     if isinstance(data, list):
-        lists: list[list] = [data]
+        lists: list[tuple[object, list]] = [(None, data)]
     elif isinstance(data, dict):
-        lists = [v for v in data.values() if isinstance(v, list)]
+        lists = [(k, v) for k, v in data.items() if isinstance(v, list)]
     else:
         return None
+    # 身份声明制（st-sI-identity-20261004）：册头 unique_key 声明优先，无声明退位置口径
+    declared = _declared_fields_by_family(text, data)
     keys: set[str] = set()
-    for lst in lists:
+    for fam_key, lst in lists:
+        fields = declared.get(fam_key)
         for item in lst:
             # 身份键单点真源委托（entry_identity_key，st-joinchk-20261004 契约对齐修）——
             # 此处曾逐字复制「首字段判标量」旧逻辑，与真源背离致 aliases 开头条目漏计。
-            ident = entry_identity_key(item)
+            ident = entry_identity_key(item, fields)
             if ident is not None:
                 keys.add(ident)
     return keys or None
@@ -336,14 +339,45 @@ def make_registry_mass_deletion_gate() -> GateSpec:
     )
 
 
-def entry_identity_key(item: object) -> str | None:
-    """单条目身份键：每条首个标量字段 → ``"key=value"``（身份定义唯一真源）。
+def _declared_fields_by_family(text: str, data: object) -> dict[object, tuple[str, ...]]:
+    """册头 ``unique_key`` 声明 → 逐族适用身份字段（身份声明制入口，F10 治本手术1）。
+
+    声明解析与逐族适用性真源=``commit_queue_landing._unique_key_decl`` /
+    ``_entries_carry_declared_fields``（QMine A1 件③ L1 SSOT——懒导入防 src→scripts
+    顶层依赖环；导入失败=无声明可用，退位置首标量口径，fail-open 同向）。
+
+    返回 {族键: 字段元组}（全有全无：族内 dict 条目须全数携带声明标量字段，
+    否则该族不进计划——防同族混轨双键空间）；无声明/不适用=空 dict。
+    """
+    try:
+        from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+            _entries_carry_declared_fields,
+            _unique_key_decl,
+        )
+    except Exception:  # noqa: BLE001 — scripts 不可达=声明面不可用，退现状
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    decl = _unique_key_decl(text)
+    if not decl:
+        return {}
+    plan: dict[object, tuple[str, ...]] = {}
+    for fam_key, fam_entries in data.items():
+        if str(fam_key) == "unique_key":
+            continue  # 声明本体不是条目族（list 形声明值会被族迭代误纳，防御位）
+        if not isinstance(fam_entries, list):
+            continue
+        fields = decl.get(str(fam_key)) or decl.get(None)
+        if fields and _entries_carry_declared_fields(fam_entries, fields):
+            plan[fam_key] = fields
+    return plan
+
+
+def entry_identity_key(item: object, declared_fields: tuple[str, ...] | None = None) -> str | None:
+    """单条目身份键：册声明字段优先 → ``"field=value"``（身份定义唯一真源）。
 
     W2 落地器三向合并（commit_queue_landing）复用本函数——落地侧与门禁侧必须用
     同一份身份定义，否则"门禁放行的"与"合并器救回的"会各说各话。
-
-    Returns:
-        身份键；条目非 dict / 空条目 / 无任何标量字段 → None（判不了不误报，fail-open 同向）。
 
     st-joinchk-20261004 契约对齐修：原实现取「首字段判标量」（首字段非标量即 None），
     与本文档「首个标量字段」契约背离——capability 册 383 条 aliases 列表开头的存量
@@ -351,9 +385,24 @@ def entry_identity_key(item: object) -> str | None:
     -0003/0004/0005 三连实弹）。修正为向后扫描取首个标量字段：首字段本标量者行为
     零变化；aliases 开头者身份从无到有（gate 身份断言覆盖面只会更严=更少静默蒸发，
     合并器解锁）。无任何标量字段仍 None（fail-open 同向不变）。
+
+    st-sI-identity-20261004 身份声明制（f10_fidelity_diff §6.1）：优先取册内声明的
+    unique_key 族字段（RULING=ruling_id/TRANSLATION=module_path/ARCH=issue_id/
+    CAND=id/CAPCAN=capability_id+file,token 等）——身份与字段位置解耦，PG jsonb
+    键序重排不再改变身份串（B3 收缩 TRANSLATION 8761→1262/RULING 294→41 治本）。
+    声明字段缺失/非标量 → 退位置向后扫描（fdfe8fe302 语义保留，零新死法）；
+    declared_fields=None → 纯位置口径（无声明册行为零变化）。
+
+    Returns:
+        身份键；条目非 dict / 空条目 / 无任何标量字段 → None（判不了不误报，fail-open 同向）。
     """
     if not isinstance(item, dict) or not item:
         return None
+    if declared_fields:
+        for field in declared_fields:
+            value = item.get(field)
+            if isinstance(value, (str, int, float, bool)):
+                return f"{field}={value}"
     for field in item:
         value = item[field]
         if isinstance(value, (str, int, float, bool)):
