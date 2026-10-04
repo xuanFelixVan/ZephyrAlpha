@@ -1,5 +1,10 @@
 # [BLUEPRINT] MOD-DATA-066 | docs/03_modules/_domain_data/source_sla_tracker/blueprint.md
 # [MODULE] zephyr.data.source_sla_tracker
+# [DEPRECATED] 2026-10-04 图12 F1z E-3（Owner 已批退役）：全仓零外部调用方（grep 实测 2026-10-03）
+#   + data/sla/ 台账停更 38 天（末件 SLA-20260826-180754.json）双实证，宪法 §4 内收判据
+#   "零触发零消费→退役"。successor=MOD-L00-004 supply_sentinel 族行数地板腿（断供定性职责覆盖，
+#  册外注记=casebook_registry.yaml outside_registry"data/sla/ 源 SLA 台账（已退役）"条）。
+#   物理文件删除与册随裁定归档留退役排班波，本批只标记不删（先例=windows_service.py [DEPRECATED]）。
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] 无（聚合核心纯内存；性能记录序列/目标注入；source_health_check 语义参照不 import）
 # [CONSUMERS] 运行时装配批（探测记录接入 / SLA 目标注册 / 日周报计划任务 / 看板读侧）

@@ -8,8 +8,8 @@ title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.2.0"
-date: 2026-10-01
+version: "2.2.1"
+date: 2026-10-04
 topic: data_ops_sop
 ---
 
@@ -118,6 +118,7 @@ tasks.yaml 条目模板（字段以现有任务为准）：
    - ②调度器日志/心跳可见该任务真实执行记录（**反例入册：shareholder_incremental 任务在、断供两月无人知**）；
    - ③目标消费者实际查得到数（§9 路由落地）。
 5. 失败必须留痕 failures/{date}_{task}.json——静默失败=断供起点。
+   **断供事故处置记录必须落 `data/failures/` 案卷（CASEBOOK-001 册号，文件名前缀 `outage_`，如 `outage_sector_snapshot_20260915.json`），禁止仅留会话散页**（图12 F1z E-8，Owner 批 2026-10-04——病历价值在翻阅，散页无册号无反查入口；断供案与对账差异同库同命名段，不另建断供台账）。
 
 ## §9 消费端接线（接通哪里——路由表=初猜，终局以 §9A 六问挖掘为准）
 

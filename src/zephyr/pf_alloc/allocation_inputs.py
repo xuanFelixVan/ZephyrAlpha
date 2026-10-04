@@ -808,7 +808,8 @@ SQL_LATEST_L9_AGG = (
     "FROM {table} WHERE source_line = 'AGG' AND trade_date <= '{date}' "
     "ORDER BY trade_date DESC, ingest_ts DESC LIMIT 1"
 )
-# 降级系数（工程缺省，Owner 数字未签——签批后随裁定固化；一键切回 flag 兜底）：
+# 降级系数（Owner 签批 2026-10-04：黄0.90/红0.70 维持——原"工程缺省待 Owner 签"就此固化，
+# 数值零改动；一键切回 flag 兜底通道保留）：
 # 黄=供给有黄帽（陈旧/稀疏/未吸收）轻降；红=断供/挂零/断链重降。只减不加，green 不施加。
 L9_READINESS_YELLOW_CAP = 0.90
 L9_READINESS_RED_CAP = 0.70
