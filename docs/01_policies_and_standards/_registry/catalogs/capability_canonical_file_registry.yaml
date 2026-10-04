@@ -58670,4 +58670,20 @@ creation_tokens:
   created_by: st-bm-reclass-20261004
   capability: bm_reclass_ruling
   merge_evaluation: "一次性呈批件（battle_map 定性横向·覆盖切片，裁定#483已批A施工落地99141078f4），批复登记后转归档"
+- file: docs/_working/commitmap_cure/f6_doctorscan_refresh.md
+  token: commitmap-cure-f6-doctorscan-refresh-20261004
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f7_latency_dashboard.md
+  token: commitmap-cure-f7-latency-dashboard-20261004
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/f8_orphan_triage.md
+  token: commitmap-cure-f8-orphan-triage-20261004
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/index.md
+  token: commitmap-cure-index-20261004
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
 di_seam_exemptions: []

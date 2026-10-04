@@ -1,0 +1,1621 @@
+ttl: task_bound
+session: st-f5-mountdata-20261003
+date: '2026-10-03'
+title: F5 四字段装配④·消费者聚合（182台 consumer_count + top5 名字指针）
+completes_when: 总筹升级生成器消费并随上户口批落地后转归档
+source_map:
+  consumer_count: f3_consumer_detail.csv 按门禁行计数（与主表「消费者数」列逐台相等，机械复核零偏差）
+  top_consumers: 该门禁明细行文件序前 ≤5 个消费者文件名（明细文件每台门禁 production 行恒在 test 行前，文件序即生产优先，零判定）
+  inv1: 只存计数与名字指针，禁复制明细行（任务书 INV-1）
+  note: 机械转换零判定产物；判定权归总筹
+aggregates:
+- gate_id: GATE-PROTECTED-PATHS
+  consumer_count: 6
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-WORKTREE-REQUIRED
+  consumer_count: 14
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ALGO-FLOW
+  consumer_count: 69
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_algo_flow_script_backup/check_algo_flow.py
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-PYTEST-CONFIG-DRIFT
+  consumer_count: 3
+  top_consumers:
+  - .pre-commit-config.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - py.ini
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ARCH
+  consumer_count: 108
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/P1-E3_NLP管道架构裁定与施工方案.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/algorithm_overview_architecture_decision.md
+  - .trae/documents/backtest_observability_mlflow_plan.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-NAMING
+  consumer_count: 18
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-NAMING-AUDIT
+  consumer_count: 8
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DOC-NODE-ID
+  consumer_count: 19
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ID-UNIQ
+  consumer_count: 17
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-INTEGRITY
+  consumer_count: 21
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-12
+  consumer_count: 5354
+  top_consumers:
+  - .github/workflows/commit_message_guard.yml
+  - .github/workflows/dedup-test.yml
+  - .github/workflows/governance.yml
+  - .github/workflows/lsg_security_gate.yml
+  - .github/workflows/red-blue-validator.yml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-TRIPLE-ALIGN
+  consumer_count: 7
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-FRONTMATTER
+  consumer_count: 17
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-FRONTMATTER-AUDIT
+  consumer_count: 7
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-VOCAB
+  consumer_count: 81
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/rules/project_rules.md
+  - .workbuddy/memory/2026-10-03.md
+  - config/dev_delivery_map.yaml
+  - config/governance/noqa_exempt_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-16
+  consumer_count: 2806
+  top_consumers:
+  - .github/workflows/deploy.yml
+  - .github/workflows/governance.yml
+  - .github/workflows/red-blue-validator.yml
+  - .import_linter_cache/6c751d98f3de1d748d53476362fb195271fd53f5.data.json
+  - .openclaw-attachments/20260914-150801-204e5e79-304-pasted_text_20260914-150801.txt
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-17
+  consumer_count: 3016
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .import_linter_cache/6c751d98f3de1d748d53476362fb195271fd53f5.data.json
+  - .openclaw-attachments/20260914-222449-a8101d0b-a15-pasted_text_20260914-222449.txt
+  - .openclaw-attachments/20260914-230850-9295947f-009-pasted_text_20260914-230850.txt
+  - .pre-commit-config.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-NESTED-FLAT-PREFIX
+  consumer_count: 11
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SRC-NO-DATA
+  consumer_count: 12
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DIRECTORY-CONTRACT
+  consumer_count: 21
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-VMS-SSOT
+  consumer_count: 14
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SCHEMA-TRUTH
+  consumer_count: 7
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SYMBOL-CONVENTION
+  consumer_count: 12
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ZR
+  consumer_count: 20
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/module_id_deliverables_2_3_production_plan.md
+  - .trae/documents/parallel_session_drift_root_cause_remediation.md
+  - data/backups/depgraph_pre_variant_patch_20260629_174218.sql
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SSOT-CODE
+  consumer_count: 13
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-TEST
+  consumer_count: 76
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/integrate_bm_sim07_test_to_cicd.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-TEST-SYMBOL
+  consumer_count: 2
+  top_consumers:
+  - .pre-commit-config.yaml
+  - scripts/governance/check_test_symbol_validity.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ERRCODE
+  consumer_count: 13
+  top_consumers:
+  - .pre-commit-config.yaml
+  - architecture_model/contracts/error_code_registry.yaml
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-REG-BL
+  consumer_count: 97
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/parallel_session_drift_root_cause_remediation.md
+  - .trae/documents/systemic_drift_governance_root_cure_plan.md
+  - .trae/documents/systemic_drift_root_cure_continuation_plan.md
+  - .trae/documents/systemic_drift_root_cure_resume_p2t3.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-BP-PLACE
+  consumer_count: 9
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/backups/depgraph_pre_variant_patch_20260629_174218.sql
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SCRIPT-Q
+  consumer_count: 6
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ADM
+  consumer_count: 24
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .pre-commit-config.yaml
+  - .trae/documents/parallel_session_drift_root_cause_remediation.md
+  - .trae/documents/systemic_drift_governance_root_cure_plan.md
+  - config/nav_table_mapping.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-21
+  consumer_count: 2276
+  top_consumers:
+  - .import_linter_cache/6c751d98f3de1d748d53476362fb195271fd53f5.data.json
+  - .pre-commit-config.yaml
+  - .roo/rules/project_rules.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/_zoomable_html/regime_detector_drilldown_sample.html
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-20
+  consumer_count: 4490
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .import_linter_cache/6c751d98f3de1d748d53476362fb195271fd53f5.data.json
+  - .openclaw-attachments/20260914-151749-0fcb49b2-bc2-pasted_text_20260914-151749.txt
+  - .openclaw-attachments/20260914-230850-9295947f-009-pasted_text_20260914-230850.txt
+  - .pre-commit-config.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SILENT-DEGRADATION
+  consumer_count: 8
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-RETURN-CONTRACT
+  consumer_count: 7
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/P3_100pct_ai_governance_closure.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-WORKTREE-OPS-TELEMETRY
+  consumer_count: 7
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/P3_100pct_ai_governance_closure.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-MCP
+  consumer_count: 828
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .pre-commit-config.yaml
+  - .roo/rules/project_rules.md
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-C2
+  consumer_count: 370
+  top_consumers:
+  - .openclaw-attachments/20260914-151749-0fcb49b2-bc2-pasted_text_20260914-151749.txt
+  - .openclaw-attachments/20260914-235246-85c71319-703-pasted_text_20260914-235246.txt
+  - .pre-commit-config.yaml
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-CODEGEN-IDEMPOTENT
+  consumer_count: 2
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-CANONICAL-YAML-DRIFT
+  consumer_count: 14
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/phase-b-yaml-staleness-fix-and-drift-gate.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ENCODING
+  consumer_count: 24
+  top_consumers:
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-COMMIT-GW
+  consumer_count: 30
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/rules/onboarding_detail.md
+  - .trae/rules/project_rules.md
+  - .workbuddy/memory/2026-09-15.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-NO-TESTS-UNIT
+  consumer_count: 11
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DEDUP
+  consumer_count: 41
+  top_consumers:
+  - .pre-commit-config.yaml
+  - config/trading_decision_map.yaml
+  - data/backups/depgraph_pre_variant_patch_20260629_174218.sql
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DEBT-BRIDGE
+  consumer_count: 11
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .pre-commit-config.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ANY-ABUSE
+  consumer_count: 38
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ALGO-QUALITY
+  consumer_count: 15
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/gate-algo-quality-detector.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-GEN-NO-REALTIME-TIME
+  consumer_count: 9
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/algo_flow_calibrated/MOD-GOV_CHECK_GEN_NO_REALTIME.txt
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-NO-COMMIT-DERIVED
+  consumer_count: 9
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/algo_flow_calibrated/MOD-GOV_CHECK_NO_COMMIT_DERIVED.txt
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-MODULE-LIFECYCLE
+  consumer_count: 2
+  top_consumers:
+  - .pre-commit-config.yaml
+  - scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ALGO-FLOW-LINK
+  consumer_count: 70
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ALGO-NOTE-SYNC
+  consumer_count: 58
+  top_consumers:
+  - .openclaw-attachments/20260914-230850-9295947f-009-pasted_text_20260914-230850.txt
+  - config/trading_decision_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ARCH-REFERENCE
+  consumer_count: 53
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/execute_a_remaining_gates_and_registry_qa.md
+  - .trae/documents/p1_batch4_execution.md
+  - .trae/documents/p1_batches_2_3_4_execution.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ASYNCIO-RUN-IN-CONTEXT
+  consumer_count: 41
+  top_consumers:
+  - .trae/documents/execute_a_remaining_gates_and_registry_qa.md
+  - .trae/documents/warn_only_to_hard_gate_batch.md
+  - .trae/documents/warn_to_hard_gate_final_registration.md
+  - .trae/documents/warn_to_hard_gate_finish_commit.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-BARE-GETENV
+  consumer_count: 36
+  top_consumers:
+  - SECRETS.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-BARE-SQL
+  consumer_count: 267
+  top_consumers:
+  - .trae/documents/algorithm_overview_architecture_decision.md
+  - .trae/documents/plan_battle_map_algorithm_field_autogen.md
+  - .workbuddy/memory/2026-09-12.md
+  - .workbuddy/memory/2026-09-15.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BARE-SUBPROCESS
+  consumer_count: 48
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-10-03.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-BATTLE-MAP-ALIGNMENT
+  consumer_count: 15
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md
+  - docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md
+  - docs/02_enterprise_architecture/02_domain_architecture_docs/18_d_gov_code_quality.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BLUEPRINT-HEADER
+  consumer_count: 16
+  top_consumers:
+  - config/construction_workflow_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
+  consumer_count: 17
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DOC-HEADER-SUITE
+  consumer_count: 61
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  consumer_count: 28
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/p1-in-process-gate-node-id-hardcode.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BUSINESS-REGISTRY
+  consumer_count: 39
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CAP-CONSISTENCY
+  consumer_count: 36
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CAPABILITY-LOOKUP-REQUIRED
+  consumer_count: 73
+  top_consumers:
+  - .openclaw-attachments/20260914-141342-bf9814a2-9a7-pasted_text_20260914-141342.txt
+  - .openclaw-attachments/20260914-141353-9004101e-ad2-pasted_text_20260914-141353.txt
+  - .openclaw-attachments/20260914-192440-9cfb5ee4-dc0-pasted_text_20260914-192440.txt
+  - .openclaw-attachments/20260914-222449-a8101d0b-a15-pasted_text_20260914-222449.txt
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CAPABILITY-OVERLAP
+  consumer_count: 69
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/algo_flow_calibrated/MOD-CLONE_GUARD.txt
+  - config/mcp.json
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CH-BATCH-SIZE
+  consumer_count: 36
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CH-FINAL-GATE
+  consumer_count: 49
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CH-VERSION-COL
+  consumer_count: 27
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CLAIM-REQUIRED
+  consumer_count: 61
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/depgraph_commit_and_foreign_change_gate_治本.md
+  - .trae/documents/plan_worktree_required_gate.md
+  - .trae/documents/混合提交治本_13a5e1d512裁定与COMMIT_SCOPE_gate方案.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: COMMIT-SCOPE
+  consumer_count: 48
+  top_consumers:
+  - .trae/documents/混合提交治本_13a5e1d512裁定与COMMIT_SCOPE_gate方案.md
+  - .workbuddy/memory/2026-09-12.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CONSUMERS-ACCURACY
+  consumer_count: 38
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: CREATE-GUARD
+  consumer_count: 259
+  top_consumers:
+  - .openclaw-attachments/20260914-222449-a8101d0b-a15-pasted_text_20260914-222449.txt
+  - .openclaw-attachments/20260914-230948-a417fffe-12b-pasted_text_20260914-230948.txt
+  - .trae/documents/P3_closure_gate_fixes.md
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/P3_merge_conflict_resolution.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: REFERENCE-INTEGRITY
+  consumer_count: 54
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DATETIME-NOW-FORBIDDEN
+  consumer_count: 47
+  top_consumers:
+  - .openclaw-attachments/20260914-230948-a417fffe-12b-pasted_text_20260914-230948.txt
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/complete_decision_index_split_merge.md
+  - .trae/documents/finish_decision_index_split_gate3_rerun_commit.md
+  - .trae/documents/warn_only_to_hard_gate_batch.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DECISION-MAP
+  consumer_count: 22
+  top_consumers:
+  - config/trading_decision_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DEPGRAPH-FRESHNESS
+  consumer_count: 36
+  top_consumers:
+  - config/construction_workflow_map.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DEPGRAPH-ENFORCEMENT
+  consumer_count: 23
+  top_consumers:
+  - .workbuddy/memory/2026-10-03.md
+  - config/construction_workflow_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DEPGRAPH-WRITE-PATH
+  consumer_count: 41
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DERIVATION-ANNOTATION
+  consumer_count: 22
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DERIVED-FILE-DELETION-PROTECTION
+  consumer_count: 24
+  top_consumers:
+  - .trae/documents/plan_worktree_required_gate.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DIRECTORY-CONTRACT
+  consumer_count: 55
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/depgraph_commit_and_foreign_change_gate_治本.md
+  - .trae/documents/p1_batches_2_3_4_execution.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DOC-REF-BROKEN
+  consumer_count: 45
+  top_consumers:
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DOMAIN-FK
+  consumer_count: 49
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+  consumer_count: 23
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: EMPTY-HANDLER
+  consumer_count: 27
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ENCODING-SAFETY
+  consumer_count: 43
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-ERRCODE-CONSISTENCY
+  consumer_count: 25
+  top_consumers:
+  - .openclaw-attachments/20260914-230850-9295947f-009-pasted_text_20260914-230850.txt
+  - architecture_model/contracts/error_code_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: EXEMPT-ZONE-FM
+  consumer_count: 71
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - config/switch_criteria.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FILE-COPY
+  consumer_count: 39
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FILE-PLACEMENT-TTL
+  consumer_count: 60
+  top_consumers:
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/P3_phase_a_final_completion_plan.md
+  - .trae/documents/P3_phase_a_residual_completion_plan.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/complete_decision_index_split_merge.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FOLDER-CAPACITY-HARD-LIMIT
+  consumer_count: 32
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-09-11.md
+  - .workbuddy/memory/2026-09-15.md
+  - config/construction_workflow_map.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FOREIGN-CHANGE-DETECTION
+  consumer_count: 35
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/depgraph_commit_and_foreign_change_gate_治本.md
+  - .trae/documents/plan_worktree_required_gate.md
+  - .trae/documents/混合提交治本_13a5e1d512裁定与COMMIT_SCOPE_gate方案.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FORGED-GW-MARKER
+  consumer_count: 24
+  top_consumers:
+  - config/dev_delivery_map.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FRONTEND-MAP
+  consumer_count: 22
+  top_consumers:
+  - .workbuddy/memory/2026-09-15.md
+  - config/construction_workflow_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FRONTEND-TRUTH-SOURCE
+  consumer_count: 23
+  top_consumers:
+  - config/construction_workflow_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FUNCTION-DUP
+  consumer_count: 74
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GIT-CALL-BUDGET
+  consumer_count: 24
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - config/construction_workflow_map.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-GOD-CLASS
+  consumer_count: 33
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-HARDCODED-URL
+  consumer_count: 34
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: HELD-OVERLAP
+  consumer_count: 92
+  top_consumers:
+  - .trae/documents/P3_merge_conflict_resolution.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/algo_flow_calibrated/MOD-GOV_SESSION_WORKTREE.txt
+  - .trae/documents/commit_gate_registry_sync.md
+  - .trae/documents/commit_gate_registry_sync_plan.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: COMPLEXITY-GUARD
+  consumer_count: 53
+  top_consumers:
+  - config/construction_workflow_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: HOT-FILE-BASE-FRESHNESS
+  consumer_count: 36
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/rules/trae_085_stale_base_overwrite.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ID-UNIQUENESS
+  consumer_count: 22
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-UPWARD-IMPORT
+  consumer_count: 37
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: IMPORT-INTEGRITY
+  consumer_count: 46
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/algorithm_overview_architecture_decision.md
+  - .trae/documents/plan_battle_map_algorithm_field_autogen.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: INDUSTRY-CHAIN-MAP
+  consumer_count: 16
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/registry_master_index_exemptions.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  - docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BLOOD-FLESH
+  consumer_count: 34
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: STATE-VOCAB-REGISTRY
+  consumer_count: 30
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TAG-VOCAB
+  consumer_count: 24
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-LONG-PARAM-LIST
+  consumer_count: 63
+  top_consumers:
+  - .trae/documents/finish_decision_index_split_gate3_rerun_commit.md
+  - .workbuddy/memory/2026-09-15.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MANUAL-ONLY-PERMANENT
+  consumer_count: 46
+  top_consumers:
+  - .trae/documents/P3_closure_gate_fixes.md
+  - .trae/documents/P3_followup_todos_completion_plan.md
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/P3_merge_conflict_resolution.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MCP-VERSION-FIELD
+  consumer_count: 27
+  top_consumers:
+  - .trae/documents/execute_a_remaining_gates_and_registry_qa.md
+  - .trae/documents/warn_only_to_hard_gate_batch.md
+  - .trae/documents/warn_to_hard_gate_final_registration.md
+  - .trae/documents/warn_to_hard_gate_finish_commit.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MODULE-ID-CONSISTENCY
+  consumer_count: 34
+  top_consumers:
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/depgraph_commit_and_foreign_change_gate_治本.md
+  - .trae/documents/warn_to_hard_gate_final_registration.md
+  - .trae/documents/warn_to_hard_gate_finish_commit.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MSG-EXPOSURE
+  consumer_count: 91
+  top_consumers:
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/P3_phase_a_final_completion_plan.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MSG-STYLE
+  consumer_count: 33
+  top_consumers:
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/P3_phase_a_final_completion_plan.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MUTABLE-CONST-WITHOUT-FINAL
+  consumer_count: 44
+  top_consumers:
+  - .trae/documents/execute_a_remaining_gates_and_registry_qa.md
+  - .trae/documents/warn_only_to_hard_gate_batch.md
+  - .trae/documents/warn_to_hard_gate_final_registration.md
+  - .trae/documents/warn_to_hard_gate_finish_commit.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NEW-FILE-DEPGRAPH-ENFORCEMENT
+  consumer_count: 33
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/align-all-unified-panorama.md
+  - .trae/documents/root_temp_file_enforcement_治本方案.md
+  - .trae/documents/技术指标清单骨架先行施工计划.md
+  - config/construction_workflow_map.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-IMPORT-SIDE-EFFECT
+  consumer_count: 32
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NOQA-VALIDATION
+  consumer_count: 54
+  top_consumers:
+  - .trae/documents/P3_followup_todos_completion_plan.md
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/P3_phase_a_final_completion_plan.md
+  - .trae/documents/P3_phase_a_residual_completion_plan.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: OPEN-WITHOUT-WITH
+  consumer_count: 30
+  top_consumers:
+  - .trae/documents/execute_a_remaining_gates_and_registry_qa.md
+  - .trae/documents/warn_only_to_hard_gate_batch.md
+  - .trae/documents/warn_to_hard_gate_final_registration.md
+  - .trae/documents/warn_to_hard_gate_finish_commit.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ORPHAN-MODULE
+  consumer_count: 128
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/algo_flow_calibrated/MOD-GOV_COMMIT_GATES.txt
+  - .trae/documents/finish_decision_index_split_verify_and_commit.md
+  - .trae/documents/混合提交治本_13a5e1d512裁定与COMMIT_SCOPE_gate方案.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: MAP-ALIGNMENT
+  consumer_count: 46
+  top_consumers:
+  - config/construction_workflow_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: PERMANENT-SYSTEM-TRIGGER
+  consumer_count: 17
+  top_consumers:
+  - .workbuddy/memory/2026-10-02.md
+  - docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-PRECOMMIT-OFFLINE
+  consumer_count: 28
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: PROTECTED-PATHS
+  consumer_count: 68
+  top_consumers:
+  - .openclaw-attachments/20260914-150801-204e5e79-304-pasted_text_20260914-150801.txt
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: PURE-ASSERTION
+  consumer_count: 30
+  top_consumers:
+  - .trae/documents/commit_gate_registry_sync.md
+  - .trae/documents/commit_gate_registry_sync_plan.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: PURE-SHIM
+  consumer_count: 31
+  top_consumers:
+  - .trae/documents/commit_gate_registry_sync.md
+  - .trae/documents/commit_gate_registry_sync_plan.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: R5-DIGIT-SUFFIX
+  consumer_count: 57
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-10-03.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FMS-HYGIENE
+  consumer_count: 42
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RECONCILER-FILE-OPS
+  consumer_count: 42
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RECONCILER-HEALTH
+  consumer_count: 50
+  top_consumers:
+  - .trae/documents/P3_followup_todos_root_cause_plan.md
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/P3_merge_conflict_resolution.md
+  - .trae/documents/P3_phase_a_final_completion_plan.md
+  - .trae/documents/P3_phase_a_residual_completion_plan.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: REGISTRY-CODE-ANCHOR
+  consumer_count: 24
+  top_consumers:
+  - .workbuddy/memory/2026-09-12.md
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: REGISTRY-MASS-DELETION
+  consumer_count: 45
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: REGISTRY-YAML-PARSE
+  consumer_count: 12
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RELATIVE-PATH-LITERAL
+  consumer_count: 29
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RENAME-DEPGRAPH-SYNC
+  consumer_count: 42
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/plan_worktree_required_gate.md
+  - .workbuddy/memory/2026-09-14.md
+  - AGENTS.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RESOURCE-SCHEDULE
+  consumer_count: 27
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RULE-EXECUTION-PAIRING
+  consumer_count: 32
+  top_consumers:
+  - .trae/documents/algo_flow_calibrated/MOD-GOV_RULE_EXECUTION_PAIRING_GATE.txt
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RULE-FOUR-WAY-ALIGN
+  consumer_count: 31
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/align-all-unified-panorama.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RULING-COMMIT-VERIFIED
+  consumer_count: 28
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: RULING-REFERENCE
+  consumer_count: 42
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SCHEMA-FILE-EXISTS
+  consumer_count: 24
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SCRIPTS-IMPORT-INTEGRITY
+  consumer_count: 37
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-SECRET-HARDCODE
+  consumer_count: 29
+  top_consumers:
+  - .workbuddy/memory/2026-10-03.md
+  - SECRETS.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SECRET-REGISTRY-CONSISTENCY
+  consumer_count: 25
+  top_consumers:
+  - SECRETS.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SESSION-REQUIRED
+  consumer_count: 77
+  top_consumers:
+  - .openclaw-attachments/20260914-230352-0a22a1bb-246-pasted_text_20260914-230352.txt
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/capability-lookup-bypass-remaining-implementation.md
+  - .trae/documents/complete_decision_index_split_merge.md
+  - .trae/documents/plan_worktree_required_gate.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SNAPSHOT-DRIFT
+  consumer_count: 22
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SPLIT-COORDINATION
+  consumer_count: 16
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SSOT-REDEFINITION
+  consumer_count: 63
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: STASH-ACCUMULATION
+  consumer_count: 21
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/root_temp_file_enforcement_治本方案.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: FACTORY-MAP
+  consumer_count: 17
+  top_consumers:
+  - config/strategy_production_map.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  - docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_en.md
+  - docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_zh.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: SYNTAX-VALIDATION
+  consumer_count: 17
+  top_consumers:
+  - .openclaw-attachments/20260914-141342-bf9814a2-9a7-pasted_text_20260914-141342.txt
+  - .openclaw-attachments/20260914-141353-9004101e-ad2-pasted_text_20260914-141353.txt
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml
+  - docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TABLE-NAME-REGISTRY
+  consumer_count: 68
+  top_consumers:
+  - .openclaw-attachments/20260914-150801-204e5e79-304-pasted_text_20260914-150801.txt
+  - .openclaw-attachments/20260914-192355-89492f1c-1a6-pasted_text_20260914-192355.txt
+  - .openclaw-attachments/20260914-230850-9295947f-009-pasted_text_20260914-230850.txt
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-09-14.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TAKEOVER-PENDING
+  consumer_count: 17
+  top_consumers:
+  - .workbuddy/memory/2026-10-02.md
+  - .workbuddy/memory/2026-10-03.md
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TEST-RESIDUE-SSOT
+  consumer_count: 26
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - config/construction_workflow_map.yaml
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TEST-SOURCE-CONSISTENCY
+  consumer_count: 110
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-09-14.md
+  - config/construction_workflow_map.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: META-TESTS-COVERAGE
+  consumer_count: 47
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TRANSLATION-COVERAGE
+  consumer_count: 110
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-10-02.md
+  - .workbuddy/memory/2026-10-03.md
+  - AGENTS.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: TTL-METADATA
+  consumer_count: 61
+  top_consumers:
+  - .openclaw-attachments/20260914-222449-a8101d0b-a15-pasted_text_20260914-222449.txt
+  - .trae/documents/P3_closure_gate_fixes.md
+  - .trae/documents/P3_merge_conflict_resolution.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-09-11.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: UNDEFINED-NAME
+  consumer_count: 47
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: UNSAFE-DICT-SPREAD
+  consumer_count: 30
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: VOCAB-CHAIN
+  consumer_count: 34
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: WORKTREE-REQUIRED
+  consumer_count: 64
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/plan_worktree_required_gate.md
+  - .workbuddy/memory/2026-09-15.md
+  - config/dev_delivery_map.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+  consumer_count: 28
+  top_consumers:
+  - .trae/documents/execute_a_remaining_gates_and_registry_qa.md
+  - .trae/documents/warn_only_to_hard_gate_batch.md
+  - .trae/documents/warn_to_hard_gate_final_registration.md
+  - .trae/documents/warn_to_hard_gate_finish_commit.md
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DANGLING-REFERENCE
+  consumer_count: 28
+  top_consumers:
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: PERM-TRIGGER
+  consumer_count: 99
+  top_consumers:
+  - .openclaw-attachments/20260914-222449-a8101d0b-a15-pasted_text_20260914-222449.txt
+  - .trae/documents/P3_phase_a_final_completion_plan.md
+  - .workbuddy/memory/2026-09-14.md
+  - .workbuddy/memory/2026-09-15.md
+  - .workbuddy/memory/2026-10-03.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: VOCAB-HARDCODE
+  consumer_count: 44
+  top_consumers:
+  - .github/workflows/governance.yml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DEPGRAPH-PRE-REGISTRATION
+  consumer_count: 31
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .workbuddy/memory/2026-09-12.md
+  - .workbuddy/memory/2026-09-15.md
+  - config/construction_workflow_map.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-PANORAMA-ALIGNMENT
+  consumer_count: 29
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/align-all-unified-panorama.md
+  - .trae/documents/depgraph_scale_confusion_fix_resume_execution_plan.md
+  - .trae/documents/h1_redis_hot_施工规划.md
+  - .trae/documents/panorama_four_view_alignment_rule.md
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BLUEPRINT-AMODULE-CONSISTENCY
+  consumer_count: 29
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: NO-HIGH-COMPLEXITY
+  consumer_count: 48
+  top_consumers:
+  - .trae/documents/finish_decision_index_split_gate3_rerun_commit.md
+  - .workbuddy/memory/2026-09-12.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: COMMIT-CRITICAL-SECTION-LOCK
+  consumer_count: 3
+  top_consumers:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+  - scripts/governance/generators/generate_gate_registry.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-SCHEMA-HEALTH
+  consumer_count: 17
+  top_consumers:
+  - .pre-commit-config.yaml
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - .trae/documents/commit_gate_registry_sync.md
+  - .trae/rules/onboarding_detail.md
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: DATA-TASK-COMPLETENESS
+  consumer_count: 19
+  top_consumers:
+  - .trae/documents/_arch_issue_full_backup.yaml
+  - data/databases/backups/depgraph_backup_20260721_220004.sql
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: ISSUE-RESOLVED-INTEGRITY
+  consumer_count: 12
+  top_consumers:
+  - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+  - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+  - data/databases/backups/depgraph_backup_20260821_p06.sql
+  - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: LIBRARY-COVERAGE
+  consumer_count: 2
+  top_consumers:
+  - docs/03_modules/_domain_library/blueprint.md
+  - scripts/governance/generators/generate_gate_registry.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: BLUEPRINT-FORMAT
+  consumer_count: 83
+  top_consumers:
+  - .trae/documents/P3_closure_gate_fixes.md
+  - .trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md
+  - .trae/documents/P3_merge_conflict_resolution.md
+  - .trae/documents/P3_phase_a_residual_completion_plan.md
+  - .trae/documents/_arch_issue_full_backup.yaml
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DETECT-GIT-DANGEROUS
+  consumer_count: 1
+  top_consumers:
+  - scripts/governance/generators/generate_gate_registry.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DETECT-SHELL-DANGEROUS
+  consumer_count: 1
+  top_consumers:
+  - scripts/governance/generators/generate_gate_registry.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv
+- gate_id: GATE-DETECT-PERMANENT-DELETION
+  consumer_count: 1
+  top_consumers:
+  - scripts/governance/generators/generate_gate_registry.py
+  detail_source: docs/_working/commitmap_cure/f3_consumer_detail.csv

@@ -1,0 +1,184 @@
+ttl: task_bound
+session: st-f5-mountdata-20261003
+date: '2026-10-03'
+title: F5 四字段装配②·病历挂载层（28环节 casebooks + G01/G02 显式不挂注记）
+completes_when: 总筹升级生成器消费并随上户口批落地后转归档
+source_map:
+  nodes: f4_casebook_mount_plan.md §1 挂载矩阵逐字（任务书指定 casebooks 唯一真源）；raw=矩阵原胞；casebooks=原胞按「；」切分的 册码#章码 指针列表（INV-1 引用不复制）
+  unmounted_note: f4_casebook_mount_plan.md §0 显式不挂注记逐字；D11-G01/G02 name_zh 摘自 config/dev_delivery_map.yaml（指针信息）
+  note: 机械转换零判定产物；判定权归总筹
+nodes:
+  D11-S01:
+    raw: AP#域一；MEM#1；RV2#缺口(R2-F6)
+    casebooks:
+    - AP#域一
+    - MEM#1
+    - RV2#缺口(R2-F6)
+  D11-S02:
+    raw: AP#域一；MEM#1；RV2#缺口(B-1)
+    casebooks:
+    - AP#域一
+    - MEM#1
+    - RV2#缺口(B-1)
+  D11-S03:
+    raw: AP#域一；MEM#1；RV2#缺口(R2-F1/R2-F2)；DCS#队列(DEATH-017)
+    casebooks:
+    - AP#域一
+    - MEM#1
+    - RV2#缺口(R2-F1/R2-F2)
+    - DCS#队列(DEATH-017)
+  D11-S04:
+    raw: AP#域一；MEM#2；RV1#缺口(F3 归一锚面)
+    casebooks:
+    - AP#域一
+    - MEM#2
+    - RV1#缺口(F3 归一锚面)
+  D11-S05:
+    raw: AP#域五；MEM#2
+    casebooks:
+    - AP#域五
+    - MEM#2
+  D11-S06:
+    raw: AP#域二；MEM#2；DCS#队列(DEATH-017)
+    casebooks:
+    - AP#域二
+    - MEM#2
+    - DCS#队列(DEATH-017)
+  D11-S07:
+    raw: AP#域二；MEM#2
+    casebooks:
+    - AP#域二
+    - MEM#2
+  D11-S08:
+    raw: AP#域一+域四；MEM#1；RV1#缺口(F2/F3/F5)；RV2#缺口(R2-F1/R2-F5)+RV2#裁定(#477/#478)
+    casebooks:
+    - AP#域一+域四
+    - MEM#1
+    - RV1#缺口(F2/F3/F5)
+    - RV2#缺口(R2-F1/R2-F5)+RV2#裁定(#477/#478)
+  D11-S09:
+    raw: MEM#2
+    casebooks:
+    - MEM#2
+  D11-C01:
+    raw: AP#域二；MEM#5；DCS#队列(DEATH-017)
+    casebooks:
+    - AP#域二
+    - MEM#5
+    - DCS#队列(DEATH-017)
+  D11-C02:
+    raw: DCS#全册（本册=C02 递送锚 commit_navigation_playbook 的第三真源原料）；MEM#9
+    casebooks:
+    - DCS#全册（本册=C02 递送锚 commit_navigation_playbook 的第三真源原料）
+    - MEM#9
+  D11-C03:
+    raw: AP#域二；MEM#2
+    casebooks:
+    - AP#域二
+    - MEM#2
+  D11-C04:
+    raw: MEM#6
+    casebooks:
+    - MEM#6
+  D11-C05:
+    raw: AP#域二；DCS#真源+结构+手续；MEM#3；RV1#缺口(F6)
+    casebooks:
+    - AP#域二
+    - DCS#真源+结构+手续
+    - MEM#3
+    - RV1#缺口(F6)
+  D11-C06:
+    raw: DCS#结构(DEATH-002)；MEM#5
+    casebooks:
+    - DCS#结构(DEATH-002)
+    - MEM#5
+  D11-C07:
+    raw: AP#域二；DCS#手续+通道+真源+审批；MEM#3；RV1#缺口(F6)
+    casebooks:
+    - AP#域二
+    - DCS#手续+通道+真源+审批
+    - MEM#3
+    - RV1#缺口(F6)
+  D11-C08:
+    raw: AP#域三；SV#底数+SV#治未病；DCS#队列(DEATH-016)；MEM#4
+    casebooks:
+    - AP#域三
+    - SV#底数+SV#治未病
+    - DCS#队列(DEATH-016)
+    - MEM#4
+  D11-C09:
+    raw: AP#域三；MEM#4
+    casebooks:
+    - AP#域三
+    - MEM#4
+  D11-C10:
+    raw: AP#域二；DCS#队列(DEATH-016/018)；RV1#缺口(F3/F4)；MEM#5
+    casebooks:
+    - AP#域二
+    - DCS#队列(DEATH-016/018)
+    - RV1#缺口(F3/F4)
+    - MEM#5
+  D11-C11:
+    raw: RV1#全卷+RV2#全卷（**主挂**）；MEM#10；DCS#队列(DEATH-016 兼)
+    casebooks:
+    - RV1#全卷+RV2#全卷（**主挂**）
+    - MEM#10
+    - DCS#队列(DEATH-016 兼)
+  D11-C12:
+    raw: MEM#4
+    casebooks:
+    - MEM#4
+  D11-C13:
+    raw: AP#域三；SV#治未病(三次重试报警)；RV1#观察+RV2#观察；MEM#10
+    casebooks:
+    - AP#域三
+    - SV#治未病(三次重试报警)
+    - RV1#观察+RV2#观察
+    - MEM#10
+  D11-D01:
+    raw: SV#底数+SV#死因；DCS#队列；AP#域三；MEM#8
+    casebooks:
+    - SV#底数+SV#死因
+    - DCS#队列
+    - AP#域三
+    - MEM#8
+  D11-D02:
+    raw: SV#死因+SV#方案(分诊)；DCS#全册（死因→处方蒸馏正典）；MEM#8
+    casebooks:
+    - SV#死因+SV#方案(分诊)
+    - DCS#全册（死因→处方蒸馏正典）
+    - MEM#8
+  D11-D03:
+    raw: AP#域三；SV#治未病；MEM#10
+    casebooks:
+    - AP#域三
+    - SV#治未病
+    - MEM#10
+  D11-D04:
+    raw: SV#裁定(B doctor 三铁闸)+SV#抢救目标+SV#口径；DCS#队列(DEATH-009/016)；MEM#7
+    casebooks:
+    - SV#裁定(B doctor 三铁闸)+SV#抢救目标+SV#口径
+    - DCS#队列(DEATH-009/016)
+    - MEM#7
+  D11-D05:
+    raw: SV#底数(cascade_stale)；DCS#队列(DEATH-018)；MEM#8
+    casebooks:
+    - SV#底数(cascade_stale)
+    - DCS#队列(DEATH-018)
+    - MEM#8
+  D11-D06:
+    raw: SV#裁定(A 不变量 SV)+SV#三问+SV#施工序；AP#域四；RV1#缺口(F4)；MEM#8
+    casebooks:
+    - SV#裁定(A 不变量 SV)+SV#三问+SV#施工序
+    - AP#域四
+    - RV1#缺口(F4)
+    - MEM#8
+unmounted_note:
+  D11-G01:
+    name_zh: 退出码死分支（码 4 与 STASH_CONFLICT 支无生产者）
+    note_verbatim: gap 节点 G01/G02 不挂（骨架外缺口件无运行代码可挂，其病历由 C07/C13 同章覆盖）。
+    source: f4_casebook_mount_plan.md §0
+  D11-G02:
+    name_zh: precommit 通道回滚旗恒失效（代码键未注册 × default=True）
+    note_verbatim: gap 节点 G01/G02 不挂（骨架外缺口件无运行代码可挂，其病历由 C07/C13 同章覆盖）。
+    source: f4_casebook_mount_plan.md §0
