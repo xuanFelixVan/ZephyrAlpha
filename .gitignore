@@ -240,6 +240,9 @@ logs/
 # 导致 system_telemetry/__init__.py 的 `from .logs import flush` ModuleNotFoundError
 !src/zephyr/infrastructure/system_telemetry/logs/
 !src/zephyr/infrastructure/system_telemetry/logs/*
+# 豁免（F8 家族处置表07 裁定提交，st-sH-f8family-20261004）：全流通总筹车道日志
+# 收编入库（病历本素材历史保全）；方向=收编入库增强追踪，非排除；先例=sz_open_data 收编模式
+!docs/_working/circulation_chief/logs/
 
 # Session and journal artifacts
 _journals/
