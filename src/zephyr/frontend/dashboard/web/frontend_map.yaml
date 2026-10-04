@@ -2564,7 +2564,8 @@ features:
   page: warroom
   module_id: wr-risk-cards
   file: features/warroom/wr-risk-cards.js
-  backend_ref: mixed:五级熔断/回撤油门行=api:/api/risk-status（trading_kill_switch_state.json 投影，W-E1 2026-10-01；油门档无落盘影子标「演示档」）；其余行=演示数据 FEED 表且逐行标「演示」
+  backend_ref: api:/api/risk-status
+  backend_ref_note_zh: "五级熔断/回撤油门行=该端点（trading_kill_switch_state.json 投影，W-E1 2026-10-01；油门档无落盘影子标「演示档」）；其余行=演示数据 FEED 表且逐行标「演示」。（2026-10-04 类型化修正——原 mixed: 非五前缀悬空，FRONTEND-MAP R1 处方；来源 b7cf02061bf 袋抢救直投带入，跨道公路坑洞修由 st-tclose-integ-20261004 留痕代修）"
   status: active
 - id: F-LIVE-ORD-TICKET
   name: 盘中下单票据+日志过滤
