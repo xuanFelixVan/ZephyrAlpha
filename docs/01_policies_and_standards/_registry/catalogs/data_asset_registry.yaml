@@ -74,9 +74,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.9.8
+version: 1.9.9
 created: '2026-08-13'
-last_updated: '2026-10-01'
+last_updated: '2026-10-04'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]
@@ -84,6 +84,7 @@ unique_key:
   jobs: [job_id]
 entry_counts: {sources: 18, datasets: 334, jobs: 122}  # 2026-09-14 v1.9.3：+DS-241/242 +JOB-106/107（C-1 消费端首批：sentiment_panel+alt_regime_signal）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.2：+SRC-SZOPENDATA-001 +DS-234~240 +JOB-099~105（深圳开放数据批量源 7 表 16 系列）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）  # 2026-09-14 v1.9.1：+DS-233 台风路径 +JOB-097/098（气象事件层）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 # W1 册面接线批 changelog(2026-10-01, st-datasop-20260930): +DS-306~345 补注册 40 张（P0 12 张 §2+P1 28 张 §3，CH 2026-10-01 system.tables 行数实测；SRC 回填核括号已核实去除）；幽灵降级 13（DS-029~039/DS-224/DS-225→candidate+degradation_note）；production 幽灵实体名锚定校正 2（DS-084→c1_market.index_constituent、DS-085→c1_market.st_stock_list，方案A）；DS-123 CH 复验 close≠0=99.50%/max(trade_date)=2026-09-30→撤黑名单复登 active；DS-237 断供标注；SRC-OKX-001 尾 13 字段补全（degraded）；entry_counts 机械重算 datasets 293（账面）→334（实测 294+40，消存量漂移；W1 工单快照基线，T1-B6 删块已经由总筹 merge session/st-menu-t1b6-20260930 落 dev，不在本批）
+# D8 口径纠正批 changelog(2026-10-04, st-datasop-20260930): 幽灵13项三段挖掘翻案落册（证据=docs/_working/fullflow_mine/verify/D6_ghost13_mining.md，13/13 口径纠正 0 建表 0 删码）——DS-029~039 physical_type 模块路径→in_memory_compute（内存计算工序非落库表，status 维持 candidate，degradation_note 追加定案句）；DS-224 candidate→active 复评回升（depgraph PG 四表族已扩 13 表实测增长+cm_* 活查，physical_type→pg_depgraph_tables，degradation_note 记回升依据）；DS-225 physical_type→job_and_endpoint（/api/chain-impact-stream :4786 存活，status 维持 candidate）；JOB-028~038 description 补内存工序口径；受影响条目 updated_at 机械同步 2026-10-04（entry_counts 无增删不变）
 
 # v1.9.8 changelog(2026-09-16): C4 历史修复双轨重建——+DS-275 c3_fundamental.consensus_daily_repaired
 #   （研报 PDF 原文提取的**发布时点** EPS 重建一致预期历史，治 §9 档案「历史快照=今天的预期回放」污染；
@@ -1802,7 +1803,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/correlation_analyzer.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-028
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -1814,10 +1815,10 @@ datasets:
   name: factor_analysis.correlation_analyzer
   name_zh: 因子间相关系数矩阵
   status: candidate
-  degradation_note: "factor_analysis 六件套注册时仅设计态，CH 无物理表，降级待物化"
+  degradation_note: "factor_analysis 六件套注册时仅设计态，CH 无物理表，降级待物化；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-005
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -1839,7 +1840,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/correlation_dedup.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-029
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -1851,10 +1852,10 @@ datasets:
   name: factor_analysis.correlation_dedup
   name_zh: 去重后的因子集合
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-006
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -1876,7 +1877,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/decay_monitor.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-030
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -1888,10 +1889,10 @@ datasets:
   name: factor_analysis.decay_monitor
   name_zh: 因子衰减报告
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-009
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -1913,7 +1914,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/factor_attribution.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-031
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -1925,10 +1926,10 @@ datasets:
   name: factor_analysis.factor_attribution
   name_zh: 因子归因报告
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-010
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -1950,7 +1951,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/factor_optimization.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-032
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -1962,10 +1963,10 @@ datasets:
   name: factor_analysis.factor_optimization
   name_zh: 优化后的因子权重
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-012
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -1987,7 +1988,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/ic_decay.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-033
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -1999,10 +2000,10 @@ datasets:
   name: factor_analysis.ic_decay
   name_zh: IC衰减曲线
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-004
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2024,7 +2025,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/ic_ir_calc.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-034
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -2036,10 +2037,10 @@ datasets:
   name: factor_analysis.ic_ir_calc
   name_zh: IC/IR指标序列
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-002
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2061,7 +2062,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/ic_ir_evaluator.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-035
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -2073,10 +2074,10 @@ datasets:
   name: factor_analysis.ic_ir_evaluator
   name_zh: IC/IR评估报告
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-003
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2098,7 +2099,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/layered_backtest.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-036
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -2110,10 +2111,10 @@ datasets:
   name: factor_analysis.layered_backtest
   name_zh: 分层回测结果
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-007
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2135,7 +2136,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/multifactor_synthesis.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-037
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -2147,10 +2148,10 @@ datasets:
   name: factor_analysis.multifactor_synthesis
   name_zh: 合成因子信号
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-011
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -2172,7 +2173,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: src/zephyr/factor/analysis/three_level_judgment.py
+  physical_type: in_memory_compute
   produced_by_job: JOB-038
   consumed_by_jobs: []
   domain_id: D_FACTOR
@@ -2184,10 +2185,10 @@ datasets:
   name: factor_analysis.three_level_judgment
   name_zh: 三级研判结果
   status: candidate
-  degradation_note: "同 DS-029"
+  degradation_note: "同 DS-029；2026-10-04 D6 三段挖掘定案：模块实体存活于 src/zephyr/factor/analysis/（27 文件）且有真消费（ic_ir_calc←multifactor_sleeve 等），本条目为内存计算工序非落库表，登记口径纠正（PG/CH 无表非数据丢失）"
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-008
   produced_by_source: SRC-INTERNAL-001
   survivorship_free:
@@ -9547,7 +9548,7 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref:
-  physical_type: postgres_table
+  physical_type: pg_depgraph_tables
   produced_by_job:
   consumed_by_jobs: []
   domain_id: D_INTELLIGENCE
@@ -9563,11 +9564,11 @@ datasets:
   design_maturity: production
   name: governance.ig_industry_graph
   name_zh: 产业链图谱（ig_* 四表族）
-  status: candidate
-  degradation_note: "W1 复核：physical_type=postgres_table（depgraph PG），非 CH 表，本次 CH 排查不含 PG——降级候选，PG 侧复验四表族存活后可回升 active"
+  status: active
+  degradation_note: "W1 复核曾因 CH 排查不含 PG 降级候选；2026-10-04 D6 三段挖掘复验回升 active：depgraph PG 四表族已扩 13 表且实测增长（ig_node 3328→5560/ig_fact 264072/ig_product_revenue 165255/ig_company_metric 235392 等），api_server cm_* 通道活查 ig_node/ig_node_company/ig_chain（:3854 等）——满足本条自设回升条件；CH 无表为登记口径错位非数据丢失（证据=docs/_working/fullflow_mine/verify/D6_ghost13_mining.md §1.4）"
   version: 1.0.0
   created_at: "2026-09-11"
-  updated_at: "2026-09-11"
+  updated_at: "2026-10-04"
   owner: MOD-INT-NEWS-CHAIN
   produced_by_source: SRC-INTERNAL-001
   survivorship_free: partial
@@ -9591,8 +9592,7 @@ datasets:
   entity_type: dataset
   scope: testing
   contract_ref:
-  physical_type: 
-    src/zephyr/intelligence/chain_impact_stream.py::ChainImpactSnapshot
+  physical_type: job_and_endpoint
   produced_by_job:
   consumed_by_jobs: []
   domain_id: D_INTELLIGENCE
@@ -9610,10 +9610,10 @@ datasets:
   name: intelligence.chain_impact_stream
   name_zh: 盘中事件冲击流
   status: candidate
-  degradation_note: "派生流视图（无物理表为设计态），降级候选；若 api_server /api/chain-impact-stream 仍在用，改登 job/endpoint 资产而非 dataset"
+  degradation_note: "派生流视图（无物理表为设计态），降级候选；若 api_server /api/chain-impact-stream 仍在用，改登 job/endpoint 资产而非 dataset；2026-10-04 D6 三段挖掘确认端点存活（api_server.py:4786 /api/chain-impact-stream，实现真源 zephyr.intelligence.chain_impact_stream 三件套在位），按自设路径改登 job/endpoint 资产（physical_type=job_and_endpoint），status 维持 candidate——无物理表为设计态非数据丢失"
   version: 0.1.0
   created_at: "2026-09-11"
-  updated_at: "2026-09-11"
+  updated_at: "2026-10-04"
   owner: MOD-INT-IMPACT-STREAM
   produced_by_source: SRC-INTERNAL-001
   survivorship_free: partial
@@ -14190,7 +14190,7 @@ jobs:
   outputs:
   - DS-029
   pit_relevance: strict
-  description: 因子相关性分析（消费因子信号，产出分析结果）
+  description: 因子相关性分析（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-005
   design_maturity: production
   name: analyze.correlation_analyzer
@@ -14198,7 +14198,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-005
   entry_role: "reference"
   applies_to: []
@@ -14220,7 +14220,7 @@ jobs:
   outputs:
   - DS-030
   pit_relevance: strict
-  description: 因子去重（消费因子信号，产出分析结果）
+  description: 因子去重（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-006
   design_maturity: production
   name: analyze.correlation_dedup
@@ -14228,7 +14228,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-006
   entry_role: "reference"
   applies_to: []
@@ -14250,7 +14250,7 @@ jobs:
   outputs:
   - DS-031
   pit_relevance: strict
-  description: 因子衰减监控（消费因子信号，产出分析结果）
+  description: 因子衰减监控（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-009
   design_maturity: production
   name: analyze.decay_monitor
@@ -14258,7 +14258,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-009
   entry_role: "reference"
   applies_to: []
@@ -14280,7 +14280,7 @@ jobs:
   outputs:
   - DS-032
   pit_relevance: strict
-  description: 因子归因（消费因子信号，产出分析结果）
+  description: 因子归因（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-010
   design_maturity: production
   name: analyze.factor_attribution
@@ -14288,7 +14288,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-010
   entry_role: "reference"
   applies_to: []
@@ -14310,7 +14310,7 @@ jobs:
   outputs:
   - DS-033
   pit_relevance: strict
-  description: 因子优化（消费因子信号，产出分析结果）
+  description: 因子优化（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-012
   design_maturity: production
   name: analyze.factor_optimization
@@ -14318,7 +14318,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-012
   entry_role: "reference"
   applies_to: []
@@ -14340,7 +14340,7 @@ jobs:
   outputs:
   - DS-034
   pit_relevance: strict
-  description: IC衰减分析（消费因子信号，产出分析结果）
+  description: IC衰减分析（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-004
   design_maturity: production
   name: analyze.ic_decay
@@ -14348,7 +14348,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-004
   entry_role: "reference"
   applies_to: []
@@ -14370,7 +14370,7 @@ jobs:
   outputs:
   - DS-035
   pit_relevance: strict
-  description: IC/IR计算（消费因子信号，产出分析结果）
+  description: IC/IR计算（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-002
   design_maturity: production
   name: analyze.ic_ir_calc
@@ -14378,7 +14378,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-002
   entry_role: "reference"
   applies_to: []
@@ -14400,7 +14400,7 @@ jobs:
   outputs:
   - DS-036
   pit_relevance: strict
-  description: IC/IR评估（消费因子信号，产出分析结果）
+  description: IC/IR评估（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-003
   design_maturity: production
   name: analyze.ic_ir_evaluator
@@ -14408,7 +14408,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-003
   entry_role: "reference"
   applies_to: []
@@ -14430,7 +14430,7 @@ jobs:
   outputs:
   - DS-037
   pit_relevance: strict
-  description: 分层回测（消费因子信号，产出分析结果）
+  description: 分层回测（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-007
   design_maturity: production
   name: analyze.layered_backtest
@@ -14438,7 +14438,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-007
   entry_role: "reference"
   applies_to: []
@@ -14460,7 +14460,7 @@ jobs:
   outputs:
   - DS-038
   pit_relevance: strict
-  description: 多因子合成（消费因子信号，产出分析结果）
+  description: 多因子合成（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-011
   design_maturity: production
   name: analyze.multifactor_synthesis
@@ -14468,7 +14468,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-011
   entry_role: "reference"
   applies_to: []
@@ -14490,7 +14490,7 @@ jobs:
   outputs:
   - DS-039
   pit_relevance: strict
-  description: 三级研判（消费因子信号，产出分析结果）
+  description: 三级研判（消费因子信号，产出分析结果）；输出为内存计算工序产物，物理类型口径见对应 DS 条目（2026-10-04 口径纠正）
   module_id: MOD-L02-008
   design_maturity: production
   name: analyze.three_level_judgment
@@ -14498,7 +14498,7 @@ jobs:
   status: active
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-10-04'
   owner: MOD-L02-008
   entry_role: "reference"
   applies_to: []
