@@ -1,0 +1,36 @@
+ttl: task_bound
+session: st-chief-mount-20261003
+date: '2026-10-03'
+title: 总筹补挂裁定——三台 in_process 册独有门禁的目的标签/环节归属（F6 红1 处置）
+completes_when: 图11 封矿批统一挂载册吸收（f5_purpose_tags 后继合并或一本账收敛）后转归档
+note: >-
+  总筹判定件（判定权=总筹；非机械装配产物）。法源=裁定#480 C 节「门禁身份一本账」收敛授权 +
+  F6 f6_coverage_reds.md 红1（2026-10-03 总筹裁定：随 chief 批补挂）。三台=AI 层负面清单门
+  （zephyr.ai_layer.redline.negative_list_gates，2026-09-24 OBJ_S S2 挂载、09-26 st-ddup 翻回
+  enabled），在 in_process 册（:710/:716/:722）不在 shell 册，故不在 F2 的 182 台巡查面——非漏挂，
+  是注册册割裂面。触发证据=f3_trigger_evidence_readme.md:217（近 30 天结构化流）。环节归属：三台均
+  in-process 链执行 → D11-C05（shell 侧归 C07，口径不混）。消费面未抽取（F3 巡查面=shell 册
+  182 台），consumers=null 显式留缺，随「门禁身份一本账」收敛批补。范围注记：QUEUE-LANDING×163
+  同属册外高频四台之一，但其身份核验归一本账收敛批，本件不抢判、不挂载。
+gates:
+  REAL-KEY-REFERENCE-SCAN:
+    label_name: 「别把钥匙留在门口」
+    node_id: D11-C05
+    trigger_count: 874
+    consumers: null
+    evidence: docs/_working/commitmap_cure/f3_trigger_evidence_readme.md:217
+    rationale: own-diff 实盘真键字样引用拦截（NL-2）=密钥安全红线，12 号标签本体案（裁定#480 批准增设后首批改挂例）
+  TASK-ORDER-DOCS-LOCK:
+    label_name: 「文件在谁手里」
+    node_id: D11-C05
+    trigger_count: 864
+    consumers: null
+    evidence: docs/_working/commitmap_cure/f3_trigger_evidence_readme.md:217
+    rationale: 同会话施工产物×任务书互斥锁（NL-5）=地盘/互斥纪律，③号「文件在谁手里」直接对应（2026-10-04 机械同步：③号标签随 SOP v1.1.1 §2 规2 终审改名 这块地在谁手里→文件在谁手里，st-sG-mapwrite-20261004 随图11 血肉批对齐 f5_purpose_tags 冻结名，判定语义零变）
+  CONSTITUTION-LINE-LIMIT:
+    label_name: 「代码的底线体面」
+    node_id: D11-C05
+    trigger_count: 864
+    consumers: null
+    evidence: docs/_working/commitmap_cure/f3_trigger_evidence_readme.md:217
+    rationale: AGENTS.md ≤300 行硬上限断言（NL-3，宪法 §6）=上下文预算洁癖，⑨号兜底（无更贴切标签，回炉候选留档）
