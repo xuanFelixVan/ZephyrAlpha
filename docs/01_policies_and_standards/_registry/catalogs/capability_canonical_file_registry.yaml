@@ -53107,25 +53107,21 @@ creation_tokens:
   token: f128-wiring-init-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
-  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/audit_sink.py
   token: f128-wiring-audit-sink-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
-  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/data_exit_guard.py
   token: f128-wiring-data-exit-guard-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
-  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/lsg_masking_front.py
   token: f128-wiring-lsg-front-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
-  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/ex_core/adapters/miniqmt_broker.py
   token: auto-miniqmt-broker-20260704
@@ -59034,4 +59030,14 @@ creation_tokens:
   capability: tests_cure_campaign
   created_by: st-tests-chief-20261004
   merge_evaluation: "归并裁定表（129目录→8域机生真源）。净零：一级目录148→8收敛（宪法§4内收），无新册无新规则。"
+- file: config/panorama_master_map.yaml
+  token: panorama-master-map-panorama-master-map-20261004
+  capability: panorama_master_map
+  created_by: st-mastermap-20261004
+  merge_evaluation: "跨域不同对象不并（w5_1）：总图=§8.3导航序的图索引机生载体，不替代任何既有图；与全景图族各生成器同域不同对象"
+- file: scripts/governance/d5_architecture/generators/generate_panorama_master_map.py
+  token: panorama-master-map-generate-panorama-master-map-20261004
+  capability: panorama_master_map
+  created_by: st-mastermap-20261004
+  merge_evaluation: "跨域不同对象不并（w5_1）：总图=§8.3导航序的图索引机生载体，不替代任何既有图；与全景图族各生成器同域不同对象"
 di_seam_exemptions: []
