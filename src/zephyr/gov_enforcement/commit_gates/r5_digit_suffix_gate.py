@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] fail-closed——git ls-tree 失败时阻断 commit；增量检测只阻断新引入的 _NN 目录，历史违规目录（progressive_convergence）跳过
+# [INVARIANTS] fail-closed——git ls-tree 失败时阻断 commit；增量检测只阻断新引入的 _NN 目录，历史违规目录（progressive_convergence）跳过；目录级豁免标记（r5_exemption.md frontmatter 非空 r5_digit_suffix_exempt 理由）→ 视同历史违规跳过，标记缺失/不可读/理由空=不豁免
 # [MODIFY-GUARD] gate_id="R5-DIGIT-SUFFIX"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -43,6 +43,13 @@ trae_028 L1242: "历史违规目录在下次涉及该目录的refactor时顺带�
 - 存在 -> 历史违规，跳过（允许正常维护）
 - 不存在 -> 新引入违规，阻断
 
+目录级豁免标记（硬拦门位件③处方，2026-10-04 st-sJ-doctorb2）
+--------------------------------------------------------------
+目录名已是历史事实且不可重命名（他会话在途文件零触碰）时，
+目录内放 ``r5_exemption.md``（frontmatter 含非空
+``r5_digit_suffix_exempt: <一句话理由>``）即豁免——视同历史违规跳过。
+标记随目录走、自文档化；标记缺失/不可读/理由为空 -> 不豁免（fail-closed）。
+
 设计决策
 --------
 1. **priority=35**：在 DIRECTORY-CONTRACT(30) 之后、CLAIM-REQUIRED(40) 之前——
@@ -78,6 +85,37 @@ __all__ = ["make_r5_digit_suffix_gate"]
 # R5 正则——与 validate_directory_structure.py L149 _DIGIT_SUFFIX_RE 同源（_\d+ 结尾）
 # 真源：trae_028_doc_structure_naming.yaml L1224-1228 gov_doc_003_directory_semantics R5
 _DIGIT_SUFFIX_RE = re.compile(r"_\d+$")
+
+# 目录级豁免标记（硬拦门位件③处方，2026-10-04 st-sJ-doctorb2）：
+# 目录名已是历史事实且不可重命名（他会话在途文件零触碰）时，目录内放
+# r5_exemption.md（frontmatter 含非空 r5_digit_suffix_exempt: <理由>）即豁免。
+# 标记随目录走、自文档化；标记缺失/不可读/理由为空 -> 不豁免（fail-closed）。
+_EXEMPT_MARKER_FILENAME = "r5_exemption.md"
+_EXEMPT_FRONTMATTER_KEY = "r5_digit_suffix_exempt"
+
+
+def _is_r5_exempt(project_root, dir_path: str) -> bool:
+    """目录级豁免标记检查（硬拦门位件③）。
+
+    目录内 ``r5_exemption.md`` frontmatter 含非空 ``r5_digit_suffix_exempt``
+    理由 -> True；其余（缺标记/不可读/理由空/无 frontmatter）-> False。
+    """
+    marker = os.path.join(str(project_root), dir_path.rstrip("/"), _EXEMPT_MARKER_FILENAME)
+    try:
+        with open(marker, encoding="utf-8", errors="replace") as fh:
+            content = fh.read()
+    except OSError:
+        return False
+    if not content.startswith("---"):
+        return False
+    end = content.find("\n---", 3)
+    if end == -1:
+        return False
+    for ln in content[:end].splitlines():
+        s = ln.strip()
+        if s.startswith(_EXEMPT_FRONTMATTER_KEY + ":"):
+            return bool(s.split(":", 1)[1].strip())
+    return False
 
 
 def make_r5_digit_suffix_gate() -> GateSpec:
@@ -135,15 +173,29 @@ def make_r5_digit_suffix_gate() -> GateSpec:
                 # 目录不存在于 HEAD -> 新引入违规
                 new_violations.append(dir_path)
 
-        # 3. 返回结果
-        if new_violations:
+        # 3. 目录级豁免标记（硬拦门位件③）：标记在册 -> 视同历史违规跳过（留审计 detail）
+        exempt: list[str] = []
+        blocked: list[str] = []
+        for dir_path in new_violations:
+            if _is_r5_exempt(project_root, dir_path):
+                exempt.append(dir_path)
+            else:
+                blocked.append(dir_path)
+
+        # 4. 返回结果
+        if blocked:
             return False, (
-                f"R5 数字后缀目录禁止: {' '.join(new_violations)} -> "
+                f"R5 数字后缀目录禁止: {' '.join(blocked)} -> "
                 f"gov_doc_003_directory_semantics R5 禁止 _NN 数字后缀（暗示多真源，"
                 f"违反 SSoT 原则）。如需区分版本请用语义不同的目录名。"
             )
 
-        # 全部是历史违规 -> 通过（progressive_convergence 渐进收敛策略）
-        return True, (f"digit-suffix dirs exist in HEAD (historical, skipped): {', '.join(historical)}")
+        # 全部豁免/历史违规 -> 通过（exempted=标记豁免；historical=HEAD 已在册）
+        passed_note: list[str] = []
+        if historical:
+            passed_note.append(f"historical: {', '.join(historical)}")
+        if exempt:
+            passed_note.append(f"exempted (r5_exemption.md 标记在册): {', '.join(exempt)}")
+        return True, "; ".join(passed_note) or "no digit-suffix violations"
 
     return GateSpec(gate_id="R5-DIGIT-SUFFIX", check=_check, priority=35)

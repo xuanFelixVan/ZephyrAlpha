@@ -199,3 +199,65 @@ class TestDeletionCommit:
         passed, detail = spec.check(gw, [str(tmp_path / "src/zephyr/governance/deleted_01/gone.py")])
         assert passed is True
         assert "no digit-suffix" in detail
+
+
+class TestExemptionMarker:
+    """目录级豁免标记（硬拦门位件③）：r5_exemption.md frontmatter 非空理由 → 豁免。"""
+
+    def _make_marker(self, repo_dir: Path, dir_rel: str, reason: str) -> None:
+        marker = repo_dir / dir_rel / "r5_exemption.md"
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text(
+            f"---\nr5_digit_suffix_exempt: {reason}\ntitle: marker\nsession: test\nttl: task_bound\n---\n",
+            encoding="utf-8",
+        )
+
+    def test_exempt_marker_passes(self, tmp_path: Path) -> None:
+        _init_git_repo(tmp_path)
+        f = _make_file(tmp_path, "docs/_working/cure_20261003/index.md")
+        self._make_marker(tmp_path, "docs/_working/cure_20261003", "目录名已是历史事实")
+        gw = _MockGateway(tmp_path)
+        spec = make_r5_digit_suffix_gate()
+        passed, detail = spec.check(gw, [str(f)])
+        assert passed is True
+        assert "exempted" in detail
+
+    def test_empty_reason_marker_not_exempt(self, tmp_path: Path) -> None:
+        _init_git_repo(tmp_path)
+        f = _make_file(tmp_path, "docs/_working/cure_20261003/index.md")
+        self._make_marker(tmp_path, "docs/_working/cure_20261003", "")
+        gw = _MockGateway(tmp_path)
+        spec = make_r5_digit_suffix_gate()
+        passed, detail = spec.check(gw, [str(f)])
+        assert passed is False
+        assert "cure_20261003" in detail
+
+    def test_missing_marker_still_blocked(self, tmp_path: Path) -> None:
+        _init_git_repo(tmp_path)
+        f = _make_file(tmp_path, "docs/_working/cure_20261003/index.md")
+        gw = _MockGateway(tmp_path)
+        spec = make_r5_digit_suffix_gate()
+        passed, detail = spec.check(gw, [str(f)])
+        assert passed is False
+
+    def test_marker_without_frontmatter_not_exempt(self, tmp_path: Path) -> None:
+        _init_git_repo(tmp_path)
+        f = _make_file(tmp_path, "docs/_working/cure_20261003/index.md")
+        marker = tmp_path / "docs/_working/cure_20261003/r5_exemption.md"
+        marker.write_text("no frontmatter here\n", encoding="utf-8")
+        gw = _MockGateway(tmp_path)
+        spec = make_r5_digit_suffix_gate()
+        passed, detail = spec.check(gw, [str(f)])
+        assert passed is False
+
+    def test_mixed_exempt_and_blocked_reports_blocked_only(self, tmp_path: Path) -> None:
+        _init_git_repo(tmp_path)
+        f1 = _make_file(tmp_path, "docs/_working/cure_20261003/a.md")
+        f2 = _make_file(tmp_path, "src/zephyr/api_03/b.py")
+        self._make_marker(tmp_path, "docs/_working/cure_20261003", "历史事实豁免")
+        gw = _MockGateway(tmp_path)
+        spec = make_r5_digit_suffix_gate()
+        passed, detail = spec.check(gw, [str(f1), str(f2)])
+        assert passed is False
+        assert "api_03" in detail
+        assert "cure_20261003" not in detail
