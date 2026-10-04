@@ -58966,4 +58966,19 @@ creation_tokens:
   created_by: st-a2-ledgercensus-20261004
   capability: commitmap_cure_a2_gaplist
   merge_evaluation: "同上跨域供料件结构化镜像（gap清单机生面），ttl=task_bound随收敛批转归档，永久区零增长"
+- file: docs/_working/map_census/gomap/gomap_f2_facts.yaml
+  token: gomap-f2-gomap-f2-facts-20261003
+  created_by: st-gomap-f2m-20261003
+  capability: gomap_f2
+  merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
+- file: docs/_working/map_census/gomap/gomap_f2_focus_evidence.yaml
+  token: gomap-f2-gomap-f2-focus-evidence-20261003
+  created_by: st-gomap-f2m-20261003
+  capability: gomap_f2
+  merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
+- file: docs/_working/map_census/gomap/gomap_f2_zero_evidence.yaml
+  token: gomap-f2-gomap-f2-zero-evidence-20261003
+  created_by: st-gomap-f2m-20261003
+  capability: gomap_f2
+  merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
 di_seam_exemptions: []

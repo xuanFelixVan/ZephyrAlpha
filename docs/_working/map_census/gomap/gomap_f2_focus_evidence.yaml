@@ -1,0 +1,523 @@
+ttl: task_bound
+completes_when: GOMAP 挂血肉战役 chief 判读消费本表后转归档
+schema_version: '0.1'
+session: st-gomap-f2m-20261003
+generated_at: '2026-10-03T18:02:00+00:00'
+census_id: GOMAP-F2-FOCUS-EVIDENCE-001
+title: GOMAP 图10 挂血肉 F2·21 台重点集执行证据深挖（6 zero_import + 15 weak net=1，名单=F1 表2）
+criteria_zh: 执行证据=分源池逐源 grep 台三形态：commit_queue done/dead 全量袋、.runtime/audit 全件、gate_audit 101 件、lookup_audit、drift_watchdog 33490 行、reconcile_reports 987 件、git GW
+  trail 近 3000 commit。真执行通道 13 源 vs 弱触碰类 2 源（audit_write_touch/gate_foreign_list）拆分见 facts 表 criteria。三分类：has_exec_evidence=真执行通道有命中；weak_touch_only_never_executed=仅提及/触碰类；never_executed_evidence=全无。摘录≤3
+  行/台，优先语义执行通道，不足补提及类（mention 标注）。
+counts:
+  focus_total: 21
+  has_exec_evidence: 0
+  weak_touch_only_never_executed: 21
+  never_executed_evidence: 0
+modules:
+- path: scripts/arch_guard/fitness_functions/check_kill_switch_latency.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 60
+  channels:
+  - audit_write_touch
+  - gate_foreign_list
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046294.558, "path": "scripts/arch_guard/fitness_functions/check_kill_switch_latency.py", "op": "write", "hash_before": "6316e617c143c747",
+      "hash_after": "6316e617c143c747", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:54'
+    excerpt: '{"timestamp": 1789482518, "gate": "CAPABILITY-OVERLAP", "session_id": "st-f06dsr-shift2-20260915", "foreign_count": 143, "foreign_files": ["scripts/arch_guard/fitness_functions/check_kill_switch_latency.py",
+      "src/zephyr/autonomy_core/__init__.py", "src/zephyr/autonomy_core/__main'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:54'
+    excerpt: '{"timestamp": 1789482854, "gate": "CAPABILITY-OVERLAP", "session_id": "st-govmap-20260915", "foreign_count": 144, "foreign_files": ["scripts/arch_guard/fitness_functions/check_kill_switch_latency.py",
+      "scripts/governance/repair/concurrent_write_test.py", "src/zephyr/autonomy_core'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/fix_orphan_all.py
+  bucket: zero_import
+  exec_evidence_hits: 0
+  mention_hits: 15
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046288.211, "path": "scripts/fix_orphan_all.py", "op": "write", "hash_before": "3d4c13e00c90b78e", "hash_after": "3d4c13e00c90b78e", "processes":
+      [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031361.12, "path": "scripts/fix_orphan_all.py", "op": "write", "hash_before": "3d4c13e00c90b78e", "hash_after": "3d4c13e00c90b78e", "processes":
+      [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe '
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035255.622, "path": "scripts/fix_orphan_all.py", "op": "write", "hash_before": "3d4c13e00c90b78e", "hash_after": "3d4c13e00c90b78e", "processes":
+      [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/_sync/fix_orphan_deps.py
+  bucket: zero_import
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046085.22, "path": "scripts/governance/_sync/fix_orphan_deps.py", "op": "write", "hash_before": "1cc7f074f1095bcc", "hash_after": "1cc7f074f1095bcc",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pyth'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031391.433, "path": "scripts/governance/_sync/fix_orphan_deps.py", "op": "write", "hash_before": "1cc7f074f1095bcc", "hash_after": "1cc7f074f1095bcc",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pyt'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035072.063, "path": "scripts/governance/_sync/fix_orphan_deps.py", "op": "write", "hash_before": "1cc7f074f1095bcc", "hash_after": "1cc7f074f1095bcc",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pyt'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/d5_architecture/check_budget_health.py
+  bucket: zero_import
+  exec_evidence_hits: 0
+  mention_hits: 12
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046125.764, "path": "scripts/governance/d5_architecture/check_budget_health.py", "op": "write", "hash_before": "3eab6b8cf22f2943", "hash_after":
+      "3eab6b8cf22f2943", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Program'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031446.961, "path": "scripts/governance/d5_architecture/check_budget_health.py", "op": "write", "hash_before": "3eab6b8cf22f2943", "hash_after":
+      "3eab6b8cf22f2943", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Program'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035024.314, "path": "scripts/governance/d5_architecture/check_budget_health.py", "op": "write", "hash_before": "3eab6b8cf22f2943", "hash_after":
+      "3eab6b8cf22f2943", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Program'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/d5_architecture/checkers/check_orphan_outputs.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046130.571, "path": "scripts/governance/d5_architecture/checkers/check_orphan_outputs.py", "op": "write", "hash_before": "1d2a37e27d228afa",
+      "hash_after": "1d2a37e27d228afa", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Loca'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031452.327, "path": "scripts/governance/d5_architecture/checkers/check_orphan_outputs.py", "op": "write", "hash_before": "1d2a37e27d228afa",
+      "hash_after": "1d2a37e27d228afa", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Loca'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035075.061, "path": "scripts/governance/d5_architecture/checkers/check_orphan_outputs.py", "op": "write", "hash_before": "1d2a37e27d228afa",
+      "hash_after": "1d2a37e27d228afa", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Loca'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 60
+  channels:
+  - audit_write_touch
+  - gate_foreign_list
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046149.871, "path": "scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py", "op": "write", "hash_before": "c3c2b634cf18ad12",
+      "hash_after": "c3c2b634cf18ad12", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:54'
+    excerpt: '{"timestamp": 1789923163, "gate": "CAPABILITY-OVERLAP", "session_id": "st-ulib-20260921", "foreign_count": 191, "foreign_files": ["scripts/automation/validate_intel_registry.py",
+      "scripts/ch/archiver.py", "scripts/ch/rolling_archive_reconciler.py", "scripts/ch/waste_table_scanner'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:54'
+    excerpt: '{"timestamp": 1789940819, "gate": "CAPABILITY-OVERLAP", "session_id": "st-workclean-20260921", "foreign_count": 203, "foreign_files": ["schemas/categories/market/market_index_valuation_daily.py",
+      "scripts/automation/validate_intel_registry.py", "scripts/ch/archiver.py", "scripts/'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/d7_code/fix_orphan_exports.py
+  bucket: zero_import
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046170.951, "path": "scripts/governance/d7_code/fix_orphan_exports.py", "op": "write", "hash_before": "63c39c3c0cac3c34", "hash_after": "63c39c3c0cac3c34",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031513.822, "path": "scripts/governance/d7_code/fix_orphan_exports.py", "op": "write", "hash_before": "63c39c3c0cac3c34", "hash_after": "63c39c3c0cac3c34",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035038.132, "path": "scripts/governance/d7_code/fix_orphan_exports.py", "op": "write", "hash_before": "63c39c3c0cac3c34", "hash_after": "63c39c3c0cac3c34",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046180.407, "path": "scripts/governance/d8_doc_sync/validate_document_lifecycle.py", "op": "write", "hash_before": "bdf384d406c34e16", "hash_after":
+      "bdf384d406c34e16", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Pro'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031528.707, "path": "scripts/governance/d8_doc_sync/validate_document_lifecycle.py", "op": "write", "hash_before": "bdf384d406c34e16", "hash_after":
+      "bdf384d406c34e16", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Pro'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035043.0, "path": "scripts/governance/d8_doc_sync/validate_document_lifecycle.py", "op": "write", "hash_before": "bdf384d406c34e16", "hash_after":
+      "bdf384d406c34e16", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Progr'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046201.302, "path": "scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py", "op": "write", "hash_before":
+      "6665123a4fc6732c", "hash_after": "6665123a4fc6732c", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\User'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031568.267, "path": "scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py", "op": "write", "hash_before":
+      "6665123a4fc6732c", "hash_after": "6665123a4fc6732c", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\User'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035105.609, "path": "scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py", "op": "write", "hash_before":
+      "6665123a4fc6732c", "hash_after": "6665123a4fc6732c", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\User'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/meta/manage_kill_switch.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 13
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046204.423, "path": "scripts/governance/meta/manage_kill_switch.py", "op": "write", "hash_before": "09a82f74835ffdc1", "hash_after": "09a82f74835ffdc1",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\P'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031585.235, "path": "scripts/governance/meta/manage_kill_switch.py", "op": "write", "hash_before": "09a82f74835ffdc1", "hash_after": "09a82f74835ffdc1",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\P'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035052.684, "path": "scripts/governance/meta/manage_kill_switch.py", "op": "write", "hash_before": "09a82f74835ffdc1", "hash_after": "09a82f74835ffdc1",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\P'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/meta/trace_finding_lifecycle.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 13
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046206.17, "path": "scripts/governance/meta/trace_finding_lifecycle.py", "op": "write", "hash_before": "55ccc4ff40bb2d31", "hash_after":
+      "55ccc4ff40bb2d31", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Pytho'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031593.12, "path": "scripts/governance/meta/trace_finding_lifecycle.py", "op": "write", "hash_before": "55ccc4ff40bb2d31", "hash_after":
+      "55ccc4ff40bb2d31", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Pytho'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035057.375, "path": "scripts/governance/meta/trace_finding_lifecycle.py", "op": "write", "hash_before": "55ccc4ff40bb2d31", "hash_after":
+      "55ccc4ff40bb2d31", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Pyth'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/meta/validate_environment_health.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 13
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046207.191, "path": "scripts/governance/meta/validate_environment_health.py", "op": "write", "hash_before": "0f811e5d3d8fa3b5", "hash_after":
+      "0f811e5d3d8fa3b5", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031596.6, "path": "scripts/governance/meta/validate_environment_health.py", "op": "write", "hash_before": "0f811e5d3d8fa3b5", "hash_after":
+      "0f811e5d3d8fa3b5", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Py'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035058.472, "path": "scripts/governance/meta/validate_environment_health.py", "op": "write", "hash_before": "0f811e5d3d8fa3b5", "hash_after":
+      "0f811e5d3d8fa3b5", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/meta/validate_script_system_health.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046208.375, "path": "scripts/governance/meta/validate_script_system_health.py", "op": "write", "hash_before": "0410e3b8204222d8", "hash_after":
+      "0410e3b8204222d8", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031600.492, "path": "scripts/governance/meta/validate_script_system_health.py", "op": "write", "hash_before": "0410e3b8204222d8", "hash_after":
+      "0410e3b8204222d8", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035060.383, "path": "scripts/governance/meta/validate_script_system_health.py", "op": "write", "hash_before": "0410e3b8204222d8", "hash_after":
+      "0410e3b8204222d8", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/repair/apply_verification_results.py
+  bucket: zero_import
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046224.02, "path": "scripts/governance/repair/apply_verification_results.py", "op": "write", "hash_before": "d163656b0a25045e", "hash_after":
+      "d163656b0a25045e", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031652.493, "path": "scripts/governance/repair/apply_verification_results.py", "op": "write", "hash_before": "d163656b0a25045e", "hash_after":
+      "d163656b0a25045e", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035063.776, "path": "scripts/governance/repair/apply_verification_results.py", "op": "write", "hash_before": "d163656b0a25045e", "hash_after":
+      "d163656b0a25045e", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/repair/concurrent_commit_test.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 13
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046224.267, "path": "scripts/governance/repair/concurrent_commit_test.py", "op": "write", "hash_before": "9f5047f0f0ff8d39", "hash_after":
+      "9f5047f0f0ff8d39", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Pyt'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031653.832, "path": "scripts/governance/repair/concurrent_commit_test.py", "op": "write", "hash_before": "9f5047f0f0ff8d39", "hash_after":
+      "9f5047f0f0ff8d39", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Pyt'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035064.022, "path": "scripts/governance/repair/concurrent_commit_test.py", "op": "write", "hash_before": "9f5047f0f0ff8d39", "hash_after":
+      "9f5047f0f0ff8d39", "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Pyt'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/repair/red_blue_test.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 11
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046224.557, "path": "scripts/governance/repair/red_blue_test.py", "op": "write", "hash_before": "50507c44eca1535f", "hash_after": "50507c44eca1535f",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pyth'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031655.32, "path": "scripts/governance/repair/red_blue_test.py", "op": "write", "hash_before": "50507c44eca1535f", "hash_after": "50507c44eca1535f",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pytho'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035064.581, "path": "scripts/governance/repair/red_blue_test.py", "op": "write", "hash_before": "50507c44eca1535f", "hash_after": "50507c44eca1535f",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pyth'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/repair/rollback_depgraph.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 13
+  channels:
+  - audit_write_touch
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046224.724, "path": "scripts/governance/repair/rollback_depgraph.py", "op": "write", "hash_before": "128367945f27ac50", "hash_after": "128367945f27ac50",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791031656.085, "path": "scripts/governance/repair/rollback_depgraph.py", "op": "write", "hash_before": "128367945f27ac50", "hash_after": "128367945f27ac50",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 00:02:16'
+    excerpt: '{"ts": 1791035064.704, "path": "scripts/governance/repair/rollback_depgraph.py", "op": "write", "hash_before": "128367945f27ac50", "hash_after": "128367945f27ac50",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/vms/vms_cron_monitor.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 41
+  channels:
+  - audit_write_touch
+  - gate_foreign_list
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046232.79, "path": "scripts/governance/vms/vms_cron_monitor.py", "op": "write", "hash_before": "48f36d2ccc59b75a", "hash_after": "48f36d2ccc59b75a",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pytho'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:49'
+    excerpt: '{"timestamp": 1789480452, "gate": "NOQA-VALIDATION", "session_id": "st-qoder-t1a-20260915", "foreign_count": 25, "foreign_files": ["scripts/governance/_archive/vms_ri/ri_boundary_check.py",
+      "scripts/governance/_archive/vms_ri/ri_build_completion_check.py", "scripts/governance/_ar'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:49'
+    excerpt: '{"timestamp": 1789482923, "gate": "NOQA-VALIDATION", "session_id": "st-qoder-t1a-20260915", "foreign_count": 173, "foreign_files": ["scripts/arch_guard/fitness_functions/check_kill_switch_latency.py",
+      "scripts/governance/_archive/vms_ri/ri_boundary_check.py", "scripts/governance/'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/governance/vms/vms_health_check.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 40
+  channels:
+  - audit_write_touch
+  - gate_foreign_list
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046233.63, "path": "scripts/governance/vms/vms_health_check.py", "op": "write", "hash_before": "8bfefd47cc4433fe", "hash_after": "8bfefd47cc4433fe",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Pytho'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:49'
+    excerpt: '{"timestamp": 1789480452, "gate": "NOQA-VALIDATION", "session_id": "st-qoder-t1a-20260915", "foreign_count": 25, "foreign_files": ["scripts/governance/_archive/vms_ri/ri_boundary_check.py",
+      "scripts/governance/_archive/vms_ri/ri_build_completion_check.py", "scripts/governance/_ar'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:49'
+    excerpt: '{"timestamp": 1789482923, "gate": "NOQA-VALIDATION", "session_id": "st-qoder-t1a-20260915", "foreign_count": 173, "foreign_files": ["scripts/arch_guard/fitness_functions/check_kill_switch_latency.py",
+      "scripts/governance/_archive/vms_ri/ri_boundary_check.py", "scripts/governance/'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: scripts/ops/e2e_ch_alert_probe.py
+  bucket: zero_import
+  exec_evidence_hits: 0
+  mention_hits: 60
+  channels:
+  - audit_write_touch
+  - gate_foreign_list
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791043447.794, "path": "scripts/ops/e2e_ch_alert_probe.py", "op": "write", "hash_before": "0a25b2b54cd25c1e", "hash_after": "0a25b2b54cd25c1e",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Python312\\py'
+  - src: audit_write_touch(weak)
+    ts: '2026-10-04 01:44:55'
+    excerpt: '{"ts": 1791046324.183, "path": "scripts/ops/e2e_ch_alert_probe.py", "op": "write", "hash_before": "0a25b2b54cd25c1e", "hash_after": "0a25b2b54cd25c1e",
+      "processes": [{"pid": 12860, "name": "python.exe", "cmdline": "C:\\Users\\fanzi\\AppData\\Local\\Programs\\Python\\Python312\\py'
+  - src: gate_foreign_list(weak)
+    ts: '2026-10-04 00:31:51'
+    excerpt: '{"timestamp": 1789724495, "gate": "IMPORT-INTEGRITY", "session_id": "task:SRC-081", "foreign_count": 179, "foreign_files": ["scripts/_archive/migration/inject_domain_fields.py",
+      "scripts/ch/apply_crypto_shadow_tables_ddl.py", "scripts/compute_signals.py", "scripts/diagnose_breadt'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）
+- path: src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py
+  bucket: weak_net1
+  exec_evidence_hits: 0
+  mention_hits: 14
+  channels:
+  - gate_audit_strict
+  last_executed:
+    ts: ''
+    src: ''
+  excerpts:
+  - src: gate_audit_strict(weak)
+    ts: '2026-10-04 00:31:45'
+    excerpt: '{"timestamp": 1789564356.9288192, "session_id": "st-btfix-p17-20260916", "file": "src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py",
+      "baseline_size": 1865}'
+  - src: gate_audit_strict(weak)
+    ts: '2026-10-03 19:47:18'
+    excerpt: '+- file: docs/03_modules/_domain_integration/algo_flow/degradation_spiral_detector.yaml'
+  - src: gate_audit_strict(weak)
+    ts: '2026-10-03 19:47:18'
+    excerpt: '+  token: btfix-p1p2-degradation-spiral-detector-20260916'
+  verdict: weak_touch_only_never_executed
+  note_zh: 无真执行通道记录；仅 write_audit 触碰/外来staged清单 弱证据（摘录 weak 标注）

@@ -1,0 +1,56 @@
+ttl: task_bound
+completes_when: GOMAP 挂血肉战役 chief 判读消费本表后转归档
+schema_version: '0.1'
+session: st-gomap-f2m-20261003
+generated_at: '2026-10-03T18:02:00+00:00'
+census_id: GOMAP-F2-ZERO-EVIDENCE-001
+title: GOMAP 图10 挂血肉 F2·双零台清单（零触发+零消费；chief 内收直接输入，只列不判）
+criteria_zh: 双零判定（主口径，语义执行源）：7 个语义执行源全零 AND consumers_net=0（提及/触碰类不算触发证据）。宽口径（附）：全 15 源含提及类全零 AND consumers_net=0。两清单若空=如实报告空表（非缺产）；只列不判（内收四分处置归 chief）。
+counts:
+  double_zero_total: 0
+  double_zero_strict_total: 6
+  of_total: 448
+double_zero: []
+double_zero_strict:
+- module: scripts.governance.repair.apply_verification_results
+  path: scripts/governance/repair/apply_verification_results.py
+  domain: ''
+  family: L5_selfheal
+  wiring: suspect_orphan
+  malformed: false
+  mention_hits: 11
+- module: scripts.governance.repair.audit_design_completeness
+  path: scripts/governance/repair/audit_design_completeness.py
+  domain: D_GOV_AUDIT
+  family: L5_selfheal
+  wiring: wired_by_header
+  malformed: false
+  mention_hits: 13
+- module: scripts.governance._sync.fix_orphan_deps
+  path: scripts/governance/_sync/fix_orphan_deps.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  wiring: suspect_orphan
+  malformed: false
+  mention_hits: 11
+- module: scripts.governance.fix_orphan_exports
+  path: scripts/governance/d7_code/fix_orphan_exports.py
+  domain: D_GOV_SCRIPTS
+  family: L4_reap
+  wiring: suspect_orphan
+  malformed: false
+  mention_hits: 11
+- module: scripts.governance.meta_question.wo_a2legs.probe_sector_name_sources
+  path: scripts/governance/meta_question/wo_a2legs/probe_sector_name_sources.py
+  domain: D_DATA
+  family: L1_monitor
+  wiring: wired_by_header
+  malformed: false
+  mention_hits: 226
+- module: scripts.governance.d5_architecture.validators.lifecycle.validate_lifecycle_refs
+  path: scripts/governance/d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
+  domain: D_GOV_SCRIPTS
+  family: L0_lifecycle
+  wiring: suspect_orphan
+  malformed: false
+  mention_hits: 932
