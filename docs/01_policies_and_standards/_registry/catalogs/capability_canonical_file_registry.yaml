@@ -58986,4 +58986,9 @@ creation_tokens:
   created_by: st-map9-f4-20261003
   capability: map9_f4_acceptance
   merge_evaluation: "跨域不同对象不并：图9 F4 三红台账+Owner验收件，map_census 家族 F 车道收口实例，消费 F1/F3 真源非其第二实现"
+- file: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  token: casebook-registry-casebook-registry-20261004
+  created_by: st-vm12g-20261004
+  capability: casebook_registry
+  merge_evaluation: "永久病历本登记册token重登记：原20261003版被册归一化重打以HEAD为基底覆盖吸收从未进HEAD；本行以HEAD为基底纯插入叠加"
 di_seam_exemptions: []
