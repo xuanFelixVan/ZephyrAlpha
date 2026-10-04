@@ -38,15 +38,15 @@ legend:
   name_zh: 事后要翻旧账
   desc_zh: 干过的事有账可查,犯过的病有病历可翻
 - tag: no_duplicate
-  name_zh: 一个模块别干两人的活
-  desc_zh: 同标签多钉=重复建设显影位,该并就并
+  name_zh: 模块不能重复建设
+  desc_zh: 同标签多钉=重复簇显影位;无价值且已有重复的并/退
 - tag: orphan_claim
   name_zh: 孤儿要认领或销户
   desc_zh: 没人认领也没人消费的模块,要么上户口要么退役
 - tag: ledger_match
   name_zh: 账实要对得上
   desc_zh: wiring 四态:说接了线就得真有线,机扫重跑不漂移
-legend_note_zh: 草案待 Owner 终审冻结(2026-10-04 呈批 10 条);冻结后机贴不改名(SOP §2.2)。
+legend_note_zh: 已冻结:Owner 终审 2026-10-04 十条全批,#8 定名「模块不能重复建设」(原草案「一个模块别干两人的活」);冻结后机贴不改名(SOP §2.2)。
 tag_rules:
 - selector: family=L0_lifecycle
   tags:
