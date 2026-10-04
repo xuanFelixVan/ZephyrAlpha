@@ -58699,4 +58699,48 @@ creation_tokens:
   token: commitmap-cure-07-f8-family-disposition-20261004
   created_by: st-commitmap-chief-20261003
   capability: commitmap_cure
+- file: docs/_working/datatail/2026-09-23-datatail-shift-report.md
+  token: st-datatail-20260923-2026-09-23-datatail-shift-report-20261004
+  created_by: st-datatail-20260923
+  capability: st-datatail-20260923
+- file: docs/_working/e2e_integration/cost_qualified_list_reexam_20260923.yaml
+  token: st-e2e-20260924-cost-qualified-list-reexam-20260923-20261004
+  created_by: st-e2e-20260924
+  capability: st-e2e-20260924
+- file: docs/_working/datatail/2026-09-23-night-run-report.md
+  token: st-nightdata-20260923-2026-09-23-night-run-report-20261004
+  created_by: st-nightdata-20260923
+  capability: st-nightdata-20260923
+- file: docs/_working/commit_speedup_campaign/00_skeleton/s2_substage_tree.yaml
+  token: st-commitspeed-tbl-20260924-s2-substage-tree-20261004
+  created_by: st-commitspeed-tbl-20260924
+  capability: st-commitspeed-tbl-20260924
+- file: docs/_working/commit_speedup_campaign/20_target_arch/a1_conflict_graph.yaml
+  token: st-commitspeed-tbl-20260924-a1-conflict-graph-20261004
+  created_by: st-commitspeed-tbl-20260924
+  capability: st-commitspeed-tbl-20260924
+- file: docs/_working/commit_speedup_campaign/20_target_arch/a3_gate_repointing_matrix.yaml
+  token: st-commitspeed-tbl-20260924-a3-gate-repointing-matrix-20261004
+  created_by: st-commitspeed-tbl-20260924
+  capability: st-commitspeed-tbl-20260924
+- file: docs/_working/commit_speedup_campaign/40_b0_derived_offload/b0_2_gate_dependency_matrix.yaml
+  token: st-commitspeed-tbl-20260924-b0-2-gate-dependency-matrix-20261004
+  created_by: st-commitspeed-tbl-20260924
+  capability: st-commitspeed-tbl-20260924
+- file: docs/_working/pipeline_final/LEDGER.md
+  token: st-pipeline-final-20260924-ledger-20261004
+  created_by: st-pipeline-final-20260924
+  capability: st-pipeline-final-20260924
+- file: docs/_working/ai_layer_vision/closure_wave2/W4D_l1_design_repair.md
+  token: st-ailayer-final-20260924-w4d-l1-design-repair-20261004
+  created_by: st-ailayer-final-20260924
+  capability: st-ailayer-final-20260924
+- file: src/zephyr/gov_enforcement/rule_bridge/union_priority_ruler.py
+  token: st-final-build-20260926-union-priority-ruler-20261004
+  created_by: st-final-build-20260926
+  capability: st-final-build-20260926
+- file: src/zephyr/shared/foundation/flag_read_state.py
+  token: st-final-build-20260926-flag-read-state-20261004
+  created_by: st-final-build-20260926
+  capability: st-final-build-20260926
 di_seam_exemptions: []
