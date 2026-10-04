@@ -188,6 +188,75 @@ def test_missing_governance_handle_yields_unknown(tmp_path):
     assert bwp._wave_card_status(ctx).status == bwp.STATUS_UNKNOWN
 
 
+# --------------------------------------------------------------------------- c1a 必过集合校准（#ARCH-381）
+
+
+def _wave_rows(extra: list[tuple[str, str]] | None = None, drop: str | None = None, unverify: str | None = None):
+    """构造 tasks 读数（行形状=新 SQL 的 (task_id, verification_status) 二元组）。"""
+    whitelist = [f"OPS-92601{n:02d}" for n in range(21, 31)]  # OPS-9260121~130 十波卡
+    rows = [(tid, "unverified" if tid == unverify else "verified") for tid in whitelist if tid != drop]
+    rows.extend(extra or [])
+    return lambda sql: rows
+
+
+_STALE_EXTRACTION_CARDS = [
+    ("OPS-9260103", "unverified"),  # 波1A.3 触发面三列对账表生成器
+    ("OPS-9260104", "unverified"),  # 波1A.4 规则↔执法面对账尺
+    ("OPS-9260105", "unverified"),  # 波1A.5 死库与死指针清理（depgraph.db=0 字节空壳）
+    ("OPS-9260106", "unverified"),  # 波1A.6 交接书退役
+    ("OPS-9260107", "unverified"),  # 波1B.1.1 四台在册禁用门逐台定性
+    ("OPS-9260110", "unverified"),  # 波1B.1.4 REGISTRY-CODE-ANCHOR 漂移重算
+    ("OPS-9260111", "unverified"),  # 波1B.1.5 CREATE-GUARD 触发面登记
+    ("OPS-9260112", "unverified"),  # 波1B.1.6 flag 三态读
+    ("OPS-9260116", "unverified"),  # 波1B.1.8 从未入库件捞回
+    ("OPS-9260117", "unverified"),  # 波2.1 六图役 30 施工件抢救落地
+    ("OPS-9260118", "unverified"),  # 波2.2 波2 役 169 件抢救落地
+    ("OPS-9260119", "unverified"),  # 波2.3 全流通三批成品抢救落地
+    ("OPS-9260120", "unverified"),  # 波2.4 CH 大声失败改造+灾备处方件
+]
+
+
+def test_calibrated_mustpass_ignores_stale_extraction_cards(tmp_path):
+    """红证（#ARCH-381 校准）：13 张上古抽取卡 unverified 不再阻断——必过集合=白名单口径。"""
+    ctx = bwp.PreflightContext(now=_NOW, repo_root=tmp_path, governance_rows=_wave_rows(extra=_STALE_EXTRACTION_CARDS))
+    reading = bwp._wave_card_status(ctx)
+
+    assert reading.status == bwp.STATUS_GREEN
+    assert "移出必过集合" in reading.evidence and "13" in reading.evidence  # out-of-scope 读数留痕防静默
+
+
+def test_whitelist_card_unverified_still_blocks(tmp_path):
+    """闸仍咬合：白名单内十波卡任一张 unverified → RED（校准≠橡皮章）。"""
+    ctx = bwp.PreflightContext(
+        now=_NOW, repo_root=tmp_path, governance_rows=_wave_rows(extra=_STALE_EXTRACTION_CARDS, unverify="OPS-9260129")
+    )
+    reading = bwp._wave_card_status(ctx)
+
+    assert reading.status == bwp.STATUS_RED
+    assert "OPS-9260129" in reading.evidence
+
+
+def test_whitelist_card_missing_blocks(tmp_path):
+    """闸仍咬合：白名单卡从 tasks 表缺席（被删/改名）→ RED 且 knowable_when 非空。"""
+    ctx = bwp.PreflightContext(now=_NOW, repo_root=tmp_path, governance_rows=_wave_rows(drop="OPS-9260130"))
+    reading = bwp._wave_card_status(ctx)
+
+    assert reading.status == bwp.STATUS_RED
+    assert reading.knowable_when
+
+
+def test_calibration_provenance_as_of_annotated(tmp_path):
+    """防漂移：清单来源必须带 as_of 校准注记，且注记实际浮出 evidence 面（写死陈旧可被追责）。"""
+    assert bwp.C1_CALIBRATION_AS_OF == "2026-10-04"
+    assert bwp.C1_CALIBRATION_SOURCE == "#ARCH-381"
+    assert len(bwp.C1_REQUIRED_CARDS) == 10
+
+    ctx = bwp.PreflightContext(now=_NOW, repo_root=tmp_path, governance_rows=_wave_rows())
+    reading = bwp._wave_card_status(ctx)
+
+    assert "as_of=2026-10-04" in reading.evidence and "#ARCH-381" in reading.evidence
+
+
 # --------------------------------------------------------------------------- 防伪两态
 
 

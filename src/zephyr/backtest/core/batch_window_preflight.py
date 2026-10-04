@@ -33,7 +33,8 @@
 不另立第二道 gate（净零：判据真源仍在 W 册，本模块只做读取与判决）。
 
 五条触发条件（W 册 波12 原文，编号一一对应）：
-  c1 波 0–11 全部施工终态达成（含波 10 G-D 引擎就绪=READY_NOT_FIRED）
+  c1 必过集合全 VERIFIED（#ARCH-381 校准清单 as_of=2026-10-04，考试相关性口径；
+      含波 10 G-D 引擎就绪=READY_NOT_FIRED）
   c2 W-178 板块宇宙完整性（880 概念 gap 补齐 或 降级裁定留痕）
   c3 W-173 GPU 重写 L2 完成（共振矩阵单格耗时达标——目标值须已声明）
   c4 ⚑-2 成本门口径已拍板（B 案/C 案）——Owner 门位，未拍板即 BLOCKED_AWAITING_GATE
@@ -57,7 +58,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime
@@ -90,21 +90,26 @@ W12_CONDITION_IDS: tuple[str, ...] = (
     C5_T2_PROMOTION_POOL,
 )
 
-#: 波 0–11 施工终态须覆盖的波次主号（1A/1B 是 W 册外部审查后插入的半波，9.5 归 9）
-REQUIRED_WAVES: tuple[str, ...] = (
-    "0",
-    "1A",
-    "1B",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
+#: [ARCH-381] c1a 必过集合=考试相关性口径校准白名单（Owner 2026-10-04 裁"准"）。
+#: as_of 锚定校准裁定日——白名单写死必陈旧：新增入闸须经 ARCH 议题批文增补本清单并同步 as_of
+#: （防漂移断言见 tests/backtest/test_batch_window_ignition_gate.py）。
+#: 基线=十波卡 OPS-9260121~130（波 0/3~11 补建卡，考试直接相关，校准日已全 verified）；
+#: 13 张上古架构抽取卡（OPS-9260103~OPS-9260120 段内 unverified 者，depgraph 对齐/死库清理等
+#: 元数据作业，目标库 depgraph.db=0 字节空壳、与考试链零因果）移出必过集合，转普通架构工单队列
+#: （不删除不改态；evidence 面保留清单外 unverified 读数防静默）。
+C1_CALIBRATION_AS_OF: Final[str] = "2026-10-04"
+C1_CALIBRATION_SOURCE: Final[str] = "#ARCH-381"
+C1_REQUIRED_CARDS: Final[tuple[str, ...]] = (
+    "OPS-9260121",  # 波0
+    "OPS-9260122",  # 波3
+    "OPS-9260123",  # 波4
+    "OPS-9260124",  # 波5
+    "OPS-9260125",  # 波6
+    "OPS-9260126",  # 波7
+    "OPS-9260127",  # 波8
+    "OPS-9260128",  # 波9
+    "OPS-9260129",  # 波10
+    "OPS-9260130",  # 波11
 )
 
 #: 波12 两案的立案日（c4 成本门口径 / c2 板块宇宙降级备选 均在此日之后才可能存在）
@@ -126,7 +131,6 @@ W12_WINDOW_PURPOSES: frozenset[str] = frozenset(
     }
 )
 
-_WAVE_RE = re.compile(r"^波\s*(\d+[A-Za-z]?)")
 _VERIFIED = "verified"
 
 ConditionReader = Callable[["PreflightContext"], "ConditionReading"]
@@ -369,20 +373,23 @@ def _find_owner_ruling(
 # c1 波 0–11 施工终态（含波 10 G-D 引擎 READY_NOT_FIRED）
 # ---------------------------------------------------------------------------
 
-_SQL_WAVE_CARDS = "SELECT title, verification_status FROM tasks WHERE title LIKE '波%' LIMIT 2000"
+_SQL_WAVE_CARDS = "SELECT task_id, verification_status FROM tasks WHERE title LIKE '波%' LIMIT 2000"
 
 
 def _wave_card_status(ctx: PreflightContext) -> ConditionReading:
-    """波次交付卡读数（governance 库 tasks 表，波1A.1/1A.2 的机读真源）。
+    """c1a 必过集合读数（governance 库 tasks 表，#ARCH-381 校准清单的机读真源）。
 
-    判据：波 0–11 每波至少一张卡，且全部 verification_status=verified（COMPLETED 不算交付）。
+    判据（#ARCH-381 as_of=2026-10-04，Owner 裁"准"=考试相关性口径）：
+    白名单卡（C1_REQUIRED_CARDS=十波卡+经 ARCH 批文增补的考试直接相关卡）逐张在册
+    且全部 verification_status=verified（COMPLETED 不算交付）；清单外波次卡一律
+    out-of-scope 不阻断（evidence 保留其 unverified 读数防静默）。
     """
     cmd = "python -m zephyr.backtest.core.batch_window_preflight --reading c1a"
     channel = "DatabaseService.get_governance_conn(read_only=True) → tasks（失败抛）"
     if ctx.governance_rows is None:
         return ConditionReading(
             condition_id="c1a_wave_cards",
-            title_zh="波次交付卡全 VERIFIED",
+            title_zh="必过集合全 VERIFIED（#ARCH-381 校准清单）",
             status=STATUS_UNKNOWN,
             cmd=cmd,
             channel="未注入（默认通道不可用）",
@@ -396,35 +403,36 @@ def _wave_card_status(ctx: PreflightContext) -> ConditionReading:
         return _fail_to_unknown(
             ctx,
             "c1a_wave_cards",
-            "波次交付卡全 VERIFIED",
+            "必过集合全 VERIFIED（#ARCH-381 校准清单）",
             cmd,
             channel,
             exc,
             "恢复 governance 只读通道后复跑本读数",
         )
-    by_wave: dict[str, list[str]] = {}
-    for title, vstat in ((str(r[0]), str(r[1] or "").strip().lower()) for r in rows):
-        m = _WAVE_RE.match(title)
-        by_wave.setdefault(m.group(1) if m else "?", []).append(vstat)
-    missing = [w for w in REQUIRED_WAVES if w not in by_wave]
-    not_verified = sorted(f"{w}:{st}" for w, sts in by_wave.items() for st in sts if st != _VERIFIED)
+    by_id = {str(r[0]): str(r[1] or "").strip().lower() for r in rows}
+    missing = [cid for cid in C1_REQUIRED_CARDS if cid not in by_id]
+    not_verified = sorted(
+        f"{cid}:{by_id[cid]}" for cid in C1_REQUIRED_CARDS if cid in by_id and by_id[cid] != _VERIFIED
+    )
+    out_of_scope = sorted(cid for cid, st in by_id.items() if cid not in C1_REQUIRED_CARDS and st != _VERIFIED)
     evidence = (
-        f"波次卡 {sum(len(v) for v in by_wave.values())} 张，覆盖波次主号 {sorted(by_wave)}；"
-        f"零 VERIFIED 项 {not_verified[:6]}{'…' if len(not_verified) > 6 else ''}"
+        f"必过集合 {len(C1_REQUIRED_CARDS)} 张（校准 {C1_CALIBRATION_SOURCE} as_of={C1_CALIBRATION_AS_OF}）"
+        f"缺 {missing or '无'}；未 VERIFIED {not_verified or '无'}；"
+        f"清单外 unverified 波次卡 {len(out_of_scope)} 张（#ARCH-381 移出必过集合，不阻断）"
     )
     status = STATUS_GREEN if (not missing and not not_verified) else STATUS_RED
-    if not by_wave:
+    if not by_id:
         status = STATUS_UNKNOWN
     return ConditionReading(
         condition_id="c1a_wave_cards",
-        title_zh="波次交付卡全 VERIFIED",
+        title_zh="必过集合全 VERIFIED（#ARCH-381 校准清单）",
         status=status,
         cmd=cmd,
         channel=channel,
         as_of=ctx.as_of,
         evidence=evidence,
-        unknown_reason="" if by_wave else "tasks 表零波次卡——追踪面未建，不可判终态",
-        knowable_when="按 W 册把波 0–11 各包建卡（W1A.1 通道）并逐张升 VERIFIED（W1A.2 三判据）",
+        unknown_reason="" if by_id else "tasks 表零波次卡——追踪面未建，不可判终态",
+        knowable_when="按 #ARCH-381 校准口径把必过集合各卡建卡入 tasks 并逐张升 VERIFIED（W1A.2 三判据）",
     )
 
 
@@ -495,11 +503,11 @@ def _wave10_engine_status(ctx: PreflightContext) -> ConditionReading:
 
 
 def read_construction_terminal(ctx: PreflightContext) -> ConditionReading:
-    """c1 = 波次卡全 VERIFIED 且 G-D 引擎 READY_NOT_FIRED（子读数聚合取最保守）。"""
+    """c1 = 必过集合（#ARCH-381 校准清单）全 VERIFIED 且 G-D 引擎 READY_NOT_FIRED（子读数聚合取最保守）。"""
     subs = [_wave_card_status(ctx), _wave10_engine_status(ctx)]
     return ConditionReading(
         condition_id=C1_CONSTRUCTION,
-        title_zh="波 0–11 施工终态达成（含波10 G-D=READY_NOT_FIRED）",
+        title_zh="施工终态达成（#ARCH-381 必过集合；含波10 G-D=READY_NOT_FIRED）",
         status=_worst([s.status for s in subs]),
         cmd=" && ".join(s.cmd for s in subs),
         channel=" | ".join(s.channel for s in subs),
