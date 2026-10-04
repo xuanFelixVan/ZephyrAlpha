@@ -244,3 +244,58 @@ ENGINE = MergeTree
 ORDER BY tuple()
 SETTINGS index_granularity = 8192;
 ```
+
+---
+
+# --- 批B: governance.db 空表 3 张（SQLite DDL 存档，2026-10-04 DROP 前提取） ---
+
+## audit_trail | rows_at_drop_time = 0
+
+```sql
+CREATE TABLE audit_trail (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trade_date TEXT NOT NULL,
+    stage TEXT NOT NULL,                    -- raw_event / match_decision / attribution
+    event_type TEXT NOT NULL,               -- system_fill / broker_settlement / match_verdict / brinson_result ...
+    payload_json TEXT NOT NULL,             -- 事件负载（canonical JSON）
+    prev_hash TEXT NOT NULL,                -- 哈希链（首条空串）
+    record_hash TEXT NOT NULL UNIQUE,       -- SHA-256 记录指纹
+    recorded_at TEXT NOT NULL,              -- UTC ISO8601
+    read_only_after TEXT,                   -- 30 天 read-only 触发器口径（到期日，§3.3）
+    schema_version TEXT NOT NULL DEFAULT '1.0'
+);
+```
+
+## costs | rows_at_drop_time = 0
+
+```sql
+CREATE TABLE costs (
+        cost_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cost_type TEXT NOT NULL,
+        amount REAL NOT NULL,
+        currency TEXT DEFAULT 'CNY',
+        description TEXT,
+        recorded_at TEXT NOT NULL,
+        session_id TEXT,
+        task_id TEXT,
+        FOREIGN KEY (task_id) REFERENCES tasks(task_id)
+    );
+```
+
+## report_archive | rows_at_drop_time = 0
+
+```sql
+CREATE TABLE report_archive (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    archive_id TEXT NOT NULL UNIQUE,        -- ARCH-xxxxxxxxxx（ReportPublisher 口径）
+    report_id TEXT NOT NULL,                -- 报告逻辑标识
+    source TEXT NOT NULL,                   -- ReportSource 枚举值
+    report_type TEXT NOT NULL,
+    archived_at TEXT NOT NULL,              -- UTC ISO8601
+    content_json TEXT NOT NULL,             -- canonical JSON
+    content_hash TEXT NOT NULL,             -- SHA-256(content)
+    prev_hash TEXT NOT NULL,                -- 哈希链（首条空串）
+    record_hash TEXT NOT NULL UNIQUE,       -- SHA-256(链指纹)
+    schema_version TEXT NOT NULL DEFAULT '1.0'
+);
+```
