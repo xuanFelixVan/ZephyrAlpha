@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-BT-189 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """intake 编排测试——验收①②⑤条款的编排层部分（幂等/KillSwitch/簇首/FDR 联动/差异化拒收）。"""
+
 from __future__ import annotations
 
 import sys
@@ -51,39 +52,44 @@ class TestClusterHeads:
 
 class TestDifferentiation:
     def test_reject_when_all_axes_same(self):
-        reg = [{"strategy_id": "STR-OLD-001", "strategy_class": "mined",
-                "holding_period": "波段", "sleeve": "alpha"}]
-        ok, why = differentiation_ok({"signal_axis": "mined", "holding_period": "波段",
-                                      "state_adaptation": "alpha"}, reg)
+        reg = [{"strategy_id": "STR-OLD-001", "strategy_class": "mined", "holding_period": "波段", "sleeve": "alpha"}]
+        ok, why = differentiation_ok(
+            {"signal_axis": "mined", "holding_period": "波段", "state_adaptation": "alpha"}, reg
+        )
         assert not ok and "STR-OLD-001" in why
 
     def test_pass_when_one_axis_differs(self):
-        reg = [{"strategy_id": "STR-OLD-001", "strategy_class": "mined",
-                "holding_period": "波段", "sleeve": "hedge"}]
-        ok, why = differentiation_ok({"signal_axis": "mined", "holding_period": "波段",
-                                      "state_adaptation": "alpha"}, reg)
+        reg = [{"strategy_id": "STR-OLD-001", "strategy_class": "mined", "holding_period": "波段", "sleeve": "hedge"}]
+        ok, why = differentiation_ok(
+            {"signal_axis": "mined", "holding_period": "波段", "state_adaptation": "alpha"}, reg
+        )
         assert ok
 
 
 class TestNextNumber:
     def test_sequential(self, tmp_path, monkeypatch):
         monkeypatch.setattr(intake, "REGISTRY", tmp_path / "no.yaml")
-        assert next_strategy_number({"strategies": [
-            {"strategy_id": "STR-AUTO-001"}, {"strategy_id": "STR-AUTO-003"}]}, "AUTO") == 4
+        assert (
+            next_strategy_number(
+                {"strategies": [{"strategy_id": "STR-AUTO-001"}, {"strategy_id": "STR-AUTO-003"}]}, "AUTO"
+            )
+            == 4
+        )
         assert next_strategy_number({"strategies": []}, "AUTO") == 1
 
 
 class TestPromoteToSim:
     def test_full_pass(self):
         fsm = build_strategy_fsm("STR-T-001")
-        ok, why = promote_to_sim(fsm, dual=True, fdr=True, no_decay=True)
+        ok, why = promote_to_sim(fsm, {"dual": True, "fdr": True, "no_decay": True})
         assert ok and fsm.current_state == "sim"
 
     def test_fail_when_any_condition_false(self):
         for kw in ({"dual": False}, {"fdr": False}, {"no_decay": False}):
             fsm = build_strategy_fsm("STR-T-002")
-            ok, _ = promote_to_sim(fsm, dual=kw.get("dual", True), fdr=kw.get("fdr", True),
-                                   no_decay=kw.get("no_decay", True))
+            conds = {"dual": True, "fdr": True, "no_decay": True}
+            conds.update(kw)
+            ok, _ = promote_to_sim(fsm, conds)
             assert not ok and fsm.current_state == "candidate"
 
 
@@ -99,9 +105,15 @@ class TestRunIntake:
         r1 = run_intake("B1", passed, corr, dry_run=True)
         assert r1["promoted"] and "CAND-aaa" in r1["fdr_keep"]
         # 模拟已入库：库内已有簇首映射 id
-        monkeypatch.setattr(intake, "_load_registry", lambda: {"strategies": [
-            {"strategy_id": "CAND-aaa", "strategy_class": "mined",
-             "holding_period": "波段", "sleeve": "alpha"}]})
+        monkeypatch.setattr(
+            intake,
+            "_load_registry",
+            lambda: {
+                "strategies": [
+                    {"strategy_id": "CAND-aaa", "strategy_class": "mined", "holding_period": "波段", "sleeve": "alpha"}
+                ]
+            },
+        )
         r2 = run_intake("B1", passed, corr, dry_run=True)
         assert "CAND-aaa" in r2["skipped"]
 
@@ -144,12 +156,21 @@ class TestRunIntake:
 
         monkeypatch.setattr("zephyr.strategy_pipeline.registry_writer.append_entries", fake_append)
         monkeypatch.setattr(intake, "_auto_mount_sids", fake_mount)
-        item = {"key": "CAND-aaa@c4_x.py", "source_file": "scripts/backtest/translated/c4_x.py",
-                "is_sharpe": 1.0, "turnover": 0.3, "max_drawdown": -0.2,
-                "segments": [{"batch": "C4-OOS-2024-2026", "sharpe": 0.5, "decay": 0.1}]}
-        r = run_intake("B5", {"CAND-aaa@c4_x.py": 0.001},
-                       {("CAND-aaa@c4_x.py", "CAND-aaa@c4_x.py"): 1.0},
-                       dry_run=False, items=[item])
+        item = {
+            "key": "CAND-aaa@c4_x.py",
+            "source_file": "scripts/backtest/translated/c4_x.py",
+            "is_sharpe": 1.0,
+            "turnover": 0.3,
+            "max_drawdown": -0.2,
+            "segments": [{"batch": "C4-OOS-2024-2026", "sharpe": 0.5, "decay": 0.1}],
+        }
+        r = run_intake(
+            "B5",
+            {"CAND-aaa@c4_x.py": 0.001},
+            {("CAND-aaa@c4_x.py", "CAND-aaa@c4_x.py"): 1.0},
+            dry_run=False,
+            items=[item],
+        )
         assert r["registry"]["new_sids"] == r["created_sids"]
         assert calls["mounted"] == r["created_sids"]
         entry = calls["entries"][0]
@@ -164,12 +185,22 @@ class TestRunIntake:
         k1 = "CAND-strong@c4_c72318f2da1c_bias_ql.py"
         k2 = "CAND-weak@c4_4440d07f973f_ultrashort.py"
         items = [
-            {"key": k1, "source_file": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py",
-             "is_sharpe": 1.0, "turnover": 0.2, "max_drawdown": -0.1,
-             "segments": [{"batch": "C4-OOS", "sharpe": 0.5, "decay": 0.1}]},
-            {"key": k2, "source_file": "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py",
-             "is_sharpe": 0.3, "turnover": 1.2, "max_drawdown": -0.4,
-             "segments": [{"batch": "C4-OOS", "sharpe": 0.5, "decay": 0.1}]},
+            {
+                "key": k1,
+                "source_file": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py",
+                "is_sharpe": 1.0,
+                "turnover": 0.2,
+                "max_drawdown": -0.1,
+                "segments": [{"batch": "C4-OOS", "sharpe": 0.5, "decay": 0.1}],
+            },
+            {
+                "key": k2,
+                "source_file": "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py",
+                "is_sharpe": 0.3,
+                "turnover": 1.2,
+                "max_drawdown": -0.4,
+                "segments": [{"batch": "C4-OOS", "sharpe": 0.5, "decay": 0.1}],
+            },
         ]
         r = run_intake("B6", {k1: 0.0001, k2: 0.9}, {}, dry_run=True, items=items)
         assert len(r["created_sids"]) == 2  # 都登记（簇首∧差异化）
@@ -178,12 +209,27 @@ class TestRunIntake:
     def test_code_path_idempotency(self, monkeypatch):
         # 文件粒度幂等：key 不同但 source_file 已在库（注册表 code_path 命中）→ 跳过
         self._kill_clear(monkeypatch)
-        monkeypatch.setattr(intake, "_load_registry", lambda: {"strategies": [
-            {"strategy_id": "STR-VREV-026",
-             "code_path": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py"}]})
+        monkeypatch.setattr(
+            intake,
+            "_load_registry",
+            lambda: {
+                "strategies": [
+                    {
+                        "strategy_id": "STR-VREV-026",
+                        "code_path": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py",
+                    }
+                ]
+            },
+        )
         key = "CAND-c72318f2da1c@c4_c72318f2da1c_bias_ql.py"
-        item = {"key": key, "source_file": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py",
-                "is_sharpe": 0.16, "turnover": 0.2, "max_drawdown": -0.1, "segments": []}
+        item = {
+            "key": key,
+            "source_file": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py",
+            "is_sharpe": 0.16,
+            "turnover": 0.2,
+            "max_drawdown": -0.1,
+            "segments": [],
+        }
         r = run_intake("B7", {key: 0.001}, {}, dry_run=True, items=[item])
         assert "已入库" in r["skipped"][key]
 
@@ -198,3 +244,164 @@ class TestRunIntake:
         assert blk["role"] == "cluster_head"
         assert blk["absorbed"][0]["candidate_id"] == "CAND-tail"
         assert blk["absorbed"][0]["correlation"] == 0.71
+
+    def test_candidate_reeval_promotes_on_pass(self, monkeypatch, tmp_path):
+        # Rx-1（2026-10-04 Owner 批）：已登记 candidate 本批再次过考 → 重检三条件 →
+        # 补 promote（不再被幂等闸 skip）；已毕业件（sim/production）仍幂等跳过
+        import yaml as _yaml
+
+        self._kill_clear(monkeypatch)
+        regp = tmp_path / "strategy_registry.yaml"
+        regp.write_text(
+            _yaml.safe_dump(
+                {
+                    "strategies": [
+                        {
+                            "strategy_id": "STR-EXIST-001",
+                            "code_path": "c4_exist.py",
+                            "lifecycle_status": "candidate",
+                            "strategy_class": "mined",
+                            "holding_period": "波段",
+                            "sleeve": "alpha",
+                        },
+                        {
+                            "strategy_id": "STR-DONE-002",
+                            "code_path": "c4_done.py",
+                            "lifecycle_status": "sim",
+                            "strategy_class": "mined",
+                            "holding_period": "波段",
+                            "sleeve": "alpha",
+                        },
+                    ]
+                },
+                allow_unicode=True,
+            ),
+            encoding="utf-8",
+        )
+        registry_doc = _yaml.safe_load(regp.read_text(encoding="utf-8"))
+        monkeypatch.setattr(intake, "_load_registry", lambda: registry_doc)
+        monkeypatch.setattr(intake, "REGISTRY", regp)
+        passed = {"CAND-exist@c4_exist.py": 0.001, "CAND-done@c4_done.py": 0.002}
+        items = [
+            {
+                "key": "CAND-exist@c4_exist.py",
+                "source_file": "c4_exist.py",
+                "segments": [{"batch": "B", "sharpe": 1.2, "decay": 0.1}],
+            },
+            {
+                "key": "CAND-done@c4_done.py",
+                "source_file": "c4_done.py",
+                "segments": [{"batch": "B", "sharpe": 1.2, "decay": 0.1}],
+            },
+        ]
+        r = run_intake("RX1", passed, {}, dry_run=True, items=items)
+        # candidate 命中=重检放行（非 skip）；已毕业命中=幂等 skip
+        assert any("STR-EXIST-001" in s for s in r.get("reeval_promoted", {})), r
+        assert any("c4_done.py" in k for k in r.get("skipped", {})), r
+
+    def test_apply_candidate_promotion_updates_registry(self, monkeypatch, tmp_path):
+        # Rx-1 持久面：_apply_candidate_promotion 原位 CAS 更新 lifecycle+evidence（条目数守恒）
+        import yaml as _yaml
+
+        regp = tmp_path / "reg.yaml"
+        regp.write_text(
+            _yaml.safe_dump(
+                {
+                    "strategies": [
+                        {
+                            "strategy_id": "STR-EXIST-001",
+                            "code_path": "c4_exist.py",
+                            "lifecycle_status": "candidate",
+                            "evidence": "原证据行",
+                        },
+                        {
+                            "strategy_id": "STR-KEEP-002",
+                            "code_path": "c4_keep.py",
+                            "lifecycle_status": "candidate",
+                            "evidence": "不动行",
+                        },
+                    ]
+                },
+                allow_unicode=True,
+            ),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(intake, "_load_registry", lambda: _yaml.safe_load(regp.read_text(encoding="utf-8")))
+        monkeypatch.setattr(intake, "REGISTRY", regp)
+        receipt = intake._apply_candidate_promotion(
+            {"STR-EXIST-001": "CAND-x@c4_exist.py: 三条件全绿"}, trigger_batch="T9"
+        )
+        assert receipt["updated"] == 1
+        doc = _yaml.safe_load(regp.read_text(encoding="utf-8"))
+        by_sid = {e["strategy_id"]: e for e in doc["strategies"]}
+        assert by_sid["STR-EXIST-001"]["lifecycle_status"] == "sim"
+        assert "Rx-1 重检放行 T9" in by_sid["STR-EXIST-001"]["evidence"]
+        assert by_sid["STR-KEEP-002"]["lifecycle_status"] == "candidate"  # 邻行零触碰
+
+    def test_candidate_reexam_monthly_sweep(self, monkeypatch, tmp_path):
+        # Rx-2 月度全池复检：全绿台→promoted+原位更新；缺双窗台→gaps 分类（Rx-3 名单）
+        import yaml as _yaml
+
+        regp = tmp_path / "reg.yaml"
+        regp.write_text(
+            _yaml.safe_dump(
+                {
+                    "strategies": [
+                        {
+                            "strategy_id": "STR-OK-001",
+                            "code_path": "c4_ok.py",
+                            "lifecycle_status": "candidate",
+                            "evidence": "",
+                        },
+                        {
+                            "strategy_id": "STR-GAP-002",
+                            "code_path": "c4_gap.py",
+                            "lifecycle_status": "candidate",
+                            "evidence": "",
+                        },
+                    ]
+                },
+                allow_unicode=True,
+            ),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(intake, "_load_registry", lambda: _yaml.safe_load(regp.read_text(encoding="utf-8")))
+        monkeypatch.setattr(intake, "REGISTRY", regp)
+
+        def fake_eval(sid, *, entry=None, **kw):
+            if sid == "STR-OK-001":
+                return {
+                    "ok": True,
+                    "conditions": {
+                        k: {"ok": True, "reason": "全绿"}
+                        for k in ("dual_window_pass", "bh_fdr_pass", "no_pending_decay_alert")
+                    },
+                    "failed": [],
+                    "context": None,
+                    "screen_sid": sid,
+                }
+            return {
+                "ok": False,
+                "conditions": {
+                    "dual_window_pass": {"ok": False, "reason": "无 §8 行"},
+                    "bh_fdr_pass": {"ok": True, "reason": "过"},
+                    "no_pending_decay_alert": {"ok": True, "reason": "无"},
+                },
+                "failed": ["dual_window_pass"],
+                "context": None,
+                "screen_sid": sid,
+            }
+
+        monkeypatch.setattr("zephyr.strategy_pipeline.promotion_advisory.evaluate_sim_preauthorization", fake_eval)
+        r = intake.run_candidate_reexam(dry_run=True)
+        assert r["candidates"] == 2
+        assert "STR-OK-001" in r["promoted"]
+        assert r["gap_detail"].get("dual_window_pass") == ["STR-GAP-002"]
+
+    def test_candidate_reexam_kind_wired(self):
+        # Rx-2 接线断言：kind 在轻册+发射表+执行体在场
+        from zephyr.strategy_pipeline import pipeline_events as pe
+
+        assert "candidate_reexam_monthly" in pe.LIGHT_KINDS
+        assert hasattr(pe, "run_candidate_reexam_monthly")
+        assert hasattr(intake, "run_candidate_reexam")
