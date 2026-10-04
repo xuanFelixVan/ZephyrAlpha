@@ -4,12 +4,12 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-20T09:41:29Z'
+generated_at: '2026-10-04T12:10:38Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 unique_key:
 - path
-total_files: 298
+total_files: 302
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1901,6 +1901,36 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md
+  module_id: ''
+  title: 自动化班底值守 SOP（双引擎两班制：治理班×业务班）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/automation_sop/index.md
+  module_id: ''
+  title: 自动化班底族索引
+  doc_type: index
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/backtest_system_sop/README.md
   module_id: ''
   title: 回测体系 SOP 总纲——分级回测金字塔 × AI 自驱循环 × 策略库入库漏斗
@@ -2008,7 +2038,7 @@ files:
   section_count: 0
 - path: docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
   module_id: ''
-  title: 交易决策域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
+  title: 交易决策域施工流程标准作业规程（SOP）——端到端 17 段施工闭环
   doc_type: policy
   status: active
   version: 1.7.2
@@ -2058,6 +2088,21 @@ files:
   status: active
   version: 1.0.0
   rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md
+  module_id: ''
+  title: 车道施工纪律 SOP——多车道并发施工全纪律一页册（冷启动/提交正门/新建三件套/热注册表/门禁红线/并发安全/EOL/判据交付）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
   scope: ''
   stability: ''
   layer: ''
@@ -2116,7 +2161,7 @@ files:
   title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编排真源）
   doc_type: policy
   status: active
-  version: 1.1.0
+  version: 2.2.0
   rule_form: procedural
   scope: ''
   stability: ''
@@ -2176,9 +2221,54 @@ files:
   title: 全项目对齐清单——全图全库+代码文档三层对齐规则（全图全库对齐版）
   doc_type: policy
   status: active
-  version: 1.6.0
+  version: 1.8.0
   rule_form: checklist
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+  module_id: ''
+  title: 提交指路指南（机生版）
+  doc_type: policy
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md
+  module_id: ''
+  title: 施工台账方法论——车道存活三查·停手回流·回执六项·"永不说全绿"（多车道战役台账法）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md
+  module_id: ''
+  title: 深度裁定方法论——"只给最强模型"战场划分法 × 全仓待裁穷举扫描法（裁定/审计战役通用真源）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
@@ -2189,6 +2279,96 @@ files:
 - path: docs/01_policies_and_standards/sop/governance_sop/index.md
   module_id: ''
   title: governance_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+  module_id: CFG-COMMIT-DEATH-CASES-001
+  title: 提交撞墙死因案例册（死因→处方蒸馏，附实弹证据）
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  module_id: CFG-COMMIT-GUIDE-FILETYPES-001
+  title: 提交指路指南·文件类型 checklist 真源（按类型千人千面）
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  module_id: CFG-COMMIT-GATE-DIGEST-001
+  title: 提交门禁判据蒸馏册（提交指路指南生成器的判据源）
+  doc_type: register
+  status: active
+  version: 1.2.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/index.md
+  module_id: ''
+  title: commit_guide_sources — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md
+  module_id: ''
+  title: 血肉编目标准作业规程（SOP）——资产人读描述区必填与质量标准
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: library
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/library_sop/index.md
+  module_id: ''
+  title: library_sop — 目录索引
   doc_type: index
   status: active
   version: 1.0.0
@@ -2231,12 +2411,27 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md
+  module_id: ''
+  title: 指标挖矿 SOP——TASC 论文定向检索+公式可验证性唯一准入闸+时盒停手立卡（技术指标公式移植入库生产线）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
   module_id: ''
   title: 挖矿 SOP——全网调研+内部反查的全面挖掘方法论（六向寻路/防噪音四闸/矿脉枯竭终止/挖后自审闸）
   doc_type: policy
   status: active
-  version: 1.4.0
+  version: 1.6.0
   rule_form: procedural
   scope: ''
   stability: ''
@@ -2269,6 +2464,21 @@ files:
   version: 1.2.0
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md
+  module_id: ''
+  title: 纵向地图挂图 SOP——血肉挂载、病历挂载、目的标签与内收对审（纵轴地图家族通用）
+  doc_type: policy
+  status: active
+  version: 1.1.2
+  rule_form: procedural
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
@@ -2726,12 +2936,27 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
-  module_id: PS-REG-021
-  title: 能力→真源文件反查注册表
-  doc_type: gate
+- path: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  module_id: ''
+  title: 永久病历本登记册（casebook registry，纵向地图家族 casebooks 字段唯一反查册）
+  doc_type: register
   status: active
-  version: 1.1.1
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml
+  module_id: MOD-GOV-CHAINREG
+  title: ''
+  doc_type: ''
+  status: active
+  version: '1.0'
   rule_form: ''
   scope: ''
   stability: ''
@@ -3041,6 +3266,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml
+  module_id: REG-FMS-DEADREF-BASELINE
+  title: FMS 死引用棘轮基线（生成物，禁手改）
+  doc_type: register
+  status: active
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
   module_id: PS-REG-012
   title: Frontmatter 字段定义登记表
@@ -3196,6 +3436,21 @@ files:
   title: ''
   doc_type: ''
   status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml
+  module_id: REG-TAGVOCAB-001
+  title: 图书馆标签标准词库（枚举+别名层）
+  doc_type: register
+  status: active
   version: 1.0.0
   rule_form: ''
   scope: ''
@@ -3512,6 +3767,21 @@ files:
   doc_type: ''
   status: active
   version: 1.2.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
+  module_id: REG-STATE-VOCAB-001
+  title: 状态词表中央登记表
+  doc_type: register
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -3866,6 +4136,51 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
+  module_id: RPT-GATE-FACE-RECONCILIATION
+  title: ''
+  doc_type: register
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
+  module_id: RPT-GATE-FACE-RECONCILIATION
+  title: 门禁触发面三列对账表（波 1A.3）
+  doc_type: register
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/reports/index.md
+  module_id: ''
+  title: reports — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/schemas/index.md
   module_id: GOV-006
   title: _registry/schemas/ 目录索引
@@ -3945,6 +4260,21 @@ files:
   module_id: PS-VOC-022
   title: blueprint_refs.status 受控词表
   doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+  module_id: MOD-GOVERNANCE
+  title: card_state 受控词表
+  doc_type: ''
   status: active
   version: 1.0.0
   rule_form: ''
@@ -4286,6 +4616,81 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_frequencies_vocabulary.yaml
+  module_id: MOD-CHAINPILE-METAQ
+  title: ''
+  doc_type: vocabulary
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_layers_vocabulary.yaml
+  module_id: MOD-CHAINPILE-METAQ
+  title: ''
+  doc_type: vocabulary
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_origins_vocabulary.yaml
+  module_id: MOD-CHAINPILE-METAQ
+  title: ''
+  doc_type: vocabulary
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_outcomes_vocabulary.yaml
+  module_id: MOD-CHAINPILE-METAQ
+  title: ''
+  doc_type: vocabulary
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_statuses_vocabulary.yaml
+  module_id: MOD-CHAINPILE-METAQ
+  title: ''
+  doc_type: vocabulary
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml
   module_id: PS-VOC-027
   title: module_lifecycle_status 受控词表
@@ -4441,7 +4846,7 @@ files:
   title: startup 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -4526,357 +4931,12 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md
-  module_id: ''
-  title: 车道施工纪律 SOP——多车道并发施工全纪律一页册（冷启动/提交正门/新建三件套/热注册表/门禁红线/并发安全/EOL/判据交付）
-  doc_type: policy
+- path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  module_id: PS-REG-021
+  title: 能力→真源文件反查注册表
+  doc_type: gate
   status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md
-  module_id: ''
-  title: 施工台账方法论——车道存活三查·停手回流·回执六项·"永不说全绿"（多车道战役台账法）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md
-  module_id: ''
-  title: 深度裁定方法论——"只给最强模型"战场划分法 × 全仓待裁穷举扫描法（裁定/审计战役通用真源）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md
-  module_id: ''
-  title: 血肉编目标准作业规程（SOP）——资产人读描述区必填与质量标准
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: library
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/library_sop/index.md
-  module_id: ''
-  title: library_sop — 目录索引
-  doc_type: ''
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md
-  module_id: ''
-  title: 指标挖矿 SOP——TASC 论文定向检索+公式可验证性唯一准入闸+时盒停手立卡（技术指标公式移植入库生产线）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: procedural
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml
-  module_id: MOD-GOV-CHAINREG
-  title: ''
-  doc_type: ''
-  status: active
-  version: '1.0'
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml
-  module_id: REG-TAGVOCAB-001
-  title: 图书馆标签标准词库（枚举+别名层）
-  doc_type: register
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
-  module_id: REG-STATE-VOCAB-001
-  title: 状态词表中央登记表
-  doc_type: register
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
-  module_id: ''
-  title: 提交指路指南（机生版）
-  doc_type: policy
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
-  module_id: CFG-COMMIT-DEATH-CASES-001
-  title: 提交撞墙死因案例册（死因→处方蒸馏，附实弹证据）
-  doc_type: register
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
-  module_id: CFG-COMMIT-GUIDE-FILETYPES-001
-  title: 提交指路指南·文件类型 checklist 真源（按类型千人千面）
-  doc_type: register
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
-  module_id: CFG-COMMIT-GATE-DIGEST-001
-  title: 99 台提交门禁判据蒸馏册（提交指路指南生成器的判据源）
-  doc_type: register
-  status: active
-  version: 1.1.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_frequencies_vocabulary.yaml
-  module_id: MOD-CHAINPILE-METAQ
-  title: ''
-  doc_type: vocabulary
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_layers_vocabulary.yaml
-  module_id: MOD-CHAINPILE-METAQ
-  title: ''
-  doc_type: vocabulary
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_origins_vocabulary.yaml
-  module_id: MOD-CHAINPILE-METAQ
-  title: ''
-  doc_type: vocabulary
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_outcomes_vocabulary.yaml
-  module_id: MOD-CHAINPILE-METAQ
-  title: ''
-  doc_type: vocabulary
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/vocabularies/meta_question_statuses_vocabulary.yaml
-  module_id: MOD-CHAINPILE-METAQ
-  title: ''
-  doc_type: vocabulary
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md
-  module_id: ''
-  title: 自动化班底值守 SOP（双引擎两班制：治理班×业务班）
-  doc_type: policy
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/sop/automation_sop/index.md
-  module_id: ''
-  title: 自动化班底族索引
-  doc_type: index
-  status: active
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/fms_deadref_baseline.yaml
-  module_id: REG-FMS-DEADREF-BASELINE
-  title: FMS 死引用棘轮基线（生成物，禁手改）
-  doc_type: register
-  status: active
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.md
-  module_id: RPT-GATE-FACE-RECONCILIATION
-  title: ''
-  doc_type: register
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/reports/gate_face_reconciliation.yaml
-  module_id: RPT-GATE-FACE-RECONCILIATION
-  title: 门禁触发面三列对账表（波 1A.3）
-  doc_type: register
-  status: ''
-  version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
-  module_id: MOD-GOVERNANCE
-  title: card_state 受控词表
-  doc_type: ''
-  status: active
-  version: 1.0.0
+  version: 1.1.1
   rule_form: ''
   scope: ''
   stability: ''
