@@ -62540,6 +62540,39 @@ entries:
   plain_zh: "每天早上自动把昨天的新闻逐条打情绪分存进 news_sentiment_score 表，漏了的日子自动补，也能手动补任意历史区间，断了能接着跑"
   responsibility_layer: ai
 
+- module_path: src/zephyr/governance/audit/registry_entry_counts_reconciler.py
+  domain_id: D_GOV_RULE
+  name_zh: "注册册条目计数对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "治 ROOR 手工计数漂移：post-commit 事件触发自动调用 check_registry_consistency 回填 entry_count，让注册表数字与实际条目数始终一致，不再靠人肉维护。"
+  responsibility_layer: governance
+- module_path: scripts/backfill_option_daily_stats.py
+  domain_id: D_DATA_ENG
+  name_zh: "期权每日统计历史回补"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把交易所官方期权每日统计（沪 SSE/深 SZSE，akshare 免费源）按日拉齐回补进 c1_market.option_daily_stats 表，默认 dry-run 零写入，可断点续跑并记录跳过区间。"
+  responsibility_layer: business
+- module_path: scripts/sector_line/build_gpu_input_pack.py
+  domain_id: D_DATA_ENG
+  name_zh: "GPU板块条件矩阵输入包建造器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把板块条件矩阵所需的 880 板块日K 等输入打包成 grid 跑批目录，同参数重跑产物逐字节一致（sha256 幂等），供 GPU 训练直接消费。"
+  responsibility_layer: business
+- module_path: scripts/sector_line/freeze_baseline.py
+  domain_id: D_DATA_ENG
+  name_zh: "状态层回放基线冻结器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把状态层回放的活值与 880 板块日K 基线冻结成基准文件，重跑时断言零漂移，防止回放口径悄悄变化导致对比失真。"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
@@ -73622,7 +73655,8 @@ algo_submodules:
   node_id: A1
   name_zh: ① 包公共面再导出
   name_en: __init__ re-export
-  plain_zh: 再导出 CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance（共 3 符号）
+  plain_zh: 再导出 CleaningAnomalyEngine, DataAnomalyAlerter, ExpectationGovernance, IncrementalUpdateEngine, GpuResourceManager（共
+    5 符号，后两件守卫式）
 - module_path: src/zephyr/data_security/__init__.py
   module_id: MOD-DATA_SEC
   node_id: A1
@@ -73769,3 +73803,9 @@ algo_submodules:
   desc_en: ""
   plain_zh: "把券商账号这类敏感编号变成只有末几位能看的打码形式，短号和空号干脆全部打码，保证日志里绝不漏真号"
   responsibility_layer: infrastructure
+- module_path: src/zephyr/reporting/report_publisher.py
+  module_id: MOD-RPT-003
+  node_id: A2B
+  name_zh: ②b 持久化出口（可选注入，F115 R2 薄刀）
+  name_en: archive_sink.persist（真身 report_archive_sink.JsonlArchiveSink）
+  plain_zh: 注入 archive_sink 时归档逐条 append-only 落盘 JSONL（默认 data/reports/report_archive.jsonl）

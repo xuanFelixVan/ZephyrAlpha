@@ -58832,4 +58832,9 @@ creation_tokens:
   created_by: st-sH-f8family-20261004
   capability: f8_family
   merge_evaluation: "F8家族处置表07裁定提交保全：跨域不同对象不并"
+- file: docs/03_modules/_domain_governance/algo_flow/audit/registry_entry_counts_reconciler.yaml
+  token: f8-family-registry-entry-counts-reconciler-20261004
+  created_by: st-sH-f8family-20261004
+  capability: f8_family
+  merge_evaluation: "死信处方补卡（ALGO-FLOW-LINK 断锚治本）：同真源 src docstring 的外部投影，同域同对象"
 di_seam_exemptions: []

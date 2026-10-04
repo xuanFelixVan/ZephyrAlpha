@@ -1,0 +1,42 @@
+# ALGO_FLOW 外部真源——registry_entry_counts_reconciler（_domain_governance 域，真源 src/zephyr/governance/audit/registry_entry_counts_reconciler.py）
+# F8 家族处置批 D 死信处方补卡（st-sH-f8family-20261004）：src 头部 external 锚自创建即指向本卡，
+# 卡片缺席=ALGO-FLOW-LINK 断裂；本卡按 sibling blueprint_status_transition_reconciler.yaml 同构补齐。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.audit.registry_entry_counts_reconciler
+source_of_truth: src/zephyr/governance/audit/registry_entry_counts_reconciler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: post-commit 提交文件列表 committed_files
+    #   intro: 本次 commit 的 staged 文件路径列表
+    # - id: I2
+    #   name: 触发路径命中集 _TRIGGER_RELPATHS
+    #   intro: ROOR + check_registry_consistency.py + 本模块自身（改动即触发对账）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 事件触发判定
+    #   name_en: _trigger
+    #   intro: committed_files 命中 _TRIGGER_RELPATHS 任一路径才触发（事件触发，禁轮询）
+    # - id: A2
+    #   name_zh: ② 回填工具 subprocess 执行
+    #   name_en: run_entry_counts_backfill
+    #   intro: 固定 argv 白名单调 check_registry_consistency.py --update-entry-counts，90s 超时
+    # - id: A3
+    #   name_zh: ③ 结果落账
+    #   name_en: reconciler 收口
+    #   intro: ok 且 fixed 非空经 gateway _commit_auto 落 chore(registry) 批；失败 warn 留证不硬拦
+    # 层: 输出
+    # - id: O1
+    #   name: ReconcileResult
+    #   intro: 回填 FIXED 明细 + stale_left 计数（ok/fixed/stale_left/stderr_tail）
+    #   downstream: GitCommitGateway post-commit reconciler 链
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
