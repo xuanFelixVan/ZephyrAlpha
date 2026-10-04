@@ -59099,4 +59099,14 @@ creation_tokens:
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
   merge_evaluation: "工单st-tdm-mountgate-20261005挂载义务门禁施工批（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流非第二真源；PG账本同指纹已登记OK为真源，本yaml面插只作CREATE-GUARD过门耗材，st-mastermap 8909ac6901同款先例）"
+- file: docs/_working/tdm_mount/g_tag_mount_report.md
+  token: tdm-mount-g-tag-report-20261004
+  capability: tdm_mount
+  created_by: st-tdm-tag-20261004
+  merge_evaluation: "TDM标签机贴批件一产出报告（机贴计数/覆盖对拍/扩展判据44台呈审/SIG-149锚张力呈报）；无替代物（新战役件，ttl:task_bound）"
+- file: docs/_working/tdm_mount/h_label_subject_escalation.md
+  token: tdm-mount-h-label-escalation-20261004
+  capability: tdm_mount
+  created_by: st-tdm-tag-20261004
+  merge_evaluation: "标签自含主体判据复核升级单（5过/7升级呈Owner门位）；无替代物（新战役件，ttl:task_bound）"
 di_seam_exemptions: []
