@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——bridge_instruction_kernel（_domain_execution_core 域，真源 src/zephyr/ex_core/bridge_instruction_kernel.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_core.bridge_instruction_kernel
+source_of_truth: src/zephyr/ex_core/bridge_instruction_kernel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 指令文件行列表（含盖章态）
+    #   fields: order_id / action / body / mark(#SENDING·#DONE·#FAIL)
+    #   code: read 端口 -> parse_instructions
+    # - id: I2
+    #   name: 柜台挂单 remark 集 + 注入时钟 + 协议时限
+    #   fields: counter_remarks(终态唯一证据源) / now_ms / cfg(sending_timeout_ms·max_retry)
+    #   code: is_counter_confirmed / BridgeProtocolConfig
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 行解析与三态分派
+    #   name_en: parse_and_dispatch
+    #   intro: 裸行/#SENDING/终态三分派，#DONE·#FAIL 行直接跳过
+    #   code: parse_instructions / run_executor_cycle
+    # - id: A2
+    #   name_zh: SENDING 柜台确认推进
+    #   name_en: sending_confirm_or_timeout
+    #   intro: 柜台可见即 #DONE；认领计时未超时等待；超时重发（盘上仍低阶才发），重试到上限转 #FAIL 显式拒单（缺陷①治点）
+    #   code: _advance_sending_row / is_counter_confirmed / sending_timeout_ms / max_retry
+    # - id: A3
+    #   name_zh: 裸行抢占认领与下发
+    #   name_en: claim_and_send
+    #   intro: sent_oids 去重 + 写前重读防陈旧快照再下发（缺陷②治点）；撤单 send 成功就地落 #DONE
+    #   code: _dispatch_bare_row / _disk_rank / ExecutorState.sent_oids / ACTION_CANCEL
+    # - id: A4
+    #   name_zh: 读-合并-替换回写
+    #   name_en: merge_and_commit
+    #   intro: 只按 order_id 改写目标行、标号单调不回退、禁旧快照整文件回写；有改写才 commit
+    #   code: _merge_transitions / commit 端口
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 周期报告 CycleReport
+    #   name_en: cycle_report
+    #   intro: submitted/done/failed/acks/skipped 五元组，供沙箱诊断打印与测试断言
+    #   downstream: zephyr.ex_core.adapters.qmt_file_bridge_broker / ZEPHYR_EXEC 沙箱哑执行器
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; I2 --> A2 ; A1 --> A2 ; A1 --> A3 ; A2 --> A4 ; A3 --> A4 ; A4 --> O1
