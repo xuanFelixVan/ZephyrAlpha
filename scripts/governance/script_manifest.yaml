@@ -1,31 +1,31 @@
-# 自动生成于 2026-09-29T23:23:45Z
+# 自动生成于 2026-10-04T17:23:57Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-29T23:23:45Z'
+generated_at: '2026-10-04T17:23:57Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 536
-with_manifest: 423
-missing_manifest: 113
+total_scripts: 569
+with_manifest: 424
+missing_manifest: 145
 categories:
   governance:_sync: 4
-  governance:_tasks: 3
-  governance: 76
+  governance:_tasks: 4
+  governance: 80
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 26
   governance:d2_links: 2
-  governance:d3_metadata: 31
+  governance:d3_metadata: 33
   governance:d4_paths: 4
-  governance:d5_architecture: 125
+  governance:d5_architecture: 137
   governance:d6_security: 15
   governance:d7_code: 37
   governance:d8_doc_sync: 15
   governance:d9_knowledge: 2
   governance:data_quality: 2
-  governance:data_supply: 1
+  governance:data_supply: 7
   governance:fullflow: 1
   governance:generators: 23
   governance:git_hooks: 1
@@ -42,7 +42,11 @@ categories:
   governance:standards: 1
   governance:standards_governance: 1
   governance:vms: 9
-  governance:wave1a: 1
+  governance:wave10: 1
+  governance:wave11: 1
+  governance:wave1a: 3
+  governance:wave1b: 3
+  governance:wave2: 1
   governance:wave3: 1
 scripts:
 - name: _sync/check_p0_status.py
@@ -97,6 +101,16 @@ scripts:
   description: P1-2 列出所有Phase 0任务卡状态
   tags:
   - Quick
+- name: _tasks/session_closeout_reconciler.py
+  owner: governance:_tasks
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: _tasks/task_show.py
   owner: governance:_tasks
   dimensions:
@@ -266,6 +280,16 @@ scripts:
   - Periodic
   - Quick
 - name: blob_gc.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: card_review_automation.py
   owner: governance
   dimensions: []
   priority: P2
@@ -1238,6 +1262,44 @@ scripts:
   description: 模块 [DOMAIN] 头字段确定性补标生成器（三级证据推断 + 可执行回填，W4c）
   tags:
   - Quick
+- name: d3_metadata/backfill_roor_reg_annotation.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 60
+  args:
+  - flag: --check
+    type: bool
+    description: 门出口：有欠账 exit 1
+  - flag: --diff
+    type: bool
+    description: 打印欠账册页建议 diff（零写入）
+  - flag: --patch
+    type: str
+    description: 建议 diff 落 patch 文件
+  - flag: --apply
+    type: bool
+    description: 半自动写（必须配 --only）
+  - flag: --only
+    type: str
+    description: 显式确认的册页相对路径清单（逗号分隔）
+  - flag: --output
+    type: str
+    description: 机生缺失映射 YAML 输出路径
+  - flag: --roor
+    type: str
+    description: ROOR 路径覆盖（默认 docs/registry_of_registries.yaml）
+  - flag: --repo-root
+    type: str
+    description: 仓库根覆盖（测试用）
+  warn_only: false
+  description: 'ROOR 册页 REG 名批注欠账机生扫描/回填：对账产出缺失映射，回填只出建议 diff/patch， --only 显式确认后
+    safe_write_text CAS 写入；maintenance:auto 册归 generator 车道默认拒写。
+
+    '
+  tags:
+  - Quick
 - name: d3_metadata/backfill_ttl_metadata.py
   owner: governance:d3_metadata
   dimensions:
@@ -1434,6 +1496,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: d3_metadata/generate_wiring_registry.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/inventory_blanked_canonical_fields.py
   owner: governance:d3_metadata
   dimensions: []
@@ -2283,6 +2355,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_connection_matrix.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_constraint_violations.py
   owner: governance:d5_architecture
   dimensions:
@@ -2295,6 +2377,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_construction_workflow_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_contract_catalog.py
   owner: governance:d5_architecture
   dimensions:
@@ -2355,6 +2447,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_data_supply_chain_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_dataflow_diagram.py
   owner: governance:d5_architecture
   dimensions:
@@ -2391,6 +2493,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_dev_delivery_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_domain_doc.py
   owner: governance:d5_architecture
   dimensions:
@@ -2437,6 +2549,16 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_map_coverage_attribution.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_module_algorithm_overview.py
   owner: governance:d5_architecture
   dimensions:
@@ -2498,6 +2620,26 @@ scripts:
   tags:
   - Critical
   - Disruptive
+- name: d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d5_architecture/generators/generate_trading_day_cycle_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/generate_trading_map_diagram.py
   owner: governance:d5_architecture
   dimensions: []
@@ -2924,6 +3066,16 @@ scripts:
   description: GATE-A — 实际代码目录↔architecture_model/YAML SSoT 对账，检测未登记目录/YAML漂移/文件数不一致
   tags:
   - Critical
+- name: d5_architecture/validators/validate_construction_steps.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/validate_cross_references.py
   owner: governance:d5_architecture
   dimensions:
@@ -2936,6 +3088,16 @@ scripts:
     注册链，根治引用漂移）
   tags:
   - Critical
+- name: d5_architecture/validators/validate_data_supply_chain_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/validate_dependency_graph_template.py
   owner: governance:d5_architecture
   dimensions:
@@ -2970,6 +3132,16 @@ scripts:
   description: 废弃文件活跃引用检测（LFC-001 / PS-STD-009 §5）
   tags:
   - Critical
+- name: d5_architecture/validators/validate_dev_delivery_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/validate_directory_structure.py
   owner: governance:d5_architecture
   dimensions:
@@ -3128,6 +3300,16 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/validate_strategy_production_map.py
   owner: governance:d5_architecture
   dimensions: []
@@ -3162,6 +3344,16 @@ scripts:
     status/version 对账）
   tags:
   - Critical
+- name: d5_architecture/validators/validate_trading_day_cycle_map.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/yaml_md/validate_md_yaml_number_drift.py
   owner: governance:d5_architecture
   dimensions:
@@ -4097,6 +4289,76 @@ scripts:
   - Quick
 - name: data_supply/ch_probe.py
   owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: data_supply/check_wave3_rulers.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: data_supply/false_green_crosscheck.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: data_supply/no_cache_endorsement.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: data_supply/strict_truth_reader.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: data_supply/supply_conservation.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: data_supply/supply_sources.py
+  owner: governance:data_supply
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: dead_letter_doctor.py
+  owner: governance
   dimensions: []
   priority: P2
   timeout_seconds: 60
@@ -6196,6 +6458,16 @@ scripts:
     + subprocess 回退）。
   tags:
   - Critical
+- name: register_asset.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: register_deferred_modules.py
   owner: governance
   dimensions:
@@ -6428,6 +6700,16 @@ scripts:
     Phase 6）
   tags:
   - Quick
+- name: session_takeover_ledger.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: session_worktree_cli.py
   owner: governance
   dimensions:
@@ -6646,8 +6928,88 @@ scripts:
   description: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222
   tags:
   - Quick
+- name: wave10/wave10_asset_base_audit.py
+  owner: governance:wave10
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave11/w178_universe_facts_gen.py
+  owner: governance:wave11
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: wave1a/ch_read_shape_ruler.py
   owner: governance:wave1a
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave1a/store_liveness_probe.py
+  owner: governance:wave1a
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave1a/verified_promotion_check.py
+  owner: governance:wave1a
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave1b/claim_gate_repro.py
+  owner: governance:wave1b
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave1b/dead_letter_census.py
+  owner: governance:wave1b
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave1b/dead_letter_prescriptions.py
+  owner: governance:wave1b
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: wave2/lane_inventory.py
+  owner: governance:wave2
   dimensions: []
   priority: P2
   timeout_seconds: 60
