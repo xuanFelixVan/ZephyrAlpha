@@ -256,6 +256,13 @@ def _build_overview(
     fac_soft: int = 0,
     gom_hard: int = 0,
     gom_soft: int = 0,
+    cov_total: int = 0,
+    cov_direct: int = 0,
+    cov_derived: int = 0,
+    cov_orphans: int = 0,
+    cov_dangling: int = 0,
+    cov_hard: int = 0,
+    cov_threshold: int | None = None,
 ) -> str:
     """构建全图全库对齐总览 Markdown（2026-09-15 十图升级：+图 10 治理运行地图）。
     命名口径=#ARCH-ALIGN-NAMING-001 计数无关命名。"""
@@ -358,6 +365,16 @@ def _build_overview(
     lines.append(f"- warning 级（已删墓碑豁免待清理）: {gom_soft}")
     lines.append("")
 
+    # === 覆盖账本 v2·join checker（裁定#481 分母，2026-10-04 接入 st-joinchk-20261004）===
+    if cov_total:
+        _cov_mode = f"硬模式 threshold={cov_threshold}" if cov_threshold is not None else "report-only（恒 exit 0）"
+        lines.append("## 七、覆盖账本 v2·join checker（裁定#481 分母·六图归属普查）")
+        lines.append("")
+        lines.append(f"- 记账宇宙: {cov_total}（主账=src/zephyr .py+scripts .py+frontend js/html）")
+        lines.append(f"- 直接挂载: {cov_direct}｜闭包归属: {cov_derived}｜孤儿: {cov_orphans}｜悬空键: {cov_dangling}")
+        lines.append(f"- 判定模式: {_cov_mode}｜本节硬计: {cov_hard}（孤儿明细=docs/_working/map_build/30/31 号）")
+        lines.append("")
+
     # === 汇总裁定 ===
     lines.append("## 七、汇总裁定")
     lines.append("")
@@ -370,6 +387,7 @@ def _build_overview(
         + layer2_hard
         + fac_hard
         + gom_hard
+        + cov_hard
     )
     soft_issues = (
         pano.issues_total
@@ -400,10 +418,11 @@ def _build_overview(
         lines.append(f"   - trading_decision_map error: {len(dm_fails)}")
         lines.append(f"   - strategy_production_map error: {fac_hard}")
         lines.append(f"   - governance_operations_map error: {gom_hard}")
+        lines.append(f"   - 覆盖账本普查硬计: {cov_hard}")
     else:
         lines.append(
             "✅ **硬问题清零**: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, "
-            "decision_map error=0, factory_map error=0, gomap error=0"
+            "decision_map error=0, factory_map error=0, gomap error=0, coverage error=0"
         )
 
     if soft_issues > 0:
@@ -423,6 +442,34 @@ def _build_overview(
     return "\n".join(lines) + "\n"
 
 
+def _orphan_census_verdict(report: dict, threshold: int | None) -> tuple[int, list[str]]:
+    """覆盖账本普查判定（第十二节，裁定#481 验收不等式的阈值参数化入口）。
+
+    - threshold=None（默认，report-only）：恒 0 硬——数字进总览报告，孤儿判罚归填充班
+      （Owner 看完基线后随填充班递降翻硬：500→100→0）。
+    - threshold=<int>（硬模式）：orphans>threshold 计 1 硬；悬空键不随阈值宽限，
+      dangling>0 恒计 1 硬（禁静默——31 号报告 §接入方案 exit 语义）。
+
+    Returns:
+        (hard_count, message_lines)。
+    """
+    orphans = len(report.get("orphans") or [])
+    dangling = len(report.get("dangling_keys") or [])
+    msgs: list[str] = []
+    if threshold is None:
+        if dangling:
+            msgs.append(f"悬空键 {dangling} 条（report-only 不阻断，禁静默——待判罚：修键或登记 MOD）")
+        return 0, msgs
+    hard = 0
+    if orphans > threshold:
+        hard += 1
+        msgs.append(f"orphans={orphans} > threshold={threshold}（硬）")
+    if dangling > 0:
+        hard += 1
+        msgs.append(f"dangling_keys={dangling}（悬空键恒硬，不随阈值宽限）")
+    return hard, msgs
+
+
 def main() -> int:
     """Entry point: parse args, run both alignments, return exit code."""
     parser = argparse.ArgumentParser(
@@ -438,6 +485,13 @@ def main() -> int:
         "--no-report",
         action="store_true",
         help="不写总览报告（门禁场景，仅返回 exit code）",
+    )
+    parser.add_argument(
+        "--orphan-threshold",
+        type=int,
+        default=None,
+        help="覆盖账本普查硬阈值（第十二节，裁定#481）：缺省=report-only 恒 exit 0（数字进总览报告）；"
+        "设值后 orphans>阈值 或 悬空键>0 即 exit 1（Owner 随填充班递降 500→100→0 翻硬；悬空键不随阈值宽限恒硬）",
     )
     args = parser.parse_args()
 
@@ -734,6 +788,44 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001 — 图 13 故障不炸整个 align_all（降 warn，学图 9/10/12 先例）
         print(f"  WARN: 图 13 校验异常（降级跳过不计违规）: {e}")
 
+    # --- 第十二节：覆盖账本 v2·join checker（裁定#481 分母·六图归属普查，2026-10-04 接入 st-joinchk-20261004）---
+    print()
+    print("[+] 覆盖账本 v2·join checker（裁定#481 分母：宇宙×六图挂载×闭包→归属/孤儿普查）...")
+    cov_hard = 0
+    cov_total = cov_direct = cov_derived = cov_orphans = cov_dangling = 0
+    try:
+        _cov_gen_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators")
+        if _cov_gen_dir not in sys.path:
+            sys.path.insert(0, _cov_gen_dir)
+        from generate_map_coverage_attribution import run_attribution  # noqa: import-integrity  sys.path 动态加载
+
+        _cov_report = run_attribution(
+            _REPO_ROOT,
+            output_yaml=None,
+            output_md=None,
+            git_last_commit=lambda root, rel: "-",  # 证据细节归 30/31 号产出，普查面免逐孤儿 git 子进程
+        )
+        cov_total = _cov_report["accounting_units_total"]
+        cov_direct = sum(_cov_report["by_map"].values())
+        cov_derived = _cov_report["closure_derived"]
+        cov_orphans = len(_cov_report["orphans"])
+        cov_dangling = len(_cov_report["dangling_keys"])
+        cov_hard, _cov_msgs = _orphan_census_verdict(_cov_report, args.orphan_threshold)
+        print(
+            f"  OK: 宇宙={cov_total} 直接挂载={cov_direct} 闭包归属={cov_derived} "
+            f"孤儿={cov_orphans} 悬空键={cov_dangling}"
+        )
+        if args.orphan_threshold is None:
+            print("  report-only（--orphan-threshold 未设，恒 exit 0）：数字进总览报告，判罚归填充班")
+        else:
+            print(f"  硬模式（threshold={args.orphan_threshold}）：orphans>阈值 或 悬空键>0 即计硬")
+        for m in _cov_msgs:
+            print(f"    {m}")
+        for _dk in _cov_report["dangling_keys"][:5]:
+            print(f"    悬空键: {_dk['key']}（{_dk['source_map']}）")
+    except Exception as e:  # noqa: BLE001 — 普查故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
+        print(f"  WARN: 覆盖账本普查异常（降级跳过不计违规）: {e}")
+
     hard_issues = (
         len(pano.domain_mismatches)
         + len(bm.ghost_anchors)
@@ -744,6 +836,7 @@ def main() -> int:
         + gom_hard
         + dsc_hard
         + tdc_hard
+        + cov_hard
     )
     # 图 8 数据层违规（ig_hard）不计硬闸：产业链清欠=长城专项进行中（S21/S24 Owner gated、
     # S25 梳理清单在案），判定权=graph_quality_check 引擎；git 侧工件已由
@@ -760,14 +853,15 @@ def main() -> int:
             f"factory_map error={fac_hard}, "
             f"gomap error={gom_hard}, "
             f"data_supply_chain error={dsc_hard}, "
-            f"trading_day_cycle error={tdc_hard}）"
+            f"trading_day_cycle error={tdc_hard}, "
+            f"coverage error={cov_hard}）"
         )
         print("   须修复后才能施工！")
     else:
         print(
             "✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, "
             "decision_map error=0, factory_map error=0, gomap error=0, data_supply_chain error=0, "
-            "trading_day_cycle error=0"
+            "trading_day_cycle error=0, coverage error=0"
         )
 
     soft_issues = (
@@ -809,6 +903,13 @@ def main() -> int:
             fac_soft=fac_soft,
             gom_hard=gom_hard,
             gom_soft=gom_soft,
+            cov_total=cov_total,
+            cov_direct=cov_direct,
+            cov_derived=cov_derived,
+            cov_orphans=cov_orphans,
+            cov_dangling=cov_dangling,
+            cov_hard=cov_hard,
+            cov_threshold=args.orphan_threshold,
         )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(overview, encoding="utf-8")
