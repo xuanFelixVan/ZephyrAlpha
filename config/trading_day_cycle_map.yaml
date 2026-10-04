@@ -1,7 +1,9 @@
 # 交易日循环全景图（trading_day_cycle_map，图 13）——由 generate_trading_day_cycle_map.py 机生。
 # 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md。
 # 三条硬让渡进 laws/boundary：时刻值不搬家（cron 字面量零复制）、决策内容不进图（判据走 tdm_refs）、管线内部不重画；machine_facts 层重扫即刷新。
-schema_version: '0.2'
+schema_version: '0.3'
+blood_stage: f1_pending
+purpose_tags: []
 map_id: trading_day_cycle_map
 name_zh: 交易日循环全景图
 nickname: 交易日循环
@@ -9,7 +11,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
-generated_at: '2026-10-04T01:53:46+08:00'
+generated_at: '2026-10-04T07:22:41+08:00'
 ops_tool_ref:
   tool: scripts/ops/schedule_overview.py
   gate: GATE-SCHEDULE-CONSISTENCY(priority=826)
@@ -21,8 +23,9 @@ ssot_note_zh: '环节契约真源=docs/_working/map_build/fig13_daycycle/00_skel
   三条硬让渡已落成 laws/boundary：时刻值不搬家（节点只存槽名/tn 名/entity_id/段名）、决策内容不进图（判据唯一出路 tdm_refs）、数据管线内部结构不重画。
 
   字段分层（六图终局卷 §1 裁定一「同语义必同名」）：L0 通用层统一名 note_zh/doc_refs（三个同义异名注解字段与两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；L1 纵轴层本图取用 slot_source/slot_refs/schtasks_refs/cadence_zh(declared+observed
-  双子键)/wiring_status/downstream_action/fallback/invalidation/ready_gate+no_ready_gate_reason_zh/tdm_refs/gap_refs+red_reason；L2
-  图专属层字段清单=dloop_stages（dloop 段归属）、mechanism（触发机制三分：A_apscheduler/B_windows_task/C_inprocess_stage/D_unscheduled）、skeleton_status（骨架态镜像，实扫得）、mining_recheck_status（作业簿复判另记）、availability（🌑
+  双子键)/wiring_status/downstream_action/fallback/invalidation/ready_gate+no_ready_gate_reason_zh/tdm_refs/gap_refs+red_reason/purpose_tag/casebooks/trigger_facts/consumers（后四者=挂图
+  SOP §4 标准字段，schema 0.3 起入菜单；schema 0.2→0.3 为纯加性迁移，本批以空/默认值进图不灌血肉不贴标签——标签 13 条候选等 Owner 终审，f2_done 翻闸随血肉批）；L2 图专属层字段清单=dloop_stages（dloop
+  段归属）、mechanism（触发机制三分：A_apscheduler/B_windows_task/C_inprocess_stage/D_unscheduled）、skeleton_status（骨架态镜像，实扫得）、mining_recheck_status（作业簿复判另记）、availability（🌑
   不可得）、entity_refs、miss_policy（表A-A6）、freshness_severity_zh（A2）、expected_emits_per_trading_day（A4）、ready_basis（A5）、no_drift_evidence（A7）、admission_denied_zh/ready_gate_absent_zh
   等单格注记。
 
@@ -139,6 +142,10 @@ nodes:
   - task:futures_warehouse_receipt_backfill_czce
   - task:futures_warehouse_receipt_backfill_shfe
   - task:road_freight_index_full_refresh
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: unwired
@@ -206,6 +213,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - benchmark:C1-alert 腿与 rerun 腿分工真源至今是散文注释（三路兜底边已在本图落地）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/supply_sentinel.py:11
@@ -268,6 +279,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - benchmark:C1-detect_only 无落盘面（检出即蒸发，表A-A7 同族）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/calendar_coverage_checker.py:101
@@ -332,6 +347,10 @@ nodes:
   - TDM-E-L9-A09
   - TDM-P-P1-03
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py:272
@@ -401,6 +420,10 @@ nodes:
   - task:hl_liquidation_capture
   - task:hl_oi_snapshot_daily_refresh
   - task:hl_perp_snapshot_daily_refresh
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -461,6 +484,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -486,10 +513,10 @@ nodes:
   node_type: stage
   decision_question: 08:45 与 12:55 两拍 QMT 进程在不在？不在时谁来登录？
   note_zh: 独立 ps1 脚本判进程存活并写留痕；不覆盖自动登录（🌑-1）
-  module_id: MOD-SCRIPT-run_post_settlement
+  module_id: MOD-SCRIPT-qmt_watchdog
   source_anchors:
-  - scripts/installers/qmt_watchdog.ps1:28
-  - scripts/installers/qmt_watchdog.ps1:11
+  - scripts/qmt_watchdog.ps1:28
+  - scripts/qmt_watchdog.ps1:11
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-07
   - docs/_working/map_build/fig13_daycycle/03_盘前编排与十源探针.md
@@ -523,12 +550,16 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
-  module_ref: scripts/installers/qmt_watchdog.ps1:28
-  module_label_bilingual: scripts/installers/qmt_watchdog.ps1
+  module_ref: scripts/qmt_watchdog.ps1:28
+  module_label_bilingual: scripts/qmt_watchdog.ps1
   exec_evidence:
-  - '复跑: grep -n ''New-ScheduledTaskTrigger'' scripts/installers/qmt_watchdog.ps1 → 两拍时点在注册声明面'
+  - '复跑: grep -n ''New-ScheduledTaskTrigger'' scripts/qmt_watchdog.ps1 → 两拍时点在注册声明面'
   - '复跑（主区只读）: tail -6 data/runtime/qmt_watchdog.log → 连续交易日两拍 OK 且带 pid'
   machine_facts:
     schtasks_facts:
@@ -536,7 +567,7 @@ nodes:
       registered:
         ZephyrAlpha_QMTWatchdog: true
       declared_in_register_scripts:
-        ZephyrAlpha_QMTWatchdog: false
+        ZephyrAlpha_QMTWatchdog: true
 - node_id: D13-08
   name_zh: 十源健康探针（归档 57 号 C3 腿）
   segment: A
@@ -579,6 +610,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: unwired
@@ -601,8 +636,8 @@ nodes:
   module_id: null
   source_anchors:
   - docs/_archive/57_daily_cycle_sop.md
-  - scripts/installers/qmt_watchdog.ps1:43
-  - scripts/installers/start_paper_session_daily.ps1:61
+  - scripts/qmt_watchdog.ps1:43
+  - scripts/start_paper_session_daily.ps1:61
   - src/zephyr/data/scheduler.py:1701
   doc_refs:
   - docs/_archive/57_daily_cycle_sop.md
@@ -644,6 +679,10 @@ nodes:
   - benchmark:A1-拒准入出边清单见顶层 admission_edges（本门唯一带拒准入语义的出边集）
   - benchmark:C2-就绪门语义强度（是否允许持续重检/挂几次）留总包复裁——本图按骨架现文只立「当日一次判定」的门，未擅自加 re_check；D13-07 的 12:55 第二拍是否升为门内复检即此分歧的具体落点，故本图未给
     D13-07 加拒准入出边
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: unwired
@@ -694,6 +733,10 @@ nodes:
   tdm_refs:
   - TDM-E-L9-V3
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -754,6 +797,10 @@ nodes:
   tdm_refs:
   - TDM-E-L3-11-1
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py
@@ -781,7 +828,7 @@ nodes:
   module_id: MOD-L06-001
   source_anchors:
   - scripts/tasks/register/register_paper_session_task.ps1:67
-  - scripts/installers/start_paper_session_daily.ps1
+  - scripts/start_paper_session_daily.ps1
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-12
   - docs/_working/map_build/fig13_daycycle/02_盘前元数据与竞价.md
@@ -815,6 +862,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-07 判 QMT 进程在 + 今日为交易日"由入边与本注记承载（就绪门格另置 ready_gate:true）
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
   module_ref: scripts/tasks/register/register_paper_session_task.ps1:67
@@ -874,6 +925,10 @@ nodes:
   - TDM-E-L1-AGG
   gap_refs:
   - slot:post_auction
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: unwired
@@ -939,6 +994,10 @@ nodes:
   gap_refs:
   - benchmark:A2-freshness_severity 两级未接线
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -1000,6 +1059,10 @@ nodes:
   tdm_refs:
   - TDM-E-L9-A01
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py
@@ -1059,6 +1122,10 @@ nodes:
   gap_refs:
   - benchmark:A2-freshness_severity 两级未接线
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -1122,6 +1189,10 @@ nodes:
   gap_refs:
   - benchmark:A2-下游情绪窗原料新鲜度分级未接线
   - xref:ghost-table-c1_market.news_data（真身 c3_fundamental 同名表；改册面归图 12 簿 11 §1-D，本图只挂生产者腿不建其环节）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py
@@ -1183,6 +1254,10 @@ nodes:
   - benchmark:A2-freshness_severity 两级未接线
   - benchmark:A4-expected_emits 应产断言未接线（本格先落应产数，缺产告警仍无主体）
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -1245,6 +1320,10 @@ nodes:
   tdm_refs:
   - TDM-E-L2-01-4
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
   module_ref: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:80
@@ -1302,6 +1381,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - benchmark:A4-窗内应产 1 拍而实产 0（恒 skipped）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - auction_hit
@@ -1358,6 +1441,10 @@ nodes:
   - TDM-E-L1-AGG
   - TDM-P-P2
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - intraday_l1
@@ -1411,6 +1498,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格——前置"D13-21 产出为输入"由入边与本注记承载（就绪门格另置 ready_gate:true）
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - classify
@@ -1465,6 +1556,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - benchmark:A4-盘中应产 N 拍而实产 0（席位在、节拍无）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - sentiment_loop
@@ -1525,6 +1620,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - table:c1_market.execution_report（消费方在等未产表，环节面见 gap 节点 D13-G02）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
   module_ref: src/zephyr/ex_core/live_strategy_adapter.py
@@ -1582,6 +1681,10 @@ nodes:
   tdm_refs:
   - TDM-E-L9-V3
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -1643,6 +1746,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格——前置"收盘（交易所时钟）"由入边与本注记承载（就绪门格另置 ready_gate:true）
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
   module_ref: scripts/tasks/register/register_counter_trend_feeder_tasks.ps1:86
@@ -1702,6 +1809,10 @@ nodes:
   gap_refs:
   - benchmark:A7-no_drift_evidence 缺位（matched 零留痕）
   - table:c1_market.execution_report（消费方在等未产表，环节面见 gap 节点 D13-G02）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages: []
   red_reason: unwired
@@ -1721,7 +1832,7 @@ nodes:
   - scripts/tasks/register/register_post_settlement_task.ps1:42
   - scripts/tasks/register/register_post_settlement_task.ps1:26
   - src/zephyr/trading/post_settlement_pipeline.py:43
-  - scripts/tasks/run/run_post_settlement.py
+  - scripts/run_post_settlement.py
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-28
   - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
@@ -1758,6 +1869,10 @@ nodes:
   gap_refs:
   - benchmark:A5-ready_basis=assumed（推定与确认已在字段上分离；外部真源=🌑-4）
   - benchmark:C5-同硬时点两处真源（ps1 触发器与代码常量）待总包定唯一位
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
   module_ref: src/zephyr/trading/post_settlement_pipeline.py:43
@@ -1828,6 +1943,10 @@ nodes:
   - benchmark:A7-no_drift_evidence 缺位
   - slot:eod_reconciliation
   - table:c1_market.reconciliation_differences（环节面见 gap 节点 D13-G03）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: unwired
@@ -1898,6 +2017,10 @@ nodes:
   - benchmark:A1-就绪门语义的第二宿主（本格名即「下游全链就绪门」，与 D13-09 开盘前门一字之差两轴，防混淆点已实证钉死于 D13-09 注记）
   - benchmark:C2-收盘就绪门与开盘就绪门同字不同轴（防后来者把两门合并成一格）
   - task:cohort_ledger_daily
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py:2265
@@ -1909,6 +2032,8 @@ nodes:
   - D13-32
   - D13-33
   - D13-35
+  admission_denied_zh: 未过门=下游拒绝就绪准入（拒准入出边逐条列顶层 admission_edges：16:45 dloop data_readiness 腿缺当日主行情则整圈 T-1 重放仍记 SUCCESS；17:00
+    补下载缺批则同表两实例并发写）——门体前置=交易所日终批处理推定完成（🌑-4 无外部真源，缺格事实记 gate 语义本身）
   machine_facts:
     slot_facts:
       slot_effective_task_count:
@@ -1961,6 +2086,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - benchmark:A4-应产 1 次日回测而排班侧恒 0（无缺席告警主体）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: unwired
@@ -2013,6 +2142,10 @@ nodes:
   tdm_refs:
   - TDM-E-L0-03
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/plan_engine/daily_loop_master_switch.py:337
@@ -2076,6 +2209,10 @@ nodes:
   - TDM-E-L9-V1
   - TDM-E-L9-V3
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - close_verify
@@ -2132,6 +2269,10 @@ nodes:
   tdm_refs:
   - TDM-E-L0-03
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - decision
@@ -2195,6 +2336,10 @@ nodes:
   gap_refs:
   - benchmark:C1-rerun 措辞权留总包（17:00 补下载是「有手」腿）
   - task:cohort_ledger_daily
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: unwired
@@ -2209,7 +2354,7 @@ nodes:
     slot_facts:
       slot_effective_task_count:
         daily_backfill: 0
-        daily_capital: 37
+        daily_capital: 39
         daily_event: 40
       special_branch_exists:
         daily_backfill: true
@@ -2269,6 +2414,10 @@ nodes:
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
   - task:consensus_daily_build
   - task:research_report_detail_incremental
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: broken_supply
@@ -2329,6 +2478,10 @@ nodes:
   gap_refs:
   - benchmark:A2-freshness_severity 两级未接线
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py
@@ -2391,6 +2544,10 @@ nodes:
   gap_refs:
   - benchmark:A7-no_drift_evidence 推广到巡检格
   - benchmark:C1-alert 腿（23:00 只检不修）与 rerun 腿边界=本图三条边
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/integrity_checker.py
@@ -2454,6 +2611,10 @@ nodes:
   gap_refs:
   - benchmark:A2-freshness_severity 两级未接线
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/consensus_crosscheck.py:62
@@ -2512,6 +2673,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - task:alt_fx_ecb_daily_incremental
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   module_ref: src/zephyr/data/scheduler.py
@@ -2572,6 +2737,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格——前置"QMT 可达 + 避开晨维护窗"由入边与本注记承载（就绪门格另置 ready_gate:true）
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
   red_reason: unwired
@@ -2608,7 +2777,7 @@ nodes:
   source_anchors:
   - scripts/tasks/register/register_guard_tasks.ps1:46
   - scripts/tasks/register/register_guard_tasks.ps1:33
-  - scripts/installers/deadman_switch.ps1:138
+  - scripts/deadman_switch.ps1:138
   doc_refs:
   - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-42
   - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
@@ -2647,6 +2816,10 @@ nodes:
   no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
   tdm_refs: []
   gap_refs: []
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: B_windows_task
   dloop_stages: []
   module_ref: scripts/tasks/register/register_guard_tasks.ps1:20
@@ -2663,7 +2836,7 @@ nodes:
         ZephyrAlpha_TradingWatchdog: true
       declared_in_register_scripts:
         ZephyrAlpha_DataScheduler: false
-        ZephyrAlpha_DeadmanSwitch: false
+        ZephyrAlpha_DeadmanSwitch: true
         ZephyrAlpha_ProcessReaper: true
         ZephyrAlpha_TickSubscriber: false
         ZephyrAlpha_TradingWatchdog: false
@@ -2709,6 +2882,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - benchmark:C5-calendar_gated 三值（true/false/null=未声明）的 null 语义与补填义务留总包；本图只登记「无守卫是有意还是漏配读不出」这一表达缺口，不改守卫名单
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages: []
   module_ref: src/zephyr/data/trading_calendar.py:151
@@ -2765,6 +2942,10 @@ nodes:
   - benchmark:A2-断供无分级覆盖
   - benchmark:A4-应产 1 次日界件而实产 0
   - table:c1_market.judgment_next_day_forecast（在册断供，环节面在本格、修复归图 12）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: C_inprocess_stage
   dloop_stages:
   - next_day
@@ -2831,6 +3012,10 @@ nodes:
   gap_refs:
   - benchmark:A3-unknown 第四显示态缺位
   - benchmark:C3-加态=改判据口径（本车道未改，留总包）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: unwired
@@ -2881,6 +3066,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - xref:fig12-消费方在等未产表-5 条中涉及本图环节者 1 条（其余 3 条归属图 12/图 9，本图不建其节点：account_nav_daily、factor_feature_value、factor_signal）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: broken_supply
@@ -2932,6 +3121,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - xref:fig12-消费方在等未产表-reconciliation_differences（生产者=D13-29 腿，消费侧新证在册）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: broken_supply
@@ -2982,6 +3175,10 @@ nodes:
   tdm_refs: []
   gap_refs:
   - xref:fig12-幽灵引用-news_data（改册面，非环节面；本图只挂生产者腿 D13-17/18）
+  purpose_tag: null
+  casebooks: []
+  trigger_facts: null
+  consumers: []
   mechanism: D_unscheduled
   dloop_stages: []
   red_reason: ghost_ref
@@ -3226,7 +3423,7 @@ machine_facts:
         executor: default
         cadence_class: trading_weekday
         declared: true
-        effective_task_count: 37
+        effective_task_count: 39
         special_branch_exists: false
         calendar_guarded: true
         in_catchup_universe: true
@@ -3381,6 +3578,16 @@ machine_facts:
         calendar_guarded: true
         in_catchup_universe: true
         idle_slot: false
+      nightly_news_score:
+        slot: nightly_news_score
+        executor: default
+        cadence_class: all_week
+        declared: true
+        effective_task_count: 0
+        special_branch_exists: true
+        calendar_guarded: false
+        in_catchup_universe: false
+        idle_slot: false
       nightly_sentiment:
         slot: nightly_sentiment
         executor: default
@@ -3471,7 +3678,7 @@ machine_facts:
         calendar_guarded: false
         in_catchup_universe: true
         idle_slot: false
-    slot_total: 32
+    slot_total: 33
     catchup_universe:
       source: src/zephyr/data/catchup_guard.py
       exists: true
@@ -3524,6 +3731,7 @@ machine_facts:
     - dloop_post
     - integrity_check
     - lane_g_intake_sweep
+    - nightly_news_score
     - nightly_sentiment
     - pf_alloc_rebalance_check
     - sector_close_final
@@ -3625,14 +3833,24 @@ machine_facts:
       dispatch_stage_sync: true
       sync_outliers: []
     register_scripts:
-      script_count: 1
+      script_count: 2
       register_scripts:
+      - scripts/register_commit_perf_report_task.ps1
       - scripts/register_process_reaper_task.ps1
       declaring_scripts:
+        scripts/deadman_switch.ps1:
+        - ZephyrAlpha_DeadmanSwitch
+        scripts/qmt_watchdog.ps1:
+        - ZephyrAlpha_QMTWatchdog
+        scripts/register_commit_perf_report_task.ps1:
+        - ZephyrAlpha_CommitPerfReport
         scripts/register_process_reaper_task.ps1:
         - ZephyrAlpha_ProcessReaper
       declared_task_names:
+      - ZephyrAlpha_CommitPerfReport
+      - ZephyrAlpha_DeadmanSwitch
       - ZephyrAlpha_ProcessReaper
+      - ZephyrAlpha_QMTWatchdog
     registered_schtasks:
       available: true
       reason: ''
@@ -3643,6 +3861,7 @@ machine_facts:
       - ZephyrAlpha_C4Exam
       - ZephyrAlpha_C4Exam_Full0916
       - ZephyrAlpha_CHHealthProbe
+      - ZephyrAlpha_CommitPerfReport
       - ZephyrAlpha_ConfigCheck
       - ZephyrAlpha_DataScheduler
       - ZephyrAlpha_DeadmanSwitch
@@ -3693,7 +3912,7 @@ machine_facts:
         present: false
     registry_entities:
       exists: true
-      total_entity_ids: 102
+      total_entity_ids: 104
       referenced_entity_ids:
       - data_slot_intraday_minute
       - ops_qmt_watchdog
@@ -3721,6 +3940,7 @@ machine_facts:
         - block_trade_detail_incremental
         - block_trade_incremental
         - cffex_member_ranking_refresh
+        - cftc_positioning_refresh
         - china_bond_yield_refresh
         - cohort_ledger_daily
         - concept_board_refresh
@@ -3730,6 +3950,7 @@ machine_facts:
         - eia_petroleum_incremental
         - etf_share_snapshot_refresh
         - futures_warehouse_receipt_incremental
+        - gold_etf_holdings_refresh
         - index_member_postclose
         - ipo_calendar_daily
         - ir_activity_record_refresh
@@ -3923,6 +4144,7 @@ machine_facts:
         - northbound_hold_snapshot_refresh
         - top10_circulating_shareholders_incremental
         - top10_shareholders_incremental
+        nightly_news_score: []
         nightly_sentiment: []
         pf_alloc_rebalance_check: []
         post_auction: []
@@ -3996,7 +4218,7 @@ machine_facts:
         cohort_ledger_daily:
         - daily_capital
         - daily_kline
-      total_declared_tasks: 271
+      total_declared_tasks: 273
     dangling_objects:
       fake_channel_slots:
       - eod_reconciliation
@@ -4209,7 +4431,7 @@ machine_facts:
       reason_zh: 同上（默认落点悬空）
   module_id_roster:
     source: docs/03_modules/path_ownership_map.yaml
-    claims_scanned: 8009
+    claims_scanned: 8010
     note_zh: existence ∈ {未实现, deprecated} 的在册条目不采信；未被覆盖的路径退回源文件 [BLUEPRINT] 头声明（须磁盘实存）。在册面存在性与磁盘实存漂移时以磁盘为准并在环节
       note 记事实（本车道不改 depgraph）。
   tdm_roster_scanned: true
@@ -4240,8 +4462,8 @@ counts:
     unwired_slot_hollow: 4
     wired: 24
   machine:
-    slot_total: 32
-    special_branch_total: 14
+    slot_total: 33
+    special_branch_total: 15
     idle_slot_total: 2
     idle_slots:
     - eod_reconciliation
@@ -4252,8 +4474,8 @@ counts:
     dangling_unclaimed: []
     calendar_guarded_slot_total: 10
     dloop_stage_universe: 17
-    register_script_total: 1
-    task_declaring_script_total: 1
+    register_script_total: 2
+    task_declaring_script_total: 4
     schtasks_query_available: true
     service_flag_present: []
     skeleton_status_scan:

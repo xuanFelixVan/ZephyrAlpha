@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SCRIPT-run_post_settlement | scripts/run_post_settlement.py
+# [BLUEPRINT] MOD-SCRIPT-qmt_watchdog | scripts/qmt_watchdog.ps1
 # [MODULE] scripts.qmt_watchdog
 # [DOMAIN] D_TRADING
 # [STABILITY] evolving

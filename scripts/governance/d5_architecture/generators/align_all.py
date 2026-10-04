@@ -708,6 +708,32 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001 — 图 12 故障不炸整个 align_all（降 warn，学图 9/10 先例）
         print(f"  WARN: 图 12 校验异常（降级跳过不计违规）: {e}")
 
+    # --- 第十一节：交易日循环全景图（图 13，node_id+module_id 轴，2026-10-04 十二图升级 st-tclose-fig13reg-20261004）---
+    print()
+    print("[+] 第十二图 交易日循环全景图（图13，48节点契约结构校验+血肉分阶段）...")
+    tdc_hard = 0
+    tdc_soft = 0
+    try:
+        _tdc_validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
+        if _tdc_validators_dir not in sys.path:
+            sys.path.insert(0, _tdc_validators_dir)
+        from validate_trading_day_cycle_map import validate_structure  # noqa: import-integrity  sys.path 动态加载
+
+        _tdc_path = _REPO_ROOT / "config" / "trading_day_cycle_map.yaml"
+        _tdc_data = yaml.safe_load(_tdc_path.read_text(encoding="utf-8"))
+        _tdc_warns: list[str] = []
+        _tdc_errors = validate_structure(_tdc_data, _REPO_ROOT, _tdc_warns)
+        tdc_hard, tdc_soft = len(_tdc_errors), len(_tdc_warns)
+        _tdc_nodes = len(_tdc_data.get("nodes") or [])
+        print(
+            f"  OK: 节点={_tdc_nodes}（blood_stage={_tdc_data.get('blood_stage')}，结构校验单一真源=validate_structure）"
+        )
+        print(f"  问题: 硬={tdc_hard}, 软={tdc_soft}（f1_pending 血肉未满 warn 属预期，F2 批填满翻 f2_done 转硬）")
+        for x in _tdc_errors[:5]:
+            print(f"    FAIL: {x}")
+    except Exception as e:  # noqa: BLE001 — 图 13 故障不炸整个 align_all（降 warn，学图 9/10/12 先例）
+        print(f"  WARN: 图 13 校验异常（降级跳过不计违规）: {e}")
+
     hard_issues = (
         len(pano.domain_mismatches)
         + len(bm.ghost_anchors)
@@ -717,6 +743,7 @@ def main() -> int:
         + fac_hard
         + gom_hard
         + dsc_hard
+        + tdc_hard
     )
     # 图 8 数据层违规（ig_hard）不计硬闸：产业链清欠=长城专项进行中（S21/S24 Owner gated、
     # S25 梳理清单在案），判定权=graph_quality_check 引擎；git 侧工件已由
@@ -732,13 +759,15 @@ def main() -> int:
             f"decision_map error={len(dm_fails)}, "
             f"factory_map error={fac_hard}, "
             f"gomap error={gom_hard}, "
-            f"data_supply_chain error={dsc_hard}）"
+            f"data_supply_chain error={dsc_hard}, "
+            f"trading_day_cycle error={tdc_hard}）"
         )
         print("   须修复后才能施工！")
     else:
         print(
             "✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, "
-            "decision_map error=0, factory_map error=0, gomap error=0, data_supply_chain error=0"
+            "decision_map error=0, factory_map error=0, gomap error=0, data_supply_chain error=0, "
+            "trading_day_cycle error=0"
         )
 
     soft_issues = (

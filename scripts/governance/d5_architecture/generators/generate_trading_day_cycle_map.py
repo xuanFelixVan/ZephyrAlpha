@@ -410,8 +410,8 @@ N: dict[str, dict[str, Any]] = {
         gate="无前置",
         nrg="",
         fb="无人接：登录只能人做（🌑 点名项，图不编造出处）",
-        ref="scripts/installers/qmt_watchdog.ps1:28",
-        anc=["scripts/installers/qmt_watchdog.ps1:28", "scripts/installers/qmt_watchdog.ps1:11"],
+        ref="scripts/qmt_watchdog.ps1:28",
+        anc=["scripts/qmt_watchdog.ps1:28", "scripts/qmt_watchdog.ps1:11"],
         run=["data/runtime/qmt_watchdog.log"],
         ev=["骨架 §2 D13-07 行：留痕末六行=连续三交易日两拍均 OK 且带 pid（§2 表内实查）"],
         obs="交易日每日 2 拍",
@@ -463,8 +463,8 @@ N: dict[str, dict[str, Any]] = {
         ref=None,
         anc=[
             "docs/_archive/57_daily_cycle_sop.md",
-            "scripts/installers/qmt_watchdog.ps1:43",
-            "scripts/installers/start_paper_session_daily.ps1:61",
+            "scripts/qmt_watchdog.ps1:43",
+            "scripts/start_paper_session_daily.ps1:61",
             "src/zephyr/data/scheduler.py:1701",
         ],
         doc=["docs/_archive/57_daily_cycle_sop.md", _EXT_BOOK],
@@ -543,7 +543,7 @@ N: dict[str, dict[str, Any]] = {
         ref="scripts/tasks/register/register_paper_session_task.ps1:67",
         anc=[
             "scripts/tasks/register/register_paper_session_task.ps1:67",
-            "scripts/installers/start_paper_session_daily.ps1",
+            "scripts/start_paper_session_daily.ps1",
         ],
         run=[".runtime/logs/paper_session.log"],
         ev=[
@@ -897,7 +897,7 @@ N: dict[str, dict[str, Any]] = {
             "scripts/tasks/register/register_post_settlement_task.ps1:42",
             "scripts/tasks/register/register_post_settlement_task.ps1:26",
             "src/zephyr/trading/post_settlement_pipeline.py:43",
-            "scripts/tasks/run/run_post_settlement.py",
+            "scripts/run_post_settlement.py",
         ],
         run=["data/runtime/post_settlement_last_run.log"],
         ev=[
@@ -957,7 +957,12 @@ N: dict[str, dict[str, Any]] = {
         ],
         obs="交易日每日 1 批",
         dangling=["task:cohort_ledger_daily"],
-        extra=dict(readiness_gate_for=("D13-32", "D13-33", "D13-35")),
+        extra=dict(
+            readiness_gate_for=("D13-32", "D13-33", "D13-35"),
+            admission_denied_zh="未过门=下游拒绝就绪准入（拒准入出边逐条列顶层 admission_edges：16:45 dloop "
+            "data_readiness 腿缺当日主行情则整圈 T-1 重放仍记 SUCCESS；17:00 补下载缺批则同表两实例并发写）——"
+            "门体前置=交易所日终批处理推定完成（🌑-4 无外部真源，缺格事实记 gate 语义本身）",
+        ),
     ),
     "D13-31": dict(
         seg="C",
@@ -1227,7 +1232,7 @@ N: dict[str, dict[str, Any]] = {
         anc=[
             "scripts/tasks/register/register_guard_tasks.ps1:46",
             "scripts/tasks/register/register_guard_tasks.ps1:33",
-            "scripts/installers/deadman_switch.ps1:138",
+            "scripts/deadman_switch.ps1:138",
         ],
         run=[".runtime/"],
         ev=[
@@ -1509,7 +1514,7 @@ EXEC: dict[str, list[str]] = {
     ],
     "D13-07": [
         "复跑（主区只读）: tail -6 data/runtime/qmt_watchdog.log → 连续交易日两拍 OK 且带 pid",
-        "复跑: grep -n 'New-ScheduledTaskTrigger' scripts/installers/qmt_watchdog.ps1 → 两拍时点在注册声明面",
+        "复跑: grep -n 'New-ScheduledTaskTrigger' scripts/qmt_watchdog.ps1 → 两拍时点在注册声明面",
     ],
     "D13-08": [
         "复跑（主区只读）: ls -1 logs/source_health_*.log → 逐日一份在盘（簿 03 纠正「连续每日」口径："
@@ -2546,6 +2551,12 @@ def build_nodes(
             "no_ready_gate_reason_zh": _no_gate_reason(nid, spec),
             "tdm_refs": sorted(set(spec.get("tdm") or []) | set(TDMX.get(nid) or [])),
             "gap_refs": node_gap_refs(nid, ledger),
+            # ── L1 血肉四字段（schema 0.3 挂图 SOP §4；以空/默认值进图，本批不灌血肉不贴标签——
+            #    标签 13 条候选等 Owner 终审，机贴不改名前置=图头 purpose_tags 冻结）──
+            "purpose_tag": None,
+            "casebooks": [],
+            "trigger_facts": None,
+            "consumers": [],
             # ── L2 图专属层（六图终局卷 §1 L2 + 簿 10 表A 落字段；清单在图头 ssot_note_zh 声明）──
             "mechanism": {
                 "schedule": "A_apscheduler",
@@ -2639,7 +2650,13 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
     for sym in skeleton_status.values():
         skeleton_counts[sym] = skeleton_counts.get(sym, 0) + 1
     doc = {
-        "schema_version": "0.2",
+        "schema_version": "0.3",
+        # schema 0.3（st-tclose-fig13reg-20261004 转正批·加性迁移）：血肉四字段层进 L1 菜单。
+        # blood_stage=血肉分阶段开关（f1_pending=四字段未填校验器降 warn；f2_done=硬红）——
+        # 防"schema 升级与血肉填充不同窗"把全图提交打死；标签 13 条候选等 Owner 终审，
+        # purpose_tags 冻结前恒空表（生成器禁代填代贴——挂图 SOP §2 机贴不改名前置）。
+        "blood_stage": "f1_pending",
+        "purpose_tags": [],
         "map_id": "trading_day_cycle_map",
         "name_zh": "交易日循环全景图",
         "nickname": "交易日循环",
@@ -2664,7 +2681,10 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
             "（三个同义异名注解字段与两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；"
             "L1 纵轴层本图取用 slot_source/slot_refs/schtasks_refs/cadence_zh(declared+observed 双子键)/"
             "wiring_status/downstream_action/fallback/invalidation/ready_gate+no_ready_gate_reason_zh/"
-            "tdm_refs/gap_refs+red_reason；L2 图专属层字段清单=dloop_stages（dloop 段归属）、mechanism"
+            "tdm_refs/gap_refs+red_reason/purpose_tag/casebooks/trigger_facts/consumers"
+            "（后四者=挂图 SOP §4 标准字段，schema 0.3 起入菜单；schema 0.2→0.3 为纯加性迁移，"
+            "本批以空/默认值进图不灌血肉不贴标签——标签 13 条候选等 Owner 终审，f2_done 翻闸随血肉批）；"
+            "L2 图专属层字段清单=dloop_stages（dloop 段归属）、mechanism"
             "（触发机制三分：A_apscheduler/B_windows_task/C_inprocess_stage/D_unscheduled）、"
             "skeleton_status（骨架态镜像，实扫得）、mining_recheck_status（作业簿复判另记）、"
             "availability（🌑 不可得）、entity_refs、miss_policy（表A-A6）、freshness_severity_zh（A2）、"
