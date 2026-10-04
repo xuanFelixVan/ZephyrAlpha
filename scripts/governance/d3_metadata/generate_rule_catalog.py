@@ -276,6 +276,9 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
         # maintenance 字段治本（2026-06-29）：声明 auto 让 generate_registry_master_index.py
         # 正确标记本表为自动维护——原缺省填 manual 是标记滞后根因（registry_master_index L167 误标 manual）
         "maintenance": "auto",
+        # 身份声明（st-sI-identity-20261004 手术1b）：条目身份=声明字段，与字段位置解耦
+        # （render 往返/账本键/合并键同口径）；本表生成器重建头部，声明必须随生成器落盘
+        "unique_key": ["path"],
         "total_files": len(merged_entries),
         "total_rules": total_rules,
         "tier_distribution": tier_distribution,
