@@ -58756,4 +58756,214 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
+- file: docs/_working/fullflow_mine/wiring/D1_deletion_exec.md
+  token: d1-net-deletion-d1-deletion-exec-20261004
+  created_by: st-datasop-20260930
+  capability: d1_net_deletion
+  merge_evaluation: "净删执行报告一次性交付件,消费方=Owner验收,与DDL备份同域不同对象不并"
+- file: docs/_working/map_build/30_attribution_table.yaml
+  token: panorama-map-census-30-attribution-table-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/31_orphan_clusters.md
+  token: panorama-map-census-31-orphan-clusters-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/40_triage_index.md
+  token: panorama-map-census-40-triage-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_misc_ai_report_triage.md
+  token: panorama-map-census-41-misc-ai-report-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_misc_core_triage.md
+  token: panorama-map-census-41-misc-core-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_misc_general_triage.md
+  token: panorama-map-census-41-misc-general-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_misc_gov_triage.md
+  token: panorama-map-census-41-misc-gov-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_misc_infra_triage.md
+  token: panorama-map-census-41-misc-infra-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_scripts__archive_triage.md
+  token: panorama-map-census-41-scripts--archive-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_scripts_governance_triage.md
+  token: panorama-map-census-41-scripts-governance-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_ai_layer_triage.md
+  token: panorama-map-census-41-src-zephyr-ai-layer-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_autonomy_core_triage.md
+  token: panorama-map-census-41-src-zephyr-autonomy-core-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_compliance_triage.md
+  token: panorama-map-census-41-src-zephyr-compliance-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_ex_core_triage.md
+  token: panorama-map-census-41-src-zephyr-ex-core-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_factor_triage.md
+  token: panorama-map-census-41-src-zephyr-factor-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_feedback_loop_triage.md
+  token: panorama-map-census-41-src-zephyr-feedback-loop-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_frontend_triage.md
+  token: panorama-map-census-41-src-zephyr-frontend-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_gov_audit_triage.md
+  token: panorama-map-census-41-src-zephyr-gov-audit-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_gov_code_quality_triage.md
+  token: panorama-map-census-41-src-zephyr-gov-code-quality-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_gov_drift_triage.md
+  token: panorama-map-census-41-src-zephyr-gov-drift-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_governance_triage.md
+  token: panorama-map-census-41-src-zephyr-governance-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_infrastructure_triage.md
+  token: panorama-map-census-41-src-zephyr-infrastructure-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_integration_triage.md
+  token: panorama-map-census-41-src-zephyr-integration-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_intelligence_triage.md
+  token: panorama-map-census-41-src-zephyr-intelligence-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_ml_train_triage.md
+  token: panorama-map-census-41-src-zephyr-ml-train-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_orchestrator_triage.md
+  token: panorama-map-census-41-src-zephyr-orchestrator-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_reporting_triage.md
+  token: panorama-map-census-41-src-zephyr-reporting-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_risk_triage.md
+  token: panorama-map-census-41-src-zephyr-risk-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_shared_triage.md
+  token: panorama-map-census-41-src-zephyr-shared-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_signal_ashare_triage.md
+  token: panorama-map-census-41-src-zephyr-signal-ashare-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_signal_fundamental_triage.md
+  token: panorama-map-census-41-src-zephyr-signal-fundamental-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/41_src_zephyr_trading_triage.md
+  token: panorama-map-census-41-src-zephyr-trading-triage-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/fig11_delivery/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/fig12_datachain/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/fig13_daycycle/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/fig14_construction/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/fig15_cardlife/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/fig16_ruling/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/map_build/index.md
+  token: panorama-map-census-index-20261004
+  created_by: st-orphtriage-20261004
+  capability: panorama_map_census
+  merge_evaluation: "同族增量：40/41 号分诊证据包为覆盖账本 v2 战役产物（本会话原创 30 件）；prefix 扫描一并补登记他会话已落地未登记件（30/31号/index/99 等，created_by 归属失真已知会，补登记非原创声明）；消费方=chief 终审+各图车道，跨域不同对象不并"
+- file: docs/_working/commitmap_cure/a2_ledger_census.md
+  token: commitmap-cure-a2-census-a2-ledger-census-20261004
+  created_by: st-a2-ledgercensus-20261004
+  capability: commitmap_cure_a2_census
+  merge_evaluation: "跨域新收口供料件：一本账收敛批A2车道五面盘点（吸收F3名录+F5挂载面+两册对拍散面视角成单件），ttl=task_bound随收敛批转归档，永久区零增长"
+- file: docs/_working/commitmap_cure/a2_gap_list.yaml
+  token: commitmap-cure-a2-gaplist-a2-gap-list-20261004
+  created_by: st-a2-ledgercensus-20261004
+  capability: commitmap_cure_a2_gaplist
+  merge_evaluation: "同上跨域供料件结构化镜像（gap清单机生面），ttl=task_bound随收敛批转归档，永久区零增长"
 di_seam_exemptions: []
