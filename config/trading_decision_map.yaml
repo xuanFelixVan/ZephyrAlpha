@@ -22,6 +22,45 @@ map_id: TDMAP-001
 name_zh: 交易决策地图
 effective_from: '2026-09-08'     # 知识层 PIT 生效日（D118/D122）：本版规则集的"开始存在"时点；规则回测预检比对轴——回测区间早于此=知识漂移须报告声明（D120 标注放行）。首次盘点统一=落盘日；此后每次 D 裁定批量落盘刷新
 markets: [cn_a, crypto]          # 同 schema 两实例（D2.5）；crypto V0 为骨架空壳
+# 目的标签图例（Owner 2026-10-04 终审冻结；纵向挂图 SOP §2 实例化；机贴贴 module_mounts 成员+判据族节点，同标签多钉=重复簇显形位）
+purpose_tags:
+- id: PT-01
+  tag_zh: 大盘死了别买
+  meaning_zh: 先证明环境允许交易，再谈买什么——总闸不过一切免谈
+- id: PT-02
+  tag_zh: 找最强的板块
+  meaning_zh: 钱只去最强的地方——弱板块里的好票也是坏交易
+- id: PT-03
+  tag_zh: 在强板块里挑好股
+  meaning_zh: 从候选池到可交易标的要过层层验证，不是看着顺眼就买
+- id: PT-04
+  tag_zh: 该出手时才出手
+  meaning_zh: 没有胜率赔率优势就是赌博——概率门不到不开仓
+- id: PT-05
+  tag_zh: 买得便宜卖得顺
+  meaning_zh: 同一个判断执行差一档收益就差一截——成本是真源级的事
+- id: PT-06
+  tag_zh: 拿着的票每天体检
+  meaning_zh: 买入逻辑死了还拿着=给死策略送钱
+- id: PT-07
+  tag_zh: 跌了怎么办
+  meaning_zh: 预先想好退路，临场只会瘫痪——防守先于进攻设计
+- id: PT-08
+  tag_zh: 别把鸡蛋放一个篮子
+  meaning_zh: 单票单策略单行业的重仓=一次黑天鹅清零
+- id: PT-09
+  tag_zh: 盘前想好盘中照做
+  meaning_zh: 临场发挥是亏损之母——预案先行，盘中只执行不发明
+- id: PT-10
+  tag_zh: 策略会过期
+  meaning_zh: 昨天赚钱的方法明天可能反着亏——衰减必须被监测和执行
+- id: PT-11
+  tag_zh: 每个决定留证据
+  meaning_zh: 没有验证记录的判据=拍脑袋冒充科学——置信度是地图的信用
+- id: PT-12
+  tag_zh: AI 干活人把关
+  meaning_zh: 自动化越深，越要有一道人能踩死的刹车
+
 
 nodes:
   # ── 建仓流 entry_flow（cn_a，内嵌 Owner 主观漏斗 L1-L4）──────────────────
