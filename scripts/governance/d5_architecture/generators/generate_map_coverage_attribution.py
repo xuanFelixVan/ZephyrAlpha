@@ -394,6 +394,32 @@ def _git_last_commit_default(repo_root: Path, rel: str) -> str:
 # ---------------------------------------------------------------- main engine
 
 
+def _load_exemptions(registry_path: Path | None, repo_root: Path) -> dict[str, dict]:
+    """豁免登记册读取（Owner 2026-10-04 立法：存在就要有用，或者有结论——在案豁免=第三合法态）。
+
+    - 册缺失 → 空豁免（overlay 非依赖，普查照常）
+    - 册在但 YAML 损坏 → SystemExit fail-closed（判罚真源禁静默降级）
+    - 条目最小契约=file+conclusion_zh；缺 file 的条目显式报错（防整册静默失效）
+    Returns: file（posix 归一）→ 条目 dict。
+    """
+    path = Path(registry_path) if registry_path else repo_root / "config" / "coverage_exemption_registry.yaml"
+    if not path.exists():
+        return {}
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError) as exc:
+        raise SystemExit(f"[join-checker] 豁免登记册损坏（fail-closed）: {path}: {exc}") from exc
+    entries = data.get("exemptions") or []
+    if not isinstance(entries, list):
+        raise SystemExit(f"[join-checker] 豁免登记册 exemptions 段非列表（fail-closed）: {path}")
+    out: dict[str, dict] = {}
+    for i, e in enumerate(entries):
+        if not isinstance(e, dict) or not e.get("file"):
+            raise SystemExit(f"[join-checker] 豁免条目 #{i} 缺 file 字段（fail-closed）: {path}")
+        out[e["file"].replace("\\", "/").strip()] = e
+    return out
+
+
 def run_attribution(
     repo_root: Path | str,
     *,
@@ -404,6 +430,7 @@ def run_attribution(
     output_yaml: Path | str | None = None,
     output_md: Path | str | None = None,
     git_last_commit: Callable[[Path, str], str] | None = None,
+    exemption_registry: Path | None = None,
 ) -> dict:
     """归属总表主引擎（幂等可重跑；返回报告 dict 并落 30/31 两件）。"""
     repo_root = Path(repo_root).resolve()
@@ -485,6 +512,33 @@ def run_attribution(
         if status == "orphan":
             orphans.append(row)
 
+    # ⑤b 豁免减法（Owner 2026-10-04：真孤儿=两不沾且无结论；在案豁免独立报数不打红不隐身）
+    exemptions = _load_exemptions(exemption_registry, repo_root)
+    exempted_rows: list[dict] = []
+    stale_exemptions: list[dict] = []
+    if exemptions:
+        still_orphan: list[dict] = []
+        for u in orphans:
+            entry = exemptions.pop(u["file"], None)
+            if entry is not None:
+                u["status"] = "exempted"  # units 行与 orphans 行同引用，一处改两处生效
+                exempted_rows.append(
+                    {
+                        "file": u["file"],
+                        "conclusion_zh": entry.get("conclusion_zh", ""),
+                        "basis": entry.get("basis", ""),
+                        "review_when": entry.get("review_when", ""),
+                    }
+                )
+            else:
+                still_orphan.append(u)
+        orphans = still_orphan
+        for path, entry in exemptions.items():  # 未被孤儿消费=册比孤儿多（陈旧条目显性化）
+            reason = (
+                "not_orphan（已挂载/闭包归属，豁免过期）" if path in universe else "file_not_in_universe（路径不存在）"
+            )
+            stale_exemptions.append({"file": path, "reason": reason, "basis": entry.get("basis", "")})
+
     # ⑥ 孤儿判级（复用 GOMAP 四档，索引扫全宇宙）+ 证据
     frontend_refs = _frontend_referenced(
         frontend_map or repo_root / "src/zephyr/frontend/dashboard/web/frontend_map.yaml"
@@ -535,6 +589,8 @@ def run_attribution(
             "scripts_manifest_total": manifest_total,
         },
         "orphans": orphan_rows,
+        "exempted": exempted_rows,
+        "stale_exemptions": stale_exemptions,
         "units": [{k: u[k] for k in ("file", "maps_direct", "maps_derived", "status")} for u in units],
         "meta": {
             "generated_at": now_utc().isoformat(timespec="seconds"),
@@ -549,6 +605,8 @@ def run_attribution(
                 "keys_out_of_universe": out_of_universe,
                 "derived_by_map": derived_by_map,
                 "orphan_count": len(orphan_rows),
+                "exempted_count": len(exempted_rows),
+                "stale_exemption_count": len(stale_exemptions),
             },
             "crosscheck_ruling481": {
                 "expected_approx": _UNIVERSE_EXPECTED,
@@ -594,7 +652,8 @@ def _write_md(report: dict, out_md: Path, repo_root: Path, frontend_refs: set[st
     ap(
         f"> 宇宙={total}（裁定#481 预估≈{xc['expected_approx']}，偏差 {xc['deviation_pct']:+.1f}%）；"
         f"直接挂载 {sum(by_map.values())}；闭包归属 {report['closure_derived']}；"
-        f"孤儿 {len(report['orphans'])}（簇 {len(clusters)}）；悬空键 {len(report['dangling_keys'])}。"
+        f"真孤儿 {len(report['orphans'])}（簇 {len(clusters)}）；"
+        f"豁免在案 {len(report.get('exempted') or [])}；悬空键 {len(report['dangling_keys'])}。"
     )
     ap("")
     ap("## 六图覆盖率一栏表")
@@ -622,6 +681,18 @@ def _write_md(report: dict, out_md: Path, repo_root: Path, frontend_refs: set[st
         if len(members) > 3:
             ap(f"- …其余 {len(members) - 3} 台见 30 号 units 段")
         ap("")
+    if report.get("exempted"):
+        ap("## 豁免在案（有结论，第三合法态——不打红不隐身，复查条件到期须处置）")
+        ap("")
+        for e in report["exempted"]:
+            ap(f"- `{e['file']}`：{e['conclusion_zh']}（依据 {e['basis']}；复查：{e['review_when']}）")
+        ap("")
+    if report.get("stale_exemptions"):
+        ap("## 陈旧豁免条目（册比孤儿多——清册信号）")
+        ap("")
+        for s in report["stale_exemptions"]:
+            ap(f"- `{s['file']}`：{s['reason']}（依据 {s['basis']}）")
+        ap("")
     if report["dangling_keys"]:
         ap("## 悬空键（MOD-* 反查查无，禁静默——逐条判罚或修键）")
         ap("")
@@ -630,19 +701,20 @@ def _write_md(report: dict, out_md: Path, repo_root: Path, frontend_refs: set[st
         if len(report["dangling_keys"]) > 20:
             ap(f"- …其余 {len(report['dangling_keys']) - 20} 条见 30 号 dangling_keys 段")
         ap("")
-    ap("## align_all 第十节接入方案（评估·只评估不施工）")
+    ap("## align_all 第十二节接入（已施工，ff8f841edf）")
     ap("")
     ap(
-        "1. 调用点：align_all.py 现有第十节（图12 数据供给链）之后新增一节，"
-        "单行复用本生成器 run_attribution()（同仓同真源，读六图 YAML+depgraph PG，产出即本 30 号 schema）。"
+        "1. 调用点：align_all.py 第十二节（图12 第十节/图13 第十一节之后）复用 run_attribution()"
+        "（普查面只取计数，证据细节归本 30/31 号）。"
     )
     ap(
-        "2. 阈值参数化建议：首跑 report-only——新增 `--orphan-threshold`（默认 None=只报数字不判硬），"
-        "Owner 看完首跑基线后随孤儿填充班递降（如 500→100→0），到 0 时改 exit>0 硬门。"
+        "2. 阈值：`--orphan-threshold` 缺省 report-only 恒 exit 0；设值后 **真孤儿**（两不沾且无结论）"
+        ">阈值 或 悬空键>0 即 exit 1（悬空键不随阈值宽限恒硬）。Owner 立法口径（2026-10-04）："
+        "存在就要有用，或者有结论——终点=真孤儿 0。"
     )
     ap(
-        "3. exit 语义：report-only 阶段恒 exit 0（数字进总览报告）；翻硬后 orphans>threshold 即 exit 1，"
-        "与现行 align_all「硬>0=exit 1」同口径，悬空键恒硬报（禁静默）。"
+        "3. 豁免册：config/coverage_exemption_registry.yaml（在案结论的机械载体，豁免=第三合法态；"
+        "陈旧条目（路径不存在/已重新挂载）由普查显性报 stale_exemptions 促清册）。"
     )
     out_md.parent.mkdir(parents=True, exist_ok=True)
     out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -659,6 +731,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out-md", default=str(_REPO / "docs/_working/map_build/31_orphan_clusters.md"))
     ap.add_argument("--script-manifest", default=str(_REPO / "scripts/script-manifest.yaml"))
     ap.add_argument("--frontend-map", default=str(_REPO / "src/zephyr/frontend/dashboard/web/frontend_map.yaml"))
+    ap.add_argument(
+        "--exemption-registry",
+        default=str(_REPO / "config" / "coverage_exemption_registry.yaml"),
+        help="豁免登记册（在案结论=第三合法态）；缺省 config/coverage_exemption_registry.yaml，缺册=零豁免",
+    )
     ns = ap.parse_args(argv)
     report = run_attribution(
         ns.repo_root,
@@ -666,11 +743,15 @@ def main(argv: list[str] | None = None) -> int:
         frontend_map=Path(ns.frontend_map),
         output_yaml=ns.out_yaml,
         output_md=ns.out_md,
+        exemption_registry=Path(ns.exemption_registry),
     )
     print(
         f"[join-checker] units={report['accounting_units_total']}"
         f" direct={sum(report['by_map'].values())} derived={report['closure_derived']}"
-        f" orphans={len(report['orphans'])} dangling={len(report['dangling_keys'])}"
+        f" true_orphans={len(report['orphans'])}"
+        f" exempted={len(report.get('exempted') or [])}"
+        f" stale_exemptions={len(report.get('stale_exemptions') or [])}"
+        f" dangling={len(report['dangling_keys'])}"
     )
     return 0
 

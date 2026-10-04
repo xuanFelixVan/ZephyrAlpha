@@ -277,3 +277,73 @@ def test_production_pg_never_touched(fake_universe):
     sig = inspect.signature(mca.run_attribution)
     assert "depgraph_override" in sig.parameters
     assert "repo_root" in sig.parameters
+
+
+# ---------- 豁免登记册（Owner 2026-10-04 立法：在案结论=第三合法态） ----------
+
+
+def _exemption_registry(tmp_path, entries):
+    p = tmp_path / "cov_exemptions.yaml"
+    p.write_text(yaml.safe_dump({"exemptions": entries}, allow_unicode=True), encoding="utf-8")
+    return p
+
+
+def test_exemption_reclassifies_orphan(fake_universe):
+    """在案豁免的孤儿→status=exempted（出 orphans 入 exempted，结论字段随行）；未消费条目显性报陈旧。"""
+    reg = _exemption_registry(
+        fake_universe["root"],
+        [
+            {
+                "file": "src/zephyr/pkg_c/orphan.py",
+                "conclusion_zh": "暂停令保留现状",
+                "basis": "owner-20261004",
+                "review_when": "恢复通知",
+            },
+            {
+                "file": "src/zephyr/does_not_exist.py",
+                "conclusion_zh": "陈旧",
+                "basis": "x",
+                "review_when": "y",
+            },
+        ],
+    )
+    res = _run(fake_universe, _maps_dir(fake_universe["root"]), exemption_registry=reg)
+    units = {u["file"]: u for u in res["units"]}
+    assert units["src/zephyr/pkg_c/orphan.py"]["status"] == "exempted"
+    orphan_files = {o["file"] for o in res["orphans"]}
+    assert "src/zephyr/pkg_c/orphan.py" not in orphan_files
+    assert res["exempted"][0]["basis"] == "owner-20261004"
+    stale = [s for s in res["stale_exemptions"] if s["file"] == "src/zephyr/does_not_exist.py"]
+    assert stale and stale[0]["reason"].startswith("file_not_in_universe")
+    # 其余真孤儿不受牵连（闭包环件照判）
+    assert units["src/zephyr/pkg_d/cyc_a.py"]["status"] == "orphan"
+
+
+def test_stale_exemption_for_mounted_file(fake_universe):
+    """给已挂载件的豁免=过期（not_orphan），显性报陈旧促清册，不静默。"""
+    reg = _exemption_registry(
+        fake_universe["root"],
+        [
+            {
+                "file": "src/zephyr/pkg_a/mounted.py",
+                "conclusion_zh": "给已挂载件的过期豁免",
+                "basis": "x",
+                "review_when": "y",
+            }
+        ],
+    )
+    res = _run(fake_universe, _maps_dir(fake_universe["root"]), exemption_registry=reg)
+    assert res["exempted"] == []
+    stale = [s for s in res["stale_exemptions"] if s["file"] == "src/zephyr/pkg_a/mounted.py"]
+    assert stale and stale[0]["reason"].startswith("not_orphan")
+
+
+def test_absent_registry_zero_exemptions(fake_universe):
+    """缺册=零豁免（overlay 非依赖），普查行为与无豁免机制时逐位一致。"""
+    res = _run(
+        fake_universe,
+        _maps_dir(fake_universe["root"]),
+        exemption_registry=fake_universe["root"] / "no_such_registry.yaml",
+    )
+    assert res["exempted"] == [] and res["stale_exemptions"] == []
+    assert any(u["status"] == "orphan" for u in res["units"])

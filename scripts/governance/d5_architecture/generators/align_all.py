@@ -260,6 +260,7 @@ def _build_overview(
     cov_direct: int = 0,
     cov_derived: int = 0,
     cov_orphans: int = 0,
+    cov_exempted: int = 0,
     cov_dangling: int = 0,
     cov_hard: int = 0,
     cov_threshold: int | None = None,
@@ -371,7 +372,10 @@ def _build_overview(
         lines.append("## 七、覆盖账本 v2·join checker（裁定#481 分母·六图归属普查）")
         lines.append("")
         lines.append(f"- 记账宇宙: {cov_total}（主账=src/zephyr .py+scripts .py+frontend js/html）")
-        lines.append(f"- 直接挂载: {cov_direct}｜闭包归属: {cov_derived}｜孤儿: {cov_orphans}｜悬空键: {cov_dangling}")
+        lines.append(
+            f"- 直接挂载: {cov_direct}｜闭包归属: {cov_derived}｜真孤儿: {cov_orphans}"
+            f"｜豁免在案: {cov_exempted}（有结论=第三合法态，不打红不隐身）｜悬空键: {cov_dangling}"
+        )
         lines.append(f"- 判定模式: {_cov_mode}｜本节硬计: {cov_hard}（孤儿明细=docs/_working/map_build/30/31 号）")
         lines.append("")
 
@@ -792,7 +796,7 @@ def main() -> int:
     print()
     print("[+] 覆盖账本 v2·join checker（裁定#481 分母：宇宙×六图挂载×闭包→归属/孤儿普查）...")
     cov_hard = 0
-    cov_total = cov_direct = cov_derived = cov_orphans = cov_dangling = 0
+    cov_total = cov_direct = cov_derived = cov_orphans = cov_exempted = cov_dangling = 0
     try:
         _cov_gen_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators")
         if _cov_gen_dir not in sys.path:
@@ -809,12 +813,16 @@ def main() -> int:
         cov_direct = sum(_cov_report["by_map"].values())
         cov_derived = _cov_report["closure_derived"]
         cov_orphans = len(_cov_report["orphans"])
+        cov_exempted = len(_cov_report.get("exempted") or [])
         cov_dangling = len(_cov_report["dangling_keys"])
         cov_hard, _cov_msgs = _orphan_census_verdict(_cov_report, args.orphan_threshold)
         print(
             f"  OK: 宇宙={cov_total} 直接挂载={cov_direct} 闭包归属={cov_derived} "
-            f"孤儿={cov_orphans} 悬空键={cov_dangling}"
+            f"真孤儿={cov_orphans}（另有豁免在案={cov_exempted}，有结论不打红不隐身）"
+            f" 悬空键={cov_dangling}"
         )
+        for _sx in (_cov_report.get("stale_exemptions") or [])[:5]:
+            print(f"    陈旧豁免: {_sx['file']}（{_sx['reason']}——清册信号）")
         if args.orphan_threshold is None:
             print("  report-only（--orphan-threshold 未设，恒 exit 0）：数字进总览报告，判罚归填充班")
         else:
@@ -907,6 +915,7 @@ def main() -> int:
             cov_direct=cov_direct,
             cov_derived=cov_derived,
             cov_orphans=cov_orphans,
+            cov_exempted=cov_exempted,
             cov_dangling=cov_dangling,
             cov_hard=cov_hard,
             cov_threshold=args.orphan_threshold,
