@@ -55,8 +55,27 @@ gates:
     consumers: null
     evidence: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:926
     rationale: 图12（数据供给链图）结构校验门（经 MAP-ALIGNMENT 聚合台）=图册与机生现实对账，⑧号；新入册未满证据窗 trigger_count=0 显式留缺（随一本账收敛批补 facts）
+  CONSTRUCTION-WORKFLOW-MAP:
+    label_name: 「账本必须对得上」
+    node_id: D11-C07
+    trigger_count: 0
+    consumers: null
+    evidence: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:926
+    rationale: 图14（AI 施工升级流图）结构校验门（经 MAP-ALIGNMENT 聚合台）=图册与机生现实对账，⑧号；2026-10-04 午新入册（A2 盘点发现，册 185→187），第三批补挂，同族判例=同 DATA-SUPPLY-CHAIN-MAP；新入册未满证据窗 count=0 显式留缺
+  STRATEGY-CARD-LIFECYCLE-MAP:
+    label_name: 「账本必须对得上」
+    node_id: D11-C07
+    trigger_count: 0
+    consumers: null
+    evidence: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml:938
+    rationale: 图15（策略卡生命周期图）结构校验门（经 MAP-ALIGNMENT 聚合台）=图册与机生现实对账，⑧号；2026-10-04 午新入册（A2 盘点发现），第三批补挂，同族判例同上；新入册未满证据窗 count=0 显式留缺
 addendum_note_20261004: >-
   第二批补挂（F7 V5 红1 处置）：三台均为 shell 册冻结（182 台）后新入册者（册今值 185），非巡查漏挂。
   挂载面终值 188=两册并集齐平。治本主轨不变=裁定#480 C-3 门禁身份一本账收敛批 + MOUNT 登记时挂载
   声明（新门禁入册即上图，从机制上消灭"新黑户"尾巴）。
+addendum_note_20261004_pm: >-
+  第三批补挂（A2 盘点红1 处置，2026-10-04 午）：shell 册再涨 2 台（图14/图15 结构校验门，册 185→187，
+  并集 190）——"齐平"注记第三次被新入册打破（ treadmill 实证第 3 次：第二批次日即破）。本批挂载面
+  190=当前并集齐平；此注记不再承诺静态齐平，齐平面=regen 时点函数，治本仍归 MOUNT 登记时挂载声明。
+  DATA-SUPPLY-CHAIN-MAP 证据行号随册增长漂移（:926→前移），以 gate_id 检索为准。
 
