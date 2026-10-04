@@ -58610,4 +58610,64 @@ creation_tokens:
   created_by: st-datasop-20260930
   capability: fullflow_wiring
   merge_evaluation: "task_bound 执行报告（ttl: task_bound），w5_1 no-merge；EXEC-4 三处消费接线执行留痕"
+- file: docs/_working/map_build/30_attribution_table.yaml
+  token: map-coverage-attribution-30-attribution-table-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/31_orphan_clusters.md
+  token: map-coverage-attribution-31-orphan-clusters-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/fig11_delivery/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/fig12_datachain/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/fig13_daycycle/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/fig14_construction/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/fig15_cardlife/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/fig16_ruling/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: docs/_working/map_build/index.md
+  token: map-coverage-attribution-index-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker 同真源派生无同域重复；顺带补回 fig 系六车道 index.md 共7条在册 token 行（HEAD 版册经注册册拉锯缺行恢复）"
+- file: scripts/governance/d5_architecture/generators/generate_map_coverage_attribution.py
+  token: map-coverage-attribution-generate-map-coverage-attribution-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "裁定#481执行件：账本v2 join checker"
+- file: docs/_working/bm_reclass_ruling/01_ruling_package.md
+  token: bm-reclass-ruling-01-ruling-package-20261004
+  created_by: st-bm-reclass-20261004
+  capability: bm_reclass_ruling
+  merge_evaluation: "一次性呈批件（battle_map 定性横向·覆盖切片，裁定#483已批A施工落地99141078f4），批复登记后转归档"
+- file: docs/_working/bm_reclass_ruling/index.md
+  token: bm-reclass-ruling-index-20261004
+  created_by: st-bm-reclass-20261004
+  capability: bm_reclass_ruling
+  merge_evaluation: "一次性呈批件（battle_map 定性横向·覆盖切片，裁定#483已批A施工落地99141078f4），批复登记后转归档"
 di_seam_exemptions: []
