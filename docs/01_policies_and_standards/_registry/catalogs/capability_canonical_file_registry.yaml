@@ -10,6 +10,15 @@ summary: capability → canonical_file 反查注册表，解决"AI 不知道某�
   仅声明能力索引（capability_id/aliases/description）+ 可选人工 裁定字段；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/
   removed_duplicates 全部由 CapabilityLookup 从磁盘头部 + git log 自动派生，消除 YAML↔代码头部同步漂移成本。对标
   K8s Service(声明) + Endpoints(实时发现) 模式。
+# 身份声明（st-sI-identity-20261004 手术1b）：条目身份=册内声明字段（与字段位置解耦，
+# render 往返/账本键/合并键同口径；capabilities 族 aliases 列表开头条目由此获得稳定身份）；
+# 无声明族退位置首标量。creation_tokens 声明 file 单字段（token 经复合键后缀区分；
+# 11 条历史无 token 条目不破坏全有全无适用性）。
+unique_key:
+  capabilities:
+  - capability_id
+  creation_tokens:
+  - file
 capabilities:
 - aliases:
   - add_module_translation

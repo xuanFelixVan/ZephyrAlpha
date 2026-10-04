@@ -7,6 +7,8 @@ status: active
 generated_at: '2026-09-20T09:41:29Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
+unique_key:
+- path
 total_files: 298
 total_rules: 61
 tier_distribution:
