@@ -1510,10 +1510,10 @@ def _spawn_heartbeat_daemon(
         ]
 
         # #ARCH-279 裁定A2：heartbeat daemon 为非 git commit 子进程——剔除授权变量。
-        try:
-            from scripts.ops_guard import sanitized_spawn_env
-        except ImportError:
-            from ops_guard import sanitized_spawn_env
+        # 裸模块降级形态已删（scripts/ 是包；裸 `ops_guard` 形态被 IMPORT-INTEGRITY
+        # 判悬空阻断整文件落地——2026-10-03 车道C）
+        from scripts.ops_guard import sanitized_spawn_env
+
         env = sanitized_spawn_env()
 
         # 确保 src/ 在 PYTHONPATH（daemon 进程需导入 zephyr.* 模块）
@@ -3079,6 +3079,25 @@ def session_worktree_start(
                 sid,
             )
 
+        # 裁定#480 C-2 先查再建（2026-10-03）：注册成功后对 task_files 三源扫描同类
+        # 半成品在途（git status 盘面 / 活跃 worktree / 死信袋，纯只读）。渐进收紧
+        # 第一档=提示不阻断；扫描异常 fail-open（观测面不绑架主流程，与 S1/sweep 同族）。
+        # pytest 态跳过（不动既有测试的 stdout 面）；判据查盘面不查 HEAD（裁定#480 红线）。
+        try:
+            if "PYTEST_CURRENT_TEST" not in os.environ:
+                from zephyr.governance.audit.reuse_scan import (
+                    scan_similar_work,  # noqa: PLC0415 — 惰性装载 governance.audit（ARCH-031：governance 根禁新增 .py）
+                )
+
+                if task_files:
+                    _rs_hits = scan_similar_work(list(task_files), root, exclude_worktree_sids=[sid])
+                    _rs_tail = " — " + "；".join(h["hint"] for h in _rs_hits[:3]) if _rs_hits else ""
+                    print(f"reuse_scan: {len(_rs_hits)} 件同类半成品在途，开工前建议核看{_rs_tail}")
+                else:
+                    print("reuse_scan: 未提供 task_files，跳过预查（start 传 task_files 可预查同类半成品在途）")
+        except Exception as _rs_err:  # noqa: BLE001 — 观测面 fail-open 不阻断启动
+            logger.debug("reuse_scan hook 异常（不阻断 start）: %s", _rs_err)
+
         return {
             "session_id": sid,
             "worktree_path": str(wt_path),
@@ -3232,10 +3251,10 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
     # 显式构造确保稳健（对标 directory_contract_gate.py 同款修复）。
 
     # #ARCH-279 裁定A2：DCR 检查脚本为非 git commit 子进程——剔除授权变量。
-    try:
-        from scripts.ops_guard import sanitized_spawn_env
-    except ImportError:
-        from ops_guard import sanitized_spawn_env
+    # 裸模块降级形态已删（scripts/ 是包且 scripts.ops_guard 恒可达；裸 `ops_guard`
+    # 形态被 IMPORT-INTEGRITY 静态探测判悬空阻断整文件落地——2026-10-03 车道C）
+    from scripts.ops_guard import sanitized_spawn_env
+
     dcr_env = sanitized_spawn_env()
 
     _src_dir = str(root / "src")

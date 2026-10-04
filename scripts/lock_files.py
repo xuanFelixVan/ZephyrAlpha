@@ -1155,6 +1155,20 @@ def _stash_claimed_paths(repo_root: Path, session_id: str, rel_paths: list[str])
             cwd=str(repo_root),
             timeout=30,
         )
+        # 工作区擦除级操作遥测（GATE-WORKTREE-OPS-TELEMETRY，2026-10-03 车道C 补齐）：
+        # stash push 成功才记（op=file_stash）；遥测自身降级不阻断 salvage 主流程
+        try:
+            from zephyr.shared.io.workspace_telemetry import log_workspace_op  # noqa: PLC0415 — 惰性装载
+
+            log_workspace_op(
+                op="file_stash",
+                session_id=session_id,
+                source="lock_files._stash_claimed_paths",
+                root=Path(repo_root),
+                file=",".join(changed[:5]),
+            )
+        except Exception:  # noqa: BLE001 — 遥测失败仅降级，绝不阻断 salvage
+            pass
         return (ref.stdout.strip() if ref.returncode == 0 else "refs/stash"), changed
     except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
         return "", []
@@ -1632,6 +1646,66 @@ def _validate_file_arg(arg: str) -> str | None:
     return arg
 
 
+# ── 裁定#480 D 入口强制位（2026-10-03 车道C 手术3）：首次 acquire 一次性说明书路由 ──
+# 渐进收紧第一档=已读留痕+指引打印，不做硬阻断（硬阻断待 Owner 观察期后）。
+# 已读判定双通道：.runtime/lookup_audit/<sid>.jsonl（走过能力反查的老会话）或
+# .runtime/guide_reads/<sid>.json（本机制自己的留痕）任一存在=已读，零输出零开销。
+_GUIDE_READS_DIR = REPO_ROOT / ".runtime" / "guide_reads"
+_LOOKUP_AUDIT_DIR = REPO_ROOT / ".runtime" / "lookup_audit"
+_PLAYBOOK_REL = "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
+# 扩展名→(FT 检索词, playbook 锚点行) 小字典——索引不是内容复制（锚点约定=
+# playbook 头部"类型节=## FT-<type_id>；接口按子串检索"）。精确路由优先走
+# batch_creation_tokens.detect_file_type（type_id 表驱动唯一真源），此表仅兜底。
+_FT_EXT_TABLE: dict[str, tuple[str, tuple[str, ...]]] = {
+    ".py": ("FT-python", ("## FT-new_src_py", "## FT-new_script_py", "## FT-new_test_py")),
+    ".md": ("FT-markdown", ("## FT-formal_md", "## FT-working_md")),
+    ".yaml": ("FT-yaml", ("## FT-registry_yaml", "## FT-config_yaml", "## FT-rules_yaml")),
+    ".yml": ("FT-yaml", ("## FT-registry_yaml", "## FT-config_yaml", "## FT-rules_yaml")),
+    ".ps1": ("FT-powershell", ("## FT-ps1",)),
+}
+
+
+def _ft_route_for_path(file_path: str) -> tuple[str, tuple[str, ...]]:
+    """按将 claim 的文件路由 FT- 卡片：detect_file_type 精确命中优先，扩展名小字典兜底。"""
+    try:
+        from batch_creation_tokens import detect_file_type  # noqa: PLC0415 — 惰性装载（sys.path 已含 d3_metadata）
+
+        type_id = detect_file_type(_normalize_path(file_path))
+        if type_id:
+            return f"FT-{type_id}", (f"## FT-{type_id}", "## FT-universal")
+    except Exception:  # noqa: BLE001 — 路由是加法面，fail-open 退扩展字典
+        pass
+    keyword, anchors = _FT_EXT_TABLE.get(Path(file_path).suffix.lower(), ("FT-universal", ("## FT-universal",)))
+    if "## FT-universal" not in anchors:
+        anchors = anchors + ("## FT-universal",)
+    return keyword, anchors
+
+
+def _deliver_first_acquire_guide(sid: str, file_path: str) -> None:
+    """首次 acquire 一次性说明书路由（渐进收紧第一档：提示不阻断）。
+
+    fail-open 铁律：本函数任何异常静默吞（指引递送绝不绑架锁主流程）；已读
+    （guide_reads 留痕或 lookup_audit 既有审计）=零输出零开销直接返回。
+    """
+    try:
+        marker = _GUIDE_READS_DIR / f"{sid}.json"
+        if marker.exists() or (_LOOKUP_AUDIT_DIR / f"{sid}.jsonl").exists():
+            return
+        keyword, anchors = _ft_route_for_path(file_path)
+        print("=== 首次施工指路（本会话一次性；裁定#480 D 入口强制位，渐进收紧第一档）===")
+        print(f"  将 claim: {_normalize_path(file_path)}（playbook 检索词: {keyword}）")
+        for a in anchors:
+            print(f"  playbook 锚点: {a}")
+        print(f"  指南全文（机生禁手改）: {_PLAYBOOK_REL}")
+        _GUIDE_READS_DIR.mkdir(parents=True, exist_ok=True)
+        marker.write_text(
+            json.dumps({"sid": sid, "file": _normalize_path(file_path), "read_at": time.time()}),
+            encoding="utf-8",
+        )
+    except Exception:  # noqa: BLE001 — 指引面 fail-open：绝不阻断 acquire 主流程
+        pass
+
+
 def main() -> int:
     args = sys.argv[1:]
 
@@ -1660,11 +1734,16 @@ def main() -> int:
         f = _validate_file_arg(args[1])
         if f is None:
             return 1
-        return cmd_acquire(
+        rc = cmd_acquire(
             f,
             args[2],
             AcquireOptions(task=task, skip_naming_check=skip_naming, ttl_minutes=ttl_minutes, session_id=bind_session),
         )
+        # 裁定#480 D 入口强制位：首次 acquire 成功后递送一次性说明书路由
+        # （渐进收紧第一档，只打印+留痕不阻断；DENIED 不消耗一次性资格）
+        if rc == 0:
+            _deliver_first_acquire_guide(bind_session or args[2], f)
+        return rc
 
     if cmd == "acquire-batch" and len(args) >= 2:
         ttl_minutes_b, err = _parse_ttl_opt(args)
