@@ -1,0 +1,1218 @@
+schema_version: 1.0
+ledger_id: TDM-MOUNT-VERDICTS
+ttl: task_bound
+generation: chief_adjudicated
+adjudicator: st-tdm-chief-20261004（总筹）
+inputs:
+- B_coverage_ledger_v1.yaml unmounted_orphan 233
+- C_mount_draft_v1.md 证据列
+- depgraph nodes 表撞号实证
+counts:
+  orphan_total: 233
+  mount_tdm: 171
+  mount_hand_J2: 7
+  exempt: 55
+  collision_pairs: 2
+  mls_orphans: 4
+  draft_auto_overridden: 36
+rulings:
+  no1_mls:
+    MOD-MLS-001:
+      target_map: 图9 策略工厂
+      note: 模型漂移监控=模型车道设施；另有 depgraph 零注册缺位→GOMAP 车道登记工单
+    MOD-MLS-002:
+      target_map: 图9 策略工厂
+      note: 模型压缩加速=模型车道设施；depgraph 零注册→登记工单
+    MOD-MLS-003:
+      target_map: GOMAP
+      note: codegen 适配器=AI 开发工具；depgraph 零注册→登记工单
+    MOD-MLS-004:
+      target_map: GOMAP
+      note: 深审适配器=AI 开发工具；depgraph 零注册→登记工单
+  no2_collision:
+    MOD-SIG-087:
+      keep: signal_factory（信号工厂，保留 087）
+      keep_mount: TDM-E-FLOW
+      reid:
+      - factor_result_bridge
+      - MOD-SIG-153
+      reid_mount: TDM-E-L3-07-2
+      evidence: depgraph 双注册实证：src/signal_ashare/strategy_signal/signal_factory.py 与 factor_result_bridge.py 同带 087
+    MOD-SIG-088:
+      keep: capital_behavior_orchestrator（保留 088）
+      keep_mount: TDM-E-L2-01-4
+      reid:
+      - risk_event_consumer
+      - MOD-SIG-154
+      reid_mount: TDM-E-L2-09-1
+      evidence: depgraph 双注册实证：capital_behavior_orchestrator.py 与 risk_event_consumer.py 同带 088
+  no3_delta: 追认：233=300-67；手测基线106为任务A补ID前口径，机械必然非漂移
+  no4_cross_domain: 9 台全部合法（J2 挂手形态已在图）：INT 族→E-L9 源线，DATA/L9AGG→判据数据输入，ENTITY-GRAPH→事件图谱传导，GOV-CHAINRECON→链对账手，L00-004→盘前预案族；apply 批补 J2 影响因子标注
+  no5_verdicts: 见 verdicts 表（0漏行断言已过）
+  no6_confidence: 追认 Flash 口径：verified 需 evidence 带 run=/SR=/oos_tested；untested62=红节点；apply 批落 D 草案值
+verdicts:
+  MOD-SIG-058:
+    action: mount
+    target: TDM-E-L2-01-1
+    criterion: J1
+    note: ''
+  MOD-SIG-059:
+    action: mount
+    target: TDM-E-L2-05-2
+    criterion: J1
+    note: 期权情绪三件套→信号响应
+  MOD-SIG-061:
+    action: mount
+    target: TDM-E-L2-04
+    criterion: J1
+    note: ''
+  MOD-SIG-063:
+    action: mount
+    target: TDM-E-L2-01-5
+    criterion: J1
+    note: ''
+  MOD-SIG-091:
+    action: mount
+    target: TDM-E-L3-12-4
+    criterion: J1
+    note: ''
+  MOD-SIG-092:
+    action: mount
+    target: TDM-E-L3-12
+    criterion: J1
+    note: 缺口回补→个股多维验证（改判：龙虎榜错配）
+  MOD-SIG-094:
+    action: mount
+    target: TDM-E-L2-05-2
+    criterion: J1
+    note: ''
+  MOD-SIG-095:
+    action: mount
+    target: TDM-E-L2-01-1
+    criterion: J1
+    note: 顶底背离→结构强度（改判：扩散指标错配）
+  MOD-SIG-096:
+    action: mount
+    target: TDM-E-L3-12
+    criterion: J1
+    note: ''
+  MOD-SIG-097:
+    action: mount
+    target: TDM-E-L2-01-1
+    criterion: J1
+    note: ''
+  MOD-SIG-099:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 恐慌冰点=大盘级情绪极值（改判：降段到 L1）
+  MOD-SIG-100:
+    action: mount
+    target: TDM-E-L2-01-1
+    criterion: J1
+    note: 突破真伪→结构强度（改判：资金流错配）
+  MOD-SIG-101:
+    action: mount
+    target: TDM-E-L2-01-1
+    criterion: J1
+    note: ''
+  MOD-SIG-102:
+    action: mount
+    target: TDM-E-L3-07-2
+    criterion: J1
+    note: ''
+  MOD-SIG-103:
+    action: mount
+    target: TDM-E-L3-12
+    criterion: J1
+    note: 底部区域判定→个股验证（改判：形态错配）
+  MOD-SIG-104:
+    action: mount
+    target: TDM-E-L2-06-1
+    criterion: J1
+    note: ''
+  MOD-SIG-105:
+    action: mount
+    target: TDM-E-L3-03-3
+    criterion: J1
+    note: ''
+  MOD-SIG-106:
+    action: mount
+    target: TDM-E-L2-09
+    criterion: J1
+    note: 事件透支减仓→催化剂识别（改判：资金流错配）
+  MOD-SIG-107:
+    action: mount
+    target: TDM-E-L2-05-2
+    criterion: J1
+    note: ''
+  MOD-SIG-108:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 六源择时共振=大盘级（改判：个股打分链错配）
+  MOD-SIG-109:
+    action: mount
+    target: TDM-E-L3-03-3
+    criterion: J1
+    note: ''
+  MOD-SIG-110:
+    action: mount
+    target: TDM-E-L2-09-1
+    criterion: J1
+    note: SUE 财报漂移→事件传导
+  MOD-SIG-111:
+    action: mount
+    target: TDM-F-C3-01
+    criterion: J3
+    note: 信号全链路溯源=归因设施（改判：响应三件套错配）
+  MOD-SIG-112:
+    action: mount
+    target: TDM-E-L2-09-1
+    criterion: J1
+    note: ''
+  MOD-SIG-113:
+    action: mount
+    target: TDM-E-L2-04-2
+    criterion: J1
+    note: ''
+  MOD-SIG-114:
+    action: mount
+    target: TDM-E-L1-S2
+    criterion: J1
+    note: 玩家行为合力→市场内部结构（改判：响应错配）
+  MOD-SIG-115:
+    action: mount
+    target: TDM-E-L3-12-4
+    criterion: J1
+    note: ''
+  MOD-SIG-116:
+    action: mount
+    target: TDM-E-L2-07
+    criterion: J1
+    note: ''
+  MOD-SIG-117:
+    action: mount
+    target: TDM-E-L2-09-1
+    criterion: J1
+    note: ''
+  MOD-SIG-119:
+    action: mount
+    target: TDM-E-L2-02-2
+    criterion: J1
+    note: ''
+  MOD-SIG-120:
+    action: mount
+    target: TDM-E-L2-01-1
+    criterion: J1
+    note: ''
+  MOD-SIG-121:
+    action: mount
+    target: TDM-E-L2-02-2
+    criterion: J1
+    note: ''
+  MOD-SIG-122:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 效应日历=大盘级时序判据（改判：回踩ABC错配）
+  MOD-SIG-123:
+    action: mount
+    target: TDM-E-L2-09-1
+    criterion: J1
+    note: ''
+  MOD-SIG-124:
+    action: mount
+    target: TDM-E-L3-12-3
+    criterion: J1
+    note: ''
+  MOD-SIG-125:
+    action: mount
+    target: TDM-E-L2-09-1
+    criterion: J1
+    note: ''
+  MOD-SIG-126:
+    action: mount
+    target: TDM-E-L3-09
+    criterion: J1
+    note: ''
+  MOD-SIG-127:
+    action: mount
+    target: TDM-E-L3-12
+    criterion: J1
+    note: 因果检验→个股多维验证（改判：打分链错配）
+  MOD-SIG-128:
+    action: mount
+    target: TDM-E-L0-04
+    criterion: J1
+    note: 预测区间校准→明日滚动预测（改判：水温档错配）
+  MOD-SIG-129:
+    action: mount
+    target: TDM-E-L3-03-3
+    criterion: J1
+    note: ''
+  MOD-SIG-130:
+    action: mount
+    target: TDM-E-L3-03-3
+    criterion: J1
+    note: ''
+  MOD-SIG-131:
+    action: mount
+    target: TDM-E-L2-05-2
+    criterion: J1
+    note: ''
+  MOD-SIG-132:
+    action: mount
+    target: TDM-P-P2-01
+    criterion: J1
+    note: 做T净价差账→做T资格成本前置（改判：回踩质量错配）
+  MOD-SIG-133:
+    action: mount
+    target: TDM-E-L3-03-3
+    criterion: J1
+    note: ''
+  MOD-SIG-144:
+    action: mount
+    target: TDM-E-L2-01
+    criterion: J1
+    note: 板块四维跨截面排名→板块强度综合
+  MOD-SIG-145:
+    action: mount
+    target: TDM-E-L3-12-4
+    criterion: J1
+    note: win_rate_provider 注入契约→形态引擎
+  MOD-SIG-146:
+    action: mount
+    target: TDM-E-L3-12-4
+    criterion: J1
+    note: Renko/P&F 替代序列底座→形态引擎
+  MOD-SIG-147:
+    action: mount
+    target: TDM-E-L2-01-5
+    criterion: J1
+    note: ''
+  MOD-SIG-148:
+    action: mount
+    target: TDM-E-L3-12-4
+    criterion: J1
+    note: ''
+  MOD-SIG-149:
+    action: mount
+    target: TDM-E-L3-12-4
+    criterion: J1
+    note: 形态退役台账（改判：板块生命周期错配）
+  MOD-SIG-150:
+    action: mount
+    target: TDM-F-C3-02
+    criterion: J1
+    note: 策略退役检查→升降级与退役评审（改判：合流体检错配）
+  MOD-RK-011:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: 回撤实时追踪→组合级体检
+  MOD-RK-042:
+    action: mount
+    target: TDM-F-C1
+    criterion: J1
+    note: 对冲腿单→敞口/预算管理（改判：总闸错配）
+  MOD-RK-043:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J3
+    note: VaR 批量预取=计量设施→VaR 族锚点
+  MOD-RK-044:
+    action: mount
+    target: TDM-X-R1
+    criterion: J3
+    note: 风控规则版本真源→应急/风控族设施
+  MOD-RK-045:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J3
+    note: VaR 历史模拟 SQL（改判：龙虎榜错配）
+  MOD-RK-046:
+    action: mount
+    target: TDM-F-C1
+    criterion: J1
+    note: ''
+  MOD-RK-048:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 流动性恶化→市场状态
+  MOD-RK-05:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: VaR 核心→组合级风险体检锚点
+  MOD-RK-06:
+    action: mount
+    target: TDM-X-R1
+    criterion: J3
+    note: 风控告警路由设施
+  MOD-RK-07:
+    action: mount
+    target: TDM-E-L4-12
+    criterion: J1
+    note: 集中度→订单级预检（Pre-Trade Block 供方）
+  MOD-RK-08:
+    action: mount
+    target: TDM-F-C1
+    criterion: J1
+    note: 风险预算分配→预算切分
+  MOD-RK-10:
+    action: mount
+    target: TDM-E-L1
+    criterion: J1
+    note: 系统性风险五信号→总闸，联动 X-R1
+  MOD-RK-12:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 压力测试→盘前风险预案
+  MOD-RK-13:
+    action: mount
+    target: TDM-F-C2-03
+    criterion: J1
+    note: 策略拥挤重叠→相关性聚类
+  MOD-RK-14:
+    action: mount
+    target: TDM-X-R1-01
+    criterion: J1
+    note: AI 行为越界→熔断前置监控
+  MOD-RK-15:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: ES/CVaR 尾部→VaR 族锚点
+  MOD-RK-16:
+    action: mount
+    target: TDM-F-C1
+    criterion: J1
+    note: 风险分解→预算切分供方
+  MOD-RK-18:
+    action: mount
+    target: TDM-F-C3-05
+    criterion: J1
+    note: 模型风险审计→信号健康
+  MOD-RK-19:
+    action: mount
+    target: TDM-E-L4-13
+    criterion: J3
+    note: 操作风险解释层→执行审计族
+  MOD-RK-20:
+    action: mount
+    target: TDM-E-L0-03
+    criterion: J1
+    note: 日终审计→收盘复盘
+  MOD-RK-21:
+    action: mount
+    target: TDM-E-L1
+    criterion: J1
+    note: ''
+  MOD-RK-23:
+    action: mount
+    target: TDM-E-L0-03
+    criterion: J1
+    note: 实盘vs回测偏离→复盘
+  MOD-RK-26:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: FHS→VaR 族锚点
+  MOD-RK-28:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 盘前前瞻 VaR+共形垫
+  MOD-RK-29:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 盘中流动性+相关性仪表盘
+  MOD-RK-30:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 三层风控拧绳
+  MOD-RK-31:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 黑天鹅嗅探
+  MOD-RK-32:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 拥挤+动手（正反馈踩踏）
+  MOD-RK-33:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: Copula 联合分布→VaR 族锚点
+  MOD-RK-34:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: VaR/CVaR 分级预警→VaR 族锚点
+  MOD-RK-35:
+    action: mount
+    target: TDM-X-S1-02
+    criterion: J1
+    note: ATR 止损→止损族判定
+  MOD-RK-36:
+    action: mount
+    target: TDM-X-R1-01
+    criterion: J1
+    note: 紧急操作二次确认与留痕
+  MOD-RK-37:
+    action: mount
+    target: TDM-F-C3-01
+    criterion: J1
+    note: Brinson+因子归因→归因引擎
+  MOD-RK-38:
+    action: mount
+    target: TDM-F-C2-02
+    criterion: J1
+    note: 因子敞口→组合约束栈
+  MOD-RK-39:
+    action: mount
+    target: TDM-E-L3-10
+    criterion: J1
+    note: 庄股操纵回避→可交易性预检
+  MOD-RK-40:
+    action: mount
+    target: TDM-P-P2
+    criterion: J1
+    note: 买入后分时保护→加减仓防守
+  MOD-RK-41:
+    action: mount
+    target: TDM-E-L4-07
+    criterion: J1
+    note: 风控事件优先于信号→条件触发队列（改判：顺位排序错配）
+  MOD-POS-006:
+    action: mount
+    target: TDM-P-P1-01
+    criterion: J1
+    note: T+1 可用资金→台账
+  MOD-POS-007:
+    action: mount
+    target: TDM-P-P1-02
+    criterion: J1
+    note: 资金曲线分级→持仓分级与监控频率
+  MOD-POS-008:
+    action: mount
+    target: TDM-P-P1-04
+    criterion: J1
+    note: 回撤分级响应→风险否决体检
+  MOD-POS-009:
+    action: mount
+    target: TDM-P-P1-01
+    criterion: J3
+    note: 仓位审计哈希链设施
+  MOD-POS-016:
+    action: mount
+    target: TDM-P-P1
+    criterion: J1
+    note: 卖出-仓位双向链接
+  MOD-POS-017:
+    action: mount
+    target: TDM-P-P1-04
+    criterion: J1
+    note: 风险日历否决→风险否决体检
+  MOD-POS-020:
+    action: mount
+    target: TDM-P-P1-01
+    criterion: J3
+    note: 独立策略账本设施
+  MOD-POS-025:
+    action: mount
+    target: TDM-P-P1-05
+    criterion: J1
+    note: ''
+  MOD-POS-029:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: 组合层网格编译器雏形
+  MOD-SELL-006:
+    action: mount
+    target: TDM-X-S1
+    criterion: J1
+    note: 置换/再平衡被动卖出
+  MOD-SELL-008:
+    action: mount
+    target: TDM-X-S1-05
+    criterion: J1
+    note: 买卖冲突仲裁→信号融合
+  MOD-SELL-009:
+    action: mount
+    target: TDM-X-S1-05
+    criterion: J1
+    note: 紧迫度评分器→名实相符节点
+  MOD-SELL-015:
+    action: mount
+    target: TDM-X-S1-02
+    criterion: J1
+    note: 止损猎杀防护→止损族
+  MOD-SELL-016:
+    action: mount
+    target: TDM-X-S1
+    criterion: J3
+    note: S1 族治缺口件（含挂机诊断）
+  MOD-EX-002:
+    action: mount
+    target: TDM-E-L4-13
+    criterion: J1
+    note: 持仓跟踪账本→容灾对账族
+  MOD-EX-003:
+    action: mount
+    target: TDM-E-L4-13
+    criterion: J1
+    note: 执行审计黑匣子
+  MOD-EX-049:
+    action: mount
+    target: TDM-E-L4
+    criterion: J3
+    note: 聚合根总调度台
+  MOD-EX-050:
+    action: mount
+    target: TDM-E-L4
+    criterion: J3
+    note: 订单/持仓仓储接口
+  MOD-EX-055:
+    action: mount
+    target: TDM-E-L4
+    criterion: J3
+    note: 蓝图=AUTOGEN 桩无正文，段级占位待补
+  MOD-EX-056:
+    action: mount
+    target: TDM-E-L4-13
+    criterion: J1
+    note: 持仓对账器
+  MOD-EX-057:
+    action: mount
+    target: TDM-E-L4-10
+    criterion: J1
+    note: Saga 六步事务→订单生命周期
+  MOD-EX-063:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 盘前四道关→盘前作战计划（改判：撤改处理错配）
+  MOD-EX-064:
+    action: mount
+    target: TDM-E-L4-14
+    criterion: J1
+    note: 成交质量调参→成本反馈
+  MOD-XS-008:
+    action: mount
+    target: TDM-E-L4-06
+    criterion: J1
+    note: RL 执行骨架→执行算法
+  MOD-XS-015:
+    action: mount
+    target: TDM-E-L4-06
+    criterion: J1
+    note: 通道选型+拆单→执行算法（改判：成本反馈错配）
+  MOD-XS-017:
+    action: mount
+    target: TDM-E-L4-14
+    criterion: J1
+    note: 滑点 TCA→成本反馈
+  MOD-XS-019:
+    action: mount
+    target: TDM-E-L4-14
+    criterion: J1
+    note: 全成本优化器→成本反馈
+  MOD-EXSIM-001:
+    action: mount
+    target: TDM-E-L4-14
+    criterion: J1
+    note: 冲击成本真源→成本反馈
+  MOD-EXE-AGENTS:
+    action: mount
+    target: TDM-E-L4
+    criterion: J3
+    note: 执行层四类 Agent 薄入口
+  MOD-PLAN-002:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 蓝图=AUTOGEN 桩无正文，段级占位待补
+  MOD-PLAN-004:
+    action: mount
+    target: TDM-E-L0-03
+    criterion: J1
+    note: 隔夜边界修正
+  MOD-PLAN-005:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 多情景方案+竞价三细节
+  MOD-PLAN-006:
+    action: mount
+    target: TDM-E-L0-02
+    criterion: J1
+    note: 盘中次日预案边界修正→偏离监控
+  MOD-PLAN-007:
+    action: mount
+    target: TDM-E-L0-03
+    criterion: J1
+    note: LLM 盘前复盘
+  MOD-PLAN-019:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 九情景对策模板
+  MOD-PLAN-020:
+    action: mount
+    target: TDM-E-L0-01
+    criterion: J1
+    note: 四路指令合流→计划生成（改判：段根→子节点）
+  MOD-PLAN-021:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 盘前 75 分钟工序表
+  MOD-PLAN-023:
+    action: mount
+    target: TDM-E-L0
+    criterion: J1
+    note: 盘前流水线
+  MOD-REGIME-006:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 日历变盘窗口→市场状态判定
+  MOD-REGIME-007:
+    action: mount
+    target: TDM-E-L1-S2
+    criterion: J1
+    note: 横截面结构特征
+  MOD-REGIME-011:
+    action: mount
+    target: TDM-E-L1-S4
+    criterion: J1
+    note: GARCH(1,1)→波动率传感器
+  MOD-REGIME-013:
+    action: mount
+    target: TDM-E-L1-S4
+    criterion: J1
+    note: 波动压缩突破
+  MOD-REGIME-014:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 风格识别 HMM
+  MOD-TRADING-002:
+    action: mount
+    target: TDM-P-P1-01
+    criterion: J1
+    note: 盈亏核算→台账
+  MOD-TRADING-009:
+    action: mount
+    target: TDM-E-L4-10
+    criterion: J1
+    note: 订单大管家幂等账本
+  MOD-TRADING-011:
+    action: mount
+    target: TDM-X-S1-06
+    criterion: J1
+    note: 人工指令通道→人工通道族节点
+  MOD-TRADING-014:
+    action: mount
+    target: TDM-X-S2-02
+    criterion: J3
+    note: 证券基础信息真源→T+1/涨跌停约束供方
+  MOD-TRADING-015:
+    action: mount
+    target: TDM-E-L9-AGG
+    criterion: J3
+    note: TDM 后端骨架=地图自身索引设施→知识供给汇聚
+  MOD-TRIG-001:
+    action: mount
+    target: TDM-E-L4
+    criterion: J3
+    note: 蓝图=AUTOGEN 桩无正文，段级占位待补
+  MOD-TRADING-003:
+    action: exempt
+    target: 图13 交易日循环
+    criterion: EX
+    note: 盘后结算对账，裁定#409：结算段归图13
+  MOD-TRADING-004:
+    action: exempt
+    target: 图13 交易日循环
+    criterion: EX
+    note: 公司行动=结算段持仓调整
+  MOD-TRADING-010:
+    action: exempt
+    target: 图13 交易日循环
+    criterion: EX
+    note: 结算档案柜
+  MOD-TRADING-012:
+    action: exempt
+    target: 图13 交易日循环
+    criterion: EX
+    note: post_settlement 15:30 链
+  MOD-PA-002:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: 多策略信号合成→组合聚合输入
+  MOD-PA-004:
+    action: mount
+    target: TDM-F-C2-03
+    criterion: J1
+    note: G12 相关性门禁→聚类上限
+  MOD-PA-006:
+    action: mount
+    target: TDM-F-C1
+    criterion: J1
+    note: 蓝图=AUTOGEN 桩无正文，段级占位待补
+  MOD-PA-013:
+    action: mount
+    target: TDM-F-C1
+    criterion: J1
+    note: 回撤约束资金分配→预算切分
+  MOD-PA-014:
+    action: mount
+    target: TDM-F-C3-04
+    criterion: J1
+    note: ''
+  MOD-PA-015:
+    action: mount
+    target: TDM-F-C3-03
+    criterion: J1
+    note: 体制条件贝叶斯调权→sleeve 调权
+  MOD-PF-001:
+    action: mount
+    target: TDM-F-C3-02
+    criterion: J1
+    note: 策略生命周期状态机→升降级管线
+  MOD-PF-002:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: 组合优化器
+  MOD-PF-003:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: 再平衡调度器
+  MOD-PF-006:
+    action: mount
+    target: TDM-F-C2-02
+    criterion: J1
+    note: 约束求解器→约束栈
+  MOD-PF-008:
+    action: mount
+    target: TDM-F-C3-02
+    criterion: J1
+    note: Champion-Challenger 晋升统计
+  MOD-PF-009:
+    action: mount
+    target: TDM-F-C3-04
+    criterion: J1
+    note: ''
+  MOD-PF-010:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: ''
+  MOD-PF-011:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: ''
+  MOD-PF-012:
+    action: mount
+    target: TDM-F-C2-03
+    criterion: J1
+    note: ''
+  MOD-PF-013:
+    action: mount
+    target: TDM-F-C2-02
+    criterion: J1
+    note: ''
+  MOD-PF-014:
+    action: mount
+    target: TDM-F-C2
+    criterion: J1
+    note: 调仓四笔成本账
+  MOD-MKT-001:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族
+  MOD-MKT-002:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族
+  MOD-MKT-003:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族
+  MOD-MKT-004:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族
+  MOD-MKT-005:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族
+  MOD-MKT-006:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族
+  MOD-MKT-007:
+    action: mount_hand
+    target: TDM-E-L1-S1
+    criterion: J2
+    note: 行情供给伸手：编制在图12数据链，影响因子=时延/连续性/质量；供给全传感器族；蓝图正文为撞名裁定文案，内容待核实
+  MOD-AU-001:
+    action: exempt
+    target: GOMAP
+    criterion: EX
+    note: 运行时写操作三分类=系统写边界治理非交易决策
+  MOD-AU-002:
+    action: mount
+    target: TDM-X-R1-01
+    criterion: J1
+    note: KillSwitch 两级编排→熔断分级
+  MOD-AU-005:
+    action: mount
+    target: TDM-X-R1
+    criterion: J2
+    note: Agent 自治级别定义=ai_autonomy 字段实施设施
+  MOD-AU-006:
+    action: mount
+    target: TDM-X-R1
+    criterion: J2
+    note: Agent 动作门禁（限额/时段/动作白名单）
+  MOD-AU-007:
+    action: mount
+    target: TDM-X-R1-01
+    criterion: J1
+    note: 风控建议 Agent→熔断前置
+  MOD-AU-008:
+    action: mount
+    target: TDM-E-L9-D2
+    criterion: J1
+    note: 研究员裁决→假设登记与考试（改判：打分链错配）
+  MOD-AU-009:
+    action: mount
+    target: TDM-F-C3-05
+    criterion: J1
+    note: 信号分析员→信号健康
+  MOD-AU-010:
+    action: mount
+    target: TDM-E-L1-AGG
+    criterion: J1
+    note: 择时分析员裁决（改判：状态快照错配）
+  MOD-AU-011:
+    action: mount
+    target: TDM-P-P2-02
+    criterion: J1
+    note: 做T交易员裁决
+  MOD-AU-012:
+    action: mount
+    target: TDM-X-R1
+    criterion: J1
+    note: AI 决策权重 30% 硬顶
+  MOD-AU-013:
+    action: exempt
+    target: 图13 交易日循环
+    criterion: EX
+    note: 运维自治判定=运营时序域
+  MOD-SIGQC-003:
+    action: mount
+    target: TDM-F-C3-05
+    criterion: J3
+    note: 信号去重→信号健康（改判）
+  MOD-SIGQC-005:
+    action: mount
+    target: TDM-F-C3-05
+    criterion: J3
+    note: 质量基准对比（改判）
+  MOD-SIGQC-006:
+    action: mount
+    target: TDM-F-C3-05
+    criterion: J3
+    note: 可解释性保障（改判）
+  MOD-BT-018:
+    action: mount
+    target: TDM-F-C3-05
+    criterion: J3
+    note: 策略衰减监控=S7 退役场景设施→信号健康
+  MOD-BT-019:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-020:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-021:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-022:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-023:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-024:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-026:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 回测车间工具（报告/缓存/参数分析/质检/诊断/比较/NaN清洗）
+  MOD-BT-027:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: V1-V5 安检管线=工厂 intake 设施；TDM E-L9-E1 消费其 verdict（confidence 链）
+  MOD-BT-028:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 多策略交叉验证离线层；TDM E-L3 消费其稳健名次
+  MOD-SIM-002:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-003:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-005:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-012:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-021:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-022:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-023:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-024:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-SIM-028:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 仿真/统计验证设施（含 SIM-028 过拟合四关=工厂上线门禁，改判）
+  MOD-ML-010:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-011:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-012:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-013:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-014:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-015:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-016:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-017:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-018:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-019:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-020:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-021:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-ML-022:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 模型生产/研究设施；交易侧经 factor/algo refs 引用其产出
+  MOD-L11-001:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: ML 平台核心层（推理标准化+注册）
+  MOD-L13-001:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 实验管理层（验证管线标准化）
+  MOD-FAC-001:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-FAC-002:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-FAC-003:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-FAC-004:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-FAC-005:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-FAC-006:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-FAC-007:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子生产车间（挖掘/进化/投票/变异）；TDM 经 factor_refs 引用因子结果
+  MOD-L02-001:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子工厂双角色管理
+  MOD-L02-027:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子案例库（图9 已挂册，实例建库欠账在图9 F4 账本）
+  MOD-L02-LIFECYCLE:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 因子周评排位/退役/复活（改判：板块生命周期节点错配，那是因子生命周期）
+  MOD-FACTORY-002:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 286 因子/策略查重裁判=S1 防撞车设施，编制在工厂 intake
+  MOD-AUDITTEST-001:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 质量保障自驱动器
+  MOD-DT-001:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 虚拟市场陪练=事前压测验证车道
+  MOD-INF-019:
+    action: exempt
+    target: GOMAP
+    criterion: EX
+    note: Agent Spec 能力发现路由=AI 基建
+  MOD-INF-021:
+    action: exempt
+    target: GOMAP
+    criterion: EX
+    note: 回滚/撤销系统=开发安全设施
+  MOD-VOTE_REVIEW_SHELL:
+    action: exempt
+    target: 图11 交付流水线
+    criterion: EX
+    note: 多会话唱票=开发治理工具
+  MOD-FACTORY-001:
+    action: mount
+    target: TDM-E-L9-AGG
+    criterion: J1
+    note: 知识标签分拣员→知识供给汇聚
+  MOD-L04-001:
+    action: mount
+    target: TDM-X-R1
+    criterion: J1
+    note: 风险管理引擎本体（止损执行+Pre/Post-trade+KillSwitch）
+  MOD-SIG-087:
+    action: mount
+    target: TDM-E-FLOW
+    criterion: FIX
+    note: 撞号对：signal_factory 保留本 ID→信号工厂输出；factor_result_bridge 改 SIG-153→多因子打分链
+  MOD-SIG-088:
+    action: mount
+    target: TDM-E-L2-01-4
+    criterion: FIX
+    note: 撞号对：capital_behavior_orchestrator 保留本 ID→板块资金流；risk_event_consumer 改 SIG-154→事件传导
