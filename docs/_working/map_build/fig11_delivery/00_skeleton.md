@@ -58,6 +58,15 @@ owner: st-mapbuild-20260924
 | 活跃台账 | `.runtime/session_registry.json`、`.runtime/handoffs/`、`.runtime/commit_queue/belt_daemon.heartbeat` | 运行时 JSON 直扫 |
 | 生成器先例 | `scripts/governance/generate_governance_map.py`（GOMAP 427 模块机生样板，GOMAP counts 实测） | 照抄形态 |
 
+## §0.5 目的标签图例与病历挂载声明（血肉四字段=指针真源，禁复制）
+
+> 挂图 SOP（`sop/mining_sop/vertical_map_mounting_policy.md` §2/§3/§4）落地声明节。**四字段内容真源一律指针引用，本骨架禁复制条目正文**（INV-1；2026-10-04 终审修订 5 条标签名自含主体[SOP v1.1.1 §2 规2，st-vm12e-20261004]后，凡复制标签表处即漂移——本节已去复制化，历史复制版见 git 历史）。
+
+- **目的标签图例（12 条冻结）**：真源=`docs/_working/commitmap_cure/f5_purpose_tags.yaml` labels 节（1-11=00_design_basis §1 冻结表逐字、12 号「别把钥匙留在门口」=裁定#480 批准增设）。图头渲染由生成器消费该件（purpose_labels.legend），冻结后机贴不改名。标签贴在**机制**上——门禁级 gate→标签/环节映射=叶层存输入件（INV-1 不进图本体），图内只渲染节点 purpose_tags 直方图（同标签多钉=重复簇显影位）。
+- **病历挂载（casebooks）**：真源=`docs/_working/commitmap_cure/f5_casebooks_mount.yaml`（28 环节挂载矩阵，F4 §1 唯一真源）；册号身份反查册=`docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml`（REG-CASEBOOK-001，Owner 2026-10-04 上户口批）。完备性铁律=每本永久病历本 ≥1 环节；D11-G01/G02=骨架外缺口件显式不挂（F4 §0 注记）。
+- **触发实测/消费者聚合**：真源=`f5_trigger_facts.yaml`/`f5_consumers_agg.yaml`（图内只挂节点级计数与 ≤5 名字指针，明细禁入图）。
+- **图外补挂**：三台 in_process 册独有门禁（REAL-KEY-REFERENCE-SCAN / TASK-ORDER-DOCS-LOCK / CONSTITUTION-LINE-LIMIT）标签/环节归属=`chief_purpose_addendum.yaml`（12 号/③/⑨ → D11-C05，2026-10-03 总筹裁定）；QUEUE-LANDING×163 身份核验归裁定#480「门禁身份一本账」收敛批，不在本图单独挂载。
+
 ## §1 环节全集（28 环节 = 会话 9 + 提交 13 + 死信 6）
 
 状态列每条附实查路径；⬜/🔨 的区分见 skeleton_mining_policy §5。子环节数=估数（叶层由作业簿枚举，骨架不预枚举品种全集）。
@@ -178,7 +187,7 @@ owner: st-mapbuild-20260924
 
 1. **IDE 对话层触发源**：会话"诞生"发生在 Trae IDE 内部（注入/弹窗/上下文组装），仓库内无机生面可扫——机生边界只能停在 session_worktree_start 被调用这一可观测点（session_worktree.py 头 CONSUMERS"AI 对话启动时调用"即上限）。
 2. **Owner 灰度翻窗过程记录**：flag 翻开的对话现场（如 2026-08-22 serializer 翻 ON、2026-09-12 interactive 批准）只余 flags.yaml 描述内引与 commit 号（281b7f469），过程本身不可机生——图节点以 flag 状态为可扫描面，历史过程引用裁定/留痕文号。
-3. **hold_st_gov2 / hold_stress_phaseB_20260923 目录出处**：全仓（.py/.md/.yaml/.json）grep 零命中，只能确认是人工搬运留袋（疑似 st-gov2 会话与 st-k4-20260923 压测 Phase B 的隔离袋）——先按 ⬜ 处理：D06 作业簿领"考古定罪"条目，若从 git log/会话台账仍不可考则转 🌑 终态。
+3. **hold_st_gov2 / hold_stress_phaseB_20260923 目录出处**：全仓（.py/.md/.yaml/.json）grep 零命中，只能确认是人工搬运留袋（疑似 st-gov2 会话与 st-k4-20260923 压测 Phase B 的隔离袋）——先按 ⬜ 处理：D06 作业簿领"考古定罪"条目，若从 git log/会话台账仍不可考则转 🌑 终态。**2026-10-03 更新（F6 基线复核）**：hold_stress_phaseB_20260923 出处已考——压测 Phase B 空转死信隔离袋，判明于 cleanup_final 班（`docs/_working/cleanup_final/cleanup_ledger.md:26` + `docs/_working/cmd_ledger/automation_master_plan.md:63`「禁擅自 requeue」）；hold_st_gov2 仍无出处（`commitmap_cure/f3_trigger_evidence_readme.md:184` 仅列表提及）——本项 🌑 收窄为 hold_st_gov2 一件。
 
 ## §7 实查命令附录（Owner/后续会话照跑即可复核；全部只读）
 

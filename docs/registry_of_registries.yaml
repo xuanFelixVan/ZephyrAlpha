@@ -521,6 +521,41 @@ tiers:
         description: 生成器再生清洁对棘轮基线（漂移指纹只减不增，新增须 --update-baseline 显式落）
         owner: MOD-GOVERNANCE
 
+      - registry_id: REG-CASEBOOK-001
+        name: 永久病历本登记册（casebook_registry）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+        format: yaml
+        maintenance: manual （条目增删须随裁定或挂图批走；治理类库不挂 TDM 轴，已登记 TestNewRegistryGate._GOVERNANCE_EXEMPT 豁免）
+        entry_count: 5
+        counting_rule: casebooks 列表条目数（外加 outside_registry 注记 2 条不计数）
+        status: active
+        description: 纵向地图家族 casebooks 字段唯一反查册（挂图 SOP §3 机规1 册号载体；Owner 2026-10-04 上户口批 st-vm12e-20261004）。收编五本路径身份（CASEBOOK-001 data/failures 数据对账案卷库含断供案 outage_ 命名段约定/CASEBOOK-002 堵点本/CASEBOOK-003 抢救台账/CASEBOOK-004 审查两卷/CASEBOOK-005 MEMORY 索引）；死因案例册已有 module_id 身份册外注记。净零声明=收编散落路径身份为唯一反查册（宪法 §4 同域收敛）。
+        owned_by: governance
+
+      - registry_id: REG-MAP-DEVDELIVERY-001
+        name: 交付流水线全景图（dev_delivery_map，图11）
+        physical_path: config/dev_delivery_map.yaml
+        format: yaml
+        tier_1_governance: true
+        maintenance: auto （scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py）
+        entry_count: 28
+        counting_rule: nodes[] 中 node_type=stage 的环节条目数（gap 节点 D11-G01/G02=骨架外缺口件不计；counts.total_nodes=30 含 2 gap）
+        status: active
+        description: 图11 机生图——代码从会话诞生到落地 dev 的 28 环节交付流水线（会话9+提交13+死信6+2 gap 显性化），L1 挂血肉四字段（purpose_tags/casebooks/trigger_facts/consumers，挂图SOP §4；生成器硬失败防空壳）
+        owned_by: governance
+
+      - registry_id: REG-MAP-DSCM-001
+        name: 数据供给链图（data_supply_chain_map，图12）
+        physical_path: config/data_supply_chain_map.yaml
+        format: yaml
+        tier_1_governance: true
+        maintenance: auto （scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py）
+        entry_count: 43
+        counting_rule: nodes 条目数（图12 43 节点满配，F2 血肉批后）
+        status: active
+        description: 图12 机生图——数据供给链 43 节点（S1 采集→S5 对账五段），四字段血肉已满（blood_stage=f2_done），DATA-SUPPLY-CHAIN-MAP 门禁经 MAP-ALIGNMENT 聚合台守护
+        owned_by: governance
+
   - tier: 2
     name: 数据与运行时级
     description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表

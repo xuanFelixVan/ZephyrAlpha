@@ -44,13 +44,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-pytest.skip(
-    "SUBJECT-RETIRED: config/dev_delivery_map.yaml retired in 531ac17ef7; validator "
-    "validate_dev_delivery_map never committed (git log --all empty). Adversarial guard "
-    "retires with its subject (chief final-verify disposal 2026-09-28).",
-    allow_module_level=True,
-)
-
+# 2026-10-03 解封（st-chief-mount-20261003）：skip 所述退役已被推翻——config/dev_delivery_map.yaml
+# 复活再生（b192fa39126，2026-09-30）且校验器在册（dc0bc34cff9）；对抗守卫随被测对象复活，
+# 并随挂血肉四字段层（schema 0.3）扩 CV-BLOOD 判据族。
 _REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(_REPO / "scripts" / "governance" / "d5_architecture" / "validators"))
 sys.path.insert(0, str(_REPO / "scripts" / "governance" / "d5_architecture" / "generators"))
@@ -275,9 +271,14 @@ def test_red_inv1_cross_source_copy_from_tasks_yaml():
 # ---------------------------------------------------------------------------
 
 
-def test_red_generator_is_byte_idempotent():
+def test_red_generator_is_byte_idempotent(monkeypatch):
+    """幂等=同输入两次产出逐字节等。唯一活体输入面=scan_queue_states（.runtime/commit_queue 计数，
+    belt daemon 会在两次调用间迁移条目=输入真变了，非生成器非确定；2026-10-03 解封后实测踩中一次）。
+    冻结该面后，其余全部输入（代码/册/骨架/挂血肉件）的逐字节确定性才是本测对象。"""
     import generate_dev_delivery_map as gen
 
+    frozen_states = {st: {"exists": True, "item_count": 0} for st in ("pending", "processing", "done", "dead")}
+    monkeypatch.setattr(gen, "scan_queue_states", lambda root: dict(frozen_states))
     doc1 = gen.serialize_document(gen.build_document(as_of="2026-09-24T12:00:00+08:00", root=_REPO))
     doc2 = gen.serialize_document(gen.build_document(as_of="2026-09-24T12:00:00+08:00", root=_REPO))
     h1 = hashlib.sha256(doc1.encode("utf-8")).hexdigest()
@@ -491,3 +492,151 @@ def test_red_skeleton_cross_check_downgrades_when_absent(tmp_path):
     errs = validate_structure(d, root=tmp_path, warnings=warns)
     assert any("骨架三态列不可读" in w for w in warns)
     assert not any("production 数" in e for e in errs)
+
+
+# ---------------------------------------------------------------------------
+# 红组·CV-BLOOD 挂血肉四字段（挂图SOP §4；2026-10-03 随 schema 0.3 新增）
+# ---------------------------------------------------------------------------
+
+
+def test_red_missing_blood_key():
+    """挂血肉键整条消失（不是 null 而是没有）→ 必报"缺必填键 casebooks"。"""
+    d = copy.deepcopy(_GOOD)
+    _find(d, "D11-C08").pop("casebooks")
+    assert any("缺必填键 casebooks" in e and "D11-C08" in e for e in _errs(d))
+
+
+def test_red_stage_node_empty_casebooks():
+    """stage 环节病历空挂（casebooks=[]）→ 必报 CV-BLOOD 完备性红。"""
+    d = copy.deepcopy(_GOOD)
+    _find(d, "D11-S09")["casebooks"] = []
+    assert any("CV-BLOOD" in e and "casebooks" in e and "D11-S09" in e for e in _errs(d))
+
+
+def test_red_gap_node_fabricated_blood():
+    """gap 节点伪造挂载（casebooks 塞值）→ 必报"gap 节点 casebooks 必须为 null"。"""
+    d = copy.deepcopy(_GOOD)
+    _find(d, "D11-G01")["casebooks"] = ["AP#域二"]
+    assert any("CV-BLOOD" in e and "必须为 null" in e and "D11-G01" in e for e in _errs(d))
+
+
+def test_red_purpose_label_off_legend():
+    """节点直方图用了图例外标签（幻觉标签）→ 必报"用了图例外标签"。"""
+    d = copy.deepcopy(_GOOD)
+    node = _find(d, "D11-C05")
+    node["purpose_tags"] = {**node["purpose_tags"], "「不存在的标签」": 1}
+    d["counts"]["blood"]["gates_mounted"] += 1
+    assert any("CV-BLOOD" in e and "图例外标签" in e for e in _errs(d))
+
+
+def test_red_blood_counts_drift():
+    """手改 counts.blood.gates_mounted（图不回生成器）→ 必报与直方图之和不符。"""
+    d = copy.deepcopy(_GOOD)
+    d["counts"]["blood"]["gates_mounted"] += 7
+    assert any("CV-BLOOD" in e and "gates_mounted" in e for e in _errs(d))
+
+
+def test_red_purpose_labels_missing_top_key():
+    """purpose_labels 顶层键整删 → 必报缺顶层必填键。"""
+    d = copy.deepcopy(_GOOD)
+    d.pop("purpose_labels")
+    assert any("缺顶层必填键: purpose_labels" in e for e in _errs(d))
+
+
+def test_red_purpose_label_without_one_liner():
+    """图例标签缺一句话定义 → 必报"缺一句话定义"（SOP §2：说不出一句话=回炉）。"""
+    d = copy.deepcopy(_GOOD)
+    d["purpose_labels"]["legend"].append({"ordinal": 99, "label_name": "「新标签」", "one_liner": ""})
+    d["counts"]["blood"]["purpose_labels"] += 1
+    assert any("CV-BLOOD" in e and "缺一句话定义" in e for e in _errs(d))
+
+
+def test_green_blood_layer_on_real_map():
+    """绿组：真图挂血肉层完备——30 节点四键全在、28 环节病历非空、图例 12 条与 counts 平。"""
+    for n in _GOOD["nodes"]:
+        for k in ("purpose_tags", "casebooks", "trigger_facts", "consumers"):
+            assert k in n, (n["node_id"], k)
+        if n["node_type"] == "stage":
+            assert n["casebooks"], n["node_id"]
+        else:
+            assert n["casebooks"] is None and n["purpose_tags"] is None
+    assert len(_GOOD["purpose_labels"]["legend"]) == _GOOD["counts"]["blood"]["purpose_labels"]
+    hist = sum(v for n in _GOOD["nodes"] if isinstance(n.get("purpose_tags"), dict) for v in n["purpose_tags"].values())
+    assert hist == _GOOD["counts"]["blood"]["gates_mounted"]
+
+
+# ---------------------------------------------------------------------------
+# 四字段挂载六面（任务书 2026-10-04 上户口批：挂上/缺文件黄牌/INV-1 禁复制/12 标签枚举/
+# 新模块挂点/G01G02 无病历）
+# ---------------------------------------------------------------------------
+
+
+def test_yellow_missing_blood_inputs_warn_not_block(tmp_path):
+    """缺文件黄牌：root 下五输入件缺席 → 进 warnings 不进 errors（校验器只观测不阻断；
+    生成器侧才是硬失败面，见 test_red_generator_missing_blood_input_hard_fails）。"""
+    warns: list[str] = []
+    errs = validate_structure(copy.deepcopy(_GOOD), root=tmp_path, warnings=warns)
+    assert any("四字段输入件缺席" in w and "f5_purpose_tags.yaml" in w for w in warns)
+    assert any("chief_purpose_addendum.yaml" in w for w in warns)
+    assert not any("四字段输入件缺席" in e for e in errs)
+
+
+def test_red_generator_missing_blood_input_hard_fails(tmp_path):
+    """生成器缺件=硬失败（FileNotFoundError）：血肉层不可静默降级——与校验器黄牌构成双面契约。"""
+    import generate_dev_delivery_map as gen
+
+    with pytest.raises(FileNotFoundError, match="挂血肉输入件缺失"):
+        gen.build_document(as_of="2026-10-04T00:00:00+08:00", root=tmp_path)
+
+
+def test_green_blood_inv1_no_leaf_copy():
+    """INV-1 禁复制断言：图内只渲染直方图/计数/指针——叶层字段（source_row/逐台明细/
+    CSV 行）一律不得进图本体。"""
+    raw = (_REPO / "config" / "dev_delivery_map.yaml").read_text(encoding="utf-8")
+    assert "source_row" not in raw, "f5 gates 行号（叶层）泄入图本体"
+    for lb in _GOOD["purpose_labels"]["legend"]:
+        assert set(lb) == {"ordinal", "label_name", "one_liner"}, lb
+    for n in _GOOD["nodes"]:
+        if n["node_type"] != "stage":
+            continue
+        assert set(n["trigger_facts"]) == {"gates", "total_triggers_30d", "zero_trigger_gates"}, n["node_id"]
+        assert set(n["consumers"]) == {"gates", "gates_with_consumers", "sample_consumers"}, n["node_id"]
+        assert len(n["consumers"]["sample_consumers"]) <= 8, n["node_id"]
+        assert all(isinstance(v, int) for v in n["purpose_tags"].values()), n["node_id"]
+        assert all("#" in ptr for ptr in n["casebooks"]), n["node_id"]
+
+
+def test_green_purpose_labels_enum_matches_f5_freeze():
+    """12 标签枚举校验：图例与 f5_purpose_tags.yaml labels 节逐条同名同号（冻结真源）。"""
+    f5 = yaml.safe_load((_REPO / "docs/_working/commitmap_cure/f5_purpose_tags.yaml").read_text(encoding="utf-8"))
+    f5_names = [lb["label_name"] for lb in f5["labels"]]
+    legend_names = [lb["label_name"] for lb in _GOOD["purpose_labels"]["legend"]]
+    assert len(f5_names) == 12 and len(set(f5_names)) == 12
+    assert legend_names == f5_names
+    assert [lb["ordinal"] for lb in _GOOD["purpose_labels"]["legend"]] == list(range(1, 13))
+
+
+def test_green_new_module_mounts():
+    """新模块挂点（今夜手术产物五处）：S01=audit/reuse_scan、S02=register_asset+lock_files
+    首 claim 指南路由、S03=liveness_verdict、C05 备注含 approval_resolver/create_guard 修复点。"""
+    import generate_dev_delivery_map as gen
+
+    doc = gen.build_document(as_of="2026-10-04T00:00:00+08:00", root=_REPO)
+    n = {x["node_id"]: x for x in doc["nodes"]}
+    assert "src/zephyr/governance/audit/reuse_scan.py" in n["D11-S01"]["source_anchors"]
+    assert "scripts/governance/register_asset.py" in n["D11-S02"]["source_anchors"]
+    assert "scripts/lock_files.py:1684" in n["D11-S02"]["source_anchors"]
+    assert "_deliver_first_acquire_guide" in n["D11-S02"]["note_zh"]
+    assert "src/zephyr/security/access_control/session_concurrency.py:1608" in n["D11-S03"]["source_anchors"]
+    assert "liveness_verdict" in n["D11-S03"]["note_zh"]
+    assert "approval_resolver" in n["D11-C05"]["note_zh"] and "create_guard" in n["D11-C05"]["note_zh"]
+
+
+def test_green_gap_nodes_four_fields_all_none():
+    """G01G02 无病历：两 gap 节点四字段全 null（骨架外缺口件无机制可挂；红面伪造案见上）。"""
+    for nid in GAP_NODES:
+        node = _find(_GOOD, nid)
+        assert node["purpose_tags"] is None, nid
+        assert node["casebooks"] is None, nid
+        assert node["trigger_facts"] is None, nid
+        assert node["consumers"] is None, nid

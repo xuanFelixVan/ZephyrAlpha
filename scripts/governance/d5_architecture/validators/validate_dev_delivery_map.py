@@ -53,7 +53,7 @@
 # [TESTS] tests/governance/d5_architecture/test_dev_delivery_map_adversarial.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""交付流水线全景图（dev_delivery_map，图 11）结构校验器——v0.2 schema 单一真源。
+"""交付流水线全景图（dev_delivery_map，图 11）结构校验器——v0.3 schema 单一真源（v0.3=挂血肉四字段层，挂图SOP §4）。
 
 形态照抄 validate_strategy_production_map.py（图 9 母版）：
 `validate_structure(data, root=None, warnings=None)->list[str]` 只做纯结构判定（gate 只封阻塞语义）；
@@ -85,6 +85,16 @@ from validate_construction_steps import (
 DEFAULT_MAP = Path("config/dev_delivery_map.yaml")
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _SKELETON_REL = "docs/_working/map_build/fig11_delivery/00_skeleton.md"
+# 挂血肉四字段输入件（与生成器 _F5_*/_CHIEF_ADDENDUM 常量同源面；缺席=黄牌警告不阻断——
+# 生成器侧缺件=FileNotFoundError 硬失败防空壳图，校验器侧只留观测口：图本体四字段挂齐时
+# 输入件在盘与否不构成结构红，重生成前补件即可；勿把战役件可用性耦合进图结构判定）
+_BLOOD_INPUT_RELS: tuple[str, ...] = (
+    "docs/_working/commitmap_cure/f5_purpose_tags.yaml",
+    "docs/_working/commitmap_cure/f5_casebooks_mount.yaml",
+    "docs/_working/commitmap_cure/f5_trigger_facts.yaml",
+    "docs/_working/commitmap_cure/f5_consumers_agg.yaml",
+    "docs/_working/commitmap_cure/chief_purpose_addendum.yaml",
+)
 # depgraph PG 在册性探测（F821 治理补缺：常量段佚失，按 nodes.blueprint_id 列重建，占位符 {ph} 由调用方 .format 填充）
 _SQL_BLUEPRINT_ID_LIST = "SELECT blueprint_id FROM nodes WHERE blueprint_id IN ({ph})"
 
@@ -110,6 +120,8 @@ REQUIRED_TOP = [
     "laws",
     "boundary",
     "layers",
+    "purpose_labels",
+    "casebooks_index",
     "nodes",
     "edges",
     "feedback_loops",
@@ -131,8 +143,16 @@ REQUIRED_NODE = [
     "store_refs",
     "doc_refs",
 ]
-# 必须**存在**（值可为 null）的键：双轴与总线挂载面
-REQUIRED_KEY_PRESENT = ["verified_scope", "module_id", "wiring_status"]
+# 必须**存在**（值可为 null）的键：双轴与总线挂载面 + 挂血肉四字段（挂图SOP §4）
+REQUIRED_KEY_PRESENT = [
+    "verified_scope",
+    "module_id",
+    "wiring_status",
+    "purpose_tags",
+    "casebooks",
+    "trigger_facts",
+    "consumers",
+]
 # 废止别名（同义异名归一后不得残留）——出现即红
 BANNED_NODE_FIELDS = {
     "mech_note_zh": "note_zh",
@@ -160,16 +180,18 @@ DECISION_Q_MAX = 120
 
 # INV-1 复制侵权扫描源（门禁册条目正文）。扫这些键下的长文本；
 # 册缺失/解析失败=子检查跳过（不把热册可用性耦合进地图校验）。
+# 2026-10-03 修复：原稿 Path("docs" / ...) 是 str/str 除法，模块导入即 TypeError——
+# 自 09-28 对抗测试模块级 skip 后无人 import 本件，10-01 重构埋雷无人踩；解封即现形。
 _INV1_REGISTRY_PATHS = (
-    str(Path("docs" / "01_policies_and_standards" / "_registry" / "catalogs") / "in_process_gate_registry.yaml"),
-    str(Path("docs" / "01_policies_and_standards" / "_registry" / "catalogs") / "gate_registry.yaml"),
+    str(Path("docs") / "01_policies_and_standards" / "_registry" / "catalogs" / "in_process_gate_registry.yaml"),
+    str(Path("docs") / "01_policies_and_standards" / "_registry" / "catalogs" / "gate_registry.yaml"),
 )
 # 红队补洞 2026-09-24（宪章级红线 INV-1 覆盖面）：门禁册之外的机生真源正文
 # （tasks.yaml/schedule.yaml/数据资产注册表）抄进图11 节点同样判红。册不可读=跳过不误伤。
 _INV1_GENERIC_PATHS = (
     "src/zephyr/data/config/tasks.yaml",
     "src/zephyr/data/config/schedule.yaml",
-    str(Path("docs" / "01_policies_and_standards" / "_registry" / "catalogs") / "data_asset_registry.yaml"),
+    str(Path("docs") / "01_policies_and_standards" / "_registry" / "catalogs" / "data_asset_registry.yaml"),
 )
 _INV1_TEXT_KEYS = ("description", "desc_zh", "note_zh", "what_zh", "reason_zh", "semantics_zh")
 _INV1_MIN_LEN = 25
@@ -314,6 +336,12 @@ def validate_structure(data: dict, root: Path | None = None, warnings: list[str]
     if not skeleton_status and warnings is not None:
         warnings.append(f"骨架三态列不可读（{_SKELETON_REL}）：CV-DUAL 的 ✅ 对照子检查降 warn")
 
+    # CV-BLOOD 前置黄牌（挂图SOP §4 四字段输入面）：五输入件缺席=warn 不阻断（2026-10-04 上户口批）
+    if warnings is not None:
+        for rel in _BLOOD_INPUT_RELS:
+            if not (root / rel).is_file():
+                warnings.append(f"四字段输入件缺席（黄牌不阻断，重生成前先补件）: {rel}")
+
     nodes = data.get("nodes", [])
     ids: list[str] = []
     universe = set(NODE_UNIVERSE)
@@ -334,7 +362,31 @@ def validate_structure(data: dict, root: Path | None = None, warnings: list[str]
                 _err(errors, f"{nid}: 缺必填字段 {f}")
         for f in REQUIRED_KEY_PRESENT:
             if f not in n:
-                _err(errors, f"{nid}: 缺必填键 {f}（值可为 null，键必须在——双轴/总线挂载面不得静默缺失）")
+                _err(errors, f"{nid}: 缺必填键 {f}（值可为 null，键必须在——双轴/总线/挂血肉面不得静默缺失）")
+        # --- CV-BLOOD：挂血肉四字段形态（挂图SOP §4；gap=null、stage=直方图/指针列表/计数 dict）---
+        if n.get("node_type") == "gap":
+            for bf in ("purpose_tags", "casebooks", "trigger_facts", "consumers"):
+                if n.get(bf) is not None:
+                    _err(errors, f"{nid}: CV-BLOOD——gap 节点 {bf} 必须为 null（骨架外缺口件无机制可挂）")
+        elif n.get("node_type") == "stage":
+            pt = n.get("purpose_tags")
+            if not isinstance(pt, dict) or not all(isinstance(v, int) and not isinstance(v, bool) for v in pt.values()):
+                _err(
+                    errors,
+                    f"{nid}: CV-BLOOD——purpose_tags 须为 dict[str,int] 标签直方图（实际类型 {type(pt).__name__}）",
+                )
+            cb = n.get("casebooks")
+            if not isinstance(cb, list) or not cb or not all(isinstance(x, str) and x.strip() for x in cb):
+                _err(
+                    errors,
+                    f"{nid}: CV-BLOOD——casebooks 须为非空 册码#章码 指针列表（挂图SOP §3 完备性：环节病历不许空挂）",
+                )
+            tf = n.get("trigger_facts")
+            if not isinstance(tf, dict) or not {"gates", "total_triggers_30d", "zero_trigger_gates"} <= set(tf):
+                _err(errors, f"{nid}: CV-BLOOD——trigger_facts 缺 gates/total_triggers_30d/zero_trigger_gates")
+            cs = n.get("consumers")
+            if not isinstance(cs, dict) or not {"gates", "gates_with_consumers", "sample_consumers"} <= set(cs):
+                _err(errors, f"{nid}: CV-BLOOD——consumers 缺 gates/gates_with_consumers/sample_consumers")
         # --- CV-DOMAIN：越域挂载（决策判据归 TDM）---
         for xf in CROSS_DOMAIN_FIELDS:
             if xf in n:
@@ -431,6 +483,61 @@ def validate_structure(data: dict, root: Path | None = None, warnings: list[str]
         for a in anchors:
             if a and _is_checkable_disk_path(a) and not (root / a).exists():
                 _err(errors, f"{nid}: 路径锚磁盘实存检查失败（锚不存在）: {a}")
+
+    # --- CV-BLOOD 全图面：图例完备（SOP §2）+ 标签命中域 + counts 三面平（手改/幻觉漂移=红）---
+    pl = data.get("purpose_labels") or {}
+    legend = pl.get("legend") if isinstance(pl, dict) else None
+    legend_names = [lb.get("label_name") for lb in (legend or []) if isinstance(lb, dict)]
+    hist_total = 0
+    stage_with_cb = 0
+    cb_prefixes: set[str] = set()
+    for n in nodes:
+        if not isinstance(n, dict) or n.get("node_type") != "stage":
+            continue
+        pt = n.get("purpose_tags")
+        if isinstance(pt, dict):
+            hist_total += sum(v for v in pt.values() if isinstance(v, int) and not isinstance(v, bool))
+        cb = n.get("casebooks")
+        if isinstance(cb, list) and cb:
+            stage_with_cb += 1
+            cb_prefixes.update(str(x).split("#", 1)[0] for x in cb)
+    if not legend_names:
+        _err(errors, "CV-BLOOD——purpose_labels.legend 不得为空（挂图SOP §2：图例冻结入图头）")
+    else:
+        if len(legend_names) != len(set(legend_names)):
+            _err(errors, "CV-BLOOD——purpose_labels.legend 标签重名")
+        for lb in legend:
+            if not str(lb.get("one_liner") or "").strip():
+                _err(errors, f"CV-BLOOD——标签 {lb.get('label_name')!r} 缺一句话定义（说不出一句话=回炉）")
+        legend_set = set(legend_names)
+        for n in nodes:
+            if not isinstance(n, dict) or not isinstance(n.get("purpose_tags"), dict):
+                continue
+            for lname in n["purpose_tags"]:
+                if lname not in legend_set:
+                    _err(errors, f"{n.get('node_id')}: CV-BLOOD——purpose_tags 用了图例外标签 {lname!r}")
+    blood_counts = (data.get("counts") or {}).get("blood") or {}
+    if blood_counts:
+        if blood_counts.get("gates_mounted") != hist_total:
+            _err(
+                errors,
+                f"CV-BLOOD——counts.blood.gates_mounted={blood_counts.get('gates_mounted')} 与节点直方图之和 "
+                f"{hist_total} 不符（手改漂移或幻影挂载）",
+            )
+        if blood_counts.get("purpose_labels") != len(legend_names):
+            _err(errors, "CV-BLOOD——counts.blood.purpose_labels 与图例实数不符")
+        if blood_counts.get("nodes_with_casebooks") != stage_with_cb:
+            _err(
+                errors,
+                f"CV-BLOOD——counts.blood.nodes_with_casebooks={blood_counts.get('nodes_with_casebooks')} "
+                f"与非空 casebooks 节点实数 {stage_with_cb} 不符",
+            )
+        if blood_counts.get("casebooks_books") != len(cb_prefixes):
+            _err(
+                errors,
+                f"CV-BLOOD——counts.blood.casebooks_books={blood_counts.get('casebooks_books')} "
+                f"与册码前缀去重实数 {len(cb_prefixes)} 不符",
+            )
 
     if len(ids) != len(set(ids)):
         _err(errors, "node_id 存在重复")

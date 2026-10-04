@@ -1,7 +1,7 @@
 # 交付流水线全景图（dev_delivery_map，图 11）——由 generate_dev_delivery_map.py 机生。
 # 本文件禁手改后不回生成（counts 一致性校验判红）；环节契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md。
 # 节点只存稳定标识符与指针（INV-1）；machine_facts 层重扫即刷新，人工语义层改动须先回写骨架。
-schema_version: '0.2'
+schema_version: '0.3'
 map_id: dev_delivery_map
 name_zh: 交付流水线全景图
 nickname: 交付流水线
@@ -9,13 +9,14 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
-generated_at: '2026-09-30T08:30:35+08:00'
+generated_at: '2026-10-04T10:52:08+08:00'
 ssot_note_zh: '骨架人工语义层（环节名/decision_question/laws/boundary/边/反馈环/L2 退出码处方列）契约真源=docs/_working/map_build/fig11_delivery/00_skeleton.md（§6
   封顶 28 环节）+ 八本作业簿（exec_evidence 口径真源=各簿 §末-3 实查命令）；machine_facts 层每次全量重扫可执行真相源（门禁册/reconciler 登记面/四脚本 AST 面/队列四态目录只读计数/退出码分发表与生产者构造/骨架三态列/depgraph
   在册 module_id 投影面），禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。
 
-  字段分层（六图终局卷 §1 裁定一）：L0 通用层统一名 note_zh/doc_refs（三个同义异名注解字段与两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；L1 纵轴层本图取用 wiring_status/red_reason/doc_refs/exec_evidence；L2
-  图专属层字段清单=exit_codes（提交门退出码全谱：顶层矩阵+节点级专码归属）、gate_cluster（门禁簇归属）、deadletter_class（死信分类归属）。
+  字段分层（六图终局卷 §1 裁定一）：L0 通用层统一名 note_zh/doc_refs（三个同义异名注解字段与两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；L1 纵轴层本图取用 wiring_status/red_reason/doc_refs/exec_evidence/purpose_tags/casebooks/trigger_facts/consumers（后四=挂图SOP
+  §4 四标准字段：输入件=commitmap_cure 战役 f5 四件+总筹 addendum，缺件生成器硬失败；标签图例=purpose_labels 节；机制级 gate→标签/环节映射=叶层留输入件不进图本体，图内只渲染节点直方图；gap
+  节点四字段=null 无机制可挂）；L2 图专属层字段清单=exit_codes（提交门退出码全谱：顶层矩阵+节点级专码归属）、gate_cluster（门禁簇归属）、deadletter_class（死信分类归属）。
 
   双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §1 状态列 ✅（26 个，多了算谎少了算欠），structure=仅结构性事实已核（2 个 🔨 环节 + 2 个 gap 节点）；本生成器不擅改任何判据。
 
@@ -45,6 +46,59 @@ layers:
   name_zh: 死信车道
   span_zh: 起=C10 失败判定；止=requeue 回 pending 或留 dead/ 终态
   handoff_zh: D04 回 C08 入队（新 qid）；D03 出域到 task_board（任务治理域，引用不吸收）
+purpose_labels:
+  law_zh: 目的标签=挂图SOP §2 横切轴：11 条=00_design_basis §1 冻结表（Owner 终审），12 号「别把钥匙留在门口」=裁定#480 批准增设；冻结后机贴不改名
+  machine_input: docs/_working/commitmap_cure/f5_purpose_tags.yaml
+  mount_rule_zh: 标签贴在机制上：门禁级 gate→标签/环节映射=叶层（f5_purpose_tags.yaml+chief_purpose_addendum.yaml，INV-1 不进图本体）；图内渲染=节点
+    purpose_tags 直方图——同标签多钉=重复簇显影位（内收对审入口）
+  legend:
+  - ordinal: 1
+    label_name: 「会话进场先亮身份」
+    one_liner: 进场先登记身份，干活留名，出了事找得到人
+  - ordinal: 2
+    label_name: 「施工队还活着吗」
+    one_liner: 证明施工队没死，死了别让它继续"代表你"说话
+  - ordinal: 3
+    label_name: 「文件在谁手里」
+    one_liner: 改文件前先领地，防止两个人同时改一个文件互相踩
+  - ordinal: 4
+    label_name: 「新文件上户口」
+    one_liner: 新建的东西必须登记姓名籍贯，否则就是黑户，门禁见一次拦一次
+  - ordinal: 5
+    label_name: 「别拿假地址骗我」
+    one_liner: 防幻觉漂移——文件名、路径、引用必须真实存在，不许凭记忆编
+  - ordinal: 6
+    label_name: 「别人犯错别连坐我」
+    one_liner: 他人的违规不能算在我头上，各扫门前雪；死人的错我顺路扫（见 §2.1）
+  - ordinal: 7
+    label_name: 「宁可留错不可删错」
+    one_liner: 档案安全——销账不可逆，删东西必须过最高审
+  - ordinal: 8
+    label_name: 「账本必须对得上」
+    one_liner: 一致性对账——册子和现实必须一致，两处说法必有一假
+  - ordinal: 9
+    label_name: 「代码的底线体面」
+    one_liner: 质量底线——格式、命名、时区这些不改就难受的洁癖
+  - ordinal: 10
+    label_name: 「死信也要死得明白」
+    one_liner: 死信生命周期——为什么死、能不能救、救不了怎么体面下葬
+  - ordinal: 11
+    label_name: 「门禁快而不漏」
+    one_liner: 提速——安检可以快，但检查项一项不能少
+  - ordinal: 12
+    label_name: 「别把钥匙留在门口」
+    one_liner: 密钥不裸奔/SQL 不散落/LLM 必经安检
+casebooks_index:
+  law_zh: 病历挂载=挂图SOP §3：只挂本（册码#章码指针）不挂病例；完备性铁律=每本永久病历本 ≥1 环节
+  machine_input: docs/_working/commitmap_cure/f5_casebooks_mount.yaml
+  books:
+  - AP
+  - DCS
+  - MEM
+  - RV1
+  - RV2
+  - SV
+  gap_unmounted_note_zh: D11-G01/G02=骨架外缺口件无运行代码可挂（F4 §0 显式不挂注记）
 exit_codes:
   owner_node: D11-C01
   law_zh: 退出码是全车道共用的机器契约：改分发表=改契约，须经本矩阵穷举并进commit_navigation_playbook 指路面（作业簿 04 §1）
@@ -150,19 +204,20 @@ exit_codes:
 gate_cluster:
   in_process:
     registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
-    total_gates_field: 104
-    entries_scanned: 104
+    total_gates_field: 105
+    entries_scanned: 105
     files_trigger_entries: 25
     note_zh: priority 真源在代码 GateSpec、own_scope 册面无此字段（作业簿 05 溢出 O-C12）
   shell:
     registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
-    total_gates_field: 178
-    entries_scanned: 178
+    total_gates_field: 185
+    entries_scanned: 185
     by_enforcement_channel: &id004
-      commit-gate: 99
-      manual: 28
-      pre-commit: 51
-    own_scope_true_entries: 57
+      commit-gate: 95
+      commit-gateway: 2
+      manual: 39
+      pre-commit: 49
+    own_scope_true_entries: 58
     generated_by: scripts/governance/generators/generate_gate_registry.py
     note_zh: 字段值与条目实数双口径并列（total_gates 落后于列表=册内漂移，由生成器 --check 管）
   two_channel_overlap_note_zh: in-process ∩ pre-commit 实测=1 台（GATE-VOCAB 双执行），生成器注释「交集 0」已过期（作业簿 05 溢出 O-C10）
@@ -181,7 +236,7 @@ deadletter_class:
     marker_counts: &id005
       source: scripts/commit_queue.py
       exists: true
-      _DEAD_REASON_ENV_MARKERS: 18
+      _DEAD_REASON_ENV_MARKERS: 23
       _DEAD_REASON_ITEM_MARKERS: 18
 nodes:
 - node_id: D11-S01
@@ -190,7 +245,8 @@ nodes:
   lane: S
   node_type: stage
   decision_question: 本会话该启动吗？启动前环境/守卫/隔离施工/能力反查就位了吗？
-  note_zh: 冷启动序列钩子=phase_manager session_startup（环境切换→reaper 守卫存活→worktree 申请制→能力反查→depgraph 登记）；开班检查脚本 record_session_start_commit.py。逐项守则归并行协调政策，图不复制
+  note_zh: 冷启动序列钩子=phase_manager session_startup（环境切换→reaper 守卫存活→worktree 申请制→能力反查→depgraph 登记）；开班检查脚本 record_session_start_commit.py；同类半成品在途预查=audit/reuse_scan（裁定#480
+    C-2「先查再建」：三源 fail-open 纯只读，session_worktree_start 注册成功后打印同类半成品提示）。逐项守则归并行协调政策，图不复制
   build_status: built
   build_status_zh: built
   confidence: verified
@@ -198,6 +254,7 @@ nodes:
   evidence:
   - .runtime/session_registry.json 实查在盘（2026-09-24）
   - scripts/record_session_start_commit.py 实查在盘
+  - 'src/zephyr/governance/audit/reuse_scan.py 在位（裁定#480 C-2）；本会话 2026-10-04 启动实弹：start 输出「reuse_scan: 未提供 task_files，跳过预查」=预查钩子活体'
   - src/zephyr/governance/ops_governance/phase_manager.py:248 session_startup 在位
   exec_evidence:
   - .runtime/lookup_audit/ 367 件（2026-09-25 只读计数）=冷启动第 4 条能力反查审计在产面
@@ -208,6 +265,7 @@ nodes:
   source_anchors:
   - src/zephyr/governance/ops_governance/phase_manager.py:248
   - scripts/record_session_start_commit.py
+  - src/zephyr/governance/audit/reuse_scan.py
   runtime_refs:
   - .runtime/session_registry.json
   data_refs: []
@@ -222,6 +280,19 @@ nodes:
   - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
   wiring_status: wired
   module_label_bilingual: ZephyrAlpha 施工阶段门控引擎. / Phase Manager
+  purpose_tags: {}
+  casebooks:
+  - AP#域一
+  - MEM#1
+  - RV2#缺口(R2-F6)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S02
   name_zh: worktree 分配与池化
   stage: S
@@ -229,15 +300,19 @@ nodes:
   node_type: stage
   decision_question: 本会话 worktree 从哪来？池 lease 还是直接创建？并发阻断怎么判？
   note_zh: session_worktree_start 优先 WorktreePool.lease（失败 fall back 直建，池永不阻断启动）+lease 后异步 prefetch 补池；breaking_change
-    双向并发阻断
+    双向并发阻断；新资产上户口合一命令=scripts/governance/register_asset.py（裁定#480 C-2：creation_token/大白话/depgraph 五道手续一条命令编排，纯编排零重写）；首
+    claim 指南路由=lock_files.py:1684 _deliver_first_acquire_guide（本会话首次 acquire 弹施工指路 playbook 锚点，已读留痕后零输出，fail-open
+    不绑架锁主流程）
   build_status: built
   build_status_zh: built
   confidence: verified
   verified_scope: production
   evidence:
+  - scripts/governance/register_asset.py 在位（MOD-GOV-REGISTER-ASSET，裁定#480 C-2 上户口合一）
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:2607 session_worktree_start
   - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277 lease（P3.3 池化+prefetch）
   - 本战役工作目录 .aidrafts/st-mapbuild-20260924 即活体
+  - 首 claim 指南路由活体实弹（2026-10-04）：本会话首次 lock_files acquire 输出「首次施工指路」段（FT-new_script_py playbook 锚点递送）
   exec_evidence:
   - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277 lease 在位（复跑 grep -n 'def lease'）
   - 主区只读 ls -d .aidrafts/* → 12 个在途会话 worktree（2026-09-25）；本战役目录 .aidrafts/st-mapbuild-20260924 即活体
@@ -246,6 +321,8 @@ nodes:
   source_anchors:
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py:2607
   - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277
+  - scripts/governance/register_asset.py
+  - scripts/lock_files.py:1684
   runtime_refs:
   - .aidrafts/
   - .aidrafts_pool/
@@ -261,13 +338,27 @@ nodes:
   - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
   wiring_status: wired
   module_label_bilingual: 会话Worktree / Session Worktree
+  purpose_tags: {}
+  casebooks:
+  - AP#域一
+  - MEM#1
+  - RV2#缺口(B-1)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S03
   name_zh: 会话心跳与活性判定
   stage: S
   lane: S
   node_type: stage
   decision_question: 会话还活着吗？新鲜窗与 idle 自退双轨怎么判死？
-  note_zh: heartbeat_daemon 30s 刷新+jsonl 审计；SessionRegistry 90s 新鲜窗+1800s idle 自退双轨；活性 schema 契约引用并行协调政策（吸收其路径作节点注解，不复制正文）
+  note_zh: heartbeat_daemon 30s 刷新+jsonl 审计；SessionRegistry 90s 新鲜窗+1800s idle 自退双轨；单一活性裁决表=liveness_verdict（裁定#480
+    C-2 活性合流：8 套活性机制零改动继续在岗作数据源，P1-P6 优先级只读折算，唯一结论=state+authoritative_signal——内收式合流非重写）；活性 schema 契约引用并行协调政策（吸收其路径作节点注解，不复制正文）
   build_status: built
   build_status_zh: built
   confidence: verified
@@ -275,6 +366,7 @@ nodes:
   evidence:
   - heartbeat_daemon.py:39-40（30s 刷新+jsonl 审计）
   - session_concurrency.py:148（90s 新鲜窗+1800s idle 自退）
+  - session_concurrency.py:1608 def liveness_verdict 在位（裁定#480 C-2，st-sB-surgery-20261003 施工；同批 tests/governance/test_liveness_verdict_20261003.py）
   exec_evidence:
   - heartbeat_daemon 文件路径节声明审计真源=.runtime/sessions/<sid>/heartbeat.jsonl
   - 主区只读 ls .runtime/sessions → 49 个会话目录，逐目录 heartbeat.jsonl/heartbeat.pid 面（2026-09-25）
@@ -283,6 +375,7 @@ nodes:
   source_anchors:
   - src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:39
   - src/zephyr/security/access_control/session_concurrency.py:148
+  - src/zephyr/security/access_control/session_concurrency.py:1608
   runtime_refs:
   - .runtime/（heartbeat jsonl 审计面）
   data_refs: []
@@ -293,6 +386,20 @@ nodes:
   - docs/_working/map_build/fig11_delivery/01_会话启动与worktree池.md
   wiring_status: wired
   module_label_bilingual: session heartbeat 独立进程 / Heartbeat Daemon
+  purpose_tags: {}
+  casebooks:
+  - AP#域一
+  - MEM#1
+  - RV2#缺口(R2-F1/R2-F2)
+  - DCS#队列(DEATH-017)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S04
   name_zh: 改前 claim（文件锁+基线快照）
   stage: S
@@ -331,6 +438,19 @@ nodes:
   - docs/_working/map_build/fig11_delivery/02_claim协议与暂存晋升.md
   wiring_status: wired
   module_label_bilingual: 锁files / lock_files
+  purpose_tags: {}
+  casebooks:
+  - AP#域一
+  - MEM#2
+  - RV1#缺口(F3 归一锚面)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S05
   name_zh: 在途编辑与暂存晋升
   stage: S
@@ -375,6 +495,18 @@ nodes:
   wiring_status: unwired_no_caller
   red_reason: unwired
   module_label_bilingual: 对账注册表 / reconciliation_registry
+  purpose_tags: {}
+  casebooks:
+  - AP#域五
+  - MEM#2
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S06
   name_zh: 会话内 worktree 提交
   stage: S
@@ -413,6 +545,19 @@ nodes:
   wiring_status: wired
   gate_cluster: worktree_compatible_subset
   module_label_bilingual: 会话Worktree / Session Worktree
+  purpose_tags: {}
+  casebooks:
+  - AP#域二
+  - MEM#2
+  - DCS#队列(DEATH-017)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S07
   name_zh: 合并回主区（merge 正门）
   stage: S
@@ -457,6 +602,18 @@ nodes:
   red_reason: unwired
   gate_cluster: pre_merge_topo_check
   module_label_bilingual: 会话Worktree / Session Worktree
+  purpose_tags: {}
+  casebooks:
+  - AP#域二
+  - MEM#2
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S08
   name_zh: 放弃与死会话回收
   stage: S
@@ -496,6 +653,20 @@ nodes:
   - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
   wiring_status: wired
   module_label_bilingual: 锁files / lock_files
+  purpose_tags: {}
+  casebooks:
+  - AP#域一+域四
+  - MEM#1
+  - RV1#缺口(F2/F3/F5)
+  - RV2#缺口(R2-F1/R2-F5)+RV2#裁定(#477/#478)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-S09
   name_zh: 收尾注销与 handoff 交接
   stage: S
@@ -534,6 +705,17 @@ nodes:
   - docs/_working/map_build/fig11_delivery/03_merge回主区与收尾.md
   wiring_status: wired
   module_label_bilingual: Session 级并发协调模块 / Session Concurrency
+  purpose_tags: {}
+  casebooks:
+  - MEM#2
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C01
   name_zh: 提交正门 CLI 与危险命令外壳
   stage: C
@@ -595,6 +777,25 @@ nodes:
     commit_exit_map: *id001
     exit_code_producers: *id002
     dead_branch_statuses: *id003
+  purpose_tags:
+    「会话进场先亮身份」: 1
+  casebooks:
+  - AP#域二
+  - MEM#5
+  - DCS#队列(DEATH-017)
+  trigger_facts:
+    gates: 1
+    total_triggers_30d: 6
+    zero_trigger_gates: []
+  consumers:
+    gates: 1
+    gates_with_consumers: 1
+    sample_consumers:
+    - .pre-commit-config.yaml
+    - .trae/rules/onboarding_detail.md
+    - .trae/rules/project_rules.md
+    - .workbuddy/memory/2026-09-15.md
+    - data/databases/backups/depgraph_backup_20260721_220004.sql
 - node_id: D11-C02
   name_zh: 失败指引锚点递送
   stage: C
@@ -630,6 +831,18 @@ nodes:
   wiring_status: partial
   red_reason: unwired
   module_label_bilingual: Git提交 / git_commit
+  purpose_tags: {}
+  casebooks:
+  - DCS#全册（本册=C02 递送锚 commit_navigation_playbook 的第三真源原料）
+  - MEM#9
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C03
   name_zh: claim 结算与失败重试语义
   stage: C
@@ -669,6 +882,18 @@ nodes:
   - 6
   - 7
   module_label_bilingual: Git提交 / git_commit
+  purpose_tags: {}
+  casebooks:
+  - AP#域二
+  - MEM#2
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C04
   name_zh: 全局串行锁与锁争用改道
   stage: C
@@ -710,6 +935,22 @@ nodes:
   exit_codes:
   - 2
   module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+  purpose_tags:
+    「文件在谁手里」: 1
+  casebooks:
+  - MEM#6
+  trigger_facts:
+    gates: 1
+    total_triggers_30d: 0
+    zero_trigger_gates:
+    - COMMIT-CRITICAL-SECTION-LOCK
+  consumers:
+    gates: 1
+    gates_with_consumers: 1
+    sample_consumers:
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    - docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+    - scripts/governance/generators/generate_gate_registry.py
 - node_id: D11-C05
   name_zh: in-process 门禁链执行
   stage: C
@@ -717,12 +958,16 @@ nodes:
   node_type: stage
   decision_question: 本改动按 priority 逐台过了门禁册登记的 in-process 门禁吗？（数量以册 total_gates 字段为准）
   note_zh: in_process_gate_registry.yaml 动态注册（gate_auto_registrar）；锁外预跑+结果缓存+漂移观察（flags gate_preflight/gate_result_cache）；worktree
-    跳过面 _WORKTREE_SKIP_GATES；叶层=册自身（99 条目明细进作业簿 05，INV-1 不抄进图）
+    跳过面 _WORKTREE_SKIP_GATES；审批判定收敛器=commit_gates/approval_resolver（三通道：marker 防伪[查无即拒]+裁定册授权+都不命中，5611dbf3ca 修复
+    _strip_worktree_prefix 补单数 worktree/ 形态——serializer 落地树授权命中治本）；create_guard 册读取经 anchor_main_root 锚主仓根（同批修复：主区盘面=登记即时真源，#ARCH-324
+    先例）；叶层=册自身（99 条目明细进作业簿 05，INV-1 不抄进图）
   build_status: built
   build_status_zh: built
   confidence: verified
   verified_scope: production
   evidence:
+  - approval_resolver._strip_worktree_prefix 单数 worktree/ 形态在位（5611dbf3ca 时序倒置治本，#461 落地形态裁定命中放行）
+  - create_guard.py:728 anchor_main_root 主区锚定在位（登记完即可提交，serializer 陈旧册破坏已修）
   - gateway _preflight_flag_enabled/_check_gates_with_drift_watch 在位
   - in_process_gate_registry.yaml total_gates 字段 grep 实查
   - machine_facts 双计数（字段值 vs 条目实扫）由本生成器动态产出
@@ -736,6 +981,8 @@ nodes:
   - src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:2880
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:347
+  - src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+  - src/zephyr/gov_enforcement/commit_gates/create_guard.py
   runtime_refs: []
   data_refs:
   - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
@@ -758,13 +1005,53 @@ nodes:
     gate_registry_facts: &id006
       registry: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
       exists: true
-      total_gates_field: 104
-      entries_scanned: 104
+      total_gates_field: 105
+      entries_scanned: 105
       generated_by: null
       cluster_by_channel:
-        unspecified: 104
+        unspecified: 105
       own_scope_true_entries: 0
       files_trigger_entries: 25
+  purpose_tags:
+    「账本必须对得上」: 43
+    「代码的底线体面」: 26
+    「新文件上户口」: 27
+    「别拿假地址骗我」: 12
+    「别把钥匙留在门口」: 5
+    「会话进场先亮身份」: 1
+    「文件在谁手里」: 5
+    「别人犯错别连坐我」: 2
+    「宁可留错不可删错」: 4
+    「门禁快而不漏」: 2
+    「施工队还活着吗」: 6
+    「死信也要死得明白」: 1
+  casebooks:
+  - AP#域二
+  - DCS#真源+结构+手续
+  - MEM#3
+  - RV1#缺口(F6)
+  trigger_facts:
+    gates: 134
+    total_triggers_30d: 189273
+    zero_trigger_gates:
+    - GATE-ARCH
+    - GATE-NAMING-AUDIT
+    - GATE-FRONTMATTER-AUDIT
+    - GATE-BP-PLACE
+    - GATE-DEDUP
+    - ISSUE-RESOLVED-INTEGRITY
+  consumers:
+    gates: 134
+    gates_with_consumers: 131
+    sample_consumers:
+    - .pre-commit-config.yaml
+    - .trae/documents/P1-E3_NLP管道架构裁定与施工方案.md
+    - .trae/documents/_arch_issue_full_backup.yaml
+    - .trae/documents/algorithm_overview_architecture_decision.md
+    - .trae/documents/backtest_observability_mlflow_plan.md
+    - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+    - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+    - data/databases/backups/depgraph_backup_20260821_p06.sql
 - node_id: D11-C06
   name_zh: 暂存与提交本体
   stage: C
@@ -803,6 +1090,24 @@ nodes:
   - 10
   gate_cluster: gw_marker_chain
   module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+  purpose_tags:
+    「会话进场先亮身份」: 1
+  casebooks:
+  - DCS#结构(DEATH-002)
+  - MEM#5
+  trigger_facts:
+    gates: 1
+    total_triggers_30d: 607
+    zero_trigger_gates: []
+  consumers:
+    gates: 1
+    gates_with_consumers: 1
+    sample_consumers:
+    - config/dev_delivery_map.yaml
+    - data/databases/backups/depgraph_backup_20260721_220004.sql
+    - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+    - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+    - data/databases/backups/depgraph_backup_20260821_p06.sql
 - node_id: D11-C07
   name_zh: pre-commit shell 门禁通道
   stage: C
@@ -850,12 +1155,45 @@ nodes:
     gate_registry_facts: &id007
       registry: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
       exists: true
-      total_gates_field: 178
-      entries_scanned: 178
+      total_gates_field: 185
+      entries_scanned: 185
       generated_by: scripts/governance/generators/generate_gate_registry.py
       cluster_by_channel: *id004
-      own_scope_true_entries: 57
-      files_trigger_entries: 68
+      own_scope_true_entries: 58
+      files_trigger_entries: 67
+  purpose_tags:
+    「宁可留错不可删错」: 5
+    「文件在谁手里」: 1
+    「新文件上户口」: 7
+    「账本必须对得上」: 18
+    「代码的底线体面」: 11
+    「别拿假地址骗我」: 2
+    「别把钥匙留在门口」: 2
+    「死信也要死得明白」: 2
+  casebooks:
+  - AP#域二
+  - DCS#手续+通道+真源+审批
+  - MEM#3
+  - RV1#缺口(F6)
+  trigger_facts:
+    gates: 48
+    total_triggers_30d: 1323
+    zero_trigger_gates:
+    - GATE-DETECT-GIT-DANGEROUS
+    - GATE-DETECT-SHELL-DANGEROUS
+    - GATE-DETECT-PERMANENT-DELETION
+  consumers:
+    gates: 48
+    gates_with_consumers: 48
+    sample_consumers:
+    - .pre-commit-config.yaml
+    - data/databases/backups/depgraph_backup_20260814_aigit001_taskboard.sql
+    - data/databases/backups/depgraph_backup_20260817_ai00close.sql
+    - data/databases/backups/depgraph_backup_20260821_p06.sql
+    - data/databases/backups/depgraph_backup_AI-DGR-001_20260817.sql
+    - .trae/documents/_algo_flow_script_backup/check_algo_flow.py
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    - py.ini
 - node_id: D11-C08
   name_zh: 入队即转活（快照入袋）
   stage: C
@@ -901,6 +1239,7 @@ nodes:
       path: scripts/commit_queue.py
       exists: true
       public_functions:
+      - backfill_base_heads
       - channel_key_for_files
       - check_dead_burst
       - classify_dead_reason
@@ -912,12 +1251,27 @@ nodes:
       - emit_dead_backlog_alert
       - enqueue_item
       - main
+      - mark_cascade_stale_batch
       - queue_health
       - queue_status
       - requeue_dead_item
       - resolve_queue_root
       - try_bootstrap_drain
       main_exit_codes: []
+  purpose_tags: {}
+  casebooks:
+  - AP#域三
+  - SV#底数+SV#治未病
+  - DCS#队列(DEATH-016)
+  - MEM#4
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C09
   name_zh: 排空调度与消费端
   stage: C
@@ -957,6 +1311,18 @@ nodes:
   wiring_status: partial
   red_reason: unwired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  purpose_tags: {}
+  casebooks:
+  - AP#域三
+  - MEM#4
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C10
   name_zh: 真落盘（worktree+CAS+收敛）
   stage: C
@@ -999,6 +1365,20 @@ nodes:
   - env→退回 pending 绝不死信（LandingEnvironmentError）
   - item→dead/
   module_label_bilingual: 提交队列落盘执行体 / Commit Queue Landing
+  purpose_tags: {}
+  casebooks:
+  - AP#域二
+  - DCS#队列(DEATH-016/018)
+  - RV1#缺口(F3/F4)
+  - MEM#5
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C11
   name_zh: post-commit 对账与守卫
   stage: C
@@ -1037,6 +1417,19 @@ nodes:
   module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
   machine_facts:
     reconciler_register_calls: 58
+  purpose_tags: {}
+  casebooks:
+  - RV1#全卷+RV2#全卷（**主挂**）
+  - MEM#10
+  - DCS#队列(DEATH-016 兼)
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C12
   name_zh: 机器车道与紧急通道
   stage: C
@@ -1073,6 +1466,17 @@ nodes:
   - docs/_working/map_build/fig11_delivery/07_对账观测与紧急车道.md
   wiring_status: wired
   module_label_bilingual: 全项目唯一合法 git commit 入口 / Git Commit Gateway
+  purpose_tags: {}
+  casebooks:
+  - MEM#4
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-C13
   name_zh: 队列台账与运维观测
   stage: C
@@ -1128,10 +1532,24 @@ nodes:
         item_count: 1
       done:
         exists: true
-        item_count: 718
+        item_count: 498
       dead:
         exists: true
-        item_count: 689
+        item_count: 631
+  purpose_tags: {}
+  casebooks:
+  - AP#域三
+  - SV#治未病(三次重试报警)
+  - RV1#观察+RV2#观察
+  - MEM#10
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-D01
   name_zh: 死信产生（不卡队）
   stage: D
@@ -1172,6 +1590,20 @@ nodes:
   - env
   - other
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  purpose_tags: {}
+  casebooks:
+  - SV#底数+SV#死因
+  - DCS#队列
+  - AP#域三
+  - MEM#8
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-D02
   name_zh: 死因三分类甄别
   stage: D
@@ -1211,6 +1643,19 @@ nodes:
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
   machine_facts:
     deadletter_marker_counts: *id005
+  purpose_tags: {}
+  casebooks:
+  - SV#死因+SV#方案(分诊)
+  - DCS#全册（死因→处方蒸馏正典）
+  - MEM#8
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-D03
   name_zh: 死信台账联动与告警
   stage: D
@@ -1242,6 +1687,19 @@ nodes:
   - docs/_working/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  purpose_tags: {}
+  casebooks:
+  - AP#域三
+  - SV#治未病
+  - MEM#10
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-D04
   name_zh: requeue 复活链路
   stage: D
@@ -1275,6 +1733,19 @@ nodes:
   - docs/_working/map_build/fig11_delivery/08_死信全链.md
   wiring_status: wired
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  purpose_tags: {}
+  casebooks:
+  - SV#裁定(B doctor 三铁闸)+SV#抢救目标+SV#口径
+  - DCS#队列(DEATH-009/016)
+  - MEM#7
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-D05
   name_zh: 级联失效判定（cascade_stale）
   stage: D
@@ -1309,6 +1780,19 @@ nodes:
   deadletter_class:
   - item(cascade_stale)
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  purpose_tags: {}
+  casebooks:
+  - SV#底数(cascade_stale)
+  - DCS#队列(DEATH-018)
+  - MEM#8
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-D06
   name_zh: 死信归档轮换与清零战役
   stage: D
@@ -1351,6 +1835,20 @@ nodes:
   - 真未落地
   - 历史留档
   module_label_bilingual: 提交队列串行化 / Commit Queue Serialization
+  purpose_tags: {}
+  casebooks:
+  - SV#裁定(A 不变量 SV)+SV#三问+SV#施工序
+  - AP#域四
+  - RV1#缺口(F4)
+  - MEM#8
+  trigger_facts:
+    gates: 0
+    total_triggers_30d: 0
+    zero_trigger_gates: []
+  consumers:
+    gates: 0
+    gates_with_consumers: 0
+    sample_consumers: []
 - node_id: D11-G01
   name_zh: 退出码死分支（码 4 与 STASH_CONFLICT 支无生产者）
   stage: C
@@ -1395,6 +1893,10 @@ nodes:
     commit_exit_map: *id001
     exit_code_producers: *id002
     dead_branch_statuses: *id003
+  purpose_tags: null
+  casebooks: null
+  trigger_facts: null
+  consumers: null
 - node_id: D11-G02
   name_zh: precommit 通道回滚旗恒失效（代码键未注册 × default=True）
   stage: C
@@ -1438,6 +1940,10 @@ nodes:
       in_roster: true
       default_on: true
       roster_keys_scanned: 19
+  purpose_tags: null
+  casebooks: null
+  trigger_facts: null
+  consumers: null
 edges:
 - - D11-S01
   - D11-S02
@@ -1529,6 +2035,19 @@ counts:
     unwired_no_caller: 2
     unwired_slot_hollow: 2
     wired: 22
+  blood:
+    purpose_labels: 12
+    gates_mounted: 185
+    addendum_gates: 3
+    zero_trigger_candidate_gates: 10
+    casebooks_books: 6
+    nodes_with_casebooks: 28
+    sources:
+    - docs/_working/commitmap_cure/f5_purpose_tags.yaml
+    - docs/_working/commitmap_cure/f5_casebooks_mount.yaml
+    - docs/_working/commitmap_cure/f5_trigger_facts.yaml
+    - docs/_working/commitmap_cure/f5_consumers_agg.yaml
+    - docs/_working/commitmap_cure/chief_purpose_addendum.yaml
   machine:
     reconciler_register_calls: 58
     in_process_gate_facts: *id006

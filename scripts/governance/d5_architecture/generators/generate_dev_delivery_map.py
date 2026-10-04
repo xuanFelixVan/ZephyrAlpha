@@ -6,7 +6,9 @@
 # [DEPENDENCIES] yaml；scripts.governance._shared.terminology_loader（get_category_map）；
 #   scripts.governance._shared.module_translation_loader（get_module_translation）；
 #   zephyr.shared.io.file_utils（safe_write_text，热写通道复用）；git（只读 show 取 HEAD 提交时间派生时间戳）；
-#   docs/03_modules/path_ownership_map.yaml（depgraph_node 在册 module_id 派生面，只读）
+#   docs/03_modules/path_ownership_map.yaml（depgraph_node 在册 module_id 派生面，只读）；
+#   validate_dev_delivery_map（scan_skeleton_status 单源导入——CLONEGUARD 收内 2026-10-04，
+#   先例 dc0bc34cff 家族方向：校验器=判据单一真源，生成器禁持副本）
 # [CONSUMERS] config/dev_delivery_map.yaml（唯一产出物）；
 #   tests/governance/d5_architecture/test_dev_delivery_map_adversarial.py（幂等实证直调 build_document）；
 #   总包排产：重生成/对齐（alignment_checklist 挂轴由总包落）
@@ -107,6 +109,9 @@ from d5_architecture.generators._common import (  # noqa: E402  # noqa: import-i
 from d5_architecture.validators.validate_construction_steps import (  # noqa: E402  # noqa: import-integrity  sys.path 注入的 governance 包
     scan_module_id_index,
 )
+from d5_architecture.validators.validate_dev_delivery_map import (  # noqa: E402  # noqa: import-integrity  CLONEGUARD 单源化（先例 dc0bc34cff 家族方向：生成器改导入校验器判据件）
+    scan_skeleton_status,
+)
 
 OUTPUT_PATH = _REPO_ROOT / "config" / "dev_delivery_map.yaml"
 _SKELETON = "docs/_working/map_build/fig11_delivery/00_skeleton.md"
@@ -155,6 +160,14 @@ _GC = "scripts/governance/commit_queue_landing.py"
 _CLI = "scripts/git_commit.py"
 _INPROC_REG = "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml"
 _SHELL_REG = "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
+# 挂血肉四字段输入件（挂图SOP vertical_map_mounting_policy §4：purpose_tag/casebooks/trigger_facts/consumers）
+# F5 机生四件（零判定装配）+ 总筹 addendum（判定件）；缺任一件=硬失败（血肉层不可静默降级）
+_CURE_DIR = "docs/_working/commitmap_cure"
+_F5_PURPOSE = f"{_CURE_DIR}/f5_purpose_tags.yaml"
+_F5_CASEBOOKS = f"{_CURE_DIR}/f5_casebooks_mount.yaml"
+_F5_TRIGGER = f"{_CURE_DIR}/f5_trigger_facts.yaml"
+_F5_CONSUMERS = f"{_CURE_DIR}/f5_consumers_agg.yaml"
+_CHIEF_ADDENDUM = f"{_CURE_DIR}/chief_purpose_addendum.yaml"
 
 # ---------------------------------------------------------------------------
 # 人工语义层（骨架/作业簿契约常量，全量按 NODE_ORDER 枚举——静态清单禁手工维护的是
@@ -205,14 +218,22 @@ N: dict[str, dict[str, Any]] = {
         name="会话冷启动与开班检查",
         q="本会话该启动吗？启动前环境/守卫/隔离施工/能力反查就位了吗？",
         mech="冷启动序列钩子=phase_manager session_startup（环境切换→reaper 守卫存活→worktree 申请制→"
-        "能力反查→depgraph 登记）；开班检查脚本 record_session_start_commit.py。逐项守则归并行协调政策，图不复制",
+        "能力反查→depgraph 登记）；开班检查脚本 record_session_start_commit.py；同类半成品在途预查="
+        "audit/reuse_scan（裁定#480 C-2「先查再建」：三源 fail-open 纯只读，session_worktree_start "
+        "注册成功后打印同类半成品提示）。逐项守则归并行协调政策，图不复制",
         ref="src/zephyr/governance/ops_governance/phase_manager.py:248",
-        anc=["src/zephyr/governance/ops_governance/phase_manager.py:248", "scripts/record_session_start_commit.py"],
+        anc=[
+            "src/zephyr/governance/ops_governance/phase_manager.py:248",
+            "scripts/record_session_start_commit.py",
+            "src/zephyr/governance/audit/reuse_scan.py",
+        ],
         run=[".runtime/session_registry.json"],
         ev=[
             "src/zephyr/governance/ops_governance/phase_manager.py:248 session_startup 在位",
             ".runtime/session_registry.json 实查在盘（2026-09-24）",
             "scripts/record_session_start_commit.py 实查在盘",
+            "src/zephyr/governance/audit/reuse_scan.py 在位（裁定#480 C-2）；本会话 2026-10-04 启动实弹："
+            "start 输出「reuse_scan: 未提供 task_files，跳过预查」=预查钩子活体",
         ],
         stores=[
             dict(
@@ -228,14 +249,26 @@ N: dict[str, dict[str, Any]] = {
         name="worktree 分配与池化",
         q="本会话 worktree 从哪来？池 lease 还是直接创建？并发阻断怎么判？",
         mech="session_worktree_start 优先 WorktreePool.lease（失败 fall back 直建，池永不阻断启动）+"
-        "lease 后异步 prefetch 补池；breaking_change 双向并发阻断",
+        "lease 后异步 prefetch 补池；breaking_change 双向并发阻断；"
+        "新资产上户口合一命令=scripts/governance/register_asset.py（裁定#480 C-2：creation_token/大白话/"
+        "depgraph 五道手续一条命令编排，纯编排零重写）；"
+        "首 claim 指南路由=lock_files.py:1684 _deliver_first_acquire_guide"
+        "（本会话首次 acquire 弹施工指路 playbook 锚点，已读留痕后零输出，fail-open 不绑架锁主流程）",
         ref=f"{_SW}:2607",
-        anc=[f"{_SW}:2607", "src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277"],
+        anc=[
+            f"{_SW}:2607",
+            "src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277",
+            "scripts/governance/register_asset.py",
+            "scripts/lock_files.py:1684",
+        ],
         run=[".aidrafts/", ".aidrafts_pool/"],
         ev=[
             f"{_SW}:2607 session_worktree_start",
             "src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:277 lease（P3.3 池化+prefetch）",
             "本战役工作目录 .aidrafts/st-mapbuild-20260924 即活体",
+            "scripts/governance/register_asset.py 在位（MOD-GOV-REGISTER-ASSET，裁定#480 C-2 上户口合一）",
+            "首 claim 指南路由活体实弹（2026-10-04）：本会话首次 lock_files acquire 输出「首次施工指路」段"
+            "（FT-new_script_py playbook 锚点递送）",
         ],
         stores=[
             dict(
@@ -251,16 +284,21 @@ N: dict[str, dict[str, Any]] = {
         name="会话心跳与活性判定",
         q="会话还活着吗？新鲜窗与 idle 自退双轨怎么判死？",
         mech="heartbeat_daemon 30s 刷新+jsonl 审计；SessionRegistry 90s 新鲜窗+1800s idle 自退双轨；"
+        "单一活性裁决表=liveness_verdict（裁定#480 C-2 活性合流：8 套活性机制零改动继续在岗作数据源，"
+        "P1-P6 优先级只读折算，唯一结论=state+authoritative_signal——内收式合流非重写）；"
         "活性 schema 契约引用并行协调政策（吸收其路径作节点注解，不复制正文）",
         ref="src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:39",
         anc=[
             "src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py:39",
             "src/zephyr/security/access_control/session_concurrency.py:148",
+            "src/zephyr/security/access_control/session_concurrency.py:1608",
         ],
         run=[".runtime/（heartbeat jsonl 审计面）"],
         ev=[
             "heartbeat_daemon.py:39-40（30s 刷新+jsonl 审计）",
             "session_concurrency.py:148（90s 新鲜窗+1800s idle 自退）",
+            "session_concurrency.py:1608 def liveness_verdict 在位（裁定#480 C-2，"
+            "st-sB-surgery-20261003 施工；同批 tests/governance/test_liveness_verdict_20261003.py）",
         ],
     ),
     "D11-S04": dict(
@@ -475,14 +513,26 @@ N: dict[str, dict[str, Any]] = {
         q="本改动按 priority 逐台过了门禁册登记的 in-process 门禁吗？（数量以册 total_gates 字段为准）",
         mech="in_process_gate_registry.yaml 动态注册（gate_auto_registrar）；锁外预跑+结果缓存+漂移观察"
         "（flags gate_preflight/gate_result_cache）；worktree 跳过面 _WORKTREE_SKIP_GATES；"
+        "审批判定收敛器=commit_gates/approval_resolver（三通道：marker 防伪[查无即拒]+裁定册授权+都不命中，"
+        "5611dbf3ca 修复 _strip_worktree_prefix 补单数 worktree/ 形态——serializer 落地树授权命中治本）；"
+        "create_guard 册读取经 anchor_main_root 锚主仓根（同批修复：主区盘面=登记即时真源，#ARCH-324 先例）；"
         "叶层=册自身（99 条目明细进作业簿 05，INV-1 不抄进图）",
         ref="src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py",
-        anc=["src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py", f"{_GW}:2880", f"{_GW}:347"],
+        anc=[
+            "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py",
+            f"{_GW}:2880",
+            f"{_GW}:347",
+            "src/zephyr/gov_enforcement/commit_gates/approval_resolver.py",
+            "src/zephyr/gov_enforcement/commit_gates/create_guard.py",
+        ],
         data=[_INPROC_REG, "config/flags.yaml"],
         ev=[
             "in_process_gate_registry.yaml total_gates 字段 grep 实查",
             "gateway _preflight_flag_enabled/_check_gates_with_drift_watch 在位",
             "machine_facts 双计数（字段值 vs 条目实扫）由本生成器动态产出",
+            "approval_resolver._strip_worktree_prefix 单数 worktree/ 形态在位（5611dbf3ca 时序倒置治本，"
+            "#461 落地形态裁定命中放行）",
+            "create_guard.py:728 anchor_main_root 主区锚定在位（登记完即可提交，serializer 陈旧册破坏已修）",
         ],
         gate_facts=_INPROC_REG,
     ),
@@ -1194,26 +1244,6 @@ def scan_gate_registry(root: Path, rel_path: str) -> dict[str, Any]:
     return out
 
 
-def scan_skeleton_status(root: Path) -> dict[str, str]:
-    """骨架 §1 环节表三态列实扫（verified_scope 双轴的唯一同源口径，禁在图内自造状态）。
-
-    判据口径来自骨架（本图唯一收敛基准），本函数只读不算：✅/🔨/⬜/🌑 逐环节取列 4。
-    文件缺失/表形变更 ⇒ 返回空表，由调用方回落契约常量并在 machine_facts 记 exists:false。
-    """
-    p = root / _SKELETON
-    if not p.exists():
-        return {}
-    text = p.read_text(encoding="utf-8", errors="replace")
-    sec = text.split("## §1 环节全集", 1)
-    if len(sec) != 2:
-        return {}
-    body = sec[1].split("\n## §2", 1)[0]
-    out: dict[str, str] = {}
-    for m in re.finditer(r"^\|\s*(D11-[A-Z]\d{2})\s*\|[^|]*\|[^|]*\|\s*([✅🔨⬜🌑])\s*\|", body, re.M):
-        out[m.group(1)] = m.group(2)
-    return out
-
-
 def _assign_target_name(node: ast.AST) -> str | None:
     """取赋值语句左值名（Assign/AnnAssign 两形态；非赋值/解构返回 None）。"""
     if isinstance(node, ast.Assign) and node.targets:
@@ -1353,6 +1383,112 @@ def scan_precommit_flag_pair(root: Path) -> dict[str, Any]:
     return out
 
 
+def load_blood_mount(root: Path) -> dict[str, Any]:
+    """挂血肉四字段装载：F5 四件 + 总筹 addendum → 节点级聚合（INV-1：图内只渲染直方图/计数/指针）。
+
+    缺任一输入件=FileNotFoundError 硬失败——四字段层是挂图SOP §6「看得懂验收」三样之一，
+    缺件静默降级会让图看似挂满实则空壳（与 build_semantic_layers 的 missing_exec 同级防自粉饰）。
+    """
+
+    def _load(rel: str) -> dict[str, Any]:
+        """_load implementation."""
+        p = root / rel
+        if not p.is_file():
+            raise FileNotFoundError(f"挂血肉输入件缺失: {rel}（commitmap_cure 战役件；缺件=四字段层不可生成）")
+        return yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+
+    purpose_doc = _load(_F5_PURPOSE)
+    casebooks_doc = _load(_F5_CASEBOOKS)
+    trigger_doc = _load(_F5_TRIGGER)
+    consumers_doc = _load(_F5_CONSUMERS)
+    addendum = _load(_CHIEF_ADDENDUM)
+
+    legend = [
+        {"ordinal": lb.get("ordinal"), "label_name": lb["label_name"], "one_liner": lb["one_liner"]}
+        for lb in purpose_doc.get("labels") or []
+    ]
+    if not legend:
+        raise ValueError(f"目的标签图例为空: {_F5_PURPOSE} labels 节")
+    label_names = {lb["label_name"] for lb in legend}
+    if len(label_names) != len(legend):
+        raise ValueError("目的标签图例存在重名标签（SOP §2 规4：说不出一句话的标签回炉）")
+
+    gate_label: dict[str, tuple[str, str]] = {}
+    for g in purpose_doc.get("gates") or []:
+        if g["gate_id"] in gate_label:
+            raise ValueError(f"F5 标签映射重复登记门禁: {g['gate_id']}")
+        if g["label_name"] not in label_names:
+            raise ValueError(f"F5 标签映射用了图例外标签: {g['gate_id']} -> {g['label_name']}")
+        gate_label[g["gate_id"]] = (g["label_name"], g["node_id"])
+    addendum_gates = addendum.get("gates") or {}
+    for gid, spec in addendum_gates.items():
+        if gid in gate_label:
+            raise ValueError(f"addendum 与 F5 重复登记门禁: {gid}")
+        if spec["label_name"] not in label_names:
+            raise ValueError(f"addendum 用了图例外标签: {gid} -> {spec['label_name']}")
+        gate_label[gid] = (spec["label_name"], spec["node_id"])
+
+    trig_by_gate = {row["gate_id"]: row for row in trigger_doc.get("facts") or []}
+    cons_by_gate = {row["gate_id"]: row for row in consumers_doc.get("aggregates") or []}
+    # addendum 台位并入 facts 池（consumers 未抽取=null 显式留缺，随门禁身份一本账收敛批补）
+    for gid, spec in addendum_gates.items():
+        trig_by_gate[gid] = {
+            "gate_id": gid,
+            "trigger_count": spec.get("trigger_count"),
+            "zero_trigger_candidate": False,
+            "evidence": spec.get("evidence"),
+        }
+        cons_by_gate[gid] = {"gate_id": gid, "consumer_count": None, "top_consumers": []}
+
+    known_nodes = set(NODE_ORDER)
+    purpose_hist: dict[str, dict[str, int]] = {}
+    trig_by_node: dict[str, dict[str, Any]] = {}
+    cons_by_node: dict[str, dict[str, Any]] = {}
+    zero_gates: list[str] = []
+    for gid, (lname, nid) in gate_label.items():
+        if nid not in known_nodes:
+            raise ValueError(f"挂载环节越出契约全集: {gid} -> {nid}（增枝须先回写骨架 §1）")
+        hist = purpose_hist.setdefault(nid, {})
+        hist[lname] = hist.get(lname, 0) + 1
+        tf = trig_by_gate.get(gid) or {}
+        tn = trig_by_node.setdefault(nid, {"gates": 0, "total_triggers_30d": 0, "zero_trigger_gates": []})
+        tn["gates"] += 1
+        tn["total_triggers_30d"] += int(tf.get("trigger_count") or 0)
+        if tf.get("zero_trigger_candidate"):
+            zero_gates.append(gid)
+            tn["zero_trigger_gates"].append(gid)
+        cn = cons_by_node.setdefault(nid, {"gates": 0, "gates_with_consumers": 0, "sample_consumers": []})
+        cn["gates"] += 1
+        cg = cons_by_gate.get(gid) or {}
+        if cg.get("consumer_count"):
+            cn["gates_with_consumers"] += 1
+        for name in cg.get("top_consumers") or []:
+            if name not in cn["sample_consumers"]:
+                cn["sample_consumers"].append(name)
+        cn["sample_consumers"] = cn["sample_consumers"][:8]
+
+    casebooks_by_node: dict[str, list[str]] = {}
+    for nid, row in (casebooks_doc.get("nodes") or {}).items():
+        if nid not in known_nodes:
+            raise ValueError(f"casebooks 挂载环节越出契约全集: {nid}")
+        casebooks_by_node[nid] = list(row.get("casebooks") or [])
+    books = sorted({ptr.split("#", 1)[0] for ptrs in casebooks_by_node.values() for ptr in ptrs})
+
+    return {
+        "legend": legend,
+        "purpose_hist": purpose_hist,
+        "casebooks_by_node": casebooks_by_node,
+        "casebooks_unmounted": dict(casebooks_doc.get("unmounted_note") or {}),
+        "trig_by_node": trig_by_node,
+        "cons_by_node": cons_by_node,
+        "books": books,
+        "gates_mounted": len(gate_label),
+        "addendum_gates": sorted(addendum_gates),
+        "zero_gates_total": sorted(zero_gates),
+        "sources": [_F5_PURPOSE, _F5_CASEBOOKS, _F5_TRIGGER, _F5_CONSUMERS, _CHIEF_ADDENDUM],
+    }
+
+
 def build_machine_facts(root: Path) -> dict[str, Any]:
     """一次全扫产出 {node_id: machine_facts} + 顶层 machine 计数块。"""
     facts: dict[str, Any] = {}
@@ -1489,6 +1625,24 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
         mf = facts.get(node["node_id"])
         if mf:
             node["machine_facts"] = mf
+    # 挂血肉四字段（挂图SOP §4）：gap 节点四字段=null（无机制可挂）；机制级映射=叶层留输入件（INV-1）
+    blood = load_blood_mount(root)
+    for node in nodes:
+        if node["node_type"] == "gap":
+            node["purpose_tags"] = None
+            node["casebooks"] = None
+            node["trigger_facts"] = None
+            node["consumers"] = None
+            continue
+        nid = node["node_id"]
+        node["purpose_tags"] = blood["purpose_hist"].get(nid, {})
+        node["casebooks"] = blood["casebooks_by_node"].get(nid, [])
+        node["trigger_facts"] = blood["trig_by_node"].get(
+            nid, {"gates": 0, "total_triggers_30d": 0, "zero_trigger_gates": []}
+        )
+        node["consumers"] = blood["cons_by_node"].get(
+            nid, {"gates": 0, "gates_with_consumers": 0, "sample_consumers": []}
+        )
     edges = [list(e) for e in EDGES]
     lane_dist = {"S": 0, "C": 0, "D": 0}
     type_dist: dict[str, int] = {}
@@ -1507,7 +1661,7 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
     for sym in skeleton_status.values():
         skeleton_counts[sym] = skeleton_counts.get(sym, 0) + 1
     doc = {
-        "schema_version": "0.2",
+        "schema_version": "0.3",
         "map_id": "dev_delivery_map",
         "name_zh": "交付流水线全景图",
         "nickname": "交付流水线",
@@ -1523,7 +1677,10 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
             "禁手工维护。节点只存稳定标识符与指针，禁复制条目正文（INV-1）。\n"
             "字段分层（六图终局卷 §1 裁定一）：L0 通用层统一名 note_zh/doc_refs（三个同义异名注解字段与"
             "两个 doc 指针别名已废止，残留由校验器 CV-L0 判红）；"
-            "L1 纵轴层本图取用 wiring_status/red_reason/doc_refs/exec_evidence；"
+            "L1 纵轴层本图取用 wiring_status/red_reason/doc_refs/exec_evidence/"
+            "purpose_tags/casebooks/trigger_facts/consumers（后四=挂图SOP §4 四标准字段：输入件=commitmap_cure 战役 "
+            "f5 四件+总筹 addendum，缺件生成器硬失败；标签图例=purpose_labels 节；机制级 gate→标签/环节映射=叶层"
+            "留输入件不进图本体，图内只渲染节点直方图；gap 节点四字段=null 无机制可挂）；"
             "L2 图专属层字段清单=exit_codes（提交门退出码全谱：顶层矩阵+节点级专码归属）、"
             "gate_cluster（门禁簇归属）、deadletter_class（死信分类归属）。\n"
             "双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §1 状态列 ✅（26 个，多了算谎少了算欠），"
@@ -1534,6 +1691,24 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
         "laws": list(LAWS),
         "boundary": list(BOUNDARY),
         "layers": layers,
+        "purpose_labels": {
+            "law_zh": (
+                "目的标签=挂图SOP §2 横切轴：11 条=00_design_basis §1 冻结表（Owner 终审），"
+                "12 号「别把钥匙留在门口」=裁定#480 批准增设；冻结后机贴不改名"
+            ),
+            "machine_input": _F5_PURPOSE,
+            "mount_rule_zh": (
+                "标签贴在机制上：门禁级 gate→标签/环节映射=叶层（f5_purpose_tags.yaml+chief_purpose_addendum.yaml，"
+                "INV-1 不进图本体）；图内渲染=节点 purpose_tags 直方图——同标签多钉=重复簇显影位（内收对审入口）"
+            ),
+            "legend": blood["legend"],
+        },
+        "casebooks_index": {
+            "law_zh": "病历挂载=挂图SOP §3：只挂本（册码#章码指针）不挂病例；完备性铁律=每本永久病历本 ≥1 环节",
+            "machine_input": _F5_CASEBOOKS,
+            "books": blood["books"],
+            "gap_unmounted_note_zh": "D11-G01/G02=骨架外缺口件无运行代码可挂（F4 §0 显式不挂注记）",
+        },
         "exit_codes": {
             "owner_node": "D11-C01",
             "law_zh": "退出码是全车道共用的机器契约：改分发表=改契约，须经本矩阵穷举并进"
@@ -1587,6 +1762,15 @@ def build_document(as_of: str, root: Path) -> dict[str, Any]:
             "by_node_type": {k: type_dist[k] for k in sorted(type_dist)},
             "by_verified_scope": {k: scope_dist[k] for k in sorted(scope_dist)},
             "by_wiring_status": {k: wiring_dist[k] for k in sorted(wiring_dist)},
+            "blood": {
+                "purpose_labels": len(blood["legend"]),
+                "gates_mounted": blood["gates_mounted"],
+                "addendum_gates": len(blood["addendum_gates"]),
+                "zero_trigger_candidate_gates": len(blood["zero_gates_total"]),
+                "casebooks_books": len(blood["books"]),
+                "nodes_with_casebooks": sum(1 for v in blood["casebooks_by_node"].values() if v),
+                "sources": list(blood["sources"]),
+            },
             "machine": {
                 "reconciler_register_calls": facts.get("D11-C11", {}).get("reconciler_register_calls"),
                 "in_process_gate_facts": inproc_facts,
@@ -1641,7 +1825,10 @@ def main() -> int:
     if args.dry_run:
         print(
             f"dry-run: nodes={doc['counts']['total_nodes']} edges={doc['counts']['total_edges']} "
-            f"lane={doc['counts']['by_lane']} generated_at={as_of}"
+            f"lane={doc['counts']['by_lane']} generated_at={as_of} "
+            f"blood=gates_mounted:{doc['counts']['blood']['gates_mounted']} "
+            f"labels:{doc['counts']['blood']['purpose_labels']} "
+            f"casebooks_books:{doc['counts']['blood']['casebooks_books']}"
         )
         return 0
     payload = serialize_document(doc)

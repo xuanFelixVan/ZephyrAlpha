@@ -391,11 +391,18 @@ ENTRY_SPECS: dict[str, tuple[str, str, str]] = {
     "REG-FMS-DEADREF-BASELINE": ("yaml_list", "entries", "entries 数组条目数（死引用棘轮基线，生成物）"),
     "REG-REGEN-CLEAN-001": ("yaml_dict_len", "baseline", "baseline 指纹字典键数（生成对棘轮）"),
     "REG-METAQ-001": ("yaml_field", "row_count", "row_count 字段值（PG meta_question 快照）"),
+    # 2026-10-04 上户口批（st-sG-mapwrite-20261004）：图12 入 ROOR 补口径（图11 走 ENTRY_MANUAL——
+    # node_type=stage 子字段过滤超 yaml_list/yaml_field 口径面，数字真源对账=生成器 counts.by_node_type.stage）
+    "REG-MAP-DSCM-001": ("yaml_list", "nodes", "nodes 条目数（图12 43 节点满配，F2 血肉批后）"),
 }
 
 # 不可自动数的表（原因显式登记；改口径需同步本表）
 ENTRY_MANUAL: dict[str, str] = {
     "REG-MOD-ALPHA_SIGNAL_DOMAIN": "retired（module_registry.yaml 已退库，commit 2145eb3688）",
+    "REG-MAP-DEVDELIVERY-001": (
+        "机生图子字段过滤口径（nodes[].node_type=stage=28 环节，gap 2 台不计）——"
+        "yaml_list/yaml_field 无过滤面；数字对账真源=生成器 counts.by_node_type.stage"
+    ),
     "REG-DOMAIN-GOV-001": "markdown frontmatter 口径",
     "REG-AFX-FIXER-001": "code_inline（engine.py fixer_map 字典）",
     "REG-STD-003": "markdown 口径（quality_standard.md）",
