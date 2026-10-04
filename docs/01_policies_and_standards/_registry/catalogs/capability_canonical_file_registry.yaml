@@ -6771,6 +6771,11 @@ capabilities:
   capability_id: yaml_to_depgraph_sync
   canonical_override: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
 creation_tokens:
+- file: docs/_working/map_census/casebooks_family/casebooks_gap_matrix.yaml
+  token: mapcb-survey-casebooks-gap-matrix-20261005
+  created_by: st-mapcb-survey-20261005
+  capability: mapcb_survey
+  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册"
 - file: .github/copilot-instructions.md
   token: circ-a4-copilot-instructions-20260930
   capability: library_lookup
