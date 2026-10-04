@@ -33,7 +33,7 @@ registry_mass_deletion_gate.py — 登记表 mass-deletion 门禁（防蒸发第
        会被"删他人 16 条 + 插自己 25 条"的代数抵消批次整体放行（E1 实测三判据全绿、
        16 条静默蒸发）；身份比对不看代数只看"哪一条没了"。
        身份 = 每条首个标量字段（登记表惯例主键：capability_id/path/module_path/gate_id…）；
-       条目非 dict 或首字段非标量 → 该条不计入身份集（判不了不误报，fail-open 同向）。
+       条目非 dict 或无任何标量字段 → 该条不计入身份集（判不了不误报，fail-open 同向）。
 
 触发范围：staged 相对路径命中 _REGISTRY_DIR_MARKER（登记表目录）或 _WATCH_FILES
 （目录外登记类 YAML）；_EXEMPT_FILES 豁免。
@@ -48,6 +48,7 @@ Usage::
         make_registry_mass_deletion_gate,
     )
     registry.register(make_registry_mass_deletion_gate())
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/registry_mass_deletion_gate.yaml
 """
 
 from __future__ import annotations
@@ -176,12 +177,11 @@ def _entry_identity_keys(text: str) -> set[str] | None:
     keys: set[str] = set()
     for lst in lists:
         for item in lst:
-            if not isinstance(item, dict) or not item:
-                continue
-            first = next(iter(item))
-            value = item[first]
-            if isinstance(value, (str, int, float, bool)):
-                keys.add(f"{first}={value}")
+            # 身份键单点真源委托（entry_identity_key，st-joinchk-20261004 契约对齐修）——
+            # 此处曾逐字复制「首字段判标量」旧逻辑，与真源背离致 aliases 开头条目漏计。
+            ident = entry_identity_key(item)
+            if ident is not None:
+                keys.add(ident)
     return keys or None
 
 
@@ -343,12 +343,19 @@ def entry_identity_key(item: object) -> str | None:
     同一份身份定义，否则"门禁放行的"与"合并器救回的"会各说各话。
 
     Returns:
-        身份键；条目非 dict / 空条目 / 首字段非标量 → None（判不了不误报，fail-open 同向）。
+        身份键；条目非 dict / 空条目 / 无任何标量字段 → None（判不了不误报，fail-open 同向）。
+
+    st-joinchk-20261004 契约对齐修：原实现取「首字段判标量」（首字段非标量即 None），
+    与本文档「首个标量字段」契约背离——capability 册 383 条 aliases 列表开头的存量
+    条目身份恒 None，落地器三向合并漂移路径必死信（q-20261004-st-joinchk-20261004
+    -0003/0004/0005 三连实弹）。修正为向后扫描取首个标量字段：首字段本标量者行为
+    零变化；aliases 开头者身份从无到有（gate 身份断言覆盖面只会更严=更少静默蒸发，
+    合并器解锁）。无任何标量字段仍 None（fail-open 同向不变）。
     """
     if not isinstance(item, dict) or not item:
         return None
-    first = next(iter(item))
-    value = item[first]
-    if isinstance(value, (str, int, float, bool)):
-        return f"{first}={value}"
+    for field in item:
+        value = item[field]
+        if isinstance(value, (str, int, float, bool)):
+            return f"{field}={value}"
     return None

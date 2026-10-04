@@ -1,0 +1,77 @@
+# ALGO_FLOW 外部真源——registry_mass_deletion_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py）
+# 2026-10-04 st-joinchk-20261004 补登：本 gate 为 P2-1 出仓批六件漏网欠账之一（GATE-ALGO-FLOW 实弹
+# 拦截后补），块内容按当刻源码手工如实摘写（非 docstring 内联副本——本件从未有内联块）；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: staged 登记表类文件清单
+    #   fields: git diff --cached 增改面 ∩ _REGISTRY_DIR_MARKER/_WATCH_FILES 命中（tests 豁免）
+    #   code: _is_watch_file/_collect_staged（gateway.run_git）
+    # - id: I2
+    #   name: HEAD 侧与 staged 侧登记表文本
+    #   fields: git show HEAD:<path> 与索引读，两侧 YAML 文本
+    #   code: check 闭包内逐文件读取（fail-open：读不到跳过该文件）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① entry_identity_key（身份键单点真源）
+    #   name_en: entry_identity_key
+    #   intro: 单条目身份键=首个标量字段 → "key=value"。
+    #   desc: 单条目身份键=首个标量字段 → "key=value"；条目非 dict/空/无任何标量字段 → None（判不了不误报，fail-open 同向）。st-joinchk-20261004 契约对齐修：原实现取「首字段判标量」与文档契约「首个标量字段」背离（aliases 列表开头即弃），修为向后扫描取首个标量字段——W2 落地器三向合并复用本函数（落地侧与门禁侧同一身份定义）；返回 str|None。
+    #   inputs: item（单条目 dict）
+    #   outputs: str | None
+    # - id: A2
+    #   name_zh: ② _entry_identity_keys（身份集）
+    #   name_en: _entry_identity_keys
+    #   intro: 文本→身份键集合，逐条委托 A1 单点真源。
+    #   desc: 文本→身份键集合；YAML 解析失败/无 list 结构 → None（调用方跳过本信号）。st-joinchk-20261004 起逐条委托 entry_identity_key（原为逐字复制的旧逻辑，与真源背离致 aliases 开头条目漏计）；返回 set[str]|None。
+    #   inputs: text（登记表 YAML 文本）
+    #   outputs: set[str] | None
+    # - id: A3
+    #   name_zh: ③ 三信号检测（计数×2+身份×1）
+    #   name_en: three_signal_detection
+    #   intro: 净删行（_line_delta 删>插）/条目数减少（_yaml_entry_count new<old）/身份消失（HEAD 身份集−staged 身份集 非空）。
+    #   desc: 三信号检测：信号1 净删行=difflib 累计 delete/replace vs insert/replace（deleted>added 违规）；信号2 条目数断言（new<old 无论行数违规）；信号3 身份断言（E1 实弹加固——计数型判据被"删他人+插自己"代数抵消的盲区补口，身份比对不看代数只看"哪一条没了"）；任一命中且无白名单标记→违规。
+    #   inputs: I2（两侧文本）
+    #   outputs: violations 清单
+    # - id: A4
+    #   name_zh: ④ 白名单标记逃生+审计
+    #   name_en: allowlist_escape_and_audit
+    #   intro: commit message 含 [allow-mass-deletion:<reason≥10字>] 放行；阻断与放行均落审计。
+    #   desc: 白名单标记逃生：[allow-mass-deletion:reason]（reason≥10 字随 message 永久留痕，对标 [no-lookup:reason] 先例）；_audit 写 .runtime/gate_audit/registry_mass_deletion.jsonl（写失败静默降级不阻断）。
+    #   inputs: commit message, 判定结果
+    #   outputs: 放行/阻断决议, 审计记录
+    # - id: A5
+    #   name_zh: ⑤ make_registry_mass_deletion_gate
+    #   name_en: make_registry_mass_deletion_gate
+    #   intro: 组装 REGISTRY-MASS-DELETION GateSpec（priority=140，硬阻断型）。
+    #   desc: 组装 REGISTRY-MASS-DELETION GateSpec（priority=140，commit 阶段硬阻断）；check 闭包 (gateway, files, **kwargs)->(passed, message)，永不抛异常（git/YAML 失败 fail-open 不误报）。
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: (passed, message) 判定
+    #   name_en: verdict tuple
+    #   intro: 门禁判定与违规明细（三信号各一条）。
+    #   downstream: gate_auto_registrar（in_process_gate_registry.yaml 条目驱动，经 GATE-PRECOMMIT-RUN 执行）
+    # - id: O2
+    #   name_zh: 审计 jsonl
+    #   name_en: audit jsonl
+    #   intro: 阻断与放行双落 .runtime/gate_audit/registry_mass_deletion.jsonl。
+    #   downstream: 审计看板/治理巡检
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A3
+    # I2 --> A3
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> O1
+    # A5 --> O2

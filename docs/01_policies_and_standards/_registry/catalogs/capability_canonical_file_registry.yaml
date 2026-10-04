@@ -58686,4 +58686,9 @@ creation_tokens:
   token: commitmap-cure-index-20261004
   created_by: st-commitmap-chief-20261003
   capability: commitmap_cure
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/registry_mass_deletion_gate.yaml
+  token: btfix-p1p2-registry-mass-deletion-gate-20261004
+  created_by: st-joinchk-20261004
+  capability: btfix_p1p2
+  merge_evaluation: "GATE-ALGO-FLOW 欠账补登：registry_mass_deletion_gate 出仓卡（P2-1 六件漏网之一），卡族同真源（check_algo_flow 管线消费）无第二真源"
 di_seam_exemptions: []

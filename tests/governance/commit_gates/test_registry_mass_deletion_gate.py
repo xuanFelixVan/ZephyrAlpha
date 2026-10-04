@@ -25,10 +25,10 @@ import pytest
 
 from zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate import (
     _entry_identity_keys,
-    make_registry_mass_deletion_gate,
     _is_watch_file,
     _line_delta,
     _yaml_entry_count,
+    make_registry_mass_deletion_gate,
 )
 
 NL = chr(10)  # 测试内构造 YAML 文本的行尾（避免源码里嵌 \t/\n 字面量歧义）
@@ -70,6 +70,30 @@ class TestEntryIdentityKeys:
         text = NL.join(self._entry("alpha") + self._entry("beta")) + NL
         assert _entry_identity_keys(text) == {"capability_id=alpha", "capability_id=beta"}
 
+    def test_identity_falls_forward_to_first_scalar_field(self):
+        """红蓝补口（st-joinchk-20261004 实弹地雷）：首字段非标量（aliases 列表开头）
+        时身份应向后扫描取首个标量字段——契约原文「每条首个标量字段」，实现曾误作
+        「首字段判标量」致 capability 册 383 条存量条目身份恒 None、三向合并漂移路径
+        必死信（q-20261004-st-joinchk-20261004-0003/0004/0005 三连实弹）。"""
+        text = (
+            NL.join(
+                [
+                    "- aliases: [red_blue_validator, redblocker]",
+                    "  capability_id: red_blue_validator",
+                    "  path: docs/x.md",
+                    "- aliases: [a2]",
+                    "  capability_id: second_entry",
+                ]
+            )
+            + NL
+        )
+        assert _entry_identity_keys(text) == {"capability_id=red_blue_validator", "capability_id=second_entry"}
+
+    def test_entry_without_any_scalar_field_yields_no_identity(self):
+        """全字段非标量（无标量可取）→ 维持 None（判不了不误报，fail-open 同向不变）。"""
+        text = NL.join(["- aliases: [only_list_field]"]) + NL
+        assert _entry_identity_keys(text) is None
+
     def test_unparsable_or_non_list_returns_none(self):
         assert _entry_identity_keys("foo: bar" + NL) is None
         assert _entry_identity_keys(chr(9) + ": : :" + NL) is None
@@ -80,9 +104,9 @@ class TestEntryIdentityKeys:
         能红证据：前两条断言=旧判据"放行"的机械证明（净删 4 行 ≤ 净插 6 行、
         条目数 11 > 10 不减）；摘掉 gate 的信号3，第三条断言即失败。
         """
-        head = NL.join(sum((self._entry(f"keep_{i}") for i in range(10)), [])) + NL
-        kept = sum((self._entry(f"keep_{i}") for i in range(10) if i not in (3, 7)), [])
-        mine = sum((self._entry(f"mine_{i}") for i in range(3)), [])
+        head = NL.join([line for i in range(10) for line in self._entry(f"keep_{i}")]) + NL
+        kept = [line for i in range(10) if i not in (3, 7) for line in self._entry(f"keep_{i}")]
+        mine = [line for j in range(3) for line in self._entry(f"mine_{j}")]
         staged = NL.join(kept + mine) + NL
         deleted, added = _line_delta(head, staged)
         assert deleted <= added, f"前置：净删行信号应放行（deleted={deleted} added={added}）"
@@ -98,8 +122,9 @@ class _RbgovIdentityStubGateway:
         self.project_root = root
 
     def run_git(self, cmd, timeout=30):  # noqa: ARG002 — gate 只传 cmd
-        return subprocess.run(cmd, cwd=str(self.project_root), capture_output=True,
-                              text=True, encoding="utf-8", errors="replace")
+        return subprocess.run(
+            cmd, cwd=str(self.project_root), capture_output=True, text=True, encoding="utf-8", errors="replace"
+        )
 
 
 _REG_REL = "docs/01_policies_and_standards/_registry/catalogs/red_test_registry.yaml"
@@ -113,14 +138,17 @@ def _e2e_check(tmp_path: Path, head_entries: list[int], staged_entries: list[int
 
     def render(ids, mine):
         lines = ["# red test registry", ""]
-        lines += sum([[f"- capability_id: keep_{i}", f"  path: x{i}.md"] for i in ids], [])
-        lines += sum([[f"- capability_id: mine_{i}", f"  path: m{i}.md"] for i in range(mine)], [])
+        lines += [line for i in ids for line in (f"- capability_id: keep_{i}", f"  path: x{i}.md")]
+        lines += [line for j in range(mine) for line in (f"- capability_id: mine_{j}", f"  path: m{j}.md")]
         return NL.join(lines) + NL
 
     reg.write_text(render(head_entries, 0), encoding="utf-8")
     git = lambda *a: subprocess.run(["git", *a], cwd=str(repo), capture_output=True, text=True)  # noqa: E731
-    git("init", "-q"); git("config", "user.email", "t@t"); git("config", "user.name", "t")
-    git("add", "--", _REG_REL); git("commit", "-q", "-m", "head version")
+    git("init", "-q")
+    git("config", "user.email", "t@t")
+    git("config", "user.name", "t")
+    git("add", "--", _REG_REL)
+    git("commit", "-q", "-m", "head version")
     reg.write_text(render(staged_entries, extra_mine), encoding="utf-8")
     git("add", "--", _REG_REL)
     gate = make_registry_mass_deletion_gate()
@@ -132,16 +160,20 @@ class TestMassDeletionIdentitySignalE2E:
 
     def test_e1_batch_now_blocked_end_to_end(self, tmp_path):
         """HEAD 10 条 → staged 删 2 条插 3 条：旧判据放行，本信号必须阻断（能红点）。"""
-        passed, detail = _e2e_check(tmp_path, head_entries=list(range(10)),
-                                    staged_entries=[i for i in range(10) if i not in (3, 7)],
-                                    extra_mine=3)
+        passed, detail = _e2e_check(
+            tmp_path,
+            head_entries=list(range(10)),
+            staged_entries=[i for i in range(10) if i not in (3, 7)],
+            extra_mine=3,
+        )
         assert not passed, f"身份消失必须阻断，实得 passed={passed}"
         assert "身份消失 2 条" in detail, detail
 
     def test_pure_insert_still_passes(self, tmp_path):
         """正控：只插不删（真实登记常态）必须仍放行——加严不打死正门。"""
-        passed, detail = _e2e_check(tmp_path, head_entries=list(range(10)),
-                                    staged_entries=list(range(10)), extra_mine=3)
+        passed, detail = _e2e_check(
+            tmp_path, head_entries=list(range(10)), staged_entries=list(range(10)), extra_mine=3
+        )
         assert passed, f"纯插入不应阻断，实得 detail={detail}"
 
     def test_marker_escape_still_works(self, tmp_path):
@@ -150,13 +182,22 @@ class TestMassDeletionIdentitySignalE2E:
         reg = repo / _REG_REL
         reg.parent.mkdir(parents=True, exist_ok=True)
         reg.write_text("- capability_id: keep_0" + NL + "  path: x0.md" + NL, encoding="utf-8")
-        for a in (["init", "-q"], ["config", "user.email", "t@t"], ["config", "user.name", "t"],
-                  ["add", "--", _REG_REL], ["commit", "-q", "-m", "h"]):
+        for a in (
+            ["init", "-q"],
+            ["config", "user.email", "t@t"],
+            ["config", "user.name", "t"],
+            ["add", "--", _REG_REL],
+            ["commit", "-q", "-m", "h"],
+        ):
             subprocess.run(["git", *a], cwd=str(repo), capture_output=True, text=True)
         reg.write_text("- capability_id: mine_0" + NL + "  path: m0.md" + NL, encoding="utf-8")
         subprocess.run(["git", "add", "--", _REG_REL], cwd=str(repo), capture_output=True, text=True)
         gate = make_registry_mass_deletion_gate()
-        passed, detail = gate.check(_RbgovIdentityStubGateway(repo), [_REG_REL], session_id=None,
-                                    commit_message="[allow-mass-deletion:合法整表重排已备份可比对回滚]")
+        passed, detail = gate.check(
+            _RbgovIdentityStubGateway(repo),
+            [_REG_REL],
+            session_id=None,
+            commit_message="[allow-mass-deletion:合法整表重排已备份可比对回滚]",
+        )
         assert passed, "白名单标记仍应放行（只加严判据，不动逃生语义）"
         assert "warn" in detail
