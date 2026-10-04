@@ -1,9 +1,12 @@
 # [BLUEPRINT] MOD-REGIME-005 | docs/03_modules/_domain_regime/chip_distribution_engine/blueprint.md
 # [MODULE] zephyr.regime.features.chip_distribution_engine
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] numpy; pandas
+# [DEPENDENCIES] numpy; pandas; zephyr.factor.technical_indicators.chips(compute_chip_metrics)
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费#12筹码结构/#5空间位置/S2底部筹码)——
 #             声明面：实际零 import（2026-09-15 转正审计 CHIP-2），stub 在 risk_signal_builder 常量
+# [CONSUMERS] TDM-E-L3-12-3 筹码分布分析节点（config/trading_decision_map.yaml）——winner 剖面
+#             供给 IND-CHIPS-001 获利盘占比（2026-10-04 SW14 处方①接线，D21 第一步；
+#             trial 期信号不进决策=裁定#257④ 纪律维持）
 # [STARTUP] imported
 # [MATURITY] trial  # 2026-09-16 裁定#257④：production 系虚标（零消费端+真实数据伪分布），打回 trial；量纲修复后以指数级试点身份再评估转正
 # [INVARIANTS] total_distribution Σ=1.0; age_layers各层Σ=1.0; 32网格网格0=最低价网格31=最高价
@@ -41,6 +44,18 @@
   输出确定（窗口相同→逐字节一致）。
 - τ 帧内 PIT：avg_vol 改窗口内 expanding（只用 ≤t 正量），消除"τ 含帧内未来量"。
 
+2026-10-04 winner（获利盘）剖面（SW14 处方①，D21 第一步，Owner 批）：
+- 新增 compute_winner_profile：直调 zephyr.factor.technical_indicators.chips::
+  compute_chip_metrics（CYQ 迭代衰减分布内核，IND-CHIPS-001 供给
+  chips_winner 获利盘占比）——禁在 regime 域第二套分布实现（nb1_b6 处方①）。
+- 输入=OHLCV 序列 + 换手率三源解析（显式入参 > df turnover_rate 列 >
+  float_share 派生：换手%=volume(股)/(流通股本万股×1e4)×100，tushare
+  stock_daily_basic.float_share 万股原值口径，CH c1_market 在产 710 万行）；
+  三源皆缺 → fail-open 降级（对齐 CYQ 类软降级语义）。
+- 输出与既有剖面同构（available/chips_winner/…/degrade_reason），键恒在；
+  空/缺列/全零成交量全场景不抛错（ZA-REGIME-0050 族降级契约）。
+- D21 后续：流通股本工程到位后升级"单峰密集度"全语义（nb1_b6 处方③）。
+
 # [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/chip_distribution_engine.yaml
 """
 
@@ -51,6 +66,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from zephyr.factor.technical_indicators.chips import compute_chip_metrics
+
 __all__ = [
     "triangular_pdf",
     "compute_vwap",
@@ -58,6 +75,7 @@ __all__ = [
     "turnover_recurse",
     "build_grid_prices",
     "compute_metrics",
+    "compute_winner_profile",
     "ChipDistributionEngine",
 ]
 
@@ -280,6 +298,136 @@ def compute_metrics(dist: np.ndarray, age_layers: dict[str, np.ndarray] | None =
 
 
 # ---------------------------------------------------------------------------
+# winner（获利盘）剖面 —— 直调 chips.py::CYQ 内核（IND-CHIPS-001 供给面）
+# ---------------------------------------------------------------------------
+
+_WINNER_SCHEMA_VERSION = "1.0"
+_WINNER_SOURCE = "zephyr.factor.technical_indicators.chips.compute_chip_metrics (IND-CHIPS-001)"
+
+
+def _winner_unavailable(reason: str, window_days: int = 0) -> dict[str, Any]:
+    """winner 剖面降级形态（fail-open）：键恒在、值置空、原因可读，绝不抛错。"""
+    return {
+        "available": False,
+        "chips_winner": None,
+        "chips_avg_cost": None,
+        "chips_cost_5": None,
+        "chips_cost_15": None,
+        "chips_cost_85": None,
+        "chips_cost_95": None,
+        "winner_series": None,
+        "window_days": int(window_days),
+        "degrade_reason": reason,
+        "schema_version": _WINNER_SCHEMA_VERSION,
+        "source": _WINNER_SOURCE,
+    }
+
+
+def _resolve_turnover_rate(
+    df: pd.DataFrame,
+    turnover_rate: pd.Series | None,
+    float_share: float | None,
+) -> tuple[pd.Series | None, str | None]:
+    """换手率三源解析：显式入参 > df turnover_rate 列 > float_share 派生。
+
+    返回 (turnover_rate_pct 序列或 None, 降级原因或 None)。全 NaN 列对齐 CYQ
+    类 _soft_turnover 语义按"无源"降级（非 daily 周期=设计内 NULL 输出）。
+    """
+    if turnover_rate is not None:
+        tr = pd.Series(turnover_rate)
+        if tr.notna().any():
+            return tr, None
+    if "turnover_rate" in df.columns:
+        tr = df["turnover_rate"]
+        if tr.notna().any():
+            return tr, None
+    share = float(float_share) if float_share is not None else float("nan")
+    if np.isfinite(share) and share > 0:
+        # volume 统一为股（2026-09-22 量纲治本）；float_share=tushare 万股原值 → ×1e4 成股
+        tr = df["volume"].astype(float) / (share * 1e4) * 100.0
+        return tr, None
+    return None, "no_turnover_source(缺换手率列/入参且 float_share 不可用)"
+
+
+def compute_winner_profile(
+    ohlcv_df: pd.DataFrame | None,
+    *,
+    turnover_rate: pd.Series | None = None,
+    float_share: float | None = None,
+    n_bins: int = 400,
+) -> dict[str, Any]:
+    """获利盘（winner）剖面——直调 zephyr.factor.technical_indicators.chips::CYQ 内核。
+
+    IND-CHIPS-001（Chip Distribution CYQ）chips_winner 获利盘占比由本剖面供给消费：
+    禁在 regime 域第二套分布实现（SW14 处方①/nb1_b6 三审"真源唯一"）。D21 第一步；
+    "单峰密集度"全语义待流通股本工程（处方③）。trial 期信号不进决策（裁定#257④）。
+
+    Parameters
+    ----------
+    ohlcv_df      : OHLCV DataFrame（columns: high/low/close/volume 必须；
+                    turnover_rate 列可选）
+    turnover_rate : 显式换手率%（优先级最高，可选）
+    float_share   : 流通股本（万股，tushare stock_daily_basic.float_share 口径）；
+                    仅当无换手率源时派生：换手%=volume(股)/(万股×1e4)×100
+    n_bins        : CYQ 价格网格数（默认 400，与指标库 IND-CHIPS-001 params 同源）
+
+    Returns
+    -------
+    dict（与引擎既有剖面同构，键恒在）：
+        available     : 是否产出有效获利盘
+        chips_winner  : 末日获利盘比例 [0,1]（成本≤close 的筹码质量占比）
+        chips_avg_cost/cost_5/15/85/95 : 末日平均成本/成本分位
+        winner_series : 逐日获利盘序列
+        degrade_reason: 降级原因（available=False 时可读）
+    全场景不抛错：None/空 df、缺硬列、缺换手源、全零成交量 → fail-open 降级
+    （ZA-REGIME-0050 族降级契约对齐）。
+    """
+    if ohlcv_df is None or len(ohlcv_df) == 0:
+        return _winner_unavailable("empty_data(空数据)")
+    df = ohlcv_df
+    missing = [c for c in ("high", "low", "close", "volume") if c not in df.columns]
+    if missing:
+        return _winner_unavailable(f"missing_columns(缺硬列:{','.join(missing)})")
+    tr, degrade = _resolve_turnover_rate(df, turnover_rate, float_share)
+    if tr is None:
+        return _winner_unavailable(degrade or "no_turnover_source")
+    if len(tr) != len(df):
+        return _winner_unavailable("turnover_length_mismatch(换手率与K线行数不齐)")
+
+    metrics = compute_chip_metrics(
+        high=df["high"],
+        low=df["low"],
+        close=df["close"],
+        volume=df["volume"],
+        turnover_rate_pct=tr,
+        n_bins=int(n_bins),
+    )
+    winner = metrics["chips_winner"].to_numpy(dtype=float)
+    last = winner[-1] if winner.size else float("nan")
+    if not np.isfinite(last):
+        return _winner_unavailable("no_chips_mass(全历史零成交量或末日无筹码)", window_days=len(df))
+
+    def _last(col: str) -> float:
+        v = float(metrics[col].to_numpy(dtype=float)[-1])
+        return v if np.isfinite(v) else None
+
+    return {
+        "available": True,
+        "chips_winner": float(last),
+        "chips_avg_cost": _last("chips_avg_cost"),
+        "chips_cost_5": _last("chips_cost_5"),
+        "chips_cost_15": _last("chips_cost_15"),
+        "chips_cost_85": _last("chips_cost_85"),
+        "chips_cost_95": _last("chips_cost_95"),
+        "winner_series": [float(x) if np.isfinite(x) else None for x in winner],
+        "window_days": int(len(df)),
+        "degrade_reason": None,
+        "schema_version": _WINNER_SCHEMA_VERSION,
+        "source": _WINNER_SOURCE,
+    }
+
+
+# ---------------------------------------------------------------------------
 # 筹码分布引擎（端到端）
 # ---------------------------------------------------------------------------
 
@@ -309,17 +457,19 @@ class ChipDistributionEngine:
         self.lookback = lookback
         self.avg_turnover = avg_turnover
 
-    def compute(self, ohlcv_df: pd.DataFrame, symbol: str = "") -> dict[str, Any]:
+    def compute(self, ohlcv_df: pd.DataFrame, symbol: str = "", float_share: float | None = None) -> dict[str, Any]:
         """端到端计算筹码分布。
 
         Parameters
         ----------
-        ohlcv_df : OHLCV DataFrame（columns: date/open/high/low/close/volume/amount）
-        symbol   : 标的代码
+        ohlcv_df    : OHLCV DataFrame（columns: date/open/high/low/close/volume/amount）
+        symbol      : 标的代码
+        float_share : 流通股本（万股，可选）——透传 winner 剖面作换手率派生源
 
         Returns
         -------
-        筹码分布结果 dict（见蓝图 §2.2）
+        筹码分布结果 dict（见蓝图 §2.2）；winner 剖面键恒在（SW14 处方①，
+        IND-CHIPS-001 供给面，缺数据 fail-open）
         """
         # 降级：空数据返回均匀分布
         if ohlcv_df is None or len(ohlcv_df) == 0:
@@ -336,7 +486,7 @@ class ChipDistributionEngine:
         if price_max <= price_min:
             # 停牌或单一价格，降级为均匀分布
             date = self._get_date(df)
-            return self._uniform_result(symbol, date)
+            return self._uniform_result(symbol, date, winner=compute_winner_profile(df, float_share=float_share))
 
         grid_prices = build_grid_prices(price_min, price_max, self.n_grids)
 
@@ -384,7 +534,8 @@ class ChipDistributionEngine:
             "total_distribution": total_dist.tolist(),
             "age_layers": {k: v.tolist() for k, v in age_layers.items()},
             "metrics": metrics,
-            "schema_version": "1.1",
+            "winner": compute_winner_profile(df, float_share=float_share),
+            "schema_version": "1.2",
             "window_days": int(lookback),
         }
 
@@ -399,9 +550,7 @@ class ChipDistributionEngine:
         """
         vol = np.asarray(vol, dtype=float)
         vol_pos = np.where(vol > 0, vol, np.nan)
-        avg_vol_t = (
-            pd.Series(vol_pos).expanding(min_periods=self._TAU_MIN_OBS).mean().to_numpy()
-        )
+        avg_vol_t = pd.Series(vol_pos).expanding(min_periods=self._TAU_MIN_OBS).mean().to_numpy()
         with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
             circ = avg_vol_t / self.avg_turnover
             tau = np.where(avg_vol_t > 0, vol / circ, 0.0)
@@ -442,8 +591,13 @@ class ChipDistributionEngine:
             if s > 0:
                 age_layers[layer] = age_layers[layer] / s
 
-    def _uniform_result(self, symbol: str, date: Any = None) -> dict[str, Any]:
-        """降级：均匀分布（32网格各 1/32）。"""
+    def _uniform_result(
+        self,
+        symbol: str,
+        date: str | pd.Timestamp | None = None,
+        winner: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """降级：均匀分布（32网格各 1/32）；winner 剖面键恒在（缺省 fail-open）。"""
         uniform = np.ones(self.n_grids) / self.n_grids
         age = {k: uniform.copy() for k in ["ultra_short", "short", "medium", "long"]}
         return {
@@ -453,11 +607,12 @@ class ChipDistributionEngine:
             "total_distribution": uniform.tolist(),
             "age_layers": {k: v.tolist() for k, v in age.items()},
             "metrics": compute_metrics(uniform, age),
+            "winner": winner if winner is not None else _winner_unavailable("uniform_degrade(均匀降级)"),
             "schema_version": "1.0",
         }
 
     @staticmethod
-    def _get_date(df: pd.DataFrame) -> Any:
+    def _get_date(df: pd.DataFrame) -> str | pd.Timestamp | None:
         """安全获取最后一行日期。"""
         if "date" in df.columns and len(df) > 0:
             return df.iloc[-1]["date"]

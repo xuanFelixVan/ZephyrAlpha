@@ -2111,7 +2111,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-12-3
-  note_confirmed: 2026-09-16
+  note_confirmed: 2026-10-04
   name_zh: 筹码分布分析
   market: cn_a
   flow: entry_flow
@@ -2128,6 +2128,10 @@ nodes:
     语义未实现挂起（需流通股本数据工程）；kline_daily.volume 实测为手已修（量纲自洽探测），
     引擎 trial 期本维度信号不进决策）
     （note_confirmed: 2026-09-16 chip_distribution_engine.py 量纲+warmup 修复同批修订本注）
+    （2026-10-04 获利盘接线落地（SW14 处方①，D21 第一步，Owner 批）：chip_distribution_engine
+    增 winner 剖面直调 zephyr.factor.technical_indicators.chips::CYQ——获利盘占比由 CHIPS-001
+    供给（chips_winner，换手率衰减迭代分布，不依赖流通股本先行出数）；"单峰密集度"全语义
+    仍挂起待 D21 流通股本工程（nb1_b6 处方③）；trial 期信号不进决策（#257④ 纪律维持））
   parent_node: TDM-E-L3-12
   factor_refs: []
   data_refs: [DS-150]
