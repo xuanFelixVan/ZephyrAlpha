@@ -53828,6 +53828,8 @@ creation_tokens:
   token: mapfamily-construction_workflow_map_gate-20261004
   capability: map_family
   created_by: st-tclose-integ-20261004
+  map_mounts:
+  - dev_delivery_map:D11-C07
   merge_evaluation: "跨域不同对象不并：map_family 门族=各图提交面执法件（同 20261001 三图先例口径），子目录因 FOLDER-CAPACITY 120 硬上限；字节=wave2 死袋抢救 c064678aeefc+落点适配"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
   token: mapfamily-data_supply_chain_map_gate-20261001
@@ -53843,6 +53845,8 @@ creation_tokens:
   token: mapfamily-strategy_card_lifecycle_map_gate-20261004
   capability: map_family
   created_by: st-tclose-integ-20261004
+  map_mounts:
+  - dev_delivery_map:D11-C07
   merge_evaluation: "跨域不同对象不并：map_family 门族=各图提交面执法件（同 20261001 三图先例口径），子目录因 FOLDER-CAPACITY 120 硬上限；字节=wave2 死袋抢救 8b2e28d38747+落点适配"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
   token: mapfamily-trading_day_cycle_map_gate-20261001
@@ -58990,4 +58994,44 @@ creation_tokens:
   created_by: st-sK-orphanarch-20261004
   capability: commitmap_cure
   merge_evaluation: "F11 三族孤儿红测试考古裁定书（车道K 任务指令指定产出路径，F8 家族处置批D2 配套判定记录件）；f8_orphan_triage.md 同战役同形态先例，无重复对象"
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/index.md
+  token: map9-rx1-index-20261004
+  capability: map9_rx1_e7funnel
+  created_by: st-map9-f4-20261003
+  merge_evaluation: "跨域不同对象不并：E7漏斗Rx-1施工配套（intake ALGO_FLOW 外置），lane_i 投影账本正道登记"
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/intake.yaml
+  token: map9-rx1-intake-20261004
+  capability: map9_rx1_e7funnel
+  created_by: st-map9-f4-20261003
+  merge_evaluation: "跨域不同对象不并：E7漏斗Rx-1施工配套（intake ALGO_FLOW 外置），lane_i 投影账本正道登记"
+- file: docs/03_modules/_domain_strategy_pipeline/index.md
+  token: map9-rx1-index-20261004
+  capability: map9_rx1_e7funnel
+  created_by: st-map9-f4-20261003
+  merge_evaluation: "跨域不同对象不并：E7漏斗Rx-1施工配套（intake ALGO_FLOW 外置），lane_i 投影账本正道登记"
+- file: docs/_working/tdm_mount/f_mountgate_spec_v1.md
+  token: tdm-mountgate-f-spec-20261005
+  capability: tdm_mountgate
+  created_by: st-tdm-mountgate-20261005
+  merge_evaluation: "工单st-tdm-mountgate-20261005总筹详版规格（挂载义务门禁TDM-MOUNT-COVERAGE：三选一裁决/撞号拦/蓝图锚一致性/reconciler事件触发/红蓝测试）。净零申报：与TDM v1.3立项0e94229a1b蓝图锚一致性校验合流扩展非第二真源；规格文档一次性交付件无新册无新规则。"
+- file: docs/_working/tests_cure_campaign/01_structure_census.md
+  token: tests-cure-structure-census-20261004
+  capability: tests_cure_campaign
+  created_by: st-tests-chief-20261004
+  merge_evaluation: "结构普查册（129目录/4045py/八域分布/超限清单/同名异父56对/zephyr对撞）。净零：挖矿产出替代人工盘点，无新册无新规则。"
+- file: docs/_working/tests_cure_campaign/02_reference_census.md
+  token: tests-cure-reference-census-20261004
+  capability: tests_cure_campaign
+  created_by: st-tests-chief-20261004
+  merge_evaluation: "引用面普查册（P0=13/P1≈277/conftest27/pytest配置面）。净零：挖矿产出，无新册无新规则。"
+- file: docs/_working/tests_cure_campaign/03_garbage_census.md
+  token: tests-cure-garbage-census-20261004
+  capability: tests_cure_campaign
+  created_by: st-tests-chief-20261004
+  merge_evaluation: "垃圾判据册（L1=8/L2真永久=4/L3强候选7对/L4=184）。净零：挖矿产出，无新册无新规则。"
+- file: docs/_working/tests_cure_campaign/04_merge_verdicts.md
+  token: tests-cure-merge-verdicts-20261004
+  capability: tests_cure_campaign
+  created_by: st-tests-chief-20261004
+  merge_evaluation: "归并裁定表（129目录→8域机生真源）。净零：一级目录148→8收敛（宪法§4内收），无新册无新规则。"
 di_seam_exemptions: []
