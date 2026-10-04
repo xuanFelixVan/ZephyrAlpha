@@ -62532,4 +62532,14 @@ creation_tokens:
   token: commitmap-cure-s-liquidation-report-20261004
   created_by: st-s-liquidation-20261004
   capability: commitmap_cure
+- file: schemas/categories/market/market_alt_sz_reservoir_level_daily.py
+  token: alt-sz-daily-downsample-market-alt-sz-reservoir-level-daily-20261004
+  capability: alt_sz_daily_downsample
+  created_by: st-datasop-20260930
+  merge_evaluation: "EXEC-E3 降采样落地批（Owner 批 D5）：日级聚合 DDL 为原表跨粒度派生新形状非第二真源（跨域不同对象不并）"
+- file: schemas/categories/market/market_alt_sz_house_listing_daily.py
+  token: alt-sz-daily-downsample-market-alt-sz-house-listing-daily-20261004
+  capability: alt_sz_daily_downsample
+  created_by: st-datasop-20260930
+  merge_evaluation: "EXEC-E3 降采样落地批（Owner 批 D5）：日级聚合 DDL 为明细跨粒度派生新形状非第二真源（跨域不同对象不并）"
 di_seam_exemptions: []
