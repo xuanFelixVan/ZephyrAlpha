@@ -59183,4 +59183,29 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
+- file: docs/_working/fullflow_mine/verify/D6_ghost13_mining.md
+  token: ghost13-mining-d6-ghost13-mining-20261004
+  created_by: st-datasop-20260930
+  capability: ghost13_mining
+  merge_evaluation: "13项均为登记口径错位非真实缺表：11张为模块能力误登dataset(能力挂MOD-L02-*,与dataset条目同域不同对象→改口径不并)、DS-224锚PG、DS-225改登endpoint——零新建零删册,报告本身task_bound自灭"
+- file: docs/_working/map_census/gomap/gomap_f2_facts.yaml
+  token: gomap-f2-gomap-f2-facts-20261004
+  created_by: st-gomap-chief-20261004
+  capability: gomap_f2
+  merge_evaluation: "F2三表重投token:原创st-gomap-f2m-20261003;dev HEAD 已含同名token(belt已落地),本批补主区盘面册供入队预检与工具链同源"
+- file: docs/_working/map_census/gomap/gomap_f2_focus_evidence.yaml
+  token: gomap-f2-gomap-f2-focus-evidence-20261004
+  created_by: st-gomap-chief-20261004
+  capability: gomap_f2
+  merge_evaluation: "F2三表重投token:原创st-gomap-f2m-20261003;dev HEAD 已含同名token(belt已落地),本批补主区盘面册供入队预检与工具链同源"
+- file: docs/_working/map_census/gomap/gomap_f2_zero_evidence.yaml
+  token: gomap-f2-gomap-f2-zero-evidence-20261004
+  created_by: st-gomap-chief-20261004
+  capability: gomap_f2
+  merge_evaluation: "F2三表重投token:原创st-gomap-f2m-20261003;dev HEAD 已含同名token(belt已落地),本批补主区盘面册供入队预检与工具链同源"
+- file: docs/_working/map_census/gomap/index.md
+  token: gomap-f2-index-20261004
+  created_by: st-gomap-chief-20261004
+  capability: gomap_f2
+  merge_evaluation: "F2三表重投token:原创st-gomap-f2m-20261003;dev HEAD 已含同名token(belt已落地),本批补主区盘面册供入队预检与工具链同源"
 di_seam_exemptions: []
