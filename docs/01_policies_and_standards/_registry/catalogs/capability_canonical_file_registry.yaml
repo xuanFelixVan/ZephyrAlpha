@@ -53107,21 +53107,25 @@ creation_tokens:
   token: f128-wiring-init-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/audit_sink.py
   token: f128-wiring-audit-sink-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/data_exit_guard.py
   token: f128-wiring-data-exit-guard-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/lsg_masking_front.py
   token: f128-wiring-lsg-front-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/ex_core/adapters/miniqmt_broker.py
   token: auto-miniqmt-broker-20260704
@@ -58981,4 +58985,9 @@ creation_tokens:
   created_by: st-gomap-f2m-20261003
   capability: gomap_f2
   merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
+- file: docs/_working/commitmap_cure/f11_orphan_test_verdict.md
+  token: commitmap-cure-f11-orphan-test-verdict-20261004
+  created_by: st-sK-orphanarch-20261004
+  capability: commitmap_cure
+  merge_evaluation: "F11 三族孤儿红测试考古裁定书（车道K 任务指令指定产出路径，F8 家族处置批D2 配套判定记录件）；f8_orphan_triage.md 同战役同形态先例，无重复对象"
 di_seam_exemptions: []
