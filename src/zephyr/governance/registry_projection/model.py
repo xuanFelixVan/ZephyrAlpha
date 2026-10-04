@@ -7,9 +7,11 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 快照模型是生成器唯一输入形态：条目=有序 (key,value) 对（保序+保留重复键，
-#   compose 级提取，safe_load 无法表达的遗留脏数据零丢失）；规范化序=(file,token) 复合键
-#   字节序，与 commit_queue_landing._merge_entry_identity 同构
-# [MODIFY-GUARD] 新建 2026-09-23 st-wm1-buildB-20260923（W-M1 波0 车道B）
+#   compose 级提取，safe_load 无法表达的遗留脏数据零丢失）；规范化序=声明身份字段
+#   （册头 unique_key，无声明退 (file,token) legacy 映射/首字段）字节序，与
+#   commit_queue_landing._merge_entry_identity 同构；身份声明制=st-sI-identity-20261004
+# [MODIFY-GUARD] 新建 2026-09-23 st-wm1-buildB-20260923（W-M1 波0 车道B）；
+#   2026-10-04 st-sI-identity-20261004 身份声明制（F10 治本手术1）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -71,6 +73,10 @@ class ProjectionSnapshot:
     ledger_revision: int = 0
     snapshot_version: int = 0
     content_sha256: str = ""
+    # 身份声明制（st-sI-identity-20261004）：{族键: 声明身份字段元组}（"*"=全族默认）。
+    # 空dict=无声明（消费面退位置首标量口径，fdfe8fe302 语义）。bundle 契约新增可选键
+    # unique_key_fields 由此还原；snapshot_from_yaml 从根 unique_key 声明提取。
+    unique_key_fields: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     def section(self, root_key: str) -> Section | None:
         for sec in self.sections:
@@ -80,6 +86,11 @@ class ProjectionSnapshot:
 
     def entry_counts(self) -> dict[str, int]:
         return {sec.root_key: len(sec.entries) for sec in self.sections}
+
+    def declared_fields_for(self, root_key: str) -> tuple[str, ...] | None:
+        """族声明身份字段（族键直查 → "*" 通配 → None=无声明）。"""
+        fields = self.unique_key_fields.get(root_key) or self.unique_key_fields.get("*")
+        return fields or None
 
 
 def _scalar_tag_value(node: object) -> object:
@@ -137,6 +148,33 @@ def _entries_from_sequence(seq_node: object) -> list[list[tuple[str, object]]]:
     return entries
 
 
+def _normalize_unique_key_decl(raw: object) -> dict[str, tuple[str, ...]]:
+    """根 unique_key 声明 → {族键: 字段元组} 归一（list=全族默认"*"，dict=按族）。
+
+    与 commit_queue_landing._unique_key_decl 同一声明规范（QMine A1 件③ L1 SSOT）；
+    退化形态（空/含非字符串段）静默丢弃该段——声明无效=无声明，退位置口径。
+    """
+
+    def _fields(items: object) -> tuple[str, ...] | None:
+        if not isinstance(items, list) or not items:
+            return None
+        if not all(isinstance(f, str) and f for f in items):
+            return None
+        return tuple(items)
+
+    out: dict[str, tuple[str, ...]] = {}
+    if isinstance(raw, list):
+        fields = _fields(raw)
+        if fields:
+            out["*"] = fields
+    elif isinstance(raw, dict):
+        for fam, items in raw.items():
+            fields = _fields(items)
+            if fields:
+                out[str(fam)] = fields
+    return out
+
+
 def snapshot_from_yaml(text: str, *, registry_id: str, physical_path: str) -> ProjectionSnapshot:
     """compose 级提取：保序+保留条目内重复键（safe_load 盲区零丢失）。"""
     import yaml
@@ -152,8 +190,11 @@ def snapshot_from_yaml(text: str, *, registry_id: str, physical_path: str) -> Pr
     sections: list[Section] = []
     trailing: list[tuple[str, object]] = []
     seen_section = False
+    unique_key_decl: dict[str, tuple[str, ...]] = {}
     for key_node, value_node in root.value:
         key = str(_scalar_tag_value(key_node))
+        if key == "unique_key":  # 身份声明提取（位置无关：头部/尾部均收）
+            unique_key_decl = _normalize_unique_key_decl(_node_to_value(value_node))
         if type(value_node).__name__ == "SequenceNode" and value_node.value:
             first = value_node.value[0]
             if type(first).__name__ == "MappingNode" and not seen_section:
@@ -174,6 +215,7 @@ def snapshot_from_yaml(text: str, *, registry_id: str, physical_path: str) -> Pr
         header_lines=header_lines,
         sections=sections,
         trailing_scalars=trailing,
+        unique_key_fields=unique_key_decl,
     )
 
 
@@ -184,14 +226,23 @@ def entry_field(entry: list[tuple[str, object]], key: str) -> object:
     return None
 
 
-def entry_identity_key(entry: list[tuple[str, object]]) -> tuple[str, str]:
-    """复合身份 (file, token or "")——与合并器 _merge_entry_identity 同构的排序键形态。"""
-    file_v = entry_field(entry, "file")
-    token_v = entry_field(entry, "token")
-    return (
-        "" if file_v is None else str(file_v),
-        "" if token_v is None else str(token_v),
-    )
+def entry_identity_key(
+    entry: list[tuple[str, object]], declared_fields: tuple[str, ...] | None = None
+) -> tuple[str, ...]:
+    """复合身份元组（排序键形态）——声明字段优先，无声明退首个标量字段。
+
+    st-sI-identity-20261004 身份声明制（f10 §6.1）：declared_fields 给定时按声明
+    序取字段值元组（与册内 unique_key 声明一致）；缺失字段以 "" 占位（与既有
+    (file, token) 排序键同容错口径）。无声明 → 向后扫描首个标量字段（fdfe8fe302
+    同义）；条目无任何标量字段 → ("",)。调用方对 (file, token) 族（creation_tokens）
+    显式传声明或沿用 _IDENTITY_SORT_KEY 兜底，禁盲调。
+    """
+    if declared_fields:
+        return tuple("" if entry_field(entry, f) is None else str(entry_field(entry, f)) for f in declared_fields)
+    for k, v in entry:
+        if isinstance(v, (str, int, float, bool)):
+            return (str(v),)
+    return ("",)
 
 
 _IDENTITY_SORT_KEY: dict[str, tuple[str, str]] = {
@@ -199,8 +250,10 @@ _IDENTITY_SORT_KEY: dict[str, tuple[str, str]] = {
 }
 
 
-def _identity_key_for(root_key: str, entry: list[tuple[str, object]]) -> tuple[str, ...]:
-    fields = _IDENTITY_SORT_KEY.get(root_key)
+def _identity_key_for(
+    root_key: str, entry: list[tuple[str, object]], declared_fields: tuple[str, ...] | None = None
+) -> tuple[str, ...]:
+    fields = declared_fields or _IDENTITY_SORT_KEY.get(root_key)
     if fields is None:
         first = entry[0][0] if entry else ""
         return ("" if entry_field(entry, first) is None else str(entry_field(entry, first)),)
@@ -208,7 +261,7 @@ def _identity_key_for(root_key: str, entry: list[tuple[str, object]]) -> tuple[s
 
 
 def canonicalize(snapshot: ProjectionSnapshot) -> ProjectionSnapshot:
-    """规范化序：creation_tokens 按 (file, token) 字节序、capabilities 按 capability_id 字节序。
+    """规范化序：按册声明身份字段（无声明退 legacy 映射/首字段）字节序重排条目。
 
     发布侧（registry_snapshot.publish）必须先规范化再落 bundle——render 本身保序，
     字节确定性由「同快照同字节」保证，规范化序由快照契约保证。
@@ -218,9 +271,11 @@ def canonicalize(snapshot: ProjectionSnapshot) -> ProjectionSnapshot:
     out = copy.copy(snapshot)
     out.sections = []
     for sec in snapshot.sections:
+        declared = snapshot.declared_fields_for(sec.root_key)
         out.sections.append(
             Section(
-                root_key=sec.root_key, entries=sorted(sec.entries, key=lambda e: _identity_key_for(sec.root_key, e))
+                root_key=sec.root_key,
+                entries=sorted(sec.entries, key=lambda e: _identity_key_for(sec.root_key, e, declared)),
             )
         )
     return out

@@ -18,12 +18,13 @@
 # [TESTS] tests/governance/registry_projection/test_projection_pg_source.py
 """pg_source.py — registry_snapshot 快照表只读消费 + bundle ⇄ 快照模型。
 
-bundle JSON 契约（与车道乙对齐，jsonb 保序形态）::
+bundle JSON 契约（与车道乙对齐，jsonb 保序形态；st-sI-identity-20261004 增可选键）::
 
     {"registry_id": str, "snapshot_version": int, "ledger_revision": int,
      "content_sha256": str, "header_lines": [str],
      "sections": [{"root_key": str, "entries": [[[key, value], ...], ...]}],
-     "trailing_scalars": [[key, value], ...]}
+     "trailing_scalars": [[key, value], ...],
+     "unique_key_fields": {family: [field, ...]}}   # 可选：发布侧解析的逐族身份声明计划
 
 条目=有序 [key, value] 对数组（jsonb 保序+重复键可表达）；value 递归同构。
 
@@ -60,6 +61,14 @@ def snapshot_from_bundle(bundle: dict[str, object], physical_path: str) -> Proje
             )
             for sec in bundle["sections"]
         ]
+        # 身份声明制（st-sI-identity-20261004）：bundle 可选键 unique_key_fields（发布侧
+        # 落已解析的逐族计划）；旧 bundle 缺位=空声明（消费面退位置口径，向后兼容）
+        raw_decl = bundle.get("unique_key_fields")
+        declared: dict[str, tuple[str, ...]] = {}
+        if isinstance(raw_decl, dict):
+            for fam, fields in raw_decl.items():
+                if isinstance(fields, list) and fields and all(isinstance(f, str) and f for f in fields):
+                    declared[str(fam)] = tuple(fields)
         return ProjectionSnapshot(
             registry_id=str(bundle["registry_id"]),
             physical_path=physical_path,
@@ -69,6 +78,7 @@ def snapshot_from_bundle(bundle: dict[str, object], physical_path: str) -> Proje
             ledger_revision=int(bundle.get("ledger_revision") or 0),
             snapshot_version=int(bundle.get("snapshot_version") or 0),
             content_sha256=str(bundle.get("content_sha256") or ""),
+            unique_key_fields=declared,
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise ProjectionUnavailable(f"bundle 结构不符契约: {exc}") from exc

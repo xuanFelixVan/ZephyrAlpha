@@ -8,8 +8,10 @@
 # [MATURITY] production
 # [INVARIANTS] render(snapshot) 是纯函数：无时钟/无随机/无环境依赖，同快照永远同字节；
 #   零 volatile 字段（生成元数据只进状态文件与账本审计，不进产物）；UTF-8 无 BOM+
-#   LF+文件尾单换行；写盘前语义等值断言（safe_load 回读 vs 快照）不等即拒写
-# [MODIFY-GUARD] 新建 2026-09-23 st-wm1-buildB-20260923（W-M1 波0 车道B）
+#   LF+文件尾单换行；写盘前语义等值断言（safe_load 回读 vs 快照）不等即拒写；
+#   身份键往返不变断言（快照身份集==渲染重扫身份集，声明族零坍缩）——st-sI-identity-20261004
+# [MODIFY-GUARD] 新建 2026-09-23 st-wm1-buildB-20260923（W-M1 波0 车道B）；
+#   2026-10-04 st-sI-identity-20261004 补身份断言（f10 §3 盲区封死）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -160,10 +162,59 @@ def semantic_model(snapshot) -> dict[str, object]:
     return model
 
 
+def _identity_str(entry: list[tuple[str, object]], declared_fields: tuple[str, ...] | None) -> str | None:
+    """条目（有序对列表）→ 身份键串（ledger entry_composite_key 同源：声明优先/位置回退）。"""
+    from zephyr.governance.registry_ledger.ledger_identity import entry_composite_key  # noqa: PLC0415
+
+    payload: dict[str, object] = {}
+    for k, v in entry:  # 重复键取后值（safe_load 同判据）
+        payload[k] = v
+    return entry_composite_key(payload, declared_fields)
+
+
+def _rescan_family_blocks(rendered: str) -> dict[object, list[object]]:
+    """渲染产物重扫（与账本盘面扫描同一切分真源）→ {族键: 条目 blk.data 序}。"""
+    from scripts.governance.commit_queue_landing import _split_registry_entries  # noqa: PLC0415
+
+    families, err = _split_registry_entries(rendered)
+    if err:
+        raise SemanticMismatch(f"渲染产物重扫失败（切分器报错）: {err}")
+    return {fam_key: [blk.data for blk in fam.blocks] for fam_key, fam in families.items()}
+
+
 def self_check(rendered: str, snapshot) -> None:
-    """写盘前语义等值断言（丙号文 §2.3.5）：不等即 SemanticMismatch 拒写。"""
+    """写盘前语义等值断言（丙号文 §2.3.5）：不等即 SemanticMismatch 拒写。
+
+    st-sI-identity-20261004 补身份断言（f10 §3 守卫盲区实证封死）：safe_load 等值
+    断言序不敏感，测不出身份口径漂移（B3 期七册全 PASS 而身份坍缩 7749）——增判
+    ①身份键往返不变：快照节段身份集 == 渲染重扫同族身份集（同声明口径，序不敏感盲区封死）；
+    ②声明族身份零坍缩：有 unique_key 声明的族，唯一身份数==条目数（撞并即拒写）。
+    """
     import yaml
 
     rendered_model = yaml.safe_load(rendered)
     if rendered_model != semantic_model(snapshot):
         raise SemanticMismatch("渲染回读语义与快照不等（键集/字段级/段序断言失败）——拒写")
+
+    rescan_blocks = _rescan_family_blocks(rendered)
+    for sec in snapshot.sections:
+        declared = snapshot.declared_fields_for(sec.root_key)
+        snap_ids = [_identity_str(entry, declared) for entry in sec.entries]
+        rescan_ids = [
+            _identity_str(list(data.items()), declared) if isinstance(data, dict) else None
+            for data in rescan_blocks.get(sec.root_key, [])
+        ]
+        # ① 身份键往返不变：集合相等（None=passthrough 边界，两侧同判据剔除）
+        snap_set = {i for i in snap_ids if i is not None}
+        rescan_set = {i for i in rescan_ids if i is not None}
+        if snap_set != rescan_set:
+            lost = sorted(snap_set - rescan_set)[:3]
+            gained = sorted(rescan_set - snap_set)[:3]
+            raise SemanticMismatch(f"身份键往返漂移（族 {sec.root_key}）：渲染重扫丢 {lost} / 增 {gained}——拒写")
+        # ② 声明族零坍缩：声明 unique_key 即唯一性契约，撞并=身份口径漂移（B3 病灶形态）
+        if declared:
+            valid = [i for i in snap_ids if i is not None]
+            if len(set(valid)) < len(valid):
+                seen: set[str] = set()
+                dupes = sorted({i for i in valid if (i in seen or seen.add(i))})[:3]
+                raise SemanticMismatch(f"声明族 {sec.root_key} 身份坍缩（声明唯一键撞并 {dupes}）——拒写")

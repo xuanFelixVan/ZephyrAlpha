@@ -167,6 +167,32 @@ def _release_conn(c: _Conn) -> None:
         from zephyr.governance.depgraph_schema import release_depgraph_pg_connection
 
         release_depgraph_pg_connection(c.conn)
+
+
+def _catalog_declared_fields(c: _Conn, registry_id: str, family_key: str, schema: str) -> tuple[str, ...] | None:
+    """catalog 声明列 → 族声明身份字段（None=无声明退位置口径）。
+
+    st-sI-identity-20261004 手术1 接线：意图 API 身份推导与扫描/对账同一声明口径
+    （register 算键 / update CAS 校验）。列空/解析失败=None（fail-open 位置口径，
+    与门禁/账本同边界）。catalog 列由 _seed_catalog 随扫描落库（手术1b）。
+    """
+    with contextlib.suppress(Exception):
+        with c.conn.cursor() as cur:
+            cur.execute(
+                f"SELECT unique_key_fields FROM {_t('registry_catalog', schema)} WHERE registry_id=%s",  # noqa: bare-sql  W-M1 ledger SQL 真源集中本模块（参数化查询）
+                (registry_id,),
+            )
+            row = cur.fetchone()
+        raw = row[0] if row else None
+        if isinstance(raw, str):
+            raw = json.loads(raw)
+        if isinstance(raw, dict):
+            fields = raw.get(family_key)
+            if isinstance(fields, list) and fields and all(isinstance(f, str) and f for f in fields):
+                return tuple(fields)
+        elif isinstance(raw, list) and raw and all(isinstance(f, str) and f for f in raw):
+            return tuple(raw)
+    return None
     with contextlib.suppress(Exception):
         c.conn.close()
 
@@ -239,11 +265,13 @@ def register(  # noqa: long-param-list  02号文§3.1 意图API签名契约绑�
     _validate_actor(actor_kind)
     if not isinstance(payload, dict) or not payload:
         return Result(SCHEMA_INVALID, detail={"cause": "payload must be a non-empty dict"})
-    entry_key = entry_composite_key(payload)
+    c = _conn_ctx(conn)
+    declared = _catalog_declared_fields(c, registry_id, family_key, schema)
+    entry_key = entry_composite_key(payload, declared)
     if entry_key is None:
+        _release_conn(c)  # 早退自管连接显式回收（此时尚未进入下方 try/finally）
         return Result(SCHEMA_INVALID, detail={"cause": "identity key unresolvable (non-scalar first field)"})
     sha = canonical_payload_sha256(payload)
-    c = _conn_ctx(conn)
 
     def _t(name: str, _s: str = schema) -> str:
         return f'"{_s}".{name}'
@@ -364,10 +392,12 @@ def update(  # noqa: long-param-list  02号文§3.1 意图API签名契约绑定�
         raise ValueError(f"expected_version must be int >= 1, got {expected_version!r}")
     if not isinstance(payload, dict) or not payload:
         return Result(SCHEMA_INVALID, detail={"cause": "payload must be a non-empty dict"})
-    if entry_composite_key(payload) != entry_key:
+    c = _conn_ctx(conn)
+    declared = _catalog_declared_fields(c, registry_id, family_key, schema)
+    if entry_composite_key(payload, declared) != entry_key:
+        _release_conn(c)  # 早退自管连接显式回收（此时尚未进入下方 try/finally）
         return Result(INVALID_ARGUMENT, detail={"cause": "payload identity mismatch with entry_key"})
     sha = canonical_payload_sha256(payload)
-    c = _conn_ctx(conn)
 
     def _t(name: str, _s: str = schema) -> str:
         return f'"{_s}".{name}'
