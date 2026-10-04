@@ -42,7 +42,7 @@ references:
   - {id: "MOD-INF-022", at: "§2", why: "Escalation / Kill Switch——仅存 references（打破 018↔022 DAG 环）"}
 responsibility_domain: 
 design_maturity: production
-build_status: generated
+build_status: stable
 ---
 
 # Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
@@ -222,7 +222,7 @@ build_status: generated
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-018` 的 159 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-018` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -232,7 +232,7 @@ build_status: generated
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-018 | MOD-INF-018 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 159 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.43"
+version: "2.2.44"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.43 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.44 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 242 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 250 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 242 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 250 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1098,6 +1098,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market/market_ndrc_fuel_price.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_news_sentiment_window.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_northbound_hold_snapshot.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_option_daily_stats.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_option_greeks.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_option_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_option_kline.py` | ✅ 已实现 | |
@@ -1147,6 +1148,7 @@ class ViolationDetail(BaseModel):
 | `tests/risk/core/test_orchestrator_alert_integration.py` | ✅ 已实现 | |
 | `tests/risk/core/test_orchestrator_g3g5g6_integration.py` | ✅ 已实现 | |
 | `tests/risk/test_kill_switch_state_persistence.py` | ✅ 已实现 | |
+| `tests/risk/test_kill_switch_t1_bucket.py` | ✅ 已实现 | |
 | `tests/risk/test_l04_risk_management.py` | ✅ 已实现 | |
 | `tests/zephyr/backtest/test_ch_tick_replay.py` | ✅ 已实现 | |
 | `tests/zephyr/data/test_financial_derived_compute.py` | ✅ 已实现 | |

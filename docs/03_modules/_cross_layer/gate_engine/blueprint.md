@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.45"
+version: "0.8.49"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -243,6 +243,8 @@ build_status: stable
 | `commit_gates/registry_code_anchor_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/errcode_consistency_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/hot_file_base_freshness_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/_capability_registry_io.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/resource_schedule_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
@@ -297,8 +299,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 339 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 375 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -309,7 +311,7 @@ build_status: stable
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 339 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 375 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1466,6 +1468,9 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/data/date_normalize.py` | ✅ 已实现 | |
+| `src/zephyr/data/dual_source_guard.py` | ✅ 已实现 | |
+| `src/zephyr/data/miniqmt_caliber_sentinel.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_governance_gates.py` | ✅ 已实现 | |
 | `src/zephyr/feedback_loop/gates/_operational_gates.py` | ✅ 已实现 | |
@@ -1480,6 +1485,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py` | ✅ 已实现 | |
@@ -1500,6 +1506,8 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/commit_gates/trading_day_cycle_map_gate.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/registry_alignment.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py` | ✅ 已实现 | |
@@ -1615,10 +1623,14 @@ STEP 3: 拆分后验证
 | `tests/governance/rule_enforcement/test_secrets_guard.py` | ✅ 已实现 | |
 | `tests/governance/rule_enforcement/test_triple_alignment.py` | ✅ 已实现 | |
 | `tests/governance/test_alignment_gates_red_blue.py` | ✅ 已实现 | |
+| `tests/governance/test_ch_probe_json_serialization_canary.py` | ✅ 已实现 | |
+| `tests/governance/test_enforcement_surface_reconcile_canary.py` | ✅ 已实现 | |
 | `tests/governance/test_gate_failure_probes.py` | ✅ 已实现 | |
 | `tests/governance/test_generate_gate_face_reconciliation.py` | ✅ 已实现 | |
 | `tests/governance/test_preflight_bare_sql_alignment.py` | ✅ 已实现 | |
+| `tests/governance/test_pst_modified_scope.py` | ✅ 已实现 | |
 | `tests/governance/test_risk_tier_registry.py` | ✅ 已实现 | |
+| `tests/governance/test_session_takeover_ledger.py` | ✅ 已实现 | |
 | `tests/governance/test_split_coordination.py` | ✅ 已实现 | |
 | `tests/llm_security/test_llm_cost_router.py` | ✅ 已实现 | |
 | `tests/risk/test_risk_ssot.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.20
+version: 6.1.22
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -61,7 +61,7 @@ summary: >
   15核心RI模块跨层协同+48项设计约束+交易基础设施+模块通信模式+确定性复现+AI施工模式库。v6.1.0模板v3.5/v3.6升级完成。
 responsibility_domain: 
 build_status: generated
-design_maturity: design
+design_maturity: production
 ---
 
 > actual_disk_path: src/zephyr/shared/ (Shared Core 承载) + src/zephyr/infra_ops/ (独立落地) + src/zephyr/lifecycle_manager/ (RI-02)
@@ -196,7 +196,7 @@ design_maturity: design
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-002` 的 83 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-002` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-002` 的 84 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-002` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -208,7 +208,7 @@ design_maturity: design
 | module_id | MOD-INF-002 | MOD-INF-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 83 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 84 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 

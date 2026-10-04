@@ -38,7 +38,7 @@ references:
 codification_level: L1
 responsibility_domain: 
 design_maturity: production
-build_status: production
+build_status: generated
 ---
 
 # Model Profiler 蓝图 — 模型画像器·LLM能力基线测量
@@ -151,7 +151,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-034 | MOD-INF-034 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | production | production | ✅ |
+| build_status | generated | generated | ✅ |
 | file_count | 35 文件 | 8 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

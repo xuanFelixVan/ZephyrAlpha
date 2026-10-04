@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.22"
+version: "4.0.26"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -208,7 +208,7 @@ dual_storage:
     content: "元数据 + 血缘 + 质量 + 版本"
   consistency: "同一 Engine.compute() 驱动两种存储写入 → 消除15-25%偏差"
 responsibility_domain: 
-build_status: production
+build_status: generated
 ---
 
 > ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放[ARCH-045 P0]，可施工。
@@ -308,7 +308,7 @@ build_status: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L02-001` 的 131 个 file 节点 | design | `extract_depgraph.py --modules MOD-L02-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L02-001` 的 133 个 file 节点 | design | `extract_depgraph.py --modules MOD-L02-001` |
 | 数据流图 (dataflow) | 23 个 Dataset / 24 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 2 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -319,8 +319,8 @@ build_status: production
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L02-001 | MOD-L02-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | production | production | ✅ |
-| file_count | 131 文件 | 14 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 133 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1106,6 +1106,7 @@ class FactorMeta(BaseModel):
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/factor/alpha_signal_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/factor/auction_strength.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/factor/core/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/backpressure/limiter.py` | ✅ 已实现 | |

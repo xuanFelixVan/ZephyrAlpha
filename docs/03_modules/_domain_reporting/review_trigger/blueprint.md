@@ -3,7 +3,7 @@ module_id: MOD-RPT-038
 title: "复盘链事件触发入口蓝图 — 缺失的调用方 + CLI 一次性事件面（F115 R1 触发链薄刀）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -15,7 +15,7 @@ last_updated: "2026-09-29"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: stable
 ---
 
@@ -53,7 +53,7 @@ run_weekly/run_monthly 由调用方在日终/周末/月末事件触发"——**�
 
 ### 3.1 上游缺口显式标注（不伪装完整审计）
 
-- AuditRequest：空持仓/空成交/零净值/空限额（同 scripts/run_post_settlement.py
+- AuditRequest：空持仓/空成交/零净值/空限额（同 scripts/tasks/run/run_post_settlement.py
   _build_audit_fn 先例——57 号文 GAP 族输入真源未接线，缺口由产出显式标注）。
 - 契约快照/指标：RiskDashboardSnapshot/RiskMetricsReport 零值最小构造，
   calculation_method="upstream_gap_minimal"，portfolio_id 双契约一致。
@@ -104,6 +104,7 @@ run_weekly/run_monthly 由调用方在日终/周末/月末事件触发"——**�
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/reporting/test_attribution_meta_iteration.py` | ✅ 已实现 | |
+| `tests/reporting/test_review_trigger.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 
@@ -118,3 +119,30 @@ run_weekly/run_monthly 由调用方在日终/周末/月末事件触发"——**�
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+### §0.6 五图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RPT-038`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-RPT-038` 的 4 个 file 节点 | production | `extract_depgraph.py --modules MOD-RPT-038` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-RPT-038 | MOD-RPT-038 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | stable | stable | ✅ |
+| file_count | 4 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
