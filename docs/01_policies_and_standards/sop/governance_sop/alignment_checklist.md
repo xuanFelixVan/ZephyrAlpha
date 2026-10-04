@@ -7,8 +7,8 @@ title: 全项目对齐清单——全图全库+代码文档三层对齐规则（
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.0"
-date: 2026-10-03
+version: "1.8.0"
+date: 2026-10-04
 topic: full_project_alignment_checklist
 scope: global
 depends_on:
@@ -62,7 +62,7 @@ related_modules:
 
 ## 3. 第一层：全景图对齐（全图全库对齐之"图"）
 
-> 全景图现 11 张+2 张待转正（图11/图13，见 §3 底部注记）：depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map/trading_decision_map/industry_chain_map + 策略生产全景图（strategy_production_map，2026-09-13 九图升级：E0-E9 供给端全景 `config/strategy_production_map.yaml`，D38"新图必挂总线"同源——结构校验器/对抗测试先行落地 681a7fc806，FACTORY-MAP gate+本挂轴同批闭环）+ 治理运行地图（governance_operations_map，2026-09-15 十图升级 #ARCH-312：治理运行时流水线骨架机生+人工语义层，`config/governance_operations_map.yaml`，D38"新图必挂总线"同源挂轴）+ 数据供给链图（data_supply_chain_map，图 12，2026-10-03 十一图升级 st-vm12surg-20261003：外部源→采集→入库→衍生→冷备→对账修复双层图 `config/data_supply_chain_map.yaml` schema 0.3，D38 同源挂轴——validator/DATA-SUPPLY-CHAIN-MAP gate/对抗测试/挂轴同批闭环，gate 补件兑现生成器 [CONSUMERS] 自 09-25 的幽灵声明）
+> 全景图现 13 张+2 张待转正（图11/图13，见 §3 底部注记）：depgraph/dataflowgraph/decisiongraph/blueprint/battle_map/frontend_map/trading_decision_map/industry_chain_map + 策略生产全景图（strategy_production_map，2026-09-13 九图升级：E0-E9 供给端全景 `config/strategy_production_map.yaml`，D38"新图必挂总线"同源——结构校验器/对抗测试先行落地 681a7fc806，FACTORY-MAP gate+本挂轴同批闭环）+ 治理运行地图（governance_operations_map，2026-09-15 十图升级 #ARCH-312：治理运行时流水线骨架机生+人工语义层，`config/governance_operations_map.yaml`，D38"新图必挂总线"同源挂轴）+ 数据供给链图（data_supply_chain_map，图 12，2026-10-03 十一图升级 st-vm12surg-20261003：外部源→采集→入库→衍生→冷备→对账修复双层图 `config/data_supply_chain_map.yaml` schema 0.3，D38 同源挂轴——validator/DATA-SUPPLY-CHAIN-MAP gate/对抗测试/挂轴同批闭环，gate 补件兑现生成器 [CONSUMERS] 自 09-25 的幽灵声明） + AI 施工升级流图（construction_workflow_map，图 14，2026-10-04 十四图升级 st-tclose-integ-20261004：AI 施工任务级 17 环节闭环 `config/construction_workflow_map.yaml` schema 0.1，D38 同源挂轴——步骤锚机读锚块真源=construction_workflow_policy.md 附录 D，validator/CONSTRUCTION-WORKFLOW-MAP gate/对抗测试/挂轴同批闭环）+ 策略卡生命周期图（strategy_card_lifecycle_map，图 15，同批：策略卡 13 态+17 迁移+13 禁边状态机 `config/strategy_card_lifecycle_map.yaml`，anchor_source=registry——宿主=experiment_registry CARD-* 契约条目+card_state_vocabulary 词表，validator/STRATEGY-CARD-LIFECYCLE-MAP gate/对抗测试/挂轴同批闭环）
 
 轴=纵（流程视图）/横（结构视图），裁定#409+宪章 §8.1
 
@@ -90,10 +90,12 @@ python scripts/governance/d5_architecture/validators/validate_data_supply_chain_
 | **strategy_production_map**（策略生产全景图/策略工厂，图 9，2026-09-13 九图升级） | `config/strategy_production_map.yaml`（git YAML 真源） | node_id（FAC-*） | 结构十项校验（字段完整性/边引用闭合/E0-E9 层位/laws/产品清单/built 必有代码锚/lane 归属/未声明反馈环/自环/store_refs 三要素）error>0=阻断；仓储存在性（磁盘路径+CH 表）error=硬、CH 连接异常=warn、待定入库位=warn | commit 前（触发式 gate：图 YAML/校验器变更）/ align_all 第 8 节 | [validate_strategy_production_map.py](../../../scripts/governance/d5_architecture/validators/validate_strategy_production_map.py) 校验器 + **FACTORY-MAP gate（commit 自动阻断，priority=142）**（校验单一真源=validate_structure 动态复用；仓储存在性归 align_all/CLI，CH 环境异常不误伤提交） | 结构 error>0→阻断 commit；仓储缺失→align_all 硬报告 | 纵轴（流程） |
 | **governance_operations_map**（治理运行地图，图 10，2026-09-15 十图升级 #ARCH-312） | `config/governance_operations_map.yaml`（git YAML 真源，机生，生成器=[generate_governance_map.py](../../../../scripts/governance/generate_governance_map.py)） | module_id（机生层）/ import spec（人工层） | 机生层 families 与生成器 scan() 重建逐模块比对（忽略 generated_at/counts）；人工层 mounts/disconnected import spec 磁盘实存（已删墓碑凭 note 豁免计软）+GOM-L0..L6 层位合法+disconnected 必带 note | commit 前 / align_all 第九节 | align_all 第九节（免独立校验器/免 gate，触发率实证后再议） | error>0 阻断（align_all exit 1）；已删墓碑 warn 待清理 | 纵轴（流程） |
 | **data_supply_chain_map**（数据供给链图，图 12，2026-10-03 十一图升级 st-vm12surg-20261003） | `config/data_supply_chain_map.yaml`（git YAML 真源，双层：机生层全量重建+人工语义层 existing-wins，生成器=[generate_data_supply_chain_map.py](../../../scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py)） | node_id（DSC-*）+ module_id（MOD 总线） | CV-L0/BUS/**BLOOD**/DUAL/FACET/GAP/WAIT 结构校验 error>0=阻断（血肉四字段 purpose_tag/casebooks/trigger_facts/consumers 分阶段：blood_stage=f1_pending 缺键降 warn／f2_done 转硬——挂图 SOP §4）；落地即挂图 warn 腿（触及数据域蓝图的 commit 其 MOD 号未挂图→留痕不拦，F2 血肉满+覆盖账本绿后随裁定翻硬） | commit 前（触发式 gate：图 YAML+生成器+校验器+tasks/schedule/scheduler+资产册+path_ownership+数据域蓝图族）/ align_all 第十节 | [validate_data_supply_chain_map.py](../../../scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py) 校验器 + **DATA-SUPPLY-CHAIN-MAP gate（经 MAP-ALIGNMENT 聚合台 subs 接入）**（校验单一真源=validate_structure 动态复用）+ 对抗测试 [test_data_supply_chain_map_gate.py](../../../tests/governance/commit_gates/test_data_supply_chain_map_gate.py) | 结构 error>0→阻断 commit；血肉未满（f1_pending）→warn 注记放行；图 YAML 损坏→fail-closed | 纵轴（流程） |
+| **construction_workflow_map**（AI 施工升级流图，图 14，2026-10-04 十四图升级 st-tclose-integ-20261004） | `config/construction_workflow_map.yaml`（git YAML 真源，派生件：锚块真源=施工 SOP 附录 D 机读锚块，生成器=[generate_construction_workflow_map.py](../../../scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py)，anchor_source 标当前装载点） | step_id（D14-*） | CV-01~16 结构校验 error>0=阻断（政策↔图双向闭合/可执行锚磁盘实存/gate 双册在册/禁行号锚/计数只进 counts/handoff 边界/状态自洽）；pending_anchors 显式白名单非空=warn 显性欠账 | commit 前（触发式 gate：图 YAML+校验器+生成器+锚块提案件+施工 SOP）/ align_all 第十三节 | [validate_construction_steps.py](../../../scripts/governance/d5_architecture/validators/validate_construction_steps.py) 校验器 + **CONSTRUCTION-WORKFLOW-MAP gate（经 MAP-ALIGNMENT 聚合台 subs 接入）**（结构校验单一真源动态复用）+ 对抗测试 [test_construction_workflow_map_gate.py](../../../tests/governance/commit_gates/test_construction_workflow_map_gate.py) | 结构 error>0→阻断 commit；图 YAML 损坏/校验器不可达→fail-closed | 纵轴（流程） |
+| **strategy_card_lifecycle_map**（策略卡生命周期图，图 15，2026-10-04 同批） | `config/strategy_card_lifecycle_map.yaml`（git YAML 真源，anchor_source=registry：状态真源=experiment_registry CARD-* 契约条目+card_state_vocabulary 词表，卡 md 为判据正文真源，图=机读镜像） | state_id（D15-S*）+ card_id | CV 结构面（词表闭集动态加载/状态机良构/禁边可枚不可绕/双轴/计数）error>0=阻断；实例面 8 条红账（F-05/F-07/X09/F-03×2/族账×3）=91 提案件 §10 已登记真实数据缺陷，归卡谱系专项清偿，gate 与 align_all 只取结构面 | commit 前（触发式 gate：图 YAML+校验器+生成器+口径档案+宿主册+宿主词表）/ align_all 第十四节（结构面） | [validate_strategy_card_lifecycle_map.py](../../../scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py) 校验器 + **STRATEGY-CARD-LIFECYCLE-MAP gate（经 MAP-ALIGNMENT 聚合台 subs 接入）**+ 对抗测试 [test_strategy_card_lifecycle_map_gate.py](../../../tests/governance/commit_gates/test_strategy_card_lifecycle_map_gate.py) | 结构 error>0→阻断 commit；图 YAML 损坏→fail-closed | 纵轴（流程） |
 
 > 待转正：dev_delivery_map（图11 交付流水线）/trading_day_cycle_map（图13 交易日循环）——YAML+生成器已落 config/，挂轴/校验器/gate 见转正批，其 §3 正式行随转正批登记。（图12 data_supply_chain_map 已随 2026-10-03 十一图升级入 §3 正式表，见上表与 §10 修订记录。）
 
-**硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）；全景图 git 侧工件违规（FRONTEND-MAP/DECISION-MAP/INDUSTRY-CHAIN-MAP/FACTORY-MAP/**DATA-SUPPLY-CHAIN-MAP** gate）；治理运行地图 error>0（align_all 第九节，图 10 行）；数据供给链图结构 error>0（align_all 第十节，图 12 行）
+**硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 / frontend_ref 悬空（自动门禁建成后；建成前人工确认）；全景图 git 侧工件违规（FRONTEND-MAP/DECISION-MAP/INDUSTRY-CHAIN-MAP/FACTORY-MAP/**DATA-SUPPLY-CHAIN-MAP**/**CONSTRUCTION-WORKFLOW-MAP**/**STRATEGY-CARD-LIFECYCLE-MAP** gate）；治理运行地图 error>0（align_all 第九节，图 10 行）；数据供给链图结构 error>0（align_all 第十节，图 12 行）；施工升级流图结构/锚块闭合 error>0（align_all 第十三节，图 14 行）；卡生命周期图结构 error>0（align_all 第十四节，图 15 行）
 
 ## 4. 第二层：注册表对齐
 
@@ -193,6 +195,7 @@ python scripts/governance/d5_architecture/validators/validate_data_supply_chain_
 | **新 AI 冷启动时** | 新 AI session 开始 | 必读本清单 + construction_workflow_sop + frontend_handbook（如涉及前端） | construction_workflow_sop Step 0 |
 | **新业务条目注册时**（2026-09-11 满贯） | 因子/策略/指标/形态/席位/阈值等任何业务库条目 commit | BUSINESS-REGISTRY gate 21 段整库校验 + depgraph 存在性 + （涉字典）FK 闭环 | gate 139 自动 + align_all 第五节 |
 | **产业链工件变更时**（2026-09-11 图 8） | 触及 industry_graph_field_dictionary/chainmap_cluster_names/DDL 真源 | INDUSTRY-CHAIN-MAP gate 结构四边 + 簇名词表 sanity；数据层 align_all 第七节 | gate 141 自动 + align_all 恒跑 |
+| **全景图工件变更时**（图 12-15 触发式，2026-10-04 扩） | 触及任一全景图 YAML/生成器/校验器/锚块真源（数据供给链/施工升级流/卡生命周期族） | 对应图结构校验（CV 族；图14 含政策锚块闭合） | 对应 MAP gate 自动（经 MAP-ALIGNMENT 聚合台）+ align_all 对应节（第十/十三/十四节） |
 
 ## 7. 不一致处置
 
@@ -242,6 +245,7 @@ python scripts/governance/d5_architecture/validators/validate_data_supply_chain_
 | 2026-09-15 | 1.6.0 | **十图升级（GOMAP 转正，#ARCH-312）**：①§3 新增图 10 治理运行地图行（module_id/import spec 双轴：机生层与生成器 scan() 重建比对+人工层 mounts/disconnected 路径实存+层位合法+disconnected 必带 note；工具=align_all 第九节，免独立校验器/免 gate，触发率实证后再议）；②计数命名合规清理（#ARCH-ALIGN-NAMING-001）：frontmatter 标题/§3 标题去"九图满贯"改"全图全库对齐"，引言/§3 数量改"现 10 张"动态口径，硬阻断条件行去计数命名；③统一验证命令块更新（align_all 加第九节图 10） | Owner 2026-09-15 放行 GOMAP 转正为全景图体系图 10（battle_map 定位措辞同步升级，语义与机制零变更）；实施细节见收尾报告 |
 | 2026-09-19 | —（§11 节增；frontmatter 版本/日期行按“只增节不改行”约束未动，下次全量修订时一并升版） | 新增 §11 全景图唯一性裁定（Owner 2026-09-19） | W4-5 TDM 唯一地图裁定落地（final3 战役）；裁定号补登归 00_master_directive §X-0 裁定登记批 |
 | 2026-10-03 | 1.7.0 | **十一图升级（图 12 数据供给链图挂轴，st-vm12surg-20261003 手术批）**：①§3 新增图 12 行（node_id+module_id 双轴：CV 规则族结构校验+血肉四字段 blood_stage 分阶段+落地即挂图 warn 腿；工具=validate_data_supply_chain_map+DATA-SUPPLY-CHAIN-MAP gate 经 MAP-ALIGNMENT 聚合台 subs，优先级 146）+引言计数 10→11；②gate 补件=兑现生成器 [CONSUMERS] 自 2026-09-25 声明的幽灵消费方（文档说有实则没有型缺陷治本）；③schema 0.2→0.3（挂图 SOP §4 四字段进 L1 菜单，加性迁移语义层继承）；④对抗测试 13 例含 6 能红（伪造枚举/自造标签/production 缺 trigger_facts/图例越界/YAML 损坏 fail-closed/触发式 skip） | 挂图 SOP（vertical_map_mounting_policy.md 2026-10-03 立）向纵轴地图家族通用化落地第一图；血肉填充（F2 批）与目的标签 Owner 终审随后 |
+| 2026-10-04 | 1.8.0 | **十四/十五图升级（图 14 施工升级流图+图 15 卡生命周期图挂轴，st-tclose-integ-20261004 整合批）**：①§3 新增图 14 行（step_id D14-* 轴：CV-01~16 结构校验+pending_anchors 显性欠账 warn；锚块真源=construction_workflow_policy.md 附录 D；工具=validate_construction_steps+CONSTRUCTION-WORKFLOW-MAP gate 经 MAP-ALIGNMENT 聚合台 subs）+图 15 行（state_id D15-S*+card_id 双键：CV 结构面硬/实例面 8 红账归卡谱系专项；工具=validate_strategy_card_lifecycle_map+STRATEGY-CARD-LIFECYCLE-MAP gate）+引言计数 11→13；②硬阻断条件行补两 gate 与 align_all 第十三/十四节；③§6 时机矩阵补全景图工件变更行；④align_all 第十三/十四节同批接线（结构面；实例面红账不入硬闸口径见行内） | Owner 令"死会话工作代做"（272 件整合批接管；图本体零改动；#451/#452 随收口批原子登记） |
 
 ## 11. 全景图唯一性裁定（Owner 2026-09-19）
 
