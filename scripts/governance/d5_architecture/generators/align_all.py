@@ -260,7 +260,6 @@ def _build_overview(
     cov_direct: int = 0,
     cov_derived: int = 0,
     cov_orphans: int = 0,
-    cov_exempted: int = 0,
     cov_dangling: int = 0,
     cov_hard: int = 0,
     cov_threshold: int | None = None,
@@ -372,10 +371,7 @@ def _build_overview(
         lines.append("## 七、覆盖账本 v2·join checker（裁定#481 分母·六图归属普查）")
         lines.append("")
         lines.append(f"- 记账宇宙: {cov_total}（主账=src/zephyr .py+scripts .py+frontend js/html）")
-        lines.append(
-            f"- 直接挂载: {cov_direct}｜闭包归属: {cov_derived}｜真孤儿: {cov_orphans}"
-            f"｜豁免在案: {cov_exempted}（有结论=第三合法态，不打红不隐身）｜悬空键: {cov_dangling}"
-        )
+        lines.append(f"- 直接挂载: {cov_direct}｜闭包归属: {cov_derived}｜孤儿: {cov_orphans}｜悬空键: {cov_dangling}")
         lines.append(f"- 判定模式: {_cov_mode}｜本节硬计: {cov_hard}（孤儿明细=docs/_working/map_build/30/31 号）")
         lines.append("")
 
@@ -796,7 +792,7 @@ def main() -> int:
     print()
     print("[+] 覆盖账本 v2·join checker（裁定#481 分母：宇宙×六图挂载×闭包→归属/孤儿普查）...")
     cov_hard = 0
-    cov_total = cov_direct = cov_derived = cov_orphans = cov_exempted = cov_dangling = 0
+    cov_total = cov_direct = cov_derived = cov_orphans = cov_dangling = 0
     try:
         _cov_gen_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators")
         if _cov_gen_dir not in sys.path:
@@ -813,16 +809,12 @@ def main() -> int:
         cov_direct = sum(_cov_report["by_map"].values())
         cov_derived = _cov_report["closure_derived"]
         cov_orphans = len(_cov_report["orphans"])
-        cov_exempted = len(_cov_report.get("exempted") or [])
         cov_dangling = len(_cov_report["dangling_keys"])
         cov_hard, _cov_msgs = _orphan_census_verdict(_cov_report, args.orphan_threshold)
         print(
             f"  OK: 宇宙={cov_total} 直接挂载={cov_direct} 闭包归属={cov_derived} "
-            f"真孤儿={cov_orphans}（另有豁免在案={cov_exempted}，有结论不打红不隐身）"
-            f" 悬空键={cov_dangling}"
+            f"孤儿={cov_orphans} 悬空键={cov_dangling}"
         )
-        for _sx in (_cov_report.get("stale_exemptions") or [])[:5]:
-            print(f"    陈旧豁免: {_sx['file']}（{_sx['reason']}——清册信号）")
         if args.orphan_threshold is None:
             print("  report-only（--orphan-threshold 未设，恒 exit 0）：数字进总览报告，判罚归填充班")
         else:
@@ -833,6 +825,75 @@ def main() -> int:
             print(f"    悬空键: {_dk['key']}（{_dk['source_map']}）")
     except Exception as e:  # noqa: BLE001 — 普查故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
         print(f"  WARN: 覆盖账本普查异常（降级跳过不计违规）: {e}")
+
+    # --- 第十三节：AI 施工升级流图（图 14，step_id D14-* 轴，2026-10-04 十四图升级 st-tclose-integ-20261004）---
+    print()
+    print("[+] 第十三图 AI 施工升级流图（图14，17 环节契约结构+政策锚块闭合校验）...")
+    cwm_hard = 0
+    cwm_soft = 0
+    try:
+        _cwm_validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
+        if _cwm_validators_dir not in sys.path:
+            sys.path.insert(0, _cwm_validators_dir)
+        import validate_construction_steps as _cwm  # noqa: import-integrity  sys.path 动态加载
+
+        _cwm_path = _REPO_ROOT / "config" / "construction_workflow_map.yaml"
+        _cwm_data = yaml.safe_load(_cwm_path.read_text(encoding="utf-8"))
+        _cwm_policy_path = (
+            _REPO_ROOT
+            / "docs"
+            / "01_policies_and_standards"
+            / "sop"
+            / "construction_sop"
+            / "construction_workflow_policy.md"
+        )
+        _cwm_warns: list[str] = []
+        _cwm_errors = _cwm.validate_structure(_cwm_data)
+        _cwm_anchor_errors = _cwm.check_anchors(
+            _cwm_policy_path.read_text(encoding="utf-8"), _cwm_data, _REPO_ROOT, _cwm_warns
+        )
+        cwm_hard, cwm_soft = len(_cwm_errors) + len(_cwm_anchor_errors), len(_cwm_warns)
+        _cwm_nodes = len(_cwm_data.get("nodes") or [])
+        print(
+            f"  OK: 节点={_cwm_nodes}（anchor_source={_cwm_data.get('anchor_source')}，"
+            f"结构+锚块闭合校验单一真源=validate_construction_steps）"
+        )
+        print(f"  问题: 硬={cwm_hard}, 软={cwm_soft}（pending_anchors 显式白名单 warn 属预期欠账）")
+        for x in (_cwm_errors + _cwm_anchor_errors)[:5]:
+            print(f"    FAIL: {x}")
+    except Exception as e:  # noqa: BLE001 — 图 14 故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
+        print(f"  WARN: 图 14 校验异常（降级跳过不计违规）: {e}")
+
+    # --- 第十四节：策略卡生命周期图（图 15，state_id D15-S*+card_id 轴，2026-10-04 同批；结构面）---
+    print()
+    print("[+] 第十四图 策略卡生命周期图（图15，13 态状态机+17 迁移+13 禁边结构校验）...")
+    scm_hard = 0
+    scm_soft = 0
+    try:
+        _scm_validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
+        if _scm_validators_dir not in sys.path:
+            sys.path.insert(0, _scm_validators_dir)
+        from validate_strategy_card_lifecycle_map import (
+            validate_structure as _scm_vs,  # noqa: import-integrity  sys.path 动态加载
+        )
+
+        _scm_path = _REPO_ROOT / "config" / "strategy_card_lifecycle_map.yaml"
+        _scm_data = yaml.safe_load(_scm_path.read_text(encoding="utf-8"))
+        _scm_errors = _scm_vs(_scm_data)
+        scm_hard = len(_scm_errors)
+        _scm_states = len(_scm_data.get("states") or [])
+        print(
+            f"  OK: 状态={_scm_states}（anchor_source={_scm_data.get('anchor_source')}，"
+            f"结构校验单一真源=validate_strategy_card_lifecycle_map.validate_structure）"
+        )
+        print(
+            "  口径: 本节只取结构面；实例面红账（F-05/F-07/X09/F-03×2/族账×3 共 8 条）"
+            "已登记于 91 提案件 §10，归卡谱系专项清偿，不进 align_all 硬闸"
+        )
+        for x in _scm_errors[:5]:
+            print(f"    FAIL: {x}")
+    except Exception as e:  # noqa: BLE001 — 图 15 故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
+        print(f"  WARN: 图 15 校验异常（降级跳过不计违规）: {e}")
 
     hard_issues = (
         len(pano.domain_mismatches)
@@ -845,6 +906,8 @@ def main() -> int:
         + dsc_hard
         + tdc_hard
         + cov_hard
+        + cwm_hard
+        + scm_hard
     )
     # 图 8 数据层违规（ig_hard）不计硬闸：产业链清欠=长城专项进行中（S21/S24 Owner gated、
     # S25 梳理清单在案），判定权=graph_quality_check 引擎；git 侧工件已由
@@ -862,14 +925,18 @@ def main() -> int:
             f"gomap error={gom_hard}, "
             f"data_supply_chain error={dsc_hard}, "
             f"trading_day_cycle error={tdc_hard}, "
-            f"coverage error={cov_hard}）"
+            f"coverage error={cov_hard}, "
+            f"construction_workflow error={cwm_hard}, "
+            f"strategy_card_lifecycle error={scm_hard}）"
         )
         print("   须修复后才能施工！")
     else:
         print(
             "✅ 硬问题清零: domain_mismatches=0, ghost_anchors=0, frontend_map fail=0, "
             "decision_map error=0, factory_map error=0, gomap error=0, data_supply_chain error=0, "
-            "trading_day_cycle error=0, coverage error=0"
+            "trading_day_cycle error=0, coverage error=0, "
+            "construction_workflow error=0, "
+            "strategy_card_lifecycle error=0"
         )
 
     soft_issues = (
@@ -915,7 +982,6 @@ def main() -> int:
             cov_direct=cov_direct,
             cov_derived=cov_derived,
             cov_orphans=cov_orphans,
-            cov_exempted=cov_exempted,
             cov_dangling=cov_dangling,
             cov_hard=cov_hard,
             cov_threshold=args.orphan_threshold,
