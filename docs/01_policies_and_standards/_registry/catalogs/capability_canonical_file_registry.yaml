@@ -62519,4 +62519,12 @@ creation_tokens:
   capability: news_score_daily
   created_by: st-datasop-20260930
   merge_evaluation: "EXEC-2b P0止血治本件（新闻评分链13月断供治本：日更生产者+断点续传回补），投影迁移丢token后正门补登"
+- file: docs/_working/commitmap_cure/r_replay_report.md
+  token: commitmap-cure-r-replay-report-20261004
+  created_by: st-chief-mount-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/s_liquidation_report.md
+  token: commitmap-cure-s-liquidation-report-20261004
+  created_by: st-s-liquidation-20261004
+  capability: commitmap_cure
 di_seam_exemptions: []
