@@ -197,6 +197,8 @@ def _apply_gate_selfdoc(filepath: Path, content: str, findings: list[dict]) -> l
     """
     if not findings:
         return findings
+    if filepath.suffix.lower() != ".md":
+        return findings  # .md-only 收窄：代码面操作指令不给文档豁免通道
     marked_lines = {
         i + 1 for i, ln in enumerate(content.splitlines()) if "[GATE-SELFDOC:" + _GATE_SELFDOC_ID + "]" in ln
     }
@@ -215,6 +217,17 @@ def _apply_gate_selfdoc(filepath: Path, content: str, findings: list[dict]) -> l
             dropped += 1
             continue
         kept.append(f)
+    if dropped > 0:
+        if len(kept) > 0 and dropped > _GATE_SELFDOC_LINE_LIMIT:
+            print(
+                f"[GATE-SELFDOC:{_GATE_SELFDOC_ID}] audit: {filepath.name} 豁免 {dropped} 行超出单文件上限 {_GATE_SELFDOC_LINE_LIMIT}，照拦 {len(kept)} 行",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                f"[GATE-SELFDOC:{_GATE_SELFDOC_ID}] audit: {filepath.name} 豁免 {dropped} 行（标记/frontmatter 留痕）",
+                file=sys.stderr,
+            )
     return kept
 
 
