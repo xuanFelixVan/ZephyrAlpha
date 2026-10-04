@@ -382,6 +382,30 @@ gaps:
     created: "2026-09-10"
     last_updated: "2026-09-10"
 
+  # === 2026-10-04: hk_kline vs kline_hk_daily 行级覆盖缺口（D1 净删预检·不删依据留档）===
+  - id: "hk_kline_row_level_coverage_gap"
+    table: "c1_market.hk_kline"
+    gap_type: "cross_table_coverage"
+    comparison_base: "c1_market.kline_hk_daily"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"
+    root_cause: "D1 净删预检（st-datasop-20260930，Owner 批净删 2026-10-04）实证：hk_kline
+      6107 行（193 canonical 标的，2026-08-03~09-15，miniqmt 源）对照 kline_hk_daily
+      （5702 原始 symbol，qmt 源，2026-08-03~09-30）：浅层三判据全过（canonical 代码覆盖
+      193/193、最新日期 09-30>09-15、字段集全含且 kline_hk_daily 多 name 列），但行级
+      (canonical,trade_date) 配对 3774/6107 在 kline_hk_daily 无对应；143/193 标的于
+      2026-09-15 在 kline_hk_daily 缺席，抽样 00003/00004/00005 在 kline_hk_daily 仅 5-6 行
+      （08-21~09-16 零散）而 hk_kline 全窗密集——qmt 源对小市值标的覆盖稀疏。删 hk_kline
+      将唯一性灭失 3774 对日K，故判不删。"
+    resolution_plan: "登记缺口，hk_kline 连同 tasks.yaml 双任务（hk_kline_incremental/
+      hk_kline_full_refresh）一并维持现状；后续 kline_hk_daily 若补齐该 3774 对（复检 SQL=
+      canonical+trade_date NOT EXISTS 对拍，见 docs/_working/fullflow_mine/wiring/
+      D1_deletion_exec.md）可重启净删预检。"
+    primary_alternative: "无（kline_hk_daily 深度与行级覆盖皆不足）"
+    created: "2026-10-04"
+    last_updated: "2026-10-04"
+
   # === 2026-09-10: kline_us_daily 深度=tickflow 免费源上限（数据总览全库体检 P3）===
   - id: "kline_us_daily_source_depth_limit"
     table: "c1_market.kline_us_daily"
@@ -742,8 +766,9 @@ gaps:
     verification_20260918: "st-ff-datagap 2026-09-18 复跑：真值断供仍成立且需新增一项风险登记——按 data_source 分组，2026-09-10 之后 tdx 零行，09-11/09-15 全部是 synth_sh（279,560 行）、09-14 是 synth_eq（139,780 行）各 580 code。即库内合成行冒充真值外观，消费方不按 data_source 过滤即会把方案 J 合成值当实测真值使用（方案 J 已如实标记，风险在下游不自知）。intraday_sector 档期 5 任务空转的停用建议见 tasks 片段第 5 条；哨兵需 source_min_rows（按 data_source 设行数地板）方能机械分辨"
     evidence: "kline_sector_intraday 近 12 日序列：09-07=727/315799、09-08=727/304228、09-09=727/295983、09-10=563/37857、09-11 起无；max(trade_date)=2026-09-10"
     verification_20260929: "st-c9-secktide 2026-09-29 治愈役复测：①tdx K线族服务端拒答实锤——裸 tdxpy 0.2.7 get_security_bars/get_index_bars 于 _RELIABLE_SERVERS 3 台 TCP 可达机（115.238.56.198/115.238.90.165/218.75.126.9）+ mootdx 0.11.7 池 2 台活机（110.41.147.114/124.70.199.56）全部只回 2 字节 0x0320（声称 800 根、零数据体，zip==unzip=2），同机 get_security_count(1)=27471/get_minute_time_data=240 正常——服务端对 pytdx 系客户端停供 K 线族（协议层拒答），非网络断、非本仓代码回归（mootdx/tdxpy 自 07-22 安装未动）；②断供实况修正：tdx 真值止于 09-10（本条原记 09-11 起零供给成立），09-11~09-22 表内每日 139,780 行全部是 synth_sh/synth_eq 人工腿（无排班、会话人肉日跑，09-23 起人工腿断=本表表面断供起点 09-22 15:00）；③本役回补：09-23/09-24/09-28 各 139,780 行×580 板块（synth_board_minute.py 现成通道，kline_1min 依赖四日齐供已验，880082.SH 日界连续性抽查无缝），日历 SSoT 判定 09-25（中秋）/09-26（周六）非交易日无缺口；④续供腿接线：新增计划任务 sector_board_synth_eod 每日 15:50 跑 synth_board_minute --trade-date <today>（非交易日自 no-op；register_sector_synth_task.ps1 幂等注册）；未决维持：132 条 8803/8804 行业板合成不可覆盖（无成分映射）、intraday_sector 5 tdx 任务停用建议仍待 Owner、哨兵 source_min_rows 待建、换源 tqcenter 分钟级=独立立项。"
+    verification_20261004: "st-tclose-b1retire-20261004 B1三退役收口（Owner批）：①tdx 断供终态 CH 实证——kline_sector_intraday 按 data_source 分组五周期（1/5/15/30/60m）尾日全部=2026-09-10 15:00、其后 tdx 零行，本条断供定性永久成立；②tasks.yaml 六任务正式退役（kline_sector_1/5/15/30/60min_incremental 五 tdx 任务由退役留观升级正式退役 + kline_sector_880_resample 判死退役：kline_sector_880 全表仅 1d/763260 行，五周期合成异表永不可见），形态=disabled:true+retired_date:2026-10-04+retired_by:Owner批B1三退役，落原 req_sentinel_02 待裁记号；③方案 J 通道收口：计划任务 sector_board_synth_eod 注销（前态 Ready、LastRun=2026-10-04 15:50 exit=0），runner 转退役说明留档（S12 先改说明再注销），收敛终点=sector_eqw_intraday（Ready 未动）；④表与全部历史行保留（tdx 真值+synth 系合成行均可溯 data_source）。本条状态维持 accepted 永久闭合，不再复测。"
     created: "2026-09-15"
-    last_updated: "2026-09-29"
+    last_updated: "2026-10-04"
 
   # === 2026-09-15: stock_indicator.circ_mv/total_mv 断供（tushare_daily_basic 断链）→ 已回填 ===
   - id: "stock_indicator_circ_mv_outage"
