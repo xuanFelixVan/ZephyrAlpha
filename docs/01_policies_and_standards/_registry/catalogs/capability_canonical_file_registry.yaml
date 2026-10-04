@@ -6773,9 +6773,9 @@ capabilities:
 creation_tokens:
 - file: docs/_working/map_census/casebooks_family/casebooks_gap_matrix.yaml
   token: mapcb-survey-casebooks-gap-matrix-20261005
-  created_by: st-mapcb-survey-20261005
   capability: mapcb_survey
-  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册"
+  created_by: st-mapcb-survey-20261005
+  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册（docs/_working 任务界暂存件，ttl=task_bound）"
 - file: .github/copilot-instructions.md
   token: circ-a4-copilot-instructions-20260930
   capability: library_lookup
@@ -62542,4 +62542,64 @@ creation_tokens:
   capability: alt_sz_daily_downsample
   created_by: st-datasop-20260930
   merge_evaluation: "EXEC-E3 降采样落地批（Owner 批 D5）：日级聚合 DDL 为明细跨粒度派生新形状非第二真源（跨域不同对象不并）"
+- file: docs/_working/fullflow_mine/verify/D2_formula_mining.md
+  token: fullflow-mine-d2-mining-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "D波审查/施工产出件（Owner裁定执行波）"
+- file: docs/_working/fullflow_mine/verify/D5_granularity_research.md
+  token: fullflow-mine-d5-granularity-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "D波审查/施工产出件（Owner裁定执行波）"
+- file: docs/_working/fullflow_mine/wiring/D4_rollout_plan.md
+  token: fullflow-mine-d4-rollout-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "D波审查/施工产出件（Owner裁定执行波）"
+- file: docs/_working/fullflow_mine/wiring/D7_lane_e_complete.md
+  token: fullflow-mine-d7-lanee-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "D波审查/施工产出件（Owner裁定执行波）"
+- file: docs/_working/fullflow_mine/wiring/D8_semantic_fix.md
+  token: fullflow-mine-d8-semantic-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "D波审查/施工产出件（Owner裁定执行波）"
+- file: docs/_working/fullflow_mine/wiring/E3_downsample_exec.md
+  token: auto-e3-exec-report-20261005
+  capability: alt_sz_daily_downsample
+  created_by: st-datasop-20260930
+  merge_evaluation: "EXEC-E3 执行报告 task_bound（三步验证/回填对账/对拍/分区迁移/消费方切换留痕）"
+- file: docs/_working/fullflow_mine/wiring/E3_downsample_exec.md
+  token: fullflow-mine-e3-downsample-20261004
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "D波审查/施工产出件（Owner裁定执行波）"
+- file: docs/_working/fullflow_mine/wiring/E4_wave1_live.md
+  token: fullflow-mine-e4-wave1-20261005
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "策略波1部署就绪执行报告"
+- file: docs/_working/tdm_mount/g_mount_obligation_manifest.md
+  token: tdm-mountgate-manifest-artifact-md-20261005
+  capability: tdm_mountgate
+  created_by: st-tdm-mountgate-20261005
+  merge_evaluation: "工单st-tdm-mountgate-20261005机生产物token补登（义务清单md+yaml投影，生成器token已在册；净零=机生投影非新册）"
+- file: docs/_working/tdm_mount/g_mount_obligation_manifest.yaml
+  token: tdm-mountgate-manifest-artifact-yaml-20261005
+  capability: tdm_mountgate
+  created_by: st-tdm-mountgate-20261005
+  merge_evaluation: "工单st-tdm-mountgate-20261005机生产物token补登（义务清单md+yaml投影，生成器token已在册；净零=机生投影非新册）"
+- file: schemas/categories/market/market_alt_sz_house_listing_daily.py
+  token: auto-e3-house-listing-daily-20261005
+  capability: alt_sz_daily_downsample
+  created_by: st-datasop-20260930
+  merge_evaluation: "EXEC-E3 house_listing 明细 zone×日聚合派生 DDL（跨粒度新对象，裁定#375 不并），明细本表保留"
+- file: schemas/categories/market/market_alt_sz_reservoir_level_daily.py
+  token: auto-e3-reservoir-daily-20261005
+  capability: alt_sz_daily_downsample
+  created_by: st-datasop-20260930
+  merge_evaluation: "EXEC-E3 降采样派生（跨粒度新对象，裁定#375 不并）：日级聚合表/执行报告，原表明细与汛期原粒度保留"
 di_seam_exemptions: []
