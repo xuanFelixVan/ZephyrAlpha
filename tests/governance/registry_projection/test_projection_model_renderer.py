@@ -62,11 +62,15 @@ def _snap(text: str = SAMPLE) -> ProjectionSnapshot:
 def test_extract_preserves_order_and_duplicates():
     snap = _snap()
     tok = snap.section("creation_tokens")
-    assert [entry_identity_key(e) for e in tok.entries] == [
+    fields = ("file", "token")  # creation_tokens 声明/legacy 身份字段
+    assert [entry_identity_key(e, fields) for e in tok.entries] == [
         ("src/z.py", "tok-2"),
         ("src/a.py", "tok-1"),
         ("src/a.py", "tok-0"),
     ]
+    # 无声明回退：首个标量字段（fdfe8fe302 同义，st-sI-identity-20261004 声明制）
+    assert entry_identity_key([("file", "src/a.py"), ("token", "t")]) == ("src/a.py",)
+    assert entry_identity_key([("aliases", ["x"]), ("capability_id", "c")], ("capability_id",)) == ("c",)
 
 
 def test_render_deterministic_and_semantic_roundtrip():
@@ -98,11 +102,12 @@ def test_self_check_rejects_real_mismatch():
 def test_canonicalize_sort_key_is_file_token():
     snap = _snap()
     ordered = canonicalize(snap).section("creation_tokens").entries
-    keys = [entry_identity_key(e) for e in ordered]
+    fields = ("file", "token")
+    keys = [entry_identity_key(e, fields) for e in ordered]
     assert keys == sorted(keys)  # (file, token) 字节序
     # 多重集等值：规范化只重排不增减（与合并器复合身份同键集）
-    orig_map = {entry_identity_key(e): e for e in snap.section("creation_tokens").entries}
-    assert {entry_identity_key(e): e for e in ordered} == orig_map
+    orig_map = {entry_identity_key(e, fields): e for e in snap.section("creation_tokens").entries}
+    assert {entry_identity_key(e, fields): e for e in ordered} == orig_map
 
 
 def test_quadrant_classification():
