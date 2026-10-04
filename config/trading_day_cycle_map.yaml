@@ -50,12 +50,12 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
-generated_at: '2026-10-04T17:23:49+08:00'
+generated_at: '2026-10-05T01:10:14+08:00'
 ops_tool_ref:
   tool: scripts/ops/schedule_overview.py
   gate: GATE-SCHEDULE-CONSISTENCY(priority=826)
   note_zh: 资源容量/互斥窗/三表一致性归排班族工具（裁定#482 互挂引用：数据层同源三表、视图层正交不并）
-ssot_note_zh: '环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节四段）+ 十本作业簿（簿 10=外部对标三扫：表A 七条逐条落
+ssot_note_zh: '环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节四段）+ 十本作业簿（簿 10=外部对标三扫：表A 七条逐条落
   L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入不自裁）；machine_facts/trigger_surfaces 层每次全量重扫可执行真相源（排班槽面/任务挂载 join/特殊槽分支面/PHASE_STAGES
   实扫/日历守卫面/计划任务只读查询面/服务总闸实存面/骨架状态列实扫/depgraph 在册 module_id 投影面），禁手工维护。
 
@@ -190,7 +190,7 @@ nodes:
   - SV#底数（low）
   - SV#方案（low）
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日 1 次 firing；自 09-21 起无一圈完成
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -271,7 +271,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日 1 拍；托管变异巡检另有 7 天节奏闸（未跑属正常）
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -346,7 +346,7 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -423,7 +423,7 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -506,7 +506,7 @@ nodes:
   casebooks:
   - MEM-F13#币圈与另类
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -580,7 +580,7 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -656,7 +656,7 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 2 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -725,7 +725,7 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日 1 份日志（触发者待定位）
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -804,7 +804,7 @@ nodes:
   casebooks:
   - MEM-F13#盘前探针（low）
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 0 拍（无合成器；三判据各自半自动且互不交集）
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -867,7 +867,7 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -940,7 +940,7 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 窗内每 10 秒
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1016,7 +1016,7 @@ nodes:
   - MEM-F13#模拟盘与做T
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 次拉起
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1088,7 +1088,7 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 名义每日 1 拍；实为 0 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1165,7 +1165,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 盘中每 5 分钟
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1240,7 +1240,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 盘中每 5 分钟
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1282,7 +1282,7 @@ nodes:
   data_refs: []
   store_refs: []
   evidence:
-  - 簿 04 环节段：该层实测断供 2 交易日（在册定性）
+  - 簿 04 环节段：该层实测断供 2 交易日（在册定性；2026-10-05 复扫挂载在位——10-04 所见消失系并发编辑瞬态窗，假阳性回收）
   confidence: verified
   verified_scope: structure
   build_status: partial
@@ -1309,12 +1309,11 @@ nodes:
   gap_refs:
   - benchmark:A2-freshness_severity 两级未接线
   - benchmark:C4-分级归告警系统还是图侧声明（留裁）
-  - slot:intraday_sector
   purpose_tag: t06_intraday_ingest
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 盘中每 5 分钟
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1334,14 +1333,14 @@ nodes:
   machine_facts:
     slot_facts:
       slot_effective_task_count:
-        intraday_sector: 0
+        intraday_sector: 5
       special_branch_exists:
         intraday_sector: false
       calendar_guarded:
         intraday_sector: false
       in_catchup_universe:
         intraday_sector: true
-      idle_slot: true
+      idle_slot: false
 - node_id: D13-17
   name_zh: 事件驱动快新闻 + EDB 轮询
   segment: B
@@ -1390,7 +1389,7 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每 3 分钟
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1464,7 +1463,7 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每小时 2 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1540,7 +1539,7 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 5 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1610,7 +1609,7 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 自动圈下 0 拍（恒 skipped）
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1676,7 +1675,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 唤醒词驱动（当日数拍）
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1742,7 +1741,7 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 唤醒词驱动
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1807,7 +1806,7 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每日恰 1 拍（收盘后）；盘中零拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1881,7 +1880,7 @@ nodes:
   casebooks:
   - MEM-F13#模拟盘与做T
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 常驻
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -1951,7 +1950,7 @@ nodes:
   purpose_tag: t08_postmarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2025,7 +2024,7 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2097,7 +2096,7 @@ nodes:
   purpose_tag: t09_settlement_recon
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 定周期腿每若干分钟；事件入口腿 0 次
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2168,7 +2167,7 @@ nodes:
   - MEM-F13#结算复活
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2251,7 +2250,7 @@ nodes:
   purpose_tag: t09_settlement_recon
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 名义每日 1 拍；实为 0 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2335,7 +2334,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 批
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2361,7 +2360,7 @@ nodes:
   machine_facts:
     slot_facts:
       slot_effective_task_count:
-        daily_kline: 29
+        daily_kline: 30
       special_branch_exists:
         daily_kline: false
       calendar_guarded:
@@ -2413,7 +2412,7 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 无
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2477,7 +2476,7 @@ nodes:
   casebooks:
   - DCS#队列（low）
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 圈
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2553,7 +2552,7 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每圈 1 次
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2622,7 +2621,7 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每圈 1 次
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2699,7 +2698,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 3 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2787,7 +2786,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2861,7 +2860,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -2937,7 +2936,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3015,7 +3014,7 @@ nodes:
   casebooks:
   - MEM-F13#移窗与口径
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3086,7 +3085,7 @@ nodes:
   purpose_tag: t11_nightly_batch
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 交易日每日 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3159,7 +3158,7 @@ nodes:
   casebooks:
   - MEM-F13#日历与周窗
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 周 1 拍 + 月 1 拍
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3252,7 +3251,7 @@ nodes:
   - MEM-F13#守护判活与误杀
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每 5 分钟重点火
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3277,11 +3276,11 @@ nodes:
         ZephyrAlpha_TickSubscriber: true
         ZephyrAlpha_TradingWatchdog: true
       declared_in_register_scripts:
-        ZephyrAlpha_DataScheduler: false
+        ZephyrAlpha_DataScheduler: true
         ZephyrAlpha_DeadmanSwitch: true
         ZephyrAlpha_ProcessReaper: true
-        ZephyrAlpha_TickSubscriber: false
-        ZephyrAlpha_TradingWatchdog: false
+        ZephyrAlpha_TickSubscriber: true
+        ZephyrAlpha_TradingWatchdog: true
 - node_id: D13-43
   name_zh: 交易日历闸门（本图不变量载体：事件触发禁定时器）
   segment: D
@@ -3328,7 +3327,7 @@ nodes:
   casebooks:
   - MEM-F13#日历与周窗
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 全日每拍实查
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3398,7 +3397,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-04T17:23:49+08:00'
+    as_of: '2026-10-05T01:10:14+08:00'
     evidence: 每圈 1 次（当日实为 0 产出）
     source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
@@ -3427,6 +3426,194 @@ nodes:
       - next_day
       in_phase_stages:
         next_day: true
+- node_id: D13-45
+  name_zh: 盘中模拟盘桥（做T测试窗双拍）
+  segment: B
+  node_type: stage
+  decision_question: 桥窗两拍跑了吗？产出与退出码留痕在哪？
+  note_zh: 计划任务双拍拉起模拟桥日跑器（做T测试窗）；注册于 scripts 拆簇批（a4b503a163）
+  module_id: MOD-BT-222
+  source_anchors:
+  - scripts/tasks/register/register_sim_bridge_execute_task.ps1:47
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-45
+  - docs/_working/map_build/fig13_daycycle/04_盘中采集层群.md
+  runtime_refs:
+  - logs/sim_bridge_execute.log
+  data_refs: []
+  store_refs: []
+  evidence:
+  - logs/sim_bridge_execute.log 在盘但尾部空+资源册 samples=0=最近执行证据未取到（降🔨不升✅）
+  - schtasks 只读查询：下次 2026-10-05 09:35 就绪（任务在册活着）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_SimBridgeExecute
+  entity_refs:
+  - sch_sim_bridge_execute
+  cadence_zh:
+    declared: 交易日 09:35 与 13:05 两拍（盘中测试窗内；骨架 0924 考古「全仓无 SimBridge」已被实存推翻——骨架回写 2026-10-04）
+    observed: 注册后未取到执行留痕（周末窗未开）
+  wiring_status: partial
+  downstream_action: execute
+  failure_visibility_zh: ''
+  fallback: 无（错过窗不补）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"模拟盘会话拉起后桥窗开"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs: []
+  purpose_tag: t05_paper_session
+  casebooks: []
+  trigger_facts:
+    as_of: '2026-10-05T01:10:14+08:00'
+    evidence: 注册后未取到执行留痕（周末窗未开）
+    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+  consumers: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/backtest/sim_daily_runner.py:1
+  module_label_bilingual: 模拟盘日链接电执行体
+  exec_evidence: []
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_SimBridgeExecute: true
+      declared_in_register_scripts:
+        ZephyrAlpha_SimBridgeExecute: false
+- node_id: D13-46
+  name_zh: 盘初决策链哨兵（09:40 只读巡检）
+  segment: B
+  node_type: stage
+  decision_question: 09:40 决策链健康巡检跑了吗？红项告警送达谁？
+  note_zh: 计划任务→治理域哨兵脚本 v10（14 测绿）：盘初核对决策链健康并告警（只读）
+  module_id: MOD-GOV
+  source_anchors:
+  - scripts/tasks/register/register_decision_chain_sentinel_task.ps1:69
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-46
+  - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
+  runtime_refs: []
+  data_refs: []
+  store_refs: []
+  evidence:
+  - 资源册实测样本 1 条（peak 0.117GB）；last_at 时区口径与 09:40 CST 不吻合待复判（降🔨）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schtasks
+  slot_refs: []
+  schtasks_refs:
+  - ZephyrAlpha_DecisionChainSentinel
+  entity_refs:
+  - sch_decision_chain_sentinel
+  cadence_zh:
+    declared: 每日 09:40（盘初 10 分钟）
+    observed: 样本 1 条（时区口径待复判）
+  wiring_status: partial
+  downstream_action: alert_only
+  failure_visibility_zh: ''
+  fallback: 无（只读巡检，检出即告警）
+  miss_policy: alert
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格，无前置就绪判定
+  tdm_refs: []
+  gap_refs: []
+  purpose_tag: t02_supply_alert
+  casebooks: []
+  trigger_facts:
+    as_of: '2026-10-05T01:10:14+08:00'
+    evidence: 样本 1 条（时区口径待复判）
+    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+  consumers: []
+  mechanism: B_windows_task
+  dloop_stages: []
+  module_ref: scripts/governance/decision_chain_sentinel.py:1
+  module_label_bilingual: 决策链哨兵 / Decision Chain Sentinel
+  exec_evidence: []
+  machine_facts:
+    schtasks_facts:
+      query_available: true
+      registered:
+        ZephyrAlpha_DecisionChainSentinel: true
+      declared_in_register_scripts:
+        ZephyrAlpha_DecisionChainSentinel: false
+- node_id: D13-47
+  name_zh: tick 双源一致性比对（QMT 主源 vs TDX 备源）
+  segment: D
+  node_type: stage
+  decision_question: 昨交易日 tick 两源对上答案了吗？不一致经谁告警？
+  note_zh: DAG 槽→内容级两源一致性校验器（价格/成交量/缺失标的），只校验不阻断，落 cross_validation_log，fail 经 Alerter
+  module_id: MOD-L00-004
+  source_anchors:
+  - src/zephyr/data/config/schedule.yaml:187
+  doc_refs:
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2 D13-47
+  - docs/_working/map_build/fig13_daycycle/09_夜窗与日界贯穿.md
+  runtime_refs:
+  - cross_validation_log 表（逻辑名；表名真源=TableRegistry，图内禁带库名前缀字面量——TABLE-NAME-REGISTRY 口径）
+  data_refs: []
+  store_refs: []
+  evidence:
+  - CH 实证（骨架 §7 C 组口径）：全表 17,466 行 max(check_date)=2026-10-01（10-02 起缺档→降🔨）
+  confidence: verified
+  verified_scope: structure
+  build_status: partial
+  build_status_zh: partial
+  skeleton_status: 🔨
+  slot_source: schedule
+  slot_refs:
+  - cross_validation
+  schtasks_refs: []
+  entity_refs: []
+  cadence_zh:
+    declared: 交易日 00:15（跨午夜，夜窗）
+    observed: 在产但近日缺档（max=10-01）
+  wiring_status: partial
+  downstream_action: detect_only
+  failure_visibility_zh: ''
+  fallback: 无（落表即止）
+  miss_policy: absorb
+  invalidation: null
+  ready_gate: false
+  no_ready_gate_reason_zh: 本格非就绪门格——前置"两侧源当日已落库"由入边与本注记承载（就绪门格另置 ready_gate:true）
+  tdm_refs: []
+  gap_refs: []
+  purpose_tag: t02_supply_alert
+  casebooks: []
+  trigger_facts:
+    as_of: '2026-10-05T01:10:14+08:00'
+    evidence: 在产但近日缺档（max=10-01）
+    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+  consumers: []
+  mechanism: A_apscheduler
+  dloop_stages: []
+  red_reason: broken_supply
+  module_ref: src/zephyr/data/cross_source_validator.py:1
+  module_label_bilingual: 跨源校验器 / cross_source_validator
+  exec_evidence: []
+  availability: unreachable
+  machine_facts:
+    slot_facts:
+      slot_effective_task_count:
+        cross_validation: 0
+      special_branch_exists:
+        cross_validation: true
+      calendar_guarded:
+        cross_validation: true
+      in_catchup_universe:
+        cross_validation: false
+      idle_slot: false
 - node_id: D13-G01
   name_zh: 无产出证据态缺位（「该产 N 条而实产 0」与「没跑」在图上同形）
   segment: A
@@ -3441,7 +3628,7 @@ nodes:
   - src/zephyr/data/config/schedule.yaml:34
   - src/zephyr/data/config/schedule.yaml:202
   doc_refs:
-  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节契约，本格为骨架外 gap 件）
   - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
   - 六图终局卷 §4 图13 判据①（空转槽与落空对象全可查）
   runtime_refs: []
@@ -3499,7 +3686,7 @@ nodes:
   - src/zephyr/trading/three_way_reconciliation.py
   doc_refs:
   - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
-  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节契约，本格为骨架外 gap 件）
   - docs/_working/map_build/fig13_daycycle/05_盘中资金流与决策层.md
   runtime_refs: []
   data_refs: []
@@ -3559,7 +3746,7 @@ nodes:
   - src/zephyr/reporting/reconciliation_schema.py:42
   doc_refs:
   - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
-  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节契约，本格为骨架外 gap 件）
   - docs/_working/map_build/fig13_daycycle/06_盘后结算与三账.md
   - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
   runtime_refs: []
@@ -3620,7 +3807,7 @@ nodes:
   - src/zephyr/data/config/schedule.yaml
   doc_refs:
   - docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
-  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节契约，本格为骨架外 gap 件）
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节契约，本格为骨架外 gap 件）
   - docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
   runtime_refs: []
   data_refs: []
@@ -3935,7 +4122,7 @@ machine_facts:
         executor: heavy
         cadence_class: trading_weekday
         declared: true
-        effective_task_count: 29
+        effective_task_count: 30
         special_branch_exists: false
         calendar_guarded: true
         in_catchup_universe: true
@@ -4015,11 +4202,11 @@ machine_facts:
         executor: intraday_sector
         cadence_class: interval
         declared: true
-        effective_task_count: 0
+        effective_task_count: 5
         special_branch_exists: false
         calendar_guarded: false
         in_catchup_universe: true
-        idle_slot: true
+        idle_slot: false
       lane_g_intake_sweep:
         slot: lane_g_intake_sweep
         executor: default
@@ -4059,16 +4246,6 @@ machine_facts:
         special_branch_exists: false
         calendar_guarded: true
         in_catchup_universe: true
-        idle_slot: false
-      nightly_news_score:
-        slot: nightly_news_score
-        executor: default
-        cadence_class: all_week
-        declared: true
-        effective_task_count: 0
-        special_branch_exists: true
-        calendar_guarded: false
-        in_catchup_universe: false
         idle_slot: false
       nightly_sentiment:
         slot: nightly_sentiment
@@ -4160,7 +4337,7 @@ machine_facts:
         calendar_guarded: false
         in_catchup_universe: true
         idle_slot: false
-    slot_total: 33
+    slot_total: 32
     catchup_universe:
       source: src/zephyr/data/catchup_guard.py
       exists: true
@@ -4213,7 +4390,6 @@ machine_facts:
     - dloop_post
     - integrity_check
     - lane_g_intake_sweep
-    - nightly_news_score
     - nightly_sentiment
     - pf_alloc_rebalance_check
     - sector_close_final
@@ -4328,11 +4504,23 @@ machine_facts:
         - ZephyrAlpha_CommitPerfReport
         scripts/register_process_reaper_task.ps1:
         - ZephyrAlpha_ProcessReaper
+        scripts/start_ch_health_probe.ps1:
+        - ZephyrAlpha_CHHealthProbe
+        scripts/start_scheduler.ps1:
+        - ZephyrAlpha_DataScheduler
+        scripts/start_tick_subscriber.ps1:
+        - ZephyrAlpha_TickSubscriber
+        scripts/start_trading.ps1:
+        - ZephyrAlpha_TradingWatchdog
       declared_task_names:
+      - ZephyrAlpha_CHHealthProbe
       - ZephyrAlpha_CommitPerfReport
+      - ZephyrAlpha_DataScheduler
       - ZephyrAlpha_DeadmanSwitch
       - ZephyrAlpha_ProcessReaper
       - ZephyrAlpha_QMTWatchdog
+      - ZephyrAlpha_TickSubscriber
+      - ZephyrAlpha_TradingWatchdog
     registered_schtasks:
       available: true
       reason: ''
@@ -4394,14 +4582,16 @@ machine_facts:
         present: false
     registry_entities:
       exists: true
-      total_entity_ids: 104
+      total_entity_ids: 102
       referenced_entity_ids:
       - data_slot_intraday_minute
       - ops_qmt_watchdog
+      - sch_decision_chain_sentinel
       - sch_index_minute_eod
       - sch_intraday_fund_flow
       - sch_paper_session
       - sch_post_settlement
+      - sch_sim_bridge_execute
       - sch_trading_watchdog
       unknown_refs: []
     task_mount_facts:
@@ -4524,6 +4714,7 @@ machine_facts:
         - kline_index_incremental
         - kline_monthly_hfq_incremental
         - kline_sector_880_incremental
+        - kline_sector_880_resample
         - kline_sector_incremental
         - kline_weekly_hfq_incremental
         - option_kline_incremental
@@ -4583,7 +4774,12 @@ machine_facts:
         - sector_snapshot_incremental
         - tick_data_snapshot
         - us_futures_intraday_snapshot
-        intraday_sector: []
+        intraday_sector:
+        - kline_sector_15min_incremental
+        - kline_sector_1min_incremental
+        - kline_sector_30min_incremental
+        - kline_sector_5min_incremental
+        - kline_sector_60min_incremental
         lane_g_intake_sweep: []
         monthly_static:
         - calendar_event_refresh
@@ -4620,7 +4816,6 @@ machine_facts:
         - northbound_hold_snapshot_refresh
         - top10_circulating_shareholders_incremental
         - top10_shareholders_incremental
-        nightly_news_score: []
         nightly_sentiment: []
         pf_alloc_rebalance_check: []
         post_auction: []
@@ -4698,7 +4893,6 @@ machine_facts:
     dangling_objects:
       fake_channel_slots:
       - eod_reconciliation
-      - intraday_sector
       - post_auction
       orphan_tasks:
       - task:dividend_incremental
@@ -4726,10 +4920,6 @@ machine_facts:
         kind: fake_channel_slot
         owner_nodes:
         - D13-29
-      - id: slot:intraday_sector
-        kind: fake_channel_slot
-        owner_nodes:
-        - D13-16
       - id: slot:post_auction
         kind: fake_channel_slot
         owner_nodes:
@@ -4795,7 +4985,7 @@ machine_facts:
         slot: research_nightly
         owner_nodes:
         - D13-36
-      total: 17
+      total: 16
   external_benchmark_landing:
     source: docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
     table_a_landed:
@@ -4912,69 +5102,68 @@ machine_facts:
       reason_zh: 同上（默认落点悬空）
   module_id_roster:
     source: docs/03_modules/path_ownership_map.yaml
-    claims_scanned: 8010
+    claims_scanned: 8011
     note_zh: existence ∈ {未实现, deprecated} 的在册条目不采信；未被覆盖的路径退回源文件 [BLUEPRINT] 头声明（须磁盘实存）。在册面存在性与磁盘实存漂移时以磁盘为准并在环节
       note 记事实（本车道不改 depgraph）。
   tdm_roster_scanned: true
 counts:
-  total_nodes: 48
-  nodes_with_purpose_tag: 44
+  total_nodes: 51
+  nodes_with_purpose_tag: 47
   nodes_with_casebooks: 25
-  nodes_with_trigger_facts: 44
+  nodes_with_trigger_facts: 47
   nodes_with_consumers: 48
   total_edges: 64
   total_feedback_loops: 10
   by_segment:
     A: 13
-    B: 14
+    B: 16
     C: 12
-    D: 9
+    D: 10
   by_slot_source:
-    schedule: 25
-    schtasks: 7
+    schedule: 26
+    schtasks: 9
     none: 7
     dloop_stage: 7
     event: 2
   by_node_type:
     gap: 4
-    stage: 44
+    stage: 47
   by_verified_scope:
     production: 14
-    structure: 34
+    structure: 37
   by_wiring_status:
-    partial: 14
+    partial: 17
     unwired_no_caller: 6
     unwired_slot_hollow: 4
     wired: 24
   machine:
-    slot_total: 33
-    special_branch_total: 15
-    idle_slot_total: 3
+    slot_total: 32
+    special_branch_total: 14
+    idle_slot_total: 2
     idle_slots:
     - eod_reconciliation
-    - intraday_sector
     - post_auction
     orphan_task_total: 4
     double_slot_task_total: 1
-    dangling_total: 17
+    dangling_total: 16
     dangling_unclaimed: []
     calendar_guarded_slot_total: 10
     dloop_stage_universe: 17
     register_script_total: 2
-    task_declaring_script_total: 4
+    task_declaring_script_total: 8
     schtasks_query_available: true
     service_flag_present: []
     skeleton_status_scan:
       source: docs/_working/map_build/fig13_daycycle/00_skeleton.md
-      nodes_scanned: 44
+      nodes_scanned: 47
       by_symbol:
         ✅: 14
         ⬜: 3
-        🔨: 27
+        🔨: 30
     module_id_scan:
       source: docs/03_modules/path_ownership_map.yaml
-      nodes_with_module_id: 42
-      nodes_with_module_ref: 42
+      nodes_with_module_id: 45
+      nodes_with_module_ref: 45
       nodes_null_module_id: 6
     tdm_refs:
       nodes_with_tdm_refs: 20

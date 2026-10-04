@@ -10,7 +10,7 @@
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 台账只读（禁写图/真源文件）；结构错误=exit 1 警告不阻断；validate_structure 纯内存判据（gate 只封阻塞语义，禁复制判据）；外部面（骨架状态列/depgraph 在册投影/TDM 在册/路径锚磁盘/INV-1 三真源）不可达=对应子检查降 warn 绝不升级 error（禁环境异常打死无辜提交）；判据真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §0-§3 与六图终局卷 §1 三层字段裁定；放宽任何检查项=改判据须与图 YAML+gate+对抗测试同批
-# [MODIFY-GUARD] gap 节点增删须同步本件 NODE_UNIVERSE 与生成器 NODE_ORDER（生成器同款）；NODE_UNIVERSE/SEGMENT_OF_GAP 为契约常量，改动=改 48 节点契约须总包裁定
+# [MODIFY-GUARD] gap 节点增删须同步本件 NODE_UNIVERSE 与生成器 NODE_ORDER（生成器同款）；NODE_UNIVERSE/SEGMENT_OF_GAP 为契约常量，改动=改 51 节点契约须总包裁定
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -71,7 +71,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[4]
 # ---------------------------------------------------------------------------
 # 契约常量（48 节点全集；改动=改契约，须总包裁定并与生成器 NODE_ORDER 同批）
 # ---------------------------------------------------------------------------
-NODE_UNIVERSE: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 45)) + (
+NODE_UNIVERSE: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 48)) + (
     "D13-G01",
     "D13-G02",
     "D13-G03",
@@ -79,7 +79,7 @@ NODE_UNIVERSE: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 45)) + (
 )
 CONTRACT_UNIVERSE: frozenset[str] = frozenset(NODE_UNIVERSE)
 GAP_NODES: tuple[str, ...] = ("D13-G01", "D13-G02", "D13-G03", "D13-G04")
-_STAGE_NODES: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 45))
+_STAGE_NODES: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 48))
 # 契约序（时点序）：倒序边（序号回接）必须声明反馈环
 _NODE_ORDER_INDEX: dict[str, int] = {nid: i for i, nid in enumerate(NODE_UNIVERSE)}
 
@@ -89,11 +89,17 @@ _SEGMENT_IDS: frozenset[str] = frozenset(SEGMENTS)
 # 段归属契约：编号落段（盘前 12／盘中 12／盘后 11／夜窗 9）+ gap 显式声明段
 SEGMENT_OF_GAP: dict[str, str] = {"D13-G01": "A", "D13-G02": "B", "D13-G03": "C", "D13-G04": "B"}
 
+# 骨架回写 2026-10-04（总筹裁定）：45/46/47 编号顺延续接 44 后，段落按语义归段非编号区间
+# （盘中双拍/盘初哨兵归 B、跨午夜比对归 D）——与 SEGMENT_OF_GAP 同为契约例外显式表
+SEGMENT_OF_REWRITE: dict[str, str] = {"D13-45": "B", "D13-46": "B", "D13-47": "D"}
+
 
 def _expected_segment(nid: str) -> str | None:
     """编号契约落段；契约全集外的伪造编号返回 None（由越界判据负责报红，落段比较跳过）。"""
     if nid in SEGMENT_OF_GAP:
         return SEGMENT_OF_GAP[nid]
+    if nid in SEGMENT_OF_REWRITE:
+        return SEGMENT_OF_REWRITE[nid]
     if nid not in CONTRACT_UNIVERSE:
         return None
     idx = int(nid.split("-")[1])

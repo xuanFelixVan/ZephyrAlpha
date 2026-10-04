@@ -150,12 +150,12 @@ _BOOK_OF: dict[str, str] = {
     **{f"{i:02d}": "01_盘前就绪链.md" for i in (1, 2, 3)},
     **{f"{i:02d}": "02_盘前元数据与竞价.md" for i in (4, 5, 6, 11, 12)},
     **{f"{i:02d}": "03_盘前编排与十源探针.md" for i in (7, 8, 9, 10)},
-    **{f"{i:02d}": "04_盘中采集层群.md" for i in (13, 14, 15, 16, 17, 18)},
-    **{f"{i:02d}": "05_盘中资金流与决策层.md" for i in (19, 20, 21, 22, 23)},
+    **{f"{i:02d}": "04_盘中采集层群.md" for i in (13, 14, 15, 16, 17, 18, 45)},
+    **{f"{i:02d}": "05_盘中资金流与决策层.md" for i in (19, 20, 21, 22, 23, 46)},
     **{f"{i:02d}": "06_盘后结算与三账.md" for i in (25, 26, 27, 28, 29)},
     **{f"{i:02d}": "07_dloop十六段解剖.md" for i in (24, 32, 33, 34)},
     **{f"{i:02d}": "08_盘后批次与当日回测.md" for i in (30, 31, 35)},
-    **{f"{i:02d}": "09_夜窗与日界贯穿.md" for i in (36, 37, 38, 39, 40, 41, 42, 43, 44)},
+    **{f"{i:02d}": "09_夜窗与日界贯穿.md" for i in (36, 37, 38, 39, 40, 41, 42, 43, 44, 47)},
 }
 
 # ---------------------------------------------------------------------------
@@ -226,9 +226,9 @@ SEGMENT_SEMANTIC_ZH: dict[str, dict[str, str]] = {
     ),
 }
 
-# 契约全集：44 环节（骨架 §2 四张表，编号一经定稿即契约）+ 4 个 gap 显性化缺口节点
+# 契约全集：47 环节（骨架 §2 四张表，编号一经定稿即契约）+ 4 个 gap 显性化缺口节点
 # （簿 10 表A/表C 与图 12 侧跨图缺口，属骨架外件，待总包回写骨架 §2——本车道禁改骨架）。
-NODE_ORDER: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 45)) + GAP_ORDER
+NODE_ORDER: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 48)) + GAP_ORDER
 # gap 节点的 doc_refs 出处（不在骨架 §2 表内，禁指骨架 §2——骨架无此行）
 _GAP_DOC = {
     "D13-G01": (_EXT_BOOK, "六图终局卷 §4 图13 判据①（空转槽与落空对象全可查）"),
@@ -241,7 +241,7 @@ _GAP_DOC = {
 }
 
 # ---------------------------------------------------------------------------
-# 44 环节语义契约件（骨架 §2 四张表逐行 + 九本作业簿复判；status 照用骨架状态列）
+# 47 环节语义契约件（骨架 §2 四张表逐行 + 九本作业簿复判；status 照用骨架状态列）
 # 字段：seg 段归属｜st 骨架状态｜recheck 作业簿复判（不改骨架口径，另字段承载）｜name 环节名
 #       q decision_question（时序问题，非决策判据）｜mech 机制一句话｜clk 时点语义（无 cron 字面量）
 #       src slot_source｜slot/entity/tn/stages 各类真源指针｜act downstream_action
@@ -373,6 +373,9 @@ NODE_PURPOSE_TAG: dict[str, str] = {
     "D13-42": "t12_guard_calendar",
     "D13-43": "t12_guard_calendar",
     "D13-44": "t13_day_boundary",
+    "D13-45": "t05_paper_session",
+    "D13-46": "t02_supply_alert",
+    "D13-47": "t02_supply_alert",
 }
 
 # 病历挂载采纳矩阵（件2 12_casebook_matrix_d13.yaml §1 总筹复核采纳内联；INV-1 只指针禁抄内容）。
@@ -411,6 +414,70 @@ _CONSUMERS_CSV_REL = f"{_BOOK_DIR}/13_consumers_scan_d13.csv"
 _CONSUMERS_CSV = _REPO_ROOT / _CONSUMERS_CSV_REL
 
 N: dict[str, dict[str, Any]] = {
+    "D13-45": dict(
+        seg="B",
+        st="🔨",
+        name="盘中模拟盘桥（做T测试窗双拍）",
+        src=_SCHT,
+        tn=["ZephyrAlpha_SimBridgeExecute"],
+        entity=["sch_sim_bridge_execute"],
+        clk="交易日 09:35 与 13:05 两拍（盘中测试窗内；骨架 0924 考古「全仓无 SimBridge」已被实存推翻——骨架回写 2026-10-04）",
+        act="execute",
+        q="桥窗两拍跑了吗？产出与退出码留痕在哪？",
+        mech="计划任务双拍拉起模拟桥日跑器（做T测试窗）；注册于 scripts 拆簇批（a4b503a163）",
+        gate="模拟盘会话拉起后桥窗开",
+        nrg="",
+        fb="无（错过窗不补）",
+        ref="scripts/backtest/sim_daily_runner.py:1",
+        anc=["scripts/tasks/register/register_sim_bridge_execute_task.ps1:47"],
+        run=["logs/sim_bridge_execute.log"],
+        ev=[
+            "schtasks 只读查询：下次 2026-10-05 09:35 就绪（任务在册活着）",
+            "logs/sim_bridge_execute.log 在盘但尾部空+资源册 samples=0=最近执行证据未取到（降🔨不升✅）",
+        ],
+        obs="注册后未取到执行留痕（周末窗未开）",
+    ),
+    "D13-46": dict(
+        seg="B",
+        st="🔨",
+        name="盘初决策链哨兵（09:40 只读巡检）",
+        src=_SCHT,
+        tn=["ZephyrAlpha_DecisionChainSentinel"],
+        entity=["sch_decision_chain_sentinel"],
+        clk="每日 09:40（盘初 10 分钟）",
+        act="alert_only",
+        q="09:40 决策链健康巡检跑了吗？红项告警送达谁？",
+        mech="计划任务→治理域哨兵脚本 v10（14 测绿）：盘初核对决策链健康并告警（只读）",
+        gate="无前置",
+        nrg="",
+        fb="无（只读巡检，检出即告警）",
+        ref="scripts/governance/decision_chain_sentinel.py:1",
+        anc=["scripts/tasks/register/register_decision_chain_sentinel_task.ps1:69"],
+        ev=["资源册实测样本 1 条（peak 0.117GB）；last_at 时区口径与 09:40 CST 不吻合待复判（降🔨）"],
+        obs="样本 1 条（时区口径待复判）",
+    ),
+    "D13-47": dict(
+        seg="D",
+        st="🔨",
+        name="tick 双源一致性比对（QMT 主源 vs TDX 备源）",
+        src=_SCHED,
+        slot=["cross_validation"],
+        clk="交易日 00:15（跨午夜，夜窗）",
+        act="detect_only",
+        q="昨交易日 tick 两源对上答案了吗？不一致经谁告警？",
+        mech="DAG 槽→内容级两源一致性校验器（价格/成交量/缺失标的），只校验不阻断，落 cross_validation_log，fail 经 Alerter",
+        gate="两侧源当日已落库",
+        nrg="",
+        fb="无（落表即止）",
+        ref="src/zephyr/data/cross_source_validator.py:1",
+        anc=["src/zephyr/data/config/schedule.yaml:187"],
+        run=[
+            "cross_validation_log 表（逻辑名；表名真源=TableRegistry，图内禁带库名前缀字面量——TABLE-NAME-REGISTRY 口径）"
+        ],
+        ev=["CH 实证（骨架 §7 C 组口径）：全表 17,466 行 max(check_date)=2026-10-01（10-02 起缺档→降🔨）"],
+        obs="在产但近日缺档（max=10-01）",
+        red="broken_supply",
+    ),
     # ── 段 A 盘前 ──────────────────────────────────────────────────────
     "D13-01": dict(
         seg="A",
@@ -790,7 +857,9 @@ N: dict[str, dict[str, Any]] = {
         fb="无（该槽不在补跑宇宙内）",
         ref=_SCHEDULER_REL,
         anc=[f"{_SCHEDULE_REL}:50"],
-        ev=["簿 04 环节段：该层实测断供 2 交易日（在册定性）"],
+        ev=[
+            "簿 04 环节段：该层实测断供 2 交易日（在册定性；2026-10-05 复扫挂载在位——10-04 所见消失系并发编辑瞬态窗，假阳性回收）"
+        ],
         obs="盘中每 5 分钟",
     ),
     "D13-17": dict(
@@ -1614,6 +1683,9 @@ TDMX: dict[str, list[str]] = {
 
 # L1 wiring_status（缺省 wired）——"槽挂着但没跑「的统一表达位，三图共用这一个字段
 WIRING: dict[str, str] = {
+    "D13-45": "partial",  # 注册后未取到执行留痕（周末窗未开）
+    "D13-46": "partial",  # 有实测样本但 last_at 时区口径待复判
+    "D13-47": "partial",  # 在产但近日缺档（max=10-01）
     "D13-01": "partial",  # 每日 firing 而自上期起无一圈完成（晨间重启风暴腰斩长批）
     "D13-05": "unwired_slot_hollow",  # 槽在册、任务上线后从未自动跑成（水位全靠手动）
     "D13-06": "partial",  # 四子源在产、一子源零行（SUCCESS 而水位不动型）
@@ -2693,7 +2765,7 @@ def build_nodes(
     *,
     as_of: str | None = None,
 ) -> list[dict[str, Any]]:
-    """44 环节 + 4 gap 节点：人工语义层 ⊕ 机生面（三层字段名一律取六图终局卷 §1 统一名）。"""
+    """47 环节 + 4 gap 节点：人工语义层 ⊕ 机生面（三层字段名一律取六图终局卷 §1 统一名）。"""
     build_status_zh = get_category_map("build_status")
     ledger = surfaces.get("dangling_objects") or {}
     as_of_eff = as_of or head_commit_time(_REPO_ROOT)
@@ -2730,7 +2802,7 @@ def build_nodes(
                 else (
                     set(_GAP_DOC[nid])
                     | set(spec.get("doc") or [])
-                    | {_SKELETON + " §2（44 环节契约，本格为骨架外 gap 件）"}
+                    | {_SKELETON + " §2（47 环节契约，本格为骨架外 gap 件）"}
                 )
             ),
             "runtime_refs": list(spec.get("run", [])),
@@ -2888,7 +2960,7 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
             "note_zh": "资源容量/互斥窗/三表一致性归排班族工具（裁定#482 互挂引用：数据层同源三表、视图层正交不并）",
         },
         "ssot_note_zh": (
-            "环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（44 环节四段）+ 十本作业簿"
+            "环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节四段）+ 十本作业簿"
             "（簿 10=外部对标三扫：表A 七条逐条落 L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入"
             "不自裁）；machine_facts/trigger_surfaces 层每次全量重扫可执行真相源（排班槽面/任务挂载 join/"
             "特殊槽分支面/PHASE_STAGES 实扫/日历守卫面/计划任务只读查询面/服务总闸实存面/骨架状态列实扫/"

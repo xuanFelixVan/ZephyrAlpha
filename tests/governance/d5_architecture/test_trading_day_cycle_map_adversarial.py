@@ -98,9 +98,9 @@ def test_green_real_map_passes():
 def test_green_map_shape_matches_contract():
     """44 环节 + 4 gap 全建；四段分布=骨架 §2（12/12/11/9）+ gap 显式声明段归属。"""
     c = _GOOD["counts"]
-    assert c["total_nodes"] == len(CONTRACT_UNIVERSE) == 48
-    assert c["by_segment"] == {"A": 13, "B": 14, "C": 12, "D": 9}
-    assert c["by_node_type"] == {"gap": 4, "stage": 44}
+    assert c["total_nodes"] == len(CONTRACT_UNIVERSE) == 51  # 47 环节+4 gap（骨架回写 2026-10-04 三新格）
+    assert c["by_segment"] == {"A": 13, "B": 16, "C": 12, "D": 10}  # 骨架回写三新格：45/46 入 B、47 入 D
+    assert c["by_node_type"] == {"gap": 4, "stage": 47}
 
 
 def test_green_three_hard_lets_go_into_laws():
@@ -116,7 +116,7 @@ def test_green_dual_axis_matches_skeleton_counts():
     prod = {n["node_id"] for n in _GOOD["nodes"] if n.get("verified_scope") == "production"}
     assert sk and len(ok) == 14, f"骨架实扫 ✅ 数漂移：{len(ok)}"
     assert prod == ok, f"production 集与骨架 ✅ 集不重合：多={prod - ok} 少={ok - prod}"
-    assert _GOOD["counts"]["by_verified_scope"] == {"production": 14, "structure": 34}
+    assert _GOOD["counts"]["by_verified_scope"] == {"production": 14, "structure": 37}  # 三新格全🔨=structure
 
 
 def test_green_all_code_backed_nodes_carry_module_id():
@@ -609,8 +609,13 @@ def test_red_gate_node_without_denial_semantics():
 def test_green_idle_slots_and_dangling_ledger_are_queryable():
     """终局判据①：2 空转槽与 16 落空对象全部可查——台账逐条带 owner_nodes 且非空。"""
     dg = _GOOD["machine_facts"]["trigger_surfaces"]["dangling_objects"]
-    assert sorted(dg["fake_channel_slots"]) == ["eod_reconciliation", "post_auction"]
-    assert dg["total"] == _GOOD["counts"]["machine"]["dangling_total"] == len(dg["entries"]) == 16
+    assert sorted(dg["fake_channel_slots"]) == [
+        "eod_reconciliation",
+        "post_auction",
+    ]  # 2026-10-05 复扫：intraday_sector 挂载在位（10-04 所见消失=并发编辑瞬态假阳性）
+    assert (
+        dg["total"] == _GOOD["counts"]["machine"]["dangling_total"] == len(dg["entries"]) == 16
+    )  # 2026-10-05 复扫回归 16（10-04 所见 17=并发编辑瞬态）
     assert all(e["owner_nodes"] for e in dg["entries"]), "落空对象必须至少有一个归属环节"
     by_id = {e["id"]: e for e in dg["entries"]}
     for slot in ("post_auction", "eod_reconciliation"):
@@ -970,7 +975,7 @@ def test_green_real_map_schema_03_additive_fields_present():
     tag_ids = {t["id"] for t in tags}
     stages = [n for n in _GOOD["nodes"] if n.get("node_type") == "stage"]
     gaps = [n for n in _GOOD["nodes"] if n.get("node_type") == "gap"]
-    assert len(stages) == 44
+    assert len(stages) == 47
     assert all(n.get("purpose_tag") in tag_ids for n in stages)
     assert all(not n.get("purpose_tag") for n in gaps)
     sample = _GOOD["nodes"][0]

@@ -37709,7 +37709,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'scripts/qmt_watchdog.ps1'
-    owner_blueprint: 'MOD-SCRIPT-run_post_settlement'
+    owner_blueprint: 'MOD-SCRIPT-qmt_watchdog'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'generated'

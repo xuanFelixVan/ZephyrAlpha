@@ -41,7 +41,7 @@ owner: st-mapbuild-20260924（图13 骨架主）
 2. **决策内容不进图**：任何"怎么判"唯一出路是 `tdm_ref: TDM-*`；本图节点**不得有** `judgment_basis`/`factor_refs`/`strategy_refs` 字段。
 3. **管线内部结构不重画**：17 个有任务挂载的数据槽在本图只作"批次节点"（含计数与当日就绪判定），其源→库→衍生→冷备→对账内部结构归图12；对账/归因的装配落点归 battle_map BM-REC-*。
 
-**退路（诚实备案）**：若 Owner 否决"同资产不同轴"适用于本图与排班三表之间（普查 §2.3 已为图12↔dataflowgraph 认过一次同判据），则本判定改 **②**：§2 的 44 环节降为 `schedule_overview.py` 新段 A4"日序视图"，图13 作废。扩节点清单=①`schedule_overview.py` 加 `--section daycycle`；②`resource_profile_registry.yaml` 加 `ready_gate`/`fallback_slot`/`miss_consequence` 三字段（先过双证评估）；③`align_all.py` 不新增节。
+**退路（诚实备案）**：若 Owner 否决"同资产不同轴"适用于本图与排班三表之间（普查 §2.3 已为图12↔dataflowgraph 认过一次同判据），则本判定改 **②**：§2 的 47 环节降为 `schedule_overview.py` 新段 A4"日序视图"，图13 作废。扩节点清单=①`schedule_overview.py` 加 `--section daycycle`；②`resource_profile_registry.yaml` 加 `ready_gate`/`fallback_slot`/`miss_consequence` 三字段（先过双证评估）；③`align_all.py` 不新增节。
 
 **§0 判定的唯一失效条件**：若禁则一（决策内容不进图）被违反，本图立刻退化成"第二份动作流程真源"，撞 layering policy §2.1 合并铁律，届时①应改判②。
 
@@ -67,7 +67,7 @@ owner: st-mapbuild-20260924（图13 骨架主）
 
 **边界（明确不做）**：下单/撤单执行流（TDM L4/X-S2）｜因子与策略（各库）｜数据管线内部（图12）｜资源争抢与内存天花板（排班三表）｜治理夜班（C4Exam/ModelExam/GateFullTreeAudit ~28 schtasks → GOMAP 扩排程层，普查 §5 已有归属）｜开发时会话生命周期（图11）｜24/7 三班制交接（`shift_handover_checklist` 现役件，对象是连续市场）。
 
-## §2 环节全集（44 环节，骨架层=中类，叶层留作业簿）
+## §2 环节全集（47 环节，骨架层=中类，叶层留作业簿）
 
 编号 `D13-NN` 一经定稿即契约，作业簿文件名必须引用它。
 **状态纪律**：`✅`=时点存在性+执行体存在性+最近执行证据三证齐（本文件实查、§7 可复跑）；`🔨`=有执行体但最近执行证据未取到/滞后/断供；`⬜`=空白可开入口；`🌑`=当前形态不可得（不占环节格，全部集中在 §6 点名）。
@@ -105,6 +105,8 @@ owner: st-mapbuild-20260924（图13 骨架主）
 | D13-22 | 盘中情景归类 | 盘中 | 同上 `classify` | 🔨 | `daily_loop_master_switch.py:218-222` → `scenario_classifier.maybe_classify_intraday_scenario` | 1 |
 | D13-23 | 盘中情绪环单拍（有节拍席位、无节拍） | 盘中 | dloop 段内，非独立排班 | 🔨 | `daily_loop_master_switch.py:274-291`（docstring 自陈"单拍就绪没节拍——本段=节拍席位"）→ `zephyr.data.intraday_sentiment_loop.run_once` | 1 |
 | D13-24 | 模拟盘保活与成交回路（09:30–15:05） | 盘中 | 常驻（tn=PaperSession 拉起，close_at 15:05） | ✅ | `src/zephyr/ex_core/live_strategy_adapter.py`（MOD-L06-001，`[CONSUMERS]` 自证 57 号 GAP-2 接线已落、挂计划任务=Owner 窗口已兑现）；留痕 `paper_session.log:144`"保活至 2026-09-23T15:05:00+08:00"、`:145` exit_code=0、`:141-143` slot started/`slots_running=1` | 4 |
+| D13-45 | 盘中模拟盘桥（做T测试窗双拍） | 盘中 | 09:35/13:05（tn=`ZephyrAlpha_SimBridgeExecute`） | 🔨 | register ps1:47-48；执行体 scripts/backtest/sim_daily_runner.py（MOD-BT-222）；schtasks 下次 2026-10-05 就绪；log 空+资源册 samples=0（骨架回写 2026-10-04，0924 考古“全仓无 SimBridge”被推翻） | 1 |
+| D13-46 | 盘初决策链哨兵（09:40 只读巡检） | 盘中 | 09:40（tn=`ZephyrAlpha_DecisionChainSentinel`） | 🔨 | register ps1:69；执行体 scripts/governance/decision_chain_sentinel.py v10（14 测绿）；资源册样本 1 条 last_at 时区口径待复判（骨架回写 2026-10-04） | 1 |
 
 ### 段 C 盘后 15:00–20:00（11 环节）
 
@@ -135,9 +137,10 @@ owner: st-mapbuild-20260924（图13 骨架主）
 | D13-42 | 常驻守护三路（reaper / deadman 心跳 / guard 三件套） | 贯穿 | AtLogOn + 每 5 分钟重点火 | 🔨 | `scripts/register_guard_tasks.ps1:46-52`（DataScheduler/TickSubscriber/…+DeadmanSwitch 读 3 路心跳，stale>10min 告警）；`:20-27` 单实例唯一 SSoT=脚本级 PID 锁+心跳判定，Task Scheduler 必须不参与单实例决策（08-06/08-07 两日静默死亡根因）；`:33-37` INT-03 92 号 D3 裁定=`ZephyrAlpha_TradingWatchdog` 注册于 **Disabled 态**；`scripts/deadman_switch.ps1:138,167`（PaperSession 陈旧→`schtasks /run`）。**主体让渡 GOMAP**（普查 §5），本图只留接缝三点：09:25 前谁必须活着、15:05 后谁该退、心跳缺失算不算当日 FAIL | 3 |
 | D13-43 | 交易日历闸门（本图不变量载体：事件触发禁定时器） | 贯穿 | 每槽触发时实查 | 🔨 | `src/zephyr/data/trading_calendar.py:151-163` 实测守卫 **9/29 槽**（intraday_realtime/intraday_minute/daily_kline/daily_capital/daily_event/nightly_financial/daily_backfill/integrity_check/auction_highfreq），其余 20 槽非交易日空跑由幂等吸收（schedule.yaml:247-248 dloop 自证"法定假日空跑由底层幂等闸+数据就绪门 fail-closed 吸收"）；生效实证=`paper_session.log:3`（09-19 SKIP is_trading_day=False）；铁律真源=`config/strategy_production_map.yaml:22` laws 第3条"事件触发禁定时器：trade_calendar 闸门+数据到达触发，禁 cron/sleep-loop"；宪法 §9.3 | 3 |
 | D13-44 | 日界交接（T 日盘后 → T+1 日盘前的状态移交） | 贯穿(段界) | 23:35 收口 / 05:30 重启 | ⬜ | 在位件 `src/zephyr/trading/shift_handover_checklist.py`（MOD-INF-035）对象是 **24/7 三班制 UTC 0/8/16 + 持仓/保证金五项**（`:7` INVARIANTS），面向连续市场，**不覆盖 A 股日界**；A 股 T→T+1 散在 plan_engine 三件（实测在位：`intraday_tomorrow_forecast.py`/`tomorrow_boundary_planner.py`/`overnight_boundary_reviser.py`）；**实测 `judgment_next_day_forecast` 按上海日 max=09-21，缺 09-22/09-23 两交易日=断供** → 四段里唯一"名义在产、实测断链"处 | 4 |
+| D13-47 | tick 双源一致性比对（QMT 主源 vs TDX 备源） | 夜窗 | 00:15 交易日 `cross_validation` | 🔨 | schedule.yaml:184-188；执行体 src/zephyr/data/cross_source_validator.py（CONSUMERS=run_schedule 自证）；CH cross_validation_log 17,466 行 max(check_date)=2026-10-01 缺档（骨架回写 2026-10-04） | 1 |
 
-**合计 44 环节**：盘前 12（D13-01..12）｜盘中 12（D13-13..24）｜盘后 11（D13-25..35）｜夜窗与贯穿 9（D13-36..44）。
-**状态分布**：✅ 14（31.8%）｜🔨 27（61.4%）｜⬜ 3（6.8%）｜🌑 0（环节格里无 🌑；5 项不可得集中在 §6 点名，其中 4 项落在 D13-09/D13-28 的腿上，不占独立格）。
+**合计 47 环节**：盘前 12（D13-01..12）｜盘中 14（D13-13..24+45..46）｜盘后 11（D13-25..35）｜夜窗与贯穿 10（D13-36..44+47）。45/46/47=2026-10-04 总筹骨架回写（三实体实勘三证立格；贴既有语义轴 t05/t02/t02，图例 label 不动——法源=让渡一“时刻值不搬家”：图例时刻是族代表拍点非真源，节点 cadence/slot_ref 才是）。
+**状态分布**：✅ 14（29.8%）｜🔨 30（63.8%）｜⬜ 3（6.4%）｜🌑 0（环节格里无 🌑；5 项不可得集中在 §6 点名，其中 4 项落在 D13-09/D13-28 的腿上，不占独立格）。
 🔨 占六成是本图的诚实形态：12 个编排型特殊槽与 3 个 ps1 feeder 的**执行留痕不在仓库可读区**（调度器日志不落地、告警走 Alerter 外部通道）。**降 🔨 不升 ✅ 就是本骨架与"凭印象标 ✅"的分界**（skeleton policy §5 铁律）。
 
 ### 2.1 触发机制三分（本图独有的结构性发现，亦是"脊"必须独立成图的实证）
