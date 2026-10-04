@@ -9,7 +9,7 @@ generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 unique_key:
 - path
-total_files: 302
+total_files: 303
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2161,7 +2161,7 @@ files:
   title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编排真源）
   doc_type: policy
   status: active
-  version: 2.2.0
+  version: 2.2.1
   rule_form: procedural
   scope: ''
   stability: ''
@@ -2641,7 +2641,7 @@ files:
   title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末先行
   doc_type: policy
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: procedural
   scope: 07_trading_decision_architecture
   stability: ''
@@ -3031,7 +3031,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.9.8
+  version: 1.9.9
   rule_form: ''
   scope: ''
   stability: ''
@@ -4938,6 +4938,21 @@ files:
   status: active
   version: 1.1.1
   rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
+  module_id: ''
+  title: 任务卡工单制政策 v1.0——施工必开卡/两轮预审验收/闸消费/图书馆预留/豁免判据
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
   scope: ''
   stability: ''
   layer: ''
