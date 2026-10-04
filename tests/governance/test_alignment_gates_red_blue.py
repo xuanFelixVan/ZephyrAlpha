@@ -12,6 +12,8 @@
   R5 业务库注入重复 id → 阻断
   R6 业务库注入非法 module_id 格式 → 阻断
   R7 作战地图 report 注入 ghost/orphan/narrative → 硬判定三连阻断
+  R7b ghost_tdm 第6腿（V0.5.0 轴归一）：伪造 tdm_node_id 必红（align 纯判定+写入端双捕）；
+      NULL 无主态/列不存在回滚态/TDM 真源不可达 → 全放行（fail-open）
 蓝队（防御验证→合法场景必须放行）：
   B1 仓库真源地图 run_checks 全绿
   B2 6 库整库校验全绿（基线 100%）
@@ -204,12 +206,14 @@ class TestRedBattleMap:
     2026-09-15 件5 分级调整：ghost_anchors 硬→软（PG 状态非 git 状态，提交人无
     agency——写入端 apply_battle_map.op_add_anchor 已强制存在性校验防复发，
     anchor 674 连坐事故实证）；孤儿环节/缺失叙事保持硬（修复面在 git 文件）。
+    V0.5.0 轴归一手术批1：ghost_tdm 与幽灵锚点同模式=软告警。
     """
 
     @staticmethod
     def _report(**overrides) -> SimpleNamespace:
         base = dict(
             ghost_anchors=[],
+            ghost_tdms=[],
             orphan_steps=[],
             missing_narratives=[],
             domain_drifts=[],
@@ -227,6 +231,30 @@ class TestRedBattleMap:
         assert any("BM-INV-002" in s for s in soft)
         assert any("remove-anchor" in s for s in soft)
 
+    def test_r7_ghost_tdm_soft(self) -> None:
+        """ghost_tdm（V0.5.0 轴归一）：与幽灵锚点同模式——soft 不阻断，消息指向修正命令。"""
+        hard, soft = evaluate_battle_map_report(
+            self._report(ghost_tdms=[{"step_id": "BM-X", "tdm_node_id": "TDM-FAKE-99"}])
+        )
+        assert hard == []
+        assert any("ghost_tdm" in s for s in soft)
+        assert any("tdm_node_id" in s for s in soft)
+
+    def test_r7_legacy_report_without_ghost_tdms_attr_ok(self) -> None:
+        """向后兼容：旧形状 report（无 ghost_tdms 字段）不炸门禁（getattr 默认空）。"""
+        legacy = SimpleNamespace(
+            ghost_anchors=[],
+            orphan_steps=[],
+            missing_narratives=[],
+            domain_drifts=[],
+            dangling_edges=[],
+            parent_child_issues=[],
+            orphan_modules=[],
+        )
+        hard, soft = evaluate_battle_map_report(legacy)
+        assert hard == []
+        assert not any("ghost_tdm" in s for s in soft)
+
     def test_r7_orphan_step_blocked(self) -> None:
         hard, _ = evaluate_battle_map_report(self._report(orphan_steps=[{"step_id": "BM-GHOST-99"}]))
         assert any("BM-INV-001" in h for h in hard)
@@ -240,6 +268,114 @@ class TestRedBattleMap:
         hard, soft = evaluate_battle_map_report(self._report(orphan_modules=[{"blueprint_id": "MOD-X"}]))
         assert hard == []
         assert any("BM-INV-007" in s for s in soft)
+
+
+class TestGhostTdmLeg:
+    """ghost_tdm 第6腿（V0.5.0 轴归一手术批1）：tdm_node_id 非空必须在 TDM yaml nodes。
+
+    红队：伪造 tdm_node_id（TDM 查无此节点）→ _check_ghost_tdms 必红 / 写入端必拦。
+    蓝队：合法直映 id / NULL 无主态 / 列不存在（回滚态）→ 全放行。
+    """
+
+    @staticmethod
+    def _import_align():
+        import align_battle_map  # noqa: import-integrity  sys.path 动态加载（真源在 scripts/governance）
+
+        return align_battle_map
+
+    # ── 红队：纯判定必红 ──
+
+    def test_red_forged_tdm_id_detected(self) -> None:
+        ab = self._import_align()
+        steps = [
+            {"step_id": "BM-BUY-04", "step_name": "分批建仓", "flow_stage": "buy_flow", "tdm_node_id": "TDM-FAKE-99"},
+            {
+                "step_id": "BM-SELL-03",
+                "step_name": "卖出信号收集评分",
+                "flow_stage": "sell_flow",
+                "tdm_node_id": "TDM-X-S1",
+            },
+        ]
+        findings = ab._check_ghost_tdms(steps, {"TDM-X-S1"})
+        assert len(findings) == 1
+        assert findings[0]["step_id"] == "BM-BUY-04"
+        assert findings[0]["tdm_node_id"] == "TDM-FAKE-99"
+        assert findings[0]["reason"] == "tdm_node_id_not_found"
+
+    def test_red_empty_valid_set_flags_all_mounted(self) -> None:
+        """TDM 集合退化（空但 available）→ 所有已挂载全红（防真源损坏漏检）。"""
+        ab = self._import_align()
+        steps = [{"step_id": "BM-X", "step_name": "x", "flow_stage": "buy_flow", "tdm_node_id": "TDM-E-L4-01"}]
+        findings = ab._check_ghost_tdms(steps, set())
+        assert len(findings) == 1
+
+    def test_red_apply_write_side_rejects_forged_id(self) -> None:
+        """写入端拦截：apply_battle_map 对伪造 tdm_node_id 必须抛 ValueError。"""
+        ab = self._import_align()
+        apply_mod = sys.modules.get("apply_battle_map")
+        if apply_mod is None:
+            import apply_battle_map  # noqa: import-integrity  sys.path 动态加载
+
+            apply_mod = sys.modules["apply_battle_map"]
+        with pytest.raises(ValueError, match="ghost_tdm"):
+            apply_mod._ensure_tdm_node_id_exists("TDM-FAKE-99")
+
+    # ── 蓝队：合法场景放行 ──
+
+    def test_blue_null_and_unmounted_pass(self) -> None:
+        """NULL/空串=无主/策略工厂段（未回填）→ 放行，零误报。"""
+        ab = self._import_align()
+        steps = [
+            {
+                "step_id": "BM-RES-01",
+                "step_name": "研究数据与特征存储",
+                "flow_stage": "research_incubation",
+                "tdm_node_id": None,
+            },
+            {
+                "step_id": "BM-SEL-02",
+                "step_name": "因子计算与信号生成",
+                "flow_stage": "stock_selection",
+                "tdm_node_id": "",
+            },
+        ]
+        assert ab._check_ghost_tdms(steps, set()) == []
+
+    def test_blue_column_missing_skips_leg(self) -> None:
+        """回滚态（列不存在，行 dict 无 tdm_node_id 键）→ 腿 skip 零 finding（降级无中间态）。"""
+        ab = self._import_align()
+        steps = [{"step_id": "BM-BUY-04", "step_name": "分批建仓", "flow_stage": "buy_flow"}]
+        assert ab._check_ghost_tdms(steps, set()) == []
+
+    def test_blue_direct_mapping_ids_in_real_tdm_yaml(self) -> None:
+        """仓库真源蓝测：直映 11 对的 TDM node_id 全部存在于现值 yaml（182 nodes）。"""
+        ab = self._import_align()
+        valid, available = ab._valid_ids_tdm()
+        assert available, "TDM yaml 必须可加载"
+        assert len(valid) == 182
+        direct_ids = [
+            "TDM-E-L4-01",
+            "TDM-X-R1",
+            "TDM-X-S1",
+            "TDM-X-S1-03",
+            "TDM-X-S1-02",
+            "TDM-X-S2-06",
+            "TDM-X-S1-05",
+            "TDM-E-L2-02",
+            "TDM-E-L2-03",
+            "TDM-E-L1-AGG",
+            "TDM-P-P1-04",
+        ]
+        missing = [i for i in direct_ids if i not in valid]
+        assert missing == [], f"直映 id 缺失: {missing}"
+
+    def test_blue_tdm_yaml_unavailable_fail_open(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """TDM yaml 不可达 → (空集, available=False) fail-open（同 _GRAPH_COLLECTORS 家族惯例）。"""
+        ab = self._import_align()
+        monkeypatch.setattr(ab, "_TDM_YAML", ab._REPO_ROOT / "config" / "__no_such_tdm__.yaml")
+        valid, available = ab._valid_ids_tdm()
+        assert available is False
+        assert valid == set()
 
 
 # ═══════════════════════ 蓝队：防御验证 ═══════════════════════

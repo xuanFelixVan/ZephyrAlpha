@@ -388,3 +388,9 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/frontend/dashboard/api_server.py:factory_ledger||src/zephyr/frontend/dashboard/api_server.py:factory_candidates"
   note: 两条独立路由各自薄包装惯用样板（route wrapper→_impl：ledger 读 CH 台账聚合/candidates 读 lane_*_candidates.csv 聚合），业务真源与消费面不同（factory.js 台账区 vs 进货·考试 tab），结构相似=FastAPI 路由薄包装惯用法非逻辑克隆；登记者=整装回测备战 W3 前端批（st-fullscore-20260930）
+- id: cg-bm-remove-op-pair-20261004
+  verdict: intentional
+  stable_key: "scripts/governance/apply_battle_map.py:op_remove_anchor||scripts/governance/apply_battle_map.py:op_remove_edge"
+  note: 删除操作存量同构对（按 id SELECT 存在性→dry-run 打印→DELETE→返回 op 名，anchor/edge 各自字面 SQL 防拼接），
+    MODIFY-GUARD 对标 apply_decisiongraph.py 同形对（跨文件既定惯例），本批未触碰两函数实现，仅因文件随批改动暴露
+    （轴归一手术批1 仅加 tdm_node_id 白名单+校验）；合并=参数化泛型需动两文件对标面，超出本批边界（st-tclose-bmsurg-20261004）

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__（经 in_process_gate_registry.yaml 自动注册）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 混合分级（文件触发）——staged 触及作战地图相关路径（module_translation_registry/battle_map_domain_policy/align_battle_map/apply_battle_map/src battle_map 代码）时跑七类对齐：违规孤儿环节(BM-INV-001，acknowledged 已排除)>0 / missing_narratives(BM-INV-003)>0 → 阻断（git 可见状态，提交人 touch 触发路径即有 agency 修复）；ghost_anchors(BM-INV-002) 2026-09-15 硬→软降级（PG 状态非 git 状态，提交人无 agency——写入端 apply_battle_map.op_add_anchor 已强制存在性校验防复发，治理上报件5；anchor 674 连坐事故实证）；domain_drifts/dangling_edges/parent_child/orphan_modules 保持 warn（孤儿模块 457=血肉阶段清淤campaign，G4）；基线 0 已实证（2026-09-05 G3 驱零后）；PG 异常=fail-open（对标 panorama gate 惯例）
+# [INVARIANTS] 混合分级（文件触发）——staged 触及作战地图相关路径（module_translation_registry/battle_map_domain_policy/align_battle_map/apply_battle_map/src battle_map 代码）时跑八类对齐：违规孤儿环节(BM-INV-001，acknowledged 已排除)>0 / missing_narratives(BM-INV-003)>0 → 阻断（git 可见状态，提交人 touch 触发路径即有 agency 修复）；ghost_anchors(BM-INV-002) 2026-09-15 硬→软降级（PG 状态非 git 状态，提交人无 agency——写入端 apply_battle_map.op_add_anchor 已强制存在性校验防复发，治理上报件5；anchor 674 连坐事故实证）；ghost_tdm(V0.5.0 轴归一) 与幽灵锚点同模式=软告警（写入端 tdm_node_id 存在性校验防复发）；domain_drifts/dangling_edges/parent_child/orphan_modules 保持 warn（孤儿模块 457=血肉阶段清淤campaign，G4）；基线 0 已实证（2026-09-05 G3 驱零后）；PG 异常=fail-open（对标 panorama gate 惯例）
 # [MODIFY-GUARD] gate_id="GATE-BATTLE-MAP-ALIGNMENT"；触发路径清单变更须同步 trae_080
 # [STABILITY] evolving
 # [SAFETY] L
@@ -20,7 +20,8 @@
 
 病根（第一性原理）
 -----------------
-作战地图七类对齐检查（BM-INV-001~007）此前全部 warn-only 君子协定——"改 battle_map
+作战地图八类对齐检查（BM-INV-001~007 + ghost_tdm V0.5.0 轴归一）此前全部 warn-only
+君子协定——"改 battle_map
 三表前自动 PG 备份"有，但"改完引用断了会拦截"没有。血肉填充阶段大量新环节/新锚点
 入库，孤儿环节/缺失叙事可无感累积。2026-09-05 G3 驱零实证：违规孤儿环节=0、缺失
 叙事=0、幽灵锚点=0（acknowledged 18 项已排除）——三类确定性检查具备升硬基线。
@@ -91,6 +92,16 @@ def evaluate_battle_map_report(report: object) -> tuple[list[str], list[str]]:
         soft.append(
             f"幽灵锚点（BM-INV-002）={len(report.ghost_anchors)}: {report.ghost_anchors[:5]}"
             "（PG 状态非本提交产物——写入端已强制存在性校验；清理=apply_battle_map.py --remove-anchor --anchor-id <id>）"
+        )
+    # ghost_tdm（V0.5.0 轴归一手术批1）：与幽灵锚点同模式——PG 状态非 git 状态，
+    # 写入端 apply_battle_map tdm_node_id 存在性校验防复发，提交时检测降为 warn。
+    # getattr 兼容旧 report 形状（无该字段=腿未跑，静默跳过）。
+    ghost_tdms = getattr(report, "ghost_tdms", [])
+    if ghost_tdms:
+        soft.append(
+            f"TDM 挂载漂移（ghost_tdm）={len(ghost_tdms)}: {ghost_tdms[:5]}"
+            "（PG 状态非本提交产物——写入端已强制存在性校验；修正=apply_battle_map.py "
+            "--update-step --field tdm_node_id / 置 NULL 回退无主态）"
         )
     if report.orphan_steps:
         hard.append(

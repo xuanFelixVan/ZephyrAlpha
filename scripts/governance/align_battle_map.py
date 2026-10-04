@@ -38,6 +38,8 @@
       (5) 域漂移（BM-INV-004）：anchor.target 的 domain 不在 step.flow_stage 允许列表
       (6) 父子嵌套（BM-INV-006）：父不存在/跨阶段/成环/depth超限
       (7) 孤儿模块（BM-INV-007）：业务域 depgraph 模块无任何锚点指向 = 造出来没用上
+      (8) TDM 挂载漂移（ghost_tdm，V0.5.0 轴归一手术批1）：steps.tdm_node_id 非空但
+          config/trading_decision_map.yaml nodes 查无此节点 = 挂死词（红）
   - 输出 MD 报告到 docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md
 
 定位：只读检测器（君子协定告警，不做自动修复，不硬阻断 commit），由人工或后续工具根据报告处理。
@@ -124,6 +126,10 @@ _DOMAIN_POLICY_YAML = (
     _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "battle_map_domain_policy.yaml"
 )
 
+# TDM 真源（V0.5.0 轴归一手术批1：battle_map_steps.tdm_node_id 存在性校验目标）
+# TDM=交易决策流程唯一地图（alignment_checklist.md §9 原则1），流程词真源在 YAML
+_TDM_YAML = _REPO_ROOT / "config" / "trading_decision_map.yaml"
+
 # depgraph SQL 常量（NO-BARE-SQL 集中化，§5.160.2）
 SQL_SELECT_DEPGRAPH_VALID_IDS = (
     "SELECT blueprint_id, path FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
@@ -201,6 +207,7 @@ class BattleMapAlignmentReport:
     domain_drifts: list[dict] = field(default_factory=list)  # BM-INV-004 域漂移
     parent_child_issues: list[dict] = field(default_factory=list)  # BM-INV-006 父子嵌套
     orphan_modules: list[dict] = field(default_factory=list)  # BM-INV-007 孤儿模块（违规）
+    ghost_tdms: list[dict] = field(default_factory=list)  # ghost_tdm TDM 挂载漂移（V0.5.0 轴归一第6腿）
     business_module_count: int = 0  # 业务域 depgraph 模块总数（BM-INV-007 扫描范围）
     # V1.1.0 三档分类（治本：补齐二元不变量第三态，消除 100%AI 开发下的治理振荡）
     acknowledged_orphan_steps: list[dict] = field(default_factory=list)  # BM-INV-001 已确认合理孤儿环节
@@ -235,6 +242,7 @@ class BattleMapAlignmentReport:
         lines.append(f"  - 域漂移（BM-INV-004，target domain 不在 flow_stage 允许列表）: {len(self.domain_drifts)}")
         lines.append(f"  - 父子嵌套问题（BM-INV-006，父不存在/跨阶段/成环/depth超限）: {len(self.parent_child_issues)}")
         lines.append(f"  - 孤儿模块（BM-INV-007，业务域模块无作战锚点=造出来没用上）: {len(self.orphan_modules)} 违规")
+        lines.append(f"  - TDM 挂载漂移（ghost_tdm，tdm_node_id 在 TDM yaml 查无此节点）: {len(self.ghost_tdms)}")
         # V1.1.0 三档分类：已确认合理孤儿（acknowledged）单独统计，不计入违规总数
         if self.acknowledged_orphan_steps or self.acknowledged_orphan_modules:
             lines.append("- 已确认合理孤儿（acknowledged，定期复审，不计违规）:")
@@ -443,8 +451,30 @@ class BattleMapAlignmentReport:
                 )
         lines.append("")
 
+        # 8. TDM 挂载漂移（ghost_tdm，V0.5.0 轴归一手术批1）
+        lines.append("## 8. TDM 挂载漂移（ghost_tdm：tdm_node_id 在 TDM yaml 查无此节点）")
+        lines.append("")
+        lines.append(
+            "> 君子协定：battle_map_steps.tdm_node_id 非空时，必须能在 TDM 真源 "
+            "`config/trading_decision_map.yaml` nodes 里找到（TDM=交易决策流程唯一地图，"
+            "alignment_checklist.md §9 原则1）。查无此节点 = 挂死词 = 指向不存在的 TDM 节点。"
+            "列不存在（回滚态）或 TDM yaml 不可用时本腿自动 skip，无中间态。"
+        )
+        lines.append("")
+        if not self.ghost_tdms:
+            lines.append("> ✅ 无 TDM 挂载漂移（或 tdm_node_id 列不存在=腿 skip）。")
+        else:
+            lines.append("| step_id | tdm_node_id | 环节名 | 阶段 |")
+            lines.append("|---|---|---|---|")
+            for s in self.ghost_tdms:
+                lines.append(
+                    f"| {s.get('step_id', '—')} | {s.get('tdm_node_id', '—')} | "
+                    f"{s.get('step_name', '—')} | {s.get('flow_stage', '—')} |"
+                )
+        lines.append("")
+
         # 处置建议
-        lines.append("## 8. 处置建议")
+        lines.append("## 9. 处置建议")
         lines.append("")
         lines.append(
             "- 孤儿环节：用 `apply_battle_map.py --add-anchor` 为环节挂载承载模块/候选/蓝图"
@@ -477,6 +507,12 @@ class BattleMapAlignmentReport:
             "`battle_map_domain_policy.yaml` §acknowledged_orphans；② 这些是「计划中未实现」或"
             "「planned 待实现」的显式登记，AI 不应尝试「修复」（消除治理振荡）；③ 到 review_frequency "
             "到期时强制复审，对应模块 build_status planned→stable 后补挂锚点并移出此清单"
+        )
+        lines.append(
+            "- TDM 挂载漂移（ghost_tdm）：① 核对该 step 的 tdm_node_id 是否笔误（对照 "
+            "`config/trading_decision_map.yaml` nodes）；② 笔误则用 "
+            "`apply_battle_map.py --update-step --step-id <id> --field tdm_node_id --value <正确id>` 修正；"
+            "③ 若映射本身有误（BM 词在 TDM 无对应），置 NULL 回退无主态"
         )
         lines.append("")
 
@@ -548,7 +584,6 @@ def _valid_ids_from_pg(conn_factory, queries: list[tuple[str, tuple[str, ...]]])
 def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
     """采集 dataflowgraph 合法 target_id（entity_name ∪ job_name ∪ module_id）。"""
     from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: PLC0415
-
         get_dataflowgraph_pg_connection,
     )
 
@@ -564,7 +599,6 @@ def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
 def _valid_ids_decisiongraph() -> tuple[set[str], bool]:
     """采集 decisiongraph 合法 target_id（path ∪ module_id ∪ layer_id）。"""
     from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: PLC0415
-
         get_decisiongraph_pg_connection,
     )
 
@@ -661,6 +695,59 @@ _GRAPH_COLLECTORS = {
     "candidate": _valid_ids_candidate,
     "blueprint": _valid_ids_blueprint,
 }
+
+
+# ---------------------------------------------------------------------------
+# TDM 挂载漂移采集（ghost_tdm，V0.5.0 轴归一手术批1）
+# ---------------------------------------------------------------------------
+
+
+def _valid_ids_tdm() -> tuple[set[str], bool]:
+    """采集 TDM 合法 node_id 集合（config/trading_decision_map.yaml nodes）。
+
+    加载器单一真源=zephyr.trading.decision_map.load_decision_map（与 decision_map_gate/
+    check_decision_map 同源）；文件不存在/解析失败/包不可达时返回 available=False
+    （fail-open 跳过校验，与 _GRAPH_COLLECTORS 家族同惯例）。
+
+    Returns:
+        (valid_node_ids, available) — available=False 表示 TDM 真源不可用（跳过第6腿）
+    """
+    try:
+        from zephyr.trading.decision_map import load_decision_map
+
+        if not _TDM_YAML.exists():
+            return set(), False
+        dm = load_decision_map(_TDM_YAML)
+        valid = {str(n.node_id) for n in dm.nodes if getattr(n, "node_id", None)}
+        return valid, True
+    except Exception:  # noqa: BLE001 — TDM 真源不可用降级空集（fail-open，同家族惯例）
+        return set(), False
+
+
+def _check_ghost_tdms(steps: list[dict], valid_tdm_ids: set[str]) -> list[dict]:
+    """ghost_tdm 纯判定：tdm_node_id 非空但 TDM nodes 查无此节点 → 挂死词（红）。
+
+    :param steps: battle_map_steps 全量行（SELECT * 含 tdm_node_id 列；列不存在时
+                  行 dict 无该键 = 腿自动 skip，回滚态降级无中间态）
+    :param valid_tdm_ids: TDM yaml nodes 合法 node_id 集合
+    :return: ghost_tdm findings 列表（step_id/tdm_node_id/step_name/flow_stage）
+    """
+    findings: list[dict] = []
+    for s in steps:
+        tid = s.get("tdm_node_id")
+        if not tid:  # NULL/空串 = 无主/策略工厂段（未回填），放行
+            continue
+        if str(tid) not in valid_tdm_ids:
+            findings.append(
+                {
+                    "step_id": s.get("step_id"),
+                    "tdm_node_id": str(tid),
+                    "step_name": s.get("step_name", "—"),
+                    "flow_stage": s.get("flow_stage", "—"),
+                    "reason": "tdm_node_id_not_found",
+                }
+            )
+    return findings
 
 
 # ---------------------------------------------------------------------------
@@ -1079,6 +1166,21 @@ def run_alignment(
     # BM-INV-006 父子嵌套一致性：父存在/同阶段/无环/depth≤2
     parent_child_issues = _check_parent_child_consistency(steps)
 
+    # ghost_tdm TDM 挂载漂移（V0.5.0 轴归一手术批1）：tdm_node_id 非空必须在 TDM nodes 集合。
+    # 列不存在（回滚态，行 dict 无该键）= 腿自动 skip 降级回 5 腿，无中间态；
+    # TDM yaml 不可用 = source_unavailable 记录后跳过（fail-open，同家族惯例）。
+    ghost_tdms: list[dict] = []
+    tdm_column_present = bool(steps) and "tdm_node_id" in steps[0]
+    if not tdm_column_present:
+        logger.info("tdm_node_id 列不存在（回滚态或未迁移），ghost_tdm 腿 skip")
+    else:
+        valid_tdm_ids, tdm_available = _valid_ids_tdm()
+        if not tdm_available:
+            source_unavailable.append("tdm_yaml")
+            logger.warning("TDM 真源不可用（%s），ghost_tdm 腿跳过", _TDM_YAML)
+        else:
+            ghost_tdms = _check_ghost_tdms(steps, valid_tdm_ids)
+
     # BM-INV-007 孤儿模块：业务域 depgraph 节点无任何锚点指向
     orphan_modules: list[dict] = []
     acknowledged_orphan_modules: list[dict] = []
@@ -1136,6 +1238,7 @@ def run_alignment(
         domain_drifts=domain_drifts,
         parent_child_issues=parent_child_issues,
         orphan_modules=orphan_modules,
+        ghost_tdms=ghost_tdms,
         business_module_count=business_module_count,
         acknowledged_orphan_steps=acknowledged_orphan_steps,
         acknowledged_orphan_modules=acknowledged_orphan_modules,
@@ -1149,6 +1252,7 @@ def run_alignment(
             + len(domain_drifts)
             + len(parent_child_issues)
             + len(orphan_modules)
+            + len(ghost_tdms)
         ),
     )
 
@@ -1160,7 +1264,7 @@ def run_alignment(
         )
         logger.info("作战地图对齐报告已写入 %s", output_path)
         logger.info(
-            "违规总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d, 孤儿模块=%d)",
+            "违规总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d, 孤儿模块=%d, ghost_tdm=%d)",
             report.issues_total,
             len(orphan_steps),
             len(ghost_anchors),
@@ -1169,6 +1273,7 @@ def run_alignment(
             len(domain_drifts),
             len(parent_child_issues),
             len(orphan_modules),
+            len(ghost_tdms),
         )
         logger.info(
             "三档分类: 违规孤儿环节=%d + acknowledged=%d | 违规孤儿模块=%d + acknowledged=%d",

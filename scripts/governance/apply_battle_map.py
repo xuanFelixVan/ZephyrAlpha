@@ -131,6 +131,7 @@ _EDGE_OPS = frozenset({"add_edge", "remove_edge"})
 _ALL_OPS = _STEP_OPS | _ANCHOR_OPS | _EDGE_OPS
 
 # update_step 允许更新的字段白名单（安全约束：禁止改 step_id）
+# tdm_node_id（V0.5.0 轴归一手术批1）：BM→TDM 指针列，写入时校验存在性（防挂死词）
 _STEP_UPDATABLE_FIELDS = {
     "step_name",
     "flow_stage",
@@ -142,8 +143,29 @@ _STEP_UPDATABLE_FIELDS = {
     "parent_step_id",
     "depth",
     "design_maturity",
+    "tdm_node_id",
 }
 _STEP_JSONB_FIELDS = {"indicators"}
+
+
+def _ensure_tdm_node_id_exists(value: Any) -> None:
+    """tdm_node_id 存在性校验（V0.5.0 轴归一手术批1，裁定#483 后置项）。
+
+    与 BM-INV-002 幽灵锚点校验同构：复用 align_battle_map._valid_ids_tdm 同一存在性
+    真源（加载器=zephyr.trading.decision_map.load_decision_map），TDM yaml 不可用时
+    fail-open 放行（与 align 批量检测同惯例），存量复测归 align_battle_map 第6腿
+    ghost_tdm。NULL/空串=无主/策略工厂段（未回填），放行。
+    """
+    if not value:
+        return
+    from align_battle_map import _valid_ids_tdm
+
+    valid_ids, available = _valid_ids_tdm()
+    if available and str(value) not in valid_ids:
+        raise ValueError(
+            f"tdm_node_id '{value}' 在 config/trading_decision_map.yaml nodes 中不存在"
+            f"（ghost_tdm 写入拦截；先核对 TDM 节点 id 再回填，或置 NULL 回退无主态）"
+        )
 
 
 def _get_supported_ops() -> set[str]:
@@ -187,12 +209,14 @@ def op_add_step(
     parent_step_id: str | None = None,
     depth: int = 0,
     design_maturity: str = "production",
+    tdm_node_id: str | None = None,
     dry_run: bool = False,
 ) -> dict:
     """添加作战环节。
 
     step_id 格式：BM-<阶段缩写>-<序号>，如 BM-BUY-03。
     indicators 是 6 件套结构化数据（trigger/consumes/params/data_flow/code_mapping/degradation）。
+    tdm_node_id（V0.5.0）：BM→TDM 轴归一指针，非空时校验 TDM nodes 存在性。
     """
     if flow_stage not in _VALID_FLOW_STAGES:
         raise ValueError(f"flow_stage '{flow_stage}' 不合法，合法值: {sorted(_VALID_FLOW_STAGES)}")
@@ -200,6 +224,7 @@ def op_add_step(
         raise ValueError(f"design_maturity '{design_maturity}' 不合法，合法值: {sorted(_VALID_DESIGN_MATURITIES)}")
     if not step_id or not step_name:
         raise ValueError("step_id 和 step_name 必填")
+    _ensure_tdm_node_id_exists(tdm_node_id)
 
     row = {
         "step_id": step_id,
@@ -213,6 +238,7 @@ def op_add_step(
         "parent_step_id": parent_step_id,
         "depth": depth,
         "design_maturity": design_maturity,
+        "tdm_node_id": tdm_node_id,
     }
 
     with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -247,10 +273,10 @@ def op_add_step(
                 INSERT INTO battle_map_steps
                     (step_id, step_name, flow_stage, layer, sort_order,
                      narrative_ref, indicators, source_ref, parent_step_id, depth,
-                     design_maturity)
+                     design_maturity, tdm_node_id)
                 VALUES (%(step_id)s, %(step_name)s, %(flow_stage)s, %(layer)s, %(sort_order)s,
                         %(narrative_ref)s, %(indicators)s, %(source_ref)s,
-                        %(parent_step_id)s, %(depth)s, %(design_maturity)s)
+                        %(parent_step_id)s, %(depth)s, %(design_maturity)s, %(tdm_node_id)s)
                 RETURNING step_id
                 """,
                 row,
@@ -269,6 +295,8 @@ def op_update_step(conn, *, step_id: str, field: str, value: Any, dry_run: bool 
         raise ValueError(f"flow_stage '{value}' 不合法")
     if field == "design_maturity" and value not in _VALID_DESIGN_MATURITIES:
         raise ValueError(f"design_maturity '{value}' 不合法")
+    if field == "tdm_node_id":
+        _ensure_tdm_node_id_exists(value)
 
     db_value = json.dumps(value, ensure_ascii=False) if field in _STEP_JSONB_FIELDS else value
 
@@ -687,7 +715,7 @@ def _execute_ops(ops: list[dict], dry_run: bool = False) -> int:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)
         return EXIT_FINDINGS
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — DB 写入失败降级 exit 4（ERROR_CONTRACT 契约内，不外抛）
         conn.rollback()
         print(f"ERROR (DB): {e}", file=sys.stderr)
         return 4

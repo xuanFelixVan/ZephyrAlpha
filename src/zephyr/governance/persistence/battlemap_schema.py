@@ -147,12 +147,17 @@ def get_battle_map_pg_connection(*args, **kwargs):
 
 
 # ---------------------------------------------------------------------------
-# DDL — battle_map_steps 表（作战环节，13列，V0.4.0 新增 parent_step_id + depth）
+# DDL — battle_map_steps 表（作战环节，14列，V0.4.0 新增 parent_step_id + depth；
+#       V0.5.0 新增 tdm_node_id——BM→TDM 轴归一指针列，裁定#483 后置项手术批1）
 # step_id TEXT PK（格式 BM-<阶段缩写>-<序号>，如 BM-BUY-03）
 # indicators JSONB — 6件套结构化数据（trigger/consumes/params/data_flow/code_mapping/degradation）
 # narrative_ref TEXT — 指向翻译真源 battle_map_steps 段的 step_id（叙事真源在 YAML）
 # parent_step_id TEXT — V0.4.0 父子嵌套：自引用 FK 指向父环节（NULL=顶层）
 # depth INTEGER — V0.4.0 层级深度（0=顶层,1=子,2=孙，最大2，BM-INV-006）
+# tdm_node_id TEXT — V0.5.0 轴归一指针：TDM 真源=config/trading_decision_map.yaml nodes
+#   （YAML 真源不能建 PG FK），NULL=无主/策略工厂段；存在性校验由 align_battle_map
+#   第6腿 ghost_tdm 承载（写入端 apply_battle_map 同步校验，fail-open）。
+#   回滚=ALTER TABLE battle_map_steps DROP COLUMN IF EXISTS tdm_node_id;
 # ---------------------------------------------------------------------------
 
 _DDL_BATTLE_MAP_STEPS = f"""
@@ -170,6 +175,7 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
         CHECK (design_maturity IN ({", ".join(f"'{m}'" for m in _DESIGN_MATURITIES)})),
     parent_step_id   TEXT    REFERENCES battle_map_steps(step_id) ON DELETE SET NULL,
     depth            INTEGER NOT NULL DEFAULT 0,
+    tdm_node_id      TEXT,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
     updated_at       TIMESTAMPTZ DEFAULT NOW()
 )
@@ -217,13 +223,15 @@ CREATE TABLE IF NOT EXISTS battle_map_edges (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — 索引（7个，V0.4.0 新增 parent_step_id 索引，对齐 depgraph/decisiongraph 命名风格）
+# DDL — 索引（8个，V0.4.0 新增 parent_step_id 索引；V0.5.0 新增 tdm_node_id 索引，
+#       对齐 depgraph/decisiongraph 命名风格）
 # ---------------------------------------------------------------------------
 
 _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_flow_stage ON battle_map_steps(flow_stage)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_sort ON battle_map_steps(flow_stage, sort_order)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_parent ON battle_map_steps(parent_step_id)",
+    "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_tdm_node ON battle_map_steps(tdm_node_id)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_anchors_step ON battle_map_anchors(step_id)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_anchors_target ON battle_map_anchors(target_graph, target_id)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_edges_from ON battle_map_edges(from_step_id)",
