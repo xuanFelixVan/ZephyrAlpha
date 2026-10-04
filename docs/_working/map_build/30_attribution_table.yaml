@@ -1,23 +1,23 @@
-accounting_units_total: 5182
+accounting_units_total: 5179
 by_map:
-  GOMAP: 453
+  GOMAP: 454
   TDM: 113
-  FACTORY: 350
-  FIG11: 891
+  FACTORY: 389
+  FIG11: 895
   FIG12: 218
-  FIG13: 214
-closure_derived: 1220
+  FIG13: 215
+closure_derived: 1209
 dangling_keys:
 - key: MOD-BT-006
   source_map: FACTORY
 - key: MOD-BT-215
   source_map: FACTORY
 auxiliary_ledger:
-  tests_py_count: 4040
-  docs_file_count: 10934
+  tests_py_count: 4043
+  docs_file_count: 11366
   merged_empty_init: 0
   frontend_file_count: 140
-  scripts_manifest_total: 1226
+  scripts_manifest_total: 1229
 orphans:
 - file: scripts/__init__.py
   cluster_hint: scripts.__init__.py
@@ -343,13 +343,6 @@ orphans:
     last_commit: '2026-08-21'
 - file: scripts/compute_signals.py
   cluster_hint: scripts.compute_signals.py
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-02'
-- file: scripts/crypto_daily_review.py
-  cluster_hint: scripts.crypto_daily_review.py
   tier: wired_by_header
   evidence:
     imports_in: 0
@@ -973,9 +966,9 @@ orphans:
     last_commit: '2026-09-26'
 - file: src/zephyr/alt_data/__init__.py
   cluster_hint: src.zephyr.alt_data
-  tier: wired_by_header
+  tier: wired
   evidence:
-    imports_in: 0
+    imports_in: 1
     imported_by: 0
     last_commit: '2026-09-23'
 - file: src/zephyr/alt_data/_extensions/__init__.py
@@ -1923,6 +1916,13 @@ orphans:
     imports_in: 1
     imported_by: 0
     last_commit: '2026-09-16'
+- file: src/zephyr/compliance/__init__.py
+  cluster_hint: src.zephyr.compliance
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-18'
 - file: src/zephyr/compliance/_extensions/__init__.py
   cluster_hint: src.zephyr.compliance
   tier: suspect_orphan
@@ -2202,82 +2202,26 @@ orphans:
   evidence:
     imports_in: 0
     imported_by: 0
-    last_commit: untracked
+    last_commit: '2026-10-04'
 - file: src/zephyr/data/quality/archive_sla_burnrate.py
   cluster_hint: src.zephyr.data
   tier: wired
   evidence:
     imports_in: 1
     imported_by: 0
-    last_commit: untracked
+    last_commit: '2026-10-04'
 - file: src/zephyr/data/quality/sla_breach_predictor.py
   cluster_hint: src.zephyr.data
   tier: wired
   evidence:
     imports_in: 2
     imported_by: 0
-    last_commit: untracked
+    last_commit: '2026-10-04'
 - file: src/zephyr/data/tick_redis_cache.py
   cluster_hint: src.zephyr.data
   tier: wired
   evidence:
     imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/_extensions/__init__.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/api/__init__.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/cold_data_archive_manager.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/core/__init__.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/data_lake_manager.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/infrastructure/__init__.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/models/__init__.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/data_eng/services/__init__.py
-  cluster_hint: src.zephyr.data_eng
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
     imported_by: 0
     last_commit: '2026-09-16'
 - file: src/zephyr/data_governance/__init__.py
@@ -2560,6 +2504,13 @@ orphans:
     imports_in: 6
     imported_by: 0
     last_commit: '2026-09-15'
+- file: src/zephyr/ex_core/bridge_instruction_kernel.py
+  cluster_hint: src.zephyr.ex_core
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-10-04'
 - file: src/zephyr/ex_core/broker_link_probe.py
   cluster_hint: src.zephyr.ex_core
   tier: wired_by_header
@@ -2670,13 +2621,6 @@ orphans:
   tier: wired
   evidence:
     imports_in: 3
-    imported_by: 0
-    last_commit: '2026-09-15'
-- file: src/zephyr/ex_core/rules/crypto.py
-  cluster_hint: src.zephyr.ex_core
-  tier: wired
-  evidence:
-    imports_in: 1
     imported_by: 0
     last_commit: '2026-09-15'
 - file: src/zephyr/ex_core/saga_compensation_registry.py
@@ -2848,6 +2792,13 @@ orphans:
     imported_by: 0
     last_commit: '2026-09-16'
 - file: src/zephyr/experiment_tracking/__init__.py
+  cluster_hint: src.zephyr.experiment_tracking
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-16'
+- file: src/zephyr/experiment_tracking/adapters/__init__.py
   cluster_hint: src.zephyr.experiment_tracking
   tier: wired_by_header
   evidence:
@@ -3110,7 +3061,7 @@ orphans:
   cluster_hint: src.zephyr.factor
   tier: wired
   evidence:
-    imports_in: 1
+    imports_in: 2
     imported_by: 0
     last_commit: '2026-09-22'
 - file: src/zephyr/factor/technical_indicators/cycle.py
@@ -4387,13 +4338,6 @@ orphans:
     imports_in: 2
     imported_by: 0
     last_commit: '2026-09-16'
-- file: src/zephyr/feedback_loop/forensic/crypto_bootstrap.py
-  cluster_hint: src.zephyr.feedback_loop
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
 - file: src/zephyr/feedback_loop/forensic/deterministic_replay.py
   cluster_hint: src.zephyr.feedback_loop
   tier: wired
@@ -5045,13 +4989,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-01'
-- file: src/zephyr/frontend/dashboard/web/features/cryptomarket/cm-engine.js
-  cluster_hint: src.zephyr.frontend
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-12'
 - file: src/zephyr/frontend/dashboard/web/features/datasrc/ds-page.js
   cluster_hint: src.zephyr.frontend
   tier: suspect_orphan
@@ -5528,41 +5465,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-13'
-- file: src/zephyr/frontend/dashboard/web/pages/cryptobt.html
-  cluster_hint: src.zephyr.frontend
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-29'
-- file: src/zephyr/frontend/dashboard/web/pages/cryptoinfo.html
-  cluster_hint: src.zephyr.frontend
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-29'
-- file: src/zephyr/frontend/dashboard/web/pages/cryptomarket.html
-  cluster_hint: src.zephyr.frontend
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-30'
-- file: src/zephyr/frontend/dashboard/web/pages/cryptopos.html
-  cluster_hint: src.zephyr.frontend
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-29'
-- file: src/zephyr/frontend/dashboard/web/pages/cryptostrat.html
-  cluster_hint: src.zephyr.frontend
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-29'
 - file: src/zephyr/frontend/dashboard/web/pages/datasrc.html
   cluster_hint: src.zephyr.frontend
   tier: suspect_orphan
@@ -6676,13 +6578,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-16'
-- file: src/zephyr/gov_drift/__init__.py
-  cluster_hint: src.zephyr.gov_drift
-  tier: wired_dynamic
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
 - file: src/zephyr/gov_drift/absence_manager.py
   cluster_hint: src.zephyr.gov_drift
   tier: wired
@@ -7187,13 +7082,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-16'
-- file: src/zephyr/governance/audit/reuse_scan.py
-  cluster_hint: src.zephyr.governance
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: untracked
 - file: src/zephyr/governance/audit/snapshot_manager.py
   cluster_hint: src.zephyr.governance
   tier: wired_dynamic
@@ -7474,21 +7362,7 @@ orphans:
     imports_in: 1
     imported_by: 0
     last_commit: '2026-09-16'
-- file: src/zephyr/governance/financial_governance/__init__.py
-  cluster_hint: src.zephyr.governance
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-18'
 - file: src/zephyr/governance/financial_governance/arbitrage_asymmetry_detector.py
-  cluster_hint: src.zephyr.governance
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
   cluster_hint: src.zephyr.governance
   tier: wired_by_header
   evidence:
@@ -10407,13 +10281,6 @@ orphans:
     imports_in: 1
     imported_by: 0
     last_commit: '2026-09-15'
-- file: src/zephyr/nlp/__init__.py
-  cluster_hint: src.zephyr.nlp
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
 - file: src/zephyr/nlp/news_impact_grader.py
   cluster_hint: src.zephyr.nlp
   tier: wired_by_header
@@ -10445,13 +10312,6 @@ orphans:
 - file: src/zephyr/nlp/sentiment_pipeline.py
   cluster_hint: src.zephyr.nlp
   tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/orchestrator/contracts/__init__.py
-  cluster_hint: src.zephyr.orchestrator
-  tier: suspect_orphan
   evidence:
     imports_in: 0
     imported_by: 0
@@ -10997,9 +10857,9 @@ orphans:
     last_commit: '2026-09-16'
 - file: src/zephyr/position/live_nav_recorder.py
   cluster_hint: src.zephyr.position
-  tier: wired_by_header
+  tier: wired
   evidence:
-    imports_in: 0
+    imports_in: 1
     imported_by: 0
     last_commit: '2026-09-16'
 - file: src/zephyr/position/models/__init__.py
@@ -11158,9 +11018,9 @@ orphans:
     last_commit: '2026-09-16'
 - file: src/zephyr/reporting/attribution_calculator.py
   cluster_hint: src.zephyr.reporting
-  tier: wired_by_header
+  tier: wired
   evidence:
-    imports_in: 0
+    imports_in: 1
     imported_by: 0
     last_commit: '2026-09-16'
 - file: src/zephyr/reporting/attribution_registry_mapper.py
@@ -11377,7 +11237,7 @@ orphans:
   cluster_hint: src.zephyr.risk
   tier: wired
   evidence:
-    imports_in: 1
+    imports_in: 2
     imported_by: 0
     last_commit: '2026-09-18'
 - file: src/zephyr/risk/core/crowding_response_engine.py
@@ -11646,167 +11506,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/__init__.py
-  cluster_hint: src.zephyr.security
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/adversarial_robustness.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/alignment_scorer.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 5
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/__init__.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/l1_input.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/lsg_pattern_tracker.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/patterns/__init__.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/payloads/__init__.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/protocol.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 15
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-29'
-- file: src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py
-  cluster_hint: src.zephyr.security
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 1
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py
-  cluster_hint: src.zephyr.security
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/sensitivity_classifier.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/security/llm_defense/llm_security/solo_dev_safety_net.py
-  cluster_hint: src.zephyr.security
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
 - file: src/zephyr/security/llm_defense/spectral_guard.py
   cluster_hint: src.zephyr.security
   tier: wired_by_header
@@ -11936,13 +11635,6 @@ orphans:
 - file: src/zephyr/shared/adaptation/prompt_version_manager.py
   cluster_hint: src.zephyr.shared
   tier: wired_dynamic
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/shared/ai_guards/__init__.py
-  cluster_hint: src.zephyr.shared
-  tier: suspect_orphan
   evidence:
     imports_in: 0
     imported_by: 0
@@ -13330,7 +13022,7 @@ orphans:
   cluster_hint: src.zephyr.shared
   tier: wired
   evidence:
-    imports_in: 252
+    imports_in: 254
     imported_by: 0
     last_commit: '2026-09-16'
 - file: src/zephyr/shared/utils/verify_paths.py
@@ -14488,6 +14180,44 @@ orphans:
     imports_in: 1
     imported_by: 0
     last_commit: '2026-08-17'
+exempted:
+- file: scripts/crypto_daily_review.py
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），脚本保留现状等恢复通知；恢复时接线、长期不用则退役
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 2027-01-04（90 天）未恢复则呈退役提案
+- file: src/zephyr/ex_core/rules/crypto.py
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），规则模块保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/feedback_loop/forensic/crypto_bootstrap.py
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），取证自举件保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/frontend/dashboard/web/features/cryptomarket/cm-engine.js
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），前端引擎保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/frontend/dashboard/web/pages/cryptobt.html
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈回测页保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/frontend/dashboard/web/pages/cryptoinfo.html
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈信息页保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/frontend/dashboard/web/pages/cryptomarket.html
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈行情页保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/frontend/dashboard/web/pages/cryptopos.html
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈持仓页保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+- file: src/zephyr/frontend/dashboard/web/pages/cryptostrat.html
+  conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈策略页保留现状等通知
+  basis: crypto-dev-paused-20261004
+  review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+stale_exemptions: []
 units:
 - file: scripts/__init__.py
   maps_direct: []
@@ -14746,6 +14476,7 @@ units:
 - file: scripts/_archive/ops/quick_profile.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -15024,11 +14755,8 @@ units:
 - file: scripts/audit/t0_conditional_e4_v2_exam.py
   maps_direct: []
   maps_derived:
-  - FIG11
   - FIG12
   - FIG13
-  - GOMAP
-  - TDM
   status: derived
 - file: scripts/audit/t0_conditional_e4_v3_exam.py
   maps_direct: []
@@ -15072,25 +14800,20 @@ units:
 - file: scripts/automation/intel_harvester.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/automation/source_card_drafter.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/automation/validate_intel_registry.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backfill_auction_snapshot_history.py
   maps_direct:
@@ -15240,11 +14963,9 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/factory_grid_anova.py
   maps_direct:
@@ -15339,10 +15060,12 @@ units:
   maps_derived: []
   status: direct
 - file: scripts/backtest/intake_load_screen_c2.py
-  maps_direct:
+  maps_direct: []
+  maps_derived:
   - FACTORY
-  maps_derived: []
-  status: direct
+  - FIG12
+  - FIG13
+  status: derived
 - file: scripts/backtest/kronos_adapter.py
   maps_direct:
   - FACTORY
@@ -15367,11 +15090,9 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/lane_c_formula_miner.py
   maps_direct:
@@ -15920,61 +15641,49 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/translated/c4_fact_4b200528.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/translated/c4_fact_4db4c41e.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/translated/c4_fact_4f749668.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/translated/c4_fact_e293e217.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/translated/c4_fact_e831084c.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/backtest/translated/c4_fd47fa0e6401_macd_resonance.py
   maps_direct:
@@ -16586,7 +16295,7 @@ units:
 - file: scripts/crypto_daily_review.py
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: scripts/data/audit_technical_indicator_coverage.py
   maps_direct:
   - FIG12
@@ -16780,7 +16489,6 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
@@ -16899,6 +16607,15 @@ units:
   - FIG11
   maps_derived: []
   status: direct
+- file: scripts/generate_map_coverage_ledger.py
+  maps_direct: []
+  maps_derived:
+  - FIG11
+  - FIG12
+  - FIG13
+  - GOMAP
+  - TDM
+  status: derived
 - file: scripts/generate_pathway_registry.py
   maps_direct:
   - FIG11
@@ -18750,6 +18467,11 @@ units:
   - FIG11
   maps_derived: []
   status: direct
+- file: scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: scripts/governance/d5_architecture/validators/yaml_md/__init__.py
   maps_direct:
   - FIG11
@@ -19913,8 +19635,6 @@ units:
   maps_direct: []
   maps_derived:
   - FIG11
-  - FIG12
-  - FIG13
   - GOMAP
   - TDM
   status: derived
@@ -19938,8 +19658,6 @@ units:
   maps_direct: []
   maps_derived:
   - FIG11
-  - FIG12
-  - FIG13
   - GOMAP
   - TDM
   status: derived
@@ -20271,10 +19989,10 @@ units:
   maps_derived: []
   status: direct
 - file: scripts/governance/register_asset.py
-  maps_direct: []
-  maps_derived:
+  maps_direct:
   - FIG11
-  status: derived
+  maps_derived: []
+  status: direct
 - file: scripts/governance/register_deferred_modules.py
   maps_direct: []
   maps_derived:
@@ -20929,9 +20647,8 @@ units:
 - file: scripts/ml/eval_sentiment.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/ml/run_research_rating_batch.py
   maps_direct: []
@@ -20943,11 +20660,10 @@ units:
 - file: scripts/ml/run_sentiment_batch.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - FIG12
   - FIG13
   - GOMAP
-  - TDM
   status: derived
 - file: scripts/ml/run_sft_train.py
   maps_direct: []
@@ -21051,6 +20767,11 @@ units:
 - file: scripts/rollback.py
   maps_direct:
   - FIG11
+  maps_derived: []
+  status: direct
+- file: scripts/run_post_settlement.py
+  maps_direct:
+  - FIG13
   maps_derived: []
   status: direct
 - file: scripts/scaffold.py
@@ -21313,6 +21034,7 @@ units:
 - file: src/zephyr/__init__.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -22164,9 +21886,7 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/autonomy_core/context/context_model_strategy.py
   maps_direct: []
@@ -22180,9 +21900,7 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/autonomy_core/context/context_pipeline_auto.py
   maps_direct: []
@@ -22190,7 +21908,6 @@ units:
   - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/autonomy_core/context/context_playground.py
   maps_direct: []
@@ -22275,9 +21992,7 @@ units:
 - file: src/zephyr/autonomy_core/embedding_provider_adapter.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/autonomy_core/file_autoregister.py
   maps_direct: []
@@ -22357,9 +22072,7 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/autonomy_core/self_evolution_fidelity_gate.py
   maps_direct: []
@@ -22564,9 +22277,7 @@ units:
 - file: src/zephyr/autonomy_core/skills/skill_router.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/autonomy_core/skills/skill_sandbox.py
   maps_direct: []
@@ -23013,11 +22724,8 @@ units:
   status: orphan
 - file: src/zephyr/compliance/__init__.py
   maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/compliance/_extensions/__init__.py
   maps_direct: []
   maps_derived: []
@@ -23033,6 +22741,7 @@ units:
 - file: src/zephyr/compliance/audit_trail/__init__.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -23040,6 +22749,7 @@ units:
 - file: src/zephyr/compliance/audit_trail/bridges/__init__.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -24104,38 +23814,18 @@ units:
   - GOMAP
   - TDM
   status: derived
-- file: src/zephyr/data_eng/_extensions/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/data_eng/api/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
 - file: src/zephyr/data_eng/cleaning_anomaly_engine.py
   maps_direct: []
   maps_derived:
   - FIG12
   - FIG13
   status: derived
-- file: src/zephyr/data_eng/cold_data_archive_manager.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/data_eng/core/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
 - file: src/zephyr/data_eng/data_anomaly_alerter.py
   maps_direct: []
   maps_derived:
   - FIG12
   - FIG13
   status: derived
-- file: src/zephyr/data_eng/data_lake_manager.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
 - file: src/zephyr/data_eng/expectation_governance.py
   maps_direct: []
   maps_derived:
@@ -24153,24 +23843,6 @@ units:
   - FIG12
   - FIG13
   - TDM
-  status: derived
-- file: src/zephyr/data_eng/infrastructure/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/data_eng/models/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/data_eng/services/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/data_eng/stream_processing_engine.py
-  maps_direct: []
-  maps_derived:
-  - FIG12
-  - FIG13
   status: derived
 - file: src/zephyr/data_governance/__init__.py
   maps_direct: []
@@ -24306,9 +23978,8 @@ units:
 - file: src/zephyr/data_security/wiring/__init__.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
-  - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/data_security/wiring/audit_sink.py
   maps_direct: []
@@ -24322,9 +23993,7 @@ units:
 - file: src/zephyr/data_security/wiring/lsg_masking_front.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/digital_twin/__init__.py
   maps_direct: []
@@ -24426,6 +24095,10 @@ units:
   - FIG13
   maps_derived: []
   status: direct
+- file: src/zephyr/ex_core/bridge_instruction_kernel.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/ex_core/broker_link_probe.py
   maps_direct: []
   maps_derived: []
@@ -24666,7 +24339,7 @@ units:
 - file: src/zephyr/ex_core/rules/crypto.py
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/ex_core/saga_compensation_registry.py
   maps_direct: []
   maps_derived: []
@@ -24889,9 +24562,8 @@ units:
   status: orphan
 - file: src/zephyr/experiment_tracking/adapters/__init__.py
   maps_direct: []
-  maps_derived:
-  - FACTORY
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/experiment_tracking/adapters/c1_adapter.py
   maps_direct: []
   maps_derived:
@@ -25457,8 +25129,6 @@ units:
   maps_derived:
   - FACTORY
   - FIG11
-  - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/feedback_loop/actors/__init__.py
   maps_direct: []
@@ -25524,16 +25194,12 @@ units:
 - file: src/zephyr/feedback_loop/auto_evolution.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/feedback_loop/backpressure_bridge.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/feedback_loop/collectors/__init__.py
   maps_direct: []
@@ -26342,9 +26008,7 @@ units:
 - file: src/zephyr/feedback_loop/evolution_engine.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/feedback_loop/exceptions.py
   maps_direct: []
@@ -26378,7 +26042,7 @@ units:
 - file: src/zephyr/feedback_loop/forensic/crypto_bootstrap.py
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/feedback_loop/forensic/deterministic_replay.py
   maps_direct: []
   maps_derived: []
@@ -26756,6 +26420,7 @@ units:
 - file: src/zephyr/feedback_loop/scheduler.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -26763,6 +26428,7 @@ units:
 - file: src/zephyr/feedback_loop/scheduler_act.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -26828,9 +26494,7 @@ units:
 - file: src/zephyr/feedback_loop/skill_library.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/feedback_loop/slo_manager.py
   maps_direct: []
@@ -27198,7 +26862,7 @@ units:
 - file: src/zephyr/frontend/dashboard/web/features/cryptomarket/cm-engine.js
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/frontend/dashboard/web/features/datasrc/ds-page.js
   maps_direct: []
   maps_derived: []
@@ -27474,23 +27138,23 @@ units:
 - file: src/zephyr/frontend/dashboard/web/pages/cryptobt.html
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/frontend/dashboard/web/pages/cryptoinfo.html
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/frontend/dashboard/web/pages/cryptomarket.html
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/frontend/dashboard/web/pages/cryptopos.html
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/frontend/dashboard/web/pages/cryptostrat.html
   maps_direct: []
   maps_derived: []
-  status: orphan
+  status: exempted
 - file: src/zephyr/frontend/dashboard/web/pages/datasrc.html
   maps_direct: []
   maps_derived: []
@@ -27816,6 +27480,7 @@ units:
 - file: src/zephyr/gov_audit/bridges/__init__.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -27834,6 +27499,7 @@ units:
 - file: src/zephyr/gov_audit/bridges/audit_delegation_bridge.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -27893,6 +27559,7 @@ units:
 - file: src/zephyr/gov_audit/delegation_auditor.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -27900,6 +27567,7 @@ units:
 - file: src/zephyr/gov_audit/delegation_bridge.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -27931,16 +27599,12 @@ units:
   maps_derived:
   - FACTORY
   - FIG11
-  - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/gov_audit/feedback_policy.py
   maps_direct: []
   maps_derived:
   - FACTORY
   - FIG11
-  - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/gov_audit/feedback_self_audit.py
   maps_direct: []
@@ -28391,8 +28055,11 @@ units:
   status: orphan
 - file: src/zephyr/gov_drift/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  - GOMAP
+  - TDM
+  status: derived
 - file: src/zephyr/gov_drift/__main__.py
   maps_direct: []
   maps_derived:
@@ -29406,6 +29073,11 @@ units:
   - FIG11
   maps_derived: []
   status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/trading_day_cycle_map_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py
   maps_direct:
   - FIG11
@@ -30099,20 +29771,20 @@ units:
   maps_derived: []
   status: direct
 - file: src/zephyr/governance/audit/registry_entry_counts_reconciler.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
+  maps_direct:
   - GOMAP
-  status: derived
+  maps_derived: []
+  status: direct
 - file: src/zephyr/governance/audit/remediation_progress_reconciler.py
   maps_direct:
   - GOMAP
   maps_derived: []
   status: direct
 - file: src/zephyr/governance/audit/reuse_scan.py
-  maps_direct: []
+  maps_direct:
+  - FIG11
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/governance/audit/runtime_violation_snapshot.py
   maps_direct: []
   maps_derived:
@@ -30348,9 +30020,8 @@ units:
 - file: src/zephyr/governance/escalation/__init__.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/governance/escalation/alternative_path_blocker.py
   maps_direct: []
@@ -30372,9 +30043,8 @@ units:
 - file: src/zephyr/governance/escalation/escalation_engine.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/governance/escalation/escalation_fatigue_manager.py
   maps_direct: []
@@ -30439,16 +30109,18 @@ units:
   status: orphan
 - file: src/zephyr/governance/financial_governance/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - GOMAP
+  status: derived
 - file: src/zephyr/governance/financial_governance/arbitrage_asymmetry_detector.py
   maps_direct: []
   maps_derived: []
   status: orphan
 - file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FACTORY
+  status: derived
 - file: src/zephyr/governance/financial_governance/budget_enforcement.py
   maps_direct:
   - GOMAP
@@ -30502,16 +30174,12 @@ units:
 - file: src/zephyr/governance/implementations/__init__.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/governance/implementations/default_security_gateway.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/governance/indicator_usage_audit.py
   maps_direct: []
@@ -30571,9 +30239,7 @@ units:
 - file: src/zephyr/governance/intelligence_governance/delegation_engine.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/governance/intelligence_governance/delegation_manager.py
   maps_direct: []
@@ -30628,9 +30294,8 @@ units:
 - file: src/zephyr/governance/intelligence_governance/self_test.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/governance/intelligence_governance/self_validator.py
   maps_direct: []
@@ -30953,9 +30618,9 @@ units:
 - file: src/zephyr/governance/ops_governance/service_registration.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/governance/ops_governance/stream_abort_guard.py
   maps_direct:
@@ -31200,9 +30865,9 @@ units:
 - file: src/zephyr/governance/resilience_governance/f5_event_subscriber.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/governance/resilience_governance/f5_shutdown_manager.py
   maps_direct:
@@ -31293,9 +30958,7 @@ units:
 - file: src/zephyr/governance/security_governance/default_security_gateway.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/governance/security_governance/github_api_guard.py
   maps_direct: []
@@ -31434,9 +31097,9 @@ units:
 - file: src/zephyr/governance/services/adapter.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/governance/services/cross_session_correlator.py
   maps_direct: []
@@ -33260,6 +32923,7 @@ units:
 - file: src/zephyr/integration/local_model/deepseek_chat.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -33267,9 +32931,7 @@ units:
 - file: src/zephyr/integration/local_model/embedding_router.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/local_model/local_model_scheduler.py
   maps_direct: []
@@ -33277,21 +32939,17 @@ units:
   - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/local_model/lsg_gate.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/local_model/ollama_chat.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/local_model/ollama_embedding.py
   maps_direct: []
@@ -33300,6 +32958,7 @@ units:
 - file: src/zephyr/integration/mcp/__init__.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -33348,6 +33007,7 @@ units:
 - file: src/zephyr/integration/mcp/gateway_server.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -33355,6 +33015,7 @@ units:
 - file: src/zephyr/integration/mcp/governance_server.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -33404,9 +33065,9 @@ units:
 - file: src/zephyr/integration/mcp/vector_memory_server.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/mcp_server.py
   maps_direct: []
@@ -33450,9 +33111,8 @@ units:
 - file: src/zephyr/integration/vector_memory/__init__.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/bm25_index.py
   maps_direct: []
@@ -33461,9 +33121,7 @@ units:
 - file: src/zephyr/integration/vector_memory/bridge_layer.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/cache_layer.py
   maps_direct: []
@@ -33476,9 +33134,7 @@ units:
 - file: src/zephyr/integration/vector_memory/collection_manager.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/collection_schemas.py
   maps_direct: []
@@ -33487,51 +33143,39 @@ units:
 - file: src/zephyr/integration/vector_memory/context_ingest.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/cross_collection_retriever.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/delegated_vector_memory.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/design_principles.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/faiss_collection_manager.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/hybrid_retriever.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/in_memory_fake_vms.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/in_memory_memory_backend.py
   maps_direct: []
@@ -33540,9 +33184,8 @@ units:
 - file: src/zephyr/integration/vector_memory/in_process_vector_memory.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/index_health_monitor.py
   maps_direct:
@@ -33556,9 +33199,7 @@ units:
 - file: src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/ollama_embedding.py
   maps_direct: []
@@ -33567,37 +33208,30 @@ units:
 - file: src/zephyr/integration/vector_memory/provenance_enforcer.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/retrieval_feedback.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/sqlite_metadata_store.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/vector_bridge.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/vector_writer.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/integration/vector_memory/vms_errors.py
   maps_direct: []
@@ -33606,16 +33240,14 @@ units:
 - file: src/zephyr/integration/vector_memory/vms_memory_backend.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/integration/vector_memory/vms_schemas.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/intelligence/__init__.py
   maps_direct: []
@@ -33628,9 +33260,8 @@ units:
 - file: src/zephyr/intelligence/agent_memory_architecture.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/intelligence/api/__init__.py
   maps_direct: []
@@ -33672,9 +33303,8 @@ units:
 - file: src/zephyr/intelligence/episodic_memory_store.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/intelligence/event_anomaly_detector.py
   maps_direct: []
@@ -33822,9 +33452,8 @@ units:
 - file: src/zephyr/intelligence/model_evaluation/unified_memory_api.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/intelligence/model_intel/__init__.py
   maps_direct: []
@@ -33903,6 +33532,7 @@ units:
 - file: src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
   - TDM
@@ -33970,7 +33600,16 @@ units:
 - file: src/zephyr/intelligence/news_llm_scorer.py
   maps_direct: []
   maps_derived:
+  - FACTORY
+  - GOMAP
+  status: derived
+- file: src/zephyr/intelligence/news_score_daily.py
+  maps_direct: []
+  maps_derived:
+  - FACTORY
   - FIG11
+  - FIG12
+  - FIG13
   - GOMAP
   - TDM
   status: derived
@@ -33990,7 +33629,6 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - FIG12
   - FIG13
   - GOMAP
@@ -34081,9 +33719,8 @@ units:
 - file: src/zephyr/knowledge/__init__.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/knowledge/ai_knowledge_extractor.py
   maps_direct: []
@@ -34105,9 +33742,7 @@ units:
 - file: src/zephyr/knowledge/kb_engine.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/knowledge/knowledge_artifact_store.py
   maps_direct: []
@@ -34121,30 +33756,25 @@ units:
 - file: src/zephyr/knowledge/layered_memory_orchestrator.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/knowledge/paper_tracker.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/knowledge/rag_pipeline.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/knowledge/research_catalog.py
   maps_direct: []
   maps_derived:
-  - FIG11
+  - FACTORY
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/knowledge/research_project_aggregate.py
   maps_direct: []
@@ -34559,8 +34189,10 @@ units:
   status: orphan
 - file: src/zephyr/nlp/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG12
+  - FIG13
+  status: derived
 - file: src/zephyr/nlp/news_dual_tagger.py
   maps_direct: []
   maps_derived:
@@ -34593,28 +34225,24 @@ units:
   - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/orchestrator/agent_coordination_skill.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/orchestrator/agent_orchestrator.py
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/orchestrator/contracts/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: src/zephyr/orchestrator/contracts/alert_handler.py
   maps_direct: []
   maps_derived:
@@ -34660,9 +34288,7 @@ units:
 - file: src/zephyr/orchestrator/execution/__init__.py
   maps_direct: []
   maps_derived:
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/orchestrator/execution/batch_orchestrator.py
   maps_direct: []
@@ -34671,9 +34297,7 @@ units:
 - file: src/zephyr/orchestrator/execution/context_bridge.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/orchestrator/execution/data_lifecycle.py
   maps_direct:
@@ -34691,9 +34315,7 @@ units:
 - file: src/zephyr/orchestrator/execution/memory_writer.py
   maps_direct: []
   maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
+  - FACTORY
   status: derived
 - file: src/zephyr/orchestrator/execution/phase_executor.py
   maps_direct: []
@@ -34813,9 +34435,7 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/orchestrator/lifecycle/__init__.py
   maps_direct:
@@ -35862,6 +35482,10 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
+  - FIG11
+  - FIG12
+  - FIG13
+  - GOMAP
   - TDM
   status: derived
 - file: src/zephyr/regime/validation/__init__.py
@@ -36009,6 +35633,7 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
+  - FIG11
   - FIG13
   - GOMAP
   status: derived
@@ -37297,211 +36922,207 @@ units:
   maps_derived: []
   status: orphan
 - file: src/zephyr/security/llm_defense/__init__.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/__init__.py
-  maps_direct: []
-  maps_derived:
+  maps_direct:
   - FACTORY
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/adversarial_robustness.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/alignment_scorer.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py
-  maps_direct: []
-  maps_derived:
+  maps_direct:
   - FACTORY
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/dashboard/__init__.py
-  maps_direct: []
-  maps_derived:
+  maps_direct:
   - FACTORY
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/dashboard/app.py
-  maps_direct: []
-  maps_derived:
+  maps_direct:
   - FACTORY
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/gateway.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/__init__.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l0_supply_chain.py
-  maps_direct: []
-  maps_derived:
-  - GOMAP
-  status: derived
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l1_input.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py
-  maps_direct: []
-  maps_derived:
-  - GOMAP
-  status: derived
-- file: src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py
   maps_direct:
+  - FACTORY
   - GOMAP
   maps_derived: []
   status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l6_feishu_alert.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/lsg_pattern_tracker.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/patterns/__init__.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
-- file: src/zephyr/security/llm_defense/llm_security/payloads/__init__.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/payloads/__init__.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/poisoning_monitor.py
   maps_direct:
+  - FACTORY
   - GOMAP
   maps_derived: []
   status: direct
 - file: src/zephyr/security/llm_defense/llm_security/process_sandbox.py
-  maps_direct: []
-  maps_derived:
-  - GOMAP
-  status: derived
-- file: src/zephyr/security/llm_defense/llm_security/protocol.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py
-  maps_direct: []
-  maps_derived: []
-  status: orphan
-- file: src/zephyr/security/llm_defense/llm_security/self_protection/isolation.py
-  maps_direct: []
-  maps_derived:
+  maps_direct:
   - FACTORY
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/protocol.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/self_protection/__init__.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: src/zephyr/security/llm_defense/llm_security/self_protection/isolation.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/sensitivity_classifier.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/llm_security/solo_dev_safety_net.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/security/llm_defense/spectral_guard.py
   maps_direct: []
   maps_derived: []
@@ -37731,8 +37352,9 @@ units:
   status: orphan
 - file: src/zephyr/shared/ai_guards/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - GOMAP
+  status: derived
 - file: src/zephyr/shared/ai_guards/ai_audit_guard.py
   maps_direct:
   - GOMAP
@@ -39608,6 +39230,10 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
+  - FIG11
+  - FIG12
+  - FIG13
+  - GOMAP
   - TDM
   status: derived
 - file: src/zephyr/signal_ashare/strategy_signal/strategy_vote_integrator.py
@@ -39993,7 +39619,11 @@ units:
 - file: src/zephyr/strategy_factory/owner_band_t/__init__.py
   maps_direct: []
   maps_derived:
-  - FACTORY
+  - FIG11
+  - FIG12
+  - FIG13
+  - GOMAP
+  - TDM
   status: derived
 - file: src/zephyr/strategy_factory/owner_band_t/costs.py
   maps_direct: []
@@ -40222,9 +39852,9 @@ units:
 - file: src/zephyr/trading/auto_dispatcher.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/trading/auto_integrator.py
   maps_direct:
@@ -40419,7 +40049,6 @@ units:
   - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/trading/recon_runner.py
   maps_direct:
@@ -40684,7 +40313,6 @@ units:
   - FACTORY
   - FIG11
   - GOMAP
-  - TDM
   status: derived
 - file: src/zephyr/trading/windows_service.py
   maps_direct:
@@ -40706,7 +40334,7 @@ units:
   maps_derived: []
   status: direct
 meta:
-  generated_at: '2026-10-03T18:54:07+00:00'
+  generated_at: '2026-10-04T09:32:41+00:00'
   ruling: 裁定#481（主账=src/zephyr .py+scripts .py+frontend js/html≈5200；辅账 tests/docs）
   design_spec: docs/_working/map_build/20_join_checker_design.md rev2
   map_sources:
@@ -40719,18 +40347,20 @@ meta:
   closure_engine: analyze_change_impact.ChangeImpactAnalyzer（复用 _bfs_dependents，禁重写）
   tier_engine: generate_governance_map._wiring_tier（四档复用，禁另造）
   counts_diag:
-    mounted_files: 1895
+    mounted_files: 1938
     mounted_not_in_depgraph: 1
     keys_out_of_universe: 0
     derived_by_map:
-      GOMAP: 782
-      TDM: 660
-      FACTORY: 219
-      FIG11: 755
-      FIG12: 405
-      FIG13: 428
-    orphan_count: 2067
+      GOMAP: 741
+      TDM: 568
+      FACTORY: 287
+      FIG11: 677
+      FIG12: 409
+      FIG13: 432
+    orphan_count: 2023
+    exempted_count: 9
+    stale_exemption_count: 0
   crosscheck_ruling481:
     expected_approx: 5200
-    actual: 5182
-    deviation_pct: -0.3
+    actual: 5179
+    deviation_pct: -0.4

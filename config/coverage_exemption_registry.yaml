@@ -1,0 +1,53 @@
+# 覆盖账本豁免登记册（在案结论=第三合法态）
+#
+# 立法依据（Owner 2026-10-04 口径）："存在就要有用，或者有结论"——孤儿容忍终点=0 的分子
+# 是"两不沾且无结论"的真孤儿；有明确结论的（如币圈暂停令）登记在册，普查时独立报数、
+# 不打红、不隐身（consumed by generate_map_coverage_attribution.py --exemption-registry，
+# align_all 第十二节随普查面读取）。
+#
+# 条目契约：file=仓内 posix 相对路径（须在主账宇宙内）；conclusion_zh=结论（大白话）；
+# basis=依据（指令/裁定/会话号）；review_when=复查条件（到期未处置须升级 Owner）。
+# 陈旧条目（路径不存在/文件已重新挂载）由普查显性报 stale_exemptions 促清册——册比孤儿多是病。
+#
+# 首批登记（2026-10-04）：币圈暂停开发令——"模块保留现状等通知"（crypto-dev-paused-20261004）。
+schema_version: "0.1"
+registry_id: COVERAGE-EXEMPTION-001
+updated: "2026-10-04"
+ssot_note: 判罚结论真源=Owner 指令；本册=机械载体（普查减法输入），条目增删须带依据
+exemptions:
+  - file: scripts/crypto_daily_review.py
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），脚本保留现状等恢复通知；恢复时接线、长期不用则退役
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 2027-01-04（90 天）未恢复则呈退役提案
+  - file: src/zephyr/ex_core/rules/crypto.py
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），规则模块保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/feedback_loop/forensic/crypto_bootstrap.py
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），取证自举件保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/frontend/dashboard/web/features/cryptomarket/cm-engine.js
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），前端引擎保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/frontend/dashboard/web/pages/cryptobt.html
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈回测页保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/frontend/dashboard/web/pages/cryptoinfo.html
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈信息页保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/frontend/dashboard/web/pages/cryptomarket.html
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈行情页保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/frontend/dashboard/web/pages/cryptopos.html
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈持仓页保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案
+  - file: src/zephyr/frontend/dashboard/web/pages/cryptostrat.html
+    conclusion_zh: 币圈暂停开发（Owner 令 2026-10-04），币圈策略页保留现状等通知
+    basis: crypto-dev-paused-20261004
+    review_when: 币圈恢复开发通知，或 90 天未恢复则呈退役提案

@@ -58991,4 +58991,9 @@ creation_tokens:
   created_by: st-vm12g-20261004
   capability: casebook_registry
   merge_evaluation: "永久病历本登记册token重登记：原20261003版被册归一化重打以HEAD为基底覆盖吸收从未进HEAD；本行以HEAD为基底纯插入叠加"
+- file: config/coverage_exemption_registry.yaml
+  token: map-coverage-attribution-coverage-exemption-registry-20261004
+  created_by: st-joinchk-20261004
+  capability: map_coverage_attribution
+  merge_evaluation: "Owner 2026-10-04 立法执行件：豁免登记册（在案结论=第三合法态），普查减法输入，无同域重复"
 di_seam_exemptions: []
