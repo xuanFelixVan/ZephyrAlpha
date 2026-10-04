@@ -27,7 +27,7 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = REPO_ROOT / "scripts" / "deadman_switch.ps1"
+SCRIPT = REPO_ROOT / "scripts" / "deadman_switch.ps1"  # 2026-10-04 路径对齐 a4b503a16 拆簇（installers→scripts 根）
 
 
 def _run_deadman(tmp_dir: Path) -> subprocess.CompletedProcess[str]:
