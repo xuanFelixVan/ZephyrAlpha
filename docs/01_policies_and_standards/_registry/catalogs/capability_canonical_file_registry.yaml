@@ -58996,4 +58996,19 @@ creation_tokens:
   created_by: st-joinchk-20261004
   capability: map_coverage_attribution
   merge_evaluation: "Owner 2026-10-04 立法执行件：豁免登记册（在案结论=第三合法态），普查减法输入，无同域重复"
+- file: docs/_working/map_census/gomap/gomap_f2_facts.yaml
+  token: gomap-f2-gomap-f2-facts-20261003
+  created_by: st-gomap-f2m-20261003
+  capability: gomap_f2
+  merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
+- file: docs/_working/map_census/gomap/gomap_f2_focus_evidence.yaml
+  token: gomap-f2-gomap-f2-focus-evidence-20261003
+  created_by: st-gomap-f2m-20261003
+  capability: gomap_f2
+  merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
+- file: docs/_working/map_census/gomap/gomap_f2_zero_evidence.yaml
+  token: gomap-f2-gomap-f2-zero-evidence-20261003
+  created_by: st-gomap-f2m-20261003
+  capability: gomap_f2
+  merge_evaluation: "净零申报：F2 facts 证据抽取三表为 GOMAP 图10 挂血肉战役 F1 验收后机械抽取产物，消费方=chief 内收对审四分处置；方法论=F1 表3 已验 14 源分源计数+清单效应排除法复用，无新册无新规则"
 di_seam_exemptions: []
