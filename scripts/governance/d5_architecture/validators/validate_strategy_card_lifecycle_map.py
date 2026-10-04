@@ -66,12 +66,8 @@ _SQL_MODULE_ID_LIST = "SELECT blueprint_id FROM nodes WHERE blueprint_id IN ({})
 _SKELETON_REL = "docs/_working/map_build/fig15_cardlife/00_skeleton.md"
 _PROPOSAL_REL = "docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml"
 _REGISTRY_VOCAB_REL = "docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml"
-_REGISTRY_HOST_REL = str(
-    Path("docs" / "01_policies_and_standards" / "_registry" / "catalogs") / "experiment_registry.yaml"
-)
-_RULING_REGISTRY_REL = str(
-    Path("docs" / "01_policies_and_standards" / "_registry" / "catalogs") / "ruling_registry.yaml"
-)
+_REGISTRY_HOST_REL = "docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml"
+_RULING_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
 _PATH_OWNERSHIP_REL = "docs/03_modules/path_ownership_map.yaml"
 _INV1_CORPUS_RELS = (
     "docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md",
