@@ -943,3 +943,89 @@ class TestMergeEvaluationWarn:
             passed, detail = gate.check(gw, [str(f)], session_id="st-test-me-20260920")
         assert passed is True
         assert "#375" in caplog.text, "空白值应视同缺失触发 warn"
+
+
+class TestMapMountsDeclaration:
+    """挂图申报必填面（Owner 2026-10-04 三点批准）：新 src/zephyr .py 必须申报挂图归属。
+
+    单元隔离：monkeypatch _load_capability_registry（合成册）与字段头/basename/关键词
+    三检测（非本单元面）；节点图索引走 tmp 仓 config/ 真文件（disk 面，不 staged）。
+    """
+
+    REL = "src/zephyr/fake_pkg/__map_mounts_test_mod_20261004__.py"
+
+    @staticmethod
+    def _prepare(tmp_path: Path, monkeypatch, entry_extra: dict) -> tuple:
+        import zephyr.gov_enforcement.commit_gates.create_guard as cg
+
+        _init_git_repo(tmp_path)
+        f = _stage_file(tmp_path, TestMapMountsDeclaration.REL)
+        registry = {
+            "creation_tokens": [
+                {
+                    "file": TestMapMountsDeclaration.REL,
+                    "token": "map-mounts-test-20261004",
+                    "created_by": "st-mapmount-test",
+                    "capability": "map_mounts_test",
+                    "merge_evaluation": "测试夹具",
+                    **entry_extra,
+                }
+            ]
+        }
+        monkeypatch.setattr(cg, "_load_capability_registry", lambda gw: (registry, ""))
+        # 掐掉真 CapabilityLookup 构造（其构造器会写真登记册——#ARCH-084 tracked 写守护
+        # 会逮；basename/关键词两检测均已 monkeypatch 放行，lookup 传 None 不入判定）
+        monkeypatch.setattr(cg, "_build_capability_lookup", lambda: None)
+        monkeypatch.setattr(cg, "_check_field_header", lambda gw, files: (True, ""))
+        monkeypatch.setattr(cg, "_check_basename_collision", lambda gw, files, lookup=None: (True, ""))
+        monkeypatch.setattr(
+            cg,
+            "_check_capability_keyword_overlap",
+            lambda gw, files, session_id=None, lookup=None, lookup_error="": (True, ""),
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        return cg, f, gw
+
+    @staticmethod
+    def _write_fake_map(tmp_path: Path) -> None:
+        config_dir = tmp_path / "config"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        (config_dir / "fake_day_map.yaml").write_text(
+            "map_id: fake_day_map\nnodes:\n- node_id: F-01\n  name_zh: 测试格\n",
+            encoding="utf-8",
+        )
+
+    def test_missing_declaration_blocks(self, tmp_path: Path, monkeypatch) -> None:
+        """map_mounts 与 no_mount_reason 皆缺 → 硬阻断，消息含双路修复指引。"""
+        cg, f, gw = self._prepare(tmp_path, monkeypatch, {})
+        passed, detail = cg.make_create_guard().check(gw, [str(f)], session_id="st-mapmount-test")
+        assert passed is False, f"未申报挂图面的新 src/zephyr .py 应被阻断: {detail}"
+        assert "挂图" in detail and "map_mounts" in detail and "no_mount_reason" in detail
+
+    def test_valid_mount_passes(self, tmp_path: Path, monkeypatch) -> None:
+        """map_mounts 指向在册 (map_id, node_id) → 放行。"""
+        self._write_fake_map(tmp_path)
+        cg, f, gw = self._prepare(tmp_path, monkeypatch, {"map_mounts": ["fake_day_map:F-01"]})
+        passed, detail = cg.make_create_guard().check(gw, [str(f)], session_id="st-mapmount-test")
+        assert passed is True, f"在册挂点应放行: {detail}"
+
+    def test_unknown_node_blocks(self, tmp_path: Path, monkeypatch) -> None:
+        """map_mounts 指向不在册节点（图例罩不住）→ 硬阻断（防编造挂点）。"""
+        self._write_fake_map(tmp_path)
+        cg, f, gw = self._prepare(tmp_path, monkeypatch, {"map_mounts": ["fake_day_map:F-99"]})
+        passed, detail = cg.make_create_guard().check(gw, [str(f)], session_id="st-mapmount-test")
+        assert passed is False, f"不在册挂点应被阻断: {detail}"
+        assert "不在" in detail and "F-99" in detail
+
+    def test_escape_reason_passes_and_audits(self, tmp_path: Path, monkeypatch) -> None:
+        """no_mount_reason 逃生 → 放行且落 .runtime/gate_audit 逃生审计。"""
+        import json as _json
+
+        cg, f, gw = self._prepare(tmp_path, monkeypatch, {"no_mount_reason": "测试夹具非节点图资产"})
+        passed, detail = cg.make_create_guard().check(gw, [str(f)], session_id="st-mapmount-test")
+        assert passed is True, f"逃生申报应放行: {detail}"
+        audit = tmp_path.joinpath(*cg._MAP_MOUNTS_ESCAPE_AUDIT_REL)
+        assert audit.exists(), "逃生审计应落盘"
+        record = _json.loads(audit.read_text(encoding="utf-8").strip().splitlines()[-1])
+        assert record["event"] == "map_mounts_escape"
+        assert record["escapes"][0]["reason"] == "测试夹具非节点图资产"

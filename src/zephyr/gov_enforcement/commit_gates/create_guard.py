@@ -5,8 +5,10 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动；S4-C（2026-09-30，手术簿 s4_c_p90_cache.md）进程级 lookup 单例：_build_capability_lookup 失效键=registry(normcase+mtime_ns+size)∪双根扫描概要(scan_root_summary)，未变复用常驻实例/变即重建，env ZEPHYR_CG_LOOKUP_SINGLETON=0 一键回退每次新构造，warm_capability_lookup_async 判重链后后台预热（daemon，异常全吞），判定语义零变化（检索面/#456 两档/fail-closed 出口不动，monkeypatch 注入缝保留）；S4-B（2026-09-30，手术簿 s4_b_token_sim.md）判重二阶段 token 相似度影子采集：触发面收敛=仅 #456 散文级 warn 命中条目，结构证据=新建 .py 与命中条目 canonical_file 的 AST 标识符有序序列（_TOKEN_SIM_TRUNC 截断护栏）经 _tokenize 切词后 diff_utils.similarity_ratio（stdlib 零新依赖），canonical 侧 (normcase,mtime_ns,size) 键缓存（失败不缓存），audit-only 只落 .runtime/gate_audit/create_guard_token_sim_shadow.jsonl（fail-open），would_block 恒 False/threshold 恒 None——不改任何判定，相似度分布一周后 Owner 门位定档
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）；裁定#456（2026-09-30）判重腿两档化：探针命中字段∈{capability_id,aliases,canonical_file}（标识符级）维持硬拦，仅命中 description（散文面）降为 warn（logger.warning+审计 .runtime/gate_audit/create_guard_keyword_dup_warn.jsonl，不阻断；处方=逃生标记或 python -m zephyr.library.lookup 正查），逃生标记/判死阈值语义零改动；S4-C（2026-09-30，手术簿 s4_c_p90_cache.md）进程级 lookup 单例：_build_capability_lookup 失效键=registry(normcase+mtime_ns+size)∪双根扫描概要(scan_root_summary)，未变复用常驻实例/变即重建，env ZEPHYR_CG_LOOKUP_SINGLETON=0 一键回退每次新构造，warm_capability_lookup_async 判重链后后台预热（daemon，异常全吞），判定语义零变化（检索面/#456 两档/fail-closed 出口不动，monkeypatch 注入缝保留）；S4-B（2026-09-30，手术簿 s4_b_token_sim.md）判重二阶段 token 相似度影子采集：触发面收敛=仅 #456 散文级 warn 命中条目，结构证据=新建 .py 与命中条目 canonical_file 的 AST 标识符有序序列（_TOKEN_SIM_TRUNC 截断护栏）经 _tokenize 切词后 diff_utils.similarity_ratio（stdlib 零新依赖），canonical 侧 (normcase,mtime_ns,size) 键缓存（失败不缓存），audit-only 只落 .runtime/gate_audit/create_guard_token_sim_shadow.jsonl（fail-open），would_block 恒 False/threshold 恒 None——不改任何判定，相似度分布一周后 Owner 门位定档；挂图申报必填面（Owner 2026-10-04 三点批准，st-mapmount-surg-20261004）：新建 src/zephyr/**.py（own-scope，tests/ 豁免照旧）token 条目须声明 map_mounts（逐条 "<map_id>:<node_id>" 两端在册=config 节点图索引，防编造挂点）或 no_mount_reason（非空理由逃生+审计 .runtime/gate_audit/create_guard_map_mounts_escape.jsonl 季度复核）；两者皆无→硬阻断；存量零迁移（仅本次 commit 新增文件生效）；scripts/.ps1 面 v1 暂缓；图族不可达→索引空→挂点判不在册阻断（fail-closed 对齐本 gate 哲学）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+#   施工行: sid=st-mapmount-surg-20261004 + Owner 2026-10-04 三点批准（①新 src/zephyr .py 全量必填
+#   ②存量零迁移走覆盖账本季清 ③图例罩不住先拒走 Owner 终审）——新增 _check_map_mounts 挂图申报面
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -269,6 +271,21 @@ _MERGE_EVAL_AUDIT_REL = (".runtime", "gate_audit", "create_guard_merge_evaluatio
 
 # 判重腿散文级 warn 审计路径（裁定#456 两档化；同族通道对标 _MERGE_EVAL_AUDIT_REL）
 _KEYWORD_DUP_WARN_AUDIT_REL = (".runtime", "gate_audit", "create_guard_keyword_dup_warn.jsonl")
+
+# === 挂图申报必填面（Owner 2026-10-04 三点批准；st-mapmount-surg-20261004 施工） ===
+# 新建 src/zephyr/**.py 的 token 条目必须声明挂图归属（"模块落地自动挂图"防腐入口）：
+#   map_mounts: ["<map_id>:<node_id>", ...]（一岗多流程合法多条；挂点须在册机械校验）
+#   或 no_mount_reason: "<一句话理由>"（逃生阀：非节点图资产/存量迁移/fixture——审计
+#   留痕季度复核；禁用于"图例罩不住"场景：那应先扩图例/立格走 Owner 终审再挂）。
+# 存量零迁移（只对本次 commit 新增文件生效）；scripts/.ps1 面 v1 暂缓；tests/ 豁免照旧。
+_SRC_ZEPHYR_PREFIX = "src/zephyr/"
+_MAP_MOUNTS_FIELD = "map_mounts"
+_NO_MOUNT_REASON_FIELD = "no_mount_reason"
+_MAP_MOUNTS_ESCAPE_AUDIT_REL = (".runtime", "gate_audit", "create_guard_map_mounts_escape.jsonl")
+# 节点图索引进程内缓存（键=config/*.yaml 全目录 stat 概要，写后失效——同款键型
+# 先例 _CANON_TOKEN_SIM_CACHE；常驻 gateway/serializer 进程跨 commit 复用，避免每次
+# 提交重解析全部图 YAML）
+_MAP_NODE_INDEX_CACHE: dict[str, tuple] = {}
 
 
 def _read_registry_text(registry_path) -> str:
@@ -874,6 +891,157 @@ def _audit_keyword_dup_warn(
             _f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception as _e:  # noqa: BLE001 — 审计写失败 fail-open（warn-only 契约）
         logger.warning("CREATE-GUARD: 判重 warn 审计写入失败: %s", _e, exc_info=True)
+
+
+def _load_node_map_index(project_root) -> dict[str, set[str]]:
+    """config/ 节点图索引：map_id → node_id 集（挂点校验真源面）。
+
+    扫描 config/*.yaml 中同时含顶层 map_id 与非空 nodes 列表者（纵轴节点图家族
+    形态：trading_day_cycle_map / data_supply_chain_map / trading_decision_map /
+    strategy_production_map / ...，新图自动纳入无需改本函数）。单图解析失败=该图
+    缺席（不绑架无关提交；挂点指向缺席图会被判"不在册"硬阻断）。进程内缓存键=
+    config/*.yaml 全目录 stat 概要，图重生成后自动失效。
+    """
+    config_dir = Path(project_root) / "config"
+    if not config_dir.is_dir():
+        return {}
+    yaml_files = sorted(config_dir.glob("*.yaml"))
+    stat_parts = []
+    for p in yaml_files:
+        try:
+            st = p.stat()
+        except OSError:
+            continue
+        stat_parts.append((os.path.normcase(str(p)), st.st_mtime_ns, st.st_size))
+    cache_key = tuple(stat_parts)
+    cached = _MAP_NODE_INDEX_CACHE.get("entry")
+    if cached is not None and cached[0] == cache_key:
+        return cached[1]
+    index: dict[str, set[str]] = {}
+    for p in yaml_files:
+        try:
+            data = yaml.safe_load(p.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001 — 单图失败=该图缺席（不绑架无关提交）
+            continue
+        if not isinstance(data, dict):
+            continue
+        map_id = data.get("map_id")
+        nodes = data.get("nodes")
+        if not (isinstance(map_id, str) and map_id and isinstance(nodes, list)):
+            continue
+        node_ids = {str(n.get("node_id")) for n in nodes if isinstance(n, dict) and n.get("node_id")}
+        if node_ids:
+            index[map_id] = node_ids
+    _MAP_NODE_INDEX_CACHE["entry"] = (cache_key, index)
+    return index
+
+
+def _audit_map_mounts_escape(gateway, session_id: str | None, escapes: list[tuple[str, str]]) -> None:
+    """no_mount_reason 逃生审计（jsonl append 到 .runtime/gate_audit/；fail-open）。
+
+    对标 _audit_merge_evaluation_missing 同款通道惯例：时间戳 now_utc
+    （RULE-SCHEMA-TZ）；落 gateway.project_root（tmp 测试仓不触碰生产 .runtime/）。
+    """
+    try:
+        audit_path = gateway.project_root.joinpath(*_MAP_MOUNTS_ESCAPE_AUDIT_REL)
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": now_utc().isoformat(),
+            "gate": "CREATE-GUARD",
+            "event": "map_mounts_escape",
+            "session_id": session_id or "?",
+            "escape_count": len(escapes),
+            "escapes": [{"file": f, "reason": r[:200]} for f, r in escapes[:50]],
+        }
+        with audit_path.open("a", encoding="utf-8") as _f:
+            _f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception as _e:  # noqa: BLE001 — 审计写失败 fail-open
+        logger.warning("CREATE-GUARD: map_mounts 逃生审计写入失败: %s", _e, exc_info=True)
+
+
+def _check_map_mounts(
+    gateway, session_id: str | None, new_py_files: list[str], registry_data: dict
+) -> tuple[bool, str]:
+    """挂图申报必填面：新建 src/zephyr/**.py 必须声明挂图归属（Owner 2026-10-04 三点批准）。
+
+    - 检测面=own-scope new_py_files（上游已过滤 tests/ 豁免与本提交文件面）；非
+      src/zephyr/ 前缀（scripts/ 等 v1 暂缓）不在此面；无 token 条目者由
+      _check_creation_token 硬阻断管，不重复报。
+    - 判据（逐文件按 token 条目）：
+      ① map_mounts 非空列表 → 逐条校验 "<map_id>:<node_id>" 两端在册（config/ 节点
+         图索引），不在册=硬阻断（防编造挂点="图例罩不住先拒"的机械版）；
+      ② map_mounts 缺/空 → no_mount_reason 须为非空字符串 → 放行+落逃生审计；
+      ③ 两者皆无 → 硬阻断（修复指引双路）。
+    - 存量零迁移：只对本次 commit 新增文件生效（modified/未新增路径不触发）。
+    - fail-closed 语义：config/ 图族不可达 → 索引空 → 任何 map_mounts 判"不在册"
+      阻断（检测器失效禁放行，对齐本 gate 哲学）。
+    """
+    scoped = [f for f in new_py_files if f.startswith(_SRC_ZEPHYR_PREFIX)]
+    if not scoped:
+        return True, ""
+    entries = _collect_token_entries(registry_data)
+    missing: list[str] = []
+    escapes: list[tuple[str, str]] = []
+    need_index = False
+    for f in scoped:
+        entry = entries.get(f)
+        if entry is None:
+            continue
+        mounts = entry.get(_MAP_MOUNTS_FIELD)
+        if isinstance(mounts, list) and mounts:
+            need_index = True
+            continue
+        reason = entry.get(_NO_MOUNT_REASON_FIELD)
+        if isinstance(reason, str) and reason.strip():
+            escapes.append((f, reason.strip()))
+        else:
+            missing.append(f)
+    bad_mounts: list[tuple[str, str, str]] = []
+    if need_index:
+        index = _load_node_map_index(gateway.project_root)
+        for f in scoped:
+            entry = entries.get(f)
+            if entry is None:
+                continue
+            mounts = entry.get(_MAP_MOUNTS_FIELD)
+            if not (isinstance(mounts, list) and mounts):
+                continue
+            for m in mounts:
+                m_str = str(m).strip()
+                map_id, sep, node_id = m_str.partition(":")
+                if not sep or not map_id or not node_id:
+                    bad_mounts.append((f, m_str, "格式须为 <map_id>:<node_id>"))
+                    continue
+                node_set = index.get(map_id)
+                if node_set is None:
+                    bad_mounts.append((f, m_str, f"map_id={map_id} 不在 config/ 节点图索引（图缺席或无 nodes）"))
+                elif node_id not in node_set:
+                    bad_mounts.append(
+                        (f, m_str, f"node_id={node_id} 不在 {map_id} nodes 内（图例罩不住→先扩图/立格走 Owner 终审）")
+                    )
+    if bad_mounts:
+        _lines = "; ".join(f"{f} 声明 {m}：{why}" for f, m, why in bad_mounts)
+        return False, (
+            f"挂图申报挂点不在册（MAP-MOUNTS）: {_lines}. "
+            f"map_mounts 逐条须为 '<map_id>:<node_id>' 且两端在册"
+            f"（config/ 节点图索引=带 map_id+nodes 的 *.yaml 家族）. "
+            f"图例罩不住=先扩图例/立格走 Owner 终审再挂（Owner 2026-10-04 批准③）. "
+            f"修复：改 capability_canonical_file_registry.yaml 对应条目 map_mounts 为在册挂点，"
+            f"或该文件确属非节点图资产时改用 no_mount_reason 逃生申报."
+        )
+    if missing:
+        shown = ", ".join(missing[:5]) + ("..." if len(missing) > 5 else "")
+        return False, (
+            f"新建 src/zephyr .py 未申报挂图面（MAP-MOUNTS 必填，Owner 2026-10-04 三点批准）: {shown}. "
+            f"模块落地自动挂图防腐入口——修复二选一："
+            f"①在 capability_canonical_file_registry.yaml 对应 creation_tokens 条目加 "
+            f'map_mounts: ["<map_id>:<node_id>"]（一岗多流程多条并列，挂点须在册）；'
+            f'②确属非节点图资产（纯基建/存量迁移/fixture）加 no_mount_reason: "<一句话理由>"'
+            f"（逃生审计留痕季度复核；禁用于图例罩不住场景——那应先扩图例走 Owner 终审）."
+        )
+    if escapes:
+        _audit_map_mounts_escape(gateway, session_id, escapes)
+    return True, ""
 
 
 def _ast_identifier_sequence(tree: ast.Module) -> str:
@@ -1576,6 +1744,13 @@ def _run_file_registration_checks(
 
     # ARCH-031：字段头部完整性检测
     passed, detail = _check_field_header(gateway, new_py_files)
+    if not passed:
+        return False, detail
+
+    # 挂图申报必填面（Owner 2026-10-04 三点批准）：新建 src/zephyr .py 的 token 条目
+    # 必须声明 map_mounts（在册挂点逐条校验）或 no_mount_reason（逃生+审计留痕）。
+    # 置于字段头检测之后（结构检查先于申报检查）
+    passed, detail = _check_map_mounts(gateway, session_id, new_py_files, data)
     if not passed:
         return False, detail
 
