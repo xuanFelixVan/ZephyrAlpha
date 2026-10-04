@@ -40,7 +40,9 @@ CV-ADMIT（声明而无边=假门、门无出边=空门）/ 通用结构类（�
 越界节点/node_id 重复/counts 漂移/缺顶层键/laws 空置/路径锚不存在/超长）/
 生成器幂等与取时禁令、计划任务面只查不写；绿组另钉口径面：production 数==骨架 ✅ 数（14）、
 gap 节点=4、有码环节全挂 module_id、D13-09 已升为一等门节点带拒准入出边、表A 七条与表C 五条
-逐条可查、跨图缺口（图12 侧 5+1）归属分派清楚。
+逐条可查、跨图缺口（图12 侧 5+1）归属分派清楚；
+红组 N（转正批 schema 0.2→0.3 加性迁移）：CV-BLOOD 血肉四字段分阶段——blood_stage 枚举/
+f1_pending 缺键降 warn 不拦/f2_done 缺键硬红+purpose_tag 越图例枚举红+production trigger_facts 必非空。
 """
 
 from __future__ import annotations
@@ -54,12 +56,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-pytest.skip(
-    "SUBJECT-RETIRED: config/trading_day_cycle_map.yaml retired in 531ac17ef7; validator "
-    "validate_trading_day_cycle_map never committed (git log --all empty). Adversarial guard "
-    "retires with its subject (chief final-verify disposal 2026-09-28).",
-    allow_module_level=True,
-)
+# SUBJECT-RETIRED skip 已解封（st-tclose-fig13reg-20261004 转正批）：其前提「被测图已退役、
+# validator 永不落地」被 5d8f72a3628 推翻——图13 现役（48 节点机生图）且
+# validate_trading_day_cycle_map 已随转正批落地，对抗尺恢复在岗。
 
 _REPO = Path(__file__).resolve().parents[3]
 _VALIDATORS_DIR = _REPO / "scripts" / "governance" / "d5_architecture" / "validators"
@@ -907,6 +906,76 @@ def test_green_real_map_has_no_cron_literal():
     """控制组：真图全树无 cron 字面量（否则上面两条红案无判别力）。"""
     blob = (_REPO / _MAP_REL).read_text(encoding="utf-8")
     assert not re.search(r"^\s*.*\*{1,2}\s+\*?\d*\s+\*\s+\*\s+[0-9\-\*,/]+$", blob, re.M)
+
+
+# ---------------------------------------------------------------------------
+# 红组 N：schema 0.3 CV-BLOOD——血肉四字段分阶段（st-tclose-fig13reg-20261004 加性迁移）
+# ---------------------------------------------------------------------------
+
+
+def test_blood_stage_enum_enforced():
+    d = copy.deepcopy(_GOOD)
+    d["blood_stage"] = "f0_draft"
+    assert any("blood_stage 非法" in e for e in _errs(d))
+
+
+def test_green_f1_pending_blood_keys_warn_only():
+    """f1_pending：四字段以空默认值在图=warn 不拦（分阶段开关防"schema 升级与血肉填充不同窗"打死提交）。"""
+    d = copy.deepcopy(_GOOD)
+    d["blood_stage"] = "f1_pending"
+    warnings: list[str] = []
+    errs = validate_structure(d, root=_REPO, warnings=warnings)
+    assert errs == []
+    assert any("血肉未满" in w for w in warnings)
+
+
+def test_red_f2_done_missing_blood_keys():
+    d = copy.deepcopy(_GOOD)
+    d["blood_stage"] = "f2_done"
+    d["purpose_tags"] = [{"id": f"tag_{i}"} for i in range(13)]
+    errs = _errs(d)
+    assert any("CV-BLOOD" in e for e in errs), "f2_done 且四字段空默认值必须判红"
+
+
+def test_red_f2_done_purpose_tag_not_in_legend():
+    d = copy.deepcopy(_GOOD)
+    d["blood_stage"] = "f2_done"
+    d["purpose_tags"] = [{"id": f"tag_{i}"} for i in range(13)]
+    _find(d, "D13-05")["purpose_tag"] = "made_up_tag"
+    assert any("不在图头 purpose_tags 枚举" in e for e in _errs(d))
+
+
+def test_red_f2_done_production_requires_trigger_facts():
+    d = copy.deepcopy(_GOOD)
+    d["blood_stage"] = "f2_done"
+    d["purpose_tags"] = [{"id": f"tag_{i}"} for i in range(13)]
+    prod = next(n for n in d["nodes"] if n.get("verified_scope") == "production")
+    prod["trigger_facts"] = None
+    assert any("production 节点 trigger_facts 必非空" in e for e in _errs(d))
+
+
+def test_red_schema_version_out_of_support():
+    d = copy.deepcopy(_GOOD)
+    d["schema_version"] = "0.9"
+    assert any("schema_version" in e and "不受支持" in e for e in _errs(d))
+
+
+def test_green_real_map_schema_03_additive_fields_present():
+    """控制组：真图 0.3+血肉已灌满——f2_done、13 条冻结图例、44 环节全贴标、gap 不贴。"""
+    assert _GOOD["schema_version"] == "0.3"
+    assert _GOOD["blood_stage"] == "f2_done"
+    tags = _GOOD["purpose_tags"]
+    assert len(tags) == 13  # Owner 终审冻结 2026-10-04（时间前缀+具体动作版）
+    assert all(t.get("id") and t.get("label") and t.get("plain_zh") for t in tags)
+    tag_ids = {t["id"] for t in tags}
+    stages = [n for n in _GOOD["nodes"] if n.get("node_type") == "stage"]
+    gaps = [n for n in _GOOD["nodes"] if n.get("node_type") == "gap"]
+    assert len(stages) == 44
+    assert all(n.get("purpose_tag") in tag_ids for n in stages)
+    assert all(not n.get("purpose_tag") for n in gaps)
+    sample = _GOOD["nodes"][0]
+    for k in ("purpose_tag", "casebooks", "trigger_facts", "consumers"):
+        assert k in sample, k
 
 
 # ---------------------------------------------------------------------------

@@ -254,6 +254,162 @@ _EVENT = "event"
 _DLOOP = "dloop_stage"
 _NONE = "none"
 
+# ---------------------------------------------------------------------------
+# 血肉层常量（2026-10-04 Owner 终审冻结：13 条目的标签；机贴不改名——挂图 SOP §2）。
+# label=Owner 批准原文（时间前缀+具体动作，一字未改）；plain_zh=一句大白话；
+# id=稳定枚举（节点 purpose_tag 引用值；改名=全量重贴，禁）。
+# ---------------------------------------------------------------------------
+PURPOSE_TAGS: tuple[dict[str, str], ...] = (
+    {
+        "id": "t01_catchup_rerun",
+        "label": "05:30 档期对账补跑",
+        "plain_zh": "错过排班时刻的任务，清晨这一圈查漏并自动补跑",
+    },
+    {
+        "id": "t02_supply_alert",
+        "label": "06:50/07:10/23:00 断供检测告警",
+        "plain_zh": "数据没来先喊出来——只报警不动手，报警送没送到人是关键",
+    },
+    {
+        "id": "t03_premarket_ingest",
+        "label": "08:20–09:25 盘前数据采集入库",
+        "plain_zh": "开盘前的情绪窗、元数据、板块复制、竞价五档落库（币圈格已暂停，保留现状等 Owner 通知）",
+    },
+    {
+        "id": "t04_ready_gate",
+        "label": "09:15 开盘前就绪检查",
+        "plain_zh": "QMT 活着吗+关键任务水位动了没+探针绿吗，合成「今天照跑还是 SKIP」——门体现无主体",
+    },
+    {
+        "id": "t05_paper_session",
+        "label": "09:25–15:05 模拟盘会话",
+        "plain_zh": "09:25 拉起、盘中保活、15:05 收口撤未成交单",
+    },
+    {
+        "id": "t06_intraday_ingest",
+        "label": "09:30–15:05 盘中行情采集入库",
+        "plain_zh": "tick/分钟K/板块/快慢新闻/资金流五快照，每 5 分钟滚动落库",
+    },
+    {
+        "id": "t07_wakeword_judge",
+        "label": "盘中 分钟K到了才跑的判定",
+        "plain_zh": "没有自己的钟点，60 分钟K每来一根新数据被叫醒算一次（竞价命中/L1 状态/情景归类/情绪环）",
+    },
+    {
+        "id": "t08_postmarket_ingest",
+        "label": "15:10–16:30 盘后行情定格入库",
+        "plain_zh": "板块定格、指数分钟K补拉、16:30 日K——下游全链的原料",
+    },
+    {
+        "id": "t09_settlement_recon",
+        "label": "15:30/15:40 收盘结算对账",
+        "plain_zh": "结算单就绪+柜台/内部/持仓三账对答案（含盘中事件腿 D13-27）",
+    },
+    {
+        "id": "t10_daycycle_review",
+        "label": "16:45 日循环复盘检查",
+        "plain_zh": "当日数据到齐才开算：先验证今天计划兑现没有、再结算、再出当日结论（实盘包恒空=安全态）",
+    },
+    {
+        "id": "t11_nightly_batch",
+        "label": "17:00–00:30 夜间批量入库（含周月批）",
+        "plain_zh": "资金面/事件/研报/财务/一致预期/另类宏观，外加跨日界的周批月批",
+    },
+    {
+        "id": "t12_guard_calendar",
+        "label": "全天 守护心跳与休市停跑",
+        "plain_zh": "看门狗两拍+三路心跳+休市日自动拦停不空跑（交易日闸：9/29 槽在册）",
+    },
+    {
+        "id": "t13_day_boundary",
+        "label": "23:35/05:30 今日收口·备明日（预测+边界）",
+        "plain_zh": "夜窗收口、清晨重启开新天；中间把明日预测和边界备好——断供过 2 日，断了=明天用前天的预测",
+    },
+)
+
+# 44 环节贴标（一节一签；gap 节点不贴——F4/图12 家族先例）。改贴=总筹批，禁随手改。
+NODE_PURPOSE_TAG: dict[str, str] = {
+    "D13-01": "t01_catchup_rerun",
+    "D13-02": "t02_supply_alert",
+    "D13-03": "t02_supply_alert",
+    "D13-08": "t02_supply_alert",
+    "D13-38": "t02_supply_alert",
+    "D13-04": "t03_premarket_ingest",
+    "D13-05": "t03_premarket_ingest",
+    "D13-06": "t03_premarket_ingest",
+    "D13-10": "t03_premarket_ingest",
+    "D13-11": "t03_premarket_ingest",
+    "D13-09": "t04_ready_gate",
+    "D13-12": "t05_paper_session",
+    "D13-24": "t05_paper_session",
+    "D13-13": "t06_intraday_ingest",
+    "D13-14": "t06_intraday_ingest",
+    "D13-15": "t06_intraday_ingest",
+    "D13-16": "t06_intraday_ingest",
+    "D13-17": "t06_intraday_ingest",
+    "D13-18": "t06_intraday_ingest",
+    "D13-19": "t06_intraday_ingest",
+    "D13-20": "t07_wakeword_judge",
+    "D13-21": "t07_wakeword_judge",
+    "D13-22": "t07_wakeword_judge",
+    "D13-23": "t07_wakeword_judge",
+    "D13-25": "t08_postmarket_ingest",
+    "D13-26": "t08_postmarket_ingest",
+    "D13-30": "t08_postmarket_ingest",
+    "D13-27": "t09_settlement_recon",
+    "D13-28": "t09_settlement_recon",
+    "D13-29": "t09_settlement_recon",
+    "D13-31": "t10_daycycle_review",
+    "D13-32": "t10_daycycle_review",
+    "D13-33": "t10_daycycle_review",
+    "D13-34": "t10_daycycle_review",
+    "D13-35": "t11_nightly_batch",
+    "D13-36": "t11_nightly_batch",
+    "D13-37": "t11_nightly_batch",
+    "D13-39": "t11_nightly_batch",
+    "D13-40": "t11_nightly_batch",
+    "D13-41": "t11_nightly_batch",
+    "D13-07": "t12_guard_calendar",
+    "D13-42": "t12_guard_calendar",
+    "D13-43": "t12_guard_calendar",
+    "D13-44": "t13_day_boundary",
+}
+
+# 病历挂载采纳矩阵（件2 12_casebook_matrix_d13.yaml §1 总筹复核采纳内联；INV-1 只指针禁抄内容）。
+# 高置信在前；「（low）」后缀=跨域类比挂载（总筹复裁 2026-10-04 判合法：SOP 判据3 挂的是病型
+# 非提交域内容；完备性铁律按家族级口径=每本≥1 环节于语义相关图即满足，图11 已满足故本图为增益）。
+CASEBOOKS_ADOPTED: dict[str, tuple[str, ...]] = {
+    "D13-01": ("MEM-F13#断供补数", "MEM-F13#守护判活与误杀", "AP#域二（low）", "SV#底数（low）", "SV#方案（low）"),
+    "D13-02": ("MEM-F13#断供补数",),
+    "D13-05": ("MEM-F13#币圈与另类",),
+    "D13-07": ("MEM-F13#计划任务静默",),
+    "D13-09": ("MEM-F13#盘前探针（low）",),
+    "D13-12": ("MEM-F13#模拟盘与做T", "MEM-F13#计划任务静默"),
+    "D13-14": ("MEM-F13#时区与假绿",),
+    "D13-15": ("MEM-F13#时区与假绿",),
+    "D13-16": ("MEM-F13#时区与假绿",),
+    "D13-19": ("MEM-F13#计划任务静默",),
+    "D13-21": ("MEM-F13#时区与假绿",),
+    "D13-24": ("MEM-F13#模拟盘与做T",),
+    "D13-26": ("MEM-F13#计划任务静默",),
+    "D13-28": ("MEM-F13#结算复活", "MEM-F13#计划任务静默"),
+    "D13-30": ("MEM-F13#时区与假绿",),
+    "D13-32": ("DCS#队列（low）",),
+    "D13-35": ("MEM-F13#断供补数",),
+    "D13-36": ("MEM-F13#断供补数",),
+    "D13-37": ("MEM-F13#断供补数",),
+    "D13-38": ("MEM-F13#断供补数",),
+    "D13-39": ("MEM-F13#移窗与口径",),
+    "D13-41": ("MEM-F13#日历与周窗",),
+    "D13-42": ("AP#域一", "RV2#缺口", "RV2#观察", "MEM-F13#守护判活与误杀", "MEM-F13#计划任务静默"),
+    "D13-43": ("MEM-F13#日历与周窗",),
+    "D13-44": ("MEM-F13#时区与假绿",),
+}
+
+# 件3 消费面（CSV 机生投影源；仓内已落地件，缺席=降级空表不崩生成）
+_CONSUMERS_CSV_REL = f"{_BOOK_DIR}/13_consumers_scan_d13.csv"
+_CONSUMERS_CSV = _REPO_ROOT / _CONSUMERS_CSV_REL
+
 N: dict[str, dict[str, Any]] = {
     # ── 段 A 盘前 ──────────────────────────────────────────────────────
     "D13-01": dict(
@@ -372,6 +528,9 @@ N: dict[str, dict[str, Any]] = {
         ev=["骨架 §2 D13-05 行：该任务上线后从未自动跑成、水位全靠手动（槽注释自证）"],
         obs="每日 1 拍",
         dangling=["slot:daily_crypto"],
+        extra=dict(
+            paused_zh="Owner 令 2026-10-04：币圈暂停开发，模块保留现状等通知；本格保留格位与标签（t03），不列任何开发项"
+        ),
     ),
     "D13-06": dict(
         seg="A",
@@ -1150,15 +1309,15 @@ N: dict[str, dict[str, Any]] = {
         name="一致预期管线双向验证",
         src=_SCHED,
         slot=["consensus_crosscheck"],
-        clk="交易日 23:30（单实例）",
+        clk="交易日 00:30（跨午夜移窗后=避开 20:30 研报/22:00 财务同窗内存峰值；单实例。时点漂移修正 2026-10-04 血肉批：schedule.yaml 已移窗而本格 09-24 骨架文停 23:30；资源册 dow=2-6 与 schedule.yaml=1-5 的 dow 分歧另在案待排班班）",
         act="detect_only",
-        q="23:30 双向对答案了吗？不一致时谁被通知？总闸开着吗？",
+        q="00:30 双向对答案了吗？不一致时谁被通知？总闸开着吗？",
         mech="特殊槽分支 → 交叉验证（秩相关/新鲜度/结构断言/PIT 修正率四查），产物落交叉验证日志表",
         gate="自建聚合与外部快照两侧均已落库",
         nrg="",
         fb="无（落表即止）",
         ref="src/zephyr/data/consensus_crosscheck.py:62",
-        anc=["src/zephyr/data/consensus_crosscheck.py:14", "src/zephyr/data/scheduler.py:341", f"{_SCHEDULE_REL}:103"],
+        anc=["src/zephyr/data/consensus_crosscheck.py:14", "src/zephyr/data/scheduler.py:341", f"{_SCHEDULE_REL}:113"],
         run=["data/runtime/consensus_crosscheck.disabled"],
         ev=[
             "骨架 §2 D13-39 行：源污染事件治本配套（槽注释自证）",
@@ -1915,6 +2074,7 @@ FEEDBACK_LOOPS = [
 
 
 def _read_text(root: Path, rel: str) -> str:
+    """_read_text implementation."""
     p = root / rel
     return p.read_text(encoding="utf-8", errors="replace") if p.exists() else ""
 
@@ -2410,6 +2570,7 @@ def schtasks_facts(tns: list[str], surfaces: dict[str, Any]) -> dict[str, Any]:
 
 
 def _anchor_rel(ref: str) -> str:
+    """_anchor_rel implementation."""
     s = str(ref).rsplit(":", 1)[0] if str(ref).rsplit(":", 1)[-1].isdigit() else str(ref)
     return s if re.fullmatch(r"[\w./\-]+", s) else s
 
@@ -2485,12 +2646,58 @@ def node_gap_refs(nid: str, ledger: dict[str, Any]) -> list[str]:
     return sorted(set(refs))
 
 
+def build_consumers_index() -> dict[str, list[str]]:
+    """件3 消费面投影（INV-1 只指针不搬家）：node → [count 汇总, 代表条目×≤4, source 指针]。
+
+    CSV 缺席/不可解析=空表降级（counts.nodes_with_consumers 呈现，不崩生成——
+    同 scan_tdm_node_ids 家族降级先例）；NONE 行（零消费在案）不进代表条目、单独显性化。
+    """
+    out: dict[str, list[str]] = {}
+    if not _CONSUMERS_CSV.exists():
+        return out
+    import csv as _csv
+
+    try:
+        rows_by_node: dict[str, list[dict[str, str]]] = {}
+        with _CONSUMERS_CSV.open(encoding="utf-8-sig", newline="") as f:
+            for row in _csv.DictReader(f):
+                nid = str(row.get("node_id") or "").strip()
+                if nid:
+                    rows_by_node.setdefault(nid, []).append(row)
+        for nid, rows in rows_by_node.items():
+            kinds: dict[str, int] = {}
+            for r in rows:
+                k = str(r.get("consumer_kind") or "").strip() or "?"
+                kinds[k] = kinds.get(k, 0) + 1
+            entries = [f"count:{len(rows)}({','.join(f'{k}={v}' for k, v in sorted(kinds.items()))})"]
+            shown = 0
+            for r in rows:
+                c = str(r.get("consumer") or "").strip()
+                if c and c.upper() != "NONE" and shown < 4:
+                    entries.append(c)
+                    shown += 1
+            if shown == 0 and rows:
+                entries.append("none:零消费在案（件3 NONE 行）")
+            if len(rows) > 4:
+                entries.append(f"source:{_CONSUMERS_CSV_REL}#{nid}")
+            out[nid] = entries
+    except Exception:  # noqa: BLE001 — 消费面缺席=降级空表（血肉计数字段呈现）
+        return {}
+    return out
+
+
 def build_nodes(
-    surfaces: dict[str, Any], module_index: dict[str, str], skeleton_status: dict[str, str]
+    surfaces: dict[str, Any],
+    module_index: dict[str, str],
+    skeleton_status: dict[str, str],
+    *,
+    as_of: str | None = None,
 ) -> list[dict[str, Any]]:
     """44 环节 + 4 gap 节点：人工语义层 ⊕ 机生面（三层字段名一律取六图终局卷 §1 统一名）。"""
     build_status_zh = get_category_map("build_status")
     ledger = surfaces.get("dangling_objects") or {}
+    as_of_eff = as_of or head_commit_time(_REPO_ROOT)
+    consumers_index = build_consumers_index()
     nodes: list[dict[str, Any]] = []
     for nid in NODE_ORDER:
         spec = N[nid]
@@ -2551,12 +2758,22 @@ def build_nodes(
             "no_ready_gate_reason_zh": _no_gate_reason(nid, spec),
             "tdm_refs": sorted(set(spec.get("tdm") or []) | set(TDMX.get(nid) or [])),
             "gap_refs": node_gap_refs(nid, ledger),
-            # ── L1 血肉四字段（schema 0.3 挂图 SOP §4；以空/默认值进图，本批不灌血肉不贴标签——
-            #    标签 13 条候选等 Owner 终审，机贴不改名前置=图头 purpose_tags 冻结）──
-            "purpose_tag": None,
-            "casebooks": [],
-            "trigger_facts": None,
-            "consumers": [],
+            # ── L1 血肉四字段（schema 0.3 挂图 SOP §4；2026-10-04 Owner 终批 13 条冻结后血肉批灌满翻
+            #    f2_done：purpose_tag 机贴不改名=挂图 SOP §2；casebooks=件2 采纳矩阵内联（low=跨域类比
+            #    总筹复裁合法）；consumers=件3 机生投影只指针；trigger_facts=cadence obs 证据位投影，
+            #    task_runs 实数计数归后续批。gap 节点不贴不灌——F4/图12 家族先例）──
+            "purpose_tag": None if is_gap else NODE_PURPOSE_TAG.get(nid),
+            "casebooks": [] if is_gap else list(CASEBOOKS_ADOPTED.get(nid) or []),
+            "trigger_facts": (
+                None
+                if is_gap
+                else {
+                    "as_of": as_of_eff,
+                    "evidence": str(spec.get("obs") or spec["clk"]),
+                    "source": "cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）",
+                }
+            ),
+            "consumers": list(consumers_index.get(nid) or []),
             # ── L2 图专属层（六图终局卷 §1 L2 + 簿 10 表A 落字段；清单在图头 ssot_note_zh 声明）──
             "mechanism": {
                 "schedule": "A_apscheduler",
@@ -2625,7 +2842,7 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
     surfaces = build_trigger_surfaces(root, skip_schtasks=skip_schtasks)
     module_index = scan_module_id_index(root)
     skeleton_status = scan_skeleton_status(root)
-    nodes = build_nodes(surfaces, module_index, skeleton_status)
+    nodes = build_nodes(surfaces, module_index, skeleton_status, as_of=as_of)
     missing_exec = [
         n["node_id"] for n in nodes if n.get("verified_scope") == "production" and not n.get("exec_evidence")
     ]
@@ -2653,10 +2870,11 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
         "schema_version": "0.3",
         # schema 0.3（st-tclose-fig13reg-20261004 转正批·加性迁移）：血肉四字段层进 L1 菜单。
         # blood_stage=血肉分阶段开关（f1_pending=四字段未填校验器降 warn；f2_done=硬红）——
-        # 防"schema 升级与血肉填充不同窗"把全图提交打死；标签 13 条候选等 Owner 终审，
-        # purpose_tags 冻结前恒空表（生成器禁代填代贴——挂图 SOP §2 机贴不改名前置）。
-        "blood_stage": "f1_pending",
-        "purpose_tags": [],
+        # 防"schema 升级与血肉填充不同窗"把全图提交打死。13 条目的标签已 Owner 终审冻结
+        # （2026-10-04，时间前缀+具体动作版）；血肉批（st-fig13-surg-20261004）灌满四字段并翻
+        # f2_done（CV-BLOOD 转硬判）；purpose_tags 冻结图例=机贴不改名（挂图 SOP §2）。
+        "blood_stage": "f2_done",
+        "purpose_tags": [dict(t) for t in PURPOSE_TAGS],
         "map_id": "trading_day_cycle_map",
         "name_zh": "交易日循环全景图",
         "nickname": "交易日循环",
@@ -2682,14 +2900,16 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
             "L1 纵轴层本图取用 slot_source/slot_refs/schtasks_refs/cadence_zh(declared+observed 双子键)/"
             "wiring_status/downstream_action/fallback/invalidation/ready_gate+no_ready_gate_reason_zh/"
             "tdm_refs/gap_refs+red_reason/purpose_tag/casebooks/trigger_facts/consumers"
-            "（后四者=挂图 SOP §4 标准字段，schema 0.3 起入菜单；schema 0.2→0.3 为纯加性迁移，"
-            "本批以空/默认值进图不灌血肉不贴标签——标签 13 条候选等 Owner 终审，f2_done 翻闸随血肉批）；"
+            "（后四者=挂图 SOP §4 标准字段，schema 0.3 起入菜单；13 条目的标签 2026-10-04 Owner 终审冻结、"
+            "血肉批 st-fig13-surg-20261004 灌满翻 f2_done：casebooks=件2 采纳矩阵内联（low=跨域类比总筹复裁合法）、"
+            "consumers=件3 机生投影只指针、trigger_facts=cadence obs 证据位投影·task_runs 实数计数归后续批）；"
             "L2 图专属层字段清单=dloop_stages（dloop 段归属）、mechanism"
             "（触发机制三分：A_apscheduler/B_windows_task/C_inprocess_stage/D_unscheduled）、"
             "skeleton_status（骨架态镜像，实扫得）、mining_recheck_status（作业簿复判另记）、"
             "availability（🌑 不可得）、entity_refs、miss_policy（表A-A6）、freshness_severity_zh（A2）、"
             "expected_emits_per_trading_day（A4）、ready_basis（A5）、no_drift_evidence（A7）、"
-            "admission_denied_zh/ready_gate_absent_zh 等单格注记。\n"
+            "admission_denied_zh/ready_gate_absent_zh 等单格注记"
+            "（含 paused_zh=Owner 币圈暂停令 2026-10-04·D13-05 保留现状等通知）。\n"
             "双轴口径（六图终局卷 §3）：verified_scope=production ⇔ 骨架 §2 状态列 ✅（14 个，多了算谎"
             "少了算欠，校验器 CV-DUAL 计数判且 production 必带 exec_evidence）；structure=仅结构性事实"
             "（含「该在而无主」这类负结论）已核，覆盖 🔨/⬜ 与 gap 节点。本生成器不擅改任何判据与阈值。\n"
@@ -2814,6 +3034,10 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
         },
         "counts": {
             "total_nodes": len(nodes),
+            "nodes_with_purpose_tag": sum(1 for n in nodes if n.get("purpose_tag")),
+            "nodes_with_casebooks": sum(1 for n in nodes if n.get("casebooks")),
+            "nodes_with_trigger_facts": sum(1 for n in nodes if n.get("trigger_facts")),
+            "nodes_with_consumers": sum(1 for n in nodes if n.get("consumers")),
             "total_edges": len(edges),
             "total_feedback_loops": len(FEEDBACK_LOOPS),
             "by_segment": by_segment,
