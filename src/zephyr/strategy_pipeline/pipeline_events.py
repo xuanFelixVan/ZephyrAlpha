@@ -161,6 +161,7 @@ LIGHT_KINDS = frozenset(
         "attribution_daily",
         "sim_observe_daily",
         "t0_condition_pack_due",
+        "candidate_reexam_monthly",
     }
 )
 HEAVY_KINDS = frozenset({"c4_batch_due"})
@@ -462,6 +463,10 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
         out = run_sim_deviation_monthly(evt["payload"])
         _touch_marker("sim_deviation")
         return out
+    if kind == "candidate_reexam_monthly":
+        out = run_candidate_reexam_monthly(evt["payload"])
+        _touch_marker("candidate_reexam")
+        return out
     if kind == "pf_alloc_daily":
         out = run_pf_alloc_daily(evt["payload"])
         _touch_marker("pf_alloc_daily")  # kind 级日号（唤醒侧去重）；trade_date 级双写闸在 handler 内
@@ -675,6 +680,23 @@ def run_sim_deviation_monthly(payload: dict[str, Any]) -> dict[str, Any]:
     return {"rc": rc, "month": month, "governance_rc": gov_rc}
 
 
+def run_candidate_reexam_monthly(payload: dict[str, Any]) -> dict[str, Any]:
+    """Rx-2 月度全池复检执行体（candidate_reexam_monthly）：intake.run_candidate_reexam。
+
+    附产 Rx-3 排程面：双窗证据缺口名单（gap_detail.dual_window_pass）→ 告警一次，
+    补考排程消费该名单（证据缺位 fail-closed，先有化验单查房才有意义）。"""
+    from zephyr.strategy_pipeline.intake import run_candidate_reexam
+
+    out = run_candidate_reexam(dry_run=bool(payload.get("dry_run", False)))
+    gaps = (out.get("gap_detail") or {}).get("dual_window_pass") or []
+    if gaps:
+        alert(
+            f"候选池双窗证据缺口 {len(gaps)} 台（Rx-3 补考名单，前 8）：{'、'.join(gaps[:8])}",
+            level="WARNING",
+        )
+    return out
+
+
 def run_attribution_daily(payload: dict[str, Any]) -> dict[str, Any]:
     """归因日账（WO-1 四段答案，TC-08 段2/裁定#392 之 D5 批代落）：sim_attribution_daily 产出口日跑。
     --day 业务日=resolve_pf_alloc_trade_date()（数据驱动禁墙钟猜日，与发射链同真源；
@@ -873,6 +895,7 @@ def maybe_emit_monthly() -> dict[str, Any]:
         ("sim_deviation", "sim_deviation_monthly"),
         ("paper_outpost", "paper_outpost_due"),  # F26 E7 前哨月度考核（SW5 接线批）
         ("league_judge", "league_judge_due"),  # F73 A/B 联赛判据月度档（st-c9-f73，处方堵点2/6）
+        ("candidate_reexam", "candidate_reexam_monthly"),  # Rx-2 月度全池复检（2026-10-04 Owner 批）
     ):
         if not _marker_due(name):
             continue
