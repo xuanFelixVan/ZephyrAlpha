@@ -1,3 +1,16 @@
+# ============================================================================
+# RETIRED 2026-10-04 (Owner conditional approval). The image target
+# G:\backup\ch_vm_backup (data.vhdx, ~593GiB stale 2026-09-30 snapshot,
+# superseded by G:\ch_backup_disk2.vhdx + daily db_dumps + offsite) is
+# scheduled for deletion. This writer script is SEALED: an early exit before
+# the main flow blocks every mode, including task (re-)registration.
+# Do NOT run and do NOT re-register task ZephyrAlpha-WeeklyVMBackup.
+# The file body is kept for reference only (restore.ps1 vm-leg references are
+# pending a later revision). Physical deletion of the image and unregistering
+# the task await Owner confirmation after the recovery-degradation note.
+# Evidence pack: docs/_working/fullcirc_closeout_chief/bak_591g_evidence.md
+# Registry: INFRA-STORE-003 (infrastructure_registry.yaml)
+# ============================================================================
 <#
 .SYNOPSIS
     Backup of the ClickHouse Hyper-V VM (config copy -> F:, full image -> G:) plus
@@ -130,6 +143,15 @@ function Set-StateField($name, $value) {
     $j = ($st | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
     [System.IO.File]::WriteAllText($StateFile, $j, (New-Object System.Text.UTF8Encoding($false)))
 }
+
+# ==================== RETIRED: EARLY EXIT (2026-10-04) ====================
+# Every execution mode is sealed here (backup, AutoCheck, CompactWindow and the
+# -TaskStatus/-RegisterTask/-UnregisterTask switches below). Owner conditional
+# approval 2026-10-04; image target ch_vm_backup removed from INFRA-STORE-003.
+# Weekly task ZephyrAlpha-WeeklyVMBackup has been Disabled (not unregistered --
+# unregister happens only after the Owner confirms physical deletion).
+Write-Host "[CH-VM-BACKUP] RETIRED 2026-10-04 (Owner conditional approval): image target ch_vm_backup removed. Script is sealed -- do not run. See INFRA-STORE-003." -ForegroundColor Yellow
+exit 0
 
 # ==================== -TaskStatus ====================
 if ($TaskStatus) {
