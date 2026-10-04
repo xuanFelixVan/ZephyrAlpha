@@ -284,7 +284,7 @@ tiers:
         name: 文档元数据索引（已合并至 PS-REG-018 rule_catalog_registry.yaml）
         physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
         format: yaml
-        maintenance: manual
+        maintenance: pg_ledger
         entry_count: 256
         counting_rule: files 数组条目数（rule catalog 文件级）
         status: active
@@ -436,7 +436,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
         format: yaml
         tier: tier_1_governance
-        maintenance: manual
+        maintenance: pg_ledger
         entry_count: 761  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）
         counting_rule: entries 数组条目数（含 deprecated 全量）
         status: active
@@ -449,7 +449,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
         format: yaml
         tier: tier_1_governance
-        maintenance: semi-auto（canonical 声明=manual；扫描=auto via CapabilityLookup.__init__）
+        maintenance: pg_ledger（canonical 声明=manual；扫描=auto via CapabilityLookup.__init__；2026-10-04 cutover：文件=YAML 只读投影，条目写路径唯一入口=意图 API registry_ledger.api）
         entry_count: 378
         counting_rule: capability 条目数（2026-09-06 实测回填，全部 alive；creation_tokens/di_seam_exemptions 为独立数组不入本表计数）
         status: active
@@ -480,7 +480,7 @@ tiers:
         name: error_code SSoT 注册表
         physical_path: architecture_model/contracts/error_code_registry.yaml
         format: yaml
-        maintenance: manual
+        maintenance: pg_ledger
         entry_count: 788
         counting_rule: error_codes 条目数（2026-09-06 占位码转正批完成后实测终值——41 前缀 183 类转正；e27cf22c FAC/FBL 去重删 11 条双条目后终值 770，总管 2026-09-06 复核修正）
         status: active
@@ -531,6 +531,39 @@ tiers:
         status: active
         description: 纵向地图家族 casebooks 字段唯一反查册（挂图 SOP §3 机规1 册号载体；Owner 2026-10-04 上户口批 st-vm12e-20261004）。收编五本路径身份（CASEBOOK-001 data/failures 数据对账案卷库含断供案 outage_ 命名段约定/CASEBOOK-002 堵点本/CASEBOOK-003 抢救台账/CASEBOOK-004 审查两卷/CASEBOOK-005 MEMORY 索引）；死因案例册已有 module_id 身份册外注记。净零声明=收编散落路径身份为唯一反查册（宪法 §4 同域收敛）。
         owned_by: governance
+
+      - registry_id: REG-MODULE-TRANSLATION-001
+        name: 模块大白话翻译册
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+        format: yaml
+        tier_1_governance: true
+        maintenance: pg_ledger（2026-10-04 cutover；四族声明制身份键 entries/battle_map_steps/battle_map_cross_cutting/algo_submodules）
+        entry_count: 8758
+        counting_rule: 四族条目总数（reconcile_20261004_191046 实值）
+        status: active
+        description: 模块名→大白话三语翻译唯一真源（TRANSLATION-COVERAGE/i18n loader 消费）；文件=YAML 只读投影，写路径=意图 API
+
+      - registry_id: REG-CAND-001
+        name: 候选模块注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
+        format: yaml
+        tier_1_governance: true
+        maintenance: pg_ledger（2026-10-04 cutover）
+        entry_count: 623
+        counting_rule: entries 条目数
+        status: active
+        description: 候选模块池（点子池非项目库）；文件=YAML 只读投影
+
+      - registry_id: REG-RULING-001
+        name: 裁定注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+        format: yaml
+        tier_1_governance: true
+        maintenance: pg_ledger（2026-10-04 cutover；裁定#NNN 同 commit 原子纪律不变）
+        entry_count: 299
+        counting_rule: rulings 条目数
+        status: active
+        description: 裁定唯一真源（RULE-RULING 纪律）；文件=YAML 只读投影
 
       - registry_id: REG-MAP-DEVDELIVERY-001
         name: 交付流水线全景图（dev_delivery_map，图11）
