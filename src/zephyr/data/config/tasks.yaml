@@ -443,6 +443,8 @@ tasks:
   symbols:         # null=自动取LOF板块
   extra:
     description: "LOF 1分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+    disabled: true
+    disabled_reason: "2026-10-05 Owner 批退役（EXEC-E2）：c1_market.kline_lof_1min 已 DROP SYNC（DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/），采集任务随表退役停用留痕；复活须先重建表并重注册 DS 条目。"
 
 - task_id: kline_lof_5min_incremental
   table: c1_market.kline_lof_5min
@@ -455,6 +457,8 @@ tasks:
   symbols:
   extra:
     description: "LOF 5分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+    disabled: true
+    disabled_reason: "2026-10-05 Owner 批退役（EXEC-E2）：c1_market.kline_lof_5min 已 DROP SYNC（DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/），采集任务随表退役停用留痕；复活须先重建表并重注册 DS 条目。"
 
 - task_id: kline_lof_15min_incremental
   table: c1_market.kline_lof_15min
@@ -467,6 +471,8 @@ tasks:
   symbols:
   extra:
     description: "LOF 15分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+    disabled: true
+    disabled_reason: "2026-10-05 Owner 批退役（EXEC-E2）：c1_market.kline_lof_15min 已 DROP SYNC（DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/），采集任务随表退役停用留痕；复活须先重建表并重注册 DS 条目。"
 
 - task_id: kline_lof_30min_incremental
   table: c1_market.kline_lof_30min
@@ -479,6 +485,8 @@ tasks:
   symbols:
   extra:
     description: "LOF 30分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+    disabled: true
+    disabled_reason: "2026-10-05 Owner 批退役（EXEC-E2）：c1_market.kline_lof_30min 已 DROP SYNC（DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/），采集任务随表退役停用留痕；复活须先重建表并重注册 DS 条目。"
 
 - task_id: kline_lof_60min_incremental
   table: c1_market.kline_lof_60min
@@ -491,6 +499,8 @@ tasks:
   symbols:
   extra:
     description: "LOF 60分钟K线增量（miniQMT get_market_data_ex，sector=LOF）"
+    disabled: true
+    disabled_reason: "2026-10-05 Owner 批退役（EXEC-E2）：c1_market.kline_lof_60min 已 DROP SYNC（DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/），采集任务随表退役停用留痕；复活须先重建表并重注册 DS 条目。"
 
   # ============== 全市场分钟级宽度快照（2026-08-22 新增，92号清单 §8.2 / 44号备忘 M1-④）==============
 - task_id: market_breadth_snapshot_minute
@@ -3879,8 +3889,9 @@ tasks:
   capability: option_daily_stats
   symbols:
   extra:
-    disabled: true  # 2026-09-24 st-pipeline-final：#ARCH-CH-022 capability 契约校验正确拦截——akshare provider 无 option_daily_stats 能力实现（历史数据经 scripts/data/backfill_option_daily_stats.py 专项回补入库，定时管道从未跑通）。恢复=provider 实现 option_daily_stats fetch 后摘除本 disabled。
+    disabled: true  # 2026-09-24 st-pipeline-final：#ARCH-CH-022 capability 契约校验正确拦截——akshare provider 无 option_daily_stats 能力实现（历史数据经 scripts/data/backfill_option_daily_stats.py 专项回补入库，定时管道从未跑通）。恢复=provider 实现 option_daily_stats fetch 后摘除本 disabled。摘除后不再恢复：表已于 2026-10-05 DROP。
     description: "期权官方每日统计增量（akshare option_daily_stats_sse/szse 官方接口：认认购成交量/未平仓合约数/总成交额+成交量PCR/持仓量PCR；成交额拆分官方不提供，三列预留恒0）"
+    disabled_reason: "2026-10-05 Owner 批退役（EXEC-E2）：c1_market.option_daily_stats 已 DROP SYNC（DDL+全量 CSV 备份=G:/zephyr_cold/50_archive/by_project/zephyralpha/retire_20261005/），本任务随表退役永久停用；此前 2026-09-24 已因 provider 无 capability 实现停用。"
     trading_day_only: true
 
   fallback_sources: []
