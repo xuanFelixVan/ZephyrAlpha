@@ -58976,4 +58976,14 @@ creation_tokens:
   created_by: st-map9-f2-20261003
   capability: map9_f2_writeback
   merge_evaluation: "跨域不同对象不并：图9 F2 挂载回填回执件（F2 会话成品，F4 会话代寄归档），map_census 家族实例，非既有件第二实现"
+- file: docs/_working/map_census/fac9_04_acceptance.md
+  token: map9-f4-acceptance-fac9-04-acceptance-20261004
+  created_by: st-map9-f4-20261003
+  capability: map9_f4_acceptance
+  merge_evaluation: "跨域不同对象不并：图9 F4 三红台账+Owner验收件，map_census 家族 F 车道收口实例，消费 F1/F3 真源非其第二实现"
+- file: docs/_working/map_census/fac9_04_census_ledger.yaml
+  token: map9-f4-acceptance-fac9-04-census-ledger-20261004
+  created_by: st-map9-f4-20261003
+  capability: map9_f4_acceptance
+  merge_evaluation: "跨域不同对象不并：图9 F4 三红台账+Owner验收件，map_census 家族 F 车道收口实例，消费 F1/F3 真源非其第二实现"
 di_seam_exemptions: []

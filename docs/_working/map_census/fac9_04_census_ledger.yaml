@@ -1,0 +1,84 @@
+# 图9 策略工厂 覆盖账本三红对账（F4 机生）
+# 会话: st-map9-f4-20261003 | 日期: 2026-10-04
+# 真源: config/strategy_production_map.yaml (HEAD, 339 节点) × fac9_01_mount_candidates.yaml (db394dfb23) × fac9_03_facts.yaml (7d5218aeaa)
+# 口径: 红1=候选可挂(判据1-4)而图上无；红2=节点内嵌大段外部文本/跨节点重复长文本(>200字符)；红3=已知病历册无≥1环节挂载
+ttl: task_bound
+completes_when: 总筹消化三红清单（红1 呈裁/缺口回填排程）后本件转归档
+counts:
+  mech_nodes: 323
+  trigger_facts_filled: 111
+  trigger_facts_null: 212
+  consumers_filled: 138
+  consumers_null: 185
+  consumers_measured_zero: 83
+  casebooks_mounted_nodes: 26
+  casebooks_mounted_books: 15
+  red1_orphans: 11
+  red2_copying: 0
+  red3_unmounted_casebooks: 0
+  validator: "PASS exit=0 nodes=339 edges=16 (3 WARN 均为主干自注待定旧项)"
+red1_orphans:
+  # 全部=F2 回执申报的「呈总筹 11 件」——非漏挂，是挂否待裁；处置=Owner/总筹裁定后或挂或改判反面
+  - module_id: MOD-INF-016
+    verdict: "3"
+    name_zh: "Shared+Core 跨层共享基建（280 py）"
+    disposition: 呈总筹
+  - module_id: MOD-LLM_SECURITY
+    verdict: "3"
+    name_zh: "LLM Security Gateway（LSG）——F3 补扫 97 文件引用，判据3 高置信"
+    disposition: 呈总筹
+  - module_id: MOD-INF-034
+    verdict: "3"
+    name_zh: "模型画像器"
+    disposition: 呈总筹
+  - module_id: MOD-INF-015
+    verdict: "3"
+    name_zh: "全系统遥测"
+    disposition: 呈总筹
+  - module_id: "dir:_domain_infrastructure_operations/strategic_message_bus"
+    verdict: "3"
+    name_zh: "战略消息总线"
+    disposition: 呈总筹
+  - module_id: MOD-INF-OPS-ALERT-FEED
+    verdict: "3"
+    name_zh: "运营告警供给线"
+    disposition: 呈总筹
+  - module_id: "dir:_domain_machine_learning_train/research_asset_versioning"
+    verdict: "3"
+    name_zh: "研究资产版本化"
+    disposition: 呈总筹
+  - module_id: "dir:_domain_intelligence/llm_agent_router"
+    verdict: "3"
+    name_zh: "LLM 路由器"
+    disposition: 呈总筹
+  - module_id: "dir:_domain_alt_data/alt_source_health_manager"
+    verdict: "3"
+    name_zh: "另类数据源健康管理"
+    disposition: 呈总筹
+  - module_id: "dir:_domain_alt_data/alt_data_catalog"
+    verdict: "3"
+    name_zh: "另类数据目录"
+    disposition: 呈总筹
+  - module_id: "dir:_domain_security_llm/spectral_guard"
+    verdict: "3"
+    name_zh: "Spectral Guard"
+    disposition: 呈总筹
+red2_copying:
+  method: "机制节点全部标量字段 >200 字符扫描 + 跨节点重复长文本(前80字符指纹)对碰"
+  long_text_nodes: 0
+  duplicated_long_text: 0
+  verdict: "零抄写——机制节点全部为引用形态（module_ref/短名/标签），内容留在蓝图侧（INV-1 合规）"
+red3_casebooks:
+  method: "F1 报告 §六 15 本病历册 × 图 casebooks 字段中文名精确匹配"
+  mounted_books: ["因子研究案例库", "N试次账本", "预审判定台账", "考试成绩+判定书台账", "衰减死因册",
+                  "过拟合裁定档案", "回测run档案图书馆", "试验台账红证", "进货台账", "翻译件台账",
+                  "模拟盘病历族", "联赛档案", "模型版本注册表", "全域事实台账", "复现演练档案"]
+  unmounted_books: []
+  verdict: "15/15 全挂——§3 完备性铁律达标（病历本零孤儿）"
+  caveat: "因子研究案例库册=有挂载无实例（factor_casebook.db 盘面零命中，fac9_03 实测）——挂上的是空书，建库仍是欠账"
+backfill_gaps:
+  trigger_facts_null_212:
+    - "E8×34/E9×8 全族：运行证据在 DB 侧（c1_backtest.alloc_budget_daily/归因报告），8 条处方待总筹代跑后回填"
+    - "E0×17/E6×10 等：横切设施与事件触发件无专属磁盘产物计数——触发证据属节拍归一范畴（SOP v1.1.0），需按节拍折算补测"
+  consumers_null_185: "含 verdict-4 三件（REGIME-001/PF-003/PF-007 已由 F4 补扫入图 82/3/32 面）与未扫 74 台（无 py 指针的 cfg:/域册/病历册面，消费面=挂载关系本身）"
+  pending14_build_status: "F2 报告 §一 pending 14 台（路径未登记/无实体占位）待 F5+ 翻案"
