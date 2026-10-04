@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增/修改文件所在目录平铺文件数（排除 __init__.py/隐藏文件/子目录）> _HARD_LIMIT(120) 时阻断 commit；tests/ 豁免；git diff 不可达 fail-open（logger.warning）；文件系统扫描失败 fail-open；检出违规则 fail-closed（passed=False）
+# [INVARIANTS] 硬阻断——staged 新增/修改文件所在目录平铺文件数（排除 __init__.py/隐藏文件/子目录）> _HARD_LIMIT(120) 时阻断 commit；tests/ 一级豁免（相对 tests 段深度≤1，_tests_depth_exceeded 判定；深度≥2 照常受限——tests 分类战役 Owner 批"一级豁免、二级受限"）；git diff 不可达 fail-open（logger.warning）；文件系统扫描失败 fail-open；检出违规则 fail-closed（passed=False）
 # [MODIFY-GUARD] gate_id="FOLDER-CAPACITY-HARD-LIMIT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -31,7 +31,8 @@ hook + --warn-only，被 --no-verify 绕过且不阻断。需要 in-process 硬�
 --------
 在 GitCommitGateway pre-commit 阶段（in-process）注册门禁：
   1. 获取 staged added/modified .py/.yaml/.md 文件
-  2. 过滤 tests/ 豁免
+  2. 过滤 tests/ 一级豁免（相对 tests 段深度≥2 的文件照常纳入——全豁免曾是
+     膨胀缺口，tests/governance 涨到 830 即实证；收窄=tests 治理战役配套闸）
   3. 对每个文件所在目录，统计平铺文件数（排除 __init__.py、隐藏文件、子目录内文件）
   4. N > _HARD_LIMIT (120) -> 硬阻断
 
@@ -70,8 +71,8 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _norm_rel,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    TEST_EXEMPT_PREFIXES,
     GateSpec,
-    is_test_exempt,
 )
 
 logger = logging.getLogger(__name__)
@@ -85,6 +86,34 @@ _HARD_LIMIT = 120
 
 # 触发检测的文件扩展名（代码 + 配置 + 文档）
 _TRIGGER_EXTENSIONS: tuple[str, ...] = (".py", ".yaml", ".yml", ".md")
+
+# tests/ 豁免收窄（2026-10-04，st-tests-chief-20261004，Owner 批"一级豁免、二级受限"）：
+# 全豁免=膨胀缺口（tests/ 是全仓唯一无容量闸区，tests/governance 830 实证）。
+# 深度口径（相对最右 tests 段）：根散文件=0、一级平铺=1（豁免）、二级平铺=2（受限）。
+_TESTS_EXEMPT_MAX_DEPTH = 1
+
+
+def _tests_depth_exceeded(file_path: str) -> bool:
+    """tests 豁免收窄判定：文件相对 tests/ 段的目录深度 >_TESTS_EXEMPT_MAX_DEPTH？
+
+    Args:
+        file_path: 文件相对路径（可含正/反斜杠）。
+
+    Returns:
+        True 表示不豁免（纳入容量检测）：非 tests 文件，或 tests 深度≥2。
+        tests/a.py（根散文件）与 tests/<dir>/a.py（一级平铺）豁免；
+        tests/<dir>/<sub>/a.py（二级平铺）起受限。
+        前缀集合与 is_test_exempt 同源（TEST_EXEMPT_PREFIXES，覆盖嵌套
+        tests 段如 scripts/tests/），取最右命中段计算深度。
+    """
+    normalized = file_path.replace("\\", "/")
+    segments = [s for s in normalized.split("/") if s]
+    prefixes = {p.rstrip("/") for p in TEST_EXEMPT_PREFIXES}
+    for i in range(len(segments) - 2, -1, -1):
+        if segments[i] in prefixes:
+            depth = len(segments) - i - 2  # 减 tests 段自身与文件名段
+            return depth > _TESTS_EXEMPT_MAX_DEPTH
+    return True  # 非 tests 文件：本就不豁免
 
 
 def _collect_staged_trigger_files(gateway) -> list[str]:
@@ -110,10 +139,12 @@ def _collect_staged_trigger_files(gateway) -> list[str]:
         )
         return []
 
-    return [f for f in staged if f.endswith(_TRIGGER_EXTENSIONS) and not is_test_exempt(f)]
+    return [f for f in staged if f.endswith(_TRIGGER_EXTENSIONS) and _tests_depth_exceeded(f)]
 
 
-def _collect_own_trigger_files(gateway, files: list[str] | None, session_id: str | None) -> tuple[list[str], list[str], list[str] | None]:
+def _collect_own_trigger_files(
+    gateway, files: list[str] | None, session_id: str | None
+) -> tuple[list[str], list[str], list[str] | None]:
     """构建本次 commit 的触发文件范围（own-scope，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；B5①連坐治本）。
 
     优先级：files 清单非空 → 直接用（gateway.check_all 传入的本次 commit 文件，
@@ -125,7 +156,7 @@ def _collect_own_trigger_files(gateway, files: list[str] | None, session_id: str
         own_scope=None 表示退回旧行为（不拆分 own/foreign）。
     """
     if files:
-        own = [f for f in files if f.endswith(_TRIGGER_EXTENSIONS) and not is_test_exempt(f)]
+        own = [f for f in files if f.endswith(_TRIGGER_EXTENSIONS) and _tests_depth_exceeded(f)]
         return own, [], None
     staged_triggers = _collect_staged_trigger_files(gateway)
     if not staged_triggers:
