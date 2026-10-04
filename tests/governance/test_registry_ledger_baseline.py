@@ -119,6 +119,21 @@ creation_tokens:
 di_seam_exemptions: []
 """
 
+# 声明制红蓝册（st-sI-identity-20261004 手术1/4）：date 抢占 jsonb 首字段形态下
+# ruling_id 声明键恒稳；rekey 场景用（导入期位置键 → 声明键迁移零重复行）
+DECLARED_YAML = """schema_version: 1.0.0
+registry_id: REG-RB-DECL-001
+title: 声明制红蓝册
+status: active
+unique_key:
+- ruling_id
+entries:
+- ruling_id: '裁定#1'
+  date: '2026-07-18'
+- ruling_id: '裁定#2'
+  date: '2026-07-18'
+"""
+
 
 @pytest.fixture()
 def sample_registry(tmp_path):
@@ -294,3 +309,113 @@ class TestReconcile:
         r3 = baseline_mod.reconcile_registry(root, rel, conn=ledger["conn"], schema=ledger["schema"])
         assert r3["pg_only"] >= 1
         assert _count(ledger, "registry_entry", "WHERE status='active'") >= 5  # 不物理删
+
+
+class TestDeclaredIdentity:
+    """st-sI-identity-20261004 身份声明制红蓝（手术1/2/4）。"""
+
+    def test_scan_reports_declared_families(self, baseline_mod, tmp_path):
+        rel = "docs/_rb_fixture/declared.yaml"
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(DECLARED_YAML, encoding="utf-8", newline="\n")
+        scan = baseline_mod.scan_registry_file(tmp_path, rel)
+        assert scan["declared_identity_families"] == ["entries"]
+        assert scan["header"]["unique_key"] == ["ruling_id"]  # 手术1b：声明随头部面落库种子
+        keys = {ek for _fk, ek, _p in baseline_mod._iter_scan_entries(tmp_path, rel)}
+        assert keys == {"ruling_id=裁定#1", "ruling_id=裁定#2"}
+
+    def test_publish_bundle_carries_plan_and_identity_first(self, baseline_mod, tmp_path, ledger):
+        """手术2：bundle 落声明计划 + 声明身份字段置首（jsonb 键序重排免疫）。"""
+        import json as _json
+
+        rel = "docs/_rb_fixture/declared.yaml"
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        # jsonb 重排形态入库：date 抢首（模拟 PG 归还序）
+        reordered = (
+            "schema_version: 1.0.0\n"
+            "registry_id: REG-RB-DECL-001\n"
+            "title: t\n"
+            "status: active\n"
+            "unique_key:\n"
+            "- ruling_id\n"
+            "entries:\n"
+            "- date: '2026-07-18'\n"
+            "  ruling_id: '裁定#1'\n"
+        )
+        target.write_text(reordered, encoding="utf-8", newline="\n")
+        baseline_mod.import_baseline(tmp_path, rel, conn=ledger["conn"], schema=ledger["schema"])
+        # 直接改写 PG payload 键序模拟 jsonb 归还序（import 走盘面原序）
+        cur = ledger["conn"].cursor()
+        cur.execute(
+            f"UPDATE \"{ledger['schema']}\".registry_entry SET payload=%s::jsonb WHERE registry_id='REG-RB-DECL-001'",
+            (_json.dumps({"date": "2026-07-18", "ruling_id": "裁定#1"}),),
+        )
+        cur.close()
+        ledger["conn"].commit()
+        baseline_mod.publish_snapshot(
+            "REG-RB-DECL-001", conn=ledger["conn"], schema=ledger["schema"], repo_root=tmp_path
+        )
+        cur = ledger["conn"].cursor()
+        cur.execute(
+            f'SELECT bundle FROM "{ledger["schema"]}".registry_snapshot WHERE registry_id=%s',
+            ("REG-RB-DECL-001",),
+        )
+        bundle = cur.fetchone()[0]
+        cur.close()
+        if isinstance(bundle, str):
+            bundle = _json.loads(bundle)
+        assert bundle["unique_key_fields"] == {"entries": ["ruling_id"]}
+        entry_pairs = bundle["sections"][0]["entries"][0]
+        assert entry_pairs[0][0] == "ruling_id"  # 身份字段置首（手术2）
+        # 渲染往返：声明键恒稳（位置口径下 date 会抢占）
+        from zephyr.governance.registry_projection.pg_source import snapshot_from_bundle
+        from zephyr.governance.registry_projection.renderer import render, self_check
+
+        snap = snapshot_from_bundle(bundle, rel)
+        rendered = render(snap)
+        self_check(rendered, snap)
+        assert "- ruling_id: 裁定#1" in rendered  # 声明首字段置首=渲染后重扫同键（位置口径下 date 抢占）
+
+    def test_reconcile_rekeys_same_content_no_duplicate_rows(self, baseline_mod, tmp_path, ledger):
+        """手术4 rekey 安全网：键口径迁移（位置键→声明键）同内容迁键零重复行。"""
+        rel = "docs/_rb_fixture/rekey.yaml"
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        # 阶段一：无声明+date 抢首（jsonb 归还序形态）导入 → 位置键 date=2026-07-18
+        # 两条同键 first-wins 只进一条（B3 撞并形态）
+        reordered_no_decl = (
+            "schema_version: 1.0.0\n"
+            "registry_id: REG-RB-DECL-001\n"
+            "title: t\n"
+            "status: active\n"
+            "entries:\n"
+            "- date: '2026-07-18'\n"
+            "  ruling_id: '裁定#1'\n"
+            "- date: '2026-07-18'\n"
+            "  ruling_id: '裁定#2'\n"
+        )
+        target.write_text(reordered_no_decl, encoding="utf-8", newline="\n")
+        baseline_mod.import_baseline(tmp_path, rel, conn=ledger["conn"], schema=ledger["schema"])
+        assert _count(ledger, "registry_entry") == 1  # 同位置键 first-wins 一条（撞并形态）
+
+        # 阶段二：补声明（手术1b）→ 声明键 ruling_id=裁定#1/2 与 PG 位置键不等
+        target.write_text(DECLARED_YAML, encoding="utf-8", newline="\n")
+        rep = baseline_mod.reconcile_registry(tmp_path, rel, conn=ledger["conn"], schema=ledger["schema"])
+        # B3 放大器封死：零重复行注入（总行数不超 yaml 键数），缺条目按声明键补齐
+        assert _count(ledger, "registry_entry") <= 2
+        assert _count(ledger, "registry_entry", "WHERE status='active'") <= 2
+        cur = ledger["conn"].cursor()
+        cur.execute(
+            f'SELECT entry_key FROM "{ledger["schema"]}".registry_entry '
+            "WHERE registry_id='REG-RB-DECL-001' ORDER BY entry_key"
+        )
+        keys = [r[0] for r in cur.fetchall()]
+        cur.close()
+        # 声明键空间收敛（老位置键行被 rekey 或内容不同被呈报，绝不双行同内容）
+        assert len(keys) == len(set(keys))
+        assert "date=2026-07-18" not in keys or keys.count("date=2026-07-18") == 1
+        # 冒烟字段就位（手术4 报告面）
+        assert rep["identity_smoke_sampled"] >= 2
+        assert rep["identity_smoke_unstable"] == 0
