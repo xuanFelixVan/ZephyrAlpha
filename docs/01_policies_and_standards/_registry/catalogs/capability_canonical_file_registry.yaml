@@ -58691,4 +58691,12 @@ creation_tokens:
   created_by: st-joinchk-20261004
   capability: btfix_p1p2
   merge_evaluation: "GATE-ALGO-FLOW 欠账补登：registry_mass_deletion_gate 出仓卡（P2-1 六件漏网之一），卡族同真源（check_algo_flow 管线消费）无第二真源"
+- file: docs/_working/commitmap_cure/06_replay_evidence.md
+  token: commitmap-cure-06-replay-evidence-20261004
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
+- file: docs/_working/commitmap_cure/07_f8_family_disposition.md
+  token: commitmap-cure-07-f8-family-disposition-20261004
+  created_by: st-commitmap-chief-20261003
+  capability: commitmap_cure
 di_seam_exemptions: []
