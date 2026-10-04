@@ -53107,21 +53107,25 @@ creation_tokens:
   token: f128-wiring-init-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/audit_sink.py
   token: f128-wiring-audit-sink-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/data_exit_guard.py
   token: f128-wiring-data-exit-guard-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/lsg_masking_front.py
   token: f128-wiring-lsg-front-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
+  no_mount_reason: "F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）"
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/ex_core/adapters/miniqmt_broker.py
   token: auto-miniqmt-broker-20260704
@@ -59050,4 +59054,19 @@ creation_tokens:
   created_by: st-fig1113reg-20261004
   capability: dev_delivery_map
   merge_evaluation: "图11转正四件套批 gate 通道配套 ALGO_FLOW 卡（P2-1 出仓管线同形卡零新能力面，净零——补 dev_delivery gate 头 ALGO_FLOW external 锚卡位）"
+- file: docs/_working/deadletter_cure_20261003/r5_exemption.md
+  token: deadletter-r5-exemption-r5-exemption-20261004
+  created_by: st-sJ-doctorb2-20261004
+  capability: deadletter_r5_exemption
+  merge_evaluation: "跨域不同对象不并——R5豁免标记文件属门禁机制数据产物，与战役骨架册内容件不同对象，无替代无退役"
+- file: docs/_working/map_census/gomap/gomap_f3_disposition.yaml
+  token: gomap-f3-disposition-gomap-f3-disposition-20261004
+  created_by: st-gomap-chief-20261004
+  capability: gomap_f3_disposition
+  merge_evaluation: "F3 四分处置表:GOMAP图10挂血肉战役 chief 终裁件(Owner 判据锚定:无价值+已有重复,不以消费者计数为准);消费方=Owner 退役批门位+装配批;净零申报:处置表为 F1/F2 证据的裁定居产物"
+- file: docs/_working/fullscore_night/10_coordination/NIGHT_STATE.md
+  token: fullscore-night-coordination-night-state-20261004
+  created_by: st-sJ-doctorb2-20261004
+  capability: fullscore_night_coordination
+  merge_evaluation: "跨域不同对象不并——补登记他会话在途件（st-fullscore/st-sH-f8family 战役协调状态册），created_by=登记会话非原创（归属失真已披露，precedent=st-orphtriage token先行批）"
 di_seam_exemptions: []
