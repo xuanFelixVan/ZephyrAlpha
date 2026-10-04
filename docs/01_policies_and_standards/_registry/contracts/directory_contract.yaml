@@ -403,12 +403,13 @@ directory_extensions:
   # （必须是 allowed 的子集）。AI 创建临时文件前 MUST 对照 trae_070 directory_purpose_classification
   # 确定目标目录，DCR-008 在 commit 时强制阻断跨类乱放。
   - path: "docs/_working/"
-    allowed: [".md", ".csv", ".yaml", ".html"]
+    # .json 扩面（2026-10-04 st-sJ-doctorb2，Owner 硬拦门位件①）：死信战役 JSON 证据文件=数据产物非第二真源
+    allowed: [".md", ".csv", ".yaml", ".html", ".json"]
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline"]
     zone: temporary
     allowed_doc_types: []
     purpose: task_document
-    purpose_allowed_extensions: [".md", ".csv", ".yaml", ".html"]
+    purpose_allowed_extensions: [".md", ".csv", ".yaml", ".html", ".json"]
     note: ".html 白名单=Owner 2026-08-29 裁定：仪表盘原型等 UI 设计稿（人工设计 artifact，如 2026-08-20-dashboard-mockup.html）可入 git 追踪——此前原型长期 untracked 裸奔（Mode D 式丢失风险），且 _SCAN_EXTENSIONS 不含 .html（repo 扫描不受影响），仅显式提交时经 DCR 校验；生成物 .html 仍归各区生成器目录（如 battle_map/_zoomable_html/），不适用本条"
 
   - path: "docs/_working/audit/"
@@ -534,7 +535,7 @@ directory_extensions:
   # 真源：directory_contract.yaml P1 阶段新增（2026-07-01 治 34 个裸奔目录）
   # 调研依据：data/ 下 35 个子目录扩展名分布调研报告
   - path: "data/"
-    allowed: [".json", ".jsonl", ".yaml", ".md", ".csv", ".db", ".duckdb", ".sqlite3", ".bin", ".index", ".wal", ".sql", ".ndjson", ".log", ".tar.gz", ".mmd", ".gitkeep", ".npy"]  # 2026-09-24 st-pipeline-final: numpy 数值产物（ML 数据包标准格式，同类=.pt/.bin 模型二进制），GPU 板块条件矩阵包首个用例
+    allowed: [".json", ".jsonl", ".yaml", ".md", ".csv", ".db", ".duckdb", ".sqlite3", ".bin", ".index", ".wal", ".sql", ".ndjson", ".log", ".tar.gz", ".mmd", ".gitkeep", ".npy", ".rda"]  # 2026-09-24 st-pipeline-final: numpy 数值产物（ML 数据包标准格式，同类=.pt/.bin 模型二进制），GPU 板块条件矩阵包首个用例；2026-10-04 st-sJ-doctorb2 .rda 扩面（Owner 硬拦门位件②）：R 二进制研究数据对（RDS/RData 序列化格式），研究数据产物非第二真源
 
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp"]
     zone: neutral
