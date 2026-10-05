@@ -285,7 +285,7 @@ tasks:
   extra:
     description: "周K线增量（miniQMT 日K聚合 resample W）"
     disabled: true
-    disabled_reason: "冗余任务：c1_market.kline_weekly 实测 100% 由 local_qfq 通道喂数，且 hfq 版 kline_weekly_hfq_incremental 独立成功；akshare fallback 无该 capability，失败为噪音。停用留痕，如需 miniqmt 通道可移除本两行。"
+    disabled_reason: "冗余任务：c1_market.kline_weekly 实测 100% 由 local_qfq 通道喂数，且 hfq 版 kline_weekly_hfq_incremental 独立成功；akshare fallback 无该 capability，失败为噪音。停用留痕，如需 miniqmt 通道可移除本两行。2026-10-05 退役注记（EXEC-F1）：目标表 kline_weekly 已 DROP，消费端切 kline_weekly_hfq（DS-175），本任务不可复启。"
 - task_id: kline_monthly_incremental
   table: c1_market.kline_monthly
   source: miniqmt
@@ -298,7 +298,7 @@ tasks:
   extra:
     description: "月K线增量（miniQMT 日K聚合 resample M）"
     disabled: true
-    disabled_reason: "冗余任务：c1_market.kline_monthly 实测 100% 由 local_qfq 通道喂数，且 hfq 版 kline_monthly_hfq_incremental 独立成功；akshare fallback 无该 capability，失败为噪音。停用留痕，如需 miniqmt 通道可移除本两行。"
+    disabled_reason: "冗余任务：c1_market.kline_monthly 实测 100% 由 local_qfq 通道喂数，且 hfq 版 kline_monthly_hfq_incremental 独立成功；akshare fallback 无该 capability，失败为噪音。停用留痕，如需 miniqmt 通道可移除本两行。2026-10-05 退役注记（EXEC-F1）：目标表 kline_monthly 已 DROP，消费端切 kline_monthly_hfq（DS-169），本任务不可复启。"
 - task_id: kline_1min_incremental
   table: c1_market.kline_1min
   source: miniqmt

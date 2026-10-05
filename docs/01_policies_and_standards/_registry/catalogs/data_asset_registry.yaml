@@ -7235,10 +7235,10 @@ datasets:
   design_maturity: production
   name: c1_market.kline_monthly
   name_zh: 月 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7256,7 +7256,7 @@ datasets:
   - 数据
   - 行情
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-F1 周月线切 hfq）：CH 表已 DROP（停更于 2026-09-15）；DDL+行数留档=docs/_working/fullflow_mine/wiring/F1_period_drop_ddl.md；删前活消费切 kline_monthly_hfq（DS-169）并 grep 复核：指标计算/dashboard 已切，残留引用仅写入侧 miniqmt_provider（任务随表停）与离线诊断 speed_tester。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-169
@@ -7486,10 +7486,10 @@ datasets:
   design_maturity: production
   name: c1_market.kline_weekly
   name_zh: 周 K
-  status: active
+  status: retired
   version: 1.0.0
   created_at: "2026-09-03"
-  updated_at: "2026-09-03"
+  updated_at: '2026-10-05'
   owner: MOD-L00-004
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -7507,7 +7507,7 @@ datasets:
   - 数据
   - 行情
   algorithm_status: not_applicable
-  evidence: ""
+  evidence: "2026-10-05 Owner 批退役（EXEC-F1 周月线切 hfq）：CH 表已 DROP（停更于 2026-09-15）；DDL+行数留档=docs/_working/fullflow_mine/wiring/F1_period_drop_ddl.md；删前活消费切 kline_weekly_hfq（DS-175）并 grep 复核：指标计算/dashboard 已切，残留引用仅写入侧 miniqmt_provider（任务随表停）与离线诊断 speed_tester。"
   code_symbol:
   code_fingerprint:
 - dataset_id: DS-175
