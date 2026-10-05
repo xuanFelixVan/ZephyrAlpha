@@ -1,3 +1,12 @@
+# ============================================================================
+# [DEPRECATED] 2026-10-05 波 1A.4 收尾退役（st-tclose-c1close-20261005）——staged 手工底稿
+# 原生成器 scripts/governance/meta/enforcement_surface_reconcile.py 已不在 HEAD/盘面；
+# 双口径正式通道已由同脚本双表生成器取代（W3C1 原计划"表②覆盖尺同脚本"落地）：
+#   scripts/governance/generate_gate_face_reconciliation.py
+#   -> docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation_registry.yaml
+#      （ROOR 条目 REG-RULE-FACE-RECONCILIATION-001，maintenance: auto）
+# 本件仅留作 1A.4 口径差破案证据（c1_three_knots_probe.md ③节锚点），禁再消费/禁再更新。
+# ============================================================================
 meta:
   generator: scripts/governance/meta/enforcement_surface_reconcile.py
   roster_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml

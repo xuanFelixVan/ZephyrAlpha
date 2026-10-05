@@ -367,6 +367,17 @@ tiers:
         description: 每条 STD-* 的治理族归属/状态/历史被毙与重考证据计数——#306 红队条款①的可执行判据载体（派生自动档）
         owned_by: standards_governance
 
+      - registry_id: REG-RULE-FACE-RECONCILIATION-001
+        name: 规则↔执法面双口径对账报告
+        physical_path: docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation_registry.yaml
+        format: yaml
+        entry_count: 86
+        maintenance: auto （scripts/governance/generate_gate_face_reconciliation.py 双表产出·表②）
+        counting_rule: summary.rules_total 字段值（生成器现算=规则册 trae_*.yaml 文件数，勿手写）
+        status: active
+        description: 86 册规则逐条的真执法面（执法域 py id/别名级命中，零匹配=存量定性长名单）与被提及面（非代码文案提及，零匹配=短名单）双口径分列——1A.4 出口判据"覆盖率进 ROOR 派生字段"的先例合 pattern 载体（波 1A.4 收尾 2026-10-05，st-tclose-c1close-20261005）；净零对价=退役 one_off check_rule_coverage.py + staged 手工 enforcement_surface_reconciliation.yaml（同批 [DEPRECATED] 归档）；Owner 常设授权通道=本车道任务指令
+        owned_by: governance
+
       - registry_id: REG-FUNC-DOMAIN-001
         name: 功能域注册表
         status: active  # 2026-09-18 补（BRK-084：该条目原缺 status 键，是 ROOR 唯一"结构不完整"条目）
@@ -991,23 +1002,25 @@ known_issues:
 summary:
   generated_by: scripts/governance/d3_metadata/check_registry_consistency.py --refresh-summary
   total_tiers: 3
-  total_registries: 76
+  total_registries: 88
   by_tier:
     tier_0: 12
-    tier_1: 30
-    tier_2: 34
+    tier_1: 41
+    tier_2: 35
   entries_carrying_tier_field:
     tier_1_governance: 7
   by_status:
-    active: 66
+    active: 78
     archived: 2
     deprecated: 1
     draft: 7
   by_medium:
+    broken: 1
     database: 2
-    ok: 74
-  broken: 0
-  broken_registry_ids: []
+    ok: 85
+  broken: 1
+  broken_registry_ids:
+  - REG-CASEBOOK-001
   legacy_manual_claims_replaced:
     fully_scanned: 19（无机械真源：ROOR 条目 status 值域为 active/draft/archived/deprecated，从不出现 fully_scanned）
     pending_scan: 5（同上；条目侧亦无 pending_scan 取值）

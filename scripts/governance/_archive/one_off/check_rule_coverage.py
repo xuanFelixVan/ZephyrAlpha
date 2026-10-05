@@ -13,6 +13,10 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] task_bound
+# [DEPRECATED] 2026-10-05 波 1A.4 收尾退役（st-tclose-c1close-20261005）：one_off 漂移检测器，
+#   key_facts.yaml 基准早已停维护、消费面归零；净零对价登记=其治理位由常设生成器
+#   scripts/governance/generate_gate_face_reconciliation.py 表②（REG-RULE-FACE-RECONCILIATION-001，
+#   ROOR 同名条目）取代。仅归档留痕，禁复活禁消费。
 """governance/check_rule_coverage 脚本 — 规则文件漂移检测
 
 读取 data/rule_optimization/key_facts.yaml，验证 .trae/rules/*.md 和 AGENTS.md

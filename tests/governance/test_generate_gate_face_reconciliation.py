@@ -209,3 +209,140 @@ def test_main_refuses_table_without_git_tree(tmp_path: Path, monkeypatch: pytest
     _write_roster(tmp_path, [dict(REAL_GATE)])  # 无 .git → tracked=None → 拒出表
     monkeypatch.setattr(gf, "REPO_ROOT", tmp_path)
     assert gf.main(["--check"]) == 2
+
+
+# ── 表② 规则↔执法面双口径（0104 收尾，st-tclose-c1close-20261005）──
+
+
+def _write_rule(repo: Path, no: str, *, title: str = "示例铁律", tags: list[str] | None = None) -> str:
+    rel = f"docs/01_policies_and_standards/rules/trae_{no}_demo_rule.yaml"
+    path = repo / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        yaml.safe_dump({"rule_id": f"TRAE-{no}", "title": title, "tags": tags or []}, allow_unicode=True),
+        encoding="utf-8",
+    )
+    return rel
+
+
+def test_load_rules_builds_identifiers(tmp_path: Path) -> None:
+    _write_rule(tmp_path, "065", title="能力反查强制铁律（RULE-CAPABILITY-LOOKUP）", tags=["RULE-X"])
+    rules = gf.load_rules(tmp_path)
+    assert rules is not None and len(rules) == 1
+    r = rules[0]
+    assert r["rule_no"] == "065"
+    assert r["rule_file"] == "docs/01_policies_and_standards/rules/trae_065_demo_rule.yaml"
+    assert r["rule_id"] == "TRAE-065"
+    assert "RULE-CAPABILITY-LOOKUP" in r["aliases"] and "RULE-X" in r["aliases"]  # 单字母别名段也收
+    primary = r["patterns"][0]
+    assert primary.search("见 trae_065 与 TRAE-065")  # 主形大小写/分隔符归一
+    assert primary.search("trae_65 非补位形也中")  # 0{0,2} 前缀归一
+    assert not primary.search("trae_0655 不吃")  # 后随数字不误切
+    assert not primary.search("trae_064 不吃")  # 相邻号不串
+
+
+def test_rule_corpus_filters_archive_and_generated(tmp_path: Path) -> None:
+    tracked = {
+        "src/zephyr/gov_enforcement/commit_gates/g.py",
+        "scripts/governance/_archive/old.py",  # _archive 两面皆排除
+        "docs/note.md",
+        "src/zephyr/trading/x.py",  # 执法域外 py 不进 code 面
+        "docs/01_policies_and_standards/_registry/reports/rpt.yaml",  # 机生区不进 mention 面
+    }
+    assert gf._rule_corpus(tracked, code_face=True) == ["src/zephyr/gov_enforcement/commit_gates/g.py"]
+    assert gf._rule_corpus(tracked, code_face=False) == ["docs/note.md"]
+
+
+def test_scan_rule_face_dual_caliber_self_exclusion(tmp_path: Path) -> None:
+    _write_rule(tmp_path, "065", title="X（RULE-CAPABILITY-LOOKUP）")
+    _write_rule(tmp_path, "057", title="Y")
+    (tmp_path / "src/zephyr/gov_enforcement/commit_gates").mkdir(parents=True)
+    (tmp_path / "src/zephyr/gov_enforcement/commit_gates/g.py").write_text("gate for trae_065", encoding="utf-8")
+    (tmp_path / "docs").mkdir(exist_ok=True)
+    (tmp_path / "docs/note.md").write_text("trae_065 很重要", encoding="utf-8")
+    (tmp_path / "docs/01_policies_and_standards/_registry/reports").mkdir(parents=True)
+    (tmp_path / "docs/01_policies_and_standards/_registry/reports/rpt.yaml").write_text("trae_057", encoding="utf-8")
+    tracked = {
+        "docs/01_policies_and_standards/rules/trae_065_demo_rule.yaml",
+        "docs/01_policies_and_standards/rules/trae_057_demo_rule.yaml",
+        "src/zephyr/gov_enforcement/commit_gates/g.py",
+        "docs/note.md",
+        "docs/01_policies_and_standards/_registry/reports/rpt.yaml",
+    }
+    rules = gf.load_rules(tmp_path)
+    assert rules is not None
+    code_hits = gf.scan_rule_face(rules, gf._rule_corpus(tracked, code_face=True), tmp_path, code_face=True)
+    assert code_hits["065"] == ["src/zephyr/gov_enforcement/commit_gates/g.py"]
+    assert code_hits["057"] == []
+    mention_hits = gf.scan_rule_face(rules, gf._rule_corpus(tracked, code_face=False), tmp_path, code_face=False)
+    assert mention_hits["065"] == ["docs/note.md"]  # 规则自身文件自提及排除
+    assert mention_hits["057"] == []  # 机生报告区提及不计被提及面
+
+
+def test_build_rule_table_stats_and_render_yaml(tmp_path: Path) -> None:
+    _write_rule(tmp_path, "065", title="X（RULE-CAP）")
+    _write_rule(tmp_path, "057", title="Y")
+    (tmp_path / "src/zephyr/gov_enforcement").mkdir(parents=True)
+    (tmp_path / "src/zephyr/gov_enforcement/g.py").write_text("trae_065 gate", encoding="utf-8")
+    tracked = {
+        "docs/01_policies_and_standards/rules/trae_065_demo_rule.yaml",
+        "docs/01_policies_and_standards/rules/trae_057_demo_rule.yaml",
+        "src/zephyr/gov_enforcement/g.py",
+    }
+    table = gf.build_rule_table(tmp_path, tracked, "head123")
+    s = table["summary"]
+    assert s["rules_total"] == 2
+    assert s["rules_enforced_in_code"] == 1 and s["rules_code_zero_match"] == 1
+    assert s["coverage_pct_enforced_in_code"] == 50.0
+    assert [r["rule_no"] for r in table["code_zero_rows"]] == ["057"]
+    doc = yaml.safe_load(gf.render_rule_yaml(table))
+    assert doc["module_id"] == "REG-RULE-FACE-RECONCILIATION-001"
+    assert doc["summary"]["caliber_note"]  # 双口径防混注记必须随表
+    assert doc["zero_match_longlist_code"][0]["rule_no"] == "057"
+    assert doc["rows"][0]["mention_ref_files_truncated"] in (True, False)
+
+
+def test_main_e2e_writes_rule_table_additively(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    repo = _git_init_repo(tmp_path)
+    (repo / "src").mkdir()
+    (repo / "src" / "a.py").write_text("x", encoding="utf-8")  # REAL_GATE files_trigger 命中面
+    (repo / "src/zephyr/gov_enforcement").mkdir(parents=True)
+    (repo / "src/zephyr/gov_enforcement/g.py").write_text("gate for trae_065", encoding="utf-8")
+    _write_rule(repo, "065", title="X")
+    _write_rule(repo, "057", title="Y")
+    subprocess.run(["git", "add", "-A"], cwd=str(repo), check=True)
+    subprocess.run(["git", "commit", "-qm", "init"], cwd=str(repo), check=True)
+    _write_roster(repo, [dict(REAL_GATE, files_trigger=["src/a.py"])])
+    monkeypatch.setattr(gf, "REPO_ROOT", repo)
+    out_dir = repo / "out"
+    rc = gf.main(["--output-dir", str(out_dir)])
+    assert rc == 0  # 表②零匹配不改变 rc（存量定性清单非红）
+    rule_yml = yaml.safe_load((out_dir / "rule_face_reconciliation_registry.yaml").read_text(encoding="utf-8"))
+    assert rule_yml["summary"]["rules_total"] == 2
+    assert rule_yml["summary"]["rules_enforced_in_code"] == 1
+
+
+def test_main_check_mode_skips_rule_table(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    repo = _git_init_repo(tmp_path)
+    (repo / "src").mkdir()
+    (repo / "src" / "a.py").write_text("x", encoding="utf-8")
+    _write_rule(repo, "065", title="X")
+    subprocess.run(["git", "add", "-A"], cwd=str(repo), check=True)
+    subprocess.run(["git", "commit", "-qm", "init"], cwd=str(repo), check=True)
+    _write_roster(repo, [dict(REAL_GATE, files_trigger=["src/a.py"])])
+    monkeypatch.setattr(gf, "REPO_ROOT", repo)
+    out_dir = repo / "out"
+    assert gf.main(["--check", "--output-dir", str(out_dir)]) == 0
+    assert not (out_dir / "rule_face_reconciliation_registry.yaml").exists()  # --check 不出表②
+
+
+def test_main_missing_rules_dir_skips_rule_table_keeps_gate_rc(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    repo = _git_init_repo(tmp_path)
+    (repo / "src").mkdir()
+    (repo / "src" / "a.py").write_text("x", encoding="utf-8")
+    subprocess.run(["git", "add", "-A"], cwd=str(repo), check=True)
+    subprocess.run(["git", "commit", "-qm", "init"], cwd=str(repo), check=True)
+    _write_roster(repo, [dict(REAL_GATE), _entry("NO-TRIG-GATE")])  # R2 红在册
+    monkeypatch.setattr(gf, "REPO_ROOT", repo)
+    rc = gf.main(["--output-dir", str(repo / "out")])
+    assert rc == 1  # 规则册缺失只跳过表②，表① rc 语义不变

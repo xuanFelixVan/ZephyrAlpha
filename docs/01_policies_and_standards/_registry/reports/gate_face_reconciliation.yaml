@@ -3,8 +3,8 @@ doc_type: register
 ttl: permanent
 title: 门禁触发面三列对账表（波 1A.3）
 generated_by: scripts/governance/generate_gate_face_reconciliation.py
-generated_at: '2026-10-01T06:52:24+00:00'
-head_commit: 6d1283c73b61635303909799a112b0a86cf28605
+generated_at: '2026-10-05T16:13:26+00:00'
+head_commit: 48df2da55a7b317ad19c63fb34b76f04ae96e9b6
 roster: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
 red_criteria:
 - R1-declared-but-not-loaded
@@ -12,16 +12,16 @@ red_criteria:
 - R3-trigger-dead-zero-hit
 - R0-loaded-but-not-declared
 summary:
-  roster_entries: 104
-  roster_declared_total_gates: 104
-  enabled_count: 96
+  roster_entries: 106
+  roster_declared_total_gates: 106
+  enabled_count: 98
   disabled_count: 8
-  loaded_count: 96
+  loaded_count: 98
   load_aggregate_error: ''
   trigger_conditional_count: 24
-  trigger_always_run_count: 72
+  trigger_always_run_count: 74
   dead_trigger_count: 0
-  red_count: 72
+  red_count: 74
 red_list:
 - gate_id: HELD-OVERLAP
   kind: R2-trigger-empty-always-run
@@ -57,6 +57,9 @@ red_list:
   kind: R2-trigger-empty-always-run
   detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
 - gate_id: TRANSLATION-COVERAGE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TDM-MOUNT-COVERAGE
   kind: R2-trigger-empty-always-run
   detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
 - gate_id: ENCODING-SAFETY
@@ -237,6 +240,9 @@ red_list:
   kind: R2-trigger-empty-always-run
   detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
 - gate_id: FMS-HYGIENE
+  kind: R2-trigger-empty-always-run
+  detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
+- gate_id: TAKEOVER-PENDING
   kind: R2-trigger-empty-always-run
   detail: files_trigger 空=每链全跑（1A.3 悬案②同款）
 rows:
@@ -343,10 +349,10 @@ rows:
   - docs/01_policies_and_standards/rules/
   - rule_
   trigger_mode: conditional
-  head_hit_files: 468
+  head_hit_files: 403
   per_pattern_hits:
     docs/01_policies_and_standards/rules/: 87
-    rule_: 385
+    rule_: 320
   dead_trigger: false
 - gate_id: REFERENCE-INTEGRITY
   enabled: true
@@ -356,10 +362,10 @@ rows:
   - docs/*.yaml
   - docs/*.json
   trigger_mode: conditional
-  head_hit_files: 8617
+  head_hit_files: 8989
   per_pattern_hits:
-    docs/*.md: 4507
-    docs/*.yaml: 4108
+    docs/*.md: 4818
+    docs/*.yaml: 4169
     docs/*.json: 2
   dead_trigger: false
 - gate_id: RULE-FOUR-WAY-ALIGN
@@ -369,10 +375,10 @@ rows:
   - docs/01_policies_and_standards/rules/
   - rule_
   trigger_mode: conditional
-  head_hit_files: 468
+  head_hit_files: 403
   per_pattern_hits:
     docs/01_policies_and_standards/rules/: 87
-    rule_: 385
+    rule_: 320
   dead_trigger: false
 - gate_id: RULING-COMMIT-VERIFIED
   enabled: true
@@ -391,14 +397,22 @@ rows:
   - src/
   - data/
   trigger_mode: conditional
-  head_hit_files: 14810
+  head_hit_files: 15024
   per_pattern_hits:
-    docs/: 8722
-    scripts/: 1399
-    src/: 4068
-    data/: 1188
+    docs/: 9110
+    scripts/: 1393
+    src/: 4080
+    data/: 1022
   dead_trigger: false
 - gate_id: TRANSLATION-COVERAGE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: TDM-MOUNT-COVERAGE
   enabled: true
   loaded_in_process: true
   files_trigger: []
@@ -431,10 +445,10 @@ rows:
   - schemas/*.py
   - sitecustomize.py
   trigger_mode: conditional
-  head_hit_files: 5194
+  head_hit_files: 5245
   per_pattern_hits:
-    src/*.py: 3795
-    scripts/*.py: 1162
+    src/*.py: 3807
+    scripts/*.py: 1201
     schemas/*.py: 236
     sitecustomize.py: 1
   dead_trigger: false
@@ -503,10 +517,10 @@ rows:
   - schemas/*.py
   - sitecustomize.py
   trigger_mode: conditional
-  head_hit_files: 5194
+  head_hit_files: 5245
   per_pattern_hits:
-    src/*.py: 3795
-    scripts/*.py: 1162
+    src/*.py: 3807
+    scripts/*.py: 1201
     schemas/*.py: 236
     sitecustomize.py: 1
   dead_trigger: false
@@ -585,10 +599,10 @@ rows:
   - schemas/*.py
   - sitecustomize.py
   trigger_mode: conditional
-  head_hit_files: 5194
+  head_hit_files: 5245
   per_pattern_hits:
-    src/*.py: 3795
-    scripts/*.py: 1162
+    src/*.py: 3807
+    scripts/*.py: 1201
     schemas/*.py: 236
     sitecustomize.py: 1
   dead_trigger: false
@@ -638,8 +652,40 @@ rows:
   - docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml
   - scripts/governance/d5_architecture/generators/align_panoramas.py
   - docs/03_modules/*.md
+  - config/construction_workflow_map.yaml
+  - config/strategy_card_lifecycle_map.yaml
+  - scripts/governance/d5_architecture/validators/validate_construction_steps.py
+  - scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py
+  - scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+  - scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+  - src/zephyr/gov_enforcement/commit_gates/map_family/construction_workflow_map_gate.py
+  - src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md
+  - docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
+  - docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml
+  - docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+  - config/data_supply_chain_map.yaml
+  - scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py
+  - scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py
+  - docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
+  - config/trading_day_cycle_map.yaml
+  - scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+  - scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py
+  - docs/_working/map_build/fig13_daycycle/00_skeleton.md
+  - config/trading_decision_map.yaml
+  - src/zephyr/plan_engine/daily_loop_master_switch.py
+  - src/zephyr/data/trading_calendar.py
+  - src/zephyr/data/config/resource_profile_registry.yaml
+  - config/dev_delivery_map.yaml
+  - scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
+  - scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py
+  - docs/_working/map_build/fig11_delivery/00_skeleton.md
+  - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  - config/flags.yaml
   trigger_mode: conditional
-  head_hit_files: 1438
+  head_hit_files: 1492
   per_pattern_hits:
     src/zephyr/governance/depgraph_schema.py: 1
     src/zephyr/governance/persistence/dataflowgraph_schema.py: 1
@@ -650,7 +696,39 @@ rows:
     scripts/governance/generate_project_depgraph.py: 1
     docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml: 1
     scripts/governance/d5_architecture/generators/align_panoramas.py: 1
-    docs/03_modules/*.md: 1429
+    docs/03_modules/*.md: 1454
+    config/construction_workflow_map.yaml: 1
+    config/strategy_card_lifecycle_map.yaml: 1
+    scripts/governance/d5_architecture/validators/validate_construction_steps.py: 1
+    scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py: 1
+    scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py: 1
+    scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py: 1
+    src/zephyr/gov_enforcement/commit_gates/map_family/construction_workflow_map_gate.py: 0
+    src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py: 0
+    docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md: 1
+    docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml: 1
+    docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml: 1
+    docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml: 1
+    docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml: 1
+    config/data_supply_chain_map.yaml: 1
+    scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py: 1
+    scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py: 1
+    docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml: 1
+    config/trading_day_cycle_map.yaml: 1
+    scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py: 1
+    scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py: 1
+    docs/_working/map_build/fig13_daycycle/00_skeleton.md: 1
+    config/trading_decision_map.yaml: 1
+    src/zephyr/plan_engine/daily_loop_master_switch.py: 1
+    src/zephyr/data/trading_calendar.py: 1
+    src/zephyr/data/config/resource_profile_registry.yaml: 0
+    config/dev_delivery_map.yaml: 1
+    scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py: 1
+    scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py: 1
+    docs/_working/map_build/fig11_delivery/00_skeleton.md: 1
+    docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml: 1
+    docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: 1
+    config/flags.yaml: 1
   dead_trigger: false
 - gate_id: NO-BARE-SQL
   enabled: true
@@ -683,10 +761,10 @@ rows:
   - schema
   - ddl
   trigger_mode: conditional
-  head_hit_files: 384
+  head_hit_files: 367
   per_pattern_hits:
-    schema: 347
-    ddl: 37
+    schema: 332
+    ddl: 35
   dead_trigger: false
 - gate_id: COMPLEXITY-GUARD
   enabled: true
@@ -697,10 +775,10 @@ rows:
   - schemas/*.py
   - sitecustomize.py
   trigger_mode: conditional
-  head_hit_files: 5194
+  head_hit_files: 5245
   per_pattern_hits:
-    src/*.py: 3795
-    scripts/*.py: 1162
+    src/*.py: 3807
+    scripts/*.py: 1201
     schemas/*.py: 236
     sitecustomize.py: 1
   dead_trigger: false
@@ -726,9 +804,9 @@ rows:
   files_trigger:
   - src/zephyr/gov_enforcement/commit_gates/
   trigger_mode: conditional
-  head_hit_files: 125
+  head_hit_files: 130
   per_pattern_hits:
-    src/zephyr/gov_enforcement/commit_gates/: 125
+    src/zephyr/gov_enforcement/commit_gates/: 130
   dead_trigger: false
 - gate_id: TEST-SOURCE-CONSISTENCY
   enabled: true
@@ -752,9 +830,9 @@ rows:
   files_trigger:
   - '*.py'
   trigger_mode: conditional
-  head_hit_files: 9159
+  head_hit_files: 6609
   per_pattern_hits:
-    '*.py': 9159
+    '*.py': 6609
   dead_trigger: false
 - gate_id: BLUEPRINT-HEADER
   enabled: false
@@ -787,10 +865,10 @@ rows:
   - src/
   - scripts/
   trigger_mode: conditional
-  head_hit_files: 5467
+  head_hit_files: 5473
   per_pattern_hits:
-    src/: 4068
-    scripts/: 1399
+    src/: 4080
+    scripts/: 1393
   dead_trigger: false
 - gate_id: RECONCILER-HEALTH
   enabled: true
@@ -806,9 +884,9 @@ rows:
   files_trigger:
   - scripts/*.py
   trigger_mode: conditional
-  head_hit_files: 1162
+  head_hit_files: 1201
   per_pattern_hits:
-    scripts/*.py: 1162
+    scripts/*.py: 1201
   dead_trigger: false
 - gate_id: GIT-CALL-BUDGET
   enabled: true
@@ -908,9 +986,9 @@ rows:
   files_trigger:
   - schema
   trigger_mode: conditional
-  head_hit_files: 347
+  head_hit_files: 332
   per_pattern_hits:
-    schema: 347
+    schema: 332
   dead_trigger: false
 - gate_id: ASYNCIO-RUN-IN-CONTEXT
   enabled: true
@@ -918,9 +996,9 @@ rows:
   files_trigger:
   - src/zephyr/*.py
   trigger_mode: conditional
-  head_hit_files: 3795
+  head_hit_files: 3807
   per_pattern_hits:
-    src/zephyr/*.py: 3795
+    src/zephyr/*.py: 3807
   dead_trigger: false
 - gate_id: MUTABLE-CONST-WITHOUT-FINAL
   enabled: true
@@ -1011,12 +1089,12 @@ rows:
   - scripts/governance/
   - scripts/backup/
   trigger_mode: conditional
-  head_hit_files: 1384
+  head_hit_files: 1413
   per_pattern_hits:
-    src/zephyr/governance/: 336
-    src/zephyr/gov_enforcement/: 300
-    scripts/governance/: 729
-    scripts/backup/: 19
+    src/zephyr/governance/: 339
+    src/zephyr/gov_enforcement/: 305
+    scripts/governance/: 754
+    scripts/backup/: 15
   dead_trigger: false
 - gate_id: REGISTRY-CODE-ANCHOR
   enabled: true
@@ -1081,10 +1159,10 @@ rows:
   - library
   - catalogs/
   trigger_mode: conditional
-  head_hit_files: 223
+  head_hit_files: 225
   per_pattern_hits:
-    library: 138
-    catalogs/: 86
+    library: 139
+    catalogs/: 87
   dead_trigger: false
 - gate_id: BLOOD-FLESH
   enabled: true
@@ -1094,10 +1172,10 @@ rows:
   - scripts/*.py
   - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   trigger_mode: conditional
-  head_hit_files: 4958
+  head_hit_files: 5009
   per_pattern_hits:
-    src/zephyr/*.py: 3795
-    scripts/*.py: 1162
+    src/zephyr/*.py: 3807
+    scripts/*.py: 1201
     docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: 1
   dead_trigger: false
 - gate_id: FRONTEND-TRUTH-SOURCE
@@ -1155,10 +1233,10 @@ rows:
   - tasks.yaml
   - config/
   trigger_mode: conditional
-  head_hit_files: 131
+  head_hit_files: 124
   per_pattern_hits:
     tasks.yaml: 1
-    config/: 131
+    config/: 124
   dead_trigger: false
 - gate_id: REAL-KEY-REFERENCE-SCAN
   enabled: true
@@ -1193,6 +1271,14 @@ rows:
   per_pattern_hits: {}
   dead_trigger: false
 - gate_id: FMS-HYGIENE
+  enabled: true
+  loaded_in_process: true
+  files_trigger: []
+  trigger_mode: always-run
+  head_hit_files: 0
+  per_pattern_hits: {}
+  dead_trigger: false
+- gate_id: TAKEOVER-PENDING
   enabled: true
   loaded_in_process: true
   files_trigger: []

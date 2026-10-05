@@ -299,7 +299,7 @@ DOMAIN_REGISTRY_PATH = (
 )
 
 # 口径元组：(kind, key, counting_rule 文本)
-# kind ∈ yaml_list（顶层数组条目数）/ yaml_field（顶层整数字段值）/
+# kind ∈ yaml_list（顶层数组条目数）/ yaml_field（顶层整数或 '.' 分段嵌套整数字段值）/
 #         yaml_sum（多点位求和，key 用 + 连接，段内 . 寻址）/
 #         yaml_dict_len（顶层 dict 键数）/ glob（目录内文件数，key=pattern）
 ENTRY_SPECS: dict[str, tuple[str, str, str]] = {
@@ -394,6 +394,14 @@ ENTRY_SPECS: dict[str, tuple[str, str, str]] = {
     # 2026-10-04 上户口批（st-sG-mapwrite-20261004）：图12 入 ROOR 补口径（图11 走 ENTRY_MANUAL——
     # node_type=stage 子字段过滤超 yaml_list/yaml_field 口径面，数字真源对账=生成器 counts.by_node_type.stage）
     "REG-MAP-DSCM-001": ("yaml_list", "nodes", "nodes 条目数（图12 43 节点满配，F2 血肉批后）"),
+    # 2026-10-05 上户口批（st-tclose-c1close-20261005）：1A.4 表② RPT 入 ROOR 补口径——
+    # 数字真源=RPT summary.rules_total（生成器现算=规则册 trae_*.yaml 文件数）；yaml_field
+    # 本批补 '.' 分段下钻（嵌套整数字段此前无口径可用）
+    "REG-RULE-FACE-RECONCILIATION-001": (
+        "yaml_field",
+        "summary.rules_total",
+        "summary.rules_total 字段值（生成器现算=规则册 trae_*.yaml 文件数）",
+    ),
 }
 
 # 不可自动数的表（原因显式登记；改口径需同步本表）
@@ -450,6 +458,17 @@ def _actual_entry_count(spec: tuple[str, str, str], physical_path: str) -> int |
         value = data.get(key)
         return len(value) if isinstance(value, list) else None
     if kind == "yaml_field":
+        if "." in key:
+            # 2026-10-05（st-tclose-c1close-20261005）补点寻址：嵌套整数字段（如
+            # RPT summary.rules_total）此前无口径可用——yaml_field 仅顶层的、
+            # yaml_sum 仅 list 求和；'.' 分段下钻语义与 yaml_sum 对齐。无 '.' 键行为不变。
+            current: Any = data
+            for segment in key.split("."):
+                if isinstance(current, dict):
+                    current = current.get(segment)
+                else:
+                    return None
+            return current if isinstance(current, int) else None
         return data.get(key) if isinstance(data.get(key), int) else None
     if kind == "yaml_dict_len":
         value = data.get(key)
