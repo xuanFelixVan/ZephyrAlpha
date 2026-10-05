@@ -674,6 +674,10 @@ _GOVERNANCE_EXEMPT = frozenset(
         # fms_deadref_baseline=HYGIENE-DEADREF-NEW 棘轮基线；regen_clean_baseline=regen 清零基线
         "fms_deadref_baseline.yaml",
         "regen_clean_baseline.yaml",
+        # 2026-10-05 总筹裁（四报验收批）：两治理类新册豁免登记（测试自处方二选一之豁免腿）
+        # schema_migrations=10-02 落地的 schema 迁移台账；casebook_registry=病历挂载战役的病历册登记册
+        "schema_migrations.yaml",
+        "casebook_registry.yaml",
         # 2026-09-16 僵尸处置批（裁定#258/#259）：六库退役归档至 catalogs/_archive/，豁免清单同步剪除
         # （ai_session_registry/knowledge_article_registry/frontier_llm_benchmark_ranking/business_streams_registry/
         # declarative_contract_tracker_registry/interface_contract_registry）——归档目录不在 glob("*.yaml") 扫描面，
