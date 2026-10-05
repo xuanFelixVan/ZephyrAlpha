@@ -1,0 +1,176 @@
+# 全景总图（图之图）真源 — panorama_master_map（schema 0.1）
+# 定位：system_charter §8.3 AI 冷启动导航序的机生载体——本图是"图的索引"，不是第 16 张家族图。
+# 节点集对账基准=docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md §3
+# （双闭：§3 在册图集与 nodes 集多一张少一张都红，校验器=生成器内置）。
+# 渲染物=docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama_master_map.md（机生，禁手改后不回生成；config/ 扩展名契约只许 json/yaml/yml 故按图族范式落架构图目录）；语义边首批由总包令
+# st-mastermap-20261004 定稿（可增不可凭空造，每边必带 basis）。
+schema_version: '0.1'
+map_id: panorama_master_map
+name_zh: 全景总图（图之图）
+ssot_note_zh: >-
+  nodes=alignment_checklist §3 全景图家族全集（13 正式+2 待转正），每节点 file 指向该图
+  §3 在册真源或其对齐工具（PG 真源图 file=对齐工具脚本，YAML 真源图 file=图 yaml 本体）；
+  节点 map_id 与 yaml 真源 frontmatter map_id 逐字一致（TDMAP-001/DSCMAP-012/GOMAP-001
+  为册面实名）。横纵轴判据=宪章 §8.1 两轴分类+battle_map 裁定#483。图16（治理立法）未立，
+  「治理立法→GOMAP10」条件边暂不入册，待该图裁定并入后随批增补。
+nodes:
+- map_id: depgraph
+  name_zh: 依赖全景图
+  axis: horizontal
+  file: scripts/governance/apply_depgraph.py
+  one_line_zh: 图1 横轴·模块依赖结构全景——文件级依赖唯一真源（PG dep_ 表组）
+- map_id: dataflowgraph
+  name_zh: 数据流全景图
+  axis: horizontal
+  file: scripts/governance/sync_panorama_module.py
+  one_line_zh: 图2 横轴·数据流全景——数据流 job 与代码实际 dataflow 一致（PG 3 表）
+- map_id: decisiongraph
+  name_zh: 决策流全景图
+  axis: vertical
+  file: scripts/governance/sync_panorama_module.py
+  one_line_zh: 图3 纵轴·决策流全景（半下岗：保留 schema 与对齐通道，不扩容）
+- map_id: blueprint
+  name_zh: 模块蓝图
+  axis: horizontal
+  file: docs/03_modules/_master_blueprint/blueprint.md
+  one_line_zh: 图4 横轴·模块蓝图族——frontmatter 4 字段与 depgraph 一致（总锚=主蓝图）
+- map_id: battle_map
+  name_zh: 作战地图
+  axis: horizontal
+  file: scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py
+  one_line_zh: 图5 横轴·作战地图——生命周期格子覆盖切片，step_id 对齐（裁定#483 定横）
+- map_id: frontend_map
+  name_zh: 前端全景图
+  axis: horizontal
+  file: src/zephyr/frontend/dashboard/web/frontend_map.yaml
+  one_line_zh: 图6 横轴·前端全景——302 功能点挂 backend_ref 到模块注册表
+- map_id: TDMAP-001
+  name_zh: 交易决策地图
+  axis: vertical
+  file: config/trading_decision_map.yaml
+  one_line_zh: 图7 纵轴·交易决策地图——交易决策流程唯一地图（TDM-* 节点）
+- map_id: industry_chain_map
+  name_zh: 产业链全景图
+  axis: horizontal
+  file: config/chainmap_cluster_names.yaml
+  one_line_zh: 图8 横轴·产业链全景——chain_id 轴+S1-S21 合格线引擎体检
+- map_id: strategy_production_map
+  name_zh: 策略生产全景图
+  axis: vertical
+  file: config/strategy_production_map.yaml
+  one_line_zh: 图9 纵轴·策略工厂——E0-E9 供给端生产流程（策略从原料到出厂）
+- map_id: GOMAP-001
+  name_zh: 治理运行地图
+  axis: vertical
+  file: config/governance_operations_map.yaml
+  one_line_zh: 图10 纵轴·治理运行地图——治理运行时流水线（机生层+人工语义层）
+- map_id: dev_delivery_map
+  name_zh: 交付流水线全景图
+  axis: vertical
+  file: config/dev_delivery_map.yaml
+  one_line_zh: 图11 纵轴·交付流水线——28 环节施工变更唯一入口（待转正）
+- map_id: DSCMAP-012
+  name_zh: 数据供给链图
+  axis: vertical
+  file: config/data_supply_chain_map.yaml
+  one_line_zh: 图12 纵轴·数据供给链——外部源→采集→入库→衍生→冷备→对账修复双层图
+- map_id: trading_day_cycle_map
+  name_zh: 交易日循环全景图
+  axis: vertical
+  file: config/trading_day_cycle_map.yaml
+  one_line_zh: 图13 纵轴·交易日循环——交易决策流的交易日时序投影（待转正）
+- map_id: construction_workflow_map
+  name_zh: AI 施工升级流图
+  axis: vertical
+  file: config/construction_workflow_map.yaml
+  one_line_zh: 图14 纵轴·AI 施工升级流——任务级 17 环节闭环（D14-* 轴）
+- map_id: strategy_card_lifecycle_map
+  name_zh: 策略卡生命周期图
+  axis: vertical
+  file: config/strategy_card_lifecycle_map.yaml
+  one_line_zh: 图15 纵轴·策略卡生命周期——13 态+17 迁移+13 禁边状态机
+edges:
+- from: DSCMAP-012
+  to: TDMAP-001
+  relation_zh: 数据供给（供料）
+  basis: §3 图12 行——外部源→采集→入库→衍生为交易决策供料（总包令 st-mastermap-20261004 首批语义边）
+- from: DSCMAP-012
+  to: strategy_production_map
+  relation_zh: 数据供给（供料）
+  basis: §3 图12/图9 行——供给链为策略工厂 E0-E9 供原料（总包令首批语义边）
+- from: strategy_production_map
+  to: TDMAP-001
+  relation_zh: 策略上岗
+  basis: §3 图9/图7 行——工厂出厂策略挂载进交易决策地图（总包令首批语义边）
+- from: strategy_production_map
+  to: strategy_card_lifecycle_map
+  relation_zh: 卡生命周期
+  basis: §3 图15 行——策略卡 13 态+17 迁移承接工厂产品形态（总包令首批语义边）
+- from: TDMAP-001
+  to: trading_day_cycle_map
+  relation_zh: 决策时序投影
+  basis: §3 图13 行——交易日循环全景=交易决策流的时序投影（总包令首批语义边）
+- from: dev_delivery_map
+  to: depgraph
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门——一切施工变更经交付流水线入 HEAD（总包令首批语义边"图11交付→全部config图"机生展开）
+- from: dev_delivery_map
+  to: dataflowgraph
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: decisiongraph
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: blueprint
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: battle_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: frontend_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: TDMAP-001
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: industry_chain_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: strategy_production_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: GOMAP-001
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: DSCMAP-012
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: trading_day_cycle_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: construction_workflow_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: dev_delivery_map
+  to: strategy_card_lifecycle_map
+  relation_zh: 施工变更唯一入口
+  basis: 图11 laws 正门唯一/队列是正门（总包令首批语义边机生展开）
+- from: construction_workflow_map
+  to: dev_delivery_map
+  relation_zh: 施工流终点接交付（Step10 交界）
+  basis: §3 图14 行+总包令——施工流 17 环节终点与交付流水线 Step10 交界（总包令首批语义边）
+- from: GOMAP-001
+  to: dev_delivery_map
+  relation_zh: 治理运行时守护交付
+  basis: §3 图10 行——治理运行地图守护提交链与交付面（总包令首批语义边）
