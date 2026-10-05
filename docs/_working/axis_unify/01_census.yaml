@@ -1,0 +1,115 @@
+meta:
+  title: 轴归一手术·F0 三轴盘点（只读）
+  session: st-axisunify-flash-20261005
+  date: '2026-10-05'
+  method: BattleMapReader 只读 + yaml.safe_load；零 PG 写入、零 YAML 写入
+axis_bm:
+  source: PG battle_map_steps/battle_map_anchors/battle_map_edges
+  step_total: 341
+  flow_stage_dist:
+    backtest_validation: 53
+    buy_flow: 27
+    execution: 6
+    model_training: 14
+    position_management: 24
+    reconciliation: 18
+    research_incubation: 34
+    risk_control: 50
+    sell_flow: 14
+    simulation_validation: 8
+    stock_selection: 93
+  anchors_total: 588
+  edges_total: 114
+  tdm_node_id_filled: 11
+  tdm_node_id_filled_ids:
+  - BM-BUY-02-D
+  - BM-BUY-04
+  - BM-RC-10
+  - BM-SEL-03
+  - BM-SEL-08
+  - BM-SEL-09
+  - BM-SELL-02
+  - BM-SELL-03
+  - BM-SELL-04-A
+  - BM-SELL-04-B
+  - BM-SELL-09
+  batch1_provenance: c7d4cf51075 轴归一手术批1（机械段）：tdm_node_id 列+直映11对回填+align 第6腿 ghost_tdm
+axis_tdm:
+  source: config/trading_decision_map.yaml
+  node_total: 185
+  family_dist:
+    TDM-C: 4
+    TDM-E: 128
+    TDM-F: 16
+    TDM-P: 18
+    TDM-X: 19
+  layer_dist:
+    C1: 4
+    C2: 5
+    C3: 6
+    CFLOW: 1
+    L0: 5
+    L1: 10
+    L2: 30
+    L3: 26
+    L4: 16
+    L9: 44
+    LROOT: 1
+    P1: 7
+    P2: 5
+    P3: 5
+    PFLOW: 1
+    S1: 7
+    S2: 7
+    X1: 4
+    XFLOW: 1
+axis_factory:
+  source: config/strategy_production_map.yaml
+  node_total: 341
+  type_dist:
+    stage: 10
+    lane: 7
+    mechanism: 324
+  stage_dist:
+    E0: 18
+    E1: 66
+    E2: 8
+    E3: 80
+    E4: 82
+    E5: 5
+    E6: 15
+    E7: 23
+    E8: 35
+    E9: 9
+  pairing_surface: F1 配对面=10 个 stage 节点（FAC-E0..E9）；7 lane+324 mechanism 节点不在本手术配对面
+cross_cutting:
+  source: module_translation_registry.yaml §battle_map_cross_cutting
+  category_total: 17
+  categories:
+  - benchmark_mapping
+  - conflict_matrix
+  - distribution_awareness
+  - emergency_degradation
+  - event_sourcing_config_center
+  - factor_direct_fusion
+  - factor_governance
+  - four_modes
+  - four_tracks
+  - funnel
+  - hard_boundary_constraints
+  - intraday_events
+  - model_quantization
+  - shared_signal_injection
+  - signal_lifecycle
+  - timeline
+  - voting_first_multi_agent
+count_verification:
+- BM 341 = 工单 341 ✓（裁定#483 散文记 340，实测 341，以本盘点为准）
+- TDM 185 vs 工单 184：差 1——批1 复核时 182，D123 批（e5c0844f5e）2026-10-05 增 TDM-E-L0-04 后现值 185；工单 184 系概数，以现值枚举为准
+- 工厂 341 vs 工单『27 段』：27 系旧计数（10 stage+7 lane=17 第一层，机制节点后随裁定#484/#485 增铸）；本手术配对面取 10 stage，机制节点不入配对面
+- 批1 直映 11 对核对：PG tdm_node_id 非空 11 条，与提案沿用值一致
+tdm_mount_lane_check:
+  config_trading_decision_map_yaml_active_claim: 无活跃 claim（lock_files status 8 锁中无此文件；st-tdm-mountgate-20261005 心跳 exited 2026-10-05T04:13Z=idle timeout）
+  pending_staged_changes: config/trading_decision_map.yaml 处于 staged 未落袋态（他会话 tdm chief/tag 车道在途，q 传送带消化中）
+  this_session_write: 本会话对 TDM/工厂 YAML 零写入（F0-F2 只读）；F3 写入批待 F2 放行后与 tdm_mount 车道同窗协调
+  double_write_risk: 无——本会话不写 trading_decision_map.yaml，与在途车道无同文件写冲突
