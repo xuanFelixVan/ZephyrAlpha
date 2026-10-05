@@ -62617,4 +62617,34 @@ creation_tokens:
   capability: map9_f6_minor_surgery
   created_by: st-map9-f6-20261005
   merge_evaluation: "跨域不同对象不并：图9 F6 停手报告（前置门不可满足+四件弹药处方交付），无替代无退役对象，task_bound"
+- file: scripts/backtest/cost_model.py
+  token: wave2-card-quantize-cost-model-20261005
+  created_by: st-datasop-20260930
+  capability: wave2_card_quantize
+  merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
+- file: scripts/backtest/translated/c4_370d098d7c54_vrev001_warm_oversold.py
+  token: wave2-card-quantize-c4-370d098d7c54-vrev001-warm-oversold-20261005
+  created_by: st-datasop-20260930
+  capability: wave2_card_quantize
+  merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
+- file: scripts/backtest/translated/c4_6986c63122a5_momtrend002_ma_cross.py
+  token: wave2-card-quantize-c4-6986c63122a5-momtrend002-ma-cross-20261005
+  created_by: st-datasop-20260930
+  capability: wave2_card_quantize
+  merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
+- file: scripts/backtest/translated/c4_6f8aa44abe0e_vrev019_vwap_band.py
+  token: wave2-card-quantize-c4-6f8aa44abe0e-vrev019-vwap-band-20261005
+  created_by: st-datasop-20260930
+  capability: wave2_card_quantize
+  merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
+- file: scripts/backtest/translated/c4_7865eeda0157_momtrend019_first_breakout.py
+  token: wave2-card-quantize-c4-7865eeda0157-momtrend019-first-breakout-20261005
+  created_by: st-datasop-20260930
+  capability: wave2_card_quantize
+  merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
+- file: scripts/backtest/translated/c4_cd3885d23838_vrev002_no_bottom_fish.py
+  token: wave2-card-quantize-c4-cd3885d23838-vrev002-no-bottom-fish-20261005
+  created_by: st-datasop-20260930
+  capability: wave2_card_quantize
+  merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
 di_seam_exemptions: []
