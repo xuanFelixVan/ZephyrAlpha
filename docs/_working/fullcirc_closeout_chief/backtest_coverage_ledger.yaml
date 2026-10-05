@@ -1,0 +1,388 @@
+# 回测覆盖总册（机生·禁手填）——生成器=scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py
+# 三真源：H9 挖矿（t3_fullflow_exam_mining.md）+ F6R 自动化表（90_execution_log.md §H11 发车）+ 考场证据（data/strategy_intake + trial_ledger_registry）。
+# 边界：只建账本不建新全景图（图形态按 #486 立项卡呈批另案）；图9 挂载预留待 vm12 协调，本册零图面写入；
+#       T2 在跑考场只读摘要不判死；缺口正文留在 H9 挖矿文档（INV-1 指针制），本册只存引用与计数。
+# 再生成：python scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py（--check 验漂移；手改必被下一轮再生成抹除）。
+schema_version: 1.0.0
+ttl: task_bound
+doc_type: coverage_ledger
+title: 回测覆盖总册（机生派生·禁手填）
+status: active
+version: 0.1.0
+generated_at: '2026-10-06T02:34:46+08:00'
+as_of: '2026-10-06'
+generator: scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py
+casebook:
+  casebook_id: CASEBOOK-009
+  name_zh: 回测覆盖总册
+  registration_note: 册号授自 Owner 2026-10-05 H11 发车裁定（90_execution_log.md 在案）；casebook_registry.yaml 物理入册待上户口批次补录（原在途
+    staged 版自主区暂存面消失，八册 001-008 内容以 census 双证留存，本批不代建防私改）
+  library_entry: fs_collector 白名单不含 docs/_working——图书馆反查经 casebook_registry.yaml（catalogs/ 在扫）
+sources:
+  h9_mining: docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md
+  f6r_automation: docs/_working/fullcirc_closeout_chief/90_execution_log.md（H11 发车行；F6R 行值=Owner 对话转写）
+  exam_evidence: data/strategy_intake
+  n_trial_ledger: docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml
+  grid_schema: config/position_recipe_grid_schema.yaml
+  prereg: config/search_space_prereg.yaml
+  default_context_source: scripts/backtest/factory_grid_executor.py（DEFAULT_CONTEXT 机读）
+counts:
+  tdm_nodes:
+    total: 182
+    a_tested: 16
+    b_interface_not_opened: 26
+    c_gap: 118
+    d_non_backtest: 22
+  gap_work:
+    S: 5
+    M: 8
+    L: 5
+  pyramid_layers: 7
+  factory_dims_total: 13
+  factory_dims_phase1_active: 9
+  factory_dims_gap: 12
+pyramid:
+- layer: data_validation
+  layer_zh: 数据验证
+  automation: full
+  automation_evidence: F6R：数据验证✅自动（Owner 2026-10-05 对话转写，90_execution_log.md 在案）
+  gate: 考卷载荷闸（close/index/breadth/etf/valuation/fin/ST/成分/limit 白名单）+ S3 知识生效日前视哨兵
+  covered_tests:
+  - ref: TDM-E-L9-A01 源线·日线行情
+    kind: tdm_node_class_A
+    evidence: H9 §1.9（load_px←日线行情宽表，表名经 TableRegistry 真源）
+  - ref: 知识生效日哨兵（S3）
+    kind: sentinel
+    evidence: H9 §4.7（_c4_engine 正向项，PIT）
+  uncovered_gaps:
+  - gap_ref: H9:L3
+    desc: L9 另类数据源线 30 条无考卷消费（逐条立项替代声明制）
+  - gap_ref: H9:L9-A15
+    desc: 加密永续/费率源线（crypto 域零回测实现）
+- layer: factor_unit_test
+  layer_zh: 因子单测
+  automation: full
+  automation_evidence: F6R：工厂生产✅自动（一问一考考试链 TDM-E-L9-E1=A 类在考）
+  gate: validation runner（src/zephyr/trading/validation/runner.py + layered/strategy_validation_pipeline）
+  covered_tests:
+  - ref: TDM-E-L9-E1 验证·一问一考考试链
+    kind: tdm_node_class_A
+    evidence: H9 §1.9
+  - ref: TDM-E-L9-D1 决策假设·因子组合挖掘
+    kind: tdm_node_class_A
+    evidence: H9 §1.9（mcts_expression_search）
+  - ref: f06_e4_wfa_exam（E4 三阶段门控 8 折滚动）
+    kind: exam_script
+    evidence: H9 §1.8 TDM-F-C3-04
+  uncovered_gaps:
+  - gap_ref: H9:C
+    desc: L3-02 九阶段选票主链基本面漏斗（C 类）；fin 载荷在册不消费
+  - gap_ref: H9:M8
+    desc: L3-03 双池评分最简版（M 级补写）
+- layer: strategy_grid
+  layer_zh: 策略网格
+  automation: semi
+  automation_evidence: F6R：考试准入闸✅自动＋发车半自动（E0 问闸/GPU 独占自动，发车须人批）
+  gate: E0 问闸＋GPU 独占（vram.concurrency=1）＋exam_cost_gate 全档（cost_gate_in_every_tier=true）
+  covered_tests:
+  - ref: grid_20260915-052012
+    kind: grid_t0_calibration
+    points: 200
+    status: completed
+  - ref: grid_20260915-052749
+    kind: grid_subspace_batch
+    points: 1999
+    status: pending_verdict(in_flight_or_abandoned)
+  - ref: grid_20260915-060812
+    kind: grid_subspace_batch
+    points: 1999
+    status: pending_verdict(in_flight_or_abandoned)
+  - ref: grid_20260916-123551
+    kind: grid_subspace_batch
+    points: 10080
+    status: pending_verdict(in_flight_or_abandoned)
+  - ref: grid_20260916-123552
+    kind: grid_subspace_batch
+    points: 5990
+    status: pending_verdict(in_flight_or_abandoned)
+  - ref: grid_20260916-233634
+    kind: grid_subspace_batch
+    points: 8
+    status: pending_verdict(in_flight_or_abandoned)
+  - ref: grid_20260924-080309
+    kind: grid_t0_calibration
+    points: 200
+    status: completed
+  - ref: grid_20260925-232032
+    kind: grid_t0_calibration
+    points: 200
+    status: completed
+  - ref: grid_20260926-021530
+    kind: grid_t0_calibration
+    points: 200
+    status: completed
+  - ref: grid_20260926-024947
+    kind: grid_t1_coarse
+    points: 3700
+    status: verdict:fail
+  - ref: grid_20261005-215457
+    kind: grid_subspace_batch
+    points: 24
+    status: pending_verdict(in_flight_or_abandoned)
+  uncovered_gaps:
+  - gap_ref: H9:B
+    desc: B 类 26 节点有接口未开考（J/F/K 维折叠，DEFAULT_CONTEXT phase=1）
+- layer: tdm_module_replay
+  layer_zh: TDM模块回放
+  automation: manual
+  automation_evidence: F6R 无对应自动段（H9 §0：考卷=T0/T1/T2 一次性批次，无模块回放机生编排）
+  gate: none
+  covered_tests:
+  - ref: H9 §0 A 类 16 节点（宇宙/剔除/因子合成/顺位/可交易性/定尺寸/调仓/成本档）
+    kind: tdm_node_class_A
+    evidence: t3_fullflow_exam_mining.md §0/§1
+  - ref: battle_map_steps 11/341 条 tdm_node_id 映射
+    kind: mapping_snapshot
+    evidence: H9 §1.11（8/11 落考卷零实现带=讽刺发现）
+  uncovered_gaps:
+  - gap_ref: H9:C
+    desc: C 类 118 节点考卷引擎零实现（X 离场/P 持仓/C 组合/L2 板块四大环节带）
+  - gap_ref: H9:B
+    desc: B 类 26 节点接口占位未开考
+- layer: stage_integration
+  layer_zh: 环节集成
+  automation: manual
+  automation_evidence: T3a/T3b 未开考（H9 §3：T3a 开闸考 83 分钟可容；T3b 须先重标定 per_point_seconds）
+  gate: prereg 冻结＋空间变更 Owner 裁定门（#ARCH-366 先例）
+  covered_tests: []
+  uncovered_gaps:
+  - gap_ref: H9:T3a
+    desc: T3a 开闸考=S 级 5 件接线（S1-S5）待施工（H10 车道在途）
+  - gap_ref: H9:T3b
+    desc: T3b 加离场考=M 级 8 件模块补写（M1-M8），前置=耗时口径强制重标定
+- layer: prereg_acceptance
+  layer_zh: 预注册验收
+  automation: semi
+  automation_evidence: F6R：考试准入闸✅自动＋成绩单入总册半自动＋DSR 接线小活（未完）
+  gate: search_space_prereg v2 fail-closed 钳制（_apply_prereg_budget；改空间=作废重开）
+  covered_tests:
+  - ref: prereg v2 冻结（裁定#413 签发，frozen_at 2026-09-24）
+    kind: prereg_freeze
+    evidence: config/search_space_prereg.yaml
+  - ref: T1→T2 交接验收判据机读（verdict 结论以 run 状态字段为准）
+    kind: handover_verdict
+    evidence: t1_t2_handover.py（run 见 status）
+    run: grid_20260926-024947
+    status: fail
+  - ref: n_trial_ledger 试次账本接线（E7 dsr_denominator）
+    kind: ledger_wiring
+    evidence: e7_defense.ledger_required=true
+  uncovered_gaps:
+  - gap_ref: F6R:DSR
+    desc: DSR 接线小活（F6R 行=小活未完）
+  - gap_ref: H9:T3
+    desc: T3 budget 键（t3_points/t3_per_point_seconds_measured）待裁定冻结（H9 §3.3）
+- layer: integrated
+  layer_zh: 整装
+  automation: semi
+  automation_evidence: F6R：晋级池半自动＋实盘开关🚫人工（实盘开关自动化=forbidden）
+  gate: 晋级池 c5 条件门；实盘开关=Owner 人工门位（自动化禁用，forbidden）
+  covered_tests:
+  - ref: T1 冠军配方 36388958b3d8 送晋级池（样本外+前向验证工单）
+    kind: promotion_ticket
+    evidence: 90_execution_log.md §10-05 深夜（c5 条件 GREEN）
+  uncovered_gaps:
+  - gap_ref: H9:T3c
+    desc: T3c 整装考=多策略组合层+订单语义转 sim 平面（L 级 L1/L2/L4）
+  - gap_ref: H9:L5
+    desc: crypto 域独立子系统
+  - gap_ref: F6R:LIVE
+    desc: 实盘开关🚫人工（设计边界：自动化禁用非缺口）
+factory_dims:
+- dim: A1_factor_normalize
+  desc: 因子标准化
+  values_total: 6
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - industry_neutral
+  - rank
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 2/6 值（['industry_neutral', 'rank']）；未入子空间值未考
+- dim: A2_combine_weight
+  desc: 多因子合成权重
+  values_total: 8
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - halflife60
+  - ic_ir
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 2/8 值（['halflife60', 'ic_ir']）；未入子空间值未考
+- dim: B_top_n
+  desc: 选股截面 Top-N
+  values_total: 5
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - top100
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 1/5 值（['top100']）；未入子空间值未考
+- dim: C_sizing
+  desc: 仓位定尺寸
+  values_total: 7
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - equal_weight
+  - signal_strength
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 2/7 值（['equal_weight', 'signal_strength']）；未入子空间值未考
+- dim: D1_rebalance_freq
+  desc: 调仓频率
+  values_total: 4
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - biweekly
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 1/4 值（['biweekly']）；未入子空间值未考
+- dim: D2_rebalance_trigger
+  desc: 调仓触发
+  values_total: 2
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - periodic
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 1/2 值（['periodic']）；未入子空间值未考
+- dim: E_single_cap
+  desc: 单票上限
+  values_total: 3
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - cap10
+  - cap20
+  - cap5
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: null
+- dim: F_merge_policy
+  desc: 多策略合并
+  values_total: 4
+  phase1_active: false
+  t1_examined: false
+  t1_ref: null
+  t2_subspace: []
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: phase1 折叠（active_if=len(strategy_pool) > 1）→B 类有接口未开考
+- dim: G_universe
+  desc: 标的池
+  values_total: 3
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - hs300
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 1/3 值（['hs300']）；未入子空间值未考
+- dim: H_turnover_lambda
+  desc: 换手惩罚 λ
+  values_total: 3
+  phase1_active: true
+  t1_examined: true
+  t1_ref: grid_20260926-024947
+  t2_subspace:
+  - lambda_5bp
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: T2 子空间含 1/3 值（['lambda_5bp']）；未入子空间值未考
+- dim: I_cost_tier
+  desc: 成本假设档（鲁棒性重跑层——不进乘法网格，恒折叠；执行器对幸存者单独重跑）
+  values_total: 3
+  phase1_active: false
+  t1_examined: false
+  t1_ref: null
+  t2_subspace: []
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: 恒折叠（设计边界非缺口）：成本假设档（鲁棒性重跑层——不进乘法网格，恒折叠；执行器对幸存者单独重跑）
+- dim: J_regime_switch
+  desc: regime 开关（Owner 已同意二期）
+  values_total: 2
+  phase1_active: false
+  t1_examined: false
+  t1_ref: null
+  t2_subspace: []
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: phase1 折叠（active_if=phase >= 2）→B 类有接口未开考
+- dim: K_capital_ramp
+  desc: 建仓节奏/资金爬坡（需 harness 支持路径依赖，蓝图 §九-2）
+  values_total: 4
+  phase1_active: false
+  t1_examined: false
+  t1_ref: null
+  t2_subspace: []
+  t2_subspace_ref: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  gap: phase1 折叠（active_if=capital_ramp_enabled）→B 类有接口未开考
+trial_summary:
+  n_trial_ledger:
+    registry: docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml
+    counting_rule: 计数边界=可审计机器回测次数（2026-09-15 裁定）。count = screen_runs.total_trials + sum(batch_records.n_trials)。manual_population
+      只入 known_floor 披露，不入 count。
+    screen_runs_total_trials: 269
+    screen_runs_total_runs: 25
+    screen_runs_last_synced_at: '2026-09-15T05:43:43+00:00'
+    batch_records_count: 8
+    batch_records_n_trials_sum: 20363
+    manual_population: 0
+    manual_note: 人工历史试错不可审计，仅 Owner 登记时累加；当前无登记=0（诚实缺省）
+    cumulative_count: 20632
+  dsr_link: e7_defense.dsr_denominator=trial_ledger cumulative_trials（N 浮动门槛）
+  grid_census:
+    intake_root: data/strategy_intake
+    runs_scanned: 22
+    total_evaluated: 24670
+    by_stage:
+      smoke:
+      - grid_20260915-051517
+      - grid_20260915-051610
+      - grid_20260916-012207
+      - grid_20260917-000940
+      - grid_20260917-001854
+      - grid_20260917-003812
+      - grid_20260923-063545
+      - grid_20260924-102243
+      - grid_20261001-051901
+      subspace_batch:
+      - grid_20260915-052749
+      - grid_20260915-060812
+      - grid_20260916-123551
+      - grid_20260916-123552
+      - grid_20260916-233634
+      - grid_20260929-040003
+      - grid_20260929-040141
+      - grid_20261005-215457
+      t0_calibration:
+      - grid_20260915-052012
+      - grid_20260924-080309
+      - grid_20260925-232032
+      - grid_20260926-021530
+      t1_coarse:
+      - grid_20260926-024947
+    classification_rule: mode=smoke→smoke；n_sampled==200→t0_calibration；n_sampled==3700 或有 handover_verdict→t1_coarse；其余
+      batch_b_subspace→subspace_batch；T2 主考=n_sampled==expected_points(24) 时在 run 备注标 t2_candidate
+    t2_main_candidates:
+    - grid_20261005-215457
+    t2_main_note: 在跑/待判定考场（只读摘要，完结以考场 verdict 为准，本账本不判死）
+  mix_rule: 累计口径（registry）与普查口径（grid_census）分列禁混算——时间窗/判重口径不同
+consumers:
+- 晨报
+- 发车闸
+- 晋级池
+- 图书馆查询
