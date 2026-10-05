@@ -7,15 +7,15 @@ owner: st-joinchk-20261004
 
 # 孤儿簇报告（31 号·机生）
 
-> 宇宙=5179（裁定#481 预估≈5200，偏差 -0.4%）；直接挂载 2284；闭包归属 1209；真孤儿 2023（簇 74）；豁免在案 9；悬空键 2。
+> 宇宙=5209（裁定#481 预估≈5200，偏差 +0.2%）；直接挂载 2306；闭包归属 1213；真孤儿 2029（簇 74）；豁免在案 9；悬空键 0。
 
 ## 六图覆盖率一栏表
 
 | 行 | GOMAP | TDM | FACTORY | FIG11 | FIG12 | FIG13 |
 |---|---|---|---|---|---|---|
-| direct（直接挂载） | 454 | 113 | 389 | 895 | 218 | 215 |
-| closure（闭包归属） | 741 | 568 | 287 | 677 | 409 | 432 |
-| 覆盖率%（direct+closure）/宇宙 | 23.1% | 13.1% | 13.1% | 30.4% | 12.1% | 12.5% |
+| direct（直接挂载） | 455 | 113 | 396 | 906 | 218 | 218 |
+| closure（闭包归属） | 739 | 565 | 290 | 682 | 411 | 434 |
+| 覆盖率%（direct+closure）/宇宙 | 22.9% | 13.0% | 13.2% | 30.5% | 12.1% | 12.5% |
 
 > 孤儿为全集判（六图两不沾），跨图共享一份清单；上表第三行按 (direct+closure)/宇宙 计单图覆盖。
 
@@ -27,17 +27,17 @@ owner: st-joinchk-20261004
 - `src/zephyr/feedback_loop/actors/global_action_scheduler.py`（wired，imported_by=0，last_commit=2026-09-16）
 - …其余 224 台见 30 号 units 段
 
-### src.zephyr.shared（210 台：suspect_orphan=28，wired=117，wired_by_header=56，wired_dynamic=9）
+### src.zephyr.shared（208 台：suspect_orphan=26，wired=117，wired_by_header=56，wired_dynamic=9）
 - `src/zephyr/shared/__version__.py`（wired，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/shared/_cross_layer/__init__.py`（wired_dynamic，imported_by=0，last_commit=2026-09-18）
 - `src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py`（wired，imported_by=0，last_commit=2026-09-16）
-- …其余 207 台见 30 号 units 段
+- …其余 205 台见 30 号 units 段
 
-### src.zephyr.frontend（166 台：suspect_orphan=140，wired=15，wired_by_header=11）
+### src.zephyr.frontend（167 台：suspect_orphan=140，wired=15，wired_by_header=12）
+- `src/zephyr/frontend/__init__.py`（wired_by_header，imported_by=0，last_commit=2026-09-18）
 - `src/zephyr/frontend/_extensions/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/frontend/api/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
-- `src/zephyr/frontend/compliance_dashboard.py`（wired_by_header，imported_by=0，last_commit=2026-09-17）
-- …其余 163 台见 30 号 units 段
+- …其余 164 台见 30 号 units 段
 
 ### src.zephyr.infrastructure（160 台：suspect_orphan=5，wired=111，wired_by_header=43，wired_dynamic=1）
 - `src/zephyr/infrastructure/_extensions/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
@@ -45,7 +45,7 @@ owner: st-joinchk-20261004
 - `src/zephyr/infrastructure/a2a_protocol/governance/__init__.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - …其余 157 台见 30 号 units 段
 
-### src.zephyr.governance（158 台：suspect_orphan=3，wired=41，wired_by_header=77，wired_dynamic=37）
+### src.zephyr.governance（158 台：suspect_orphan=4，wired=40，wired_by_header=77，wired_dynamic=37）
 - `src/zephyr/governance/a2a/__init__.py`（wired_dynamic，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/governance/agent_spec/__init__.py`（wired_dynamic，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/governance/agent_spec/registry.py`（wired，imported_by=0，last_commit=2026-09-16）
@@ -57,11 +57,11 @@ owner: st-joinchk-20261004
 - `src/zephyr/autonomy_core/agent_observability.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - …其余 100 台见 30 号 units 段
 
-### src.zephyr.signal_ashare（78 台：suspect_orphan=7，wired=37，wired_by_header=34）
+### src.zephyr.signal_ashare（84 台：suspect_orphan=7，wired=37，wired_by_header=40）
 - `src/zephyr/signal_ashare/_extensions/__init__.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/signal_ashare/api/__init__.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/signal_ashare/banker_pattern_simulator.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
-- …其余 75 台见 30 号 units 段
+- …其余 81 台见 30 号 units 段
 
 ### src.zephyr.gov_code_quality（61 台：suspect_orphan=1，wired=6，wired_by_header=51，wired_dynamic=3）
 - `src/zephyr/gov_code_quality/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
@@ -75,34 +75,34 @@ owner: st-joinchk-20261004
 - `src/zephyr/intelligence/api/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
 - …其余 50 台见 30 号 units 段
 
-### src.zephyr.orchestrator（47 台：suspect_orphan=3，wired=11，wired_by_header=32，wired_dynamic=1）
+### src.zephyr.orchestrator（49 台：suspect_orphan=5，wired=11，wired_by_header=32，wired_dynamic=1）
+- `src/zephyr/orchestrator/contracts/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/orchestrator/contracts/construction_guide.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/orchestrator/contracts/contract_registry.py`（wired，imported_by=0，last_commit=2026-09-16）
-- `src/zephyr/orchestrator/contracts/contract_router.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
-- …其余 44 台见 30 号 units 段
+- …其余 46 台见 30 号 units 段
 
-### src.zephyr.gov_drift（46 台：suspect_orphan=1，wired=35，wired_by_header=4，wired_dynamic=6）
+### src.zephyr.gov_drift（47 台：suspect_orphan=1，wired=35，wired_by_header=4，wired_dynamic=7）
+- `src/zephyr/gov_drift/__init__.py`（wired_dynamic，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/gov_drift/absence_manager.py`（wired，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/gov_drift/ai_construction_detectors.py`（wired，imported_by=0，last_commit=2026-09-16）
-- `src/zephyr/gov_drift/ai_context_injector.py`（wired，imported_by=0，last_commit=2026-09-16）
-- …其余 43 台见 30 号 units 段
+- …其余 44 台见 30 号 units 段
 
-### scripts.governance（42 台：suspect_orphan=7，wired=11，wired_by_header=24）
+### scripts.governance（44 台：suspect_orphan=8，wired=11，wired_by_header=25）
 - `scripts/governance/__init__.py`（wired，imported_by=0，last_commit=2026-06-21）
 - `scripts/governance/_shared/__init__.py`（wired，imported_by=0，last_commit=2026-06-21）
 - `scripts/governance/_shared/algo_flow_applier.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
-- …其余 39 台见 30 号 units 段
-
-### src.zephyr.ml_train（41 台：suspect_orphan=9，wired=10，wired_by_header=21，wired_dynamic=1）
-- `src/zephyr/ml_train/__init__.py`（wired_dynamic，imported_by=0，last_commit=2026-09-15）
-- `src/zephyr/ml_train/_extensions/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-15）
-- `src/zephyr/ml_train/adversarial_robustness_validator.py`（wired_by_header，imported_by=0，last_commit=2026-09-15）
-- …其余 38 台见 30 号 units 段
+- …其余 41 台见 30 号 units 段
 
 ### src.zephyr.gov_audit（40 台：wired=21，wired_by_header=9，wired_dynamic=10）
 - `src/zephyr/gov_audit/__init__.py`（wired，imported_by=0，last_commit=2026-09-18）
 - `src/zephyr/gov_audit/action_history.py`（wired_by_header，imported_by=0，last_commit=2026-09-17）
 - `src/zephyr/gov_audit/agent_signer.py`（wired，imported_by=0，last_commit=2026-09-17）
+- …其余 37 台见 30 号 units 段
+
+### src.zephyr.ml_train（40 台：suspect_orphan=9，wired=10，wired_by_header=20，wired_dynamic=1）
+- `src/zephyr/ml_train/__init__.py`（wired_dynamic，imported_by=0，last_commit=2026-09-15）
+- `src/zephyr/ml_train/_extensions/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-15）
+- `src/zephyr/ml_train/adversarial_robustness_validator.py`（wired_by_header，imported_by=0，last_commit=2026-09-15）
 - …其余 37 台见 30 号 units 段
 
 ### src.zephyr.factor（38 台：suspect_orphan=4，wired=25，wired_by_header=9）
@@ -111,11 +111,11 @@ owner: st-joinchk-20261004
 - `src/zephyr/factor/analysis/correlation_analyzer.py`（wired，imported_by=0，last_commit=2026-09-15）
 - …其余 35 台见 30 号 units 段
 
-### scripts._archive（35 台：suspect_orphan=18，wired=1，wired_by_header=16）
+### scripts._archive（31 台：suspect_orphan=14，wired=1，wired_by_header=16）
 - `scripts/_archive/construction/create_db_alignment_tasks.py`（suspect_orphan，imported_by=0，last_commit=2026-08-21）
 - `scripts/_archive/construction/create_dm_phase9_tasks.py`（suspect_orphan，imported_by=0，last_commit=2026-08-21）
 - `scripts/_archive/construction/dm014_orphan_edge_repair.py`（suspect_orphan，imported_by=0，last_commit=2026-08-21）
-- …其余 32 台见 30 号 units 段
+- …其余 28 台见 30 号 units 段
 
 ### src.zephyr.trading（29 台：suspect_orphan=7，wired=19，wired_by_header=2，wired_dynamic=1）
 - `src/zephyr/trading/_extensions/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-15）
@@ -159,11 +159,11 @@ owner: st-joinchk-20261004
 - `src/zephyr/ai_layer/cleaning/local_prefill.py`（wired，imported_by=0，last_commit=2026-09-26）
 - …其余 19 台见 30 号 units 段
 
-### src.zephyr.ex_core（22 台：suspect_orphan=4，wired=7，wired_by_header=11）
+### src.zephyr.ex_core（21 台：suspect_orphan=4，wired=7，wired_by_header=10）
 - `src/zephyr/ex_core/_extensions/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-15）
 - `src/zephyr/ex_core/api/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-15）
 - `src/zephyr/ex_core/audit_journal/__init__.py`（wired_by_header，imported_by=0，last_commit=2026-09-15）
-- …其余 19 台见 30 号 units 段
+- …其余 18 台见 30 号 units 段
 
 ### src.zephyr.data_governance（19 台：wired=2，wired_by_header=17）
 - `src/zephyr/data_governance/__init__.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
@@ -321,6 +321,12 @@ owner: st-joinchk-20261004
 - `src/zephyr/strategy_factory/owner_band_t/regime_gate.py`（wired，imported_by=0，last_commit=2026-09-17）
 - …其余 4 台见 30 号 units 段
 
+### src.zephyr.nlp（6 台：suspect_orphan=1，wired=3，wired_by_header=2）
+- `src/zephyr/nlp/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
+- `src/zephyr/nlp/news_impact_grader.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
+- `src/zephyr/nlp/nlp_inference.py`（wired，imported_by=0，last_commit=2026-09-16）
+- …其余 3 台见 30 号 units 段
+
 ### scripts.data（5 台：wired_by_header=5）
 - `scripts/data/pattern_catalog_sync.py`（wired_by_header，imported_by=0，last_commit=untracked）
 - `scripts/data/pattern_event_backfill.py`（wired_by_header，imported_by=0，last_commit=untracked）
@@ -331,12 +337,6 @@ owner: st-joinchk-20261004
 - `src/zephyr/knowledge/ai_knowledge_extractor.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/knowledge/collection_schema_manager.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/knowledge/financial_knowledge_graph.py`（wired，imported_by=0，last_commit=2026-09-16）
-- …其余 2 台见 30 号 units 段
-
-### src.zephyr.nlp（5 台：wired=3，wired_by_header=2）
-- `src/zephyr/nlp/news_impact_grader.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
-- `src/zephyr/nlp/nlp_inference.py`（wired，imported_by=0，last_commit=2026-09-16）
-- `src/zephyr/nlp/research_rating.py`（wired，imported_by=0，last_commit=2026-09-16）
 - …其余 2 台见 30 号 units 段
 
 ### scripts.ch（4 台：wired_by_header=4）
@@ -351,14 +351,15 @@ owner: st-joinchk-20261004
 - `src/zephyr/plan_engine/scenario_attribution_stats.py`（wired，imported_by=0，last_commit=2026-09-02）
 - …其余 1 台见 30 号 units 段
 
+### scripts.audit（3 台：wired=2，wired_by_header=1）
+- `scripts/audit/cost_trio_exam.py`（wired，imported_by=0，last_commit=2026-09-24）
+- `scripts/audit/t0_conditional_e4_v2_exam.py`（wired，imported_by=0，last_commit=2026-09-28）
+- `scripts/audit/t0_six_phase_materialize.py`（wired_by_header，imported_by=0，last_commit=2026-09-28）
+
 ### src.zephyr.infra_runtime（3 台：wired_by_header=3）
 - `src/zephyr/infra_runtime/cold_plane_isolation.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/infra_runtime/ml_pipeline_process.py`（wired_by_header，imported_by=0，last_commit=2026-09-16）
 - `src/zephyr/infra_runtime/runtime_admission.py`（wired_by_header，imported_by=0，last_commit=2026-09-17）
-
-### scripts.audit（2 台：wired=1，wired_by_header=1）
-- `scripts/audit/cost_trio_exam.py`（wired，imported_by=0，last_commit=2026-09-24）
-- `scripts/audit/t0_six_phase_materialize.py`（wired_by_header，imported_by=0，last_commit=2026-09-28）
 
 ### src.zephyr.gov_rule（2 台：suspect_orphan=1，wired_by_header=1）
 - `src/zephyr/gov_rule/__init__.py`（suspect_orphan，imported_by=0，last_commit=2026-09-16）
@@ -423,11 +424,6 @@ owner: st-joinchk-20261004
 - `src/zephyr/frontend/dashboard/web/pages/cryptomarket.html`：币圈暂停开发（Owner 令 2026-10-04），币圈行情页保留现状等通知（依据 crypto-dev-paused-20261004；复查：币圈恢复开发通知，或 90 天未恢复则呈退役提案）
 - `src/zephyr/frontend/dashboard/web/pages/cryptopos.html`：币圈暂停开发（Owner 令 2026-10-04），币圈持仓页保留现状等通知（依据 crypto-dev-paused-20261004；复查：币圈恢复开发通知，或 90 天未恢复则呈退役提案）
 - `src/zephyr/frontend/dashboard/web/pages/cryptostrat.html`：币圈暂停开发（Owner 令 2026-10-04），币圈策略页保留现状等通知（依据 crypto-dev-paused-20261004；复查：币圈恢复开发通知，或 90 天未恢复则呈退役提案）
-
-## 悬空键（MOD-* 反查查无，禁静默——逐条判罚或修键）
-
-- `MOD-BT-006`（FACTORY）
-- `MOD-BT-215`（FACTORY）
 
 ## align_all 第十二节接入（已施工，ff8f841edf）
 

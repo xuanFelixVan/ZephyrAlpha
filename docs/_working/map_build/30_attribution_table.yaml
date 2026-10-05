@@ -1,23 +1,19 @@
-accounting_units_total: 5179
+accounting_units_total: 5209
 by_map:
-  GOMAP: 454
+  GOMAP: 455
   TDM: 113
-  FACTORY: 389
-  FIG11: 895
+  FACTORY: 396
+  FIG11: 906
   FIG12: 218
-  FIG13: 215
-closure_derived: 1209
-dangling_keys:
-- key: MOD-BT-006
-  source_map: FACTORY
-- key: MOD-BT-215
-  source_map: FACTORY
+  FIG13: 218
+closure_derived: 1213
+dangling_keys: []
 auxiliary_ledger:
-  tests_py_count: 4043
-  docs_file_count: 11366
-  merged_empty_init: 0
+  tests_py_count: 6059
+  docs_file_count: 11135
+  merged_empty_init: 1
   frontend_file_count: 140
-  scripts_manifest_total: 1229
+  scripts_manifest_total: 1199
 orphans:
 - file: scripts/__init__.py
   cluster_hint: scripts.__init__.py
@@ -47,20 +43,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-08-21'
-- file: scripts/_archive/governance/compare_ba_copies.py
-  cluster_hint: scripts._archive
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-06-22'
-- file: scripts/_archive/governance/create_depgraph_task_cards.py
-  cluster_hint: scripts._archive
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-21'
 - file: scripts/_archive/governance/d11_compliance/batch_remove_bom.py
   cluster_hint: scripts._archive
   tier: suspect_orphan
@@ -68,20 +50,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-06-22'
-- file: scripts/_archive/governance/list_no_consumer_orphans.py
-  cluster_hint: scripts._archive
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-06-22'
-- file: scripts/_archive/governance/merge_domain_nodes.py
-  cluster_hint: scripts._archive
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-08-21'
 - file: scripts/_archive/governance/repair/ensure_dep_cycles_view.py
   cluster_hint: scripts._archive
   tier: suspect_orphan
@@ -285,6 +253,13 @@ orphans:
     imports_in: 7
     imported_by: 0
     last_commit: '2026-09-24'
+- file: scripts/audit/t0_conditional_e4_v2_exam.py
+  cluster_hint: scripts.audit
+  tier: wired
+  evidence:
+    imports_in: 1
+    imported_by: 0
+    last_commit: '2026-09-28'
 - file: scripts/audit/t0_six_phase_materialize.py
   cluster_hint: scripts.audit
   tier: wired_by_header
@@ -439,6 +414,13 @@ orphans:
     imports_in: 5
     imported_by: 0
     last_commit: '2026-08-20'
+- file: scripts/governance/_shared/mount_obligation.py
+  cluster_hint: scripts.governance
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
 - file: scripts/governance/_shared/registry_batch_edit.py
   cluster_hint: scripts.governance
   tier: suspect_orphan
@@ -523,6 +505,13 @@ orphans:
     imports_in: 2
     imported_by: 0
     last_commit: '2026-08-20'
+- file: scripts/governance/d5_architecture/validators/__init__.py
+  cluster_hint: scripts.governance
+  tier: suspect_orphan
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-06-21'
 - file: scripts/governance/d5_architecture/validators/validate_authority_registry.py
   cluster_hint: scripts.governance
   tier: wired_by_header
@@ -676,7 +665,7 @@ orphans:
   evidence:
     imports_in: 0
     imported_by: 0
-    last_commit: untracked
+    last_commit: '2026-10-05'
 - file: scripts/governance/wave1a/verified_promotion_check.py
   cluster_hint: scripts.governance
   tier: wired_by_header
@@ -2504,13 +2493,6 @@ orphans:
     imports_in: 6
     imported_by: 0
     last_commit: '2026-09-15'
-- file: src/zephyr/ex_core/bridge_instruction_kernel.py
-  cluster_hint: src.zephyr.ex_core
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-10-04'
 - file: src/zephyr/ex_core/broker_link_probe.py
   cluster_hint: src.zephyr.ex_core
   tier: wired_by_header
@@ -4709,6 +4691,13 @@ orphans:
     imports_in: 3
     imported_by: 0
     last_commit: '2026-09-16'
+- file: src/zephyr/frontend/__init__.py
+  cluster_hint: src.zephyr.frontend
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-18'
 - file: src/zephyr/frontend/_extensions/__init__.py
   cluster_hint: src.zephyr.frontend
   tier: suspect_orphan
@@ -6578,6 +6567,13 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-16'
+- file: src/zephyr/gov_drift/__init__.py
+  cluster_hint: src.zephyr.gov_drift
+  tier: wired_dynamic
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-16'
 - file: src/zephyr/gov_drift/absence_manager.py
   cluster_hint: src.zephyr.gov_drift
   tier: wired
@@ -7362,6 +7358,13 @@ orphans:
     imports_in: 1
     imported_by: 0
     last_commit: '2026-09-16'
+- file: src/zephyr/governance/financial_governance/__init__.py
+  cluster_hint: src.zephyr.governance
+  tier: suspect_orphan
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-18'
 - file: src/zephyr/governance/financial_governance/arbitrage_asymmetry_detector.py
   cluster_hint: src.zephyr.governance
   tier: wired_by_header
@@ -7716,7 +7719,7 @@ orphans:
   cluster_hint: src.zephyr.governance
   tier: wired
   evidence:
-    imports_in: 3
+    imports_in: 4
     imported_by: 0
     last_commit: '2026-09-25'
 - file: src/zephyr/governance/registry_projection/model.py
@@ -7725,14 +7728,7 @@ orphans:
   evidence:
     imports_in: 4
     imported_by: 0
-    last_commit: '2026-09-25'
-- file: src/zephyr/governance/registry_projection/renderer.py
-  cluster_hint: src.zephyr.governance
-  tier: wired
-  evidence:
-    imports_in: 2
-    imported_by: 0
-    last_commit: '2026-10-03'
+    last_commit: '2026-10-04'
 - file: src/zephyr/governance/resilience_governance/__init__.py
   cluster_hint: src.zephyr.governance
   tier: wired_by_header
@@ -8108,7 +8104,7 @@ orphans:
   cluster_hint: src.zephyr.governance
   tier: wired
   evidence:
-    imports_in: 14
+    imports_in: 15
     imported_by: 0
     last_commit: '2026-09-16'
 - file: src/zephyr/governance/strategies/strategy_registry.py
@@ -10064,13 +10060,6 @@ orphans:
     imports_in: 0
     imported_by: 0
     last_commit: '2026-09-15'
-- file: src/zephyr/ml_train/decision_annotation_dataset.py
-  cluster_hint: src.zephyr.ml_train
-  tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-15'
 - file: src/zephyr/ml_train/experiment_anomaly_detector.py
   cluster_hint: src.zephyr.ml_train
   tier: wired
@@ -10281,6 +10270,13 @@ orphans:
     imports_in: 1
     imported_by: 0
     last_commit: '2026-09-15'
+- file: src/zephyr/nlp/__init__.py
+  cluster_hint: src.zephyr.nlp
+  tier: suspect_orphan
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-16'
 - file: src/zephyr/nlp/news_impact_grader.py
   cluster_hint: src.zephyr.nlp
   tier: wired_by_header
@@ -10312,6 +10308,13 @@ orphans:
 - file: src/zephyr/nlp/sentiment_pipeline.py
   cluster_hint: src.zephyr.nlp
   tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-16'
+- file: src/zephyr/orchestrator/contracts/__init__.py
+  cluster_hint: src.zephyr.orchestrator
+  tier: suspect_orphan
   evidence:
     imports_in: 0
     imported_by: 0
@@ -10368,6 +10371,13 @@ orphans:
 - file: src/zephyr/orchestrator/deferred_queue.py
   cluster_hint: src.zephyr.orchestrator
   tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: '2026-09-16'
+- file: src/zephyr/orchestrator/execution/__init__.py
+  cluster_hint: src.zephyr.orchestrator
+  tier: suspect_orphan
   evidence:
     imports_in: 0
     imported_by: 0
@@ -12602,7 +12612,7 @@ orphans:
   cluster_hint: src.zephyr.shared
   tier: wired
   evidence:
-    imports_in: 445
+    imports_in: 450
     imported_by: 0
     last_commit: '2026-09-22'
 - file: src/zephyr/shared/io/serialization.py
@@ -12633,13 +12643,6 @@ orphans:
     imports_in: 29
     imported_by: 0
     last_commit: '2026-09-26'
-- file: src/zephyr/shared/maintenance/__init__.py
-  cluster_hint: src.zephyr.shared
-  tier: suspect_orphan
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
 - file: src/zephyr/shared/maintenance/code_economy_analyzer.py
   cluster_hint: src.zephyr.shared
   tier: wired_by_header
@@ -13035,13 +13038,6 @@ orphans:
 - file: src/zephyr/shared/utils/zephyr_logger.py
   cluster_hint: src.zephyr.shared
   tier: wired_by_header
-  evidence:
-    imports_in: 0
-    imported_by: 0
-    last_commit: '2026-09-16'
-- file: src/zephyr/shared/versioning/__init__.py
-  cluster_hint: src.zephyr.shared
-  tier: suspect_orphan
   evidence:
     imports_in: 0
     imported_by: 0
@@ -13456,9 +13452,51 @@ orphans:
   cluster_hint: src.zephyr.signal_ashare
   tier: wired
   evidence:
-    imports_in: 1
+    imports_in: 2
     imported_by: 0
     last_commit: '2026-10-02'
+- file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  cluster_hint: src.zephyr.signal_ashare
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
+- file: src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py
+  cluster_hint: src.zephyr.signal_ashare
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
+- file: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
+  cluster_hint: src.zephyr.signal_ashare
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
+- file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  cluster_hint: src.zephyr.signal_ashare
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
+- file: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+  cluster_hint: src.zephyr.signal_ashare
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
+- file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
+  cluster_hint: src.zephyr.signal_ashare
+  tier: wired_by_header
+  evidence:
+    imports_in: 0
+    imported_by: 0
+    last_commit: untracked
 - file: src/zephyr/signal_ashare/stock_relation_gnn.py
   cluster_hint: src.zephyr.signal_ashare
   tier: wired_by_header
@@ -14009,7 +14047,7 @@ orphans:
   cluster_hint: src.zephyr.trading
   tier: wired
   evidence:
-    imports_in: 5
+    imports_in: 6
     imported_by: 0
     last_commit: '2026-09-30'
 - file: src/zephyr/trading/infrastructure/__init__.py
@@ -14237,12 +14275,14 @@ units:
   status: orphan
 - file: scripts/_archive/governance/compare_ba_copies.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: scripts/_archive/governance/create_depgraph_task_cards.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: scripts/_archive/governance/d11_compliance/batch_remove_bom.py
   maps_direct: []
   maps_derived: []
@@ -14354,12 +14394,14 @@ units:
   status: derived
 - file: scripts/_archive/governance/list_no_consumer_orphans.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: scripts/_archive/governance/merge_domain_nodes.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: scripts/_archive/governance/repair/ensure_dep_cycles_view.py
   maps_direct: []
   maps_derived: []
@@ -14754,10 +14796,8 @@ units:
   status: derived
 - file: scripts/audit/t0_conditional_e4_v2_exam.py
   maps_direct: []
-  maps_derived:
-  - FIG12
-  - FIG13
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: scripts/audit/t0_conditional_e4_v3_exam.py
   maps_direct: []
   maps_derived:
@@ -14812,8 +14852,11 @@ units:
 - file: scripts/automation/validate_intel_registry.py
   maps_direct: []
   maps_derived:
-  - FACTORY
+  - FIG11
+  - FIG12
+  - FIG13
   - GOMAP
+  - TDM
   status: derived
 - file: scripts/backfill_auction_snapshot_history.py
   maps_direct:
@@ -14887,6 +14930,11 @@ units:
   - FIG13
   status: derived
 - file: scripts/backtest/cost_accounting_ruler.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: scripts/backtest/cost_model.py
   maps_direct:
   - FACTORY
   maps_derived: []
@@ -15213,6 +15261,7 @@ units:
 - file: scripts/backtest/sim_daily_runner.py
   maps_direct:
   - FACTORY
+  - FIG13
   maps_derived: []
   status: direct
 - file: scripts/backtest/sim_deviation_report.py
@@ -15367,6 +15416,11 @@ units:
   maps_derived:
   - FACTORY
   status: derived
+- file: scripts/backtest/translated/c4_370d098d7c54_vrev001_warm_oversold.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: scripts/backtest/translated/c4_40ca0da1a3ca_value55.py
   maps_direct:
   - FACTORY
@@ -15417,12 +15471,27 @@ units:
   - FACTORY
   maps_derived: []
   status: direct
+- file: scripts/backtest/translated/c4_6986c63122a5_momtrend002_ma_cross.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
 - file: scripts/backtest/translated/c4_6a6ec8869ddb_momentum62.py
   maps_direct:
   - FACTORY
   maps_derived: []
   status: direct
 - file: scripts/backtest/translated/c4_6cb29d4d9ba8_mom_rev_300.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: scripts/backtest/translated/c4_6f8aa44abe0e_vrev019_vwap_band.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: scripts/backtest/translated/c4_7865eeda0157_momtrend019_first_breakout.py
   maps_direct:
   - FACTORY
   maps_derived: []
@@ -15588,6 +15657,11 @@ units:
   maps_derived: []
   status: direct
 - file: scripts/backtest/translated/c4_c7a8ddbab748_ma10_ma5.py
+  maps_direct:
+  - FACTORY
+  maps_derived: []
+  status: direct
+- file: scripts/backtest/translated/c4_cd3885d23838_vrev002_no_bottom_fish.py
   maps_direct:
   - FACTORY
   maps_derived: []
@@ -16616,6 +16690,11 @@ units:
   - GOMAP
   - TDM
   status: derived
+- file: scripts/generate_mount_obligation_manifest.py
+  maps_direct: []
+  maps_derived:
+  - GOMAP
+  status: derived
 - file: scripts/generate_pathway_registry.py
   maps_direct:
   - FIG11
@@ -16905,6 +16984,10 @@ units:
   maps_derived:
   - FIG11
   status: derived
+- file: scripts/governance/_shared/mount_obligation.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
 - file: scripts/governance/_shared/registry_batch_edit.py
   maps_direct: []
   maps_derived: []
@@ -17073,6 +17156,11 @@ units:
   maps_direct: []
   maps_derived: []
   status: orphan
+- file: scripts/governance/card_review_automation.py
+  maps_direct: []
+  maps_derived:
+  - FIG11
+  status: derived
 - file: scripts/governance/check_commit_message.py
   maps_direct: []
   maps_derived:
@@ -18095,6 +18183,11 @@ units:
   maps_derived:
   - FIG11
   status: derived
+- file: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: scripts/governance/d5_architecture/generators/generate_integration_topology.py
   maps_direct: []
   maps_derived:
@@ -18127,6 +18220,11 @@ units:
   - FIG13
   - GOMAP
   status: derived
+- file: scripts/governance/d5_architecture/generators/generate_panorama_master_map.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: scripts/governance/d5_architecture/generators/generate_panorama_registry.py
   maps_direct: []
   maps_derived:
@@ -18148,6 +18246,11 @@ units:
   maps_derived:
   - FIG11
   status: derived
+- file: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
   maps_direct:
   - FIG11
@@ -18245,9 +18348,8 @@ units:
   status: direct
 - file: scripts/governance/d5_architecture/validators/__init__.py
   maps_direct: []
-  maps_derived:
-  - FIG11
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: scripts/governance/d5_architecture/validators/blueprint/__init__.py
   maps_direct:
   - FIG11
@@ -18402,6 +18504,11 @@ units:
   maps_derived: []
   status: direct
 - file: scripts/governance/d5_architecture/validators/validate_gate_yaml.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
   maps_direct:
   - FIG11
   maps_derived: []
@@ -18925,14 +19032,10 @@ units:
   maps_derived: []
   status: direct
 - file: scripts/governance/decision_chain_sentinel.py
-  maps_direct: []
-  maps_derived:
-  - FIG11
-  - FIG12
+  maps_direct:
   - FIG13
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: direct
 - file: scripts/governance/decision_node_plain_zh_backfill.py
   maps_direct: []
   maps_derived:
@@ -19505,11 +19608,8 @@ units:
 - file: scripts/governance/meta_question/reexam/a06/stats_core.py
   maps_direct: []
   maps_derived:
-  - FIG11
   - FIG12
   - FIG13
-  - GOMAP
-  - TDM
   status: derived
 - file: scripts/governance/meta_question/reexam/dsrhythm/exam_dsrhythm.py
   maps_direct: []
@@ -19745,7 +19845,6 @@ units:
 - file: scripts/governance/meta_question/wo_a2legs/prepare_io_2018.py
   maps_direct: []
   maps_derived:
-  - FACTORY
   - FIG11
   - FIG12
   - FIG13
@@ -20307,7 +20406,10 @@ units:
 - file: scripts/industry_graph/backfill_futures_main.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
+  - FIG12
+  - FIG13
   - GOMAP
   - TDM
   status: derived
@@ -20528,14 +20630,20 @@ units:
 - file: scripts/industry_graph/rag_build_index.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
+  - FIG12
+  - FIG13
   - GOMAP
   - TDM
   status: derived
 - file: scripts/industry_graph/rag_query.py
   maps_direct: []
   maps_derived:
+  - FACTORY
   - FIG11
+  - FIG12
+  - FIG13
   - GOMAP
   - TDM
   status: derived
@@ -20769,11 +20877,38 @@ units:
   - FIG11
   maps_derived: []
   status: direct
+- file: scripts/run_backtest.py
+  maps_direct: []
+  maps_derived:
+  - FACTORY
+  - FIG12
+  - FIG13
+  - TDM
+  status: derived
+- file: scripts/run_boot_sla_probe.py
+  maps_direct:
+  - FIG11
+  - GOMAP
+  maps_derived: []
+  status: direct
+- file: scripts/run_deepseek_v4_exam.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: scripts/run_post_settlement.py
   maps_direct:
   - FIG13
   maps_derived: []
   status: direct
+- file: scripts/run_qwen3_baseline_exam.py
+  maps_direct: []
+  maps_derived:
+  - FACTORY
+  - FIG11
+  - GOMAP
+  - TDM
+  status: derived
 - file: scripts/scaffold.py
   maps_direct:
   - FIG11
@@ -20891,7 +21026,6 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - TDM
   status: derived
 - file: scripts/tests/diag_s2_recovery.py
   maps_direct: []
@@ -21025,7 +21159,6 @@ units:
   maps_direct: []
   maps_derived:
   - FACTORY
-  - TDM
   status: derived
 - file: scripts/verify_sentiment_hidden_driver.py
   maps_direct: []
@@ -24096,9 +24229,10 @@ units:
   maps_derived: []
   status: direct
 - file: src/zephyr/ex_core/bridge_instruction_kernel.py
-  maps_direct: []
+  maps_direct:
+  - FIG13
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/ex_core/broker_link_probe.py
   maps_direct: []
   maps_derived: []
@@ -26620,11 +26754,8 @@ units:
   status: orphan
 - file: src/zephyr/frontend/__init__.py
   maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/frontend/_extensions/__init__.py
   maps_direct: []
   maps_derived: []
@@ -28055,11 +28186,8 @@ units:
   status: orphan
 - file: src/zephyr/gov_drift/__init__.py
   maps_direct: []
-  maps_derived:
-  - FIG11
-  - GOMAP
-  - TDM
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/gov_drift/__main__.py
   maps_direct: []
   maps_derived:
@@ -28626,11 +28754,6 @@ units:
   - FIG11
   maps_derived: []
   status: direct
-- file: src/zephyr/gov_enforcement/commit_gates/data_supply_chain_map_gate.py
-  maps_direct:
-  - FIG11
-  maps_derived: []
-  status: direct
 - file: src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py
   maps_direct:
   - FIG11
@@ -28826,6 +28949,36 @@ units:
   maps_derived: []
   status: direct
 - file: src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/construction_workflow_map_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/trading_day_cycle_map_gate.py
   maps_direct:
   - FIG11
   maps_derived: []
@@ -29058,6 +29211,11 @@ units:
   - FIG11
   maps_derived: []
   status: direct
+- file: src/zephyr/gov_enforcement/commit_gates/tdm_mount_coverage_gate.py
+  maps_direct:
+  - FIG11
+  maps_derived: []
+  status: direct
 - file: src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
   maps_direct:
   - FIG11
@@ -29069,11 +29227,6 @@ units:
   maps_derived: []
   status: direct
 - file: src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py
-  maps_direct:
-  - FIG11
-  maps_derived: []
-  status: direct
-- file: src/zephyr/gov_enforcement/commit_gates/trading_day_cycle_map_gate.py
   maps_direct:
   - FIG11
   maps_derived: []
@@ -29804,6 +29957,12 @@ units:
   maps_direct: []
   maps_derived: []
   status: orphan
+- file: src/zephyr/governance/audit/tdm_mount_coverage_reconciler.py
+  maps_direct: []
+  maps_derived:
+  - FIG11
+  - GOMAP
+  status: derived
 - file: src/zephyr/governance/audit/translation_coverage_reconciler.py
   maps_direct:
   - GOMAP
@@ -30109,9 +30268,8 @@ units:
   status: orphan
 - file: src/zephyr/governance/financial_governance/__init__.py
   maps_direct: []
-  maps_derived:
-  - GOMAP
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/governance/financial_governance/arbitrage_asymmetry_detector.py
   maps_direct: []
   maps_derived: []
@@ -30381,6 +30539,11 @@ units:
   - GOMAP
   maps_derived: []
   status: direct
+- file: src/zephyr/governance/map_query.py
+  maps_direct: []
+  maps_derived:
+  - FIG11
+  status: derived
 - file: src/zephyr/governance/meta_question/__init__.py
   maps_direct: []
   maps_derived:
@@ -30803,8 +30966,9 @@ units:
   status: derived
 - file: src/zephyr/governance/registry_projection/renderer.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: src/zephyr/governance/registry_projection/state.py
   maps_direct: []
   maps_derived:
@@ -34054,9 +34218,10 @@ units:
   maps_derived: []
   status: orphan
 - file: src/zephyr/ml_train/decision_annotation_dataset.py
-  maps_direct: []
+  maps_direct:
+  - FACTORY
   maps_derived: []
-  status: orphan
+  status: direct
 - file: src/zephyr/ml_train/decision_tree_decision_architecture.py
   maps_direct: []
   maps_derived:
@@ -34189,10 +34354,8 @@ units:
   status: orphan
 - file: src/zephyr/nlp/__init__.py
   maps_direct: []
-  maps_derived:
-  - FIG12
-  - FIG13
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/nlp/news_dual_tagger.py
   maps_direct: []
   maps_derived:
@@ -34240,9 +34403,8 @@ units:
   status: derived
 - file: src/zephyr/orchestrator/contracts/__init__.py
   maps_direct: []
-  maps_derived:
-  - FIG11
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/orchestrator/contracts/alert_handler.py
   maps_direct: []
   maps_derived:
@@ -34287,9 +34449,8 @@ units:
   status: orphan
 - file: src/zephyr/orchestrator/execution/__init__.py
   maps_direct: []
-  maps_derived:
-  - GOMAP
-  status: derived
+  maps_derived: []
+  status: orphan
 - file: src/zephyr/orchestrator/execution/batch_orchestrator.py
   maps_direct: []
   maps_derived: []
@@ -38188,8 +38349,9 @@ units:
   status: direct
 - file: src/zephyr/shared/maintenance/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - GOMAP
+  status: derived
 - file: src/zephyr/shared/maintenance/autonomy_monitor.py
   maps_direct:
   - GOMAP
@@ -38517,8 +38679,9 @@ units:
   status: orphan
 - file: src/zephyr/shared/versioning/__init__.py
   maps_direct: []
-  maps_derived: []
-  status: orphan
+  maps_derived:
+  - FIG11
+  status: derived
 - file: src/zephyr/shared/versioning/version_negotiation.py
   maps_direct:
   - FIG11
@@ -39140,6 +39303,30 @@ units:
   - FIG11
   status: derived
 - file: src/zephyr/signal_ashare/signal_history_writer.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
+- file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
+- file: src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
+- file: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
+- file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
+- file: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+  maps_direct: []
+  maps_derived: []
+  status: orphan
+- file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
   maps_direct: []
   maps_derived: []
   status: orphan
@@ -40334,7 +40521,7 @@ units:
   maps_derived: []
   status: direct
 meta:
-  generated_at: '2026-10-04T09:32:41+00:00'
+  generated_at: '2026-10-05T13:03:14+00:00'
   ruling: 裁定#481（主账=src/zephyr .py+scripts .py+frontend js/html≈5200；辅账 tests/docs）
   design_spec: docs/_working/map_build/20_join_checker_design.md rev2
   map_sources:
@@ -40347,20 +40534,20 @@ meta:
   closure_engine: analyze_change_impact.ChangeImpactAnalyzer（复用 _bfs_dependents，禁重写）
   tier_engine: generate_governance_map._wiring_tier（四档复用，禁另造）
   counts_diag:
-    mounted_files: 1938
+    mounted_files: 1958
     mounted_not_in_depgraph: 1
     keys_out_of_universe: 0
     derived_by_map:
-      GOMAP: 741
-      TDM: 568
-      FACTORY: 287
-      FIG11: 677
-      FIG12: 409
-      FIG13: 432
-    orphan_count: 2023
+      GOMAP: 739
+      TDM: 565
+      FACTORY: 290
+      FIG11: 682
+      FIG12: 411
+      FIG13: 434
+    orphan_count: 2029
     exempted_count: 9
     stale_exemption_count: 0
   crosscheck_ruling481:
     expected_approx: 5200
-    actual: 5179
-    deviation_pct: -0.4
+    actual: 5209
+    deviation_pct: 0.2
