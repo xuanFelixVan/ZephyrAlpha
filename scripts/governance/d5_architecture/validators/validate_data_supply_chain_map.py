@@ -9,7 +9,7 @@
 #   门禁册与数据资产注册表仅 check_anchors / check_inv1 两个存在性面读取（validate_structure 零 I/O）；
 #   zephyr.governance.depgraph_schema（module_id 在册性 DB 腿，不可达=降 warn，禁环境异常打死提交）
 # [CONSUMERS] config/data_supply_chain_map.yaml 质量门禁；
-#   zephyr.gov_enforcement.commit_gates.data_supply_chain_map_gate（结构校验单一真源复用）;
+#   zephyr.gov_enforcement.commit_gates.map_family.data_supply_chain_map_gate（结构校验单一真源复用）;
 #   scripts.governance.d5_architecture.generators.align_all（第十一节挂轴）;
 #   tests/governance/d5_architecture/test_data_supply_chain_map_adversarial.py;
 #   CLI: python .../validate_data_supply_chain_map.py --map config/data_supply_chain_map.yaml
@@ -28,6 +28,7 @@
 #   检查项=顶层必填键/节点 L0-L1 必填字段/22 环节契约全集双向差集（越界=伪造环节、缺号=缺环节）/
 #   CV-L0 旧别名残留即红（note_zh/doc_refs/source_anchors/fallback/downstream_action 统一名）/
 #   CV-BUS 总线挂载（module_ref⇒module_id、MOD-* 形态、在册投影逐路径核、null 必配 red_reason）/
+#   CV-BLOOD 血肉四字段（blood_stage 开关：f1_pending 缺键降 warn／f2_done 缺键=error、purpose_tag 必在图头枚举、production 必带 trigger_facts）/
 #   CV-DUAL 双轴（production⇔骨架 ✅ 逐节点+计数双判、分面行禁 production、production 必带
 #   freshness_evidence 且 verdict∈{fresh,lagging}、probe_failed 一律不放行、通道禁空串语义）/
 #   CV-FACET（分面节点≥2 腿+腿态合法+腿证据非空+行级 ✅ 仅当全腿 ✅）/
@@ -96,6 +97,8 @@ PATH_OWNERSHIP_REL = "docs/03_modules/path_ownership_map.yaml"
 
 REQUIRED_TOP = [
     "schema_version",
+    "blood_stage",
+    "purpose_tags",
     "map_id",
     "name_zh",
     "generator",
@@ -199,7 +202,14 @@ SLOT_SOURCES = {"schedule", "schtasks", "event", "dloop_stage", "manual", "none"
 DOWNSTREAM_ACTIONS = {"auto_remediate", "alert_only", "detect_only", "none"}
 CONFIDENCE = {"verified", "proposed", "untested"}
 VERIFIED_SCOPE = {"production", "structure"}
-RED_REASONS = {"terminal", "unwired", "broken_supply", "ghost_ref"}
+RED_REASONS = {"terminal", "unwired", "broken_supply", "ghost_ref", "contract_sourced"}
+# ── CV-BLOOD 常量（schema 0.3，st-vm12surg-20261003 挂图 SOP §4 升级）─────────────
+# 血肉四字段：purpose_tag/casebooks/trigger_facts/consumers（挂图 SOP 向 L1 菜单新增的标准字段）
+BLOOD_FIELDS = ("purpose_tag", "casebooks", "trigger_facts", "consumers")
+# blood_stage=血肉分阶段开关：f1_pending（四字段未填，缺键降 warn 不拦——防 schema 升级与
+# 血肉填充不同窗期间打死无辜提交）/ f2_done（血肉满，缺键=error；F2 批填完翻 done）。
+BLOOD_STAGES = {"f1_pending", "f2_done"}
+PURPOSE_TAG_MIN, PURPOSE_TAG_MAX = 8, 12
 FACET_STATUS = {"✅", "🔨", "⬜", "🟡", "🔴"}
 EDGE_KINDS = {"data_flow", "degrade", "handoff_out", "feedback", "control", "trigger", "gap"}
 EDGE_STATUS = {"live", "unwired", "degraded"}
@@ -389,6 +399,27 @@ def validate_structure(data: dict, root: Path | None = None, warnings: list[str]
             _err(errors, f"缺顶层必填键: {k}")
     if errors:
         return errors
+
+    # ── CV-BLOOD 图头面：blood_stage 开关 + purpose_tags 图例（SOP §2 冻结面）────────
+    stage_blood = data.get("blood_stage")
+    if stage_blood not in BLOOD_STAGES:
+        _err(errors, f"blood_stage 非法 {stage_blood!r}（合法集={sorted(BLOOD_STAGES)}；schema 0.3 血肉分阶段开关）")
+        stage_blood = None
+    tags_head = data.get("purpose_tags")
+    if not isinstance(tags_head, list):
+        _err(errors, "purpose_tags 须为列表（SOP §2 图例标签；f2_done 时 8~12 条冻结）")
+        tags_head = []
+    else:
+        for t in tags_head:
+            if not isinstance(t, dict) or not t.get("id") or not t.get("plain_zh"):
+                _err(errors, "purpose_tags 条目缺 id/plain_zh（每条=一句大白话，Owner 看得懂是验收标准）")
+    tag_ids = {t.get("id") for t in tags_head if isinstance(t, dict)}
+    if stage_blood == "f2_done" and not PURPOSE_TAG_MIN <= len(tag_ids) <= PURPOSE_TAG_MAX:
+        _err(
+            errors,
+            f"f2_done：purpose_tags 须 {PURPOSE_TAG_MIN}~{PURPOSE_TAG_MAX} 条（SOP §2 建议 8~12），"
+            f"现 {len(tag_ids)} 条——Owner 终审冻结后禁增删改名，翻 done 前先补图例",
+        )
     if not data.get("laws"):
         _err(errors, "laws（全图铁律）不得为空")
     if not data.get("feedback_loops"):
@@ -516,6 +547,42 @@ def validate_structure(data: dict, root: Path | None = None, warnings: list[str]
                 _err(errors, f"{nid}: CV-BUS——module_id={mod_id} 与在册投影 {claimed}（{rel}）不符")
         if not mod_id and not red:
             _err(errors, f"{nid}: CV-BUS——module_id 为空必配 red_reason（纯结构/终点聚合/gap 节点=合法 null 但要写因）")
+        # ── CV-BLOOD：血肉四字段（schema 0.3；f1_pending 降 warn / f2_done 硬红）────────
+        # gap 节点四字段合法挂载且 module_id 保持 null（挂图 SOP §3/§4：gap 格常是
+        # 「在等的消费方」（consumers）与「缺口病历」（casebooks）的合法宿主）。
+        for bf in BLOOD_FIELDS:
+            if bf not in n:
+                if stage_blood == "f2_done":
+                    _err(errors, f"{nid}: CV-BLOOD——缺四字段键 {bf}（值可空，键必须在——挂载面禁静默缺失）")
+                elif warnings is not None:
+                    warnings.append(f"{nid}: 血肉未满（blood_stage=f1_pending）——缺 {bf} 键")
+        pt = n.get("purpose_tag")
+        if pt is not None and tag_ids and pt not in tag_ids:
+            _err(
+                errors,
+                f"{nid}: CV-BLOOD——purpose_tag {pt!r} 不在图头 purpose_tags 枚举（SOP §2 冻结后机贴，禁自造标签）",
+            )
+        if node_type != "gap":
+            if stage_blood == "f2_done" and not pt:
+                _err(errors, f"{nid}: CV-BLOOD——非 gap 节点缺 purpose_tag（机制级目的标签必贴，SOP §2）")
+            elif stage_blood != "f2_done" and not pt and warnings is not None:
+                warnings.append(f"{nid}: 血肉未满——purpose_tag 未贴")
+        for bf in ("casebooks", "consumers"):
+            v = n.get(bf)
+            if v is not None and not isinstance(v, list):
+                _err(errors, f"{nid}: CV-BLOOD——{bf} 须为列表（册籍标识符/引用面，INV-1 只存标识符）")
+        tf = n.get("trigger_facts")
+        if isinstance(tf, dict):
+            for k in ("as_of", "evidence"):
+                if not tf.get(k):
+                    _err(
+                        errors,
+                        f"{nid}: CV-BLOOD——trigger_facts 缺 {k}（L1 汇总位必键；明细归 L2 freshness_evidence，禁重复）",
+                    )
+        elif tf is not None and not isinstance(tf, dict):
+            _err(errors, f"{nid}: CV-BLOOD——trigger_facts 须为 dict（as_of+evidence+计数域）")
+        if stage_blood == "f2_done" and scope == "production" and not tf:
+            _err(errors, f"{nid}: CV-BLOOD——production 节点 trigger_facts 必非空（实测触发数=在产证据位，SOP §4）")
         # ── CV-FACET：分面腿（行级 ✅ 仅当全腿 ✅ 的机生版）────────────────
         facets = n.get("facets") or []
         if facets:
@@ -894,6 +961,7 @@ def _ch_table_resolver(root: Path) -> Callable[[set[str]], set[str]] | None:
         conn.execute("SELECT 1")  # 通道自检：失败即抛 ⇒ 整体降 warn
 
         def _resolve(wanted: set[str]) -> set[str]:
+            """_resolve implementation."""
             known: set[str] = set()
             for t in sorted(wanted):
                 if not _is_ch_table_anchor(t):

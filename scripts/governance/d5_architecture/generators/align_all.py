@@ -894,6 +894,59 @@ def main() -> int:
             print(f"    FAIL: {x}")
     except Exception as e:  # noqa: BLE001 — 图 15 故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
         print(f"  WARN: 图 15 校验异常（降级跳过不计违规）: {e}")
+    # --- 第十七节：全景总图（图之图，panorama_master_map，§3 双闭索引轴，2026-10-04 st-mastermap-20261004）---
+    print()
+    print("[+] 第十七图 全景总图（图之图，§8.3 冷启动导航序机生载体+§3 在册图集双闭校验）...")
+    pmm_hard = 0
+    pmm_soft = 0
+    try:
+        _pmm_gen_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators")
+        if _pmm_gen_dir not in sys.path:
+            sys.path.insert(0, _pmm_gen_dir)
+        import generate_panorama_master_map as _pmm  # noqa: import-integrity  sys.path 动态加载
+
+        _pmm_data = _pmm.load_master(_REPO_ROOT / "config" / "panorama_master_map.yaml")
+        _pmm_checklist = (_REPO_ROOT / _pmm.CHECKLIST_REL).read_text(encoding="utf-8")
+        _pmm_errors, _pmm_warns, _pmm_stats = _pmm.validate(_pmm_data, _pmm_checklist, _REPO_ROOT)
+        pmm_hard, pmm_soft = len(_pmm_errors), len(_pmm_warns)
+        print(
+            f"  OK: nodes={_pmm_stats['nodes']}（纵轴={_pmm_stats['vertical']}"
+            f" 横轴={_pmm_stats['horizontal']}）edges={_pmm_stats['edges']}"
+            f"（§3 在册={_pmm_stats['section3_registered']}，"
+            f"校验单一真源=generate_panorama_master_map.validate）"
+        )
+        print(
+            "  口径: 节点集=§3 全景图家族全集（13 正式+2 待转正）；总图自身=索引不入 nodes"
+            "（图之图语义，§3 以注记行登记）；机生渲染=docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama_master_map.md"
+        )
+        for x in _pmm_errors[:5]:
+            print(f"    FAIL: {x}")
+    except Exception as e:  # noqa: BLE001 — 图之图故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
+        print(f"  WARN: 全景总图校验异常（降级跳过不计违规）: {e}")
+
+    # --- 第十五节：交付流水线全景图（图 11，node_id+module_id 轴，2026-10-04 十五图升级 st-fig1113reg-20261004）---
+    print()
+    print("[+] 第十五图 交付流水线全景图（图11，28+2 环节契约结构校验）...")
+    ddm_hard = 0
+    ddm_soft = 0
+    try:
+        _ddm_validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
+        if _ddm_validators_dir not in sys.path:
+            sys.path.insert(0, _ddm_validators_dir)
+        from validate_dev_delivery_map import validate_structure as _ddm_vs  # noqa: import-integrity  sys.path 动态加载
+
+        _ddm_path = _REPO_ROOT / "config" / "dev_delivery_map.yaml"
+        _ddm_data = yaml.safe_load(_ddm_path.read_text(encoding="utf-8"))
+        _ddm_warns: list[str] = []
+        _ddm_errors = _ddm_vs(_ddm_data, _REPO_ROOT, _ddm_warns)
+        ddm_hard, ddm_soft = len(_ddm_errors), len(_ddm_warns)
+        _ddm_nodes = len(_ddm_data.get("nodes") or [])
+        print(f"  OK: 节点={_ddm_nodes}（结构校验单一真源=validate_dev_delivery_map.validate_structure）")
+        print(f"  问题: 硬={ddm_hard}, 软={ddm_soft}（外部面不可达降 warn 属预期，禁环境异常打死提交）")
+        for x in _ddm_errors[:5]:
+            print(f"    FAIL: {x}")
+    except Exception as e:  # noqa: BLE001 — 图 11 故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
+        print(f"  WARN: 图 11 校验异常（降级跳过不计违规）: {e}")
 
     hard_issues = (
         len(pano.domain_mismatches)
@@ -908,6 +961,8 @@ def main() -> int:
         + cov_hard
         + cwm_hard
         + scm_hard
+        + ddm_hard
+        + pmm_hard
     )
     # 图 8 数据层违规（ig_hard）不计硬闸：产业链清欠=长城专项进行中（S21/S24 Owner gated、
     # S25 梳理清单在案），判定权=graph_quality_check 引擎；git 侧工件已由
@@ -927,7 +982,9 @@ def main() -> int:
             f"trading_day_cycle error={tdc_hard}, "
             f"coverage error={cov_hard}, "
             f"construction_workflow error={cwm_hard}, "
-            f"strategy_card_lifecycle error={scm_hard}）"
+            f"strategy_card_lifecycle error={scm_hard}, "
+            f"dev_delivery error={ddm_hard}, "
+            f"panorama_master_map error={pmm_hard}）"
         )
         print("   须修复后才能施工！")
     else:
@@ -936,7 +993,8 @@ def main() -> int:
             "decision_map error=0, factory_map error=0, gomap error=0, data_supply_chain error=0, "
             "trading_day_cycle error=0, coverage error=0, "
             "construction_workflow error=0, "
-            "strategy_card_lifecycle error=0"
+            "strategy_card_lifecycle error=0, dev_delivery error=0, "
+            "panorama_master_map error=0"
         )
 
     soft_issues = (

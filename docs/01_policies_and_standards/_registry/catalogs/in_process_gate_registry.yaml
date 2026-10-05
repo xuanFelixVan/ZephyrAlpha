@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 105
+total_gates: 106
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -149,6 +149,11 @@ gates:
 - gate_id: TRANSLATION-COVERAGE
   module_path: zephyr.gov_enforcement.commit_gates.translation_coverage_gate
   factory_function: make_translation_coverage_gate
+  source: in_process
+  enabled: true
+- gate_id: TDM-MOUNT-COVERAGE
+  module_path: zephyr.gov_enforcement.commit_gates.tdm_mount_coverage_gate
+  factory_function: make_tdm_mount_coverage_gate
   source: in_process
   enabled: true
 - gate_id: ENCODING-SAFETY
@@ -301,7 +306,7 @@ gates:
   register_line: 453
   enabled: true
 - gate_id: MAP-ALIGNMENT
-  files_trigger: ["src/zephyr/governance/depgraph_schema.py", "src/zephyr/governance/persistence/dataflowgraph_schema.py", "src/zephyr/governance/persistence/decisiongraph_schema.py", "scripts/governance/apply_depgraph.py", "scripts/governance/apply_dataflowgraph.py", "scripts/governance/apply_decisiongraph.py", "scripts/governance/generate_project_depgraph.py", "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml", "scripts/governance/d5_architecture/generators/align_panoramas.py", "docs/03_modules/*.md"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#11)=docs/03_modules/ 整目录→*.md fnmatch（对齐检测真读面仅 blueprint .md，HEAD 实测 4844→1438；9 精确路径与门内 _TRIGGER_PATTERNS 镜像不变，目录前缀为真域超集=注册册不宽于门内）
+  files_trigger: ["src/zephyr/governance/depgraph_schema.py", "src/zephyr/governance/persistence/dataflowgraph_schema.py", "src/zephyr/governance/persistence/decisiongraph_schema.py", "scripts/governance/apply_depgraph.py", "scripts/governance/apply_dataflowgraph.py", "scripts/governance/apply_decisiongraph.py", "scripts/governance/generate_project_depgraph.py", "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml", "scripts/governance/d5_architecture/generators/align_panoramas.py", "docs/03_modules/*.md", "config/construction_workflow_map.yaml", "config/strategy_card_lifecycle_map.yaml", "scripts/governance/d5_architecture/validators/validate_construction_steps.py", "scripts/governance/d5_architecture/validators/validate_strategy_card_lifecycle_map.py", "scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py", "scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py", "src/zephyr/gov_enforcement/commit_gates/map_family/construction_workflow_map_gate.py", "src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py", "docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md", "docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml", "docs/_working/map_build/fig15_cardlife/91_registry_host_proposal.yaml", "docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml", "docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml", "config/data_supply_chain_map.yaml", "scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py", "scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py", "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml", "config/trading_day_cycle_map.yaml", "scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py", "scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py", "docs/_working/map_build/fig13_daycycle/00_skeleton.md", "config/trading_decision_map.yaml", "src/zephyr/plan_engine/daily_loop_master_switch.py", "src/zephyr/data/trading_calendar.py", "src/zephyr/data/config/resource_profile_registry.yaml", "config/dev_delivery_map.yaml", "scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py", "scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py", "docs/_working/map_build/fig11_delivery/00_skeleton.md", "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml", "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml", "config/flags.yaml"]  # P5 收窄(C98二批/st-finaldel-c98-20260930，台账#11)=docs/03_modules/ 整目录→*.md fnmatch（对齐检测真读面仅 blueprint .md，HEAD 实测 4844→1438；9 精确路径与门内 _TRIGGER_PATTERNS 镜像不变，目录前缀为真域超集=注册册不宽于门内）
   module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
   factory_function: make_map_alignment_gate
   source: in_process

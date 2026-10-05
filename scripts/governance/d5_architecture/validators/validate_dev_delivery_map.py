@@ -17,8 +17,8 @@
 #   PG 不可达=降 warn，禁环境异常打死提交）
 # [CONSUMERS] 交付流水线全景图（config/dev_delivery_map.yaml）质量门禁；
 #   tests/governance/d5_architecture/test_dev_delivery_map_adversarial.py；
-#   zephyr.gov_enforcement.commit_gates.dev_delivery_map_gate（DEV-DELIVERY-MAP gate，
-#   结构校验单一真源复用）；scripts.governance.d5_architecture.generators.align_all（总包挂轴）
+#   zephyr.gov_enforcement.commit_gates.map_family.dev_delivery_map_gate（DEV-DELIVERY-MAP gate，
+#   结构校验单一真源复用）；scripts.governance.d5_architecture.generators.align_all（第十五节挂轴）
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 台账只读（本工具禁写）；结构错误=exit 1，警告不阻断（warnings 由调用方可选收集）；

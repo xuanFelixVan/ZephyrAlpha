@@ -135,7 +135,9 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             return True, ""
         staged_files = diff_result.stdout.strip().splitlines()
         # own 化（st-gslim-20260923 P2）：只对齐本 session staged，外来 warn+审计不阻断
-        staged_files = _split_own_foreign(gateway, staged_files, files, kwargs.get("session_id"), gate_name="GATE-PANORAMA-ALIGNMENT")[0]
+        staged_files = _split_own_foreign(
+            gateway, staged_files, files, kwargs.get("session_id"), gate_name="GATE-PANORAMA-ALIGNMENT"
+        )[0]
         if not staged_files:
             return True, ""
     except (NotADirectoryError, FileNotFoundError) as e:
@@ -258,8 +260,7 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     blueprint_only_mismatches = domain_mismatch_count - len(strict_mismatches)
     if blueprint_only_mismatches > 0:
         warnings.append(
-            f"blueprint 域不一致 {blueprint_only_mismatches} 处（warn-only，"
-            f"运行 sync_panorama_module.py --all 对齐）"
+            f"blueprint 域不一致 {blueprint_only_mismatches} 处（warn-only，运行 sync_panorama_module.py --all 对齐）"
         )
 
     if warnings:
@@ -289,7 +290,12 @@ def make_map_alignment_gate() -> GateSpec:
     - FRONTEND-MAP（frontend_map_gate._check_impl）
     - INDUSTRY-CHAIN-MAP（industry_chain_map_gate._check_impl）
     - FACTORY-MAP（strategy_factory_map_gate._check_impl）
+    - DATA-SUPPLY-CHAIN-MAP（map_family.data_supply_chain_map_gate._check——图12 补件：兑现
+      generate_data_supply_chain_map [CONSUMERS] 自 2026-09-25 的幽灵声明，st-vm12surg 治本闭环）
+    - TRADING-DAY-CYCLE-MAP（map_family.trading_day_cycle_map_gate._check——图13 转正批
+      st-tclose-fig13reg-20261004 补件：兑现 generate_trading_day_cycle_map [CONSUMERS] 声明面）
     """
+
     def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         failures: list[str] = []
         subs = [
@@ -299,6 +305,9 @@ def make_map_alignment_gate() -> GateSpec:
             ("FRONTEND-MAP", "frontend_map_gate", "_check"),
             ("INDUSTRY-CHAIN-MAP", "industry_chain_map_gate", "_check"),
             ("FACTORY-MAP", "strategy_factory_map_gate", "_check"),
+            ("DATA-SUPPLY-CHAIN-MAP", "map_family.data_supply_chain_map_gate", "_check"),
+            ("DEV-DELIVERY-MAP", "map_family.dev_delivery_map_gate", "_check"),
+            ("TRADING-DAY-CYCLE-MAP", "map_family.trading_day_cycle_map_gate", "_check"),
         ]
         for sgid, mod, impl_name in subs:
             try:
@@ -306,6 +315,7 @@ def make_map_alignment_gate() -> GateSpec:
                     fn = _check
                 else:
                     import importlib  # noqa: PLC0415
+
                     fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
             except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
                 failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
@@ -316,4 +326,5 @@ def make_map_alignment_gate() -> GateSpec:
         if failures:
             return False, "\n".join(failures)
         return True, ""
+
     return GateSpec(gate_id="MAP-ALIGNMENT", check=_union_check, priority=141)

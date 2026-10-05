@@ -1,0 +1,41 @@
+# ALGO_FLOW 外部真源——data_supply_chain_map_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py）
+# 2026-10-04 图12 转正收尾批随批出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.map_family.data_supply_chain_map_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/map_family/data_supply_chain_map_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: data_supply_chain_map_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① _check
+    #   name_en: _check
+    #   intro: 图12 结构校验闭包（触发式收窄+fail-closed+validator 单一真源复用）。
+    #   desc: own_scope 触发面收窄（图输入面 8 路精确+数据域蓝图族前缀）→ 动态加载 validate_data_supply_chain_map.validate_structure → 图 YAML 解析异常 fail-closed → error>0 阻断 → 放行时 warn 腿留痕（f1_pending 血肉未满+落地即挂图 MOD 号扫描）。 Returns: tuple[bool, str]。
+    #   inputs: gateway, files, **kwargs
+    #   outputs: tuple[bool, str]
+    # - id: A2
+    #   name_zh: ② make_data_supply_chain_map_gate
+    #   name_en: make_data_supply_chain_map_gate
+    #   intro: 单门工厂（兼容形态；实际经 MAP-ALIGNMENT subs 接入）。
+    #   desc: 构造 GateSpec(gate_id="DATA-SUPPLY-CHAIN-MAP", priority=146)。
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate.make_map_alignment_gate
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
+    # A2 --> O1
+    # [/ALGO_FLOW]
