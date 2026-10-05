@@ -4180,3 +4180,33 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   related_rulings: ['裁定#484']
   superseded_by: ''
+- ruling_id: 裁定#486
+  date: '2026-10-05'
+  title: 图16 治理立法流图准入+新全景图立项卡呈批制（Owner 双批，一裁两项）
+  status: active
+  summary: 'Owner 2026-10-05 双批（图16 立项施工总包令内嵌裁定，随批 st-fig16-20261005 经意图API 正道入册；一裁两项）。
+
+    ①图16 治理立法流图准入（立项卡呈批制首例）：立图，状态机形态，机生自 pg_ledger（REG-RULING-001 裁定注册链：意图API→publish_snapshot→render
+    投影）。四道门全过——门①独立触发与终点（触发=裁定事件，终点=生效/取代/废弃终态）；门②跨模块交接（呈报→取号→登记→门禁74→消费→取代五站交接）；门③GOMAP 运行时章程不含立法（治理运行地图管运行面、本图管立法面，跨域不同对象不并，w5_1
+    判据）；门④机生真源强（pg_ledger 账本+裁定册双面在册，REG-RULING-001 唯一真源）。两道保险丝：结构下限≥12 有意义节点否则停工呈 chief 降级评估为注册表面板；裁定实例=数据行非节点（INV-1
+    同款，实例计数只进 counts 段）。取代 census §4 图16 行「并 GOMAP 扩治理排程层」倾向（该评估基于 PG 化前 7 步手工流程前提，7f0beccac4 cutover
+    后前提已失效）。
+
+    ②新图立项卡呈批制（同批批准，自第 17 张图起永久生效）：一切新全景图立项一律立项卡呈 Owner 批制——chief 只出卡（四道门论证+schema 设计）不开门（GO/NO-GO 权恒归
+    Owner）；本条=图16 准入程序的下不为例条款与未来之法（先例：图14/图15 立项卡曾 chief 卡+批一体，本条封口）。'
+  category: 治理架构
+  affected_files:
+  - config/governance_legislation_map.yaml
+  - docs/_working/map_build/fig16_legislation/00_skeleton.md
+  - docs/_working/map_census/00_panorama_map_census_v1.md
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  - config/panorama_master_map.yaml
+  - scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  - scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
+  - src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
+  related_arch: []
+  related_rulings:
+  - 裁定#409
+  - 裁定#451
+  - 裁定#20-D
+  superseded_by: null
