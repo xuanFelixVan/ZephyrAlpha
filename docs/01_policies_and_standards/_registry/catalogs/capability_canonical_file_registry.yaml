@@ -54879,6 +54879,14 @@ creation_tokens:
   token: factory-backend-run-factory-lane-c-20260913
   capability: factory_backend
   created_by: st-facbe-20260914
+- file: scripts/backtest/translated/c4_fact_69d28f58.py
+  token: factory-backend-c4-fact-69d28f58-20261005
+  created_by: factory_intake_pipeline(auto)
+  capability: factory_backend
+- file: scripts/backtest/translated/c4_fact_c3e511c2.py
+  token: factory-backend-c4-fact-c3e511c2-20261005
+  created_by: factory_intake_pipeline(auto)
+  capability: factory_backend
 - file: scripts/tasks/run/run_post_settlement.py
   token: auto-run-post-settlement-20260821
   capability: daily_cycle_sop

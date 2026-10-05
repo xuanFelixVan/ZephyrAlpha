@@ -127,6 +127,11 @@ entry_schema:
 strategies:
 
   - strategy_id: "STR-E-TIMING-001"
+    card_state: frozen
+    card_state_frozen_at: "2026-10-05"
+    card_state_frozen_basis: "D4_rollout_plan §5.2+Owner批件2026-10-04(全部批准现在施工/全部执行)；考窗/阈值=本卡 evidence 字段既有值写死(三窗 IS1.15/OOS0.83/S3 0.98)，禁现场调参"
+    card_state_observation: "波1观察5交易日：日回撤>1.5%或5日>3%熔断(§4.4)；起步仓=额定1/3，首笔=起步仓再取1/2；滑点<模型1.5倍"
+    card_state_credential: "E4W1-ETIMING001-CRED-20261005"
     name: "恐慌反弹分布预测"
     name_zh: "恐慌反弹分布预测"
     aliases: ["panic_rebound", "lane_e_baseline"]
@@ -337,7 +342,8 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F2.42"
-    code_path: ""
+    code_path: "scripts/backtest/translated/c4_6986c63122a5_momtrend002_ma_cross.py"
+    exam_scheduled: "2026-10-05"
     lifecycle_status: "candidate"
     status: "candidate"
     version: "1.0.0"
@@ -398,7 +404,7 @@ strategies:
     tags: ["信号", "均线", "止损", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=1.08|run=SCR-C4-20260913-002056|台账键=CAND-b1ab42050d68|同族=pilot_002 MA5/10金叉(沪深300池)|登记=2026-09-13 C5聚类对质报告"
-    code_symbol: null
+    code_symbol: "scripts/backtest/translated/c4_6986c63122a5_momtrend002_ma_cross.py::build"
     code_fingerprint: null
 
   - strategy_id: "STR-DABAN-001"
@@ -1057,7 +1063,8 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §F7.11"
-    code_path: ""
+    code_path: "scripts/backtest/translated/c4_370d098d7c54_vrev001_warm_oversold.py"
+    exam_scheduled: "2026-10-05"
     lifecycle_status: "candidate"
     status: "candidate"
     version: "1.0.0"
@@ -1118,7 +1125,7 @@ strategies:
     tags: ["情绪", "规则", "资金", "超跌"]
     algorithm_status: "pending_backtest"
     evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=1.15|DSR=0.5309|run=SCR-C4-20260913-002056|台账键=CAND-e3da6fa71af1|同族=恐慌反弹持有19日(000852指数口径)|登记=2026-09-13 C5聚类对质报告"
-    code_symbol: null
+    code_symbol: "scripts/backtest/translated/c4_370d098d7c54_vrev001_warm_oversold.py::build"
     code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-030"
@@ -1704,7 +1711,8 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S9.5（吸收 S15.3）"
-    code_path: ""
+    code_path: "scripts/backtest/translated/c4_cd3885d23838_vrev002_no_bottom_fish.py"
+    exam_scheduled: "2026-10-05"
     lifecycle_status: "candidate"
     status: "candidate"
     version: "1.0.0"
@@ -1765,7 +1773,7 @@ strategies:
     tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
-    code_symbol: null
+    code_symbol: "scripts/backtest/translated/c4_cd3885d23838_vrev002_no_bottom_fish.py::build"
     code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-035"
@@ -5145,7 +5153,8 @@ strategies:
     benchmark_id: "BMK-INDEX-001"
     module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S10.1"
-    code_path: ""
+    code_path: "scripts/backtest/translated/c4_7865eeda0157_momtrend019_first_breakout.py"
+    exam_scheduled: "2026-10-05"
     lifecycle_status: "candidate"
     status: "candidate"
     version: "1.0.0"
@@ -5206,7 +5215,7 @@ strategies:
     tags: ["尾盘", "执行", "放量", "突破", "竞价", "股票池"]
     algorithm_status: "pending_backtest"
     evidence: "家族替身证据|窗口=IS 2020-2023|Sharpe=-0.308|DSR=0.0026|run=SCR-C4-20260913-002056|台账键=CAND-a4543012b464|同族=趋势交易5.0(HHV30+回归趋势,沪深300池)|登记=2026-09-13 C5聚类对质报告"
-    code_symbol: null
+    code_symbol: "scripts/backtest/translated/c4_7865eeda0157_momtrend019_first_breakout.py::build"
     code_fingerprint: null
 
   - strategy_id: "STR-MOMTREND-020"
@@ -9077,6 +9086,7 @@ strategies:
     module_id: "MOD-L05-001"
     doc_ref: "29_factor_strategy_extraction.md §S13.6"
     code_path: "src/zephyr/pf_core/vwap_reversion_strategy.py"
+    exam_scheduled: "2026-10-05"
     lifecycle_status: "backtest"
     status: "active"
     version: "1.0.0"
@@ -12274,6 +12284,11 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py::build"
     code_fingerprint: null
   - strategy_id: "STR-TSMALL-001"
+    card_state: frozen
+    card_state_frozen_at: "2026-10-05"
+    card_state_frozen_basis: "D4_rollout_plan §5.2+Owner批件2026-10-04(全部批准现在施工/全部执行)；考窗/阈值=本卡 evidence 字段既有值写死(双窗 IS1.066/OOS0.694)，禁现场调参"
+    card_state_observation: "波1观察5交易日：5日回撤>4%熔断(§4.4 月频选股族)；起步仓=额定1/3，首笔=起步仓再取1/2；滑点<模型1.5倍"
+    card_state_credential: "E4W1-TSMALL001-CRED-20261005"
     strategy_class: "multifactor"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
     mount_route: "TDM-E-L3-07-3"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 small_cap_quality 违反家族法（id 段 TSMALL 无对应家族），按词汇表边界并入 multifactor（多条件合成筛选）；挂图路由不受影响（fa53723fb2 已人工挂图）"
@@ -12604,6 +12619,11 @@ strategies:
     code_symbol: "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py::build"
     code_fingerprint: null
   - strategy_id: "STR-DABAN-023"
+    card_state: frozen
+    card_state_frozen_at: "2026-10-05"
+    card_state_frozen_basis: "D4_rollout_plan §5.2+Owner批件2026-10-04(全部批准现在施工/全部执行)；考窗/阈值=本卡 evidence 字段既有值写死(双窗 IS0.070/OOS0.795)，禁现场调参"
+    card_state_observation: "波1观察5交易日：单日回撤>2%熔断(§4.4 日内族)；起步仓=额定1/3，首笔=起步仓再取1/2；滑点<模型1.5倍"
+    card_state_credential: "E4W1-DABAN023-CRED-20261005"
     strategy_class: "daban"  # route 真源：挂图节点（SOP-C §6.2，2026-09-16 双层分离批）
     mount_route: "TDM-P-P2"
     relabel_note: "2026-09-15 复核班真值修正（AI 架构师代判，Owner 夜班指令批）：C5 批临时类 intraday_gap 修正回 id 段 DABAN 对应的 daban 家族（超短高开缺口属短打战术族）"
