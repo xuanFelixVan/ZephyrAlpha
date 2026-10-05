@@ -62647,4 +62647,14 @@ creation_tokens:
   created_by: st-datasop-20260930
   capability: wave2_card_quantize
   merge_evaluation: "卡级考试工件四件+VREV-019考试重放件+cost_model遗失重建件：考试产线消费非新真源（策略逻辑真源=strategy_registry卡假说），与存量c4族同范式无新增规则面；pf_core生产件与回测件层界分工不并（二次登记：首次 6 条被他会话陈旧快照整写吞，B23/16fa829 同型风暴）"
+- file: docs/_working/map_build/60_chief_adjudication_v1.md
+  token: panorama-map-census-60-chief-adjudication-v1-20261005
+  created_by: st-btfix-20261005
+  capability: panorama_map_census
+  merge_evaluation: "错盖修复取证+执行报告，40号§4建议的落地件"
+- file: docs/_working/map_build/45_depgraph_miscover_fix.md
+  token: panorama-map-census-45-depgraph-miscover-fix-20261005
+  created_by: st-btfix-20261005
+  capability: panorama_map_census
+  merge_evaluation: "错盖修复取证+执行报告，40号§4建议的落地件"
 di_seam_exemptions: []
