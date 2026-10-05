@@ -195,15 +195,37 @@ class TestImport:
         assert _count(ledger, "registry_event") == 5  # 零新事件
 
 
+class TestPublishRepoRootGuard:
+    """渐进腐蚀守卫（st-tclose-infracure2-20261005 件3）：repo_root=None 裸发布机械拒绝。
+
+    实战事故=repo_root 缺失时 _projection_context_from_disk fail-open 降级空尾部段，
+    渲染丢 di_seam_exemptions 等根键，且 noop 幂等把腐蚀固化成稳定态。
+    """
+
+    def test_publish_without_repo_root_rejected(self, baseline_mod, ledger):
+        with pytest.raises(ValueError, match="repo_root 缺失将丢尾部段"):
+            baseline_mod.publish_snapshot("REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"])
+
+    def test_publish_with_repo_root_green(self, baseline_mod, sample_registry, ledger):
+        root, rel = sample_registry
+        baseline_mod.import_baseline(root, rel, conn=ledger["conn"], schema=ledger["schema"])
+        p = baseline_mod.publish_snapshot(
+            "REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"], repo_root=root
+        )
+        assert p["snapshot_version"] == 1 and p["entry_count"] == 5
+
+
 class TestPublish:
     def test_publish_versions_and_noop(self, baseline_mod, sample_registry, ledger):
         root, rel = sample_registry
         baseline_mod.import_baseline(root, rel, conn=ledger["conn"], schema=ledger["schema"])
         p1 = baseline_mod.publish_snapshot(
-            "REG-RB-TEST-001", git_commit_ref="a" * 40, conn=ledger["conn"], schema=ledger["schema"]
+            "REG-RB-TEST-001", git_commit_ref="a" * 40, conn=ledger["conn"], schema=ledger["schema"], repo_root=root
         )
         assert p1["snapshot_version"] == 1 and p1["entry_count"] == 5
-        p2 = baseline_mod.publish_snapshot("REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"])
+        p2 = baseline_mod.publish_snapshot(
+            "REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"], repo_root=root
+        )
         assert p2["noop"] is True and p2["snapshot_version"] == 1  # 同内容重发=noop
         # 内容前进 → v2（内容更新走意图 API CAS——import 幂等不覆写，by-design）
         from zephyr.governance.registry_ledger.api import update
@@ -220,7 +242,9 @@ class TestPublish:
             schema=ledger["schema"],
         )
         assert r.code == "OK"
-        p3 = baseline_mod.publish_snapshot("REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"])
+        p3 = baseline_mod.publish_snapshot(
+            "REG-RB-TEST-001", conn=ledger["conn"], schema=ledger["schema"], repo_root=root
+        )
         assert p3["noop"] is False and p3["snapshot_version"] == 2
 
     def test_publish_bundle_matches_reader_contract(self, baseline_mod, sample_registry, ledger):

@@ -576,7 +576,18 @@ def publish_snapshot(
     手术2（st-sI-identity-20261004，f10 §3.1 键序链治本）：条目对构建时声明身份字段
     置首——PG jsonb（键长,字节序）重排不再抢占位置首字段，render 后重扫恒同键；
     unique_key_fields=已解析逐族声明计划随 bundle 固化（读端零再解析）。
+
+    渐进腐蚀守卫（st-tclose-infracure2-20261005 件3）：repo_root=None 时
+    _projection_context_from_disk/_scan_declared_plan 的盘面来源缺失（fail-open 降级
+    空头部/空尾部/空声明），实战事故=渲染丢 di_seam_exemptions 等根键且 noop 幂等
+    把腐蚀永久固化（骨架比对把"空尾部"当稳定态）。故裸发布机械拒绝。
     """
+    if repo_root is None:
+        raise ValueError(
+            "publish_snapshot: repo_root 缺失将丢尾部段（header_lines/trailing_scalars/"
+            "unique_key_fields 盘面来源缺失，渲染即丢 di_seam_exemptions 等根键），"
+            "禁止裸发布——显式传 repo_root（仓库根，如 Path('.')）后重试"
+        )
     owned = conn is None
     c = conn or _open_writer_conn()
     try:
