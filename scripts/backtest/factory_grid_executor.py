@@ -67,6 +67,27 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
             后端开关 ZEPHYR_COMPUTE_BACKEND（缺省 auto=cupy 可用即 gpu FP64 张量核，
             env=cpu 恒原 pandas 路径零漂移），快路径资格=等形对齐（引擎侧判，
             gpu_core 零索引语义）。基准=docs/_working/gpu_rewrite/p1_wiring_benchmark.md。
+  T6（2026-10-05）: T3a 开闸考 S 级五件接线（st-tclose-t3a-20261005，缺省路径逐位
+            零漂移；挖矿真源=docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md）:
+            ①S1 J 总闸——J_regime_switch=on 格点经 owner_regime_switcher 冻结口径
+            build_schedule 日级帽调度表×权重逐行乘（cap_t=max(cap_A,cap_B) 全包乘性帽），
+            调度表数据缺失=eval 层整格阴性（NegativeRecord，禁静默）；manifest 条件增
+            j_state 列（态分布 JSON 审计位）+批级 j_regime_schedule.csv 落盘；
+            ②S2 成交价口径——exec_caliber=close|next_open|vwap 透传引擎（引擎侧实现，
+            本件只做执行价宽表装载与 _vwap_from_amount_volume 量纲哨兵）；
+            ③S3 估值财务因子面——factor_surface=v1_value 时 v1 三因子+f_ep/f_bp
+            （load_valuation 日频 EOD）+f_np_yoy（fin 公告门 PIT，公告次一交易日生效）；
+            数据缺席=eval 层整格阴性（fail-closed）；
+            ④S4 护盘白名单内容登记——defensive_whitelist_assets() 引用 MOD-POS-026
+            模块常量（AI 禁自填，登记≠启用，D114 休眠不破），t3 prereg defensive_leg
+            对齐校验漂移=SystemExit；
+            ⑤S5 归因 manifest 增列——cost_attribution_row() 冻结土规成本线精确分量
+            分解（佣金/印花/滑点三份额+年化拖累；网格无订单对象，trade 级地板佣金
+            效应不在网格语义内=诚实披露），cost_attribution=True 时条件并列；
+            ⑥stage t3 家族（t3/t3-t1/t3-t2）——DEFAULT_CONTEXT 按 stage 参数化
+            （t3 家族→phase=2 J 展开），预算钳制走 config/search_space_prereg_t3a.yaml
+            （t3_points/t3_*_points/t3_per_point_seconds_measured fail-closed），
+            成本档 t3=全档（exam_scale_cost_gate 真源）。
 
 用法:
   python scripts/backtest/factory_grid_executor.py --smoke                 # 烟测（管线联通，8 格点）
@@ -292,6 +313,122 @@ def compute_v1_factors(closes: pd.DataFrame) -> dict[str, pd.DataFrame]:
     f_lowvol20 = -rets.rolling(20).std()
     f_ma_gap = closes / ma20 - 1.0
     return {"f_mom20": f_mom20, "f_lowvol20": f_lowvol20, "f_ma_gap": f_ma_gap}
+
+
+# T3a 因子面取值域（S3 接线；v1_value=v1 三因子+f_ep/f_bp+f_np_yoy，挖矿 §2-S3）
+FACTOR_SURFACES: tuple[str, ...] = ("v1", "v1_value")
+
+
+def compute_value_factors(val_pe: pd.DataFrame, val_pb: pd.DataFrame) -> dict[str, pd.DataFrame]:
+    """S3 估值因子面（载荷=引擎 load_valuation 在册，日频 EOD 快照 PIT 与 v1 同口径）。
+
+    f_ep=盈利收益率 1/PE、f_bp=账面市值比 1/PB。档语义：pe/pb≤1（含亏损 pe<0 与近零
+    奇异值）→NaN，不留符号噪声进截面；截面尺度交 A1 标准化（raw 档依赖该守卫）。
+    """
+
+    def _inv(df: pd.DataFrame) -> pd.DataFrame:
+        return 1.0 / df.where(df > 1.0)
+
+    return {"f_ep": _inv(val_pe), "f_bp": _inv(val_pb)}
+
+
+def _fin_np_yoy_panel(hist: pd.DataFrame, trade_days: pd.DatetimeIndex, columns: pd.Index) -> pd.DataFrame:
+    """S3 财务因子日频 PIT 面板：np_q_yoy 按公告门生效（公告次一交易日可见）。
+
+    实现：(announce_date×symbol) 宽表 → reindex(trade_days, ffill)=公告日当日可见
+    → 整表 shift(1) 行位=次一交易日生效（公告多为盘后，当日即用=前视防御；
+    比 announce_date+1 自然日更严且对齐交易日历）。缺数据票恒 NaN。
+    """
+    h = hist.dropna(subset=["np_q_yoy"]).sort_values(["symbol", "report_period", "announce_date"])
+    if h.empty:
+        return pd.DataFrame(np.nan, index=trade_days, columns=columns)
+    w = h.pivot_table(index="announce_date", columns="symbol", values="np_q_yoy", aggfunc="last").sort_index()
+    panel = w.reindex(trade_days.union(w.index)).ffill().reindex(trade_days).shift(1)
+    return panel.reindex(columns=columns)
+
+
+def _load_fin_np_yoy_history() -> pd.DataFrame:
+    """S3 财务历史全量（复用引擎 fin_history 公告门装载，整表一次入缓存）。"""
+    from _c4_engine import fin_history
+
+    return fin_history(as_of="2099-12-31", metrics=("np_q_yoy",))
+
+
+def _apply_regime_caps(weights: pd.DataFrame, schedule: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
+    """S1 J 总闸（挖矿 §2-S1）：owner_regime_switcher 日级帽调度表×权重矩阵逐行乘。
+
+    帽语义（prereg honesty 钉定）：cap_t=max(cap_A,cap_B)——全包乘性帽（任一策略包
+    获准的敞口上限即考卷组合可部署上限）；trend_down 空帽=0（总闸全关）。
+    已知失真（挖矿 §4.6）：本帽≠TDM L1 六态挂载矩阵（多格 pending-owner-adoption）。
+    返回 (缩放后权重, 态分布计数)。
+    """
+    cap = schedule[["cap_A", "cap_B"]].max(axis=1)
+    cap = cap.reindex(weights.index).fillna(0.0)
+    dist = schedule["state"].value_counts().to_dict()
+    return weights.mul(cap, axis=0), {str(k): int(v) for k, v in dist.items()}
+
+
+def _load_j_regime_schedule(trade_days: pd.DatetimeIndex) -> pd.DataFrame:
+    """S1 调度表装载（owner_regime_switcher 冻结口径：PIT 翻转次日生效+置信门+滞后带
+    +失败安全全在库，钉用 run_id=数据装载器真源）。数据缺失=异常上抛（调用方记
+    eval 层整格阴性，fail-closed 禁静默——挖矿 §3.3.5）。"""
+    from zephyr.strategy_factory.owner_regime_switcher.data_loader import load_regime_snapshots
+    from zephyr.strategy_factory.owner_regime_switcher.switcher import SwitcherConfig, build_schedule
+
+    snaps = load_regime_snapshots()
+    return build_schedule(pd.DatetimeIndex(trade_days), snaps, SwitcherConfig())
+
+
+def defensive_whitelist_assets() -> dict:
+    """S4 护盘白名单内容登记（挖矿 §2-S4；真源引用，AI 禁自填内容）。
+
+    内容真源=MOD-POS-026 DEFAULT_TIER1/TIER2（TDM-X-R1-03 module_ref 落码件）；
+    登记≠启用：D114 休眠铁律不破（enabled=False），state_matrix euphoria/distribution
+    防御格仍 pending-owner-adoption（格子内容=Owner 资金分配门位）。本件只把内容
+    机读化供 T3a prereg 卡 defensive_leg 对齐校验与考卷预检消费。
+    """
+    from zephyr.position.core.defensive_asset_whitelist import DEFAULT_TIER1, DEFAULT_TIER2
+
+    return {
+        "tier1": list(DEFAULT_TIER1),
+        "tier2": list(DEFAULT_TIER2),
+        "source_module": "MOD-POS-026",
+        "enabled": False,
+    }
+
+
+def _validate_defensive_whitelist_registration(prereg_assets: dict) -> None:
+    """T3a prereg defensive_leg 与 MOD-POS-026 真源对齐校验（内容漂移=SystemExit fail-closed）。"""
+    truth = defensive_whitelist_assets()
+    if (
+        list(prereg_assets.get("tier1") or []) != truth["tier1"]
+        or list(prereg_assets.get("tier2") or []) != truth["tier2"]
+    ):
+        raise SystemExit("[prereg-t3a] defensive_leg 资产与 MOD-POS-026 白名单真源漂移——登记内容非法，禁开跑")
+
+
+def cost_attribution_row(avg_turnover_1side: float, days: int, slippage_bp: float | None) -> dict[str, float]:
+    """S5 归因 manifest 增列（挖矿 §2-S5）：冻结土规成本线的精确分量分解。
+
+    恒等式（引擎 _backtest_core/_net_line 同式）：cost_d = turnover_d×k/1e4，
+    k = 佣金2.5bp×2双边+印花10bp卖+滑点档×2双边；total = avg_turnover_1side（引擎
+    stats 实测均值）×days×k/1e4——从 stats 精确还原，免重算权重路径（封板闸后
+    executed 权重的 turnover 只在引擎内），分量占比为恒等式确定性分解（非估计）。
+    诚实边界：网格向量化无订单对象，框架 trade 级 CostAttribution（MOD-BT-001）的
+    名义相关效应（地板佣金/碎片化）不在网格语义内——本分解只覆盖平档成本线。
+    """
+    from _c4_engine import COMMISSION_BP, SLIPPAGE_BP, STAMP_BP  # 冻结土规常量唯一真源（引擎侧）
+
+    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
+    k_bp = COMMISSION_BP * 2.0 + STAMP_BP + slip * 2.0
+    t1 = float(avg_turnover_1side)
+    return {
+        "cost_drag_total": t1 * float(days) * k_bp / 1e4,
+        "cost_drag_annual": t1 * 244.0 * k_bp / 1e4,
+        "cost_commission_share": (COMMISSION_BP * 2.0) / k_bp,
+        "cost_stamp_share": STAMP_BP / k_bp,
+        "cost_slippage_share": (slip * 2.0) / k_bp,
+    }
 
 
 def _demean_by_group(factor: pd.DataFrame, group_of_col: dict[str, str]) -> pd.DataFrame:
@@ -598,12 +735,15 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     rets60_var: pd.DataFrame | None = None,
     industry_map: dict[str, str] | None = None,
     combine_cache: dict | None = None,
+    j_schedule: pd.DataFrame | None = None,
 ) -> tuple[pd.DataFrame, tuple[str, ...]]:
     """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。
 
     combine_cache（T2c）: 按 (G,A1,A2) prefix 复用 combined 截面+rank——同 prefix 格点
     的 normalize/combine 输入确定则输出确定（industry_map/mkt_cap_w 批内恒定），rank 仅
     依赖 combined。命中时 A1/A2 degraded 标记一并复现，manifest 口径与无缓存逐位一致。
+    j_schedule（T6 S1）: J_regime_switch=on 格点必需（缺席=RuntimeError，禁静默放行全帽）；
+    off/无 J 维格点忽略——缺省 None 路径与 T5 语义逐位零漂移。
     """
     v = recipe.values
     degraded: list[str] = []
@@ -659,6 +799,11 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
         degraded.append("C_sizing")
     weights = _apply_freq_trigger(weights, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
     weights = _apply_cap_and_lambda(weights, v["E_single_cap"], v["H_turnover_lambda"])
+    if v.get("J_regime_switch") == "on":
+        # T6 S1: 总闸帽最后生效（信号侧缓存不受影响；帽乘性缩放=额外换手的真实语义）。
+        if j_schedule is None:
+            raise RuntimeError("J_regime_switch=on 需日级帽调度表（run_batch 未加载）——fail-closed")
+        weights, _j_dist = _apply_regime_caps(weights, j_schedule)
     return weights, tuple(degraded)
 
 
@@ -713,6 +858,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     engine: str = "auto",
     engine_degrade: str = "",
     _gpu_rerun: bool = False,
+    context_overrides: dict | None = None,
+    factor_surface: str = "v1",
+    exec_caliber: str = "close",
+    cost_attribution: bool = False,
 ) -> dict:
     """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。
 
@@ -724,9 +873,15 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     GPU 波失败=整波弃置重跑 CPU（_GPUWaveFailure，禁半成品混合后端批次），
     summary 以 engine/engine_degrade 披露；manifest 增 backend/degrade 两列。
     _gpu_rerun=内部递归护栏（重跑波不再进包装段，防无限递归）。
+    context_overrides/factor_surface/exec_caliber/cost_attribution（T6，st-tclose-t3a-20261005）:
+    缺省=现行语义逐位零漂移；t3 家族由 main() 按 prereg t3a 卡解析注入——
+    context_overrides={"phase":2} 展开 J 维；factor_surface="v1_value" 接估值财务因子；
+    exec_caliber 非 close 需执行价宽表；cost_attribution=True 增归因五列。
     """
     if engine not in _VALID_ENGINES:
         raise ValueError(f"engine 须为 {'|'.join(_VALID_ENGINES)}，得到 {engine!r}")
+    if factor_surface not in FACTOR_SURFACES:
+        raise ValueError(f"factor_surface 须为 {'|'.join(FACTOR_SURFACES)}，得到 {factor_surface!r}")
     if not _gpu_rerun:
         try:
             return run_batch(
@@ -740,6 +895,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 cost_gate_tiers_bp=cost_gate_tiers_bp,
                 engine=engine,
                 _gpu_rerun=True,
+                context_overrides=context_overrides,
+                factor_surface=factor_surface,
+                exec_caliber=exec_caliber,
+                cost_attribution=cost_attribution,
             )
         except _GPUWaveFailure as exc:
             import logging as _lg
@@ -757,6 +916,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 engine="cpu",
                 engine_degrade=f"gpu_wave_failed_rerun_cpu:{exc}",
                 _gpu_rerun=True,
+                context_overrides=context_overrides,
+                factor_surface=factor_surface,
+                exec_caliber=exec_caliber,
+                cost_attribution=cost_attribution,
             )
     # ——以下=单波单趟主体——
     from zephyr.position.core.position_recipe_compiler import GridCompiler
@@ -783,7 +946,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         _gpu_resolve = None
     gpu_wave = _gpu_resolve is not None and _gpu_resolve(_wave_backend) == "gpu"
     compiler = GridCompiler.from_yaml(SCHEMA_PATH)
-    expansion = compiler.compile(DEFAULT_CONTEXT)
+    compile_ctx = {**DEFAULT_CONTEXT, **(context_overrides or {})}
+    expansion = compiler.compile(compile_ctx)
     recipes_all = list(expansion.recipes)
     if subspace:
         # 批次 B 子空间枚举（裁定: A 给出的高价值子空间全因子穷尽——过滤即全跑，非抽样）
@@ -804,11 +968,40 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     import datetime as _dt
 
     warm_start = (pd.Timestamp(start) - pd.Timedelta(days=200)).date().isoformat()
-    px = load_px(warm_start, end, fields=("close", "volume"))
+    # T6 S2: 执行价口径附加字段（next_open=open；vwap=amount/volume 经量纲哨兵）
+    caliber_extra: tuple[str, ...] = {"next_open": ("open",), "vwap": ("amount", "volume")}.get(exec_caliber, ())
+    px = load_px(warm_start, end, fields=("close", "volume") + caliber_extra)
     closes_all = wide(px, "close")
+    px_exec_all: pd.DataFrame | None = None
+    if exec_caliber == "next_open":
+        px_exec_all = wide(px, "open")
+    elif exec_caliber == "vwap":
+        from _c4_engine import _vwap_from_amount_volume
+
+        px_exec_all = _vwap_from_amount_volume(wide(px, "amount"), wide(px, "volume"), closes_all)
     closes = closes_all.loc[(closes_all.index >= pd.Timestamp(start)) & (closes_all.index <= pd.Timestamp(end))]
     flags = load_st_flags(start, end)
     closes_eval = filter_st(closes_all, flags).loc[closes.index]
+
+    # T6 S3: 估值/财务因子面批级装载（factor_surface=v1_value 时；缺席=格点级 eval 阴性，
+    # fail-closed 禁静默降级——估值是考卷维不是装饰）
+    factor_data_fail = ""
+    val_pe = val_pb = fin_hist = None
+    if factor_surface == "v1_value":
+        try:
+            from _c4_engine import load_valuation
+
+            _val = load_valuation(warm_start, end, fields=("pe", "pb"))
+            val_pe = _val["pe"].reindex(closes_all.index).reindex(columns=closes_all.columns)
+            val_pb = _val["pb"].reindex(closes_all.index).reindex(columns=closes_all.columns)
+            fin_hist = _load_fin_np_yoy_history()
+            if val_pe.empty or val_pb.empty:
+                raise RuntimeError("load_valuation 空面板")
+        except Exception as exc:  # noqa: BLE001
+            factor_data_fail = f"factor_data_load_fail:{type(exc).__name__}:{str(exc)[:80]}"
+            import logging as _lg
+
+            _lg.getLogger(__name__).warning("S3 估值/财务因子面装载失败（v1_value 格点将记 eval 阴性）: %s", exc)
 
     universe_cache: dict[str, set[str]] = {}
     factors_cache: dict[str, dict[str, pd.DataFrame]] = {}
@@ -835,9 +1028,37 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     nets_for_neff: dict[str, list[float]] = {}
     nets_archive: dict[str, pd.Series] = {}  # recipe_id → 带日期索引 net（归因读端消费，2026-09-24 st-gpu-final）
     cost_rows: dict[str, dict[float, float]] = {}  # T3 方案①: recipe_id → {bp: sharpe}（仅档位扫描启用时非空）
+    j_state_rows: dict[str, dict[str, int]] = {}  # T6 S1: recipe_id → 态分布（仅 J=on 格点非空）
+    attr_rows: dict[str, dict[str, float]] = {}  # T6 S5: recipe_id → 成本归因分解（仅启用时非空）
+    j_schedule: pd.DataFrame | None = None
+    j_load_fail = ""
     eval_dead = bt_dead = gate_dead = 0
     for r in picked:
         g = r.values["G_universe"]
+        # T6 S1: J=on 格点先过调度表闸（装载失败=本格 eval 阴性，其余格点不受染）
+        if r.values.get("J_regime_switch") == "on":
+            if j_load_fail:
+                negatives.append(
+                    NegativeRecord(r.recipe_id, "eval", j_load_fail, r.values, "", "j_schedule 不可用（fail-closed）")
+                )
+                eval_dead += 1
+                continue
+            if j_schedule is None:
+                try:
+                    j_schedule = _load_j_regime_schedule(closes.index)
+                    j_schedule.to_csv(out_dir / "j_regime_schedule.csv", encoding="utf-8")  # 批级审计件
+                except Exception as exc:  # noqa: BLE001
+                    j_load_fail = f"j_schedule_load_fail:{type(exc).__name__}"
+                    negatives.append(NegativeRecord(r.recipe_id, "eval", j_load_fail, r.values, "", str(exc)[:120]))
+                    eval_dead += 1
+                    continue
+        if factor_data_fail and factor_surface == "v1_value":
+            # T6 S3: 因子面数据缺席=格点 eval 阴性（fail-closed，禁静默降 v1）
+            negatives.append(
+                NegativeRecord(r.recipe_id, "eval", factor_data_fail.split(":")[0], r.values, "", factor_data_fail)
+            )
+            eval_dead += 1
+            continue
         if g not in universe_cache:
             try:
                 universe_cache[g] = _load_universe(g, start, end)
@@ -859,10 +1080,15 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         if g not in factors_cache:
             closes_g = closes_eval[cols]
             factors_cache[g] = compute_v1_factors(closes_g)
+            if factor_surface == "v1_value":
+                # T6 S3: 估值财务因子并入考卷因子面（缺列/缺数据票=NaN 交 A1 守卫；5 因子交 A2 全模式）
+                factors_cache[g].update(compute_value_factors(val_pe[cols], val_pb[cols]))
+                factors_cache[g]["f_np_yoy"] = _fin_np_yoy_panel(fin_hist, closes_g.index, pd.Index(cols))[cols]
             # L1 hoist（st-gpup1-20260929）: closes/rets 张量面只依赖 (窗口, 宇宙列集)，
             # 同宇宙多格点批级预热一次共享（原逐格重算；与内联式同式同序=逐位一致）。
             slice_cache[g] = (closes_g, vol20[cols], prep_px_tensor(closes_g.index, closes_g))
         closes_g, vol20_g, pre_tensor = slice_cache[g]
+        px_exec_g = None if px_exec_all is None else px_exec_all[cols]
         try:
             weights, degraded = evaluate_recipe(
                 r,
@@ -875,6 +1101,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 rets60_var=rets60_var,
                 industry_map=industry_map,
                 combine_cache=combine_cache,
+                j_schedule=j_schedule,
             )
         except Exception as exc:  # noqa: BLE001
             negatives.append(
@@ -882,6 +1109,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             )
             eval_dead += 1
             continue
+        if r.values.get("J_regime_switch") == "on" and j_schedule is not None:
+            # T6 S1: 态分布审计位（调度表批级共享，格点级零冗余读取）
+            j_state_rows[r.recipe_id] = {str(k): int(v) for k, v in j_schedule["state"].value_counts().items()}
         try:
             # st-ddup-20260925 去重改造②: run_backtest+daily_net_returns 两连调合并为
             # run_backtest_full 单趟（stats/net 与原两调逐位一致，掩码批级缓存自动复用）。
@@ -895,10 +1125,23 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             try:
                 if cost_gate_tiers_bp is not None:
                     stats, net, nets_by_tier = run_backtest_full_with_tiers(
-                        weights, closes_g, tuple(cost_gate_tiers_bp), backend=_wave_backend, pre_tensor=pre_tensor
+                        weights,
+                        closes_g,
+                        tuple(cost_gate_tiers_bp),
+                        backend=_wave_backend,
+                        pre_tensor=pre_tensor,
+                        exec_caliber=exec_caliber,
+                        px_exec=px_exec_g,
                     )
                 else:
-                    stats, net = run_backtest_full(weights, closes_g, backend=_wave_backend, pre_tensor=pre_tensor)
+                    stats, net = run_backtest_full(
+                        weights,
+                        closes_g,
+                        backend=_wave_backend,
+                        pre_tensor=pre_tensor,
+                        exec_caliber=exec_caliber,
+                        px_exec=px_exec_g,
+                    )
             except Exception as exc:  # noqa: BLE001
                 if gpu_wave:
                     raise _GPUWaveFailure(f"{r.recipe_id}: {type(exc).__name__}: {exc}") from exc
@@ -935,7 +1178,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 from zephyr.backtest.regime_validation.exam_cost_gate import run_cost_tier_scan
 
                 if nets_by_tier is None:
-                    nets_by_tier = net_returns_by_tiers(weights, closes_g, tuple(cost_gate_tiers_bp))
+                    nets_by_tier = net_returns_by_tiers(
+                        weights, closes_g, tuple(cost_gate_tiers_bp), exec_caliber=exec_caliber, px_exec=px_exec_g
+                    )
                 cost_rows[r.recipe_id] = run_cost_tier_scan(
                     weights, closes_g, daily_net_returns, tiers_bp=tuple(cost_gate_tiers_bp), nets_by_tier=nets_by_tier
                 )
@@ -952,6 +1197,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 )
                 gate_dead += 1
                 continue
+        if cost_attribution:
+            # T6 S5: 从引擎 stats 精确还原的成本归因分解（主判据口径=冻结土规缺省档）
+            attr_rows[r.recipe_id] = cost_attribution_row(float(stats["avg_turnover_1side"]), int(stats["days"]), None)
         manifest_rows.append(
             GridEvalOutcome(
                 r.recipe_id,
@@ -1022,6 +1270,18 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             ]
         )
         manifest = manifest.merge(cost_df, on="recipe_id", how="left")
+    if j_state_rows:
+        # T6 S1: J 总闸态分布审计列（仅 J=on 格点启用时新增列，缺省路径 schema 零变化；
+        # 每日逐日调度表另落 j_regime_schedule.csv 批级审计件）
+        j_df = pd.DataFrame(
+            [{"recipe_id": rid, "j_state": json.dumps(dist, sort_keys=True)} for rid, dist in j_state_rows.items()]
+        )
+        manifest = manifest.merge(j_df, on="recipe_id", how="left")
+    if attr_rows:
+        # T6 S5: 成本归因分解五列（仅 cost_attribution 启用时新增列，缺省路径 schema 零变化）
+        manifest = manifest.merge(
+            pd.DataFrame([{"recipe_id": rid, **row} for rid, row in attr_rows.items()]), on="recipe_id", how="left"
+        )
     # errors="ignore": 全员阴性批（manifest 空 DataFrame 无列）时 legacy 会 KeyError 崩批——
     # gate 阴性必须落 negatives.csv 可审计，禁崩批丢证据（非空路径输出逐位不变）
     manifest.drop(columns=["values"], errors="ignore").to_csv(out_dir / "manifest.csv", index=False)
@@ -1053,6 +1313,22 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
         # T3 方案①: 仅档位扫描启用时披露（缺省路径 summary 逐键零漂移）
         summary["cost_gate_tiers_bp"] = [float(t) for t in cost_gate_tiers_bp]
         summary["gate_dead"] = gate_dead
+    if j_state_rows or j_load_fail:
+        # T6 S1: 仅 J 接线启用/失败时披露（缺省路径 summary 逐键零漂移）
+        summary["j_regime"] = {
+            "enabled": bool(j_state_rows),
+            "schedule_file": "j_regime_schedule.csv" if j_schedule is not None else None,
+            "load_fail": j_load_fail or None,
+            "defensive_whitelist_registered": defensive_whitelist_assets(),
+        }
+    if exec_caliber != "close" or factor_surface != "v1" or cost_attribution:
+        # T6: 仅 t3 家族注入面启用时披露（缺省路径 summary 逐键零漂移）
+        summary["t3a_wiring"] = {
+            "exec_caliber": exec_caliber,
+            "factor_surface": factor_surface,
+            "cost_attribution": cost_attribution,
+            "context": compile_ctx,
+        }
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     if not smoke:
         # P0-6 试验台账记账治本（2026-09-28）：批末入账——17.4% 漏记的根因是没人调
@@ -1164,15 +1440,41 @@ def _verify_counts(grid_root_override: str | None = None) -> int:
     return 1 if missing else 0
 
 
-def _load_prereg_caps() -> dict:
-    """prereg budget_caps 读取（缺册 fail-closed，错误文案与原 _apply_prereg_budget 逐字一致）。"""
+#: T6: t3 家族 stage（T3a 开闸考；context phase=2+prereg t3a 卡；挖矿 §3.2）
+T3_STAGES: tuple[str, ...] = ("t3", "t3-t1", "t3-t2")
+PREREG_T3A_PATH = _REPO / "config" / "search_space_prereg_t3a.yaml"
+
+
+def _load_prereg_caps(stage: str = "") -> dict:
+    """prereg budget_caps 读取（缺册 fail-closed，错误文案与原 _apply_prereg_budget 逐字一致）。
+
+    T6: stage ∈ T3_STAGES 改读 config/search_space_prereg_t3a.yaml（T3a 独立冻结卡，
+    缺失=SystemExit fail-closed）；其余 stage 沿用主 prereg 册（逐字零变化）。
+    """
     import yaml
 
+    if stage in T3_STAGES:
+        if not PREREG_T3A_PATH.exists():
+            raise SystemExit(f"[prereg] {PREREG_T3A_PATH.name} 缺失——T3a 预注册冻结卡缺失，禁开跑（fail-closed）")
+        cfg = yaml.safe_load(PREREG_T3A_PATH.read_text(encoding="utf-8")) or {}
+        return cfg.get("budget_caps") or {}
     prereg = Path(__file__).resolve().parents[2] / "config" / "search_space_prereg.yaml"
     if not prereg.exists():
         raise SystemExit("[prereg] config/search_space_prereg.yaml 缺失——预注册冻结缺失，禁开跑（fail-closed）")
     cfg = yaml.safe_load(prereg.read_text(encoding="utf-8")) or {}
     return cfg.get("budget_caps") or {}
+
+
+def _load_t3a_exam_card() -> dict:
+    """T6: T3a 冻结卡整卡读取（exam_definition/pass_criteria/honesty；未冻结卡 fail-closed）。"""
+    import yaml
+
+    if not PREREG_T3A_PATH.exists():
+        raise SystemExit(f"[prereg] {PREREG_T3A_PATH.name} 缺失——T3a 预注册冻结卡缺失，禁开跑（fail-closed）")
+    card = yaml.safe_load(PREREG_T3A_PATH.read_text(encoding="utf-8")) or {}
+    if not card.get("frozen_at") or not card.get("frozen_by"):
+        raise SystemExit("[prereg] T3a 冻结卡缺 frozen_at/frozen_by——未冻结卡禁开跑（fail-closed）")
+    return card
 
 
 def _load_cost_gate_tiers() -> list[float]:
@@ -1196,11 +1498,16 @@ def _resolve_stage_cost_tiers(stage: str, caps: dict | None = None) -> tuple[flo
     （""：普通批次保持现行行为逐位零漂移）——调用方不做 per-point 档位扫描。启用时:
       t1 → prereg 轻档集（如 [0,5] 两档粗筛）；t0/t2 → 全档（exam_scale_cost_gate.yaml
       真源）。轻档须为全档子集（口径一致性），档位非法=SystemExit fail-closed。
+    T6: t3 家族=全档（挖矿 §3.3.3 成本门不放松；caps 未传时按 stage 读对应冻结册）。
     """
     from zephyr.backtest.regime_validation.exam_cost_gate import validate_scan_tiers
 
     if caps is None:
-        caps = _load_prereg_caps()
+        caps = _load_prereg_caps(stage)
+    if stage in T3_STAGES:
+        # T6: t3 家族=全档成本门（挖矿 §3.3.3 成本门不放松；t3a 卡不设分层轻档键，
+        # 档位集唯一真源=exam_scale_cost_gate.yaml，禁跳门）
+        return tuple(validate_scan_tiers(_load_cost_gate_tiers()))
     if STAGED_TIERS_KEY not in caps:
         return None
     raw = caps[STAGED_TIERS_KEY]
@@ -1216,7 +1523,8 @@ def _resolve_stage_cost_tiers(stage: str, caps: dict | None = None) -> tuple[flo
             f"[prereg] budget_caps.{STAGED_TIERS_KEY}={list(light)} 非全档 {list(full_tiers)} 子集——档位口径漂移，禁开跑"
         )
     # 字段在场即校验（冻结册损坏无论哪个 stage 都 fail-closed）；但 per-point 扫描
-    # 只随 stage 名义启用——t1=轻档 / t0,t2=全档 / ""（普通批次）=不启用（零漂移）。
+    # 只随 stage 名义启用——t1=轻档 / t0,t2=全档 / ""（普通批次）=不启用（零漂移）；
+    # t3 家族已在上方提前返回全档。
     if stage == "t1":
         return light
     if stage in ("t0", "t2"):
@@ -1232,10 +1540,29 @@ def _apply_prereg_budget(stage: str, n_samples: int) -> int:
     T3 方案①（2026-09-24）: budget_caps.cost_gate_t1_tiers_bp 在场时校验分层档位语义
     （轻档合法且为全档子集，master 开关 cost_gate_in_every_tier 仍须为 true——分层只
     收窄 T1 扫描档位，不放松"每档必有成本门"）；字段缺省=现行语义逐字零变化。
+    T6（st-tclose-t3a-20261005）: stage ∈ T3 家族（t3/t3-t1/t3-t2）读 t3a 冻结册——
+    总帽 t3_points+分层帽 t3_calibration_points/t3_tier1_points/t3_tier2_points；
+    t3-t1/t3-t2 须 t3_per_point_seconds_measured 已回填（T3a-T0 标定门槛，null=禁跑）；
+    t3（标定档）不要求回填键——T0 的唯一用途就是实测回填它。
     """
-    caps = _load_prereg_caps()
+    caps = _load_prereg_caps(stage)
     if not caps.get("cost_gate_in_every_tier", False):
         raise SystemExit("[prereg] budget_caps.cost_gate_in_every_tier 未冻结为 true——成本门禁跳，禁开跑")
+    if stage in T3_STAGES:
+        cap_total_t3 = caps.get("t3_points")
+        if cap_total_t3 and n_samples > int(cap_total_t3):
+            print(f"[prereg] stage={stage} 点数 {n_samples} > t3_points={cap_total_t3}，钳制")
+            n_samples = int(cap_total_t3)
+        stage_key_t3 = {"t3": "t3_calibration_points", "t3-t1": "t3_tier1_points", "t3-t2": "t3_tier2_points"}[stage]
+        cap_stage_t3 = caps.get(stage_key_t3)
+        if cap_stage_t3 and n_samples > int(cap_stage_t3):
+            print(f"[prereg] stage={stage} 点数 {n_samples} > {stage_key_t3}={cap_stage_t3}，钳制")
+            n_samples = int(cap_stage_t3)
+        if stage in ("t3-t1", "t3-t2") and not caps.get("t3_per_point_seconds_measured"):
+            raise SystemExit(
+                "[prereg] budget_caps.t3_per_point_seconds_measured=null（T3a-T0 未标定回填）——t3-t1/t3-t2 禁开跑"
+            )
+        return n_samples
     if STAGED_TIERS_KEY in caps:
         _resolve_stage_cost_tiers(stage, caps)
     cap_total = caps.get("grid_points_cap")
@@ -1286,8 +1613,8 @@ def main() -> int:
     ap.add_argument(
         "--stage",
         default="",
-        choices=["", "t0", "t1", "t2"],
-        help="预算阶段（t0 标定 200/t1 粗扫 17100/t2 细化 13000；空=沿用 n-samples 不受 stage 帽）",
+        choices=["", "t0", "t1", "t2", "t3", "t3-t1", "t3-t2"],
+        help="预算阶段（t0 标定 200/t1 粗扫 17100/t2 细化 13000；t3 家族=T3a 开闸考 t3a 冻结册钳制；空=沿用 n-samples 不受 stage 帽）",
     )
     ap.add_argument(
         "--skip-compute-gate",
@@ -1317,12 +1644,38 @@ def main() -> int:
     if (not args.smoke and not args.skip_compute_gate) or args.stage == "t2":
         _ask_compute_window_gate(args.stage)
     stage_tiers = None
+    ctx_overrides: dict | None = None
+    factor_surface = "v1"
+    exec_caliber = "close"
+    cost_attribution = False
     if args.stage and not args.smoke:
         args.n_samples = _apply_prereg_budget(args.stage, args.n_samples)
         stage_tiers = _resolve_stage_cost_tiers(args.stage)
     elif not args.smoke:
         args.n_samples = _apply_prereg_budget("", args.n_samples)
         stage_tiers = _resolve_stage_cost_tiers("")
+    if args.stage in T3_STAGES and not args.smoke:
+        # T6: t3 家族按 t3a 冻结卡注入考卷面（context/因子面/成交价口径/白名单登记校验）
+        card = _load_t3a_exam_card()
+        exam = card.get("exam_definition") or {}
+        ctx_overrides = dict(exam.get("context_overrides") or {})
+        factor_surface = str(exam.get("factor_surface") or "v1")
+        exec_caliber = str(exam.get("exec_caliber") or "close")
+        if factor_surface not in FACTOR_SURFACES:
+            raise SystemExit(f"[prereg] T3a 冻结卡 factor_surface 非法: {factor_surface}")
+        if exec_caliber not in ("close", "next_open", "vwap"):
+            raise SystemExit(f"[prereg] T3a 冻结卡 exec_caliber 非法: {exec_caliber}")
+        cost_attribution = bool(exam.get("cost_attribution", True))
+        _validate_defensive_whitelist_registration(exam.get("defensive_leg") or {})
+        print(
+            f"[prereg-t3a] 考卷面注入: context={ctx_overrides} factor_surface={factor_surface} "
+            f"exec_caliber={exec_caliber} G_universe={exam.get('G_universe')} "
+            f"J={exam.get('J_regime_switch')} stratify={exam.get('stratify_dims')}"
+        )
+        print(
+            "[prereg-t3a] 护盘白名单登记（MOD-POS-026 真源，登记≠启用 D114 休眠）: "
+            f"tier1={defensive_whitelist_assets()['tier1']}"
+        )
     if stage_tiers is not None:
         print(
             f"[prereg] stage={args.stage or '(none)'} per-point 成本档位={list(stage_tiers)}（方案①分层语义，裁定#413）"
@@ -1341,6 +1694,10 @@ def main() -> int:
         stratify_dims=stratify,
         cost_gate_tiers_bp=stage_tiers,
         engine=args.engine,
+        context_overrides=ctx_overrides,
+        factor_surface=factor_surface,
+        exec_caliber=exec_caliber,
+        cost_attribution=cost_attribution,
     )
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0

@@ -18,6 +18,9 @@
 #   （缺省 auto；"cpu"=恒原 pandas 路径零漂移红线；"gpu"=仅等形对齐格点走 gpu_core FP64
 #   张量核，掩码 CH 查询留在本件）；prep_px_tensor/run_backtest_full_with_tiers=L1 hoist
 #   （批级 closes/rets 预热共享+成本门单趟三产物，输出与原两调逐位一致）
+#   T3a S2 成交价口径（st-tclose-t3a-20261005）：exec_caliber=close|next_open|vwap 全入口
+#   透传（缺省 close=现行逐位零漂移；非 close 口径=rets 换源恒 CPU+guard_reason 显性披露，
+#   见 _VALID_EXEC_CALIBERS/exec_interval_returns/_vwap_from_amount_volume）
 # [MODIFY-GUARD] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -73,6 +76,45 @@ _T_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 
 # 涨跌停封板判定容差（E7 探针同口径 2026-09-17：close_raw >= limit_up*(1-1e-4)）
 _LIMIT_SEAL_TOL = 1e-4
+
+# ── S2 成交价口径（st-tclose-t3a-20261005，T3a 开闸考接线件）──────────────────
+# close=现行冻结口径（w_t 收盘决策收盘成交，区间收益=close_{d+1}/close_d−1）；
+# next_open=收盘决策、次日开盘成交（区间收益=open_{d+1}/open_d−1，"rets 换源"）；
+# vwap=同形换源（执行价宽表由调用方给 _vwap_from_amount_volume 产出）。
+# GPU 快路径仅支持 close 口径（gpu_core 只吃 close-to-close 等形张量面）——非 close
+# 口径恒走 pandas 原路并出 guard_reason=fastpath_exec_caliber（显性降速，禁静默）。
+_VALID_EXEC_CALIBERS: tuple[str, ...] = ("close", "next_open", "vwap")
+_GUARD_EXEC_CALIBER: str = "fastpath_exec_caliber_cpu_only"
+
+
+def exec_interval_returns(px_exec: pd.DataFrame) -> pd.DataFrame:
+    """S2 执行价口径持仓区间收益宽表：rets[d] = px_{d+1}/px_d − 1（末行 NaN）。
+
+    语义：w_{d-1}（d-1 收盘决策）于 d 日按执行价 px_d 成交，持有至 d+1 日执行价再
+    平仓，区间收益即 px_{d+1}/px_d−1。PIT：执行价只进入**收益实现**，不进入任何
+    决策输入（决策输入仍全为 ≤d-1 信息，w.shift(1) 前视防御不变）。
+    """
+    return px_exec.shift(-1) / px_exec - 1.0
+
+
+def _vwap_from_amount_volume(
+    amount: pd.DataFrame, volume: pd.DataFrame, close_ref: pd.DataFrame, tol_lo: float = 0.5, tol_hi: float = 2.0
+) -> pd.DataFrame:
+    """S3/S2 vwap 宽表 = amount/volume（volume>0 之外 NaN），带量纲哨兵。
+
+    单位哨兵：vwap/close_ref 中位数必须落在 [tol_lo, tol_hi]（同日 vwap 必在 close
+    邻域；amount 千元/volume 手 类量纲错配会给出 10x 级偏离）——越界 RuntimeError
+    （fail-closed，禁把量纲错的价格当成交价）。
+    """
+    vol = volume.where(volume > 0)
+    vwap = amount / vol
+    ratio = (vwap / close_ref).replace([np.inf, -np.inf], np.nan).to_numpy()
+    ratio = ratio[np.isfinite(ratio)]
+    med = float(np.median(ratio)) if ratio.size else float("nan")
+    if not np.isfinite(med) or not (tol_lo <= med <= tol_hi):
+        raise RuntimeError(f"vwap 量纲哨兵越界: median(vwap/close)={med}——amount/volume 单位错配，禁用作成交价")
+    return vwap
+
 
 # 掩码批级 LRU 缓存（st-ddup-20260925 去重改造③，gpu_rewrite/hotspot_census.md §二 L1-a/L1-b/L1-d）：
 # 掩码只依赖 (窗口, 宇宙列集)，与格点无关——键=(起,止,6字列集元组)；容量按批内宇宙族数
@@ -565,6 +607,8 @@ def _backtest_core(
     *,
     backend: str | None = None,
     pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+    exec_caliber: str = "close",
+    px_exec: pd.DataFrame | None = None,
 ) -> tuple[pd.Series, pd.Series]:
     """run_backtest / daily_net_returns 共享单趟（st-ddup-20260925 去重改造②，
     gpu_rewrite/hotspot_census.md §二 L2-b：两函数体重叠 90%，执行器两连调=白付 1 个 pass）。
@@ -574,9 +618,25 @@ def _backtest_core(
     （零漂移红线）；"gpu"=gpu_core 张量核（仅等形对齐格点，否则原路径）。
     pre_tensor（L1 hoist）：prep_px_tensor 产出 (closes, rets) 批级共享，免逐格重算；
     仅 CPU 原路径消费（GPU 核内含等价张量面）。
+    exec_caliber/px_exec（S2 接线，st-tclose-t3a-20261005）："close"（缺省）=现行口径
+    逐位零漂移；"next_open"/"vwap"=rets 换源（exec_interval_returns），恒走 pandas 原路
+    （GPU 核仅 close 等形面），缺 px_exec=ValueError（禁静默回落）。
     L2-B：实际后端与守卫判定记入 _LAST_BACKEND_GUARD（消费见 _stats_from_net 的
     backend/guard_reason 披露键；同步执行流内紧邻消费，无跨线程读）。
     """
+    if exec_caliber != "close":
+        if exec_caliber not in _VALID_EXEC_CALIBERS:
+            raise ValueError(f"exec_caliber 须为 {'|'.join(_VALID_EXEC_CALIBERS)}，得到 {exec_caliber!r}")
+        if px_exec is None:
+            raise ValueError(f"exec_caliber={exec_caliber} 需执行价宽表 px_exec（禁静默回落 close）")
+        _LAST_BACKEND_GUARD.update(backend="cpu", guard_reason=_GUARD_EXEC_CALIBER)
+        px_x = px_exec.reindex(weights.index.union(weights.index)).ffill()
+        w = weights.reindex(px_x.index).ffill().fillna(0.0)
+        w = apply_fillability_gate(w, gate_limits=gate_limits)
+        rets = exec_interval_returns(px_x)
+        gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
+        turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
+        return gross, turnover
     be = _resolve_engine_backend(backend)
     if be == "gpu" and _gpu_fastpath_eligible(weights, px_close):
         # auto 档尺寸守卫：小面板 gpu 输 hoisted-cpu（kernel-launch 税，L2-A 后阈值重校准
@@ -679,6 +739,8 @@ def run_backtest(
     *,
     backend: str | None = None,
     pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+    exec_caliber: str = "close",
+    px_exec: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """T+1 收盘执行向量化回测——与 pilot_002_ma_cross 逐行同口径。
 
@@ -690,8 +752,17 @@ def run_backtest(
     None=冻结土规 SLIPPAGE_BP 零变更。仅滑点项可覆盖，佣金/印花不动——
     正考口径必须传 None，档位扫描是侧向分析不改冻结土规。
     backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。
+    exec_caliber/px_exec: S2 成交价口径（缺省 close=现行逐位零漂移；语义见 _backtest_core）。
     """
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    gross, turnover = _backtest_core(
+        weights,
+        px_close,
+        gate_limits=gate_limits,
+        backend=backend,
+        pre_tensor=pre_tensor,
+        exec_caliber=exec_caliber,
+        px_exec=px_exec,
+    )
     net = _net_line(gross, turnover, slippage_bp)
     return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD)
 
@@ -704,14 +775,25 @@ def daily_net_returns(
     *,
     backend: str | None = None,
     pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+    exec_caliber: str = "close",
+    px_exec: pd.DataFrame | None = None,
 ) -> pd.Series:
     """与 run_backtest 同口径的净收益序列（供 DSR 批内偏度/峰度合并计算）。
 
     gate_limits: 涨跌停可成交性闸（默认开，与 run_backtest 一致）。
     slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用）；None=冻结土规零变更。
     backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。
+    exec_caliber/px_exec: S2 成交价口径（缺省 close=现行逐位零漂移）。
     """
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    gross, turnover = _backtest_core(
+        weights,
+        px_close,
+        gate_limits=gate_limits,
+        backend=backend,
+        pre_tensor=pre_tensor,
+        exec_caliber=exec_caliber,
+        px_exec=px_exec,
+    )
     return _net_line(gross, turnover, slippage_bp).fillna(0.0)
 
 
@@ -723,14 +805,25 @@ def run_backtest_full(
     *,
     backend: str | None = None,
     pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+    exec_caliber: str = "close",
+    px_exec: pd.DataFrame | None = None,
 ) -> tuple[dict[str, Any], pd.Series]:
     """单趟双产物 (stats, net)——run_backtest + daily_net_returns 合并入口
     （st-ddup-20260925 去重改造②，内收声明：替代执行器两连调 run_backtest+
     daily_net_returns；stats 与 run_backtest(...) 逐位一致，net 与
     daily_net_returns(...) 逐位一致，两原函数签名/语义不变）。
     slippage_bp 语义与 run_backtest 相同（None=冻结土规；扫描档走 net_returns_by_tiers）。
-    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。"""
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。
+    exec_caliber/px_exec: S2 成交价口径（缺省 close=现行逐位零漂移）。"""
+    gross, turnover = _backtest_core(
+        weights,
+        px_close,
+        gate_limits=gate_limits,
+        backend=backend,
+        pre_tensor=pre_tensor,
+        exec_caliber=exec_caliber,
+        px_exec=px_exec,
+    )
     net = _net_line(gross, turnover, slippage_bp)
     return _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD), net.fillna(0.0)
 
@@ -743,13 +836,24 @@ def run_backtest_full_with_tiers(
     *,
     backend: str | None = None,
     pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+    exec_caliber: str = "close",
+    px_exec: pd.DataFrame | None = None,
 ) -> tuple[dict[str, Any], pd.Series, dict[float, pd.Series]]:
     """单趟三产物 (stats, net, nets_by_tier)——run_backtest_full + net_returns_by_tiers
     同 (weights,px) 合并入口（st-gpup1-20260929 L1 hoist，hotspot_census §二 L2-b 同族
     内收声明：替代执行器成本门场景 run_backtest_full+net_returns_by_tiers 两连调——
     原先同 (weights,px) 白付 1 个 pass；gross/turnover 一次计算两处消费，三产物与
-    两函数各自输出逐位一致）。backend/pre_tensor 语义见 _backtest_core。"""
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    两函数各自输出逐位一致）。backend/pre_tensor 语义见 _backtest_core。
+    exec_caliber/px_exec: S2 成交价口径（缺省 close=现行逐位零漂移）。"""
+    gross, turnover = _backtest_core(
+        weights,
+        px_close,
+        gate_limits=gate_limits,
+        backend=backend,
+        pre_tensor=pre_tensor,
+        exec_caliber=exec_caliber,
+        px_exec=px_exec,
+    )
     net = _net_line(gross, turnover, None)
     stats = _stats_from_net(net, turnover, weights, backend_info=_LAST_BACKEND_GUARD)
     nets_by_tier = {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
@@ -764,13 +868,24 @@ def net_returns_by_tiers(
     *,
     backend: str | None = None,
     pre_tensor: tuple[pd.DataFrame, pd.DataFrame] | None = None,
+    exec_caliber: str = "close",
+    px_exec: pd.DataFrame | None = None,
 ) -> dict[float, pd.Series]:
     """一趟 gross/turnover × 多档成本标量乘（st-ddup-20260925 去重改造①，内收声明：
     替代 run_cost_tier_scan 五档各自全量重算的引擎侧路径——档间唯一差异是一行标量
     成本线，五遍全量回测收敛为一遍回测+五档后处理）。
     返回 {float(bp): net}；各档 net 与 daily_net_returns(slippage_bp=bp) 逐位一致。
-    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。"""
-    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits, backend=backend, pre_tensor=pre_tensor)
+    backend/pre_tensor: P1 接线与 L1 hoist 透传（语义见 _backtest_core）。
+    exec_caliber/px_exec: S2 成交价口径（缺省 close=现行逐位零漂移）。"""
+    gross, turnover = _backtest_core(
+        weights,
+        px_close,
+        gate_limits=gate_limits,
+        backend=backend,
+        pre_tensor=pre_tensor,
+        exec_caliber=exec_caliber,
+        px_exec=px_exec,
+    )
     return {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
 
 
