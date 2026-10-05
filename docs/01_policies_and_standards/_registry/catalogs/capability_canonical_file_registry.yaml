@@ -62772,4 +62772,106 @@ creation_tokens:
   created_by: st-fg-srcline1-20261005
   capability: source_line_criterion
   merge_evaluation: "新增能力面（能力反查六向零命中）：红源线判据转化器族=源线数据到decision_question判据的专用翻译件，与sector族传感器（信号算法件）正交，不替代不合并旧条目"
+- file: docs/_working/commitmap_cure/f12_doctor3_report.md
+  token: st-f12-doctor3-f12-doctor3-report-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 治愈报告（本批交付物 token 先行）"
+- file: docs/_working/map_census/02_quarterly_ledger_prep_v1.csv
+  token: map-census-02-quarterly-ledger-prep-v1-20261005
+  created_by: st-sentinel-census-20261005
+  capability: map_census
+  merge_evaluation: "季度清账本备料：census 衍生过滤分组件，喂覆盖账本三红首报；纯只读派生零替代"
+- file: docs/03_modules/_domain_factor/chips/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/cycle/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/momentum/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/reversal/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/statistics/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/trend/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/volatility/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/03_modules/_domain_factor/volume/blueprint.md
+  token: factor-indicator-blueprint-blueprint-20261005
+  created_by: st-fb-indeng-20261005
+  capability: factor_indicator_blueprint
+  merge_evaluation: "净零申报：指标引擎8台(MOD-L02-019/020/021/022/023/028/029/031)蓝图补建，depgraph已注册蓝图全缺，总筹已裁豁免供图9域"
+- file: docs/_working/axis_unify/00_work_order.md
+  token: axis-unify-00-work-order-20261005
+  created_by: st-axisunify-flash-20261005
+  capability: axis_unify
+  merge_evaluation: "战役工作文档(ttl:task_bound)：F5 归档后随 docs/_working 归档机制收敛，不与任何常设册并合，零替代旧条目"
+- file: docs/_working/axis_unify/01_census.yaml
+  token: axis-unify-01-census-20261005
+  created_by: st-axisunify-flash-20261005
+  capability: axis_unify
+  merge_evaluation: "战役工作文档(ttl:task_bound)：F5 归档后随 docs/_working 归档机制收敛，不与任何常设册并合，零替代旧条目"
+- file: docs/_working/axis_unify/02_mapping_proposal.yaml
+  token: axis-unify-02-mapping-proposal-20261005
+  created_by: st-axisunify-flash-20261005
+  capability: axis_unify
+  merge_evaluation: "战役工作文档(ttl:task_bound)：F5 归档后随 docs/_working 归档机制收敛，不与任何常设册并合，零替代旧条目"
+- file: docs/_working/axis_unify/03_ruling_submission.md
+  token: axis-unify-03-ruling-submission-20261005
+  created_by: st-axisunify-flash-20261005
+  capability: axis_unify
+  merge_evaluation: "战役工作文档(ttl:task_bound)：F5 归档后随 docs/_working 归档机制收敛，不与任何常设册并合，零替代旧条目"
+- file: docs/_working/map_build/fig16_legislation/00_skeleton.md
+  token: fig16-00_skeleton-20261005
+  created_by: st-fig16-20261005
+  capability: governance_legislation_map
+  merge_evaluation: 裁定准入执行件：立法流状态机图，同真源(pg_ledger+裁定册)派生，无同域重复
+- file: config/governance_legislation_map.yaml
+  token: fig16-governance_legislation_map-20261005
+  created_by: st-fig16-20261005
+  capability: governance_legislation_map
+  merge_evaluation: 裁定准入执行件：立法流状态机图，同真源(pg_ledger+裁定册)派生，无同域重复
+- file: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  token: fig16-generate_governance_legislation_map-20261005
+  created_by: st-fig16-20261005
+  capability: governance_legislation_map
+  merge_evaluation: 裁定准入执行件：立法流状态机图，同真源(pg_ledger+裁定册)派生，无同域重复
+- file: scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
+  token: fig16-validate_governance_legislation_map-20261005
+  created_by: st-fig16-20261005
+  capability: governance_legislation_map
+  merge_evaluation: 裁定准入执行件：立法流状态机图，同真源(pg_ledger+裁定册)派生，无同域重复
+- file: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
+  token: mapfamily-governance_legislation_map_gate-20261005
+  created_by: st-fig16-20261005
+  capability: map_family_governance_legislation_map_gate
+  merge_evaluation: 跨域不同对象不并：map_family 第四图族提交面执法件（图16 立法流结构门），收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate
+    第二实现
+  no_mount_reason: 提交面执法件（map_family 图族 gate）非业务模块无图挂载点；同族先例=mapfamily 三 gate token 均无 map_mounts
+- file: docs/_working/tdm_mount/fd_srcline_priority_v1.md
+  token: tdm-mount-fd-srcline-priority-v1-20261005
+  created_by: st-fd-srcline-20261005
+  capability: tdm_mount
+  merge_evaluation: "净零申报：37红源线实现优先级矩阵+Top5施工规格草案，为总筹源线施工排序供料，替代无机生通道的手工评估"
 di_seam_exemptions: []
