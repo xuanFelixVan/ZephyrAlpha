@@ -408,11 +408,29 @@ def default_landing_stub(item: dict, queue_root: Path) -> LandingResult:
 # ---------------------------------------------------------------------------
 
 
+def _strip_lane_prefix(p: Path) -> Path:
+    """车道内路径 → 主仓同构路径：截掉 .aidrafts/<车道> 或 .worktrees/<sid> 两段前缀。
+
+    车道里的 scripts 副本按 __file__ 派生的根会把队列解析进车道本地目录——主带
+    不排=袋搁浅（10-05 三车道独立实证：gomap worktree dud 袋/capcov D 道死信/
+    mapcb CDE 三袋 rc=128）。显式传参与 __file__ 默认分支同判，双标记全覆盖
+    （修2 只盖显式+.aidrafts，.worktrees 与默认分支裸奔）。
+    """
+    parts = p.parts
+    for marker in (".aidrafts", ".worktrees"):
+        if marker in parts:
+            i = parts.index(marker)
+            return Path(*parts[:i], *parts[i + 2 :])
+    return p
+
+
 def resolve_queue_root(queue_root: str | os.PathLike | None = None) -> Path:
     """队列根解析序：显式参数 > 环境变量 > 仓库默认 .runtime/commit_queue。
 
     默认锚 __file__ 派生的仓库根（scripts/ 上一级）——与 task_board 锚主仓同理，
     本队列是跨 worktree 协调设施，MUST 全会话共享同一目录。
+    车道感知（修3，Owner 批 2026-10-05）：__file__ 派生根或显式传入路径位于
+    .aidrafts/.worktrees 车道内时，截断到主仓同构路径——车道本地队列主带不排。
     P0-C 测试隔离治本（st-commitspeed-20260916，2026-09-16）：pytest 运行态下
     禁止回退生产根——历史 735 条死信系测试无 queue_root 落生产队列所致
     （dead_reason 含 .runtime/tmp/pytest_* 路径，已隔离转运 .runtime/quarantine/
@@ -420,15 +438,8 @@ def resolve_queue_root(queue_root: str | os.PathLike | None = None) -> Path:
     ZEPHYR_COMMIT_QUEUE_DIR；确需测默认解析本体的用例 monkeypatch PYTEST_CURRENT_TEST。
     """
     if queue_root is not None:
-        # 修2（Owner 全批 2026-10-05）：显式传入的路径若在 worktree 内（.aidrafts/），
-        # 重定向到主仓队列——worktree 本地队列主带不排=袋搁浅（10-05 实锤）
-        qp = Path(queue_root)
-        if ".aidrafts" in qp.parts:
-            parts = qp.parts
-            for i, part in enumerate(parts):
-                if part == ".aidrafts":
-                    return Path(*parts[:i]) / ".runtime" / "commit_queue"
-        return Path(queue_root)
+        # 修2（Owner 全批 2026-10-05）→ 修3 扩面：显式路径车道重定向（双标记+保子路径）
+        return _strip_lane_prefix(Path(queue_root))
     env = os.environ.get(QUEUE_ENV_VAR)
     if env:
         return Path(env)
@@ -438,7 +449,7 @@ def resolve_queue_root(queue_root: str | os.PathLike | None = None) -> Path:
             "测试 MUST 显式传 queue_root=tmp_path/... 或 setenv "
             f"{QUEUE_ENV_VAR}（历史 735 条测试污染死信治本）"
         )
-    return _REPO_ROOT / _QUEUE_DIR_DEFAULT
+    return _strip_lane_prefix(_REPO_ROOT) / _QUEUE_DIR_DEFAULT
 
 
 def _ensure_dirs(queue_root: Path) -> None:
@@ -2827,17 +2838,6 @@ def requeue_dead_item(
         old_item = json.loads(dead_path.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
         raise RequeueError(f"死信项读取失败: {qid}（{exc}）") from exc
-    # 修②（Owner 全批 2026-10-05）：原子去重锁——已 requeued 的袋拒绝再次 requeue。
-    # 原病灶：requeued 标注在新袋入队后才写（L3033），两并发进程都能在写入前
-    # 读到无标记旧袋=竞态窗口导致同袋双投（白跑 400s drain）。
-    # 此检查在熔断检查之前，一发即中（fail-closed：已投过的不许再投）。
-    if old_item.get("requeued") and not force:
-        _prev = old_item["requeued"]
-        raise RequeueError(
-            f"去重拒绝：{qid} 已被 requeue 至 {_prev.get('new_qid', '?')}（{_prev.get('at', '?')}），"
-            "重复重投=白跑一轮 drain。确需再投的用 --force（留痕）",
-            details={"previous_new_qid": _prev.get("new_qid", ""), "requeued_at": _prev.get("at", "")},
-        )
     old_meta = old_item.get("meta") or {}
     # 波 1B 1.7c 复发熔断（st-zc9-lane-r1）：同签名死信已 _RECURRENCE_FUSE_LIMIT 次
     # ⇒ 盲 requeue 拒绝（修根因前不再烧 landing）；根因工序单随 details 一跳可达；
