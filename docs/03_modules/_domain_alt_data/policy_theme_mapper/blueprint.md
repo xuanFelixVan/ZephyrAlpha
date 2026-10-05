@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-005
+module_id: MOD-ALT-005
 module_name: policy_theme_mapper
 domain: D_ALT_DATA
 doc_type: blueprint

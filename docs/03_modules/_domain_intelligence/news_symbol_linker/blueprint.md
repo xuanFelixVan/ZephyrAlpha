@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-NEWS-LINK
+module_id: MOD-INT-NEWS-LINK
 module_name: news_symbol_linker
 domain: D_INTELLIGENCE
 doc_type: blueprint

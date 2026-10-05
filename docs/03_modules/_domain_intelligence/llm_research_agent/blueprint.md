@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-RESEARCH-AGENT
+module_id: MOD-INT-RESEARCH-AGENT
 module_name: llm_research_agent
 domain: D_INTELLIGENCE
 doc_type: blueprint

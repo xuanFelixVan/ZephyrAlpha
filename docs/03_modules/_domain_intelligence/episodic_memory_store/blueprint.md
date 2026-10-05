@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-EPISODIC-MEM
+module_id: MOD-INT-EPISODIC-MEM
 module_name: episodic_memory_store
 domain: D_INTELLIGENCE
 doc_type: blueprint

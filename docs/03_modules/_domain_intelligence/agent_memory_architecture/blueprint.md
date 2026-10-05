@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-AGENT-MEMORY
+module_id: MOD-INT-AGENT-MEMORY
 module_name: agent_memory_architecture
 domain: D_INTELLIGENCE
 doc_type: blueprint

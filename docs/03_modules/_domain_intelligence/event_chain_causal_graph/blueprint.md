@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-EVENT-CHAIN
+module_id: MOD-INT-EVENT-CHAIN
 module_name: event_chain_causal_graph
 domain: D_INTELLIGENCE
 doc_type: blueprint

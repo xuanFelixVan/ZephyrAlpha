@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-010
+module_id: MOD-ALT-010
 module_name: policy_expectation_analyzer
 domain: D_ALT_DATA
 doc_type: blueprint

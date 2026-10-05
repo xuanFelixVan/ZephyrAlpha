@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-AGENT-ROUTER
+module_id: MOD-INT-AGENT-ROUTER
 module_name: llm_agent_router
 domain: D_INTELLIGENCE
 doc_type: blueprint

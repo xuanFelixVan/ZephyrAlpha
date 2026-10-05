@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-009
+module_id: MOD-ALT-009
 module_name: research_report_collector
 domain: D_ALT_DATA
 doc_type: blueprint

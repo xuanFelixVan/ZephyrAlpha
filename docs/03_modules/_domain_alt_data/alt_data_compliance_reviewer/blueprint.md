@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-015
+module_id: MOD-ALT-015
 module_name: alt_data_compliance_reviewer
 domain: D_ALT_DATA
 doc_type: blueprint

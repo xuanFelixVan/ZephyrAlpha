@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-MKT-INTERPRETER
+module_id: MOD-INT-MKT-INTERPRETER
 module_name: llm_market_interpreter
 domain: D_INTELLIGENCE
 doc_type: blueprint

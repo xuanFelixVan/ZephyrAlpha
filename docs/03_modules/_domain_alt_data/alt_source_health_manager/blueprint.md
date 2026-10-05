@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-011
+module_id: MOD-ALT-011
 module_name: alt_source_health_manager
 domain: D_ALT_DATA
 doc_type: blueprint

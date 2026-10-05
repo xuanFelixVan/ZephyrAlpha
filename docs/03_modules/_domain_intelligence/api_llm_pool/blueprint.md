@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-API-LLM-POOL
+module_id: MOD-INT-API-LLM-POOL
 module_name: api_llm_pool
 domain: D_INTELLIGENCE
 doc_type: blueprint

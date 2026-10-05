@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-007
+module_id: MOD-ALT-007
 module_name: alt_data_connector
 domain: D_ALT_DATA
 doc_type: blueprint

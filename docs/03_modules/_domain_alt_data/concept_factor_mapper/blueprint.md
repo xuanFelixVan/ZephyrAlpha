@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-006
+module_id: MOD-ALT-006
 module_name: concept_factor_mapper
 domain: D_ALT_DATA
 doc_type: blueprint

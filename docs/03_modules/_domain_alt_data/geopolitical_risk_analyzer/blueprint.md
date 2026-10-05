@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-014
+module_id: MOD-ALT-014
 module_name: geopolitical_risk_analyzer
 domain: D_ALT_DATA
 doc_type: blueprint

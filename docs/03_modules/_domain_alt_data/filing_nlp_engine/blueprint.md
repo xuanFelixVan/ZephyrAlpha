@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-003
+module_id: MOD-ALT-003
 module_name: filing_nlp_engine
 domain: D_ALT_DATA
 doc_type: blueprint

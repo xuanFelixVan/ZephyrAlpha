@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-LLM-SELFEVAL
+module_id: MOD-INT-LLM-SELFEVAL
 module_name: llm_self_evaluation
 domain: D_INTELLIGENCE
 doc_type: blueprint

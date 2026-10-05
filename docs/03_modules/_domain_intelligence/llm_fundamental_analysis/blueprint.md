@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-LLM-FUND
+module_id: MOD-INT-LLM-FUND
 module_name: llm_fundamental_analysis
 domain: D_INTELLIGENCE
 doc_type: blueprint

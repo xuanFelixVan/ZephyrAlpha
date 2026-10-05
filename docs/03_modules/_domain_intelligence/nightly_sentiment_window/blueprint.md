@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-NEWS-NIGHT
+module_id: MOD-INT-NEWS-NIGHT
 module_name: nightly_sentiment_window
 domain: D_INTELLIGENCE
 doc_type: blueprint

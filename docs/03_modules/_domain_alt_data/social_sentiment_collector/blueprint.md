@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-001
+module_id: MOD-ALT-001
 module_name: social_sentiment_collector
 domain: D_ALT_DATA
 doc_type: blueprint

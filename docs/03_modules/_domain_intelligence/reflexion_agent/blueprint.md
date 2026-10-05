@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-REFLEXION_AGENT
+module_id: MOD-REFLEXION_AGENT
 module_name: reflexion_agent
 domain: D_INTELLIGENCE
 doc_type: blueprint

@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-002
+module_id: MOD-ALT-002
 module_name: web_scraper_engine
 domain: D_ALT_DATA
 doc_type: blueprint

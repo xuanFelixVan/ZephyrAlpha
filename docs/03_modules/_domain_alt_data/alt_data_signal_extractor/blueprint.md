@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-013
+module_id: MOD-ALT-013
 module_name: alt_data_signal_extractor
 domain: D_ALT_DATA
 doc_type: blueprint

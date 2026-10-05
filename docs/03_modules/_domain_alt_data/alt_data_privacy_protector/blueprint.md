@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-012
+module_id: MOD-ALT-012
 module_name: alt_data_privacy_protector
 domain: D_ALT_DATA
 doc_type: blueprint

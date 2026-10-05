@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-ALT-004
+module_id: MOD-ALT-004
 module_name: sentiment_engine
 domain: D_ALT_DATA
 doc_type: blueprint

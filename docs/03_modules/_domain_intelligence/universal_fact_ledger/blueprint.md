@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-FACT-LEDGER
+module_id: MOD-INT-FACT-LEDGER
 module_name: universal_fact_ledger
 domain: D_INTELLIGENCE
 doc_type: blueprint

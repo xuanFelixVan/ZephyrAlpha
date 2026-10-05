@@ -1,5 +1,6 @@
 ---
 blueprint_id: MOD-INT-HUMAN-TRUST
+module_id: MOD-INT-HUMAN-TRUST
 module_name: human_trust_model
 domain: D_INTELLIGENCE
 doc_type: blueprint
