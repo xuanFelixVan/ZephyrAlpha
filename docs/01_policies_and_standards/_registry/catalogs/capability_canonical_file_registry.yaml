@@ -57215,11 +57215,13 @@ creation_tokens:
   token: mapfamily-data_supply_chain_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_data_supply_chain_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
   token: mapfamily-dev_delivery_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_dev_delivery_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/strategy_card_lifecycle_map_gate.py
   token: mapfamily-strategy_card_lifecycle_map_gate-20261004
@@ -57232,6 +57234,7 @@ creation_tokens:
   token: mapfamily-trading_day_cycle_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_trading_day_cycle_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py
   token: auto-mcp-version-field-gate-20260723
@@ -62468,11 +62471,13 @@ creation_tokens:
   token: tdm-mountgate-gate-20261005
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "TDM-MOUNT-COVERAGE提交时门禁priority=61：三选一裁决+撞号拦+蓝图锚一致性（own-diff新增blueprint.md/新.py）。工单st-tdm-mountgate-20261005挂载义务门禁施工（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流，非第二真源；消费方互斥无同域重复）"
 - file: src/zephyr/governance/audit/tdm_mount_coverage_reconciler.py
   token: tdm-mountgate-reconciler-20261005
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "post-commit事件触发reconciler priority=952：模块册变更→重扫→孤儿判红（禁cron宪法四要素）。工单st-tdm-mountgate-20261005挂载义务门禁施工（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流，非第二真源；消费方互斥无同域重复）"
 - file: scripts/generate_mount_obligation_manifest.py
   token: tdm-mountgate-manifest-gen-20261005
@@ -62657,4 +62662,14 @@ creation_tokens:
   created_by: st-btfix-20261005
   capability: panorama_map_census
   merge_evaluation: "错盖修复取证+执行报告，40号§4建议的落地件"
+- file: docs/_working/fullflow_mine/wiring/F3_wire_check.md
+  token: fullflow-mine-f3-wire-check-20261005
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "任务书指定产出件（F3 接线查证销账报告，一次性交付件，与既有 wiring 报告同域同类不并）"
+- file: docs/_working/map_census/casebooks_family/encoding_normalize_map.yaml
+  token: mapcb-normalize-encoding-normalize-map-20261005
+  capability: mapcb_normalize
+  created_by: st-mapcb-normalize-20261005
+  merge_evaluation: "编码归一候选表（纯只读班，零判读）：DSC 正典全写映射+SP 自由名候选对位+字母册码映射键草案，供 chief 判定；不替代不合并任何既有册"
 di_seam_exemptions: []
