@@ -76,8 +76,10 @@ _PERIOD_TABLE: dict[str, str] = {
     "30m": "kline_30min",
     "60m": "kline_60min",
     "1d": "kline_daily",
-    "1w": "kline_weekly",
-    "1M": "kline_monthly",
+    # 语义变更点（F1 批 2026-10-05 生效）：周/月 K 线切后复权表（后复权消除除权跳空，
+    # 价格绝对值与旧非复权口径不可比）；旧表 kline_weekly/kline_monthly 已退役 DROP（停更 09-15）。
+    "1w": "kline_weekly_hfq",
+    "1M": "kline_monthly_hfq",
 }
 
 _client = None  # CH 连接（连接统一治本 2026-09-14：经 DatabaseService 槽位领取，writer/账号语义见 _ch 注释）
@@ -1510,13 +1512,11 @@ _TABLE_ZH = {
     "kline_lof_30min": "LOF 30 分 K",
     "kline_lof_5min": "LOF 5 分 K",
     "kline_lof_60min": "LOF 60 分 K",
-    "kline_monthly": "月 K",
     "kline_monthly_hfq": "月 K 后复权",
     "kline_sector": "板块 K 线",
     "kline_sector_880": "板块 K 线（880）",
     "kline_sector_intraday": "板块盘中 K",
     "kline_us_daily": "美股日 K",
-    "kline_weekly": "周 K",
     "kline_weekly_hfq": "周 K 后复权",
     "limit_up_down": "涨跌停明细",
     "lof_list": "LOF 清单",
@@ -1981,9 +1981,7 @@ _ASSET_HUGE_ROWS = 200_000_000  # 行数超阈值用 uniq 近似（亿级表 uni
 _ASSET_ASHARE_UNIVERSE: Final = {  # "应有宽度=股票全历史清单"白名单（宇宙口径=全 A 含退市的表才展示应有，子宇宙表列入必误红）
     "kline_daily",
     "kline_daily_hfq",
-    "kline_weekly",
     "kline_weekly_hfq",
-    "kline_monthly",
     "kline_monthly_hfq",
     "stk_limit",
     "technical_indicator",

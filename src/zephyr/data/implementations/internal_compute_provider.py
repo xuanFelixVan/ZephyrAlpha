@@ -78,8 +78,11 @@ _PERIOD_MAP: dict[str, tuple[str, str, bool]] = {
     "60min": ("c1_market.kline_60min", "trade_time", True),
     "120min": ("c1_market.kline_60min", "trade_time", True),  # 聚合源
     "daily": ("c1_market.kline_daily", "trade_date", False),
-    "weekly": ("c1_market.kline_weekly", "trade_date", False),
-    "monthly": ("c1_market.kline_monthly", "trade_date", False),
+    # 语义变更点（F1 批 2026-10-05 生效）：周月指标计算源切后复权表 kline_weekly_hfq/kline_monthly_hfq。
+    # 后复权消除除权除息跳空=正确量化做法，但指标数值口径随之改变（与旧非复权值不可直接比）；
+    # 旧表 kline_weekly/kline_monthly 已于 2026-10-05 退役 DROP（停更于 09-15）。
+    "weekly": ("c1_market.kline_weekly_hfq", "trade_date", False),
+    "monthly": ("c1_market.kline_monthly_hfq", "trade_date", False),
 }
 
 # 全量回算时的周期遍历顺序（日/周/月先行，分钟随后）
