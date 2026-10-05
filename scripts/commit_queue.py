@@ -2827,6 +2827,17 @@ def requeue_dead_item(
         old_item = json.loads(dead_path.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
         raise RequeueError(f"死信项读取失败: {qid}（{exc}）") from exc
+    # 修②（Owner 全批 2026-10-05）：原子去重锁——已 requeued 的袋拒绝再次 requeue。
+    # 原病灶：requeued 标注在新袋入队后才写（L3033），两并发进程都能在写入前
+    # 读到无标记旧袋=竞态窗口导致同袋双投（白跑 400s drain）。
+    # 此检查在熔断检查之前，一发即中（fail-closed：已投过的不许再投）。
+    if old_item.get("requeued") and not force:
+        _prev = old_item["requeued"]
+        raise RequeueError(
+            f"去重拒绝：{qid} 已被 requeue 至 {_prev.get('new_qid', '?')}（{_prev.get('at', '?')}），"
+            "重复重投=白跑一轮 drain。确需再投的用 --force（留痕）",
+            details={"previous_new_qid": _prev.get("new_qid", ""), "requeued_at": _prev.get("at", "")},
+        )
     old_meta = old_item.get("meta") or {}
     # 波 1B 1.7c 复发熔断（st-zc9-lane-r1）：同签名死信已 _RECURRENCE_FUSE_LIMIT 次
     # ⇒ 盲 requeue 拒绝（修根因前不再烧 landing）；根因工序单随 details 一跳可达；
