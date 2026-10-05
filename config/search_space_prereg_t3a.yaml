@@ -1,0 +1,98 @@
+# T3a 开闸考·预注册冻结卡（整装考第一批，挖矿真源=docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md §3）
+# 冻结语义：T3a 跑数前本文件为唯一考卷/判据/预算真源；事后挪门柱=本批作废（exam_policy §1.1）。
+# 授权链: Owner 常设授权（整装回测按 TDM 流程落地）+ 总包工单 T3a（车道 H10，st-tclose-t3a-20261005 施工，
+#   挖矿=H9 st-tclose-t3mine-20261005）；空间变更定性=J 维 context 翻转（非增删轴，#ARCH-366 先例），
+#   phase 翻转 N_raw 翻倍的预算/honesty 同卡原子冻结。
+# 消费: scripts/backtest/factory_grid_executor.py（stage=t3|t3-t1|t3-t2；_load_prereg_caps/_apply_prereg_budget/
+#   _resolve_stage_cost_tiers/_load_t3a_exam_card/_validate_defensive_whitelist_registration，fail-closed 全链）
+schema_version: 1.0.0
+doc_type: search_space_preregistration
+title: T3a 开闸考·考卷定义+判据+算力预算（J_regime_switch 开闸×全A剔ST 域）
+created: '2026-10-05'
+frozen_at: '2026-10-05T00:00:00+08:00'
+frozen_by: 总包工单T3a（Owner 常设授权：整装回测按 TDM 流程落地；裁定号回填位=owner_ruling_id）
+owner_ruling_id: null           # 点火前若总包要求正式裁定号，在此回填（回填属冻结卡允许的登记位补全，非判据改动）
+session: st-tclose-t3a-20261005
+objective:
+  # 搜索主目标沿用 17 号文口径（prereg 主册同源）；毛 Sharpe 仅观察项
+  primary: cost_adjusted_sharpe
+  observed: [gross_sharpe, annual_turnover_x, crisis_maxdd_improvement_pp]
+  cost_caliber: _c4_engine 冻结土规（佣金2.5bp双边+印花10bp卖+滑点5bp）+ 档位扫描（exam_policy §3 双口径声明：本批报告 MUST 标注本口径与 IS 窗口）
+exam_definition:
+  # 考卷定义（挖矿 §3.1/§3.2；九维网格整卷，J 双腿配对）
+  context_overrides: {phase: 2}          # DEFAULT_CONTEXT 之上的覆盖（strategy_pool/capital_ramp 不变，F/K 仍折叠）
+  G_universe: [all_a_ex_st]              # 全A剔ST 域（挖矿 T3a 指定域；subspace 由点火方经 --subspace-json 落地）
+  J_regime_switch: ['on', 'off']         # 双腿配对（regime 增益判据需要同格 off 对照；引号防 YAML 1.1 布尔陷阱）
+  factor_surface: v1_value               # S3 接线后考卷因子面=v1 三因子+f_ep/f_bp+f_np_yoy
+  exec_caliber: close                    # S2 已接线但 T3a 主判据仍冻结收盘口径（next_open/vwap=观察项非判据）
+  window: ['2020-01-01', '2023-12-31']   # IS 考窗（执行器 --start/--end 默认窗，跑数前写死）
+  seed: 20260915                         # 分层抽样种子（执行器默认，禁跑中改）
+  stratify_dims: [J_regime_switch, B_top_n]   # 分层轴：J 腿配平+Top-N 结构轴
+  n_raw_expected: 725760                 # phase=2 名义空间（362,880×2，挖矿 §3.1）；G 子空间过滤后=241,920
+  j_engine_semantics: owner_regime_switcher 日级帽调度（cap_A/cap_B 乘性帽+置信门+迟滞+失败安全；
+    全包帽 cap_t=max(cap_A,cap_B)，trend_down=0）；调度数据缺失=整格阴性（NegativeRecord eval 层，
+    fail-closed 禁静默）
+  j_schedule_source: c1_backtest.regime_snapshot_history（data_loader 钉用 run_id，PIT 翻转次日生效双保险在库）
+  defensive_leg:
+    # S4 护盘白名单内容登记（真源=MOD-POS-026 DEFAULT_TIER1/TIER2，执行器 _validate_defensive_whitelist_registration
+    # 对齐校验，漂移=SystemExit）。登记≠启用：D114 休眠铁律不破，state_matrix euphoria/distribution
+    # 防御格仍 pending-owner-adoption（格子内容=Owner 资金分配门位，AI 禁自填）
+    registered: true
+    enabled: false
+    source_module: MOD-POS-026
+    tier1: ['510300', '510500', '512100', '510880']   # 宽基 ETF（沪深300/中证500/中证1000/红利）
+    tier2: ['512800', '512890']                        # 银行/高股息
+    state_matrix_cells: untouched                      # 本卡禁改 TDM state_matrix（Owner 门位）
+  cost_attribution: true                 # S5 归因五列入 manifest（网格口径=冻结土规成本线精确分量分解）
+pass_criteria:
+  # 判据（exam_policy §1.1：跑数前写死，事后挪门柱=作废）
+  cost_gate:
+    tiers_bp: [0, 5, 10, 20, 40]         # 全档（唯一真源=config/exam_scale_cost_gate.yaml，禁双头改）
+    survival_floor: 0.0                  # 最高档(40bp) sharpe 下限（与主册同值，不放松）
+    turnover_cap_annual_x: 8.0
+    monotonic_tol: 1.0e-9
+  regime_gain:
+    # J 增益判据（挖矿 §3.3.2）：J=on vs off 同格配对，CRISIS 时段 MaxDD 改善≥5pp
+    crisis_maxdd_improvement_min_pp: 5.0
+    caliber_source: src/zephyr/backtest/regime_validation/c2_extreme_event_protection.py   # 口径真源（MaxDD=nav/cummax−1 最小值；改善=|DD_off|−|DD_on|）
+    cross_check: c3_throttle_attribution 分态归因复核——改善应来自预期防御态（非全态摊薄）
+    pairing_rule: 同 (A1,A2,B,C,D1,D2,E,H) 配置 on/off 成对比较；off 腿缺席的格不进判据分母（如实披露配对覆盖率）
+  dsr: 主册 e7_defense 同款（n_trial_ledger 累计口径，DSR 喂全部留痕试验次数）
+budget_caps:
+  cost_gate_in_every_tier: true          # 成本门禁跳（任何粗扫阶段）
+  t3_points: 9400                        # T3a 总帽=T0 200+T1 7400+T2 1800（挖矿 §3.1）
+  t3_calibration_points: 200             # T3a-T0 标定跑：唯一用途=实测 s/格 回填下行
+  t3_tier1_points: 7400                  # T3a-T1 分层粗扫
+  t3_tier2_points: 1800                  # T3a-T2 主效应层细化+全档成本门复验
+  t3_per_point_seconds_measured: null    # T3a-T0 实测回填位（null 时 t3-t1/t3-t2 禁开跑，fail-closed）
+  wall_clock_hours: 59                   # 沿主册窗口口径
+  effective_duty_pct: 80
+  single_job_wall_clock_cap_hours: 12
+  vram:
+    physical_gb: 24
+    train_quota_gb: 18
+    concurrency: 1                       # 单卡禁共存（主册同款）
+compute_budget_estimate:
+  # 预计算量复核（挖矿 §3.4 口径：0.53s/格=gpu_core 薄核冒烟实测，#ARCH-366/W-173）
+  caliber: gpu_core 薄核 0.53s/格（仅纯向量化可用；M 级模块进考卷必须 T3b-T0 重标定=硬门槛）
+  t0_seconds: 106        # 200×0.53≈1.8min
+  t1_seconds: 3922       # 7400×0.53≈65.4min
+  t2_seconds: 954        # 1800×0.53≈15.9min
+  total_seconds: 4982    # 9400×0.53≈83.0min（挖矿口径 83 分钟复核一致）；含成本档扫描仍在 2h 内
+e0_gate:
+  compute_window: f06_grid_batch（E0 问闸不豁免，--skip-compute-gate 仅 smoke）
+  gpu_exclusive: vram.concurrency=1（与在跑批互斥——T2 grid_20261005-215457 在跑期禁点火 T3a）
+honesty:
+  - J 总闸≠TDM L1 六态挂载矩阵：T3a 的"开闸"=owner_regime_switcher 日级帽调度（两帽+迟滞），状态粒度与
+    挂载语义都窄于 state_matrix（多格 pending-owner-adoption、euphoria/distribution C5 禁用）；两者差距是
+    T3a 的已知失真（挖矿 §4.6），不是等价实现
+  - 成交价=收盘口径零延迟隐含成交（w.shift(1)×close rets）：乐观偏差已知（无开盘缺口/无自身冲击/平档滑点，
+    挖矿 §4.1）；next_open/vwap 口径已接线（S2）但本批判据仍冻结 close——换口径结论仅作观察项披露
+  - 复权链断供（kline_daily.adj_factor 恒 1）：本批一切日线结论=暂定档，报告/回写 MUST 带"暂定（复权链断供）"
+    标签（exam_policy §4）
+  - S3 估值财务因子为日频 EOD 快照（pe/pb）与公告门 PIT 面板（np_q_yoy 公告次一交易日生效）；估值因子
+    pe/pb≤1 档（亏损/近零）=NaN 不进截面；新数据线已过引擎 PIT 哨兵同款纪律（挖矿 §4.7）
+  - S5 成本归因=网格平档成本线精确分量分解，不含 trade 级名义效应（地板佣金/碎片化——网格无订单对象，
+    框架 CostAttribution MOD-BT-001 语义不在网格域）
+  - T3a 只考日级可表达子集；做T/订单九态/板块/组合聚合层不在本卷（T3b/T3c，挖矿 §3.1 分批边界）
+  - 负结果承诺：T3a 全量负结果（含 J 调度缺数据格、因子面缺数据格）如实入 negatives.csv 并计 N_eff，禁删改

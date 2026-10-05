@@ -3650,6 +3650,11 @@ creation_tokens:
   token: ibt-cf-search-space-prereg-20260923
   capability: ibt_remediation
   created_by: st-ibt-remedy-cf-20260923
+- file: config/search_space_prereg_t3a.yaml
+  token: t3a-prereg-card-search-space-prereg-t3a-20261005
+  capability: t3a_search_space_prereg
+  created_by: st-tclose-t3a-20261005
+  merge_evaluation: "T3a 开闸考预注册冻结卡（考卷定义/判据/预算帽/honesty 七条）——派生自主 prereg 册 schema 复用（GridCompiler/_apply_prereg_budget 同消费面），净零=以独立卡承载 T3a 批次不增删主册任何轴"
 - file: config/secret_registry.yaml
   note: 结构化密钥声明注册表（72 KEY 真源，与 .env.example 双源对齐）
   token: auto-secret-registry-20260804
@@ -32181,6 +32186,166 @@ creation_tokens:
   capability: fullconnect_campaign
   created_by: st-c9-f45
   merge_evaluation: "chief9_night 目录索引（生成件，与 runbook 同袋原子）"
+- file: docs/_working/chief_fullchain_20261006/00_campaign_brief.md
+  token: chief-fullchain-campaign-00_campaign_brief-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/01_skeleton_environments.md
+  token: chief-fullchain-campaign-01_skeleton_environments-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/02_gap_ledger.md
+  token: chief-fullchain-campaign-02_gap_ledger-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/03_folder_audit_method.md
+  token: chief-fullchain-campaign-03_folder_audit_method-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/05_folder_verdicts.md
+  token: chief-fullchain-campaign-05_folder_verdicts-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/06_root_sweep_ledger.md
+  token: chief-fullchain-campaign-06_root_sweep_ledger-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/90_chief_runlog.md
+  token: chief-fullchain-campaign-90_chief_runlog-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/99_final_delivery.md
+  token: chief-fullchain-campaign-99_final_delivery-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_01_collect.md
+  token: chief-fullchain-campaign-env_01_collect-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_02_ingest.md
+  token: chief-fullchain-campaign-env_02_ingest-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_03_derive.md
+  token: chief-fullchain-campaign-env_03_derive-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_04_coldstore.md
+  token: chief-fullchain-campaign-env_04_coldstore-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_05_recon.md
+  token: chief-fullchain-campaign-env_05_recon-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_06a_premarket.md
+  token: chief-fullchain-campaign-env_06a_premarket-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_06b_intraday.md
+  token: chief-fullchain-campaign-env_06b_intraday-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_06c_postmarket.md
+  token: chief-fullchain-campaign-env_06c_postmarket-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_06d_nightwindow.md
+  token: chief-fullchain-campaign-env_06d_nightwindow-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_07_source_lines.md
+  token: chief-fullchain-campaign-env_07_source_lines-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_08_market_state.md
+  token: chief-fullchain-campaign-env_08_market_state-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_09_sector_select.md
+  token: chief-fullchain-campaign-env_09_sector_select-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_10_stock_select.md
+  token: chief-fullchain-campaign-env_10_stock_select-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_11_trade_exec.md
+  token: chief-fullchain-campaign-env_11_trade_exec-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_12_pflow_holdings.md
+  token: chief-fullchain-campaign-env_12_pflow_holdings-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_13_x_legs.md
+  token: chief-fullchain-campaign-env_13_x_legs-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_14_pp_plan.md
+  token: chief-fullchain-campaign-env_14_pp_plan-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_15_recon_ledger.md
+  token: chief-fullchain-campaign-env_15_recon_ledger-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_16_e9_retro_loop.md
+  token: chief-fullchain-campaign-env_16_e9_retro_loop-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_17_e0_e9_chain.md
+  token: chief-fullchain-campaign-env_17_e0_e9_chain-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_18_sysops.md
+  token: chief-fullchain-campaign-env_18_sysops-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_19_ai_legislation.md
+  token: chief-fullchain-campaign-env_19_ai_legislation-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_20_dev_delivery.md
+  token: chief-fullchain-campaign-env_20_dev_delivery-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
+- file: docs/_working/chief_fullchain_20261006/env_mining/env_21_arch_base.md
+  token: chief-fullchain-campaign-env_21_arch_base-20261006
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区：审计/骨架/缺口三真源合一，无既有同域资产可替代（w5_1：跨域不同对象不并）"
 - file: docs/_working/circulation_chief/00_orchestration.md
   token: circulation-chief-doc-00-orchestration-20261001
   capability: circulation-chief-doc
@@ -35457,6 +35622,11 @@ creation_tokens:
   capability: fullcirc_closeout_chief
   created_by: st-tclose-20261004
   merge_evaluation: "全流通收尾总包战役册（R5语义目录改名重登记）：晨班三命令收尾件，替代四份过时交接令口径，净零"
+- file: docs/_working/fullcirc_closeout_chief/backtest_coverage_ledger.yaml
+  token: covledger-backtest_coverage_ledger-20261006
+  capability: backtest_coverage_ledger
+  created_by: st-tclose-covledger-20261005
+  merge_evaluation: "净零声明：本册=三真源机生派生索引（INV-1 指针制，缺口正文留 H9 挖矿文档），替代散落口头/散文态覆盖问答；CASEBOOK-009 号（H11 发车裁定），casebook_registry 物理化待上户口批"
 - file: docs/_working/fullcirc_closeout_chief/c1_three_knots_probe.md
   token: c1-three-knots-probe-md-fullcirc-closeout-20261005
   capability: c1_three_knots_probe_md
@@ -39496,9 +39666,9 @@ creation_tokens:
   merge_evaluation: "季度清账本备料：census 衍生过滤分组件，喂覆盖账本三红首报；纯只读派生零替代"
 - file: docs/_working/map_census/casebooks_family/casebooks_gap_matrix.yaml
   token: mapcb-survey-casebooks-gap-matrix-20261005
-  created_by: st-mapcb-survey-20261005
   capability: mapcb_survey
-  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册"
+  created_by: st-mapcb-survey-20261005
+  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册（docs/_working 任务界暂存件，ttl=task_bound）"
 - file: docs/_working/map_census/casebooks_family/encoding_normalize_map.yaml
   token: mapcb-normalize-encoding-normalize-map-20261005
   capability: mapcb_normalize
@@ -49725,6 +49895,11 @@ creation_tokens:
   token: auto-generate-asset-catalog-20260706
   capability: domain_architecture_generators
   created_by: session-sess-44960-20260706204645
+- file: scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py
+  token: covledger-generate_backtest_coverage_ledger-20261006
+  capability: backtest_coverage_ledger_generator
+  created_by: st-tclose-covledger-20261005
+  merge_evaluation: "净零声明：机生账本替代人工汇总覆盖面（晨报/发车闸此前读 H9 挖矿散文+考场目录人工背数）；只建账本不建新全景图（Owner 2026-10-05 四连问裁定，图形态按 #486 立项卡另案）"
 - file: scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py
   token: auction-backfill-generate-battle-map-diagram-20260916
   capability: auction_backfill
@@ -54957,11 +55132,13 @@ creation_tokens:
   token: mapfamily-data_supply_chain_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_data_supply_chain_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
   token: mapfamily-dev_delivery_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_dev_delivery_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
   token: mapfamily-governance_legislation_map_gate-20261005
@@ -54979,6 +55156,7 @@ creation_tokens:
   token: mapfamily-trading_day_cycle_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_trading_day_cycle_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py
   token: auto-mcp-version-field-gate-20260723
@@ -55167,6 +55345,7 @@ creation_tokens:
   token: tdm-mountgate-gate-20261005
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "TDM-MOUNT-COVERAGE提交时门禁priority=61：三选一裁决+撞号拦+蓝图锚一致性（own-diff新增blueprint.md/新.py）。工单st-tdm-mountgate-20261005挂载义务门禁施工（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流，非第二真源；消费方互斥无同域重复）"
 - file: src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
   token: auto-test-residue-ssot-gate-20260804
@@ -55405,6 +55584,7 @@ creation_tokens:
   token: tdm-mountgate-reconciler-20261005
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "post-commit事件触发reconciler priority=952：模块册变更→重扫→孤儿判红（禁cron宪法四要素）。工单st-tdm-mountgate-20261005挂载义务门禁施工（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流，非第二真源；消费方互斥无同域重复）"
 - file: src/zephyr/governance/audit/translation_coverage_reconciler.py
   token: auto-translation-coverage-reconciler-20260802
@@ -55919,7 +56099,8 @@ creation_tokens:
   token: news-score-daily-20261004
   capability: news_score_daily
   created_by: st-datasop-20260930
-  merge_evaluation: "EXEC-2b P0止血治本件（新闻评分链13月断供治本：日更生产者+断点续传回补），投影迁移丢token后正门补登"
+  no_mount_reason: 数据基建日更生产者（非图节点资产）：产出news_sentiment_score表供情绪特征消费，无地图挂载语义
+  merge_evaluation: "EXEC-2b P0止血治本件（新闻评分链13月断供治本）"
 - file: src/zephyr/intelligence/news_sentiment_analyzer.py
   note: CAND-AISA-001 AI 舆情分析器 MVP 主模块（#ARCH-AISA-001）
   token: auto-news-sentiment-analyzer-20260818
@@ -59916,69 +60097,4 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
-- file: src/zephyr/orchestrator/_archive/lifecycle/__init__.py
-  token: gomap-cluster-archive---init---20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/housekeeping.py
-  token: gomap-cluster-archive-housekeeping-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/incident_postmortem.py
-  token: gomap-cluster-archive-incident-postmortem-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/rolling_upgrade.py
-  token: gomap-cluster-archive-rolling-upgrade-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/session_conflict.py
-  token: gomap-cluster-archive-session-conflict-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/startup_sequencer.py
-  token: gomap-cluster-archive-startup-sequencer-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/state_propagation.py
-  token: gomap-cluster-archive-state-propagation-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/state_synchronizer.py
-  token: gomap-cluster-archive-state-synchronizer-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/system_transfer.py
-  token: gomap-cluster-archive-system-transfer-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/orchestrator/_archive/lifecycle/teardown_manager.py
-  token: gomap-cluster-archive-teardown-manager-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇①归档迁移非新建:orchestrator/lifecycle 十件套裁定#485整簇转档,git mv 保历史"
-- file: src/zephyr/infrastructure/capacity_assurance/_archive/budget_forecaster.py
-  token: gomap-cluster-archive-budget-forecaster-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇②归档迁移非新建:capacity 三件裁定#485转档,git mv 保历史"
-- file: src/zephyr/infrastructure/capacity_assurance/_archive/schema.py
-  token: gomap-cluster-archive-schema-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇②归档迁移非新建:capacity 三件裁定#485转档,git mv 保历史"
-- file: src/zephyr/infrastructure/capacity_assurance/_archive/sli_instrumentation.py
-  token: gomap-cluster-archive-sli-instrumentation-20261005
-  created_by: st-gomap-chief-20261004
-  capability: gomap_cluster_archive
-  merge_evaluation: "并簇②归档迁移非新建:capacity 三件裁定#485转档,git mv 保历史"
 di_seam_exemptions: []
