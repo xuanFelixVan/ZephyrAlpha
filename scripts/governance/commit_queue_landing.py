@@ -363,9 +363,12 @@ def all_derived_total_pairs() -> dict[str, dict[str, str]]:
 
 def is_registry_mergeable(rel: str) -> bool:
     """仓内相对路径是否命中注册表族（W2 三向合并作用域；与 gate 的
-    REGISTRY-MASS-DELETION 触发目录同源语义，按前缀族判定不逐文件枚举）。"""
+    REGISTRY-MASS-DELETION 触发目录同源语义，按前缀族判定不逐文件枚举）。
+    二层⑥扩展（Owner 全批 2026-10-05）：docs/_working/ 产出件也纳入合并仲裁
+    ——纯文档报告/台账的基底漂移（他人改过同名文件）可安全并入，不再直接
+    cascade_stale 死信（基底冲突 67 袋的 ~60% 属此类）。"""
     norm = rel.replace("\\", "/")
-    return norm.startswith(_REGISTRY_CATALOGS_PREFIX) and norm.endswith(".yaml")
+    return (norm.startswith(_REGISTRY_CATALOGS_PREFIX) and norm.endswith(".yaml")) or norm.startswith("docs/_working/")
 
 
 @dataclass
@@ -2946,6 +2949,11 @@ class WorktreeLanding:
                         # 锁等待放宽（2026-09-16 q-…-0009/0010/0011 死信实证）：并发
                         # 提交期撞全局锁是瞬态，排队等待即可落地，gateway 缺省 60s 太短。
                         lock_wait_timeout=self._lock_wait_seconds,
+                        # 二层⑤（Owner 全批 2026-10-05）：袋即持锁——入队时已验过
+                        # claim（入队者显式 --files 清单=claim 意思表示），落地不再
+                        # 二次执法 CLAIM-REQUIRED（原 24 次/天白跑+13 袋死信实证）。
+                        # 直连提交照查不放松——本参数仅队列落地路径生效。
+                        allow_overlap=True,
                     )
                     # Mode B 自愈（st-commitspeed-20260916 晚，st-resched-fix/st-auditfix
                     # pathspec 死信实证）：新文件在 prestage 已 staged，但 gateway commit

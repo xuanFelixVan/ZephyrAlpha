@@ -198,7 +198,20 @@ def _duplicate_root_keys(text: str) -> list[str]:
     return dups
 
 
+_PARSE_CACHE: dict[str, tuple[str, list[str]]] = {}
+_PARSE_CACHE_MAX = 8
+
+
 def _structural_issues(text: str, profile: str) -> list[str]:
+    """二层⑦缓存（Owner 全批 2026-10-05）：13k 条热册 yaml.safe_load 每次 ~2s，
+    同内容重复解析 36 次/天=白跑 72s。以 sha256(text) 为键缓存结果，命中即返。
+    fail-open：缓存写入失败静默跳过（安全不降级=每次都全量解析）。"""
+    import hashlib as _hl
+
+    _key = f"{profile}:{_hl.sha256(text.encode('utf-8')).hexdigest()[:16]}"
+    _cached = _PARSE_CACHE.get(_key)
+    if _cached is not None:
+        return list(_cached)
     """对 staged 文本做档案化断言 → 问题清单（空=通过）。永不抛异常。
 
     capability_registry 档：parse + 根键唯一 + exemptions 末位 + creation_tokens list。
@@ -227,6 +240,8 @@ def _structural_issues(text: str, profile: str) -> list[str]:
         ct = data.get("creation_tokens")
         if not isinstance(ct, list):
             issues.append(f"creation_tokens 不是 list（实际 {type(ct).__name__}）")
+    if len(_PARSE_CACHE) < _PARSE_CACHE_MAX * 2:
+        _PARSE_CACHE[_key] = list(issues)
     return issues
 
 
