@@ -1,0 +1,77 @@
+ttl: task_bound
+session: st-mapcb-normalize-20261005
+date: '2026-10-05'
+title: '八图 casebooks 编码归一候选表（DSC 正典册号全写映射+SP 自由名候选对位+字母册码映射键草案·纯只读零判读）'
+method_note: 'yaml.safe_load 机械解析 config/data_supply_chain_map.yaml 与 config/strategy_production_map.yaml 的 nodes[].casebooks（2026-10-05 车道独立重推导实测）+ 对照 docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml 八册（引用版本=主区工作区 staged 新增版，他会话在途尚未落 dev HEAD，只读引用零改动）与 config/governance_operations_map.yaml casebooks_legend_zh；全文零判定零判死——凡 candidate/候选 字样均为对位建议非定案，判读权归 chief；本表不替代不合并任何既有册'
+scope_note: '仅涉 casebooks_gap_matrix.yaml classification=异构编码 的两图（data_supply_chain_map/strategy_production_map，机械复核一致）；其余六图（已达标二+无字段四）不在本班范围'
+zero_write_note: '本班纯只读盘点：对两源图零回写零改码，产出仅本候选表'
+rederive_note: '本表=车道独立机械重推导版：与同日前次中断运行遗留草稿（主区/车道各一份未跟踪副本，逐字节同文）逐行比对，机械事实全一致；差异以机械证据修正并记档于 fact_side_notes'
+
+dsc_normalization_rows:
+  source_file: config/data_supply_chain_map.yaml
+  parse_evidence: 'yaml.safe_load 实测 nodes 总数 43，casebooks 非空挂载 8；指针两形态=CASEBOOK-001（×3 裸册号）与 CASEBOOK-001#outage（×5 册号+章码）；零一对应 casebook_registry CASEBOOK-001（数据对账案卷库 data/failures/）'
+  full_form_note: '全写形态=正典册号+章码（册码#章码 指针语法，与 dev_delivery_map/trading_day_cycle_map 已达标语法同构）；#outage 章码依据=casebook_registry CASEBOOK-001 scope_zh E-8 约定（断供事故案文件名前缀 outage_，落本库不另建断供台账）；裸册号行章码枚举无真源（八册无章码枚举键），候选补章码留 chief'
+  rows:
+    - {node_id: DSC-GAP-MACRO, current_pointer: 'CASEBOOK-001#outage', canonical_full_form: 'CASEBOOK-001#outage（册号正典+章码在位，已是全写形态）', note: '断供事故案挂载，E-8 约定正门'}
+    - {node_id: DSC-07, current_pointer: 'CASEBOOK-001#outage', canonical_full_form: 'CASEBOOK-001#outage（册号正典+章码在位，已是全写形态）', note: '断供事故案挂载'}
+    - {node_id: DSC-08, current_pointer: 'CASEBOOK-001#outage', canonical_full_form: 'CASEBOOK-001#outage（册号正典+章码在位，已是全写形态）', note: '断链事故案挂载'}
+    - {node_id: DSC-GAP-CONSENSUSCHAIN, current_pointer: 'CASEBOOK-001#outage', canonical_full_form: 'CASEBOOK-001#outage（册号正典+章码在位，已是全写形态）', note: '断链事故案挂载'}
+    - {node_id: DSC-GAP-L2TICK, current_pointer: 'CASEBOOK-001#outage', canonical_full_form: 'CASEBOOK-001#outage（册号正典+章码在位，已是全写形态）', note: '断供事故案挂载'}
+    - {node_id: DSC-13, current_pointer: 'CASEBOOK-001', canonical_full_form: 'CASEBOOK-001（册号正典；章码缺位，候选补章码留 chief）', note: '完整性巡检挂对账差异案卷'}
+    - {node_id: DSC-19, current_pointer: 'CASEBOOK-001', canonical_full_form: 'CASEBOOK-001（册号正典；章码缺位，候选补章码留 chief）', note: 'casebook_registry CASEBOOK-001 scope_zh 记有图12 挂载建议 DSC-19，图面实挂与此一致'}
+    - {node_id: DSC-20, current_pointer: 'CASEBOOK-001', canonical_full_form: 'CASEBOOK-001（册号正典；章码缺位，候选补章码留 chief）', note: 'casebook_registry CASEBOOK-001 scope_zh 记有图12 挂载建议 DSC-20，图面实挂与此一致'}
+
+sp_candidate_rows:
+  source_file: config/strategy_production_map.yaml
+  parse_evidence: 'yaml.safe_load 实测 nodes 总数 341，casebooks 非空挂载 26（26 指针）；Counter 去重=15 种自由名（机械实证，无空格/标点变体——任务卡与 casebooks_gap_matrix.yaml 口径均为 14 种，差 1 系口径vs盘面事实，如实记档判读归 chief）'
+  kind_counts_evidence: '联赛档案×4、试验台账红证×4、衰减死因册×3、模拟盘病历族×3、复现演练档案×2、其余 10 种各×1（16+10=26，Counter 机械实证）'
+  mapping_basis: '对位基准=casebook_registry 八正典册+outside_registry，语义锚=config/governance_operations_map.yaml casebooks_legend_zh 六册语义（DCS=死因/AP=堵点/SV=抢救/RV=审查/MEM=记忆/MM=挖矿）；对不上的标 unknown 待 chief'
+  rows:
+    - {node_id: FAC-E1-M-002, free_name: '进货台账', candidate_casebook: 'CASEBOOK-007（采集打卡账本 integrator_progress task_runs）', candidate_chapter: null, rationale: '节点名=进货台账对账核验器，采集进货段的执行打卡+对账语义与 registry#7 自述（应跑 vs 打卡对账正门）同源', confidence: medium}
+    - {node_id: FAC-E1E-M-008, free_name: '模型版本注册表', candidate_casebook: unknown, candidate_chapter: null, rationale: '版本注册语义，八册无版本注册类册', confidence: null}
+    - {node_id: FAC-E1G-M-006, free_name: '全域事实台账', candidate_casebook: 'CASEBOOK-007（采集打卡账本 integrator_progress task_runs）', candidate_chapter: null, rationale: '节点名自述=进货证据位，registry#7 自述=trigger_facts 机数证据的正门，事实/机数证据语义同源', confidence: medium}
+    - {node_id: FAC-E2-M-001, free_name: '预审判定台账', candidate_casebook: 'CASEBOOK-004（审查发现两卷）', candidate_chapter: null, rationale: '预审与审查（RV=审查）词根同源，假说预审判定记录对位审查发现卷——判定vs发现的对象差留 chief', confidence: low}
+    - {node_id: FAC-E3-M-076, free_name: '翻译件台账', candidate_casebook: unknown, candidate_chapter: null, rationale: '翻译件（术语翻译层）语义，八册无翻译类册', confidence: null}
+    - {node_id: FAC-E4-M-007, free_name: '回测run档案图书馆', candidate_casebook: unknown, candidate_chapter: null, rationale: 'run 词根与 registry#7 task_runs 同形但对象域不同（回测执行档案 vs 数据采集打卡），八册无回测档案册', confidence: null}
+    - {node_id: FAC-E4-M-011, free_name: '试验台账红证', candidate_casebook: unknown, candidate_chapter: null, rationale: '试验证据件语义，八册无试验台账册（红证与红蓝审查 RV 字面近但对象域不同：因子试验证据 vs 治理域审查发现）', confidence: null}
+    - {node_id: FAC-E4-M-012, free_name: '试验台账红证', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（试验证据件，八册无对应）', confidence: null}
+    - {node_id: FAC-E4-M-013, free_name: '试验台账红证', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（试验证据件，八册无对应）', confidence: null}
+    - {node_id: FAC-E4-M-020, free_name: 'N试次账本', candidate_casebook: unknown, candidate_chapter: null, rationale: '试验统计账本（FDR 预算证据位），八册无试验统计类册', confidence: null}
+    - {node_id: FAC-E4-M-023, free_name: '试验台账红证', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（节点名自述=批末记账红证病历页，八册无试验台账册）', confidence: null}
+    - {node_id: FAC-E4-M-050, free_name: '过拟合裁定档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '裁定记录语义，八册无裁定类册（DCS=死因/RV=审查语义均不覆盖过拟合裁定）', confidence: null}
+    - {node_id: FAC-E4-M-053, free_name: '因子研究案例库', candidate_casebook: unknown, candidate_chapter: null, rationale: '自身已持独立库身份（节点名自述 data/databases/factor_casebook.db，成功/失败修复病历本），案例册形态但八册外自持，候选=维持独立身份或授册号留 chief', confidence: null}
+    - {node_id: FAC-E4-M-063, free_name: '复现演练档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '演练档案语义，八册无演练类册', confidence: null}
+    - {node_id: FAC-E6-M-001, free_name: '考试成绩+判定书台账', candidate_casebook: unknown, candidate_chapter: null, rationale: '评估成绩+判定书语义，八册无评估判定类册', confidence: null}
+    - {node_id: FAC-E6-M-002, free_name: '衰减死因册', candidate_casebook: 'outside_registry 提交撞墙死因案例册（module_id=CFG-COMMIT-DEATH-CASES-001）', candidate_chapter: null, rationale: '字面含死因，与 DCS=死因案例册语义直配（legend 六册语义对位）；对象域差（信号衰减死因 vs 提交撞墙死因）显式留 chief', confidence: low}
+    - {node_id: FAC-E6-M-010, free_name: '衰减死因册', candidate_casebook: 'outside_registry 提交撞墙死因案例册（module_id=CFG-COMMIT-DEATH-CASES-001）', candidate_chapter: null, rationale: '同上（死因语义直配 DCS，对象域差留 chief）', confidence: low}
+    - {node_id: FAC-E6-M-013, free_name: '衰减死因册', candidate_casebook: 'outside_registry 提交撞墙死因案例册（module_id=CFG-COMMIT-DEATH-CASES-001）', candidate_chapter: null, rationale: '同上（死因语义直配 DCS，对象域差留 chief）', confidence: low}
+    - {node_id: FAC-E7-M-003, free_name: '模拟盘病历族', candidate_casebook: unknown, candidate_chapter: null, rationale: '模拟盘病历族（多件族形态），八册无模拟盘类册', confidence: null}
+    - {node_id: FAC-E7-M-007, free_name: '模拟盘病历族', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（节点名自述=判定台账表结构病历册，八册无对应）', confidence: null}
+    - {node_id: FAC-E7-M-015, free_name: '联赛档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '赛马联赛注册/计分档案，八册无联赛类册', confidence: null}
+    - {node_id: FAC-E7-M-016, free_name: '联赛档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（联赛档案打包器，八册无对应）', confidence: null}
+    - {node_id: FAC-E7-M-017, free_name: '联赛档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（联赛月度快照，八册无对应）', confidence: null}
+    - {node_id: FAC-E7-M-018, free_name: '联赛档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（联赛复原器，八册无对应）', confidence: null}
+    - {node_id: FAC-E7-M-020, free_name: '模拟盘病历族', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（模拟盘日刊生成器，八册无对应）', confidence: null}
+    - {node_id: FAC-E7-M-022, free_name: '复现演练档案', candidate_casebook: unknown, candidate_chapter: null, rationale: '同上（月度危机演练件，八册无对应）', confidence: null}
+  unknown_summary: 'unknown 共 20 行/11 种自由名（模型版本注册表/翻译件台账/回测run档案图书馆/试验台账红证×4/N试次账本/过拟合裁定档案/因子研究案例库/复现演练档案×2/考试成绩+判定书台账/模拟盘病历族×3/联赛档案×4）；候选命中 6 行/4 种（进货台账/全域事实台账→CASEBOOK-007，预审判定台账→CASEBOOK-004，衰减死因册×3→DCS）'
+
+letter_code_map_draft:
+  draft_note: '全仓结构化映射键草案（现状=散见 GOMAP 图例散文与 registry scope_zh，无结构化键——casebooks_gap_matrix.yaml cross_cutting_facts 实证）；正典源=casebook_registry 八册；字母码全集=legend 六码（DCS/AP/SV/RV1/RV2/MM）+图面在用码（MEM/MEM-F13 及不带分卷的裸 RV；dev_delivery_map 81 指针[AP19/MEM28/RV12/DCS14/SV8]与 trading_day_cycle_map 35 指针[MEM-F13 28/AP2/SV2/DCS1/RV2]机械实测）；本草案仅列候选映射，授键与生效判读归 chief'
+  rows:
+    - {letter_code: DCS, canonical_casebook_id: 'outside_registry（无正典册号；module_id=CFG-COMMIT-DEATH-CASES-001）', evidence: 'config/governance_operations_map.yaml casebooks_legend_zh（DCS=死因案例册 CFG-COMMIT-DEATH-CASES-001，module_id 身份）+ casebook_registry.yaml outside_registry[0]（禁双重身份不入册）', confidence: high}
+    - {letter_code: AP, canonical_casebook_id: CASEBOOK-002, evidence: 'legend（AP=堵点本五域 docs/_working/branch_zero_takeover/all_problems_ledger.md）+ casebook_registry CASEBOOK-002 physical_path 同路径，双证同文', confidence: high}
+    - {letter_code: SV, canonical_casebook_id: CASEBOOK-003, evidence: 'legend（SV=抢救台账 docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md）+ casebook_registry CASEBOOK-003 physical_path 同路径，双证同文', confidence: high}
+    - {letter_code: RV1, canonical_casebook_id: CASEBOOK-004, evidence: 'legend（RV1/RV2=审查发现两卷 review_findings{,_round2}.md）+ casebook_registry CASEBOOK-004 physical_path 含两卷；RV1→卷一由花括号展开式机械推得', confidence: high}
+    - {letter_code: RV2, canonical_casebook_id: CASEBOOK-004, evidence: '同 RV1（RV2→卷二 review_findings_round2.md）；同册两码=册级映射+章级分卷', confidence: high}
+    - {letter_code: RV, canonical_casebook_id: CASEBOOK-004, evidence: '不带分卷的裸 RV 码=图面在用（dev_delivery_map ×12、trading_day_cycle_map ×2 机械实测，重推导版新增行）；宿主册同 RV1/RV2 双证；卷级分派语义留 chief', confidence: medium}
+    - {letter_code: MM, canonical_casebook_id: '无正典册号（legend 自述路径身份，上户口批统一授册号——授号未落地）', evidence: 'legend（MM=治理挖矿地图册 docs/_working/2026-09-15-governance-module-mining-sop-map.md）；casebook_registry 八册+outside_registry 均无 MM 对应条目；图面挂载零次（DD/TDC 实测 0 指针）', confidence: pending_unregistered}
+    - {letter_code: MEM, canonical_casebook_id: CASEBOOK-005, evidence: 'casebooks_gap_matrix.yaml letter_code_bindings_note（MEM=005）+ casebook_registry CASEBOOK-005 name_zh=记忆教训索引 MEMORY.md；注记=GOMAP legend 六码无 MEM 条目；图面实测=dev_delivery_map 裸 MEM ×28，trading_day_cycle_map 用其变体 MEM-F13 ×28（裸 MEM 在 TDC 零挂）', confidence: medium}
+    - {letter_code: MEM-F13, canonical_casebook_id: CASEBOOK-005, evidence: 'casebooks_gap_matrix.yaml trading_day_cycle_map identifier_note（MEM-F13=图13特设 9 主题簇，宿主册=CASEBOOK-005）+ truth_source docs/_working/map_build/fig13_daycycle/12_casebook_matrix_d13.yaml:49 chapter_system（行号机械核实）', confidence: medium}
+
+fact_side_notes:
+  - 'DSC 图另有事实留证（承 gap_matrix）：casebook_registry CASEBOOK-006/007/008 三册 scope_zh 记有图12 挂载建议/授号（DSC-14/16/19/20、DSC-10A/10B），但图面 casebooks 实挂仅 CASEBOOK-001——建议面与实挂面差，判读归 chief'
+  - 'SP 图自由名种类实测 15 vs 任务卡/参考件口径 14（差 1，无变体名，机械 Counter 实证），如实记档'
+  - '与遗留草稿两处差异以机械证据修正记档：①SP kind_counts「其余 N 种各×1」草稿作 11（16+11=27≠26 自相矛盾）修正为 10（Counter 实证 10 种单挂，16+10=26）②E4 段行序草稿 023 在 020 前，按源图节点原始出现序修正为 020 在 023 前'
+  - '遗留草稿未收录的裸 RV 码行（DD×12/TDC×2 实测）由重推导补入字母码草案（8 组→9 组），机械事实支持'
+  - '本表三节均为候选/草案形态：DSC 行=现状正典全写映射（事实面）、SP 行=语义对位候选（零判死）、字母码行=结构化映射键草案（零生效）'
+one_line_conclusion: 'DSC 八挂载全对正典 CASEBOOK-001（5 行已全写#outage、3 行裸册号缺章码枚举）、SP 26 挂载 15 种自由名仅 4 种可语义对位（CB-007×2/CB-004×1/DCS×3 行，余 20 行 unknown）、字母码 9 组（含重推导补的裸 RV）中 5 组双证 high（DCS/AP/SV/RV1/RV2）、MM 未授号、MEM/MEM-F13/裸 RV medium——全表零判读，判读权归 chief'
