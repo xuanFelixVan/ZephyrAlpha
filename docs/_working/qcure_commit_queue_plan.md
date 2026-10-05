@@ -3,6 +3,61 @@ ttl: task_bound
 title: QCure — 提交队列死信治本临时施工方案 v0.1
 session: st-qcure-20260925
 ---
+> ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
+> **总结论：已结案（QCure 提交队列死信治本方案 v0.1 已被后续施工消费落码：enqueue 侧预检与裁定适配器两大核心机制在仓）**
+> **✅ 已完成（摘录）**
+> - ①enqueue 侧预检=commit_queue.py preflight_root/run_enqueue_preflight + tests/governance/test_enqueue_preflight.py；②M4 裁定适配器=裁定#410 schema+approval_resolver.py/protected_paths_gate.py 消费链；③死因排行榜 395 笔证据学为 10-01 治本共同底图
+> **⚠️ 未完成**
+> - M
+> - 5
+> - .
+> - 3
+> -  
+> - 热
+> - 册
+> - 三
+> - 向
+> - 合
+> - 并
+> - 族
+> - '
+> - 另
+> - 开
+> - 专
+> - 包
+> - '
+> - 至
+> - 今
+> - 未
+> - 见
+> - 专
+> - 包
+> - 文
+> - 档
+> - （
+> - 设
+> - 计
+> - 即
+> - 延
+> - 期
+> - 项
+> - ，
+> - 随
+> - 章
+> - 转
+> -  
+> - O
+> - w
+> - n
+> - e
+> - r
+> -  
+> - 菜
+> - 单
+> - ）
+> **核验方式**：全文读+preflight/approved_paths 代码链与裁定登记 triple-check
+> **处置建议**：可归档（archive/2026-10）
+
 
 # QCure — 提交队列死信治本 临时施工方案 v0.1
 

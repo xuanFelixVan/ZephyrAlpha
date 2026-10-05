@@ -3,6 +3,15 @@ title: 竞价族桥接切换挖矿盘点与施工终态
 ttl: task_bound
 completes_when: 台账 §2.2-B auction 两项勾选且 9/18 退役日首日验证通过后随批次归档
 ---
+> ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
+> **总结论：未结案（仍有待办）。处置=保留。**
+> **✅ 已完成（摘录）**
+> - 施工本体已完成
+> **⚠️ 未完成**
+> - ①台账 §2.2-B auction 两项 checkbox 未勾（qmt-bridge-migration-ledger L100-101 实测 [ ]），completes_when 条件①未闭合；②§11 明晨观察清单 7 项全未勾，退役日首日验证无回填；③L88/L119 运营红旗'stk_limit 自 9/16 起无新行'核查挂账无销项
+> **核验方式**：全文读+checkbox 实测+completes_when 对照
+> **处置建议**：保留（三待办归 qmt bridge 运维线；stk_limit 数据面断供已登记本役 02_gap_ledger §2 断供组）
+
 
 # 竞价族桥接切换·挖矿盘点与施工终态（2026-09-17）
 

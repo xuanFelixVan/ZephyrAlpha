@@ -4,6 +4,15 @@ ttl: task_bound
 title: 提交链灾难四死因治本终报（st-commitfix-20261001 总包）
 session: st-commitfix-20261001
 ---
+> ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
+> **总结论：未结案（仍有待办）。处置=保留。**
+> **✅ 已完成（摘录）**
+> - 治本七笔已落（§正文明示）
+> **⚠️ 未完成**
+> - ①移交项 1（C0）：scripts/run_ollama_exam.py、scripts/grep_coverage.ps1 两件迁移仍在 scripts/ 根未迁 _archive/；②移交项 3：tests/resource/test_process_pool.py:116 test_dead_process_detected 存量红无处置记录；③移交项 2/5：pytest 隔离审计与 claim 双平面漂移合并读无结案文档
+> **核验方式**：全文读+移交清单逐条对仓实测
+> **处置建议**：保留（待办三项归属：C0 迁移=低危机械件可随本役批次补做；存量红与审计结案归测试治理线）
+
 
 # 提交链灾难定案+治本终报（2026-10-01 夜班总包）
 

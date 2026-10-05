@@ -5,6 +5,15 @@ title: 提交链路全组件存留裁定与提速方案（挖矿交接版）
 session: st-gate-rationalize-20260929
 deliverable_to: 施工对话（ 门禁/提交链提速施工班）
 ---
+> ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
+> **总结论：未结案（仍有待办）。处置=保留。**
+> **✅ 已完成（摘录）**
+> - §11 第一波已落地
+> **⚠️ 未完成**
+> - ①第二波'flag 三翻转'未做（config/flags.yaml:124-127 integrity_baseline_mode 仍出厂现行，own-tree/gate_cache_preflight 无翻转痕迹）；②统一册仍缺 3 个实跑 hook 条目（§2 L43 gate-detect-git-dangerous 等）生成器登记债未清；③单趟化 Phase-A/B、hook 通道出锁、簇4 parse 共享、warn-only 4 台转硬均无后续批次承接
+> **核验方式**：全文读+flags.yaml 实测+统一册 grep
+> **处置建议**：保留（三项归门禁治理线；已在 02_gap_ledger §5 结构性治理组登记）
+
 
 # 提交链路全组件存留裁定与提速方案（挖矿交接版）
 
