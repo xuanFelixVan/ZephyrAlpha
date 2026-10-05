@@ -313,6 +313,11 @@ def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[
             seen_data_refs.add(dr)
             if dr.startswith("待定"):
                 warnings.append(f"{n.get('node_id')}: 数据源待定（未接/未入库）: {dr}")
+            elif dr.startswith("pg:"):
+                # PG 图谱面（fac9_04_followup §二：ig_fact=depgraph PG 产业链事实表）——
+                # to_regclass 探测；PG 不可达=warn 降级不阻断（图结构是本职责，
+                # PG 可用性是环境属性；对齐 CH 分支的 fail-closed 语义差异是有意设计）
+                _check_pg_table(dr[3:], errors, warnings, node_id=str(n.get("node_id")))
             elif dr.startswith("c1_") and "." in dr:
                 _check_ch_table(dr, errors, label="数据源 CH 表")
             elif "/" in dr:
@@ -333,6 +338,24 @@ def _check_ch_table(table: str, errors: list[str], label: str = "CH 表") -> Non
             errors.append(f"{label}不存在: {table}")
     except Exception as exc:  # noqa: BLE001
         errors.append(f"{label}检查失败 {table}: {exc}")
+
+
+def _check_pg_table(table: str, errors: list[str], warnings: list[str], node_id: str = "") -> None:
+    """to_regclass 探测 depgraph PG 表；PG 不可达=warn 降级（PG 可用性=环境属性，非图结构职责）。"""
+    try:
+        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+        conn = get_depgraph_pg_connection(read_only=True)
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT to_regclass(%s) IS NOT NULL", (table,))
+            exists = bool(cur.fetchone()[0])
+        finally:
+            conn.close()
+        if not exists:
+            errors.append(f"PG 表不存在: {table}（node={node_id}）")
+    except Exception as exc:  # noqa: BLE001 — PG 不可达=环境属性，降级为警告
+        warnings.append(f"{node_id}: PG 探测不可达（降级警告，不阻断）: {table}: {exc}")
 
 
 def main() -> int:

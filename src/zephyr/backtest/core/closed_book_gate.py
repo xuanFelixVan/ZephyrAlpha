@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-BT-201 | docs/03_modules/_domain_backtest/blueprint.md
+# [BLUEPRINT] MOD-BT-205 | docs/03_modules/_domain_backtest/blueprint.md | §fac9_04_followup一 201撞号改授（原201=前哨对账器forward_post，出生commit 055ad8cf307复制粘贴单向撞号，205空闲实查零占用）
 # [MODULE] zephyr.backtest.core.closed_book_gate
 # create-guard-not-dup: 本件是闭卷(HOLDOUT)读取闸(前视泄露fail-closed拦口),命中词to date系闭卷日语文巧合,非LLM探测/清单漂移/命名规范能力的第二实现
 # [DOMAIN] D_BACKTEST
