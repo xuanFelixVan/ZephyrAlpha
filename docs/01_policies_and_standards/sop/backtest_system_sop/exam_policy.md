@@ -69,3 +69,9 @@ related_issues:
 
 - 裁定#365（2026-09-19）：本册=G3+G5+G6+G8 合并新立（净零原则下唯一新立候选）；对价=四条缺口在 `docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/strategy_sop_gap_report.md` 登记销项（resolved）；同批 factor_mining_sop 转正（G4/G2/G10 载体）。
 - 修订纪律：本册为判据真源，车道临时条款与之旅中冲突时**就严者为准**；修本册走裁定登记（RULE-RULING）。
+
+## 8. 考试案例附录（案例索引，非判据；各案例判据以各自 prereg 冻结卡为准）
+
+- T1 海选：F-06 网格 T1 分层粗扫（3700 点/轻档成本门），prereg=config/search_space_prereg.yaml budget_caps.tier1_points。
+- T2 验收：T2 细化 900 点+全档成本门复验（波12 统一窗口），同上 prereg tier2_points；T1→T2 交接判据机读=scripts/backtest/t1_t2_handover.py。
+- T3a 开闸：整装考第一批（J_regime_switch 开闸×全A剔ST 域），prereg=config/search_space_prereg_t3a.yaml；挖矿真源=docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md §3。

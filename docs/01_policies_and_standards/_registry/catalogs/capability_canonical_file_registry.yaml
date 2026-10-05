@@ -35467,6 +35467,11 @@ creation_tokens:
   capability: fullcirc_closeout_chief
   created_by: st-tclose-integ-20261004
   merge_evaluation: "战役整合批施工单（清点结论+五批工单+执行留痕），Owner 令死会话工作代做的工单载体；task_bound 随批退役"
+- file: docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md
+  token: t3-fullflow-exam-mining-t3-fullflow-exam-mining-20261005
+  capability: t3_fullflow_exam_mining
+  created_by: st-tclose-t3mine-20261005
+  merge_evaluation: "H9 挖矿报告入库（182 节点对标+S/M/L 缺口分级+T3 三批设计），纯文档零代码，净零=挖矿作业产物归档无替代项"
 - file: docs/_working/fullconnect_campaign/00_orchestration.md
   token: fullconnect-campaign-00-orchestration-20260926
   capability: fullconnect_campaign
