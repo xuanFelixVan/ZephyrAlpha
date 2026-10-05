@@ -2452,6 +2452,22 @@ algo_submodules:
   node_id: A1
   plain_zh: params 对象优先，旧关键字参数经参数对象构造函数过渡，混用显式拒绝
   module_id: MOD-TRADING-001
+- module_path: src/zephyr/gov_enforcement/commit_gates/tdm_mount_coverage_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "TDM挂载覆盖门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "TDM 挂载覆盖门禁：新增或修改代码文件时自动核对该文件是否已按挂载总筹裁决挂到纵向图对应节点上，没挂就拦下提交，防止代码和地图脱节变成孤儿"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/audit/tdm_mount_coverage_reconciler.py
+  domain_id: D_GOV_AUDIT
+  name_zh: "TDM挂载义务存量对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交后事件触发的全量重扫：模块册一变更就重算人口对挂载并集与豁免册的差额，孤儿判红落盘告警不阻断，与提交门禁共享同一套判定助手防口径漂移"
+  responsibility_layer: governance
 battle_map_cross_cutting:
 - category: benchmark_mapping
   name_zh: 外部对标清单（Benchmark Mapping）
