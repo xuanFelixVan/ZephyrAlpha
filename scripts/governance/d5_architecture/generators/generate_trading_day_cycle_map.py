@@ -152,7 +152,7 @@ _BOOK_OF: dict[str, str] = {
     **{f"{i:02d}": "03_盘前编排与十源探针.md" for i in (7, 8, 9, 10)},
     **{f"{i:02d}": "04_盘中采集层群.md" for i in (13, 14, 15, 16, 17, 18, 45)},
     **{f"{i:02d}": "05_盘中资金流与决策层.md" for i in (19, 20, 21, 22, 23, 46)},
-    **{f"{i:02d}": "06_盘后结算与三账.md" for i in (25, 26, 27, 28, 29)},
+    **{f"{i:02d}": "06_盘后结算与三账.md" for i in (25, 26, 27, 28, 29, 48)},
     **{f"{i:02d}": "07_dloop十六段解剖.md" for i in (24, 32, 33, 34)},
     **{f"{i:02d}": "08_盘后批次与当日回测.md" for i in (30, 31, 35)},
     **{f"{i:02d}": "09_夜窗与日界贯穿.md" for i in (36, 37, 38, 39, 40, 41, 42, 43, 44, 47)},
@@ -226,9 +226,9 @@ SEGMENT_SEMANTIC_ZH: dict[str, dict[str, str]] = {
     ),
 }
 
-# 契约全集：47 环节（骨架 §2 四张表，编号一经定稿即契约）+ 4 个 gap 显性化缺口节点
+# 契约全集：48 环节（骨架 §2 四张表，编号一经定稿即契约）+ 4 个 gap 显性化缺口节点
 # （簿 10 表A/表C 与图 12 侧跨图缺口，属骨架外件，待总包回写骨架 §2——本车道禁改骨架）。
-NODE_ORDER: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 48)) + GAP_ORDER
+NODE_ORDER: tuple[str, ...] = tuple(f"D13-{i:02d}" for i in range(1, 49)) + GAP_ORDER
 # gap 节点的 doc_refs 出处（不在骨架 §2 表内，禁指骨架 §2——骨架无此行）
 _GAP_DOC = {
     "D13-G01": (_EXT_BOOK, "六图终局卷 §4 图13 判据①（空转槽与落空对象全可查）"),
@@ -241,7 +241,7 @@ _GAP_DOC = {
 }
 
 # ---------------------------------------------------------------------------
-# 47 环节语义契约件（骨架 §2 四张表逐行 + 九本作业簿复判；status 照用骨架状态列）
+# 48 环节语义契约件（骨架 §2 四张表逐行 + 九本作业簿复判；status 照用骨架状态列）
 # 字段：seg 段归属｜st 骨架状态｜recheck 作业簿复判（不改骨架口径，另字段承载）｜name 环节名
 #       q decision_question（时序问题，非决策判据）｜mech 机制一句话｜clk 时点语义（无 cron 字面量）
 #       src slot_source｜slot/entity/tn/stages 各类真源指针｜act downstream_action
@@ -376,6 +376,7 @@ NODE_PURPOSE_TAG: dict[str, str] = {
     "D13-45": "t05_paper_session",
     "D13-46": "t02_supply_alert",
     "D13-47": "t02_supply_alert",
+    "D13-48": "t08_postmarket_ingest",
 }
 
 # 病历挂载采纳矩阵（件2 12_casebook_matrix_d13.yaml §1 总筹复核采纳内联；INV-1 只指针禁抄内容）。
@@ -414,6 +415,30 @@ _CONSUMERS_CSV_REL = f"{_BOOK_DIR}/13_consumers_scan_d13.csv"
 _CONSUMERS_CSV = _REPO_ROOT / _CONSUMERS_CSV_REL
 
 N: dict[str, dict[str, Any]] = {
+    "D13-48": dict(
+        seg="C",
+        st="✅",
+        name="盘后板块K等权撮合（tdx 永久断供的收敛终点）",
+        src=_SCHT,
+        tn=["sector_eqw_intraday"],
+        entity=[],
+        clk="每日 15:40（盘后；成分×个股分钟K链式聚合，非交易日自然零行）",
+        act="execute",
+        q="昨日/今日板块K撮合产了吗？行数与板块数够 580 族吗？",
+        mech="计划任务→等权链式聚合 runner（MOD-DATA-061，scripts/kline_sector_intraday_from_constituents.py）：sector_constituent 成分 × kline_1min 个股分钟 → kline_sector_intraday（data_source='synth_sh'，写前精准 DELETE 幂等）",
+        gate="当日个股分钟K与成分表已落库",
+        nrg="",
+        fb="无（次日 15:40 重跑覆盖）",
+        ref="scripts/kline_sector_intraday_from_constituents.py:1",
+        anc=["scripts/tasks/register/register_sector_eqw_task.ps1:16"],
+        run=["kline_sector_intraday 表（逻辑名；表名真源=TableRegistry，图内禁库名前缀字面量）"],
+        ev=[
+            "CH 实证：kline_sector_intraday 近 8 日全量=synth_sh（09-30 当日 171,351 行、全期 450,511 行，580 板块族满格）",
+            "成分表 sector_constituent 新鲜（max(updated_at)=09-30 21:38 UTC）；tdx 源最后行=09-10 15:00 后零行（断供永久定性，known_data_gaps 2026-10-04 B1 三退役批 Owner 批）",
+            "对拍达标在案（方案 J Phase 3 校准：行业段 corr 0.9954-0.9990/地区 0.9953-0.9980/概念段 0.85-0.95=成分回溯误差已知项）",
+        ],
+        obs="交易日每日 1 跑（假日零行自然安全；runner MATURITY=testing 待升 production）",
+    ),
     "D13-45": dict(
         seg="B",
         st="🔨",
@@ -432,7 +457,7 @@ N: dict[str, dict[str, Any]] = {
         anc=["scripts/tasks/register/register_sim_bridge_execute_task.ps1:47"],
         run=["logs/sim_bridge_execute.log"],
         ev=[
-            "schtasks 只读查询：下次 2026-10-05 09:35 就绪（任务在册活着）",
+            "schtasks 只读查询：下次 2026-10-05 09:35 就绪（任务在册活着）；10-05=国庆假——触发器纯 Daily，执行体自带 is_trading_day 闸（sim_daily_runner.py:260-262）假日触发即退非误判，2026-10-05 Owner 指正后澄清",
             "logs/sim_bridge_execute.log 在盘但尾部空+资源册 samples=0=最近执行证据未取到（降🔨不升✅）",
         ],
         obs="注册后未取到执行留痕（周末窗未开）",
@@ -453,7 +478,9 @@ N: dict[str, dict[str, Any]] = {
         fb="无（只读巡检，检出即告警）",
         ref="scripts/governance/decision_chain_sentinel.py:1",
         anc=["scripts/tasks/register/register_decision_chain_sentinel_task.ps1:69"],
-        ev=["资源册实测样本 1 条（peak 0.117GB）；last_at 时区口径与 09:40 CST 不吻合待复判（降🔨）"],
+        ev=[
+            "资源册实测样本 1 条（peak 0.117GB）；last_at 时区口径与 09:40 CST 不吻合待复判（降🔨）；无交易日闸实锤（decision_chain_sentinel.py 零 is_trading_day 引用）——国庆假 10-01..07 每日 09:40 照触发=假日空跑在案，加闸归哨兵车道小修（2026-10-05 排查发现）"
+        ],
         obs="样本 1 条（时区口径待复判）",
     ),
     "D13-47": dict(
@@ -474,9 +501,11 @@ N: dict[str, dict[str, Any]] = {
         run=[
             "cross_validation_log 表（逻辑名；表名真源=TableRegistry，图内禁带库名前缀字面量——TABLE-NAME-REGISTRY 口径）"
         ],
-        ev=["CH 实证（骨架 §7 C 组口径）：全表 17,466 行 max(check_date)=2026-10-01（10-02 起缺档→降🔨）"],
-        obs="在产但近日缺档（max=10-01）",
-        red="broken_supply",
+        ev=[
+            "CH 实证（骨架 §7 C 组口径）：全表 17,466 行；最近交易日 09-30 全量核对 7,952 行在案（09-28 亦 7,860 行）",
+            "10-01..07=国庆假期无交易日无核对面（原「10-02 起缺档」系假日误判，2026-10-05 Owner 指正后撤回；10-08 开市复核）",
+        ],
+        obs="假日窗口无判据；10-08 开市复核",
     ),
     # ── 段 A 盘前 ──────────────────────────────────────────────────────
     "D13-01": dict(
@@ -845,13 +874,13 @@ N: dict[str, dict[str, Any]] = {
     "D13-16": dict(
         seg="B",
         st="🔨",
-        name="盘中板块分钟K线层（独立直连池）",
+        name="盘中板块分钟K线层（tdx 通道已退役——撮合收敛 D13-48）",
         src=_SCHED,
         slot=["intraday_sector"],
         clk="盘中每 5 分钟（独立执行器避开全市场慢任务）",
         act="execute",
         q="板块分钟K独立池在产吗？断供几个交易日？",
-        mech="独立执行器池 DAG 槽（与 miniqmt 全市场慢任务隔离）",
+        mech="原 tdx/mootdx 直连独立池——2026-10-04 B1 三退役批正式退役（五 tdx 任务 disabled+计划任务注销）；盘中实时板块K通道已死，产能收敛至 D13-48 盘后撮合",
         gate="无前置",
         nrg="",
         fb="无（该槽不在补跑宇宙内）",
@@ -859,6 +888,8 @@ N: dict[str, dict[str, Any]] = {
         anc=[f"{_SCHEDULE_REL}:50"],
         ev=[
             "簿 04 环节段：该层实测断供 2 交易日（在册定性；2026-10-05 复扫挂载在位——10-04 所见消失系并发编辑瞬态窗，假阳性回收）"
+            "源头风险在案（Owner 2026-10-05 指示）：本层全链押 tqcenter（通达信插件 880xxx 板块指数分钟K）——通达信板块数据停供风险；撮合替代已在役=D13-48（15:40 等权链式聚合）",
+            "终局（2026-10-05 核实）：本格 tdx 通道永久断供+任务退役（known_data_gaps verification_20261004 B1 批）；实时性诉求改由盘后撮合承接",
         ],
         obs="盘中每 5 分钟",
     ),
@@ -1683,6 +1714,7 @@ TDMX: dict[str, list[str]] = {
 
 # L1 wiring_status（缺省 wired）——"槽挂着但没跑「的统一表达位，三图共用这一个字段
 WIRING: dict[str, str] = {
+    "D13-48": "wired",  # 盘后撮合在产（synth_sh 满格）
     "D13-45": "partial",  # 注册后未取到执行留痕（周末窗未开）
     "D13-46": "partial",  # 有实测样本但 last_at 时区口径待复判
     "D13-47": "partial",  # 在产但近日缺档（max=10-01）
@@ -1694,7 +1726,7 @@ WIRING: dict[str, str] = {
     "D13-10": "partial",  # 新增槽未热载 + 产物停 T-1
     "D13-13": "unwired_slot_hollow",  # 零任务∧零特殊槽分支⇒恒假成功
     "D13-14": "partial",  # 层在拍而多腿零产
-    "D13-16": "partial",  # 独立池断供
+    "D13-16": "unwired_slot_hollow",  # tdx 五任务退役后槽空（2026-10-04 B1 批）；产能收敛 D13-48
     "D13-18": "partial",  # 分池在转而研报腿断供
     "D13-20": "unwired_slot_hollow",  # 墙钟窗闸在 16:45 自动圈下恒 skipped
     "D13-23": "partial",  # 有节拍席位无节拍（每交易日 1 拍且落收盘后窗）
@@ -1739,6 +1771,11 @@ RED: dict[str, str] = {
 # L1 exec_evidence=production（骨架 ✅）环节的"真在产/真在跑「复跑口径（骨架 §7 + 各簿 §实查命令）。
 # 观察数随并发漂移，故一律写"命令口径 + 断言 + 观察日「，不把静态计数钉进散文（根宪法 §9 条目 5）。
 EXEC: dict[str, list[str]] = {
+    "D13-48": [
+        "复跑（主区只读）: schtasks /Query /TN sector_eqw_intraday → 任务在册（每日 15:40 触发）",
+        "复跑（骨架 §7 C 组口径，DatabaseService CH 只读）: kline_sector_intraday 近 8 日按 data_source 分组=synth_sh 满格（09-30 当日 171,351 行）",
+        "复跑: grep -n 'synth_sh' scripts/kline_sector_intraday_from_constituents.py → 等权链式聚合 runner 在位（MOD-DATA-061）",
+    ],
     "D13-04": [
         "复跑（骨架 §7 C 组，DatabaseService CH 只读）：情绪窗口表 max(window_ts) 与全表行数读数",
         "复跑: grep -n 'nightly_sentiment' src/zephyr/data/scheduler.py → 特殊槽分支在位（逐日产出行）",
@@ -2367,12 +2404,19 @@ def scan_register_scripts(root: Path) -> dict[str, Any]:
     自注册脚本同样在册（漏扫会让"计划任务未在册"判定在降级模式下假红）。
     """
     scripts: dict[str, list[str]] = {}
-    for p in sorted(root.glob("scripts/*.ps1")):
+    # 双簇 glob（裁定#482 register 拆簇形态）：老位 scripts/*.ps1 + 新位 scripts/tasks/register/*.ps1
+    _ps1_files = sorted(root.glob("scripts/*.ps1")) + sorted(root.glob("scripts/tasks/register/*.ps1"))
+    for p in _ps1_files:
         try:
             text = p.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
         tns = sorted(set(re.findall(r'["\'](ZephyrAlpha_[A-Za-z0-9_]+)["\']', text)))
+        # 无前缀任务名（命名违规在册件如 sector_eqw_intraday）：仅 register_* 注册器内的
+        # $taskName = '...' 显式赋值形态收录（声明面=实存佐证；命名规范化归 ops 车道）
+        if Path(p).name.startswith("register_"):
+            _bare = re.findall(r"[$]taskName\s*=\s*['\"]([A-Za-z0-9_]+)['\"]", text)
+            tns = sorted(set(tns) | set(_bare))
         if tns:
             scripts[p.relative_to(root).as_posix()] = tns
     declared = sorted({tn for tns in scripts.values() for tn in tns})
@@ -2590,7 +2634,12 @@ def build_trigger_surfaces(root: Path, *, skip_schtasks: bool) -> dict[str, Any]
         "calendar_guard": guard,
         "dloop_phases": dloop,
         "register_scripts": scripts,
-        "registered_schtasks": registered,
+        "registered_schtasks": {
+            **registered,
+            "task_names": sorted(
+                set(registered.get("task_names") or []) | set(scripts.get("declared_task_names") or [])
+            ),
+        },
         "service_flags": scan_service_flags(root),
         "registry_entities": scan_registry_entities(
             root, {e for spec in N.values() for e in (spec.get("entity") or [])}
@@ -2634,6 +2683,8 @@ def schtasks_facts(tns: list[str], surfaces: dict[str, Any]) -> dict[str, Any]:
     reg = surfaces.get("registered_schtasks") or {}
     names = set(reg.get("task_names") or [])
     declared = set((surfaces.get("register_scripts") or {}).get("declared_task_names") or [])
+    # 声明面并入查询面（在册实存=查询∪声明；查询面 ZephyrAlpha_ 过滤会漏根目录无前缀任务）
+    names |= declared
     return {
         "query_available": bool(reg.get("available")),
         "registered": {t: (t in names if reg.get("available") else None) for t in sorted(tns)},
@@ -2765,7 +2816,7 @@ def build_nodes(
     *,
     as_of: str | None = None,
 ) -> list[dict[str, Any]]:
-    """47 环节 + 4 gap 节点：人工语义层 ⊕ 机生面（三层字段名一律取六图终局卷 §1 统一名）。"""
+    """48 环节 + 4 gap 节点：人工语义层 ⊕ 机生面（三层字段名一律取六图终局卷 §1 统一名）。"""
     build_status_zh = get_category_map("build_status")
     ledger = surfaces.get("dangling_objects") or {}
     as_of_eff = as_of or head_commit_time(_REPO_ROOT)
@@ -2802,7 +2853,7 @@ def build_nodes(
                 else (
                     set(_GAP_DOC[nid])
                     | set(spec.get("doc") or [])
-                    | {_SKELETON + " §2（47 环节契约，本格为骨架外 gap 件）"}
+                    | {_SKELETON + " §2（48 环节契约，本格为骨架外 gap 件）"}
                 )
             ),
             "runtime_refs": list(spec.get("run", [])),
@@ -2960,7 +3011,7 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
             "note_zh": "资源容量/互斥窗/三表一致性归排班族工具（裁定#482 互挂引用：数据层同源三表、视图层正交不并）",
         },
         "ssot_note_zh": (
-            "环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（47 环节四段）+ 十本作业簿"
+            "环节契约真源=docs/_working/map_build/fig13_daycycle/00_skeleton.md §2（48 环节四段）+ 十本作业簿"
             "（簿 10=外部对标三扫：表A 七条逐条落 L1/L2 字段或 gap 节点、表C 五条判据分歧只以 gap_refs 记入"
             "不自裁）；machine_facts/trigger_surfaces 层每次全量重扫可执行真相源（排班槽面/任务挂载 join/"
             "特殊槽分支面/PHASE_STAGES 实扫/日历守卫面/计划任务只读查询面/服务总闸实存面/骨架状态列实扫/"

@@ -8498,7 +8498,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_breadth.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
@@ -8540,7 +8540,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_momentum.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
@@ -8554,7 +8554,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_gate.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
@@ -8568,7 +8568,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_rotation_state.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
@@ -8582,21 +8582,21 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_pullback.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_siphon.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/signal_ashare/sector/sector_rrg.py'
-    owner_blueprint: 'MOD-SIG-026 supplement'
+    owner_blueprint: 'MOD-SIG-026'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
