@@ -79,8 +79,18 @@ __all__ = ["run_checks", "collect_strategy_ids_via_ast"]
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _MAP_PATH = _REPO_ROOT / "config" / "trading_decision_map.yaml"
+_FACTORY_MAP_PATH = _REPO_ROOT / "config" / "strategy_production_map.yaml"
 _REGISTRY_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
 _PF_CORE_DIR = _REPO_ROOT / "src" / "zephyr" / "pf_core"
+
+# R12（battle_map_refs 互挂引用，轴归一手术裁定#483/#487）常量
+# 交易段流桶（裁定#483 段归属：这些段的 BM 环节叙事真源在 TDM；无回链=warn 君子协定）
+_R12_TRADING_STAGES = frozenset(
+    {"buy_flow", "sell_flow", "stock_selection", "position_management", "risk_control", "execution", "reconciliation"}
+)
+# 留空白名单（裁定#487 §四）：这些 TDM 节点族无 battle_map_refs=合法态，不告警
+# ——TDM-E-L9 知识供给轴（横向支撑无生命周期格子）+TDM-C 币圈族（crypto-dev-paused 冻结令）
+_R12_EMPTY_LEGAL_PREFIXES = ("TDM-E-L9", "TDM-C-")
 
 # SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate）
 # 审计 F-（AUDIT_REPORT 失明清单#5）修复：原查 nodes.module_id=不存在列→UndefinedColumn
@@ -159,6 +169,14 @@ def run_checks(
         warns.extend(_check_data_existence(dm, rd))
     except Exception as e:  # noqa: BLE001 — R11 是增强检查，异常不阻断主校验
         warns.append(f"R11 [map] 数据实存性检查异常（跳过）: {e}")
+
+    # R12: battle_map_refs 互挂引用存在性（轴归一手术裁定#483/#487；PG 只读 fail-open）
+    try:
+        r12_fails, r12_warns = _check_battle_map_refs()
+        fails.extend(r12_fails)
+        warns.extend(r12_warns)
+    except Exception as e:  # noqa: BLE001 — R12 是增强检查，异常不阻断主校验
+        warns.append(f"R12 [map] battle_map_refs 检查异常（跳过）: {e}")
 
     if not ok:
         pass  # ok 语义=fails 为空，已由分级表达
@@ -241,6 +259,63 @@ def _check_data_existence(dm, registry_dir: Path) -> list[str]:
         if warn:
             warns.append(warn)
     return warns
+
+
+def _check_battle_map_refs() -> tuple[list[str], list[str]]:
+    """R12：TDM/工厂节点 battle_map_refs → PG battle_map_steps 存在性（轴归一裁定#483/#487）。
+
+    - 死引用=error（BM 三表冻结真源；引用指向不存在的环节=挂死词）。
+    - 留空白名单：TDM-E-L9 知识供给轴/TDM-C 币圈族无 refs=合法态（裁定#487 §四），不告警。
+    - 交易段 BM 环节无 TDM 回链=warn 君子协定（聚合计数单行，含 R4 自有；触发率实证后议 gate 化）。
+    - 两图均无 battle_map_refs 字段=回滚态，本腿自动 skip。
+    - PG 只读 fail-open 只限 DB 不可用类异常；其他异常向上抛（禁吞成死检查，AUDIT 清单#5 同训）。
+    """
+    import yaml
+
+    from zephyr.governance.persistence.battle_map_reader import BattleMapReader
+
+    fails: list[str] = []
+    warns: list[str] = []
+    raw_refs: dict[str, list[str]] = {}
+    for label, path in (("TDM", _MAP_PATH), ("FACTORY", _FACTORY_MAP_PATH)):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        except FileNotFoundError:
+            continue
+        for n in data.get("nodes") or []:
+            refs = n.get("battle_map_refs") or []
+            if refs:
+                raw_refs[f"{label}:{n.get('node_id')}"] = [str(x) for x in refs]
+    if not raw_refs:
+        return [], []  # 回滚态 skip（对标 ghost_tdm 腿列缺失语义）
+
+    with BattleMapReader() as reader:
+        steps = reader.get_all_steps()
+        step_ids = {s.get("step_id") for s in steps}
+        all_refs: set[str] = set()
+        for refs in raw_refs.values():
+            all_refs.update(refs)
+        dead = sorted({ref for refs in raw_refs.values() for ref in refs if ref not in step_ids})
+        fails.extend(
+            f"R12 [{nid}] battle_map_refs 死引用: {d}"
+            for nid, refs in sorted(raw_refs.items())
+            for d in refs
+            if d in dead
+        )
+        # 交易段无回链君子协定计数：tdm_node_id 列不存在（回滚态）时跳过计数
+        if any("tdm_node_id" in s for s in steps):
+            n_unlinked = sum(
+                1
+                for s in steps
+                if s.get("flow_stage") in _R12_TRADING_STAGES
+                and not s.get("tdm_node_id")
+                and s.get("step_id") not in all_refs
+            )
+            warns.append(
+                f"R12 [map] 交易段 BM 无 TDM 回链 {n_unlinked} 条"
+                "（君子协定计数，含 R4 自有——裁定#487 §六；触发率实证后再议 gate 化）"
+            )
+    return fails, warns
 
 
 def _module_exists_in_depgraph(module_ref: str) -> bool:

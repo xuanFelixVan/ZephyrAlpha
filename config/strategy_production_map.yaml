@@ -103,6 +103,7 @@ nodes:
     design_refs: []
     store_refs:
       - {artifact: 候选想法清单, location: data/strategy_intake/, key: md5_12, retention: 永久}
+    battle_map_refs: [BM-RES-06, BM-RES-06-A, BM-RES-06-B, BM-RES-09, BM-RES-09-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E1A
     name_zh: 车道A-社区货源
@@ -271,6 +272,7 @@ nodes:
     store_refs:
       - {artifact: 预审判定记录, location: c1_backtest.hypothesis_precheck, key: candidate_id,
          retention: 永久}
+    battle_map_refs: [BM-RES-03, BM-RES-03-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E3
     name_zh: 构造与翻译
@@ -300,6 +302,7 @@ nodes:
       - QuantCode-Bench arxiv.org/html/2604.15151（NL→可执行策略可靠性基准）
     store_refs:
       - {artifact: 翻译件, location: scripts/backtest/translated/, key: strategy_id, retention: 永久}
+    battle_map_refs: [BM-MT-01-B, BM-MT-03, BM-RES-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E4
     name_zh: 考试咽喉
@@ -322,6 +325,7 @@ nodes:
     store_refs:
       - {artifact: 考试成绩+判定书, location: c1_backtest.strategy_screen + data/backtest_artifacts/runs/,
          key: strategy_id+screen_batch, retention: 永久}
+    battle_map_refs: [BM-BT-01-D, BM-BT-02-E, BM-BT-03, BM-BT-03-A, BM-BT-03-E, BM-BT-04, BM-BT-04-A, BM-BT-04-B, BM-BT-04-C, BM-BT-05, BM-BT-05-A, BM-BT-05-B, BM-BT-05-C, BM-BT-05-E, BM-BT-05-F, BM-BT-05-G, BM-BT-05-I, BM-BT-05-J, BM-BT-06, BM-BT-06-A, BM-BT-06-B, BM-BT-06-C, BM-BT-07, BM-BT-07-A, BM-BT-07-I, BM-MT-02, BM-MT-02-B, BM-SEL-02-F]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E5
     name_zh: 协同去重
@@ -340,6 +344,7 @@ nodes:
       - 天风金工因子正交全攻略 sohu.com/a/201668064_619347
       - 朴素合成警告 papers.ssrn.com/sol3/papers.cfm?abstract_id=6255159
     store_refs: []
+    battle_map_refs: [BM-SEL-02-D, BM-SEL-02-E]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E6
     name_zh: 入库监控
@@ -358,6 +363,7 @@ nodes:
       - IC 月度巡检挂起规则（中文社区实践） cloud.baidu.com/article/3791374
     store_refs:
       - {artifact: 判定书/衰减巡检, location: data/backtest_artifacts/runs/, key: run_id, retention: 永久}
+    battle_map_refs: [BM-BT-05-D, BM-MT-05, BM-SEL-02-G]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E7
     name_zh: 模拟盘前哨
@@ -378,6 +384,7 @@ nodes:
       - Lime Trading 模拟盘价值 lime.co/news/The-Value-of-Simulation-Why-Paper-Trading-Still-Matters/
     store_refs:
       - {artifact: 前哨对账报告, location: data/backtest_artifacts/runs/, key: strategy_id+前哨批次, retention: 永久}
+    battle_map_refs: [BM-BT-05-H, BM-BT-08, BM-MT-02-A, BM-SIM-08]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
   - node_id: FAC-E8
     name_zh: 组装与资金分配
@@ -440,6 +447,7 @@ nodes:
 # ==== mechanism 挂载层（F2 机生 st-map9-f2-20261003；真源=fac9_01_mount_candidates.yaml，
 #      一机制一节点；骨架 16 节点不动；trigger_facts/consumers 待 F3 回填）====
 # -- E0 组（15 件）--
+    battle_map_refs: [BM-BT-05-H-A, BM-BT-05-H-B, BM-BT-05-H-C, BM-BT-05-H-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
   - node_id: FAC-E0-M-001
     parent_node: FAC-E0
     name_zh: 算力调度闸门

@@ -4210,3 +4210,32 @@ entries:
   - 裁定#451
   - 裁定#20-D
   superseded_by: null
+- ruling_id: "裁定#487"
+  title: 轴归一手术 F2 终审放行+F3 落地——BM 格子↔TDM/工厂互挂引用（按建议办+两条款）
+  date: '2026-10-05'
+  category: 治理架构
+  status: active
+  summary: |-
+    Owner/GLM-5.3 总筹 2026-10-05 F2 终审签字放行（verdict=docs/_working/axis_unify/03_f2_verdict.md，
+    executor st-axisunify-flash-20261005；裁定#483 后置项收口）。总判=按建议办+两条补充条款+四放行条件。
+    ①手术形批：TDM/工厂 YAML 逐节点 battle_map_refs 五联锚加一联（纯加字段零删改）；
+    条款1 零叙事删除——module_translation_registry §battle_map_steps 一字不动，互挂=叙事版权归属非删除，
+    BM 格子叙事降级"挂载描述"继续存在；条款2 infra 实现件一律 R4 自有、方法论叙事件才归入——
+    按此全量自查 R2：17 条改判 R4（引擎/管道/采集机械族）+17 条 borderline 论证保留（纪律/判读方法论）。
+    ②C 级 134 条按建议办：含 C-083 BM-SELL-08 做T→TDM-P-P2 做T族互挂成立、C-071..073 A股止损族→
+    TDM-X-S1 止损族同款；两处 BM flow_stage 桶均不动（#483 判据：展示顺序≠叙事所有权；三表冻结红线）。
+    B 级 159 按提案办；A 级 48 免审列册。③留空白名单批：TDM-E-L9 知识供给轴（横向支撑无生命周期格子）+
+    TDM-C 币圈族（crypto-dev-paused-20261004 冻结令）无 refs=合法态，validator 留空白名单语义引用本裁定。
+    ④F3 落地读数：71 节点 199 条 refs（TDM 63 节点+工厂 8 stage；E0/E8 因条款2 改判后无研究段格子挂靠=
+    留空披露）；运行时三消费零触碰；BM 三表/锚点零触碰（PG 只读）。
+    ⑤F4 一致性防线：check_decision_map 增 R12 腿（死引用=error 红攻实证/交易段无回链=warn 君子协定
+    聚合计数/留空白名单），复用形=join_checker 设计稿键归一+存在性判定，零新 gate 零新册。
+  affected_files:
+  - config/trading_decision_map.yaml
+  - config/strategy_production_map.yaml
+  - docs/_working/axis_unify/03_f2_verdict.md
+  - docs/_working/axis_unify/04_write_batch.md
+  - scripts/governance/d5_architecture/generators/check_decision_map.py
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#483', '裁定#482', '裁定#486']
+  superseded_by: ''
