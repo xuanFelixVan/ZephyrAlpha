@@ -178,6 +178,22 @@ def validate_structure(data: dict) -> list[str]:
                     _err(errors, f"{nid}: stage 与 parent 不一致（mechanism 须与主干同环节）")
             if legend_tags and n.get("purpose_tag") and str(n["purpose_tag"]) not in legend_tags:
                 _err(errors, f"{nid}: purpose_tag 不在 purpose_legend 图例: {n.get('purpose_tag')!r}")
+            # 血肉字段值域（F4 验收件 §四-3 需求，2026-10-05 总筹施工）：
+            # observed 三态=int/float/str/null（dict 形态必带 observed 键）；consumers 上限 50 防整仓贴图
+            tf = n.get("trigger_facts")
+            if isinstance(tf, dict):
+                if "observed" not in tf:
+                    _err(errors, f"{nid}: trigger_facts 缺 observed 键（dict 形态必带）")
+                elif tf["observed"] is not None and not isinstance(tf["observed"], (int, float, str)):
+                    _err(
+                        errors,
+                        f"{nid}: trigger_facts.observed 非法形态（须 int/float/str/null）: {type(tf['observed']).__name__}",
+                    )
+            elif tf is not None and not isinstance(tf, (int, float, str)):
+                _err(errors, f"{nid}: trigger_facts 非法形态（null/标量/dict 三态）: {type(tf).__name__}")
+            cs = n.get("consumers")
+            if isinstance(cs, list) and len(cs) > 50:
+                _err(errors, f"{nid}: consumers 超 50 上限（{len(cs)} 条；防整仓贴进单节点，口径=截前 20+总数注记）")
             for sr in n.get("store_refs") or []:
                 if not sr.get("artifact") or not sr.get("location") or not sr.get("retention"):
                     _err(errors, f"{nid}: store_refs 条目缺 artifact/location/retention")
