@@ -330,6 +330,8 @@ extend-aliases = { "zephyr.shared.paths" = "paths", "zephyr.shared.time_utils" =
     "SIM117",  # nested with (测试中可读性优先)
     "E731",  # lambda赋值 (测试中简洁性优先)
     "RUF043",  # pattern包含元字符 (测试中合理使用)
+    "BLE001",  # 盲except (测试环境/依赖缺失触发skip的顶层兜底,apply_depgraph同机制,2026-10-04 tests分类战役实测219处一致模式)
+    "B905",  # zip缺strict= (py3.9兼容,测试断言不涉长度判定,同批40处)
 ]
 "scripts/**" = [
     "F823",  # 局部变量引用前赋值 (脚本中合理使用)
