@@ -29,7 +29,7 @@ status: design_v1
 | ⑤ | 前端（裁定呈现） | 复刻 S13 promotion 先例（`src/zephyr/frontend/dashboard/web/features/promotion/promotion.js`+api_server 只读路由）：裁定卡=只读 API+JS 渲染，Owner 只读（登记不施工，归 L5/L6 呈现件） | — | signal（登记不施工） |
 | ⑥ | 数据字段（记什么） | 任务书 schema v0 附录 A（definition_of_done 预注册/acceptance.reviewer 异会话异档/pre_rulings）；附录 C #5 验收判据自改=根约束禁区；OBJ_M M2 exam_suite_version 必记字段（防题库污染）；L2 卡 elite_score/elite_rank/elite_status 回填位已留；`config/resource_profile_registry.yaml`（排班 v1 互斥组/E0 算力档词表） | — | signal |
 
-**受阻记录**：EX-R1（specification gaming 谱系核验）429×4（60-130s 间隔重试）未取到实时结果——DeepMind "Specification gaming: the flip side of AI ingenuity"（Krakovna 系）为通行引文，本稿仅作查钻营 checklist 思想锚点不引具体条目，**URL 补核挂单进 C6 验收标准，未编引文**。
+**受阻记录**：EX-R1（specification gaming 谱系核验）429×4（60-130s 间隔重试）未取到实时结果——DeepMind "Specification gaming: the flip side of AI ingenuity"（Krakovna 系）为通行引文，本稿仅作查钻营 checklist 思想锚点不引具体条目，**URL 补核挂单进 C6 验收标准，未编引文**（销账：2026-09-24 实网核验完成，引文=Krakovna, V., et al. (2020-04-21) DeepMind 博客，署名九人；详见 too_good.py SPEC_GAMING_CITATION+staging 核验记录）。
 
 ---
 
@@ -109,7 +109,7 @@ status: design_v1
 
 1. **查泄漏 leakage**：对照 Kapoor & Narayanan 八类分类学逐项过——时序窗重叠/预处理泄漏（全量归一化后再切窗）/重叠加窗/非独立样本；模型类加考题污染（考题或变体出现在候选的清洗语料/训练材料——MCE RISK-3.4 同源风险）；机检=考卷 sha256 vs 候选接触记录比对。
 2. **查隐性风险 hidden_risk**：收益分布尾部（偏度/最大回撤/tail ratio）——"稳定小赚+尾部爆仓"卖保险形态；参数扰动敏感性（overfitting_adjudicator 检验器③可复用，现未接线正好此处消费）；容量/滑点/手续费假设敏感性；模型类加胜例定性抽检（胜例同质化=只会一种题）。
-3. **查运气/钻营 luck_or_gaming**：多重比较复算（同批候选数与 BHY 校正后 q 值——赢在没校正前=运气）；种子/窗口敏感性（换 3 种子+滚动窗重跑，排序不稳=过拟合考纲）；近亲繁殖检查（候选与考卷同源同作者，L2 simhash+L7 先验）；基准记忆（模型类=变体题冒烟重考）；specification gaming 自问一句（业界思想锚，EX-R1 受阻待补核）："候选是不是在优化考卷而不是优化目标？"
+3. **查运气/钻营 luck_or_gaming**：多重比较复算（同批候选数与 BHY 校正后 q 值——赢在没校正前=运气）；种子/窗口敏感性（换 3 种子+滚动窗重跑，排序不稳=过拟合考纲）；近亲繁殖检查（候选与考卷同源同作者，L2 simhash+L7 先验）；基准记忆（模型类=变体题冒烟重考）；specification gaming 自问一句（业界思想锚，EX-R1 已核销账 2026-09-24）："候选是不是在优化考卷而不是优化目标？"
 
 **三出口**（裁定写进 experiment 卡，全部留痕）：
 
@@ -209,3 +209,15 @@ DGM 教训（V2-R5）的机制化落地，七道机检（前五道进执行器�
 ## 红蓝 R2 修复记录（2026-09-17，红队 R2 发现）
 
 - **R2（同名事件冲突拆分+节锚漂移）**：L2 侧回执事件改名 `intake_exam_receipt`（payload 删未定义的 intake_id），本稿 §3 `intake_exam_due`（L2→L4 派考）**保留原名不变**——同名冲突消解，两事件方向/载荷不再交叠；§2.6 第 2 道机检锚的过时节号（v2.0 节号漂移）改指"主文档 §3.2 验收三级协议"，grep 零残留。连带核记：§3 L5 行与待 Owner-3 的 evidence_ref 增补已经 L2 稿 R2 同批落地，挂单仅余派考边跨稿确认。
+
+## 归位记录（2026-09-26，W4-D 文档修复车道）
+
+- **背景**：本稿 2026-09-24 的 EX-R1 销账两处更新（§1 受阻记录行、§2.5 三查③"已核销账"措辞）当时
+  被写到了 `../L1_perceive/DESIGN.md`（错路径＝用本稿覆盖 L1 自有稿，事故留痕见
+  `../L1_perceive/DESIGN.md` §八 与 `../closure_wave2/W4D_l1_design_repair.md`），本文件因此停留在
+  2026-09-17 R2 旧版。本次把这两行**原样搬回本路径**（内容零改写、判据零改动），并让 L1 路径回到 L1 稿——
+  一份稿只有一个家。
+- **实证**：销账所指 `too_good.py` 盘上存在且含该引文常量——`src/zephyr/ai_layer/comparator/too_good.py:148`
+  `SPEC_GAMING_CITATION`（2026-09-26 grep 核过）；C6 施工项"引文补核"验收锚自此可指实。
+- **待总筹一行**：本稿 §5.3 第 4 项"creation_token 补登"仍未销（`capability_canonical_file_registry.yaml`
+  以 token `ai-layer-vision-design-20260916` 记 L1/L3/L5/L7 等路径，本车道零登记面写权）。
