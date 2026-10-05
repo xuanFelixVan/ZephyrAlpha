@@ -420,6 +420,14 @@ def resolve_queue_root(queue_root: str | os.PathLike | None = None) -> Path:
     ZEPHYR_COMMIT_QUEUE_DIR；确需测默认解析本体的用例 monkeypatch PYTEST_CURRENT_TEST。
     """
     if queue_root is not None:
+        # 修2（Owner 全批 2026-10-05）：显式传入的路径若在 worktree 内（.aidrafts/），
+        # 重定向到主仓队列——worktree 本地队列主带不排=袋搁浅（10-05 实锤）
+        qp = Path(queue_root)
+        if ".aidrafts" in qp.parts:
+            parts = qp.parts
+            for i, part in enumerate(parts):
+                if part == ".aidrafts":
+                    return Path(*parts[:i]) / ".runtime" / "commit_queue"
         return Path(queue_root)
     env = os.environ.get(QUEUE_ENV_VAR)
     if env:
