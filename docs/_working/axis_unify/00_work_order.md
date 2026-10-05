@@ -1,9 +1,11 @@
 ---
 ttl: task_bound
 completes_when: F5 收尾报告落 HEAD 且裁定登记（拟裁定#484+，施工时实查最大号）后本件转归档
-title: 轴归一手术·作战工单（裁定#483 后置项，Owner 2026-10-05 开工令）
+status: executed
+executed_as: 裁定#487（#486 被 fig16 占用顺延）；落地 commit e546b6d7a3（F3 写入+F4 防线+F5 收尾同袋原子，8 文件纯净+capability token 由 gomap 先行袋 9dd96e8920 承载入 HEAD）；F2 终审=03_f2_verdict.md
+title: 轴归一手术·作战工单（裁定#483 后置项，Owner 2026-10-05 开工令，已执行完毕）
 owner_dispatcher: st-bm-reclass-20261004（GLM-5.3 总筹）
-executor: st-axisunify-flash-20261005（Flash 执行，拟）
+executor: st-axisunify-flash-20261005（Flash 执行）
 ---
 
 # 轴归一手术工单：BM 格子 ↔ TDM/工厂节点 词汇收敛
