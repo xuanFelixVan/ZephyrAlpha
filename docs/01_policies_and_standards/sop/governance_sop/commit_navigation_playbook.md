@@ -1347,3 +1347,20 @@ doc_type: policy
 - 已停用 enabled:false: 8 台：BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
 - 在册覆盖: 105/105
 
+
+## 队列通道先行批铁律（2026-10-05 GOMAP 对话实证 + 裁定#480 D 配套）
+
+**一句话**：袋里有新建文件（tests/ 豁免面除外）→ 入队前先验 token 在 dev HEAD，不在就拆两袋：token 先行批 → 内容批。
+
+**前因**：CREATE-GUARD 在队列落地时读 dev HEAD 的 capability 册（`anchor_main_root` 锚主仓盘面），不看袋内带的册子改动。"token 与 yaml 同 commit 原子"只在直连正门成立，队列通道必须先行批。实证：同签名死因一晚 250 次（熔断都烧了）。
+
+**操作三步**：
+1. 入队前验：`git show dev:docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | grep <token>` → 在则直接入内容袋
+2. 不在 → 拆袋：第一袋仅 capability 册一件（token 插入，走意图 API 正道=`register_tokens_ledger.py`），入队落地后再入第二袋（内容件）
+3. 可用 `--depends-on <token袋qid>` 挂依赖（前置落盘才放行后置=机器强制先行）
+
+**临时军规**（车道 worktree 作业）：
+- 入队必显式 `--queue-root <主仓根>/.runtime/commit_queue`（默认解析已被 `_strip_lane_prefix` 兜底，但显式传参永远最安全）
+- worktree 内跑 python 须双 env 锚：`ZEPHYR_ALPHA_ROOT` + `ZEPHYR_WORKTREE_ROOT`（单设后者压不过 usercustomize 预导入）
+
+**死因签名细化（wave-2 登记）**：外层 "网关落盘失败（COMMIT_FAILED）" 太粗（250 次死亡横跨几十种真实根因共用一个签名，熔断误伤所有重投）。修③ 已细化到文件级指纹，但外层 COMMIT_FAILED 包装层仍需按门禁 ID 拆分。
