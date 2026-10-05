@@ -565,7 +565,18 @@ class PooledProcess:
 
     @property
     def is_alive(self) -> bool:
-        return self.process.poll() is None
+        # 存活判定（st-tclose-infracure2-20261005 件4 显式化）：returncode 非 None
+        # （已被 poll/wait 收割）或 wait(0) 可收割=死；双信号判活才返回活。
+        # 语义与 poll() is None 等价（CPython poll 本即 wait(0)+returncode 缓存），
+        # 只许更准判死：live 进程 returncode 恒 None 且 wait(0) 抛 TimeoutExpired，
+        # 绝无误判活进程为死的路径（消费者=本池 reap/stats + scripts/mcp/launcher.py）。
+        if self.process.returncode is not None:
+            return False
+        try:
+            self.process.wait(timeout=0)
+        except subprocess.TimeoutExpired:
+            return True
+        return False
 
     @property
     def pid(self) -> int | None:

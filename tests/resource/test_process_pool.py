@@ -97,20 +97,37 @@ class TestProcessPoolZombie:
         self._pools.append(pool)
         return pool
 
+    @staticmethod
+    def _wait_dead(entry, timeout: float = 15.0) -> bool:
+        """有界等死（替代固定 sleep）。
+
+        根因实测（st-tclose-infracure2-20261005 件4）：本环境 usercustomize（LSG
+        运行时网引导）使每个 python 子进程启动+退出 ~1.3s（python -S=0.03s 实证
+        归因），原 1.0s 固定 sleep 断言时进程真活着——存活判定语义无误，是测试的
+        环境敏感固定等待。改有界轮询：真死才放行，跨环境确定性绿。
+        """
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            if not entry.is_alive:
+                return True
+            time.sleep(0.1)
+        return False
+
     def test_dead_process_detected(self):
         pool = self._make_pool()
         entry = pool.get_or_create("quick-die", [sys.executable, "-c", "pass"])
-        time.sleep(1.0)
+        assert self._wait_dead(entry), "quick-die 15s 内未退出（超出解释器启动预算）"
         assert not entry.is_alive
         reaped = pool.reap_zombies()
         assert reaped >= 1
 
     def test_get_or_create_replaces_dead(self):
         pool = self._make_pool()
-        pool.get_or_create("replace-test", [sys.executable, "-c", "pass"])
-        time.sleep(1.0)
+        old = pool.get_or_create("replace-test", [sys.executable, "-c", "pass"])
+        assert self._wait_dead(old), "replace-test 旧进程 15s 内未退出"
         new_entry = pool.get_or_create("replace-test", [sys.executable, "-c", "import time; time.sleep(60)"])
         assert new_entry is not None
+        assert new_entry is not old  # 真替换语义：死条目被移除后新建
         assert new_entry.is_alive
 
 
