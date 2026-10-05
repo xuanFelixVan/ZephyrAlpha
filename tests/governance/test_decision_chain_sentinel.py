@@ -5,6 +5,7 @@
 # [DEPENDENCIES] scripts/governance/decision_chain_sentinel.py（importlib 按路径加载, 同 test_audit_worktree_ops_telemetry.py 先例）
 # [INVARIANTS] mock 连接三例（正常/滞后超限/DB 异常）+ 降级与边界例; 测试禁写生产路径（宪法§9.6）,
 #   告警 jsonl 一律落 tmp_path fixture; 不触真实 DB（FakeExecutor 全注入）。
+#   交易日闸两例（D13-46 2026-10-05）: 非交易日早退零副作用+--force 穿闸 / 交易日放行全链路。
 # [TESTS] self
 # [A_module] module_id=MOD-GOV-decision_chain_sentinel_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -441,3 +442,62 @@ def test_expected_day_axis_comes_from_calendar_true_source(sent, tmp_path: Path)
     assert "is_open = 1" in axis_sql[0]
     for banned in ("_HOLIDAYS", "_HOLIDAY_DATES", "_CLOSED_DAYS", "holiday_list"):
         assert not hasattr(sent, banned), f"日历真源之外禁立第二份节假日真源: {banned}"
+
+
+# ============== 交易日闸（D13-46 假日空跑缺陷, 2026-10-05）==============
+
+
+def test_trading_day_gate_skips_non_trading_day_zero_side_effects(sent, tmp_path: Path, monkeypatch, capsys):
+    """非交易日：主入口打一行 SKIP 留痕后早退 exit 0——零 DB 连接/零告警落盘（假日空跑治本）。
+
+    同参带 --force 即穿闸走正常巡检路径（人工逃生口契约），证明闸只在默认形态生效。
+    闸真源=zephyr.data.trading_calendar（XSHG），本测整体替身化，不触真日历。
+    """
+    import zephyr.data.trading_calendar as tc
+
+    monkeypatch.setattr(tc, "is_trading_day", lambda d=None: False)
+
+    def _factory():
+        called.append(1)
+        return FakeExecutor(
+            decision_max=date(2026, 9, 24),
+            calendar_max=date(2026, 9, 24),
+            kline_max=date(2026, 9, 24),
+            open_days_after=0,
+        )
+
+    called: list[int] = []
+    monkeypatch.setattr(sent, "_default_executor", _factory)
+    # dloop 第二判据隔离（L09-C04）：fetch_perf 指向空沙箱，禁读生产盘
+    monkeypatch.setattr(sent, "_FETCH_PERF_DIR", tmp_path / "fetch_perf")
+    alert_log = tmp_path / "alert.jsonl"
+    argv = ["--ref-date", "2026-10-01", "--alert-log", str(alert_log)]
+
+    assert sent.main(argv) == sent._EXIT_OK
+    assert "SKIP (is_trading_day=False)" in capsys.readouterr().out, "早退留痕一行必须在 stdout"
+    assert not called, "闸必须先于任何 DB 连接生效（executor 工厂零调用=零副作用）"
+    assert not alert_log.exists(), "早退禁写告警文件"
+
+    assert sent.main(argv + ["--force"]) == sent._EXIT_OK, "--force 穿闸后走正常巡检路径"
+    assert called, "--force 必须穿透交易日闸（executor 已被调用）"
+    assert not alert_log.exists(), "正常巡检禁写告警文件"
+
+
+def test_trading_day_gate_passes_on_trading_day(sent, tmp_path: Path, monkeypatch):
+    """交易日：闸放行，main 全链路照常（0/4/8 出口契约与巡检逻辑零改变）。"""
+    import zephyr.data.trading_calendar as tc
+
+    monkeypatch.setattr(tc, "is_trading_day", lambda d=None: True)
+    ex = FakeExecutor(
+        decision_max=date(2026, 9, 24),
+        calendar_max=date(2026, 9, 24),
+        kline_max=date(2026, 9, 24),
+        open_days_after=0,
+    )
+    monkeypatch.setattr(sent, "_default_executor", lambda: ex)
+    # dloop 第二判据隔离（L09-C04）：fetch_perf 指向空沙箱，禁读生产盘
+    monkeypatch.setattr(sent, "_FETCH_PERF_DIR", tmp_path / "fetch_perf")
+    alert_log = tmp_path / "alert.jsonl"
+    code = sent.main(["--ref-date", "2026-09-24", "--alert-log", str(alert_log)])
+    assert code == sent._EXIT_OK
+    assert not alert_log.exists()

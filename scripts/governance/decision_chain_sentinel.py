@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV | docs/_working/decision_map_campaign/links/L09_review/SKEL.md §四（沿用账本=13 号文 TRD-A01）
 # [MODULE] scripts.governance.decision_chain_sentinel
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.infrastructure.database_service(懒加载); zephyr.shared.utils.time_utils; zephyr.data.table_registry; schemas.categories.decision_daily(表名真源)
+# [DEPENDENCIES] zephyr.infrastructure.database_service(懒加载); zephyr.shared.utils.time_utils; zephyr.data.table_registry; zephyr.data.trading_calendar(懒加载, 交易日闸); schemas.categories.decision_daily(表名真源)
 # [CONSUMERS] schtasks ZephyrAlpha_DecisionChainSentinel(每日 09:40 盘前, scripts/tasks/register/register_decision_chain_sentinel_task.ps1 注册); data/runtime/process_reaper_keep.txt(防误杀条目 decision_chain_sentinel)
 # [STARTUP] scheduled_task
 # [MATURITY] trial
@@ -19,7 +19,11 @@
 #   参照日(降级腿与报表字段)=min(日历最近开市日, kline_index max 日期)取小(任务书口径: 日历超前于数据面时不虚计滞后),
 #     仅在日历"期望日腿"不可用(查询失败/超出日历覆盖)时充当判据轴, 此时 lag 仍按 --lag-days 阈值判;
 #   告警唯一出口=alert jsonl 追加行+进程退出码(任务书契约, 不另开 Alerter 通道=净零内收); 无状态每次实查(自动维护=无 state 文件防第二真源);
-#   自动关闭=schtasks /change /disable(不设 disabled 标记文件, 不加任务书之外机制)。
+#   自动关闭=schtasks /change /disable(不设 disabled 标记文件, 不加任务书之外机制);
+#   交易日闸(D13-46, 2026-10-05 假日空跑缺陷): 主入口 ref_date 解析后、任何 DB 连接前 is_trading_day 短路——
+#     非交易日 print 一行 "SKIP (is_trading_day=False)" 即 exit 0(零 DB 连接/零告警落盘=零副作用), --force=人工逃生口
+#     (假日取证仍可跑); 真源=zephyr.data.trading_calendar(XSHG, 禁另立节假日清单), 闸在执行体, 注册 ps1 的 Daily 触发器不动
+#     (同 sim_bridge/scheduler 拉起腿形态); 巡检逻辑与 0/4/8 出口契约零触碰。
 #   ★ 数据源勘误留档(2026-09-25 实测 DESCRIBE): 任务书原文写"PG depgraph 连接 get_depgraph_pg_connection", 实测 PG 全 schema 无 decision_daily(仅 depgraph 决策图四表 decision_nodes/layers/edges/tracks);
 #   决策快照真源=ClickHouse c1_backtest.decision_daily(schemas/categories/decision_daily.py DDL 唯一真源, 写侧唯一=daily_decision_orchestrator, 读侧先例=warroom.py), 统计列=trade_date(Date, 拍板生效日=次交易日);
 #   按实测改走 CH reader, 防"连不存在的表"型 R-021 有名无实假通道(SKEL §5.2)。
@@ -53,14 +57,17 @@ E 自动跳到次开市日（例：2026-09-25 中秋休市 ⇒ E=2026-09-28）�
 
 用法：
   python scripts/governance/decision_chain_sentinel.py [--lag-days N] [--ref-date YYYY-MM-DD]
-                                                       [--alert-log PATH]
+                                                       [--alert-log PATH] [--force]
+交易日闸（D13-46, 2026-10-05）：ref_date 为非交易日（节假日/周末）时打一行 "SKIP (is_trading_day=False)"
+  早退 exit 0（假日零空跑零副作用，闸在执行体，注册 ps1 的 Daily 触发器不动）；--force 跳闸供人工假日取证。
+  交易日真源=zephyr.data.trading_calendar（XSHG），禁硬编码节假日清单。
 exit: 0=正常 | 4=告警 | 8=error(fail-soft)
 """
 
 from __future__ import annotations
 
 __manifest__ = """
-args: [--lag-days, --ref-date, --alert-log]
+args: [--lag-days, --ref-date, --alert-log, --force]
 description: 决策链哨兵——期望交易日（日历 >=今日首个开市日）无 decision_daily 行即告警（TRD-A01/L09-C04, exit 0/4/8）。
 dimensions:
 - D11
@@ -415,11 +422,23 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--ref-date", default=None, help="基准日 YYYY-MM-DD（默认=上海时区今日; 演练/测试用）")
     parser.add_argument("--alert-log", default=None, help=f"告警 jsonl 路径（默认 {_DEFAULT_ALERT_LOG}）")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="跳过交易日闸（人工逃生口: 假日取证/演练用; 默认非交易日早退零副作用）",
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     try:
         ref_date = date.fromisoformat(args.ref_date) if args.ref_date else now_utc().astimezone(_SHANGHAI_TZ).date()
+        if not args.force:  # 交易日闸(D13-46): 任何 DB 连接前短路, 非交易日零副作用早退; --force=人工逃生口
+            from zephyr.data.trading_calendar import is_trading_day  # 懒加载(同 sim_daily_runner.plan_bridge 形态)
+
+            if not is_trading_day(ref_date):
+                print("SKIP (is_trading_day=False)")
+                log.info("ref_date=%s 非A股交易日, 哨兵早退(假日零空跑; --force 可跳闸)", ref_date.isoformat())
+                return _EXIT_OK
         record = run_sentinel(
             _default_executor(),
             ref_date=ref_date,
