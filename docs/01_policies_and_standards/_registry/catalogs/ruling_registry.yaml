@@ -4154,3 +4154,29 @@ entries:
   affected_files:
   - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
   related_rulings: []
+- ruling_id: "裁定#485"
+  title: 图9 E8 PA 空号三裁定+E9 命名法（真身名在前/module_ref 恒指真路径/名实一对一）
+  date: '2026-10-04'
+  category: 治理架构
+  status: active
+  summary: |-
+    Owner 2026-10-04 裁定原文直录（对图9 挂载层两呈裁项）。
+    ① E8 十个从未铸造的 PA 号（PA-005/008-012/016-019）三条裁定：空号不是模块不上图——
+    E8 的 MOD-PA-002..024 区间打包语义改为实际在册枚举，区间只许覆盖连续已铸造成员，
+    十个空号从挂载面剔除；空号登记为跳号永不复用（BT-201 撞号事故制度化：复用空号=给
+    未来考古埋雷，同 BT-092 三重撞号成因；真身需要时找铸造权威取新号）；跳号原因入台账
+    （"区间申报未铸造"），在 path_ownership/编号面板注记防未来 AI 重复考古。
+    ② E9-M-003 节点名"决策标注数据集"与裁定真身 sim_attribution_report 的命名张力：
+    机械真身优先，图面名跟随真身——真身名在前、俗称降为括注，module_ref 恒指真路径
+    （图面另立命名=SOP v1.1.2 域主体统一禁近义词漂移立法所防之病）；若 census 行确有
+    独立 decision_annotation 真身模块则两件各自挂载、名实一对一不并也不混。
+    执行注记：经实勘 decision_annotation_dataset 真身实存（src/zephyr/ml_train/
+    decision_annotation_dataset.py，MOD-ML-014），落入条件分支——M-003 改名模拟盘归因
+    报告（真身名在前），M-004 保持决策标注数据集专名并改指真身 MOD-ML-014；PA 区间改
+    连续段枚举 MOD-PA-002..004,006..007,013..015,020..024（主干+机制节点两处）。
+  affected_files:
+  - config/strategy_production_map.yaml
+  - docs/_working/map_census/fac9_04_census_ledger.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#484']
+  superseded_by: ''
