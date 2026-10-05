@@ -1,0 +1,345 @@
+---
+ttl: task_bound
+completes_when: 总筹消费本四分草案（步7裁定/转呈Owner）后本件退役
+title: 图12 步7内收对审·四分处置草案（机械供料，零处置）
+owner: st-vm12in1-20261004
+session: st-vm12in1-20261004
+date: "2026-10-04"
+disposition_boundary: 本件只出清单零处置——退役/合并类归Owner门位（宪法§5），裁定权归总筹（SOP§5步7）；图骨架/注册册/代码/tests零改动
+criteria_source: AGENTS.md §4.2 内收判据铁律 w5_1（同真源可派生→必并｜零触发零消费→退役｜同域重复簇→收敛唯一｜跨域不同对象→不并）
+sop_source: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md v1.1.2（§5步7+§2.4同标签多钉显影+§4 v1.1.0补丁1节拍归一）
+inputs_consumed:
+  map: config/data_supply_chain_map.yaml 工作树盘面版（blood_stage=f2_done，schema 0.3，trigger_facts as_of=2026-10-04；非旧HEAD）
+  f1a: docs/_working/vmap12_flesh/f1a_mechanism_mounts.yaml（32候选+7不挂+自审置信分布）
+  f2z: docs/_working/vmap12_flesh/f2z_coverage_report.yaml（三红=红1孤儿8/红2抄写0/红3未挂病历0）
+  f1z: docs/_working/vmap12_flesh/f1z_escalations.md（E-1~E-10十条，E-3已裁退役/E-13已落）
+  handoff: docs/_working/vmap12_flesh/90_landing_handoff.md（HEAD落后9文件，盘面=真态）
+  e13_landed: E-13八族挂载面13处手术已落盘面（DSC-SRC/02/03/04/05/07/09/19 source_anchors 实读验证 2026-10-04）
+  grep_live: 本会话8组接线实证grep（circuit_breaker/redundant_source/cleaning-quality/calendar族/auto_backfiller/storage_tiering+compression_archiver/ch_parts_monitor/cross_source_validator，2026-10-04实跑）
+base_counts:
+  nodes_total: 43
+  non_gap_nodes: 28
+  gap_nodes: 15
+  verdicts: {alive: 15, dead: 14, insufficient_window: 13, null: 1}
+  tag_matrix_non_gap: {lineage: 5, no_double_write: 3, source_fallback: 2, schedule_complete: 5, can_rollback: 6, break_detect: 4, break_repair: 3, fresh_check: 0, ledger_readable: 0}
+four_way_summary:
+  merge_candidates: 3（IN1-13/14/15；其中 13/15 与退同指，独立并候选=1）
+  retire_candidates: 3（IN1-09 严格+IN1-10/11 条件）
+  keep: 18
+  repair_candidates: 10
+  total_entries: 34
+---
+
+# 图12 内收对审·四分处置草案（SOP §5 步7 机械供料）
+
+> 证据锚记法：`map#节点ID.字段`=config/data_supply_chain_map.yaml 该节点字段实读；`counts.*`=机生计数键；`file:line`=代码实锚；grep 均为本会话 2026-10-04 实跑。
+> 处置候选≠处置：全部条目待总筹裁定；退/并类涉注册册净删与代码面，归 Owner 门位（宪法 §5.2）。
+
+## §1 判据①同真源可派生→必并（9标签×28非格机制矩阵）
+
+**矩阵结论：9 标签中 7 个有钉、2 个零钉；全部同标签多钉均为"不同对象共用同一目的词"，未发现同真源可派生的高置信并格。** 逐标签判定：
+
+- id: IN1-01
+  object: lineage 五钉（DSC-SRC/01/02/03/HA）
+  disposal: 留
+  criterion: 判据①+判据④
+  evidence: map#DSC-SRC/01/02/03.segments=S1+HA=S3；运行平面互异=源归一/盘后cron/盘中tick/事件驱动/读侧出口；MOD-L00-004伞跨≥11节点属流水线骨干常态非重复
+  confidence: 高（不并判定）
+  risk_note: DSC-SRC purpose_tag=lineage 但其 fallback 面承载 switch_source 语义（任务书例问解答：与 DSC-05 WAL 先落盘=源平面 vs 写平面，非同真源，不并）
+
+- id: IN1-02
+  object: no_double_write 三钉（DSC-04/06/18）
+  disposal: 留
+  criterion: 判据①
+  evidence: 三层防线互异=写通道层（ch_writer两条二级降级）/判重门层（check_tick_duplication正门）/引擎合并层（ReplacingMergeTree OPTIMIZE）；map#DSC-04/06/18.module_ref 三件互不相同
+  confidence: 高（不并判定）
+  risk_note: DSC-06 判重聚合对照腿断（GAP-DUPGUARD dead，WB12-09 Code42必红被吞成0）→ 转修候选 IN1-28
+
+- id: IN1-03
+  object: source_fallback 两钉（DSC-05/DSC-FB）
+  disposal: 留（FB 另转修）
+  criterion: 判据①
+  evidence: 同链两段互异=DSC-05 写侧 WAL 先段落盘 vs DSC-FB 汇聚+回灌（local_replay 一套两用途）；map#DSC-FB.consumers=[]（回灌腿未接）
+  confidence: 高（不并判定）
+  risk_note: FB 未接线→修候选 IN1-31；禁因同标签并格（段面不同）
+
+- id: IN1-04
+  object: schedule_complete 五钉（DSC-07/08/09/21/20）
+  disposal: 留
+  criterion: 判据①
+  evidence: 三衍生族（技术指标/财务一致预期/形态情绪板块）+表外派生（工厂回测组合直写）+对账格，对象各异；DSC-21 表外写手编制在各算法域=引用不搬家（INV-1）
+  confidence: 高（不并判定）
+  risk_note: DSC-08 派生腿停摆→修候选 IN1-27
+
+- id: IN1-05
+  object: can_rollback 六钉（DSC-10A/10B/11/12/HB/HC）
+  disposal: 留
+  criterion: 判据①
+  evidence: 手动CLI归档/滚动事件触发归档/灾备双链/契约决策件/热转冷交接/冷转恢复交接=六种对象；10A与10B 同册族不同触发面（archiver.py 一岗多流程，SOP§1.4合法）；11（backup_reconciler产备份）与HC（restore侧交接）只在恢复界面相邻、对象不同
+  confidence: 高（不并判定）
+  risk_note: DSC-11 代码快照腿今晨 failed→修候选 IN1-29；DSC-12 真源=契约已注记（red_reason=contract_sourced，E-1已消化）
+
+- id: IN1-06
+  object: break_detect 四钉（DSC-13/15/17/19）
+  disposal: 留（15 另入判据③簇）
+  criterion: 判据①
+  evidence: 四探测面互异=13 数据面新鲜度+完整性（四检核器）/15 日终三账对账/17 一致预期源间互验/19 存储面 CHECKSUM part 探测；任务书例问解答：13 四检核器与 ch_parts_monitor 探测面重叠度=低（数据层 vs 存储层，锚互斥：map#DSC-13 anchors=integrity_checker+supply_sentinel vs map#DSC-19 anchors=ch_parts_monitor）
+  confidence: 高（不并判定）
+  risk_note: DSC-13 与 DSC-20 同执行体双格（integrity_checker.py+slot:integrity_check）=一岗多流程合法（SOP§1.4 引用非复制），观察注记不入簇（见 IN1-19）；15 未接线→判据③簇 IN1-13
+
+- id: IN1-07
+  object: break_repair 三钉（DSC-14/14D/16）
+  disposal: 留（14D/16 分别的入②③）
+  criterion: 判据①
+  evidence: 14 三通道在岗（行数/档期/台账，mref=catchup_guard.py）vs 14D 第四通道（未接线）vs 16 手动修复族——同标签同域三实现，非同真源但同域→转判据③簇 IN1-12
+  confidence: 高（簇指向判定）
+  risk_note: 并格不适用（三面是"自动分片/事件自动/手动"三态分工），收敛方向见 §3
+
+- id: IN1-08
+  object: 标签层显影——fresh_check 与 ledger_readable 双标签零钉
+  disposal: 修（标签层，归总筹呈Owner）
+  criterion: SOP§2.4-2.5 反面（有标签无钉）
+  evidence: tag_matrix_non_gap.fresh_check=0/ledger_readable=0（counts键实读）；语义载体=freshness_evidence 字段（fresh_check）与 DSC-20 审计面（ledger_readable），未经 purpose_tag 承载
+  confidence: 高（零钉事实）/处置置信低（是否补钉归总筹）
+  risk_note: 标签已冻结（Owner 终审入图头，机贴不改名）——本件只登记显影，补钉/拆并/改述均须 Owner 门位；已列 in1z IN1-E1
+
+## §2 判据②零触发零消费→退役（14 dead × consumers 空列表交叉）
+
+**节拍归一复核（SOP v1.1.0 补丁1）先行结论：14 条 dead 无一违反节拍铁律。** 7 条带 obs/exp 者期望全=7（观测窗 7 日÷日节拍=7>1，判死合法）；GAP-EXECEP 1/7=唯一 1 行来自 sim 桥、"实盘链死"判死合法（注：非字面零）；GAP-L2TICK obs=0 无 exp 字段——证据类型=表 0 行+权限未采购（结构缺席非窗口计数），节拍判据不适用、verdict 仍成立；其余 5 条（NEWSGHOST/MACRO/DUPGUARD/CONSENSUSCHAIN/CODEBACKUP）=结构性死亡（幽灵名/0字节/对照腿断/链停/备份腿failed），非窗口计数判死。
+
+**交叉结果：dead × consumers=[] 严格命中仅 2 格（DSC-14D、DSC-GAP-CODEBACKUP）；其中 gap 格"退役"不适用（删格=掩盖缺口），净退候选 1 条高置信 + 3 条条件退。**
+
+- id: IN1-09
+  object: DSC-14D auto_backfiller（第四通道：事件自动回填，MOD-DAT-AUTO-BACKFILLER）
+  disposal: 退
+  criterion: 判据②（严格双重零）+判据③簇同指
+  evidence: map#DSC-14D.trigger_facts obs=0/exp=7/zv=dead；consumers=[]；note_zh 自证"既不在任何调度分派、也不在任何事件订阅，只有包级 re-export 与单测"（map#DSC-14D.note_zh）；本会话 grep：auto_backfiller 调用方=仅 data/__init__.py re-export+图12生成器；WB12-14 死因=建好未接线，wiring_registry 以 pure_library/exempt 合法绕过接线门
+  confidence: 高
+  risk_note: 退役连带面=wiring_registry exempt 条目处置+MOD-DAT-AUTO-BACKFILLER 销册+__init__ re-export 摘除——注册册净删归 Owner 门位（in1z IN1-E7）；骨架 D12-14 第4腿分面⬜须同步改判（骨架契约面）
+
+- id: IN1-10
+  object: DSC-15 eod_reconciliation（日终三账对账：回测vs模拟盘 L1/L2/L3，MOD-TRADING-007）
+  disposal: 退（条件）或接线复活
+  criterion: 判据②+判据③（与 DSC-20 对账面同域簇）
+  evidence: map#DSC-15.trigger_facts obs=0/exp=7/zv=dead；"15:40无分派分支+零生产调用方（WB12-15 P0三证）"；唯一 consumers 条目=registry:backtest_backlog.yaml:1222 **按空表降级设计**——属"消费者已自愈绕开"非真实消费；DSC-20 任务级对账 alive（obs 3/3）已覆盖"应跑对打卡"主对账面
+  confidence: 中
+  risk_note: 二选一归总筹：①退（三账对账需求面由 DSC-20 覆盖或明示放弃；连带 GAP-RECDIFF 同步处置+recon_runner/ex_core 销挂）②修（补 15:40 分派分支接线）。禁默认保留（零触发三年面）
+
+- id: IN1-11
+  object: DSC-GAP-NAV 写器腿 live_nav_recorder（account_nav_daily 表 0 行+写器零接线）
+  disposal: 退或复活（二选一归 Owner）
+  criterion: 判据②（写器腿零触发零调用）
+  evidence: map#DSC-GAP-NAV.trigger_facts obs=0/exp=7/zv=dead（期望7计数0判死）；evidence"写器live_nav_recorder全仓零调用方（11卷§1C）"；consumers 三条**在等**（SPM:357 FAC-E8/SPM:380 FAC-E9/code:ops_alert_feed.py:39）
+  confidence: 中（机制面证据铁/处置需Owner）
+  risk_note: 消费面在等=退役须通知三消费方改降级；复活=接线+补供。资金面数据（账户净值）属业务决策→Owner 门位（in1z IN1-E3）
+
+- id: IN1-12
+  object: DSC-GAP-CODEBACKUP（代码快照备份腿）
+  disposal: 修（非退）
+  criterion: 判据②交叉命中但 gap 格不适用退
+  evidence: map#DSC-GAP-CODEBACKUP.trigger_facts zv=dead+consumers=[]；evidence"今晨备份代码快照腿status=failed（backup_log主腿正常max 09-24）"
+  confidence: 高（事实）/处置=修
+  risk_note: gap 格退役=删格掩盖缺口，违内收精神；转修候选 IN1-29（急性失败，建议排前）
+
+**其余 10 条 dead 一律不列退**：DSC-08（5 消费者在等）、DSC-GAP-NEWSGHOST/MACRO/DUPGUARD/CONSENSUSCHAIN/L2TICK（gap 结构面+消费方在等或待Owner窗口）、GAP-FFVAL/FFSIG（DDL 待Owner批）、GAP-RECDIFF（随 DSC-15 联动）、GAP-EXECEP（1 行实盘链死，二选一呈总筹）——全部转 §5 修或 in1z 呈批。
+
+## §3 判据③同域重复簇→收敛唯一（表A §2.1/2.2 已挂机制功能近似簇）
+
+- id: IN1-13
+  object: 回补三面簇（DSC-14 三通道 / DSC-14D 第四通道 / DSC-16 手动族约18台）
+  disposal: 并（收敛方向）+退（14D，同指 IN1-09）
+  criterion: 判据③
+  evidence: 同域（缺口回补）三实现：14=自动三通道在岗（catchup_guard+backfill_checker 锚）/14D=事件自动未接线（grep 仅 re-export）/16=手动脚本族（map#DSC-16 anchors=repair_kline_degraded_pull+c4_history_repair+known_data_gaps，代表锚非全量=INV-1）
+  confidence: 中高（簇成立）/收敛方向归总筹
+  risk_note: 推荐收敛终态=14 吸收自动化职责（或 14D 复活接线二选一）+16 手动族保留（手动/自动两态分工合法）；18 台脚本未逐台 grep（采 F1a 族口径，见自审）
+
+- id: IN1-14
+  object: 换源双实现簇（source_circuit_breaker.py vs dual_source_guard+redundant_source 族6件）
+  disposal: 并（收敛唯一候选）
+  criterion: 判据③（同域=换源，双实现双平面）
+  evidence: circuit_breaker 接线实证=2 调用方（scheduler.py+external_system_connector.py）；redundant_source 族接线实证=tick_subscriber/connectors/intraday_main 多调用方；**运行平面不同**（盘后批量 vs 盘中tick/connector层）；dual_source_guard.py 本体零外部调用方（grep 实证，疑门面/死件）
+  confidence: 中
+  risk_note: 代码级合并禁本批动（硬边界）；推荐方向=统一换源策略内核+双平面薄壳；dual_source_guard 本体退役须先清 connector 层引用关系（低置信，in1z IN1-E4）
+
+- id: IN1-15
+  object: 对账双格簇（DSC-15 三账对账 dead vs DSC-20 任务级对账 alive）
+  disposal: 并（残面收敛入 20）或退 15（同指 IN1-10）
+  criterion: 判据③
+  evidence: 同域对账：15 未接线（WB12-15）+20 在岗 obs 3/3（map#DSC-20.trigger_facts）；两格 mref 互异（recon_runner vs integrity_checker+progress_store）非同执行体
+  confidence: 中
+  risk_note: 与 IN1-10 同一对象两判据同指——终裁一句即可，禁两案并行
+
+- id: IN1-16
+  object: 清洗/质量族（cleaning 六件+quality_sentinel+purity_adjudicator+quarantine_manifest+divergence_stats）
+  disposal: 留（非重复簇）
+  criterion: 判据③反面
+  evidence: grep 互链实证=cleaning_rules_hosting/cleaning_expectation_hosting 调 quality_sentinel；quarantine_manifest/supply_sentinel 调 cleaning 族——互为依赖的管线非平行重复；分格现状（DSC-04 清洗 vs DSC-06 质量门）与互链事实一致
+  confidence: 高（不并判定）
+
+- id: IN1-17
+  object: 日历族（trading_calendar+calendar/包、manual_calendar_events、event_calendar_filler、calendar_coverage_checker）
+  disposal: 留（非重复簇）
+  criterion: 判据③反面
+  evidence: 三层依赖链 grep 实证=event_calendar_filler 消费 trading_calendar（源→补全→覆盖检查）；calendar_coverage_checker 挂 DSC-13 与源分格；manual_calendar_events=人工事件源
+  confidence: 高（不并判定）
+
+- id: IN1-18
+  object: 同执行体多格观察（integrity_checker.py 双格 13/20；archiver.py 三格 10A/10B/HB）
+  disposal: 留
+  criterion: SOP§1.4 一岗多流程合法（INV-1）
+  evidence: map#DSC-13/20.module_ref=integrity_checker.py；map#DSC-10A/10B/HB.module_ref=archiver.py；格=叙事位（检测面/对账面/手动/滚动/交接）、模块=编制一份
+  confidence: 高（合法判定）
+  risk_note: 非"抄写"（红2=0 佐证）；禁误判重复簇而并格
+
+- id: IN1-19
+  object: E-13 八族机制挂载面复核（circuit_breaker/error_classifier/tick_redis+h1_redis/ch_parts_monitor/mtf_fusion/news族/market_breadth/sector_intraday/database_service）
+  disposal: 留（挂载合法）+1 修残腿
+  criterion: 判据③反面+红1 对账
+  evidence: 八族 source_anchors 已落盘面（map#DSC-SRC/02/03/04/05/07/09/19 实读，13 处手术含一岗多流程双挂）；孤儿机械复验=0（f2z §0）
+  confidence: 高
+  risk_note: **残腿=error_classifier 仍半挂**：DSC-SRC fallback 段文述其判据语义但 source_anchors 无 file 锚（map#DSC-SRC.anchors 实读=tasks.yaml/provider_base/circuit_breaker 三件，无 error_classifier.py）→修候选 IN1-33
+
+- id: IN1-20
+  object: DSC-12 历史锚卫生（storage_tiering.py+data_compression_archiver.py 双死件在锚）
+  disposal: 留（注记已在格面，无新增呈批）
+  criterion: 判据③反面+F1a §2.3 判定沿用
+  evidence: map#DSC-12.note_zh 已自述"裁定#383纸面退役（零触发零消费、文件在盘未摘）/实测零调用方"；本会话 grep 复核=storage_tiering 仅 __init__ re-export+语义引用注释、compression_archiver 仅生成器
+  confidence: 高（事实）
+  risk_note: 下轮 regen 是否修剪历史锚=总筹随手项，非独立呈批
+
+## §4 判据④跨域不同对象→不并（留清单）
+
+- id: IN1-21
+  object: 四段采集链+三段入库链+五段衍生面+六格冷备面+七格对账修复面（43 格骨架本体）
+  disposal: 留
+  criterion: 判据④（跨域不同对象）
+  evidence: 骨架契约=docs/_working/map_build/fig12_datachain/00_skeleton.md §1（22环节契约全集+批次4封顶重宣）；15 gap 格=结构显影位非冗余格（裁定二：module_id null 合法）
+  confidence: 高
+  risk_note: 骨架级并格/删格=封顶重宣级变更，非步7权限；本批零骨架变更
+
+- id: IN1-22
+  object: DSC-GAP-FFVAL/FFSIG（工厂在线面双悬空）
+  disposal: 留（待Owner建表窗口）
+  criterion: 判据④（外部依赖缺席≠可退役）
+  evidence: map#GAP-FFVAL/FFSIG.trigger_facts dead（CH 表不存在+DDL 真源在仓未 apply；消费锚 feature_store_writer.py:125/buffer.py:25）
+  confidence: 高（事实）
+  risk_note: in1z IN1-E5 已列；建表批=Owner 门位（💰与生产窗口）
+
+- id: IN1-23
+  object: DSC-GAP-L2TICK（L2 行情断供）
+  disposal: 留（待外购决策）
+  criterion: 判据④（💰-4 外部采购未做）
+  evidence: map#GAP-L2TICK.trigger_facts dead（l2_tick/suspend 双0行+消费锚 cost_model_calibration 族）
+  confidence: 高（事实）
+  risk_note: in1z IN1-E6；采购属 Owner 资金门位
+
+- id: IN1-24
+  object: DSC-GAP-TERMINUS（可证终点聚合格）
+  disposal: 留
+  criterion: 判据④（终点结构格）
+  evidence: map#GAP-TERMINUS.trigger_facts=null 合法（f2z §2：43−1 键在）；双实锚=archive_manifest+task_reconcile 案卷
+  confidence: 高
+
+- id: IN1-25
+  object: DSC-21 表外派生生产（工厂/回测/组合域直写 CH）
+  disposal: 留
+  criterion: 判据④（编制在算法域，引用不搬家）
+  evidence: map#DSC-21.module_id=MOD-PA-031+consumers 四条（regime_snapshot_history×6 消费文件等）；INV-1 指针形态在册
+  confidence: 高
+
+- id: IN1-26
+  object: 三交接格 HA/HB/HC（派生出图/热转冷/冷转恢复）
+  disposal: 留
+  criterion: 判据④（三个不同方向的交接位）
+  evidence: map#HA（ch_reader 出图→TDM/工厂/图13）/HB（archiver 超线分区+当日回执）/HC（restore.ps1+_recovery_drill 演练）；交接 A 挂 MOD-L00-004、HC 挂 MOD-INF-043（E-2 已裁落地）
+  confidence: 高
+
+## §5 修候选（破损但在岗/消费方在等——四分之"修"）
+
+- id: IN1-27
+  object: DSC-08 财务/一致预期派生停摆复活
+  disposal: 修
+  criterion: 判据②反面（dead 但 5 消费者在等→禁退转修）
+  evidence: map#DSC-08.trigger_facts obs=0/exp=7；consensus_daily max=2026-09-14 停10日（6,797,719 行实测 11卷§1B）；consumers=TDM:DS-232+factor/fundamentals.py:24+expectations.py:19+factor_registry:277/12394/12433
+  confidence: 高
+  risk_note: 连带 GAP-CONSENSUSCHAIN 复链（research_report 停6日上游）；修复排期归总筹
+
+- id: IN1-28
+  object: DSC-06 判重聚合对照腿修复
+  disposal: 修
+  criterion: 监控盲区（必红被吞）
+  evidence: map#GAP-DUPGUARD.evidence="判重器聚合对照腿结构不可用（WB12-09:Code42必红被吞成0,行号级因果链）"
+  confidence: 高
+  risk_note: "别把同一行写两遍"标签的对照腿哑火=幂等声明无独立复核；代码面改动归数据班
+
+- id: IN1-29
+  object: DSC-11 代码快照备份腿复活（GAP-CODEBACKUP 缺口闭合）
+  disposal: 修
+  criterion: 急性失败
+  evidence: map#GAP-CODEBACKUP.evidence="今晨备份代码快照腿status=failed（backup_log主腿正常max 09-24）"（2026-10-04 时点）
+  confidence: 高
+  risk_note: 主腿正常=灾备未裸奔；但代码快照腿停=回滚能力缺一角，建议排修前
+
+- id: IN1-30
+  object: DSC-GAP-NEWSGHOST 幽灵库名修复
+  disposal: 修
+  criterion: 引用断链（真身在产）
+  evidence: map#GAP-NEWSGHOST.evidence="c1_market.news_data 在 CH 247 表不存在,真身 c3_fundamental.news_data 7,930,454 行新鲜"；consumers=SPM:76(FAC-E1) 指向幽灵名
+  confidence: 高
+  risk_note: 改引用面（SPM/图12生成器真源声明）非建表；归数据班+下轮 regen
+
+- id: IN1-31
+  object: DSC-FB 回灌腿接线
+  disposal: 修
+  criterion: 设施半用（一套两用途只跑单腿）
+  evidence: map#DSC-FB.consumers=[]（f2z §2 八空格之一"FB 回灌腿未接"）；mref=local_replay.py 锚在
+  confidence: 中
+  risk_note: 接线=让 WAL 先段落盘的 TSV 能回流——故障日数据不断的关键腿；排期归总筹
+
+- id: IN1-32
+  object: DSC-GAP-REPLAY/MIRROR/ARCHIVE-AUDIT 测量腿/计数腿接线（三格合议）
+  disposal: 修
+  criterion: insufficient_window 族（腿未接非机制死）
+  evidence: f2z §4"人工门位/测量腿未接/计数腿未接族——SOP v1.1.0 补丁1 逐条适用"；三格 consumers=[] 合法空
+  confidence: 中（必要性）/低（紧迫性）
+  risk_note: 不接则三格永 insufficient_window，内收复审无证据面；随 regen 窗口顺带办
+
+- id: IN1-33
+  object: DSC-SRC 补 error_classifier.py 硬锚（红1 残腿）
+  disposal: 修
+  criterion: 半挂补锚（f2z 红1 表格原判定"文述在册缺硬锚"）
+  evidence: map#DSC-SRC.fallback 段文述 error_classifier 判 unrecoverable 即换源；anchors 三件无 error_classifier.py（E-13 手术落八族时未含）
+  confidence: 中高
+  risk_note: 生成器 _HUMAN 层改动=机制挂载批/维护班权限，非本批
+
+- id: IN1-34
+  object: DSC-GAP-MACRO 宏观采集修复（0 字节部件装载失败）
+  disposal: 修
+  criterion: dead 但契约面 13 消费方在等（indirect）
+  evidence: map#GAP-MACRO.evidence="macro_data 0字节部件装载失败读链不可达+failures macro_data_incremental 族 1,026 件病域旁证"；casebooks=CASEBOOK-001#outage 在挂
+  confidence: 中
+  risk_note: 修复工程量未评估（本件自审已声明）；排期归总筹，病域案卷已挂不丢证据
+
+## 自审（跑了什么/没扫什么/四分计数）
+
+scanned:
+  - 图12盘面 43 节点四字段全量实读（工作树版 blood_stage=f2_done，非旧HEAD；9 标签图例+28 非格 purpose_tag 矩阵机读）
+  - 14 条 dead 机制 trigger_facts.evidence 全文+节拍归一逐条复核（7 条带 obs/exp+1 条半计数+5 条结构性死亡+1 条无 exp）
+  - consumers 空列表交叉全量（8 空格=FB/14D/17/REPLAY/MIRROR/CODEBACKUP/ARCHIVE-AUDIT/TERMINUS）
+  - F1a 三节（§1.2 真候选/§2.1+2.2 漏挂 32 条/§2.3 不挂 7 条）+F2z 四节（三红+四覆盖计数+production 10/10+verdict 分布）+F1z E-1~E-10+90_landing_handoff
+  - 8 组接线实证 grep 实跑（circuit_breaker=2 调用方/redundant_source=多调用方+dual_source_guard 本体零/清洗质量互链/calendar 三层/auto_backfiller 仅 re-export/storage_tiering 仅 re-export+compression_archiver 仅生成器/ch_parts_monitor=2/cross_source_validator=3）
+not_scanned:
+  - task_runs/integrator_progress.db 原始库未直连复核（采用盘面 trigger_facts 转录口径——机数证据链已在各节点 evidence 内，未二次验证）
+  - 图9/图11/图13 同机制挂载面未交叉（一岗多流程他图面；若总筹需跨图重复簇对审须另开横图批）
+  - scripts/data 回补族约 18 台未逐台 grep（INV-1 采用 F1a §2.2 族口径+DSC-16 代表锚）
+  - GAP-MACRO/FFVAL 等修复面未做工程量评估（只判定"该修不该退"，未答"怎么修多久"）
+  - DSC-21 四表（regime_snapshot_history 族）消费深度未抽验（留格式判定已足）
+four_way_counts:
+  merge: 3（IN1-13 回补三面收敛/IN1-14 换源双实现/IN1-15 对账残面——13/15 与退侧同指，独立并候选仅 14）
+  retire: 3（IN1-09 严格零触发零消费/IN1-10 条件退或接线/IN1-11 Owner 二选一；IN1-12 交叉命中但 gap 格转修不计退）
+  keep: 18（IN1-01~07 标签矩阵不并判定 7 条+IN1-16~20 判据③反面 5 条+IN1-21~26 判据④ 6 条）
+  repair: 10（IN1-08 标签层+IN1-12 备份腿+IN1-27~34 破损腿与残锚）
+  total_entries: 34
+  note: 14D 与 15 各为两判据同指（②③），计数以首现判据归属不双计——总筹消费时按对象去重
+high_confidence_ratio: "全表高置信 25/34≈74%；处置敏感桶（并/退/修 16 条）内高置信 6/16≈38%（与 F1a 表A 38% 同水位——可裁定面占比稳定）"
+escalations: 见同目录 in1z_escalations.md（8 条：IN1-E1~E8）
