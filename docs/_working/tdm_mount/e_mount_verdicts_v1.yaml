@@ -15,6 +15,7 @@ counts:
   collision_pairs: 2
   mls_orphans: 4
   draft_auto_overridden: 36
+  addendum_exempt_blindspot: 8
 rulings:
   no1_mls:
     MOD-MLS-001:
@@ -50,6 +51,7 @@ rulings:
   no4_cross_domain: 9 台全部合法（J2 挂手形态已在图）：INT 族→E-L9 源线，DATA/L9AGG→判据数据输入，ENTITY-GRAPH→事件图谱传导，GOV-CHAINRECON→链对账手，L00-004→盘前预案族；apply 批补 J2 影响因子标注
   no5_verdicts: 见 verdicts 表（0漏行断言已过）
   no6_confidence: 追认 Flash 口径：verified 需 evidence 带 run=/SR=/oos_tested；untested62=红节点；apply 批落 D 草案值
+  no7_blindspot_addendum: 2026-10-05 体检批：8台指标引擎豁免追加（不在233人口内，独立追加块）；TDM 经 factor_refs→IND→引擎传导链可达
 verdicts:
   MOD-SIG-058:
     action: mount
@@ -1216,3 +1218,43 @@ verdicts:
     target: TDM-E-L2-01-4
     criterion: FIX
     note: 撞号对：capital_behavior_orchestrator 保留本 ID→板块资金流；risk_event_consumer 改 SIG-154→事件传导
+  MOD-L02-019:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（technical_indicators 包，指标册41条），无蓝图代码级=人口盲区首案；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-020:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册5条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-021:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册25条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-022:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册18条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-023:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册17条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-028:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册9条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-029:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册8条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
+  MOD-L02-031:
+    action: exempt
+    target: 图9 策略工厂
+    criterion: EX
+    note: 指标计算引擎（指标册5条）；2026-10-05 Owner 体检问询逮出，总筹按 L02-001/027 同族判例豁免；蓝图补建=Flash车道B在飞
