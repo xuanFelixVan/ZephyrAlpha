@@ -39666,9 +39666,9 @@ creation_tokens:
   merge_evaluation: "季度清账本备料：census 衍生过滤分组件，喂覆盖账本三红首报；纯只读派生零替代"
 - file: docs/_working/map_census/casebooks_family/casebooks_gap_matrix.yaml
   token: mapcb-survey-casebooks-gap-matrix-20261005
-  created_by: st-mapcb-survey-20261005
   capability: mapcb_survey
-  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册"
+  created_by: st-mapcb-survey-20261005
+  merge_evaluation: "八图 casebooks 现状对账盘点件（任务卡纯只读班，零施工零判读）：对照 GOMAP 样板产出八图×五问差距矩阵，供 chief 判定 casebooks 族治理批；不替代不合并任何既有册（docs/_working 任务界暂存件，ttl=task_bound）"
 - file: docs/_working/map_census/casebooks_family/encoding_normalize_map.yaml
   token: mapcb-normalize-encoding-normalize-map-20261005
   capability: mapcb_normalize
@@ -55132,11 +55132,13 @@ creation_tokens:
   token: mapfamily-data_supply_chain_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_data_supply_chain_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/dev_delivery_map_gate.py
   token: mapfamily-dev_delivery_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_dev_delivery_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
   token: mapfamily-governance_legislation_map_gate-20261005
@@ -55154,6 +55156,7 @@ creation_tokens:
   token: mapfamily-trading_day_cycle_map_gate-20261001
   created_by: st-matrix-final-20260930
   capability_id: map_family_trading_day_cycle_map_gate
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "跨域不同对象不并：map_family 三 gate=三图族提交面执法件，收纳子目录因 FOLDER-CAPACITY 120 硬上限，非既有 gate 第二实现"
 - file: src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py
   token: auto-mcp-version-field-gate-20260723
@@ -55342,6 +55345,7 @@ creation_tokens:
   token: tdm-mountgate-gate-20261005
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "TDM-MOUNT-COVERAGE提交时门禁priority=61：三选一裁决+撞号拦+蓝图锚一致性（own-diff新增blueprint.md/新.py）。工单st-tdm-mountgate-20261005挂载义务门禁施工（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流，非第二真源；消费方互斥无同域重复）"
 - file: src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
   token: auto-test-residue-ssot-gate-20260804
@@ -55580,6 +55584,7 @@ creation_tokens:
   token: tdm-mountgate-reconciler-20261005
   capability: tdm_mountgate
   created_by: st-tdm-mountgate-20261005
+  no_mount_reason: 图族守门员执法件本身不入图节点（挂载语义=其守卫的图 YAML 输入面，见各文件 [CONSUMERS]/[DEPENDENCIES] 声明面）；纯治理基建非业务资产
   merge_evaluation: "post-commit事件触发reconciler priority=952：模块册变更→重扫→孤儿判红（禁cron宪法四要素）。工单st-tdm-mountgate-20261005挂载义务门禁施工（净零=与TDM v1.3立项0e94229a1b蓝图锚校验合流，非第二真源；消费方互斥无同域重复）"
 - file: src/zephyr/governance/audit/translation_coverage_reconciler.py
   token: auto-translation-coverage-reconciler-20260802
@@ -56094,7 +56099,8 @@ creation_tokens:
   token: news-score-daily-20261004
   capability: news_score_daily
   created_by: st-datasop-20260930
-  merge_evaluation: "EXEC-2b P0止血治本件（新闻评分链13月断供治本：日更生产者+断点续传回补），投影迁移丢token后正门补登"
+  no_mount_reason: 数据基建日更生产者（非图节点资产）：产出news_sentiment_score表供情绪特征消费，无地图挂载语义
+  merge_evaluation: "EXEC-2b P0止血治本件（新闻评分链13月断供治本）"
 - file: src/zephyr/intelligence/news_sentiment_analyzer.py
   note: CAND-AISA-001 AI 舆情分析器 MVP 主模块（#ARCH-AISA-001）
   token: auto-news-sentiment-analyzer-20260818
@@ -60156,4 +60162,8 @@ creation_tokens:
   created_by: st-gomap-chief-20261004
   capability: gomap_cluster_archive
   merge_evaluation: "并簇②归档迁移非新建:capacity 三件裁定#485转档,git mv 保历史"
+- file: docs/_working/map_census/gomap/capacity_eval_evidence.yaml
+  token: capcov-survey-capacity-eval-evidence-20261005
+  created_by: st-capcov-survey-20261005
+  capability: capcov_survey
 di_seam_exemptions: []
