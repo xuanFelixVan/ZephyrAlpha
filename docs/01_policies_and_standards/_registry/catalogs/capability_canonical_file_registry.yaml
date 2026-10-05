@@ -62602,4 +62602,19 @@ creation_tokens:
   capability: alt_sz_daily_downsample
   created_by: st-datasop-20260930
   merge_evaluation: "EXEC-E3 降采样派生（跨粒度新对象，裁定#375 不并）：日级聚合表/执行报告，原表明细与汛期原粒度保留"
+- file: docs/_working/fullflow_mine/wiring/E1_netdelete21.md
+  token: fullflow-mine-e1-netdelete-20261005
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "净删21条执行报告（抽查前置）"
+- file: docs/_working/fullflow_mine/wiring/LAND_report.md
+  token: fullflow-mine-land-report-20261005
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班落库专员产出件（task_bound 报告，无替代物）"
+- file: docs/_working/map_census/fac9_06_minor_surgery_report.md
+  token: map9-f6-minor-surgery-20261005
+  capability: map9_f6_minor_surgery
+  created_by: st-map9-f6-20261005
+  merge_evaluation: "跨域不同对象不并：图9 F6 停手报告（前置门不可满足+四件弹药处方交付），无替代无退役对象，task_bound"
 di_seam_exemptions: []
