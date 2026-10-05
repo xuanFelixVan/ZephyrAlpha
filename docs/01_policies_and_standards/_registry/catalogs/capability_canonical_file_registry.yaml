@@ -62672,4 +62672,104 @@ creation_tokens:
   capability: mapcb_normalize
   created_by: st-mapcb-normalize-20261005
   merge_evaluation: "编码归一候选表（纯只读班，零判读）：DSC 正典全写映射+SP 自由名候选对位+字母册码映射键草案，供 chief 判定；不替代不合并任何既有册"
+- file: docs/_working/bm_reclass_ruling/01_ruling_package.md
+  token: st-f12-doctor3-01-ruling-package-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/map_census/fac9_04_followup.md
+  token: st-f12-doctor3-fac9-04-followup-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/03_modules/_domain_governance/algo_flow/reuse_scan.yaml
+  token: st-f12-doctor3-reuse-scan-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/datatail/2026-09-23-datatail-shift-report.md
+  token: st-f12-doctor3-2026-09-23-datatail-shift-report-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/datatail/2026-09-23-night-run-report.md
+  token: st-f12-doctor3-2026-09-23-night-run-report-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/pipeline_final/LEDGER.md
+  token: st-f12-doctor3-ledger-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/ai_layer_vision/closure_wave2/W4D_l1_design_repair.md
+  token: st-f12-doctor3-w4d-l1-design-repair-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/ch_fail_loud_campaign_20260926/01_casefile_probe_green_lies.md
+  token: st-f12-doctor3-01-casefile-probe-green-lies-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/qoder_legacy_closeout_20260928/W140_f62_wiring_table.md
+  token: st-f12-doctor3-w140-f62-wiring-table-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/night_totalflow_20261001/00_skeleton.md
+  token: st-f12-doctor3-00-skeleton-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/night_totalflow_20261001/90_red_blue.md
+  token: st-f12-doctor3-90-red-blue-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/night_totalflow_20261001/A_mine.md
+  token: st-f12-doctor3-a-mine-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/night_totalflow_20261001/B_mine.md
+  token: st-f12-doctor3-b-mine-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/night_totalflow_20261001/CEF_mine.md
+  token: st-f12-doctor3-cef-mine-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/night_totalflow_20261001/D_mine.md
+  token: st-f12-doctor3-d-mine-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/commitmap_cure/f6_doctorscan_refresh.md
+  token: st-f12-doctor3-f6-doctorscan-refresh-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/commitmap_cure/f7_latency_dashboard.md
+  token: st-f12-doctor3-f7-latency-dashboard-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: docs/_working/commitmap_cure/f8_orphan_triage.md
+  token: st-f12-doctor3-f8-orphan-triage-20261005
+  created_by: st-f12-doctor3-20261005
+  capability: st-f12-doctor3
+  merge_evaluation: "F12 doctor 批3 正门补登：14 袋 CREATE-GUARD 缺 token 手续补齐（闸三 REFUSED 转正门），YAML 插针过门耗材，内容零改动"
+- file: src/zephyr/signal_ashare/source_line/__init__.py
+  token: source-line-criterion---init---20261005
+  created_by: st-fg-srcline1-20261005
+  capability: source_line_criterion
+  merge_evaluation: "新增能力面（能力反查六向零命中）：红源线判据转化器族=源线数据到decision_question判据的专用翻译件，与sector族传感器（信号算法件）正交，不替代不合并旧条目"
+- file: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
+  token: source-line-criterion-kline-momentum-criterion-20261005
+  created_by: st-fg-srcline1-20261005
+  capability: source_line_criterion
+  merge_evaluation: "新增能力面（能力反查六向零命中）：红源线判据转化器族=源线数据到decision_question判据的专用翻译件，与sector族传感器（信号算法件）正交，不替代不合并旧条目"
 di_seam_exemptions: []
