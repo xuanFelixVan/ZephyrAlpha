@@ -580,6 +580,38 @@ def _acquire_prepare(
     return 0, normalized, lines, True
 
 
+def _ensure_session_registered(session_id: str) -> None:
+    """acquire --session 会话存活兜底（2026-10-05 提交链治本·C9 同款，修3）。
+
+    裁定#252 绑定锁的生死=会话生死（_is_stale 走 SessionRegistry 判活）；会话
+    未注册/已过期时 claim 的锁锚在死会话上，后续入队必被幽灵闸（裁定#459，按
+    心跳判袋主生死）判死。此处机械兜底：未注册（get_session 对死/过期会话返回
+    None，S3-A 语义）→ session_worktree_start 幂等重注册+拉起心跳 daemon
+    （pid=0+live 心跳文件，C355 豁免=有袋在队不自退），不依赖施工 AI 记得手工
+    注册流程；已注册且存活=零额外操作。判活与重注册任何失败均不阻断 claim
+    （与 git_commit.py enqueue 兜底同口径——锁语义不依赖注册，fail-open）。
+    """
+    if not session_id:
+        return
+    try:
+        if str(_SRC_ROOT) not in sys.path:
+            sys.path.insert(0, str(_SRC_ROOT))
+        from zephyr.security.access_control.session_concurrency import SessionRegistry  # noqa: PLC0415
+
+        if SessionRegistry(REPO_ROOT).get_session(str(session_id)) is not None:
+            return  # 已注册且存活（get_session 内建判活：死/过期返回 None）→ 零额外操作
+    except Exception:  # noqa: BLE001 — 判活不可达按未注册处理，交下方兜底（其失败也不阻断）
+        pass
+    try:
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start  # noqa: PLC0415
+
+        swr = session_worktree_start(session_id=session_id, allow_duplicate=True, allow_workspace_drift=True)
+        if not (isinstance(swr, dict) and swr.get("ok")):
+            print(f"WARN — 会话 {session_id} 自动重注册未确认（不阻断 claim）: {str(swr)[:120]}")
+    except Exception as exc:  # noqa: BLE001 — 兜底失败不阻断 claim（C9 同口径）
+        print(f"WARN — 会话 {session_id} 自动重注册失败（不阻断 claim）: {exc}")
+
+
 def cmd_acquire(
     file_path: str,
     owner_id: str,
@@ -1731,6 +1763,9 @@ def main() -> int:
         # 裁定#252：--session 绑定锁存活=会话存活（owner.json 写 session_id，
         # _is_stale 走 SessionRegistry 会话判活；缺省退化旧 PID+TTL 语义）
         bind_session = _parse_opt(args, "--session") or ""
+        # 修3（st-sQ-infra-20261005）：会话存活兜底——未注册/已过期自动幂等重注册
+        # （C9 同款）后再继续 claim；失败不阻断（helper 内 fail-open）。
+        _ensure_session_registered(bind_session)
         f = _validate_file_arg(args[1])
         if f is None:
             return 1

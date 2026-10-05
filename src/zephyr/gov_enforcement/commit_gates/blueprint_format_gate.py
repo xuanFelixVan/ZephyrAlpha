@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含 [BLUEPRINT] 头部时，module_id 必须合规（裁定#208 双轨制：MOD-/SH- 前缀）；存量基线违规 grandfathered（只检 added 行）；git diff不可达fail-open；检出违规则fail-closed。治本（#ARCH-DATAQUALITY-V1.1）：移除 tests/ 豁免——100% AI 开发下豁免区=债务温床，482 个 SRC-XXX 违规因 tests/ 豁免累积
+# [INVARIANTS] 硬阻断——staged .py added 行含 [BLUEPRINT] 头部时，module_id 必须合规（裁定#208 双轨制：MOD-/SH- 前缀）；存量基线违规 grandfathered（只检 added 行）；git diff不可达fail-open；检出违规则fail-closed。治本（#ARCH-DATAQUALITY-V1.1）：移除 tests/ 豁免——100% AI 开发下豁免区=债务温床，482 个 SRC-XXX 违规因 tests/ 豁免累积；own 化 2026-10-05(st-sQ-infra-20261005 修4)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="DOC-HEADER-SUITE"（T8簇2 聚合门，st-commitspeed-pkg8-20260925；本模块同时保留吸收台 BLUEPRINT-FORMAT 薄工厂）；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -71,6 +71,7 @@ from typing import Final
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
@@ -139,6 +140,10 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     # is_valid_module_id，确保 worktree 模式下使用 worktree 中的模块版本
     is_valid_module_id = _load_is_valid_module_id(gateway.project_root)
     py_files = _get_staged_py_files(gateway, "BLUEPRINT-FORMAT")
+    # own 化（修4，st-sQ-infra-20261005，#ARCH-GATE-OWN-SCOPE-001 推广面/M2 道 92 台同款）：
+    # 扫描范围=全暂存∩本 session；外来 staged 不扫描、不产生违规、不阻断（warn+审计，
+    # 多会话连坐结构性消除）。无归属信息（files 空+无 session_id）退化旧行为扫全量。
+    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="BLUEPRINT-FORMAT")[0]
     violations: list[str] = []
     for py_file in py_files:
         for line_no, content in _get_added_lines(gateway, py_file, "BLUEPRINT-FORMAT"):
