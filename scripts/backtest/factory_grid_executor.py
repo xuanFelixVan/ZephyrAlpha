@@ -898,6 +898,79 @@ def _apply_exit_overlay(
     return weights.where(~trigger, 0.0), stop_mode
 
 
+def _apply_thesis_survival_overlay(
+    weights: pd.DataFrame,
+    combined: pd.DataFrame,
+    closes: pd.DataFrame,
+    thesis_decay: float = 0.30,
+) -> pd.DataFrame:
+    """M5 买入逻辑存活判定（P1-03 thesis_survival 回测化，T3b 考维引擎语义；T3a 不接线）。
+
+    语义（挖矿 M5，thesis 否决权口径）：入场理由=选股因子本身——输入持仓段（held 取自
+    输入权重）首日截面秩百分位（pct rank，越高越好）=段内 thesis 基准；当前秩较基准下滑
+    超 thesis_decay→当日清仓（收盘判定，§4.4 同族已知失真）；秩不回升则否决持续（段基准
+    不因清仓重置），秩回升即放行。秩口径与因子面无关（v1/v1_value/dual_pool 通用）。
+    closes 参数=签名统一面（本判定不消费价格，预留成交价口径接线）。
+    """
+    if not 0 < thesis_decay < 1:
+        raise ValueError(f"thesis_decay 须在 (0,1): {thesis_decay!r}")
+    rank_now = combined.rank(axis=1, pct=True)
+    held = weights > 0
+    entry_day = held & ~held.shift(1, fill_value=False)
+    rank_entry = rank_now.where(entry_day).ffill()
+    thesis_exit = held & (rank_now < rank_entry - thesis_decay)
+    return weights.where(~thesis_exit, 0.0)
+
+
+def _apply_capital_ramp_overlay(
+    weights: pd.DataFrame,
+    closes: pd.DataFrame,
+    ramp_mode: str,
+) -> tuple[pd.DataFrame, str]:
+    """M4 K 维分批建仓路径（L4-01 分批建仓+P3 金字塔+S2-05 分批止盈，T3b 考维引擎语义；T3a 不接线）。
+
+    schema K 维自述"需 harness 支持路径依赖"——日级向量化实现即满足（挖矿 M4）：
+    - lump：恒等（一次性足额=现行考卷语义）
+    - linear_20d / linear_60d：持仓段内第 n 日权重×min(1, n/N)（线性爬坡；段=入场日
+      cumsum 按 (票,段号) 计数，段内第 1 日=1/N，满 N 日足额）
+    - pyramid：三档金字塔（P3 翻译）：入场 1/3 档，收盘≥入场价×1.03 加至 2/3 档，
+      ≥×1.06 加至 1.0 档；已加仓档不因回落降档（路径依赖=金字塔语义；S2-05 分批
+      止盈为其对称面，考卷以本三档近似表达，差距=T3b honesty 披露位）
+    返回 (渐变后权重, ramp_mode)。
+    """
+    if ramp_mode == "lump":
+        return weights, ramp_mode
+    if ramp_mode not in ("linear_20d", "linear_60d", "pyramid"):
+        raise ValueError(f"未知 ramp_mode: {ramp_mode!r}（合法=lump|linear_20d|linear_60d|pyramid）")
+    if ramp_mode in ("linear_20d", "linear_60d"):
+        n_days = int(ramp_mode.split("_")[1].rstrip("d"))
+        held = weights > 0
+        entry_day = held & ~held.shift(1, fill_value=False)
+        regime = entry_day.cumsum()
+        st = held.stack()
+        reg = regime.stack().reindex(st.index)
+        cnt = st.groupby([st.index.get_level_values(1), reg]).cumsum().unstack()
+        ramp = (cnt / float(n_days)).clip(upper=1.0).fillna(0.0)
+        return weights.mul(ramp, axis=0), ramp_mode
+    # pyramid：入场价锚（同 M1 entry 语义）+ 价档乘数；armed 档段内持久化（cummax 路径依赖，
+    # 已加仓档不因回落降档；段=入场日 cumsum，重入场重置）
+    held = weights > 0
+    entry_day = held & ~held.shift(1, fill_value=False)
+    entry_px = closes.where(entry_day).ffill()
+    regime = entry_day.cumsum()
+
+    def _armed_in_segment(flag: pd.DataFrame) -> pd.DataFrame:
+        st = flag.where(held).stack()
+        reg = regime.stack().reindex(st.index)
+        return st.groupby([st.index.get_level_values(1), reg]).cummax().unstack()
+
+    armed3 = _armed_in_segment(closes >= entry_px * 1.03).fillna(False)
+    armed6 = _armed_in_segment(closes >= entry_px * 1.06).fillna(False)
+    tranche = (1.0 / 3.0) + (1.0 / 3.0) * armed3 + (1.0 / 3.0) * armed6
+    tranche = tranche.where(held, 0.0)
+    return weights.mul(tranche, axis=0), ramp_mode
+
+
 def _apply_industry_topk_overlay(
     combined: pd.DataFrame,
     closes: pd.DataFrame,

@@ -711,3 +711,69 @@ def test_m3_topk2_keeps_both_industries():
     combined = pd.DataFrame(1.0, index=idx, columns=cols)
     out = mod._apply_industry_topk_overlay(combined, base, imap, top_k_industries=2, mom_window=20)
     assert (out.iloc[-1] == 1.0).all()
+
+
+# ── M4 K 维分批建仓路径（L4-01+P3+S2-05，T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m4_lump_identity_and_linear_ramp():
+    """红组：lump=恒等；linear_20d 段内第 n 日权重×n/N 线性爬坡（段重置）。"""
+    idx = pd.bdate_range("2023-01-02", periods=6)
+    c = pd.DataFrame(10.0, index=idx, columns=["000001"])
+    w = _flat_weights(idx, ["000001"])
+    out_lump, m = mod._apply_capital_ramp_overlay(w, c, "lump")
+    assert m == "lump" and out_lump.equals(w)
+    out, m = mod._apply_capital_ramp_overlay(w, c, "linear_20d")
+    assert m == "linear_20d"
+    # 段内第 1..6 日（cnt=1..6）→ 0.5×cnt/20
+    expect = [0.5 * n / 20 for n in range(1, 7)]
+    assert np.allclose(out["000001"].to_numpy(), expect)
+
+
+def test_m4_pyramid_tranches():
+    """红组：金字塔三档（入场 1/3、+3% 加至 2/3、+6% 加至 1.0）。"""
+    idx = pd.bdate_range("2023-01-02", periods=4)
+    c = pd.DataFrame({"000001": [10.0, 10.4, 10.7, 10.0]}, index=idx)  # day1 +4%、day2 +7%、day3 回落
+    w = _flat_weights(idx, ["000001"])
+    out, m = mod._apply_capital_ramp_overlay(w, c, "pyramid")
+    assert m == "pyramid"
+    vals = out["000001"].to_numpy()
+    assert np.isclose(vals[0], 0.5 / 3)
+    assert np.isclose(vals[1], 0.5 * 2 / 3)
+    assert np.isclose(vals[2], 0.5)
+    assert np.isclose(vals[3], 0.5)  # 已加仓档不因回落降档（路径依赖=金字塔语义）
+
+
+def test_m4_unknown_ramp_mode_fail_closed():
+    closes = _synth_closes(n_days=10, n_sym=2, seed=67)
+    w = _flat_weights(closes.index, list(closes.columns))
+    with pytest.raises(ValueError, match="ramp_mode"):
+        mod._apply_capital_ramp_overlay(w, closes, "magic")
+
+
+# ── M5 thesis 存活（P1-03，T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m5_thesis_survival_rank_decay_exit():
+    """红组：thesis 否决权语义——输入持仓段内秩下滑超阈值即持续否决，秩回升即放行（收盘判定）。"""
+    idx = pd.bdate_range("2023-01-02", periods=5)
+    cols = ["000001", "000002"]
+    combined = pd.DataFrame(
+        {"000001": [0.9, 0.2, 0.1, 0.95, 0.95], "000002": [0.5, 0.8, 0.9, 0.9, 0.9]}, index=idx
+    )  # 000001 段内基准=day0 秩 1.0；day1/2 秩 0.5<0.7 否决；day3 秩回升 1.0 放行
+    c = pd.DataFrame(10.0, index=idx, columns=cols)
+    w = _flat_weights(idx, cols)
+    out = mod._apply_thesis_survival_overlay(w, combined, c, thesis_decay=0.30)
+    assert out.loc[idx[0], "000001"] == 0.5
+    assert out.loc[idx[1], "000001"] == 0.0  # 秩下滑超阈值当日清仓
+    assert out.loc[idx[2], "000001"] == 0.0  # 否决持续（秩未回升，段基准不重置）
+    assert out.loc[idx[3], "000001"] == 0.5  # 秩回升放行
+    assert (out["000002"] == 0.5).all()  # 秩上行持有
+
+
+def test_m5_thesis_bad_decay_fail_closed():
+    closes = _synth_closes(n_days=10, n_sym=2, seed=71)
+    w = _flat_weights(closes.index, list(closes.columns))
+    combined = pd.DataFrame(0.5, index=closes.index, columns=closes.columns)
+    with pytest.raises(ValueError, match="thesis_decay"):
+        mod._apply_thesis_survival_overlay(w, combined, closes, thesis_decay=1.5)
