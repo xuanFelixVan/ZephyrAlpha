@@ -62337,4 +62337,14 @@ creation_tokens:
   capability: 批2策略全量考（DefaultBacktestEngine标准化装置+checkpoint幂等）
   created_by: st-matrix-20261006
   merge_evaluation: "新增策略考试器；复用vectorized_engine（PIT/剔ST/T+1默认开）不重造引擎"
+- file: docs/_working/audit_fix/AUDIT_FIX_00_skeleton.md
+  token: audit-fix-00-skeleton-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/AUDIT_FIX_LEDGER.md
+  token: audit-fix-ledger-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
 di_seam_exemptions: []

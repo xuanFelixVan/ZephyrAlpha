@@ -324,7 +324,7 @@ EOF
 待落清单（本包侧，恢复后一条命令即可续做，成品字节已在备份且 apply 脚本幂等）：
 | 袋 | 内容 | 落地后判据 |
 |---|---|---|
-| 0013 | creation_token 登记册 + script_manifest(HEAD 基 448) + 8 件案卷 | `git show HEAD:docs/_working/audit_fix/AUDIT_FIX_AUDIT_FIX_LEDGER.md` 非空；`C10 幻影=0` 转绿 |
+| 0013 | creation_token 登记册 + script_manifest(HEAD 基 448) + 8 件案卷 | `git show HEAD:docs/_working/audit_fix/AUDIT_FIX_LEDGER.md` 非空；`C10 幻影=0` 转绿 |
 | 0014 | align_all 偏斜补硬 + 案卷终态 | `C4` 在主区不再假红（skipped 或 passed） |
 | 0015 | 测试遮蔽 skip 分支 + 案卷终态 | 主区 `pytest tests/governance/test_audit_fix_lanes_rulers.py` 无 FAILED |
 
