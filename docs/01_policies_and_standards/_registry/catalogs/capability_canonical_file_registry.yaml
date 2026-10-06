@@ -33084,9 +33084,9 @@ creation_tokens:
   merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
 - file: docs/_working/commit_chain_mining/commitchain_ledger.md
   token: commitchain-ledger-renamed-20260922
-  capability: commit_chain_mining
   created_by: st-commitchain-20260922
-  merge_evaluation: "同一条目改名（gate-naming 基名撞车整改：LEDGER.md 与 flash_speedup/F5_registry_debt/LEDGER.md 撞名），旧 token 条目随之退役，非第二真源"
+  capability: commit_chain_mining
+  merge_evaluation: "同一条目改名（gate-naming 基名撞车整改：AUDIT_FIX_LEDGER.md 与 flash_speedup/F5_registry_debt/AUDIT_FIX_LEDGER.md 撞名），旧 token 条目随之退役，非第二真源"
 - file: docs/_working/commit_speedup_campaign/00_HANDOFF.md
   token: commit-speedup-00-handoff-20260924
   capability: commit_speedup
