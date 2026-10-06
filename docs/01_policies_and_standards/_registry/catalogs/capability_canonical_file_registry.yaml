@@ -60166,4 +60166,2174 @@ creation_tokens:
   token: capcov-survey-capacity-eval-evidence-20261005
   created_by: st-capcov-survey-20261005
   capability: capcov_survey
+- file: data/strategy_intake/matrix_gap_lists_v1.yaml
+  token: matrix-inv-gaplists-20261006
+  capability: 四张缺口单（有数据没因子/有因子没策略/有策略没考试/全断链）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；矩阵总包第一步输出"
+- file: data/strategy_intake/matrix_inventory.yaml
+  token: matrix-inv-inventory-20261006
+  capability: 家底总表（八册机生：334数据集+178因子+161策略+147指标+182环节+283原问题+考试账+普查）
+  created_by: st-matrix-20261006
+  merge_evaluation: "矩阵总包第一步底册；七成现成底册合成，机生禁手填"
+- file: docs/_working/archive/2026-10/2026-09-15-c5-cluster-refresh.md
+  token: chief-archive-202610-41760101
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-15-four-big-items-blueprint.md
+  token: chief-archive-202610-19222600
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-15-full-automation-night-plan.md
+  token: chief-archive-202610-44953612
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-15-governance-module-mining-sop-map.md
+  token: chief-archive-202610-62189363
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-15-gutters-eoc3-verification-deadend.md
+  token: chief-archive-202610-64888769
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
+  token: chief-archive-202610-84870494
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-15-tilib-handoff.md
+  token: chief-archive-202610-94192611
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-gate-identity-root-fix-plan.md
+  token: chief-archive-202610-90615713
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/00_skeleton_environments.md
+  token: chief-archive-202610-81783780
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/W1_landing_anchoring.md
+  token: chief-archive-202610-12122384
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/W2_commit_chain.md
+  token: chief-archive-202610-76875993
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/W3_retirement.md
+  token: chief-archive-202610-56598172
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/W4_selfref_exemption.md
+  token: chief-archive-202610-11211057
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/W5_author_debt.md
+  token: chief-archive-202610-24849475
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/b6_reverse_orphan_reconciler.md
+  token: chief-archive-202610-20322144
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18-rule-audit-master-construction-plan.md
+  token: chief-archive-202610-73614144
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/00_skeleton.md
+  token: chief-archive-202610-60296292
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/00_workorder_施工包.md
+  token: chief-archive-202610-83503215
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/final_report.md
+  token: chief-archive-202610-39376308
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/index.md
+  token: chief-archive-202610-43813176
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w1_mining/index.md
+  token: chief-archive-202610-36225918
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w1_mining/w1a_consumers.md
+  token: chief-archive-202610-61631694
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w1_mining/w1b_generators.md
+  token: chief-archive-202610-75871774
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w1_mining/w1c_gates.md
+  token: chief-archive-202610-12094840
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w1_mining/w1d_layers.md
+  token: chief-archive-202610-52394735
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w2_ruling/index.md
+  token: chief-archive-202610-91960785
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w2_ruling/w2_self_ruling_335.md
+  token: chief-archive-202610-70059054
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w3_vocab_construction/index.md
+  token: chief-archive-202610-26548230
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w3_vocab_construction/w3_execution_log.md
+  token: chief-archive-202610-67020799
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w4_construction/index.md
+  token: chief-archive-202610-16623839
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w4_construction/w4_execution_log.md
+  token: chief-archive-202610-59610427
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w5_exemption/index.md
+  token: chief-archive-202610-48393578
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w5_exemption/w5_survey.md
+  token: chief-archive-202610-25625100
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w6_loop_check/index.md
+  token: chief-archive-202610-11233724
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w6_loop_check/w6_round1_log.md
+  token: chief-archive-202610-94547572
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w7_redblue/index.md
+  token: chief-archive-202610-04963848
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_adversarial_plan.md
+  token: chief-archive-202610-61721765
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_execution_log.md
+  token: chief-archive-202610-27926892
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_fixes.md
+  token: chief-archive-202610-58407817
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w8_landing/index.md
+  token: chief-archive-202610-31964100
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-18_vocab_consolidation_campaign/w8_landing/landing_log.md
+  token: chief-archive-202610-03479718
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-19-overnight-handover-max-shift.md
+  token: chief-archive-202610-01661427
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/2026-09-19-overnight-scope-lock-report.md
+  token: chief-archive-202610-60462576
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/align_dirty/align_dirty_ledger.md
+  token: chief-archive-202610-58110169
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/align_dirty/working_cleanup_r2.md
+  token: chief-archive-202610-93614129
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/audit_integrity/2026-09-16-audit-key-era-deployment.md
+  token: chief-archive-202610-26763838
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/audit_integrity/audit_chain_incident_forensics_gwa.md
+  token: chief-archive-202610-02399164
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/bm_reclass_ruling/01_ruling_package.md
+  token: chief-archive-202610-78416929
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/board_synthesis/2026-09-15-board-index-synthesis-plan.md
+  token: chief-archive-202610-03390044
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/board_synthesis/2026-09-15-phase1-calibration-report.md
+  token: chief-archive-202610-24265798
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/board_synthesis/2026-09-15-phase3-minute-calibration-report.md
+  token: chief-archive-202610-54370962
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/branch_zero_takeover_20261002/t1_takeover_infra.md
+  token: chief-archive-202610-87172419
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/chain_circulation_campaign/00_orchestration.md
+  token: chief-archive-202610-31288659
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/chain_circulation_campaign/91_progress.md
+  token: chief-archive-202610-20150397
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/chain_circulation_campaign/99_skipped_for_owner.md
+  token: chief-archive-202610-62475049
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/chain_circulation_campaign/ec1_equity_wire_ledger.md
+  token: chief-archive-202610-62838754
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/chain_circulation_campaign/ec2_p0_breaks_ledger.md
+  token: chief-archive-202610-63440751
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/chain_circulation_campaign/ec3_water_health_ledger.md
+  token: chief-archive-202610-07912338
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/cleanup_final/cleanup_ledger.md
+  token: chief-archive-202610-22884642
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/FINAL_REPORT_st_code_doc_20260921.md
+  token: chief-archive-202610-07723909
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/index.md
+  token: chief-archive-202610-12550222
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p1_bugs/index.md
+  token: chief-archive-202610-29736778
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p1_bugs/w12_bug_verdicts.md
+  token: chief-archive-202610-73015112
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p2_tests/index.md
+  token: chief-archive-202610-86318077
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p2_tests/w13_true_account_closure.md
+  token: chief-archive-202610-91720363
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p3_placement/index.md
+  token: chief-archive-202610-55127761
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p3_placement/w14_placement_ledger.md
+  token: chief-archive-202610-07089502
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p4_ledgers/index.md
+  token: chief-archive-202610-79614771
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p4_ledgers/w15_hanging_accounts_verdict.md
+  token: chief-archive-202610-32787807
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p5_final3/index.md
+  token: chief-archive-202610-55629795
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p5_final3/w16_final3_tail_report.md
+  token: chief-archive-202610-31935852
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/code_doc_gov_campaign/p5_final3/wo_equity_penetration_v1.md
+  token: chief-archive-202610-37658148
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/00_skeleton.md
+  token: chief-archive-202610-50979012
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/11_channel_out_of_lock_surgery.md
+  token: chief-archive-202610-69806218
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e01_claim_locks.md
+  token: chief-archive-202610-67114308
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e02_gateway_preflight.md
+  token: chief-archive-202610-40827462
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e03_l2_gates.md
+  token: chief-archive-202610-42844546
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e04_precommit_channel.md
+  token: chief-archive-202610-14771295
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e05_git_core.md
+  token: chief-archive-202610-53765334
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e06_postcommit.md
+  token: chief-archive-202610-00654480
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e07_queue_landing.md
+  token: chief-archive-202610-27106782
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e08_reconciler.md
+  token: chief-archive-202610-27742966
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e09_telemetry_flags.md
+  token: chief-archive-202610-22962996
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_fullflow/e10_observability.md
+  token: chief-archive-202610-20009972
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/00_skeleton_route_table.md
+  token: chief-archive-202610-99192747
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/10_enqueue.md
+  token: chief-archive-202610-70497584
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/11_serializer_lease.md
+  token: chief-archive-202610-83650312
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/12_belt_daemon_trigger.md
+  token: chief-archive-202610-09006525
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/14_landing_executor.md
+  token: chief-archive-202610-25154241
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/15_gate_chain.md
+  token: chief-archive-202610-62192620
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/16_deadletter_alerts.md
+  token: chief-archive-202610-53737511
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/17_observability.md
+  token: chief-archive-202610-25859956
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/18_direct_session_claim.md
+  token: chief-archive-202610-55612016
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/19_worktree_layer.md
+  token: chief-archive-202610-86880474
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/20_external_benchmark.md
+  token: chief-archive-202610-77726914
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/90_design_v1.md
+  token: chief-archive-202610-94527936
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_chain_mining/commitchain_ledger.md
+  token: chief-archive-202610-98711388
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/00_commit_speedup_master_plan.md
+  token: chief-archive-202610-91972299
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/00_handoff.md
+  token: chief-archive-202610-15565664
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/00_skeleton/S1_stage_inventory.md
+  token: chief-archive-202610-81189415
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/00_skeleton/S2_substage_tree.yaml
+  token: chief-archive-202610-44186681
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/00_skeleton/S3_gaps_and_blindspots.md
+  token: chief-archive-202610-50075236
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/10_D1_D2/D1_stats_lock.md
+  token: chief-archive-202610-98893933
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/10_D1_D2/D2_env_flag_leak.md
+  token: chief-archive-202610-83659469
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/10_D1_D2/README.md
+  token: chief-archive-202610-78271467
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/10_D1_D2/d1_d2_readme.md
+  token: chief-archive-202610-17174686
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/A1_conflict_graph.yaml
+  token: chief-archive-202610-24505601
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/A2_target_architecture.md
+  token: chief-archive-202610-85783418
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/A3_gate_repointing_matrix.yaml
+  token: chief-archive-202610-32188385
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/A4_migration_ladder.md
+  token: chief-archive-202610-99841749
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/README.md
+  token: chief-archive-202610-06470699
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/target_arch_readme.md
+  token: chief-archive-202610-31230295
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/30_gate_census/C1_gate_dossier.md
+  token: chief-archive-202610-67493833
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/30_gate_census/P3_integrity_head_derivative_prep.md
+  token: chief-archive-202610-63936788
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/40_B0_derived_offload/B0_1_sync_sites.md
+  token: chief-archive-202610-20345178
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/40_B0_derived_offload/B0_2_gate_dependency_matrix.yaml
+  token: chief-archive-202610-91846153
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/40_B0_derived_offload/B0_3_design_and_tests.md
+  token: chief-archive-202610-61115091
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/40_B0_derived_offload/README.md
+  token: chief-archive-202610-98200928
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/40_B0_derived_offload/b0_readme.md
+  token: chief-archive-202610-17643592
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/50_replay_baseline/r1_design.md
+  token: chief-archive-202610-29609951
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/dead_triage.yaml
+  token: chief-archive-202610-85850785
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/dead_triage_r2.yaml
+  token: chief-archive-202610-09092485
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/dead_triage_report.md
+  token: chief-archive-202610-71666067
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/deep_dive_r1.md
+  token: chief-archive-202610-01899713
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/a2_window_20260924_detail.yaml
+  token: chief-archive-202610-22350188
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/a3_precommit_channel_rows.yaml
+  token: chief-archive-202610-40049410
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/a_worker_gate_mystery.yaml
+  token: chief-archive-202610-00236984
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/b_residual_decomposition.yaml
+  token: chief-archive-202610-13890760
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/b_residual_per_event.yaml
+  token: chief-archive-202610-09579845
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/c_block_retry.yaml
+  token: chief-archive-202610-74609210
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/d_dead_letter_lineage.yaml
+  token: chief-archive-202610-57273381
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/e2_recoverable_minutes.yaml
+  token: chief-archive-202610-12144499
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/e3_poolwave_busy.yaml
+  token: chief-archive-202610-37990410
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/e_throughput_model.yaml
+  token: chief-archive-202610-05170231
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/70_redblue/redblue_governance.md
+  token: chief-archive-202610-50718428
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/70_redblue/redblue_robust.md
+  token: chief-archive-202610-39979255
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/80_hmac_proposal/proposal.md
+  token: chief-archive-202610-10168277
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/CAMPAIGN_STATE_SNAPSHOT.md
+  token: chief-archive-202610-74698895
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/HANDOFF_NEXT_SESSION.md
+  token: chief-archive-202610-04405505
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/decisions_log.md
+  token: chief-archive-202610-81692187
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/max_ruling_queue.md
+  token: chief-archive-202610-13353914
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/max_rulings.md
+  token: chief-archive-202610-69037778
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/red_blue_pkg14_report.md
+  token: chief-archive-202610-19331000
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/s1_acceptance_20260929.md
+  token: chief-archive-202610-15882443
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/t13_rename_report.md
+  token: chief-archive-202610-56996625
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/t14_roster_report.md
+  token: chief-archive-202610-98706629
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/t14_roster_report.yaml
+  token: chief-archive-202610-67310475
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/90_verification/t1_ledger_readings.md
+  token: chief-archive-202610-44185518
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_speedup_campaign/99_FINAL_REPORT.md
+  token: chief-archive-202610-57785282
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_system_opt/03_gate_health_audit.md
+  token: chief-archive-202610-15819970
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_system_opt/04_deadletter_cost_analysis.md
+  token: chief-archive-202610-81243716
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_system_opt/05_staging_blackhand_forensics.md
+  token: chief-archive-202610-14177157
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_system_opt/06_final_report.md
+  token: chief-archive-202610-57992411
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commit_system_opt/LEDGER.md
+  token: chief-archive-202610-22637794
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/commitspeed_audit/2026-09-24-commit_wait_investigation_report.md
+  token: chief-archive-202610-67881570
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/b10_final_delivery_report_20260922.md
+  token: chief-archive-202610-88657225
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/final_delivery_report_20260921.md
+  token: chief-archive-202610-15301339
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/index.md
+  token: chief-archive-202610-59169833
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p0_0917_tick_recovery_report.md
+  token: chief-archive-202610-30440579
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p0_sim_as_source_assessment.md
+  token: chief-archive-202610-43943037
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p1_valuation_repair_report.md
+  token: chief-archive-202610-17417918
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p2_supply_resumption_report.md
+  token: chief-archive-202610-83824662
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p3_sentinel_registry_report.md
+  token: chief-archive-202610-07311305
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p4_tilib_batch10_report.md
+  token: chief-archive-202610-97167892
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p5_scd2_fix_report.md
+  token: chief-archive-202610-38224300
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/data_fix_campaign/p6_1970_root_cure_report.md
+  token: chief-archive-202610-56613302
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/emotion_index_skeleton_v0.md
+  token: chief-archive-202610-48703012
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/exam_report_v1.md
+  token: chief-archive-202610-42834452
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/external_methodology_review.md
+  token: chief-archive-202610-22130037
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/gap_list_and_construction_proposal.md
+  token: chief-archive-202610-83628184
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/gpu_emotion_condition_matrix_v1.meta.yaml
+  token: chief-archive-202610-36272880
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/history_replay_report_v1.md
+  token: chief-archive-202610-15799018
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/internal_inventory.md
+  token: chief-archive-202610-08397392
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/prereg_exam_cards_v0.md
+  token: chief-archive-202610-32233858
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/emotion_line/redblue_round_record.md
+  token: chief-archive-202610-44481208
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/00_master_ledger.md
+  token: chief-archive-202610-27636532
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/90_report.md
+  token: chief-archive-202610-48200181
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/91_fresh_triage_and_rulings.md
+  token: chief-archive-202610-52858052
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F1_derived_commit_merge/DESIGN.md
+  token: chief-archive-202610-96932038
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F1_derived_commit_merge/index.md
+  token: chief-archive-202610-77839845
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F2_prereq/DESIGN.md
+  token: chief-archive-202610-53580192
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F2_prereq/index.md
+  token: chief-archive-202610-79838422
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F3_head_gate_diff/DESIGN.md
+  token: chief-archive-202610-76637195
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F3_head_gate_diff/index.md
+  token: chief-archive-202610-59521161
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F4_generator_concurrency/DESIGN.md
+  token: chief-archive-202610-42870277
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F4_generator_concurrency/index.md
+  token: chief-archive-202610-64006505
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F5_dc_preflight/DESIGN.md
+  token: chief-archive-202610-64383996
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F5_dc_preflight/index.md
+  token: chief-archive-202610-17560016
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F5_registry_debt/LEDGER_flash_speedup_F5.md
+  token: chief-archive-202610-59386410
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F5_registry_debt/index.md
+  token: chief-archive-202610-21619442
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F6_bottleneck/DESIGN.md
+  token: chief-archive-202610-83233043
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F6_bottleneck/index.md
+  token: chief-archive-202610-32450834
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F9_queue_newfile_deadletter/DESIGN.md
+  token: chief-archive-202610-42838661
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/F9_queue_newfile_deadletter/index.md
+  token: chief-archive-202610-78804494
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/dead_letter_triage_20260921.md
+  token: chief-archive-202610-19886047
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/index.md
+  token: chief-archive-202610-82834532
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/flash_speedup/t1_worktree_base_conflict_patch_backup.md
+  token: chief-archive-202610-28921108
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/forensics/llama_server_crash_forensics_202609.md
+  token: chief-archive-202610-89125571
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/compute_inventory.md
+  token: chief-archive-202610-49723362
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/gpu_landscape.md
+  token: chief-archive-202610-01146988
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/hotspot_census.md
+  token: chief-archive-202610-96373777
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/industry_gpu_landscape.md
+  token: chief-archive-202610-72962516
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/migration_roadmap.md
+  token: chief-archive-202610-71981254
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/p1_wiring_benchmark.md
+  token: chief-archive-202610-89668212
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/rewrite_architecture.md
+  token: chief-archive-202610-51535944
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/rewrite_architecture_three_tiers.md
+  token: chief-archive-202610-60370098
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/roadmap.md
+  token: chief-archive-202610-93272341
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/validation_framework.md
+  token: chief-archive-202610-39715889
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/gpu_rewrite/verification_framework.md
+  token: chief-archive-202610-85076106
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/guides/index.md
+  token: chief-archive-202610-82553426
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/guides/process_incubator_migration_guide.md
+  token: chief-archive-202610-26822705
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/kimi_audit/lane_reports/cost_trio_reexam_report.md
+  token: chief-archive-202610-49346570
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/kimi_audit/lane_reports/cost_trio_result.yaml
+  token: chief-archive-202610-29717159
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/night_totalflow_20261001/00_skeleton.md
+  token: chief-archive-202610-94262839
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/night_totalflow_20261001/90_red_blue.md
+  token: chief-archive-202610-71802497
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/night_totalflow_20261001/A_mine.md
+  token: chief-archive-202610-41327933
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/night_totalflow_20261001/B_mine.md
+  token: chief-archive-202610-08762465
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/night_totalflow_20261001/CEF_mine.md
+  token: chief-archive-202610-03448979
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/night_totalflow_20261001/D_mine.md
+  token: chief-archive-202610-17087450
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/oddjobs_final/LEDGER.md
+  token: chief-archive-202610-92687568
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/00_skeleton_overview.md
+  token: chief-archive-202610-09544263
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/approval_language/workbook.md
+  token: chief-archive-202610-93775289
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/bag_storage/workbook.md
+  token: chief-archive-202610-60206401
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/cas_converge/workbook.md
+  token: chief-archive-202610-33993968
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/deadletter/workbook.md
+  token: chief-archive-202610-19002897
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/fullflow/red_light_diagnosis.md
+  token: chief-archive-202610-45207156
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/fullflow/workbook.md
+  token: chief-archive-202610-73960247
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/gate_chain/workbook.md
+  token: chief-archive-202610-93518691
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/landing_materialize/workbook.md
+  token: chief-archive-202610-06188230
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/observability/workbook.md
+  token: chief-archive-202610-10189073
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/producer_enqueue/workbook.md
+  token: chief-archive-202610-60654844
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_campaign/queue_scheduler/workbook.md
+  token: chief-archive-202610-31642258
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/qcure_commit_queue_plan.md
+  token: chief-archive-202610-74724844
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/redblue/2026-09-15-xtreme-redblue-v5-report.md
+  token: chief-archive-202610-56252143
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
+  token: chief-archive-202610-89562531
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/reexam_strategy_lane/runs/p1_translated_jq_outpool/state.yaml
+  token: chief-archive-202610-95844238
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/MORNING_REPORT_st-secbuild_20260923.md
+  token: chief-archive-202610-28396684
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/batch2_consumer_wiring_patch.md
+  token: chief-archive-202610-26335752
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/exam/prereg_exam_report_v1.md
+  token: chief-archive-202610-07527721
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/exam/prereg_exam_results_v1.yaml
+  token: chief-archive-202610-86448804
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_external_methodology.md
+  token: chief-archive-202610-71459246
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_gap_list_and_construction_proposal.md
+  token: chief-archive-202610-55066169
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_internal_inventory.md
+  token: chief-archive-202610-58189010
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_layer_skeleton_v0.md
+  token: chief-archive-202610-56731205
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
+  token: chief-archive-202610-09564914
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
+  token: chief-archive-202610-49259000
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/sector_redblue_round_record.md
+  token: chief-archive-202610-08400036
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/statreplay/replay_report.md
+  token: chief-archive-202610-28737167
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+  token: chief-archive-202610-17647446
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sector_line/statreplay/sector_replay_depth_dossier_v0.md
+  token: chief-archive-202610-44299458
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/00_campaign_ledger.md
+  token: chief-archive-202610-34109165
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/01_ruling_plan_mapping_and_orphans.md
+  token: chief-archive-202610-40720266
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/crypto_fastlane_eval.md
+  token: chief-archive-202610-36800243
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/daily_report_20260922.md
+  token: chief-archive-202610-52511590
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/delivery_report.md
+  token: chief-archive-202610-03355920
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/delivery_report_20260923.md
+  token: chief-archive-202610-85272022
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/first_daily_report_20260921.md
+  token: chief-archive-202610-13068310
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sim_launch/plan_order_mapping_proposal.md
+  token: chief-archive-202610-44239338
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sweep_tail/sweep_tail_ledger_st-sweep-tail-20260923.md
+  token: chief-archive-202610-38944694
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/sweep_tail/sweep_tail_probes_st-sweep-tail-20260923.md
+  token: chief-archive-202610-32221553
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/BOARD_INDEX_INTRADAY_SUPPLY_DESIGN.md
+  token: chief-archive-202610-45334586
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/FINAL_REPORT_t0_matrix_reexam.md
+  token: chief-archive-202610-85765859
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/HANDOFF_emoreplay_stranded.md
+  token: chief-archive-202610-85151729
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/LEDGER.md
+  token: chief-archive-202610-70314832
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/METHOD_MINING_t0.md
+  token: chief-archive-202610-90849452
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/REDEVID_mutation_probe_matrix.md
+  token: chief-archive-202610-95776467
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/T0_SCHEME_MATRIX.md
+  token: chief-archive-202610-21212202
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/rerun_frozen/cost_trio_result.yaml
+  token: chief-archive-202610-43576804
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/six_phase_history_v1.meta.yaml
+  token: chief-archive-202610-73377626
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+  token: chief-archive-202610-95221448
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_result.yaml
+  token: chief-archive-202610-38136882
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_verdict.md
+  token: chief-archive-202610-01125488
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_conditional_e4_v2_VOID.md
+  token: chief-archive-202610-44888460
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_conditional_e4_v2_result.yaml
+  token: chief-archive-202610-52692640
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_conditional_e4_v3_result.yaml
+  token: chief-archive-202610-15874736
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_conditional_e4_v3_verdict.md
+  token: chief-archive-202610-00566737
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+  token: chief-archive-202610-29767008
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+  token: chief-archive-202610-82486294
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_revival/t0_conditional_e4_result.yaml
+  token: chief-archive-202610-59192267
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_revival/t0_conditional_e4_verdict.md
+  token: chief-archive-202610-86480581
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
+  token: chief-archive-202610-55163166
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/t0_revival/t0_revival_session_report.md
+  token: chief-archive-202610-70538398
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/00_tdm20_ledger.md
+  token: chief-archive-202610-58956244
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/01_node_expansion_list.md
+  token: chief-archive-202610-91068968
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/02_deliverables_index.md
+  token: chief-archive-202610-30289817
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/03_pp001_slot_alignment.md
+  token: chief-archive-202610-23540389
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/04_chain_recon_report.md
+  token: chief-archive-202610-65301740
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/05_morning_report.md
+  token: chief-archive-202610-18289458
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/06_agg_switch_rollback_plan.md
+  token: chief-archive-202610-73496215
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/tdm20_campaign/index.md
+  token: chief-archive-202610-30808161
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/vocab_legislation/01_official_state_vocabulary.md
+  token: chief-archive-202610-80727211
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/vocab_legislation/02_state_vocabulary_mapping_register.md
+  token: chief-archive-202610-90896304
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/同花顺资料/被投清单登记_ths_import_2026-09-08.md
+  token: chief-archive-202610-97692712
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/archive/2026-10/同花顺资料/被投清单登记_ths_import_20260908.md
+  token: chief-archive-202610-76607224
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: docs/_working/fexam/00_exam_campaign_summary_v1.md
+  token: fexam-book-summary-20261006
+  capability: 批5考试总册（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/fexam/allocator_shadow_report_v1.md
+  token: fexam-book-allocshadow-20261006
+  capability: 批4分配器影子报告（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/fexam/bt_p0_roster_v1.yaml
+  token: fexam-book-roster-20261006
+  capability: 批0应考名单册（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/fexam/factor_exam_scores_v1.yaml
+  token: fexam-book-factorscores-20261006
+  capability: 批1因子分数册（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/fexam/indicator_exam_scores_v1.yaml
+  token: fexam-book-indicatorscores-20261006
+  capability: 批3指标分数册（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/fexam/strategy_exam_scores_v1.yaml
+  token: fexam-book-stratscores-20261006
+  capability: 批2策略分数册（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/matrix_campaign/90_execution_log.md
+  token: matrix-campaign-execlog-20261006
+  capability: 矩阵战役执行台账
+  created_by: st-matrix-20261006
+  merge_evaluation: "战役台账；无替代对象"
+- file: docs/_working/matrix_campaign/99_delivery.md
+  token: matrix-campaign-delivery-20261006
+  capability: 矩阵战役终报（四清单：已接线/已考试/在队/等Owner）
+  created_by: st-matrix-20261006
+  merge_evaluation: "战役终报；无替代对象"
+- file: docs/_working/matrix_campaign/construction_queue_v1.yaml
+  token: matrix-campaign-constqueue-20261006
+  capability: 施工车道派工队列v1（S/M/L三级，来源=M1/M2规格卡）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增派工队列；挖矿→施工的交接件；无替代对象"
+- file: docs/_working/matrix_campaign/construction_queue_v1.yaml
+  token: matrix-campaign-constqueue-v2-20261006
+  capability: 施工车道派工队列v1（S/M/L三级，来源=M1/M2规格卡）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增派工队列；挖矿→施工交接件；无替代对象"
+- file: docs/_working/matrix_campaign/fac9_05_drift_repair_plan.md
+  token: matrix-campaign-fac905-20261006
+  capability: 修路车道修复计划册（只开方不动刀）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增修复处方；无替代对象"
+- file: docs/_working/matrix_campaign/metaq_matching_v1.yaml
+  token: matrix-campaign-metaqmatch-20261006
+  capability: 原问题×考试产物匹配表（机生）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/matrix_campaign/mining/00_stage_skeleton.md
+  token: matrix-skel-00_stage_skeleton-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/99_skeleton_selfcheck.md
+  token: matrix-skel-99_skeleton_selfcheck-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/00_l9_sources_index.md
+  token: matrix-m1-00_l9_sources_index-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/99_negative_results.md
+  token: matrix-m1-99_negative_results-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A03.md
+  token: matrix-m1-spec_SL-A03-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A06.md
+  token: matrix-m1-spec_SL-A06-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A08.md
+  token: matrix-m1-spec_SL-A08-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A09.md
+  token: matrix-m1-spec_SL-A09-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A10.md
+  token: matrix-m1-spec_SL-A10-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A12.md
+  token: matrix-m1-spec_SL-A12-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A13.md
+  token: matrix-m1-spec_SL-A13-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A15.md
+  token: matrix-m1-spec_SL-A15-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-G3.md
+  token: matrix-m1-spec_SL-G3-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/00_exit_sector_index.md
+  token: matrix-m2-00_exit_sector_index-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/99_negative_results.md
+  token: matrix-m2-99_negative_results-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-01-4_flow.md
+  token: matrix-m2-spec_l2_TDM-E-L2-01-4_flow-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-01_strength.md
+  token: matrix-m2-spec_l2_TDM-E-L2-01_strength-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-02_rotation.md
+  token: matrix-m2-spec_l2_TDM-E-L2-02_rotation-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-03_cycle.md
+  token: matrix-m2-spec_l2_TDM-E-L2-03_cycle-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-04_state.md
+  token: matrix-m2-spec_l2_TDM-E-L2-04_state-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-05_water.md
+  token: matrix-m2-spec_l2_TDM-E-L2-05_water-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-06-2_leader.md
+  token: matrix-m2-spec_l2_TDM-E-L2-06-2_leader-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-06_conduction.md
+  token: matrix-m2-spec_l2_TDM-E-L2-06_conduction-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-07_pullback.md
+  token: matrix-m2-spec_l2_TDM-E-L2-07_pullback-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-08_lifecycle.md
+  token: matrix-m2-spec_l2_TDM-E-L2-08_lifecycle-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-09_catalyst.md
+  token: matrix-m2-spec_l2_TDM-E-L2-09_catalyst-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2-10_catchup.md
+  token: matrix-m2-spec_l2_TDM-E-L2-10_catchup-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_l2_TDM-E-L2.md
+  token: matrix-m2-spec_l2_TDM-E-L2-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-FLOW.md
+  token: matrix-m2-spec_x_TDM-X-FLOW-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-R1-03.md
+  token: matrix-m2-spec_x_TDM-X-R1-03-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S1-01.md
+  token: matrix-m2-spec_x_TDM-X-S1-01-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S1-02.md
+  token: matrix-m2-spec_x_TDM-X-S1-02-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S1-03.md
+  token: matrix-m2-spec_x_TDM-X-S1-03-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S1-04.md
+  token: matrix-m2-spec_x_TDM-X-S1-04-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S1-05.md
+  token: matrix-m2-spec_x_TDM-X-S1-05-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S1.md
+  token: matrix-m2-spec_x_TDM-X-S1-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S2-01.md
+  token: matrix-m2-spec_x_TDM-X-S2-01-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S2-03.md
+  token: matrix-m2-spec_x_TDM-X-S2-03-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S2-04.md
+  token: matrix-m2-spec_x_TDM-X-S2-04-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S2-05.md
+  token: matrix-m2-spec_x_TDM-X-S2-05-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/m2_exit_sector/spec_x_TDM-X-S2.md
+  token: matrix-m2-spec_x_TDM-X-S2-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_c_portfolio_mining.md
+  token: matrix-skel-st_c_portfolio_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_crypto_mining.md
+  token: matrix-skel-st_crypto_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_data_legs_mining.md
+  token: matrix-skel-st_data_legs_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e0_compute_mining.md
+  token: matrix-skel-st_e0_compute_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e1_idea_intake_mining.md
+  token: matrix-skel-st_e1_idea_intake_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e2_hypothesis_mining.md
+  token: matrix-skel-st_e2_hypothesis_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e3_construction_mining.md
+  token: matrix-skel-st_e3_construction_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e4_exam_throat_mining.md
+  token: matrix-skel-st_e4_exam_throat_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e5_dedup_mining.md
+  token: matrix-skel-st_e5_dedup_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e6_intake_monitor_mining.md
+  token: matrix-skel-st_e6_intake_monitor_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e7_paper_mining.md
+  token: matrix-skel-st_e7_paper_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e8_assembly_mining.md
+  token: matrix-skel-st_e8_assembly_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_e9_attribution_mining.md
+  token: matrix-skel-st_e9_attribution_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_l0_l1_premarket_mining.md
+  token: matrix-skel-st_l0_l1_premarket_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_l2_sector_mining.md
+  token: matrix-skel-st_l2_sector_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_l3_stock_mining.md
+  token: matrix-skel-st_l3_stock_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_l4_exec_mining.md
+  token: matrix-skel-st_l4_exec_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_l9_alt_mining.md
+  token: matrix-skel-st_l9_alt_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_p_daytrade_mining.md
+  token: matrix-skel-st_p_daytrade_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: docs/_working/matrix_campaign/mining/st_x_exit_mining.md
+  token: matrix-skel-st_x_exit_mining-20261006
+  capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增挖矿文档；无替代对象；负结果与缺口如实入册"
+- file: s/_working/archive/2026-10/2026-09-18-landing-anchor-algo-flow-closeout/index.md
+  token: chief-archive-202610-59352473
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/align_dirty/index.md
+  token: chief-archive-202610-78459618
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/audit_integrity/index.md
+  token: chief-archive-202610-73481773
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/bm_reclass_ruling/index.md
+  token: chief-archive-202610-00323885
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/board_synthesis/index.md
+  token: chief-archive-202610-61493388
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/branch_zero_takeover_20261002/index.md
+  token: chief-archive-202610-68686904
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/chain_circulation_campaign/index.md
+  token: chief-archive-202610-27147787
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/cleanup_final/index.md
+  token: chief-archive-202610-89976838
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_chain_fullflow/index.md
+  token: chief-archive-202610-29480014
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_chain_mining/index.md
+  token: chief-archive-202610-87353525
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/00_skeleton/index.md
+  token: chief-archive-202610-64390850
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/10_D1_D2/index.md
+  token: chief-archive-202610-71938008
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/20_target_arch/index.md
+  token: chief-archive-202610-25677125
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/30_gate_census/index.md
+  token: chief-archive-202610-61321299
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/40_B0_derived_offload/index.md
+  token: chief-archive-202610-98485015
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/50_replay_baseline/index.md
+  token: chief-archive-202610-55437772
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/index.md
+  token: chief-archive-202610-16145318
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/60_deep_dive/r1_data/index.md
+  token: chief-archive-202610-38838141
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/70_redblue/index.md
+  token: chief-archive-202610-97284806
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/80_hmac_proposal/index.md
+  token: chief-archive-202610-28614424
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/90_verification/index.md
+  token: chief-archive-202610-17137979
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_speedup_campaign/index.md
+  token: chief-archive-202610-29675847
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commit_system_opt/index.md
+  token: chief-archive-202610-09043546
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/commitspeed_audit/index.md
+  token: chief-archive-202610-05505928
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/emotion_line/index.md
+  token: chief-archive-202610-60436088
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/forensics/index.md
+  token: chief-archive-202610-94497491
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/gpu_rewrite/index.md
+  token: chief-archive-202610-91574460
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/index.md
+  token: chief-archive-202610-27807742
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/kimi_audit/index.md
+  token: chief-archive-202610-96933523
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/kimi_audit/lane_reports/index.md
+  token: chief-archive-202610-52215844
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/night_totalflow_20261001/index.md
+  token: chief-archive-202610-25260239
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/oddjobs_final/index.md
+  token: chief-archive-202610-61552603
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/approval_language/index.md
+  token: chief-archive-202610-80405179
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/bag_storage/index.md
+  token: chief-archive-202610-19972815
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/cas_converge/index.md
+  token: chief-archive-202610-30883729
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/deadletter/index.md
+  token: chief-archive-202610-07012351
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/fullflow/index.md
+  token: chief-archive-202610-33424979
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/gate_chain/index.md
+  token: chief-archive-202610-94992223
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/index.md
+  token: chief-archive-202610-22225618
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/landing_materialize/index.md
+  token: chief-archive-202610-82167766
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/observability/index.md
+  token: chief-archive-202610-38273832
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/producer_enqueue/index.md
+  token: chief-archive-202610-75780415
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/qcure_campaign/queue_scheduler/index.md
+  token: chief-archive-202610-42187758
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/redblue/index.md
+  token: chief-archive-202610-74895651
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/reexam_strategy_lane/index.md
+  token: chief-archive-202610-84473187
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/reexam_strategy_lane/runs/index.md
+  token: chief-archive-202610-32145359
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/reexam_strategy_lane/runs/p1_translated_jq_outpool/index.md
+  token: chief-archive-202610-78986060
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/sector_line/exam/index.md
+  token: chief-archive-202610-63662763
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/sector_line/index.md
+  token: chief-archive-202610-87738035
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/sector_line/statreplay/index.md
+  token: chief-archive-202610-18450997
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/sim_launch/index.md
+  token: chief-archive-202610-97057912
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/sweep_tail/index.md
+  token: chief-archive-202610-35281782
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/t0_matrix/index.md
+  token: chief-archive-202610-76290533
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/t0_matrix/rerun_frozen/index.md
+  token: chief-archive-202610-58556306
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/t0_revival/index.md
+  token: chief-archive-202610-16487218
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/vocab_legislation/index.md
+  token: chief-archive-202610-28969612
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: s/_working/archive/2026-10/同花顺资料/index.md
+  token: chief-archive-202610-39676442
+  capability: chief_fullchain_archive
+  created_by: st-workingchief-20261006
+  merge_evaluation: "归档迁移路径 token（2026-10 归档批：35役+12根文件 git mv 后的 archive 路径面，沿用 2026-09 归档先例 1433 条同型）"
+- file: scripts/backtest/fexam/__init__.py
+  token: fexam-suite-init-20261006
+  capability: 矩阵考试战役·套件包入口（空init）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增全量考试套件；替代物：无（四类资产此前零注册表驱动考试器）；净零=批次5总册收编全部考试产物，退役候选由分数册三态承载"
+- file: scripts/backtest/fexam/allocator_shadow.py
+  token: fexam-suite-allocshadow-20261006
+  capability: 批4分配器五套影子考（简化实现+序贯统计证据量报告）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增分配器影子比较；MOD-PF-008 mSPRT内核复用；简化版实现如实标注非逐行复用"
+- file: scripts/backtest/fexam/campaign_report.py
+  token: fexam-suite-campaignreport-20261006
+  capability: 批5考试总册+matrix_inventory机生+四缺口单+原问题匹配表
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增战役汇总器；对接H11 backtest_coverage_ledger只读引用"
+- file: scripts/backtest/fexam/ch_data.py
+  token: fexam-suite-chdata-20261006
+  capability: CH只读数据装载（前向收益面板/因子指标列面板/regime态）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增CH只读装载层；替代物：无（考试域此前无registry→CH列映射器）；只SELECT零写库"
+- file: scripts/backtest/fexam/ic_exam.py
+  token: fexam-suite-icexam-20261006
+  capability: 批1/批3 IC考试引擎（复用compute_ic_series内核+HOLDOUT纪律）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增IC考试引擎；复用zephyr.factor.core.evaluation.metrics内核不重造；批1因子批3指标共用"
+- file: scripts/backtest/fexam/roster.py
+  token: fexam-suite-roster-20261006
+  capability: 批0 BT-P0应考名单机生器（四册解析+可考性预分类）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增roster机生器；替代物：无；计数用字段禁散文"
+- file: scripts/backtest/fexam/run_fexam.py
+  token: fexam-suite-runcli-20261006
+  capability: fexam CLI单入口（roster/factor/indicator/strategy/allocator/summary/inventory/metaq八子命令）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增单入口CLI；收编全部子命令防散装脚本"
+- file: scripts/backtest/fexam/strategy_exam.py
+  token: fexam-suite-stratexam-20261006
+  capability: 批2策略全量考（DefaultBacktestEngine标准化装置+checkpoint幂等）
+  created_by: st-matrix-20261006
+  merge_evaluation: "新增策略考试器；复用vectorized_engine（PIT/剔ST/T+1默认开）不重造引擎"
 di_seam_exemptions: []
