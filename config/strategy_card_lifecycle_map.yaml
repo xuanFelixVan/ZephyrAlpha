@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
-generated_at: '2026-09-26T00:00:00+08:00'
+generated_at: '2026-10-07T04:20:27+08:00'
 registry_host: experiment_registry
 anchor_source: registry
 anchor_block_origin: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
@@ -145,7 +145,7 @@ states:
   - D15-G02
   evidence:
   - '`docs/_working/sector_line/sector_prereg_exam_cards_v0.md` frontmatter `status: draft（先于实验落盘；施工开工时冻结为 frozen，冻结后禁改参数）…'
-  instances_observed: 1
+  instances_observed: 3
   instances_by_card: []
 - state_id: D15-S2
   value: candidate
@@ -211,7 +211,7 @@ states:
   - D15-G02
   evidence:
   - '33 张卡的 frontmatter `status: frozen（…）`（§3-A 计数）；模板真源 `factor_mining_sop_policy.md:108` `status: frozen # 启动后不得改动`'
-  instances_observed: 53
+  instances_observed: 57
   instances_by_card:
   - ETFT0-PREREG-CARD
   - OFI-PREREG-CARD
@@ -1656,12 +1656,12 @@ gaps:
   decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
   note_zh: 89 张卡 / 60 有头 29 无头 / 23 种串 / 0 张在受控词表内
   measured:
-    cards: 89
-    headed: 60
-    headless: 29
-    distinct_status_strings: 23
-    in_controlled_vocab: 56
-    registered_in_host: 56
+    cards: 105
+    headed: 69
+    headless: 36
+    distinct_status_strings: 29
+    in_controlled_vocab: 62
+    registered_in_host: 52
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1690,7 +1690,7 @@ gaps:
     registry_entries: 67
     contract_card_entries: 56
     run_entries: 11
-    card_key_intersection_with_corpus: 56
+    card_key_intersection_with_corpus: 52
     viability_verdict_null: 65
     viability_verdict_filled_by:
     - ALGO-VWAP-03
@@ -1793,7 +1793,8 @@ gaps:
     - docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_exam_report.md
     - docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
     - docs/_working/archive/2026-09/bizmine_night/regime_axis/b15_bucket_switch_narrow_test_report.md
-    - docs/_working/t0_matrix/t0_ceiling_verdict.md
+    - docs/_working/archive/2026-10/t0_matrix/t0_ceiling_verdict.md
+    - docs/_working/archive/2026-10/t0_matrix/t0_conditional_e4_v3_verdict.md
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1820,8 +1821,12 @@ gaps:
   note_zh: 3 个 production 脚本的 BLUEPRINT 卡锚指向从未入库的两张卡；run 档案整目录 gitignored
   measured:
     missing_truth_sources:
+    - docs/_working/emotion_line/prereg_exam_cards_v0.md
+    - docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+    - docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
     - docs/_working/t0_matrix/t0_ceiling_prereg_card.md
-    blueprint_card_anchors: 7
+    - docs/_working/t0_revival/t0_conditional_prereg_card.md
+    blueprint_card_anchors: 11
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1838,6 +1843,7 @@ gaps:
   - 簿03 §A 逐处开账（本件 measured 由生成器现算）
 card_ledger:
 - experiment_id: CARD-T0-PRERG-02
+  module_id: MOD-SIM-024
   card_id: T0-PRERG-02
   entry_kind: single_hypothesis
   family_id: T0-PRERG
@@ -1906,6 +1912,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-T0-PRERG-01
+  module_id: MOD-SIM-024
   card_id: T0-PRERG-01
   entry_kind: single_hypothesis
   family_id: T0-PRERG
@@ -1932,6 +1939,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-ALGO-VWAP-03
+  module_id: MOD-SIM-024
   card_id: ALGO-VWAP-03
   entry_kind: single_hypothesis
   family_id: null
@@ -1967,6 +1975,7 @@ card_ledger:
   conclusion_tier: null
   viability_verdict: refuted
 - experiment_id: CARD-T0-CONDITIONAL
+  module_id: MOD-SIM-024
   card_id: T0-CONDITIONAL
   entry_kind: single_hypothesis
   family_id: T0-CONDITIONAL
@@ -1999,6 +2008,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-09
+  module_id: MOD-SIM-024
   card_id: P3-E1C-09
   entry_kind: single_hypothesis
   family_id: P3-E1C-STABLE13
@@ -2032,6 +2042,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-NARROWING
+  module_id: MOD-SIM-024
   card_id: P3-B-NARROWING
   entry_kind: narrowing_ruling
   family_id: P3-B-FIRST6
@@ -2054,6 +2065,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-ALGO-CAND-MOM-01
+  module_id: MOD-SIM-024
   card_id: ALGO-CAND-MOM-01
   entry_kind: single_hypothesis
   family_id: null
@@ -2077,6 +2089,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-PRERG-MOM-01
+  module_id: MOD-SIM-024
   card_id: PRERG-MOM-01
   entry_kind: single_hypothesis
   family_id: null
@@ -2110,6 +2123,7 @@ card_ledger:
   conclusion_tier: null
   viability_verdict: refuted
 - experiment_id: CARD-SECTOR-PRERG-DECK-01
+  module_id: MOD-SIM-024
   card_id: SECTOR-PRERG-DECK-01
   entry_kind: family
   family_id: SECTOR-V1
@@ -2142,6 +2156,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-T0-MATRIX-VWAP-CEILING
+  module_id: MOD-SIM-024
   card_id: T0-MATRIX-VWAP-CEILING
   entry_kind: single_hypothesis
   family_id: T0-MATRIX
@@ -2165,6 +2180,7 @@ card_ledger:
   revived_by: null
   conclusion_tier: null
 - experiment_id: CARD-OFI-PREREG-CARD
+  module_id: MOD-SIM-024
   card_id: OFI-PREREG-CARD
   name_zh: ALGO件① OFI成交签名代理 预注册卡（frozen，先于实验落盘）
   entry_kind: single_hypothesis
@@ -2191,6 +2207,7 @@ card_ledger:
   frozen_at: '2026-09-19'
   conclusion_tier: null
 - experiment_id: CARD-ETFT0-PREREG-CARD
+  module_id: MOD-SIM-024
   card_id: ETFT0-PREREG-CARD
   name_zh: ETFT0 预注册卡——高波资产做T 振幅经济学勘测（三宇宙，宇宙选择规则先于测量，frozen）
   entry_kind: single_hypothesis
@@ -2217,6 +2234,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-CARD-F-TOP20-EXAM
+  module_id: MOD-SIM-024
   card_id: PREREG-CARD-F-TOP20-EXAM
   name_zh: F 车道 top-20 待考池窄考+正考预注册卡（W2-T3 E4 收口批次，st-final3-20260919）
   entry_kind: single_hypothesis
@@ -2243,6 +2261,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-SLICE3-PROTOCOL
+  module_id: MOD-SIM-024
   card_id: PREREG-SLICE3-PROTOCOL
   name_zh: 指标库全扫切片C 预注册协议（执行前钉死）——c1_market.technical_indicator 因子列第3等分 55 列 IC 大海选
   entry_kind: single_hypothesis
@@ -2269,6 +2288,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-CARD-MID-VALLEY-SCREEN
+  module_id: MOD-SIM-024
   card_id: PREREG-CARD-MID-VALLEY-SCREEN
   name_zh: MID 洼地深挖预注册卡——38 可映射候选 × vol_pct 灰度三桶条件 IC 二筛（st-bizmine-mid-20260919，frozen）
   entry_kind: single_hypothesis
@@ -2295,6 +2315,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-CARD-MID-VALLEY-TOP10
+  module_id: MOD-SIM-024
   card_id: PREREG-CARD-MID-VALLEY-TOP10
   name_zh: MID 洼地 top-10 候选预注册卡（10 卡合册，考试门槛 frozen，st-bizmine-mid-20260919）
   entry_kind: single_hypothesis
@@ -2321,6 +2342,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-CARD-B15-BUCKET-SWITCH
+  module_id: MOD-SIM-024
   card_id: PREREG-CARD-B15-BUCKET-SWITCH
   name_zh: B-15 预注册卡——按大盘灰度桶切换组队 前向窗窄测（裁定#361，frozen 先于取数）
   entry_kind: single_hypothesis
@@ -2347,6 +2369,7 @@ card_ledger:
   frozen_at: '2026-09-19'
   conclusion_tier: null
 - experiment_id: CARD-T0-REGIME-PREREG-CARD
+  module_id: MOD-SIM-024
   card_id: T0-REGIME-PREREG-CARD
   name_zh: T0 预注册卡——510300 做T 行情条件化窄测（regime 条件振幅勘测，frozen）
   entry_kind: single_hypothesis
@@ -2373,6 +2396,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-TICK-MATRIX-PREREG-CARD
+  module_id: MOD-SIM-024
   card_id: TICK-MATRIX-PREREG-CARD
   name_zh: tick 矩阵基线轮预注册卡（frozen，先于实验落盘）
   entry_kind: single_hypothesis
@@ -2399,6 +2423,7 @@ card_ledger:
   frozen_at: '2026-09-19'
   conclusion_tier: null
 - experiment_id: CARD-TICK-T0-PREREG-CARD
+  module_id: MOD-SIM-024
   card_id: TICK-T0-PREREG-CARD
   name_zh: TICK-T0 预注册卡（tick 级执行三模型×三标的窄测，frozen 先于任何取数统计）
   entry_kind: single_hypothesis
@@ -2425,6 +2450,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-FAMILY-SUMMARY
+  module_id: MOD-SIM-024
   card_id: PREREG-FAMILY-SUMMARY
   name_zh: L1 第二批预注册·族总卡——量能/统计族 18 档（去重后 15 组）沙箱考试（frozen）
   entry_kind: family
@@ -2451,6 +2477,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-01-OBV
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-01-OBV
   name_zh: L1 第二批预注册卡 prereg_group_01_obv（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2477,6 +2504,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-02-MFI
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-02-MFI
   name_zh: L1 第二批预注册卡 prereg_group_02_mfi（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2503,6 +2531,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-03-VR
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-03-VR
   name_zh: L1 第二批预注册卡 prereg_group_03_vr（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2529,6 +2558,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-04-AD
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-04-AD
   name_zh: L1 第二批预注册卡 prereg_group_04_ad（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2555,6 +2585,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-05-PVT
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-05-PVT
   name_zh: L1 第二批预注册卡 prereg_group_05_pvt（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2581,6 +2612,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-06-WVAD
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-06-WVAD
   name_zh: L1 第二批预注册卡 prereg_group_06_wvad（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2607,6 +2639,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-07-ADOSC
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-07-ADOSC
   name_zh: L1 第二批预注册卡 prereg_group_07_adosc（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2633,6 +2666,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-08-EOM
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-08-EOM
   name_zh: L1 第二批预注册卡 prereg_group_08_eom（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2659,6 +2693,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-09-KVO
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-09-KVO
   name_zh: L1 第二批预注册卡 prereg_group_09_kvo（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2685,6 +2720,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-10-NVI
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-10-NVI
   name_zh: L1 第二批预注册卡 prereg_group_10_nvi（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2711,6 +2747,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-11-PVI
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-11-PVI
   name_zh: L1 第二批预注册卡 prereg_group_11_pvi（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2737,6 +2774,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-12-FORCE-INDEX
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-12-FORCE-INDEX
   name_zh: L1 第二批预注册卡 prereg_group_12_force_index（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2763,6 +2801,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-13-CORREL
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-13-CORREL
   name_zh: L1 第二批预注册卡 prereg_group_13_correl（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2789,6 +2828,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-14-BETA
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-14-BETA
   name_zh: L1 第二批预注册卡 prereg_group_14_beta（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2815,6 +2855,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+  module_id: MOD-SIM-024
   card_id: PREREG-GROUP-15-ROLLVAR-PRICELEVEL
   name_zh: L1 第二批预注册卡 prereg_group_15_rollvar_pricelevel（量能/统计族点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2841,6 +2882,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-EXP-01
+  module_id: MOD-SIM-024
   card_id: P3-B-EXP-01
   name_zh: P3 预注册卡 P3-B-EXP-01（FCT-EXP-001 一致预期EP 点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2867,6 +2909,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-EXP-02
+  module_id: MOD-SIM-024
   card_id: P3-B-EXP-02
   name_zh: P3 预注册卡 P3-B-EXP-02（FCT-EXP-002 修正动量 点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2893,6 +2936,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-EXP-03
+  module_id: MOD-SIM-024
   card_id: P3-B-EXP-03
   name_zh: P3 预注册卡 P3-B-EXP-03（FCT-EXP-003 修正广度 点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2919,6 +2963,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-EXP-04
+  module_id: MOD-SIM-024
   card_id: P3-B-EXP-04
   name_zh: P3 预注册卡 P3-B-EXP-04（FCT-EXP-004 异常覆盖 点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2945,6 +2990,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-EXP-05
+  module_id: MOD-SIM-024
   card_id: P3-B-EXP-05
   name_zh: P3 预注册卡 P3-B-EXP-05（FCT-EXP-005 分歧度 点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2971,6 +3017,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-B-EXP-06
+  module_id: MOD-SIM-024
   card_id: P3-B-EXP-06
   name_zh: P3 预注册卡 P3-B-EXP-06（FCT-EXP-006 评级动量 点火考试，frozen）
   entry_kind: single_hypothesis
@@ -2997,6 +3044,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-01
+  module_id: MOD-SIM-024
   card_id: P3-E1C-01
   name_zh: P3 预注册卡 P3-E1C-01（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3023,6 +3071,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-02
+  module_id: MOD-SIM-024
   card_id: P3-E1C-02
   name_zh: P3 预注册卡 P3-E1C-02（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3049,6 +3098,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-03
+  module_id: MOD-SIM-024
   card_id: P3-E1C-03
   name_zh: P3 预注册卡 P3-E1C-03（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3075,6 +3125,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-04
+  module_id: MOD-SIM-024
   card_id: P3-E1C-04
   name_zh: P3 预注册卡 P3-E1C-04（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3101,6 +3152,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-05
+  module_id: MOD-SIM-024
   card_id: P3-E1C-05
   name_zh: P3 预注册卡 P3-E1C-05（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3127,6 +3179,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-06
+  module_id: MOD-SIM-024
   card_id: P3-E1C-06
   name_zh: P3 预注册卡 P3-E1C-06（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3153,6 +3206,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-07
+  module_id: MOD-SIM-024
   card_id: P3-E1C-07
   name_zh: P3 预注册卡 P3-E1C-07（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3179,6 +3233,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-08
+  module_id: MOD-SIM-024
   card_id: P3-E1C-08
   name_zh: P3 预注册卡 P3-E1C-08（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3205,6 +3260,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-10
+  module_id: MOD-SIM-024
   card_id: P3-E1C-10
   name_zh: P3 预注册卡 P3-E1C-10（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3231,6 +3287,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-11
+  module_id: MOD-SIM-024
   card_id: P3-E1C-11
   name_zh: P3 预注册卡 P3-E1C-11（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3257,6 +3314,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-12
+  module_id: MOD-SIM-024
   card_id: P3-E1C-12
   name_zh: P3 预注册卡 P3-E1C-12（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3283,6 +3341,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-P3-E1C-13
+  module_id: MOD-SIM-024
   card_id: P3-E1C-13
   name_zh: P3 预注册卡 P3-E1C-13（E1C 稳健池候选点火考试，frozen）
   entry_kind: single_hypothesis
@@ -3309,6 +3368,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-T-PREREGISTER
+  module_id: MOD-SIM-024
   card_id: T-PREREGISTER
   name_zh: lane T 预注册卡——做T v2 单假设窄考试「三重共振极值点出手」（frozen）
   entry_kind: single_hypothesis
@@ -3335,6 +3395,7 @@ card_ledger:
   frozen_at: null
   conclusion_tier: null
 - experiment_id: CARD-PREREG-EXAM-CARDS-V0
+  module_id: MOD-SIM-024
   card_id: PREREG-EXAM-CARDS-V0
   name_zh: 情绪指数预注册考试卡草案 v0——S8 领先性卡 + 成分有效性单卡
   entry_kind: family
@@ -3361,32 +3422,36 @@ card_ledger:
   frozen_at: '2026-09-22'
   conclusion_tier: null
 corpus:
-  n: 89
-  headed: 60
-  headless: 29
-  distinct_status_strings: 23
-  in_controlled_vocab: 56
-  registered: 56
+  n: 105
+  headed: 69
+  headless: 36
+  distinct_status_strings: 29
+  in_controlled_vocab: 62
+  registered: 52
   by_token:
-    None: 29
+    active: 4
+    None: 36
     候选: 1
-    frozen: 54
+    frozen: 58
     已封卡 SEALED: 1
-    active: 3
     draft: 1
+    draft_pending_owner: 2
+    LOCK-PENDING: 1
+    '"sample_cards_ready"': 1
   by_disposition:
-    unmapped_headless: 29
-    map: 56
+    needs_adjudication: 3
+    unmapped_headless: 36
+    map: 62
     non_domain: 2
-    needs_adjudication: 2
+    unmatched_alias: 2
   by_state: &id001
     candidate: 1
-    draft: 1
-    frozen: 53
+    draft: 3
+    frozen: 57
     sealed: 1
   by_registered_state: &id002
     candidate: 1
-    frozen: 51
+    frozen: 47
     red: 2
     sealed: 1
     suspended: 1
@@ -3429,10 +3494,26 @@ corpus:
       declared_n_eff:
       - 13
       single_hypothesis_members: 13
+    T0-CEILING:
+      members: 1
+      declared_n_eff: []
+      single_hypothesis_members: 1
     T0-CONDITIONAL:
       members: 1
       declared_n_eff: []
       single_hypothesis_members: 1
+    T0-CONDITIONAL-V2:
+      members: 1
+      declared_n_eff: []
+      single_hypothesis_members: 1
+    T0-CONDITIONAL-V3:
+      members: 1
+      declared_n_eff: []
+      single_hypothesis_members: 1
+    T0-MATERIAL:
+      members: 2
+      declared_n_eff: []
+      single_hypothesis_members: 2
     T0-PRERG:
       members: 2
       declared_n_eff:
@@ -3443,18 +3524,25 @@ corpus:
       declared_n_eff:
       - 1
       single_hypothesis_members: 1
-  family_id_coverage: 43
+  family_id_coverage: 48
   n_eff_coverage: 40
-  lane_coverage: 56
-  card_id_field_coverage: 56
+  lane_coverage: 60
+  card_id_field_coverage: 52
   duplicate_content_groups:
-    5d359d00e153:
-    - docs/_working/2026-09-15-neff-estimator-preregistration.md
-    - docs/_working/archive/2026-09/c_class_scattered/2026-09-15-neff-estimator-preregistration.md
     f6f1f7452600:
     - docs/_working/2026-09-07-tdm-backtest-protocol.md
     - docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
   cards:
+  - path: docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
+    stem: task_card_work_order_policy
+    mapped_state: null
+    disposition: needs_adjudication
+    family_id: null
+    n_eff_declared: null
+    sha12: 98ec72f0063b
+    registered_card_id: null
+    registered_state: null
+    registered: false
   - path: docs/_working/2026-09-07-tdm-backtest-protocol.md
     stem: 2026-09-07-tdm-backtest-protocol
     mapped_state: null
@@ -3462,16 +3550,6 @@ corpus:
     family_id: null
     n_eff_declared: null
     sha12: f6f1f7452600
-    registered_card_id: null
-    registered_state: null
-    registered: false
-  - path: docs/_working/2026-09-15-neff-estimator-preregistration.md
-    stem: 2026-09-15-neff-estimator-preregistration
-    mapped_state: null
-    disposition: unmapped_headless
-    family_id: null
-    n_eff_declared: null
-    sha12: 5d359d00e153
     registered_card_id: null
     registered_state: null
     registered: false
@@ -3941,7 +4019,7 @@ corpus:
     disposition: unmapped_headless
     family_id: null
     n_eff_declared: null
-    sha12: 5d359d00e153
+    sha12: 9cd8d0d5b9a9
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4245,16 +4323,186 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
-  - path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+  - path: docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
+    stem: 2026-09-15-neff-estimator-preregistration
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 554209304e8e
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/emotion_line/prereg_exam_cards_v0.md
     stem: prereg_exam_cards_v0
     mapped_state: frozen
     disposition: map
     family_id: null
     n_eff_declared: null
     sha12: e5b70dae20b8
-    registered_card_id: PREREG-EXAM-CARDS-V0
-    registered_state: frozen
-    registered: true
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
+    stem: pre_registration_card
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 6f090ad8059f
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
+    stem: sector_prereg_exam_cards_v0
+    mapped_state: draft
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: d4922ad65666
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
+    stem: sector_prereg_exam_cards_v1_frozen
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 8dfebf3a6a6f
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+    stem: sector_prereg_exam_cards_v2_frozen
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 7e1cd8d3d541
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+    stem: t0_ceiling_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-CEILING
+    n_eff_declared: null
+    sha12: 4d013a724af0
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+    stem: t0_conditional_v2_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-CONDITIONAL-V2
+    n_eff_declared: null
+    sha12: 225a91dfcb77
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+    stem: t0_conditional_v3_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-CONDITIONAL-V3
+    n_eff_declared: null
+    sha12: a3208f29a5f5
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
+    stem: t0_conditional_prereg_card
+    mapped_state: frozen
+    disposition: map
+    family_id: T0-CONDITIONAL
+    n_eff_declared: null
+    sha12: c847c3a55f6a
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+    stem: T0_MATERIAL_EXAM_CARD_draft
+    mapped_state: draft
+    disposition: map
+    family_id: T0-MATERIAL
+    n_eff_declared: null
+    sha12: 3d7a25d1f00d
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+    stem: ADJ_prereg_resign_two_round
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: ff7888dc0052
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+    stem: T0_MATERIAL_EXAM_CARD_draft
+    mapped_state: draft
+    disposition: map
+    family_id: T0-MATERIAL
+    n_eff_declared: null
+    sha12: 972ad0f3c9bf
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
+    stem: l5_project_cards_20261006
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: ba18f147301a
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/fullconnect_campaign/g_backtest_gpu/09_f66_backtest_prereg_loop.md
+    stem: 09_f66_backtest_prereg_loop
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 7bf869e15d4d
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
+    stem: chief_lease_protocol
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: dd23ab472263
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
+    stem: 92_chief_handover_card_wave2
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 9ca3dfa305db
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/fullscore_night/03_integrated_backtest/prereg_v2.md
+    stem: prereg_v2
+    mapped_state: null
+    disposition: unmatched_alias
+    family_id: null
+    n_eff_declared: null
+    sha12: be31267e866e
+    registered_card_id: null
+    registered_state: null
+    registered: false
   - path: docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
     stem: IBT-PROTOCOL-V1
     mapped_state: null
@@ -4262,6 +4510,16 @@ corpus:
     family_id: null
     n_eff_declared: null
     sha12: 9ab7c545a6eb
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+    stem: 22_fig15_card_lifecycle_charter
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 16a1c22d9f7d
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4295,36 +4553,16 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
-  - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
-    stem: sector_prereg_exam_cards_v0
-    mapped_state: draft
-    disposition: map
+  - path: docs/_working/ultimate_library/b_batch_sample_cards.md
+    stem: b_batch_sample_cards
+    mapped_state: null
+    disposition: unmatched_alias
     family_id: null
     n_eff_declared: null
-    sha12: d4922ad65666
-    registered_card_id: SECTOR-PRERG-DECK-01
-    registered_state: frozen
-    registered: true
-  - path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
-    stem: sector_prereg_exam_cards_v1_frozen
-    mapped_state: frozen
-    disposition: map
-    family_id: null
-    n_eff_declared: null
-    sha12: 8dfebf3a6a6f
-    registered_card_id: SECTOR-PRERG-DECK-01
-    registered_state: frozen
-    registered: true
-  - path: docs/_working/t0_revival/t0_conditional_prereg_card.md
-    stem: t0_conditional_prereg_card
-    mapped_state: frozen
-    disposition: map
-    family_id: T0-CONDITIONAL
-    n_eff_declared: null
-    sha12: c847c3a55f6a
-    registered_card_id: T0-CONDITIONAL
-    registered_state: frozen
-    registered: true
+    sha12: c8b0bfd0af88
+    registered_card_id: null
+    registered_state: null
+    registered: false
   - path: docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
     stem: comment_pool_alpha101_cards
     mapped_state: null
@@ -4353,15 +4591,15 @@ counts:
   total_edges: 30
   terminal_states: 4
   production: 13
-  cards_total: 89
+  cards_total: 105
   by_state: *id001
   registered_by_state: *id002
   registered_entries_in_ledger: 56
-  corpus_files_registered: 56
-  unregistered_declarable: 0
-  state_undeclared_headless: 29
-  needs_adjudication: 2
-  unmatched_alias: 0
+  corpus_files_registered: 52
+  unregistered_declarable: 10
+  state_undeclared_headless: 36
+  needs_adjudication: 3
+  unmatched_alias: 2
   non_domain_excluded: 2
   by_verified_scope:
     structure: 36
@@ -4384,12 +4622,21 @@ counts:
     forbidden: 13
   in_register_rulings: 0
   uncited_rulings: []
-  pending_registration: 0
+  pending_registration: 10
 pending_registration:
-  unregistered_declarable: []
+  unregistered_declarable:
+  - docs/_working/archive/2026-10/emotion_line/prereg_exam_cards_v0.md
+  - docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
+  - docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
+  - docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+  - docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+  - docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+  - docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+  - docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
+  - docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
   state_undeclared_headless:
   - docs/_working/2026-09-07-tdm-backtest-protocol.md
-  - docs/_working/2026-09-15-neff-estimator-preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
   - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
@@ -4412,21 +4659,32 @@ pending_registration:
   - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  - docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
+  - docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+  - docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
+  - docs/_working/fullconnect_campaign/g_backtest_gpu/09_f66_backtest_prereg_loop.md
+  - docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
+  - docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
+  - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
   - docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
   - docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
   needs_adjudication:
+  - docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
   - docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
   - docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
-  unmatched_alias: []
+  unmatched_alias:
+  - docs/_working/fullscore_night/03_integrated_backtest/prereg_v2.md
+  - docs/_working/ultimate_library/b_batch_sample_cards.md
   non_domain_excluded:
   - docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_protocol.md
   - docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
   unmapped_cards:
+  - docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
   - docs/_working/2026-09-07-tdm-backtest-protocol.md
-  - docs/_working/2026-09-15-neff-estimator-preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
   - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
@@ -4452,10 +4710,20 @@ pending_registration:
   - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  - docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
+  - docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+  - docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
+  - docs/_working/fullconnect_campaign/g_backtest_gpu/09_f66_backtest_prereg_loop.md
+  - docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
+  - docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
+  - docs/_working/fullscore_night/03_integrated_backtest/prereg_v2.md
   - docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
+  - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  - docs/_working/ultimate_library/b_batch_sample_cards.md
   - docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
   - docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
   reason_zh: unregistered_declarable=卡头可判态却无登记条目（本役回填欠账，registry 期必须清空，CV-HOST 硬腿判红）；state_undeclared_headless=卡头无
