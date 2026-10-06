@@ -64,7 +64,7 @@ budget_caps:
   t3_calibration_points: 200             # T3a-T0 标定跑：唯一用途=实测 s/格 回填下行
   t3_tier1_points: 7400                  # T3a-T1 分层粗扫
   t3_tier2_points: 1800                  # T3a-T2 主效应层细化+全档成本门复验
-  t3_per_point_seconds_measured: null    # T3a-T0 实测回填位（null 时 t3-t1/t3-t2 禁开跑，fail-closed）
+  t3_per_point_seconds_measured: 9.96    # T3a-T0 实测回填（st-t3series-20261006：基线批=grid_20261006-122117，1992.1s/200点=9.96s/点，200/200 全活 0 死口径；缺陷修复袋 aea38cbee4 版执行器实测；null 时 t3-t1/t3-t2 禁开跑，fail-closed）
   wall_clock_hours: 59                   # 沿主册窗口口径
   effective_duty_pct: 80
   single_job_wall_clock_cap_hours: 12
