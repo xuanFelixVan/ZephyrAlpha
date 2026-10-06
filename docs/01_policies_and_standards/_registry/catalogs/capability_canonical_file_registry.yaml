@@ -62362,4 +62362,8 @@ creation_tokens:
   created_by: st-fig16-20261005
   capability: governance_legislation_map
   merge_evaluation: 同真源派生：图16 图族 gate 的 ALGO_FLOW 外部机读块（P2-1 契约出仓件），非第二实现
+- file: docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
+  token: st-t3series-l5cards-20261006
+  created_by: st-t3series-20261006
+
 di_seam_exemptions: []
