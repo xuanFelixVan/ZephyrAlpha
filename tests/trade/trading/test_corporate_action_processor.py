@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-004 | docs/03_modules/_domain_trading/corporate_action_processor/blueprint.md
 # [MODULE] tests.trading.test_corporate_action_processor
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.corporate_action_processor
@@ -11,7 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-TRADING-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=TEST-MOD-TRADING-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-TRADING-004 Corporate Action Processor 单元测试.
 
@@ -534,7 +533,7 @@ class TestImmutability:
             action_type=CorporateActionType.CASH_DIVIDEND,
             dividend_per_share="0.5",
         )
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             action.symbol = "X"  # type: ignore[misc]
 
         adj = PositionAdjustment(
@@ -547,5 +546,5 @@ class TestImmutability:
             adjusted_avg_cost=Decimal("9.5"),
             cash_delta=Decimal("50"),
         )
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             adj.symbol = "X"  # type: ignore[misc]

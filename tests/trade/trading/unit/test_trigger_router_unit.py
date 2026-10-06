@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_trigger_router_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-TEST-698 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_trigger_router
 # [DOMAIN] D_TRADING
 # [STABILITY] evolving
@@ -131,11 +130,11 @@ class TestTriggerHandlerSpec:
         assert spec.description == ""
 
     def test_handler_required(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             TriggerHandlerSpec(handler="")
 
     def test_extra_field_forbidden(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             TriggerHandlerSpec(
                 handler="pkg.mod.func",
                 unknown_field="x",  # type: ignore[call-arg]
@@ -143,7 +142,7 @@ class TestTriggerHandlerSpec:
 
     def test_frozen(self):
         spec = TriggerHandlerSpec(handler="pkg.mod.func")
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             spec.handler = "tampered"  # type: ignore[misc]
 
 

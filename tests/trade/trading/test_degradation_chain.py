@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_degradation_chain | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §3.3
 # [MODULE] tests.trading.test_degradation_chain
 # [INVARIANTS] 阈值真源=蓝图§3.3四级降级链;WARNING=Lv1/CRITICAL=Lv2/EMERGENCY=Lv3
 # [MODIFY-GUARD] src/zephyr/trading/resource_optimization.py

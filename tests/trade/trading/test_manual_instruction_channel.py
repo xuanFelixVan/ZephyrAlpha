@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-011 | docs/03_modules/_domain_trading/manual_instruction_channel/blueprint.md | §test
 # [MODULE] tests.trading.test_manual_instruction_channel
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.manual_instruction_channel
@@ -12,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_manual_instruction_channel.py
-# [A_test] module_id: MOD-TRADING-011 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: TEST-MOD-TRADING-011 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-TRADING-011 单元测试: ManualInstructionChannel — C-013 外部指令盯盘（人工指令通道）。
 
@@ -111,7 +110,7 @@ class TestInstructionSchema:
 
     def test_instruction_frozen(self) -> None:
         ins = _instruction()
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             ins.quantity = Decimal("1")  # type: ignore[misc]
 
 

@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_protection_index | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §17
 # [MODULE] tests.test_protection_index
 # [DOMAIN] D_TRADING
 # [INVARIANTS] none
@@ -35,7 +34,7 @@ try:
 
     _IMPORT_OK = True
     _IMPORT_REASON = ""
-except Exception as exc:  # noqa: BLE001
+except Exception as exc:
     _IMPORT_OK = False
     _IMPORT_REASON = str(exc)
 
@@ -92,7 +91,7 @@ class TestProtectionEntry:
         assert entry.owner_module == "MOD-INF-033"
 
     def test_extra_fields_forbidden(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             ProtectionEntry(path="x", unknown_field="y")
 
 
@@ -110,7 +109,7 @@ class TestIndexStats:
         assert stats.last_rebuild_time == 0.0
 
     def test_extra_fields_forbidden(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             IndexStats(total_entries=1, rogue_field=True)
 
 

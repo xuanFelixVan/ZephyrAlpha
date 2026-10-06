@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_capability_registry_cache | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §16.3
 # [MODULE] tests.trading.test_capability_registry
 # [INVARIANTS] 缓存写失效无脏读;TTL<=0 永不命中
 # [MODIFY-GUARD] src/zephyr/trading/capability_registry.py

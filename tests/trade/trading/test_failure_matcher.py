@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_failure_matcher | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-TEST-384 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_failure_matcher
 # [DOMAIN] D_TRADING
 # [INVARIANTS] FailureMatcher.match返回FailureMatch; probability∈[0,1]; unknown category for no match

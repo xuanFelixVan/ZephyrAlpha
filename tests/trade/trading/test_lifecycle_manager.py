@@ -1,8 +1,7 @@
-# [A_test] module_id: MOD-GOV_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
+# [A_test] module_id: MOD-GOV_lifecycle_manager-TEST_LIFECYCLE_MANAGER-XTE-570EC8 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
 from __future__ import annotations
 
-# [A_test] module_id=MOD-GOV_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
+# [A_test] module_id=MOD-GOV_lifecycle_manager-TEST_LIFECYCLE_MANAGER-XTE-570EC8 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.test_lifecycle_manager
 # [DOMAIN] D_TRADING
 # [INVARIANTS] none

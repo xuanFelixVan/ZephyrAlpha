@@ -1,0 +1,708 @@
+# [TTL] permanent
+"""验证 runner v1 单元测试（P1-2）——方法推导/holdout 切分/两土规/lag 开关/dry-run 零写入。
+
+真源: docs/_working/2026-09-09-node-backtest-governance.md §8.2 P1-2
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime
+from pathlib import Path
+
+import pytest
+
+from zephyr.trading.validation.runner import (
+    ValidationConfig,
+    ValidationError,
+    apply_exit_soil_rules,
+    apply_soil_rules,
+    compute_exec_metrics,
+    compute_exit_counterfactual_metrics,
+    derive_method,
+    holdout_cutoff,
+    load_exec_nodes,
+    load_xflow_nodes,
+    partition_by_holdout,
+    run_validation,
+)
+
+AS_OF = datetime(2026, 9, 9, 12, 0, 0)
+
+
+# ── 节点清单与方法推导 ────────────────────────────────────────────────────
+
+
+def test_load_exec_nodes_first_batch_baseline_excluding_crypto():
+    nodes = load_exec_nodes()
+    # 基线 14 只增不减（地图演化可增 L4 节点；2026-09-12 实测 15——地图增长线扩容后未同步本基线，按下限断言收口）
+    assert len(nodes) >= 14, f"首批基线 14 只增不减: {len(nodes)}"
+    assert all(not n["node_id"].startswith("TDM-C-") for n in nodes)
+    assert any(n["node_id"] == "TDM-E-L4-03" for n in nodes)
+
+
+def test_derive_method_mapping():
+    assert derive_method({"layer": "L4"}) == "exec_quality"
+    assert derive_method({"layer": "L1", "flow": "exit_flow"}) == "exit_counterfactual"
+    assert derive_method({"layer": "L1", "flow": "portfolio_flow"}) == "portfolio_attribution"
+    assert derive_method({"layer": "L1", "node_id": "TDM-E-L1-S1"}) == "sensor_monotonicity"
+    assert derive_method({"layer": "L1", "node_id": "TDM-E-L1-AGG"}) == "agg_discrimination"
+    assert derive_method({"layer": "L2"}) == "agg_discrimination"
+
+
+# ── holdout 切分（PB-08：最近 12 个月保密考卷）────────────────────────────
+
+
+def test_holdout_cutoff_twelve_months():
+    assert holdout_cutoff(AS_OF, 12) == datetime(2025, 9, 9)
+    assert holdout_cutoff(datetime(2026, 3, 31), 12) == datetime(2025, 3, 28)  # 月底安全截断
+
+
+def test_partition_splits_at_cutoff():
+    fills = [
+        {"timestamp": "2025-09-09", "symbol": "x", "side": "buy", "price": 10},
+        {"timestamp": "2025-09-10", "symbol": "x", "side": "buy", "price": 10},
+        {"timestamp": "2026-08-14 09:30", "symbol": "x", "side": "buy", "price": 10},
+        {"timestamp": "", "symbol": "x", "side": "buy", "price": 10},
+    ]
+    inside, locked = partition_by_holdout(fills, datetime(2025, 9, 9))
+    assert len(inside) == 1 and inside[0]["timestamp"] == "2025-09-09"
+    assert len(locked) == 3  # holdout 内 + 脏时间戳（宁严勿漏）
+
+
+# ── 两土规（PB-13 降级裁定）───────────────────────────────────────────────
+
+
+def test_soil_rule_insufficient_samples():
+    sig, verdict, reason = apply_soil_rules({"triggers": 10, "slip_bp_mean": 5.0}, ValidationConfig())
+    assert sig == "insufficient_samples" and verdict == "pending" and reason == "insufficient_samples"
+
+
+def test_soil_rule_oos_decay_suspect():
+    metrics = {"triggers": 100, "slip_bp_mean": 30.0}
+    first = {"slip_bp_mean": 10.0}  # 衰减 (30-10)/10 = 200% >= 50%
+    sig, verdict, reason = apply_soil_rules(metrics, ValidationConfig(), first_metrics=first)
+    assert sig == "oos_decay_suspect" and verdict == "pending" and reason == "oos_decay_suspect"
+
+
+def test_soil_rule_verdict_by_slippage():
+    cfg = ValidationConfig()
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 8.0}, cfg) == ("ok", "valid", "slip_within_tolerance")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 30.0}, cfg) == ("ok", "pending", "slip_marginal")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": 88.0}, cfg) == ("ok", "noise", "slip_above_tolerance")
+    assert apply_soil_rules({"triggers": 50, "slip_bp_mean": None}, cfg) == ("", "pending", "reference_price_missing")
+
+
+def test_compute_exec_metrics_direction_and_skip():
+    fills = [
+        {"symbol": "A", "side": "buy", "price": 11.0},  # 劣于基准 10%
+        {"symbol": "B", "side": "sell", "price": 9.0},  # 卖低于基准=劣 10%
+        {"symbol": "C", "side": "buy", "price": 10.0},  # 无参考价 → 跳过滑点
+    ]
+    m = compute_exec_metrics(fills, ref_prices={"A": 10.0, "B": 10.0})
+    assert m["triggers"] == 3
+    assert m["slip_samples"] == 2
+    assert m["slip_bp_mean"] == 1000.0  # 两侧都劣 10% → +1000bp
+    assert m["fill_rate"] is None  # 未成交数不可得，如实置空
+
+
+# ── 批入口（dry-run 零写入 + 14 行产出）──────────────────────────────────
+
+
+def test_run_validation_dry_run_no_write(tmp_path: Path):
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-t1.json").write_text(
+        json.dumps(
+            {
+                "run_id": "bt-t1",
+                "strategy_id": "test",
+                "trade_log": [{"timestamp": "2026-06-01", "symbol": "A", "side": "buy", "price": 10.0}],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    def _must_not_write(table, columns, tsv):
+        raise AssertionError("dry-run 禁止写库")
+
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),  # 显式旧模式（一期 12mo 行为锚）
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        dry_run=True,
+        writer=_must_not_write,
+    )
+    assert len(report.rows) >= 14
+    assert all(r["verdict"] == "pending" for r in report.rows)
+    assert all(r["significance"] == "insufficient_samples" for r in report.rows)
+    assert all(r["verdict_reason"] == "insufficient_samples" for r in report.rows)  # R2 判定链代码生成
+    assert all("holdout" in r["notes"] for r in report.rows)  # notes 如实披露锁窗原因
+    assert report.written is False
+    assert report.snapshot_commit  # 快照绑定（PB-06）必带 commit 号
+
+
+def test_run_validation_writes_tsv(tmp_path: Path):
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-t2.json").write_text(json.dumps({"run_id": "bt-t2", "trade_log": []}), encoding="utf-8")
+    captured = {}
+
+    def fake_writer(table, columns, tsv):
+        captured["table"], captured["columns"], captured["tsv"] = table, columns, tsv
+        return True
+
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        writer=fake_writer,
+        decay_check=False,
+    )  # 单测不依赖 CH（衰减巡检走真实台账查询）
+    assert report.written is True
+    assert captured["table"] == "c1_backtest.node_verdict"
+    lines = captured["tsv"].decode("utf-8").strip().split("\n")
+    assert len(lines) >= 14
+    assert all(len(l.split("\t")) == 13 for l in lines)
+    assert "\\N" in lines[0]  # hit_ratio=None → CH TSV NULL 转义（空串会变 0，实测踩坑）
+
+
+def test_run_validation_decay_tail_hook(tmp_path: Path, monkeypatch):
+    """衰减巡检=验证批尾随事件（裁定 2026-09-10）：写库成功后自动跑，失败不阻断验证批。"""
+    import zephyr.trading.validation.decay_watch as dw
+
+    # 台账查询打桩（单测不依赖真实 CH）：基线 0.60 → 最新 0.55，未达 50% 衰减线
+    monkeypatch.setattr(
+        dw.ch_writer,
+        "query",
+        lambda q, timeout=30: (
+            "TDM-E-L1-S1\tvalid\t2025-01-01\tVAL-A\t2025-01-02 10:00:00\t0.60\texec_quality\n"
+            "TDM-E-L1-S1\tvalid\t2026-06-01\tVAL-B\t2026-06-02 10:00:00\t0.55\texec_quality\n"
+        ),
+    )
+
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-t3.json").write_text(json.dumps({"run_id": "bt-t3", "trade_log": []}), encoding="utf-8")
+    writes: list[str] = []
+
+    def counting_writer(table, columns, tsv):
+        writes.append(table)
+        return True
+
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        writer=counting_writer,
+        decay_check=True,
+    )
+    assert report.written is True
+    assert report.decay is not None  # 钩子已执行且吃到打桩台账
+    assert report.decay["checked"] == 2
+    assert report.decay["decayed"] == 0  # 未达 50% 衰减线 → 不追加 decaying 行
+    assert len(writes) == 1  # 只写了验证批 14 行，无 decaying 追加
+    # dry-run 不触发巡检（未写库无新数据可比）
+    report_dry = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF),
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        dry_run=True,
+        writer=counting_writer,
+        decay_check=True,
+    )
+    assert report_dry.decay is None
+
+
+# ── 衰减自动巡检（PB-14）──────────────────────────────────────────────────
+
+
+class TestDecayWatch:
+    TSV_HEADER = None  # ledger TSV 无表头（ch_writer TSV 惯例）
+
+    def _row(self, node, verdict, hit, win, method="exec_quality", at="2026-01-01 10:00:00"):
+        return {
+            "node_id": node,
+            "verdict": verdict,
+            "window_end": win,
+            "run_id": f"VAL-{win}",
+            "verdict_at": at,
+            "hit_ratio": hit,
+            "validation_method": method,
+        }
+
+    def test_detect_decay_over_threshold(self):
+        from zephyr.trading.validation.decay_watch import detect_decays
+
+        rows = [
+            self._row("TDM-E-L1-S1", "valid", 0.80, "2025-01-01"),
+            self._row("TDM-E-L1-S1", "valid", 0.30, "2026-01-01", at="2026-01-01 10:00:00"),  # 衰减 62.5%
+            self._row("TDM-E-L4-03", "valid", 0.90, "2025-01-01"),
+            self._row("TDM-E-L4-03", "valid", 0.70, "2026-01-01", at="2026-01-01 10:00:00"),  # 衰减 22% 未达线
+        ]
+        out = detect_decays(rows)
+        assert len(out) == 1
+        assert out[0]["node_id"] == "TDM-E-L1-S1"
+        assert out[0]["decay"] >= 0.50
+
+    def test_no_baseline_no_verdict(self):
+        from zephyr.trading.validation.decay_watch import detect_decays
+
+        rows = [
+            self._row("TDM-X-S1", "pending", None, "2026-01-01"),
+            self._row("TDM-X-S1", "valid", None, "2026-02-01", at="2026-02-01 10:00:00"),  # 无基线值不判
+        ]
+        assert detect_decays(rows) == []
+
+    def test_run_decay_check_dry_run_and_write(self):
+        from zephyr.trading.validation.decay_watch import run_decay_check
+
+        tsv = (
+            "TDM-F-C1\tvalid\t2025-01-01\tVAL-A\t2025-01-02 10:00:00\t0.60\tportfolio_attribution\n"
+            "TDM-F-C1\tvalid\t2026-06-01\tVAL-B\t2026-06-02 10:00:00\t0.20\tportfolio_attribution\n"
+        )
+        captured = {}
+        report = run_decay_check(
+            ledger_tsv=tsv, dry_run=True, writer=lambda t, c, b: captured.update(table=t, tsv=b) or True
+        )
+        assert report["decayed"] == 1 and report["written"] is False
+        report2 = run_decay_check(
+            ledger_tsv=tsv, as_of=AS_OF, writer=lambda t, c, b: captured.update(table=t, tsv=b) or True
+        )
+        assert report2["written"] is True
+        assert captured["table"] == "c1_backtest.node_verdict"
+        line = captured["tsv"].decode("utf-8").strip().split("\n")[0].split("\t")
+        assert line[4] == "TDM-F-C1" and line[9] == "decaying"
+        assert line[8] == "oos_decay_suspect"
+        assert line[10] == "oos_decay_suspect"  # verdict_reason（R2 判定链代码生成）
+        assert line[5] == "portfolio_attribution"  # 沿用节点原验证方法
+        assert "衰减" in line[12]
+
+
+# ── 备忘 96 批 2：衰减巡检按 materiality 分档接线 ──────────────────────────
+
+_TIER_CASES = [
+    # (node_id, baseline_hit, latest_hit) —— 两个节点都达衰减线，靠档位区分是否被扫到
+    ("TDM-E-L1", 0.80, 0.30),  # critical → monthly
+    ("TDM-E-L4-09", 0.90, 0.40),  # critical → monthly
+    ("TDM-X-S9", 0.60, 0.20),  # normal → semiannual
+]
+
+
+def _tier_tsv() -> str:
+    return "".join(
+        f"{nid}\tvalid\t2025-01-01\tVAL-A\t2025-01-02 10:00:00\t{b}\tagg_discrimination\n"
+        f"{nid}\tvalid\t2026-06-01\tVAL-B\t2026-06-02 10:00:00\t{l}\tagg_discrimination\n"
+        for nid, b, l in _TIER_CASES
+    )
+
+
+def test_load_node_scan_tiers_follows_materiality():
+    """档位表取自地图真源：critical 节点=monthly，normal 节点=semiannual。"""
+    from zephyr.trading.validation.decay_watch import load_node_scan_tiers
+
+    tiers = load_node_scan_tiers()
+    assert tiers, "地图真源应已回填 decay_scan_frequency（备忘 96 批 1）"
+    assert set(tiers.values()) <= {"monthly", "quarterly", "semiannual"}
+    # 批 1 回填事实：6 个 critical 节点月扫（断言用下限+档位存在性，不写死总数）
+    critical = [n for n, f in tiers.items() if f == "monthly"]
+    assert len(critical) >= 1, "至少应有 critical 节点挂月扫"
+    assert len(tiers) >= 100, f"地图节点应已全量分档，实得 {len(tiers)}"
+
+
+def test_detect_decays_filters_by_tier():
+    """按档扫描：monthly 档只扫 critical 节点，semiannual 档只扫 normal 节点。"""
+    from zephyr.trading.validation.decay_watch import detect_decays
+
+    rows = [
+        {
+            "node_id": nid,
+            "verdict": "valid",
+            "window_end": w,
+            "run_id": f"VAL-{w}",
+            "verdict_at": f"{w} 10:00:00",
+            "hit_ratio": h,
+            "validation_method": "agg_discrimination",
+        }
+        for nid, b, l in _TIER_CASES
+        for w, h in (("2025-01-01", b), ("2026-06-01", l))
+    ]
+    tiers = {"TDM-E-L1": "monthly", "TDM-E-L4-09": "monthly", "TDM-X-S9": "semiannual"}
+
+    monthly = detect_decays(rows, scan_frequency="monthly", tiers=tiers)
+    assert {d["node_id"] for d in monthly} == {"TDM-E-L1", "TDM-E-L4-09"}
+
+    semiannual = detect_decays(rows, scan_frequency="semiannual", tiers=tiers)
+    assert [d["node_id"] for d in semiannual] == ["TDM-X-S9"]
+
+    # 不传档位=全量扫描（旧行为向后兼容）
+    assert len(detect_decays(rows)) == 3
+
+
+def test_detect_decays_tier_requires_tiers_fail_closed():
+    """给了 scan_frequency 却不给档位表 → 报错，不静默退化成全量扫描。"""
+    import pytest
+
+    from zephyr.trading.validation import decay_watch
+
+    with pytest.raises(decay_watch.ValidationError):
+        decay_watch.detect_decays([], scan_frequency="monthly", tiers=None)
+    with pytest.raises(decay_watch.ValidationError):
+        decay_watch.detect_decays([], scan_frequency="weekly", tiers={})
+
+
+def test_run_decay_check_tier_end_to_end():
+    """整链：按档扫描 → 只写该档 decaying 行，run_id 带档位后缀，notes 留档位痕迹。"""
+    from zephyr.trading.validation.decay_watch import run_decay_check
+
+    captured = {}
+    tiers = {"TDM-E-L1": "monthly", "TDM-E-L4-09": "monthly", "TDM-X-S9": "semiannual"}
+    report = run_decay_check(
+        ledger_tsv=_tier_tsv(),
+        as_of=AS_OF,
+        scan_frequency="monthly",
+        tiers=tiers,
+        writer=lambda t, c, b: captured.update(table=t, tsv=b) or True,
+    )
+    assert report["decayed"] == 2 and report["written"] is True
+    assert report["scan_frequency"] == "monthly"
+    assert report["scanned_nodes"] == 2
+    lines = captured["tsv"].decode("utf-8").strip().split("\n")
+    assert len(lines) == 2
+    assert all(line.split("\t")[4].startswith("TDM-E-") for line in lines)
+    assert "DECAY-20260909-120000-MONTHLY" in lines[0]
+    assert "monthly 档巡检" in lines[0]
+
+
+# ── 第二批：X 流（exit_counterfactual，Owner 2026-09-10 指令 T3）──────────
+
+_XFLOW_BASELINE_18 = {
+    "TDM-X-S1",
+    "TDM-X-S1-01",
+    "TDM-X-S1-02",
+    "TDM-X-S1-03",
+    "TDM-X-S1-04",
+    "TDM-X-S1-05",
+    "TDM-X-S1-06",
+    "TDM-X-S2",
+    "TDM-X-S2-01",
+    "TDM-X-S2-02",
+    "TDM-X-S2-03",
+    "TDM-X-S2-04",
+    "TDM-X-S2-05",
+    "TDM-X-S2-06",
+    "TDM-X-R1",
+    "TDM-X-R1-01",
+    "TDM-X-R1-02",
+    "TDM-X-R1-03",
+}
+
+
+def test_load_xflow_nodes_covers_baseline():
+    """X 流清单：基线 18 节点全在 + flow 全为 exit_flow；地图演化新增节点
+    （如 TDM-X-FLOW）自动入批，断言用下限守卫不写死总数。"""
+    nodes = load_xflow_nodes()
+    ids = {n["node_id"] for n in nodes}
+    missing = _XFLOW_BASELINE_18 - ids
+    assert not missing, f"基线 X 流节点缺失: {missing}"
+    assert len(nodes) >= 18, f"X 流至少应含基线 18: {len(nodes)}"
+    assert all(n["flow"] == "exit_flow" for n in nodes)
+    assert "TDM-X-R1-03" in ids  # 护盘加仓白名单（名义 exit_flow，消融方向注意）
+
+
+def test_derive_method_xflow_all_exit_counterfactual():
+    for n in load_xflow_nodes():
+        assert derive_method(n) == "exit_counterfactual", n["node_id"]
+    # 回归：L4 优先级最高不受影响
+    assert derive_method({"layer": "L4", "flow": "exit_flow"}) == "exec_quality"
+
+
+def test_exit_metrics_no_ablation_degrades_pending():
+    """对照未建时诚实降级：triggers=卖出流水数、avoided_amount=None → pending。"""
+    fills = [{"side": "sell", "price": 10.0} for _ in range(50)]
+    m = compute_exit_counterfactual_metrics(fills, ablation_diff=None)
+    assert m["triggers"] == 50 and m["avoided_amount"] is None
+    sig, verdict, reason = apply_exit_soil_rules(m, ValidationConfig())
+    assert (
+        sig == "" and verdict == "pending" and reason == "counterfactual_missing"
+    )  # 越过样本量闸门后，对照缺失=保持 pending（不造假）
+
+
+def test_exit_metrics_with_ablation_diff_and_rules():
+    """双净值差输入：避损额口径 + 土规映射 valid/noise/样本不足。"""
+    fills = [{"side": "sell"}] * 50
+    m = compute_exit_counterfactual_metrics(fills, ablation_diff=[100.0, -20.0, 30.0])
+    assert m["avoided_amount"] == 110.0 and m["ablation_samples"] == 3
+    # 对照样本 <30 → insufficient_samples（触发数够但对照序列不够）
+    assert apply_exit_soil_rules(m, ValidationConfig()) == ("insufficient_samples", "pending", "insufficient_samples")
+    m2 = compute_exit_counterfactual_metrics(fills, ablation_diff=[1.0] * 30)
+    assert apply_exit_soil_rules(m2, ValidationConfig()) == ("ok", "valid", "counterfactual_confirmed")  # 避损>0
+    m3 = compute_exit_counterfactual_metrics(fills, ablation_diff=[-1.0] * 30)
+    assert apply_exit_soil_rules(m3, ValidationConfig()) == ("ok", "noise", "avoided_negative")  # 风控反而更差
+    # 触发<30 → insufficient_samples（样本量闸门最前）
+    m4 = compute_exit_counterfactual_metrics([{"side": "sell"}] * 10, ablation_diff=[1.0] * 30)
+    assert apply_exit_soil_rules(m4, ValidationConfig()) == ("insufficient_samples", "pending", "insufficient_samples")
+    # 衰减闸门：首验避损 100 → 现值 40（衰减 60% ≥ 50%）
+    m5 = compute_exit_counterfactual_metrics(fills, ablation_diff=[1.0] * 30)
+    m5["avoided_amount"] = 40.0
+    first = {"avoided_amount": 100.0}
+    assert apply_exit_soil_rules(m5, ValidationConfig(), first_metrics=first) == (
+        "oos_decay_suspect",
+        "pending",
+        "oos_decay_suspect",
+    )
+
+
+def test_run_validation_xflow_dry_run_no_write(tmp_path: Path):
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-x1.json").write_text(
+        json.dumps(
+            {
+                "run_id": "bt-x1",
+                "strategy_id": "test",
+                "trade_log": [{"timestamp": "2026-06-01", "symbol": "A", "side": "sell", "price": 10.0}],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    def _must_not_write(table, columns, tsv):
+        raise AssertionError("dry-run 禁止写库")
+
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF),  # 默认配置=锚点已启用（D=2026-09-09）
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        dry_run=True,
+        writer=_must_not_write,
+        batch="XFLOW",
+    )
+    assert len(report.rows) >= 18  # 地图演化可增节点，基线 18 只增不减
+    assert {r["node_id"] for r in report.rows} >= _XFLOW_BASELINE_18
+    assert all(r["validation_method"] == "exit_counterfactual" for r in report.rows)
+    assert all(r["verdict"] == "pending" for r in report.rows)
+    assert all(r["significance"] == "insufficient_samples" for r in report.rows)
+    assert all("定稿锚点 D=2026-09-09" in r["notes"] for r in report.rows)  # 锚点披露（Owner 2026-09-09 放行）
+    assert all("对照数据未就绪" in r["notes"] for r in report.rows)  # 消融降级披露
+    assert report.written is False
+
+
+def test_run_validation_xflow_writes_tsv(tmp_path: Path):
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-x2.json").write_text(json.dumps({"run_id": "bt-x2", "trade_log": []}), encoding="utf-8")
+    captured = {}
+
+    def fake_writer(table, columns, tsv):
+        captured["table"], captured["columns"], captured["tsv"] = table, columns, tsv
+        return True
+
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF),
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        writer=fake_writer,
+        decay_check=False,
+        batch="XFLOW",
+        ablation_diff=[5.0] * 40,
+    )  # 默认锚点启用；2026-06 流水 D 前全锁 → 仍按样本闸门 pending
+    assert report.written is True
+    assert captured["table"] == "c1_backtest.node_verdict"
+    lines = captured["tsv"].decode("utf-8").strip().split("\n")
+    assert len(lines) >= 18  # 地图演化可增节点
+    assert all(len(l.split("\t")) == 13 for l in lines)
+    row = lines[0].split("\t")
+    assert row[5] == "exit_counterfactual"
+    assert row[4].startswith("TDM-X-")
+    assert "\\N" in lines[0]  # NULL 转义不可回退
+    decoded = captured["tsv"].decode("utf-8")
+    assert "定稿锚点 D=2026-09-09" in decoded  # 锚点披露进台账 notes
+
+
+def test_run_validation_batch_regression_and_guard(tmp_path: Path):
+    """batch 默认 L4 行为不变（一期 14 行回归锚）+ 非法 batch 拒绝。"""
+    artifacts = tmp_path / "art"
+    artifacts.mkdir()
+    (artifacts / "bt-r1.json").write_text(json.dumps({"run_id": "bt-r1", "trade_log": []}), encoding="utf-8")
+    report = run_validation(
+        cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),
+        artifacts_dir=artifacts,
+        archive_root=tmp_path / "runs",
+        dry_run=True,
+        writer=lambda *a: True,
+    )
+    assert len(report.rows) >= 14  # 基线 14 只增不减（地图演化，2026-09-12 实测 15）
+    assert all(r["validation_method"] == "exec_quality" for r in report.rows)
+    with pytest.raises(ValidationError):
+        run_validation(
+            cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),
+            artifacts_dir=artifacts,
+            archive_root=tmp_path / "runs",
+            dry_run=True,
+            batch="NOPE",
+        )
+
+
+# ── exec 滑点 v2 口径（遗留④，2026-09-10）────────────────────────────────
+
+
+class TestExecMetricsV2Basis:
+    """decision_price 优先 + VWAP 兜底 + slip_basis 口径标注。"""
+
+    def test_decision_price_takes_priority(self):
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0, "decision_price": 10.0}]
+        m = compute_exec_metrics(fills, ref_prices={"A": 9.0})  # 若错用 VWAP 会得 +2000bp
+        assert m["slip_bp_mean"] == 1000.0  # (11-10)/10 = +1000bp（劣于决策价）
+        assert m["slip_basis"] == "decision_price"
+
+    def test_sell_direction_negative_when_better(self):
+        fills = [{"symbol": "A", "side": "sell", "price": 10.2, "decision_price": 10.0}]
+        m = compute_exec_metrics(fills)
+        assert m["slip_bp_mean"] == -200.0  # 卖高于决策价=负 bp=优于决策价（v1 方向约定）
+        fills2 = [{"symbol": "A", "side": "sell", "price": 9.9, "decision_price": 10.0}]
+        assert compute_exec_metrics(fills2)["slip_bp_mean"] == 100.0  # 卖低于决策价=劣
+
+    def test_vwap_fallback_for_legacy_fills(self):
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0}]  # 旧产物无 decision_price
+        m = compute_exec_metrics(fills, ref_prices={"A": 10.0})
+        assert m["slip_bp_mean"] == 1000.0
+        assert m["slip_basis"] == "vwap_proxy"
+
+    def test_mixed_basis_annotation(self):
+        fills = [
+            {"symbol": "A", "side": "buy", "price": 11.0, "decision_price": 10.0},
+            {"symbol": "B", "side": "buy", "price": 11.0},  # 旧产物→VWAP
+        ]
+        m = compute_exec_metrics(fills, ref_prices={"B": 10.0})
+        assert m["slip_bp_mean"] == 1000.0
+        assert m["slip_basis"] == "mixed(dp=1,vwap=1)"
+
+    def test_no_basis_skipped_honestly(self):
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0}]  # 无 decision_price 无 ref
+        m = compute_exec_metrics(fills)
+        assert m["slip_bp_mean"] is None
+        assert m["slip_basis"] is None
+
+    def test_bad_decision_price_falls_back(self):
+        """decision_price<=0/脏值 → 回落 VWAP（不猜不炸）。"""
+        fills = [{"symbol": "A", "side": "buy", "price": 11.0, "decision_price": 0}]
+        m = compute_exec_metrics(fills, ref_prices={"A": 10.0})
+        assert m["slip_basis"] == "vwap_proxy" and m["slip_bp_mean"] == 1000.0
+
+    def test_l4_notes_carry_basis(self, tmp_path: Path):
+        """L4 批 notes 带口径标注（面板可读）。"""
+        artifacts = tmp_path / "art"
+        artifacts.mkdir()
+        (artifacts / "bt-v2.json").write_text(
+            json.dumps(
+                {
+                    "run_id": "bt-v2",
+                    "trade_log": [
+                        {"timestamp": "2025-06-01", "symbol": "A", "side": "buy", "price": 10.0, "decision_price": 10.0}
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        report = run_validation(
+            cfg=ValidationConfig(as_of=AS_OF, finalized_at=None),
+            artifacts_dir=artifacts,
+            archive_root=tmp_path / "runs",
+            dry_run=True,
+            writer=lambda *a: True,
+        )
+        assert any("基准口径=decision_price" in r["notes"] for r in report.rows)
+
+
+# ── 定稿锚点（finalized_at，2026-09-10 设计 §三；启用=Owner 执行放行）──────
+
+
+class TestFinalizedAnchor:
+    """finalized_at=D：D 前全锁/D 后可考；None=12 个月滚动锁现状不变。"""
+
+    FILLS = [
+        {"timestamp": "2025-06-01", "symbol": "A", "side": "buy", "price": 10.0},  # 12mo 窗内（旧）
+        {"timestamp": "2026-01-15", "symbol": "A", "side": "buy", "price": 10.0},  # 12mo 窗内（新侧）
+        {"timestamp": "2026-09-10", "symbol": "B", "side": "sell", "price": 20.0},  # D 后
+        {"timestamp": "2026-09-20", "symbol": "C", "side": "sell", "price": 30.0},  # D 后
+        {"timestamp": "garbage", "symbol": "D", "side": "buy", "price": 1.0},  # 脏时间戳
+    ]
+
+    def test_default_unchanged(self):
+        """None=现状：cutoff 两侧切分，脏时间戳锁死。"""
+        cutoff = holdout_cutoff(AS_OF, 12)
+        inside, locked = partition_by_holdout(self.FILLS, cutoff)
+        assert len(inside) == 1 and inside[0]["timestamp"] == "2025-06-01"
+        assert len(locked) == 4
+
+    def test_anchor_d_before_locked_d_after_examined(self):
+        """D=2026-09-09：D 前 3 笔（含 12mo 窗内与脏）全锁，D 后 2 笔可考。"""
+        cutoff = holdout_cutoff(AS_OF, 12)
+        inside, locked = partition_by_holdout(self.FILLS, cutoff, finalized_at="2026-09-09")
+        assert {f["timestamp"] for f in inside} == {"2026-09-10", "2026-09-20"}
+        assert len(locked) == 3
+
+    def test_invalid_d_rejected(self):
+        with pytest.raises(ValidationError):
+            partition_by_holdout(self.FILLS, holdout_cutoff(AS_OF, 12), finalized_at="not-a-date")
+
+    def test_run_validation_with_anchor(self, tmp_path: Path):
+        """批入口贯通：锚点模式下 D 后流水进在验窗口，notes 带 D 披露。"""
+        artifacts = tmp_path / "art"
+        artifacts.mkdir()
+        (artifacts / "bt-anchor.json").write_text(
+            json.dumps(
+                {
+                    "run_id": "bt-anchor",
+                    "trade_log": [
+                        {"timestamp": "2026-09-10", "symbol": "A", "side": "sell", "price": 10.0},
+                        {"timestamp": "2026-09-20", "symbol": "B", "side": "sell", "price": 11.0},
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        report = run_validation(
+            cfg=ValidationConfig(as_of=AS_OF, finalized_at="2026-09-09"),
+            artifacts_dir=artifacts,
+            archive_root=tmp_path / "runs",
+            dry_run=True,
+            writer=lambda *a: True,
+            batch="XFLOW",
+        )
+        assert len(report.rows) >= 18
+        assert all("定稿锚点 D=2026-09-09" in r["notes"] for r in report.rows)
+        # D 后 2 笔卖出=触发代理>0（对照缺失仍 pending，不造假）
+        xrows = [r for r in report.rows if r["node_id"] == report.rows[0]["node_id"]]
+        assert report.rows[0]["triggers"] == 2
+
+    def test_anchor_enabled_default_examines_post_d(self, tmp_path: Path):
+        """默认配置（锚点启用）：D 后流水进在验窗口（triggers>0），D 前全锁。"""
+        artifacts = tmp_path / "art"
+        artifacts.mkdir()
+        (artifacts / "bt-postd.json").write_text(
+            json.dumps(
+                {
+                    "run_id": "bt-postd",
+                    "trade_log": [
+                        {"timestamp": "2025-06-01", "symbol": "OLD", "side": "sell", "price": 10.0},  # D 前
+                        {"timestamp": "2026-09-10", "symbol": "NEW", "side": "sell", "price": 10.0},  # D 后
+                        {"timestamp": "2026-09-15", "symbol": "NEW", "side": "sell", "price": 10.0},  # D 后
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        report = run_validation(
+            cfg=ValidationConfig(as_of=AS_OF),
+            artifacts_dir=artifacts,
+            archive_root=tmp_path / "runs",
+            dry_run=True,
+            writer=lambda *a: True,
+            batch="XFLOW",
+        )
+        assert report.rows[0]["triggers"] == 2  # 仅 D 后 2 笔进在验窗口
+        assert report.window_start == "2026-09-10" and report.window_end == "2026-09-15"
+        assert "定稿锚点 D=2026-09-09" in report.rows[0]["notes"]
+        assert "holdout 保密窗口" not in report.rows[0]["notes"]  # 窗口内有数据→holdout 披露不触发

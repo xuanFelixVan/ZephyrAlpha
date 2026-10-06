@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-015 | docs/03_modules/_domain_trading/decision_map/blueprint.md
 # [DOMAIN] D_TRADING
 # [TESTS] tests/trade/trading/test_decision_map_r9_depgraph_check.py
 # [TTL] permanent
@@ -50,7 +49,7 @@ def test_sql_column_error_raises():
     original = cdm._SQL_CHECK_MODULE_FILE_EXISTS
     cdm._SQL_CHECK_MODULE_FILE_EXISTS = "SELECT 1 FROM nodes WHERE no_such_column_xyz_audit = %s LIMIT 1"
     try:
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             cdm._module_exists_in_depgraph("src/zephyr/plan_engine/daily_warroom_pipeline.py")
     finally:
         cdm._SQL_CHECK_MODULE_FILE_EXISTS = original

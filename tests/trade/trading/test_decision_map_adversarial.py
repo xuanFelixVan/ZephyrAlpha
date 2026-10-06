@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-015 | docs/03_modules/_domain_trading/decision_map/blueprint.md
 # [DOMAIN] D_TRADING
 # [TESTS] tests/trade/trading/test_decision_map_adversarial.py
 # [TTL] permanent

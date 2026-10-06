@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-002 | docs/03_modules/_domain_trading/pnl_calculator/blueprint.md
 # [MODULE] tests.trading.test_pnl_calculator
 # [DOMAIN] D_TRADING
 # [INVARIANTS] Decimal-only断言; 验证frozen不可变; 费率边界(佣金最低¥5/印花税卖出/过户费双向)
@@ -8,7 +7,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0019)
 # [TESTS] self
-# [A_module] module_id=MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=TEST-MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-TRADING-002 PnL Calculator 单元测试.
 
@@ -359,20 +358,20 @@ class TestInvariants:
         calc = PnlCalculator()
         fill = make_fill()
         result = calc.calculate_realized(fill, OrderSide.SELL, avg_cost=Decimal("10"))
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             result.gross_pnl = Decimal("999")  # type: ignore[misc]
 
     def test_fee_breakdown_is_frozen(self) -> None:
         """FeeBreakdown 不可变。"""
         calc = AShareFeeCalculator()
         fees = calc.calculate(Decimal("10000"), OrderSide.SELL)
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             fees.commission = Decimal("999")  # type: ignore[misc]
 
     def test_fee_config_is_frozen(self) -> None:
         """FeeConfig 不可变。"""
         cfg = FeeConfig()
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             cfg.commission_rate = Decimal("0.5")  # type: ignore[misc]
 
     def test_net_pnl_equals_gross_minus_fees(self) -> None:

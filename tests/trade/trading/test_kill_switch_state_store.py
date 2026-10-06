@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §test
 # [MODULE] tests.trading.test_kill_switch_state_store
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.kill_switch_state_store; zephyr.trading.trading_contracts.risk.trading_kill_switch
@@ -12,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 断言失败即红
 # [TESTS] 本文件
-# [A_test] module_id: MOD-INF-016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: TEST-MOD-INF-016-TEST_KILL_SWITCH_STATE_STORE | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """O-6/S-3 单元测试：五级熔断触发态持久化（落盘影子+重启重臂+auto_reenable 冷却豁免）。"""
 

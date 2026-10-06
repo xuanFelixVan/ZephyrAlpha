@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-INF-016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §test
+# [A_test] module_id: TEST-MOD-INF-016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.trading.test_kill_switch_rejection_drill
 # [STABILITY] volatile
 # [SAFETY] L

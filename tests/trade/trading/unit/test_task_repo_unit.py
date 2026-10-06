@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_task_repo_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-TEST-694 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_task_repo
 # [DOMAIN] D_TRADING
 # [STABILITY] evolving
@@ -539,7 +538,7 @@ class TestConcurrency:
             try:
                 _ = repo.get("SRC-70")
                 results.append(None)
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:
                 results.append(e)
 
         threads = [Thread(target=read_task) for _ in range(10)]
@@ -561,7 +560,7 @@ class TestConcurrency:
                 t = _make_task(tid)
                 repo.create(t)
                 created.append(tid)
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:
                 errors.append(e)
 
         threads = [Thread(target=create_task, args=(i,)) for i in range(5)]

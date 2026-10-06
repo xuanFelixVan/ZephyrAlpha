@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-012 | docs/03_modules/_domain_trading/eod_processor/blueprint.md | §test
 # [MODULE] tests.trading.test_eod_processor
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.eod_processor
@@ -12,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_eod_processor.py
-# [A_test] module_id: MOD-TRADING-012 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: TEST-MOD-TRADING-012 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-TRADING-012 单元测试: EOD Processor — D-TRADING-04 日终处理器。
 
@@ -277,7 +276,7 @@ class TestDelegationAndValidation:
     def test_report_frozen(self) -> None:
         report = run_eod_processor("2026-08-25", positions=[], cash=Decimal("0"), clock=_clock)
         assert isinstance(report, EodReport)
-        with pytest.raises(Exception):  # frozen dataclass  # noqa: B017
+        with pytest.raises(Exception):  # frozen dataclass
             report.nav = Decimal("9")  # type: ignore[misc]
 
     def test_captured_at_uses_injected_clock(self) -> None:

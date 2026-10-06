@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_gpu_consensus_scheduler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §17
 # [MODULE] tests.test_gpu_consensus_scheduler
 # [DOMAIN] D_TRADING
 # [INVARIANTS] none
@@ -121,7 +120,7 @@ class TestConsensusRequest:
         assert len(ids) == 50
 
     def test_extra_fields_forbidden(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             ConsensusRequest(unknown_field="value")
 
 
@@ -151,7 +150,7 @@ class TestConsensusResult:
         assert result.verdict == VerdictLevel.RED
 
     def test_extra_fields_forbidden(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             ConsensusResult(unknown_field="value")
 
 

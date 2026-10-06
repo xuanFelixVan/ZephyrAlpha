@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-TRADING-003 | docs/03_modules/_domain_trading/blueprint.md
 # [MODULE] tests.trading.test_post_settlement_pipeline
 # [DOMAIN] D_TRADING
 # [INVARIANTS] 15:30 cron规格; 不一致必告警; 异常捕获不逃逸; 空日期拒绝
