@@ -19,6 +19,8 @@
 # [STARTUP] manual
 # [MATURITY] testing
 # [INVARIANTS] 真源方向=锚块（政策内嵌块 ∨ 91 号提案件）→ 图 YAML 单向派生，禁手改图后不回生成；
+#   casebooks/casebooks_note_zh/casebooks_legend_zh 为人工语义层保留键（重生成原样搬回，
+#   缺席=不新增键零输出变化，挂载值人工批填）；
 # [MODIFY-GUARD] 环节契约/段分层/回边台账改动前先回写 docs/_working/map_build/fig14_construction/
 #   00_skeleton.md 与政策锚块；产出图禁手改后不回生成
 # [STABILITY] evolving
@@ -73,6 +75,9 @@
   2. 锚块层（人工语义，经校验器判据钉住）：环节名/段/角色/decision_question/note_zh/
      exec_source/gates/executable/cli_anchors/docs/rollback_to/evidence/red_findings +
      gap 节点 + laws/boundary/loops 台账
+  3. 保留键层（人工语义，重生成原样搬回）：casebooks/casebooks_note_zh/casebooks_legend_zh
+     ——病历挂载通道（st-cbsurg-20261005 批通管，先例=GOMAP _HUMAN_KEYS 3d12a098）；
+     现有目标 yaml 无键=不新增键（零输出变化），挂载值由人工批填，生成器禁伪造
 
 CLI:
     python scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
@@ -107,6 +112,7 @@ from _shared.terminology_loader import (
 )
 from d5_architecture.generators._common import (  # noqa: E402  # noqa: import-integrity  sys.path 注入的 governance 包
     head_commit_time,
+    load_preserved_keys,
     serialize_map_document,
 )
 from validate_construction_steps import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地判据单一真源模块
@@ -133,6 +139,12 @@ _GHOST_SCAN_EXCLUDE = ("docs/_working", "docs/_archive", "__pycache__", ".runtim
 _GHOST_CATALOG_DIR = "docs/01_policies_and_standards/_registry/catalogs"
 
 BUILD_STATUS_ZH_CATEGORY = "build_status"
+
+# 人工语义层保留键（casebooks 病历挂载通道，st-cbsurg-20261005 批通管零内容；
+# 先例=GOMAP _HUMAN_KEYS 机制 3d12a098）：机生层全量重建，此三键重生成时从现有
+# 目标 yaml 原样搬回，缺席=不新增键（零输出变化）；挂载值由人工批填，生成器禁伪造
+# （装载单一真源在 _common.load_preserved_keys，本件禁复制第二套）。
+_CASEBOOKS_KEYS = ("casebooks", "casebooks_note_zh", "casebooks_legend_zh")
 
 
 def strip_fence(block: str) -> str:
@@ -452,6 +464,7 @@ def build_document(as_of: str, root: Path, anchors_from: str | None = None) -> d
     matrix_rows = sorted(set(_policy_matrix_rows(policy_text)))
     ghost = scan_ghost_reference_surface(root)
     unresolvable_gates = sorted({g for n in nodes for g in (n.get("gates") or [])} - gate_ids)
+    preserved_casebooks = load_preserved_keys(OUTPUT_PATH, _CASEBOOKS_KEYS)
 
     doc: dict[str, Any] = {
         "schema_version": "0.1",
@@ -491,6 +504,8 @@ def build_document(as_of: str, root: Path, anchors_from: str | None = None) -> d
         "feedback_loops": feedback,
         "loops": loops,
         "pending_anchors": pending_anchors,
+        # 人工语义层保留键：目标 yaml 在册则原样搬回，缺席=零键写入（零输出变化）
+        **preserved_casebooks,
         "machine_facts": {
             "skeleton_status_scan": {
                 "source": _SKELETON_REL,

@@ -2,7 +2,9 @@
 # [MODULE] scripts.governance.d5_architecture.generators._common
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] (none — pure stdlib)
-# [CONSUMERS] generate_domain_doc.py; scripts/governance/align_battle_map.py
+# [CONSUMERS] generate_domain_doc.py; scripts/governance/align_battle_map.py;
+#   generate_construction_workflow_map.py; generate_strategy_card_lifecycle_map.py
+#   （casebooks 保留键装载 load_preserved_keys，st-cbsurg-20261005 批）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 模块级 import 纯 stdlib 解耦（+yaml）；不 import zephyr.*（便于 mutation testing）；# 函数体内懒加载 zephyr/_shared 例外（tbl_name/head_commit_time/anchor_label_bilingual，2026-10-02 CR-15 同批收内注记）
@@ -19,6 +21,10 @@
 当前提供 cleanup_stale_files()——治本修复"生成器只增不删"问题。
 根因：域重命名/删除后，旧编号文件不会被自动清理，导致目录残留过期文件
 （如 D-SIGNAL 重命名后 26_d_digital_twin_architecture.md 残留为孤儿文件）。
+
+另提供 load_preserved_keys()——地图家族人工语义层保留键装载（GOMAP _HUMAN_KEYS
+机制的同族收口）：机生层全量重建时，casebooks 等人工键从现有目标 yaml 原样搬回；
+缺席=返回空 dict（调用方零键写入，零输出变化；挂载值由人工批填，生成器禁伪造）。
 """
 
 from __future__ import annotations
@@ -37,10 +43,17 @@ warn_only: false
 import re
 import subprocess
 from pathlib import Path
+from typing import Any
 
 import yaml
 
-__all__ = ["cleanup_stale_files", "DB_DISPLAY_NAME", "idempotent_timestamp", "idempotent_date"]
+__all__ = [
+    "cleanup_stale_files",
+    "DB_DISPLAY_NAME",
+    "idempotent_timestamp",
+    "idempotent_date",
+    "load_preserved_keys",
+]
 
 
 # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
@@ -164,6 +177,22 @@ def head_commit_time(root: Path) -> str:
         return v if v else "unobserved"
     except Exception:  # noqa: BLE001 — git 不可达=unobserved 占位，两次运行仍逐字节等
         return "unobserved"
+
+
+def load_preserved_keys(output_path: Path | str, keys: tuple[str, ...]) -> dict[str, Any]:
+    """人工语义层保留键装载：读现有目标 yaml，在册键原样搬回（重生成不吞人工值）。
+
+    地图家族保留键通道（st-cbsurg-20261005 批，先例=GOMAP _HUMAN_KEYS 机制 3d12a098）：
+    机生层全量重建，casebooks 等人工语义键重生成时从现有目标 yaml 原样搬回；
+    目标件缺席/不可读/顶层非对象=返回空 dict（调用方零键写入，零输出变化）——缺册零默认，禁伪造。
+    """
+    try:
+        existing = yaml.safe_load(Path(output_path).read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError):
+        return {}
+    if not isinstance(existing, dict):
+        return {}
+    return {k: existing[k] for k in keys if k in existing}
 
 
 def tbl_name(category_id: str) -> str:

@@ -40,6 +40,8 @@
 #   派生方向恒为 骨架+提案件 → 图 YAML（禁手改图不回生成，CV-14 判红）；
 #   人工语义层（laws/boundary/instance_key_space）由 SEMANTIC_LAYER 常量持有并随每次生成重写，
 #   实例层（states/transitions/forbidden_edges/gaps/corpus/counts/pending_registration）全部现算；
+#   casebooks/casebooks_note_zh/casebooks_legend_zh 为人工语义层保留键（重生成从现有目标
+#   yaml 原样搬回，缺席=不新增键零输出变化，挂载值人工批填；st-cbsurg-20261005 批通管零内容）；
 #   禁硬编码中英翻译字典（名称一律取骨架列）；禁写状态（本件不产出任何状态判定，判定在校验器）；
 #   未入账卡进 pending_registration 而非报错退出（半成品期可跑，防一次性大爆炸 diff）
 #   语料口径以提案件 corpus_caliber 为准（改口径=改分母，须同时改簿03 的三数台账）；
@@ -84,9 +86,15 @@ for _p in (_GOV_DIR, _VALIDATORS_DIR):
 import validate_strategy_card_lifecycle_map as V  # noqa: E402  装载与实扫判据单一真源
 from d5_architecture.generators._common import (
     head_commit_time,  # noqa: E402  sys.path 注入的 governance 包（与姊妹生成器同款引导；CR-15 单源化家族口径）
+    load_preserved_keys,  # noqa: E402  casebooks 保留键装载单一真源（禁复制第二套）
 )
 
 OUTPUT_PATH = _REPO_ROOT / "config" / "strategy_card_lifecycle_map.yaml"
+# 人工语义层保留键（casebooks 病历挂载通道，st-cbsurg-20261005 批通管零内容；
+# 先例=GOMAP _HUMAN_KEYS 机制 3d12a098）：机生层全量重建，此三键重生成时从现有
+# 目标 yaml 原样搬回，缺席=不新增键（零输出变化）；挂载值由人工批填，生成器禁伪造
+# （装载单一真源在 _common.load_preserved_keys，本件禁复制第二套）。
+_CASEBOOKS_KEYS = ("casebooks", "casebooks_note_zh", "casebooks_legend_zh")
 _PROPOSAL_REL = V._PROPOSAL_REL
 _SKELETON_REL = V._SKELETON_REL
 _CSV_VERDICT_FACES = (
@@ -732,6 +740,7 @@ def build_document(as_of: str, root: Path, proposal: dict[str, Any] | None = Non
     non_dom = [c["path"] for c in cards if c["disposition"] == "non_domain"]
     live_host = src == "registry"
     prod = sum(1 for it in transitions + forbidden if it.get("verified_scope") == "production")
+    preserved_casebooks = load_preserved_keys(OUTPUT_PATH, _CASEBOOKS_KEYS)
     doc: dict[str, Any] = {
         "schema_version": "0.2",
         "map_id": "strategy_card_lifecycle_map",
@@ -803,6 +812,8 @@ def build_document(as_of: str, root: Path, proposal: dict[str, Any] | None = Non
         "gaps": gaps,
         "card_ledger": entries,
         "corpus": {k: v for k, v in corpus.items() if k != "cards"} | {"cards": corpus["cards"]},
+        # 人工语义层保留键：目标 yaml 在册则原样搬回，缺席=零键写入（零输出变化）
+        **preserved_casebooks,
         "counts": {
             "total_states": len(states),
             "total_transitions": len(transitions),
