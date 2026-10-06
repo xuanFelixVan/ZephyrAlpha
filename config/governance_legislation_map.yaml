@@ -1,0 +1,244 @@
+# 治理立法流图（governance_legislation_map，图16）——由 generate_governance_legislation_map.py 机生。
+# 真源=骨架 §1-§3（状态/机构/迁移/禁边语义契约）+ PG 账本 REG-RULING-001（实例唯一机械真源）。
+# 准入=裁定#486 ①（Owner 2026-10-05 双批）；本文件禁手改后不回生成（counts 一致性判红）。
+schema_version: '0.1'
+map_id: governance_legislation_map
+name_zh: 治理立法流图
+nickname: 立法流
+effective_from: '2026-10-05'
+generator: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+generated_at: '2026-10-05T00:00:00+08:00'
+gate_id: GOVERNANCE-LEGISLATION-MAP
+admission_ruling: 裁定#486
+derived_from:
+- docs/_working/map_build/fig16_legislation/00_skeleton.md
+- docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- docs/_working/map_census/00_panorama_map_census_v1.md
+- src/zephyr/governance/registry_ledger/api.py
+ssot_note_zh: 真源方向：骨架 §1-§3（状态/机构/迁移/禁边语义契约）+ PG 账本 REG-RULING-001（实例唯一机械真源，7f0beccac4 cutover）→ 本图 YAML（派生件，禁手改后不回生成）。裁定实例=数据行非节点（INV-1
+  同款），实例计数只进 counts 段且全部账本现算。结构层=骨架契约镜像，禁二次创作。
+laws:
+- 编号唯一不回收：复活唯一口=新号+related_rulings 指回（#20-D 铁律2，D16-N9/X1/T9）
+- 登记必经意图API：接口负面清单禁整册写；CAS 409 拒绝必记事件（D16-N3/X5）
+- 引用必同 commit 原子：RULING-REFERENCE gate74 L2 hard block（#20-B/#20-G，D16-N4/X4）
+- 取代必有链：superseded_by 必填且单向不可逆（#20-D 铁律9，D16-N8/X2/T6）
+- 投影非真源：册 yaml=PG 投影，PG-wins；手改投影=伪影（D16-N6/X6）
+- 计数只进 counts：散文写死数字判红；实例对拍只对生成时点负责（结构面硬/实例面 CLI live 硬）
+boundary:
+- 不含裁定正文（内容真源=ruling_registry 条目本身；INV-1 型 40 字滑窗归校验器）
+- 不含图10 GOMAP 运行时面（治理运行地图管运行进程，本图管立法条目；词汇零交 w5_1 不并）
+- 不含门禁引擎内部判据（N4/N7 只登记门存在与优先级事实，判据改动走各自真源文件）
+- 不含 deep_adjudication 呈报侧六步入表闸语义（D16-N1 只存指针；呈报判据真源=deep_adjudication_method_policy.md）
+states:
+- state_id: D16-S1
+  value: draft
+  name_zh: 草案 draft
+  terminal: false
+  note_zh: 已占号登记、尚未生效；审批通道不认（仅 active 放行）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+- state_id: D16-S2
+  value: active
+  name_zh: 生效中 active
+  terminal: false
+  note_zh: 主通道在册态；唯一能承载 approved_paths 授权与被门禁74认可引用的状态
+  source_anchors:
+  - src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+- state_id: D16-S3
+  value: superseded
+  name_zh: 被取代 superseded
+  terminal: true
+  note_zh: 新裁定取代旧裁定；superseded_by 必填（#20-D 铁律9）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- state_id: D16-S4
+  value: deprecated
+  name_zh: 已废弃 deprecated
+  terminal: true
+  note_zh: 四值枚举内预留废弃位；当前零实例（结构性预留，非自造）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- state_id: D16-S5
+  value: void
+  name_zh: 撞号墓碑 void
+  terminal: true
+  note_zh: 枚举外观测旁支：撞号处置留痕 tombstone，非裁定（占号防复用）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- state_id: D16-S6
+  value: decided
+  name_zh: 已决归档 decided
+  terminal: true
+  note_zh: 枚举外观测旁支：战役代裁/呈裁执行完毕归档，不再构成活授权
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+machinery:
+- node_id: D16-N1
+  name_zh: 呈报口
+  note_zh: 立项卡/总包令/呈裁件把立法意图送入链路；立项卡呈批制后 GO/NO-GO 权在 Owner（裁定#486 ②）
+  source_anchors:
+  - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+  - docs/_working/map_census/00_panorama_map_census_v1.md
+- node_id: D16-N2
+  name_zh: 取号器
+  note_zh: 裁定#NNN 原子占号：--next 幂等查询/--claim O_EXCL 独占/--release 仅本会话；编号不回收
+  source_anchors:
+  - scripts/governance/next_ruling_id.py
+- node_id: D16-N3
+  name_zh: 意图API
+  note_zh: register/update/retire 按条目声明；接口负面清单（禁整册写）；CAS 409 拒绝记事件；retire 强制 authority_ref
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/api.py
+- node_id: D16-N4
+  name_zh: 同commit原子门74
+  note_zh: 新增 裁定#NNN 引用必须在册且册面同 commit；L1 编号空洞 warn；L2 原子性 hard block（priority=74）
+  source_anchors:
+  - src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py
+- node_id: D16-N5
+  name_zh: publish快照
+  note_zh: active 条目集发布为不可变快照；同 content_sha=noop 幂等；身份键置首防 jsonb 重排
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/baseline.py
+- node_id: D16-N6
+  name_zh: render投影
+  note_zh: 册 yaml=PG 投影（PG-wins 回滚盘面私改）；render 通道单写者；cutover=7f0beccac4
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- node_id: D16-N7
+  name_zh: 消费方索引
+  note_zh: 审批通道（_ruling_channel：active+expires_at+approved_paths）、reference 类 gates、取号分母、对齐清单挂轴
+  source_anchors:
+  - src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+  - scripts/governance/next_ruling_id.py
+- node_id: D16-N8
+  name_zh: 取代链
+  note_zh: superseded_by 单向指针 + related_rulings 双向关联，议题-裁定互溯（#20-D 铁律9/10）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - scripts/governance/next_ruling_id.py
+- node_id: D16-N9
+  name_zh: 复活禁令
+  note_zh: 编号不回收、跳号永不复用；复活=新号+related_rulings 指回（跨实例边）；撞号=void 墓碑（裁定#485 ①制度化）
+  source_anchors:
+  - scripts/governance/next_ruling_id.py
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+transitions:
+- transition_id: D16-T1
+  from_state: []
+  to_state: draft
+  name_zh: ∅→draft
+  note_zh: register(status=draft)，占号后草案先行；先例=裁定#1
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/api.py
+- transition_id: D16-T2
+  from_state: []
+  to_state: active
+  name_zh: ∅→active
+  note_zh: register(status=active) 直批登记（主通道）；凭证=Owner 批文/呈裁批
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/api.py
+- transition_id: D16-T3
+  from_state: []
+  to_state: decided
+  name_zh: ∅→decided
+  note_zh: register(status=decided) 随批即决（战役代裁形态）；先例=裁定#404/#407
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- transition_id: D16-T4
+  from_state: []
+  to_state: void
+  name_zh: ∅→void
+  note_zh: register(status=void) 撞号墓碑随处置批登记；先例=裁定#408
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- transition_id: D16-T5
+  from_state:
+  - draft
+  to_state: active
+  name_zh: draft→active
+  note_zh: update 状态翻转（草案过批生效）
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/api.py
+- transition_id: D16-T6
+  from_state:
+  - active
+  to_state: superseded
+  name_zh: active→superseded
+  note_zh: update + superseded_by 必填（#20-D 铁律9）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- transition_id: D16-T7
+  from_state:
+  - active
+  to_state: deprecated
+  name_zh: active→deprecated
+  note_zh: update 废弃（枚举预留位，零实例）
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- transition_id: D16-T8
+  from_state:
+  - active
+  to_state: decided
+  name_zh: active→decided
+  note_zh: update 执行完毕归档；先例=#409 族归档形态
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- transition_id: D16-T9
+  from_state: []
+  to_state: active
+  name_zh: ∅→active（跨实例）
+  cross_instance: true
+  note_zh: 复活=新号 register + related_rulings 指回旧号；旧号状态不变（编号不回收的合法出路，图15 D15-M17 同构）
+  source_anchors:
+  - scripts/governance/next_ruling_id.py
+forbidden_edges:
+- edge_id: D16-X1
+  rule_zh: 任何态→active 同号就地复活（改旧条目翻回 active=伪造授权）
+  note_zh: CONFLICT_DUPLICATE 409（同号异指纹）机械拒；OK_NOOP 仅同键同指纹
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/api.py
+- edge_id: D16-X2
+  rule_zh: superseded→active 撤销取代（取代链单向不可逆）
+  note_zh: update 须 reason+审计，翻转为伪造
+  source_anchors:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+- edge_id: D16-X3
+  rule_zh: 未占号登记（grep-and-claim 占位复辟）
+  note_zh: 取号器分母感知（--next 列在途占号）
+  source_anchors:
+  - scripts/governance/next_ruling_id.py
+- edge_id: D16-X4
+  rule_zh: 未登记先引用（悬空 裁定#NNN）
+  note_zh: RULING-REFERENCE gate74 L2 hard block（#20-B/#20-G）
+  source_anchors:
+  - src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py
+- edge_id: D16-X5
+  rule_zh: 整册写绕过意图API（write_whole_registry 型接口）
+  note_zh: 接口负面清单（API 不存在该接口面）
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/api.py
+- edge_id: D16-X6
+  rule_zh: 册 yaml 手改偏离账本（绕开 render 单写者私改投影）
+  note_zh: PG-wins render 回滚=伪影
+  source_anchors:
+  - src/zephyr/governance/registry_ledger/baseline.py
+- edge_id: D16-X7
+  rule_zh: 占号转让/复用/回收（跳号永不复用）
+  note_zh: O_EXCL 独占+释放≠可复用；裁定#485 ①跳号台账
+  source_anchors:
+  - scripts/governance/next_ruling_id.py
+counts:
+  entries_total: 304
+  ledger_rows_active: 302
+  ledger_rows_retired: 43
+  by_status:
+    active: 282
+    decided: 13
+    draft: 1
+    superseded: 4
+    void: 2
+  superseded_by_chains: 5
+  snapshot_version: 9
+  by_state_caliber_zh: 账本现算基准=registry_entry active 行 payload.status（retired 行已离册不计数）；投影面 entries_total 与 ledger_rows_active
+    允许一个 render 在途窗口的偏差（D16-N6）

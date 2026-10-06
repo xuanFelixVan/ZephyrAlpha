@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——governance_legislation_map_gate（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py）
+# 图16 治理立法流图结构门（GOVERNANCE-LEGISLATION-MAP，裁定#486 ①准入）P2-1 契约：
+# docstring 内联块逐字节副本，extractor 经 external 锚加载走同一 parse_algo_flow 管线；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.map_family.governance_legislation_map_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: staged 文件清单
+    #   fields: gateway, files
+    #   code: _check(gateway, files, **kwargs)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① _check
+    #   name_en: _check
+    #   intro: 图16 结构校验闭包（触发式收窄+fail-closed+validator 单一真源复用）。
+    #   desc: 触发面收窄（图 YAML/校验器/生成器/骨架四件 normcase 归一）→ 懒加载 validate_governance_legislation_map.validate_structure（sys.path 动态加载防 zephyr↔scripts 成环）→ 图 YAML 解析异常 fail-closed → error>0 阻断 → 外部真源面不可达降 warn 留痕。 Returns: tuple[bool, str]。
+    #   inputs: gateway, files, **kwargs
+    #   outputs: tuple[bool, str]
+    # 层: 输出
+    # - id: O1
+    #   name_zh: (ok, detail)
+    #   name_en: tuple
+    #   intro: 触发式结构校验闭包返回值（真实返回注解，AST 提取）。
+    #   downstream: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate.make_map_alignment_gate
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
+    # [/ALGO_FLOW]

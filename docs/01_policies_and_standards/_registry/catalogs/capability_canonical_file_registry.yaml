@@ -62347,4 +62347,19 @@ creation_tokens:
   created_by: st-audit-fix-20260924
   capability: audit_fix
   merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/fexam/allocator_shadow_report_v1.yaml
+  token: fexam-book-allocshadow-yaml-20261006
+  created_by: st-matrix-20261006
+  capability: 批4分配器影子考册（yaml机生版）
+  merge_evaluation: 机生产物；与md版同源
+- file: docs/_working/fexam/00_exam_campaign_summary_v1.yaml
+  token: fexam-book-summary-yaml-20261006
+  created_by: st-matrix-20261006
+  capability: 批5考试总册（yaml机生版）
+  merge_evaluation: 机生产物；与md版同源
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/governance_legislation_map_gate.yaml
+  token: fig16-gate-algo-flow-yaml-20261006
+  created_by: st-fig16-20261005
+  capability: governance_legislation_map
+  merge_evaluation: 同真源派生：图16 图族 gate 的 ALGO_FLOW 外部机读块（P2-1 契约出仓件），非第二实现
 di_seam_exemptions: []
