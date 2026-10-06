@@ -67505,3 +67505,35 @@ entries:
   desc_en: ""
   plain_zh: "这是整个考试系统的遥控器：一条命令选择点名、开考、出分、盘点或对账，考法和及格线只能读不能改，保证每晚自动跑都守同一套规则。"
   responsibility_layer: business
+- module_path: scripts/generate_mount_obligation_manifest.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "挂载义务清单机生器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "自动盘点交易决策图全家该挂载的模块义务，产出已挂、豁免、标记三分类加孤儿红段的对账清单，供总筹对审与reconciler判红用，替代人工拼账"
+  responsibility_layer: governance
+- module_path: scripts/governance/_shared/mount_obligation.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "挂载义务判定共享助手"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "挂载义务怎么判定全项目只算这一份：提交门禁、义务清单机生器、覆盖率账本三个消费方都调它，防止各写一套集合逻辑口径漂移"
+  responsibility_layer: governance
+- module_path: src/zephyr/strategy_pipeline/t0_condition_pack.py
+  domain_id: D_BACKTEST
+  name_zh: "做T条件包日件执行体"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "日线数据到位后自动被事件唤醒，串行跑三步子进程把次日盘中做T要用的条件输入包生产出来，按交易日防重复、失败就告警并留队重试"
+  responsibility_layer: business
+- module_path: src/zephyr/sell_decision/services/exit_execution_orchestrator.py
+  domain_id: D_SELL_DECISION
+  name_zh: "离场执行编排器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把卖出扫描信号编排成可执行计划：时段路由、分批提示、熔断期梯度减仓次序都由它串起来，模拟盘只出防御姿态指令不碰真实订单"
+  responsibility_layer: business
