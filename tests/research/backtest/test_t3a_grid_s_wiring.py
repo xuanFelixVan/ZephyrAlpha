@@ -777,3 +777,47 @@ def test_m5_thesis_bad_decay_fail_closed():
     combined = pd.DataFrame(0.5, index=closes.index, columns=closes.columns)
     with pytest.raises(ValueError, match="thesis_decay"):
         mod._apply_thesis_survival_overlay(w, combined, closes, thesis_decay=1.5)
+
+
+# ── M6 相关性 cluster 上限（C2-03，T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m6_cluster_cap_blocks_correlated_pair():
+    """红组：高相关对=同簇，簇帽内按权重序保留、超额清零；独立票不受累。"""
+    n = 90  # > corr_window=60 进簇帽块
+    idx = pd.bdate_range("2023-01-02", periods=n)
+    rng = np.random.default_rng(73)
+    common = rng.normal(0, 0.01, n)
+    c = pd.DataFrame(
+        {
+            "000001": 10 * np.exp(np.cumsum(common + rng.normal(0, 0.001, n))),  # 与 2 高相关
+            "000002": 10 * np.exp(np.cumsum(common + rng.normal(0, 0.001, n))),
+            "000003": 10 * np.exp(np.cumsum(rng.normal(0, 0.01, n))),  # 独立
+        },
+        index=idx,
+    )
+    w = pd.DataFrame(1.0 / 3.0, index=idx, columns=list(c.columns))
+    out = mod._apply_cluster_cap_overlay(w, c, corr_window=60, corr_threshold=0.5, cap_per_cluster=1)
+    late = out.iloc[-1]
+    kept = [col for col in c.columns if late[col] > 0]
+    assert "000003" in kept  # 独立票不受累
+    assert len(kept) == 2  # 高相关对只保一只（并列按符号序=000001）
+    assert kept[0] == "000001"
+
+
+def test_m6_warmup_window_uncapped():
+    """红组：预热窗（< corr_window）无相关面→不施加簇帽（诚实缺供，非全清）。"""
+    idx = pd.bdate_range("2023-01-02", periods=30)
+    c = _synth_closes(n_days=30, n_sym=3, seed=79)
+    w = _flat_weights(idx, list(c.columns), w=1.0 / 3.0)
+    out = mod._apply_cluster_cap_overlay(w, c, corr_window=60, corr_threshold=0.5, cap_per_cluster=1)
+    assert out.equals(w)  # 30<60 无块→恒等
+
+
+def test_m6_bad_params_fail_closed():
+    c = _synth_closes(n_days=10, n_sym=2, seed=83)
+    w = _flat_weights(c.index, list(c.columns))
+    with pytest.raises(ValueError, match="corr_threshold"):
+        mod._apply_cluster_cap_overlay(w, c, corr_threshold=1.5)
+    with pytest.raises(ValueError, match="cap_per_cluster"):
+        mod._apply_cluster_cap_overlay(w, c, cap_per_cluster=0)

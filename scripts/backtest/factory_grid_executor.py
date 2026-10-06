@@ -898,6 +898,55 @@ def _apply_exit_overlay(
     return weights.where(~trigger, 0.0), stop_mode
 
 
+def _apply_cluster_cap_overlay(
+    weights: pd.DataFrame,
+    closes: pd.DataFrame,
+    corr_window: int = 60,
+    corr_threshold: float = 0.7,
+    cap_per_cluster: int = 2,
+) -> pd.DataFrame:
+    """M6 相关性 cluster 上限（C2-03，T3b 考维引擎语义；T3a 不接线=零漂移）。
+
+    语义（挖矿 M6，日频可表达子集）：分块 PIT 相关——块首=每 corr_window 交易日，块内
+    相关阵恒定（块=尾随 [bs-60, bs) 窗，零前视）；块内逐日对入选票（权重>0）做
+    |corr|>corr_threshold 图连通分量=簇，按当日权重降序（并列符号序=确定性）每簇保留
+    前 cap_per_cluster 只，超额清零。预热窗（<corr_window）无相关面=不施加簇帽（诚实
+    缺供，非全清）。O(S²) 自警（挖矿原注）：入选票通常 ≤100，逐日簇算仅在其子阵上。
+    """
+    if not 0 < corr_threshold < 1:
+        raise ValueError(f"corr_threshold 须在 (0,1): {corr_threshold!r}")
+    if cap_per_cluster < 1:
+        raise ValueError(f"cap_per_cluster 须 >=1: {cap_per_cluster!r}")
+    if len(weights.index) <= corr_window:
+        return weights  # 预热窗：无相关面，不施加（诚实缺供）
+    from scipy.sparse import csr_matrix
+    from scipy.sparse.csgraph import connected_components
+
+    rets = closes.pct_change()
+    out = weights.copy()
+    n = len(weights.index)
+    for bs in range(corr_window, n, corr_window):
+        corr = rets.iloc[bs - corr_window : bs].corr()
+        block_end = min(bs + corr_window, n)
+        for d in weights.index[bs:block_end]:
+            w_day = out.loc[d]
+            sel = [s for s in w_day.index if w_day[s] > 0]
+            if len(sel) <= cap_per_cluster:
+                continue
+            sub = corr.loc[sel, sel].to_numpy()
+            adj = csr_matrix((np.abs(sub) > corr_threshold).astype(int))
+            _ncomp, labels = connected_components(adj, directed=False)
+            order = sorted(range(len(sel)), key=lambda i: (-w_day[sel[i]], sel[i]))
+            keep_count: dict[int, int] = {}
+            for i in order:
+                c = int(labels[i])
+                if keep_count.get(c, 0) >= cap_per_cluster:
+                    out.loc[d, sel[i]] = 0.0
+                else:
+                    keep_count[c] = keep_count.get(c, 0) + 1
+    return out
+
+
 def _apply_thesis_survival_overlay(
     weights: pd.DataFrame,
     combined: pd.DataFrame,
