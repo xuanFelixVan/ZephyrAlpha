@@ -1,0 +1,50 @@
+---
+campaign: matrix-20261006
+version: v1
+generated: 2026-10-06
+note: 挖矿产物→施工队列的机生清单（来源=本战役 M1/M2 规格卡；S级先行，M级立项，L级只登记）
+---
+
+# 施工队列 v1（谁领谁开工，领走在本册标领用会话）
+
+## S 级（参数接线/已有引擎旋钮——可即接，禁夜战新写引擎）
+
+| # | item | 来源卡 | 动作 | 考试挂点 |
+|---|------|--------|------|---------|
+| S-1 | X-S2-03 exec_caliber 开维对照（close/next_open/vwap 已 T6 接线） | mining/m2_exit_sector/spec_x_*（X-S2-03） | search_space_prereg_t3a 开维对照批 | T3a 下批考场 |
+| S-2 | A13 股东户数因子（514K 行 PIT 干净，卖方共识假设） | mining/m1_alt_sources/spec_SL-A13.md | S5 落因子→冻结 prereg 卡→批1 通道重考 | fexam factor 批 |
+| S-3 | A06 主力资金流因子（5.97M 行列即因子） | spec_SL-A06.md | 同上 | 同上 |
+| S-4 | A08 BDI 轴（F4_BDI 已在产 9,301 条直接复用） | spec_SL-A08.md | 同上（近零施工） | 同上 |
+| S-5 | A15 HL 资金费率拥挤轴（跨市场） | spec_SL-A15.md | 同上 | 同上 |
+| S-6 | A03 板块指数（763K 行×729 板块，兼 T3 缺口 M3 主干料） | spec_SL-A03.md | 同上 | 同上 |
+| S-7 | A10 国际宏观（macro 表真源核验后接 FRED 等价线） | spec_SL-A10.md | 同上 | 同上 |
+| S-8 | X-R1-03 defensive whitelist（Owner 门位翻转项） | spec_x_*（X-R1-03） | 呈批单（四门位，禁自动翻转） | 等Owner |
+
+## M 级（补模块——立项后施工，每件须过 depgraph+token 三件套）
+
+| # | item | 来源卡 | 估算 |
+|---|------|--------|------|
+| M-1 | 离场族核心：ATR 止损向量化（vectorbt OHLCSTX 口径可译）——落地即激活 X 族 13 节点 | spec_x_S1-02 | 模块+T3b-T0 重标定（路径依赖禁 0.53s/格旧口径，fail-closed） |
+| M-2 | L2 板块传导后处理（one-hot×查表，零新数据线） | spec_l2_L2-06 | 小模块 |
+| M-3 | L2-01 板块强度四路子分 | spec_l2_L2-01 | 小模块 |
+| M-4 | A09 快讯情绪（市场级） | m1 spec_SL-A09 | 小模块 |
+| M-5 | A12 天气事件研究 | m1 spec_SL-A12 | 中 |
+| M-6 | G3 十大股东因子 | m1 spec_SL-G3 | 中 |
+| M-7 | 31 个 code_symbol 因子逐因子适配器（批1 解 rework 的主通道） | fexam factor 册 reason 清单 | 中×31（可分批） |
+| M-8 | 23 个 code_path 策略逐策略适配器（批2 解 rework 的主通道） | fexam strategy 册 reason 清单 | 中×23（可分批） |
+| M-9 | 原问题逐问回填工程：题面判据机解器（title→PQ 解析+claim+record 链路已实证，本战役写 0-N 件严格子集） | metaq_matching_v1.yaml writeback_deferred 逐条留痕 | 中 |
+
+## L 级（只登记，禁夜战）
+
+- P 族做T（tick 语义）、crypto 4 节点（挂 Owner F51 退役议题前不排期）、S1/S2 组骨架、条件单族、龙虎榜派发等——全清单见 mining/m2_exit_sector/00_exit_sector_index.md 分级列。
+
+## 负结果边界（禁重挖）
+
+- M1：21 条数据不可得源线（A11 EIA 空壳/B01-B10/C01-C03/G5 等）已入 99_negative_results.md，复活条件逐条在案。
+- M2：13 条不可行项（分时破位/盘中细粒度/条件单/DS-059 缺失等）已入同款台账。
+
+## 本册盲点自查
+
+1. S-2~S-7 的"落因子"动作均需先过 factor_mining_sop S5（经济逻辑一句话+数据列名+计算式三件套已预填卡内，跑数前须冻结 prereg）。
+2. M-7/M-8 的批量估算未逐锚点验证可调用性（import 层面留施工队首件验证）。
+3. 队列未排 GPU 预算（接线家族考试按每源 24-200 格计，总包 GPU 表 §四③ 承接）。
