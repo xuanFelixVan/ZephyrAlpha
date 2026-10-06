@@ -471,3 +471,82 @@ def test_load_engine_tuple_shape_unchanged():
 def test_default_context_unchanged():
     """零漂移：DEFAULT_CONTEXT phase=1 不变（存量批次语义）。"""
     assert mod.DEFAULT_CONTEXT == {"strategy_pool": ["primary"], "phase": 1, "capital_ramp_enabled": False}
+
+
+# ── T0 点火实钓缺陷回归（st-t3series-20261006，T0 标定 200 格：83 eval 死 + J 布尔陷阱）──
+
+
+def test_grid_schema_dimensions_all_string_values():
+    """红组（YAML 1.1 布尔陷阱）：schema 全维度 values/baseline 必须字符串。
+
+    裸 on/off 被 YAML 1.1 解析为 True/False，执行器 J 判定全是 == "on"
+    字符串比较——布尔化即 on 腿静默≡off 腿（regime 增益恒 0=考试失真）。
+    """
+    import yaml
+
+    schema = yaml.safe_load((_REPO / "config" / "position_recipe_grid_schema.yaml").read_text(encoding="utf-8"))
+    jdim = next(d for d in schema["dimensions"] if d["id"] == "J_regime_switch")
+    assert jdim["values"] == ["off", "on"]
+    assert jdim["baseline"] == "off"
+    for d in schema["dimensions"]:
+        assert all(isinstance(v, str) for v in d["values"]), f"{d['id']} 含非字符串取值"
+        assert isinstance(d["baseline"], str), f"{d['id']} baseline 非字符串"
+
+
+def test_grid_expansion_phase2_j_legs_string_semantics():
+    """绿组：phase=2 展开 J 双腿后 recipe values 为字符串 'on'/'off'（== "on" 可命中）。"""
+    from zephyr.position.core.position_recipe_compiler import GridCompiler
+
+    expansion = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml").compile(
+        {"strategy_pool": ["primary"], "phase": 2, "capital_ramp_enabled": False}
+    )
+    js = {r.values["J_regime_switch"] for r in expansion.recipes}
+    assert js == {"on", "off"}
+
+
+def test_j_string_guard_fail_closed_on_boolean():
+    """红组守卫：J 值布尔化（陷阱复发面）必须 SystemExit 禁跑；字符串同值放行。"""
+    vals_on = dict(V1, J_regime_switch=True)
+    with pytest.raises(SystemExit, match="布尔陷阱"):
+        mod._validate_j_string_semantics([_recipe(vals_on, "t3aguard1")])
+    vals_str = dict(V1, J_regime_switch="on")
+    mod._validate_j_string_semantics([_recipe(vals_str, "t3aguard2")])  # 不抛=过
+
+
+def test_combine_mixed_index_factor_panels_all_a2_modes():
+    """红组（T0 83/200 死因回归）：因子帧行基不一（预热 vs 考窗）时 A2 全模式不崩且对齐考窗。
+
+    v1_value 面 val_pe/pb 挂 warm 面板（1106 行）而 v1/f_np_yoy 挂考窗（970 行）：
+    orth_equal 逐帧 to_numpy 广播炸、lasso/pc1 np.stack 同形炸——83 死全在
+    A2∈{lasso, orth_equal, pc1}。修复语义：_combine 入口统一 reindex 考窗 index；
+    同基输入 reindex 恒等=逐位零漂移。
+    """
+    closes = _synth_closes(n_days=40, n_sym=5, seed=13)
+    warm_idx = pd.bdate_range("2022-10-03", periods=60)
+    rng = np.random.default_rng(17)
+    f_win = pd.DataFrame(
+        rng.normal(0, 1, (len(closes), len(closes.columns))), index=closes.index, columns=closes.columns
+    )
+    f_warm = pd.DataFrame(rng.normal(0, 1, (60, len(closes.columns))), index=warm_idx, columns=closes.columns)
+    factors = {"f_win": f_win, "f_warm": f_warm}
+    normalized = [mod._normalize(f, "zscore")[0] for f in factors.values()]
+    for a2 in ("equal", "ic_mean", "halflife60", "orth_equal", "lasso", "pc1"):
+        combined, _deg = mod._combine(factors, normalized, a2, closes)
+        assert combined.index.equals(closes.index), f"A2={a2} 输出未对齐考窗 index"
+        assert np.isfinite(combined.to_numpy()).any(), f"A2={a2} 输出全空"
+
+
+def test_combine_same_basis_input_bit_identical():
+    """零漂移守护：同基输入下修复前后语义不变（reindex 恒等）——equal 模式输出行基=考窗。"""
+    closes = _synth_closes(n_days=40, n_sym=5, seed=19)
+    rng = np.random.default_rng(23)
+    factors = {
+        n: pd.DataFrame(
+            rng.normal(0, 1, (len(closes), len(closes.columns))), index=closes.index, columns=closes.columns
+        )
+        for n in ("f_a", "f_b")
+    }
+    normalized = [mod._normalize(f, "zscore")[0] for f in factors.values()]
+    combined, deg = mod._combine(factors, normalized, "equal", closes)
+    assert combined.index.equals(closes.index)
+    assert deg is False

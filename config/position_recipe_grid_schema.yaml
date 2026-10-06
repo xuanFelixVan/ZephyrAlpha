@@ -63,8 +63,10 @@ dimensions:
     active_if: "False"
   - id: J_regime_switch
     desc: regime 开关（Owner 已同意二期）
-    values: [off, on]
-    baseline: off
+    # 严禁裸写 on/off——YAML 1.1 解析为 True/False，执行器 J 判定全是 == "on" 字符串
+    # 比较，布尔化即 on 腿静默≡off 腿（regime 增益恒 0=考试失真）。20261006 T0 标定实钓。
+    values: ['off', 'on']
+    baseline: 'off'
     active_if: "phase >= 2"
   - id: K_capital_ramp
     desc: 建仓节奏/资金爬坡（需 harness 支持路径依赖，蓝图 §九-2）

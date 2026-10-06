@@ -511,6 +511,11 @@ def _combine(
     """
     names = list(factors.keys())
     dates = closes.index
+    # 因子面异基对齐（20261006 T0 标定实钓）: v1_value 面 val_pe/pb 挂 warm 面板行而
+    # v1/f_np_yoy 挂考窗行——orth_equal 逐帧 to_numpy 广播炸、lasso/pc1 np.stack 同形炸
+    # （200 格 83 死全在 A2∈{lasso,orth_equal,pc1}）。入口统一 reindex 考窗 index；
+    # 同基输入 reindex 恒等=逐位零漂移。
+    normalized = [nf.reindex(dates) for nf in normalized]
     if mode == "equal":
         stack = pd.concat(normalized)
         return stack.groupby(level=0).mean(), False
@@ -821,7 +826,7 @@ def stratified_sample(expansion, n_samples: int, seed: int, stratify_dims: tuple
     by_prefix: dict[str, list] = {}
     if stratify_dims:
         for r in recipes:
-            key = "|".join(r.values.get(d, "?") for d in stratify_dims)
+            key = "|".join(str(r.values.get(d, "?")) for d in stratify_dims)
             by_prefix.setdefault(key, []).append(r)
     else:
         for r in recipes:
@@ -843,6 +848,19 @@ def stratified_sample(expansion, n_samples: int, seed: int, stratify_dims: tuple
         rng.shuffle(rest)
         picked.extend(rest[: n_samples - len(picked)])
     return picked[:n_samples]
+
+
+def _validate_j_string_semantics(recipes) -> None:
+    """T0 实钓守卫（20261006）: J 维取值必须字符串 on/off，布尔化=SystemExit 禁跑。
+
+    YAML 1.1 裸 on/off→True/False 时执行器 == "on" 永不命中——on 腿静默≡off 腿，
+    regime 增益恒 0（考试失真而报告不知）。schema 已引号治本，此为消费面终检；
+    折叠相（phase=1）J=baseline 'off' 字符串同过。
+    """
+    for r in recipes:
+        j = r.values.get("J_regime_switch")
+        if j is not None and j not in ("on", "off"):
+            raise SystemExit(f"[guard] J_regime_switch 取值非字符串 on/off（YAML 1.1 布尔陷阱?）: {j!r}——禁跑")
 
 
 def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun 三参演进（存量批次主入口，参数对象重构归批F账非本批）
@@ -949,6 +967,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     compile_ctx = {**DEFAULT_CONTEXT, **(context_overrides or {})}
     expansion = compiler.compile(compile_ctx)
     recipes_all = list(expansion.recipes)
+    _validate_j_string_semantics(recipes_all)
     if subspace:
         # 批次 B 子空间枚举（裁定: A 给出的高价值子空间全因子穷尽——过滤即全跑，非抽样）
         recipes_all = [r for r in recipes_all if all(r.values.get(k) in vs for k, vs in subspace.items())]
@@ -992,8 +1011,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
             from _c4_engine import load_valuation
 
             _val = load_valuation(warm_start, end, fields=("pe", "pb"))
-            val_pe = _val["pe"].reindex(closes_all.index).reindex(columns=closes_all.columns)
-            val_pb = _val["pb"].reindex(closes_all.index).reindex(columns=closes_all.columns)
+            # 对齐考窗 index（20261006 实钓修复）：warm 基面板与 v1/f_np_yoy 考窗基混挂
+            # 曾致 A2 numpy 通路 83/200 死；估值=EOD 快照无预热语义，考窗基为设计真基
+            val_pe = _val["pe"].reindex(closes.index).reindex(columns=closes_all.columns)
+            val_pb = _val["pb"].reindex(closes.index).reindex(columns=closes_all.columns)
             fin_hist = _load_fin_np_yoy_history()
             if val_pe.empty or val_pb.empty:
                 raise RuntimeError("load_valuation 空面板")
