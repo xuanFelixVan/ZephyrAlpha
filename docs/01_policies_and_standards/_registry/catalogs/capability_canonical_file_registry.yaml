@@ -63018,4 +63018,15 @@ creation_tokens:
   created_by: st-mastertc-l7
   capability: grid_stats_engine
   merge_evaluation: "G-D.2/G-D.3 波10引擎唯一实现（10_wave_plan 10.G-D READY_NOT_FIRED）"
+- file: docs/_working/fullcirc_closeout_chief/99_delivery.md
+  token: st-t3series-99delivery-20261007
+  created_by: st-t3series-20261006
+  capability: fullcirc_closeout_chief
+  merge_evaluation: "T3 系列终报四清单，战役收官交付面，接续 90 台账非第二真源"
+- file: config/chart_resonance_prereg.yaml
+  token: chart-resonance-prereg-chart-resonance-prereg-20261006
+  created_by: st-mastertc-l7
+  capability: chart_resonance_prereg
+  merge_evaluation: "波10 G-D.1 唯一真源"
+
 di_seam_exemptions: []
