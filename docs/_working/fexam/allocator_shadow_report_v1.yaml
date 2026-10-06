@@ -1,0 +1,205 @@
+doc_type: fexam_allocator_shadow
+version: v1
+generated_at_utc: '2026-10-06 02:28:17.133165+00:00'
+window_definition:
+  run:
+  - '2018-01-02'
+  - '2026-09-30'
+  is:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos_holdout:
+  - '2025-10-09'
+  - '2026-09-30'
+  same_window_as: batch2策略考同窗
+composite_selection:
+  columns:
+  - c1_market.technical_indicator.ac
+  - c1_market.technical_indicator.ad
+  - c1_market.technical_indicator.adosc
+  - c1_market.technical_indicator.adx_14
+  - c1_market.technical_indicator.alligator_jaw
+  - c1_market.technical_indicator.alligator_lips
+  - c1_market.technical_indicator.alligator_teeth
+  - c1_market.technical_indicator.ao
+  - c1_market.technical_indicator.apo
+  - c1_market.technical_indicator.ar_26
+  - c1_market.technical_indicator.aroon_down
+  - c1_market.technical_indicator.aroon_up
+  - c1_market.technical_indicator.aroonosc
+  - c1_market.technical_indicator.atr_14
+  - c1_market.technical_indicator.avgprice
+  - c1_market.technical_indicator.bbi
+  - c1_market.technical_indicator.bear_power_13
+  - c1_market.technical_indicator.beta_30
+  - c1_market.technical_indicator.bias_12
+  - c1_market.technical_indicator.bias_24
+  - c1_market.technical_indicator.bias_6
+  - c1_market.technical_indicator.boll_breakout
+  - c1_market.technical_indicator.boll_bw
+  - c1_market.technical_indicator.boll_lower
+  note: indicator_ch_backed_fallback(n=215)——批1因子0可考时的prereg回退
+  cap: 前24列（prereg冻结）
+simplification_note: 五套=权重变换向量化和的简化实现（非 pf_alloc 逐行复用）；MOD锚：RK-08=risk/core/risk_budget、PA-015=regime_bma_weighting、SIG-131=signal_weight_adjuster；逐行复用属
+  M 级施工另行登记
+regime_source: regime_table+sma_fallback
+results:
+- allocator_id: ALC-THREELAYER-001
+  verdict: measured
+  metrics:
+    is:
+      sharpe: -0.8816002482743186
+      max_drawdown: -0.7764495685604867
+      total_return: -0.7110889065261519
+      n_days: 1882
+    oos:
+      sharpe: 0.5225053560433285
+      max_drawdown: -0.22387009621802098
+      total_return: 0.08182070929723828
+      n_days: 241
+    regime_sharpe:
+      ranging_low_vol:
+        sharpe: -0.2018254471323912
+        n_days: 646
+      ranging_mid_vol:
+        sharpe: -0.6016785371138885
+        n_days: 335
+      trend_down:
+        sharpe: 0.38769427246399724
+        n_days: 545
+      trend_up:
+        sharpe: -1.895210740937201
+        n_days: 596
+  engine_run_id: bt-8ae6fd64
+- allocator_id: ALC-EQUAL-001
+  verdict: measured
+  metrics:
+    is:
+      sharpe: -0.8676944156990866
+      max_drawdown: -0.7883546883918654
+      total_return: -0.7098436343261089
+      n_days: 1882
+    oos:
+      sharpe: -0.2238340066008706
+      max_drawdown: -0.15890526296440374
+      total_return: -0.03974839221389581
+      n_days: 241
+    regime_sharpe:
+      ranging_low_vol:
+        sharpe: -0.6812952388633648
+        n_days: 646
+      ranging_mid_vol:
+        sharpe: -0.34412473458593373
+        n_days: 335
+      trend_down:
+        sharpe: 0.25624536290382866
+        n_days: 545
+      trend_up:
+        sharpe: -1.8059435281136498
+        n_days: 596
+  engine_run_id: bt-bec6bb69
+- allocator_id: ALC-RK08-001
+  verdict: measured
+  metrics:
+    is:
+      sharpe: -0.851370597356079
+      max_drawdown: -0.8027052852575333
+      total_return: -0.7352496974036598
+      n_days: 1882
+    oos:
+      sharpe: 0.3628885542430015
+      max_drawdown: -0.2718967710177647
+      total_return: 0.0577040118613803
+      n_days: 241
+    regime_sharpe:
+      ranging_low_vol:
+        sharpe: -0.11345723582968247
+        n_days: 646
+      ranging_mid_vol:
+        sharpe: -0.12530444015471684
+        n_days: 335
+      trend_down:
+        sharpe: 0.18726981204578583
+        n_days: 545
+      trend_up:
+        sharpe: -2.005626448459076
+        n_days: 596
+  engine_run_id: bt-83163877
+- allocator_id: ALC-PA015-001
+  verdict: measured
+  metrics:
+    is:
+      sharpe: -0.8427231559574859
+      max_drawdown: -0.7865728483500873
+      total_return: -0.7218450500429914
+      n_days: 1882
+    oos:
+      sharpe: 0.31838429390541534
+      max_drawdown: -0.2588913969113415
+      total_return: 0.04495267248124257
+      n_days: 241
+    regime_sharpe:
+      ranging_low_vol:
+        sharpe: -0.1695679438859706
+        n_days: 646
+      ranging_mid_vol:
+        sharpe: -0.03863954818393254
+        n_days: 335
+      trend_down:
+        sharpe: 0.19965048410250408
+        n_days: 545
+      trend_up:
+        sharpe: -2.1051187459935345
+        n_days: 596
+  engine_run_id: bt-ca334079
+- allocator_id: ALC-SIG131-001
+  verdict: measured
+  metrics:
+    is:
+      sharpe: -0.8676944156990866
+      max_drawdown: -0.7883546883918654
+      total_return: -0.7098436343261089
+      n_days: 1882
+    oos:
+      sharpe: -0.2238340066008706
+      max_drawdown: -0.15890526296440374
+      total_return: -0.03974839221389581
+      n_days: 241
+    regime_sharpe:
+      ranging_low_vol:
+        sharpe: -0.6812952388633648
+        n_days: 646
+      ranging_mid_vol:
+        sharpe: -0.34412473458593373
+        n_days: 335
+      trend_down:
+        sharpe: 0.25624536290382866
+        n_days: 545
+      trend_up:
+        sharpe: -1.8059435281136498
+        n_days: 596
+  engine_run_id: bt-59031a0b
+evidence_report:
+  champion: ALC-THREELAYER-001
+  pairs:
+  - challenger: ALC-EQUAL-001
+    n_days: 2122
+    ann_diff: 0.013030629119342807
+    t_stat: 0.4798615639177939
+    evidence_note: 配对t为当前证据量参考；mSPRT正式判定需逐日流入数据（MOD-PF-008），影子考不判终胜负
+  - challenger: ALC-RK08-001
+    n_days: 2122
+    ann_diff: 0.009262938422103078
+    t_stat: 0.45994977122018715
+    evidence_note: 配对t为当前证据量参考；mSPRT正式判定需逐日流入数据（MOD-PF-008），影子考不判终胜负
+  - challenger: ALC-PA015-001
+    n_days: 2122
+    ann_diff: 0.006199899541230202
+    t_stat: 0.35183249367154645
+    evidence_note: 配对t为当前证据量参考；mSPRT正式判定需逐日流入数据（MOD-PF-008），影子考不判终胜负
+  - challenger: ALC-SIG131-001
+    n_days: 2122
+    ann_diff: 0.013030629119342807
+    t_stat: 0.4798615639177939
+    evidence_note: 配对t为当前证据量参考；mSPRT正式判定需逐日流入数据（MOD-PF-008），影子考不判终胜负
+verdict_note: 只报当前证据量不判终胜负（MOD-PF-008 序贯统计口径）

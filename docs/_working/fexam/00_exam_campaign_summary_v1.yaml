@@ -1,0 +1,129 @@
+doc_type: fexam_campaign_summary
+version: v1
+generated_at_utc: '2026-10-06 02:29:17.672324+00:00'
+batches:
+  factor:
+    status: done
+    counts:
+      total: 175
+      rework: 175
+    retire_candidates: []
+    passes: []
+  indicator:
+    status: done
+    counts:
+      total: 143
+      rework: 55
+      pass: 78
+      retire_candidate: 10
+    retire_candidates:
+    - IND-MOM-032
+    - IND-MOM-036
+    - IND-REV-003
+    - IND-CYC-001
+    - IND-CYC-002
+    - IND-CYC-004
+    - IND-CYC-005
+    - IND-VOL-016
+    - IND-VOLUME-015
+    - IND-TREND-036
+    passes:
+    - IND-TREND-005
+    - IND-TREND-007
+    - IND-TREND-008
+    - IND-TREND-010
+    - IND-TREND-015
+    - IND-MOM-015
+    - IND-MOM-016
+    - IND-MOM-017
+    - IND-MOM-018
+    - IND-MOM-020
+    - IND-MOM-021
+    - IND-MOM-022
+    - IND-MOM-024
+    - IND-MOM-025
+    - IND-MOM-026
+    - IND-MOM-027
+    - IND-MOM-028
+    - IND-MOM-030
+    - IND-MOM-031
+    - IND-MOM-034
+    - IND-MOM-035
+    - IND-MOM-037
+    - IND-MOM-001
+    - IND-MOM-002
+    - IND-MOM-003
+    - IND-MOM-004
+    - IND-MOM-005
+    - IND-MOM-006
+    - IND-MOM-008
+    - IND-MOM-009
+    - IND-MOM-012
+    - IND-MOM-013
+    - IND-VOL-011
+    - IND-VOL-012
+    - IND-VOL-013
+    - IND-VOL-014
+    - IND-VOL-015
+    - IND-VOL-001
+    - IND-VOL-005
+    - IND-VOL-006
+    - IND-VOL-007
+    - IND-VOL-008
+    - IND-VOLUME-009
+    - IND-VOLUME-010
+    - IND-VOLUME-011
+    - IND-VOLUME-013
+    - IND-VOLUME-014
+    - IND-VOLUME-002
+    - IND-VOLUME-004
+    - IND-VOLUME-006
+    - IND-VOLUME-007
+    - IND-VOL-009
+    - IND-VOL-010
+    - IND-REV-004
+    - IND-MOM-014
+    - IND-STAT-001
+    - IND-STAT-004
+    - IND-TREND-022
+    - IND-TREND-031
+    - IND-TREND-032
+    - IND-STAT-005
+    - IND-STAT-006
+    - IND-STAT-008
+    - IND-VOL-017
+    - IND-VOL-018
+    - IND-CYC-006
+    - IND-CYC-007
+    - IND-CYC-008
+    - IND-TREND-033
+    - IND-TREND-034
+    - IND-MOM-038
+    - IND-MOM-039
+    - IND-MOM-041
+    - IND-MOM-042
+    - IND-VOLUME-016
+    - IND-STAT-009
+    - IND-TREND-037
+    - IND-CHIPS-001
+  strategy:
+    status: done
+    counts:
+      total: 161
+      rework: 161
+    retire_candidates: []
+    passes: []
+  allocator:
+    status: done
+    counts: {}
+    retire_candidates: []
+    passes: []
+coverage_ledger_join:
+  source: docs/_working/fullcirc_closeout_chief/backtest_coverage_ledger.yaml
+  status: referenced_readonly
+  version: 0.1.0
+  generated_at: '2026-10-06T02:34:46+08:00'
+approvals_pending_owner:
+- 及格线初拟全部待 Owner 校（prereg v1 内标注）
+- 第三波立项建议：ML 模型与形态库考试（M2 卡 S=3/M=28/L=11 已落 mining/m2_exit_sector/）
+negative_result_discipline: 全部 rework/retire/缺数据结论如实入册（exam_policy §5/§6），零隐藏

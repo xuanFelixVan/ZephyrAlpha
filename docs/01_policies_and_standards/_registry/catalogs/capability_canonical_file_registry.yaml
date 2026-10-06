@@ -62366,4 +62366,51 @@ creation_tokens:
   token: st-t3series-l5cards-20261006
   created_by: st-t3series-20261006
 
+- file: scripts/sector_line/build_gpu_input_pack.py
+  token: sector-line-replay-build-gpu-input-pack-20261006
+  created_by: st-cure-p02-20261006
+  capability: sector_line_replay
+  merge_evaluation: "死信清偿P02：死袋blob复活件，与树上演进件同源无重复真源，合并=恢复缺失实现"
+- file: scripts/sector_line/freeze_baseline.py
+  token: sector-line-replay-freeze-baseline-20261006
+  created_by: st-cure-p02-20261006
+  capability: sector_line_replay
+  merge_evaluation: "死信清偿P02：死袋blob复活件，与树上演进件同源无重复真源，合并=恢复缺失实现"
+- file: src/zephyr/strategy_pipeline/t0_condition_pack.py
+  token: t0-condition-pack-t0-condition-pack-20261006
+  created_by: st-cure-p02-20261006
+  capability: t0_condition_pack
+  merge_evaluation: "死信清偿P02：死袋blob复原件（st-f15-frombag-0062），做T条件包事件链最后一米，与树上无重复真源"
+- file: src/zephyr/sell_decision/services/exit_execution_orchestrator.py
+  token: exit-execution-orchestration-exit-execution-orchestrator-20261006
+  created_by: st-cure-p02-20261006
+  capability: exit_execution_orchestration
+  merge_evaluation: "死信清偿P02：死袋blob复原件（st-f15-frombag-0180），离场执行编排paper车道收口，与树上无重复真源"
+- file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
+  token: source-line-criterion-tick-microstructure-20261006
+  created_by: st-cure-p03-20261006
+  capability: source_line_criterion
+  no_mount_reason: MOD-SIG-156 挂点未在 config 图族注册；module_ref 落图后补挂（原班未动地图，总裁批文核验挂载位）
+  merge_evaluation: "TDM-E-L9-A02 判据件（tick 成交流微观结构），与同族 kline_momentum_criterion 数据源不同（分笔 vs K线），跨数据域不同对象不并"
+- file: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+  token: source-line-criterion-sector-rotation-20261006
+  created_by: st-cure-p03-20261006
+  capability: source_line_criterion
+  no_mount_reason: MOD-SIG-157 挂点未在 config 图族注册；module_ref 落图后补挂（原班未动地图，总裁批文核验挂载位）
+  merge_evaluation: "TDM-E-L9-A03 判据件（板块横截面相对强度），与市场级 sector_rotation_state 正交（截面选强 vs 状态机），跨层不同对象不并"
+- file: docs/03_modules/_domain_signal/source_line_tick_microstructure_criterion/blueprint.md
+  token: source-line-criterion-bp-tick-microstructure-20261006
+  created_by: st-cure-p03-20261006
+  capability: source_line_criterion
+  merge_evaluation: "MOD-SIG-156 蓝图随判据件同批立项，无独立合并面"
+- file: docs/03_modules/_domain_signal/source_line_sector_rotation_criterion/blueprint.md
+  token: source-line-criterion-bp-sector-rotation-20261006
+  created_by: st-cure-p03-20261006
+  capability: source_line_criterion
+  merge_evaluation: "MOD-SIG-157 蓝图随判据件同批立项，无独立合并面"
+- file: docs/_working/qoder_legacy_closeout_20260928/w_case_compaction_lost_update.md
+  token: qoder-legacy-closeout-w-case-compaction-20261006
+  created_by: st-cure-p03-20261006
+  capability: qoder_legacy_closeout
+  merge_evaluation: "qoder 收尾病案 W-CASE 补登（旧路径 token 的 _20260928 目录变体），与旧路径条目同源不同位，不并"
 di_seam_exemptions: []
