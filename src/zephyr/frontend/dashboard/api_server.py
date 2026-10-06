@@ -5354,20 +5354,6 @@ def factory_exam() -> dict[str, Any]:
     }
 
 
-# ── 静态页面一体化（W6-1，终极令 2026-09-19，Owner 已批：服务 2→1 故障面减半）────
-# 8890 单端口一体服务页面+数据。mount("/") 必须在全部 /api 路由注册之后（Starlette
-# 按注册序匹配：/api 先命中，其余路径落静态兜底）；html=True 使 / 与 /pages/xxx.html
-# 直出。api.js 的 BASE 仍为绝对地址 http://127.0.0.1:8890（同源，行为不变）；
-# serve_docs(8765) 回归文档本职，桌面壳入口切 8890（W6-2，tools/desktop/main.js）。
-from fastapi.staticfiles import StaticFiles  # noqa: E402
-
-_WEB_ROOT = Path(__file__).resolve().parent / "web"
-if _WEB_ROOT.is_dir():
-    app.mount("/", StaticFiles(directory=_WEB_ROOT, html=True), name="static-web")
-else:  # 仓库 web 目录缺失（异常场景）：纯 API 降级运行，页面通道消失须在日志可见
-    logger.warning("static web dir missing: %s — 8890 降级为纯 API（页面不服务）", _WEB_ROOT)
-
-
 # ── AI 层接线批路由（st-ailayer-final-20260924；promotion_advisories 同款降级惯例）──────────
 
 
@@ -5471,6 +5457,24 @@ def schedulegate_confirm(payload: dict[str, Any] | None = None) -> dict[str, Any
         }
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": f"confirm unavailable: {str(exc)[:180]}"}
+
+
+# ── 静态页面一体化（W6-1，终极令 2026-09-19，Owner 已批：服务 2→1 故障面减半）────
+# 8890 单端口一体服务页面+数据。mount("/") 必须在全部 /api 路由注册之后（Starlette
+# 按注册序匹配：/api 先命中，其余路径落静态兜底）；html=True 使 / 与 /pages/xxx.html
+# 直出。api.js 的 BASE 仍为绝对地址 http://127.0.0.1:8890（同源，行为不变）；
+# serve_docs(8765) 回归文档本职，桌面壳入口切 8890（W6-2，tools/desktop/main.js）。
+# [FIX 2026-10-07 st-mastertc-l11] 块整体自 AI 层路由段之前移回此处：09-24 追加的
+# budget/schedulegate 四路由曾落在 mount 之后=注册序被 mount("/") 吞（C10 尺红证），
+# 与本注释铁律及 SW3-N2 守卫序治本同族；回归尺 tests/gov/governance/
+# test_api_server_route_guard_order.py。
+from fastapi.staticfiles import StaticFiles  # noqa: E402
+
+_WEB_ROOT = Path(__file__).resolve().parent / "web"
+if _WEB_ROOT.is_dir():
+    app.mount("/", StaticFiles(directory=_WEB_ROOT, html=True), name="static-web")
+else:  # 仓库 web 目录缺失（异常场景）：纯 API 降级运行，页面通道消失须在日志可见
+    logger.warning("static web dir missing: %s — 8890 降级为纯 API（页面不服务）", _WEB_ROOT)
 
 
 def main() -> None:
