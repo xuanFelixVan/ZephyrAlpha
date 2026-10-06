@@ -1,0 +1,111 @@
+# emotion_index_exam_v1 — O道·情绪指数首考：情绪态对大盘（000300）时序择时预测力分数册
+# lane=O道 | doc_type=fexam_emotion_index_scores | campaign=matrix-20261007
+# 考窗 2019-04-01..2026-08-31 | 生成脚本 .runtime/tmp/st-matrix-20261007/emo_*.py（CH 只读）
+# ============ prereg v1 冻结块（2026-10-07 开跑前落盘；判据事前定，禁看分改） ============
+# 冻结纪律：本块落盘时 ①②③ 的任何前向收益/相关均未计算。冻结时已知=仅边际充分性统计与
+# PIT 结构探查事实（下文如实标注），①②③ 结果盲。
+prereg_v1:
+  exam_window:
+    start: '2019-04-01'
+    end: '2026-08-31'
+    note: 情绪窗=c1_market.emotion_index close_final 可得窗（1991-06-10..2026-10-05）∩ 本窗；实测考窗内 close_final=1801 行全覆盖
+  proxy:
+    primary: 000300 指数收盘价
+    source: c1_market.kline_index symbol='000300'（5282 行，2005-01-04..2026-09-30；J 道实测同源，考窗 1801/1801 日历全对齐）
+    sma200: 全程自 2005 滚动（min_periods=200），考窗内 SMA200 无预热缺口
+  signal:
+    table: c1_market.emotion_index
+    series: stage='close_final' AND version='v0.1.0'；e(t)=emotion_index（0-1 灰度分位，0=冰点 1=沸点）
+    dedup_rule: 同 trade_date 多行取 max(ingest_ts)（实测考窗每键恰 1 行，规则仅为健壮性兜底）
+    fwd_labels: fwd5=close(t+5)/close(t)-1；fwd20=close(t+20)/close(t)-1（000300 交易日口径；尾部越窗 NaN 剔除并如实报 n）
+  direction_registration:   # 事前登记，两向只选其一
+    chosen: 反向（行为金融通识：情绪高点=拥挤，其后大盘倾向下跌）
+    implication: ① 按 P(fwd_h<0 | 信号日) 判胜率；③ 按 低情绪档收益 − 高情绪档收益 > 0 判方向
+  paper1_extreme_timing:
+    signal: "S90 = {t ∈ 考窗: e(t) ≥ 0.90}（值本身即灰度分位，≥0.90=90 分位）"
+    frozen_pass: n(S90) ≥ 30 且 P(fwd5<0|S90) ≥ 55% 且 P(fwd20<0|S90) ≥ 55% 且两胜率均 > 全窗基线 P(fwd_h<0)
+    context_report_only: 基线均值/胜率与 binomial p 值；冰点镜像 e(t)≤0.10（冻结节前实测 n=0——考窗内 e 最小 0.2608，情绪从未入冰点区，如实记）；严格滞后变体 close(t+21)/close(t+1)-1（ts=15:10 晚于收盘的口径敏感性）
+  paper2_momentum_corr:
+    signal: Δemo5(t) = e(t) − e(t−5)（情绪序列自身 5 个交易日）
+    target: fwd_ret5(t) = close(t+5)/close(t) − 1
+    frozen_pass: 可用 n ≥ 200 且 |Pearson r| ≥ 0.15
+    context_report_only: Spearman ρ；同期相关（Δemo5(t) vs close(t)/close(t−5)−1）；滚动 60 日相关稳定性
+  paper3_regime_gain:
+    regime: bull = close(t) > SMA200(t)；bear = 否
+    emo_bands: high = e≥0.90；low = e≤0.40；mid = 其余（不进对比）
+    low_band_note: 冻结节前实测 e≤0.10 在考窗 n=0（min=0.2608），低档阈值事前降为 0.40（边际 n=139）并如实记
+    definitions: d_r = mean(fwd20 | low, r) − mean(fwd20 | high, r)，r∈{bull,bear}；S1 = mean(fwd20|bull) − mean(fwd20|bear)；S2 = (d_bull + d_bear)/2
+    frozen_pass: 四对比格 n≥30（冻结节前实测 bull×high=44 / bull×low=41 / bear×high=31 / bear×low=98）且 d_bull>0 且 d_bear>0 且 S2 > S1
+    context_report_only: fwd5 版与胜率版；四格均值/中位/n 全表
+  paper4_pit:
+    checklist:
+      a_ts_semantics: close_final 窗内行 ts 应=当日 15:10:00（表设计）；pre_open=09:15
+      b_asof_no_lookahead: 考窗 close_final components 逐成分 asof ≤ trade_date
+      c_no_inwindow_revision: close_final 同 (trade_date) 键不得有多行异值
+      d_construction_asof: builder 代码核验分位=trailing 窗（无全样本前视）
+      e_revision_capability: 表级"事后改写历史行"能力与快照留痕如实记（结构性）
+    freeze_time_facts:   # 冻结时已探明（探查允许于冻结前；①②③ 盲）
+      a: 窗内 1801 行 ts 违例=0；窗外仅 1991 年 70 行 ts=16:10 旧格式（不波及本考）
+      b: 考窗 close_final asof 越界违例=0（逐成分扫描）
+      c: close_final 全表 8617 键=8617 行，0 同键异值
+      d: src/zephyr/alt_data/emotion_index_builder.py _pctl=vals.tail(250) trailing + 拉窗止于当日；C6 news rolling；C5 margin as-of —— 无全样本前视
+      e: pre_open 2026-10-02 存在两行异值（ingest 2026-10-02 与 2026-10-05 重写，窗外）=事后改写历史行的实证；且考窗 1801 行全部由 2026-09-23 11:21 单批回放（source=replay）建成，无逐日快照留痕
+    pit_verdict_rule:
+      clean: a-d 全过且 e 未实证改写能力（不适用本次）
+      conditional_clean: a-d 全过且 e=仅结构瑕疵（窗内序列零修订零前视，但无逐日快照+表级可重写）
+      dirty: a-c 任一违例>0 或 d 发现构造前视 → 总判不合格自动成立
+  verdict_rule:
+    qualified: ①②③ ≥2 过 且 PIT=clean
+    conditionally_qualified: ①②③ ≥2 过 且 PIT=conditional_clean（投产前置=补逐日 append-only 快照/只追加读径，replay 重跑须留版本）
+    unqualified: ①②③ <2 过，或 PIT=dirty
+  data_discipline: CH 只读 SELECT（经 8123 HTTP，模板化 SQL，禁 DDL/INSERT）；禁改既有文件；考册先冻结后开跑
+
+# ======== 以下为开跑后结果（上方 prereg 块逐字冻结） ========
+exam_execution:
+  generated_at_utc: '2026-10-07T05:20:00+00:00'
+  scripts: .runtime/tmp/st-matrix-20261007/emo_explore.py / emo_explore2.py / emo_pit.py / emo_adequacy.py / emo_exam.py（结果快照 emo_results.json）
+  data:
+    emotion: c1_market.emotion_index stage='close_final' 考窗 1801 行（source=replay 100%，ingest 集中 2026-09-23 11:21:16 单批；每键恰 1 行）
+    proxy: c1_market.kline_index 000300 close（2005-01-04..2026-09-30 共 5282 行；SMA200 全程滚动考窗无预热缺口；情绪日∩K线日=1801/1801 零错位；fwd5/fwd20 全定义 n=1801）
+  baseline:
+    fwd5: {n: 1801, mean: 0.000716, median: 0.000490, p_neg: 0.4897}
+    fwd20: {n: 1801, mean: 0.002517, median: -0.001929, p_neg: 0.5164}
+  paper1_extreme_timing:
+    n_s90: 75
+    fwd5: {mean: 0.005649, median: 0.003159, p_neg: 0.4667, baseline_p_neg: 0.4897, beat_baseline: false, hit_ge_55: false, binom_p_vs_baseline: 0.696}
+    fwd20: {mean: 0.007353, median: 0.001388, p_neg: 0.4533, baseline_p_neg: 0.5164, beat_baseline: false, hit_ge_55: false, binom_p_vs_baseline: 0.887}
+    strict_lag20_p_neg: 0.52（ts=15:10 口径敏感性变体，仍 <55%）
+    ice_mirror: {n: 0, note: 考窗内 e 最小 0.2608，情绪从未入冰点区（prereg 已记）}
+    finding: 高情绪后大盘不跌反略涨（均值均高于全窗基线，p_neg 反低于基线但不显著）——反向假设在本窗不成立，顺向也不足 55%，两向皆无 ≥55% 信号
+    verdict: FAIL
+  paper2_momentum_corr:
+    n: 1796
+    pearson_predictive: 0.0212
+    spearman_predictive: -0.0254
+    concurrent_pearson: 0.3209
+    roll60: {min: -0.3813, max: 0.3880, share_pos: 0.448}
+    finding: Δemo5 对后 5 日收益预测相关≈0（|r|<<0.15）；同期相关 0.321=情绪是当期同步量（由涨跌家数/成交构成），无 5 日前瞻信息；滚动 60 日相关正负震荡不稳
+    verdict: FAIL
+  paper3_regime_gain:
+    cells_fwd20: {bullxhigh: {n: 44, mean: -0.005721}, bullxlow: {n: 41, mean: 0.011119}, bearxhigh: {n: 31, mean: 0.025910}, bearxlow: {n: 98, mean: 0.010235}}
+    S1_regime_spread: 0.000757
+    d_bull: 0.016839（bull 体制内反向成立）
+    d_bear: -0.015675（bear 体制内反向翻转：高情绪格均值最高 +2.59%=熊市情绪脉冲后反弹）
+    S2_emo_spread_avg: 0.000582
+    direction_ok: "false / gain_ok: false"
+    finding: 情绪档区分度跨体制变号（bull 内低胜高、bear 内高胜低），无稳定方向性增益；S2<S1，双条件不优于单条件
+    verdict: FAIL
+  paper4_pit:
+    a_ts_violations_inwindow: 0（窗外仅 1991 年 70 行 ts=16:10 旧格式）
+    a_ts_date_mismatch: 0
+    b_asof_future_violations: 0（1801 行逐成分复扫）
+    c_inwindow_revision_keys: 0
+    d_construction_asof: trailing250+拉窗止于当日+rolling/asof（builder 代码核验，冻结时事实）
+    e_revision_capability: pre_open 2026-10-02 双行异值（窗外 10-05 重写实证）；考窗 1801 行=2026-09-23 单批 replay 建成，无逐日快照留痕
+    pit_verdict: conditional_clean（a-d 全过，e=仅结构瑕疵；按冻结规则 clean 不可达）
+  verdict:
+    papers_pass: [false, false, false]
+    pit: conditional_clean
+    n_pass: 0
+    final: 不合格（①②③ 0/3 过；总判规则=①②③≥2 过且 PIT 干净）
+

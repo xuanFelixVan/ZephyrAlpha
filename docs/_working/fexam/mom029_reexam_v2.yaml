@@ -1,0 +1,88 @@
+doc_type: fexam_reexam_scores
+version: v2
+factor_id: FCT-MOM-029
+name_zh: 20日动量（代码锚）
+code_symbol: src/zephyr/factor/momentum_factor.py::Momentum20d
+generated_at_utc: '2026-10-06 19:31:08.097333+00:00'
+prereg:
+  path: docs/_working/fexam/mom029_prereg_v2.yaml
+  frozen_at_utc: '2026-10-06 19:26:43.660810+00:00'
+  frozen_by: st-matrix-20261006
+  owner_approval: Owner 2026-10-07 批“先补假设再考”（B道判rework：direction字段空+无经济假设）
+  direction: short
+  pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+  coverage_min: 0.6
+hypothesis: 过去20个交易日涨幅越高的股票，短期被追涨资金推得越透支，随后数日到数周价格倾向均值回落——本因子赌的是A股月内短期反转（做多前期输家、回避前期赢家），不是动量延续。
+window_definition:
+  holdout_exam:
+  - '2025-10-09'
+  - '2026-09-30'
+  is_ref_decay:
+  - '2024-10-08'
+  - '2025-09-30'
+  separation_note: 选样窗与考试窗分离；IS_REF仅用于衰减对照；窗承prereg v1禁挪门柱
+adaptation:
+- 逐 symbol 构造 index=date/close 列 DataFrame 逐列调真函数 Momentum20d().compute（代码锚，与B道适配同口径）
+- 逐列调用完成 symbols=5626 单列失败=0；有效因子列=5607
+- IC=ic_exam.fast_rank_ic（逐日截面 Spearman，与 compute_ic_series 内核逐位同构）
+direction: short
+verdict: pass
+reason: prereg线全过
+judge_detail:
+  eff_ic_5d: 0.051631
+  eff_icir_5d: 0.309886
+  retain_5d: 0.59228
+  coverage_holdout: 0.978142
+  lines: '|eff_ic|>=0.02 / eff_icir>=0.3 / retain>=0.5 / coverage>=0.6'
+  note: direction=short → eff=-IC/-ICIR（judge direction 口径）；coverage 由 COVERAGE_MIN=0.60 判
+metrics:
+  per_horizon:
+    '1':
+      holdout:
+        ic_mean: -0.03740669383370015
+        icir: -0.22619052018195634
+        n_obs: 240
+      is_ref:
+        ic_mean: -0.06181634991659225
+        icir: -0.42090403015823585
+        n_obs: 224
+      retain: 0.6051262147340042
+    '5':
+      holdout:
+        ic_mean: -0.051630996296182
+        icir: -0.3098861194998837
+        n_obs: 236
+      is_ref:
+        ic_mean: -0.08717330818723124
+        icir: -0.6540739526660034
+        n_obs: 224
+      retain: 0.5922798775204069
+    '20':
+      holdout:
+        ic_mean: -0.05666204214493388
+        icir: -0.3411919432837935
+        n_obs: 221
+      is_ref:
+        ic_mean: -0.10369908744318035
+        icir: -0.7497354270749473
+        n_obs: 224
+      retain: 0.5464083006128729
+  headline:
+    ic_series_len_holdout: 236
+    coverage_holdout: 0.978141729617639
+    turnover_proxy: 0.07134714097995865
+    regime_ic:
+      trend_down:
+        ic_mean: -0.14129346080056276
+        n_obs: 68
+      trend_up:
+        ic_mean: -0.01533904637774217
+        n_obs: 168
+    regime_source: sma200_default
+device_ledger:
+- object: mom029_reexam_v2
+  device: cpu
+  reason: spearman秩相关(pandas)无GPU核；rank_ic非矩阵乘法密集型，GPU无收益

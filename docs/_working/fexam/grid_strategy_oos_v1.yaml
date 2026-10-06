@@ -1,0 +1,135 @@
+doc_type: grid_strategy_oos_exam
+version: v1
+title: R道——324 格网格考（策略族）样本外判决考册
+date: '2026-10-07'
+owner: ZephyrAlpha-Owner
+status: active
+lane: R道 OOS 判决（对象=F 道 GPU 网格考 324 格，5 考场）
+prereg_v1:
+  frozen_at_utc: '2026-10-06T19:27:00+00:00'
+  frozen_before_any_verdict_calc: true
+  windows:
+    oos:
+      start: '2025-10-09'
+      end: '2026-09-30'
+    is:
+      start: '2018-01-02'
+      end: '2025-09-30'
+    note: 与全项目口径一致（codesym_strategy_exam_v1 同窗）
+  verdict_rules:
+    pass: OOS Sharpe>0 且 IS Sharpe>0 且 OOS MaxDD>=-30%
+    retire_candidate: 双窗 Sharpe<0
+    else: rework
+    direction: 按净值曲线本身方向（装置已多头，不做方向翻转）
+  metric_convention:
+    sharpe: 日净收益 mean/std(ddof=1)*sqrt(252)，rf=0（与 manifest 口径核对，符号必须一致；
+      manifest 年化基数为装置内部口径，与本册 252 基数存在 <0.02 绝对差，已实测）
+    max_drawdown: nav=(1+r).cumprod() 峰谷最大回撤（<=0；与 manifest 逐格核对）
+    ann_return: nav_end^(252/T)-1
+sources:
+  rooms:
+    std_device:
+      dir: data/strategy_intake/grid_20261006-201353
+      n_cells: 18
+    b_topn_band:
+      dir: data/strategy_intake/grid_20261006-201854
+      n_cells: 54
+    d1_freq_band:
+      dir: data/strategy_intake/grid_20261006-201935
+      n_cells: 54
+    g_universe_band:
+      dir: data/strategy_intake/grid_20261006-202016
+      n_cells: 54
+    a2_composite_band:
+      dir: data/strategy_intake/grid_20261006-202055
+      n_cells: 144
+    artifacts_per_room: [manifest.csv, net_returns.parquet, negatives.csv, summary.json]
+    read_only: true
+device_reality_note: |
+  【IS 腿不可评——预注册后核实的事实】五考场 summary.json window=[2025-10-09,2026-09-30]，
+  net_returns.parquet 覆盖恰为该 241 交易日：本批装置只跑了 OOS 窗。IS 窗(2018-01-02..2025-09-30)
+  在本批零数据；全仓扫描（grid_*/summary.json）无同族 IS 批次（其余 grid 目录=2020-2023 窗的
+  G_universe 族，子空间与窗口均不同，不可借用）。
+  按 prereg 判决语义推论：IS Sharpe 不可评 => 无格可达 pass（需 IS>0）、无格可达
+  retire_candidate（需双窗<0）=> 324 格判决算术上全部=rework。OOS 侧指标照常计算并分层披露：
+  is_pending_oos_ok（OOS Sharpe>0 且 OOS MaxDD>=-30%，IS 补考后可升 pass）/
+  is_pending_oos_dd_breach / oos_negative。
+known_device_facts:
+  e_single_cap_noop: E_single_cap(cap5/cap10/cap20)在本装置为无效维——std_device 18 格仅 7 条
+    唯一净值曲线（参数不同曲线全同）；格点多样性低于表面数。
+  negatives_csv_empty: 五考场 negatives.csv 全空（0 字节内容）。
+multiple_testing_note: 324 格多重比较，任何 OOS 正结论须 DSR/换样本复核后才可上线（诚实位）。
+dsr_ledger:
+  batch_id: fexam-grid-strat-20261007
+  kind: fexam_grid_strategy_family
+  dedup_plan: 先读 cumulative_trials 再记；五考场 324 次回测已由 auto_sync 以
+    factory_grid_batch_a 记入账（batch_id=grid_20261006-201353/201854/201935/202016/202055，
+    18+54+54+54+144=324），故本批登记 0 增量指针条目（n_trials=0+note 指向原五条），
+    防止同批回测双计分母。
+results:
+  computed_at_utc: '2026-10-06T19:35:00+00:00'
+  script: .runtime/tmp/st-matrix-20261007/grid_oos_analyze.py
+  raw_dump: .runtime/tmp/st-matrix-20261007/oos_results.json
+  consistency_check:
+    oos_sharpe_sign_vs_manifest: '324/324 一致'
+    oos_maxdd_vs_manifest_tol_1e-3: '324/324 一致'
+    parquet_window_equals_oos: '5/5 考场（IS 段数据不存在，已核实）'
+  totals:
+    n_cells: 324
+    n_unique_recipe_id: 252
+    n_unique_curves: 89
+    verdict_counts:
+      pass: 0
+      retire_candidate: 0
+      rework_total: 324
+      rework_oos_negative: 278
+      rework_is_pending_oos_ok: 42
+      rework_is_pending_oos_dd_breach: 4
+    verdict_logic_note: IS 不可评（装置只跑 OOS 窗）=> prereg 算术上无格可达 pass/retire_candidate，
+      全部 rework；OOS 侧分层仅供 IS 补考排程与机制读数。
+  per_room:
+    std_device: {n: 18, oos_negative: 18, is_pending_oos_ok: 0, is_pending_oos_dd_breach: 0}
+    b_topn_band: {n: 54, oos_negative: 50, is_pending_oos_ok: 0, is_pending_oos_dd_breach: 4}
+    d1_freq_band: {n: 54, oos_negative: 54, is_pending_oos_ok: 0, is_pending_oos_dd_breach: 0}
+    g_universe_band: {n: 54, oos_negative: 54, is_pending_oos_ok: 0, is_pending_oos_dd_breach: 0}
+    a2_composite_band: {n: 144, oos_negative: 102, is_pending_oos_ok: 42, is_pending_oos_dd_breach: 0}
+  band_patterns:
+    method: 带维逐值配对（每考场 18 组完全配对，组内除带维外参数全同），均值 OOS Sharpe
+    b_topn_band: {top10: -0.2824, top20: -0.3932, top30: -0.4144, reading: 越集中越好，但全负}
+    d1_freq_band: {monthly: -0.3932, biweekly: -0.7727, weekly: -1.3417, reading: 频率越低越好（换手成本），全负}
+    g_universe_band: {all_a_ex_st: -0.3932, hs300: -0.4364, zz500: -0.5347, reading: 全 A 股票池最好，全负}
+    a2_composite_band:
+      halflife60: 0.7124
+      ic_ir: -0.07
+      ic_mean: -0.1737
+      lasso: -0.2371
+      pc1: -0.2726
+      halflife20: -0.3627
+      equal: -0.3932
+      orth_equal: -0.9274
+      reading: 唯一 OOS 正杠杆=halflife60 慢衰减加权；ic_ir/ic_mean 次之仍负
+  pending_ok_anatomy:
+    share: 42 格全在 a2_composite_band，OOS Sharpe 0.215..1.326
+    halflife60: 全部 6 种 A1 归一化均过 OOS 侧线（18 格）
+    ic_ir_ic_mean: 仅 industry/industsize_neutral 或 rank 归一化过线（18 格）
+    halflife20: 仅 industry/industsize_neutral 过线（6 格）
+  dd_breach_anatomy: 4 格均 b_topn_band top10 × raw/size_neutral，OOS Sharpe 0.061..0.067
+    但 MaxDD -51.5%..-52.8%（弱正+深回撤）
+  global_top5_oos_sharpe:
+    top:
+    - {room: a2_composite_band, recipe_id: 1499bbeebc, oos_sharpe: 1.3257, oos_maxdd: -0.1831,
+       diff: 'A1=industsize_neutral,A2=halflife60,top20,monthly,all_a_ex_st（cap5/10/20 三胞胎同曲线）'}
+    - {room: a2_composite_band, recipe_id: 6b66852e9a, oos_sharpe: 1.2113, oos_maxdd: -0.1831,
+       diff: 'A1=industsize_neutral,A2=ic_ir,top20,monthly,all_a_ex_st（cap10/20 同曲线）'}
+    note: Top5 全部同属一族机制（中性化+halflife60/ic_ir+低频 top20 全 A），非独立证据
+  dsr_receipt:
+    cumulative_trials_before: 28789
+    cumulative_trials_after: 28789
+    delta: 0
+    entry: {batch_id: fexam-grid-strat-20261007, kind: fexam_grid_strategy_family, n_trials: 0,
+            status: recorded}
+    dedup_note: 324 次回测已由 auto_sync 计入（factory_grid_batch_a 五条 18+54+54+54+144），
+      本批=0 增量指针条目，分母不双计
+  multiple_testing_honesty: 324 格多重比较且仅 89 条唯一曲线（E_single_cap 无效维三胞胎），
+    上述 OOS 结论须 DSR 折减/换样本复核后才可上线
+

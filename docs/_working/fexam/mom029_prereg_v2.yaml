@@ -1,0 +1,48 @@
+doc_type: fexam_prereg
+version: v2
+factor_id: FCT-MOM-029
+name_zh: 20日动量（代码锚）
+code_symbol: src/zephyr/factor/momentum_factor.py::Momentum20d
+frozen_at_utc: '2026-10-06 19:26:43.660810+00:00'
+frozen_by: st-matrix-20261006
+owner_approval: Owner 2026-10-07 批“先补假设再考”（B道判rework：direction字段空+无经济假设）
+hypothesis:
+  statement_zh: 过去20个交易日涨幅越高的股票，短期被追涨资金推得越透支，随后数日到数周价格倾向均值回落——本因子赌的是A股月内短期反转（做多前期输家、回避前期赢家），不是动量延续。
+  bet: A股月内短期反转（短期反转表现，非动量延续）
+  direction: short
+  direction_meaning: 因子值与前向收益负相关；判卷按 eff=-IC/-ICIR 口径（ic_exam.judge direction=short）
+  literature_basis: 动量/反转文献通识：Jegadeesh & Titman (1993) 经典动量成立于3-12个月形成期；1个月形成期即使在美股也呈短期反转（Jegadeesh 1990; Lehmann 1990）；A股散户占比高、追涨杀跌重，月频短期反转效应稳健且强于美股（A股实证文献共识，本项目
+    factor_family_glossary 反转族亦载“20日反转是经典有效因子”）。
+  prior_independence_note: 本假设为事前登记：direction 仅依据动量/反转文献通识与代码数学含义（close.pct_change(20) 截面动量），未引用B道 codesym_factor_exam_v1
+    或任何实测 IC 符号作为 direction 依据。
+criterion:
+  window:
+    holdout_exam:
+    - '2025-10-09'
+    - '2026-09-30'
+    is_ref_decay:
+    - '2024-10-08'
+    - '2025-09-30'
+    note: HOLDOUT=考试窗；IS_REF仅作衰减对照，两窗严格不交（承prereg v1口径，禁挪门柱）
+  horizons:
+  - 1
+  - 5
+  - 20
+  headline_horizon: 5
+  pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+    coverage_min: 0.6
+    note: '|IC_5d|与ICIR均按direction调整后判（direction=short→eff=-IC/-ICIR）；retain线承v1=0.5'
+  regime_source: sma200_default
+  regime_note: 2026-10-07 Owner裁定：帘子=SMA200（HMM经J道判不合格禁回用）；regime切片report_only
+  verdict_engine: scripts/backtest/fexam/ic_exam.py::fast_rank_ic + ic_exam.judge(direction=short)；数据=scripts/backtest/fexam/ch_data.py（CH只读）；适配=逐symbol调真函数Momentum20d().compute
+change_log_vs_v1:
+- direction 由 null→short（经济假设补全，依据=文献通识，见 hypothesis.prior_independence_note）
+- 判卷口径：v1判卷时direction空按原始IC判ICIR；v2按direction=short调整后判（-IC/-ICIR）
+- 重考对象=FCT-MOM-029 单条；其余prereg线（0.02/0.3/0.5/coverage0.6）与窗口承v1不变
+amendments:
+- at_utc: '2026-10-06 19:33:42.296054+00:00'
+  by: st-matrix-20261006
+  note: 纯笔误修复：hypothesis.bet 文字修正（非判据变更；window/pass_line/direction/frozen_at 均零变更），修复于重考判卷完成后、verdict 落盘同批

@@ -1,0 +1,270 @@
+doc_type: metaq_wave2_writeback
+version: 1
+session: st-matrix-20261006
+lane: Q道：原问题36问机解回填
+generated_at_utc: '2026-10-06 19:43:08.253583+00:00'
+source_deferred: docs/_working/matrix_campaign/metaq_matching_v1.yaml#writeback_deferred（36条）
+writeback_chain: MetaQuestionRegistry.claim(actor=st-matrix-20261006) -> transition(answered->reexam) -> record_exam_result(outcome=answered)（全程
+  writeback API，零直改 PG；毕后 release_claim + 进程外核实通过）
+classification_rule: A=判据可由今晚成绩册（docs/_working/fexam/*）字段直读机解；B=需逐因子/逐策略点对点且册内无该点measured（升级工单）；C=治理面/需人工（留痕）
+counts:
+  total: 36
+  answered: 3
+  deferred: 33
+  class_A: 3
+  class_B: 26
+  class_C: 7
+answered:
+- q_id: PQ-0126
+  title: SL-A06 的主力净流入占比信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外 IC>0.01）？
+  named_object: ALT-A06-MAIN5D（主因子：5日主力净流入率均值 rank，_pct 口径）
+  book: docs/_working/fexam/alt_factor_exam_scores_v1.yaml
+  book_anchor: families[M1-ALT-A06].factors[ALT-A06-MAIN5D].metrics.per_horizon['5']
+  verdict: fail
+  conclusion_value: -0.000246
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  evidence_pg: meta_question.meta_question_exam_result recorded_by=st-matrix-20261006（exam_ref=st-matrix-20261006/fexam_wave2/PQ-0126）
+- q_id: PQ-0127
+  title: SL-A06 的主力净流入占比信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（同上判据）？
+  named_object: ALT-A06-MAIN5D
+  book: docs/_working/fexam/alt_factor_exam_scores_v1.yaml
+  book_anchor: families[M1-ALT-A06].factors[ALT-A06-MAIN5D].metrics.per_horizon['20']
+  verdict: fail
+  conclusion_value: -0.020525
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  evidence_pg: meta_question.meta_question_exam_result recorded_by=st-matrix-20261006（exam_ref=st-matrix-20261006/fexam_wave2/PQ-0127）
+- q_id: PQ-0205
+  title: SL-A13 股东户数线的户数变动分组后续收益差检验集中度信号无领先性即退役证伪方案能否机械执行（U6）？
+  named_object: M1-ALT-A13 全族 + prereg_v1_frozen
+  book: docs/_working/fexam/alt_factor_exam_scores_v1.yaml
+  book_anchor: prereg_v1_frozen(windows/factor_pass_line) + families[M1-ALT-A13].factors[ALT-A13-CHG].verdict/reason
+  verdict: pass
+  conclusion_value: 1.0
+  threshold: 判据可执行率=100%
+  evidence_pg: meta_question.meta_question_exam_result recorded_by=st-matrix-20261006（exam_ref=st-matrix-20261006/fexam_wave2/PQ-0205）
+deferred:
+- q_id: PQ-0011
+  class: B
+  criterion: SL-A01 分钟线30分钟MA20斜率→次日开盘30分钟方向准确率>50%
+  nearest_measured: FCT-INTRADAY-029/030（盘中VWAP/收盘价锚，rework）
+  gap: factor册175条全non_quantified（metrics={}）；codesym册无MA斜率对象
+  escalation: 分钟线斜率因子未量化为可计算列；且属时序择时通道非截面IC（codesym册structural先例）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0017
+  class: B
+  criterion: SL-A16 上游价格冲击×ig_io_edge消耗系数加权传导→下游行业20日IC>0.02
+  nearest_measured: 无（sector册9因子=板块动量/活跃/结构/离散/条件化）
+  gap: sector_factor_exam data_backing 无投入产出边
+  escalation: 传导信号建卡未立项
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0019
+  class: B
+  criterion: SL-A02 开盘集合竞价买卖队列失衡度 AUC>0.55
+  nearest_measured: 无（无任何册含auction_book/auction_snapshot考试）
+  gap: codesym册data_gap先例：realtime_snapshot表为空
+  escalation: 竞价簿历史数据缺口
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0023
+  class: B
+  criterion: SL-A04 EP十分位多空年化差>5%且Spearman|ρ|>0.5
+  nearest_measured: FCT-QUAL-002 价值因子（价均偏离口径，rework |ic|=0.0114）
+  gap: factor册全non_quantified；无十分位分组回测册
+  escalation: EP十分位分组回测未建；近缘对象（价均偏离）非题面判据
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0024
+  class: B
+  criterion: SL-A04 公告日PIT口径 vs 未对齐口径 IC差≥0
+  nearest_measured: 无（各册无双口径对照实验）
+  gap: alt册asof规则仅覆盖A13/A06族
+  escalation: 同窗双口径对照专测未建
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0026
+  class: B
+  criterion: SL-A06 主力口径版本切换前后 Chow断点 p<0.05
+  nearest_measured: alt册data_plane_findings记录money_flow缺口/粒度偏差（无断点检验）
+  gap: 无跨口径版本历史序列
+  escalation: 口径版本标记台账未建（此前gc复考已pass一次，按月度滚动复考节奏走）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0027
+  class: B
+  criterion: SL-A13 环比降幅>5%个股公告日后20日超额收益>0（t>2）
+  nearest_measured: ALT-A13-CHG（对数降幅连续截面IC 10/20/60d，retire_candidate |ic|=0.0019）
+  gap: M1-ALT-A13族已考，但判据不等价：册=全截面连续值IC；题面=>5%阈值事件研究+事件窗超额t检验
+  escalation: 事件研究专测未建；近缘旁证方向不利（clean窗无可测alpha）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0028
+  class: B
+  criterion: SL-A13 户均持股市值分位因子月频IC>0.02且t>2
+  nearest_measured: ALT-A13-CHG/CHG60/STREAK（降幅/连降变体）
+  gap: A13族3变体均非户均持股市值分位
+  escalation: 该变体未量化入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0045
+  class: B
+  criterion: 板块动量+资金流双信号top3组合扣费后年化超额>3%
+  nearest_measured: ALC-THREELAYER-001等5个组合（measured）
+  gap: allocator册composite_selection=technical_indicator.*列，非板块轮动组合；strategy册161条全rework空metrics
+  escalation: 板块轮动top3组合回测未建
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0049
+  class: B
+  criterion: 单因子权重上限15%约束→特质波动降>10%且收益损失≤1%
+  nearest_measured: 无
+  gap: 无约束消融实验册
+  escalation: 约束on/off对照回测未建
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0053
+  class: B
+  criterion: 焊成本滑点模型输出 vs tick实盘回执偏差均值≤2bp
+  nearest_measured: exit_sim册（stop on/off双跑对比）
+  gap: 册=止损引擎对比非滑点校准；sim_trade_log合规样本此前判零
+  escalation: 实盘回执对账数据缺口
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0088
+  class: B
+  criterion: 全市场户数降幅家数占比合成筹码情绪→市场20日收益IC>0.02且t>2（月频）
+  nearest_measured: ALT-A13族（个股截面IC）；state_recognizer sentiment_layer_inventory.emotion_index（can_test_now但缺prereg）
+  gap: 无市场级合成时序IC考试
+  escalation: 市场级筹码情绪合成+时序IC考试未建
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0090
+  class: B
+  criterion: 板块轮动+资金流top3超配5%决策对组合IR贡献>0.1
+  nearest_measured: 无
+  gap: 无IR归因账
+  escalation: 决策/归因账未落（切点后记录不足）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0110
+  class: B
+  criterion: SL-A01 均线斜率+20日突破合成信号 1日前瞻IC
+  nearest_measured: IND-TREND-001（ma_5/10/20/60，rework |ic_5d|=0.0188）
+  gap: indicator册MA族全测，但题面点名=斜率+突破合成信号，册内无该合成对象；且1d horizon以册内per_horizon为准未单列命中
+  escalation: 合成信号入册（IND/因子通道）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0111
+  class: B
+  criterion: SL-A01 均线斜率+20日突破合成信号 5日前瞻IC
+  nearest_measured: 同上
+  gap: 同上
+  escalation: 合成信号入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0112
+  class: B
+  criterion: SL-A01 均线斜率+20日突破合成信号 20日前瞻IC
+  nearest_measured: 同上
+  gap: 同上
+  escalation: 合成信号入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0113
+  class: B
+  criterion: SL-A02 尾盘主买净额占比 1日前瞻IC
+  nearest_measured: 无（alt册族=A13/A06/A08/A15，无A02）
+  gap: 全日主力净流入（A06）≠尾盘14:30-15:00主买窗
+  escalation: 尾盘主买信号未量化入册（需分钟级流向）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0114
+  class: B
+  criterion: SL-A02 尾盘主买净额占比 5日前瞻IC
+  nearest_measured: 无
+  gap: 同上
+  escalation: 尾盘主买信号未量化入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0115
+  class: B
+  criterion: SL-A02 尾盘主买净额占比 20日前瞻IC
+  nearest_measured: 无
+  gap: 同上
+  escalation: 尾盘主买信号未量化入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0119
+  class: B
+  criterion: SL-A04 EP/BP分位信号 1日前瞻IC
+  nearest_measured: FCT-QUAL-002（价均偏离，rework）
+  gap: 估值对象口径不同（非EP/BP分位）
+  escalation: EP/BP分位信号未入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0120
+  class: B
+  criterion: SL-A04 EP/BP分位信号 5日前瞻IC
+  nearest_measured: 同上
+  gap: 同上
+  escalation: EP/BP分位信号未入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0121
+  class: B
+  criterion: SL-A04 EP/BP分位信号 20日前瞻IC
+  nearest_measured: 同上
+  gap: 同上
+  escalation: EP/BP分位信号未入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0122
+  class: B
+  criterion: SL-A05 营收增速二阶差分>0（ann_date PIT）1日前瞻IC
+  nearest_measured: FCT-GR-001 单季营收同比（一阶水平，rework |ic|=0.0091）；FCT-GR-002 盈利加速度（净利润QoQ，retire |ic|=0.0024）
+  gap: 近缘对象已测但均非营收增速二阶差分
+  escalation: 精确判据（营收增速二阶差分）未入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0123
+  class: B
+  criterion: SL-A05 营收增速二阶差分>0 5日前瞻IC
+  nearest_measured: 同上
+  gap: 同上
+  escalation: 精确判据未入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0124
+  class: B
+  criterion: SL-A05 营收增速二阶差分>0 20日前瞻IC
+  nearest_measured: 同上
+  gap: 同上
+  escalation: 精确判据未入册
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0125
+  class: B
+  criterion: SL-A06 主力净流入占比 1日前瞻IC
+  nearest_measured: ALT-A06-MAIN5D已测（点名对象命中）
+  gap: 册per_horizon={5,10,20}，无1d实测
+  escalation: 补1d horizon复考（点名对象已入册，仅缺该horizon）
+  disposition: deferred_upgrade_ticket
+- q_id: PQ-0007
+  class: C
+  criterion: A档16条源线U3现答率与DS册健康检查口径一致（母问）
+  reason_not_machine_solvable: 治理面：源线谱登记审计，今晚成绩册不含源线谱对账
+  escalation: 走源线谱册对账通道（此前probe已pass，2026-09-23，exam_ref=st-metaq-20260923/probe/b_lines_PQ-0007）
+  disposition: deferred_manual_channel
+- q_id: PQ-0098
+  class: C
+  criterion: IC类考试检验功效≥80%且降阈值事件=0
+  reason_not_machine_solvable: 册无功效字段/功效账；降阈值=0有旁证（全部按prereg冻结线判定+negative_result_discipline零隐藏）但功效不可由册字段复算→整体不可机解
+  escalation: 功效预锁字段（exam_plan.power_min/sample_size/effect_size）入prereg后可机解（exam_loop assess_power 唯一出口=defer）
+  disposition: deferred_manual_channel
+- q_id: PQ-0104
+  class: C
+  criterion: E1C预注册空间单批候选≤600且N_eff占比≥30%
+  reason_not_machine_solvable: 今晚册无E1C台账/批manifest
+  escalation: E1C挖掘批台账（space_hash/manifest/N_eff估计账）建成后再考
+  disposition: deferred_manual_channel
+- q_id: PQ-0105
+  class: C
+  criterion: E1C三轨（gplearn/智能体/MCTS）有效因子产出率卡方p<0.05
+  reason_not_machine_solvable: 同上；三轨标识未落库
+  escalation: 三轨产出账落库后再考
+  disposition: deferred_manual_channel
+- q_id: PQ-0108
+  class: C
+  criterion: 组合因子新鲜窗重考（月度滚动20日）逾期率≤5%
+  reason_not_machine_solvable: 治理面：复考队列账，册无新鲜窗台账
+  escalation: reexam_scheduler落账后可机解（此前已两波insufficient留痕）
+  disposition: deferred_manual_channel
+- q_id: PQ-0133
+  class: C
+  criterion: SL-A01 U6退役判据闭环可执行性核验
+  reason_not_machine_solvable: 今晚无SL-A01专线判据执行册（indicator册=技术指标族，非A01线卡判据重放）
+  escalation: A01线卡判据重放演练（此前probe已pass，2026-09-23）
+  disposition: deferred_manual_channel
+- q_id: PQ-0151
+  class: C
+  criterion: SL-A04 U6退役判据闭环可执行性核验
+  reason_not_machine_solvable: 同上（无A04专线册）
+  escalation: A04线卡判据重放演练（此前probe已pass，2026-09-23）
+  disposition: deferred_manual_channel
+note: 硬纪律执行：每问回填前先 claim（认领校验通过）；结论值全部运行时读自成绩册字段可复算（禁编造）；不能答的33条一条未硬答，逐条留升级工单/人工通道。A06两问结论同步声明册记窗口完整性0.35限制（money_flow缺2025-09-10..2026-05-31），扩窗复考另行。

@@ -1,0 +1,22 @@
+doc_type: data_backfill_requests
+campaign: matrix-20261006
+version: v1
+created: 2026-10-07
+note: 考试战役数据回补申请（提交数据班；每条附解锁的考试）
+requests:
+- req_id: DR-1
+  dataset: c1_market.money_flow
+  gap: 2025-09-10..2026-05-31 约8.5个月空洞（A道实测）
+  unlocks: ALT-A06-PERSIST10D 重考（retain唯一过线者）
+- req_id: DR-2
+  dataset: daban_engine_load
+  gap: 仅2026-09一个月
+  unlocks: DABAN-022 策略measured判决
+- req_id: DR-3
+  dataset: minute breadth快照
+  gap: 仅2026-08-24起24日
+  unlocks: SENT-020~025/028 七因子（B道data_gap族）
+- req_id: DR-4
+  dataset: tick_data/tick_depth_5
+  gap: 2026-01-05/2026-07-24起
+  unlocks: tick组5策略（MF-069/VREV-017-019/024）EDE tick考道

@@ -86,3 +86,21 @@ ttl: task_bound
 | 调查道 | gpu_survey_v1.md（23 面矩阵） | A5/B6/C12；Top5 施工排行带验收判据；I 道探针已修正 #2 打法 |
 
 **wave-2 全部产物 token 已入账（72 枚）**；施工队列剩余项（M 级深水区：tick 回补/EDE tick 考道/事件管线闭环/时序择时通道）见各册工单字段与 construction_queue_v1。
+
+
+## wave-2.5 十道战报（裁定执行夜）
+
+| 道 | 产物 | 结论 |
+|----|------|------|
+| K道 | 16 件 tmp 抢救转正（bootstrap_gpu/gpu_ic/exit_sim/grid_adapter 四包） | 字节级一致+py_compile 15/15 绿；token 15+翻译 16+depgraph 待收 |
+| M道 | 指标链向量化影子（438/438 列逐位） | 物化段 25-42x、全路径 1.9-2.3x；生产切挂=30 行改点（日光档+夜窗双跑） |
+| N道 | MOM-029 假设补全+prereg v2+重考 | **回炉→合格转化首例**（假设事前/direction=short/四线全过/registry 3 行注解） |
+| O道 | 情绪指数首考 | **不合格**（0/3 过；同步量无 5 日前瞻；PIT 干净但需 append-only 快照重考） |
+| P道 | bootstrap×3+layered 核接线 | 进行中 |
+| Q道 | 原问题机解回填 | **首批 3 件真实回填**（PQ-0126/0127 fail、PQ-0205 pass）；33 问留痕升级 |
+| R道 | 324 格 OOS 分析 | 0 过（发现 F 道配置只跑了 OOS 窗=我的锅）；42 格 OOS 全正待 IS 补考；halflife60 族最亮；DSR 防双计 |
+| S道 | direction 全册勘察 | 19 条空标签连片缺口；17 可客观推导/2 等 Owner；翻案候选唯 MOM-029 |
+| T道 | HMM 重训回炉 | **仍不合格但大幅改善**（对角+72.9pp/抖动减半/标签置换消除）；生产不替换，SMA200 默认二次验证 |
+| 数据申请 | data_requests_v1.yaml（DR-1~4） | 提交数据班：解锁 13 因子+5 策略+1 因子重考 |
+
+**新增裁定执行记录**：paper 池 78 只落册；SMA200 默认帘子切换（HMM use_hmm=True 仅研究用）；MOM-029 注解 3 行。

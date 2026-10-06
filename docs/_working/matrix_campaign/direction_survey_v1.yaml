@@ -1,0 +1,295 @@
+# [S道勘察册] P1-8 direction 标签全册勘察 | 只读调查产出，未改动任何源册
+# 翻案候选仅列候选禁下结论；补填/翻案必须走 P1-4 式事前假设流程
+meta:
+  doc_type: direction_survey
+  id: DIRSVY-v1
+  campaign: matrix-20261006
+  lane: S-direction-survey
+  mission: P1-8 因子册 direction 标签全册勘察（只读调查）
+  created: '2026-10-06'
+  status: final
+  ttl: task_bound
+  sources:
+  - D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
+  - D:/ZephyrAlpha/docs/_working/fexam/codesym_factor_exam_v1.yaml
+  discipline: 翻案候选仅列候选、禁下结论；补填/翻案必须走 P1-4 式事前假设流程后另行呈批；本册未改动任何源册
+direction_coverage:
+  total_entries: 175
+  filled: 156
+  empty: 19
+  fill_rate: 0.891
+  value_distribution:
+    neutral: 98
+    short: 29
+    long: 29
+  both_count: 0
+  other_values: []
+  empty_by_factor_class:
+    quality: 6
+    expectations: 6
+    momentum: 4
+    intraday: 2
+    value: 1
+  empty_id_list:
+  - FCT-MOM-029
+  - FCT-MOM-030
+  - FCT-QUAL-002
+  - FCT-INTRADAY-029
+  - FCT-INTRADAY-030
+  - FCT-FQ-001
+  - FCT-FQ-002
+  - FCT-FQ-003
+  - FCT-FQ-004
+  - FCT-GR-001
+  - FCT-GR-002
+  - FCT-FQ-005
+  - FCT-FQ-006
+  - FCT-EXP-001
+  - FCT-EXP-002
+  - FCT-EXP-003
+  - FCT-EXP-004
+  - FCT-EXP-005
+  - FCT-EXP-006
+  caveats:
+  - registry 头注自述：v2.0 起 direction 默认 neutral 为占位、逐条校正——98 条 neutral 含占位存量，已填≠已裁定，真实裁定率或低于 89.1%
+  - 空标签呈片状非孤例：ICBATCH 代码锚批 5 条（MOM-029/030、QUAL-002、INTRADAY-029/030）+ 基本面粉批 14 条（FQ×6、GR×2、EXP×6）
+cross_with_fexam:
+  exam_scope_note: B 道考池=registry 全部 code_symbol 非空 31 条；19 条空 direction 中 18 条有码锚全部入考且全部实测；FCT-MOM-030
+    无码锚未入考
+  direction_declared_consistency: 实测册 direction_declared 与 registry direction 逐条一致（0 错位），B 道根因归因成立
+  bucket_by_class:
+    momentum:
+      n_empty: 4
+      in_exam: 3
+      measured: 3
+      verdicts:
+        rework: 2
+        retire_candidate: 1
+      ic_neg: 1
+      ic_pos: 2
+      flip_pass: 1
+    value:
+      n_empty: 1
+      in_exam: 1
+      measured: 1
+      verdicts:
+        rework: 1
+      ic_neg: 0
+      ic_pos: 1
+      flip_pass: 0
+    intraday:
+      n_empty: 2
+      in_exam: 2
+      measured: 2
+      verdicts:
+        rework: 2
+      ic_neg: 2
+      ic_pos: 0
+      flip_pass: 0
+    quality:
+      n_empty: 6
+      in_exam: 6
+      measured: 6
+      verdicts:
+        retire_candidate: 2
+        rework: 4
+      ic_neg: 1
+      ic_pos: 5
+      flip_pass: 0
+    expectations:
+      n_empty: 6
+      in_exam: 6
+      measured: 6
+      verdicts:
+        rework: 6
+      ic_neg: 1
+      ic_pos: 5
+      flip_pass: 0
+  verdict_summary: 18 条实测：rework 15、retire_candidate 3；headline(h5) holdout IC 为负 5 条（MOM-029/INTRADAY-029/INTRADAY-030/FQ-003/EXP-005）、为正
+    13 条
+  reversal_candidates:
+  - factor_id: FCT-MOM-029
+    name_zh: 20日动量（代码锚）
+    registry_direction_now: null
+    exam_verdict: rework
+    headline_h5_holdout:
+      ic_mean: -0.051652
+      icir: -0.30995
+      retain: 0.592581
+    fill_short_flip_eval: 补 short 后 |ic|=0.0517>=0.02 达、|icir|=0.310>=0.30 达（边际仅+0.010）、retain=0.593>=0.5
+      达 → 三线全过
+    supporting: 三窗 holdout IC 全负：h1=-0.037391 h20=-0.056654；is_ref 窗同号更负(h5=-0.0872)
+    caveats:
+    - icir 仅超线 0.010 属擦线；h1 icir=-0.226 翻后 0.226<0.3 不达（仅 headline 窗过）
+    - 仅候选禁下结论；翻案必须走 P1-4 式事前假设流程
+  non_candidates_note: 其余 17 条实测空 direction 条目补 short/long 均不可过线：|IC|<0.02（基本面/预期族）或面板退化/覆盖<60%（EXP 族），翻转不改量级
+regime_and_entry_role:
+  regime_valid:
+    filled: 44
+    empty: 131
+    rate: 0.251
+    item_dist:
+      high_vol: 25
+      low_vol: 16
+      ranging: 5
+      trend_down: 3
+      trend_up: 3
+      panic: 8
+      euphoria: 4
+  regime_invalid:
+    filled: 0
+    empty: 175
+    rate: 0.0
+    item_dist: {}
+  entry_role:
+    filled: 175
+    empty: 0
+    rate: 1.0
+    dist:
+      ranking: 157
+      filter: 1
+      timing: 12
+      factor: 5
+  findings:
+  - regime_invalid 0/175 全册零填写——头注『翻译拆解因子必须填』强制项实际零执行
+  - regime_valid 仅 25.1%，空值连片：liquidity 27/37、momentum 26/33、sentiment 19/24、technical 16/29 全空
+  - 'entry_role 100% 填但出现词表外值 factor×5（恰为 ICBATCH 批: FCT-MOM-029, FCT-MOM-030, FCT-QUAL-002, FCT-INTRADAY-029,
+    FCT-INTRADAY-030），头注默认=ranking，疑词表漂移'
+  - 空 direction 19 条的 regime_valid/regime_invalid 亦全部为空（gap 连片，宜同一工单并补）
+  - factor_class 实际词表溢出头注十类（expectations 等 5 类）；FCT-QUAL-002 前缀 QUAL 但 class=value（前缀↔类错位）
+work_order:
+  column_A_objective:
+  - factor_id: FCT-MOM-029
+    name_zh: 20日动量（代码锚）
+    factor_class: momentum
+    suggest_candidate_value: long
+    basis: code：momentum_factor.py L57 原样返回 close.pct_change(20) 无取负，动量惯例多头
+    conflict_flag: true
+    note: conflict：code 惯例=long vs B 道实测反转=short 候选（见 reversal_candidates）——两值冲突须 Owner 裁定，翻案另走 P1-4
+  - factor_id: FCT-MOM-030
+    name_zh: 4 分钟涨速资金异动
+    factor_class: momentum
+    suggest_candidate_value: long
+    basis: 卡面§F8.46：「4分钟涨速持续排名前10为最早买入信号」
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-QUAL-002
+    name_zh: 价值因子（代码锚，价均偏离口径）
+    factor_class: value
+    suggest_candidate_value: long
+    basis: code：value_factor.py L68 value_signal=1/PE（盈利率），高=便宜=value 多头惯例
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-FQ-001
+    name_zh: 应计因子（Sloan）
+    factor_class: quality
+    suggest_candidate_value: long
+    basis: 公式自带负号 -(应计)/TA，Sloan 1996 应计异象方向内嵌
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-FQ-002
+    name_zh: 现金流实现率
+    factor_class: quality
+    suggest_candidate_value: long
+    basis: 转化效率高=盈利质量好（卡面 RankIC 正向口径）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-FQ-003
+    name_zh: GPOA 毛利率资产比
+    factor_class: quality
+    suggest_candidate_value: long
+    basis: Novy-Marx 2013 盈利能力异象多头口径（deprecated，低优先）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-FQ-004
+    name_zh: 单季盈利变化 ΔROEq
+    factor_class: quality
+    suggest_candidate_value: long
+    basis: ROE 同比改善=高分多头（雪球 V4.x 单季框架）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-GR-001
+    name_zh: 单季营收同比
+    factor_class: momentum
+    suggest_candidate_value: long
+    basis: 营收成长多头（RevSUE 口径：营收难操纵）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-GR-002
+    name_zh: 盈利加速度
+    factor_class: momentum
+    suggest_candidate_value: long
+    basis: 盈利二阶导为正多头（雪球 QoQ_Acc）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-FQ-005
+    name_zh: 信息质量代理
+    factor_class: quality
+    suggest_candidate_value: long
+    basis: 公式自带负号 -|z(应收)| -std(税率)，信息质量差减分
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-FQ-006
+    name_zh: Piotroski F-Score
+    factor_class: quality
+    suggest_candidate_value: long
+    basis: F-Score 高分多头（Piotroski 2000）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-EXP-001
+    name_zh: 一致预期EP（盈利收益率）
+    factor_class: expectations
+    suggest_candidate_value: long
+    basis: EP=盈利率，高=便宜多头（华泰 RankIC 6.32% 多头口径）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-EXP-002
+    name_zh: 盈利修正动量
+    factor_class: expectations
+    suggest_candidate_value: long
+    basis: 上调修正漂移多头（Gleason & Lee 2003）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-EXP-003
+    name_zh: 预期修正广度（上调占比）
+    factor_class: expectations
+    suggest_candidate_value: long
+    basis: 上调占比高多头（华泰基本面量化之二 2024-12）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-EXP-004
+    name_zh: 异常研报覆盖度
+    factor_class: expectations
+    suggest_candidate_value: long
+    basis: 覆盖度异常高多头（Lee & So 2017）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-EXP-005
+    name_zh: 分析师分歧度
+    factor_class: expectations
+    suggest_candidate_value: short
+    basis: 卡面假设=高分歧未来收益偏低（Diether 2002）→反向消费
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  - factor_id: FCT-EXP-006
+    name_zh: 评级动量（评分制）
+    factor_class: expectations
+    suggest_candidate_value: long
+    basis: 评级上调动量多头（Jegadeesh 2002；华泰评分制）
+    conflict_flag: false
+    note: 候选值非终值；写入仍须走工单评审
+  column_B_owner_must_decide:
+  - factor_id: FCT-INTRADAY-029
+    name_zh: 盘中VWAP（代码锚）
+    factor_class: intraday
+    reason: code 自述「供信号/风控作为基准价读取」非方向 alpha；实测 ic5=-0.0201/|icir|5=0.09 量级不足；填 neutral 还是另立 baseline 语义须
+      Owner 定
+  - factor_id: FCT-INTRADAY-030
+    name_zh: 盘中收盘价（代码锚）
+    factor_class: intraday
+    reason: 同上（基准价读取件）；实测 ic5=-0.0276/|icir|5=0.18；direction 语义须 Owner 定
+  counts:
+    column_A: 17
+    column_B: 2
+    conflict_escalated: 1
+    total: 19
