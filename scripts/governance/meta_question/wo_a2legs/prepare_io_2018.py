@@ -3,7 +3,7 @@
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] scripts/industry_graph/io_ingest.py（在册装载器，本件 import 复用其 parse 逻辑不另造）;
 #                 pyreadr; GitHub raw（ionet 学术包转存官方表，与 year=2020 同一在册渠道）
-# [CONSUMERS] 产物册 data/registers/metaq_io_2018/（2018 矩阵 JSON + 部门对齐册 + 误差界取证）
+# [CONSUMERS] 产物册 data/registers/metaq-io-2018/（2018 矩阵 JSON + 部门对齐册 + 误差界取证）
 #             → 待落地：由 PG 单写者执行 io_ingest.py load --matrix io_2018_153.matrix.json
 # [STARTUP] manual
 # [MATURITY] experimental
@@ -36,7 +36,7 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(_ROOT / "src"))
 
-OUT = _ROOT / "data" / "registers" / "metaq_io_2018"
+OUT = _ROOT / "data" / "registers" / "metaq-io-2018"
 REPO = "Carol-seven/ionet"
 SUBDIR = "data"
 FILES = ["china_2018_153.rda", "china_2020_153.rda"]

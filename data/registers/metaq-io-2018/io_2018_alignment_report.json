@@ -1,0 +1,67 @@
+{
+ "meta": {
+  "title": "metaq_io_2018 — 2018 版投入产出表（153 部门）取得与 2020 版对齐取证",
+  "work_order": "WO-A2LEGS",
+  "session": "st-metaq-gc-20260924",
+  "purpose": "PQ-0080 前置：2018 版机读全表取得 + 部门口径对齐 + 外推误差界取证",
+  "channel": "ionet 学术包转存官方《中国投入产出表》（与库内 year=2020 同一在册渠道，见 scripts/industry_graph/io_ingest.py 头注 [数据来源]）",
+  "provenance": {
+   "china_2018_153.rda": {
+    "sha256": "9fc6622cb4139dc68d755a852e7788cb9cdbf7262add70e0654e5a79110a10c1",
+    "bytes": 163258,
+    "url_channel": "github:Carol-seven/ionet:data/china_2018_153.rda",
+    "matrix": "D:\\ZephyrAlpha\\data\\registers\\metaq_io_2018\\china_2018_153.matrix.json"
+   },
+   "china_2020_153.rda": {
+    "sha256": "9811cf54d54f9f233690d0829119bc02faa3e867897382ae95ad2012e478754e",
+    "bytes": 163304,
+    "url_channel": "github:Carol-seven/ionet:data/china_2020_153.rda",
+    "matrix": "D:\\ZephyrAlpha\\data\\registers\\metaq_io_2018\\china_2020_153.matrix.json"
+   }
+  },
+  "landing_pending": {
+   "reason": "本工单 PG 通道=只读（数据访问通道明令），落库须由 PG 单写者执行",
+   "command": "python scripts/industry_graph/io_ingest.py load --matrix data\\registers\\metaq_io_2018\\china_2018_153.matrix.json",
+   "caveat": "io_ingest.cmd_load 的 valid_from 硬编码 '2022-08-31'（2020 版发布时点），装载 2018 版须按年参数化，否则 PIT 可知时戳错标——落地前须先修该常量（本件不改 src/scripts 既有文件，登记为待落地补丁建议）"
+  },
+  "root_cause_note": "库内缺 2018 版的机制原因：io_ingest.cmd_check/_targets_new 只取 year>max(库内年) 的'更新'表，2018<2020 被永久跳过；补齐须显式 cmd_fetch --year 2018（本件即走显式取表）"
+ },
+ "alignment": {
+  "sectors_2018": 153,
+  "sectors_2020": 153,
+  "code_common": 153,
+  "code_only_2018": [],
+  "code_only_2020": [],
+  "code_only_2018_names": [],
+  "code_only_2020_names": [],
+  "same_code_renamed": [],
+  "same_code_renamed_count": 0,
+  "note": "对齐键=3 位部门码（官方表本体码）；码同名异=分类口径微调，异码=部门拆并，两侧差集如实列出，不做拍脑袋映射"
+ },
+ "extrapolation_error_bound": {
+  "compared_pairs_both_nonzero": 16859,
+  "max_rel_diff": 6.72349,
+  "p99_rel_diff": 1.939423,
+  "p95_rel_diff": 0.807479,
+  "median_rel_diff": 0.124667,
+  "mean_rel_diff": 0.227604,
+  "share_over_30pct": 0.208731,
+  "threshold_verdict_preview": "超 30%（按全边最大相对差；判据口径见 notes）"
+ },
+ "edges": {
+  "edges_2018": 16859,
+  "edges_2020": 16859,
+  "sanity_2018": {
+   "max_col_deviation": 1.099206604599397e-15,
+   "tolerance": 0.001,
+   "sector_count": 153,
+   "edge_count": 16859
+  },
+  "sanity_2020": {
+   "max_col_deviation": 8.217567861932118e-16,
+   "tolerance": 0.001,
+   "sector_count": 153,
+   "edge_count": 16859
+  }
+ }
+}
