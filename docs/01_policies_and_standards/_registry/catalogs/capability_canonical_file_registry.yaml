@@ -62793,4 +62793,229 @@ creation_tokens:
   created_by: st-cure-p03-20261006
   capability: source_line_criterion
   merge_evaluation: "MOD-SIG-157 判据件 ALGO_FLOW 外部真源（externalize 官方工具出仓），随判据件同批，无独立合并面"
+- file: docs/_working/commit_speedup_campaign/60_deep_dive/DEEP_DIVE_R2.md
+  token: commit-speedup-r2-deep-dive-r2-20261007
+  capability: commit_speedup_r2
+  created_by: st-mastertc-l3
+  merge_evaluation: "C05/C147 复测产物唯一落点；R1 已归档为只读基线，R2 为增量对照，不新增真源"
+- file: docs/_working/fexam/emotion_index_exam_v1.md
+  token: wave25-emoindex-exam-md-20261007
+  capability: 情绪指数首考报告md
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生伴读"
+- file: docs/_working/fexam/emotion_index_exam_v1.yaml
+  token: wave25-emoindex-exam-20261007
+  capability: 情绪指数首考考册（不合格0/3）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生考册；负结果如实"
+- file: docs/_working/fexam/grid_strategy_oos_v1.md
+  token: wave25-gridoos-md-20261007
+  capability: 324格OOS分析报告md
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生伴读"
+- file: docs/_working/fexam/grid_strategy_oos_v1.yaml
+  token: wave25-gridoos-v1-20261007
+  capability: 324格策略族OOS分析册（0过，IS窗缺失如实）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生分析册；无替代对象"
+- file: docs/_working/fexam/metaq_wave2_writeback_v1.yaml
+  token: wave25-metaq-writeback-20261007
+  capability: 原问题wave2回填留痕册（3答33deferred）
+  created_by: st-matrix-20261006
+  merge_evaluation: "回填留痕；无替代对象"
+- file: docs/_working/fexam/mom029_prereg_v2.yaml
+  token: wave25-mom029-prereg-v2-20261007
+  capability: MOM-029预注册卡v2（事前假设+direction=short）
+  created_by: st-matrix-20261006
+  merge_evaluation: "回炉→合格转化首例的冻结卡；无替代对象"
+- file: docs/_working/fexam/mom029_reexam_v2.md
+  token: wave25-mom029-reexam-md-20261007
+  capability: MOM-029重考报告md
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生伴读"
+- file: docs/_working/fexam/mom029_reexam_v2.yaml
+  token: wave25-mom029-reexam-v2-20261007
+  capability: MOM-029重考成绩册（pass四线全过）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生成绩册；无替代对象"
+- file: docs/_working/fexam/paper_pool_v1.yaml
+  token: fexam-paperpool-v1-20261007
+  capability: 78合格指标paper观察池（Owner裁定：三个月观察期不进实盘）
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生自批3分数册；无替代对象"
+- file: docs/_working/master_tc_20261006/lanes/L3_commitchain/00_workbook.md
+  token: master-tc-l3-commitchain-workbook-20261007
+  capability: master_tc_l3_commitchain
+  created_by: st-mastertc-l3
+  merge_evaluation: "总包夜战 L3 车道作业簿唯一台账（orchestration §四模板物），无同域重复簇"
+- file: docs/_working/matrix_campaign/data_requests_v1.yaml
+  token: wave25-data-requests-20261007
+  capability: 数据回补申请册DR-1~4
+  created_by: st-matrix-20261006
+  merge_evaluation: "申请册；解锁13因子5策略"
+- file: docs/_working/matrix_campaign/direction_survey_v1.md
+  token: wave25-direction-survey-md-20261007
+  capability: direction勘察报告md
+  created_by: st-matrix-20261006
+  merge_evaluation: "机生伴读"
+- file: docs/_working/matrix_campaign/direction_survey_v1.yaml
+  token: wave25-direction-survey-20261007
+  capability: direction标签全册勘察册（19空连片）
+  created_by: st-matrix-20261006
+  merge_evaluation: "只读勘察册；无替代对象"
+- file: docs/_working/matrix_campaign/master_backlog_v2.md
+  token: matrix-campaign-masterbacklog-v2-20261007
+  capability: 总施工清单v2（P0-P3全级，Owner裁定已编码）
+  created_by: st-matrix-20261006
+  merge_evaluation: "取代v1清单地位（v1内容并入）；施工唯一总账"
+- file: docs/_working/quant_methodology/07_placeholder_skeleton.md
+  token: quant-methodology-07-placeholder-skeleton-20261006
+  created_by: st-mastertc-l7
+  capability: quant_methodology
+  merge_evaluation: "C452 处方占位骨架（断号防御；内容全史零命中如实申报；主题命名/撤号=Owner）"
+- file: docs/_working/quant_methodology/08_placeholder_skeleton.md
+  token: quant-methodology-08-placeholder-skeleton-20261006
+  created_by: st-mastertc-l7
+  capability: quant_methodology
+  merge_evaluation: "C452 处方占位骨架（断号防御；内容全史零命中如实申报；主题命名/撤号=Owner）"
+- file: docs/_working/quant_methodology/12_placeholder_skeleton.md
+  token: quant-methodology-12-placeholder-skeleton-20261006
+  created_by: st-mastertc-l7
+  capability: quant_methodology
+  merge_evaluation: "C452 处方占位骨架（断号防御；内容全史零命中如实申报；主题命名/撤号=Owner）"
+- file: docs/_working/total_command_closeout/final_review_chartlib/ext_05_minute_k_persistence_design.md
+  token: final-review-chartlib-ext-05-minute-k-persistence-design-20261006
+  created_by: st-mastertc-l5
+  capability: final_review_chartlib
+  merge_evaluation: "复插:G-E.1/C242 卡面交付物(设计呈批稿),替代物=无,同域不并"
+- file: scripts/backtest/fexam/bootstrap_gpu/__init__.py
+  token: wave3-bootstrap_gpu-__init__-20261007
+  capability: bootstrap统一族GPU核（三原函数索引注入对拍35/35）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/bootstrap_gpu/bench.py
+  token: wave3-bootstrap_gpu-bench-20261007
+  capability: bootstrap统一族GPU核（三原函数索引注入对拍35/35）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/bootstrap_gpu/kernel.py
+  token: wave3-bootstrap_gpu-kernel-20261007
+  capability: bootstrap统一族GPU核（三原函数索引注入对拍35/35）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/bootstrap_gpu/parity_test.py
+  token: wave3-bootstrap_gpu-parity_test-20261007
+  capability: bootstrap统一族GPU核（三原函数索引注入对拍35/35）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/exit_sim/__init__.py
+  token: wave3-exit_sim-__init__-20261007
+  capability: ATR离场仿真器+prereg冻结卡（有增益MaxDD+16.5pp）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/exit_sim/exit_simulator.py
+  token: wave3-exit_sim-exit_simulator-20261007
+  capability: ATR离场仿真器+prereg冻结卡（有增益MaxDD+16.5pp）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/exit_sim/prereg_frozen.yaml
+  token: wave3-exit-sim-prereg-20261007
+  capability: ATR离场仿真prereg冻结卡
+  created_by: st-matrix-20261006
+  merge_evaluation: "抢救转正随件；事前冻结判据"
+- file: scripts/backtest/fexam/gpu_ic/__init__.py
+  token: wave3-gpu_ic-__init__-20261007
+  capability: IC内核GPU移植对拍件（逐位0差）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/gpu_ic/bench_numpy.py
+  token: wave3-gpu_ic-bench_numpy-20261007
+  capability: IC内核GPU移植对拍件（逐位0差）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/gpu_ic/gpu_rank_ic.py
+  token: wave3-gpu_ic-gpu_rank_ic-20261007
+  capability: IC内核GPU移植对拍件（逐位0差）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/gpu_ic/parity_test.py
+  token: wave3-gpu_ic-parity_test-20261007
+  capability: IC内核GPU移植对拍件（逐位0差）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/gpu_ic/smoke_gpu.py
+  token: wave3-gpu_ic-smoke_gpu-20261007
+  capability: IC内核GPU移植对拍件（逐位0差）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/grid_adapter/__init__.py
+  token: wave3-grid_adapter-__init__-20261007
+  capability: GPU网格考适配器+点火器（324格实弹）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/grid_adapter/emit_configs.py
+  token: wave3-grid_adapter-emit_configs-20261007
+  capability: GPU网格考适配器+点火器（324格实弹）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/grid_adapter/fire_grid.py
+  token: wave3-grid_adapter-fire_grid-20261007
+  capability: GPU网格考适配器+点火器（324格实弹）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: scripts/backtest/fexam/grid_adapter/validate_dry_run.py
+  token: wave3-grid_adapter-validate_dry_run-20261007
+  capability: GPU网格考适配器+点火器（324格实弹）
+  created_by: st-matrix-20261006
+  merge_evaluation: "tmp区24h TTL抢救转正（Owner批P0-1）；对拍结论已锁定随文件；无替代对象"
+- file: src/zephyr/factor/analysis/gpu_layered_spread_kernel.py
+  token: wave25-layered-spread-kernel-20261007
+  capability: layered spread截面分箱xp核（逐位+6.6x接线版）
+  created_by: st-matrix-20261006
+  merge_evaluation: "P道接线产物正式登记（此前直写被render冲，改走意图API正道）"
+- file: scripts/governance/check_registry_field_legality.py
+  token: reg-field-legality-check-registry-field-legality-20261006
+  created_by: st-mastertc-l5
+  capability: reg_field_legality
+  merge_evaluation: "复插:qmine D6/D11 合法化批验收工具(矿簿§4交付物),替代物=无,同域不并"
+- file: docs/_working/master_tc_20261006/lanes/L5_data/c156_field_rename_mapping.md
+  token: master-tc-l5-data-c156-field-rename-mapping-20261006
+  created_by: st-mastertc-l5
+  capability: master_tc_l5_data
+  merge_evaluation: "复插:C156 卡面交付物(纯改名映射表),替代物=无,同域不并"
+- file: docs/_working/master_tc_20261006/lanes/L5_data/c299_r5_truth_alignment.md
+  token: master-tc-l5-data-c299-r5-truth-alignment-20261006
+  created_by: st-mastertc-l5
+  capability: master_tc_l5_data
+  merge_evaluation: "复插:C299 卡面交付物(对齐方案文档),替代物=无,同域不并"
+- file: docs/_working/master_tc_20261006/lanes/L5_data/00_workbook.md
+  token: master-tc-l5-data-00-workbook-20261006
+  created_by: st-mastertc-l5
+  capability: master_tc_l5_data
+  merge_evaluation: "复插:总纲§四车道作业簿(模板明列),替代物=无,同域不并"
+- file: src/zephyr/governance/data_governance/entity_graph_uscc_bridge.py
+  token: entity-graph-uscc-bridge-entity-graph-uscc-bridge-20261006
+  created_by: st-mastertc-l5
+  capability: entity_graph_uscc_bridge
+  merge_evaluation: "复插:EC1§5.3/C122 消歧桥(只读提案器),替代物=无,同域不并"
+- file: scripts/backtest/factory_grid_executor.py.tmp.2348.92a504f68dac
+  token: grid-stats-engine-factory-grid-executorpytmp2348-20261006
+  created_by: st-mastertc-l7
+  capability: grid_stats_engine
+  merge_evaluation: "G-D.2/G-D.3 波10引擎唯一实现（10_wave_plan 10.G-D READY_NOT_FIRED）"
+- file: scripts/backtest/fexam/bootstrap_gpu/bench_result.json
+  token: grid-stats-engine-bench-result-20261006
+  created_by: st-mastertc-l7
+  capability: grid_stats_engine
+  merge_evaluation: "G-D.2/G-D.3 波10引擎唯一实现（10_wave_plan 10.G-D READY_NOT_FIRED）"
+- file: scripts/backtest/grid_stats_engine.py
+  token: grid-stats-engine-grid-stats-engine-20261006
+  created_by: st-mastertc-l7
+  capability: grid_stats_engine
+  merge_evaluation: "G-D.2/G-D.3 波10引擎唯一实现（10_wave_plan 10.G-D READY_NOT_FIRED）"
+- file: scripts/backtest/lead_lag_validator.py
+  token: grid-stats-engine-lead-lag-validator-20261006
+  created_by: st-mastertc-l7
+  capability: grid_stats_engine
+  merge_evaluation: "G-D.2/G-D.3 波10引擎唯一实现（10_wave_plan 10.G-D READY_NOT_FIRED）"
 di_seam_exemptions: []
