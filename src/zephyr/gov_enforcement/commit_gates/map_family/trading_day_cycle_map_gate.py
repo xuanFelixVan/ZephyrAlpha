@@ -110,7 +110,14 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
     if str(_VALIDATORS_DIR) not in sys.path:
         sys.path.insert(0, str(_VALIDATORS_DIR))
     try:
-        from validate_trading_day_cycle_map import validate_structure  # noqa: import-integrity  sys.path 动态加载
+        # 新鲜加载（2026-10-05 修）：驻留 serializer 进程的 sys.modules 缓存会让本 gate
+        # 复用旧版校验器——袋内同步升级的 validator/map 永不被读到（0009/0011 袋死实例），
+        # 逐次 importlib 强制重载，契约常量随盘面即时生效
+        import importlib
+
+        _mod = importlib.import_module("validate_trading_day_cycle_map")
+        _mod = importlib.reload(_mod)
+        validate_structure = _mod.validate_structure
     except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed
         logger.error("TRADING-DAY-CYCLE-MAP gate: 校验器加载失败（fail-closed）: %s", e)
         return False, f"TRADING-DAY-CYCLE-MAP: 校验器 validate_trading_day_cycle_map 加载失败（fail-closed）: {e}"
