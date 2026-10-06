@@ -95,10 +95,6 @@ def test_ch_tick_replay_in_window_read_ok():
     assert not df.empty
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="落地实况：tracked 消费侧(ch_tick_replay/ChTickProvider)未接闭卷闸(exam_ticket形参/拦截均未接线,LANE-PIT集成面缺口)，转XPASS=接线落地须改判",
-)
 def test_ch_tick_replay_post_cutoff_blocked():
     g = _gate()
     client = MagicMock()
@@ -109,10 +105,6 @@ def test_ch_tick_replay_post_cutoff_blocked():
         assert client.execute.call_count == 0  # 拦截发生在查库之前（fail-closed）
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="落地实况：tracked 消费侧(ch_tick_replay/ChTickProvider)未接闭卷闸(exam_ticket形参/拦截均未接线,LANE-PIT集成面缺口)，转XPASS=接线落地须改判",
-)
 def test_ch_tick_replay_exam_mode_allows_with_audit(tmp_path):
     g = _gate()
     client = MagicMock()
@@ -132,10 +124,6 @@ def test_ch_tick_replay_exam_mode_allows_with_audit(tmp_path):
     assert "ch_tick_replay" in text
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="落地实况：tracked 消费侧(ch_tick_replay/ChTickProvider)未接闭卷闸(exam_ticket形参/拦截均未接线,LANE-PIT集成面缺口)，转XPASS=接线落地须改判",
-)
 def test_ch_tick_replay_exam_mode_without_ticket_blocked(tmp_path):
     """考试模式必须带工单号——裸 flag=无审计泄露口子，同样拒。"""
     g = _gate()
@@ -156,10 +144,6 @@ def test_ch_tick_replay_exam_mode_without_ticket_blocked(tmp_path):
 # ── 读口二：ChTickProvider.fetch_historical（scripts/run_backtest tick 模式） ──
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="落地实况：tracked 消费侧(ch_tick_replay/ChTickProvider)未接闭卷闸(exam_ticket形参/拦截均未接线,LANE-PIT集成面缺口)，转XPASS=接线落地须改判",
-)
 def test_ch_tick_provider_post_cutoff_blocked():
     g = _gate()
     client = MagicMock()
@@ -181,10 +165,6 @@ def test_ch_tick_provider_in_window_read_ok():
     assert not df.empty
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="落地实况：tracked 消费侧(ch_tick_replay/ChTickProvider)未接闭卷闸(exam_ticket形参/拦截均未接线,LANE-PIT集成面缺口)，转XPASS=接线落地须改判",
-)
 def test_ch_tick_provider_exam_mode_allows_with_audit(tmp_path):
     _gate()
     client = MagicMock()
@@ -220,10 +200,6 @@ def test_boundary_end_on_cutoff_allowed():
     assert not df.empty
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="落地实况：tracked 消费侧(ch_tick_replay/ChTickProvider)未接闭卷闸(exam_ticket形参/拦截均未接线,LANE-PIT集成面缺口)，转XPASS=接线落地须改判",
-)
 def test_one_day_past_cutoff_blocked():
     g = _gate()
     client = MagicMock()

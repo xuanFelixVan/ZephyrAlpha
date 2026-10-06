@@ -39,9 +39,11 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 
+from zephyr.backtest.core.closed_book_gate import enforce_closed_book_read
 from zephyr.data.ch_writer import get_client
 from zephyr.data.table_registry import get_registry
 
@@ -63,6 +65,8 @@ def fetch_historical(
     start: datetime,
     end: datetime,
     interval: str = "tick",
+    exam_ticket: str | None = None,
+    audit_path: str | Path | None = None,
 ) -> pd.DataFrame:
     """MiniQmtQuoteProvider.fetch_historical 的 CH duck-typed 等价实现。
 
@@ -70,16 +74,25 @@ def fetch_historical(
         symbol: QMT 格式代码（600000.SH）；CH symbol 列存纯码，内部转换
         start/end: 时间窗（含端点；end 为当日则取当日全天）
         interval: 仅支持 "tick"（对齐既有调用语义）
+        exam_ticket: 闭卷考试工单号（None/空白=研究态）；越闭卷切点的读取必须
+            携带非空工单且会落审计行（LANE-PIT 闭卷闸接线，2026-10-07 C216 同批）
+        audit_path: 考试审计落点（默认 data/backtest_artifacts/closed_book_exam_audit.jsonl；
+            测试注入 tmp_path）
 
     Returns:
         DataFrame（列契约见模块 docstring）；无数据返回空 DataFrame。
 
     Raises:
         ValueError: interval 非 tick。
+        ClosedBookViolation: 研究态越闭卷切点（拦截发生在查库之前，fail-closed）。
+        ClosedBookConfigError: 切点真源缺位。
         CHBackfillReadError: CH 查询失败。
     """
     if interval != "tick":
         raise ValueError(f"仅支持 interval='tick'，收到: {interval}")
+
+    # 闭卷闸先行（LANE-PIT 件一接线）：任何库访问前判定，越界即抛、SQL 执行次数恒 0
+    enforce_closed_book_read(start, end, surface="ch_tick_replay", exam_ticket=exam_ticket, audit_path=audit_path)
 
     bare = symbol.split(".")[0]
     # end 含当天全天（调用方传 datetime，取日期部分做 BETWEEN）

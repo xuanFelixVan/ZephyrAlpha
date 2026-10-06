@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 
@@ -88,6 +89,8 @@ class ChTickProvider:
         start: datetime,
         end: datetime,
         interval: str = "tick",
+        exam_ticket: str | None = None,
+        audit_path: str | Path | None = None,
     ) -> pd.DataFrame:
         """拉取历史 tick（EDE 18 字段契约适配）。
 
@@ -95,9 +98,20 @@ class ChTickProvider:
             symbol: 带后缀代码（600000.SH）——与 EDE event.symbol 同口径
             start/end: datetime（tick_data.trade_date 过滤）
             interval: 仅支持 "tick"
+            exam_ticket: 闭卷考试工单号（None/空白=研究态）；越闭卷切点的读取必须
+                携带非空工单且会落审计行（LANE-PIT 闭卷闸接线，2026-10-07 C216 同批）
+            audit_path: 考试审计落点（默认 data/backtest_artifacts/closed_book_exam_audit.jsonl）
+
+        Raises:
+            ClosedBookViolation: 研究态越闭卷切点（拦截发生在查库之前，fail-closed）。
+            ClosedBookConfigError: 切点真源缺位。
         """
         if interval != "tick":
             raise ChTickProviderError(f"仅支持 interval='tick'，收到: {interval}")
+        # 闭卷闸先行（LANE-PIT 件一接线）：任何库访问前判定，越界即抛、SQL 执行次数恒 0
+        from zephyr.backtest.core.closed_book_gate import enforce_closed_book_read
+
+        enforce_closed_book_read(start, end, surface="ch_tick_provider", exam_ticket=exam_ticket, audit_path=audit_path)
         sym = str(symbol).split(".")[0]  # tick_data.symbol=纯数字（与 kline_daily 同口径）
         start_d = start.strftime("%Y-%m-%d")
         end_d = end.strftime("%Y-%m-%d")

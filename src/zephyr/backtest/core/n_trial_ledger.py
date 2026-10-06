@@ -36,6 +36,10 @@
 2. batch_records —— 台账外可审计批量的显式登记（如 F-06 批次 A 网格 manifest 的
    实评格点数 1999：manifest.csv 即出生证可复核）。auto_sync 可从
    data/strategy_intake/grid_*/summary.json 自动发现追加，亦可 record_run 手工登记。
+   T0 规则引擎批（做T族）由 sync_t0_manifest_counts 从
+   data/backtest_artifacts/t0_rule_engine/t0_rule_manifest_*.yaml 自动发现
+   （C216 补齐，2026-10-07）：batches_done.n_pairs_by_rule_period 求和=可审计
+   完整往返数，同批重同步单调前进（断点续跑批在跑读数只涨不缩）。
 3. manual_population —— 人工历史试错，仅入 known_floor 披露位，永不入 count。
 
 Usage:
@@ -68,6 +72,21 @@ LEDGER_REGISTRY_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "trial_ledger_registry.yaml"
 )
 _GRID_ROOT = REPO_ROOT / "data" / "strategy_intake"
+
+#: T0 做T族批次种类（C216 补齐，2026-10-07：reexam_strategy_lane 在途规格落地）。
+#: 值=record_run/sync 的 kind 字段口径；键=族群逻辑名。T0 产物真源见各自 script：
+#: rule_engine=scripts/backtest/t0_rule_engine.py（t0_rule_manifest_{tag}.yaml，
+#: batches_done.n_pairs_by_rule_period=可审计机器回测往返数）；material_line /
+#: state_match_matrix 产物暂无 manifest 出生证（登记走显式 record_run，禁自动发现）。
+T0_BATCH_KIND: dict[str, str] = {
+    "rule_engine": "t0_rule_engine",
+    "material_line": "t0_material_line",
+    "state_match_matrix": "t0_state_match_matrix",
+}
+
+#: T0 规则引擎批产物根（t0_rule_engine.py --out 默认值；发现面唯一真源，禁散落第二份）
+_T0_ARTIFACT_ROOT = REPO_ROOT / "data" / "backtest_artifacts" / "t0_rule_engine"
+_T0_MANIFEST_PATTERN = "t0_rule_manifest_*.yaml"
 
 
 def _rel_to_repo(path: Path) -> str:
@@ -507,10 +526,126 @@ class TrialLedger:
             "cumulative_trials": self._count_of(data),
         }
 
+    def sync_t0_manifest_counts(
+        self,
+        *,
+        artifact_root: Path | None = None,
+        synced_by: str = "n_trial_ledger",
+    ) -> dict[str, Any]:
+        """自动发现 T0 规则引擎批 manifest 并登记可审计往返数（幂等+单调，可重复执行）。
+
+        口径（C216 补齐，2026-10-07）：每个 ``t0_rule_manifest_{tag}.yaml`` 的
+        ``batches_done[bidx].n_pairs_by_rule_period`` 求和 = 本批可审计机器回测
+        完整往返数（每一对开平仓=一次完整规则回放+成本判定，manifest=出生证可复核，
+        满足 2026-09-15 计数边界裁定"只算可审计的机器回测次数"）。
+
+        与 grid 发现的差别——**单调前进**：同 batch_id 再同步时，manifest 内计数
+        增长（断点续跑批在跑）则前进 n_trials，减少/持平则不动（禁回退）。欠计 N
+        =DSR 欠折减=放水，故宁多读一次不可停在半程读数。
+
+        fail-closed 边界：manifest 整件不可读→warning+跳过（同 grid 先例）；
+        batches_done 条目缺 n_pairs_by_rule_period→该条目不计入+warning（宁少计
+        且留痕，禁猜测凑数）；少计偏差由批完成后的再同步单调收敛。
+
+        Args:
+            artifact_root: T0 批产物根（默认 _T0_ARTIFACT_ROOT；测试注入 tmp_path）。
+            synced_by: 同步者标识。
+
+        Returns:
+            {"t0_scanned": n, "t0_added": [batch_id...], "t0_updated": [batch_id...],
+             "batch_total": z, "cumulative_trials": n}
+        """
+        root = Path(artifact_root) if artifact_root else _T0_ARTIFACT_ROOT
+        self.load_registry(create_if_missing=True)  # 引导入口：骨架缺失自动落盘
+        discovered: list[dict[str, Any]] = []
+        scanned = 0
+        if root.exists():
+            for manifest_path in sorted(root.glob(_T0_MANIFEST_PATTERN)):
+                scanned += 1
+                try:
+                    import yaml
+
+                    manifest = yaml.safe_load(safe_read(manifest_path))
+                except Exception as exc:  # noqa: BLE001 — 真源不可读=该批不可审计
+                    _logger.warning("T0 manifest 读取失败 %s: %s", manifest_path, exc)
+                    continue
+                if not isinstance(manifest, dict):
+                    continue
+                batches_done = manifest.get("batches_done")
+                if not isinstance(batches_done, dict) or not batches_done:
+                    continue  # 半程 manifest（零完成批）无审计读数
+                tag = str(manifest.get("tag") or manifest_path.stem.removeprefix("t0_rule_manifest_"))
+                n_trials = 0
+                skipped_entries = 0
+                for bidx, entry in batches_done.items():
+                    pairs = (entry or {}).get("n_pairs_by_rule_period") if isinstance(entry, dict) else None
+                    if not isinstance(pairs, dict) or not all(
+                        isinstance(v, (int, float)) and not isinstance(v, bool) for v in pairs.values()
+                    ):
+                        skipped_entries += 1
+                        continue
+                    n_trials += int(sum(int(v) for v in pairs.values()))
+                if skipped_entries:
+                    _logger.warning(
+                        "T0 manifest %s 有 %d 个 batches_done 条目缺 n_pairs_by_rule_period——该部分不计入"
+                        "（宁少计留痕，禁猜测；批完成后重同步收敛）",
+                        manifest_path.name,
+                        skipped_entries,
+                    )
+                if n_trials <= 0:
+                    continue
+                discovered.append(
+                    {
+                        "batch_id": f"t0_rule_{tag}",
+                        "n_trials": n_trials,
+                        "kind": T0_BATCH_KIND["rule_engine"],
+                        "note": f"auto: {_rel_to_repo(manifest_path)}",
+                    }
+                )
+
+        state: dict[str, list[str]] = {"added": [], "updated": []}
+
+        def _mutate(data: dict[str, Any]) -> str | None:
+            records: list[dict[str, Any]] = list(data.get("batch_records") or [])
+            by_id = {str(r.get("batch_id")): r for r in records}
+            changed = False
+            for disc in discovered:
+                existing = by_id.get(str(disc["batch_id"]))
+                if existing is None:
+                    rec = dict(disc)
+                    rec["recorded_at"] = _now_iso()
+                    rec["recorded_by"] = str(synced_by)
+                    records.append(rec)
+                    state["added"].append(str(disc["batch_id"]))
+                    changed = True
+                elif int(disc["n_trials"]) > int(existing.get("n_trials") or 0):
+                    # 单调前进：断点续跑批在跑，manifest 读数增长才更新（禁回退）
+                    existing["n_trials"] = int(disc["n_trials"])
+                    existing["note"] = str(disc["note"])
+                    existing["updated_at"] = _now_iso()
+                    existing["updated_by"] = str(synced_by)
+                    state["updated"].append(str(disc["batch_id"]))
+                    changed = True
+            if not changed:
+                return None
+            records.sort(key=lambda r: str(r.get("batch_id")))
+            data["batch_records"] = records
+            return f"sync t0 +{len(state['added'])}new ~{len(state['updated'])}upd"
+
+        data = self._cas_update(_mutate)
+        return {
+            "t0_scanned": scanned,
+            "t0_added": state["added"],
+            "t0_updated": state["updated"],
+            "batch_total": len(data.get("batch_records") or []),
+            "cumulative_trials": self._count_of(data),
+        }
+
 
 __all__ = [
     "LEDGER_REGISTRY_PATH",
     "REGISTRY_SKELETON",
+    "T0_BATCH_KIND",
     "TrialLedger",
     "TrialLedgerError",
     "TrialLedgerSnapshot",

@@ -371,6 +371,142 @@ def deflated_sharpe_from_moments(
     return var_sr, _normal_cdf(z_stat), expected_max, False
 
 
+#: Harvey-Liu-Zhu (2016, RFS 29(1)) 因子发现多重检验 t 门槛（"…and the Cross-Section
+#: of Expected Returns"）：新因子 t>3.0 才值得看。本仓采纳出处=案卷
+#: docs/_working/total_command_closeout/final_review_chartlib/dossier_academic_papers.md
+#: §四.3（经验数值警戒线）+ src/zephyr/backtest/core/strategy_validation_pipeline.py 同数。
+HLZ_MULTIPLE_TESTING_T_THRESHOLD: float = 3.0
+
+#: haircut 口径合法集（method 入参闭合集，防手滑传错口径静默放水）
+_HAIRCUT_METHODS: tuple[str, ...] = ("bonferroni", "hlz_2016")
+
+
+@dataclass(frozen=True)
+class HaircutSharpeResult:
+    """Harvey-Liu 剪发夏普回执——不可变。
+
+    Attributes:
+        observed_sharpe: 观测（未折减）Sharpe
+        t_stat_single: 单检验 t 统计量 = SR·√T
+        t_stat_multiple: 多重检验修正后 t 门槛（bonferroni 闭式或 HLZ 3.0）
+        haircut_fraction: 剪发比例 ∈[0,1)（0=无剪发：试验数少或 t 已超门槛）
+        haircut_sharpe: = observed_sharpe·(1−haircut_fraction)，扣除选择效应后的 SR
+        num_trials: 试验数 N（口径见模块头：应填有效试验数，见 haircut_sharpe_harvey_liu）
+        num_obs: 样本数 T
+        method: "bonferroni" | "hlz_2016"
+    """
+
+    observed_sharpe: float
+    t_stat_single: float
+    t_stat_multiple: float
+    haircut_fraction: float
+    haircut_sharpe: float
+    num_trials: int
+    num_obs: int
+    method: str
+
+
+def haircut_sharpe_harvey_liu(
+    sharpe: float,
+    num_trials: int,
+    num_obs: int,
+    method: str = "bonferroni",
+) -> HaircutSharpeResult:
+    """Harvey-Liu 剪发夏普（haircut Sharpe，全仓唯一真源）。
+
+    文献口径（Harvey & Liu 2015, "Backtesting", JPM 30(5)；门槛数 Harvey-Liu-Zhu 2016 RFS）:
+    观测 SR 的单检验 t 统计量与"试了 N 次取最好"的多重检验门槛之比即剪发比例::
+
+        t_single = SR·√T
+        bonferroni: p_single = 2(1−Φ(|t_single|));  p_mult = min(1, p_single·N)
+                    t_mult = Φ⁻¹(1 − p_mult/2)
+        hlz_2016:   t_mult = 3.0（HLZ 经验警戒线）
+        haircut_fraction = max(0, 1 − t_mult/t_single)
+        haircut_sharpe   = SR·(1 − haircut_fraction)
+
+    与 DSR 的分工（案卷 §四.2/§四.3 采纳）：DSR 回答"P 值口径还显著吗"（概率面），
+    剪发夏普回答"扣掉选择效应后 SR 还剩多少"（幅度面）——考试系统"通过线"应设在
+    扣除选择效应之后的成绩，而非名义 SR。
+
+    **num_trials 口径（C251 案卷采纳，必读）**：N 应填**有效试验数**而非原始格数——
+    格间高度相关时有效试验数远小于总格数（DSR 的 expected_max_sharpe_z 同口径问题）。
+    估计器见 ``zephyr.backtest.core.n_trial_ledger.compute_effective_rank``；
+    试验总数必须如实披露（Bailey-López de Prado："未披露试验数的回测一文不值"）。
+    **滚动重考口径**：Sullivan et al. (1999)/Hsu et al. (2010) 实证规则盈利性随市场
+    结构漂移——剪发/DSR 判定须随窗口滚动重考（事件触发重算），一次性终审不作数。
+
+    SR≤0：无正证据可剪，原样返回（haircut_fraction=0，haircut_sharpe=SR）——
+    负 SR 本身已不构成"发现"，无须折减即不eligible（不作 fail-closed 抛错：
+    "负成绩"是合法测量结果，非"没信息"）。
+
+    Args:
+        sharpe: 非年化 Sharpe（每期）
+        num_trials: 试验数 N（≥1；建议=有效试验数，见上文口径）
+        num_obs: 样本数 T（≥2，t 统计量可估下限）
+        method: "bonferroni"（默认，Harvey & Liu 2015 原式）| "hlz_2016"（t>3.0 门槛）
+
+    Returns:
+        HaircutSharpeResult（frozen）
+
+    Raises:
+        SimulationError: num_trials<1 / num_obs<2 / sharpe 非有限 / method 非法。
+    """
+    if not isinstance(num_trials, (int,)) or num_trials < 1:
+        raise SimulationError(f"haircut_sharpe_harvey_liu: num_trials 必须>=1, 收到 {num_trials!r}")
+    if num_obs < 2:
+        raise SimulationError(f"haircut_sharpe_harvey_liu: num_obs 必须>=2(t 统计量可估), 收到 {num_obs!r}")
+    sr = float(sharpe)
+    if not math.isfinite(sr):
+        raise SimulationError(f"haircut_sharpe_harvey_liu: sharpe 非有限: {sharpe!r}")
+    if method not in _HAIRCUT_METHODS:
+        raise SimulationError(f"haircut_sharpe_harvey_liu: method 非法 {method!r}（合法集={_HAIRCUT_METHODS}）")
+
+    t_single = sr * math.sqrt(float(num_obs))
+    if method == "hlz_2016":
+        # HLZ 经验门槛与 N 无关（恒 3.0），优先于 N=1 特判
+        t_multiple = HLZ_MULTIPLE_TESTING_T_THRESHOLD
+    elif num_trials == 1:
+        # N=1=无多重测试修正：t_multiple=t_single 精确同值（不走 cdf→Φ⁻¹ 往返，
+        # 那会引入 1e-16 级浮点噪声使 haircut 非 0——数学上 N=1 剪发恒为 0）
+        t_multiple = t_single
+    else:
+        p_single = 2.0 * (1.0 - _normal_cdf(abs(t_single)))
+        p_multiple = min(1.0, p_single * float(num_trials))
+        t_multiple = _inverse_normal_cdf(1.0 - p_multiple / 2.0)
+
+    if not (t_single > 0.0):
+        # SR<=0：无正证据可剪（见 docstring），原样返回
+        return HaircutSharpeResult(
+            observed_sharpe=sr,
+            t_stat_single=t_single,
+            t_stat_multiple=t_multiple,
+            haircut_fraction=0.0,
+            haircut_sharpe=sr,
+            num_trials=int(num_trials),
+            num_obs=int(num_obs),
+            method=method,
+        )
+    if t_multiple > t_single:
+        # 门槛严格压过观测 t（如 hlz_2016 的 3.0 压过弱观测 t=0.79）→ 全剪（=1.0，剪后=0）。
+        # 禁 clamp 到 0：那读作"证据无损 stands"=放水反方向；也不线性外推负 SR——
+        # 负值须整序列重估，非比例折减可外推（诚实地板=剪没，非造负数）。
+        haircut = 1.0
+    else:
+        # t_multiple <= t_single：比例剪发 ∈ [0,1)（等号=证据恰在门槛上，剪发 0——
+        # bonferroni N=1 便恒走此支：t_multiple=t_single 精确同值）
+        haircut = 1.0 - t_multiple / t_single
+    return HaircutSharpeResult(
+        observed_sharpe=sr,
+        t_stat_single=t_single,
+        t_stat_multiple=t_multiple,
+        haircut_fraction=float(haircut),
+        haircut_sharpe=float(sr * (1.0 - haircut)),
+        num_trials=int(num_trials),
+        num_obs=int(num_obs),
+        method=method,
+    )
+
+
 def _return_side_degeneracy(std_ret: float, num_obs: int) -> str | None:
     """收益序列侧退化因由（None=可判）。
 
@@ -573,10 +709,13 @@ __all__ = [
     "DSR_UNDECIDABLE",
     "DeflatedSharpeCalculator",
     "EULER_MASCHERONI",
+    "HLZ_MULTIPLE_TESTING_T_THRESHOLD",
+    "HaircutSharpeResult",
     "KURTOSIS_PEARSON_NORMAL",
     "SimulationError",
     "deflated_sharpe_from_moments",
     "expected_max_sharpe_z",
+    "haircut_sharpe_harvey_liu",
     "sharpe_variance_is_degenerate",
     "variance_of_sharpe",
 ]

@@ -30,12 +30,15 @@ from zephyr.simulation.deflated_sharpe_calculator import (
     DSR_SIGNIFICANCE_THRESHOLD,
     DSR_UNDECIDABLE,
     EULER_MASCHERONI,
+    HLZ_MULTIPLE_TESTING_T_THRESHOLD,
     DeflatedSharpeCalculator,
     DSRConfig,
     DSRResult,
     DSRTrendPoint,
+    HaircutSharpeResult,
     SimulationError,
     deflated_sharpe_from_moments,
+    haircut_sharpe_harvey_liu,
     variance_of_sharpe,
 )
 from zephyr.simulation.deflated_sharpe_calculator import (
@@ -540,3 +543,71 @@ class TestImmutability:
         cfg = DSRConfig()
         with pytest.raises(Exception):
             cfg.significance_threshold = 0.99  # type: ignore[misc]
+
+
+# ============== Harvey-Liu 剪发夏普（C216，2026-10-07） ==============
+
+
+class TestHaircutSharpeHarveyLiu:
+    """剪发夏普：幅度面折减（与 DSR 概率面分工），案卷 §四 采纳口径。"""
+
+    def test_bonferroni_haircut_grows_with_trials(self):
+        """N 越大剪得越多：同一 SR 下 haircut 单调不减、剪后 SR 单调不增。"""
+        prev_h, prev_s = -1.0, float("inf")
+        for n in (1, 10, 100, 1000):
+            r = haircut_sharpe_harvey_liu(sharpe=0.05, num_trials=n, num_obs=252)
+            assert isinstance(r, HaircutSharpeResult)
+            assert r.haircut_fraction >= prev_h
+            assert r.haircut_sharpe <= prev_s + 1e-15
+            prev_h, prev_s = r.haircut_fraction, r.haircut_sharpe
+
+    def test_n1_no_haircut(self):
+        """N=1（无多重测试）→ 剪发为 0，剪后=原值。"""
+        r = haircut_sharpe_harvey_liu(sharpe=0.05, num_trials=1, num_obs=252)
+        assert r.haircut_fraction == 0.0
+        assert r.haircut_sharpe == pytest.approx(0.05)
+        assert r.t_stat_single == pytest.approx(0.05 * math.sqrt(252))
+
+    def test_haircut_between_zero_and_one_and_identity(self):
+        """剪发比例 ∈ [0,1)；恒等式 haircut_sharpe = SR·(1−haircut)。"""
+        for sr, n, t in ((0.02, 3700, 500), (0.1, 50, 120), (0.3, 10, 60)):
+            r = haircut_sharpe_harvey_liu(sharpe=sr, num_trials=n, num_obs=t)
+            # 上界含 1.0：p_mult 封顶 1.0 → t_mult=0 → 全剪（弱 SR 大 N 的诚实结论=剪没）
+            assert 0.0 <= r.haircut_fraction <= 1.0
+            assert r.haircut_sharpe == pytest.approx(sr * (1.0 - r.haircut_fraction))
+
+    def test_hlz_2016_threshold_fixed_at_3(self):
+        """hlz_2016 口径：门槛恒=3.0；t_single 低于门槛→剪发>0，高于→0。"""
+        weak = haircut_sharpe_harvey_liu(0.05, num_trials=1, num_obs=252, method="hlz_2016")
+        assert weak.t_stat_multiple == HLZ_MULTIPLE_TESTING_T_THRESHOLD == 3.0
+        # t=0.05*sqrt(252)=0.79 < 门槛 3.0 → 封顶全剪（1.0，剪后=0，不外推负 SR）
+        assert weak.haircut_fraction == 1.0
+        assert weak.haircut_sharpe == 0.0
+        strong = haircut_sharpe_harvey_liu(0.5, num_trials=1, num_obs=252, method="hlz_2016")
+        assert strong.t_stat_single > 3.0
+        # 强信号也按比例剪到门槛高度：剪后 t 恰=t_mult（Harvey-Liu 2015 原式恒等式）
+        assert 0.0 < strong.haircut_fraction < 1.0
+        assert strong.haircut_sharpe == pytest.approx(0.5 * (1.0 - strong.haircut_fraction))
+        assert strong.haircut_sharpe * math.sqrt(252) == pytest.approx(3.0)
+
+    def test_negative_sharpe_unchanged(self):
+        """SR<=0：无正证据可剪，原样返回（haircut=0）。"""
+        r = haircut_sharpe_harvey_liu(sharpe=-0.02, num_trials=100, num_obs=252)
+        assert r.haircut_fraction == 0.0
+        assert r.haircut_sharpe == -0.02
+
+    def test_fail_closed_inputs(self):
+        """num_trials<1 / num_obs<2 / 非有限 SR / method 非法 → SimulationError。"""
+        with pytest.raises(SimulationError):
+            haircut_sharpe_harvey_liu(0.05, num_trials=0, num_obs=252)
+        with pytest.raises(SimulationError):
+            haircut_sharpe_harvey_liu(0.05, num_trials=10, num_obs=1)
+        with pytest.raises(SimulationError):
+            haircut_sharpe_harvey_liu(float("nan"), num_trials=10, num_obs=252)
+        with pytest.raises(SimulationError):
+            haircut_sharpe_harvey_liu(0.05, num_trials=10, num_obs=252, method="made_up")
+
+    def test_result_frozen(self):
+        r = haircut_sharpe_harvey_liu(0.05, num_trials=10, num_obs=252)
+        with pytest.raises(Exception):
+            r.haircut_fraction = 0.5  # type: ignore[misc]
