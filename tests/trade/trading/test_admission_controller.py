@@ -69,7 +69,7 @@ class TestTokenBucketConfig:
         assert cfg.burst == 20.0
 
     def test_extra_forbidden(self):
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             TokenBucketConfig(rate=10.0, burst=20.0, unknown=True)
 
 

@@ -471,7 +471,7 @@ class TestImmutability:
     def test_frozen_dataclasses(self):
         """frozen dataclass 不可修改。"""
         record = make_broker_record()
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             record.trade_id = "X"  # type: ignore[misc]
 
         drift = SettlementDrift(
@@ -482,7 +482,7 @@ class TestImmutability:
             broker_value=Decimal("9"),
             diff=Decimal("1"),
         )
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             drift.symbol = "X"  # type: ignore[misc]
 
 

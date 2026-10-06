@@ -81,7 +81,7 @@ class TestKillSwitchModel:
         assert ks.active is True
 
     def test_kill_switch_missing_required_field(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             KillSwitch(level=KillSwitchLevel.POSITION_LIMIT)
 
 
