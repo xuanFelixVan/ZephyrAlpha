@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-NLP-PIPELINE | 13_regime_phase3_engineering_plan.md | §Phase 8
 # [TTL] permanent
 """test_ml_accept_nlp_pipeline.py — NLP 验收脚本单元测试（Phase 8）。
 

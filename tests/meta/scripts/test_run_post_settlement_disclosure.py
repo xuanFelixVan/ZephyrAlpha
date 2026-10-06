@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-SCRIPT-run_post_settlement | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-SCRIPT-run_post_settlement | scripts/run_post_settlement.py | §
+# [A_test] module_id: MOD-GOV_run_post_settlement_disclosure | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_run_post_settlement_disclosure
 # [DOMAIN] D_TRADING
 # [STABILITY] volatile

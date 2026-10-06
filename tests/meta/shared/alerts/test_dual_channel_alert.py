@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] tests.shared.alerts.test_dual_channel_alert
 # [DOMAIN] D_SHARED
 # [INVARIANTS] 通道选择正确落 sent 标记; get_failed_channels 只报未达通道

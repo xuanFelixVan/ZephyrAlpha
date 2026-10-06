@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | src/zephyr/shared/contracts/enums/order_enums.py（G41-2a 九态映射桥）
 # [MODULE] tests.shared.test_order_enums_nine_state_bridge
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums

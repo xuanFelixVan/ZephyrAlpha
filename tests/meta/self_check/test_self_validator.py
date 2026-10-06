@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_self_validator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_self_validator
 # [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] Shadow Parallel Run必须通过;自验证不可跳过

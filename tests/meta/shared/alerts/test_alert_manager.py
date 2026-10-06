@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] tests.shared.alerts.test_alert_manager
 # [DOMAIN] D_SHARED
 # [INVARIANTS] 环形上限保留最新; acknowledge 幂等; get_active/get_by_severity 过滤正确

@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-021 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """Invariant tests for guard watchdog scripts (fix #ARCH-BOOT-001 Phase 3).
 

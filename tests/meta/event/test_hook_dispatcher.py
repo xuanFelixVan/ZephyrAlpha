@@ -1,0 +1,283 @@
+# [A_test] module_id: MOD-GOV_hook_dispatcher | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [MODULE] tests.test_hook_dispatcher
+# [DOMAIN] D_INFRA_RUNTIME
+# [INVARIANTS] HookDispatcher must dispatch registered hooks on matching events
+# [MODIFY-GUARD] none
+# [CONSUMERS] pytest
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] none
+# [TESTS] this file
+# [TTL] task_bound
+
+from __future__ import annotations
+
+from zephyr.shared.event_bus import EventBus, EventType
+from zephyr.shared.events.hook_dispatcher import HookConfig, HookDispatcher, HookExecution
+
+
+class TestHookConfig:
+    def test_instantiation_defaults(self):
+        cfg = HookConfig(hook_id="HK-1", event_type=EventType.TASK_COMPLETED)
+        assert cfg.hook_id == "HK-1"
+        assert cfg.event_type == EventType.TASK_COMPLETED
+        assert cfg.callback_url == ""
+        assert cfg.callback_script == ""
+        assert cfg.enabled is True
+        assert cfg.max_retries == 3
+
+    def test_instantiation_with_all_fields(self):
+        cfg = HookConfig(
+            hook_id="HK-2",
+            event_type=EventType.TASK_FAILED,
+            callback_url="https://example.com/hook",
+            callback_script="echo hello",
+            enabled=False,
+            max_retries=5,
+        )
+        assert cfg.callback_url == "https://example.com/hook"
+        assert cfg.callback_script == "echo hello"
+        assert cfg.enabled is False
+        assert cfg.max_retries == 5
+
+
+class TestHookExecution:
+    def test_instantiation(self):
+        ex = HookExecution(
+            hook_id="HK-1",
+            event_id="EV-1",
+            success=True,
+            response="ok",
+            timestamp_utc="2026-01-01T00:00:00+00:00",
+        )
+        assert ex.hook_id == "HK-1"
+        assert ex.success is True
+        assert ex.response == "ok"
+
+
+class TestHookDispatcher:
+    def test_instantiation_with_explicit_bus(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        assert dispatcher.bus is bus
+        assert dispatcher.data_dir == tmp_path
+
+    def test_register_hook(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(hook_id="HK-REG", event_type=EventType.TASK_COMPLETED)
+        dispatcher.register_hook(hook)
+        assert hook in dispatcher.hooks[EventType.TASK_COMPLETED]
+
+    def test_register_multiple_hooks_same_type(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        h1 = HookConfig(hook_id="HK-A", event_type=EventType.TASK_COMPLETED)
+        h2 = HookConfig(hook_id="HK-B", event_type=EventType.TASK_COMPLETED)
+        dispatcher.register_hook(h1)
+        dispatcher.register_hook(h2)
+        assert len(dispatcher.hooks[EventType.TASK_COMPLETED]) == 2
+
+    def test_script_hook_dispatches_on_task_completed(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(
+            hook_id="HK-SCRIPT",
+            event_type=EventType.TASK_COMPLETED,
+            callback_script="python -c \"print('done')\"",
+        )
+        dispatcher.register_hook(hook)
+        bus.publish(EventType.TASK_COMPLETED, "TASK-100")
+        executions = dispatcher.get_executions()
+        assert len(executions) == 1
+        assert executions[0].hook_id == "HK-SCRIPT"
+        assert executions[0].success is True
+
+    def test_script_hook_dispatches_on_task_failed(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(
+            hook_id="HK-FAIL",
+            event_type=EventType.TASK_FAILED,
+            callback_script="python -c \"print('fail-handled')\"",
+        )
+        dispatcher.register_hook(hook)
+        bus.publish(EventType.TASK_FAILED, "TASK-200")
+        executions = dispatcher.get_executions()
+        assert len(executions) == 1
+        assert executions[0].hook_id == "HK-FAIL"
+
+    def test_disabled_hook_not_dispatched(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(
+            hook_id="HK-DIS",
+            event_type=EventType.TASK_COMPLETED,
+            callback_script="python -c \"print('should-not-run')\"",
+            enabled=False,
+        )
+        dispatcher.register_hook(hook)
+        bus.publish(EventType.TASK_COMPLETED, "TASK-300")
+        assert dispatcher.get_executions() == []
+
+    def test_unregistered_event_type_no_dispatch(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(
+            hook_id="HK-UNREG",
+            event_type=EventType.TASK_COMPLETED,
+            callback_script="python -c \"print('x')\"",
+        )
+        dispatcher.register_hook(hook)
+        bus.publish(EventType.TASK_CREATED, "TASK-400")
+        assert dispatcher.get_executions() == []
+
+    def test_get_executions_filtered_by_hook_id(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        h1 = HookConfig(
+            hook_id="HK-F1", event_type=EventType.TASK_COMPLETED, callback_script="python -c \"print('a')\""
+        )
+        h2 = HookConfig(hook_id="HK-F2", event_type=EventType.TASK_FAILED, callback_script="python -c \"print('b')\"")
+        dispatcher.register_hook(h1)
+        dispatcher.register_hook(h2)
+        bus.publish(EventType.TASK_COMPLETED, "TASK-500")
+        bus.publish(EventType.TASK_FAILED, "TASK-501")
+        filtered = dispatcher.get_executions(hook_id="HK-F1")
+        assert len(filtered) == 1
+        assert filtered[0].hook_id == "HK-F1"
+
+    def test_get_executions_returns_all(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        h1 = HookConfig(
+            hook_id="HK-G1", event_type=EventType.TASK_COMPLETED, callback_script="python -c \"print('a')\""
+        )
+        h2 = HookConfig(hook_id="HK-G2", event_type=EventType.TASK_FAILED, callback_script="python -c \"print('b')\"")
+        dispatcher.register_hook(h1)
+        dispatcher.register_hook(h2)
+        bus.publish(EventType.TASK_COMPLETED, "TASK-600")
+        bus.publish(EventType.TASK_FAILED, "TASK-601")
+        all_ex = dispatcher.get_executions()
+        assert len(all_ex) == 2
+
+    def test_failing_script_records_failure(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(
+            hook_id="HK-BAD",
+            event_type=EventType.TASK_COMPLETED,
+            callback_script='python -c "raise SystemExit(1)"',
+        )
+        dispatcher.register_hook(hook)
+        bus.publish(EventType.TASK_COMPLETED, "TASK-700")
+        executions = dispatcher.get_executions()
+        assert len(executions) == 1
+        assert executions[0].success is False
+
+    def test_webhook_hook_no_script_no_crash(self, tmp_path):
+        bus = EventBus()
+        dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+        hook = HookConfig(
+            hook_id="HK-WH",
+            event_type=EventType.TASK_COMPLETED,
+            # 5.40.5 修复后 webhook 真实发 HTTP POST：127.0.0.1:9（discard 端口）
+            # 确定性连接拒绝 -> 重试后记录失败执行，不 crash。
+            callback_url="http://127.0.0.1:9/webhook",
+            max_retries=2,
+        )
+        dispatcher.register_hook(hook)
+        bus.publish(EventType.TASK_COMPLETED, "TASK-800")
+        executions = dispatcher.get_executions()
+        assert len(executions) == 1
+        assert executions[0].hook_id == "HK-WH"
+        assert executions[0].success is False
+
+    def test_webhook_success_records_execution_and_headers(self, tmp_path):
+        import hashlib
+        import hmac as hmac_mod
+        import json
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        captured: dict = {}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                body = self.rfile.read(int(self.headers.get("Content-Length", 0)))
+                captured["headers"] = dict(self.headers)
+                captured["body"] = body
+                self.send_response(200)
+                self.end_headers()
+
+            def log_message(self, *args):
+                pass
+
+        server = HTTPServer(("127.0.0.1", 0), Handler)
+        port = server.server_address[1]
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            bus = EventBus()
+            dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+            hook = HookConfig(
+                hook_id="HK-WH-OK",
+                event_type=EventType.TASK_COMPLETED,
+                callback_url=f"http://127.0.0.1:{port}/webhook",
+                webhook_secret="s3cret",
+            )
+            dispatcher.register_hook(hook)
+            event = bus.publish(EventType.TASK_COMPLETED, "TASK-900")
+            executions = dispatcher.get_executions()
+            assert len(executions) == 1
+            assert executions[0].success is True
+            assert executions[0].response.startswith("HTTP 2")
+            # 幂等键：hook:{hook_id}:{event_id}（同一事件重投 = 同一键）
+            assert captured["headers"].get("Idempotency-Key") == f"hook:HK-WH-OK:{event.event_id}"
+            # HMAC-SHA256 签名
+            expected_sig = "sha256=" + hmac_mod.new(b"s3cret", captured["body"], hashlib.sha256).hexdigest()
+            assert captured["headers"].get("X-Zephyr-Signature") == expected_sig
+            payload = json.loads(captured["body"].decode("utf-8"))
+            assert payload["task_id"] == "TASK-900"
+            assert payload["event_type"] == "task.completed"
+        finally:
+            server.shutdown()
+            server.server_close()
+
+    def test_webhook_retries_on_5xx_then_succeeds(self, tmp_path):
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        state = {"calls": 0}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                state["calls"] += 1
+                self.rfile.read(int(self.headers.get("Content-Length", 0)))
+                self.send_response(500 if state["calls"] < 3 else 200)
+                self.end_headers()
+
+            def log_message(self, *args):
+                pass
+
+        server = HTTPServer(("127.0.0.1", 0), Handler)
+        port = server.server_address[1]
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            bus = EventBus()
+            dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+            hook = HookConfig(
+                hook_id="HK-WH-RETRY",
+                event_type=EventType.TASK_COMPLETED,
+                callback_url=f"http://127.0.0.1:{port}/webhook",
+                max_retries=3,
+            )
+            dispatcher.register_hook(hook)
+            bus.publish(EventType.TASK_COMPLETED, "TASK-901")
+            executions = dispatcher.get_executions()
+            assert len(executions) == 1
+            assert executions[0].success is True
+            assert state["calls"] == 3  # 两次 500 transient 重试后第三次成功
+        finally:
+            server.shutdown()
+            server.server_close()

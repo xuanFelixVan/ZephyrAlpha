@@ -1,5 +1,4 @@
 # [A_test] module_id: zephyr.shared.lifecycle.registry_state_vocab | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-BT-188 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §lifecycle_fsm_vocab
 # [MODULE] tests.shared.lifecycle.test_registry_state_vocab
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] pytest; PyYAML; zephyr.shared.lifecycle.registry_state_vocab;

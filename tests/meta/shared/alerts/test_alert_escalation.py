@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] tests.shared.alerts.test_alert_escalation
 # [DOMAIN] D_SHARED
 # [INVARIANTS] 超时真源=注册表fail-closed(THD-ALERT-002=300); 显式传参覆盖; 状态属性正确

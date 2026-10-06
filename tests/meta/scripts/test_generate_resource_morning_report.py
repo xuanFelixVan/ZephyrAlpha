@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-RESCHED-MORNING | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-RESCHED-MORNING | docs/03_modules/_cross_layer/resource_morning_report/blueprint.md | §
+# [A_test] module_id: TEST-MOD-RESCHED-MORNING | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_generate_resource_morning_report
 # [STABILITY] volatile
 # [SAFETY] L

@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # [TTL] permanent
 # [MODULE] tests.shared.test_process_incubator
@@ -267,7 +266,7 @@ def test_mark_reaped_roundtrip(inc: ProcessIncubator, real_cmd):
         assert inc.mark_reaped(rec.record_id) is True
         assert inc.mark_reaped("nonexistent") is False
         assert inc.list_active() == []
-        assert inc.stats()["reaped"] if "reaped" in inc.stats() else True  # noqa: SIM401
+        assert inc.stats().get("reaped", True)
     finally:
         proc.terminate()
         proc.wait(timeout=10)

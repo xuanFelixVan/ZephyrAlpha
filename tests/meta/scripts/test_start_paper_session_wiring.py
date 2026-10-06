@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-PAPER-SESSION-WIRING | docs/03_modules/_domain_execution_core/blueprint.md | 合规闸装配存在性钉
 # [MODULE] tests.scripts.test_start_paper_session_wiring
 # [DOMAIN] D_EXECUTION_CORE
 # [DEPENDENCIES] tests.scripts 先例目录；importlib 直载 scripts/start_paper_session.py

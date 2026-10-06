@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_domain_shared/algo_flow/io/file_utils.yaml | §test
 # [TTL] permanent
 # [MODULE] tests.shared.io.test_file_utils_atomic_retry
 # [TESTS] src/zephyr/shared/io/file_utils.py

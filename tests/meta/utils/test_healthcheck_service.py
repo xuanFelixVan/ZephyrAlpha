@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_healthcheck_service | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-TEST-392 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_healthcheck_service
 # [DOMAIN] D_SHARED

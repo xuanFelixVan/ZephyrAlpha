@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-021 | tests/scripts/test_git_guard_self_harm.py | §git-guard-self-harm-tests
 # [MODULE] tests.scripts.test_git_guard_self_harm
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.git_guard
@@ -12,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
-# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=TEST-MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_git_guard_self_harm.py — git_guard reset --hard 自伤检测单测（L1 止血验收）
 

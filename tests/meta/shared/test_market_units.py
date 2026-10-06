@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_market_units | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md | §test
 # [MODULE] tests.shared.test_market_units
 # [DOMAIN] D_SHARED
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
@@ -177,7 +176,7 @@ class TestAdjustment:
         # 送转后股数翻倍：raw 手数 1000→2000（主进料=手），amount 恒 2,000,000 元
         lots = [1000.0, 1000.0, 1000.0, 2000.0, 2000.0, 2000.0]
         rows = []
-        for i, (c, lv) in enumerate(zip(raw_closes, lots)):  # noqa: B905
+        for i, (c, lv) in enumerate(zip(raw_closes, lots)):
             date = f"2026-01-0{i + 1}"
             rows.append((symbol, date, c * 0.98, c * 1.02, c * 0.97, c, lv, 2_000_000.0))
         df = _frame(rows, multi_index=True)

@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_handbook | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-TEST-391 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_handbook
 # [DOMAIN] D_SHARED
 # [INVARIANTS] Handbook.generate_onboarding_context返回非空str; get_directory_map返回非空dict

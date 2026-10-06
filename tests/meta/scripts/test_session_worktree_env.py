@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-DATA-067 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # [MODULE] tests.scripts.test_session_worktree_env
 # [DOMAIN] D_AUDITTEST

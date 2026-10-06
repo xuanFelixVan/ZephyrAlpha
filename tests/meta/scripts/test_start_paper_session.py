@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_start_paper_session | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-SCRIPT-start_paper_session | scripts/start_paper_session.py | §
 # [MODULE] tests.scripts.test_start_paper_session
 # [DOMAIN] D_EX_CORE
 # [STABILITY] volatile

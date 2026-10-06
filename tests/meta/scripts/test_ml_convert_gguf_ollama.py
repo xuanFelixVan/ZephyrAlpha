@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-NLP-PIPELINE | 13_regime_phase3_engineering_plan.md | §Phase 6
 # [TTL] permanent
 """test_ml_convert_gguf_ollama.py — GGUF 回灌 Ollama 转换脚本单元测试（Phase 6）。
 

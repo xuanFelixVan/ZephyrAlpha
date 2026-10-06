@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-021 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """Unit tests for guard watchdog heartbeat logic (fix #ARCH-BOOT-001).
 

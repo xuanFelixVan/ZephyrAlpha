@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-REGIME-P2-E8 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # [MODULE] tests.scripts.test_websearch_ingest
 # [DOMAIN] D_GOV_ENFORCEMENT
@@ -417,7 +416,7 @@ def test_ingest_transaction_rollback(tmp_path: Path) -> None:
         {"type": "不存在的类型", "market": "cn"},
     ]
     p = _tmp_batch(tmp_path, recs)
-    with pytest.raises(Exception):  # noqa: B017
+    with pytest.raises(Exception):
         wi.cmd_ingest(str(p))
     from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
@@ -727,7 +726,7 @@ def test_ingest_node_company_resolves_existing_node(tmp_path: Path) -> None:
                 "source": "websearch",
             }
         ]
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             wi.cmd_ingest(str(_tmp_batch(tmp_path / "bad", bad)))
     finally:
         cur.execute(
@@ -806,7 +805,7 @@ def test_ingest_chunk_fk_violation_rolls_back(tmp_path: Path) -> None:
         }
     ]
     p = _tmp_batch(tmp_path, recs)
-    with pytest.raises(Exception):  # noqa: B017
+    with pytest.raises(Exception):
         wi.cmd_ingest(str(p))
     from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 

@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] tests.shared.alerts.test_alert_precision_tracker
 # [DOMAIN] D_SHARED
 # [INVARIANTS] precision/recall 口径正确; 零除退化 0.0; 计数单调

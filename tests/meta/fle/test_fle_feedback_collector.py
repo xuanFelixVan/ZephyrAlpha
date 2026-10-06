@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_fle_feedback_collector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_fle_feedback_collector
 # [DOMAIN] D_FRONTEND
 # [INVARIANTS] FeedbackEntry.score in [1,5]; FeedbackCollector.add returns FeedbackEntry; summarize returns FeedbackSummary
@@ -59,7 +58,7 @@ class TestFeedbackEntryInstantiation:
 
 class TestFeedbackEntryValidation:
     def test_score_below_range_raises(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             FeedbackEntry(
                 entry_id="FB-0004",
                 task_id="T-001",
@@ -68,7 +67,7 @@ class TestFeedbackEntryValidation:
             )
 
     def test_score_above_range_raises(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             FeedbackEntry(
                 entry_id="FB-0005",
                 task_id="T-001",
@@ -77,7 +76,7 @@ class TestFeedbackEntryValidation:
             )
 
     def test_empty_entry_id_raises(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             FeedbackEntry(
                 entry_id="",
                 task_id="T-001",
@@ -86,7 +85,7 @@ class TestFeedbackEntryValidation:
             )
 
     def test_empty_task_id_raises(self):
-        with pytest.raises(Exception):  # noqa: B017
+        with pytest.raises(Exception):
             FeedbackEntry(
                 entry_id="FB-0006",
                 task_id="",

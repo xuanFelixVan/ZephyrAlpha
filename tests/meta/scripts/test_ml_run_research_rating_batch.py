@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-NLP-PIPELINE | 13_regime_phase3_engineering_plan.md | §Phase 7
 # [TTL] permanent
 """test_ml_run_research_rating_batch.py — 研报评级批量脚本单元测试（CAND-NLP-006）。
 

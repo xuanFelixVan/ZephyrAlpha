@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-RESCHED-PROFILE | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-RESCHED-PROFILE | docs/03_modules/_cross_layer/resource_profile_registry/blueprint.md | §
+# [A_test] module_id: MOD-RESCHED-PROFILE-TEST_GENERATE_RESOURCE_PRO | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_generate_resource_profile_registry
 # [STABILITY] volatile
 # [SAFETY] L

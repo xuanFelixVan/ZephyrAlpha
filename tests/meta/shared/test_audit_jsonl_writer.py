@@ -1,12 +1,11 @@
-# [A_test] module_id: MOD-INF-016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §audit-jsonl-writer
+# [A_test] module_id: TEST-MOD-INF-016-TEST_AUDIT_JSONL_WRITER-TEST_AUDIT_JSONL_WRITER | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.shared.test_audit_jsonl_writer
 # [DOMAIN] D_SHARED
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [A_module] module_id=MOD-INF-016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=TEST-MOD-INF-016-TEST_AUDIT_JSONL_WRITER-TEST_AUDIT_JSONL_WRITER | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_audit_jsonl_writer.py — 审计 jsonl 统一写入助手单测（批5c 验收）
 

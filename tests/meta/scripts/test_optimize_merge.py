@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-043 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """Unit tests for scripts/ch/optimize_merge.py — ReplacingMergeTree 合并维护工具。
 

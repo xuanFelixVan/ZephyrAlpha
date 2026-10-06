@@ -1,6 +1,5 @@
-# [BLUEPRINT] MOD-SHARED-003 | docs/03_modules/_domain_shared/api_cost_governor/blueprint.md | §test
 # [TTL] permanent
-# [A_test] module_id: MOD-SHARED-003 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
+# [A_test] module_id: TEST-MOD-SHARED-003 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.shared.capacity_governance.test_api_cost_governor
 # [TESTS] src/zephyr/shared/capacity_governance/api_cost_governor.py
 """MOD-SHARED-003 单元测试：api_cost_governor 外部API成本治理器。

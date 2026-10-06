@@ -1,6 +1,5 @@
-# [BLUEPRINT] MOD-SHARED-005 | docs/03_modules/_domain_shared/cache_consistency_manager/blueprint.md | §test
 # [TTL] permanent
-# [A_test] module_id: MOD-SHARED-005 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
+# [A_test] module_id: TEST-MOD-SHARED-005 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.shared.io.test_cache_consistency_manager
 # [TESTS] src/zephyr/shared/io/cache_consistency_manager.py
 """MOD-SHARED-005 单元测试：cache_consistency_manager 缓存一致性管理器。

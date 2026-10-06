@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_instrument_shared | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-TEST-567 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_instrument
 # [DOMAIN] D_SHARED
 # [STABILITY] evolving

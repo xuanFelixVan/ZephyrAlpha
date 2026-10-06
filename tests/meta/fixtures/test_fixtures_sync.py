@@ -1,5 +1,4 @@
 # [A_test] module_id: MOD-GOV_fixtures_sync | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] tests.fixtures.test_fixtures_sync
 # [STABILITY] evolving
 # [SAFETY] L
@@ -107,7 +106,7 @@ class TestFixturesSync:
                     missing.append((mock_path.name, f"TRAE-{ref_num}"))
         if missing:
             details = "; ".join(f"{m}→{r}" for m, r in missing[:10])
-            assert False, f"{len(missing)} 个 mock 引用的规则在真源不存在: {details}"  # noqa: B011
+            assert False, f"{len(missing)} 个 mock 引用的规则在真源不存在: {details}"
 
     def test_no_orphan_mock_files(self):
         """PASS: 每个 mock 文件编号都有对应的真源规则文件（防止 mock 残留）。"""
@@ -121,4 +120,4 @@ class TestFixturesSync:
                 if file_num not in rule_numbers:
                     orphans.append(mock_path.name)
         if orphans:
-            assert False, f"{len(orphans)} 个 orphan mock（真源规则已删除但 mock 残留）: {orphans[:10]}"  # noqa: B011
+            assert False, f"{len(orphans)} 个 orphan mock（真源规则已删除但 mock 残留）: {orphans[:10]}"

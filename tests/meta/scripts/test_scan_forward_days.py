@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-REGIME-P2-E8 | 13_regime_phase3_engineering_plan.md | §4.2
 # [TTL] permanent
 """test_scan_forward_days.py — P2-E8 forward_days 扫描脚本单元测试。
 

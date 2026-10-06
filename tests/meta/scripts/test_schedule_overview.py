@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-OPS_SCHED_OVERVIEW | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-OPS_SCHED_OVERVIEW | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §schedule-overview
+# [A_test] module_id: TEST-MOD-OPS_SCHED_OVERVIEW | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_schedule_overview
 # [STABILITY] volatile
 # [SAFETY] L

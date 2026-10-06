@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-RESCHED-VIEW | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-RESCHED-VIEW | docs/03_modules/_domain_frontend/resource_week_view/blueprint.md | §
+# [A_test] module_id: TEST-MOD-RESCHED-VIEW | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_generate_resource_week_view
 # [STABILITY] volatile
 # [SAFETY] L

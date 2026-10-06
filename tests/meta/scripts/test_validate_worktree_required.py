@@ -1,12 +1,11 @@
-# [A_test] module_id: MOD-INF-005 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/d11_compliance/validate_worktree_required.py | §gate-worktree-required
+# [A_test] module_id: TEST-MOD-INF-005-TEST_VALIDATE_WORKTREE_REQUI-TEST_VALIDATE_WORKTREE_REQUI | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_validate_worktree_required
 # [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [A_module] module_id=MOD-INF-005 | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=TEST-MOD-INF-005-TEST_VALIDATE_WORKTREE_REQUI-TEST_VALIDATE_WORKTREE_REQUI | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_validate_worktree_required.py — GATE-WORKTREE-REQUIRED 软门禁单测（L3.1 验收）
 

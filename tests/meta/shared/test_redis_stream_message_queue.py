@@ -1,6 +1,5 @@
-# [BLUEPRINT] MOD-SHARED-004 | docs/03_modules/_domain_shared/redis_stream_message_queue/blueprint.md | §test
 # [TTL] permanent
-# [A_test] module_id: MOD-SHARED-004 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
+# [A_test] module_id: TEST-MOD-SHARED-004 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.shared.test_redis_stream_message_queue
 # [TESTS] src/zephyr/shared/redis_stream_message_queue.py
 """MOD-SHARED-004 单元测试：redis_stream_message_queue Redis Streams 可靠消息队列。

@@ -1,5 +1,4 @@
-# [A_test] module_id: MOD-SCRIPT-crypto_daily_review | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-SCRIPT-crypto_daily_review | scripts/crypto_daily_review.py | §
+# [A_test] module_id: TEST-MOD-SCRIPT-crypto_daily_review | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_crypto_daily_review
 # [DOMAIN] D_TRADING
 # [STABILITY] volatile
@@ -415,7 +414,7 @@ class TestMainEndToEnd:
         assert cdr.main(["--date", _DATE], data_root=data_root, report_dir=report_dir) == 0
         second = (report_dir / f"{_DATE}-crypto-daily-review.md").read_text(encoding="utf-8")
         # 重跑覆盖同名报告（生成时间行可能变化，窗口与标题恒定）
-        for line_first, line_second in zip(first.splitlines(), second.splitlines()):  # noqa: B905
+        for line_first, line_second in zip(first.splitlines(), second.splitlines()):
             if line_first.startswith("- 生成时间"):
                 continue
             assert line_first == line_second

@@ -1,12 +1,11 @@
-# [A_test] module_id: MOD-INF-005 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/check_protected_paths.py | §B4-merge-approval-transpose
+# [A_test] module_id: TEST-MOD-INF-005-TEST_CHECK_PROTECTED_PATHS_M-TEST_CHECK_PROTECTED_PATHS_M | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.scripts.test_check_protected_paths_merge
 # [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [A_module] module_id=MOD-INF-005 | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=TEST-MOD-INF-005-TEST_CHECK_PROTECTED_PATHS_M-TEST_CHECK_PROTECTED_PATHS_M | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_check_protected_paths_merge.py — B4 治本（2026-08-19）merge 场景审批转置单测
 

@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] tests.shared.alerts.test_alert_senders
 # [DOMAIN] D_SHARED
 # [INVARIANTS] 默认不启用; best-effort(False不抛); 传输注入零网络; 凭据不出现在异常/日志路径

@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-NLP-PIPELINE | 13_regime_phase3_engineering_plan.md | §Phase 7
 # [TTL] permanent
 """test_ml_run_sentiment_batch.py — 离线批量推理+日级聚合脚本单元测试（Phase 7）。
 

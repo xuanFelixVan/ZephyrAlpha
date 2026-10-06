@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-L00-004 | data_source_integrator_blueprint.md | §4
 # [TTL] permanent
 """test_ch_tag_news_category.py — category 刷标脚本单元测试（CAND-DAT-024）。
 
