@@ -1,0 +1,1651 @@
+doc_type: fexam_strategy_scores
+version: v1
+generated_at_utc: '2026-10-05 19:26:09.632811+00:00'
+prereg_v1:
+  windows:
+    holdout_exam:
+      start: '2025-10-09'
+      end: '2026-09-30'
+      note: 近12月干净窗，选样窗与考试窗分离
+    is_ref_decay:
+      start: '2024-10-08'
+      end: '2025-09-30'
+      note: 衰减参照窗，与考试窗不交
+  horizons:
+  - 1
+  - 5
+  - 20
+  headline_horizon: 5
+  factor_pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+    note: 初拟待Owner校（施工单§2口径）
+  indicator_pass_line:
+    abs_ic_5d_min: 0.02
+    regime_check: report_only
+    note: IC及格线同因子；regime_valid声明核对只报告不判死
+  strategy_pass_line:
+    oos_sharpe_min: 0.0
+    is_sharpe_min: 0.0
+    oos_maxdd_max: 0.3
+    activation_weight_band:
+      floor: 0
+      current: 0.1
+      ceiling: 0.3
+      step_cap: 0.2
+    note: 初拟待Owner校
+  strategy_device:
+    engine: DefaultBacktestEngine(MOD-BT-001)
+    execution_lag_days: 1
+    exclude_st: true
+    pit_filter: true
+    top_n: 20
+    rebalance: monthly
+    weighting: equal
+    single_run_split: 一次连续跑，nav按窗分段（IS/OOS同源同参数）
+  device_policy: IC考试=CPU pandas（spearman秩相关无GPU核，逐条可解释degrade）；批2整装=vectorized_engine CPU逐日（c4 GPU引擎为网格考专属，批2单跑非网格不适用0.53s/格口径）；degrade台账随册
+  regime_key: c1_backtest.regime_snapshot_history HMM四态argmax；<2019-04用SMA200 fallback
+  lookahead_note: 因子/指标册 last_updated=2026-09 晚于考试窗——registry 本身含前视风险，本考为存量清点口径（verdict 只证明窗内表现，不证明可上线），上线另走晋升门
+window_definition:
+  run:
+  - '2018-01-02'
+  - '2026-09-30'
+  is:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos_holdout:
+  - '2025-10-09'
+  - '2026-09-30'
+  separation_note: 单次连续跑 nav 按 IS/OOS 时间分段；OOS=近12月干净窗与批1/批3同窗
+device_ledger:
+- object: strategy_exam
+  device: cpu
+  reason: vectorized_engine(MOD-BT-001)为CPU逐日引擎，无cupy核；0.53s/格口径属c4网格引擎（T3a专用），批2为逐策略单跑不适用；成本大头=数据一次拉取（全批摊薄）
+harness_note: 策略考=alpha_sources等权合成在标准装置(top20/月频/等权/PIT/剔ST/T+1)上的表现；非策略全部定制逻辑（定制回测=L级另行登记）
+regime_source: regime_table+sma_fallback
+dsr_ledger:
+  batch_id: fexam-strategies-20261006
+  n_trials: 0
+  record:
+    batch_id: fexam-strategies-20261006
+    n_trials: 0
+    status: recorded
+    cumulative_trials: 20632
+  note: DSR折减只记账不计入本批判定（判定用OOS干净窗，试次折减随册呈报）
+counts:
+  total: 161
+  rework: 161
+results:
+- object_id: STR-E-TIMING-001
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-027
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-001
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-002
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-001
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-002
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-003
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-003
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-028
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-004
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-029
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-005
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-001
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-030
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-031
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-032
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-006
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-007
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-033
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-034
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-002
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-035
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-036
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-037
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-038
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-039
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-040
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-041
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-042
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-043
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-044
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-008
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-009
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-045
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-046
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-047
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-048
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-010
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-049
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-050
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-011
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-012
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-013
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-004
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-005
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-051
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-006
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-003
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-014
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-007
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-015
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-052
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-016
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-017
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-053
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-054
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-008
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-009
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-010
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-055
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-011
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-012
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-018
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-019
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-020
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-021
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-SECTOR-001
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-004
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-022
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-005
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-023
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-013
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-056
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-057
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-058
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-059
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-006
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-007
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-014
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-008
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-009
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-015
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-060
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-016
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-010
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-024
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-061
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-011
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-062
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-017
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-018
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-025
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-012
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-063
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-013
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-026
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-027
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-064
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-028
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-029
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-065
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-066
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-014
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-015
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-019
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-016
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-067
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-068
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-020
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-069
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-VREV-017
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-VREV-018
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags: []
+  metrics: {}
+- object_id: STR-VREV-019
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags: []
+  metrics: {}
+- object_id: STR-VREV-020
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-024
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-MULTIFACTOR-070
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-071
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-072
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-030
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-073
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-074
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-075
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-076
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-077
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-078
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-079
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-080
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-031
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-081
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-021
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-082
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-083
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-022
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-084
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-085
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-086
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-087
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-088
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-089
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-090
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-091
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-092
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-093
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-021
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MOMTREND-032
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-VREV-023
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-094
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-MULTIFACTOR-095
+  kind: strategy
+  bucket: non_quantified
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  - universe_id_missing
+  - cost_model_id_missing
+  metrics: {}
+- object_id: STR-DABAN-022
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-MULTIFACTOR-096
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-EVENT-001
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-VREV-025
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-TSMALL-001
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-VAL-001
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-MOMTREND-033
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-VREV-026
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-DABAN-023
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-VREV-027
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-MULTIFACTOR-097
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-MULTIFACTOR-098
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}
+- object_id: STR-MULTIFACTOR-099
+  kind: strategy
+  bucket: code_backed
+  verdict: rework
+  reason: alpha_sources 空或全部不可解析（未量化/缺CH列）——如实登记禁造凑数
+  missing_recipe_flags:
+  - alpha_sources_empty
+  metrics: {}

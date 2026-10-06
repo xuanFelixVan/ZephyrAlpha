@@ -68,3 +68,16 @@ batch_records:
     裁定补登:重考消费了累计N却未回写账本
   recorded_at: '2026-09-17T08:20:53+00:00'
   recorded_by: kimi-audit
+- batch_id: fexam-strategies-20261006
+  n_trials: 0
+  kind: fexam_strategy_batch
+  note: fexam batch2 evidence=D:/ZephyrAlpha/docs/_working/fexam/strategy_exam_scores_v1.yaml;
+    windows=('2018-01-02', '2026-09-30')+('2025-10-09', '2026-09-30')
+  recorded_at: '2026-10-05T19:26:09+00:00'
+  recorded_by: st-matrix-20261006
+- batch_id: grid_20261006-052748
+  n_trials: 117
+  kind: factory_grid_batch_a
+  note: 'auto: data\strategy_intake\grid_20261006-052748\summary.json'
+  recorded_at: '2026-10-05T22:09:02+00:00'
+  recorded_by: factory_grid_executor
