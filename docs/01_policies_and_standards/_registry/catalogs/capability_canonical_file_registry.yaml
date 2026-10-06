@@ -62414,4 +62414,14 @@ creation_tokens:
   created_by: st-cure-p03-20261006
   capability: qoder_legacy_closeout
   merge_evaluation: "qoder 收尾病案 W-CASE 补登（旧路径 token 的 _20260928 目录变体），与旧路径条目同源不同位，不并"
+- file: docs/_working/commitmap_cure/f15_frombag_report.md
+  token: closeout-report-f15-frombag-report-20261006
+  created_by: st-f15-frombag-20261005
+  capability: closeout_report
+  merge_evaluation: "F15 from-bag 批量重投报告（收官班成果件，commitmap-cure P0 收尾袋捎带入库）"
+- file: docs/_working/commitmap_cure/final_closeout_report.md
+  token: closeout-report-final-closeout-report-20261006
+  created_by: st-closeout-basereq-20261006
+  capability: closeout_report
+  merge_evaluation: "commitmap-cure 战役收官终报（总包成果件，P0 收尾袋捎带入库）"
 di_seam_exemptions: []

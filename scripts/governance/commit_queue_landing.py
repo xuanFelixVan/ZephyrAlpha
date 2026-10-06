@@ -362,13 +362,17 @@ def all_derived_total_pairs() -> dict[str, dict[str, str]]:
 
 
 def is_registry_mergeable(rel: str) -> bool:
-    """仓内相对路径是否命中注册表族（W2 三向合并作用域；与 gate 的
-    REGISTRY-MASS-DELETION 触发目录同源语义，按前缀族判定不逐文件枚举）。
-    二层⑥扩展（Owner 全批 2026-10-05）：docs/_working/ 产出件也纳入合并仲裁
-    ——纯文档报告/台账的基底漂移（他人改过同名文件）可安全并入，不再直接
-    cascade_stale 死信（基底冲突 67 袋的 ~60% 属此类）。"""
-    norm = rel.replace("\\", "/")
-    return (norm.startswith(_REGISTRY_CATALOGS_PREFIX) and norm.endswith(".yaml")) or norm.startswith("docs/_working/")
+    """仓内相对路径是否交落地侧三向合并仲裁（W2 作用域谓词）。
+
+    二层⑥扩展（Owner 全批 2026-10-05）：docs/_working/ 产出件纳入合并仲裁。
+    commitmap-cure P0 治本（Owner 终裁 2026-10-06）：**扩到全部路径**——演进件
+    （dev 侧已推进、袋侧未改）"仍判已落地"口径不再限注册表/产出件前缀；任何路径
+    的基底漂移都交合并仲裁消化，不在队列层判 cascade_stale/基底冲突死信。
+    落地仲裁语义仍 fail-closed：仅 dev 改→noop 吸收；仅袋改→取袋；双侧皆改→
+    真冲突死信；dev 已删件拒绝复活。条目级 YAML 合并作用域见
+    _merge_registry_file 内分流（仅注册表 catalogs 族；其余 YAML 走整文件三方）。"""
+    del rel  # 全路径恒真（扩面口径）；保留形参以维持六处调用点与测试注入签名稳定
+    return True
 
 
 @dataclass
@@ -2174,10 +2178,15 @@ class WorktreeLanding:
             if r.returncode != 0:
                 raise RuntimeError(f"[landing] base_blob 对象不可读（{base_blob[:12]}）——死信回退人工")
             base_text = r.stdout
-        # 非 YAML 的 _working 件（md/csv 等）整文件三方回退（2026-10-06 修，二层⑥勘误）：
-        # 条目级 yaml 合并对 md 无意义且 frontmatter 诱发 compose 必炸（0016 死实例）——
+        # 非"注册表族 YAML"件整文件三方回退（2026-10-06 修，二层⑥勘误；P0 治本收窄分流）：
+        # 条目级 yaml 合并对 md 无意义且 frontmatter 诱发 compose 必炸（0016 死实例）；
+        # P0 扩面后全部路径都进本函数，config/ 等普通 YAML 同样不适用条目级语义
+        # （退役检查/唯一键推断/total 自愈只对 catalogs 族有意义）——整文件三分支
+        # 覆盖「非 YAML + 非注册表族 YAML」，条目级合并仅剩注册表 catalogs 族 .yaml。
         # 整文件标准三方：仅袋改→取袋；仅 dev 改→noop 吸收；两侧皆改→真冲突死信。
-        if not rel.replace("\\", "/").endswith((".yaml", ".yml")):
+        _norm_rel = rel.replace("\\", "/")
+        _is_catalog_yaml = _norm_rel.startswith(_REGISTRY_CATALOGS_PREFIX) and _norm_rel.endswith(".yaml")
+        if not _is_catalog_yaml:
             _base = base_text if base_text is not None else ""
             if theirs_text == _base:
                 meta = item.get("meta")
@@ -2193,7 +2202,7 @@ class WorktreeLanding:
                 return None
             if ours_text == _base:
                 return theirs_text.encode("utf-8")
-            raise RuntimeError(f"[landing] 非 YAML 件双侧皆改真冲突（整文件三方，死信回退人工）: {rel}")
+            raise RuntimeError(f"[landing] 非注册表族件双侧皆改真冲突（整文件三方，死信回退人工）: {rel}")
         bag_paths = self._bag_payload_paths(item)
         merged, conflict = three_way_merge_registry_yaml(
             base_text,
