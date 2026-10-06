@@ -294,6 +294,8 @@ def make_map_alignment_gate() -> GateSpec:
       generate_data_supply_chain_map [CONSUMERS] 自 2026-09-25 的幽灵声明，st-vm12surg 治本闭环）
     - TRADING-DAY-CYCLE-MAP（map_family.trading_day_cycle_map_gate._check——图13 转正批
       st-tclose-fig13reg-20261004 补件：兑现 generate_trading_day_cycle_map [CONSUMERS] 声明面）
+    - GOVERNANCE-LEGISLATION-MAP（map_family.governance_legislation_map_gate._check——图16 立项批
+      st-fig16-20261005：立法流结构门，裁定#486 ①准入同批接线）
     """
 
     def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -308,6 +310,7 @@ def make_map_alignment_gate() -> GateSpec:
             ("DATA-SUPPLY-CHAIN-MAP", "map_family.data_supply_chain_map_gate", "_check"),
             ("DEV-DELIVERY-MAP", "map_family.dev_delivery_map_gate", "_check"),
             ("TRADING-DAY-CYCLE-MAP", "map_family.trading_day_cycle_map_gate", "_check"),
+            ("GOVERNANCE-LEGISLATION-MAP", "map_family.governance_legislation_map_gate", "_check"),
         ]
         for sgid, mod, impl_name in subs:
             try:

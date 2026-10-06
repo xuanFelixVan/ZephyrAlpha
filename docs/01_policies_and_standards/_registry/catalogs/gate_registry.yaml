@@ -7,7 +7,7 @@ generated_at: '2026-10-04T16:56:37Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 189
+total_gates: 190
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -2333,3 +2333,15 @@ gates:
   status: active
   source: pre-commit
   enforcement_channel: pre-commit
+- gate_id: GOVERNANCE-LEGISLATION-MAP
+  name: 'GOVERNANCE-LEGISLATION-MAP: 图16（治理立法流图）结构校验门（GOVERNANCE-LEGISLATION-MAP，经 MAP-ALIGNMENT
+    聚合台）（CommitGate, priority=141）'
+  entry: in-process (GitCommitGateway)
+  description: 图16（治理立法流图）结构校验门（GOVERNANCE-LEGISLATION-MAP，经 MAP-ALIGNMENT 聚合台）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate

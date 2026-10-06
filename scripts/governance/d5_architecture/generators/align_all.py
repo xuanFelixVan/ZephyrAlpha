@@ -113,7 +113,7 @@ from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 
     PanoramaAlignmentReport,
     PanoramaEmptyError,
 )
-from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+from align_panoramas import (
     run_alignment as run_panorama_alignment,
 )
 
@@ -948,6 +948,40 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001 — 图 11 故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
         print(f"  WARN: 图 11 校验异常（降级跳过不计违规）: {e}")
 
+    # --- 第十六节：治理立法流图（图 16，state_id D16-S*/ruling_id 轴，2026-10-05 立项批 st-fig16-20261005；结构面）---
+    print()
+    print("[+] 第十六图 治理立法流图（图16，6 态+9 机构+9 迁移+7 禁边结构校验）...")
+    glp_hard = 0
+    glp_soft = 0
+    try:
+        _glp_validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
+        if _glp_validators_dir not in sys.path:
+            sys.path.insert(0, _glp_validators_dir)
+        from validate_governance_legislation_map import (
+            validate_structure as _glp_vs,
+        )
+
+        _glp_path = _REPO_ROOT / "config" / "governance_legislation_map.yaml"
+        _glp_data = yaml.safe_load(_glp_path.read_text(encoding="utf-8"))
+        _glp_warns: list[str] = []
+        _glp_errors = _glp_vs(_glp_data, root=_REPO_ROOT, warnings=_glp_warns, live=False)
+        glp_hard, glp_soft = len(_glp_errors), len(_glp_warns)
+        _glp_states = len(_glp_data.get("states") or [])
+        _glp_mach = len(_glp_data.get("machinery") or [])
+        print(
+            f"  OK: 状态={_glp_states} 机构={_glp_mach}"
+            f"（结构校验单一真源=validate_governance_legislation_map.validate_structure，"
+            f"准入=裁定#486 ①）"
+        )
+        print(
+            "  口径: 本节只取结构面（live=False）；实例面（CV-04 真源磁盘实存/CV-05 counts 账本对拍）"
+            "归校验器 CLI live 口径，不进 align_all 硬闸（学图15 实例面先例）"
+        )
+        for x in _glp_errors[:5]:
+            print(f"    FAIL: {x}")
+    except Exception as e:  # noqa: BLE001 — 图 16 故障不炸整个 align_all（降 warn，学图 9/10/12/13 先例）
+        print(f"  WARN: 图 16 校验异常（降级跳过不计违规）: {e}")
+
     hard_issues = (
         len(pano.domain_mismatches)
         + len(bm.ghost_anchors)
@@ -963,6 +997,7 @@ def main() -> int:
         + scm_hard
         + ddm_hard
         + pmm_hard
+        + glp_hard
     )
     # 图 8 数据层违规（ig_hard）不计硬闸：产业链清欠=长城专项进行中（S21/S24 Owner gated、
     # S25 梳理清单在案），判定权=graph_quality_check 引擎；git 侧工件已由
@@ -984,7 +1019,8 @@ def main() -> int:
             f"construction_workflow error={cwm_hard}, "
             f"strategy_card_lifecycle error={scm_hard}, "
             f"dev_delivery error={ddm_hard}, "
-            f"panorama_master_map error={pmm_hard}）"
+            f"panorama_master_map error={pmm_hard}, "
+            f"governance_legislation error={glp_hard}）"
         )
         print("   须修复后才能施工！")
     else:
@@ -994,7 +1030,7 @@ def main() -> int:
             "trading_day_cycle error=0, coverage error=0, "
             "construction_workflow error=0, "
             "strategy_card_lifecycle error=0, dev_delivery error=0, "
-            "panorama_master_map error=0"
+            "panorama_master_map error=0, governance_legislation error=0"
         )
 
     soft_issues = (
