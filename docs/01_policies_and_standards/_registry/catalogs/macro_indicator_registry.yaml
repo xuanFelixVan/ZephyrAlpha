@@ -86,12 +86,12 @@ indicators:
     market_impact: "超预期通胀=紧缩预期（利空成长/利多资源）；通缩压力=宽松预期"
     impact_assets: ["equity_index", "bond", "commodity"]
     data_ref: "DS-101"
-    used_by: ["regime", "macro_timing"]
+    used_by: ["regime", "macro_timing", "macro_regime_sensor"]
     reliability_note: "关注核心 CPI（剔食品能源）趋势性更强"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -117,7 +117,9 @@ indicators:
     impact_assets: ["equity_index", "commodity", "sector_cyclical"]
     data_ref: "DS-101"
     used_by: ["regime", "sector_rotation"]
-    reliability_note: "PPI-CPI 剪刀差=上中下游利润再分配信号"
+    reliability_note: >-
+      PPI-CPI 剪刀差=上中下游利润再分配信号
+      2026-09-30 NB1-B5 复活接线：消费模块=src/zephyr/regime/features/macro_regime_sensor.py（TDM-E-L1-S0 改指）；序列映射=config/macro_indicator_series_map.yaml；数据源核验=CH c1_market.macro_data 活源实测：PPI 序列未采集（akshare job 缺位，akshare_provider.py=st-zc9-lane-d 领地，本车道让路登记）→ 储备移交 T1B6/后继班次，映射表 status=missing。
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
@@ -149,12 +151,12 @@ indicators:
     market_impact: "荣枯线 50 上下=扩张/收缩预期差交易"
     impact_assets: ["equity_index", "commodity", "bond"]
     data_ref: "DS-101"
-    used_by: ["regime", "macro_timing"]
+    used_by: ["regime", "macro_timing", "macro_regime_sensor"]
     reliability_note: "财新 PMI（每月 1 日/3 日）样本偏中小民企，与官方背离时有信息价值"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -179,12 +181,12 @@ indicators:
     market_impact: "总量锚（预期已部分 priced-in）；分项（投资/消费/出口）更有交易价值"
     impact_assets: ["equity_index", "bond", "cny"]
     data_ref: "DS-101"
-    used_by: ["regime"]
+    used_by: ["regime", "macro_regime_sensor"]
     reliability_note: "低频滞后，regime 背景变量而非交易信号"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -212,12 +214,12 @@ indicators:
     market_impact: "社融超预期=信用扩张（利多周期/利空债）；结构（企业中长贷）比总量更重要"
     impact_assets: ["equity_index", "bond", "sector_bank"]
     data_ref: "DS-101"
-    used_by: ["regime", "macro_timing", "liquidity_model"]
+    used_by: ["regime", "macro_timing", "liquidity_model", "macro_regime_sensor"]
     reliability_note: "M1 同比-M2 同比剪刀差=资金活化程度，与股市相关性高"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -242,12 +244,12 @@ indicators:
     market_impact: "M2 高增=流动性充裕（利多估值）；M1 活化更敏感"
     impact_assets: ["equity_index", "bond"]
     data_ref: "DS-101"
-    used_by: ["regime", "liquidity_model"]
+    used_by: ["regime", "liquidity_model", "macro_regime_sensor"]
     reliability_note: "与社融合并解读（信用+货币双轮）"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -272,12 +274,12 @@ indicators:
     market_impact: "降息=利多（成长股/地产链敏感）；不降=预期落空短期利空"
     impact_assets: ["equity_index", "sector_bank", "sector_property", "bond"]
     data_ref: "DS-101"
-    used_by: ["macro_timing", "sector_rotation"]
+    used_by: ["macro_timing", "sector_rotation", "macro_regime_sensor"]
     reliability_note: "1 年期 vs 5 年期（房贷锚）分开看；MLF 利率为 LPR 前瞻指引"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -303,7 +305,9 @@ indicators:
     impact_assets: ["bond", "equity_index"]
     data_ref: "DS-101"
     used_by: ["macro_timing", "liquidity_model"]
-    reliability_note: "7 天逆回购利率（OMO）2024 起升级为政策利率主轴，MLF 政策利率色彩淡化——两者都要跟踪"
+    reliability_note: >-
+      7 天逆回购利率（OMO）2024 起升级为政策利率主轴，MLF 政策利率色彩淡化——两者都要跟踪
+      2026-09-30 NB1-B5 复活接线：消费模块=src/zephyr/regime/features/macro_regime_sensor.py（TDM-E-L1-S0 改指）；序列映射=config/macro_indicator_series_map.yaml；数据源核验=CH c1_market.macro_data 活源实测：MLF 序列未采集（TDM 挂载 8 条中唯一缺数据条目，传感件缺员降权不阻断）；采集腿补挂同 PPI 让路登记 → 储备移交 T1B6/后继班次。
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
@@ -332,12 +336,12 @@ indicators:
     market_impact: "利率下行=利多估值（DCF 分母）；股债性价比（ERP）择时核心"
     impact_assets: ["equity_index", "bond"]
     data_ref: "DS-101"
-    used_by: ["regime", "erp_timing"]
+    used_by: ["regime", "erp_timing", "macro_regime_sensor"]
     reliability_note: "股债收益差（1/PE - 10Y）是 A 股大级别择时有效指标"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -366,7 +370,9 @@ indicators:
     impact_assets: ["equity_index", "cny", "sector_export"]
     data_ref: "DS-101"
     used_by: ["regime", "sector_rotation"]
-    reliability_note: "1-2 月合并发布（春节扰动），解读需剔基数"
+    reliability_note: >-
+      1-2 月合并发布（春节扰动），解读需剔基数
+      2026-09-30 NB1-B5 复活接线：消费模块=src/zephyr/regime/features/macro_regime_sensor.py（TDM-E-L1-S0 改指）；序列映射=config/macro_indicator_series_map.yaml；数据源核验=CH c1_market.macro_data 活源实测：贸易差额序列未采集（akshare job 缺位）→ 储备移交 T1B6/后继班次，映射表 status=missing。
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
@@ -395,12 +401,12 @@ indicators:
     market_impact: "贬值压力=北向流出压力（利空蓝筹）；升值=外资回流"
     impact_assets: ["equity_index", "northbound_flow"]
     data_ref: "DS-101"
-    used_by: ["regime", "northbound_model"]
+    used_by: ["regime", "northbound_model", "macro_regime_sensor"]
     reliability_note: "中间价 vs 即期价差=逆周期因子调控信号"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -428,12 +434,12 @@ indicators:
     market_impact: "加息周期=全球流动性收紧（利空成长/新兴市场）；降息=利多"
     impact_assets: ["equity_index", "northbound_flow", "cny", "gold"]
     data_ref: "SRC-FRED-001"
-    used_by: ["regime", "cross_market"]
+    used_by: ["regime", "cross_market", "macro_regime_sensor"]
     reliability_note: "关注点阵图预期差 vs 决议本身；鲍威尔记者会措辞微调也可驱动波动"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -458,12 +464,12 @@ indicators:
     market_impact: "美债利率急升=全球风险资产估值压力（成长股敏感）；中美利差倒挂=资本流出压力"
     impact_assets: ["equity_index", "northbound_flow", "gold"]
     data_ref: "SRC-FRED-001"
-    used_by: ["regime", "cross_market"]
+    used_by: ["regime", "cross_market", "macro_regime_sensor"]
     reliability_note: "实际利率（TIPS 10Y）对成长股定价更直接"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -488,12 +494,12 @@ indicators:
     market_impact: "非农超预期=加息预期升温（利空）；弱非农=降息预期（利多）"
     impact_assets: ["equity_index", "gold", "us10y"]
     data_ref: "SRC-FRED-001"
-    used_by: ["cross_market"]
+    used_by: ["cross_market", "macro_regime_sensor"]
     reliability_note: "MUST 跟踪修订值而非仅初值；2024-2025 多次大幅下修教训"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: []
     regime_invalid: []
@@ -518,12 +524,12 @@ indicators:
     market_impact: "VIX 急升（>30）=全球避险（A 股跟跌概率高）；VIX 低位=风险偏好平稳"
     impact_assets: ["equity_index", "cross_market"]
     data_ref: "SRC-FRED-001"
-    used_by: ["regime", "cross_market"]
+    used_by: ["regime", "cross_market", "macro_regime_sensor"]
     reliability_note: "A 股相关性弱于美股，但极端值（>35）传染性强"
-    status: "candidate"
+    status: "active"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-09-30"
     owner: "MOD-GOVERNANCE"
     regime_valid: ["panic"]
     regime_invalid: []
@@ -549,7 +555,9 @@ indicators:
     impact_assets: ["equity_index"]
     data_ref: ""
     used_by: ["regime"]
-    reliability_note: "国内——GDP/PMI/CPI/PPI/失业率、货币政策 LPR/存款准备金率；海外——ISM/CPI/GDP；债市——国债收益率/信用利差；大宗——原油/黄金/铜。为 F6.24-F6.27 的宏观数据底座（数据采集清单口径）。"
+    reliability_note: >-
+      国内——GDP/PMI/CPI/PPI/失业率、货币政策 LPR/存款准备金率；海外——ISM/CPI/GDP；债市——国债收益率/信用利差；大宗——原油/黄金/铜。为 F6.24-F6.27 的宏观数据底座（数据采集清单口径）。
+      2026-09-30 NB1-B5 复活接线：消费模块=src/zephyr/regime/features/macro_regime_sensor.py（TDM-E-L1-S0 改指）；序列映射=config/macro_indicator_series_map.yaml；数据源核验=CH c1_market.macro_data 活源实测：本条=监控指标组 meta 条目（无数值序列），组件覆盖以序列映射表为准，保 candidate 不参与转正。
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-15"
@@ -565,6 +573,11 @@ indicators:
 
 
 # ============================================================
+# v1.3.0（2026-09-30 NB1-B5 复活车道 st-menu-t1b5-20260930，Owner 批 R1-R5 复活接入）：
+#   entry_count 15→16（CN-016 后补未回填的漂移①销口）；12 条 wired 指标 candidate→active
+#   （消费模块=macro_regime_sensor.py 已改指 TDM-E-L1-S0）；CN-002/008/010 源缺保 candidate
+#   （采集腿让路登记转 T1B6 储备）；CN-016=meta 条目不参与转正。
+
 # 治理规则
 # ============================================================
 # 1. PIT 铁律：所有指标 MUST 以"发布时点"入库（而非数据时点）——回测用
