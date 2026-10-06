@@ -10,7 +10,7 @@ ttl: permanent
 
 # 全景总图（图之图）
 
-> 机生渲染，禁手改后不回生成。真源: config/panorama_master_map.yaml（nodes=15 edges=21 | 纵轴=9 横轴=6）；对账基准: docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md §3（在册 15 图，双闭校验随生成器）。
+> 机生渲染，禁手改后不回生成。真源: config/panorama_master_map.yaml（nodes=16 edges=22 | 纵轴=10 横轴=6）；对账基准: docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md §3（在册 16 图，双闭校验随生成器）。
 
 ```mermaid
 flowchart LR
@@ -24,6 +24,7 @@ flowchart LR
         trading_day_cycle_map["交易日循环全景图<br/>trading_day_cycle_map"]
         construction_workflow_map["AI 施工升级流图<br/>construction_workflow_map"]
         strategy_card_lifecycle_map["策略卡生命周期图<br/>strategy_card_lifecycle_map"]
+        governance_legislation_map["治理立法流图<br/>governance_legislation_map"]
     end
     subgraph HORIZONTAL["横轴·结构视图"]
         depgraph["依赖全景图<br/>depgraph"]
@@ -38,6 +39,7 @@ flowchart LR
     DSCMAP_012 -->|"数据供给（供料）"| strategy_production_map
     strategy_production_map -->|"策略上岗"| TDMAP_001
     strategy_production_map -->|"卡生命周期"| strategy_card_lifecycle_map
+    governance_legislation_map -->|"立法供给运行时（激活条件边）"| GOMAP_001
     TDMAP_001 -->|"决策时序投影"| trading_day_cycle_map
     dev_delivery_map -->|"施工变更唯一入口"| depgraph
     dev_delivery_map -->|"施工变更唯一入口"| dataflowgraph

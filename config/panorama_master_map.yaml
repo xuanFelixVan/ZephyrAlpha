@@ -89,6 +89,11 @@ nodes:
   axis: vertical
   file: config/strategy_card_lifecycle_map.yaml
   one_line_zh: 图15 纵轴·策略卡生命周期——13 态+17 迁移+13 禁边状态机
+- map_id: governance_legislation_map
+  name_zh: 治理立法流图
+  axis: vertical
+  file: config/governance_legislation_map.yaml
+  one_line_zh: 图16 纵轴·治理立法流全景——裁定 6 态状态机+9 台机械（机生自 pg_ledger REG-RULING-001，裁定#486 ①准入）
 edges:
 - from: DSCMAP-012
   to: TDMAP-001
@@ -106,6 +111,10 @@ edges:
   to: strategy_card_lifecycle_map
   relation_zh: 卡生命周期
   basis: §3 图15 行——策略卡 13 态+17 迁移承接工厂产品形态（总包令首批语义边）
+- from: governance_legislation_map
+  to: GOMAP-001
+  relation_zh: 立法供给运行时（激活条件边）
+  basis: 裁定#486 ①——图16 条件边挂账兑现（chief 终裁四③）；治理立法流图为治理运行地图供给立法真源，边随本批激活
 - from: TDMAP-001
   to: trading_day_cycle_map
   relation_zh: 决策时序投影
