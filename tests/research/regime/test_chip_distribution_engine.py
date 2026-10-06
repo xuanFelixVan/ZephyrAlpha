@@ -1,0 +1,502 @@
+# [BLUEPRINT] MOD-REGIME-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
+# [TTL] permanent
+# [MODULE] tests.regime.test_chip_distribution_engine
+# [DOMAIN] D_REGIME
+# [DEPENDENCIES] numpy; pandas; pytest
+# [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费#12筹码结构/#5空间位置/S2底部筹码)
+# [STARTUP] imported
+# [MATURITY] design
+# [INVARIANTS] total_distribution Σ=1.0; age_layers各层Σ=1.0; 32网格网格0=最低价网格31=最高价
+# [A_module] module_id=TST-REGIME-005 | layer=test | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] permanent
+
+"""
+MOD-REGIME-005 筹码分布引擎 单元测试桩
+
+华泰2026前沿算法：VWAP中心三角分布换手递推 + 筹码龄分层 + 32相对网格映射
+TDD: 先写测试桩定义接口和预期行为，再写实现让测试通过
+"""
+
+from __future__ import annotations
+
+import time
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+import pytest
+
+# ---------------------------------------------------------------------------
+# Fixtures: 构造 mock OHLCV 数据（不依赖 ClickHouse）
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture
+def sample_ohlcv_10d() -> pd.DataFrame:
+    """10日 mock OHLCV 数据，用于递推测试。"""
+    dates = pd.date_range("2026-07-20", periods=10, freq="B")
+    rng = np.random.default_rng(42)
+    base = 10.0
+    return pd.DataFrame(
+        {
+            "date": dates,
+            "open": base + rng.uniform(-0.2, 0.2, 10),
+            "high": base + rng.uniform(0.1, 0.5, 10),
+            "low": base + rng.uniform(-0.5, -0.1, 10),
+            "close": base + rng.uniform(-0.3, 0.3, 10),
+            "volume": rng.uniform(1e6, 5e6, 10),
+            "amount": rng.uniform(1e7, 5e7, 10),
+        }
+    )
+
+
+@pytest.fixture
+def sample_ohlcv_250d() -> pd.DataFrame:
+    """250日 mock OHLCV 数据，用于完整递推+网格映射测试。"""
+    dates = pd.date_range("2025-08-01", periods=250, freq="B")
+    rng = np.random.default_rng(123)
+    # 模拟一个先跌后涨的走势，底部有堆积
+    close = 10.0 + np.cumsum(rng.normal(-0.01, 0.15, 250))
+    close[150:] += np.cumsum(rng.normal(0.02, 0.12, 100))  # 后100天反弹
+    high = close + rng.uniform(0.05, 0.3, 250)
+    low = close - rng.uniform(0.05, 0.3, 250)
+    open_ = close + rng.uniform(-0.1, 0.1, 250)
+    volume = rng.uniform(1e6, 5e6, 250)
+    amount = volume * close
+    return pd.DataFrame(
+        {"date": dates, "open": open_, "high": high, "low": low, "close": close, "volume": volume, "amount": amount}
+    )
+
+
+# ---------------------------------------------------------------------------
+# 1. 三角分布密度函数
+# ---------------------------------------------------------------------------
+
+
+class TestTriangularDistribution:
+    """测试 VWAP 中心三角分布密度函数 D_t(p)。"""
+
+    def test_vwap_is_peak(self):
+        """VWAP 处密度最大（三角分布峰值在中心）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            triangular_pdf,
+        )
+
+        vwap, low, high = 10.0, 9.0, 11.0
+        # VWAP 处密度应该最大
+        density_at_vwap = triangular_pdf(vwap, vwap, low, high)
+        density_off_center = triangular_pdf(9.5, vwap, low, high)
+        assert density_at_vwap > density_off_center
+
+    def test_zero_outside_range(self):
+        """[low, high] 之外密度为 0，边界内（严格大于 low/小于 high）> 0。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            triangular_pdf,
+        )
+
+        vwap, low, high = 10.0, 9.0, 11.0
+        assert triangular_pdf(8.0, vwap, low, high) == 0.0
+        assert triangular_pdf(12.0, vwap, low, high) == 0.0
+        # 三角分布在端点处密度为0，严格在区间内才 > 0
+        assert triangular_pdf(9.1, vwap, low, high) > 0.0
+        assert triangular_pdf(10.9, vwap, low, high) > 0.0
+
+    def test_normalizes_to_one(self):
+        """离散化到价格网格后 Σ=1.0。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            compute_daily_distribution,
+        )
+
+        vwap, low, high = 10.0, 9.0, 11.0
+        prices = np.linspace(9.0, 11.0, 32)
+        dist = compute_daily_distribution(vwap, low, high, prices)
+        assert abs(sum(dist) - 1.0) < 1e-10
+
+
+# ---------------------------------------------------------------------------
+# 2. 换手递推
+# ---------------------------------------------------------------------------
+
+
+class TestTurnoverRecursion:
+    """测试换手递推公式 C_t = (1-τ)×C_{t-1} + τ×D_t。"""
+
+    def test_zero_turnover_preserves(self):
+        """τ=0 时 C_t = C_{t-1}（完全保留旧筹码）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            turnover_recurse,
+        )
+
+        old = np.array([0.1] * 32)
+        new = np.array([0.0] * 16 + [0.0625] * 16)
+        result = turnover_recurse(old, new, tau=0.0)
+        np.testing.assert_array_almost_equal(result, old)
+
+    def test_full_turnover_replaces(self):
+        """τ=1 时 C_t = D_t（完全替换为新筹码）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            turnover_recurse,
+        )
+
+        old = np.array([0.1] * 32)
+        new = np.array([0.0] * 16 + [0.0625] * 16)
+        result = turnover_recurse(old, new, tau=1.0)
+        np.testing.assert_array_almost_equal(result, new)
+
+    def test_half_turnover_blends(self):
+        """τ=0.5 时 C_t = 0.5×C_{t-1} + 0.5×D_t（混合）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            turnover_recurse,
+        )
+
+        old = np.array([0.1] * 32)  # 均匀
+        new = np.array([0.0] * 16 + [0.0625] * 16)  # 上半
+        result = turnover_recurse(old, new, tau=0.5)
+        expected = 0.5 * old + 0.5 * new
+        np.testing.assert_array_almost_equal(result, expected)
+
+    def test_result_always_normalizes(self):
+        """递推后结果始终归一化（Σ=1.0）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            turnover_recurse,
+        )
+
+        old = np.random.dirichlet(np.ones(32))
+        new = np.random.dirichlet(np.ones(32))
+        for tau in [0.1, 0.3, 0.5, 0.7, 0.9]:
+            result = turnover_recurse(old, new, tau=tau)
+            assert abs(sum(result) - 1.0) < 1e-10
+
+
+# ---------------------------------------------------------------------------
+# 3. 32 相对网格映射
+# ---------------------------------------------------------------------------
+
+
+class TestGridMapping:
+    """测试 32 相对网格映射（跨股比较）。"""
+
+    def test_grid_boundaries(self):
+        """网格 0 = 最低价，网格 31 = 最高价。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            build_grid_prices,
+        )
+
+        low, high = 5.0, 15.0
+        grid = build_grid_prices(low, high, n_grids=32)
+        assert len(grid) == 32
+        assert abs(grid[0] - 5.0) < 1e-10
+        assert abs(grid[31] - 15.0) < 1e-10
+
+    def test_grid_spacing_uniform(self):
+        """网格等间距。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            build_grid_prices,
+        )
+
+        # linspace(0, 31, 32) → 步长 = 31/31 = 1.0
+        grid = build_grid_prices(0.0, 31.0, n_grids=32)
+        diffs = np.diff(grid)
+        np.testing.assert_array_almost_equal(diffs, np.full(31, 1.0))
+
+
+# ---------------------------------------------------------------------------
+# 4. 筹码分布引擎端到端
+# ---------------------------------------------------------------------------
+
+
+class TestChipDistributionEngine:
+    """测试 ChipDistributionEngine 端到端计算。"""
+
+    def test_output_structure(self, sample_ohlcv_250d):
+        """输出包含所有必需字段。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
+        required_keys = [
+            "symbol",
+            "date",
+            "grid_prices",
+            "total_distribution",
+            "age_layers",
+            "metrics",
+        ]
+        for key in required_keys:
+            assert key in result, f"Missing key: {key}"
+
+    def test_total_distribution_normalizes(self, sample_ohlcv_250d):
+        """total_distribution Σ=1.0。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
+        assert abs(sum(result["total_distribution"]) - 1.0) < 1e-10
+
+    def test_age_layers_each_normalizes(self, sample_ohlcv_250d):
+        """age_layers 各层 Σ=1.0。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
+        for layer_name, layer_dist in result["age_layers"].items():
+            assert abs(sum(layer_dist) - 1.0) < 1e-10, f"{layer_name} not normalized"
+
+    def test_grid_length_32(self, sample_ohlcv_250d):
+        """所有分布长度=32。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
+        assert len(result["total_distribution"]) == 32
+        assert len(result["grid_prices"]) == 32
+        for layer_dist in result["age_layers"].values():
+            assert len(layer_dist) == 32
+
+    def test_metrics_present(self, sample_ohlcv_250d):
+        """衍生指标全部存在且在合理范围。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(sample_ohlcv_250d, symbol="000300.SH")
+        m = result["metrics"]
+        assert "long_term_bottom_ratio" in m
+        assert "upper_trap_peak" in m
+        assert "bottom_accumulation" in m
+        assert "distribution_migration" in m
+        # long_term_bottom_ratio ∈ [0, 1]
+        assert 0.0 <= m["long_term_bottom_ratio"] <= 1.0
+        assert 0.0 <= m["bottom_accumulation"] <= 1.0
+
+
+# ---------------------------------------------------------------------------
+# 5. 衍生指标语义正确性
+# ---------------------------------------------------------------------------
+
+
+class TestDerivedMetrics:
+    """测试衍生指标的语义正确性。"""
+
+    def test_bottom_accumulation_high_when_bottom_heavy(self):
+        """底部堆积时 bottom_accumulation 高。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            compute_metrics,
+        )
+
+        # 底部8格占80%
+        dist = np.array([0.1] * 8 + [0.005] * 24)
+        metrics = compute_metrics(dist, age_layers=None)
+        assert metrics["bottom_accumulation"] > 0.7
+
+    def test_migration_negative_when_bottom_heavy(self):
+        """底部堆积时 migration 为负（筹码下移）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            compute_metrics,
+        )
+
+        long_layer = np.array([0.1] * 8 + [0.005] * 24)
+        age_layers = {"long": long_layer, "ultra_short": long_layer, "short": long_layer, "medium": long_layer}
+        metrics = compute_metrics(long_layer, age_layers=age_layers)
+        assert metrics["distribution_migration"] < 0
+
+    def test_migration_positive_when_top_heavy(self):
+        """高位堆积时 migration 为正（筹码上移=派发）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            compute_metrics,
+        )
+
+        long_layer = np.array([0.005] * 24 + [0.1] * 8)
+        age_layers = {"long": long_layer, "ultra_short": long_layer, "short": long_layer, "medium": long_layer}
+        metrics = compute_metrics(long_layer, age_layers=age_layers)
+        assert metrics["distribution_migration"] > 0
+
+
+# ---------------------------------------------------------------------------
+# 6. 降级处理
+# ---------------------------------------------------------------------------
+
+
+class TestDegradation:
+    """测试降级处理。"""
+
+    def test_empty_ohlcv_returns_uniform(self):
+        """空 OHLCV 返回均匀分布。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        empty_df = pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume", "amount"])
+        result = engine.compute(empty_df, symbol="000300.SH")
+        assert abs(sum(result["total_distribution"]) - 1.0) < 1e-10
+        # 均匀分布：每格 1/32
+        expected = 1.0 / 32
+        for v in result["total_distribution"]:
+            assert abs(v - expected) < 1e-10
+
+    def test_zero_volume_uses_typical_price(self):
+        """成交量为 0 时用典型价格 (O+H+L+C)/4 代替 VWAP。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            compute_vwap,
+        )
+
+        row = {"open": 10.0, "high": 11.0, "low": 9.0, "close": 10.5, "volume": 0.0, "amount": 0.0}
+        vwap = compute_vwap(row)
+        expected = (10.0 + 11.0 + 9.0 + 10.5) / 4
+        assert abs(vwap - expected) < 1e-10
+
+
+# ---------------------------------------------------------------------------
+# 7. 量纲与 warmup（2026-09-16 CHIP-1/CHIP-3 修复，裁定#257④）
+# ---------------------------------------------------------------------------
+
+
+class TestVolumeCaliberAndWarmup:
+    """量纲自洽探测（手→股）+ warmup 窗对齐 + tau PIT。
+
+    真实口径：kline_daily.volume 实测为"手"（600519 全窗 amount/close/volume
+    中位 100.04、全市场 8 票抽查中位 97.8~101.9，CH 只读实证 2026-09-16），
+    旧实现裸 amount/volume=100×价格伪 VWAP；指数表 volume 无 vwap 语义
+    （000300 ratio 0.57~0.62 界外）。mock 自洽数据（amount=volume×价格）raw
+    直接命中不受影响。
+    """
+
+    @staticmethod
+    def _lots_ohlcv(n_days: int = 300) -> pd.DataFrame:
+        """volume 为"手"的 OHLCV（amount=volume×100×close，贴近 kline_daily 真实口径）。"""
+        dates = pd.date_range("2024-01-01", periods=n_days, freq="B")
+        rng = np.random.default_rng(7)
+        close = 100.0 + np.cumsum(rng.normal(0.02, 1.0, n_days))
+        high = close + rng.uniform(0.05, 0.8, n_days)
+        low = close - rng.uniform(0.05, 0.8, n_days)
+        open_ = close + rng.uniform(-0.3, 0.3, n_days)
+        volume_lots = rng.uniform(1e4, 5e4, n_days)
+        return pd.DataFrame(
+            {
+                "date": dates,
+                "open": open_,
+                "high": high,
+                "low": low,
+                "close": close,
+                "volume": volume_lots,
+                "amount": volume_lots * 100.0 * close,
+            }
+        )
+
+    def test_lots_volume_vwap_in_range(self):
+        """手口径数据：VWAP 落在当日 [low, high]（raw/100 命中）。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        df = self._lots_ohlcv(30)
+        for _, row in df.iterrows():
+            v = compute_vwap(row)
+            assert float(row["low"]) <= v <= float(row["high"]), f"vwap {v} out of [{row['low']},{row['high']}]"
+
+    def test_self_consistent_volume_still_raw(self):
+        """自洽数据（amount=volume×close）：raw 直接命中，行为与修复前一致。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        row = {"open": 9.8, "high": 10.6, "low": 9.6, "close": 10.2, "volume": 1e6, "amount": 1e6 * 10.2}
+        assert abs(compute_vwap(row) - 10.2) < 1e-9
+
+    def test_index_style_mismatch_falls_to_typical(self):
+        """量纲全界外（指数型）：降级典型价 (O+H+L+C)/4。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        # 仿 000300 真实口径：amount/volume≈0.62×close，×100 后≈62×close 仍界外
+        row = {
+            "open": 4400.0,
+            "high": 4460.0,
+            "low": 4390.0,
+            "close": 4450.0,
+            "volume": 1.427e8,
+            "amount": 0.62 * 4450.0 * 1.427e8,
+        }
+        v = compute_vwap(row)
+        expected = (4400.0 + 4460.0 + 4390.0 + 4450.0) / 4
+        assert abs(v - expected) < 1e-6
+
+    def test_nan_volume_no_crash_no_poison(self):
+        """volume/amount 为 NaN：降级典型价且不抛错（防 NaN 毒化下游）。"""
+        from zephyr.regime.features.chip_distribution_engine import compute_vwap
+
+        row = {"open": 10.0, "high": 11.0, "low": 9.0, "close": 10.5, "volume": float("nan"), "amount": float("nan")}
+        expected = (10.0 + 11.0 + 9.0 + 10.5) / 4
+        assert abs(compute_vwap(row) - expected) < 1e-10
+
+    def test_engine_bottom_accumulation_not_stuck(self):
+        """手口径趋势数据端到端：BA 不再恒 0.995 级伪信号（真实口径验收）。"""
+        from zephyr.regime.features.chip_distribution_engine import ChipDistributionEngine
+
+        engine = ChipDistributionEngine()
+        result = engine.compute(self._lots_ohlcv(300), symbol="600519.SH")
+        ba = result["metrics"]["bottom_accumulation"]
+        assert ba < 0.9, f"BA={ba:.4f} 仍处伪信号区（旧实现恒 0.995）"
+        assert abs(sum(result["total_distribution"]) - 1.0) < 1e-9
+
+    def test_same_end_date_start_invariance(self):
+        """同末日跨数据起点：窗口对齐后输出确定（漂移=0，验收阈值 <0.05）。"""
+        from zephyr.regime.features.chip_distribution_engine import ChipDistributionEngine
+
+        engine = ChipDistributionEngine()
+        df = self._lots_ohlcv(600)
+        ref = engine.compute(df, symbol="X")
+        for cut in (100, 250, 300):  # 切后均 ≥ lookback=250 行（窗口本身不变）
+            sub = engine.compute(df.iloc[cut:].reset_index(drop=True), symbol="X")
+            assert sub["total_distribution"] == pytest.approx(ref["total_distribution"], abs=1e-9), (
+                f"start cut={cut} 输出漂移"
+            )
+
+    def test_tau_expanding_no_future_leak(self):
+        """tau PIT：改变 t 之后的历史不影响 ≤t 的 tau。"""
+        from zephyr.regime.features.chip_distribution_engine import ChipDistributionEngine
+
+        engine = ChipDistributionEngine(lookback=250)
+        rng = np.random.default_rng(3)
+        vol = rng.uniform(1e4, 5e4, 100)
+        tampered = vol.copy()
+        tampered[60:] *= 10.0  # 只改尾部
+        tau_a = engine._estimate_tau(vol)
+        tau_b = engine._estimate_tau(tampered)
+        np.testing.assert_array_equal(tau_a[:60], tau_b[:60])
+        assert not np.array_equal(tau_a[60:], tau_b[60:])
+
+
+# ---------------------------------------------------------------------------
+# 8. 性能测试
+# ---------------------------------------------------------------------------
+
+
+class TestPerformance:
+    """性能测试——不做过早优化，但设定合理基线。"""
+
+    @pytest.mark.financial
+    def test_single_compute_under_50ms(self, sample_ohlcv_250d):
+        """单次计算 < 50ms（250日递推+32网格）。"""
+        from zephyr.regime.features.chip_distribution_engine import (
+            ChipDistributionEngine,
+        )
+
+        engine = ChipDistributionEngine()
+        # 2026-08-24 六轮 sweep 实证：三路并发极限负载下单次采样偶超 50ms（CPU 抢占
+        # 噪声非算法回归）——5 次采样取最小值（系统噪声只加时不减时，最小值抗干扰），
+        # 隔离与负载下语义一致：最快一次仍 < 50ms 即算法性能达标。
+        samples = []
+        for _ in range(5):
+            start = time.perf_counter()
+            engine.compute(sample_ohlcv_250d, symbol="000300.SH")
+            samples.append(time.perf_counter() - start)
+        elapsed = min(samples)
+        # 基线 50ms，不是 200ms——先实现再测量，慢了再优化
+        assert elapsed < 0.05, f"Chip distribution took {elapsed:.3f}s (min of 5), expected < 0.05s"
