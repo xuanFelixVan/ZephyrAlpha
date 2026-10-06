@@ -2174,6 +2174,26 @@ class WorktreeLanding:
             if r.returncode != 0:
                 raise RuntimeError(f"[landing] base_blob 对象不可读（{base_blob[:12]}）——死信回退人工")
             base_text = r.stdout
+        # 非 YAML 的 _working 件（md/csv 等）整文件三方回退（2026-10-06 修，二层⑥勘误）：
+        # 条目级 yaml 合并对 md 无意义且 frontmatter 诱发 compose 必炸（0016 死实例）——
+        # 整文件标准三方：仅袋改→取袋；仅 dev 改→noop 吸收；两侧皆改→真冲突死信。
+        if not rel.replace("\\", "/").endswith((".yaml", ".yml")):
+            _base = base_text if base_text is not None else ""
+            if theirs_text == _base:
+                meta = item.get("meta")
+                if not isinstance(meta, dict):
+                    meta = {}
+                    item["meta"] = meta
+                prev = str(meta.get("noop_audit") or "")
+                meta["noop_audit"] = (
+                    f"{prev}; {rel}: whole-file noop（dev 独进，袋侧基底未变）"
+                    if prev
+                    else f"{rel}: whole-file noop（dev 独进，袋侧基底未变）"
+                )
+                return None
+            if ours_text == _base:
+                return theirs_text.encode("utf-8")
+            raise RuntimeError(f"[landing] 非 YAML 件双侧皆改真冲突（整文件三方，死信回退人工）: {rel}")
         bag_paths = self._bag_payload_paths(item)
         merged, conflict = three_way_merge_registry_yaml(
             base_text,
