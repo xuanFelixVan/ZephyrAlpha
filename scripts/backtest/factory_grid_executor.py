@@ -1576,7 +1576,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     # DSR 精确口径数据基础；环境无 pyarrow 时兜底 csv.gz
     net_returns_file: str | None = None
     if nets_archive:
-        nr = pd.concat(nets_archive.values(), axis=1)  # 带 DatetimeIndex 对齐落盘（行=交易日）
+        # dict-concat（20261006 读端实证缺陷修复）：values()-concat 丢键=列名退化 0..n，
+        # 产物不自描述（归档注释预警过的读端债）——dict-concat 键=recipe_id 列名。
+        nr = pd.concat(nets_archive, axis=1)  # 带 DatetimeIndex 对齐落盘（行=交易日，列=recipe_id）
         try:
             nr_path = out_dir / "net_returns.parquet"
             nr.to_parquet(nr_path)

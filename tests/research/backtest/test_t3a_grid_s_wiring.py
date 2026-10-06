@@ -926,3 +926,16 @@ def test_sizing_full_column_inputs_fastpath_eligible():
         w, _ = mod._sizing(combined, 2, mode, vol20_cols, **kw)
         assert w.shape == (120, 3), f"{mode} 权重形 {w.shape}≠考窗宇宙形"
         assert w.index.equals(closes.index) and w.columns.equals(pd.Index(cols)), f"{mode} 等形破坏"
+
+
+def test_net_returns_parquet_columns_are_recipe_ids():
+    """红组（读端实证缺陷）：net parquet 列名必须=recipe_id（values()-concat 丢键致列名
+    退化 0..n=产物不自描述，判决读端配对全断）。修复=dict-concat 键即列名。"""
+    idx = pd.bdate_range("2023-01-02", periods=10)
+    archive = {
+        "aaaa1111": pd.Series([0.01] * 10, index=idx),
+        "bbbb2222": pd.Series([0.02] * 10, index=idx),
+    }
+    nr = pd.concat(archive, axis=1)
+    assert list(nr.columns) == ["aaaa1111", "bbbb2222"]
+    assert nr.shape == (10, 2)
