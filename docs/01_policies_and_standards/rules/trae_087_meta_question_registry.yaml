@@ -1,0 +1,84 @@
+rule_id: TRAE-087
+title: 原问题登记与基建先挖后建铁律（问题定义纪律+五要素入表+施工标准立法）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-087
+depends_on:
+- TRAE-065
+- TRAE-077
+- TRAE-060
+tags:
+- TRAE
+- meta_question
+- piling
+- question_discipline
+- L1_foundation
+- 原问题
+- 净零
+ttl: permanent
+stability: new
+safety_level: M
+ai_autonomy: ai_modifiable
+aliases:
+- RULE-META-QUESTION
+- 问题定义纪律
+- 基建先挖后建
+- 定桩纪律
+severity: high
+scope: global_construction
+domain: TRAE
+enforcement:
+  paired_gate_id: null  # 入库闸机检=meta_question 写入 API 内建校验（src/zephyr/governance/meta_question），不走 commit gate；CTI 门禁链见 CAPABILITY-CHECK
+triggers:
+- operation: pre_construction
+- operation: question_register
+- operation: meta_question_write
+- operation: new_campaign
+sections:
+  question_discipline:
+    section_type: constraint
+    title: 问题定义纪律——什么才有资格成为"问题"（合则入表，不合=感想不是问题）
+    original_rules:
+    - 定桩纪要§2（Owner × Max 2026-09-22 定案，存真=docs/_working/chain_piling_campaign/00_piling_minutes.md）
+    conditions:
+    - type: constraint
+      check: 五要素齐备——①能被数据回答 ②能被考试证伪 ③有明确消费方 ④有更新频率 ⑤PIT 安全。五者缺一=感想不是问题，禁入 meta_question_registry
+      pass: 走 MetaQuestionRegistry.register()（src/zephyr/governance/meta_question，机检五要素+查重+净零声明）
+      fail: 感想/口号/无消费方挂载 → 禁入表；确有培养价值走盲册通道（status=blinded，见设计真源 10 号件 §6）
+    - type: constraint
+      check: 一问一考——拆到不能再拆、并到不再重考（parent_id/merged_into 字段承载拆并留痕）
+      pass: 粒度落 PQ-NNNN 单问，考试方案 exam_plan 含 criterion+threshold
+      fail: 一问多考/多问一考 → 拆并后再入表
+    - type: constraint
+      check: 三问停止判据（拆分粒度止境，与骨架挖矿政策同一判据，净零引用不重复）——真源=docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md §3：①生产者/来源系统变了→拆 ②验证口径变了→拆 ③只是标签/品种/参数变→不拆
+      pass: 按三问判据定粒度后入表
+      fail: 违反三问判据的过碎/过粗问题 → 退回重拆并
+  build_mine_first:
+    section_type: constraint
+    title: 基建先挖后建施工标准（Owner 立法，2026-09-22 定桩令）
+    original_rules:
+    - 定桩纪要§8.5
+    conditions:
+    - type: constraint
+      check: 顺序铁律——先挖基建自身→建骨架→骨架内填血→施工基建→基建落地后才施工上层工程。一切基建类战役波次遵此序，禁跳步
+      pass: 波次推进以"挖透（红蓝+盲点专项收口）"为进入施工的前置
+      fail: 跳过挖矿直接施工 → 上层工程建在无骨架的流沙上（整装回测/图书馆无馆员两先例）
+    - type: constraint
+      check: 基建自身的挖矿产出=骨架设计文档+管理办法（权限/审计/并发/对账/净零）+盲点专项（11 维逐维表态禁留白）+对抗红蓝
+      pass: 产出齐且红蓝通过 → 进施工
+      fail: 缺件 → 退回 W1 波次补挖
+  registry_entries:
+    section_type: constraint
+    title: 入表与消费出口
+    original_rules:
+    - 定桩纪要§7
+    conditions:
+    - type: constraint
+      check: 唯一入口=MetaQuestionRegistry（PG schema meta_question 三表：主表 23 列=18 字段底稿+5 运营字段；audit 双轨；exam_result 独立表）；YAML 快照机生禁手工维护；ROOR 已登记
+      pass: register/transition/claim/record_exam_result 四口
+      fail: 禁绕 API 直写 PG（裸 SQL 红线）；禁手工编快照
+metadata:
+  created: '2026-09-22'
+  created_by: st-chainpile-20260922
+  source: 定桩战役（st-chainpile-20260922）W2 同批裁定
+  design_truth: docs/_working/chain_piling_campaign/infra_mining/
