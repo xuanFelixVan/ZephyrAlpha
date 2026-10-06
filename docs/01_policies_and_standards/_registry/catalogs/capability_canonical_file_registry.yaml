@@ -60166,6 +60166,7 @@ creation_tokens:
   token: capcov-survey-capacity-eval-evidence-20261005
   created_by: st-capcov-survey-20261005
   capability: capcov_survey
+  merge_evaluation: "裁定#375 内收判据：map census 盘点候选表（task_bound 纯只读零判读），无既有条目可合并，独立能力面"
 - file: data/strategy_intake/matrix_gap_lists_v1.yaml
   token: matrix-inv-gaplists-20261006
   capability: 四张缺口单（有数据没因子/有因子没策略/有策略没考试/全断链）

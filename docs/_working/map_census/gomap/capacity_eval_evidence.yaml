@@ -1,0 +1,354 @@
+# [DOMAIN] D_INFRA_RUNTIME
+# [BLUEPRINT] MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
+# [MODULE] docs._working.map_census.gomap.capacity_eval_evidence
+# [A_module] module_id=DOC-GOMAP-CAPACITY-EVAL-EVIDENCE | layer=document | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
+# [GATE-SELFDOC:CREATE-GUARD]
+# [GATE-SELFDOC:GIT-DANGEROUS]
+ttl: task_bound
+completes_when: capacity 评估件活覆盖对照班 chief 判读消费本表后转归档
+schema_version: '0.1'
+session: st-capcov-survey-20261005
+generated_at: '2026-10-05T08:49:59+00:00'
+census_id: CAPACITY-EVAL-EVIDENCE-001
+title: capacity 评估三件（risk_mitigation R1~R16 / tech_stack DD-1~16 / cross_module_integration CT-1~4）全仓活机制对位证据对照表
+objects:
+- src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py
+- src/zephyr/infrastructure/capacity_assurance/tech_stack.py
+- src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py
+method_note: 纯只读机械盘点。在编源码面=src/ 与 scripts/ 下 *.py（排除 tests/ 与 docs/；tests 命中单独标注不计 wired）。grep 工具=git bash grep/rg 精确符号+同义词两轮。判定口径——wired_counterpart=同功能活机制在编件存在且有被调用/注册证据；partial_counterpart=语义相近但对象或修饰语义不同的在编件存在（差异写入 note，是否升级 GAP 留 chief）；GAP=同功能活机制全仓 grep 无对位；orphan=仅定义无生产调用点；missing=全仓无此件。零判读：本表只做机械标记，不做修复建议。
+zero_write_note: 本班对三件对象源码零回写零改码，仅新建本证据表一个文件；GAP 标记为机械事实（grep 无命中），判读权留 chief。
+counts:
+  risk_mitigation_rows: 16
+  tech_stack_rows: 16
+  cross_module_rows: 4
+  risk_gap_count: 6
+  tech_gap_count: 0
+  cross_module_gap_count: 1
+  gap_total: 7
+  partial_counterpart_count: 5
+  dd_orphan_or_partial_rows: 2
+
+# ============ 表1 risk_mitigation R1~R16 ============
+risk_mitigation_table:
+- r_id: R1
+  method: enable_wal_mode / perform_wal_checkpoint
+  function_zh: 启用 SQLite WAL 模式；定期执行 WAL checkpoint（mode 枚举白名单防注入）
+  status: wired_counterpart
+  evidence:
+  - src/zephyr/governance/persistence/database_manager.py:591 'shutdown 时 self._wal_checkpoint(mode="PASSIVE")'
+  - src/zephyr/governance/persistence/database_manager.py:663-685 '_wal_checkpoint 定义（TRUNCATE/PASSIVE + mode 白名单 ValueError）'
+  - src/zephyr/data/redundant_source/sqlite_fallback.py:58,207 'PRAGMA journal_mode=WAL + wal_checkpoint(TRUNCATE)'
+  - src/zephyr/data/progress_store.py:84; src/zephyr/factor/casebook/casebook.py:100; src/zephyr/governance/financial_governance/atomic_transaction_manager.py:544 'journal_mode=WAL 另三处'
+  note: 在编活机制=DatabaseManager shutdown checkpoint 链路；同白名单校验语义在 database_manager.py:668 复刻
+- r_id: R2
+  method: DeadlockDetector
+  function_zh: 跨模块死锁检测——超时+重试指数退避（含 jitter）+按序锁获取
+  status: wired_counterpart
+  evidence:
+  - src/zephyr/governance/resilience_governance/deadlock_detector.py:31 'class DeadlockDetector（DFS 循环检测+Dijkstra 排序+超时破解，f5_boot_integration.py:66 注释证实）'
+  - src/zephyr/governance/escalation/escalation_engine.py:503 '挂接 ("zephyr.governance.resilience_governance.deadlock_detector", "DeadlockDetector")'
+  - src/zephyr/governance/intelligence_governance/delegation_engine.py:52,59 '构造注入 deadlock_detector'
+  note: 同名活件在 resilience_governance（能力语义同：死锁检测+破解）；本件另一能力=重试退避（retry_with_backoff）未见独立对位 grep（backoff 通用件未深查）
+- r_id: R3
+  method: AlertLinkIsolator
+  function_zh: 告警链路隔离——fire-and-forget + ThreadPoolExecutor + contextvars 传播 + 队列满丢弃
+  status: GAP
+  evidence:
+  - 'grep AlertLinkIsolator / fire_and_forget / alert-iso 于 src/ scripts/（排除本件）：零命中'
+  - src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py 'grep alert|queue|isolat：零命中'
+  note: 告警发送隔离活机制全仓无对位；tests/ 证据不计（本表口径）
+- r_id: R4
+  method: SchemaVersionGuard
+  function_zh: Pydantic Schema 版本漂移防护——config 版本双向校验 + 模型字段存在性检查
+  status: GAP
+  evidence:
+  - 'grep SchemaVersionGuard / validate_config_version 于 src/ scripts/（排除本件）：零命中'
+  - 'grep SCHEMA_VERSION src/（排除 capacity_assurance）：命中均为各域数据格式版本常量（no_delete_manifest.py:61=1.0.0、order_daemon.py:107=0.1 等），非 pydantic schema 漂移校验机制'
+  note: 全仓无 config_version==expected 双向校验活件；capacity_assurance/schema.py:57,108 的 ai_provenance 表清单属表存在性校验，非版本漂移防护
+- r_id: R5
+  method: TokenCalibration
+  function_zh: Token 预估校准——滚动窗口记录(estimated,actual)并输出修正系数与准确率
+  status: wired_counterpart
+  evidence:
+  - src/zephyr/gov_drift/bootstrapping_calibrator.py:46,79 'self._correction_factor 滚动计算'
+  - src/zephyr/gov_drift/bootstrapping_calibrator.py:85 'int(estimated_tokens * self._correction_factor) 修正预估'
+  note: 同功能活件（token 预估校准修正系数）；window 结构差异（校准器以误差均值计，本件以比值计）
+- r_id: R6
+  method: KillSwitchSafeguard
+  function_zh: Kill Switch 误触发保护——脉冲过滤（持续时长≥sustain_duration）+多条件非 AND（计数制）
+  status: partial_counterpart
+  evidence:
+  - src/zephyr/security/access_control/kill_switch.py:90-94 'TriggerDefinition(default_threshold=5) 阈值触发定义'
+  - src/zephyr/security/access_control/kill_switch.py:282-304 'count >= threshold 才 block（计数确认制，含日志）'
+  note: 相近语义=触发需计数过阈值（防单次误触发）；差异=无持续时长维度、无"多条件非 AND"组合逻辑，是否升级 GAP 留 chief
+- r_id: R7
+  method: SandboxHardener
+  function_zh: Sandbox 硬边界加固——memory/execution_seconds/file_descriptors 三项硬限校验
+  status: partial_counterpart
+  evidence:
+  - src/zephyr/security/llm_defense/llm_security/process_sandbox.py:33 'L2a=subprocess+路径白名单+env 白名单+timeout 强制'
+  - src/zephyr/security/llm_defense/llm_security/process_sandbox.py:50,159-162 'timeout 默认 60s 强制+L2aSandboxTimeout 异常'
+  - src/zephyr/infrastructure/capacity_assurance/contracts/batch2_governance.py:123 'max_file_descriptors 契约字段（schema 定义非活机制）'
+  note: timeout 维度有活对位；memory/fd 硬限（setrlimit 类）无 grep 命中，差异留 chief
+- r_id: R8
+  method: ProvenanceIntegrityChecker
+  function_zh: Provenance hash 链定期校验——逐行验 prev_hash 链接+curr_hash 重算
+  status: wired_counterpart
+  evidence:
+  - src/zephyr/gov_audit/integrity.py:198 'class IntegrityVerifier（verify_chain）'
+  - src/zephyr/gov_audit/cli.py:99-104 '真实调用 from zephyr.gov_audit.integrity import IntegrityVerifier; verifier = IntegrityVerifier()'
+  - src/zephyr/compliance/evidence_chain_generator.py:26-27 'verify_chain() 可重放校验 prev_hash 链完整性（Fail-Closed）'
+  - src/zephyr/ai_layer/redline/sev_router.py:36 'SEV-1 审计断链：verify_chain mismatch>0 联动'
+  note: hash 链校验活机制在编且入 SEV 路由
+- r_id: R9
+  method: incremental_hash_verify
+  function_zh: 增量 hash 校验——盲点#14 缓解（复用 R8 校验器，分块 chunk_size 参数）
+  status: wired_counterpart
+  evidence:
+  - src/zephyr/gov_audit/integrity.py:198; src/zephyr/gov_audit/cli.py:99-104 '同 R8：verify_chain 活件'
+  note: 主功能（hash 链校验）有活对位；"增量/分块"修饰语义无独立在编件（IntegrityVerifier 为全链校验），差异注记留 chief
+- r_id: R10
+  method: input_pattern_whitelist
+  function_zh: 输入模式白名单——盲点#15 缓解（allowed_patterns 子串匹配放行）
+  status: partial_counterpart
+  evidence:
+  - src/zephyr/security/llm_defense/llm_security/layers/l1_input.py:74-77 '输入正则规则集（jailbreak/direct 命中模式）'
+  - src/zephyr/security/llm_defense/llm_security/layers/l1_input.py:203,228 'blocked 判定（jailbreak_hits/direct_hits/score<0.5）+阻断'
+  note: 输入模式过滤活件在编（LSG L1 层）；语义为黑名单拦截而非白名单放行，差异留 chief
+- r_id: R11
+  method: kill_switch_channel_arbiter
+  function_zh: Kill Switch 双通道竞争仲裁——盲点#16 缓解（文件信号优先，环境变量降级为缓存）
+  status: partial_counterpart
+  evidence:
+  - src/zephyr/security/access_control/kill_switch.py:61 'KILL_SWITCH_STATE_ENV = "ZEPHYR_KILL_SWITCH_STATE_PATH"'
+  - src/zephyr/security/access_control/kill_switch.py:427-436 '_resolve_state_path：显式参数 > env > None（纯内存态）优先级仲裁'
+  note: 双通道（env+state 文件）在编；仲裁方向不同（本件=文件信号优先 env 降级；security 版=参数>env>内存），差异留 chief
+- r_id: R12
+  method: error_budget_reconciler
+  function_zh: Error Budget 不变式校验——盲点#26 缓解（聚合值 vs 分窗和 tolerance 校验）
+  status: GAP
+  evidence:
+  - src/zephyr/feedback_loop/error_budget.py:37-74 'ErrorBudgetManager=记账（record_consumption/remaining/is_exhausted），无聚合不变式校验'
+  - src/zephyr/governance/ops_governance/error_budget_burst_limiter.py:29 'BurstLimiter=突发限流，非不变式校验'
+  - src/zephyr/feedback_loop/diagnosers/reliability/burn_rate_alerter.py 'burn rate 告警，非聚合一致性校验'
+  note: 不变式校验（aggregated==per_window_sum）活机制全仓无对位
+- r_id: R13
+  method: slo_config_sanitizer
+  function_zh: SLO 配置脱敏——盲点#38 缓解（敏感键值替换 ***，递归 dict）
+  status: partial_counterpart
+  evidence:
+  - src/zephyr/data_security/ai_masking_pipeline.py:163-188 '_mask_l2/_mask_l3/_mask_l4 分级脱敏'
+  note: 脱敏活件在编但对象=文本（MaskingPolicy），本件对象=配置 dict 键名匹配；同对象（config dict 脱敏）无 grep 命中，差异留 chief
+- r_id: R14
+  method: MigrationCrashRecovery
+  function_zh: ContractBus 迁移崩溃恢复——盲点#49 缓解（checkpoint 文件记录已完成批次）
+  status: GAP
+  evidence:
+  - 'grep MigrationCrashRecovery / mark_batch_complete 于 src/ scripts/（排除本件）：零命中'
+  - src/zephyr/autonomy_core/context/checkpoint_manager.py 'checkpoint 活件存在但对象=context 管理非 ContractBus 迁移'
+  note: ContractBus 迁移崩溃恢复同对象活机制无对位；相近件（context checkpoint）注记留 chief
+- r_id: R15
+  method: unicode_path_normalizer
+  function_zh: Unicode 路径规范化——盲点#65 缓解（NFC+斜杠统一+casefold）
+  status: GAP
+  evidence:
+  - 'grep unicode_path_normalizer 于 src/ scripts/（排除本件）：零命中'
+  - src/zephyr/ai_layer/intake/dedup.py:98 'unicodedata.normalize("NFKC") 但对象=文本去重非路径'
+  - src/zephyr/shared/io/file_utils.py:654-698 '路径安全三件套=resolve+前缀判定（逃逸防护），无 unicode 规范化'
+  note: 路径 Unicode 规范化同对象活机制无对位；文本 NFKC 与路径 resolve 防护为相近件注记
+- r_id: R16
+  method: ChromaDBThreadGuard
+  function_zh: ChromaDB 线程池泄漏防护——盲点#66 缓解（任务计数达阈值回收重建 executor）
+  status: GAP
+  evidence:
+  - 'grep ChromaDBThreadGuard 于 src/ scripts/（排除本件）：零命中'
+  - src/zephyr/integration/vector_memory/bridge_layer.py:167; collection_manager.py:294; in_process_vector_memory.py:320 'chromadb 在编使用，grep ThreadPoolExecutor|_recycle 于 vector_memory：零命中'
+  note: chroma 线程池回收防护活机制无对位；chromadb 消费件在编但无线程池治理逻辑
+
+# ============ 表2 tech_stack DD-1~16 ============
+tech_stack_table:
+- dd_id: DD-1
+  component: SLO 配置（终选 YAML + Pydantic v2）
+  startup_check: inspect_pydantic_v2——import pydantic 验版本 2.x，失败给 pip 建议（tech_stack.py:124-147）
+  status: wired
+  evidence:
+  - 'grep -rln "from pydantic|import pydantic" src/zephyr --include=*.py = 191 个文件'
+  - src/config/capacity/tech_stackmanifest.yaml 'manifest 缺省路径不存在，运行时走 _default_decisions（tech_stack.py:56-62,77-78）'
+  note: manifest 事实文件在 config/tech_stack_manifest.yaml（registry_adapter.py:686-687 挂 REG-CAP-001），与 validator 默认路径 src/config/capacity/tech_stackmanifest.yaml 不符——validator 实际永远走内置清单，记档留 chief
+- dd_id: DD-2
+  component: 审计存储（SQLite + hash 链）
+  startup_check: inspect_sqlite——内存库 SELECT 1 连通性（tech_stack.py:149-164）
+  status: wired
+  evidence:
+  - src/zephyr/governance/persistence/database_manager.py:33,591 'DatabaseManager WAL+checkpoint 活件'
+  - src/zephyr/gov_audit/integrity.py:198 'IntegrityVerifier verify_chain'
+  note: SQLite+hash 链双要素均在编
+- dd_id: DD-3
+  component: 指标采样（structlog + OpenTelemetry SDK）
+  startup_check: inspect_otel_sdk——import opentelemetry 验版本（tech_stack.py:166-188）
+  status: wired
+  evidence:
+  - src/zephyr/shared/observability/tracing.py:54,91,128 '_check_otel/start_span/traced 在编'
+  - src/zephyr/infrastructure/system_telemetry/traces/span_stub.py:8 'Span 命名 gen_ai.component.operation+W3C traceparent 不变量'
+  note: tracing.py 直接 from-import 消费者少（trace_waterfall_view.py:4 注释级装配引用），OTel 组件整体在编（system_telemetry 族）
+- dd_id: DD-4
+  component: AI 审计规则（YAML 规则集 + Pydantic 校验）
+  startup_check: generic_check——仅回显终选无实际校验（tech_stack.py:116-122，无 _check_dd_4）
+  status: orphan
+  evidence:
+  - src/zephyr/shared/ai_guards/ai_audit_guard.py:31,39 'AuditRecord + AiAuditGuard 类定义'
+  - 'grep "AiAuditGuard(" 于 src/ scripts/（排除本件）：零命中'
+  note: 机械判定 orphan（仅定义无构造调用）；gov_audit 审计域整体在编但"YAML 规则集+Pydantic 校验"形态未实证，升级判读留 chief
+- dd_id: DD-5
+  component: 治理闭环（自研 EMA + 阈值，inspect 映射 psutil）
+  startup_check: inspect_psutil——import psutil 验版本（tech_stack.py:221-235）
+  status: wired
+  evidence:
+  - src/zephyr/gov_drift/resource_guard.py 'import psutil（资源治理活件）'
+  - src/zephyr/data/catchup_guard.py; src/zephyr/data/tick_subscriber.py; src/zephyr/frontend/dashboard/services_registry.py 'psutil 多域使用'
+  note: psutil 依赖面 wired；"EMA+阈值"治理算法本体未单独深查
+- dd_id: DD-6
+  component: 类型校验（mypy + import-linter）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - pyproject.toml:347 '[tool.mypy] 配置段'
+  - .importlinter '契约文件存在'
+  - pyproject.toml:91 '"import-linter>=2.0,<3.0" 依赖声明'
+  note: 双工具配置与依赖均在编
+- dd_id: DD-7
+  component: 单元测试（pytest + pytest-cov）
+  startup_check: inspect_pytest——import pytest 验版本（tech_stack.py:190-204）
+  status: wired
+  evidence:
+  - pyproject.toml:125 '[tool.pytest.ini_options]'
+  - py.ini:40 '[pytest] 段（裁定#278 精简跑法）'
+  note: tests/ 目录在编（tests/risk 等存在）
+- dd_id: DD-8
+  component: 静态扫描（ruff + bandit）
+  startup_check: generic_check——无实际校验
+  status: partial
+  evidence:
+  - pyproject.toml:212,216 '[tool.ruff] / [tool.ruff.lint] 配置段=wired'
+  - 'grep -rln bandit 于 scripts/ .pre-commit-config.yaml：零命中'
+  note: ruff 在编；bandit 全仓配置/脚本面无 grep 命中（未在编），两工具一活一缺，机械记 partial 留 chief
+- dd_id: DD-9
+  component: ContractBus 迁移（分三批 15+15+14）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/shared/contracts/contract_bus.py:116,136,163,166 'ContractBus 类+enforce_contract 装饰器+_default_bus 单例+get_bus()'
+  - src/zephyr/shared/__init__.py:86,154 '"get_bus" 导出映射 contracts.contract_bus'
+  - src/zephyr/shared/event_bus.py:357-361 'lazy import get_bus 桥接 bus.set_contract_bus'
+  - src/zephyr/infrastructure/capacity_assurance/contracts/contract_bus.py:37,80 'ContractBusLoader+get_contract_bus_loader（仅包内 __init__.py:20 import，包外无消费者）'
+  note: ContractBus 组件 wired；capacity_assurance 侧迁移 Loader 包外无消费点（orphan 嫌疑注记）
+- dd_id: DD-10
+  component: Error Budget（SQLite + Pydantic v2）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/governance/ops_governance/budget_engine.py 'BudgetEngine 活件：pre_flight_gate.py:54、phase_check_registry.py:639、adversarial_tester.py:317-380 实例化'
+  - src/zephyr/feedback_loop/error_budget.py:36 'ErrorBudgetManager 仅定义，src 内无调用方（orphan 副本注记）'
+  - config/error_budget_config.yaml '配置册在编'
+  note: Error Budget 功能域活（ops_governance 族）；feedback_loop 版 Manager 为 orphan 副本，二者的 SSOT 关系判读留 chief
+- dd_id: DD-11
+  component: Token Budget（Token Bucket + 滑动窗口）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/autonomy_core/prompt_registry.py:68 'from capacity_assurance.token_budget import estimate_tokens'
+  - src/zephyr/autonomy_core/context/context_assembler.py:54; context_budget.py:34; context_injector.py:55; context_pipeline.py:53; context_budget_tracker.py:50; governance/context_governance/context_budget.py:49 'DEFAULT_CONTEXT_TOKEN_BUDGET+estimate_tokens 七处 import'
+  note: 同包 token_budget.py 高频消费=wired
+- dd_id: DD-12
+  component: Kill Switch（环境变量 + 文件信号）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/security/access_control/kill_switch.py:61,427-439 'KILL_SWITCH_STATE_ENV+state 路径解析+get_kill_switch 单例'
+  - src/zephyr/security/access_control/kill_switch.py:282-304 '阈值触发 block 活逻辑'
+  - src/zephyr/autonomy_core/kill_switch_orchestrator.py:347 'lazy import capacity_assurance.kill_switch（fuse 适配器:239）'
+  note: 双件（security 版+capacity_assurance fuse 版）均在编且经 orchestrator 挂接
+- dd_id: DD-13
+  component: Sandbox（子进程 + 资源限制）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/security/llm_defense/llm_security/process_sandbox.py:19 'L2a ProcessSandbox subprocess 路径白名单沙箱'
+  - src/zephyr/security/llm_defense/llm_security/gateway.py:31,192 'ProcessSandboxLayer 挂入 LSG 网关 layers'
+  note: LSG 在编（宪法 §7 真源），sandbox 层经 gateway 注册=wired
+- dd_id: DD-14
+  component: Graceful Degradation（YAML 降级链 + 模型路由）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/ai_layer/cleaning/washer.py:155,162 '读 config/model_routing_policy.yaml 路由解析'
+  - src/zephyr/data/purity_adjudicator.py:64,179-184 '同册 task_routes 真源'
+  - src/zephyr/security/access_control/engine_degradation.py:343; genesis_bootstrap.py:260 'EngineDegradationManager 单例活件'
+  - src/zephyr/ai_layer/redline/dashboard_pipeline.py:20 '阈值真源=config/obj_s_degradation.yaml（mtime 热加载）'
+  note: 降级链+模型路由双要素均有在编 loader/manager
+- dd_id: DD-15
+  component: OTel 语义规范（OpenTelemetry GenAI Conventions）
+  startup_check: generic_check——无实际校验
+  status: wired
+  evidence:
+  - src/zephyr/infrastructure/system_telemetry/traces/span_stub.py:8 'Span 命名 MUST 遵循 gen_ai.component.operation 风格'
+  - src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py:8 'ai_behavior 字段命名 MUST 可映射 OTel gen_ai.* 属性'
+  note: GenAI 规范以不变量声明落进在编遥测件
+- dd_id: DD-16
+  component: 语义缓存（ChromaDB 向量相似度）
+  startup_check: inspect_chromadb——import chromadb 验版本（tech_stack.py:206-219）
+  status: wired
+  evidence:
+  - src/zephyr/integration/vector_memory/bridge_layer.py:167,248 'import chromadb'
+  - src/zephyr/integration/vector_memory/collection_manager.py:294; in_process_vector_memory.py:320,364 '集合管理与 _query_chromadb 查询链路'
+  - src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py:79 'chroma→faiss 迁移件在编（技术栈迁移中信号）'
+  note: chromadb 消费面 wired；faiss 迁移件并存在编，终态判读留 chief
+
+# ============ 表3 cross_module_integration CT-1~4 ============
+cross_module_table:
+- ct_id: CT-1
+  design_intent: capacity-assurance -> predict-router：Error Budget L3+（Critical/Emergency）触发自动模型路由切换；OTel Span capacity.alert.sent -> predict.router.received（源码 docstring cross_module_integration.py:67-73）
+  status: partial_counterpart
+  live_impl_paths:
+  - 模型路由活件=governance/intelligence_governance/model_router.py（class ModelRouter:70、route():127）
+  - 实际调用点=infrastructure/pipeline/llm_gateway.py:373-378 'ModelRouter().route(...)；cost_tracker.py:39 亦有独立 pipeline 版 ModelRouter'
+  - 集中转发=governance/financial_governance/budget_enforcement.py:23 'ModelRouter,TaskComplexity 导出'
+  evidence:
+  - src/zephyr/governance/intelligence_governance/model_router.py:70,127
+  - src/zephyr/infrastructure/pipeline/llm_gateway.py:378
+  - 'grep "Error Budget L3+ -> 路由切换" 联动链（burn_rate/alarm→router callback）：无 grep 命中'
+  note: 模型路由组件 wired；"容量告警 L3+ 自动触发路由切换"的联动链无实证（本件 PredictRouterIntegration 回调注册机制包外无消费者），联动缺口判读留 chief
+- ct_id: CT-2
+  design_intent: capacity-assurance -> market-data-ingestor：Kill Switch ON 暂停高风险通道，低风险通道（国债/货币市场）不受影响；OTel Span capacity.kill_switch -> market_data.channel_pause（cross_module_integration.py:110-115）
+  status: partial_counterpart
+  live_impl_paths:
+  - 交易域熔断活件=trading/trading_contracts/risk/trading_kill_switch.py（MOD-INF-016 五级 REDUCE_ONLY..AUTO_KILL）
+  - 编排挂接=autonomy_core/kill_switch_orchestrator.py:161 '交易五级熔断适配器（空目标=全部五级）'
+  - SEV 联动=ai_layer/redline/sev_router.py:38 'SEV-2 资金异常：trading_kill_switch 五级任一触发'
+  evidence:
+  - src/zephyr/autonomy_core/kill_switch_orchestrator.py:161,347
+  - src/zephyr/ai_layer/redline/sev_router.py:7,19,38
+  - 'grep treasury|money_market 于 src/zephyr/（排除 capacity_assurance）：零命中'
+  note: kill switch→交易暂停活机制在编（五级熔断）；"高风险/低风险通道分级豁免"语义无对位（orchestrator 为全量目标），差异留 chief
+- ct_id: CT-3
+  design_intent: task-system -> capacity-assurance：Token Budget 耗尽返回限流（RATE_LIMITED）而非崩溃；OTel Span task.token_deduct -> capacity.token_budget（cross_module_integration.py:147-152）
+  status: wired_counterpart
+  live_impl_paths:
+  - 预算引擎活件=governance/ops_governance/budget_engine.py 'BudgetEngine 于 pre_flight_gate.py:54、phase_check_registry.py:639、adversarial_tester.py:317-380 实例化'
+  - 限流决策活件=gov_enforcement/behavioral_admission/admission_controller.py:41,276-288 'AdmissionDecision.RATE_LIMITED → QUEUED（限流不入崩溃）'
+  - 转发壳=governance/financial_governance/budget_enforcement.py '导出 BudgetEnforcer/BudgetEngine/BudgetTracker/BurnRateMonitor/DegradationManager（MOD-INF-024 budget_enforcer）'
+  evidence:
+  - src/zephyr/governance/ops_governance/budget_engine.py（经 pre_flight_gate.py:54 消费）
+  - src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py:276-288
+  - src/zephyr/gov_enforcement/behavioral_admission/admission_response.py:46 'RATE_LIMITED→AdmissionResponseStatus.QUEUED'
+  note: token 记账层=capacity_assurance/token_budget.py（autonomy_core 七处 import，见 DD-11）；BudgetEnforcer 类（skill_executor.py:134）经转发壳导出但无直接构造调用点，注记留 chief
+- ct_id: CT-4
+  design_intent: capacity-assurance -> iguana-rebalancer：资本容量告警禁止新开仓；OTel Span capacity.capital_check -> iguana.rebalance.gate（cross_module_integration.py:183-188）
+  status: GAP
+  live_impl_paths: []
+  evidence:
+  - 'grep iguana 于 src/：仅本件+contracts/batch3_integration.py:77（契约 dataclass 定义"资本账户熔断"）'
+  - 'grep can_open|allow_new|position_gate 于 src/zephyr/trading/：零命中'
+  - src/zephyr/signal_fundamental/strategy/implementations/default_capital_allocator.py:61 'DefaultCapitalAllocator=资本分配器（分配比例语义，非禁开仓闸）'
+  note: 资本容量告警→禁止新开仓闸门活机制全仓无对位；相近件（资本分配器）语义不同，注记留 chief
