@@ -35,3 +35,9 @@ completes_when: T3 系列战役收官（99_delivery 终报四清单落袋）即�
 - **M7/M8 袋在队列翻面中**（q-0011 失踪/q-0012 死于 SSOT-REDEFINITION 落地侧注册表瞬态——两侧盘面解析实测均健康 13685/13700 token，判落地合并竞态非数据损坏）；修复袋待 q-0013 落地后补投。
 - **L 级五件立项卡出卡**（l5_project_cards_20261006.md，裁定#486 呈批制五卡全 null 待批）——CREATE-GUARD 三连拒后定位"落地面读 dev HEAD 注册表"铁律，token 先行袋 q-0013 外科手术面（HEAD+仅本条目，REGISTRY-MASS-DELETION v1 拒得对：整文件渲染面袋会真删 HEAD 78 行漂移）。
 - N 账本 CAS 写三批全拒=trial_ledger_registry 他会话（st-matrix）在飞面，批级 n_eff 披露位如实留空，判决前回放补账=开放项。
+
+## 10-06 深夜 Owner 令并行化：六路并发 T1 全收+两新缺陷类治本+T2 在飞
+- Owner 现场令"用 GPU+并发"。诊断：GPU 3% 系包围圈主导（pandas 因子面/合成/定尺寸+五档成本扫描，GPU 只加速内层回测环）+等形守卫挡回（CPU 点 100% 集中于 mkt_cap/kelly）。落两修：①mkt_cap_w 考窗基对齐（warm 基行并集变形，230≠120 行）②_sizing 消费口切列（mkt_cap_w/rets60 全 5055 列面 × cols 秩面=**列并集**变形=行修列没修的主犯，kelly 之谜同根因）——切列=额外列全 NaN 下游丢弃逐位恒等，净零漂移 GPU 资格恢复。vram.concurrency=1 本批偏离=Owner 令（VRAM 6×1.3G≪18G 配额，判据面零影响），判决书预算偏差位如实入。
+- 并发战役弯路如实记：①& 后台孤儿化（壳回收，改受管 run_in_background）②秒级时间戳目录名撞车（6 分片同秒启动两进程互写同 out_dir=产物互覆污染→分片目录强制 _s{i}of{k} 后缀）③TaskStop 只杀壳不杀 python 子进程（三僵尸烧半小时，PowerShell 按 cmdline 精确点名后强杀）④六路同启装载共振挤爆内存杀一路（后改稳态补燃）。分片 0/2 残卷 ~4.5h 算力沉没=并行化代价，如实入账。
+- **T1 收官：六分片并集 7400/7400 恰达冻帽，7399 活+1 死**（唯一死=18:2x 内存挤压窗 MemoryError，基建瞬态负例如实入册非考语义）。判决管线两修后出真数：net parquet 列名退化 0..n（concat(values()) 丢键="产物不自描述"读端债今踩响）→dict-concat 治本+六卷位序修复；**104 对配对、覆盖 2.8%、CRISIS MaxDD 改善均值 +3.48pp/中位 +4.47pp（<5pp 冻结门）→T1 干跑如实 FAIL**；冠军=off 腿 cost-adj Sharpe 1.81（DSR 0.984 显著）——J 帽护回撤但牺牲收益画像清晰，T2 补对后终判。
+- 心跳守护教训：17:59 起的守护进程被本会话当僵尸误杀（1s CPU 小进程≠僵尸）→SESSION-REQUIRED 复发三连；立"register+enqueue 同命令"模式续命。
