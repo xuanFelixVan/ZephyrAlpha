@@ -45,8 +45,8 @@ language: zh
 |------|------|
 | `c0_meta` | 1 |
 | `c1_backtest` | 2 |
-| `c1_market` | 184 |
-| `c3_fundamental` | 33 |
+| `c1_market` | 183 |
+| `c3_fundamental` | 34 |
 | **合计 / Total** | **220** |
 <!-- AUTO-END:table_counts -->
 
