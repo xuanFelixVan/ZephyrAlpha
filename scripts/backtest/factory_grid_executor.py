@@ -898,6 +898,54 @@ def _apply_exit_overlay(
     return weights.where(~trigger, 0.0), stop_mode
 
 
+def dual_pool_score_surface(
+    closes: pd.DataFrame,
+    pool_window: int = 20,
+    n_quantile: int = 5,
+) -> pd.DataFrame:
+    """M8 双池评分最简版（L3-03，T3b 考卷选股面备选；T3a 不接线=零漂移）。
+
+    语义（挖矿 M8，F 维 signal_additive 搭桥）：动量分=close.pct_change(pool_window) 截面
+    分位→1..n_quantile；低波分=|日收益| rolling(pool_window).mean() 反向分位→1..n_quantile
+    （波越小分越高）；合流=signal_additive 等权相加→(2, 2×n_quantile] 分面=选股面（消费方
+    按 combined 高→低选）。预热窗=NaN（诚实缺供）。参数越界 ValueError fail-closed。
+    """
+    if pool_window < 1:
+        raise ValueError(f"pool_window 须 >=1: {pool_window!r}")
+    if n_quantile < 2:
+        raise ValueError(f"n_quantile 须 >=2: {n_quantile!r}")
+    mom = closes.pct_change(pool_window)
+    vol = closes.pct_change().abs().rolling(pool_window).mean()
+    mom_q = np.ceil(mom.rank(axis=1, pct=True) * n_quantile).clip(1, n_quantile)
+    vol_q = np.ceil((1.0 - vol.rank(axis=1, pct=True)) * n_quantile).clip(1, n_quantile)
+    return mom_q + vol_q
+
+
+def _apply_participation_cap_overlay(
+    weights: pd.DataFrame,
+    volume: pd.DataFrame,
+    closes: pd.DataFrame,
+    participation: float = 0.05,
+    capital: float = 1e8,
+    adv_window: int = 20,
+) -> pd.DataFrame:
+    """M7 部分成交参与率帽（L4-11，INV-UNIT-001 口径，T3b 考维引擎语义；T3a 不接线）。
+
+    语义（挖矿 M7 参与率近似）：单票目标名义额（w×capital）≤ participation×ADV20 名义额
+    （ADV=mean(volume,adv_window)×close；min_periods=1 预热窗部分窗如实）；超帽削到帽，
+    削出量不重分配（保守）。已知近似（T3b 卡 honesty 披露位）：考卷无订单对象，绑定
+    目标权重（=调仓 trades 的保守包络，非真实 Δw 序列）；volume 单位=股（数据线口径），
+    capital=考卷常量（T3b 卡钉定，默认 1e8）。
+    """
+    if not 0 < participation < 1:
+        raise ValueError(f"participation 须在 (0,1): {participation!r}")
+    if capital <= 0:
+        raise ValueError(f"capital 须 >0: {capital!r}")
+    adv_notional = volume.rolling(adv_window, min_periods=1).mean() * closes
+    w_max = ((adv_notional * participation) / capital).clip(upper=1.0)
+    return weights.clip(upper=w_max)
+
+
 def _apply_cluster_cap_overlay(
     weights: pd.DataFrame,
     closes: pd.DataFrame,

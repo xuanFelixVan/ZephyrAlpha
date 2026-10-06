@@ -821,3 +821,59 @@ def test_m6_bad_params_fail_closed():
         mod._apply_cluster_cap_overlay(w, c, corr_threshold=1.5)
     with pytest.raises(ValueError, match="cap_per_cluster"):
         mod._apply_cluster_cap_overlay(w, c, cap_per_cluster=0)
+
+
+# ── M7 参与率帽（L4-11，INV-UNIT-001 口径；T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m7_participation_cap_clips_illiquid_only():
+    """红组：低流动性票目标权重被削到 participation×ADV20 名义/capital；流动性票不动。"""
+    idx = pd.bdate_range("2023-01-02", periods=25)
+    c = pd.DataFrame({"000001": [10.0] * 25, "000002": [10.0] * 25}, index=idx)
+    v = pd.DataFrame({"000001": [1e4] * 25, "000002": [1e9] * 25}, index=idx)  # A 流通额小 1e5 名义/日
+    w = _flat_weights(idx, ["000001", "000002"], w=0.5)
+    out = mod._apply_participation_cap_overlay(w, v, c, participation=0.05, capital=1e8)
+    # A: ADV20 名义=1e4×10=1e5 → 帽=0.05×1e5/1e8=5e-5 → 0.5 被削
+    assert np.isclose(out["000001"].iloc[-1], 0.05 * 1e5 / 1e8)
+    assert np.isclose(out["000002"].iloc[-1], 0.5)  # B 名义 1e10 → 帽 5.0>0.5 不削
+    assert out["000002"].equals(w["000002"])
+
+
+def test_m7_bad_params_fail_closed():
+    c = _synth_closes(n_days=10, n_sym=2, seed=89)
+    v = pd.DataFrame(1e6, index=c.index, columns=c.columns)
+    w = _flat_weights(c.index, list(c.columns))
+    with pytest.raises(ValueError, match="participation"):
+        mod._apply_participation_cap_overlay(w, v, c, participation=0.0)
+    with pytest.raises(ValueError, match="capital"):
+        mod._apply_participation_cap_overlay(w, v, c, participation=0.05, capital=-1)
+
+
+# ── M8 双池 5 分制（L3-03，F 维 signal_additive 搭桥；T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m8_dual_pool_quintile_scores():
+    """红组：动量/低波双 5 分位 signal_additive 合流——联合最优=10、联合最差=2、预热窗 NaN。"""
+    idx = pd.bdate_range("2023-01-02", periods=30)
+    cols = ["000001", "000002", "000003", "000004", "000005", "000006"]
+    a = [0.008, 0.006, 0.004, 0.002, 0.000, -0.002]  # 动量严格递减（数值预检实证）
+    b = [0.0002, 0.005, 0.010, 0.015, 0.020, 0.030]  # 振荡幅严格递增
+    tt = np.arange(30)
+    sq = np.where(tt % 2 == 0, 1.0, -1.0)
+    data = {c: 10 * np.exp(a[i] * tt + b[i] * np.cumsum(sq)) for i, c in enumerate(cols)}
+    c = pd.DataFrame(data, index=idx)
+    surf = mod.dual_pool_score_surface(c, pool_window=20)
+    late = surf.iloc[-1]
+    assert late["000002"] == 10.0  # 联合最优（次高动量+最低波）=5+5
+    assert late["000006"] == 2.0  # 联合最差（垫底动量+最高波）=1+1（分面下界=2）
+    assert ((late >= 2.0) & (late <= 10.0)).all()
+    assert surf.iloc[20].notna().all()  # 预热窗后全定义
+    assert surf.iloc[:20].isna().all().all()  # 预热窗=NaN（诚实缺供）
+
+
+def test_m8_bad_params_fail_closed():
+    c = _synth_closes(n_days=10, n_sym=2, seed=97)
+    with pytest.raises(ValueError, match="pool_window"):
+        mod.dual_pool_score_surface(c, pool_window=0)
+    with pytest.raises(ValueError, match="n_quantile"):
+        mod.dual_pool_score_surface(c, pool_window=5, n_quantile=1)
