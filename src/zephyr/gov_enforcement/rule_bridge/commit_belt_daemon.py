@@ -501,7 +501,8 @@ def _check_ledger_backlog() -> None:
         import json as _json
 
         oldest_ts = None
-        n = 0
+        qids: set[str] = set()
+        noqid_lines = 0
         for line in lines:
             try:
                 rec = _json.loads(line)
@@ -509,7 +510,11 @@ def _check_ledger_backlog() -> None:
                 continue
             if rec.get("kind") != "dead_letter":
                 continue  # 告警行/记账流水不计积压（W5 收窄，见 docstring）
-            n += 1
+            qid = rec.get("qid")
+            if qid:
+                qids.add(str(qid))
+            else:
+                noqid_lines += 1
             ts = rec.get("ts")
             if ts:
                 try:
@@ -517,6 +522,9 @@ def _check_ledger_backlog() -> None:
                     oldest_ts = dt if oldest_ts is None or dt < oldest_ts else oldest_ts
                 except (ValueError, TypeError):
                     pass
+        # 2026-10-04 修7（裁定#480 家族·F7 仪表班实证）：daemon 每次重启对同 qid 全量重登记，
+        # 行数口径把 pending 虚报百倍（账本 15.4 万行 vs 唯一袋 2060）——积压按唯一 qid 计
+        n = len(qids) + noqid_lines
         age_s = (datetime.now().astimezone() - oldest_ts).total_seconds() if oldest_ts else 0.0
         # ── R-06 冷却状态机（S18 kimi-audit G2）────────────────────────────
         # 改前：无状态变化检测，越阈期间每 tick 重写同一事实（取证：1095 行同事实
