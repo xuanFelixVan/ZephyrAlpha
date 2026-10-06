@@ -5,7 +5,7 @@
 # [CONSUMERS] AI sessions (查询能力真源); GitCommitGateway (check_ssot_conflicts, check_capability_duplicates); scaffold (find_files_by_module_path); check_ssot_gate (check_ssot_conflicts, check_capability_duplicates)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] YAML 真源是人工裁定的能力索引（capability_id/aliases/description + 可选 override/manual 条目）；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/removed_duplicates 均由磁盘扫描+git log 自动派生，不持久化为第二真源
+# [INVARIANTS] YAML 真源是人工裁定的能力索引（capability_id/aliases/description + 可选 override/manual 条目）；canonical_file/module_id/blueprint_id/domain/maturity/duplicates/removed_duplicates 均由磁盘扫描+git log 自动派生，不持久化为第二真源；S4-C（2026-09-30，手术簿 s4_c_p90_cache.md）scan_disk_headers 分片缓存：片概要 scan_root_summary（.py 文件数+max mtime_ns，stat-only）未变整片复用 _DISK_HEADER_SHARD_CACHE（键含 base_root 防单/多根 rel 基准错位），概要不可得→该片回退全扫不缓存（fail-safe，判定语义零变化）
 # [MODIFY-GUARD] capability_canonical_file_registry.yaml (能力索引真源); governance/__init__.py __all__
 # [STABILITY] evolving
 # [SAFETY] L
@@ -124,6 +124,40 @@ SCAN_ROOTS: Final[list[Path]] = [
 # 向后兼容别名（单 root 时代的外部引用）：指向 SCAN_ROOTS[0]
 SCAN_ROOT: Final[Path] = SCAN_ROOTS[0]
 HEADER_SCAN_LIMIT: Final[int] = 30  # 头部字段都在前 30 行，只读这么多省时间
+
+
+def scan_root_summary(root: Path) -> tuple[int, int] | None:
+    """单扫描根廉价概要 ``(py 文件数, max mtime_ns)`` ——S4-C 分片失效判据。
+
+    stat-only walk（不读文件内容），远廉于逐文件解析头部的全量扫描。消费方：
+    - ``scan_disk_headers`` 片缓存失效判据（概要未变→整片复用）；
+    - ``create_guard._lookup_invalidation_key`` 进程级单例失效键的磁盘面分量。
+
+    失败（OSError 等）→ ``None``：调用方据此放弃缓存/失效判定，回退全量扫描
+    （fail-safe 对齐 gate_cache_preflight [ERROR_CONTRACT]——失效判定设施异常
+    绝不改变判定语义）。残余窗口：文件数不变且 max mtime_ns 不变的改写判不到
+    （手术簿 §6 风险1 登记接受面）。
+    """
+    try:
+        count = 0
+        max_mtime_ns = 0
+        for dirpath, _dirnames, filenames in os.walk(root):
+            for name in filenames:
+                if not name.endswith(".py"):
+                    continue
+                count += 1
+                mtime_ns = os.stat(os.path.join(dirpath, name)).st_mtime_ns
+                if mtime_ns > max_mtime_ns:
+                    max_mtime_ns = mtime_ns
+        return (count, max_mtime_ns)
+    except OSError:
+        return None
+
+
+# S4-C 片缓存（进程级）：(normcase(root), normcase(base_root)) -> (概要, 该片头部)
+# base_root 进键：单根/多根模式下同一根的 rel 基准不同，混用会错位。
+# 值内 HeaderInfo 为只读共享对象（查询路径不 mutate）。
+_DISK_HEADER_SHARD_CACHE: dict[tuple[str, str], tuple[tuple[int, int], dict[str, HeaderInfo]]] = {}
 
 # 成熟度排序权重（ARCH-MM-002 两档化：production > design）；未知成熟度=0
 _MATURITY_RANK: dict[str, int] = {"production": 1, "design": 0}
@@ -506,11 +540,26 @@ class CapabilityLookup:
         治本（P8 Phase 3）：多根化遍历 self._scan_roots 而非单根 self._scan_root。
 
         （Stage 4 公共化，primary）
+
+        S4-C 分片扫描（2026-09-30，手术簿 s4_c_p90_cache.md）：双根拆片，每片以
+        ``scan_root_summary`` 廉价概要（.py 文件数+max mtime_ns）做失效判据——
+        只有概要变化的片才重扫，未变片复用 ``_DISK_HEADER_SHARD_CACHE`` 片缓存
+        （跨实例共享只读 HeaderInfo）。夜战改 docs/registry 不会把 src 片拖进重扫。
+        fail-safe：概要不可得（None）→ 该片照旧全扫且不缓存（回退现行为，
+        绝不因缓存设施异常放行/阻断判定语义）。
         """
         result: dict[str, HeaderInfo] = {}
         for root in self._scan_roots:
             if not root.exists():
                 continue
+            # 片缓存键含 base_root：单根/多根模式下同一根的 rel 基准不同，混用会错位
+            cache_key = (os.path.normcase(str(root)), os.path.normcase(str(self._base_root)))
+            summary = scan_root_summary(root)
+            cached = _DISK_HEADER_SHARD_CACHE.get(cache_key)
+            if summary is not None and cached is not None and cached[0] == summary:
+                result.update(cached[1])
+                continue
+            shard: dict[str, HeaderInfo] = {}
             for py in root.rglob("*.py"):
                 try:
                     rel = py.relative_to(self._base_root).as_posix()
@@ -519,7 +568,10 @@ class CapabilityLookup:
                 header = self.parse_header(py, rel)
                 # 只收录有 module_id 或 module_path 的文件（有头部声明的）
                 if header.module_id or header.module_path:
-                    result[rel] = header
+                    shard[rel] = header
+            if summary is not None:
+                _DISK_HEADER_SHARD_CACHE[cache_key] = (summary, shard)
+            result.update(shard)
         return result
 
     def _scan_disk_headers(self) -> dict[str, HeaderInfo]:
