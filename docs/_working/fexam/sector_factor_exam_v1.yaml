@@ -1,0 +1,395 @@
+doc_type: fexam_sector_factor_scores
+version: v1
+campaign: matrix-20261006
+lane: C道-L2板块族首波（M-2/M-3 可考化首波）
+generated_at_utc: '2026-10-06 10:17:07.612306+00:00'
+prereg_v1:
+  factor_pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+    note: 初拟待Owner校（施工单§2口径）
+  windows:
+    holdout_exam:
+    - '2025-10-09'
+    - '2026-09-30'
+    is_ref_decay:
+    - '2024-10-08'
+    - '2025-09-30'
+  horizons:
+  - 1
+  - 5
+  - 20
+  headline_horizon: 5
+  directions_declared_before_exam:
+    sec_mom20_eqw: long
+    sec_mom_multi: long
+    sec_act_amount: long
+    sec_struct_trend: long
+    sec_div20: short
+    stk_resid_mom20: long
+    sec_cond_mult: long
+    stk_cond_gated: long
+    ks_idx_mom20: long
+  judge: ic_exam.judge（roster.PREREG_V1 判据，禁现场改）
+data_backing:
+  industry_map: c1_market.industry_class L1（industry_level=1，31 行业+NULL 桶；symbol 级 1:1）
+  industry_aggregate: c1_market.kline_daily_hfq close/amount 等权聚合（成员日收益均值/成交额求和）
+  kline_sector: c1_market.kline_sector 880xxx/881xxx 728 码（名义窗 2025-07-18..2026-09-30；实测宽覆盖自 2026-03，此前每月≤7 码）
+  stock_panel: c1_market.kline_daily_hfq（UNION 窗 485 日 × 5626 码；HOLDOUT 期行业映射覆盖 5533/5626 码，未映射 fail-closed=NaN）
+proxy_declarations:
+- stock_strength（L2-06 gate②）= 个股20日动量截面百分位×10（v1 合成因子不在本车道，代理显式声明）
+- 行业指数 = 成员等权日收益累积指数代理（起点=1；非官方行业指数）
+- L2-01-1 涨停占比/连板梯队子分不可算（stk_limit 不在本波底座）→ struct 路仅 trend 子分
+- L2-01-4 资金流路不可算（money_flow 不在本波底座）→ sector_score 三路等权归一（in-spec fallback）
+- 市场级 ±10 调节（L2-01-5）缺席未计
+risks:
+- industry_class 为现行快照：valid_to 全 NULL、valid_from 仅 2 个 ingest 日（2026-08-03/2026-09-28），无 PIT 历史——映射按 2026-09 现状回溯应用于全窗，含幸存者/前视偏差（行业重分类不可见），分数解释须带此折价
+- kline_sector 实测宽覆盖自 2026-03（每月≥100 码），全部落在 HOLDOUT 内——其派生因子无 IS_REF 参照（retain 不可判）且 code 无名称列（880/881 与 industry_sw
+  无权威 join），prereg 冻结窗下不可考（禁挪窗）；
+- 板块因子经 one-hot 广播后个股层截面区分度=行业内同值（每行业一值），IC 有效样本=行业数×成员，与个股原生因子的可比较性有限
+- 动量族全负 IC 为 HOLDOUT 窗市场反转态（raw 个股 mom20 对拍同号 -0.0515 佐证非管线错位）；stk_resid_mom20/stk_cond_gated 的 |IC|/|ICIR| 若按 short
+  预登记可达线——但改向必须走新 prereg，禁看分后翻向
+counts:
+  total: 9
+  rework: 9
+sanity_check:
+  raw_stk_mom20_ic5d_holdout: -0.05150433788049684
+  note: raw 个股20日动量（不经行业广播）同窗对拍——负号与板块族一致，佐证为 A 股反转态而非前向收益错位
+results:
+- object_id: ks_idx_mom20
+  direction_prereg: long
+  verdict: rework
+  reason: 'insufficient_window: kline_sector 实际宽覆盖自 2026-03（每月>=100 码）起，全部落在 HOLDOUT 内；IS_REF 无参照（retain 不可判）且 code→行业映射无考前期拟合窗（窗内拟合=泄露，禁）——prereg
+    冻结窗下不可考'
+  spec_note: '880xxx×600+881xxx×128 码无名称列，与 industry_sw 无权威 join；月度覆盖实测: 2025-07:1, 2025-10:2, 2026-01:6, 2026-02:7,
+    2026-03:590, 2026-04:591, 2026-05:586, 2026-06:590, 2026-07:593, 2026-08:726, 2026-09:728'
+  metrics: {}
+- object_id: sec_mom20_eqw
+  direction_prereg: long
+  verdict: rework
+  reason: '|ic|=0.0321(线0.02) icir=-0.21(线0.3) retain=0.87(线0.5)'
+  spec_note: ''
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.01893195563279375
+          icir: -0.12269674223448371
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.021493089295385046
+          icir: -0.13851367330371267
+          n_obs: 224
+        retain: 0.880839202434188
+      '5':
+        holdout:
+          ic_mean: -0.03207763643408649
+          icir: -0.20760410125638934
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.036677801898419245
+          icir: -0.27563532660548107
+          n_obs: 224
+        retain: 0.8745790307425425
+      '20':
+        holdout:
+          ic_mean: -0.03832508065623036
+          icir: -0.26204115401898026
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.054571991398024496
+          icir: -0.42621261635797825
+          n_obs: 224
+        retain: 0.7022848108419537
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 1.0
+      turnover_proxy: 0.07070694113347886
+- object_id: sec_mom_multi
+  direction_prereg: long
+  verdict: rework
+  reason: '|ic|=0.0208(线0.02) icir=-0.15(线0.3) retain=0.74(线0.5)'
+  spec_note: ''
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.013493227399558761
+          icir: -0.09792758805133452
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.024825990096647765
+          icir: -0.172089484531254
+          n_obs: 224
+        retain: 0.5435121558910451
+      '5':
+        holdout:
+          ic_mean: -0.020813815575505372
+          icir: -0.15041320329680502
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.02801551525811372
+          icir: -0.21914516149712815
+          n_obs: 224
+        retain: 0.7429388816783362
+      '20':
+        holdout:
+          ic_mean: -0.029857904324535414
+          icir: -0.20675339356102382
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.03967736733293787
+          icir: -0.30722848055984986
+          n_obs: 224
+        retain: 0.7525172744954047
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 1.0
+      turnover_proxy: 0.20959302712245798
+- object_id: sec_act_amount
+  direction_prereg: long
+  verdict: rework
+  reason: '|ic|=0.0117(线0.02) icir=-0.06(线0.3) retain=1.23(线0.5)'
+  spec_note: ''
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.015345246918132329
+          icir: -0.08271949232818189
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.008661233090181726
+          icir: -0.046702521203063375
+          n_obs: 239
+        retain: 1.7717161931050585
+      '5':
+        holdout:
+          ic_mean: -0.011689450092798004
+          icir: -0.06264927142415619
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.009484999925437212
+          icir: -0.05666662162774153
+          n_obs: 239
+        retain: 1.232414357900923
+      '20':
+        holdout:
+          ic_mean: -0.007704291863924385
+          icir: -0.042258344620112145
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.004144143911899735
+          icir: -0.0237076071926378
+          n_obs: 239
+        retain: 1.8590792278718495
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 1.0
+      turnover_proxy: 0.057946853418281874
+- object_id: sec_struct_trend
+  direction_prereg: long
+  verdict: rework
+  reason: '|ic|=0.0308(线0.02) icir=-0.25(线0.3) retain=18.40(线0.5)'
+  spec_note: 01-1 三子分中涨停占比/连板梯队不可算（stk_limit 不在本波 CH 底座）——仅 trend 子分，degraded
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.012279651100938151
+          icir: -0.10410495326802502
+          n_obs: 238
+        is_ref:
+          ic_mean: -0.006714288360207109
+          icir: -0.0664402706955714
+          n_obs: 219
+        retain: 1.8288834858083713
+      '5':
+        holdout:
+          ic_mean: -0.03084832777136997
+          icir: -0.2512211019659662
+          n_obs: 234
+        is_ref:
+          ic_mean: -0.001676590200293936
+          icir: -0.01876446685205224
+          n_obs: 216
+        retain: 18.399444161108487
+      '20':
+        holdout:
+          ic_mean: -0.03442466544053875
+          icir: -0.28345864572606666
+          n_obs: 220
+        is_ref:
+          ic_mean: -0.0038688482690916715
+          icir: -0.0425436262633496
+          n_obs: 219
+        retain: 8.897910449359902
+    headline:
+      ic_series_len_holdout: 234
+      coverage_holdout: 1.0
+      turnover_proxy: 0.425430963412485
+- object_id: sec_div20
+  direction_prereg: short
+  verdict: rework
+  reason: '|ic|=0.0179(线0.02) icir=0.09(线0.3) retain=1.18(线0.5)'
+  spec_note: ''
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.015949565650809804
+          icir: -0.08226878635721298
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.01033999909040269
+          icir: -0.06174328374485261
+          n_obs: 234
+        retain: 1.542511320490711
+      '5':
+        holdout:
+          ic_mean: -0.017930863912522403
+          icir: -0.09389592796707665
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.015138442862522224
+          icir: -0.0934774000180369
+          n_obs: 234
+        retain: 1.1844589351334998
+      '20':
+        holdout:
+          ic_mean: -0.021109100869319733
+          icir: -0.111870745155977
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.01892097730415031
+          icir: -0.10616799350766837
+          n_obs: 234
+        retain: 1.115645377614266
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 1.0
+      turnover_proxy: 0.01160921548031002
+- object_id: stk_resid_mom20
+  direction_prereg: long
+  verdict: rework
+  reason: '|ic|=0.0400(线0.02) icir=-0.34(线0.3) retain=0.52(线0.5)'
+  spec_note: ''
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.031425478983260945
+          icir: -0.25946398932489706
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.05608876632811537
+          icir: -0.5574534570560836
+          n_obs: 224
+        retain: 0.5602811586089108
+      '5':
+        holdout:
+          ic_mean: -0.03997672020399843
+          icir: -0.3351108853102269
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.07656879575768273
+          icir: -0.7681757912199408
+          n_obs: 224
+        retain: 0.5221019843450687
+      '20':
+        holdout:
+          ic_mean: -0.04470498531053631
+          icir: -0.3640214210462533
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.08521712288615854
+          icir: -0.8167372098997635
+          n_obs: 224
+        retain: 0.5246009698104646
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.9871446537673244
+      turnover_proxy: 0.06404081372529946
+- object_id: sec_cond_mult
+  direction_prereg: long
+  verdict: rework
+  reason: '|ic|=0.0234(线0.02) icir=-0.18(线0.3) retain=1.52(线0.5)'
+  spec_note: L2-06 查表 15%/5%/-10% 冻结口径；sector_score 四路中 flow（主力净流入）与 01-1 两子分缺席→三路等权归一（in-spec 降权 fallback，degraded）；市场级±10调节（L2-01-5）缺席未计
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.010258207443192746
+          icir: -0.07660734035790318
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.017083486297205998
+          icir: -0.11701491155422725
+          n_obs: 224
+        retain: 0.6004750590557429
+      '5':
+        holdout:
+          ic_mean: -0.023423276682424662
+          icir: -0.1792506186986024
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.015389202963437829
+          icir: -0.12518549611184424
+          n_obs: 224
+        retain: 1.5220591175562794
+      '20':
+        holdout:
+          ic_mean: -0.0326104486440317
+          icir: -0.223405749902327
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.0187338125971173
+          icir: -0.13406963615364628
+          n_obs: 224
+        retain: 1.7407267460895652
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 1.0
+      turnover_proxy: 0.3507545588512341
+- object_id: stk_cond_gated
+  direction_prereg: long
+  verdict: rework
+  reason: coverage 0.15<0.6
+  spec_note: gate=板块>6∧个股>5∧成交>2亿（TDM 口径冻结）；stock_strength 代理=个股20日动量百分位×10（v1 合成因子不在本车道范围，代理声明如左）
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.04105495740152023
+          icir: -0.2829200495101768
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.0858504003261388
+          icir: -0.6170730894450961
+          n_obs: 224
+        retain: 0.4782150956262956
+      '5':
+        holdout:
+          ic_mean: -0.0693013807542204
+          icir: -0.42738223647615287
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.14550863535426548
+          icir: -1.145370216325338
+          n_obs: 224
+        retain: 0.4762698831275163
+      '20':
+        holdout:
+          ic_mean: -0.06298975930058151
+          icir: -0.354191329297116
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.14462012644990965
+          icir: -1.195024668303323
+          n_obs: 224
+        retain: 0.43555320304880607
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.1466608133779933
+      turnover_proxy: 0.11718831066454727

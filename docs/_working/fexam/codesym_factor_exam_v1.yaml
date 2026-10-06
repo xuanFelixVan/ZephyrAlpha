@@ -1,0 +1,1267 @@
+doc_type: fexam_codesym_factor_scores
+version: v1
+generated_at_utc: '2026-10-06 10:42:22.679740+00:00'
+harness: .runtime/tmp/st-matrix-20261006/adapter_harness.py（M-7 B道第一波临时工装）
+prereg_v1:
+  windows:
+    holdout_exam:
+      start: '2025-10-09'
+      end: '2026-09-30'
+      note: 近12月干净窗，选样窗与考试窗分离
+    is_ref_decay:
+      start: '2024-10-08'
+      end: '2025-09-30'
+      note: 衰减参照窗，与考试窗不交
+  horizons:
+  - 1
+  - 5
+  - 20
+  headline_horizon: 5
+  factor_pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+    note: 初拟待Owner校（施工单§2口径）
+  indicator_pass_line:
+    abs_ic_5d_min: 0.02
+    regime_check: report_only
+    note: IC及格线同因子；regime_valid声明核对只报告不判死
+  strategy_pass_line:
+    oos_sharpe_min: 0.0
+    is_sharpe_min: 0.0
+    oos_maxdd_max: 0.3
+    activation_weight_band:
+      floor: 0
+      current: 0.1
+      ceiling: 0.3
+      step_cap: 0.2
+    note: 初拟待Owner校
+  strategy_device:
+    engine: DefaultBacktestEngine(MOD-BT-001)
+    execution_lag_days: 1
+    exclude_st: true
+    pit_filter: true
+    top_n: 20
+    rebalance: monthly
+    weighting: equal
+    single_run_split: 一次连续跑，nav按窗分段（IS/OOS同源同参数）
+  device_policy: IC考试=CPU pandas（spearman秩相关无GPU核，逐条可解释degrade）；批2整装=vectorized_engine CPU逐日（c4 GPU引擎为网格考专属，批2单跑非网格不适用0.53s/格口径）；degrade台账随册
+  regime_key: c1_backtest.regime_snapshot_history HMM四态argmax；<2019-04用SMA200 fallback
+  lookahead_note: 因子/指标册 last_updated=2026-09 晚于考试窗——registry 本身含前视风险，本考为存量清点口径（verdict 只证明窗内表现，不证明可上线），上线另走晋升门
+window_definition:
+  holdout_exam:
+  - '2025-10-09'
+  - '2026-09-30'
+  is_ref_decay:
+  - '2024-10-08'
+  - '2025-09-30'
+  union:
+  - '2024-10-08'
+  - '2026-09-30'
+exam_scope: factor_registry 全部 code_symbol 非空条目（31 条）——导入真函数→适配算值→截面 IC 考试
+counts:
+  total: 31
+  rework: 28
+  retire_candidate: 3
+measured_count: 18
+rework_reason_classes:
+  structural_not_cross_sectional: 6
+  data_gap: 7
+  metrics_below_prereg_line: 9
+  retire_no_alpha: 3
+  coverage_below_60pct: 5
+  panel_degenerate: 1
+results:
+- factor_id: FCT-SENT-016
+  name_zh: 期指基差率
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/futures_basis_monitor.py::compute_futures_basis
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: structural:cross_section_width——横截面宽度=期指品种数(≤4)<30/日，低于 fast_rank_ic 最小样本线，截面 IC 不可定义；需时序择时考试通道
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.futures_basis_monitor::compute_futures_basis
+  - pattern: no_args
+    status: OK
+    detail: 'FuturesBasisSnapshot(ts=''2026-10-06 18:38:48'', trade_date=''2026-10-06'', per_symbol={''IF'': FuturesBasisSymbol(product=''IF'',
+      spot_name=''沪深300'', basis_rate=-0.0176'
+  - pattern: ohlcv_df
+    status: ERROR
+    detail: 'ValueError(''ts 格式非法（须 YYYY-MM-DD[ HH:MM:SS]）: symbol            close         open         high          low  volume  amount\ntrade_date                        '
+  - pattern: informed
+    status: OK
+    detail: '{"trade_date": "2026-09-15", "degraded": false, "n_products": 4, "per_symbol": {"IF": {"basis_rate": -0.006759,
+      "basis_vel_30m": 0.013571, "vel_source": "d1_proxy"}, "IC": {"basis_rate": -0.000449, "basis_vel_30m": -0.000766, "vel_source":
+      "d1_proxy"}, "IM": {"basis_rate": -0.003361, "basis_vel_30m": -0.003589, "vel_source": "d1_proxy"}, "IH": {"basis_rate":
+      -0.00561, "basis_vel_30m": -0.005383, "vel_source": "d1_proxy"}}, "notes": ["2026-09-14~2026-09-20 为股指期货交割周，贴水自然收敛失真剔除
+      → 信号降权×0.5"]}'
+- factor_id: FCT-SENT-017
+  name_zh: 期指基差变化率
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/futures_basis_monitor.py::compute_futures_basis
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: structural:cross_section_width——横截面宽度=期指品种数(≤4)<30/日，低于 fast_rank_ic 最小样本线，截面 IC 不可定义；需时序择时考试通道
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.futures_basis_monitor::compute_futures_basis
+  - pattern: no_args
+    status: OK
+    detail: 'FuturesBasisSnapshot(ts=''2026-10-06 18:38:55'', trade_date=''2026-10-06'', per_symbol={''IF'': FuturesBasisSymbol(product=''IF'',
+      spot_name=''沪深300'', basis_rate=-0.0176'
+  - pattern: ohlcv_df
+    status: ERROR
+    detail: 'ValueError(''ts 格式非法（须 YYYY-MM-DD[ HH:MM:SS]）: symbol            close         open         high          low  volume  amount\ntrade_date                        '
+  - pattern: informed
+    status: OK
+    detail: '{"trade_date": "2026-09-15", "degraded": false, "n_products": 4, "per_symbol": {"IF": {"basis_rate": -0.006759,
+      "basis_vel_30m": 0.013571, "vel_source": "d1_proxy"}, "IC": {"basis_rate": -0.000449, "basis_vel_30m": -0.000766, "vel_source":
+      "d1_proxy"}, "IM": {"basis_rate": -0.003361, "basis_vel_30m": -0.003589, "vel_source": "d1_proxy"}, "IH": {"basis_rate":
+      -0.00561, "basis_vel_30m": -0.005383, "vel_source": "d1_proxy"}}, "notes": ["2026-09-14~2026-09-20 为股指期货交割周，贴水自然收敛失真剔除
+      → 信号降权×0.5"]}'
+- factor_id: FCT-SENT-018
+  name_zh: 期权成交量PCR
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/option_sentiment.py::compute_option_sentiment
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: structural:market_level——代码输出为市场级时序值（单值/日），无截面离散度，fast_rank_ic 截面秩相关数学不可定义；prereg 判据为截面 IC 考试，需另设时序择时考试通道
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.option_sentiment::compute_option_sentiment
+  - pattern: no_args
+    status: OK
+    detail: OptionSentimentResult(date='2026-09-30', pcr=2.11421479694959, pcr_basis='volume', pcr_percentile=1.0, iv_rank=None,
+      iv_jump_flag=False, skew_norm=0.21269465923
+  - pattern: ohlcv_df
+    status: ERROR
+    detail: 'ValueError("time data ''symbol            close         open         high          low  volume  amount\\ntrade_date                                              '
+  - pattern: informed
+    status: OK
+    detail: '{"date": "2026-09-15", "pcr": 1.0790336285099162, "pcr_percentile": 0.6764705882352942, "iv_rank": null, "degraded":
+      false, "notes": ["IV Rank 可用窗 38 日 < 60 日守卫，降级"]}'
+- factor_id: FCT-SENT-019
+  name_zh: 300ETF隐含波动率IV_Rank分位
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/option_sentiment.py::compute_option_sentiment
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: structural:market_level——代码输出为市场级时序值（单值/日），无截面离散度，fast_rank_ic 截面秩相关数学不可定义；prereg 判据为截面 IC 考试，需另设时序择时考试通道
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.option_sentiment::compute_option_sentiment
+  - pattern: no_args
+    status: OK
+    detail: OptionSentimentResult(date='2026-09-30', pcr=2.11421479694959, pcr_basis='volume', pcr_percentile=1.0, iv_rank=None,
+      iv_jump_flag=False, skew_norm=0.21269465923
+  - pattern: ohlcv_df
+    status: ERROR
+    detail: 'ValueError("time data ''symbol            close         open         high          low  volume  amount\\ntrade_date                                              '
+  - pattern: informed
+    status: OK
+    detail: '{"date": "2026-09-15", "pcr": 1.0790336285099162, "pcr_percentile": 0.6764705882352942, "iv_rank": null, "degraded":
+      false, "notes": ["IV Rank 可用窗 38 日 < 60 日守卫，降级"]}'
+- factor_id: FCT-SENT-020
+  name_zh: 涨跌家数速度breadth_vel
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  direction_declared: long
+  measured: false
+  verdict: rework
+  reason: data_gap:分钟级 breadth 快照历史仅 2026-08-24 起（24 交易日，market_breadth_snapshot），HOLDOUT 245 交易日缺 2025-10..2026-08 段——20
+    日 z 窗与考试窗不可建；且输出为市场级时序值非截面
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 3 required positional arguments: ''self'', ''time_series'',
+      and ''index_change_pct'''
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 2 required positional arguments: ''time_series''
+      and ''index_change_pct'''
+  - pattern: informed
+    status: OK
+    detail: method=analyze_breadth_acceleration 最小输入(None×2)调用结果=None
+- factor_id: FCT-SENT-021
+  name_zh: 涨停净增速率lu_net_rate
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  direction_declared: long
+  measured: false
+  verdict: rework
+  reason: data_gap:同 FCT-SENT-020（分钟 breadth 快照缺 2025-10..2026-08 历史段）
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 3 required positional arguments: ''self'', ''time_series'',
+      and ''index_change_pct'''
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 2 required positional arguments: ''time_series''
+      and ''index_change_pct'''
+  - pattern: informed
+    status: OK
+    detail: method=analyze_breadth_acceleration 最小输入(None×2)调用结果=None
+- factor_id: FCT-SENT-022
+  name_zh: 边际炸板率break_rate
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: data_gap:同 FCT-SENT-020（分钟 breadth 快照缺 2025-10..2026-08 历史段）
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 3 required positional arguments: ''self'', ''time_series'',
+      and ''index_change_pct'''
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 2 required positional arguments: ''time_series''
+      and ''index_change_pct'''
+  - pattern: informed
+    status: OK
+    detail: method=analyze_breadth_acceleration 最小输入(None×2)调用结果=None
+- factor_id: FCT-SENT-023
+  name_zh: 护盘背离度guard_ratio
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.detect_distortion
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: data_gap:护盘背离需指数贡献度拆解+黄白线分钟 spread 历史（CH 无对应数据表）
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.detect_distortion
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.detect_distortion() missing 5 required positional arguments: ''self'', ''index_contrib'',
+      ''spread_series'', ''advance_ratio'', and ''index_chang'
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.detect_distortion() missing 4 required positional arguments: ''index_contrib'', ''spread_series'',
+      ''advance_ratio'', and ''index_change_pct'''
+  - pattern: informed
+    status: OK
+    detail: method=detect_distortion 最小输入(None×4)调用结果=None
+- factor_id: FCT-SENT-024
+  name_zh: 量能外推比volume_ratio
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.forecast_volume
+  direction_declared: long
+  measured: false
+  verdict: rework
+  reason: data_gap:量能外推需 20 日同时刻分钟成交占比曲线历史（CH 无分钟成交历史表）
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.forecast_volume
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.forecast_volume() missing 3 required positional arguments: ''self'', ''volume_input'',
+      and ''breadth_vel_5m'''
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.forecast_volume() missing 2 required positional arguments: ''volume_input'' and ''breadth_vel_5m'''
+  - pattern: informed
+    status: OK
+    detail: method=forecast_volume 最小输入(None×2)调用结果=None
+- factor_id: FCT-SENT-025
+  name_zh: 大幅回撤个股数drawdown_count
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.count_large_drawdowns
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: data_gap:需日内个股 high/current gain 快照历史（realtime_snapshot 表为空）
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.count_large_drawdowns
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.count_large_drawdowns() missing 2 required positional arguments: ''self'' and ''stocks'''
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.count_large_drawdowns() missing 1 required positional argument: ''stocks'''
+  - pattern: informed
+    status: OK
+    detail: method=count_large_drawdowns 最小输入(None×1)调用结果=None
+- factor_id: FCT-SENT-026
+  name_zh: 电风扇速度计rotation_velocity
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sector/sector_divergence.py::compute_sector_divergence
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: structural:market_level——代码输出为市场级时序值（单值/日），无截面离散度，fast_rank_ic 截面秩相关数学不可定义；prereg 判据为截面 IC 考试，需另设时序择时考试通道
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sector.sector_divergence::compute_sector_divergence
+  - pattern: no_args
+    status: OK
+    detail: 'SectorDivergenceResult(date=''2026-09-30'', rotation_state=''NEUTRAL_MIXED'', watch_score=0.0, top_risk_flag=False,
+      siphon_z=-0.741740421553586, siphon_flag=False, '
+  - pattern: ohlcv_df
+    status: ERROR
+    detail: 'ValueError("time data ''symbol            close         open         high          low  volume  amount\\ntrade_date                                              '
+  - pattern: informed
+    status: OK
+    detail: '{"date": "2026-09-15", "rotation_velocity": 295.17941585535465, "velocity_percentile": 0.918, "watchlist_n":
+      1112, "watchlist_sample": [{"symbol": "600088.SH", "score": 0.4950000000000001, "pct": 0.999910007199424}, {"symbol":
+      "600697.SH", "score": 0.48888888888888893, "pct": 0.9997300215982722}, {"symbol": "002212.SZ", "score": 0.48461538461538495,
+      "pct": 0.9995500359971202}, {"symbol": "600666.SH", "score": 0.47391304347826085, "pct": 0.9993700503959683}, {"symbol":
+      "000981.SZ", "score": 0.45714285714285713, "pct": 0.9991900647948164}], "degraded": false, "notes": []}'
+- factor_id: FCT-SENT-027
+  name_zh: 个股分歧度divergence_stock
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sector/sector_divergence.py::compute_sector_divergence
+  direction_declared: short
+  measured: false
+  verdict: rework
+  reason: structural:watchlist——代码输出为 >80 分位个股风险清单（StockDivergenceWatch 子集），非全截面因子值，prereg 覆盖线 60% 结构不可达；velocity 主输出为市场级标量
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sector.sector_divergence::compute_sector_divergence
+  - pattern: no_args
+    status: OK
+    detail: 'SectorDivergenceResult(date=''2026-09-30'', rotation_state=''NEUTRAL_MIXED'', watch_score=0.0, top_risk_flag=False,
+      siphon_z=-0.741740421553586, siphon_flag=False, '
+  - pattern: ohlcv_df
+    status: ERROR
+    detail: 'ValueError("time data ''symbol            close         open         high          low  volume  amount\\ntrade_date                                              '
+  - pattern: informed
+    status: OK
+    detail: '{"date": "2026-09-15", "rotation_velocity": 295.17941585535465, "velocity_percentile": 0.918, "watchlist_n":
+      1112, "watchlist_sample": [{"symbol": "600088.SH", "score": 0.4950000000000001, "pct": 0.999910007199424}, {"symbol":
+      "600697.SH", "score": 0.48888888888888893, "pct": 0.9997300215982722}, {"symbol": "002212.SZ", "score": 0.48461538461538495,
+      "pct": 0.9995500359971202}, {"symbol": "600666.SH", "score": 0.47391304347826085, "pct": 0.9993700503959683}, {"symbol":
+      "000981.SZ", "score": 0.45714285714285713, "pct": 0.9991900647948164}], "degraded": false, "notes": []}'
+- factor_id: FCT-SENT-028
+  name_zh: 涨跌家数二阶加速度breadth_acc
+  factor_class: sentiment
+  status: candidate
+  code_symbol: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  direction_declared: long
+  measured: false
+  verdict: rework
+  reason: data_gap:同 FCT-SENT-020（分钟 breadth 快照缺 2025-10..2026-08 历史段）
+  adaptation: []
+  attempts:
+  - pattern: import
+    status: OK
+    detail: zephyr.signal_ashare.sentiment.market_sentiment_analyzer::MarketSentimentAnalyzer.analyze_breadth_acceleration
+  - pattern: no_args
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 3 required positional arguments: ''self'', ''time_series'',
+      and ''index_change_pct'''
+  - pattern: ohlcv_df
+    status: TypeError
+    detail: 'MarketSentimentAnalyzer.analyze_breadth_acceleration() missing 2 required positional arguments: ''time_series''
+      and ''index_change_pct'''
+  - pattern: informed
+    status: OK
+    detail: method=analyze_breadth_acceleration 最小输入(None×2)调用结果=None
+- factor_id: FCT-MOM-029
+  name_zh: 20日动量（代码锚）
+  factor_class: momentum
+  status: candidate
+  code_symbol: src/zephyr/factor/momentum_factor.py::Momentum20d
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0517(线0.02) icir=-0.31(线0.3) retain=0.59(线0.5)'
+  adaptation:
+  - 适配=对每 symbol 构造 index=date/close 列 DataFrame 逐列调真函数 Momentum20d().compute
+  - 逐列调用完成 symbols=5626 单列失败=0
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.037391
+          icir: -0.226076
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.061801
+          icir: -0.42085
+          n_obs: 224
+        retain: 0.605021
+      '5':
+        holdout:
+          ic_mean: -0.051652
+          icir: -0.30995
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.087165
+          icir: -0.653999
+          n_obs: 224
+        retain: 0.592581
+      '20':
+        holdout:
+          ic_mean: -0.056654
+          icir: -0.341096
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.103713
+          icir: -0.749836
+          n_obs: 224
+        retain: 0.546256
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.984289
+- factor_id: FCT-QUAL-002
+  name_zh: 价值因子（代码锚，价均偏离口径）
+  factor_class: value
+  status: candidate
+  code_symbol: src/zephyr/factor/value_factor.py::ValueFactor
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0114(线0.02) icir=0.11(线0.3) retain=0.77(线0.5)'
+  adaptation:
+  - 适配=每 symbol 构造 close+eps_basic（financial_derived 按 announce_date as-of PIT 对齐到日频）调真函数 ValueFactor().compute
+  - 日频 bar eps_basic PIT 覆盖率=99.94%（缺失走代码默认 earnings=5.0）
+  - 逐列调用完成 symbols=5626 单列失败=0
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.009323
+          icir: 0.087277
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.010617
+          icir: 0.104373
+          n_obs: 222
+        retain: 0.878108
+      '5':
+        holdout:
+          ic_mean: 0.011357
+          icir: 0.113055
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.014677
+          icir: 0.145892
+          n_obs: 220
+        retain: 0.773803
+      '20':
+        holdout:
+          ic_mean: 0.016021
+          icir: 0.160095
+          n_obs: 221
+        is_ref:
+          ic_mean: 0.00845
+          icir: 0.095193
+          n_obs: 227
+        retain: 1.895915
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.977252
+- factor_id: FCT-INTRADAY-029
+  name_zh: 盘中VWAP（代码锚）
+  factor_class: intraday
+  status: candidate
+  code_symbol: src/zephyr/factor/intraday_snapshot_factors.py::IntradayVwap
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0201(线0.02) icir=-0.09(线0.3) retain=0.79(线0.5)'
+  adaptation:
+  - 适配=以日频 kline 快照代盘中 tick 快照（index=symbol，列 close/volume/amount），逐交易日调真函数 compute——代码为纯横截面无历史依赖，日频代用保持语义
+  - 逐日调用完成 days=485
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.020992
+          icir: -0.099176
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.017898
+          icir: -0.101976
+          n_obs: 244
+        retain: 1.172831
+      '5':
+        holdout:
+          ic_mean: -0.020094
+          icir: -0.092122
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.025322
+          icir: -0.149632
+          n_obs: 244
+        retain: 0.793529
+      '20':
+        holdout:
+          ic_mean: -0.02802
+          icir: -0.11973
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.033135
+          icir: -0.193677
+          n_obs: 244
+        retain: 0.845626
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.977252
+- factor_id: FCT-INTRADAY-030
+  name_zh: 盘中收盘价（代码锚）
+  factor_class: intraday
+  status: candidate
+  code_symbol: src/zephyr/factor/intraday_snapshot_factors.py::IntradayClose
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0276(线0.02) icir=-0.18(线0.3) retain=0.70(线0.5)'
+  adaptation:
+  - 适配=以日频 kline 快照代盘中 tick 快照（index=symbol，列 close/volume/amount），逐交易日调真函数 compute——代码为纯横截面无历史依赖，日频代用保持语义
+  - 逐日调用完成 days=485
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.020206
+          icir: -0.129257
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.022514
+          icir: -0.186951
+          n_obs: 244
+        retain: 0.897496
+      '5':
+        holdout:
+          ic_mean: -0.027582
+          icir: -0.179646
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.039329
+          icir: -0.346563
+          n_obs: 244
+        retain: 0.701322
+      '20':
+        holdout:
+          ic_mean: -0.037495
+          icir: -0.226449
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.066389
+          icir: -0.538675
+          n_obs: 244
+        retain: 0.564782
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.977252
+- factor_id: FCT-FQ-001
+  name_zh: 应计因子（Sloan）
+  factor_class: quality
+  status: experimental
+  code_symbol: src/zephyr/factor/fundamentals.py::fq01_accrual
+  direction_declared: null
+  measured: true
+  verdict: retire_candidate
+  reason: clean窗无可测alpha（|ic|=0.0023, |icir|=0.03）
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=166529
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.002261
+          icir: 0.034398
+          n_obs: 240
+        is_ref:
+          ic_mean: -0.000638
+          icir: -0.013119
+          n_obs: 244
+        retain: 3.544399
+      '5':
+        holdout:
+          ic_mean: 0.002311
+          icir: 0.034645
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.003645
+          icir: -0.076321
+          n_obs: 244
+        retain: 0.634102
+      '20':
+        holdout:
+          ic_mean: 0.003057
+          icir: 0.042145
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.008267
+          icir: -0.16038
+          n_obs: 244
+        retain: 0.369833
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.986215
+- factor_id: FCT-FQ-002
+  name_zh: 现金流实现率
+  factor_class: quality
+  status: experimental
+  code_symbol: src/zephyr/factor/fundamentals.py::fq02_cash_conversion
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0054(线0.02) icir=0.11(线0.3) retain=10.69(线0.5)'
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=150681
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.005605
+          icir: 0.108521
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.003702
+          icir: 0.058515
+          n_obs: 244
+        retain: 1.514198
+      '5':
+        holdout:
+          ic_mean: 0.005374
+          icir: 0.109261
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.000503
+          icir: -0.007478
+          n_obs: 244
+        retain: 10.688866
+      '20':
+        holdout:
+          ic_mean: 0.009281
+          icir: 0.211193
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.007418
+          icir: -0.105701
+          n_obs: 244
+        retain: 1.251119
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.978636
+- factor_id: FCT-FQ-003
+  name_zh: GPOA 毛利率资产比
+  factor_class: quality
+  status: deprecated
+  code_symbol: src/zephyr/factor/fundamentals.py::fq03_gpoa
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0063(线0.02) icir=-0.07(线0.3) retain=2.81(线0.5)'
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=158837
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.003532
+          icir: -0.042617
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.000238
+          icir: 0.002773
+          n_obs: 244
+        retain: 14.851341
+      '5':
+        holdout:
+          ic_mean: -0.006293
+          icir: -0.074719
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.002239
+          icir: -0.026673
+          n_obs: 244
+        retain: 2.809865
+      '20':
+        holdout:
+          ic_mean: -0.014457
+          icir: -0.161922
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.006889
+          icir: -0.072188
+          n_obs: 244
+        retain: 2.09861
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.986171
+- factor_id: FCT-FQ-004
+  name_zh: 单季盈利变化 ΔROEq
+  factor_class: quality
+  status: experimental
+  code_symbol: src/zephyr/factor/fundamentals.py::fq04_delta_roe_q
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0077(线0.02) icir=0.12(线0.3) retain=0.72(线0.5)'
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=139278
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.005604
+          icir: 0.098217
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.008092
+          icir: 0.181302
+          n_obs: 244
+        retain: 0.69249
+      '5':
+        holdout:
+          ic_mean: 0.007724
+          icir: 0.122851
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.010727
+          icir: 0.19699
+          n_obs: 244
+        retain: 0.720101
+      '20':
+        holdout:
+          ic_mean: 0.014816
+          icir: 0.222016
+          n_obs: 221
+        is_ref:
+          ic_mean: 0.018167
+          icir: 0.276207
+          n_obs: 244
+        retain: 0.815548
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.982987
+- factor_id: FCT-GR-001
+  name_zh: 单季营收同比
+  factor_class: momentum
+  status: experimental
+  code_symbol: src/zephyr/factor/fundamentals.py::gr01_rev_q_yoy
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0091(线0.02) icir=0.09(线0.3) retain=0.52(线0.5)'
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=158433
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.002619
+          icir: 0.025583
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.008762
+          icir: 0.126339
+          n_obs: 244
+        retain: 0.29887
+      '5':
+        holdout:
+          ic_mean: 0.009099
+          icir: 0.086518
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.01742
+          icir: 0.238307
+          n_obs: 244
+        retain: 0.522313
+      '20':
+        holdout:
+          ic_mean: 0.021588
+          icir: 0.192235
+          n_obs: 221
+        is_ref:
+          ic_mean: 0.030848
+          icir: 0.37451
+          n_obs: 244
+        retain: 0.699822
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.984083
+- factor_id: FCT-GR-002
+  name_zh: 盈利加速度
+  factor_class: momentum
+  status: candidate
+  code_symbol: src/zephyr/factor/fundamentals.py::gr02_np_q_qoq
+  direction_declared: null
+  measured: true
+  verdict: retire_candidate
+  reason: clean窗无可测alpha（|ic|=0.0024, |icir|=0.06）
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=159704
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.001644
+          icir: 0.047058
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.002308
+          icir: 0.066531
+          n_obs: 244
+        retain: 0.711964
+      '5':
+        holdout:
+          ic_mean: 0.002369
+          icir: 0.064091
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.001064
+          icir: 0.029586
+          n_obs: 244
+        retain: 2.226558
+      '20':
+        holdout:
+          ic_mean: 0.00238
+          icir: 0.062131
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.004841
+          icir: -0.122059
+          n_obs: 244
+        retain: 0.491536
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.983616
+- factor_id: FCT-FQ-005
+  name_zh: 信息质量代理
+  factor_class: quality
+  status: candidate
+  code_symbol: src/zephyr/factor/fundamentals.py::fq05_info_quality
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: '|ic|=0.0032(线0.02) icir=0.10(线0.3) retain=0.89(线0.5)'
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=131644
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.00105
+          icir: 0.031247
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.002342
+          icir: 0.070904
+          n_obs: 244
+        retain: 0.448294
+      '5':
+        holdout:
+          ic_mean: 0.003185
+          icir: 0.102873
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.003573
+          icir: 0.105988
+          n_obs: 244
+        retain: 0.8915
+      '20':
+        holdout:
+          ic_mean: 0.008144
+          icir: 0.275611
+          n_obs: 221
+        is_ref:
+          ic_mean: 0.007824
+          icir: 0.194188
+          n_obs: 244
+        retain: 1.040811
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.982539
+- factor_id: FCT-FQ-006
+  name_zh: Piotroski F-Score
+  factor_class: quality
+  status: candidate
+  code_symbol: src/zephyr/factor/fundamentals.py::fq06_fscore
+  direction_declared: null
+  measured: true
+  verdict: retire_candidate
+  reason: clean窗无可测alpha（|ic|=0.0041, |icir|=0.08）
+  adaptation:
+  - 数据= financial_derived(DS-230) statement 面板 MultiIndex(symbol,report_period)（每键 PIT 最新版本）
+  - 展开=按 announce_date as-of merge_asof 到日频（公告次日起可见，PIT）
+  - statement 非空行=129710
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.006189
+          icir: 0.117249
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.00358
+          icir: 0.053878
+          n_obs: 244
+        retain: 1.72891
+      '5':
+        holdout:
+          ic_mean: 0.004088
+          icir: 0.076581
+          n_obs: 236
+        is_ref:
+          ic_mean: -0.000728
+          icir: -0.009762
+          n_obs: 244
+        retain: 5.617673
+      '20':
+        holdout:
+          ic_mean: 0.004104
+          icir: 0.069349
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.004897
+          icir: -0.054745
+          n_obs: 244
+        retain: 0.838199
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.985546
+- factor_id: FCT-EXP-001
+  name_zh: 一致预期EP（盈利收益率）
+  factor_class: expectations
+  status: candidate
+  code_symbol: src/zephyr/factor/expectations.py::exp01_consensus_ep
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: coverage 0.47<0.6
+  adaptation:
+  - 数据=consensus_daily fy1（最小预测年>=当年）；close=后复权收盘（与回测同口径）
+  - 调真函数 exp01_consensus_ep(eps_consensus_fy1, close)
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.015225
+          icir: 0.137452
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.020548
+          icir: 0.264304
+          n_obs: 244
+        retain: 0.74095
+      '5':
+        holdout:
+          ic_mean: 0.026896
+          icir: 0.250795
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.043008
+          icir: 0.552911
+          n_obs: 244
+        retain: 0.625373
+      '20':
+        holdout:
+          ic_mean: 0.046906
+          icir: 0.493267
+          n_obs: 221
+        is_ref:
+          ic_mean: 0.077994
+          icir: 1.029463
+          n_obs: 244
+        retain: 0.60141
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.466452
+- factor_id: FCT-EXP-002
+  name_zh: 盈利修正动量
+  factor_class: expectations
+  status: candidate
+  code_symbol: src/zephyr/factor/expectations.py::exp02_revision_momentum
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: coverage 0.53<0.6
+  adaptation:
+  - 数据=consensus_daily fy1；eps_mean 缺列→用 eps_consensus（一致预期即均值，替代留痕）
+  - 调真函数 exp02_revision_momentum(eps, std, mean, k=20)（k=params.k_td）
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.003335
+          icir: 0.188937
+          n_obs: 53
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 47
+        retain: 3334.546619
+      '5':
+        holdout:
+          ic_mean: 0.003561
+          icir: 0.316483
+          n_obs: 51
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 49
+        retain: 3561.241867
+      '20':
+        holdout:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 43
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 46
+        retain: 0.0
+    headline:
+      ic_series_len_holdout: 51
+      coverage_holdout: 0.534078
+- factor_id: FCT-EXP-003
+  name_zh: 预期修正广度（上调占比）
+  factor_class: expectations
+  status: candidate
+  code_symbol: src/zephyr/factor/expectations.py::exp03_revision_breadth
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: HOLDOUT 有效 IC 日不足30（n=3）——面板退化
+  adaptation:
+  - '数据=research_report(fy1 槽位: publish_date/eps_fy1) + consensus_daily 同预测年序列'
+  - 调真函数 exp03_revision_breadth(report_eps, consensus_daily, window=90)（逐 symbol×fy 槽位；一致预期序列取与研报槽位同 forecast_year——窗内研报 fy1_year
+    主频 2027，consensus fy1 聚合 2026，按槽位年对齐）
+  - 产出研报日网格因子 symbol 数=2664 槽位数=2664（事件日散点，未前推——覆盖即真实研报覆盖）
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.003609
+          icir: 0.707107
+          n_obs: 3
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 3
+        retain: 3608.645124
+      '5':
+        holdout:
+          ic_mean: 0.012679
+          icir: 0.707107
+          n_obs: 3
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 3
+        retain: 12679.023407
+      '20':
+        holdout:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 2
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 3
+        retain: 0.0
+    headline:
+      ic_series_len_holdout: 3
+      coverage_holdout: 0.06006
+- factor_id: FCT-EXP-004
+  name_zh: 异常研报覆盖度
+  factor_class: expectations
+  status: candidate
+  code_symbol: src/zephyr/factor/expectations.py::exp04_anomaly_coverage
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: coverage 0.48<0.6
+  adaptation:
+  - coverage=n_reports/n_orgs（consensus_daily fy1）；特征=log_mv(stock_indicator.total_mv)+mom_63(kline)+turnover_20(kline.turnover
+    滚动20)
+  - 调真函数 exp04_anomaly_coverage(coverage_t, characteristics_t) 逐日截面
+  - 逐日截面回归完成 days=422
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.004022
+          icir: 0.041059
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.020369
+          icir: 0.230651
+          n_obs: 181
+        retain: 0.197435
+      '5':
+        holdout:
+          ic_mean: 0.0072
+          icir: 0.081002
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.038447
+          icir: 0.450224
+          n_obs: 181
+        retain: 0.187261
+      '20':
+        holdout:
+          ic_mean: 0.005249
+          icir: 0.055451
+          n_obs: 221
+        is_ref:
+          ic_mean: 0.05703
+          icir: 0.579316
+          n_obs: 181
+        retain: 0.092047
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.475256
+- factor_id: FCT-EXP-005
+  name_zh: 分析师分歧度
+  factor_class: expectations
+  status: candidate
+  code_symbol: src/zephyr/factor/expectations.py::exp05_dispersion
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: coverage 0.53<0.6
+  adaptation:
+  - 数据=consensus_daily fy1；调真函数 exp05_dispersion(std, mean)
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: -0.001607
+          icir: -0.079188
+          n_obs: 46
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 37
+        retain: 1606.995423
+      '5':
+        holdout:
+          ic_mean: -0.004714
+          icir: -0.353033
+          n_obs: 43
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 37
+        retain: 4714.052256
+      '20':
+        holdout:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 40
+        is_ref:
+          ic_mean: 0.0
+          icir: 0.0
+          n_obs: 37
+        retain: 0.0
+    headline:
+      ic_series_len_holdout: 43
+      coverage_holdout: 0.530665
+- factor_id: FCT-EXP-006
+  name_zh: 评级动量（评分制）
+  factor_class: expectations
+  status: candidate
+  code_symbol: src/zephyr/factor/expectations.py::exp06_rating_momentum
+  direction_declared: null
+  measured: true
+  verdict: rework
+  reason: coverage 0.47<0.6
+  adaptation:
+  - 数据=consensus_daily rating_score_mean（同日多预测年取均值）
+  - 调真函数 exp06_rating_momentum(mean, k=60)（k=params.k_td）
+  metrics:
+    per_horizon:
+      '1':
+        holdout:
+          ic_mean: 0.004244
+          icir: 0.104247
+          n_obs: 240
+        is_ref:
+          ic_mean: 0.000829
+          icir: 0.022759
+          n_obs: 184
+        retain: 5.117946
+      '5':
+        holdout:
+          ic_mean: 0.014052
+          icir: 0.340032
+          n_obs: 236
+        is_ref:
+          ic_mean: 0.001964
+          icir: 0.053299
+          n_obs: 184
+        retain: 7.15515
+      '20':
+        holdout:
+          ic_mean: 0.022129
+          icir: 0.484513
+          n_obs: 221
+        is_ref:
+          ic_mean: -0.014589
+          icir: -0.419471
+          n_obs: 184
+        retain: 1.516821
+    headline:
+      ic_series_len_holdout: 236
+      coverage_holdout: 0.473117

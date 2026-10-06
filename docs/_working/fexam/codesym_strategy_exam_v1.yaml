@@ -1,0 +1,571 @@
+doc_type: codesym_strategy_exam_scores
+version: v1
+lane: D道 M-8 wave2：策略 code_path 适配勘察+首波（23 个 code_path 全量）
+generated_at_utc: '2026-10-06 12:26:46.605783+00:00'
+source_registry: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（code_path 非空=23）
+prereg_v1:
+  windows:
+    holdout_exam:
+      start: '2025-10-09'
+      end: '2026-09-30'
+      note: 近12月干净窗，选样窗与考试窗分离
+    is_ref_decay:
+      start: '2024-10-08'
+      end: '2025-09-30'
+      note: 衰减参照窗，与考试窗不交
+  horizons:
+  - 1
+  - 5
+  - 20
+  headline_horizon: 5
+  factor_pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+    note: 初拟待Owner校（施工单§2口径）
+  indicator_pass_line:
+    abs_ic_5d_min: 0.02
+    regime_check: report_only
+    note: IC及格线同因子；regime_valid声明核对只报告不判死
+  strategy_pass_line:
+    oos_sharpe_min: 0.0
+    is_sharpe_min: 0.0
+    oos_maxdd_max: 0.3
+    activation_weight_band:
+      floor: 0
+      current: 0.1
+      ceiling: 0.3
+      step_cap: 0.2
+    note: 初拟待Owner校
+  strategy_device:
+    engine: DefaultBacktestEngine(MOD-BT-001)
+    execution_lag_days: 1
+    exclude_st: true
+    pit_filter: true
+    top_n: 20
+    rebalance: monthly
+    weighting: equal
+    single_run_split: 一次连续跑，nav按窗分段（IS/OOS同源同参数）
+  device_policy: IC考试=CPU pandas（spearman秩相关无GPU核，逐条可解释degrade）；批2整装=vectorized_engine CPU逐日（c4 GPU引擎为网格考专属，批2单跑非网格不适用0.53s/格口径）；degrade台账随册
+  regime_key: c1_backtest.regime_snapshot_history HMM四态argmax；<2019-04用SMA200 fallback
+  lookahead_note: 因子/指标册 last_updated=2026-09 晚于考试窗——registry 本身含前视风险，本考为存量清点口径（verdict 只证明窗内表现，不证明可上线），上线另走晋升门
+window_definition:
+  run:
+  - '2018-01-02'
+  - '2026-09-30'
+  is:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos_holdout:
+  - '2025-10-09'
+  - '2026-09-30'
+  separation_note: 单次连续跑 nav 按窗分段（与批2同口径）
+harness_note: code_path 车道口径：B 类 build(start,end)->(weights,closes) 信号面板直入标准装置 DefaultBacktestEngine(BacktestConfig() 缺省=PIT/剔ST/T+1/参与率上限/冲击成本全默认开)，单次连续跑
+  2018-01-02..2026-09-30，nav 分段 IS/OOS，judge=PREREG_V1.strategy_pass_line。语义披露：①引擎对非零权重行 Σ→1 归一（满仓口径），全零行=当日不下单维持持仓≠清仓（出场意图的现金态需
+  ShrinkageBacktestEngine 表达——适配工单，本批按装置缺省如实计量）；②translated 策略 build 内部已 shift(1) PIT，叠加引擎 execution_lag_days=1=双重保守滞后（无前视，批内统一可比）；③stock_indicator
+  估值/financial_derived 输入 2020-01 起覆盖，四只估值类 IS 前段无信号稀释 IS sharpe；④早期窗 hfq 覆盖稀疏（2018 初约 234 只/日）；⑤本批零既有文件改动，引擎数据采集器仅在本车道临时脚本内做同语义记忆化（消逐日全表扫描，判定逻辑零改动）。
+classification_legend:
+  A: 标准 Strategy 类接口（StrategyBase.generate_target_weights / TickStrategyBase.on_tick）
+  B: 可调用函数返回信号面板（translated 统一 build(start,end)->(weights,closes)）
+  C: 脚本型无信号出口（main() 产分布预测非权重）
+  D: 依赖实盘连接（QMT 等）禁碰——本批实测在码级无此类（tick 组=数据装置缺口，非实盘连接，如实归 A+rework）
+counts:
+  total: 23
+  B: 14
+  action_measured: 10
+  verdict_retire_candidate: 7
+  action_error: 3
+  verdict_rework: 16
+  action_rework: 10
+  A: 8
+  C: 1
+dsr_note: 本批判 zero DSR 记账（试次=13 次引擎跑，随判读呈报；正式记账待与批2合并窗口决定）
+results:
+- strategy_id: STR-MOMTREND-002
+  code_path: scripts/backtest/translated/c4_6986c63122a5_momtrend002_ma_cross.py
+  entry_form: build(start,end)->(weights,closes)
+  interface_class: B
+  knowledge_effective_from: '2026-10-05'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-1.78, oos=-3.06）
+  metrics:
+    is:
+      sharpe: -1.7838493299981442
+      max_drawdown: -0.8025432116061293
+      total_return: -0.7859823274456431
+      n_days: 1882
+    oos:
+      sharpe: -3.06132069781158
+      max_drawdown: -0.05549415003214859
+      total_return: -0.04841670901858419
+      n_days: 241
+  engine:
+    trades_count: 17651
+    win_rate: 0.4027319830428639
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 27
+    rows_with_signal: 2095
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-b2c14e77
+  signal_panel:
+    n_weight_cols: 564
+    n_cols_in_flat: 564
+    weight_rows_nonzero: 2096
+- strategy_id: STR-VREV-001
+  code_path: scripts/backtest/translated/c4_370d098d7c54_vrev001_warm_oversold.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-10-05'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-0.92, oos=-0.44）
+  metrics:
+    is:
+      sharpe: -0.9234322561103209
+      max_drawdown: -0.7694921281645578
+      total_return: -0.7683941316782249
+      n_days: 1882
+    oos:
+      sharpe: -0.4411782709070657
+      max_drawdown: -0.07343873523529475
+      total_return: -0.0273055862836995
+      n_days: 241
+  engine:
+    trades_count: 5994
+    win_rate: 0.46208195949128594
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 1044
+    rows_with_signal: 1078
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-4146dbf5
+  signal_panel:
+    n_weight_cols: 564
+    n_cols_in_flat: 564
+    weight_rows_nonzero: 1078
+- strategy_id: STR-VREV-002
+  code_path: scripts/backtest/translated/c4_cd3885d23838_vrev002_no_bottom_fish.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-10-05'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-0.30, oos=-2.58）
+  metrics:
+    is:
+      sharpe: -0.29643453565886546
+      max_drawdown: -0.5427447785381012
+      total_return: -0.3656010876601883
+      n_days: 1882
+    oos:
+      sharpe: -2.5764257490600104
+      max_drawdown: -0.13077274425858978
+      total_return: -0.12342433306087874
+      n_days: 241
+  engine:
+    trades_count: 27679
+    win_rate: 0.48563353744700893
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 160
+    rows_with_signal: 1962
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-c1dbcd84
+  signal_panel:
+    n_weight_cols: 564
+    n_cols_in_flat: 564
+    weight_rows_nonzero: 1963
+- strategy_id: STR-MOMTREND-019
+  code_path: scripts/backtest/translated/c4_7865eeda0157_momtrend019_first_breakout.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-10-05'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-0.64, oos=-2.21）
+  metrics:
+    is:
+      sharpe: -0.6396511691964673
+      max_drawdown: -0.8180332734505634
+      total_return: -0.7943850709032146
+      n_days: 1882
+    oos:
+      sharpe: -2.210956126740637
+      max_drawdown: -0.27069245357617727
+      total_return: -0.24008300167199115
+      n_days: 241
+  engine:
+    trades_count: 5608
+    win_rate: 0.442769665567593
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 621
+    rows_with_signal: 1501
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-660b990f
+  signal_panel:
+    n_weight_cols: 564
+    n_cols_in_flat: 564
+    weight_rows_nonzero: 1502
+- strategy_id: STR-TSMALL-001
+  code_path: scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-14'
+  knowledge_drift: true
+  action: error
+  verdict: rework
+  reason: 'engine_error: ImplausibleBacktestError: 回测合理性护栏拦截 (result_id=bt-bb973775): total_return=3.0284 超过合理上限 +300%（前视/无限流动性失真嫌疑）'
+  metrics: null
+  engine: null
+  engine_run_id: null
+  signal_panel:
+    n_weight_cols: 5819
+    n_cols_in_flat: 5818
+    weight_rows_nonzero: 2099
+  trace_tail:
+  - 'zephyr.backtest.core.engine_base.ImplausibleBacktestError: 回测合理性护栏拦截 (result_id=bt-bb973775): total_return=3.0284 超过合理上限
+    +300%（前视/无限流动性失真嫌疑）'
+  note: stock_indicator 估值 2020-01 起覆盖，IS 前段无信号=nav 平坦稀释 IS sharpe（装置如实）
+- strategy_id: STR-VAL-001
+  code_path: scripts/backtest/translated/c4_8d000bf3ccc3_pb_poe.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-14'
+  knowledge_drift: true
+  action: measured
+  verdict: rework
+  reason: is_sharpe=0.59 oos_sharpe=-0.08 oos_mdd=-37.57%
+  metrics:
+    is:
+      sharpe: 0.5875893509361393
+      max_drawdown: -0.5639104909866043
+      total_return: 1.2296716194390012
+      n_days: 1882
+    oos:
+      sharpe: -0.07968200570649928
+      max_drawdown: -0.37572231392295474
+      total_return: -0.09026086679022993
+      n_days: 241
+  engine:
+    trades_count: 2378
+    win_rate: 0.4262835609985869
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 382
+    rows_with_signal: 1740
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-66af4a07
+  signal_panel:
+    n_weight_cols: 5823
+    n_cols_in_flat: 5818
+    weight_rows_nonzero: 1740
+  note: 同上估值覆盖稀释
+- strategy_id: STR-VREV-026
+  code_path: scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-12'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-1.19, oos=-2.28）
+  metrics:
+    is:
+      sharpe: -1.1874320346453238
+      max_drawdown: -0.657287652180529
+      total_return: -0.6429978749369185
+      n_days: 1882
+    oos:
+      sharpe: -2.275716686289705
+      max_drawdown: -0.1033264884458629
+      total_return: -0.10175689535290722
+      n_days: 241
+  engine:
+    trades_count: 16276
+    win_rate: 0.45548751766368345
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 13
+    rows_with_signal: 2109
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-66c02848
+  signal_panel:
+    n_weight_cols: 564
+    n_cols_in_flat: 564
+    weight_rows_nonzero: 2110
+- strategy_id: STR-DABAN-023
+  code_path: scripts/backtest/translated/c4_4440d07f973f_ultrashort.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-13'
+  knowledge_drift: true
+  action: error
+  verdict: rework
+  reason: 'engine_error: ImplausibleBacktestError: 回测合理性护栏拦截 (result_id=bt-f05b6263): total_return=-0.9936 低于合理下限 -95%（无杠杆
+    long-only 不可能）'
+  metrics: null
+  engine: null
+  engine_run_id: null
+  signal_panel:
+    n_weight_cols: 3750
+    n_cols_in_flat: 3749
+    weight_rows_nonzero: 684
+  trace_tail:
+  - 'zephyr.backtest.core.engine_base.ImplausibleBacktestError: 回测合理性护栏拦截 (result_id=bt-f05b6263): total_return=-0.9936 低于合理下限
+    -95%（无杠杆 long-only 不可能）'
+- strategy_id: STR-VREV-027
+  code_path: scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-12'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-0.94, oos=-0.11）
+  metrics:
+    is:
+      sharpe: -0.9377459944487819
+      max_drawdown: -0.8324471207154341
+      total_return: -0.806139985617387
+      n_days: 1882
+    oos:
+      sharpe: -0.10644048191375846
+      max_drawdown: -0.22017429023343782
+      total_return: -0.05207645292360885
+      n_days: 241
+  engine:
+    trades_count: 3496
+    win_rate: 0.47150259067357514
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 27
+    rows_with_signal: 2095
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-4a6bccc6
+  signal_panel:
+    n_weight_cols: 564
+    n_cols_in_flat: 564
+    weight_rows_nonzero: 2096
+- strategy_id: STR-MULTIFACTOR-097
+  code_path: scripts/backtest/translated/c4_fact_4db4c41e.py
+  entry_form: build(s,e)（委托 factor_strategy_template.build_factor_weights）
+  interface_class: B
+  knowledge_effective_from: '2026-09-15'
+  knowledge_drift: true
+  action: measured
+  verdict: retire_candidate
+  reason: 双窗负Sharpe（is=-1.61, oos=-0.13）
+  metrics:
+    is:
+      sharpe: -1.605345945535587
+      max_drawdown: -0.8763708243971917
+      total_return: -0.8693727228094629
+      n_days: 1882
+    oos:
+      sharpe: -0.13393213594478645
+      max_drawdown: -0.018131259371450496
+      total_return: -0.0032052071470531907
+      n_days: 241
+  engine:
+    trades_count: 7449
+    win_rate: 0.46019783325482805
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 5
+    rows_with_signal: 2117
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-09a1b160
+  signal_panel:
+    n_weight_cols: 39
+    n_cols_in_flat: 39
+    weight_rows_nonzero: 2117
+  note: 符号归一 shim 重考（symbol_canonical→裸6位，纯格式映射）
+- strategy_id: STR-MULTIFACTOR-098
+  code_path: scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-14'
+  knowledge_drift: true
+  action: measured
+  verdict: rework
+  reason: is_sharpe=0.05 oos_sharpe=-0.04 oos_mdd=-39.63%
+  metrics:
+    is:
+      sharpe: 0.05187952834706664
+      max_drawdown: -0.7654207517401198
+      total_return: -0.17731480723068793
+      n_days: 1882
+    oos:
+      sharpe: -0.04207433687808407
+      max_drawdown: -0.396289690722283
+      total_return: -0.0805326371829862
+      n_days: 241
+  engine:
+    trades_count: 9253
+    win_rate: 0.437588318417334
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 1
+    rows_with_signal: 2121
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-e290dad6
+  signal_panel:
+    n_weight_cols: 5830
+    n_cols_in_flat: 5818
+    weight_rows_nonzero: 2122
+  note: 同上估值覆盖稀释
+- strategy_id: STR-MULTIFACTOR-099
+  code_path: scripts/backtest/translated/c4_8664521af1a0_snake_cap.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-14'
+  knowledge_drift: true
+  action: measured
+  verdict: rework
+  reason: is_sharpe=0.46 oos_sharpe=-1.26 oos_mdd=-47.04%
+  metrics:
+    is:
+      sharpe: 0.4581534218880993
+      max_drawdown: -0.43928582695070467
+      total_return: 1.0536360245504102
+      n_days: 1882
+    oos:
+      sharpe: -1.2585432916634798
+      max_drawdown: -0.4703938484670585
+      total_return: -0.31877082192857575
+      n_days: 241
+  engine:
+    trades_count: 8304
+    win_rate: 0.49646726330664154
+    overfitting_flag: true
+    skipped_fills: 0
+    rows_all_zero: 1
+    rows_with_signal: 2121
+    swallowed_cash_mass: 0.0
+  engine_run_id: bt-457d17c6
+  signal_panel:
+    n_weight_cols: 5194
+    n_cols_in_flat: 5189
+    weight_rows_nonzero: 2122
+  note: 同上估值覆盖稀释
+- strategy_id: STR-MOMTREND-033
+  code_path: scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-12'
+  knowledge_drift: true
+  action: error
+  verdict: rework
+  reason: 'engine_error: ImplausibleBacktestError: 回测合理性护栏拦截 (result_id=bt-3c45feb0): trades_count=0 空跑（信号/撮合/配置失真嫌疑；确需空跑对照请
+    allow_empty_trades=True）'
+  metrics: null
+  engine: null
+  engine_run_id: null
+  signal_panel:
+    n_weight_cols: 1
+    n_cols_in_flat: 0
+    weight_rows_nonzero: 726
+  trace_tail:
+  - 'zephyr.backtest.core.engine_base.ImplausibleBacktestError: 回测合理性护栏拦截 (result_id=bt-3c45feb0): trades_count=0 空跑（信号/撮合/配置失真嫌疑；确需空跑对照请
+    allow_empty_trades=True）'
+  note: 标的=000300 指数，不在股票 flat：预期引擎 sanity guard（trades=0）error 如实记
+- strategy_id: STR-VREV-025
+  code_path: scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py
+  entry_form: build
+  interface_class: B
+  knowledge_effective_from: '2026-09-12'
+  knowledge_drift: true
+  action: rework
+  verdict: rework
+  reason: 指数/ETF 执行通道缺失：策略标的为指数（kline_index），标准装置 flat 仅股票（kline_daily_hfq）；且指数码与股票码同空间碰撞（000001=上证指数/平安银行、000852=中证1000/石化机械）直接喂引擎=假测错标的。工单：装置增指数/ETF
+    价格腿（kline_index/kline_etf_daily）+同码碰撞防护闸
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+  note: 权重腿=000001/000852 指数（撞股票码），跑=假测平安银行/石化机械，禁跑
+- strategy_id: STR-MULTIFACTOR-069
+  code_path: src/zephyr/pf_core/vwap_reversion_strategy.py + intraday_surge_fall_strategy.py
+  entry_form: VWAPReversionStrategy.on_tick / IntradaySurgeFallStrategy.on_tick -> {symbol:weight}
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: tick/盘口数据装置缺口：tick_depth_5 仅 2026-07-24..2026-09-30、tick_data 仅 2026-01-05..2026-09-30，OOS（2025-10-09 起）前段无数据；且标准装置=日频
+    DefaultBacktestEngine 无法表达 on_tick 级 T+0 round-trip。工单：①回补 2025-10-08..2026-01-04 tick+5档盘口；②建 EDE tick 考试道（tick_replay+matching_logic），禁止在日线装置凑数
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-VREV-017
+  code_path: src/zephyr/pf_core/intraday_surge_fall_strategy.py
+  entry_form: IntradaySurgeFallStrategy.on_tick
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: tick/盘口数据装置缺口：tick_depth_5 仅 2026-07-24..2026-09-30、tick_data 仅 2026-01-05..2026-09-30，OOS（2025-10-09 起）前段无数据；且标准装置=日频
+    DefaultBacktestEngine 无法表达 on_tick 级 T+0 round-trip。工单：①回补 2025-10-08..2026-01-04 tick+5档盘口；②建 EDE tick 考试道（tick_replay+matching_logic），禁止在日线装置凑数
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-VREV-018
+  code_path: src/zephyr/pf_core/vwap_reversion_strategy.py
+  entry_form: VWAPReversionStrategy.on_tick
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: tick/盘口数据装置缺口：tick_depth_5 仅 2026-07-24..2026-09-30、tick_data 仅 2026-01-05..2026-09-30，OOS（2025-10-09 起）前段无数据；且标准装置=日频
+    DefaultBacktestEngine 无法表达 on_tick 级 T+0 round-trip。工单：①回补 2025-10-08..2026-01-04 tick+5档盘口；②建 EDE tick 考试道（tick_replay+matching_logic），禁止在日线装置凑数
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-VREV-019
+  code_path: src/zephyr/pf_core/vwap_reversion_strategy.py
+  entry_form: VWAPReversionStrategy.on_tick
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: tick/盘口数据装置缺口：tick_depth_5 仅 2026-07-24..2026-09-30、tick_data 仅 2026-01-05..2026-09-30，OOS（2025-10-09 起）前段无数据；且标准装置=日频
+    DefaultBacktestEngine 无法表达 on_tick 级 T+0 round-trip。工单：①回补 2025-10-08..2026-01-04 tick+5档盘口；②建 EDE tick 考试道（tick_replay+matching_logic），禁止在日线装置凑数
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-VREV-024
+  code_path: src/zephyr/pf_core/orderbook_imbalance_strategy.py
+  entry_form: OrderBookImbalanceStrategy.on_tick
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: tick/盘口数据装置缺口：tick_depth_5 仅 2026-07-24..2026-09-30、tick_data 仅 2026-01-05..2026-09-30，OOS（2025-10-09 起）前段无数据；且标准装置=日频
+    DefaultBacktestEngine 无法表达 on_tick 级 T+0 round-trip。工单：①回补 2025-10-08..2026-01-04 tick+5档盘口；②建 EDE tick 考试道（tick_replay+matching_logic），禁止在日线装置凑数
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-DABAN-022
+  code_path: src/zephyr/pf_core/strategies/daban_sleeve_strategy.py
+  entry_form: DabanSleeveStrategy.generate_target_weights / build_weight_panel_for_dates（lane A 已消费）
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: 决策负载表 c1_market.daban_engine_load 仅 1651 行（2026-09-01..09-28），OOS 几乎全窗无数据。接口现成（build_weight_panel_for_dates 即权重面板出口）；工单=daban_load_producer
+    历史回补至 2025-10 前后即可考
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+  note: 非实盘连接：经 DatabaseService PIT 真读持久化负载
+- strategy_id: STR-MULTIFACTOR-096
+  code_path: src/zephyr/pf_core/strategies/multifactor_sleeve_strategy.py
+  entry_form: MultifactorSleeveStrategy.generate_target_weights(universe,signals,constraints)->dict
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: 无因子输入契约：册内 alpha_sources=[]、factor_dependencies=[]——喂什么截面=私货（禁）。工单=册内登记该 sleeve 消费的 factor_id 清单+ic_weights 离线产出约定（compute_ic_weights
+    已备），即可按月频截面注粮接入标准装置
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-EVENT-001
+  code_path: src/zephyr/pf_core/strategies/event_driven_sleeve_strategy.py
+  entry_form: EventDrivenSleeveStrategy.generate_target_weights(universe,signals,constraints)->dict
+  interface_class: A
+  action: rework
+  verdict: rework
+  reason: '依赖 event_score（[MATURITY] design，事件链 NLP 管道未闭环 #ARCH-NLP-PIPELINE-001）+EventRecord/分钟级异动确认输入；无历史事件数据供给。工单=事件数据管道闭环+历史事件回填后方可考'
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数
+- strategy_id: STR-E-TIMING-001
+  code_path: scripts/backtest/lane_e_quantile_baseline.py
+  entry_form: main()/run_quantile_walkforward（产出 q05/q50/q95 分布预测，非权重面板）
+  interface_class: C
+  action: rework
+  verdict: rework
+  reason: 分布预测→仓位映射层缺失（q05/q50/q95 无交易语义）；且预测标的=000300 指数，同指数/ETF 执行通道缺口。工单=定义分布→持仓规则（如 q05 分位择时阈值）+指数/ETF 执行腿，映射层属新增逻辑须 Owner
+    过目
+  not_run_reason: 装置/数据缺口，按硬纪律不运行不凑数

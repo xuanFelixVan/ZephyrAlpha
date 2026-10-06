@@ -1,0 +1,399 @@
+# state_recognizer_exam_v1 — 市场状态识别器（HMM 四态）准确度考试分数册
+# lane=J道 | doc_type=fexam_state_recognizer_scores | 考窗 2019-04-01..2026-08-31（2026-09 前向缓冲）
+# generated_at_utc=2026-10-06T12:18:20.721795+00:00
+# state_recognizer_exam_v1 — prereg 冻结块（2026-10-06 开跑前落盘；判据事前定，禁看分改）
+# 本快照存于 .runtime/tmp/st-matrix-20261006/prereg_snapshot_v1.yaml，与最终分数册 prereg 块逐字一致。
+prereg_v1:
+  exam_window:
+    start: '2019-04-01'
+    end: '2026-08-31'
+    forward_buffer: '2026-09-30'
+    note: 考窗留 2026-09 做前向缓冲（fwd20 标签可用）；fwd60 尾部越窗行按 NaN 丢弃并如实报 n
+  proxy:
+    primary: 000300 指数收盘价
+    source: c1_market.kline_index（symbol='000300'，5282 行，2005-01-04..2026-09-30，考窗全覆盖）
+    deviation_note: 施工单初拟查 c1_market.kline_daily——实测该表无 000300（count=0），000300 真源在同库 kline_index，属同一指数更优真源，如实标注非改判据
+    fallback: 全市场等权均值代理（ch_data.sma_regime_fallback 同源口径）——本考未触发（kline_index 覆盖齐全）
+  hmm_states:
+    table: c1_backtest.regime_snapshot_history
+    loader: scripts/backtest/fexam/ch_data.py load_regime_states（同日多快照去重取末笔=最新检测态）
+    labels: p_r1=ranging_low_vol / p_r2=ranging_mid_vol / p_r3=trend_up / p_r4=trend_down（argmax）
+    pit_semantics: 表本身 PIT 设计（trade_date=t 行的检测信息 ≤ t-1，勿用当日行外推当日）；本考 state(t) 原样对齐，前向收益=close(t)→close(t+h)，不加额外滞后
+  realized_state_definition:   # 事前冻结，逐字执行
+    fwd20: close(t+20)/close(t)-1（000300 交易日口径）
+    rv20: 000300 日收益率（pct_change）滚动 20 日标准差
+    rv_pct: rv20 在考窗截面内的百分位秩（实现已然标签允许用窗内信息； tercile 边界=1/3、2/3）
+    labels:
+      trend_up: fwd20 > 0 且 rv_pct ≤ 2/3
+      trend_down: fwd20 < 0
+      ranging_low_vol: 其余（fwd20 ≥ 0 且 rv_pct > 2/3，或 fwd20 == 0）且 rv_pct ≤ 1/3
+      ranging_mid_vol: 其余且 rv_pct > 1/3
+    drop_rule: fwd20 为 NaN 的考窗尾部行从一切 realized 相关指标剔除，如实报 n
+  pass_criteria:   # 初拟待 Owner 校，全部事前冻结
+    c1_trend_up_hit: P(fwd20>0 | HMM=trend_up) ≥ 0.55
+    c2_trend_down_hit: P(fwd20<0 | HMM=trend_down) ≥ 0.55
+    c3_confusion_diag: 混淆矩阵对角线占比（trace/N，HMM 行 × realized 列）≥ 0.40（四类随机基线 0.25）
+    c4_switch_lag: 真实体制转折→HMM 换挡滞后 median(|lag|) ≤ 5 个交易日
+    c5_baseline_dominance: 对 SMA200 土办法基线同口径四指标（①②③④）全部不劣于（HMM ≥ baseline，无容差）
+  switch_lag_protocol:
+    realized_change_points: realized(t) ≠ realized(t-1) 且前后两段均 ≥5 个交易日的边界（滤单日毛刺）
+    hmm_change_points: HMM 态序列逐日变化点，不加持续过滤（保真反映识别器抖动）
+    lag: 每个 realized 转折点到最近 HMM 变化点的有符号交易日距离（取 |lag| 最小者）；±20 交易日截断；另报 |lag|≤5 占比、P90、max
+    calendar: 000300 交易日历（考窗内）
+  baseline:
+    sma200: 000300 收盘价 200 日简单均线（min_periods=200；2005 起算，考窗内无预热缺口）
+    state: close > SMA200 → trend_up，否则 trend_down（两态）
+    same_caliber_metrics: ①（trend_up 行 P(fwd20>0)）、②（trend_down 行 P(fwd20<0)）、③（基线标签==realized 四类标签占比）、④（同 lag 协议）
+  verdict_rule:
+    qualified: ①②③④⑤ 全过
+    conditionally_qualified: ①②③ 全过、仅 ④ 和/或 ⑤ 未过（准头够、及时性/基线劣势）
+    unqualified: ①②③ 任一未过
+  sentiment_layer: report_only 盘点（无及格线）：MOD-ALT-EMOTION-INDEX-BUILDER blueprint 读态 + news_score_daily 实测（CH 只读）
+
+# ======== 以下为开跑后结果（prereg 块以上逐字冻结） ========
+exam_execution:
+  generated_at_utc: '2026-10-06T12:18:20.721795+00:00'
+  scripts: .runtime/tmp/st-matrix-20261006/state_exam_data.py / state_exam_run.py / state_exam_report.py
+  data_sources:
+    hmm_states: c1_backtest.regime_snapshot_history（3632 行/1822 日，同日多快照取末笔=最新检测态，PIT 按表设计）
+    proxy: c1_market.kline_index symbol=000300 close（5282 行 2005-01-04..2026-09-30；kline_daily 实测无 000300，fallback
+      等权代理未触发）
+    read_only: CH 全程只读 SELECT；本项目零既有文件改动、零 git 操作
+  n_rows: 1801
+  hmm_state_dist:
+    ranging_low_vol: 646
+    trend_up: 575
+    ranging_mid_vol: 335
+    trend_down: 245
+  realized_state_dist:
+    trend_down: 930
+    trend_up: 554
+    ranging_mid_vol: 317
+  realized_empty_classes:
+  - ranging_low_vol
+  fwd_nan_dropped:
+    fwd5: 0
+    fwd20: 0
+    fwd60: 39
+criteria_frozen_result:
+  ①_c1_pass:
+    criterion: trend_up 态 P(fwd20>0) ≥ 55%
+    pass: false
+  ②_c2_pass:
+    criterion: trend_down 态 P(fwd20<0) ≥ 55%
+    pass: false
+  ③_c3_pass:
+    criterion: 混淆矩阵对角线占比 ≥ 40%
+    pass: false
+  ④_c4_pass:
+    criterion: 换挡滞后 median|lag| ≤ 5 交易日
+    pass: true
+  ⑤_c5_pass:
+    criterion: 四指标全面不劣于 SMA200 基线
+    pass: false
+table1_hit_rate:
+- state: ranging_low_vol
+  n: 646
+  fwd5:
+    n: 646
+    mean: 0.001329
+    median: 0.000465
+    win_rate: 0.5077
+  fwd20:
+    n: 646
+    mean: 0.000647
+    median: -0.007001
+    win_rate: 0.4489
+  fwd60:
+    n: 641
+    mean: 0.013233
+    median: 0.000966
+    win_rate: 0.5039
+- state: ranging_mid_vol
+  n: 335
+  fwd5:
+    n: 335
+    mean: -6.5e-05
+    median: 0.002743
+    win_rate: 0.5313
+  fwd20:
+    n: 335
+    mean: -0.001189
+    median: -0.002675
+    win_rate: 0.4716
+  fwd60:
+    n: 335
+    mean: 0.009807
+    median: -0.004186
+    win_rate: 0.4776
+- state: trend_up
+  n: 575
+  fwd5:
+    n: 575
+    mean: -0.000423
+    median: -0.000582
+    win_rate: 0.4922
+  fwd20:
+    n: 575
+    mean: 0.006977
+    median: 0.001993
+    win_rate: 0.5217
+  fwd60:
+    n: 541
+    mean: 0.009725
+    median: 0.002614
+    win_rate: 0.5213
+- state: trend_down
+  n: 245
+  fwd5:
+    n: 245
+    mean: 0.00284
+    median: 0.002825
+    win_rate: 0.5306
+  fwd20:
+    n: 245
+    mean: 0.00205
+    median: 0.000651
+    win_rate: 0.502
+  fwd60:
+    n: 245
+    mean: 0.002679
+    median: 0.006481
+    win_rate: 0.5306
+table2_confusion:
+  n: 1801
+  counts:
+    ranging_low_vol:
+      ranging_mid_vol: 110
+      trend_up: 180
+      trend_down: 356
+    ranging_mid_vol:
+      ranging_mid_vol: 52
+      trend_up: 106
+      trend_down: 177
+    trend_up:
+      ranging_mid_vol: 103
+      trend_up: 197
+      trend_down: 275
+    trend_down:
+      ranging_mid_vol: 52
+      trend_up: 71
+      trend_down: 122
+  row_normalized:
+    ranging_low_vol:
+      ranging_mid_vol: 0.1703
+      trend_up: 0.2786
+      trend_down: 0.5511
+    ranging_mid_vol:
+      ranging_mid_vol: 0.1552
+      trend_up: 0.3164
+      trend_down: 0.5284
+    trend_up:
+      ranging_mid_vol: 0.1791
+      trend_up: 0.3426
+      trend_down: 0.4783
+    trend_down:
+      ranging_mid_vol: 0.2122
+      trend_up: 0.2898
+      trend_down: 0.498
+  diag_share: 0.206
+  diag_note: 对角线=HMM 态与 realized 四类标签同名；realized 档 ranging_low_vol 恒空（prereg 定义推论，见定义）
+  majority_class_share: 0.5164
+  majority_class: trend_down
+table3_switch_lag_hmm:
+  n_realized_turns: 38
+  n_pred_change_points_raw: 128
+  median_abs_lag: 4.5
+  mean_abs_lag: 7.89
+  p90_abs_lag: 20.0
+  max_abs_lag: 20.0
+  share_within_5d: 0.5263
+  signed_lags:
+  - 3
+  - -20
+  - 4
+  - 0
+  - -8
+  - 20
+  - -3
+  - -11
+  - 9
+  - 0
+  - -3
+  - -6
+  - 19
+  - 1
+  - -3
+  - 12
+  - 0
+  - 4
+  - -8
+  - -14
+  - 1
+  - -13
+  - -3
+  - 3
+  - 20
+  - -3
+  - -10
+  - 0
+  - -3
+  - 20
+  - -2
+  - 1
+  - 0
+  - 12
+  - 5
+  - -16
+  - -20
+  - -20
+table4_baseline_vs_sma200:
+  hmm:
+    c1_trend_up_p_fwd20_pos: 0.5217
+    c2_trend_down_p_fwd20_neg: 0.498
+    c3_diag_share: 0.206
+    lag:
+      n_realized_turns: 38
+      n_pred_change_points_raw: 128
+      median_abs_lag: 4.5
+      mean_abs_lag: 7.89
+      p90_abs_lag: 20.0
+      max_abs_lag: 20.0
+      share_within_5d: 0.5263
+      signed_lags:
+      - 3
+      - -20
+      - 4
+      - 0
+      - -8
+      - 20
+      - -3
+      - -11
+      - 9
+      - 0
+      - -3
+      - -6
+      - 19
+      - 1
+      - -3
+      - 12
+      - 0
+      - 4
+      - -8
+      - -14
+      - 1
+      - -13
+      - -3
+      - 3
+      - 20
+      - -3
+      - -10
+      - 0
+      - -3
+      - 20
+      - -2
+      - 1
+      - 0
+      - 12
+      - 5
+      - -16
+      - -20
+      - -20
+  sma200:
+    c1_trend_up_p_fwd20_pos: 0.5104
+    c2_trend_down_p_fwd20_neg: 0.5542
+    c3_diag_share: 0.427
+    lag:
+      n_realized_turns: 38
+      n_pred_change_points_raw: 65
+      median_abs_lag: 20.0
+      mean_abs_lag: 13.66
+      p90_abs_lag: 20.0
+      max_abs_lag: 20.0
+      share_within_5d: 0.3158
+      signed_lags:
+      - 20
+      - 20
+      - 20
+      - 0
+      - -5
+      - 0
+      - -20
+      - -20
+      - 20
+      - 9
+      - -1
+      - -20
+      - 2
+      - -20
+      - -20
+      - 1
+      - 0
+      - -4
+      - -20
+      - -20
+      - 20
+      - 20
+      - 20
+      - 0
+      - 20
+      - -20
+      - -20
+      - 20
+      - 0
+      - -20
+      - 20
+      - 20
+      - 20
+      - 5
+      - -1
+      - -12
+      - -19
+      - -20
+  dominance:
+    c1_hmm_ge_sma: true
+    c2_hmm_ge_sma: false
+    c3_hmm_ge_sma: false
+    c4_hmm_ge_sma: true
+    all_pass: false
+sentiment_layer_inventory:
+  emotion_index_builder:
+    blueprint: docs/03_modules/MOD-ALT-EMOTION-INDEX-BUILDER.md（blueprint Draft；depgraph 五图对齐=production，2 file
+      节点）
+    code: src/zephyr/alt_data/emotion_index_builder.py（纯计算零写库）；落表 c1_market.emotion_index
+    table_total_rows: 8659
+    table_full_range:
+    - '1991-06-10'
+    - '2026-10-05'
+    exam_window_rows: 1801
+    exam_window_stage_version: close_final/v0.1.0
+    can_test_now: 现在能考——考窗 1801 个交易日全覆盖（close_final/v0.1.0），可与 HMM 态逐日对齐做情绪-体制联动考
+    missing: 缺 prereg 及格线与版本稳定性承诺（v0.1.0 evolving，1991 年起回填段质量未验），考分只能证窗内联动不能证可上线
+  news_score_daily:
+    table_exists: false
+    closest_tables:
+      c3_fundamental.news_sentiment_score:
+        rows: 7947739
+        range:
+        - '2010-01-02 00:00:00.000'
+        - '2026-10-04 04:34:35.000'
+        grain: 事件级（news_id+polarity）
+      c3_fundamental.news_data:
+        rows: 8118037
+      c1_market.news_sentiment_window:
+        rows_by_type:
+          night/symbol: 19635
+          night/market: 196
+    can_test_now: 现在能考（间接）——事件级 795 万行可按日聚合出情绪曲线再考与 regime 的区分力，聚合口径需先 prereg
+    missing: 缺日频落地表 news_score_daily（实测 system.tables 无此名）；market 级日窗仅 196 行，覆盖太薄
+verdict:
+  overall: 不合格
+  rule: ①②③ 任一未过=不合格（prereg 冻结规则）
+verdict_notes:
+- ①=52.17%（差 2.83pp）②=49.80%（差 5.20pp，且 trend_down 态 fwd20 均值为正 +0.21%——识别器喊熊的日子随后反而反弹）③=20.62%，低于 40% 线也低于 25%
+  均匀随机线
+- ③判读必须带类失衡警示：realized 档 ranging_low_vol 恒空（冻结定义推论：残差档 rv_pct 恒>2/3），trend_down 占 51.64%——多数类零模型基线即 51.64%，均匀随机
+  25% 不是本矩阵的正确零假设；但 HMM 20.62% 连多数类基线的一半都不到，'准头不足'结论对该警示稳健
+- ④过线（median 4.5≤5）但 HMM 原始变化点 128 个 vs 真实转折 38 个——识别器抖动约 3.4 倍，及时性靠抖动换来的嫌疑未排除（share|lag|≤5 仅 52.6%，P90=20 截断值）
+- ⑤逐项：c1 HMM 52.17%≥SMA 51.04% 胜、c2 HMM 49.80%<SMA 55.42% 负、c3 HMM 20.62%<SMA 42.67% 大幅负、c4 HMM 4.5≤SMA 20.0 胜——2胜2负不构成全面压过
+- 本考只证明窗内（2019-04..2026-08）识别器表现，不构成上线判断；判据线为初拟待 Owner 校（prereg 已声明）

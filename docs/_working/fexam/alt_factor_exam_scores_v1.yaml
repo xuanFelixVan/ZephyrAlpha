@@ -1,0 +1,1113 @@
+doc_type: fexam_alt_factor_scores
+version: v1
+lane: A道 wave-2（S级另类因子落地+考试）
+campaign: matrix-20261006
+generated_at_utc: '2026-10-06 10:34:03.330999+00:00'
+truth_source_spec_cards:
+- card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A13.md
+  family_id: M1-ALT-A13
+  frozen_note: 卡面 status=draft_pre_freeze，本考=卡面计算式首批实弹；照卡计算，禁改卡
+- card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A06.md
+  family_id: M1-ALT-A06
+  frozen_note: 卡面 status=draft_pre_freeze，本考=卡面计算式首批实弹；照卡计算，禁改卡
+- card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A08.md
+  family_id: M1-ALT-A08
+  frozen_note: 卡面 status=draft_pre_freeze，本考=卡面计算式首批实弹；照卡计算，禁改卡
+- card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A15.md
+  family_id: M1-ALT-A15
+  frozen_note: 卡面 status=draft_pre_freeze，本考=卡面计算式首批实弹；照卡计算，禁改卡
+prereg_v1_frozen:
+  windows:
+    holdout_exam:
+    - '2025-10-09'
+    - '2026-09-30'
+    is_ref_decay:
+    - '2024-10-08'
+    - '2025-09-30'
+    note: 任务冻结窗（fexam prereg v1 同源）；选样窗与考试窗分离
+  factor_pass_line:
+    abs_ic_min: 0.02
+    icir_min: 0.3
+    ic_retain_min: 0.5
+    note: 初拟待Owner校（施工单§2口径）
+  coverage_min: 0.6
+  horizon_policy: '截面因子按卡面前瞻（A13: 10/20/60 headline=20；A06: 5/10/20 headline=5）；条件化按卡面分桶考法'
+  window_policy:
+  - 数据起点晚/中途缺口的源按'数据可得窗'考并单独标注（禁假装全窗）
+  - 截面因子窗口完整性（HOLDOUT 有效因子日占比）<0.9 时 pass 降级 rework（本册冻结）
+  - 条件化：A08 判窗=卡面 OOS；A15 判窗=任务 HOLDOUT；桶边界一律卡面 IS 钉死
+  - A15 边界退化规则（跑数前冻结）：IS 期 f_med 在 HL 默认基率 1.25e-05 有原子（质量 56.5%）致 q33==q66 → low=<q33 / mid=原子基线 / high=>q66
+  verdict_mapping_conditional:
+    A08: pass=Sharpe差(高桶-低桶)>0 且 bootstrap 90%CI 不含0（升考证据档）；rework=方向正但CI含0；retire_candidate=方向证伪
+    A15: pass=拥挤桶 MaxDD 改善>=5pp 且收益不劣化（卡面阈值）；rework=改善<5pp 或收益劣化或判据不可计算；retire_candidate=改善<=0
+  frozen_before_run:
+  - A08 出口链板块清单={880431.SH船舶, 880461.SH水运, 880468.SH港口}（规则=sector_code_name_map industry_l2 名称∈{船舶,水运,港口}，对齐卡面机制行；排除清单随册）
+  - bootstrap seed=20261006, iid 组内重排 1000 次
+  - A15 退化分桶规则（见 window_policy）
+device_ledger:
+- object: alt_factor_ic_exam
+  device: cpu
+  reason: fast_rank_ic=逐日秩变换+Pearson（pandas 向量化），spearman 秩相关无 GPU 核，GPU 无收益
+- object: conditional_bucket_exam
+  device: cpu
+  reason: 分桶 Sharpe/bootstrap（numpy+scipy.stats.spearmanr），CPU 毫秒级，无 GPU 核
+- object: ch_access
+  device: cpu
+  reason: ch_data 只读 HTTP(8123) TSV 拉取，网络 IO 非算力
+regime_source: regime_table
+data_plane_findings:
+- c1_market.money_flow 存在 8.5 个月数据缺口（2025-09-10..2026-05-31），月度行数 202509=36,005（半月）后直跳 202606——A06 判据按数据可得窗+完整性降级
+- c1_market.kline_sector_880.sector_name 全空（763,260 行 0 非空）——板块名经 c1_market.sector_code_name_map 典表解析（argMax by ingest_ts），v_kline_sector_880_named
+  视图经网关查询 404 不可用
+- c1_market.hl_funding_history 实为逐小时结算（24 小时×~198K 条/时），卡面'8h 费率'描述与库内粒度偏差如实记录；聚合口径（中位数/占比）不受影响
+- c3_fundamental.shareholder_count 同日多披露 18,464 对（2024 起）→ 按 (symbol,announce_date) 取 ingest_ts 末条（卡面规则）；holder_count 空值 687
+  条剔除
+- 股东户数披露频率（2024-10-08 起/票）：p10=8 p50=8 p90=57 条——自愿披露混杂，样本构成漂移风险随卡面如实记
+- kline_daily_hfq：10,097,728 行 / 5,912 票 / 1990-12-19..2026-09-30（全窗可用）；money_flow∩kline 符号格式一致（裸代码）
+- 股东户数披露质量 flag：data_source=bdpan 501,958 / akshare 12,437
+counts:
+  total: 9
+  pass: 0
+  rework: 4
+  retire_candidate: 5
+families:
+- family_id: M1-ALT-A13
+  card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A13.md
+  hypothesis: 股东户数下降=筹码集中（散户离场/机构吸筹），对个股未来 10-60 日收益有正向预测力
+  mechanism: 股东户数是筹码持有者分散度的直接读数，户数下降=筹码从散户向大资金转移，知情方建仓在先、定价随后
+  table: c3_fundamental.shareholder_count
+  table_facts: 514,395 行 / 5,906 票 / 1993-01-12..2026-09-30（CH 实测与卡面一致）
+  window_note: 33 年全史，考试窗（2024-10 起）无缺口；asof 投影按 announce_date<t（禁 end_date 对齐）
+  headline: 前瞻 10/20/60 交易日，headline=20（卡面中位前瞻）
+  factors:
+  - object_id: ALT-A13-CHG
+    kind: factor
+    family_id: M1-ALT-A13
+    route: cross_section_ic
+    variant_note: 主因子：对数户数降幅 asof 投影（正=筹码集中）
+    formula: f_chg(t) = -[log h(t) - log h(t_prev_disclose)]; h=holder_count asof(announce_date<=t-1)
+    pit_note: announce_date 严格 < t（=≤t-1 自然日）；end_date 禁用于时点对齐（卡面）；同日多披露取 ingest_ts 末条
+    horizons_card:
+    - 10
+    - 20
+    - 60
+    headline_horizon: 20
+    verdict: retire_candidate
+    reason: clean窗无可测alpha（|ic|=0.0019, |icir|=0.04）
+    pass_line:
+      abs_ic_min: 0.02
+      icir_min: 0.3
+      ic_retain_min: 0.5
+      note: 初拟待Owner校（施工单§2口径）
+    metrics:
+      per_horizon:
+        '10':
+          holdout:
+            ic_mean: 0.00055071869799407
+            icir: 0.010571900604188875
+            n_obs: 231
+          is_ref:
+            ic_mean: 0.025084322583632482
+            icir: 0.6235936661583679
+            n_obs: 244
+          retain: 0.02195469684931472
+          ic_dates_holdout: 231
+        '20':
+          holdout:
+            ic_mean: -0.001873676582415272
+            icir: -0.04150345254178157
+            n_obs: 221
+          is_ref:
+            ic_mean: 0.02707291062775682
+            icir: 0.6633948658260143
+            n_obs: 244
+          retain: 0.0692085386819939
+          ic_dates_holdout: 221
+        '60':
+          holdout:
+            ic_mean: -0.022687964237923488
+            icir: -0.49975099553161434
+            n_obs: 181
+          is_ref:
+            ic_mean: 0.041421829918362824
+            icir: 1.2556263925250362
+            n_obs: 244
+          retain: 0.5477296460016032
+          ic_dates_holdout: 181
+      headline:
+        coverage_holdout: 0.9879803290286127
+        window_integrity_holdout: 1.0
+        turnover_proxy: 0.10927126934946252
+        regime_ic:
+          ranging_low_vol:
+            ic_mean: -0.009551734380474514
+            n_obs: 98
+          ranging_mid_vol:
+            ic_mean: .nan
+            n_obs: 20
+          trend_up:
+            ic_mean: 0.007019457733394135
+            n_obs: 103
+    regime_source: regime_table
+  - object_id: ALT-A13-CHG60
+    kind: factor
+    family_id: M1-ALT-A13
+    route: cross_section_ic
+    variant_note: 季度对齐变体：60 交易日对数户数降幅
+    formula: f_chg60(t) = -[log h(t) - log h(t-60交易日 asof)]
+    pit_note: 同上；60 交易日=市场交易日历
+    horizons_card:
+    - 10
+    - 20
+    - 60
+    headline_horizon: 20
+    verdict: rework
+    reason: '|ic|=0.0119(线0.02) icir=0.26(线0.3) retain=0.27(线0.5)'
+    pass_line:
+      abs_ic_min: 0.02
+      icir_min: 0.3
+      ic_retain_min: 0.5
+      note: 初拟待Owner校（施工单§2口径）
+    metrics:
+      per_horizon:
+        '10':
+          holdout:
+            ic_mean: 0.009844547247377513
+            icir: 0.16568912142461575
+            n_obs: 231
+          is_ref:
+            ic_mean: 0.036717849509992434
+            icir: 0.8370208917941802
+            n_obs: 244
+          retain: 0.268113393860346
+          ic_dates_holdout: 231
+        '20':
+          holdout:
+            ic_mean: 0.011870770979035421
+            icir: 0.25607586300105406
+            n_obs: 221
+          is_ref:
+            ic_mean: 0.044291702519607366
+            icir: 1.0134128850496888
+            n_obs: 244
+          retain: 0.26801342697947506
+          ic_dates_holdout: 221
+        '60':
+          holdout:
+            ic_mean: 0.013111310017839774
+            icir: 0.40358140055564273
+            n_obs: 181
+          is_ref:
+            ic_mean: 0.053478420001923155
+            icir: 1.5571718106035994
+            n_obs: 244
+          retain: 0.24517010819258075
+          ic_dates_holdout: 181
+      headline:
+        coverage_holdout: 0.9945942243928244
+        window_integrity_holdout: 1.0
+        turnover_proxy: 0.06302092604469345
+        regime_ic:
+          ranging_low_vol:
+            ic_mean: 0.005441237708835518
+            n_obs: 98
+          ranging_mid_vol:
+            ic_mean: .nan
+            n_obs: 20
+          trend_up:
+            ic_mean: 0.01984075444321859
+            n_obs: 103
+    regime_source: regime_table
+  - object_id: ALT-A13-STREAK
+    kind: factor
+    family_id: M1-ALT-A13
+    route: cross_section_ic
+    variant_note: 持续集中变体：连续披露期户数下降计数
+    formula: f_streak(t) = count(连续披露期户数下降) 截至 asof 最新披露
+    pit_note: 同上
+    horizons_card:
+    - 10
+    - 20
+    - 60
+    headline_horizon: 20
+    verdict: retire_candidate
+    reason: clean窗无可测alpha（|ic|=0.0039, |icir|=0.07）
+    pass_line:
+      abs_ic_min: 0.02
+      icir_min: 0.3
+      ic_retain_min: 0.5
+      note: 初拟待Owner校（施工单§2口径）
+    metrics:
+      per_horizon:
+        '10':
+          holdout:
+            ic_mean: 0.0037900167896415303
+            icir: 0.06306651225153968
+            n_obs: 231
+          is_ref:
+            ic_mean: 0.022329084712577395
+            icir: 0.49862547402595725
+            n_obs: 244
+          retain: 0.1697345340584745
+          ic_dates_holdout: 231
+        '20':
+          holdout:
+            ic_mean: 0.003875951688644945
+            icir: 0.06955234214564873
+            n_obs: 221
+          is_ref:
+            ic_mean: 0.026029859183218686
+            icir: 0.5578805074438443
+            n_obs: 244
+          retain: 0.14890405904092446
+          ic_dates_holdout: 221
+        '60':
+          holdout:
+            ic_mean: -0.006240317081298104
+            icir: -0.12373500331465667
+            n_obs: 181
+          is_ref:
+            ic_mean: 0.04016129222655404
+            icir: 1.1770184632463692
+            n_obs: 244
+          retain: 0.1553813818065371
+          ic_dates_holdout: 181
+      headline:
+        coverage_holdout: 0.9863622774537312
+        window_integrity_holdout: 1.0
+        turnover_proxy: 0.07436130179070799
+        regime_ic:
+          ranging_low_vol:
+            ic_mean: -0.004711926244178125
+            n_obs: 98
+          ranging_mid_vol:
+            ic_mean: .nan
+            n_obs: 20
+          trend_up:
+            ic_mean: 0.014934516305021715
+            n_obs: 103
+    regime_source: regime_table
+  family_summary:
+    family_best_object: ALT-A13-CHG60
+    family_best_verdict: rework
+    family_best_reason: '|ic|=0.0119(线0.02) icir=0.26(线0.3) retain=0.27(线0.5)'
+    family_verdicts:
+      ALT-A13-CHG: retire_candidate
+      ALT-A13-CHG60: rework
+      ALT-A13-STREAK: retire_candidate
+- family_id: M1-ALT-A06
+  card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A06.md
+  hypothesis: 大单/超大单净流入占比是知情交易者订单流代理，主力净流入率截面秩可预测 5-20 日相对收益
+  mechanism: 大单净流入=资金实力方用真金白银投票，知情性订单的自我隐藏极限使流向在数日尺度上持续
+  table: c1_market.money_flow
+  table_facts: 5,971,039 行 / 5,781 票（CH 实测与卡面一致）
+  window_note: 数据可得窗=2021-01-04..2025-09-09 + 2026-06-01..2026-09-30；缺口=2025-09-10..2026-05-31（8.5 个月）→ HOLDOUT 有效段仅 2026-06-01..2026-09-30（窗口完整性~0.35），IS_REF
+    尾段 2025-09-10..09-30 亦缺——按任务纪律以数据可得窗如实标注，禁假装全窗；pass 需窗口完整性>=0.9，不足者降级 rework（本册冻结规则）
+  headline: 前瞻 5/10/20 交易日，headline=5（prereg headline_horizon=5 且卡面一致）
+  factors:
+  - object_id: ALT-A06-MAIN5D
+    kind: factor
+    family_id: M1-ALT-A06
+    route: cross_section_ic
+    variant_note: 主因子：5 日主力净流入率均值（_pct 口径，禁绝对额）
+    formula: f_main(t) = rank( mean(main_net_inflow_pct, 5) )
+    pit_note: T-1：t 日因子消费 ≤t-1 日流向（当日盘后落定）；数据缺口 2025-09-10..2026-05-31 如实呈现为 NaN
+    horizons_card:
+    - 5
+    - 10
+    - 20
+    headline_horizon: 5
+    verdict: retire_candidate
+    reason: clean窗无可测alpha（|ic|=0.0002, |icir|=0.00）
+    pass_line:
+      abs_ic_min: 0.02
+      icir_min: 0.3
+      ic_retain_min: 0.5
+      note: 初拟待Owner校（施工单§2口径）
+    metrics:
+      per_horizon:
+        '5':
+          holdout:
+            ic_mean: -0.00024582135354870584
+            icir: -0.0032688896310343394
+            n_obs: 76
+          is_ref:
+            ic_mean: -0.038502631132426864
+            icir: -0.7046295709262527
+            n_obs: 230
+          retain: 0.0063845338959621235
+          ic_dates_holdout: 76
+        '10':
+          holdout:
+            ic_mean: -0.009599960329746166
+            icir: -0.1496237816068088
+            n_obs: 71
+          is_ref:
+            ic_mean: -0.03925343595038942
+            icir: -0.7357298553847401
+            n_obs: 230
+          retain: 0.24456356742576893
+          ic_dates_holdout: 71
+        '20':
+          holdout:
+            ic_mean: -0.020525103070966836
+            icir: -0.30769742840909237
+            n_obs: 61
+          is_ref:
+            ic_mean: -0.0432610535359646
+            icir: -0.7539924966966578
+            n_obs: 230
+          retain: 0.4744476010946779
+          ic_dates_holdout: 61
+      headline:
+        coverage_holdout: 0.9496387201979306
+        window_integrity_holdout: 1.0
+        turnover_proxy: 0.16175327804310458
+        regime_ic:
+          ranging_low_vol:
+            ic_mean: .nan
+            n_obs: 22
+          trend_up:
+            ic_mean: -0.0008924678093990821
+            n_obs: 54
+    regime_source: regime_table
+  - object_id: ALT-A06-SUPER5D
+    kind: factor
+    family_id: M1-ALT-A06
+    route: cross_section_ic
+    variant_note: 超大单变体：5 日超大单净流入率均值
+    formula: f_super(t) = rank( mean(super_large_net_inflow_pct, 5) )
+    pit_note: 同上
+    horizons_card:
+    - 5
+    - 10
+    - 20
+    headline_horizon: 5
+    verdict: retire_candidate
+    reason: clean窗无可测alpha（|ic|=0.0045, |icir|=0.09）
+    pass_line:
+      abs_ic_min: 0.02
+      icir_min: 0.3
+      ic_retain_min: 0.5
+      note: 初拟待Owner校（施工单§2口径）
+    metrics:
+      per_horizon:
+        '5':
+          holdout:
+            ic_mean: 0.004472695265837376
+            icir: 0.09127395342374632
+            n_obs: 76
+          is_ref:
+            ic_mean: -0.025373726318263012
+            icir: -0.6833322756569588
+            n_obs: 230
+          retain: 0.1762727007352525
+          ic_dates_holdout: 76
+        '10':
+          holdout:
+            ic_mean: -0.0013548471044415933
+            icir: -0.03606343382382264
+            n_obs: 71
+          is_ref:
+            ic_mean: -0.02452952422449745
+            icir: -0.7021661012315988
+            n_obs: 230
+          retain: 0.05523332177346179
+          ic_dates_holdout: 71
+        '20':
+          holdout:
+            ic_mean: -0.011126432357617634
+            icir: -0.321416743254355
+            n_obs: 61
+          is_ref:
+            ic_mean: -0.02641012071005947
+            icir: -0.748113763172666
+            n_obs: 230
+          retain: 0.4212942636562671
+          ic_dates_holdout: 61
+      headline:
+        coverage_holdout: 0.9496387201979306
+        window_integrity_holdout: 1.0
+        turnover_proxy: 0.21662777858782933
+        regime_ic:
+          ranging_low_vol:
+            ic_mean: .nan
+            n_obs: 22
+          trend_up:
+            ic_mean: 0.00438393264874097
+            n_obs: 54
+    regime_source: regime_table
+  - object_id: ALT-A06-PERSIST10D
+    kind: factor
+    family_id: M1-ALT-A06
+    route: cross_section_ic
+    variant_note: 持续性变体：10 日正流入天数占比
+    formula: f_persist(t) = rank( count_days(main_net_inflow_pct>0, 10) / 10 )
+    pit_note: 同上
+    horizons_card:
+    - 5
+    - 10
+    - 20
+    headline_horizon: 5
+    verdict: rework
+    reason: '|ic|=0.0119(线0.02) icir=0.18(线0.3) retain=0.60(线0.5)'
+    pass_line:
+      abs_ic_min: 0.02
+      icir_min: 0.3
+      ic_retain_min: 0.5
+      note: 初拟待Owner校（施工单§2口径）
+    metrics:
+      per_horizon:
+        '5':
+          holdout:
+            ic_mean: 0.011924509405372501
+            icir: 0.1781655040456187
+            n_obs: 71
+          is_ref:
+            ic_mean: -0.01973979485974314
+            icir: -0.3986557856630828
+            n_obs: 230
+          retain: 0.6040847683625657
+          ic_dates_holdout: 71
+        '10':
+          holdout:
+            ic_mean: 0.007997164212816795
+            icir: 0.15480747813639664
+            n_obs: 66
+          is_ref:
+            ic_mean: -0.02185989491071974
+            icir: -0.45805460023487987
+            n_obs: 230
+          retain: 0.365837267081056
+          ic_dates_holdout: 66
+        '20':
+          holdout:
+            ic_mean: -0.003860874658313432
+            icir: -0.06072607716293001
+            n_obs: 56
+          is_ref:
+            ic_mean: -0.023040983207552004
+            icir: -0.4718124504322374
+            n_obs: 230
+          retain: 0.16756553414126774
+          ic_dates_holdout: 56
+      headline:
+        coverage_holdout: 0.9461420097846033
+        window_integrity_holdout: 1.0
+        turnover_proxy: 0.07514514121038085
+        regime_ic:
+          ranging_low_vol:
+            ic_mean: .nan
+            n_obs: 17
+          trend_up:
+            ic_mean: 0.011391099379317338
+            n_obs: 54
+    regime_source: regime_table
+  family_summary:
+    family_best_object: ALT-A06-PERSIST10D
+    family_best_verdict: rework
+    family_best_reason: '|ic|=0.0119(线0.02) icir=0.18(线0.3) retain=0.60(线0.5)'
+    family_verdicts:
+      ALT-A06-MAIN5D: retire_candidate
+      ALT-A06-SUPER5D: retire_candidate
+      ALT-A06-PERSIST10D: rework
+- family_id: M1-ALT-A08
+  card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A08.md
+  hypothesis: BDI 动量上行期出口链（航运/港口/出口制造）相对收益为正（轴+条件选股完整考法）
+  mechanism: 运价是全球实物贸易的现货价，BDI 领先于出口链企业订单-盈利的实现，运价动量期出口链资产被系统性重定价
+  table: c1_market.alt_regime_signal(F4_BDI_MOMENTUM_Z20) + c1_market.kline_sector_880 + c1_market.alt_shipping_index
+  table_facts: 轴 9,301 条 1989-11-14..2026-09-30；BDI 14,010 行；冻结板块收盘面 2021-08-02 起
+  window_note: 桶边界=轴值卡面 IS(2006-01..2021-12) 三分位钉死 [-0.5299, 0.2076]；板块收益面仅 2021-08-02 起 → 卡面 IS 的板块收益段实际仅 2021-08..2021-12(~100
+    交易日)，如实标注；verdict 判窗=卡面 OOS(2022-01..2026-09)；卡面 multiplicity 3指数×2清单属后续完整预注册，本波按卡面计算式只考 F4 轴×冻结清单 1 组态
+  headline: 非 IC 路线（卡面）：分桶条件 Sharpe 差 + bootstrap 1000 次 90%CI
+  factors:
+  - object_id: ALT-A08-BDI-COND
+    kind: conditional
+    family_id: M1-ALT-A08
+    route: conditional_bucket
+    verdict: retire_candidate
+    reason: '方向证伪: Sharpe差=-0.052<=0（卡面OOS窗）'
+    verdict_basis: card_oos(2022-01..2026-09)，桶边界=轴值卡面IS(2006..2021)三分位钉死
+    frozen_sector_list:
+      880431.SH: 船舶
+      880461.SH: 水运
+      880468.SH: 港口
+    frozen_sector_rule: sector_code_name_map(industry_l2, named) 名称∈{船舶,水运,港口}；排除：880430航空(非出口制造/油价暴露)、880464仓储物流与880757冷链物流(物流非出口制造)、880313石油贸易与880610中俄贸易(贸易服务/油价地缘暴露)、880728航运概念(concept族与水运重复,禁混算)
+    axis:
+      source: c1_market.alt_regime_signal F4_BDI_MOMENTUM_Z20（只引用不重算,卡面）
+      pit: T-1 投影 signal_date<t；禁当日BDI分桶当日A股(卡面)
+      bounds_is_pinned:
+      - -0.5299
+      - 0.2076
+      n_signals: 9301
+    windows:
+      full_sector_panel:
+        range:
+        - '2021-07-01'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 389
+            sharpe_ann: 0.353
+            mean_bps: 3.07
+          mid:
+            n: 468
+            sharpe_ann: 0.238
+            mean_bps: 2.06
+          high:
+            n: 395
+            sharpe_ann: -0.368
+            mean_bps: -2.89
+        sharpe_diff_high_minus_low:
+          obs: -0.045
+          ci90:
+          - -0.167
+          - 0.063
+          excl0: false
+          n_boot: 1000
+          scheme: iid 日收益组内重排(seed=20261006)
+        bucket_share:
+          low: 0.308
+          mid: 0.376
+          high: 0.316
+      card_is_effective:
+        range:
+        - '2021-08-02'
+        - '2021-12-31'
+        bucket_stats:
+          low:
+            n: 38
+            sharpe_ann: -3.747
+            mean_bps: -29.94
+          mid:
+            n: 30
+            sharpe_ann: 6.442
+            mean_bps: 57.47
+          high:
+            n: 34
+            sharpe_ann: -3.308
+            mean_bps: -28.08
+        sharpe_diff_high_minus_low:
+          obs: 0.028
+          ci90:
+          - -0.423
+          - 0.476
+          excl0: false
+          n_boot: 1000
+          scheme: iid 日收益组内重排(seed=20261006)
+        bucket_share:
+          low: 0.369
+          mid: 0.301
+          high: 0.33
+      card_oos:
+        range:
+        - '2022-01-01'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 351
+            sharpe_ann: 0.76
+            mean_bps: 6.65
+          mid:
+            n: 438
+            sharpe_ann: -0.203
+            mean_bps: -1.74
+          high:
+            n: 361
+            sharpe_ann: -0.066
+            mean_bps: -0.51
+        sharpe_diff_high_minus_low:
+          obs: -0.052
+          ci90:
+          - -0.176
+          - 0.066
+          excl0: false
+          n_boot: 1000
+          scheme: iid 日收益组内重排(seed=20261006)
+        bucket_share:
+          low: 0.305
+          mid: 0.381
+          high: 0.314
+      holdout_exam:
+        range:
+        - '2025-10-09'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 53
+            sharpe_ann: -0.484
+            mean_bps: -3.62
+          mid:
+            n: 110
+            sharpe_ann: 1.997
+            mean_bps: 17.75
+          high:
+            n: 78
+            sharpe_ann: 0.426
+            mean_bps: 3.37
+        sharpe_diff_high_minus_low:
+          obs: 0.057
+          ci90:
+          - -0.227
+          - 0.332
+          excl0: false
+          n_boot: 1000
+          scheme: iid 日收益组内重排(seed=20261006)
+        bucket_share:
+          low: 0.22
+          mid: 0.456
+          high: 0.324
+    metrics:
+      coverage_holdout: 1.0
+      turnover_proxy_axis: 0.035
+      aux_rolling_ic60_fwd20_excess:
+        full:
+          ic_mean: 0.0188
+          icir: 0.115
+          n_windows: 1173
+        holdout:
+          ic_mean: 0.1099
+          icir: 0.706
+          n_windows: 162
+        definition: 滚动60日Spearman(轴T-1, 出口链-全市场20日前向超额)。辅助report-only,非卡面考法
+        card_aux_note: 卡面辅助考法(板块动量IC交互项)需板块成员股面板,板块层仅3资产<30最小样本 → 本波不可考,如实记
+      regime_bucket_cross:
+        ranging_low_vol:
+          n: 98
+          share_low_mid_high:
+          - 0.18
+          - 0.42
+          - 0.4
+          axis_mean: 0.163
+        ranging_mid_vol:
+          n: 20
+          share_low_mid_high: null
+        trend_up:
+          n: 123
+          share_low_mid_high:
+          - 0.2
+          - 0.49
+          - 0.31
+          axis_mean: -0.104
+    regime_source: regime_table
+    ic_mean: 0.0188
+    icir: 0.115
+    data_notes:
+    - kline_sector_880.sector_name 全空(763,260行0非空)——名称经 sector_code_name_map 典表解析
+    - 冻结板块收盘面 2021-08-02 起 → 卡面 IS(2006..2021) 的板块收益段实际仅 2021-08..2021-12(约100交易日),如实标注
+    - 卡面 multiplicity 3指数×2清单=后续完整预注册；本波按卡面计算式只考 F4 轴×冻结清单 1 组态
+  family_summary:
+    family_best_object: ALT-A08-BDI-COND
+    family_best_verdict: retire_candidate
+    family_best_reason: '方向证伪: Sharpe差=-0.052<=0（卡面OOS窗）'
+    family_verdicts:
+      ALT-A08-BDI-COND: retire_candidate
+- family_id: M1-ALT-A15
+  card: docs/_working/matrix_campaign/mining/m1_alt_sources/spec_SL-A15.md
+  hypothesis: 永续资金费率=加密杠杆多头拥挤度，拥挤桶收缩敞口/防守——A 股组合风险偏好条件轴，非选股 alpha
+  mechanism: 资金费率是永续多头为杠杆付出的持续成本，费率极端=拥挤极致=脆弱性积累，全球风险偏好温度计高频读数
+  table: c1_market.hl_funding_history
+  table_facts: 4,750,075 行 / 234 币 / 2023-05-12..2026-10-05（卡面真源；任务简报提及的 hl_perp_snapshot_daily 为对照记录，以卡为准）
+  window_note: 边界/阈值=卡面 IS(2023-06-01..2025-12-31) 钉死；判窗=任务冻结 HOLDOUT(2025-10-09..2026-09-30)，卡面 IS 与 HOLDOUT 重叠 2025-10..12
+    如实声明；funding_time 列=UTC→北京+8h，窗口 (t-1 15:00, t 15:00] 右闭
+  headline: 非 IC 路线（卡面）：拥挤桶 vs 其余 MaxDD/收益对比 + 拥挤极值后 5 日 risk-off 命中率
+  factors:
+  - object_id: ALT-A15-FMED-COND
+    kind: conditional
+    family_id: M1-ALT-A15
+    route: conditional_bucket
+    variant_note: 主口径：全市场中位数（北京时 (t-1 15:00, t 15:00] 右闭聚合）
+    verdict: rework
+    reason: '判据不可计算: HOLDOUT 拥挤桶 n=0<20（拥挤态在判窗未出现,桶空）；IS 段描述性证据仅卡内+牛市段禁升级（卡面自警伪象）→ 回S0-S3 等拥挤态样本/扩窗重考'
+    verdict_basis: 判窗=任务冻结 HOLDOUT(2025-10-09..2026-09-30)；边界/阈值=卡面IS(2023-06..2025-12)钉死（卡面IS与HOLDOUT重叠2025-10..12,如实声明）
+    axis:
+      bounds_is_pinned:
+      - 1.25e-05
+      - 1.25e-05
+      bounds_degenerate: true
+      bounds_note: 若退化：IS 期 f_med 在 HL 默认基率处有原子（中位数钉死）→ 冻结退化规则 low=<q33/mid=原子基线/high=>q66
+      q90_threshold_is: 4.49584e-05
+      pit: funding_time 列=UTC→北京+8h；窗口(t-1 15:00,t 15:00]右闭；桶归属日 t 的前向收益自 t 收盘起算=零前视（读数 t 15:00 完整）
+    windows:
+      full:
+        range:
+        - '2023-06-01'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 246
+            mean_bps: -12.09
+            sharpe_ann: -1.386
+            maxdd_pct: -32.36
+          mid:
+            n: 471
+            mean_bps: 9.92
+            sharpe_ann: 0.911
+            maxdd_pct: -34.72
+          high:
+            n: 93
+            mean_bps: 32.55
+            sharpe_ann: 3.542
+            maxdd_pct: -6.66
+          rest:
+            n: 717
+            mean_bps: 2.37
+            sharpe_ann: 0.232
+            maxdd_pct: -41.07
+        crowded_vs_rest:
+          maxdd_improvement_pp: -34.41
+          return_not_worse: true
+        bucket_share:
+          low: 0.304
+          mid: 0.581
+          high: 0.115
+        hit_fwd5_neg:
+          crowded: 0.3441
+          uncond: 0.4568
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+      card_is:
+        range:
+        - '2023-06-01'
+        - '2025-12-31'
+        bucket_stats:
+          low:
+            n: 179
+            mean_bps: -9.09
+            sharpe_ann: -1.093
+            maxdd_pct: -25.57
+          mid:
+            n: 357
+            mean_bps: 9.45
+            sharpe_ann: 0.818
+            maxdd_pct: -34.72
+          high:
+            n: 93
+            mean_bps: 32.55
+            sharpe_ann: 3.542
+            maxdd_pct: -6.66
+          rest:
+            n: 536
+            mean_bps: 3.26
+            sharpe_ann: 0.307
+            maxdd_pct: -41.07
+        crowded_vs_rest:
+          maxdd_improvement_pp: -34.41
+          return_not_worse: true
+        bucket_share:
+          low: 0.285
+          mid: 0.568
+          high: 0.148
+        hit_fwd5_neg:
+          crowded: 0.3441
+          uncond: 0.4515
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+      card_oos:
+        range:
+        - '2026-01-01'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 67
+            mean_bps: -20.11
+            sharpe_ann: -2.071
+            maxdd_pct: -19.61
+          mid:
+            n: 114
+            mean_bps: 11.38
+            sharpe_ann: 1.35
+            maxdd_pct: -13.11
+          high:
+            n: 0
+          rest:
+            n: 181
+            mean_bps: -0.28
+            sharpe_ann: -0.031
+            maxdd_pct: -21.59
+        crowded_vs_rest:
+          maxdd_improvement_pp: null
+          return_not_worse: null
+        bucket_share:
+          low: 0.37
+          mid: 0.63
+          high: 0.0
+        hit_fwd5_neg:
+          crowded: null
+          uncond: 0.4751
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+      holdout_exam:
+        range:
+        - '2025-10-09'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 122
+            mean_bps: -7.49
+            sharpe_ann: -0.896
+            maxdd_pct: -19.61
+          mid:
+            n: 119
+            mean_bps: 9.56
+            sharpe_ann: 1.152
+            maxdd_pct: -13.11
+          high:
+            n: 0
+          rest:
+            n: 241
+            mean_bps: 0.93
+            sharpe_ann: 0.112
+            maxdd_pct: -21.59
+        crowded_vs_rest:
+          maxdd_improvement_pp: null
+          return_not_worse: null
+        bucket_share:
+          low: 0.506
+          mid: 0.494
+          high: 0.0
+        hit_fwd5_neg:
+          crowded: null
+          uncond: 0.4398
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+    metrics:
+      coverage_holdout: 1.0
+      turnover_proxy_axis: 0.2252
+      aux_rolling_ic60_fwd5:
+        full:
+          ic_mean: 0.0104
+          icir: 0.043
+          n_windows: 733
+        holdout:
+          ic_mean: -0.0694
+          icir: -0.376
+          n_windows: 177
+        definition: 滚动60日Spearman(轴, 全市场等权5日前向收益)。辅助report-only
+      regime_bucket_cross:
+        ranging_low_vol:
+          n: 98
+          share_low_mid_high:
+          - 0.47
+          - 0.53
+          - 0.0
+          axis_mean: 0.0
+        ranging_mid_vol:
+          n: 20
+          share_low_mid_high: null
+        trend_up:
+          n: 123
+          share_low_mid_high:
+          - 0.46
+          - 0.54
+          - 0.0
+          axis_mean: 0.0
+    regime_source: regime_table
+    ic_mean: 0.0104
+    icir: 0.043
+    data_notes:
+    - hl_funding_history 实为逐小时结算(24h×~198K/时),卡面'8h费率'描述与库内粒度偏差如实记录；聚合口径(中位数/占比)不受影响
+    - 单所(Hyperliquid)代理全加密拥挤,币安/OKX未接——结论禁表述为'全市场拥挤度'(卡面)
+    - OI加权口径禁用(hl_oi_snapshot_daily 仅2.5周,卡面)；任务简报提到的 hl_perp_snapshot_daily=对照记录,卡面真源=hl_funding_history
+    - 样本期几乎全牛市(卡面自警)——分桶占比与体制标签已随册
+  - object_id: ALT-A15-FEXT-COND
+    kind: conditional
+    family_id: M1-ALT-A15
+    route: conditional_bucket
+    variant_note: 极端拥挤占比口径：费率>q90(IS)读数占比
+    verdict: rework
+    reason: '判据不可计算: HOLDOUT 拥挤桶 n=3<20（拥挤态在判窗未出现,桶空）；IS 段描述性证据仅卡内+牛市段禁升级（卡面自警伪象）→ 回S0-S3 等拥挤态样本/扩窗重考'
+    verdict_basis: 判窗=任务冻结 HOLDOUT(2025-10-09..2026-09-30)；边界/阈值=卡面IS(2023-06..2025-12)钉死（卡面IS与HOLDOUT重叠2025-10..12,如实声明）
+    axis:
+      bounds_is_pinned:
+      - 0.01306417
+      - 0.0785742
+      bounds_degenerate: false
+      bounds_note: 若退化：IS 期 f_med 在 HL 默认基率处有原子（中位数钉死）→ 冻结退化规则 low=<q33/mid=原子基线/high=>q66
+      q90_threshold_is: 4.49584e-05
+      pit: funding_time 列=UTC→北京+8h；窗口(t-1 15:00,t 15:00]右闭；桶归属日 t 的前向收益自 t 收盘起算=零前视（读数 t 15:00 完整）
+    windows:
+      full:
+        range:
+        - '2023-06-01'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 335
+            mean_bps: 2.56
+            sharpe_ann: 0.279
+            maxdd_pct: -25.44
+          mid:
+            n: 262
+            mean_bps: 11.57
+            sharpe_ann: 1.097
+            maxdd_pct: -19.94
+          high:
+            n: 213
+            mean_bps: 3.92
+            sharpe_ann: 0.357
+            maxdd_pct: -30.64
+          rest:
+            n: 597
+            mean_bps: 6.51
+            sharpe_ann: 0.665
+            maxdd_pct: -21.59
+        crowded_vs_rest:
+          maxdd_improvement_pp: 9.05
+          return_not_worse: false
+        bucket_share:
+          low: 0.414
+          mid: 0.323
+          high: 0.263
+        hit_fwd5_neg:
+          crowded: 0.4883
+          uncond: 0.4568
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+      card_is:
+        range:
+        - '2023-06-01'
+        - '2025-12-31'
+        bucket_stats:
+          low:
+            n: 210
+            mean_bps: 7.34
+            sharpe_ann: 0.827
+            maxdd_pct: -16.62
+          mid:
+            n: 209
+            mean_bps: 12.38
+            sharpe_ann: 1.106
+            maxdd_pct: -19.94
+          high:
+            n: 210
+            mean_bps: 3.07
+            sharpe_ann: 0.278
+            maxdd_pct: -30.64
+          rest:
+            n: 419
+            mean_bps: 9.86
+            sharpe_ann: 0.975
+            maxdd_pct: -18.75
+        crowded_vs_rest:
+          maxdd_improvement_pp: 11.89
+          return_not_worse: false
+        bucket_share:
+          low: 0.334
+          mid: 0.332
+          high: 0.334
+        hit_fwd5_neg:
+          crowded: 0.4857
+          uncond: 0.4515
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+      card_oos:
+        range:
+        - '2026-01-01'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 125
+            mean_bps: -5.48
+            sharpe_ann: -0.571
+            maxdd_pct: -25.44
+          mid:
+            n: 53
+            mean_bps: 8.38
+            sharpe_ann: 1.131
+            maxdd_pct: -9.24
+          high:
+            n: 3
+          rest:
+            n: 178
+            mean_bps: -1.36
+            sharpe_ann: -0.151
+            maxdd_pct: -21.59
+        crowded_vs_rest:
+          maxdd_improvement_pp: null
+          return_not_worse: null
+        bucket_share:
+          low: 0.691
+          mid: 0.293
+          high: 0.017
+        hit_fwd5_neg:
+          crowded: null
+          uncond: 0.4751
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+      holdout_exam:
+        range:
+        - '2025-10-09'
+        - '2026-09-30'
+        bucket_stats:
+          low:
+            n: 177
+            mean_bps: -2.94
+            sharpe_ann: -0.335
+            maxdd_pct: -25.44
+          mid:
+            n: 61
+            mean_bps: 9.09
+            sharpe_ann: 1.308
+            maxdd_pct: -9.24
+          high:
+            n: 3
+          rest:
+            n: 238
+            mean_bps: 0.14
+            sharpe_ann: 0.017
+            maxdd_pct: -21.59
+        crowded_vs_rest:
+          maxdd_improvement_pp: null
+          return_not_worse: null
+        bucket_share:
+          low: 0.734
+          mid: 0.253
+          high: 0.012
+        hit_fwd5_neg:
+          crowded: null
+          uncond: 0.4398
+          note: '辅助: 拥挤极值桶后5日风险off命中率 vs 无条件(卡面辅助考法), report-only'
+    metrics:
+      coverage_holdout: 1.0
+      turnover_proxy_axis: 0.0699
+      aux_rolling_ic60_fwd5:
+        full:
+          ic_mean: 0.0512
+          icir: 0.189
+          n_windows: 761
+        holdout:
+          ic_mean: 0.0108
+          icir: 0.069
+          n_windows: 177
+        definition: 滚动60日Spearman(轴, 全市场等权5日前向收益)。辅助report-only
+      regime_bucket_cross:
+        ranging_low_vol:
+          n: 98
+          share_low_mid_high:
+          - 0.72
+          - 0.28
+          - 0.0
+          axis_mean: 0.011
+        ranging_mid_vol:
+          n: 20
+          share_low_mid_high: null
+        trend_up:
+          n: 123
+          share_low_mid_high:
+          - 0.73
+          - 0.24
+          - 0.02
+          axis_mean: 0.016
+    regime_source: regime_table
+    ic_mean: 0.0512
+    icir: 0.189
+    data_notes:
+    - hl_funding_history 实为逐小时结算(24h×~198K/时),卡面'8h费率'描述与库内粒度偏差如实记录；聚合口径(中位数/占比)不受影响
+    - 单所(Hyperliquid)代理全加密拥挤,币安/OKX未接——结论禁表述为'全市场拥挤度'(卡面)
+    - OI加权口径禁用(hl_oi_snapshot_daily 仅2.5周,卡面)；任务简报提到的 hl_perp_snapshot_daily=对照记录,卡面真源=hl_funding_history
+    - 样本期几乎全牛市(卡面自警)——分桶占比与体制标签已随册
+  family_summary:
+    family_best_object: ALT-A15-FEXT-COND
+    family_best_verdict: rework
+    family_best_reason: '判据不可计算: HOLDOUT 拥挤桶 n=3<20（拥挤态在判窗未出现,桶空）；IS 段描述性证据仅卡内+牛市段禁升级（卡面自警伪象）→ 回S0-S3 等拥挤态样本/扩窗重考'
+    family_verdicts:
+      ALT-A15-FMED-COND: rework
+      ALT-A15-FEXT-COND: rework
+negative_results_note: 全部 rework/retire/判据不可考结论如实入册（exam_policy §5/§6），零隐藏；0 pass 不掩盖——A13 主变体干净窗无 alpha、A06 主变体干净窗无 alpha、A08
+  方向证伪、A15 拥挤态在考试窗未出现
+recompute_note: 每 verdict 可复算：计算式(formula)+PIT 口径(pit_note)+表名+窗口+边界值+seed 全量内嵌；复算脚本=.runtime/tmp/st-matrix-20261006/wave2_probe*.py|wave2_factors.py|wave2_cond.py（tmp
+  TTL 风险如实标注——计算式已全量内嵌本册，可独立复算）；checkpoint=同目录 wave2_ckpt.jsonl

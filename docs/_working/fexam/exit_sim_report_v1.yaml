@@ -1,0 +1,312 @@
+doc_type: exit_sim_report
+version: v1
+generated_at_utc: '2026-10-06 11:44:29.678410+00:00'
+prereg_frozen_at_utc: '2026-10-06 10:10:50.146205+00:00'
+prereg_frozen_source: .runtime/tmp/st-matrix-20261006/exit_sim/prereg_frozen.yaml
+prereg_frozen:
+  doc_type: exit_sim_prereg
+  version: v1
+  frozen_at_utc: '2026-10-06 10:10:50.146205+00:00'
+  lane: E道：离场族 ATR 止损首件（M-1 工单首件，X 族 13 节点激活钥匙）
+  scope_note: 夜战以「考试装置扩展」形态出活（.runtime/tmp 区）；正式 src/ 模块化+治理三件套=日光档工单
+  device:
+    signal_source: docs/_working/fexam/indicator_exam_scores_v1.yaml verdict==pass 的 ch_backings 首列，文档序去重，cap 24
+      列（确定性，不挑不调）
+    columns_cap24:
+    - column: c1_market.technical_indicator.macd_dif
+      provenance: IND-TREND-005
+    - column: c1_market.technical_indicator.pdi_14
+      provenance: IND-TREND-007
+    - column: c1_market.technical_indicator.cci_14
+      provenance: IND-TREND-008
+    - column: c1_market.technical_indicator.trix
+      provenance: IND-TREND-010
+    - column: c1_market.technical_indicator.vip_14
+      provenance: IND-TREND-015
+    - column: c1_market.technical_indicator.tsi
+      provenance: IND-MOM-015
+    - column: c1_market.technical_indicator.smi
+      provenance: IND-MOM-016
+    - column: c1_market.technical_indicator.fisher_9
+      provenance: IND-MOM-017
+    - column: c1_market.technical_indicator.kst
+      provenance: IND-MOM-018
+    - column: c1_market.technical_indicator.qqe_14
+      provenance: IND-MOM-020
+    - column: c1_market.technical_indicator.stc
+      provenance: IND-MOM-021
+    - column: c1_market.technical_indicator.rvgi_10
+      provenance: IND-MOM-022
+    - column: c1_market.technical_indicator.aroon_up
+      provenance: IND-MOM-024
+    - column: c1_market.technical_indicator.aroonosc
+      provenance: IND-MOM-025
+    - column: c1_market.technical_indicator.bop
+      provenance: IND-MOM-026
+    - column: c1_market.technical_indicator.ppo
+      provenance: IND-MOM-027
+    - column: c1_market.technical_indicator.apo
+      provenance: IND-MOM-028
+    - column: c1_market.technical_indicator.ar_26
+      provenance: IND-MOM-030
+    - column: c1_market.technical_indicator.cr_26
+      provenance: IND-MOM-031
+    - column: c1_market.technical_indicator.bull_power_13
+      provenance: IND-MOM-034
+    - column: c1_market.technical_indicator.coppock
+      provenance: IND-MOM-035
+    - column: c1_market.technical_indicator.wt1
+      provenance: IND-MOM-037
+    - column: c1_market.technical_indicator.kdj_k
+      provenance: IND-MOM-001
+    - column: c1_market.technical_indicator.rsi_6
+      provenance: IND-MOM-002
+    composite: strategy_exam.composite_signal（逐列截面秩 pct，direction 全部为空=long，逐日等权均值）——函数复用禁重造
+    weights: strategy_exam.monthly_topn_signals top_n=20 月频等权步进函数——函数复用禁重造
+    candidate_filter: 信号日 ATR14 非 NaN 者方可入 top20 候选；不足 20 只=该月空仓（同装置 len<top_n 语义）
+    execution: 调仓信号=月首交易日收盘生成；执行=T+1 开盘（execution_lag_days=1 同引擎语义）
+    windows:
+      run:
+      - '2018-01-02'
+      - '2026-09-30'
+      is:
+      - '2018-01-02'
+      - '2025-09-30'
+      oos_holdout:
+      - '2025-10-09'
+      - '2026-09-30'
+      kline_load:
+      - '2017-10-01'
+      - '2026-09-30'
+      kline_load_note: ATR14 暖机 3 个月；信号/仿真窗仍=RUN，暖机数据不进信号
+    stop_rules:
+      entry_price: 调仓 T+1 开盘价
+      initial_stop: entry_price - 3×ATR14(调仓信号日收盘)
+      trailing_stop: 持仓期最高收盘 - 3×ATR14(当日收盘, Chandelier 式逐日更新)
+      effective_stop: max(initial_stop, trailing_stop)
+      pierce_def: 当日收盘 < effective_stop（严格小于）
+      exit_exec: 次日开盘离场（T+1，禁当日来回）；该票开盘缺价（停牌）顺延至下一可用开盘
+      reentry: 止损离场名当日禁再买（挂单未平禁买）；再进只能等下次月频调仓
+      cash_park: 离场资金现金化（0 收益）至下次月频调仓
+      rebalance_reentry_reset: 月频调仓再买=新入场（entry/hi_close/atr_entry 全重置）
+      deferred_sell: 调仓卖出遇停牌顺延逐日重试至成交后现金化，顺延期按收盘估值
+    atr:
+      definition: TR=max(H-L,|H-C_prev|,|L-C_prev|)；ATR14=Wilder 平滑：种子=前14个有效TR的SMA，此后 ATR_t=(13×ATR_{t-1}+TR_t)/14；TR
+        缺失（停牌日）ATR 沿用前值
+      price_basis: c1_market.kline_daily_hfq 后复权 high/low/close 自算（全程同口径），数据只读
+      window: 14
+    costs: 佣金双边 COMMISSION_RATE（万0.854，单一真源=matching_logic，与引擎同源）；滑点/冲击/参与率/PIT/剔ST 未建模——对照双臂同口径不受影响，与官方引擎装置差异如实随册
+    primary_comparison: 同一模拟器 stop_enabled on/off 双跑（同信号同装置同成本）——判据只看此对照；官方引擎无止损跑仅作 sanity 参考
+  judge_frozen:
+    oos_window: 2025-10-09..2026-09-30
+    maxdd_improve_pp: (nostop_oos_maxdd - stop_oos_maxdd)×100（MaxDD 负数口径，改善=朝 0 靠拢）
+    verdict_gain: 止损版 OOS MaxDD 改善 >= 5pp 且 (stop_oos_sharpe - nostop_oos_sharpe) >= -0.2 → 「有增益」
+    verdict_else: 否则「无增益/负增益」，负结果如实入册
+    metrics_tool: strategy_exam.window_metrics（sharpe 年化 244 + 最大回撤，复用禁重造）
+  recalibration_duty:
+    per_run_seconds: time.perf_counter 包住单次完整仿真（24 列票池×RUN 全窗路径依赖日循环）；warm 1 次后实测 3 次取均值，双臂各测，随册落盘
+    grid_unit: per_symbol_day_us = per_run_seconds×1e6/(持仓列数×交易日数)，供网格外推
+    legacy_ban: 路径依赖日循环禁引用 0.53s/格旧口径（属 c4 GPU 网格引擎 T3a 专用，与本装置无关）
+window_definition:
+  run:
+  - '2018-01-02'
+  - '2026-09-30'
+  is:
+  - '2018-01-02'
+  - '2025-09-30'
+  oos_holdout:
+  - '2025-10-09'
+  - '2026-09-30'
+recalibration:
+  duty: T3b-T0：路径依赖日循环性能以本次实测为唯一口径；0.53s/格旧口径（c4 GPU 网格引擎 T3a 专用）禁引用
+  method: time.perf_counter 包住单次完整仿真；warm 1 次 + 实测 3 次取均值
+  nostop:
+    per_run_seconds_warmup_plus3_mean: 0.3263626999978442
+    per_run_seconds_runs:
+    - 0.33028809999814257
+    - 0.3384619999997085
+    - 0.31033799999568146
+    per_symbol_day_us: 0.1309430420926657
+  stop:
+    per_run_seconds_warmup_plus3_mean: 0.4277342000035181
+    per_run_seconds_runs:
+    - 0.4093531999969855
+    - 0.43003780000435654
+    - 0.44381160000921227
+    per_symbol_day_us: 0.1716152530785636
+  data_load_seconds: 31.6
+  note: 网格外推：路径依赖参数网格≈per_run_seconds/格（stop 臂口径）
+comparison:
+  primary: 同一模拟器 stop_enabled on/off 双跑（同信号同装置同成本）
+  nostop:
+    metrics:
+      is:
+        sharpe: -0.3668617000672521
+        max_drawdown: -0.8769239652991081
+        total_return: -0.7021285255950257
+        n_days: 1882
+      oos:
+        sharpe: -0.18692884455291017
+        max_drawdown: -0.5755568447870416
+        total_return: -0.18481490084224794
+        n_days: 241
+      run:
+        sharpe: -0.3301476132869194
+        max_drawdown: -0.8769239652991081
+        total_return: -0.7564350016435709
+        n_days: 2123
+    sim_stats:
+      n_rebalance_exec_days: 105
+      n_empty_months: 36
+      n_stop_pierces: 0
+      n_stop_exits: 0
+      n_stop_pending_at_end: 0
+      n_cash_capped_buys: 40
+      n_deferred_sells: 6
+      n_rebalance_trades: 2686
+      n_symbols_traded: 1174
+      pierces_sample: []
+      final_equity: 243564.99835642905
+      n_days: 2123
+  stop:
+    metrics:
+      is:
+        sharpe: -0.5654490168238594
+        max_drawdown: -0.8545512041175939
+        total_return: -0.7287048356013734
+        n_days: 1882
+      oos:
+        sharpe: 0.4320096666457379
+        max_drawdown: -0.41015378957210924
+        total_return: 0.09432776008433574
+        n_days: 241
+      run:
+        sharpe: -0.3935670103467472
+        max_drawdown: -0.8545512041175939
+        total_return: -0.700138698200327
+        n_days: 2123
+    sim_stats:
+      n_rebalance_exec_days: 105
+      n_empty_months: 36
+      n_stop_pierces: 777
+      n_stop_exits: 776
+      n_stop_pending_at_end: 1
+      n_cash_capped_buys: 38
+      n_deferred_sells: 3
+      n_rebalance_trades: 1930
+      n_symbols_traded: 1174
+      pierces_sample:
+      - date: '2021-01-08'
+        symbol: '603444'
+        close: 401.6949
+        eff_stop: 417.1169
+        entry_px: 481.2392
+        hi_close: 481.2392
+        atr_entry: 21.374112
+        atr_now: 24.57354
+      - date: '2021-01-11'
+        symbol: '300751'
+        close: 545.869
+        eff_stop: 560.348
+        entry_px: 672.1514
+        hi_close: 672.1514
+        atr_entry: 37.267801
+        atr_now: 45.090063
+      - date: '2021-01-13'
+        symbol: '300841'
+        close: 496.0
+        eff_stop: 501.628
+        entry_px: 507.96
+        hi_close: 588.0
+        atr_entry: 20.835241
+        atr_now: 28.790658
+      - date: '2021-01-19'
+        symbol: '300601'
+        close: 211.6951
+        eff_stop: 213.9805
+        entry_px: 247.9188
+        hi_close: 252.8064
+        atr_entry: 13.52468
+        atr_now: 12.941976
+      - date: '2021-01-19'
+        symbol: '600809'
+        close: 1584.15
+        eff_stop: 1584.8445
+        entry_px: 1650.4131
+        hi_close: 1874.8282
+        atr_entry: 66.817073
+        atr_now: 96.661257
+      final_equity: 299861.3017996729
+      n_days: 2123
+  judge:
+    oos_maxdd_improve_pp: 16.54
+    oos_sharpe_delta: 0.6189
+    criterion: MaxDD改善(回撤变浅)>=5pp 且 Sharpe不降超0.2（prereg judge_frozen 语义口径）
+    sign_erratum: prereg 机器行公式 (nostop-stop) 与括注「改善=朝 0 靠拢」符号相反，按语义取 (stop-nostop)；双臂同规则无选择性
+    verdict: 有增益
+signal_coverage:
+  total_months: 105
+  positioned_months: 69
+  empty_months: 36
+  note: 24 列 pass 指标列 CH 覆盖起点≈2021-01（c1_market.technical_indicator 表数据起点），2018-01..2020-12 共 36 个月按装置语义（候选<20 只）空仓；prereg
+    窗口冻结不动，覆盖现实如实随册
+reference_engine_nostop:
+  status: timeout
+  note: 官方引擎参考跑 480s 看门狗超时（Decimal 全市场逐日单线程，sanity 用途非判据）；主对照=本模拟器双臂，不受影响
+  cached: true
+device_delta_note: 本仿真器与官方引擎装置差异：无 PIT/剔ST/滑点/冲击/参与率建模，佣金同源双边；对照双臂同口径故差分方向不受影响；正式化时如需引擎级保真另立工单
+provenance:
+  scores_yaml: docs/_working/fexam/indicator_exam_scores_v1.yaml
+  columns:
+  - column: c1_market.technical_indicator.macd_dif
+    provenance: IND-TREND-005
+  - column: c1_market.technical_indicator.pdi_14
+    provenance: IND-TREND-007
+  - column: c1_market.technical_indicator.cci_14
+    provenance: IND-TREND-008
+  - column: c1_market.technical_indicator.trix
+    provenance: IND-TREND-010
+  - column: c1_market.technical_indicator.vip_14
+    provenance: IND-TREND-015
+  - column: c1_market.technical_indicator.tsi
+    provenance: IND-MOM-015
+  - column: c1_market.technical_indicator.smi
+    provenance: IND-MOM-016
+  - column: c1_market.technical_indicator.fisher_9
+    provenance: IND-MOM-017
+  - column: c1_market.technical_indicator.kst
+    provenance: IND-MOM-018
+  - column: c1_market.technical_indicator.qqe_14
+    provenance: IND-MOM-020
+  - column: c1_market.technical_indicator.stc
+    provenance: IND-MOM-021
+  - column: c1_market.technical_indicator.rvgi_10
+    provenance: IND-MOM-022
+  - column: c1_market.technical_indicator.aroon_up
+    provenance: IND-MOM-024
+  - column: c1_market.technical_indicator.aroonosc
+    provenance: IND-MOM-025
+  - column: c1_market.technical_indicator.bop
+    provenance: IND-MOM-026
+  - column: c1_market.technical_indicator.ppo
+    provenance: IND-MOM-027
+  - column: c1_market.technical_indicator.apo
+    provenance: IND-MOM-028
+  - column: c1_market.technical_indicator.ar_26
+    provenance: IND-MOM-030
+  - column: c1_market.technical_indicator.cr_26
+    provenance: IND-MOM-031
+  - column: c1_market.technical_indicator.bull_power_13
+    provenance: IND-MOM-034
+  - column: c1_market.technical_indicator.coppock
+    provenance: IND-MOM-035
+  - column: c1_market.technical_indicator.wt1
+    provenance: IND-MOM-037
+  - column: c1_market.technical_indicator.kdj_k
+    provenance: IND-MOM-001
+  - column: c1_market.technical_indicator.rsi_6
+    provenance: IND-MOM-002
+  signal_functions: scripts/backtest/fexam/strategy_exam.py（composite_signal/monthly_topn_signals/window_metrics
+    复用）
+  module_tmp: .runtime/tmp/st-matrix-20261006/exit_sim/exit_simulator.py
+  commission_rate: 8.54e-05
