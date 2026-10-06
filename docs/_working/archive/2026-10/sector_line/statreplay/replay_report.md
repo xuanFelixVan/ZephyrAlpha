@@ -1,6 +1,5 @@
 ---
 ttl: task_bound
-doc_type: report
 title: 状态层历史回放深窗·执行报告（985 日全窗零失败）
 created: 2026-09-24
 sid: st-pipeline-final-20260924
