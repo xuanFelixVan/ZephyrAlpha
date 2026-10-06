@@ -901,3 +901,28 @@ def test_mkt_cap_warm_basis_bit_identical_to_window_basis():
     # 逐位一致性=考窗切片对拍（warm 基的并集多余行全 NaN→引擎侧丢弃，此即等价机理）
     pd.testing.assert_frame_equal(w_warm.loc[idx], w_win)
     assert w_win.index.equals(closes.index) and w_win.columns.equals(closes.columns)
+
+
+def test_sizing_full_column_inputs_fastpath_eligible():
+    """红组（mkt_cap/kelly 列并集团案）：全列市值/rets60 面经调用点切列后权重=考窗宇宙形。
+
+    真跑实锤：s4 分片 mkt_cap 173/173、kelly 330/330 全 CPU——根因=全 5055 列面 ×
+    cols 秩面=列并集，等形守卫按列拒绝（行对齐修复不够，列才是主犯）。
+    """
+    rng = np.random.default_rng(109)
+    idx = pd.bdate_range("2023-01-02", periods=120)
+    all_cols = ["000001", "000002", "000003", "000004"]
+    cols = all_cols[:3]  # 宇宙子集
+    closes = pd.DataFrame(10 * np.exp(np.cumsum(rng.normal(0, 0.01, (120, 4)), axis=0)), index=idx, columns=all_cols)
+    vol20_cols = closes[cols].pct_change().rolling(20).std()
+    mkt_full = pd.DataFrame(1e9, index=idx, columns=all_cols)
+    r60m_full = closes.pct_change().rolling(60).mean()
+    r60v_full = closes.pct_change().rolling(60).var()
+    combined = pd.DataFrame(rng.normal(0, 1, (120, 3)), index=idx, columns=cols)
+    for mode, kw in (
+        ("mkt_cap", {"mkt_cap_w": mkt_full}),
+        ("kelly_025", {"rets60_mean": r60m_full, "rets60_var": r60v_full}),
+    ):
+        w, _ = mod._sizing(combined, 2, mode, vol20_cols, **kw)
+        assert w.shape == (120, 3), f"{mode} 权重形 {w.shape}≠考窗宇宙形"
+        assert w.index.equals(closes.index) and w.columns.equals(pd.Index(cols)), f"{mode} 等形破坏"

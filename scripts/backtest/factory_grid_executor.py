@@ -626,6 +626,15 @@ def _sizing(  # noqa: long-param-list  存量函数签名（E4成本门接线仅
     rank_pre（T2c 缓存加速）: 同一 scores 已算好的 rank（combined 缓存随附）；
     rank 仅依赖 scores，传入时跳过重算，数值恒等。调用方保证 scores 对应关系。
     """
+    # 可选输入面切列到 scores 列集（20261006 快路径诊断治本）：全 5055 列市值/rets60 面
+    # × cols 秩面=列并集变形，等形守卫按列拒绝（mkt_cap/kelly 全数 CPU 的同根因；
+    # 切列=额外列全 NaN 下游丢弃的逐位恒等，GPU 资格恢复）。
+    if mkt_cap_w is not None:
+        mkt_cap_w = mkt_cap_w.reindex(columns=scores.columns)
+    if rets60_mean is not None:
+        rets60_mean = rets60_mean.reindex(columns=scores.columns)
+    if rets60_var is not None:
+        rets60_var = rets60_var.reindex(columns=scores.columns)
     rank = rank_pre if rank_pre is not None else scores.rank(axis=1, ascending=False)
     mask = rank <= top_n
     base = mask.astype(float)
