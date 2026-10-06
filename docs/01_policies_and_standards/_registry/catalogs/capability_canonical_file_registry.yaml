@@ -56799,6 +56799,7 @@ creation_tokens:
   capability: macro-regime-sensor
   created_by: st-menu-t1b5-20260930
   merge_evaluation: "跨域不同对象不并：TDM-E-L1-S0 宏观环境传感器真消费模块（NB1-B5 R2-R3处方件，政策表态分析器不消费MAC数值实证在案）"
+  no_mount_reason: TDM-E-L1-S0 宏观环境传感器复活件（NB1-B5 R2-R3 处方），挂点未在 config 图族注册，module_ref 落图后补挂（commitmap-cure P03 车道落地前置补申报）
 - file: src/zephyr/regime/index_market_brief.py
   token: auto-index-market-brief-20260823
   capability: index_market_brief

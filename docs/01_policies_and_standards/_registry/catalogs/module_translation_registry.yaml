@@ -67537,3 +67537,19 @@ entries:
   desc_en: ""
   plain_zh: "把卖出扫描信号编排成可执行计划：时段路由、分批提示、熔断期梯度减仓次序都由它串起来，模拟盘只出防御姿态指令不碰真实订单"
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "Tick分笔微观结构判据"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用逐笔成交数据算买卖不平衡和冲击成本，判断当天微观结构能不能预测明天涨跌，方向不明就给平局不硬编"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "板块轮动强弱判据"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看板块指数谁强谁弱：相对强度打分高且连续跑赢大盘够久才认定轮动领先，双门防一日游假信号"
+  responsibility_layer: business
