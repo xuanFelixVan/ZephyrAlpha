@@ -1,0 +1,444 @@
+# [MODULE] tests.ex_core.test_pre_execution_checker
+# [DOMAIN] D_EX_CORE
+# [DEPENDENCIES] zephyr.ex_core.pre_execution_checker
+# [STARTUP] imported
+# [MATURITY] evolving
+# [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
+# [MODIFY-GUARD] only_add_tests;do_not_modify_source
+# [CONSUMERS] pytest;CI_pipeline
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] ImportError->skip_module
+# [TESTS] test_pre_execution_checker.py
+# [A_test] module_id: TEST-MOD-EX-024 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [TTL] task_bound
+"""MOD-EX-024 单元测试: PreExecutionChecker — 执行前检查器。
+
+覆盖: 熔断闸门/交易时段闸门(L-003)/快照装配/否决引擎四级检查,
+各环节 fail-closed 降级(探针异常按熔断处理/时段异常按非交易时段/
+快照失败拒单), 短路语义(熔断激活不建快照), 报告契约。
+CAND-CRYPTO-006/#262 注入式改造: market_calendar 注入覆盖。
+"""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from decimal import Decimal
+
+import pytest
+
+pytest.importorskip(
+    "zephyr.ex_core.pre_execution_checker",
+    reason="pre_execution_checker not importable",
+)
+
+from zephyr.data.calendar import CryptoCalendar  # noqa: E402
+from zephyr.ex_core.pre_execution_checker import (  # noqa: E402
+    PreExecutionChecker,
+    is_ashare_trading_window,
+)
+from zephyr.risk.core.risk_data_pipeline import (  # noqa: E402
+    RiskDataPipelineError,
+    RiskSnapshotInput,
+    assemble_risk_snapshot,
+)
+from zephyr.risk.core.risk_veto_engine import OrderRiskRequest  # noqa: E402
+from zephyr.shared.contracts.enums.order_enums import OrderSide  # noqa: E402
+from zephyr.shared.contracts.market_data import NormalizedMarketData  # noqa: E402
+from zephyr.shared.contracts.position import PositionSnapshot  # noqa: E402
+from zephyr.shared.contracts.risk_limits import RiskLimits  # noqa: E402
+
+_NOW = datetime(2026, 8, 21, 10, 0, tzinfo=UTC)  # 周五 10:00 UTC? → 见窗口测试注释
+
+# ── 夹具 ─────────────────────────────────────────────────────────────
+
+
+def _clean_snapshot():
+    pos = PositionSnapshot(
+        portfolio_id="pf-1",
+        as_of_timestamp=_NOW,
+        idempotency_key="pos-1",
+        cash=Decimal("100000"),
+        holdings={"600519.SH": Decimal("10")},
+        market_values={},
+        total_market_value=Decimal("0"),
+    )
+    quote = NormalizedMarketData(
+        symbol="600519.SH",
+        timestamp=_NOW,
+        open=Decimal("1700"),
+        high=Decimal("1700"),
+        low=Decimal("1700"),
+        close=Decimal("1700"),
+        volume=Decimal("1000"),
+        data_source="stub",
+        idempotency_key="q-1",
+    )
+    limits = RiskLimits(
+        as_of_date=_NOW,
+        idempotency_key="lim-1",
+        max_single_position=0.50,
+        max_gross_leverage=1.0,
+    )
+    return assemble_risk_snapshot(
+        RiskSnapshotInput(
+            position_snapshot=pos,
+            quotes={"600519.SH": quote},
+            fills=(),
+            limits=limits,
+            as_of=_NOW,
+        )
+    )
+
+
+def _request(quantity: str = "1", side: OrderSide = OrderSide.BUY) -> OrderRiskRequest:
+    return OrderRiskRequest(
+        symbol="600519.SH",
+        side=side,
+        quantity=Decimal(quantity),
+        price=Decimal("1700"),
+        strategy_id="st-1",
+    )
+
+
+class _StubSnapshotBuilder:
+    """snapshot_builder 协议桩：计数 + 可配置异常。"""
+
+    def __init__(self, snapshot=None, exc: Exception | None = None):
+        self._snapshot = snapshot
+        self._exc = exc
+        self.calls = 0
+
+    def __call__(self):
+        self.calls += 1
+        if self._exc is not None:
+            raise self._exc
+        return self._snapshot
+
+
+def _checker(**overrides) -> tuple[PreExecutionChecker, _StubSnapshotBuilder]:
+    builder = overrides.pop("snapshot_builder", _StubSnapshotBuilder(_clean_snapshot()))
+    kwargs = dict(
+        snapshot_builder=builder,
+        kill_switch_probe=lambda: False,
+        session_window_probe=lambda now: True,
+    )
+    kwargs.update(overrides)
+    return PreExecutionChecker(**kwargs), builder
+
+
+# ── 放行路径 ─────────────────────────────────────────────────────────
+
+
+class TestAllowPath:
+    def test_clean_buy_allowed(self):
+        checker, _ = _checker()
+        report = checker.check(_request())
+        assert report.allowed
+        assert report.blocks == ()
+
+    def test_report_carries_ids(self):
+        checker, _ = _checker()
+        req = _request()
+        report = checker.check(req)
+        assert report.request_id == req.request_id
+        assert report.snapshot_id is not None
+
+    def test_report_immutable(self):
+        checker, _ = _checker()
+        report = checker.check(_request())
+        with pytest.raises(AttributeError):
+            report.allowed = False  # type: ignore[misc]
+
+
+# ── 熔断闸门 ─────────────────────────────────────────────────────────
+
+
+class TestKillSwitchGate:
+    def test_kill_switch_active_blocks_all(self):
+        checker, builder = _checker(kill_switch_probe=lambda: True)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "KILL_SWITCH_ACTIVE" in codes
+        assert builder.calls == 0  # 短路: 熔断激活不建快照
+
+    def test_kill_switch_probe_error_fail_closed(self):
+        def _boom():
+            raise RuntimeError("state store down")
+
+        checker, _ = _checker(kill_switch_probe=_boom)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "KILL_SWITCH_PROBE_ERROR" in codes
+
+
+# ── 交易时段闸门 (L-003) ─────────────────────────────────────────────
+
+
+class TestSessionWindowGate:
+    def test_outside_window_blocked(self):
+        checker, _ = _checker(session_window_probe=lambda now: False)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_window_probe_error_fail_closed(self):
+        def _boom(now):
+            raise RuntimeError("calendar down")
+
+        checker, _ = _checker(session_window_probe=_boom)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "SESSION_WINDOW_PROBE_ERROR" in codes
+
+
+# ── 快照与否决 ───────────────────────────────────────────────────────
+
+
+class TestSnapshotAndVeto:
+    def test_snapshot_failure_blocks(self):
+        builder = _StubSnapshotBuilder(
+            exc=RiskDataPipelineError("持仓真源不可用", details={}),
+        )
+        checker, _ = _checker(snapshot_builder=builder)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "SNAPSHOT_UNAVAILABLE" in codes
+        assert report.snapshot_id is None
+
+    def test_veto_blocks_mapped(self):
+        # 超限买入 → 否决引擎产出 SINGLE_POSITION_LIMIT
+        pos = PositionSnapshot(
+            portfolio_id="pf-1",
+            as_of_timestamp=_NOW,
+            idempotency_key="pos-1",
+            cash=Decimal("10000"),
+            holdings={"600519.SH": Decimal("100")},
+            market_values={},
+            total_market_value=Decimal("0"),
+        )
+        quote = NormalizedMarketData(
+            symbol="600519.SH",
+            timestamp=_NOW,
+            open=Decimal("1700"),
+            high=Decimal("1700"),
+            low=Decimal("1700"),
+            close=Decimal("1700"),
+            volume=Decimal("1000"),
+            data_source="stub",
+            idempotency_key="q-1",
+        )
+        limits = RiskLimits(
+            as_of_date=_NOW,
+            idempotency_key="lim-1",
+            max_single_position=0.10,
+            max_gross_leverage=1.0,
+        )
+        snap = assemble_risk_snapshot(
+            RiskSnapshotInput(
+                position_snapshot=pos,
+                quotes={"600519.SH": quote},
+                fills=(),
+                limits=limits,
+                as_of=_NOW,
+            )
+        )
+        checker, _ = _checker(snapshot_builder=_StubSnapshotBuilder(snap))
+        report = checker.check(_request(quantity="10"))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "SINGLE_POSITION_LIMIT" in codes
+        assert report.veto_decision is not None
+
+
+# ── A 股交易时段默认实现 ─────────────────────────────────────────────
+
+
+class TestAshareTradingWindow:
+    def test_morning_session(self):
+        # 2026-08-21 是周五; 10:00 北京时间在 09:30-11:30 窗口内
+        assert is_ashare_trading_window(datetime(2026, 8, 21, 10, 0)) is True
+
+    def test_lunch_break_closed(self):
+        assert is_ashare_trading_window(datetime(2026, 8, 21, 12, 0)) is False
+
+    def test_afternoon_session(self):
+        assert is_ashare_trading_window(datetime(2026, 8, 21, 14, 0)) is True
+
+    def test_before_open(self):
+        assert is_ashare_trading_window(datetime(2026, 8, 21, 9, 0)) is False
+
+    def test_after_close(self):
+        assert is_ashare_trading_window(datetime(2026, 8, 21, 15, 30)) is False
+
+    def test_weekend_closed(self):
+        # 2026-08-22 周六
+        assert is_ashare_trading_window(datetime(2026, 8, 22, 10, 0)) is False
+
+
+# ── CAND-CRYPTO-006/#262: market_calendar 注入 ─────────────────────
+
+
+class TestMarketCalendarInjection:
+    def test_default_calendar_is_ashare(self):
+        """无注入时默认使用 A 股日历。"""
+        checker, _ = _checker(session_window_probe=None)
+        # 2026-08-21 周五 10:00 UTC → 北京 18:00 已收盘
+        report = checker.check(_request(), now=datetime(2026, 8, 21, 10, 0, tzinfo=UTC))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_crypto_calendar_7x24_always_open(self):
+        """币版日历注入：7×24 恒开放。"""
+        checker, _ = _checker(
+            session_window_probe=None,
+            market_calendar=CryptoCalendar(),
+        )
+        # 周六凌晨 3 点也应放行
+        report = checker.check(_request(), now=datetime(2026, 8, 22, 3, 0, tzinfo=UTC))
+        assert report.allowed
+        assert report.blocks == ()
+
+    def test_crypto_calendar_naive_datetime_utc(self):
+        """币版日历 naive datetime 按 UTC 口径解释。"""
+        checker, _ = _checker(
+            session_window_probe=None,
+            market_calendar=CryptoCalendar(),
+        )
+        # naive datetime 2026-08-22 03:00 → UTC 03:00
+        report = checker.check(_request(), now=datetime(2026, 8, 22, 3, 0))
+        assert report.allowed
+
+    def test_ashare_calendar_naive_datetime_shanghai(self):
+        """A股日历 naive datetime 按 Asia/Shanghai 口径解释。"""
+        checker, _ = _checker(session_window_probe=None)
+        # naive datetime 2026-08-21 10:00 → 北京 10:00 在窗口内
+        report = checker.check(_request(), now=datetime(2026, 8, 21, 10, 0))
+        assert report.allowed
+
+    def test_ashare_calendar_lunch_break_blocked(self):
+        """A股日历午休时段阻断。"""
+        checker, _ = _checker(session_window_probe=None)
+        # naive datetime 2026-08-21 12:00 → 北京 12:00 午休
+        report = checker.check(_request(), now=datetime(2026, 8, 21, 12, 0))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_ashare_calendar_weekend_blocked(self):
+        """A股日历周末阻断。"""
+        checker, _ = _checker(session_window_probe=None)
+        # naive datetime 2026-08-22 10:00 → 北京 10:00 周六
+        report = checker.check(_request(), now=datetime(2026, 8, 22, 10, 0))
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_session_window_probe_overrides_calendar(self):
+        """显式 session_window_probe 优先于 market_calendar。"""
+        custom_probe_called = False
+
+        def custom_probe(now):
+            nonlocal custom_probe_called
+            custom_probe_called = True
+            return False
+
+        checker, _ = _checker(
+            session_window_probe=custom_probe,
+            market_calendar=CryptoCalendar(),
+        )
+        report = checker.check(_request())
+        assert custom_probe_called
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+
+# ── 闸门 1.5: live 档阻断（O-6/S-1，blocks_live_trading 接线 G6）────────────
+
+
+class TestLiveEnvGate:
+    """S-1 红蓝：live 档旗标拒单/探针异常 fail-closed/sim 放行到下一闸/默认探针配置语义。"""
+
+    def test_live_flag_blocks_all(self):
+        checker, builder = _checker(live_block_probe=lambda: True)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "LIVE_TRADING_BLOCKED" in codes
+        assert builder.calls == 0  # 短路: live 阻断不建快照
+
+    def test_probe_error_fail_closed(self):
+        def _boom():
+            raise RuntimeError("qmt_environments unreadable")
+
+        checker, builder = _checker(live_block_probe=_boom)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "LIVE_TRADING_BLOCKED" in codes
+        assert builder.calls == 0
+
+    def test_sim_flag_reaches_next_gate(self):
+        # sim 档放行 live 闸 → 流到闸门2 时段（注入非交易时段=被时段闸拦，证到达）
+        checker, builder = _checker(live_block_probe=lambda: False, session_window_probe=lambda now: False)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "LIVE_TRADING_BLOCKED" not in codes
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_default_probe_config_semantics(self, tmp_path, monkeypatch):
+        # env 层 current_env() 有进程级缓存，不可 mid-process 切换环境变量——
+        # 改 monkeypatch 模块符号 current_env（工厂调用面），语义覆盖同构。
+        import zephyr.ex_core.pre_execution_checker as pec
+        from zephyr.ex_core.pre_execution_checker import _default_live_block_probe
+
+        cfg = tmp_path / "qmt_environments.yaml"
+        cfg.write_text(
+            "\n".join(
+                [
+                    "environments:",
+                    "  - env: sim",
+                    "    blocks_live_trading: false",
+                    "  - env: live",
+                    "    blocks_live_trading: true",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        # production 环境读 live 档 → 阻断
+        monkeypatch.setattr(pec, "current_env", lambda: pec.EnvName.PROD)
+        assert _default_live_block_probe(cfg)() is True
+        # dev 环境读 sim 档 → 放行（新探针实例，防实例内 cache 串味）
+        monkeypatch.setattr(pec, "current_env", lambda: pec.EnvName.DEV)
+        assert _default_live_block_probe(cfg)() is False
+        # 配置损坏 → 探针上抛（闸门侧 fail-closed 兜底）
+        bad = tmp_path / "bad.yaml"
+        bad.write_text("{ not: [valid", encoding="utf-8")
+        monkeypatch.setattr(pec, "current_env", lambda: pec.EnvName.PROD)
+        try:
+            _default_live_block_probe(bad)()
+        except Exception:  # noqa: BLE001
+            pass
+        else:
+            pytest.fail("损坏配置必须上抛（闸门 fail-closed 兜底依赖）")
+        # 旗标缺失 → 上抛（缺条目=拒单语义）
+        cfg2 = tmp_path / "missing_flag.yaml"
+        cfg2.write_text(
+            "\n".join(["environments:", "  - env: live"]),
+            encoding="utf-8",
+        )
+        try:
+            _default_live_block_probe(cfg2)()
+        except Exception:  # noqa: BLE001
+            pass
+        else:
+            pytest.fail("缺 blocks_live_trading 旗标必须上抛（fail-closed）")
