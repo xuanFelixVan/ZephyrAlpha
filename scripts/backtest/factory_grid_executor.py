@@ -1281,7 +1281,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     full_sample_n = len(picked)
     picked = _shard_sample(picked, shard_idx, num_shards)
     run_ts = time.strftime("%Y%m%d-%H%M%S")
-    out_dir = INTAKE_DIR / f"grid_{run_ts}"
+    # 并发分片目录名带 shard 标识（20261006 撞车教训：6 分片同秒启动，秒级时间戳目录
+    # 名相撞=两进程互写同一 out_dir，产物互覆污染）——分片跑必带 _s{i}of{k} 后缀。
+    shard_tag = f"_s{int(shard_idx)}of{int(num_shards)}" if num_shards else ""
+    out_dir = INTAKE_DIR / f"grid_{run_ts}{shard_tag}"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # 数据一次拉取（窗口外多留 120 日算因子预热）
@@ -1332,7 +1335,10 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     combine_cache: dict = {}  # (G,A1,A2) → (combined, rank, a1_deg, a2_deg)
     vol20 = closes_eval.pct_change().rolling(20).std()
     # T2a 精确实现数据面: 市值宽表 + 60 日收益矩（mkt_cap/kelly sizing 消费）
-    mkt_cap_w = _load_mkt_cap_wide(warm_start, end, closes_all.columns)
+    # 考窗基对齐（20261006 Owner 并行化前置）：warm 基市值表致 mkt_cap 定尺寸权重并集
+    # 变形（230 行≠考窗 120 行）→ GPU 等形守卫全数挡回 CPU（T0 实测 mkt_cap 29/29 CPU）。
+    # 对齐=考窗切片逐位恒等（并集多余行全 NaN→引擎丢弃），净零漂移+快路径资格恢复。
+    mkt_cap_w = _load_mkt_cap_wide(warm_start, end, closes_all.columns).reindex(closes.index)
     rets_daily = closes_eval.pct_change()
     rets60_mean = rets_daily.rolling(60).mean()
     rets60_var = rets_daily.rolling(60).var()
