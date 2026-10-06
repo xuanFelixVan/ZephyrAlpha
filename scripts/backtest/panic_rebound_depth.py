@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-BT-092 | docs/03_modules/_domain_backtest/blueprint.md
+# [BLUEPRINT] MOD-BT-235 | docs/03_modules/_domain_backtest/blueprint.md | §fac9_06 A② 092三重撞号改授（092保sim_deviation，04:55后到者让位，235空闲）
 # [MODULE] scripts.backtest.panic_rebound_depth
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] numpy; pandas; sklearn; zephyr.backtest.run_archive; scripts.backtest.translated._c4_engine
@@ -19,6 +19,7 @@
   Phase 2 参数敏感性：decline_threshold ∈ {0.60,0.65,0.70} × window ∈ {10,15,20} = 9 组
   Phase 3 特征消融：去掉每个特征组看 Sharpe 变化
 """
+
 from __future__ import annotations
 
 import argparse
@@ -39,8 +40,7 @@ VOL_WINDOWS = (5, 20)
 TRAIN_WINDOW = 500
 
 
-def _load_index(engine, symbol: str, start: str, end: str,
-                fields: tuple[str, ...] = ("close",)) -> pd.DataFrame:
+def _load_index(engine, symbol: str, start: str, end: str, fields: tuple[str, ...] = ("close",)) -> pd.DataFrame:
     cols = ", ".join(fields)
     cfg = engine["cfg"]
     cli = engine["client"]
@@ -76,6 +76,7 @@ def _build_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def _fit_predict_linear_quantile(X_train, y_train, X_pred, alpha: float) -> float:
     from sklearn.linear_model import QuantileRegressor
+
     m = QuantileRegressor(quantile=alpha, solver="highs", alpha=0.01)
     m.fit(X_train, y_train)
     return float(m.predict(X_pred)[0])
@@ -93,14 +94,13 @@ def _walkforward_quantile(
     dates = feats.index
 
     rows: list[dict] = []
-    for i in range(train_window, len(data) - 1 if False else len(vals)):
+    for i in range(train_window, len(vals)):
         row: dict[str, Any] = {"date": dates[i], "realized": y[i]}
         for q in quantiles:
             try:
-                row[f"q{int(q*100):02d}"] = _fit_predict_linear_quantile(
-                    vals[:i], y[:i], vals[i:i+1], q)
-            except Exception:
-                row[f"q{int(q*100):02d}"] = np.nan
+                row[f"q{int(q * 100):02d}"] = _fit_predict_linear_quantile(vals[:i], y[:i], vals[i : i + 1], q)
+            except Exception:  # noqa: BLE001 逐分位拟合失败填 NaN 继续=数值稳健设计（单分位失败不得中断全表）
+                row[f"q{int(q * 100):02d}"] = np.nan
         rows.append(row)
     return pd.DataFrame(rows).set_index("date")
 
@@ -137,7 +137,9 @@ def multi_window_analysis(engine) -> dict[str, Any]:
         pred = _walkforward_quantile(feats, TRAIN_WINDOW)
         ev = _evaluate(pred)
         out[label] = ev
-        logger.info("%s: sharpe=%.3f mdd=%.4f inside=%.3f", label, ev["ann_sharpe"], ev["max_drawdown"], ev["coverage_inside"])
+        logger.info(
+            "%s: sharpe=%.3f mdd=%.4f inside=%.3f", label, ev["ann_sharpe"], ev["max_drawdown"], ev["coverage_inside"]
+        )
     return out
 
 
@@ -147,14 +149,19 @@ def param_sensitivity(engine) -> dict[str, Any]:
     idx = _load_index(engine, "000300", "2020-01-01", "2026-06-30", fields=("close",))
     rets = idx["close"].pct_change()
     from zephyr.pf_alloc.core.forward_stop_loss import forward_stop_signal
+
     for w in grid["windows"]:
         for t in grid["thresholds"]:
             sig = forward_stop_signal(rets, window=w, decline_threshold=t)
             triggers = int(sig["stop_review"].sum())
-            grid["results"].append({
-                "window": w, "threshold": t, "triggers": triggers,
-                "trigger_rate": round(triggers / len(rets), 4),
-            })
+            grid["results"].append(
+                {
+                    "window": w,
+                    "threshold": t,
+                    "triggers": triggers,
+                    "trigger_rate": round(triggers / len(rets), 4),
+                }
+            )
     return grid
 
 
@@ -165,6 +172,7 @@ def main() -> int:
     args = ap.parse_args()
 
     from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
+
     ensure_ch_env_loaded()
     cfg = load_ch_reader_config()
     from zephyr.data.ch_writer import get_client_strict

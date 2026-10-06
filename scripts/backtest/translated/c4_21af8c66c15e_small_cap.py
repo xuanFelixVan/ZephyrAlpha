@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-BT-092 | docs/03_modules/_domain_backtest/blueprint.md
+# [BLUEPRINT] MOD-BT-236 | docs/03_modules/_domain_backtest/blueprint.md | §fac9_06 A② 092三重撞号改授（09:16后到者让位，236空闲）
 # [MODULE] scripts.backtest.translated.c4_21af8c66c15e_small_cap
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.data.ch_config; numpy; pandas
@@ -38,7 +38,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import pandas as pd
-
 from _c4_engine import emit, filter_st, load_px, load_st_flags, load_valuation, run_backtest, wide
 
 logger = logging.getLogger(__name__)
@@ -84,8 +83,16 @@ def main() -> None:
 
     weights, closes = build(C4_START, C4_END)
     stats = run_backtest(weights, closes)
-    print(json.dumps(emit(STRATEGY_ID, stats, ["D1 全A剔ST近似中小板", "D2 T+1收盘", "D3 涨跌停不可剔",
-                                               "D4 规模因子不登记", "D5 壳不译"]), ensure_ascii=False))
+    print(
+        json.dumps(
+            emit(
+                STRATEGY_ID,
+                stats,
+                ["D1 全A剔ST近似中小板", "D2 T+1收盘", "D3 涨跌停不可剔", "D4 规模因子不登记", "D5 壳不译"],
+            ),
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":

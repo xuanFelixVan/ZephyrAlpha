@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-BT-084 | docs/03_modules/_domain_backtest/blueprint.md
+# [BLUEPRINT] MOD-BT-215 | docs/03_modules/_domain_backtest/blueprint.md | §fac9_06 A① 084错盖改授（084真主=lane_e_quantile_baseline，215空闲，出生证=fullflow_mining/b2_f28）
 # [MODULE] scripts.backtest.sim_attribution_report
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.infrastructure.database_service; zephyr.data.ch_writer(INSERT 预留);
@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import itertools
 import json
 import logging
 import math
@@ -70,6 +71,7 @@ def _ensure_repo_on_path() -> None:
     if str(_REPO_ROOT) not in sys.path:
         sys.path.insert(0, str(_REPO_ROOT))
 
+
 _POCKET_TABLE = "c1_backtest.sim_pocket_daily"  # 真源=schemas/categories/sim_pocket_daily.py（未入 TableRegistry，表名派生自 DDL 真源模块）
 _TRADE_LOG_TABLE = "c1_backtest.sim_trade_log"  # 真源=schemas/categories/sim_trade_log.py（同上）
 # 注册表真源（#ARCH-CH-024）：已注册表禁硬编码——经 TableRegistry 派生（get_registry 惰性缓存）
@@ -90,6 +92,8 @@ def _tables() -> dict[str, str]:
         _TABLES["trade_log"] = tradelog.TABLE_NAME
         _TABLES["bench"] = get_registry().table("market_index_kline")  # c1_market.kline_index
     return _TABLES
+
+
 # 对平容差：账本 daily_pnl/equity 均按元 round(2)——链式复算允许 ±0.01 元/日的舍入漂移
 _RECON_TOL = 0.011
 # trade_log cost_paid 与常量复算的交叉核对容差（同口径应 <1e-6 相对，0.01 元绝对兜底）
@@ -136,8 +140,11 @@ def fetch_trade_events() -> dict[tuple[str, str, str], dict]:
     out: dict[tuple[str, str, str], dict] = {}
     for d, sid, sym, action, sh, px, cost, cash_after in rows:
         out[(str(sid), str(d), str(action))] = {
-            "symbol": sym, "shares": float(sh), "price": float(px),
-            "cost_paid": float(cost), "cash_after": float(cash_after),
+            "symbol": sym,
+            "shares": float(sh),
+            "price": float(px),
+            "cost_paid": float(cost),
+            "cash_after": float(cash_after),
         }
     return out
 
@@ -158,12 +165,19 @@ def fetch_benchmark_closes(symbols: tuple[str, ...], d0: str, d1: str) -> dict[s
 
 def _pocket_row_dict(r: tuple) -> dict:
     return {
-        "trade_date": str(r[0]), "strategy_id": str(r[1]),
-        "initial_capital": float(r[2]), "cash": float(r[3]),
-        "position_symbol": str(r[4] or ""), "shares": float(r[5]),
-        "position_value": float(r[6]), "equity": float(r[7]),
-        "daily_pnl": float(r[8]), "signal": str(r[9]),
-        "mode": str(r[10]), "run_id": str(r[11]), "note": str(r[12] or ""),
+        "trade_date": str(r[0]),
+        "strategy_id": str(r[1]),
+        "initial_capital": float(r[2]),
+        "cash": float(r[3]),
+        "position_symbol": str(r[4] or ""),
+        "shares": float(r[5]),
+        "position_value": float(r[6]),
+        "equity": float(r[7]),
+        "daily_pnl": float(r[8]),
+        "signal": str(r[9]),
+        "mode": str(r[10]),
+        "run_id": str(r[11]),
+        "note": str(r[12] or ""),
     }
 
 
@@ -211,7 +225,8 @@ def cost_of_day(row: dict, prev_equity: float, events: dict, ledger) -> tuple[fl
         if drift > _COST_TOL:
             raise RuntimeError(
                 f"成本口径漂移 fail-closed: {row['strategy_id']} {row['trade_date']} {signal} "
-                f"trade_log={ev['cost_paid']:.4f} vs 常量复算={expected:.4f} (差 {drift:.4f} > {_COST_TOL})")
+                f"trade_log={ev['cost_paid']:.4f} vs 常量复算={expected:.4f} (差 {drift:.4f} > {_COST_TOL})"
+            )
         return ev["cost_paid"], breakdown
     return expected, breakdown  # trade_log 缺行=常量复算兜底（detail 注明）
 
@@ -252,13 +267,21 @@ def decompose_chain(chain: list[dict], events: dict, ledger) -> list[dict]:
         # 开户行（signal=open）日 pnl 恒 0，成本恒 0（开户不是交易）
         if row["signal"] == "open":
             cost, breakdown = 0.0, {"commission": 0.0, "slippage": 0.0, "impact": 0.0}
-        out.append({
-            "trade_date": row["trade_date"], "strategy_id": row["strategy_id"],
-            "pnl_gross": pnl_net + cost, "pnl_cost": cost, "pnl_net": pnl_net,
-            "_prev_equity": prev, "_signal": row["signal"], "_mode": row["mode"],
-            "_run_id": row["run_id"], "_equity": row["equity"],
-            "_cost_breakdown": breakdown,
-        })
+        out.append(
+            {
+                "trade_date": row["trade_date"],
+                "strategy_id": row["strategy_id"],
+                "pnl_gross": pnl_net + cost,
+                "pnl_cost": cost,
+                "pnl_net": pnl_net,
+                "_prev_equity": prev,
+                "_signal": row["signal"],
+                "_mode": row["mode"],
+                "_run_id": row["run_id"],
+                "_equity": row["equity"],
+                "_cost_breakdown": breakdown,
+            }
+        )
         prev_equity = row["equity"]
     return out
 
@@ -269,14 +292,15 @@ def verify_chain_continuity(chain: list[dict], decomposed: list[dict]) -> list[s
     返回漂移报告列表（空=全对平）；链首行 prev=initial_capital。
     """
     issues: list[str] = []
-    for i, (row, dec) in enumerate(zip(chain, decomposed)):
+    for i, (row, dec) in enumerate(zip(chain, decomposed, strict=False)):
         prev = row["initial_capital"] if i == 0 else chain[i - 1]["equity"]
         drift = abs((row["equity"] - prev) - row["daily_pnl"])
         if drift > _RECON_TOL:
             issues.append(
                 f"{row['strategy_id']}/{row['mode']} {row['trade_date']}: "
                 f"equity 差分复算 {row['equity'] - prev:.4f} vs daily_pnl {row['daily_pnl']:.4f}"
-                f" (漂移 {drift:.4f})")
+                f" (漂移 {drift:.4f})"
+            )
         dec["_prev_equity"] = prev
     return issues
 
@@ -296,7 +320,7 @@ def benchmark_daily_returns(closes: dict[str, dict[str, float]]) -> dict[str, di
     for sym, series in closes.items():
         dates = sorted(series)
         rets: dict[str, float] = {}
-        for a, b in zip(dates, dates[1:]):
+        for a, b in itertools.pairwise(dates):
             if series[a] > 0:
                 rets[b] = series[b] / series[a] - 1.0
         out[sym] = rets
@@ -318,16 +342,20 @@ def assign_risk_contrib(by_date: dict[str, list[dict]]) -> None:
             raise RuntimeError(f"risk_contrib sanity check 失败: {d} 合计={total!r} (单策略期必须=100%)")
 
 
-def assemble_rows(decomposed: list[dict], bench_rets: dict[str, dict[str, float]],
-                  *, bench_primary: str, bench_secondary: str) -> list[dict]:
+def assemble_rows(
+    decomposed: list[dict], bench_rets: dict[str, dict[str, float]], *, bench_primary: str, bench_secondary: str
+) -> list[dict]:
     """装配长表行：benchmark_rel=策略日收益-主基准日收益；次基准/明细入 detail JSON。"""
     by_date: dict[str, list[dict]] = {}
     for dec in decomposed:
         by_date.setdefault(dec["trade_date"], []).append(dec)
     assign_risk_contrib(by_date)
-    rets_all = {dec["trade_date"]: dec["pnl_net"] / dec["_prev_equity"]
-                if dec["_prev_equity"] and dec["_prev_equity"] > 0 else math.nan
-                for dec in decomposed}
+    rets_all = {
+        dec["trade_date"]: dec["pnl_net"] / dec["_prev_equity"]
+        if dec["_prev_equity"] and dec["_prev_equity"] > 0
+        else math.nan
+        for dec in decomposed
+    }
     rows: list[dict] = []
     for dec in decomposed:
         d = dec["trade_date"]
@@ -336,33 +364,38 @@ def assemble_rows(decomposed: list[dict], bench_rets: dict[str, dict[str, float]
         bs = bench_rets.get(bench_secondary, {}).get(d)
         bench_rel = (strat_ret - bp) if (bp is not None and not math.isnan(strat_ret)) else math.nan
         detail = {
-            "mode": dec["_mode"], "run_id": dec["_run_id"], "signal": dec["_signal"],
-            "equity": dec["_equity"], "prev_equity": dec["_prev_equity"],
+            "mode": dec["_mode"],
+            "run_id": dec["_run_id"],
+            "signal": dec["_signal"],
+            "equity": dec["_equity"],
+            "prev_equity": dec["_prev_equity"],
             "strategy_ret": None if math.isnan(strat_ret) else round(strat_ret, 10),
             "benchmark_ret_primary": None if bp is None else round(bp, 10),
-            "benchmark_rel_hs300": (None if bs is None or math.isnan(strat_ret)
-                                    else round(strat_ret - bs, 10)),
+            "benchmark_rel_hs300": (None if bs is None or math.isnan(strat_ret) else round(strat_ret - bs, 10)),
             "cost_breakdown": {k: round(v, 6) for k, v in dec["_cost_breakdown"].items()},
             "risk_contrib_placeholder": dec.get("_risk_placeholder", False),
             "schema_version": "sim_attribution/1.0",
         }
         if math.isnan(bench_rel):
             detail["benchmark_missing"] = True
-        rows.append({
-            "trade_date": d, "strategy_id": dec["strategy_id"],
-            "pnl_gross": round(dec["pnl_gross"], 2), "pnl_cost": round(dec["pnl_cost"], 2),
-            "pnl_net": round(dec["pnl_net"], 2),
-            "benchmark_rel": None if math.isnan(bench_rel) else round(bench_rel, 10),
-            "risk_contrib": round(dec["risk_contrib"], 10),
-            "detail": json.dumps(detail, ensure_ascii=False, sort_keys=True),
-        })
+        rows.append(
+            {
+                "trade_date": d,
+                "strategy_id": dec["strategy_id"],
+                "pnl_gross": round(dec["pnl_gross"], 2),
+                "pnl_cost": round(dec["pnl_cost"], 2),
+                "pnl_net": round(dec["pnl_net"], 2),
+                "benchmark_rel": None if math.isnan(bench_rel) else round(bench_rel, 10),
+                "risk_contrib": round(dec["risk_contrib"], 10),
+                "detail": json.dumps(detail, ensure_ascii=False, sort_keys=True),
+            }
+        )
     return rows
 
 
 def rows_to_tsv(rows: list[dict]) -> str:
     """长表行 → INSERT 列序 TSV（ch_writer 通道；NaN→nan，None→\\N）。"""
-    cols = ("trade_date", "strategy_id", "pnl_gross", "pnl_cost", "pnl_net",
-            "benchmark_rel", "risk_contrib", "detail")
+    cols = ("trade_date", "strategy_id", "pnl_gross", "pnl_cost", "pnl_net", "benchmark_rel", "risk_contrib", "detail")
 
     def cell(v: Any) -> str:
         if v is None:
@@ -399,8 +432,7 @@ def replay() -> dict:
         dec = decompose_chain(chains[key], events, ledger)
         continuity_issues.extend(verify_chain_continuity(chains[key], dec))
         decomposed.extend(dec)
-    rows = assemble_rows(decomposed, bench_rets,
-                         bench_primary=BENCHMARK_PRIMARY, bench_secondary=BENCHMARK_SECONDARY)
+    rows = assemble_rows(decomposed, bench_rets, bench_primary=BENCHMARK_PRIMARY, bench_secondary=BENCHMARK_SECONDARY)
 
     # ---- 对账三重核查 ----
     ledger_net_sum = round(sum(r["daily_pnl"] for r in pocket), 2)
@@ -408,11 +440,14 @@ def replay() -> dict:
     gross_sum = round(sum(r["pnl_gross"] for r in rows), 2)
     cost_sum = round(sum(r["pnl_cost"] for r in rows), 2)
     recon = {
-        "rows_ledger": len(pocket), "rows_attrib": len(rows),
+        "rows_ledger": len(pocket),
+        "rows_attrib": len(rows),
         "chains": {f"{k[0]}/{k[1]}": len(v) for k, v in sorted(chains.items())},
-        "ledger_net_sum": ledger_net_sum, "attrib_net_sum": attrib_net_sum,
+        "ledger_net_sum": ledger_net_sum,
+        "attrib_net_sum": attrib_net_sum,
         "recon_diff": round(attrib_net_sum - ledger_net_sum, 2),
-        "gross_sum": gross_sum, "cost_sum": cost_sum,
+        "gross_sum": gross_sum,
+        "cost_sum": cost_sum,
         "identity_check": round(gross_sum - cost_sum - attrib_net_sum, 2),
         "continuity_issues": continuity_issues,
         "cost_events_checked": sum(1 for dec in decomposed if dec["_signal"] in ("entry", "exit")),
@@ -459,15 +494,19 @@ def run_daily(day: str | None = None) -> dict:
         full_chain = build_chains(all_rows)[(row["strategy_id"], row["mode"])]
         dec = decompose_chain(_slice_with_prev(full_chain, d), events, ledger)
         decomposed.extend(dec)
-    rows = assemble_rows(decomposed, bench_rets,
-                         bench_primary=BENCHMARK_PRIMARY, bench_secondary=BENCHMARK_SECONDARY)
+    rows = assemble_rows(decomposed, bench_rets, bench_primary=BENCHMARK_PRIMARY, bench_secondary=BENCHMARK_SECONDARY)
     from schemas.categories.sim_attribution_daily import DATABASE
 
     # WO-1 接线收尾（2026-09-18 总统筹批）：计算→落库一体（表已建，insert_rows fail-closed）；
     # 重跑幂等由 RMT 同键去重保证（trade_date/strategy_id/metric 键序）
     insert_rows(rows)
-    return {"table": f"{DATABASE}.{TABLE_NAME}", "day": d,
-            "rows": rows, "insert_columns": INSERT_COLUMNS, "tsv": rows_to_tsv(rows)}
+    return {
+        "table": f"{DATABASE}.{TABLE_NAME}",
+        "day": d,
+        "rows": rows,
+        "insert_columns": INSERT_COLUMNS,
+        "tsv": rows_to_tsv(rows),
+    }
 
 
 def _slice_with_prev(full_chain: list[dict], day: str) -> list[dict]:
@@ -505,12 +544,10 @@ def main() -> None:
         recon = out["recon"]
         if args.insert_tsv:
             Path(args.insert_tsv).write_text(rows_to_tsv(out["rows"]), encoding="utf-8")
-        print(json.dumps({"mode": "replay", **recon, "tsv_rows": len(out["rows"])},
-                         ensure_ascii=False, indent=2))
+        print(json.dumps({"mode": "replay", **recon, "tsv_rows": len(out["rows"])}, ensure_ascii=False, indent=2))
         return
     out = run_daily(day=args.day)
-    payload = {"mode": "daily", "day": out["day"], "rows": len(out["rows"]),
-               "table": out["table"]}
+    payload = {"mode": "daily", "day": out["day"], "rows": len(out["rows"]), "table": out["table"]}
     if args.insert_tsv:
         Path(args.insert_tsv).write_text(out["tsv"], encoding="utf-8")
         payload["tsv_path"] = args.insert_tsv
