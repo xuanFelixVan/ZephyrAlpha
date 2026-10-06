@@ -67377,3 +67377,131 @@ entries:
   desc_en: ""
   plain_zh: "读全景总图真源yaml，校验节点集与全景图目录双闭、每图文件实存、边端点闭合，全绿才渲染出mermaid总图（图的索引）。新图先登记图目录再进总图，双跑逐字节幂等。"
   responsibility_layer: governance
+- module_path: scripts/governance/d3_metadata/register_tokens_ledger.py
+  domain_id: D_GOV
+  name_zh: "token账本一键登记器"
+  name_en: "register tokens ledger"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把新建文件的token通过意图API三步（登记入PG账本、发布快照、重打投影册）一键完成，替代已被封禁的直写通道"
+  responsibility_layer: governance
+- module_path: scripts/governance/registry_migration/ledger_reconcile_head.py
+  domain_id: D_GOV
+  name_zh: "账本对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对比PG账本与HEAD投影册的token条目差异，自动补登缺失条目，防止渲染丢字"
+  responsibility_layer: governance
+- module_path: docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation.yaml
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "规则执法面双口径对账表"
+  name_en: "Rule Face Reconciliation Report"
+  desc_zh: "每条规则一行：真执法面与被提及面双口径分列，附双零匹配名单"
+  desc_en: ""
+  plain_zh: "这张表回答一个问题：86 条铁律里，哪些真的有代码在管，哪些只是嘴上提过。生成器每次重算，谁也别想手改数字。"
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "图16立法流生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "治理立法流图（图16）的机生件：把裁定从诞生到退休的状态规矩和九台机器读进一张图，实例条数直连裁定账本现算，同账本重跑两遍一字不差，图坏了跑一遍就修好。"
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/validators/validate_governance_legislation_map.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "图16立法流校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "图16 立法流图的质检员：六种裁定状态一个不许自造、终态不许再出边、七条禁边不许绕、实例条数和账本对不上就报红，提交前把图拦在门口。"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/map_family/governance_legislation_map_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "图16立法流提交门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "治理立法流图的守门员：有人改这张图或它的生成器时自动核对结构，状态枚举自造、禁边丢失或实例混进图节点就拦下提交，防止地图和裁定账本脱节。"
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/generators/generate_backtest_coverage_ledger.py
+  domain_id: D_DATA
+  name_zh: "回测覆盖账本生成器"
+  name_en: "Generate Backtest Coverage Ledger"
+  desc_zh: "三真源机生回测覆盖总册 yaml（七层金字塔自动化/已考/未考/缺口+13维旋钮覆盖+试次摘要）"
+  desc_en: ""
+  plain_zh: "扫描试次账本、考场产物与环节对标表，自动生成回测金字塔每层的自动化状态、已考未考与缺口清单"
+  responsibility_layer: business
+- module_path: tests/gov/governance/d5_architecture/test_generate_backtest_coverage_ledger.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "回测覆盖总册生成器红绿测试"
+  name_en: "Test Generate Backtest Coverage Ledger"
+  desc_zh: "fixtures 断言渲染形态；缺真源/计数断言失败必报错不静默；幂等与--check 漂移"
+  desc_en: ""
+  plain_zh: "给账本生成器当考官：故意抽掉原材料，看它是不是老实报错而不是编数；再用同一批材料算两遍，看两本账是否一模一样；最后核对手改过的账会被查出来。全在临时沙盒里做，不碰真实账本和考场。"
+  responsibility_layer: governance
+- module_path: scripts/backtest/fexam/ch_data.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam CH只读装载层"
+  name_en: "fexam CH loader"
+  desc_zh: "CH只读SELECT装载前向收益/因子指标列面板/regime态，fail-closed"
+  desc_en: ""
+  plain_zh: "这是考试车的油管：从行情数据库里只读地抽数据（不发任何写指令），把价格、因子值、市场状态装成考试能直接用的表格。数据库连不上就报警停考，绝不编造假数据。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/__init__.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam考试套件包入口"
+  name_en: "fexam suite package"
+  desc_zh: "全量考试套件包初始化，收编批0-5全部子模块"
+  desc_en: ""
+  plain_zh: "这是考试工厂的大门牌：把从生成考卷、跑考试、出成绩册的所有零件归到一个屋檐下，外面只认这一个入口。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/roster.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam批0应考名单机生器"
+  name_en: "fexam roster generator"
+  desc_zh: "四册解析+可考性机判分类+prereg冻结口径，名单全部来自册零手工挑题"
+  desc_en: ""
+  plain_zh: "这是点名册印刷机：把策略册、因子册、指标册里的每一条资产自动点出名字造册，并预先判断谁能上考场谁缺材料，考法和及格线提前盖章冻结防止事后挪门柱。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/ic_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam批1批3 IC考试引擎"
+  name_en: "fexam IC exam engine"
+  desc_zh: "向量秩IC/ICIR/换手/分体制/衰减五项度量+三态机判+断点续跑，批1因子批3指标共用"
+  desc_en: ""
+  plain_zh: "这是阅卷机：给每个因子或指标算出它预测股价的本事（IC）有多强多稳，按提前公布的及格线判合格回炉或淘汰，中途停电了能从断点继续不用重考。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/strategy_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam批2策略整装考"
+  name_en: "fexam strategy exam"
+  desc_zh: "alpha合成+月频top20标准装置+引擎IS/OOS双窗+DSR记账+checkpoint幂等"
+  desc_en: ""
+  plain_zh: "这是整装策略的 standardized 考场：把策略册里每条策略的选股因子装上统一的买卖规则跑一遍历史行情，分上半场下半场各打一次分，全部成绩和考试次数自动记账。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/allocator_shadow.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam批4分配器影子考"
+  name_en: "fexam allocator shadow"
+  desc_zh: "五套资金分配法同窗影子对比+序贯统计证据量，只报证据不判终胜负"
+  desc_en: ""
+  plain_zh: "这是五种分钱方法的比武场：同一份信号同一时间段让五种仓位分配法各跑一遍，比较谁赚得多回撤小，但只报告当前证据量不急着判谁最终赢。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/campaign_report.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam批5总册汇总器"
+  name_en: "fexam campaign reporter"
+  desc_zh: "考试总册+家底总表八册合成+四张缺口单+原问题匹配表，全机生禁手填"
+  desc_en: ""
+  plain_zh: "这是成绩公布栏：把四场考试的成绩册汇成一张总表，顺手盘点全部家底哪些接通了哪些断链，再把攒的问题清单和考试结果对上号。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/run_fexam.py
+  domain_id: D_BACKTEST
+  name_zh: "fexam CLI单入口"
+  name_en: "fexam CLI entry"
+  desc_zh: "八子命令单入口（roster/factor/strategy/indicator/allocator/summary/inventory/metaq/selftest），prereg只读防挪门柱"
+  desc_en: ""
+  plain_zh: "这是整个考试系统的遥控器：一条命令选择点名、开考、出分、盘点或对账，考法和及格线只能读不能改，保证每晚自动跑都守同一套规则。"
+  responsibility_layer: business
