@@ -877,3 +877,27 @@ def test_m8_bad_params_fail_closed():
         mod.dual_pool_score_surface(c, pool_window=0)
     with pytest.raises(ValueError, match="n_quantile"):
         mod.dual_pool_score_surface(c, pool_window=5, n_quantile=1)
+
+
+# ── mkt_cap_w 考窗基对齐（GPU 快路径资格恢复，Owner 令并行化前置；20261006）──
+
+
+def test_mkt_cap_warm_basis_bit_identical_to_window_basis():
+    """红组：mkt_cap 定尺寸在 warm 基市值表 vs 考窗基市值表下输出逐位恒等（对齐修复语义）。
+
+    真跑实证：mkt_cap 全部 29/29 点 fastpath_ineligible（warm 基并集 230 行≠考窗 120 行
+    被等形守卫挡回 CPU）。对齐后权重=考窗形（GPU 资格恢复），净值的逐位一致性由
+    "并集多余行全 NaN→引擎丢弃"保证，本测试直接对拍两基输出。
+    """
+    rng = np.random.default_rng(107)
+    idx = pd.bdate_range("2023-01-02", periods=120)
+    cols = ["000001", "000002", "000003"]
+    closes = pd.DataFrame(10 * np.exp(np.cumsum(rng.normal(0, 0.01, (120, 3)), axis=0)), index=idx, columns=cols)
+    vol20 = closes.pct_change().rolling(20).std()
+    warm_idx = pd.bdate_range("2022-08-01", periods=150)
+    mv = pd.DataFrame(rng.uniform(5e9, 5e10, (150, 3)), index=warm_idx, columns=cols)
+    w_warm, _ = mod._sizing(closes, 2, "mkt_cap", vol20, mkt_cap_w=mv)
+    w_win, _ = mod._sizing(closes, 2, "mkt_cap", vol20, mkt_cap_w=mv.reindex(idx))
+    # 逐位一致性=考窗切片对拍（warm 基的并集多余行全 NaN→引擎侧丢弃，此即等价机理）
+    pd.testing.assert_frame_equal(w_warm.loc[idx], w_win)
+    assert w_win.index.equals(closes.index) and w_win.columns.equals(closes.columns)
