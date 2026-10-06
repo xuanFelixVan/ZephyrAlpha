@@ -850,6 +850,115 @@ def stratified_sample(expansion, n_samples: int, seed: int, stratify_dims: tuple
     return picked[:n_samples]
 
 
+def _close_atr(closes: pd.DataFrame, window: int = 14) -> pd.DataFrame:
+    """close-only ATR 代理（M1）：cATR=mean(|Δclose|,window)。
+
+    考卷数据面只有 close（load_px fields 无 high/low），真 ATR（含跳空真实波幅）不可得
+    ——本代理为诚实翻译，与真 ATR 的差距=T3b 冻结卡 honesty 披露位，禁冒充真 ATR。
+    """
+    return closes.diff().abs().rolling(window, min_periods=window).mean()
+
+
+def _apply_exit_overlay(
+    weights: pd.DataFrame,
+    closes: pd.DataFrame,
+    stop_mode: str,
+    atr_window: int = 14,
+) -> tuple[pd.DataFrame, str]:
+    """M1 X 族离场叠加（X-S1-02 止损族 + X-S1-03 止盈族，T3b 考维引擎语义；T3a 不接线=零漂移）。
+
+    日级向量化（挖矿 M1）：收盘判定触发（诚实位 §4.4 已知失真：触发滞后到收盘，双向失真
+    之一如实入卷）；触发日该票权重清零，次日基础权重再入选=新持仓段（entry 重置）。
+    - off：原样直返（恒等）
+    - atr3x：入场价−3×cATR14 硬止损带（入场=持仓 0→1 翻转日，入场价=当日收盘）
+    - trail20：持仓段收盘运行峰值×(1−0.20) 移动止盈（峰值按段重置）
+    - tp20：入场价×1.20 目标价止盈
+    返回 (调整后权重, stop_mode)。
+    """
+    if stop_mode == "off":
+        return weights, stop_mode
+    if stop_mode not in ("atr3x", "trail20", "tp20"):
+        raise ValueError(f"未知 stop_mode: {stop_mode!r}（合法=off|atr3x|trail20|tp20）")
+    held = weights > 0
+    entry_day = held & ~held.shift(1, fill_value=False)
+    entry_px = closes.where(entry_day).ffill()
+    if stop_mode == "atr3x":
+        level = entry_px - 3.0 * _close_atr(closes, atr_window)
+        trigger = held & (closes < level)
+    elif stop_mode == "trail20":
+        # 段内运行峰值：stack 后按 (票, 段号) cummax 再 unstack（段号=入场日 cumsum，列独立；
+        # where(held).stack 丢未持仓行，reindex 对齐段号再分组）
+        regime = entry_day.cumsum()
+        st = closes.where(held).stack()
+        reg = regime.stack().reindex(st.index)
+        peak = st.groupby([st.index.get_level_values(1), reg]).cummax().unstack()
+        trigger = held & (closes < peak * (1.0 - 0.20))
+    else:  # tp20
+        trigger = held & (closes >= entry_px * 1.20)
+    return weights.where(~trigger, 0.0), stop_mode
+
+
+def _apply_industry_topk_overlay(
+    combined: pd.DataFrame,
+    closes: pd.DataFrame,
+    industry_map: dict[str, str],
+    top_k_industries: int = 3,
+    mom_window: int = 20,
+) -> pd.DataFrame:
+    """M3 行业动量 Top-K × 板块内个股两层排序（L2 板块主干最简版，T3b 考维引擎语义；T3a 不接线）。
+
+    语义（挖矿 M3）：行业动量=成员等权 mean(close.pct_change(mom_window))；行业按动量
+    截面 rank 取 Top-K（行业锚=industry_map/sws2021_l1，schema industry_anchor 同源）；
+    非 Top-K 行业个股权重清零、缺锚票行业层直接淘汰（诚实缺供，禁静默保留）；Top-K
+    行业内保留 combined 原序（第二层）。预热窗动量 NaN→当日全清（诚实缺供）。
+    返回 masked combined（date × symbol）。
+    """
+    mom = closes.pct_change(mom_window)
+    ind_of = pd.Series({s: industry_map.get(s) for s in closes.columns})
+    known_syms = list(ind_of.index[ind_of.notna()])
+    # 行业动量：转置 groupby（避 axis=1 弃用路），date × industry
+    ind_mom = mom[known_syms].T.groupby(ind_of.loc[known_syms].to_numpy()).mean().T
+    topk = ind_mom.rank(axis=1, ascending=False) <= top_k_industries  # date × industry
+    # 符号面还原：keep_sym[d,s] = topk[d, ind(s)]；缺锚票=全 False
+    keep = pd.DataFrame(False, index=closes.index, columns=closes.columns)
+    for sym in known_syms:
+        keep[sym] = topk[ind_of[sym]].reindex(closes.index).fillna(False).to_numpy()
+    return combined.where(keep)
+
+
+def _apply_dd_breaker_overlay(
+    weights: pd.DataFrame,
+    closes: pd.DataFrame,
+    breaker_mode: str,
+) -> tuple[pd.DataFrame, pd.Series | None]:
+    """M2 回撤熔断分级与减仓（X-R1-01/02，T3b 考维引擎语义；T3a 不接线=零漂移）。
+
+    考卷可表达子集=挖矿 M2 向量化骨架：组合权益 nav（w.shift(1)×日收益，与引擎同口径）
+    → running max → dd → 阈值带→帽（无记忆分带）。帽=日级乘性（同 J 帽语义家族）：
+    NORMAL 1.0 / WARN(dd≤5%) 0.75 / DANGER(≤10%) 0.50 / CRISIS(≤15%) 0.25 / KILL(≤kill_dd) 0。
+    已知失真（T3b 卡 honesty 披露位）：live 机 DrawdownStateMachine 的迟滞半阈恢复/持续
+    确认窗/最短持有/VaR-CVaR 升级源/毕业准则/复位守卫/RECOVERY 阶梯=非日频向量化可
+    表达域，不翻译（六态考卷呈现=五帽带，RECOVERY 缺席如实声明）。
+    breaker_mode：off | dd20（kill_dd=0.20，T3b 卡草案枚举）；warn/danger/crisis 沿
+    DrawdownStateMachineConfig memo 默认（0.05/0.10/0.15）。
+    返回 (帽后权重, 日级帽序列 caps)。
+    """
+    if breaker_mode == "off":
+        return weights, None
+    if breaker_mode not in ("dd20",):
+        raise ValueError(f"未知 breaker_mode: {breaker_mode!r}（合法=off|dd20）")
+    kill_dd = 0.20 if breaker_mode == "dd20" else 0.25
+    rets = closes.pct_change()
+    port = (weights.shift(1).fillna(0.0) * rets.fillna(0.0)).sum(axis=1)
+    nav = (1.0 + port).cumprod()
+    dd = nav / nav.cummax() - 1.0
+    caps = pd.Series(
+        np.select([dd <= -kill_dd, dd <= -0.15, dd <= -0.10, dd <= -0.05], [0.0, 0.25, 0.50, 0.75], default=1.0),
+        index=weights.index,
+    )
+    return weights.mul(caps, axis=0), caps
+
+
 def _validate_j_string_semantics(recipes) -> None:
     """T0 实钓守卫（20261006）: J 维取值必须字符串 on/off，布尔化=SystemExit 禁跑。
 
@@ -861,6 +970,20 @@ def _validate_j_string_semantics(recipes) -> None:
         j = r.values.get("J_regime_switch")
         if j is not None and j not in ("on", "off"):
             raise SystemExit(f"[guard] J_regime_switch 取值非字符串 on/off（YAML 1.1 布尔陷阱?）: {j!r}——禁跑")
+
+
+def _shard_sample(picked: list, shard_idx: int | None, num_shards: int | None) -> list:
+    """确定性分片（20261006 st-t3series）：同一冻结样本按 i::k 轮转切片。
+
+    背景：T0 实测 9.96s/点 ⇒ T1 全量 7400 点 ≈20.5h，超冻卡 single_job_wall_clock_cap_hours=12
+    ——按帽拆多 job。同 seed+分层抽样确定 ⇒ i::k 分片=互斥+并集=全集+可复现；各分片
+    manifest/net_returns 并集=整跑语义（判决侧合并）。num_shards 缺省=零漂移。
+    """
+    if not num_shards:
+        return picked
+    if shard_idx is None or not 0 <= int(shard_idx) < int(num_shards):
+        raise ValueError(f"shard_idx={shard_idx!r} 须在 [0, num_shards={num_shards}) 内")
+    return list(picked[int(shard_idx) :: int(num_shards)])
 
 
 def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun 三参演进（存量批次主入口，参数对象重构归批F账非本批）
@@ -880,6 +1003,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     factor_surface: str = "v1",
     exec_caliber: str = "close",
     cost_attribution: bool = False,
+    shard_idx: int | None = None,
+    num_shards: int | None = None,
 ) -> dict:
     """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。
 
@@ -917,6 +1042,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 factor_surface=factor_surface,
                 exec_caliber=exec_caliber,
                 cost_attribution=cost_attribution,
+                shard_idx=shard_idx,
+                num_shards=num_shards,
             )
         except _GPUWaveFailure as exc:
             import logging as _lg
@@ -938,6 +1065,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 factor_surface=factor_surface,
                 exec_caliber=exec_caliber,
                 cost_attribution=cost_attribution,
+                shard_idx=shard_idx,
+                num_shards=num_shards,
             )
     # ——以下=单波单趟主体——
     from zephyr.position.core.position_recipe_compiler import GridCompiler
@@ -979,6 +1108,8 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     sub_view.recipes = recipes_all
     sub_view.n_raw = len(recipes_all)
     picked = stratified_sample(sub_view, 8 if smoke else n_samples, seed, stratify_dims=stratify_dims)
+    full_sample_n = len(picked)
+    picked = _shard_sample(picked, shard_idx, num_shards)
     run_ts = time.strftime("%Y%m%d-%H%M%S")
     out_dir = INTAKE_DIR / f"grid_{run_ts}"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1330,6 +1461,9 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     if engine_degrade:
         # L2-C：GPU 波败 fail-closed 整波重跑 CPU 的披露键（空=未发生降级）
         summary["engine_degrade"] = engine_degrade
+    if num_shards:
+        # 分片披露（20261006）：full_sample_n=分片前冻结样本总量；并集=整跑
+        summary["shard"] = {"idx": int(shard_idx), "num": int(num_shards), "full_sample_n": full_sample_n}
     if cost_gate_tiers_bp is not None:
         # T3 方案①: 仅档位扫描启用时披露（缺省路径 summary 逐键零漂移）
         summary["cost_gate_tiers_bp"] = [float(t) for t in cost_gate_tiers_bp]
@@ -1658,6 +1792,18 @@ def main() -> int:
         default="",
         help="对账尺网格根目录覆盖（默认 data/strategy_intake；测试注入 tmp）",
     )
+    ap.add_argument(
+        "--shard-idx",
+        type=int,
+        default=None,
+        help="确定性分片序号（配 --num-shards；i::k 轮转切片，并集=整跑；单 job 墙钟帽合规用）",
+    )
+    ap.add_argument(
+        "--num-shards",
+        type=int,
+        default=None,
+        help="确定性分片总数（缺省=不分片零漂移）；分片须串行跑（vram.concurrency=1）",
+    )
     args = ap.parse_args()
     if args.verify_counts:
         return _verify_counts(args.verify_grid_root or None)
@@ -1719,6 +1865,8 @@ def main() -> int:
         factor_surface=factor_surface,
         exec_caliber=exec_caliber,
         cost_attribution=cost_attribution,
+        shard_idx=args.shard_idx,
+        num_shards=args.num_shards,
     )
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0

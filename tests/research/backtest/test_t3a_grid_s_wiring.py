@@ -550,3 +550,164 @@ def test_combine_same_basis_input_bit_identical():
     combined, deg = mod._combine(factors, normalized, "equal", closes)
     assert combined.index.equals(closes.index)
     assert deg is False
+
+
+# ── T1 确定性分片（20261006 st-t3series：实测 9.96s/点 ⇒ T1 20.5h > 单job帽 12h）──
+
+
+def test_shard_sample_partition_disjoint_union_deterministic():
+    """红组：i::k 分片=互斥+并集=全集+同序确定性。"""
+    sample = list(range(100))
+    shards = [mod._shard_sample(sample, i, 3) for i in range(3)]
+    union = sorted(x for s in shards for x in s)
+    assert union == list(range(100))
+    for a, b in ((0, 1), (0, 2), (1, 2)):
+        assert not set(shards[a]) & set(shards[b]), f"分片 {a}/{b} 交集非空"
+    assert shards[0] == list(range(0, 100, 3))
+    assert mod._shard_sample(sample, 0, 3) == mod._shard_sample(sample, 0, 3)
+
+
+def test_shard_sample_identity_when_unchunked_and_range_guard():
+    """零漂移：num_shards 缺省=原样直返；越界 idx=ValueError 禁跑。"""
+    sample = [7, 8, 9]
+    assert mod._shard_sample(sample, None, None) is sample
+    assert mod._shard_sample(sample, 0, None) is sample
+    with pytest.raises(ValueError, match="shard_idx"):
+        mod._shard_sample(sample, 2, 2)
+    with pytest.raises(ValueError, match="shard_idx"):
+        mod._shard_sample(sample, None, 2)
+
+
+# ── M1 离场族 X 维引擎语义（20261006 st-t3series，T3b 前置；T3a 不接线=零漂移）──
+
+
+def _flat_weights(idx: pd.DatetimeIndex, cols: list[str], w: float = 0.5) -> pd.DataFrame:
+    return pd.DataFrame(w, index=idx, columns=cols)
+
+
+def test_m1_off_mode_bit_identical():
+    """off=恒等直返（未接线期零漂移锚）。"""
+    closes = _synth_closes(n_days=30, n_sym=3, seed=41)
+    w = _flat_weights(closes.index, list(closes.columns))
+    out, mode = mod._apply_exit_overlay(w, closes, "off")
+    assert mode == "off"
+    assert out.equals(w)
+
+
+def test_m1_tp20_target_take_profit():
+    """红组（S1-03 止盈族）：涨幅触及入场价×1.20 当日收盘清仓，随后基础权重再入选=新段重入场。"""
+    idx = pd.bdate_range("2023-01-02", periods=6)
+    c = pd.DataFrame({"000001": [10.0, 10.0, 10.0, 12.5, 12.0, 12.0], "000002": [10.0] * 6}, index=idx)
+    w = _flat_weights(idx, ["000001", "000002"])
+    out, _ = mod._apply_exit_overlay(w, c, "tp20")
+    # 000001: 入场价 10（day0）；day3 收盘 12.5≥12.0 触发→w=0；day4 基础权重仍在→按规则保留（overlay 只清触发日）
+    assert out.loc[idx[3], "000001"] == 0.0
+    assert out.loc[idx[0], "000001"] == 0.5
+    assert (out["000002"] == 0.5).all()
+
+
+def test_m1_trail20_trailing_stop():
+    """红组（移动止盈）：持仓期运行峰值回落≥20% 当日收盘清仓；峰值按持仓段重置。"""
+    idx = pd.bdate_range("2023-01-02", periods=5)
+    c = pd.DataFrame({"000001": [10.0, 12.0, 12.5, 9.9, 9.9]}, index=idx)  # 峰 12.5；9.9<12.5×0.8=10.0
+    w = _flat_weights(idx, ["000001"])
+    out, _ = mod._apply_exit_overlay(w, c, "trail20")
+    assert out.loc[idx[3], "000001"] == 0.0
+    assert out.loc[idx[2], "000001"] == 0.5  # 峰值日不触发
+
+
+def test_m1_atr3x_hard_stop():
+    """红组（S1-02 止损族）：入场价−3×cATR14 硬带；深跌触发日收盘清仓。"""
+    n = 30
+    idx = pd.bdate_range("2023-01-02", periods=n)
+    base = [10.0] * 20 + [10.0, 10.0] + [10.0] * 8
+    vals = [10.0] * 25 + [4.0] * 5  # day25 深崩 60%（远超 3×cATR 带）
+    c = pd.DataFrame({"000001": vals}, index=idx)
+    w = _flat_weights(idx, ["000001"])
+    out, _ = mod._apply_exit_overlay(w, c, "atr3x")
+    assert out.loc[idx[25], "000001"] == 0.0
+    assert (out.loc[idx[:25], "000001"] == 0.5).all()
+
+
+def test_m1_unknown_mode_fail_closed():
+    """未知 stop_mode=ValueError（fail-closed，禁静默当 off）。"""
+    closes = _synth_closes(n_days=10, n_sym=2, seed=43)
+    w = _flat_weights(closes.index, list(closes.columns))
+    with pytest.raises(ValueError, match="stop_mode"):
+        mod._apply_exit_overlay(w, closes, "magic_mode")
+
+
+# ── M2 回撤熔断族 X 维引擎语义（X-R1-01/02，T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m2_off_mode_bit_identical():
+    """off=恒等直返。"""
+    closes = _synth_closes(n_days=30, n_sym=3, seed=47)
+    w = _flat_weights(closes.index, list(closes.columns))
+    out, cap = mod._apply_dd_breaker_overlay(w, closes, "off")
+    assert out.equals(w)
+    assert cap is None
+
+
+def test_m2_dd20_band_caps_and_peak_reference():
+    """红组：组合回撤跌破带→同日帽乘性缩水（峰值=running max 非入场价）；KILL 带全关。"""
+    idx = pd.bdate_range("2023-01-02", periods=5)
+    # 组合 50/50 两票：+0% → +10% → −26%（dd≈−23.6% 落 DANGER/CRISIS 间）→ 0 → 0
+    c = pd.DataFrame({"000001": [10.0, 10.0, 11.0, 8.0, 8.0], "000002": [10.0, 10.0, 11.0, 8.2, 8.2]}, index=idx)
+    w = _flat_weights(idx, ["000001", "000002"])
+    out, caps = mod._apply_dd_breaker_overlay(w, c, "dd20")
+    r = c.pct_change().fillna(0.0)
+    port = (w.shift(1).fillna(0.0) * r).sum(axis=1)
+    nav = (1 + port).cumprod()
+    dd = nav / nav.cummax() - 1
+    import numpy as np
+
+    expect = np.select([dd <= -0.20, dd <= -0.15, dd <= -0.10, dd <= -0.05], [0.0, 0.25, 0.50, 0.75], default=1.0)
+    assert np.allclose(caps.to_numpy(), expect)
+    assert np.allclose(out.to_numpy(), (w.mul(caps, axis=0)).to_numpy())
+    assert caps.iloc[2] == 1.0 and caps.iloc[3] < 1.0  # 上涨日无帽、深跌日降帽
+
+
+def test_m2_unknown_breaker_mode_fail_closed():
+    """未知 breaker_mode=ValueError（fail-closed）。"""
+    closes = _synth_closes(n_days=10, n_sym=2, seed=53)
+    w = _flat_weights(closes.index, list(closes.columns))
+    with pytest.raises(ValueError, match="breaker_mode"):
+        mod._apply_dd_breaker_overlay(w, closes, "magic")
+
+
+# ── M3 行业 Top-K 两层选股（L2 板块主干最简版，T3b 前置；T3a 不接线=零漂移）──
+
+
+def test_m3_industry_topk_two_layer():
+    """红组：行业动量 Top-K 外的个股清零；Top-K 行业内保留 combined 序；缺锚票淘汰。"""
+    idx = pd.bdate_range("2023-01-02", periods=25)
+    cols = ["111001", "111002", "222001", "222002", "333001"]
+    rng = np.random.default_rng(61)
+    base = pd.DataFrame(10.0 + np.cumsum(rng.normal(0, 0.05, (25, 5)), axis=0), index=idx, columns=cols)
+    # 强推行业 11 上行、行业 22 下行（确定性动量差）
+    base["111001"] = np.linspace(10, 14, 25)
+    base["111002"] = np.linspace(10, 13.5, 25)
+    base["222001"] = np.linspace(12, 9, 25)
+    base["222002"] = np.linspace(12, 9.2, 25)
+    imap = {"111001": "行业11", "111002": "行业11", "222001": "行业22", "222002": "行业22"}  # 333001 缺锚
+    combined = pd.DataFrame(1.0, index=idx, columns=cols)
+    out = mod._apply_industry_topk_overlay(combined, base, imap, top_k_industries=1, mom_window=20)
+    late = out.iloc[-1]
+    assert late["111001"] == 1.0 and late["111002"] == 1.0  # 动量冠军行业保留
+    # 垫底行业/缺锚票=NaN 不进截面（与 S3 估值 NaN 档同约定，非 0 权）
+    assert pd.isna(late["222001"]) and pd.isna(late["222002"])
+    assert pd.isna(late["333001"])  # 缺行业锚=行业层淘汰（诚实，不静默保留）
+    early = out.iloc[0]
+    assert early.isna().all()  # 预热窗动量 NaN→无行业可排→全清（诚实缺供）
+
+
+def test_m3_topk2_keeps_both_industries():
+    """K=2 时两行业全保留（Top-K 边界语义）。"""
+    idx = pd.bdate_range("2023-01-02", periods=25)
+    cols = ["111001", "222001"]
+    base = pd.DataFrame({"111001": np.linspace(10, 14, 25), "222001": np.linspace(12, 9, 25)}, index=idx)
+    imap = {"111001": "I1", "222001": "I2"}
+    combined = pd.DataFrame(1.0, index=idx, columns=cols)
+    out = mod._apply_industry_topk_overlay(combined, base, imap, top_k_industries=2, mom_window=20)
+    assert (out.iloc[-1] == 1.0).all()
