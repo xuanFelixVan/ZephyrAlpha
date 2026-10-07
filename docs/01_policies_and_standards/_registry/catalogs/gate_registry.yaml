@@ -902,7 +902,11 @@ gates:
   name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
   entry: in-process (GitCommitGateway)
   description: CREATE-GUARD
-  files_trigger: ''
+  # C304（st-mastertc-l2 2026-10-07）触发面补登记：staged 新增 .py（tests/ 豁免）+
+  # 非 rules/ .yaml 才有判责面（create_guard.py INVARIANTS）——他类文件零判责不触发
+  files_trigger:
+  - '*.py'
+  - '*.yaml'
   always_run: false
   category: commit_gate
   status: active

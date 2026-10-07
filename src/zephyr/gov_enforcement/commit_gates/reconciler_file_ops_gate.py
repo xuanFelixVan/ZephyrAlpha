@@ -5,8 +5,8 @@
 # [CONSUMERS] gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
 # [STARTUP] imported by gate_auto_registrar
 # [MATURITY] production
-# [INVARIANTS] 只读扫描 staged 文件全文，零写入零副作用；ops_guard.py 自身豁免
-# [MODIFY-GUARD] 裸原语正则与原语清单变更需同步 tests/governance/commit_gates/test_reconciler_file_ops_gate.py
+# [INVARIANTS] own-diff 作用域只读扫描（C338：modified 只判本包新增行、新文件保持全文），零写入零副作用；ops_guard.py 自身豁免
+# [MODIFY-GUARD] 裸原语正则与原语清单变更需同步 tests/gov/governance/commit_gates/test_reconciler_file_ops_gate.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -42,7 +42,11 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     is_test_exempt,
 )
 
-__all__: Final = ["make_reconciler_file_ops_gate", "scan_file_for_bare_primitives"]
+__all__: Final = [
+    "make_reconciler_file_ops_gate",
+    "scan_file_for_bare_primitives",
+    "scan_own_diff_for_bare_primitives",
+]
 
 #: 扫描范围（治理代理代码区，相对项目根前缀）
 _SCAN_PREFIXES = (
@@ -75,7 +79,7 @@ _EXEMPT_MARKER = "# ops-guard-exempt"
 
 
 def scan_file_for_bare_primitives(path: Path) -> list[tuple[int, str]]:
-    """扫描单文件裸删除/移动原语调用行。
+    """扫描单文件全文裸删除/移动原语调用行（新文件路径与独立复测入口）。
 
     Returns:
         [(lineno, line_stripped), ...] 违规行清单（注释行/豁免标记行/docstring 行已过滤）。
@@ -88,12 +92,20 @@ def scan_file_for_bare_primitives(path: Path) -> list[tuple[int, str]]:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return []
-    lines = text.splitlines()
     # 2026-08-20 波3 实证：审计脚本 docstring 枚举被审计原语（``os.remove()`` 等）致自扫误报，
     # docstring 行豁免与 bare_sql_gate（R95 _extract_docstring_lines）同口径
     doc_lines = _extract_docstring_lines(text)
+    return _judge_lines(enumerate(text.splitlines(), 1), doc_lines)
+
+
+def _judge_lines(numbered_lines, doc_lines: set[int]) -> list[tuple[int, str]]:
+    """行级判定（全文/新增行两路共用的唯一真源，C338 拆件防口径漂移）。
+
+    Returns:
+        [(lineno, line_stripped), ...] 违规行清单。
+    """
     hits: list[tuple[int, str]] = []
-    for lineno, line in enumerate(lines, 1):
+    for lineno, line in numbered_lines:
         if lineno in doc_lines:
             continue
         stripped = line.strip()
@@ -104,6 +116,45 @@ def scan_file_for_bare_primitives(path: Path) -> list[tuple[int, str]]:
         if _BARE_PRIMITIVE_RE.search(line):
             hits.append((lineno, stripped[:120]))
     return hits
+
+
+def scan_own_diff_for_bare_primitives(gateway, rel: str, root: Path) -> list[tuple[int, str]]:
+    """own-diff 作用域扫描（C338，#ARCH-GATE-OWN-SCOPE 同族口径，参照
+    _diff_helpers own-scope 家族）：
+
+    - modified 文件（HEAD 有此文件）＝只判本包新增行（unified=0 diff 行号集合化）
+      ——存量违规不因 format 重排/无关触碰被误报为本包新增（2026-08-20 波3 同族
+      病形：format 重排致伪"新增"）；
+    - 新文件（HEAD 无此文件，含 git 故障 fail-open）＝保持全文扫描，语义不变窄；
+    - fail-open：diff 不可得（[]）＝无新增证据，放行不误报（gate ERROR_CONTRACT：
+      扫描异常 → fail-open 放行）。
+
+    Returns:
+        [(lineno, line_stripped), ...] 违规行清单。
+    """
+    from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: PLC0415
+        _extract_docstring_lines,
+        _get_added_lines,
+        _read_head_file,
+        _read_staged_file,
+    )
+
+    head_text = _read_head_file(gateway, rel)
+    if head_text is None:
+        # 新文件（或 HEAD 面不可读——保守退旧口径）：全文扫描，不收窄
+        return scan_file_for_bare_primitives(root / rel)
+    added = _get_added_lines(gateway, rel, gate_name="RECONCILER-FILE-OPS")
+    if not added:
+        return []  # 无新增行证据＝own-diff 放行（存量面不在本 gate 判责内）
+    staged = _read_staged_file(gateway, rel)
+    if staged is None:
+        # index 面读不到 → 退磁盘（docstring 判定需全文上下文）；盘也无 → 放行
+        try:
+            staged = (root / rel).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return []
+    doc_lines = _extract_docstring_lines(staged)
+    return _judge_lines(added, doc_lines)
 
 
 def make_reconciler_file_ops_gate() -> GateSpec:
@@ -129,7 +180,7 @@ def make_reconciler_file_ops_gate() -> GateSpec:
             if not any(rel.startswith(p) for p in _SCAN_PREFIXES):
                 continue
             try:
-                hits = scan_file_for_bare_primitives(root / rel)
+                hits = scan_own_diff_for_bare_primitives(gateway, rel, root)  # C338 own-diff 作用域（新文件保持全文）
             except Exception as e:  # noqa: BLE001 — 单文件扫描异常不阻断
                 return True, f"scan degraded for {rel}: {e}"
             for lineno, snippet in hits:

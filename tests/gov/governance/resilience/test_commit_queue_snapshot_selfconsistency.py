@@ -35,6 +35,16 @@
 
 活性护栏尺（L 组）钉死"判据收紧到 stale-path 级"的口径：正常并行（同会话连投、
 多文件正常改+一枚安全携带）零误杀；整袋拒（等值即杀）会误杀的形态单独计数上报。
+
+契约迁移注记（2026-10-07，st-mastertc-l2/C443-W134，择真源=Owner 终裁 2026-10-06
+commitmap-cure P0，落地面 commit 7e737d7af6）：is_registry_mergeable 扩为全路径恒真
+后，基底漂移一律交落地侧合并仲裁消化——队列层快进判定与 stale-carry 见证的两处
+旧执法点退役（见证候选集恒空=结构退役而非绕过，本尺把退役契约本身钉死防复活）。
+原 H 组钉的三条安全属性**逐条换执法点重钉，零放水**：
+  H1 防回退 ⇒ _merge_registry_file 整文件三分支：theirs==base ⇒ noop 吸收
+     （meta["noop_audit"] 逐路径点名=原"这不是你的改动"审计面）；
+  H2 防吃字 ⇒ 袋侧真改×dev 侧真改 ⇒ 双侧皆改 RuntimeError 真冲突死信；
+  H3 防复活 ⇒ 条目级加侧闸不变（原断言保留）。
 """
 
 from __future__ import annotations
@@ -205,23 +215,36 @@ def test_h1_stale_carry_in_same_session_blind_spot(cq, cql, repo: Path, tmp_path
         "ATK-3 复发：袋字节恰等其自身基底的陈旧携带路径回退了 dev 在册内容"
     )
 
-    # 见证函数级读数（修前缺席即红——本尺的存在性半段；用落地前副本，_land 会就地剥除）
+    # 见证/仲裁读数（2026-10-07 契约迁移，7e737d7af6）：见证候选集在全路径扩面后恒空
+    # （is_registry_mergeable 恒真 ⇒ 候选收集全跳）——退役契约钉死；其防回退语义由
+    # 落地侧整文件三方接管：theirs==base ⇒ noop 吸收（消费端=_apply_snapshot 分流）。
+    # 用落地前副本（_land 会就地剥条目）。
     fn = getattr(cql, "assert_snapshot_selfconsistent", None)
-    assert fn is not None, "assert_snapshot_selfconsistent 未装配（H 队见证层缺失）"
+    assert fn is not None, "assert_snapshot_selfconsistent 未装配"
     dangerous, safe = fn(bag2_asis, queue_root=qroot, repo_root=repo, current_dev=tip1)
-    assert dangerous == ["hot.yaml"], f"陈旧携带路径必须被点名，实得 dangerous={dangerous} safe={safe}"
-    assert safe == []
+    assert dangerous == [] and safe == [], "全路径仲裁扩面后见证不再点名路径（退役契约）"
+    landing_probe = cql.WorktreeLanding(repo_root=repo, queue_root=qroot, worktree_path=tmp_path / "w_probe1")
+    assert landing_probe._merge_registry_file(bag2, "hot.yaml", b"value: v0\n", tip1) is None, (
+        "陈旧携带（袋字节==基底）在落地仲裁必须 noop 吸收——dev 在册 v1 不可被回退"
+    )
 
-    # 阴性控制①（原行为保持）：漂移若出自**他会话**，既有快进判定仍须判红（见证不接管）
+    # 阴性控制①（他会话字节保护，新执法点）：他把 hot 推进 v2 后，旧字节携带袋重投
+    # ⇒ hot 走 noop 吸收保住 v2-by-other，自家真改动（notes）仍落地——保护面从
+    # "队列层判红"迁到"落地仲裁不回退"，语义不丢。
     _commit(repo, "hot.yaml", b"value: v2 by other\n", "foreign landing [GW:other-sid:q-x]")
-    tip_other = _git(repo, "rev-parse", "refs/heads/dev")
     bag3 = _enqueue(cq, cql, wt_old, qroot, "laneSelf", "bag3 after foreign", ["notes.txt", "hot.yaml"])
-    probe = cql.WorktreeLanding(repo_root=repo, queue_root=qroot, worktree_path=tmp_path / "w")
-    assert "快进判定失败" in str(probe._conflict_reason(bag3, tip_other)), "他会话漂移仍拦=原行为保持"
+    kind3, _ = _land(cql, cq, repo, qroot, tmp_path, bag3, 3)
+    assert kind3 in ("landed", "noop")  # notes 已由 bag2 落在 dev（幂等 noop）或真落地
+    tip3 = _git(repo, "rev-parse", "refs/heads/dev")
+    assert _show(repo, tip3, "hot.yaml") == b"value: v2 by other\n", "他会话字节不得被携带回退（仲裁 noop 吸收）"
+    assert _show(repo, tip3, "notes.txt") == b"n1 own edit\n", "他会话在场不连坐自家真改动"
 
 
 def test_h1_whole_bag_stale_is_dead_letter_named(cq, cql, repo: Path, tmp_path: Path) -> None:
-    """全袋皆陈旧危险携带 ⇒ 拒落、死信回属主，message 点名路径与"这不是你的改动"。"""
+    """全袋皆陈旧携带 ⇒ 零落地（noop）、dev 在册内容零回退、逐路径审计点名。
+
+    2026-10-07 契约迁移（7e737d7af6）：拒落死信通道退役，同语义迁到落地仲裁——
+    整袋 noop 吸收 + meta["noop_audit"] 点名（"这不是你的改动"审计面保留）。"""
     base = _commit(repo, "hot.yaml", b"value: v0\n", "seed")
     qroot = tmp_path / "q-h1d"
     wt_old = _wt_at(repo, tmp_path / "wt_d", base)
@@ -230,18 +253,17 @@ def test_h1_whole_bag_stale_is_dead_letter_named(cq, cql, repo: Path, tmp_path: 
     assert _land(cql, cq, repo, qroot, tmp_path, bag1, 11)[0] == "landed"
     _write(wt_old, "hot.yaml", b"value: v0\n")
     bag2 = _enqueue(cq, cql, wt_old, qroot, "laneOwn", "bag2 pure carry", ["hot.yaml"])
-    tip = _git(repo, "rev-parse", "refs/heads/dev")
-    assert getattr(cql.WorktreeLanding, "_witness_stale_carry", None) is not None, "_witness_stale_carry 未装配"
+    kind2, _ = _land(cql, cq, repo, qroot, tmp_path, bag2, 12)
+    assert kind2 == "noop", f"整袋纯携带必须零落地，实得 {kind2}"
+    assert _show(repo, _git(repo, "rev-parse", "refs/heads/dev"), "hot.yaml") == b"value: v1\n", (
+        "ATK-3 复发：整袋陈旧携带回退了 dev 在册内容"
+    )
+    audit = str((bag2.get("meta") or {}).get("noop_audit") or "")
+    assert "hot.yaml" in audit, "noop 吸收必须逐路径审计点名（原死信点名的审计面）"
+    # 阴性控制：dev 回指到袋基底（携带路径无人动过，写=noop）⇒ 仲裁同样不拒不假落地
     landing = cql.WorktreeLanding(repo_root=repo, queue_root=qroot, worktree_path=tmp_path / "wt_x")
-    verdict = landing._witness_stale_carry(bag2, qroot, tip)
-    assert verdict is not None and not verdict.ok, "整袋陈旧携带必须拒落"
-    assert "hot.yaml" in verdict.reason and "这不是你的改动" in verdict.reason
-    # 死因须按 item 性分类并带可行动处方（新增死因族三处补齐之"测试"处）
-    assert cq.classify_dead_reason(verdict.reason) == "item"
-    assert "同步" in cq.dead_letter_prescription(verdict.reason)
-    # 阴性控制：dev 回指到袋基底（携带路径无人动过，写=noop）⇒ 不得拒落
-    assert landing._witness_stale_carry(json.loads(json.dumps(bag2)), qroot, base) is None, (
-        "安全携带（袋==基底==dev）拒落＝整袋误杀形态回归"
+    assert landing._merge_registry_file(bag2, "hot.yaml", b"value: v0\n", base) is None, (
+        "安全携带（袋==基底==dev）被拦＝整袋误杀形态回归"
     )
 
 
@@ -281,11 +303,13 @@ def test_h2_from_bag_requeue_keeps_original_base(cq, cql, repo: Path, tmp_path: 
     assert ent["base_blob"] == _git(repo, "rev-parse", f"{c0}:hot.yaml"), "base_blob 必须随基底重算"
     assert ent["blob_sha256"] == bag["files"][0]["blob_sha256"], "内容仍取原袋（from-bag 语义不变）"
 
-    # 行为级：陈旧覆盖在快进判定现红（修前：base==tip ⇒ 判据失明 ⇒ vB 被 vA 吃掉）
-    verdict = cql.WorktreeLanding(repo_root=repo, queue_root=qroot, worktree_path=tmp_path / "wt_l2")._conflict_reason(
-        nb, tip
-    )
-    assert verdict is not None and "快进判定失败" in verdict, f"from-bag 重投袋必须判红，实得 {verdict!r}"
+    # 行为级（2026-10-07 契约迁移，7e737d7af6）：陈旧覆盖在落地仲裁现红——袋侧真改
+    # （vA≠基底 v0）×dev 侧真改（vB）＝双侧皆改 ⇒ 整文件三方 RuntimeError 真冲突死信，
+    # vB 不可被 vA 吃掉（原执法点=队列层快进判定，已随全路径扩面退役）。
+    conflict_probe = cql.WorktreeLanding(repo_root=repo, queue_root=qroot, worktree_path=tmp_path / "wt_l2")
+    with pytest.raises(RuntimeError, match="双侧皆改"):
+        conflict_probe._merge_registry_file(nb, "hot.yaml", b"value: vA\n", tip)
+    assert _show(repo, tip, "hot.yaml") == b"value: vB\n", "真冲突死信前提下 dev 在册 vB 必须保住"
 
     # 阴性控制：默认（工作区重建）重投口径不变——基底仍=重建工作区自己的 HEAD
     _write(repo, "hot.yaml", b"value: vC owner reworked\n")
@@ -361,16 +385,18 @@ def test_liveness_two_same_session_bags_not_killed(cq, cql, repo: Path, tmp_path
     _git(wt, "checkout", "-f", "--detach", _git(repo, "rev-parse", "refs/heads/dev"))
     _write(wt, "new.md", b"brand new content\n")
     bag2 = _enqueue(cq, cql, wt, qroot, "laneL", "bag2", ["new.md", "hot.yaml"])
+    # 2026-10-07 契约迁移（7e737d7af6）：安全携带保护迁到落地仲裁——见证退役契约钉死
+    # （候选集恒空），hot 走 noop 吸收既不误杀也不回退，new.md 真改动照常落地。
     dangerous, safe = cql.assert_snapshot_selfconsistent(
         bag2,
         queue_root=qroot,
         repo_root=repo,
         current_dev=_git(repo, "rev-parse", "refs/heads/dev"),
     )
-    assert dangerous == [] and safe == ["hot.yaml"], (
-        "安全携带（袋==基底==dev，写=noop）不得进拒落名单——等值即杀＝整袋拒形态误杀"
-    )
-    assert _land(cql, cq, repo, qroot, tmp_path, bag2, 22)[0] == "landed"
+    assert dangerous == [] and safe == [], "见证候选集恒空（全路径扩面退役契约）"
+    assert _land(cql, cq, repo, qroot, tmp_path, bag2, 22)[0] == "landed", "安全携带不得拖死同批真改动"
+    # 注：hot 在此形态走 ours==theirs 等值短路（noop），早于整文件三分支、无 noop_audit
+    # 戳——"dev 在册保住"性质由下方字节断言钉死，审计戳断言归 theirs==base 形态（L 组 b）。
     tip = _git(repo, "rev-parse", "refs/heads/dev")
     assert _show(repo, tip, "new.md") == b"brand new content\n"
     assert _show(repo, tip, "hot.yaml") == b"v1\n"
@@ -394,14 +420,15 @@ def test_liveness_multi_file_normal_change_one_carry(cq, cql, repo: Path, tmp_pa
     _write(wt, "a.md", b"a2 own edit\n")
     _write(wt, "b.md", b"b2 own edit\n")
     bag2 = _enqueue(cq, cql, wt, qroot, "laneL2", "normal work + one carry", ["a.md", "b.md", "stale.md"])
+    # 2026-10-07 契约迁移（7e737d7af6）：部分携带保护迁到落地仲裁——stale.md 走
+    # theirs==base ⇒ noop 吸收（dev 在册 s1 保住），a/b 真改动照常落地，整袋不死。
     tip = _git(repo, "rev-parse", "refs/heads/dev")
-    dangerous, safe = cql.assert_snapshot_selfconsistent(bag2, queue_root=qroot, repo_root=repo, current_dev=tip)
-    assert dangerous == ["stale.md"] and safe == []
-    assert _land(cql, cq, repo, qroot, tmp_path, bag2, 32)[0] == "landed", "部分命中不得整袋死"
+    assert _land(cql, cq, repo, qroot, tmp_path, bag2, 32)[0] == "landed", "部分携带不得整袋死"
     tip2 = _git(repo, "rev-parse", "refs/heads/dev")
     assert _show(repo, tip2, "a.md") == b"a2 own edit\n"
     assert _show(repo, tip2, "b.md") == b"b2 own edit\n"
-    assert _show(repo, tip2, "stale.md") == b"s1\n", "陈旧携带路径必须被剥除而非落袋"
+    assert _show(repo, tip2, "stale.md") == b"s1\n", "陈旧携带路径必须被吸收（dev 在册保住）而非落袋"
+    assert "stale.md" in str((bag2.get("meta") or {}).get("noop_audit") or ""), "部分携带的剥除必须留逐路径审计"
 
 
 def test_landing_pipeline_wiring_guards() -> None:
