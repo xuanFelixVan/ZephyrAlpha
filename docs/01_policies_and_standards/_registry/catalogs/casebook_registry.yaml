@@ -1,0 +1,76 @@
+# [A_config] module_id=CFG-casebook_registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# 永久病历本登记册（挂图 SOP §3 机规1 的"册号"载体——Owner 2026-10-04 上户口批，st-vm12e-20261004）
+# 净零声明：收编五本"路径身份"散落登记状态（堵点本/抢救台账/审查两卷/MEMORY 索引/data-failures 案卷），
+#   为全图族 casebooks 字段提供唯一反查册（同域重复簇→收敛唯一，宪法 §4 内收判据）。
+# 维护纪律：条目增删/改名须随裁定或挂图批走（低频）；计数以盘面为准勿在散文写死；
+#   治理类库（非业务资产库）不挂 TDM 交叉轴——已登记 tests/trading/test_decision_map.py
+#   ::TestNewRegistryGate._GOVERNANCE_EXEMPT 豁免（D38 铁律二选一之豁免腿）。
+schema_version: "1.0.0"
+doc_type: register
+ttl: permanent
+title: "永久病历本登记册（casebook registry，纵向地图家族 casebooks 字段唯一反查册）"
+status: active
+version: "1.0.0"
+date: "2026-10-04"
+owner: ZephyrAlpha-Owner
+governing_sop: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md
+casebooks:
+  - casebook_id: CASEBOOK-001
+    name_zh: 数据对账案卷库（data/failures）
+    physical_path: data/failures/
+    form: directory_jsonl
+    domain: D_DATA
+    status: active
+    entry_scale: "15134 件（2026-10-03 实测，日增在产）"
+    scope_zh: >
+      数据任务对账差异案卷（task_reconcile 族 JSON）——图12 数据供给链 S5 对账修复段的运行病历。
+      E-8 约定（Owner 2026-10-04 批）：断供事故案必落本库，文件名前缀 outage_（如
+      outage_sector_snapshot_20260915.json），禁再散页——断供案与对账差异同库同命名段，
+      不另建断供台账（净零）。图12 casebooks 挂载建议：DSC-19/DSC-20 及 break_detect 族环节。
+  - casebook_id: CASEBOOK-002
+    name_zh: 堵点本（35 类全量问题总册·五域）
+    physical_path: docs/_working/branch_zero_takeover/all_problems_ledger.md
+    form: markdown_ledger
+    domain: D_GOV
+    status: active
+    entry_scale: "盘面 33 条（五域分章）"
+    scope_zh: >
+      全流通清场战役产出的五域问题总册（ OWNER 批准常驻）。图11 五域各挂（f4 方案 §2.2
+      章级拆分）；图12 数据域域三/域四相关章节按 f4 矩阵挂载。
+  - casebook_id: CASEBOOK-003
+    name_zh: 死信抢救台账（dead_letter_salvage_ledger）
+    physical_path: docs/_working/branch_zero_takeover/dead_letter_salvage_ledger_20261003.md
+    form: markdown_ledger
+    domain: D_GOV
+    status: active
+    entry_scale: "底数 1235 袋 / 章内结构化条目 70（9 章）"
+    scope_zh: >
+      提交队列死信抢救台账（st-deadletter-cure-20261003 产出）。图11 D01/D02/D04/D06 主挂
+      （f4 方案 §2.3）。
+  - casebook_id: CASEBOOK-004
+    name_zh: 审查发现两卷（review_findings 卷一+卷二）
+    physical_path: docs/_working/branch_zero_takeover/review_findings.md; docs/_working/branch_zero_takeover/review_findings_round2.md
+    form: markdown_ledger
+    domain: D_GOV
+    status: active
+    entry_scale: "卷一 17 单元 + 卷二 12 编号单元 = 29"
+    scope_zh: >
+      三夜战役红蓝审查发现两卷（f4 方案 §2.4）。图11 C11/C13 主挂（对账观测环节）。
+  - casebook_id: CASEBOOK-005
+    name_zh: 记忆教训索引（ZCode 记忆库 MEMORY.md）
+    physical_path: "C:/Users/fanzi/.zcode/cli/memories/projects/zephyralpha-88c39a4848e315f8/memory/MEMORY.md"
+    form: external_index
+    domain: D_GOV
+    status: active
+    entry_scale: "376 条（f4 方案 §2.5 口径 2026-10-03）"
+    scope_zh: >
+      仓外 ZCode 记忆库索引（跨会话教训沉淀）。图11 facts/病历层按 10 主题簇挂载
+      （交链相关 98 条）；禁写 machine_facts 机生面（防腐三律 1）。仓外资产=登记指针
+      不复制内容（INV-1），仓内会话引用须注明"仓外路径、以记忆库为准"。
+outside_registry:
+  - name_zh: 提交撞墙死因案例册
+    identity: "module_id=CFG-COMMIT-DEATH-CASES-001（owner=MOD-INF-005，ttl: permanent）"
+    note: 已有 module_id 登记身份（SOP §3 机规1 合格），不入本册（禁双重身份）；图11 C02-D06 族挂载（f4 方案 §2.1）。
+  - name_zh: data/sla/ 源 SLA 台账（已退役）
+    identity: 无册号（永久不授）
+    note: MOD-DATA-066 source_sla_tracker 2026-10-04 Owner 批退役（功能被 MOD-L00-004 supply_sentinel 族代替），台账停更残件随冷库例行归档，禁挂任何图 casebooks（图12 E-3 处置）。
