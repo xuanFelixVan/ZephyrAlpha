@@ -20616,10 +20616,10 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/data/dual_source_guard.py
   desc_en: ""
-  desc_zh: ""
+  desc_zh: "已退役（[TTL] task_bound 口径，2026-10-07 图12/TDM 收官·车道D 归档批）：双源判据供给件落地但生产消费核未接线（consensus_crosscheck 实查零引用，tests XPASS 自证），按 task_bound 退役归档；文件留盘不删（防链路悬锚），重评条件=recon_runner/consensus 双源对账接线时复活。"
   name_en: ""
   name_zh: 双源分裂守卫
-  plain_zh: 读失败不等于零行两边都空不等于干净单边有数即判分裂
+  plain_zh: 读失败不等于零行两边都空不等于干净单边有数即判分裂（已退役2026-10-07：判据件留盘，生产消费核未接线）
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
 - module_path: src/zephyr/data/error_classifier.py
@@ -67776,3 +67776,11 @@ entries:
   desc_en: ""
   plain_zh: "AI 施工队第一次往业务代码区写文件时拦截检查：本会话开工前有没有走过正门反查（能力反查或图书馆查询）。没走正门就拒绝写入并给出一条现成的正门命令，走了就放行并记录首写时间戳，让'先查后建'从君子协定变成结构强制。"
   responsibility_layer: governance
+- module_path: schemas/categories/factor_signal.py
+  domain_id: D_DATA
+  name_zh: "因子信号表DDL真源"
+  name_en: "factor_signal DDL-as-code"
+  desc_zh: "c1_market.factor_signal 表 DDL 唯一真源（CTR-002 FactorSignal 契约落库面，buffer 默认落点）；字段口径=契约+buffer TSV 列序+DS-003/004 三分合一；ReplacingMergeTree 同键重放幂等"
+  desc_en: ""
+  plain_zh: "因子算出来的买卖信号要稳稳落进数据库，全靠这份建表说明书：一张长表按因子、股票、截面时点各记一行，算错了重跑会自动覆盖当天旧行不重复记账，空值表示还没算出来禁止瞎凑数，跟隔壁特征值表是一对兄弟件但各管各的账。"
+  responsibility_layer: business

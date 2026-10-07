@@ -3,10 +3,12 @@
 # [TTL] task_bound
 # [STARTUP] imported
 #   （原值 lazy：纯函数，无 IO 无副作用；不挂调度槽，由宿主检查族调用）——GATE-VOCAB 词表归正 imported）
-# [CONSUMERS] zephyr.data.consensus_crosscheck（族 1 双源对账，已接线）;
-#             待接线（越出本包写域，见本册"缺口"）: zephyr.trading.recon_runner
-#             （reconciliation_differences 双源）; score 族宿主（未定位，禁臆指）;
-#             tests/data/test_wave3_dual_source_guard.py
+# [CONSUMERS] （2026-10-07 实查修正·车道D归档批——原"consensus_crosscheck 已接线"为幽灵声明：
+#             全仓 grep 零生产消费方，consensus_crosscheck.check_reconciliation 未消费本件
+#             （tests/data/data/test_wave3_dual_source_guard.py:75 XPASS reason 自证），recon_runner
+#             /score 族宿主均未接线）。实况消费方=仅测试件 tests/data/data/test_wave3_dual_source_guard.py。
+#             本件按 [TTL] task_bound 于 2026-10-07 退役归档：文件留盘不删不改行为（纯函数判据库），
+#             重评条件=recon_runner/consensus 双源对账接线时复活。
 # [DEPENDENCIES] 仅 stdlib（禁引 DB/CH——读失败判定由调用方以 raw 载体交进来）
 # [INVARIANTS] 三条铁律，任何宿主不得绕过：
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1

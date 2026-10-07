@@ -1,6 +1,9 @@
 # ALGO_FLOW 外部真源——dual_source_guard（_domain_data 域 wave3 子册，真源 src/zephyr/data/dual_source_guard.py）
 # 2026-10-01 全流通清场落地批 P2-1 契约口径：docstring 内一行 external 锚，机器块落本册（子目录避平铺容量硬限）；
 # 算法公共面变化时同步更新本块。
+# [RETIRED 2026-10-07] 模块按 [TTL] task_bound 口径退役归档（图12/TDM 战役收官·车道D）：判据供给件落地
+#   但生产消费核未接线——头注声明的 consensus_crosscheck 实查零引用（tests 断言自证 XPASS），
+#   recon_runner/score 族宿主均未挂。文件留盘不删（src 与本册均保留，防链路悬锚）；重评条件=宿主接线时复活本块。
 doc_type: architecture_view
 ttl: permanent
 module: zephyr.data.dual_source_guard
