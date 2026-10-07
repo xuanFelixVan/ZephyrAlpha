@@ -63270,4 +63270,10 @@ creation_tokens:
   created_by: st-mastertc-l9
   capability: gov_backfill_created
   merge_evaluation: "C127 一次性回填器（task_bound）：与陈化处置/生成器族跨域不同对象不并；零触发零消费后随批退役"
+- file: config/search_space_prereg_t3b.yaml
+  token: st-t3series-t3b-prereg-card-20261007
+  created_by: st-t3series-20261006
+  capability: t3b_exam_prereg
+  merge_evaluation: "T3b 加离场考预注册冻结卡（Owner 20261007 批），先冻卷后开考真源"
+
 di_seam_exemptions: []
