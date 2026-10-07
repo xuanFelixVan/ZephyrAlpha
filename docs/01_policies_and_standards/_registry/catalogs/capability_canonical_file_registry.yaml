@@ -63281,4 +63281,9 @@ creation_tokens:
   created_by: st-mastertc-l9
   capability: master_tc_night_l9_workbook
   merge_evaluation: "L9 车道作业簿：总包夜战十卡六向台账（跨域不同对象不并；既有 lane workbook 簿系同型，零新册）"
+- file: docs/_working/master_tc_night/99_delivery/交付报告.md
+  token: master-tc-delivery-file-20261007
+  created_by: st-mastertc-sweep
+  capability: master_tc_delivery
+  merge_evaluation: "夜战终报归档"
 di_seam_exemptions: []
