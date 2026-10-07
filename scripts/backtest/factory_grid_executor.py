@@ -1812,20 +1812,25 @@ def _verify_counts(grid_root_override: str | None = None) -> int:
 #: T6: t3 家族 stage（T3a 开闸考；context phase=2+prereg t3a 卡；挖矿 §3.2）
 T3_STAGES: tuple[str, ...] = ("t3", "t3-t1", "t3-t2")
 PREREG_T3A_PATH = _REPO / "config" / "search_space_prereg_t3a.yaml"
+#: T3b: t3b 家族 stage（T3b 加离场考；context phase=3+prereg t3b 卡；挖矿 §3.1 批次表）
+T3B_STAGES: tuple[str, ...] = ("t3b", "t3b-t1", "t3b-t2")
+PREREG_T3B_PATH = _REPO / "config" / "search_space_prereg_t3b.yaml"
 
 
 def _load_prereg_caps(stage: str = "") -> dict:
     """prereg budget_caps 读取（缺册 fail-closed，错误文案与原 _apply_prereg_budget 逐字一致）。
 
     T6: stage ∈ T3_STAGES 改读 config/search_space_prereg_t3a.yaml（T3a 独立冻结卡，
-    缺失=SystemExit fail-closed）；其余 stage 沿用主 prereg 册（逐字零变化）。
+    缺失=SystemExit fail-closed）；T3b: stage ∈ T3B_STAGES 改读 t3b 卡（同构）；
+    其余 stage 沿用主 prereg 册（逐字零变化）。
     """
     import yaml
 
-    if stage in T3_STAGES:
-        if not PREREG_T3A_PATH.exists():
-            raise SystemExit(f"[prereg] {PREREG_T3A_PATH.name} 缺失——T3a 预注册冻结卡缺失，禁开跑（fail-closed）")
-        cfg = yaml.safe_load(PREREG_T3A_PATH.read_text(encoding="utf-8")) or {}
+    if stage in T3_STAGES or stage in T3B_STAGES:
+        path = PREREG_T3A_PATH if stage in T3_STAGES else PREREG_T3B_PATH
+        if not path.exists():
+            raise SystemExit(f"[prereg] {path.name} 缺失——预注册冻结卡缺失，禁开跑（fail-closed）")
+        cfg = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         return cfg.get("budget_caps") or {}
     prereg = Path(__file__).resolve().parents[2] / "config" / "search_space_prereg.yaml"
     if not prereg.exists():
@@ -1843,6 +1848,18 @@ def _load_t3a_exam_card() -> dict:
     card = yaml.safe_load(PREREG_T3A_PATH.read_text(encoding="utf-8")) or {}
     if not card.get("frozen_at") or not card.get("frozen_by"):
         raise SystemExit("[prereg] T3a 冻结卡缺 frozen_at/frozen_by——未冻结卡禁开跑（fail-closed）")
+    return card
+
+
+def _load_t3b_exam_card() -> dict:
+    """T3b: 冻结卡整卡读取（同 t3a 构造；未冻结卡 fail-closed）。"""
+    import yaml
+
+    if not PREREG_T3B_PATH.exists():
+        raise SystemExit(f"[prereg] {PREREG_T3B_PATH.name} 缺失——T3b 预注册冻结卡缺失，禁开跑（fail-closed）")
+    card = yaml.safe_load(PREREG_T3B_PATH.read_text(encoding="utf-8")) or {}
+    if not card.get("frozen_at") or not card.get("frozen_by"):
+        raise SystemExit("[prereg] T3b 冻结卡缺 frozen_at/frozen_by——未冻结卡禁开跑（fail-closed）")
     return card
 
 
@@ -1873,8 +1890,8 @@ def _resolve_stage_cost_tiers(stage: str, caps: dict | None = None) -> tuple[flo
 
     if caps is None:
         caps = _load_prereg_caps(stage)
-    if stage in T3_STAGES:
-        # T6: t3 家族=全档成本门（挖矿 §3.3.3 成本门不放松；t3a 卡不设分层轻档键，
+    if stage in T3_STAGES or stage in T3B_STAGES:
+        # T6: t3/t3b 家族=全档成本门（挖矿 §3.3.3 成本门不放松；卡不设分层轻档键，
         # 档位集唯一真源=exam_scale_cost_gate.yaml，禁跳门）
         return tuple(validate_scan_tiers(_load_cost_gate_tiers()))
     if STAGED_TIERS_KEY not in caps:
@@ -1932,6 +1949,23 @@ def _apply_prereg_budget(stage: str, n_samples: int) -> int:
                 "[prereg] budget_caps.t3_per_point_seconds_measured=null（T3a-T0 未标定回填）——t3-t1/t3-t2 禁开跑"
             )
         return n_samples
+    if stage in T3B_STAGES:
+        cap_total_t3b = caps.get("t3b_points")
+        if cap_total_t3b and n_samples > int(cap_total_t3b):
+            print(f"[prereg] stage={stage} 点数 {n_samples} > t3b_points={cap_total_t3b}，钳制")
+            n_samples = int(cap_total_t3b)
+        stage_key_t3b = {"t3b": "t3b_calibration_points", "t3b-t1": "t3b_tier1_points", "t3b-t2": "t3b_tier2_points"}[
+            stage
+        ]
+        cap_stage_t3b = caps.get(stage_key_t3b)
+        if cap_stage_t3b and n_samples > int(cap_stage_t3b):
+            print(f"[prereg] stage={stage} 点数 {n_samples} > {stage_key_t3b}={cap_stage_t3b}，钳制")
+            n_samples = int(cap_stage_t3b)
+        if stage in ("t3b-t1", "t3b-t2") and not caps.get("t3b_per_point_seconds_measured"):
+            raise SystemExit(
+                "[prereg] budget_caps.t3b_per_point_seconds_measured=null（T3b-T0 未标定回填）——t3b-t1/t3b-t2 禁开跑"
+            )
+        return n_samples
     if STAGED_TIERS_KEY in caps:
         _resolve_stage_cost_tiers(stage, caps)
     cap_total = caps.get("grid_points_cap")
@@ -1982,7 +2016,7 @@ def main() -> int:
     ap.add_argument(
         "--stage",
         default="",
-        choices=["", "t0", "t1", "t2", "t3", "t3-t1", "t3-t2"],
+        choices=["", "t0", "t1", "t2", "t3", "t3-t1", "t3-t2", "t3b", "t3b-t1", "t3b-t2"],
         help="预算阶段（t0 标定 200/t1 粗扫 17100/t2 细化 13000；t3 家族=T3a 开闸考 t3a 冻结册钳制；空=沿用 n-samples 不受 stage 帽）",
     )
     ap.add_argument(
@@ -2040,7 +2074,29 @@ def main() -> int:
     elif not args.smoke:
         args.n_samples = _apply_prereg_budget("", args.n_samples)
         stage_tiers = _resolve_stage_cost_tiers("")
-    if args.stage in T3_STAGES and not args.smoke:
+    if args.stage in T3B_STAGES and not args.smoke:
+        # T3b: t3b 家族按 t3b 冻结卡注入考卷面（phase=3 激活 X 族；同 t3a 构造）
+        card = _load_t3b_exam_card()
+        exam = card.get("exam_definition") or {}
+        ctx_overrides = dict(exam.get("context_overrides") or {})
+        factor_surface = str(exam.get("factor_surface") or "v1")
+        exec_caliber = str(exam.get("exec_caliber") or "close")
+        if factor_surface not in FACTOR_SURFACES:
+            raise SystemExit(f"[prereg] T3b 冻结卡 factor_surface 非法: {factor_surface}")
+        if exec_caliber not in ("close", "next_open", "vwap"):
+            raise SystemExit(f"[prereg] T3b 冻结卡 exec_caliber 非法: {exec_caliber}")
+        cost_attribution = bool(exam.get("cost_attribution", True))
+        _validate_defensive_whitelist_registration(exam.get("defensive_leg") or {})
+        print(
+            f"[prereg-t3b] 考卷面注入: context={ctx_overrides} factor_surface={factor_surface} "
+            f"exec_caliber={exec_caliber} G_universe={exam.get('G_universe')} "
+            f"X={exam.get('X_stop')}×{exam.get('X_breaker')} stratify={exam.get('stratify_dims')}"
+        )
+        print(
+            "[prereg-t3b] 护盘白名单登记（MOD-POS-026 真源，登记≠启用 D114 休眠）: "
+            f"tier1={defensive_whitelist_assets()['tier1']}"
+        )
+    elif args.stage in T3_STAGES and not args.smoke:
         # T6: t3 家族按 t3a 冻结卡注入考卷面（context/因子面/成交价口径/白名单登记校验）
         card = _load_t3a_exam_card()
         exam = card.get("exam_definition") or {}

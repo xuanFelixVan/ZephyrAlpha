@@ -1,0 +1,93 @@
+# T3b 加离场考·预注册冻结卡（整装考第二批，挖矿真源=docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md §3.1 批次表）
+# 冻结语义：T3b 跑数前本文件为唯一考卷/判据/预算真源；事后挪门柱=本批作废（exam_policy §1.1）。
+# 授权链：Owner 2026-10-07 chat 批令（"批"，卡 v2 草案=99_delivery.md §六）+ 总包工单 T3b
+#   （st-t3series-20261006 接线施工：schema X 维袋 q-0031/接线袋 q-0034/T0 标定 grid_20261007-095504）。
+# 空间变更定性：新增 X_stop/X_breaker 两轴（schema phase>=3 门控）=增删轴，#ARCH-366 须 Owner 批——本卡即批件。
+schema_version: 2.0.0
+doc_type: search_space_preregistration
+title: T3b 加离场考·考卷定义+判据+算力预算（X_stop/X_breaker 离场族 × all_a_ex_st 域）
+created: '2026-10-07'
+frozen_at: '2026-10-07T11:00:00+08:00'
+frozen_by: Owner chat 批令（2026-10-07"批"）；出卡=st-t3series-20261006（裁定号回填位=owner_ruling_id）
+owner_ruling_id: null
+session: st-t3series-20261006
+objective:
+  primary: cost_adjusted_sharpe
+  observed: [gross_sharpe, annual_turnover_x, crisis_maxdd_improvement_pp, exit_protection_pp]
+  cost_caliber: _c4_engine 冻结土规（佣金2.5bp双边+印花10bp卖+滑点5bp）+ 档位扫描（exam_policy §3）
+exam_definition:
+  # 考卷定义（挖矿 §3.1 T3b 行：T3a 空间 × M1/M2 离场维）
+  context_overrides: {phase: 3, strategy_pool: [primary], capital_ramp_enabled: false}
+  G_universe: [all_a_ex_st]
+  J_regime_switch: ['on', 'off']          # T3a 空间继承（phase>=2）
+  X_stop: ['off', 'atr3x', 'trail20']     # phase>=3；tp20 已实现未入考卷（卡 v3 可扩档）
+  X_breaker: ['off', 'dd20']
+  factor_surface: v1_value                # 沿 T3a 因子面
+  exec_caliber: close
+  window: ['2020-01-01', '2023-12-31']
+  seed: 20260915
+  stratify_dims: [J_regime_switch, B_top_n]
+  n_raw_expected: 4354560                 # phase=3 名义空间（T3a 725,760 × 6）
+  overlay_order: [J_regime_caps, X_stop, X_breaker]   # 序钉（冻结位）：breaker 消费 post-stop 组合权益
+  j_engine_semantics: 沿 T3a（owner_regime_switcher 日级帽调度；调度缺失=整格阴性 fail-closed）
+  j_schedule_source: c1_backtest.regime_snapshot_history
+  defensive_leg:
+    registered: true
+    enabled: false
+    source_module: MOD-POS-026
+    tier1: ['510300', '510500', '512100', '510880']
+    tier2: ['512800', '512890']
+    state_matrix_cells: untouched
+  cost_attribution: true
+pass_criteria:
+  cost_gate:
+    tiers_bp: [0, 5, 10, 20, 40]
+    survival_floor: 0.0
+    turnover_cap_annual_x: 8.0
+    monotonic_tol: 1.0e-9
+  exit_gain:
+    # 新维度新判据（Owner 2026-10-07 批）：离场族保护判据沿已批门值语义（5pp=T3a 同款，
+    # 非挪旧门柱）；保护代价（cost-adj Sharpe 变化）=观察项如实披露
+    crisis_maxdd_improvement_min_pp: 5.0
+    caliber_source: src/zephyr/backtest/regime_validation/c2_extreme_event_protection.py
+    pairing_rule: 同 (A1,A2,B,C,D1,D2,E,H,J) 配置 X_active vs X=off 配对（X_stop/X_breaker 任一非 off=active 腿）；
+      off 腿缺席不进判据分母（如实披露配对覆盖率）
+    cross_check: 改善应来自离场触发日（stop 清仓/breaker 帽缩水）而非全期摊薄——触发日占比分态披露
+    sharpe_cost_observed: cost_adjusted_sharpe 配对差=观察项（保护代价），不设门
+  t3a_carryover_note: T3a regime 增益判据（J 门）本卡不重判——T3a 判决书 FAIL 已入册，J 后续=Owner 三选一另裁
+  dsr: 主册 e7_defense 同款（n_trial_ledger 累计口径）
+budget_caps:
+  cost_gate_in_every_tier: true
+  t3b_points: 9400                        # T0 200（已消耗 pre-freeze）+T1 7400+T2 1800
+  t3b_calibration_points: 200             # 已消耗：grid_20261007-095504（pre-freeze 标定，Owner 令序）
+  t3b_tier1_points: 7400
+  t3b_tier2_points: 1800
+  t3b_per_point_seconds_measured: 5.08    # T0 实测回填（grid_20261007-095504：1015.4s/200 点，199 活+1 结构负例）
+  wall_clock_hours: 59
+  effective_duty_pct: 80
+  single_job_wall_clock_cap_hours: 12
+  shard_parallel:
+    num_shards: 3                         # Owner 20261006 并行令+卡草案"3 路并发"批文；i::k 确定性分片
+    per_shard_wall_clock_hours: 3.5       # 7400/3×5.08s≈3.5h/路（并行收卷，单卷帽 12h 内）
+  vram:
+    physical_gb: 24
+    train_quota_gb: 18
+    concurrency: 3                        # 分片并行（T0 实测 3×~1.3G≪18G 配额；Owner 令偏离已披露）
+compute_budget_estimate:
+  caliber: T0 实测 5.08s/点（GPU 99.5%+列切修复+overlay 纯向量化；非 0.53 薄核亦非 35.33 日级循环口径）
+  t0_seconds: 1015                         # 已消耗（pre-freeze）
+  t1_seconds: 37592                        # 7400×5.08
+  t2_seconds: 9144                         # 1800×5.08
+  total_seconds: 47751                     # ≈13.3h 串行；3 路并行≈5.5h 墙钟（T1 3.5h+T2 2.5h 内）
+e0_gate:
+  compute_window: f06_grid_batch（E0 问闸不豁免，--skip-compute-gate 仅 smoke）
+  gpu_exclusive: 分片并行 3 路（Owner 令；T0 实测显存 3×1.3G≪18G 配额）
+honesty:
+  - 离场判定=收盘口径（诚实位 §4.4 同族：触发滞后到收盘，双向失真如实）
+  - cATR=mean(|Δclose|,14) close-only 代理（考卷数据面无 high/low，与真 ATR 差距披露）
+  - breaker=无记忆五帽带（WARN 0.75/DANGER 0.50/CRISIS 0.25/KILL 0）；live 机迟滞/持续窗/最短持有/VaR 源/毕业/复位/RECOVERY 阶梯不在向量化域=不翻译
+  - X 维无预热语义（ATR14/权益曲线冷启动期触发灵敏度低=已知失真）
+  - 成交价=收盘零延迟隐含成交（沿 T3a 同款乐观偏差）；复权链断供=结论暂定档标签
+  - X 无预热语义外，因子面/调度语义沿 T3a honesty 七条全数继承
+  - 负结果承诺：全量负结果（含 stop/breaker 触发致净值零方差格）如实入 negatives.csv 禁删改
+  - T0 结构负例 1 条（dd20 全关账 insufficient_net）已入册=考卷语义真实呈现非缺陷

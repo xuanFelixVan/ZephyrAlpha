@@ -1057,3 +1057,31 @@ def test_evaluate_recipe_x_order_pin_stop_then_breaker():
     )
     w_manual, _ = mod._apply_dd_breaker_overlay(w_stop_only, closes, "dd20")
     assert np.allclose(w_both.values, w_manual.values), "序钉破坏：组合输出≠stop→breaker 两级 compose"
+
+
+# ── T3b stage 族（20261007 袋C：冻卡消费 fail-closed 机械）──
+
+
+def test_t3b_card_frozen_and_budget_clamps():
+    """红组：t3b 冻结卡在场且 frozen；预算钳制沿 t3b_* 键；实测秒/格在场解锁 t1/t2。"""
+    card = mod._load_t3b_exam_card()
+    assert card["exam_definition"]["context_overrides"]["phase"] == 3
+    assert card["exam_definition"]["X_stop"] == ["off", "atr3x", "trail20"]
+    assert card["budget_caps"]["t3b_tier1_points"] == 7400
+    assert card["budget_caps"]["t3b_per_point_seconds_measured"] == 5.08
+    assert mod._apply_prereg_budget("t3b-t1", 20000) == 7400
+    assert mod._apply_prereg_budget("t3b", 20000) == 200
+    caps = mod._load_prereg_caps("t3b-t1")
+    assert caps.get("t3b_per_point_seconds_measured")
+
+
+def test_t3b_context_injection_phase3_activates_x():
+    """绿组：t3b 卡 context（phase=3）编译展开 X 双维——注入面与考卷面闭环。"""
+    from zephyr.position.core.position_recipe_compiler import GridCompiler
+
+    card = mod._load_t3b_exam_card()
+    expansion = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml").compile(
+        card["exam_definition"]["context_overrides"]
+    )
+    assert {r.values["X_stop"] for r in expansion.recipes} == {"off", "atr3x", "trail20"}
+    assert {r.values["X_breaker"] for r in expansion.recipes} == {"off", "dd20"}
