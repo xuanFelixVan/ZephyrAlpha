@@ -44,4 +44,6 @@ completes_when: 总包夜战战役(master_tc_night)归档收尾
 2. **C266 B 表 40 项**：移交裁定台/继任窗补登；优先 usercustomize 口径冲突澄清。
 3. **C419 I27 余量**：tests/infrastructure mcp 网络依赖大件簇待独立网络执行窗（L8 已移交，本卡只落账）。
 4. **C129/C419 考古面**：640 行版与 16 项清单原件若有备份/死袋可考古，考古后以原件为准复核重建版。
-5. 提交面：两袋（L4 新件+token 册/六编辑件），队列落地后 `git log -1 --name-only` 复核归属。
+5. 提交面终态（三袋全落，`git log -1 --name-only` 归属复核零外来）：**q-0002→831a35b30ab**（袋 B 六编辑件）｜**q-0003→eb358e0cfda**（袋 A1 token 册先行：自登 5+代补登他道 HEAD 独有 9，意图 API publish v79）｜**q-0004→a621b977651**（袋 A2 五新件重投）。
+6. 死袋留痕：q-0001 死因=落地门 CREATE-GUARD 读 HEAD 册时 token 未先行（袋 B 先落、registry 不在其中）——按 L0 处方"先行落地"拆袋重投，旧袋不复活。
+7. 过程发现移交：capable 册投影时序差曾两次翻面盘面 token（他道袋落地+daemon render 竞态），本车道以"重 render+重 add+先行落地"自愈；该竞态根治归维护班（注册表投影 vs 袋落地顺序）。

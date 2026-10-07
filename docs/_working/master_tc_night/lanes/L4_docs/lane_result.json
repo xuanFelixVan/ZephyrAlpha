@@ -15,7 +15,14 @@
     "C453": {"status": "GREEN", "summary": "96_final_delivery §六R表后销号终态注记：R-3热册增量已由各批落地；R-4六图收口裁定#451/#452；R-5已治；R-7复核读数D盘58G/93%（queue仍7.6G，删除面Owner门）", "commits": []},
     "C266": {"status": "GREEN-对账移交", "summary": "§4约60项对裁定册#419-#488三分：A已覆盖打勾34（主干#488+#431+#439）；B OWNER_GATE未覆盖移交40（多为执行回执缺裁/低优先补登；优先=4.3-#22 usercustomize与宪法RULE-ENV表述冲突）；C Owner门位性质项独立列示；零写裁定册", "commits": []}
   },
-  "commits": [],
+  "commits": [
+    {"hash": "831a35b30ab", "route": "主区队列q-20261007-st-mastertc-l4-0002", "cards": ["C247", "C226", "C419", "C453", "C430", "C341", "C129", "C342小修"], "files": ["docs/_working/total_command_closeout/00_master_skeleton.md", "docs/_working/total_command_closeout/96_final_delivery.md", "docs/_working/total_command_closeout/review_ext_autonomy_and_agents.md", "docs/_working/total_command_closeout/review_ext_ci_and_mergequeue.md", "docs/_working/decision_map_campaign_20260924/19_gpu_plan_and_master_backlog.md", "docs/_working/fms_overhaul/99_delivery_report.md"]},
+    {"hash": "eb358e0cfda", "route": "主区队列q-0003（token册先行）", "cards": ["token册"], "files": ["docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"]},
+    {"hash": "a621b977651", "route": "主区队列q-0004（A2重投）", "cards": ["C192", "C342", "C266", "workbook", "lane_result"], "files": ["docs/_working/fullflow_mining/57_gap_vs_fullflow_matrix.md", "docs/_working/master_tc_night/lanes/L4_docs/00_workbook.md", "docs/_working/master_tc_night/lanes/L4_docs/c266_owner_gate_list.md", "docs/_working/master_tc_night/lanes/L4_docs/c342_ghost_refs.md", "docs/_working/master_tc_night/lanes/L4_docs/lane_result.json"]}
+  ],
+  "dead_bags": [
+    {"qid": "q-20261007-st-mastertc-l4-0001", "dead_reason": "落地门CREATE-GUARD读HEAD册时token未先行（袋内registry虽含token但袋B先落、registry不在其中）；处方=L0'先行落地'：拆A1(token册,eb358e0cfda)+A2(五件,a621b977651)，不重投旧袋"}
+  ],
   "open_questions": [
     "C61：22本叶册字节蒸发（0/22捞回）——请Owner定重建（守'叶册与施工同批出'纪律）或撤卡",
     "C266-B：40项未覆盖移交裁定台/继任窗补登；优先项=4.3-#22 usercustomize（宪法RULE-ENV装网 vs 清单'永久禁用'表述相反，唯一口径冲突面）",
