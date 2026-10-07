@@ -67,6 +67,34 @@ casebooks:
       仓外 ZCode 记忆库索引（跨会话教训沉淀）。图11 facts/病历层按 10 主题簇挂载
       （交链相关 98 条）；禁写 machine_facts 机生面（防腐三律 1）。仓外资产=登记指针
       不复制内容（INV-1），仓内会话引用须注明"仓外路径、以记忆库为准"。
+  - casebook_id: CASEBOOK-006
+    name_zh: 已知数据缺口台账（known_data_gaps）
+    physical_path: src/zephyr/data/config/known_data_gaps.yaml
+    form: yaml_ledger
+    domain: D_DATA
+    status: active
+    scope_zh: >
+      supply_sentinel 断供检测 gap_id 绑定台账（长期静默豁免凭据面）。图12 挂载 DSC-14/DSC-16。
+      （2026-10-07 补授：E-12 处方原件随 f2z §六配方遗失，本条按 chief 会话记录重建，
+      挂载落点以图12 语义层现值为准。）
+  - casebook_id: CASEBOOK-007
+    name_zh: 采集打卡账本（integrator_progress task_runs）
+    physical_path: data/integrator_progress.db
+    form: sqlite_table
+    domain: D_DATA
+    status: active
+    scope_zh: >
+      逐任务执行留痕（应跑对打卡分母来源——DSC-20 档期对账与 trigger_facts 机数证据正门）。
+      图12 挂载 DSC-20。（2026-10-07 补授，重建来源同上。）
+  - casebook_id: CASEBOOK-008
+    name_zh: 归档清单（archive_manifest）
+    physical_path: data/archive_manifest.jsonl
+    form: jsonl_ledger
+    domain: D_DATA
+    status: active
+    scope_zh: >
+      冷备归档逐表回执（含 compress_ratio——DSC-10B 可证终点双实锚之一）。图12 挂载
+      DSC-10A/DSC-10B。（2026-10-07 补授，重建来源同上。）
 outside_registry:
   - name_zh: 提交撞墙死因案例册
     identity: "module_id=CFG-COMMIT-DEATH-CASES-001（owner=MOD-INF-005，ttl: permanent）"
