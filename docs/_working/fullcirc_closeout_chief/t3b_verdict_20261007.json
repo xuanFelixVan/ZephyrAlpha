@@ -1,0 +1,132 @@
+{
+ "exam": "T3b 加离场考（X_stop/X_breaker 离场族 × all_a_ex_st 域，T3a 空间继承）",
+ "generated_at": "2026-10-07T21:31:47",
+ "prereg_card_sha256_16": "9aae6e101200d96c",
+ "window": [
+  "2020-01-01",
+  "2023-12-31"
+ ],
+ "seed": 20260915,
+ "batches": [
+  {
+   "dir": "grid_20261007-112020_s0of3",
+   "stage_role": "T1 粗扫分片",
+   "n_sampled": 2467,
+   "evaluated": 2459,
+   "eval_dead": 8,
+   "backend": "auto"
+  },
+  {
+   "dir": "grid_20261007-112036_s1of3",
+   "stage_role": "T1 粗扫分片",
+   "n_sampled": 2467,
+   "evaluated": 2461,
+   "eval_dead": 6,
+   "backend": "auto"
+  },
+  {
+   "dir": "grid_20261007-112038_s2of3",
+   "stage_role": "T1 粗扫分片",
+   "n_sampled": 2466,
+   "evaluated": 2459,
+   "eval_dead": 7,
+   "backend": "auto"
+  },
+  {
+   "dir": "grid_20261007-193118_s0of3",
+   "stage_role": "T1 粗扫分片",
+   "n_sampled": 600,
+   "evaluated": 600,
+   "eval_dead": 0,
+   "backend": "auto"
+  },
+  {
+   "dir": "grid_20261007-193123_s1of3",
+   "stage_role": "T1 粗扫分片",
+   "n_sampled": 600,
+   "evaluated": 600,
+   "eval_dead": 0,
+   "backend": "auto"
+  },
+  {
+   "dir": "grid_20261007-193128_s2of3",
+   "stage_role": "T1 粗扫分片",
+   "n_sampled": 600,
+   "evaluated": 600,
+   "eval_dead": 0,
+   "backend": "auto"
+  }
+ ],
+ "n_sampled_total_union": 9200,
+ "n_raw_full_sample": 27600,
+ "regime_gain": {
+  "pairs": 27,
+  "pairing_coverage_of_on_legs": 0.0035,
+  "imp_mean_avg": 0.00327,
+  "imp_mean_median": 0.0008,
+  "imp_mean_min": 0.0,
+  "share_pairs_ge_5pp": 0.0,
+  "criterion": "CRISIS MaxDD 改善（配对均值）>= 5pp",
+  "verdict": "FAIL",
+  "x_composition": {
+   "atr3x+dd20": 0.00126,
+   "atr3x+off": 0.00086,
+   "off+dd20": 0.00667,
+   "trail20+dd20": 0.00718,
+   "trail20+off": 0.00137
+  },
+  "sharpe_cost_observed_avg": -0.13959
+ },
+ "cost_gate": {
+  "cost_attribution_cols_present": [
+   "cost_drag_total",
+   "cost_drag_annual",
+   "cost_commission_share",
+   "cost_stamp_share",
+   "cost_slippage_share"
+  ],
+  "champion": {
+   "recipe_id": "aeeef8abccb5",
+   "cost_adjusted_sharpe": 1.6449,
+   "gross_sharpe": 2.106,
+   "annual_turnover_x": 0.04,
+   "J": "off",
+   "vals": {
+    "A1_factor_normalize": "rank",
+    "A2_combine_weight": "equal",
+    "B_top_n": "top100",
+    "C_sizing": "risk_parity",
+    "D1_rebalance_freq": "biweekly",
+    "D2_rebalance_trigger": "drift_band",
+    "E_single_cap": "cap20",
+    "H_turnover_lambda": "lambda_5bp",
+    "J_regime_switch": "off"
+   }
+  }
+ },
+ "dsr": {
+  "champion_recipe_id": "aeeef8abccb5",
+  "num_trials_fed": 91,
+  "num_trials_source": "n_trials_effective 求和（批级 n_eff 披露位）",
+  "dsr": 0.9646,
+  "is_significant": true,
+  "degenerate": false,
+  "note": "N 账本 CAS 写被他会话在飞台账阻断（trial_ledger_registry 工作树未提交面）——以批级 n_eff 披露位求和喂 DSR，账本回填=开放项"
+ },
+ "negatives": {
+  "total": 21,
+  "by_layer": {
+   "eval": 21
+  },
+  "by_reason_top": {
+   "eval_fail:MemoryError": 21
+  }
+ },
+ "honesty_echo": [
+  "J 总闸≠TDM L1 六态挂载矩阵（帽调度=已知失真，挖矿 §4.6）",
+  "收盘口径零延迟隐含成交=乐观偏差（next_open/vwap 仅观察项）",
+  "复权链断供（adj_factor 恒 1）——本批日线结论=暂定档标签必带",
+  "做T/订单九态/板块/组合层不在本卷（T3b/T3c 分批边界）",
+  "负结果全量入册（含 J 调度缺数据格/因子面缺数据格）禁删改"
+ ]
+}
