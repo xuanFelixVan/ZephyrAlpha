@@ -36,19 +36,17 @@ tasks:
     capability: adj_factor
 - task_id: kline_daily_hfq_incremental
   table: c1_market.kline_daily_hfq
-  source: miniqmt
+  source: internal    # B4-M1（2026-10-08 Owner 批方案B）：本地派生腿（internal_compute_provider._fetch_kline_daily_hfq → recalc_hfq 真源管线 raw×adj_factor，lineage_version=100，--promote 按窗提升+逐出厂商口径）；原 miniqmt dividend_type=back 厂商口径致生产表混口径（09-28..30 实测 15,636 行 lineage=1）
   schedule: daily_kline
   incremental: true
   date_col: trade_date
-  dependencies: ["adj_factor_incremental"]    # DAG: adj_factor -> kline_daily_hfq
+  dependencies: ["kline_daily_incremental", "adj_factor_incremental"]    # DAG: 派生原料=raw+factor 双先落（原仅 adj_factor——厂商腿自采无需 raw，派生腿必须补 raw 依赖）
   capability: kline_daily_hfq
   symbols:
   extra:
-    description: "后复权日K线增量（miniQMT dividend_type=back）"
+    description: "后复权日K线增量（本地派生 raw×adj_factor，WO-004 裁定口径真源管线；FetchResult 零行防双写，行由管线 INSERT-SELECT 直落）"
 
-  fallback_sources:
-  - source: akshare
-    capability: kline_daily_hfq
+  fallback_sources: []    # 裁定口径 fail-closed：内部派生失败宁可缺行不混口径（原 akshare 兜底摘除——其 hfq 亦厂商口径，WO-004 禁混）
 - task_id: kline_daily_incremental
   table: c1_market.kline_daily
   source: miniqmt
@@ -1068,15 +1066,15 @@ tasks:
   # ============== 静态数据月初刷新（每月1日 09:00）==============
 - task_id: trade_calendar_refresh
   table: c1_market.trade_calendar
-  source: baostock
+  source: internal    # B2 裁定（2026-10-08 Owner 批"派生全量+切源"）：XSHG 全自然日本地派生（internal_compute_provider._fetch_ashare_trade_calendar，is_open 0/1 两态，1990-12-19/XSHG 首会话~today+2 年）；baostock 有 IP 黑名单史（#ARCH-DATA-015）
   schedule: monthly_static
   incremental: false    # 全量重建
   dependencies: []
   capability: trade_calendar
   symbols:
   extra:
-    description: "交易日历全量刷新（baostock query_trade_date）"
-  # #ARCH-DATA-015: baostock IP黑名单（10001011）治本——补 akshare fallback（原无兜底）
+    description: "交易日历全量刷新（XSHG 全自然日派生，含休市行——修 akshare 兜底只产交易日行的口径残缺=gate_deny_calendar_unknown 复发根因，2026 国庆实证）"
+  # #ARCH-DATA-015: baostock IP黑名单（10001011）——akshare 兜底保留（注意其口径只产交易日行 is_open 恒 1，仅降级用）
   fallback_sources:
   - source: akshare
     capability: trade_calendar
@@ -3445,21 +3443,6 @@ tasks:
   extra:
     description: "打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1：连板/开板次数/首触/封板分钟/封单额/流通市值/个股涨幅/板块与全市场封板家数/宽度/大盘涨幅；触发=盘后 daily_kline 事件批 → internal_compute_provider._fetch_daban_engine_load 逐交易日驱动 ex_core.daban_load_producer.run_daily_batch（口径真源在生产者，路由件零业务复制），落表由调度器写通道承担；derived_fields 逐字段 real|default 留痕，不可产字段省略交引擎中性默认）"
 
-# ============== 投资者行为画像 cohort 日账本（2026-09-22 st-emomine-20260922 闸合拢：admin 通道建表+本任务登记，兑现 st-dloop-20260921 接线声明；表/品类/写入器/路由分支均已就位，本条为最后缺口）==============
-
-- task_id: cohort_ledger_daily
-  table: c1_backtest.cohort_daily_ledger
-  source: internal  # 本地结算（读 money_flow/alt_stock_comment/margin_trading/dragon_tiger(_seat)/daban_board_event/block_trade/kline_daily，不从外部API拉取）
-  schedule: daily_kline    # 盘后批（PIT：trade_date=业务日，builder 只用 ≤当日收盘数据）
-  incremental: true    # 逐交易日驱动（ReplacingMergeTree (cohort_id, metric_id, trade_date) 同键重放幂等）
-  date_col: trade_date
-  dependencies: ["money_flow_incremental", "margin_trading_incremental", "dragon_tiger_incremental", "block_trade_incremental"]    # [DAG-DERIVED] 依 cohort_daily_ledger 模块头声明四原料；derive_task_dependencies.py 重扫可校正    # DAG: 原料四表盘后落库后才有结算原料
-  capability: cohort_daily_ledger
-  symbols:         # null=全市场聚合（人群×指标长表行）
-  fallback_sources: []    # internal 结算源天然无副源
-  extra:
-    description: "投资者行为画像五人群日账本结算（WORK-ORDER-5 一期：retail/leverage/hot_money/inst_config/industry 留位；触发=盘后 daily_kline 原料批 → internal_compute_provider._fetch_cohort_daily 逐交易日驱动 zephyr.alt_data.cohort_daily_writer.write_cohort_daily（写入器=唯一写入口，strict 通道 fail-visible；行由写入器直落表，FetchResult 零行防框架二次插行=防双写）；行=人群×指标+state 四态+proxy_source 溯源+bias_note 偏差注记）"
-
 # ============== 情绪指数日批（2026-09-22 st-emomine-20260922，骨架 v0.2/契约 v0.1：六成分等权，独立状态变量=场内温度计，禁 fear_greed 异轴顶替）==============
 
 - task_id: emotion_index_close_final
@@ -3859,17 +3842,22 @@ tasks:
 # 写入器收敛（2026-09-22 st-dloop-20260921，Owner 批 wiring_proposals §A）：路由分支
 # 委托 zephyr.alt_data.cohort_daily_writer（strict 通道+fail-open），不走框架插行双写；
 # extra.trading_day_only 补齐（同 anchored_state_build 口径，非交易日 skip 防 missing 行污染）。
+# 去重收敛（2026-10-08 st-t3b-dedup，Owner 批裁定「立项，机械去重+判重测试钉死」；fig12 WB12-49 在案重复）：
+# 全仓唯一重复 task_id 收敛为本条=正身（daily_capital 档=Owner 批 §A 指定档期+cohort_daily_writer.py 头注同证
+# +四 dep 三条同批 DAG+最后有意维护 dloop 收敛落此）；删除 st-emomine-20260922 误登记的 daily_kline 重条
+# （其 recon 早于 55033fd509 落地误判任务缺失；两重条自 2026-09-23 起每夜 16:30/18:00 双触发），
+# 败者独有描述信息（WORK-ORDER-5 留位/行语义/PIT 注记）已并入本条 description 与行尾注释。
 - task_id: cohort_ledger_daily
   table: c1_backtest.cohort_daily_ledger
-  source: internal
-  schedule: daily_capital
-  incremental: true
+  source: internal  # 本地结算（读 money_flow/margin_trading/dragon_tiger/block_trade 当日增量聚合，不从外部API拉取）
+  schedule: daily_capital    # 四原料 18:00 批之后（§A）；PIT：trade_date=业务日，builder 只用 ≤当日收盘数据
+  incremental: true    # 逐交易日驱动（ReplacingMergeTree (cohort_id, metric_id, trade_date) 同键重放幂等）
   date_col: trade_date
-  dependencies: ["money_flow_incremental", "margin_trading_incremental", "dragon_tiger_incremental", "block_trade_incremental"]
+  dependencies: ["money_flow_incremental", "margin_trading_incremental", "dragon_tiger_incremental", "block_trade_incremental"]    # DAG: 原料三条同批（18:00）先落库后结算；margin 在 nightly_financial 22:00=跨批，get_ready_tasks 跨批依赖视为已满足（§A deps 照抄的既知口径）
   capability: cohort_daily_ledger
-  symbols:
+  symbols:         # null=全市场聚合（人群×指标长表行）
   extra:
-    description: "五人群投资者行为日账本结算（融资融券/大宗/龙虎榜/资金流四增量当日落库后经 cohort_daily_writer strict 通道落 c1_backtest.cohort_daily_ledger，ReplacingMergeTree 同键幂等；真源 schemas/categories/cohort_daily_ledger.py + zephyr.alt_data.cohort_daily_ledger）"
+    description: "五人群投资者行为日账本结算（融资融券/大宗/龙虎榜/资金流四增量当日落库后经 cohort_daily_writer strict 通道落 c1_backtest.cohort_daily_ledger，ReplacingMergeTree 同键幂等；真源 schemas/categories/cohort_daily_ledger.py + zephyr.alt_data.cohort_daily_ledger；WORK-ORDER-5 一期：retail/leverage/hot_money/inst_config/industry 留位，行=人群×指标+state 四态+proxy_source 溯源+bias_note 偏差注记；FetchResult 零行防框架二次插行=防双写）"
     trading_day_only: true    # 依赖当日四原料盘后数据（同 anchored_state_build；节假日 skip 防降级行污染）
 
   fallback_sources: []    # internal 计算源天然无副源
