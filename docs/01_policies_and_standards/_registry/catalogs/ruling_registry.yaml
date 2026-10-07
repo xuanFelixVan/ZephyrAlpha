@@ -4239,3 +4239,36 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   related_rulings: ['裁定#483', '裁定#482', '裁定#486']
   superseded_by: ''
+- ruling_id: "裁定#488"
+  title: 总包夜战 2026-10-06 全量⏳处置——Owner 保留七项登记关账+其余代裁基准分项表（一次落册）
+  date: '2026-10-07'
+  category: 治理架构
+  status: active
+  summary: |-
+    总包裁定台 st-mastertc-l10 依 Owner 2026-10-06 对话授权（原文：全部未完成任务开工、遇到问题
+    自己裁定、最终不留待裁定内容）+宪法§9.11 正式通道，将总包战役（st-mastertc-20261006，基线
+    014ccf5b18）⏳ 全量处置一次落册。scope=本夜 126 卡中全部 ⏳ 卡的处置授权与方向裁定；分项如下。
+    【A 段：Owner 保留门位（本夜禁代裁，登记+跳过即关账，晨会呈 Owner）】
+    ①C63 实盘拒单启用（实盘资金/生产流转）②C287 实盘准入 live（实盘资金/生产流转）
+    ③C109 F 盘 716G 摘除（物理删除三段式）④C410 清盘真删（物理删除三段式）
+    ⑤C267 剩余 0 字节库真删（物理删除三段式；归档+留档可做）⑥C36/C37 VM 依赖两卡（VM 离线）
+    ⑦C45 intake_ledger_recon rebuild（VM 依赖）。
+    【B 段：代裁基准（本裁定批准生效，各车道照办，引用本裁定号即可）】
+    C81 L07-C03→收编唯一（HANDOVER_INSTRUCTION 建议）；C82 L08-C03→接线（有注入点）；
+    C398 F119→双引擎并存至 2026-10-08 继任窗复核；C102 排产账本→TTL 面+PG 外镜像；
+    C103 OrderFileStore→quarantine 语义（隔离可恢复）；C19 severity 变体→维持 warn+登记台账；
+    C21 AutoRuntime→维持封存；C24 ROOR 8 候选→仅批带 successor 且零消费者的净删候选，余维持；
+    C38 D 盘→维持现状+周报；C65 余菜单→按 99 册建议逐条批；C320 图15 human_gate→按
+    risk_tier_registry 默认 medium 落册；C445 相位判别器→AI 侧施工，判据暂记「判不出=记红不拒单」；
+    C490 镜像树迁移批 W0+165GiB 豁免按归档处方批，8 候选并入 C24 口径；
+    immutable_tree 24h 实测汇报补成册；AI 进化点火→维持封存至 W6 窗；
+    C300 commit_queue_interactive→维持现状（已 enabled）+窗口=下维护窗；
+    C410/C109/C63/C287/C36/C37/C45→归 A 段 Owner 保留。
+    【效力与边界】A 段七项本夜不施工、不删任何东西；本裁定不翻转任何 flag 出厂值（C300 维持
+    现状=非翻转）；净零声明：一条总裁定收编全表，不另立单项裁定（C81/C82/C398 已含于分项表）。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/master_tc_20261006/00_orchestration.md
+  - docs/_working/master_tc_20261006/lanes/L10_rulings/00_workbook.md
+  related_rulings: ['裁定#20-B']
+  superseded_by: ''
