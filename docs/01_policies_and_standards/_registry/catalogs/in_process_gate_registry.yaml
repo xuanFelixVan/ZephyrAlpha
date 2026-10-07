@@ -218,7 +218,7 @@ gates:
   register_line: 436
   enabled: true
 - gate_id: FILE-COPY
-  files_trigger: ["src/*.py", "scripts/*.py", "schemas/*.py", "sitecustomize.py"]  # P5 目录收窄(wave4-E/st-ffchief-20261001)=*.py 全域裸配→业务四径正向模式（tests/+.runtime/+docs/ 非业务面不再触发，业务 .py 全覆盖含 schemas/+根 sitecustomize.py）；台内只检 staged 新增 .py own-diff、无 .py 提交短路不变
+  files_trigger: ["added:src/*.py", "added:scripts/*.py", "added:schemas/*.py", "added:sitecustomize.py"]  # 超宽门收窄(G4/st-govfix-g4-20261007)=业务四径全部加 added: 前缀（C98-c 第五路：仅本笔 git 新增 A 态文件匹配，--diff-filter=A 已实证）；理据=台内只检 staged 新增 .py（_get_staged_new_py_files 同款 diff-filter=A），修改(M)态提交此前照样全跑门体(check_code_duplication.py 子进程 120s 超时面)后空转放行——纯修改批触发面归零，新增批行为逐字节不变；门内 own-diff/短路逻辑不动
   module_path: zephyr.gov_enforcement.commit_gates.file_copy_gate
   factory_function: make_file_copy_gate
   source: in_process
@@ -274,7 +274,7 @@ gates:
   register_line: 448
   enabled: false  # 执行退役(2026-09-30 Owner批):判据由DOC-HEADER-SUITE同参转发承载(9/26遥测160=160同起同落),停standalone双跑——gate_survival_adjudication.md §4.1/4.2
 - gate_id: FUNCTION-DUP
-  files_trigger: ["src/*.py", "scripts/*.py", "schemas/*.py", "sitecustomize.py"]  # P5 目录收窄(wave4-E/st-ffchief-20261001)=*.py 全域裸配→业务四径正向模式（tests/+.runtime/+docs/ 非业务面不再触发）；台内只检 staged 新增 .py own-diff（_split_own_foreign）不变
+  files_trigger: ["added:src/*.py", "added:scripts/*.py", "added:schemas/*.py", "added:sitecustomize.py"]  # 超宽门收窄(G4/st-govfix-g4-20261007)=业务四径全部加 added: 前缀（C98-c 第五路：仅本笔 git 新增 A 态文件匹配，--diff-filter=A 已实证）；理据=台内只检 staged 新增 .py（_get_staged_new_py_files 同款 diff-filter=A）+同目录兄弟扫描，修改(M)态提交此前照样全跑门体后空转放行——纯修改批触发面归零，新增批行为逐字节不变；门内 own-diff/短路逻辑不动
   module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
   factory_function: make_function_dup_gate
   source: in_process

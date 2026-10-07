@@ -5,13 +5,13 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，仅 scripts/governance/ 范围，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()，src/zephyr/ 不接入因依赖方向错误）；盲区1治本（2026-07-17）：dict 字面量检测（ast.Dict key 提取 + dict() 调用 + set({...}) 递归）；盲区2治本：检测9 if 语句 ast.Compare 字面量集合（in/not in，min_values=2）；盲区3治本：单字符词表值加载（H/M/L 等，len>=1，原 >=2 漏检 safety_level）；盲区4治本：检测10 return 语句字面量集合（min_values=2）；盲区5治本：_match_vocab_values 全子集阈值（hit_count==len(str_values) 且 ≥ min_values=2，检测4/9/10 共用）替代原 min(3,total)且≥2——覆盖 2 值子集（如 ("draft","active") 2/3 status），单值子集不报（误报率过高）
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；上下文豁免通道（F7 治理 st-govfix-g4-20261007）：行尾 `# gate-vocab-context: <vocab_name>[;...]` 声明该词表值匹配属非复制语境（如 governance_family A/B/C/D 单字母误伤面），仅豁免检测4/9/10 值匹配且须点名命中词表，检测1/2/5/6/7/8 不受影响，标注现量审计可见（不强制 noqa 登记，盲区3 safety_level H/M/L 检测不放宽）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，仅 scripts/governance/ 范围，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()，src/zephyr/ 不接入因依赖方向错误）；盲区1治本（2026-07-17）：dict 字面量检测（ast.Dict key 提取 + dict() 调用 + set({...}) 递归）；盲区2治本：检测9 if 语句 ast.Compare 字面量集合（in/not in，min_values=2）；盲区3治本：单字符词表值加载（H/M/L 等，len>=1，原 >=2 漏检 safety_level）；盲区4治本：检测10 return 语句字面量集合（min_values=2）；盲区5治本：_match_vocab_values 全子集阈值（hit_count==len(str_values) 且 ≥ min_values=2，检测4/9/10 共用）替代原 min(3,total)且≥2——覆盖 2 值子集（如 ("draft","active") 2/3 status），单值子集不报（误报率过高）
 # [MODIFY-GUARD]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无违规或 warn-only）；EXIT_FINDINGS=1（--ci 模式有违规）；EXIT_ERROR=2（脚本异常）
-# [TESTS] 手动测试：全量扫描 exit 0；已知违规文件被检出
+# [TESTS] tests/governance/test_check_vocab_hardcode.py（F7 上下文豁免通道红蓝）；手动测试：全量扫描 exit 0；已知违规文件被检出
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 由 pre-commit run_gate_chain 事件自动触发（--ci 模式在案），非人工 manual 运行
@@ -125,6 +125,23 @@ _VOCAB_LOAD_FUNC_PATTERN = re.compile(
 # 阈值变量理应从 thresholds.yaml 通过 _get_threshold() 读取，硬编码=第二真源=必漂移。
 # 豁免：合理不接入 SSoT 的阈值（如实验性/脚本专用）加 noqa: gate-vocab。
 _THRESHOLD_VAR_PATTERN = re.compile(r"^[A-Z_]*?(THRESHOLD|DEADLINE|TIMEOUT|QUARANTINE|LIMIT)[A-Z_]*$")
+
+# ── 上下文豁免通道（F7 治理，st-govfix-g4-20261007）──
+# 行尾标注 ``# gate-vocab-context: <vocab_name>[;<vocab_name>...]``：
+# 声明该行的字面量集合命中属"非词表复制语境"（合法用例：governance_family 词表
+# values=A/B/C/D 全单字母，治理家族优先级序 ["A","B","C","D"] 等业务序列与词表
+# 值域天然重合——单字母值的全子集匹配是结构性误伤面，任何含 A-D 的列表均命中）。
+# 语义约束（防滥用收窄面）：
+#   1. 只豁免检测4/9/10 值匹配，且必须点名"命中的那个词表名"才生效——
+#      点名错误/未命中词表的标注是惰性标注（照报，审计可见）。
+#   2. 检测1（变量名匹配 VALID_*）/检测2/5/6/7/8 完全不受影响——真词表复制
+#      （变量名+字面量集合双信号）无法借道本通道逃逸。
+#   3. 盲区3 治本不放宽：safety_level H/M/L 等单字母值匹配默认照报，
+#      仅显式标注的行豁免（per-line 粒度，非词表级白名单）。
+#   4. 标注现量进审计输出（CONTEXT-EXEMPT AUDIT），趋势可见；不强制
+#      noqa_exempt_registry 登记（登记闭环=noqa 型 gate-vocab 重型通道，
+#      本通道=轻型语境声明，二者互补不互替）。
+_CONTEXT_EXEMPT_PATTERN = re.compile(r"#\s*gate-vocab-context:\s*([A-Za-z0-9_;, ]+)")
 
 # ── DDL 例外白名单（SQL CHECK 无法 yaml.safe_load，走 DDL-as-Code 协议）──
 _DDL_EXEMPT_FILES: frozenset[str] = frozenset(
@@ -497,13 +514,16 @@ def _check_file(
                 match = _match_vocab_values(node.value, vocab_values, min_values=2)
                 if match:
                     vocab_name, hit_count, total = match
-                    issues.append(
-                        (
-                            node.lineno,
-                            f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
-                            f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                    # F7 上下文豁免通道：行尾标注点名该词表=非复制语境，跳过值匹配报告
+                    # （不用 continue——检测8 阈值检测与本检测同节点先后判定，须保持可达）
+                    if vocab_name not in _get_context_exempt_vocabs(source, node.lineno):
+                        issues.append(
+                            (
+                                node.lineno,
+                                f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                                f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                            )
                         )
-                    )
 
             # 检测8：阈值变量硬编码（ARCH-036 P3-A5: 阈值数值应从 SSoT 读取）
             # 仅对 scripts/governance/ 范围生效——thresholds.yaml 是脚本治理系统的 SSoT，
@@ -619,6 +639,9 @@ def _check_file(
                     match = _match_vocab_values(comparator, vocab_values, min_values=2)
                     if match:
                         vocab_name, hit_count, total = match
+                        # F7 上下文豁免通道：行尾标注点名该词表=非复制语境，跳过值匹配报告
+                        if vocab_name in _get_context_exempt_vocabs(source, node.lineno):
+                            break
                         issues.append(
                             (
                                 node.lineno,
@@ -636,6 +659,9 @@ def _check_file(
                 match = _match_vocab_values(node.value, vocab_values, min_values=2)
                 if match:
                     vocab_name, hit_count, total = match
+                    # F7 上下文豁免通道：行尾标注点名该词表=非复制语境，跳过值匹配报告
+                    if vocab_name in _get_context_exempt_vocabs(source, node.lineno):
+                        continue
                     issues.append(
                         (
                             node.lineno,
@@ -734,6 +760,61 @@ def _has_noqa_exempt(source: str, lineno: int) -> bool:
     if lineno < 1 or lineno > len(lines):
         return False
     return "# noqa: gate-vocab" in lines[lineno - 1]
+
+
+def _get_context_exempt_vocabs(source: str, lineno: int) -> set[str]:
+    """提取指定行行尾 ``# gate-vocab-context:`` 标注点名的词表名集合（F7 上下文豁免通道）。
+
+    标注形式：``# gate-vocab-context: governance_family`` 或分号/逗号分隔多词表。
+    仅当检测4/9/10 值匹配命中的词表名 ∈ 本行点名集合时豁免该匹配——
+    点名未命中词表的标注是惰性标注（照报）。解析失败/越界返回空 set（不豁免）。
+
+    Args:
+        source: 文件源码
+        lineno: 1-based 行号
+
+    Returns:
+        该行点名的词表名集合（如 ``{"governance_family"}``）；无标注返回空 set。
+    """
+    lines = source.splitlines()
+    if lineno < 1 or lineno > len(lines):
+        return set()
+    m = _CONTEXT_EXEMPT_PATTERN.search(lines[lineno - 1])
+    if not m:
+        return set()
+    names = re.split(r"[;,]", m.group(1))
+    return {n.strip() for n in names if n.strip()}
+
+
+def _collect_context_exemptions(source: str) -> list[tuple[int, str]]:
+    """收集文件中所有 ``# gate-vocab-context:`` 标注的行号与点名词表（审计用）。
+
+    与 ``_collect_noqa_exemptions`` 同构：用 ``tokenize`` 识别真正 COMMENT token，
+    排除 docstring/字符串字面量中的文字引用误报。
+
+    Args:
+        source: 文件源码
+
+    Returns:
+        ``[(行号, 点名词表原文), ...]``
+    """
+    import io
+    import tokenize
+
+    exemptions: list[tuple[int, str]] = []
+    directive = "gate-vocab-context:"
+    try:
+        tokens = list(tokenize.generate_tokens(io.StringIO(source).readline))
+    except tokenize.TokenError:
+        return []
+    for tok in tokens:
+        if tok.type != tokenize.COMMENT:
+            continue
+        after_hash = tok.string[1:].lstrip()
+        if not after_hash.startswith(directive):
+            continue
+        exemptions.append((tok.start[0], after_hash[len(directive) :].strip()))
+    return exemptions
 
 
 def _collect_noqa_exemptions(source: str) -> list[tuple[int, str]]:
@@ -947,6 +1028,8 @@ def main() -> int:
     all_issues: list[tuple[Path, int, str]] = []
     # noqa 审计累计（治本 2026-06-30）：防止豁免被滥用无限增长
     all_noqa: list[tuple[Path, int, str]] = []
+    # F7 上下文豁免通道审计累计（st-govfix-g4-20261007）：标注现量趋势可见
+    all_ctx: list[tuple[Path, int, str]] = []
     checked = 0
 
     if args.files:
@@ -980,6 +1063,9 @@ def main() -> int:
             src = filepath.read_text(encoding="utf-8")
             for lineno, reason in _collect_noqa_exemptions(src):
                 all_noqa.append((filepath, lineno, reason))
+            # F7 上下文豁免审计：收集本文件的 gate-vocab-context 标注行
+            for lineno, vocabs in _collect_context_exemptions(src):
+                all_ctx.append((filepath, lineno, vocabs))
         except (OSError, UnicodeDecodeError):
             pass
 
@@ -1000,6 +1086,18 @@ def main() -> int:
     # （len(exemptions)），未登记 noqa 标记 [UNREGISTERED]——闭环系统：
     # 每个 noqa 必须在 config/governance/noqa_exempt_registry.yaml 登记，
     # 否则 --ci 模式 exit 1。registry 缺失时退化为 fallback 基线 33。
+    # ── F7 上下文豁免通道审计摘要（st-govfix-g4-20261007）──
+    # 标注现量输出（visibility），不影响退出码；防滥用靠"点名命中才生效"+ 本审计趋势。
+    if all_ctx:
+        ctx_files = len({fp for fp, _, _ in all_ctx})
+        print(f"\nCONTEXT-EXEMPT AUDIT: {len(all_ctx)} gate-vocab-context annotation(s) across {ctx_files} files")
+        for fp, lineno, vocabs in all_ctx:
+            try:
+                rel = fp.relative_to(REPO_ROOT)
+            except ValueError:
+                rel = fp
+            print(f"  {rel}:{lineno} gate-vocab-context: {vocabs}")
+
     registry = _load_noqa_registry()
     registered_keys = _registered_exemption_keys(registry)
     reason_map = _registered_reason_map(registry)

@@ -1,0 +1,60 @@
+# [A_config] module_id=CFG-private-key-exempt-registry | layer=config | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] permanent
+module_id: CFG-PRIVATE-KEY-EXEMPT-REGISTRY-001
+ttl: permanent
+title: detect_private_key 豁免路径登记册（测试 fixture / 模式真源白名单通道）
+doc_type: register
+registry_id: CFG-PRIVATE-KEY-EXEMPT-REGISTRY-001
+name: Private Key Exempt Registry
+description: >-
+  scripts/governance/d7_code/detect_private_key.py 豁免路径唯一真源（G4 误伤面治理
+  机制化件，st-govfix-g4-20261007）。净零声明：本册替代该脚本内联 _EXEMPT_PATHS
+  硬编码 set（同真源收敛唯一，w5_1 判据）——原 6 条硬编码条目中 4 条 tests/ 路径
+  系 tests 重组前旧址（HEAD 不存在，git ls-files 实证），随本迁移改挂现址；
+  2 条真源件原样保留。登记语义：path 命中（POSIX 归一化精确比对）即跳过该文件的
+  私钥标记扫描；册缺失/损坏时检测器退化到内建最小豁免集（2 条真源件）并 stderr
+  告警（fail-safe 向检测态，不向放行态）。陈旧条目审计：路径既不在 git index
+  也不在盘上时打印 [STALE-EXEMPT]（warn-only，退休候选，不自动删）。
+  背景（P08b 回执）：commit 队列 226-398 家族慢性死循环=PRIVATE_KEY_DETECTED
+  误杀 tests fixture（secrets 扫描器测试的字面 PEM 标记串非真实私钥）；
+  P08b/P05b 曾以内容改写（字符串拼接绕道）临时治标 4 件，本册=机制化正门——
+  fixture 测试经登记豁免后可恢复直写字面量，不再需要拼接绕道。
+
+owner: MOD-INF-005
+tier: tier_2_domain
+status: active
+version: 1.0.0
+created: '2026-10-07'
+last_updated: '2026-10-07'
+
+exempt_paths:
+- path: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
+  reason: secrets 检测模式真源——自身必然含 PEM/密钥标记字面量（原 _EXEMPT_PATHS 迁移）
+  added_by: legacy-migrate
+  added_date: '2026-10-07'
+- path: scripts/governance/d7_code/detect_private_key.py
+  reason: 检测器自检豁免——源码含私钥标记模式字面量（同真源理据，原 _EXEMPT_PATHS 迁移）
+  added_by: legacy-migrate
+  added_date: '2026-10-07'
+- path: tests/ai/llm_security/test_secrets.py
+  reason: secrets 扫描器测试 fixture——PEM 标记串为被测函数输入样例非真实私钥（旧路径
+    tests/llm_security/test_secrets.py 迁移现址；P08b 死袋 0001 死因件）
+  added_by: st-govfix-g4-20261007
+  added_date: '2026-10-07'
+- path: tests/gov/governance/access_control/test_credential_rotation_trigger.py
+  reason: 凭据轮换触发测试 fixture（旧路径 tests/test_credential_rotation_trigger.py 迁移现址）
+  added_by: st-govfix-g4-20261007
+  added_date: '2026-10-07'
+- path: tests/meta/fix/test_auto_fix_core.py
+  reason: 自动修复核心测试 fixture（旧路径 tests/fix/test_auto_fix_core.py 迁移现址）
+  added_by: st-govfix-g4-20261007
+  added_date: '2026-10-07'
+- path: tests/meta/fix/test_fix_safety.py
+  reason: 修复安全性测试 fixture（旧路径 tests/test_fix_safety.py 迁移现址）
+  added_by: st-govfix-g4-20261007
+  added_date: '2026-10-07'
+- path: tests/governance/test_detect_private_key.py
+  reason: 私钥检测器自身的红蓝测试 fixture——PEM 标记字面量为被测函数输入样例非真实
+    私钥（本册机制化的首批自用案例：通道须能豁免验证通道自身的测试）
+  added_by: st-govfix-g4-20261007
+  added_date: '2026-10-08'
