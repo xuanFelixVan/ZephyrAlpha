@@ -7,12 +7,144 @@ doc_type: policy
 # 提交指路指南（机生版）
 
 > **本文件由生成器产出，禁手改**——改判据请改源头册后重跑生成器。
-> 生成器: `python scripts/governance/generators/generate_commit_guide.py` ｜ 生成时刻: 2026-10-03 09:28 UTC
+> 生成器: `python scripts/governance/generators/generate_commit_guide.py` ｜ 生成时刻: 2026-10-07 20:18 UTC
 > 源册: gate_digest_registry.yaml（判据蒸馏）/ file_type_checklists_registry.yaml（类型清单）/ death_cases_registry.yaml（死因案例）/ in_process_gate_registry.yaml（在册台目）
 
-> **8 台已停用 enabled:false**（卡片标'停用'，状态真源=gate_registry）: BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
+> **⚠️ 12 台判据源已漂移待重蒸馏**: CREATE-GUARD, NO-SECRET-HARDCODE, R5-DIGIT-SUFFIX, FOLDER-CAPACITY-HARD-LIMIT, REGISTRY-MASS-DELETION, REGISTRY-YAML-PARSE, PERMANENT-SYSTEM-TRIGGER, BLUEPRINT-FORMAT, RECONCILER-FILE-OPS, MAP-ALIGNMENT, DOC-HEADER-SUITE, FMS-HYGIENE ｜ **1 台在册未蒸馏**（附录 B）: TDM-MOUNT-COVERAGE ｜ **8 台已停用 enabled:false**（卡片标'停用'，状态真源=gate_registry）: BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
 
 锚点约定：gate 卡片标题=`### <GATE_ID>`，类型节=`## FT-<type_id>`；接口按子串检索。
+
+## 序页 — 锚点目录（找节先看这里）
+
+- `L0-JOURNEY` — 施工全程九站地图（按施工时间序；每站一行处方）
+- `FT-universal` — 每一笔提交的通用前置
+- `FT-new_src_py` — 新建 src/zephyr/ 生产模块
+- `FT-new_script_py` — 新建 scripts/ 治理/业务脚本
+- `FT-new_test_py` — 新建 tests/ 测试件
+- `FT-working_md` — 新建 docs/_working/ 工作文档（报告/台账/案卷）
+- `FT-formal_md` — 新建正式 docs/** 文档（SOP/政策/规范）
+- `FT-registry_yaml` — 注册表 YAML（docs/.../_registry/catalogs/）
+- `FT-config_yaml` — 非 rules 配置 YAML（config/ data/ schemas/ 及 docs/_working 的 .yaml/.yml）
+- `FT-rules_yaml` — 规则 YAML（docs/01_policies_and_standards/rules/trae_*.yaml）
+- `FT-rename_move` — 文件改名/搬移
+- `FT-deletion_batch` — 删除批/退役批
+- `FT-migration_batch` — 迁移/DDL/数据批
+- `FT-ps1` — PowerShell 脚本（.ps1）
+- `FT-other_new_asset` — 其他新建资产（.json/.sh/.mmd）
+- `FT-queue_channel` — 队列通道专项（enqueue/requeue/死信分诊）
+- `FT-extra-registry` — 机制红线（非 in-process 台，但同硬阻断级）
+- `DEATH-CASES` — 死因处方速查（按实测成本排序）
+- `APPENDIX-A` — 全台速查表
+- `APPENDIX-B` — 在册未蒸馏台目
+- `APPENDIX-C` — 判据源新鲜度快照
+
+---
+
+## L0-JOURNEY — 施工全程九站地图（按施工时间序；每站一行处方）
+
+> 口径: 线内先挖后干、线间并行流水；进门被拒=照处方执行后重试，不换道硬闯；多会话并发窗一律走队列
+
+- **J1 开工反查（正门检票）**｜时机: 写第一行业务码之前；进场钩子拒绝 Edit/Write 时｜处方: 开工第一件必读 docs/_working/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md（前役坑全压缩）；反查=capability_lookup.find(<关键词>, session_id=<sid>) 或 python -m zephyr.library.lookup "<关键词>" --session <sid>——照拒绝话术里的现成命令执行后重试原写动作；顺带看 library_dedup 命中（资产已建成=扩展或避让）
+### CAPABILITY-LOOKUP-REQUIRED
+
+- 强度: 硬阻断
+- 触发面: commit 含 src/zephyr/**.py 业务代码
+- 判据: 本 session 审计日志须有 capability_lookup/rule_discovery 调用记录
+- 豁免: message [no-lookup:<白名单 reason>]（gate-fix/continuation/mechanical 等 16 项；sweep 两封死因=reason 不在白名单）；env 紧急逃生
+- 处方: 写码前 capability_lookup.find()（留审计）；纯机械批用白名单 reason 词；requeue 不改 message——死因是 message 类必须新 enqueue
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py`
+
+- **J2 领锁 claim**｜时机: 动他人可能同写的文件之前｜处方: lock_files.py acquire <file> <sid>（TTL 30 分钟，过期重领）；他会话活锁不可代收；死会话锁按宪法 §2.7 精准 release 后重领
+### CLAIM-REQUIRED
+
+- 强度: 硬阻断
+- 触发面: commit 目标 files 清单
+- 判据: session 已注册时目标文件必须在 held_files（先 claim 后改后提交）
+- 豁免: allow_overlap=True；session 未注册放行（SESSION-REQUIRED 已拦）
+- 处方: 提交前 lock_files.py acquire <file> <sid>（或 gateway claim_files）
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/claim_required_gate.py`
+
+### HELD-OVERLAP
+
+- 强度: 硬阻断
+- 触发面: 提交目标文件被其他活跃 session 持有（SessionRegistry+.ailocks 双轨）
+- 判据: 命中即阻断（搭便车防护）；Path.resolve 归一化比较
+- 豁免: commit(allow_overlap=True)（CLI --allow-overlap），message 自动追加重叠标记
+- 处方: 等锁释放；确需同窗走 --allow-overlap 逃生（留审计）
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py`
+
+- **J3 隔离施工**｜时机: 首次创建工作区时｜处方: session_worktree.py create <sid> <task>（默认隔离；直改主区=显式申请）；观测数据（lookup_audit/entrance_audit/投影状态）一律锚主仓根，worktree 内禁另立副本
+### WORKTREE-REQUIRED
+
+- 强度: 硬阻断
+- 触发面: 每次 commit
+- 判据: 非 worktree+有其他活跃 session 即拦（共享区搭便车/黑洞风险）
+- 豁免: worktree 内；solo；--allow-non-worktree；--allow-overlap
+- 处方: session_worktree_start 隔离施工；逃生后改完即提交不留窗
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py`
+
+- **J4 token 意图 API（新资产）**｜时机: 新建 .py/.yaml/.json/.md 资产后、提交前｜处方: capability 册=PG 投影册禁手改——registry_ledger api.register(REG-CAPCAN-001, 'creation_tokens', payload) → publish_snapshot → registry_projection_generator --render；src 新件另需 map_mounts 或 no_mount_reason；.py 头 14 字段+TTL 缺一拦
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
+
+- 强度: 硬阻断
+- 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
+- 判据: 八道硬拦——①reconciler 新增 make_*_reconciler 函数须 trae_060-reviewed 标记 ②rules/ .yaml 命名 trae_NNN_<主题>_<描述>（ARCH-037）③governance/ 根禁新增 .py（ARCH-031）④类名跨模块唯一（git grep，ARCH-034）⑤creation_token 精确路径匹配（读工作区册）⑥.py 头 30 行字段头（真源 trae_047 a_full.required，__init__ 3 字段）⑦basename 碰撞（fail-open 冗余后备）⑧查功能关键词两档化（裁定#456：标识符级硬拦/散文级 warn）；warn 面=merge_evaluation 缺失+散文级判重
+- 豁免: tests/ 全豁免；rules/ .yaml 走命名检查不走 token；codegen（BEGIN CODEGEN/CODGEN）豁免字段头；类名豁免标记 class-name-alias；# create-guard-not-dup: <一句话理由> 整文件豁免关键词判重；外来 staged warn+审计
+- 处方: 先在 capability_canonical_file_registry.yaml creation_tokens 登记四字段（file/token/created_by/capability，可带 --merge-evaluation 四判据一句话）再写文件；token 与内容同批原子或 token 批先行（队列通道倒序必死）；关键词命中=扩展 canonical 或写逃生标记；rules/ 用 python scripts/scaffold.py rule <主题_描述>
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/create_guard.py`
+
+- **J5 翻译先行**｜时机: 新建 .py 当批｜处方: add_module_translation.py --path <f> --domain <D_*> --name-zh <> --plain-zh <大白话>；双读面规则：落地门读主区盘面翻译册，不是 dev HEAD——先落主区盘面
+### TRANSLATION-COVERAGE
+
+- 强度: 硬阻断
+- 触发面: 新增 .py（src/zephyr/ 或 scripts/ 下）
+- 判据: 翻译册须有合格条目——存在+非空+CJK 大于等于 8+非通用模板
+- 豁免: tests/、demos/、test_ 前缀、*_test.py 后缀、__init__.py、_archive/
+- 处方: python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*> --name-zh <中文名> --plain-zh <大白话至少 8 汉字>
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py`
+
+- **J6 投影册纪律（共享登记册）**｜时机: 任何共享登记册（capability/翻译/裁定/目录契约）编辑时｜处方: 手改=指纹门拦（私改投影册无效）；双读面：锁外预检读 HEAD 册、锁内落地门读主区盘面——『token/翻译先行落地』指主区 HEAD；并发渲染竞态=重渲染后立即重 stage 再投
+### REGISTRY-YAML-PARSE ⚠️待重蒸馏(判据源已漂移)
+
+- 强度: 硬阻断
+- 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
+- 判据: safe_load 过+顶层根键唯一（compose 节点树判重）+capability 档 di_seam_exemptions 末位键+creation_tokens 为 list（data_asset 档仅前两项）；W-M1 投影执法：staged 指纹≠投影状态文件即拦（私改投影册无效，须走意图 API+生成器重打）；fail-closed
+- 豁免: 无人工逃生；git/读失败 fail-open；投影检查在状态文件缺失时零行为
+- 处方: token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插）；插后本地 yaml.safe_load 预验再提交
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py`
+
+- **J7 提交面选择**｜时机: 首次 commit 尝试前想清楚走哪条道｜处方: 入队前标准一步=gate_prerun.py --session <sid> --files <同值清单> --message-file <msg>（进程内门唯它能预跑，exit1 修到 0 再投）；单域干净=网关直连；跨域 --allow-multi-domain 留痕；.gitignore 等保护路径需 [ARCH-APPROVAL:<已登记issue>]（Owner 门位禁自签）；多会话并发窗/主区脏面一律队列拆域（enqueue 带 --worktree-root --base-head <dev真HEAD>；死袋禁 requeue——全新入队并写明理由；会话注册+心跳与提交同命令链防 SESSION-REQUIRED）
+### COMMIT-SCOPE
+
+- 强度: 硬阻断
+- 触发面: 每个 commit 的 files 清单
+- 判据: 不得跨两个以上功能域（.py 读 [DOMAIN] 头；非 .py 用 functional_domain_registry ssot_path 前缀匹配）
+- 豁免: allow_multi_domain=True + message multi-domain 标记（留痕合法）
+- 处方: 拆分为每域一笔；确需跨域（裁定+registry 原子批）用 --allow-multi-domain
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/commit_scope_gate.py`
+
+### PROTECTED-PATHS
+
+- 强度: 硬阻断
+- 触发面: staged 命中受保护路径（真源=check_protected_paths.py PROTECTED_PATTERNS 7 条：.git/、AGENTS.md、rules/ 目录、architecture_model/、.gitignore、.gitattributes、ruling_registry.yaml）
+- 判据: 写受保护路径须审批（防 27 包误忽略事故复发；撞墙成本最高档 P50 183min）；审批判定=①message [ARCH-APPROVAL:...] 标记防伪（id 须实存，查无即拒）②裁定册 active 条目 approved_paths 覆盖 ③merge 分支侧已批转置
+- 豁免: 紧急 env ZEPHYR_PROTECTED_PATHS_BYPASS=1（留痕）；registry 读取异常+标记在场 fail-open
+- 处方: 走 [ARCH-APPROVAL:<issue_id>] 标记（裁定登记后），勿硬闯
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py`
+
+- **J8 死账处置三步拳**｜时机: TAKEOVER-PENDING / 死会话锁挡道时｜处方: ①session_takeover_ledger.py --resolve <sid> --by <我> --note <如实证据注记> ②session_worktree.py archive <sid> --execute（patch 存证+rescue，真 ahead 落台账禁 -D）③修因后 requeue --force 留痕——活会话（pid=0 逻辑会话心跳在续也算活）不可代收，须 Owner 裁定注销
+### TAKEOVER-PENDING
+
+- 强度: 硬阻断
+- 触发面: 每 commit；接管台账（.runtime/takeover_ledger.jsonl）有 open 条目且 commit 文件命中其 held/dirty/staging 面（具体文件级重叠，目录级不咬合）
+- 判据: 命中死会话遗留资源面即硬阻断（接管显化 L3）；台账锚主仓根（防 serializer worktree 落地静默放行）
+- 豁免: tests/；台账缺失/损坏 fail-open（显化设施失效不拦无辜）；--resolve 后自动放行；袋内文件不参与咬合
+- 处方: 按接管处方处置后 python scripts/governance/session_takeover_ledger.py --resolve <sid> --by <接管者>；台账不可用 --scan 重建
+- 判据源: `src/zephyr/gov_enforcement/commit_gates/takeover_pending_gate.py`
+
+- **J9 落地核验**｜时机: 每次提交/落地完成后｜处方: git log -1 --name-only 核真实归属（暂存区会吸收他会话）→ release claims → 队列件核验 dev 内容到齐 → 临时文件/救援件清点归档
+
+---
 
 ## FT-universal — 每一笔提交的通用前置
 
@@ -116,7 +248,7 @@ doc_type: policy
 - [TRANSLATION-COVERAGE] 翻译缺失/模板话（'提供包入口和模块加载功能'） → add_module_translation.py 一条命令；plain_zh 写人话 ≥8 汉字
 - [ORPHAN-MODULE] 文件搬运+同批改引用被 ORPHAN/IMPORT 轮番拦死 → 三方（文件+import+名册）同批原子；或迁移延后另案（k4-0007 三连死实证）
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -215,7 +347,7 @@ doc_type: policy
 - 处方: 对齐三轨道声明；撞车 ID 改名；standalone 已退役（2026-09-30），执行入口=DOC-HEADER-SUITE
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py`
 
-### BLUEPRINT-FORMAT（停用：见 gate_registry）
+### BLUEPRINT-FORMAT（停用：见 gate_registry） ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 停用（enabled:false，不参与在飞预检）
 - 触发面: .py added 行 [BLUEPRINT] 头（无 tests/ 豁免）
@@ -251,7 +383,7 @@ doc_type: policy
 - 处方: 先 apply_depgraph.py --add-design-node 登记，完工后 apply_depgraph.py --transition-build-status <node_id> production
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py`
 
-### PERMANENT-SYSTEM-TRIGGER
+### PERMANENT-SYSTEM-TRIGGER ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: 头 40 行含 [TTL] permanent 的 staged .py（非 tests/）own-scope（聚合台含 MANUAL-ONLY-PERMANENT 子检查）
@@ -320,7 +452,7 @@ doc_type: policy
 **本类常见死因**（案例册全量见文末速查）:
 - [PERMANENT-SYSTEM-TRIGGER] CLI runner 被判永久系统时间触发 → M11 豁免尾注 # noqa: m11-perm-manual-legitimate（manual CLI 合法先例）
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -356,7 +488,7 @@ doc_type: policy
 - 处方: 补 import/修拼写/补本地定义
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py`
 
-### PERMANENT-SYSTEM-TRIGGER
+### PERMANENT-SYSTEM-TRIGGER ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: 头 40 行含 [TTL] permanent 的 staged .py（非 tests/）own-scope（聚合台含 MANUAL-ONLY-PERMANENT 子检查）
@@ -469,7 +601,7 @@ doc_type: policy
 - 处方: 按目录契约放置/改名；docs/_working 只许 .csv/.html/.md/.yaml（.meta.json 违规改 .meta.yaml）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/directory_contract_gate.py`
 
-### R5-DIGIT-SUFFIX
+### R5-DIGIT-SUFFIX ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: 文件路径任意父级目录名匹配数字后缀（新引入才拦，历史不追溯）
@@ -478,7 +610,7 @@ doc_type: policy
 - 处方: 用语义名目录（e2e_20260924 违规、e2e_integration 合法；registry_incident 去 0b 后缀合法先例）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -557,7 +689,7 @@ doc_type: policy
 - 处方: 补登对应 registry（architecture_issue_registry.yaml 或 ruling_registry.yaml，与引用同 commit 原子）或删引用；核对 AGENTS.md 章节号
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -566,7 +698,7 @@ doc_type: policy
 - 处方: 先在 capability_canonical_file_registry.yaml creation_tokens 登记四字段（file/token/created_by/capability，可带 --merge-evaluation 四判据一句话）再写文件；token 与内容同批原子或 token 批先行（队列通道倒序必死）；关键词命中=扩展 canonical 或写逃生标记；rules/ 用 python scripts/scaffold.py rule <主题_描述>
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/create_guard.py`
 
-### FOLDER-CAPACITY-HARD-LIMIT
+### FOLDER-CAPACITY-HARD-LIMIT ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged .py/.yaml/.md 所在目录
@@ -592,7 +724,7 @@ doc_type: policy
 - [REGISTRY-MASS-DELETION] 整文件快照压盘（陈旧基底覆写他会话刚落地条目） → 热文件 safe_write_text+expected_base_sha256；写前守恒闸拒写即停，勿强行重写
 - [REGISTRY-YAML-PARSE] 三向合并失败/快照撕裂死信 → 解析护栏（yaml.safe_load 预验）过了再入队；同族多条插入注意合并器同点插入语义
 
-### REGISTRY-MASS-DELETION
+### REGISTRY-MASS-DELETION ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged YAML 命中 _registry/catalogs/ 或 ROOR
@@ -601,7 +733,7 @@ doc_type: policy
 - 处方: 批量补登走 scripts/governance/registry_batch_edit.py 纯插入；共享热册 CAS 写（safe_write_text）+写前守恒闸；共享暂存区副本陈旧会误报——git add 自愈
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py`
 
-### REGISTRY-YAML-PARSE
+### REGISTRY-YAML-PARSE ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
@@ -637,7 +769,7 @@ doc_type: policy
 - 处方: git log -p 区间核对上游改动；已含则 release 后重 claim（锚刷新）再提交；claim_snapshots 删快照刷锚配方在案
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -656,7 +788,7 @@ doc_type: policy
 1. frontmatter ttl 按区：config/ 永久区=permanent；docs/_working 下 .yaml/.yml 一律 task_bound（FILE-PLACEMENT-TTL 拦错区）
 1. 表名走 TableRegistry；词表值走加载器禁硬编码
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -816,7 +948,7 @@ doc_type: policy
 - 处方: 跑 sync_registry_from_blueprints.py --write 恢复派生文件；确需删走逃生通道
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/derived_file_deletion_gate.py`
 
-### REGISTRY-MASS-DELETION
+### REGISTRY-MASS-DELETION ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged YAML 命中 _registry/catalogs/ 或 ROOR
@@ -937,7 +1069,7 @@ doc_type: policy
 - 处方: .ps1 注释写英文；全仓 LF；中文内容只进 UTF-8 文本格式
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/encoding_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -956,7 +1088,7 @@ doc_type: policy
 1. ttl 义务同在（TTL-METADATA 格式面含 .json/.sh/.mmd）：永久区 frontmatter ttl permanent，临时区 task_bound
 1. 目录契约扩展名面：docs/_working 只许 .csv/.html/.md/.yaml——.json 落别处或改 .meta.yaml
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -1010,7 +1142,7 @@ doc_type: policy
 - 处方: 写码前 capability_lookup.find()（留审计）；纯机械批用白名单 reason 词；requeue 不改 message——死因是 message 类必须新 enqueue
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py`
 
-### REGISTRY-YAML-PARSE
+### REGISTRY-YAML-PARSE ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
@@ -1338,29 +1470,12 @@ doc_type: policy
 
 ## APPENDIX-B — 在册未蒸馏台目（生成器自动清点，蒸馏后重跑）
 
-（无——在册全覆盖）
+- TDM-MOUNT-COVERAGE
 
 ## APPENDIX-C — 判据源新鲜度快照
 
-- 漂移待重蒸馏: 0 台
+- 漂移待重蒸馏: 12 台：CREATE-GUARD, NO-SECRET-HARDCODE, R5-DIGIT-SUFFIX, FOLDER-CAPACITY-HARD-LIMIT, REGISTRY-MASS-DELETION, REGISTRY-YAML-PARSE, PERMANENT-SYSTEM-TRIGGER, BLUEPRINT-FORMAT, RECONCILER-FILE-OPS, MAP-ALIGNMENT, DOC-HEADER-SUITE, FMS-HYGIENE
 - 未记录哈希: 0 台
 - 已停用 enabled:false: 8 台：BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
-- 在册覆盖: 105/105
+- 在册覆盖: 105/106
 
-
-## 队列通道先行批铁律（2026-10-05 GOMAP 对话实证 + 裁定#480 D 配套）
-
-**一句话**：袋里有新建文件（tests/ 豁免面除外）→ 入队前先验 token 在 dev HEAD，不在就拆两袋：token 先行批 → 内容批。
-
-**前因**：CREATE-GUARD 在队列落地时读 dev HEAD 的 capability 册（`anchor_main_root` 锚主仓盘面），不看袋内带的册子改动。"token 与 yaml 同 commit 原子"只在直连正门成立，队列通道必须先行批。实证：同签名死因一晚 250 次（熔断都烧了）。
-
-**操作三步**：
-1. 入队前验：`git show dev:docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | grep <token>` → 在则直接入内容袋
-2. 不在 → 拆袋：第一袋仅 capability 册一件（token 插入，走意图 API 正道=`register_tokens_ledger.py`），入队落地后再入第二袋（内容件）
-3. 可用 `--depends-on <token袋qid>` 挂依赖（前置落盘才放行后置=机器强制先行）
-
-**临时军规**（车道 worktree 作业）：
-- 入队必显式 `--queue-root <主仓根>/.runtime/commit_queue`（默认解析已被 `_strip_lane_prefix` 兜底，但显式传参永远最安全）
-- worktree 内跑 python 须双 env 锚：`ZEPHYR_ALPHA_ROOT` + `ZEPHYR_WORKTREE_ROOT`（单设后者压不过 usercustomize 预导入）
-
-**死因签名细化（wave-2 登记）**：外层 "网关落盘失败（COMMIT_FAILED）" 太粗（250 次死亡横跨几十种真实根因共用一个签名，熔断误伤所有重投）。修③ 已细化到文件级指纹，但外层 COMMIT_FAILED 包装层仍需按门禁 ID 拆分。

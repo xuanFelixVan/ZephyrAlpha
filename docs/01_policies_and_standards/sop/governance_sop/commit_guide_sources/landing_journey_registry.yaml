@@ -1,0 +1,62 @@
+# landing_journey_registry.yaml — 施工全程站地图源册（L0-JOURNEY）
+# 消费方: scripts/governance/generators/generate_commit_guide.py（机生进 commit_navigation_playbook.md）
+# 站序=施工时间序；prescription 一行说清"这一站被拦时照抄什么动作"；gate_refs 引用蒸馏册在册 gate（未知 id 生成失败）
+# 沿革: 2026-10-07 夜 st-entrance-gate-20261007 九门实证蒸馏（Owner 立项"正门放落地说明书+序页"）
+title: "施工全程九站地图（按施工时间序；每站一行处方）"
+caliber: "线内先挖后干、线间并行流水；进门被拒=照处方执行后重试，不换道硬闯；多会话并发窗一律走队列"
+stations:
+  - station_id: "J1"
+    title: "开工反查（正门检票）"
+    timing: "写第一行业务码之前；进场钩子拒绝 Edit/Write 时"
+    prescription: "开工第一件必读 docs/_working/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md（前役坑全压缩）；反查=capability_lookup.find(<关键词>, session_id=<sid>) 或 python -m zephyr.library.lookup \"<关键词>\" --session <sid>——照拒绝话术里的现成命令执行后重试原写动作；顺带看 library_dedup 命中（资产已建成=扩展或避让）"
+    gate_refs:
+      - CAPABILITY-LOOKUP-REQUIRED
+  - station_id: "J2"
+    title: "领锁 claim"
+    timing: "动他人可能同写的文件之前"
+    prescription: "lock_files.py acquire <file> <sid>（TTL 30 分钟，过期重领）；他会话活锁不可代收；死会话锁按宪法 §2.7 精准 release 后重领"
+    gate_refs:
+      - CLAIM-REQUIRED
+      - HELD-OVERLAP
+  - station_id: "J3"
+    title: "隔离施工"
+    timing: "首次创建工作区时"
+    prescription: "session_worktree.py create <sid> <task>（默认隔离；直改主区=显式申请）；观测数据（lookup_audit/entrance_audit/投影状态）一律锚主仓根，worktree 内禁另立副本"
+    gate_refs:
+      - WORKTREE-REQUIRED
+  - station_id: "J4"
+    title: "token 意图 API（新资产）"
+    timing: "新建 .py/.yaml/.json/.md 资产后、提交前"
+    prescription: "capability 册=PG 投影册禁手改——registry_ledger api.register(REG-CAPCAN-001, 'creation_tokens', payload) → publish_snapshot → registry_projection_generator --render；src 新件另需 map_mounts 或 no_mount_reason；.py 头 14 字段+TTL 缺一拦"
+    gate_refs:
+      - CREATE-GUARD
+  - station_id: "J5"
+    title: "翻译先行"
+    timing: "新建 .py 当批"
+    prescription: "add_module_translation.py --path <f> --domain <D_*> --name-zh <> --plain-zh <大白话>；双读面规则：落地门读主区盘面翻译册，不是 dev HEAD——先落主区盘面"
+    gate_refs:
+      - TRANSLATION-COVERAGE
+  - station_id: "J6"
+    title: "投影册纪律（共享登记册）"
+    timing: "任何共享登记册（capability/翻译/裁定/目录契约）编辑时"
+    prescription: "手改=指纹门拦（私改投影册无效）；双读面：锁外预检读 HEAD 册、锁内落地门读主区盘面——『token/翻译先行落地』指主区 HEAD；并发渲染竞态=重渲染后立即重 stage 再投"
+    gate_refs:
+      - REGISTRY-YAML-PARSE
+  - station_id: "J7"
+    title: "提交面选择"
+    timing: "首次 commit 尝试前想清楚走哪条道"
+    prescription: "入队前标准一步=gate_prerun.py --session <sid> --files <同值清单> --message-file <msg>（进程内门唯它能预跑，exit1 修到 0 再投）；单域干净=网关直连；跨域 --allow-multi-domain 留痕；.gitignore 等保护路径需 [ARCH-APPROVAL:<已登记issue>]（Owner 门位禁自签）；多会话并发窗/主区脏面一律队列拆域（enqueue 带 --worktree-root --base-head <dev真HEAD>；死袋禁 requeue——全新入队并写明理由；会话注册+心跳与提交同命令链防 SESSION-REQUIRED）"
+    gate_refs:
+      - COMMIT-SCOPE
+      - PROTECTED-PATHS
+  - station_id: "J8"
+    title: "死账处置三步拳"
+    timing: "TAKEOVER-PENDING / 死会话锁挡道时"
+    prescription: "①session_takeover_ledger.py --resolve <sid> --by <我> --note <如实证据注记> ②session_worktree.py archive <sid> --execute（patch 存证+rescue，真 ahead 落台账禁 -D）③修因后 requeue --force 留痕——活会话（pid=0 逻辑会话心跳在续也算活）不可代收，须 Owner 裁定注销"
+    gate_refs:
+      - TAKEOVER-PENDING
+  - station_id: "J9"
+    title: "落地核验"
+    timing: "每次提交/落地完成后"
+    prescription: "git log -1 --name-only 核真实归属（暂存区会吸收他会话）→ release claims → 队列件核验 dev 内容到齐 → 临时文件/救援件清点归档"
+    gate_refs: []
