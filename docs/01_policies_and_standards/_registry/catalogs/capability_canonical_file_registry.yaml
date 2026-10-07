@@ -63921,4 +63921,45 @@ creation_tokens:
   capability: srcline1
   merge_evaluation: "六转化器缺件两枚的 pyc 内省重建规格（docstring/签名幸存面），重建种子非第二真源"
 
+- file: docs/_working/matrix_campaign/mining/cyc_conditional_prereg_v1.md
+  token: cyc-conditional-prereg-20261008
+  capability: cyc_conditional_prereg
+  created_by: st-mx07-L10
+  merge_evaluation: "新增挖矿设计卡（裁定#489① CYC 条件考场预注册判据冻结）；判据真源唯一，无同域重复册；无替代对象"
+- file: docs/_working/matrix_campaign/mining/emotion_index_prereg_and_first_exam_v1.md
+  token: matrix-campaign-emotion-index-prereg-and-first-exam-v1-20261007
+  created_by: st-mx07-L8
+  capability: matrix_campaign
+  merge_evaluation: "裁定#375 内收评估：上考 emotion_index_exam_v1.yaml 为分数册（fexam 域），本件为 prereg+verdict 设计卡（mining 域），跨域不同对象不并"
+- file: scripts/data/emotion_index_snapshot.py
+  token: data-ops-emotion-index-snapshot-20261007
+  created_by: st-mx07-L8
+  capability: data_ops
+  merge_evaluation: "裁定#375 内收评估：无同真源可派生旧条目可并；builder/replay 为 CH 计算落库面、本件为落盘证据面，不并"
+- file: docs/_working/tail3/ops/00_workbook.md
+  token: tail3-ops-00-workbook-20261007
+  created_by: st-t3c-ops
+  capability: tail3_ops
+  merge_evaluation: "车道C运维取证件，随袋归档"
+- file: docs/_working/tail3/ops/01_diagnosis_report.md
+  token: tail3-ops-01-diagnosis-report-20261007
+  created_by: st-t3c-ops
+  capability: tail3_ops
+  merge_evaluation: "车道C运维取证件，随袋归档"
+- file: docs/_working/tail3/ops/02_pre_restart_snapshot.md
+  token: tail3-ops-02-pre-restart-snapshot-20261007
+  created_by: st-t3c-ops
+  capability: tail3_ops
+  merge_evaluation: "车道C运维取证件，随袋归档"
+- file: docs/_working/tail3/ops/03_post_restart_snapshot.md
+  token: tail3-ops-03-post-restart-snapshot-20261007
+  created_by: st-t3c-ops
+  capability: tail3_ops
+  merge_evaluation: "车道C运维取证件，随袋归档"
+- file: docs/_working/tail3/ops/04_heartbeat_15min.md
+  token: tail3-ops-04-heartbeat-15min-20261007
+  created_by: st-t3c-ops
+  capability: tail3_ops
+  merge_evaluation: "车道C运维取证件，随袋归档"
+
 di_seam_exemptions: []
