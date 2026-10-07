@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] exit 0=完成 1=活引用中止(MLC-003 step2) 2=错误 3=门位拒绝（缺裁定/顺序缺失/批文未落地）；P1 骨架：step7 契约状态翻转暂不执行（待 Owner 增枝批文② --cascade-deprecate 立法），只登记 contracts_affected
+# [ERROR_CONTRACT] exit 0=完成 1=活引用中止(MLC-003 step2) 2=错误 3=门位拒绝（缺裁定/顺序缺失/批文未落地）；step7 契约级联=--cascade-deprecate 旗（trae_032:459 已立法，Owner 增枝批文②由该条取代）：标记传播模式（命中契约条目写 deprecated/deprecated_reason/deprecated_date，单 CAS 写事务）；缺旗=只登记 contracts_affected（REMAIN 语义保留）
 # [TESTS] tests/governance/lifecycle/test_retire_module.py
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
@@ -25,7 +25,8 @@
   4 设置 superseded_by + deprecated_reason + deprecated_date ├ 单 CAS 写事务（safe_write_text）
   5 保留 90 天       retain_until=deprecated_date+90d           ┘ + retirement_records upsert
   6 Owner 批准       --owner-ruling 在 ruling_registry 校验 active → approved_by
-  7 IFC-007 级联     契约匹配→contracts_affected 登记；状态翻转待批文②（P1 只登记，REMAIN）
+  7 IFC-007 级联     契约匹配→contracts_affected 登记；--cascade-deprecate 时标记传播
+                     （命中契约条目写 deprecated 标记，trae_032:459 立法；缺旗=只登记，REMAIN）
 
 去向指针统一（S9 簿 §4.4，与 S5 successor_of 单值双写）：successor 身份一律用
 module_id；step4 是唯一写入点，同时写 module_id_registry（条目 superseded_by+
@@ -43,7 +44,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: [--module, --successor, --step, --all, --status, --rollback, --owner-ruling,
-       --execute, --cascade-contracts, --registry, --ruling-registry,
+       --execute, --cascade-contracts, --cascade-deprecate, --registry, --ruling-registry,
        --consumer-registry, --contracts, --state-dir, --session]
 description: MLC-003 退役七步执行器（默认 dry-run；真实执行须 --execute+--owner-ruling）
 dimensions:
@@ -56,6 +57,7 @@ warn_only: false
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from dataclasses import dataclass, field
@@ -121,11 +123,15 @@ class Ports:
 # ---------- 台账：行手术式补丁（保留原册注释，零结构重排） ----------
 
 
-def find_entry_block(lines: list[str], module_id: str) -> tuple[int, int]:
-    """定位 `  - module_id: <id>` 条目块 [start, end)；找不到返回 (-1, -1)。"""
+def _find_keyed_block(lines: list[str], marker_prefix: str, item_marker: str) -> tuple[int, int]:
+    """通用列表条目块定位（CloneGuard 合并位：find_entry_block/find_contract_block 共用本体）。
+
+    :param marker_prefix: 条目起始行全串（如 `  - module_id: MOD-A`）
+    :param item_marker: 同级下一条目行的前缀（如 `  - module_id: `）
+    """
     start = -1
     for i, ln in enumerate(lines):
-        if ln.rstrip("\n") == f"  - module_id: {module_id}":
+        if ln.rstrip("\n") == marker_prefix:
             start = i
             break
     if start < 0:
@@ -133,10 +139,15 @@ def find_entry_block(lines: list[str], module_id: str) -> tuple[int, int]:
     end = len(lines)
     for j in range(start + 1, len(lines)):
         s = lines[j]
-        if s.startswith("  - module_id: ") or (s and not s[0].isspace() and not s.startswith("#")):
+        if s.startswith(item_marker) or (s and not s[0].isspace() and not s.startswith("#")):
             end = j
             break
     return start, end
+
+
+def find_entry_block(lines: list[str], module_id: str) -> tuple[int, int]:
+    """定位 `  - module_id: <id>` 条目块 [start, end)；找不到返回 (-1, -1)。"""
+    return _find_keyed_block(lines, f"  - module_id: {module_id}", "  - module_id: ")
 
 
 def patch_entry_fields(text: str, module_id: str, fields: dict[str, Any], remove: list[str] | None = None) -> str:
@@ -191,6 +202,102 @@ RECORD_FIELDS = (
     "archived_date",
     "rollback_of",
 )
+
+
+_ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def find_contract_block(lines: list[str], contract_id: str) -> tuple[int, int]:
+    """定位 contracts 列表中 `  - id: <cid>` 条目块 [start, end)；找不到返回 (-1, -1)。"""
+    return _find_keyed_block(lines, f"  - id: {contract_id}", "  - id: ")
+
+
+def patch_contract_fields(text: str, contract_id: str, fields: dict[str, Any]) -> str:
+    """契约条目块内写字段（标记传播用）；字段已存在则原位替换（保留同行尾注释），缺失则插到块内最后一个 4 空格缩进行之后。"""
+    lines = text.splitlines(keepends=True)
+    start, end = find_contract_block(lines, contract_id)
+    if start < 0:
+        raise KeyError(f"contract_id {contract_id} 不在契约册中")
+    block = lines[start:end]
+
+    def _render(key: str, val: Any) -> str:
+        if isinstance(val, str) and (":" in val or val.strip() == "" or val.startswith("#") or _ISO_DATE.match(val)):
+            rendered = f"{key}: {json.dumps(val, ensure_ascii=False)}"
+        elif isinstance(val, bool):
+            rendered = f"{key}: {str(val).lower()}"
+        else:
+            rendered = f"{key}: {val}"
+        return "    " + rendered + "\n"
+
+    for key, val in fields.items():
+        prefix = f"    {key}:"
+        hit = False
+        for idx, ln in enumerate(block):
+            if ln.startswith(prefix):
+                block[idx] = _render(key, val)
+                hit = True
+                break
+        if hit:
+            continue
+        insert_at = 0
+        for idx, ln in enumerate(block):
+            if ln.startswith("    "):
+                insert_at = idx + 1
+        block.insert(insert_at, _render(key, val))
+    return "".join(lines[:start] + block + lines[end:])
+
+
+def cascade_deprecate_contracts(ports: Ports, contract_ids: list[str]) -> dict:
+    """IFC-007 标记传播（trae_032:459 立法）：命中契约条目单 CAS 写事务批量打 deprecated 标记。
+
+    幂等：条目已带 deprecated: true 时跳过该条（全跳=skip）。写失败显式报错不吞。
+    """
+    text = ports.contracts_path.read_text(encoding="utf-8")
+    data = yaml.safe_load(text) or {}
+    today = ports.now().strftime("%Y-%m-%d")
+    patched, skipped, missing = [], [], []
+    new_text = text
+    for cid in contract_ids:
+        entry = next((c for c in data.get("contracts") or [] if str(c.get("id", "")) == cid), None)
+        if entry is None:
+            missing.append(cid)
+            continue
+        if entry.get("deprecated") is True:
+            skipped.append(cid)
+            continue
+        new_text = patch_contract_fields(
+            new_text,
+            cid,
+            {
+                "deprecated": True,
+                "deprecated_reason": f"IFC-007 契约级联废弃（retire_module --cascade-deprecate，{today}）",
+                "deprecated_date": today,
+            },
+        )
+        patched.append(cid)
+    if not patched:
+        return {
+            "status": "skip",
+            "marked": [],
+            "skipped": skipped,
+            "missing": missing,
+            "detail": "无新标记（全幂等跳过或全缺失）",
+        }
+    result = safe_write_text(
+        ports.contracts_path,
+        new_text,
+        expected_base_sha256=content_sha256(text),
+        repo_root=ports.repo_root,
+    )
+    if not getattr(result, "written", False):
+        return {"status": "error", "detail": f"契约册 CAS 写失败: {result}", "marked": [], "missing": missing}
+    return {
+        "status": "done",
+        "marked": patched,
+        "skipped": skipped,
+        "missing": missing,
+        "detail": f"契约标记传播完成（deprecated 标记 {len(patched)} 条，deprecated_date={today}）",
+    }
 
 
 def render_record(record: dict) -> list[str]:
@@ -473,13 +580,13 @@ def step6_owner_approval(ports: Ports, ruling: str) -> dict:
 
 
 def step7_contract_cascade(ports: Ports, module_id: str, module_domains: list[str]) -> dict:
-    """step7 IFC-007：P1 只登记命中契约；状态翻转待 Owner 增枝批文②（trae_032 --cascade-deprecate 立法）。"""
+    """step7 IFC-007：契约匹配登记（状态翻转由 --cascade-deprecate 旗另行触发，本函数只登记）。"""
     hits = match_contracts(ports, module_id, module_domains)
     if not hits:
         return {"status": "done", "detail": "无命中契约=N/A 完成", "contracts_affected": []}
     return {
         "status": "remain",
-        "detail": "命中契约已登记 contracts_affected；契约状态翻转须 Owner 增枝批文②（--cascade-deprecate 立法）后启用",
+        "detail": "命中契约已登记 contracts_affected；契约 deprecated 标记传播须 --cascade-deprecate 旗（trae_032:459 立法）",
         "contracts_affected": hits,
     }
 
@@ -635,12 +742,28 @@ def _persist_contracts_affected(ports: Ports, module_id: str, res: dict) -> None
         res["detail"] += f"；台账写异常: {type(exc).__name__}: {exc}"
 
 
-def _run_step7(ports: Ports, module_id: str, execute: bool) -> tuple[dict, int]:
-    """step7 IFC-007：契约命中登记；execute 且有命中→台账二次落账。"""
+def _run_step7(ports: Ports, module_id: str, execute: bool, cascade_deprecate: bool = False) -> tuple[dict, int]:
+    """step7 IFC-007：契约命中登记；execute 且有命中→台账二次落账。
+
+    --cascade-deprecate（trae_032:459 立法）：登记后对命中契约执行标记传播
+    （deprecated 写入契约条目，单 CAS 写事务）；dry-run=零写侧预告。
+    """
     domains = _step7_domains(ports, module_id)
     res = step7_contract_cascade(ports, module_id, domains)
     if execute and res.get("contracts_affected"):
         _persist_contracts_affected(ports, module_id, res)
+    if cascade_deprecate and res.get("contracts_affected"):
+        if not execute:
+            res["detail"] += "；[DRY-RUN] 将对命中契约执行 deprecated 标记传播（--cascade-deprecate）"
+            return (res, EXIT_PASS)
+        mark = cascade_deprecate_contracts(ports, res["contracts_affected"])
+        res["cascade"] = mark
+        if mark["status"] == "done":
+            res["detail"] += f"；{mark['detail']}"
+        elif mark["status"] == "skip":
+            res["detail"] += f"；级联标记幂等跳过: {mark['detail']}"
+        else:
+            return (res, EXIT_ERROR)
     return (res, EXIT_PASS)
 
 
@@ -656,6 +779,7 @@ class _StepContext:
     ruling: str = ""
     state: dict = field(default_factory=dict)
     is_all: bool = False
+    cascade_deprecate: bool = False
 
 
 def run_step(ports: Ports, ctx: _StepContext, n: int) -> tuple[dict, int]:
@@ -676,7 +800,7 @@ def run_step(ports: Ports, ctx: _StepContext, n: int) -> tuple[dict, int]:
     if n == 6:
         return _run_step6(ports, ctx.ruling, execute)
     if n == 7:
-        return _run_step7(ports, module_id, execute)
+        return _run_step7(ports, module_id, execute, ctx.cascade_deprecate)
     return ({"status": "error", "detail": f"未知 step {n}（合法 1-7）"}, EXIT_ERROR)
 
 
@@ -824,7 +948,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--rollback", action="store_true", help="回收窗口回退 deprecated→active（须裁定）")
     parser.add_argument("--owner-ruling", default="", help="Owner 裁定号（--execute 必配）")
     parser.add_argument("--execute", action="store_true", help="真实执行（缺省=dry-run 零写侧）")
-    parser.add_argument("--cascade-contracts", action="store_true", help="[P1 恒拒] 契约级联翻转（待 Owner 增枝批文②）")
+    parser.add_argument(
+        "--cascade-deprecate",
+        action="store_true",
+        help="IFC-007 契约级联废弃（trae_032:459 立法）：命中契约条目标记传播 deprecated（execute=单 CAS 写；缺省 dry-run 预告）",
+    )
+    parser.add_argument(
+        "--cascade-contracts", action="store_true", help="[已废止恒拒] 旧旗标，改用 --cascade-deprecate"
+    )
     parser.add_argument("--reason", default="", help="deprecated_reason（缺省自动生成）")
     parser.add_argument("--registry", default=str(DEFAULT_REGISTRY))
     parser.add_argument("--ruling-registry", default=str(DEFAULT_RULING_REGISTRY))
@@ -842,8 +973,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cascade_contracts:
         print(
-            "REFUSED: step7 契约级联翻转须 Owner 增枝批文②（trae_032 修正批 --cascade-deprecate 立法）落地后启用；"
-            "P1 只登记 contracts_affected",
+            "REFUSED: --cascade-contracts 旗标已废止（Owner 增枝批文②由 trae_032:459 立法取代）——"
+            "IFC-007 契约级联废弃改用 --cascade-deprecate",
             file=sys.stderr,
         )
         return EXIT_REFUSED
@@ -880,6 +1011,7 @@ def main(argv: list[str] | None = None) -> int:
         ruling=ruling,
         state=state,
         is_all=args.all,
+        cascade_deprecate=args.cascade_deprecate,
     )
     final = _run_steps(ports, ctx)
     _print_done_banner(module_id, successor, ruling, execute, args.all, final)
