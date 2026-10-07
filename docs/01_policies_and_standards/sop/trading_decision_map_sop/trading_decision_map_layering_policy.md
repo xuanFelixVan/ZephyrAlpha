@@ -7,7 +7,7 @@ title: 交易决策地图逐层讨论 SOP——防撞车·防越级·防枝末�
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.0"
+version: "1.4.0"
 date: 2026-10-04
 topic: trading_decision_map_layering_sop
 scope: 07_trading_decision_architecture
@@ -96,6 +96,14 @@ related_issues:
 | `confidence` | verified/proposed/untested | 判据验证状态（R6 强制，v1.2 声明至今未落字段，本批补齐） | verified 需 evidence 带 run=/SR=/oos_tested 证据键；红节点（red_reason 非空）恒 untested；初填=D 草案（62/2/118） |
 
 **豁免不进图**：55 台域归属豁免（图9 策略工厂/图13 交易日循环/GOMAP）不写任何地图字段——豁免真源=e 裁决册 exempt 表，未来 MOUNT-COVERAGE gate 的义务清单消费方。
+
+#### 2.2.3 策略装载 v2（节点规范 v1.7，D124/D125 Owner 2026-10-05 全批）
+
+strategy_mounts 条目从三件套（strategy_ref/confidence/evidence）升为**配置对象**：`activation`（五档 off/shadow/paper/low/live，复用 ai_autonomy 同款词汇；换档=唯一人工审批点；初填 paper）、`weight_band`（{floor,current,ceiling,step_cap:0.2}，带宽机生 ceiling 留 Owner 审，初填 ceiling=0.3 占位待考试）、`fitness`（{regime_keys 从 state_matrix cells 机械派生,score 待考试回填,evidence 沿用 run= 键}）、`conflict_priority`（默认=考试分高者优先同分看证据新旧，Owner 裁；字段仅存显式人工覆盖）。
+
+**state_matrix 词汇基准**（D125 随批）：温度计态（月12态/周三段日5档）与指标库 regime_valid 一律折算到 state_matrix 6 态再查表，防三套词汇漂移。
+
+**D125 策略路由主轴**（Owner 2026-10-05 批）：F-C1 扩三节点=策略路由判定（F-C1-01，state_matrix 查表真源）/权重分配（F-C1-02，分配器治理=冠军-挑战者：在位冠军=三层栈 RK-08 地板+PA-015 体制倾斜+SIG-131 步长运动学，影子挑战者=集成平均版/单算法简化版，PF-008 序贯统计晋升）/灰度切换管理（F-C1-03，双向 weight_band 同步爬坡，紧急态例外允许硬切）；刹车接线=X-R1→F-C1-01（熔断清空当日激活集）。
 **枝干分级不设字段**：主干/树枝/枝末由树位置自动推导（第一层=主干；有子=树枝；叶=枝末），SOP 枝末先行检查用推导值。
 **契合点**：指标库条目自带 regime_valid（因子生效市场环境），状态矩阵路由直接消费。
 
@@ -224,3 +232,4 @@ L1 大盘总闸 ✅（六段+灰度+仲裁+预算带，D7-D13）
 | 2026-09-05 | 1.1.0 | 新增 §2 定位声明+节点规范 v1.3+合并政策；Step 1 处置五选一改（引用→吸收）；Step 6 按五联锚更新；§4 层位表 E-L2 置🔶 | Owner 裁定：地图=唯一动作流程真源（同等职责文档一律合并）；节点七要素+五联锚（algo_refs 指向算法库条目 IND-*/EXA-*，条目自身索引代码，非指向文档）；父子只写 parent_node、上下游用 edges、枝干分级自动推导（删 rank 字段）【裁定号 D16 追认】 |
 | 2026-09-06 | 1.2.0 | 节点规范 v1.3→v1.5：新增 activation/invalidation/fallback（v1.4 字段审计）+ai_autonomy 五档治理阶梯及 §2.2.1 铁律 | 【D17】字段完备性审计（DMN/交易计划模板/2025-26 agent 规划论文/项目注册表四路）收敛 4 字段；【D18】Owner 终裁：实盘审批制演进为治理阶梯制（宪章 B-007 同步改写），初始档 paper，kill switch 常驻，换档=唯一人工审批点 |
 | 2026-10-04 | 1.3.0 | 节点规范 v1.5→v1.6：新增挂载三字段（module_mounts/module_mounts_influence/confidence）+回链纵向挂图 SOP（其 L1 四字段本域取用裁决=取二缓一空一）+§5 目的标签图例草案 12 条待 Owner 终审 | 2026-10-03/04 TDM 血肉挂载战役：B 账本实证 233 缺口→e 裁决册 233 行（171挂+7挂手+55豁免，36 处改判草案错配）；confidence 补 v1.2 以来 R6 强制未落字段账；撞号两对修复（SIG-153/154） |
+| 2026-10-05 | 1.4.0 | 节点规范 v1.6→v1.7：§2.2.3 策略装载 v2 配置对象（D124 四要素）+state_matrix 词汇基准+D125 策略路由主轴三节点与刹车接线 | Owner 2026-10-05 全批；分配器治理=冠军-挑战者（PF-008 承载）；为整装回测与全量考试铺轨（q-0015 真冲突人工重放批） |

@@ -34,31 +34,31 @@ purpose_tags:
   tag_zh: 在强板块里挑好股
   meaning_zh: 从候选池到可交易标的要过层层验证，不是看着顺眼就买
 - id: PT-04
-  tag_zh: 该出手时才出手
+  tag_zh: 决策没优势不出手
   meaning_zh: 没有胜率赔率优势就是赌博——概率门不到不开仓
 - id: PT-05
-  tag_zh: 买得便宜卖得顺
+  tag_zh: 票买得便宜卖得顺
   meaning_zh: 同一个判断执行差一档收益就差一截——成本是真源级的事
 - id: PT-06
   tag_zh: 拿着的票每天体检
   meaning_zh: 买入逻辑死了还拿着=给死策略送钱
 - id: PT-07
-  tag_zh: 跌了怎么办
+  tag_zh: 持仓跌了怎么办
   meaning_zh: 预先想好退路，临场只会瘫痪——防守先于进攻设计
 - id: PT-08
-  tag_zh: 别把鸡蛋放一个篮子
+  tag_zh: 仓位别挤一个篮子
   meaning_zh: 单票单策略单行业的重仓=一次黑天鹅清零
 - id: PT-09
-  tag_zh: 盘前想好盘中照做
+  tag_zh: 交易盘前想好盘中照做
   meaning_zh: 临场发挥是亏损之母——预案先行，盘中只执行不发明
 - id: PT-10
   tag_zh: 策略会过期
   meaning_zh: 昨天赚钱的方法明天可能反着亏——衰减必须被监测和执行
 - id: PT-11
-  tag_zh: 每个决定留证据
+  tag_zh: 每个决策留证据
   meaning_zh: 没有验证记录的判据=拍脑袋冒充科学——置信度是地图的信用
 - id: PT-12
-  tag_zh: AI 干活人把关
+  tag_zh: AI 交易人把关
   meaning_zh: 自动化越深，越要有一道人能踩死的刹车
 
 
@@ -4200,6 +4200,72 @@ nodes:
   purpose_tag: PT-08
   battle_map_refs: [BM-POS-01, BM-POS-02, BM-POS-05, BM-POS-06, BM-RC-07, BM-RC-07-B, BM-SEL-20-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
+- node_id: TDM-F-C1-01
+  name_zh: 策略路由判定
+  market: cn_a
+  flow: portfolio_flow
+  layer: C1
+  node_type: stage
+  point: 盘前
+  decision_question: 当前体制格子下哪些策略可用，当日激活集是谁
+  algo_note_zh: "D125(2026-10-05 Owner 批)：输入=L1-AGG 体制态+state_matrix 格子+fitness；state_matrix cells=路由查表真源；X-R1 熔断触发时激活集清空=刹车接线"
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: by_ref_design
+  strategy_mounts: []
+  activation: premarket
+  materiality: high
+  decay_scan_frequency: quarterly
+  confidence: untested
+  purpose_tag: PT-08
+  module_mounts: ['MOD-PA-015', 'MOD-SIG-129', 'MOD-SIG-130']
+  tags: ['tdm-chief-20261006', 'D125', 'router']
+- node_id: TDM-F-C1-02
+  name_zh: 权重分配
+  market: cn_a
+  flow: portfolio_flow
+  layer: C1
+  node_type: stage
+  point: 盘前
+  decision_question: 激活集内按置信度配比当日资金（如 5:1:1:1:2），分配器治理谁说了算
+  algo_note_zh: "D125 分配器治理=冠军-挑战者（Owner 2026-10-05 裁）：在位冠军=三层栈（RK-08 风险预算地板+PA-015 体制倾斜+SIG-131 步长运动学）；影子挑战者=集成平均版/单算法简化版，PF-008 序贯统计晋升"
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: by_ref_design
+  strategy_mounts: []
+  activation: premarket
+  materiality: high
+  decay_scan_frequency: quarterly
+  confidence: untested
+  purpose_tag: PT-08
+  module_mounts: ['MOD-RK-08', 'MOD-PF-008', 'MOD-SIG-131']
+  tags: ['tdm-chief-20261006', 'D125', 'allocator', 'champion-challenger']
+- node_id: TDM-F-C1-03
+  name_zh: 灰度切换管理
+  market: cn_a
+  flow: portfolio_flow
+  layer: C1
+  node_type: stage
+  point: 盘中
+  decision_question: 策略A到策略B的切换如何双向同步渐变而非硬切
+  algo_note_zh: "D125：双向 weight_band 爬坡（步长上限=step_cap 0.2）+PA-015 平滑过渡判例；紧急态（X-R1/RK-41）例外允许硬切"
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: by_ref_design
+  strategy_mounts: []
+  activation: intraday
+  materiality: high
+  decay_scan_frequency: quarterly
+  confidence: untested
+  purpose_tag: PT-09
+  module_mounts: ['MOD-SIG-131', 'MOD-PA-015']
+  tags: ['tdm-chief-20261006', 'D125', 'gray-switch']
 - node_id: TDM-F-C2
   name_zh: 组合聚合
   market: cn_a
@@ -6081,6 +6147,10 @@ edges:
 - {from_node: TDM-E-L2-09-2, to_node: TDM-E-L0-02, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
 
   # ══ TDM 2.0 新增边（全带语义四元组 payload_type/frequency/lag/pit_proof）══
+- {from_node: TDM-E-L1-AGG, to_node: TDM-F-C1-01, edge_type: feed, payload_zh: "D125 当前体制态输入路由判定", payload_type: signal, frequency: daily, lag: "0d", pit_proof: unaudited-20261005}
+- {from_node: TDM-X-R1, to_node: TDM-F-C1-01, edge_type: feed, payload_zh: "D125 熔断触发清空当日激活集", payload_type: signal, frequency: intraday, lag: "0d", pit_proof: unaudited-20261005}
+- {from_node: TDM-F-C1-01, to_node: TDM-F-C1-02, edge_type: feed, payload_zh: "当日激活集传入权重分配", payload_type: signal, frequency: daily, lag: "0d", pit_proof: unaudited-20261005}
+- {from_node: TDM-F-C1-02, to_node: TDM-F-C1-03, edge_type: feed, payload_zh: "目标配比传入灰度切换", payload_type: signal, frequency: daily, lag: "0d", pit_proof: unaudited-20261005}
 - {from_node: TDM-E-L9-A01, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "日线/分钟行情供给", payload_type: data, frequency: daily, lag: "hours", pit_proof: "K线落定不修订，复权因子禁进PIT窗"}
 - {from_node: TDM-E-L9-A02, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "Tick分笔供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "TDX分笔仅近交易日，历史依赖包断档不可补"}
 - {from_node: TDM-E-L9-A03, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "板块/概念指数供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "指数快照落定不修订，成分随披露更新"}
@@ -6141,6 +6211,7 @@ edges:
 - {from_node: TDM-E-L9-A15, to_node: TDM-E-L1-S0, edge_type: feed, payload_zh: "跨市场风险偏好", payload_type: signal, frequency: realtime, lag: "0d", pit_proof: "费率/OI极值预警快照"}
 - {from_node: TDM-E-L9-A02, to_node: TDM-E-L4-14, edge_type: feed, payload_zh: "tick成交原料", payload_type: data, frequency: daily, lag: "hours", pit_proof: "历史包到货日为界断档不可补"}
 - {from_node: TDM-E-L9-AGG, to_node: TDM-E-FLOW, edge_type: feed, payload_zh: "供给健康读数", payload_type: governance, frequency: daily, lag: "0d", pit_proof: "T日聚合读数喂次日数据就绪度"}
+# 词汇对齐注记（D125 随批）：温度计态与指标库 regime_valid 一律折算到本表 6 态再查表（防三套词汇漂移）
 state_matrix:
   # 列轴六段定稿（v1.2，Owner 裁定"机构命名+修复期独立成段"）
   # 命名=Wyckoff 阶段论+行为金融标准术语（机构通用），MarketTriage 六态同构验证：
