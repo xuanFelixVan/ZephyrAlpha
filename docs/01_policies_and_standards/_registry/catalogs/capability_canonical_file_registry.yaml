@@ -63552,4 +63552,34 @@ creation_tokens:
   merge_evaluation: "accel 包入口的 ALGO_FLOW 外部锚 yaml 随批登记（ALGO-FLOW-LINK 门硬要求实存），零新增能力面"
   no_mount_reason: "算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产"
 
+- file: data/strategy_intake/grid_gpu_sectorcond_20260924-0834/README.md
+  token: strategy-intake-gpu-pack-readme-20261007
+  capability: strategy_intake_gpu_pack
+  created_by: st-govfix-g6-20261007
+  merge_evaluation: "GPU 网格 sectorcond_20260924-0834 数据袋自述/索引，st-pipeline-final 原产，capability 唯一承载无同域重复"
+- file: data/strategy_intake/grid_gpu_sectorcond_20260924-0834/sector_index.json
+  token: strategy-intake-gpu-pack-sector-index-20261007
+  capability: strategy_intake_gpu_pack
+  created_by: st-govfix-g6-20261007
+  merge_evaluation: "GPU 网格 sectorcond_20260924-0834 数据袋自述/索引，st-pipeline-final 原产，capability 唯一承载无同域重复"
+- file: docs/_working/sector_line/gpu_input_pack/build_gpu_input_pack.py
+  token: sector-line-docs-build-gpu-input-pack-20261007
+  capability: sector_line_docs
+  created_by: st-govfix-g6-20261007
+  merge_evaluation: "sector_line statreplay 判决链/gpu_input_pack 文档面死信复活批，原会话唯一产出，无既有承载条目不并"
+- file: docs/_working/sector_line/statreplay/replay_report.md
+  token: sector-line-docs-replay-report-20261007
+  capability: sector_line_docs
+  created_by: st-govfix-g6-20261007
+  merge_evaluation: "sector_line statreplay 判决链/gpu_input_pack 文档面死信复活批，原会话唯一产出，无既有承载条目不并"
+- file: docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+  token: sector-line-docs-sector-prereg-exam-cards-v2-frozen-20261007
+  capability: sector_line_docs
+  created_by: st-govfix-g6-20261007
+  merge_evaluation: "sector_line statreplay 判决链/gpu_input_pack 文档面死信复活批，原会话唯一产出，无既有承载条目不并"
+- file: docs/_working/sector_line/statreplay/sector_replay_depth_dossier_v0.md
+  token: sector-line-docs-sector-replay-depth-dossier-v0-20261007
+  capability: sector_line_docs
+  created_by: st-govfix-g6-20261007
+  merge_evaluation: "sector_line statreplay 判决链/gpu_input_pack 文档面死信复活批，原会话唯一产出，无既有承载条目不并"
 di_seam_exemptions: []
