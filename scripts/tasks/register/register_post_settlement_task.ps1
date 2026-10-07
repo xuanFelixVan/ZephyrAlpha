@@ -30,7 +30,12 @@
 
 $ErrorActionPreference = "Stop"
 
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+# FIX 2026-10-05/07 (DSC N-1, st-vm12v surgery, vm12w diagnosis): script lives at
+# scripts/tasks/register/ (3 levels deep) after the scripts re-cluster, so ".." resolves
+# to scripts/tasks, not repo root - the log redirect then points at a nonexistent dir,
+# cmd fails, python never runs, LastTaskResult=0 fake green (post-settlement + NAV leg
+# both dead since 09-30). Re-applied 10-07 after a battlefield reset wiped the first fix.
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
 $pythonExe = Join-Path $env:LOCALAPPDATA "Programs\Python\Python312\python.exe"
 if (-not (Test-Path $pythonExe)) { $pythonExe = "python.exe" }
 $logPath = Join-Path $repoRoot "data\runtime\post_settlement_last_run.log"
