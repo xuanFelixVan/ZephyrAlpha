@@ -63382,4 +63382,50 @@ creation_tokens:
   created_by: st-mastertc-l9
   capability: fms_overhaul
   merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/matrix_campaign/mining/layered_spread_kernel_wiring_v1.md
+  token: layered-spread-kernel-wiring-20261007
+  capability: layered_spread_kernel_wiring
+  created_by: st-mx07-L4
+  merge_evaluation: "接线基准册（对拍+耗时实测留档），与 layered_backtest.py 同真源演进；无同域重复册"
+- file: docs/_working/matrix_campaign/mining/rowvec_promotion_v1.md
+  token: rowvec-promotion-v1-20261007
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "P1-1 行物化向量化转正+切挂留档册（对拍 438/438 1e-9+耗时 16-54x 实测），与 panelized_indicators.py 同真源演进；同族先例=layered_spread_kernel_wiring_v1.md（st-mx07-L4），无同域重复册"
+- file: schemas/categories/factor_signal.py
+  token: factor_schema-factor_signal-20261007
+  capability: factor_schema
+  created_by: st-vm12final-20261007-laneF
+  merge_evaluation: "因子信号截面表DDL-as-Code真源定稿（factor_signal新真源文件，替代散落DDL口头/设计态，净零新增登记面；FFVAL/FFSIG建表批车道F）"
+- file: src/zephyr/backtest/accel/__init__.py
+  token: bootstrap-kernel---init---20261007
+  capability: bootstrap_kernel
+  created_by: st-mx07-L3
+  no_mount_reason: 包入口 __init__（re-export 门面），非节点图资产；挂图归属随真源 bootstrap_kernel.py
+  merge_evaluation: "内收迁移：scripts/backtest/fexam/bootstrap_gpu/kernel.py 夜战 staging 核同真源转正（35/35 对拍结论随迁），零新增能力面，scripts 侧降薄 re-export"
+- file: src/zephyr/backtest/accel/bootstrap_kernel.py
+  token: bootstrap-kernel-bootstrap-kernel-20261007
+  capability: bootstrap_kernel
+  created_by: st-mx07-L3
+  map_mounts:
+  - TDMAP-001:TDM-F-C3-04
+  merge_evaluation: "内收迁移：scripts/backtest/fexam/bootstrap_gpu/kernel.py 夜战 staging 核同真源转正（35/35 对拍结论随迁），零新增能力面，scripts 侧降薄 re-export"
+- file: src/zephyr/factor/technical_indicators/bench_scaling.py
+  token: rowvec-bench-scaling-20261007
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  no_mount_reason: 性能基准 harness（T 规模缩放计时）非 TDM 业务决策节点对应物（TDM-F 族=仓位/归因/风控决策节点，无一对应指标计算基础设施）；架构归属走 depgraph 设计节点 MOD-L02-TI-BENCH，map 挂载待业务图扩容经 Owner 门位补挂
+  merge_evaluation: "替代对象=影子抢救件 docs/_working/matrix_campaign/rescued_tmp_20261007/rowvec/bench_scaling.py（转正，影子件退役）；净零：新增 1 永久件对应退役 1 影子件，不并（跨域不同对象：性能 harness vs 算法实现）"
+- file: src/zephyr/factor/technical_indicators/panelized_indicators.py
+  token: rowvec-panelized-indicators-20261007
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  no_mount_reason: 指标链写链性能工程件（pandas 物化层）非 TDM 业务决策节点对应物（TDM-F 族全为组合决策节点：预算切分/约束栈/归因/调权等，无一对应指标计算基础设施）；架构归属走 depgraph 设计节点 MOD-L02-TI-PANELIZED，map 挂载待业务图扩容经 Owner 门位补挂
+  merge_evaluation: "替代对象=internal_compute_provider iterrows+_build_row 逐格行物化热点（52.9% CPU；影子对拍 438/438 列 |Δ|≤1e-9 全等后由本件承接，切挂=独立工单）+影子抢救件 rescued_tmp_20261007/rowvec/panelized_indicators.py（转正退役）；净零：一替二（热点路径+影子件），同真源派生的性能等价替换非第二真源，不并"
+- file: src/zephyr/factor/technical_indicators/parity_check.py
+  token: rowvec-parity-check-20261007
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  no_mount_reason: 对拍验收 harness（新旧路径等值验证+计时）非 TDM 业务决策节点对应物（TDM-F 族=仓位/归因/风控决策节点）；架构归属走 depgraph 设计节点 MOD-L02-TI-PARITY，map 挂载待业务图扩容经 Owner 门位补挂
+  merge_evaluation: "替代对象=影子抢救件 docs/_working/matrix_campaign/rescued_tmp_20261007/rowvec/parity_check.py（转正，影子件退役）；净零：新增 1 永久件对应退役 1 影子件，不并（跨域不同对象：验收 harness vs 算法实现）"
 di_seam_exemptions: []
