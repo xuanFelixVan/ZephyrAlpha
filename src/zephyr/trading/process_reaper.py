@@ -1329,21 +1329,45 @@ def _run_safety_wires(report: ReapReport) -> None:
     report.safety_wires = wires
 
 
+def _compute_live_report() -> ReapReport:
+    """现算一轮只读扫描（C324 L4 三把尺：status 现算化）。
+
+    dry_run 语义=零杀零自动清理；**不写状态文件**——_write_status 只在 reap() 的
+    finally 落盘（真跑快照语义），--status 现算走本函数绕开落盘，保护 last_run.json
+    的"上次真跑"凭据不被 dry-run 快照覆盖。
+    """
+    report = ReapReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), dry_run=True)
+    return _reap_cycle(True, report)
+
+
 def _print_status() -> int:
-    if not _STATUS_FILE.exists():
-        print("never_run=true（无状态文件，等待 Task Scheduler 首次触发）")
-        return 0
+    """状态输出：默认现算（live 只读扫描），现算失败回退 last_run.json 文件（C324，2026-10-07）。"""
+    data: dict[str, Any] | None = None
+    source = "live"
     try:
-        data = json.loads(_STATUS_FILE.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as e:
-        print(f"status_file_corrupt={e}")
-        return 1
+        data = dict(_compute_live_report().__dict__)
+    except Exception as exc:  # noqa: BLE001 — 现算失败不得反噬状态通道，回退文件
+        logger.warning("status 现算失败，回退状态文件: %r", exc)
+    if data is None:
+        source = "file"
+        if not _STATUS_FILE.exists():
+            print("never_run=true（现算不可用且无状态文件，等待 Task Scheduler 首次触发）")
+            return 0
+        try:
+            data = json.loads(_STATUS_FILE.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            print(f"status_file_corrupt={e}")
+            return 1
+    print(f"source={source}")
+    if source == "live":
+        print("scan_mode=live_dryrun（只读现算：零杀/零自动清理/不写状态文件）")
     print(f"last_run={data.get('timestamp')}")
-    print(f"dry_run={data.get('dry_run')}")
+    if source == "file":
+        print(f"dry_run={data.get('dry_run')}")
     print(
         f"scanned={data.get('scanned')} whitelist_hits={data.get('whitelist_hits')} trae_hits={data.get('trae_descendant_hits')}"
     )
-    print(f"killed={len(data.get('killed', []))} reported={len(data.get('reported', []))}")
+    print(f"killed={len(data.get('killed', []) or [])} reported={len(data.get('reported', []) or [])}")
     print(f"ghosts={data.get('ghosts')}")
     print(f"drift={data.get('drift')}")
     wires = data.get("safety_wires") or {}
