@@ -1,0 +1,40 @@
+# --- 治理锚定 ---
+# blueprint: MOD-GOV-115 | scripts/governance/entrance_gate_hook.py | §
+# module_id: MOD-GOV-115
+# stability: testing
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+module_id: MOD-GOV-115
+capability_id: entrance_gate_hook
+category: governance
+description: 施工进场检票钩子（ZCode PreToolUse hook）——会话首次对业务代码路径（src/ .py、scripts/ .py/.ps1、config/）执行 Edit/Write 时检票：harness session_id 在 lookup_audit 无合格反查记录则 exit 2 拒绝并给出正门命令模板；每次业务写落时序审计到 entrance_audit/（治出口查票分不清先票后票的结构缺陷）；别名桥 .aliases/ 兼容 st-* 自选施工 sid
+examples:
+- input:
+    session_id: sess-abc123
+    tool_name: Edit
+    cwd: D:/ZephyrAlpha
+    tool_input:
+      file_path: D:/ZephyrAlpha/src/zephyr/pkg/demo.py
+  output:
+    exit_code: 2
+    stderr_contains: python -m zephyr.library.lookup
+- input:
+    session_id: sess-abc123
+    tool_name: Read
+  output:
+    exit_code: 0
+input_schema:
+  properties:
+    cwd:
+      type: string
+    session_id:
+      type: string
+    tool_input:
+      type: object
+    tool_name:
+      type: string
+  required:
+  - session_id
+  - tool_name

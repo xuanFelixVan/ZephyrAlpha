@@ -67768,3 +67768,11 @@ entries:
   desc_en: ""
   plain_zh: "它干两件事：一是看备份配置算出各环节该多快跑完的及格线，二是把进程保护名单偷偷拍张快照存三天——万一名单被谁改了或者保护进程被误杀，拿快照一对就能查出改了什么。"
   responsibility_layer: governance
+- module_path: scripts/governance/entrance_gate_hook.py
+  domain_id: D_GOVERNANCE
+  name_zh: "施工进场检票钩子"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI 施工队第一次往业务代码区写文件时拦截检查：本会话开工前有没有走过正门反查（能力反查或图书馆查询）。没走正门就拒绝写入并给出一条现成的正门命令，走了就放行并记录首写时间戳，让'先查后建'从君子协定变成结构强制。"
+  responsibility_layer: governance

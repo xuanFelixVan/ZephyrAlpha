@@ -63367,4 +63367,19 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
+- file: docs/_working/fms_overhaul/S1_ref_integrity/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/fms_overhaul/S4_registry_self_gov/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/fms_overhaul/S9_retire_automation/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
 di_seam_exemptions: []

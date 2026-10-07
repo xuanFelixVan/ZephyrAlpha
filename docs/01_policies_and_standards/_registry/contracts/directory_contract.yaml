@@ -846,6 +846,13 @@ directory_extensions:
     zone: neutral
     allowed_doc_types: []
     note: "GitHub平台专属配置——workflows/子目录放GitHub Actions CI/CD流水线YAML定义。平台约定目录非项目业务逻辑。allowed 含空串扩展名（\"\"）以兼容 GitHub 平台约定无扩展名文件（CODEOWNERS/FUNDING 等）"
+  # --- 平台约定目录（2026-10-07 补盲，st-entrance-gate-20261007）---
+  - path: ".zcode/"
+    allowed: [".json", ".md"]
+    forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".csv", ".jsonl"]
+    zone: neutral
+    allowed_doc_types: []
+    note: "ZCode 平台专属配置——config.json 挂 PreToolUse 进场检票钩子（MOD-GOV-115，施工前反查首写强制+时序审计）。平台约定目录非项目业务逻辑，同 .github/ 收敛口径"
 
 # ============================================================
 # 3. 根目录白名单（Root Directory Whitelist）
