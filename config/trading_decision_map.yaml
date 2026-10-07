@@ -5210,6 +5210,27 @@ nodes:
   confidence: untested
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A16", "A档"]
+- node_id: TDM-E-L9-A17
+  name_zh: 源线·卖方研报
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘后
+  decision_question: 卖方研报评级调整与目标价变化里，哪些信息领先于股价、值得进判据
+  algo_note_zh: "2026-10-05 全项目体检批新增（Owner 指令）：研报为唯一源线级设计缺口；alt_data 域 research_report_collector 已存在待补挂此"
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: by_ref_design
+  strategy_mounts: []
+  activation: postmarket
+  materiality: normal
+  decay_scan_frequency: semiannual
+  confidence: untested
+  purpose_tag: PT-11
+  tags: ['tdm-chief-20261006', 'source-line', 'SL-A17']
 - node_id: TDM-E-L9-B01
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·卫星影像
