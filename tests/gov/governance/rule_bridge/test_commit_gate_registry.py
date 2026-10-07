@@ -445,8 +445,12 @@ class TestTimedPhaseC157:
         import time
 
         m = _c157_clean_acc
+        # Windows 下 time.monotonic=GetTickCount64（分辨率 15.625ms）：sleep 须跨
+        # ≥1 个 tick 边界，否则 t0/t1 同 tick 读数 delta=0.0（st-mastertc-loop R1
+        # 闪红实证：sleep(0.01) 约 2/3 概率记 0.0）。0.05s=3+ tick 保证量化 delta
+        # ≥15.6ms > 断言下限 5.0ms，且仍远小于预算读数噪声。
         with m._timed_phase("FMS-HYGIENE", "baseline_load"):
-            time.sleep(0.01)
+            time.sleep(0.05)
         assert "FMS-HYGIENE" in m._PHASE_ACC
         assert m._PHASE_ACC["FMS-HYGIENE"]["baseline_load"] >= 5.0
 
