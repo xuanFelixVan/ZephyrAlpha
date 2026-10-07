@@ -406,6 +406,33 @@ class HaircutSharpeResult:
     method: str
 
 
+def _erfcinv(p: float) -> float:
+    """erfc 反函数（p∈(0,1]；远尾 Newton 精解， bonferroni t_mult 唯一计算路径）。
+
+    恒等式：Φ⁻¹(1−q) = √2·erfcinv(2q)。当 q<1e-16 时浮点无法表示 1−q（塌成 1.0），
+    Φ⁻¹ 路径死；erfcinv 直接在 p 域解 erfc(y)=p，p 低至 1e-300 仍保有全精度
+    （erfc 无消去）。初值=渐近式 erfc(y)≈e^{−y²}/(y√π) 两轮自洽，Newton 4 轮内
+    收敛（|step|≤1e-12·max(1,y) 早停）。
+    """
+    if not (0.0 < p <= 1.0):
+        raise SimulationError(f"erfcinv 定义域为 (0,1]: p={p}", details={"p": p})
+    if p == 1.0:
+        return 0.0  # erfc(0)=1（p_mult 封顶 1 → t_mult=0 → 全剪，与 Φ⁻¹(0.5)=0 同像）
+    # 渐近种子（p√π>1 时种子式无意义，0 起步 Newton 对小 y 段平滑收敛）
+    y = math.sqrt(max(0.0, -math.log(max(p * math.sqrt(math.pi), 1e-300))))
+    for _ in range(2):
+        if y > 0.0:
+            y = math.sqrt(max(0.0, -math.log(max(p * y * math.sqrt(math.pi), 1e-300))))
+    for _ in range(6):
+        f = math.erfc(y) - p
+        df = -2.0 / math.sqrt(math.pi) * math.exp(-y * y)
+        step = f / df
+        y -= step
+        if abs(step) <= 1e-12 * max(1.0, y):
+            break
+    return y
+
+
 def haircut_sharpe_harvey_liu(
     sharpe: float,
     num_trials: int,
@@ -470,9 +497,15 @@ def haircut_sharpe_harvey_liu(
         # 那会引入 1e-16 级浮点噪声使 haircut 非 0——数学上 N=1 剪发恒为 0）
         t_multiple = t_single
     else:
-        p_single = 2.0 * (1.0 - _normal_cdf(abs(t_single)))
+        # 2026-10-07 红队（st-mastertc-rb）：bonferroni t_mult 改经 erfc 闭式解。
+        # 旧式 p_single=2*(1-Φ(|t|)) 两处浮点病：①|t|≳6 灾难性消去（p 被压低
+        # →t_mult 虚高→过剪发）；②|t|≳8.3 时 1-Φ 下溢为 0 且 1-p_mult/2 塌成
+        # 1.0 → Φ⁻¹ 定义域外 SimulationError（合法强信号崩计算链）。
+        # 数学恒等：Φ⁻¹(1−p_mult/2) = √2·erfcinv(p_mult)（1−Φ(x)=erfc(x/√2)/2），
+        # p_single 亦走 erfc（无消去），全尾精度保持、域异常不可达。
+        p_single = math.erfc(abs(t_single) / math.sqrt(2.0))
         p_multiple = min(1.0, p_single * float(num_trials))
-        t_multiple = _inverse_normal_cdf(1.0 - p_multiple / 2.0)
+        t_multiple = math.sqrt(2.0) * _erfcinv(p_multiple)
 
     if not (t_single > 0.0):
         # SR<=0：无正证据可剪（见 docstring），原样返回

@@ -590,6 +590,27 @@ class TestHaircutSharpeHarveyLiu:
         assert strong.haircut_sharpe == pytest.approx(0.5 * (1.0 - strong.haircut_fraction))
         assert strong.haircut_sharpe * math.sqrt(252) == pytest.approx(3.0)
 
+    def test_far_tail_t_does_not_crash_or_overhair(self):
+        """红队回归（st-mastertc-rb 2026-10-07）：|t|≳8.3 时旧式 2*(1-Φ) 下溢
+        →Φ⁻¹(1.0) 定义域外 SimulationError（合法强信号崩计算链）；erfc/erfcinv
+        闭式下远尾全精度：强信号小 N=小剪发（非全剪、非崩溃）。"""
+        # t_single = 0.8*sqrt(252) ≈ 12.7 ≫ 8.3（旧码必崩点）
+        r = haircut_sharpe_harvey_liu(sharpe=0.8, num_trials=2, num_obs=252)
+        assert 0.0 < r.haircut_fraction < 0.1  # N=2 强信号：bonferroni 后仍远超门槛→微小剪发
+        assert r.haircut_sharpe == pytest.approx(0.8 * (1.0 - r.haircut_fraction))
+        assert 0.0 < r.t_stat_multiple < r.t_stat_single  # 门槛在观测之下但非零
+
+    def test_bonferroni_t_mult_matches_normaldist_midrange(self):
+        """erfcinv 路径与 NormalDist 解析路径在可表示域（p>1e-16）交叉对拍。"""
+        from statistics import NormalDist
+
+        for sr, n, t in ((0.05, 10, 252), (0.15, 50, 120), (0.3, 1000, 60)):
+            r = haircut_sharpe_harvey_liu(sharpe=sr, num_trials=n, num_obs=t, method="bonferroni")
+            t_single = sr * math.sqrt(t)
+            p_single = 2.0 * (1.0 - NormalDist().cdf(abs(t_single)))
+            expected = NormalDist().inv_cdf(1.0 - min(1.0, p_single * n) / 2.0)
+            assert r.t_stat_multiple == pytest.approx(expected, rel=1e-9)
+
     def test_negative_sharpe_unchanged(self):
         """SR<=0：无正证据可剪，原样返回（haircut=0）。"""
         r = haircut_sharpe_harvey_liu(sharpe=-0.02, num_trials=100, num_obs=252)

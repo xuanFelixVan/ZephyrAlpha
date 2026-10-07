@@ -101,19 +101,23 @@ def fetch_historical(
     start_ts = start.strftime("%Y-%m-%d %H:%M:%S")
     end_ts = end.strftime("%Y-%m-%d %H:%M:%S")
 
+    # 2026-10-07 红队（st-mastertc-rb）：SQL 参数化（clickhouse-driver %(name)s
+    # 转义替身，与 ch_tick_provider._SQL_TICK 同口径）。旧 f-string 内插 symbol/
+    # 时间串=注入面（RULE-DATA-OPS：禁拼值进 SQL）。
     sql = f"""
     SELECT {_SQL_COLUMNS}
     FROM {_TBL_TICK_DATA}
-    WHERE symbol = '{bare}'
-      AND trade_date BETWEEN '{start_d}' AND '{end_d}'
-      AND timestamp BETWEEN toDateTime64('{start_ts}', 3, 'Asia/Shanghai')
-                        AND toDateTime64('{end_ts}', 3, 'Asia/Shanghai')
+    WHERE symbol = %(sym)s
+      AND trade_date BETWEEN %(start_d)s AND %(end_d)s
+      AND timestamp BETWEEN toDateTime64(%(start_ts)s, 3, 'Asia/Shanghai')
+                        AND toDateTime64(%(end_ts)s, 3, 'Asia/Shanghai')
       AND price > 0
     ORDER BY timestamp
     """
+    params = {"sym": bare, "start_d": start_d, "end_d": end_d, "start_ts": start_ts, "end_ts": end_ts}
     try:
         client = get_client()
-        rows = client.execute(sql)
+        rows = client.execute(sql, params)
     except Exception as e:  # noqa: BLE001 — 统一转 CHBackfillReadError
         raise CHBackfillReadError(f"CH tick 读取失败 symbol={symbol}: {e}") from e
 

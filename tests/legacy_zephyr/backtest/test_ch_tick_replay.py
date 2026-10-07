@@ -24,8 +24,12 @@ from zephyr.backtest.implementations.ch_tick_replay import (
     fetch_historical,
 )
 
-START = datetime(2026, 9, 8, 9, 30, 0)
-END = datetime(2026, 9, 8, 15, 0, 0)
+START = datetime(2025, 8, 8, 9, 30, 0)
+END = datetime(2025, 8, 8, 15, 0, 0)
+# 2026-10-07 红队（st-mastertc-rb）：窗取闭卷切点（2025-09-09，finalized_at
+# 2026-09-09−12mo 派生）之前的合法研究段——C216 闭卷闸接线后，旧窗 2026-09-08
+# 属密封区，无 exam_ticket 的研究态读取在闸上即抛 ClosedBookViolation（5 测皆红）。
+# 本文件测的是 adapter 行为（CH mock），闸语义归 tests/backtest/test_closed_book_tick_gate.py。
 
 
 def _ch_rows():
@@ -46,11 +50,28 @@ class TestFetchHistorical:
         with patch.object(cr, "get_client", return_value=client):
             df = fetch_historical("600000.SH", START, END)
         assert df.empty
-        sql = client.execute.call_args[0][0]
-        assert "symbol = '600000'" in sql  # 纯码（CH 列形态）
-        assert "trade_date BETWEEN '2026-09-08' AND '2026-09-08'" in sql
+        # 2026-10-07 红队（st-mastertc-rb）：SQL 参数化后断言模板占位+params 值
+        # （禁拼值进 SQL——RULE-DATA-OPS；与 ch_tick_provider 同口径）
+        sql, params = client.execute.call_args[0][0], client.execute.call_args[0][1]
+        assert "symbol = %(sym)s" in sql  # 纯码占位（CH 列形态）
         assert "ORDER BY timestamp" in sql
         assert "price > 0" in sql
+        assert params["sym"] == "600000"
+        assert params["start_d"] == "2025-08-08"
+        assert params["end_d"] == "2025-08-08"
+        assert params["start_ts"] == "2025-08-08 09:30:00"
+        assert params["end_ts"] == "2025-08-08 15:00:00"
+
+    def test_sql_symbol_metachar_stays_parameterized(self):
+        """注入面回归：symbol 含引号/分号时必须走参数通道，不得拼进 SQL 文本。"""
+        client = MagicMock()
+        client.execute.return_value = []
+        with patch.object(cr, "get_client", return_value=client):
+            fetch_historical("600000'); DROP TABLE c1_market.tick_data--.SH", START, END)
+        sql = client.execute.call_args[0][0]
+        assert "'; DROP TABLE" not in sql  # 恶意载荷不入 SQL 文本
+        # split(".")[0] 取首个点前缀（载荷在 .tick_data 处被截断）——仍走参数通道
+        assert client.execute.call_args[0][1]["sym"] == "600000'); DROP TABLE c1_market"
 
     def test_rows_mapped_with_full_5level_columns(self):
         client = MagicMock()
