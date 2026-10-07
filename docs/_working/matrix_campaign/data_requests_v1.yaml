@@ -2,21 +2,118 @@ doc_type: data_backfill_requests
 campaign: matrix-20261006
 version: v1
 created: 2026-10-07
-note: 考试战役数据回补申请（提交数据班；每条附解锁的考试）
+finalized: 2026-10-08
+finalized_by: st-mx07-L9
+status: "final —— 待 Owner 转数据班"
+note: "考试战役数据回补申请定稿（每条附窗口到日/量级行数/到货验收判据/解锁对象清单+逐条证据出处）；行数除标注实测外均为按证据折算的估算值；零数据库操作，字段全部取自仓内证据册"
+evidence_sources:
+- docs/_working/fexam/alt_factor_exam_scores_v1.md "A道：money_flow 8.5 月缺口 CH 实测+A06 族三变体 verdict"
+- docs/_working/fexam/codesym_factor_exam_v1.md "B道：data_gap 7 因子判决+分钟 breadth 快照仅 2026-08-24 起（24 交易日）实测"
+- docs/_working/fexam/codesym_strategy_exam_v1.md "D道：tick 组 5 策略与 STR-DABAN-022 适配工单（数据缺口原文+回补窗）"
+- docs/_working/matrix_campaign/master_backlog_v2.md "总账口径：P1-6/P1-7（本周申请项）与 P2-3/P2-4（二波解锁）"
+- docs/_working/matrix_campaign/99_delivery.md "L104 计数口径：解锁 13 因子+5 策略+1 因子重考"
+- docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml "DS-108/181/195/271/306 表规格、producer 与行数量级"
 requests:
 - req_id: DR-1
-  dataset: c1_market.money_flow
-  gap: 2025-09-10..2026-05-31 约8.5个月空洞（A道实测）
-  unlocks: ALT-A06-PERSIST10D 重考（retain唯一过线者）
+  dataset: "c1_market.money_flow（DS-181｜源 tushare daily_capital｜日频）"
+  priority: "P1-6（总账本周项）"
+  gap_window: "2025-09-10..2026-05-31（约 8.5 个月，A道 CH 实测）"
+  existing_windows: "2021-01-04..2025-09-09 + 2026-06-01..2026-09-30"
+  gap_evidence: "alt_factor_exam_scores_v1.md：月度行数 202509=36,005（半月）后直跳 202606；A06 判据按数据可得窗+完整性降级"
+  row_magnitude:
+    existing_rows: "5,971,039 行 / 5,781 票（A道 2026-10-06 CH 实测）"
+    backfill_estimate: "约 84–90 万行（缺口窗约 172 个 A 股交易日 × 日均约 4,900–5,200 行折算，估算值；到货以实际交易日历×票面为准）"
+  acceptance_criteria:
+  - "缺口窗 2025-09-10..2026-05-31 全 A 股交易日在册（对齐 c1_market.trade_calendar DS-196），零空洞且与现存两段首尾无缝衔接"
+  - "行面口径一致：symbol=裸代码（与现存面及 kline_daily_hfq 交集格式一致，alt_factor_exam_scores_v1.md 实测）；字段=tushare daily_capital 原列；pit_policy=strict"
+  - "判重按 (trade_date,symbol) 同键幂等，禁以聚合数代替逐行（RULE-DATA-OPS）"
+  - "验收复算：HOLDOUT=2025-10-09..2026-09-30（245 交易日）窗口完整性=在册天数/245 ≥ 0.9（A道册冻结 pass 线）；复跑 A06 族三变体 exam 全窗可算"
+  unlock_objects:
+  - object_id: ALT-A06-PERSIST10D
+    action: "重考（主对象）"
+    basis: "A道 rework（|ic|=0.0119/icir=0.18/retain=0.60，retain 唯一过线者）；判读受缺口降级（HOLDOUT 有效段仅 2026-06-01..09-30，完整性约 0.35）"
+    evidence: "docs/_working/fexam/alt_factor_exam_scores_v1.md §M1-ALT-A06 + master_backlog_v2.md P1-6"
+  - object_id: ALT-A06-MAIN5D
+    action: "复核候选（回补后全窗复算，供 Owner 复活门位）"
+    basis: "retire_candidate 判读基于同一缺口降级窗（ic=-0.0002/n=76）"
+    evidence: "docs/_working/fexam/alt_factor_exam_scores_v1.md L19-20/L36/L50"
+  - object_id: ALT-A06-SUPER5D
+    action: "复核候选（回补后全窗复算，供 Owner 复活门位）"
+    basis: "retire_candidate 判读基于同一缺口降级窗（ic=0.0045/n=76）"
+    evidence: "docs/_working/fexam/alt_factor_exam_scores_v1.md L19-20/L36/L50"
 - req_id: DR-2
-  dataset: daban_engine_load
-  gap: 仅2026-09一个月
-  unlocks: DABAN-022 策略measured判决
+  dataset: "c1_market.daban_engine_load（DS-271｜SRC-INTERNAL-001 内部源=daban_engine_load_daily 可历史重放｜trade_date×symbol 候选负载宽表）"
+  priority: "P1-7（总账本周项）"
+  gap_window: "现存仅 2026-09-01..2026-09-28（20 交易日）；回补窗=2025-10-09..2026-08-31（衔接现存段）"
+  gap_evidence: "codesym_strategy_exam_v1.md 工单 STR-DABAN-022：负载表仅 1651 行（2026-09-01..09-28），OOS 几乎全窗无数据，工单=daban_load_producer 历史回补至 2025-10 前后即可考"
+  row_magnitude:
+    existing_rows: "1,651 行（D道工单实测）"
+    backfill_estimate: "约 1.8 万行（回补窗约 219 交易日 × 日均约 83 行/日折算，估算值）"
+  acceptance_criteria:
+  - "回补窗 2025-10-09..2026-08-31 全交易日覆盖，与现存 2026-09 段无缝衔接"
+  - "同 producer（daban_engine_load_daily）同版本（load_version 列）重放产出；列集与 DDL 真源 schemas/categories/market/market_daban_engine_load.py 一致（21 列）；ReplacingMergeTree (trade_date,symbol) 同键幂等可重复重放"
+  - "PIT 口径可核（DS-271 册载 lookahead_test_method：决策日 T 只取 max(trade_date)<T 的事件日分区）"
+  - "验收复算：STR-DABAN-022 的 build_weight_panel_for_dates 对全 OOS（2025-10-09..2026-09-30）出非空权重面板并跑 measured verdict"
+  unlock_objects:
+  - object_id: STR-DABAN-022
+    action: "measured 判决（接口现成，数据到货即可考）"
+    basis: "D道 A 类 rework：DabanSleeveStrategy.generate_target_weights / build_weight_panel_for_dates，决策负载表 OOS 几乎全窗无数据"
+    evidence: "docs/_working/fexam/codesym_strategy_exam_v1.md 工单 STR-DABAN-022 + master_backlog_v2.md P1-7"
 - req_id: DR-3
-  dataset: minute breadth快照
-  gap: 仅2026-08-24起24日
-  unlocks: SENT-020~025/028 七因子（B道data_gap族）
+  dataset: "market_data.market_breadth_snapshot（DS-108｜分钟级全市场宽度快照｜JOB-088｜SRC-QMT-001 get_full_tick 全市场推导口径）"
+  priority: "P2-3 组成（二波解锁前置）"
+  gap_window: "回补窗=2025-10-09..2026-08-23（221 交易日=HOLDOUT 245−现存 24）；现存仅 2026-08-24 起 24 交易日"
+  gap_evidence: "codesym_factor_exam_v1.md §B：分钟级 breadth 快照历史仅 2026-08-24 起（24 交易日，market_breadth_snapshot），HOLDOUT 245 交易日缺 2025-10..2026-08 段"
+  row_magnitude:
+    existing_rows: "证据册未载现存行数（如实标注）"
+    backfill_estimate: "约 5.3 万行（221 交易日 × 约 240 分钟/日折算，市场级无 symbol 维，估算值）"
+  acceptance_criteria:
+  - "回补窗 2025-10-09..2026-08-23 全交易日分钟级覆盖"
+  - "列面与 DS-108 format_summary 一致（上涨/下跌/平盘家数、涨停/跌停/封住涨停/曾涨停计数、参与统计标的数、全市场累计成交额、degraded 标记）；涨跌停判定同 stk_limit DS-082 板块差异化幅度口径"
+  - "验收复算：FCT-SENT-020 的 analyze_breadth_acceleration 最小输入调用返回非 None（B道探针复测），且 HOLDOUT 段快照覆盖完整"
+  unlock_objects:
+  - object_id: "FCT-SENT-020 / FCT-SENT-021 / FCT-SENT-022 / FCT-SENT-028"
+    action: "直接解锁（本 DR 到货即可重考）"
+    basis: "B道 data_gap：analyze_breadth_acceleration 最小输入调用结果=None（缺 2025-10..2026-08 历史段）"
+    evidence: "docs/_working/fexam/codesym_factor_exam_v1.md §B L50-52/L58"
+  - object_id: "FCT-SENT-023 / FCT-SENT-024 / FCT-SENT-025"
+    action: "条件解锁（需本申请外扩展线，数据班另确认供给源后再报）"
+    basis: "FCT-SENT-023 需指数贡献度拆解+黄白线分钟 spread 历史（CH 无对应表）；FCT-SENT-024 需 20 日同时刻分钟成交占比曲线历史；FCT-SENT-025 需个股日内 high/current gain 快照（realtime_snapshot 表为空）——纯 breadth 回补不解锁"
+    evidence: "docs/_working/fexam/codesym_factor_exam_v1.md §B L53-55"
 - req_id: DR-4
-  dataset: tick_data/tick_depth_5
-  gap: 2026-01-05/2026-07-24起
-  unlocks: tick组5策略（MF-069/VREV-017-019/024）EDE tick考道
+  dataset: "c1_market.tick_data（DS-195｜Tick 3 秒快照含买卖一档，非逐笔）+ c1_market.tick_depth_5（DS-306｜五档盘口）"
+  priority: "P2-4（二波，另前置 EDE tick 考道建设——施工侧工单，非数据班项）"
+  gap_window: "回补窗=2025-10-08..2026-01-04（D道工单原文：tick+5 档盘口）；tick_data 现存 2026-01-05..2026-09-30；tick_depth_5 现存仅 2026-07-24..2026-09-30，故 2025-10-08..2026-07-23 段深度亦缺，2026-01-05..2026-07-23 段是否需补由 EDE tick 考道定（数据班确认）"
+  gap_evidence: "codesym_strategy_exam_v1.md 工单：tick_depth_5 仅 2026-07-24..2026-09-30、tick_data 仅 2026-01-05..2026-09-30，OOS（2025-10-09 起）前段无数据"
+  row_magnitude:
+    existing_rows: "tick_data 84.2 亿行（DS-195 册载 2026-09-03 system.parts）；tick_depth_5 130,143,451 行（DS-306 册载 2026-10-01 CH 实测，折合约 277 万行/日）"
+    backfill_estimate: "tick_data 约 30 亿行量级（约 61 交易日 × 约 5,000 万行/日折算）；tick_depth_5 随确认窗按约 277 万行/日折算——均估算值，量级供数据班排产参考"
+  acceptance_criteria:
+  - "tick_data 回补窗 2025-10-08..2026-01-04 全交易日 3 秒快照覆盖（含买卖一档；L2 逐笔属 l2_tick 通道且 disabled，勿混供）"
+  - "五档盘口与 tick_data 同窗对齐可按 symbol×时间戳 join"
+  - "验收复算：EDE tick 考道（tick_replay+matching_logic）建成后 on_tick 组 5 策略跑 measured；禁止在日线装置凑数（工单原文）"
+  unlock_objects:
+  - object_id: STR-MULTIFACTOR-069
+    entry_form: "VWAPReversionStrategy.on_tick / IntradaySurgeFallStrategy.on_tick -> {symbol:weight}"
+    evidence: "docs/_working/fexam/codesym_strategy_exam_v1.md 工单 L37"
+  - object_id: STR-VREV-017
+    entry_form: "IntradaySurgeFallStrategy.on_tick"
+    evidence: "docs/_working/fexam/codesym_strategy_exam_v1.md 工单 L38"
+  - object_id: STR-VREV-018
+    entry_form: "VWAPReversionStrategy.on_tick"
+    evidence: "docs/_working/fexam/codesym_strategy_exam_v1.md 工单 L39"
+  - object_id: STR-VREV-019
+    entry_form: "VWAPReversionStrategy.on_tick"
+    evidence: "docs/_working/fexam/codesym_strategy_exam_v1.md 工单 L40"
+  - object_id: STR-VREV-024
+    entry_form: "OrderBookImbalanceStrategy.on_tick"
+    evidence: "docs/_working/fexam/codesym_strategy_exam_v1.md 工单 L41 + strategy_exam_scores_v1.yaml（五条 code_backed rework 在册）+ master_backlog_v2.md P2-4"
+tally_reconciliation:
+  claim: "99_delivery.md L104：本申请包解锁 13 因子+5 策略+1 因子重考；master_backlog_v2.md P2-3：data_gap 类 13 因子"
+  verified:
+  - "5 策略 = DR-4 tick 组 5 条（逐条实证一致）"
+  - "1 因子重考 = ALT-A06-PERSIST10D（实证一致）"
+  - "13 因子的仓内唯一出处 = B道 codesym_factor_exam_v1.md §B 未实测 13 条（FCT-SENT-016..028 全族）；其中 data_gap 7 条=本申请可解锁口径（4 直接+3 条件扩展线）"
+  - "structural 6 条（FCT-SENT-016/017/018/019/026/027）为截面 IC 数学不可定义（期指窄截面/市场级标量/风险清单），数据回补不可解锁、需时序择时考试通道——数据班无需为该 6 条供数，本申请不为其列需求"
+  - "未入 L104 计数但同受缺口影响，本册如实补列：STR-DABAN-022（策略）与 ALT-A06-MAIN5D/SUPER5D（复核候选）"
+  net_unlock_by_backfill: "因子 10 条（7 data_gap SENT + 3 A06 族，其中 3 条 SENT 待扩展线）+ 策略 6 条（tick 5 + DABAN-022）"
