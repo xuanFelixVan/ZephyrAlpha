@@ -236,9 +236,9 @@ _EXECUTOR_FILES: dict[str, list[str]] = {
     "DSC-10B": ["scripts/ch/rolling_archive_reconciler.py", "scripts/backup/backup.ps1"],
     "DSC-11": ["scripts/backup/backup.ps1", "scripts/backup/backup_reconciler.py", "scripts/backup/backup_config.yaml"],
     "DSC-12": [
-        "docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml",
-        "src/zephyr/data/storage_tiering.py",
-        "src/zephyr/data/data_compression_archiver.py",
+        "docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml"
+        # IN1-20（2026-10-07）：storage_tiering.py（裁定#383 纸面退役）与 data_compression_archiver.py
+        # （零调用方）两死件自执行体扫描面修剪——建成/在盘≠在岗，历史留档见 DSC-12 gaps 台账
     ],
     "DSC-13": [
         "src/zephyr/data/integrity_checker.py",
@@ -567,7 +567,57 @@ def _n(node_id: str, segment: str, node_type: str, name_zh: str, question: str, 
 
 
 _HUMAN: dict[str, Any] = {
-    "schema_version": "0.2",
+    "schema_version": "0.3",
+    # schema 0.3（挂图 SOP §4，st-vm12f2 批入图头）：血肉分阶段开关＋图例冻结面——
+    # 与盘面 existing-wins 同值镜像（F2 批 Owner 终审冻结 9 条，禁增删改名）
+    "blood_stage": "f2_done",
+    "purpose_tags": [
+        {
+            "id": "fresh_check",
+            "label": "数据还新鲜吗",
+            "plain_zh": '每张业务表都有"最后一天"——这族机制天天核对它停没停在昨天，停了就报警。',
+        },
+        {
+            "id": "break_detect",
+            "label": "坏了谁发现",
+            "plain_zh": "数据断了、缺了、烂了，得有东西第一时间喊出来，不能等下游用的时候才炸。",
+        },
+        {
+            "id": "break_repair",
+            "label": "坏了谁修回",
+            "plain_zh": "发现问题只是第一步——这族机制负责把缺的补回来、把坏的修回去。",
+        },
+        {
+            "id": "can_rollback",
+            "label": "坏了能不能回滚",
+            "plain_zh": '删错表、写坏库的时候，冷库和备份是唯一能让你说"还好有备份"的东西。',
+        },
+        {
+            "id": "schedule_complete",
+            "label": "该来的数据来了没",
+            "plain_zh": '每天该跑的任务都跑了吗——拿"应跑清单"对"打卡记录"，漏一个都能数出来。',
+        },
+        {
+            "id": "lineage",
+            "label": "东西从哪来的",
+            "plain_zh": "每行数据都能说清来自哪家源、走哪条通道——源出问题知道找谁。",
+        },
+        {
+            "id": "source_fallback",
+            "label": "源不可靠怎么办",
+            "plain_zh": "外部源说断就断——备胎源、熔断器、先落盘再入库，都是为了断供当天数据不断。",
+        },
+        {
+            "id": "no_double_write",
+            "label": "别把同一行写两遍",
+            "plain_zh": "重跑不可怕，可怕的是重跑把数据翻倍——幂等加判重，保证跑十遍还是一份。",
+        },
+        {
+            "id": "ledger_readable",
+            "label": "账本要能翻",
+            "plain_zh": "每笔采集、每次失败都留底账——出了事能翻账，没出事能对账。",
+        },
+    ],
     "map_id": "DSCMAP-012",
     "name_zh": "数据供给链图",
     "nickname": "图12 数据供给链",
@@ -655,7 +705,13 @@ _NODES: list[dict[str, Any]] = [
         confidence="verified",
         verified_scope="structure",
         module_ref="src/zephyr/data/provider_base.py",
-        source_anchors=[f"file:{TASKS_YAML_REL}", "file:src/zephyr/data/provider_base.py"],
+        source_anchors=[
+            f"file:{TASKS_YAML_REL}",
+            "file:src/zephyr/data/provider_base.py",
+            # IN1-33（2026-10-07）：error_classifier 硬锚补齐——fallback 段文述其判据语义，
+            # E-13 八族挂载手术时漏挂，纯锚补零行为变更
+            "file:src/zephyr/data/error_classifier.py",
+        ],
         store_refs=[
             {
                 "artifact": "源能力契约",
@@ -949,9 +1005,16 @@ _NODES: list[dict[str, Any]] = [
         "DSC-GAP-MACRO",
         _S,
         "gap",
-        "运行事故：macro_data 0 字节部件装载失败致读链不可达（探测器口径外）",
+        "运行事故（已解除）：macro_data 0 字节部件装载——读链已恢复，节点退役留痕（残病登记数据班）",
         "一张表的部件坏了，谁会先知道？现有检核里有谁的口径抓得住它？",
-        note_zh="批次4（09-25T03:55）实录 187×0 字节 parts 致该表装载失败，并连锁打死 system.tables/parts/columns 全枚举面；本车道 09-25T15:2x 复跑该表已可读（max(report_date)=09-24）＝事故态解除。可修问题禁洗成 🌑：本节点按运行事故红项入账，检测口径缺口（CHECKSUM 之外的 0 字节部件族）挂 DSC-19。",
+        note_zh=(
+            "事发：批次4（09-25T03:55）实录 187×0 字节 parts 致该表装载失败，并连锁打死 system.tables/parts/columns "
+            "全枚举面；当日 15:2x 复跑该表已可读＝事故态初步解除。"
+            "改判（IN1-34a，2026-10-07）：事故态解除复测成立——目标表（锚见 source_anchors/data_refs）count=50,767、"
+            "max(report_date)=2026-10-02（DatabaseService reader 直查）；节点转 insufficient_window 退役留痕。"
+            "残病=源侧拉取 SSL EOF 失败族（failures 1,026 件）＋检测口径缺口（CHECKSUM 之外的 0 字节 parts 族不可见，挂 DSC-19），"
+            "两件登记数据班（处方 IN1-34 b/c：SSL 重试退避+页级断点续跑；ch_parts_monitor 扩 0 字节 parts 探针）。"
+        ),
         build_status="pending",
         wiring_status="wired_stream",
         slot_source="schedule",
@@ -1116,7 +1179,11 @@ _NODES: list[dict[str, Any]] = [
             }
         ],
         gap_refs=["DSC-GAP-REPLAY"],
-        evidence=[f"{BOOK_DIR}/02_入库单通道与幂等判重.md §4 溢-3"],
+        evidence=[
+            f"{BOOK_DIR}/02_入库单通道与幂等判重.md §4 溢-3",
+            # IN1-31③（2026-10-07）：回灌腿在岗实证——scheduler._start_local_replay 守护线程
+            "file:src/zephyr/data/scheduler.py:1128-1165 _start_local_replay 守护线程在岗实读（启动即检+30min 周期+超阈值追平 replay_catchup）",
+        ],
     ),
     _n(
         "DSC-06",
@@ -1304,7 +1371,14 @@ _NODES: list[dict[str, Any]] = [
         "stage",
         "财务 / 一致预期派生（PIT 双守卫）",
         "派生层滞后是派生自己的锅，还是上游的锅？",
-        note_zh="两条 internal 腿：financial_derived_build（deps=三大报表）与 consensus_daily_build（deps=研报明细+交易日历）；PIT 铁律在派生侧有第二道守卫（1970 哨兵 + publish_date<=trade_date 零 embargo）。行级状态=分面。",
+        note_zh=(
+            "两条 internal 腿：financial_derived_build（deps=三大报表）与 consensus_daily_build"
+            "（deps=研报明细+交易日历）；PIT 铁律在派生侧有第二道守卫（1970 哨兵 + publish_date<=trade_date 零 embargo）。"
+            "改判（IN1-27①，2026-10-07）：停摆口径作废——链已复活（consensus_daily max(trade_date)=2026-09-30 "
+            "与上游 research_report max(publish_date)=09-30 严格相等；build 双腿 09-28~10-02 多次 SUCCESS）。"
+            "残病=上游 research_report_detail_incremental 慢性超时（连续 STALE 撞 6h 收割闸，见 gaps 台账，归数据班）。"
+            "行级状态=分面。"
+        ),
         build_status="partial",
         wiring_status="wired_cron",
         slot_source="schedule",
@@ -1339,20 +1413,19 @@ _NODES: list[dict[str, Any]] = [
             {
                 "leg_id": "financial",
                 "name_zh": "财务派生腿",
-                "status": "🔨",
+                "status": "✅",
                 "evidence": [
-                    "本车道复跑：financial_derived_build 末次 2026-09-24T23:27:35Z(北京) status=FAILED",
-                    "error='<' not supported between instances of 'str' and 'datetime.date'",
-                    "financial_derived max(announce_date)=09-02；09-23/24 案卷均列漏跑",
+                    "修复提交 baee3850fde（09-27）后多次 SUCCESS：task_runs #197111(09-28)/#207524(10-02) 实读（2026-10-07 只读台账）",
+                    "financial_derived 306,527 行 max(announce_date)=2026-09-02（DatabaseService reader 复跑 2026-10-07）",
                 ],
             },
             {
                 "leg_id": "consensus",
                 "name_zh": "一致预期腿",
-                "status": "🔴",
+                "status": "✅",
                 "evidence": [
-                    "consensus_daily max=2026-09-14（本车道复跑 6,797,719 行，停更持续）",
-                    "consensus_daily_build 末次 09-18 FAILED＋连日漏跑",
+                    "consensus_daily 6,829,376 行 max(trade_date)=2026-09-30，与 research_report max(publish_date)=09-30 严格相等（DatabaseService reader 复跑 2026-10-07）",
+                    "consensus_daily_build task_runs #199983(09-30)/#205178(10-01) SUCCESS 实读",
                 ],
             },
         ],
@@ -1362,7 +1435,7 @@ _NODES: list[dict[str, Any]] = [
                 "symptom": "run_failing",
                 "measured_on": "2026-09-25",
                 "pointer": "integrator_progress.db task_progress（本车道只读复跑）＋ 05 簿 §1.2 案卷",
-                "note_zh": "财务腿由批次4 的案卷漏跑升级为跑必失败（类型比较异常），三腿中档期留痕有但结果为红",
+                "note_zh": "财务腿 09-24/25/26 跑必失败（类型比较异常）——已治本：修复提交 baee3850fde（09-27）后 #197111/#207524 全 SUCCESS（2026-10-07 复核闭合）",
             },
             {
                 "anchor": "file:src/zephyr/data/financial_parser.py",
@@ -1370,6 +1443,13 @@ _NODES: list[dict[str, Any]] = [
                 "measured_on": "2026-09-24",
                 "pointer": f"{BOOK_DIR}/03_衍生加工三族.md §4 溢-7",
                 "note_zh": "骨架原列真源，其 CONSUMERS 自证接线尚未发生——不在产数路径，真源映射已改挂两个 compute 实现件",
+            },
+            {
+                "anchor": "task:research_report_detail_incremental",
+                "symptom": "stale_slot_run",
+                "measured_on": "2026-10-07",
+                "pointer": "task_runs 台账 data/integrator_progress.db（只读实读 2026-10-07：09-21~10-02 八 STALE/一 SUCCESS）＋预诊断处方 IN1-27（vmap12_intake，归数据班）",
+                "note_zh": "残病指针：上游单次实跑 4.6~7h+ 撞 6h stale-reap 闸（10-02 仍 STALE），上游断则 consensus 腿再停——治残病处方在案归数据班，本格留观察位",
             },
         ],
         evidence=[
@@ -1534,9 +1614,15 @@ _NODES: list[dict[str, Any]] = [
         "DSC-GAP-CONSENSUSCHAIN",
         _D,
         "gap",
-        "断链：research_report→consensus_daily 预期重建链停摆",
+        "断链（已复活）：research_report→consensus_daily 预期重建链——09-30 起回正，节点退役留痕",
         "预期因子食的是哪一天的数据？上游断与下游断怎么分？",
-        note_zh="研报明细 max(publish_date)=09-18（本车道复跑未涨）→ 预期重建 max=09-14（比上游还早 4 天＝派生自身也停）→ 因子族与 15 卷卡直接食旧；build 任务连日列漏跑、末次 FAILED。",
+        note_zh=(
+            "事发（09-25 定账）：研报明细 max(publish_date)=09-18（本车道复跑未涨）→ 预期重建 max=09-14"
+            "（比上游还早 4 天＝派生自身也停）→ 因子族与 15 卷卡直接食旧；build 任务连日列漏跑、末次 FAILED。"
+            "改判（IN1-27①，2026-10-07）：链已复活——consensus_daily max(trade_date)=2026-09-30 与上游 "
+            "research_report max(publish_date)=09-30 严格相等，build 双腿多次 SUCCESS；已达本格自述退役条件"
+            "（重跑通＋新鲜度回正），按禁删格纪律转退役留痕留档防再断，残病指针挂 DSC-08 gaps 台账（归数据班）。"
+        ),
         build_status="pending",
         wiring_status="wired_cron",
         slot_source="schedule",
@@ -1980,9 +2066,16 @@ _NODES: list[dict[str, Any]] = [
         "DSC-GAP-CODEBACKUP",
         _C,
         "gap",
-        "断供：今晨备份的代码快照腿 status=failed",
+        "事件缺口（已闭合）：代码快照腿 09-25 一次性失败——10-04 起 ok 自愈（留档防再发）",
         "报告里 CH 成功，就等于所有阶段都成功吗？",
-        note_zh="本车道读 logs/backup_report_20260925_060007.json：databases.clickhouse.status=ok 且 verified=True，但 code_backup.status=failed（failures=1、vanished=5）；OS 任务态未回收。灾备段的 ✅ 因此带限定。",
+        note_zh=(
+            "本车道读 logs/backup_report_20260925_060007.json：databases.clickhouse.status=ok 且 verified=True，"
+            "但 code_backup.status=failed（failures=1、vanished=5）；OS 任务态未回收。灾备段的 ✅ 因此带限定。"
+            "改判（IN1-29/IN1-12，2026-10-07）：09-25 事件型缺口已闭合——10-04~10-07 报告主流 status=ok/failures=0"
+            "（10-05 060005 实读 ok/0/0，rotated 正常滚动）；10-07 上午 09:44~11:37 又现 9 连败"
+            "（robocopy 撞活锁文件 tilib_nightly_run.log，与 09-25 同类瞬时竞争）13:40 起自愈 ok——"
+            "格留档防再发（禁删格），新事件见 gaps 台账 2026-10-07 条。"
+        ),
         build_status="pending",
         wiring_status="wired_os_task",
         slot_source="schtasks",
@@ -1991,7 +2084,11 @@ _NODES: list[dict[str, Any]] = [
         confidence="verified",
         verified_scope="structure",
         red_reason="broken_supply",
-        source_anchors=["file:scripts/backup/backup.ps1", "file:logs/backup_report_20260925_060007.json"],
+        source_anchors=[
+            "file:scripts/backup/backup.ps1",
+            "file:logs/backup_report_20260925_060007.json",
+            "file:logs/backup_report_20261005_060005.json",
+        ],
         store_refs=[
             {
                 "artifact": "版本化快照",
@@ -2006,10 +2103,21 @@ _NODES: list[dict[str, Any]] = [
                 "symptom": "run_failing",
                 "measured_on": "2026-09-25",
                 "pointer": "backup_report_20260925_060007.json（本车道实读）",
-                "note_zh": "prev_snapshot=20260924、rotated=[]⇒09-25 快照未成，回退窗口只剩 09-24 一份",
-            }
+                "note_zh": "prev_snapshot=20260924、rotated=[]⇒09-25 快照未成，回退窗口只剩 09-24 一份（本事件已闭合，见改判注记）",
+            },
+            {
+                "anchor": "file:logs/backup_report_20261007_094445.json",
+                "symptom": "run_failing",
+                "measured_on": "2026-10-07",
+                "pointer": "backup_report_20261007_094445~113707 九连份实读（error_sample=活锁文件 tilib_nightly_run.log）",
+                "note_zh": "10-07 上午瞬时失败窗（robocopy 扫描撞活锁文件，与 09-25 同类竞争非结构性）——13:40 起同日自愈 ok（134059/143807/154200 实读），留痕防再发",
+            },
         ],
-        evidence=["本车道 09-25 只读复跑：报告 JSON（utf-8-sig）逐字段实读"],
+        evidence=[
+            "本车道 09-25 只读复跑：报告 JSON（utf-8-sig）逐字段实读",
+            "改判复核 2026-10-07：logs/backup_report_20261005_*/20261007_* 批量实读——10-05 27 份全 ok/failures=0，"
+            "10-07 除 09:44~11:37 九份瞬时 failed 外全 ok（同日自愈）——09-25 事件型缺口闭合成立",
+        ],
     ),
     _n(
         "DSC-12",
@@ -2017,7 +2125,7 @@ _NODES: list[dict[str, Any]] = [
         "stage",
         "冷热分层 / 压缩决策（契约驱动，结构上不可能产数 ✅）",
         "分层决策的真源件还活着吗？压缩比数据在哪里？",
-        note_zh="本环节是 DSC-10B 的输入节点（决策 vs 执行），不是并列环节；真源=data_retention_contract.yaml §rolling_archive + INV-RET-003/005。骨架原指真源 storage_tiering.py 已被裁定#383 判纸面退役（零触发零消费、文件在盘未摘），data_compression_archiver.py 实测零调用方——两件的建成/在盘都不等于在岗。",
+        note_zh="本环节是 DSC-10B 的输入节点（决策 vs 执行），不是并列环节；真源=data_retention_contract.yaml §rolling_archive + INV-RET-003/005。骨架原指真源 storage_tiering.py 已被裁定#383 判纸面退役（零触发零消费、文件在盘未摘），data_compression_archiver.py 实测零调用方——两件的建成/在盘都不等于在岗。修剪（IN1-20，2026-10-07）：两死件自 source_anchors 与机生执行体扫描面摘除（纸面退役件不再充当活锚），历史留档见 gaps 台账。",
         build_status="partial",
         wiring_status="decision_only",
         slot_source="none",
@@ -2028,9 +2136,9 @@ _NODES: list[dict[str, Any]] = [
         red_reason="unwired",
         module_ref=None,
         source_anchors=[
+            # IN1-20（2026-10-07）：storage_tiering.py（裁定#383 纸面退役）/data_compression_archiver.py
+            # （零调用）两死件摘除——真源锚只留契约件，死件历史见 gaps 台账
             "file:docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml",
-            "file:src/zephyr/data/storage_tiering.py",
-            "file:src/zephyr/data/data_compression_archiver.py",
         ],
         store_refs=[
             {
@@ -2418,9 +2526,15 @@ _NODES: list[dict[str, Any]] = [
         "DSC-14D",
         _R,
         "channel",
-        "第四通道：事件自动回填（auto_backfiller）——建好未接线",
+        "第四通道：事件自动回填（auto_backfiller）——留档退役（2026-10-04 Owner批）",
         "新因子/公式升级/源修复之后的历史重刷，今天由谁触发？",
-        note_zh="设计=按日期分片规划回填＋10% 随机抽样验证＋更新血缘并触发 auto-retrain；实测=既不在任何调度分派、也不在任何事件订阅，只有包级 re-export 与单测。骨架 §1 D12-14 的第 4 腿即此件（分面 ⬜）。",
+        note_zh=(
+            "设计=按日期分片规划回填＋10% 随机抽样验证＋更新血缘并触发 auto-retrain；"
+            "实测=既不在任何调度分派、也不在任何事件订阅，只有包级 re-export 与单测。"
+            "骨架 §1 D12-14 的第 4 腿即此件（分面 ⬜）。"
+            "改判（IN1-E7④，Owner 2026-10-04 批）：按留档退役处置——文件在盘、摘挂载，"
+            "骨架第 4 腿 ⬜ 随批改判为退役留档；节点留档防复活引用（对照先例=storage_tiering 裁定#383 纸面退役）。"
+        ),
         build_status="pending",
         wiring_status="unwired_exempt_bypass",
         slot_source="none",
@@ -2472,7 +2586,10 @@ _NODES: list[dict[str, Any]] = [
                 "note_zh": "SOP 把它写成常态在岗，与代码/注册表三说不一＝文档矛盾=事故型，禁按文档标 ✅",
             },
         ],
-        evidence=[f"{BOOK_DIR}/05_对账修复六环.md §2.3（四条可复跑证据链：grep/特殊槽全集/注册表/SOP）"],
+        evidence=[
+            f"{BOOK_DIR}/05_对账修复六环.md §2.3（四条可复跑证据链：grep/特殊槽全集/注册表/SOP）",
+            "留档退役批复：in1z_escalations.md IN1-E7——Owner 2026-10-04 裁留档退役（docs/_working/vmap12_intake/）",
+        ],
     ),
     _n(
         "DSC-15",
@@ -3323,6 +3440,8 @@ def build_document(root: Path, as_of: str | None) -> dict[str, Any]:
     labels = {src: get_zh(src, "data_source") for src in tasks["per_source_task_counts"]}
     doc: dict[str, Any] = {
         "schema_version": human("schema_version"),
+        "blood_stage": human("blood_stage"),
+        "purpose_tags": human("purpose_tags"),
         "map_id": human("map_id"),
         "name_zh": human("name_zh"),
         "nickname": human("nickname"),
@@ -3490,6 +3609,8 @@ def render(doc: dict[str, Any]) -> str:
         "# 血肉源：docs/_working/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）\n"
         "# 纪律：INV-1 只存标识符与指针｜挂槽≠在跑｜空串≠无数据｜production 必带 freshness_evidence｜"
         "缺口不冒充 built｜双轴与骨架 §1 同源（production 数==✅ 数）\n"
+        "# 图例注记（IN1-E1·Owner 批选②·2026-10-07 落图）：fresh_check/ledger_readable=字段级语义不入标签轴"
+        "——语义分别由 freshness_evidence 字段与 DSC-20 审计面承载（零格面改动零重贴）\n"
     )
     body = yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=118)
     return header + body
