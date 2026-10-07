@@ -63478,4 +63478,15 @@ creation_tokens:
   created_by: st-extaudit-20261007
   capability: ext_audit_20261007
   merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/fullcirc_closeout_chief/t3b_verdict_20261007.md
+  token: st-t3series-t3b-verdict-md-20261007
+  created_by: st-t3series-20261006
+  capability: t3b_exam_verdict
+  merge_evaluation: "T3b 加离场考判决书（exit_gain 5pp FAIL 如实入册），负结果台账正主"
+- file: docs/_working/fullcirc_closeout_chief/t3b_verdict_20261007.json
+  token: st-t3series-t3b-verdict-json-20261007
+  created_by: st-t3series-20261006
+  capability: t3b_exam_verdict
+  merge_evaluation: "判决书机读面（同真源数据层），非第二真源"
+
 di_seam_exemptions: []
