@@ -63291,4 +63291,74 @@ creation_tokens:
   created_by: st-mastertc-rb
   capability: master_tc_night_redblue
   merge_evaluation: "总包夜战红蓝车道交付物：99_delivery 下发现表新册（跨域不同对象不并：对抗审查留痕非任何既有簿系）"
+- file: docs/03_modules/_domain_signal/source_line_capital_flow_direction_criterion/blueprint.md
+  token: srcline1-source-line-capital-flow-direction-criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: docs/03_modules/_domain_signal/source_line_fundamental_pricing_lag_criterion/blueprint.md
+  token: srcline1-source-line-fundamental-pricing-lag-criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: docs/03_modules/_domain_signal/source_line_kline_momentum_criterion/blueprint.md
+  token: srcline1-source-line-kline-momentum-criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: docs/03_modules/_domain_signal/source_line_news_sentiment_criterion/blueprint.md
+  token: srcline1-source-line-news-sentiment-criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: docs/03_modules/_domain_signal/source_line_sector_rotation_criterion/blueprint.md
+  token: srcline1-source-line-sector-rotation-criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: docs/03_modules/_domain_signal/source_line_tick_microstructure_criterion/blueprint.md
+  token: srcline1-source-line-tick-microstructure-criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: docs/_working/srcline1_construction_report.md
+  token: srcline1-working-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: src/zephyr/signal_ashare/source_line/__init__.py
+  token: srcline1-source-line-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  token: srcline1-capital_flow_direction_criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py
+  token: srcline1-fundamental_pricing_lag_criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
+  token: srcline1-kline_momentum_criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  token: srcline1-news_sentiment_criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+  token: srcline1-sector_rotation_criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
+  token: srcline1-tick_microstructure_criterion-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 di_seam_exemptions: []
