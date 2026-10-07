@@ -25,7 +25,8 @@ MOD-TRADING-015，node_id 轴 TDM-*）。本文件是其对齐校验入口：
 
   run_checks() -> (fails, warns, total)
     fails = error 级缺口（R1 枚举违规/R2 边断链/R3 策略引用断链/R4 因子断链/R5 数据断链/
-            R6 置信度违规/R7 矩阵格断链/R8 sequence 成环）→ 硬阻断
+            R6 置信度违规/R7 矩阵格断链/R8 sequence 成环/R9 module_ref 断链/
+            R12 battle_map_refs 死引用/R13 挂载指针形态+目的标签枚举与完备性）→ 硬阻断
     warns = warning 级（module_ref=null 红节点占位等）→ 不阻断
     total = 节点数
 
@@ -73,6 +74,7 @@ strategy_id="..." / TickStrategyMeta 的字面量（8 实盘策略真源=代码 
 from __future__ import annotations
 
 import ast
+import re
 from pathlib import Path
 
 __all__ = ["run_checks", "collect_strategy_ids_via_ast"]
@@ -105,6 +107,21 @@ _SQL_DATA_FRESHNESS = (
     "SELECT max(toDate(modification_time)), sum(rows) FROM system.parts "
     "WHERE active AND database = '{db}' AND table = '{table}'"
 )
+
+# R13（挂载三字段形态+目的标签族，图12收官批 2026-10-07）常量
+# MOD-* 指针形态（与 zephyr.trading.decision_map._MOD_ID_RE 同形：2026-09-16 复核班放宽，
+# depgraph 库侧已下划线治理 MOD-INT_NEWS_CHAIN 类，连字符-only 正则会误红）
+_R13_MOD_ID_RE = re.compile(r"MOD-[A-Z0-9]+(?:[_-][A-Z0-9]+)*")
+# 路径指针形态：仓库相对路径（fullmatch 天然排除空白/CJK/散文标点——正文抄入=红）
+_R13_PATH_RE = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_./\\-]*")
+# 图头标签 id 与节点 purpose_tag 值的骨架（PT-01..PT-12；值域真源=图头 purpose_tags 列表）
+_R13_PT_ID_RE = re.compile(r"PT-\d{2}")
+# 节点级 confidence（挂载三字段之三，v1.6 spec；与 R6 挂载级 confidence 同词表）
+_R13_NODE_CONFIDENCES = frozenset({"verified", "proposed", "untested"})
+# 满格四字段（按实图字段名，v1.7 节点规范）：四者皆非空=内容满格节点，
+# 缺 purpose_tag=error（R13-3 标签完备性）。判据族无机械标记字段且实图全带标
+# （机贴批 3ca6e997c9 起 186/186），规则按全节点从严不设豁免——防"新节点忘贴标"钻空子。
+_R13_FULL_FIELDS = ("decision_question", "algo_note_zh", "module_ref", "module_mounts")
 
 
 def collect_strategy_ids_via_ast(pf_core_dir: Path = _PF_CORE_DIR) -> frozenset[str]:
@@ -177,6 +194,10 @@ def run_checks(
         warns.extend(r12_warns)
     except Exception as e:  # noqa: BLE001 — R12 是增强检查，异常不阻断主校验
         warns.append(f"R12 [map] battle_map_refs 检查异常（跳过）: {e}")
+
+    # R13: 挂载三字段形态+目的标签枚举/落位+满格标签完备性（图12收官批；纯 YAML 只读，
+    # 不裹 try——YAML 已被 load_decision_map 解析过，再炸=环境异常，按 ERROR_CONTRACT 上抛）
+    fails.extend(_check_r13_mounts_and_purpose_tags(mp))
 
     if not ok:
         pass  # ok 语义=fails 为空，已由分级表达
@@ -316,6 +337,122 @@ def _check_battle_map_refs() -> tuple[list[str], list[str]]:
                 "（君子协定计数，含 R4 自有——裁定#487 §六；触发率实证后再议 gate 化）"
             )
     return fails, warns
+
+
+def _check_r13_mounts_and_purpose_tags(map_path: Path) -> list[str]:
+    """R13 三族（图12收官批 2026-10-07）：挂载指针形态+目的标签枚举/落位+满格标签完备性。
+
+    - R13-1 挂载三字段形态（INV-1 指针制）：module_mounts 成员必须是 MOD-* 模块指针或
+      仓库相对路径指针——正文/散文抄进挂载字段=红；module_mounts_influence 键必须 MOD-*
+      （值=影响说明散文，合法）；节点级 confidence ∈ R6 同款词表。
+    - R13-2 目的标签：节点 purpose_tag ∈ 图头 purpose_tags 枚举（值域真源=图头，禁双真源）；
+      自造不存在标签/枚举外值=红；purpose_tag 键必须落 node_id 块界内（nodes 段外出现=红，
+      机贴批 3ca6e997c9 手术记录：末节点首插被 portfolio_plan 同缩进 confidence 行吞入的事故复发防线）。
+    - R13-3 满格节点标签完备性：四字段（_R13_FULL_FIELDS，按实图字段名）皆非空的节点缺
+      purpose_tag=error 级。
+
+    X-R1 拆钉（tdm_mount/g_tag_mount_report §三.1 处方）：段头 TDM-X-R1 持 PT-12
+    （kill switch 本体）、其子节点 R1-01/02/03 持 PT-07（熔断预案机制）是合法形态——
+    本族不设"同段同标签"父子一致性检查，任何父子女标签组合只要各自合法即放行，
+    禁一次性特判（通用规则天然覆盖，拆钉=不引入特例而非加白名单）。
+
+    纯 YAML 只读（两字段不在 frozen dataclass schema，故在本层读 raw；异常向上抛，禁吞）。
+    """
+    import yaml
+
+    raw = yaml.safe_load(map_path.read_text(encoding="utf-8")) or {}
+    fails: list[str] = []
+
+    # 图头枚举真源完整性（R13-2 前置：值域真源坏了枚举校验不可信）
+    header = raw.get("purpose_tags")
+    pt_ids: set[str] = set()
+    if not isinstance(header, list) or not header:
+        fails.append("R13 [map] 图头 purpose_tags 缺失或非列表（目的标签值域真源缺失）")
+    else:
+        for entry in header:
+            if not isinstance(entry, dict):
+                fails.append(f"R13 [map] 图头 purpose_tags 条目非映射: {entry!r}")
+                continue
+            pid = str(entry.get("id") or "")
+            if not _R13_PT_ID_RE.fullmatch(pid):
+                fails.append(f"R13 [map] 图头标签 id 非法（须 PT-NN）: {pid!r}")
+            elif pid in pt_ids:
+                fails.append(f"R13 [map] 图头标签 id 重复: {pid}")
+            else:
+                pt_ids.add(pid)
+            if not str(entry.get("tag_zh") or "").strip() or not str(entry.get("meaning_zh") or "").strip():
+                fails.append(f"R13 [map] 图头标签 {pid or entry!r} 缺 tag_zh/meaning_zh（大白话+意义双字段必填）")
+
+    def _is_pointer(value: str) -> bool:
+        """INV-1 指针制：MOD-* 模块指针 或 含 / 的仓库相对路径指针；其余（散文/单词）=非指针。"""
+        return bool(_R13_MOD_ID_RE.fullmatch(value)) or ("/" in value and _R13_PATH_RE.fullmatch(value) is not None)
+
+    def _filled(v) -> bool:
+        """满格判定：标量非空白串/列表非空；None=空。"""
+        if v is None:
+            return False
+        if isinstance(v, str):
+            return bool(v.strip())
+        return bool(v)
+
+    for n in raw.get("nodes") or []:
+        if not isinstance(n, dict):
+            fails.append(f"R13 [map] nodes 条目非映射: {n!r}")
+            continue
+        nid = str(n.get("node_id") or "?")
+        # ── R13-1 挂载三字段形态 ──────────────────────────────────────────
+        mounts = n.get("module_mounts")
+        if mounts is not None:
+            if not isinstance(mounts, list):
+                fails.append(f"R13 [{nid}] module_mounts 必须是列表（实态 {type(mounts).__name__}）")
+            else:
+                for m in mounts:
+                    if not isinstance(m, str) or not _is_pointer(m):
+                        fails.append(
+                            f"R13 [{nid}] module_mounts 成员非指针（INV-1 指针制——"
+                            f"禁把正文/散文抄进挂载字段，只收 MOD-* 或路径指针）: {m!r}"
+                        )
+        influence = n.get("module_mounts_influence")
+        if influence is not None:
+            if not isinstance(influence, dict):
+                fails.append(f"R13 [{nid}] module_mounts_influence 必须是映射（MOD-*→影响说明）")
+            else:
+                for k in influence:
+                    if not _R13_MOD_ID_RE.fullmatch(str(k)):
+                        fails.append(f"R13 [{nid}] module_mounts_influence 键非 MOD-* 指针: {k!r}")
+        conf = n.get("confidence")
+        if conf is not None and str(conf) not in _R13_NODE_CONFIDENCES:
+            fails.append(f"R13 [{nid}] 节点 confidence 非法: {conf!r}（词表 verified/proposed/untested）")
+        # ── R13-2 purpose_tag 枚举+标量形态 ───────────────────────────────
+        pt = n.get("purpose_tag")
+        if pt is not None:
+            if not isinstance(pt, str) or not _R13_PT_ID_RE.fullmatch(pt):
+                fails.append(f"R13 [{nid}] purpose_tag 须为标量 PT-ID（枚举外形态）: {pt!r}")
+            elif pt_ids and pt not in pt_ids:
+                fails.append(f"R13 [{nid}] purpose_tag 自造/不存在于图头枚举: {pt}")
+        # ── R13-3 满格节点标签完备性（error 级）───────────────────────────
+        if pt is None and all(_filled(n.get(f)) for f in _R13_FULL_FIELDS):
+            fails.append(
+                f"R13 [{nid}] 满格节点缺 purpose_tag（{_R13_FULL_FIELDS} 四字段已满格，"
+                f"标签缺失=error——目的标签机贴欠账）"
+            )
+
+    # R13-2 落位防线：purpose_tag 键禁出现在 nodes 段之外（手术记录复发防线）
+    stray: list[str] = []
+
+    def _scan(obj, path: str) -> None:
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k == "purpose_tag" and not path.startswith("nodes"):
+                    stray.append(path or "<root>")
+                _scan(v, f"{path}.{k}" if path else str(k))
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                _scan(v, f"{path}[{i}]")
+
+    _scan({k: v for k, v in raw.items() if k != "nodes"}, "")
+    fails.extend(f"R13 [map] purpose_tag 键出现在 nodes 段之外（须落 node_id 块界内）: {p}" for p in stray)
+    return fails
 
 
 def _module_exists_in_depgraph(module_ref: str) -> bool:
