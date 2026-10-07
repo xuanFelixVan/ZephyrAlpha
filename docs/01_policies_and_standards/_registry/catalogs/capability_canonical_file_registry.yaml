@@ -63905,4 +63905,14 @@ creation_tokens:
   - TDMAP-001:TDM-F-C1
   - TDMAP-001:TDM-F-C2-01
   merge_evaluation: "L-4 里程碑一 PP-001 V0 蓝图首块纯新增：capability 反查 netting/net_positions/split_capital 零命中，无既有件被替代；MOD-PA-002 信号级/MOD-PA-003 单策略内规整/CLONEGUARD 预查零 findings 跨域不同对象不并"
+- file: scripts/backtest/fexam/emotion_linkage_exam.py
+  token: fexam-emotion-linkage-exam-20261007
+  created_by: st-mx07-L8
+  capability: fexam
+  merge_evaluation: "裁定#375 内收评估：ic_exam/strategy_exam 为截面/策略考引擎，本件为情绪单序列联动考，同域不同对象不并"
+- file: docs/_working/matrix_campaign/mining/classic_indicator_investigation_v1.md
+  token: classic-indicator-investigation-classic-indicator-investigation-v1-20261007
+  created_by: st-mx07-L1
+  capability: classic_indicator_investigation
+  merge_evaluation: "调查报告新建单文件，无替代对象；同真源派生=无；消费面=裁定#489①复议输入与 fexam v2 立项建议；零触发零消费判据不适用（新文档首日）"
 di_seam_exemptions: []
