@@ -68,6 +68,22 @@ dimensions:
     values: ['off', 'on']
     baseline: 'off'
     active_if: "phase >= 2"
+  - id: X_stop
+    desc: 离场族·止损止盈叠加（M1，T3b 加离场考新增；挖矿 §M M1）
+    # 语义=引擎 _apply_exit_overlay：off 恒等/atr3x 入场价−3×cATR14 硬止损带/trail20
+    # 持仓段峰值×0.8 移动止盈（收盘判定，§4.4 已知失真）。phase>=3 才展开（三期=离场考），
+    # phase 1/2 折叠=存量考试零漂移。tp20 已实现未入考卷（T3b 卡 v2 可扩档）。
+    values: ['off', 'atr3x', 'trail20']
+    baseline: 'off'
+    active_if: "phase >= 3"
+  - id: X_breaker
+    desc: 离场族·回撤熔断帽（M2，T3b 加离场考新增；挖矿 §M M2）
+    # 语义=引擎 _apply_dd_breaker_overlay：组合权益 running-max→dd→五帽带（WARN 0.75/
+    # DANGER 0.50/CRISIS 0.25/KILL 0），dd20=kill_dd 0.20。live 机迟滞/毕业/复位面
+    # 不在向量化域=T3b 卡 honesty 披露位。
+    values: ['off', 'dd20']
+    baseline: 'off'
+    active_if: "phase >= 3"
   - id: K_capital_ramp
     desc: 建仓节奏/资金爬坡（需 harness 支持路径依赖，蓝图 §九-2）
     values: [lump, linear_20d, linear_60d, pyramid]

@@ -135,11 +135,15 @@ def test_charter_v2_schema_nominal_counts() -> None:
     assert n_full == 362880 * 4 * 2 * 4, f"全激活 N 不符: {n_full}"
     exp = c.compile(DEFAULT_CONTEXT)
     assert exp.n_raw == n_folded
+    # T3b 加离场考（st-t3series-20261007）新增 X_stop/X_breaker：phase>=3 展开，
+    # DEFAULT_CONTEXT(phase=1) 折叠入集——N_raw 362,880 锚不变（失活维贡献=1）。
     assert set(exp.folded_dimensions) == {
         "F_merge_policy",
         "I_cost_tier",
         "J_regime_switch",
         "K_capital_ramp",
+        "X_stop",
+        "X_breaker",
     }
 
 

@@ -939,3 +939,39 @@ def test_net_returns_parquet_columns_are_recipe_ids():
     nr = pd.concat(archive, axis=1)
     assert list(nr.columns) == ["aaaa1111", "bbbb2222"]
     assert nr.shape == (10, 2)
+
+
+# ── T3b X 维 schema（phase>=3 离场考；phase 1/2 折叠零漂移）──
+
+
+def test_schema_x_dims_folded_below_phase3():
+    """红组：X_stop/X_breaker 在 phase 1/2 必须折叠（存量考试零漂移），phase>=3 展开。"""
+    import yaml
+
+    schema = yaml.safe_load((_REPO / "config" / "position_recipe_grid_schema.yaml").read_text(encoding="utf-8"))
+    xdims = {d["id"]: d for d in schema["dimensions"] if d["id"] in ("X_stop", "X_breaker")}
+    assert set(xdims) == {"X_stop", "X_breaker"}
+    assert xdims["X_stop"]["values"] == ["off", "atr3x", "trail20"]
+    assert xdims["X_breaker"]["values"] == ["off", "dd20"]
+    assert all(d["baseline"] == "off" for d in xdims.values())
+    assert all(d["active_if"] == "phase >= 3" for d in xdims.values())
+
+
+def test_grid_expansion_x_dims_phase_gating():
+    """绿组：phase=1/2 编译 X 维折叠（N_raw 不变+values 携 baseline 'off' 字符串）；
+    phase=3 展开（N_raw ×6，X 双腿字符串在册）。"""
+    from zephyr.position.core.position_recipe_compiler import GridCompiler
+
+    compiler = GridCompiler.from_yaml(_REPO / "config" / "position_recipe_grid_schema.yaml")
+    base_ctx = {"strategy_pool": ["primary"], "phase": 2, "capital_ramp_enabled": False}
+    e2 = compiler.compile(base_ctx)
+    assert "X_stop" in e2.folded_dimensions and "X_breaker" in e2.folded_dimensions
+    assert all(r.values["X_stop"] == "off" and r.values["X_breaker"] == "off" for r in e2.recipes)
+    e3 = compiler.compile({**base_ctx, "phase": 3})
+    assert "X_stop" in e3.active_dimensions and "X_breaker" in e3.active_dimensions
+    js = {r.values["X_stop"] for r in e3.recipes}
+    bs = {r.values["X_breaker"] for r in e3.recipes}
+    assert js == {"off", "atr3x", "trail20"} and bs == {"off", "dd20"}
+    assert e3.n_raw == e2.n_raw * 6
+    # J 在 phase 3 保持展开（T3b 继承 T3a 空间）
+    assert {r.values["J_regime_switch"] for r in e3.recipes} == {"on", "off"}
