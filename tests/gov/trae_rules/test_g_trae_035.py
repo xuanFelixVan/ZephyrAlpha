@@ -15,7 +15,7 @@ GATE_YAML = PROJECT_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcem
 RULE_YAML = (
     PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_035_task_construction_verification.yaml"
 )
-MOCK_YAML = PROJECT_ROOT / "tests" / "fixtures" / "g_trae_035_mock.yaml"
+MOCK_YAML = PROJECT_ROOT / "tests" / "meta" / "fixtures" / "g_trae_035_mock.yaml"
 
 
 class TestGTrae035:

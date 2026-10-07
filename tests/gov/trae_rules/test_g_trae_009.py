@@ -13,7 +13,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 GATE_YAML = PROJECT_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement" / "g_trae_009.yaml"
 RULE_YAML = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_009_anti_hallucination_safety.yaml"
-MOCK_YAML = PROJECT_ROOT / "tests" / "fixtures" / "g_trae_009_mock.yaml"
+MOCK_YAML = PROJECT_ROOT / "tests" / "meta" / "fixtures" / "g_trae_009_mock.yaml"
 
 
 class TestGTrae009:
