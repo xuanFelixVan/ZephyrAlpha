@@ -63539,4 +63539,17 @@ creation_tokens:
   created_by: st-extaudit-20261007
   capability: ext_audit_20261007
   merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/03_modules/_domain_backtest/algo_flow/bootstrap_kernel.yaml
+  token: bootstrap-kernel-algo-flow-20261007
+  created_by: st-mx07-L3
+  capability: bootstrap_kernel
+  merge_evaluation: "MOD-BT-237 真源模块的 ALGO_FLOW 外部锚 yaml 随批登记（ALGO-FLOW-LINK 门硬要求实存），零新增能力面"
+  no_mount_reason: "算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产"
+- file: docs/03_modules/_domain_backtest/algo_flow/accel__init__.yaml
+  token: bootstrap-kernel-accel-init-algo-flow-20261007
+  created_by: st-mx07-L3
+  capability: bootstrap_kernel
+  merge_evaluation: "accel 包入口的 ALGO_FLOW 外部锚 yaml 随批登记（ALGO-FLOW-LINK 门硬要求实存），零新增能力面"
+  no_mount_reason: "算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产"
+
 di_seam_exemptions: []
