@@ -3920,5 +3920,44 @@ tasks:
   symbols:
   extra:
     description: "日终三账对账（回测 vs 模拟盘 L1/L2/L3 三账核对→A/B/C 归因，差异 append-only 落 governance.db:reconciliation_differences；CH 侧同名表见品类真源注记）——执行走 eod_reconciliation 特殊分派分支，非 run_task 管线"
-
   fallback_sources: []    # internal 编排源天然无副源
+
+# ============== 图12/TDM 收官总攻批·车道F 因子族两表（2026-10-07 st-vm12final-20261007-laneF）==============
+# 两表已建（本会话 admin 通道 apply，消账 DSC-GAP-FFVAL/DSC-GAP-FFSIG；DDL 真源
+# schemas/categories/factor_feature_value.py + factor_signal.py，apply_market_tables_ddl 已注册，
+# verify_schema_truth 零漂移）。生产者=进程内管线（zephyr.factor.feature_store_writer 分块 INSERT /
+# factor.core.batch_output.buffer TSV flush），不走调度器 internal provider——无 _fetch 分支，
+# enabled 必被 #ARCH-CH-022 capability 契约校验拦（option_daily_stats_daily 同款先例），
+# 故 disabled 登记留位：回填/写入任务=只登记不执行；恢复=后续批实现 _fetch_factor_* 路由分支后摘旗。
+# 全资产净零：无既有条目可承载因子族写入/回填职能，+2 条目。
+
+- task_id: factor_feature_value_daily
+  table: c1_market.factor_feature_value
+  source: internal  # 本地计算（因子 DAG 盘后预计算 → feature_store_writer 直写，零外部API）
+  schedule: daily_kline    # 盘后批（PIT：trade_date=业务日；value 预热期 NULL 不前向填充）
+  incremental: true    # 逐交易日驱动（ReplacingMergeTree (factor_id, symbol, trade_date) 同键重放幂等）
+  date_col: trade_date
+  dependencies: []    # 原料=库内行情/基本面成品表，因子计算 DAG 由 factor 管线进程内自管
+  capability: factor_feature_value
+  symbols:         # null=全市场截面
+  fallback_sources: []    # internal 计算源天然无副源
+  extra:
+    disabled: true  # 2026-10-07 车道F：表已建（admin 通道+探针+零漂移），写入器=zephyr.factor.feature_store_writer（进程内管线直写 CH 非调度器插行）；provider 无 _fetch 分支，enabled 必被 capability 契约校验拦。恢复=实现 _fetch_factor_feature_value 路由分支后摘除本旗。
+    description: "因子特征值日批（15号§3.4 特征仓库存储层：单表+factor_id 维度列仿 technical_indicator 模式，盘后预计算入表；写入=feature_store_writer 分块 INSERT，schema INSERT_COLUMNS 为唯一列序真源；同(factor_id,symbol,trade_date)重算取最新）"
+    trading_day_only: true
+
+- task_id: factor_signal_daily
+  table: c1_market.factor_signal
+  source: internal  # 本地计算（CTR-002 FactorSignal 经 batch_output.buffer 批量落表，零外部API）
+  schedule: daily_kline    # 盘后批（PIT：as_of_date=因子计算的数据截面日期，INV-004，DateTime64(3,'Asia/Shanghai')）
+  incremental: true    # 逐交易日驱动（ReplacingMergeTree (factor_id, symbol, as_of_date) 同键重放幂等）
+  date_col: as_of_date
+  dependencies: []
+  capability: factor_signal
+  symbols:         # null=全市场截面
+  fallback_sources: []    # internal 计算源天然无副源
+  extra:
+    disabled: true  # 2026-10-07 车道F：表已建（admin 通道+探针+零漂移），写入器=factor.core.batch_output.buffer（默认 target_table 本表，TSV 列序=_SIGNAL_COLUMNS 与 schema INSERT_COLUMNS 同序）；provider 无 _fetch 分支，enabled 必被 capability 契约校验拦。恢复=实现 _fetch_factor_signal 路由分支后摘除本旗。
+    description: "因子信号日批（CTR-002 FactorSignal 契约落库面：buffer 定量/定时批量 flush 直写，idempotency_key 重放同键，ORDER BY 不含 key=重算取最新；消账 DSC-GAP-FFSIG 默认落点悬空）"
+    trading_day_only: true
+
