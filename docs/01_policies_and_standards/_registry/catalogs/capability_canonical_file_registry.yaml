@@ -63361,4 +63361,19 @@ creation_tokens:
   capability: srcline1
   created_by: st-fg-srcline1-20261005
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: .zcode/config.json
+  token: zcode-entrance-hook-config-20261007
+  capability: entrance_gate_hook_config
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "唯一接线面：ZCode workspace 作用域 hooks 配置（PreToolUse→MOD-GOV-115 检票），随仓分发所有 ZCode 会话；替代无（.zcode/ 首份配置），内收 w5_1 不并（平台接线配置非规则数据）"
+- file: data/capability_cards/entrance_gate_hook.yaml
+  token: entrance-gate-hook-card-20261007
+  capability: entrance_gate_hook_card
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "MOD-GOV-115 能力卡——让检票钩子自身可经 capability_lookup 正门反查发现（围栏自身 discoverable）；同族先例=library_lookup 卡（MOD-LIB-003）；不并（跨域不同对象：卡=发现面，钩子=执法面）"
+- file: scripts/governance/entrance_gate_hook.py
+  token: entrance-gate-hook-20261007
+  capability: entrance_gate_hook
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "跨域不同对象不并：进场检票（harness PreToolUse 首写时点）与 CAPABILITY-LOOKUP-REQUIRED（commit 出口面）与裁定#480 D 首次acquire指路（lock 领锁时点）是同一『施工正门』在三个时点的独立检票位，非同判据重复实现；本件补时序审计面（entrance_audit 首写戳，治出口查票分不清先票后票——2026-10-07 实测 34 会话 7 疑似补票）；图书馆总口 zephyr.library.lookup（MOD-LIB-003）为其检票对象非合并对象"
 di_seam_exemptions: []
