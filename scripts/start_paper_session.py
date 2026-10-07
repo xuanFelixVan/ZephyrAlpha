@@ -75,6 +75,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import logging
 import math
@@ -119,6 +120,7 @@ from zephyr.ex_core.live_strategy_adapter import LiveStrategyAdapter, StrategySl
 from zephyr.ex_core.order_manager import OrderManager  # noqa: E402
 from zephyr.ex_core.position_reconciler import PositionReconciler  # noqa: E402
 from zephyr.ex_core.position_tracker.tracker import PositionTracker  # noqa: E402
+from zephyr.ex_core.fill_handler import FillHandler  # noqa: E402
 from zephyr.ex_core.programmatic_trading_guard import (  # noqa: E402
     ProgrammaticTradingGuard,
     ProgrammaticTradingGuardConfig,
@@ -165,6 +167,55 @@ _FILL_DEDUP_PREFIX = "paper_fill_ids"
 #: 会话停机时等待成交派发线程排空的秒数：在途成交未落本地账就重启，新会话拿到的
 #: 账本必然落后于券商 → 首轮对账误冻结。超时不阻断停机（停机优先），但大声出声。
 _FILL_DISPATCH_DRAIN_TIMEOUT_S = 5.0
+#: BF-5 Fill 事实 JSONL 唯一写者的两个稳定落点（wiring_A_fill_writer.md 处方；
+#: 与 tracker 的每次装配唯一 token 去重集**故意分文件**——共用会让先跑的
+#: tracker.apply_fill 抢登记，写者永远判"已处理"→一行都不落；纯内存 set 又会让
+#: --service 退避重启重放当日成交造重复行）。
+_FILL_JSONL_DIR = _REPO_ROOT / "data" / "fills"
+_FILL_JSONL_DEDUP_PATH = _REPO_ROOT / "data" / "runtime" / "state" / "paper_fill_jsonl_written"
+
+
+# ── BF-5：Fill 事实 JSONL 唯一写者（wiring_A_fill_writer.md 处方，sim 域限动）──
+
+
+class _PaperFillJsonlWriter:
+    """Fill 事实 JSONL 唯一写者（BF-5，F57 恒空总根的治本件）。
+
+    三个非常规处置（处方原文，各有测试钉，不是随手写法）：
+    1. 只吃订单快照副本（copy.copy + filled_quantity=0/avg_fill_price=None）——
+       OrderManager._on_fill 在回调链之前已就地累加订单账，把活订单交给写者
+       ＝同一笔成交在订单账上计两次。
+    2. 快照 order_id 改按 fill 侧键——券商推送带 broker 订单号时 _lookup_order
+       走第二路配对，写者一致性校验若按本地 UUID 键会抛 OrderNotFoundError
+       被派发线程计 errors 吞掉＝又一条静默丢失的 Fill 事实。
+    3. 去重集持久且与 tracker 分文件（见 _FILL_JSONL_DEDUP_PATH 注）。
+
+    env='sim' 硬断言（C107 主卡增补）：本写者=模拟盘域的事实链，实盘 Fill 事实
+    另走对账通道；非 'sim' 域调用一律拒绝构造（禁双域共用写者）。
+    """
+
+    def __init__(
+        self,
+        fills_dir: str | Path = _FILL_JSONL_DIR,
+        dedup_path: str | Path = _FILL_JSONL_DEDUP_PATH,
+        *,
+        env: str = "sim",
+    ) -> None:
+        if env != "sim":
+            raise ValueError(f"Fill JSONL 写者仅限 sim 域（收到 env={env!r}）——实盘事实链另走对账，禁双域共用写者")
+        self._handler = FillHandler(dedup_store=AppendOnlyDedupSet(dedup_path), fills_dir=fills_dir)
+
+    def process_fill(self, fill: Fill, order: Order) -> None:
+        """写者入口：快照副本防二次计数 + fill 侧键防静默丢。"""
+        snapshot = copy.copy(order)
+        snapshot.filled_quantity = Decimal("0")
+        snapshot.avg_fill_price = None
+        snapshot.order_id = fill.order_id
+        self._handler.process_fill(fill, snapshot)
+
+    def query_fills_by_date(self, trade_date: str) -> list[Fill]:
+        """F57 读取口径直通（写读闭环自检用）。"""
+        return self._handler.query_fills_by_date(trade_date)
 
 
 # ── 纯保活占位策略（默认安全态）──────────────────────────────────────────────
@@ -384,8 +435,16 @@ def _wire_position_book_feed(
             )
         return order
 
+    # BF-5 单一写者：消费线程内双落——本地持仓账（既有腿）+ Fill 事实 JSONL（新腿）。
+    # 落在消费线程而非券商回调线程（40_execution_broker §决策①：回调零耗时）。
+    fill_writer = _PaperFillJsonlWriter(env="sim")
+
+    def _consume_fill(fill: Fill, order: Order) -> None:
+        tracker.apply_fill(fill, order.side)
+        fill_writer.process_fill(fill, order)
+
     dispatcher = AsyncFillDispatcher(
-        consumer=lambda fill, order: tracker.apply_fill(fill, order.side),
+        consumer=_consume_fill,
         lookup_order_fn=_lookup_order,
         consumer_name=f"paper-fill-dispatch-{strategy_id}",
     )
