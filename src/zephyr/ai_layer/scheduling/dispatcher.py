@@ -13,7 +13,9 @@
 # [MATURITY] new
 # [INVARIANTS] 进化量尺两问打分=纯函数（score = labor_segments × advantage_bucket × demote，
 #              DESIGN §2.5，全枚举可测）；防饥饿=pending 龄 >7 天一次性 +1.0 bump（policy 常量）；
-#              带星胜 ×0.5 且排同分队尾；repair 工单不与进化比 score（专人专事独立队列，共享配额池）；
+#              谷时偏好=free_window_pref 排序偏好键（C6 消费端 M4 执行器，config 出厂关闭；
+#              纯加分不抢断、坏配置=0 保守不抛）；带星胜 ×0.5 且排同分队尾；
+#              repair 工单不与进化比 score（专人专事独立队列，共享配额池）；
 #              问闸=纯拉式（每段开工瞬间调一次 check_gate，exit 3=拒→deferred，不轮询不 sleep-loop，
 #              资源恢复事件唤醒重评）；配额四读数全部注入（Q1 会话/Q2 子代理/Q3 token/Q4 提交带宽，
 #              不建新计量系统）；降级梯度表全留痕（终点禁自我扩容=定调 #10）；T1 派工前置双预检
@@ -62,6 +64,7 @@ __all__: Final = [
     "count_labor_segments",
     "advantage_bucket",
     "work_order_score",
+    "free_window_boost",
     "rank_pending",
     "skeleton_decisions",
     "apply_skeleton_decisions",
@@ -125,10 +128,12 @@ def work_order_score(
     starred: bool,
     policy: Mapping[str, Any],
     pending_age_days: float = 0.0,
+    free_boost: float = 0.0,
 ) -> dict[str, Any]:
-    """纯函数：score = labor_segments × advantage_bucket × demote（+防饥饿 bump）。
+    """纯函数：score = labor_segments × advantage_bucket × demote（+防饥饿 bump +谷时偏好）。
 
     :param pending_age_days: pending 龄（天）；> starvation_age_days 一次性 +starvation_bump
+    :param free_boost: 谷时偏好加分（free_window_boost 产出；缺省 0=行为与旧式完全一致）
     """
     prio = policy["priority"]
     segments = count_labor_segments(labor_killed, int(prio["labor_segments_max"]))
@@ -136,13 +141,39 @@ def work_order_score(
     base = segments * _BUCKET_SCORES[bucket] * (float(prio["starred_demote_factor"]) if starred else 1.0)
     bump = float(prio["starvation_bump"]) if pending_age_days > float(prio["starvation_age_days"]) else 0.0
     return {
-        "score": round(base + bump, 4),
+        "score": round(base + bump + free_boost, 4),
         "base": round(base, 4),
         "bump": bump,
+        "free_window_boost": round(free_boost, 4),
         "labor_segments": segments,
         "advantage_bucket": bucket,
         "starred": bool(starred),
     }
+
+
+def free_window_boost(now: datetime, policy: Mapping[str, Any]) -> float:
+    """C6 消费端谷时偏好（M4 执行器排序偏好键）：now 落在 policy 谷时窗内 → +boost，否则 0。
+
+    config 面=policy["priority"]["free_window_pref"]：{enabled, windows: ["HH:MM-HH:MM",...], boost}。
+    缺失/关闭/窗表坏=0.0（保守不加分，不抛——偏好键绝不升级为派工阻断面）。
+    时刻判定用调用方注入的 now（tz-aware 由 rank_pending 统一把关；窗端点含左含右）。
+    """
+    try:
+        pref = policy["priority"]["free_window_pref"]
+        if not pref or not pref.get("enabled"):
+            return 0.0
+        boost = float(pref["boost"])
+        minutes = now.hour * 60 + now.minute
+        for win in pref.get("windows") or []:
+            start_s, _, end_s = str(win).partition("-")
+            sh, sm = str(start_s).strip().split(":")
+            eh, em = str(end_s).strip().split(":")
+            start_m, end_m = int(sh) * 60 + int(sm), int(eh) * 60 + int(em)
+            if start_m <= minutes <= end_m:
+                return boost
+        return 0.0
+    except (KeyError, TypeError, ValueError):
+        return 0.0
 
 
 def rank_pending(
@@ -174,6 +205,7 @@ def rank_pending(
             bool(order.get("starred")),
             policy,
             age_days,
+            free_window_boost(now, policy),
         )
         scored.append({"order_id": order["order_id"], "fifo_seq": len(scored), **s})
     scored.sort(key=lambda r: (-r["score"], r["starred"], r["fifo_seq"]))

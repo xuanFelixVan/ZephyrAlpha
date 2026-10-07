@@ -23,6 +23,7 @@ from zephyr.ai_layer.scheduling.dispatcher import (
     count_labor_segments,
     degrade,
     evaluate_quota,
+    free_window_boost,
     rank_pending,
     skeleton_decisions,
     work_order_score,
@@ -317,3 +318,71 @@ def test_skeleton_decisions_projection(journal, tmp_path) -> None:
     assert merged["wo-c"]["state"] == "pending"  # 未拍板：页据此渲染拍板按钮
     assert "state" not in merged["wo-plain"] and "confirm_receipt" not in merged["wo-plain"]
     assert set(skeleton_decisions(journal)) == {"wo-a", "wo-b"}  # 同单取最新留痕
+
+
+# ---------------------------------------------------------------------------
+# 谷时偏好 free_window_pref（C85：C6 消费端 M4 执行器排序偏好键；mock config 全隔离）
+# ---------------------------------------------------------------------------
+
+
+def _policy_with_free_window(base: dict[str, Any], **pref: Any) -> dict[str, Any]:
+    import copy
+
+    p = copy.deepcopy(base)
+    if pref:
+        p["priority"]["free_window_pref"] = pref
+    return p
+
+
+VALLEY_NOW = datetime(2026, 10, 7, 3, 30, 0, tzinfo=UTC)  # 03:30 谷时
+PEAK_NOW = datetime(2026, 10, 7, 12, 0, 0, tzinfo=UTC)  # 12:00 峰时
+
+PREF = {"enabled": True, "windows": ["02:00-07:00"], "boost": 0.5}
+
+
+def test_free_window_boost_in_and_out_of_window(policy: dict[str, Any]) -> None:
+    p = _policy_with_free_window(policy, **PREF)
+    assert free_window_boost(VALLEY_NOW, p) == 0.5  # 窗内=+boost
+    assert free_window_boost(PEAK_NOW, p) == 0.0  # 窗外=0
+    edge = free_window_boost(datetime(2026, 10, 7, 2, 0, 0, tzinfo=UTC), p)
+    assert edge == 0.5  # 端点含左含右
+
+
+def test_free_window_boost_disabled_or_missing_conservative(policy: dict[str, Any]) -> None:
+    assert free_window_boost(VALLEY_NOW, policy) == 0.0  # config 缺块=0（现网行为零变化）
+    p_off = _policy_with_free_window(policy, enabled=False, windows=["02:00-07:00"], boost=0.5)
+    assert free_window_boost(VALLEY_NOW, p_off) == 0.0  # 出厂关闭=0
+    p_bad = _policy_with_free_window(policy, enabled=True, windows=["bad"], boost=0.5)
+    assert free_window_boost(VALLEY_NOW, p_bad) == 0.0  # 坏窗表=0 保守不抛
+    p_nob = _policy_with_free_window(policy, enabled=True, windows=["02:00-07:00"], boost="x")
+    assert free_window_boost(VALLEY_NOW, p_nob) == 0.0  # 坏 boost=0 保守不抛
+
+
+def test_free_window_boost_reorders_ranking(policy: dict[str, Any]) -> None:
+    """偏好键语义：同分工单窗内加分即排序前移（不新增边、不抢占，只影响顺序）。"""
+    mk = lambda oid: {  # noqa: E731
+        "order_id": oid,
+        "labor_killed": "a",
+        "significance": 0.25,
+        "starred": False,
+        "kind": "evolution",
+        "owner_gate": False,
+        "created_at": PEAK_NOW,
+    }
+    orders = [mk("WO-HI-SEG"), mk("WO-LO")]
+    orders[0]["labor_killed"] = "a;b"  # 2 段 base=4.0
+    orders[1]["labor_killed"] = "a"  # 1 段 base=2.0
+    p = _policy_with_free_window(policy, **PREF)
+    base_ids = [r["order_id"] for r in rank_pending(orders, p, PEAK_NOW)]
+    assert base_ids == ["WO-HI-SEG", "WO-LO"]  # 峰时=纯两问序
+    # 谷时给 LO 单独 boost 不改模型——boost 全队同加，验证分数分解与并列翻转：
+    lo_score = work_order_score("a", 0.25, False, p, 0.0, free_window_boost(VALLEY_NOW, p))
+    assert lo_score["score"] == 2.5 and lo_score["free_window_boost"] == 0.5
+    hi_in_window = work_order_score("a;b", 0.25, False, p, 0.0, free_window_boost(VALLEY_NOW, p))
+    assert hi_in_window["score"] == 4.5  # 高分段单仍居首（偏好≠翻转优先级）
+
+
+def test_rank_pending_free_window_naive_now_still_rejected(policy: dict[str, Any]) -> None:
+    p = _policy_with_free_window(policy, **PREF)
+    with pytest.raises(ValueError):
+        rank_pending([], p, datetime(2026, 10, 7, 3, 0, 0))  # naive 仍拒（RULE-SCHEMA-TZ）
