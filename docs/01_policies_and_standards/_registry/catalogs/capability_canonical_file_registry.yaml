@@ -63148,4 +63148,9 @@ creation_tokens:
   capability: master_tc_night
   created_by: st-mastertc-l0
   merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L0_channel/00_workbook.md
+  token: master-tc-night-l0-channel-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
 di_seam_exemptions: []
