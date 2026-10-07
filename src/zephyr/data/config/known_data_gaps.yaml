@@ -1593,8 +1593,39 @@ gaps:
     detection_threshold: 1
     status: "open"
     root_cause: "在册病根（00 册 W-36/02 册 X-40，src/zephyr/data/dual_source_guard.py:28 实锚）：DuckDB governance.db 与 c1_market.reconciliation_differences 两库皆空，对账差异双真源零落地面（2026-09-30 CH 实读 0 行复核）。F06 卷九张清单未列本表，B15 复核补挂"
-    resolution_plan: "先裁对账差异真源唯一归属（DuckDB vs CH，一盘一责）再建写入腿；禁双真源并行"
+    resolution_plan: "先裁对账差异真源唯一归属（DuckDB vs CH，一盘一责）再建写入腿；禁双真源并行。2026-10-07 C299 对齐方案已出（docs/_working/master_tc_20261006/lanes/L5_data/c299_r5_truth_alignment.md）：真源=trades 日历为主+schedule.yaml 班面唯一表达，三步收敛（判据走日历/班面 dow 语义统一=调度域移交/连续 5 交易日无假绿验收）；本行挂账面更新，配置与写入腿施工另批"
     created: "2026-09-30"
-    last_updated: "2026-09-30"
+    last_updated: "2026-10-07"
 
-last_updated: "2026-09-30"
+  - id: "realtime_snapshot_empty_table_no_leg"
+    table: "c1_market.realtime_snapshot"
+    gap_type: "empty_table"
+    start_date: ""
+    end_date: ""
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"
+    root_cause: "C120 空壳表逐表复核补登（st-mastertc-l5，2026-10-07）：wave3 empty_tables_recheck（2026-09-26 探针）13 张 vacuum 名单之一，master_tc 复核时发现其余 12 张均已在册（l2_tick 走 l2_tick_permission_required/edb_data 走 ifind_quota/ipo_schedule 等 6 张走 *_empty_table_no_leg/reconciliation_differences 走 dual_empty_disease/account_nav_daily 走 writer_zero_caller），唯本表漏登；10-07 复测仍 0 行。预留表语义同 6 张先例：schema 在册而采集腿未建，非管道故障。"
+    impact: "c1_market.realtime_snapshot 无数据可读；下游若按表名接线将读空集，普查/对齐侧会误判缺件或假绿。"
+    evidence: "docs/_working/total_command_closeout/wave3/empty_tables_recheck.yaml（2026-09-26 probe，strict_rows=0）；st-mastertc-l5 2026-10-07 DatabaseService 只读复测 count()=0"
+    resolution_plan: "建腿 vs 退役逐表裁=Owner 门（同 6 张先例通道）。退役走 #311/#328 条件通道（rename 隔离 7 天再 DROP，三层调查留证）；建腿=tasks.yaml+provider 接线后本条转 resolved。"
+    created: "2026-10-07"
+    last_updated: "2026-10-07"
+
+  # === 2026-10-04: macro_data 源侧拉取 SSL EOF 失败族（eastmoney datacenter 翻页网络层，IN1-34）===
+  # 图12/TDM 收官·车道D 登记（st-vm12final-20261007-laneD，2026-10-07）：只登记处方不施工，代码批归数据班。
+  - id: "macro_data_eastmoney_ssl_eof_chronic"
+    table: "c1_market.macro_data"
+    gap_type: "source_stale"
+    start_date: "2026-09-18"
+    end_date: null
+    date_column: "report_date"
+    detection_threshold: 1
+    status: "open"
+    root_cause: "eastmoney datacenter-web API 翻页网络层慢性失败：SSLEOFError（[_ssl.c:1000] EOF occurred in violation of protocol），代表件 data/failures/20261004_macro_data_incremental_172555.json 实读（HTTPSConnectionPool datacenter-web.eastmoney.com:443 Max retries exceeded，url=/api/data/v1/get?reportName=RPT_IMP_INTRESTRATEN...=利率族第4页）。车道D 实测（2026-10-07 全 failures 目录扫描）：SSL-EOF 族共 506 件/散布 52 天（09-18 起慢性，09-24~09-26 峰值 13-14 件/日），证明连续翻页长跑必撞网络层；读链本身可达（事故态已解除：CH count=50,767 max(report_date)=2026-10-02）"
+    impact: "macro_data 增量任务部分指标族（利率 RPT_IMP_INTRESTRATEN 等）周期性缺页；检测口径缺口叠加——探测器只查 CHECKSUM_DOESNT_MATCH，0 字节 parts 族不可见（挂 DSC-19）"
+    resolution_plan: "归数据班代码批（IN1-34 处方原文，车道D 只登记）：①macro 拉取加 SSL 重试/退避；②页级断点续跑（失败族证明连续翻页必撞，长跑治本）；③ch_parts_monitor 扩 0 字节 parts 探针（system.parts bytes_on_disk=0 族）。SSL EOF 根因未定论（本机网络/代理 vs 源站 TLS 均可能，置信低）——施工前先人工复跑一次确认可复现性再定方案"
+    created: "2026-10-07"
+    last_updated: "2026-10-07"
+
+last_updated: "2026-10-07"
