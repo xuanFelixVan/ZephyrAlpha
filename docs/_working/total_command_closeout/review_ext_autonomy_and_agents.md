@@ -271,3 +271,13 @@ alternatives_rejected: [{option: "own-scope 大改", why_rejected: "7 袋实测 
    ChAP 的一手来源两次受阻（403 / 405），我只有检索摘要。而"布尔尺不足以判噪声"这个论断，我在本仓方案里**没有找到反证**（`92` 册的尺确实全是布尔），但也**没有找到第二个独立来源**支持"必须上统计阈值"。考虑到本仓是**单机、单 Owner、无流量分桶**，ChAP 的前提（大流量 + KPI 时序 + 显著性检验）在本仓可能根本不成立——统计阈值需要样本量，本仓备份轮一天一次、演练一月一次，**样本量可能永远不足以做显著性检验**。⇒ 此条我倾向**自我降级为"观察项"而非缺口**，但我没把握，交给总筹判。
 3. **§三 T-1/T-3 契约草案的字段是"设计"而非"验证过的实践"，且与内收原则可能冲突。**
    T-1 的 `lane_events.jsonl` + `lane_checkpoint.yaml`、T-3 的 `delegation.yaml` 都是我从 E5-02/E5-03/E5-13 的**概念**推出的字段集，**没有任何一手来源给出过这样的字段清单**（Anthropic/OpenHands 只描述机制，不给 schema）。风险有二：①本仓已有 `.runtime/sessions/<sid>/staging/`、`.ailocks/registry.json`、`94_ledger.md`、queue blobs **四处**近似载体，新增 schema 很可能撞上内收判据铁律 w5_1（同真源可派生→必并），**变成第二真源**；②`turn_budget.checkpoint_at_pct: 80` 这个阈值是我拍的，**无外部依据**。⇒ 这三份草案应被当作**字段候选清单**而非可施工规格；施工前必须先做"是否可从既有四处载体派生"的判定。**同理，痛点 2 处方里我建议复用 Z-38 取号器发 `session_epoch`，但取号器是为一天几次的裁定号设计的，会话心跳是分钟级 × 多会话——高频发号是否可行我没核实，此建议方向性有效、可行性待验。**
+
+---
+
+## §六 补厚补遗（C430，2026-10-07，st-mastertc-l4；仅用仓内案卷交叉引用，不联网）
+
+1. **E1-01 Job Object 覆盖率的"孵化路径未查"缺口，仓内侧已有局部实证**：退役道 C301 已产出 `schtasks` 全量枚举（NB2_evidence/schtasks_all csv，430 任务）——本仓确有**计划任务面**在跑业务进程（reaper 计划任务即宪法 RULE-GUARDIAN 前提）。按 §五.1 的微软口径，这部分进程**不在调用者 Job Object 内**，故"Job Object=100% 覆盖"在本仓不成立；E1-06（handle 复用+create_time 复验）应为主处方，Job Object 仅作 subprocess 腿的加固层。
+2. **E4-04"布尔尺缺统计阈值"单源问题**：同意原卷自我降级为观察项；补一条仓内锚——三把尺判据模板常设化（master_skeleton W-102，本夜已并入四家对表注记：great_expectations/pandera/dbt tests+data-diff/QLib）已把"口径校准"从布尔尺上移一层，统计阈值诉求的落点在 W-102 判据模板而非逐尺改造。
+3. **T-1/T-3 草案的"第二真源"风险，总包夜战已给出实践答案**：本夜 12 车道实际用的是**既有载体派生**路线（lane workbook+lane_result.json 落 `.runtime/sessions/<sid>/staging`+handoff 交接包，见 parallel_session_coordination_policy §2.9/§10），未新建 events/checkpoint/delegation 三 schema——即 §五.3 的"先判派生再施工"已被战役默认执行；三份草案保持"字段候选清单"定位不变，`turn_budget.checkpoint_at_pct: 80` 阈值继续标"无依据待验"。
+4. **"自动化成为事故源"案例不足**：仓内可补一例本地实证——收割器误杀面本夜有正向读数（process_reaper --status：scanned=23/whitelist_hits=20/killed=0），"误杀"风险当前由白名单+keep.txt 登记（长批先登记 `data/runtime/process_reaper_keep.txt`）压制，属原卷痛点 1 处方的仓内落地证据，可作 §二 痛点 1 的本地对照行。
+

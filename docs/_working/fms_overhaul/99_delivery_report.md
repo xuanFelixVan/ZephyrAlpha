@@ -34,7 +34,7 @@ status: 交付中（队列落地+终验进行时）
 - C5（B10 退役七件）：已修复杂度四函数+长参数表（收口代理在途）
 - B3（图书馆接线十二件）：已修 SQL 常量 _SQL_ 前缀+token 随批
 
-## 三、九线挖矿簿（万无一失的证据面）
+## 三、九线挖矿簿（"万无一失不成立"复核的证据面）
 
 docs/_working/fms_overhaul/ 下 S1-S9 九簿全挖干（六向台账+自审闸三态），00_orchestration=总骨架，S8=多队协调协议。任何后续会话拿簿可直接开工。
 
@@ -238,3 +238,78 @@ git status --porcelain -- docs/01_policies_and_standards/_registry/catalogs/rege
 ③后波若在 main 跑全量并见到这 4 红，按本条判读，**不要**去改判据或删测试。
 另注意：主区全量测试面还残留 `tests/library/test_potential_consumers_guard.py` 等
 他道未落地删除位（§十一），同读法。
+
+## 十七、S2 生命周期与临时区（重建纲要节）
+
+- 职责：把"永久/临时隔离"变成机械可判定事实——根目录 19 项残留逐一定性+删除处方、CAS 残渣全仓普查防复发、docs/_working 2,827 件陈化处置、FMS-HYGIENE"永久引临时"第三查判定规则与棘轮基线。
+- 状态：挖干（3 项 Owner 门位外呼已标注，不阻塞无主件净化批）。
+- 真源：`docs/_working/fms_overhaul/S2_lifecycle_ephemeral/README.md`。
+
+## 十八、S3 分类学与命名（重建纲要节）
+
+- 职责：docs/03_modules 三套并存命名体系（4,776 件=yaml 3,353+md 1,423）的十年级收敛规格——镜像树映射函数+命名规则+深度/扇出帽+渐进迁移棘轮，并指认规格真源落点与执法门挂点。
+- 状态：挖干（1 项口径裁定留总筹 §5.4，不阻塞 B9 开工）。
+- 真源：`docs/_working/fms_overhaul/S3_taxonomy_naming/README.md`。
+
+## 十九、S5 图书馆接线：successor_of+lookup 单口+三层对账（重建纲要节）
+
+- 职责：lib_assets 总账加 `successor_of` 墓碑去向指针全线接通（DDL→馆员→lookup→馆页），立"路径禁凭记忆必经 lookup"宪法条款，立总账↔生成视图↔盘面三层一致性检查器（独立新文件避开 st-p1b 三件）。
+- 状态：挖干（唯二外部依赖=Owner 增枝批文+st-p1b 落地后 reconciler 挂接，已给绕行）。
+- 真源：`docs/_working/fms_overhaul/S5_library_wiring/README.md`。
+
+## 二十、S7 生成器与 regen-clean（重建纲要节）
+
+- 职责：全仓生成器/生成物家底普查，落地"凡生成物必有 regenerate && diff 机械验证"：`regen_clean_check.py` 检查器+FMS-REGEN-CLEAN 门，堵宪法 9.5"静态清单禁手工维护"无机械验证之缺。
+- 状态：挖干（自审三态见其 §5）。
+- 真源：`docs/_working/fms_overhaul/S7_generators_regen/README.md`。
+
+## 廿一、S8 并发与冲突面（重建纲要节）
+
+- 职责：登记本夜多队并发格局（worktree 生态 ~90：.aidrafts 23/.worktrees 45+/.qoder 9/队列+tmp）、冲突避让图、gateway 仪式链实证与协调协议——后续会话持本簿即可安全进场。
+- 状态：MINE 完成（挖干）。
+- 真源：`docs/_working/fms_overhaul/S8_conflict_surface/README.md`。
+
+## 廿二、X2 门挂接处方：FMS-REGEN-CLEAN 接线（重建纲要节）
+
+- 结论：检查器本体已落 HEAD（3f9b600d21+q-0009）但执法面=0（三处登记面零命中），属"装饰件待接线"；单对成本实测数据定档，禁凭印象接线；FMS-HYGIENE 已在册（priority=138 warn 起步）。
+- 真源：`docs/_working/fms_overhaul/X2_gate_wiring_prescription.md`。
+
+## 廿三、95 外部审查案卷（只读调研，重建纲要节）
+
+- 三件：F/G 冷储+备份体系审查（分类/漂移/幻觉/重放）、F 盘取证（f_space_forensics）、图书馆命名与本地 MCP（library_naming_and_local_mcp）；全部只读零写操作，证据分级 [亲验]/[读档]/[推断]。
+- 真源：`docs/_working/fms_overhaul/95_external_review/`（三 md）。
+
+## 廿四、_data 数据附件（重建纲要节）
+
+- 死引用四表（deadref_fix_map/deadref_missing_2498/deadref_refcounts/deadref_refs_unique）+非 ASCII 路径清单（non_ascii_paths）；10,683 引用 2,498 死=23.4% 基线的机械底账，FMS-HYGIENE 棘轮基线的数据面。
+- 真源：`docs/_working/fms_overhaul/_data/`（五 csv）。
+
+## 廿五、FMS-HYGIENE 门与死引用治理（重建纲要节）
+
+- 棘轮机制：存量违规进生成基线豁免（只减不增），新增违规一律硬拦；门已注册 in_process_gate_registry（priority=138，warn 起步）；清偿进度见 S2/S5 两簿与 §一 评分卡。
+- 真源：`docs/_working/fms_overhaul/00_orchestration.md` §一/§二（五支柱）。
+
+## 廿六、后续波次与 O-1..O-6 待裁衔接（重建纲要节）
+
+- 本报告 §十~§十五 收尾班（st-fms-tc-20260927）已登记：跨车道暂存删除事件、FMS-HYGIENE 翻档判据缺陷、同文件对撞、终态待裁清单 O-1..O-6 及大白话版；后续班按编号回"批/否/改成X"即可，无需重读全卷。
+- 真源：本册 §十~§十五 + `docs/_working/fms_overhaul/00_orchestration.md`。
+
+## 廿七、重建声明（C129，2026-10-07）
+
+- **本册 §十七..廿八 为重建版纲要节，非原 640 行全文**：原 640 行版已蒸发（盘面仅存 240 行止 §十六），本节由 fms_overhaul 各 S 簿 README/00_orchestration/X2/95_external_review 现存台账重建，每节 3-5 行摘要+真源指针。
+- 原件若有备份/死袋可考古，考古后以原件为准替换本纲要节；重建过程零虚构——全部结论可回溯至所引真源。
+
+## 廿八、真源指针总表（重建纲要节）
+
+| 节 | 真源 |
+|----|------|
+| 十七 | S2_lifecycle_ephemeral/README.md |
+| 十八 | S3_taxonomy_naming/README.md |
+| 十九 | S5_library_wiring/README.md |
+| 二十 | S7_generators_regen/README.md |
+| 廿一 | S8_conflict_surface/README.md |
+| 廿二 | X2_gate_wiring_prescription.md |
+| 廿三 | 95_external_review/（3 md） |
+| 廿四 | _data/（5 csv） |
+| 廿五/廿六 | 00_orchestration.md+本册 §十~§十五 |
+
