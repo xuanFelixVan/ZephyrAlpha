@@ -13,7 +13,7 @@ status_note: 本模板由中段手术批（schema 0.3+gate 补件+挂轴）下�
 
 1. `config/data_supply_chain_map.yaml` 图头 `schema_version: '0.3'` 且 `blood_stage: f1_pending`（手术批已落）。
 2. `python scripts/governance/d5_architecture/validators/validate_data_supply_chain_map.py` → exit 0（errors=0；warns=200 属预期=43 节点血肉未满）。
-3. **Owner 终审回执**：§1 图例标签 9 条已经 Owner 批准冻结（未批=只填 casebooks/trigger_facts/consumers 三字段，purpose_tag 与翻闸等 Owner 批后做）。
+3. **Owner 终审回执：已批 ✅（2026-10-04 Owner 批示"其他全部按照你的建议施工"——§1 九条标签冻结生效，直接进入 §1 写图头）。**
 
 ## §1 图例标签冻结入图头（Owner 终审后第一步）
 
@@ -58,9 +58,9 @@ purpose_tags:
 
 ```yaml
   purpose_tag: fresh_check            # 单值，必在图头 purpose_tags 枚举内；一岗多流程同机制多挂时贴主导目的
-  casebooks:                           # 列表，册籍标识符（有登记身份的病历本；个案不挂——SOP §3 规3）
-  - data/failures 案卷库               # 命名段待上户口批授 CASEBOOK-* 册号后改挂册号
-  - integrator_progress.db task_runs
+  casebooks:                           # 列表，**册号形态=CASEBOOK-NNN**（docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml 唯一反查册，Owner 2026-10-04 上户口批）；可带#章码后缀；个案不挂——SOP §3 规3
+  - CASEBOOK-001                       # data/failures 数据对账案卷库（断供案同库，outage_ 命名段）
+  - CASEBOOK-002#域三                  # 堵点本按章挂示例
   trigger_facts:                       # dict：L1 汇总位三必键（as_of/evidence/期望与计数）；明细归 L2 freshness_evidence 禁重复
     as_of: '2026-10-03'
     evidence: 'machine.tasks_yaml 271 任务执行留痕；F1 表C 双时点口径'
@@ -101,5 +101,6 @@ purpose_tags:
 ## §6 红线
 
 - 只动图 yaml 语义层+自家 vmap12_flesh/ 目录；机生层（machine/counts）禁手改（重跑生成器刷新）。
-- E-3（sla_tracker 死环二选一）/E-6（data/failures 上户口）/E-8（断供台账三选一）呈 Owner 未决前：casebooks 挂现状描述性标识（如 `data/sla（停更38天，E-3 呈批中）`），禁自行退役/建册/删册。
+- **E-3 已裁（Owner 2026-10-04）：source_sla_tracker 退役**——data/sla 禁挂 casebooks（casebook_registry outside_registry 已注记"永久不授册号"）；蓝图 status=retired 禁引用为新依赖。
+- **E-6/E-8 已办（Owner 2026-10-04）**：casebooks 一律挂 CASEBOOK-NNN 册号（casebook_registry.yaml 反查）；断供案落 CASEBOOK-001（data/failures）outage_ 命名段，禁新建断供台账。
 - tasks.yaml 重复 id（E-4）域内未修前，trigger_facts 计数照机生层 271/270 口径转录并注明 duplicate 口径。
