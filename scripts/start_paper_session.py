@@ -171,8 +171,9 @@ _FILL_DISPATCH_DRAIN_TIMEOUT_S = 5.0
 #: 与 tracker 的每次装配唯一 token 去重集**故意分文件**——共用会让先跑的
 #: tracker.apply_fill 抢登记，写者永远判"已处理"→一行都不落；纯内存 set 又会让
 #: --service 退避重启重放当日成交造重复行）。
-_FILL_JSONL_DIR = _REPO_ROOT / "data" / "fills"
-_FILL_JSONL_DEDUP_PATH = _REPO_ROOT / "data" / "runtime" / "state" / "paper_fill_jsonl_written"
+_DEFAULT_FILLS_DIR = _REPO_ROOT / "data" / "fills"
+_FILL_JSONL_DEDUP_NAME = "paper_fill_jsonl_written"
+_DEFAULT_FILL_JSONL_DEDUP_PATH = _REPO_ROOT / "data" / "runtime" / "state" / _FILL_JSONL_DEDUP_NAME
 
 
 # ── BF-5：Fill 事实 JSONL 唯一写者（wiring_A_fill_writer.md 处方，sim 域限动）──
@@ -188,7 +189,7 @@ class _PaperFillJsonlWriter:
     2. 快照 order_id 改按 fill 侧键——券商推送带 broker 订单号时 _lookup_order
        走第二路配对，写者一致性校验若按本地 UUID 键会抛 OrderNotFoundError
        被派发线程计 errors 吞掉＝又一条静默丢失的 Fill 事实。
-    3. 去重集持久且与 tracker 分文件（见 _FILL_JSONL_DEDUP_PATH 注）。
+    3. 去重集持久且与 tracker 分文件（见 _DEFAULT_FILL_JSONL_DEDUP_PATH 注）。
 
     env='sim' 硬断言（C107 主卡增补）：本写者=模拟盘域的事实链，实盘 Fill 事实
     另走对账通道；非 'sim' 域调用一律拒绝构造（禁双域共用写者）。
@@ -196,8 +197,8 @@ class _PaperFillJsonlWriter:
 
     def __init__(
         self,
-        fills_dir: str | Path = _FILL_JSONL_DIR,
-        dedup_path: str | Path = _FILL_JSONL_DEDUP_PATH,
+        fills_dir: str | Path = _DEFAULT_FILLS_DIR,
+        dedup_path: str | Path = _DEFAULT_FILL_JSONL_DEDUP_PATH,
         *,
         env: str = "sim",
     ) -> None:
@@ -409,6 +410,8 @@ def _wire_position_book_feed(
     tracker: PositionTracker,
     *,
     strategy_id: str,
+    fills_dir: str | Path | None = None,
+    fill_jsonl_dedup_path: str | Path | None = None,
 ) -> AsyncFillDispatcher:
     """券商成交 → 入队 → 派发线程落本地持仓账（盘中对账链的前置件）。
 
@@ -437,7 +440,12 @@ def _wire_position_book_feed(
 
     # BF-5 单一写者：消费线程内双落——本地持仓账（既有腿）+ Fill 事实 JSONL（新腿）。
     # 落在消费线程而非券商回调线程（40_execution_broker §决策①：回调零耗时）。
-    fill_writer = _PaperFillJsonlWriter(env="sim")
+    # fills_dir/fill_jsonl_dedup_path 注入缝=测试隔离用（禁写 data/ 生产路径），生产缺省走常量落点。
+    fill_writer = _PaperFillJsonlWriter(
+        fills_dir=_DEFAULT_FILLS_DIR if fills_dir is None else fills_dir,
+        dedup_path=_DEFAULT_FILL_JSONL_DEDUP_PATH if fill_jsonl_dedup_path is None else fill_jsonl_dedup_path,
+        env="sim",
+    )
 
     def _consume_fill(fill: Fill, order: Order) -> None:
         tracker.apply_fill(fill, order.side)
