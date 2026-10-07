@@ -402,6 +402,28 @@ ENTRY_SPECS: dict[str, tuple[str, str, str]] = {
         "summary.rules_total",
         "summary.rules_total 字段值（生成器现算=规则册 trae_*.yaml 文件数）",
     ),
+    # 2026-10-08 重放批（st-workingchief-20261006）：10-06 夜批落地后被落袋战争滚回，增量幂等重放——
+    # 六张地图族口径 + RULING 数据键实为 entries（旧词 'rulings' 派生 None 曾被误报 MISSING）+
+    # TRANSLATION 四族 yaml_sum
+    "REG-MAP-TDM-001": ("yaml_list", "nodes", "nodes 条目数（TDM 四 flow 节点）"),
+    "REG-MAP-FACTORY-001": ("yaml_list", "nodes", "nodes 条目数（FACTORY 十层 341 节点）"),
+    "REG-MAP-GOMAP-001": (
+        "yaml_field",
+        "counts.total_modules",
+        "counts.total_modules 字段值（GOMAP 七族全模块挂载，生成器字段）",
+    ),
+    "REG-MAP-CWF-001": ("yaml_list", "nodes", "nodes 条目数（图14 施工升级流 28 节点）"),
+    "REG-MAP-SCLC-001": ("yaml_list", "transitions", "transitions 条目数（图15 状态机 17 迁移边）"),
+    "REG-MAP-GLM-001": ("yaml_list", "transitions", "transitions 条目数（立法流状态机 9 迁移边）"),
+    "REG-RULING-001": ("yaml_list", "entries", "entries 数组条目数（pg_ledger 只读投影，裁定唯一真源）"),
+    "REG-MODULE-TRANSLATION-001": (
+        "yaml_sum",
+        "entries+algo_submodules+battle_map_cross_cutting+battle_map_steps",
+        "四族条目数合计（entries+algo_submodules+battle_map_cross_cutting+battle_map_steps）",
+    ),
+    # 2026-10-08（st-workingchief-20261006）：casebook_registry.yaml 已由 st-vm12final-laneE
+    # 自死袋 blob 复活落仓（95a5e4e78c），broken=1 解除在即——补口径收官
+    "REG-CASEBOOK-001": ("yaml_list", "casebooks", "casebooks 数组条目数（永久病历本登记册）"),
 }
 
 # 不可自动数的表（原因显式登记；改口径需同步本表）
