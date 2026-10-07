@@ -62995,9 +62995,10 @@ creation_tokens:
   merge_evaluation: "复插:总纲§四车道作业簿(模板明列),替代物=无,同域不并"
 - file: src/zephyr/governance/data_governance/entity_graph_uscc_bridge.py
   token: entity-graph-uscc-bridge-entity-graph-uscc-bridge-20261006
-  created_by: st-mastertc-l5
   capability: entity_graph_uscc_bridge
+  created_by: st-mastertc-l5
   merge_evaluation: "复插:EC1§5.3/C122 消歧桥(只读提案器),替代物=无,同域不并"
+  no_mount_reason: "只读数据治理提案器(名册行→uscc 匹配建议,纯函数零写库),非节点图业务资产;消费挂载归属随 EC1 chainmap_equity_graph 前端富化批域图扩图另批(C122 卡面,2026-10-07 重启会话 st-mastertc-l5b 补申报)"
 - file: scripts/backtest/factory_grid_executor.py.tmp.2348.92a504f68dac
   token: grid-stats-engine-factory-grid-executorpytmp2348-20261006
   created_by: st-mastertc-l7
@@ -63039,4 +63040,112 @@ creation_tokens:
   capability: t3a_exam_verdict
   created_by: st-t3series-20261006
   merge_evaluation: "判决书机读面（同真源同源派生=md 的数据层，消费方=覆盖账本生成器/晨报），非第二真源"
+- file: src/zephyr/signal_ashare/limit_up/event_axis.py
+  token: l6-signal-structure-event-axis-20261007
+  capability: l6_signal_structure
+  created_by: st-mastertc-l6
+  merge_evaluation: "C232 波10 G-B.3 首件落码：涨停事件轴显式层（封板/开板炸/炸板），替代案卷登记面；w5_1 不并（跨域不同对象：事件轴 vs 双池统计件）"
+  no_mount_reason: "研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）"
+- file: src/zephyr/signal_ashare/swing_sequence.py
+  token: l6-signal-structure-swing-seq-20261007
+  capability: l6_signal_structure
+  created_by: st-mastertc-l6
+  merge_evaluation: "C234 波10 G-C.2 首件落码：复用缠论分型的摆动序列标注，禁第二套极值算法（零同物在册）；w5_1 不并（极值检测唯一实现=chanlun，本件为序列标注层）"
+  no_mount_reason: "研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）"
+- file: src/zephyr/signal_ashare/resonance_pair.py
+  token: l6-signal-structure-resonance-20261007
+  capability: l6_signal_structure
+  created_by: st-mastertc-l6
+  merge_evaluation: "C235 波10 G-C.3 首件落码：15M 上沿×1M 双峰组合态判定器（不点火），消费 swing_sequence 语义；w5_1 不并（判定器 vs 检测器跨层不同对象）"
+  no_mount_reason: "研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）"
+- file: docs/_working/master_tc_night/00_orchestration.md
+  token: master-tc-night-00-orchestration-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/00_环节总表.md
+  token: master-tc-night-00--20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/01_block_data_supply.md
+  token: master-tc-night-01-block-data-supply-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/02_block_signal_strategy.md
+  token: master-tc-night-02-block-signal-strategy-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/03_block_backtest_exam.md
+  token: master-tc-night-03-block-backtest-exam-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/04_block_live_execution.md
+  token: master-tc-night-04-block-live-execution-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/05_block_governance_gates.md
+  token: master-tc-night-05-block-governance-gates-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/01_skeleton/06_block_infrastructure.md
+  token: master-tc-night-06-block-infrastructure-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L10_rulings/00_workbook.md
+  token: master-tc-night-00-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L10_rulings/PENDING_RULINGS.md
+  token: master-tc-night-pending-rulings-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L11_test_rehome/00_workbook.md
+  token: master-tc-night-00-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L11_test_rehome/delivery.json
+  token: master-tc-night-delivery-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L3_commitchain/00_workbook.md
+  token: master-tc-night-00-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L5_data/00_workbook.md
+  token: master-tc-night-00-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L5_data/c156_field_rename_mapping.md
+  token: master-tc-night-c156-field-rename-mapping-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L5_data/c299_r5_truth_alignment.md
+  token: master-tc-night-c299-r5-truth-alignment-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L7_backtest/00_workbook.md
+  token: master-tc-night-00-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/r5_exemption.md
+  token: master-tc-night-r5-exemption-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l0
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
 di_seam_exemptions: []
