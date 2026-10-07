@@ -75,6 +75,7 @@ def compute_layer_spread(
     factor_panel: pd.DataFrame,
     return_panel: pd.DataFrame,
     n_layers: int | None = None,
+    use_kernel: bool = True,
 ) -> pd.Series:
     """计算多空收益差时间序列（最高层 - 最低层）。
 
@@ -82,12 +83,17 @@ def compute_layer_spread(
         factor_panel: index=date, columns=symbol, values=因子值
         return_panel: index=date, columns=symbol, values=前向收益
         n_layers: 分层数，None 时从配置读取
+        use_kernel: True=委托 compute_layer_spread_kernel（xp 核，与 pandas 路径
+            逐位对拍实测零差，提速实测读数见 mining/layered_spread_kernel_wiring_v1.md）；
+            False=纯 pandas 后备（逐日 layered_returns，原实现保留）
 
     Returns:
         pd.Series，index=date, values=多空收益差。数据不足的截面跳过。
     """
     if n_layers is None:
         n_layers = _get_n_layers()
+    if use_kernel:
+        return compute_layer_spread_kernel(factor_panel, return_panel, n_layers=n_layers)
     common_dates = factor_panel.index.intersection(return_panel.index)
     spreads: dict = {}
     for date in common_dates:
@@ -286,7 +292,8 @@ def parity_end_to_end(layer_mode: str = "quantile_replica") -> dict:
     ]:
         fp = _random_panel(t, c, nan_pct, seed)
         rp = _random_panel(t, c, nan_pct, seed + 1000)
-        want = compute_layer_spread(fp, rp, n_layers=5)
+        # 接线后参照侧必须显式走纯 pandas 后备，否则 kernel vs kernel 自比失效
+        want = compute_layer_spread(fp, rp, n_layers=5, use_kernel=False)
         got = compute_layer_spread_kernel(fp, rp, n_layers=5, layer_mode=layer_mode)
         common = want.index.intersection(got.index)
         w = want.loc[common].to_numpy()
