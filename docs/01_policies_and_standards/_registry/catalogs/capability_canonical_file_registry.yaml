@@ -63915,4 +63915,10 @@ creation_tokens:
   created_by: st-mx07-L1
   capability: classic_indicator_investigation
   merge_evaluation: "调查报告新建单文件，无替代对象；同真源派生=无；消费面=裁定#489①复议输入与 fexam v2 立项建议；零触发零消费判据不适用（新文档首日）"
+- file: docs/_working/l5_lanes/pyc_reconstruct_spec_missing2.md
+  token: st-fr-resurrect-pycspec-20261008
+  created_by: st-fr-resurrect
+  capability: srcline1
+  merge_evaluation: "六转化器缺件两枚的 pyc 内省重建规格（docstring/签名幸存面），重建种子非第二真源"
+
 di_seam_exemptions: []
