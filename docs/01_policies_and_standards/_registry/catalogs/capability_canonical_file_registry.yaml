@@ -62998,7 +62998,6 @@ creation_tokens:
   capability: entity_graph_uscc_bridge
   created_by: st-mastertc-l5
   merge_evaluation: "复插:EC1§5.3/C122 消歧桥(只读提案器),替代物=无,同域不并"
-  no_mount_reason: "只读数据治理提案器(名册行→uscc 匹配建议,纯函数零写库),非节点图业务资产;消费挂载归属随 EC1 chainmap_equity_graph 前端富化批域图扩图另批(C122 卡面,2026-10-07 重启会话 st-mastertc-l5b 补申报)"
 - file: scripts/backtest/factory_grid_executor.py.tmp.2348.92a504f68dac
   token: grid-stats-engine-factory-grid-executorpytmp2348-20261006
   created_by: st-mastertc-l7
@@ -63045,19 +63044,16 @@ creation_tokens:
   capability: l6_signal_structure
   created_by: st-mastertc-l6
   merge_evaluation: "C232 波10 G-B.3 首件落码：涨停事件轴显式层（封板/开板炸/炸板），替代案卷登记面；w5_1 不并（跨域不同对象：事件轴 vs 双池统计件）"
-  no_mount_reason: "研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）"
 - file: src/zephyr/signal_ashare/swing_sequence.py
   token: l6-signal-structure-swing-seq-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
   merge_evaluation: "C234 波10 G-C.2 首件落码：复用缠论分型的摆动序列标注，禁第二套极值算法（零同物在册）；w5_1 不并（极值检测唯一实现=chanlun，本件为序列标注层）"
-  no_mount_reason: "研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）"
 - file: src/zephyr/signal_ashare/resonance_pair.py
   token: l6-signal-structure-resonance-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
   merge_evaluation: "C235 波10 G-C.3 首件落码：15M 上沿×1M 双峰组合态判定器（不点火），消费 swing_sequence 语义；w5_1 不并（判定器 vs 检测器跨层不同对象）"
-  no_mount_reason: "研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）"
 - file: docs/_working/master_tc_night/00_orchestration.md
   token: master-tc-night-00-orchestration-20261007
   capability: master_tc_night
@@ -63203,4 +63199,29 @@ creation_tokens:
   created_by: st-mastertc-l2
   capability: lane-workbook
   merge_evaluation: "夜战车道作业簿/案卷：纯新增车道工作区零替代（任务绑定，战役归档随袋退役）"
+- file: docs/_working/fullflow_mining/57_gap_vs_fullflow_matrix.md
+  token: fullflow-mining-57-gap-matrix-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l4
+  merge_evaluation: "总包夜战对账产表,挂fullflow挖矿战役目录,与132总表/全环节总册互指针不重复,战役终了归档"
+- file: docs/_working/master_tc_night/lanes/L4_docs/00_workbook.md
+  token: master-tc-night-00-workbook-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l4
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L4_docs/c266_owner_gate_list.md
+  token: master-tc-night-c266-owner-gate-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l4
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L4_docs/c342_ghost_refs.md
+  token: master-tc-night-c342-ghost-refs-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l4
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/master_tc_night/lanes/L4_docs/lane_result.json
+  token: master-tc-night-lane-result-20261007
+  capability: master_tc_night
+  created_by: st-mastertc-l4
+  merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
 di_seam_exemptions: []
