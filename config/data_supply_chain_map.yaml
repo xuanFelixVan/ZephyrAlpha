@@ -3,6 +3,7 @@
 # 人工语义层（nodes/edges/laws/segments/boundary）existing-wins；machine/counts 每次重建
 # 血肉源：docs/_working/map_build/fig12_datachain/{00_skeleton.md,01~05 作业簿,11/12 两卷}（实测结论已作节点字段）
 # 纪律：INV-1 只存标识符与指针｜挂槽≠在跑｜空串≠无数据｜production 必带 freshness_evidence｜缺口不冒充 built｜双轴与骨架 §1 同源（production 数==✅ 数）
+# 图例注记（IN1-E1·Owner 批选②·2026-10-07 落图）：fresh_check/ledger_readable=字段级语义不入标签轴——语义分别由 freshness_evidence 字段与 DSC-20 审计面承载（零格面改动零重贴）
 schema_version: '0.3'
 blood_stage: f2_done
 purpose_tags:
@@ -144,6 +145,7 @@ nodes:
   source_anchors:
   - file:src/zephyr/data/config/tasks.yaml
   - file:src/zephyr/data/provider_base.py
+  - file:src/zephyr/data/error_classifier.py
   data_refs: []
   store_refs:
   - artifact: 源能力契约
@@ -279,7 +281,7 @@ nodes:
     slots:
       daily_capital:
         in_schedule: true
-        task_count: 43
+        task_count: 45
         special_dispatch: false
       daily_event:
         in_schedule: true
@@ -287,7 +289,7 @@ nodes:
         special_dispatch: false
       daily_kline:
         in_schedule: true
-        task_count: 36
+        task_count: 38
         special_dispatch: true
       monthly_static:
         in_schedule: true
@@ -660,12 +662,14 @@ nodes:
     evidence: 幽灵库名引用：c1_market.news_data在CH 247表不存在,真身c3_fundamental.news_data 7,930,454行新鲜(11卷§1D)
     zero_trigger_verdict: dead
 - node_id: DSC-GAP-MACRO
-  name_zh: 运行事故：macro_data 0 字节部件装载失败致读链不可达（探测器口径外）
+  name_zh: 运行事故（已解除）：macro_data 0 字节部件装载——读链已恢复，节点退役留痕（残病登记数据班）
   segment: S1_collect
   node_type: gap
   decision_question: 一张表的部件坏了，谁会先知道？现有检核里有谁的口径抓得住它？
-  note_zh: 批次4（09-25T03:55）实录 187×0 字节 parts 致该表装载失败，并连锁打死 system.tables/parts/columns 全枚举面；本车道 09-25T15:2x 复跑该表已可读（max(report_date)=09-24）＝事故态解除。可修问题禁洗成
-    🌑：本节点按运行事故红项入账，检测口径缺口（CHECKSUM 之外的 0 字节部件族）挂 DSC-19。
+  note_zh: 事发：批次4（09-25T03:55）实录 187×0 字节 parts 致该表装载失败，并连锁打死 system.tables/parts/columns 全枚举面；当日 15:2x 复跑该表已可读＝事故态初步解除。改判（IN1-34a，2026-10-07）：事故态解除复测成立——目标表（锚见
+    source_anchors/data_refs）count=50,767、max(report_date)=2026-10-02（DatabaseService reader 直查）；节点转 insufficient_window
+    退役留痕。残病=源侧拉取 SSL EOF 失败族（failures 1,026 件）＋检测口径缺口（CHECKSUM 之外的 0 字节 parts 族不可见，挂 DSC-19），两件登记数据班（处方 IN1-34 b/c：SSL 重试退避+页级断点续跑；ch_parts_monitor
+    扩 0 字节 parts 探针）。
   build_status: pending
   wiring_status: wired_stream
   slot_source: schedule
@@ -718,9 +722,10 @@ nodes:
   consumers:
   - indirect:契约面13个(11卷§4-N2)
   trigger_facts:
-    as_of: '2026-10-04'
-    evidence: macro_data 0字节部件装载失败读链不可达(探测器口径外)；failures macro_data_incremental族1,026件病域旁证(ls 2026-10-03)
-    zero_trigger_verdict: dead
+    as_of: '2026-10-07'
+    evidence: 事故态解除复测：目标表 count=50,767 max(report_date)=2026-10-02（DatabaseService reader 直查 2026-10-07）；残病=源侧SSL失败族1,026件+检测口径缺口（登记数据班，IN1-34
+      b/c）
+    zero_trigger_verdict: insufficient_window
 - node_id: DSC-04
   name_zh: ClickHouse 写入通道（两条二级降级）
   segment: S2_ingest
@@ -921,6 +926,7 @@ nodes:
   verified_scope: structure
   evidence:
   - docs/_working/map_build/fig12_datachain/02_入库单通道与幂等判重.md §4 溢-3
+  - file:src/zephyr/data/scheduler.py:1128-1165 _start_local_replay 守护线程在岗实读（启动即检+30min 周期+超阈值追平 replay_catchup）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -933,10 +939,12 @@ nodes:
     executors_missing: []
   purpose_tag: source_fallback
   casebooks: []
-  consumers: []
+  consumers:
+  - code:src/zephyr/data/scheduler.py:1128-1165
   trigger_facts:
-    as_of: '2026-10-04'
-    evidence: 回灌排空测量腿未接(GAP-REPLAY)——期望未知计数缺席，禁判死(SOP v1.1.0补丁1)
+    as_of: '2026-10-07'
+    evidence: 回灌排空测量腿未接(GAP-REPLAY)——期望未知计数缺席，禁判死(SOP v1.1.0补丁1)；回灌腿在岗实证=_start_local_replay 守护线程（scheduler.py:1128-1165
+      实读 2026-10-07，两代毒丸隔离目录 10-01/10-03=回灌尝试留痕）
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-06
   name_zh: 幂等写与判重（引擎语义 + 全字段判重正门）
@@ -1162,7 +1170,10 @@ nodes:
     - daban_engine_load_daily
     - emotion_index_close_final
     - emotion_index_pre_open
+    - eod_reconciliation_daily
     - factor_decay_monitor_weekly
+    - factor_feature_value_daily
+    - factor_signal_daily
     - financial_derived_build
     - hk_trade_calendar_refresh
     - index_adjustment_derive
@@ -1183,8 +1194,8 @@ nodes:
         strategy_screen: 0
         account_nav_daily: 0
         execution_report: 0
-        factor_feature_value: 0
-        factor_signal: 0
+        factor_feature_value: 3
+        factor_signal: 3
       note_zh: 命中数全 0 ⇒ 该批表的生产者不在 tasks.yaml 面内（DSC-21 立行的机械尺）
   purpose_tag: schedule_complete
   casebooks:
@@ -1203,7 +1214,9 @@ nodes:
   node_type: stage
   decision_question: 派生层滞后是派生自己的锅，还是上游的锅？
   note_zh: 两条 internal 腿：financial_derived_build（deps=三大报表）与 consensus_daily_build（deps=研报明细+交易日历）；PIT 铁律在派生侧有第二道守卫（1970
-    哨兵 + publish_date<=trade_date 零 embargo）。行级状态=分面。
+    哨兵 + publish_date<=trade_date 零 embargo）。改判（IN1-27①，2026-10-07）：停摆口径作废——链已复活（consensus_daily max(trade_date)=2026-09-30
+    与上游 research_report max(publish_date)=09-30 严格相等；build 双腿 09-28~10-02 多次 SUCCESS）。残病=上游 research_report_detail_incremental
+    慢性超时（连续 STALE 撞 6h 收割闸，见 gaps 台账，归数据班）。行级状态=分面。
   build_status: partial
   wiring_status: wired_cron
   slot_source: schedule
@@ -1246,28 +1259,33 @@ nodes:
   facets:
   - leg_id: financial
     name_zh: 财务派生腿
-    status: 🔨
+    status: ✅
     evidence:
-    - 本车道复跑：financial_derived_build 末次 2026-09-24T23:27:35Z(北京) status=FAILED
-    - error='<' not supported between instances of 'str' and 'datetime.date'
-    - financial_derived max(announce_date)=09-02；09-23/24 案卷均列漏跑
+    - '修复提交 baee3850fde（09-27）后多次 SUCCESS：task_runs #197111(09-28)/#207524(10-02) 实读（2026-10-07 只读台账）'
+    - financial_derived 306,527 行 max(announce_date)=2026-09-02（DatabaseService reader 复跑 2026-10-07）
   - leg_id: consensus
     name_zh: 一致预期腿
-    status: 🔴
+    status: ✅
     evidence:
-    - consensus_daily max=2026-09-14（本车道复跑 6,797,719 行，停更持续）
-    - consensus_daily_build 末次 09-18 FAILED＋连日漏跑
+    - consensus_daily 6,829,376 行 max(trade_date)=2026-09-30，与 research_report max(publish_date)=09-30 严格相等（DatabaseService
+      reader 复跑 2026-10-07）
+    - 'consensus_daily_build task_runs #199983(09-30)/#205178(10-01) SUCCESS 实读'
   gaps:
   - anchor: task:financial_derived_build
     symptom: run_failing
     measured_on: '2026-09-25'
     pointer: integrator_progress.db task_progress（本车道只读复跑）＋ 05 簿 §1.2 案卷
-    note_zh: 财务腿由批次4 的案卷漏跑升级为跑必失败（类型比较异常），三腿中档期留痕有但结果为红
+    note_zh: '财务腿 09-24/25/26 跑必失败（类型比较异常）——已治本：修复提交 baee3850fde（09-27）后 #197111/#207524 全 SUCCESS（2026-10-07 复核闭合）'
   - anchor: file:src/zephyr/data/financial_parser.py
     symptom: path_ghost
     measured_on: '2026-09-24'
     pointer: docs/_working/map_build/fig12_datachain/03_衍生加工三族.md §4 溢-7
     note_zh: 骨架原列真源，其 CONSUMERS 自证接线尚未发生——不在产数路径，真源映射已改挂两个 compute 实现件
+  - anchor: task:research_report_detail_incremental
+    symptom: stale_slot_run
+    measured_on: '2026-10-07'
+    pointer: task_runs 台账 data/integrator_progress.db（只读实读 2026-10-07：09-21~10-02 八 STALE/一 SUCCESS）＋预诊断处方 IN1-27（vmap12_intake，归数据班）
+    note_zh: 残病指针：上游单次实跑 4.6~7h+ 撞 6h stale-reap 闸（10-02 仍 STALE），上游断则 consensus 腿再停——治残病处方在案归数据班，本格留观察位
   machine:
     executors:
     - path: src/zephyr/data/implementations/financial_derived_compute.py
@@ -1289,11 +1307,13 @@ nodes:
   - registry:factor_registry:277/12394/12433
   - ref:docs/_working/map_build/fig12_datachain/11_消费端需求反查.md§1A/B
   trigger_facts:
-    as_of: '2026-10-04'
-    evidence: 一致预期腿停摆：consensus_daily max=2026-09-14停10日(6,797,719行实测11卷§1B)——期望>1且计数缺席判死；financial_derived max=06-30正常档期
+    as_of: '2026-10-07'
+    evidence: 链复活：consensus_daily max(trade_date)=2026-09-30（6,829,376行 reader 直查）与 research_report max(publish_date)=09-30
+      严格相等；build 双腿 SUCCESS=#199983(09-30)/#205178(10-01)/#197111(09-28)/#207524(10-02)（task_runs 只读台账）；残病=上游 research_report_detail_incremental
+      慢性超时（10-02 仍 STALE，归数据班）
     expected_runs_window: 7
-    observed_runs: 0
-    zero_trigger_verdict: dead
+    observed_runs: 2
+    zero_trigger_verdict: alive
 - node_id: DSC-09
   name_zh: 形态 / 情绪 / 板块状态衍生
   segment: S3_derive
@@ -1507,11 +1527,13 @@ nodes:
     evidence: 任务表外进程内生产(不走tasks/schedule=打卡集合照不到)；产物读数regime_snapshot 09-24/strategy_screen 09-22；C态5表中4表栽此域(11卷§4-N1)
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-GAP-CONSENSUSCHAIN
-  name_zh: 断链：research_report→consensus_daily 预期重建链停摆
+  name_zh: 断链（已复活）：research_report→consensus_daily 预期重建链——09-30 起回正，节点退役留痕
   segment: S3_derive
   node_type: gap
   decision_question: 预期因子食的是哪一天的数据？上游断与下游断怎么分？
-  note_zh: 研报明细 max(publish_date)=09-18（本车道复跑未涨）→ 预期重建 max=09-14（比上游还早 4 天＝派生自身也停）→ 因子族与 15 卷卡直接食旧；build 任务连日列漏跑、末次 FAILED。
+  note_zh: 事发（09-25 定账）：研报明细 max(publish_date)=09-18（本车道复跑未涨）→ 预期重建 max=09-14（比上游还早 4 天＝派生自身也停）→ 因子族与 15 卷卡直接食旧；build 任务连日列漏跑、末次
+    FAILED。改判（IN1-27①，2026-10-07）：链已复活——consensus_daily max(trade_date)=2026-09-30 与上游 research_report max(publish_date)=09-30
+    严格相等，build 双腿多次 SUCCESS；已达本格自述退役条件（重跑通＋新鲜度回正），按禁删格纪律转退役留痕留档防再断，残病指针挂 DSC-08 gaps 台账（归数据班）。
   build_status: pending
   wiring_status: wired_cron
   slot_source: schedule
@@ -1560,9 +1582,10 @@ nodes:
   - code:factor/expectations.py:19
   - registry:factor_registry共识族
   trigger_facts:
-    as_of: '2026-10-04'
-    evidence: research_report停6日+consensus停10日且派生差4日=派生本身停(11卷§1B)
-    zero_trigger_verdict: dead
+    as_of: '2026-10-07'
+    evidence: 链已复活：consensus max(trade_date)=2026-09-30=上游 research_report max(publish_date)（严格相等判据过，reader 直查 2026-10-07）；残病指针=DSC-08
+      gaps 台账（归数据班）
+    zero_trigger_verdict: alive
 - node_id: DSC-GAP-NAV
   name_zh: 等未产表：c1_market.account_nav_daily（三消费方在等，写器零接线）
   segment: S3_derive
@@ -1811,8 +1834,8 @@ nodes:
   downstream_action: none
   fallback: []
   invalidation: null
-  module_id: MOD-L00-004
-  module_ref: src/zephyr/data/ch_reader.py
+  module_id: null
+  module_ref: null
   source_anchors:
   - file:docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
   - c1_market.technical_indicator
@@ -2175,12 +2198,14 @@ nodes:
     evidence: backup_log max=2026-09-24T22:47Z(北京09-25 06:47)日发；schtasks DailyBackup 09-24 06:00 Result=0(cons12§3)；今晨代码快照腿failed(GAP-CODEBACKUP)
     zero_trigger_verdict: alive
 - node_id: DSC-GAP-CODEBACKUP
-  name_zh: 断供：今晨备份的代码快照腿 status=failed
+  name_zh: 事件缺口（已闭合）：代码快照腿 09-25 一次性失败——10-04 起 ok 自愈（留档防再发）
   segment: S4_coldstore
   node_type: gap
   decision_question: 报告里 CH 成功，就等于所有阶段都成功吗？
   note_zh: 本车道读 logs/backup_report_20260925_060007.json：databases.clickhouse.status=ok 且 verified=True，但 code_backup.status=failed（failures=1、vanished=5）；OS
-    任务态未回收。灾备段的 ✅ 因此带限定。
+    任务态未回收。灾备段的 ✅ 因此带限定。改判（IN1-29/IN1-12，2026-10-07）：09-25 事件型缺口已闭合——10-04~10-07 报告主流 status=ok/failures=0（10-05 060005
+    实读 ok/0/0，rotated 正常滚动）；10-07 上午 09:44~11:37 又现 9 连败（robocopy 撞活锁文件 tilib_nightly_run.log，与 09-25 同类瞬时竞争）13:40 起自愈 ok——格留档防再发（禁删格），新事件见
+    gaps 台账 2026-10-07 条。
   build_status: pending
   wiring_status: wired_os_task
   slot_source: schtasks
@@ -2193,6 +2218,7 @@ nodes:
   source_anchors:
   - file:scripts/backup/backup.ps1
   - file:logs/backup_report_20260925_060007.json
+  - file:logs/backup_report_20261005_060005.json
   data_refs: []
   store_refs:
   - artifact: 版本化快照
@@ -2210,6 +2236,8 @@ nodes:
   verified_scope: structure
   evidence:
   - 本车道 09-25 只读复跑：报告 JSON（utf-8-sig）逐字段实读
+  - 改判复核 2026-10-07：logs/backup_report_20261005_*/20261007_* 批量实读——10-05 27 份全 ok/failures=0，10-07 除 09:44~11:37 九份瞬时 failed
+    外全 ok（同日自愈）——09-25 事件型缺口闭合成立
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2218,22 +2246,29 @@ nodes:
     symptom: run_failing
     measured_on: '2026-09-25'
     pointer: backup_report_20260925_060007.json（本车道实读）
-    note_zh: prev_snapshot=20260924、rotated=[]⇒09-25 快照未成，回退窗口只剩 09-24 一份
+    note_zh: prev_snapshot=20260924、rotated=[]⇒09-25 快照未成，回退窗口只剩 09-24 一份（本事件已闭合，见改判注记）
+  - anchor: file:logs/backup_report_20261007_094445.json
+    symptom: run_failing
+    measured_on: '2026-10-07'
+    pointer: backup_report_20261007_094445~113707 九连份实读（error_sample=活锁文件 tilib_nightly_run.log）
+    note_zh: 10-07 上午瞬时失败窗（robocopy 扫描撞活锁文件，与 09-25 同类竞争非结构性）——13:40 起同日自愈 ok（134059/143807/154200 实读），留痕防再发
   machine: {}
   purpose_tag: null
   casebooks: []
   consumers: []
   trigger_facts:
-    as_of: '2026-10-04'
-    evidence: 今晨备份代码快照腿status=failed(节点note;backup_log主腿正常max 09-24)
-    zero_trigger_verdict: dead
+    as_of: '2026-10-07'
+    evidence: 闭合判定：10-04~10-07 报告主流 ok/failures=0（10-05 060005 实读 ok/0/0）；10-07 上午瞬时 failed 窗 9 份已自愈（134059 起 ok）——09-25
+      事件型缺口闭合
+    zero_trigger_verdict: alive
 - node_id: DSC-12
   name_zh: 冷热分层 / 压缩决策（契约驱动，结构上不可能产数 ✅）
   segment: S4_coldstore
   node_type: stage
   decision_question: 分层决策的真源件还活着吗？压缩比数据在哪里？
   note_zh: 本环节是 DSC-10B 的输入节点（决策 vs 执行），不是并列环节；真源=data_retention_contract.yaml §rolling_archive + INV-RET-003/005。骨架原指真源
-    storage_tiering.py 已被裁定#383 判纸面退役（零触发零消费、文件在盘未摘），data_compression_archiver.py 实测零调用方——两件的建成/在盘都不等于在岗。
+    storage_tiering.py 已被裁定#383 判纸面退役（零触发零消费、文件在盘未摘），data_compression_archiver.py 实测零调用方——两件的建成/在盘都不等于在岗。修剪（IN1-20，2026-10-07）：两死件自
+    source_anchors 与机生执行体扫描面摘除（纸面退役件不再充当活锚），历史留档见 gaps 台账。
   build_status: partial
   wiring_status: decision_only
   slot_source: none
@@ -2248,8 +2283,6 @@ nodes:
   module_ref: null
   source_anchors:
   - file:docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
-  - file:src/zephyr/data/storage_tiering.py
-  - file:src/zephyr/data/data_compression_archiver.py
   data_refs: []
   store_refs:
   - artifact: 压缩比度量
@@ -2286,12 +2319,6 @@ nodes:
     - path: docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
       exists: true
       label: ''
-    - path: src/zephyr/data/storage_tiering.py
-      exists: true
-      label: 存储分层生命周期管理 / Storage Tiering Lifecycle
-    - path: src/zephyr/data/data_compression_archiver.py
-      exists: true
-      label: 行情数据压缩归档器
     executors_missing: []
   purpose_tag: can_rollback
   casebooks: []
@@ -2363,8 +2390,8 @@ nodes:
   downstream_action: none
   fallback: []
   invalidation: null
-  module_id: MOD-INF-043
-  module_ref: scripts/ch/_recovery_drill.py
+  module_id: null
+  module_ref: null
   source_anchors:
   - file:scripts/ch/archiver.py
   - file:scripts/backup/restore.ps1
@@ -2815,12 +2842,12 @@ nodes:
     expected_runs_window: 7
     zero_trigger_verdict: insufficient_window
 - node_id: DSC-14D
-  name_zh: 第四通道：事件自动回填（auto_backfiller）——建好未接线
+  name_zh: 第四通道：事件自动回填（auto_backfiller）——留档退役（2026-10-04 Owner批）
   segment: S5_recon
   node_type: channel
   decision_question: 新因子/公式升级/源修复之后的历史重刷，今天由谁触发？
   note_zh: 设计=按日期分片规划回填＋10% 随机抽样验证＋更新血缘并触发 auto-retrain；实测=既不在任何调度分派、也不在任何事件订阅，只有包级 re-export 与单测。骨架 §1 D12-14 的第 4 腿即此件（分面
-    ⬜）。
+    ⬜）。改判（IN1-E7④，Owner 2026-10-04 批）：按留档退役处置——文件在盘、摘挂载，骨架第 4 腿 ⬜ 随批改判为退役留档；节点留档防复活引用（对照先例=storage_tiering 裁定#383 纸面退役）。
   build_status: pending
   wiring_status: unwired_exempt_bypass
   slot_source: none
@@ -2853,6 +2880,7 @@ nodes:
   verified_scope: structure
   evidence:
   - docs/_working/map_build/fig12_datachain/05_对账修复六环.md §2.3（四条可复跑证据链：grep/特殊槽全集/注册表/SOP）
+  - 留档退役批复：in1z_escalations.md IN1-E7——Owner 2026-10-04 裁留档退役（docs/_working/vmap12_intake/）
   freshness_evidence: []
   task_family: null
   facets: []
@@ -2882,8 +2910,8 @@ nodes:
   casebooks: []
   consumers: []
   trigger_facts:
-    as_of: '2026-10-04'
-    evidence: 第四通道建好未接线：re-export+测试而已,wiring_registry以pure_library/exempt合法绕过接线门(WB12-14)——零触发判死成立(死因=未接线)
+    as_of: '2026-10-07'
+    evidence: 第四通道建好未接线（死因=未接线）→ 留档退役 2026-10-04 Owner批（IN1-E7④）：文件在盘摘挂载，节点转退役留档（laneC 2026-10-07 落）
     expected_runs_window: 7
     observed_runs: 0
     zero_trigger_verdict: dead
@@ -2953,10 +2981,9 @@ nodes:
     slots:
       eod_reconciliation:
         in_schedule: true
-        task_count: 0
-        special_dispatch: false
-    hollow_slots:
-    - eod_reconciliation
+        task_count: 1
+        special_dispatch: true
+    hollow_slots: []
     executors:
     - path: src/zephyr/trading/recon_runner.py
       exists: true
@@ -3782,13 +3809,9 @@ counts:
   segment_S4_coldstore: 9
   segment_S5_recon: 11
   unwired_or_hollow: 9
-  gaps_registered: 69
+  gaps_registered: 71
   proposed_semantics: 1
   verified_semantics: 42
-  nodes_with_purpose_tag: 28
-  nodes_with_casebooks: 8
-  nodes_with_trigger_facts: 42
-  nodes_with_consumers: 35
   gap_nodes: 15
   built_nodes: 13
   pending_nodes: 17
@@ -3798,23 +3821,23 @@ counts:
   facet_nodes: 4
   stage_nodes: 22
   skeleton_ok_rows: 10
-  nodes_with_module_id: 27
+  nodes_with_module_id: 25
   gap_ref_edges: 17
 machine:
-  as_of: '2026-10-04'
+  as_of: '2026-10-07'
   sources:
     tasks_yaml:
       path: src/zephyr/data/config/tasks.yaml
-      tasks_total: 271
-      unique_task_ids: 270
+      tasks_total: 276
+      unique_task_ids: 275
       duplicate_task_ids:
       - cohort_ledger_daily
       distinct_sources: 23
-      distinct_target_tables: 192
-      incremental_true: 163
+      distinct_target_tables: 197
+      incremental_true: 165
       fallback_nonempty: 39
       schedule_disabled: 4
-      with_date_col: 198
+      with_date_col: 203
       tasks_with_buffer: 32
       dep_edges: 66
       tasks_with_deps: 43
@@ -3822,8 +3845,8 @@ machine:
       per_source_task_counts:
         akshare: 100
         miniqmt: 56
-        akshare_alt: 36
-        internal: 24
+        akshare_alt: 38
+        internal: 27
         tushare: 13
         tdx: 5
         tqcenter: 5
@@ -3844,10 +3867,10 @@ machine:
         crypto_sentiment_panel: 1
         eastmoney_news: 1
       per_slot_task_counts:
+        daily_capital: 45
         weekend_calibration: 44
-        daily_capital: 43
         daily_event: 42
-        daily_kline: 36
+        daily_kline: 38
         monthly_static: 21
         intraday_minute: 16
         intraday_realtime: 16
@@ -3861,6 +3884,7 @@ machine:
         news_slow: 2
         research_nightly: 2
         daily_alt_fx: 1
+        eod_reconciliation: 1
         weekend_backfill: 1
     schedule_yaml:
       path: src/zephyr/data/config/schedule.yaml
@@ -3912,7 +3936,6 @@ machine:
       - daily_backfill
       - data_supply_sentinel
       - dloop_post
-      - eod_reconciliation
       - integrity_check
       - lane_g_intake_sweep
       - nightly_sentiment
@@ -3933,6 +3956,7 @@ machine:
       - daily_kline
       - data_supply_sentinel
       - dloop_post
+      - eod_reconciliation
       - integrity_check
       - lane_g_intake_sweep
       - nightly_sentiment
@@ -3941,7 +3965,6 @@ machine:
       - sector_pre_open
       - weekend_backfill
       slots_hollow:
-      - eod_reconciliation
       - post_auction
     asset_registry:
       path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
@@ -3951,9 +3974,10 @@ machine:
         jobs: 122
       actual:
         sources: 18
-        datasets: 334
+        datasets: 336
         jobs: 122
-      drift: {}
+      drift:
+        datasets: 2
     skeleton_status:
       path: docs/_working/map_build/fig12_datachain/00_skeleton.md
       rows_scanned: 22
@@ -3976,9 +4000,9 @@ machine:
     module_id_projection:
       path: docs/03_modules/path_ownership_map.yaml
       claims_scanned: 8063
-      nodes_with_module_id: 27
-      nodes_with_module_ref: 27
-      nodes_null_module_id: 16
+      nodes_with_module_id: 25
+      nodes_with_module_ref: 25
+      nodes_null_module_id: 18
     process_in_product: *id002
   source_task_labels:
     akshare: AKShare
@@ -4013,4 +4037,4 @@ machine:
     trigger: ''
     feedback: 反馈
   internal_task_ids: *id001
-  target_table_count: 192
+  target_table_count: 197
