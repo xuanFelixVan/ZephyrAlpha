@@ -63962,4 +63962,9 @@ creation_tokens:
   capability: tail3_ops
   merge_evaluation: "车道C运维取证件，随袋归档"
 
+- file: scripts/governance/commit_claim_check.py
+  token: commit-claim-check-commit-claim-check-20261007
+  created_by: st-govfix-g1-20261007
+  capability: commit_claim_check
+  merge_evaluation: "F3 消息账 vs 代码账对账复查门：复用 git_commit.py 既有 commit message 解析面与提交袋 files 清单真源（宣称代码文件∈袋内布尔判定，零新判据）；与 git_commit.py 内联 F3 快检同函数族收敛（随袋同迁 scripts/governance/ 子目录供复用），跨域不并 claim 对账族"
 di_seam_exemptions: []
