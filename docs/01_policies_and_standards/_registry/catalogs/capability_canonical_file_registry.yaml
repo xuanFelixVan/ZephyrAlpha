@@ -63168,4 +63168,19 @@ creation_tokens:
   created_by: st-mastertc-l1
   capability: lane1_gov_a_workbook
   merge_evaluation: "总包夜战 L1 治理A 车道作业簿+X01 立案档，替代零散任务台账（一次性夜战产物，task_bound）"
+- file: docs/_working/master_tc_night/lanes/L6_factory/00_workbook.md
+  token: master-tc-l6-factory-00-workbook-20261007
+  created_by: st-mastertc-l6
+  capability: master_tc_l6_factory
+  merge_evaluation: "C400/C191/workbook 三册=L6 车道作业簿与触发面/销账台账交付件（真源引用册，零同物在册）；w5_1 不并（跨域不同对象：车道作业面 vs 规则数据册）"
+- file: docs/_working/master_tc_night/lanes/L6_factory/34_trigger_surface.md
+  token: master-tc-l6-factory-34-trigger-surface-20261007
+  created_by: st-mastertc-l6
+  capability: master_tc_l6_factory
+  merge_evaluation: "C400/C191/workbook 三册=L6 车道作业簿与触发面/销账台账交付件（真源引用册，零同物在册）；w5_1 不并（跨域不同对象：车道作业面 vs 规则数据册）"
+- file: docs/_working/master_tc_night/lanes/L6_factory/p2_card_ledger.md
+  token: master-tc-l6-factory-p2-card-ledger-20261007
+  created_by: st-mastertc-l6
+  capability: master_tc_l6_factory
+  merge_evaluation: "C400/C191/workbook 三册=L6 车道作业簿与触发面/销账台账交付件（真源引用册，零同物在册）；w5_1 不并（跨域不同对象：车道作业面 vs 规则数据册）"
 di_seam_exemptions: []

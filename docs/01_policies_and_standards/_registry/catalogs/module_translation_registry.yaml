@@ -67720,3 +67720,35 @@ entries:
   desc_en: ""
   plain_zh: "检查两个行情序列是不是一个先动另一个后动：一格一格试不同的时间差算相关，把所有试出来的结果放一起做多重校验，防止碰巧像的混进来；再把时间段切成前后几段各验一遍看领先关系稳不稳。只出验证报告不下结论，考得不好也如实留档"
   responsibility_layer: business
+- module_path: src/zephyr/factor/analysis/tech_factor_pipeline.py
+  domain_id: D_FACTOR
+  name_zh: "TECH 因子计算链"
+  name_en: "tech factor pipeline"
+  desc_zh: "CNS-01 接线件：指标宽表→因子值面板→合成信号一键链（PIT 透传）"
+  desc_en: ""
+  plain_zh: "它把技术指标宽表里的列读出来变成因子值，再合成为一个综合信号分数，是指标存了没人算到因子真能用之间缺的那条传送带。只建链不吹牛：IC 证据要等数据库实弹跑批才算数。"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/limit_up/event_axis.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "涨停事件轴"
+  name_en: "limit-up event axis"
+  desc_zh: "A股涨停生命周期事件显式层：封板/开板炸/炸板互斥单选事件轴纯函数核"
+  desc_en: ""
+  plain_zh: "它把每天每只股票的涨停状态变成三种明确事件：封住了、开盘就板被砸开、盘中摸板没封住。给涨停生态的下游统计一个统一的事件口径，不再各算各的。"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/swing_sequence.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "摆动结构序列"
+  name_en: "swing sequence"
+  desc_zh: "复用缠论分型的 LH/HH/HL/LL 序列标注与双峰提取纯函数核"
+  desc_en: ""
+  plain_zh: "它把K线图上的高点和低点串成一条摆动轨迹，并标注每个高点比前一个高还是低、每个低点比前一个高还是低，还能找出最近的一对双峰。极值识别完全复用缠论分型，自己不做第二套。"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/resonance_pair.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "共振条件对定义器"
+  name_en: "resonance pair definer"
+  desc_zh: "15M 上沿×1M 双峰组合态判定纯函数核（READY_NOT_FIRED 不点火）"
+  desc_en: ""
+  plain_zh: "它回答一个问题：15分钟图的压力上沿和1分钟图的最近双峰，是不是顶在了同一个价位附近。只给共振成立/不成立的判定结论，绝不发出买卖指令——点火永远是下游的事。"
+  responsibility_layer: business
