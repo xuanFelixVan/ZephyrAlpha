@@ -45,3 +45,9 @@ completes_when: 四清单全部销账（T3b 卡 v2 获批并考毕、L 卡各获
 ## 五、诚实位回声（全条在案）
 
 判决书 §六全录：J 总闸≠TDM L1 六态矩阵、收盘零延迟乐观偏差、复权链断供暂定档、S3 因子面 PIT 纪律、S5 归因口径边界、T3a 只考日级子集、负结果禁删改。预算面新增两条披露：并发偏离（Owner 令）与 12h 帽的分片口径。
+
+## 六、T3b-T0 标定出数（20261007 开工令，呈批件=卡 v2 草案）
+
+- **实测 5.08s/点**（T0=grid_20261007-095504：200 采样/199 活/1 结构负例 insufficient_net（dd20 全关账=净值零方差），1015.4s）——挖矿文档 35.33s/格 恐惧值的 1/7：列切修复后 **GPU 199/200=99.5%**（Owner"用 GPU"令在 T3b 面完全兑现）+overlay 纯向量化。
+- **卡 v2 草案要点**（Owner 批后落冻结文件再开 T1/T2，先冻卷后开考）：空间 phase=3（X_stop 3×X_breaker 2 展开，N_raw=4,354,560，J 双腿继承）；窗/种子沿 T3a（2020-2023/20260915）；预算结构沿 T3a（T0 200 已消耗/T1 7400/T2 1800）；wall clock：T1≈10.4h 单卷（贴 12h 帽线）→**建议 3 路并发分片 ≈3.5h 收卷**（沿 Owner 并行令）；判据=主干沿 17 号文+成本门全档，新增离场判据（stop/breaker 档 vs off 档同配对 cost-adj Sharpe 与 CRISIS MaxDD）=**新维度新判据须 Owner 批**（非挪旧门柱）；honesty 新增：overlay 收盘判定失真/cATR close-only 代理/breaker 五帽带≠live 机/X 无预热语义；序钉=J帽→stop→breaker。
+- 接线施工袋：schema X 维（phase>=3 门控，存量零漂移）+evaluate_recipe 接线+`--context-json` 标定通道+unstack 标签错位真 bug 修复（trail20/linear/pyramid 三处同型，测试烧算力前钓出）——q-0031/0032。
