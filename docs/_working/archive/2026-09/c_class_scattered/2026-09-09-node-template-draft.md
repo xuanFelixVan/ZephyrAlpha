@@ -2,6 +2,7 @@
 ttl: task_bound
 status: RETIRED（已退役，2026-09-10）
 migrated_to: docs/01_policies_and_standards/_registry/catalogs/industry_graph_field_dictionary.yaml
+created: 2026-09-09
 ---
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）

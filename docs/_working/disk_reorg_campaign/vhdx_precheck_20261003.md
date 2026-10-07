@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-10-03
 ---
 # vhdx 季度压缩预检单（自动生成·提醒条目）
 

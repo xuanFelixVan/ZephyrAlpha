@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-14
 ---
 
 # 调研：量化研究社区与 Vibe Coding 社区的研究笔记留存/清理实践

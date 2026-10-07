@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 
 # auto_mount 自动挂图器施工交底（2026-09-15 班，MOD-BT-171）

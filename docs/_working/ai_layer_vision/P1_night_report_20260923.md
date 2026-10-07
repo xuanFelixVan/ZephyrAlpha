@@ -5,6 +5,7 @@ owner: ZephyrAlpha-Owner
 session: st-ailayer-p1-20260923
 date: 2026-09-23
 status: morning_report
+created: 2026-09-23
 ---
 
 # AI 层 P1 施工班晨报（2026-09-23 晨）

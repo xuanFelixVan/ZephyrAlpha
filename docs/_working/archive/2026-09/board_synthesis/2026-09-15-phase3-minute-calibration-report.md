@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 
 > **doc_type**: 校准报告（板块指数自建合成 Phase 3 分钟级，方案 §4 验收矩阵实测）

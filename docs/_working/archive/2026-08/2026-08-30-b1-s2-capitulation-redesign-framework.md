@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-30
 ---
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_memo_working · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-30 · topic=regime_s2_capitulation_redesign_framework · scope=07_trading_decision_architecture · completes_when=S2 残余四件（2015/2020 事件标注裁定、fund 跨工程项、ERP 管道、dump 阈值同源化）闭环后归档。

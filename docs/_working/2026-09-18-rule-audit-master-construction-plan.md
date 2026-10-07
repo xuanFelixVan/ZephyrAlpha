@@ -10,6 +10,7 @@ topic: rule_audit_master_plan
 scope: global
 session: st-ruledisp-20260918
 decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
+created: 2026-09-18
 ---
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（规则与审计一条龙总方案已全线进入执行并由活台账继任：D-1..D-18 封口裁定全部消费，施工事实以 CONSTRUCTION_LEDGER.md 为唯一进度真源）**

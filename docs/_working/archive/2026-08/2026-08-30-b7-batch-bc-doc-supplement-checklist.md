@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-30
 ---
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_memo_working · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-30 · topic=data_utilization_batch_bc_doc_supplement · scope=07_trading_decision_architecture · completes_when=批次 B/C 17 张表六字段消费级文档落位三目标文档且 ARCH-300 三空表前置闭环后归档。

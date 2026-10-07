@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: F 车道接线已落 dev（st-tclose-fwire-20261004 袋），字条使命完成随夜批归档
+created: 2026-10-01
 ---
 # merge 协调请求（st-lanech-20261001 → 在场各队）
 

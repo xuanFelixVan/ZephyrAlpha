@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-30
 ---
 
 # B16 勘探裁定：dReport / Jump on PEAD 数据可得性评估

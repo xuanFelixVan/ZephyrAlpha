@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-23
 ---
 
 # 数据尾巴班·总包回执（st-datatail-20260923，2026-09-23）

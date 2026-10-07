@@ -2,6 +2,7 @@
 ttl: task_bound
 date: 2026-09-07
 task_context: TDM 外审 #10 天地板阈值裁定实证（D99 裁定的数据依据），审查闭环后归档
+created: 2026-09-07
 ---
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）

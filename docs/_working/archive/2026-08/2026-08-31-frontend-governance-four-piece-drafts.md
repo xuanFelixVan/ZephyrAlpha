@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-31
 ---
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_draft · owner=ZephyrAlpha-Owner · status=active_executing · version=0.5.0 · date=2026-08-31 · topic=frontend_governance_four_piece。

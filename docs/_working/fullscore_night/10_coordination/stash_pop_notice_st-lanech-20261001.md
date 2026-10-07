@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 告知已随批落 dev 送达各队（stash a50ed2c4 可 reflog 考古），认领完成后随夜批归档
+created: 2026-10-01
 ---
 # stash 误弹告知（致 st-circ-g2 / 在场各队）— st-lanech-20261001
 

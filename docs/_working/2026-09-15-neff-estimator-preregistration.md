@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（N_eff 估计器预注册锁定记录：effective_rank 双口径锁定防 p-hacking，义务=锁定本身，已完成且未被违反性更换）**

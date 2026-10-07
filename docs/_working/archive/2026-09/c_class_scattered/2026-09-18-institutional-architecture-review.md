@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 已归档（历史战役载体，2026-09-20 批量归档#374① 同族）
+created: 2026-09-18
 ---
 
 # ZephyrAlpha 机构级架构尽调报告

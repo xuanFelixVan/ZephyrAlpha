@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 
 > **doc_type**: 施工方案（板块指数自建合成，Owner 2026-09-15 授权立项）

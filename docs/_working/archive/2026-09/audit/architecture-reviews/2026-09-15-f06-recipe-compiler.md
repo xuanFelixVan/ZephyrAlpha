@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 
 # 架构评审：F-06 仓位配方编译器雏形（MOD-POS-029）

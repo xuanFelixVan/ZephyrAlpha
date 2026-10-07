@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-30
 ---
 
 > **文档元信息**（_working 临时区豁免规范，EXEMPT-ZONE-FM）：doc_type=design_memo_working · owner=ZephyrAlpha-Owner · language=zh · status=active · version=1.0.0 · date=2026-08-30 · topic=event_driven_six_factor_construction · scope=07_trading_decision_architecture · completes_when=六因子矩阵 event_impact_score 接线进 event_funnel/sleeve 且 G23 校准完成后归档。

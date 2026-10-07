@@ -9,6 +9,7 @@ date: 2026-09-18
 topic: gate_identity_root_fix
 scope: global
 session: st-ruledisp-20260918
+created: 2026-09-18
 ---
 > ## 结案报告（2026-10-06 由 st-workingchief-20261006 核验）
 > **总结论：已结案（门禁身份 B′ 治本施工令已被执行链消费：WP17 假绿修复在码[adversarial_validation/cli.py:52 裁定#359 区分度自检]，战役施工由 rule_audit_campaign/CONSTRUCTION_LEDGER.md 活台账继任）**

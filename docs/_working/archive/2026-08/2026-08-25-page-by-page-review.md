@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-25
 ---
 
 > **文档元信息**（_working 临时区豁免规范：正式 frontmatter 仅入正式目录，EXEMPT-ZONE-FM）：doc_type=architecture_view · owner=ZephyrAlpha-Owner · status=active · version=0.20.0 · date=2026-08-29 · topic=page_by_page_review · scope=07_trading_decision_architecture。

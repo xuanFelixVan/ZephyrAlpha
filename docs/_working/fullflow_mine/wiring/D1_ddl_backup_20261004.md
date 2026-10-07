@@ -6,6 +6,7 @@ language: zh
 status: active
 version: "1.0.0"
 date: 2026-10-04
+created: 2026-10-04
 ---
 
 # D1 DDL 备份（原定 .sql 名，因 DIRECTORY-CONTRACT docs/_working 仅许 md/csv/yaml/html 改存 .md，内容零改动）

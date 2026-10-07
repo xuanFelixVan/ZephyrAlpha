@@ -2,6 +2,7 @@
 ttl: task_bound
 date: 2026-09-07
 task_context: 交易决策地图（TDMAP-001）拼装回测前外审 Round 1+Round 2 问题报告归档（审查闭环后归档）；协议与闸门见 2026-09-07-tdm-backtest-protocol.md
+created: 2026-09-07
 ---
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）

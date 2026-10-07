@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 54 条问题全部对账到 census_reverify 四态判或断点台账（本件为 R-038 救回件）
+created: 2026-09-18
 ---
 
 # ZephyrAlpha 架构尽调 — 全量问题清单

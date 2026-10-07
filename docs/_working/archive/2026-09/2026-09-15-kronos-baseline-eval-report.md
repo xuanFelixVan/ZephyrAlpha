@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 
 # Kronos 基线接入·多票扩展评估报告（终版）

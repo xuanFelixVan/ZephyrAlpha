@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: P0 三项工程（队列转正/own-scope 第三批/死信详情回写）已 commit 且 ARCH-310 登记 in_progress；P1/P2 项由后续班次按本报告 §五施工方案接续
+created: 2026-09-12
 ---
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）

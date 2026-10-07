@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 报告结论被 MAX_REVIEW_CHECKLIST / FINAL_DELIVERY_REPORT 引用并逐条对账完毕（本件为 R-038 救回件）
+created: 2026-09-18
 ---
 
 # ZephyrAlpha 机构级架构尽调报告

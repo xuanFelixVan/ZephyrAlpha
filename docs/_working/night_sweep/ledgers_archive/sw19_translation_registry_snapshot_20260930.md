@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 夜巡台账抢救归档使命完成（c1核销与追溯证据已可查，随本战役归档保留）
+created: 2026-09-30
 ---
 # sw19_translation_registry_snapshot_20260930
 

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-24
 ---
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）

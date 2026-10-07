@@ -2,6 +2,7 @@
 ttl: task_bound
 date: 2026-09-07
 task_context: 交易决策地图（TDMAP-001）拼装回测协议 V0——外审 Round 1 修复产出；回测/实盘口径合同与启动闸门
+created: 2026-09-07
 ---
 
 > ## 结案报告（2026-09-15 由 st-fullchain-20260914 核验）

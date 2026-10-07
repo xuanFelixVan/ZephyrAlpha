@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 五卡逐卡获 Owner 裁定号回填或明确判死即归档
+created: 2026-10-06
 ---
 <!-- creation_token: st-t3series-l5cards-20261006 | created_by: st-t3series-20261006 -->
 # L 级五件立项卡（裁定#486 呈批制——chief 出卡 Owner 批）

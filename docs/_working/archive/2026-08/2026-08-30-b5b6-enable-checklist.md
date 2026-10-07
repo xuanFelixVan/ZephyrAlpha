@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-30
 ---
 
 # B5/B6 启用冒烟 Checklist（Owner 一键启用前逐项核查）

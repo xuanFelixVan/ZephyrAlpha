@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "CH 实弹批六件——VM 离线阻塞移交账"
 session: st-finaldel-chief-20260930
+created: 2026-09-30
 ---
 
 # CH 实弹批六件——VM 离线阻塞移交账（2026-09-30）

@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 completes_when: 裁定#267 落地+终验 mismatch=0+提交入库+Owner 验收（密钥分期与新钥部署收口）
+created: 2026-09-16
 ---
 
 # 审计链 HMAC 密钥分期与新真钥部署报告（st-auditkey-20260916）

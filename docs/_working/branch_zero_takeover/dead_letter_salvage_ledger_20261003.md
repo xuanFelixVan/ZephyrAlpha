@@ -6,6 +6,7 @@ title: 死信清算力缺陷根治台账（1235 只死袋全量归因 + Owner �
 completes_when: 归因引擎/回魂闸落地（commit 3514117725），239 可销待 --execute，996 护留台账移交 doctor/requeue 循环
 resources:
   mining_data: docs/_working/deadletter_cure_20261003/10_mining/
+created: 2026-10-03
 ---
 
 # 死信清算力缺陷 —— 根治台账（2026-10-03）

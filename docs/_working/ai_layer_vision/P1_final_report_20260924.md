@@ -5,6 +5,7 @@ owner: ZephyrAlpha-Owner
 session: st-ailayer-final-20260924
 date: 2026-09-24
 status: draft_final_report
+created: 2026-09-24
 ---
 
 # AI 层 P1 终报（草稿 v1，2026-09-24）

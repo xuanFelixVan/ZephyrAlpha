@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-09-15
 ---
 
 # 交接包：kline_1min / daily_valuation 覆盖疑云排查 → 待执行 remediation

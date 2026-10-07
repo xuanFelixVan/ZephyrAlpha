@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+created: 2026-08-30
 ---
 
 # B20 裁定书草稿：recon_runner L3 期初持仓快照数据源

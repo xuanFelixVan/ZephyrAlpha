@@ -2,6 +2,7 @@
 ttl: task_bound
 title: "终验循环检查两轮+红蓝对抗报告（对象=20260930 今晚施工面）"
 session: st-finaldel-final2-20260930
+created: 2026-09-30
 ---
 
 # 终验循环检查两轮 + 红蓝对抗报告（st-finaldel-final2-20260930，2026-09-30）
