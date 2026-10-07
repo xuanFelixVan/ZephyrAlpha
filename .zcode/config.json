@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "enabled": true,
+    "timeoutMs": 20000,
+    "events": {
+      "PreToolUse": [
+        {
+          "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+          "hooks": [
+            {
+              "type": "process",
+              "command": "powershell",
+              "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${ZCODE_PROJECT_DIR}/scripts/governance/entrance_gate_hook.ps1"
+              ],
+              "timeoutMs": 15000,
+              "statusMessage": "施工进场检票（MOD-GOV-115 entrance gate）"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

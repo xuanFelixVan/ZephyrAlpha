@@ -291,9 +291,10 @@ docs/_working/analysis/
 # CloneGuard 配置文件（Phase A，#ARCH-FORCE-MERGE-DEDUP-001）
 !clone_guard.yml
 !echo-guard.yml
-# --- 合法根目录（git tracked，13 项）---
+# --- 合法根目录（git tracked，14 项）---
 !.github/
 !.trae/
+!.zcode/
 !architecture_model/
 !config/
 !data/
@@ -599,6 +600,8 @@ data/model_profiles/
 data/research_rating/
 # 情绪批量处理运行时数据
 data/sentiment_batch/
+# emotion_index 每日快照运行时数据（append-only 落盘件，可再生自 CH 全表；快照器=scripts/data/emotion_index_snapshot.py）
+data/emotion_index_snapshots/
 # 冷启动导入模式（一次性分析产物）
 data/fix_patterns/
 # 临时调试脚本（AI 会话一次性）
@@ -627,6 +630,9 @@ scripts/data/sz_open_data/*
 !scripts/data/backfill_technical_indicator_dwm.py
 !scripts/data/tilib_dwm_shard_runner.py
 !scripts/data/backfill_night.ps1
+# emotion_index append-only 每日快照器收编（st-mx07-L8 2026-10-08，先例=source_health_patrol 同模式；
+# 方向=收编入库增强追踪。快照输出目录另行整目录忽略，见 data/sentiment_batch/ 同款）
+!scripts/data/emotion_index_snapshot.py
 
 # 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
 data/asset_index/offrepo_scan_report.json

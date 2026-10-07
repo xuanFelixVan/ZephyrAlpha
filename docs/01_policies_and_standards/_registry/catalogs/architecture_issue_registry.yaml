@@ -10254,3 +10254,13 @@ entries:
   adjudication: 补标为机械元数据标注：每文件治理锚定块纯插一行 domain_id/[DOMAIN] （+1 行，其余字节 sha256 核验零改动），非契约语义变更；architecture_model/ 保护本意=重大修改须审批，本条为裁定#335 授权范围的形式化登记， commit message 经 [ARCH-APPROVAL:ARCH-VOCABCONSOL-DOMAIN-BACKFILL-001] 逃生通道放行（先例格式=d8419af8e6）。
   last_updated: "2026-09-18"
   related_adjudication: "#335"
+- issue_id: "#ARCH-381"
+  owner: Owner（2026-10-07 夜令原文"详细调查后你来执行……现在开始施工以上所有内容"，总包会话在案）
+  title: 进场检票钩子（MOD-GOV-115）随仓分发审批登记：.gitignore 白名单 !.zcode/ + .zcode/config.json 入库——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体
+  status: decided
+  created: "2026-10-07"
+  category: governance
+  severity: P3低
+  description: Owner 2026-10-07 夜令直接授权检票钩子 .zcode 入库（L0 全程卡+序页+检票锚点等全套说明书已建成入袋）。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即本批正门标记的登记载体（#ARCH-360 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-381]，审批真源=Owner 夜令原文（2026-10-07 总包会话在案），gate 逃生审计+本登记双留痕。 内容=.gitignore 根白名单 +!.zcode/（合法根目录计数 13→14）+ .zcode/config.json（ZCode workspace hooks：PreToolUse 进场检票接线，本机盘面已实证生效）。
+  last_updated: "2026-10-07"
+  related_rulings: []
