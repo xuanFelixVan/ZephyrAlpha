@@ -3895,3 +3895,30 @@ tasks:
     trading_day_only: true
 
   fallback_sources: []
+
+# 日终三账对账槽位登记（图12 DSC-15 接线 2026-10-07 st-vm12final-20261007-laneB）：
+# 15:40 eod_reconciliation 槽此前 task_count=0（unwired_slot_hollow/R-021 假通道：槽在
+# schedule.yaml、无分派分支、零任务）。编排型任务：真正执行走 scheduler._run_special_schedule
+# 的 eod_reconciliation 分支（委托 src/zephyr/trading/recon_runner.run_daily_reconciliation，
+# L1 交易级/L2 持仓零容差/L3 PnL 0.1%→A/B/C 归因→差异 append-only 落
+# governance.db:reconciliation_differences），不入 run_task provider 管线（dloop_post/
+# cross_validation 编排先例同口径）；本条目=槽位登记+表目标审计口径（per_slot_task_counts
+# 翻 0→1）。source=internal（品类真源 market_reconciliation_differences 的 data_source
+# 注册即 [internal]）；无 capability 字段=合法（CAP-NOT-FOUND 为 ERROR 级启动校验，
+# internal provider meta 未声明 recon 能力；factor_decay_monitor_weekly 同为先例）。
+# catchup_guard 档期桶不含 eod_reconciliation → 本条目不对账不补跑，无误触 run_task 面。
+# 全资产净零：无既有条目可承载对账槽位职能，+1 条目。
+# 真源锚=config/data_supply_chain_map.yaml DSC-15 节点（slot:eod_reconciliation /
+# file:src/zephyr/trading/recon_runner.py / file:src/zephyr/ex_core/eod_reconciliation.py）。
+- task_id: eod_reconciliation_daily
+  table: c1_market.reconciliation_differences
+  source: internal
+  schedule: eod_reconciliation
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  symbols:
+  extra:
+    description: "日终三账对账（回测 vs 模拟盘 L1/L2/L3 三账核对→A/B/C 归因，差异 append-only 落 governance.db:reconciliation_differences；CH 侧同名表见品类真源注记）——执行走 eod_reconciliation 特殊分派分支，非 run_task 管线"
+
+  fallback_sources: []    # internal 编排源天然无副源
