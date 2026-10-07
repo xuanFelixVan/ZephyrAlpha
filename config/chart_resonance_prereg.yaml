@@ -1,0 +1,91 @@
+# G-D.1 图形共振矩阵·预注册族（C237，2026-10-07，总包车道 L7）
+# ═══════════════════════════════════════════════════════════════════════════
+# 纪律首行（ext_01 G-D.1 判据栏）：图形信号只作条件轴禁作独立信号——
+#   Marshall et al. (2006) 证伪基线（成熟市场 TA 形态无增量；学术案卷
+#   dossier_academic_papers.md §1.1），任何格的边际有效性必须以"条件轴×其他轴"
+#   交互项口径入考，禁单信号上线结论。
+# 判据真源=docs/_working/total_command_closeout/10_wave_plan.md 10.G-D 行
+#   （★READY_NOT_FIRED：引擎+prereg 冻结+日频小样本冒烟通过即出口；
+#   不点火、结果不入账本、不作策略结论，正式跑全推迟到波 12 G-D.4 Owner 门位）。
+# 引擎=scripts/backtest/grid_stats_engine.py（C238/C239 落地，四件套+SPA/StepM+分半窗）。
+# 冻结语义（同 E7 模板 config/search_space_prereg.yaml）：本文件冻结后 diff==0；
+#   改空间=作废重开预注册（禁跑中改）；族轴扩员走 family_registry 显式登记，
+#   禁事后入族（e7_defense.family_registry_required）。
+# 轴来源=ext_01_revised_construction_plan.md G-D.1 行：
+#   图形信号族（83 蜡烛+几何形态+共振对+A股事件轴）× 周期（日/周/月；分钟待 G-E）
+#   × 市场状态（F4 三态，复用条件包选族口径）。
+schema_version: 1.0.0
+doc_type: search_space_preregistration
+title: 图形共振矩阵·预注册搜索空间+预算封顶+E7 防线（G-D.1）
+created: '2026-10-07'
+frozen_at: '2026-10-07T05:30:00+08:00'
+frozen_by: st-mastertc-l7（总包夜战授权=00_orchestration.md Owner 令 2026-10-06/07）
+owner_signoff: 总包授权（正式点火另走 G-D.4 Owner 门位，本冻结仅锁判据防漂移）
+session: st-mastertc-l7
+status: READY_NOT_FIRED   # 10_wave_plan 10.G-D 口径，禁点火（手滑点火=污染统计账本）
+
+objective:
+  primary: cost_adjusted_sharpe          # 与 E7 同目标函数（成本后 Sharpe）
+  observed: [gross_sharpe, annual_turnover_x, win_rate]
+  cost_caliber: _c4_engine 冻结土规（佣金2.5bp双边+印花10bp卖+滑点5bp）+ 档位扫描
+  pass_criteria:
+    cost_gate:
+      tiers_bp: [0, 5, 10, 20, 40]       # 真源=config/exam_scale_cost_gate.yaml（禁双头改）
+      survival_floor: 0.0                # 最高档(40bp) sharpe 下限
+      turnover_cap_annual_x: 8.0         # E7 换手上限门同值（禁放宽）
+      monotonic_tol: 1.0e-9              # 五档单调非增容差
+    multiple_testing:
+      engine: scripts/backtest/grid_stats_engine.spa_reality_check + .stepm
+      caliber: White(2000) RC / Hansen(2005) SPA 简版 + Romano-Wolf(2005) StepM 简版（文献口径注释在引擎 docstring）
+    dsr:
+      engine: scripts/backtest/grid_stats_engine.evaluate_grid
+      n_eff_caliber: 有效试验数=compute_effective_rank 熵广度折算（禁 Bonferroni 除总格数）
+      threshold: 0.95                    # 全仓 DSR_SIGNIFICANCE_THRESHOLD（禁另立第二真源）
+    rolling_reexam:
+      engine: scripts/backtest/grid_stats_engine.half_split_reexam
+      caliber: 分半窗+时间外推检验；事件触发重考任务记录（禁 cron/Timer）
+    negative_result_promise: 负结果无论正负都保留（negatives 口径），禁删改（预注册纪律）
+
+axes:
+  signal_family:
+    # 族登记制：本冻结登记族名+规模上限；逐信号枚举在 G-D.4 点火前经
+    # family_registry 显式登记回填（登记动作本身不改本文件——diff==0 纪律），
+    # 禁事后入族（e7_defense.family_registry_required）。
+    candlestick_83: {registered: 83, note: "83 蜡烛形态族（ext_01 G-D.1 口径；Marshall 2006 证伪基线→只作条件轴）"}
+    geometric_sr: {registered: pending_family_registry, note: "几何形态/趋势线支撑阻力族（规模随 G-C 交付的线族清单登记）"}
+    resonance_pair: {registered: pending_family_registry, note: "共振对族（两信号共现格；规模随族登记）"}
+    cn_event_axis: {registered: pending_family_registry, note: "A股事件轴族（封板/炸板不对称、假突破 busted pattern 等，学术案卷 §1.4/§6.5/§6.6）"}
+  period:
+    enabled: [daily, weekly, monthly]    # 日/周/月立即；分钟待 G-E（ext_01 G-D.1 原文）
+    disabled_until: [G-E 分钟族]
+  market_state:
+    # 复用条件包选族口径（F4 三态，禁另立状态定义=第二真源）
+    pack_module: zephyr.backtest.regime_validation.condition_package
+    state_family: F4_BDI_MOMENTUM_Z20    # neutral/risk_on/risk_off（F4 实测三态）
+    search_window: ['2019-01-04', '2025-09-09']   # 闭卷窗，窗外数据禁入（closed_book 纪律）
+    cells_eligible_floor: 30             # 30 日地板（INSUFFICIENT-N 口径与引擎一致）
+    stratification: evaluation_only_not_in_training   # 分层只用于评估不进训练（案卷 §四.4，防泄露）
+
+budget_caps:
+  grid_points_cap: 25000                 # 含五档成本门（对齐 E7 机器容量口径，禁超）
+  per_cell_seconds_target: 3.5           # 承 E7 resonance_per_cell_seconds_target 同值
+  wall_clock_cap_hours: 59               # 单轮考试窗上限（同 E7 量级；点火时按裁定重排）
+  tier1_points_cap: 3700                 # T1 粗扫帽（E7 同值；点火时按族登记实数收缩）
+  tier2_points_cap: 900                  # T2 主效应前 20% 层展开帽（E7 同值）
+  cost_gate_in_every_tier: true          # Owner 采纳令：任何粗扫阶段禁跳成本门
+  trial_ledger: 全试验（含被跳过/被拒绝的格子）逐批入 n_trial_ledger（红证=漏记一例试验必红）
+
+e7_defense:
+  dsr_denominator: n_trial_ledger cumulative_trials（累计可审计口径，自动管线）
+  dsr_floating: true                     # DSR 门槛随 N_trial 浮动（裁定#306 族口径）
+  family_registry_required: true         # 族外尝试计入族下限，禁事后入族
+  ledger_required: true                  # 每次尝试必经 n_trial_ledger（record_run/sync_t0_manifest_counts 同纪律）
+  closed_book: 切点=2025-09-09（enforce_closed_book 派生真源，禁本文件落第二常数）
+  chart_signal_as_condition_axis_only: true   # 纪律首行的机器可读位（禁独立信号结论）
+
+honesty:
+  - 本 prereg 冻结时图形族仅有 candlestick_83 有实数规模，其余三族 pending——
+    点火前族登记回填是放行前置件（G-D.4 门位检查项），缺登记=禁点火。
+  - 引擎口径（Lo2002+ddof=0+244 基准 / c* 二分+单调 / SPA/StepM 简版简化点）
+    以 grid_stats_engine docstring 为准，与本册互为镜像；改口径=作废重开预注册。
+  - READY_NOT_FIRED：本册冻结不构成点火授权；波 12 G-D.4 Owner 门位前禁跑生产数据。
