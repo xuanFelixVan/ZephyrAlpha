@@ -46,6 +46,8 @@ Usage::
     python scripts/governance/dead_letter_doctor.py --prescribe <qid>    # 单袋处方（建议，不执行）
     python scripts/governance/dead_letter_doctor.py --apply <qid> \\     # 受控执行（默认关，须显式）
         [--params params.json]                                           # plain_zh 人工供稿/能力名覆盖
+    python scripts/governance/dead_letter_doctor.py --settle-root-causes \\   # F5 根因清账（dry-run）
+        [--execute]                                                      # 活袋零命中单归档 _settled/
 """
 
 from __future__ import annotations
@@ -87,6 +89,9 @@ __all__ = [
     "prescribe",
     "load_state",
     "apply_healing",
+    "load_root_cause_tickets",
+    "count_live_letters_by_signature",
+    "settle_root_causes",
     "main",
 ]
 
@@ -855,12 +860,159 @@ def apply_healing(
 
 
 # ---------------------------------------------------------------------------
+# 根因工序单清账（F5 配套，st-govfix-g2-20261007）：按根因归档
+# ---------------------------------------------------------------------------
+# 病根：_seal_dead_letter 熔断后把根因工序单落 dead/_root_cause/<签名slug>.json，
+# 但全仓没有任何清账出口——根因修完、死信归档后工序单永久晾置（现读 19 张，
+# 其中 family 级旧签名单聚合 120+ 会话）。治法：doctor 增清账模式，按**根因签名**
+# 逐单对账——签名在 dead/ 活袋面零命中（全落地/全归档）⇒ 可结算，--execute 时
+# 归档进 dead/_root_cause/_settled/（mv 非删，RB2 同精神，可逆）。默认 dry-run
+# 零写（对齐 dead-archive"默认干跑、显式才动盘"）。签名口径=commit_queue 真源
+# _dead_signature（活袋优先用袋体封印的 dead_signature 字段，无则现算——新旧
+# 签名粒度共存互不误伤：旧 family 级单对旧袋、新 gate_id 级单对新袋各自对账）。
+
+
+def _settled_dir(queue_root: Path) -> Path:
+    """根因工序单归档位：dead/_root_cause/_settled/（下划线前缀不入 slug 名册面）。"""
+    return queue_root / "dead" / "_root_cause" / "_settled"
+
+
+def load_root_cause_tickets(queue_root: Path) -> list[dict]:
+    """读 dead/_root_cause/*.json 工序单（跳过 _settled/ 与非 .json；坏读计 corrupt 不抛）。"""
+    rc_dir = queue_root / "dead" / "_root_cause"
+    if not rc_dir.is_dir():
+        return []
+    tickets: list[dict] = []
+    for p in sorted(rc_dir.glob("*.json")):
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                raise ValueError("工序单顶层非 object")
+        except (OSError, ValueError):
+            tickets.append({"file": p.name, "signature": "", "corrupt": True})
+            continue
+        tickets.append(
+            {
+                "file": p.name,
+                "signature": str(data.get("signature") or ""),
+                "first_dead_at": str(data.get("first_dead_at") or ""),
+                "owner_sessions": data.get("owner_sessions") or [],
+                "sample_qid": str(data.get("sample_qid") or ""),
+                "corrupt": False,
+            }
+        )
+    return tickets
+
+
+def count_live_letters_by_signature(queue_root: Path) -> dict[str, int]:
+    """dead/ 活袋（q-*.json）按归因签名计数：袋体封印的 dead_signature 优先，缺则现算。"""
+    dead_dir = queue_root / "dead"
+    counts: dict[str, int] = {}
+    if not dead_dir.is_dir():
+        return counts
+    for p in sorted(dead_dir.glob("q-*.json")):
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(data, dict):
+            continue  # 坏袋不当零命中证据（宁不结算不误结算）
+        sig = str(data.get("dead_signature") or "") or _cq._dead_signature(data)
+        if sig:
+            counts[sig] = counts.get(sig, 0) + 1
+    return counts
+
+
+def settle_root_causes(queue_root: Path, *, execute: bool, operator: str = _DEFAULT_OPERATOR) -> tuple[int, dict]:
+    """根因清账主入口：逐单对账 →（--execute）零命中单归档 _settled/ + 审计。
+
+    Returns:
+        (exit_code, report)。exit 0=成功（含 dry-run 与无事可做）；exit 1=IO 错。
+    """
+    tickets = load_root_cause_tickets(queue_root)
+    live = count_live_letters_by_signature(queue_root)
+    results: list[dict] = []
+    settled = 0
+    for t in tickets:
+        sig = t["signature"]
+        n = live.get(sig, 0) if sig else -1
+        entry = {
+            "file": t["file"],
+            "signature": sig,
+            "live_letters": n,
+            "settleable": (not t["corrupt"]) and bool(sig) and n == 0,
+            "corrupt": t["corrupt"],
+            "archived": False,
+        }
+        if entry["settleable"] and execute:
+            src = queue_root / "dead" / "_root_cause" / t["file"]
+            dst_dir = _settled_dir(queue_root)
+            try:
+                dst_dir.mkdir(parents=True, exist_ok=True)
+                data = json.loads(src.read_text(encoding="utf-8"))
+                data["settled_at"] = _now_iso()
+                data["settled_live_letters"] = 0
+                data["settled_by"] = operator
+                tmp = dst_dir / (t["file"] + ".tmp")
+                tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
+                os.replace(tmp, dst_dir / t["file"])
+                src.unlink()
+                entry["archived"] = True
+                settled += 1
+                audit_append(
+                    queue_root,
+                    qid=f"root-cause:{t['file']}",
+                    session_id=None,
+                    action="root_cause_settle",
+                    family=sig,
+                    result=f"根因零活袋命中，工序单归档 _settled/{t['file']}",
+                    operator=operator,
+                )
+            except OSError as exc:
+                entry["error"] = str(exc)
+                results.append(entry)
+                continue
+        results.append(entry)
+    report = {
+        "queue_root": str(queue_root),
+        "execute": execute,
+        "total_tickets": len(tickets),
+        "settleable": sum(1 for r in results if r["settleable"]),
+        "archived": settled,
+        "active": sum(1 for r in results if not r["corrupt"] and r["signature"] and r["live_letters"] > 0),
+        "results": results,
+    }
+    return 0, report
+
+
+def _print_settle_report(report: dict) -> None:
+    """人读清账报告（按根因逐单，归档/在活性二值醒目）。"""
+    tag = "EXECUTE" if report["execute"] else "DRY-RUN"
+    print(f"=== 根因工序单清账（{tag}）===")
+    print(f"队列根: {report['queue_root']}")
+    print(
+        f"工序单 {report['total_tickets']} 张：可结算 {report['settleable']}"
+        f"（已归档 {report['archived']}）｜仍活跃 {report['active']}"
+    )
+    for r in report["results"]:
+        if r["corrupt"]:
+            print(f"  [坏读] {r['file']}")
+        elif r["signature"] and r["live_letters"] == 0:
+            done = "已归档" if r["archived"] else "可结算"
+            print(f"  [{done}] {r['file']}  sig={r['signature']}  活袋命中=0")
+        else:
+            print(f"  [活跃] {r['file']}  sig={r['signature']}  活袋命中={r['live_letters']}")
+    if not report["execute"]:
+        print("下一步: 确认无误后加 --execute 落账（归档=mv 非删，可逆）")
+
+
+# ---------------------------------------------------------------------------
 # CLI（argparse，风格对齐 session_takeover_ledger.main）
 # ---------------------------------------------------------------------------
 
 
 def main(argv: list[str] | None = None) -> int:
-    """CLI 入口：--scan（默认零写诊断）/ --prescribe / --apply。"""
+    """CLI 入口：--scan（默认零写诊断）/ --prescribe / --apply / --settle-root-causes。"""
     ap = argparse.ArgumentParser(
         prog="dead_letter_doctor.py",
         description="死信急诊分诊台：手续类死因先补手续再正门重投（三道铁闸：只动表格/不走捷径/只救一次）",
@@ -870,6 +1022,17 @@ def main(argv: list[str] | None = None) -> int:
         "--prescribe", metavar="QID", help="处方模式：单袋处方 JSON 落 doctor_prescriptions/（建议，不执行）"
     )
     ap.add_argument("--apply", metavar="QID", help="执行模式（默认关）：只对机器可定的处方执行登记动作")
+    ap.add_argument(
+        "--settle-root-causes",
+        action="store_true",
+        help="根因清账模式（默认 dry-run 零写）：dead/_root_cause/ 工序单逐张按签名对账，"
+        "活袋零命中单可结算归档（--execute 落账）",
+    )
+    ap.add_argument(
+        "--execute",
+        action="store_true",
+        help="与 --settle-root-causes 联用：把可结算工序单归档进 _settled/（mv 非删可逆）+ 审计",
+    )
     ap.add_argument(
         "--params",
         metavar="PATH",
@@ -889,6 +1052,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.prescribe and args.apply:
         print("FAIL: --prescribe 与 --apply 互斥（一次只做一种）", file=sys.stderr)
         return 1
+
+    # F5 根因清账模式（默认 dry-run 零写；--execute 才归档）——与 prescribe/apply 互斥
+    if args.settle_root_causes:
+        if args.prescribe or args.apply:
+            print("FAIL: --settle-root-causes 与 --prescribe/--apply 互斥（一次只做一种）", file=sys.stderr)
+            return 1
+        code, report = settle_root_causes(queue_root, execute=args.execute, operator=args.operator)
+        _print_settle_report(report)
+        return code
 
     if args.prescribe:
         code, rx = prescribe(args.prescribe, queue_root, operator=args.operator)

@@ -354,6 +354,10 @@ def cleanup_dead_session_keep_lines(active_session_ids: set[str] | None = None) 
     if active_session_ids is None:
         try:
             active_session_ids = {s.session_id for s in SessionRegistry().list_active()}
+            # 心跳豁免（st-govfix-g2-20261007）：heartbeat.jsonl 60s 内有跳的会话视同
+            # 活跃——list_active 的 PID/心跳字段判死不否决心跳文件活性证据（keeper
+            # 被收割后 keep 行被误清=二次误杀）。
+            active_session_ids |= set(fresh_heartbeat_guard().get("sids") or set())
         except Exception as e:  # noqa: BLE001 — 注册表不可达时宁可全保留
             logger.warning("SessionRegistry 不可达，跳过 keep 清理: %s", e)
             active_session_ids = None
@@ -391,6 +395,62 @@ def cleanup_dead_session_keep_lines(active_session_ids: set[str] | None = None) 
             logger.error("keep 清理写回失败（CAS 冲突），本轮不删任何行: %s", r)
             return {"kept_bare": 0, "kept_alive_tagged": 0, "removed_dead_tagged": 0, "parsed": -1}
     return counts
+
+
+# ============== 心跳文件豁免面（st-govfix-g2-20261007）==============
+# 调度战役 keeper 误杀 6 次实证：keeper/heartbeat_daemon 进程被本器收割后，会话的
+# 注册 PID 探针翻转假死 → lock 清理/接管链误判会话死，在途工作被"代收"。治本：
+# heartbeat.jsonl 60s 内有跳的会话（守护 30s 一跳，60s=两拍容错）其进程面一律豁免
+# 收割——pid=注册 PID（keeper 自注册）、ppid=注册 PID（daemon 是 keeper 子进程）、
+# cmdline 含 sid（daemon argv 带 sid）三路归因任一命中即降级 report。
+# 探针唯一真源=SessionRegistry._has_fresh_heartbeat（禁第二判据）；注册表不可达
+# → 空面（不豁免——方向=宁可少豁免，不扩大收割盲区）。
+
+_HEARTBEAT_EXEMPT_WINDOW_S = 60.0
+
+
+def fresh_heartbeat_guard(window_s: float = _HEARTBEAT_EXEMPT_WINDOW_S) -> dict[str, set[int] | set[str]]:
+    """心跳文件豁免面：60s 内 heartbeat.jsonl 有跳的会话 → {"sids", "pids"}。
+
+    pids=会话注册 PID 集（keeper）；sids=会话 id 集（cmdline 归因用）。
+    失败只 warn 返回空面（不豁免），绝不阻断收割主链。
+    """
+    sids: set[str] = set()
+    pids: set[int] = set()
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        reg = SessionRegistry(REPO_ROOT)
+        for sid, d in (reg.load() or {}).items():
+            try:
+                if not reg._has_fresh_heartbeat(str(sid), window_s):  # noqa: SLF001 — 同仓在册探针复用
+                    continue
+            except Exception:  # noqa: BLE001 — 单会话探针异常不拖累豁免面
+                continue
+            sids.add(str(sid))
+            try:
+                p = int((d or {}).get("pid") or 0)
+            except (TypeError, ValueError):
+                p = 0
+            if p > 0:
+                pids.add(p)
+    except Exception as e:  # noqa: BLE001 — 注册表不可达=不豁免（收割语义不因设施缺席放大）
+        logger.warning("heartbeat 豁免面构建失败（本轮不豁免）: %s", e)
+    return {"sids": sids, "pids": pids}
+
+
+def heartbeat_exempt_reason(pid: int, ppid: int | None, cmdline: str, guard: dict[str, set[int] | set[str]]) -> str:
+    """进程 → 豁免归因（空串=不豁免）。纯函数便于单测。"""
+    pids = guard.get("pids") or set()
+    sids = guard.get("sids") or set()
+    if pid in pids:
+        return "pid=session-registered-keeper"
+    if ppid is not None and ppid in pids:
+        return "ppid=keeper-child(heartbeat-daemon)"
+    for sid in sorted(sids):
+        if sid and sid in cmdline:
+            return f"cmdline-mentions-{sid}"
+    return ""
 
 
 # ============== 进程枚举与判定（纯函数，可测试）==============
@@ -1209,6 +1269,7 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
         _collect_metrics(project_py)
         trae_descendants = _build_trae_descendant_set(all_procs)
         live_pids = set(all_procs.keys())
+        hb_guard = fresh_heartbeat_guard()
 
         for pid, info in project_py.items():
             if info.get("dead"):
@@ -1234,6 +1295,14 @@ def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
                 is_trae_descendant=pid in trae_descendants,
                 whitelist_hit=whitelist_hit,
             )
+            # 心跳豁免（st-govfix-g2-20261007）：60s 内 heartbeat.jsonl 有跳的会话
+            # 进程面一律降级 report——收割 keeper/daemon 制造假死会话是调度战役实证
+            # 事故源（6 次误杀），活会话的进程面不在收割域。
+            hb_exempt = heartbeat_exempt_reason(pid, ppid, cmdline, hb_guard)
+            if verdict.action == "kill" and hb_exempt:
+                verdict.action = "report"
+                verdict.reason = f"heartbeat_fresh_exempt({hb_exempt})<-{verdict.reason}"
+                logger.info("heartbeat 豁免 PID=%d reason=%s", pid, verdict.reason)
             if verdict.action == "kill":
                 if dry_run:
                     verdict.killed = False

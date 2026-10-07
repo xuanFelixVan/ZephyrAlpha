@@ -67824,3 +67824,11 @@ entries:
   desc_en: ""
   plain_zh: "把三处跑得慢的统计重抽样循环合成一个向量化加速核，CPU跟GPU共用同一份代码，结果和原实现逐位一致才准上线"
   responsibility_layer: business
+- module_path: scripts/gate_dry_run.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "全门链本地干跑器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交前把三段门禁一次跑完并全部列出硬拦，让你一次改完再提交，不用反复撞墙试错"
+  responsibility_layer: governance

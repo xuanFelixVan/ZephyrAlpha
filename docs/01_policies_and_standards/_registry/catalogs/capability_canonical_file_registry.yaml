@@ -63588,4 +63588,10 @@ creation_tokens:
   capability: private_key_exempt_registry
   merge_evaluation: "替代 detect_private_key.py 内联 _EXEMPT_PATHS 硬编码豁免集（同真源收敛唯一）；旧 4 条 tests/ 旧址硬编码条目随迁移退役（HEAD 不存在），2 条真源件原样保留=零净增"
 
+- file: scripts/gate_dry_run.py
+  token: govfix-g2-dryrun-gate-dry-run-20261007
+  created_by: st-govfix-g2-20261007
+  capability: govfix-g2-dryrun
+  merge_evaluation: "净零组合器：三段判定全复用既有真源（gate_prerun/enqueue_preflight/commit_queue登记三族），零新判据；替代三处分散预跑手工拼装流程"
+
 di_seam_exemptions: []

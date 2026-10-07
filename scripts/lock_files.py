@@ -156,6 +156,33 @@ def _owner_file(lock_dir: Path) -> Path:
     return lock_dir / "owner.json"
 
 
+# 心跳文件豁免窗（st-govfix-g2-20261007，调度战役 keeper 误杀 6 次实证）：
+# heartbeat.jsonl 60s 内有跳的会话一律豁免 stale 判定与遗物回收——守护 30s 一跳，
+# 60s 窗=两拍容错；探针唯一真源=SessionRegistry._has_fresh_heartbeat（禁第二判据）。
+_HEARTBEAT_FILE_EXEMPT_WINDOW_S = 60.0
+
+
+def _session_heartbeat_file_fresh(session_id: str) -> bool:
+    """会话心跳文件豁免探针：heartbeat.jsonl mtime 在窗内=True。
+
+    判活设施任何异常 → False（不豁免——方向=宁可少豁免，不放大锁尸面）。
+    """
+    try:
+        import sys as _sys
+
+        if str(_SRC_ROOT) not in _sys.path:
+            _sys.path.insert(0, str(_SRC_ROOT))
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        return bool(
+            SessionRegistry(REPO_ROOT)._has_fresh_heartbeat(  # noqa: SLF001 — 同仓在册探针复用
+                str(session_id), _HEARTBEAT_FILE_EXEMPT_WINDOW_S
+            )
+        )
+    except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
+        return False
+
+
 def _is_stale(lock_dir: Path) -> bool:
     owner = _read_owner(lock_dir)
     if owner is None:
@@ -192,6 +219,12 @@ def _is_stale(lock_dir: Path) -> bool:
                     # 完全不敏感"的交接班互挡。
                     if _claim_expired_and_idle(owner, info):
                         return True
+                    return False
+                # 心跳文件豁免（st-govfix-g2-20261007，调度战役 keeper 被收割误杀 6 次
+                # 实证）：heartbeat.jsonl 60s 内有跳=守护真实在岗——注册 PID 亡/心跳字段
+                # 停 ≠ 会话死（reaper 收割 keeper 进程后 PID 探针立即翻转假死），豁免
+                # 回收。探针=SessionRegistry._has_fresh_heartbeat 同源判据，禁第二判据。
+                if _session_heartbeat_file_fresh(str(session_id)):
                     return False
                 return True  # 会话已死（心跳超时/PID 亡/TTL 超）→ 锁 stale
             # info is None（registry 无此会话条目）：退化旧语义继续判定
@@ -903,6 +936,9 @@ def cmd_cleanup(repo_root: str | Path | None = None, auto_salvage: bool = True) 
             for sid, d in data.items():
                 try:
                     if not _is_session_alive(SessionInfo.from_dict(d), now):
+                        # 心跳文件豁免（st-govfix-g2-20261007）：60s 内有跳不进回收候选
+                        if _session_heartbeat_file_fresh(str(sid)):
+                            continue
                         candidates.add(sid)
                 except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
                     continue
@@ -1077,9 +1113,16 @@ def _death_evidence(
             from zephyr.security.access_control.session_concurrency import _is_session_alive
 
             ev1 = not _is_session_alive(info, now)
+            # 心跳文件豁免（st-govfix-g2-20261007，调度战役 keeper 误杀 6 次实证）：
+            # 注册表证死后若 heartbeat.jsonl 60s 内有跳（守护真实在岗），活性证据
+            # 推翻证死—— keeper 进程被收割只杀 PID 探针，不杀会话工作面。
+            if ev1 and _session_heartbeat_file_fresh(str(session_id)):
+                ev1 = False
+                ev1_desc = "registry:dead-but-heartbeat-fresh-exempt"
         except Exception:  # noqa: BLE001 — 历史存量豁免（行号漂移误归，语义不变）
             ev1 = False  # 判活设施异常=无法证死（fail-closed，方向=防误收）
-        ev1_desc = f"registry:{'dead' if ev1 else 'alive'}"
+        if not ev1_desc:
+            ev1_desc = f"registry:{'dead' if ev1 else 'alive'}"
     else:
         pids = [c.get("pid", 0) for c in claims.values()]
         if claims and all((not p) or int(p) <= 0 or not is_pid_alive(int(p)) for p in pids):

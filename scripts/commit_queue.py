@@ -2403,16 +2403,41 @@ def try_bootstrap_drain(queue_root: str | os.PathLike | None = None, *, landing=
 #: 同签名复发熔断阈值：第 3 封即熔断升级根因工序单（10_wave_plan R-M 判据）
 _RECURRENCE_FUSE_LIMIT = 3
 
+# F5 门禁 id 提取（st-govfix-g2-20261007）：熔断签名从 family 级下沉 gate_id 级。
+# 病根实证（.runtime/commit_queue/dead/_root_cause/）：family:头部 粒度下 733 封
+# "网关落盘失败（COMMIT_FAILED）" 全部聚进一张工序单 item_网关落盘失败_COMMIT_FAILED.json
+# （120+ 属主会话、异门根因互相熔断）；反向 "landing 异常:<hash>" 又因死因文本嵌
+# hash 被拆成 4 张同根因工序单——聚合面被文本噪声双向击穿。判据同源：与
+# dead_letter_prescriptions.RE_GATE / classify_census 的 "门禁 <id> 阻断" 提取式
+# 同一形态（禁第二判据，故此处正则字面与该尺保持逐字节一致）。
+_GATE_BLOCK_RE = re.compile(r"门禁\s+([A-Za-z][A-Za-z0-9_\-]{2,})\s*阻断")
+
+
+def _extract_gate_id(dead_reason: str) -> str:
+    """死因文本 → 门禁 id（"门禁 <GATE-ID> 阻断" 形态）；未命中回空串。
+
+    F5：能定位到具体门禁的死亡，签名钉在 gate_id 上——同门复发才互熔，异门
+    各自计数；定位不到门禁的（纯环境/机制死）维持原 family:头部 粒度不变。
+    """
+    m = _GATE_BLOCK_RE.search(dead_reason or "")
+    return m.group(1) if m else ""
+
 
 def _dead_signature(item: dict) -> str:
-    """归因签名 = f"{死因族}:{死因头部特征}"——同根因必同签名，异根因必异签名。
+    """归因签名 = f"{死因族}:{门禁id|死因头部特征}"——同根因必同签名，异根因必异签名。
 
-    头部特征取 dead_reason 首个冒号前的 gate/机制标识（CREATE-GUARD/COMMIT_SCOPE/
-    attempts_exhausted…）；族=classify_dead_reason 三分类现读（禁抄常量防漂移）。
+    F5 下沉（st-govfix-g2-20261007）：死因文本含 "门禁 <GATE-ID> 阻断" 时取
+    **gate_id 级**签名（如 item:CREATE-GUARD）——同门复发才共签互熔，异门不再被
+    "网关落盘失败（COMMIT_FAILED）" 这类机制头并成一张 120 会话工序单；无门禁
+    点名的死因回退原 family:头部 粒度（头部=首个冒号前的 gate/机制标识）。
+    族=classify_dead_reason 三分类现读（禁抄常量防漂移）。
     空死因回退 "other:NOREASON"（熔断永不因缺死因而静默失效）。
     """
     reason = str(item.get("dead_reason") or "")
     family = classify_dead_reason(reason)
+    gate_id = _extract_gate_id(reason)
+    if gate_id:
+        return f"{family}:{gate_id}"
     head = reason.split(":", 1)[0].strip() if reason else ""
     return f"{family}:{head or 'NOREASON'}"
 
@@ -2880,6 +2905,14 @@ def requeue_dead_item(
     # 默认仍=当前工作区内容（修-重试工作流依赖此语义：改完 requeue 带新内容），
     # 但 MUST 显式告知「快照≠死信原快照」；--from_bag 则从 dead/ 项 blob 袋直读
     # 原始内容（sha256 自校验，工作区漂移免疫）。
+    # F4 快照漂移披露（st-govfix-g2-20261007）：worktree 重建分支逐件比对
+    # sha256(工作区字节) vs 死信快照 blob_sha256，漂移件清单随**返回值**
+    # （result["snapshot_drift"]，只进 CLI 报文不进袋体——cascade_diff 差分尺钉死
+    # 袋字段集）披露并提示"修因请新入队"。口径=**非阻断**：修-重试工作流（D7）
+    # 依赖取工作区现字节，硬拦=破坏在册工作流；安全性由"披露+通道指引"承担——
+    # 漂移=内容已变，若这是修因后的新内容，正门是重新 enqueue 新袋（活 sid 领袋），
+    # requeue 只该带死信原内容（--from-bag）或原样重试。
+    snapshot_drift: list[dict[str, str]] = []
     if from_bag:
         logger.info("[requeue] from_bag=原袋重建（内容寻址 sha256 自校验，工作区漂移免疫）")
     else:
@@ -2910,13 +2943,28 @@ def requeue_dead_item(
             payload.append((path, content))
             continue
         try:
-            payload.append((path, (wt / path).read_bytes()))
+            content = (wt / path).read_bytes()
         except OSError as exc:
             # MSG-EXPOSURE §5.99.20 口径：消息只留摘要，路径走 details 结构化字段
             raise RequeueError(
                 "工作区文件缺失/不可读，无法重建快照（路径见 details）——若该文件应删除请人工处理",
                 details={"path": path, "cause": str(exc), "hint": "from_bag=True 可取死信原快照"},
             ) from exc
+        if f.get("blob_sha256"):
+            wt_sha = hashlib.sha256(content).hexdigest()
+            if wt_sha != f.get("blob_sha256"):
+                snapshot_drift.append(
+                    {"path": path, "worktree_sha256": wt_sha, "snapshot_sha256": str(f.get("blob_sha256"))}
+                )
+        payload.append((path, content))
+    if snapshot_drift and not from_bag:
+        logger.warning(
+            "[requeue] F4 快照漂移：%d/%d 件工作区内容≠死信快照（sha256 不符）——"
+            "修因请新入队（内容修复后的袋禁 requeue 旧 blob，一律重新 enqueue 新袋）；"
+            "要死信原内容用 --from-bag。漂移清单随 CLI 报文 snapshot_drift 披露。",
+            len(snapshot_drift),
+            len(payload),
+        )
     if not payload and not deletes:
         raise RequeueError(f"死信项无文件条目可取回: {qid}")
 
@@ -3046,7 +3094,8 @@ def requeue_dead_item(
     _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：原袋终态留痕完成，残留影子清理（语义已并入新袋）
     _notify_task_board_requeued(old_item, new_item["qid"])
     logger.info("[requeue] %s -> %s（基于当前工作区重建快照，新 qid 排 FIFO 队尾）", qid, new_item["qid"])
-    return {"old_qid": qid, "new_qid": new_item["qid"], "item": new_item}
+    # F4：漂移清单只进返回值（CLI 报文面），零袋体新字段（cascade_diff 基线保护）
+    return {"old_qid": qid, "new_qid": new_item["qid"], "item": new_item, "snapshot_drift": snapshot_drift}
 
 
 # ---------------------------------------------------------------------------
@@ -4388,6 +4437,18 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
         return 2
     src = "死信原快照" if args.from_bag else "当前工作区"
     print(f"REQUEUED: {result['old_qid']} -> {result['new_qid']}（快照来源={src}，新 qid 排 FIFO 队尾）")
+    # F4 快照漂移披露（st-govfix-g2-20261007）：源文件 hash≠快照 hash 时当场报全部
+    # 漂移件双 hash + "修因请新入队"通道指引（非阻断——修-重试工作流依赖工作区现字节）
+    for d in result.get("snapshot_drift") or []:
+        print(
+            f"SNAPSHOT-DRIFT: {d['path']}\n"
+            f"  worktree_sha256={d['worktree_sha256']}\n"
+            f"  snapshot_sha256={d['snapshot_sha256']}\n"
+            f"  -> 修因请新入队（内容修复后的袋禁 requeue 旧 blob，重新 enqueue 新袋）；"
+            f"要死信原内容用 --from-bag"
+        )
+    if result.get("snapshot_drift"):
+        print(f"SNAPSHOT-DRIFT 汇总: {len(result['snapshot_drift'])} 件工作区内容≠死信快照")
     if not args.no_bootstrap:
         drain_result = try_bootstrap_drain(args.queue_root)  # 重入队自举排空（66 号 §8）
         if not drain_result.get("skipped"):
