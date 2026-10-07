@@ -63582,4 +63582,10 @@ creation_tokens:
   capability: sector_line_docs
   created_by: st-govfix-g6-20261007
   merge_evaluation: "sector_line statreplay 判决链/gpu_input_pack 文档面死信复活批，原会话唯一产出，无既有承载条目不并"
+- file: config/governance/private_key_exempt_registry.yaml
+  token: private-key-exempt-registry-private-key-exempt-registry-20261007
+  created_by: st-govfix-g4-20261007
+  capability: private_key_exempt_registry
+  merge_evaluation: "替代 detect_private_key.py 内联 _EXEMPT_PATHS 硬编码豁免集（同真源收敛唯一）；旧 4 条 tests/ 旧址硬编码条目随迁移退役（HEAD 不存在），2 条真源件原样保留=零净增"
+
 di_seam_exemptions: []
