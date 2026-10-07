@@ -67,6 +67,10 @@ _SQL_DROP_DRILL_DB_FORCE = "DROP DATABASE IF EXISTS " + _DRILL_DB + " WITH (FORC
 #: locale 读数失败时的回落参数（=活库 09-26 实测值），回落事实入 report["drill_db_locale_source"]。
 _DRILL_LOCALE_FALLBACK: tuple[str, str, str] = ("C", "C", "UTF8")
 _SQL_LIVE_DB_LOCALE = "SELECT datcollate, datctype, pg_encoding_to_char(encoding) FROM pg_database WHERE datname='{db}'"
+#: IN1-32b（2026-10-07）：PG15 createdb（含 TEMPLATE template0）预建 public schema，与 dump 内
+#: CREATE SCHEMA public 撞车（2026-10-01 04:30 首跑 rc=1 两错之一：『模式 public 已经存在』）。
+#: restore 前对演练库显式 DROP public schema（治本，非靠 C4 良性分类兜底）。
+_SQL_DROP_DRILL_PUBLIC_SCHEMA = "DROP SCHEMA IF EXISTS public"
 
 
 def _build_create_drill_sql(collate: str, ctype: str, encoding: str) -> str:
@@ -653,8 +657,22 @@ def run_drill(
             timeout=120,
             check=True,
         )
+        # IN1-32b：drill 库 restore 前显式 DROP public schema（PG15 createdb 预建 public 撞 dump
+        # 的 CREATE SCHEMA public——2026-10-01 首跑 rc=1 根因①，治本不再依赖 C4 良性分类兜底）
+        schema_reset = run_subprocess_hidden(
+            [psql, "-h", host, "-U", user, "-d", _DRILL_DB, "-c", _SQL_DROP_DRILL_PUBLIC_SCHEMA],
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=120,
+        )
+        report["drill_db_schema_reset_rc"] = schema_reset.returncode
+        # IN1-32b：--no-owner 之外加 --no-privileges（-x）——dump 内 ALTER DEFAULT PRIVILEGES FOR
+        # ROLE postgres 对演练角色恒 permission denied（2026-10-01 首跑 rc=1 根因②）。
+        # 风险留痕（IN1-32 risk_note）：--no-privileges 跳过 GRANT 面 → 演练库权限面与生产不同构；
+        # 演练目的=端到端可读性验证（表集/行数/内容指纹），权限面同构性不在裁决范围，可接受。
         r = run_subprocess_hidden(
-            [pg_restore, "-h", host, "-U", user, "-d", _DRILL_DB, "--no-owner", str(dump)],
+            [pg_restore, "-h", host, "-U", user, "-d", _DRILL_DB, "--no-owner", "--no-privileges", str(dump)],
             capture_output=True,
             text=True,
             env=env,
