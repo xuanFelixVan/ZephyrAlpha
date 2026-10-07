@@ -1,0 +1,19 @@
+
+cluster_execution_amendment:
+  date: '2026-10-06'
+  owner_approval: 全部按建议施工(价值判断补课后改判版)
+  ruling_1_orchestrator_lifecycle:
+    disposition: 整簇转归档(git mv → src/zephyr/orchestrator/_archive/lifecycle,10 件)
+    value_judgment: 设计有思想(5层启动序列+120s超时状态机/状态传播规则表/结构化事故模型)但零接线且活机制全覆盖(SessionRegistry/对账链/boot_hooks/reaper/S09),数月零对应事故;转正=十个改造工程且制造重复建设(标签#8)
+    harvest: 摘果三枚——tech_stack 组件自检思想→boot_hooks 吸收(见②);分层启动思想+结构化事故模型→本注记记档,档内随时捞回
+  ruling_2_capacity_assurance:
+    archive_3: [schema.py, sli_instrumentation.py, budget_forecaster.py]
+    archive_reason: schema=活默克尔审计链(data/audit_trail)超越;sli=system_telemetry 事实上SLI流;budget_forecaster=47行单方法边际
+    keep_contracts_package: contracts/ 包壳留位——内含在编 batch1/2/3(排雷记录:曾拟归档,发现活件撤回)
+    evaluation_3: [tech_stack.py, cross_module_integration.py, risk_mitigation.py]
+    evaluation_input: capacity_eval_evidence.yaml(fa498197c0d 已落 dev:R/DD/CT 三表36行+7 GAP)
+    evaluation_plan: tech_stack 16组件自检→boot_hooks 吸收细案;cross_module CT契约层评估;risk_mitigation R1-R16 逐条裁(7 GAP 待处置)
+  ruling_3_meta_validators:
+    disposition: 双退(git rm)
+    value_judgment: 八检查项逐项对位活机制全覆盖;"一条命令聚合"便利四月零使用
+  counts_impact: GOMAP 例行重跑预期 450→420(退役15+并簇15出图)

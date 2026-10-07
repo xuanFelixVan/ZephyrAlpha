@@ -46,8 +46,8 @@ language: zh
 | `c0_meta` | 1 |
 | `c1_backtest` | 2 |
 | `c1_market` | 183 |
-| `c3_fundamental` | 34 |
-| **合计 / Total** | **220** |
+| `c3_fundamental` | 33 |
+| **合计 / Total** | **219** |
 <!-- AUTO-END:table_counts -->
 
 ## 5. 外部权威源（全量表清单与逐表 schema）
