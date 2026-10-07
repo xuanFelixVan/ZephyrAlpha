@@ -64,6 +64,7 @@ import logging
 import subprocess
 import sys
 import time
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Final
@@ -99,6 +100,8 @@ def _stat_flush(gateway: object) -> None:
         with _STAT_LOCK:
             acc = _STAT_ACC.copy()
             _STAT_ACC.clear()
+            phases = {g: dict(p) for g, p in _PHASE_ACC.items()}
+            _PHASE_ACC.clear()
         if not acc:
             return
         from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
@@ -111,10 +114,50 @@ def _stat_flush(gateway: object) -> None:
             "ms": {g: v["ms"] for g, v in acc.items()},
             "total_ms": round(sum(v["ms"] for v in acc.values()), 1),
         }
+        if phases:  # C157 残差相计时：仅声明相的门出现，消费方按需读取（向后兼容）
+            rec["phases"] = phases
         with (audit_dir / "gate_execution_stats.jsonl").open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001 — 观测落盘永不阻断
         pass
+
+
+# ---------------------------------------------------------------------------
+# C157（st-mastertc-l1，2026-10-07）残差相计时：per-gate 墙钟（上方 _stat_ms）
+# 只答"哪台门重"，不答"重在哪一相"。共享 _timed_phase 上下文管理器让最重的
+# 3 台门（GATE-PRECOMMIT-RUN / CREATE-GUARD / FMS-HYGIENE）在体内把重相
+# （hook 进程运行 / registry 载入+判重链 / 基线册载入+引用扫描）单独记账，
+# 随同一行 gate_execution_stats.jsonl 落盘（rec["phases"]）。fail-safe：
+# 计时任何异常静默吞掉，绝不影响被包业务与提交主链路。
+# ---------------------------------------------------------------------------
+_PHASE_ACC: dict[str, dict[str, float]] = {}
+
+
+def _phase_ms(gate_id: str, phase: str, ms: float) -> None:
+    """单相累计记账（线程安全，fail-safe 静默）。"""
+    try:
+        with _STAT_LOCK:
+            bucket = _PHASE_ACC.setdefault(gate_id, {})
+            bucket[phase] = round(bucket.get(phase, 0.0) + ms, 1)
+    except Exception:  # noqa: BLE001 — 观测记账永不阻断
+        pass
+
+
+@contextmanager
+def _timed_phase(gate_id: str, phase: str):
+    """单相计时上下文（C157）：``with _timed_phase(gate_id, "phase_name"): ...``。
+
+    相名约定 = 门内重相的稳定短标识（如 "registry_load"/"hooks_run"），进入
+    gate_execution_stats.jsonl 的 ``phases.<gate_id>.<phase>``（毫秒，链内累计）。
+    """
+    _t0 = time.monotonic()
+    try:
+        yield
+    finally:
+        try:
+            _phase_ms(gate_id, phase, (time.monotonic() - _t0) * 1000)
+        except Exception:  # noqa: BLE001 — 计时异常静默，业务零感知
+            pass
 
 
 def _audit_allow_overlap_usage(gateway: object, files: list[str], kwargs: dict) -> None:

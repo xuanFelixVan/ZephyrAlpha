@@ -90,7 +90,11 @@ from zephyr.gov_enforcement.commit_gates.read_side.fms_ref_extractor import (
     is_template_form,
     normalize_ref,
 )
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    _timed_phase,  # noqa: PLC2701 — C157 残差相计时：门内重相记账走共享 helper（同包私有约）
+    is_test_exempt,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -278,7 +282,8 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             return True, ""
 
         wt_root = _get_worktree_root(gateway)
-        baseline = _load_baseline_refs(str(getattr(gateway, "project_root", ".")))
+        with _timed_phase(_GATE_ID, "baseline_load"):  # C157 残差相计时
+            baseline = _load_baseline_refs(str(getattr(gateway, "project_root", ".")))
 
         findings: dict[str, list[str]] = {
             _CLASS_DEADREF: [],
@@ -286,17 +291,18 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             _CLASS_PERM_EPHEMERAL: [],
             _CLASS_CAS: [],
         }
-        for rel in own:
-            permanent = is_permanent_referrer(rel)
-            new_refs = _new_refs_of_file(gateway, rel, wt_root)
-            if not new_refs:
-                continue
-            for token, forms in sorted(new_refs.items()):
-                if is_template_form(token):
-                    continue  # 模板/占位形态提取层豁免（A 类 196 实证，S1 §4.4 风险 1）
-                cls = _classify_new_ref(gateway, token, forms, permanent, baseline)
-                if cls:
-                    findings[cls].append(f"{rel} -> {token}")
+        with _timed_phase(_GATE_ID, "ref_scan"):  # C157 残差相计时
+            for rel in own:
+                permanent = is_permanent_referrer(rel)
+                new_refs = _new_refs_of_file(gateway, rel, wt_root)
+                if not new_refs:
+                    continue
+                for token, forms in sorted(new_refs.items()):
+                    if is_template_form(token):
+                        continue  # 模板/占位形态提取层豁免（A 类 196 实证，S1 §4.4 风险 1）
+                    cls = _classify_new_ref(gateway, token, forms, permanent, baseline)
+                    if cls:
+                        findings[cls].append(f"{rel} -> {token}")
 
         findings = {k: v for k, v in findings.items() if v}
         if not findings:

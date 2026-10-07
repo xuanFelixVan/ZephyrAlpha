@@ -164,7 +164,11 @@ from zephyr.gov_enforcement.commit_gates._capability_registry_io import (
     reset_parse_cache,
 )
 from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC2701 — C157 相计时共享 helper 同包私约
+    GateSpec,
+    _timed_phase,
+    is_test_exempt,
+)
 from zephyr.governance.rule_patterns import RULE_NAME_RE
 from zephyr.shared.utils.diff_utils import similarity_ratio
 from zephyr.shared.utils.time_utils import now_utc
@@ -1728,8 +1732,11 @@ def _run_file_registration_checks(
 
     registry 单次加载供 token 硬阻断与 #375 warn 共用（40k 行 YAML 重试解析昂贵，
     不双载；撕读重试计数语义不变——仍是一次 _load_capability_registry 调用）。
+    C157 残差相计时：registry 载入与判重链（~86s lookup 构造所在）单独记账入
+    gate_execution_stats.jsonl phases 面。
     """
-    data, detail = _load_capability_registry(gateway)
+    with _timed_phase("CREATE-GUARD", "registry_load"):
+        data, detail = _load_capability_registry(gateway)
     if data is None:
         return False, detail
 
@@ -1760,17 +1767,19 @@ def _run_file_registration_checks(
     # （内部再构造→同败→warning 跳过），关键词检测 fail-closed（检测器失效禁放行）。
     _lookup = None
     _lookup_err = ""
-    if new_py_files:
-        try:
-            _lookup = _build_capability_lookup()
-        except Exception as _e:  # noqa: BLE001 — 交由两检测各自按其 fail 语义处置
-            _lookup_err = f"{type(_e).__name__}: {_e}"
+    with _timed_phase("CREATE-GUARD", "dup_lookup_build"):  # C157 残差相计时（~86s 构造所在）
+        if new_py_files:
+            try:
+                _lookup = _build_capability_lookup()
+            except Exception as _e:  # noqa: BLE001 — 交由两检测各自按其 fail 语义处置
+                _lookup_err = f"{type(_e).__name__}: {_e}"
     passed, detail = _check_basename_collision(gateway, new_py_files, lookup=_lookup)
     if not passed:
         return False, detail
-    passed, detail = _check_capability_keyword_overlap(
-        gateway, new_py_files, session_id=session_id, lookup=_lookup, lookup_error=_lookup_err
-    )
+    with _timed_phase("CREATE-GUARD", "keyword_overlap"):  # C157 残差相计时
+        passed, detail = _check_capability_keyword_overlap(
+            gateway, new_py_files, session_id=session_id, lookup=_lookup, lookup_error=_lookup_err
+        )
     # S4-C 预热：判重链完成后空闲期后台预热/刷新单例（daemon，异常全吞，不影响
     # 本链判定）——为本进程下一次 commit 把 ~86-109s 构造尾从关键路径搬走。
     warm_capability_lookup_async()

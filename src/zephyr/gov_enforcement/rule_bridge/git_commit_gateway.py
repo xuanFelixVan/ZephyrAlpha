@@ -3956,16 +3956,23 @@ class GitCommitGateway:
         rc = 0
         mutation = False
         skipped = False
+        # C157 残差相计时（st-mastertc-l1）：临时索引构建与 hook 执行两重相单独
+        # 记账入 gate_execution_stats.jsonl phases 面（fail-safe，判定零变化）。
+        from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: PLC0415
+            _timed_phase as _c157_timed_phase,
+        )
+
         try:
             head = self._precommit_git(env, root, ["rev-parse", "--verify", "HEAD"], timeout_s=60)
             if head.returncode != 0:
                 skipped = True
                 return output, rc, mutation, infra_error, skipped
-            rt = self._precommit_git(env, root, ["read-tree", "HEAD"])
-            if rt.returncode != 0:
-                infra_error = f"read-tree failed: {rt.stderr.strip()[:300]}"
-            if not infra_error:
-                infra_error = self._precommit_build_temp_index(env, rel_existing, rel_deleted)
+            with _c157_timed_phase("GATE-PRECOMMIT-RUN", "index_build"):
+                rt = self._precommit_git(env, root, ["read-tree", "HEAD"])
+                if rt.returncode != 0:
+                    infra_error = f"read-tree failed: {rt.stderr.strip()[:300]}"
+                if not infra_error:
+                    infra_error = self._precommit_build_temp_index(env, rel_existing, rel_deleted)
             if not infra_error:
                 chunks = [rel_existing[i : i + 200] for i in range(0, len(rel_existing), 200)] or [[]]
                 # ── D3 Phase-A 快败子集（st-commitchain-20260922，Owner R3 两段式）──
@@ -3974,13 +3981,14 @@ class GitCommitGateway:
                 # own/foreign 归因器（_precommit_decide_failure），语义零变化。
                 # 全局 fail_fast 禁用原因：会以 foreign 失败掩蔽 own 失败→误放行。
                 fa_output, fa_rc, fa_infra, fa_ran = "", 0, "", False
-                if _precommit_fast_subset_enabled():  # P1-1（红队 0922）：开关必须门住调用本身
-                    _fa_t0 = time.monotonic()
-                    fa_output, fa_rc, fa_infra = self._precommit_fast_subset(env, chunks)
-                    # A1 装表：快段与全段的差≈慢尾成本（不改调用形态——逐 hook 已被
-                    # 实测否决："会把真落地集成套件时长乘 N 倍"，50-commit 挂死教训）
-                    self._pc_fast_ms = (time.monotonic() - _fa_t0) * 1000
-                    fa_ran = not fa_infra
+                with _c157_timed_phase("GATE-PRECOMMIT-RUN", "hooks_run_fast"):
+                    if _precommit_fast_subset_enabled():  # P1-1（红队 0922）：开关必须门住调用本身
+                        _fa_t0 = time.monotonic()
+                        fa_output, fa_rc, fa_infra = self._precommit_fast_subset(env, chunks)
+                        # A1 装表：快段与全段的差≈慢尾成本（不改调用形态——逐 hook 已被
+                        # 实测否决："会把真落地集成套件时长乘 N 倍"，50-commit 挂死教训）
+                        self._pc_fast_ms = (time.monotonic() - _fa_t0) * 1000
+                        fa_ran = not fa_infra
                 if not fa_infra and fa_rc != 0:
                     logger.info(
                         "GitCommitGateway: precommit fast-subset 命中违规，短路全通道（rc=%d）",
@@ -3995,7 +4003,8 @@ class GitCommitGateway:
                 if fa_ran and not _precommit_phaseb_full_enabled():
                     fast_ids = _precommit_config_hook_ids(str(self.project_root))
                     pb_extra_skip = ",".join(hid for hid in fast_ids if hid not in _PRECOMMIT_SLOW_TAIL_HOOKS)
-                output, rc, mutation, infra_error = self._precommit_execute(env, chunks, extra_skip=pb_extra_skip)
+                with _c157_timed_phase("GATE-PRECOMMIT-RUN", "hooks_run_slow_tail"):
+                    output, rc, mutation, infra_error = self._precommit_execute(env, chunks, extra_skip=pb_extra_skip)
                 if pb_extra_skip and fa_output:
                     output = fa_output + "\n" + output  # 归因面合并：快段（绿）段并入判定输入
         finally:
