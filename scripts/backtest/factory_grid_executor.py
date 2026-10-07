@@ -818,6 +818,15 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
         if j_schedule is None:
             raise RuntimeError("J_regime_switch=on 需日级帽调度表（run_batch 未加载）——fail-closed")
         weights, _j_dist = _apply_regime_caps(weights, j_schedule)
+    # T3b X 族离场叠加（20261007 袋B 接线；phase>=3 展开，折叠相值恒 'off'=零漂移）。
+    # 序钉（T3b 卡 v2 冻结位）：J 帽 → X_stop（个股离场清仓）→ X_breaker（组合帽收口，
+    # 消费 post-stop 组合权益=对真实持仓反应，最保守）。未接线相缺省 'off'=恒等。
+    stop_mode = v.get("X_stop", "off")
+    if stop_mode != "off":
+        weights, _ = _apply_exit_overlay(weights, closes, stop_mode)
+    breaker_mode = v.get("X_breaker", "off")
+    if breaker_mode != "off":
+        weights, _ = _apply_dd_breaker_overlay(weights, closes, breaker_mode)
     return weights, tuple(degraded)
 
 
@@ -896,11 +905,17 @@ def _apply_exit_overlay(
         trigger = held & (closes < level)
     elif stop_mode == "trail20":
         # 段内运行峰值：stack 后按 (票, 段号) cummax 再 unstack（段号=入场日 cumsum，列独立；
-        # where(held).stack 丢未持仓行，reindex 对齐段号再分组）
+        # where(held).stack 丢未持仓行，reindex 对齐段号再分组）。unstack 会丢"从未持仓"的
+        # 票列与全空仓日期行——reindex 回 closes 全标签面（NaN→trigger False=诚实缺供）。
         regime = entry_day.cumsum()
         st = closes.where(held).stack()
         reg = regime.stack().reindex(st.index)
-        peak = st.groupby([st.index.get_level_values(1), reg]).cummax().unstack()
+        peak = (
+            st.groupby([st.index.get_level_values(1), reg])
+            .cummax()
+            .unstack()
+            .reindex(index=closes.index, columns=closes.columns)
+        )
         trigger = held & (closes < peak * (1.0 - 0.20))
     else:  # tp20
         trigger = held & (closes >= entry_px * 1.20)
@@ -1055,7 +1070,13 @@ def _apply_capital_ramp_overlay(
         regime = entry_day.cumsum()
         st = held.stack()
         reg = regime.stack().reindex(st.index)
-        cnt = st.groupby([st.index.get_level_values(1), reg]).cumsum().unstack()
+        # unstack 丢空列/空行——reindex 回全标签面（同 trail20 峰值修，20261007）
+        cnt = (
+            st.groupby([st.index.get_level_values(1), reg])
+            .cumsum()
+            .unstack()
+            .reindex(index=weights.index, columns=weights.columns)
+        )
         ramp = (cnt / float(n_days)).clip(upper=1.0).fillna(0.0)
         return weights.mul(ramp, axis=0), ramp_mode
     # pyramid：入场价锚（同 M1 entry 语义）+ 价档乘数；armed 档段内持久化（cummax 路径依赖，
@@ -1068,7 +1089,13 @@ def _apply_capital_ramp_overlay(
     def _armed_in_segment(flag: pd.DataFrame) -> pd.DataFrame:
         st = flag.where(held).stack()
         reg = regime.stack().reindex(st.index)
-        return st.groupby([st.index.get_level_values(1), reg]).cummax().unstack()
+        # unstack 丢空列/空行——reindex 回全标签面（同 trail20 峰值修）
+        return (
+            st.groupby([st.index.get_level_values(1), reg])
+            .cummax()
+            .unstack()
+            .reindex(index=weights.index, columns=weights.columns)
+        )
 
     armed3 = _armed_in_segment(closes >= entry_px * 1.03).fillna(False)
     armed6 = _armed_in_segment(closes >= entry_px * 1.06).fillna(False)
@@ -1991,6 +2018,11 @@ def main() -> int:
         default=None,
         help="确定性分片总数（缺省=不分片零漂移）；分片须串行跑（vram.concurrency=1）",
     )
+    ap.add_argument(
+        "--context-json",
+        default="",
+        help="显式 context 注入（非 stage 批次用，如 T3b-T0 标定 '{\"phase\": 3}'；缺省空=零漂移）",
+    )
     args = ap.parse_args()
     if args.verify_counts:
         return _verify_counts(args.verify_grid_root or None)
@@ -2038,6 +2070,10 @@ def main() -> int:
 
     subspace = _json.loads(args.subspace_json) if args.subspace_json else None
     stratify = tuple(d for d in args.stratify_dims.split(",") if d)
+    if ctx_overrides is None and args.context_json:
+        # 显式 context 注入（20261007 袋B）：非 stage 批次的 T3b-T0 标定通道（phase=3
+        # 激活 X 族；缺省空=零漂移）。stage 批次仍以冻卡注入为准，本旗标不参与。
+        ctx_overrides = _json.loads(args.context_json)
     s = run_batch(
         args.n_samples,
         args.seed,

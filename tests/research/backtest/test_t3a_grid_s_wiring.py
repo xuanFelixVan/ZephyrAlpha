@@ -975,3 +975,85 @@ def test_grid_expansion_x_dims_phase_gating():
     assert e3.n_raw == e2.n_raw * 6
     # J 在 phase 3 保持展开（T3b 继承 T3a 空间）
     assert {r.values["J_regime_switch"] for r in e3.recipes} == {"on", "off"}
+
+
+# ── T3b X 族接线（20261007 袋B：evaluate_recipe 序钉 J帽→stop→breaker；折叠 'off'=零漂移）──
+
+
+def test_evaluate_recipe_x_off_identity_folded():
+    """零漂移锚：X_stop/X_breaker='off'（折叠相 baseline）→ 与无 X 键 recipe 逐位一致。"""
+    closes = _synth_closes(n_days=80, n_sym=4, seed=113)
+    factors = mod.compute_v1_factors(closes)
+    vol20 = closes.pct_change().rolling(20).std()
+    cols = list(closes.columns)
+    r_no_x = _recipe(dict(V1))
+    w_no, _ = mod.evaluate_recipe(r_no_x, closes, factors, vol20, cols)
+    r_off = _recipe({**V1, "X_stop": "off", "X_breaker": "off"})
+    w_off, _ = mod.evaluate_recipe(r_off, closes, factors, vol20, cols)
+    assert w_off.equals(w_no)
+
+
+def test_evaluate_recipe_x_stop_trail20_wired_end_to_end():
+    """绿组：X_stop=trail20 经 evaluate_recipe 全链生效——深跌票权重被离场清零。"""
+    idx = pd.bdate_range("2023-01-02", periods=80)
+    cols = ["000001", "000002", "000003", "000004"]
+    rng = np.random.default_rng(127)
+    up = 10 * np.exp(np.cumsum(rng.normal(0.002, 0.01, (80, 1)), axis=0))
+    crash = np.concatenate(
+        [
+            10 * np.exp(np.cumsum(rng.normal(0.002, 0.01, (30, 1)), axis=0)),
+            10 * np.exp(np.cumsum(rng.normal(-0.05, 0.005, (50, 1)), axis=0)),
+        ]
+    )
+    closes = pd.DataFrame(np.hstack([up, crash, up * 0.9, crash * 1.05]), index=idx, columns=cols)
+    factors = mod.compute_v1_factors(closes)
+    vol20 = closes.pct_change().rolling(20).std()
+    r_base = _recipe({**V1, "B_top_n": "top2", "X_stop": "trail20"})
+    w_stop, _ = mod.evaluate_recipe(r_base, closes, factors, vol20, cols)
+    r_base0 = _recipe({**V1, "B_top_n": "top2"})
+    w_base, _ = mod.evaluate_recipe(r_base0, closes, factors, vol20, cols)
+    diff_days = (w_stop.sum(axis=1) - w_base.sum(axis=1)).abs()
+    assert (diff_days > 1e-12).any(), "trail20 全程无清仓=接线未生效"
+    assert (w_stop.sum(axis=1) <= w_base.sum(axis=1) + 1e-12).all(), "离场只减不增"
+
+
+def test_evaluate_recipe_x_breaker_dd20_wired_end_to_end():
+    """绿组：X_breaker=dd20 经 evaluate_recipe 全链生效——组合深撤带触发帽缩水。"""
+    idx = pd.bdate_range("2023-01-02", periods=80)
+    cols = ["000001", "000002", "000003", "000004"]
+    rng = np.random.default_rng(131)
+    rise = 10 * np.exp(np.cumsum(rng.normal(0.004, 0.008, (40, 4)), axis=0))
+    crash = rise[-1:, :] * np.exp(np.cumsum(rng.normal(-0.03, 0.004, (40, 4)), axis=0))
+    closes = pd.DataFrame(np.vstack([rise, crash]), index=idx, columns=cols)
+    factors = mod.compute_v1_factors(closes)
+    vol20 = closes.pct_change().rolling(20).std()
+    w_brk, _ = mod.evaluate_recipe(_recipe({**V1, "X_breaker": "dd20"}), closes, factors, vol20, cols)
+    w_base, _ = mod.evaluate_recipe(_recipe(dict(V1)), closes, factors, vol20, cols)
+    tail = slice(idx[45], idx[-1])
+    assert (w_brk.loc[tail].to_numpy() <= w_base.loc[tail].to_numpy() + 1e-12).all(), "帽后权重须≤基准"
+    assert (w_brk.loc[tail].to_numpy() < w_base.loc[tail].to_numpy() - 1e-12).any(), "深撤带内应有帽缩水"
+
+
+def test_evaluate_recipe_x_order_pin_stop_then_breaker():
+    """序钉：J帽→stop→breaker 组合输出=手工两级 compose（breaker 消费 post-stop 权重）。"""
+    idx = pd.bdate_range("2023-01-02", periods=80)
+    cols = ["000001", "000002", "000003", "000004"]
+    rng = np.random.default_rng(137)
+    up = 10 * np.exp(np.cumsum(rng.normal(0.002, 0.01, (80, 1)), axis=0))
+    crash = np.concatenate(
+        [
+            10 * np.exp(np.cumsum(rng.normal(0.002, 0.01, (30, 1)), axis=0)),
+            10 * np.exp(np.cumsum(rng.normal(-0.05, 0.005, (50, 1)), axis=0)),
+        ]
+    )
+    closes = pd.DataFrame(np.hstack([up, crash, up * 0.9, crash * 1.05]), index=idx, columns=cols)
+    factors = mod.compute_v1_factors(closes)
+    vol20 = closes.pct_change().rolling(20).std()
+    r_both = _recipe({**V1, "B_top_n": "top2", "X_stop": "trail20", "X_breaker": "dd20"})
+    w_both, _ = mod.evaluate_recipe(r_both, closes, factors, vol20, cols)
+    # 手工 compose：先 stop 后 breaker（同输入面，breaker 消费 post-stop 权重与组合权益）
+    w_stop_only, _ = mod.evaluate_recipe(
+        _recipe({**V1, "B_top_n": "top2", "X_stop": "trail20"}), closes, factors, vol20, cols
+    )
+    w_manual, _ = mod._apply_dd_breaker_overlay(w_stop_only, closes, "dd20")
+    assert np.allclose(w_both.values, w_manual.values), "序钉破坏：组合输出≠stop→breaker 两级 compose"
