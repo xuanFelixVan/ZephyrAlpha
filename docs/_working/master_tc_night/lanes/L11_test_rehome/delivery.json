@@ -1,0 +1,93 @@
+{
+  "lane": "L11_test_rehome",
+  "session": "st-mastertc-l11",
+  "generated": "2026-10-07T07:05:00+08:00",
+  "wait_tests_chief": false,
+  "chief_inflight_evidence": "03:40 实测：锁表零持有 + 最后 tests/ 提交 e824a7ff9e=02:55（45min 前）→ 判不在飞，走全量重收编；st-cure-p10 三枚过期锁精准释放（其 04:01 复活落 trade/trading 面，零撞）",
+  "cards": {
+    "C263_test_commit_preflight_registry_cache": {
+      "old_bytes_sha256_16": "54b908e988da5898",
+      "old_source": "8a6353976a8:tests/governance/rule_bridge/test_commit_preflight_registry_cache.py",
+      "new_path": "tests/gov/governance/rule_bridge/test_commit_preflight_registry_cache.py",
+      "byte_delta": "BLUEPRINT 行删 + module_id 撞号治本（chief 既定动作，materialize 权威副本采用）",
+      "pytest": "8 passed",
+      "commit": "44f445c47e"
+    },
+    "C16_test_rb14_s7_cross_lane": {
+      "old_bytes_sha256_16": "c4cacdb3b8fc468e",
+      "old_source": "8b6c351c58c:tests/governance/red_blue_pkg14/test_rb14_s7_cross_lane.py",
+      "new_path": "tests/gov/governance/red_blue_pkg14/test_rb14_s7_cross_lane.py",
+      "byte_delta": "BLUEPRINT 行删 + import 块 I001 双配置兼容改写 + 块首 noqa: I001（落地侧 ruff 环境判据分歧四袋实证后压制）",
+      "pytest": "5 passed",
+      "commit": "b20899c870"
+    },
+    "C56_wave3_dual_source_guard": {
+      "old_bytes_sha256_16": "66f271594daf336b",
+      "old_source": "f577545c5c4:tests/data/test_wave3_dual_source_guard.py",
+      "new_path": "tests/data/data/test_wave3_dual_source_guard.py",
+      "byte_delta": "BLUEPRINT 行删",
+      "pytest": "5 passed, 3 xfailed",
+      "commit": "44f445c47e",
+      "residual": "旧路径盘面回灌僵尸 tests/data/test_wave3_dual_source_guard.py 未物理删，留清理班"
+    },
+    "C56_governance_legislation_map_adversarial": {
+      "old_bytes_sha256_16": "744b3b2c927746bd",
+      "old_source": "caffd260345:tests/governance/d5_architecture/test_governance_legislation_map_adversarial.py",
+      "new_path": "tests/gov/governance/d5_architecture/test_governance_legislation_map_adversarial.py",
+      "byte_delta": "git mv+新家适配（parents[4]/TEST- id/BLUEPRINT 删）",
+      "pytest": "15 passed",
+      "commit": "44f445c47e",
+      "prerequisite": "CV-05 counts 回灌（config/governance_legislation_map.yaml，commit cdd1246dc6）"
+    },
+    "C56_strategy_card_lifecycle_map_adversarial": {
+      "old_bytes_sha256_16": "d9bc9eee3c79cc4f",
+      "old_source": "87cb48bf0e5^:tests/governance/d5_architecture/test_strategy_card_lifecycle_map_adversarial.py（q-0213 捞回件 #16）",
+      "new_path": "tests/gov/governance/d5_architecture/test_strategy_card_lifecycle_map_adversarial.py",
+      "byte_delta": "机械三改（BLUEPRINT 删/TEST- id/parents[4]）",
+      "pytest": "67 passed / 3 failed（生产真债如实红录：D15-S1 真源锚被 014ccf5b18d 归档 mv 未重指 ×2 + CV-HOST 注册欠账 unregistered_declarable=10 → RED 移交 fig15/工厂车道）",
+      "commit": "44f445c47e",
+      "prerequisite": "图 counts 回灌（config/strategy_card_lifecycle_map.yaml，commit cdd1246dc6）"
+    },
+    "C155_test_evaporation_cure_lane_ev": {
+      "old_bytes_sha256_16": null,
+      "old_source": "无 git 史；唯一遗物=pyc 骨架（co_filename=旧路径，2026-09-28 先红版）→ 按 pyc 全骨架+现行 EV-02 落地形态忠实重写",
+      "new_path": "tests/gov/governance/resilience/test_evaporation_cure_lane_ev.py",
+      "byte_delta": "重写件 worktree sha256_16=034b754cb329f9e9",
+      "pytest": "7 passed",
+      "commit": "44f445c47e"
+    },
+    "C155_test_commit_queue_snapshot_selfconsistency": {
+      "old_bytes_sha256_16": "c1f50a6838f7b034",
+      "old_source": "dbf5ee8a6c7:tests/governance/test_commit_queue_snapshot_selfconsistency.py",
+      "new_path": "tests/gov/governance/resilience/test_commit_queue_snapshot_selfconsistency.py",
+      "byte_delta": "parents[3]→[4] + 归位移动",
+      "pytest": "2 passed / 5 failed（见证层 _stale_carry_candidate_blobs 对现行 enqueue 契约漂移返空 → RED 移交 queue/landing 治理车道，不白洗）",
+      "commit": "44f445c47e"
+    },
+    "C10_test_api_server_route_guard_order": {
+      "old_bytes_sha256_16": "a66d847f785fef97",
+      "old_source": "3d0c5fcdf01:tests/governance/test_api_server_route_guard_order.py",
+      "new_path": "tests/frontend/test_api_server_route_guard_order.py",
+      "byte_delta": "BLUEPRINT 删 + parents[3]→[2] + 归位 D_FRONTEND 本域",
+      "pytest": "3 passed（首跑 1 红=真回归实证 → 产线治本：api_server mount 块移回全部 AI 路由注册之后；SW3 哨兵尺绿 + 运行时序实证 4 路由[54-57]先于 mount[58]）",
+      "commit": "44f445c47e",
+      "production_fix_commit": "e5f0f9a5ee"
+    }
+  },
+  "commits": [
+    "44f445c47e",
+    "b20899c870",
+    "e5f0f9a5ee",
+    "cdd1246dc6"
+  ],
+  "channel_notes": "正门两度被共享暂存区他会话 A 态连坐（MUTABLE-CONST 扫全暂存面）+ FOLDER-CAPACITY 判据漂移（tests 豁免收窄至深度≤1 vs 根盘面 212 平铺）→ 宪法§2.6 队列通道落地；队列战史：0001/0002/0005/0006/0007 五死同签名（落地侧 ruff 对 rb14 import 块判 I001，本地三态全绿，维护班堵点本自动登记）→ 拆袋定位病灶收敛 rb14 单件 → 0009 noqa 压制闭环；副产品=requeue 快照竞态曾捕获零字节 blob 疑点留维护班",
+  "residuals": [
+    "legislation 旧路径删除半边（git mv R 暂存残影）随收尾班落",
+    "strategy_card 3 红生产真债 → fig15/工厂车道",
+    "selfconsistency 5 红契约漂移案 → queue/landing 治理车道",
+    "旧路径盘面回灌僵尸 → 清理班（标记+隔离制）",
+    "FOLDER-CAPACITY 判据漂移 + tests/gov/governance 根 212 平铺 → tests 治理战役后续窗"
+  ],
+  "claims": "12/12 released（gateway verified + lock registry CLEAN）",
+  "workbook": "docs/_working/master_tc_night/lanes/L11_test_rehome/00_workbook.md"
+}

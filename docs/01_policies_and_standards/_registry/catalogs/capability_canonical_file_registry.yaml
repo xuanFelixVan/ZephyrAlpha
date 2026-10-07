@@ -63153,4 +63153,19 @@ creation_tokens:
   capability: master_tc_night
   created_by: st-mastertc-l0
   merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/ai_layer_vision/HANDOFF_wave2_closeout.md
+  token: c314-wave2-closeout-handoff-handoff-wave2-closeout-20261007
+  created_by: st-mastertc-l8
+  capability: c314-wave2-closeout-handoff
+  merge_evaluation: "移交卷非规则册：与 92 册交接卡跨域不同对象不并（92=波2施工交接，本件=收口清理勾选+移交清单）；零重复真源"
+- file: docs/_working/master_tc_night/lanes/L1_gov_a/00_workbook.md
+  token: lane1-gov-a-workbook-00-workbook-20261007
+  created_by: st-mastertc-l1
+  capability: lane1_gov_a_workbook
+  merge_evaluation: "总包夜战 L1 治理A 车道作业簿+X01 立案档，替代零散任务台账（一次性夜战产物，task_bound）"
+- file: docs/_working/master_tc_night/lanes/L1_gov_a/x01_case.md
+  token: lane1-gov-a-workbook-x01-case-20261007
+  created_by: st-mastertc-l1
+  capability: lane1_gov_a_workbook
+  merge_evaluation: "总包夜战 L1 治理A 车道作业簿+X01 立案档，替代零散任务台账（一次性夜战产物，task_bound）"
 di_seam_exemptions: []
