@@ -63183,4 +63183,9 @@ creation_tokens:
   created_by: st-mastertc-l6
   capability: master_tc_l6_factory
   merge_evaluation: "C400/C191/workbook 三册=L6 车道作业簿与触发面/销账台账交付件（真源引用册，零同物在册）；w5_1 不并（跨域不同对象：车道作业面 vs 规则数据册）"
+- file: docs/_working/master_tc_night/99_delivery/close_lane.md
+  token: master-tc-night-close-lane-20261007
+  created_by: st-mastertc-close
+  capability: master_tc_night
+  merge_evaluation: "总包夜战施工文档归档"
 di_seam_exemptions: []
