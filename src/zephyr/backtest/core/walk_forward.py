@@ -39,6 +39,11 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+from zephyr.backtest.accel.bootstrap_kernel import (
+    stationary_bootstrap_index_matrix,
+    wrc_boot_tstats,
+)
+
 # White's Reality Check显著性水平(alpha)
 WRC_SIGNIFICANCE_LEVEL = 0.05
 
@@ -268,16 +273,14 @@ class WalkForwardAnalyzer:
             block_size = max(1, int(round(n ** (1.0 / 3.0))))
 
         # 重新中心化(under H0: 均值为0), stationary block bootstrap估计null分布
+        # P1-3 换核(MOD-BT-237): 内层 b 循环 -> 批量索引矩阵 + wrc_boot_tstats 核。
+        # 索引过程与 _stationary_block_bootstrap 逐块生成分布同构(Politis & Romano 1994),
+        # RNG 流不同源; 逐位对拍走同索引注入(<=1e-9),
+        # 见 tests/backtest/test_bootstrap_kernel_wiring.py
         recentered = diff - obs_mean
         rng = np.random.default_rng()
-        boot_stats = np.empty(n_bootstrap)
-        for b in range(n_bootstrap):
-            sample = self._stationary_block_bootstrap(recentered, block_size, rng)
-            s_std = float(np.std(sample, ddof=1))
-            if s_std <= 0:
-                boot_stats[b] = 0.0
-            else:
-                boot_stats[b] = float(np.mean(sample)) / (s_std / sqrt_n)
+        idx_matrix = stationary_bootstrap_index_matrix(n, block_size, n_bootstrap, rng)
+        boot_stats = wrc_boot_tstats(recentered, idx_matrix, sqrt_n)
 
         # 单侧p-value(超额收益能力: bootstrap >= observed)
         p_value = float(np.mean(boot_stats >= obs_t))

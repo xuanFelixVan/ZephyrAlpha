@@ -38,6 +38,11 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+from zephyr.backtest.accel.bootstrap_kernel import (
+    corr_boot_pair_stats,
+    stationary_bootstrap_index_matrix,
+)
+
 __all__ = [
     "MIN_OBS",
     "BootstrapCIResult",
@@ -319,15 +324,14 @@ def bootstrap_correlation_ci(
 
     names = list(returns_panel.columns)
     pairs = [(i, j) for i in range(k) for j in range(i + 1, k)]
-    boot_p = np.empty((n_bootstrap, len(pairs)))
-    boot_s = np.empty((n_bootstrap, len(pairs)))
+    # P1-3 换核(MOD-BT-237): rep 循环 -> 批量索引矩阵 + corr_boot_pair_stats 核。
+    # 同一批索引同步应用于所有列=同步行重采样（cross-sectional 同期相关不变）；
+    # 标量 stationary_bootstrap_indices 保留为公共 API，内部索引改由批量生成器
+    # 产出——分布同构、RNG 流不同源，逐位对拍走同索引注入(<=1e-9)，
+    # 见 tests/backtest/test_bootstrap_kernel_wiring.py
     rng = np.random.default_rng(seed)
-    for rep in range(n_bootstrap):
-        idx = stationary_bootstrap_indices(t, b, rng)
-        pm, sm = _pair_corr_stats(x[idx])
-        for pi, (i, j) in enumerate(pairs):
-            boot_p[rep, pi] = pm[i, j]
-            boot_s[rep, pi] = sm[i, j]
+    idx_matrix = stationary_bootstrap_index_matrix(t, b, n_bootstrap, rng)
+    boot_p, boot_s = corr_boot_pair_stats(x, idx_matrix)
 
     pm0, sm0 = _pair_corr_stats(x)
     alpha = (1.0 - confidence) / 2.0

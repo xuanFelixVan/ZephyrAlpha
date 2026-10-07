@@ -1,0 +1,63 @@
+# ALGO_FLOW 外部真源——bootstrap_kernel（_domain_backtest 域，真源 src/zephyr/backtest/accel/bootstrap_kernel.py）
+# st-mx07-L3 P1-3 接线批（MOD-BT-237）随批登记；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.accel.bootstrap_kernel
+source_of_truth: src/zephyr/backtest/accel/bootstrap_kernel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: recentered/returns_on/returns_off/panel
+    #   fields: 一维差分或开/关收益序列（1D）、(T,k) 对齐面板（2D）
+    #   code: wrc_boot_tstats / e2_boot_sharpe_diffs / corr_boot_pair_stats 形参（FP64 收口 _as_f64_*）
+    # - id: I2
+    #   name: idx_matrix
+    #   fields: (B,T) int64 索引矩阵（stationary_bootstrap_index_matrix 产出，同索引注入对拍契约）
+    #   code: stationary_bootstrap_index_matrix(n, mean_block, n_paths, rng)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: stationary_bootstrap_index_matrix
+    #   name_en: stationary_bootstrap_index_matrix
+    #   intro: 批量 stationary bootstrap 环绕索引矩阵（块长几何分布+块起点均匀+环绕取模，向量化散点展开）。
+    #   desc: 分布同构于三原实现的索引过程（Politis & Romano 1994）；尾部补样循环对 p<1 指数衰减。
+    #   inputs: n mean_block n_paths rng
+    #   outputs: np.ndarray (n_paths, n) int64
+    # - id: A2
+    #   name_zh: wrc_boot_tstats（White's RC t 统计量核）
+    #   name_en: wrc_boot_tstats
+    #   intro: (B,T) 同步 gather 后逐路径 mean/(std_ddof1/sqrt_n)，std<=0 退化为 0。
+    #   desc: 镜像 walk_forward.whites_reality_check 内层 b 循环同式；xp 单一代码路径。
+    #   inputs: recentered idx_matrix sqrt_n
+    #   outputs: np.ndarray (B,) float64
+    # - id: A3
+    #   name_zh: e2_boot_sharpe_diffs（E2 成对 Sharpe 差核）
+    #   name_en: e2_boot_sharpe_diffs
+    #   intro: 开/关共用同一批索引成对重采样，annualized_sharpe 同式差分。
+    #   desc: 镜像 e2_stationary_bootstrap.bootstrap_sharpe_difference b 循环同式。
+    #   inputs: returns_on returns_off idx_matrix periods_per_year
+    #   outputs: np.ndarray (B,) float64
+    # - id: A4
+    #   name_zh: corr_boot_pair_stats（多元同步行重采样相关系数核）
+    #   name_en: corr_boot_pair_stats
+    #   intro: 同一批索引同步应用于所有列，Pearson=批 matmul 协方差归一，Spearman=列秩变换后同式。
+    #   desc: 镜像 correlation_block_bootstrap.bootstrap_correlation_ci rep 循环同式；分块控内存。
+    #   inputs: panel idx_matrix chunk_rows
+    #   outputs: (boot_pearson, boot_spearman) 各 (B, k(k-1)/2) float64
+    # 层: 输出
+    # - id: O1
+    #   name_zh: bootstrap 统计量矩阵
+    #   name_en: bootstrap statistic matrices
+    #   intro: p_value/CI/prob/阈值判定等判定面不入核，由调用方按原语义聚合。
+    #   downstream: walk_forward.whites_reality_check; e2_stationary_bootstrap; correlation_block_bootstrap; scripts/backtest/fexam/bootstrap_gpu/kernel.py（薄 re-export）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I2 --> A1
+    # I1 --> A2
+    # A1 --> A2
+    # A1 --> A3
+    # A1 --> A4
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1

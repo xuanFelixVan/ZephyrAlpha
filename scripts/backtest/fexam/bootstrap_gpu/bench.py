@@ -48,8 +48,19 @@ from kernel import (  # noqa: E402
     wrc_boot_tstats,
 )
 
-assert "cupy" not in sys.modules, "kernel.py import 触发了 cupy import——夜战纪律违规"
-assert resolve_backend() == "cpu", "auto 后端须恒 CPU（夜战纪律）"
+# st-mx07-L3 P1-3 迁移适配：kernel 已成 src/zephyr/backtest/accel/bootstrap_kernel.py 的薄
+# re-export（真源 MOD-BT-237），import 时 zephyr.backtest 包初始化会传递加载 cupy（既有包
+# 行为，与本核无关——原"import kernel 后 sys.modules 零 cupy"断言在门面态不可满足）。
+# 静态守卫改为：真源核本体零顶层 cupy import（夜战纪律的可达形态），运行面由下一行 auto 恒 CPU 断言承担。
+import zephyr.backtest.accel.bootstrap_kernel as _src_kernel  # noqa: E402
+
+
+def _assert_kernel_source_no_top_cupy() -> None:
+    """真源核本体零顶层 cupy import（NO-IMPORT-SIDE-EFFECT：检查收敛到 main，模块导入零 I/O）。"""
+    lines = Path(_src_kernel.__file__).read_text(encoding="utf-8").splitlines()
+    top = [ln for ln in lines if ln.startswith("import cupy")]
+    assert not top, f"真源核本体顶层 cupy import 违规: {top}"
+
 
 from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer  # noqa: E402
 from zephyr.backtest.regime_validation import e2_stationary_bootstrap as e2mod  # noqa: E402
@@ -106,6 +117,8 @@ def bench_case(name: str, fn_orig, fn_new) -> dict:
 
 
 def main() -> int:
+    _assert_kernel_source_no_top_cupy()
+    assert resolve_backend() == "cpu", "auto 后端须恒 CPU（夜战纪律）"
     print(f"bench: B={N_BOOT} x T={T} | backend={resolve_backend()} | numpy {np.__version__}")
     results: list[dict] = []
 

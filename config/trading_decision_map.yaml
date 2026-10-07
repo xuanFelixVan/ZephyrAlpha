@@ -4624,7 +4624,7 @@ nodes:
 
 - node_id: TDM-F-C3-04
   name_zh: 参数校准闭环
-  note_confirmed: 2026-09-16
+  note_confirmed: 2026-10-07
   market: cn_a
   flow: portfolio_flow
   layer: C3
@@ -4638,6 +4638,9 @@ nodes:
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml：算法推导图外迁，算法口径不变）
     （2026-09-15 walk_forward 算法推导图外迁至 docs/03_modules/_domain_backtest/algo_flow/walk_forward.yaml，口径不变；同
     commit 触碰源码故本块同日再确认）
+    （2026-10-07 WRC 内层 stationary bootstrap 循环换核至 zephyr.backtest.accel.bootstrap_kernel（MOD-BT-237）：
+    批量索引矩阵+向量化 t 统计量核，p_value/判定面语义不变，同索引注入对拍逐位 ≤1e-9
+    （tests/backtest/test_bootstrap_kernel_wiring.py）；同 commit 触碰源码故本块同日再确认）
   parent_node: TDM-F-C3
   factor_refs: []
   data_refs: []

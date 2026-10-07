@@ -47,10 +47,21 @@ from kernel import (  # noqa: E402
     wrc_boot_tstats,
 )
 
-# 夜战纪律（第 1 层）：kernel 模块 import 本身零 cupy 触碰（必须在 zephyr 导入前断言——
-# zephyr.backtest 包 __init__ 会传递加载 gpu_core→cupy，属既有包行为、与本核无关）
-assert "cupy" not in sys.modules, "kernel.py import 触发了 cupy import——夜战纪律违规"
+# st-mx07-L3 P1-3 迁移适配：kernel 已成 src/zephyr/backtest/accel/bootstrap_kernel.py 的薄
+# re-export（真源 MOD-BT-237），import 时 zephyr.backtest 包初始化会传递加载 cupy（既有包
+# 行为，与本核无关——原"import kernel 后 sys.modules 零 cupy"断言在门面态不可满足）。
+# 静态守卫改为：真源核本体零顶层 cupy import；运行面由 main() 末尾 auto 恒 CPU 断言承担。
+import zephyr.backtest.accel.bootstrap_kernel as _src_kernel  # noqa: E402
 
+
+def _assert_kernel_source_no_top_cupy() -> None:
+    """真源核本体零顶层 cupy import（NO-IMPORT-SIDE-EFFECT：检查收敛到 main，模块导入零 I/O）。"""
+    lines = Path(_src_kernel.__file__).read_text(encoding="utf-8").splitlines()
+    top = [ln for ln in lines if ln.startswith("import cupy")]
+    assert not top, f"真源核本体顶层 cupy import 违规: {top}"
+
+
+from zephyr.backtest.core import walk_forward as wfmod  # noqa: E402
 from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer  # noqa: E402
 from zephyr.backtest.regime_validation import e2_stationary_bootstrap as e2mod  # noqa: E402
 from zephyr.factor.analysis import correlation_block_bootstrap as cbbmod  # noqa: E402
@@ -70,7 +81,11 @@ def check(name: str, a, b, tol: float = TOL) -> None:
 
 
 class _Feed:
-    """按序供给注入索引行（消费计数守恒校验防静默错位）。"""
+    """按序供给注入索引（消费计数守恒校验防静默错位）。
+
+    st-mx07-L3 P1-3 接线后消费方索引缝由"逐行标量供给"升级为"一次吃整张 (B,T)
+    矩阵"——next_matrix() 即矩阵缝注入口，计数从 N_BOOT 变为 1。
+    """
 
     def __init__(self, mat: np.ndarray):
         self.mat = mat
@@ -80,6 +95,10 @@ class _Feed:
         row = self.mat[self.i]
         self.i += 1
         return row
+
+    def next_matrix(self) -> np.ndarray:
+        self.i += 1
+        return self.mat
 
 
 def make_data(seed: int = 20261006) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -122,17 +141,17 @@ def test_wrc(s: np.ndarray, b: np.ndarray) -> None:
 
     idx = stationary_bootstrap_index_matrix(n, block, N_BOOT, np.random.default_rng(101))
     feed = _Feed(idx)
-    orig_fn = WalkForwardAnalyzer.__dict__["_stationary_block_bootstrap"]
+    orig_fn = wfmod.stationary_bootstrap_index_matrix
 
-    def _injected(data, block_size, rng, _f=feed):  # noqa: ARG001 — rng 刻意弃用（注入契约）
-        return data[_f.next()]
+    def _injected(n_, mb_, npaths_, rng_, _f=feed):  # noqa: ARG001 — rng 刻意弃用（注入契约）
+        return _f.next_matrix()
 
-    WalkForwardAnalyzer._stationary_block_bootstrap = staticmethod(_injected)
+    wfmod.stationary_bootstrap_index_matrix = _injected
     try:
         res = WalkForwardAnalyzer().whites_reality_check(ser_s, ser_b, n_bootstrap=N_BOOT, block_size=0)
     finally:
-        WalkForwardAnalyzer._stationary_block_bootstrap = orig_fn
-    assert feed.i == N_BOOT, f"WRC 索引消费数 {feed.i} != {N_BOOT}"
+        wfmod.stationary_bootstrap_index_matrix = orig_fn
+    assert feed.i == 1, f"WRC 矩阵索引缝消费数 {feed.i} != 1"
 
     ref = np.empty(N_BOOT)  # 原函数 276-280 行同式的参考逐 b 统计（同索引）
     for i in range(N_BOOT):
@@ -152,13 +171,13 @@ def test_e2(s: np.ndarray, b: np.ndarray) -> None:
     cfg = e2mod.E2BootstrapConfig(n_boot=N_BOOT, mean_block=21, seed=42, ci_level=0.90)
     idx = stationary_bootstrap_index_matrix(T, 21, N_BOOT, np.random.default_rng(202))
     feed = _Feed(idx)
-    orig_fn = e2mod.stationary_bootstrap_indices
-    e2mod.stationary_bootstrap_indices = lambda n_, mb_, rng_, _f=feed: _f.next()  # noqa: ARG005
+    orig_fn = e2mod.stationary_bootstrap_index_matrix
+    e2mod.stationary_bootstrap_index_matrix = lambda n_, mb_, nb_, rng_, _f=feed: _f.next_matrix()  # noqa: ARG005
     try:
         res = e2mod.bootstrap_sharpe_difference(s, b, cfg)
     finally:
-        e2mod.stationary_bootstrap_indices = orig_fn
-    assert feed.i == N_BOOT, f"E2 索引消费数 {feed.i} != {N_BOOT}"
+        e2mod.stationary_bootstrap_index_matrix = orig_fn
+    assert feed.i == 1, f"E2 矩阵索引缝消费数 {feed.i} != 1"
 
     ref = np.array([e2mod.annualized_sharpe(s[idx[i]]) - e2mod.annualized_sharpe(b[idx[i]]) for i in range(N_BOOT)])
     diffs = e2_boot_sharpe_diffs(s, b, idx, periods_per_year=252)
@@ -184,15 +203,15 @@ def test_corr(panel: np.ndarray) -> None:
 
     idx = stationary_bootstrap_index_matrix(T, blk, N_BOOT, np.random.default_rng(303))
     feed = _Feed(idx)
-    orig_fn = cbbmod.stationary_bootstrap_indices
-    cbbmod.stationary_bootstrap_indices = lambda n_, bs_, rng_, _f=feed: _f.next()  # noqa: ARG005
+    orig_fn = cbbmod.stationary_bootstrap_index_matrix
+    cbbmod.stationary_bootstrap_index_matrix = lambda n_, bs_, nb_, rng_, _f=feed: _f.next_matrix()  # noqa: ARG005
     try:
         res = cbbmod.bootstrap_correlation_ci(
             df, n_bootstrap=N_BOOT, block_size=blk, confidence=0.90, threshold=0.6, seed=7
         )
     finally:
-        cbbmod.stationary_bootstrap_indices = orig_fn
-    assert feed.i == N_BOOT, f"CORR 索引消费数 {feed.i} != {N_BOOT}"
+        cbbmod.stationary_bootstrap_index_matrix = orig_fn
+    assert feed.i == 1, f"CORR 矩阵索引缝消费数 {feed.i} != 1"
 
     ref_p = np.empty((N_BOOT, len(pairs)))
     ref_s = np.empty_like(ref_p)
@@ -223,6 +242,7 @@ def test_corr(panel: np.ndarray) -> None:
 
 
 def main() -> int:
+    _assert_kernel_source_no_top_cupy()
     print(f"parity_test: T={T} N_BOOT={N_BOOT} tol={TOL:g}（同索引矩阵注入法）")
     sanity_index_generator()
     s, b, panel = make_data()

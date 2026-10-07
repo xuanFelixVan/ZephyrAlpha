@@ -1,0 +1,32 @@
+# ALGO_FLOW 外部真源——accel 包入口（_domain_backtest 域，真源 src/zephyr/backtest/accel/__init__.py）
+# st-mx07-L3 P1-3 接线批（MOD-BT-237）随批登记。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.accel
+source_of_truth: src/zephyr/backtest/accel/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 包级 re-export 面
+    #   fields: bootstrap_kernel 公共名（BACKEND_ENV/degrade_log/resolve_backend/索引生成器/三核）
+    #   code: from zephyr.backtest.accel.bootstrap_kernel import ...
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 统计加速核子包门面
+    #   name_en: accel package facade
+    #   intro: D_BACKTEST 统计加速核子包入口，零逻辑纯 re-export（语义零分叉）。
+    #   desc: 消费方经 zephyr.backtest.accel.<name> 或全限定模块路径可达；判定面不入核。
+    #   inputs: bootstrap_kernel 公共名
+    #   outputs: 包命名空间导出面
+    # 层: 输出
+    # - id: O1
+    #   name_zh: __all__ 导出面
+    #   name_en: __all__ exports
+    #   intro: 7 个公共名（Final 标注）。
+    #   downstream: 三处内循环消费方；scripts 薄 re-export 门面
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1

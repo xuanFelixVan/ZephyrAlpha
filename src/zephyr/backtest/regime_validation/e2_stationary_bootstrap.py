@@ -38,6 +38,11 @@ from typing import Sequence
 
 import numpy as np
 
+from zephyr.backtest.accel.bootstrap_kernel import (
+    e2_boot_sharpe_diffs,
+    stationary_bootstrap_index_matrix,
+)
+
 try:  # 治理基类缺失时降级为 Exception，保证模块可独立 import
     from zephyr.shared.foundation.errors import ZephyrBaseError
 except Exception:  # pragma: no cover  # noqa: BLE001
@@ -164,10 +169,12 @@ def bootstrap_sharpe_difference(
 
     rng = np.random.default_rng(cfg.seed)
     observed = annualized_sharpe(on, cfg.periods_per_year) - annualized_sharpe(off, cfg.periods_per_year)
-    diffs = np.empty(cfg.n_boot, dtype=float)
-    for b in range(cfg.n_boot):
-        idx = stationary_bootstrap_indices(on.size, cfg.mean_block, rng)
-        diffs[b] = annualized_sharpe(on[idx], cfg.periods_per_year) - annualized_sharpe(off[idx], cfg.periods_per_year)
+    # P1-3 换核(MOD-BT-237): b 循环 -> 批量索引矩阵 + e2_boot_sharpe_diffs 核。
+    # 开/关共用同一批索引=成对重采样保配对（语义不变）；标量 stationary_bootstrap_indices
+    # 保留为公共 API，内部索引改由批量生成器产出——分布同构、RNG 流不同源，
+    # 逐位对拍走同索引注入(<=1e-9)，见 tests/backtest/test_bootstrap_kernel_wiring.py
+    idx_matrix = stationary_bootstrap_index_matrix(on.size, cfg.mean_block, cfg.n_boot, rng)
+    diffs = e2_boot_sharpe_diffs(on, off, idx_matrix, periods_per_year=cfg.periods_per_year)
     alpha = 1.0 - cfg.ci_level
     ci_lower, ci_upper = (float(q) for q in np.quantile(diffs, [alpha / 2.0, 1.0 - alpha / 2.0]))
     prob_positive = float(np.mean(diffs > 0.0))
