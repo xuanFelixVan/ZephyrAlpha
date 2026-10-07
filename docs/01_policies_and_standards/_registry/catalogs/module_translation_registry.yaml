@@ -20616,10 +20616,10 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/data/dual_source_guard.py
   desc_en: ""
-  desc_zh: "已退役（[TTL] task_bound 口径，2026-10-07 图12/TDM 收官·车道D 归档批）：双源判据供给件落地但生产消费核未接线（consensus_crosscheck 实查零引用，tests XPASS 自证），按 task_bound 退役归档；文件留盘不删（防链路悬锚），重评条件=recon_runner/consensus 双源对账接线时复活。"
+  desc_zh: ""
   name_en: ""
   name_zh: 双源分裂守卫
-  plain_zh: 读失败不等于零行两边都空不等于干净单边有数即判分裂（已退役2026-10-07：判据件留盘，生产消费核未接线）
+  plain_zh: 读失败不等于零行两边都空不等于干净单边有数即判分裂
   domain_id: D_GOV_CODE_QUALITY
   responsibility_layer: governance
 - module_path: src/zephyr/data/error_classifier.py
@@ -67783,4 +67783,44 @@ entries:
   desc_zh: "c1_market.factor_signal 表 DDL 唯一真源（CTR-002 FactorSignal 契约落库面，buffer 默认落点）；字段口径=契约+buffer TSV 列序+DS-003/004 三分合一；ReplacingMergeTree 同键重放幂等"
   desc_en: ""
   plain_zh: "因子算出来的买卖信号要稳稳落进数据库，全靠这份建表说明书：一张长表按因子、股票、截面时点各记一行，算错了重跑会自动覆盖当天旧行不重复记账，空值表示还没算出来禁止瞎凑数，跟隔壁特征值表是一对兄弟件但各管各的账。"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicators/panelized_indicators.py
+  domain_id: D_FACTOR
+  name_zh: "指标链行物化向量化"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "算技术指标时原来一行一行慢慢抠数字，速度慢在这；这个模块把整张表一次性批量算完打包成行，快了几十倍，算出来的每个数字和老办法一模一样（误差不超过十的负九次方）"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicators/parity_check.py
+  domain_id: D_FACTOR
+  name_zh: "行物化向量化对拍器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一个验收工具：让老办法和新办法各算一遍所有指标，逐列逐格比对新旧结果是否一模一样、顺带测速度，读库不写库，切生产前后都要跑它把关"
+  responsibility_layer: business
+- module_path: src/zephyr/factor/technical_indicators/bench_scaling.py
+  domain_id: D_FACTOR
+  name_zh: "行物化向量化规模计时"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一个测速工具：数据量从二百五根到整史逐档测试批量算法快多少倍，再拿假数据单独测滑窗小算子的提速，结果写成表放临时目录"
+  responsibility_layer: business
+- module_path: tests/zephyr/factor/technical_indicators/test_panelized_indicators.py
+  domain_id: D_FACTOR
+  name_zh: "行物化向量化单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假行情数据验证新批量算法的每个小算子和老算法结果一致、缺数和无穷大的处理一致、用完的临时替换一定还原不污染别人"
+  responsibility_layer: business
+- module_path: src/zephyr/backtest/accel/bootstrap_kernel.py
+  domain_id: D_BACKTEST
+  name_zh: "Bootstrap统计加速核"
+  name_en: "Bootstrap Statistics Acceleration Kernel"
+  desc_zh: "bootstrap统一族xp纯函数核：WRC t统计量/E2 Sharpe差/多元相关三热循环的向量化实现"
+  desc_en: ""
+  plain_zh: "把三处跑得慢的统计重抽样循环合成一个向量化加速核，CPU跟GPU共用同一份代码，结果和原实现逐位一致才准上线"
   responsibility_layer: business
