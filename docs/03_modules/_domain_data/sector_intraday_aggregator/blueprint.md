@@ -4,7 +4,7 @@ module_name: sector_intraday_aggregator
 domain: D_DATA
 doc_type: blueprint
 ttl: permanent
-design_maturity: testing
+design_maturity: production  # st-fig13-followup-20261006 B2: header MATURITY testing->production 同批
 stability: evolving
 safety_level: L
 ai_autonomy: ai_modifiable

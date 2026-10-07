@@ -420,7 +420,7 @@ N: dict[str, dict[str, Any]] = {
         st="✅",
         name="盘后板块K等权撮合（tdx 永久断供的收敛终点）",
         src=_SCHT,
-        tn=["sector_eqw_intraday"],
+        tn=["ZephyrAlpha_SectorEqwIntraday"],
         entity=[],
         clk="每日 15:40（盘后；成分×个股分钟K链式聚合，非交易日自然零行）",
         act="execute",
@@ -430,14 +430,14 @@ N: dict[str, dict[str, Any]] = {
         nrg="",
         fb="无（次日 15:40 重跑覆盖）",
         ref="scripts/kline_sector_intraday_from_constituents.py:1",
-        anc=["scripts/tasks/register/register_sector_eqw_task.ps1:16"],
+        anc=["scripts/tasks/register/register_sector_eqw_task.ps1:21"],
         run=["kline_sector_intraday 表（逻辑名；表名真源=TableRegistry，图内禁库名前缀字面量）"],
         ev=[
             "CH 实证：kline_sector_intraday 近 8 日全量=synth_sh（09-30 当日 171,351 行、全期 450,511 行，580 板块族满格）",
             "成分表 sector_constituent 新鲜（max(updated_at)=09-30 21:38 UTC）；tdx 源最后行=09-10 15:00 后零行（断供永久定性，known_data_gaps 2026-10-04 B1 三退役批 Owner 批）",
             "对拍达标在案（方案 J Phase 3 校准：行业段 corr 0.9954-0.9990/地区 0.9953-0.9980/概念段 0.85-0.95=成分回溯误差已知项）",
         ],
-        obs="交易日每日 1 跑（假日零行自然安全；runner MATURITY=testing 待升 production）",
+        obs="交易日每日 1 跑（假日零行自然安全；runner MATURITY=production 2026-10-08 升级，ops 车道 st-fig13-followup）",
     ),
     "D13-45": dict(
         seg="B",
@@ -1772,7 +1772,7 @@ RED: dict[str, str] = {
 # 观察数随并发漂移，故一律写"命令口径 + 断言 + 观察日「，不把静态计数钉进散文（根宪法 §9 条目 5）。
 EXEC: dict[str, list[str]] = {
     "D13-48": [
-        "复跑（主区只读）: schtasks /Query /TN sector_eqw_intraday → 任务在册（每日 15:40 触发）",
+        "复跑（主区只读）: schtasks /Query /TN ZephyrAlpha_SectorEqwIntraday → 任务在册（每日 15:40 触发；2026-10-08 由 sector_eqw_intraday 规范化改名，ops 车道）",
         "复跑（骨架 §7 C 组口径，DatabaseService CH 只读）: kline_sector_intraday 近 8 日按 data_source 分组=synth_sh 满格（09-30 当日 171,351 行）",
         "复跑: grep -n 'synth_sh' scripts/kline_sector_intraday_from_constituents.py → 等权链式聚合 runner 在位（MOD-DATA-061）",
     ],
@@ -2412,8 +2412,9 @@ def scan_register_scripts(root: Path) -> dict[str, Any]:
         except OSError:
             continue
         tns = sorted(set(re.findall(r'["\'](ZephyrAlpha_[A-Za-z0-9_]+)["\']', text)))
-        # 无前缀任务名（命名违规在册件如 sector_eqw_intraday）：仅 register_* 注册器内的
-        # $taskName = '...' 显式赋值形态收录（声明面=实存佐证；命名规范化归 ops 车道）
+        # 无前缀任务名兜底：仅 register_* 注册器内的 $taskName = '...' 显式赋值形态
+        # 收录（声明面=实存佐证；命名规范化归 ops 车道——sector_eqw_intraday 已于
+        # 2026-10-08 改名 ZephyrAlpha_SectorEqwIntraday 收口，兜底留给未来同类件）
         if Path(p).name.startswith("register_"):
             _bare = re.findall(r"[$]taskName\s*=\s*['\"]([A-Za-z0-9_]+)['\"]", text)
             tns = sorted(set(tns) | set(_bare))

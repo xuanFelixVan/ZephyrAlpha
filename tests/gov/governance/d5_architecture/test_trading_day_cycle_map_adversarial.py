@@ -606,21 +606,24 @@ def test_red_gate_node_without_denial_semantics():
 
 
 def test_green_idle_slots_and_dangling_ledger_are_queryable():
-    """终局判据①：2 空转槽与 16 落空对象全部可查——台账逐条带 owner_nodes 且非空。"""
+    # 钉值对齐 2026-10-08 现势（st-fig13-followup）：eod_reconciliation 槽已由
+    # st-vm12final-20261007-laneB 落地 eod_reconciliation_daily 任务（图12 DSC-15 接线，
+    # tasks.yaml 槽位登记 0→1）→ 该槽退出空转（2→1）、落空对象 16→15（outside 9→10、
+    # 双槽任务 1→0 随彼批对碰收敛）。若彼袋回卷，此处随重生成重扫自动回到旧值=预期漂移。
+    """终局判据①：1 空转槽与 15 落空对象全部可查——台账逐条带 owner_nodes 且非空。"""
     dg = _GOOD["machine_facts"]["trigger_surfaces"]["dangling_objects"]
-    assert sorted(dg["fake_channel_slots"]) == ["eod_reconciliation", "post_auction"]
-    assert dg["total"] == _GOOD["counts"]["machine"]["dangling_total"] == len(dg["entries"]) == 16
+    assert sorted(dg["fake_channel_slots"]) == ["post_auction"]
+    assert dg["total"] == _GOOD["counts"]["machine"]["dangling_total"] == len(dg["entries"]) == 15
     assert all(e["owner_nodes"] for e in dg["entries"]), "落空对象必须至少有一个归属环节"
     by_id = {e["id"]: e for e in dg["entries"]}
-    for slot in ("post_auction", "eod_reconciliation"):
-        owners = by_id[f"slot:{slot}"]["owner_nodes"]
-        assert all(_find(_GOOD, o)["wiring_status"] == "unwired_slot_hollow" for o in owners)
+    owners = by_id["slot:post_auction"]["owner_nodes"]
+    assert all(_find(_GOOD, o)["wiring_status"] == "unwired_slot_hollow" for o in owners)
     outside = sum(x["effective_task_count"] for x in dg["tasks_outside_catchup_universe"])
     assert (len(dg["fake_channel_slots"]), len(dg["orphan_tasks"]), outside, len(dg["double_slot_tasks"])) == (
-        2,
-        4,
-        9,
         1,
+        4,
+        10,
+        0,
     )
 
 
