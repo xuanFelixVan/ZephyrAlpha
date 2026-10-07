@@ -205,6 +205,39 @@ def _schedule_should_skip(
     return False
 
 
+def _resolve_eod_recon_run_id(trade_date: str) -> tuple[str | None, str | None]:
+    """DSC-15 日终三账对账 run_id 解析：取最新"当日"回测产物。
+
+    list_artifacts 按 created_at 降序返回；created_at=now_utc_str()（UTC，空格分隔，
+    result_repository 存储契约）。15:40 北京=07:40 UTC——北京今日凌晨（00:00-08:00）
+    落盘的产物 UTC 日期是昨日，故认 {今日, 昨UTC} 两窗；最新产物不在窗内即判无当日
+    产物（陈旧产物重放 L2 持仓会制造全量假差异，宁告警不硬跑）。
+
+    Returns:
+        (run_id, created_at_日期)；无认领产物返回 (None, None)（不抛，调用方 WARN 出声）。
+    """
+    from zephyr.backtest.io.result_repository import get_artifact, list_artifacts
+
+    try:
+        candidates = list_artifacts()
+    except Exception as exc:  # noqa: BLE001 — 产物目录异常按无产物处置，由调用方出声
+        log.warning("list_artifacts 异常（按无当日产物处置）: %s", exc)
+        return None, None
+    accepted = {
+        trade_date,
+        (datetime.date.fromisoformat(trade_date) - datetime.timedelta(days=1)).isoformat(),
+    }
+    for run_id in candidates:
+        try:
+            created_day = (get_artifact(run_id).created_at or "")[:10]
+        except Exception:  # noqa: BLE001 — 单产物损坏/隔离跳过，继续找次新
+            continue
+        if created_day in accepted:
+            return run_id, created_day
+        break  # created_at 降序：最新产物超窗，更旧的必不是当日
+    return None, None
+
+
 def _run_special_schedule(
     scheduler: IntegratorScheduler,
     schedule_name: str,
@@ -566,6 +599,81 @@ def _run_special_schedule(
                 pass
             return {"lane_g_intake_sweep": False}
         return {"lane_g_intake_sweep": bool(result.get("ok", False))}
+    # DSC-15 日终三账对账槽（图12 S5_recon 终点环接线，2026-10-07 st-vm12final-20261007-laneB）：
+    # 15:40 槽此前在 schedule.yaml 挂着但无分派分支+零任务=R-021 假通道（DSC-15
+    # unwired_slot_hollow：交常规 DAG 跑 0 任务静默返回成功，"回测与柜台今天还对得上吗"
+    # 这一问无人问）。本分支接唯一入口 src/zephyr/trading/recon_runner.run_daily_reconciliation
+    # （L1 交易级/L2 持仓零容差/L3 PnL 0.1% → A/B/C 归因 → 差异 append-only 落
+    # governance.db:reconciliation_differences；模块自述不挂调度，编排职责在本分支）。
+    # 交易日守卫入 TRADING_DAY_GUARDED_SCHEDULES（cross_validation 2026-09-27 同款先例）；
+    # 总闸 data/runtime/eod_reconciliation.disabled 存在=停用（服务总闸惯例，即时生效）；
+    # broker=MiniQmtBroker()（position_monitor.create_position_broker 同款装配）。
+    if schedule_name == "eod_reconciliation":
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "eod_reconciliation.disabled"
+        if _flag.exists():
+            log.info("时段 %s 跳过：总闸 eod_reconciliation.disabled 存在", schedule_name)
+            return {"eod_reconciliation": False}
+        trade_date = datetime.date.today().isoformat()
+        from zephyr.trading.recon_runner import run_daily_reconciliation
+
+        run_id, _artifact_day = _resolve_eod_recon_run_id(trade_date)
+        if run_id is None:
+            # 无当日回测产物=对账一问问不出，WARN 出声不硬跑（I4 不变量；非静默槽）
+            scheduler._alerter.notify(
+                "eod_reconciliation",
+                f"日终三账对账跳过：{trade_date} 无当日回测产物（data/backtest_artifacts "
+                "最新产物超当窗），回测跑批链未供数——请检查回测管线",
+                level="WARN",
+                source="eod_reconciliation",
+            )
+            return {"eod_reconciliation": False}
+        try:
+            from zephyr.ex_core.adapters.miniqmt_broker import MiniQmtBroker
+
+            broker = MiniQmtBroker()
+            broker.connect()
+        except Exception as exc:  # noqa: BLE001 — 柜台侧不可达降级告警，不炸调度器（同族先例）
+            scheduler._alerter.notify(
+                "eod_reconciliation",
+                f"日终三账对账 broker 装配/连接失败: {str(exc)[:200]}",
+                level="ERROR",
+                source="eod_reconciliation",
+            )
+            return {"eod_reconciliation": False}
+        try:
+            result = run_daily_reconciliation(trade_date=trade_date, run_id=run_id, broker=broker)
+        except Exception as exc:  # noqa: BLE001 — 对账故障降级告警，不炸调度器（同族先例）
+            scheduler._alerter.notify(
+                "eod_reconciliation",
+                f"日终三账对账执行异常: {str(exc)[:200]}",
+                level="ERROR",
+                source="eod_reconciliation",
+            )
+            return {"eod_reconciliation": False}
+        finally:
+            try:
+                broker.disconnect()
+            except Exception:  # noqa: BLE001 — 断连清理失败不反噬调度结论
+                pass
+        # recon_runner 契约：C 类清单（整笔缺失成交）当日必告警；A/B 归因差异属正常产出仅留痕
+        if result.c_class_items:
+            scheduler._alerter.notify(
+                "eod_reconciliation",
+                f"日终三账对账存在 C 类缺失成交 {len(result.c_class_items)} 笔"
+                f"（trade_date={trade_date} run_id={run_id}）: "
+                + "; ".join(f"{i.symbol}/{i.drift_type}/{i.detail[:40]}" for i in result.c_class_items[:5]),
+                level="ERROR",
+                source="eod_reconciliation",
+            )
+        log.info(
+            "日终三账对账完成: trade_date=%s run_id=%s 落库=%d 行 db_error=%s C类=%d",
+            trade_date,
+            run_id,
+            result.rows_written,
+            result.db_error,
+            len(result.c_class_items),
+        )
+        return {"eod_reconciliation": result.db_error is None}
     return None
 
 

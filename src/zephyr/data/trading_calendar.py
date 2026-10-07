@@ -160,5 +160,6 @@ TRADING_DAY_GUARDED_SCHEDULES = frozenset(
         "integrity_check",  # L11 每日完整性巡检层
         "cross_validation",  # L11.5 多源交叉校验层（非交易日无当日 tick 可比对，2026-09-27 F04 接线）
         "auction_highfreq",  # L0 集合竞价高频层
+        "eod_reconciliation",  # L13.5 日终三账对账层（非交易日无当日成交可比对，2026-10-07 DSC-15 接线）
     }
 )
