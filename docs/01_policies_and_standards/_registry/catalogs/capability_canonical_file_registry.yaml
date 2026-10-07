@@ -63188,4 +63188,19 @@ creation_tokens:
   created_by: st-mastertc-close
   capability: master_tc_night
   merge_evaluation: "总包夜战施工文档归档"
+- file: docs/_working/master_tc_night/lanes/L2_gov_b/00_workbook.md
+  token: lane-workbook-00-workbook-20261007
+  created_by: st-mastertc-l2
+  capability: lane-workbook
+  merge_evaluation: "夜战车道作业簿/案卷：纯新增车道工作区零替代（任务绑定，战役归档随袋退役）"
+- file: docs/_working/master_tc_night/lanes/L2_gov_b/c346_retrospect.md
+  token: lane-workbook-c346-retrospect-20261007
+  created_by: st-mastertc-l2
+  capability: lane-workbook
+  merge_evaluation: "夜战车道作业簿/案卷：纯新增车道工作区零替代（任务绑定，战役归档随袋退役）"
+- file: docs/_working/master_tc_night/lanes/L2_gov_b/p2_five.md
+  token: lane-workbook-p2-five-20261007
+  created_by: st-mastertc-l2
+  capability: lane-workbook
+  merge_evaluation: "夜战车道作业簿/案卷：纯新增车道工作区零替代（任务绑定，战役归档随袋退役）"
 di_seam_exemptions: []
