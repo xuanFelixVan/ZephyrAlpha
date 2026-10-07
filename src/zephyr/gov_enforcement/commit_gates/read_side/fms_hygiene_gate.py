@@ -57,7 +57,7 @@ Usage::
     registry.register(make_fms_hygiene_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/read_side_fms_hygiene_gate.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/fms_hygiene_gate.yaml
 """
 
 from __future__ import annotations

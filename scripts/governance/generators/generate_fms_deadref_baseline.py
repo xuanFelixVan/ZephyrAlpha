@@ -42,7 +42,7 @@ Usage::
     PYTHONPATH=src python scripts/governance/generators/generate_fms_deadref_baseline.py
     PYTHONPATH=src python scripts/governance/generators/generate_fms_deadref_baseline.py --check
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/read_side_fms_hygiene_gate.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/fms_hygiene_gate.yaml
 """
 
 from __future__ import annotations

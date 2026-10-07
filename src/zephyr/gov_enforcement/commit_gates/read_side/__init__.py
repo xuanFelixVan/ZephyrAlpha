@@ -23,7 +23,7 @@
   口径漂移防线）。
 - :mod:`fms_hygiene_gate`——FMS-HYGIENE 读侧门（priority=138，warn→block 两段制）。
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/read_side_fms_hygiene_gate.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/fms_hygiene_gate.yaml
 """
 
 from typing import Final
