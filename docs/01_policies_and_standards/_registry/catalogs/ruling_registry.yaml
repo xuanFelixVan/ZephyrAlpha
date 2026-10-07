@@ -4272,3 +4272,39 @@ entries:
   - docs/_working/master_tc_20261006/lanes/L10_rulings/00_workbook.md
   related_rulings: ['裁定#20-B']
   superseded_by: ''
+- ruling_id: "裁定#489"
+  title: 矩阵战役 2026-10-07 六项 Owner 裁定落册——指标退役/CYC留观/HMM两段式/及格线v1/v1_value暂不开/t0立项第二波（一次落册）
+  date: '2026-10-07'
+  category: 量化研究治理
+  status: active
+  summary: |-
+    st-matrix-20261007 依 Owner 2026-10-07 对话批令（"全部同意"+六项逐项确认），将考试战役六项
+    待裁一次落册。分项如下。
+    【①10 退役候选指标处置】证据=indicator_exam_scores_v1（干净窗 5 日 IC 全部 0.0004~0.0042，
+    direction 均 null）。裁定：6 件退役（MOM-032 加速振荡器/MOM-036 挤压（零件身份保留，策略层
+    触发件可用）/REV-003 MACD背离/VOL-016 盘整指数（与体制帘子功能重复）/VOLUME-015 威廉累积派发
+    （斜率/背离版可另立新条目重考）/TREND-036 三阶高通（零件身份保留））——technical_indicator_
+    registry status→retired 随本裁定同 commit。CYC 族 4 件（CYC-001/002/004/005）留观：非方向
+    预测器，5 日方向 IC 属科目错配；改考"条件变量考场"（预注册判据=分层增益显著性，一次窗口定
+    生死，不过即整族归档）。复活条件：全网调查车道（经典指标算法疑点对表 TA-Lib/tulip/pandas_ta
+    +文献）若证伪我方实现或考法，按新条目复活重考。
+    【②HMM 两段式】SMA200 立即设为生产默认体制帘子（P0-3，本裁定即授权，代码切换车道施工，册头
+    标注 regime_source=sma200）；HMM 封顶再攻一次：v3 处方=重训报告（rescued_tmp_20261007/
+    hmm_retrain/REPORT.md）滞后攻点（sma50 距离/ret_10d 快特征或概率滞回）+up_hivol carve 收窄，
+    预注册判据=四表全过线冻结不变，一次窗口；不过即永久退役进负结果档案。
+    【③及格线 v1】IC>0.02/ICIR>0.3/retain≥0.5 冻结为 v1；护栏两条：进池环节叠 Bonferroni/DSR
+    多重检验校正（143 候选×运气=必然假阳，单指标阈值挡不住聚合层）；v1 定位临时，3 个月 paper
+    池实测命中率回调。
+    【④value_reversal v1_value 通道】现不开（弃行）：T3b 冻结卡未出分前禁开通用通道（防预注册
+    后门）；出分后过线凭考号提新裁定，不过线自然弃行。
+    【⑤t0_material_line】批准立项（23.3h→<2h，GPU 普查 A- 级"价值最大单点"）；排序=P1-1 指标链
+    向量化落地后第二波开工，复用同款逐位对拍+双跑验收。
+    【⑥R1/R2 地图名实错位】推迟——证据在地图值班队，Owner 指定值班队=本会话系，调档补齐后另立
+    裁定呈批。
+    净零声明：一条总裁定收编六项，不另立单项裁定；本裁定不翻转任何 flag 出厂值。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
+  - docs/_working/matrix_campaign/master_backlog_v2.md
+  related_rulings: ['裁定#488']
+  superseded_by: ''

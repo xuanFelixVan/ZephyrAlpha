@@ -16,7 +16,7 @@ ttl: task_bound
 |---|------|------|---------|------|
 | P0-1 | **tmp 区代码抢救**：bootstrap_gpu 核 / gpu_ic 核 / exit_sim 仿真器+冻结卡 / grid_adapter 三件套，从 .runtime/tmp（24h TTL）转正到仓内 staging 包（token/翻译/depgraph 全套治理） | E/G/H/I 道产物 24h TTL | 四件在 HEAD+导入自证+对拍脚本随行 | ✅ 已落（6b3426c398，18 件，2026-10-07 st-matrix-20261007 补交；前 3 袋死于 TTL-METADATA/VOCAB-HARDCODE/BARE-SUBPROCESS 三门，逐一修因后过） |
 | P0-2 | **78 合格指标入 paper 观察池**（paper_pool_v1.yaml，三个月观察期后复核） | Owner 裁定 | 78 只在册带 IC/覆盖数据 | ✅ 已落 |
-| P0-3 | **SMA200 土办法设为默认体制帘子**（J 道 HMM 判不合格；HMM 重训过考前不得回用）；此后一切考试的 regime_source=sma200 | J 道 verdict+Owner 裁定 | 代码默认值变更+册头标注 | 施工中 |
+| P0-3 | **SMA200 土办法设为默认体制帘子**（J 道 HMM 判不合格；HMM 重训过考前不得回用）；此后一切考试的 regime_source=sma200 | J 道 verdict+Owner 裁定 | 代码默认值变更+册头标注 | 授权=裁定#489②，待车道施工 |
 | P0-4 | **MOM-029 direction 注解挂起**——卡面无经济假设文档，禁看分填方向；改立工单"先补 hypothesis 再考" | 纪律刹车 | 工单入本册 P1 | ✅ 已判 |
 
 ## P1 本周（高价值/数据已具备）
@@ -49,11 +49,11 @@ ttl: task_bound
 
 | # | 事项 | 等什么 |
 |---|------|--------|
-| P3-1 | 10 退役候选指标逐个复核 | **Owner 逐个看（已封存不执行）** |
+| P3-1 | 10 退役候选指标逐个复核 | ✅ 裁定#489①（6 退役/CYC 4 留观改条件考场；复活条件=全网调查车道证伪实现或考法） |
 | P3-2 | T3a 开闸考点火 | t3a 通道裁定 + GPU 空窗 |
-| P3-3 | value_reversal v1_value 因子面通道 | Owner 裁定开 t3 通道或弃行 |
-| P3-4 | t0_material_line 路径并行（23.3h→<2h） | 立项批（工 M-L） |
-| P3-5 | R1/R2 地图名实错位定谳 | 地图值班队窗口 |
+| P3-3 | value_reversal v1_value 因子面通道 | ✅ 裁定#489④（暂不开，T3b 出分后凭考号再裁） |
+| P3-4 | t0_material_line 路径并行（23.3h→<2h） | ✅ 裁定#489⑤（已批，P1-1 落地后第二波） |
+| P3-5 | R1/R2 地图名实错位定谳 | 裁定#489⑥ 值班队已接管（本会话系），调档中 |
 | P3-6 | metaq 逐问回填（36 问 deferred 留痕） | 逐问判据机解器（M-9） |
 | P3-7 | 定时器钉死：考试机挂 Windows 计划任务 | 人工再跑 2-3 天确认稳定后 |
 
