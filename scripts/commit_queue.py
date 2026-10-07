@@ -3126,9 +3126,10 @@ def _dev_head_landed_checker_factory(repo_root: Path | None = None) -> Callable[
     """
     root = repo_root if repo_root is not None else _REPO_ROOT
     tree: set[str] | None = None
+    tree_lower: dict[str, str] | None = None  # 大小写漂移回退索引（Owner 2026-10-07 裁定 A）
 
     def _checker(path: str, action: str) -> bool:
-        nonlocal tree
+        nonlocal tree, tree_lower
         if tree is None:
             import subprocess
 
@@ -3141,11 +3142,19 @@ def _dev_head_landed_checker_factory(repo_root: Path | None = None) -> Callable[
                     check=True,
                 )
                 tree = set(proc.stdout.splitlines())
+                tree_lower = {p.lower(): p for p in tree}
             except Exception:  # noqa: BLE001 — git 不可用=判据不可得，fail-closed 全留
                 tree = set()
+                tree_lower = {}
         if action == "delete":
-            return path not in tree  # delete 取反语义：dev 已无=已落地删除
-        return path in tree
+            # delete 取反语义：dev 已无=已落地删除（大小写变体在树=未删，同回退口径）
+            return path not in tree and path.lower() not in tree_lower
+        if path in tree:
+            return True
+        # 大小写漂移回退（Owner 2026-10-07 裁定 A）：Windows 文件系统大小写不敏感，
+        # 袋内旧小写路径 vs HEAD 大写变体=同一文件（如 commit_speedup 骨架 16 件，
+        # P07 三态表实证）；精确 miss 后忽略大小写再找一次，找到即判已落地。
+        return path.lower() in tree_lower
 
     return _checker
 
