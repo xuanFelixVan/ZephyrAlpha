@@ -67766,5 +67766,5 @@ entries:
   name_en: "retention derived limits and keep shadow"
   desc_zh: "从 backup_config.yaml 纯函数派生 P95 时限读数；keep.txt 只读抄录生成 3 天影子快照到 .runtime/audit"
   desc_en: ""
-  plain_zh: "它干两件事：一是看备份配置算出各环节该多快跑完的及格线，二是把进程保护名单偷偷拍张快照存三天——万一名单被谁改了或者保护进程被误杀，拿快照一对就能查出改了什么。名单本体它绝对不碰。"
+  plain_zh: "它干两件事：一是看备份配置算出各环节该多快跑完的及格线，二是把进程保护名单偷偷拍张快照存三天——万一名单被谁改了或者保护进程被误杀，拿快照一对就能查出改了什么。"
   responsibility_layer: governance

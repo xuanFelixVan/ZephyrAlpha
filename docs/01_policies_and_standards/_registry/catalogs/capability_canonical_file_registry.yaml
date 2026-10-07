@@ -63276,4 +63276,9 @@ creation_tokens:
   capability: t3b_exam_prereg
   merge_evaluation: "T3b 加离场考预注册冻结卡（Owner 20261007 批），先冻卷后开考真源"
 
+- file: docs/_working/master_tc_night/lanes/L9_clean_fms/00_workbook.md
+  token: master-tc-night-l9-workbook-00-workbook-20261007
+  created_by: st-mastertc-l9
+  capability: master_tc_night_l9_workbook
+  merge_evaluation: "L9 车道作业簿：总包夜战十卡六向台账（跨域不同对象不并；既有 lane workbook 簿系同型，零新册）"
 di_seam_exemptions: []
