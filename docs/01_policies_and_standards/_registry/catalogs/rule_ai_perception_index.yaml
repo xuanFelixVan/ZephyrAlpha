@@ -7,7 +7,7 @@ generated_at: '2026-09-05T04:15:48Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 86
+total_rules: 87
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -2298,3 +2298,33 @@ rules:
   - DS-11
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_086_frontend_module_construction.yaml
+- rule_id: TRAE-087
+  title: 原问题登记与基建先挖后建铁律（问题定义纪律+五要素入表+施工标准立法）
+  module_id: TRAE-087
+  scope: global_construction
+  domain: TRAE
+  severity: high
+  stability: new
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations:
+  - pre_construction
+  - question_register
+  - meta_question_write
+  - new_campaign
+  gate_ids: []
+  tags:
+  - TRAE
+  - meta_question
+  - piling
+  - question_discipline
+  - L1_foundation
+  - 原问题
+  - 净零
+  aliases:
+  - RULE-META-QUESTION
+  - 问题定义纪律
+  - 基建先挖后建
+  - 定桩纪律
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_087_meta_question_registry.yaml

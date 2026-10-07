@@ -9,7 +9,7 @@ generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 unique_key:
 - path
-total_files: 303
+total_files: 305
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2221,7 +2221,7 @@ files:
   title: 全项目对齐清单——全图全库+代码文档三层对齐规则（全图全库对齐版）
   doc_type: policy
   status: active
-  version: 1.8.0
+  version: 1.11.0
   rule_form: checklist
   scope: global
   stability: ''
@@ -4953,6 +4953,40 @@ files:
   status: active
   version: 1.0.0
   rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/rules/trae_087_meta_question_registry.yaml
+  module_id: TRAE-087
+  title: 原问题登记与基建先挖后建铁律（问题定义纪律+五要素入表+施工标准立法）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: global_construction
+  stability: new
+  layer: L1_foundation
+  superseded_by: ''
+  severity: high
+  tier: ''
+  aliases:
+  - RULE-META-QUESTION
+  - 问题定义纪律
+  - 基建先挖后建
+  - 定桩纪律
+  section_count: 3
+- path: docs/01_policies_and_standards/_registry/reports/rule_face_reconciliation_registry.yaml
+  module_id: REG-RULE-FACE-RECONCILIATION-001
+  title: 规则↔执法面双口径对账表（波 1A.4 收尾）
+  doc_type: register
+  status: ''
+  version: ''
+  rule_form: ''
   scope: ''
   stability: ''
   layer: ''
