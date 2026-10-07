@@ -4,20 +4,21 @@
 # [DEPENDENCIES] 无（DDL-as-Code 真源文件）
 # [CONSUMERS] apply_*_ddl（Owner 窗口执行）；zephyr.factor.feature_store_writer
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] factor_feature_value 表 DDL 唯一真源；本文件仅供 apply DDL 引用，禁止直接执行建表
 # [MODIFY-GUARD] schema-change
 # [STABILITY] stable
 # [SAFETY] L
-# [AI_AUTONOMY] human_only
+# [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DDL与DB不一致->apply_*_ddl.py --verify退出码1
 # [TESTS] tests/factor/test_feature_store_writer.py（列序契约）
 # [TTL] permanent
 """factor_feature_value 表 DDL-as-Code（category_id: factor_feature_value）。
 
 本文件是 c1_market.factor_feature_value 表结构的唯一真源（DDL-as-Code 模式）。
-**状态：设计态（design）——未执行 apply DDL**（DDL 执行属 Owner 窗口；
-15_data_feature_layer_spec §3.4 要点④特征仓库存储层，AI-NIGHT-001 包N 施工）。
+**状态：已建表（2026-10-07 图12/TDM 战役收官总攻批·车道F st-vm12final-20261007-laneF，
+admin 通道 apply 本 DDL，消账 DSC-GAP-FFVAL）**。设计定稿=AI-NIGHT-001 包N
+（15_data_feature_layer_spec §3.4 要点④特征仓库存储层）。
 
 架构选型（15 号 §3.4 轻量三层之存储层）：
     特征值落 ClickHouse 单表——仿 technical_indicator 表"单表 + 维度列"模式
@@ -41,11 +42,11 @@
     月分区 toYYYYMM(trade_date)（回算/归档可整批 DROP，18 号对齐）；
     ORDER BY (factor_id, symbol, trade_date)（主查询模式=单因子截面/单标的时间序）。
 
-登记说明（待办，不属本批施工）：
-    ① business_data_categories.yaml 新增 category_id=factor_feature_value
-      （三库注册链 SSoT，随 Owner 窗口 apply DDL 同批登记）；
-    ② data_asset_registry.yaml 数据资产登记——62 号 P1 载体（15 号 §3.4 既定）；
-    ③ 本文件 [AI_AUTONOMY] human_only：后续结构变更走 schema-change 守卫。
+登记说明（2026-10-07 车道F 建表同批完成）：
+    ① business_data_categories.yaml 已新增 category_id=factor_feature_value
+      （三库注册链 SSoT，与 apply DDL 同批登记）；
+    ② data_asset_registry.yaml 已登记表级资产（DS-346）；
+    ③ 本文件 [AI_AUTONOMY] ai_modifiable；后续结构变更走 schema-change 守卫。
 """
 
 from __future__ import annotations
@@ -78,10 +79,6 @@ TABLE_NAME = "factor_feature_value"
 DATABASE = "c1_market"
 CATEGORY_ID = "factor_feature_value"
 CALC_MODE = "preload"
-# 设计态注记（T6，2026-09-09）：本表 DDL 尚未在 DB 执行，DB 无 c1_market.factor_feature_value 属预期。
-# verify_schema_truth.py 读到本字段即显式跳过该表（输出 SKIP 行 + 汇总含跳过计数，非静默）。
-# ⚠️ Owner 窗口 apply DDL 建表成功后必须删除本注记，让核对器恢复真实校验。
-DDL_STATUS = "design_not_executed"
 ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(trade_date)"
 ORDER_BY = "(factor_id, symbol, trade_date)"

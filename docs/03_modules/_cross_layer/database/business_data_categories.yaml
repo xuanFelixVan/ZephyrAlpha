@@ -5547,3 +5547,35 @@
   calc_mode: compute
   producer: sector_state_pipeline.run_pre_open
   schedule: sector_pre_open
+
+# --- 图12/TDM 收官总攻批因子族两表（2026-10-07 st-vm12final-20261007-laneF，消账 DSC-GAP-FFVAL/FFSIG）---
+
+- category_id: factor_feature_value
+  name: "因子特征值长表(单表+factor_id维度列仿technical_indicator模式避N分表演进成本;value预热期NULL不前向填充=PIT铁律;ReplacingMergeTree(factor_id,symbol,trade_date)幂等重算;15号§3.4特征仓库存储层)"
+  engine: clickhouse
+  database: c1_market
+  table: factor_feature_value
+  schema_file: schemas/categories/factor_feature_value.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "INSERT_COLUMNS 为写入面唯一真源(feature_store_writer 引用禁硬编码表结构);value NULL=预热期如实态禁前向填充;同(factor_id,symbol,trade_date)重算取最新;MATERIALIZED 派生列(exchange/symbol_canonical)禁显式写入"
+  calc_mode: preload
+  producer: zephyr.factor.feature_store_writer
+  schedule: factor_feature_value_daily
+
+- category_id: factor_signal
+  name: "因子信号长表(CTR-002 FactorSignal契约落库面=batch_output.buffer默认target_table;as_of_date截面时点PIT对齐INV-004;idempotency_key重放同键;ReplacingMergeTree(factor_id,symbol,as_of_date)同键重算取最新)"
+  engine: clickhouse
+  database: c1_market
+  table: factor_signal
+  schema_file: schemas/categories/factor_signal.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "契约真源=shared/contracts/factor_signal.py(CTR-002 CODEGEN冻结段)禁私定义(G6 no_self_defined_factor_signal);TSV列序=buffer._SIGNAL_COLUMNS与schema INSERT_COLUMNS同序;raw_value等可空列NULL不前向填充;MATERIALIZED 派生列禁显式写入"
+  calc_mode: preload
+  producer: zephyr.factor.core.batch_output.buffer
+  schedule: factor_signal_daily

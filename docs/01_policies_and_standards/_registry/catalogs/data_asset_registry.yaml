@@ -13402,6 +13402,88 @@ datasets:
   code_symbol:
   code_fingerprint:
 
+- dataset_id: DS-346
+  entity_name: c1_market.factor_feature_value
+  entity_type: dataset
+  scope: production
+  contract_ref:
+  physical_type: clickhouse_table
+  produced_by_job: factor_feature_value_daily
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 因子特征值长表（源 internal｜任务 factor_feature_value_daily｜时段
+    daily_kline；单表+factor_id 维度列仿 technical_indicator 模式；value 预热期 NULL
+    不前向填充=PIT 铁律；ReplacingMergeTree(factor_id,symbol,trade_date) 幂等重算；
+    DDL 真源 schemas/categories/factor_feature_value.py）；空表新建 2026-10-07
+    （图12/TDM 收官总攻批车道F，消账 DSC-GAP-FFVAL），回填任务登记未执行
+  valid_since: '2026-10-07'
+  module_id: MOD-L02-001
+  design_maturity: production
+  name: c1_market.factor_feature_value
+  name_zh: 因子特征值
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-07'
+  updated_at: '2026-10-07'
+  owner: MOD-L02-001
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: unknown
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock]
+  tags: ["数据", "因子"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-07 车道F admin 通道建表+reader 探针 exists+verify_schema_truth 零漂移；消费面=feature_store_writer/offline_store/ufl_deterministic_layer（DSC-GAP-FFVAL 消费方声明）"
+  code_symbol:
+  code_fingerprint:
+- dataset_id: DS-347
+  entity_name: c1_market.factor_signal
+  entity_type: dataset
+  scope: production
+  contract_ref: CTR-002
+  physical_type: clickhouse_table
+  produced_by_job: factor_signal_daily
+  consumed_by_jobs: []
+  domain_id: D_FACTOR
+  pit_policy: strict
+  format_summary: 因子信号长表（源 internal｜任务 factor_signal_daily｜时段 daily_kline；
+    CTR-002 FactorSignal 契约落库面=batch_output.buffer 默认 target_table；
+    as_of_date 截面时点 PIT 对齐 INV-004；idempotency_key 重放同键；
+    ReplacingMergeTree(factor_id,symbol,as_of_date) 同键重算取最新；
+    DDL 真源 schemas/categories/factor_signal.py）；空表新建 2026-10-07
+    （图12/TDM 收官总攻批车道F，消账 DSC-GAP-FFSIG），回填任务登记未执行
+  valid_since: '2026-10-07'
+  module_id: MOD-L02-001
+  design_maturity: production
+  name: c1_market.factor_signal
+  name_zh: 因子信号
+  status: active
+  version: 1.0.0
+  created_at: '2026-10-07'
+  updated_at: '2026-10-07'
+  owner: MOD-L02-001
+  produced_by_source: SRC-INTERNAL-001
+  survivorship_free: unknown
+  pit_available:
+  earnings_lag_days:
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: [stock]
+  tags: ["数据", "因子", "信号"]
+  algorithm_status: not_applicable
+  evidence: "2026-10-07 车道F admin 通道建表+reader 探针 exists+verify_schema_truth 零漂移；消费面=batch_output.buffer._SIGNAL_COLUMNS TSV 列序契约（DSC-GAP-FFSIG 默认落点）；契约级前身条目=DS-003/DS-004"
+  code_symbol:
+  code_fingerprint:
+
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline

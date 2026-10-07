@@ -371,6 +371,13 @@ from schemas.categories.crypto.hl_oi_snapshot_daily import HL_OI_SNAPSHOT_DAILY_
 # D5 跨资产·Hyperliquid 四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
 # 全市场行情快照/资金费率/清算流/持仓 OI 快照，DDL 真源 schemas/categories/crypto/（hl_ 前缀与既有 crypto 影子线隔离）
 from schemas.categories.crypto.hl_perp_snapshot_daily import HL_PERP_SNAPSHOT_DAILY_DDL
+
+# 图12/TDM 战役收官总攻批两表（2026-10-07，st-vm12final-20261007-laneF）：
+# 因子特征值长表（15号§3.4 特征仓库存储层，AI-NIGHT-001 包N 设计定稿转落地）+
+# 因子信号长表（CTR-002 FactorSignal 契约落库面=batch_output.buffer 默认落点）；
+# 消账 DSC-GAP-FFVAL/DSC-GAP-FFSIG，DDL 真源 schemas/categories/ 根目录两件
+from schemas.categories.factor_feature_value import FACTOR_FEATURE_VALUE_DDL
+from schemas.categories.factor_signal import FACTOR_SIGNAL_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
 from schemas.categories.judgment.judgment_daily_plan import JUDGMENT_DAILY_PLAN_DDL
 
@@ -609,6 +616,11 @@ _ALL_DDL: list[tuple[str, str]] = [
     # signal_ashare.core.candidate_pool_snapshot（ch_writer 正门），日批按
     # (trade_date, stage, symbol) 同键重放幂等替换；决策日 T PIT 只读 max(trade_date)<T
     ("c1_market.stock_candidate_pool", STOCK_CANDIDATE_POOL_DDL),
+    # 图12/TDM 收官总攻批两表（2026-10-07 st-vm12final-20261007-laneF）：因子族两长表
+    # （特征值=15号§3.4 存储层设计转落地；信号=CTR-002 契约落库面/buffer 默认落点），
+    # 消账 DSC-GAP-FFVAL/DSC-GAP-FFSIG；ReplacingMergeTree 同键重放幂等
+    ("c1_market.factor_feature_value", FACTOR_FEATURE_VALUE_DDL),
+    ("c1_market.factor_signal", FACTOR_SIGNAL_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1200,6 +1212,9 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "market_china_bond_yield": "ReplacingMergeTree",
     # 个股候选池快照（zc-lane-t-20260927 L04-C01）：日批按 (trade_date, stage, symbol) 同键替换幂等
     "stock_candidate_pool": "ReplacingMergeTree",
+    # 图12/TDM 收官总攻批两表（2026-10-07 st-vm12final-20261007-laneF）：因子族长表同键替换幂等
+    "factor_feature_value": "ReplacingMergeTree",
+    "factor_signal": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"
