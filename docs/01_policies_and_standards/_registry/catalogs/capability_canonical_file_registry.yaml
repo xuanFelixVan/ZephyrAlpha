@@ -63428,4 +63428,54 @@ creation_tokens:
   created_by: st-mx07-L5
   no_mount_reason: 对拍验收 harness（新旧路径等值验证+计时）非 TDM 业务决策节点对应物（TDM-F 族=仓位/归因/风控决策节点）；架构归属走 depgraph 设计节点 MOD-L02-TI-PARITY，map 挂载待业务图扩容经 Owner 门位补挂
   merge_evaluation: "替代对象=影子抢救件 docs/_working/matrix_campaign/rescued_tmp_20261007/rowvec/parity_check.py（转正，影子件退役）；净零：新增 1 永久件对应退役 1 影子件，不并（跨域不同对象：验收 harness vs 算法实现）"
+- file: docs/_working/external_audit_20261007/00_audit_plan.md
+  token: ext-audit-20261007-00-audit-plan-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/00_audit_report.md
+  token: ext-audit-20261007-00-audit-report-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_a_mainchain.md
+  token: ext-audit-20261007-lane-a-mainchain-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_b_governance.md
+  token: ext-audit-20261007-lane-b-governance-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_c_commitchain.md
+  token: ext-audit-20261007-lane-c-commitchain-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_d_backtest_exam.md
+  token: ext-audit-20261007-lane-d-backtest-exam-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_e_retire_ai.md
+  token: ext-audit-20261007-lane-e-retire-ai-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_f_ledger_authenticity.md
+  token: ext-audit-20261007-lane-f-ledger-authenticity-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_g_open53_cards.md
+  token: ext-audit-20261007-lane-g-open53-cards-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_20261007/lane_h_consolidation.md
+  token: ext-audit-20261007-lane-h-consolidation-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
 di_seam_exemptions: []
