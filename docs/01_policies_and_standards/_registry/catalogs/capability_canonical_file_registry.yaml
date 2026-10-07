@@ -64010,4 +64010,15 @@ creation_tokens:
   capability: fullcirculation_campaign
   merge_evaluation: "全流通战役文档族（骨架+裁定+判读+处方+挖矿+台账），Owner 全批"
 
+- file: docs/_working/map_census/03_quarterly_red_report_v1_companion.csv
+  token: fig13-quarterly-red-report-companion-03-quarterly-red-report-v1-companion-20261007
+  created_by: st-fig13-followup-20261006
+  capability: fig13_quarterly_red_report_companion
+  merge_evaluation: "首报配套处置csv报告md派生面"
+- file: docs/03_modules/_domain_portfolio_alloc/portfolio_netting/blueprint.md
+  token: st-t3series-l4-portfolio-netting-bp-20261008
+  created_by: st-t3series-20261006
+  capability: l4_portfolio_v0
+  merge_evaluation: "MOD-PA-034 蓝图（与 PA-002/PA-003/MOD-POS-021 分工声明在册），同源非第二真源"
+
 di_seam_exemptions: []
