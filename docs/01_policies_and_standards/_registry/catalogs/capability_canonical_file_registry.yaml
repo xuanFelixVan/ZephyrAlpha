@@ -63489,4 +63489,54 @@ creation_tokens:
   capability: t3b_exam_verdict
   merge_evaluation: "判决书机读面（同真源数据层），非第二真源"
 
+- file: docs/_working/external_audit_mastertc/00_audit_plan.md
+  token: ext-audit-20261007-00-audit-plan-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/00_audit_report.md
+  token: ext-audit-20261007-00-audit-report-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_a_mainchain.md
+  token: ext-audit-20261007-lane-a-mainchain-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_b_governance.md
+  token: ext-audit-20261007-lane-b-governance-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_c_commitchain.md
+  token: ext-audit-20261007-lane-c-commitchain-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_d_backtest_exam.md
+  token: ext-audit-20261007-lane-d-backtest-exam-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_e_retire_ai.md
+  token: ext-audit-20261007-lane-e-retire-ai-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_f_ledger_authenticity.md
+  token: ext-audit-20261007-lane-f-ledger-authenticity-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_g_open53_cards.md
+  token: ext-audit-20261007-lane-g-open53-cards-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/external_audit_mastertc/lane_h_consolidation.md
+  token: ext-audit-20261007-lane-h-consolidation-20261007
+  created_by: st-extaudit-20261007
+  capability: ext_audit_20261007
+  merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
 di_seam_exemptions: []
