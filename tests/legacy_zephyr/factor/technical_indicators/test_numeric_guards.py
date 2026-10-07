@@ -132,6 +132,30 @@ class TestE10ColumnGuards:
         out = TechnicalIndicatorRegistry.get("cvi")().compute(d)
         _assert_no_inf(out)
 
+    def test_cvi_dust_denominator_business_bound(self):
+        """cvi B3 巨值修面（2026-10-08 裁定A）：长期 H=L 使 EMA 衰减至浮点尘后区间
+        重现，dust 分母比值天文爆炸（存量实测至 8.3e265、闸后日产毒 11 万行）——
+        |cvi|>1e6 界外即 NaN；正常量级输出不受影响。"""
+        n_flat, n_jump = 80, 8
+        closes = [10.0] * n_flat + [10.0 + i * 0.5 for i in range(n_jump)]
+        idx = pd.date_range("2026-01-05", periods=n_flat + n_jump, freq="B")
+        d = pd.DataFrame(
+            {
+                "open": closes,
+                "high": [c + (0.0 if i < n_flat else 5.0) for i, c in enumerate(closes)],
+                "low": [c - (0.0 if i < n_flat else 5.0) for i, c in enumerate(closes)],
+                "close": closes,
+                "volume": [1000.0] * (n_flat + n_jump),
+            },
+            index=idx,
+        )
+        out = TechnicalIndicatorRegistry.get("cvi")().compute(d)
+        _assert_no_inf(out)
+        cvi = out["cvi"].to_numpy(dtype=float)
+        finite = cvi[~np.isnan(cvi)]
+        assert (np.abs(finite) <= 1e6).all(), f"界外巨值漏网: max={np.abs(finite).max():.3e}"
+        assert np.isnan(cvi[-3:]).all(), "恢复段 dust 比值应被界掩码为 NaN"
+
     def test_cti_zero_variance_window_no_inf(self):
         """cti：零方差窗（常数 close 浮点尘实证产 ±Inf）→ NaN。"""
         d = _df([0.1] * 20, spread=0.0)

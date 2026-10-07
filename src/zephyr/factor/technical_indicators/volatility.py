@@ -551,7 +551,11 @@ class CVI(TechnicalIndicatorBase):
         base = ema_rng.shift(roc_n)
         # E10 数值防护（2026-10-01）：EMA 基期=0（前段 H=L 一字零区间，ema 链种子 0）
         # → 分母 0 无值语义 → NaN，禁除零 ±Inf（census cvi 13,266 行实证）
+        # B3 巨值修面（2026-10-08 裁定A）：分母浮点尘（长期 H=L 后 ema 衰减至 1e-30 量级，
+        # 区间重现时比值天文爆炸至 8.3e265，闸后仍日产毒 11 万行实证）——|cvi|>1e6 即无值
+        # （业务界=Chaikin 波动率百分比量级 ×1e3 安全系数，与存量清洗判据同阈值）
         cvi = (100 * (ema_rng / base - 1)).where(base > 0)
+        cvi = cvi.where(cvi.abs() <= 1e6)
         cvi[~np.isfinite(cvi)] = np.nan  # 终防护：残余非有限值不落列
         return pd.DataFrame({"cvi": cvi}, index=data.index)
 
