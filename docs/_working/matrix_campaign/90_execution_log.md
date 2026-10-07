@@ -97,3 +97,10 @@ ttl: task_bound
 - 队列落袋全序列：q-0003 capability 册 HEAD 归一 → q-0006 翻译册 → q-0007 代码袋重投 → q-0008 np修复 → q-0009/0010 战役文档 → q-0011 册+总表 → 袋3 收口（本册+终报+批4/5 产物）。死信自愈链全程演练：CREATE-GUARD 关键词判重（not-dup 标记）/cascade_stale/TAKEOVER-PENDING（活体声明）/TTL 缺失（26+35 文件补 frontmatter，9 卡补闭合 ---，A15 裸 URL 引号）——每一门的处方都已留痕。
 - 接管误判：心跳守护 01:25 停摆 → TAKEOVER-PENDING 咬住本会话 → 重拉守护 + session_takeover_ledger --resolve 活体声明，恢复。
 - 质量终态：循环检查×2 连续零未决（fexam 19 测试+DSR 域 59/60 唯一红=covledger 他队在途面）+红蓝 6/6+ruff 零+selftest 6/6。
+
+
+## 夜战补记（st-mx07-L4，2026-10-07）
+
+- L4 车道（P1-2 layered spread 核接线）代码面已交袋：compute_layer_spread 委托 compute_layer_spread_kernel（use_kernel 默认 True+纯 pandas 后备），parity_end_to_end 参照侧钉死 use_kernel=False；对拍 5/5 逐位零差（max_abs_diff=0.0）、提速实测 39.3-87.1x、既有测试 10/10 绿。基准册=docs/_working/matrix_campaign/mining/layered_spread_kernel_wiring_v1.md（盘上在，待随册落地）。
+- BLOCKER：基准册 .md 与 capability_canonical_file_registry.yaml（本车道 creation_token 条目 layered_spread_kernel_wiring+陈旧快照 16 条增量修复，只增不减自检过，worktree/双 index 在）被 TAKEOVER-PENDING 咬住——死会话 st-mastertc-l6 open 接管条目命中该册；其 worktree .aidrafts/st-mastertc-l6 含 8 项未并成果（factor/signal 新模块+测试），merge/abort 属 mastertc 总包/closeout 班权限，L4 不代裁。处方：closeout 班按接管处方处置 st-mastertc-l6 → 注册表随袋落地（token 条目在盘上册，纯追加带货）→ 基准册 .md 单袋补交（token 进 HEAD 后 CREATE-GUARD 即过）。
+- 附产：batch_creation_tokens 写前自检拦下盘上注册表陈旧快照（缺 HEAD 16 条），L4 已按手册 §4 增量补回（CAS+只增不减，head_subset 实证 True），B22 守恒闸首次实弹防蒸发成功。
