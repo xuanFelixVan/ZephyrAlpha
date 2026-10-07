@@ -48,7 +48,7 @@ _PS_QUERY = (
     "$ts=@(Get-ScheduledTask -TaskName 'ZephyrAlpha*');"
     "foreach($t in $ts){"
     "$i=$t|Get-ScheduledTaskInfo;"
-    "'{0}|{1}|{2}|{3}' -f $t.TaskName,$t.State,$i.LastTaskResult,$i.LastRunTime.ToString('yyyy-MM-dd HH:mm:ss')"
+    "'{0}|{1}|{2}|{3}' -f $t.TaskName,$t.State,$i.LastTaskResult,$i.LastRunTime.ToString('yyyy-MM-dd HH:mm:ss',[System.Globalization.CultureInfo]::InvariantCulture)"
     "}"
 )
 _NAME_RE = re.compile(r"ZephyrAlpha[-_][A-Za-z0-9_]+")
