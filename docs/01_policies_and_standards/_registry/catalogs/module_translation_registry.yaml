@@ -67752,3 +67752,19 @@ entries:
   desc_en: ""
   plain_zh: "它回答一个问题：15分钟图的压力上沿和1分钟图的最近双峰，是不是顶在了同一个价位附近。只给共振成立/不成立的判定结论，绝不发出买卖指令——点火永远是下游的事。"
   responsibility_layer: business
+- module_path: scripts/governance/generators/backfill_created_from_filename.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "created 字段回填器"
+  name_en: "created backfill from filename"
+  desc_zh: "扫 working 区文件名含 ISO 日期的 md，回填 frontmatter created（CAS 逐件写，--apply 才落盘）"
+  desc_en: ""
+  plain_zh: "它帮文档补生日：很多挖矿簿没写创建日期，导致过期清理时不知道它多老了。这个工具从文件名里的日期（比如 2026-09-24-xxx.md）读出创建日，自动填进文件头部，先预览再动手，绝不覆盖已有的日期。"
+  responsibility_layer: governance
+- module_path: scripts/backup/retention_derived.py
+  domain_id: D_GOVERNANCE
+  name_zh: "备份时限派生器+免死影子账"
+  name_en: "retention derived limits and keep shadow"
+  desc_zh: "从 backup_config.yaml 纯函数派生 P95 时限读数；keep.txt 只读抄录生成 3 天影子快照到 .runtime/audit"
+  desc_en: ""
+  plain_zh: "它干两件事：一是看备份配置算出各环节该多快跑完的及格线，二是把进程保护名单偷偷拍张快照存三天——万一名单被谁改了或者保护进程被误杀，拿快照一对就能查出改了什么。名单本体它绝对不碰。"
+  responsibility_layer: governance

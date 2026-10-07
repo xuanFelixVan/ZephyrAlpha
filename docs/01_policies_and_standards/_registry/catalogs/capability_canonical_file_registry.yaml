@@ -63224,4 +63224,50 @@ creation_tokens:
   capability: master_tc_night
   created_by: st-mastertc-l4
   merge_evaluation: "总包夜战施工文档,战役终了归档,无既有真源重复"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/external_benchmark_5.md
+  token: decision-map-campaign-20260924-external-benchmark-5-20261007
+  created_by: st-mastertc-l9
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "C62/C189 补件：L09 复测尺+L08 外部对表，归既有 decision_map_campaign 簿系（跨域不同对象不并，零新册）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/800ms_budget.md
+  token: decision-map-campaign-20260924-800ms-budget-20261007
+  created_by: st-mastertc-l9
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "C62/C189 补件：L09 复测尺+L08 外部对表，归既有 decision_map_campaign 簿系（跨域不同对象不并，零新册）"
+- file: docs/_working/fms_overhaul/M3_mirror_tree_migration/mirror_tree_prep.md
+  token: fms-overhaul-mirror-tree-prep-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/fms_overhaul/S1_ref_integrity/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/fms_overhaul/S4_registry_self_gov/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/fms_overhaul/S6_navigation_econ/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: docs/_working/fms_overhaul/S9_retire_automation/README.md
+  token: fms-overhaul-readme-20261007
+  created_by: st-mastertc-l9
+  capability: fms_overhaul
+  merge_evaluation: "C28/C473 备料簿与蒸发簿重建骨架：替代各线散落挖矿簿复本，收敛唯一战役区（fms_overhaul），零同域新册（README 即簿壳）"
+- file: scripts/backup/retention_derived.py
+  token: backup-retention-derived-retention-derived-20261007
+  created_by: st-mastertc-l9
+  capability: backup_retention_derived
+  merge_evaluation: "C440 时限派生器+免死影子账（task_bound 骨架）：与 backup.ps1/backup_reconciler 同域不同对象不并（读侧尺 vs 写侧执行）；纯函数+单测零新册"
+
+- file: scripts/governance/generators/backfill_created_from_filename.py
+  token: gov-backfill-created-backfill-created-from-filename-20261007
+  created_by: st-mastertc-l9
+  capability: gov_backfill_created
+  merge_evaluation: "C127 一次性回填器（task_bound）：与陈化处置/生成器族跨域不同对象不并；零触发零消费后随批退役"
 di_seam_exemptions: []
