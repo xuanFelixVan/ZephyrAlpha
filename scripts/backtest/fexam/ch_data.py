@@ -10,7 +10,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH 不可达/超时 → CHAccessError；空结果返回空 DataFrame 不报错
-# [TESTS] tests/backtest/fexam/test_ic_exam.py（经上层间接）
+# [TESTS] tests/backtest/fexam/test_ic_exam.py（经上层间接）; tests/backtest/fexam/test_regime_series.py（regime 默认源直测）
 # [MODIFY-GUARD] docs/_working/matrix_campaign/90_execution_log.md（CH只读契约，禁加写路径）
 # [TTL] permanent
 # create-guard-not-dup: fexam专用CH只读装载层（表名经TableRegistry，与dataflow/northbound等命中无功能交集）
@@ -20,6 +20,8 @@
 - HOLDOUT 考试窗=2025-10-09..2026-09-30（近12月干净窗）
 - IS_REF 衰减参照窗=2024-10-08..2025-09-30（与 HOLDOUT 严格不交）
 - 窗口定义随分数册头部落盘，禁止事后修改（exam_policy §1 挪门柱=作废）
+- regime_source 口径（裁定#489②）：默认=SMA200 帘子（"sma200_default"）；
+  HMM 仅显式 use_hmm=True 启用（未过考禁回用），来源标签以 regime_series 返回值为准
 """
 
 from __future__ import annotations
@@ -195,10 +197,10 @@ def load_regime_states(start: str, end: str) -> pd.Series:
 
 
 def sma_regime_fallback(dates: pd.DatetimeIndex, window: int = 200) -> pd.Series:
-    """regime 表未覆盖期（<2019-04）的确定性 fallback：代理指数 200 日 SMA 上/下。
+    """确定性 SMA200 体制帘子：代理指数 200 日 SMA 上/下（裁定#489② 后=默认真源）。
 
     代理=后复权全市场等权均值（不引入额外数据源，确定性可复算）。
-    regime 表覆盖期不得用本 fallback（优先真源）。
+    use_hmm=True 的 opt-in 路径中本函数退居补洞：regime 表覆盖期优先 HMM 真源。
     """
     proxy = load_close("1990-01-01", dates.max().strftime("%Y-%m-%d")).mean(axis=1).dropna()
     if proxy.empty:
@@ -209,14 +211,21 @@ def sma_regime_fallback(dates: pd.DatetimeIndex, window: int = 200) -> pd.Series
     return state.rename("regime")
 
 
-def regime_series(start: str, end: str) -> tuple[pd.Series, str]:
-    """regime 态序列+来源标注（regime_table / sma_fallback / mixed）。
+def regime_series(start: str, end: str, *, use_hmm: bool = False) -> tuple[pd.Series, str]:
+    """regime 态序列+来源标注。
 
-    真源优先：regime_snapshot_history 覆盖的日期用 HMM 态；
-    未覆盖日期（<2019-04）用确定性 SMA fallback 补，来源如实标注。
+    裁定#489②：SMA200 立即设默认帘子——默认（use_hmm=False）全窗走确定性 SMA200，
+    返回 regime_source="sma200_default"；HMM（regime_snapshot_history）未过考禁回用，
+    仅显式 use_hmm=True 才启用（opt-in 路径来源如实标注 regime_table / sma_fallback /
+    regime_table+sma_fallback）。来源同时写进返回 Series 的 attrs["source"]（供上层
+    输出头直读，禁凭记忆硬编码标签）。
     """
-    hmm = load_regime_states(start, end)
     dates = pd.date_range(start, end, freq="D")
+    if not use_hmm:
+        sma = sma_regime_fallback(dates).dropna()
+        sma.attrs["source"] = "sma200_default"
+        return sma, "sma200_default"
+    hmm = load_regime_states(start, end)
     if hmm.empty:
         return sma_regime_fallback(dates), "sma_fallback"
     merged = sma_regime_fallback(dates)
@@ -228,4 +237,6 @@ def regime_series(start: str, end: str) -> tuple[pd.Series, str]:
     source = "regime_table+sma_fallback"
     if pd.Timestamp(start) >= hmm.index.min():
         source = "regime_table"
-    return merged.dropna(), source
+    out = merged.dropna()
+    out.attrs["source"] = source
+    return out, source

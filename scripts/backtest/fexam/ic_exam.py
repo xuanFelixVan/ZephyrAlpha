@@ -244,7 +244,7 @@ def _measure_column(
                 "regime_ic": regime_ic_slice(slice_ic(ic, *ch_data.WINDOW_HOLDOUT), regimes),
             }
     out["headline"]["regime_source"] = (
-        regimes.get("source", "regime_table") if isinstance(regimes, pd.Series) else "n/a"
+        regimes.attrs.get("source", "sma200_default") if isinstance(regimes, pd.Series) else "n/a"
     )
     return out
 
@@ -265,6 +265,7 @@ def run_exam(
 
     close = ch_data.load_close(*ch_data.WINDOW_UNION)
     rets = ch_data.forward_returns(close, horizons)
+    # 裁定#489②：默认 SMA200 帘子（regime_source="sma200_default"）；HMM 未过考禁回用
     regimes, regime_source = ch_data.regime_series(*ch_data.WINDOW_HOLDOUT)
 
     done: dict[str, dict[str, Any]] = {}

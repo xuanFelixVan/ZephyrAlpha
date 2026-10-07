@@ -163,6 +163,7 @@ def run_shadow(
         raise RuntimeError("无可用合成列（批1分数册与 roster 均无 ch_backed 列）——fail-closed")
 
     flat, close, _vol = _load_inputs(keys)
+    # 裁定#489②：默认 SMA200 帘子（regime_source="sma200_default"）；HMM 未过考禁回用
     regimes, regime_source = ch_data.regime_series(*WINDOW_RUN)
 
     # 合成信号→top_n 基础目标（等权底仓），再按五套做权重变换

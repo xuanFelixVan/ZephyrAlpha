@@ -204,6 +204,7 @@ def run_exam(
                 continue
 
     flat, close, _vol = _load_run_data()
+    # 裁定#489②：默认 SMA200 帘子（regime_source="sma200_default"）；HMM 未过考禁回用
     regimes, regime_source = ch_data.regime_series(*WINDOW_RUN)
     engine = DefaultBacktestEngine(BacktestConfig())
 
