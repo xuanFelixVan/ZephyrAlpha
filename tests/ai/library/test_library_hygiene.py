@@ -48,6 +48,7 @@ from scripts.governance.generators.library_hygiene import (  # noqa: E402
     _DOCS_WORKING_DAYS,
     _tracked_working_docs,
     classify_working_docs,
+    filter_new_md_missing_created,
     run_hygiene,
 )
 
@@ -203,4 +204,27 @@ class TestHelperContract:
         """[TESTS] 指向的文件必须真实存在——本尺的存在本身就是这条断言的实现。"""
         hdr = (REPO_ROOT / "scripts" / "governance" / "generators" / "library_hygiene.py").read_text(encoding="utf-8")
         assert "# [TESTS] tests/library/test_library_hygiene.py" in hdr
-        assert Path(__file__).relative_to(REPO_ROOT).as_posix() == "tests/library/test_library_hygiene.py"
+        # 2026-10-07 C128 班修复：本件已随测试树治理迁至 tests/ai/library/，自检断言同步实存路径
+        assert Path(__file__).relative_to(REPO_ROOT).as_posix() == "tests/ai/library/test_library_hygiene.py"
+
+
+class TestCheckNewFilesMode:
+    """C128 --check-new-files：staged 新增 docs/_working md 缺 created → warn 清单（函数级单测，不依赖 git）。"""
+
+    def test_new_md_without_created_is_listed(self, tmp_path: Path) -> None:
+        bad = _doc(tmp_path, "docs/_working/lanes/new_nodate.md", ttl="task_bound")
+        good = _doc(tmp_path, "docs/_working/lanes/new_ok.md", ttl="task_bound", created="2026-10-07")
+        got = filter_new_md_missing_created(tmp_path, [bad, good])
+        assert got == [bad], got
+
+    def test_scope_is_working_md_only(self, tmp_path: Path) -> None:
+        """作用域=docs/_working 的 .md：src md/脚本/子目录外的件不进清单。"""
+        bad = _doc(tmp_path, "docs/_working/a/nd.md", ttl="task_bound")
+        _doc(tmp_path, "docs/_working/a/ok.md", ttl="task_bound", created="2026-10-07")
+        got = filter_new_md_missing_created(tmp_path, [bad, "docs/_working/a/tool.py", "src/notes.md"])
+        assert got == [bad], got
+
+    def test_ghost_path_is_flagged_not_fatal(self, tmp_path: Path) -> None:
+        """git 清单与盘面竞态（staged 后被删）=判缺上榜不抛异常（warn 级恒放行契约）。"""
+        got = filter_new_md_missing_created(tmp_path, ["docs/_working/ghost/never.md"])
+        assert got == ["docs/_working/ghost/never.md"], got

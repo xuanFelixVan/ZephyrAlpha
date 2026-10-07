@@ -19,6 +19,7 @@
 Usage::
 
     python scripts/governance/generators/library_hygiene.py
+    python scripts/governance/generators/library_hygiene.py --check-new-files  # C128：staged 新增 md 缺 created 检查（warn 恒放行）
 # [ALGO_FLOW] external: docs/03_modules/_domain_library/algo_flow/generators/library_hygiene.yaml
 """
 
@@ -38,7 +39,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-__all__: Final[list[str]] = ["run_hygiene"]
+__all__: Final[list[str]] = ["run_hygiene", "check_staged_new_docs_created", "filter_new_md_missing_created"]
 
 _OUT: Final[Path] = Path("docs/_working/ultimate_library/HYGIENE.md")
 _DOCS_WORKING_DAYS: Final[int] = 30
@@ -165,6 +166,54 @@ def classify_working_docs(repo: Path, days: int, today: Any, tracked: list[str] 
     return buckets
 
 
+def _staged_added_files(repo: Path) -> list[str]:
+    """staged 新增（A）文件清单（仓内相对路径，POSIX 分隔）；git 不可用降级空清单。"""
+    import subprocess  # noqa: PLC0415 — 仅本函数需要，避免模块级拉入 git 依赖
+
+    try:
+        r = subprocess.run(  # noqa: bare-subprocess  只读 git 清单，与 _tracked_working_docs 同口径
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(repo),
+        )
+    except Exception:  # noqa: BLE001 — git 不可用则本检查降级为空，调用方出声
+        return []
+    if r.returncode != 0:
+        return []
+    return [ln.strip().replace("\\", "/") for ln in r.stdout.splitlines() if ln.strip()]
+
+
+def filter_new_md_missing_created(repo: Path, rel_paths: list[str]) -> list[str]:
+    """staged 新增 docs/_working/*.md 中缺 frontmatter `created` 的件（纯函数，可单测）。
+
+    判缺口径与 classify_working_docs 的 undated 同轴（_created_date None=缺失/坏日期）；
+    warn 级：只列清单不阻断（恒放行；升硬前置=存量清零+Owner 批准）。
+    """
+    from _shared.frontmatter import parse_frontmatter_from_file  # noqa: PLC0415  同目录约定：_shared 父目录入 sys.path
+
+    out: list[str] = []
+    for rel in sorted(set(rel_paths)):
+        if not (rel.startswith("docs/_working/") and rel.endswith(".md")):
+            continue
+        p = repo / rel
+        meta = parse_frontmatter_from_file(p) if p.is_file() else None
+        if _created_date(meta) is None:
+            out.append(rel)
+    return out
+
+
+def check_staged_new_docs_created(root: str = ".") -> list[str]:
+    """C128 读侧检查入口：staged 新增 md 缺 created → warn 清单（不写报告、不改退出码契约）。"""
+    repo = Path(root)
+    added = _staged_added_files(repo)
+    if not added:
+        return []
+    return filter_new_md_missing_created(repo, added)
+
+
 def _collect_logs_unregistered(repo: Path, days: int, now: float, warn: list[str]) -> list[str]:
     """logs/ 超龄且不命中任何日志抽屉前缀（未在册=编外日志）。"""
     import yaml  # noqa: PLC0415
@@ -271,8 +320,19 @@ def _write_report(repo: Path, result: dict[str, Any]) -> None:
     out.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
+def _main_check_new_files() -> int:
+    """--check-new-files 模式：打印缺 created 的 staged 新增 md 清单，恒 0 放行（warn 级）。"""
+    missing = check_staged_new_docs_created(str(REPO_ROOT))
+    for rel in missing:
+        print(f"WARN: staged 新件缺 frontmatter created: {rel}")
+    print(f"check-new-files: missing_created={len(missing)}（warn 恒放行；升硬前置=存量清零+Owner 批）")
+    return 0
+
+
 def main() -> int:
     """CLI 入口：打印摘要（退出码契约不变：0=正常，2=异常）。"""
+    if "--check-new-files" in sys.argv[1:]:
+        return _main_check_new_files()
     result = run_hygiene(str(REPO_ROOT))
     print(
         f"hygiene: docs_working_aged={len(result['docs_working'])} "
