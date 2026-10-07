@@ -97,7 +97,7 @@ nodes:
       已建=MOD-BT-154 进货编排（薄编排层：E1D 进货→E1B 可选→E2 幂等预审自动接续，
       E0 问闸预检接线，E3 排产清单产出；C 车道重算力闸点已声明待 E1C 施工）
     compute_class: mixed
-    data_refs: [待定:c1_market.news_data]  # F-AUDIT-BLIND-04：全 CH 无 news 表，真表入库前挂待定
+    data_refs: [c3_fundamental.news_data]  # 真身 c3_fundamental.news_data（幽灵名退役留档=图12 DSC-GAP-NEWSGHOST 防再引节点）
     module_ref: MOD-BT-154
     build_status: partial
     design_refs: []
