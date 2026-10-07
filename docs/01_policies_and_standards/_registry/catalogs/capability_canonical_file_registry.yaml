@@ -58763,6 +58763,7 @@ creation_tokens:
   token: entity-graph-uscc-bridge-entity-graph-uscc-bridge-20261006
   capability: entity_graph_uscc_bridge
   created_by: st-mastertc-l5
+  no_mount_reason: 数据治理消歧桥（只读提案器，四态提案零真实库写），非 TDM 决策节点对应物；挂图归属随数据治理域节点图扩容另批
   merge_evaluation: "复插:EC1§5.3/C122 消歧桥(只读提案器),替代物=无,同域不并"
 - file: src/zephyr/governance/data_governance/miniqmt_provider.py
   token: auto-miniqmt-provider-20260704
@@ -60655,6 +60656,7 @@ creation_tokens:
   token: l6-signal-structure-event-axis-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
+  no_mount_reason: 研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）
   merge_evaluation: "C232 波10 G-B.3 首件落码：涨停事件轴显式层（封板/开板炸/炸板），替代案卷登记面；w5_1 不并（跨域不同对象：事件轴 vs 双池统计件）"
 - file: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
   token: auto-lhb-premium-analyzer-20260822
@@ -60783,6 +60785,7 @@ creation_tokens:
   token: l6-signal-structure-resonance-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
+  no_mount_reason: 研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）
   merge_evaluation: "C235 波10 G-C.3 首件落码：15M 上沿×1M 双峰组合态判定器（不点火），消费 swing_sequence 语义；w5_1 不并（判定器 vs 检测器跨层不同对象）"
 - file: src/zephyr/signal_ashare/risk_event_consumer.py
   token: auto-scaffold-risk_event_consumer-20260825
@@ -60924,6 +60927,8 @@ creation_tokens:
   token: srcline1-sector_rotation_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  no_mount_reason: MOD-SIG-157 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
+  no_mount_reason: MOD-SIG-157 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
   token: source-line-criterion-tick-microstructure-20261006
@@ -60935,6 +60940,8 @@ creation_tokens:
   token: srcline1-tick_microstructure_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  no_mount_reason: MOD-SIG-156 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
+  no_mount_reason: MOD-SIG-156 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/stock_signal_strength.py
   token: auto-stock-signal-strength-20260823
@@ -61032,6 +61039,7 @@ creation_tokens:
   token: l6-signal-structure-swing-seq-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
+  no_mount_reason: 研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）
   merge_evaluation: "C234 波10 G-C.2 首件落码：复用缠论分型的摆动序列标注，禁第二套极值算法（零同物在册）；w5_1 不并（极值检测唯一实现=chanlun，本件为序列标注层）"
 - file: src/zephyr/signal_ashare/tradability_preflight.py
   token: tdm-l310-preflight-20260916
@@ -63594,4 +63602,307 @@ creation_tokens:
   capability: govfix-g2-dryrun
   merge_evaluation: "净零组合器：三段判定全复用既有真源（gate_prerun/enqueue_preflight/commit_queue登记三族），零新判据；替代三处分散预跑手工拼装流程"
 
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/landing_journey_registry.yaml
+  token: landing-journey-registry-20261008
+  capability: landing_journey_registry
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "L0 落地全程卡源册（九站处方，正门说明书生成器第五源）——与 gate_digest(判据面)/file_type_checklists(类型面)/death_cases(案例面) 正交：时间序旅程面，消费方同一生成器，不并"
+- file: docs/_working/audit_cure_night/00_orchestration.md
+  token: audit-cure-night-00-orchestration-20261007
+  capability: audit_cure_night
+  created_by: st-acure-20261008-chief
+  merge_evaluation: "审计闭合战役树；职责=外部审计 findings 施工收口，复用既有真源零新 taxonomy；跨域不同对象不并"
+- file: docs/_working/audit_cure_night/02_lanes/B_branch_workbook.md
+  token: acure-lane-b-branch-workbook-20261008
+  capability: acure-lane-b
+  created_by: st-acure-b1
+  merge_evaluation: "车道台账：与分支作业簿/卡面真源跨域不同对象不并（本件=lane B 六向台账施工记录位）；零重复真源"
+- file: docs/_working/chief_fullchain_campaign/00_campaign_brief.md
+  token: chief-fullchain-campaign-00_campaign_brief-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/01_skeleton_environments.md
+  token: chief-fullchain-campaign-01_skeleton_environments-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/02_gap_ledger.md
+  token: chief-fullchain-campaign-02_gap_ledger-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/05_folder_verdicts.md
+  token: chief-fullchain-campaign-05_folder_verdicts-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/06_root_sweep_ledger.md
+  token: chief-fullchain-campaign-06_root_sweep_ledger-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/90_chief_runlog.md
+  token: chief-fullchain-campaign-90_chief_runlog-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/99_final_delivery.md
+  token: chief-fullchain-campaign-99_final_delivery-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_01_collect.md
+  token: chief-fullchain-campaign-env_01_collect-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_02_ingest.md
+  token: chief-fullchain-campaign-env_02_ingest-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_03_derive.md
+  token: chief-fullchain-campaign-env_03_derive-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_04_coldstore.md
+  token: chief-fullchain-campaign-env_04_coldstore-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_05_recon.md
+  token: chief-fullchain-campaign-env_05_recon-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_06a_premarket.md
+  token: chief-fullchain-campaign-env_06a_premarket-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_06b_intraday.md
+  token: chief-fullchain-campaign-env_06b_intraday-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_06c_postmarket.md
+  token: chief-fullchain-campaign-env_06c_postmarket-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_06d_nightwindow.md
+  token: chief-fullchain-campaign-env_06d_nightwindow-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_07_source_lines.md
+  token: chief-fullchain-campaign-env_07_source_lines-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_08_market_state.md
+  token: chief-fullchain-campaign-env_08_market_state-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_09_sector_select.md
+  token: chief-fullchain-campaign-env_09_sector_select-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_10_stock_select.md
+  token: chief-fullchain-campaign-env_10_stock_select-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_11_trade_exec.md
+  token: chief-fullchain-campaign-env_11_trade_exec-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_12_pflow_holdings.md
+  token: chief-fullchain-campaign-env_12_pflow_holdings-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_13_x_legs.md
+  token: chief-fullchain-campaign-env_13_x_legs-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_14_pp_plan.md
+  token: chief-fullchain-campaign-env_14_pp_plan-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_15_recon_ledger.md
+  token: chief-fullchain-campaign-env_15_recon_ledger-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_16_e9_retro_loop.md
+  token: chief-fullchain-campaign-env_16_e9_retro_loop-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_17_e0_e9_chain.md
+  token: chief-fullchain-campaign-env_17_e0_e9_chain-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_18_sysops.md
+  token: chief-fullchain-campaign-env_18_sysops-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_19_ai_legislation.md
+  token: chief-fullchain-campaign-env_19_ai_legislation-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_20_dev_delivery.md
+  token: chief-fullchain-campaign-env_20_dev_delivery-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/env_mining/env_21_arch_base.md
+  token: chief-fullchain-campaign-env_21_arch_base-20261008
+  capability: chief_fullchain_campaign
+  created_by: st-workingchief-20261006
+  merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/commitmap_cure/t_guardfix_report.md
+  token: commitmap-cure-t-guardfix-report-20261004
+  capability: commitmap_cure
+  created_by: st-t-guardfix-20261004
+- file: docs/_working/factory_flow_20261007/00_施工方案与环节骨架.md
+  token: factory-flow-mining-00_施工方案与环节骨架-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E0_算力调度.md
+  token: factory-flow-mining-E0_算力调度-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E1_进货七车道.md
+  token: factory-flow-mining-E1_进货七车道-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E2_假说预审.md
+  token: factory-flow-mining-E2_假说预审-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E3_构造翻译.md
+  token: factory-flow-mining-E3_构造翻译-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E4_考试咽喉.md
+  token: factory-flow-mining-E4_考试咽喉-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E5_协同去重.md
+  token: factory-flow-mining-E5_协同去重-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E6_入库监控.md
+  token: factory-flow-mining-E6_入库监控-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E7_模拟盘前哨.md
+  token: factory-flow-mining-E7_模拟盘前哨-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E8_组装与资金分配.md
+  token: factory-flow-mining-E8_组装与资金分配-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/E9_实盘归因.md
+  token: factory-flow-mining-E9_实盘归因-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/factory_flow_20261007/MAP_图级设施.md
+  token: factory-flow-mining-MAP_图级设施-20261008
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层非第二实现）"
+- file: docs/_working/fullflow_campaign/00_skeleton.md
+  token: fullflow-00_skeleton-20261008
+  capability: fullflow_00_skeleton
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/fullflow_campaign/01_data_supply.md
+  token: fullflow-01_data_supply-20261008
+  capability: fullflow_01_data_supply
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/fullflow_campaign/02_signal_tdm.md
+  token: fullflow-02_signal_tdm-20261008
+  capability: fullflow_02_signal_tdm
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/fullflow_campaign/03_backtest_exam.md
+  token: fullflow-03_backtest_exam-20261008
+  capability: fullflow_03_backtest_exam
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/fullflow_campaign/04_risk_exec.md
+  token: fullflow-04_risk_exec-20261008
+  capability: fullflow_04_risk_exec
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/fullflow_campaign/05_frontend_monitor.md
+  token: fullflow-05_frontend_monitor-20261008
+  capability: fullflow_05_frontend_monitor
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/fullflow_campaign/06_gov_delivery.md
+  token: fullflow-06_gov_delivery-20261008
+  capability: fullflow_06_gov_delivery
+  created_by: st-entrance-gate-20261007
+  merge_evaluation: "挖矿环节簿（六向台账+自审闸三态），兄弟簿各管一段互不并；战役 fullflow_campaign（R5 更名迁移条目）"
+- file: docs/_working/map_census/fac9_07_ammo_report.md
+  token: map9-f7-ammo-fac9-07-ammo-report-20261008
+  capability: map9_f7_ammo
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：F7 弹药点火批报告重建版（原 blob 二次灭失，内容=F7 终报+总包交叉核验）"
+- file: docs/_working/master_tc_night/lanes/L8_retire_ai/00_workbook.md
+  token: l8-retire-ai-lane-workbook-00-workbook-20261007
+  capability: l8-retire-ai-lane-workbook
+  created_by: st-mastertc-l8
+  merge_evaluation: "车道作业簿+卡判映射表：与 orchestration 册/卡面真源跨域不同对象不并（本件=六向台账施工记录位）；零重复真源"
+- file: docs/_working/master_tc_night/lanes/L8_retire_ai/b_class_map.md
+  token: l8-retire-ai-lane-workbook-b-class-map-20261007
+  capability: l8-retire-ai-lane-workbook
+  created_by: st-mastertc-l8
+  merge_evaluation: "车道作业簿+卡判映射表：与 orchestration 册/卡面真源跨域不同对象不并（本件=六向台账施工记录位）；零重复真源"
+- file: scripts/governance/commit_claim_check.py
+  token: commit-claim-check-govfix-g1-20261007
+  capability: commit_claim_check
+  created_by: st-govfix-g1-20261007
+  merge_evaluation: "F3 缺陷修复新增复查门，无同域重复（capability 反查零命中）；替代人工肉眼对账"
+- file: src/zephyr/factor/analysis/tech_factor_pipeline.py
+  token: tech-factor-pipeline-tech-factor-pipeline-20261007
+  capability: tech_factor_pipeline
+  created_by: st-acure-r1
+  no_mount_reason: 研究面接线件未实弹（CNS-01 一键链，IC 跑批未接线），消费挂载随 IC 跑批接线批补报
+  merge_evaluation: "CNS-01 接线件（C75 死袋复活）：指标宽表→因子值面板→合成信号一键链，零既有件被替代；跨域不同对象不并"
+- file: src/zephyr/pf_alloc/core/portfolio_netting.py
+  token: auto-scaffold-portfolio_netting-20261008
+  capability: portfolio_netting
+  created_by: scaffold.py
+  map_mounts:
+  - TDMAP-001:TDM-F-C1
+  - TDMAP-001:TDM-F-C2-01
+  merge_evaluation: "L-4 里程碑一 PP-001 V0 蓝图首块纯新增：capability 反查 netting/net_positions/split_capital 零命中，无既有件被替代；MOD-PA-002 信号级/MOD-PA-003 单策略内规整/CLONEGUARD 预查零 findings 跨域不同对象不并"
 di_seam_exemptions: []
