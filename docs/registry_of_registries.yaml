@@ -475,7 +475,7 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual（aliases/description 随生成器增减同步）
-        entry_count: 0
+        entry_count: 13951
         counting_rule: creation_tokens 数组条目数
         status: active
         description: >-
