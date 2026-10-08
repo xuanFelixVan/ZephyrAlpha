@@ -26,6 +26,14 @@ OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理
     chat = OllamaChat(model="qwen3:8b")
     reply = chat.ask("这段代码有什么问题？", system="你是代码审查助手")
     structured = chat.ask_json("分类: {text}", fields=["category", "confidence"])
+
+# [ALGO_FLOW]
+# 层: 输入  I1=task_type+prompt（工厂三车道 lane_b/translator/lane_c2 调用）
+# 层: 算法  A1=resolve_routed_model 读 model_routing_policy.task_routes（fail-closed，禁私接）
+#           A2=OllamaChat HTTP localhost 推理（qwen3:8b 量产轨缺省）
+# 层: 输出  O1=模型名/补全文本回调用方
+# 边: I1 -.-> A1 -.-> A2 -.-> O1
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations
@@ -37,6 +45,7 @@ import random
 import re
 import time
 from http import HTTPStatus
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.integration.local_model.lsg_gate import (
@@ -59,6 +68,53 @@ INFERENCE_MODEL: Final[str] = os.getenv("OLLAMA_INFERENCE_MODEL", "qwen3:8b")
 INFERENCE_TEMPERATURE: Final[float] = 0.1
 INFERENCE_MAX_TOKENS: Final[int] = 1024
 INFERENCE_TIMEOUT_S: Final[float] = 60.0
+
+
+def resolve_routed_model(task_type: str, policy_path: str | os.PathLike[str] | None = None) -> str:
+    """工厂车道模型路由唯一口：读 config/model_routing_policy.yaml 的 task_routes（MOD-MODEL_ROUTER_ORCH 真源）。
+
+    接线批注（st-fullscore-20260930，裁定真源=03_llm_local_vs_api_verdict §四.2）：工厂三车道
+    （lane_b/translator/lane_c2）原硬编码 MODEL 常量直连 OllamaChat，未经路由面——本函数把
+    "粗挖本地、精翻/审查 API"的既有分层策略落为执行体。语义（fail-closed，对齐既有消费者
+    washer.resolve_route_from_config / purity_adjudicator.resolve_purity_route 先例）：
+
+      preferred="local"      → default_local_model（qwen3:8b）
+      preferred="local:<m>"  → <m>（双冒号形态只按首个冒号切分）
+      preferred="<api>:<m>"  → RuntimeError（API 升级轨必须走 LSG 网关面，本解析器不发货；
+                                本地车道禁裸 API 直连——宪法 §9.2）
+      轨缺席/册缺失/解析失败 → RuntimeError（禁私接模型，禁回落硬编码缺省）
+
+    Returns:
+        str: 本地模型名（如 "qwen3:8b"），供 OllamaChat(model=...) 直接消费。
+    """
+    root = Path(__file__).resolve().parents[4]
+    path = Path(policy_path) if policy_path else root / "config" / "model_routing_policy.yaml"
+    if not path.exists():
+        raise RuntimeError("routing_config_missing（路由册缺失，禁私接模型）") from None
+    try:
+        import yaml
+
+        raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except OSError as exc:
+        raise RuntimeError(f"routing_config_unreadable: {exc}") from exc
+    entry = (raw.get("task_routes") or {}).get(task_type) if isinstance(raw, dict) else None
+    if not isinstance(entry, dict):
+        raise RuntimeError(f"route_missing:{task_type}（轨未在册，禁私接模型——改 config 不改码）")
+    preferred = str(entry.get("preferred", "") or "")
+    if ":" in preferred:
+        provider, model = preferred.split(":", 1)
+    else:
+        provider, model = preferred, ""
+    if provider in ("zhipu", "deepseek", "openai_azure", "anthropic"):
+        raise RuntimeError(
+            f"api_track_not_local:{preferred}（{task_type} 路由到 API 升级轨——必须经 LSG 网关面，"
+            "本地车道解析器不发货；如需升轨请走 LLMGateway 接线批，禁绕闸直连）"
+        )
+    if provider in ("local", "ollama"):
+        return model or str(raw.get("default_local_model") or "").strip()
+    raise RuntimeError(f"route_preferred_malformed（须 local|local:model|provider:model 形态）: {preferred[:60]}")
+
+
 # qwen3 思考链默认关闭（生成后统一被 _strip_think_block 剥除，实测 -93% 无效 token、
 # 单条 9.0s→3.6s）；评估/调试需思考模式时设 ZEPHYR_OLLAMA_THINK=1
 INFERENCE_THINK: Final[bool] = os.getenv("ZEPHYR_OLLAMA_THINK", "0").lower() in ("1", "true", "yes")
