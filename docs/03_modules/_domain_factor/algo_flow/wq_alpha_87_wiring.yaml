@@ -1,0 +1,54 @@
+# ALGO_FLOW 外部真源——wq_alpha_87_wiring（_domain_factor 域，真源 src/zephyr/factor/wq_alpha_87_wiring.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.wq_alpha_87_wiring
+source_of_truth: src/zephyr/factor/wq_alpha_87_wiring.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: history 长表
+    #   fields: MultiIndex(symbol, trade_date)；columns=open/high/low/close/volume/amount（load_history 出口归一口径）
+    #   code: history_to_panels()
+    # - id: I2
+    #   name: return_panel 前向收益面板
+    #   fields: (date×symbol) DataFrame，PIT 已实现收益（对齐靠 index）
+    #   code: make_ic_ir_hook()
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 注册册登记
+    #   name_en: wire_wq_alpha_87
+    #   intro: 87 公式经 WqAlpha87.register_all(register_hook) 逐个装配为 FactorBase 适配类入 FactorRegistry（幂等重入=0，撞他类抛 Alpha87WiringError 不顶替）。
+    #   inputs: WQ_ALPHA_87_IDS
+    #   outputs: FactorRegistry.registry 增 wq_alpha_001..wq_alpha_101（domain=wq_alpha，降级公式带 ind-neutralize-degraded 标）
+    #   code: wire_wq_alpha_87()
+    # - id: A2
+    #   name_zh: 调用链挂载
+    #   name_en: compute_panel duck-type
+    #   intro: 适配类声明 compute_panel(history)，backtest._compute_factor_panel 优先整面板一次计算（截面公式免逐标的退化）；考试链 evaluate_factor/compute_ic_ir_table 按 factor_id 查册直用。
+    #   inputs: FactorRegistry.get(factor_id) + history
+    #   outputs: (date×symbol) 因子面板
+    #   code: WqAlpha87Factor.compute_panel()
+    # - id: A3
+    #   name_zh: IC 委托装配
+    #   name_en: make_ic_ir_hook
+    #   intro: validate_ic 的真实 ic_hook 工厂，委托 metrics.compute_ic_series/compute_ir（ic_ir_calc 同语义 PIT；空截面容错全 0 不阻断批内其他因子）。
+    #   inputs: values panel + return_panel
+    #   outputs: {factor_id, ic_mean, ic_std, ir, sample_size}
+    #   code: make_ic_ir_hook()
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 87 因子批考面
+    #   name_en: wired_factor_ids
+    #   intro: evaluate_factor/compute_ic_ir_table/StrategyRunner 经 FactorRegistry 解析 wq_alpha_* 出 IC/IR/OOS。
+    #   downstream: 考试链 D-FACTOR-03（backtest/ic_ir_calc）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A2
+    # I2 --> A3
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

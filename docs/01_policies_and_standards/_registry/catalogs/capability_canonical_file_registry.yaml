@@ -64295,6 +64295,8 @@ creation_tokens:
   token: wq-alpha-87-wiring-20261008
   capability: wq_alpha_87_wiring
   created_by: st-mx07-W6
+  map_mounts:
+  - strategy_production_map:FAC-E4
   merge_evaluation: "同真源装配：wq_alpha_87.py 头部 CONSUMERS 声明的 register/ic 双委托注入点的真实装配（master_backlog P2-6 接线），非重复建库，替代无"
 - file: scripts/backtest/fexam/conditional_exam.py
   token: conditional-exam-cyc-20261008
@@ -64336,4 +64338,9 @@ creation_tokens:
   created_by: st-mx07-W3
   capability: conditional_exam_cyc_archive
   merge_evaluation: "新增 CYC 条件变量考场执行留档（四指标读数原文/检验统计量/N_fam 冻结/verdict 逐项/参照窗分歧如实报/自裁记录；判读辅助面，数值真源=考册 yaml）"
+- file: docs/03_modules/_domain_factor/algo_flow/wq_alpha_87_wiring.yaml
+  token: wq-alpha-87-wiring-algoflow-20261008
+  capability: wq_alpha_87_wiring
+  created_by: st-mx07-W6
+  merge_evaluation: "wq_alpha_87_wiring.py 的 ALGO_FLOW 外部真源（externalize_algo_flow.py 生成器产物，同真源视图非第二真源），先例=btfix-p1p2-wq-alpha-87-20260915 同目录同构"
 di_seam_exemptions: []

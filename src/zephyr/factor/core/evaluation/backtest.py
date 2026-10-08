@@ -262,8 +262,7 @@ def _log_panel_report(report: MarketPanelReport, context: str) -> None:
         problems.append("后复权因子源不可用，价格为**未复权原始价**（除权幻影未修）")
     elif report.unadjusted_symbols:
         problems.append(
-            f"{report.unadjusted_symbols} 个标的（{report.unadjusted_rows} 行）无复权因子，"
-            "该标的整窗退不复权"
+            f"{report.unadjusted_symbols} 个标的（{report.unadjusted_rows} 行）无复权因子，该标的整窗退不复权"
         )
     if problems:
         log.warning("行情口径归一告警 %s：%s ｜ %s", context, "；".join(problems), line)
@@ -326,6 +325,12 @@ def load_history(
 def _compute_factor_panel(factor_cls: type, history: pd.DataFrame) -> pd.DataFrame:
     """逐标的计算因子值，组装面板 (index=date, columns=symbol)。"""
     factor = factor_cls()
+    # 截面型因子挂载点（wq_alpha_87 接线 2026-10-08，wq_alpha_87_wiring）：因子声明
+    # compute_panel(history) 即整面板一次计算——逐标的 compute 对截面公式必然退化
+    # （单列截面 rank 恒 1）；未声明该方法的因子走原逐标的路径，行为零变化。
+    panel_computer = getattr(factor, "compute_panel", None)
+    if callable(panel_computer):
+        return panel_computer(history)
     values: dict[str, pd.Series] = {}
     for symbol, group in history.groupby(level="symbol"):
         values[str(symbol)] = factor.compute(group.droplevel("symbol"))
