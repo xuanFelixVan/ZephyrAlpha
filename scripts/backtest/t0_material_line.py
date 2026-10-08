@@ -285,8 +285,22 @@ def run_pipeline(
     grid_bp: float,
     notional: float,
     run_id: str,
+    engine: str = "fast",
 ) -> tuple[dict[str, pd.DataFrame], dict]:
-    """主管线：取数一次，逐周期构建语料。返回 {period: pairs_df}, stats。"""
+    """主管线：取数一次，逐周期构建语料。返回 {period: pairs_df}, stats。
+
+    engine 分派（st-mx07-W1 单点切挂，裁定#489⑤ 路径并行）：
+    - "fast"（默认）：t0_material_line_fast.run_pipeline_fast（numba/向量化路径并行核，
+      对拍逐位+耗时实测=docs/_working/matrix_campaign/mining/t0_material_line_parallel_v1.md；
+      fast 输入契约=价格列 float64 规范化，语义缝披露见其 INVARIANTS 与对拍 harness 披露段）；
+    - "legacy"：下方原逐 symbol-day Python 循环（回滚口径：engine="legacy" 一参回退，
+      零代码改动；或 revert 本切挂 diff——legacy 循环体未动）。
+    """
+    if engine != "legacy":
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import t0_material_line_fast  # 延迟导入：fast 缺席（如 numba 环境异常）不影响 legacy 面
+
+        return t0_material_line_fast.run_pipeline_fast(conn, symbols, start, end, periods, grid_bp, notional, run_id)
     t0 = time.perf_counter()
     bars, bar_stats = load_bars(conn, symbols, start, end)
     t_fetch = time.perf_counter() - t0
