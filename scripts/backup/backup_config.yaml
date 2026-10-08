@@ -32,7 +32,7 @@ code_backup:
   source: "D:\\ZephyrAlpha"
   target: "F:\\code_backup"
   exclude_dirs: [".git", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".runtime", ".aidrafts", "tmp", ".venv", ".worktrees"]  # 2026-09-28 加 .worktrees：会话整仓副本致 vault diff 无界增长（09-25/09-28 两轮 9-19h 长跑根因），其内容为 git 派生可重建
-  exclude_files: ["*.pyc", "*.db-wal", "*.db-shm"]
+  exclude_files: ["*.pyc", "*.db-wal", "*.db-shm", 'data\runtime\*.log']  # E-6 2026-10-09: data/runtime 夜间日志被活写进程排它持锁（tilib_nightly_run.log 占 15/17 次失败主因），运行时噪声非业务资产，含路径分隔符的模式按源根相对路径匹配
 
 # 版本化代码快照（v2.1）：base\<yyyyMMdd>\，retention 天轮转
 # 空间保险（v2.1.1）：盘剩余 < free_floor_gb 时从最老快照逐出（最少保留 min_keep_days 天），
@@ -130,8 +130,10 @@ offrepo_backup:
 # 判据出处=F:/zephyr_cold/AUDIT_SOP.md §一.1「F≥700G、G≥500G、D≥50G、E≥50G free」
 # ——该 SOP 活在盘上且无任何代码读者，故 2026-09-26 一次 599GiB VM 全量复制
 #    可以"合法地"把 F 从 766→167GiB 击穿红线而无人拦（LEDGER_final.md 处方 P-6）。
-# 唯一读者=scripts/backup/backup_ch_vm.ps1 的 Get-CapacityGuardDecision（缺键时
-# 该脚本回退内置常量 700 并响亮标 source=fallback，绝不静默归零=绝不自动放行）。
+# 读者=scripts/backup/backup_ch_vm.ps1 的 Get-CapacityGuardDecision 与
+# scripts/backup/backup.ps1 的 Get-MinFreeGB/Test-CapacityGuardBreach（E-4,
+# 2026-10-09 起 3c/3d 镜像与 db_dumps 拷贝共用本闸；缺键时两脚本均回退
+# 内置常量 700 并响亮标 fallback，绝不静默归零=绝不自动放行）。
 # 语义：复制完成后，目标盘剩余 free 不得低于本表值。
 # ============================================================
 capacity_guard:

@@ -137,6 +137,29 @@ function Copy-FileShareTolerant {
     } finally { $fsSrc.Dispose() }
 }
 
+# (E-6, 2026-10-09) Classify file-in-use contention: ERROR_SHARING_VIOLATION
+# (0x80070020 = -2147024864) / ERROR_LOCK_VIOLATION (0x80070021 = -2147024863).
+# A live writer holding the file (e.g. a data\runtime nightly log) is transient
+# churn, not an integrity failure -- callers count it separately as a warn and
+# never let it flip the vault verdict (the tilib_nightly_run.log share conflicts
+# were 15/17 of the historical vault "failures").
+# PS wraps .NET exceptions: the wrapper carries a GENERIC HResult (0x80131500)
+# and a LOCALE-TRANSLATED message, so the walk must descend InnerException for
+# the real Win32 HRESULT (language-independent) -- message text is only a last
+# resort and therefore ASCII-only.
+function Test-ShareLockedError {
+    param($ErrorRecord)
+    if (-not $ErrorRecord -or -not $ErrorRecord.Exception) { return $false }
+    $ex = $ErrorRecord.Exception
+    while ($ex) {
+        $hr = 0
+        try { $hr = $ex.HResult } catch { $hr = 0 }
+        if ($hr -eq -2147024864 -or $hr -eq -2147024863) { return $true }
+        $ex = $ex.InnerException
+    }
+    return ([string]$ErrorRecord.Exception.Message) -match "being used by another process"
+}
+
 # ==================== mirror deletion guard ====================
 # WHY: /MIR propagates deletions. The 2026-09-14 docs/_working incident proved that a
 # source-side accident destroys the last recovery copy the same night (see the v2.1.0
@@ -244,7 +267,7 @@ if ($yamlContent -match 'working_vault:[\s\S]*?min_keep_days:\s*(\d+)') { $Vault
 
 # Parse exclude lists (inline YAML format: [item1, item2, ...])
 $ExcludeDirs = @(".git","node_modules","__pycache__",".pytest_cache",".mypy_cache",".ruff_cache",".runtime",".aidrafts","tmp",".venv")
-$ExcludeFiles = @("*.pyc","*.db-wal","*.db-shm")
+$ExcludeFiles = @("*.pyc","*.db-wal","*.db-shm","data\runtime\*.log")
 if ($yamlContent -match 'exclude_dirs:\s*\[([^\]]+)\]') {
     $ExcludeDirs = $matches[1] -split ',' | ForEach-Object { $_.Trim().Trim('"').Trim("'") } | Where-Object { $_ }
 }
@@ -648,11 +671,18 @@ if ($Mode -eq "ch") {
                     if (($attr -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { continue }
                     $stack.Push($e)
                 } else {
+                    $relRaw = $e.Substring($Root.Length).TrimStart('\')
                     $skip = $false
-                    foreach ($p in $ExclFiles) { if ($name -like $p) { $skip = $true; break } }
+                    foreach ($p in $ExclFiles) {
+                        # (E-6) patterns containing a path separator match against
+                        # the source-root-relative path (e.g. 'data\runtime\*.log');
+                        # plain patterns keep matching the file name only.
+                        if ($p -like '*\*') { if ($relRaw -like $p) { $skip = $true; break } }
+                        elseif ($name -like $p) { $skip = $true; break }
+                    }
                     if ($skip) { continue }
                     $fi = [System.IO.FileInfo]::new($e)
-                    $rel = $e.Substring($Root.Length).TrimStart('\').ToLower()
+                    $rel = $relRaw.ToLower()
                     $idx[$rel] = @($e, $fi.Length, $fi.LastWriteTimeUtc)
                 }
             }
@@ -682,7 +712,7 @@ if ($Mode -eq "ch") {
         if ($prevDirs) { $prevDay = $prevDirs[-1].FullName }
     }
 
-    $linked = 0; $copied = 0; $linkFail = 0; $replaced = 0; $vanished = 0; $errors3 = @()
+    $linked = 0; $copied = 0; $linkFail = 0; $replaced = 0; $vanished = 0; $shareLocked = 0; $errors3 = @()
     $rcCode = 0
 
     if (-not $prevDay) {
@@ -752,6 +782,13 @@ if ($Mode -eq "ch") {
                         # Was: counted as failure and flipped status to failed (2026-09-15).
                         $vanished++
                         Write-Warn "Source vanished mid-run, skipped: $rel"
+                    } elseif (Test-ShareLockedError $_) {
+                        # (E-6) a live writer holds the file -> transient contention,
+                        # counted separately as share_locked; never flips the vault
+                        # verdict ($vaultOk only counts $linkFail).
+                        $shareLocked++
+                        $errors3 += "$rel : share-locked (WARN, not a failure): $($_.Exception.Message)"
+                        Write-Warn "Share-locked by a live writer, skipped: $rel"
                     } else {
                         $linkFail++
                         $errors3 += "$rel : $($_.Exception.Message)"
@@ -759,7 +796,7 @@ if ($Mode -eq "ch") {
                 }
             }
         }
-        Write-OK ("Snapshot: linked={0}, copied={1}, replaced={2}, failures={3}, vanished={4}" -f $linked, $copied, $replaced, $linkFail, $vanished)
+        Write-OK ("Snapshot: linked={0}, copied={1}, replaced={2}, failures={3}, vanished={4}, share_locked={5}" -f $linked, $copied, $replaced, $linkFail, $vanished, $shareLocked)
         if ($errors3.Count -gt 0) {
             foreach ($msg in ($errors3 | Select-Object -First 10)) { Write-Warn "Snapshot failure: $msg" }
         }
@@ -820,7 +857,7 @@ if ($Mode -eq "ch") {
     $codeResult = @{
         status=$(if($vaultOk){"ok"}else{"failed"}); mode="versioned"
         vault_base=$VaultBase; day_target=$dayTarget; prev_snapshot=$prevDay
-        retention_days=$VaultRetentionDays; hardlinked=$linked; copied=$copied; failures=$linkFail; vanished=$vanished
+        retention_days=$VaultRetentionDays; hardlinked=$linked; copied=$copied; failures=$linkFail; vanished=$vanished; share_locked=$shareLocked
         robocopy_exit=$rcCode; rotated=$rotated
         # The failure detail used to live only on the console, which the scheduled
         # task discards -> a "failures=1" verdict was unattributable after the fact.
