@@ -296,3 +296,14 @@ retirement_schedule:
   group_b_mark_superseded: 1
   group_b_ids: [rule_watcher]
   evidence: "逐条 old_path/new_path HEAD 存在性实测（12/13 new 存活；rule_watcher 双亡）；本册 pending=13 全覆盖"
+# ── windows_service.py 候选册行（2026-10-07 L8/C394 追加，#488 通道裁定=候选转 deprecated 标记）──
+# 文件头 [DEPRECATED] 注记已由夜总攻 B11（commit ae952d32）落地；本行补候选册登记位，零删除。
+# 双实证=sc query ZephyrAlpha→1060（SCM 未装）+零运行时消费者（无 import，仅字面量/注释提及）。
+# successor=ZephyrAlpha_* 计划任务群+桌面壳自启动；物理删除留退役排班窗（Owner 门位）。
+  windows_service_file_retire:
+    candidate: src/zephyr/trading/windows_service.py
+    status: deprecated_marked
+    marked_by: "夜总攻 B11 / ae952d32（2026-09-30）"
+    registered_by: "st-mastertc-l8（2026-10-07 C394）"
+    successor: "ZephyrAlpha_* 计划任务群+桌面壳自启动"
+    physical_deletion: "Owner 门位保留（#488 通道）；三段式窗口另批"

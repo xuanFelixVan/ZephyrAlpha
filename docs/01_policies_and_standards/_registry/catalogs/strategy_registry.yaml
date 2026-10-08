@@ -35,6 +35,7 @@ related_arch: '#ARCH-BREG-001'
 unique_key:
 - strategy_id
 
+lifecycle_status_values: [candidate, backtest, sim, paper, live, monitoring, decayed, retired, shelved]  # 裁定#398/#399 词表九态（原八态+shelved 收编）；机读消费=registry_state_vocab.MACHINE_READABLE_FIELD；10-08 审计闭合夜 B 道自 l8 分支 content-equivalent 落地（裁定#490 A 段）
 entry_schema:
   strategy_id: str               # STR-{CLASS}-{NNN}，如 STR-DABAN-001
   name: str
