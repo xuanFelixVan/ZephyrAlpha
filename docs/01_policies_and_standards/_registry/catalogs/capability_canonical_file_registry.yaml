@@ -3396,101 +3396,6 @@ capabilities:
   description: YAML 真源 → depgraph PostgreSQL readonly 表单向同步脚本。同步 9 张 readonly 表 （gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/ business_streams/infrastructure_components/model_capabilities/contracts）。 禁止反向（DB→YAML），禁止手写 DB 表（readonly trigger 硬阻断，需 disable_readonly_triggers 临时禁用）。ARCH-046 治本加固（2026-07-04）： sync_infrastructure_registry() 函数补 DELETE 逻辑——自动清理 YAML 中已删除 但 DB 残留的孤儿墓碑条目（防墓碑残留幻觉源）。解决发现性：新 AI 搜 "YAML 同步 DB/infrastructure_components 同步/墓碑清理" 可定位真源。 解决防重建：check_file_canonical() 反查阻止新 AI 重建同步脚本。 关联规则：ARCH-046（数据库节点全景图登记三铁律）。 ARCH-052 扩展（2026-07-06）：新增 sync_aggregate_nodes() 函数（P7 优先级）， 从 4 个 registry.yaml（rule_enforcement/scripts/test_suite/rule_registry_collection） UPSERT 聚合节点到 nodes 表，作为 depgraph 重建后的 YAML→DB 恢复通道。 sync_dataflow_registry() DELETE 加 WHERE design_maturity != 'design' 条件， 保护 apply_dataflowgraph --add-design-* 写入的设计态数据。解决发现性：新 AI 搜 "聚合节点同步/aggregate_nodes 恢复/dataflow 设计态保护" 可定位真源。 关联规则：ARCH-052（聚合节点模式治理配置对象过细）。 ARCH-053 扩展（2026-07-06）：新增 sync_interface_contracts() 函数（P8 优先级）， 从 interface_contract_registry.yaml UPSERT 接口契约到 interface_contracts 表 （对标 Backstage API kind，接口集级粒度）。新增 sync_database_nodes() 函数 （P8 优先级），从 infrastructure_registry.yaml 的 relational_db/vector_db 条目 UPSERT database 节点到 nodes 表（补齐 depgraph 缺失的数据库节点）。 解决发现性：新 AI 搜"接口契约同步/database 节点同步" 可定位真源。 关联规则：ARCH-053（API 契约层补齐 + database 节点 + AI 可发现性）。
   canonical_override: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
 creation_tokens:
-- file: docs/_working/audit_cure_night/01_mining/00_workitems_master.md
-  token: audit-cure-night-00-workitems-master-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/branch_landing/p1_2_l8_branch_landing.md
-  token: audit-cure-night-p1-2-l8-branch-landing-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_10_fill_red_test.md
-  token: audit-cure-night-p0-10-fill-red-test-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_1_deadbag_cluster.md
-  token: audit-cure-night-p0-1-deadbag-cluster-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_7_registry_integrity.md
-  token: audit-cure-night-p0-7-registry-integrity-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_6_desktop_9_cards.md
-  token: audit-cure-night-p0-6-desktop-9-cards-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_9_inflight_narrative.md
-  token: audit-cure-night-p0-9-inflight-narrative-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_2_close_lane_erratum.md
-  token: audit-cure-night-p0-2-close-lane-erratum-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_3_loop_check_verdict.md
-  token: audit-cure-night-p0-3-loop-check-verdict-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_4_c441_authority_anchor.md
-  token: audit-cure-night-p0-4-c441-authority-anchor-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_5_c19_c18_swap.md
-  token: audit-cure-night-p0-5-c19-c18-swap-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_8_c129_recovery.md
-  token: audit-cure-night-p0-8-c129-recovery-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p1_4_5_6_governance_notes.md
-  token: audit-cure-night-p1-4-5-6-governance-notes-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/open_questions/open_questions_c312_c271_c315.md
-  token: audit-cure-night-open-questions-c312-c271-c315-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/open_questions/p1_handover_cards.md
-  token: audit-cure-night-p1-handover-cards-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/01_mining/open_questions/p2_digest.md
-  token: audit-cure-night-p2-digest-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/audit_cure_night/02_lanes/E_erratum_workbook.md
-  token: acure-lane-e-erratum-workbook-20261008
-  capability: acure_lane_e
-  created_by: st-acure-e1
-  merge_evaluation: "审计闭合夜 E 道（台账勘误）作业簿登记；车道工作区纯新增，零替代（裁定#375 四判据：跨域不同对象不并）"
-- file: docs/_working/audit_cure_night/99_delivery/交付报告.md
-  token: audit-cure-night-file-20261009
-  capability: audit_cure_night
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
-- file: docs/_working/chief_fullchain_campaign/HANDOFF_NEXT_SESSION.md
-  token: chief-fullchain-campaign-handoff-next-session-20261009
-  capability: chief_fullchain_campaign
-  created_by: st-chiefc-20261009
-  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
 - file: .github/copilot-instructions.md
   token: circ-a4-copilot-instructions-20260930
   capability: library_lookup
@@ -6351,6 +6256,11 @@ creation_tokens:
   token: index-navigation-03-modules-cross-layer-clone-guard-20260919
   capability: index_navigation
   created_by: st-final3-20260919
+- file: docs/03_modules/_cross_layer/database/business_data_categories.yaml
+  token: fullflow-mine-docs-03-modules--cross-layer-database-business-data-categories-yaml-20261008
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件"
 - file: docs/03_modules/_cross_layer/process_incubator/blueprint.md
   token: process-incubator-blueprint-blueprint-20260915
   capability: process_incubator_blueprint
@@ -8670,6 +8580,11 @@ creation_tokens:
   token: btfix-p1p2-services--init---20260916
   capability: btfix_p1p2
   created_by: st-btfix-p17-20260916
+- file: docs/03_modules/_domain_data_security/algo_flow/wiring__init__.yaml
+  token: datsec-wiring-init-yaml-20261009
+  capability: datsec_wiring
+  created_by: st-chiefc-20261009
+  merge_evaluation: "ALGO_FLOW 外部真源出仓件（GATE-ALGO-FLOW 修复配套，车道 2a 抢救批）"
 - file: docs/03_modules/_domain_data_security/data_access_auditor/index.md
   token: index-navigation-03-modules-domain-data-security-data-access-auditor-20260919
   capability: index_navigation
@@ -9262,6 +9177,11 @@ creation_tokens:
   token: btfix-p1p2-batch-output--init---20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_factor/algo_flow/bench_scaling.yaml
+  token: rowvec-algoflow-bench-20261008
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 bench_scaling.py 同真源演进"
 - file: docs/03_modules/_domain_factor/algo_flow/bhy_fdr.yaml
   token: btfix-p1p2-bhy-fdr-20260915
   capability: btfix_p1p2
@@ -9515,6 +9435,16 @@ creation_tokens:
   token: btfix-p1p2-offline-store-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_factor/algo_flow/panelized_indicators.yaml
+  token: rowvec-algoflow-panelized-20261008
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 panelized_indicators.py 同真源演进"
+- file: docs/03_modules/_domain_factor/algo_flow/parity_check.yaml
+  token: rowvec-algoflow-parity-20261008
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 parity_check.py 同真源演进"
 - file: docs/03_modules/_domain_factor/algo_flow/reversal.yaml
   token: btfix-p1p2-reversal-20260915
   capability: btfix_p1p2
@@ -17179,6 +17109,11 @@ creation_tokens:
   token: btfix-p1p2-news-impact-grader-20260916
   capability: btfix_p1p2
   created_by: st-btfix-p17-20260916
+- file: docs/03_modules/_domain_intelligence/algo_flow/news_score_daily.yaml
+  token: fullflow-mine-books-news-score-daily-yaml-20261009
+  capability: fullflow_mine_books
+  created_by: st-chiefc-20261009
+  merge_evaluation: "ALGO_FLOW 外部真源出仓件（GATE-ALGO-FLOW 修复配套，车道 2a 抢救批）"
 - file: docs/03_modules/_domain_intelligence/algo_flow/news_sentiment_analyzer.yaml
   token: btfix-p1p2-news-sentiment-analyzer-20260916
   capability: btfix_p1p2
@@ -23014,6 +22949,16 @@ creation_tokens:
   token: btfix-p1p2-similar-day-inference-20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_signal/algo_flow/source_line/capital_flow_direction_criterion.yaml
+  token: ff2-cfd-algo-flow-external-20261008
+  capability: algo_flow_external
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
+- file: docs/03_modules/_domain_signal/algo_flow/source_line/news_sentiment_criterion.yaml
+  token: ff2-nsc-algo-flow-external-20261008
+  capability: algo_flow_external
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
 - file: docs/03_modules/_domain_signal/algo_flow/source_line/sector_rotation_criterion.yaml
   token: source-line-criterion-algo-sector-rot-20261006
   capability: source_line_criterion
@@ -23738,6 +23683,11 @@ creation_tokens:
   token: index-navigation-03-modules-domain-simulation-strategy-simulator-20260919
   capability: index_navigation
   created_by: st-final3-20260919
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_decision_orchestrator.yaml
+  token: ff2-ddo-algo-flow-external-20261008
+  capability: algo_flow_external
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
 - file: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_gate_snapshot.yaml
   token: dloop-algo-flow-daily-gate-snapshot-20260922
   capability: dloop_algo_flow
@@ -33014,16 +32964,106 @@ creation_tokens:
   capability: audit_cure_night
   created_by: st-acure-20261008-chief
   merge_evaluation: "审计闭合战役树；职责=外部审计 findings 施工收口，复用既有真源零新 taxonomy；跨域不同对象不并"
+- file: docs/_working/audit_cure_night/01_mining/00_workitems_master.md
+  token: audit-cure-night-00-workitems-master-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/branch_landing/p1_2_l8_branch_landing.md
+  token: audit-cure-night-p1-2-l8-branch-landing-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_10_fill_red_test.md
+  token: audit-cure-night-p0-10-fill-red-test-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_1_deadbag_cluster.md
+  token: audit-cure-night-p0-1-deadbag-cluster-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_7_registry_integrity.md
+  token: audit-cure-night-p0-7-registry-integrity-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_6_desktop_9_cards.md
+  token: audit-cure-night-p0-6-desktop-9-cards-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_9_inflight_narrative.md
+  token: audit-cure-night-p0-9-inflight-narrative-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_2_close_lane_erratum.md
+  token: audit-cure-night-p0-2-close-lane-erratum-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_3_loop_check_verdict.md
+  token: audit-cure-night-p0-3-loop-check-verdict-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_4_c441_authority_anchor.md
+  token: audit-cure-night-p0-4-c441-authority-anchor-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_5_c19_c18_swap.md
+  token: audit-cure-night-p0-5-c19-c18-swap-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_8_c129_recovery.md
+  token: audit-cure-night-p0-8-c129-recovery-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p1_4_5_6_governance_notes.md
+  token: audit-cure-night-p1-4-5-6-governance-notes-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/open_questions/open_questions_c312_c271_c315.md
+  token: audit-cure-night-open-questions-c312-c271-c315-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/open_questions/p1_handover_cards.md
+  token: audit-cure-night-p1-handover-cards-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/open_questions/p2_digest.md
+  token: audit-cure-night-p2-digest-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
 - file: docs/_working/audit_cure_night/02_lanes/B_branch_workbook.md
   token: acure-lane-b-branch-workbook-20261008
   capability: acure-lane-b
   created_by: st-acure-b1
   merge_evaluation: "车道台账：与分支作业簿/卡面真源跨域不同对象不并（本件=lane B 六向台账施工记录位）；零重复真源"
+- file: docs/_working/audit_cure_night/02_lanes/E_erratum_workbook.md
+  token: acure-lane-e-erratum-workbook-20261008
+  capability: acure_lane_e
+  created_by: st-acure-e1
+  merge_evaluation: "审计闭合夜 E 道（台账勘误）作业簿登记；车道工作区纯新增，零替代（裁定#375 四判据：跨域不同对象不并）"
 - file: docs/_working/audit_cure_night/02_lanes/R_recover_workbook.md
   token: acure-lane-r-r-recover-workbook-20261007
   capability: acure_lane_r
   created_by: st-acure-r1
   merge_evaluation: "死袋复活车道作业簿（裁定#490），task_bound 随车道归档退役；跨域不同对象不并"
+- file: docs/_working/audit_cure_night/99_delivery/交付报告.md
+  token: audit-cure-night-file-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
 - file: docs/_working/audit_fix/00_skeleton.md
   token: surge-rescue-00-skeleton-20260927
   capability: surge_rescue
@@ -34107,6 +34147,11 @@ creation_tokens:
   capability: chief_fullchain_campaign
   created_by: st-workingchief-20261006
   merge_evaluation: "总包统筹役文档区复活落位（R5 数字后缀目录禁令改道：chief_fullchain_20261006→chief_fullchain_campaign，内容自死袋 blob sha256 物化，无既有同域资产可替代）"
+- file: docs/_working/chief_fullchain_campaign/HANDOFF_NEXT_SESSION.md
+  token: chief-fullchain-campaign-handoff-next-session-20261009
+  capability: chief_fullchain_campaign
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
 - file: docs/_working/chief_fullchain_campaign/env_mining/env_01_collect.md
   token: chief-fullchain-campaign-env_01_collect-20261008
   capability: chief_fullchain_campaign
@@ -35323,6 +35368,10 @@ creation_tokens:
   capability: commitmap_cure_a2_census
   created_by: st-a2-ledgercensus-20261004
   merge_evaluation: "跨域新收口供料件：一本账收敛批A2车道五面盘点（吸收F3名录+F5挂载面+两册对拍散面视角成单件），ttl=task_bound随收敛批转归档，永久区零增长"
+- file: docs/_working/commitmap_cure/chief_handoff_20261008.md
+  token: commitmap-cure-chief-handoff-20261008
+  capability: commitmap_cure
+  created_by: st-chief-mount-20261003
 - file: docs/_working/commitmap_cure/chief_purpose_addendum.yaml
   token: commitmap-cure-chief-purpose-addendum-20261003
   capability: commitmap_cure
@@ -36920,6 +36969,66 @@ creation_tokens:
   capability: ext_audit_20261007
   created_by: st-extaudit-20261007
   merge_evaluation: "外部审查十件产出；审查职责独立无既有承载条目，不并；跨域不同对象"
+- file: docs/_working/factory_flow/00_施工方案与环节骨架.md
+  token: factory-flow-mining-00_施工方案与环节骨架
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E0_算力调度.md
+  token: factory-flow-mining-E0_算力调度
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E1_进货七车道.md
+  token: factory-flow-mining-E1_进货七车道
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E2_假说预审.md
+  token: factory-flow-mining-E2_假说预审
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E3_构造翻译.md
+  token: factory-flow-mining-E3_构造翻译
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E4_考试咽喉.md
+  token: factory-flow-mining-E4_考试咽喉
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E5_协同去重.md
+  token: factory-flow-mining-E5_协同去重
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E6_入库监控.md
+  token: factory-flow-mining-E6_入库监控
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E7_模拟盘前哨.md
+  token: factory-flow-mining-E7_模拟盘前哨
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E8_组装与资金分配.md
+  token: factory-flow-mining-E8_组装与资金分配
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/E9_实盘归因.md
+  token: factory-flow-mining-E9_实盘归因
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
+- file: docs/_working/factory_flow/MAP_图级设施.md
+  token: factory-flow-mining-MAP_图级设施
+  capability: factory_flow_mining
+  created_by: st-map9-chief-20261008
+  merge_evaluation: "跨域不同对象不并：图9 全流通环节挖矿文档（map_census 真源派生导航层）"
 - file: docs/_working/factory_flow_20261007/00_施工方案与环节骨架.md
   token: factory-flow-mining-00_施工方案与环节骨架-20261008
   capability: factory_flow_mining
@@ -37070,6 +37179,11 @@ creation_tokens:
   capability: 324格策略族OOS分析册（0过，IS窗缺失如实）
   created_by: st-matrix-20261006
   merge_evaluation: "机生分析册；无替代对象"
+- file: docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml
+  token: conditional-exam-cyc-scores-indicator-conditional-exam-scores-v1-20261008
+  capability: conditional_exam_cyc_scores
+  created_by: st-mx07-W3
+  merge_evaluation: "新增 CYC 族条件变量考场一次窗口分数册（考试窗+参照窗全读数/N_fam=11 解盲前冻结/逐对 HAC+Bonferroni/verdict 逐项；schema=预注册卡 §9.3 冻结；判死真源）"
 - file: docs/_working/fexam/indicator_exam_scores_v1.yaml
   token: fexam-book-indicatorscores-20261006
   capability: 批3指标分数册（机生）
@@ -37125,6 +37239,21 @@ creation_tokens:
   capability: 批2策略分数册（机生）
   created_by: st-matrix-20261006
   merge_evaluation: "机生产物；无替代对象"
+- file: docs/_working/fig13_followup/c1_trigger_facts_realdata_plan.md
+  token: fig13-followup-books-c1-trigger-facts-realdata-plan-20261008
+  capability: fig13_followup_books
+  created_by: st-fig13-followup-20261006
+  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/fig13_followup/c2_quarterly_ledger_criteria.md
+  token: fig13-followup-books-c2-quarterly-ledger-criteria-20261008
+  capability: fig13_followup_books
+  created_by: st-fig13-followup-20261006
+  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/fig13_followup/c2_unknown83_classification.csv
+  token: fig13-followup-books-c2-unknown83-classification-20261008
+  capability: fig13_followup_books
+  created_by: st-fig13-followup-20261006
+  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
 - file: docs/_working/final_delivery_campaign/00_orchestration.md
   token: final-delivery-campaign-00-orchestration-20260929
   capability: final_delivery_campaign
@@ -37885,6 +38014,11 @@ creation_tokens:
 - file: docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
   token: st-t3series-l5cards-20261006
   created_by: st-t3series-20261006
+- file: docs/_working/fullcirc_closeout_chief/reaudit_20261007.md
+  token: fullcirc-closeout-reaudit-20261007
+  capability: fullcirc_closeout_chief
+  created_by: st-tclose-reaudit-20261007
+  merge_evaluation: "终审重查报告：两天大施工后全量对账，替代逐条口头汇报，净零"
 - file: docs/_working/fullcirc_closeout_chief/t3_fullflow_exam_mining.md
   token: t3-fullflow-exam-mining-t3-fullflow-exam-mining-20261005
   capability: t3_fullflow_exam_mining
@@ -37965,6 +38099,16 @@ creation_tokens:
   capability: fullcirculation_campaign
   created_by: st-fc-landing-20261008
   merge_evaluation: "全流通战役文档族（骨架+裁定+判读+处方+挖矿+台账），Owner 全批"
+- file: docs/_working/fullcirculation_campaign/10_hop_mining/spm_strategy_production/hops.yaml
+  token: spm-casebook-mining-hops-20261008
+  capability: spm_casebook_mining
+  created_by: st-fc-spm-20261008
+  merge_evaluation: "图9 SPM 机制级挂载挖矿档：task_bound 挖矿留痕（本批交付件），与图11/13/15 hops 档同族不同图不重复（跨域不同对象不并）；随批落地后归档"
+- file: docs/_working/fullcirculation_campaign/10_hop_mining/tdm_decision/hops.yaml
+  token: tdm-casebook-mining-hops-20261008
+  capability: tdm_casebook_mining
+  created_by: st-fc-tdm-20261008
+  merge_evaluation: "同域收敛：TDM 环节挂载挖矿档并入 fullcirculation hops 挖矿档族（spm_strategy_production 同构先例），零新增独立册"
 - file: docs/_working/fullconnect_campaign/00_orchestration.md
   token: fullconnect-campaign-00-orchestration-20260926
   capability: fullconnect_campaign
@@ -38911,6 +39055,11 @@ creation_tokens:
   token: wiresafe-pack-req-wiresafe-01-20260918
   capability: wiresafe-pack
   created_by: st-ff-wiresafe-20260918
+- file: docs/_working/fullflow_campaign/delivery/99_morning_report_st_fullflow2_20261008.md
+  token: ff2-morning-report-20261008
+  capability: campaign_delivery_report
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 战役晨报交付件（docs/_working 时限文档），非节点图资产
 - file: docs/_working/fullflow_campaign/delivery/FINAL_DELIVERY_REPORT.md
   token: fullflow-final-delivery-report-20260918
   capability: fullflow_final_delivery_report
@@ -39856,6 +40005,11 @@ creation_tokens:
   capability: fullflow_mine_books
   created_by: st-datasop-20260930
   merge_evaluation: "收尾班产出件（Owner夜令/裁定执行波），与前班战役册互补不重复"
+- file: docs/_working/fullflow_mine/wiring/G1_netdelete_redo.md
+  token: fullflow-mine-wiring-G1-netdelete-redo-md-20261008
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件"
 - file: docs/_working/fullflow_mine/wiring/LAND_report.md
   token: fullflow-mine-land-report-20261005
   capability: fullflow_mine_books
@@ -42032,6 +42186,16 @@ creation_tokens:
   capability: map_census
   created_by: st-sentinel-census-20261005
   merge_evaluation: "季度清账本备料：census 衍生过滤分组件，喂覆盖账本三红首报；纯只读派生零替代"
+- file: docs/_working/map_census/03_open_day_recheck_20261008.md
+  token: fig13-open-day-recheck-03-open-day-recheck-20261008-20261008
+  capability: fig13_open_day_recheck
+  created_by: st-fig13-followup-20261006
+  merge_evaluation: "10-08开市三复核报告：线A交付物"
+- file: docs/_working/map_census/03_quarterly_red_report_v1.md
+  token: fig13-quarterly-red-report-03-quarterly-red-report-v1-20261008
+  capability: fig13_quarterly_red_report
+  created_by: st-fig13-followup-20261006
+  merge_evaluation: "季度三红首报判据承c2簿真源"
 - file: docs/_working/map_census/03_quarterly_red_report_v1_companion.csv
   token: fig13-quarterly-red-report-companion-03-quarterly-red-report-v1-companion-20261007
   capability: fig13_quarterly_red_report_companion
@@ -42437,6 +42601,11 @@ creation_tokens:
   capability: matrix_exam_evidence
   created_by: st-mx07-chief
   merge_evaluation: "W3 条件考场解盲前冻结证据归档（自 24h TTL staging 抢救，防证据灭失）；证据件无替代对象"
+- file: docs/_working/matrix_campaign/mining/cyc_conditional_exam_v1.md
+  token: conditional-exam-cyc-archive-cyc-conditional-exam-v1-20261008
+  capability: conditional_exam_cyc_archive
+  created_by: st-mx07-W3
+  merge_evaluation: "新增 CYC 条件变量考场执行留档（四指标读数原文/检验统计量/N_fam 冻结/verdict 逐项/参照窗分歧如实报/自裁记录；判读辅助面，数值真源=考册 yaml）"
 - file: docs/_working/matrix_campaign/mining/cyc_conditional_prereg_v1.md
   token: cyc-conditional-prereg-20261008
   capability: cyc_conditional_prereg
@@ -42447,6 +42616,21 @@ creation_tokens:
   capability: matrix_campaign
   created_by: st-mx07-L8
   merge_evaluation: "裁定#375 内收评估：上考 emotion_index_exam_v1.yaml 为分数册（fexam 域），本件为 prereg+verdict 设计卡（mining 域），跨域不同对象不并"
+- file: docs/_working/matrix_campaign/mining/emotion_linkage_exam_v1_results.archive.json
+  token: auto-matrix-exam-evidence-20261008-emotion-verdict
+  capability: matrix_exam_evidence
+  created_by: st-mx07-L8
+  merge_evaluation: "L8 情绪联动首考 verdict 机器可读副本归档（自 24h TTL staging 抢救；三读数已逐字在 HEAD 留档册）；证据件无替代对象"
+- file: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+  token: matrix-w4-exit-family-12nodes-prereg-draft-20261008
+  capability: matrix_w4_exit_family
+  created_by: st-mx07-W4
+  merge_evaluation: "新增离场族其余12节点prereg草稿（勘察后③路径：12节点逐节点机制/前置/判据候选转录自规格卡与E道模板，判据候选只引仓内权威不新造；零跑数零代码）；无替代对象；与m2_exit_sector规格卡不并——卡=机制真源，本草=开考前置与判据候选汇总面"
+- file: docs/_working/matrix_campaign/mining/hmm_v3_exam_v1.md
+  token: matrix-w2-hmm-v3-exam-v1-20261008
+  capability: matrix_w2_hmm_v3_exam
+  created_by: st-mx07-W2
+  merge_evaluation: "新增 HMM v3 一次窗口结果册（施工 diff 摘要/全量读数原文/四表逐项判定/verdict=conditionally_qualified→裁定#489② 判死永久退役留痕）；无替代对象，判据真源唯一（fexam prereg_v1 冻结块）"
 - file: docs/_working/matrix_campaign/mining/layered_spread_kernel_wiring_v1.md
   token: layered-spread-kernel-wiring-20261007
   capability: layered_spread_kernel_wiring
@@ -42857,6 +43041,11 @@ creation_tokens:
   capability: technical_indicator_rowvec
   created_by: st-mx07-L5
   merge_evaluation: "P1-1 行物化向量化转正+切挂留档册（对拍 438/438 1e-9+耗时 16-54x 实测），与 panelized_indicators.py 同真源演进；同族先例=layered_spread_kernel_wiring_v1.md（st-mx07-L4），无同域重复册"
+- file: docs/_working/matrix_campaign/mining/sector_propagation_wiring_v1.md
+  token: sector-wiring-doc-sector-propagation-wiring-v1-20261008
+  capability: sector_wiring_doc
+  created_by: st-mx07-W5
+  merge_evaluation: "W5 板块接线施工留档册（勘察+四路真源锚+单测/真数对拍读数+自裁+遗留）：task_bound 战役文档非第二真源，替代无"
 - file: docs/_working/matrix_campaign/mining/st_c_portfolio_mining.md
   token: matrix-skel-st_c_portfolio_mining-20261006
   capability: 矩阵战役挖矿产物（车道代理产出，总包收割入账）
@@ -43057,6 +43246,11 @@ creation_tokens:
   capability: 矩阵战役wave-2施工产物（车道代理产出，总包收割）
   created_by: st-matrix-20261006
   merge_evaluation: "新增成绩册/调查册；无替代对象；负结果如实入册"
+- file: docs/_working/matrix_campaign/mining/t0_material_line_parallel_v1.md
+  token: matrix-w1-t0mat-parallel-doc-20261008
+  capability: matrix_campaign_mining
+  created_by: st-mx07-W1
+  merge_evaluation: "W1 车道任务卡指定留档册（profile 读数/对拍读数/耗时对比/切挂点/回滚口径/语义缝自裁），战役挖矿簿系同域归档，非新真源"
 - file: docs/_working/matrix_campaign/mining/wq_alpha_87_wiring_v1.md
   token: matrix-w6-wq87-wiring-doc-20261008
   capability: matrix_campaign_mining
@@ -47753,11 +47947,31 @@ creation_tokens:
   capability: t0_conditional
   created_by: st-t0-revival-20260922
   merge_evaluation: "条件化做T复活轴预注册考试件（裁定#399二）：复活唯一口=新预注册假设卡+E4考试，与#331被砍旧形态不同真源不并"
+- file: docs/_working/tail3/00_orchestration.md
+  token: tail3-workbook-00-orchestration-20261007
+  capability: tail3_workbook
+  created_by: st-tail3-20261008
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
+- file: docs/_working/tail3/lane_a_casebook/00_workbook.md
+  token: tail3-workbook-00-workbook-20261007
+  capability: tail3_workbook
+  created_by: st-tail3-20261008
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
+- file: docs/_working/tail3/lane_b_dedup/00_workbook.md
+  token: tail3-workbook-00-workbook-20261007
+  capability: tail3_workbook
+  created_by: st-tail3-20261008
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
 - file: docs/_working/tail3/ops/00_workbook.md
   token: tail3-ops-00-workbook-20261007
   capability: tail3_ops
   created_by: st-t3c-ops
   merge_evaluation: "车道C运维取证件，随袋归档"
+- file: docs/_working/tail3/ops/00_workbook.md
+  token: tail3-workbook-00-workbook-20261007
+  capability: tail3_workbook
+  created_by: st-tail3-20261008
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
 - file: docs/_working/tail3/ops/01_diagnosis_report.md
   token: tail3-ops-01-diagnosis-report-20261007
   capability: tail3_ops
@@ -47778,6 +47992,11 @@ creation_tokens:
   capability: tail3_ops
   created_by: st-t3c-ops
   merge_evaluation: "车道C运维取证件，随袋归档"
+- file: docs/_working/tail3/ops/05_review_followup_report.md
+  token: tail3-ops-05-review-followup-report-20261008
+  capability: tail3_ops
+  created_by: st-t3c-ops
+  merge_evaluation: "16:05 复核分支处置件，随袋归档"
 - file: docs/_working/tdm20_campaign/00_campaign_ledger.md
   token: tdm20-expansion-00-campaign-ledger-20260922
   capability: tdm20_expansion
@@ -51284,6 +51503,11 @@ creation_tokens:
   capability: CH只读数据装载（前向收益面板/因子指标列面板/regime态）
   created_by: st-matrix-20261006
   merge_evaluation: "新增CH只读装载层；替代物：无（考试域此前无registry→CH列映射器）；只SELECT零写库"
+- file: scripts/backtest/fexam/conditional_exam.py
+  token: conditional-exam-cyc-20261008
+  capability: conditional_exam_cyc
+  created_by: st-mx07-W3
+  merge_evaluation: "新增 CYC 族条件变量考场检验器（裁定#489① 预注册卡判据冻结实现：相位分层/层间 HAC(maxlags=10)/Bonferroni 族/一次窗口；基线 B1 动量 B2 反转）；与 ic_exam 方向 IC 考场科目不同零功能交集，无替代对象"
 - file: scripts/backtest/fexam/emotion_linkage_exam.py
   token: fexam-emotion-linkage-exam-20261007
   capability: fexam
@@ -51354,6 +51578,11 @@ creation_tokens:
   capability: 批1/批3 IC考试引擎（复用compute_ic_series内核+HOLDOUT纪律）
   created_by: st-matrix-20261006
   merge_evaluation: "新增IC考试引擎；复用zephyr.factor.core.evaluation.metrics内核不重造；批1因子批3指标共用"
+- file: scripts/backtest/fexam/paper_pool_gate.py
+  token: paper-pool-gate-paper-pool-gate-20261007
+  capability: paper_pool_gate
+  created_by: st-mx07-L11
+  merge_evaluation: "跨域不同对象不并：paper池进池判据门（裁定489③三线AND+聚合层Bonferroni/DSR校正），与factor_pool_manager池内管理/bhy_fdr入池FDR无交集"
 - file: scripts/backtest/fexam/roster.py
   token: fexam-suite-roster-20261006
   capability: 批0 BT-P0应考名单机生器（四册解析+可考性预分类）
@@ -51546,6 +51775,11 @@ creation_tokens:
   capability: sector_prereg_exam
   created_by: st-secbuild-20260923
   merge_evaluation: "secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_prereg_exam 域内无第二件）"
+- file: scripts/backtest/sector_surface.py
+  token: sector-surface-20261008
+  capability: sector_surface_wiring
+  created_by: st-mx07-W5
+  merge_evaluation: "新增板块强度四路面板+回测引擎传导后处理（矩阵战役 mx07-W5：M-2 L2-06+M-3 L2-01 规格卡照卡施工）；四路合分核 MOD-SIG-142/生产接线 MOD-SIG-144/传导核 MOD-SIG-136 均在库不替代，本件=回测引擎考卷语义补面（spec 卡 L2-01 §4 sector_surface 新件位）"
 - file: scripts/backtest/sim_attribution_report.py
   token: sim-attribution-sim-attribution-report-20260917
   capability: sim_attribution
@@ -51601,6 +51835,16 @@ creation_tokens:
   capability: t0_material_line_l05
   created_by: st-cmd-20260924
   merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：做T材料线管线"
+- file: scripts/backtest/t0_material_line_fast.py
+  token: t0mat-fast-core-20261008
+  capability: t0_material_line_path_parallel
+  created_by: st-mx07-W1
+  merge_evaluation: "材料线建模循环路径并行加速核（裁定#489⑤ W1：numba prange 逐路径核+numpy reduceat 兜底+批式管线）；M0 语义真源仍是 t0_material_line.run_model_m0（逐标量复刻零改动），判据真源 cost_trio_exam 未触碰，无替代对象"
+- file: scripts/backtest/t0_material_line_parity.py
+  token: t0mat-parity-20261008
+  capability: t0_material_line_path_parallel
+  created_by: st-mx07-W1
+  merge_evaluation: "材料线路径并行对拍+计时 harness（索引注入法：同一规范化 df 注入两路径逐位比对+Decimal 边界披露段）；fast 切挂前后回归通道，无替代对象"
 - file: scripts/backtest/t0_rule_engine.py
   token: t0-rule-engine-t0-rule-engine-20261001
   capability: t0_rule_engine
@@ -58417,11 +58661,22 @@ creation_tokens:
   capability: static_lineage_analyzer
   created_by: scaffold.py
 - file: src/zephyr/data_security/wiring/__init__.py
+  token: datsec-wiring-__init__-20261009
+  capability: datsec_wiring
+  created_by: st-chiefc-20261009
+  no_mount_reason: 包初始化件非决策节点资产，判据模块各自挂图
+  merge_evaluation: "F128 接线复活件抢救入库（st-menu-t1b2-20260930 夜批 known-gap→接线复活，车道 2a 补投）"
+- file: src/zephyr/data_security/wiring/__init__.py
   token: f128-wiring-init-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
   no_mount_reason: F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: src/zephyr/data_security/wiring/audit_sink.py
+  token: datsec-wiring-audit-sink-20261009
+  capability: datsec_wiring
+  created_by: st-chiefc-20261009
+  merge_evaluation: "F128 接线复活件抢救入库（st-menu-t1b2-20260930 夜批 known-gap→接线复活，车道 2a 补投）"
 - file: src/zephyr/data_security/wiring/audit_sink.py
   token: f128-wiring-audit-sink-20261001
   capability: f128_data_security_wiring
@@ -58429,11 +58684,21 @@ creation_tokens:
   no_mount_reason: F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
 - file: src/zephyr/data_security/wiring/data_exit_guard.py
+  token: datsec-wiring-data-exit-guard-20261009
+  capability: datsec_wiring
+  created_by: st-chiefc-20261009
+  merge_evaluation: "F128 接线复活件抢救入库（st-menu-t1b2-20260930 夜批 known-gap→接线复活，车道 2a 补投）"
+- file: src/zephyr/data_security/wiring/data_exit_guard.py
   token: f128-wiring-data-exit-guard-20261001
   capability: f128_data_security_wiring
   created_by: st-menu-w3h-20260930
   no_mount_reason: F128 接线层复活件（NB1-B2 翻案批），数据安全域在 config/*.yaml 节点图族无 MOD-DATSEC 节点可挂，挂载归属随域图扩图另批（2026-10-04 车道K 补申报，token 先行于 2026-10-01 由 st-menu-w3h 登记）
   merge_evaluation: "F128 两接点接线复活件（NB1-B2 裁定卡处方：LSG l1 前置+数据出口+审计落盘），同域唯一接线层无替代对象；非同源新建（继任 794f16569b DEPRECATED 包的翻案接线，Owner 批文）"
+- file: src/zephyr/data_security/wiring/lsg_masking_front.py
+  token: datsec-wiring-lsg-masking-front-20261009
+  capability: datsec_wiring
+  created_by: st-chiefc-20261009
+  merge_evaluation: "F128 接线复活件抢救入库（st-menu-t1b2-20260930 夜批 known-gap→接线复活，车道 2a 补投）"
 - file: src/zephyr/data_security/wiring/lsg_masking_front.py
   token: f128-wiring-lsg-front-20261001
   capability: f128_data_security_wiring
@@ -59967,6 +60232,11 @@ creation_tokens:
   capability: gomap_cluster_archive
   created_by: st-gomap-chief-20261004
   merge_evaluation: "并簇②归档迁移非新建:capacity 三件裁定#485转档,git mv 保历史"
+- file: src/zephyr/infrastructure/capacity_assurance/_archive/risk_mitigation.py
+  token: risk-mitigation-archive-risk-mitigation-2026-10-08
+  capability: risk_mitigation_archive
+  created_by: st-fc-landing-20261008
+  merge_evaluation: "裁定#485并簇②评估件归档除名（伪GAP9证毕）：risk_mitigation.py 移入 _archive 保留层，路径级移动非新建真源；PG 节点路径已同步"
 - file: src/zephyr/infrastructure/capacity_assurance/_archive/schema.py
   token: gomap-cluster-archive-schema-20261005
   capability: gomap_cluster_archive
@@ -60168,6 +60438,11 @@ creation_tokens:
   capability: news_llm_scorer
   created_by: scaffold.py
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: src/zephyr/intelligence/news_score_daily.py
+  token: fullflow-mine-src-zephyr-intelligence-news-score-daily-py-20261008
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件"
 - file: src/zephyr/intelligence/news_score_daily.py
   token: news-score-daily-20261004
   capability: news_score_daily
@@ -61821,10 +62096,21 @@ creation_tokens:
   created_by: st-fg-srcline1-20261005
   merge_evaluation: "新增能力面（能力反查六向零命中）：红源线判据转化器族=源线数据到decision_question判据的专用翻译件，与sector族传感器（信号算法件）正交，不替代不合并旧条目"
 - file: src/zephyr/signal_ashare/source_line/__init__.py
+  token: srcline1-__init__-20261005
+  capability: srcline1
+  created_by: st-fg-srcline1-20261005
+  no_mount_reason: 包初始化件非决策节点资产，判据模块各自挂图
+  merge_evaluation: "红源线首批判据转化器（总筹终裁挂载）"
+- file: src/zephyr/signal_ashare/source_line/__init__.py
   token: srcline1-source-line-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
   merge_evaluation: "同上（蓝图/入口/施工报告配套件）"
+- file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  token: ff2-capital-flow-direction-criterion-20261008
+  capability: source_line_criterion
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A06 资金流，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
 - file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
   token: srcline1-capital_flow_direction_criterion-20261005
   capability: srcline1
@@ -61835,17 +62121,28 @@ creation_tokens:
   token: srcline1-fundamental_pricing_lag_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A05
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
   token: source-line-criterion-kline-momentum-criterion-20261005
   capability: source_line_criterion
   created_by: st-fg-srcline1-20261005
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A01
   merge_evaluation: "新增能力面（能力反查六向零命中）：红源线判据转化器族=源线数据到decision_question判据的专用翻译件，与sector族传感器（信号算法件）正交，不替代不合并旧条目"
 - file: src/zephyr/signal_ashare/source_line/kline_momentum_criterion.py
   token: srcline1-kline_momentum_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A01
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
+- file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  token: ff2-news-sentiment-criterion-20261008
+  capability: source_line_criterion
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A09 财经快讯情绪，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
 - file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
   token: srcline1-news_sentiment_criterion-20261005
   capability: srcline1
@@ -61856,24 +62153,32 @@ creation_tokens:
   token: source-line-criterion-sector-rotation-20261006
   capability: source_line_criterion
   created_by: st-cure-p03-20261006
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A03
   no_mount_reason: MOD-SIG-157 挂点未在 config 图族注册；module_ref 落图后补挂（原班未动地图，总裁批文核验挂载位）
   merge_evaluation: "TDM-E-L9-A03 判据件（板块横截面相对强度），与市场级 sector_rotation_state 正交（截面选强 vs 状态机），跨层不同对象不并"
 - file: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
   token: srcline1-sector_rotation_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A03
   no_mount_reason: MOD-SIG-157 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
   token: source-line-criterion-tick-microstructure-20261006
   capability: source_line_criterion
   created_by: st-cure-p03-20261006
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A02
   no_mount_reason: MOD-SIG-156 挂点未在 config 图族注册；module_ref 落图后补挂（原班未动地图，总裁批文核验挂载位）
   merge_evaluation: "TDM-E-L9-A02 判据件（tick 成交流微观结构），与同族 kline_momentum_criterion 数据源不同（分笔 vs K线），跨数据域不同对象不并"
 - file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
   token: srcline1-tick_microstructure_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  map_mounts:
+  - TDMAP-001:TDM-E-L9-A02
   no_mount_reason: MOD-SIG-156 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/stock_signal_strength.py
@@ -62225,6 +62530,11 @@ creation_tokens:
   token: auto-test-a2a-check-gateway-20260825
   capability: a2a_check_gateway
   created_by: AI-K3-DIGEST-W2（scaffold 无 test 模式，主代理补登，tests/ 豁免自愿随 SELL-001 先例）
+- file: tests/ai/intelligence/test_news_score_daily.py
+  token: fullflow-mine-tests-ai-intelligence-test-news-score-daily-py-20261008
+  capability: fullflow_mine_books
+  created_by: st-datasop-20260930
+  merge_evaluation: "收尾班产出件"
 - file: tests/alt_data/test_board_index_supply.py
   token: board-index-consumer-registration-test-board-index-supply-2026-09-28
   capability: board-index-consumer-registration
@@ -64308,74 +64618,31 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
-- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_decision_orchestrator.yaml
-  token: ff2-ddo-algo-flow-external-20261008
-  capability: algo_flow_external
-  created_by: st-fullflow2-20261008
-  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
-- file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
-  token: ff2-capital-flow-direction-criterion-20261008
-  capability: source_line_criterion
-  created_by: st-fullflow2-20261008
-  no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A06 资金流，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
-- file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
-  token: ff2-news-sentiment-criterion-20261008
-  capability: source_line_criterion
-  created_by: st-fullflow2-20261008
-  no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A09 财经快讯情绪，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
-- file: docs/_working/map_census/03_open_day_recheck_20261008.md
-  token: fig13-open-day-recheck-03-open-day-recheck-20261008-20261008
-  created_by: st-fig13-followup-20261006
-  capability: fig13_open_day_recheck
-  merge_evaluation: "10-08开市三复核报告：线A交付物"
-- file: docs/_working/map_census/03_quarterly_red_report_v1.md
-  token: fig13-quarterly-red-report-03-quarterly-red-report-v1-20261008
-  created_by: st-fig13-followup-20261006
-  capability: fig13_quarterly_red_report
-  merge_evaluation: "季度三红首报判据承c2簿真源"
-- file: docs/_working/fig13_followup/c1_trigger_facts_realdata_plan.md
-  token: fig13-followup-books-c1-trigger-facts-realdata-plan-20261008
-  created_by: st-fig13-followup-20261006
-  capability: fig13_followup_books
-  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
-- file: docs/_working/fig13_followup/c2_quarterly_ledger_criteria.md
-  token: fig13-followup-books-c2-quarterly-ledger-criteria-20261008
-  created_by: st-fig13-followup-20261006
-  capability: fig13_followup_books
-  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
-- file: docs/_working/fig13_followup/c2_unknown83_classification.csv
-  token: fig13-followup-books-c2-unknown83-classification-20261008
-  created_by: st-fig13-followup-20261006
-  capability: fig13_followup_books
-  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
-- file: docs/03_modules/_domain_signal/algo_flow/source_line/capital_flow_direction_criterion.yaml
-  token: ff2-cfd-algo-flow-external-20261008
-  capability: algo_flow_external
-  created_by: st-fullflow2-20261008
-  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
-- file: docs/03_modules/_domain_signal/algo_flow/source_line/news_sentiment_criterion.yaml
-  token: ff2-nsc-algo-flow-external-20261008
-  capability: algo_flow_external
-  created_by: st-fullflow2-20261008
-  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
-- file: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
-  token: gov-adjudication-routing-adjudication-routing-policy-20261008
+file_token:
+- note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
+  path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
+  token: adjudication_routing_policy
+  format: .md
   created_by: st-matrix-20261007
-  capability: gov-adjudication-routing
-  merge_evaluation: "裁定路由政策：三公理+八类路由+两轨制（L3 裁定引擎输入）"
-- file: docs/_working/2026-10-08-handoff-fullscore-night.md
-  token: fullscore-night-handoff-2026-10-08-handoff-fullscore-night-20261008
-  created_by: st-fullscore-20260930
-  capability: fullscore_night_handoff
-  merge_evaluation: "七域满分通宵战役新对话交接件（一键复制指令+裁定表+后续清单），task_bound 交接媒介，替代无（09-30 交接件的后继棒），净增一发"
-- file: docs/_working/matrix_campaign/HANDOFF_NEXT_SESSION.md
-  token: matrix-handoff-closeout-handoff-next-session-20261008
-  created_by: st-matrix-20261007
-  capability: matrix-handoff-closeout
-  merge_evaluation: "收尾交接册 v2 置换（战役 handoff 生命周期文件，v1 内容全部执行完毕归档于 git 史）"
-- file: docs/_working/deadcure_campaign/00_charter.md
-  token: deadcure-campaign-00-charter-20261008
-  created_by: st-deadcure-restore-chief
-  capability: deadcure-campaign
-  merge_evaluation: "死信清偿专案台账，无同真源可派生（既有清偿册属他役战役区），docs/_working/<campaign>/ 为同域唯一承接位"
+t2-handover-claim-grid0926:
+- note: 批D 考试产物元数据补登（C-3 账实对齐，st-chiefc-20261009）
+  path: data/strategy_intake/grid_20260926-024947/t2_handover_claim.yaml
+  token: t2-handover-claim-grid0926
+  format: .yaml
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接（exam grid 家族文件随 grid 目录走）"
+t2-subspace-json-grid0926:
+- note: 批D 考试产物元数据补登（C-3 账实对齐，st-chiefc-20261009）
+  path: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  token: t2-subspace-json-grid0926
+  format: .json
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接（exam grid 家族文件随 grid 目录走）"
+t2-subspace-meta-grid0926:
+- note: 批D 考试产物元数据补登（C-3 账实对齐，st-chiefc-20261009）
+  path: data/strategy_intake/grid_20260926-024947/t2_subspace_meta.yaml
+  token: t2-subspace-meta-grid0926
+  format: .yaml
+  created_by: st-chiefc-20261009
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接（exam grid 家族文件随 grid 目录走）"
 di_seam_exemptions: []
