@@ -4374,3 +4374,59 @@ entries:
   superseded_by: null
   approved_paths:
   - docs/_working/total_circulation_night/s3_library_step2.md
+- ruling_id: "裁定#493"
+  title: CASEBOOK-006/007/008 空号作废（处方遗失，永不回填）
+  date: "2026-10-08"
+  category: 治理
+  status: active
+  summary: |-
+    Owner 已批裁定原文：「006/007/008 因处方遗失作废，永不回填，新册从下一新号顺延」。
+    背景：E-12 处方原件随 f2z §六配方遗失；2026-10-07 三册按 chief 会话记录「补授」重建，
+    违勿造假凑数原则，本裁定将其作废为 reserved_void 空号并从册体撤除，永不回填，
+    下一新册号从 CASEBOOK-009 顺延。同批落 reserved_void 注记段+条件激活防重门
+    （tests/governance/test_casebook_reserved_void_gate.py，ec2b5a1028 先行在册——
+    本批落地即自动 activation，伪造占用 006/007/008 将显红）。
+    勘误备注：casebook 册头曾在途批预写「裁定#492」引注，#492 实际被 st-fullflow2-20261008
+    的 R8 引用勘误竞得（编号赛跑），本批落册时一并纠正为 #493。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml
+  - tests/governance/test_casebook_reserved_void_gate.py
+  related_rulings: []
+  superseded_by: null
+- ruling_id: "裁定#494"
+  title: 矩阵战役 2026-10-08 三项落册——HMM 改判"实现停用·算法待优化"+CYC 族转轨 A+退役两轨制/裁定路由政策骨架（Owner 复审产物，修正 #489② 的概念/实现捆绑判）
+  date: '2026-10-08'
+  category: 量化研究治理
+  status: active
+  summary: |-
+    st-matrix-20261007 依 Owner 2026-10-08 对话批令（"改/A/落"三项逐项确认），对 #489② 的 HMM
+    判死做概念/实现分离修正并落地裁定路由政策骨架。分项如下。
+    【①HMM 改判】Owner 论点=大盘状态是行业共识概念（主观客全员在用），不合格的只能是实现而非
+    概念；#489②"体制识别方向永久退役"把概念与实现捆判，切宽了。改判：HMM 体制识别器从"永久退役"
+    改为"实现停用·算法待优化"（注册状态语义=deprecated）。三件事随档：下岗原因=三次考试（J 道原考
+    混淆对角 20.6%/v2 重训/v3 一次窗口 conditionally_qualified，滞后 10>5、up 分量 0.552<0.613）
+    全不过线，证据=hmm_v3_exam_v1.md；职责承载者=SMA200 帘子（L2 已切默认，regime_source=
+    sma200_default）；重启条件（写死防无限重试循环）=仅限两条——(a)不同代际算法族（jump model/
+    BOCPD 等 L6 调研在册者，非高斯 HMM 再调参）+新预注册卡+Owner 开窗；(b)某策略明确需要多态体制
+    输入且 SMA200 不够用时随策略重考。use_hmm=False 默认维持（研究用 opt-in 不变）。
+    【②CYC 族 4 条转轨 A】IND-CYC-001/002/004/005 从 retired 改 deprecated（停用·待优化，轨 A）：
+    下岗原因=W3 条件考场 Bonferroni 全不显著（best_p_adj 0.362/0.531/1.0/1.0>0.05）保留在注记；
+    重启条件=作为策略层零件被引用时随策略重考；独立信号路已走完（一次窗口已消耗）。
+    【③两轨制+裁定路由政策骨架】（占号勘误：PG token note 写 #490，实际裁定号=#494，他队 #490-493 先落）adjudication_routing_policy.md 落 governance_sop 族（creation_token
+    已入 PG 账本 REG-CAPCAN-001 快照 v116）：裁定哲学三公理（可逆性不对称/概念与实现分离/证据先于
+    裁定）+八类路由总表（D1 生死处置两轨制【本裁定生效】/D2 通道门禁/D3 标准阈值/D4 方向路线/
+    D5 资源优先级/D6 事故冲突/D7 数据口径/D8 例外豁免）+L1-L3 自治挂钩。定位=路由层（什么事走哪条
+    路谁拍板），与 deep_adjudication_method_policy（怎么组织裁定战役）互挂不复制；裁定登记语义仍归
+    RULE-RULING+本册；人机门位仍归宪法 §5。净零：零新 gate/零新注册表/零新字段（复用 deprecated/
+    retired 既有枚举）。
+    净零声明：一条总裁定收编三项；本裁定不翻转任何 flag 出厂值；capability 投影册本批不携带
+    （token=PG 在账，yaml 投影待下轮 render 增量显现，fig13 先例）。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
+  - docs/_working/matrix_campaign/mining/hmm_v3_exam_v1.md
+  - docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
+  - docs/01_policies_and_standards/sop/README.md
+  related_rulings: ['裁定#489', '裁定#488']
+  superseded_by: ''
+  # 注：#489② HMM 段由本裁定①修正（概念/实现分离），其余五段不受影响。

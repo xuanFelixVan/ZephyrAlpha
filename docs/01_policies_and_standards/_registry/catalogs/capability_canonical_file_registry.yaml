@@ -64263,4 +64263,9 @@ creation_tokens:
   capability: algo_flow_external
   created_by: st-fullflow2-20261008
   no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
+- file: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
+  token: gov-adjudication-routing-adjudication-routing-policy-20261008
+  created_by: st-matrix-20261007
+  capability: gov-adjudication-routing
+  merge_evaluation: "裁定路由政策：三公理+八类路由+两轨制（L3 裁定引擎输入）"
 di_seam_exemptions: []

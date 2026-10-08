@@ -3044,7 +3044,7 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=0.362122（判活需 <0.05）G=0.020558 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
+  status: deprecated  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=0.362122（判活需 <0.05）G=0.020558 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9 →裁定#494 转轨A 停用·算法待优化（行业经典概念不判死；重启条件=策略层零件引用时随策略重考）
   version: 1.0.0
   created_at: '2026-09-14'
   updated_at: '2026-10-08'
@@ -3077,7 +3077,7 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=0.530570（判活需 <0.05）G=0.003482 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
+  status: deprecated  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=0.530570（判活需 <0.05）G=0.003482 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9 →裁定#494 转轨A 停用·算法待优化（行业经典概念不判死；重启条件=策略层零件引用时随策略重考）
   version: 1.0.0
   created_at: '2026-09-14'
   updated_at: '2026-10-08'
@@ -3143,7 +3143,7 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=1.000000（判活需 <0.05）G=0.001348 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
+  status: deprecated  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=1.000000（判活需 <0.05）G=0.001348 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9 →裁定#494 转轨A 停用·算法待优化（行业经典概念不判死；重启条件=策略层零件引用时随策略重考）
   version: 1.0.0
   created_at: '2026-09-14'
   updated_at: '2026-10-08'
@@ -3176,7 +3176,7 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=1.000000（判活需 <0.05）G=0.000937 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
+  status: deprecated  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=1.000000（判活需 <0.05）G=0.000937 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9 →裁定#494 转轨A 停用·算法待优化（行业经典概念不判死；重启条件=策略层零件引用时随策略重考）
   version: 1.0.0
   created_at: '2026-09-14'
   updated_at: '2026-10-08'
@@ -4312,3 +4312,514 @@ indicators:
   evidence: ""
   code_symbol: "src/zephyr/factor/technical_indicators/chips.py::CHIP_CONC_70"
   code_fingerprint: null
+- indicator_id: IND-TREND-018
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: BBI
+  name_zh: 多空指数
+  aliases: ["Bull and Bear Index"]
+  indicator_class: trend
+  formula: BBI=(MA3+MA6+MA12+MA24)/4
+  params: {periods: [3, 6, 12, 24]}
+  inputs: [close]
+  outputs: [bbi]
+  warmup_period: 24
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-020
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: GMMA
+  name_zh: 顾比复合均线
+  aliases: ["Guppy Multiple MA"]
+  indicator_class: trend
+  formula: 短期组 EMA3-15 与长期组 EMA30-60 共 12 条；组收敛/发散判趋势
+  params: {short: [3, 5, 8, 10, 12, 15], long: [30, 35, 40, 45, 50, 60]}
+  inputs: [close]
+  outputs: [gmma_s3, gmma_s5, gmma_s8, gmma_s10, gmma_s12, gmma_s15, gmma_l30, gmma_l35, gmma_l40, gmma_l45, gmma_l50, gmma_l60]
+  warmup_period: 60
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-15'
+  updated_at: '2026-09-15'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-003
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: WMA
+  name_zh: 加权移动平均
+  aliases: []
+  indicator_class: trend
+  formula: WMA=N 日收盘价线性加权平均（权重 1..N，近期权重高）
+  params: {period: 10}
+  inputs: [close]
+  outputs: [wma_10]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "组合"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+- indicator_id: IND-TREND-004
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: DEMA
+  name_zh: 双指数移动平均
+  aliases: []
+  indicator_class: trend
+  formula: DEMA=2×EMA−EMA(EMA)，减少 EMA 滞后，adjust=False 对齐通达信
+  params: {period: 12}
+  inputs: [close]
+  outputs: [dema_12]
+  warmup_period: 24
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: ["index"]
+  tags: ["趋势", "均线", "指数"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+- indicator_id: IND-MOM-028
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: APO
+  name_zh: 绝对价格振荡器
+  aliases: ["Absolute Price Oscillator"]
+  indicator_class: momentum
+  formula: APO=EMA12−EMA26（绝对差值）
+  params: {fast: 12, slow: 26}
+  inputs: [close]
+  outputs: [apo]
+  warmup_period: 26
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-013
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: LWR
+  name_zh: 慢速威廉
+  aliases: ["LWR", "LW&R"]
+  indicator_class: momentum
+  formula: RSV=(HH9−C)/(HH9−LL9)×100；LWR1=SMA(RSV,3,1)；LWR2=SMA(LWR1,3,1)（威廉口径，方向与KDJ相反）
+  params: {period: 9, k_smooth: 3, d_smooth: 3}
+  inputs: [high, low, close]
+  outputs: [lwr_1, lwr_2]
+  warmup_period: 15
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-14'
+  updated_at: '2026-09-14'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "超买", "超跌", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-022
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Triple Exponential Moving Average
+  name_zh: 三重指数移动平均
+  aliases: ["TEMA", "Triple EMA"]
+  indicator_class: trend
+  formula: e1=EMA(C,N)；e2=EMA(e1,N)；e3=EMA(e2,N)；TEMA=3e1−3e2+e3（EMA adjust=False 种子=首值）
+  params: {period: 10}
+  inputs: [close]
+  outputs: [tema_10]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-023
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Triangular Moving Average
+  name_zh: 三角移动平均
+  aliases: ["TRIMA"]
+  indicator_class: trend
+  formula: 偶窗 N=10：SMA(SMA(C,N/2),N/2+1)=SMA(SMA(C,5),6)；奇窗：双 (N+1)/2 级联（TA-Lib 口径，实测 lookback=9 一致）
+  params: {period: 10}
+  inputs: [close]
+  outputs: [trima_10]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-024
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Tillson T3
+  name_zh: T3均线
+  aliases: ["T3", "Tillson Moving Average"]
+  indicator_class: trend
+  formula: e1..e6=六重 EMA(C,N) 链；c1=−a³,c2=3a²+3a³,c3=−6a²−3a−3a³,c4=1+3a+a³+3a²；T3=c1e6+c2e5+c3e4+c4e3（Tillson，a=vfactor=0.7）
+  params: {period: 10, vfactor: 0.7}
+  inputs: [close]
+  outputs: [t3_10]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-026
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Variable Index Dynamic Average
+  name_zh: 可变指数动态均线
+  aliases: ["VIDYA", "Chande VIDYA"]
+  indicator_class: trend
+  formula: alpha=|CMO(C,cmo_period)|/100×2/(N+1)；VIDYA=alpha·C+(1−alpha)·VIDYA_prev（Chande；种子=首个 CMO 有效当根收盘）
+  params: {period: 14, cmo_period: 9}
+  inputs: [close]
+  outputs: [vidya_14]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-028
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Jurik Moving Average
+  name_zh: Jurik自适应均线
+  aliases: ["JMA", "Jurik JMA"]
+  indicator_class: trend
+  formula: Jurik 开源移植（pandas-ta 经典口径）：beta=0.45(N−1)/(0.45+2(N−1))，alpha=beta^phaseRatio 递推平滑+波动压缩链（phase=50, power=2 默认）
+  params: {period: 7, phase: 50, power: 2}
+  inputs: [close]
+  outputs: [jma_7]
+  warmup_period: 7
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 趋势类扩充批9-1：M-L2 价格变换族（4 指标/4 列，2026-09-20 tilib 清欠班）══════════════
+- indicator_id: IND-TREND-029
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Average Price
+  name_zh: 四价均价
+  aliases: ["AVGPRICE", "ohlc4"]
+  indicator_class: trend
+  formula: AVGPRICE=(O+H+L+C)/4（TA-Lib Price Transform 组）
+  params: {}
+  inputs: [open, high, low, close]
+  outputs: [avgprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-030
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Median Price
+  name_zh: 中价
+  aliases: ["MEDPRICE", "hl2"]
+  indicator_class: trend
+  formula: MEDPRICE=(H+L)/2（TA-Lib Price Transform 组）
+  params: {}
+  inputs: [high, low]
+  outputs: [medprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-031
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Typical Price
+  name_zh: 典型价格
+  aliases: ["TYPPRICE", "hlc3"]
+  indicator_class: trend
+  formula: TYPPRICE=(H+L+C)/3（TA-Lib Price Transform 组）
+  params: {}
+  inputs: [high, low, close]
+  outputs: [typprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-032
+  # [RESTORED 2026-10-08] 无授权批量删除事故回填：Owner 批准全量恢复（基线 50933522210；成绩=10 rework/5 pass 见 indicator_exam_scores_v1；后续处置待删除队补录授权或照常生命周期）
+  name: Weighted Close Price
+  name_zh: 加权收盘价
+  aliases: ["WCPRICE", "WCLPRICE"]
+  indicator_class: trend
+  formula: WCPRICE=(H+L+2×C)/4（收盘双倍权重；TA-Lib WCLPRICE 同义）
+  params: {}
+  inputs: [high, low, close]
+  outputs: [wcprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 统计族扩充批9-1：M-L3 回归族（4 指标/4 列，2026-09-20 tilib 清欠班）══════════════
+# 立条裁定：M-L3 清单"LINEARREG_BAR"与既有 IND-STAT-003 LINEARREG 本体同义不重复立条；STDERR 除数 N−2 经 talib 对照实测钉死

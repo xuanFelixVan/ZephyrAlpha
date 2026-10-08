@@ -6,7 +6,8 @@ creation_token: matrix-w2-hmm-v3-exam-v1-20261008
 lane: st-mx07-W2（矩阵战役 2026-10-07 夜战第二波 W2）| 授权: 裁定#489②（HMM 封顶再攻一次 v3，不过线即永久退役）
 设计卡: docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md（判据/超参/窗口全部冻结照卡）
 日期: 2026-10-08（开跑 12:5x 前后，一次窗口）| 性质: 施工+跑数+判定结果册（增量写）
-状态: 已判定——verdict=conditionally_qualified（≠qualified），裁定#489② 判死动作已执行（§4）
+状态: 已判定——verdict=conditionally_qualified（≠qualified）；裁定#489② 判死动作已执行（§4）
+改判: 裁定#494（Owner 2026-10-08 复审）——概念/实现分离：大盘状态概念不判死（SMA200 承载在岗），本考卷判的是高斯 HMM 实现族 → 改"实现停用·算法待优化"（deprecated 语义）；重启条件=不同代际算法族（jump/BOCPD 等 L6 调研在册）+新预注册卡+Owner 开窗，或策略层零件引用时随策略重考；三次考试证据链随档本册 §2-§4
 
 ## 1. 施工 diff 摘要（v2→v3 恰好三外科，其余骨架逐字复用）
 
