@@ -47,6 +47,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 | 3 | 风控实况只读投影 | `GET /api/risk-status`（api_server.py L5168） | **黄** | 未起服务（纪律）；静态核验：真源文件在且 JSON 可解析，端点逻辑为纯只读投影+fail-visible=通道绿；但影子 saved_at=2026-10-07（陈旧>1 日）且全 5 闸 active=true，状态判读需 Owner |
 | 4 | regime 只读投影 | `GET /api/regime/current`（api_server.py L5214） | **黄** | 词表 import 绿；端点设计性 degraded:true——7 态日序无持久化真源，current 恒 null（检测器离线回放另批立项） |
 | 5 | 仓位双闸守卫（G1/G7） | `python scripts/governance/check_trd_a20_a21_dual_gates.py` | **红** | 实测 FAIL×2：G7 参数表与代码常量漂移 `hard_cap 0.3 != code 0.6`；G1 密钥轮换 Owner 催办未办 |
+| 5b | **G7 修复就绪待落地（总包 st-entrance-gate-20261007 深挖后执行）** | 修复=代码 HARD_CAP 0.60→0.30（裁定#429 考古定谳 0.30 为 Owner 签发真值），守卫实测 G7 PASS，已入 st-poscap 分支+队列袋 | **受阻** | 该文件叠四层先存量债形成债务墙：①TABLE-NAME-REGISTRY（L182 表名硬编码，品类已在册只差 TableRegistry 引用——已同批修）②GATE-ALGO-FLOW（模块无 ALGO_FLOW 锚——校准块已起草入 docstring）③GATE-ANY-ABUSE（L279 _scalar1 裸 Any 返回）④6 处 lint。fail-closed 设计=漂移期间 effective_hard_cap=0.0 不建仓（无风险敞口）；处方=属主车道 ALGO_FLOW 校准遍按 ②③④⑤ 顺次清偿后，①随批落地（修复内容在其分支 st-poscap-fix-20261008 留档） |
 | 6 | 模拟盘冒烟 | `python scripts/start_paper_session.py --dry-run`（只连 QMT 模拟账户不打单） | **黄** | 入口在、装配链齐（风控层必装配：回撤基线读不到=拒绝装配 exit 1 fail-closed）；未执行——需 QMT 环境+交易日+Owner 窗口 |
 | 7 | 模拟盘下单会话 | `python scripts/start_paper_session.py [--strategy topn-momentum] [--service]` | **红-需授权** | 可向模拟账户真实下单；**需 Owner 授权才可运行**，本次只记录不执行 |
 | 8 | 模拟盘计划任务 wrapper | `powershell -ExecutionPolicy Bypass -File scripts\start_paper_session_daily.ps1` | **黄** | 脚本存在（交易日判定+QMT 进程探活+拉起 --service+日志 .runtime/logs/paper_session.log）；登记的计划任务 DISABLED（启用=Owner 窗，92 D3） |
