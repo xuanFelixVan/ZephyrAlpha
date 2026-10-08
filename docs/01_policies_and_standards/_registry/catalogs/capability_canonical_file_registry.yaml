@@ -64246,4 +64246,19 @@ creation_tokens:
   capability: risk_mitigation_archive
   merge_evaluation: "裁定#485并簇②评估件归档除名（伪GAP9证毕）：risk_mitigation.py 移入 _archive 保留层，路径级移动非新建真源；PG 节点路径已同步"
 
+- file: docs/03_modules/_domain_factor/algo_flow/panelized_indicators.yaml
+  token: rowvec-algoflow-panelized-20261008
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 panelized_indicators.py 同真源演进"
+- file: docs/03_modules/_domain_factor/algo_flow/parity_check.yaml
+  token: rowvec-algoflow-parity-20261008
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 parity_check.py 同真源演进"
+- file: docs/03_modules/_domain_factor/algo_flow/bench_scaling.yaml
+  token: rowvec-algoflow-bench-20261008
+  capability: technical_indicator_rowvec
+  created_by: st-mx07-L5
+  merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 bench_scaling.py 同真源演进"
 di_seam_exemptions: []
