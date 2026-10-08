@@ -251,6 +251,8 @@ class _RenderCtx:
         digest = _load_yaml(_SOURCES_DIR / "gate_digest_registry.yaml")
         self.checklists = _load_yaml(_SOURCES_DIR / "file_type_checklists_registry.yaml")
         cases_doc = _load_yaml(_SOURCES_DIR / "death_cases_registry.yaml")
+        journey_path = _SOURCES_DIR / "landing_journey_registry.yaml"
+        self.journey = _load_yaml(journey_path) if journey_path.exists() else {}
         self.registry_gates = registry["gates"]
         self.registry_ids = {g["gate_id"] for g in self.registry_gates}
         # 蒸馏面与死门显式分家（2026-09-30）：enabled:false 门不再 SystemExit 拒渲染，
@@ -274,6 +276,38 @@ class _RenderCtx:
         """gate_card implementation."""
         entry = self.digest_by_id.get(gate_id)
         return _render_gate_card(entry, self.drifted_set, self.disabled) if entry else []
+
+
+def _render_journey(ctx: _RenderCtx) -> list[str]:
+    """L0 施工全程站地图渲染（源=landing_journey_registry.yaml，可选源：缺文件零渲染）。
+
+    站序=施工时间序；每站一行处方+命中的门卡全展开。站引用未知 gate id 视为
+    源册笔误——宁可生成失败也不出假地图（对齐四源硬校验纪律）。
+    """
+    stations = ctx.journey.get("stations") or []
+    if not stations:
+        return []
+    out = [
+        f"## L0-JOURNEY — {ctx.journey.get('title', '施工全程站地图（按施工时间序；每站一行处方）')}",
+        "",
+        f"> 口径: {ctx.journey.get('caliber', '线内先挖后干、线间并行流水；进门被拒=照处方执行后重试，不换道硬闯')}",
+        "",
+    ]
+    for st in stations:
+        sid = str(st.get("station_id", "")).strip()
+        title = str(st.get("title", "")).strip()
+        timing = str(st.get("timing", "")).strip()
+        rx = str(st.get("prescription", "")).strip()
+        if not (sid and title and rx):
+            raise SystemExit(f"landing_journey_registry.yaml 站条目字段缺失（需 station_id/title/prescription）: {st}")
+        out.append(f"- **{sid} {title}**｜时机: {timing}｜处方: {rx}")
+        for ref in st.get("gate_refs", []) or []:
+            card = ctx.gate_card(str(ref))
+            if not card:
+                raise SystemExit(f"landing_journey_registry.yaml 站 {sid} 引用未在册 gate: {ref}（修源册或补蒸馏）")
+            out.extend(card)
+    out.extend(["", "---", ""])
+    return out
 
 
 def _render_header(ctx: _RenderCtx, ts: str) -> list[str]:
@@ -308,6 +342,23 @@ def _render_header(ctx: _RenderCtx, ts: str) -> list[str]:
     if banner:
         out.extend(["", "> " + " ｜ ".join(banner)])
     out.extend(["", "锚点约定：gate 卡片标题=`### <GATE_ID>`，类型节=`## FT-<type_id>`；接口按子串检索。", ""])
+    # 序页（TOC）——锚点目录：本文件所有节的一行索引（机生；找节先看这里，再按锚点子串检索）
+    toc: list[tuple[str, str]] = []
+    if ctx.journey.get("stations"):
+        toc.append(("L0-JOURNEY", str(ctx.journey.get("title", "施工全程站地图"))))
+    toc.append(("FT-universal", "每一笔提交的通用前置"))
+    for sec in ctx.checklists.get("file_types", []) or []:
+        toc.append((f"FT-{sec.get('type_id')}", str(sec.get("title", ""))))
+    extra = ctx.checklists.get("extra_registry") or {}
+    if extra:
+        toc.append(("FT-extra-registry", str(extra.get("title", ""))))
+    toc.append(("DEATH-CASES", "死因处方速查（按实测成本排序）"))
+    toc.append(("APPENDIX-A", "全台速查表"))
+    toc.append(("APPENDIX-B", "在册未蒸馏台目"))
+    toc.append(("APPENDIX-C", "判据源新鲜度快照"))
+    out.extend(["## 序页 — 锚点目录（找节先看这里）", ""])
+    out.extend(f"- `{aid}` — {desc}" for aid, desc in toc)
+    out.extend(["", "---", ""])
     return out
 
 
@@ -424,6 +475,7 @@ def _render() -> str:
     ts = now_utc().strftime("%Y-%m-%d %H:%M UTC")
     out: list[str] = []
     out.extend(_render_header(ctx, ts))
+    out.extend(_render_journey(ctx))
     out.extend(_render_universal(ctx))
     out.extend(_render_types_and_extra(ctx))
     out.extend(_render_cases(ctx.cases))
