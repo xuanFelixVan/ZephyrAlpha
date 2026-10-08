@@ -1,0 +1,8 @@
+schema: t1_t2_handover/claim-1
+pid: 19360
+created_at: '2026-10-05T21:54:49+08:00'
+launched: true
+note: lanes=LANE-AUTO watchdog tick
+t2_pid: 4264
+t2_log: D:\ZephyrAlpha\.runtime\logs\grid_t2_handover_20261005-215449.log
+launched_at: '2026-10-05T21:55:15+08:00'

@@ -1,0 +1,21 @@
+generated_by: scripts/backtest/t1_t2_handover.py
+rule: S1-S4 确定性选层（案卷 AUTO_t1_t2_handover.md §四，可复算）
+ranking_metric: sharpe
+strong_dims:
+- A1_factor_normalize
+- A2_combine_weight
+- B_top_n
+- C_sizing
+- D1_rebalance_freq
+- D2_rebalance_trigger
+- G_universe
+- H_turnover_lambda
+weak_dims_expanded:
+- E_single_cap
+top_share: 0.2
+pruned_levels: []
+expected_points: 24
+cap: 900
+manifest_sha256: 739f8c6d4c36822271bae65e89fa8b18ef0a7a18566e98dbcc86ce50bf021135
+executor_clamp: 引擎 --n-samples 缺省 20000 → _apply_prereg_budget 钳至 tier2_points=900（seed
+  默认 20260915，抽样确定性）

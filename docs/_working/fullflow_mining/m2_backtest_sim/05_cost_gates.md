@@ -29,7 +29,7 @@ session: st-commitspeed-tbl-20260924
 | 5.3 | 预注册参数面 yaml（Owner 通宵令批C，冻结后禁改） | config/exam_scale_cost_gate.yaml 全文（本车道实读） | 绿 |
 | 5.4 | E7 换手门实测战绩：T0 200 格上 8x 线 0/200 触发；惩罚强度跨 20 倍带排秩稳定（Spearman 0.9998~1.0000，top50 50/50） | e2e_integration/LEDGER.md:136 | 绿 |
 | 5.5 | 轻档/全档对拍红蓝载体 | scripts/backtest/calibrate_cost_tier_redblue.py（03_gpu_campaign §三4 指名消费） | 绿（载体在；下窗方案①跑批时用） |
-| 5.6 | 存活池重考（批D 新鲜窗）：exam_cost_reexam 消费门在 | scripts/backtest/exam_cost_reexam.py（exam_cost_gate CONSUMERS 第二项） | **黄**：批D 产物仓内未见（IBT-F01），重考未完成——GPU 搜索的池基悬空 |
+| 5.6 | 存活池重考（批D 新鲜窗）：exam_cost_reexam 消费门在 | scripts/backtest/exam_cost_reexam.py（exam_cost_gate CONSUMERS 第二项） | **黄**（2026-10-09 账实对齐更新，st-chiefc-20261009 C-3）：批D 产物已部分落 git（data/strategy_intake/grid_20260926-024947/ 四件+t2 三件：handover_claim/subspace/subspace_meta；net_returns.parquet 52MB 按 v2 数据驻留公理不入 git，迁 CH/冷库呈报 I 区）；重考出 qualifying 名单未落主区（=C-2 未完）——池基裁定仍悬 |
 | 5.7 | 成本口径标准族：CST-ASTOCK-001（回测实盘档）/CST-T0-001（做T 31.2bp 往返；转债/跨境 ETF 无印花 1-8bp）；冻结土规=佣金 2.5bp 双边+印花 10bp 卖+滑点 5bp | T0_SCHEME_MATRIX.md 判定口径节；prereg objective.cost_caliber | 绿 |
 
 ## 四、堵点与病灶

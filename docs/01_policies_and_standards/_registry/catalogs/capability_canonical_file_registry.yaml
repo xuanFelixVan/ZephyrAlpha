@@ -64703,6 +64703,21 @@ creation_tokens:
   created_by: st-deadcure-restore-chief
   capability: deadcure-campaign
   merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: data/strategy_intake/grid_20260926-024947/t2_handover_claim.yaml
+  token: t2-subspace-t2-handover-claim-20261008
+  created_by: st-chiefc-20261009
+  capability: t2_subspace
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
+- file: data/strategy_intake/grid_20260926-024947/t2_subspace.json
+  token: t2-subspace-t2-subspace-20261008
+  created_by: st-chiefc-20261009
+  capability: t2_subspace
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
+- file: data/strategy_intake/grid_20260926-024947/t2_subspace_meta.yaml
+  token: t2-subspace-t2-subspace-meta-20261008
+  created_by: st-chiefc-20261009
+  capability: t2_subspace
+  merge_evaluation: "G1-1 跨域不同对象不并另立：批D grid 专属产物元数据，无既有资产可承接"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md

@@ -1,0 +1,34 @@
+{
+  "A1_factor_normalize": [
+    "rank",
+    "industry_neutral"
+  ],
+  "A2_combine_weight": [
+    "halflife60",
+    "ic_ir"
+  ],
+  "B_top_n": [
+    "top100"
+  ],
+  "C_sizing": [
+    "equal_weight",
+    "signal_strength"
+  ],
+  "D1_rebalance_freq": [
+    "biweekly"
+  ],
+  "D2_rebalance_trigger": [
+    "periodic"
+  ],
+  "E_single_cap": [
+    "cap10",
+    "cap20",
+    "cap5"
+  ],
+  "G_universe": [
+    "hs300"
+  ],
+  "H_turnover_lambda": [
+    "lambda_5bp"
+  ]
+}
