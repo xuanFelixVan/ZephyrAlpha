@@ -5,9 +5,11 @@
 # [CONSUMERS] 前端 dashboard（web/services/api.js）
 # [STARTUP] manual（python -m zephyr.frontend.dashboard.api_server 或 uvicorn 直跑；面板服务控制台可一键重启）
 # [MATURITY] production
-# [INVARIANTS] 只读服务+四个获准写端点（backtest-run / framework-backtest-run / services-control /
-#   promotion-decide——写权限扩张均有授权留痕：前者回测产物、中者服务编排、末者 Owner 拍板门位数字化
-#   授权=Owner 2026-09-15 通宵自主执行指令+宪法 §5）; 非法输入 fail-closed 返回 ok:false; Decimal/Date 一律转 JSON 可序列化
+# [INVARIANTS] 只读服务+五个获准写端点（backtest-run / framework-backtest-run / services-control /
+#   promotion-decide / schedulegate-confirm——写权限扩张均有授权留痕：前三者=回测产物/服务编排，
+#   promotion-decide Owner 拍板门位数字化授权=Owner 2026-09-15 通宵自主执行指令+宪法 §5，
+#   schedulegate-confirm=排程确认门（授权链=路由自身 confirm_gate 三落点账+owner_gate 声明，
+#   头注 2026-10-08 补登对齐实际 POST 面数——05_frontend_monitor 簿 S5 黄项收口））; 非法输入 fail-closed 返回 ok:false; Decimal/Date 一律转 JSON 可序列化
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -31,6 +33,7 @@ serve_docs(8765) 回归文档本职。read-only，零写副作用。
   GET /api/pattern-evidence                       形态机生证据（REG-PAT-001 evidence 直读）
   GET /api/promotion-advisories                   策略转正建议清单（C5 审批页数据源，只读）
   POST /api/promotion-decide                      Owner 拍板 approve/reject（第四获准写端点，见端点 docstring 授权依据）
+  POST /api/schedulegate-confirm                  骨架级一键确认（第五获准写端点，ConfirmGate.decide 三落点账）
   GET /api/reports?source=risk&report_type=daily_risk_review&limit=50   报告归档只读投影（F115 R3，data/reports/ 落盘面直读）
 返回：{"ok": true, "bars": [{timestamp(ms), open, high, low, close, volume, amount}]}
 异常一律 ok:false——前端据此回退演示数据（演示诚实纪律：前端标"演示"角标）。
@@ -1274,13 +1277,13 @@ def signals_overview() -> dict[str, Any]:
 
 
 # ── 服务总闸（Owner 2026-09-02 裁定：桌面 Dashboard 承担启动编排）─────────────
-# 真源=services_registry.SERVICE_CATALOG（16 启动项）；psutil 采集 CPU/内存；
+# 真源=services_registry.SERVICE_CATALOG（35 启动项）；psutil 采集 CPU/内存；
 # 分级开关（free/confirm/guard/external/self）+ 操作审计落盘 tmp/services_control_log.jsonl
 
 
 @app.get("/api/services-status")
 def services_status() -> dict[str, Any]:
-    """服务总闸状态：16 启动项四态灯（DS-12）+ CPU/内存 + 心跳年龄 + 整机水位。"""
+    """服务总闸状态：35 启动项四态灯（DS-12）+ CPU/内存 + 心跳年龄 + 整机水位。"""
     from zephyr.frontend.dashboard.services_registry import get_control_log, get_services_status
 
     st = get_services_status()

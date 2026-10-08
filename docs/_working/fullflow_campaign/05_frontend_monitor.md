@@ -111,8 +111,8 @@ completes_when: 全流通战役收官且最终交付报告落盘
 - [绿] 路由面完整闭环：54 路由 AST 提取与 import 冒烟 app.routes 双实证一致；错误契约 ok:false 全覆盖，静态 web 目录缺失自动降级纯 API（日志可见）。
 - [绿] 测试面在岗：tests/frontend/ 2 件（route_guard_order/main_guard_order）+ tests/infra/frontend/ 28 件（heartbeat/schedulegate_confirm/reports/ch_timeout/cron_single_source/dashboard_smoke 等）。
 - [绿] 旧入口治理干净：Streamlit/Panel 双弃用均带 Owner 裁定留痕，保留不删有明确参考价值声明。
-- [黄] 写端点授权声明漂移：api_server 头注 [INVARIANTS] 写"四个获准写端点"（backtest-run/framework-backtest-run/services-control/promotion-decide），实际 POST 路由 5 个——schedulegate-confirm（L5433）未入头注授权清单（路由自身带 confirm_gate 三落点账与 owner_gate 声明，授权链在但头注不同步）。
-- [黄] 监控文案数字漂移：/api/services-status docstring 写"16 启动项"，services_registry 实测 len(SERVICE_CATALOG)=35（2026-09-25）——路由文案未随目录增长更新。
+- [黄→已收口 10-08] 写端点授权声明漂移：api_server 头注 [INVARIANTS] 写"四个获准写端点"（backtest-run/framework-backtest-run/services-control/promotion-decide），实际 POST 路由 5 个——schedulegate-confirm（L5433）未入头注授权清单（路由自身带 confirm_gate 三落点账与 owner_gate 声明，授权链在但头注不同步）。**st-fullflow2 10-08 已修**：头注 INVARIANTS 升"五个获准写端点"并补 schedulegate-confirm 授权链注记，docstring 端点清单补第五端点行。
+- [黄→已收口 10-08] 监控文案数字漂移：/api/services-status docstring 写"16 启动项"，services_registry 实测 len(SERVICE_CATALOG)=35（2026-09-25）——路由文案未随目录增长更新。**st-fullflow2 10-08 已修**：services-status docstring 与服务总闸注释两处 16→35（len(SERVICE_CATALOG) 现值口径）。
 - [黄] frontend_map.yaml 364 功能点含 auto_scanned=true 待逐页人工复核转正（scan_frontend_pages.py 半自动补登，未全转正）。
 - [黄] /api/health、/api/kline 两路由无 docstring（AST 提取用途为空，仅头注可查）——54 路由中 2 条自描述缺失。
 - [黄] CORS allow_origins=["*"]（方法收窄 GET/POST）——本机单用户面可接受，若端口暴露面扩大需收紧。

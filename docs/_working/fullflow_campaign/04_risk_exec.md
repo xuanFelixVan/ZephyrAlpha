@@ -103,8 +103,8 @@ completes_when: 全流通战役收官且最终交付报告落盘
 
 ## 六、缺口面（[绿|黄|红]）
 
-- **[红] 仓位硬顶双真源漂移**：`position_parameters.yaml` hard_cap=0.30（confirmed 裁定#429）vs `daily_decision_orchestrator.py` HARD_CAP=0.60（裁定#305 草案值），G7 守卫实测 FAIL。fail-closed 机制在（未确认=0.0），但 confirmed 后两处不同值=施工债，须代码常量同步 0.30 并让守卫转绿。
-- **[红] G1 密钥轮换催办未办**：.env 曝光后 Owner 超 3 天未轮换（双闸守卫实测输出），连带风控面准入。
+- **[红→已闭合 10-08] 仓位硬顶双真源漂移**：`position_parameters.yaml` hard_cap=0.30（confirmed 裁定#429）vs `daily_decision_orchestrator.py` HARD_CAP=0.60（裁定#305 草案值），G7 守卫实测 FAIL。**已修（st-entrance-gate-20261007 落地，st-fullflow2 10-08 交叉验证）**：代码 HARD_CAP 0.60→0.30 已入 dev（裁定#429 考古定谳 0.30=Owner 2026-09-29 数字确认真值），守卫 scripts/governance/check_trd_a20_a21_dual_gates.py 实测 G7 PASS。
+- **[红·催办刷新 10-08] G1 密钥轮换催办未办**：.env 曝光（2026-09-18）后 Owner 超期未轮换——截至 2026-10-08 已 20 天（双闸守卫输出"超 3 天"系挖矿时旧判读），连带风控面准入。**催办刷新（st-fullflow2-20261008 晨报随报提醒）**：本项=Owner 钥匙操作，AI 禁代旋转；请 Owner 执行 G1 密钥轮换（secrets.py 体系内换钥+受影响 token 重签）后回写轮换完成日期，本行随之转绿。
 - **[红-需 Owner 授权才可运行]**：真实下单/资金类入口——`python -m zephyr.trading`（实盘进程）、`start_paper_session.py` 非 dry-run 模式（模拟账户下单）、ex_sor 券商连接器实连、rl_trainer `--real-training`（H-04）。本次全部只记录未执行。
 - **[黄] regime 7 态无日序持久化真源**：`/api/regime/current` 永久 degraded（current=null），日序生产=检测器离线回放，另批立项未开工。
 - **[黄] 回撤五档无落盘影子**：DrawdownController 为 trading 进程内存态，risk-status 如实标 unavailable——重启即丢档位观测（与熔断影子同病未治）。
@@ -121,4 +121,4 @@ completes_when: 全流通战役收官且最终交付报告落盘
 
 - 绿证据：ex_sor 24 模块+风控真源 8 模块 import 全绿；风控真源链（熔断影子→只读投影→漂移守卫→fail-closed/fail-visible）体系完整；执行域测试 18 件在案。
 - 黄证据：regime 日序缺真源、回撤档无影子、日损失限额未配置、模拟盘自动化 DISABLED、影子全开待判读——均为"通道在但缺数据或缺授权"。
-- 红证据（不阻断本环节簿交付，但阻断带资运行）：G7 硬顶漂移 0.30≠0.60 守卫 FAIL + G1 密钥轮换催办 + 全部真实下单/资金入口未获 Owner 授权。**任何带资运行前：先清 G7/G1，再走 Owner 授权门。**
+- 红证据（不阻断本环节簿交付，但阻断带资运行）：~~G7 硬顶漂移~~（10-08 已修，守卫 PASS）+ G1 密钥轮换催办（Owner 未办，10-08 晨报已再催）+ 全部真实下单/资金入口未获 Owner 授权。**任何带资运行前：先清 G1，再走 Owner 授权门。**

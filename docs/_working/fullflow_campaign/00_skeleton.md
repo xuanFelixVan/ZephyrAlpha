@@ -39,7 +39,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 | 02_signal_tdm | **已挖** | ✓（7 节齐） | 黄 | TDMAP-001 实测 186 节点/261 边/188 挂载（挂图手术已在 dev 二次确认）；loader+run_checks 全过（393 warn=63 红节点占位）；signal_ashare 149/149 import 绿；**源线判据 4/6 已落 dev（acure 车道落地中，A06/A09 不代修）**；吸收面卡点=592 策略 vs 10 候选 |
 | 03_backtest_exam | **已挖** | ✓（7 节齐） | **绿**（主链健康） | factory_grid/c4_batch_screen/f06_wfa/run_fexam --help 全过；引擎 import 12/12；四张 prereg 冻结卡在簿；C4Exam+F06Grid 排程 Ready 有 10 月实跑日志；GPU 路由闭环。1 红=sector_prereg_exam_runner 无 --help 守卫（挖矿代理自误触开考已当场还原+核验无他队损失）+4 黄（model_exam 链三重断/ps1 旧路径/T3a-b owner_ruling_id 空/成本门 v1v2 双轨） |
 | 04_risk_exec | **已挖+G7 已修** | ✓（7 节齐） | 黄→修复中 | ~~红洞 G7~~ **已修**（裁定#429 考古定谳 0.30 为 Owner 签发真值，代码 0.60→0.30 已入袋守卫 PASS）；G1 密钥轮换逾期仍 open（Owner 运维动作）；黄×5（熔断影子陈旧/regime 无日序/回撤无影子/daily_loss_limit 未配/模拟盘任务 DISABLED）；ex_sor 24 模块+风控 8 模块 import 全绿 |
-| 05_frontend_monitor | **已挖** | ✓（7 节齐） | 绿（5 黄无红） | 路由 54 双实证；黄项=头注漂移×2+auto_scanned 待转正 |
+| 05_frontend_monitor | **已挖** | ✓（7 节齐） | 绿（5 黄无红） | 路由 54 双实证；黄项=头注漂移×2（**10-08 已收口**：五写端点头注+35 启动项计数同步入码）+auto_scanned 待转正 |
 | 06_gov_delivery | 已有 L0 卡 | ✓ | 绿 | 总包薄补 |
 
 ## 三·五、内收挂接（正典 taxonomy 指针——本骨架=现状验证视图，非新 taxonomy）
@@ -51,6 +51,8 @@ completes_when: 全流通战役收官且最终交付报告落盘
 1. **G7 仓位硬顶漂移——已执行修复**（裁定#429 考古定谳 0.30 为 Owner 签发真值，代码常量 0.60→0.30 已入袋，守卫实测 PASS）；**G1 密钥轮换催办**仍 open（Owner 运维动作，非 AI 可代办）。
 2. **四项不可核**（移交原会话/Owner）：291/21 对账裁决、车道A 批2 的 13 行终裁、D124、三张工单（全量考试/GPU 路由/整装回测）——全仓 docs/workbook/登记册/commit 史四轮检索无载体，**未落盘=对项目不可见**；工单域线索=fullconnect 16 项工单清单（无 D124 对应）。
 3. **capital_flow_direction/news_sentiment 两判据**：实体全仓不存在（worktree/.aidrafts/staging/docs 均无），仅 st-tdm-chief 壳注册的 token+图谱节点在账——**从未建造**，token 可复用；归口=acure R 恢复道（信号三模块复活含此二）或后续车道按序新建。
+4. **吸收面卡点呈报（R4，呈报不扩面）**：normalized 592 策略 vs translated_manifest 仅 10 候选——翻译/吸收产能=S2→S3 流量卡点（02 簿 §6 实测）。按交接令纪律**只登记呈报、禁自行扩面**：扩面排产（翻译吞吐/候选复筛/lane_f 6159 行消化序）须 Owner 批，随 10-08 晨报呈报。
+5. **[完成] R1 三袋复核（st-fullflow2 10-08）**：entrance_gate_hook.py 含 L0-JOURNEY ✓／00_skeleton 含内收挂接 ✓／.zcode/config.json 含 PreToolUse ✓——前任三袋落地面抽查全过，未重做。
 
 ## 四、冲突纪律（五大队同窗）
 
