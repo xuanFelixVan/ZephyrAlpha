@@ -410,6 +410,9 @@ def _plan_fill(target: _FillTarget, holding: bool, cash: float, shares: float, p
 
 def replay_one(cid: str, module_path: Path, day: str, run_id: str, *, state_dir: Path | None = None) -> dict:
     """单候选重放：build() 尾行目标仓位→方案C 收盘成交（entry/exit/hold 标记市场）。"""
+    # 重放腿状态隔离（[整装回测备战W1] 遗留收口）：state_dir 缺省时用 replay 隔离态目录，
+    # 防历史日倒退重放把持久六态机（ZA-RK-0060 kill switch/回撤态）打炸+污染实盘态。
+    state_dir = state_dir or (_BRIDGE_RISK_STATE_DIR / "replay")
     spec = importlib.util.spec_from_file_location(f"simreplay_{cid.replace('-', '_')}", module_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"翻译件不可加载: {module_path.name}")
@@ -523,6 +526,8 @@ def e4_replay(day: str, limit: int, *, state_dir: Path | None = None) -> dict:
     风控闸（[整装回测备战W1] 接线②）：逐候选过 _evaluate_sim_risk，拒绝者记
     risk_blocked 不进重放成交；KILL 追加熔断清算台账行。
     """
+    # 重放腿状态隔离（[整装回测备战W1] 遗留收口）：缺省态目录=replay 隔离面（同 replay_one）。
+    state_dir = state_dir or (_BRIDGE_RISK_STATE_DIR / "replay")
     cands = e4_candidates()[: max(limit, 0)]
     out: dict = {"replayed": [], "errors": [], "day": day}
     run_id = f"sim-observe-{_now_utc().strftime('%Y%m%d%H%M%S')}"
