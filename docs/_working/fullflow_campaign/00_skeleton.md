@@ -48,7 +48,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 
 ## 三·六、移交与不可核登记（Owner 前置声明下按协议登记）
 
-1. **G7 仓位硬顶漂移——已执行修复**（裁定#429 考古定谳 0.30 为 Owner 签发真值，代码常量 0.60→0.30 已入袋，守卫实测 PASS）；**G1 密钥轮换催办**仍 open（Owner 运维动作，非 AI 可代办）。
+1. **G7 仓位硬顶漂移——已执行修复**（裁定#429 考古定谳 0.30 为 Owner 签发真值，代码常量 0.60→0.30 已入袋，守卫实测 PASS）；**G1 密钥轮换催办**仍 open（Owner 运维动作，非 AI 可代办）。〔已结案 2026-10-09：#398一+#399四 定谳=维持不轮换（触发器制），Owner B 清单 R15 批转登记面收口；.env mtime 澄清留 Owner 知会——st-chiefc-20261009 G 车道〕
 2. **四项不可核**（移交原会话/Owner）：291/21 对账裁决、车道A 批2 的 13 行终裁、D124、三张工单（全量考试/GPU 路由/整装回测）——全仓 docs/workbook/登记册/commit 史四轮检索无载体，**未落盘=对项目不可见**；工单域线索=fullconnect 16 项工单清单（无 D124 对应）。
 3. **[完成 10-08] capital_flow_direction/news_sentiment 两判据**：原登记"归口=acure R 恢复道"系错挂（acure-r1 的信号三模块=event_axis/swing_sequence/resonance_pair 死袋复活，见其 R_recover_workbook——与此二判据无关）；st-fullflow2 按 R6 交接授权补建：MOD-SIG-159（A06 资金流）/MOD-SIG-160（A09 快讯情绪）纯函数判据件+红蓝测试 45 测+蓝图+ALGO_FLOW 外部锚（a600b7f7191 落地，六投六门各修一病全程留痕 msg_r6_srcline.md）；module_ref 挂图待总裁终裁批（02 簿交接提示流程），本总包移交下窗排产。
 4. **吸收面卡点呈报（R4，呈报不扩面）**：normalized 592 策略 vs translated_manifest 仅 10 候选——翻译/吸收产能=S2→S3 流量卡点（02 簿 §6 实测）。按交接令纪律**只登记呈报、禁自行扩面**：扩面排产（翻译吞吐/候选复筛/lane_f 6159 行消化序）须 Owner 批，随 10-08 晨报呈报。
@@ -65,6 +65,6 @@ completes_when: 全流通战役收官且最终交付报告落盘
 > 完整版=delivery/99_morning_report_st_fullflow2_20261008.md（文件已落盘待提交——其 creation_token 在 capability 册待 st-matrix 活会话飞行批落 HEAD 后随下窗补提交，避免与其 file_token 新族三向合并相撞）。
 
 - **R1-R8 全闭环**：六袋落 dev=1ea5b93226(R2 判重闭合)/02847d8e5c(ERRCODE SSoT 复位)/d68b7cbc87(R3+R4+R5)/578fae09f3(R8 裁定#492+议题册 ARCH-TRD-A10)/0b287d0bed(R7 ALGO_FLOW 出仓)/a600b7f7191(R6 源线判据 6/6 补建)。循环检查两轮 0 失败（133 测+marker+clone+DSC validator）。
-- **O1 密钥轮换重定性（子代理车道深查裁定）**：裁定#398（2026-09-22，active，#399 追认）已结案=不轮换（OKX 只读无 passphrase 结构性不可调用/iFind 退役/网盘无敏感/LLM+TUSHARE 挂触发器）；在喊的催办=登记面欠账（tc10 步骤5 未按 #398 回写+G1 守卫 #392 旧判据与结案语义结构性死锁），非安全欠账。**待 Owner 一句话确认维持 #398（或改判要换）+授权登记面收口**；悬案：根 .env mtime 09-30 03:14 无登记（Owner 澄清是否本人动过）。
+- **O1 密钥轮换重定性（子代理车道深查裁定）**：裁定#398（2026-09-22，active，#399 追认）已结案=不轮换（OKX 只读无 passphrase 结构性不可调用/iFind 退役/网盘无敏感/LLM+TUSHARE 挂触发器）；在喊的催办=登记面欠账（tc10 步骤5 未按 #398 回写+G1 守卫 #392 旧判据与结案语义结构性死锁），非安全欠账。**待 Owner 一句话确认维持 #398（或改判要换）+授权登记面收口**；悬案：根 .env mtime 09-30 03:14 无登记（Owner 澄清是否本人动过）。〔已结案 2026-10-09：Owner《Owner呈批菜单_重路由版》B 清单批复即『维持 #398』确认+R15 登记面收口授权；.env 澄清项转 Owner 知会项（不代答）——st-chiefc-20261009 G 车道〕
 - **O2 四项不可核**：子代理三路检索复核结论见其回报（本节不转述，详报告）。
 - **移交后续窗**：吸收面 592v10 扩面排产（R4 呈报件）/A06-A09 module_ref 挂图总裁终裁批/ factory 死会话（st-fc-landing dirty=55、st-fc-spm dirty=3）worktree triage/本报告文件补提交。

@@ -46,7 +46,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 | 2 | 风控真源模块 import | kill_switch_state_store/trading_kill_switch/drawdown_controller/regime_detector/daily_decision_orchestrator/drawdown_state_machine/ai_layer.scheduling | **绿** | 8/8 import OK |
 | 3 | 风控实况只读投影 | `GET /api/risk-status`（api_server.py L5168） | **黄** | 未起服务（纪律）；静态核验：真源文件在且 JSON 可解析，端点逻辑为纯只读投影+fail-visible=通道绿；但影子 saved_at=2026-10-07（陈旧>1 日）且全 5 闸 active=true，状态判读需 Owner |
 | 4 | regime 只读投影 | `GET /api/regime/current`（api_server.py L5214） | **黄** | 词表 import 绿；端点设计性 degraded:true——7 态日序无持久化真源，current 恒 null（检测器离线回放另批立项） |
-| 5 | 仓位双闸守卫（G1/G7） | `python scripts/governance/check_trd_a20_a21_dual_gates.py` | **红** | 实测 FAIL×2：G7 参数表与代码常量漂移 `hard_cap 0.3 != code 0.6`；G1 密钥轮换 Owner 催办未办 |
+| 5 | 仓位双闸守卫（G1/G7） | `python scripts/governance/check_trd_a20_a21_dual_gates.py` | **红** | 实测 FAIL×2：G7 参数表与代码常量漂移 `hard_cap 0.3 != code 0.6`；G1 密钥轮换 Owner 催办未办〔G1 已结案 2026-10-09：#398/#399 维持不轮换+触发器制，R15 批转收口——G 车道登记〕 |
 | 5b | **G7 修复就绪待落地（总包 st-entrance-gate-20261007 深挖后执行）** | 修复=代码 HARD_CAP 0.60→0.30（裁定#429 考古定谳 0.30 为 Owner 签发真值），守卫实测 G7 PASS，已入 st-poscap 分支+队列袋 | **受阻** | 该文件叠四层先存量债形成债务墙：①TABLE-NAME-REGISTRY（L182 表名硬编码，品类已在册只差 TableRegistry 引用——已同批修）②GATE-ALGO-FLOW（模块无 ALGO_FLOW 锚——校准块已起草入 docstring）③GATE-ANY-ABUSE（L279 _scalar1 裸 Any 返回）④6 处 lint。fail-closed 设计=漂移期间 effective_hard_cap=0.0 不建仓（无风险敞口）；处方=属主车道 ALGO_FLOW 校准遍按 ②③④⑤ 顺次清偿后，①随批落地（修复内容在其分支 st-poscap-fix-20261008 留档） |
 | 6 | 模拟盘冒烟 | `python scripts/start_paper_session.py --dry-run`（只连 QMT 模拟账户不打单） | **黄** | 入口在、装配链齐（风控层必装配：回撤基线读不到=拒绝装配 exit 1 fail-closed）；未执行——需 QMT 环境+交易日+Owner 窗口 |
 | 7 | 模拟盘下单会话 | `python scripts/start_paper_session.py [--strategy topn-momentum] [--service]` | **红-需授权** | 可向模拟账户真实下单；**需 Owner 授权才可运行**，本次只记录不执行 |
@@ -104,7 +104,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 ## 六、缺口面（[绿|黄|红]）
 
 - **[红→已闭合 10-08] 仓位硬顶双真源漂移**：`position_parameters.yaml` hard_cap=0.30（confirmed 裁定#429）vs `daily_decision_orchestrator.py` HARD_CAP=0.60（裁定#305 草案值），G7 守卫实测 FAIL。**已修（st-entrance-gate-20261007 落地，st-fullflow2 10-08 交叉验证）**：代码 HARD_CAP 0.60→0.30 已入 dev（裁定#429 考古定谳 0.30=Owner 2026-09-29 数字确认真值），守卫 scripts/governance/check_trd_a20_a21_dual_gates.py 实测 G7 PASS。
-- **[红·催办刷新 10-08] G1 密钥轮换催办未办**：.env 曝光（2026-09-18）后 Owner 超期未轮换——截至 2026-10-08 已 20 天（双闸守卫输出"超 3 天"系挖矿时旧判读），连带风控面准入。**催办刷新（st-fullflow2-20261008 晨报随报提醒）**：本项=Owner 钥匙操作，AI 禁代旋转；请 Owner 执行 G1 密钥轮换（secrets.py 体系内换钥+受影响 token 重签）后回写轮换完成日期，本行随之转绿。
+- **[红·催办刷新 10-08] G1 密钥轮换催办未办**：.env 曝光（2026-09-18）后 Owner 超期未轮换——截至 2026-10-08 已 20 天（双闸守卫输出"超 3 天"系挖矿时旧判读），连带风控面准入。**催办刷新（st-fullflow2-20261008 晨报随报提醒）**：本项=Owner 钥匙操作，AI 禁代旋转；请 Owner 执行 G1 密钥轮换（secrets.py 体系内换钥+受影响 token 重签）后回写轮换完成日期，本行随之转绿。**[结案 10-09]**：#398一（Owner 明示不轮换+触发器制=异常计费/异常调用即轮换）+#399四 全批准确认+Owner 2026-10-09 B 清单 R15 批转=登记面收口；本催办行转结案绿（安全语义=维持不轮换，非轮换完成）；.env mtime 澄清留 Owner 知会——st-chiefc-20261009 G 车道。
 - **[红-需 Owner 授权才可运行]**：真实下单/资金类入口——`python -m zephyr.trading`（实盘进程）、`start_paper_session.py` 非 dry-run 模式（模拟账户下单）、ex_sor 券商连接器实连、rl_trainer `--real-training`（H-04）。本次全部只记录未执行。
 - **[黄] regime 7 态无日序持久化真源**：`/api/regime/current` 永久 degraded（current=null），日序生产=检测器离线回放，另批立项未开工。
 - **[黄] 回撤五档无落盘影子**：DrawdownController 为 trading 进程内存态，risk-status 如实标 unavailable——重启即丢档位观测（与熔断影子同病未治）。
@@ -121,4 +121,4 @@ completes_when: 全流通战役收官且最终交付报告落盘
 
 - 绿证据：ex_sor 24 模块+风控真源 8 模块 import 全绿；风控真源链（熔断影子→只读投影→漂移守卫→fail-closed/fail-visible）体系完整；执行域测试 18 件在案。
 - 黄证据：regime 日序缺真源、回撤档无影子、日损失限额未配置、模拟盘自动化 DISABLED、影子全开待判读——均为"通道在但缺数据或缺授权"。
-- 红证据（不阻断本环节簿交付，但阻断带资运行）：~~G7 硬顶漂移~~（10-08 已修，守卫 PASS）+ G1 密钥轮换催办（Owner 未办，10-08 晨报已再催）+ 全部真实下单/资金入口未获 Owner 授权。**任何带资运行前：先清 G1，再走 Owner 授权门。**
+- 红证据（不阻断本环节簿交付，但阻断带资运行）：~~G7 硬顶漂移~~（10-08 已修，守卫 PASS）+ ~~G1 密钥轮换催办（Owner 未办，10-08 晨报已再催）~~（10-09 已结案：#398/#399 维持不轮换+R15 批转收口——G 车道登记）+ 全部真实下单/资金入口未获 Owner 授权。**任何带资运行前：先清 G1，再走 Owner 授权门。**
