@@ -781,9 +781,20 @@ if ($Mode -eq "ch") {
         $dumpsDay = $RunAt.ToString("yyyyMMdd")
         $dumpsDayTarget = Join-Path $DumpsTarget $dumpsDay
         New-Item -ItemType Directory -Path $dumpsDayTarget -Force | Out-Null
-        & robocopy $DumpDir $dumpsDayTarget "/E" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
-        $rcDumps = $LASTEXITCODE
-        if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK ("DB dumps snapshot done: {0}" -f $dumpsDayTarget) }
+        # (E-4) capacity red-line pre-gate: breach = skip the dumps copy (warn +
+        # trace), rotation below is cheap and stays available.
+        $rcDumps = 0
+        $dumpsSkippedByGuard = $false
+        if (Test-CapacityGuardBreach $dumpsDayTarget) {
+            $dumpsSkippedByGuard = $true
+            $dbStatus.db_dumps = @{status="warn"; reason="capacity_guard"; error="target drive below registered red line, dumps copy skipped"}
+        } else {
+            & robocopy $DumpDir $dumpsDayTarget "/E" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
+            $rcDumps = $LASTEXITCODE
+        }
+        if (-not $dumpsSkippedByGuard) {
+            if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK ("DB dumps snapshot done: {0}" -f $dumpsDayTarget) }
+        }
         $rotatedDumps = @()
         $dumpsStateOk = $false
         try {
@@ -881,6 +892,57 @@ if ($Mode -ne "ch") {
     }
 }
 
+# ==================== Capacity guard (E-4, 2026-10-09) ====================
+# Semantics ported from backup_ch_vm.ps1 Get-CapacityGuardDecision / the red
+# lines F>=700 / G>=500 free GB (backup_config.yaml capacity_guard section).
+# That sealed script was the section's ONLY reader, so STAGE 3c/3d mirrors and
+# the DB-dumps copy ran unguarded (2026-09-26 F-drive incident class). Contract
+# here: if the target drive's CURRENT free space is already below the
+# registered red line, SKIP that target (warn + report trace) and keep going --
+# never fail the whole pass. Simplification vs the sealed original: these are
+# incremental mirrors, so per-target source sizing would cost a full tree
+# enumeration; the pre-gate is "free already below red line". A missing or
+# unreadable config key falls back to the constant below and stays ON (never
+# silently zero = never silently allow), same as the sealed original.
+$script:MinFreeFallbackGB = 700
+$script:MinFreeGbMap = $null
+function Get-MinFreeGB {
+    param([string]$DriveLetter)
+    if ($null -eq $script:MinFreeGbMap) {
+        $script:MinFreeGbMap = @{}
+        try {
+            $mapJson = ($yamlContent | & python -c "import sys,yaml,json;d=yaml.safe_load(sys.stdin.read()) or {};print(json.dumps((d.get('capacity_guard') or {}).get('min_free_gb') or {}))") -join ''
+            if ($mapJson) { $script:MinFreeGbMap = $mapJson | ConvertFrom-Json }
+        } catch { $script:MinFreeGbMap = @{} }
+        if (-not $script:MinFreeGbMap -or $script:MinFreeGbMap.PSObject.Properties.Count -eq 0) {
+            Write-Warn "capacity_guard.min_free_gb unreadable/empty in backup_config.yaml -- built-in fallback $($script:MinFreeFallbackGB)GB (guard stays ON)"
+        }
+    }
+    $prop = $null
+    if ($script:MinFreeGbMap) { $prop = $script:MinFreeGbMap.PSObject.Properties[$DriveLetter] }
+    if ($prop -and [string]$prop.Value -match '^[0-9]+(\.[0-9]+)?$') { return [double]$prop.Value }
+    return $script:MinFreeFallbackGB
+}
+function Test-CapacityGuardBreach {
+    param([string]$TargetPath)
+    # Returns $true = target drive free space already below the registered red
+    # line -> caller must SKIP this target (warn + trace) and keep going.
+    try {
+        $drive = (Split-Path -Qualifier $TargetPath).TrimEnd(':')
+        $freeGB = [math]::Round((Get-PSDrive -Name $drive -ErrorAction Stop).Free / 1GB, 2)
+        $minFree = Get-MinFreeGB -DriveLetter $drive
+        if ($freeGB -lt $minFree) {
+            Write-Warn ("capacity_guard BREACH on {0}: free={1}GB < red line {2}GB -> skipping this target (run continues)" -f $drive, $freeGB, $minFree)
+            return $true
+        }
+    } catch {
+        # Guard infrastructure failure must not block backups: record + proceed.
+        Write-Warn ("capacity_guard check unavailable for {0}: {1} (target NOT blocked)" -f $TargetPath, $_.Exception.Message)
+        return $false
+    }
+    return $false
+}
+
 # ==================== STAGE 3c: Off-repo critical assets mirror ====================
 # Added 2026-09-08 (Owner approved): mirror off-repo critical assets (C/E drive)
 # to F:\offrepo_backup\<id>\. Registry source: config/asset_inventory.yaml
@@ -912,11 +974,21 @@ if ($Mode -eq "ch") {
     $mirrorCap = Get-MirrorPurgeCap -Yaml $yamlContent -Fallback $MaxPurgeFallback
     foreach ($t in $offrepoTargets) {
         if (-not (Test-Path $t.source)) {
-            $offrepoStatus[$t.id] = @{status="failed"; error="source missing: $($t.source)"}
-            Write-Err "Off-repo [$($t.id)]: source missing: $($t.source)"
+            # (E-2, 2026-10-09) source-missing is a TARGET-side availability problem
+            # (retired machine dir / moved archive), not a backup pipeline failure:
+            # degrade to WARN so it no longer flips the whole pass (and
+            # last_backup_status) to failed. Counted separately via the
+            # source_missing aggregate on $offrepoResult.
+            $offrepoStatus[$t.id] = @{status="warn"; reason="source_missing"; error="source missing (target-side asset unavailable): $($t.source)"}
+            Write-Warn "Off-repo [$($t.id)]: source missing (WARN, not run-fatal): $($t.source)"
             continue
         }
         $tgt = Join-Path $offrepoBase $t.id
+        # (E-4) capacity red-line pre-gate: breach = skip THIS target, keep going.
+        if (Test-CapacityGuardBreach $tgt) {
+            $offrepoStatus[$t.id] = @{status="warn"; reason="capacity_guard"; error="target drive below registered red line, target skipped"}
+            continue
+        }
         $gm = Invoke-GuardedMirror -Source $t.source -Target $tgt -Cap $mirrorCap
         $rc = [int]$gm.robocopy_exit
         if ($gm.mode -ne "mirror") {
@@ -931,8 +1003,14 @@ if ($Mode -eq "ch") {
             Write-OK ("Off-repo [{0}]: ok ({1:N2} GB, mode={2})" -f $t.id, ($tgtBytes/1GB), $gm.mode)
         }
     }
+    # (E-2) aggregation: warn-grade target outcomes (source missing) no longer
+    # count as stage failure; source_missing lists the ids of off-repo assets
+    # whose source vanished (the "off-repo assets missing source" counter the
+    # aggregate verdict reports).
     $offrepoResult = @{
-        status = $(if (($offrepoStatus.Values | Where-Object status -eq "failed").Count -gt 0) {"failed"} elseif ($offrepoTargets.Count -eq 0) {"skipped"; reason="no targets parsed"} else {"ok"})
+        status = $(if (($offrepoStatus.Values | Where-Object { [string]$_.status -eq "failed" }).Count -gt 0) {"failed"} elseif ($offrepoTargets.Count -eq 0) {"skipped"; reason="no targets parsed"} elseif (($offrepoStatus.Values | Where-Object { [string]$_.status -eq "warn" }).Count -gt 0) {"warn"} else {"ok"})
+        source_missing = @($offrepoStatus.Keys | Where-Object { [string]$offrepoStatus[$_].reason -eq "source_missing" })
+        capacity_skipped = @($offrepoStatus.Keys | Where-Object { [string]$offrepoStatus[$_].reason -eq "capacity_guard" })
         targets = $offrepoStatus
     }
 }
@@ -977,12 +1055,18 @@ if ($Mode -eq "ch") {
     $mirrorCapG = Get-MirrorPurgeCap -Yaml $yamlContent -Fallback $MaxPurgeFallback
     foreach ($t in $gMirrorTargets) {
         if (-not (Test-Path $t.source)) {
-            $gMirrorStatus[$t.id] = @{status="failed"; error="source missing: $($t.source)"}
-            Write-Err "G-mirror [$($t.id)]: source missing: $($t.source)"
+            # (E-2) same target-side degradation as Stage 3c: warn, not run-fatal.
+            $gMirrorStatus[$t.id] = @{status="warn"; reason="source_missing"; error="source missing (target-side asset unavailable): $($t.source)"}
+            Write-Warn "G-mirror [$($t.id)]: source missing (WARN, not run-fatal): $($t.source)"
             continue
         }
         # a3 4.6: per-target explicit target: overrides base\id derivation
         $gTgt = if ($t.PSObject.Properties['target'] -and $t.target) { [string]$t.target } else { Join-Path $gMirrorBase $t.id }
+        # (E-4) capacity red-line pre-gate: breach = skip THIS target, keep going.
+        if (Test-CapacityGuardBreach $gTgt) {
+            $gMirrorStatus[$t.id] = @{status="warn"; reason="capacity_guard"; error="target drive below registered red line, target skipped"}
+            continue
+        }
         $gmG = Invoke-GuardedMirror -Source $t.source -Target $gTgt -Cap $mirrorCapG -CopyArgs @("/COPY:DAT")
         $rcG = [int]$gmG.robocopy_exit
         if ($gmG.mode -ne "mirror") {
@@ -996,8 +1080,11 @@ if ($Mode -eq "ch") {
             Write-OK "G-mirror [$($t.id)]: ok (mode=$($gmG.mode) would_purge=$($gmG.would_purge)/cap=$($mirrorCapG))"
         }
     }
+    # (E-2) aggregation: same warn-grade semantics as Stage 3c.
     $gMirrorResult = @{
-        status = $(if (($gMirrorStatus.Values | Where-Object status -eq "failed").Count -gt 0) {"failed"} elseif ($gMirrorTargets.Count -eq 0) {"skipped"} else {"ok"})
+        status = $(if (($gMirrorStatus.Values | Where-Object { [string]$_.status -eq "failed" }).Count -gt 0) {"failed"} elseif ($gMirrorTargets.Count -eq 0) {"skipped"} elseif (($gMirrorStatus.Values | Where-Object { [string]$_.status -eq "warn" }).Count -gt 0) {"warn"} else {"ok"})
+        source_missing = @($gMirrorStatus.Keys | Where-Object { [string]$gMirrorStatus[$_].reason -eq "source_missing" })
+        capacity_skipped = @($gMirrorStatus.Keys | Where-Object { [string]$gMirrorStatus[$_].reason -eq "capacity_guard" })
         targets = $gMirrorStatus
     }
 }
@@ -1045,6 +1132,20 @@ if ($Mode -ne "ch") {
     $overall = "ok"
     if ($failedStages.Count -gt 0) { $overall = "failed" }
     $state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue $overall -Force
+    # (E-5, 2026-10-09) last_success vs last_attempt separation: the state file
+    # previously kept ONLY the newest attempt verdict, so any later noisy pass
+    # (manual re-run / lock-skip / peripheral failure) erased the last fully
+    # green record and readers saw "failed" although the 06:00 core legs were
+    # green. last_attempt_* records every completed pass; last_success_* is
+    # sticky and advances ONLY on an ok pass. The reconciler's lock_skipped
+    # writers (settle_previous_ignition + ignition pre-check) are dict-merges
+    # that never touch these fields (red-proven: .runtime/tmp/e5_redproof).
+    $state | Add-Member -NotePropertyName last_attempt_status -NotePropertyValue $overall -Force
+    $state | Add-Member -NotePropertyName last_attempt_time -NotePropertyValue (Get-Date).ToString("o") -Force
+    if ($overall -eq "ok") {
+        $state | Add-Member -NotePropertyName last_success_status -NotePropertyValue "ok" -Force
+        $state | Add-Member -NotePropertyName last_success_time -NotePropertyValue (Get-Date).ToString("o") -Force
+    }
 }
 if ($dbStatus.clickhouse) {
     $chSt = [string]$dbStatus.clickhouse.status
