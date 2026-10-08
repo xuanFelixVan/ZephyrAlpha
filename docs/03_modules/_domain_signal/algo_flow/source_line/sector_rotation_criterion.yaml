@@ -1,0 +1,61 @@
+# ALGO_FLOW 外部真源——sector_rotation_criterion（_domain_signal 域，真源 src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.source_line.sector_rotation_criterion
+source_of_truth: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 板块指数日收盘序列族
+    #   fields: boards: Mapping[str, Sequence[float]]（DS-117/DS-119 CH 表调用方注入零 IO）
+    #   code: build_sector_rotation_snapshot（调用方注入口径）
+    # - id: I2
+    #   name: 市场基准日收益序列
+    #   fields: benchmark_closes: Sequence[float]
+    #   code: streak_vs_benchmark 的基准腿
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 序列校验
+    #   name_en: validate_series
+    #   intro: 单板块序列过短（<window+1）跳过记 notes 不整体 fail；基准序列非法 fail-closed。
+    #   desc: SectorRotationInputError；_validate_series L119。
+    #   code: _validate_series(closes, min_len, what)
+    # - id: A2
+    #   name_zh: ② 板块相对强度横截面分位
+    #   name_en: rs_rank_pct
+    #   intro: 板块 N 日收益（DEFAULT_WINDOW=20）在全板块横截面的分位 ∈ [0,1]，1=最强。
+    #   desc: 横截面百分位排名，逐板块一值。
+    #   code: build_sector_rotation_snapshot 内 RS 计算
+    # - id: A3
+    #   name_zh: ③ 领涨持续性
+    #   name_en: streak_vs_benchmark
+    #   intro: 板块连续跑赢基准（市场基准日收益）天数，正整数。
+    #   desc: 逐日比较板块与基准收益，连续为正计数。
+    #   code: streak_vs_benchmark(board_closes, benchmark_closes) L132
+    # - id: A4
+    #   name_zh: ④ 领先性三档判据
+    #   name_en: classify_lead_tier
+    #   intro: RS 分位 ≥0.8 且 streak ≥3 → LEAD（成分股跟随预期）；分位 ≥0.6 → WATCH；其余 NONE。双门防一日游板块误报。
+    #   desc: RS_LEAD_MIN=0.8/RS_WATCH_MIN=0.6/STREAK_LEAD_MIN=3。
+    #   code: classify_lead_tier(rs_rank_pct, streak) L110
+    # 层: 输出
+    # - id: O1
+    #   name: SectorRotationSnapshot / BoardRotationCriterion
+    #   fields: frozen dataclass（rs_rank_pct/streak/lead_tier/notes 逐板块）
+    #   code: build_sector_rotation_snapshot L149
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A1 --> A3
+    # I2 --> A3
+    # A2 --> A4
+    # A3 --> A4
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1

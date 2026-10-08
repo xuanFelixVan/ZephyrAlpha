@@ -1,0 +1,55 @@
+# ALGO_FLOW 外部真源——tick_microstructure_criterion（_domain_signal 域，真源 src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.source_line.tick_microstructure_criterion
+source_of_truth: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: tick 成交流序列
+    #   fields: symbol: str; ticks: Sequence[Mapping]（DS-001 口径：price/volume/side/timestamp）
+    #   code: build_from_ticks(symbol, ticks)（调用方注入零 IO，按时间升序）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 序列校验与归一
+    #   name_en: validate_and_normalize
+    #   intro: 乱序重排；side 归一 B/S（兼容 buy/sell/1/0/-1）；单笔缺陷跳过记 notes；<2 笔 fail-closed。
+    #   desc: TickMicroInputError（空/长度<2/NaN/非正价/非正量/方向不可判）；记录级缺陷不整体 fail。
+    #   code: build_from_ticks L214-260
+    # - id: A2
+    #   name_zh: ② 主动性买卖不平衡
+    #   name_en: order_flow_imbalance
+    #   intro: imbalance=(ΣV_buy−ΣV_sell)/ΣV_all ∈ [-1,1]；五档阈值 ±0.10/±0.25（初拟待标定）。
+    #   desc: STRONG_BUY/BUY/NEUTRAL/SELL/STRONG_SELL；classify_imbalance_tier L106。
+    #   code: classify_imbalance_tier(imbalance)
+    # - id: A3
+    #   name_zh: ③ 冲击成本代理
+    #   name_en: kyle_lambda_proxy
+    #   intro: impact_coef=Σ|Δprice|/Σvolume（Kyle-λ 简化，值越大流动性越薄）。
+    #   desc: 逐笔价差绝对值求和除以总量，纯标量代理。
+    #   code: build_from_ticks 内 impact_coef 累计
+    # - id: A4
+    #   name_zh: ④ 次日方向判据
+    #   name_en: direction_lean
+    #   intro: 不平衡档与尾段动量（末 10% 笔数、最少 5 笔净方向）同向→long/short；背离→flat 不编方向。
+    #   desc: TAIL_FRACTION=0.10/TAIL_MIN_TICKS=5；direction_lean_of(tier, tail_bullish) L119。
+    #   code: direction_lean_of(imbalance_tier, tail_bullish)
+    # 层: 输出
+    # - id: O1
+    #   name: TickMicroCriterion
+    #   fields: frozen dataclass（imbalance/tier/impact_coef/tail_bullish/direction_lean/notes）
+    #   code: build_tick_micro_criterion L133 / build_from_ticks L214
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A1 --> A3
+    # A1 --> A4
+    # A2 --> A4
+    # A2 --> O1
+    # A3 --> O1
+    # A4 --> O1

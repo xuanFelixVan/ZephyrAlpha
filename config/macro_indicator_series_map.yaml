@@ -1,0 +1,260 @@
+# [A_config] module_id=MOD-REGIME-MAC | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# ============================================================================
+# 宏观指标 ID ↔ 数据序列码映射表（R1 处方件，NB1-B5 复活车道 2026-09-30）
+# 方向真源: docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml（REG-MAC-001，指标定义 SSoT）
+# 消费真源: src/zephyr/regime/features/macro_regime_sensor.py（TDM-E-L1-S0 真消费模块，唯一读者）
+# 数据通道: c1_market.macro_data（现值表，TableRegistry=market_macro_data）
+#           c1_market.macro_data_vintage（PIT 存证，zephyr.data.macro_vintage.PIT_LATEST_SQL）
+# ============================================================================
+# 本表是"翻译层"铁律载体（宪法 §RULE-REGISTRY / NB1-B5 R1）：消费侧禁散落硬编码序列码，
+#   一律经 macro_regime_sensor.load_series_map() 读取本表解析。
+# 字段：
+#   source        数据源通道（akshare/fred/eia/worldbank；=macro_data.data_source 列值域）
+#   series_code   macro_data.indicator_name 精确值（采集腿产出名，改采集腿须同步本表）
+#   series_role   primary=组内主序列 | aux=派生辅助序列（derive_scissors=M1-M2剪刀差）
+#   unit          序列单位（与 macro_data.unit 对齐：% / 指数 / 亿元 / 人民币/美元 / 千人）
+#   transform     取数后变换：level=直接用 | yoy=滚动12期和同比（流量类）| diff=一阶差分
+#   direction     信号方向：positive=高分位=支撑 | inverse=高分位=压制 | neutral=背景变量不参与方向打分
+#   seasonal_adjusted  上游是否季调（中国官方月度多为未季调，回测解读需自剔春节扰动）
+#   status        wired=序列在库且已验证 | missing=序列缺（采集腿缺位，让路登记见 reliability_note）
+#   freshness     本车道 2026-09-30 CH 实测核验快照（rows/last_obs；仅核验留痕，禁作运行时判据）
+# 治理：
+#   1. 新增/改映射 MUST 与采集腿产出名同批核对（macro_data.indicator_name 为唯一对齐键）。
+#   2. missing 条目不删除——序列落地后改 status=wired 并回填 freshness（转正走 safe_write_text CAS）。
+#   3. PIT 语义：as_of 回测取数走 vintage 通道（pub_ts<=as_of），现值读数仅限盘前 live 判定面。
+# ============================================================================
+
+ttl: permanent
+schema_version: '1.0'
+registry_id: MAP-MAC-SERIES-001
+name: Macro Indicator Series Map
+name_zh: 宏观指标序列映射表
+description: >-
+  MAC-* 指标 ID 到 c1_market.macro_data 序列码的唯一翻译层（R1 处方件）。
+  消费唯一入口=macro_regime_sensor.load_series_map；本表不含指标定义语义
+  （发布纪律/市场影响等定义语义归 REG-MAC-001）。
+owner: MOD-REGIME-MAC
+version: 1.0.0
+created: '2026-09-30'
+last_updated: '2026-09-30'
+unique_key: [indicator_id]
+entry_count: 16
+
+mappings:
+  # ---- CN 物价 ----
+  - indicator_id: MAC-CN-001
+    source: akshare
+    series_code: "全国-同比增长"
+    series_role: primary
+    unit: "%"
+    transform: level
+    direction: neutral
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 357, last_obs: '2026-08-31', verified: '2026-09-30'}
+
+  - indicator_id: MAC-CN-002
+    source: akshare
+    series_code: ""
+    series_role: primary
+    unit: "%"
+    transform: level
+    direction: neutral
+    seasonal_adjusted: false
+    status: missing
+    reliability_note: >-
+      PPI 序列未采集：akshare macro_china_ppi 未挂 _fetch_macro_data job。
+      akshare_provider.py=st-zc9-lane-d 领地（夜战避让图），本车道让路登记未动其文件；
+      后继班次补 job 后（产出名列名须回填 series_code）本条改 status=wired。
+
+  # ---- CN 景气 ----
+  - indicator_id: MAC-CN-003
+    source: akshare
+    series_code: "制造业-指数"
+    series_role: primary
+    unit: "指数"
+    transform: level
+    direction: positive
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 366, last_obs: '2026-09-30', verified: '2026-09-30'}
+    reliability_note: 官方制造业 PMI 指数（荣枯线 50 上下解读，定义语义归注册表）
+
+  - indicator_id: MAC-CN-004
+    source: akshare
+    series_code: "GDP_同比"
+    series_role: primary
+    unit: "%"
+    transform: level
+    direction: neutral
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 159, last_obs: '2026-06-30', verified: '2026-09-30'}
+
+  # ---- CN 货币信贷 ----
+  - indicator_id: MAC-CN-005
+    source: akshare
+    series_code: "社会融资规模增量"
+    series_role: primary
+    unit: "亿元"
+    transform: yoy
+    direction: positive
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 208, last_obs: '2026-04-30', verified: '2026-09-30'}
+    reliability_note: >-
+      源端截断警示：本车道 2026-09-30 13:41 UTC 实测采集腿仍成功写入（ingest_ts 当日），
+      但 akshare 上游 macro_china_shrzgm 仅供数至 2026-04——源端变更非我方腿断，
+      已如实登记；yoy 变换=滚动12期和同比，对截断尾月自动缺值降级。
+
+  - indicator_id: MAC-CN-006
+    source: akshare
+    series_code: "货币和准货币(M2)-同比增长"
+    series_role: primary
+    unit: "%"
+    transform: level
+    direction: positive
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 371, last_obs: '2026-08-31', verified: '2026-09-30'}
+    aux_series:
+      - series_code: "货币(M1)-同比增长"
+        series_role: aux
+        derive: derive_scissors   # M1-M2 剪刀差=资金活化（信用脉冲前瞻，卖方主流框架）
+        unit: "%"
+        transform: level
+        direction: positive
+        status: wired
+        freshness: {rows: 361, last_obs: '2026-08-31', verified: '2026-09-30'}
+
+  - indicator_id: MAC-CN-007
+    source: akshare
+    series_code: "LPR_1年"
+    series_role: primary
+    unit: "%"
+    transform: diff
+    direction: inverse   # 降息（diff<0）=宽松=支撑；map 到组内取反号分位
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 98, last_obs: '2026-09-20', verified: '2026-09-30'}
+
+  - indicator_id: MAC-CN-008
+    source: akshare
+    series_code: ""
+    series_role: primary
+    unit: "%"
+    transform: diff
+    direction: inverse
+    seasonal_adjusted: false
+    status: missing
+    reliability_note: >-
+      MLF 操作序列未采集（akshare 无现成 job；2025 起改月末数量招标，语义弱化为 OMO 配角）。
+      TDM-E-L1-S0 挂载 8 条中唯一缺数据条目——传感件按缺员降权处理，不阻断组打分。
+      补采集腿同 MAC-CN-002 让路登记（akshare_provider.py=lane-d 领地）。
+
+  - indicator_id: MAC-CN-009
+    source: akshare
+    series_code: "国债_10年"
+    series_role: primary
+    unit: "%"
+    transform: level
+    direction: inverse   # 利率下行=估值分母友好；极低位衰退警示另册，本组只取方向
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 4209, last_obs: '2026-09-30', verified: '2026-09-30'}
+
+  # ---- CN 外部 ----
+  - indicator_id: MAC-CN-010
+    source: akshare
+    series_code: ""
+    series_role: primary
+    unit: "亿美元"
+    transform: level
+    direction: neutral
+    seasonal_adjusted: false
+    status: missing
+    reliability_note: >-
+      贸易差额序列未采集（akshare macro_china_trade_balance 未挂 job）。
+      同 MAC-CN-002 让路登记；海关 1-2 月合并发布的春节扰动在注册表 reliability_note。
+
+  - indicator_id: MAC-CN-011
+    source: fred
+    series_code: "FRED_USDCNY"
+    series_role: primary
+    unit: "人民币/美元"
+    transform: level
+    direction: inverse   # USDCNY 上行=贬值压力=北向流出压力
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 1273, last_obs: '2026-09-25', verified: '2026-09-30'}
+    reliability_note: FRED DEXCHUS（R4 处方美系经既有 macro_fred 腿已全覆盖，本车道复用未另立管线）
+
+  # ---- US（R4：既有 FRED 腿 21 序列在产，2026-09-30 实测新鲜） ----
+  - indicator_id: MAC-US-001
+    source: fred
+    series_code: "FRED_FEDFUNDS_US"
+    series_role: primary
+    unit: "%"
+    transform: diff
+    direction: inverse   # 加息（diff>0）=全球流动性收紧=压制
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 60, last_obs: '2026-07-01', verified: '2026-09-30'}
+    reliability_note: FEDFUNDS 月频；FOMC 决议事件语义归注册表/EVT-MACRO-001，本表只落数值腿
+
+  - indicator_id: MAC-US-002
+    source: fred
+    series_code: "FRED_DGS10_US"
+    series_role: primary
+    unit: "%"
+    transform: level
+    direction: inverse
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 1277, last_obs: '2026-09-28', verified: '2026-09-30'}
+    reliability_note: 备胎序列=akshare"美国国债收益率10年"（同表更鲜至 09-30）；主用 FRED 保口径连续
+
+  - indicator_id: MAC-US-003
+    source: fred
+    series_code: "FRED_PAYEMS_US"
+    series_role: primary
+    unit: "千人"
+    transform: yoy
+    direction: positive
+    seasonal_adjusted: true
+    status: wired
+    freshness: {rows: 60, last_obs: '2026-07-01', verified: '2026-09-30'}
+    reliability_note: PAYEMS 为季调序列（唯一年化口径，yoy 变换后解读）；修订频繁→vintage 通道回测
+
+  - indicator_id: MAC-US-004
+    source: fred
+    series_code: "FRED_VIX"
+    series_role: primary
+    unit: "指数"
+    transform: level
+    direction: inverse   # VIX 高分位=全球避险=压制（注册表 regime_valid=[panic] 呼应）
+    seasonal_adjusted: false
+    status: wired
+    freshness: {rows: 1316, last_obs: '2026-09-28', verified: '2026-09-30'}
+
+  # ---- CN 监控组（meta） ----
+  - indicator_id: MAC-CN-016
+    source: registry_meta
+    series_code: ""
+    series_role: meta
+    unit: ""
+    transform: level
+    direction: neutral
+    seasonal_adjusted: false
+    status: wired
+    reliability_note: >-
+      监控指标组=注册表 meta 条目（F6.24-F6.27 数据采集清单口径），无数值序列。
+      组件=本表其余 CN 条目+补齐后 CN-002/008/010；本条在传感件中不参与打分。
+
+# 消费分组与权重（组声明真源=本段；传感件运行时读取，代码 GROUPS/GROUP_WEIGHTS 仅为映射表未声明时的兜底缺省）
+groups:
+  A_monetary: [MAC-CN-007, MAC-CN-008, MAC-CN-009, MAC-US-001]        # 货币（利率与政策利率方向）
+  B_liquidity_credit: [MAC-CN-005, MAC-CN-006]                        # 流动性信用（社融+M2/M1 剪刀差）
+  C_overseas: [MAC-CN-011, MAC-US-002, MAC-US-004]                    # 海外（汇率+美债+风险偏好）
+  D_growth_policy: [MAC-CN-001, MAC-CN-002, MAC-CN-003, MAC-CN-004]   # 增长物价（GDP/PMI/CPI/PPI）
+weights: {A_monetary: 0.30, B_liquidity_credit: 0.30, C_overseas: 0.20, D_growth_policy: 0.20}
