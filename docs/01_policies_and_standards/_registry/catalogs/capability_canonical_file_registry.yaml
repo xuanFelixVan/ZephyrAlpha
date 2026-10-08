@@ -64643,6 +64643,66 @@ creation_tokens:
   created_by: st-deadcure-restore-chief
   capability: deadcure-campaign
   merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/03_modules/MOD-SELL-020/blueprint.md
+  token: deadcure-campaign-blueprint-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/05_tests_restore_manifest.yaml
+  token: deadcure-campaign-05-tests-restore-manifest-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/06_f1_ruler_blob_sources.yaml
+  token: deadcure-campaign-06-f1-ruler-blob-sources-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/07_residual_bags_index.yaml
+  token: deadcure-campaign-07-residual-bags-index-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/08_hot_registry_eviction_evidence.md
+  token: deadcure-campaign-08-hot-registry-eviction-evidence-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/09_handoff_laneF1b.md
+  token: deadcure-campaign-09-handoff-laneF1b-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/10_owner_menu_deadcure40.md
+  token: deadcure-campaign-10-owner-menu-deadcure40-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/deadcure_campaign/99_delivery.md
+  token: deadcure-campaign-99-delivery-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/final_delivery_campaign/cleanup_manifest_20260930.md
+  token: deadcure-campaign-cleanup-manifest-20260930-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/handoff_ownscope_expansion_m2.md
+  token: deadcure-campaign-handoff-ownscope-expansion-m2-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/night_sweep/99_nightsweep_final_report.md
+  token: deadcure-campaign-99-nightsweep-final-report-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
+- file: docs/_working/night_sweep/cns_closeout_ledger.md
+  token: deadcure-campaign-cns-closeout-ledger-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案落地批：复活原战役未落地台账/交割登记册/呈批菜单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生（裁定#375 四判据）"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
