@@ -60,52 +60,7 @@ sit_out_list 禁做清单/kill_switch 熔断）合成收拢为 c1_backtest.decis
     regime→六段映射已切法定真源（2026-09-25 附录C 六步之第 3 步，r4/r2/r1 三键行为变化
     由对照测试快照钉住）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 业务日
-#   fields: day（业务日，缺省=交易日历旁证最近交易日）
-#   code: run_daily_decision(day)
-# - id: I2
-#   name: 一闸快照
-#   fields: daily_gate_snapshot（前置闸状态，D1-D7 判定门输入）
-#   code: DailyGateSnapshot
-# - id: I3
-#   name: 持仓与市场状态
-#   fields: 持仓行/regime 六段（DB 只读，resolve_reader 注入）
-#   code: resolve_reader
-# - id: I4
-#   name: TDM 配置查表
-#   fields: trading_decision_map.yaml（只读）
-#   code: PyYAML load
-# 层: 校验
-# - id: V1
-#   name: marker 幂等拍板
-#   fields: 业务日级 marker 先拍板先占（S6）；同日重唤醒跳过
-#   code: marker 段
-# 层: 算法
-# - id: A1
-#   name: 快照落库
-#   intro: decision_daily 快照只增不改（重拍=新 run_id 追加）
-#   code: 快照写入段
-# - id: A2
-#   name: D1-D7 判定门收敛
-#   intro: 七门全收敛=禁新开仓/维持现状；任一门按其语义处置
-#   code: D1-D7 判定段
-# - id: A3
-#   name: 合成拍板
-#   intro: 只读齐→合成拍板→落库分发（调度器不是策略，零新增判断逻辑）
-#   code: 合成拍板段
-# 层: 输出
-# - id: O1
-#   name: 落库分发
-#   fields: decision_daily 行+pipeline_events 播报+warroom 读侧
-#   code: 写通道段
-# 层: 断点
-# - id: X1
-#   name: 自身异常 fail-open
-#   intro: 不留半行（D7）；保命件横切独立不削弱
-#   code: 异常处置段
+# [ALGO_FLOW] external: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_decision_orchestrator.yaml
 """
 
 from __future__ import annotations

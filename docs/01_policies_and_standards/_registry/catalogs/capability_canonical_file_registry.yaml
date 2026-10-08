@@ -61734,6 +61734,7 @@ creation_tokens:
   token: srcline1-capital_flow_direction_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  no_mount_reason: MOD-SIG-159 原班 token（st-fg-srcline1-20261005）与 ff2 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂（总裁终裁批）
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/source_line/fundamental_pricing_lag_criterion.py
   token: srcline1-fundamental_pricing_lag_criterion-20261005
@@ -61754,6 +61755,7 @@ creation_tokens:
   token: srcline1-news_sentiment_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
+  no_mount_reason: MOD-SIG-160 原班 token（st-fg-srcline1-20261005）与 ff2 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂（总裁终裁批）
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/source_line/sector_rotation_criterion.py
   token: source-line-criterion-sector-rotation-20261006
@@ -64211,4 +64213,19 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_decision_orchestrator.yaml
+  token: ff2-ddo-algo-flow-external-20261008
+  capability: algo_flow_external
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
+- file: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  token: ff2-capital-flow-direction-criterion-20261008
+  capability: source_line_criterion
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A06 资金流，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
+- file: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  token: ff2-news-sentiment-criterion-20261008
+  capability: source_line_criterion
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A09 财经快讯情绪，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
 di_seam_exemptions: []
