@@ -6,6 +6,8 @@ language: zh
 status: active
 ---
 
+> [SUPERSEDED-BY-POINTER A-5/st-chiefc-20261009/2026-10-09 · 双真源收口] 本目录=旧真源（原数字后缀目录名，被 R5-DIGIT-SUFFIX 硬拦后已改名）：本件已由 docs/_working/chain_fullflow_closeout/mining_closeout_and_adjudication.md 收口（16 本中 13 本同名同字节、3 本仅文内自引用路径随改名差异；closeout 另含 8 本 ruling_*=超集，HEAD/案卷/注册表索引均指向 closeout）。本件自即日起仅作存档指针，内容不再更新。status: superseded | superseded_by: docs/_working/chain_fullflow_closeout/mining_closeout_and_adjudication.md | ttl: task_bound
+
 # 挖矿收口页（只作索引与合并裁定，细节以各案卷为准）
 
 - 作业性质：五路并行挖矿（M1-M5），全程只读；本域其余案卷 = D 队 `business_pipeline_skeleton.md` + 8 本 `lane_pipe_*.md`。

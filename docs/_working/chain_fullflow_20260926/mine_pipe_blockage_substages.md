@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+> [SUPERSEDED-BY-POINTER A-5/st-chiefc-20261009/2026-10-09 · 双真源收口] 本目录=旧真源（原数字后缀目录名，被 R5-DIGIT-SUFFIX 硬拦后已改名）：本件已由 docs/_working/chain_fullflow_closeout/mine_pipe_blockage_substages.md 收口（16 本中 13 本同名同字节、3 本仅文内自引用路径随改名差异；closeout 另含 8 本 ruling_*=超集，HEAD/案卷/注册表索引均指向 closeout）。本件自即日起仅作存档指针，内容不再更新。status: superseded | superseded_by: docs/_working/chain_fullflow_closeout/mine_pipe_blockage_substages.md | ttl: task_bound
+
 # M3 · 九条不通链路五段子环节拆解 + 假绿灯全量普查 + str⊶date 共因定位
 
 - 作业性质：全程只读（SELECT / 只读 SQLite / 纯函数内存复现 / 端口探针）；未施工、未 git 写、未重启任何服务。

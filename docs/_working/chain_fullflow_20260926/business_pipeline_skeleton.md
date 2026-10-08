@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+> [SUPERSEDED-BY-POINTER A-5/st-chiefc-20261009/2026-10-09 · 双真源收口] 本目录=旧真源（原数字后缀目录名，被 R5-DIGIT-SUFFIX 硬拦后已改名）：本件已由 docs/_working/chain_fullflow_closeout/business_pipeline_skeleton.md 收口（16 本中 13 本同名同字节、3 本仅文内自引用路径随改名差异；closeout 另含 8 本 ruling_*=超集，HEAD/案卷/注册表索引均指向 closeout）。本件自即日起仅作存档指针，内容不再更新。status: superseded | superseded_by: docs/_working/chain_fullflow_closeout/business_pipeline_skeleton.md | ttl: task_bound
+
 # D 队 · 业务链路广度普查 — 链路总表骨架
 
 - 普查日期：2026-09-26（上一交易日 = 2026-09-25 周五；表内 "09-24/09-25" 均为实测最新数据日）

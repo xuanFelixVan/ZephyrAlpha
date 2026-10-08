@@ -1,6 +1,8 @@
 ---
 ttl: task_bound
 ---
+
+> [SUPERSEDED-BY-POINTER A-5/st-chiefc-20261009/2026-10-09 · 双真源收口] 本目录=旧真源（原数字后缀目录名，被 R5-DIGIT-SUFFIX 硬拦后已改名）：本件已由 docs/_working/chain_fullflow_closeout/mine_guard_wiring_census.md 收口（16 本中 13 本同名同字节、3 本仅文内自引用路径随改名差异；closeout 另含 8 本 ruling_*=超集，HEAD/案卷/注册表索引均指向 closeout）。本件自即日起仅作存档指针，内容不再更新。status: superseded | superseded_by: docs/_working/chain_fullflow_closeout/mine_guard_wiring_census.md | ttl: task_bound
 # M5 广度普查案卷：「声称已防护」接线真实性总表（全量版）
 
 > 班次：全流通战役挖矿班 M5（只挖矿、只写案卷、不施工）。判据沿用上一班两问：**谁调它 + 它能否改变行为**。

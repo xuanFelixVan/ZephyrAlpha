@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+> [SUPERSEDED-BY-POINTER A-5/st-chiefc-20261009/2026-10-09 · 双真源收口] 本目录=旧真源（原数字后缀目录名，被 R5-DIGIT-SUFFIX 硬拦后已改名）：本件已由 docs/_working/chain_fullflow_closeout/mine_queue_liveness_and_trigger_mass.md 收口（16 本中 13 本同名同字节、3 本仅文内自引用路径随改名差异；closeout 另含 8 本 ruling_*=超集，HEAD/案卷/注册表索引均指向 closeout）。本件自即日起仅作存档指针，内容不再更新。status: superseded | superseded_by: docs/_working/chain_fullflow_closeout/mine_queue_liveness_and_trigger_mass.md | ttl: task_bound
+
 # 案卷 M4 — 提交队列活性 / 饿死 / 触发面臃肿 家族（只挖矿，不施工）
 
 > 取数时刻（UTC）：2026-09-25T18:23Z–18:4xZ 窗口（`date -u` 实测三点：叙述 ts ≤ 文件 mtime ≤ 收尾 `date`）。本地=UTC+8。统计脚本与中间产物在 `.runtime/tmp/mine_dossiers_20260926/`。全程只读：未 drain、未 requeue、未动主区 index、未提交。本卷所有计数=实测读数+取数命令，勿当常数引用。

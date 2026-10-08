@@ -2,6 +2,8 @@
 ttl: task_bound
 ---
 
+> [SUPERSEDED-BY-POINTER A-5/st-chiefc-20261009/2026-10-09 · 双真源收口] 本目录=旧真源（原数字后缀目录名，被 R5-DIGIT-SUFFIX 硬拦后已改名）：本件已由 docs/_working/chain_fullflow_closeout/mine_door_registration_completion.md 收口（16 本中 13 本同名同字节、3 本仅文内自引用路径随改名差异；closeout 另含 8 本 ruling_*=超集，HEAD/案卷/注册表索引均指向 closeout）。本件自即日起仅作存档指针，内容不再更新。status: superseded | superseded_by: docs/_working/chain_fullflow_closeout/mine_door_registration_completion.md | ttl: task_bound
+
 # 案卷 · 提交链死信「门禁/登记拒绝」族挖矿（M1，只挖不干）
 
 > 战役=全流通战役 20260926 ｜ 母节点=死信中的门禁/登记类拒绝 ｜ 班别=M1 挖矿班（只读，零施工）。
