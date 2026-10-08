@@ -79,3 +79,9 @@ completes_when: fullscore_night 战役文档随 F8 家族处置批B 归档
 **q-0023 落地后待办**：①sim_daily_runner.py 的 e4_replay+replay_one 加"重放腿状态隔离"补丁（state_dir 缺省=_BRIDGE_RISK_STATE_DIR/"replay"，防历史日倒退 ZA-RK-0060 打炸持久机+防重放污染实盘六态机——循环检查第二轮 2 红的根因，测试 test_replay_one_* 两例会转绿）②重跑循环检查第二轮至连续两次零③红蓝对抗④staging 收编件（.runtime/sessions/st-fullscore-20260930/staging/{06_gpu_compute,scripts_backtest}）跟册车⑤收尾清理（_c4_engine.py.tmp.18376 确认无害后删；worktree 大扫除 dry-run）。
 **今夜已确认落地 HEAD 全表**：867d821d45(USDCNH)/3d0c5fcdf0(mount 修复)/111e0226+6ba40236d8(勘误)/8011104d(GPU 三件)/c0306f6a(密钥)/2188763b(风控)/c4c7960bb8(GPU L2 全批 6.8-15.4x)/75ac9432(ART_ROOT)/23dfabb250(W2 测试隔离+CI)/b7cf0206(前端四件)/13eaba13ca+a03280dc6b(他队携我方 token 进 HEAD)。
 **IBT v2 终局**：四窗跑完，FAIL 如实裁决（HOLDOUT 净夏普 -0.938/换手 20.85x 超标），完整性门 PASS 反前视全绿——链路真通、池中 alpha 未过终考，批 D 选择窗结构混杂已呈 Owner。
+
+## 十一、战役收口（2026-10-08）
+**收尾清欠全部完成**：六测试恢复/重建（③④⑤⑥从 git 历史删除面/悬垂 blob 捞回，①②按现行契约重建）+重放腿状态隔离补丁（aef7b1e509）+成本批（07663e42b8）全部落 HEAD；直投哈希链 aef7b1e509/d69125b1de/f3edb35614/ae63d6cd1f/07663e42b8；q-0025/26/28/29/30 全 done 零死袋。
+**循环检查**：R1=142 passed+1xpassed 0 failed；R2=142+1xpassed 0 failed——连续两次零，宪法 RULE-EIGHTEEN 通过。
+**新对话交接件**：docs/_working/2026-10-08-handoff-fullscore-night.md（§0 一键复制指令+§5 裁定表+§6 后续清单）。
+**后续任务序**：A=批 D 选择窗重做+复考准备；B=F4 做T语料画像；C=W3-5 插座；D=worktree 大扫除 dry-run；E=coverage 翻转真门禁+xfail 清偿；F=v3 复考。
