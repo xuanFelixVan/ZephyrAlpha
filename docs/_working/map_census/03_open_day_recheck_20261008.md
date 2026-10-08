@@ -33,7 +33,7 @@ owner: st-fig13-followup-20261006
 - **09:35 拍实测（抓真缺陷）**：任务触发（LastRun=10-08 09:35:01）但 **Result=4294770688 且 log 不存在**——在册任务 Action 指向 `scripts\tasks\run\run_sim_bridge_execute_daily.ps1`（**不存在**，scripts 拆簇失准同款病，与 st-t3c-ops 车道 10-08 定性的"触发链断"同类）；而注册器源（HEAD scripts/tasks/register/register_sim_bridge_execute_task.ps1:29）指向的正确路径 `scripts\run_sim_bridge_execute_daily.ps1` 实存。
 - **处置（09:47，线A 自裁）**：重跑注册器（Register -Force 幂等，state preserved）→ Action 正位实查 ARGS=正确路径、Next=10-08 13:05。**13:05 拍=修正后首个真交易日拍**，取证后回填。
 - **13:05 拍实测（修正后首个真交易日拍）：PASS**——LastRun=10-08 13:05:00、Result=0；`.runtime/logs/sim_bridge_execute.log`（真身路径，任务文本所写 logs/ 系笔误）非空留痕 11,964 字节，当日行="SKIP: XtItClient not running -- bridge terminal offline"（诚实跳单：QMT 桥终端离线，与 st-t3c-ops 车道同日定性互证）；假日 SKIP 三连（10-01/02/03 各两拍"non-trading day"）=交易日闸负向验证再证。产物行=无（终端离线诚实不产单）。
-- D13-45 回写：_待回填（A2 复核批，随 15:40 证据一并）_
+- D13-45 回写：**已落地**（线A·A2 复核批 HEAD 6920658910：ev 三行 10-08 实测证据+obs 升✅候选注记；状态保持🔨，状态升级待骨架 §2 行同步另批）
 
 ## A3 · 哨兵闸实战 + 双源比对（09:40 / 00:15 分窗回填）
 
