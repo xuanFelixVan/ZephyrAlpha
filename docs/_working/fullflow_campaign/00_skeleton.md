@@ -35,7 +35,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 
 | 环节簿 | 状态 | 六向齐 | 自审闸 | 备注 |
 |---|---|---|---|---|
-| 01_data_supply | **已挖** | ✓（7 节齐） | **黄** | 15 入口实测（10绿4黄1红）；12 缺口含 3 红：**判重正门 check_tick_duplication 查询路径带伤（修前冻结一切 tick 删重）**/备份可还原性未证/研报停更；DataScheduler=Running 实证但 production 验证 10/43 |
+| 01_data_supply | **已挖** | ✓（7 节齐） | **黄** | 15 入口实测（10绿4黄1红）；12 缺口原含 3 红，其中 **判重正门 check_tick_duplication 查询路径带伤已于 10-08 修复闭合**（三处手术 10-05/07 在码+复跑实弹 --month 202610 三腿全通 exit 0+守卫测试 11/11 绿，图12 DSC-GAP-DUPGUARD 已落改判注记，删重冻结令解除）；余 2 红=备份可还原性未证/研报停更；DataScheduler=Running 实证但 production 验证 10/43 |
 | 02_signal_tdm | **已挖** | ✓（7 节齐） | 黄 | TDMAP-001 实测 186 节点/261 边/188 挂载（挂图手术已在 dev 二次确认）；loader+run_checks 全过（393 warn=63 红节点占位）；signal_ashare 149/149 import 绿；**源线判据 4/6 已落 dev（acure 车道落地中，A06/A09 不代修）**；吸收面卡点=592 策略 vs 10 候选 |
 | 03_backtest_exam | **已挖** | ✓（7 节齐） | **绿**（主链健康） | factory_grid/c4_batch_screen/f06_wfa/run_fexam --help 全过；引擎 import 12/12；四张 prereg 冻结卡在簿；C4Exam+F06Grid 排程 Ready 有 10 月实跑日志；GPU 路由闭环。1 红=sector_prereg_exam_runner 无 --help 守卫（挖矿代理自误触开考已当场还原+核验无他队损失）+4 黄（model_exam 链三重断/ps1 旧路径/T3a-b owner_ruling_id 空/成本门 v1v2 双轨） |
 | 04_risk_exec | **已挖+G7 已修** | ✓（7 节齐） | 黄→修复中 | ~~红洞 G7~~ **已修**（裁定#429 考古定谳 0.30 为 Owner 签发真值，代码 0.60→0.30 已入袋守卫 PASS）；G1 密钥轮换逾期仍 open（Owner 运维动作）；黄×5（熔断影子陈旧/regime 无日序/回撤无影子/daily_loss_limit 未配/模拟盘任务 DISABLED）；ex_sor 24 模块+风控 8 模块 import 全绿 |

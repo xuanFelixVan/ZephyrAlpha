@@ -1225,7 +1225,7 @@ _NODES: list[dict[str, Any]] = [
                 "symptom": "tool_broken",
                 "measured_on": "2026-09-24",
                 "pointer": f"{BOOK_DIR}/02_入库单通道与幂等判重.md §3 内-5",
-                "note_zh": "见 DSC-GAP-DUPGUARD——聚合对照腿一跑必红且红被吞成 0",
+                "note_zh": "见 DSC-GAP-DUPGUARD——聚合对照腿一跑必红且红被吞成 0（已闭合改判 2026-10-08：三处手术落地+复跑实弹三腿全通，见 DSC-GAP-DUPGUARD 改判注记）",
             }
         ],
         evidence=[f"{BOOK_DIR}/02_入库单通道与幂等判重.md §3（引擎/排序键/分区键实测＋Code 42 复现）"],
@@ -1234,9 +1234,17 @@ _NODES: list[dict[str, Any]] = [
         "DSC-GAP-DUPGUARD",
         _I,
         "gap",
-        "缺口：判重器聚合对照腿不可用（准入闸半假绿）",
+        "缺口（已闭合）：判重器查询路径带伤——三处手术 10-05/07 落地+10-08 复跑实弹三腿全通（留档防再发）",
         "被判重器放行的无重复结论，今天能不能信？",
-        note_zh="RULE-DATA-OPS 指定的判重唯一正门自身坏着：不得以工具跑过了当作删数据的许可。",
+        note_zh=(
+            "事发：RULE-DATA-OPS 指定的判重唯一正门自身坏着，不得以工具跑过了当作删数据的许可。"
+            "改判（2026-10-08，st-fullflow2 复跑）：查询路径已闭合——三处手术（uniqExact tuple 单参包装消 Code 42/"
+            "硬编码 src 改仓根推算消跨仓不同源/trade_date Date 型 WHERE 消 Code 43）+严格通道 ch_reader.query_rows "
+            "fail-visible（失败点名腿 exit 2，禁吞 0 行假绿）均已在码；10-08 实弹复跑 --month 202610 三腿全通"
+            "（total=12,911,474=uniq_full_field、dup_group=0、exit 0），守卫测试 11/11 绿。"
+            "格留档防再发（禁删格），复用判据=改后脚本+tests/gov/governance/scripts_governance/"
+            "test_check_tick_duplication.py；--help 绿≠查询绿的教训固化在 01_data_supply.md 入口面。"
+        ),
         build_status="pending",
         wiring_status="wired_manual",
         slot_source="manual",
@@ -1261,14 +1269,14 @@ _NODES: list[dict[str, Any]] = [
                 "symptom": "false_success",
                 "measured_on": "2026-09-24",
                 "pointer": f"{BOOK_DIR}/02_入库单通道与幂等判重.md §3 内-5",
-                "note_zh": "_SQL_TOTAL_ROW 平铺 14 列 × tick_data 4 个 Nullable 列 → Code 42 恒抛 → 空串 → 解析成 0 行 → 报告印总行数 0/去重 0/差 0，exit 码只由真重复腿决定＝半假绿",
+                "note_zh": "_SQL_TOTAL_ROW 平铺 14 列 × tick_data 4 个 Nullable 列 → Code 42 恒抛 → 空串 → 解析成 0 行 → 报告印总行数 0/去重 0/差 0，exit 码只由真重复腿决定＝半假绿（本条已闭合 2026-10-08，见 DSC-GAP-DUPGUARD 改判注记）",
             },
             {
                 "anchor": "file:scripts/governance/data_quality/check_tick_duplication.py:125",
                 "symptom": "hardcoded_main_repo",
                 "measured_on": "2026-09-24",
                 "pointer": f"{BOOK_DIR}/02_入库单通道与幂等判重.md §4 溢-5(b)",
-                "note_zh": "脚本硬编码主区 src 并插 sys.path → 在 worktree 里跑会加载主区代码，判重结论与被审仓不同源",
+                "note_zh": "脚本硬编码主区 src 并插 sys.path → 在 worktree 里跑会加载主区代码，判重结论与被审仓不同源（本条已闭合 2026-10-08，见 DSC-GAP-DUPGUARD 改判注记）",
             },
         ],
         evidence=[f"{BOOK_DIR}/02_入库单通道与幂等判重.md §3 内-5（Code 42 原样复跑复现＋行号级因果链）"],

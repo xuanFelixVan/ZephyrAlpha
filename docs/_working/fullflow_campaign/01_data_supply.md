@@ -37,7 +37,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 | 7 | `python -m zephyr.data.consensus_crosscheck --help` | 绿 | 一致预期每日双向验证（--selftest 火警演习） |
 | 8 | `python -m zephyr.data.macro_vintage --help` | 绿 | PIT 宏观工具面（--selftest/--print-ddl/--pit-sql AS_OF） |
 | 9 | `python -m zephyr.data.ch_parts_monitor` | 绿 | 实跑返回"OK: 无表 active parts 超阈值(30)"——0 字节部件监视器在岗 |
-| 10 | `scripts/governance/data_quality/check_tick_duplication.py --help` | 绿 | RULE-DATA-OPS 判重正门，--month/--market-type/--json（注意：图12 缺口台账记其查询路径 09-25 坏着，--help 绿≠查询绿） |
+| 10 | `scripts/governance/data_quality/check_tick_duplication.py --month 202610` | 绿（实弹） | RULE-DATA-OPS 判重正门，--month/--market-type/--json。查询路径 2026-10-08 实弹复跑三腿全通：total=12,911,474=uniq_full_field、dup_group=0、exit 0（三处手术 10-05/07 已落：tuple 包装消 Code 42/src 路径推算/Date 型 WHERE 消 Code 43；严格通道 fail-visible）；守卫测试 11/11 绿。教训留档：--help 绿≠查询绿 |
 | 11 | `python -m zephyr.data.backfill_checker --help` | 红 | **无 argparse，--help 被忽略直接开跑 L10 周末补下载**并连上 CH writer——本次实测误触 25 秒后 timeout 截断；事后核验 scheduler.log（止于昨日 15:50）与 local_fallback/_manifest.jsonl（01:37，早于误触）均无本次写入痕迹 |
 | 12 | `python -m zephyr.data.supply_sentinel --help` | 黄 | 设计上无 CLI 入口（源码自注"运维一次性巡检"），静默退出 0；由调度槽分派 |
 | 13 | `python -m zephyr.data.{integrity_checker,source_health_check,storage_tiering,data_service}` | 黄 | 均无 --help 输出（库模块无 argparse 主入口），只能被调度器/上层调用 |
@@ -72,7 +72,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 
 ## 六、缺口面（每条：[色] 描述 + 处方）
 
-1. [红] **判重正门带伤在岗**：图12 缺口台账（as_of=10-07）明记"RULE-DATA-OPS 指定的判重唯一正门自身坏着：不得以工具跑过了当作删数据的许可"——本次 --help 实测绿但查询路径未经 CH 实弹验证。处方：按 DSC 台账修复 check_tick_duplication 查询路径并留 fail-visible 复跑证据，修复前冻结一切 tick 删重操作。
+1. [绿→已闭合 2026-10-08] **判重正门查询路径已修复实证**：图12 缺口台账（as_of=10-07）记"判重唯一正门自身坏着"——其三处伤（`_SQL_TOTAL_ROW` 平铺 14 列撞 Nullable 聚合上限 Code 42 被吞成 0／硬编码主区 src 跨仓不同源／`trade_date` Date↔UInt32 比较恒抛 Code 43）已由 st-vm12v/12w 于 10-05/07 手术落地（tuple 单参包装+仓根推算+Date 型 WHERE+严格通道 query_rows fail-visible）。st-fullflow2 于 10-08 实弹复跑 `--month 202610`：三腿全通（total=12,911,474=uniq_full_field、dup_group=0、exit 0），守卫测试 tests/gov/governance/scripts_governance/test_check_tick_duplication.py 11/11 绿（fail-visible 腿已证明能红）。**tick 删重冻结令随之解除**——删重操作仍须走 RULE-DATA-OPS 三步验证，判重结论只认本工具全字段口径。台账面：图12 DSC-GAP-DUPGUARD 已落"已闭合"改判注记（禁删格留档）。
 2. [红] **备份可还原性未闭**：archive_manifest.jsonl 只证明"导出与删除发生过"，不证明副本今天可还原；图12 记 restore_drill 证据链未闭合（计划任务虽 Ready）。处方：跑一轮 ZEPHYR-RESTORE-DRILL 实弹还原并把还原证据写回 DSC-TERMINUS 案卷。
 3. [红] **研报明细停更**：09-25 定账 max(publish_date)=09-18 不涨，预期重建 max=09-14 仍落后上游（eastmoney 研报源）。处方：走 backfill_checker 定点回补前先修 eastmoney_news/研报 provider 抓取。
 4. [黄] **tushare 源断供在案**：scheduler.log 尾 ERROR news_tushare_incremental Provider 不可用；13 条 tushare 任务与 rss 新闻链受牵连。处方：speed-test 复测 tushare 配额/令牌，不可用则 akshare_alt 38 任务的备源切换路径顶上并登记 fallback 留痕。
@@ -88,7 +88,7 @@ completes_when: 全流通战役收官且最终交付报告落盘
 ## 七、自审闸
 
 **裁定：黄（通道在、主链在跑，但保险丝未全闭）。**
-一句版：数据供给链是全仓自动化程度最高的一段——23 源 275 任务 25 槽由 OS 级计划任务矩阵实跑（DataScheduler=Running 实证），CH 197 表、冷备/熔断/判重/哨兵四位一体在岗；但 production 验证面仅 10/43 节点，判重正门带伤、备份可还原性未证、tushare 断供三处保险未闭，按"production 必带 freshness_evidence"的铁律只能裁黄不能宣绿。
+一句版：数据供给链是全仓自动化程度最高的一段——23 源 275 任务 25 槽由 OS 级计划任务矩阵实跑（DataScheduler=Running 实证），CH 197 表、冷备/熔断/判重/哨兵四位一体在岗；判重正门查询路径已于 10-08 实弹复跑闭合（原三红之一转绿）；但 production 验证面仅 10/43 节点，备份可还原性未证、tushare 断供两处保险未闭，按"production 必带 freshness_evidence"的铁律只能裁黄不能宣绿。
 
 ---
 
