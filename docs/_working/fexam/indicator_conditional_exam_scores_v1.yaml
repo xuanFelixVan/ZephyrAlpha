@@ -1,0 +1,349 @@
+doc_type: fexam_indicator_conditional_scores
+version: v1
+generated_at_utc: '2026-10-08 05:33:11.974204+00:00'
+prereg_ref:
+  card: docs/_working/matrix_campaign/mining/cyc_conditional_prereg_v1.md
+  card_commit: dfcc8ec9548c6e827cacc7ee32e7c5f0a8d7d542
+  ruling: 裁定#489①
+baseline_used: B1
+baseline_ic_all: -0.051690700940678215
+family_size: 11
+exam_window:
+- '2025-10-09'
+- '2026-09-30'
+per_indicator:
+  IND-CYC-001:
+    strata:
+      D1:
+        n_days: 236.0
+        n_stockdays: 347445.0
+        mu_s: -0.037187
+      D2:
+        n_days: 236.0
+        n_stockdays: 580621.0
+        mu_s: -0.048843
+      D3:
+        n_days: 236.0
+        n_stockdays: 359690.0
+        mu_s: -0.072249
+    mu_all: -0.051691
+    gain: 0.020558
+    best_stratum: D3
+    pairs:
+    - a: D1
+      b: D2
+      n_days: 236.0
+      mean_d: 0.011656
+      t_hac: 1.227471
+      p_raw: 0.219646
+      p_adj: 1.0
+      degenerate: 0.0
+    - a: D1
+      b: D3
+      n_days: 236.0
+      mean_d: 0.035062
+      t_hac: 1.927008
+      p_raw: 0.053979
+      p_adj: 0.593766
+      degenerate: 0.0
+    - a: D2
+      b: D3
+      n_days: 236.0
+      mean_d: 0.023406
+      t_hac: 2.133055
+      p_raw: 0.03292
+      p_adj: 0.362122
+      degenerate: 0.0
+    verdict: fail
+  IND-CYC-002:
+    strata:
+      P1:
+        n_days: 236.0
+        n_stockdays: 323214.0
+        mu_s: -0.05277
+      P2:
+        n_days: 236.0
+        n_stockdays: 321438.0
+        mu_s: -0.048866
+      P3:
+        n_days: 236.0
+        n_stockdays: 323341.0
+        mu_s: -0.049924
+      P4:
+        n_days: 236.0
+        n_stockdays: 319763.0
+        mu_s: -0.055173
+    mu_all: -0.051691
+    gain: 0.003482
+    best_stratum: P4
+    pairs:
+    - a: P1
+      b: P2
+      n_days: 236.0
+      mean_d: -0.003904
+      t_hac: -1.050739
+      p_raw: 0.293378
+      p_adj: 1.0
+      degenerate: 0.0
+    - a: P1
+      b: P3
+      n_days: 236.0
+      mean_d: -0.002846
+      t_hac: -0.62179
+      p_raw: 0.53408
+      p_adj: 1.0
+      degenerate: 0.0
+    - a: P1
+      b: P4
+      n_days: 236.0
+      mean_d: 0.002403
+      t_hac: 0.618256
+      p_raw: 0.536407
+      p_adj: 1.0
+      degenerate: 0.0
+    - a: P2
+      b: P3
+      n_days: 236.0
+      mean_d: 0.001058
+      t_hac: 0.27127
+      p_raw: 0.786183
+      p_adj: 1.0
+      degenerate: 0.0
+    - a: P2
+      b: P4
+      n_days: 236.0
+      mean_d: 0.006307
+      t_hac: 1.975304
+      p_raw: 0.048234
+      p_adj: 0.53057
+      degenerate: 0.0
+    - a: P3
+      b: P4
+      n_days: 236.0
+      mean_d: 0.005249
+      t_hac: 1.193255
+      p_raw: 0.232769
+      p_adj: 1.0
+      degenerate: 0.0
+    verdict: fail
+  IND-CYC-004:
+    strata:
+      W0:
+        n_days: 236.0
+        n_stockdays: 643973.0
+        mu_s: -0.053038
+      W1:
+        n_days: 236.0
+        n_stockdays: 643783.0
+        mu_s: -0.050254
+    mu_all: -0.051691
+    gain: 0.001348
+    best_stratum: W0
+    pairs:
+    - a: W0
+      b: W1
+      n_days: 236.0
+      mean_d: -0.002784
+      t_hac: -1.009341
+      p_raw: 0.312811
+      p_adj: 1.0
+      degenerate: 0.0
+    verdict: fail
+  IND-CYC-005:
+    strata:
+      M0:
+        n_days: 236.0
+        n_stockdays: 750346.0
+        mu_s: -0.05095
+      M1:
+        n_days: 236.0
+        n_stockdays: 537410.0
+        mu_s: -0.052627
+    mu_all: -0.051691
+    gain: 0.000937
+    best_stratum: M1
+    pairs:
+    - a: M0
+      b: M1
+      n_days: 236.0
+      mean_d: 0.001677
+      t_hac: 0.390792
+      p_raw: 0.695951
+      p_adj: 1.0
+      degenerate: 0.0
+    verdict: fail
+family_verdict: fail
+ref_window_report:
+  window:
+  - '2024-10-08'
+  - '2025-09-30'
+  baseline_used: B1
+  baseline_ic_all: -0.082481
+  family_size: 11
+  family_verdict: pass
+  per_indicator:
+    IND-CYC-001:
+      strata:
+        D1:
+          n_days: 236.0
+          n_stockdays: 349412.0
+          mu_s: -0.056893
+        D2:
+          n_days: 244.0
+          n_stockdays: 603348.0
+          mu_s: -0.080143
+        D3:
+          n_days: 241.0
+          n_stockdays: 358048.0
+          mu_s: -0.122992
+      mu_all: -0.082481
+      gain: 0.040511
+      best_stratum: D3
+      pairs:
+      - a: D1
+        b: D2
+        n_days: 236.0
+        mean_d: 0.022743
+        t_hac: 3.54899
+        p_raw: 0.000387
+        p_adj: 0.004254
+        degenerate: 0.0
+      - a: D1
+        b: D3
+        n_days: 233.0
+        mean_d: 0.065363
+        t_hac: 5.48192
+        p_raw: 0.0
+        p_adj: 0.0
+        degenerate: 0.0
+      - a: D2
+        b: D3
+        n_days: 241.0
+        mean_d: 0.04119
+        t_hac: 4.676321
+        p_raw: 3.0e-06
+        p_adj: 3.2e-05
+        degenerate: 0.0
+      verdict: pass
+    IND-CYC-002:
+      strata:
+        P1:
+          n_days: 244.0
+          n_stockdays: 328662.0
+          mu_s: -0.081092
+        P2:
+          n_days: 244.0
+          n_stockdays: 326268.0
+          mu_s: -0.085616
+        P3:
+          n_days: 244.0
+          n_stockdays: 328368.0
+          mu_s: -0.079174
+        P4:
+          n_days: 244.0
+          n_stockdays: 327510.0
+          mu_s: -0.084969
+      mu_all: -0.082481
+      gain: 0.003135
+      best_stratum: P2
+      pairs:
+      - a: P1
+        b: P2
+        n_days: 244.0
+        mean_d: 0.004524
+        t_hac: 1.196148
+        p_raw: 0.231639
+        p_adj: 1.0
+        degenerate: 0.0
+      - a: P1
+        b: P3
+        n_days: 244.0
+        mean_d: -0.001918
+        t_hac: -0.604906
+        p_raw: 0.545242
+        p_adj: 1.0
+        degenerate: 0.0
+      - a: P1
+        b: P4
+        n_days: 244.0
+        mean_d: 0.003877
+        t_hac: 1.077459
+        p_raw: 0.281275
+        p_adj: 1.0
+        degenerate: 0.0
+      - a: P2
+        b: P3
+        n_days: 244.0
+        mean_d: -0.006442
+        t_hac: -1.684902
+        p_raw: 0.092007
+        p_adj: 1.0
+        degenerate: 0.0
+      - a: P2
+        b: P4
+        n_days: 244.0
+        mean_d: -0.000647
+        t_hac: -0.139961
+        p_raw: 0.888691
+        p_adj: 1.0
+        degenerate: 0.0
+      - a: P3
+        b: P4
+        n_days: 244.0
+        mean_d: 0.005795
+        t_hac: 1.351176
+        p_raw: 0.176639
+        p_adj: 1.0
+        degenerate: 0.0
+      verdict: fail
+    IND-CYC-004:
+      strata:
+        W0:
+          n_days: 244.0
+          n_stockdays: 655333.0
+          mu_s: -0.083393
+        W1:
+          n_days: 244.0
+          n_stockdays: 655475.0
+          mu_s: -0.081915
+      mu_all: -0.082481
+      gain: 0.000912
+      best_stratum: W0
+      pairs:
+      - a: W0
+        b: W1
+        n_days: 244.0
+        mean_d: -0.001478
+        t_hac: -0.48081
+        p_raw: 0.630651
+        p_adj: 1.0
+        degenerate: 0.0
+      verdict: fail
+    IND-CYC-005:
+      strata:
+        M0:
+          n_days: 244.0
+          n_stockdays: 765655.0
+          mu_s: -0.083499
+        M1:
+          n_days: 244.0
+          n_stockdays: 545153.0
+          mu_s: -0.081653
+      mu_all: -0.082481
+      gain: 0.001018
+      best_stratum: M0
+      pairs:
+      - a: M0
+        b: M1
+        n_days: 244.0
+        mean_d: -0.001846
+        t_hac: -0.58327
+        p_raw: 0.559711
+        p_adj: 1.0
+        degenerate: 0.0
+      verdict: fail
+device_ledger:
+- object: indicator_conditional_exam
+  device: cpu
+  statsmodels_hac_maxlags: 10
+  rng: none

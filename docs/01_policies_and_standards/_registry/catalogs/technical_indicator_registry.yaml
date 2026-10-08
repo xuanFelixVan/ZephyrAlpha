@@ -11,6 +11,11 @@
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、出货、动量、反转、吸筹、因子、均线、基准、形态、成交、执行、指数、指标、波动、突破、组合、绩效、背离、资金、超买、超跌、趋势、量价、震荡
 # schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
+# 净删修订（2026-10-08，Owner 2026-10-04/05 两次"全部执行"批复 0-3 净删 21 条候退役指标/因子；名单=D2_formula_mining.md 终裁，抽查 5 条零翻案见 E1_netdelete21.md；前班 E1 执行被并发回退，本班 EXEC-G1 同名单重执行）：
+#   本册删 15 条（IND-TREND-003/004/018/020/022/023/024/026/028/029/030/031/032+IND-MOM-013/028，143→128）；留痕=docs/_working/fullflow_mine/wiring/G1_netdelete_redo.md
+#   融合收编（公式归 host 变体注记，知识零丢失）：WMA/TRIMA→MA、DEMA/TEMA→HMA+ZLEMA、T3→SuperSmoother、VIDYA→KAMA
+#   转考试 2 条：IND-TREND-025 MAMA、IND-TREND-027 FRAMA（exam_queue: 2026-10-08）
+#   CH 侧 214 列历史数据不动（wma_10/dema_12/bbi/gmma_*/tema_10/trima_10/t3_10/vidya_14/jma_7/avgprice/medprice/typprice/wcprice/lwr_1/lwr_2/apo 等列保留，停止新增计算另批工单）
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -20,7 +25,7 @@ name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
   技术指标唯一真源（SSoT）。登记全部技术指标（OHLCV 为主，批10 起筹码族引入换手率输入；编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  9 大类 142 在产指标 214 输出列（注册 143 条含退役 1；对齐 16 号 §6.1-6.10 + 代码 src/zephyr/factor/technical_indicators/ 8 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）；批9-3：波3 M-L6 学术滤波器族 +3 指标/4 列（SUPERSMOOTHER/HIGHPASS/PTREND，TASC 2024-09 Precision Trend 挖矿）；批9-4：波5 学术卡清偿 +2 指标/3 列（CONTINUATION/GPRED，mesasoftware 官网 PDF 公式源，M-L6 登记卡全清偿）；批10：筹码族 +3 指标/9 列（CYQ 迭代衰减筹码分布/SCR 筹码集中度/CYC 成本均线通达信口径，MOD-L02-031 chips.py，指标输入首次引入换手率 stock_daily_basic 仅 daily 周期，其余周期软降级 NULL，CYQ 独立实现复算 000852 近 20 日逐日 0 偏差对表）
+  9 大类 142 在产指标 214 输出列（注册 128 条含退役 1，2026-10-08 D2 净删 15 条见头部修订注记；对齐 16 号 §6.1-6.10 + 代码 src/zephyr/factor/technical_indicators/ 8 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）；批9-3：波3 M-L6 学术滤波器族 +3 指标/4 列（SUPERSMOOTHER/HIGHPASS/PTREND，TASC 2024-09 Precision Trend 挖矿）；批9-4：波5 学术卡清偿 +2 指标/3 列（CONTINUATION/GPRED，mesasoftware 官网 PDF 公式源，M-L6 登记卡全清偿）；批10：筹码族 +3 指标/9 列（CYQ 迭代衰减筹码分布/SCR 筹码集中度/CYC 成本均线通达信口径，MOD-L02-031 chips.py，指标输入首次引入换手率 stock_daily_basic 仅 daily 周期，其余周期软降级 NULL，CYQ 独立实现复算 000852 近 20 日逐日 0 偏差对表）
   数值正确性由 1109 测试用例 + Registry↔DDL 双向交叉校验锁定）。
   全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合；筹码族例外仅 daily——换手率输入为日频），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
@@ -31,13 +36,13 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.6.1
+version: 1.7.0
 created: '2026-08-13'
-last_updated: '2026-09-21'
+last_updated: '2026-10-08'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 143
+entry_count: 128
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -107,39 +112,6 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-- indicator_id: IND-TREND-018
-  name: BBI
-  name_zh: 多空指数
-  aliases: ["Bull and Bear Index"]
-  indicator_class: trend
-  formula: BBI=(MA3+MA6+MA12+MA24)/4
-  params: {periods: [3, 6, 12, 24]}
-  inputs: [close]
-  outputs: [bbi]
-  warmup_period: 24
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-14'
-  updated_at: '2026-09-14'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
 - indicator_id: IND-TREND-019
   name: ALLIGATOR
   name_zh: 鳄鱼线
@@ -150,39 +122,6 @@ indicators:
   inputs: [high, low]
   outputs: [alligator_jaw, alligator_teeth, alligator_lips]
   warmup_period: 34
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-15'
-  updated_at: '2026-09-15'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-020
-  name: GMMA
-  name_zh: 顾比复合均线
-  aliases: ["Guppy Multiple MA"]
-  indicator_class: trend
-  formula: 短期组 EMA3-15 与长期组 EMA30-60 共 12 条；组收敛/发散判趋势
-  params: {short: [3, 5, 8, 10, 12, 15], long: [30, 35, 40, 45, 50, 60]}
-  inputs: [close]
-  outputs: [gmma_s3, gmma_s5, gmma_s8, gmma_s10, gmma_s12, gmma_s15, gmma_l30, gmma_l35, gmma_l40, gmma_l45, gmma_l50, gmma_l60]
-  warmup_period: 60
   computation_mode: vectorized
   module_id: MOD-L02-021
   doc_ref: 16_technical_indicator_catalog.md §6.1
@@ -241,6 +180,7 @@ indicators:
 
 # ══════════════ 趋势类 trend（18 指标 / 29 列，MOD-L02-021 trend.py，doc §6.1）══════════════
 - indicator_id: IND-TREND-001
+  # absorption 2026-10-08（D2 净删收编，知识零丢失）：WMA(原 IND-TREND-003 线性加权平均，权重 1..N)/TRIMA(原 IND-TREND-023 双 SMA 级联)=SMA 低通族变体
   name: MA
   name_zh: 简单移动平均
   aliases: ["SMA", "均线"]
@@ -282,70 +222,6 @@ indicators:
   inputs: [close]
   outputs: [ema_12, ema_26]
   warmup_period: 26
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-08-13'
-  updated_at: '2026-08-13'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: ["index"]
-  tags: ["趋势", "均线", "指数"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-- indicator_id: IND-TREND-003
-  name: WMA
-  name_zh: 加权移动平均
-  aliases: []
-  indicator_class: trend
-  formula: WMA=N 日收盘价线性加权平均（权重 1..N，近期权重高）
-  params: {period: 10}
-  inputs: [close]
-  outputs: [wma_10]
-  warmup_period: 10
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-08-13'
-  updated_at: '2026-08-13'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "组合"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-- indicator_id: IND-TREND-004
-  name: DEMA
-  name_zh: 双指数移动平均
-  aliases: []
-  indicator_class: trend
-  formula: DEMA=2×EMA−EMA(EMA)，减少 EMA 滞后，adjust=False 对齐通达信
-  params: {period: 12}
-  inputs: [close]
-  outputs: [dema_12]
-  warmup_period: 24
   computation_mode: vectorized
   module_id: MOD-L02-021
   doc_ref: 16_technical_indicator_catalog.md §6.1
@@ -595,6 +471,7 @@ indicators:
   code_fingerprint: null
 
 - indicator_id: IND-TREND-012
+  # absorption 2026-10-08（D2 净删收编）：DEMA(原 IND-TREND-004)/TEMA(原 IND-TREND-022)=零滞后同目标簇变体（与 ZLEMA 共同承载）
   name: HMA
   name_zh: Hull均线
   aliases: ["Hull Moving Average"]
@@ -628,6 +505,7 @@ indicators:
   code_fingerprint: null
 
 - indicator_id: IND-TREND-013
+  # absorption 2026-10-08（D2 净删收编）：DEMA(原 IND-TREND-004)/TEMA(原 IND-TREND-022)=零滞后同目标簇变体（与 HMA 共同承载）
   name: ZLEMA
   name_zh: 零滞后EMA
   aliases: ["Zero-Lag EMA"]
@@ -661,6 +539,7 @@ indicators:
   code_fingerprint: null
 
 - indicator_id: IND-TREND-014
+  # absorption 2026-10-08（D2 净删收编）：VIDYA(原 IND-TREND-026 CMO 效率驱动)=ER 同族变体
   name: KAMA
   name_zh: Kaufman自适应均线
   aliases: ["Kaufman Adaptive MA"]
@@ -1164,39 +1043,6 @@ indicators:
   params: {fast: 12, slow: 26}
   inputs: [close]
   outputs: [ppo]
-  warmup_period: 26
-  computation_mode: vectorized
-  module_id: MOD-L02-019
-  doc_ref: 16_technical_indicator_catalog.md §6.2
-  code_path: src/zephyr/factor/technical_indicators/momentum.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-14'
-  updated_at: '2026-09-14'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["动量", "趋势", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-MOM-028
-  name: APO
-  name_zh: 绝对价格振荡器
-  aliases: ["Absolute Price Oscillator"]
-  indicator_class: momentum
-  formula: APO=EMA12−EMA26（绝对差值）
-  params: {fast: 12, slow: 26}
-  inputs: [close]
-  outputs: [apo]
   warmup_period: 26
   computation_mode: vectorized
   module_id: MOD-L02-019
@@ -1901,39 +1747,6 @@ indicators:
   entry_role: "state"
   applies_to: []
   tags: ["动量", "情绪", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-MOM-013
-  name: LWR
-  name_zh: 慢速威廉
-  aliases: ["LWR", "LW&R"]
-  indicator_class: momentum
-  formula: RSV=(HH9−C)/(HH9−LL9)×100；LWR1=SMA(RSV,3,1)；LWR2=SMA(LWR1,3,1)（威廉口径，方向与KDJ相反）
-  params: {period: 9, k_smooth: 3, d_smooth: 3}
-  inputs: [high, low, close]
-  outputs: [lwr_1, lwr_2]
-  warmup_period: 15
-  computation_mode: vectorized
-  module_id: MOD-L02-019
-  doc_ref: 16_technical_indicator_catalog.md §6.2
-  code_path: src/zephyr/factor/technical_indicators/momentum.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-14'
-  updated_at: '2026-09-14'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["动量", "超买", "超跌", "指标"]
   algorithm_status: "quantized"
   evidence: ""
   code_symbol: null
@@ -3231,10 +3044,10 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: active
+  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=0.362122（判活需 <0.05）G=0.020558 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
   version: 1.0.0
   created_at: '2026-09-14'
-  updated_at: '2026-09-14'
+  updated_at: '2026-10-08'
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
@@ -3245,7 +3058,7 @@ indicators:
   applies_to: []
   tags: ["循环", "指标"]
   algorithm_status: "quantized"
-  evidence: ""
+  evidence: "conditional_exam_v1 FAIL 2026-10-08 best_p_adj=0.362122 G=0.020558 baseline=B1 best_stratum=D3 window=2025-10-09..2026-09-30 n_days=236 family_size=11 ref_window=CYC-001 显著但 report-only 不改判；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册卡 commit=dfcc8ec9548c6e827cacc7ee32e7c5f0a8d7d542 裁定#489① 一次窗口定生死 整族归档"
   code_symbol: null
   code_fingerprint: null
 
@@ -3264,10 +3077,10 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: active
+  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=0.530570（判活需 <0.05）G=0.003482 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
   version: 1.0.0
   created_at: '2026-09-14'
-  updated_at: '2026-09-14'
+  updated_at: '2026-10-08'
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
@@ -3278,7 +3091,7 @@ indicators:
   applies_to: []
   tags: ["循环", "指标"]
   algorithm_status: "quantized"
-  evidence: ""
+  evidence: "conditional_exam_v1 FAIL 2026-10-08 best_p_adj=0.530570 G=0.003482 baseline=B1 best_stratum=P4 window=2025-10-09..2026-09-30 n_days=236 family_size=11 ref_window=CYC-001 显著但 report-only 不改判；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册卡 commit=dfcc8ec9548c6e827cacc7ee32e7c5f0a8d7d542 裁定#489① 一次窗口定生死 整族归档"
   code_symbol: null
   code_fingerprint: null
 
@@ -3330,10 +3143,10 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: active
+  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=1.000000（判活需 <0.05）G=0.001348 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
   version: 1.0.0
   created_at: '2026-09-14'
-  updated_at: '2026-09-14'
+  updated_at: '2026-10-08'
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
@@ -3344,7 +3157,7 @@ indicators:
   applies_to: []
   tags: ["循环", "指标"]
   algorithm_status: "quantized"
-  evidence: ""
+  evidence: "conditional_exam_v1 FAIL 2026-10-08 best_p_adj=1.000000 G=0.001348 baseline=B1 best_stratum=W0 window=2025-10-09..2026-09-30 n_days=236 family_size=11 ref_window=CYC-001 显著但 report-only 不改判；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册卡 commit=dfcc8ec9548c6e827cacc7ee32e7c5f0a8d7d542 裁定#489① 一次窗口定生死 整族归档"
   code_symbol: null
   code_fingerprint: null
 
@@ -3363,10 +3176,10 @@ indicators:
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
-  status: active
+  status: retired  # 裁定#489① 2026-10-08 条件变量考场退役：分层增益 Bonferroni(N=11) 全不显著 best_p_adj=1.000000（判活需 <0.05）G=0.000937 baseline=B1；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册=cyc_conditional_prereg_v1.md@dfcc8ec9
   version: 1.0.0
   created_at: '2026-09-14'
-  updated_at: '2026-09-14'
+  updated_at: '2026-10-08'
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
@@ -3377,7 +3190,7 @@ indicators:
   applies_to: []
   tags: ["循环", "趋势", "指标"]
   algorithm_status: "quantized"
-  evidence: ""
+  evidence: "conditional_exam_v1 FAIL 2026-10-08 best_p_adj=1.000000 G=0.000937 baseline=B1 best_stratum=M1 window=2025-10-09..2026-09-30 n_days=236 family_size=11 ref_window=CYC-001 显著但 report-only 不改判；考册=docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml 预注册卡 commit=dfcc8ec9548c6e827cacc7ee32e7c5f0a8d7d542 裁定#489① 一次窗口定生死 整族归档"
   code_symbol: null
   code_fingerprint: null
 
@@ -3420,106 +3233,8 @@ indicators:
 
 # ══════════════ 趋势类扩充批9-1：M-L1 自适应均线族（7 指标/8 列，2026-09-20 tilib 清欠班）══════════════
 # 黄金对照：MAMA/FAMA 与 TA-Lib 逐位一致（偏差 0.0）；TEMA/T3 预热段种子差异按既有 MAMA 豁免口径第 100 根起 rtol=1e-6 对照
-- indicator_id: IND-TREND-022
-  name: Triple Exponential Moving Average
-  name_zh: 三重指数移动平均
-  aliases: ["TEMA", "Triple EMA"]
-  indicator_class: trend
-  formula: e1=EMA(C,N)；e2=EMA(e1,N)；e3=EMA(e2,N)；TEMA=3e1−3e2+e3（EMA adjust=False 种子=首值）
-  params: {period: 10}
-  inputs: [close]
-  outputs: [tema_10]
-  warmup_period: 1
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-023
-  name: Triangular Moving Average
-  name_zh: 三角移动平均
-  aliases: ["TRIMA"]
-  indicator_class: trend
-  formula: 偶窗 N=10：SMA(SMA(C,N/2),N/2+1)=SMA(SMA(C,5),6)；奇窗：双 (N+1)/2 级联（TA-Lib 口径，实测 lookback=9 一致）
-  params: {period: 10}
-  inputs: [close]
-  outputs: [trima_10]
-  warmup_period: 10
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-024
-  name: Tillson T3
-  name_zh: T3均线
-  aliases: ["T3", "Tillson Moving Average"]
-  indicator_class: trend
-  formula: e1..e6=六重 EMA(C,N) 链；c1=−a³,c2=3a²+3a³,c3=−6a²−3a−3a³,c4=1+3a+a³+3a²；T3=c1e6+c2e5+c3e4+c4e3（Tillson，a=vfactor=0.7）
-  params: {period: 10, vfactor: 0.7}
-  inputs: [close]
-  outputs: [t3_10]
-  warmup_period: 1
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
 - indicator_id: IND-TREND-025
+  # exam_queue: 2026-10-08（D2 转考试）S2：对 KAMA 基线正交性/IC 增量（Hilbert 周期驱动机制异族；TA-Lib 黄金对照可得）
   name: MESA Adaptive Moving Average
   name_zh: MESA自适应均线
   aliases: ["MAMA", "FAMA", "Ehlers MAMA"]
@@ -3552,40 +3267,8 @@ indicators:
   code_symbol: null
   code_fingerprint: null
 
-- indicator_id: IND-TREND-026
-  name: Variable Index Dynamic Average
-  name_zh: 可变指数动态均线
-  aliases: ["VIDYA", "Chande VIDYA"]
-  indicator_class: trend
-  formula: alpha=|CMO(C,cmo_period)|/100×2/(N+1)；VIDYA=alpha·C+(1−alpha)·VIDYA_prev（Chande；种子=首个 CMO 有效当根收盘）
-  params: {period: 14, cmo_period: 9}
-  inputs: [close]
-  outputs: [vidya_14]
-  warmup_period: 10
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
 - indicator_id: IND-TREND-027
+  # exam_queue: 2026-10-08（D2 转考试）S2 同轴并考：分形维数 D 驱动，机制异族边界情形
   name: Fractal Adaptive Moving Average
   name_zh: 分形自适应均线
   aliases: ["FRAMA", "Ehlers FRAMA"]
@@ -3613,172 +3296,6 @@ indicators:
   entry_role: "state"
   applies_to: []
   tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-028
-  name: Jurik Moving Average
-  name_zh: Jurik自适应均线
-  aliases: ["JMA", "Jurik JMA"]
-  indicator_class: trend
-  formula: Jurik 开源移植（pandas-ta 经典口径）：beta=0.45(N−1)/(0.45+2(N−1))，alpha=beta^phaseRatio 递推平滑+波动压缩链（phase=50, power=2 默认）
-  params: {period: 7, phase: 50, power: 2}
-  inputs: [close]
-  outputs: [jma_7]
-  warmup_period: 7
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["趋势", "均线", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-# ══════════════ 趋势类扩充批9-1：M-L2 价格变换族（4 指标/4 列，2026-09-20 tilib 清欠班）══════════════
-- indicator_id: IND-TREND-029
-  name: Average Price
-  name_zh: 四价均价
-  aliases: ["AVGPRICE", "ohlc4"]
-  indicator_class: trend
-  formula: AVGPRICE=(O+H+L+C)/4（TA-Lib Price Transform 组）
-  params: {}
-  inputs: [open, high, low, close]
-  outputs: [avgprice]
-  warmup_period: 1
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["基准", "趋势", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-030
-  name: Median Price
-  name_zh: 中价
-  aliases: ["MEDPRICE", "hl2"]
-  indicator_class: trend
-  formula: MEDPRICE=(H+L)/2（TA-Lib Price Transform 组）
-  params: {}
-  inputs: [high, low]
-  outputs: [medprice]
-  warmup_period: 1
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["基准", "趋势", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-031
-  name: Typical Price
-  name_zh: 典型价格
-  aliases: ["TYPPRICE", "hlc3"]
-  indicator_class: trend
-  formula: TYPPRICE=(H+L+C)/3（TA-Lib Price Transform 组）
-  params: {}
-  inputs: [high, low, close]
-  outputs: [typprice]
-  warmup_period: 1
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["基准", "趋势", "指标"]
-  algorithm_status: "quantized"
-  evidence: ""
-  code_symbol: null
-  code_fingerprint: null
-
-- indicator_id: IND-TREND-032
-  name: Weighted Close Price
-  name_zh: 加权收盘价
-  aliases: ["WCPRICE", "WCLPRICE"]
-  indicator_class: trend
-  formula: WCPRICE=(H+L+2×C)/4（收盘双倍权重；TA-Lib WCLPRICE 同义）
-  params: {}
-  inputs: [high, low, close]
-  outputs: [wcprice]
-  warmup_period: 1
-  computation_mode: vectorized
-  module_id: MOD-L02-021
-  doc_ref: 16_technical_indicator_catalog.md §6.1
-  code_path: src/zephyr/factor/technical_indicators/trend.py
-  used_by_factors: []
-  status: active
-  version: 1.0.0
-  created_at: '2026-09-20'
-  updated_at: '2026-09-20'
-  owner: MOD-GOVERNANCE
-  primary_timeframe: "daily"
-  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
-  regime_invalid: []
-  direction: "neutral"
-  entry_role: "state"
-  applies_to: []
-  tags: ["基准", "趋势", "指标"]
   algorithm_status: "quantized"
   evidence: ""
   code_symbol: null
@@ -4519,6 +4036,7 @@ indicators:
 # ══════════════ 波3 批9-3：M-L6 学术滤波器族（3 指标/4 列，2026-09-20 tilib 清欠班）══════════════
 # 挖矿真源=TASC 2024-09 "Precision Trend Analysis"（Ehlers）+ financial-hacker C 转译逐行核对；Griffiths 预测器/Continuation Index 立卡登记未施工（公式源未镜像，见 a3 挖矿报告）
 - indicator_id: IND-TREND-035
+  # absorption 2026-10-08（D2 净删收编）：T3(原 IND-TREND-024 Tillson 六重 EMA，vfactor 0.7)=低通平滑同目标簇变体
   name: SuperSmoother
   name_zh: 超级平滑器
   aliases: ["SUPERSMOOTHER", "Ehlers SuperSmoother"]
