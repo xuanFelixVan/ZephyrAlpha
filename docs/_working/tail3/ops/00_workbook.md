@@ -79,3 +79,9 @@ completes_when: 停跑因诊断报告（根因+证据链）+低峰窗重启前�
 | ⑧ | 提交正门 | PASS（含排障披露）——六次预检被拦均走逃生处方整改（DIRECTORY-CONTRACT 改名/UTF-8 转码、CREATE-GUARD token 先行、WORKTREE-REQUIRED --allow-non-worktree、SESSION-REQUIRED 注册）；token 三度被 stomper 蒸发，终以先行袋 q-0002（blob sha d967937b…含 5 token 实证）+内容批后投出清 |
 
 两轮循环检查零未决问题（⑧队列落地为时序待办非检查缺陷）。
+
+## 16:05 复核判读（automation-c39f6c69 分支处置，16:21-16:3x）
+
+- 三读数：①15:30 实跑 Result=0 ✓ ②尾块 MiniQMT 连接成功+净值落库+exit_code=0 ✓ ③DB 补跑前={09-28,10-08}、09-30 缺。
+- 判定 **[SRC-1已恢复]**=分支 A：执行 09-30 补跑成功（MiniQMT 连接/audit PASS/净值落库 rows=1/exit_code=0），DB 终态三行连续（09-28/09-30/10-08）。
+- 升级分支（QMT 人工拉起）不触发。详见 05_review_followup_report.md。
