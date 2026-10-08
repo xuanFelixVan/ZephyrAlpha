@@ -4210,7 +4210,7 @@ entries:
   - 裁定#451
   - 裁定#20-D
   superseded_by: null
-- ruling_id: "裁定#487"
+- ruling_id: "裁定#491"
   title: 轴归一手术 F2 终审放行+F3 落地——BM 格子↔TDM/工厂互挂引用（按建议办+两条款）
   date: '2026-10-05'
   category: 治理架构
@@ -4308,3 +4308,43 @@ entries:
   - docs/_working/matrix_campaign/master_backlog_v2.md
   related_rulings: ['裁定#488']
   superseded_by: ''
+
+- ruling_id: "裁定#490"
+  title: 审计闭合夜战授权+裁定#488 两处勘误（C19/C18 卡号对调更正、C441 机制与授权面更正撤回"批准翻转"）
+  date: '2026-10-08'
+  category: 治理
+  status: active
+  summary: |-
+    A 段【授权】：依 Owner 2026-10-08 对话令（"施工外部审计以上所有内容…并发施工…遇到问题自己裁定…至到全部完成"），授权总包 st-acure-20261008-chief 执行外部审查（docs/_working/external_audit_mastertc/）P0×10 必修+P1×10+❓AI 可施工项的闭合施工：死袋复活落地、台账勘误、桌面清单回补、l8 分支内容落地、循环检查两轮零失败+红蓝对抗修复。边界=宪法 §5 Owner 门位不代裁：flag 出厂翻转（C441/C85/C300 翻转面）、实盘资金（C63/C287）、生产流转、注册表净删执行（C24/C411 候选仅呈报）、物理删除（C109/C410/C267）——此类登记留呈晨会。
+    B 段【勘误一·C19/C18】：裁定#488 B 段"C19 severity 变体→维持 warn+登记台账"所载事由实属 C18（qmine R2 architecture_issue_registry 非标 severity 变体）——卡号错挂系落册笔误。更正：C18=已裁（维持 warn+登记台账，借本条通道）；C19 原事由（qmine R3：3 密钥门死触发定性呈报）恢复待裁，回补未完成面。
+    C 段【勘误二·C441】：#488 交付报告面"词表门判据已改写（BLOCK_FLIP_CLEAN_STREAK=20）批准翻转"两处失真更正——(1) 该判据属 C27 的 FMS-HYGIENE 门（fms_hygiene_gate.py:119），词表门本体 tag_vocab_gate.py TAG_VOCAB_GATE_MODE="warn" 无 streak 机制；(2) "批准翻转"表述撤回：mode 翻转仍=OWNER-GATE（fms_hygiene_gate.py L114-116 立法原文），任何 block 翻转须 Owner 单项裁定。外部审计 lane_e P0-E1/lane_g P0-3/P0-5 实证在案。
+    D 段【净零】：一条总裁定收编授权+两处勘误；对 HEAD 纯插入，既有条目零触碰。
+  evidence: 外部审查 00_audit_report.md §三 P0-4/P0-5/P0-6 + lane_e_retire_ai.md P0-E1 + lane_g_open53_cards.md P0-3/P0-5；Owner 对话令原文见 00_orchestration.md 头注
+  affected_files:
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#488']
+  superseded_by: ''
+
+- ruling_id: "裁定#487"
+  title: PKG 包层收编正名（module_id_registry 扩面第三制+四号补登）
+  date: "2026-10-08"
+  category: 架构
+  status: active
+  summary: |-
+    Owner 2026-10-08 放行（chief 前报述明裁定全文——"PKG-* 是真实存在的 package 层身份
+    约定（regime 族 4 活例），module_id_registry 扩面吸收 PKG 命名空间为 package 层法定
+    前缀，4 个既有号一次性补登记……你说派我就写指令"——Owner 回复点名"PKG 补登小批"=放行）。
+    内容：①allocation_rules 新增 package_format=PKG-{package-kebab} 第三制（与 MOD 文档
+    规则/代码模块两制并列；分配前提=包有非空 __init__ 且确需包级锚定）；②四号补登
+    PKG-regime/PKG-regime-core/PKG-regime-features/PKG-bt-regime-validation（btfix 45号
+    §4 呈报件，backtest/regime_validation/__init__.py 头自认领零注册的定号悬案）；
+    ③total_registered 74→78 与 MODULE-ID-CONSISTENCY 计数同步；registry_version 2.5.0。
+    呈报链：st-btfix-20261005 45号 §4 → chief 终裁（60号战役收官报）→ Owner 放行。
+  affected_files:
+  - architecture_model/module_id_registry.yaml
+  - docs/_working/map_build/45_depgraph_miscover_fix.md
+  related_arch: []
+  related_rulings: ["裁定#486"]
+  superseded_by: null
+  approved_paths:
+  - architecture_model/module_id_registry.yaml
