@@ -214,17 +214,25 @@ def rank_pending(
 
 # ── 骨架单拍板（C9 确认态判定落点=审批事件账，Owner 2026-09-27 批文）─────────────
 def skeleton_decisions(journal: SchedulingJournal) -> dict[str, dict[str, Any]]:
-    """事件账→{order_id: 最新拍板回执}（append-only 账，同单多笔取最新=改判留痕保序）。"""
+    """事件账→{order_id: 最新拍板回执}（append-only 账，同单多笔取最新=改判留痕保序）。
+
+    decided_by 兼容映射（F-3，2026-10-10）：本事件 kind 有两个历史生产者形态——
+    confirm_gate._decide_new 写 ``actor``（其三落点账统一词汇，wiring_C §二处置 1
+    钉死的已认证身份），confirm_skeleton 直写 ``decided_by``。读侧在此单点归一
+    （decided_by 优先、缺则回退 actor），历史账两种形态都不丢拍板人；写侧两侧零改
+    （禁两边各改一半）。
+    """
     out: dict[str, dict[str, Any]] = {}
     for ev in journal.pending():
         if ev.kind != KIND_ORDER_CONFIRMED_DUE:
             continue
-        oid = str((ev.payload or {}).get("order_id") or "")
+        payload = ev.payload or {}
+        oid = str(payload.get("order_id") or "")
         if oid:
             out[oid] = {
-                "decision": (ev.payload or {}).get("decision"),
+                "decision": payload.get("decision"),
                 "decided_at": ev.recorded_at,
-                "decided_by": (ev.payload or {}).get("decided_by"),
+                "decided_by": payload.get("decided_by") or payload.get("actor"),
                 "event_id": ev.id,
             }
     return out

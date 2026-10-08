@@ -320,6 +320,31 @@ def test_skeleton_decisions_projection(journal, tmp_path) -> None:
     assert set(skeleton_decisions(journal)) == {"wo-a", "wo-b"}  # 同单取最新留痕
 
 
+def test_skeleton_decisions_decided_by_actor_compat(journal) -> None:
+    """F-3 字段错配回归：读侧单点归一 decided_by，两种历史生产形态都不丢拍板人。
+
+    错配病灶（修前）：confirm_gate._decide_new 的事件 payload 写 ``actor``（其三落点
+    账统一词汇，wiring_C §二处置 1 钉死的已认证身份），而本读侧只认 ``decided_by`` ⇒
+    api_server 实接生产者拍的单 decided_by 恒 None（拍板人静默丢失）。修后读侧
+    decided_by 优先、缺则回退 actor；写侧两侧零改（禁两边各改一半）。
+    红证：对修前代码跑本用例必红（wo-cg 拿到 None）。
+    """
+    from zephyr.ai_layer.scheduling.scheduling_events import KIND_ORDER_CONFIRMED_DUE
+
+    # 形态1：confirm_gate._decide_new（api_server POST /api/schedulegate-confirm 实接）写 actor
+    journal.emit(KIND_ORDER_CONFIRMED_DUE, {"order_id": "wo-cg", "decision": "confirm", "actor": "schedulegate_ui"})
+    # 形态2：confirm_skeleton（CLI 直拍通道）直写 decided_by
+    journal.emit(KIND_ORDER_CONFIRMED_DUE, {"order_id": "wo-cs", "decision": "reject", "decided_by": "owner_cli"})
+    got = skeleton_decisions(journal)
+    assert got["wo-cg"]["decided_by"] == "schedulegate_ui"  # 修前恒 None（红证判据）
+    assert got["wo-cs"]["decided_by"] == "owner_cli"  # 原生形态不受映射影响
+    # 双字段同现时 decided_by 优先（不因回退遮蔽显式值）
+    journal.emit(
+        KIND_ORDER_CONFIRMED_DUE, {"order_id": "wo-both", "decision": "confirm", "actor": "a1", "decided_by": "d1"}
+    )
+    assert skeleton_decisions(journal)["wo-both"]["decided_by"] == "d1"
+
+
 # ---------------------------------------------------------------------------
 # 谷时偏好 free_window_pref（C85：C6 消费端 M4 执行器排序偏好键；mock config 全隔离）
 # ---------------------------------------------------------------------------

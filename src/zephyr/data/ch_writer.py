@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import datetime
 import http.client
+import io
 import logging
 import os
 import threading
@@ -1282,3 +1283,73 @@ def query_strict(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> list[tuple]:
 
     log.error("CH query_strict 失败(TCP+HTTP 均失败): %s | attempts=%s", sql_stripped[:200], attempts)
     raise ClickHouseQueryError(sql_stripped, attempts)
+
+
+def http_query_raw(
+    sql: str,
+    timeout: int = _DEFAULT_TIMEOUT,
+    *,
+    sink: io.BufferedWriter | None = None,
+) -> bytes | int:
+    """HTTP 单链路裸读（FORMAT 透传专用；archiver 裸 ``http.client`` 收编，2026-10-09）。
+
+    为什么存在：TCP 驱动通道会吞掉 FORMAT 子句并返回手工拼 TSV（``query`` /
+    ``query_strict`` 共用该传输层，FORMAT Parquet/JSON 读数必被改写——archiver
+    2026-09-20 实证）。需要 FORMAT 原文的读数必须走 HTTP；本函数是
+    :func:`query_strict` 的 HTTP-only 兄弟：同一套 host 解析/鉴权头/自愈钩子/只读
+    白名单，只换"响应原文不解析、失败必抛"的契约。
+
+    内收约束：复用 ``get_http_host()`` / ``_ch_http_headers()`` /
+    ``_invalidate_http_host()`` / ``_note_http_failure()`` / ``_reset_http_fail_streak()``，
+    不新建连接层；调用方禁再私攒 host/账号直连（裸 ``http.client`` 于调用面收口）。
+
+    Args:
+        sql: 只读 SQL（可带 FORMAT Parquet/JSON 等透传子句）
+        timeout: 超时秒数
+        sink: 可写二进制对象（如打开的文件）。传入则 64KiB 分块流式写入并返回总
+              字节数（大分区导出防内存峰值）；None 则累积返回完整 bytes。
+
+    Returns:
+        sink 为 None → 响应原文 ``bytes``；传入 sink → 写入总字节数 ``int``。
+
+    Raises:
+        ClickHouseQueryError: host 不可用、非 200、或传输异常（无静默空串/None）。
+    """
+    sql_stripped = sql.strip()
+    if not sql_stripped.upper().startswith(_READ_ONLY_PREFIXES):
+        raise ClickHouseQueryError(sql, [("contract", "http_query_raw 仅允许只读语句")])
+    http_host = get_http_host()
+    if not http_host:
+        raise ClickHouseQueryError(sql, [("http", "host 不可用（配置缺失或处于冷却期）")])
+    try:
+        conn = http.client.HTTPConnection(http_host, _CH_HTTP_PORT, timeout=timeout)
+        try:
+            conn.request("POST", "/", body=sql_stripped.encode("utf-8"), headers=_ch_http_headers())
+            resp = conn.getresponse()
+            if resp.status != 200:
+                body = resp.read().decode("utf-8", errors="replace")
+                if 500 <= resp.status < 600:
+                    _note_http_failure(f"http_query_raw status={resp.status}")
+                else:
+                    _reset_http_fail_streak()  # 4xx＝服务端应答正常的语句/权限错，链路本身健康
+                raise ClickHouseQueryError(sql, [("http", f"status={resp.status} body={body[:200]}")])
+            if sink is None:
+                data = resp.read()
+                _reset_http_fail_streak()
+                return data
+            # 哨兵迭代分块读（PERM-TRIGGER 洁净形态：响应体流式读不是时间触发循环，
+            # 避免 ast.While+Constant(True) 被判 while True 轮询——语义等价 64KiB 分块）
+            total = 0
+            for chunk in iter(lambda: resp.read(1 << 16), b""):
+                sink.write(chunk)
+                total += len(chunk)
+            _reset_http_fail_streak()
+            return total
+        finally:
+            conn.close()
+    except ClickHouseQueryError:
+        raise
+    except Exception as e:  # noqa: BLE001 — 契约要求：传输异常转严格异常并触发链路自愈
+        _invalidate_http_host(f"http_query_raw 失败: {e}")
+        _note_http_failure(f"http_query_raw exception: {e}")
+        raise ClickHouseQueryError(sql, [("http", f"{type(e).__name__}: {e}")]) from e

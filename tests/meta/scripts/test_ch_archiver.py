@@ -447,3 +447,80 @@ class TestRestoreChecksumGuard:
 
         monkeypatch.setattr(archiver, "_get_writer_client", lambda: _FakeClient())
         assert archiver.restore_partition("c1_market.kline_1min", "202101") is True
+
+
+# ============== F-2：裸 http.client 收编 ch_writer.http_query_raw（2026-10-10）==============
+
+
+class TestUnifiedHttpChannel:
+    """archiver 导出/抽样通道收编：三处裸 http.client 直连改 ch_writer.http_query_raw。
+
+    病灶（修前）：模块私攒 _CH_HOST/_CH_USER/端口直连——与统一配置漂移、绕过自愈钩子
+    （_note_http_failure/_invalidate_http_host）、非 200 静默返 None。
+    红证：把统一客户端的 host/端口改错必须抛 ClickHouseQueryError（错误契约显式化）。
+    """
+
+    @staticmethod
+    def _patch_dead_endpoint(monkeypatch):
+        """把统一客户端指向死端口并隔离自愈钩子（防污染 ch_writer 全局冷却态）。"""
+        monkeypatch.setattr(archiver.ch_writer, "get_http_host", lambda: "127.0.0.1")
+        monkeypatch.setattr(archiver.ch_writer, "_CH_HTTP_PORT", 1)  # 端口改错=无人监听
+        monkeypatch.setattr(archiver.ch_writer, "_invalidate_http_host", lambda reason: None)
+        monkeypatch.setattr(archiver.ch_writer, "_note_http_failure", lambda reason: None)
+
+    def test_no_bare_http_client_in_source(self):
+        """源面收口：archiver 不得再出现 import http.client / HTTPConnection 直连。"""
+        source = pathlib.Path(archiver.__file__).read_text(encoding="utf-8")
+        assert "import http.client" not in source
+        assert "HTTPConnection" not in source
+
+    def test_export_streams_via_unified_client(self, monkeypatch, tmp_path):
+        """export_partition 经统一原语流式导出：sink 分块写盘、SQL 带 FORMAT Parquet 透传。"""
+        monkeypatch.setattr(archiver, "ARCHIVE_ROOT", tmp_path)
+        monkeypatch.setattr(archiver.ch_reader, "inject_final", lambda s: s)
+        seen: dict = {}
+
+        def fake_raw(sql, timeout=600, sink=None):
+            seen["sql"] = sql
+            seen["timeout"] = timeout
+            sink.write(b"PARQUETBYTES")
+            return 12
+
+        monkeypatch.setattr(archiver.ch_writer, "http_query_raw", fake_raw)
+        pq_path = archiver.export_partition("c1_market.kline_1min", "202101")
+        assert pq_path == tmp_path / "c1_market" / "kline_1min" / "202101.parquet"
+        assert pq_path.read_bytes() == b"PARQUETBYTES"
+        assert seen["sql"].startswith("SELECT") and "FORMAT Parquet" in seen["sql"]
+        assert seen["timeout"] == 600  # 大分区导出超时契约保持
+
+    def test_sample_json_via_unified_client(self, monkeypatch):
+        """_http_query_json 走统一原语并解析 JSON 原文（TCP 吞 FORMAT 病灶不回归）。"""
+        monkeypatch.setattr(
+            archiver.ch_writer,
+            "http_query_raw",
+            lambda sql, timeout=120: _json.dumps({"data": [{"x": 1}]}).encode("utf-8"),
+        )
+        assert archiver._http_query_json("SELECT 1 FORMAT JSON") == {"data": [{"x": 1}]}
+
+    def test_red_evidence_bad_port_raises_strict(self, monkeypatch):
+        """红证：统一客户端端口改错（死端口）必须抛 ClickHouseQueryError——
+        旧裸连"非 200 返 None / 异常自吞"的静默形态在传输层消失。"""
+        self._patch_dead_endpoint(monkeypatch)
+        with pytest.raises(archiver.ch_writer.ClickHouseQueryError):
+            archiver._http_query_json("SELECT 1 FORMAT JSON", timeout=2)
+
+    def test_red_evidence_bad_port_export_fails_visible(self, monkeypatch, tmp_path):
+        """红证（导出面）：端口改错 → export 返回 None 且不留半截 Parquet
+        （三阶段原子契约：任何阶段失败不进下一阶段，日志必出声）。"""
+        self._patch_dead_endpoint(monkeypatch)
+        monkeypatch.setattr(archiver, "ARCHIVE_ROOT", tmp_path)
+        assert archiver.export_partition("c1_market.kline_1min", "202101") is None
+        pq_path = tmp_path / "c1_market" / "kline_1min" / "202101.parquet"
+        assert not pq_path.exists()
+
+    def test_http_query_raw_read_only_guard(self):
+        """传输层只读守卫：非只读语句直接抛（判据通道禁写，同 query_strict 白名单）。"""
+        from zephyr.data.ch_writer import ClickHouseQueryError
+
+        with pytest.raises(ClickHouseQueryError):
+            archiver.ch_writer.http_query_raw("ALTER TABLE t DROP PARTITION 202101")

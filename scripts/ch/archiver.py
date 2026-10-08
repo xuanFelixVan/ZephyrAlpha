@@ -35,7 +35,6 @@ import argparse
 import datetime
 import decimal
 import hashlib
-import http.client
 import json
 import logging
 import math
@@ -44,7 +43,6 @@ import pathlib
 import re
 import sys
 import time
-import urllib.parse
 
 import numpy as np
 import pandas as pd
@@ -53,9 +51,8 @@ _PROJECT_ROOT = str(pathlib.Path(__file__).resolve().parents[2])
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from zephyr.data import ch_reader
+from zephyr.data import ch_reader, ch_writer
 from zephyr.data.ch_config import ensure_ch_env_loaded as _ensure_ch_env_loaded
-from zephyr.shared.security.secrets import get_secret_or_default
 
 _ensure_ch_env_loaded()
 
@@ -72,10 +69,9 @@ ARCHIVE_ROOT = pathlib.Path(
 )  # 2026-09-20 冷储主库落 F（分包4，对账 PASS 2211 文件/117.6G）
 MANIFEST_PATH = ARCHIVE_ROOT / "archive_manifest.jsonl"
 
-_CH_HOST = get_secret_or_default("CLICKHOUSE_HOST", "")
-_CH_HTTP_PORT = int(get_secret_or_default("CLICKHOUSE_HTTP_PORT", "8123"))
-_CH_USER = get_secret_or_default("CLICKHOUSE_WRITER_USER") or get_secret_or_default("CLICKHOUSE_USER", "default")
-_CH_PASSWORD = get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD") or get_secret_or_default("CLICKHOUSE_PASSWORD", "")
+# CH 连接配置不再私攒（2026-10-10 F-2 收编）：host/账号/端口全走 ch_writer 统一传输层
+# （get_http_host/_ch_http_headers，真源 config/.env.clickhouse）；原模块级
+# _CH_HOST/_CH_USER 等直连常量已删（私攒凭据=与统一配置漂移的病灶）。
 
 # 各表的分区表达式（用于 WHERE 条件导出）
 # 格式: table -> (partition_expr, partition_type)
@@ -221,31 +217,12 @@ def export_partition(
     t0 = time.time()
 
     try:
-        conn = http.client.HTTPConnection(_CH_HOST, _CH_HTTP_PORT, timeout=600)
-        headers = {
-            "X-ClickHouse-User": _CH_USER,
-            "X-ClickHouse-Key": _CH_PASSWORD,
-        }
-        quoted_sql = urllib.parse.quote(sql)
-        conn.request("GET", f"/?query={quoted_sql}", headers=headers)
-        resp = conn.getresponse()
-
-        if resp.status != 200:
-            body = resp.read().decode("utf-8", errors="replace")[:500]
-            log.error("  export HTTP %s: %s", resp.status, body)
-            conn.close()
-            return None
-
-        # 流式写入文件
-        total_bytes = 0
+        # F-2（2026-10-10）：裸 http.client GET 直连收编进 ch_writer.http_query_raw
+        # （统一 host/鉴权/自愈钩子；sink 流式写盘保住原 64KiB 分块防内存峰值语义；
+        # 失败必抛 ClickHouseQueryError——原"非 200 返 None"的静默面由统一错误契约替代）。
         with open(pq_path, "wb") as f:
-            while True:
-                chunk = resp.read(65536)
-                if not chunk:
-                    break
-                f.write(chunk)
-                total_bytes += len(chunk)
-        conn.close()
+            total_bytes = ch_writer.http_query_raw(sql, timeout=600, sink=f)
+        assert isinstance(total_bytes, int)
 
         elapsed = time.time() - t0
         size_mb = total_bytes / 1024 / 1024
@@ -357,30 +334,17 @@ def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
 
 
 def _http_query_json(sql: str, timeout: int = 120) -> dict:
-    """直连 HTTP 执行 FORMAT JSON 查询返回 dict。
+    """HTTP 原文执行 FORMAT JSON 查询返回 dict（走 ch_writer.http_query_raw 统一通道）。
 
-    2026-09-20 修：原走 ch_reader.query（ch_writer TCP 通道），TCP 路径 FORMAT JSON
-    被驱动吞掉、返回手工拼的 TSV → json.loads 必炸（"Extra data"）；抽样比对自
-    该病灶起恒败。与 export_partition 同通道（直连 HTTP），响应即 JSON 原文。
+    为什么必须 HTTP 原文（不走 ch_reader.query/query_strict 的 TCP 通道）：2026-09-20
+    实证 TCP 路径 FORMAT JSON 被驱动吞掉、返回手工拼的 TSV → json.loads 必炸
+    （"Extra data"）；抽样比对自该病灶起恒败。与 export_partition 同通道（HTTP 原文），
+    响应即 JSON 原文。
+
+    F-2（2026-10-10）收编：原函数内私攒 host/账号的裸 http.client 直连改统一原语；
+    错误契约从自抛 RuntimeError 升级为 ClickHouseQueryError（同族必抛，attempts 可溯源）。
     """
-    import http.client as _hc
-    import urllib.parse as _up
-
-    conn = _hc.HTTPConnection(_CH_HOST, _CH_HTTP_PORT, timeout=timeout)
-    try:
-        conn.request(
-            "POST",
-            "/",
-            body=sql.encode("utf-8"),
-            headers={"X-ClickHouse-User": _CH_USER, "X-ClickHouse-Key": _CH_PASSWORD},
-        )
-        resp = conn.getresponse()
-        body = resp.read().decode("utf-8", errors="replace")
-        if resp.status != 200:
-            raise RuntimeError(f"CH HTTP {resp.status}: {body[:300]}")
-        return json.loads(body)
-    finally:
-        conn.close()
+    return json.loads(ch_writer.http_query_raw(sql, timeout=timeout))
 
 
 def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: str | None = None) -> bool:
