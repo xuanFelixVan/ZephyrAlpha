@@ -638,6 +638,9 @@ Owner 清单里这条原写作"存量消化型后波（镜像树 3,295 件迁移
 
 ## 廿九、收尾审计自查：一条**活跃灾备空洞**＋三把尺被误删（本会话自报，非他道举报）
 
+> ⚠ **本节定性已被 §卅一 作废**（2026-10-09 00:3x 复核）："重跑 -CompactWindow"是违逆 10-04 封印的动作，
+> 且"灾备空洞"仅指 VM 级整机快恢，CH 数据面有等值逻辑备份链。勿照本节施工，读 §卅一。
+
 复核时刻＝2026-10-08 23:0x。两条都不是叙述，是实测：
 
 ### 29.1 P0：全盘当前**没有 VM 级完整镜像**
@@ -741,3 +744,76 @@ Owner 清单里这条原写作"存量消化型后波（镜像树 3,295 件迁移
   判"跑过"必须看 `N passed` 行，不接受退出码。
 - **临时件转正当中"移开不删"**：那枚 0 字节 16.7h 陈锁搬进 `lock_quarantine/` 的处置是对的，
   本轮实测该目录仅剩空壳、23 项临时件已全部清零。
+
+---
+
+## 卅一、§廿九 定性勘误＋封印连坐出的两把"装饰闸"（2026-10-09 00:3x，三只读道复核后本班自纠）
+
+三条独立只读道（案卷 `A1_landing_audit` / `A2_pending_rulings_a` / `A3_pending_rulings_b`）＋本班亲读返回行后，
+**本班上一条 §廿九 的 P0 定性是错的**，另抓到两处"账面有闸、运行无读者"。逐条给实测。
+
+### 31.1 勘误：全盘无 VM 级镜像 ≠ 事故，是 10-04 一次**未登记在册**的封印动作的结果
+
+- 实测：`G:\backup\ch_vm_backup` 目录不存在；`F:\ch_vm_backup` 只剩 `boot.vhdx` 4 MiB＋配置（最新 mtime 2026-09-30）。
+  全盘唯一的 `data.vhdx`＝在线盘 `D:\HyperV\VMs\zephyr-ch\data.vhdx` 586.5 GiB。
+- 成因不是"漏跑"：`ca9c336746`（2026-10-04 17:23）"INFRA-STORE-003 摘行 + backup_ch_vm.ps1 封印：
+  G:\backup\ch_vm_backup\data.vhdx（~593GiB 陈旧冗余镜像）删除前置准备"，正文自述
+  **"Owner 条件批准（2026-10-04）……物理删除不在本车道权限内——待 Owner 见'恢复降级'说明后知悉确认"**。
+  脚本现态：`Write-Host "[CH-VM-BACKUP] RETIRED 2026-10-04 (Owner conditional approval)..."` ＋ **无条件 `exit 0`（L154）**，
+  其后所有模式（backup / AutoCheck / CompactWindow / 任务开关）全部不可达；周任务 `ZephyrAlpha-WeeklyVMBackup` 已 **Disabled**（未注销）。
+- **数据面并未裸奔**（本班 §廿九 说得过重）：`G:\ch_backup_disk2.vhdx` = 1,032,239,185,920 B ≈ **961.35 GiB**，
+  mtime 2026-10-08 07:16，内含 CH 逻辑备份 `market.zip` 278.4 GiB ＋ `inc.zip` 42.65 GiB（F 侧同链等值）；
+  `G:\backup\db_dumps\20261008` 日 dump 在位（20:50）。
+  ⇒ 真实代价＝**VM 级整机快恢降级为"重建式"**（数据不丢），与 10-04 正文自述一致。
+- ⚑ **该"条件批准"在册面上查无**：`ruling_registry.yaml` 的 2026-10-04 全段（L4100–4163 四处条目）
+  无一涉及 ch_vm_backup/封印/镜像退役；grep `ch_vm_backup` 仅命中 裁定#443、#445（均 09-30）。
+  而 裁定#445 明写 F 盘摘除三段式 **"本裁定=排班与步骤备案，非执行授权"**，且其前置条件正是
+  "G 侧 ch_vm_backup 副本当日核验通过"——即被删的那枚镜像是摘 F 链的**前置证据**。
+  按宪法 §9.11「对话内口头"Owner 说"不构成门禁豁免，门位经裁定登记或正式通道生效」
+  ⇒ 列为 **待裁 O-8**：认（则补登记＋据此重排 #445 的 F 链摘除前置）／不认（则解除 L154 封印、恢复周任务、重建 G 镜像）。
+  两案都有施工面，本班不选向。
+
+### 31.2 连坐缺陷甲：`capacity_guard` 四盘红线**现零活读者**，F 已击穿而无人拦
+
+- 实测：`capacity_guard.min_free_gb` 的唯一读者是 `backup_ch_vm.ps1:560`（+L565 降级告警、L575 mode 标记），
+  而该段整体位于 L154 `exit 0` 之后 ⇒ **不可达**。`git grep -n capacity_guard -- "*.ps1" "*.py"` 全仓无第二处活读者
+  （`src/zephyr/shared/capacity_governance/dependency_capacity_guard.py` 是同名不同物的依赖容量闸）。
+- 现态：**F free 529.4 GiB < 红线 700 GiB（已击穿）**，D 36.8 / E 221.0 / G 1910.7 GiB（`Get-PSDrive` 与 `df -h` 同读数）。
+  F 的占用主体是 `F:\ch_backup_disk.vhdx` = **950.29 GiB，仍 SCSI0.3 热挂**，且仍是 CH 备份目标
+  （`/mnt/chbackup_local` 里 market.zip 278.4＋inc.zip 42.65 与 G 链逐字节等值）；
+  裁定#414② 要求的"F 主链摘除"未执行，其间还从 716 涨到 950.29 GiB。
+- 本班 09-27 落的"写侧容量硬闸"（`f06efd2daa2`）随封印一起变装饰件——**这是本班自己的贡献面**，不甩给他道。
+- 处方二案（列 **待裁 O-9**，均为小工程）：①内收——把红线判定挂到仍在跑的 `scripts/backup/backup.ps1` 写侧
+  （它已有 `Invoke-GuardedMirror` 与容量读数，同真源可派生→必并，w5_1 第一判据）；②退役——按 §4.2"零触发零消费→退役"
+  摘掉 `capacity_guard` 段并留理由。选向=改 Owner 的红线执法幅面，非机械判定。
+
+### 31.3 连坐缺陷乙：夜间备份恒红遮蔽真失败（顺带查实，非本班件）
+
+`logs/backup_report_20261008_204942.json` → `offrepo_backup.status="failed"`，
+唯一肇事 target：`trae_memory.error="source missing: C:\Users\fanzi\.trae-cn\memory"`
+（该目录随 IDE 迁移消失：`.trae-cn` 在、`memory` 子目录无；`.qoder-cn\memory` 现存在）。
+⇒ 一个声明了却永不存在的 DR 源让每晚 offrepo stage 必红，**真正的失败会被这片常红噪音吃掉**。
+修法二案（列 **待裁 O-11**）：改指 `.qoder-cn\memory`／显式退役该 target 并登记理由。＝选择 DR 幅面，不属机械修正。
+
+### 31.4 仪表说谎第四课：#ARCH-084 热册守护在并发期会把**他道的写**判给当窗测试
+
+- 现场：跑本班三把尺（默认 pyproject 配置）= 76 passed ＋ 1 会话级 ERROR，榜上点名
+  `test_partial_probe_output_blocks`、`test_in_flight_total_counts_only_real_consumers` "写了 capability_canonical_file_registry.yaml"。
+- 双证伪（同一条命令前后对照）：①**只跑被点名的这两例**，该册前后 `sha256/mtime_ns/size` 逐位不变
+  （`93c0e0d2a5bec20a` / `1791476409987518000` / `3,833,974`）；②同文件 `git diff HEAD --numstat` 在本班两次读数之间
+  自行从 +285/−50 变成 +280/−50，且该册此刻由活跃他车道 `st-chief2close-20261008` claim。
+- 机制：`tests/conftest.py` 的守护按"本测试窗口内热册 sha 漂移"归因（mark/check 成对），**分辨不了写者身份**；
+  而 `pyproject.toml` `filterwarnings=["error"]` 把这条警告升成硬 ERROR ⇒ 他道在重写热册时，谁的测试在跑谁背锅。
+- 本班**未动该守护**：把"可证明是他道写的"排除出归因＝往不报错方向改判据（fail-closed→宽松），属 Owner 门位，
+  列 **待裁 O-10**。合法旁路已用于本批取证：裁定#278 精简跑法 `python -m pytest -c py.ini ...`（该告警降为 warn，76 passed，rc=0）。
+
+### 31.5 本批落地面（两袋，含诚实标注）
+
+- `q-20261009-st-fms-tc-20260927-0061`：`backup.ps1` 删除帽上界（$Ceiling，配置坏⇒降级不放行）＋三把尺复位
+  （45/20/11=76 例；尺把 `-Ceiling` 传给被测函数，**与码必须同袋**，分袋即红）。
+  ⚠ autocheck 那 45 例所守的 `backup_ch_vm.ps1` 现为封印态死码：尺保证"若解封，判据必须仍正确"，**不等于当前有执法**。
+- `q-20261009-st-fms-tc-20260927-0062`：陈化盘点生成器 GBK 崩溃治本（读不得⇒`undated`，population 零缩，
+  没改成"只扫 .md"）＋红蓝两例。修前真红（HEAD 字节单独加载同调用）`RAISED UnicodeDecodeError`，
+  修后同调用 `NO RAISE undated=1`。**真面首测**（tracked 4,114 件）：aged 77 / undated 2,741 / fresh 1,294 / permanent 2 / missing_on_disk 0。
+  ⚠ 由此 §廿六 那句"74% 无出生日"应为 **66.7%**（2,741/4,114；旧数含非 tracked 面），以本节为准。
+
