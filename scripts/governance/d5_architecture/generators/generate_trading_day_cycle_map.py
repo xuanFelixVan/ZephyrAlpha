@@ -426,7 +426,7 @@ N: dict[str, dict[str, Any]] = {
         clk="每日 15:40（盘后；成分×个股分钟K链式聚合，非交易日自然零行）",
         act="execute",
         q="昨日/今日板块K撮合产了吗？行数与板块数够 580 族吗？",
-        mech="计划任务→等权链式聚合 runner（MOD-DATA-061，scripts/kline_sector_intraday_from_constituents.py）：sector_constituent 成分 × kline_1min 个股分钟 → kline_sector_intraday（data_source='synth_sh'，写前精准 DELETE 幂等）",
+        mech="计划任务→等权链式聚合 runner（MOD-DATA-061，scripts/kline_sector_intraday_from_constituents.py）：sector_constituent 成分 × kline_1min 个股分钟 → kline_sector_intraday（data_source='internal_eqw'，写前精准 DELETE 幂等；synth_sh=09-30 前历史行字面量）",
         gate="当日个股分钟K与成分表已落库",
         nrg="",
         fb="无（次日 15:40 重跑覆盖）",
@@ -434,7 +434,7 @@ N: dict[str, dict[str, Any]] = {
         anc=["scripts/tasks/register/register_sector_eqw_task.ps1:21"],
         run=["kline_sector_intraday 表（逻辑名；表名真源=TableRegistry，图内禁库名前缀字面量）"],
         ev=[
-            "CH 实证：kline_sector_intraday 近 8 日全量=synth_sh（09-30 当日 171,351 行、全期 450,511 行，580 板块族满格）",
+            "CH 实证：10-08 改名后首个交易日 internal_eqw 五周期满格（1m=171,351 行×711 族、5m=35,550/15m=12,798/30m=7,110/60m=4,266 同族满格，任务 LastRun 15:40 Result=0）；synth_sh=09-30 及之前历史行（同量级 171,351 行）",
             "成分表 sector_constituent 新鲜（max(updated_at)=09-30 21:38 UTC）；tdx 源最后行=09-10 15:00 后零行（断供永久定性，known_data_gaps 2026-10-04 B1 三退役批 Owner 批）",
             "对拍达标在案（方案 J Phase 3 校准：行业段 corr 0.9954-0.9990/地区 0.9953-0.9980/概念段 0.85-0.95=成分回溯误差已知项）",
         ],
@@ -458,10 +458,11 @@ N: dict[str, dict[str, Any]] = {
         anc=["scripts/tasks/register/register_sim_bridge_execute_task.ps1:47"],
         run=["logs/sim_bridge_execute.log"],
         ev=[
-            "schtasks 只读查询：下次 2026-10-05 09:35 就绪（任务在册活着）；10-05=国庆假——触发器纯 Daily，执行体自带 is_trading_day 闸（sim_daily_runner.py:260-262）假日触发即退非误判，2026-10-05 Owner 指正后澄清",
-            "logs/sim_bridge_execute.log 在盘但尾部空+资源册 samples=0=最近执行证据未取到（降🔨不升✅）",
+            "schtasks 只读查询：触发器纯 Daily，执行体自带 is_trading_day 闸（sim_daily_runner.py:260-262）假日触发即退非误判，2026-10-05 Owner 指正后澄清",
+            "10-08 开市复核实测（st-fig13-followup 线A）：09:35 拍触发但在册 Action 指向拆簇失准路径（scripts\tasks\run\run_sim_bridge_execute_daily.ps1 不存在→Result=4294770688 零留痕），09:47 重跑注册器 Register -Force 修正（注册器源路径 scripts\run_sim_bridge_execute_daily.ps1 本正确）；13:05 修正后首拍 LastRun/Result=0",
+            "13:05 拍留痕：.runtime/logs/sim_bridge_execute.log 非空（11,964B，当日行='SKIP: XtItClient not running'=终端离线诚实跳单，与 st-t3c-ops 车道 QMT 离线定性互证）；假日 SKIP 三连（10-01/02/03 各两拍）=闸负向验证",
         ],
-        obs="注册后未取到执行留痕（周末窗未开）",
+        obs="执行留痕已取证（13:05 修正后首拍闸内诚实退出）；升✅候选待骨架 §2 行与状态三态表同步（本批只更证据不动状态）",
     ),
     "D13-46": dict(
         seg="B",
@@ -1715,7 +1716,7 @@ TDMX: dict[str, list[str]] = {
 
 # L1 wiring_status（缺省 wired）——"槽挂着但没跑「的统一表达位，三图共用这一个字段
 WIRING: dict[str, str] = {
-    "D13-48": "wired",  # 盘后撮合在产（synth_sh 满格）
+    "D13-48": "wired",  # 盘后撮合在产（internal_eqw 满格；synth_sh=历史行）
     "D13-45": "partial",  # 注册后未取到执行留痕（周末窗未开）
     "D13-46": "partial",  # 有实测样本但 last_at 时区口径待复判
     "D13-47": "partial",  # 在产但近日缺档（max=10-01）
@@ -1774,8 +1775,8 @@ RED: dict[str, str] = {
 EXEC: dict[str, list[str]] = {
     "D13-48": [
         "复跑（主区只读）: schtasks /Query /TN ZephyrAlpha_SectorEqwIntraday → 任务在册（每日 15:40 触发；2026-10-08 由 sector_eqw_intraday 规范化改名，ops 车道）",
-        "复跑（骨架 §7 C 组口径，DatabaseService CH 只读）: kline_sector_intraday 近 8 日按 data_source 分组=synth_sh 满格（09-30 当日 171,351 行）",
-        "复跑: grep -n 'synth_sh' scripts/kline_sector_intraday_from_constituents.py → 等权链式聚合 runner 在位（MOD-DATA-061）",
+        "复跑（骨架 §7 C 组口径，DatabaseService CH 只读）: kline_sector_intraday 当日按 data_source 分组=internal_eqw 满格（10-08 实测 1m=171,351 行×711 族；synth_sh=09-30 前历史行）",
+        "复跑: grep -n 'internal_eqw' scripts/kline_sector_intraday_from_constituents.py → 等权链式聚合 runner 在位（MOD-DATA-061）",
     ],
     "D13-04": [
         "复跑（骨架 §7 C 组，DatabaseService CH 只读）：情绪窗口表 max(window_ts) 与全表行数读数",
@@ -2458,8 +2459,9 @@ def scan_registered_schtasks(root: Path, *, skip: bool = False) -> dict[str, Any
 # ── trigger_facts 实数化（st-fig13-followup-20261006 线C；口径真源=docs/_working/fig13_followup/c1_trigger_facts_realdata_plan.md 封矿簿）──
 _TRIGGER_DB_REL = "data/integrator_progress.db"
 _TRIGGER_WINDOW_DAYS = 30
-# B 类节拍窗：96h（容忍一个周末/假日 + 负载停顿；全 10 台 B 节点皆日频族）
-_SCHTASKS_INFO_WINDOW_HOURS = 96
+# B 类节拍窗：240h=8 天长假（国庆/春节）+2 天缓冲（红队⑤探针实证 96h 在长假尾假零；
+# trigger 语义=任务在窗内开过机，非产出语义）——st-fig13-followup A2 复核批 errata
+_SCHTASKS_INFO_WINDOW_HOURS = 240
 # C 类产物表（挖矿钉死：骨架 §2 :104/:124；表名一律裸逻辑名，真源=TableRegistry）
 _C_PRODUCT_TABLES: dict[str, dict[str, str]] = {
     "D13-21": {

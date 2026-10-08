@@ -36,7 +36,7 @@ owner: st-fig13-followup-20261006
 ### 机制B · Windows 计划任务（10 节点，src=schtasks）
 - **真源**：`Get-ScheduledTaskInfo`（**只读查询**，与既有 `scan_registered_schtasks` 同通道同降级；`--skip-schtasks` 时同跳过）。
 - **计数语义**：`metric=schtasks_lastrun_in_window`；`count = 1 if LastRunTime ∈ 预期节拍窗 else 0`；`last_run`=LastRunTime 原值。
-  - 节拍窗判定：每日类槽窗=72h（容忍一个休市日+时区漂移）；周类=10d；D13-42 守护族=72h。判据写死在 TRIGGER_CADENCE 常量表，逐节点可覆盖。
+  - 节拍窗判定：**240h=8 天长假（国庆/春节）+2 天缓冲**（errata 2026-10-08 红队⑤探针：96h 原值在长假尾对日频族产生假零，10-08 A2 复核批随批修正；trigger 语义=任务在窗内开过机，非产出语义）。判据写死在 _SCHTASKS_INFO_WINDOW_HOURS 常量，逐节点可覆盖。
 - **产物面旁证**：run[] 日志/表**不进 count**（实证：六份运行日志五种格式、fundflow 进度条乱码、sim_bridge 空文件——异构面正则机读=假绿温床，自裁弃；日志证据留在 evidence/EXEC 文本）。
 - **降级**：查询失败/任务不在册 → count=null + no_count_reason="schtasks 查询面不可用"（禁把"查不到"读成"没注册"，沿用 scan_registered_schtasks 口径）。
 - **边界**：改名批（B1）后 tn=新名，查询面按 tn 逐个查；任务在册但从未跑（LastRunTime 空）→ count=0（真零触发）。
