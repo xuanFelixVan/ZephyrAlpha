@@ -64253,4 +64253,14 @@ creation_tokens:
   created_by: st-fig13-followup-20261006
   capability: fig13_followup_books
   merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/03_modules/_domain_signal/algo_flow/source_line/capital_flow_direction_criterion.yaml
+  token: ff2-cfd-algo-flow-external-20261008
+  capability: algo_flow_external
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
+- file: docs/03_modules/_domain_signal/algo_flow/source_line/news_sentiment_criterion.yaml
+  token: ff2-nsc-algo-flow-external-20261008
+  capability: algo_flow_external
+  created_by: st-fullflow2-20261008
+  no_mount_reason: 算法地图外部锚文件（由源码 docstring 锚引用），非节点图资产
 di_seam_exemptions: []

@@ -68080,3 +68080,19 @@ entries:
   desc_en: ""
   plain_zh: "这个脚本给CYC族四个循环类指标办一场条件变量考试：先看20日动量基线活不活，再把每天全市场股票按各指标的相位值分成几层，比较不同层里动量的预测力差异大不大。用统计学检验（层间差值的HAC检验再乘11做校正）判断这个指标有没有资格当策略的分层开关。跑一次就定生死，结果写进分数册，考官规则全部来自预注册卡禁止临场改。"
   responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "资金流方向源线判据转化器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把每日主力资金净流入和股价序列，换算成这个股票短期被资金看好还是看空的判读标签"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/source_line/news_sentiment_criterion.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "快讯情绪源线判据转化器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把一段时间内的新闻快讯情绪分按新旧加权汇总，算出当下市场情绪是热是冷并给出四档标签"
+  responsibility_layer: business

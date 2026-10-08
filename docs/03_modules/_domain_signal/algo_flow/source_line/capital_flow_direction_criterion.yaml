@@ -1,0 +1,29 @@
+# ALGO_FLOW 外部真源——capital_flow_direction_criterion（_domain_signal 域，真源 src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.source_line.capital_flow_direction_criterion
+source_of_truth: src/zephyr/signal_ashare/source_line/capital_flow_direction_criterion.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 个股日度主力净流入序列族+同轴收盘序列族
+    #   fields: flows_by_symbol/closes_by_symbol（日期升序，DS-016 由调用方读取注入，日度聚合盘后落定不修订）
+    #   code: build_capital_flow_snapshot(flows_by_symbol, closes_by_symbol, window=10)
+    # 层: 算法
+    # - id: A1
+    #   name: 流向三段判据合成
+    #   intro: conviction=近窗净流/绝对流 ∈[-1,1] × 带符号 streak 双门 → FOLLOW_IN/FOLLOW_OUT/WATCH/NONE 四档 + 价流背离 note
+    #   inputs: I1
+    #   outputs: CapitalFlowSnapshot（symbols 判据行+follow_in/out 清单）
+    #   code: build_capital_flow_snapshot 主循环（classify_flow_tier/flow_streak 纯函数核）
+    # 层: 输出
+    # - id: O1
+    #   name: 判据快照序列化
+    #   fields: to_dict() 全基本类型（json.dumps 直序列化，下游 TDM 挂载消费待总裁终裁批）
+    #   inputs: A1
+    #   code: CapitalFlowSnapshot.to_dict
+    # 边: I1 --> A1 ; A1 --> O1
+    # [/ALGO_FLOW]
