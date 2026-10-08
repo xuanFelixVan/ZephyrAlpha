@@ -110,7 +110,7 @@ session: st-mastertc-mine
 | C128 | L1 | **WAIT** | '_working 新件必须有 created'门（防回填后继续漏；终局菜单④） | — |
 | C27 | L1 | **WAIT** | FMS-HYGIENE warn→block 翻转（现 warn 执法+3702 基线棘轮；翻 block 需存量清偿过半+判据改写，挂 Owner 菜单） | — |
 | C30 | L4 | **GREEN** | docs/02_enterprise_architecture/02_domain_architecture_docs/ 76+ 大文件从未入 git（注意：I5 车道有'幻影区判据错案撤'记录，施工 | — |
-| C61 | L4 | **GREEN** | 叶册 22 本 token 批落地（chief7_docs_staging 车道字节在 .aidrafts/st-chief7-20260928） | — |
+| C61 | L4 | **OWNER** | 22 本叶册字节蒸发 0/22 捞回（10-07 L4 取证推翻原 GREEN 误记；重建/撤卡待 Owner） | — |
 | C129 | L4 | **WAIT** | 99_delivery_report.md §十七..廿八落库（存储第二波/镜像树裁定/陈化普查/死锁根因/记忆体检——盘面 640 行 vs HEAD 240 行，自称'已入册'实未落地） | — |
 | C419 | L4 | **GREEN** | 终局报告 16 项任务对账（自称 7 完成/2 部分/7 未做） | — |
 | C453 | L4 | **GREEN** | R-1..R-7 移交清单（叶子册/d5 五图/热册增量等） | — |

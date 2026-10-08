@@ -47,3 +47,22 @@ completes_when: 总包夜战战役(master_tc_night)归档收尾
 5. 提交面终态（三袋全落，`git log -1 --name-only` 归属复核零外来）：**q-0002→831a35b30ab**（袋 B 六编辑件）｜**q-0003→eb358e0cfda**（袋 A1 token 册先行：自登 5+代补登他道 HEAD 独有 9，意图 API publish v79）｜**q-0004→a621b977651**（袋 A2 五新件重投）。
 6. 死袋留痕：q-0001 死因=落地门 CREATE-GUARD 读 HEAD 册时 token 未先行（袋 B 先落、registry 不在其中）——按 L0 处方"先行落地"拆袋重投，旧袋不复活。
 7. 过程发现移交：capable 册投影时序差曾两次翻面盘面 token（他道袋落地+daemon render 竞态），本车道以"重 render+重 add+先行落地"自愈；该竞态根治归维护班（注册表投影 vs 袋落地顺序）。
+## 附录 A：C61 qid 级反查清单（0/22 独立复算包；st-acure-e1 2026-10-08 整理，裁定#490 链）
+
+> 本附录内容全部取自本簿 §三 C61 条目与 C430 对照行既有读数（外部审计已验证为真），只做复算化整理，零新增事实。
+
+### A.1 复算命令/动作与读数对照
+
+| # | 复算命令/动作 | 读数 | 指向 |
+|---|---|---|---|
+| 1 | `.aidrafts/` 目录清点（chief7 会话目录存在性） | 仅剩 tdm/tests 两 chief；`st-chief7-20260928` 不在盘 | 蒸发现场 |
+| 2 | `git log --all -- "*chief7*"` | 0 命中 | chief7 零 commit 入史 |
+| 3 | 死袋台账按 chief7 会话枚举（袋=commit_queue 队列账本条目） | 102 袋；内容全为 scripts/governance .py，唯一 md 3 件=fig14 骨架 2+wave7 红面 1，**无一本叶册** | 102 袋枚举 |
+| 4 | 全量死袋叶册路径反查（本仓对照行：done=510/dead=1651） | 1651 袋中叶册路径仅 10 处=盘面已在册 10 本（首批 6 本 beb2da1d7d7+四族 4 本 d7e0200a93d） | 死袋面 0 新增 |
+| 5 | 会话暂存区清点 | 仅剩 heartbeat.jsonl | 暂存区零叶册字节 |
+| 6 | stash 与 worktree 元数据巡检（`git stash list` 等） | 无 stash、无 worktree 元数据 | 隐藏面零 |
+| 7 | 双全量 bundle（0926/1003）核对 | 不含未提交字节 | bundle 面零 |
+
+### A.2 结论链
+
+102 袋（全为 scripts/governance .py；md 3 件非叶册）∪ 1651 死袋（叶册路径 10/10 已在册）∪ 暂存区（heartbeat.jsonl）∪ stash/worktree（零）∪ bundle（零）⇒ **22 本叶册字节蒸发，0/22 捞回**。本附录使命令级读数可独立复算；重建/撤卡待 Owner 门位。

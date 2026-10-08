@@ -32,7 +32,7 @@ completes_when: 总包夜战收尾班(st-mastertc-close)四项任务落地核实
 | q-...-l0-0003 | 7 | 落地（l7-0010 转移属主重投：G-D 引擎族+测试） |
 | q-...-l1-0007 | 2 | 落地（L1 簿+x01_case） |
 | q-...-l6-0003 | - | 落地 |
-| q-...-l6-0004 | 8 | 落地 45c1f0b224（signal_ashare 三件+测试+双册） |
+| q-...-l6-0004 | 5 | 未落地——45c1f0b224 实为 5 文件 docs 袋；三件+测试在死袋 recover-0002/0005，10-08 审计闭合夜复活施工处置（见 audit_cure_night） |
 | q-...-l8-0008 | 2 | 落地（rule_catalog_registry+rule_ai_perception_index） |
 | q-...-l1b-0001/0002、l5c-0001 | - | l1b 落地；l5c-0001 死（见下） |
 

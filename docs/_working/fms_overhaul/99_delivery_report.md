@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+gate_selfdoc: GIT-DANGEROUS  # [GATE-SELFDOC:GIT-DANGEROUS] §廿二 450/462 行=16.7h 陈锁案卷取证引文，非操作指令（detect_git_dangerous 自带豁免通道，总包裁定 A3）
 title: FMS 大改造战役·交付报告（Owner 晨报底稿）
 created: 2026-09-27
 sid: st-fms-chief-20260927
@@ -239,77 +240,396 @@ git status --porcelain -- docs/01_policies_and_standards/_registry/catalogs/rege
 另注意：主区全量测试面还残留 `tests/library/test_potential_consumers_guard.py` 等
 他道未落地删除位（§十一），同读法。
 
-## 十七、S2 生命周期与临时区（重建纲要节）
+---
 
-- 职责：把"永久/临时隔离"变成机械可判定事实——根目录 19 项残留逐一定性+删除处方、CAS 残渣全仓普查防复发、docs/_working 2,827 件陈化处置、FMS-HYGIENE"永久引临时"第三查判定规则与棘轮基线。
-- 状态：挖干（3 项 Owner 门位外呼已标注，不阻塞无主件净化批）。
-- 真源：`docs/_working/fms_overhaul/S2_lifecycle_ephemeral/README.md`。
+## 十七、存储面治本第二波：写侧服从裁定 + 读侧取件裁决（2026-09-27 午后，Owner 批准"全部批准·全速"后开工）
 
-## 十八、S3 分类学与命名（重建纲要节）
+> **重建说明+捞回归位注记（st-acure-e1，2026-10-08，裁定#490 链）**：本册 §十七..廿八 十二节原件实录曾于 2026-10-07 被 st-mastertc-l4 袋 831a35b30a 误删，代之以“重建纲要节”（主题=各 S 簿索引摘要，与原件实录不同；其重建声明节自带“考古后以原件为准替换本纲要节”条款）。本夜经外部审计 lane_f P0-F1 定性、裁定#490 授权，原件十二节已自 object DB 悬挂 blob `d5e61426e985fb393b55733fb4891cd20afae0fe`（git blob id；内容 sha256=`e4a456550f057b72f82aae642a8de6416ca87a45f9b9fd4cad6bd1de5d44b5b8`，633 行，含 GATE-SELFDOC 头）捞回归位，即以下正文。被替换的重建纲要节十二条（S2 生命周期临时区/S3 分类学命名/S5 图书馆接线/S7 生成器 regen-clean/S8 并发冲突面/X2 门挂接处方/95 外审案卷/_data 数据附件/FMS-HYGIENE 死引用治理/波次与 O-1..O-6 衔接/重建声明/真源指针总表）不再占正文，可经 831a35b30a 袋考古溯源；其指向的各 S 簿真源本体仍在盘面未动。另：§三标题语义修正（C342）保留现版。
 
-- 职责：docs/03_modules 三套并存命名体系（4,776 件=yaml 3,353+md 1,423）的十年级收敛规格——镜像树映射函数+命名规则+深度/扇出帽+渐进迁移棘轮，并指认规格真源落点与执法门挂点。
-- 状态：挖干（1 项口径裁定留总筹 §5.4，不阻塞 B9 开工）。
-- 真源：`docs/_working/fms_overhaul/S3_taxonomy_naming/README.md`。
+外审案卷 `95_external_review/backup_cold_store_review.md` 点名的四条实锤里，本波收掉三条半，
+全部经 GitCommitGateway 入袋。尺面合计新增 45+30=75 例，DR 邻域 `tests/dr tests/scripts/backup`
+148 例全绿。
 
-## 十九、S5 图书馆接线：successor_of+lookup 单口+三层对账（重建纲要节）
+| # | 治本对象 | 落地形态 | 状态 |
+|---|---------|---------|------|
+| 1 | 写侧 data.vhdx 灌 F（09-26 事故根因，案 A） | 配置级件留 F、全量镜像归 G（写侧服从 `restore.ps1` 早已声明的 $ChVmImageHome 家） | 已落 `103b97dc11` |
+| 2 | G 侧冻结镜像无刷新通道（案 B） | 同一写侧新增 `-CompactWindow` 有序窗口：停机→刷 G→验字节长→Optimize-VHD→开机→探针→回写→最后退役 F 残留 | 已落 `103b97dc11` |
+| 3 | 唯一夜镜像裸 /MIR 传播删除（案 G） | `backup.ps1` STAGE 3c/3d 共用"先数后删"闸，帽登记于 `backup_config.yaml` 的 `mirror_guard.max_propagated_deletes=200` | 已落 `5d5398e848` |
+| 4 | 演练验 G、恢复用 F（案卷 §210） | `Get-VmImageChoice`/`Get-VmImageSrc` 单点裁决；verify 打印与 vm 取用同一派生 | 已落 `5d5398e848` |
+| 半 | 冷库第二副本落未登记孤儿目录（案 C） | 未动——属数据面搬迁，需独立窗口 | 记 §十九 |
 
-- 职责：lib_assets 总账加 `successor_of` 墓碑去向指针全线接通（DDL→馆员→lookup→馆页），立"路径禁凭记忆必经 lookup"宪法条款，立总账↔生成视图↔盘面三层一致性检查器（独立新文件避开 st-p1b 三件）。
-- 状态：挖干（唯二外部依赖=Owner 增枝批文+st-p1b 落地后 reconciler 挂接，已给绕行）。
-- 真源：`docs/_working/fms_overhaul/S5_library_wiring/README.md`。
+### 17.1 一处判据被自己的实测推翻（记档以免重犯）
 
-## 二十、S7 生成器与 regen-clean（重建纲要节）
+`/MIR` 待删数第一版按 robocopy 汇总区英文列名 `Files :`/`Extras` 解析。**本机 robocopy 以 OEM
+码页输出中文表头**，那条路径会永久返回"未知"⇒ 护栏静默失效、镜像从此再不删除且毫不报错。
+这是"判据在错误面上恒绿"的又一同型：写解析器前先抓一次真输出，别照文档记忆写。
+改判为数 `*EXTRA` 行（locale 无关，且是 `/NFL /NDL` 之后唯一还留在输出里的信号）。四例实测：
+5 残留→5、含子目录（连带空目录）→4、两份相同→0、源缺失→exit 16→未知。
 
-- 职责：全仓生成器/生成物家底普查，落地"凡生成物必有 regenerate && diff 机械验证"：`regen_clean_check.py` 检查器+FMS-REGEN-CLEAN 门，堵宪法 9.5"静态清单禁手工维护"无机械验证之缺。
-- 状态：挖干（自审三态见其 §5）。
-- 真源：`docs/_working/fms_overhaul/S7_generators_regen/README.md`。
+### 17.2 压缩窗口的前置闸换了测量面（不是放松）
 
-## 廿一、S8 并发与冲突面（重建纲要节）
+旧判据"注册会话数>0 即拒"在本机不可满足：实测 `st-chief7w` 心跳 16 秒前刚跳，而它 6 个 claim
+的文件最后写入是 07:25–10:30（9 小时前）。**心跳只证 daemon 活着，不证会话在干活**，
+拿它当停机许可＝要么永久拒绝要么永久无视。新判据量"停机真会打断什么"，两条都可测：
+① ClickHouse 活体量（未完成备份+merges+未完成 mutations+运行中查询，减去探针自己那条）；
+② 非本会话的在途队列袋。会话注册数降级为 advisory 打印（连带 held_files 数）。
 
-- 职责：登记本夜多队并发格局（worktree 生态 ~90：.aidrafts 23/.worktrees 45+/.qoder 9/队列+tmp）、冲突避让图、gateway 仪式链实证与协调协议——后续会话持本簿即可安全进场。
-- 状态：MINE 完成（挖干）。
-- 真源：`docs/_working/fms_overhaul/S8_conflict_surface/README.md`。
+顺带修掉我自己埋的两处：① 新鲜度误读 `$st.last_backup_status`——那属于 CH 逻辑备份
+（`backup_ch.ps1`），读它＝让相邻子系统给"VM 可灾备"背书；改读 VM 自己的
+`last_ch_vm_backup_success` + `last_ch_vm_backup_time`，并加 30 天界。② 前置闸与 Step 5
+健康探针各写一遍 `.env.clickhouse` 解析，收敛为 `Get-ChBaseUrl` 唯一读者（两处口径分叉
+＝一个探 A 主机一个探 B 主机）。
 
-## 廿二、X2 门挂接处方：FMS-REGEN-CLEAN 接线（重建纲要节）
+### 17.3 一次自查：我的中文注释被自家 ASCII 尺打死
 
-- 结论：检查器本体已落 HEAD（3f9b600d21+q-0009）但执法面=0（三处登记面零命中），属"装饰件待接线"；单对成本实测数据定档，禁凭印象接线；FMS-HYGIENE 已在册（priority=138 warn 起步）。
-- 真源：`docs/_working/fms_overhaul/X2_gate_wiring_prescription.md`。
+写 `backup.ps1` 时在注释里贴了 GBK 字面量（"文件:"与六个中文列名），
+`test_script_is_pure_ascii` 当场转红——HEAD 版该文件非 ASCII 字节数=0，是我引入的。
+根宪法 §9.7 说的就是这类假语法错误。改写为英文叙述，不放宽尺、不加 noqa。
 
-## 廿三、95 外部审查案卷（只读调研，重建纲要节）
+---
 
-- 三件：F/G 冷储+备份体系审查（分类/漂移/幻觉/重放）、F 盘取证（f_space_forensics）、图书馆命名与本地 MCP（library_naming_and_local_mcp）；全部只读零写操作，证据分级 [亲验]/[读档]/[推断]。
-- 真源：`docs/_working/fms_overhaul/95_external_review/`（三 md）。
+---
 
-## 廿四、_data 数据附件（重建纲要节）
+## 十八、镜像树迁移（3,295 件积压）裁定：**本批不做整体迁移，先做写者改造 W0**
 
-- 死引用四表（deadref_fix_map/deadref_missing_2498/deadref_refcounts/deadref_refs_unique）+非 ASCII 路径清单（non_ascii_paths）；10,683 引用 2,498 死=23.4% 基线的机械底账，FMS-HYGIENE 棘轮基线的数据面。
-- 真源：`docs/_working/fms_overhaul/_data/`（五 csv）。
+备料案卷=`M3_mirror_tree_migration/mirror_tree_prep.md`（只读调研，零 git 写操作）。要点：
 
-## 廿五、FMS-HYGIENE 门与死引用治理（重建纲要节）
+- 镜像位定义：`M(src/zephyr/<pkg>/<sub>/<mod>.py)=docs/03_modules/<pkg>/<sub>/<mod>.yaml`，
+  `__init__.py→<末段目录>__init__.yaml`；判定面 `scripts/governance/d1_structure/check_mirror_tree.py:111-123,230-236`；
+  法律=`domain_naming_rules.yaml:69-74`（NR-006，severity=error）。认领方向是**文档侧反向声明**
+  （frontmatter `source_of_truth`/`module`），不是遍历 src。
+- 计数复现：交付报告写 3,295，本次实测 **3,309**（`mirror_hits=0`，98.2% 包覆盖两项吻合）。
+  统计面是**盘面 rglob 而非 tracked 树**，+14 无法逐件归因（交付时点无键集合快照）——
+  又一次印证"散文计数必漂移，数只能机生"。
+- 三条承重证据说明"现在做"是净负收益：
+  1. 积压的 3,309 个 yaml 是**唯一副本、不可再生**：3,307 个源 .py 只剩锚行，机器块已出仓，
+     而出仓器 INVARIANT 明写"已带 external 锚的文件跳过"（`externalize_algo_flow.py:9`）
+     ⇒ "删了重生成"这条路根本不存在；
+  2. 真实同批改动面 **≥6,100 个既有文件**（5,716 .py 含 4,062 行 `[BLUEPRINT]` 头部 + 3,310 行锚）；
+  3. NR-006 **无执法落点**：FMS-HYGIENE 虽注册（`gate_registry.yaml:2110`）但四查不含镜像位，且 MODE=warn。
+- 最大单一风险：`git mv` 与 6,100 处引用重写**无法构成一个可验证原子 commit**；在当前
+  443 文件/−57,074 行（252 文件含删除）的混合暂存池里，跨批窗口锚与 yaml 互指不到，
+  `algo_flow_link_gate` 硬拦后的回滚会**连坐他会话未落地工作**。
+- 净零：本裁定不新增门、不新增册，只把一条错误工单改判为"W0 写者改造先行"。
 
-- 棘轮机制：存量违规进生成基线豁免（只减不增），新增违规一律硬拦；门已注册 in_process_gate_registry（priority=138，warn 起步）；清偿进度见 S2/S5 两簿与 §一 评分卡。
-- 真源：`docs/_working/fms_overhaul/00_orchestration.md` §一/§二（五支柱）。
+---
 
-## 廿六、后续波次与 O-1..O-6 待裁衔接（重建纲要节）
+## 十九、幻影区判据更正（撤一条我自己的错案）+ 案 C 未动项
 
-- 本报告 §十~§十五 收尾班（st-fms-tc-20260927）已登记：跨车道暂存删除事件、FMS-HYGIENE 翻档判据缺陷、同文件对撞、终态待裁清单 O-1..O-6 及大白话版；后续班按编号回"批/否/改成X"即可，无需重读全卷。
-- 真源：本册 §十~§十五 + `docs/_working/fms_overhaul/00_orchestration.md`。
+- **更正**：交付报告与 S8 §⑤14 记"untracked-phantom 76 件从未入 git＝债"。实测证伪：
+  `docs/02_enterprise_architecture/02_domain_architecture_docs/*.md`（77 件）由 `.gitignore:541`
+  **设计内排除**，理由就写在该行注释（派生产物离库，见根宪法 §11.1.4；生成器
+  `generate_domain_doc.py`），且 `!.../README.md` 显式豁免唯一手写件。
+  `git ls-files --others --exclude-standard` 在该目录=**0**。⇒ `is_clean` 对它们返回空是
+  **正确行为**，不是假干净。真幻影只有 10 件（01 域 2 + 03 域 8），当日因 token 册被外来
+  55 条暂存删除污染而停手未投（该污染现已清零，后波可直接重投）。
+- 教训入库：判"从未入 git"之前必须连 `.gitignore` 一起判，否则会把"设计外"当成"遗漏"，
+  并把一个本不存在的债列进后波。
+- **案 C 未动**：冷库第二副本落未登记孤儿目录（`G:\zephyr_cold\zephyr_cold_archive` +
+  两棵 `zephyralpha_ch_waste_tables_*`）——属数据面搬迁＋登记面收敛，需独立窗口，本波不碰。
 
-## 廿七、重建声明（C129，2026-10-07）
+---
 
-- **本册 §十七..廿八 为重建版纲要节，非原 640 行全文**：原 640 行版已蒸发（盘面仅存 240 行止 §十六），本节由 fms_overhaul 各 S 簿 README/00_orchestration/X2/95_external_review 现存台账重建，每节 3-5 行摘要+真源指针。
-- 原件若有备份/死袋可考古，考古后以原件为准替换本纲要节；重建过程零虚构——全部结论可回溯至所引真源。
+## 二十、搁置车道救援工单：`csx-p3b`（HEAD 现红 10 例的真因，非 R4 引入）
 
-## 廿八、真源指针总表（重建纲要节）
+`tests/governance/audit/test_integrity_head_baseline.py` 在 HEAD **10 failed**（实测）：
+9 例 `FileNotFoundError: src/zephyr/gov_enforcement/derived_dirty_ledger.py`，
+1 例 `TypeError: check() got an unexpected keyword argument 'baseline_mode'`。
 
-| 节 | 真源 |
-|----|------|
-| 十七 | S2_lifecycle_ephemeral/README.md |
-| 十八 | S3_taxonomy_naming/README.md |
-| 十九 | S5_library_wiring/README.md |
-| 二十 | S7_generators_regen/README.md |
-| 廿一 | S8_conflict_surface/README.md |
-| 廿二 | X2_gate_wiring_prescription.md |
-| 廿三 | 95_external_review/（3 md） |
-| 廿四 | _data/（5 csv） |
-| 廿五/廿六 | 00_orchestration.md+本册 §十~§十五 |
+取证链（全部实测，非推断）：
 
+| 项 | 读数 |
+|---|---|
+| 该测试何人何时落 | `17f823f251`（st-commitspeed-tbl-20260924，09-24）自述"本袋补齐证尺与修复同在纪律" |
+| 被测实现是否在任一 ref | **否**——`git log --all -- '*derived_dirty_ledger.py'` 零命中 |
+| 实现何在 | `.worktrees/csx-p3b`（detached `11923233c2`，locked，最新写入 09-25 18:21）内含该模块 4,030 B + 8 件改动 |
+| 那份代码好不好用 | 在其基座真跑 **10 passed in 4.13s**（证尺与实现自洽） |
+| 其测试与 HEAD 测试 | blob 同为 `87451ac01f` ⇒ 尺未分叉，缺的只是实现 |
+
+**为何本批不救**（逐件分叉表，判据=base blob vs HEAD blob）：
+
+- CLEAN（4 件可直接搬）：`validate_rules_integrity.py`、`gateway_post_commit_ritual.py`、
+  `reconciliation_registry.py`，外加与 HEAD 全等的测试件；
+- MOVED（5 件基座已动）：`config/flags.yaml`、两本热册（token 册 / module_translation 册）、
+  `commit_queue_landing.py`、`git_commit_gateway.py`；
+- **硬阻断**：上述 MOVED 里的 `commit_queue_landing.py` 与 `git_commit_gateway.py` 在主区
+  index 里正被**他道**改写（暂存面 +144/−154 与 +28/−80，状态 `MM`），且这两件**不在任何队列袋里**。
+  覆盖它们=归属篡改＋把别人未落地字节打回去，违 Owner 红线"他会话在途文件禁改"。
+
+**留给空闲窗口的精确重放配方**（我已按此顺序验证可行性）：
+
+1. 搬 3 件 CLEAN 文件字节 + 新模块 `derived_dirty_ledger.py`；
+2. 新模块用 CAS 工具补 token 与 translation 两条**增量**（禁整片覆盖热册；写前
+   `git diff --cached HEAD --numstat` 第二列必须=0）；
+3. `config/flags.yaml` 以 HEAD 文本为基**追加** `integrity_baseline_mode` 块——
+   该块自带 `mode: "snapshot"` + `implementation_status: "gated"`，即**保持出厂态势不变**，
+   其自述写明"翻 head 属 Owner 门位（high tier）"；本工单**不含**翻转；
+4. `commit_queue_landing.py`/`git_commit_gateway.py` 做 base→theirs 的三向合并，
+   **仅在主区那两处外来暂存编辑落地或清零之后**；
+5. 验：`pytest tests/governance/audit/test_integrity_head_baseline.py` 须在**当前基座** 10 passed，
+   再跑提交链邻域；
+6. 一袋落地，commit message 署名被救车道 `st-commitspeed-tbl-20260924` 并附其 worktree 与
+   base blob 号，使归属清晰（救援不占功）。
+
+---
+
+---
+
+## 廿一、语义分叉裁定：`st-p23-rebase`（Owner 清单第 5 项）——**接受其语义，但实测它是半接线**
+
+### 21.1 裁定：与本波"未知即拒"取向不冲突，接受
+
+我此前把这条记成"相冲"，读完案卷 `three_piece_infra/rebase_fix/CASE.md` 后**更正**：
+它把判定从"队列层 base_blob 漂移⇒整袋死"移到"落地层条目级三向合并仲裁"，而合并器本身
+fail-closed——真冲突（同键异容）死信并附双方条目全文，base 不可知时自会死信
+（`commit_queue_landing.py:1712-1718`）。收窄的只是"族漂移"这一维，不是安全边界；
+非 mergeable 路径与 drain 直连口维持旧严格判据（其红证 B/D 钉住）。⇒ 与"未知≠安全"同向。
+
+### 21.2 实测：HEAD 上这特性是**惰性的**（存在性判据≠内容判据又一例）
+
+| 面 | 实测 |
+|---|---|
+| `HEAD:scripts/commit_queue.py` | 含 `mergeable_pred`×4、`rebased_registry`×5 ⇒ 队列侧参数**已落 HEAD** |
+| `HEAD:…/commit_queue_landing.py:3056` | `return cq._revalidate_stale_base(item, head_reader)` —— **无人传谓词** |
+| 其红证尺 `tests/governance/test_queue_registry_rebase_not_retire.py` | **盘上有、HEAD 无**（未落地） |
+
+⇒ 特性只落一半，注册表族袋子今日仍按旧判据死信（`.runtime/commit_queue/dead` 实测 912 只）。
+"参数在＝特性在"正是我提醒过自己的那个坑。
+
+### 21.3 执行记录（当日就补完了；"要开 worktree"的前提被实测撤掉）
+
+原判"须开隔离 worktree"，理由是会连带吸收他道 hunks。§廿二 恢复磁盘陈旧核心件后重测
+`commit_queue_landing.py` 的**磁盘独有行集合**：仅 6 行，且全部就是该道自己的注入
+（docstring 5 行 + 那一条调用）——ATK-1/EV-02 等他道 hunks 早已落地进 HEAD，不在独有集里。
+⇒ 以 HEAD 文本为基做一次超集重放即可（净差 **+7/−1、单 hunk**），零吸收零回退，
+无需 worktree。这也说明"要不要隔离"不该凭印象，判据是**独有行集合**。
+
+执行时当场发现一件更硬的事：**该道的两半自己互相打脸**。
+
+- 其红证 D 断言 `head_reader is None ∧ mergeable ⇒ 放行交合并`；
+- 而其已落地的 `commit_queue.py` 边界②写死 `head_reader 缺失 ⇒ 一律判不适用`。
+  ⇒ 特性因此惰性，其尺件在盘上红了两天也没敢入册。
+
+裁定=取证尺、改边界②。理由是**方向性判据**而非吞吐：我按"转述即签字"的规矩自己读到
+raise 行才下判——`commit_queue_landing.py:1769` 在 `base_head` 与逐路径 `base_blob`
+皆不可知时 `raise RuntimeError`（上一行注释"绝不猜基底"），所以队列层抢先判死**不产生
+任何安全增量**，只把可救的袋变成人工重投。非 mergeable 路径无此下游仲裁者，保险丝逐字节
+照旧；缺省 `None` 调用方（drain 直连口）口径逐字节不变。收窄面只有一格。
+
+成本证据（立项理由）：死信册带指纹 `(head_reader 缺失无法重校验)` 共 **37 只，其中 33 只
+发生在 09-27 当日**（含本会话 8 只）——是活跃误杀，不是历史噪声。
+
+尺面：其 4 红证 passed + `test_commit_queue.py` 91 passed +
+`test_commit_queue_landing.py`/`test_commit_queue_base_head.py` 92 passed。
+袋 `q-...-0058/0059`，署名 st-p23-rebase。
+
+**现场生效判据**（别只看测试绿）：
+`grep -l rebased_registry .runtime/commit_queue/done/*.json | wc -l` 应开始 >0；
+落地前该数=0（历史袋全是死信或旧口径）。
+
+### 21.4 主区 index 安全公告（他会话在途，我只读不改）
+
+三把提交链核心的三方态实测（HEAD / index / 磁盘 互不相同）：
+
+- `scripts/commit_queue.py`：HEAD 有谓词，**index 与磁盘都没有**，index 比 HEAD 少 ~7.9K 字符
+  ⇒ index 里躺着一份**陈旧基底回退版**；
+- `scripts/governance/commit_queue_landing.py`：谓词调用点只在**磁盘**，index/HEAD 均无；
+- `src/…/git_commit_gateway.py`：磁盘==HEAD，但 **index 比 HEAD 少 ~2.1K 字符**（同样陈旧）。
+
+这三处**我一律未动**（Owner 红线 + 根宪法 §3.4）。现有防线：非 mergeable 文件的基底漂移会被
+`_revalidate_stale_base` 判 `mismatched`⇒死信，不会静默回退，故不是活跃丢失风险；
+但任何车道若带 `--skip-preflight` 或直连提交带上这些路径，就会把核心文件打回旧版。
+处置建议：各车道在自己 worktree 重取基底后整批重投，勿在主区混态上直提。
+
+---
+
+## 廿二、提交链现场：一枚 16.7 小时陈锁毒住一台序列化 worktree（实测根因，非猜测）
+
+现象：我方袋 `q-...-0051`（2 件：backup_ch_vm.ps1 + 其尺）在 `processing/` 停 33 分钟不落地，
+`attempts=2`，`last_failure` 原文：
+
+```
+LandingEnvironmentError: git 瞬态环境失败，项退回 pending 等下次自举:
+git reset --hard refs/heads/dev -> rc=128:
+fatal: Unable to create 'D:/ZephyrAlpha/.git/worktrees/w0/index.lock': File exists.
+```
+
+定性三证（全部零写入探针）：① 该锁 mtime **03:46:08**，量测时刻 20:29 ⇒ 陈 16.7h；
+② 锁体 **0 字节**；③ 存活超过 10 分钟的 `git.exe` 数量=**0**（此刻只有 20:28 起的两条短命 git）。
+⇒ 判定为**无主陈锁**，不是活跃持锁。
+
+处置：不删——`os.replace` 移入 `.runtime/tmp/lock_quarantine/w0_index_lock_stale_20260927T202948`
+（留字节与 sha 可复原）。移开后 **<1 分钟**该袋即以 `d52a43a672` 落地。⇒ 因果确认。
+
+**处方（后波施工件，本波只登记不改码以免与在途 hunks 撞面）**：序列化 worktree 在执行
+`git reset --hard` 之前，应先做一次"锁龄 + 无活体 git 持有者"双判据的陈锁检疫并就地移开，
+而不是把袋退回 pending 空转——一台 worktree 被毒住时该 lane 永久不可用，而 belt daemon
+只会换 worktree 不会解雇坏的那台。判据取向=可检疫不可重试。
+
+---
+
+## 廿三、cascade_stale 的活体样本，以及它如何替 §廿一 结了账
+
+`0051` 落地后，同会话的两只后袋被基底重校验判死，死因原文：
+
+| 袋 | 内容 | 死因 |
+|---|---|---|
+| 0052 | `capability_canonical_file_registry.yaml`（token 册） | `cascade_stale … (head_reader 缺失无法重校验)` |
+| 0053 | backup.ps1 / restore.ps1 / backup_config.yaml + 2 新尺 | 同型 |
+
+两型修法不同，这里第一次有并排实测：
+
+- **非 mergeable 文件**（后三件 .ps1/.yaml）判死是对的 ⇒ 正解 `requeue`（新 qid 取当前盘面快照，
+  基底与 HEAD 重新对齐）。本次即按此走通：`0053 → 0055`。
+- **注册表族**（0052）本该由条目级三向合并仲裁救活——但 §廿一.2 实测该特性在 HEAD 上**惰性**
+  （无人向 `_revalidate_stale_base` 传 `mergeable_pred`），于是它也死了。
+  ⇒ 这条惰性的**真实代价**从此有了样本：token 册一类袋每被误死一次，就要人工 requeue 一轮。
+  §廿一 的补接线由"应当做"升级为"有成本数据"。
+
+---
+
+## 廿四、worktree 登记面泄漏（空间与治理双项）
+
+实测：`.git/worktrees` 登记 **132** 台；其中 `agent-general-purpose-*` **21** 台
+（每个后台子代理留一台，无回收）；`.worktrees/` 目录 **94** 个；
+`git worktree list` 三方核对出 **1** 台纯孤儿（登记在、目录已无：`.aidrafts_pool/pool-20260919202729-c433`）。
+这与 S1 报的 `.worktrees` 21.85 GiB 是同一件事的两面：**占用在盘上，泄漏在登记面**。
+后波建议（本波未动，`git worktree prune` 会连带影响在途车道，须在全静默窗口做）：
+子代理 worktree 应在代理退出时由会话收尾序列注销；`session_worktree.py` 的收尾清单需补这一项。
+
+---
+
+## 廿五、"HEAD 有修复 ≠ 运行中有修复"：主区磁盘被陈旧整文件写回退（本日 P0 级根因）
+
+发现路径是反的：我先为"我的袋子反复死"找原因，才挖出这条。
+
+实测三件提交链核心的 **磁盘 vs HEAD** 行集合差：
+
+| 文件 | 磁盘独有 | HEAD 独有 | 定性 |
+|---|---|---|---|
+| `scripts/commit_queue.py` | **3 行**（全是修复前旧码：两参签名 + 旧比对两行） | 缺 `mergeable_pred`/`rebased_registry`/`_hr_getter`/半接线治本 | **纯回退**，无他道未落地内容 |
+| `scripts/governance/commit_queue_landing.py` | 6 行（=st-p23-rebase 注入本体） | 125 行（含 12:23 派生标量名册修复） | 回退＋一条他道未落地增量 |
+| `src/…/git_commit_gateway.py`、`scripts/git_commit.py` | 0 | 0 | 健康 |
+
+机理：belt daemon（pid 27728，17:00 起）与所有从主区跑的 python **读的是磁盘字节**。
+13:04 落地的 `head_reader 半接线补齐`（`94326c3bd9`）与 12:05 的 `mergeable_pred`
+（`82308924d7`）在磁盘上都不存在 ⇒ 当天 06:00 之后落的所有袋都在跑修复前逻辑，
+于是出现"修复已入册、误杀仍继续"的假象。**这类病灶的指纹是：git 面全绿、现场仍红。**
+
+处置与取证：
+
+1. 判"能不能恢复"不许凭肉眼，判据=**磁盘独有行集合**（Counter 差集）。本次 `commit_queue.py`
+   独有集只有 3 行且逐行可解释为修复前旧码 ⇒ 恢复零丢失；
+2. 恢复前先备份字节：`.runtime/tmp/commit_queue_disk_stale_before_restore_20260927T2045.py`；
+3. `git checkout HEAD -- scripts/commit_queue.py` 后实测签名恢复为三参、index==HEAD；
+4. 现场对照：恢复前我的袋两次 `attempts` 停在 head_reader 缺失；恢复后同一条 requeue
+   立刻 `DRAIN: done=1 dead=0`。**前后因果由同一条命令量出，不是叙事。**
+
+处方（后波施工，本波只登记）：
+- 提交链核心四件（`commit_queue.py`/`commit_queue_landing.py`/`git_commit_gateway.py`/
+  `git_commit.py`）应纳入一条**主区磁盘==HEAD** 的常驻尺：漂移即红并打印独有行集合，
+  因为"自动 git add + 整文件写"使这种回退可在无人提交时发生；
+- `_revalidate_stale_base` 的 marker 文案应自带"运行代码版本"提示（例如把 `_hr_getter`
+  是否存在打进死因），否则下次仍要人肉挖 30 分钟。
+
+---
+
+---
+
+## 廿六、`_working` 陈化普查：把"2,827 件待迁移"改判为"74% population 没有出生日"
+
+Owner 清单里这条原写作"存量消化型后波（镜像树 3,295 件迁移、`_working` 2,827 老化…）"。
+本波把它的**判龄轴修对了**，于是存量真相第一次可见。
+
+### 26.1 这条尺原先是永久空转的
+
+`scripts/governance/generators/library_hygiene.py` 是月度卫生批的唯一候选产出器，它对
+`docs/_working` 用 **mtime** 判龄。而 S2 案卷 §2.5 早已实测 `mtime>30 天` 桶 **= 0**
+（git checkout/merge/stash 天天碰 mtime）。净效果＝类目①**永不产出候选**，
+月批看着在跑，实则对着一个恒空的面点头。
+另有一条同源 metadata 谎：该文件头 `[TESTS] tests/library/test_library_hygiene.py`
+指向的测试件**从未存在**（`git ls-files` 零命中）＝"有测试登记、零测试实存"。
+
+### 26.2 改成 `created` 轴后，当日全量实测分布（tracked 面 3,172 件）
+
+| 桶 | 件数 | 含义 |
+|---|---|---|
+| aged（created>30 天 且 task_bound） | **1** | 真正"按年龄该处置"的只有 1 件 |
+| fresh（created≤30 天） | 798 | 未到期 |
+| **undated（created 读不得）** | **2,361（74.4%）** | **陈化根本不可判** |
+| ├ 有 frontmatter 但无 `created` 键 | 1,807 | 元数据欠账（可回填，且文件名里常就带日期，如 `2026-08-22-frontend-backend-gap-ledger.md`） |
+| ├ 无 frontmatter 起始 `---` | 551 | 多为非 md 的机生/数据件，本就不该用文档生命周期尺量 |
+| └ 有 `---` 但 yaml 解析失败/空 | 3 | 坏 frontmatter（真档实存） |
+| other ttl | 2 | permanent 族，永不入候选 |
+| **missing_on_disk** | **10** | **在册但盘上没有＝删除欠账**，与元数据缺失两种病，必须分桶 |
+
+### 26.3 裁定：这条后波的正确形态是"补元数据＋装门"，不是"迁文件"
+
+- 按年龄几乎无候选 ⇒ "迁移 2,827 件"是个伪工单；真欠账是 74% 无出生日；
+- 补 `created` 之前任何"陈化处置"都无法机械判定，也无法给棘轮基线；
+- 回填源现成：大量文件名自带 ISO 日期（`2026-08-22-…`、`2026-09-18_…`），
+  可先做**文件名⇒created 的一次性回填批**，再装一条"`_working` 新件必须有 created"的门
+  （否则补完继续漏）；
+- 净零：本波**不新建脚本**——按 S2 案卷 §2.6 自己的净零方案（"零新工具，挂 `library_hygiene`
+  既有月批"）扩了既生成器，并补上它 `[TESTS]` 一直宣称却不存在的那件尺（17 例）。
+
+**那 10 件 `missing_on_disk` 已单独定性**（防下一班"顺手恢复"他道未落地删除）：
+`git status --porcelain` 全为 ` D`＝**工作区已删、未暂存**；`git ls-files -v` 首字母全为 `H`
+＝不存在 assume-unchanged/skip-worktree 遮蔽（不是"被隐藏的件"）。且非局部现象——
+**全仓同类未暂存删除实测 175 件**，与 §十一（一次暂存删 186 枚已入库件）同族。
+处置归属＝属主车道／Owner 门位，**本波一件未动、未暂存、未恢复**，只把"存在这 10 件"变成机器可见事实。
+
+### 26.4 本波落地的判据（五条，各由尺钉死）
+
+1. **轴=created 不是 mtime**——尺用 `os.utime` 把 mtime 造老 400 天而 created 写今天，
+   断言仍落 fresh；并**反向自证 utime 真生效**（否则该例会因"什么都没发生"而假绿）；
+2. **ttl 必走 YAML 解析器**——`ttl: "task_bound"` 引号变体实测在永久区有 810 件，
+   裸正则会把它们判成"未声明 ttl"而整批漏掉（反例真源 `doc_lifecycle.py:152`）；
+3. **读不得者单列计数**——created 缺失/坏值/坏 frontmatter 一律进 `undated`，
+   禁静默归零（否则"把字段写坏"就能躲过盘点）；
+4. **缺失件独立成桶**——`missing_on_disk` 与 `undated` 分开，防下一班人拿着删除事件去补字段；
+5. **生成物自己必须可落地**——该生成器原先往报告里写 `doc_type:`，而 `docs/_working` 的 md
+   只许 `ttl: permanent|task_bound`，多这一行就会被放置/TTL 门整批打回：**每跑一次就给自己
+   产出一件不可提交的产物**。已删该字段并加一条断言钉住（尺跑一次≠产物能落地，这两件事必须分别证）。
+
+另加一条**防自欺**：tracked 面读到 0 件时 `run_hygiene` 必记 warn、`main()` 必出声
+（"三桶全空＝盘点未生效，勿据此判空"）——因为"恒空"正是这条尺当年的死法。
+---
+
+## 廿七、记忆库自身体检（顺带查出的三处"看不见"）
+
+收尾时对 persistent memory 做了一次对账，三处与"文件在、账不在"同型：
+
+| 症状 | 实测 | 危害 |
+|---|---|---|
+| 项目索引超字节上限 | 29,000/25,000 ⇒ 系统只加载片段 | 已记的教训未来读不到 |
+| 有文件无索引 | 3 件（含**一条未闭环的采集链全线停采警报**） | 等于从未记过 |
+| 有索引无文件 | 1 件（`agent-fabricates-owner-rulings` 实为用户级件） | 指向空气，且用户级索引反而没有它 |
+
+处置：索引压到 24,526 字节并**逐文件双向对账**（补 3 条、改 1 条错级指针、
+把伪造署名那条挂回用户级），并新增一条本项目级教训
+（`runtime-code-behind-head-20260927`：HEAD 有修复 ≠ 运行中有修复）。
+**同型通则**：`[TESTS]` 指向不存在的测试件、索引指向不存在的记忆文件、
+`capability_canonical_file_registry` 里指向已迁址目录的 token 条目——都是"登记面自洽、
+实面对不上"，判存在必须走 `git ls-files` / `os.path.exists`，不能看索引行。
+
+
+---
+
+---
+
+## 廿八、两个"仪表说谎"教训（都差点导致错误决策，记录以防重演）
+
+1. **卷空闲空间不是大文件覆盖写的进度条。** 本机 21:1x–21:5x 期间 G 卷 free 只掉了 0.09 GiB，
+   我据此算出"~2 MB/s ⇒ 这趟要跑到天亮"，差点下令中止。停下来先量了一轮才发现仪表选错：
+   robocopy 正在**就地覆盖同路径已存在的 591.57 GiB 旧镜像**，逐簇重写不改变 free
+   （free 只会反映新旧尺寸差 7.43 GiB）。**中止才是真损失**——robocopy 大文件覆写无原子性，
+   中途 kill 会留下一份半写镜像，比 08-22 那份陈旧但完整的更糟。
+   判存活用：目标文件 mtime 递增 + 进程 CPU 递增；判完成只能等退出码（本机已装 watcher 等）。
+2. **PS5.1 `Write-Host` 不进管道。** 我的分离式包装器用 `& child.ps1 | Tee-Object` 收轨迹，
+   而本仓 ps1 的进度全用 Write-Host ⇒ 子脚本阶段行一条都收不到，日志"只剩包装器三行"，
+   看起来像卡死。要留全轨迹得 `Start-Transcription`，或让子脚本把关键阶段写进自己的
+   JSON/state（`backup_ch_vm.ps1` 本来就有 `$LogFile` 与 `backup_state.json`，够用）。
+3. 顺带一条**判据口径**留给后波：`Get-VHD.MinimumSize` 是"能回收多少"的真值源（本机 600.0 GiB
+   ≥ FileSize 599.0 ⇒ 原地收益≈0），**别拿虚拟机内部空闲反推宿主可回收量**——
+   这正是我先前"140–150 GiB"错估的来源，已在 §十七 与 `a6_remaining_work_order.md` 就地更正。
