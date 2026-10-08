@@ -1,0 +1,411 @@
+ttl: task_bound
+session: st-gomap-b-20261006
+date: '2026-10-08'
+campaign: fullcirculation_campaign_20261008
+title: 图12 数据供给链（DSCMAP-012）逐环节挖矿文档——每环节翻什么账+病历挂载对位
+map_file: config/data_supply_chain_map.yaml（本 worktree 施工面，43 环节）
+method_note: >-
+  逐环节读图（nodes 全 43：name/segment/purpose_tag/store_refs/gaps/trigger_facts.evidence）→
+  对照八册身份（casebook_registry.yaml：001=data/failures 案卷库／002=堵点本五域／003=死信抢救／004=审查两卷／005=记忆索引(仓外)／006=known_data_gaps／007=task_runs 打卡账本／008=archive_manifest）
+  判「历史上这类环节翻什么账」；盘面证据=主区 data/failures/ 命名族清点（2026-10-08 只读 ls+grep）+生成器反查（source_circuit_breaker.py/ch_parts_monitor.py/alerter 族）
+  +CASEBOOK-005 记忆索引逐条 grep（仓外路径只读）。正典指针形态=总包已裁 CASEBOOK-NNN#章（90_ledger verdict；字母码降显示字段）。
+division_note: >-
+  与 T7（编码归一班）分工：T7 管裸号补章（DSC-13/19/20）与 006/007/008 挂载闭合（registry 建议行 DSC-14/16→006、DSC-20→007、DSC-10A/10B→008，
+  判读候选见 02_ctable_encoding/unknown_adjudication.md §3）；本班管其余 31 空白环节（12 补挂+19 留空有注）+逐环挖矿文档。
+  T7 界内 4 个空白环节（DSC-10A/10B/14/16）本班零触碰（不加值不加注释），防叠加冲突。
+chapter_note: >-
+  章码事实面：八册无章码枚举真源，图内唯一在位章码=#outage（E-8 约定，data/failures outage_ 前缀件现 0=前瞻约定）；
+  本班沿用 unknown_adjudication §3 已呈候选章名 #alert（主体告警族 YYYYMMDD_<task>_HHMMSS.json，data/failures 盘面 1.5 万件级）与 #task_reconcile（33 件实测），
+  与 T7 候选同源不另造；CASEBOOK-005 在图12 无主题簇章系（图11 十簇/图13 MEM-F13 九簇均他图特设 matrix）→裸册号挂载，章系立项呈 chief。
+empty_rule: 无八册账可翻的环节 casebooks 留空+图内一行注释，不硬凑；留空理由分布见 stats。
+
+hops:
+# ===== S1_collect 采集（7）=====
+- id: DSC-SRC
+  name: 外部源面（provider 归一前）
+  翻的账: 源熔断与源连接失败案卷——熔断留痕旁证=data/failures circuit_breaker 族 163 件（trigger_facts 在册）+provider 连接失败族 providerconnectifind 391 件；生成器反查=source_circuit_breaker.py/scheduler.py 实锚。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  证据:
+  - data/failures 盘面：20260819__circuit_breaker_{fred,mock}_*.json 共 163+143 件（主区只读 ls 2026-10-08）
+  - 生成器：src/zephyr/data/source_circuit_breaker.py + scheduler.py（grep circuit_breaker 命中）
+  - 图内 trigger_facts：熔断留痕旁证 data/failures/_circuit_breaker_fred 族 163 件（ls 2026-10-03）
+  施工判定: mounted（本班落图）
+- id: DSC-01
+  name: 盘后批量采集（日K/估值/资金/事件/财务/静态/校准族）
+  翻的账: 两本——①应跑 vs 打卡对账（trigger_facts 实证 7 日窗期望 961/打卡 480，task_runs 为分母真源）；②盘后族任务失败告警案卷（klinedailyincremental 377 件/klinehkdaily 359 件/futurestermstructure 235 件等）。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  - CASEBOOK-007
+  证据:
+  - 图内 trigger_facts：integrator_progress.db task_runs(ro-uri) 7 日窗 480 笔/6 槽，期望 961
+  - data/failures 盘面：kline_daily/hk_daily/futures_term_structure 族命名件实测（主区只读 ls）
+  - registry#007 scope_zh：采集打卡账本=应跑对打卡分母来源（册名即采集域）
+  施工判定: mounted（本班落图；007 裸册号——chapterless sqlite 台账无章系）
+- id: DSC-02
+  name: 盘中实时/竞价采集（Tick/L2/Greeks/分钟K/880板块/集合竞价）
+  翻的账: 两本——①盘中族任务失败/新鲜度告警案卷（tickdatasnapshot 229/tickfreshness 189/realtimesnapshotincremental 114/kline*min 族 2037 件）；②task_runs 打卡 879 笔（trigger_facts 在册）。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  - CASEBOOK-007
+  证据:
+  - data/failures 盘面：tick_data_snapshot/tick_freshness/realtime_snapshot_incremental/kline_{lof,etf}_min_incremental 命名族实测
+  - 图内 trigger_facts：task_runs 7 日窗 879 笔（auction290/minute280/realtime274/pre_market35）
+  施工判定: mounted（本班落图）
+- id: DSC-03
+  name: 事件驱动采集（新闻/宏观/研报/另类/加密）
+  翻的账: 两本——①news/宏观族高失败案卷（trigger_facts 在册：failures news 族约 3400 件=高失败率旁证；盘面 newsrssincremental 1702+newsdataincremental 1697+macrodataincremental 1030 件）；②task_runs 打卡 20247 笔。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  - CASEBOOK-007
+  证据:
+  - 图内 trigger_facts：task_runs 20247 笔+failures news 族约 3400 件
+  - data/failures 盘面：news_rss/news_data/macro_data_incremental 命名族实测（主区只读 ls）
+  - 图内 gaps：macro_data_incremental 源侧 SSL EOF 失败族 1,026 件（GAP-MACRO 残病登记）
+  施工判定: mounted（本班落图）
+- id: DSC-GAP-NEWSGHOST
+  name: 幽灵引用：c1_market.news_data（库名前缀写错）
+  翻的账: 幽灵引用登记本体=图内 store_refs（11 卷 §1-D 案卷）+SPM 侧改册件；直查抛错判据在图内 gaps。八册无此账。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 store_refs：幽灵引用登记 docs/_working/map_build/fig12_datachain/11_消费端需求反查.md §1-D（retention=改册落地后本节点退役）
+  施工判定: left_empty（理由=缺口登记即图内自账，改册在 SPM 侧非病历册）
+- id: DSC-GAP-MACRO
+  name: 运行事故（已解除）：macro_data 0 字节部件装载
+  翻的账: 断供事故案（0 字节 parts 装载事故全案卷=12 卷卷首红条+§5-2；残病=SSL 失败族 1,026 件+检测口径缺口）。
+  病历挂载建议:
+  - CASEBOOK-001#outage
+  证据:
+  - 图内 evidence：12_扩行提案与封顶重宣.md 卷首红条；IN1-34 复测 count=50,767/max=2026-10-02
+  施工判定: 已有值不动（T7/前班已挂，非本班界）
+- id: DSC-GAP-L2TICK
+  name: 断供：l2_tick/suspend 双 0 行
+  翻的账: 断供事故案（表在/任务在/0 行三证+💰-4 花钱可解定性）。
+  病历挂载建议:
+  - CASEBOOK-001#outage
+  证据:
+  - 图内 evidence：01_采集三段与源熔断.md §2（09-25 复跑仍 0 行）
+  施工判定: 已有值不动
+# ===== S2_ingest 入库（6）=====
+- id: DSC-04
+  name: ClickHouse 写入通道（两条二级降级）
+  翻的账: 写链路故障告警族——WSL 写通道历史残响 wslunavailablenoautoshutdown 89 件（图内 note：WSL subprocess 通道=退役的三级说法记忆残留，其告警即该通道病史）。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  证据:
+  - data/failures 盘面：wsl_unavailable_noautoshutdown 命名族 89 件实测（主区只读 ls）
+  - 图内 note_zh：批量写从不过 TCP；WSL 通道=记忆残留
+  施工判定: mounted（本班落图）
+- id: DSC-05
+  name: 实时 WAL 落盘排空（tick 先段落盘→异步 drain）
+  翻的账: WAL/回灌族跨会话教训——记忆索引「tick 兜底回灌停摆三层根因 2026-09-16」（A4a 容量缓存/A4b 溢出旁路=本环节容量背压腿治本史）。
+  病历挂载建议:
+  - CASEBOOK-005
+  证据:
+  - CASEBOOK-005 记忆索引条目：tick-fallback-drain-stall-three-layers-20260916（仓外只读 grep 2026-10-08：A4a 容量缓存/A4b 溢出旁路在条目摘要）
+  施工判定: mounted（本班落图；005 图12 章系未建=裸册号，见 chapter_note）
+- id: DSC-FB
+  name: local_fallback 汇聚（TSV+manifest+回灌器一套两用途）
+  翻的账: 回灌键治本史——记忆索引「tick 兜底回灌停摆三层根因」内 387b7ce5 replay 键治本=本汇聚节点核心病历。
+  病历挂载建议:
+  - CASEBOOK-005
+  证据:
+  - CASEBOOK-005 记忆索引条目：tick-fallback-drain-stall-three-layers-20260916（387b7ce5 replay 键治本+8d0cf261 三件套）
+  施工判定: mounted（本班落图）
+- id: DSC-06
+  name: 幂等写与判重（引擎语义+全字段判重正门）
+  翻的账: 判重报告自身无落库台账（store_refs 自记「stdout/人工案卷（无落库台账）」=审计缺口在册）；2026-07-16 tick 21 个月误删事故（判重纪律本源）案卷先于八册建库、无宿主。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 store_refs：判重报告 location=stdout/人工案卷（无落库台账）retention=无（案卷不入库＝审计缺口）
+  - 图内 note_zh：2026-07-16 tick 误删事故治本件
+  施工判定: left_empty（理由=正门自身无台账+本源事故无八册宿主；07-16 案卷上户口缺口呈 chief）
+- id: DSC-GAP-DUPGUARD
+  name: 缺口：判重器聚合对照腿不可用（准入闸半假绿）
+  翻的账: 判重器缺陷登记=02_入库单通道与幂等判重.md §3 内-5（Code 42 行号级因果链）+图内 gaps 台账。八册无此账。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：02 卷 §3 内-5（原样复跑复现）
+  施工判定: left_empty（理由=缺陷登记在作业簿+图 gaps，非病历册形态）
+- id: DSC-GAP-REPLAY
+  name: 不可证：local_fallback 回灌是否真排空过
+  翻的账: 回灌滞留病史——记忆索引两笔：①「tick 兜底回灌停摆三层根因 2026-09-16」②「指标库线收官 2026-09-16」内 local_replay tick 5510 件自 09-15 滞留未回灌实录（正是本缺口的历史案型）。
+  病历挂载建议:
+  - CASEBOOK-005
+  证据:
+  - CASEBOOK-005 记忆索引条目：tick-fallback-drain-stall-three-layers-20260916 + tilib-closeout-ml6-backlog-pool-20260916（5510 件滞留在条目摘要）
+  - 图内 evidence：resource_profile_registry planned/dynamic+samples 落点不可见
+  施工判定: mounted（本班落图）
+# ===== S3_derive 衍生（10）=====
+- id: DSC-07
+  name: 技术指标/多周期重采样
+  翻的账: kline_sector_intraday 自 09-11 断供案（图内 trigger_facts 自引「→CASEBOOK-001#outage 段」）。
+  病历挂载建议:
+  - CASEBOOK-001#outage
+  证据:
+  - 图内 trigger_facts.evidence：kline_sector_intraday 自 09-11 断供案→CASEBOOK-001#outage 段（图面自证）
+  施工判定: 已有值不动
+- id: DSC-08
+  name: 财务/一致预期派生（PIT 双守卫）
+  翻的账: 财务腿 09-24~26 跑必失败案（治本 baee3850fde）+预期链断链复活案（IN1-27① 复测）。
+  病历挂载建议:
+  - CASEBOOK-001#outage
+  证据:
+  - 图内 gaps/facets：修复提交 baee3850fde 后全 SUCCESS（2026-10-07 复核闭合）
+  施工判定: 已有值不动
+- id: DSC-09
+  name: 形态/情绪/板块状态衍生
+  翻的账: 板块腿缺陷（trade_date 倒挂+sector_preference 全表 2 行）登记=图内 gaps+03 卷 §3；板块采集侧告警族已归 DSC-02#alert（klinesectorminincremental 168 件）。本环节自身无八册案卷。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 gaps：sector_state inversion/sector_preference 近乎空转两条在册
+  - data/failures 盘面：kline_sector_min_incremental 168 件（属采集侧 slot:intraday_sector，归 DSC-02）
+  施工判定: left_empty（理由=缺陷登记在图 gaps/作业簿；采集侧告警已在他格挂）
+- id: DSC-21
+  name: 任务表外进程内派生生产（工厂/回测/组合域直写 CH）
+  翻的账: 六表两腿缺位（task_id/档期）实证=11 卷 §1-A/§1-C/§4-N1 消费端反查案卷。八册无宿主（产物台账 regime/screen 等非病历册）。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：11_消费端需求反查.md §1-A/§1-C/§4-N1
+  施工判定: left_empty（理由=反查案卷在作业簿；进程内产线无打卡面=无案卷可翻是本格结构性事实）
+- id: DSC-GAP-CONSENSUSCHAIN
+  name: 断链（已复活）：research_report→consensus_daily 预期重建链
+  翻的账: 断链定账（09-25）与复活复测（IN1-27①）双案卷。
+  病历挂载建议:
+  - CASEBOOK-001#outage
+  证据:
+  - 图内 note_zh/evidence：03 卷 §2 内-4+12 卷 §5-2+2026-10-07 复测
+  施工判定: 已有值不动
+- id: DSC-GAP-NAV
+  name: 等未产表：c1_market.account_nav_daily
+  翻的账: 三消费方在等+写器零接线实证=11 卷 §1-C（表 0 行/1970 哨兵）。期望面未建=无历史案卷。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：11 卷 §1-C（本车道复跑同值）
+  施工判定: left_empty（理由=等未产表无案卷史；接线后由产物台账记账）
+- id: DSC-GAP-EXECEP
+  name: 等未产表：c1_market.execution_report
+  翻的账: 实盘链未接（仅 sim 钩子偶发 1 行）实证=11 卷 §1-C。同上无案卷史。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：11 卷 §1-C（count=1、max=2026-09-18）
+  施工判定: left_empty（理由=等未产表无案卷史）
+- id: DSC-GAP-FFVAL
+  name: 等未产表：c1_market.factor_feature_value（DDL 未 apply）
+  翻的账: Code 60 表不存在+DDL 在仓未 apply 实证=11 卷 §1-C。建表待 Owner 窗口=无案卷史。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：11 卷 §1-C+本车道 fail-visible 直查复跑（Code 60）
+  施工判定: left_empty（理由=等未产表无案卷史）
+- id: DSC-GAP-FFSIG
+  name: 等未产表：c1_market.factor_signal（默认落点未建表）
+  翻的账: Code 60+契约在仓实证=11 卷 §1-C。与 FFVAL 同族独立挂账。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：11 卷 §1-C+直查复跑（Code 60）
+  施工判定: left_empty（理由=等未产表无案卷史）
+- id: DSC-HA
+  name: 交接 A：派生表出图（→TDM 因子/工厂/图13 消费）
+  翻的账: 交接格无自有账——消费证据即两侧环节（11 卷 §0 分母 174 点）。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 consumers：pass-through:派生表经 ch_reader 出图
+  施工判定: left_empty（理由=交接格 pass-through 无自有病历）
+# ===== S4_coldstore 冷备（9）=====
+- id: DSC-10A
+  name: 手动 CLI 归档（archiver 五子命令）
+  翻的账: 归档清单逐表回执（archive_manifest.jsonl，含 compress_ratio）。
+  病历挂载建议:
+  - CASEBOOK-008
+  证据:
+  - registry#008 scope_zh：图12 挂载 DSC-10A/DSC-10B（2026-10-07 补授）
+  施工判定: t7_scope（registry 建议行闭合归 T7，本班零触碰）
+- id: DSC-10B
+  name: 滚动归档事件触发器（backup-success hook 五重安全阀）
+  翻的账: 同 10A（archive_manifest=可证终点双实锚之一；freshness_evidence 在挂）。
+  病历挂载建议:
+  - CASEBOOK-008
+  证据:
+  - registry#008 scope_zh+图内 freshness_evidence（manifest 2,515 行末条读数）
+  施工判定: t7_scope
+- id: DSC-GAP-ARCHIVE-AUDIT
+  name: 缺口：冷档案零周期抽检+从未端到端 restore 验证
+  翻的账: 演练任务从未运行实证（LastTaskResult=267011）+人工案卷 logs/dr_drill_*.json（班次留档）。演练件非八册。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：04 卷 §1.7/§2.5+Get-ScheduledTaskInfo 实跑
+  施工判定: left_empty（理由=零抽检零演练=无案卷可翻是本缺口本体；人工案卷 logs/ 非册）
+- id: DSC-11
+  name: 灾备双链备份（CH 增量+版本化代码快照+VM，F→G 镜像）
+  翻的账: 备份冷储战役史两笔——①「备份冷储总包通宵终局 2026-09-24」（vault 自愈+0600 实战 11/11 两轮+/MIR 瘦身早执）②「mirror 两证删除+假绿闸 2026-09-24」（mirror 残件 591.57G 删除收官+F/G 定义审计）。
+  病历挂载建议:
+  - CASEBOOK-005
+  证据:
+  - CASEBOOK-005 记忆索引条目：backup-cold-overnight-final-20260924 + backup-cold-mirror-purge-20260924（仓外只读 grep 2026-10-08）
+  - 图内 freshness_evidence：system.backup_log=CH 备份真值唯一口径（WB12-29 钦定）
+  施工判定: mounted（本班落图）
+- id: DSC-GAP-CODEBACKUP
+  name: 事件缺口（已闭合）：代码快照腿 09-25 一次性失败
+  翻的账: 案卷=logs/backup_report_*.json 件级实读（09-25 单件+10-05/10-07 批量复核闭合）。件级日志非八册。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：三时点报告实读链（09-25/10-05/10-07）
+  施工判定: left_empty（理由=案卷为 backup_report 件级 JSON（logs/ 非册）；闭合判据已在图内）
+- id: DSC-12
+  name: 冷热分层/压缩决策（契约驱动，结构上不可能产数）
+  翻的账: 决策件无运行面——IN1-E1 裁「决策 vs 执行」后本格无独立账（freshness/告警语义均不适用）。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 fallback.decision_only residual：本环节永远不可能用产数新鲜度标 ✅
+  施工判定: left_empty（理由=契约决策件无账可翻——结构性留空非欠账）
+- id: DSC-HB
+  name: 交接 B：主库热数据→冷备段
+  翻的账: 交接格无自有账（分层线参数在契约、产出侧在 10A/10B/11）。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 store_refs：分层线参数=契约真源
+  施工判定: left_empty（理由=交接格 pass-through）
+- id: DSC-HC
+  name: 交接 C：冷库/备份件→恢复侧
+  翻的账: 交接格+演练案卷人工留档（logs/dr_drill_*.json 班次留档，同 GAP-ARCHIVE-AUDIT 面非册）。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 store_refs：演练案卷 location=logs/dr_drill_*.json retention=人工班次留档
+  施工判定: left_empty（理由=交接格；演练案卷非册）
+- id: DSC-GAP-MIRROR
+  name: 'P0：g_mirror 的 ch_vm_backup 目标防护只在未提交工作树里成立'
+  翻的账: G 盘镜像保全决策史——记忆索引「mirror 两证删除 2026-09-24」（残件撕裂尾法证独有=∅ 才敢删=本 P0 的同族判定方法论）+在报件 99_pending_owner.md（Owner 门位）。
+  病历挂载建议:
+  - CASEBOOK-005
+  证据:
+  - CASEBOOK-005 记忆索引条目：backup-cold-mirror-purge-20260924（撕裂尾法证+G 22.0% 审计在摘要）
+  - 图内 evidence：04 卷 §2.3 全证据链 git log -p 实见
+  施工判定: mounted（本班落图）
+# ===== S5_recon 对账修复（11）=====
+- id: DSC-13
+  name: 完整性巡检+新鲜度哨兵（四检核器，只检测不回补）
+  翻的账: 告警件主体族（data/failures YYYYMMDD_<check>_HHMMSS.json+sentinel 族 23 件+integrity_check 逐表件）。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  证据:
+  - unknown_adjudication §3 DSC-13 行：补章候选 #alert（store_refs 第一项=告警件 data/failures/*.json 正是主体族）
+  - data/failures 盘面：supply_sentinel/sentinel 族 23 件+integrity_check 命名族实测
+  施工判定: t7_scope（裸号补章归 T7；本班只记挖矿判定不动值）
+- id: DSC-14
+  name: 缺口回补三通道（行数缺口/档期打卡/已知缺口台账）
+  翻的账: 已知缺口台账（known_data_gaps gap_id 三渠道实证 accepted 转正）+补跑台账（记在被补任务名下）。
+  病历挂载建议:
+  - CASEBOOK-006
+  证据:
+  - registry#006 scope_zh：supply_sentinel 断供检测 gap_id 绑定台账；图12 挂载 DSC-14/DSC-16
+  - 图内 store_refs：缺口台账 location=known_data_gaps.yaml
+  施工判定: t7_scope
+- id: DSC-14D
+  name: 第四通道：事件自动回填（auto_backfiller）——留档退役
+  翻的账: 退役批复=in1z_escalations IN1-E7④（Owner 2026-10-04 批）+豁免登记 wiring_registry CAND-DAT-014。批复件非八册。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：05 卷 §2.3 四条证据链+IN1-E7④ 批复
+  施工判定: left_empty（理由=退役留档格；批复/豁免登记非病历册形态）
+- id: DSC-15
+  name: 日终三账对账（回测 vs 模拟盘 L1/L2/L3）——未接线
+  翻的账: 未接线零运行——差异台账 0 行（governance.db:reconciliation_differences）＝无案可翻；近亲名 reconcile_execution_log（89,115 行）属图11 台账禁认领。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：05 卷 §3.3 零调用方+无分派分支+0 行三项实测
+  - 图内 gaps：false_green_trap（列名集双向核对）
+  施工判定: left_empty（理由=未接线无案卷；接线后账本=reconciliation_differences 非 data/failures——registry#001 建议行「break_detect 族」在本格暂无案可翻，不硬凑）
+- id: DSC-GAP-TERMINUS
+  name: 缺口：域终点（数据达标 PASS）今天不可证
+  翻的账: 终点判据缺口=图级声明（05 卷 OBS-WF-8 P0 上报）；替代实锚=DSC-10B/DSC-20 案卷（他格在挂/待挂）。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 terminal_note_zh：可证终点=归档清单+任务级对账案卷双实锚
+  施工判定: left_empty（理由=图级缺口节点，实锚在他格）
+- id: DSC-GAP-RECDIFF
+  name: 等未产表：reconciliation_differences（消费方已按空表设计降级）
+  翻的账: 0 行表被当可信输入的消费降级判据=backtest_backlog.yaml:1222（判据 c 明写空表不阻断）+11 卷 N5。注册表非八册。
+  病历挂载建议: null（留空）
+  证据:
+  - 图内 evidence：11 卷 §1-C/§4-N5+治理库只读复跑 count=0
+  施工判定: left_empty（理由=0 行表无案卷史；降级判据在 backlog 注册表）
+- id: DSC-16
+  name: 坏数据修复与回补器族（手动/留盘为主）
+  翻的账: 已知缺口台账（修复结论回写面——known_data_gaps 三渠道实证与 accepted 闭环）。
+  病历挂载建议:
+  - CASEBOOK-006
+  证据:
+  - registry#006 scope_zh：图12 挂载 DSC-14/DSC-16
+  - 图内 store_refs：缺口台账=known_data_gaps.yaml（修复纪律四条+RULE-DATA-OPS 配对面）
+  施工判定: t7_scope
+- id: DSC-17
+  name: 一致预期管线双向互验（自建聚合 vs 同花顺快照）
+  翻的账: 互验告警案卷——data/failures consensus_crosscheck 族 14 件实测（20260914..20261001 在产）；registry#001 建议行「break_detect 族环节」在本格闭合。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  证据:
+  - data/failures 盘面：20260914_consensus_crosscheck_103720.json .. 20261001_consensus_crosscheck_153000.json 共 14 件（主区只读 ls 2026-10-08）
+  - registry#001 scope_zh：挂载建议含 break_detect 族环节（DSC-17 purpose_tag=break_detect）
+  施工判定: mounted（本班落图）
+- id: DSC-18
+  name: CH 存储维护 OPTIMIZE/合并（周度 OS 任务）
+  翻的账: parts 健康告警族——chdatapartsexplosion 508 件（生成器反查=src/zephyr/data/ch_parts_monitor.py 实锚；parts 爆炸=合并维护压力史）。
+  病历挂载建议:
+  - CASEBOOK-001#alert
+  证据:
+  - data/failures 盘面：chdatapartsexplosion 命名族 508 件实测（主区只读 ls）
+  - 生成器：grep parts_explosion 唯一命中 src/zephyr/data/ch_parts_monitor.py
+  - 图内 gaps：失败 0 不可信（false_success）——效果证据缺位正需告警族补读
+  施工判定: mounted（本班落图；注=parts 域告警族与 DSC-19 共享关切，DSC-19 归 T7 补章不重挂）
+- id: DSC-19
+  name: 破损 part 自愈探测器（CHECKSUM 隔离环）
+  翻的账: 断供/破损事故族（09-25 0-byte parts 事故即族内案型）+自愈零触发实证（07-16 上线）。
+  病历挂载建议:
+  - CASEBOOK-001#outage
+  证据:
+  - unknown_adjudication §3 DSC-19 行：归 #outage 章（破损 part 事故=供给断伤族，不新造章）
+  施工判定: t7_scope（裸号补章归 T7）
+- id: DSC-20
+  name: 任务级对账（档期应跑集合 vs task_runs 打卡集合差四计数）
+  翻的账: 任务级对账案卷（task_reconcile 族 JSON 33 件实测）+打卡台账（task_runs=分母真源）。
+  病历挂载建议:
+  - CASEBOOK-001#task_reconcile
+  - CASEBOOK-007
+  证据:
+  - unknown_adjudication §3 DSC-20 行：双判读（补章 #task_reconcile+增挂 007）
+  - data/failures 盘面：task_reconcile 命名件 33 件实测
+  - registry#007 scope_zh：图12 挂载 DSC-20
+  施工判定: t7_scope（裸号补章+007 增挂归 T7）
+
+stats:
+  hops_total: 43
+  已有值不动: 5   # DSC-GAP-MACRO/DSC-07/DSC-08/DSC-GAP-CONSENSUSCHAIN/DSC-GAP-L2TICK（全 CASEBOOK-001#outage）
+  t7_scope: 7     # 裸号补章 DSC-13/19/20（DSC-20 另增挂 007）+ 挂载闭合 DSC-10A/10B/14/16
+  本班补挂: 12    # 环节数；明细见下
+  本班留空: 19    # 31 空白环节 = 12 补挂 + 19 留空（35 空白 - 4 个 T7 界内空白）
+  本班补挂明细:
+  - {node: DSC-SRC, ptr: CASEBOOK-001#alert}
+  - {node: DSC-01, ptr: 'CASEBOOK-001#alert + CASEBOOK-007'}
+  - {node: DSC-02, ptr: 'CASEBOOK-001#alert + CASEBOOK-007'}
+  - {node: DSC-03, ptr: 'CASEBOOK-001#alert + CASEBOOK-007'}
+  - {node: DSC-04, ptr: CASEBOOK-001#alert}
+  - {node: DSC-05, ptr: CASEBOOK-005}
+  - {node: DSC-FB, ptr: CASEBOOK-005}
+  - {node: DSC-11, ptr: CASEBOOK-005}
+  - {node: DSC-17, ptr: CASEBOOK-001#alert}
+  - {node: DSC-18, ptr: CASEBOOK-001#alert}
+  - {node: DSC-GAP-REPLAY, ptr: CASEBOOK-005}
+  - {node: DSC-GAP-MIRROR, ptr: CASEBOOK-005}
+  指针总数: 15    # 001#alert×7 + CASEBOOK-007×3 + CASEBOOK-005×5（跨 12 环节）
+  留空理由分布:
+    交接格无自有账: 3   # DSC-HA/DSC-HB/DSC-HC
+    等未产表/未接线无案卷史: 6  # DSC-GAP-NAV/EXECEP/FFVAL/FFSIG/RECDIFF + DSC-15
+    缺口登记在图内/作业簿非册: 5  # DSC-GAP-NEWSGHOST/DUPGUARD/ARCHIVE-AUDIT/TERMINUS + DSC-21
+    案卷为件级日志或批复件非册: 3  # DSC-GAP-CODEBACKUP/DSC-14D/DSC-09
+    正门无台账或决策件无运行面: 2  # DSC-06/DSC-12
+    # 校验：3+6+5+3+2=19 ✓；总校验 5+7+12+19=43 ✓
+side_findings:
+  - registry#002（堵点本）scope_zh 记「图12 数据域域三/域四相关章节按 f4 矩阵挂载」，但堵点本五章实测=域一会话/域二提交链/域三belt与队列/域四git档案误删审计/域五文档——对象域全在提交域，f4 矩阵亦无图12 行（f5_casebooks_mount.yaml 图11 专用）；「数据域域三/域四」建议行与堵点本实际章节存在口径差，本班零挂载，判读呈 chief（registry 建议行宜显式废止或改写）。
+  - CASEBOOK-001 主体族章（#alert）与 task_reconcile 章（#task_reconcile）均沿用 02_ctable_encoding/unknown_adjudication §3 已呈候选章名，本班未新造任何章码。
+  - CASEBOOK-005 在图12 无主题簇章系（图11 十簇/图13 MEM-F13 九簇均他图特设 matrix），本班裸册号挂 5 格；若需章系按图13 先例另立 matrix 呈批。
+  - data/failures outage_ 前缀件现 0 件（E-8=前瞻约定），5 格既有 #outage 挂载对应案型实为「断供事故案落册约定」非存量案卷——图内 5 格挂载语义=事故族归档正门，不依赖存量。

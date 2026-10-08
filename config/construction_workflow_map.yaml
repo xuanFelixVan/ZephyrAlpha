@@ -9,11 +9,11 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
-generated_at: '2026-10-02T02:37:16+08:00'
-anchor_source: proposal
-anchor_block_origin: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
+generated_at: '2026-10-08T01:20:25+08:00'
+anchor_source: policy
+anchor_block_origin: docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md
 derived_from: docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md
-ssot_note_zh: '真源方向：政策 MD 内嵌机读锚块（唯一真源）→ 本图 YAML（派生件，禁手改后不回生成）。本轮锚块来源 anchor_source=proposal（docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml）；政策未嵌块期间
+ssot_note_zh: '真源方向：政策 MD 内嵌机读锚块（唯一真源）→ 本图 YAML（派生件，禁手改后不回生成）。本轮锚块来源 anchor_source=policy（docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md）；政策未嵌块期间
   17 个环节全量记入 pending_anchors，欠账显式化禁静默。
 
   字段分层（六图终局卷 §1 裁定一）：L0 通用层统一名 note_zh/doc_refs；L1 纵轴层本图取用 wiring_status/red_reason/fallback/invalidation/gap_refs；L2
@@ -2004,24 +2004,64 @@ loops:
   kind: recovery_branch
   red_reason: terminal
   note_zh: 文件丢失经版本库恢复后重走，恢复机制归交付流水线
-pending_anchors:
-- D14-01
-- D14-02
-- D14-03
-- D14-04
-- D14-05
-- D14-06
-- D14-07
-- D14-08
-- D14-09
-- D14-10
-- D14-11
-- D14-12
-- D14-13
-- D14-14
-- D14-15
-- D14-16
-- D14-17
+pending_anchors: []
+casebooks:
+  schema:
+    carrier_grain: node_id（stage 环节级；gap 节点按图11 先例不挂=无运行代码可挂，病历由宿主环同章覆盖）
+    coding: 册码#章码 指针制（正典册号 CASEBOOK-NNN；DCS=module_id 身份字母码，绑定见 casebooks_legend_zh）
+    mounting_sop: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md（§3 病历四机规+§4 L1 四标准字段）
+    identity_registry: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml（册族身份唯一反查册）
+    mining_evidence: docs/_working/fullcirculation_campaign_20261008/10_hop_mining/fig14_construction/hops.yaml（逐环挂载与依据真源）
+    preservation: 人工语义层保留键（生成器经 _common.load_preserved_keys 原样搬回；矩阵人工批填，生成器禁伪造）
+  mounts:
+    D14-01:
+    - CASEBOOK-002#域一
+    D14-02:
+    - CASEBOOK-002#域五
+    D14-03:
+    - CASEBOOK-002#域二
+    - DCS#手续(DEATH-001)
+    - DCS#结构(DEATH-002)
+    D14-05:
+    - CASEBOOK-002#域二
+    D14-06:
+    - DCS#真源
+    D14-07:
+    - CASEBOOK-002#域五
+    D14-08:
+    - CASEBOOK-002#域三
+    D14-09:
+    - CASEBOOK-002#域二
+    - DCS#通道
+    - DCS#手续
+    D14-10:
+    - CASEBOOK-004#卷二
+    D14-11:
+    - CASEBOOK-004#卷一
+    - CASEBOOK-004#卷二
+    D14-12:
+    - CASEBOOK-002#域五
+    D14-13:
+    - DCS#真源
+    D14-14:
+    - CASEBOOK-002#域四
+    D14-15:
+    - CASEBOOK-002#域二
+    - DCS#队列
+    - DCS#手续
+    - DCS#通道
+    - DCS#审批
+    D14-16:
+    - CASEBOOK-002#域三
+    D14-17:
+    - CASEBOOK-002#域一
+    - DCS#队列(DEATH-017/018)
+casebooks_note_zh: 挖矿依据一行——堵点本五域 33 条与 DCS 22 案逐环对照（f4 §2.2/§2.1 章级拆分沿用并正典册号化）， 16/17 环节实证挂 26 指针（五域+六死因族+审查两卷章系全覆盖）；D14-04
+  架构评审门控判定无册内对应、gap 节点 G01-G09/G11/G12 按图11 先例不挂，均如实留空；逐环依据真源=10_hop_mining/fig14_construction/hops.yaml。
+casebooks_legend_zh: 册码真源（F4 同款指针制，INV-1 只存指针禁复制正文）——CASEBOOK-002=堵点本五域 docs/_working/branch_zero_takeover/all_problems_ledger.md（域一..域五
+  33 条）；CASEBOOK-004=审查发现两卷 docs/_working/branch_zero_takeover/review_findings.md+review_findings_round2.md（卷一=红蓝终报
+  A-G 向量与学费章、 卷二=上轮防回退+基线核验+门禁三平面实弹）；DCS=提交撞墙死因案例册 module_id=CFG-COMMIT-DEATH-CASES-001 （casebook_registry outside_registry，禁双重身份不入册；章码沿用
+  f4 §2.1 六死因族=手续/通道/真源/结构/队列/审批， 案号 DEATH-001..022）。一岗多流程合法：与图11/图12 共挂，编制表一份多处引用。
 machine_facts:
   skeleton_status_scan:
     source: docs/_working/map_build/fig14_construction/00_skeleton.md
@@ -2035,8 +2075,8 @@ machine_facts:
       partial: 6
       'yes': 6
   anchor_block:
-    source: proposal
-    origin: docs/_working/map_build/fig14_construction/91_step_anchor_block_proposal.yaml
+    source: policy
+    origin: docs\01_policies_and_standards\sop\construction_sop\construction_workflow_policy.md
     step_anchors: 17
     gap_anchors: 11
     loops_declared: 15
@@ -2061,7 +2101,7 @@ machine_facts:
     - '8'
     - '9'
   policy_matrix_rows:
-    count: 16
+    count: 17
     values:
     - '0'
     - '1'
@@ -2073,6 +2113,7 @@ machine_facts:
     - '12'
     - '2'
     - '3'
+    - '3.5'
     - '4'
     - '5'
     - '6'
@@ -2080,8 +2121,7 @@ machine_facts:
     - '8'
     - '9'
     closure_diff:
-      heads_minus_rows:
-      - '3.5'
+      heads_minus_rows: []
       rows_minus_heads: []
   verifiability_vocabulary:
     source: docs/01_policies_and_standards/_registry/vocabularies/verifiability_vocabulary.yaml
@@ -2090,7 +2130,7 @@ machine_facts:
     - inspection
     - manual
   gate_face:
-    gate_ids_scanned: 185
+    gate_ids_scanned: 194
     cited_gate_ids: 18
     unresolvable_gate_ids: []
   module_id_scan:
@@ -2116,8 +2156,8 @@ machine_facts:
     - docs/_archive
     - __pycache__
     - .runtime
-    referencing_files: 40
-    occurrences: 82
+    referencing_files: 29
+    occurrences: 62
     in_catalog_files: 7
     in_catalog_occurrences: 15
     in_catalog_breakdown:
@@ -2165,4 +2205,4 @@ counts:
     ✅: 6
     ⬜: 4
     🔨: 7
-  pending_anchors: 17
+  pending_anchors: 0

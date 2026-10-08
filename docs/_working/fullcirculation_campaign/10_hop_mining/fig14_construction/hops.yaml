@@ -1,0 +1,99 @@
+ttl: task_bound
+session: st-gomap-b-20261004
+date: '2026-10-08'
+title: 图14 施工流（construction_workflow_map）casebooks 首填挖矿档——环节×挂载×依据
+completes_when: 图14 casebooks 三保留键经生成器保留层验证幂等后，随施工批归档
+worktree: D:/ZephyrAlpha/.worktrees/st-gomap-b-20261004（分支 ai/st-gomap-b-20261004/gomap-casebooks-fig1415）
+method_note: >
+  逐环翻账=对照 casebook_registry 五正典册 + DCS（outside_registry，module_id=CFG-COMMIT-DEATH-CASES-001）
+  的实际章结构，按图域语义（施工任务序）实证挂载；每挂载附册内条目级依据（条号/案号/章名），
+  零依据不挂。章级拆分沿用图11 f4 方案 §2.1/§2.2（commitmap_cure/f4_casebook_mount_plan.md），
+  册码正典化（AP→CASEBOOK-002 / RV1·RV2→CASEBOOK-004；DCS 无册号保字母码）。
+identity_sources:
+  registry: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml（W 实读：001..005 五册）
+  dcs: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml（22 案实测）
+  ap: docs/_working/branch_zero_takeover/all_problems_ledger.md（五域 33 条实读）
+  rv: docs/_working/branch_zero_takeover/review_findings.md + review_findings_round2.md（章头实读）
+chapter_systems:
+  CASEBOOK-002: 五域=五章（域一 会话生命周期 #1-6 / 域二 提交链 #7-18 / 域三 belt 与队列 #19-23 / 域四 档案安全 #24-30 / 域五 文档与档案 #31-33）
+  CASEBOOK-004: 两卷=两章（卷一=红蓝终报 A-G 向量计分+红队战果+学费章 / 卷二=上轮防回退+基线核验+门禁三平面实弹+红队深挖）
+  DCS: 六死因族=六章（f4 §2.1：手续=DEATH-001/003/005/012/014/019、通道=004/006/010/011/013、真源=020/021、结构=002/007/008/009、队列=016/017/018、审批=015）
+mounts:
+  - step: D14-01
+    name_zh: Session 冷启动
+    casebooks: [CASEBOOK-002#域一]
+    evidence: 域一 #1-#6 全录即冷启动与会话生存病（鸡生蛋注册 90 秒判死/后台 shell 树回收守护/pid 判活/接管台账三件套/孤儿侦测/V5 伪造护栏）
+  - step: D14-02
+    name_zh: 文档审查
+    casebooks: [CASEBOOK-002#域五]
+    evidence: 域五 #31-#33（晚期成品忘入带/logs 与 exempt-zone frontmatter 规则族/台账命令字面量误扫）=审查对象域的文档账病
+  - step: D14-03
+    name_zh: 创建前搜索
+    casebooks: [CASEBOOK-002#域二, DCS#手续(DEATH-001), DCS#结构(DEATH-002)]
+    evidence: 域二 #11 CREATE-GUARD 反复拦（token 缺/关键词级查重）+DEATH-001 TOKEN-MISSING（P50 14.1min/封）+DEATH-002 BASENAME-COLLISION（0058/59/60 连三实证）=创建前三查（token/重名/第二真源）的病根册
+  - step: D14-04
+    name_zh: 架构评审门控判定
+    casebooks: []
+    evidence: 如实留空——堵点本五域与 DCS 六族均无架构评审/裁定门控条目（册内 grep 实证零命中），禁造挂
+  - step: D14-05
+    name_zh: 方案挖矿
+    casebooks: [CASEBOOK-002#域二]
+    evidence: 域二 #13 ALGO-FLOW 锚缺/断链（锚必须在 docstring+外置 yaml 在盘）=方案/蓝图件的锚病
+  - step: D14-06
+    name_zh: 全景图登记（设计态先行）
+    casebooks: [DCS#真源]
+    evidence: DEATH-020 STATE-VOCAB-MISSING（词表先行批）+DEATH-021 HOT-REGISTRY-EVAPORATION（热册蒸发）=写注册册/设计态登记的真源一致性病
+  - step: D14-07
+    name_zh: 全图全库对齐
+    casebooks: [CASEBOOK-002#域五]
+    evidence: 域五 #33 台账命令字面量误扫（ABS-27 改写配方）=对齐扫描器的台账误读病
+  - step: D14-08
+    name_zh: 后端盘点与拆件判定
+    casebooks: [CASEBOOK-002#域三]
+    evidence: 域三 #21 FOLDER-CAPACITY 楔死（__pycache__ 累积+scripts/ 拆簇方案在案待 Owner 批）=盘点拆件直接在册病
+  - step: D14-09
+    name_zh: 施工编码
+    casebooks: [CASEBOOK-002#域二, DCS#通道, DCS#手续]
+    evidence: 域二 #12 TRANSLATION-COVERAGE 缺词/#17 新代码门族（BARE-SUBPROCESS/PERM-TRIGGER/MSG-EXPOSURE/NOQA）/#18 noqa 位置+DCS 通道族 DEATH-004/010/011/013（frontmatter/ruff/Final/蓝图头）+手续族 DEATH-005=落码期手续病全录
+  - step: D14-10
+    name_zh: 单元测试与循环验收
+    casebooks: [CASEBOOK-004#卷二]
+    evidence: 卷二 A 上轮修复防回退核验+E 门禁三平面实弹（单测全绿≠门在执法）=循环验收方法母本
+  - step: D14-11
+    name_zh: 长清单审查
+    casebooks: [CASEBOOK-004#卷一, CASEBOOK-004#卷二]
+    evidence: 卷一 A-G 向量实测计分+红队战果+学费章（审查方法）与卷二 F 红队深挖 9 向量=长清单红蓝审查的病根与尺
+  - step: D14-12
+    name_zh: 更新施工文档
+    casebooks: [CASEBOOK-002#域五]
+    evidence: 域五 #31 晚期成品建好忘入带（收班必跑 HEAD 在位自检 SOP 增补）+#32 frontmatter 规则族模板
+  - step: D14-13
+    name_zh: 全景图状态流转
+    casebooks: [DCS#真源]
+    evidence: DEATH-020/021=状态流转触热册/词表的真源一致性病（与 D14-06 同章族，流转侧重写侧）
+  - step: D14-14
+    name_zh: 文件完整性检查
+    casebooks: [CASEBOOK-002#域四]
+    evidence: 域四 #24-#30 档案安全审计全录（worktree 退役 180 棵零删除/存档对拍/判弃死袋销账/混沌演训死亡模拟）=完整性核验尺
+  - step: D14-15
+    name_zh: 提交网关落地
+    casebooks: [CASEBOOK-002#域二, DCS#队列, DCS#手续, DCS#通道, DCS#审批]
+    evidence: 域二 #7-#11 提交链病根全录（落地门超时误杀/belt 空转/主区直投连坐）+DCS 队列族 016/017/018+手续族+通道族+审批族 015=图14 单提交环集中承接 f4 C01/C05/C07 三环的挂载面
+  - step: D14-16
+    name_zh: 临时文件清理
+    casebooks: [CASEBOOK-002#域三]
+    evidence: 域三 #19 袋快照丢未暂存册（git add 时机）/#20 scratch 残渣楔死（reset --hard+clean 配方）/#21 __pycache__ 清理=临时区清场病全录
+  - step: D14-17
+    name_zh: worktree 合并与清理
+    casebooks: [CASEBOOK-002#域一, DCS#队列(DEATH-017/018)]
+    evidence: 域一会话/worktree 生命周期+DEATH-017 WORKTREE-FAKE-RECEIPT+DEATH-018 MERGE-BASE-CONFLICT=合并清场期队列病
+unmounted:
+  steps: [D14-04]
+  steps_reason_zh: 架构评审门控判定无册内对应，如实留空（禁造挂）
+  gaps: D14-G01..G09/G11/G12
+  gaps_reason_zh: 11 件（无 G10）不挂——图11 f4 先例（骨架外缺口件无运行代码可挂，病历由宿主环同章覆盖）
+completeness_check:
+  books_all_mounted: CASEBOOK-002 五域全挂（域一×2/域二×4/域三×2/域四×1/域五×3）；CASEBOOK-004 两卷全挂；DCS 六族全挂（手续×3/通道×2/真源×2/结构×1/队列×2/审批×1）
+  counts: {carriers: 16, pointers: 26, steps_total: 17}
+  note: CASEBOOK-001/003/005 册内实证无施工流域内容（001=数据对账/003=死信抢救台账队列域/005=记忆索引），图14 不挂；三册完备性由图11/图12/图15 各自挂载满足（SOP §3 规2 是全图族口径）
+idempotency_evidence: 两生成器连跑两遍 diff 零（2026-10-08 实测，W 内）；基底刷新面=anchor_source proposal→policy（政策已嵌锚块）+generated_at/语料计数随真源演进，非幂等失效

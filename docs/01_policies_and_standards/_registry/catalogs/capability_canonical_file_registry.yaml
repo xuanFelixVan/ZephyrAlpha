@@ -64240,4 +64240,10 @@ creation_tokens:
   created_by: st-acure-e1
   merge_evaluation: "审计闭合夜 E 道（台账勘误）作业簿登记；车道工作区纯新增，零替代（裁定#375 四判据：跨域不同对象不并）"
 
+- file: src/zephyr/infrastructure/capacity_assurance/_archive/risk_mitigation.py
+  token: risk-mitigation-archive-risk-mitigation-2026-10-08
+  created_by: st-fc-landing-20261008
+  capability: risk_mitigation_archive
+  merge_evaluation: "裁定#485并簇②评估件归档除名（伪GAP9证毕）：risk_mitigation.py 移入 _archive 保留层，路径级移动非新建真源；PG 节点路径已同步"
+
 di_seam_exemptions: []

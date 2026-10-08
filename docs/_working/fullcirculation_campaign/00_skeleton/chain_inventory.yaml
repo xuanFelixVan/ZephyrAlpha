@@ -1,0 +1,3472 @@
+campaign: fullcirculation_campaign_20261008
+stage: 00_skeleton（骨架挖矿·环节清点）
+generated: '2026-10-08'
+method:
+  hop_definition: hop=各图主序列单元：TDM=节点(stage/sensor/aggregation/gate/cross_cutting)；day_cycle/dscm/dev_delivery/construction=nodes(含
+    gap 显性化件)；SPM=10 stage+7 lane(324 机制为挂载物)；scard=13 态；govops=7 层；govleg=6 态；macro=16 序列(非链)
+  four_fields_ok: 挂图SOP §4 四字段(purpose_tag/casebooks/trigger_facts/consumers)在 hop(或其直属机制)全部非空
+  tdm_source: config/trading_decision_map.yaml 为 git MM 态他队施工中——本清点读 git dev 版快照，未读工作树版
+  truth_sources:
+  - docs/registry_of_registries.yaml (ROOR)
+  - config/panorama_master_map.yaml (图族索引+22 语义边)
+  - docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md (四字段定义)
+totals:
+  chains_inventoried: 10
+  hop_chains: 9
+  total_hops: 398
+  hop_chains_total_hops: 382
+  four_field_blank_hops: 363
+  hop_chains_four_field_blank: 347
+  machinery_total: 1311
+  handoff_panorama_edges: 22
+chains:
+- chain_id: tdm
+  map_file: config/trading_decision_map.yaml
+  map_no: 图7
+  map_id: TDMAP-001
+  name_zh: 交易决策地图（交易决策链）
+  source_note: 读自 git dev 版（工作树 MM 态他队施工中，未读工作树版）
+  generator: null
+  idempotency: manual（无生成器字段）
+  hop_count: 186
+  hop_count_stage_only: 181
+  four_field_blank_hops: 186
+  machinery_total: 311
+  four_field_coverage_node_level:
+    purpose_tag: 186/186
+    casebooks: 0/186
+    trigger_facts: 0/186
+    consumers: 0/186
+  extra:
+    node_type_dist:
+      aggregation: 17
+      gate: 4
+      stage: 123
+      sensor: 37
+      cross_cutting: 5
+    flow_dist:
+      entry_flow: 133
+      position_flow: 18
+      exit_flow: 19
+      portfolio_flow: 16
+    purpose_tags_legend: 12
+    edges: 261
+    missing_fields:
+    - casebooks
+    - trigger_facts
+    - consumers（schema 未定义；仅 purpose_tag 在册 186/186）
+  hops:
+  - id: TDM-E-FLOW
+    name_zh: 输出建仓信号
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-FLOW
+    name_zh: 输出持仓信号
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-FLOW
+    name_zh: 输出离场信号
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-FLOW
+    name_zh: 输出组合信号
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L0
+    name_zh: 盘前作战计划
+    machinery_count: 9
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L0-01
+    name_zh: 计划生成
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L0-02
+    name_zh: 偏离监控与修订
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L0-03
+    name_zh: 收盘复盘与明日边界
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L0-04
+    name_zh: 明日情绪盘中滚动预测
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1
+    name_zh: 大盘总闸
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S1
+    name_zh: 大盘指数传感器
+    machinery_count: 8
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S2
+    name_zh: 市场内部结构传感器
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S3
+    name_zh: 赚钱效应传感器
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S4
+    name_zh: 波动率传感器
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S0
+    name_zh: 宏观环境传感器
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S0-1
+    name_zh: 新闻情绪语义分析
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-S5
+    name_zh: 日级市场条件传感器
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L1-AGG
+    name_zh: 市场状态判定
+    machinery_count: 12
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2
+    name_zh: 板块选择
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-01
+    name_zh: 板块强度综合
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-01-1
+    name_zh: 结构强度评估
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-01-2
+    name_zh: 动量活跃度排名
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-01-3
+    name_zh: 多周期动量加权
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-01-4
+    name_zh: 板块资金流聚合
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-01-5
+    name_zh: 市场级调节注入
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-02
+    name_zh: 轮动序列追踪
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-02-1
+    name_zh: RRG 轮动序列
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-02-2
+    name_zh: 单板块轮动预警
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-03
+    name_zh: 调整周期进度
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-03-1
+    name_zh: 扩散指标进度追踪
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-04
+    name_zh: 板块级市场状态
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-04-1
+    name_zh: 轮动状态五分类
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-04-2
+    name_zh: 虹吸态识别
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-05
+    name_zh: 水温响应
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-05-1
+    name_zh: 水温档推导
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-05-2
+    name_zh: 信号响应三件套
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-06
+    name_zh: 板块个股传导
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-06-1
+    name_zh: 三级放行门槛
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-06-2
+    name_zh: 龙头识别定位
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-06-3
+    name_zh: 强度加权传导
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-07
+    name_zh: 回踩质量分级
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-07-1
+    name_zh: 回踩ABC判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-08
+    name_zh: 板块生命周期判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-09
+    name_zh: 催化剂识别
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-09-1
+    name_zh: 事件图谱传导
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-09-2
+    name_zh: 冲击标的生成
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L2-10
+    name_zh: 同源补涨比价
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3
+    name_zh: 个股选择
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-01
+    name_zh: Universe构建与剔除
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-02
+    name_zh: 九阶段选票主链
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-03
+    name_zh: 双池评分
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-03-1
+    name_zh: 短线池5分制
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-03-2
+    name_zh: 波段池5分制
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-03-3
+    name_zh: 双策略合流体检
+    machinery_count: 6
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-04
+    name_zh: 负面否决器
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-05
+    name_zh: 顺位排序
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-06
+    name_zh: 环境开关
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-07
+    name_zh: 策略专属链
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-07-1
+    name_zh: 打板选股链
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-07-2
+    name_zh: 多因子打分链
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-07-3
+    name_zh: 其余sleeve选股链
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-08
+    name_zh: 候选池输出
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-09
+    name_zh: 股票池分层维护
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-10
+    name_zh: 可交易性预检
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-11
+    name_zh: 日内动态选股
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-11-1
+    name_zh: 竞价选股
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-11-2
+    name_zh: 盘中涨速异动扫描
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-12
+    name_zh: 个股多维验证
+    machinery_count: 4
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-12-1
+    name_zh: 个股资金面分析
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-12-2
+    name_zh: 龙虎榜席位追踪
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-12-3
+    name_zh: 筹码分布分析
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L3-12-4
+    name_zh: 形态结构识别
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4
+    name_zh: 买卖点与执行
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-01
+    name_zh: 分批建仓
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-02
+    name_zh: 买入时序
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-03
+    name_zh: 价格锚定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-04
+    name_zh: 资金分配多标的
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-05
+    name_zh: 打板执行专项
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-06
+    name_zh: 执行算法
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-07
+    name_zh: 条件触发队列
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-08
+    name_zh: 突破失败降级
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-09
+    name_zh: 执行硬约束
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-10
+    name_zh: 订单生命周期状态机
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-11
+    name_zh: 部分成交与撤改处理
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-12
+    name_zh: 订单级预检
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-13
+    name_zh: 执行容灾对账
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L4-14
+    name_zh: 执行成本反馈与选型回写
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1
+    name_zh: 持仓体检
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P2
+    name_zh: 做T与加减仓
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P3
+    name_zh: 加仓决策
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1-01
+    name_zh: 持仓对账与台账快照
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1-02
+    name_zh: 持仓分级与监控频率
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1-03
+    name_zh: 买入逻辑存活判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1-04
+    name_zh: 风险否决体检
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1-05
+    name_zh: 组合级持仓体检
+    machinery_count: 10
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P1-06
+    name_zh: 体检结论与动作清单
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P2-01
+    name_zh: 做T资格与成本前置
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P2-02
+    name_zh: 做T策略调度
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P2-03
+    name_zh: 做T闭环与成功判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P2-04
+    name_zh: 减仓与再平衡
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P3-01
+    name_zh: 加仓资格门
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P3-02
+    name_zh: 金字塔加仓规则
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P3-03
+    name_zh: 加仓量级与风险核算
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-P-P3-04
+    name_zh: 加仓时点与执行
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1
+    name_zh: 卖出信号收集评分
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2
+    name_zh: 离场执行
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-R1
+    name_zh: 应急保命
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-R1-01
+    name_zh: 熔断分级判定
+    machinery_count: 5
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-R1-02
+    name_zh: 熔断期减仓与持仓处置
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-R1-03
+    name_zh: 护盘资产定向加仓白名单
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1-01
+    name_zh: 信号收集与六桶分类
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1-02
+    name_zh: 止损族判定
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1-03
+    name_zh: 止盈族判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1-04
+    name_zh: 破位与情绪退潮信号
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1-05
+    name_zh: 信号融合与紧迫度评分
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S1-06
+    name_zh: 强制清仓绕过通道
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2-01
+    name_zh: 执行方式路由
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2-02
+    name_zh: T+1与涨跌停约束
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2-03
+    name_zh: 执行时段路由
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2-04
+    name_zh: 本地条件单管理
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2-05
+    name_zh: 分批止盈执行
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-X-S2-06
+    name_zh: 卖出闭环与退出效率
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C1
+    name_zh: 预算切分
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C1-01
+    name_zh: 策略路由判定
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C1-02
+    name_zh: 权重分配
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C1-03
+    name_zh: 灰度切换管理
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C2
+    name_zh: 组合聚合
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C3
+    name_zh: 绩效归因反馈
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C2-01
+    name_zh: 目标聚合与净额轧平
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C2-02
+    name_zh: 组合约束栈
+    machinery_count: 4
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C2-03
+    name_zh: 相关性聚类与cluster上限
+    machinery_count: 4
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C2-04
+    name_zh: budget变动三级升级
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C3-01
+    name_zh: 多维归因引擎
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C3-02
+    name_zh: 升降级管线与退役评审
+    machinery_count: 4
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C3-03
+    name_zh: sleeve权重调权
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C3-04
+    name_zh: 参数校准闭环
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-F-C3-05
+    name_zh: 可靠度养成与信号健康
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-C-L1
+    name_zh: 币圈大盘总闸
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-C-L2
+    name_zh: 赛道选择
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-C-L3
+    name_zh: 币对选择
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-C-L4
+    name_zh: 币圈买卖点
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A01
+    name_zh: 源线·日线/分钟行情
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A02
+    name_zh: 源线·Tick分笔
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A03
+    name_zh: 源线·板块/概念指数
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A04
+    name_zh: 源线·估值
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A05
+    name_zh: 源线·财务
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A06
+    name_zh: 源线·资金流
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A07
+    name_zh: 源线·千股千评
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A08
+    name_zh: 源线·航运运价BDI
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A09
+    name_zh: 源线·财经快讯情绪
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A10
+    name_zh: 源线·国际宏观
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A11
+    name_zh: 源线·能源库存
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A12
+    name_zh: 源线·天气
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A13
+    name_zh: 源线·股东户数
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A14
+    name_zh: 源线·互动易问答
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A15
+    name_zh: 源线·加密永续/费率
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A16
+    name_zh: 源线·投入产出
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-A17
+    name_zh: 源线·卖方研报
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B01
+    name_zh: 源线·卫星影像
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B02
+    name_zh: 源线·美国官方天气/海洋
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B03
+    name_zh: 源线·招聘JD
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B04
+    name_zh: 源线·电商价格
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B05
+    name_zh: 源线·招投标
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B06
+    name_zh: 源线·社媒舆情X/Reddit
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B07
+    name_zh: 源线·雪球/股吧散户情绪
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B08
+    name_zh: 源线·APP榜单
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B09
+    name_zh: 源线·进出口贸易
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-B10
+    name_zh: 源线·信用卡/支付消费
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-C01
+    name_zh: 源线·实时门店客流
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-C02
+    name_zh: 源线·银行网点/信贷活跃
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-C03
+    name_zh: 源线·直播电商实时成交
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-G1
+    name_zh: 图谱·Zephyr产业链
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-G2
+    name_zh: 图谱·ChainKnowledgeGraph事实层
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-G3
+    name_zh: 图谱·实体股权穿透
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-G4
+    name_zh: 图谱·概念/题材
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-G5
+    name_zh: 图谱·投入产出传导
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-V1
+    name_zh: 状态变量快照·大盘
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-V2
+    name_zh: 状态变量快照·情绪
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-V3
+    name_zh: 状态变量快照·板块
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-AGG
+    name_zh: 知识供给汇聚
+    machinery_count: 3
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-D1
+    name_zh: 决策假设·因子组合挖掘
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-D2
+    name_zh: 决策假设·登记与考试方案
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-E1
+    name_zh: 验证·一问一考考试链
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-E2
+    name_zh: 验证·结论回传与修正
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-Z1
+    name_zh: 治理·问题治理与状态机
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: TDM-E-L9-Z2
+    name_zh: 治理·净零与资产对账
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: TDMAP-001 -> trading_day_cycle_map
+    relation: 决策时序投影
+    recorded: 单侧：图13 20 节点 tdm_refs（18 个 TDM 节点）；TDM 侧无 D13 引用
+  - edge: strategy_production_map -> TDMAP-001
+    relation: 策略上岗
+    recorded: 机制衔接：TDM 节点 strategy_mounts 挂策略产物；SPM 侧仅 1 处文字引用（TDM-F）
+  - edge: DSCMAP-012 -> TDMAP-001
+    relation: 数据供给（供料）
+    recorded: 缺：两侧图内均无互引，仅全景总图语义边
+  - edge: dev_delivery_map -> TDMAP-001
+    relation: 施工变更唯一入口
+    recorded: 仅全景总图扇出边+宪法 §2 政策记载
+- chain_id: day_cycle
+  map_file: config/trading_day_cycle_map.yaml
+  map_no: 图13
+  map_id: trading_day_cycle_map
+  name_zh: 交易日循环全景图（交易日循环链）
+  generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
+  generated_at: '2026-10-06T01:08:53+08:00'
+  idempotency: auto（生成器再生，blood_stage=f2_done）
+  hop_count: 52
+  hop_count_stage_only: 48
+  four_field_blank_hops: 27
+  machinery_total: 98
+  four_field_coverage_node_level:
+    purpose_tag: 48/52
+    casebooks: 25/52
+    trigger_facts: 48/52
+    consumers: 48/52
+  extra:
+    node_type_dist:
+      stage: 48
+      gap: 4
+    segment_dist:
+      A: 13
+      B: 16
+      C: 13
+      D: 10
+    purpose_tags_legend: 13
+    blood_stage: f2_done
+  hops:
+  - id: D13-01
+    name_zh: 调度对账补跑（错过档期自愈）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 5
+  - id: D13-02
+    name_zh: 数据断供哨兵（含托管质量变异巡检）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-03
+    name_zh: 交易日历逐日覆盖 diff
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-04
+    name_zh: 夜间情绪窗结算（窗口 [T-1 18:00, T 08:00)）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-05
+    name_zh: 币圈日线（UTC 日界→北京晨间时点）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-06
+    name_zh: L0.5 盘前元数据（universe 与撮合约束前提）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-07
+    name_zh: QMT 终端看门狗
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-08
+    name_zh: 十源健康探针（归档 57 号 C3 腿）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-09
+    name_zh: 开盘前就绪门（09:15 前 C1+C2+C3 合成→当日准入裁定）★一等门节点
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-10
+    name_zh: 板块状态盘前复制（close_final→pre_open + 偏好重映射）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-11
+    name_zh: 集合竞价高频五档采集
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-12
+    name_zh: 模拟盘会话拉起 + 交易日历闸
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 2
+  - id: D13-13
+    name_zh: 竞价后档位一次性聚合（情绪指数竞价档）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-14
+    name_zh: 盘中实时层（Tick/L2/Greeks/IV/期货/涨跌停/港股K）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-15
+    name_zh: 盘中分钟K线滚动层
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-16
+    name_zh: 盘中板块分钟K线层（tdx 通道已退役——撮合收敛 D13-48）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-17
+    name_zh: 事件驱动快新闻 + EDB 轮询
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-18
+    name_zh: 慢新闻/研报独立队列（限流分池）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-19
+    name_zh: 板块资金流日内五快照
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-20
+    name_zh: 竞价命中判定（日内唯一带墙钟窗闸的段）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-21
+    name_zh: 盘中 L1 市场状态跟踪
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-22
+    name_zh: 盘中情景归类
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-23
+    name_zh: 盘中情绪环单拍（有节拍席位、无节拍）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-24
+    name_zh: 模拟盘保活与成交回路
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-25
+    name_zh: 板块状态盘后定格（真源态）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-26
+    name_zh: 指数分钟K日终补拉（峰谷下跌段探测器供料）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-27
+    name_zh: 盘中持仓对账事件入口（与 D13-29 分工）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-28
+    name_zh: 盘后结算管线（T+1 结算单就绪硬时点）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 2
+  - id: D13-29
+    name_zh: 日终三账核对（柜台/内部/持仓 L1+L2+L3）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-30
+    name_zh: 盘后日K线层（当日主行情落库=下游全链就绪门）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-31
+    name_zh: 当日回测跑批（对账 L1 基准腿）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-32
+    name_zh: 日循环总扳手（全链多段排班编排）★本图最大节点
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-33
+    name_zh: 收盘验证→三表结算（段序契约：verify 恒先于 settle）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-34
+    name_zh: 日度拍板（安全态：毕业包恒空→结构性无实盘）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-35
+    name_zh: 盘后数据批次群（资金面·事件·当日补下载）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-36
+    name_zh: 研报明细增量层（全市场逐股长批）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-37
+    name_zh: 夜间财务层（财报/十大股东/融资融券）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-38
+    name_zh: 每日完整性巡检（只检测+告警，不补跑）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-39
+    name_zh: 一致预期管线双向验证
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-40
+    name_zh: 另类宏观日频（假日缺价保守游标自愈）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-41
+    name_zh: 周批与月批（跨过日界的重活）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-42
+    name_zh: 常驻守护三路（reaper / deadman 心跳 / guard 三件套）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 5
+  - id: D13-43
+    name_zh: 交易日历闸门（本图不变量载体：事件触发禁定时器）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-44
+    name_zh: 日界交接（T 日盘后 → T+1 日盘前的状态移交）
+    machinery_count: 2
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D13-45
+    name_zh: 盘中模拟盘桥（做T测试窗双拍）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-46
+    name_zh: 盘初决策链哨兵（09:40 只读巡检）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-47
+    name_zh: tick 双源一致性比对（QMT 主源 vs TDX 备源）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-48
+    name_zh: 盘后板块K等权撮合（tdx 永久断供的收敛终点）
+    machinery_count: 2
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-G01
+    name_zh: 无产出证据态缺位（「该产 N 条而实产 0」与「没跑」在图上同形）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-G02
+    name_zh: 成交回报桥面空转（消费方在等一条没有接线在写的表）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-G03
+    name_zh: 三账差异表恒空且消费方已按恒空设计降级
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D13-G04
+    name_zh: 新闻产物表库名前缀写错的幽灵引用（改册面归图 12，本图只挂生产者腿）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: TDMAP-001 -> trading_day_cycle_map
+    relation: 决策时序投影
+    recorded: 本图 20 节点 tdm_refs 挂 18 个 TDM 节点（入边载体）
+- chain_id: dscm
+  map_file: config/data_supply_chain_map.yaml
+  map_no: 图12
+  map_id: DSCMAP-012
+  name_zh: 数据供给链图（数据供给链）
+  roor_registry_id: REG-MAP-DSCM-001
+  generator: scripts/governance/d5_architecture/generators/generate_data_supply_chain_map.py
+  idempotency: auto（生成器再生，blood_stage=f2_done；ROOR『四字段已满』=结构满配，casebooks 实非空仅 8/43）
+  hop_count: 43
+  hop_count_stage_only: 22
+  four_field_blank_hops: 38
+  machinery_total: 25
+  four_field_coverage_node_level:
+    purpose_tag: 28/43
+    casebooks: 8/43
+    trigger_facts: 42/43
+    consumers: 36/43
+  extra:
+    node_type_dist:
+      source: 1
+      stage: 22
+      gap: 15
+      convergence: 1
+      handoff: 3
+      channel: 1
+    segment_dist:
+      S1_collect: 7
+      S2_ingest: 6
+      S3_derive: 10
+      S4_coldstore: 9
+      S5_recon: 11
+    counts_header:
+      nodes: 43
+      edges: 62
+      segment_S1_collect: 7
+      segment_S2_ingest: 6
+      segment_S3_derive: 10
+      segment_S4_coldstore: 9
+      segment_S5_recon: 11
+      unwired_or_hollow: 9
+      gaps_registered: 71
+      proposed_semantics: 1
+      verified_semantics: 42
+      gap_nodes: 15
+      built_nodes: 13
+      pending_nodes: 17
+      partial_nodes: 13
+      production_nodes: 10
+      structure_nodes: 33
+      facet_nodes: 4
+      stage_nodes: 22
+      skeleton_ok_rows: 10
+      nodes_with_module_id: 25
+      gap_ref_edges: 17
+    blood_stage: f2_done
+  hops:
+  - id: DSC-SRC
+    name_zh: 外部源面（provider 归一前）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-01
+    name_zh: 盘后批量采集（日K/估值/资金/事件/财务/静态/校准族）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-02
+    name_zh: 盘中实时/竞价采集（Tick/L2/Greeks/分钟K/880板块/集合竞价）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-03
+    name_zh: 事件驱动采集（新闻/宏观/研报/另类/加密；口径=数据源事件）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-NEWSGHOST
+    name_zh: 幽灵引用：c1_market.news_data（库名前缀写错，真身 c3_fundamental.news_data）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-MACRO
+    name_zh: 运行事故（已解除）：macro_data 0 字节部件装载——读链已恢复，节点退役留痕（残病登记数据班）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: DSC-04
+    name_zh: ClickHouse 写入通道（两条二级降级）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-05
+    name_zh: 实时 WAL 落盘排空（tick 先段落盘→异步 drain）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-FB
+    name_zh: local_fallback 汇聚（TSV + manifest + 回灌器一套两用途）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-06
+    name_zh: 幂等写与判重（引擎语义 + 全字段判重正门）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-DUPGUARD
+    name_zh: 缺口：判重器聚合对照腿不可用（准入闸半假绿）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-07
+    name_zh: 技术指标 / 多周期重采样
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: DSC-08
+    name_zh: 财务 / 一致预期派生（PIT 双守卫）
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: DSC-09
+    name_zh: 形态 / 情绪 / 板块状态衍生
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-21
+    name_zh: 任务表外进程内派生生产（工厂/回测/组合域直写 CH）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-CONSENSUSCHAIN
+    name_zh: 断链（已复活）：research_report→consensus_daily 预期重建链——09-30 起回正，节点退役留痕
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: DSC-GAP-NAV
+    name_zh: 等未产表：c1_market.account_nav_daily（三消费方在等，写器零接线）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-EXECEP
+    name_zh: 等未产表：c1_market.execution_report（实盘链未接，仅 sim 钩子）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-FFVAL
+    name_zh: 等未产表：c1_market.factor_feature_value（DDL 未 apply，表不存在）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-FFSIG
+    name_zh: 等未产表：c1_market.factor_signal（默认落点未建表）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-HA
+    name_zh: 交接 A：派生表出图（→ TDM 因子 / 工厂 / 图13 消费）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-10A
+    name_zh: 手动 CLI 归档（archiver 五子命令 export→verify→drop）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-10B
+    name_zh: 滚动归档事件触发器（backup-success hook，五重安全阀）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-ARCHIVE-AUDIT
+    name_zh: 缺口：冷档案零周期抽检 + 从未端到端 restore 验证
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-11
+    name_zh: 灾备双链备份（CH 增量 + 版本化代码快照 + VM，F→G 镜像）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-CODEBACKUP
+    name_zh: 事件缺口（已闭合）：代码快照腿 09-25 一次性失败——10-04 起 ok 自愈（留档防再发）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-12
+    name_zh: 冷热分层 / 压缩决策（契约驱动，结构上不可能产数 ✅）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-HB
+    name_zh: 交接 B：主库热数据 → 冷备段（超线分区 + 当日备份回执）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-HC
+    name_zh: 交接 C：冷库/备份件 → 恢复侧
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-L2TICK
+    name_zh: 断供：l2_tick / suspend 双 0 行（L2 权限=💰-4 花钱可解）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: DSC-GAP-REPLAY
+    name_zh: 不可证：local_fallback 回灌是否真排空过（测量腿未接）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-MIRROR
+    name_zh: P0：g_mirror 的 ch_vm_backup 目标防护只在未提交工作树里成立
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-13
+    name_zh: 完整性巡检 + 新鲜度哨兵（四检核器，只检测不回补）
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: DSC-14
+    name_zh: 缺口回补三通道（行数缺口 / 档期打卡 / 已知缺口台账）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-14D
+    name_zh: 第四通道：事件自动回填（auto_backfiller）——留档退役（2026-10-04 Owner批）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-15
+    name_zh: 日终三账对账（回测 vs 模拟盘 L1/L2/L3）——未接线
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-TERMINUS
+    name_zh: 缺口：域终点（数据达标 PASS）今天不可证
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-GAP-RECDIFF
+    name_zh: 等未产表：reconciliation_differences（消费方已按空表设计降级）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-16
+    name_zh: 坏数据修复与回补器族（手动/留盘为主）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-17
+    name_zh: 一致预期管线双向互验（自建聚合 vs 同花顺快照）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-18
+    name_zh: CH 存储维护 OPTIMIZE / 合并（周度 OS 任务）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: DSC-19
+    name_zh: 破损 part 自愈探测器（CHECKSUM 隔离环，进程内常驻）
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: DSC-20
+    name_zh: 任务级对账（档期应跑集合 vs task_runs 打卡集合差四计数）
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  handoffs:
+  - edge: DSCMAP-012 -> TDMAP-001
+    relation: 数据供给（供料）
+    recorded: 缺：本图无 TDM 引用
+  - edge: DSCMAP-012 -> strategy_production_map
+    relation: 数据供给（供料）
+    recorded: 双侧：本图 2 处 SPM 引用；SPM 侧 1 处 DSC-GAP-NEWSGHOST 防再引；图内 9 条 handoff_out 边经 DSC-HA（交图13/图9）/DSC-HB（冷备）/DSC-HC（恢复）出域
+- chain_id: dev_delivery
+  map_file: config/dev_delivery_map.yaml
+  map_no: 图11
+  map_id: dev_delivery_map
+  name_zh: 交付流水线全景图（交付链）
+  roor_registry_id: REG-MAP-DEVDELIVERY-001
+  generator: scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
+  generated_at: '2026-10-04T13:30:00+08:00'
+  idempotency: auto（生成器硬失败防空壳）
+  hop_count: 30
+  hop_count_stage_only: 28
+  four_field_blank_hops: 25
+  machinery_total: 28
+  four_field_coverage_node_level:
+    purpose_tag: 5/30
+    casebooks: 28/30
+    trigger_facts: 28/30
+    consumers: 28/30
+  extra:
+    node_type_dist:
+      stage: 28
+      gap: 2
+    stage_dist:
+      S: 9
+      C: 15
+      D: 6
+    casebooks_index: 4
+  hops:
+  - id: D11-S01
+    name_zh: 会话冷启动与开班检查
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-S02
+    name_zh: worktree 分配与池化
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-S03
+    name_zh: 会话心跳与活性判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-S04
+    name_zh: 改前 claim（文件锁+基线快照）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-S05
+    name_zh: 在途编辑与暂存晋升
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 2
+  - id: D11-S06
+    name_zh: 会话内 worktree 提交
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-S07
+    name_zh: 合并回主区（merge 正门）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 2
+  - id: D11-S08
+    name_zh: 放弃与死会话回收
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-S09
+    name_zh: 收尾注销与 handoff 交接
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: D11-C01
+    name_zh: 提交正门 CLI 与危险命令外壳
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 3
+  - id: D11-C02
+    name_zh: 失败指引锚点递送
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 2
+  - id: D11-C03
+    name_zh: claim 结算与失败重试语义
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 2
+  - id: D11-C04
+    name_zh: 全局串行锁与锁争用改道
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 1
+  - id: D11-C05
+    name_zh: in-process 门禁链执行
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 4
+  - id: D11-C06
+    name_zh: 暂存与提交本体
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 2
+  - id: D11-C07
+    name_zh: pre-commit shell 门禁通道
+    machinery_count: 1
+    four_fields_ok: true
+    casebooks_count: 4
+  - id: D11-C08
+    name_zh: 入队即转活（快照入袋）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-C09
+    name_zh: 排空调度与消费端
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 2
+  - id: D11-C10
+    name_zh: 真落盘（worktree+CAS+收敛）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-C11
+    name_zh: post-commit 对账与守卫
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-C12
+    name_zh: 机器车道与紧急通道
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: D11-C13
+    name_zh: 队列台账与运维观测
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-D01
+    name_zh: 死信产生（不卡队）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-D02
+    name_zh: 死因三分类甄别
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-D03
+    name_zh: 死信台账联动与告警
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-D04
+    name_zh: requeue 复活链路
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-D05
+    name_zh: 级联失效判定（cascade_stale）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: D11-D06
+    name_zh: 死信归档轮换与清零战役
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: D11-G01
+    name_zh: 退出码死分支（码 4 与 STASH_CONFLICT 支无生产者）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D11-G02
+    name_zh: precommit 通道回滚旗恒失效（代码键未注册 × default=True）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: dev_delivery_map -> 14 图
+    relation: 施工变更唯一入口（扇出 14 边）
+    recorded: 全景总图机生展开边+宪法 §2；各目标图内无 D11 引用
+  - edge: construction_workflow_map -> dev_delivery_map
+    relation: 施工流终点接交付（Step10 交界）
+    recorded: 单侧：图14 5 节点 handoff_to 14 个 D11 目标；本图无 D14 引用
+  - edge: GOMAP-001 -> dev_delivery_map
+    relation: 治理运行时守护交付
+    recorded: 单侧：本图 251 处 gate 引用（gate_cluster/gate_refs）；govops 图无 D11 引用
+- chain_id: construction
+  map_file: config/construction_workflow_map.yaml
+  map_no: 图14
+  map_id: construction_workflow_map
+  name_zh: AI 施工升级流图（施工链）
+  generator: scripts/governance/d5_architecture/generators/generate_construction_workflow_map.py
+  generated_at: '2026-10-02T02:37:16+08:00'
+  idempotency: auto
+  hop_count: 28
+  hop_count_stage_only: 17
+  four_field_blank_hops: 28
+  machinery_total: 10
+  four_field_coverage_node_level:
+    purpose_tag: 0/28
+    casebooks: 0/28
+    trigger_facts: 0/28
+    consumers: 0/28
+  extra:
+    node_type_dist:
+      stage: 17
+      gap: 11
+    segment_dist:
+      前置: 6
+      判定: 3
+      设计登记: 6
+      施工: 1
+      验收: 2
+      文档: 1
+      文档转正: 2
+      落地收尾: 7
+    missing_fields:
+    - 四字段全部未上 schema（挂图SOP §4 L1 菜单字段全缺）
+  hops:
+  - id: D14-01
+    name_zh: Session 冷启动
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-02
+    name_zh: 文档审查
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-03
+    name_zh: 创建前搜索
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-04
+    name_zh: 架构评审门控判定
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-05
+    name_zh: 方案挖矿
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-06
+    name_zh: 全景图登记（设计态先行）
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-07
+    name_zh: 全图全库对齐
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-08
+    name_zh: 后端盘点与拆件判定
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-09
+    name_zh: 施工编码
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-10
+    name_zh: 单元测试与循环验收
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-11
+    name_zh: 长清单审查
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-12
+    name_zh: 更新施工文档
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-13
+    name_zh: 全景图状态流转
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-14
+    name_zh: 文件完整性检查
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-15
+    name_zh: 提交网关落地
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-16
+    name_zh: 临时文件清理
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-17
+    name_zh: worktree 合并与清理
+    machinery_count: 1
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G01
+    name_zh: 政策指认的守护件不存在（幽灵脚本）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G02
+    name_zh: 幽灵脚本已进注册表（引用面）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G03
+    name_zh: 政策所指正门脚本不存在
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G04
+    name_zh: 政策所指诊断件路径失效
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G05
+    name_zh: 设计态先行铁律无执行面（选项不存在）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G06
+    name_zh: 准入记录面不存在
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G07
+    name_zh: 会话工作树 CLI 子命令不存在（四条）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G08
+    name_zh: 锁释放命令契约与实现不符
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G09
+    name_zh: 前端真源图路径三份不一（双真源嫌疑）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G11
+    name_zh: 规则册符号锚不存在
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D14-G12
+    name_zh: 上游真源整体归档未跟进（十二处链接）
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: construction_workflow_map -> dev_delivery_map
+    relation: 施工流终点接交付（Step10 交界）
+    recorded: 本图 5 节点 handoff_to 显式挂 14 个 D11 环节（出边载体）
+- chain_id: spm
+  map_file: config/strategy_production_map.yaml
+  map_no: 图9
+  map_id: strategy_production_map
+  name_zh: 策略生产全景图（策略工厂链）
+  generator: null
+  idempotency: manual（无生成器字段）
+  hop_count: 17
+  hop_count_stage_only: 10
+  four_field_blank_hops: 17
+  machinery_total: 324
+  four_field_coverage_node_level:
+    purpose_tag: 324/324
+    casebooks: 26/324
+    trigger_facts: 112/324
+    consumers: 56/324
+  extra:
+    hop_model: 环节=10 stage+7 lane；324 mechanism 为挂载物（四字段挂机制层）
+    stage_dist:
+      E0: 17
+      E1: 58
+      E2: 7
+      E3: 79
+      E4: 81
+      E5: 4
+      E6: 14
+      E7: 22
+      E8: 34
+      E9: 8
+    mechanism_four_ok: 5
+    purpose_legend: 12
+    products: 5
+  hops:
+  - id: FAC-E0
+    name_zh: 算力调度心跳
+    machinery_count: 17
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: FAC-E1
+    name_zh: 想法进货（六车道）
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1A
+    name_zh: 车道A-社区货源
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1B
+    name_zh: 车道B-AI生成
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1C
+    name_zh: 车道C-公式挖掘机
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1D
+    name_zh: 车道D-产业链三高
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1E
+    name_zh: 车道E-模型基线
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1G
+    name_zh: 车道G-全网搜索进货
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E1F
+    name_zh: 车道F-网格仅代码
+    machinery_count: 58
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: FAC-E2
+    name_zh: 假说预审逻辑门
+    machinery_count: 7
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: FAC-E3
+    name_zh: 构造与翻译
+    machinery_count: 79
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: FAC-E4
+    name_zh: 考试咽喉
+    machinery_count: 81
+    four_fields_ok: false
+    casebooks_count: 9
+  - id: FAC-E5
+    name_zh: 协同去重
+    machinery_count: 4
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: FAC-E6
+    name_zh: 入库监控
+    machinery_count: 14
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: FAC-E7
+    name_zh: 模拟盘前哨
+    machinery_count: 22
+    four_fields_ok: false
+    casebooks_count: 8
+  - id: FAC-E8
+    name_zh: 组装与资金分配
+    machinery_count: 34
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: FAC-E9
+    name_zh: 实盘归因
+    machinery_count: 8
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: DSCMAP-012 -> strategy_production_map
+    relation: 数据供给（供料）
+    recorded: 本图 1 处 DSC 引用（DSC-GAP-NEWSGHOST 防再引）+ data_refs 指数据资产
+  - edge: strategy_production_map -> TDMAP-001
+    relation: 策略上岗
+    recorded: 弱：仅 1 处 TDM-F 文字引用；上岗机制真源=TDM strategy_mounts
+  - edge: strategy_production_map -> strategy_card_lifecycle_map
+    relation: 卡生命周期
+    recorded: 缺：本图无 SCARD 引用；图15 侧 3 处 SPM 引用（轴区分/E4 考试权）
+- chain_id: scard
+  map_file: config/strategy_card_lifecycle_map.yaml
+  map_no: 图15
+  map_id: strategy_card_lifecycle_map
+  name_zh: 策略卡生命周期图（卡生命周期链）
+  generator: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
+  generated_at: '2026-10-07T04:20:27+08:00'
+  idempotency: auto（机生自 pg_ledger/注册册）
+  hop_count: 13
+  hop_count_stage_only: 13
+  four_field_blank_hops: 13
+  machinery_total: 56
+  four_field_coverage_node_level:
+    purpose_tag: 0/13
+    casebooks: 0/13
+    trigger_facts: 0/13
+    consumers: 0/13
+  extra:
+    model: 状态机链：13 态 hop + 17 迁移边 + 13 禁边 + 6 gap 件
+    transitions: 17
+    forbidden_edges: 13
+    gaps: 6
+    corpus_cards:
+    - path: docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
+      stem: task_card_work_order_policy
+      mapped_state: null
+      disposition: needs_adjudication
+      family_id: null
+      n_eff_declared: null
+      sha12: 98ec72f0063b
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/2026-09-07-tdm-backtest-protocol.md
+      stem: 2026-09-07-tdm-backtest-protocol
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: f6f1f7452600
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+      stem: candidate_card_open_momentum_market
+      mapped_state: candidate
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: b8e255e780d9
+      registered_card_id: ALGO-CAND-MOM-01
+      registered_state: candidate
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/momentum_prereg_card.md
+      stem: momentum_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: d4a0066749d3
+      registered_card_id: PRERG-MOM-01
+      registered_state: red
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/ofi_prereg_card.md
+      stem: ofi_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: bf1360147f40
+      registered_card_id: OFI-PREREG-CARD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+      stem: vwap_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: 349876ad5656
+      registered_card_id: ALGO-VWAP-03
+      registered_state: red
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
+      stem: altdata_b_preregistration
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: c4b8684f5859
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
+      stem: prereg_etf_timing_rotation
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 9a8be4a34e19
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md
+      stem: etft0_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: ETFT0-SCREEN
+      n_eff_declared: null
+      sha12: 9259ad8a1066
+      registered_card_id: ETFT0-PREREG-CARD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+      stem: prereg_card_f_top20_exam
+      mapped_state: frozen
+      disposition: map
+      family_id: FPOOL-20260919-TOP20
+      n_eff_declared: 6
+      sha12: d4ffeb457b1c
+      registered_card_id: PREREG-CARD-F-TOP20-EXAM
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
+      stem: prereg_screen_slice_a
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 86e16fb17e41
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_b/prereg_indicators_sweep_b.md
+      stem: prereg_indicators_sweep_b
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: eb5c37c112bd
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
+      stem: prereg_slice3_protocol
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: fb803dc4f981
+      registered_card_id: PREREG-SLICE3-PROTOCOL
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_screen.md
+      stem: prereg_card_mid_valley_screen
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: 5219b1e8fe20
+      registered_card_id: PREREG-CARD-MID-VALLEY-SCREEN
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/mid_valley/prereg_card_mid_valley_top10.md
+      stem: prereg_card_mid_valley_top10
+      mapped_state: frozen
+      disposition: map
+      family_id: MIDVAL-20260919-TOP10
+      n_eff_declared: 10
+      sha12: 9072dedcda60
+      registered_card_id: PREREG-CARD-MID-VALLEY-TOP10
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_events/preregistration.md
+      stem: preregistration
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 7d191959e570
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_01_tower_bottom.md
+      stem: exam_card_01_tower_bottom
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 909adce2bf9f
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_02_double_bottom.md
+      stem: exam_card_02_double_bottom
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 195c27ba9326
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_03_tower_top.md
+      stem: exam_card_03_tower_top
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: af3f49ea6a26
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_04_marubozu.md
+      stem: exam_card_04_marubozu
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: e51fe820ccf1
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_05_shooting_star.md
+      stem: exam_card_05_shooting_star
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: e3369e762010
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/pattern_narrow_exam/exam_card_06_limit_up_flat.md
+      stem: exam_card_06_limit_up_flat
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 112667238a5a
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+      stem: prereg_card_b15_bucket_switch
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: d768d15182b3
+      registered_card_id: PREREG-CARD-B15-BUCKET-SWITCH
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/regime_axis/prereg_card_survivor_regime_buckets.md
+      stem: prereg_card_survivor_regime_buckets
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 65767c134f20
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/sector_family/a_sector_signal_prereg.md
+      stem: a_sector_signal_prereg
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: a6b081e2616e
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+      stem: t0_prereg_funding_carry
+      mapped_state: sealed
+      disposition: map
+      family_id: T0-PRERG
+      n_eff_declared: 1
+      sha12: 5bf8c5e58f5e
+      registered_card_id: T0-PRERG-02
+      registered_state: sealed
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+      stem: t0_prereg_vwap_revert
+      mapped_state: frozen
+      disposition: map
+      family_id: T0-PRERG
+      n_eff_declared: 1
+      sha12: dbdc34476aea
+      registered_card_id: T0-PRERG-01
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/t0_regime/t0_regime_prereg_card.md
+      stem: t0_regime_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: T0-REGIME
+      n_eff_declared: 1
+      sha12: 3c8671a016f5
+      registered_card_id: T0-REGIME-PREREG-CARD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_prereg_card.md
+      stem: tick_matrix_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: a126ec98c163
+      registered_card_id: TICK-MATRIX-PREREG-CARD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_protocol.md
+      stem: tick_matrix_protocol
+      mapped_state: null
+      disposition: non_domain
+      family_id: null
+      n_eff_declared: null
+      sha12: dc8880529e28
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/bizmine_night/tick_t0/tick_t0_prereg_card.md
+      stem: tick_t0_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: f14a45ce3ad7
+      registered_card_id: TICK-T0-PREREG-CARD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_family_summary.md
+      stem: prereg_family_summary
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOLSTAT
+      n_eff_declared: null
+      sha12: 6f9e02e0e9f5
+      registered_card_id: PREREG-FAMILY-SUMMARY
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_01_obv.md
+      stem: prereg_group_01_obv
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 49b4a4e95ddd
+      registered_card_id: PREREG-GROUP-01-OBV
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_02_mfi.md
+      stem: prereg_group_02_mfi
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 213d4d62cc9c
+      registered_card_id: PREREG-GROUP-02-MFI
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_03_vr.md
+      stem: prereg_group_03_vr
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 0fb6ed0273ee
+      registered_card_id: PREREG-GROUP-03-VR
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_04_ad.md
+      stem: prereg_group_04_ad
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 08ea079632f1
+      registered_card_id: PREREG-GROUP-04-AD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_05_pvt.md
+      stem: prereg_group_05_pvt
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: c64e50892104
+      registered_card_id: PREREG-GROUP-05-PVT
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_06_wvad.md
+      stem: prereg_group_06_wvad
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 8dc6f82cc35f
+      registered_card_id: PREREG-GROUP-06-WVAD
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_07_adosc.md
+      stem: prereg_group_07_adosc
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: a3e1045ed7c6
+      registered_card_id: PREREG-GROUP-07-ADOSC
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_08_eom.md
+      stem: prereg_group_08_eom
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 4c1eae13e58a
+      registered_card_id: PREREG-GROUP-08-EOM
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_09_kvo.md
+      stem: prereg_group_09_kvo
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: d001f0da51ac
+      registered_card_id: PREREG-GROUP-09-KVO
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_10_nvi.md
+      stem: prereg_group_10_nvi
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: 15ec64dccc93
+      registered_card_id: PREREG-GROUP-10-NVI
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_11_pvi.md
+      stem: prereg_group_11_pvi
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: c31ba5d71177
+      registered_card_id: PREREG-GROUP-11-PVI
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_12_force_index.md
+      stem: prereg_group_12_force_index
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-VOL12
+      n_eff_declared: 12
+      sha12: f55687139c01
+      registered_card_id: PREREG-GROUP-12-FORCE-INDEX
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_13_correl.md
+      stem: prereg_group_13_correl
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-STAT3
+      n_eff_declared: 3
+      sha12: 5a40e0aa3f52
+      registered_card_id: PREREG-GROUP-13-CORREL
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_14_beta.md
+      stem: prereg_group_14_beta
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-STAT3
+      n_eff_declared: 3
+      sha12: 5dbd421196c0
+      registered_card_id: PREREG-GROUP-14-BETA
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/bizmine_night/volume_family_l1/prereg_group_15_rollvar_pricelevel.md
+      stem: prereg_group_15_rollvar_pricelevel
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B2-STAT3
+      n_eff_declared: 3
+      sha12: 6152850239fd
+      registered_card_id: PREREG-GROUP-15-ROLLVAR-PRICELEVEL
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
+      stem: 2026-09-07-tdm-backtest-protocol
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: f6f1f7452600
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/c_class_scattered/2026-09-15-neff-estimator-preregistration.md
+      stem: 2026-09-15-neff-estimator-preregistration
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 9cd8d0d5b9a9
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
+      stem: 35_drawdown_protocol_impl
+      mapped_state: null
+      disposition: needs_adjudication
+      family_id: null
+      n_eff_declared: null
+      sha12: 095716a9b78f
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
+      stem: 37_liquidity_crisis_protocol
+      mapped_state: null
+      disposition: needs_adjudication
+      family_id: null
+      n_eff_declared: null
+      sha12: 820c18f69098
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/final3_campaign/x2_adjfactor_prereg.md
+      stem: x2_adjfactor_prereg
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 60b1a5938340
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-01.md
+      stem: P3-B-EXP-01
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: 4524161a120d
+      registered_card_id: P3-B-EXP-01
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-02.md
+      stem: P3-B-EXP-02
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: 6fd65b30b127
+      registered_card_id: P3-B-EXP-02
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-03.md
+      stem: P3-B-EXP-03
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: 71fc242b931c
+      registered_card_id: P3-B-EXP-03
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-04.md
+      stem: P3-B-EXP-04
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: 83279986a8c4
+      registered_card_id: P3-B-EXP-04
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-05.md
+      stem: P3-B-EXP-05
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: 4ade22bd46d9
+      registered_card_id: P3-B-EXP-05
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-EXP-06.md
+      stem: P3-B-EXP-06
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: 9f15de0f16fe
+      registered_card_id: P3-B-EXP-06
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-B-NARROWING.md
+      stem: P3-B-NARROWING
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-B-FIRST6
+      n_eff_declared: 6
+      sha12: e1cd7de2d6fe
+      registered_card_id: P3-B-NARROWING
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-01.md
+      stem: P3-E1C-01
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: d857e6d8e673
+      registered_card_id: P3-E1C-01
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-02.md
+      stem: P3-E1C-02
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 8dc8b61d7334
+      registered_card_id: P3-E1C-02
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-03.md
+      stem: P3-E1C-03
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 5ca27efddb32
+      registered_card_id: P3-E1C-03
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-04.md
+      stem: P3-E1C-04
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 68da3d54d84b
+      registered_card_id: P3-E1C-04
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-05.md
+      stem: P3-E1C-05
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: b33e4c801688
+      registered_card_id: P3-E1C-05
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-06.md
+      stem: P3-E1C-06
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: e07252b3c8da
+      registered_card_id: P3-E1C-06
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-07.md
+      stem: P3-E1C-07
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 08e499dd46b7
+      registered_card_id: P3-E1C-07
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-08.md
+      stem: P3-E1C-08
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: ff2aed8c3995
+      registered_card_id: P3-E1C-08
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md
+      stem: P3-E1C-09
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 9e45c95e1a51
+      registered_card_id: P3-E1C-09
+      registered_state: suspended
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-10.md
+      stem: P3-E1C-10
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 11ee566d09ba
+      registered_card_id: P3-E1C-10
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-11.md
+      stem: P3-E1C-11
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 5f089f38a836
+      registered_card_id: P3-E1C-11
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-12.md
+      stem: P3-E1C-12
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 5386f5cb8f81
+      registered_card_id: P3-E1C-12
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/p3_prereg/P3-E1C-13.md
+      stem: P3-E1C-13
+      mapped_state: frozen
+      disposition: map
+      family_id: P3-E1C-STABLE13
+      n_eff_declared: 13
+      sha12: 3f662ca3a4fc
+      registered_card_id: P3-E1C-13
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/kimi_audit/lane_reports/T_preregister.md
+      stem: T_preregister
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: b0e38622c0bf
+      registered_card_id: T-PREREGISTER
+      registered_state: frozen
+      registered: true
+    - path: docs/_working/archive/2026-09/pattern_line/lifecycle-protocol-v2.md
+      stem: lifecycle-protocol-v2
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: cd3299f0ee0a
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/pattern_line/resurrection-protocol.md
+      stem: resurrection-protocol
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 2f3e53d13421
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/regime_recal/regime_recal_protocol_2026_09_17.md
+      stem: regime_recal_protocol_2026_09_17
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 23aa948f1232
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
+      stem: tilib_clear_a2_wave1_card
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 341e68a636e7
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
+      stem: wyf3_preregistered_protocol
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 200906587b1c
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+      stem: wyf3_preregistered_protocol_v2
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 425a93b3ef5c
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
+      stem: 2026-09-15-neff-estimator-preregistration
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 554209304e8e
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/emotion_line/prereg_exam_cards_v0.md
+      stem: prereg_exam_cards_v0
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: e5b70dae20b8
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
+      stem: pre_registration_card
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 6f090ad8059f
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
+      stem: sector_prereg_exam_cards_v0
+      mapped_state: draft
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: d4922ad65666
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
+      stem: sector_prereg_exam_cards_v1_frozen
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: 8dfebf3a6a6f
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+      stem: sector_prereg_exam_cards_v2_frozen
+      mapped_state: frozen
+      disposition: map
+      family_id: null
+      n_eff_declared: null
+      sha12: 7e1cd8d3d541
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+      stem: t0_ceiling_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: T0-CEILING
+      n_eff_declared: null
+      sha12: 4d013a724af0
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+      stem: t0_conditional_v2_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: T0-CONDITIONAL-V2
+      n_eff_declared: null
+      sha12: 225a91dfcb77
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+      stem: t0_conditional_v3_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: T0-CONDITIONAL-V3
+      n_eff_declared: null
+      sha12: a3208f29a5f5
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
+      stem: t0_conditional_prereg_card
+      mapped_state: frozen
+      disposition: map
+      family_id: T0-CONDITIONAL
+      n_eff_declared: null
+      sha12: c847c3a55f6a
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+      stem: T0_MATERIAL_EXAM_CARD_draft
+      mapped_state: draft
+      disposition: map
+      family_id: T0-MATERIAL
+      n_eff_declared: null
+      sha12: 3d7a25d1f00d
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+      stem: ADJ_prereg_resign_two_round
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: ff7888dc0052
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+      stem: T0_MATERIAL_EXAM_CARD_draft
+      mapped_state: draft
+      disposition: map
+      family_id: T0-MATERIAL
+      n_eff_declared: null
+      sha12: 972ad0f3c9bf
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
+      stem: l5_project_cards_20261006
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: ba18f147301a
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/fullconnect_campaign/g_backtest_gpu/09_f66_backtest_prereg_loop.md
+      stem: 09_f66_backtest_prereg_loop
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 7bf869e15d4d
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
+      stem: chief_lease_protocol
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: dd23ab472263
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
+      stem: 92_chief_handover_card_wave2
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 9ca3dfa305db
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/fullscore_night/03_integrated_backtest/prereg_v2.md
+      stem: prereg_v2
+      mapped_state: null
+      disposition: unmatched_alias
+      family_id: null
+      n_eff_declared: null
+      sha12: be31267e866e
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
+      stem: IBT-PROTOCOL-V1
+      mapped_state: null
+      disposition: non_domain
+      family_id: null
+      n_eff_declared: null
+      sha12: 9ab7c545a6eb
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+      stem: 22_fig15_card_lifecycle_charter
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 16a1c22d9f7d
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
+      stem: tc06_r2_e1c09_options_card
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: ab0ddd382618
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
+      stem: tc06_r3_traderecord_card
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 4c8e2cf5a4b6
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+      stem: tc06_r4_t0_pairs_card
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 808c1755be32
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/ultimate_library/b_batch_sample_cards.md
+      stem: b_batch_sample_cards
+      mapped_state: null
+      disposition: unmatched_alias
+      family_id: null
+      n_eff_declared: null
+      sha12: c8b0bfd0af88
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
+      stem: comment_pool_alpha101_cards
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: f46ab3ca78ba
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    - path: docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
+      stem: huanfang_ten_hypothesis_cards
+      mapped_state: null
+      disposition: unmapped_headless
+      family_id: null
+      n_eff_declared: null
+      sha12: 46d222f5c993
+      registered_card_id: null
+      registered_state: null
+      registered: false
+    missing_fields:
+    - 四字段未上 states schema；证据以 card_ledger+counts 承载
+  hops:
+  - id: D15-S1
+    name_zh: 草案 draft
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S2
+    name_zh: 候选卡 candidate
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S3
+    name_zh: 冻结 frozen
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S4
+    name_zh: 冻结带附录 frozen-amended
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S5
+    name_zh: 在测 executing
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S6
+    name_zh: 判绿 green
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S7
+    name_zh: 判红 red
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S8
+    name_zh: 不可判 insufficient
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S9
+    name_zh: 挂起 suspended
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S10
+    name_zh: 封卡 SEALED|终态：不再重开、不再改参重跑；证据定版
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S11
+    name_zh: 判死归档 condemned
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S12
+    name_zh: 毕业出卡 graduated
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D15-S13
+    name_zh: 作废 void
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: strategy_production_map -> strategy_card_lifecycle_map
+    relation: 卡生命周期
+    recorded: 本图 3 处 SPM 引用（入边载体）；SPM 侧无回引
+- chain_id: govops
+  map_file: config/governance_operations_map.yaml
+  map_no: 图10
+  map_id: GOMAP-001
+  name_zh: 治理运行地图（治理运行时链）
+  generator: scripts/governance/generate_governance_map.py
+  generated_at: '2026-10-04T14:51:48.267771+00:00'
+  idempotency: auto
+  hop_count: 7
+  hop_count_stage_only: 7
+  four_field_blank_hops: 7
+  machinery_total: 450
+  four_field_coverage_node_level:
+    L0_lifecycle:
+      purpose_tag: 77/77
+      casebooks: 0/77
+      trigger_facts: 77/77
+      consumers: 38/77
+    L1_monitor:
+      purpose_tag: 141/141
+      casebooks: 0/141
+      trigger_facts: 141/141
+      consumers: 84/141
+    L2_resource:
+      purpose_tag: 66/66
+      casebooks: 0/66
+      trigger_facts: 66/66
+      consumers: 31/66
+    L3_fuse:
+      purpose_tag: 22/22
+      casebooks: 0/22
+      trigger_facts: 22/22
+      consumers: 17/22
+    L4_reap:
+      purpose_tag: 42/42
+      casebooks: 0/42
+      trigger_facts: 42/42
+      consumers: 24/42
+    L5_selfheal:
+      purpose_tag: 98/98
+      casebooks: 0/98
+      trigger_facts: 98/98
+      consumers: 64/98
+    L6_audit:
+      purpose_tag: 4/4
+      casebooks: 0/4
+      trigger_facts: 4/4
+      consumers: 3/4
+  extra:
+    hop_model: 环节=7 层（GOM-L0..L6）；450 机制按 family 挂层（一岗多流程）
+    counts_header:
+      total_modules: 450
+      wired: 246
+      wired_dynamic: 15
+      wired_by_header: 95
+      suspect_orphans: 94
+      untagged: 0
+    layer_casebooks: 6
+    note: 机制层 purpose_tag/trigger_facts=450/450 满；consumers=261/450；casebooks 在层不在机制
+  hops:
+  - id: GOM-L0
+    name_zh: 孵化
+    machinery_count: 77
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: GOM-L1
+    name_zh: 运行监控
+    machinery_count: 141
+    four_fields_ok: false
+    casebooks_count: 3
+  - id: GOM-L2
+    name_zh: 资源水位
+    machinery_count: 66
+    four_fields_ok: false
+    casebooks_count: 1
+  - id: GOM-L3
+    name_zh: 熔断降级
+    machinery_count: 22
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: GOM-L4
+    name_zh: 收割清理
+    machinery_count: 42
+    four_fields_ok: false
+    casebooks_count: 2
+  - id: GOM-L5
+    name_zh: 自愈对账
+    machinery_count: 98
+    four_fields_ok: false
+    casebooks_count: 4
+  - id: GOM-L6
+    name_zh: 复盘审计
+    machinery_count: 4
+    four_fields_ok: false
+    casebooks_count: 3
+  handoffs:
+  - edge: governance_legislation_map -> GOMAP-001
+    relation: 立法供给运行时（条件边）
+    recorded: 缺：两侧图内均无互引，仅全景总图边（裁定#486 ①激活）
+  - edge: GOMAP-001 -> dev_delivery_map
+    relation: 治理运行时守护交付
+    recorded: 弱：本图无 D11 引用；机制面经 gate 体系被图11 251 处引用
+- chain_id: govleg
+  map_file: config/governance_legislation_map.yaml
+  map_no: 图16
+  map_id: governance_legislation_map
+  name_zh: 治理立法流图（立法链）
+  generator: scripts/governance/d5_architecture/generators/generate_governance_legislation_map.py
+  generated_at: '2026-10-05T00:00:00+08:00'
+  idempotency: auto（机生自 pg_ledger REG-RULING-001）
+  hop_count: 6
+  hop_count_stage_only: 6
+  four_field_blank_hops: 6
+  machinery_total: 9
+  four_field_coverage_node_level:
+    purpose_tag: 0/6
+    casebooks: 0/6
+    trigger_facts: 0/6
+    consumers: 0/6
+  extra:
+    model: 裁定 6 态状态机 + 9 台机械（全局挂册不挂态）+ 9 迁移
+    machinery: 9
+    transitions: 9
+    admission_ruling: 裁定#486
+    missing_fields:
+    - 四字段未上 schema
+  hops:
+  - id: D16-S1
+    name_zh: 草案 draft
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D16-S2
+    name_zh: 生效中 active
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D16-S3
+    name_zh: 被取代 superseded
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D16-S4
+    name_zh: 已废弃 deprecated
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D16-S5
+    name_zh: 撞号墓碑 void
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: D16-S6
+    name_zh: 已决归档 decided
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs:
+  - edge: governance_legislation_map -> GOMAP-001
+    relation: 立法供给运行时
+    recorded: 出边仅在全景总图；本图无 GOMAP 引用
+- chain_id: macro_series
+  map_file: config/macro_indicator_series_map.yaml
+  map_no: null
+  map_id: MAP-MAC-SERIES-001
+  name_zh: 宏观指标序列映射表（序列册，非环节链）
+  generator: null
+  idempotency: manual
+  hop_count: 16
+  hop_count_stage_only: 0
+  four_field_blank_hops: 16
+  machinery_total: 0
+  four_field_coverage_node_level:
+    purpose_tag: 0/16
+    casebooks: 0/16
+    trigger_facts: 0/16
+    consumers: 0/16
+  extra:
+    classification: registry 型序列映射（16 序列，freshness 12/16）；不属纵向 hop 链，建议不设环节挖矿文件夹
+    groups: 4
+  hops:
+  - id: MAC-CN-001
+    name_zh: akshare/全国-同比增长
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-002
+    name_zh: akshare/
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-003
+    name_zh: akshare/制造业-指数
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-004
+    name_zh: akshare/GDP_同比
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-005
+    name_zh: akshare/社会融资规模增量
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-006
+    name_zh: akshare/货币和准货币(M2)-同比增长
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-007
+    name_zh: akshare/LPR_1年
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-008
+    name_zh: akshare/
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-009
+    name_zh: akshare/国债_10年
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-010
+    name_zh: akshare/
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-011
+    name_zh: fred/FRED_USDCNY
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-US-001
+    name_zh: fred/FRED_FEDFUNDS_US
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-US-002
+    name_zh: fred/FRED_DGS10_US
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-US-003
+    name_zh: fred/FRED_PAYEMS_US
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-US-004
+    name_zh: fred/FRED_VIX
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  - id: MAC-CN-016
+    name_zh: registry_meta/
+    machinery_count: 0
+    four_fields_ok: false
+    casebooks_count: 0
+  handoffs: []

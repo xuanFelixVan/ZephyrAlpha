@@ -1,0 +1,117 @@
+ttl: task_bound
+session: st-gomap-b-20261004
+date: '2026-10-08'
+title: 图15 策略卡生命周期（strategy_card_lifecycle_map）casebooks 首填挖矿档——载体×挂载×依据
+completes_when: 图15 casebooks 三保留键经生成器保留层验证幂等后，随施工批归档
+worktree: D:/ZephyrAlpha/.worktrees/st-gomap-b-20261004（分支 ai/st-gomap-b-20261004/gomap-casebooks-fig1415）
+method_note: >
+  逐态翻账=对照 casebook_registry 五正典册实测（001-004 四册 grep 策略卡/考试/判红/判绿/回测零命中，
+  抢救台账唯一命中为 build_delivery_cards.py 交付卡非策略卡）；策略域试验台账/模拟盘病历经
+  registry+模块册+图9 自由名族反查均无登记身份=SOP §3 规1 病历缺口，如实登记不造挂；
+  真实可挂面=CASEBOOK-005 记忆教训索引（376 条索引中策略试验教训实挖），按图13 特设簇先例
+  定义图15 专属五簇章系（与图11 交链十簇不混用）。
+identity_sources:
+  registry: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml（W 实读：001..005 五册；006-008 号段缺口如实）
+  memory_index: C:/Users/fanzi/.zcode/cli/memories/projects/zephyralpha-88c39a4848e315f8/memory/MEMORY.md（仓外，登记指针不复制内容）
+  precedent: 图13 特设簇章系 docs/_working/map_build/fig13_daycycle/12_casebook_matrix_d13.yaml:49（chapter_system 先例）
+chapter_system:
+  book: CASEBOOK-005
+  chapters:
+    立卡预注册: {evidence: trading-vision-gap-mapping-20260916.md（两策略卡待 Owner 点头立卡）+ four-lane-night-dispatch-20260922.md（做T复活=非死刑，条件化状态选择+预注册）}
+    在测纪律: {evidence: node-backtest-governance-night-20260910.md（台账 42 行全 pending，holdout 锁窗是纪律）+ backtest-system-construction-20260912.md（P0 阈值自裁冻结+runner 档案）}
+    考试判读: {evidence: integrated-backtest-first-run-20260922.md（HOLDOUT 保密考卷 -12.2% C 门不过）+ tv2-campaign-cost-falsification-20260917.md（复活窄考 RED：毛边际+0.88bp vs 12bp 门槛 p=0.4997）+ sharpe2-prep-night-20260917.md（放行档 0/存活 17/偏科生分层考试定调）+ ibt-remedy-b-pit-20260923.md（三列对照表冻结/13 可跑件两轮零逐位一致/N 账本 sync 考试尾步阻断）}
+    判读反转与防过拟合: {evidence: p002-reprint-anchored-states-20260914.md（态标签 OOS 反转）+ chart-pattern-mining-batch-20260914.md（反过拟合+复活观察）+ bt-financial-correctness-p0fix-20260914.md（前视 T+1 硬断言/PIT 证据制）}
+    判死复活裁定: {evidence: tv2-campaign-cost-falsification-20260917.md（裁定#304 砍现形态）+ four-lane-night-dispatch-20260922.md（裁定#398/#399 做T复活=非死刑）}
+mounts:
+  - carrier: D15-S1 draft
+    casebooks: [CASEBOOK-005#立卡预注册]
+    evidence: 立卡预注册簇——草案期两策略卡待 Owner 点头立卡的立卡纪律教训
+  - carrier: D15-S2 candidate
+    casebooks: [CASEBOOK-005#立卡预注册]
+    evidence: 立卡预注册簇——候选卡与草案同属立卡窗口
+  - carrier: D15-S3 frozen
+    casebooks: [CASEBOOK-005#立卡预注册]
+    evidence: 立卡预注册簇——冻结=预注册定型（做T复活=条件化状态选择+预注册口径）
+  - carrier: D15-S5 executing
+    casebooks: [CASEBOOK-005#在测纪律]
+    evidence: 在测纪律簇——holdout 锁窗是纪律/台账 pending 而非提前判读
+  - carrier: D15-S6 green
+    casebooks: [CASEBOOK-005#判读反转与防过拟合]
+    evidence: 判读反转簇——态标签 OOS 反转=判绿的已知反转病
+  - carrier: D15-S7 red
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——HOLDOUT C 门不过/复活窄考 RED=判红的在册形态
+  - carrier: D15-S8 insufficient
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——考卷掉出/断供致不可判（ibt-remedy-b 掉出 2 断供 1）
+  - carrier: D15-S9 suspended
+    casebooks: [CASEBOOK-005#在测纪律]
+    evidence: 在测纪律簇——挂起=锁窗等待（holdout 锁窗纪律同族）
+  - carrier: D15-S10 sealed
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——证据定版（三列对照表冻结/两轮零逐位一致）
+  - carrier: D15-S11 condemned
+    casebooks: [CASEBOOK-005#判死复活裁定]
+    evidence: 判死复活簇——裁定#304 砍现形态=判死在册形态
+  - carrier: D15-M01 ∅→S1
+    casebooks: [CASEBOOK-005#立卡预注册]
+    evidence: 立卡预注册簇——立卡入口纪律
+  - carrier: D15-M02 ∅→S2
+    casebooks: [CASEBOOK-005#立卡预注册]
+    evidence: 立卡预注册簇——候选直入路径
+  - carrier: D15-M03 S1→S3（owner_sign）
+    casebooks: [CASEBOOK-005#立卡预注册]
+    evidence: 立卡预注册簇——Owner 点头立卡=冻结签发（两策略卡待 Owner 点头）
+  - carrier: D15-M05 S3→S4
+    casebooks: [CASEBOOK-005#判读反转与防过拟合]
+    evidence: 判读反转簇——附录修订=反转触发后的改参面（反过拟合纪律）
+  - carrier: D15-M06 S3|S4→S5
+    casebooks: [CASEBOOK-005#在测纪律]
+    evidence: 在测纪律簇——开测即锁窗（P0 阈值自裁冻结）
+  - carrier: D15-M07 S5→S6
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——判绿签发面（放行/存活计分）
+  - carrier: D15-M08 S5→S7
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——判红签发面（C 门不过）
+  - carrier: D15-M09 S5→S8
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——不可判（断供/掉出）
+  - carrier: D15-M10 S7→S4 一次性重判
+    casebooks: [CASEBOOK-005#判读反转与防过拟合, CASEBOOK-005#判死复活裁定]
+    evidence: 反转簇（OOS 反转触发重判）+复活簇（复活窄考 RED=重判在册形态，一次性 token=rejudge_used）
+  - carrier: D15-M11 S6|S7|S8→S10（ruling）
+    casebooks: [CASEBOOK-005#考试判读]
+    evidence: 考试判读簇——封卡=证据定版（三列对照表冻结）
+  - carrier: D15-M12 S7→S11
+    casebooks: [CASEBOOK-005#判死复活裁定]
+    evidence: 判死复活簇——判死归档（裁定#304 同族）
+  - carrier: D15-M14 S8→S9（ruling）
+    casebooks: [CASEBOOK-005#在测纪律]
+    evidence: 在测纪律簇——挂起裁定=锁窗等待
+  - carrier: D15-M15 S9→S5
+    casebooks: [CASEBOOK-005#在测纪律]
+    evidence: 在测纪律簇——锁窗期满复测
+  - carrier: D15-M17 终态→新卡 S1
+    casebooks: [CASEBOOK-005#判死复活裁定]
+    evidence: 判死复活簇——做T复活=非死刑，条件化状态选择+预注册（复活=新 card_id+revives 指针正典）
+  - carrier: D15-X13 revival_guard 禁就地复活
+    casebooks: [CASEBOOK-005#判死复活裁定]
+    evidence: 判死复活簇——复活窄考+新预注册口径即本禁令的立法依据面
+unmounted:
+  states: [D15-S4, D15-S12, D15-S13]
+  states_reason_zh: S4 附录态疾病记录薄（挂 M05 承接）；S12 毕业出卡/S13 作废无册内教训
+  transitions: [D15-M13, D15-M16]
+  transitions_reason_zh: M13 S6→S12 同 S12 理由；M16 →S13 同 S13 理由
+  forbidden_edges: D15-X01..X12
+  forbidden_edges_reason_zh: 禁令绕过病无册内记录（X13 除外已挂）
+  gaps: D15-G01..G06
+  gaps_reason_zh: 图11 f4 先例——缺口件无运行代码可挂
+gap_registration:
+  试验台账: 六战役台账面（final3 w9_triage/kimi_audit/tdchain/bizmine/fullflow/IBT，即本图 D15-G03 实测面）+判决件 CSV 面（pattern_narrow/volume_family_l1，即 D15-G05 实测面）——task_bound 散页不成册（SOP §3 规1），候选随裁定批上户口
+  模拟盘病历: 图9 strategy_production_map 自由名族（模拟盘病历族挂 MOD-BT-094/223 等 14 种自由名）+MOD-BT-223 模拟盘判定台账表结构（病历册）build_status=pending 未成册——无登记身份，候选同上
+  registry_note: casebook_registry 号段 006-008 缺口如实（blob 灭失未随批），勿造假凑数（95a5e4e78c 注记）
+completeness_check:
+  counts: {carriers: 25, pointers: 26, states_total: 13, transitions_total: 17, forbidden_total: 13}
+  note: CASEBOOK-001..004 册内实证零策略卡内容故图15 不挂，其完备性由图11/图12 挂载满足（SOP §3 规2 全图族口径）
+idempotency_evidence: 生成器连跑两遍 diff 零（2026-10-08 实测，W 内）；基底刷新面=语料 105→108 卡+generated_at 随 HEAD 演进，非幂等失效

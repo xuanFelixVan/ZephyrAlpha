@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
-generated_at: '2026-10-07T04:20:27+08:00'
+generated_at: '2026-10-08T01:20:25+08:00'
 registry_host: experiment_registry
 anchor_source: registry
 anchor_block_origin: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
@@ -211,7 +211,7 @@ states:
   - D15-G02
   evidence:
   - '33 张卡的 frontmatter `status: frozen（…）`（§3-A 计数）；模板真源 `factor_mining_sop_policy.md:108` `status: frozen # 启动后不得改动`'
-  instances_observed: 57
+  instances_observed: 58
   instances_by_card:
   - ETFT0-PREREG-CARD
   - OFI-PREREG-CARD
@@ -1656,12 +1656,12 @@ gaps:
   decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
   note_zh: 89 张卡 / 60 有头 29 无头 / 23 种串 / 0 张在受控词表内
   measured:
-    cards: 105
-    headed: 69
-    headless: 36
+    cards: 108
+    headed: 70
+    headless: 38
     distinct_status_strings: 29
-    in_controlled_vocab: 62
-    registered_in_host: 52
+    in_controlled_vocab: 63
+    registered_in_host: 53
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1690,7 +1690,7 @@ gaps:
     registry_entries: 67
     contract_card_entries: 56
     run_entries: 11
-    card_key_intersection_with_corpus: 52
+    card_key_intersection_with_corpus: 53
     viability_verdict_null: 65
     viability_verdict_filled_by:
     - ALGO-VWAP-03
@@ -1795,6 +1795,10 @@ gaps:
     - docs/_working/archive/2026-09/bizmine_night/regime_axis/b15_bucket_switch_narrow_test_report.md
     - docs/_working/archive/2026-10/t0_matrix/t0_ceiling_verdict.md
     - docs/_working/archive/2026-10/t0_matrix/t0_conditional_e4_v3_verdict.md
+    - docs/_working/decision_map_campaign_20260924/links/L08_risk/external_benchmark_5.md
+    - docs/_working/decision_map_campaign_20260924/links/L09_review/800ms_budget.md
+    - docs/_working/master_tc_night/lanes/L2_gov_b/c346_retrospect.md
+    - docs/_working/master_tc_night/lanes/L2_gov_b/p2_five.md
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1821,7 +1825,6 @@ gaps:
   note_zh: 3 个 production 脚本的 BLUEPRINT 卡锚指向从未入库的两张卡；run 档案整目录 gitignored
   measured:
     missing_truth_sources:
-    - docs/_working/emotion_line/prereg_exam_cards_v0.md
     - docs/_working/sector_line/sector_prereg_exam_cards_v0.md
     - docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
     - docs/_working/t0_matrix/t0_ceiling_prereg_card.md
@@ -3422,17 +3425,17 @@ card_ledger:
   frozen_at: '2026-09-22'
   conclusion_tier: null
 corpus:
-  n: 105
-  headed: 69
-  headless: 36
+  n: 108
+  headed: 70
+  headless: 38
   distinct_status_strings: 29
-  in_controlled_vocab: 62
-  registered: 52
+  in_controlled_vocab: 63
+  registered: 53
   by_token:
     active: 4
-    None: 36
+    None: 38
     候选: 1
-    frozen: 58
+    frozen: 59
     已封卡 SEALED: 1
     draft: 1
     draft_pending_owner: 2
@@ -3440,18 +3443,18 @@ corpus:
     '"sample_cards_ready"': 1
   by_disposition:
     needs_adjudication: 3
-    unmapped_headless: 36
-    map: 62
+    unmapped_headless: 38
+    map: 63
     non_domain: 2
     unmatched_alias: 2
   by_state: &id001
     candidate: 1
     draft: 3
-    frozen: 57
+    frozen: 58
     sealed: 1
   by_registered_state: &id002
     candidate: 1
-    frozen: 47
+    frozen: 48
     red: 2
     sealed: 1
     suspended: 1
@@ -3526,12 +3529,15 @@ corpus:
       single_hypothesis_members: 1
   family_id_coverage: 48
   n_eff_coverage: 40
-  lane_coverage: 60
-  card_id_field_coverage: 52
+  lane_coverage: 61
+  card_id_field_coverage: 53
   duplicate_content_groups:
-    f6f1f7452600:
+    3219cc348f59:
     - docs/_working/2026-09-07-tdm-backtest-protocol.md
     - docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
+    7e1cd8d3d541:
+    - docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+    - docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
   cards:
   - path: docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
     stem: task_card_work_order_policy
@@ -3549,7 +3555,17 @@ corpus:
     disposition: unmapped_headless
     family_id: null
     n_eff_declared: null
-    sha12: f6f1f7452600
+    sha12: 3219cc348f59
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/2026-09-15-neff-estimator-preregistration.md
+    stem: 2026-09-15-neff-estimator-preregistration
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 423ce514731d
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4009,7 +4025,7 @@ corpus:
     disposition: unmapped_headless
     family_id: null
     n_eff_declared: null
-    sha12: f6f1f7452600
+    sha12: 3219cc348f59
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4323,36 +4339,6 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
-  - path: docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
-    stem: 2026-09-15-neff-estimator-preregistration
-    mapped_state: null
-    disposition: unmapped_headless
-    family_id: null
-    n_eff_declared: null
-    sha12: 554209304e8e
-    registered_card_id: null
-    registered_state: null
-    registered: false
-  - path: docs/_working/archive/2026-10/emotion_line/prereg_exam_cards_v0.md
-    stem: prereg_exam_cards_v0
-    mapped_state: frozen
-    disposition: map
-    family_id: null
-    n_eff_declared: null
-    sha12: e5b70dae20b8
-    registered_card_id: null
-    registered_state: null
-    registered: false
-  - path: docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
-    stem: pre_registration_card
-    mapped_state: null
-    disposition: unmapped_headless
-    family_id: null
-    n_eff_declared: null
-    sha12: 6f090ad8059f
-    registered_card_id: null
-    registered_state: null
-    registered: false
   - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
     stem: sector_prereg_exam_cards_v0
     mapped_state: draft
@@ -4453,13 +4439,33 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
+  - path: docs/_working/emotion_line/prereg_exam_cards_v0.md
+    stem: prereg_exam_cards_v0
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: e5b70dae20b8
+    registered_card_id: PREREG-EXAM-CARDS-V0
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/external_audit_mastertc/lane_g_open53_cards.md
+    stem: lane_g_open53_cards
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 1224b81c8d15
+    registered_card_id: null
+    registered_state: null
+    registered: false
   - path: docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
     stem: l5_project_cards_20261006
     mapped_state: null
     disposition: unmapped_headless
     family_id: null
     n_eff_declared: null
-    sha12: ba18f147301a
+    sha12: 8068e1f82333
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4523,6 +4529,16 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
+  - path: docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md
+    stem: hmm_v3_survey_and_prereg_v1
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: d4246fd6acc3
+    registered_card_id: null
+    registered_state: null
+    registered: false
   - path: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
     stem: tc06_r2_e1c09_options_card
     mapped_state: null
@@ -4550,6 +4566,26 @@ corpus:
     family_id: null
     n_eff_declared: null
     sha12: 808c1755be32
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/reexam_strategy_lane/pre_registration_card.md
+    stem: pre_registration_card
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 6f090ad8059f
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+    stem: sector_prereg_exam_cards_v2_frozen
+    mapped_state: frozen
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 7e1cd8d3d541
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4583,6 +4619,72 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
+casebooks:
+  schema:
+    carrier_grain: state_id/transition_id/edge_id（gap 节点按图11 先例不挂=缺口件病历由宿主态同章覆盖）
+    coding: 册码#章码 指针制（正典册号 CASEBOOK-NNN；章系=图15 特设五簇，先例=图13 特设簇章系）
+    mounting_sop: docs/01_policies_and_standards/sop/mining_sop/vertical_map_mounting_policy.md（§3 病历四机规+§4 L1 四标准字段）
+    identity_registry: docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml（册族身份唯一反查册）
+    mining_evidence: docs/_working/fullcirculation_campaign_20261008/10_hop_mining/fig15_card_lifecycle/hops.yaml（簇定义+逐挂依据真源）
+    preservation: 人工语义层保留键（生成器经 _common.load_preserved_keys 原样搬回；矩阵人工批填，生成器禁伪造）
+  mounts:
+    D15-S1:
+    - CASEBOOK-005#立卡预注册
+    D15-S2:
+    - CASEBOOK-005#立卡预注册
+    D15-S3:
+    - CASEBOOK-005#立卡预注册
+    D15-S5:
+    - CASEBOOK-005#在测纪律
+    D15-S6:
+    - CASEBOOK-005#判读反转与防过拟合
+    D15-S7:
+    - CASEBOOK-005#考试判读
+    D15-S8:
+    - CASEBOOK-005#考试判读
+    D15-S9:
+    - CASEBOOK-005#在测纪律
+    D15-S10:
+    - CASEBOOK-005#考试判读
+    D15-S11:
+    - CASEBOOK-005#判死复活裁定
+    D15-M01:
+    - CASEBOOK-005#立卡预注册
+    D15-M02:
+    - CASEBOOK-005#立卡预注册
+    D15-M03:
+    - CASEBOOK-005#立卡预注册
+    D15-M05:
+    - CASEBOOK-005#判读反转与防过拟合
+    D15-M06:
+    - CASEBOOK-005#在测纪律
+    D15-M07:
+    - CASEBOOK-005#考试判读
+    D15-M08:
+    - CASEBOOK-005#考试判读
+    D15-M09:
+    - CASEBOOK-005#考试判读
+    D15-M10:
+    - CASEBOOK-005#判读反转与防过拟合
+    - CASEBOOK-005#判死复活裁定
+    D15-M11:
+    - CASEBOOK-005#考试判读
+    D15-M12:
+    - CASEBOOK-005#判死复活裁定
+    D15-M14:
+    - CASEBOOK-005#在测纪律
+    D15-M15:
+    - CASEBOOK-005#在测纪律
+    D15-M17:
+    - CASEBOOK-005#判死复活裁定
+    D15-X13:
+    - CASEBOOK-005#判死复活裁定
+casebooks_note_zh: 挖矿依据一行——CASEBOOK-005 记忆索引实挖策略试验教训成图15 特设五簇（立卡预注册/在测纪律/考试判读/ 判读反转与防过拟合/判死复活裁定），25 载体 26 指针；001-004
+  四册 grep 实证零策略卡内容故不挂；策略域试验台账 （六战役台账面+判决件 CSV 面=本图 D15-G03/G05 实测面）与模拟盘病历（图9 自由名族+MOD-BT-223 pending 未成册） 均无册号=SOP
+  §3 规1 病历缺口，候选上户口随裁定批（registry 号段 006-008 缺口如实勿凑数）；S4/S12/S13/M13/M16/ G01-G06 无册内对应如实留空；逐挂依据真源=10_hop_mining/fig15_card_lifecycle/hops.yaml。
+casebooks_legend_zh: 册码真源（F4 同款指针制，INV-1 只存指针禁复制正文）——CASEBOOK-005=记忆教训索引 MEMORY.md （仓外路径 C:/Users/fanzi/.zcode/cli/memories/projects/zephyralpha-88c39a4848e315f8/memory/MEMORY.md，
+  以记忆库为准、登记指针不复制内容）；章系=图15 特设五簇（先例=图13 特设簇，与图11 交链十簇不混用）， 簇定义与逐条记忆锚真源=10_hop_mining/fig15_card_lifecycle/hops.yaml。试验台账/模拟盘病历无册号=缺口登记见
+  casebooks_note_zh。
 counts:
   total_states: 13
   total_transitions: 17
@@ -4591,13 +4693,13 @@ counts:
   total_edges: 30
   terminal_states: 4
   production: 13
-  cards_total: 105
+  cards_total: 108
   by_state: *id001
   registered_by_state: *id002
   registered_entries_in_ledger: 56
-  corpus_files_registered: 52
+  corpus_files_registered: 53
   unregistered_declarable: 10
-  state_undeclared_headless: 36
+  state_undeclared_headless: 38
   needs_adjudication: 3
   unmatched_alias: 2
   non_domain_excluded: 2
@@ -4625,7 +4727,6 @@ counts:
   pending_registration: 10
 pending_registration:
   unregistered_declarable:
-  - docs/_working/archive/2026-10/emotion_line/prereg_exam_cards_v0.md
   - docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
   - docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
   - docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
@@ -4635,8 +4736,10 @@ pending_registration:
   - docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
   - docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
   - docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+  - docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
   state_undeclared_headless:
   - docs/_working/2026-09-07-tdm-backtest-protocol.md
+  - docs/_working/2026-09-15-neff-estimator-preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
   - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
@@ -4659,17 +4762,18 @@ pending_registration:
   - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
-  - docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
-  - docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
   - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+  - docs/_working/external_audit_mastertc/lane_g_open53_cards.md
   - docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
   - docs/_working/fullconnect_campaign/g_backtest_gpu/09_f66_backtest_prereg_loop.md
   - docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
   - docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
   - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+  - docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  - docs/_working/reexam_strategy_lane/pre_registration_card.md
   - docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
   - docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
   needs_adjudication:
@@ -4685,6 +4789,7 @@ pending_registration:
   unmapped_cards:
   - docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
   - docs/_working/2026-09-07-tdm-backtest-protocol.md
+  - docs/_working/2026-09-15-neff-estimator-preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
   - docs/_working/archive/2026-09/bizmine_night/etf_family/prereg_etf_timing_rotation.md
   - docs/_working/archive/2026-09/bizmine_night/indicators_sweep_a/prereg_screen_slice_a.md
@@ -4710,9 +4815,8 @@ pending_registration:
   - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
-  - docs/_working/archive/2026-10/2026-09-15-neff-estimator-preregistration.md
-  - docs/_working/archive/2026-10/reexam_strategy_lane/pre_registration_card.md
   - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+  - docs/_working/external_audit_mastertc/lane_g_open53_cards.md
   - docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
   - docs/_working/fullconnect_campaign/g_backtest_gpu/09_f66_backtest_prereg_loop.md
   - docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
@@ -4720,9 +4824,11 @@ pending_registration:
   - docs/_working/fullscore_night/03_integrated_backtest/prereg_v2.md
   - docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
   - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+  - docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  - docs/_working/reexam_strategy_lane/pre_registration_card.md
   - docs/_working/ultimate_library/b_batch_sample_cards.md
   - docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
   - docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
