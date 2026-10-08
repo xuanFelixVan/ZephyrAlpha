@@ -64273,4 +64273,9 @@ creation_tokens:
   created_by: st-fullscore-20260930
   capability: fullscore_night_handoff
   merge_evaluation: "七域满分通宵战役新对话交接件（一键复制指令+裁定表+后续清单），task_bound 交接媒介，替代无（09-30 交接件的后继棒），净增一发"
+- file: docs/_working/matrix_campaign/HANDOFF_NEXT_SESSION.md
+  token: matrix-handoff-closeout-handoff-next-session-20261008
+  created_by: st-matrix-20261007
+  capability: matrix-handoff-closeout
+  merge_evaluation: "收尾交接册 v2 置换（战役 handoff 生命周期文件，v1 内容全部执行完毕归档于 git 史）"
 di_seam_exemptions: []
