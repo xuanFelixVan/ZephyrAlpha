@@ -50,7 +50,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
-generated_at: '2026-10-08T04:33:26+08:00'
+generated_at: '2026-10-08T12:25:29+08:00'
 ops_tool_ref:
   tool: scripts/ops/schedule_overview.py
   gate: GATE-SCHEDULE-CONSISTENCY(priority=826)
@@ -190,7 +190,7 @@ nodes:
   - SV#底数（low）
   - SV#方案（low）
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=catchup_guard 任务级求和×0)
@@ -273,7 +273,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=data_supply_sentinel 任务级求和×0)
@@ -350,7 +350,7 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=calendar_coverage_check 任务级求和×0)
@@ -429,7 +429,7 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=nightly_sentiment 任务级求和×0)
@@ -514,9 +514,9 @@ nodes:
   casebooks:
   - MEM-F13#币圈与另类
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 104
+    count: 110
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_crypto 任务级求和×6)
     evidence: 每日 1 拍
   consumers:
@@ -590,9 +590,9 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 149
+    count: 158
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=pre_market 任务级求和×9)
     evidence: 交易日每日 1 拍
   consumers:
@@ -668,12 +668,12 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_QMTWatchdog）
     evidence: 交易日每日 2 拍
-    last_run: '2026-10-07T12:55:01'
+    last_run: '2026-10-08T12:55:01'
   consumers:
   - count:11(code=4,config=1,doc=6)
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml:32411
@@ -740,9 +740,9 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: source_health_logs_30d
-    count: 19
+    count: 0
     source: logs/source_health_*.log glob（30日窗文件数；EXEC 口径同源）
     evidence: 每日 1 份日志（触发者待定位）
   consumers:
@@ -821,7 +821,7 @@ nodes:
   casebooks:
   - MEM-F13#盘前探针（low）
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -848,7 +848,7 @@ nodes:
   node_type: stage
   decision_question: 09:15 的盘前复制产了吗？产物停在 T 日还是 T-1 日？
   note_zh: 特殊槽分支（sector 双槽合一）→ 板块状态管线；服务总闸实存见机生层
-  module_id: MOD-SIG-026 supplement
+  module_id: MOD-SIG-026
   source_anchors:
   - src/zephyr/data/sector_state_pipeline.py:164
   - src/zephyr/data/scheduler.py:439
@@ -887,7 +887,7 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=sector_pre_open 任务级求和×0)
@@ -962,9 +962,9 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 1161
+    count: 1225
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=auction_highfreq 任务级求和×2)
     evidence: 窗内每 10 秒
   consumers:
@@ -1040,12 +1040,12 @@ nodes:
   - MEM-F13#模拟盘与做T
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_PaperSession）
     evidence: 交易日每日 1 次拉起
-    last_run: '2026-10-07T09:25:01'
+    last_run: '2026-10-08T09:25:01'
   consumers:
   - count:19(?=1,code=5,config=1,doc=12)
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml:6486
@@ -1115,7 +1115,7 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=post_auction 任务级求和×0)
@@ -1194,9 +1194,9 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 2172
+    count: 2143
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=intraday_realtime 任务级求和×15)
     evidence: 盘中每 5 分钟
   consumers:
@@ -1271,9 +1271,9 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 1255
+    count: 1266
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=intraday_minute 任务级求和×11)
     evidence: 盘中每 5 分钟
   consumers:
@@ -1348,9 +1348,9 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 355
+    count: 320
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=intraday_sector 任务级求和×5)
     evidence: 盘中每 5 分钟
   consumers:
@@ -1426,9 +1426,9 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 60875
+    count: 61632
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=event_driven 任务级求和×10)
     evidence: 每 3 分钟
   consumers:
@@ -1502,9 +1502,9 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
-    count: 280
+    count: 282
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=news_slow 任务级求和×2)
     evidence: 每小时 2 拍
   consumers:
@@ -1580,12 +1580,12 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_IntradayFundFlow）
     evidence: 交易日每日 5 拍
-    last_run: '2026-10-07T15:05:01'
+    last_run: '2026-10-08T11:05:01'
   consumers:
   - count:13(?=1,code=3,config=1,doc=8)
   - src/zephyr/frontend/dashboard/api_server.py:1588
@@ -1653,7 +1653,7 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -1722,9 +1722,9 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: table_rows_latest_shanghai_date
-    count: 4
+    count: 2
     source: DatabaseService CH reader（judgment_intraday_market_state，只读）
     evidence: 唤醒词驱动（当日数拍）
   consumers:
@@ -1790,7 +1790,7 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -1858,7 +1858,7 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -1935,12 +1935,12 @@ nodes:
   casebooks:
   - MEM-F13#模拟盘与做T
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_PaperSession）
     evidence: 常驻
-    last_run: '2026-10-07T09:25:01'
+    last_run: '2026-10-08T09:25:01'
   consumers:
   - count:11(?=1,code=4,doc=6)
   - src/zephyr/ex_core/live_strategy_adapter.py:2
@@ -1968,7 +1968,7 @@ nodes:
   node_type: stage
   decision_question: 15:10 定格的态是 T 日还是 T-1 日？
   note_zh: 特殊槽分支（sector 双槽合一）→ 板块状态管线盘后腿；服务总闸实存见机生层
-  module_id: MOD-SIG-026 supplement
+  module_id: MOD-SIG-026
   source_anchors:
   - src/zephyr/data/sector_state_pipeline.py:164
   - src/zephyr/data/scheduler.py:439
@@ -2008,7 +2008,7 @@ nodes:
   purpose_tag: t08_postmarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=sector_close_final 任务级求和×0)
@@ -2084,7 +2084,7 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_IndexMinuteEOD）
@@ -2159,7 +2159,7 @@ nodes:
   purpose_tag: t09_settlement_recon
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -2233,7 +2233,7 @@ nodes:
   - MEM-F13#结算复活
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_PostSettlement）
@@ -2319,7 +2319,7 @@ nodes:
   purpose_tag: t09_settlement_recon
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=eod_reconciliation 任务级求和×1)
@@ -2404,7 +2404,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 404
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_kline 任务级求和×29)
@@ -2484,7 +2484,7 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -2551,7 +2551,7 @@ nodes:
   casebooks:
   - DCS#队列（low）
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=dloop_post 任务级求和×0)
@@ -2629,7 +2629,7 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -2701,7 +2701,7 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: table_rows_total
     count: null
     source: DatabaseService CH reader（decision_daily，只读）
@@ -2780,7 +2780,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_backfill 任务级求和×0)
@@ -2870,7 +2870,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 18
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=research_nightly 任务级求和×2)
@@ -2946,7 +2946,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 118
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=nightly_financial 任务级求和×10)
@@ -3024,7 +3024,7 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=integrity_check 任务级求和×0)
@@ -3104,7 +3104,7 @@ nodes:
   casebooks:
   - MEM-F13#移窗与口径
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=consensus_crosscheck 任务级求和×0)
@@ -3177,7 +3177,7 @@ nodes:
   purpose_tag: t11_nightly_batch
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 11
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_alt_fx 任务级求和×1)
@@ -3252,7 +3252,7 @@ nodes:
   casebooks:
   - MEM-F13#日历与周窗
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=weekend_backfill 任务级求和×1)
@@ -3347,12 +3347,12 @@ nodes:
   - MEM-F13#守护判活与误杀
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 4
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_TradingWatchdog）
     evidence: 每 5 分钟重点火
-    last_run: '2026-10-08T04:51:56'
+    last_run: '2026-10-08T13:19:23'
   consumers:
   - count:33(?=3,code=17,doc=13)
   - src/zephyr/ex_core/live_strategy_adapter.py:355
@@ -3426,7 +3426,7 @@ nodes:
   casebooks:
   - MEM-F13#日历与周窗
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -3499,7 +3499,7 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: none
     count: null
     source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
@@ -3578,12 +3578,12 @@ nodes:
   purpose_tag: t05_paper_session
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_SimBridgeExecute）
     evidence: 注册后未取到执行留痕（周末窗未开）
-    last_run: '2026-10-07T13:05:01'
+    last_run: '2026-10-08T13:05:00'
   consumers: []
   mechanism: B_windows_task
   dloop_stages: []
@@ -3642,12 +3642,12 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 1
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_DecisionChainSentinel）
     evidence: 样本 1 条（时区口径待复判）
-    last_run: '2026-10-07T09:40:01'
+    last_run: '2026-10-08T09:40:01'
   consumers: []
   mechanism: B_windows_task
   dloop_stages: []
@@ -3706,7 +3706,7 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: task_runs_30d
     count: 0
     source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=cross_validation 任务级求和×0)
@@ -3776,7 +3776,7 @@ nodes:
   purpose_tag: t08_postmarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T04:33:26+08:00'
+    as_of: '2026-10-08T12:25:29+08:00'
     metric: schtasks_lastrun_in_window
     count: 0
     source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_SectorEqwIntraday）
@@ -4909,7 +4909,7 @@ machine_facts:
         present: false
     registry_entities:
       exists: true
-      total_entity_ids: 103
+      total_entity_ids: 102
       referenced_entity_ids:
       - data_slot_intraday_minute
       - ops_qmt_watchdog
@@ -5415,7 +5415,7 @@ machine_facts:
       reason_zh: 同上（默认落点悬空）
   module_id_roster:
     source: docs/03_modules/path_ownership_map.yaml
-    claims_scanned: 7733
+    claims_scanned: 8012
     note_zh: existence ∈ {未实现, deprecated} 的在册条目不采信；未被覆盖的路径退回源文件 [BLUEPRINT] 头声明（须磁盘实存）。在册面存在性与磁盘实存漂移时以磁盘为准并在环节
       note 记事实（本车道不改 depgraph）。
   tdm_roster_scanned: true

@@ -1,0 +1,1099 @@
+ttl: task_bound
+session: st-fc-tdm-20261008
+date: '2026-10-08'
+title: 图TDM 交易决策地图（trading_decision_map）环节级 casebooks 挂载挖矿档——186 环节逐个判挂载
+completes_when: 随 TDM casebooks 挂载批经 commit_queue 落地 dev 即完成（队列落地=交付）
+worktree: D:/ZephyrAlpha/.worktrees/st-fc-tdm-20261008（分支 ai/st-fc-tdm-20261008/tdm-casebook-mount）
+method_note: '逐环节翻账判读：以 casebook_registry 八正典册+outside_registry DCS+CASEBOOK-009（H11 发车裁定授号）为册族真源，
+
+  对 186 环节逐个问「该环节失败/漂移时确实会翻哪本案例账」——判读口径：感知/供给端直读环节翻 001#outage（供给源头病），
+
+  特征/选股计算面翻 001#alert（陈旧/熔断面病），对账与快照就绪面翻 001#task_reconcile，队列族翻 002#域三，
+
+  教训域翻 005 TDM 专属四簇（过拟合与前视/考试纪律/成本证伪/实盘衰减与归因），回测证据面翻 009（N试次/红证），
+
+  治理面翻 DCS 四族章。留空不硬凑五类：终端/段容器、未施工缺口（module_ref=null）、手经验规则域无病历族、
+
+  风控熔断域病历册缺位（GOMAP 同域缺口已显式登记）、券商执行域病历缺位。任务卡六层矩阵→TDM 实际层码语义映射：
+
+  L1 感知=TDM L1、L2 特征=TDM L2、L3 决策=TDM L3、L4 执行=TDM L4、L5 风控=X1 应急+风控散布环节、L6 复盘=L0-03/S2-06/C3 族；
+
+  章名出入校正：「001#队列」→002#域三（001 章系无队列章）、「001#审批」→DCS#审批、「009#过拟合」→005#过拟合与前视
+
+  （009 章系仅 N试次/红证）、「005#域一/域五」无此章（域一判读=L1 无独立守护体不实挂；004 审查两卷 TDM 侧查证同 SP 图
+
+  结论=内容域为战役治理审查非交易域病历，全图零挂不硬凑，完备性由图11 主挂满足）。003/004 全图零挂；
+
+  例外声明：D2/E2/Z1/V2 为未施工但语义直配先例账的环节（翻的是纪律/治理先例非运行日志，如实注明）；
+
+  挂载=INV-1 指针引用，不复制册内内容。'
+chapter_system:
+  books:
+  - book: CASEBOOK-001
+    name_zh: 数据对账案卷库（data/failures，15134 件在产）
+    chapters:
+      CASEBOOK-001#outage:
+        flip_zh: data/failures 断供事故章
+        evidence: data/failures 增量断供族实证：news_rss(1702)/news_data(1697)/macro(1035+990)/kline 系(3000+)/tick(418)/auction_data_snapshot(70)
+          等任务族案卷
+      CASEBOOK-001#alert:
+        flip_zh: data/failures 告警熔断章
+        evidence: 告警熔断族实证：_stale_reaper(398)/_provider_connect_ifind(391)+tdx/_circuit_breaker_fred(163)+mock(143)/ch_heartbeat(66)/crisis_gate_l3(133)
+      CASEBOOK-001#task_reconcile:
+        flip_zh: data/failures 对账巡检章
+        evidence: 对账巡检族实证：task_reconcile 族 33 件+integrity_check_c1_market.* 多族（登记册 CASEBOOK-001 scope 自述对账差异案卷）
+  - book: CASEBOOK-002
+    name_zh: 堵点本（35 类全量问题总册·五域）
+    chapters:
+      CASEBOOK-002#域三:
+        flip_zh: 堵点本·belt与队列章
+        evidence: 堵点本原文「域三：belt 与队列」；五域中 TDM 实挂仅此章（域一判读=L1 传感随主进程无独立守护体不实挂，域二/域四/域五无 TDM 语义环节，不硬凑）
+  - book: CASEBOOK-005
+    name_zh: 记忆教训索引（ZCode 记忆库 MEMORY.md，仓外指针制）
+    chapters:
+      CASEBOOK-005#过拟合与前视:
+        flip_zh: 记忆教训索引·过拟合与前视簇
+        evidence: 记忆件实证：chart-pattern-mining-batch-20260914（反过拟合+复活观察）+bt-financial-correctness-p0fix-20260914（前视
+          T+1 硬断言/PIT 证据制）+p002-reprint-anchored-states-20260914+ibt-remedy-b-pit-20260923（PIT 尾步阻断）
+      CASEBOOK-005#考试纪律:
+        flip_zh: 记忆教训索引·考试纪律簇
+        evidence: 记忆件实证：node-backtest-governance-night-20260910（台账 42 行全 pending/holdout 锁窗）+integrated-backtest-first-run-20260922（HOLDOUT
+          保密考卷 C 门不过）+statreplay-exam-window-replay-rulings-20260923（重考窗口裁定）
+      CASEBOOK-005#成本证伪:
+        flip_zh: 记忆教训索引·成本证伪簇
+        evidence: 记忆件实证：tv2-campaign-cost-falsification-20260917（复活窄考 RED：毛边际+0.88bp vs 12bp 门槛 p=0.4997）
+      CASEBOOK-005#实盘衰减与归因:
+        flip_zh: 记忆教训索引·实盘衰减与归因簇
+        evidence: 记忆件实证：owner-profitability-path-sharpe3-20260925（回测→实盘衰减五折惯例/模拟盘过关条件含衰减≤50%/六步路线）+gpu-final-overnight-landing-war-20260924
+  - book: CASEBOOK-009
+    name_zh: 回测覆盖总册（H11 发车裁定授号；registry 物理入册待上户口批）
+    chapters:
+      CASEBOOK-009#N试次:
+        flip_zh: 回测覆盖总册·N账本章
+        evidence: trial_ledger_registry.yaml counting_rule=count=screen_runs.total_trials+sum(batch_records.n_trials)（可审计试次正门）
+      CASEBOOK-009#红证:
+        flip_zh: 回测覆盖总册·批末记账章
+        evidence: unknown_adjudication.md 红证族判定（FAC-E4-M-011/012/013/023=P0 试验链证据件）
+  - book: DCS（outside_registry）
+    name_zh: 提交撞墙死因案例册（CFG-COMMIT-DEATH-CASES-001，字母码指针制同 GOMAP 图例）
+    chapters:
+      DCS#手续:
+        flip_zh: 死因案例册·手续族
+        evidence: 死因六族章之一；TDM 实挂四族（手续/结构/真源/审批），通道/队列零挂=TDM 无提交通道与提交队列语义环节
+      DCS#结构:
+        flip_zh: 死因案例册·结构族
+        evidence: 死因六族章之一（同上口径）
+      DCS#真源:
+        flip_zh: 死因案例册·真源族
+        evidence: 死因六族章之一（同上口径）
+      DCS#审批:
+        flip_zh: 死因案例册·审批族
+        evidence: 死因六族章之一（同上口径）
+mounts:
+- id: TDM-E-FLOW
+  层: 流终端聚合
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-P-FLOW
+  层: 流终端聚合
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-X-FLOW
+  层: 流终端聚合
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-F-FLOW
+  层: 流终端聚合
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L0
+  层: 盘前计划
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L0-01
+  层: 盘前计划
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L0-02
+  层: 盘前计划
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L0-03
+  层: 盘前计划
+  翻的账: 记忆教训索引·实盘衰减与归因簇
+  挂载:
+  - CASEBOOK-005#实盘衰减与归因
+  证据: 校准回填情景概率=归因回灌闭环，翻记忆·实盘衰减与归因簇（owner-profitability-path-sharpe3 六步路线迭代回灌教训在案）
+- id: TDM-E-L0-04
+  层: 盘前计划
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 明日预测三输入 DS 供给中断即失明，翻断供章（增量断供族在库）
+- id: TDM-E-L1
+  层: 感知层
+  翻的账: 回测覆盖总册·批末记账章；记忆教训索引·实盘衰减与归因簇
+  挂载:
+  - CASEBOOK-009#红证
+  - CASEBOOK-005#实盘衰减与归因
+  证据: 全图仅有的 confidence=verified 门位：判定被质疑翻批末记账红证页；实盘衰减监控翻记忆·衰减归因簇（模拟盘过关条件含衰减≤50% 惯例在案）
+- id: TDM-E-L1-S1
+  层: 感知层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 指数行情供给断供翻断供章（kline 系断供案 3000+ 件族在库）
+- id: TDM-E-L1-S2
+  层: 感知层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 涨停/梯队广度数据断链翻断供章（增量断供族在库）
+- id: TDM-E-L1-S3
+  层: 感知层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 溢价/晋级率数据断链翻断供章（增量断供族在库）
+- id: TDM-E-L1-S4
+  层: 感知层
+  翻的账: data/failures 断供事故章；data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#outage
+  - CASEBOOK-001#alert
+  证据: 期权 IV 主路径断供翻断供章；合成 VI 备路径切换翻告警章（_provider_connect 备源切换族 391+ 件实证）
+- id: TDM-E-L1-S0
+  层: 感知层
+  翻的账: data/failures 断供事故章；data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#outage
+  - CASEBOOK-001#alert
+  证据: 宏观供给断链翻断供章（macro 断供案 1035+990 实证）；FRED 连接熔断翻告警章（_circuit_breaker_fred 163 件）
+- id: TDM-E-L1-S0-1
+  层: 感知层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 快讯流断链本地模型无米下锅，翻断供章（news_rss 断供案 1702 件族在库）
+- id: TDM-E-L1-S5
+  层: 感知层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 11 信号环比=派生指标陈旧敏感面，翻告警章（_stale_reaper 陈旧巡检族 398 件实证）
+- id: TDM-E-L1-AGG
+  层: 感知层
+  翻的账: 记忆教训索引·实盘衰减与归因簇
+  挂载:
+  - CASEBOOK-005#实盘衰减与归因
+  证据: 大盘判定器降权/判读失效翻记忆·实盘衰减与归因簇（C3-05 可靠度养成联动；衰减判读教训在案）
+- id: TDM-E-L2
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L2-01
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 板指/涨停比派生指标面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-01-1
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 结构分三件（涨停比/梯队/趋势）数据面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-01-2
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 活跃度排名数据面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-01-3
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 多周期动量计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-01-4
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 资金流聚合数据面（DS-181/186），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-01-5
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-02
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 轮动序列计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-02-1
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: RRG 序列计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-02-2
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 见顶预警计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-03
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 调整进度计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-03-1
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 扩散指标计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-04
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-04-1
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-04-2
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-05
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L2-05-1
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 水温档推导三输入面（DS-150/082/059），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat
+    族在库）
+- id: TDM-E-L2-05-2
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-06
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-06-1
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-06-2
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-06-3
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 强度加权计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L2-07
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-07-1
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-08
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-09
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L2-09-1
+  层: 特征层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 事件图谱/快讯供给断链翻断供章（news 断供族在库；DS-224/225 事件源）
+- id: TDM-E-L2-09-2
+  层: 特征层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 冲击标的扩散输入=事件供给面，翻断供章（同上族）
+- id: TDM-E-L2-10
+  层: 特征层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 同源比价计算面（DS-186/170），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L3-01
+  层: 决策层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 全市场行情扫描直读，翻断供章（kline 系断供案族在库）
+- id: TDM-E-L3-02
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 九阶段漏斗压缩计算面（DS-150/181），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-03
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L3-03-1
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 短线池打分计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-03-2
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 波段池打分计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-03-3
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L3-04
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L3-05
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L3-06
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L3-07
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L3-07-1
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 打板漏斗盘口派生数据面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-07-2
+  层: 决策层
+  翻的账: data/failures 告警熔断章；记忆教训索引·过拟合与前视簇
+  挂载:
+  - CASEBOOK-001#alert
+  - CASEBOOK-005#过拟合与前视
+  证据: IC 加权打分=统计规则面：数据面翻告警章；因子口径翻记忆·过拟合与前视簇（bt-financial-correctness-p0fix 前视 T+1 硬断言/chart-pattern 反过拟合教训在案）
+- id: TDM-E-L3-07-3
+  层: 决策层
+  翻的账: 回测覆盖总册·批末记账章；data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-009#红证
+  - CASEBOOK-001#alert
+  证据: confidence=verified 规则面翻批末记账红证页（回测覆盖总册）；选股计算面翻告警章
+- id: TDM-E-L3-08
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L3-09
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: Tier 陈旧剔除=陈旧巡检同构语义，翻告警章（_stale_reaper 族直配）
+- id: TDM-E-L3-10
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 停牌/一字板状态数据面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-11
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L3-11-1
+  层: 决策层
+  翻的账: data/failures 断供事故章
+  挂载:
+  - CASEBOOK-001#outage
+  证据: 竞价快照断供案直配（auction_data_snapshot 70 件在库）翻断供章
+- id: TDM-E-L3-11-2
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 涨速实时计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-12
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L3-12-1
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: DDE/大单资金计算面（DS-181），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-12-2
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：该数据域无在册病历族（data_refs 空缺，数据接入后再判挂载）
+- id: TDM-E-L3-12-3
+  层: 决策层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 筹码分布计算面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L3-12-4
+  层: 决策层
+  翻的账: 记忆教训索引·过拟合与前视簇
+  挂载:
+  - CASEBOOK-005#过拟合与前视
+  证据: 形态识别规则=形态挖掘同源病理，翻记忆·过拟合与前视簇（chart-pattern-mining-batch 反过拟合+复活观察教训直配）
+- id: TDM-E-L4
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-E-L4-01
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L4-02
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L4-03
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L4-04
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L4-05
+  层: 执行层
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 封单质量验证盘口数据面（DS-082），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-E-L4-06
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L4-07
+  层: 执行层
+  翻的账: 堵点本·belt与队列章
+  挂载:
+  - CASEBOOK-002#域三
+  证据: 触发队列注册/冲突病理=堵点本域三队列族同构（belt 与队列拥堵/冲突/死锁病原文在案）——任务卡「001#队列」语义经校正落此正典章（001 章系无队列章）
+- id: TDM-E-L4-08
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-E-L4-09
+  层: 执行层
+  翻的账: 记忆教训索引·成本证伪簇
+  挂载:
+  - CASEBOOK-005#成本证伪
+  证据: 成本模型实时估算门槛翻记忆·成本证伪簇（tv2-campaign-cost-falsification 毛边际 vs 12bp 门槛教训直配）
+- id: TDM-E-L4-10
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-E-L4-11
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-E-L4-12
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-E-L4-13
+  层: 执行层
+  翻的账: data/failures 对账巡检章
+  挂载:
+  - CASEBOOK-001#task_reconcile
+  证据: 我方/券商/成交三方对账差异病理翻对账巡检章（对账差异/完整性巡检翻对账巡检章（task_reconcile 族 33 件+integrity_check_c1_market.* 多族在库））
+- id: TDM-E-L4-14
+  层: 执行层
+  翻的账: 记忆教训索引·成本证伪簇
+  挂载:
+  - CASEBOOK-005#成本证伪
+  证据: 实测滑点 vs 预估=成本证伪判读，翻记忆·成本证伪簇（复活窄考 RED 判读教训同族）
+- id: TDM-P-P1
+  层: 持仓·体检
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-P-P2
+  层: 持仓·做T加减仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-P-P3
+  层: 持仓·加仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-P-P1-01
+  层: 持仓·体检
+  翻的账: data/failures 对账巡检章
+  挂载:
+  - CASEBOOK-001#task_reconcile
+  证据: 持仓/台账对账差异翻对账巡检章（对账差异案卷族在库）
+- id: TDM-P-P1-02
+  层: 持仓·体检
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P1-03
+  层: 持仓·体检
+  翻的账: 记忆教训索引·实盘衰减与归因簇
+  挂载:
+  - CASEBOOK-005#实盘衰减与归因
+  证据: 买入逻辑存活=衰减判读域，翻记忆·实盘衰减与归因簇（回测→实盘衰减判读教训在案）
+- id: TDM-P-P1-04
+  层: 持仓·体检
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-P-P1-05
+  层: 持仓·体检
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P1-06
+  层: 持仓·体检
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P2-01
+  层: 持仓·做T加减仓
+  翻的账: 记忆教训索引·成本证伪簇
+  挂载:
+  - CASEBOOK-005#成本证伪
+  证据: 做T成本前置门槛翻记忆·成本证伪簇（成本门槛教训直配）
+- id: TDM-P-P2-02
+  层: 持仓·做T加减仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P2-03
+  层: 持仓·做T加减仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P2-04
+  层: 持仓·做T加减仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P3-01
+  层: 持仓·加仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P3-02
+  层: 持仓·加仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P3-03
+  层: 持仓·加仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-P-P3-04
+  层: 持仓·加仓
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-X-S1
+  层: 离场·信号收集
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-X-S2
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-X-R1
+  层: 风控应急
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-X-R1-01
+  层: 风控应急
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-X-R1-02
+  层: 风控应急
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-X-R1-03
+  层: 风控应急
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-X-S1-01
+  层: 离场·信号收集
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 卖出信号读数派生数据面，派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-X-S1-02
+  层: 离场·信号收集
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-X-S1-03
+  层: 离场·信号收集
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-X-S1-04
+  层: 离场·信号收集
+  翻的账: data/failures 告警熔断章
+  挂载:
+  - CASEBOOK-001#alert
+  证据: 破位/退潮信号计算面（DS-082），派生指标陈旧/熔断面翻告警章（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族在库）
+- id: TDM-X-S1-05
+  层: 离场·信号收集
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-X-S1-06
+  层: 离场·信号收集
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-X-S2-01
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-X-S2-02
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-X-S2-03
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-X-S2-04
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-X-S2-05
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：券商通道/订单执行域无在册病历族（执行病历缺位=候选缺口，待运行期事件成册后再判）
+- id: TDM-X-S2-06
+  层: 离场·执行
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-F-C1
+  层: 组合·预算切分
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-F-C1-01
+  层: 组合·预算切分
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-F-C1-02
+  层: 组合·预算切分
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-F-C1-03
+  层: 组合·预算切分
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-F-C2
+  层: 组合·聚合约束
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-F-C3
+  层: 组合·归因反馈
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：终端汇聚/段容器节点，无独立翻账语义（病历随其组成环节）
+- id: TDM-F-C2-01
+  层: 组合·聚合约束
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-F-C2-02
+  层: 组合·聚合约束
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-F-C2-03
+  层: 组合·聚合约束
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：风控/熔断域无永久病历册（GOMAP 图例已显式登记同域缺口：审计 jsonl 是 facts 流非病历本），候选=事件流成册随上户口批呈批
+- id: TDM-F-C2-04
+  层: 组合·聚合约束
+  翻的账: 死因案例册·审批族
+  挂载:
+  - DCS#审批
+  证据: 预算升级卡审批/越权病理=死因案例册审批族同域（治理升级流死因在案）——任务卡「001#审批」语义经校正落 DCS 字母码（001 章系无审批章）
+- id: TDM-F-C3-01
+  层: 组合·归因反馈
+  翻的账: 记忆教训索引·实盘衰减与归因簇
+  挂载:
+  - CASEBOOK-005#实盘衰减与归因
+  证据: 归因判读/迭代回灌教训直配（记忆·实盘衰减与归因簇 owner-profitability-path-sharpe3 在案）
+- id: TDM-F-C3-02
+  层: 组合·归因反馈
+  翻的账: 回测覆盖总册·批末记账章；记忆教训索引·考试纪律簇
+  挂载:
+  - CASEBOOK-009#红证
+  - CASEBOOK-005#考试纪律
+  证据: 升降级评审质疑翻批末记账红证页；评审判读纪律翻记忆·考试纪律簇（holdout 锁窗/判读纪律教训在案）
+- id: TDM-F-C3-03
+  层: 组合·归因反馈
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：手经验规则/判定域，casebook_registry 八册+outside_registry 无对应病历案例族，不硬凑
+- id: TDM-F-C3-04
+  层: 组合·归因反馈
+  翻的账: 记忆教训索引·过拟合与前视簇；回测覆盖总册·N账本章
+  挂载:
+  - CASEBOOK-005#过拟合与前视
+  - CASEBOOK-009#N试次
+  证据: 环节自述「不过拟合」：校准试验翻 N 账本章（trial_ledger_registry counting_rule 试次正门）；过拟合纪律翻记忆·过拟合与前视簇
+- id: TDM-F-C3-05
+  层: 组合·归因反馈
+  翻的账: 记忆教训索引·实盘衰减与归因簇
+  挂载:
+  - CASEBOOK-005#实盘衰减与归因
+  证据: 判定器/信号降权=衰减监控域，翻记忆·实盘衰减与归因簇（衰减五折惯例在案）
+- id: TDM-C-L1
+  层: 感知层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：币圈预留框架节点（未施工，V0 骨架空壳），无运行病历可翻
+- id: TDM-C-L2
+  层: 特征层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：币圈预留框架节点（未施工，V0 骨架空壳），无运行病历可翻
+- id: TDM-C-L3
+  层: 决策层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：币圈预留框架节点（未施工，V0 骨架空壳），无运行病历可翻
+- id: TDM-C-L4
+  层: 执行层
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：币圈预留框架节点（未施工，V0 骨架空壳），无运行病历可翻
+- id: TDM-E-L9-A01
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A02
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A03
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A04
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A05
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A06
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A07
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A08
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A09
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A10
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A11
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A12
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A13
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A14
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A15
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A16
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-A17
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B01
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B02
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B03
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B04
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B05
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B06
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B07
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B08
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B09
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-B10
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-C01
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-C02
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-C03
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-G1
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-G2
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-G3
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：该数据域无在册病历族（data_refs 空缺，数据接入后再判挂载）
+- id: TDM-E-L9-G4
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-G5
+  层: 知识供给
+  翻的账: '~'
+  挂载: []
+  证据: 留空理由：未施工缺口节点（module_ref=null），无运行病历可翻，建成后接数再判挂载
+- id: TDM-E-L9-V1
+  层: 知识供给
+  翻的账: data/failures 对账巡检章
+  挂载:
+  - CASEBOOK-001#task_reconcile
+  证据: T-1 快照就绪/时戳完整性=integrity_check 巡检族直配（integrity_check_c1_market.* 多族在库）
+- id: TDM-E-L9-V2
+  层: 知识供给
+  翻的账: data/failures 对账巡检章
+  挂载:
+  - CASEBOOK-001#task_reconcile
+  证据: 同 V1：快照就绪语义直配巡检族（建设中环节语义直配——先例账已存在可翻，非运行病历凑挂）
+- id: TDM-E-L9-V3
+  层: 知识供给
+  翻的账: data/failures 对账巡检章
+  挂载:
+  - CASEBOOK-001#task_reconcile
+  证据: 同 V1：板块快照就绪语义直配巡检族
+- id: TDM-E-L9-AGG
+  层: 知识供给
+  翻的账: data/failures 对账巡检章
+  挂载:
+  - CASEBOOK-001#task_reconcile
+  证据: 供给覆盖健康总览=巡检面，翻对账巡检章（完整性巡检族在库）
+- id: TDM-E-L9-D1
+  层: 知识供给
+  翻的账: 回测覆盖总册·N账本章；记忆教训索引·过拟合与前视簇
+  挂载:
+  - CASEBOOK-009#N试次
+  - CASEBOOK-005#过拟合与前视
+  证据: 组合挖掘 screen_runs=试次计数正门（counting_rule）翻 N 账本章；挖掘病理翻记忆·过拟合与前视簇（chart-pattern-mining-batch 反过拟合教训）
+- id: TDM-E-L9-D2
+  层: 知识供给
+  翻的账: 记忆教训索引·考试纪律簇
+  挂载:
+  - CASEBOOK-005#考试纪律
+  证据: 预注册 exam_plan 禁临场改题=考试纪律簇直病族（node-backtest-governance-night 台账全 pending/HOLDOUT 保密考卷教训在案；建设中环节语义直配先例账）
+- id: TDM-E-L9-E1
+  层: 知识供给
+  翻的账: 记忆教训索引·考试纪律簇；回测覆盖总册·批末记账章
+  挂载:
+  - CASEBOOK-005#考试纪律
+  - CASEBOOK-009#红证
+  证据: 按预注册 exam_plan 考试=考试纪律簇（闭卷/锁窗教训）；批末结论记账翻红证章（P0 试验链证据件族在案）
+- id: TDM-E-L9-E2
+  层: 知识供给
+  翻的账: 记忆教训索引·考试纪律簇
+  挂载:
+  - CASEBOOK-005#考试纪律
+  证据: 结论回传/复考退役建议=重考窗口裁定域，翻记忆·考试纪律簇（statreplay-exam-window-replay-rulings 重考窗口裁定在案；建设中环节语义直配）
+- id: TDM-E-L9-Z1
+  层: 知识供给
+  翻的账: 死因案例册·结构族；死因案例册·手续族
+  挂载:
+  - DCS#结构
+  - DCS#手续
+  证据: schema/状态机强制失效→条目结构违例与手续违例死亡，翻死因案例册结构族+手续族（DCS 六族章治理面；GOMAP 治理节点挂 DCS 同款）
+- id: TDM-E-L9-Z2
+  层: 知识供给
+  翻的账: 死因案例册·真源族；死因案例册·结构族
+  挂载:
+  - DCS#真源
+  - DCS#结构
+  证据: 图↔库对账不上/真源漂移翻死因案例册真源族；净零替代声明缺失=结构违例翻结构族（治理对账死因面）

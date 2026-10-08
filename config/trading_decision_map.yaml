@@ -1,3 +1,4 @@
+# 幂等风险：手工图直改无再生保护 2026-10-08
 # [A_config] module_id=MOD-TRADING-015 | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # ============================================================================
 # 交易决策地图真源（Trading Decision Map SSOT）— schema 文件级版本见下方 schema_version 字段（散文不复制版本号，防漂移）；节点规范演进由解析器承载
@@ -62,6 +63,34 @@ purpose_tags:
   meaning_zh: 自动化越深，越要有一道人能踩死的刹车
 
 
+# ----------------------------------------------------------------------------
+# 环节级 casebooks 章系图例（2026-10-08 环节病历挂载批 st-fc-tdm-20261008）：正典指针=册号#章，
+#   册族唯一反查册=docs/01_policies_and_standards/_registry/catalogs/casebook_registry.yaml；
+#   挂载判据=vertical_map_mounting_policy §3 四机规+「该环节失败/漂移时确有翻账语义」，无语义留空不硬凑
+#   （逐环节判读留痕=docs/_working/fullcirculation_campaign/10_hop_mining/tdm_decision/hops.yaml）；
+#   CASEBOOK-003 抢救台账/004 审查发现两卷在本图无翻账语义环节故零挂（003 完备性由图11 D 族主挂、
+#   004 由图11 C11/C13 主挂满足；004 两卷内容域=战役治理审查发现，非交易域病历——与 SP 图同口径查证结论）；
+#   CASEBOOK-009 回测覆盖总册=册号授自 Owner H11 发车裁定（registry 物理入册待上户口批）；
+#   DCS=死因案例册（outside_registry，module_id=CFG-COMMIT-DEATH-CASES-001，禁双重身份不入册），
+#   字母码指针制同 GOMAP 图例；六族全集=手续/通道/真源/结构/队列/审批，本图实挂四族，
+#   通道/队列零挂=TDM 无提交通道与提交队列语义环节（任务卡「001#队列」语义校正落 002#域三、
+#   「001#审批」落 DCS#审批、「009#过拟合」落 005#过拟合与前视——009 章系仅 N试次/红证两章；
+#   「005#域一/域五」无此章：域一判读=L1 传感随主进程运行无独立守护体不实挂，不硬凑）。
+casebooks_legend_zh:
+  CASEBOOK-001#outage: 数据对账案卷库·断供事故章——增量供数中断/断链案（E-8 约定 outage_ 前缀案正门；TDM 感知/供给端直读环节翻账位）
+  CASEBOOK-001#alert: 数据对账案卷库·告警熔断章——熔断/连接故障/心跳/陈旧告警案（_circuit_breaker_*/_provider_connect_*/_stale_reaper/ch_heartbeat 族；TDM 特征计算面翻账位）
+  CASEBOOK-001#task_reconcile: 数据对账案卷库·对账巡检章——对账差异与完整性巡检案（task_reconcile/integrity_check 族；TDM 对账与快照就绪面翻账位）
+  CASEBOOK-002#域三: 堵点本·belt与队列章——队列拥堵/冲突/死锁病（五域中 TDM 实挂仅此章：条件触发队列翻账位）
+  CASEBOOK-005#过拟合与前视: 记忆教训索引·过拟合与前视簇——反过拟合/前视 T+1/PIT 口径教训（TDM 专属簇集，与图9 六簇/图11 十簇/图13 九簇/图15 五簇并行不混用）
+  CASEBOOK-005#考试纪律: 记忆教训索引·考试纪律簇——holdout 锁窗/预注册禁临场改题/判读纪律/重考窗口教训（同上簇集口径）
+  CASEBOOK-005#成本证伪: 记忆教训索引·成本证伪簇——成本门槛/证伪判读教训（同上簇集口径）
+  CASEBOOK-005#实盘衰减与归因: 记忆教训索引·实盘衰减与归因簇——回测→实盘衰减/归因判读/迭代回灌教训（同上簇集口径）
+  CASEBOOK-009#N试次: 回测覆盖总册·N账本章——可审计试次计数与 FDR 预算面（源=trial_ledger_registry 的 screen_runs+batch_records）
+  CASEBOOK-009#红证: 回测覆盖总册·批末记账章——试验批末记账红证页（verified 规则面的证据翻账位；P0 试验链证据件族）
+  DCS#手续: 死因案例册·手续族（CFG-COMMIT-DEATH-CASES-001）——AI 工作产物手续违例死亡案（L9-Z1 治理面翻账位）
+  DCS#结构: 死因案例册·结构族——结构违例死亡案（L9-Z1/Z2 治理面翻账位）
+  DCS#真源: 死因案例册·真源族——真源冲突/对账不上死亡案（L9-Z2 治理面翻账位）
+  DCS#审批: 死因案例册·审批族——审批卡死/越权死亡案（F-C2-04 升级流翻账位）
 nodes:
   # ── 建仓流 entry_flow（cn_a，内嵌 Owner 主观漏斗 L1-L4）──────────────────
   # 真源对齐（v1.2.2，Owner 裁定 B 方案=第一性原理）：
@@ -80,6 +109,7 @@ nodes:
   # ── 流根节点（Owner 2026-09-09 裁定：每流的最终输出点/视图汇聚点；纯结构，不承载实时清单）──
   # 语义=终点聚合：上游=本流各段（见入边），下游无（终点）；实时结果由台账与前端另行呈现，地图只管结构
 - node_id: TDM-E-FLOW
+  casebooks: []
   name_zh: 输出建仓信号
   market: cn_a
   flow: entry_flow
@@ -105,6 +135,7 @@ nodes:
   battle_map_refs: [BM-BUY-02, BM-BUY-02-A, BM-BUY-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-P-FLOW
+  casebooks: []
   name_zh: 输出持仓信号
   market: cn_a
   flow: position_flow
@@ -135,6 +166,7 @@ nodes:
   battle_map_refs: [BM-BUY-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-FLOW
+  casebooks: []
   name_zh: 输出离场信号
   market: cn_a
   flow: exit_flow
@@ -162,6 +194,7 @@ nodes:
   battle_map_refs: [BM-BUY-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-FLOW
+  casebooks: []
   name_zh: 输出组合信号
   market: cn_a
   flow: portfolio_flow
@@ -193,6 +226,7 @@ nodes:
   # ── E-L0 盘前作战计划（Owner 2026-09-09 B-1 裁定甲-2：父+三子；定界=L0 产计划、L1 唯一开闸）──
   # 真源=plan_engine 包（D_PLAN），作战室前端已消费（今日交易计划卡/W2/W5 格）；"只挂引用不重建"承诺自本节点组兑现
 - node_id: TDM-E-L0
+  casebooks: []
   name_zh: 盘前作战计划
   market: cn_a
   flow: entry_flow
@@ -221,6 +255,7 @@ nodes:
   purpose_tag: PT-09
   battle_map_refs: [BM-PLAN-02, BM-PLAN-03, BM-SELL-07]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L0-01
+  casebooks: []
   name_zh: 计划生成
   market: cn_a
   flow: entry_flow
@@ -250,6 +285,7 @@ nodes:
   purpose_tag: PT-09
   battle_map_refs: [BM-BUY-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L0-02
+  casebooks: []
   note_confirmed: 2026-09-16  # grp3p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 偏离监控与修订
   market: cn_a
@@ -278,6 +314,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-09
 - node_id: TDM-E-L0-03
+  casebooks: [CASEBOOK-005#实盘衰减与归因]
   name_zh: 收盘复盘与明日边界
   market: cn_a
   flow: entry_flow
@@ -311,6 +348,7 @@ nodes:
   purpose_tag: PT-09
   battle_map_refs: [BM-PLAN-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L0-04
+  casebooks: [CASEBOOK-001#outage]
   note_confirmed: 2026-09-13
   name_zh: 明日情绪盘中滚动预测
   market: cn_a
@@ -349,6 +387,7 @@ nodes:
   battle_map_refs: [BM-BUY-02-A-1-c, BM-SEL-04]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L1
+  casebooks: [CASEBOOK-009#红证, CASEBOOK-005#实盘衰减与归因]
   note_confirmed: 2026-09-18
   name_zh: 大盘总闸
   market: cn_a
@@ -412,6 +451,7 @@ nodes:
   #   尚无 FCT-* 级条目（涨停家数/炸板率/晋级率等）——factor_refs 留空=地图缺口节点，
   #   补登因子后回填引用（缺口检测语义）
 - node_id: TDM-E-L1-S1
+  casebooks: [CASEBOOK-001#outage]
   name_zh: 大盘指数传感器
     # C2 施工（gw-tdm-20260909）：MOD-REGIME-016 落码，module_ref 由 index_regime_panel 改指均线排列打分核
   market: cn_a
@@ -441,6 +481,7 @@ nodes:
   purpose_tag: PT-01
 
 - node_id: TDM-E-L1-S2
+  casebooks: [CASEBOOK-001#outage]
   note_confirmed: 2026-09-16
   name_zh: 市场内部结构传感器
   market: cn_a
@@ -469,6 +510,7 @@ nodes:
   battle_map_refs: [BM-SEL-03-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L1-S3
+  casebooks: [CASEBOOK-001#outage]
   note_confirmed: 2026-09-16
   name_zh: 赚钱效应传感器
   market: cn_a
@@ -495,6 +537,7 @@ nodes:
   battle_map_refs: [BM-SEL-23, BM-SEL-23-A, BM-SEL-23-A-1, BM-SEL-23-A-2, BM-SEL-23-A-3, BM-SEL-23-A-4, BM-SEL-23-A-5, BM-SEL-23-A-6, BM-SEL-23-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L1-S4
+  casebooks: [CASEBOOK-001#outage, CASEBOOK-001#alert]
   note_confirmed: 2026-09-15
   name_zh: 波动率传感器
   market: cn_a
@@ -545,6 +588,7 @@ nodes:
   #   方法论=复用周级三步法（滚动分位→加权合成→天气分 0-100），输出喂月级谨慎度修正
   #   A股范式权重修正：政策/产业因子权重↑、总量因子权重↓
 - node_id: TDM-E-L1-S0
+  casebooks: [CASEBOOK-001#outage, CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 宏观环境传感器
   market: cn_a
@@ -573,6 +617,7 @@ nodes:
 
   # ── S0-1 新闻情绪语义分析（Owner 2026-09-09：本地模型情绪打分入图；新闻→决策链的理解层）──
 - node_id: TDM-E-L1-S0-1
+  casebooks: [CASEBOOK-001#outage]
   name_zh: 新闻情绪语义分析
   note_confirmed: 2026-09-16  # grp6p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   market: cn_a
@@ -603,6 +648,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-01
 - node_id: TDM-E-L1-S5
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 日级市场条件传感器
     # C1 施工（gw-tdm-20260909）：MOD-SIG-135 落码，module_ref 由 market_state_sensor 改指 11 信号合成核
@@ -627,6 +673,7 @@ nodes:
   purpose_tag: PT-01
 
 - node_id: TDM-E-L1-AGG
+  casebooks: [CASEBOOK-005#实盘衰减与归因]
   note_confirmed: 2026-09-23
   name_zh: 市场状态判定
   market: cn_a
@@ -665,6 +712,7 @@ nodes:
   battle_map_refs: [BM-BUY-02-A-1, BM-BUY-02-A-1-a, BM-BUY-02-A-1-b, BM-BUY-02-A-1-d, BM-SEL-03, BM-SEL-03-B, BM-SEL-07]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L2
+  casebooks: []
   name_zh: 板块选择
   market: cn_a
   flow: entry_flow
@@ -694,6 +742,7 @@ nodes:
   confidence: untested
   purpose_tag: PT-02
 - node_id: TDM-E-L2-01
+  casebooks: [CASEBOOK-001#alert]
   name_zh: 板块强度综合
   note_confirmed: 2026-09-20  # UP-4 板块分布比较接线（algo_note_zh 同步增补）
   market: cn_a
@@ -730,6 +779,7 @@ nodes:
   battle_map_refs: [BM-SEL-08-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L2-01-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
 
   name_zh: 结构强度评估
@@ -763,6 +813,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-02
 - node_id: TDM-E-L2-01-2
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
   name_zh: 动量活跃度排名
   market: cn_a
@@ -795,6 +846,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-01-3
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 多周期动量加权
@@ -826,6 +878,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-01-4
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 板块资金流聚合
@@ -859,6 +912,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-02
 - node_id: TDM-E-L2-01-5
+  casebooks: []
   note_confirmed: 2026-09-15
   name_zh: 市场级调节注入
   market: cn_a
@@ -892,6 +946,7 @@ nodes:
 
   # ── 树枝02 轮动序列追踪（BM-SEL-08）────────────────────────
 - node_id: TDM-E-L2-02
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
   name_zh: 轮动序列追踪
   market: cn_a
@@ -925,6 +980,7 @@ nodes:
   battle_map_refs: [BM-SEL-08]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L2-02-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: RRG 轮动序列
@@ -956,6 +1012,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-02-2
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
 
   name_zh: 单板块轮动预警
@@ -989,6 +1046,7 @@ nodes:
 
   # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
 - node_id: TDM-E-L2-03
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 调整周期进度
   market: cn_a
@@ -1020,6 +1078,7 @@ nodes:
   battle_map_refs: [BM-SEL-09]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L2-03-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 扩散指标进度追踪
     # C6 施工（gw-tdm-20260909）：adjustment_cycle_tracker 扩展扩散指标段
@@ -1054,6 +1113,7 @@ nodes:
 
   # ── 树枝04 板块级市场状态 ────────────────────────
 - node_id: TDM-E-L2-04
+  casebooks: []
   name_zh: 板块级市场状态
   note_confirmed: 2026-09-13
   market: cn_a
@@ -1086,6 +1146,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-04-1
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 轮动状态五分类
@@ -1116,6 +1177,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-04-2
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 虹吸态识别
@@ -1149,6 +1211,7 @@ nodes:
 
   # ── 树枝05 水温响应（D19 挂起：待 L1 温度计时间周期定稿）──────────
 - node_id: TDM-E-L2-05
+  casebooks: []
   name_zh: 水温响应
   market: cn_a
   flow: entry_flow
@@ -1177,6 +1240,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-05-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 水温档推导
   market: cn_a
@@ -1208,6 +1272,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-E-L2-05-2
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 信号响应三件套
@@ -1241,6 +1306,7 @@ nodes:
 
   # ── 树枝06 板块→个股传导 ────────────────────────
 - node_id: TDM-E-L2-06
+  casebooks: []
   note_confirmed: 2026-09-13
   name_zh: 板块个股传导
   market: cn_a
@@ -1271,6 +1337,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L2-06-1
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 三级放行门槛
@@ -1303,6 +1370,7 @@ nodes:
   purpose_tag: PT-04
 
 - node_id: TDM-E-L2-06-2
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 龙头识别定位
   market: cn_a
@@ -1335,6 +1403,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L2-06-3
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-13
 
   name_zh: 强度加权传导
@@ -1367,6 +1436,7 @@ nodes:
 
   # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
 - node_id: TDM-E-L2-07
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 回踩质量分级
   market: cn_a
@@ -1400,6 +1470,7 @@ nodes:
   purpose_tag: PT-04
 
 - node_id: TDM-E-L2-07-1
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
 
   name_zh: 回踩ABC判定
@@ -1434,6 +1505,7 @@ nodes:
   # 08 板块个体生命周期——STR-MOMTREND-003 启动/熄火条件库（科技熄火四信号/机器人启动三要素/
   #   消费启动三条件）上挂；与 02 RRG（板块间时序）分工：08 管单板块自身走到哪一段
 - node_id: TDM-E-L2-08
+  casebooks: []
   note_confirmed: 2026-09-13
   name_zh: 板块生命周期判定
   market: cn_a
@@ -1466,6 +1538,7 @@ nodes:
   purpose_tag: PT-02
   battle_map_refs: [BM-SEL-10]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L2-09
+  casebooks: []
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 催化剂识别
   market: cn_a
@@ -1500,6 +1573,7 @@ nodes:
   # ── 09 事件链（Owner 2026-09-09 落盘：新闻/产业链/供应链→盘中决策；接线 W3/W4 于 2026-09-11 交付，规格卡=docs/_working/2026-09-11-news-chain-wiring-spec-cards.md，两节点同日回填）──
   battle_map_refs: [BM-SEL-19]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L2-09-1
+  casebooks: [CASEBOOK-001#outage]
   name_zh: 事件图谱传导
   market: cn_a
   flow: entry_flow
@@ -1531,6 +1605,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-02
 - node_id: TDM-E-L2-09-2
+  casebooks: [CASEBOOK-001#outage]
   name_zh: 冲击标的生成
   market: cn_a
   flow: entry_flow
@@ -1562,6 +1637,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
 - node_id: TDM-E-L2-10
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
   name_zh: 同源补涨比价
   market: cn_a
@@ -1592,6 +1668,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L3
+  casebooks: []
   name_zh: 个股选择
   market: cn_a
   flow: entry_flow
@@ -1624,6 +1701,7 @@ nodes:
   confidence: untested
   purpose_tag: PT-03
 - node_id: TDM-E-L3-01
+  casebooks: [CASEBOOK-001#outage]
   note_confirmed: 2026-09-16
   name_zh: Universe构建与剔除
   market: cn_a
@@ -1660,6 +1738,7 @@ nodes:
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-16]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L3-02
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 九阶段选票主链
   market: cn_a
@@ -1691,6 +1770,7 @@ nodes:
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-17]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L3-03
+  casebooks: []
   name_zh: 双池评分
   market: cn_a
   flow: entry_flow
@@ -1720,6 +1800,7 @@ nodes:
   battle_map_refs: [BM-SEL-02-K, BM-SEL-18, BM-SEL-20]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-03-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 短线池5分制
   market: cn_a
@@ -1752,6 +1833,7 @@ nodes:
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-24, BM-SEL-24-A, BM-SEL-24-A-1, BM-SEL-24-A-2, BM-SEL-24-A-3, BM-SEL-24-A-4, BM-SEL-24-A-5, BM-SEL-24-A-6, BM-SEL-24-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L3-03-2
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
   name_zh: 波段池5分制
   market: cn_a
@@ -1784,6 +1866,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
 - node_id: TDM-E-L3-03-3
+  casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 双策略合流体检
   market: cn_a
@@ -1817,6 +1900,7 @@ nodes:
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-20-A, BM-SEL-25, BM-SEL-25-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L3-04
+  casebooks: []
   name_zh: 负面否决器
     # C7 施工（gw-tdm-20260909）：MOD-SIG-137 落码，module_ref 由 risk_event_consumer 改指负面清单核
   market: cn_a
@@ -1856,6 +1940,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
 - node_id: TDM-E-L3-05
+  casebooks: []
   note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 顺位排序
   market: cn_a
@@ -1886,6 +1971,7 @@ nodes:
   battle_map_refs: [BM-SEL-25-C, BM-SEL-25-C-1, BM-SEL-25-C-2, BM-SEL-25-C-3, BM-SEL-25-C-4, BM-SEL-25-C-5, BM-SEL-25-C-6]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-06
+  casebooks: []
   note_confirmed: 2026-09-30  # auto_mount 单件批复：Consumer 宣告接线确认（Owner 2026-09-30 裁定#431 通道）
   name_zh: 环境开关
   market: cn_a
@@ -1917,6 +2003,7 @@ nodes:
   purpose_tag: PT-01
 
 - node_id: TDM-E-L3-07
+  casebooks: []
   name_zh: 策略专属链
   market: cn_a
   flow: entry_flow
@@ -1945,6 +2032,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L3-07-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 打板选股链
   market: cn_a
@@ -1983,6 +2071,7 @@ nodes:
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-22, BM-SEL-22-C, BM-SEL-22-C-1, BM-SEL-22-C-2, BM-SEL-22-C-3, BM-SEL-22-C-4, BM-SEL-22-C-5, BM-SEL-22-C-6, BM-SEL-22-C-7, BM-SEL-22-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L3-07-2
+  casebooks: [CASEBOOK-001#alert, CASEBOOK-005#过拟合与前视]
   note_confirmed: 2026-09-15
   name_zh: 多因子打分链
   market: cn_a
@@ -2016,6 +2105,7 @@ nodes:
   battle_map_refs: [BM-BUY-02-A-2, BM-SEL-02, BM-SEL-02-H]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-07-3
+  casebooks: [CASEBOOK-009#红证, CASEBOOK-001#alert]
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
   name_zh: 其余sleeve选股链
   market: cn_a
@@ -2058,6 +2148,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L3-08
+  casebooks: []
   note_confirmed: 2026-09-12
   name_zh: 候选池输出
   module_id: MOD-SIG-142
@@ -2092,6 +2183,7 @@ nodes:
   # 09 股票池分层维护（业界三层就绪度池：Tier1 活跃 5-10/Tier2 培育 10-20/Tier3 雷达 20-50；
   #   每日升降级+陈旧剔除；与 03 双池正交——双池按风格、Tier 按就绪度）；STR-MULTIFACTOR-033 上挂
 - node_id: TDM-E-L3-09
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-11
   name_zh: 股票池分层维护
   market: cn_a
@@ -2128,6 +2220,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-03
 - node_id: TDM-E-L3-10
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-27
   name_zh: 可交易性预检
   market: cn_a
@@ -2166,6 +2259,7 @@ nodes:
   # ── D31 L3 补缺：日内动态选股（竞价/盘中）+ 个股多维验证（资金/龙虎榜/筹码/形态）──
   # Owner 判定成立：L3 粒度欠账——候选大头来自盘中扫描（涨速异动）与竞价（9:26-9:28），原结构全盘后
 - node_id: TDM-E-L3-11
+  casebooks: []
   name_zh: 日内动态选股
   market: cn_a
   flow: entry_flow
@@ -2196,6 +2290,7 @@ nodes:
   battle_map_refs: [BM-SEL-27]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-11-1
+  casebooks: [CASEBOOK-001#outage]
   name_zh: 竞价选股
   market: cn_a
   flow: entry_flow
@@ -2224,6 +2319,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L3-11-2
+  casebooks: [CASEBOOK-001#alert]
 
   note_confirmed: 2026-09-13
   name_zh: 盘中涨速异动扫描
@@ -2256,6 +2352,7 @@ nodes:
   purpose_tag: PT-03
   battle_map_refs: [BM-SEL-05-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L3-12
+  casebooks: []
   name_zh: 个股多维验证
   market: cn_a
   flow: entry_flow
@@ -2285,6 +2382,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L3-12-1
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16
   name_zh: 个股资金面分析
   market: cn_a
@@ -2316,6 +2414,7 @@ nodes:
   battle_map_refs: [BM-SEL-05, BM-SEL-05-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-12-2
+  casebooks: []
   note_confirmed: 2026-09-16
   name_zh: 龙虎榜席位追踪
   market: cn_a
@@ -2351,6 +2450,7 @@ nodes:
   battle_map_refs: [BM-SEL-05-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-12-3
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-10-04
   name_zh: 筹码分布分析
   market: cn_a
@@ -2392,6 +2492,7 @@ nodes:
   battle_map_refs: [BM-SEL-05]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L3-12-4
+  casebooks: [CASEBOOK-005#过拟合与前视]
   name_zh: 形态结构识别
   market: cn_a
   flow: entry_flow
@@ -2423,6 +2524,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-E-L4
+  casebooks: []
   name_zh: 买卖点与执行
   market: cn_a
   flow: entry_flow
@@ -2451,6 +2553,7 @@ nodes:
   confidence: untested
   purpose_tag: PT-04
 - node_id: TDM-E-L4-01
+  casebooks: []
   note_confirmed: 2026-09-15
   name_zh: 分批建仓
   market: cn_a
@@ -2482,6 +2585,7 @@ nodes:
   battle_map_refs: [BM-BUY-04]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L4-02
+  casebooks: []
   name_zh: 买入时序
   market: cn_a
   flow: entry_flow
@@ -2514,6 +2618,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-04
 - node_id: TDM-E-L4-03
+  casebooks: []
   note_confirmed: 2026-09-15
   name_zh: 价格锚定
   market: cn_a
@@ -2544,6 +2649,7 @@ nodes:
   purpose_tag: PT-05
 
 - node_id: TDM-E-L4-04
+  casebooks: []
   note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 资金分配多标的
   market: cn_a
@@ -2572,6 +2678,7 @@ nodes:
   purpose_tag: PT-08
 
 - node_id: TDM-E-L4-05
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 打板执行专项
   market: cn_a
@@ -2603,6 +2710,7 @@ nodes:
   purpose_tag: PT-05
 
 - node_id: TDM-E-L4-06
+  casebooks: []
   note_confirmed: 2026-09-27  # T袋（全流通 F41）：选择器新增执行质量先验调制——算法口径已变，非逐字未变
   name_zh: 执行算法
   market: cn_a
@@ -2639,6 +2747,7 @@ nodes:
   battle_map_refs: [BM-EXE-05]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L4-07
+  casebooks: [CASEBOOK-002#域三]
   note_confirmed: 2026-09-15
   name_zh: 条件触发队列
   market: cn_a
@@ -2670,6 +2779,7 @@ nodes:
   purpose_tag: PT-05
 
 - node_id: TDM-E-L4-08
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 突破失败降级
   market: cn_a
@@ -2700,6 +2810,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-E-L4-09
+  casebooks: [CASEBOOK-005#成本证伪]
   note_confirmed: 2026-09-15
   name_zh: 执行硬约束
   market: cn_a
@@ -2732,6 +2843,7 @@ nodes:
   # ── D31 L4 补缺：订单生命周期状态机/部分成交处理/订单级预检/执行容灾对账（OMS 标准件）──
   battle_map_refs: [BM-EXE-04, BM-RC-02-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L4-10
+  casebooks: []
   note_confirmed: 2026-09-28
   name_zh: 订单生命周期状态机
   market: cn_a
@@ -2764,6 +2876,7 @@ nodes:
   battle_map_refs: [BM-EXE-02]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L4-11
+  casebooks: []
   note_confirmed: 2026-09-15
   name_zh: 部分成交与撤改处理
   market: cn_a
@@ -2794,6 +2907,7 @@ nodes:
   battle_map_refs: [BM-EXE-06]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L4-12
+  casebooks: []
   note_confirmed: 2026-09-23  # O-6/S-1（裁定授权=Owner 增补令）：四级升五级——新增闸门1.5 live 档阻断（blocks_live_trading=true 拒全部新单，环境解析走 config 层，探针异常 fail-closed；纯加闸不加放，判定顺序熔断→live档→时段→快照→否决）；其余四级算法口径逐字未变。同夜配套=THD-TRD-001..004 告警四条入 alert_threshold_registry v1.6.0（S-2，alert_threshold_registry v1.6.0）+五级熔断态持久化 kill_switch_state_store 触发/复位自动落盘影子与 rebuild 重臂（S-3，state 纪律=data/runtime 原子写）。前史：H5-P0 接线复核（09-16）实现四级闸门真实装配方
 
   name_zh: 订单级预检
@@ -2827,6 +2941,7 @@ nodes:
   battle_map_refs: [BM-EXE-01, BM-RC-02]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L4-13
+  casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-15
   name_zh: 执行容灾对账
   market: cn_a
@@ -2859,6 +2974,7 @@ nodes:
   battle_map_refs: [BM-REC-01, BM-REC-01-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-E-L4-14
+  casebooks: [CASEBOOK-005#成本证伪]
   note_confirmed: 2026-09-27  # T袋（全流通 F41）：断链已闭合、先验生产者落地——算法口径已变
   name_zh: 执行成本反馈与选型回写
   market: cn_a
@@ -2897,6 +3013,7 @@ nodes:
   battle_map_refs: [BM-EXE-03, BM-REC-02-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-P-P1
+  casebooks: []
   note_confirmed: 2026-09-28  # F42 G42-1 接线（st-c9-f42）：体检棒 MOD-POS-030 落地挂 dloop premarket 段，编排面补齐
   name_zh: 持仓体检
   market: cn_a
@@ -2923,6 +3040,7 @@ nodes:
   battle_map_refs: [BM-RC-04-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-P-P2
+  casebooks: []
   name_zh: 做T与加减仓
   market: cn_a
   flow: position_flow
@@ -2952,6 +3070,7 @@ nodes:
   purpose_tag: PT-06
   battle_map_refs: [BM-SELL-08]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-P-P3
+  casebooks: []
   name_zh: 加仓决策
   market: cn_a
   flow: position_flow
@@ -2979,6 +3098,7 @@ nodes:
   #   P3 金字塔加仓规则（P3-02 红节点，69 号 §2.26 为真源）
   # P1 树枝：体检链=对账→{分级/逻辑/风险/组合}→结论动作清单（WealthBee 五步 checklist 同构）
 - node_id: TDM-P-P1-01
+  casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 持仓对账与台账快照
   market: cn_a
@@ -3015,6 +3135,7 @@ nodes:
   battle_map_refs: [BM-EXE-06, BM-POS-03, BM-RC-08-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-P-P1-02
+  casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 持仓分级与监控频率
   market: cn_a
@@ -3054,6 +3175,7 @@ nodes:
   purpose_tag: PT-06
 
 - node_id: TDM-P-P1-03
+  casebooks: [CASEBOOK-005#实盘衰减与归因]
   name_zh: 买入逻辑存活判定
     # C8 施工（gw-tdm-20260909）：MOD-PLAN-024 落码回填（module_ref 改指理由存活核+algo_note 锚定同批）
   market: cn_a
@@ -3086,6 +3208,7 @@ nodes:
   purpose_tag: PT-06
 
 - node_id: TDM-P-P1-04
+  casebooks: []
   note_confirmed: 2026-09-15
   name_zh: 风险否决体检
   market: cn_a
@@ -3121,6 +3244,7 @@ nodes:
   battle_map_refs: [BM-RC-10, BM-RC-10-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-P-P1-05
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 组合级持仓体检
   market: cn_a
@@ -3157,6 +3281,7 @@ nodes:
   battle_map_refs: [BM-RC-04, BM-RC-04-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-P-P1-06
+  casebooks: []
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 体检结论与动作清单
   market: cn_a
@@ -3192,6 +3317,7 @@ nodes:
   # P2 树枝：资格门→调度→闭环，减仓/再平衡并行（冲突规则：风控减仓 > 做T收口 > 做T新开，收口 BM-SELL-06 废弃语义；
   #   conflict_priority 字段为 schema v1.8 候选，当前以注释承载）
 - node_id: TDM-P-P2-01
+  casebooks: [CASEBOOK-005#成本证伪]
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 做T资格与成本前置
   market: cn_a
@@ -3232,6 +3358,7 @@ nodes:
   purpose_tag: PT-06
 
 - node_id: TDM-P-P2-02
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 做T策略调度
   market: cn_a
@@ -3276,6 +3403,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-06
 - node_id: TDM-P-P2-03
+  casebooks: []
 
   note_confirmed: 2026-09-13
   name_zh: 做T闭环与成功判定
@@ -3315,6 +3443,7 @@ nodes:
   purpose_tag: PT-06
 
 - node_id: TDM-P-P2-04
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 减仓与再平衡
   market: cn_a
@@ -3355,6 +3484,7 @@ nodes:
   # P3 树枝：资格门→金字塔规则→量级风险核算→时点执行（流水线）；euphoria 段无加仓权限（只卖不买，取严）
   battle_map_refs: [BM-POS-09]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-P-P3-01
+  casebooks: []
   name_zh: 加仓资格门
     # C9 施工（gw-tdm-20260909）：MOD-POS-027 落码回填 module_ref/module_id
   market: cn_a
@@ -3391,6 +3521,7 @@ nodes:
   purpose_tag: PT-04
 
 - node_id: TDM-P-P3-02
+  casebooks: []
   name_zh: 金字塔加仓规则
     # C10 施工（gw-tdm-20260909）：MOD-POS-027 同模块两函数，回填 module_ref/module_id
   market: cn_a
@@ -3431,6 +3562,7 @@ nodes:
   purpose_tag: PT-04
 
 - node_id: TDM-P-P3-03
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 加仓量级与风险核算
   market: cn_a
@@ -3461,6 +3593,7 @@ nodes:
   purpose_tag: PT-04
 
 - node_id: TDM-P-P3-04
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 加仓时点与执行
   market: cn_a
@@ -3493,6 +3626,7 @@ nodes:
 
   # ── 离场流 exit_flow（cn_a）──────────────────────────────────────────────
 - node_id: TDM-X-S1
+  casebooks: []
   name_zh: 卖出信号收集评分
   market: cn_a
   flow: exit_flow
@@ -3520,6 +3654,7 @@ nodes:
   battle_map_refs: [BM-SELL-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-S2
+  casebooks: []
   name_zh: 离场执行
   market: cn_a
   flow: exit_flow
@@ -3543,6 +3678,7 @@ nodes:
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
 - node_id: TDM-X-R1
+  casebooks: []
   note_confirmed: 2026-09-28  # F61 持久化同 commit 同步本节 algo_note_zh（ALGO-NOTE-SYNC）；判定轴/阈值/升级分叉零改动；前次确认 2026-09-20=UP-5 尾部对冲信号接线（algo_note_zh 同步增补，口径未变）
   name_zh: 应急保命
   market: cn_a
@@ -3588,6 +3724,7 @@ nodes:
   # 护盘资产定向加仓窄门=R1-03（proposed 假说，回测验证前不生效）
   battle_map_refs: [BM-BUY-02-D, BM-RC-06, BM-RC-06-A, BM-RC-12]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-X-R1-01
+  casebooks: []
   note_confirmed: 2026-09-16  # db06 机器块搬 yaml 口径未变；本轮再确认=仅 [CONSUMERS] 头据实回填（消费方 AST 实测零在网），五级判定轴/阈值/迟滞逐字未动
   name_zh: 熔断分级判定
   market: cn_a
@@ -3627,6 +3764,7 @@ nodes:
   battle_map_refs: [BM-RC-06-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-R1-02
+  casebooks: []
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 熔断期减仓与持仓处置
   market: cn_a
@@ -3660,6 +3798,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-X-R1-03
+  casebooks: []
   name_zh: 护盘资产定向加仓白名单
     # C11 施工（gw-tdm-20260909）：MOD-POS-026 落码回填 module_ref/module_id
   market: cn_a
@@ -3701,6 +3840,7 @@ nodes:
   confidence: proposed
   purpose_tag: PT-07
 - node_id: TDM-X-S1-01
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 信号收集与六桶分类
   market: cn_a
@@ -3732,6 +3872,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-X-S1-02
+  casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 止损族判定
   market: cn_a
@@ -3776,6 +3917,7 @@ nodes:
   battle_map_refs: [BM-RC-05, BM-RC-05-A, BM-RC-05-B, BM-SELL-04, BM-SELL-04-B, BM-SELL-04-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-S1-03
+  casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 止盈族判定
   market: cn_a
@@ -3807,6 +3949,7 @@ nodes:
   battle_map_refs: [BM-SELL-04, BM-SELL-04-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-S1-04
+  casebooks: [CASEBOOK-001#alert]
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 破位与情绪退潮信号
   market: cn_a
@@ -3846,6 +3989,7 @@ nodes:
   battle_map_refs: [BM-SELL-01]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-S1-05
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 信号融合与紧迫度评分
   market: cn_a
@@ -3884,6 +4028,7 @@ nodes:
   battle_map_refs: [BM-SELL-02]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-S1-06
+  casebooks: []
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 强制清仓绕过通道
   market: cn_a
@@ -3923,6 +4068,7 @@ nodes:
   # S2 树枝：路由→{涨跌停约束/时段路由/条件单/分批}→闭环退出效率；paper×4 实盘执行
   battle_map_refs: [BM-RC-05-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-X-S2-01
+  casebooks: []
   note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 执行方式路由
   market: cn_a
@@ -3966,6 +4112,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-X-S2-02
+  casebooks: []
   note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: T+1与涨跌停约束
   market: cn_a
@@ -4006,6 +4153,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-X-S2-03
+  casebooks: []
   name_zh: 执行时段路由
     # C12 施工（gw-tdm-20260909）：MOD-XS-016 落码回填 module_ref/module_id
   market: cn_a
@@ -4048,6 +4196,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-X-S2-04
+  casebooks: []
   note_confirmed: 2026-09-15
   name_zh: 本地条件单管理
   market: cn_a
@@ -4084,6 +4233,7 @@ nodes:
   purpose_tag: PT-07
 
 - node_id: TDM-X-S2-05
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 分批止盈执行
   market: cn_a
@@ -4118,6 +4268,7 @@ nodes:
   battle_map_refs: [BM-SELL-04-E]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-X-S2-06
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 卖出闭环与退出效率
   market: cn_a
@@ -4164,6 +4315,7 @@ nodes:
   # 地图终极定位（Owner 2026-09-05 拍板）：整装仿真策略组合的蓝图——本流=资金切分→组合聚合→归因反馈闭环
   battle_map_refs: [BM-SELL-09]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-F-C1
+  casebooks: []
   note_confirmed: 2026-09-20  # UP-3 前瞻风险预算接线（algo_note_zh 同步增补）
   name_zh: 预算切分
   market: cn_a
@@ -4201,6 +4353,7 @@ nodes:
   battle_map_refs: [BM-POS-01, BM-POS-02, BM-POS-05, BM-POS-06, BM-RC-07, BM-RC-07-B, BM-SEL-20-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C1-01
+  casebooks: []
   name_zh: 策略路由判定
   market: cn_a
   flow: portfolio_flow
@@ -4223,6 +4376,7 @@ nodes:
   module_mounts: ['MOD-PA-015', 'MOD-SIG-129', 'MOD-SIG-130']
   tags: ['tdm-chief-20261006', 'D125', 'router']
 - node_id: TDM-F-C1-02
+  casebooks: []
   name_zh: 权重分配
   market: cn_a
   flow: portfolio_flow
@@ -4245,6 +4399,7 @@ nodes:
   module_mounts: ['MOD-RK-08', 'MOD-PF-008', 'MOD-SIG-131']
   tags: ['tdm-chief-20261006', 'D125', 'allocator', 'champion-challenger']
 - node_id: TDM-F-C1-03
+  casebooks: []
   name_zh: 灰度切换管理
   market: cn_a
   flow: portfolio_flow
@@ -4267,6 +4422,7 @@ nodes:
   module_mounts: ['MOD-SIG-131', 'MOD-PA-015']
   tags: ['tdm-chief-20261006', 'D125', 'gray-switch']
 - node_id: TDM-F-C2
+  casebooks: []
   name_zh: 组合聚合
   market: cn_a
   flow: portfolio_flow
@@ -4292,6 +4448,7 @@ nodes:
   battle_map_refs: [BM-SEL-21, BM-SEL-21-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C3
+  casebooks: []
   name_zh: 绩效归因反馈
   market: cn_a
   flow: portfolio_flow
@@ -4325,6 +4482,7 @@ nodes:
   # C2 树枝：净额轧平→约束栈→相关性 cluster；budget 变动并行（F-C1 预算变动喂三级升级）
   battle_map_refs: [BM-REC-02, BM-RES-07, BM-RES-07-A]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-F-C2-01
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 目标聚合与净额轧平
   market: cn_a
@@ -4367,6 +4525,7 @@ nodes:
   purpose_tag: PT-08
 
 - node_id: TDM-F-C2-02
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s4 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 组合约束栈
   market: cn_a
@@ -4407,6 +4566,7 @@ nodes:
   battle_map_refs: [BM-POS-04, BM-RC-02-A, BM-RC-02-B, BM-SEL-21-D]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C2-03
+  casebooks: []
   note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 相关性聚类与cluster上限
   market: cn_a
@@ -4442,6 +4602,7 @@ nodes:
   battle_map_refs: [BM-SEL-20-C]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C2-04
+  casebooks: [DCS#审批]
   note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: budget变动三级升级
   market: cn_a
@@ -4477,6 +4638,7 @@ nodes:
 
   # C3 树枝：多维归因→{升降级评审/权重调权/参数校准/可靠度养成}（结论分发四路）
 - node_id: TDM-F-C3-01
+  casebooks: [CASEBOOK-005#实盘衰减与归因]
   note_confirmed: 2026-09-16  # grp4p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 多维归因引擎
   market: cn_a
@@ -4520,6 +4682,7 @@ nodes:
   battle_map_refs: [BM-RC-08-B, BM-REC-02-B, BM-SEL-21-E]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C3-02
+  casebooks: [CASEBOOK-009#红证, CASEBOOK-005#考试纪律]
   note_confirmed: 2026-09-15
   name_zh: 升降级管线与退役评审
   market: cn_a
@@ -4572,6 +4735,7 @@ nodes:
   purpose_tag: PT-10
 
 - node_id: TDM-F-C3-03
+  casebooks: []
   note_confirmed: 2026-09-18  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变；land3 危机闸批（crisis_gate L1/L2 接线）复确认
   name_zh: sleeve权重调权
   market: cn_a
@@ -4623,6 +4787,7 @@ nodes:
   battle_map_refs: [BM-POS-07, BM-RC-07-C, BM-SEL-21-C, BM-SELL-05]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C3-04
+  casebooks: [CASEBOOK-005#过拟合与前视, CASEBOOK-009#N试次]
   name_zh: 参数校准闭环
   note_confirmed: 2026-10-07
   market: cn_a
@@ -4676,6 +4841,7 @@ nodes:
   battle_map_refs: [BM-REC-03]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 
 - node_id: TDM-F-C3-05
+  casebooks: [CASEBOOK-005#实盘衰减与归因]
   note_confirmed: 2026-09-16  # grp2p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 可靠度养成与信号健康
   market: cn_a
@@ -4722,6 +4888,7 @@ nodes:
   # ── 币圈实例（骨架空壳，L2 弱化为赛道层）─────────────────────────────────
   battle_map_refs: [BM-REC-03, BM-REC-03-B]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-C-L1
+  casebooks: []
   name_zh: 币圈大盘总闸
   market: crypto
   flow: entry_flow
@@ -4744,6 +4911,7 @@ nodes:
   purpose_tag: PT-01
 
 - node_id: TDM-C-L2
+  casebooks: []
   name_zh: 赛道选择
   market: crypto
   flow: entry_flow
@@ -4765,6 +4933,7 @@ nodes:
   purpose_tag: PT-02
 
 - node_id: TDM-C-L3
+  casebooks: []
   name_zh: 币对选择
   market: crypto
   flow: entry_flow
@@ -4786,6 +4955,7 @@ nodes:
   purpose_tag: PT-03
 
 - node_id: TDM-C-L4
+  casebooks: []
   name_zh: 币圈买卖点
   market: crypto
   flow: entry_flow
@@ -4809,6 +4979,7 @@ nodes:
   # ══ TDM 2.0 知识供给层（layer=L9，st-tdm20-20260923 扩容：吸收 chainpile 定桩 283 问施工面）══
   # 设计真源=docs/_working/tdm20_campaign/01_node_expansion_list.md；时间分层铁律见各 V 节点注记
 - node_id: TDM-E-L9-A01
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·日线/分钟行情
   market: cn_a
@@ -4834,6 +5005,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A01", "A档"]
 - node_id: TDM-E-L9-A02
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·Tick分笔
   market: cn_a
@@ -4860,6 +5032,7 @@ nodes:
   tags: ["tdm20", "source-line", "SL-A02", "A档"]
   latency_budget: "realtime-seconds"
 - node_id: TDM-E-L9-A03
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·板块/概念指数
   market: cn_a
@@ -4885,6 +5058,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A03", "A档"]
 - node_id: TDM-E-L9-A04
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·估值
   market: cn_a
@@ -4910,6 +5084,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A04", "A档"]
 - node_id: TDM-E-L9-A05
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·财务
   market: cn_a
@@ -4935,6 +5110,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A05", "A档"]
 - node_id: TDM-E-L9-A06
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·资金流
   market: cn_a
@@ -4960,6 +5136,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A06", "A档"]
 - node_id: TDM-E-L9-A07
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·千股千评
   market: cn_a
@@ -4985,6 +5162,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A07", "A档"]
 - node_id: TDM-E-L9-A08
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·航运运价BDI
   market: cn_a
@@ -5010,6 +5188,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A08", "A档"]
 - node_id: TDM-E-L9-A09
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·财经快讯情绪
   market: cn_a
@@ -5036,6 +5215,7 @@ nodes:
   tags: ["tdm20", "source-line", "SL-A09", "A档"]
   latency_budget: "realtime-minutes"
 - node_id: TDM-E-L9-A10
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·国际宏观
   market: cn_a
@@ -5061,6 +5241,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A10", "A档"]
 - node_id: TDM-E-L9-A11
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·能源库存
   market: cn_a
@@ -5086,6 +5267,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A11", "A档"]
 - node_id: TDM-E-L9-A12
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·天气
   market: cn_a
@@ -5112,6 +5294,7 @@ nodes:
   tags: ["tdm20", "source-line", "SL-A12", "A档"]
   latency_budget: "near-realtime"
 - node_id: TDM-E-L9-A13
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·股东户数
   market: cn_a
@@ -5137,6 +5320,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A13", "A档"]
 - node_id: TDM-E-L9-A14
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·互动易问答
   market: cn_a
@@ -5163,6 +5347,7 @@ nodes:
   tags: ["tdm20", "source-line", "SL-A14", "A档"]
   latency_budget: "near-realtime"
 - node_id: TDM-E-L9-A15
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·加密永续/费率
   market: cn_a
@@ -5189,6 +5374,7 @@ nodes:
   tags: ["tdm20", "source-line", "SL-A15", "A档"]
   latency_budget: "realtime-seconds"
 - node_id: TDM-E-L9-A16
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·投入产出
   market: cn_a
@@ -5214,6 +5400,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-A16", "A档"]
 - node_id: TDM-E-L9-A17
+  casebooks: []
   name_zh: 源线·卖方研报
   market: cn_a
   flow: entry_flow
@@ -5235,6 +5422,7 @@ nodes:
   purpose_tag: PT-11
   tags: ['tdm-chief-20261006', 'source-line', 'SL-A17']
 - node_id: TDM-E-L9-B01
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·卫星影像
   market: cn_a
@@ -5260,6 +5448,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B01", "B档"]
 - node_id: TDM-E-L9-B02
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·美国官方天气/海洋
   market: cn_a
@@ -5285,6 +5474,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B02", "B档"]
 - node_id: TDM-E-L9-B03
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·招聘JD
   market: cn_a
@@ -5310,6 +5500,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B03", "B档"]
 - node_id: TDM-E-L9-B04
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·电商价格
   market: cn_a
@@ -5335,6 +5526,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B04", "B档"]
 - node_id: TDM-E-L9-B05
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·招投标
   market: cn_a
@@ -5360,6 +5552,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B05", "B档"]
 - node_id: TDM-E-L9-B06
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·社媒舆情X/Reddit
   market: cn_a
@@ -5385,6 +5578,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B06", "B档"]
 - node_id: TDM-E-L9-B07
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·雪球/股吧散户情绪
   market: cn_a
@@ -5410,6 +5604,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B07", "B档"]
 - node_id: TDM-E-L9-B08
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·APP榜单
   market: cn_a
@@ -5435,6 +5630,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B08", "B档"]
 - node_id: TDM-E-L9-B09
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·进出口贸易
   market: cn_a
@@ -5460,6 +5656,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B09", "B档"]
 - node_id: TDM-E-L9-B10
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·信用卡/支付消费
   market: cn_a
@@ -5485,6 +5682,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-B10", "B档"]
 - node_id: TDM-E-L9-C01
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·实时门店客流
   market: cn_a
@@ -5510,6 +5708,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-C01", "C档"]
 - node_id: TDM-E-L9-C02
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·银行网点/信贷活跃
   market: cn_a
@@ -5535,6 +5734,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-C02", "C档"]
 - node_id: TDM-E-L9-C03
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 源线·直播电商实时成交
   market: cn_a
@@ -5560,6 +5760,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "source-line", "SL-C03", "C档"]
 - node_id: TDM-E-L9-G1
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·Zephyr产业链
   market: cn_a
@@ -5589,6 +5790,7 @@ nodes:
   latency_budget: "T-1"
   battle_map_refs: [BM-SEL-11]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L9-G2
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·ChainKnowledgeGraph事实层
   market: cn_a
@@ -5615,6 +5817,7 @@ nodes:
   tags: ["tdm20", "graph", "G2"]
   latency_budget: "static"
 - node_id: TDM-E-L9-G3
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·实体股权穿透
   market: cn_a
@@ -5642,6 +5845,7 @@ nodes:
   tags: ["tdm20", "graph", "G3"]
   latency_budget: "T-1"
 - node_id: TDM-E-L9-G4
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·概念/题材
   market: cn_a
@@ -5668,6 +5872,7 @@ nodes:
   tags: ["tdm20", "graph", "G4"]
   latency_budget: "static"
 - node_id: TDM-E-L9-G5
+  casebooks: []
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 图谱·投入产出传导
   market: cn_a
@@ -5694,6 +5899,7 @@ nodes:
   tags: ["tdm20", "graph", "G5"]
   latency_budget: "static"
 - node_id: TDM-E-L9-V1
+  casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 状态变量快照·大盘
   market: cn_a
@@ -5719,6 +5925,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "state-var", "V1"]
 - node_id: TDM-E-L9-V2
+  casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 状态变量快照·情绪
   market: cn_a
@@ -5744,6 +5951,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "state-var", "V2"]
 - node_id: TDM-E-L9-V3
+  casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 状态变量快照·板块
   market: cn_a
@@ -5769,6 +5977,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "state-var", "V3"]
 - node_id: TDM-E-L9-AGG
+  casebooks: [CASEBOOK-001#task_reconcile]
   note_confirmed: 2026-09-28  # st-c8-l9：G3 换源同批确认（ig_equity_edge→entity_graph 六表 edge_holding，退役第一步）；前次 2026-09-26 st-chief4x-know-20260927 实件化确认
   name_zh: 知识供给汇聚
   market: cn_a
@@ -5796,6 +6005,7 @@ nodes:
   tags: ["tdm20", "agg"]
   latency_budget: "T-1 08:00"
 - node_id: TDM-E-L9-D1
+  casebooks: [CASEBOOK-009#N试次, CASEBOOK-005#过拟合与前视]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 决策假设·因子组合挖掘
   market: cn_a
@@ -5821,6 +6031,7 @@ nodes:
   tags: ["tdm20", "decision"]
   battle_map_refs: [BM-BUY-02-B, BM-MT-04]  # 轴归一互挂引用（裁定#483+裁定#487）：叙事真源=本节点，BM 格子=挂载索引；留空族白名单见裁定#487
 - node_id: TDM-E-L9-D2
+  casebooks: [CASEBOOK-005#考试纪律]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 决策假设·登记与考试方案
   market: cn_a
@@ -5846,6 +6057,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "decision"]
 - node_id: TDM-E-L9-E1
+  casebooks: [CASEBOOK-005#考试纪律, CASEBOOK-009#红证]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 验证·一问一考考试链
   market: cn_a
@@ -5870,6 +6082,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "exam"]
 - node_id: TDM-E-L9-E2
+  casebooks: [CASEBOOK-005#考试纪律]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 验证·结论回传与修正
   market: cn_a
@@ -5894,6 +6107,7 @@ nodes:
   purpose_tag: PT-11
   tags: ["tdm20", "exam"]
 - node_id: TDM-E-L9-Z1
+  casebooks: [DCS#结构, DCS#手续]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 治理·问题治理与状态机
   market: cn_a
@@ -5919,6 +6133,7 @@ nodes:
   tags: ["tdm20", "governance"]
   latency_budget: "continuous"
 - node_id: TDM-E-L9-Z2
+  casebooks: [DCS#真源, DCS#结构]
   note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
   name_zh: 治理·净零与资产对账
   market: cn_a
