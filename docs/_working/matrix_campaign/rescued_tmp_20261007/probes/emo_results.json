@@ -1,0 +1,129 @@
+{
+  "frozen_ref": "docs/_working/fexam/emotion_index_exam_v1.yaml prereg_v1",
+  "generated_at_utc": "2026-10-06T19:32:20.740894+00:00",
+  "sample": {
+    "emo_rows_window": 1801,
+    "joined_rows": 1801,
+    "calendar_miss": 0,
+    "fwd5_valid": 1801,
+    "fwd20_valid": 1801,
+    "source_mix": {
+      "replay": 1801
+    },
+    "ingest_mix": {
+      "2026-09-23 11:21:16.000": 1801
+    }
+  },
+  "baseline": {
+    "fwd5": {
+      "n": 1801,
+      "mean": 0.0007156396384600892,
+      "median": 0.0004902136921047795,
+      "p_neg": 0.48972792892837314
+    },
+    "fwd20": {
+      "n": 1801,
+      "mean": 0.0025173015008914923,
+      "median": -0.0019292950514735452,
+      "p_neg": 0.5163797890061077
+    }
+  },
+  "paper1": {
+    "n_s90": 75,
+    "fwd5": {
+      "n": 75,
+      "mean": 0.005649197192013215,
+      "median": 0.0031592392698414073,
+      "p_neg": 0.4666666666666667,
+      "baseline_p_neg": 0.48972792892837314,
+      "beat_baseline": false,
+      "hit_ge_55": false,
+      "binom_p_vs_baseline": 0.6963717540682358
+    },
+    "fwd20": {
+      "n": 75,
+      "mean": 0.0073532007796325875,
+      "median": 0.0013879092625879164,
+      "p_neg": 0.4533333333333333,
+      "baseline_p_neg": 0.5163797890061077,
+      "beat_baseline": false,
+      "hit_ge_55": false,
+      "binom_p_vs_baseline": 0.8865023142633532
+    },
+    "pass": false,
+    "ice_mirror_n": 0,
+    "strict_lag20_p_neg": 0.52,
+    "strict_lag20_n": 75
+  },
+  "paper2": {
+    "n": 1796,
+    "pearson": 0.02119998159875707,
+    "spearman": -0.025363351514241825,
+    "concurrent_pearson": 0.3209028319550087,
+    "roll60_min": -0.38129909550821706,
+    "roll60_max": 0.3879532581175359,
+    "roll60_share_pos": 0.44847438111686816,
+    "pass": false
+  },
+  "paper3": {
+    "bullxhigh": {
+      "n": 44,
+      "mean": -0.0057206682615026675
+    },
+    "bullxlow": {
+      "n": 41,
+      "mean": 0.011118603313724563
+    },
+    "bearxhigh": {
+      "n": 31,
+      "mean": 0.02590966006382456
+    },
+    "bearxlow": {
+      "n": 98,
+      "mean": 0.0102348405970555
+    },
+    "S1_regime_spread": 0.000756618664231665,
+    "d_bull": 0.01683927157522723,
+    "d_bear": -0.01567481946676906,
+    "S2_emo_spread_avg": 0.0005822260542290847,
+    "n_ge30_all": true,
+    "direction_ok": false,
+    "gain_ok": false,
+    "pass": false,
+    "fwd5_bullxhigh": {
+      "n": 44,
+      "mean": 1.8647194567922805e-05
+    },
+    "fwd5_bullxlow": {
+      "n": 41,
+      "mean": 0.007909543812396709
+    },
+    "fwd5_bearxhigh": {
+      "n": 31,
+      "mean": 0.013640945575483952
+    },
+    "fwd5_bearxlow": {
+      "n": 98,
+      "mean": 0.002861357596673788
+    }
+  },
+  "paper4": {
+    "a_ts_violations_inwindow": 0,
+    "a_ts_date_mismatch": 0,
+    "b_asof_future_violations": 0,
+    "c_inwindow_revision_keys": 0,
+    "d_construction_asof": "trailing250+拉窗止于当日+rolling/asof（builder 代码核验，冻结时事实）",
+    "e_revision_capability": "pre_open 2026-10-02 双行异值(窗外重写实证)；考窗 1801 行=2026-09-23 单批 replay 建成，无逐日快照",
+    "pit_verdict": "conditional_clean"
+  },
+  "verdict": {
+    "papers_pass": [
+      false,
+      false,
+      false
+    ],
+    "pit": "conditional_clean",
+    "n_pass": 0,
+    "verdict": "不合格"
+  }
+}
