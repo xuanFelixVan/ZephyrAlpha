@@ -11865,6 +11865,7 @@ factors:
   regime_invalid: []
 
 - factor_id: "FCT-MOM-029"
+  # paper_pool_candidate: 2026-10-08（st-mx07-L7 登记，只登记不改判据）：fexam 回炉重考四线全过→入 paper 观察池候选跟踪；status 保持 candidate，晋级 experimental 须另过 candidate→experimental 晋级门（IS 窗 |IC|>=0.02 + t p<0.05 + 覆盖>=60%），本注释非晋级裁定
   name: "Momentum 20d (code-anchored)"
   name_zh: "20日动量（代码锚）"
   aliases: ["momentum_20d"]
@@ -11888,7 +11889,7 @@ factors:
   status: "candidate"
   version: "1.0.0"
   created_at: "2026-08-24"
-  updated_at: "2026-08-24"
+  updated_at: "2026-10-08"
   owner: "MOD-GOVERNANCE"
   ic: -0.0634
   ir: -0.4079
@@ -11898,9 +11899,10 @@ factors:
   turnover: 0.5345
   capacity: 2.18
   last_evaluated_at: "2026-08-30"
-  evidence: "factor_ic_backfill 2026-08-30 .runtime/factor_ic_backfill/factor_ic_backfill_summary.json 窗2024-09-01~2026-08-28 universe≈UNI-RULE-001(N=5079) horizon=5 oos_pos=0.45 overfit=false n=477；decay未衰减至半值(|IC|随lag升至0.080平台)记null；capacity=周频top20等权10%ADV20约束均值2.18亿(min 0.13亿)"
+  evidence: "factor_ic_backfill 2026-08-30 .runtime/factor_ic_backfill/factor_ic_backfill_summary.json 窗2024-09-01~2026-08-28 universe≈UNI-RULE-001(N=5079) horizon=5 oos_pos=0.45 overfit=false n=477；decay未衰减至半值(|IC|随lag升至0.080平台)记null；capacity=周频top20等权10%ADV20约束均值2.18亿(min 0.13亿)；fexam 回炉重考 2026-10-07 verdict=pass 四线全过=回炉合格首例（direction 字段缺失 rework 后按 prereg v2 重考通过）：prereg 冻结卡=docs/_working/fexam/mom029_prereg_v2.yaml frozen_at 2026-10-06T19:26:43Z direction=short；成绩单=docs/_working/fexam/mom029_reexam_v2.yaml eff_ic_5d=0.0516/eff_icir_5d=0.3099/retain_5d=0.5923/coverage_holdout=0.9781 均过 prereg 线 0.02/0.3/0.5/0.6"
   code_symbol: "src/zephyr/factor/momentum_factor.py::Momentum20d"
   code_fingerprint: null
+  direction: "short"
   entry_role: "factor"
   note: "IC 为负——20 日动量窗口内呈反转特征，与 BTRUN 结论一致；decay 曲线显示反转效应在 lag10~13 最强"
 
