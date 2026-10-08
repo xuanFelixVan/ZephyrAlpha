@@ -58763,7 +58763,6 @@ creation_tokens:
   token: entity-graph-uscc-bridge-entity-graph-uscc-bridge-20261006
   capability: entity_graph_uscc_bridge
   created_by: st-mastertc-l5
-  no_mount_reason: 数据治理消歧桥（只读提案器，四态提案零真实库写），非 TDM 决策节点对应物；挂图归属随数据治理域节点图扩容另批
   merge_evaluation: "复插:EC1§5.3/C122 消歧桥(只读提案器),替代物=无,同域不并"
 - file: src/zephyr/governance/data_governance/miniqmt_provider.py
   token: auto-miniqmt-provider-20260704
@@ -60656,7 +60655,6 @@ creation_tokens:
   token: l6-signal-structure-event-axis-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
-  no_mount_reason: 研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）
   merge_evaluation: "C232 波10 G-B.3 首件落码：涨停事件轴显式层（封板/开板炸/炸板），替代案卷登记面；w5_1 不并（跨域不同对象：事件轴 vs 双池统计件）"
 - file: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
   token: auto-lhb-premium-analyzer-20260822
@@ -60785,7 +60783,6 @@ creation_tokens:
   token: l6-signal-structure-resonance-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
-  no_mount_reason: 研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）
   merge_evaluation: "C235 波10 G-C.3 首件落码：15M 上沿×1M 双峰组合态判定器（不点火），消费 swing_sequence 语义；w5_1 不并（判定器 vs 检测器跨层不同对象）"
 - file: src/zephyr/signal_ashare/risk_event_consumer.py
   token: auto-scaffold-risk_event_consumer-20260825
@@ -60927,7 +60924,6 @@ creation_tokens:
   token: srcline1-sector_rotation_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
-  no_mount_reason: MOD-SIG-157 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/source_line/tick_microstructure_criterion.py
   token: source-line-criterion-tick-microstructure-20261006
@@ -60939,7 +60935,6 @@ creation_tokens:
   token: srcline1-tick_microstructure_criterion-20261005
   capability: srcline1
   created_by: st-fg-srcline1-20261005
-  no_mount_reason: MOD-SIG-156 原班 token（st-fg-srcline1-20261005）与 cure 补登条目同文件重复；本条补申报消除挂图检查双条目不一致——挂点未在 config 图族注册，module_ref 落图后补挂
   merge_evaluation: "净零申报：红源线首批判据转化器（TDM 源线施工单交付件），总筹已验收终裁挂载"
 - file: src/zephyr/signal_ashare/stock_signal_strength.py
   token: auto-stock-signal-strength-20260823
@@ -61037,7 +61032,6 @@ creation_tokens:
   token: l6-signal-structure-swing-seq-20261007
   capability: l6_signal_structure
   created_by: st-mastertc-l6
-  no_mount_reason: 研究面结构件（testing，G-B/C 族首件）：消费位候选未定，挂图申报随首个生产消费者接线批补报（C252 选型口径，禁造假消费位）
   merge_evaluation: "C234 波10 G-C.2 首件落码：复用缠论分型的摆动序列标注，禁第二套极值算法（零同物在册）；w5_1 不并（极值检测唯一实现=chanlun，本件为序列标注层）"
 - file: src/zephyr/signal_ashare/tradability_preflight.py
   token: tdm-l310-preflight-20260916
@@ -64228,4 +64222,10 @@ creation_tokens:
   created_by: st-fig13-followup-20261006
   capability: fig13_followup_books
   merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/fullcirculation_campaign/10_hop_mining/spm_strategy_production/hops.yaml
+  token: spm-casebook-mining-hops-20261008
+  created_by: st-fc-spm-20261008
+  capability: spm_casebook_mining
+  merge_evaluation: "图9 SPM 机制级挂载挖矿档：task_bound 挖矿留痕（本批交付件），与图11/13/15 hops 档同族不同图不重复（跨域不同对象不并）；随批落地后归档"
+
 di_seam_exemptions: []

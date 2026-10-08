@@ -1,0 +1,1756 @@
+ttl: task_bound
+session: st-fc-spm-20261008
+date: '2026-10-08'
+title: 图9 策略工厂（strategy_production_map）机制级 casebooks 扩面挖矿档——324 机制逐台判挂载
+completes_when: 随图9 casebooks 扩面批经 commit_queue 落地 dev 即完成（队列落地=交付）
+worktree: D:/ZephyrAlpha/.worktrees/st-fc-spm-20261008（分支 ai/st-fc-spm-20261008/spm-casebook-mount）
+method_note: >
+  逐机制翻账判读：以 casebook_registry 八正典册+outside_registry+CASEBOOK-009（H11 发车裁定授号，
+  backtest_coverage_ledger 登记面）为册族真源，对 324 台机制逐台问「该机制失败/漂移时确实会翻哪本案例账」——
+  001 章系三族按 data/failures 盘面实证（增量断供族/告警熔断族/_circuit_breaker·_provider_connect·_stale_reaper/
+  task_reconcile+integrity_check 族）分章；002 章系=堵点本五域原文（域一会话生命周期/域二提交链/域三 belt 与队列/
+  域四档案安全/域五文档与档案）；009 章系=其源 trial_ledger_registry 的 N 试次计数面+批末记账红证页；
+  005 章系=图9 专属六主题簇（记忆文件逐一在案，与图11/13/15 既有簇不混用）；003/004 无翻账语义机制故不挂
+  （完备性由图11 主挂满足）；004 两卷内容域=战役治理审查发现非策略域病历，任务卡「E9→004」方向经查证无实挂语义，
+  如实留空不硬凑。既有 15 种自由名挂载（26 处）原判保留；其中 7 处在原判之上补正典指针（原判不动）。
+  挂载=INV-1 指针引用，不复制册内内容。
+chapter_system:
+  books:
+  - book: CASEBOOK-001
+    name_zh: 数据对账案卷库（data/failures，15134 件在产）
+    chapters:
+      'CASEBOOK-001#outage':
+        flip_zh: data/failures 断供事故章
+        evidence: data/failures 增量断供族实证：news_rss(1702)/news_data(1697)/macro(1035+990)/kline 系(3000+)/tick(418) 等任务族案卷
+      'CASEBOOK-001#alert':
+        flip_zh: data/failures 告警熔断章
+        evidence: data/failures 告警族实证：_stale_reaper(398)/_provider_connect_ifind(391)+tdx/_circuit_breaker_fred(163)+mock(143)/ch_heartbeat(66)/crisis_gate_l3(133)
+      'CASEBOOK-001#task_reconcile':
+        flip_zh: data/failures 对账巡检章
+        evidence: data/failures 对账巡检族实证：task_reconcile 族 33 件+integrity_check_c1_market.* 多族（登记册 CASEBOOK-001 scope 自述对账差异案卷）
+  - book: CASEBOOK-002
+    name_zh: 堵点本（35 类全量问题总册·五域）
+    chapters:
+      'CASEBOOK-002#域一':
+        flip_zh: 堵点本·会话生命周期章
+        evidence: 堵点本原文「域一：会话生命周期（AI 施工队生存问题）」；belt-daemon 复活事故记忆件在案
+      'CASEBOOK-002#域二':
+        flip_zh: 堵点本·提交链章
+        evidence: 堵点本原文「域二：提交链（3 小时提交战的病根全录）」
+      'CASEBOOK-002#域三':
+        flip_zh: 堵点本·belt与队列章
+        evidence: 堵点本原文「域三：belt 与队列」
+      'CASEBOOK-002#域四':
+        flip_zh: 堵点本·档案安全章
+        evidence: 堵点本原文「域四：档案安全（Owner 最担心的误删专项审计结论）」
+  - book: CASEBOOK-005
+    name_zh: 记忆教训索引（ZCode 记忆库 MEMORY.md，仓外指针制）
+    chapters:
+      'CASEBOOK-005#考试纪律':
+        flip_zh: 记忆教训索引·考试纪律簇
+        evidence: 记忆件实证：node-backtest-governance-night-20260910（台账 42 行全 pending/holdout 锁窗）+integrated-backtest-first-run-20260922（HOLDOUT 保密考卷 C 门不过）+sharpe2-prep-night-20260917（分层考试定调）+statreplay-exam-window-replay-rulings-20260923（重考窗口裁定）+matrix-fexam-20261006
+      'CASEBOOK-005#过拟合与前视':
+        flip_zh: 记忆教训索引·过拟合与前视簇
+        evidence: 记忆件实证：chart-pattern-mining-batch-20260914（反过拟合+复活观察）+bt-financial-correctness-p0fix-20260914（前视 T+1 硬断言/PIT 证据制）+p002-reprint-anchored-states-20260914（态标签 OOS 反转）+ibt-remedy-b-pit-20260923（PIT 尾步阻断）
+      'CASEBOOK-005#断供与补数':
+        flip_zh: 记忆教训索引·断供与补数簇
+        evidence: 记忆件实证：bse-minute-backfill-handoff-exec-20260915（分钟线补数交接）+brokentasks-verdict-fix-20260924（坏任务判定修复）
+      'CASEBOOK-005#模拟盘实习':
+        flip_zh: 记忆教训索引·模拟盘实习簇
+        evidence: 记忆件实证：sim-launch-day2-20260923+sim-launch-revival-20260922（sim 上岗/复活）+sim-platform-blueprint-20260914（平台蓝图）
+      'CASEBOOK-005#成本证伪':
+        flip_zh: 记忆教训索引·成本证伪簇
+        evidence: 记忆件实证：tv2-campaign-cost-falsification-20260917（复活窄考 RED：毛边际+0.88bp vs 12bp 门槛 p=0.4997）
+      'CASEBOOK-005#实盘衰减与归因':
+        flip_zh: 记忆教训索引·实盘衰减与归因簇
+        evidence: 记忆件实证：owner-profitability-path-sharpe3-20260925（回测→实盘衰减五折惯例/模拟盘过关条件含衰减≤50%/六步路线）+gpu-final-overnight-landing-war-20260924（条件轴输入包 F4 选族自纠 9 胞）
+  - book: CASEBOOK-009
+    name_zh: 回测覆盖总册（H11 发车裁定授号；registry 物理入册待上户口批）
+    chapters:
+      'CASEBOOK-009#N试次':
+        flip_zh: 回测覆盖总册·N账本章
+        evidence: trial_ledger_registry.yaml counting_rule=count=screen_runs.total_trials+sum(batch_records.n_trials)（可审计试次正门）；coverage_ledger sources.n_trial_ledger 实证
+      'CASEBOOK-009#红证':
+        flip_zh: 回测覆盖总册·批末记账章
+        evidence: unknown_adjudication.md 红证族判定（FAC-E4-M-011/012/013/023=P0 试验链证据件）+MOD-BT-228 节点名自述「批末记账红证（病历页）」
+mounts:
+  - id: FAC-E0-M-001
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 堵点本域三在案=belt/队列冲突族（全流通战役实测）；调度闸失效即重演该病族
+  - id: FAC-E0-M-002
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 窗口预检防夜批撞车=域三 belt/队列冲突同族（战役 3 小时提交战病根域）
+  - id: FAC-E0-M-003
+    域: E0 算力调度
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E0-M-004
+    域: E0 算力调度
+    翻的账: 堵点本·会话生命周期章
+    挂载: [CASEBOOK-002#域一]
+    证据: 进程池化/自愈=进程生死域，堵点本域一会话生存病在案（belt-daemon 复活事故 20260923）
+  - id: FAC-E0-M-005
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 同机算力竞争=域三互斥/队列冲突族，战役实测在案
+  - id: FAC-E0-M-006
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 互斥组/内存天花板冲突检测=域三队列冲突正病族
+  - id: FAC-E0-M-007
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 排班真源漂移→冲突=域三病源位，翻域三对病历
+  - id: FAC-E0-M-008
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 采样失真→排班误判→域三冲突族
+  - id: FAC-E0-M-009
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 冲突告警桥=域三冲突族的哨位
+  - id: FAC-E0-M-010
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 资源调度器失效=域三队列/belt 病直配
+  - id: FAC-E0-M-011
+    域: E0 算力调度
+    翻的账: 堵点本·会话生命周期章
+    挂载: [CASEBOOK-002#域一]
+    证据: NSSM 宿主+Supervisor=进程生死域（域一核心病：daemon 静默判死/复活事故在案）
+  - id: FAC-E0-M-012
+    域: E0 算力调度
+    翻的账: 堵点本·会话生命周期章
+    挂载: [CASEBOOK-002#域一]
+    证据: Token/算力预算=AI 施工队生存资源，域一会话生命周期病族
+  - id: FAC-E0-M-013
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 两档显存画像热交换=夜批资源排班组（域三）
+  - id: FAC-E0-M-014
+    域: E0 算力调度
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: GPU 资源调度=域三排队/互斥族
+  - id: FAC-E0-M-015
+    域: E0 算力调度
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-MAP-M-001
+    域: E0 算力调度
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-MAP-M-002
+    域: E0 算力调度
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E1-M-001
+    域: E1 想法进货
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 车道任务编排=队列族（域三）；编排卡死翻 belt/队列病
+  - id: FAC-E1-M-002
+    域: E1 想法进货
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [进货台账]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E1-M-003
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: index_quote_snapshot(53)/realtime_snapshot_incremental(114) 断供案在库，宽度采集失明即翻
+  - id: FAC-E1-M-004
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: auction_data_snapshot 断供案 70 件在库直配（同任务族）
+  - id: FAC-E1-M-005
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 研究数据断供案（kline/news/macro 族 5000+）在库
+  - id: FAC-E1-M-006
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 沙箱原料断供同上族
+  - id: FAC-E1-M-007
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：LLM/模型供给域：供给故障走自身降级链，不落 data/failures 病历族
+  - id: FAC-E1-M-008
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 解读原料=新闻供给，news_* 族案 5000+ 在库
+  - id: FAC-E1-M-009
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 情绪原料=新闻/社媒供给族案在库
+  - id: FAC-E1-M-010
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 另类信号原料=news/research 族案在库
+  - id: FAC-E1-M-011
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 概念/板块数据 kline_sector 族案 100+ 在库
+  - id: FAC-E1-M-012
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 日历效应原料=kline 历史供给族案在库
+  - id: FAC-E1A-M-001
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 粗筛跑批=c1_backtest.strategy_screen 计数源（trial_ledger counting_rule 实证），翻 N 账本对试次
+  - id: FAC-E1A-M-002
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 社媒原料=news/social 供给族案在库
+  - id: FAC-E1A-M-003
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 爬取标的=news_* 族案直配
+  - id: FAC-E1B-M-001
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：LLM/模型供给域：供给故障走自身降级链，不落 data/failures 病历族
+  - id: FAC-E1B-M-002
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：LLM/模型供给域：供给故障走自身降级链，不落 data/failures 病历族
+  - id: FAC-E1B-M-003
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：LLM/模型供给域：供给故障走自身降级链，不落 data/failures 病历族
+  - id: FAC-E1B-M-004
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：LLM/模型供给域：供给故障走自身降级链，不落 data/failures 病历族
+  - id: FAC-E1C-M-001
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: screen_runs 直入 N 账本（counting_rule=c1_backtest.strategy_screen），FDR 预算铁律②翻账位
+  - id: FAC-E1C-M-002
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: MCTS 搜索试次入 screen 表→N 账本
+  - id: FAC-E1C-M-003
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 特征发现跑批=screen_runs 计数源
+  - id: FAC-E1C-M-004
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: GP 发现跑批=screen_runs 计数源
+  - id: FAC-E1C-M-005
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: LLM 进化搜索跑批=screen_runs 计数源
+  - id: FAC-E1C-M-006
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 投票挖掘跑批=screen_runs 计数源；e1c_ledger.py 实证 E1C→N 账本消费链
+  - id: FAC-E1C-M-007
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E1C-M-008
+    域: E1 想法进货
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 预注册纪律教训在案（four-lane-night-dispatch 预注册+trading-vision-gap 立卡预注册记忆件）
+  - id: FAC-E1D-M-001
+    域: E1 想法进货
+    翻的账: data/failures 对账巡检章
+    挂载: [CASEBOOK-001#task_reconcile]
+    证据: 财务支柱依赖 daily_valuation/margin_trading integrity_check 族案（41/44 件）在库
+  - id: FAC-E1D-M-002
+    域: E1 想法进货
+    翻的账: 堵点本·档案安全章
+    挂载: [CASEBOOK-002#域四]
+    证据: 绝不写 ig_fact 正图纪律=档案安全域四病族（误写正图=域四事故形态）
+  - id: FAC-E1D-M-003
+    域: E1 想法进货
+    翻的账: 堵点本·档案安全章
+    挂载: [CASEBOOK-002#域四]
+    证据: 入图需 Owner 审核另批=防误写正图（域四）
+  - id: FAC-E1D-M-004
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: kline_sector 增量断供族案 100+ 在库直配
+  - id: FAC-E1D-M-005
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 板块报告原料=板块/行情供给族案
+  - id: FAC-E1D-M-006
+    域: E1 想法进货
+    翻的账: data/failures 对账巡检章
+    挂载: [CASEBOOK-001#task_reconcile]
+    证据: 财报解析对 daily_valuation integrity_check 族案（41 件）直配
+  - id: FAC-E1D-M-007
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 基本面原料=财报/公告供给族案在库
+  - id: FAC-E1D-M-008
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 事件链原料=新闻供给族案
+  - id: FAC-E1D-M-009
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: news_eastmoney 公告族案 164 件直配
+  - id: FAC-E1D-M-010
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 政策主题原料=news 供给族案
+  - id: FAC-E1E-M-001
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 训练/推理原料=kline 族断供案（在库最大族 3000+），基线失明即翻
+  - id: FAC-E1E-M-002
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: Kronos 基线原料=kline 供给族案
+  - id: FAC-E1E-M-003
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 微调 pkl 原料=kline 供给族案
+  - id: FAC-E1E-M-004
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: ML 工厂训练料=kline 供给族案
+  - id: FAC-E1E-M-005
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: KAN 密度头训练料=kline 供给族案
+  - id: FAC-E1E-M-006
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: PatchTST 编码器训练料=kline 供给族案
+  - id: FAC-E1E-M-007
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: QNN 两阶段训练料=kline 供给族案
+  - id: FAC-E1E-M-008
+    域: E1 想法进货
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [模型版本注册表]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E1E-M-009
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 增广原料=kline 供给族案
+  - id: FAC-E1F-M-001
+    域: E1 想法进货
+    翻的账: 回测覆盖总册·N账本章；data/failures 断供事故章
+    挂载: [CASEBOOK-009#N试次, CASEBOOK-001#outage]
+    证据: batch_records kind=factory_grid_batch_a 直入 N 账本（trial_ledger 实证 6 批）；跑批原料 kline 断供案
+  - id: FAC-E1F-M-002
+    域: E1 想法进货
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E1G-M-001
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 矿脉搜索取新闻/研报供给族案
+  - id: FAC-E1G-M-002
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: news_rss/data/cls/eastmoney/baidu 族案 4500+ 直配（同源任务）
+  - id: FAC-E1G-M-003
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 舆情原料=news 供给族案
+  - id: FAC-E1G-M-004
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 关联原料=news 供给族案
+  - id: FAC-E1G-M-005
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 夜间窗口原料=news 供给族案
+  - id: FAC-E1G-M-006
+    域: E1 想法进货
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [全域事实台账]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E1G-M-007
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: research_report_incremental 族案 43 件直配（同任务族）
+  - id: FAC-E1G-M-008
+    域: E1 想法进货
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 政策预期原料=news 供给族案
+  - id: FAC-E1G-M-009
+    域: E1 想法进货
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 矿脉源连接故障=_provider_connect_* 族案 420+ 在库（#alert）
+  - id: FAC-E1G-M-010
+    域: E1 想法进货
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: AI 源注册失配→连接故障=provider_connect 族案
+  - id: FAC-E2-M-001
+    域: E2 假说预审
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [预审判定台账]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E2-M-002
+    域: E2 假说预审
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: BH-FDR 执法=N 账本预算位（全图三铁律②「量越大及格线越狠」，MOD-BT-200 互为执法/证据件）
+  - id: FAC-E2-M-003
+    域: E2 假说预审
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E2-M-004
+    域: E2 假说预审
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E2-M-005
+    域: E2 假说预审
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E2-M-006
+    域: E2 假说预审
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E2-M-007
+    域: E2 假说预审
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E3-M-001
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-002
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-003
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-004
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-005
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-006
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-007
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-008
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-009
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-010
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-011
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-012
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-013
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-014
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-015
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-016
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-017
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-018
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-019
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-020
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-021
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-022
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-023
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-024
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-025
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-026
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-027
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-028
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-029
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-030
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-031
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-032
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-033
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-034
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-035
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-036
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-037
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-038
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-039
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-040
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-041
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-042
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-043
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-044
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-045
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-046
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-047
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-048
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-049
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-050
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-051
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-052
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-053
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-054
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-055
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-056
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-057
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-058
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-059
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-060
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-061
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-062
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-063
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-064
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-065
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-066
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-067
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-068
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-069
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-070
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-071
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-072
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-073
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-074
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-075
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E3-M-076
+    域: E3 构造代码
+    翻的账: 堵点本·档案安全章（原判自由名之上补正典指针，原判保留）
+    挂载: [翻译件台账, CASEBOOK-002#域四]
+    证据: 管线事件持久化防丢失=档案安全域四病族（事件丢失=域四事故形态）
+  - id: FAC-E3-M-077
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E3-M-078
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E3-M-079
+    域: E3 构造代码
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）
+  - id: FAC-E4-M-002
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·成本证伪簇
+    挂载: [CASEBOOK-005#成本证伪]
+    证据: 成本标定口径教训在案（tv2-campaign-cost-falsification：12bp 门槛/毛边际证伪记忆件）
+  - id: FAC-E4-M-003
+    域: E4 考试咽喉
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 考试数据手=kline 族断供案消费端正门
+  - id: FAC-E4-M-004
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-005
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-006
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-007
+    域: E4 考试咽喉
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [回测run档案图书馆]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E4-M-008
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-009
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 验证管道纪律=考试纪律簇（backtest-system-construction：runner 档案/P0 阈值自裁冻结）
+  - id: FAC-E4-M-010
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: CPCV 计分口径=考试纪律簇（statreplay-exam-window-replay-rulings 在案）
+  - id: FAC-E4-M-011
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·批末记账章（原判自由名之上补正典指针，原判保留）
+    挂载: [试验台账红证, CASEBOOK-009#红证]
+    证据: 
+  - id: FAC-E4-M-012
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·批末记账章（原判自由名之上补正典指针，原判保留）
+    挂载: [试验台账红证, CASEBOOK-009#红证]
+    证据: 
+  - id: FAC-E4-M-013
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·批末记账章（原判自由名之上补正典指针，原判保留）
+    挂载: [试验台账红证, CASEBOOK-009#红证]
+    证据: 
+  - id: FAC-E4-M-014
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 快筛批测跑批=screen_runs 计数源（c4_batch_screen.py 为 N 账本 consumers 实证）
+  - id: FAC-E4-M-015
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-016
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 及格集/p 值/相关矩阵=FDR 预算证据面，漂移翻 N 账本对试次
+  - id: FAC-E4-M-017
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 双标准考尺（PIT+锐度+pinball）判读口径=考试纪律簇
+  - id: FAC-E4-M-018
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-019
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 整装回测触发=可审计试次生产位，触发面漂移翻 N 账本对账
+  - id: FAC-E4-M-020
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·N账本章（原判自由名之上补正典指针，原判保留）
+    挂载: [N试次账本, CASEBOOK-009#N试次]
+    证据: 
+  - id: FAC-E4-M-021
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 幸存者 WFA 正考=holdout 锁窗纪律（node-backtest-governance/integrated-backtest-first-run 在案）
+  - id: FAC-E4-M-022
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E4-M-023
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·批末记账章（原判自由名之上补正典指针，原判保留）
+    挂载: [试验台账红证, CASEBOOK-009#红证]
+    证据: 
+  - id: FAC-E4-M-024
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-025
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 双活传输断链=provider_connect/heartbeat 族案在库
+  - id: FAC-E4-M-026
+    域: E4 考试咽喉
+    翻的账: data/failures 对账巡检章；记忆教训索引·断供与补数簇
+    挂载: [CASEBOOK-001#task_reconcile, CASEBOOK-005#断供与补数]
+    证据: 对账补跑=task_reconcile 族案直配；补数教训=bse-minute-backfill-handoff 记忆件
+  - id: FAC-E4-M-027
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-028
+    域: E4 考试咽喉
+    翻的账: data/failures 断供事故章；记忆教训索引·断供与补数簇
+    挂载: [CASEBOOK-001#outage, CASEBOOK-005#断供与补数]
+    证据: 自动补数器=断供后修复位（kline 族断供案在库）；补数教训=bse-minute-backfill 记忆件
+  - id: FAC-E4-M-029
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：其对应 SLA 台账已随 MOD-DATA-066 退役（2026-10-04 Owner 批：禁挂任何图 casebooks），不另造挂
+  - id: FAC-E4-M-030
+    域: E4 考试咽喉
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 多周期融合原料=kline 族断供案
+  - id: FAC-E4-M-031
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-032
+    域: E4 考试咽喉
+    翻的账: 堵点本·档案安全章
+    挂载: [CASEBOOK-002#域四]
+    证据: 压缩归档安全=域四档案病族（归档丢失/覆盖在案）
+  - id: FAC-E4-M-033
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 行情源注册失配=provider_connect 族案（ifind/tdx 420+ 件）
+  - id: FAC-E4-M-034
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-035
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 行情连接器=provider_connect 族案直配（连接故障正主）
+  - id: FAC-E4-M-036
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 主备切换=连接故障/熔断族案（切换即翻告警章）
+  - id: FAC-E4-M-037
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 源自动加载失败=provider_connect 族案
+  - id: FAC-E4-M-038
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-039
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: ch_data_parts_explosion(508)/ch_heartbeat(66) 族案直配
+  - id: FAC-E4-M-040
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-041
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: WAL 写放大守护=CH parts 膨胀族案（#alert 在库）
+  - id: FAC-E4-M-042
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-043
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-044
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-045
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-046
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·过拟合与前视簇
+    挂载: [CASEBOOK-005#过拟合与前视]
+    证据: 参数鲁棒性=反过拟合同族（chart-pattern-mining-batch 反过拟合教训在案）
+  - id: FAC-E4-M-047
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·过拟合与前视簇
+    挂载: [CASEBOOK-005#过拟合与前视]
+    证据: 未来函数=前视病正主（bt-financial-correctness-p0fix：前视 T+1 硬断言/PIT 证据制在案）
+  - id: FAC-E4-M-048
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 非正态修正判读=考试纪律簇（sharpe2-prep：分层考试定调在案）
+  - id: FAC-E4-M-049
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: DSR 折减公式消费试次数 N（多重测试偏差修正=trial_ledger 计数直接输入）
+  - id: FAC-E4-M-050
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·过拟合与前视簇（原判自由名之上补正典指针，原判保留）
+    挂载: [过拟合裁定档案, CASEBOOK-005#过拟合与前视]
+    证据: 
+  - id: FAC-E4-M-051
+    域: E4 考试咽喉
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: adj_factor_incremental 族案 33 件直配（复权口径断供）
+  - id: FAC-E4-M-052
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-053
+    域: E4 考试咽喉
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [因子研究案例库]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E4-M-054
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-055
+    域: E4 考试咽喉
+    翻的账: 堵点本·档案安全章
+    挂载: [CASEBOOK-002#域四]
+    证据: 冷归档安全=域四档案病族
+  - id: FAC-E4-M-056
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 数据异常告警=告警熔断章正主位（其触发案即 alert 族在库）
+  - id: FAC-E4-M-057
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-058
+    域: E4 考试咽喉
+    翻的账: data/failures 告警熔断章
+    挂载: [CASEBOOK-001#alert]
+    证据: 质量 SLA 违约预警=时效/陈旧告警族案（stale_reaper 398 件同族）
+  - id: FAC-E4-M-059
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 预注册考试跑批=预注册纪律（four-lane 预注册在案）
+  - id: FAC-E4-M-060
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: CPCV 重考=重考窗口纪律（statreplay-exam-window-replay-rulings 裁定在案）
+  - id: FAC-E4-M-061
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·成本证伪簇
+    挂载: [CASEBOOK-005#成本证伪]
+    证据: 成本重考=成本证伪簇（tv2 复活窄考 RED：毛边际+0.88bp vs 12bp 门槛在案）
+  - id: FAC-E4-M-062
+    域: E4 考试咽喉
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: DSR 重算回填消费 trial_ledger（MOD-BT-200 consumers 实证）
+  - id: FAC-E4-M-063
+    域: E4 考试咽喉
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [复现演练档案]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E4-M-064
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-065
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-066
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: WFO 滚动=holdout 锁窗纪律族（node-backtest-governance 在案）
+  - id: FAC-E4-M-067
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: Purged K-Fold 清洗=泄漏防治纪律（PIT/前视族教训在案）
+  - id: FAC-E4-M-068
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: CPCV 组合纯合成=考试纪律簇（integrated-backtest-first-run 在案）
+  - id: FAC-E4-M-069
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-070
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-071
+    域: E4 考试咽喉
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 考试数据处理器=kline 族断供案消费端
+  - id: FAC-E4-M-072
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·过拟合与前视簇
+    挂载: [CASEBOOK-005#过拟合与前视]
+    证据: PIT 点时=前视/PIT 病正主（ibt-remedy-b-pit/bt-financial-correctness-p0fix 在案）
+  - id: FAC-E4-M-073
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 决策门控阈值纪律=P0 阈值自裁冻结教训（node-backtest-governance 在案）
+  - id: FAC-E4-M-074
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·成本证伪簇
+    挂载: [CASEBOOK-005#成本证伪]
+    证据: 考试成本门=成本证伪簇（HOLDOUT -12.2% C 门不过/成本门哑门修真在案）
+  - id: FAC-E4-M-075
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·成本证伪簇
+    挂载: [CASEBOOK-005#成本证伪]
+    证据: 成本归因=成本证伪簇（tv2 成本证伪同族）
+  - id: FAC-E4-M-076
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：纯派生计算位：上游采集/连接位已翻断供账承接输入失效，本位无独立翻账语义
+  - id: FAC-E4-M-077
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·过拟合与前视簇
+    挂载: [CASEBOOK-005#过拟合与前视]
+    证据: 过拟合检测=反过拟合簇（chart-pattern-mining-batch 反过拟合+复活观察在案）
+  - id: FAC-E4-M-078
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 闭卷闸=holdout 保密考卷纪律（integrated-backtest-first-run：HOLDOUT 保密考卷在案）
+  - id: FAC-E4-M-079
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 验证管线纪律=runner 档案/P0 阈值冻结（backtest-system-construction 在案）
+  - id: FAC-E4-M-080
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：纯派生计算位：上游采集/连接位已翻断供账承接输入失效，本位无独立翻账语义
+  - id: FAC-E4-M-081
+    域: E4 考试咽喉
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E4-M-082
+    域: E4 考试咽喉
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: 闭卷读取闸=holdout 保密纪律同族
+  - id: FAC-E5-M-001
+    域: E5 协同去重
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E5-M-002
+    域: E5 协同去重
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E5-M-003
+    域: E5 协同去重
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E5-M-004
+    域: E5 协同去重
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E6-M-001
+    域: E6 入库监控
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [考试成绩+判定书台账]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E6-M-002
+    域: E6 入库监控
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [衰减死因册]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E6-M-003
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：其翻阅账=衰减死因册/自持账（自由名族无正典册号），正典化判读归 chief，本批不硬凑正典指针
+  - id: FAC-E6-M-004
+    域: E6 入库监控
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 入库编排=队列族（域三）
+  - id: FAC-E6-M-005
+    域: E6 入库监控
+    翻的账: 堵点本·档案安全章
+    挂载: [CASEBOOK-002#域四]
+    证据: 注册表追加写入=档案写安全域四（写坏注册表=域四事故形态）
+  - id: FAC-E6-M-006
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E6-M-007
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E6-M-008
+    域: E6 入库监控
+    翻的账: 堵点本·belt与队列章
+    挂载: [CASEBOOK-002#域三]
+    证据: 日度编排=队列族（域三）
+  - id: FAC-E6-M-009
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：其翻阅账=衰减死因册/自持账（自由名族无正典册号），正典化判读归 chief，本批不硬凑正典指针
+  - id: FAC-E6-M-010
+    域: E6 入库监控
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [衰减死因册]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E6-M-011
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E6-M-012
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E6-M-013
+    域: E6 入库监控
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [衰减死因册]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E6-M-014
+    域: E6 入库监控
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-001
+    域: E7 模拟盘前哨
+    翻的账: 记忆教训索引·模拟盘实习簇
+    挂载: [CASEBOOK-005#模拟盘实习]
+    证据: sim 上岗实习教训在案（sim-launch-day2/sim-launch-revival：连续 20 交易日零故障过关条件）
+  - id: FAC-E7-M-002
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E7-M-003
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [模拟盘病历族]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-004
+    域: E7 模拟盘前哨
+    翻的账: 记忆教训索引·模拟盘实习簇
+    挂载: [CASEBOOK-005#模拟盘实习]
+    证据: 转正判定=实习纪律（sim-launch 复活/过关条件在案）
+  - id: FAC-E7-M-005
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-006
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E7-M-007
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [模拟盘病历族]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-008
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E7-M-009
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-010
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-011
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-012
+    域: E7 模拟盘前哨
+    翻的账: 记忆教训索引·考试纪律簇
+    挂载: [CASEBOOK-005#考试纪律]
+    证据: mSPRT 序贯判读=窥视纪律（多重检验/判读纪律簇，statreplay 在案）
+  - id: FAC-E7-M-013
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-014
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E7-M-015
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [联赛档案]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-016
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [联赛档案]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-017
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [联赛档案]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-018
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [联赛档案]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-019
+    域: E7 模拟盘前哨
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：其翻阅账=衰减死因册/自持账（自由名族无正典册号），正典化判读归 chief，本批不硬凑正典指针
+  - id: FAC-E7-M-020
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [模拟盘病历族]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E7-M-021
+    域: E7 模拟盘前哨
+    翻的账: 记忆教训索引·模拟盘实习簇
+    挂载: [CASEBOOK-005#模拟盘实习]
+    证据: 转正建议书=实习纪律（sim-launch 在案）
+  - id: FAC-E7-M-022
+    域: E7 模拟盘前哨
+    翻的账: 自持账本（自由名族，原判保留）
+    挂载: [复现演练档案]
+    证据: 原判保留：机制自持账本自由名挂载（本批不动）；正典化候选判读归 chief（encoding_normalize_map）
+  - id: FAC-E8-M-001
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：pending 未运行件：无运行病历可翻（建成跑通后再判挂载）
+  - id: FAC-E8-M-002
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-003
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-004
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-005
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-006
+    域: E8 组装与资金分配
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 筛选入组=考试证据审计位，组装前翻覆盖账核对候选的试次证据
+  - id: FAC-E8-M-007
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-008
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-009
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-010
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-011
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: Regime 输入=行情快照供给族案（index_quote/realtime_snapshot），失明即翻
+  - id: FAC-E8-M-012
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：纯派生计算位：上游采集/连接位已翻断供账承接输入失效，本位无独立翻账语义
+  - id: FAC-E8-M-013
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-014
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E8-M-015
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: Regime 特征原料=行情供给族案
+  - id: FAC-E8-M-016
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 筹码分布原料=kline/行情供给族案
+  - id: FAC-E8-M-017
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 大盘指数原料=index_quote_snapshot 族案 53 件直配
+  - id: FAC-E8-M-018
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 波动率预警原料=行情供给族案
+  - id: FAC-E8-M-019
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 风格体制原料=行情供给族案
+  - id: FAC-E8-M-020
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 截面特征原料=kline 供给族案
+  - id: FAC-E8-M-021
+    域: E8 组装与资金分配
+    翻的账: data/failures 断供事故章
+    挂载: [CASEBOOK-001#outage]
+    证据: 预测融合原料=行情供给族案
+  - id: FAC-E8-M-022
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E8-M-023
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-024
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-025
+    域: E8 组装与资金分配
+    翻的账: 记忆教训索引·成本证伪簇
+    挂载: [CASEBOOK-005#成本证伪]
+    证据: 再平衡成本收益=成本证伪簇（成本门槛纪律同族）
+  - id: FAC-E8-M-026
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E8-M-027
+    域: E8 组装与资金分配
+    翻的账: 回测覆盖总册·N账本章
+    挂载: [CASEBOOK-009#N试次]
+    证据: 漏斗裁决=考试证据审计位，裁决翻覆盖账核对可考证据面（H11 覆盖总册立册目的）
+  - id: FAC-E8-M-028
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E8-M-029
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E8-M-030
+    域: E8 组装与资金分配
+    翻的账: 堵点本·档案安全章
+    挂载: [CASEBOOK-002#域四]
+    证据: 权重唯一真源写权柄闸=防误写覆盖（域四档案安全病族正主位）
+  - id: FAC-E8-M-031
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-032
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E8-M-033
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E8-M-034
+    域: E8 组装与资金分配
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）
+  - id: FAC-E9-M-001
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·实盘衰减与归因簇
+    挂载: [CASEBOOK-005#实盘衰减与归因]
+    证据: 归因判读教训=回测→实盘衰减五折惯例/Owner 收益预期（owner-profitability-path-sharpe3 记忆件在案）
+  - id: FAC-E9-M-002
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·实盘衰减与归因簇
+    挂载: [CASEBOOK-005#实盘衰减与归因]
+    证据: 风险归因判读同上簇
+  - id: FAC-E9-M-003
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·模拟盘实习簇
+    挂载: [CASEBOOK-005#模拟盘实习]
+    证据: 模拟盘归因=实习纪律（sim-launch 过关条件含衰减≤50% 在案）
+  - id: FAC-E9-M-004
+    域: E9 实盘归因
+    翻的账: ~
+    挂载: []
+    证据: 留空理由：失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑
+  - id: FAC-E9-M-005
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·实盘衰减与归因簇
+    挂载: [CASEBOOK-005#实盘衰减与归因]
+    证据: 盈亏原料手=归因链首位，判读翻实盘衰减簇
+  - id: FAC-E9-M-006
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·实盘衰减与归因簇
+    挂载: [CASEBOOK-005#实盘衰减与归因]
+    证据: 归因回灌=迭代教训簇（owner-profitability 六步路线在案）
+  - id: FAC-E9-M-007
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·实盘衰减与归因簇
+    挂载: [CASEBOOK-005#实盘衰减与归因]
+    证据: Perold 四分解判读=实盘衰减簇
+  - id: FAC-E9-M-008
+    域: E9 实盘归因
+    翻的账: 记忆教训索引·实盘衰减与归因簇
+    挂载: [CASEBOOK-005#实盘衰减与归因]
+    证据: 条件胞归因教训在案（gpu-final-overnight：条件轴输入包 F4 选族自纠 9 胞）
+
+counts:
+  total_mechanisms: 324
+  mounted: 158
+  empty: 166
+  kept_free_name_precedents: 26
+  added_canonical_on_kept: 7
+  pointer_distribution:
+    'CASEBOOK-001#alert': 11
+    'CASEBOOK-001#outage': 46
+    'CASEBOOK-001#task_reconcile': 3
+    'CASEBOOK-002#域一': 3
+    'CASEBOOK-002#域三': 13
+    'CASEBOOK-002#域四': 7
+    'CASEBOOK-005#实盘衰减与归因': 6
+    'CASEBOOK-005#成本证伪': 5
+    'CASEBOOK-005#断供与补数': 2
+    'CASEBOOK-005#模拟盘实习': 4
+    'CASEBOOK-005#考试纪律': 16
+    'CASEBOOK-005#过拟合与前视': 5
+    'CASEBOOK-009#N试次': 17
+    'CASEBOOK-009#红证': 4
+    'N试次账本': 1
+    '全域事实台账': 1
+    '回测run档案图书馆': 1
+    '因子研究案例库': 1
+    '复现演练档案': 2
+    '模型版本注册表': 1
+    '模拟盘病历族': 3
+    '翻译件台账': 1
+    '考试成绩+判定书台账': 1
+    '联赛档案': 4
+    '衰减死因册': 3
+    '试验台账红证': 4
+    '过拟合裁定档案': 1
+    '进货台账': 1
+    '预审判定台账': 1
+  empty_reason_distribution:
+    '译制策略/产品件：自身是工厂产品非病历翻阅位，其翻译质量病历=翻译件台账（自由名族无正典册号，正典化判读留 chief）': 76
+    '失败模式无在册案例族（casebook_registry 八册+outside_registry 均无对应病历位），不硬凑': 56
+    '资金分配/组合数学件：失败模式是参数与口径问题，无在册案例族可翻（八册+outside_registry 无对应病历位）': 14
+    'pending 未运行件：无运行病历可翻（建成跑通后再判挂载）': 8
+    'LLM/模型供给域：供给故障走自身降级链，不落 data/failures 病历族': 5
+    '纯派生计算位：上游采集/连接位已翻断供账承接输入失效，本位无独立翻账语义': 3
+    '其翻阅账=衰减死因册/自持账（自由名族无正典册号），正典化判读归 chief，本批不硬凑正典指针': 3
+    '其对应 SLA 台账已随 MOD-DATA-066 退役（2026-10-04 Owner 批：禁挂任何图 casebooks），不另造挂': 1
+
+existing_26_precedents:
+  policy: 原判全保留（26 处自由名一律不动）；其中 7 处补正典指针（E3-M-076、E4-M-011/012/013/020/023/050），理由=原判自由名语义与正典册章精确同源（红证族/N账本/过拟合/管线持久化），补指针非改判
+  no_corrections: 0（未发现明显错挂；衰减死因册→DCS 的低置信候选经查对象域不同（信号衰减死因≠提交撞墙死因），维持原判不迁移
+
+deviation_notes:
+  - 任务卡方向「E9 观测→004 审查」经通读 review_findings 两卷：内容域=三夜/四夜战役治理审查发现（会话/提交/门禁/死信），无策略归因域病历，判无实挂语义，E9 改挂 005 记忆簇（实盘衰减与归因），004 在本图不挂
+  - 任务卡方向「E2-E6 加工线→002 各域」按真实翻账语义收窄：仅进程/编排/写安全位实挂（域一/三/四），译制产品件与数学分配件不硬凑
+  - E4-M-029 数据源 SLA 追踪器：其台账 MOD-DATA-066 已退役（禁挂），该机制留空
+
+completeness_check:
+  counts_note: 计数以盘面机械解析为准（本档 counts 段=生成时实值）；图内 26 处既有挂载全数在挂
+  registry_note: CASEBOOK-009 尚未物理入册 casebook_registry（H11 授号在先，上户口批在途），指针以授号登记面为准，勿判伪造指针
+idempotency_risk_note: 图为手工图直改，图头已加幂等风险注释（2026-10-08）
