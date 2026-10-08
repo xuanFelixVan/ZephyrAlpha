@@ -64618,6 +64618,31 @@ creation_tokens:
   token: st-fingov-tests-regime-init-20260914
   capability: tests_zephyr_regime
   created_by: st-fingov-20260912
+- file: docs/_working/deadcure_campaign/00_charter.md
+  token: deadcure-campaign-deadcure-campaign-00-charte-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/01_ledger.md
+  token: deadcure-campaign-deadcure-campaign-01-ledge-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/02_P0_tests_hole.md
+  token: deadcure-campaign-deadcure-campaign-02-P0-tests-hol-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/03_ticket_register.md
+  token: deadcure-campaign-deadcure-campaign-03-ticket-register.-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
+- file: docs/_working/deadcure_campaign/04_pending_owner.md
+  token: deadcure-campaign-deadcure-campaign-04-pending-owne-20261009
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案台账件：四终态裁定台账/P0 tests 树空洞工单/复活工单登记册/待 Owner 门位清单，docs/_working/<campaign>/ 同域唯一承接位，无同真源可派生"
 file_token:
 - note: 裁定路由政策骨架（裁定#490 首件，Owner 2026-10-08 指令）
   path: docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
