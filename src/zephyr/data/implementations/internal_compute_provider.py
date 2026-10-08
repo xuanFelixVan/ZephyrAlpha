@@ -1077,6 +1077,7 @@ class InternalComputeProvider(IngestProviderBase):
                 TechnicalIndicatorRegistry,
                 autodiscover_technical_indicators,
             )
+            from zephyr.factor.technical_indicators.panelized_indicators import build_rows_vectorized
 
             # 确保指标模块已自动发现
             # 无条件调用（幂等）：__init__ 显式 import 的模块不含后建文件（如 cycle.py），
@@ -1148,10 +1149,14 @@ class InternalComputeProvider(IngestProviderBase):
                         symbol_data = self._filter_symbol(kline_data, symbol, period)
                         if symbol_data.empty:
                             continue
-                        indicator_values = self._compute_all_indicators(symbol_data, registered)
-                        for bar_ts, row_data in indicator_values.iterrows():
-                            row = self._build_row(bar_ts, symbol, period, row_data, columns)
-                            all_rows.append(row)
+                        # P1-1 行物化向量化切挂（st-mx07-L5，2026-10-07 夜窗）：compute+materialize
+                        # 整面向量化路径（zephyr.factor.technical_indicators.panelized_indicators），
+                        # 输出与 iterrows+_build_row 逐列等值（对拍 438/438 列 |Δ|≤1e-9，
+                        # max|Δ|=9.9e-14；物化段热点原 52.9% CPU）。
+                        # 回归通道：python -m zephyr.factor.technical_indicators.parity_check；
+                        # 回滚=revert 本调用点改回 iterrows+_build_row（_build_row 保留未删）。
+                        _merged, _rows = build_rows_vectorized(symbol_data, symbol, period, columns, registered)
+                        all_rows.extend(_rows)
                     except Exception as e:  # noqa: BLE001
                         self._log.error("[period=%s] 标的 %s 指标计算异常: %s", period, symbol, e)
                         continue

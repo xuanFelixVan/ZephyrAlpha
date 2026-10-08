@@ -1,0 +1,53 @@
+# ALGO_FLOW 外部真源——panelized_indicators（_domain_factor 域，真源 src/zephyr/factor/technical_indicators/panelized_indicators.py）
+# P1-1 行物化向量化（st-mx07-L5 转正，2026-10-07 影子期→2026-10-08 生产切挂）：docstring external 锚本块，
+# extractor 经锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.technical_indicators.panelized_indicators
+source_of_truth: src/zephyr/factor/technical_indicators/panelized_indicators.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 单标的 OHLCV 面 DataFrame + 已注册指标集 + 输出列清单
+    #   fields: symbol_data（kline OHLCV，已并换手率）/ registered（TechnicalIndicatorBase 实例表）/ columns（INSERT_COLUMNS 宽表列序）
+    #   code: build_rows_vectorized(symbol_data, symbol, period, columns, registered)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① L1 compute——逐指标整列计算（复用生产注册表类）
+    #   name_en: per-indicator whole-column compute
+    #   intro: 逐指标调生产注册的族函数（rolling/ewm 列运算本身已向量化）；递推族 SAR/KAMA/SUPERTREND/MCGINLEY/FISHER/QQE/KVO/chips/cycle 保持整列一次循环，与生产同语义
+    #   desc: _compute_all_columns 遍历 registered → 复用生产 TechnicalIndicatorBase.compute → 列拼接成中间面
+    #   inputs: I1
+    #   outputs: 指标列中间面（与生产 _compute_all_indicators 输出逐列等值）
+    #   invariant: 递推族禁改写为近似批算——与生产同源复用，不复制实现
+    # - id: A2
+    #   name_zh: ② L2 window-vec——逐窗 Python 回调换滑窗批算（_SHADOW_COMPUTE 5 族）
+    #   name_en: sliding-window vectorized overrides
+    #   intro: 把生产残余的 rolling.apply 逐窗回调换 sliding_window_view 批量列运算：trend._wma 滑窗矩阵乘（WMA/HMA）、trend._linreg_endpoint 闭式最小二乘（INERTIA）、CCI 的 AVEDEV 滑窗平均绝对偏差、AROON/AROONOSC 滑窗 argmax（NaN 窗置 NaN 对齐 min_periods 门）
+    #   formula: wma=V@w（V=sliding_window_view(close,T)）；linreg endpoint=(a·(T-1)+b)（最小二乘闭式）；aroon=argmax(isnan→-1)
+    #   code: panelized_indicators._SHADOW_COMPUTE 覆盖表 → apply_window_vectorized
+    #   inputs: A1
+    #   outputs: 窗口族指标列（逐窗等值，max|Δ|=0 微基准）
+    #   invariant: 覆盖表键=指标 id 且 ⊆ 注册表（assert 守护）；min_periods 不足窗置 NaN 与生产对齐
+    # - id: A3
+    #   name_zh: ③ L3 materialize——整面一次行物化（替换 iterrows+_build_row 逐格热点）
+    #   name_en: whole-panel row materialization
+    #   intro: 元数据列（date/symbol/period）广播 + 指标列一次性组装为行清单，消除 _build_row 逐格 Python（原 52.9% CPU）
+    #   desc: materialize_rows_vectorized(mid_panel, meta_cols, columns) → 行 dict 清单；空表短路返回空清单
+    #   inputs: A1, A2
+    #   outputs: rows（与 iterrows+_build_row 逐列等值：对拍 438/438 列 |Δ|≤1e-9，max|Δ|=9.9e-14；物化段 16-54x）
+    #   invariant: in-memory 换补丁非线程安全（INVARIANTS 声明）——生产消费=盘后单线程批处理，禁多线程并发调 compute_indicator_matrix；生产 None ⇔ 向量化 None 模式全等
+    # 层: 输出
+    # - id: O1
+    #   name: 宽表行清单（all_rows.extend 消费）
+    #   desc: internal_compute_provider._fetch_single_period 切挂点消费，写链经 sanitize 闸落 CH
+    #   inputs: A3
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A1 --> A3
+    # A2 --> A3
+    # A3 --> O1
+    # [/ALGO_FLOW]

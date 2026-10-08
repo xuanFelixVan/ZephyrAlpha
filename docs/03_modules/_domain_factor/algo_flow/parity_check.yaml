@@ -1,0 +1,61 @@
+# ALGO_FLOW 外部真源——parity_check（_domain_factor 域，真源 src/zephyr/factor/technical_indicators/parity_check.py）
+# P1-1 切挂回归通道（st-mx07-L5）：行物化切挂前后等值验收+计时 harness；CH 只读零写库，产物落 .runtime/tmp。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.technical_indicators.parity_check
+source_of_truth: src/zephyr/factor/technical_indicators/parity_check.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: CH kline 只读面（默认 001218/603938 × 500 bar）
+    #   fields: TableRegistry.table("market_technical_indicator") 同源读取链（生产 _read_kline_data 同口径）
+    #   code: build_parity_inputs(symbols, bars)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 生产腿——iterrows+_build_row 原样
+    #   name_en: production leg (row-by-row)
+    #   intro: InternalComputeProvider._read_kline_data → _merge_turnover_rate → _filter_symbol → _compute_all_indicators → iterrows()+_build_row（零改动原样调用）
+    #   code: parity_check._run_production_leg
+    #   inputs: I1
+    #   outputs: 生产宽表面
+    # - id: A2
+    #   name_zh: ② 向量化腿——compute_indicator_matrix+materialize_rows_vectorized
+    #   name_en: vectorized leg (whole-panel)
+    #   intro: panelized_indicators 三层路径（L1 compute+L2 window-vec+L3 materialize）
+    #   code: parity_check._run_vectorized_leg
+    #   inputs: I1
+    #   outputs: 向量化宽表面
+    # - id: A3
+    #   name_zh: ③ 全列对拍——数值 1e-9+NaN 模式+元数据三重口径
+    #   name_en: column-wise parity assert
+    #   intro: 数值列 |Δ|≤1e-9；NaN/None 模式全等（生产 None ⇔ 向量化 None）；元数据列（date/datetime/str）全等；FAIL 列打印明细
+    #   formula: pass = (|prod−vec|≤1e-9) ∧ (isna 模式逐格全等) ∧ (元数据列 ==)
+    #   code: parity_check.compare_frames
+    #   inputs: A1, A2
+    #   outputs: parity_table.tsv（逐列 PASS/FAIL+max|Δ|）
+    #   invariant: 存在 FAIL 列→exit 1；CH 读数空/标的根数不足→AssertionError 快速失败
+    # - id: A4
+    #   name_zh: ④ 计时——预热 1 轮后 5 轮取中位数（全路径与物化段分开）
+    #   name_en: median-of-5 timing
+    #   intro: 两路径各预热 1 轮后计时 5 轮取中位数；物化段单独打点（核心收益段）；缩放档 7/9 轮
+    #   code: parity_check.time_legs
+    #   inputs: A1, A2
+    #   outputs: timing.tsv + 控制台读数（全路径 x/y 提速、物化段 a→b 提速）
+    #   invariant: 同机同数据 CPU 纯算零 GPU 参与；读数波动 ±30% 不改倍数量级结论
+    # 层: 输出
+    # - id: O1
+    #   name: 回归通道退出码（切挂验收唯一口径）
+    #   desc: exit 0=全列全过（切挂可放行）；exit 1=存在 FAIL 列（禁切挂/需回滚排查）；TSV 产物落 .runtime/tmp/rowvec_parity/
+    #   inputs: A3, A4
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # A1 --> A3
+    # A2 --> A3
+    # A1 --> A4
+    # A2 --> A4
+    # A3 --> O1
+    # A4 --> O1
+    # [/ALGO_FLOW]

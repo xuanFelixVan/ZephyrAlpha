@@ -194,3 +194,37 @@ CREATE-GUARD（token 未登记）→TRANSLATION-COVERAGE（缺 plain_zh）→PER
 | 留档袋 | 见 commit_queue --session st-mx07-L5 | 本 md（§9 增补后） |
 
 commit hash 以 `git log --grep=st-mx07-L5` 为准。
+
+### 9.4 三试·续：FILE-COPY 死因与影子退役执行（2026-10-08 日间·二段）
+
+- 袋 0014 死于 **FILE-COPY**（新门禁遭遇）：转正件与 F2 袋 62cb580db2 刚落地的影子件
+  `scripts/matrix_rescued_tmp/rowvec/*.py` 同名孪生（AST 相似 94.4%/74.1%>70% 阈值）。
+- 处置=执行注册在案的退役预案（两处 merge_evaluation 明文「转正落地后影子退役」）：
+  影子 .py ×3 删除+module_translation_registry 三条孤儿条目清理，与转正件分**序贯双袋**
+  （先退役袋后转正袋——FILE-COPY 语料库=主仓 `git ls-files` index 口径，退役袋先落地
+  使转正袋门禁时点语料库无孪生；FIFO 单写者保证顺序）。
+- 影子证据 csv ×4 不退役（证据面非代码面，F2 册语义=证据留存）。影子 depgraph 节点
+  （16422903-05）随文件退役成历史记录，不删（审计留痕）。
+- provider 外科口径不变：快照=HEAD+本车道两 hunk，B2 在途面备份于
+  `.runtime/tmp/st-mx07-L5/provider_full_backup.py` 未收编。
+
+### 9.5 三试·续二：ALGO-FLOW 死因与修复（2026-10-08 日间·三段）
+
+- 转正袋重投死于 **GATE-ALGO-FLOW**（pre-commit gate-algo-flow-marker）：src/zephyr 模块
+  docstring 必须含 `# [ALGO_FLOW]` 标记——影子件在 scripts/ 豁免故影子期未暴露，转正
+  src 域即触发（检查口径=仅锚行存在，EXIT=0 验证过）。
+- 修复（仿同包 chips.py/trend.py 先例）：三转正件 docstring 补
+  `# [ALGO_FLOW] external: docs/03_modules/_domain_factor/algo_flow/<name>.yaml` 锚 ×3
+  +新建 algo_flow yaml ×3（机器块外部真源，含输入/算法分层 invariant）+capability 册
+  补 creation_token ×3（rowvec-algoflow-{panelized,parity,bench}-20261008，同真源机器面非第二真源）。
+- 回归复核：check_algo_flow.py --files 三件 **EXIT=0**；单测 12/12；ruff 双清；yaml 全解析。
+
+### 9.6 三试·续三：token 先行袋+LINK 死因修复（2026-10-08 日间·四段）
+
+- **token 先行袋 0018 已落地**：CREATE-GUARD 实际读取面=序列化 worktree 副本（git 同步面），
+  主区工作区登记不可见——token 必须先落地（dc83fcc9 先例同款）。capability 册随袋吸收
+  他会话在途重排（净 -3 身份非本车道删除，[allow-mass-deletion] 披露归属各自认领）。
+- 转正袋 v2（0019）死于 **ALGO-FLOW-LINK**（6 处断链）：algo_flow 块缺起/收标记——
+  起标记 `# [ALGO_FLOW]` 有了，收标记 `# [/ALGO_FLOW]` 缺失+边段缺失。修复：三 yaml
+  补边段（I/A/O 有向边）+`# [/ALGO_FLOW]` 收标记，自验 start+end+edges 全 True。
+- provider 外科口径沿用：快照=HEAD+本车道两 hunk；B2 在途面备份未收编。

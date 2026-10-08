@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——bench_scaling（_domain_factor 域，真源 src/zephyr/factor/technical_indicators/bench_scaling.py）
+# P1-1 缩放计时基准（st-mx07-L5）：行物化段 T 规模缩放+windowvec 微基准；CH 只读零写库，产物落 .runtime/tmp。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.technical_indicators.bench_scaling
+source_of_truth: src/zephyr/factor/technical_indicators/bench_scaling.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: CH 整史只读面 + 合成序列
+    #   fields: 真实行情（TableRegistry 同源读取链）用于物化段缩放；合成序列用于 windowvec 微基准
+    #   code: bench_materialize_scaling / bench_windowvec_scaling
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 物化段 T 规模缩放计时——T∈{250,500,1000,整史}
+    #   name_en: materialize scaling across T
+    #   intro: 同一面数据分别走生产 iterrows+_build_row 与 materialize_rows_vectorized，物化段单独打点，各档预热后 7/9 轮取中位数
+    #   formula: speedup = median(prod_materialize_ms) / median(vec_materialize_ms)（实测 12.3-53.7x 视 T 而定；等值性不随 T 漂移=各档 FAIL 列 0）
+    #   code: bench_scaling.bench_materialize_scaling
+    #   inputs: I1
+    #   outputs: bench_scaling.tsv（档位×两路径耗时×倍数）
+    #   invariant: 计时口径与 parity_check 同款（中位数）；CH 只读零写库
+    # - id: A2
+    #   name_zh: ② windowvec 微基准——滑窗批算 vs rolling.apply（T=500/2000/8000）
+    #   name_en: sliding-window microbench
+    #   intro: trend._wma 滑窗矩阵乘对 rolling.apply 逐窗回调，T∈{500,2000,8000} 三档计时（实测 33.0x/65.2x/260.1x，max|Δ|=0）
+    #   formula: speedup = median(rolling_apply_ms) / median(slide_matmul_ms)
+    #   code: bench_scaling.bench_windowvec_scaling
+    #   inputs: I1
+    #   outputs: bench_windowvec.tsv
+    #   invariant: max|Δ|=0（等值前提先验）；合成序列固定种子可复现
+    # 层: 输出
+    # - id: O1
+    #   name: 缩放台账 TSV（留档册耗时对比的数据源）
+    #   desc: 产物落 .runtime/tmp/rowvec_parity/（禁入包目录/项目根）；读数进 rowvec_promotion_v1.md §4 耗时对比
+    #   inputs: A1, A2
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # A1 --> O1
+    # A2 --> O1
+    # [/ALGO_FLOW]
