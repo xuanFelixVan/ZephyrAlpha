@@ -750,6 +750,7 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     industry_map: dict[str, str] | None = None,
     combine_cache: dict | None = None,
     j_schedule: pd.DataFrame | None = None,
+    sector_ctx: dict | None = None,
 ) -> tuple[pd.DataFrame, tuple[str, ...]]:
     """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。
 
@@ -758,6 +759,8 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
     依赖 combined。命中时 A1/A2 degraded 标记一并复现，manifest 口径与无缓存逐位一致。
     j_schedule（T6 S1）: J_regime_switch=on 格点必需（缺席=RuntimeError，禁静默放行全帽）；
     off/无 J 维格点忽略——缺省 None 路径与 T5 语义逐位零漂移。
+    sector_ctx（矩阵战役 W5）: X_sector 非 off 格点必需（板块强度面板 sector_surface
+    批级产出；缺席=RuntimeError fail-closed）；off/无 X 维格点忽略=零漂移。
     """
     v = recipe.values
     degraded: list[str] = []
@@ -794,6 +797,15 @@ def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门�
         if combine_cache is not None:
             rank = combined.rank(axis=1, ascending=False)
             _combine_cache_store(combine_cache, cache_key, (combined, rank, a1_deg, bool(deg2)))
+    # T3b X_sector 板块族叠加（矩阵战役 W5：L2-01 强度池+L2-06 传导后处理；phase>=3
+    # 展开，折叠相恒 'off'=零漂移）。插入位=A1/A2 之后、B Top-N 之前（L2-06 卡 §4
+    # 引擎接法=层级隔离：只调分不重排名，禁动 Top-N 语义）。
+    sector_mode = v.get("X_sector", "off")
+    if sector_mode != "off":
+        if sector_ctx is None:
+            raise RuntimeError("X_sector 非 off 需 sector_ctx（run_batch 批级板块面板）——fail-closed")
+        combined = _apply_sector_overlay(combined, sector_ctx, industry_map or {}, sector_mode)
+        rank = None  # 传导改分/池掩码改变截面序，缓存预计算 rank 作废（sizing 按新序重排）
     top_n = int(v["B_top_n"].replace("top", ""))
     # E cap 约束的持仓数扩展（B×E 交互的实务语义）: 满仓+单票≤cap 要求
     # M=ceil(1/cap) 只——M>top_n 时有效持仓数扩展为 M（仍按分数序取）
@@ -1132,6 +1144,63 @@ def _apply_industry_topk_overlay(
     return combined.where(keep)
 
 
+def _apply_sector_overlay(
+    combined: pd.DataFrame,
+    sector_ctx: dict,
+    industry_map: dict[str, str],
+    mode: str,
+) -> pd.DataFrame:
+    """L2 族板块接线（矩阵战役 W5；挖矿 m2 L2-01/L2-06 规格卡；T3a 不接线=零漂移）。
+
+    mode=strength_top15：四路板块强度（sector_surface 四路子分合成）逐日 Top-15%
+    候选池行业掩码——池外行业个股 combined 置 NaN（不进截面，同 industry_topk
+    缺锚票语义=诚实缺供禁静默保留）。
+    mode=conduction：先 gate 后 weight（L2-06-1 三级放行：板块强度>6 ∧ 个股自身
+    强度>5 ∧ 日成交>2e8 元）→ 过闸票按查表乘数调分（L2-06-3：≥9→×1.15 / ≥6→×1.05 /
+    <6→×0.90，10 分制封闭口径）；不过闸置 NaN=不进打分池（顺位 rank 天然剔除）。
+    只调分不重排名=TDM 层级隔离纪律（禁在传导段内改 Top-N 语义；乘性改分的
+    真实截面序由 sizing 重算承载——调用方置 rank=None）。
+    返回 masked/adjusted combined（date × symbol）。
+    """
+    from sector_surface import (
+        GATE_AMOUNT_MIN,
+        GATE_SECTOR_MIN,
+        GATE_STOCK_MIN,
+        conduction_multiplier,
+    )
+
+    if mode not in ("strength_top15", "conduction"):
+        raise ValueError(f"未知 X_sector mode: {mode!r}（合法=off|strength_top15|conduction）")
+    score: pd.DataFrame = sector_ctx["sector_score"]  # date×industry 0-100
+    ind_of = pd.Series({s: industry_map.get(s) for s in combined.columns})
+    known_syms = list(ind_of.index[ind_of.notna()])
+    if not known_syms:
+        raise RuntimeError("X_sector 激活但宇宙与行业锚零交集——fail-closed")
+    sym_ind = ind_of.loc[known_syms].to_numpy()
+
+    def _broadcast(df: pd.DataFrame) -> pd.DataFrame:
+        """date×industry → date×symbol（重复列标签广播+set_axis，零行循环）。"""
+        return df.loc[:, list(sym_ind)].set_axis(known_syms, axis=1)
+
+    if mode == "strength_top15":
+        pool = sector_ctx.get("pool_mask")
+        if pool is None:
+            raise RuntimeError("X_sector=strength_top15 需 sector_ctx['pool_mask']——fail-closed")
+        keep_sym = _broadcast(pool.reindex(score.index))
+        keep = pd.DataFrame(False, index=combined.index, columns=combined.columns)
+        keep.loc[:, known_syms] = keep_sym.reindex(combined.index).fillna(False).to_numpy()
+        return combined.where(keep)
+    amount = sector_ctx.get("amount")
+    if amount is None:
+        raise RuntimeError("X_sector=conduction 需 sector_ctx['amount']（gate 三级放行）——fail-closed")
+    sec10 = _broadcast(score.reindex(combined.index)).reindex(columns=combined.columns) / 10.0
+    amount_g = amount.reindex(index=combined.index, columns=combined.columns)
+    stock10 = combined.rank(axis=1, pct=True) * 10.0  # 个股强度=合成因子截面百分位×10（卡 §2）
+    gate = (sec10 > GATE_SECTOR_MIN) & (stock10 > GATE_STOCK_MIN) & (amount_g > GATE_AMOUNT_MIN)
+    mult = conduction_multiplier(sec10.fillna(-1.0))  # 缺锚/缺日行业→弱档，但 gate 已 False 不放行
+    return (combined * mult).where(gate)
+
+
 def _apply_dd_breaker_overlay(
     weights: pd.DataFrame,
     closes: pd.DataFrame,
@@ -1341,6 +1410,13 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
     closes = closes_all.loc[(closes_all.index >= pd.Timestamp(start)) & (closes_all.index <= pd.Timestamp(end))]
     flags = load_st_flags(start, end)
     closes_eval = filter_st(closes_all, flags).loc[closes.index]
+    # 矩阵战役 W5（L2-01/L2-06）: 板块强度面板批级一次构建——仅网格含非 off X_sector
+    # 值时装载（缺省零开销零漂移）；want_amount=True 供 conduction gate 三级放行。
+    sector_ctx: dict | None = None
+    if any(r.values.get("X_sector", "off") != "off" for r in picked):
+        from sector_surface import build_sector_context
+
+        sector_ctx = build_sector_context(warm_start, end, want_amount=True)
 
     # T6 S3: 估值/财务因子面批级装载（factor_surface=v1_value 时；缺席=格点级 eval 阴性，
     # fail-closed 禁静默降级——估值是考卷维不是装饰）
@@ -1466,6 +1542,7 @@ def run_batch(  # noqa: long-param-list  L2-C engine/engine_degrade/_gpu_rerun �
                 industry_map=industry_map,
                 combine_cache=combine_cache,
                 j_schedule=j_schedule,
+                sector_ctx=sector_ctx,
             )
         except Exception as exc:  # noqa: BLE001
             negatives.append(

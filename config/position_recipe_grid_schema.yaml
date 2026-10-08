@@ -84,6 +84,18 @@ dimensions:
     values: ['off', 'dd20']
     baseline: 'off'
     active_if: "phase >= 3"
+  - id: X_sector
+    desc: 板块族·强度池+传导后处理（mx07-W5 施工批新增；挖矿 m2 L2-01/L2-06 规格卡）
+    # 语义=引擎 _apply_sector_overlay（A1/A2 后、B Top-N 前=TDM 层级隔离位，只调分
+    # 不重排名）：strength_top15=板块强度四路子分（L2-01-1~4 结构/活跃/多周期动量/
+    # 资金流等权合成）逐日 Top-15% 候选池行业掩码；conduction=先 gate 后 weight
+    # （L2-06-1 三级放行：板块>6 ∧ 个股强度>5 ∧ 日成交>2e8 元，乘数查表
+    # ≥9→1.15/≥6→1.05/<6→0.90=L2-06-3 冻结口径）。phase>=3 展开，折叠相 'off'=存量
+    # 考试零漂移（X_stop/X_breaker 同款先例）；X_sector 进正式考卷=裁定前置（W5 留档
+    # §3 自裁：本批只落引擎+折叠维，正式展开归 T3b 序）。
+    values: ['off', 'strength_top15', 'conduction']
+    baseline: 'off'
+    active_if: "phase >= 3"
   - id: K_capital_ramp
     desc: 建仓节奏/资金爬坡（需 harness 支持路径依赖，蓝图 §九-2）
     values: [lump, linear_20d, linear_60d, pyramid]
