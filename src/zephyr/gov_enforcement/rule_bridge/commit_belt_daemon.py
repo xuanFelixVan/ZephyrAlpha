@@ -58,6 +58,10 @@ _QUEUE_SUBDIRS = ("pending", "processing", "done", "dead")
 _DAEMON_LOCK = "belt_daemon.lock"
 _DEBOUNCE_S = 0.5
 _LEDGER = Path(".runtime/audit/bottleneck_ledger.jsonl")
+# A-11 持久水位线（st-chiefc-20261009）：belt 守护的 seen 死信集合进程死即蒸发，
+# 每次重启"首次全量"重放 1705 封存量死信入堵点本（112MB 主因，死信速率读数被重放桶污染）。
+# 水位=当前 dead/ 全名单快照：重启预载→只记真新增；归档/清偿后名单收缩自然跟进。
+_BELT_SEEN_WATERMARK = Path(".runtime/commit_queue/belt_seen_dead.watermark.json")
 # 堵点本阈值（Owner 2026-09-16 晚授权自裁：有用就做）：≥20 条未清账或最老条目
 # >24h → 自动写告警行进堵点本+logger.error，供高模型维护班开班信号。
 _LEDGER_ALERT_THRESHOLD = 20
@@ -131,8 +135,36 @@ def _drain_once(project_root: Path) -> dict:
         return {"skipped": True, "reason": "drain_error"}
 
 
+def _load_seen_watermark(project_root: Path) -> set[str]:
+    """A-11：预载上次落盘的 seen 死信名单（损坏/缺席=空集，fail-open 多记一轮不丢事件）。"""
+    wm = _queue_root(project_root) / _BELT_SEEN_WATERMARK.name
+    try:
+        return set(json.loads(wm.read_text(encoding="utf-8")).get("seen", []))
+    except Exception:  # noqa: BLE001 — 水位读失败 fail-open（=回到旧全量重放形态，不阻断）
+        return set()
+
+
+def _save_seen_watermark(project_root: Path, seen: set[str]) -> None:
+    """A-11：扫后落盘全名单（归档后 dead/ 收缩→水位自然收缩；写失败只 warning）。"""
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    wm = _queue_root(project_root) / _BELT_SEEN_WATERMARK.name
+    try:
+        wm.parent.mkdir(parents=True, exist_ok=True)
+        wm.write_text(
+            json.dumps({"seen": sorted(seen), "ts": now_utc().isoformat()}, ensure_ascii=False),
+            encoding="utf-8",
+        )
+    except Exception:  # noqa: BLE001 — 水位写失败 fail-open（下次重启多记一轮，不丢事件）
+        logger.warning("[belt] 死信水位写盘失败（fail-open）", exc_info=True)
+
+
 def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
-    """新死信登记堵点本（专人专事协议：维护班清账，施工 AI 不修）。"""
+    """新死信登记堵点本（专人专事协议：维护班清账，施工 AI 不修）。
+
+    A-11：seen 由调用方以 _load_seen_watermark 预载（重启不再全量重放）；调用后应
+    _save_seen_watermark 落盘。归档/清偿使 dead/ 收缩后，水位随下次扫描自然收缩。
+    """
     from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
     dead_dir = _queue_root(project_root) / "dead"
@@ -163,6 +195,8 @@ def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
                     + "\n"
                 )
             n += 1
+        # A-11：归档/清偿使 dead/ 收缩→seen 同步修剪（同名 qid 再死=新事件可重记）
+        seen &= {f.name for f in dead_dir.glob("q-*.json")}
     except OSError:
         pass
     return n
@@ -790,9 +824,10 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
     if not _acquire_singleton(qroot):
         logger.warning("belt_daemon 已在运行（单例锁活体），本次启动退出")
         return 2
-    seen_dead: set[str] = set()
+    seen_dead: set[str] = _load_seen_watermark(root)  # A-11：预载持久水位，重启只记真新增
     _loop_state: dict = {"env_aborts": 0, "epoch": None}
-    _ledger_dead_letters(root, seen_dead)  # 启动即登记存量死信（首次全量）
+    _ledger_dead_letters(root, seen_dead)  # 启动登记（首次=真存量，此后=增量）
+    _save_seen_watermark(root, seen_dead)  # A-11：扫后落水位
     _check_ledger_backlog()  # 启动即自检积压
     _check_daemon_offline_gap(qroot)  # W5：启动即查离线缺口（上次心跳年龄，观测复活）
     _touch_heartbeat(qroot)  # W5：上线即打首个心跳
