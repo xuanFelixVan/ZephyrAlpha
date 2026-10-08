@@ -31,7 +31,9 @@ import numpy as np
 import pandas as pd
 
 _HERE = Path(__file__).resolve().parent
-_ROOT = _HERE.parents[3]  # .../.runtime/tmp/st-matrix-20261006/gpu_ic → ZephyrAlpha
+_ROOT = _HERE.parents[
+    3
+]  # scripts/backtest/fexam/gpu_ic → ZephyrAlpha（2026-10-07 转正后修正注释，原 tmp 路径注释已失效）
 for _p in (str(_ROOT / "src"), str(_ROOT / "scripts" / "backtest" / "fexam"), str(_HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)

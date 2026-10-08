@@ -21,7 +21,10 @@
 factory_grid_executor.py（冻结件零改动，纯外挂）。
 
 门位（全部 fail-closed，任一不过=禁点火）：
-  G1 GPU 空闲门   nvidia-smi 显存占用 < 阈值 且 无 st-t3series 进程（探测失败=忙）
+  G1 GPU 空闲门   确定性双判据（2026-10-06/07 修正）：①对方战役日志（真源
+                  .runtime/tmp/st-t3series-20261006/）30 分钟无更新=收卷；②空余显存
+                  ≥8000MB。探测失败=忙（fail-closed）；日志真源目录缺失时以注册表
+                  last_activity 交叉判据区分真清场 vs 疑似路径漂移（后者 fail-closed）
   G2 预算钳制门   行格点数经 factory_grid_executor._apply_prereg_budget 钳制（冻结册真源）；
                   战役累计已点格点 + 本行格点 ≤ grid_points_cap；墙钟估算
                   cells×per_point_seconds_measured ≤ single_job_wall_clock_cap_hours
@@ -86,6 +89,11 @@ SYSTEM_GPU_PROC_NAMES = (
 )
 #: st-t3series 进程识别：只查 python 家族（防 WMI 查询进程自匹配——其自身 cmdline 含匹配串）
 BUSY_PROCESS_PATTERN = "t3series"
+#: 对方战役日志真源（2026-10-07 G1 车道钉死：旧实现探 _HERE.parent 恒不存在=恒判收卷的
+#: fail-open 缺陷根治。改动此常量须同步 tests/backtest/fexam/test_fire_grid_gates.py 钉死断言）
+T3SERIES_LOG_DIR = _REPO / ".runtime" / "tmp" / "st-t3series-20261006"
+#: 日志静默判收卷阈值（秒）
+T3SERIES_STALE_SECONDS = 1800
 
 
 def log(event: str, **kw) -> None:
@@ -145,18 +153,49 @@ def gpu_probe() -> dict:
     }
 
 
-def _t3series_logs_stale() -> bool:
-    """对方战役日志（.runtime/tmp/st-t3series-20261006/*.log）30 分钟无更新=收卷。失败=未收卷（fail-closed）。"""
-    try:
-        log_dir = _HERE.parent / "st-t3series-20261006"
-        if not log_dir.is_dir():
-            return True  # 目录不存在=对方从未开工/已清场
-        import time as _t
+def _t3series_session_recently_active(window_s: float = T3SERIES_STALE_SECONDS) -> bool:
+    """注册表交叉判据：st-t3series 会话 last_activity 在窗内=疑似在跑。
 
-        newest = max(f.stat().st_mtime for f in log_dir.glob("*.log") if f.is_file())
-        return (_t.time() - newest) > 1800
-    except Exception:  # noqa: BLE001
-        return False  # fail-closed
+    用 last_activity 而非 last_heartbeat——heartbeat daemon 可孤儿存活（2026-10-07
+    实测：st-t3series keeper 已见 stop 退出，其 daemon 孤儿仍续心跳），activity 才
+    反映真实工作。注册表不可达/查询异常=按在跑（fail-closed，与门语义一致）。
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        reg = SessionRegistry(project_root=str(_REPO))
+        info = reg.get_session("st-t3series-20261006")
+    except Exception:  # noqa: BLE001 — 交叉判据不可用=按忙（fail-closed）
+        return True
+    if info is None:
+        return False
+    return (time.time() - float(info.last_activity or 0.0)) <= window_s
+
+
+def _t3series_logs_stale(log_dir=None, now: float | None = None) -> bool:
+    """对方战役日志收卷判定（真源=T3SERIES_LOG_DIR=.runtime/tmp/st-t3series-20261006/）。
+
+    语义重定性（2026-10-07 G1 车道 st-govfix-g1-20261007，治 6b3426c398 引入的
+    fail-open：旧实现探 _HERE.parent 恒不存在→恒返回 True=对方未收卷也判空闲）：
+      - 目录缺失 @ 钉死真源路径：真清场/从未开工 → stale=True；但注册表交叉判据
+        显示该会话近窗有真实活动（last_activity）→ 疑似路径漂移/会话刚起未落日志
+        → fail-closed（False）。
+      - 日志存在：30 分钟无 mtime 更新=收卷（True）；目录在但零日志：同缺失语义。
+      - 任何探测异常：fail-closed（False）。
+    log_dir/now 可注入（回归测试用；生产默认走真源常量）。
+    """
+    d = T3SERIES_LOG_DIR if log_dir is None else Path(log_dir)
+    tnow = time.time() if now is None else float(now)
+    active = _t3series_session_recently_active()
+    try:
+        if not d.is_dir():
+            return not active
+        newest = max((f.stat().st_mtime for f in d.glob("*.log") if f.is_file()), default=None)
+        if newest is None:
+            return not active
+        return (tnow - newest) > T3SERIES_STALE_SECONDS
+    except Exception:  # noqa: BLE001 — fail-closed
+        return False
 
 
 def _t3series_running() -> bool:

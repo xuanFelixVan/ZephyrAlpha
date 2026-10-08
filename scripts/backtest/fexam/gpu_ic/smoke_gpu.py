@@ -34,7 +34,7 @@
 # 执行方式（Git Bash）：
 #   export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"
 #   export PYTHONPATH=/d/ZephyrAlpha/src
-#   python .runtime/tmp/st-matrix-20261006/gpu_ic/smoke_gpu.py
+#   python scripts/backtest/fexam/gpu_ic/smoke_gpu.py
 # ============================================================================
 """smoke_gpu — cupy 后端 GPU 冒烟：nvidia-smi 预检 + 同一套 parity 全用例（cupy）。"""
 

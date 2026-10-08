@@ -801,6 +801,32 @@ def _ruff_preclean_gate(args, files: list[str], project_root: str) -> int | None
     return 8
 
 
+def _message_claim_gate(args, files: list[str], message: str) -> int | None:
+    """F3（st-govfix-g1-20261007）消息账 vs 代码账对账快检（commit_claim_check 最小版）。
+
+    病灶：提交消息声称代码变更但袋内零代码文件——"宣称已修实际未修"假账入库。
+    Rx-1 同位锁外秒级快败（exit 8=预检快败）；设施故障 fail-open 放行；
+    --skip-preflight 与既有预检同口径跳过；env ZEPHYR_COMMIT_CLAIM_CHECK=0 一键回退；
+    提交侧逃生=消息加 [docs-only] 显式申报（处方内告知，判据保守：袋内 ≥1 代码
+    文件即放行，不逐文件核对——逐文件核对留 v2 登记，防消息引用上下文文件假红）。
+    """
+    if getattr(args, "skip_preflight", False):
+        return None
+    try:
+        from scripts.governance.commit_claim_check import check_message_claims, claim_check_enabled
+
+        if not claim_check_enabled():
+            return None
+        verdict = check_message_claims(message, files)
+    except Exception as exc:  # noqa: BLE001 — 预检设施故障降级放行
+        logger.warning("commit claim check skipped (fail-open): %s", exc)
+        return None
+    if verdict is None:
+        return None
+    print(f"CLAIM-CHECK-BLOCKED: {verdict}", file=sys.stderr)
+    return 8
+
+
 def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozenset[str] = frozenset()) -> int | None:
     """P0-A 锁外预检：blocking 时打印一过式失败清单并返回 exit 8；否则 None 放行。"""
     if (
@@ -886,6 +912,10 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     _rx_exit = _ruff_preclean_gate(args, files, args.project_root)
     if _rx_exit is not None:
         return _rx_exit
+    # F3 消息账 vs 代码账对账快检（st-govfix-g1-20261007）：声称代码变更但袋无代码入队前死
+    _claim_exit = _message_claim_gate(args, files, message)
+    if _claim_exit is not None:
+        return _claim_exit
     _ensure_scripts_package_importable(str(_PROJECT_ROOT))
     from scripts.commit_queue import (  # noqa: PLC0415
         EnqueueOptions,
@@ -1326,6 +1356,11 @@ def main() -> int:
         _rx_exit = _ruff_preclean_gate(args, files, args.project_root)
         if _rx_exit is not None:
             return _rx_exit
+
+        # F3 消息账 vs 代码账对账快检（st-govfix-g1-20261007）：claim 前快败，零 claim 占用
+        _claim_exit = _message_claim_gate(args, files, message)
+        if _claim_exit is not None:
+            return _claim_exit
 
         # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
         claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)

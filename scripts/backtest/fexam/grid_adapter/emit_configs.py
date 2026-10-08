@@ -54,7 +54,7 @@ from pathlib import Path
 import yaml
 
 _HERE = Path(__file__).resolve().parent
-_REPO = _HERE.parents[3]  # .runtime/tmp/st-matrix-20261006/grid_adapter -> repo root
+_REPO = _HERE.parents[3]  # scripts/backtest/fexam/grid_adapter -> repo root（2026-10-07 转正后修正注释）
 sys.path.insert(0, str(_REPO / "src"))
 _BT = _REPO / "scripts" / "backtest"
 sys.path.insert(0, str(_BT / "translated"))
