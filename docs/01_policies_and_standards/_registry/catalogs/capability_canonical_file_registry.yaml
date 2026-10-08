@@ -64261,4 +64261,49 @@ creation_tokens:
   capability: technical_indicator_rowvec
   created_by: st-mx07-L5
   merge_evaluation: "ALGO_FLOW 外部真源块（GATE-ALGO-FLOW 转正件 docstring external 锚配套），非第二真源=同源机器面；随 bench_scaling.py 同真源演进"
+- file: docs/_working/fullcirculation_campaign/10_hop_mining/tdm_decision/hops.yaml
+  token: tdm-casebook-mining-hops-20261008
+  created_by: st-fc-tdm-20261008
+  capability: tdm_casebook_mining
+  merge_evaluation: "同域收敛：TDM 环节挂载挖矿档并入 fullcirculation hops 挖矿档族（spm_strategy_production 同构先例），零新增独立册"
+- file: docs/_working/matrix_campaign/dispatch_blockers.md
+  token: matrix-l12-dispatch-blockers-20261008
+  capability: matrix_l12_misalign
+  created_by: st-mx07-L12
+  merge_evaluation: "新增战役调度阻塞登记册（等 Owner 拍板项汇总，随批销账后归档）；命名按 TRAE-028 snake_case 自裁留痕在册头"
+- file: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+  token: matrix-w4-exit-family-12nodes-prereg-draft-20261008
+  capability: matrix_w4_exit_family
+  created_by: st-mx07-W4
+  merge_evaluation: "新增离场族其余12节点prereg草稿（勘察后③路径：12节点逐节点机制/前置/判据候选转录自规格卡与E道模板，判据候选只引仓内权威不新造；零跑数零代码）；无替代对象；与m2_exit_sector规格卡不并——卡=机制真源，本草=开考前置与判据候选汇总面"
+- file: docs/_working/matrix_campaign/mining/hmm_v3_exam_v1.md
+  token: matrix-w2-hmm-v3-exam-v1-20261008
+  capability: matrix_w2_hmm_v3_exam
+  created_by: st-mx07-W2
+  merge_evaluation: "新增 HMM v3 一次窗口结果册（施工 diff 摘要/全量读数原文/四表逐项判定/verdict=conditionally_qualified→裁定#489② 判死永久退役留痕）；无替代对象，判据真源唯一（fexam prereg_v1 冻结块）"
+- file: docs/_working/matrix_campaign/mining/r1r2_misalign_brief_v1.md
+  token: matrix-l12-r1r2-brief-20261008
+  capability: matrix_l12_misalign
+  created_by: st-mx07-L12
+  merge_evaluation: "新增只读调档一页纸（R1/R2 名实错位：条目清单+影响面+修复处方 F1-F5，等 Owner 拍板）；无替代对象，判据真源唯一"
+- file: scripts/backtest/sector_surface.py
+  token: sector-surface-20261008
+  capability: sector_surface_wiring
+  created_by: st-mx07-W5
+  merge_evaluation: "新增板块强度四路面板+回测引擎传导后处理（矩阵战役 mx07-W5：M-2 L2-06+M-3 L2-01 规格卡照卡施工）；四路合分核 MOD-SIG-142/生产接线 MOD-SIG-144/传导核 MOD-SIG-136 均在库不替代，本件=回测引擎考卷语义补面（spec 卡 L2-01 §4 sector_surface 新件位）"
+- file: src/zephyr/factor/wq_alpha_87_wiring.py
+  token: wq-alpha-87-wiring-20261008
+  capability: wq_alpha_87_wiring
+  created_by: st-mx07-W6
+  merge_evaluation: "同真源装配：wq_alpha_87.py 头部 CONSUMERS 声明的 register/ic 双委托注入点的真实装配（master_backlog P2-6 接线），非重复建库，替代无"
+- file: scripts/backtest/fexam/conditional_exam.py
+  token: conditional-exam-cyc-20261008
+  capability: conditional_exam_cyc
+  created_by: st-mx07-W3
+  merge_evaluation: "新增 CYC 族条件变量考场检验器（裁定#489① 预注册卡判据冻结实现：相位分层/层间 HAC(maxlags=10)/Bonferroni 族/一次窗口；基线 B1 动量 B2 反转）；与 ic_exam 方向 IC 考场科目不同零功能交集，无替代对象"
+- file: docs/_working/matrix_campaign/mining/wq_alpha_87_wiring_v1.md
+  token: matrix-w6-wq87-wiring-doc-20261008
+  capability: matrix_campaign_mining
+  created_by: st-mx07-W6
+  merge_evaluation: "W6 车道接线任务卡指定留档册（核出处/接线点/验证读数），战役挖矿簿系同域归档，非新真源"
 di_seam_exemptions: []
