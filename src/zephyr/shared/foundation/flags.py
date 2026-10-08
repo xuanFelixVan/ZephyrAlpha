@@ -386,5 +386,16 @@ def ensure_global_flags_loaded() -> int:
     global _global_flags_loaded
     if _global_flags_loaded:
         return len(global_flag_registry.list_all())
+    # G-5 三态改造（st-chiefc-20261009）：真ON/真OFF=装载成功才落闩；读失败（缺册/解析
+    # 异常）不落闩+点名——原缺陷先置 loaded=True 再加载，一次瞬断→本进程空册失明，
+    # 全部旗静默 fail-closed OFF（实测 2026-10-09 commit_queue_interactive 假 OFF 一次）。
+    yaml_path = _default_flags_yaml_path()
+    if yaml_path is None or not Path(yaml_path).exists():
+        logger.error(
+            "flags yaml MISSING: %s —— 全部旗按 fail-closed OFF 处理（点名不落闩，文件恢复后下次调用自动重装）",
+            yaml_path,
+        )
+        return 0
+    count = load_flags_from_yaml()
     _global_flags_loaded = True
-    return load_flags_from_yaml()
+    return count
