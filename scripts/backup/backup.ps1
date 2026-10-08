@@ -201,10 +201,22 @@ function Invoke-GuardedMirror {
 
 # Registered cap, with a built-in floor: an unreadable config must never mean "unlimited".
 $MaxPurgeFallback = 200
+# Red-team closure: this cap is the only thing between the guard and a bare /MIR, so a
+# config that says 999999 must not silently re-arm the very failure the guard exists to
+# stop. An out-of-range (or negative) cap returns -1 = "unusable", and since
+# Get-MirrorSyncMode compares Extras > Cap, -1 makes EVERY purge count exceed it =>
+# degrade to additive. Broken config therefore degrades, it never grants permission.
+$MaxPurgeCeiling = 5000
 function Get-MirrorPurgeCap {
-    param([string]$Yaml, [int]$Fallback)
-    if ($Yaml -match '(?m)^mirror_guard:\s*$[\s\S]*?max_propagated_deletes:\s*(\d+)') { return [int]$matches[1] }
-    return $Fallback
+    param(
+        [string]$Yaml,
+        [int]$Fallback,
+        [int]$Ceiling = 5000
+    )
+    $v = $Fallback
+    if ($Yaml -match '(?m)^mirror_guard:\s*$[\s\S]*?max_propagated_deletes:\s*(-?\d+)') { $v = [int]$matches[1] }
+    if ($v -lt 0 -or $v -gt $Ceiling) { return -1 }
+    return $v
 }
 
 # -- Load config (simple regex parse, avoid powershell-yaml dependency) --
