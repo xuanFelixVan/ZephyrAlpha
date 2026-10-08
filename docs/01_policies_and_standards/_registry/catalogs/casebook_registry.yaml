@@ -3,6 +3,8 @@
 # 净零声明：收编五本"路径身份"散落登记状态（堵点本/抢救台账/审查两卷/MEMORY 索引/data-failures 案卷），
 #   为全图族 casebooks 字段提供唯一反查册（同域重复簇→收敛唯一，宪法 §4 内收判据）。
 # 维护纪律：条目增删/改名须随裁定或挂图批走（低频）；计数以盘面为准勿在散文写死；
+# 2026-10-08 裁定#492（Owner 批）：CASEBOOK-006/007/008 作废为 reserved_void 空号，
+#   永不回填，下一新册号从 CASEBOOK-009 顺延（详见册尾 reserved_void 注记段）。
 #   治理类库（非业务资产库）不挂 TDM 交叉轴——已登记 tests/trading/test_decision_map.py
 #   ::TestNewRegistryGate._GOVERNANCE_EXEMPT 豁免（D38 铁律二选一之豁免腿）。
 schema_version: "1.0.0"
@@ -95,6 +97,19 @@ casebooks:
     scope_zh: >
       冷备归档逐表回执（含 compress_ratio——DSC-10B 可证终点双实锚之一）。图12 挂载
       DSC-10A/DSC-10B。（2026-10-07 补授，重建来源同上。）
+  - casebook_id: CASEBOOK-009
+    name_zh: 回测覆盖账本（backtest_coverage_ledger）
+    physical_path: docs/_working/fullcirc_closeout_chief/backtest_coverage_ledger.yaml
+    form: yaml_ledger
+    domain: D_GOV
+    status: active
+    entry_scale: "七层金字塔 7 层/13 维旋钮/试次 20632（机生，随考试自动更新）"
+    scope_zh: >
+      回测金字塔每层的自动化状态、已考未考与缺口清单——Owner"查看地图即知回测全流程"交付件
+      （2026-10-08 裁定：账本形态非图形态）。机生真源=generate_backtest_coverage_ledger.py
+      （三真源扫描：H9 对标 182 环节四类/F6R 锚行/考场证据普查），
+      消费方=晨报/发车闸/晋级池/图书馆查询。图9 挂载注记预留（禁直写图面）。
+
 outside_registry:
   - name_zh: 提交撞墙死因案例册
     identity: "module_id=CFG-COMMIT-DEATH-CASES-001（owner=MOD-INF-005，ttl: permanent）"
