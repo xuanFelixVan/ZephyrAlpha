@@ -274,9 +274,11 @@ class TestRedMap:
         d["counts"]["total_edges"] = 999
         monkeypatch.setattr(gate_mod, "_MAP_PATH", _write(tmp_path, d))
         passed, detail = _check(gateway=None, files=[_MAP_REL])
-        # 规模从 _GOOD 现取（禁硬编码——CR-15 契约收缩 29/34→28/33 教训，2026-10-04 适配）
+        # 规模与 anchor_source 从 _GOOD 现取（禁硬编码——CR-15 契约收缩 29/34→28/33 教训，
+        # 2026-10-04 适配；anchor_source 随图演进 proposal→policy 现取化，2026-10-07 适配）
         n, e = len(_GOOD.get("nodes") or []), len(_GOOD.get("edges") or [])
-        assert not passed and f"nodes={n}" in detail and f"edges={e}" in detail and "anchor_source=proposal" in detail
+        src = _GOOD.get("anchor_source")
+        assert not passed and f"nodes={n}" in detail and f"edges={e}" in detail and f"anchor_source={src}" in detail
 
 
 # ---------------------------------------------------------------------------
@@ -307,8 +309,15 @@ class TestRedFailClosed:
         passed, detail = _check(gateway=None, files=[_MAP_REL])
         assert not passed and "解析失败" in detail
 
+    def _proposal_universe(self, monkeypatch, tmp_path):
+        """锚块 fail-closed 用例回到 proposal 宇宙（policy 态锚腿整体跳过，2026-10-07 适配）。"""
+        d = copy.deepcopy(_GOOD)
+        d["anchor_source"] = "proposal"
+        monkeypatch.setattr(gate_mod, "_MAP_PATH", _write(tmp_path, d))
+
     def test_anchor_block_corrupt_fail_closed(self, monkeypatch, tmp_path):
-        """91 号提案件损坏：现态下它是图的真源，读不出=派生链断，必拦。"""
+        """91 号提案件损坏：proposal 态下它是图的真源，读不出=派生链断，必拦。"""
+        self._proposal_universe(monkeypatch, tmp_path)
         broken = tmp_path / "91_broken.yaml"
         broken.write_text("step_anchors: [unclosed", encoding="utf-8")
         monkeypatch.setattr(gate_mod, "_ANCHORS_PATH", broken)
@@ -316,6 +325,7 @@ class TestRedFailClosed:
         assert not passed and "锚块提案件不可装载" in detail
 
     def test_anchor_block_missing_step_anchors_fail_closed(self, monkeypatch, tmp_path):
+        self._proposal_universe(monkeypatch, tmp_path)
         empty = tmp_path / "91_empty.yaml"
         empty.write_text(yaml.safe_dump({"schema_version": "0.1", "step_anchors": []}), encoding="utf-8")
         monkeypatch.setattr(gate_mod, "_ANCHORS_PATH", empty)
@@ -323,6 +333,7 @@ class TestRedFailClosed:
         assert not passed and "step_anchors" in detail
 
     def test_anchor_block_missing_file_fail_closed(self, monkeypatch, tmp_path):
+        self._proposal_universe(monkeypatch, tmp_path)
         monkeypatch.setattr(gate_mod, "_ANCHORS_PATH", tmp_path / "no_91.yaml")
         passed, detail = _check(gateway=None, files=[_MAP_REL])
         assert not passed and "锚块提案件不可装载" in detail

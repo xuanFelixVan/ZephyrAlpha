@@ -89,7 +89,7 @@ _MAP_INPUT_EXACT: Final = frozenset(
         "docs/_working/map_build/fig13_daycycle/00_skeleton.md",
         "docs/03_modules/path_ownership_map.yaml",
         "config/trading_decision_map.yaml",
-        "src/zephyr/data/config/resource_profile_registry.yaml",
+        "config/resource_profile_registry.yaml",
     )
 )
 

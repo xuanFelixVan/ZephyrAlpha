@@ -1603,7 +1603,7 @@ gates:
   - config/trading_decision_map.yaml
   - src/zephyr/plan_engine/daily_loop_master_switch.py
   - src/zephyr/data/trading_calendar.py
-  - src/zephyr/data/config/resource_profile_registry.yaml
+  - config/resource_profile_registry.yaml
   - config/dev_delivery_map.yaml
   - scripts/governance/d5_architecture/generators/generate_dev_delivery_map.py
   - scripts/governance/d5_architecture/validators/validate_dev_delivery_map.py
