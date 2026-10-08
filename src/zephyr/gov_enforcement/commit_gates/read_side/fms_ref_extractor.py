@@ -55,7 +55,7 @@ Usage::
     for hit in extract_refs(content):
         ...  # hit.line_no / hit.token / hit.form
 
-# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/r/read_side_fms_ref_extractor.yaml
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/f/fms_ref_extractor.yaml
 """
 
 from __future__ import annotations
