@@ -33,12 +33,18 @@ description: >-
 #   指令 mlflow_run_id→fallback_ref；条目=真实可溯源实验 5 条（4 条 regime_validation 已 completed +
 #   1 条 walk_forward running），性能/检测字段诚实留 null（62 号 §4 原则 6 运行时可空）。
 #   已知 dangling：UNI-BASKET-001 → ✅ 已核销（2026-08-17 AI-REGF-001 补登 universe_registry，证据 logs/c1_repro/basket_data_spec.json；pending_fk 状态翻 resolved）。
+# v1.1.4 changelog(2026-10-09, session st-chiefc-20261009): 图15 CV-HOST 欠账回填——2026-10-06 归档批(014ccf5b18)
+#   迁移卡件的 lives_in/body_fingerprint 路径随迁修正（SECTOR-PRERG-DECK-01 v1 件指向 archive 现位并吸收 v2 statreplay
+#   版本件；T0-CONDITIONAL、T0-MATRIX-VWAP-CEILING 真源件指向 archive 现位，后者补指纹并翻 truth_source_missing=false）；
+#   新登记 CARD-T0-COND-V2 / CARD-T0-COND-V3 / CARD-T0-MATERIAL-DRAFT 三条契约条目；并代登 matrix 车道
+#   已提交在途草案卡 CARD-EXIT-FAMILY-12NODES（st-mx07-W4 件，事实登记 note 留痕）；同字节 archive 孪生件×2
+#   （sector v0/v2）按内收 w5_1 同真源必并归并删除（canonical 现位件 sha256 与在册指纹一致，git 历史零丢失）。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: draft
-version: 1.1.3
+version: 1.1.4
 created: '2026-08-13'
-last_updated: '2026-08-17'
+last_updated: '2026-10-09'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - experiment_id
@@ -1040,8 +1046,8 @@ experiments:
     - 裁定#386
     history_from: '2026-09-24'
     lives_in:
-    - path: docs/_working/t0_revival/t0_conditional_prereg_card.md
-      first_seen: '2026-09-22'
+    - path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
+      first_seen: '2026-09-22'   # 2026-10-06 归档批 014ccf5b18 随迁现位（2026-10-09 st-chiefc 图15 CV-HOST 回填修正）
     credential:
     - seq: 1
       from: draft
@@ -1051,7 +1057,7 @@ experiments:
     verdict_bindings: []
     name_zh: T0-CONDITIONAL
     body_fingerprint:
-      path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+      path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
       content_sha256: c847c3a55f6afc623acbe34a2c5058cf8d6ddf8e8857fcd57f4e4e82ba01c9e3
       frozen_at: null
     claim_fingerprint: null
@@ -1183,13 +1189,16 @@ experiments:
     versions:
     - sector_prereg_exam_cards_v0
     - sector_prereg_exam_cards_v1_frozen
+    - sector_prereg_exam_cards_v2_frozen
     rejudge_used: false
     history_from: '2026-09-24'
     lives_in:
     - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
       first_seen: '2026-09-22'
-    - path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
-      first_seen: '2026-09-23'
+    - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
+      first_seen: '2026-09-23'   # 2026-10-06 归档批 014ccf5b18 随迁现位（2026-10-09 st-chiefc 图15 CV-HOST 回填修正）
+    - path: docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+      first_seen: '2026-09-23'   # v2 版本件（双轴主判已移出）；同字节 archive 孪生件已按内收 w5_1 归并删除
     credential:
     - seq: 1
       from: draft
@@ -1214,17 +1223,17 @@ experiments:
     hypothesis_key: t0_ceiling_capacity
     card_state: frozen
     rejudge_used: false
-    truth_source_missing: true
+    truth_source_missing: false   # 2026-10-09 回填核实：真源件随 014ccf5b18 归档批在 archive 现位实存
     history_from: '2026-09-24'
     lives_in:
-    - path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
-      first_seen: '2026-09-20'
+    - path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+      first_seen: '2026-09-20'   # 2026-10-06 归档批随迁现位（2026-10-09 st-chiefc 图15 CV-HOST 回填修正）
     credential: []
     verdict_bindings: []
     name_zh: T0-MATRIX-VWAP-CEILING
     body_fingerprint:
-      path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
-      content_sha256: null
+      path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+      content_sha256: 4d013a724af0c6a2bc6deda90219d764a9371c33c34e6114b9ef9949548fbcf9
       frozen_at: null
     claim_fingerprint: null
     revived_by: null
@@ -2470,6 +2479,117 @@ experiments:
       frozen_at: '2026-09-22'
     history_from: '2026-09-26'
     frozen_at: '2026-09-22'
+    conclusion_tier: null
+  - experiment_id: CARD-T0-COND-V2
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
+    card_id: T0-COND-V2
+    name_zh: 条件化做T 预注册假设卡 V2（全窗日内往返材料+六段情绪门可用后的双门考试，frozen）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: T0-CONDITIONAL-V2
+    n_eff: unknown
+    hypothesis_key: t0_conditional_v2
+    claim_fingerprint: null
+    status_note: frozen（本卡于任何全窗考试取数之前写死；实验启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+      first_seen: '2026-09-24'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+      content_sha256: 225a91dfcb77fa21ecaa350cab5b6f2a7d23bc24150c04c7cb9392066b02d77e
+      frozen_at: '2026-09-24'
+    history_from: '2026-10-09'
+    frozen_at: '2026-09-24'
+    conclusion_tier: null
+  - experiment_id: CARD-T0-COND-V3
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
+    card_id: T0-COND-V3
+    name_zh: 条件化做T 预注册假设卡 V3（往返身份修正：配对必带 run 维+材料去重+涨跌停可行性，判据零改动）
+    entry_kind: single_hypothesis
+    card_state: frozen
+    family_id: T0-CONDITIONAL-V3
+    n_eff: unknown
+    hypothesis_key: t0_conditional_v3
+    claim_fingerprint: null
+    status_note: frozen（本卡于 V3 考试取数之前写死；启动后任何字段不得改动，改动即作废重开）
+    lives_in:
+    - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+      first_seen: '2026-09-24'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+      content_sha256: a3208f29a5f5c7219e8cf7c2f310ad416d7e1a08454f91abcec274f454ba2cd5
+      frozen_at: '2026-09-24'
+    history_from: '2026-10-09'
+    frozen_at: '2026-09-24'
+    conclusion_tier: null
+  - experiment_id: CARD-T0-MATERIAL-DRAFT
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
+    card_id: T0-MATERIAL-DRAFT
+    name_zh: T0-MATERIAL 做T材料线预注册考试卡（草案，Owner 签发即 frozen）
+    entry_kind: single_hypothesis
+    card_state: draft
+    family_id: T0-MATERIAL
+    n_eff: unknown
+    hypothesis_key: t0_material_exam
+    claim_fingerprint: null
+    status_note: draft_pending_owner（签发即 frozen：签后任何字段不得改动，改动=作废重开；frozen 先于正式取数）
+    lives_in:
+    - path: docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+      first_seen: '2026-09-26'
+    - path: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+      first_seen: '2026-09-26'   # 20260924 战役重建稿（内容有演进，两稿并存待 Owner 签发收敛）
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+      content_sha256: 972ad0f3c9bf3e9a155132b89bf3edeb6ea8e116c2b78bd9c6010d5d2882678f
+      frozen_at: null
+    history_from: '2026-10-09'
+    frozen_at: null
+    conclusion_tier: null
+  - experiment_id: CARD-EXIT-FAMILY-12NODES
+    module_id: MOD-SIM-024   # 预注册卡考试机械真源=过度拟合裁定官（N_eff/rejudge 语义所有者，bizmine 档案实证统一引用）
+    card_id: EXIT-FAMILY-12NODES
+    name_zh: 离场族其余12节点prereg卡草稿（勘察收口版，宁缺毋假）
+    entry_kind: family
+    card_state: draft
+    family_id: null
+    n_eff: unknown
+    hypothesis_key: exit_family_12nodes
+    claim_fingerprint: null
+    status_note: draft
+    note: 代登 by st-chiefc-20261009（matrix-20261007 战役 W4 车道 st-mx07-W4 已提交在途草案件，图15 CV-HOST 欠账回填事实登记；卡主车道后续演进按册→md 方向回改）
+    lives_in:
+    - path: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+      first_seen: '2026-10-08'
+    credential: []
+    rejudge_used: false
+    revives: null
+    revived_by: null
+    derived_from: null
+    verdict_bindings: []
+    body_fingerprint:
+      path: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+      content_sha256: 766a344447b7ee89f9ca072cc5c1f16edba59bba090916117bb125e93a86784c
+      frozen_at: null
+    history_from: '2026-10-09'
+    frozen_at: null
     conclusion_tier: null
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
 pending_fk:

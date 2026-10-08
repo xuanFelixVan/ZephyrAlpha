@@ -9,7 +9,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_strategy_card_lifecycle_map.py
-generated_at: '2026-10-08T01:20:25+08:00'
+generated_at: '2026-10-09T05:35:34+08:00'
 registry_host: experiment_registry
 anchor_source: registry
 anchor_block_origin: docs/01_policies_and_standards/_registry/vocabularies/card_state_vocabulary.yaml
@@ -53,6 +53,7 @@ instance_key_space:
   - ALGO-CAND-MOM-01
   - ALGO-VWAP-03
   - ETFT0-PREREG-CARD
+  - EXIT-FAMILY-12NODES
   - OFI-PREREG-CARD
   - P3-B-EXP-01
   - P3-B-EXP-02
@@ -99,7 +100,10 @@ instance_key_space:
   - PRERG-MOM-01
   - SECTOR-PRERG-DECK-01
   - T-PREREGISTER
+  - T0-COND-V2
+  - T0-COND-V3
   - T0-CONDITIONAL
+  - T0-MATERIAL-DRAFT
   - T0-MATRIX-VWAP-CEILING
   - T0-PRERG-01
   - T0-PRERG-02
@@ -145,8 +149,10 @@ states:
   - D15-G02
   evidence:
   - '`docs/_working/sector_line/sector_prereg_exam_cards_v0.md` frontmatter `status: draft（先于实验落盘；施工开工时冻结为 frozen，冻结后禁改参数）…'
-  instances_observed: 3
-  instances_by_card: []
+  instances_observed: 4
+  instances_by_card:
+  - EXIT-FAMILY-12NODES
+  - T0-MATERIAL-DRAFT
 - state_id: D15-S2
   value: candidate
   map_state: D15-S2
@@ -211,7 +217,7 @@ states:
   - D15-G02
   evidence:
   - '33 张卡的 frontmatter `status: frozen（…）`（§3-A 计数）；模板真源 `factor_mining_sop_policy.md:108` `status: frozen # 启动后不得改动`'
-  instances_observed: 58
+  instances_observed: 57
   instances_by_card:
   - ETFT0-PREREG-CARD
   - OFI-PREREG-CARD
@@ -258,6 +264,8 @@ states:
   - PREREG-SLICE3-PROTOCOL
   - SECTOR-PRERG-DECK-01
   - T-PREREGISTER
+  - T0-COND-V2
+  - T0-COND-V3
   - T0-CONDITIONAL
   - T0-MATRIX-VWAP-CEILING
   - T0-PRERG-01
@@ -1656,12 +1664,12 @@ gaps:
   decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
   note_zh: 89 张卡 / 60 有头 29 无头 / 23 种串 / 0 张在受控词表内
   measured:
-    cards: 108
+    cards: 112
     headed: 70
-    headless: 38
-    distinct_status_strings: 29
+    headless: 42
+    distinct_status_strings: 30
     in_controlled_vocab: 63
-    registered_in_host: 53
+    registered_in_host: 63
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1687,11 +1695,11 @@ gaps:
   decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
   note_zh: 11 条与卡键级交集 0；viability_verdict 11 条全 null
   measured:
-    registry_entries: 67
-    contract_card_entries: 56
+    registry_entries: 71
+    contract_card_entries: 60
     run_entries: 11
-    card_key_intersection_with_corpus: 53
-    viability_verdict_null: 65
+    card_key_intersection_with_corpus: 63
+    viability_verdict_null: 69
     viability_verdict_filled_by:
     - ALGO-VWAP-03
     - PRERG-MOM-01
@@ -1824,12 +1832,8 @@ gaps:
   decision_question: 这一处今天真的在管卡状态吗？它该退役、降级还是保留为视图？
   note_zh: 3 个 production 脚本的 BLUEPRINT 卡锚指向从未入库的两张卡；run 档案整目录 gitignored
   measured:
-    missing_truth_sources:
-    - docs/_working/sector_line/sector_prereg_exam_cards_v0.md
-    - docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
-    - docs/_working/t0_matrix/t0_ceiling_prereg_card.md
-    - docs/_working/t0_revival/t0_conditional_prereg_card.md
-    blueprint_card_anchors: 11
+    missing_truth_sources: []
+    blueprint_card_anchors: 12
   confidence: verified
   verified_scope: structure
   build_status: pending
@@ -1993,7 +1997,7 @@ card_ledger:
   - 裁定#386
   history_from: '2026-09-24'
   lives_in:
-  - path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+  - path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
     first_seen: '2026-09-22'
   credential:
   - seq: 1
@@ -2004,7 +2008,7 @@ card_ledger:
   verdict_bindings: []
   name_zh: T0-CONDITIONAL
   body_fingerprint:
-    path: docs/_working/t0_revival/t0_conditional_prereg_card.md
+    path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
     content_sha256: c847c3a55f6afc623acbe34a2c5058cf8d6ddf8e8857fcd57f4e4e82ba01c9e3
     frozen_at: null
   claim_fingerprint: null
@@ -2136,12 +2140,15 @@ card_ledger:
   versions:
   - sector_prereg_exam_cards_v0
   - sector_prereg_exam_cards_v1_frozen
+  - sector_prereg_exam_cards_v2_frozen
   rejudge_used: false
   history_from: '2026-09-24'
   lives_in:
   - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
     first_seen: '2026-09-22'
-  - path: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
+  - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
+    first_seen: '2026-09-23'
+  - path: docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
     first_seen: '2026-09-23'
   credential:
   - seq: 1
@@ -2167,17 +2174,17 @@ card_ledger:
   hypothesis_key: t0_ceiling_capacity
   card_state: frozen
   rejudge_used: false
-  truth_source_missing: true
+  truth_source_missing: false
   history_from: '2026-09-24'
   lives_in:
-  - path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+  - path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
     first_seen: '2026-09-20'
   credential: []
   verdict_bindings: []
   name_zh: T0-MATRIX-VWAP-CEILING
   body_fingerprint:
-    path: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
-    content_sha256: null
+    path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
+    content_sha256: 4d013a724af0c6a2bc6deda90219d764a9371c33c34e6114b9ef9949548fbcf9
     frozen_at: null
   claim_fingerprint: null
   revived_by: null
@@ -3424,37 +3431,150 @@ card_ledger:
   history_from: '2026-09-26'
   frozen_at: '2026-09-22'
   conclusion_tier: null
+- experiment_id: CARD-T0-COND-V2
+  module_id: MOD-SIM-024
+  card_id: T0-COND-V2
+  name_zh: 条件化做T 预注册假设卡 V2（全窗日内往返材料+六段情绪门可用后的双门考试，frozen）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: T0-CONDITIONAL-V2
+  n_eff: unknown
+  hypothesis_key: t0_conditional_v2
+  claim_fingerprint: null
+  status_note: frozen（本卡于任何全窗考试取数之前写死；实验启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+    first_seen: '2026-09-24'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
+    content_sha256: 225a91dfcb77fa21ecaa350cab5b6f2a7d23bc24150c04c7cb9392066b02d77e
+    frozen_at: '2026-09-24'
+  history_from: '2026-10-09'
+  frozen_at: '2026-09-24'
+  conclusion_tier: null
+- experiment_id: CARD-T0-COND-V3
+  module_id: MOD-SIM-024
+  card_id: T0-COND-V3
+  name_zh: 条件化做T 预注册假设卡 V3（往返身份修正：配对必带 run 维+材料去重+涨跌停可行性，判据零改动）
+  entry_kind: single_hypothesis
+  card_state: frozen
+  family_id: T0-CONDITIONAL-V3
+  n_eff: unknown
+  hypothesis_key: t0_conditional_v3
+  claim_fingerprint: null
+  status_note: frozen（本卡于 V3 考试取数之前写死；启动后任何字段不得改动，改动即作废重开）
+  lives_in:
+  - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+    first_seen: '2026-09-24'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
+    content_sha256: a3208f29a5f5c7219e8cf7c2f310ad416d7e1a08454f91abcec274f454ba2cd5
+    frozen_at: '2026-09-24'
+  history_from: '2026-10-09'
+  frozen_at: '2026-09-24'
+  conclusion_tier: null
+- experiment_id: CARD-T0-MATERIAL-DRAFT
+  module_id: MOD-SIM-024
+  card_id: T0-MATERIAL-DRAFT
+  name_zh: T0-MATERIAL 做T材料线预注册考试卡（草案，Owner 签发即 frozen）
+  entry_kind: single_hypothesis
+  card_state: draft
+  family_id: T0-MATERIAL
+  n_eff: unknown
+  hypothesis_key: t0_material_exam
+  claim_fingerprint: null
+  status_note: draft_pending_owner（签发即 frozen：签后任何字段不得改动，改动=作废重开；frozen 先于正式取数）
+  lives_in:
+  - path: docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+    first_seen: '2026-09-26'
+  - path: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+    first_seen: '2026-09-26'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+    content_sha256: 972ad0f3c9bf3e9a155132b89bf3edeb6ea8e116c2b78bd9c6010d5d2882678f
+    frozen_at: null
+  history_from: '2026-10-09'
+  frozen_at: null
+  conclusion_tier: null
+- experiment_id: CARD-EXIT-FAMILY-12NODES
+  module_id: MOD-SIM-024
+  card_id: EXIT-FAMILY-12NODES
+  name_zh: 离场族其余12节点prereg卡草稿（勘察收口版，宁缺毋假）
+  entry_kind: family
+  card_state: draft
+  family_id: null
+  n_eff: unknown
+  hypothesis_key: exit_family_12nodes
+  claim_fingerprint: null
+  status_note: draft
+  note: 代登 by st-chiefc-20261009（matrix-20261007 战役 W4 车道 st-mx07-W4 已提交在途草案件，图15 CV-HOST 欠账回填事实登记；卡主车道后续演进按册→md
+    方向回改）
+  lives_in:
+  - path: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+    first_seen: '2026-10-08'
+  credential: []
+  rejudge_used: false
+  revives: null
+  revived_by: null
+  derived_from: null
+  verdict_bindings: []
+  body_fingerprint:
+    path: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+    content_sha256: 766a344447b7ee89f9ca072cc5c1f16edba59bba090916117bb125e93a86784c
+    frozen_at: null
+  history_from: '2026-10-09'
+  frozen_at: null
+  conclusion_tier: null
 corpus:
-  n: 108
+  n: 112
   headed: 70
-  headless: 38
-  distinct_status_strings: 29
+  headless: 42
+  distinct_status_strings: 30
   in_controlled_vocab: 63
-  registered: 53
+  registered: 63
   by_token:
     active: 4
-    None: 38
+    None: 42
     候选: 1
-    frozen: 59
+    frozen: 58
     已封卡 SEALED: 1
-    draft: 1
     draft_pending_owner: 2
     LOCK-PENDING: 1
+    draft: 2
     '"sample_cards_ready"': 1
   by_disposition:
     needs_adjudication: 3
-    unmapped_headless: 38
+    unmapped_headless: 42
     map: 63
     non_domain: 2
     unmatched_alias: 2
   by_state: &id001
     candidate: 1
-    draft: 3
-    frozen: 58
+    draft: 4
+    frozen: 57
     sealed: 1
   by_registered_state: &id002
     candidate: 1
-    frozen: 48
+    draft: 3
+    frozen: 55
     red: 2
     sealed: 1
     suspended: 1
@@ -3530,14 +3650,11 @@ corpus:
   family_id_coverage: 48
   n_eff_coverage: 40
   lane_coverage: 61
-  card_id_field_coverage: 53
+  card_id_field_coverage: 63
   duplicate_content_groups:
     3219cc348f59:
     - docs/_working/2026-09-07-tdm-backtest-protocol.md
     - docs/_working/archive/2026-09/c_class_scattered/2026-09-07-tdm-backtest-protocol.md
-    7e1cd8d3d541:
-    - docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
-    - docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
   cards:
   - path: docs/01_policies_and_standards/sop/construction_sop/task_card_work_order_policy.md
     stem: task_card_work_order_policy
@@ -4339,16 +4456,6 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
-  - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
-    stem: sector_prereg_exam_cards_v0
-    mapped_state: draft
-    disposition: map
-    family_id: null
-    n_eff_declared: null
-    sha12: d4922ad65666
-    registered_card_id: null
-    registered_state: null
-    registered: false
   - path: docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
     stem: sector_prereg_exam_cards_v1_frozen
     mapped_state: frozen
@@ -4356,19 +4463,9 @@ corpus:
     family_id: null
     n_eff_declared: null
     sha12: 8dfebf3a6a6f
-    registered_card_id: null
-    registered_state: null
-    registered: false
-  - path: docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
-    stem: sector_prereg_exam_cards_v2_frozen
-    mapped_state: frozen
-    disposition: map
-    family_id: null
-    n_eff_declared: null
-    sha12: 7e1cd8d3d541
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: SECTOR-PRERG-DECK-01
+    registered_state: frozen
+    registered: true
   - path: docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
     stem: t0_ceiling_prereg_card
     mapped_state: frozen
@@ -4376,9 +4473,9 @@ corpus:
     family_id: T0-CEILING
     n_eff_declared: null
     sha12: 4d013a724af0
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: T0-MATRIX-VWAP-CEILING
+    registered_state: frozen
+    registered: true
   - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
     stem: t0_conditional_v2_prereg_card
     mapped_state: frozen
@@ -4386,9 +4483,9 @@ corpus:
     family_id: T0-CONDITIONAL-V2
     n_eff_declared: null
     sha12: 225a91dfcb77
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: T0-COND-V2
+    registered_state: frozen
+    registered: true
   - path: docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
     stem: t0_conditional_v3_prereg_card
     mapped_state: frozen
@@ -4396,9 +4493,9 @@ corpus:
     family_id: T0-CONDITIONAL-V3
     n_eff_declared: null
     sha12: a3208f29a5f5
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: T0-COND-V3
+    registered_state: frozen
+    registered: true
   - path: docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
     stem: t0_conditional_prereg_card
     mapped_state: frozen
@@ -4406,6 +4503,26 @@ corpus:
     family_id: T0-CONDITIONAL
     n_eff_declared: null
     sha12: c847c3a55f6a
+    registered_card_id: T0-CONDITIONAL
+    registered_state: frozen
+    registered: true
+  - path: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_6_desktop_9_cards.md
+    stem: p0_6_desktop_9_cards
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 47aa91d67887
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/audit_cure_night/01_mining/open_questions/p1_handover_cards.md
+    stem: p1_handover_cards
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 574d9bf475cb
     registered_card_id: null
     registered_state: null
     registered: false
@@ -4416,9 +4533,9 @@ corpus:
     family_id: T0-MATERIAL
     n_eff_declared: null
     sha12: 3d7a25d1f00d
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: T0-MATERIAL-DRAFT
+    registered_state: draft
+    registered: true
   - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
     stem: ADJ_prereg_resign_two_round
     mapped_state: null
@@ -4436,9 +4553,9 @@ corpus:
     family_id: T0-MATERIAL
     n_eff_declared: null
     sha12: 972ad0f3c9bf
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: T0-MATERIAL-DRAFT
+    registered_state: draft
+    registered: true
   - path: docs/_working/emotion_line/prereg_exam_cards_v0.md
     stem: prereg_exam_cards_v0
     mapped_state: frozen
@@ -4529,6 +4646,36 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
+  - path: docs/_working/matrix_campaign/mining/cyc_conditional_prereg_v1.md
+    stem: cyc_conditional_prereg_v1
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 0165c441554e
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/matrix_campaign/mining/emotion_index_prereg_and_first_exam_v1.md
+    stem: emotion_index_prereg_and_first_exam_v1
+    mapped_state: null
+    disposition: unmapped_headless
+    family_id: null
+    n_eff_declared: null
+    sha12: 0ab52702f684
+    registered_card_id: null
+    registered_state: null
+    registered: false
+  - path: docs/_working/matrix_campaign/mining/exit_family_12nodes_prereg_draft_v1.md
+    stem: exit_family_12nodes_prereg_draft_v1
+    mapped_state: draft
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: 766a344447b7
+    registered_card_id: EXIT-FAMILY-12NODES
+    registered_state: draft
+    registered: true
   - path: docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md
     stem: hmm_v3_survey_and_prereg_v1
     mapped_state: null
@@ -4579,6 +4726,16 @@ corpus:
     registered_card_id: null
     registered_state: null
     registered: false
+  - path: docs/_working/sector_line/sector_prereg_exam_cards_v0.md
+    stem: sector_prereg_exam_cards_v0
+    mapped_state: draft
+    disposition: map
+    family_id: null
+    n_eff_declared: null
+    sha12: d4922ad65666
+    registered_card_id: SECTOR-PRERG-DECK-01
+    registered_state: frozen
+    registered: true
   - path: docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
     stem: sector_prereg_exam_cards_v2_frozen
     mapped_state: frozen
@@ -4586,9 +4743,9 @@ corpus:
     family_id: null
     n_eff_declared: null
     sha12: 7e1cd8d3d541
-    registered_card_id: null
-    registered_state: null
-    registered: false
+    registered_card_id: SECTOR-PRERG-DECK-01
+    registered_state: frozen
+    registered: true
   - path: docs/_working/ultimate_library/b_batch_sample_cards.md
     stem: b_batch_sample_cards
     mapped_state: null
@@ -4693,13 +4850,13 @@ counts:
   total_edges: 30
   terminal_states: 4
   production: 13
-  cards_total: 108
+  cards_total: 112
   by_state: *id001
   registered_by_state: *id002
-  registered_entries_in_ledger: 56
-  corpus_files_registered: 53
-  unregistered_declarable: 10
-  state_undeclared_headless: 38
+  registered_entries_in_ledger: 60
+  corpus_files_registered: 63
+  unregistered_declarable: 0
+  state_undeclared_headless: 42
   needs_adjudication: 3
   unmatched_alias: 2
   non_domain_excluded: 2
@@ -4724,19 +4881,9 @@ counts:
     forbidden: 13
   in_register_rulings: 0
   uncited_rulings: []
-  pending_registration: 10
+  pending_registration: 0
 pending_registration:
-  unregistered_declarable:
-  - docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v0.md
-  - docs/_working/archive/2026-10/sector_line/sector_prereg_exam_cards_v1_frozen.md
-  - docs/_working/archive/2026-10/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
-  - docs/_working/archive/2026-10/t0_matrix/t0_ceiling_prereg_card.md
-  - docs/_working/archive/2026-10/t0_matrix/t0_conditional_v2_prereg_card.md
-  - docs/_working/archive/2026-10/t0_matrix/t0_conditional_v3_prereg_card.md
-  - docs/_working/archive/2026-10/t0_revival/t0_conditional_prereg_card.md
-  - docs/_working/decision_map_campaign/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
-  - docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
-  - docs/_working/sector_line/statreplay/sector_prereg_exam_cards_v2_frozen.md
+  unregistered_declarable: []
   state_undeclared_headless:
   - docs/_working/2026-09-07-tdm-backtest-protocol.md
   - docs/_working/2026-09-15-neff-estimator-preregistration.md
@@ -4762,6 +4909,8 @@ pending_registration:
   - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  - docs/_working/audit_cure_night/01_mining/desktop_lists/p0_6_desktop_9_cards.md
+  - docs/_working/audit_cure_night/01_mining/open_questions/p1_handover_cards.md
   - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
   - docs/_working/external_audit_mastertc/lane_g_open53_cards.md
   - docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
@@ -4769,6 +4918,8 @@ pending_registration:
   - docs/_working/fullflow_chief_closeout/chief_lease_protocol.md
   - docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
   - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+  - docs/_working/matrix_campaign/mining/cyc_conditional_prereg_v1.md
+  - docs/_working/matrix_campaign/mining/emotion_index_prereg_and_first_exam_v1.md
   - docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
@@ -4815,6 +4966,8 @@ pending_registration:
   - docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a2_wave1_card.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
   - docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  - docs/_working/audit_cure_night/01_mining/desktop_lists/p0_6_desktop_9_cards.md
+  - docs/_working/audit_cure_night/01_mining/open_questions/p1_handover_cards.md
   - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
   - docs/_working/external_audit_mastertc/lane_g_open53_cards.md
   - docs/_working/fullcirc_closeout_chief/l5_project_cards_20261006.md
@@ -4824,6 +4977,8 @@ pending_registration:
   - docs/_working/fullscore_night/03_integrated_backtest/prereg_v2.md
   - docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md
   - docs/_working/map_build/22_fig15_card_lifecycle_charter.md
+  - docs/_working/matrix_campaign/mining/cyc_conditional_prereg_v1.md
+  - docs/_working/matrix_campaign/mining/emotion_index_prereg_and_first_exam_v1.md
   - docs/_working/matrix_campaign/mining/hmm_v3_survey_and_prereg_v1.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
   - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
