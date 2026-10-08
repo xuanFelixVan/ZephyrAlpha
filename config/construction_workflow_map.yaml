@@ -823,10 +823,10 @@ nodes:
   - 2026-09-24 骨架 §1 D14-12 行 + 簿02 §4：d8_doc_sync 三件实测在盘；两目标件在 archive 不在原目录
   - 2026-09-25 本车道只读复跑：TTL-METADATA / FILE-PLACEMENT-TTL 在册；三件规则锚符号命中
   module_id: MOD-INF-005
-  module_ref: scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  module_ref: scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
   source_anchors:
   - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md#step-7-更新施工文档
-  - scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  - scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
   - scripts/governance/d8_doc_sync/update_progress.py
   - scripts/governance/d8_doc_sync/auto_sync_all_registries.py
   - gate:TTL-METADATA
@@ -842,12 +842,12 @@ nodes:
   runtime_refs: []
   verifiability: inspection
   anchor_kind: script
-  exec_source: script:scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  exec_source: script:scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
   gates:
   - TTL-METADATA
   - FILE-PLACEMENT-TTL
   executable:
-  - scripts/governance/d8_doc_sync/validate_document_lifecycle.py
+  - scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py
   - scripts/governance/d8_doc_sync/update_progress.py
   - scripts/governance/d8_doc_sync/auto_sync_all_registries.py
   cli_anchors: []
