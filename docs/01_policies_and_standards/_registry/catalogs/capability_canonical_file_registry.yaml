@@ -64021,4 +64021,45 @@ creation_tokens:
   capability: l4_portfolio_v0
   merge_evaluation: "MOD-PA-034 蓝图（与 PA-002/PA-003/MOD-POS-021 分工声明在册），同源非第二真源"
 
+- file: docs/_working/audit_cure_night/02_lanes/R_recover_workbook.md
+  token: acure-lane-r-r-recover-workbook-20261007
+  capability: acure_lane_r
+  created_by: st-acure-r1
+  merge_evaluation: "死袋复活车道作业簿（裁定#490），task_bound 随车道归档退役；跨域不同对象不并"
+- file: docs/_working/fullcirc_closeout_chief/truedel_20261006.md
+  token: fullcirc-closeout-chief-truedel-20261006-20261008
+  capability: truedel_20261006
+  created_by: st-tclose-truedel-20261006
+  merge_evaluation: "真删三卡收尾报告（C267/C109/C410）：唯一交付面，无替代旧条目；Owner 2026-10-06 批真删三同意的执行留痕，删后即终态不再增长"
+- file: scripts/ch/apply_hfq_lineage_engine_upgrade.py
+  token: hfq-lineage-engine-upgrade-apply-20261008
+  capability: ch_ddl_orchestration
+  created_by: st-tclose-rootcure-20261006
+  merge_evaluation: "净零：替代 C121 呈批卡 A 案零散 ALTER（L5 workbook 内嵌稿），一件编排器承载补列+升引擎+回滚全口径"
+- file: docs/_working/tail3/00_orchestration.md
+  token: tail3-workbook-00-orchestration-20261007
+  created_by: st-tail3-20261008
+  capability: tail3_workbook
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
+- file: docs/_working/tail3/lane_a_casebook/00_workbook.md
+  token: tail3-workbook-00-workbook-20261007
+  created_by: st-tail3-20261008
+  capability: tail3_workbook
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
+- file: docs/_working/tail3/lane_b_dedup/00_workbook.md
+  token: tail3-workbook-00-workbook-20261007
+  created_by: st-tail3-20261008
+  capability: tail3_workbook
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
+- file: docs/_working/tail3/ops/00_workbook.md
+  token: tail3-workbook-00-workbook-20261007
+  created_by: st-tail3-20261008
+  capability: tail3_workbook
+  merge_evaluation: "tail3 三车道作业簿，任务结束随袋归档，无并存真源"
+- file: scripts/backtest/fexam/paper_pool_gate.py
+  token: paper-pool-gate-paper-pool-gate-20261007
+  created_by: st-mx07-L11
+  capability: paper_pool_gate
+  merge_evaluation: "跨域不同对象不并：paper池进池判据门（裁定489③三线AND+聚合层Bonferroni/DSR校正），与factor_pool_manager池内管理/bhy_fdr入池FDR无交集"
+
 di_seam_exemptions: []
