@@ -68040,3 +68040,43 @@ entries:
   desc_en: ""
   plain_zh: "把三张后复权行情表（日/周/月）从裸ReplacingMergeTree升到带血缘版本参数的ReplacingMergeTree，让裁定口径数据在引擎层判赢；先补列再影子表重建最后原子换名，默认只打印计划，加--yes才执行，出事可一键换名回滚"
   responsibility_layer: business
+- module_path: src/zephyr/factor/wq_alpha_87_wiring.py
+  domain_id: D_FACTOR
+  name_zh: "WQ87 因子接线件"
+  name_en: "WQ87 factor wiring"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把87个WorldQuant公式批量装进因子注册表，让考试链能按名字取用并算出IC成绩；接线动作幂等可重跑，撞名即报错不顶替"
+  responsibility_layer: business
+- module_path: scripts/backtest/sector_surface.py
+  domain_id: D_BACKTEST
+  name_zh: "板块强度四路面板"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把每只股票按行业分堆，算出每个行业每天强不强（四路：涨停结构、成交活跃度、多日动量、资金流），合成 0-100 的行业强度分并挑出最强的前 15%%，再给回测引擎当'强板块给个股加分/弱板块打折'的弹药；只读数据不改任何账。"
+  responsibility_layer: business
+- module_path: scripts/backtest/t0_material_line_fast.py
+  domain_id: D_BACKTEST
+  name_zh: "做T材料线路径并行核"
+  name_en: "T0 material line path-parallel core"
+  desc_zh: "材料线建模循环的 numba 路径并行加速核（resample reduceat + M0 逐路径扫描），同语义复刻 t0_material_line.run_model_m0，判据复用 cost_trio_exam"
+  desc_en: ""
+  plain_zh: "原来做T材料线给全市场算语料要一个票一个票地慢慢算，要跑一天。这个工具把每只票每天的计算改成同时一起算，快了很多倍。算出来的结果和老方法一模一样（逐位核对过），判分规则完全没动。"
+  responsibility_layer: business
+- module_path: scripts/backtest/t0_material_line_parity.py
+  domain_id: D_BACKTEST
+  name_zh: "材料线路径并行对拍harness"
+  name_en: "T0 material line parity harness"
+  desc_zh: "legacy 逐日循环 vs 路径并行核的逐位对拍+计时对比 harness（索引注入法），fast 切挂前后回归通道"
+  desc_en: ""
+  plain_zh: "这个工具专门验证快版和慢版算材料线的结果是不是完全一样。它把同一份数据喂给两个版本，一格一格对答案，还顺手计时看快版到底快了多少。每次改动快版后跑一遍它就知道有没有改坏。"
+  responsibility_layer: business
+- module_path: scripts/backtest/fexam/conditional_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "CYC族条件变量考场检验器"
+  name_en: "conditional_exam"
+  desc_zh: "相位分层+层间HAC检验+Bonferroni校正的条件增益考试（预注册卡判据冻结实现）"
+  desc_en: ""
+  plain_zh: "这个脚本给CYC族四个循环类指标办一场条件变量考试：先看20日动量基线活不活，再把每天全市场股票按各指标的相位值分成几层，比较不同层里动量的预测力差异大不大。用统计学检验（层间差值的HAC检验再乘11做校正）判断这个指标有没有资格当策略的分层开关。跑一次就定生死，结果写进分数册，考官规则全部来自预注册卡禁止临场改。"
+  responsibility_layer: business

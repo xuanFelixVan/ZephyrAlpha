@@ -64306,4 +64306,29 @@ creation_tokens:
   capability: matrix_campaign_mining
   created_by: st-mx07-W6
   merge_evaluation: "W6 车道接线任务卡指定留档册（核出处/接线点/验证读数），战役挖矿簿系同域归档，非新真源"
+- file: scripts/backtest/t0_material_line_fast.py
+  token: t0mat-fast-core-20261008
+  capability: t0_material_line_path_parallel
+  created_by: st-mx07-W1
+  merge_evaluation: "材料线建模循环路径并行加速核（裁定#489⑤ W1：numba prange 逐路径核+numpy reduceat 兜底+批式管线）；M0 语义真源仍是 t0_material_line.run_model_m0（逐标量复刻零改动），判据真源 cost_trio_exam 未触碰，无替代对象"
+- file: scripts/backtest/t0_material_line_parity.py
+  token: t0mat-parity-20261008
+  capability: t0_material_line_path_parallel
+  created_by: st-mx07-W1
+  merge_evaluation: "材料线路径并行对拍+计时 harness（索引注入法：同一规范化 df 注入两路径逐位比对+Decimal 边界披露段）；fast 切挂前后回归通道，无替代对象"
+- file: docs/_working/matrix_campaign/mining/t0_material_line_parallel_v1.md
+  token: matrix-w1-t0mat-parallel-doc-20261008
+  capability: matrix_campaign_mining
+  created_by: st-mx07-W1
+  merge_evaluation: "W1 车道任务卡指定留档册（profile 读数/对拍读数/耗时对比/切挂点/回滚口径/语义缝自裁），战役挖矿簿系同域归档，非新真源"
+- file: docs/_working/matrix_campaign/mining/sector_propagation_wiring_v1.md
+  token: sector-wiring-doc-sector-propagation-wiring-v1-20261008
+  created_by: st-mx07-W5
+  capability: sector_wiring_doc
+  merge_evaluation: "W5 板块接线施工留档册（勘察+四路真源锚+单测/真数对拍读数+自裁+遗留）：task_bound 战役文档非第二真源，替代无"
+- file: docs/_working/fexam/indicator_conditional_exam_scores_v1.yaml
+  token: conditional-exam-cyc-scores-indicator-conditional-exam-scores-v1-20261008
+  created_by: st-mx07-W3
+  capability: conditional_exam_cyc_scores
+  merge_evaluation: "新增 CYC 族条件变量考场一次窗口分数册（考试窗+参照窗全读数/N_fam=11 解盲前冻结/逐对 HAC+Bonferroni/verdict 逐项；schema=预注册卡 §9.3 冻结；判死真源）"
 di_seam_exemptions: []
