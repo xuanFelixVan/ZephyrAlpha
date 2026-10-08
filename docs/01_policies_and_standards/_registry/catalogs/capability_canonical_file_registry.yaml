@@ -64228,4 +64228,29 @@ creation_tokens:
   capability: source_line_criterion
   created_by: st-fullflow2-20261008
   no_mount_reason: 源线判据件（design，落码未挂图）：消费方=TDM-E-L9-A09 财经快讯情绪，module_ref 挂载待总裁终裁批（先例 MOD-SIG-156/157 同款落码不落图），挂图申报随终裁批补报
+- file: docs/_working/map_census/03_open_day_recheck_20261008.md
+  token: fig13-open-day-recheck-03-open-day-recheck-20261008-20261008
+  created_by: st-fig13-followup-20261006
+  capability: fig13_open_day_recheck
+  merge_evaluation: "10-08开市三复核报告：线A交付物"
+- file: docs/_working/map_census/03_quarterly_red_report_v1.md
+  token: fig13-quarterly-red-report-03-quarterly-red-report-v1-20261008
+  created_by: st-fig13-followup-20261006
+  capability: fig13_quarterly_red_report
+  merge_evaluation: "季度三红首报判据承c2簿真源"
+- file: docs/_working/fig13_followup/c1_trigger_facts_realdata_plan.md
+  token: fig13-followup-books-c1-trigger-facts-realdata-plan-20261008
+  created_by: st-fig13-followup-20261006
+  capability: fig13_followup_books
+  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/fig13_followup/c2_quarterly_ledger_criteria.md
+  token: fig13-followup-books-c2-quarterly-ledger-criteria-20261008
+  created_by: st-fig13-followup-20261006
+  capability: fig13_followup_books
+  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
+- file: docs/_working/fig13_followup/c2_unknown83_classification.csv
+  token: fig13-followup-books-c2-unknown83-classification-20261008
+  created_by: st-fig13-followup-20261006
+  capability: fig13_followup_books
+  merge_evaluation: "线C挖矿两簿+清洗csv判据真源唯一化"
 di_seam_exemptions: []
