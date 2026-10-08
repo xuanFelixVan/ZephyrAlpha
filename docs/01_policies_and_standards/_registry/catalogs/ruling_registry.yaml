@@ -4348,3 +4348,29 @@ entries:
   superseded_by: null
   approved_paths:
   - architecture_model/module_id_registry.yaml
+- ruling_id: "裁定#492"
+  date: "2026-10-08"
+  title: 勘误：图书馆施工簿（s3_library_step2.md）引用"裁定#460②"错位——#460 在册实为 auto_mount V2 定版，图书馆面授权真源=#398-七+#399-四
+  category: 流程
+  status: active
+  summary: |-
+    全流通总包交接令 R8（st-fullflow2-20261008）登记勘误：图书馆总口审计闭环施工簿
+    （docs/_working/total_circulation_night/s3_library_step2.md，A4 车道 st-circ-a4-20260930，
+    标题与正文两处）引用"裁定#460②"作为施工授权锚——册面核实 裁定#460 实为"t0 甲位三版本
+    定版：auto_mount.py V2 为唯一真源（Z-C1 收口）"（2026-09-30，架构类），全条无图书馆/
+    lookup/landing 语义，②号子步亦非图书馆授权位。图书馆面真实授权链：裁定#398-七
+    （2026-09-22，"图书馆宪法挂图——方案批准（等长一行入口进宪法 §6 检索序，指向
+    zephyr.library.lookup）"）+裁定#399-四（"#398 余项全批准确认：…图书馆宪法挂图（批准
+    生效可落地）"）。原会话已故无法追补正引，本条代追补：s3_library_step2.md 的授权锚
+    应读作"#398-七（经 #399-四确认）"，其施工成果本身（lookup --session 审计/copilot
+    指针/能力卡#45/SOP 第四口）不经本勘误动摇——授权锚错位不影响成果效力，仅正引归位。
+    教训留档：施工簿标题引用裁定号前须 grep ruling_registry 册面核实号段语义（同病先例：
+    #376 勘误"原称 #304 系撞号前旧口径"、standards.yaml 错引 #335→#337 随批修正）。
+  affected_files:
+  - docs/_working/total_circulation_night/s3_library_step2.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings: ["裁定#460", "裁定#398", "裁定#399"]
+  superseded_by: null
+  approved_paths:
+  - docs/_working/total_circulation_night/s3_library_step2.md

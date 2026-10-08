@@ -10264,3 +10264,14 @@ entries:
   description: Owner 2026-10-07 夜令直接授权检票钩子 .zcode 入库（L0 全程卡+序页+检票锚点等全套说明书已建成入袋）。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即本批正门标记的登记载体（#ARCH-360 同款先例）：本批 commit message 挂 [ARCH-APPROVAL:#ARCH-381]，审批真源=Owner 夜令原文（2026-10-07 总包会话在案），gate 逃生审计+本登记双留痕。 内容=.gitignore 根白名单 +!.zcode/（合法根目录计数 13→14）+ .zcode/config.json（ZCode workspace hooks：PreToolUse 进场检票接线，本机盘面已实证生效）。
   last_updated: "2026-10-07"
   related_rulings: []
+- issue_id: "#ARCH-TRD-A10"
+  owner: Owner（真源=17号文工单族 TRD-A10 批文+观察窗清单，全文见 docs/02_enterprise_architecture 纵向图 TRD-A10 锚族；本条=st-fullflow2-20261008 按 REFERENCE-INTEGRITY [ARCH-REFERENCE] 门处方补登记，非新立议题）
+  title: TRD-A10 模拟盘观察窗与 qmt 桥客户端两缺陷（议题册缺条补登记——裁定#449 related_arch 悬空引用归位）
+  status: in_progress
+  created: "2026-10-08"
+  category: trade
+  severity: P2中
+  description: "议题实体在册外文档族长期存在而议题册缺条，致 REFERENCE-INTEGRITY 门对裁定册任意 diff 报 ARCH_ATOMICITY_VIOLATION（st-fullflow2 R8 勘误批实测触发）。已知锚面：①桥客户端两缺陷共用真源 bridge_instruction_kernel.py（该件已经裁定#449 终局销账=选 c 墓碑葬，B7 超集 78982c4c81 为事实终态）；②模拟盘观察窗台账（30 交易日幽灵单归零）+沙箱 v16→v17 换版 runbook+幽灵单日哨兵（full_project_tree_zh/en TRD-A10 锚族）；③复现用例 test_bridge_instruction_kernel_trd_a10.py（真源判据=17号文§四）。登记范围=既有事实归位，零行为变更；观察窗关闭判读仍归 Owner 工单窗。"
+  last_updated: "2026-10-08"
+  related_rulings:
+  - 裁定#449
