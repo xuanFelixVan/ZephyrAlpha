@@ -56,8 +56,56 @@ sit_out_list 禁做清单/kill_switch 熔断）合成收拢为 c1_backtest.decis
 
 参数草案声明（裁定#305 第 1/3 点，标注可调，Owner 终裁后改常量+跑测试）：
     六段预算带=TDM-F-C1 注释值（全 proposed）；过渡带=最大隶属度<60% 折减×0.5（0.5-0.7
-    带内取保守下缘）；硬顶=60%（RLM-CONCENTRATION-002）；regime→六段映射已切法定真源
-    （2026-09-25 附录C 六步之第 3 步，r4/r2/r1 三键行为变化由对照测试快照钉住）。
+    带内取保守下缘）；硬顶=30%（裁定#429 2026-09-29 Owner 数字确认签发，原草案 60% 已废）；
+    regime→六段映射已切法定真源（2026-09-25 附录C 六步之第 3 步，r4/r2/r1 三键行为变化
+    由对照测试快照钉住）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 业务日
+#   fields: day（业务日，缺省=交易日历旁证最近交易日）
+#   code: run_daily_decision(day)
+# - id: I2
+#   name: 一闸快照
+#   fields: daily_gate_snapshot（前置闸状态，D1-D7 判定门输入）
+#   code: DailyGateSnapshot
+# - id: I3
+#   name: 持仓与市场状态
+#   fields: 持仓行/regime 六段（DB 只读，resolve_reader 注入）
+#   code: resolve_reader
+# - id: I4
+#   name: TDM 配置查表
+#   fields: trading_decision_map.yaml（只读）
+#   code: PyYAML load
+# 层: 校验
+# - id: V1
+#   name: marker 幂等拍板
+#   fields: 业务日级 marker 先拍板先占（S6）；同日重唤醒跳过
+#   code: marker 段
+# 层: 算法
+# - id: A1
+#   name: 快照落库
+#   intro: decision_daily 快照只增不改（重拍=新 run_id 追加）
+#   code: 快照写入段
+# - id: A2
+#   name: D1-D7 判定门收敛
+#   intro: 七门全收敛=禁新开仓/维持现状；任一门按其语义处置
+#   code: D1-D7 判定段
+# - id: A3
+#   name: 合成拍板
+#   intro: 只读齐→合成拍板→落库分发（调度器不是策略，零新增判断逻辑）
+#   code: 合成拍板段
+# 层: 输出
+# - id: O1
+#   name: 落库分发
+#   fields: decision_daily 行+pipeline_events 播报+warroom 读侧
+#   code: 写通道段
+# 层: 断点
+# - id: X1
+#   name: 自身异常 fail-open
+#   intro: 不留半行（D7）；保命件横切独立不削弱
+#   code: 异常处置段
 """
 
 from __future__ import annotations
@@ -70,6 +118,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Final
 
+from zephyr.data.table_registry import get_registry
 from zephyr.pf_alloc.allocation_inputs import resolve_reader, validate_date_literal
 from zephyr.strategy_pipeline.daily_gate_snapshot import (
     collect_gate_snapshot,
@@ -92,12 +141,12 @@ __all__: Final = [
 ]
 
 # ── 口径常量（草案值 v0，裁定#305 标可调）─────────────────────────────────
-ORCHESTRATOR_KIND: Final = "daily_decision"          # marker 幂等键前缀（不建事件 kind，蓝图 §三.3）
-ORCHESTRATOR_PREFIX: Final = "[DAILY-DECISION]"      # 播报稳定前缀（对齐 REGIME_SNAPSHOT_PREFIX 先例）
+ORCHESTRATOR_KIND: Final = "daily_decision"  # marker 幂等键前缀（不建事件 kind，蓝图 §三.3）
+ORCHESTRATOR_PREFIX: Final = "[DAILY-DECISION]"  # 播报稳定前缀（对齐 REGIME_SNAPSHOT_PREFIX 先例）
 SCHEMA_VERSION: Final = "v1"
-HARD_CAP: Final = 0.60                # 总仓位硬顶（RLM-CONCENTRATION-002；裁定#305 第 3 点草案）
-TRANSITION_THRESHOLD: Final = 0.60    # 过渡带阈值：最大隶属度 <60%（TDM-F-C1 注记；裁定#305 第 1 点草案）
-TRANSITION_FACTOR: Final = 0.5        # 过渡带折减（0.5-0.7 带内取保守下缘；裁定#305 第 3 点草案）
+HARD_CAP: Final = 0.30  # 总仓位硬顶（裁定#429 2026-09-29 Owner 数字确认签发 0.60→0.30；config/position_parameters.yaml confirmed 同源）
+TRANSITION_THRESHOLD: Final = 0.60  # 过渡带阈值：最大隶属度 <60%（TDM-F-C1 注记；裁定#305 第 1 点草案）
+TRANSITION_FACTOR: Final = 0.5  # 过渡带折减（0.5-0.7 带内取保守下缘；裁定#305 第 3 点草案）
 # 六段预算带（TDM-F-C1 节点注释值，全 proposed；capitulation 0-10%/accumulation 20-30%/
 # ignition 30-50%/expansion 50-70%/euphoria ≤30% 只卖不买/distribution 0% 空仓）
 BUDGET_BANDS: Final[dict[str, tuple[float, float]]] = {
@@ -120,10 +169,10 @@ BUDGET_BANDS: Final[dict[str, tuple[float, float]]] = {
 # "无已毕业包，今日不出手"安全态；毕业通道接电后由工厂考试台账喂入，禁手填）
 GRADUATED_PACKAGES: Final[frozenset[str]] = frozenset()
 # 日历哨兵（蓝图 §三续期机制三层；裁定#305 第 4 点：N=3）
-CALENDAR_LEAD_TRADING_DAYS: Final = 10   # 表尾距 target 提前量 <10 交易日 → calendar_stale 哨兵
-DATA_PROVEN_ESCALATE_N: Final = 3        # 连续 data_proven 运行 N 日 → 升级告警
+CALENDAR_LEAD_TRADING_DAYS: Final = 10  # 表尾距 target 提前量 <10 交易日 → calendar_stale 哨兵
+DATA_PROVEN_ESCALATE_N: Final = 3  # 连续 data_proven 运行 N 日 → 升级告警
 _TDM_CONFIG: Final = "config/trading_decision_map.yaml"
-_STATE_NODE: Final = "TDM-E-L1"          # state_matrix 溯源节点（L1 总闸）
+_STATE_NODE: Final = "TDM-E-L1"  # state_matrix 溯源节点（L1 总闸）
 _PENDING_ADOPTION: Final = "pending-owner-adoption"
 
 Reader = Callable[[str], Any]
@@ -152,31 +201,47 @@ class LegCtx:
     degrade: list[str]
     notes: list[str]
 
+
 # SQL 模板（NO-BARE-SQL：_SQL_ 前缀常量；{date} 由 validate_date_literal 校验后方可入 SQL；
 # 表名经 TableRegistry 真源解析（#ARCH-CH-024 禁硬编码字面量），解析失败=日历通道故障走
 # data_proven/休眠分叉，不携带 fallback 字面量绕真源）
 _CAL_CATEGORY: Final = "market_trade_calendar"
-_SQL_CAL_DAY: Final = ("SELECT cal_date FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
-                       "WHERE is_open = 1 AND cal_date = '{date}' LIMIT 1")
-_SQL_CAL_NEXT: Final = ("SELECT min(cal_date) FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
-                        "WHERE is_open = 1 AND cal_date > '{date}'")
-_SQL_CAL_PREV: Final = ("SELECT max(cal_date) FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
-                        "WHERE is_open = 1 AND cal_date < '{date}'")
-_SQL_CAL_LEAD: Final = ("SELECT count() FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
-                        "WHERE is_open = 1 AND cal_date > '{date}'")
+_SQL_CAL_DAY: Final = (
+    "SELECT cal_date FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
+    "WHERE is_open = 1 AND cal_date = '{date}' LIMIT 1"
+)
+_SQL_CAL_NEXT: Final = (
+    "SELECT min(cal_date) FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
+    "WHERE is_open = 1 AND cal_date > '{date}'"
+)
+_SQL_CAL_PREV: Final = (
+    "SELECT max(cal_date) FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
+    "WHERE is_open = 1 AND cal_date < '{date}'"
+)
+_SQL_CAL_LEAD: Final = (
+    "SELECT count() FROM {cal_table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
+    "WHERE is_open = 1 AND cal_date > '{date}'"
+)
 # P2b 场景引擎联测读口（判定台账标准 §三表 3：预案+盘中/EOD 验证事实，只读）
+_TBL_PLAN_VERIFY: Final = get_registry().table(
+    "judgment_plan_verification"
+)  # #ARCH-CH-024 TableRegistry 真源派生（品类 business_data_categories.yaml 在册）
 _SQL_SCENARIO_PLAN: Final = (
     "SELECT plan_date, payload FROM c1_market.judgment_daily_plan "  # noqa: bare-sql  模块级 _SQL_ 前缀常量真源(P2b 台账只读模板)
-    "WHERE plan_date = '{date}' ORDER BY asof_ts DESC LIMIT 1")
-_SQL_SCENARIO_VERIFY: Final = ("SELECT data_date, actual_scenario_id, scenario_hits, verified_by "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
-                               "FROM c1_market.judgment_plan_verification "
-                               "WHERE data_date = '{date}' ORDER BY ingest_ts DESC LIMIT 1")
+    "WHERE plan_date = '{date}' ORDER BY asof_ts DESC LIMIT 1"
+)
+_SQL_SCENARIO_VERIFY: Final = (
+    "SELECT data_date, actual_scenario_id, scenario_hits, verified_by "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
+    "FROM " + _TBL_PLAN_VERIFY + " "
+    "WHERE data_date = '{date}' ORDER BY ingest_ts DESC LIMIT 1"
+)
 # T4 盘后核对读口（TRD-A17 最小实体化：计划=decision_daily 当日最新 run 行（schema
 # SQL_LATEST_BY_TARGET_DATE 唯一真源）；实际=sim_trade_log 当日 entry/exit 事件计数。
 # 全程 DB 只读——核对行不落库，经既有播报链出声+返回值交付）
 _SQL_SIM_TRADE_ACTUAL: Final = (
     "SELECT action, count() FROM {table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
-    "WHERE trade_date = '{date}' GROUP BY action")
+    "WHERE trade_date = '{date}' GROUP BY action"
+)
 
 
 # ── 记号（业务日级先拍板先占，蓝图 S6；与 pipeline_events AUDIT_MARKER 分文件防互踩）──
@@ -211,33 +276,42 @@ def _touch_marker(day: str, run_id: str, marker_dir: Path | str | None = None) -
 
 
 # ── S1 日历（三层：trade_calendar 真源 / XSHG 旁证 / 行情实证，蓝图 §三续期机制）──
-def _scalar1(sql: str, reader: Reader) -> Any:
+def _scalar1(sql: str, reader: Reader) -> str | None:  # cal_date 标量（消费面只用真值+str()；ANY-2 精确化）
     rows = list(resolve_reader(reader)(sql))
     return rows[0][0] if rows and rows[0] else None
-
-
-
 
 
 def _xshg_probe(xshg_fn: Callable[[str], bool] | None, day: str) -> tuple[bool, str]:
     """XSHG 旁证探测：返回（是否开市, 错误留痕）。旁证不可用=如实留痕不猜。"""
     if xshg_fn is None:
+
         def xshg_fn(d: str) -> bool:
             from zephyr.data.trading_calendar import is_trading_day
 
             return is_trading_day(__import__("datetime").date.fromisoformat(d))
+
     try:
         return bool(xshg_fn(day)), ""
     except Exception as exc:  # noqa: BLE001 — 旁证不可用如实留痕
         return False, type(exc).__name__
 
 
-def _cal_state_base(day: str, cal_table: str | None, rd: Reader, xshg_open: bool,
-                    xshg_err: str, data_proven: bool) -> dict[str, Any]:
+def _cal_state_base(
+    day: str, cal_table: str | None, rd: Reader, xshg_open: bool, xshg_err: str, data_proven: bool
+) -> dict[str, Any]:
     """S1 基态：真源行 × 旁证 × 行情实证 → 正常/data_proven 降级/休眠三态。"""
-    out: dict[str, Any] = {"source": "trade_calendar", "target_date": None, "prev_day": None,
-                           "degraded": 0, "ambiguous": 0, "stale": 0, "lead_days": None,
-                           "sleep": 0, "xshg_open": xshg_open, "xshg_error": xshg_err}
+    out: dict[str, Any] = {
+        "source": "trade_calendar",
+        "target_date": None,
+        "prev_day": None,
+        "degraded": 0,
+        "ambiguous": 0,
+        "stale": 0,
+        "lead_days": None,
+        "sleep": 0,
+        "xshg_open": xshg_open,
+        "xshg_error": xshg_err,
+    }
     cal_row = None
     if cal_table:
         try:
@@ -258,8 +332,7 @@ def _cal_state_base(day: str, cal_table: str | None, rd: Reader, xshg_open: bool
     return out
 
 
-def _cal_target(day: str, cal_table: str | None, rd: Reader, xshg_open: bool,
-                out: dict[str, Any]) -> None:
+def _cal_target(day: str, cal_table: str | None, rd: Reader, xshg_open: bool, out: dict[str, Any]) -> None:
     """次交易日解析（warroom 同款口径 is_open=1 且 >数据日 LIMIT 1）；缺→XSHG 旁证找次会话。"""
     if not cal_table:
         out["ambiguous"] = 1
@@ -275,12 +348,14 @@ def _cal_target(day: str, cal_table: str | None, rd: Reader, xshg_open: bool,
     try:
         lead = list(resolve_reader(rd)(_SQL_CAL_LEAD.format(cal_table=cal_table, date=day)))[0][0]
         if not lead and xshg_open:
-            from zephyr.data.trading_calendar import trading_days_in_range
             import datetime as _dt
+
+            from zephyr.data.trading_calendar import trading_days_in_range
 
             sessions = trading_days_in_range(
                 _dt.date.fromisoformat(day) + _dt.timedelta(days=1),
-                _dt.date.fromisoformat(day) + _dt.timedelta(days=30))
+                _dt.date.fromisoformat(day) + _dt.timedelta(days=30),
+            )
             if sessions:
                 out["target_date"] = sessions[0].isoformat()
                 out["degraded"] = 1
@@ -302,8 +377,7 @@ def _cal_sentinel(day: str, cal_table: str | None, rd: Reader, out: dict[str, An
     except Exception:  # noqa: BLE001
         pass
     try:
-        lead = int(_scalar1(_SQL_CAL_LEAD.format(
-            cal_table=cal_table, date=out["target_date"] or day), rd) or 0)
+        lead = int(_scalar1(_SQL_CAL_LEAD.format(cal_table=cal_table, date=out["target_date"] or day), rd) or 0)
         out["lead_days"] = lead
         if lead < CALENDAR_LEAD_TRADING_DAYS:
             out["stale"] = 1
@@ -385,9 +459,13 @@ def select_packages(
     v1 包集=GRADUATED_PACKAGES（空，裁定#305 第 2 点）→ enabled_packages 恒 []，
     incomplete=格缺/pending-owner-adoption/毕业∩挂载<挂载数 任一为真；空格残缺在 note 催 Owner 采纳。
     """
-    out: dict[str, Any] = {"enabled_packages": [], "per_package_cap": {},
-                           "source_cell": f"{_STATE_NODE}|{market_state or 'unknown'}",
-                           "source_confidence": "untested", "incomplete": True}
+    out: dict[str, Any] = {
+        "enabled_packages": [],
+        "per_package_cap": {},
+        "source_cell": f"{_STATE_NODE}|{market_state or 'unknown'}",
+        "source_confidence": "untested",
+        "incomplete": True,
+    }
     if not market_state:
         return out
     dm = decision_map if decision_map is not None else _load_decision_map()
@@ -400,8 +478,7 @@ def select_packages(
     enabled = sorted(set(mounted) & set(GRADUATED_PACKAGES))
     out["mounted"] = mounted
     out["enabled_packages"] = enabled
-    out["incomplete"], out["note"] = _package_verdict(
-        mounted, enabled, str(cell.get("mounted_reason") or ""))
+    out["incomplete"], out["note"] = _package_verdict(mounted, enabled, str(cell.get("mounted_reason") or ""))
     # per_package_cap：启用包受 position_cap 约束等分（v1 包集空→恒 {}；接入时按 cap/Σcap 切分）
     return out
 
@@ -416,20 +493,30 @@ def compute_position_cap(market_state: str, confidence: float) -> dict[str, Any]
     """
     band = BUDGET_BANDS.get(market_state)
     if band is None:
-        return {"band_low": 0.0, "band_high": 0.0, "position_cap": 0.0,
-                "transition": False, "sell_only": False, "invalid_state": True}
+        return {
+            "band_low": 0.0,
+            "band_high": 0.0,
+            "position_cap": 0.0,
+            "transition": False,
+            "sell_only": False,
+            "invalid_state": True,
+        }
     conf = min(1.0, max(0.0, float(confidence)))
     cap = band[0] + (band[1] - band[0]) * conf
     transition = conf < TRANSITION_THRESHOLD
     if transition:
         cap *= TRANSITION_FACTOR
-    return {"band_low": band[0], "band_high": band[1],
-            "position_cap": round(min(cap, HARD_CAP), 6),
-            "transition": transition, "sell_only": market_state == "euphoria"}
+    return {
+        "band_low": band[0],
+        "band_high": band[1],
+        "position_cap": round(min(cap, HARD_CAP), 6),
+        "transition": transition,
+        "sell_only": market_state == "euphoria",
+    }
 
 
 # ── S6 写侧（列清单唯一真源=schemas/categories/decision_daily.py；投递口径如实）──
-def _cell(value: Any) -> str:
+def _cell(value: object) -> str:
     from zephyr.data.ch_writer import tsv_escape
 
     if isinstance(value, bool):
@@ -506,7 +593,7 @@ def _read_plan_context(day: str, rd: Reader) -> str:
     try:
         row = _scalar1_wrap(rd, _SQL_SCENARIO_PLAN.format(date=day))
         if row:
-            parts.append(f"plan={str(row[0])}")
+            parts.append(f"plan={row[0]!s}")
     except Exception:  # noqa: BLE001
         pass
     try:
@@ -518,7 +605,7 @@ def _read_plan_context(day: str, rd: Reader) -> str:
     return ",".join(parts)
 
 
-def _hits_count(raw: Any) -> int:
+def _hits_count(raw: object) -> int:
     try:
         return len(json.loads(str(raw) or "[]"))
     except ValueError:
@@ -546,14 +633,12 @@ def _regime_to_segment() -> dict[str, str] | None:
             REGIME_STATE_TO_ACTIVATION_PHASE,
         )
     except Exception as exc:  # noqa: BLE001 — 真源不可用 fail-closed（禁 fallback 表）
-        log.error("[DAILY-DECISION] 六段映射真源导入失败（fail-closed 保守侧）: %s: %s",
-                  type(exc).__name__, exc)
+        log.error("[DAILY-DECISION] 六段映射真源导入失败（fail-closed 保守侧）: %s: %s", type(exc).__name__, exc)
         return None
     return REGIME_STATE_TO_ACTIVATION_PHASE
 
 
-def _s2_regime_leg(day: str, rd: Reader, cal: dict[str, Any],
-                   ctx: "LegCtx") -> tuple[str | None, float, dict]:
+def _s2_regime_leg(day: str, rd: Reader, cal: dict[str, Any], ctx: LegCtx) -> tuple[str | None, float, dict]:
     """S2 regime 腿：PIT 读+新鲜度（D1）+六段映射+预算带合成。缺席/陈旧→no_trade 原因落账。"""
     regime = read_latest_regime_snapshot(day, reader=rd)
     if regime.get("status") != "ok":
@@ -569,7 +654,7 @@ def _s2_regime_leg(day: str, rd: Reader, cal: dict[str, Any],
         ctx.notes.append(f"regime 快照陈旧（source={source_date} < 前交易日{prev_day or 'N/A'}）")
         return None, 0.0, compute_position_cap("", 0.0)
     mapping = _regime_to_segment()
-    if mapping is None:     # 真源导入失败=fail-closed（同款降级码+如实归因，禁 fallback 表）
+    if mapping is None:  # 真源导入失败=fail-closed（同款降级码+如实归因，禁 fallback 表）
         ctx.reasons.append("regime_missing")
         ctx.degrade.append("D1_regime_state_unmappable")
         ctx.notes.append("六段映射真源不可用（导入失败）→ no_trade（fail-closed 保守侧）")
@@ -590,7 +675,7 @@ def _s2_regime_leg(day: str, rd: Reader, cal: dict[str, Any],
     return state, confidence, cap_calc
 
 
-def _s3_gate_leg(gate: dict[str, Any], ctx: "LegCtx") -> None:
+def _s3_gate_leg(gate: dict[str, Any], ctx: LegCtx) -> None:
     """S3 门腿评估（采集在 run 主链）：D2 缺席降级不阻断 / D6 kill_switch 保守侧 / D3 预算缺席。"""
     gate_absent = list(gate.get("absent_layers") or [])
     if gate_absent:
@@ -621,7 +706,7 @@ def _s3_gate_leg(gate: dict[str, Any], ctx: "LegCtx") -> None:
         ctx.notes.append("alloc_budget_daily 当日无 run（预算无来源=不出预算）")
 
 
-def _no_trade_sources(state: str | None, ctx: "LegCtx") -> None:
+def _no_trade_sources(state: str | None, ctx: LegCtx) -> None:
     """三源合成第一源：distribution 预算带 0%（禁新开仓，存量由 X 流信号驱动离场，D98）。"""
     if state == "distribution":
         ctx.reasons.append("distribution_band")
@@ -629,9 +714,9 @@ def _no_trade_sources(state: str | None, ctx: "LegCtx") -> None:
 
 
 # ── 编排主入口（S1-S7 串行；永不外抛，D7 fail-open）────────────────────────
-def run_daily_decision(data_date: str | None = None, *,
-                       deps: DecisionDeps | None = None,
-                       **legacy: Any) -> dict[str, Any]:
+def run_daily_decision(
+    data_date: str | None = None, *, deps: DecisionDeps | None = None, **legacy: Any
+) -> dict[str, Any]:
     """拍板一个业务日：S1-S7 全链 → decision_daily 一行（或 sleep/error 无行）。
 
     Args:
@@ -648,12 +733,10 @@ def run_daily_decision(data_date: str | None = None, *,
     try:
         return _run_inner(data_date, d)
     except Exception as exc:  # noqa: BLE001 — D7：编排器自身异常 fail-open（不留半行+告警出声）
-        msg = (f"{ORCHESTRATOR_PREFIX} 拍板未完成（data_date={data_date or '未知'}）："
-               f"{type(exc).__name__}: {exc}")
+        msg = f"{ORCHESTRATOR_PREFIX} 拍板未完成（data_date={data_date or '未知'}）：{type(exc).__name__}: {exc}"
         log.error("%s 拍板异常 fail-open（下游无凭证=保守侧）", ORCHESTRATOR_PREFIX, exc_info=True)
         _alert(d.alert_fn, msg[:300], "ERROR")
-        return {"action": "error", "error": f"{type(exc).__name__}: {exc}"[:200],
-                "data_date": data_date}
+        return {"action": "error", "error": f"{type(exc).__name__}: {exc}"[:200], "data_date": data_date}
 
 
 def _resolve_data_date(data_date: str | None) -> str:
@@ -675,15 +758,14 @@ def _s1_precheck(day: str, rd: Reader, deps: DecisionDeps) -> tuple[dict[str, An
         return {"action": "sleep", "data_date": day}
     if cal.get("ambiguous"):
         # 日历歧义且次交易日不可解析：无生效日=不出快照行（无行=无新开仓令，安全侧）
-        _alert(deps.alert_fn,
-               f"{ORCHESTRATOR_PREFIX} {day} 次交易日不可解析（日历/XSHG 均无）→ 不出决策快照",
-               "ERROR")
+        _alert(deps.alert_fn, f"{ORCHESTRATOR_PREFIX} {day} 次交易日不可解析（日历/XSHG 均无）→ 不出决策快照", "ERROR")
         return {"action": "blocked_no_target", "data_date": day}
     return cal, kline_day
 
 
-def _s5_no_trade(day: str, rd: Reader, state: str | None, cap_calc: dict,
-                 decision_map: dict[str, Any] | None, ctx: "LegCtx") -> tuple[float, dict, dict]:
+def _s5_no_trade(
+    day: str, rd: Reader, state: str | None, cap_calc: dict, decision_map: dict[str, Any] | None, ctx: LegCtx
+) -> tuple[float, dict, dict]:
     """S3/S4/S5 合成：门快照+包选择+仓位上限+no_trade 三源 → (position_cap, packages, gate)。"""
     gate = collect_gate_snapshot(day, market_state=state, reader=rd)
     _s3_gate_leg(gate, ctx)
@@ -706,8 +788,11 @@ def _run_inner(data_date: str | None, deps: DecisionDeps) -> dict[str, Any]:
     day = _resolve_data_date(data_date)
     # 幂等闸：业务日级 marker 先拍板先占（同日重唤醒直接跳过；force=人工重跑逃生口）
     if not deps.force and _marker_seen(day, deps.marker_dir):
-        return {"action": "skipped_marker", "data_date": day,
-                "why": "already_adjudicated（重拍走 run_daily_decision(force=True)=新 run_id 追加）"}
+        return {
+            "action": "skipped_marker",
+            "data_date": day,
+            "why": "already_adjudicated（重拍走 run_daily_decision(force=True)=新 run_id 追加）",
+        }
     # S1 日历（休眠/歧义分支返回终态）
     pre = _s1_precheck(day, rd, deps)
     if not isinstance(pre, tuple):
@@ -718,14 +803,16 @@ def _run_inner(data_date: str | None, deps: DecisionDeps) -> dict[str, Any]:
         ctx.degrade.append(f"calendar:{cal['source']}")
     if cal.get("stale"):
         ctx.degrade.append("calendar_stale")
-        _alert(deps.alert_fn,
-               f"{ORCHESTRATOR_PREFIX} 日历续期哨兵：表尾提前量 "
-               f"{cal.get('lead_days')} 交易日 <{CALENDAR_LEAD_TRADING_DAYS}（data_proven 续命中，"
-               f"连续 {DATA_PROVEN_ESCALATE_N} 日升级告警催人工续期）", "WARN")
+        _alert(
+            deps.alert_fn,
+            f"{ORCHESTRATOR_PREFIX} 日历续期哨兵：表尾提前量 "
+            f"{cal.get('lead_days')} 交易日 <{CALENDAR_LEAD_TRADING_DAYS}（data_proven 续命中，"
+            f"连续 {DATA_PROVEN_ESCALATE_N} 日升级告警催人工续期）",
+            "WARN",
+        )
     # S2 regime 腿（D1 三分支折进）+ S3/S4/S5 合成腿（D2/D6/D3+包选择+仓位）
     state, confidence, cap_calc = _s2_regime_leg(day, rd, cal, ctx)
-    position_cap, packages, gate = _s5_no_trade(day, rd, state, cap_calc,
-                                                deps.decision_map, ctx)
+    position_cap, packages, gate = _s5_no_trade(day, rd, state, cap_calc, deps.decision_map, ctx)
     # S6 落快照（marker 先拍板先占在写之前占位=蓝图 S6 口径；失败不回滚防风暴）
     run_id = f"decision-{day}-{uuid.uuid4().hex[:6]}"
     _touch_marker(day, run_id, deps.marker_dir)
@@ -743,8 +830,7 @@ def _run_inner(data_date: str | None, deps: DecisionDeps) -> dict[str, Any]:
         "gate_snapshot_json": json.dumps(gate, ensure_ascii=False),
         "no_trade": no_trade,
         "no_trade_reason": ";".join(dict.fromkeys(ctx.reasons)),
-        "sit_out_list_json": json.dumps({"entries": [], "source": "sit_out_list:v1_feeds_unwired"},
-                                        ensure_ascii=False),
+        "sit_out_list_json": json.dumps({"entries": [], "source": "sit_out_list:v1_feeds_unwired"}, ensure_ascii=False),
         "calendar_source": str(cal.get("source")),
         "degraded": 1 if (ctx.degrade or cal.get("degraded")) else 0,
         "degrade_reasons": ";".join(dict.fromkeys(ctx.degrade)),
@@ -753,24 +839,33 @@ def _run_inner(data_date: str | None, deps: DecisionDeps) -> dict[str, Any]:
     }
     n, disposition = write_decision_row(row, sink=deps.sink)
     # S7 分发（v1=播报前缀+仪表盘留痕，不产执行单，裁定#305 第 6 点）
-    brief = (f"target={row['trade_date']} state={row['market_state']}"
-             f"@{confidence:.2f} cap={row['position_cap']:.2%} no_trade={no_trade}"
-             f"({row['no_trade_reason'] or '-'}) packages={packages['enabled_packages'] or '∅'}"
-             f" degraded={row['degraded']}({row['degrade_reasons'] or '-'})"
-             f" rows={n} 投递={disposition}")
+    brief = (
+        f"target={row['trade_date']} state={row['market_state']}"
+        f"@{confidence:.2f} cap={row['position_cap']:.2%} no_trade={no_trade}"
+        f"({row['no_trade_reason'] or '-'}) packages={packages['enabled_packages'] or '∅'}"
+        f" degraded={row['degraded']}({row['degrade_reasons'] or '-'})"
+        f" rows={n} 投递={disposition}"
+    )
     _alert(deps.alert_fn, f"{ORCHESTRATOR_PREFIX} 拍板完成 {brief}", "INFO")
-    return {"action": "adjudicated", "run_id": run_id, "data_date": day,
-            "trade_date": row["trade_date"], "no_trade": no_trade,
-            "no_trade_reason": row["no_trade_reason"],
-            "position_cap": row["position_cap"],
-            "market_state": row["market_state"], "degraded": row["degraded"],
-            "degrade_reasons": row["degrade_reasons"], "rows": n, "disposition": disposition,
-            "brief": brief}
+    return {
+        "action": "adjudicated",
+        "run_id": run_id,
+        "data_date": day,
+        "trade_date": row["trade_date"],
+        "no_trade": no_trade,
+        "no_trade_reason": row["no_trade_reason"],
+        "position_cap": row["position_cap"],
+        "market_state": row["market_state"],
+        "degraded": row["degraded"],
+        "degrade_reasons": row["degrade_reasons"],
+        "rows": n,
+        "disposition": disposition,
+        "brief": brief,
+    }
 
 
 # ── 事件挂点（pipeline_events wire 末棒；永不反噬唤醒链）────────────────────
-def maybe_run_daily_decision(task_id: Any = None, success: bool = True,
-                             **kwargs: Any) -> dict[str, Any]:
+def maybe_run_daily_decision(task_id: str | None = None, success: bool = True, **kwargs: object) -> dict[str, object]:
     """daily_kline SUCCESS 唤醒链末棒的编排器产出者（蓝图 §三；不建 cron/Timer/sleep-loop）。
 
     唤醒任务子串匹配与 regime/pf_alloc 同源（SIM_DAILY_WAKE_TASKS）；幂等闸在
@@ -799,12 +894,17 @@ def intraday_revoke(reason: str, *, trade_date: str | None = None) -> dict[str, 
 
     v1 裁定#305 第 7 点：无自动实盘干预，盘中修订权 Owner 人工保留——本签名仅契约占位。
     """
-    return {"action": "reserved_v1", "reason": reason, "trade_date": trade_date,
-            "note": "盘中修订权 Owner 人工保留（裁定#305 第 7 点）；执行面接入后另裁触发白名单"}
+    return {
+        "action": "reserved_v1",
+        "reason": reason,
+        "trade_date": trade_date,
+        "note": "盘中修订权 Owner 人工保留（裁定#305 第 7 点）；执行面接入后另裁触发白名单",
+    }
 
 
-def postmarket_reconcile(data_date: str, *, reader: Reader | None = None,
-                         alert_fn: AlertFn | None = None) -> dict[str, Any]:
+def postmarket_reconcile(
+    data_date: str, *, reader: Reader | None = None, alert_fn: AlertFn | None = None
+) -> dict[str, Any]:
     """T4 盘后核对（TRD-A17 最小实体化，L09-C02）：当日计划快照 vs 实际执行 → 核对行。
 
     计划行=decision_daily 按生效日取当日最新 run（SQL_LATEST_BY_TARGET_DATE 唯一真源）；
@@ -838,15 +938,13 @@ def postmarket_reconcile(data_date: str, *, reader: Reader | None = None,
         entry_count = counts.get("entry", 0)
         exit_count = counts.get("exit", 0)
     except Exception as exc:  # noqa: BLE001 — 读通道故障不反噬结算链，verdict=error 出声
-        log.warning("[DAILY-DECISION] T4 盘后核对读通道失败（data_date=%s）: %s",
-                    day, type(exc).__name__)
-        return {"verdict": "error", "data_date": day,
-                "error": f"{type(exc).__name__}: {exc}"[:200]}
+        log.warning("[DAILY-DECISION] T4 盘后核对读通道失败（data_date=%s）: %s", day, type(exc).__name__)
+        return {"verdict": "error", "data_date": day, "error": f"{type(exc).__name__}: {exc}"[:200]}
 
     fields_compared = 0
     deviations: list[dict[str, Any]] = []
 
-    def _judge(field: str, plan_side: Any, actual_side: Any, ok: bool) -> None:
+    def _judge(field: str, plan_side: object, actual_side: object, ok: bool) -> None:
         nonlocal fields_compared
         fields_compared += 1
         if not ok:
@@ -858,11 +956,19 @@ def postmarket_reconcile(data_date: str, *, reader: Reader | None = None,
     else:
         no_trade = int(plan["no_trade"])
         cap = float(plan["position_cap"])
-        _judge("no_trade_vs_entries", {"no_trade": no_trade}, {"entry_count": entry_count},
-               no_trade == 0 or entry_count == 0)
+        _judge(
+            "no_trade_vs_entries",
+            {"no_trade": no_trade},
+            {"entry_count": entry_count},
+            no_trade == 0 or entry_count == 0,
+        )
         if no_trade == 0:  # cap 核对仅在计划放行日做（禁做日 cap 恒 0，免同因双计）
-            _judge("position_cap_vs_entries", {"position_cap": cap},
-                   {"entry_count": entry_count}, cap > 0 or entry_count == 0)
+            _judge(
+                "position_cap_vs_entries",
+                {"position_cap": cap},
+                {"entry_count": entry_count},
+                cap > 0 or entry_count == 0,
+            )
     verdict = "match" if not deviations else "deviation"
     reconcile_row: dict[str, Any] = {
         "data_date": day,
@@ -877,13 +983,15 @@ def postmarket_reconcile(data_date: str, *, reader: Reader | None = None,
         "fields_deviated": len(deviations),
         "deviations": deviations,
     }
-    _alert(alert_fn,
-           f"{ORCHESTRATOR_PREFIX}[T4-RECONCILE] {day} verdict={verdict} "
-           f"plan(no_trade={reconcile_row['plan_no_trade']},"
-           f"cap={reconcile_row['plan_position_cap']},state={reconcile_row['plan_market_state'] or '-'}) "
-           f"actual(entry={entry_count},exit={exit_count}) "
-           f"diff={len(deviations)}/{fields_compared}",
-           "INFO" if verdict == "match" else "WARN")
+    _alert(
+        alert_fn,
+        f"{ORCHESTRATOR_PREFIX}[T4-RECONCILE] {day} verdict={verdict} "
+        f"plan(no_trade={reconcile_row['plan_no_trade']},"
+        f"cap={reconcile_row['plan_position_cap']},state={reconcile_row['plan_market_state'] or '-'}) "
+        f"actual(entry={entry_count},exit={exit_count}) "
+        f"diff={len(deviations)}/{fields_compared}",
+        "INFO" if verdict == "match" else "WARN",
+    )
     return reconcile_row
 
 
