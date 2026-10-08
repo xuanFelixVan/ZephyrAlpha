@@ -38,6 +38,8 @@ for _p in (str(RUN_ROOT / "scripts" / "backtest" / "fexam"), str(_SRC)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from paper_pool_gate import paper_pool_from_factor_book  # noqa: E402 — 同簇兄弟模块（path 注入后平铺导入）
+
 from zephyr.shared.utils.time_utils import now_utc  # noqa: E402
 
 CATALOGS = RUN_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
@@ -80,6 +82,10 @@ def build_summary(out_path: Path) -> dict[str, Any]:
             "retire_candidates": [r["object_id"] for r in results if r.get("verdict") == "retire_candidate"],
             "passes": [r["object_id"] for r in results if r.get("verdict") == "pass"],
         }
+        if kind == "factor":
+            # 裁定#489③：进池环节叠 Bonferroni/DSR 聚合层校正——考试 pass ≠ 进池（护栏在此，
+            # 单指标阈值挡不住聚合层运气；paper_pool_gate 只判进池，考试层三态判定不动）
+            sections[kind]["paper_pool_gate"] = paper_pool_from_factor_book(book)
 
     coverage_ledger = _load_yaml(FULLCIRC / "backtest_coverage_ledger.yaml")
     coverage_join = {
@@ -96,6 +102,14 @@ def build_summary(out_path: Path) -> dict[str, Any]:
         approvals.append(
             f"activation 升档单：{passes_n} 个策略 pass 建议入 paper 档"
             f"（weight_band={ {'floor': 0, 'current': 0.1, 'ceiling': 0.3, 'step_cap': 0.2} }）——等 Owner 批"
+        )
+    # 裁定#489③：paper 池进池建议单（因子批过聚合层护栏者；v1 临时——3 个月 paper 实测命中率回调）
+    pool_gate = sections.get("factor", {}).get("paper_pool_gate") or {}
+    if pool_gate.get("admitted"):
+        approvals.append(
+            f"paper 池进池建议单（裁定#489③：三线AND+Bonferroni/DSR聚合层校正，"
+            f"N={pool_gate.get('num_candidates')}, alpha={pool_gate.get('alpha')}）："
+            f"{len(pool_gate['admitted'])} 个因子获进池建议 → 3个月 paper 实测回调（进池≠上线，晋升另走门）"
         )
     f_pass = len(sections.get("factor", {}).get("passes") or [])
     if f_pass:
