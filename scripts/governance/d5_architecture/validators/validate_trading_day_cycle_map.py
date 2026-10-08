@@ -367,6 +367,17 @@ def validate_structure(
                 errors.append(f"CV-BLOOD: {nid} purpose_tag {pt!r} 不在图头 purpose_tags 枚举（禁贴图例外标签）")
             if str(n.get("verified_scope")) == "production" and not n.get("trigger_facts"):
                 errors.append(f"CV-BLOOD: {nid} production 节点 trigger_facts 必非空（实测触发数=在产证据位）")
+            tf = n.get("trigger_facts")
+            if isinstance(tf, dict):
+                # 实数化口径（st-fig13-followup-20261006 c1 方案簿 §4）：count 或非空 no_count_reason
+                # 二选一必在场（count=null 且无 reason=硬红；空串 reason=硬红——禁「查不到」冒充「没跑」）
+                has_count = isinstance(tf.get("count"), int) and not isinstance(tf.get("count"), bool)
+                reason = str(tf.get("no_count_reason") or "").strip()
+                if not has_count and not reason:
+                    errors.append(
+                        f"CV-BLOOD: {nid} trigger_facts 实数化口径违规——count 与 no_count_reason 双缺"
+                        "（production 必带实数计数；不可数节点必带显式降级理由）"
+                    )
 
     # ---- 外部面（可缺席，缺席降 warn）----
     surfaces = (

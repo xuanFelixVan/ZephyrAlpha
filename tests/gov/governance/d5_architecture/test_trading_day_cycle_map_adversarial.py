@@ -956,6 +956,69 @@ def test_red_f2_done_production_requires_trigger_facts():
     assert any("production 节点 trigger_facts 必非空" in e for e in _errs(d))
 
 
+# ---------------------------------------------------------------------------
+# 红组 N-2：trigger_facts 实数化（st-fig13-followup-20261006 线C；c1 方案簿 §5）——
+# count 与 no_count_reason 双缺=硬红；bool 不算计数；gap 不灌不判；production 15 台全合规控制组
+# ---------------------------------------------------------------------------
+
+
+def _pick_production_with_tf(d):
+    return next(n for n in d["nodes"] if n.get("verified_scope") == "production" and n.get("trigger_facts"))
+
+
+def test_red_production_trigger_facts_count_and_reason_both_missing():
+    d = copy.deepcopy(_GOOD)
+    _pick_production_with_tf(d)["trigger_facts"] = {
+        "as_of": "2026-10-08T00:00:00+08:00",
+        "metric": "task_runs_30d",
+        "source": "x",
+    }
+    assert any("实数化口径违规" in e for e in _errs(d))
+
+
+def test_red_trigger_facts_null_count_without_reason():
+    d = copy.deepcopy(_GOOD)
+    tf = _pick_production_with_tf(d)["trigger_facts"]
+    tf["count"] = None
+    tf.pop("no_count_reason", None)
+    assert any("双缺" in e for e in _errs(d))
+
+
+def test_red_trigger_facts_empty_reason_counts_as_missing():
+    d = copy.deepcopy(_GOOD)
+    tf = _pick_production_with_tf(d)["trigger_facts"]
+    tf["count"] = None
+    tf["no_count_reason"] = "  "
+    assert any("双缺" in e for e in _errs(d))
+
+
+def test_green_trigger_facts_bool_count_not_counted_reason_passes():
+    """bool 是 int 子类——判定面显式排除后 count=True 不算数；有非空 reason 则放行（防布尔伪装计数）。"""
+    d = copy.deepcopy(_GOOD)
+    tf = _pick_production_with_tf(d)["trigger_facts"]
+    tf["count"] = True
+    tf["no_count_reason"] = "生成期降级（bool 不算计数）"
+    assert not any("实数化口径违规" in e for e in _errs(d))
+
+
+def test_green_gap_nodes_trigger_facts_none_unchanged():
+    """家族先例：gap 四格 trigger_facts=None 不灌不判（实数化不扩面）。"""
+    gaps = [n for n in _GOOD["nodes"] if n.get("node_type") == "gap"]
+    assert gaps and all(n.get("trigger_facts") is None for n in gaps)
+    assert not any("实数化口径违规" in e for e in _errs(_GOOD))
+
+
+def test_green_all_production_trigger_facts_countable_or_reasoned():
+    """控制组：production 全台实数化合规——count 或非空 no_count_reason 二选一在场。"""
+    prods = [n for n in _GOOD["nodes"] if n.get("verified_scope") == "production"]
+    assert prods
+    for n in prods:
+        tf = n.get("trigger_facts") or {}
+        has_count = isinstance(tf.get("count"), int) and not isinstance(tf.get("count"), bool)
+        reason = str(tf.get("no_count_reason") or "").strip()
+        assert has_count or reason, n["node_id"]
+
+
 def test_red_schema_version_out_of_support():
     d = copy.deepcopy(_GOOD)
     d["schema_version"] = "0.9"
@@ -994,19 +1057,23 @@ def test_external_surfaces_unreachable_downgrades_to_warn(tmp_path):
     assert any("骨架状态列不可读" in w for w in warnings)
 
 
-def test_generator_is_byte_idempotent():
+def test_generator_is_byte_idempotent(monkeypatch):
     """同输入两次产出逐字节等（幂等=机生图可复核的前提）。"""
     import generate_trading_day_cycle_map as gen
 
+    # 实数化计数面打桩（c1 方案簿）：单测禁真连 DB/schtasks（#ARCH-084 写守护同族先例——
+    # 测试隔离；真连路径由重生成实跑与 validator 覆盖）
+    monkeypatch.setattr(gen, "scan_trigger_counts", lambda root, *, skip_schtasks=False, as_of=None: {})
     a = gen.serialize_document(gen.build_document(as_of="2026-09-24T00:00:00+08:00", root=_REPO, skip_schtasks=True))
     b = gen.serialize_document(gen.build_document(as_of="2026-09-24T00:00:00+08:00", root=_REPO, skip_schtasks=True))
     assert hashlib.sha256(a.encode()).hexdigest() == hashlib.sha256(b.encode()).hexdigest()
 
 
-def test_generator_idempotency_guard_has_teeth(tmp_path):
+def test_generator_idempotency_guard_has_teeth(tmp_path, monkeypatch):
     """证明上一条有判别力：注入不同时间戳必须产出不同字节。"""
     import generate_trading_day_cycle_map as gen
 
+    monkeypatch.setattr(gen, "scan_trigger_counts", lambda root, *, skip_schtasks=False, as_of=None: {})
     a = gen.serialize_document(gen.build_document(as_of="2026-09-24T00:00:00+08:00", root=_REPO, skip_schtasks=True))
     b = gen.serialize_document(gen.build_document(as_of="2026-09-25T00:00:00+08:00", root=_REPO, skip_schtasks=True))
     assert a != b
@@ -1015,10 +1082,11 @@ def test_generator_idempotency_guard_has_teeth(tmp_path):
     assert "generated_at: '2026-09-24T00:00:00+08:00'" in out.read_text(encoding="utf-8")
 
 
-def test_generator_refuses_to_emit_production_without_exec():
+def test_generator_refuses_to_emit_production_without_exec(monkeypatch):
     """生成期硬失败：production 环节无 exec_evidence 时宁可不产图（禁产出自粉饰的产物）。"""
     import generate_trading_day_cycle_map as gen
 
+    monkeypatch.setattr(gen, "scan_trigger_counts", lambda root, *, skip_schtasks=False, as_of=None: {})
     original = dict(gen.EXEC)
     try:
         gen.EXEC.pop("D13-34")

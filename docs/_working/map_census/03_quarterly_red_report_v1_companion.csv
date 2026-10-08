@@ -1,0 +1,22 @@
+module_id_or_object,section,class_or_verdict,disposition_zh,evidence_ref,owner_review
+D-DATA-CONCEPT-SYS,red1_unknown83,k,"unknown-keep：与 MOD-D-CONCEPT-SYS/D-DATA-IO-ANCHOR 同簇(scripts/industry_graph)，三件一并定性",fig13_followup/c2_unknown83_classification.csv,YES
+D-DATA-IO-ANCHOR,red1_unknown83,k,"unknown-keep：同上",fig13_followup/c2_unknown83_classification.csv,YES
+MOD-D-CONCEPT-SYS,red1_unknown83,k,"unknown-keep：同上",fig13_followup/c2_unknown83_classification.csv,YES
+MOD-AUTO-L1-001..L6-001(7行),red1_unknown83,f,"并入 autonomy 家系（暂编号族语义近 autonomy_core）——批量归并待Owner准驳后另批落地",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+MOD-BT-CHTP,red1_unknown83,f,"并入 backtest 家系",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+MOD-DAT-*（4行）,red1_unknown83,f,"并入 data 家系（DAT↔DATA 双前缀收敛）",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+MOD-DATA-*（3行）,red1_unknown83,f,"并入 data 家系",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+MOD-SCRIPT-*（11行）,red1_unknown83,f,"script 家系自证合规（命名即家系形态），登记归并",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+SH-*（8行）,red1_unknown83,f,"并入 shared 工具族",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+其余 f 类（INT/NLP/REGIME/RESCHED/GOV/INF/SEC/EX/EXE/ML/L02/RK/MKT 等）,red1_unknown83,f,"按 csv guess 家系归并",fig13_followup/c2_unknown83_classification.csv,YES(batch)
+MOD-FE-PROMO-API-TEST 等 t 类（6行）,red1_unknown83,t,"测试件出宇宙（同 TEST 族 401 先例）——自动生效无需Owner",fig13_followup/c2_unknown83_classification.csv,NO
+MOD-MKT-DATA,red1_unknown83,c,"币圈冻结（Owner 2026-10-04 暂停令：保留现状只读）",fig13_followup/c2_unknown83_classification.csv,NO(frozen)
+MOD-SCRIPT-crypto_daily_review,red1_unknown83,c,"币圈冻结（同上）",fig13_followup/c2_unknown83_classification.csv,NO(frozen)
+b 类 17 行（docs/03_modules 蓝图树）,red1_unknown83,b,"蓝图文档件，归属蓝图族面不计算码模块——登记不并（跨域不同对象）",fig13_followup/c2_unknown83_classification.csv,NO
+真无家767 各域,red1_homeless,verdict,"域分组面（备料3a段292行）逐域'整域退役/整域补挂'定性——首报列清单不定性",02_quarterly_ledger_prep_v1.csv#3a,YES
+复数家57行,red1_multihome,verdict,"逐行 single-home 本命家收敛（备料3b段）",02_quarterly_ledger_prep_v1.csv#3b,YES
+config/trading_day_cycle_map.yaml 散文面,red2_copycheck,PASS,">200字符段指纹对碰碰撞=0（91 evidence + 31 exec_evidence 段）；casebooks内联=Owner终批豁免；consumers=指针结构性免疫",03_quarterly_red_report_v1.md §2,NO
+图13 casebooks 25格,red3_casebooks,PASS,挂载格25/册码槽35/册码17/五族全覆盖；图面==生成器矩阵 diff=0；孤儿挂点=0,03_quarterly_red_report_v1.md §3,NO
+图13 trigger_facts 52格,c3_realdata,DONE,实数化：count=38/reason=10/gap=4/违规=0；production 15台全合规（validator CV-BLOOD 实数化腿）,03_quarterly_red_report_v1.md §4,NO
+D13-34 计数面,ops_gap,DEGRADED,"decision_daily 居 c1_backtest，zephyr_reader 无 grant——授权扩面或数据班代跑",图13 D13-34 no_count_reason,YES
+空转槽 post_auction + 孤儿任务4 + 宇宙外任务10,inner_retire,candidates,"内收判据'零触发零消费→退役'候选——收敛/退役归 Owner",图13 dangling 台账（15条）,YES

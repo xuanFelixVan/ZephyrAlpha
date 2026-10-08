@@ -1,0 +1,84 @@
+﻿module_id,path,class,disposition
+D-DATA-CONCEPT-SYS,scripts/industry_graph/concept_ingest.py,k,unknown-keep（无在册家系对碰证据，交 Owner）
+D-DATA-IO-ANCHOR,scripts/industry_graph/io_ingest.py,k,unknown-keep（无在册家系对碰证据，交 Owner）
+MOD-AUTO-L1-001,schemas/categories/market/market_alt_fx_rate_ecb.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-AUTO-L2-001(暂编号),tests/backtest/test_promotion_combo_gate.py,t,测试件出宇宙（tests/ 路径或 id 含 TEST；同 TEST 族 401 出宇宙裁定口径）
+MOD-AUTO-L2-001(暂编号，解冻后转正),scripts/backtest/promotion_combo_gate.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-AUTO-L3-001(暂编号),scripts/automation/intel_harvester.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-AUTO-L4-001(暂编号),scripts/governance/generators/generate_skeleton_health.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-AUTO-L5-001(暂编号),scripts/governance/standards/standards_lib.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-AUTO-L6-001(暂编号),src/zephyr/ex_sor/risk_redline.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-BT-CHTP,src/zephyr/governance/data_governance/ch_tick_provider.py,f,家系归并建议（guess=backtest；语义与路径均落在在册 backtest 家系）
+MOD-D-CONCEPT-SYS,scripts/industry_graph/websearch_ingest.py,k,unknown-keep（无在册家系对碰证据，交 Owner）
+MOD-DAT-daban_engine_payload,src/zephyr/data/implementations/daban_engine_payload_producer.py,f,家系归并建议（guess=data；语义与路径均落在在册 data 家系）
+MOD-DAT-foreign_coverage,src/zephyr/data/foreign_market_coverage.py,f,家系归并建议（guess=data；语义与路径均落在在册 data 家系）
+MOD-DAT-internal_compute,tests/zephyr/data/test_internal_compute_limit_up_routing.py,t,测试件出宇宙（tests/ 路径或 id 含 TEST；同 TEST 族 401 出宇宙裁定口径）
+MOD-DATA-CHAIN-EXPOSURE,scripts/industry_graph/build_chain_exposure_matrix.py,f,家系归并建议（guess=data；语义与路径均落在在册 data 家系）
+MOD-DATA-FUTBF,scripts/industry_graph/backfill_futures_main.py,f,家系归并建议（guess=data；语义与路径均落在在册 data 家系）
+MOD-DATA-HOGQC,scripts/industry_graph/hog_chain_quickcheck.py,f,家系归并建议（guess=data；语义与路径均落在在册 data 家系）
+MOD-EX-RULES-001,src/zephyr/ex_core/rules/__init__.py,f,家系归并建议（guess=ex_core；语义与路径均落在在册 ex_core 家系）
+MOD-EXE-AGENTS,docs/03_modules/_domain_autonomy_core/execution_layer_agents/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-EXE-ALGO-001,src/zephyr/autonomy_core/agents/_algorithm_experiment.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-EXE-BIZ-001,src/zephyr/autonomy_core/agents/_g04_ops_check.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-EXE-GOV-001,src/zephyr/autonomy_core/agents/governance_agent_entry.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-EXE-ITER-001,src/zephyr/autonomy_core/agents/_self_iteration_review.py,f,家系归并建议（guess=autonomy；语义与路径均落在在册 autonomy 家系）
+MOD-FE-PROMO-API-TEST,tests/frontend/test_promotion_advisory_api.py,t,测试件出宇宙（tests/ 路径或 id 含 TEST；同 TEST 族 401 出宇宙裁定口径）
+MOD-GOV-ALIGNMENT-LOOP,docs/03_modules/_domain_governance/alignment_loop/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-GOV-COMMIT-GATEWAY,tests/governance/rule_bridge/test_claim_files_batch_path.py,t,测试件出宇宙（tests/ 路径或 id 含 TEST；同 TEST 族 401 出宇宙裁定口径）
+MOD-GOV-INDUSAGE,docs/03_modules/_domain_governance/indicator_usage_audit/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INF-OPS-ALERT-FEED,docs/03_modules/_domain_infrastructure_operations/ops_alert_feed/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INF-PROC-INCUBATOR,docs/03_modules/_cross_layer/process_incubator/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-AGENT-MEMORY,docs/03_modules/_domain_intelligence/agent_memory_architecture/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-AGENT-ROUTER,docs/03_modules/_domain_intelligence/llm_agent_router/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-AIROUTE,docs/03_modules/_domain_integration/ai_service_route_matrix/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-APIGW,docs/03_modules/_domain_integration/api_gateway/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-EPISODIC-MEM,docs/03_modules/_domain_intelligence/episodic_memory_store/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-EVENT-ANOMALY,src/zephyr/intelligence/event_anomaly_detector.py,f,家系归并建议（guess=intelligence；语义与路径均落在在册 intelligence 家系）
+MOD-INT-EVENT-DT,src/zephyr/intelligence/event_dragon_tiger.py,f,家系归并建议（guess=intelligence；语义与路径均落在在册 intelligence 家系）
+MOD-INT-EVENT-FACTOR,src/zephyr/intelligence/event_factor_matrix.py,f,家系归并建议（guess=intelligence；语义与路径均落在在册 intelligence 家系）
+MOD-INT-EVENT-GEO,src/zephyr/intelligence/event_geopolitical_map.py,f,家系归并建议（guess=intelligence；语义与路径均落在在册 intelligence 家系）
+MOD-INT-EVENT-IPO,src/zephyr/intelligence/event_ipo_siphon.py,f,家系归并建议（guess=intelligence；语义与路径均落在在册 intelligence 家系）
+MOD-INT-EVENT-SCORE,src/zephyr/intelligence/event_score.py,f,家系归并建议（guess=intelligence；语义与路径均落在在册 intelligence 家系）
+MOD-INT-HUMAN-TRUST,docs/03_modules/_domain_intelligence/human_trust_model/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-LLM-SELFEVAL,docs/03_modules/_domain_intelligence/llm_self_evaluation/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-MATRIX,docs/03_modules/_domain_integration/integration_matrix_registry/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-INT-OPENAPI,docs/03_modules/_domain_integration/api_documentation_generator/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-L02-FS,src/zephyr/factor/feature_store_writer.py,f,家系归并建议（guess=factor；语义与路径均落在在册 factor 家系）
+MOD-MKT-DATA,src/zephyr/data/implementations/okx_provider.py,c,币圈冻结件（Owner 2026-10-04 暂停令：保留现状只读，不列施工项）
+MOD-ML-DENSITY,src/zephyr/ml_train/implementations/density_quantile_trainer.py,f,家系归并建议（guess=ml_train；语义与路径均落在在册 ml_train 家系）
+MOD-NLP-AGGREGATOR-001,src/zephyr/nlp/sentiment_aggregator.py,f,家系归并建议（guess=nlp；语义与路径均落在在册 nlp 家系）
+MOD-NLP-DUALTAG-001,src/zephyr/nlp/news_dual_tagger.py,f,家系归并建议（guess=nlp；语义与路径均落在在册 nlp 家系）
+MOD-NLP-IMPACT-001,src/zephyr/nlp/news_impact_grader.py,f,家系归并建议（guess=nlp；语义与路径均落在在册 nlp 家系）
+MOD-NLP-INFERENCE-001,src/zephyr/nlp/__init__.py,f,家系归并建议（guess=nlp；语义与路径均落在在册 nlp 家系）
+MOD-NLP-PIPELINE,scripts/ml/accept_nlp_pipeline.py,f,家系归并建议（guess=nlp；语义与路径均落在在册 nlp 家系）
+MOD-NLP-SENT-PIPE,src/zephyr/nlp/sentiment_pipeline.py,f,家系归并建议（guess=nlp；语义与路径均落在在册 nlp 家系）
+MOD-REGIME-P2-E8,scripts/scan_forward_days.py,f,家系归并建议（guess=regime；语义与路径均落在在册 regime 家系）
+MOD-REGIME-VAL,src/zephyr/regime/validation/overfitting_guard.py,f,家系归并建议（guess=regime；语义与路径均落在在册 regime 家系）
+MOD-REGIME-VAL-002,src/zephyr/regime/validation/__init__.py,f,家系归并建议（guess=regime；语义与路径均落在在册 regime 家系）
+MOD-RESCHED-APPLY,scripts/governance/apply_resource_plan.py,f,家系归并建议（guess=resource_sched；语义与路径均落在在册 resource_sched 家系）
+MOD-RESCHED-CALIB,scripts/tasks/register/register_measure_calibration_task.ps1,f,家系归并建议（guess=resource_sched；语义与路径均落在在册 resource_sched 家系）
+MOD-RESCHED-MORNING,scripts/governance/generators/generate_resource_morning_report.py,f,家系归并建议（guess=resource_sched；语义与路径均落在在册 resource_sched 家系）
+MOD-RESCHED-VIEW,docs/03_modules/_domain_frontend/resource_week_view/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-RK-SIGNAL-WIRING,tests/risk/test_risk_signal_consumer_wiring.py,t,测试件出宇宙（tests/ 路径或 id 含 TEST；同 TEST 族 401 出宇宙裁定口径）
+MOD-SCRIPT-battle_map_coverage_audit,scripts/battle_map_coverage_audit.py,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-crypto_daily_review,scripts/crypto_daily_review.py,c,币圈冻结件（Owner 2026-10-04 暂停令：保留现状只读，不列施工项）
+MOD-SCRIPT-register_c4_exam,scripts/tasks/register/register_c4_exam_task.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-register_f06_grid_task,scripts/tasks/register/register_f06_grid_task.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-register_factory_lane_c,scripts/tasks/register/register_factory_lane_c_task.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-register_ollama_serve,scripts/tasks/register/register_ollama_serve_task.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-run_c4_exam,scripts/tasks/run/run_c4_exam.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-run_f06_grid,scripts/tasks/run/run_f06_grid.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-run_factory_lane_c,scripts/tasks/run/run_factory_lane_c.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-run_post_settlement,scripts/installers/qmt_watchdog.ps1,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SCRIPT-start_paper_session,scripts/start_paper_session.py,f,script 家系归并（MOD-SCRIPT-* 已是在册家系形态，命名合规；census 严格口径误报）
+MOD-SEC-EVENTBUS,docs/03_modules/_domain_security/security_event_bus/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）
+MOD-VERIFY-CALIB,scripts/tests/verify_calibration_nll.py,t,测试件出宇宙（tests/ 路径或 id 含 TEST；同 TEST 族 401 出宇宙裁定口径）
+SH-DB-002,src/zephyr/governance/persistence/decision_graph_reader.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-DB-003,src/zephyr/governance/persistence/battle_map_reader.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-GOV-001,scripts/governance/oneoff/data_domain_audit_query.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-GOV-003,scripts/governance/apply_dataflowgraph.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-GOV-004,scripts/governance/session_startup_health_check.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-MAIN-001,src/zephyr/shared/blueprint_tools/blueprint_decomposer.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-MODULE_TRANSLATION-001,scripts/governance/_shared/module_translation_loader.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SH-TERM-001,scripts/governance/_shared/terminology_loader.py,f,shared 工具族归并（SH-* 前缀=shared 家系惯用形态，归属 shared/scripts 工具族）
+SYS-MASTER-001,docs/03_modules/_system_master/blueprint.md,b,蓝图文档件（docs/03_modules 蓝图树；归属蓝图族面，非代码模块）

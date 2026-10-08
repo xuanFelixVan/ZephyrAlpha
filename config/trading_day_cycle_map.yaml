@@ -50,7 +50,7 @@ effective_from: '2026-09-24'
 markets:
 - cn_a
 generator: scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py
-generated_at: '2026-10-08T02:06:40+08:00'
+generated_at: '2026-10-08T04:33:26+08:00'
 ops_tool_ref:
   tool: scripts/ops/schedule_overview.py
   gate: GATE-SCHEDULE-CONSISTENCY(priority=826)
@@ -190,9 +190,11 @@ nodes:
   - SV#底数（low）
   - SV#方案（low）
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=catchup_guard 任务级求和×0)
     evidence: 每日 1 次 firing；自 09-21 起无一圈完成
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=1,doc=9)
   - src/zephyr/frontend/dashboard/api_server.py:1634
@@ -271,9 +273,11 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=data_supply_sentinel 任务级求和×0)
     evidence: 每日 1 拍；托管变异巡检另有 7 天节奏闸（未跑属正常）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:33(?=3,code=2,config=1,doc=27)
   - docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md:138
@@ -346,9 +350,11 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=calendar_coverage_check 任务级求和×0)
     evidence: 每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,doc=10)
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml:5342
@@ -423,9 +429,11 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=nightly_sentiment 任务级求和×0)
     evidence: 每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:20(?=1,code=15,config=1,doc=3)
   - src/zephyr/alt_data/emotion_index_builder.py:322
@@ -506,9 +514,11 @@ nodes:
   casebooks:
   - MEM-F13#币圈与另类
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 104
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_crypto 任务级求和×6)
     evidence: 每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=4,config=2,doc=4)
   - src/zephyr/ai_layer/scheduling/seed_writer.py:13
@@ -580,9 +590,11 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 149
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=pre_market 任务级求和×9)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=1,doc=9)
   - src/zephyr/frontend/dashboard/api_server.py:1629
@@ -656,9 +668,12 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_QMTWatchdog）
     evidence: 交易日每日 2 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T12:55:01'
   consumers:
   - count:11(code=4,config=1,doc=6)
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml:32411
@@ -725,9 +740,11 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: source_health_logs_30d
+    count: 19
+    source: logs/source_health_*.log glob（30日窗文件数；EXEC 口径同源）
     evidence: 每日 1 份日志（触发者待定位）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=1,doc=9)
   - src/zephyr/reporting/miniqmt_order_link_probe.py:23
@@ -804,9 +821,12 @@ nodes:
   casebooks:
   - MEM-F13#盘前探针（low）
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 0 拍（无合成器；三判据各自半自动且互不交集）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 无调度无触发计数面（触发证据=日志面，见 evidence；c1 方案簿 §2 机制D）
   consumers:
   - count:7(code=3,doc=4)
   - src/zephyr/ex_core/live_strategy_adapter.py:9
@@ -867,9 +887,11 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=sector_pre_open 任务级求和×0)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:15(?=1,code=5,config=1,doc=8)
   - src/zephyr/governance/consumption/consumption_census.py:411
@@ -940,9 +962,11 @@ nodes:
   purpose_tag: t03_premarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 1161
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=auction_highfreq 任务级求和×2)
     evidence: 窗内每 10 秒
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:22(?=2,code=6,config=1,doc=13)
   - src/zephyr/frontend/dashboard/api_server.py:1630
@@ -1016,9 +1040,12 @@ nodes:
   - MEM-F13#模拟盘与做T
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_PaperSession）
     evidence: 交易日每日 1 次拉起
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T09:25:01'
   consumers:
   - count:19(?=1,code=5,config=1,doc=12)
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml:6486
@@ -1088,9 +1115,11 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=post_auction 任务级求和×0)
     evidence: 名义每日 1 拍；实为 0 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:3(code=2,config=1)
   - config/data_supply_chain_map.yaml:282
@@ -1165,9 +1194,11 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 2172
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=intraday_realtime 任务级求和×15)
     evidence: 盘中每 5 分钟
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=2,config=1,doc=7)
   - src/zephyr/frontend/dashboard/api_server.py:1622
@@ -1240,9 +1271,11 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 1255
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=intraday_minute 任务级求和×11)
     evidence: 盘中每 5 分钟
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=3,config=3,doc=4)
   - src/zephyr/frontend/dashboard/api_server.py:1621
@@ -1315,9 +1348,11 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 355
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=intraday_sector 任务级求和×5)
     evidence: 盘中每 5 分钟
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:10(code=5,config=3,doc=2)
   - src/zephyr/frontend/dashboard/api_server.py:1631
@@ -1391,9 +1426,11 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 60875
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=event_driven 任务级求和×10)
     evidence: 每 3 分钟
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:22(?=2,code=20)
   - src/zephyr/ai_layer/cleaning/auditor.py:10
@@ -1465,9 +1502,11 @@ nodes:
   purpose_tag: t06_intraday_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 280
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=news_slow 任务级求和×2)
     evidence: 每小时 2 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:10(code=4,config=1,doc=5)
   - src/zephyr/frontend/dashboard/api_server.py:1628
@@ -1541,9 +1580,12 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_IntradayFundFlow）
     evidence: 交易日每日 5 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T15:05:01'
   consumers:
   - count:13(?=1,code=3,config=1,doc=8)
   - src/zephyr/frontend/dashboard/api_server.py:1588
@@ -1611,9 +1653,12 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 自动圈下 0 拍（恒 skipped）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 进程内段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:1(code=1)
   - src/zephyr/plan_engine/daily_loop_master_switch.py:74
@@ -1677,9 +1722,11 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: table_rows_latest_shanghai_date
+    count: 4
+    source: DatabaseService CH reader（judgment_intraday_market_state，只读）
     evidence: 唤醒词驱动（当日数拍）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=2,doc=8)
   - src/zephyr/plan_engine/intraday_l1_tracker.py:7
@@ -1743,9 +1790,12 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 唤醒词驱动
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 进程内段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:3(code=3)
   - src/zephyr/plan_engine/daily_loop_master_switch.py:4
@@ -1808,9 +1858,12 @@ nodes:
   purpose_tag: t07_wakeword_judge
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 每日恰 1 拍（收盘后）；盘中零拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 进程内段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:11(?=1,code=1,doc=9)
   - src/zephyr/plan_engine/daily_loop_master_switch.py:308
@@ -1882,9 +1935,12 @@ nodes:
   casebooks:
   - MEM-F13#模拟盘与做T
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_PaperSession）
     evidence: 常驻
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T09:25:01'
   consumers:
   - count:11(?=1,code=4,doc=6)
   - src/zephyr/ex_core/live_strategy_adapter.py:2
@@ -1952,9 +2008,11 @@ nodes:
   purpose_tag: t08_postmarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=sector_close_final 任务级求和×0)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:4(code=2,config=1,doc=1)
   - docs/03_modules/_cross_layer/database/business_data_categories.yaml:5534
@@ -2026,9 +2084,12 @@ nodes:
   casebooks:
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_IndexMinuteEOD）
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T15:10:01'
   consumers:
   - count:5(code=4,config=1)
   - scripts/governance/d5_architecture/generators/generate_trading_day_cycle_map.py:852
@@ -2098,9 +2159,12 @@ nodes:
   purpose_tag: t09_settlement_recon
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 定周期腿每若干分钟；事件入口腿 0 次
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 事件触发段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:11(?=1,code=9,doc=1)
   - src/zephyr/ex_core/eod_reconciliation.py:4
@@ -2169,9 +2233,12 @@ nodes:
   - MEM-F13#结算复活
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_PostSettlement）
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T15:30:00'
   consumers:
   - count:30(?=2,code=12,doc=16)
   - src/zephyr/trading/boot_hooks.py:232
@@ -2252,9 +2319,11 @@ nodes:
   purpose_tag: t09_settlement_recon
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=eod_reconciliation 任务级求和×1)
     evidence: 名义每日 1 拍；实为 0 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:22(?=2,code=12,doc=8)
   - src/zephyr/ex_core/adapters/miniqmt_broker.py:5
@@ -2335,9 +2404,11 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 404
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_kline 任务级求和×29)
     evidence: 交易日每日 1 批
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:22(?=2,code=20)
   - src/zephyr/backtest/core/data_handler.py:373
@@ -2361,7 +2432,7 @@ nodes:
   machine_facts:
     slot_facts:
       slot_effective_task_count:
-        daily_kline: 30
+        daily_kline: 29
       special_branch_exists:
         daily_kline: false
       calendar_guarded:
@@ -2413,9 +2484,12 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 无
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 无调度无触发计数面（触发证据=日志面，见 evidence；c1 方案簿 §2 机制D）
   consumers:
   - count:3(doc=3)
   - docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml:7798
@@ -2477,9 +2551,11 @@ nodes:
   casebooks:
   - DCS#队列（low）
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=dloop_post 任务级求和×0)
     evidence: 交易日每日 1 圈
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:19(?=1,code=6,config=2,doc=10)
   - src/zephyr/pf_alloc/allocation_inputs.py:206
@@ -2553,9 +2629,12 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 每圈 1 次
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 进程内段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:22(?=2,code=14,doc=6)
   - src/zephyr/plan_engine/close_verifier.py:6
@@ -2622,9 +2701,12 @@ nodes:
   purpose_tag: t10_daycycle_review
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: table_rows_total
+    count: null
+    source: DatabaseService CH reader（decision_daily，只读）
     evidence: 每圈 1 次
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: CH reader 计数失败（ServerException：表不在 reader 授权面或 CH 不可达；c1 方案簿降级条款）
   consumers:
   - count:22(?=2,code=7,doc=13)
   - src/zephyr/plan_engine/daily_loop_master_switch.py:4
@@ -2698,9 +2780,11 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_backfill 任务级求和×0)
     evidence: 交易日每日 3 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:30(?=2,code=13,config=3,doc=12)
   - src/zephyr/frontend/dashboard/api_server.py:1627
@@ -2722,7 +2806,7 @@ nodes:
     slot_facts:
       slot_effective_task_count:
         daily_backfill: 0
-        daily_capital: 38
+        daily_capital: 39
         daily_event: 40
       special_branch_exists:
         daily_backfill: true
@@ -2786,9 +2870,11 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 18
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=research_nightly 任务级求和×2)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:7(code=3,config=1,doc=3)
   - docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md:65
@@ -2860,9 +2946,11 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 118
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=nightly_financial 任务级求和×10)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:10(code=4,config=1,doc=5)
   - src/zephyr/frontend/dashboard/api_server.py:1624
@@ -2936,9 +3024,11 @@ nodes:
   casebooks:
   - MEM-F13#断供补数
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=integrity_check 任务级求和×0)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:11(?=1,code=9,doc=1)
   - src/zephyr/autonomy_core/context/integrity_check.py:2
@@ -3014,9 +3104,11 @@ nodes:
   casebooks:
   - MEM-F13#移窗与口径
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=consensus_crosscheck 任务级求和×0)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:22(?=2,code=1,config=1,doc=18)
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml:13489
@@ -3085,9 +3177,11 @@ nodes:
   purpose_tag: t11_nightly_batch
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 11
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=daily_alt_fx 任务级求和×1)
     evidence: 交易日每日 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:4(code=2,config=1,doc=1)
   - docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md:598
@@ -3158,9 +3252,11 @@ nodes:
   casebooks:
   - MEM-F13#日历与周窗
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=weekend_backfill 任务级求和×1)
     evidence: 周 1 拍 + 月 1 拍
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers:
   - count:33(?=3,code=7,config=1,doc=22)
   - src/zephyr/frontend/dashboard/api_server.py:1626
@@ -3251,9 +3347,12 @@ nodes:
   - MEM-F13#守护判活与误杀
   - MEM-F13#计划任务静默
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 4
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_TradingWatchdog）
     evidence: 每 5 分钟重点火
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-08T04:51:56'
   consumers:
   - count:33(?=3,code=17,doc=13)
   - src/zephyr/ex_core/live_strategy_adapter.py:355
@@ -3327,9 +3426,12 @@ nodes:
   casebooks:
   - MEM-F13#日历与周窗
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 全日每拍实查
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 事件触发段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:16(?=1,code=11,doc=4)
   - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml:10007
@@ -3397,9 +3499,12 @@ nodes:
   casebooks:
   - MEM-F13#时区与假绿
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: none
+    count: null
+    source: cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）
     evidence: 每圈 1 次（当日实为 0 产出）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    no_count_reason: 进程内段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）
   consumers:
   - count:55(?=5,code=24,doc=26)
   - src/zephyr/plan_engine/intraday_tomorrow_forecast.py:1
@@ -3473,9 +3578,12 @@ nodes:
   purpose_tag: t05_paper_session
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_SimBridgeExecute）
     evidence: 注册后未取到执行留痕（周末窗未开）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T13:05:01'
   consumers: []
   mechanism: B_windows_task
   dloop_stages: []
@@ -3534,9 +3642,12 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 1
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_DecisionChainSentinel）
     evidence: 样本 1 条（时区口径待复判）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
+    last_run: '2026-10-07T09:40:01'
   consumers: []
   mechanism: B_windows_task
   dloop_stages: []
@@ -3595,9 +3706,11 @@ nodes:
   purpose_tag: t02_supply_alert
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: task_runs_30d
+    count: 0
+    source: data/integrator_progress.db:task_runs(ro-uri 30日窗；slot=cross_validation 任务级求和×0)
     evidence: 假日窗口无判据；10-08 开市复核
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers: []
   mechanism: A_apscheduler
   dloop_stages: []
@@ -3663,9 +3776,11 @@ nodes:
   purpose_tag: t08_postmarket_ingest
   casebooks: []
   trigger_facts:
-    as_of: '2026-10-08T02:06:40+08:00'
+    as_of: '2026-10-08T04:33:26+08:00'
+    metric: schtasks_lastrun_in_window
+    count: 0
+    source: Get-ScheduledTaskInfo（只读查询；96h 节拍窗；tn=ZephyrAlpha_SectorEqwIntraday）
     evidence: 交易日每日 1 跑（假日零行自然安全；runner MATURITY=production 2026-10-08 升级，ops 车道 st-fig13-followup）
-    source: cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）
   consumers: []
   mechanism: B_windows_task
   dloop_stages: []
@@ -4162,7 +4277,7 @@ machine_facts:
         executor: default
         cadence_class: trading_weekday
         declared: true
-        effective_task_count: 38
+        effective_task_count: 39
         special_branch_exists: false
         calendar_guarded: true
         in_catchup_universe: true
@@ -4192,7 +4307,7 @@ machine_facts:
         executor: heavy
         cadence_class: trading_weekday
         declared: true
-        effective_task_count: 30
+        effective_task_count: 29
         special_branch_exists: false
         calendar_guarded: true
         in_catchup_universe: true
@@ -4826,6 +4941,7 @@ machine_facts:
         - cffex_member_ranking_refresh
         - cftc_positioning_refresh
         - china_bond_yield_refresh
+        - cohort_ledger_daily
         - concept_board_refresh
         - convertible_bond_clause_refresh
         - dragon_tiger_incremental
@@ -4909,7 +5025,6 @@ machine_facts:
         daily_kline:
         - adj_factor_incremental
         - anchored_state_build
-        - cohort_ledger_daily
         - daban_engine_load_daily
         - daily_valuation_incremental
         - emotion_index_close_final

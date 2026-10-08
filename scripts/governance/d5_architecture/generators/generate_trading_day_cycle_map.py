@@ -100,6 +100,7 @@ import ast
 import re
 import subprocess
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -2454,6 +2455,268 @@ def scan_registered_schtasks(root: Path, *, skip: bool = False) -> dict[str, Any
     return {"available": True, "reason": "", "task_names": names}
 
 
+# ── trigger_facts 实数化（st-fig13-followup-20261006 线C；口径真源=docs/_working/fig13_followup/c1_trigger_facts_realdata_plan.md 封矿簿）──
+_TRIGGER_DB_REL = "data/integrator_progress.db"
+_TRIGGER_WINDOW_DAYS = 30
+# B 类节拍窗：96h（容忍一个周末/假日 + 负载停顿；全 10 台 B 节点皆日频族）
+_SCHTASKS_INFO_WINDOW_HOURS = 96
+# C 类产物表（挖矿钉死：骨架 §2 :104/:124；表名一律裸逻辑名，真源=TableRegistry）
+_C_PRODUCT_TABLES: dict[str, dict[str, str]] = {
+    "D13-21": {
+        "table": "judgment_intraday_market_state",
+        "date_expr": "toDate(asof_ts,'Asia/Shanghai')",
+        "metric": "table_rows_latest_shanghai_date",
+    },
+    "D13-34": {
+        "table": "decision_daily",
+        "date_expr": "",
+        "metric": "table_rows_total",
+    },
+}
+# D 类：D13-08 十源健康探针日志（EXEC 口径同源=logs/source_health_YYYYMMDD.log 逐日一份）
+_D_LOG_GLOBS: dict[str, dict[str, str]] = {
+    "D13-08": {"glob": "logs/source_health_*.log", "metric": "source_health_logs_30d"},
+}
+
+# SQL 集中化（NO-BARE-SQL §5.160.2：SQL 提取模块级 _SQL_* 常量；模板经 .format 填充）
+_SQL_TASK_RUNS_BY_TASK = (
+    "SELECT task_id, COUNT(*) FROM task_runs WHERE task_id IN ({ph}) AND started_at >= ? GROUP BY task_id"
+)
+_SQL_CH_COUNT_ROWS = "SELECT count() FROM {table}"
+_SQL_CH_COUNT_LATEST_DATE = "SELECT count() FROM {table} WHERE {date_expr} = (SELECT max({date_expr}) FROM {table})"
+_SQL_CH_TABLE_LOCATION = "SELECT database FROM system.tables WHERE name = '{table}'"
+
+
+def _parse_iso_utc(ts: str) -> datetime:
+    """ISO 时间戳 → UTC datetime（+08:00/+00:00 混排统一，禁跨偏移字典序比较）。"""
+    dt = datetime.fromisoformat(ts)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
+def _query_schtasks_last_run(task_names: list[str]) -> dict[str, str | None]:
+    """机制B：Get-ScheduledTaskInfo LastRunTime 只读批量查询（scan_registered_schtasks 同通道）。
+
+    返回 {task_name: ISO|None}；查询失败=空 dict（调用方按面降级，禁「查不到」冒充「没跑」）。
+    """
+    if not task_names:
+        return {}
+    lst = ", ".join("'" + n.replace("'", "''") + "'" for n in task_names)
+    cmd = (
+        "foreach($n in @(" + lst + ")){ try{ "
+        "$i=Get-ScheduledTaskInfo -TaskName $n -ErrorAction Stop; "
+        "$t=$i.LastRunTime; "
+        "if($t -and $t.Year -gt 2000){ Write-Output ($n+'|'+$t.ToString('yyyy-MM-ddTHH:mm:ss')) } "
+        "else { Write-Output ($n+'|NEVER') } "
+        "} catch { Write-Output ($n+'|ERR') } }"
+    )
+    out: dict[str, str | None] = {}
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        r = run_subprocess_hidden(["powershell", "-NoProfile", "-Command", cmd], timeout=90)
+    except Exception:  # noqa: BLE001
+        return {}
+    for ln in (r.stdout or "").splitlines():
+        ln = ln.strip()
+        if "|" not in ln:
+            continue
+        name, _, val = ln.partition("|")
+        out[name.strip()] = None if val.strip() in ("NEVER", "ERR") else val.strip()
+    return out
+
+
+def _count_ch_product(root: Path, spec: dict[str, str]) -> tuple[int | None, str | None]:
+    """机制C：CH 产物表行数（DatabaseService reader 只读；失败降级并给精确理由不崩生成）。
+
+    返回 (count|None, no_count_reason|None)；2026-10-08 实勘：reader 账号 grant 面=c1_market，
+    跨库表（decision_daily 居 c1_backtest）连 system.tables 都不可见（授权缺口非查询错误）。
+    """
+    try:
+        from zephyr.infrastructure.database_service import DatabaseService
+
+        conn = DatabaseService().get_clickhouse_conn(role="reader")
+        if spec["metric"] == "table_rows_latest_shanghai_date":
+            sql = _SQL_CH_COUNT_LATEST_DATE.format(table=spec["table"], date_expr=spec["date_expr"])
+        else:
+            sql = _SQL_CH_COUNT_ROWS.format(table=spec["table"])
+        try:
+            rows = conn.execute(sql)
+        except Exception:  # noqa: BLE001 — 默认库未命中（表居他库）→ system.tables 解析库归属重试
+            if spec["metric"] != "table_rows_total":
+                raise
+            loc = conn.execute(_SQL_CH_TABLE_LOCATION.format(table=spec["table"]))
+            if not loc:
+                raise
+            rows = conn.execute(_SQL_CH_COUNT_ROWS.format(table=f"{loc[0][0]}.{spec['table']}"))
+        return (int(rows[0][0]) if rows else 0), None
+    except Exception as e:  # noqa: BLE001 — CH 不可达/授权缺口=降级（no_count_reason），非错误
+        return None, f"CH reader 计数失败（{type(e).__name__}：表不在 reader 授权面或 CH 不可达；c1 方案簿降级条款）"
+
+
+def scan_trigger_counts(root: Path, *, skip_schtasks: bool = False, as_of: str) -> dict[str, dict[str, Any]]:
+    """trigger_facts 实数化三通道扫描（重扫即刷；逐通道独立降级，禁崩生成）。
+
+    返回 {nid: {metric, count, source, last_run?, no_count_reason?}}；未收录 nid 由
+    _build_trigger_facts 按机制类给显式 no_count_reason（禁伪造零）。
+    """
+    now_dt = _parse_iso_utc(as_of)
+    cutoff = (now_dt - timedelta(days=_TRIGGER_WINDOW_DAYS)).strftime("%Y-%m-%dT%H:%M:%S")
+    records: dict[str, dict[str, Any]] = {}
+
+    # ── 机制A（APScheduler 槽）：slot→task join（scan_task_mounts 同源）×task_runs 30 日窗 ──
+    slots = scan_schedule_slots(root)
+    mounts = scan_task_mounts(root, set(slots))
+    by_slot: dict[str, list[str]] = mounts.get("tasks_by_slot") or {}
+    slot_owners: dict[str, list[str]] = {}
+    for nid, spec in N.items():
+        for s in spec.get("slot") or []:
+            slot_owners.setdefault(s, []).append(nid)
+    task_ids_all = sorted({t for tl in by_slot.values() for t in tl})
+    counts_by_task: dict[str, int | None] = {}
+    db_ok = (root / _TRIGGER_DB_REL).exists()
+    if db_ok:
+        import sqlite3
+
+        try:
+            conn = sqlite3.connect(f"file:{(root / _TRIGGER_DB_REL).as_posix()}?mode=ro", uri=True)
+            ph = ",".join("?" * len(task_ids_all)) if task_ids_all else "NULL"
+            rows = conn.execute(_SQL_TASK_RUNS_BY_TASK.format(ph=ph), (*task_ids_all, cutoff)).fetchall()
+            counts_by_task = {r[0]: int(r[1]) for r in rows}
+            conn.close()
+        except Exception:  # noqa: BLE001
+            counts_by_task = {}
+    for slot, owners in slot_owners.items():
+        for nid in owners:
+            if nid in records or nid not in N or N[nid].get("gap"):
+                continue
+            tids = by_slot.get(slot) or []
+            if not db_ok:
+                records[nid] = {
+                    "metric": "task_runs_30d",
+                    "count": None,
+                    "source": f"{_TRIGGER_DB_REL}:task_runs(ro-uri {_TRIGGER_WINDOW_DAYS}日窗)",
+                    "no_count_reason": "integrator_progress.db 不可读（ro-uri 打开失败）",
+                }
+                continue
+            total = sum(int(counts_by_task.get(t, 0)) for t in tids)
+            records[nid] = {
+                "metric": "task_runs_30d",
+                "count": total,
+                "source": f"{_TRIGGER_DB_REL}:task_runs(ro-uri {_TRIGGER_WINDOW_DAYS}日窗；slot={slot} 任务级求和×{len(tids)})",
+            }
+
+    # ── 机制B（Windows 计划任务）：LastRunTime 在窗判定（96h 窗；count=窗内任务台数）──
+    tn_owners: dict[str, list[str]] = {}
+    for nid, spec in N.items():
+        for tn in spec.get("tn") or []:
+            tn_owners.setdefault(tn, []).append(nid)
+    all_tns = sorted(tn_owners)
+    info = {} if skip_schtasks else _query_schtasks_last_run(all_tns)
+    win_cutoff = now_dt - timedelta(hours=_SCHTASKS_INFO_WINDOW_HOURS)
+    for tn in all_tns:
+        for nid in tn_owners[tn]:
+            rec = records.get(nid)
+            if rec is not None:
+                # D13-42 类多 tn 节点：聚合为「窗内任务台数」
+                pass
+            if not info:
+                records[nid] = {
+                    "metric": "schtasks_lastrun_in_window",
+                    "count": None,
+                    "source": "Get-ScheduledTaskInfo（只读查询）",
+                    "no_count_reason": "schtasks 查询面不可用（--skip-schtasks 或查询失败）",
+                }
+                continue
+            last = info.get(tn)
+            rec = records.setdefault(
+                nid,
+                {
+                    "metric": "schtasks_lastrun_in_window",
+                    "count": 0,
+                    "source": f"Get-ScheduledTaskInfo（只读查询；{_SCHTASKS_INFO_WINDOW_HOURS}h 节拍窗）",
+                },
+            )
+            rec["source"] = f"Get-ScheduledTaskInfo（只读查询；{_SCHTASKS_INFO_WINDOW_HOURS}h 节拍窗；tn={tn}）"
+            if last:
+                in_win = 1 if _parse_iso_utc(last) >= win_cutoff else 0
+                rec["count"] = int(rec.get("count") or 0) + in_win
+                prev = rec.get("last_run")
+                rec["last_run"] = max(prev, last) if prev else last
+            # last=None（NEVER/ERR）→ 不计台数；NEVER=真零触发证据，ERR 随批面降级注记
+            if last is None and tn not in info:
+                rec["no_count_reason"] = "schtasks 查询面不可用（该任务查询失败）"
+
+    # ── 机制C（进程内段产物表）：挖矿钉死两台 ──
+    for nid, cspec in _C_PRODUCT_TABLES.items():
+        cnt, why = _count_ch_product(root, cspec)
+        records[nid] = {
+            "metric": cspec["metric"],
+            "count": cnt,
+            "source": f"DatabaseService CH reader（{cspec['table']}，只读）",
+        }
+        if cnt is None:
+            records[nid]["no_count_reason"] = why or "CH reader 不可达（生成期降级）"
+
+    # ── 机制D（无调度）：D13-08 日志文件窗计数 ──
+    for nid, dspec in _D_LOG_GLOBS.items():
+        try:
+            files = sorted((root / "logs").glob("source_health_*.log"))
+            cnt = sum(1 for f in files if f.stat().st_mtime >= (now_dt.timestamp() - _TRIGGER_WINDOW_DAYS * 86400))
+            records[nid] = {
+                "metric": dspec["metric"],
+                "count": cnt,
+                "source": f"{dspec['glob']} glob（{_TRIGGER_WINDOW_DAYS}日窗文件数；EXEC 口径同源）",
+            }
+        except Exception:  # noqa: BLE001
+            records[nid] = {
+                "metric": dspec["metric"],
+                "count": None,
+                "source": dspec["glob"],
+                "no_count_reason": "logs glob 面不可读（生成期降级）",
+            }
+    return records
+
+
+_NO_COUNT_REASON_BY_MECH = {
+    "dloop_stage": "进程内段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）",
+    "event": "事件触发段无独立产物表面（产物归上游槽节点计数，c1 方案簿 §2 机制C）",
+    "none": "无调度无触发计数面（触发证据=日志面，见 evidence；c1 方案簿 §2 机制D）",
+}
+
+
+def _build_trigger_facts(
+    nid: str, spec: dict[str, Any], counts: dict[str, dict[str, Any]] | None, as_of_eff: str
+) -> dict[str, Any]:
+    """单节点 trigger_facts 装配：实数记录优先，缺位按机制类显式 no_count_reason（禁伪造零）。"""
+    evidence = str(spec.get("obs") or spec["clk"])
+    fact: dict[str, Any] = {}
+    rec = (counts or {}).get(nid)
+    if rec is not None:
+        fact = {
+            "as_of": as_of_eff,
+            "metric": rec["metric"],
+            "count": rec.get("count"),
+            "source": rec["source"],
+            "evidence": evidence,
+        }
+        if rec.get("last_run"):
+            fact["last_run"] = rec["last_run"]
+        if rec.get("no_count_reason"):
+            fact["no_count_reason"] = rec["no_count_reason"]
+        return fact
+    fact = {
+        "as_of": as_of_eff,
+        "metric": "none",
+        "count": None,
+        "source": "cadence_zh.observed 投影（实数化口径=c1 方案簿，本机制类无独立计数面）",
+        "evidence": evidence,
+        "no_count_reason": _NO_COUNT_REASON_BY_MECH.get(spec["src"], "无独立计数面（c1 方案簿 §2）"),
+    }
+    return fact
+
+
 def scan_service_flags(root: Path) -> dict[str, Any]:
     """`data/runtime/*.disabled` 服务总闸实存面（不存在=开着；存在=停用）——总闸真落空才看得见。"""
     rels = (
@@ -2816,6 +3079,7 @@ def build_nodes(
     skeleton_status: dict[str, str],
     *,
     as_of: str | None = None,
+    trigger_counts: dict[str, dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """48 环节 + 4 gap 节点：人工语义层 ⊕ 机生面（三层字段名一律取六图终局卷 §1 统一名）。"""
     build_status_zh = get_category_map("build_status")
@@ -2888,15 +3152,7 @@ def build_nodes(
             #    task_runs 实数计数归后续批。gap 节点不贴不灌——F4/图12 家族先例）──
             "purpose_tag": None if is_gap else NODE_PURPOSE_TAG.get(nid),
             "casebooks": [] if is_gap else list(CASEBOOKS_ADOPTED.get(nid) or []),
-            "trigger_facts": (
-                None
-                if is_gap
-                else {
-                    "as_of": as_of_eff,
-                    "evidence": str(spec.get("obs") or spec["clk"]),
-                    "source": "cadence_zh.observed 投影（骨架三证第三证口径；task_runs 实数计数归后续批）",
-                }
-            ),
+            "trigger_facts": (None if is_gap else _build_trigger_facts(nid, spec, trigger_counts, as_of_eff)),
             "consumers": list(consumers_index.get(nid) or []),
             # ── L2 图专属层（六图终局卷 §1 L2 + 簿 10 表A 落字段；清单在图头 ssot_note_zh 声明）──
             "mechanism": {
@@ -2966,7 +3222,9 @@ def build_document(as_of: str, root: Path, *, skip_schtasks: bool = False) -> di
     surfaces = build_trigger_surfaces(root, skip_schtasks=skip_schtasks)
     module_index = scan_module_id_index(root)
     skeleton_status = scan_skeleton_status(root)
-    nodes = build_nodes(surfaces, module_index, skeleton_status, as_of=as_of)
+    # trigger_facts 实数化（c1 方案簿）：DB/查询面失败各自降级 no_count_reason，禁崩生成
+    trigger_counts = scan_trigger_counts(root, skip_schtasks=skip_schtasks, as_of=as_of)
+    nodes = build_nodes(surfaces, module_index, skeleton_status, as_of=as_of, trigger_counts=trigger_counts)
     missing_exec = [
         n["node_id"] for n in nodes if n.get("verified_scope") == "production" and not n.get("exec_evidence")
     ]
