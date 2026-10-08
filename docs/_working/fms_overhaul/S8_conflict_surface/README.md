@@ -222,3 +222,79 @@ status: MINE 完成（挖干）
 `tests/meta/scripts/backup/`（与 `test_backup_ps_scripts.py` 同处，判据=同为 scripts/backup/*.ps1 的尺）。
 **教训**：大规模旧目录清除袋必须逐件证"新路径实存"，不能按目录整体宣称零删失；
 收尾方复核口径＝`git grep -l <尺内独有符号> HEAD`，而不是"文件数对上了"。
+
+---
+
+## ⑩ 本班关闭现场：一处硬阻断＋§廿九 作废文（2026-10-09 01:1x，接班必读）
+
+### ⑩.1 ⚑⚠ 硬阻断：`TAKEOVER-PENDING` 挡住 `99_delivery_report.md`，本班 §卅一 无法落地
+
+死信 `q-20261009-st-fms-tc-20260927-0063`（dead_reason 全文在 `.runtime/commit_queue/dead/`）：
+
+> 门禁 TAKEOVER-PENDING 阻断：命中 open 接管条目（死会话遗留资源面）——必须先按接管处方处置再提交。
+> 死会话 `st-fc-landing-20261008`；命中文件 1 件：`docs/_working/fms_overhaul/99_delivery_report.md`
+
+本班只读取证（**未动他道任何字节，未 `--resolve`，未 `git worktree remove`**）：
+
+| 探针 | 实测 |
+|---|---|
+| 该 worktree | `.aidrafts/st-fc-landing-20261008` 在盘，dirty **55 件**（含整个 `docs/_working/fullcirculation_campaign/**` 新增战役簿面） |
+| 其基座 | `224e447318` — `git merge-base --is-ancestor` 判 **是 HEAD 祖先**（未分叉） |
+| 其 staged 版本报告 | **53,163 B**，`grep -c "## 廿九\|## 三十"` = **0** |
+| HEAD 版本报告 | **62,285 B**，两节俱在（`271889ebd1` 本班落地面） |
+
+⇒ **接班第一条红线**：处置该接管时**绝不可把其 staged 的 `99_delivery_report.md` 整体合回主区**——
+那是"旧基座＋旧报告"的超集快照，合回即**静默回退本班 §廿九/§三十**（§2.5 归属篡改的同族，只是方向相反）。
+若需收其 54 件战役簿成果，请**逐件**合回并对本报告做 `git log -- docs/_working/fms_overhaul/99_delivery_report.md` 反查后**跳过**。
+
+处方（须由维护班或 Owner 指定的接管者做，本班不代裁）：
+1. 逐件核 `.aidrafts/st-fc-landing-20261008` 的 55 件成果（本报告除外），成果 merge 或 abort；
+   worktree remove 走裁定通道登记，**禁裸 `git worktree remove`**；
+2. 确认进程已死后清理 `.runtime/sessions/st-fc-landing-20261008/` 心跳残留（ghost 活性）；
+3. `python scripts/governance/session_takeover_ledger.py --resolve st-fc-landing-20261008 --by <接管者> --note <处置结论>`；
+4. 解除阻断后，把 ⑩.2 的文字补进 `99_delivery_report.md` 作 §卅一（工作区里本班已写好但落不了地面，**勿 `git checkout HEAD --` 该文件**，否则 §卅一 直接消失）。
+
+### ⑩.2 §廿九 定性作废文（原拟 §卅一 的核心，先在此入册防他人照旧文施工）
+
+**HEAD 现存的 §廿九 说"全盘无 VM 级完整镜像＝活跃灾备空洞，后波重跑 `-CompactWindow`"——这条指令是错的，别照做。**
+
+- `scripts/backup/backup_ch_vm.ps1` 自 `ca9c336746`（2026-10-04 17:23）起在 **L154 无条件 `exit 0`**，
+  注释与 commit 正文同称"Owner conditional approval 2026-10-04 / Script is sealed -- do not run"；
+  其 backup / AutoCheck / **CompactWindow** / 任务开关四路全部不可达；周任务 `ZephyrAlpha-WeeklyVMBackup` 已 **Disabled**（未注销）。
+  ⇒ 重跑＝违逆封印；本班 §廿九 出此建议时未读 L154，属**本班自犯**（转述他人判据而未亲读返回行）。
+- 数据面**没裸奔**：`G:\ch_backup_disk2.vhdx` = 1,032,239,185,920 B ≈ **961.35 GiB**，mtime 2026-10-08 07:16，
+  内含 CH 逻辑备份 `market.zip` 278.4 GiB ＋ `inc.zip` 42.65 GiB（F 侧同链逐字节等值）；`G:\backup\db_dumps\20261008` 日 dump 在位。
+  真实代价＝**VM 级整机快恢降级为"重建式"**（与 10-04 commit 自述一致），不是"数据无备份"。
+- ⚑ 但那次批准**在册面查无**：`ruling_registry.yaml` 的 10-04 段（L4100–4163 四条）无一涉 ch_vm_backup/封印/镜像退役；
+  grep `ch_vm_backup` 只命中 裁定#443、#445（均 09-30）。而 裁定#445 明写 F 盘摘除三段式 **"本裁定=排班与步骤备案，非执行授权"**，
+  且其前置条件恰是"G 侧 ch_vm_backup 副本当日核验通过"——**被删的镜像正是摘 F 链的前置证据**。
+  按宪法 §9.11（口头"Owner 说"不构成门禁豁免）→ **待裁 O-8：认技术处置＋补登记裁定面**（零施工）。
+- 连坐缺陷：`capacity_guard` 四盘红线（F≥700/G≥500）**唯一读者 `backup_ch_vm.ps1:560` 在 L154 之后 ⇒ 现零活读者**；
+  实测 **F free 529.4 GiB 已跌破 700 红线**而无人拦（D 36.8 / E 221.0 / G 1910.7 GiB，`Get-PSDrive` 与 `df -h` 同读数）。
+  占用主体 `F:\ch_backup_disk.vhdx` = **950.29 GiB 仍 SCSI0.3 热挂**，裁定#414②/#445/#488-A①C109 的 F 链摘除至今未执行（716→950.29 在涨）。
+  本班 09-27 的"写侧容量硬闸"（`f06efd2daa2`）随封印变装饰件——**记本班账上**。修法=内收到仍活着的 `backup.ps1` 写侧
+  （w5_1"同真源可派生→必并"；击穿则跳过该目标并留痕，勿整轮 fail 复刻常红噪音）。
+
+### ⑩.3 两处仪表说谎（本班会话自证，防下一班误判）
+
+1. **#ARCH-084 热册守护把别道的写判给当窗测试**：跑本班三把尺（默认 pyproject 配置）＝76 passed ＋ 1 硬 ERROR，
+   榜点两例"写了 `capability_canonical_file_registry.yaml`"。双证伪：①只跑被点名两例，该册前后
+   `sha256/mtime_ns/size` 逐位不变（`93c0e0d2a5bec20a`/`1791476409987518000`/3,833,974）；
+   ②同文件 `git diff HEAD --numstat` 在本班两次读数间自变 +285→+280→+285，且此刻由活跃他道 `st-chief2close-20261008` claim。
+   机制＝`tests/conftest.py` 按"测试窗口内热册 sha 漂移"归因，分辨不了写者身份；`filterwarnings=["error"]` 又把它升成硬 ERROR。
+   **本班未放宽判据**（往宽松方向改属 Owner 门位）。合法旁路（已用）＝裁定#278 精简跑法 `-c py.ini`。
+2. **陈化盘点尺"有码无产"**：`library_hygiene.py` 的 created 轴版本 `14dc95cb05` 早就在 HEAD，
+   但 `classify_working_docs` 直调 frontmatter 解析，而 `_working` tracked 面里混有 GBK 证据件
+   （`night_sweep/ledgers_archive/NB2_evidence/schtasks_all_20260930.csv`）⇒ 一个件把整轮盘点打成 `UnicodeDecodeError`，
+   **HYGIENE.md 史上零生成**。修＝按本班自己立的"读不得者单列计数"归 `undated`（**没有**改成"只扫 .md"，那会静默抹掉 674 件分母＝改口径）。
+   因果自证：`fd5ef3f65a` 落地后 01:04 产物即出现（`docs/_working/ultimate_library/HYGIENE.md`，31,009 B，未跟踪，待 token 同袋）。
+   真面首测（tracked 4,114 件）：aged **72** / undated **2,741** / fresh **1,299** / 其他 ttl 2 / 在册缺失 **0**；
+   ⇒ 本簿 §廿六 那句"74% 无出生日"应为 **66.6%**（2,741/4,114，旧数含非 tracked 面）。
+
+### ⑩.4 本班落地面与未落地清单（逐条可核）
+
+| 状态 | 件 |
+|---|---|
+| 已落 | `271889ebd1` §廿九/§三十；`23c2d00e54` `backup.ps1` 删除帽上界＋三把尺复位（45+20+11=76 passed，尺传 `-Ceiling` 故与码同袋）；`fd5ef3f65a` 陈化生成器 GBK 治本＋两例红蓝 |
+| 未落（工作区在，禁回退） | `docs/_working/fms_overhaul/99_delivery_report.md` 的 §廿九 作废注记＋§卅一（被 ⑩.1 阻断） |
+| 未落（需 token，同 ⑩.1 之后） | `docs/_working/fms_overhaul/A1_landing_audit/README.md`、`A2_pending_rulings_a/README.md`、`A3_pending_rulings_b/README.md`、`docs/_working/ultimate_library/HYGIENE.md`。⚠ token 册 `capability_canonical_file_registry.yaml` 此刻带 **+285/−50 外来未落地条目**（本班实测其中 5 行系 `st-matrix-20261007` 的 `gov-adjudication-routing` 新条目）——袋＝整档快照，随袋提交即吸收他人未落地条目，本班按红线**未动**；`HEAD:99_delivery_report.md:682-683` 对三本案卷的引用因此仍是死引用 |
