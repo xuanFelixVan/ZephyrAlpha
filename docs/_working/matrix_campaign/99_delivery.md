@@ -104,3 +104,46 @@ ttl: task_bound
 | 数据申请 | data_requests_v1.yaml（DR-1~4） | 提交数据班：解锁 13 因子+5 策略+1 因子重考 |
 
 **新增裁定执行记录**：paper 池 78 只落册；SMA200 默认帘子切换（HMM use_hmm=True 仅研究用）；MOM-029 注解 3 行。
+
+
+## st-mx07 夜战端到端交付增补（2026-10-07/08，总包=st-mx07-chief）
+
+第一波 12 车道 + 第二波 6 车道 + 总包回收 2 件 + 循环检查×2 + 红蓝对抗。测试面 257 用例 252 绿（5 红为 HEAD 预存豁免面 test_factory_grid_stage_cost_tiers，零本战役引入）；ruff 触达 182 件全清；全部成果经 GitCommitGateway 落 HEAD，零裸 commit。
+
+### 第一波（裁定#489 与 backlog 可开工项）
+
+| 道 | commit | 结论 |
+|----|--------|------|
+| L1 经典指标调查 | 469219b03f | 6 退役指标三选一：AC/MACD背离/CHOP=考法错；Squeeze/WAD=实现有错（修复处方在册）；HighPass3=等价维持退役。移交 3 施工单（blockers 在册） |
+| L2 SMA200 默认帘子 | 576ba62650 | regime_series 默认 sma200_default、HMM 显式 opt-in；tests/backtest/fexam 26/26 绿+真 CH 冒烟 |
+| L3 bootstrap 核接线 | a92886e31d/61543354d7/dd98757ab4 | 核迁 src/zephyr/backtest/accel/，WRC/E2/CORR 三处换核；同 idx 对拍 35/35 ≤1e-9；wiring 13 测+e2 16 测绿 |
+| L4 layered spread 接线 | e5118cd455/e6cbed3c5d/7e6f66d055 | compute_layer_spread 委托核（use_kernel 默认 True，pandas 后备保留）；38 测绿；基准册留档 |
+| L5 指标链向量化 | e3e32b7fed/62cfdff658/fd4578561d/a7f7c2b6f4 | 转正+生产切挂（provider→build_rows_vectorized）；对拍 438/438 \|Δ\|≤1e-9（红队复跑复现）；物化段 30.4x/31.6x；影子退役净零 |
+| L6 HMM v3 设计卡 | 04eed40b22 | SOTA 全网调研+v3 三处外科设计+超参冻结一次窗口；判据冻结不可挪 |
+| L7 MOM-029 direction | chief 代寄袋（原分支 32c063db6a） | direction=short+回炉 evidence+paper_pool_candidate 注记；+4/-2 与分支后像逐块相等校验 |
+| L8 情绪快照+首考 | 783015e28b | append-only 快照器+首考修复前瞻缺陷；verdict=有条件合格（IC=-0.1905/ICIR=1.16/retain=5.94 三线过，负向）；投产前置=日批运维化（blockers） |
+| L9 DR 申请包定稿 | 3f93955c7a | DR-1~4 窗口到日+验收判据+解锁对账（10 因子+6 策略+1 重考，13/5 原口径勘误留档在册）；待 Owner 转数据班 |
+| L10 CYC 预注册卡 | dfcc8ec954 | 四指标分层判据+Bonferroni 族 N_fam 冻结+一次窗口；判死动作=registry retired |
+| L11 进池判据门 | 9785cb6f23 | paper_pool_gate 三线 AND+聚合层 Bonferroni/DSR（SSOT 委托）；24 测合成真值绿；接线 campaign_report |
+| L12 R1/R2 调档 | chief 重投袋 | 定谳：错位本体已治本（#484③+fac9_04）；#489⑥ 实为销账批，F1-F5 全 S 级呈批（blockers） |
+
+### 第二波（前置解锁）
+
+| 道 | commit | 结论 |
+|----|--------|------|
+| W1 t0_material_line 并行 | df854ec406+037ecabc3a | 建模 21.4h→≈53min（x54.3 实测）；对拍逐位 0 FAIL/20（+5 对 Decimal 语义缝如实披露）；单点切挂+回滚口径；GPU 二期与 CH 取数 IO 瓶颈遗留 |
+| W2 HMM v3 施工+跑数 | c724894154 | 一次窗口 verdict=conditionally_qualified（①②③过；④滞后 med=10>5、⑤①分量 0.552<0.613 不过）→按裁定#489② **HMM 体制识别方向永久退役**；判死四动作已执行 |
+| W3 CYC 考场跑数 | dfcc8ec954/229504a84c/f098af4148/4faf0517e8 | 一次窗口 family=fail，四指标全不过 Bonferroni→registry CYC-001/002/004/005 retired+evidence；解盲前 freeze 证据已抢救归档 |
+| W4 离场族 12 节点 | 26a5f4a969（YELLOW） | 规格前置 B1-B5 缺失/证据冲突（E 道增益 vs T3b FAIL 两考卷）→prereg 草稿呈批、未跑数（宁缺毋假）；开考等 Owner 一次裁定 |
+| W5 板块四路+传导接线 | 278f283636c | sector_surface 四路强度面板+conduction 三档 gate+schema 折叠维 X_sector；14/14 绿+真数 smoke |
+| W6 wq_alpha_87 接线 | a7d9f91950 | FactorRegistry 入册+考试链 panel 截面协议；14+54 绿；capability 册经 ledger 意图 API+publish_snapshot v103 正道落地 |
+
+### 质量门与红蓝
+
+- 循环检查 R1：3 findings（r1r2 一页纸未落库=袋 B 承接；CAS 孤儿临时件=已清；预存红计数 7→5 勘误=已登记）。257 用例复验全绿零回退。
+- 红队 11 findings（P0=0）：对拍四面攻不破（L5 复跑 438/438 复现、L3 同索引注入属实、L4 后备可达、W1 披露诚实）；PIT 五件无前视（L8 t+1 forward、W3 freeze 先于解盲、L2 同日特征、W2 滤波因果、L11 冻结常量）；门禁面无绕过。**P1=1**：W3 主批携带的他班在途退役批物理删 15 条 TREND/MOM（5 条 verdict=pass）无裁定授权→呈 Owner 核定（blockers 在册，不代修）。
+- 已知热册风险：capability 册=PG 投影，手插条目会被 render 洗——本战役 matrix-l12 双 token 等经 ledger 重登记固化（blockers 在册）。
+
+### 遗留移交（Owner/维护班/数据班）
+
+1. RD P1-1 15 条删除授权链核定；2. W4 离场族 B1-B5 裁定后照草稿冻卡施工；3. W2 HMM 判死知会确认；4. L9 DR-1~4 转数据班；5. L8 快照器日批运维化；6. L1 三施工单；7. 队列工程债（ghost_session 家族/belt 活锁/心跳 Windows 存活率/T11 参数勘误）；8. W1 GPU 二期+CH 取数 IO；9. L12 F1-F5 销账批。全目见 dispatch_blockers.md。

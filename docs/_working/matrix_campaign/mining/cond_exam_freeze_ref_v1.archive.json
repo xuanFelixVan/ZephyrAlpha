@@ -1,0 +1,36 @@
+{
+  "frozen_before_unblind": true,
+  "window": [
+    "2024-10-08",
+    "2025-09-30"
+  ],
+  "baseline_used": "B1",
+  "family_size": 11,
+  "k_eff": {
+    "IND-CYC-001": 3,
+    "IND-CYC-002": 4,
+    "IND-CYC-004": 2,
+    "IND-CYC-005": 2
+  },
+  "stratum_day_counts": {
+    "IND-CYC-001": {
+      "D1": 236,
+      "D2": 244,
+      "D3": 241
+    },
+    "IND-CYC-002": {
+      "P1": 244,
+      "P2": 244,
+      "P3": 244,
+      "P4": 244
+    },
+    "IND-CYC-004": {
+      "W0": 244,
+      "W1": 244
+    },
+    "IND-CYC-005": {
+      "M0": 244,
+      "M1": 244
+    }
+  }
+}
