@@ -152,7 +152,14 @@ def classify_working_docs(repo: Path, days: int, today: Any, tracked: list[str] 
         if not (repo / rel).is_file():
             buckets["missing_on_disk"].append(rel)
             continue
-        meta = parse_frontmatter_from_file(repo / rel)
+        try:
+            meta = parse_frontmatter_from_file(repo / rel)
+        except (UnicodeDecodeError, OSError):
+            # 读不得者进 undated，不整轮崩：_working 里混有非 UTF-8 在册证据件
+            # （实测 night_sweep/ledgers_archive/NB2_evidence/schtasks_all_20260930.csv=GBK），
+            # 一次解码失败即让本类目从未出过报告（HYGIENE.md 历史零生成）。
+            buckets["undated"].append(rel)
+            continue
         ttl = str((meta or {}).get("ttl") or "").strip().strip('"').strip("'")
         if ttl and ttl != _WORKING_TTL_OF_INTEREST:
             buckets["permanent"].append(rel)

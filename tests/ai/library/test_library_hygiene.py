@@ -76,6 +76,29 @@ def _buckets(root: Path, *paths: str, days: int = _DOCS_WORKING_DAYS, today: dt.
     return classify_working_docs(root, days, today, tracked=list(paths))
 
 
+class TestUndecodableIsCountedNotFatal:
+    """读不得的在册件必须被计数，不得把整轮盘点打死（本仓实测踩过）。"""
+
+    def test_non_utf8_tracked_file_goes_to_undated_instead_of_crashing(self, tmp_path: Path) -> None:
+        rel = "docs/_working/ev/schtasks_all_20260930.csv"
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        # GBK 字节（真源=night_sweep/ledgers_archive/NB2_evidence 同名件）：utf-8 解码必炸
+        p.write_bytes("计划任务\t状态\n".encode("gbk"))
+        got = _buckets(tmp_path, rel)
+        assert got["undated"] == [rel], got
+        assert got["aged"] == [], got
+
+    def test_one_bad_file_does_not_hide_the_aged_ones(self, tmp_path: Path) -> None:
+        bad = "docs/_working/ev/bad.csv"
+        (tmp_path / bad).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / bad).write_bytes(b"\xff\xfe\x00bad")
+        aged = _doc(tmp_path, "docs/_working/ok/a.md", ttl="task_bound", created="2025-01-01")
+        got = _buckets(tmp_path, aged, bad)
+        assert got["aged"] == [aged], got
+        assert got["undated"] == [bad], got
+
+
 class TestCreatedAxisNotMtime:
     """轴必须是 created：把 mtime 造老而 created 造新，就必须落在 fresh。"""
 
