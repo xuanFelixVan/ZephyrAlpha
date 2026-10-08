@@ -32,14 +32,15 @@
 #       新增模块时只需注册 module_id/title/path/status，无需手动同步 doc_type。
 
 module_id: MOD-GOVERNANCE
-registry_version: "2.4.0"
-last_updated: "2026-08-17"
-total_registered: 74  # Phase 3 reconciler→gate 收敛（2026-07-03）：实际条目数 73（74→73 修正，原值含 1 个已删除条目未同步）。MODULE-ID-CONSISTENCY gate 现强制 count 与实际一致。2026-08-17 AI-02：GOV-AI-002 幽灵 ID 补登（73→74）。
+registry_version: "2.5.0"
+last_updated: "2026-10-08"
+total_registered: 78  # Phase 3 reconciler→gate 收敛（2026-07-03）：实际条目数 73（74→73 修正，原值含 1 个已删除条目未同步）。MODULE-ID-CONSISTENCY gate 现强制 count 与实际一致。2026-08-17 AI-02：GOV-AI-002 幽灵 ID 补登（73→74）。2026-10-08 PKG 包层收编（chief 裁定，btfix 45号呈报→4 个既有 PKG 号一次性补登 74→78）。
 
 # ID 分配规则
 allocation_rules:
   format: "MOD-{LAYER_CODE}-{SEQ}"
   doc_rule_format: "{DOMAIN}-{TYPE}-{NNN}"
+  package_format: "PKG-{package-kebab}"  # 包层身份（2026-10-08 chief 裁定收编，btfix 45号呈报件）：src 包 __init__ 头 [A_module] 治理锚定的包级 ID；分配前提=包有非空 __init__ 且确需包级锚定（子模块已有 MOD 的不重复发 PKG）；与 MOD/DOC 两制并列第三制
   numbering_gaps: |
     以下编号已跳过（从未分配或已合并/废弃）：
     - PS-STD-005: 从未分配（Stage F 归一化时跳过）
@@ -400,6 +401,24 @@ registered_ids:
     title: "连接器入职操作手册"
     path: "docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml"
     status: production
+  # === PKG 包层（2026-10-08 收编正名，4 个既有号补登） ===
+  - module_id: PKG-regime
+    title: "市场状态感知包（regime 检测族包级锚定）"
+    path: "src/zephyr/regime/__init__.py"
+    status: active
+  - module_id: PKG-regime-core
+    title: "市场状态核心引擎包"
+    path: "src/zephyr/regime/core/__init__.py"
+    status: active
+  - module_id: PKG-regime-features
+    title: "市场状态特征包"
+    path: "src/zephyr/regime/features/__init__.py"
+    status: active
+  - module_id: PKG-bt-regime-validation
+    title: "回测体制验证包"
+    path: "src/zephyr/backtest/regime_validation/__init__.py"
+    status: active
+
   - module_id: DOM-L02-001
     title: "因子质量门控"
     path: "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml"
