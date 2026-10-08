@@ -82,18 +82,18 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 3. 文档纪律：计数用字段（`total_gates`/`total_registries`）不写死在散文；
    文档矛盾=事故（对齐清单/perf plan 自相矛盾案例在案）。
 
-## 5. 人机门位（#ARCH-310 R5）
+## 5. 人机门位（#ARCH-310 R5 → 本裁定 v2）
 
-1. 门位注册表：`risk_tier_registry.yaml`（域→tier→human_gate；未列出域默认 low）。
-2. high 域门位：production 流转 / 注册表净删 / flag 出厂翻转 / 资金破坏性操作 → Owner。
-3. medium/low 全自动；门禁强度由 gate 体系独立保证，分级不放松 gate。
+1. 门位注册表：`risk_tier_registry.yaml`（域→tier→human_gate；未列出域默认 low；按域查表，禁自报分类）。
+2. Owner 保留面六类：资金与实盘交易（含交易核心域 production 流转）｜法律合规义务｜物理不可逆删除（生产盘/无备份生产数据）｜花钱（采购/扩容/充值）｜对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）｜宪法本身。业务资产（数据/数据源/因子/策略/指标）概念级退役（轨 B）＝Owner，轨 A"待优化"标签＝AI；数据表安全删除（真重复/空表机械判据）＝AI；治理资产净删下放＝墓碑制（30 天复活窗+引用即复活评估+季度打包清账）；flag 下放＝shadow 制（≥7 天+自动回退判据）；非交易核心域首次转 production＝可回退晋升（附降级命令）；数据驻留公理：业务数据任意时刻∈{主库,冷库}。细则＝裁定路由政策 Gate 4。
+3. medium/low 全自动；门禁强度由 gate 体系独立保证，分级不放松 gate；AI 代裁一律 adjudicator 署名入册。
 
 ## 6. 上下文预算（#ARCH-310 约束②）
 
 1. 本宪法 ≤300 行是硬上限；新增内容必须等长替换。
 2. 细节检索序：capability_cards/（L0-L3 渐进披露）→ docs/01.../rules/*.yaml →
    capability_canonical_file_registry.yaml → docs/library/INDEX.md（总目，查 python -m zephyr.library.lookup）→ Grep 符号发现。方法论真源地图=sop/README.md（九族
-   索引）：调研=mining_sop/ 施工=construction_sop/ 数据操作=data_ops_sop/ 对齐改图=governance_sop/。
+   索引）：调研=mining_sop/ 施工=construction_sop/ 数据操作=data_ops_sop/ 对齐改图=governance_sop/；裁定路由=governance_sop/adjudication_routing_policy.md。
 3. 会话内不复制大段规则进上下文；引用真源路径+锚点。
 
 ## 7. 核心系统速查（细节按需检索）
@@ -137,4 +137,4 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 
 - 2026-09-12 本文件经四波红蓝极限对抗（32 场景/9 维度/A-B 双基准）达标后替换 v1 全文。
 - v1 完整原文归档：agent_constitution_legacy_v1.md（零内容丢失，可检索）；回滚=git revert 本 commit。
-
+- 2026-10-09 §5 人机门位修订随裁定路由政策 v2.0 同批落地（Owner 保留面六类+业务资产条款+墓碑/shadow 下放+数据驻留公理）；§6.2 真源地图补裁定路由指针。

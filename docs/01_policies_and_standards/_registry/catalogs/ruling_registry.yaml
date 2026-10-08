@@ -4270,7 +4270,7 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   - docs/_working/master_tc_20261006/00_orchestration.md
   - docs/_working/master_tc_20261006/lanes/L10_rulings/00_workbook.md
-  related_rulings: ['裁定#20-B']
+  related_rulings: ['裁定#20-B', '裁定#495']  # #495 边界演进指回（墓碑/shadow 制承接，非推翻）
   superseded_by: ''
 - ruling_id: "裁定#489"
   title: 矩阵战役 2026-10-07 六项 Owner 裁定落册——指标退役/CYC留观/HMM两段式/及格线v1/v1_value暂不开/t0立项第二波（一次落册）
@@ -4322,7 +4322,7 @@ entries:
   evidence: 外部审查 00_audit_report.md §三 P0-4/P0-5/P0-6 + lane_e_retire_ai.md P0-E1 + lane_g_open53_cards.md P0-3/P0-5；Owner 对话令原文见 00_orchestration.md 头注
   affected_files:
     - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  related_rulings: ['裁定#488']
+  related_rulings: ['裁定#488', '裁定#495']  # #495 边界演进指回（保留面继承+墓碑/shadow 制，非推翻）
   superseded_by: ''
 
 - ruling_id: "裁定#487"
@@ -4430,3 +4430,49 @@ entries:
   related_rulings: ['裁定#489', '裁定#488']
   superseded_by: ''
   # 注：#489② HMM 段由本裁定①修正（概念/实现分离），其余五段不受影响。
+- ruling_id: "裁定#495"
+  title: 修宪批文·裁定路由政策 v2.0 晋升+宪法 §5 门位修订+risk_tier_registry v1.1.0（Owner 2026-10-09 回批「批」，五件套同 commit 原子）
+  date: '2026-10-09'
+  category: 治理
+  status: active
+  summary: |-
+    st-chiefc-20261009 依 Owner 2026-10-09 对话回批「批」（《Owner呈批菜单·重路由版》A1-A5 全批），
+    落地裁定路由政策 v2.0 五件套同 commit 原子（RULE-RULING）。分项如下。
+    【①Gate 0 修正】「零触发零消费」仅作存量判退的联言条件之一，永不做单判；增量工程判立=
+    三轴价值主张（速度/治理质量/算法质量）存在性，三件套（基线→目标→验收判据）齐才可开工。
+    【②Owner 保留面收敛为六类】资金与实盘交易（含交易核心域 production 流转）/法律合规义务/
+    物理不可逆删除（生产盘/无备份生产数据）/花钱（采购/扩容/充值）/对外发布与资产出域（代码/
+    数据/密钥外发、开源、上传外部服务）/宪法本身；门位识别机器化=按域查表禁自报分类。
+    【③业务资产四规则】数据/数据源/因子/策略/指标概念级退役（轨 B）=Owner，轨 A"待重新优化
+    算法"标签=AI；数据表安全删除（真重复/空表机械判据三件全真+#311 隔离）=AI；数据驻留公理=
+    业务数据任意时刻∈{主库,冷库}；上实盘=Owner（含于保留面第 1 类）。
+    【④墓碑制净删下放】治理资产注册表/真源条目净删→墓碑制（deprecated/retired+30 天复活窗+
+    引用即复活评估+物理清账=季度打包）；flag 出厂翻转→shadow 制（≥7 天+自动回退判据+变更留痕）；
+    非交易核心域首次转 production→可回退晋升（附降级命令+行为变更 message 声明）。
+    【⑤互斥处理】对 #488 A 段/#490「净删执行/flag 翻转=Owner 门位」表述=边界演进非推翻：
+    物理删除/资金面内核由保留面第 1/4 类完整继承，安全承接=墓碑/shadow 双制；#488/#490 不标
+    superseded，本批在两条目补 related_rulings 指回。#415② 热册写侧唯一=队列序列化器：无冲突不动；
+    #391 禁止悬空授权：本裁定即其要求的正式登记动作。
+    【⑥判据版本化禁追溯】既有裁定不因本裁定重审；此前按旧门位呈批/搁置事项按 v2 路由重新分派
+    即视为处置；首个三轴基线快照随政策册附表 A 入册。
+    【⑦测试随批】risk_tier 新鲜度测试新家重建（旧源被 7fa19b8249b 旧路径删除波扫掉仅余 pyc）+
+    v1.1.0 契约断言；能红证据=三攻击实测全红（删保留面/回挂下放面/版本回退各 1 failed）+恢复复绿
+    10 passed。
+    净零声明：零新 gate/零新注册表/零新字段（adjudicator=修复 v1 数据洞+owner_sign=Owner 实裁
+    标记，条目级非 schema 扩面）；处置状态复用既有枚举。
+    附带勘误：本册 index 中 #494 条目曾被无主 staged 删除（袋快照机制会吸收到他会话提交）——
+    本批 git add 以 HEAD+工作区为准恢复，#494 内容零丢失。
+  evidence: 桌面《修宪批文草案_裁定路由v2_2026-10-09》《政策册v2施工文本_adjudication_routing_policy》《裁定路由政策v2.0_挖矿定稿_2026-10-09》（19 攻击面对抗扫描挖干）+《Owner呈批菜单_重路由版_2026-10-09》批复记录「批」（A1-A5）
+  affected_files:
+  - AGENTS.md
+  - docs/01_policies_and_standards/sop/governance_sop/adjudication_routing_policy.md
+  - docs/01_policies_and_standards/_registry/catalogs/risk_tier_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - tests/gov/governance/test_risk_tier_registry.py
+  approved_paths:
+  - AGENTS.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#488', '裁定#490', '裁定#494']
+  superseded_by: ''
+  adjudicator: st-chiefc-20261009
+  owner_sign: Owner 2026-10-09 回批「批」（A1 修宪+A2-A5 全批，见《Owner呈批菜单_重路由版》批复记录）

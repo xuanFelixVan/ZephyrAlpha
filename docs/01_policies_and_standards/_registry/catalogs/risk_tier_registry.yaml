@@ -8,9 +8,9 @@ name: 域风险分级与人机门位注册表
 owner: MOD-GATE-ENGINE
 tier: tier_1_governance
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-09-12'
-last_updated: '2026-09-12'
+last_updated: '2026-10-09'
 unique_key: domain
 description: >-
   R5 人机门位模型化落地（#ARCH-310，AI 原生治理评审五裁定之五，2026-09-12 Owner 批准全面开工）。
@@ -26,6 +26,9 @@ description: >-
   默认兜底：未显式列出的 domain 一律 low（fail-open 分级、fail-closed 门禁——
   门禁强度由 gate 体系独立保证，本表只决定人机门位，不放松任何既有 gate）。
 
+  v1.1.0（2026-10-09，裁定路由政策 v2.0 同批）：high human_gate 按 Owner 保留面
+  六类+业务资产条款收敛为七条；人机门位查表识别机器化（按域查表，禁自报分类）。
+
   维护策略：
   - 新域默认 low；升 high/medium 须 Owner 裁定登记（ruling_registry 关联）
   - human_gate 位变更（新增/退役）须 Owner 签字，本表 entries 同 commit 原子落库
@@ -39,11 +42,20 @@ default_tier: low
 tiers:
   high:
     gate_policy: 全量门禁+human_gate 位全生效
-    human_gate: &high_human_gate
-      - 首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
-      - 注册表/真源条目删除（净删行）
-      - 门禁 flag 出厂默认翻转（宪章 B-007 production 行为变更窗口）
-      - 资金数据破坏性操作（RULE-DATA-OPS 三步验证前置）
+    # v1.1.0（2026-10-09 Owner 批，裁定路由政策 v2.0 同批五件套）：human_gate 收敛为
+    # Owner 保留面七条；原四条中三条下放（仅限治理资产）——治理资产注册表/真源条目净删→
+    # 墓碑制（政策册 G4-1：deprecated/retired+30 天复活窗+引用即复活评估；物理清账=G4-2
+    # 季度打包）｜门禁 flag 出厂默认翻转→shadow 制（G4-6：shadow ≥7 天+自动回退判据+
+    # 变更留痕）｜非交易核心域首次转 production→可回退晋升（G4-7：附降级命令+行为变更
+    # message 声明）。人机门位细则=裁定路由政策 v2.0 Gate 4（宪法 §5 修订版）。
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   medium:
     gate_policy: 全量门禁+行为变更 message 声明
     human_gate: []
@@ -55,41 +67,104 @@ domain_tiers:
   - domain: D_EX_CORE
     tier: high
     rationale: 实盘执行引擎/订单状态机，资金安全直接承载
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   - domain: D_POSITION
     tier: high
     rationale: 持仓与 T0/T1 可卖判定，错误直接造成资金损失
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   - domain: D_RISK
     tier: high
     rationale: 风控限额/回撤清算守门，错误=风控失效
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   - domain: D_TRADING
     tier: high
     rationale: 系统大脑 AutoRuntime 与交易契约（BrokerInterface/Order）
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   - domain: D_PLAN
     tier: high
     rationale: 计划引擎产出实际交易计划
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   # ── high：数据写入路径 ──
   - domain: D_DATA
     tier: high
     rationale: 数据源实现与写入器（CH/PG 写路径），破坏性写入史（#ARCH-CH-020）
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   # ── high：治理与门禁自身 ──
   - domain: D_GOV_ENFORCEMENT
     tier: high
     rationale: 门禁引擎自身——守门人被攻陷=全部防线失效
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   - domain: D_GOVERNANCE
     tier: high
     rationale: 治理持久化/审计/reconciler 基础设施
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   - domain: D_GOV_SCRIPTS
     tier: high
     rationale: 治理脚本（gate/registry 生成与校验通道）
-    human_gate: *high_human_gate
+    human_gate:
+      - 资金与实盘交易类操作（含交易核心域 production 流转；RULE-DATA-OPS 三步验证前置）
+      - 交易核心域（D_EX_CORE/D_POSITION/D_RISK/D_TRADING/D_PLAN）首次施工转 production（对齐 depgraph design_maturity 流转 Owner 核验）
+      - 法律合规义务登记面（程序化交易报告等外部义务）
+      - 物理不可逆删除（生产盘/无备份生产数据）
+      - 对外发布与资产出域（代码/数据/密钥外发、开源、上传外部服务）
+      - 业务资产（数据/数据源/因子/策略/指标/实验产物）概念级退役（轨 B）与主库删除——数据表例外：真重复/空表经机械判据+隔离期后 AI 可删（政策册 §4.1.5）
+      - 宪法修订
   # ── medium：研究分析层 ──
   - domain: D_FACTOR
     tier: medium
