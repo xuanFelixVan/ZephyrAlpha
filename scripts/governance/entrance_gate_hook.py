@@ -234,6 +234,9 @@ def deny_message(sid: str, rel: str) -> str:
         f"CapabilityLookup().find('<你的关键词>', session_id='{sid}')\"\n"
         f"若已用其他施工 sid（st-*）注册：把该 sid 写入别名桥后重试——\n"
         f"  echo <st-sid> > .runtime/lookup_audit/.aliases/{sid}\n"
+        "（lookup 零命中时 exit=1 是『无命中』不是失败——审计已落，正门已过，直接重试写入）\n"
+        "施工全程地图（九站处方每站一行，被任何门拦都先查它）："
+        "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md 检索 L0-JOURNEY\n"
         "规则真源：AGENTS.md RULE-CAPABILITY-LOOKUP｜commit 面 CAPABILITY-LOOKUP-REQUIRED 兜底｜"
         "紧急逃生 ZEPHYR_BYPASS_LOOKUP=1（留审计）\n"
     )

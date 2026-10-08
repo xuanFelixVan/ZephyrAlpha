@@ -159,6 +159,7 @@ def test_run_denial_message_contains_paved_road(tmp_path: Path, capsys: pytest.C
     assert "python -m zephyr.library.lookup" in err
     assert "--session sess-t1" in err
     assert ".aliases/sess-t1" in err
+    assert "L0-JOURNEY" in err  # 拒绝话术内嵌全程地图锚点（正门给路）
 
 
 def test_run_allows_after_lookup_and_audits(tmp_path: Path) -> None:
