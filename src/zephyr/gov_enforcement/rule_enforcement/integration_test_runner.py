@@ -169,7 +169,9 @@ class IntegrationTestRunner:
     def __init__(self, project_root: str | None = None):
         if project_root is None:
             # 默认使用仓库根（基于本文件位置推导）
-            project_root = str(Path(__file__).resolve().parents[3])
+            # 本文件位于 src 下三层，仓根=parents[4]（st-chiefc-20261009 G-1 同型扫描第二例：
+            # 原 parents[3]=src → project_root=src → 漂移审计结果误写 src/data/drift_audit）
+            project_root = str(Path(__file__).resolve().parents[4])
         self._project_root = project_root
         self._result_dir = str(Path(project_root) / "data" / "drift_audit")
         os.makedirs(self._result_dir, exist_ok=True)

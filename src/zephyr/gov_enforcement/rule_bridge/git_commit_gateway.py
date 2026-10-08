@@ -230,7 +230,10 @@ def _immutable_tree_enabled() -> bool:
 
         import yaml  # type: ignore[import-untyped]  # noqa: PLC0415
 
-        _root = _P(__file__).resolve().parents[3]
+        # 本文件位于 src/zephyr/gov_enforcement/rule_bridge/（src 下三层）——仓根=parents[4]
+        # （st-chiefc-20261009 G-1 修复：原 parents[3]=src 拼出 src/config/flags.yaml 必失败，
+        #  fail-closed 静默 OFF，flags.yaml immutable_tree: true 实际不可达——不可变树保护在提交闸口失效）
+        _root = _P(__file__).resolve().parents[4]
         data = yaml.safe_load((_root / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
         git_ops = (data.get("flags") or {}).get("git_operations") or {}
         return bool(git_ops.get("immutable_tree", False))
