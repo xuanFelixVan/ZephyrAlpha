@@ -187,3 +187,38 @@ status: MINE 完成（挖干）
 - 驱动脚本（只读判定/正门调用，未落生产路径）：`.runtime/tmp/s1_survey.py`、`s1_table.py`、`s1_abort_lanes.py`、
   `s1_verify_cold.py`、`s1_verify_sft.py`、`s1_cold_proof.py`、`s1_unmerged_report.py`
 - reaper 防误杀登记：`data/runtime/process_reaper_keep.txt` 追加 `robocopy`、`s1_cold_archive` 两行
+
+## ⑧ 下午班追加实证（2026-09-27 20:00–23:00 停机压缩窗与提交链现场）
+
+后续会话若要 (a) 跑存储长作业、或 (b) 调试"队列不落地/门禁不生效"，先读这六条：
+
+1. **`HEAD 有修复 ≠ 运行中有修复`**。主区磁盘上的 `scripts/commit_queue.py` 曾被一次陈旧整文件写
+   回退成修复前版本，而 belt daemon 读磁盘字节 ⇒ 当日 33 只袋被"已修好的缺陷"杀掉。
+   判"能不能恢复"不许肉眼：算 **磁盘独有行集合**（`Counter(HEAD行) - Counter(磁盘行)`）；
+   独有集为空或全是修复前旧码 ⇒ 恢复零丢失；独有集含他人未落地增量 ⇒ **禁动**，
+   改做"HEAD 为基＋搬回该增量"超集重放。恢复前后要用**同一条命令**做因果对照。
+2. **0 字节、无活体 git 持有者的 `index.lock` 会永久毒住一台 serializer worktree**
+   （实测 `.git/worktrees/w0/index.lock` 陈 16.7h ⇒ 我的袋停 processing 33 分钟）。
+   三证定性＝锁龄／锁体字节数／存活超 10 分钟的 git.exe 数；处置＝**移开不删**（留证可复原），
+   移开应 <1 分钟见效，不见效即说明定性错了。
+3. **停机压缩窗前置闸量什么**：CH 活体量（未完成备份+merges+未完成 mutations+运行中查询，
+   减探针自己那条）＋非本会话在途袋。**注册会话数只作 advisory**——实测有心跳 16 秒前刚跳、
+   最后写文件却是 9 小时前的会话壳；拿它当停机许可＝要么永久拒绝要么永久无视。
+4. **窗口内禁止入袋**：门禁与 post-commit reconciler 要读 CH；CH 停着要么误杀好袋，
+   要么**静默降级**（后者更坏＝未经完整验收落地）。
+5. **两个"仪表说谎"口径**：① robocopy 就地覆盖同路径大文件时**卷空闲几乎不动**
+   （只反映新旧尺寸差），不能当进度条，判存活看目标 mtime 递增＋进程 CPU 递增，判完成只能等退出码；
+   ② PS5.1 `Write-Host` 不进管道，`& child.ps1 2>&1 | Tee-Object` 收不到本仓 ps1 的任何阶段行。
+6. **`Get-VHD.MinimumSize` 才是"能回收多少"的真值源**（本机 MinSize 600.0 ≥ FileSize 599.0 GiB
+   ⇒ 原地收益≈0）。**别拿虚拟机内部空闲反推宿主可回收量**——这正是"140–150 GiB"错估的来源。
+
+## ⑨ 收尾审计自查到的回退（2026-10-08 复核，本会话自报）
+
+`tests/dr/` 三把常驻尺（45+20+11 例：AutoCheck fail-open 治本尺、镜像删除帽尺、VM 取件裁决尺）
+**已不在 HEAD**：被 `6324c9e0f6`（st-tests-chief-20261004「旧路径删除袋1/3」，129 旧一级目录全删）
+删除，其自述"内容零删失（新路径真身在终装袋/盘面双证）"对这三件**不成立**——
+新结构下无任何路径持有其内容（`git grep Get-MirrorPurgeCap HEAD -- tests` 零命中，
+`tests/backup/` 只有另外两件）。字节可从 `5d5398e848` 完整复原，已恢复至
+`tests/meta/scripts/backup/`（与 `test_backup_ps_scripts.py` 同处，判据=同为 scripts/backup/*.ps1 的尺）。
+**教训**：大规模旧目录清除袋必须逐件证"新路径实存"，不能按目录整体宣称零删失；
+收尾方复核口径＝`git grep -l <尺内独有符号> HEAD`，而不是"文件数对上了"。
