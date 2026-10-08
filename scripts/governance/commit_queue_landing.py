@@ -1021,6 +1021,43 @@ def _index_all_sides(
     return ours_idx, theirs_idx, base_idx, None, total_dedup
 
 
+def _theirs_drops_base_entries(
+    base_text: str, theirs_text: str, identity_fn: object | None
+) -> tuple[set[str], str | None]:
+    """快进守门判定（A-12 治本，st-chiefc-20261009）：theirs 相对 base 是否丢条目。
+
+    病根（死信专车实弹 2026-10-09）：capability 册 64k 行整档快照在「入队→落地」窗内
+    被陈旧字节压制——他道已落条目不在快照里，base==ours 字节短路把整档 theirs 取进来
+    ＝抹掉 base 中活条目（5 token 三次被抹，死信再产根因）。本判定与主合并共用同一套
+    _split_registry_entries/身份函数（同输入必同判定，禁另造判据）。
+
+    Returns:
+        (missing, err)：missing=base 有而 theirs 无的条目身份（族键前缀），非空=拒绝快进；
+        err 非 None=判不了（base/theirs 切分失败，如锚点别名块独立 safe_load 必炸形态）
+        ——调用方 fail-open 保快进（q-0002/0003 锚点死锁修复不回退）。
+        族内身份判不了的条目不计入比对（不硬拦，与合并器「判不了不误报」同向）。
+    纯函数零 IO。
+    """
+    base_families, err = _split_registry_entries(base_text, identity_fn)
+    if err:
+        return set(), f"base 切分失败: {err}"
+    if not base_families:
+        return set(), None  # base 无族无条目 → 守门不适用
+    theirs_families, theirs_err = _split_registry_entries(theirs_text, identity_fn)
+    if theirs_err:
+        return set(), f"theirs 切分失败: {theirs_err}"
+    missing: set[str] = set()
+    for fam_key, base_fam in base_families.items():
+        base_ids = {b.identity for b in base_fam.blocks if b.identity is not None}
+        if not base_ids:
+            continue
+        theirs_fam = theirs_families.get(fam_key)
+        theirs_ids = {b.identity for b in theirs_fam.blocks if b.identity is not None} if theirs_fam else set()
+        for lost in base_ids - theirs_ids:
+            missing.add(f"{fam_key}:{lost}")
+    return missing, None
+
+
 def three_way_merge_registry_yaml(
     base_text: str | None,
     ours_text: str,
@@ -1044,6 +1081,45 @@ def three_way_merge_registry_yaml(
         ——调用方落地死信回人工，绝不静默整文件覆盖。
     """
     identity_fn = _family_identity_fn(rel_path, ours_text, theirs_text, base_text)
+    # 严格快进短路（st-chiefc-20261009 治本，裁定#495 修宪批战役随批）：
+    # base==ours 字节相等（dev 相对快照基底零漂移）→ 整文件取 theirs。
+    # 与非注册表路径"逐文件快进"同语义。W2 关闭注册表 path 级快进时未留此退路，
+    # 造成两个结构性缺口：① 头部标量/mapping（version/description/tiers 等）合并器
+    # 恒取 ours → 此类改动永远落不进 dev（只能靠吞没死信兜底）；② HEAD 侧文件含
+    # YAML 锚点/别名时（别名跨块引用），ours 侧条目块独立 safe_load 必炸
+    # （undefined alias）→ 该册在 HEAD 现形态下过不了合并，连"去掉锚点"的修复袋
+    # 自己都落不了地（鸡生蛋死锁，q-…-chiefc-0002/0003 双死实证）。
+    # 字节严格比较：dev 存在任何漂移（ours!=base）→ 走原条目级合并路径，行为零变更。
+    if base_text is not None and ours_text == base_text:
+        import yaml  # noqa: PLC0415 — landing 模块保持 stdlib 顶层 import（与 gate lazy 风格一致）
+
+        try:
+            yaml.safe_load(theirs_text)
+        except Exception as exc:  # noqa: BLE001 — 快进目标不合法照样死信，不静默落地
+            return None, f"{rel_path}: 快进目标 theirs 解析失败（{exc}）——死信回人工"
+        # A-12 快进守门（2026-10-09 治本）：theirs 相对 base 丢条目 → 拒绝整文件快进。
+        # 病根=陈旧快照（他道已落条目不在快照里）借 base==ours 字节短路整档覆盖＝抹活
+        # 条目（死信专车实弹：5 token 三次被抹）。落回条目级合并：ours/base 条目保留、
+        # theirs 新增照插、theirs 侧合法退役走 retired_check——零丢失方向。纯陈旧袋
+        # （只丢不增）合并结果==ours → 由既有 _noop_absorption_verdict 判合法 noop，
+        # 不死信不烧重试。base/theirs 切分失败（锚点别名形态）→ fail-open 保快进
+        # （q-0002/0003 锚点死锁修复不回退）。
+        missing, guard_err = _theirs_drops_base_entries(base_text, theirs_text, identity_fn)
+        if guard_err is None and missing:
+            logger.warning(
+                "[landing] %s 快进拒绝：theirs 相对 base 丢 %d 条（如 %s）——陈旧快照嫌疑，转条目级合并",
+                rel_path,
+                len(missing),
+                sorted(missing)[:5],
+            )
+        else:
+            if guard_err is not None:
+                logger.info(
+                    "[landing] %s 快进守门判不了（%s）——fail-open 保快进",
+                    rel_path,
+                    guard_err.splitlines()[0][:120],
+                )
+            return theirs_text, ""
     ours_families, theirs_families, base_families, err = _split_all_sides(
         ours_text, theirs_text, base_text, rel_path, identity_fn
     )

@@ -11,7 +11,12 @@
 #   creation_tokens(L883) 与顶层(L4987) 共存+EOF 尾追悬挂条目致全库解析炸四连（9ca0f62b95 修/1edeea81b4 修/
 #   a5883d01 修/94aa4111 批内修）；2026-09-15 扩：data_asset_registry.yaml 双 datasets 根键（L752/755，
 #   PyYAML 静默取后者，前段插条目被解析层忽略）随 st-patgov 合并批入库（件3），watch 面同步扩入+根键唯一
-#   硬化；正确追加姿势=插既有根键的列表尾+提交前必验 parse；阻断与放行均落审计 .runtime/gate_audit/registry_yaml_parse.jsonl
+#   硬化；正确追加姿势=插既有根键的列表尾+提交前必验 parse；阻断与放行均落审计 .runtime/gate_audit/registry_yaml_parse.jsonl；
+#   2026-10-09 扩（A-12 治本）：capability 册加 token 级只增不减守门——HEAD 顶层
+#   creation_tokens 复合身份（file|token=）相对 staged 差集非空 → 阻断（投影指纹只证
+#   staged==PG 投影，不证投影未落后 HEAD；直提 render-sync 整档覆盖抹他道 token 的
+#   病根封堵）；白名单=[allow-mass-deletion:reason≥10字]（与 REGISTRY-MASS-DELETION
+#   同标记）；HEAD 缺失/解析失败 fail-open
 # [MODIFY-GUARD] gate_id="REGISTRY-YAML-PARSE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -67,6 +72,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 from pathlib import Path
 
@@ -161,6 +167,80 @@ def _projection_tamper_issue(gateway, watch_file: str) -> str | None:
         logger.debug("projection tamper check fail-open", exc_info=True)
         return None
     return None
+
+
+# ── A-12 直提通道 token 级只增不减守门（st-chiefc-20261009，2026-10-09）────────
+# 病根：capability 册是机生投影（REGISTRY-YAML-PARSE 强制 staged==投影状态指纹），
+# 但指纹只证「staged==PG 投影」，不证「投影未落后于 HEAD」——batch_creation_tokens
+# 直写轨（gate 可见 PG 不知）与他道 api.register 轨在「入队→落地」窗内互相覆盖，
+# 直提 render-sync 整文件 commit 把 HEAD 有而投影无的 token 整批抹掉（实弹：5 token
+# 三次被抹，死信再产根因）。本守门=投影指纹之外的第二判据：HEAD 顶层 creation_tokens
+# 复合身份（file|token=，与合并器 _merge_entry_identity 同构）相对 staged 的差集非空
+# → 阻断；白名单=[allow-mass-deletion:reason≥10字]（与 REGISTRY-MASS-DELETION 同
+# 标记同语义——合法退役经 PG retire 后重打投影时用同一标记过两门）。HEAD 缺失/读取
+# 失败/解析失败 → fail-open。挂本文件不新增 gate（净零红线），own-scope 既有。
+_PROJECTION_LAG_MARKER_RE = re.compile(r"\[allow-mass-deletion:([^\]]{10,})\]")
+
+
+def _creation_token_identities(text: str) -> dict[str, str] | None:
+    """顶层 creation_tokens 条目复合身份集（file|token= → 展示名）。解析失败/结构不符 → None。"""
+    try:
+        import yaml
+
+        data = yaml.safe_load(text)
+    except Exception:  # noqa: BLE001 — 解析失败由 _structural_issues 报告
+        return None
+    if not isinstance(data, dict):
+        return None
+    ct = data.get("creation_tokens")
+    if not isinstance(ct, list):
+        return None
+    out: dict[str, str] = {}
+    for entry in ct:
+        if not isinstance(entry, dict):
+            continue
+        file_v = entry.get("file")
+        token_v = entry.get("token")
+        if isinstance(file_v, str) and isinstance(token_v, (str, int, float)):
+            out[f"{file_v}|token={token_v}"] = f"{file_v} (token={token_v})"
+        else:
+            for v in entry.values():  # 无 file/token 对 → 退首标量单键（存在级比对）
+                if isinstance(v, (str, int, float, bool)):
+                    out[str(v)] = str(v)
+                    break
+    return out
+
+
+def _head_token_lag_issue(gateway, watch_file: str, staged_text: str, message: str) -> str | None:
+    """直提通道 capability 册 token 级只增不减判别（返回问题文案或 None=通过/不适用）。永不抛异常。"""
+    try:
+        result = gateway.run_git(["git", "show", f"HEAD:{watch_file}"])
+        if result.returncode != 0:
+            return None  # 新文件/无 HEAD → fail-open
+        head_ids = _creation_token_identities(result.stdout)
+        staged_ids = _creation_token_identities(staged_text)
+        if head_ids is None or staged_ids is None:
+            return None  # 判不了 → fail-open（结构面由 _structural_issues 把守）
+        missing = sorted(set(head_ids) - set(staged_ids))
+        if not missing:
+            return None
+        if _PROJECTION_LAG_MARKER_RE.search(message or ""):
+            logger.warning(
+                "REGISTRY-YAML-PARSE: %s 相对 HEAD 少 %d 条 token，message 标记放行（合法退役须 PG retire 对账）",
+                watch_file,
+                len(missing),
+            )
+            return None
+        sample = "; ".join(head_ids[k] for k in missing[:5])
+        return (
+            f"相对 HEAD 少 {len(missing)} 条 creation_token（如 {sample}）——直提整档覆盖"
+            f"会抹掉他道已落条目（陈旧投影/双轨滞后）。修法：PG 登记（api.register）后"
+            f"重打投影（registry_projection_generator --render）再提交；确属合法退役"
+            f"（PG retire 已对账）：commit message 加 [allow-mass-deletion:<reason≥10字>]"
+        )
+    except Exception:  # noqa: BLE001 — 执法扩展整体 fail-open
+        logger.debug("head token lag check fail-open", exc_info=True)
+        return None
 
 
 def _audit(gateway, record: dict) -> None:
@@ -283,6 +363,12 @@ def make_registry_yaml_parse_gate() -> GateSpec:
             tamper = _projection_tamper_issue(gateway, watch_file)
             if tamper:
                 issues.append(tamper)
+            if profile == "capability_registry":
+                # A-12 直提通道守门：投影指纹只证 staged==PG 投影，不证投影未落后 HEAD——
+                # token 级只增不减补上双轨滞后窗（复用 own-scope：外来 staged 不拦，§3.1）
+                lag = _head_token_lag_issue(gateway, watch_file, staged_text, str(kwargs.get("commit_message") or ""))
+                if lag:
+                    issues.append(lag)
             if issues:
                 all_issues.append((watch_file, issues))
 
