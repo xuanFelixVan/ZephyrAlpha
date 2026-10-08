@@ -64331,4 +64331,9 @@ creation_tokens:
   created_by: st-mx07-W3
   capability: conditional_exam_cyc_scores
   merge_evaluation: "新增 CYC 族条件变量考场一次窗口分数册（考试窗+参照窗全读数/N_fam=11 解盲前冻结/逐对 HAC+Bonferroni/verdict 逐项；schema=预注册卡 §9.3 冻结；判死真源）"
+- file: docs/_working/matrix_campaign/mining/cyc_conditional_exam_v1.md
+  token: conditional-exam-cyc-archive-cyc-conditional-exam-v1-20261008
+  created_by: st-mx07-W3
+  capability: conditional_exam_cyc_archive
+  merge_evaluation: "新增 CYC 条件变量考场执行留档（四指标读数原文/检验统计量/N_fam 冻结/verdict 逐项/参照窗分歧如实报/自裁记录；判读辅助面，数值真源=考册 yaml）"
 di_seam_exemptions: []
