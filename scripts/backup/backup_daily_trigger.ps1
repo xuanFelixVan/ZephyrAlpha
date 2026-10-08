@@ -36,7 +36,10 @@
 param(
     [switch]$RegisterTask,
     [switch]$UnregisterTask,
-    [switch]$TaskStatus
+    [switch]$TaskStatus,
+    [switch]$SloCheckOnly,
+    [string]$SloStateFile,
+    [string]$SloAlertDir
 )
 
 $ErrorActionPreference = "Continue"
@@ -52,51 +55,97 @@ function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 
 # ==================== Backup SLO sentinel (#ARCH-BACKUP-SLO-001, 2026-08-13) ====================
 # Root cause: CH backup failed 2 days silently (failure only written to log file, no alert channel).
-# Fix: after daily backup, independently check backup_state.json CH SLO; on failure/stale write an
-#      alert file to logs/alerts/ for dashboard / AI inspection / user discovery.
-#      Does NOT depend on backup.ps1 success (runs even if backup.ps1 crashed).
+# (E-1, 2026-10-09) Dual-check hardening:
+#   - Was: only last_ch_backup_status read -> a failed MAIN backup
+#     (last_backup_status, written by backup.ps1 STAGE 4) never alerted, while a
+#     LEGAL 24h-cadence CH skip (status="skipped") false-alarmed.
+#   - Now: main status + CH status both checked; only failure-grade values alert.
+#     CH "skipped" is not failure-grade (last_ch_backup_time only advances on a
+#     real ok, so the 36h staleness probe still catches a CH leg gone dark).
+# State file / alert dir are parameters so -SloCheckOnly can dry-run against a copy.
 function Invoke-BackupSloCheck {
-    $stateFile = "$ProjectRoot\data\databases\backup_state.json"
-    $alertDir  = "$ProjectRoot\logs\alerts"
-    $sloMaxHours = 36   # CH backup SLO: must succeed within 36h (daily 06:00 + tolerance)
+    param(
+        [string]$StateFile = "$ProjectRoot\data\databases\backup_state.json",
+        [string]$AlertDir  = "$ProjectRoot\logs\alerts"
+    )
+    $sloMaxHours = 36   # backup SLO: must succeed within 36h (daily 06:00 + tolerance)
+    $mainReason = $null
+    $chReason = $null
+    $chElapsedRound = "n/a"
 
-    if (-not (Test-Path $stateFile)) {
-        $reason = "backup_state.json missing (backup never ran?)"
+    if (-not (Test-Path $StateFile)) {
+        $mainReason = "backup_state.json missing (backup never ran?)"
     } else {
         try {
-            $st = Get-Content $stateFile -Raw | ConvertFrom-Json
+            $st = Get-Content $StateFile -Raw | ConvertFrom-Json
+            # -- main backup leg (last_backup_status: ok|failed, backup.ps1 STAGE 4) --
+            $mainStatus = [string]$st.last_backup_status
+            $mainTime = $st.last_backup_time
+            if (-not $mainStatus) {
+                $mainReason = "last_backup_status missing from state (backup.ps1 too old?)"
+            } elseif ($mainStatus -ne "ok") {
+                $mainReason = "last_backup_status=${mainStatus}"
+            } elseif ($mainTime) {
+                $mElapsedH = ((Get-Date) - [datetime]::Parse($mainTime)).TotalHours
+                if ($mElapsedH -gt $sloMaxHours) {
+                    $mainReason = "main backup stale: last ok attempt {0}h ago (> {1}h SLO)" -f [math]::Round($mElapsedH, 1), $sloMaxHours
+                }
+            }
+            # -- CH leg ("skipped" = legal 24h cadence outcome, NOT failure-grade) --
             $chStatus = [string]$st.last_ch_backup_status
-            $chTime   = $st.last_ch_backup_time
-            $elapsedH = if ($chTime) { ((Get-Date) - [datetime]::Parse($chTime)).TotalHours } else { [double]::PositiveInfinity }
-            if ($chStatus -ne "ok") {
+            $chTime = $st.last_ch_backup_time
+            $chElapsedH = if ($chTime) { ((Get-Date) - [datetime]::Parse($chTime)).TotalHours } else { [double]::PositiveInfinity }
+            $chElapsedRound = [string]([math]::Round($chElapsedH, 1))
+            $chFailureGrade = @("failed", "ch_failed", "ch_log_missing")
+            if ($chFailureGrade -contains $chStatus) {
                 $chErr = [string]$st.last_ch_backup_error
-                $reason = "last_ch_backup_status=${chStatus} (error: ${chErr})"
-            } elseif ($elapsedH -gt $sloMaxHours) {
-                $elapsedRound = [math]::Round($elapsedH, 1)
-                $reason = "CH backup stale: last ok ${elapsedRound}h ago (> ${sloMaxHours}h SLO)"
-            } else {
-                $elapsedRound = [math]::Round($elapsedH, 1)
-                Write-OK "SLO check passed: last_ch_backup_status=ok, ${elapsedRound}h ago"
-                return
+                $chReason = "last_ch_backup_status=${chStatus} (error: ${chErr})"
+            } elseif ($chElapsedH -gt $sloMaxHours) {
+                $chReason = "CH backup stale: last ok {0}h ago (> {1}h SLO)" -f $chElapsedRound, $sloMaxHours
+            }
+            if (-not $mainReason -and -not $chReason) {
+                Write-OK "SLO check passed: last_backup_status=${mainStatus}, last_ch_backup_status=${chStatus}, CH last ok ${chElapsedRound}h ago"
             }
         } catch {
-            $reason = "SLO check parse error: $($_.Exception.Message)"
+            $mainReason = "SLO check parse error: $($_.Exception.Message)"
         }
     }
 
-    # Write alert file (disk = alert channel; dashboard/AI can scan logs/alerts/)
-    New-Item -ItemType Directory -Path $alertDir -Force | Out-Null
-    $alertFile = Join-Path $alertDir ("backup_slo_{0}.json" -f (Get-Date -Format 'yyyyMMdd'))
-    $alert = @{
-        alert_id   = "backup_ch_slo"
-        level      = "ERROR"
-        source     = "backup_daily_trigger"
-        timestamp  = (Get-Date).ToString("o")
-        reason     = $reason
-        slo_hours  = $sloMaxHours
+    if (-not $mainReason -and -not $chReason) { return }
+
+    # Write alert files (disk = alert channel; dashboard/AI can scan logs/alerts/)
+    # CH alert keeps the legacy backup_slo_<date>.json filename (back-compat).
+    New-Item -ItemType Directory -Path $AlertDir -Force | Out-Null
+    $today = Get-Date -Format 'yyyyMMdd'
+    $pending = @()
+    if ($mainReason) { $pending += @{ alert_id = "backup_main_slo"; reason = $mainReason; name = "backup_main_slo_${today}.json" } }
+    if ($chReason)   { $pending += @{ alert_id = "backup_ch_slo";   reason = $chReason;   name = "backup_slo_${today}.json" } }
+    foreach ($p in $pending) {
+        $alertFile = Join-Path $AlertDir $p.name
+        $alert = @{
+            alert_id   = $p.alert_id
+            level      = "ERROR"
+            source     = "backup_daily_trigger"
+            timestamp  = (Get-Date).ToString("o")
+            reason     = $p.reason
+            slo_hours  = $sloMaxHours
+        }
+        [System.IO.File]::WriteAllText($alertFile, ($alert | ConvertTo-Json -Depth 3), (New-Object System.Text.UTF8Encoding($false)))
+        Write-Err "SLO ALERT [$($p.alert_id)]: $($p.reason) -> $alertFile"
     }
-    [System.IO.File]::WriteAllText($alertFile, ($alert | ConvertTo-Json -Depth 3), (New-Object System.Text.UTF8Encoding($false)))
-    Write-Err "SLO ALERT: $reason -> $alertFile"
+}
+
+# (E-1) Testable dry-run: evaluate the sentinel against (a copy of) the state
+# file WITHOUT running a backup. Also invoked by backup.ps1 end-of-run so the
+# sentinel is live on the scheduled-task carrier too (E-1 finding: the 06:00
+# task runs backup.ps1 via wscript launch_hidden.vbs and never reaches this
+# file's default branch).
+if ($SloCheckOnly) {
+    $sloArgs = @{}
+    if ($SloStateFile) { $sloArgs.StateFile = $SloStateFile }
+    if ($SloAlertDir)  { $sloArgs.AlertDir  = $SloAlertDir }
+    Invoke-BackupSloCheck @sloArgs
+    exit 0
 }
 
 # ==================== -TaskStatus ====================

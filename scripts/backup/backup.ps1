@@ -1073,6 +1073,17 @@ $stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
 # this line to write its gate verdicts into THIS state file (the consumed one).
 Write-Host "State saved: $StateFile"
 
+# (E-1 carrier, 2026-10-09) Fire the SLO sentinel at the end of every completed
+# pass. E-1 finding: the 06:00 scheduled task runs THIS script via wscript
+# launch_hidden.vbs and never executes backup_daily_trigger.ps1's default
+# branch, so the sentinel otherwise lived only on the manual-trigger path.
+# Event-triggered (end of this run), NO new scheduled task; a sentinel failure
+# must not fail the backup -> degrade to a console warn.
+try {
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ProjectRoot\scripts\backup\backup_daily_trigger.ps1" -SloCheckOnly 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) { Write-Warn "SLO sentinel exited $LASTEXITCODE (alerts may exist under logs\alerts)" }
+} catch { Write-Warn ("SLO sentinel invocation failed: " + $_.Exception.Message) }
+
 # ==================== STAGE 4b: Rolling archive evaluation ====================
 # Backup-success event hook (contract v1.3.0 INV-RET-002 / ruling #380-#384).
 # Event-triggered only - NO new scheduled task (constitution red line; the daily
