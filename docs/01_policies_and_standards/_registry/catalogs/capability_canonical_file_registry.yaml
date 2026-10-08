@@ -3396,6 +3396,101 @@ capabilities:
   description: YAML 真源 → depgraph PostgreSQL readonly 表单向同步脚本。同步 9 张 readonly 表 （gates/field_vocabularies/registries/cross_registry_rules/hard_boundaries/ business_streams/infrastructure_components/model_capabilities/contracts）。 禁止反向（DB→YAML），禁止手写 DB 表（readonly trigger 硬阻断，需 disable_readonly_triggers 临时禁用）。ARCH-046 治本加固（2026-07-04）： sync_infrastructure_registry() 函数补 DELETE 逻辑——自动清理 YAML 中已删除 但 DB 残留的孤儿墓碑条目（防墓碑残留幻觉源）。解决发现性：新 AI 搜 "YAML 同步 DB/infrastructure_components 同步/墓碑清理" 可定位真源。 解决防重建：check_file_canonical() 反查阻止新 AI 重建同步脚本。 关联规则：ARCH-046（数据库节点全景图登记三铁律）。 ARCH-052 扩展（2026-07-06）：新增 sync_aggregate_nodes() 函数（P7 优先级）， 从 4 个 registry.yaml（rule_enforcement/scripts/test_suite/rule_registry_collection） UPSERT 聚合节点到 nodes 表，作为 depgraph 重建后的 YAML→DB 恢复通道。 sync_dataflow_registry() DELETE 加 WHERE design_maturity != 'design' 条件， 保护 apply_dataflowgraph --add-design-* 写入的设计态数据。解决发现性：新 AI 搜 "聚合节点同步/aggregate_nodes 恢复/dataflow 设计态保护" 可定位真源。 关联规则：ARCH-052（聚合节点模式治理配置对象过细）。 ARCH-053 扩展（2026-07-06）：新增 sync_interface_contracts() 函数（P8 优先级）， 从 interface_contract_registry.yaml UPSERT 接口契约到 interface_contracts 表 （对标 Backstage API kind，接口集级粒度）。新增 sync_database_nodes() 函数 （P8 优先级），从 infrastructure_registry.yaml 的 relational_db/vector_db 条目 UPSERT database 节点到 nodes 表（补齐 depgraph 缺失的数据库节点）。 解决发现性：新 AI 搜"接口契约同步/database 节点同步" 可定位真源。 关联规则：ARCH-053（API 契约层补齐 + database 节点 + AI 可发现性）。
   canonical_override: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
 creation_tokens:
+- file: docs/_working/audit_cure_night/01_mining/00_workitems_master.md
+  token: audit-cure-night-00-workitems-master-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/branch_landing/p1_2_l8_branch_landing.md
+  token: audit-cure-night-p1-2-l8-branch-landing-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_10_fill_red_test.md
+  token: audit-cure-night-p0-10-fill-red-test-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_1_deadbag_cluster.md
+  token: audit-cure-night-p0-1-deadbag-cluster-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/deadbag_recovery/p0_7_registry_integrity.md
+  token: audit-cure-night-p0-7-registry-integrity-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_6_desktop_9_cards.md
+  token: audit-cure-night-p0-6-desktop-9-cards-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/desktop_lists/p0_9_inflight_narrative.md
+  token: audit-cure-night-p0-9-inflight-narrative-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_2_close_lane_erratum.md
+  token: audit-cure-night-p0-2-close-lane-erratum-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_3_loop_check_verdict.md
+  token: audit-cure-night-p0-3-loop-check-verdict-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_4_c441_authority_anchor.md
+  token: audit-cure-night-p0-4-c441-authority-anchor-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_5_c19_c18_swap.md
+  token: audit-cure-night-p0-5-c19-c18-swap-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p0_8_c129_recovery.md
+  token: audit-cure-night-p0-8-c129-recovery-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/ledger_erratum/p1_4_5_6_governance_notes.md
+  token: audit-cure-night-p1-4-5-6-governance-notes-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/open_questions/open_questions_c312_c271_c315.md
+  token: audit-cure-night-open-questions-c312-c271-c315-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/open_questions/p1_handover_cards.md
+  token: audit-cure-night-p1-handover-cards-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/01_mining/open_questions/p2_digest.md
+  token: audit-cure-night-p2-digest-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/audit_cure_night/02_lanes/E_erratum_workbook.md
+  token: acure-lane-e-erratum-workbook-20261008
+  capability: acure_lane_e
+  created_by: st-acure-e1
+  merge_evaluation: "审计闭合夜 E 道（台账勘误）作业簿登记；车道工作区纯新增，零替代（裁定#375 四判据：跨域不同对象不并）"
+- file: docs/_working/audit_cure_night/99_delivery/交付报告.md
+  token: audit-cure-night-file-20261009
+  capability: audit_cure_night
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
+- file: docs/_working/chief_fullchain_campaign/HANDOFF_NEXT_SESSION.md
+  token: chief-fullchain-campaign-handoff-next-session-20261009
+  capability: chief_fullchain_campaign
+  created_by: st-chiefc-20261009
+  merge_evaluation: "内收w5_1跨域不同对象不并：战役/审计整改作业文档（会话交付层 ttl task_bound），audit_cure_night 与 chief_fullchain 战役真源派生"
 - file: .github/copilot-instructions.md
   token: circ-a4-copilot-instructions-20260930
   capability: library_lookup
@@ -64278,4 +64373,9 @@ creation_tokens:
   created_by: st-matrix-20261007
   capability: matrix-handoff-closeout
   merge_evaluation: "收尾交接册 v2 置换（战役 handoff 生命周期文件，v1 内容全部执行完毕归档于 git 史）"
+- file: docs/_working/deadcure_campaign/00_charter.md
+  token: deadcure-campaign-00-charter-20261008
+  created_by: st-deadcure-restore-chief
+  capability: deadcure-campaign
+  merge_evaluation: "死信清偿专案台账，无同真源可派生（既有清偿册属他役战役区），docs/_working/<campaign>/ 为同域唯一承接位"
 di_seam_exemptions: []
