@@ -1,0 +1,70 @@
+# ALGO_FLOW 外部真源——news_score_daily（_domain_intelligence 域，真源 src/zephyr/intelligence/news_score_daily.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.intelligence.news_score_daily
+source_of_truth: src/zephyr/intelligence/news_score_daily.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: news_data 当日增量行
+    #   fields: news_id/publish_time/title/content（FINAL 去重，只读母表）
+    #   code: _SQL_DAY_SELECT（TableRegistry fund_news_data）
+    # - id: I2
+    #   name: RuleBasedSentimentScorer 规则打分器
+    #   fields: 正/负词典集+反转/ST 正则（analyzer 模块级常量单源）
+    #   code: zephyr.intelligence.news_sentiment_analyzer
+    # - id: I3
+    #   name: caliber 口径指纹
+    #   fields: rule-a0e3f2b6d3（词典集+正则原文 SHA256 前 10 位）
+    #   code: caliber_fingerprint()
+    # - id: I4
+    #   name: day 发布日分片
+    #   fields: ISO YYYY-MM-DD（_iso 严格校验后方可进 SQL format，防注入）
+    #   code: score_day(day)
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 规则情绪打分
+    #   name_en: rule_sentiment_score
+    #   intro: 标题+正文经 scorer.score 产出 (polarity, hits)，positive/negative/neutral 三分类
+    #   formula: polarity=词典命中极性合成（反转/ST 正则修正）；hits=命中词典并集
+    #   code: RuleBasedSentimentScorer.score
+    #   registry: factor_registry: 不适用（数据管线非因子）
+    #   is_break: false
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 单日分片打分落表
+    #   name_en: score_day
+    #   intro: 读母表当日行→BATCH 批打分→INSERT news_sentiment_score（ReplacingMergeTree 同键幂等，可安全重跑）
+    #   inputs: I1 I2 I3 I4
+    #   outputs: O1
+    # - id: A2
+    #   name_zh: 日更调度与断点续传
+    #   name_en: run_news_score_batch/run_backfill
+    #   intro: 近 lookback 日覆盖差集补跑+retrail 重扫；backfill 按 ProgressStore last_key 续传；单日失败进 failed 继续（fail-visible 不抛）
+    #   inputs: I3
+    #   outputs: O1 O2
+    # 层: 输出
+    # - id: O1
+    #   name_zh: news_sentiment_score 逐条情绪分行
+    #   name_en: news_sentiment_score_rows
+    #   intro: c3_fundamental.news_sentiment_score（日更+回补唯一生产者，method='rule' 口径续写）
+    #   downstream: PQ-0016/0181/0036/0084 复考与下游情绪特征消费
+    # - id: O2
+    #   name_zh: 运行汇总 JSON
+    #   name_en: run_summary
+    #   intro: ok/scored/failed/rows/skipped/caliber_version（调度层降级告警输入）
+    #   downstream: scheduler.nightly_news_score（08:50 日频臂）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> F1
+    # I2 --> F1
+    # F1 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> O1
+    # A2 --> O1
+    # A2 --> O2
