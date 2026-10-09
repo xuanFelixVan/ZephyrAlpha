@@ -10,6 +10,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 import yaml
 
 FEXAM = Path(__file__).resolve().parents[3] / "scripts" / "backtest" / "fexam"
@@ -149,3 +150,60 @@ def test_run_exam_checkpoint_resume(tmp_path, monkeypatch):
     book2 = yaml.safe_load(out2.read_text(encoding="utf-8"))
     assert book2["counts"] == book1["counts"]
     assert sum(1 for r in book2["results"] if r["verdict"] == "pass") == 1
+
+
+class TestChDataPanelLatestIngest:
+    """③-a：load_panel 同键多版本须取"最新入库"版，而非行序末位（总统筹批复 2026-10-09）。"""
+
+    @staticmethod
+    def _patch(monkeypatch, tsv: str, cols: set[str]):
+        import ch_data
+
+        # 源件与本作分属两域只能分袋投；源袋未落地时显式 skip（可见状态，区别于"判据没跑却绿"）
+        if not hasattr(ch_data, "VERSION_COL"):
+            pytest.skip("ch_data 的版本列语义未落地（源袋先行），落地后本组用例自动生效")
+
+        seen: list[str] = []
+
+        def fake_sql_df(sql: str, *, timeout: int = 180) -> pd.DataFrame:
+            seen.append(sql)
+            rows = [r.split("\t") for r in tsv.strip().split("\n")]
+            width = len(rows[0])
+            return pd.DataFrame(rows, columns=[f"c{i}" for i in range(1, width + 1)], dtype=str)
+
+        monkeypatch.setattr(ch_data, "table_columns", lambda table, *, cache=None: cols)
+        monkeypatch.setattr(ch_data, "ch_query_df", fake_sql_df)
+        return ch_data, seen
+
+    def test_sql_orders_by_version_column(self, monkeypatch):
+        ch_data, seen = self._patch(
+            monkeypatch,
+            "2026-01-05\tS1\t1.0\t2026-10-08 15:00:00.000\n",
+            {"trade_date", "symbol", "period", "close", "ingest_ts"},
+        )
+        ch_data.load_panel("c1_market.technical_indicator", "close", "2026-01-01", "2026-01-31")
+        sql = seen[0]
+        assert "ORDER BY trade_date, symbol, ingest_ts" in sql
+        assert ", ingest_ts FROM" in sql
+
+    def test_latest_ingest_wins_over_row_order(self, monkeypatch):
+        # 行序末位＝最早入库版 5.0；最新入库版＝9.0 —— 旧实现（无版本列排序）取到 5.0
+        ch_data, _ = self._patch(
+            monkeypatch,
+            "2026-01-05\tS1\t1.0\t2026-10-08 15:00:00.000\n"
+            "2026-01-05\tS1\t9.0\t2026-10-09 11:00:00.000\n"
+            "2026-01-05\tS1\t5.0\t2026-10-07 09:00:00.000\n",
+            {"trade_date", "symbol", "period", "close", "ingest_ts"},
+        )
+        wide = ch_data.load_panel("c1_market.technical_indicator", "close", "2026-01-01", "2026-01-31")
+        assert float(wide.loc[pd.Timestamp("2026-01-05"), "S1"]) == 9.0
+
+    def test_table_without_version_column_falls_back(self, monkeypatch):
+        ch_data, seen = self._patch(
+            monkeypatch,
+            "2026-01-05\tS1\t7.0\n",
+            {"trade_date", "symbol", "close"},
+        )
+        wide = ch_data.load_panel("c1_market.kline_daily_hfq", "close", "2026-01-01", "2026-01-31")
+        assert "ingest_ts" not in seen[0]
+        assert float(wide.loc[pd.Timestamp("2026-01-05"), "S1"]) == 7.0
