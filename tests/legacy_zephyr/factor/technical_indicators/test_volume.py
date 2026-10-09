@@ -384,7 +384,13 @@ class TestWADCompute:
     """WAD 威廉累积/派发线——数值正确性 + 边界测试。"""
 
     def test_wad_hand_computed(self):
-        """手工微样本：up 取 C−L_prev，down 取 C−H_prev，持平计 0，首行 TAD=0。"""
+        """手工微样本：up 取 C−min(昨收,今低)=C−TRL，down 取 C−max(昨收,今高)=C−TRH，持平 0，首行 TAD=0。
+
+        2026-10-10 随实现修回 Williams/Tulip 口径改写（原用例钉的是"C−昨低/C−昨高"误读版）：
+        本例第 1 行昨收 10 < 今低 11 ⇒ TRL=min(10,11)=10 ⇒ TAD=2，而误读版给 12−low[0]=3；
+        第 3 行昨收 12 > 今高 10 ⇒ TRH=max(12,10)=12 ⇒ TAD=−3，误读版给 9−high[2]=−3（同值，
+        所以只看末行看不出区别——两处合起来才是这把尺）。
+        """
         df = pd.DataFrame(
             {
                 "high": [11.0, 13.0, 13.0, 10.0],
@@ -393,9 +399,11 @@ class TestWADCompute:
             }
         )
         result = WAD().compute(df)
-        # row0: TAD=0 → WAD=0；row1: 12>10 → TAD=12−low[0]=3 → WAD=3；
-        # row2: 12==12 → TAD=0 → WAD=3；row3: 9<12 → TAD=9−high[2]=−4 → WAD=−1
-        np.testing.assert_allclose(result["wad"].values, [0.0, 3.0, 3.0, -1.0])
+        # row0: 首行 TAD=0 → WAD=0
+        # row1: 12>10 → TAD=12−min(10,11)=2 → WAD=2
+        # row2: 12==12 → TAD=0 → WAD=2
+        # row3: 9<12 → TAD=9−max(12,10)=−3 → WAD=−1
+        np.testing.assert_allclose(result["wad"].values, [0.0, 2.0, 2.0, -1.0])
 
     def test_wad_independent_recompute(self):
         """独立逐行循环复算对照（与生产 np.where 向量化不同代码路径）。"""
@@ -409,9 +417,9 @@ class TestWADCompute:
         acc = 0.0
         for i in range(1, n_rows):
             if c[i] > c[i - 1]:
-                acc += c[i] - low[i - 1]
+                acc += c[i] - min(c[i - 1], low[i])  # TRL = min(昨收, 今低)
             elif c[i] < c[i - 1]:
-                acc += c[i] - h[i - 1]
+                acc += c[i] - max(c[i - 1], h[i])  # TRH = max(昨收, 今高)
             expected[i] = acc
         np.testing.assert_allclose(result["wad"].values, expected)
 

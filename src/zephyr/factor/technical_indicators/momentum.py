@@ -46,6 +46,7 @@ from zephyr.factor.technical_indicators.statistics import (
     _rolling_linefit,  # noqa: PLC0415 — FOSC/CTI 复用滚动线性回归闭式解
 )
 from zephyr.factor.technical_indicators.trend import _di  # noqa: PLC0415 — DX 复用 DMI 的 ±DI
+from zephyr.factor.technical_indicators.volatility import _true_range  # SQUEEZE 复用 TR 单口，不复制第二份判据
 
 # ---------------------------------------------------------------------------
 # 模块级辅助函数
@@ -1158,8 +1159,8 @@ class SQUEEZE(TechnicalIndicatorBase):
         output_columns=["squeeze_on", "squeeze_mom"],
         input_columns=["high", "low", "close"],
         params={"period": 20, "bb_mult": 2.0, "kc_mult": 1.5},
-        version="1.0.0",
-        description="squeeze_on=1 表 BB 完全嵌入 KC（波动压缩，变盘前兆）；squeeze_mom=线性回归拟合动量（LazyBear 口径）",
+        version="1.1.0",
+        description="squeeze_on=1 表 BB(20,2) 完全嵌入 KC(20,1.5)（KC 中轨=SMA20、通道=真实波幅 SMA20）；squeeze_mom=linreg(close − avg(avg(HH20,LL20),SMA20)) 末根拟合值（LazyBear 口径）",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -1172,13 +1173,25 @@ class SQUEEZE(TechnicalIndicatorBase):
         basis = close.rolling(window=n).mean()
         dev = bb_m * close.rolling(window=n).std(ddof=0)
         bb_upper, bb_lower = basis + dev, basis - dev
-        tr = data["high"] - data["low"]
-        kc_mid = close.ewm(span=n, adjust=False).mean()
+        # KC 轨用真实波幅 + SMA 中轨（LazyBear Pine 原文与 pandas_ta lazybear 分支同口径）。
+        # 旧实现两处偏离本指标声明的"LazyBear 口径"：
+        #   · TR→H−L：TR=max(H−L,|H−Cp|,|L−Cp|)≥H−L，KC 系统性偏窄（跳空日差更大）⇒
+        #     squeeze_on 触发率被压低；
+        #   · EMA→SMA：EMA 贴价更紧，判定带整体移位。
+        # BB 倍率仍按注册表声明的 2.0（LazyBear 原版 dev=multKC*stdev 是知名 bug，取 1.5），
+        # 这一处是有意修正、与 pandas_ta/TTM 规格一致，不随本段回退。
+        tr = _true_range(data["high"], data["low"], close)
+        kc_mid = basis
         rng_ma = tr.rolling(window=n).mean()
         kc_upper, kc_lower = kc_mid + kc_m * rng_ma, kc_mid - kc_m * rng_ma
         squeeze_on = ((bb_lower > kc_lower) & (bb_upper < kc_upper)).astype(float)
-        # 动量：线性回归拟合值 − 中价均值（LazyBear 简化口径：最近 n 根的一元回归外推值）
-        y = close.to_numpy(dtype=float)
+        # 动量基座＝close − avg(avg(HH_n, LL_n), SMA_n(close))（唐奇安中点与 SMA 的均值），
+        # 再对**这条基座序列**整体做 linreg 取末根拟合值。
+        # 旧写法 linreg(close) − kc_mid 与之不等价：avg 随窗变化，linreg(a−b)≠linreg(a)−b，
+        # 且缺 Donchian 分量（LazyBear: x = source − avg(...); val = linreg(x, lengthKC, 0)）。
+        donchian_mid = 0.5 * (data["high"].rolling(n).max() + data["low"].rolling(n).min())
+        base = close - 0.5 * (donchian_mid + basis)
+        y = base.to_numpy(dtype=float)
         m = len(y)
         mom = np.full(m, np.nan)
         x = np.arange(n, dtype=float)
@@ -1190,7 +1203,7 @@ class SQUEEZE(TechnicalIndicatorBase):
                 continue
             b = ((x - x_mean) * (seg - seg.mean())).sum() / x_ss
             mom[i] = seg.mean() + b * (x[-1] - x_mean)
-        squeeze_mom = pd.Series(mom, index=data.index) - kc_mid
+        squeeze_mom = pd.Series(mom, index=data.index)
         return pd.DataFrame({"squeeze_on": squeeze_on, "squeeze_mom": squeeze_mom}, index=data.index)
 
 

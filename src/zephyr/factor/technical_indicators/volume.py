@@ -484,8 +484,12 @@ class FORCE_INDEX(TechnicalIndicatorBase):
 class WAD(TechnicalIndicatorBase):
     """威廉累积/派发线（Williams Accumulation/Distribution）。
 
-    累积 sign 口径（Tulip 权威）：C>Cp 时 TAD=C−L_prev，C<Cp 时 TAD=C−H_prev，
+    累积 sign 口径（Williams 原版 MetaStock TRH/TRL，与 Tulip ti_wad 实码一致）：
+    C>Cp 时 TAD=C−min(Cp,L)（=C−TRL），C<Cp 时 TAD=C−max(Cp,H)（=C−TRH），
     其余（含持平）TAD=0；WAD=cumsum(TAD)。
+    ⚠ 曾长期误读为"C−L_prev / C−H_prev"（把 Tulip 的 yc 当昨低/昨高），2026-10-10 修回；
+      误读口径与真口径的 WAD 序列相对偏差中位 65% 且永不收敛，见
+      docs/_working/matrix_campaign/mining/classic_indicator_investigation_v1.md §3.5。
     首行口径：无 prev 行可取，TAD=0（WAD 从 0 起步，与 OBV/PVT 累积族一致，
     全序列无预热 NaN）。
     """
@@ -497,8 +501,8 @@ class WAD(TechnicalIndicatorBase):
         output_columns=["wad"],
         input_columns=["high", "low", "close"],
         params={},
-        version="1.0.0",
-        description="C>Cp 累积 C−L_prev，C<Cp 累积 C−H_prev，其余计 0；WAD=cumsum(TAD)，首行 TAD=0（Tulip 口径）",
+        version="1.1.0",
+        description="C>Cp 累积 C−min(昨收,今低)=C−TRL，C<Cp 累积 C−max(昨收,今高)=C−TRH，其余计 0；WAD=cumsum(TAD)，首行 TAD=0（Williams/Tulip 口径）",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -506,12 +510,20 @@ class WAD(TechnicalIndicatorBase):
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
         h, l, c = data["high"], data["low"], data["close"]
+        cp = c.shift(1)
         diff = c.diff()
-        # 首行 diff=NaN → 两分支比较均 False → TAD=0（首行口径）
+        # Williams 原版 MetaStock / Tulip ti_wad 口径：
+        #   C>昨收 ⇒ TAD = C − min(昨收, 今低)（TRL）
+        #   C<昨收 ⇒ TAD = C − max(昨收, 今高)（TRH）
+        # 旧实现把参考点读成"昨低/昨高"（c − l.shift(1) / c − h.shift(1)），与上面两条
+        # 不是同一个量：合成 bar 实测两口径 WAD 序列相关 0.98 而相对偏差中位 65%，
+        # cumsum 路径从此分叉且永不收敛（取证与生成器见
+        # docs/_working/matrix_campaign/mining/classic_indicator_investigation_v1.md §3.5）。
+        # 首行 diff=NaN → 两分支比较均 False → TAD=0（首行口径不变）。
         tad = np.where(
             diff > 0,
-            c - l.shift(1),
-            np.where(diff < 0, c - h.shift(1), 0.0),
+            c - np.minimum(cp, l),
+            np.where(diff < 0, c - np.maximum(cp, h), 0.0),
         )
         wad = pd.Series(tad, index=data.index).cumsum()
         return pd.DataFrame({"wad": wad}, index=data.index)
