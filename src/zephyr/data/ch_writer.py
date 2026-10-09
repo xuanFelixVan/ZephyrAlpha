@@ -5,13 +5,13 @@
 # [CONSUMERS] zephyr.data.scheduler; zephyr.data.ch_reader（query_strict/parse_tsv_rows/ClickHouseQueryError，W-180.1）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断; query_strict() 与 query() 共用同一传输层，仅错误契约不同（失败必抛、只读语句白名单）
+# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; create_fallback=False 时HTTP失败跳过本地落盘（回灌路径专用，防重复TSV）; health_check() 提供传输路径健康诊断; get_table_engine 只缓存**非空**结果，探测失败计入 engine_probe_failures 并 log.warning（GATE-P0-ENGINE-PROBE，2026-10-09 治本——旧实现把失败的 空串也当权威值缓存，一次瞬态故障令该进程永久认为引擎未知，并连累严格通道静默跳过 FINAL）; get_table_engine_strict 对未知必抛，绝不把"未知"当"非 Replacing"回答; query_strict() 与 query() 共用同一传输层，仅错误契约不同（失败必抛、只读语句白名单）
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] write_result失败->返回False+log; query失败->返回空字符串(存量静默契约，判据类读数禁用，改走 query_strict); delete_where失败->返回False; query_strict失败->raise ClickHouseQueryError(W-180.1，禁降级为空值/空表)
-# [TESTS] tests/zephyr/data/test_ch_writer.py
+# [TESTS] tests/legacy_zephyr/data/test_ch_writer.py
 # [A_module] module_id=MOD-GOV-ch_writer | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""
@@ -772,6 +772,9 @@ def _get_insertable_columns_set(table: str) -> set[str]:
 # 表引擎缓存（避免每次都查 system.tables）
 table_engine_cache: dict[str, str] = {}
 _table_engine_cache = table_engine_cache  # 向后兼容别名（R5 公共化）
+# 引擎探测失败计数（P0 治本 2026-10-09）：失败**不进**上面的权威缓存，
+# 只在此累计 + log.warning，供观测/测试断言"未污染"。键=表名，值=累计失败次数。
+engine_probe_failures: dict[str, int] = {}
 
 
 def get_table_engine(table: str) -> str:
@@ -783,8 +786,15 @@ def get_table_engine(table: str) -> str:
 
     线程安全：double-check locking（防 TOCTOU 竞态）。
 
+    P0 治本（2026-10-09，D 盘分诊战役撞出）：**探测失败（空串）绝不写缓存**。
+    旧实现无条件 `table_engine_cache[table] = engine`，把失败得到的 `""` 也当权威值缓存，
+    于是一次瞬态故障（如 `system.*` 内省整片失败）会让该进程**永久**认为
+    "此表引擎未知/非 Replacing"——且此后 `is_replacing_engine()` 不再抛异常，
+    连累严格通道 `_final_suffix_strict()` 一起静默跳过 FINAL（ReplacingMergeTree 计数虚高）。
+    现只缓存非空结果；失败计数与告警显式上报，下一次调用自动重试（自愈）。
+
     Returns:
-        引擎名字符串。查询失败返回空字符串。
+        引擎名字符串。查询失败返回空字符串（**不缓存**，且记入 engine_probe_failures）。
     """
     # 快速路径（无锁读）
     if table in table_engine_cache:
@@ -802,8 +812,35 @@ def get_table_engine(table: str) -> str:
             sql = SQL_ENGINE_BY_NAME.format(table)
         out = query(sql)
         engine = out.strip()
+        if not engine:
+            # 失败面：不缓存（防终身污染）＋响亮告警（防静默降级）
+            engine_probe_failures[table] = engine_probe_failures.get(table, 0) + 1
+            log.warning(
+                "GATE-P0-ENGINE-PROBE: get_table_engine(%s) 探测失败（空返回，与"
+                "'表不存在'不可分）——本次不写缓存，下次调用重试；"
+                "此前该表累计失败 %d 次。判据/FINAL 注入依赖此值，静默降级会让"
+                "ReplacingMergeTree 读数虚高。",
+                table,
+                engine_probe_failures[table],
+            )
+            return ""
         table_engine_cache[table] = engine
         return engine
+
+
+def get_table_engine_strict(table: str) -> str:
+    """严格版引擎读取：探测失败（空串）必抛，**绝不把"未知"当"非 Replacing"回答**。
+
+    给 `ch_reader._final_suffix_strict()` 用——旧实现走 `is_replacing_engine()`，
+    而该函数对"未知"与"确证非 Replacing"都给 False，令严格通道失去必抛契约。
+    """
+    engine = get_table_engine(table)
+    if not engine:
+        raise ClickHouseQueryError(
+            f"<engine-probe {table}>",
+            [("engine_probe", f"空返回（未知引擎），累计失败 {engine_probe_failures.get(table, 0)} 次")],
+        )
+    return engine
 
 
 def is_replacing_engine(table: str) -> bool:
