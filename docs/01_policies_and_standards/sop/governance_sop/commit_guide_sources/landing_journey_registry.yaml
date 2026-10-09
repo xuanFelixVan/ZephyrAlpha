@@ -33,7 +33,7 @@ stations:
   - station_id: "J5"
     title: "翻译先行"
     timing: "新建 .py 当批"
-    prescription: "add_module_translation.py --path <f> --domain <D_*> --name-zh <> --plain-zh <大白话>；双读面规则：落地门读主区盘面翻译册，不是 dev HEAD——先落主区盘面"
+    prescription: "经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）；双读面规则：落地门读主区盘面翻译册，不是 dev HEAD——先落主区盘面"
     gate_refs:
       - TRANSLATION-COVERAGE
   - station_id: "J6"

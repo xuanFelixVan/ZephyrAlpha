@@ -56,7 +56,7 @@ cases:
     symptom: "TRANSLATION-COVERAGE 新模块无大白话简介"
     gate: TRANSLATION-COVERAGE
     root_cause: 新增 .py 未登记翻译册（或 plain_zh 模板话 CJK<8）
-    prescription: "python scripts/governance/d3_metadata/add_module_translation.py --path <f> --domain <D_*> --name-zh <中文> --plain-zh <人话>"
+    prescription: "经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）"
     cost_note: "P50 7.5min/封，9 封"
     evidence: [emoreplay-0002]
   - case_id: DEATH-006-DIRECTORY-CONTRACT

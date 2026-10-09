@@ -142,7 +142,7 @@ gates:
     trigger: "新增 .py（src/zephyr/ 或 scripts/ 下）"
     enforce: "翻译册须有合格条目——存在+非空+CJK 大于等于 8+非通用模板"
     exempt: "tests/、demos/、test_ 前缀、*_test.py 后缀、__init__.py、_archive/"
-    fix: "python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*> --name-zh <中文名> --plain-zh <大白话至少 8 汉字>"
+    fix: "经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（--name-zh <中文名> --plain-zh <大白话至少 8 汉字> 随 payload）"
   - gate_id: REFERENCE-INTEGRITY
     source_sha256: 1850d01df7f297c2dd74dbae7f93397c9304fd004d01ad700bfd994b2cd01ebb
     source_file: src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py
@@ -390,7 +390,7 @@ gates:
     trigger: "新增 .py 翻译条目 A 面/翻译册新增条目 B 面"
     enforce: "新资产登记必填血肉——A 面 name_zh；B 面 name_zh+plain_zh 双全非模板"
     exempt: "存量不追溯；翻译册损坏 fail-open"
-    fix: "add_module_translation.py 一条命令（同 TRANSLATION-COVERAGE）"
+    fix: "经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（同 TRANSLATION-COVERAGE）"
   - gate_id: EXEMPT-ZONE-FM
     source_sha256: c905fb8796a32e0c041743946f6d172c6f83111e7689041dc8d4e59465abc986
     source_file: src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py

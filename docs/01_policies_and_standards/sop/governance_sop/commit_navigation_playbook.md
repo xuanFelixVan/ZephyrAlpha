@@ -7,10 +7,10 @@ doc_type: policy
 # 提交指路指南（机生版）
 
 > **本文件由生成器产出，禁手改**——改判据请改源头册后重跑生成器。
-> 生成器: `python scripts/governance/generators/generate_commit_guide.py` ｜ 生成时刻: 2026-10-09 16:59 UTC
+> 生成器: `python scripts/governance/generators/generate_commit_guide.py` ｜ 生成时刻: 2026-10-09 20:49 UTC
 > 源册: gate_digest_registry.yaml（判据蒸馏）/ file_type_checklists_registry.yaml（类型清单）/ death_cases_registry.yaml（死因案例）/ in_process_gate_registry.yaml（在册台目）
 
-> **8 台已停用 enabled:false**（卡片标'停用'，状态真源=gate_registry）: BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
+> **⚠️ 5 台判据源已漂移待重蒸馏**: CREATE-GUARD, REGISTRY-YAML-PARSE, CONSTITUTION-LINE-LIMIT, REAL-KEY-REFERENCE-SCAN, TASK-ORDER-DOCS-LOCK ｜ **8 台已停用 enabled:false**（卡片标'停用'，状态真源=gate_registry）: BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
 
 锚点约定：gate 卡片标题=`### <GATE_ID>`，类型节=`## FT-<type_id>`；接口按子串检索。
 
@@ -84,7 +84,7 @@ doc_type: policy
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py`
 
 - **J4 token 意图 API（新资产）**｜时机: 新建 .py/.yaml/.json/.md 资产后、提交前｜处方: capability 册=PG 投影册禁手改——registry_ledger api.register(REG-CAPCAN-001, 'creation_tokens', payload) → publish_snapshot → registry_projection_generator --render；src 新件另需 map_mounts 或 no_mount_reason；.py 头 14 字段+TTL 缺一拦
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -93,18 +93,18 @@ doc_type: policy
 - 处方: 先在 capability_canonical_file_registry.yaml creation_tokens 登记四字段（file/token/created_by/capability，可带 --merge-evaluation 四判据一句话）再写文件；token 与内容同批原子或 token 批先行（队列通道倒序必死）；关键词命中=扩展 canonical 或写逃生标记；rules/ 用 python scripts/scaffold.py rule <主题_描述>；新建 src .py 前先 grep 目标模块号全仓唯一（合规格式不等于唯一：MOD-BT-214 三撞/MOD-L06-001 裸撞实证）；map_mounts/no_mount_reason 随 token 条目同批登记
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/create_guard.py`
 
-- **J5 翻译先行**｜时机: 新建 .py 当批｜处方: add_module_translation.py --path <f> --domain <D_*> --name-zh <> --plain-zh <大白话>；双读面规则：落地门读主区盘面翻译册，不是 dev HEAD——先落主区盘面
+- **J5 翻译先行**｜时机: 新建 .py 当批｜处方: 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）；双读面规则：落地门读主区盘面翻译册，不是 dev HEAD——先落主区盘面
 ### TRANSLATION-COVERAGE
 
 - 强度: 硬阻断
 - 触发面: 新增 .py（src/zephyr/ 或 scripts/ 下）
 - 判据: 翻译册须有合格条目——存在+非空+CJK 大于等于 8+非通用模板
 - 豁免: tests/、demos/、test_ 前缀、*_test.py 后缀、__init__.py、_archive/
-- 处方: python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*> --name-zh <中文名> --plain-zh <大白话至少 8 汉字>
+- 处方: 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（--name-zh <中文名> --plain-zh <大白话至少 8 汉字> 随 payload）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py`
 
 - **J6 投影册纪律（共享登记册）**｜时机: 任何共享登记册（capability/翻译/裁定/目录契约）编辑时｜处方: 手改=指纹门拦（私改投影册无效）；双读面：锁外预检读 HEAD 册、锁内落地门读主区盘面——『token/翻译先行落地』指主区 HEAD；并发渲染竞态=重渲染后立即重 stage 再投
-### REGISTRY-YAML-PARSE
+### REGISTRY-YAML-PARSE ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
@@ -238,17 +238,17 @@ doc_type: policy
 
 1. token 先行：batch_creation_tokens.py --prefix <模块目录> 登记（--merge-evaluation 带四判据一句话）；token 与内容同批原子或 token 批先落（队列 gate 读 HEAD，倒序必死）
 1. 文件头 30 行 14 字段标注（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]；__init__.py 最低 3 字段）
-1. 翻译登记：add_module_translation.py --name-zh --plain-zh（大白话 ≥8 汉字禁模板话）
+1. 翻译登记：经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（大白话 ≥8 汉字禁模板话）
 1. 新类名全仓唯一（同名加 # class-name-alias: <理由> 豁免）；禁纯 shim；禁 governance/ 根新增
 1. 模块级可变容器写 Final（__all__: Final = [...]）；异常消息 ASCII 无句号、敏感值走 details
 1. 时间一律 now_utc()/datetime.now(UTC)；subprocess 带 CREATE_NO_WINDOW（走 process_pool）；CH 查询走 ch_reader；SQL 提 _SQL_ 常量走 DatabaseService
 
 **本类常见死因**（案例册全量见文末速查）:
 - [CREATE-GUARD] 新文件无 token 直提 → 先登记 token 再写文件；登记时带 --merge-evaluation
-- [TRANSLATION-COVERAGE] 翻译缺失/模板话（'提供包入口和模块加载功能'） → add_module_translation.py 一条命令；plain_zh 写人话 ≥8 汉字
+- [TRANSLATION-COVERAGE] 翻译缺失/模板话（'提供包入口和模块加载功能'） → 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）；plain_zh 写人话 ≥8 汉字
 - [ORPHAN-MODULE] 文件搬运+同批改引用被 ORPHAN/IMPORT 轮番拦死 → 三方（文件+import+名册）同批原子；或迁移延后另案（k4-0007 三连死实证）
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -263,7 +263,7 @@ doc_type: policy
 - 触发面: 新增 .py（src/zephyr/ 或 scripts/ 下）
 - 判据: 翻译册须有合格条目——存在+非空+CJK 大于等于 8+非通用模板
 - 豁免: tests/、demos/、test_ 前缀、*_test.py 后缀、__init__.py、_archive/
-- 处方: python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*> --name-zh <中文名> --plain-zh <大白话至少 8 汉字>
+- 处方: 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（--name-zh <中文名> --plain-zh <大白话至少 8 汉字> 随 payload）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py`
 
 ### ORPHAN-MODULE
@@ -452,7 +452,7 @@ doc_type: policy
 **本类常见死因**（案例册全量见文末速查）:
 - [PERMANENT-SYSTEM-TRIGGER] CLI runner 被判永久系统时间触发 → M11 豁免尾注 # noqa: m11-perm-manual-legitimate（manual CLI 合法先例）
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -467,7 +467,7 @@ doc_type: policy
 - 触发面: 新增 .py（src/zephyr/ 或 scripts/ 下）
 - 判据: 翻译册须有合格条目——存在+非空+CJK 大于等于 8+非通用模板
 - 豁免: tests/、demos/、test_ 前缀、*_test.py 后缀、__init__.py、_archive/
-- 处方: python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*> --name-zh <中文名> --plain-zh <大白话至少 8 汉字>
+- 处方: 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（--name-zh <中文名> --plain-zh <大白话至少 8 汉字> 随 payload）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py`
 
 ### SCRIPTS-IMPORT-INTEGRITY（停用：见 gate_registry）
@@ -610,7 +610,7 @@ doc_type: policy
 - 处方: 用语义名目录（e2e_20260924 违规、e2e_integration 合法；registry_incident 去 0b 后缀合法先例）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -689,7 +689,7 @@ doc_type: policy
 - 处方: 补登对应 registry（architecture_issue_registry.yaml 或 ruling_registry.yaml，与引用同 commit 原子）或删引用；核对 AGENTS.md 章节号
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -734,7 +734,7 @@ doc_type: policy
 - 处方: 批量补登走 scripts/governance/registry_batch_edit.py 纯插入；共享热册 CAS 写（safe_write_text）+写前守恒闸；共享暂存区副本陈旧会误报——git add 自愈；渲染重排零真删须条目级三证（HEAD/盘面/index 逐条对账）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py`
 
-### REGISTRY-YAML-PARSE
+### REGISTRY-YAML-PARSE ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
@@ -758,7 +758,7 @@ doc_type: policy
 - 触发面: 新增 .py 翻译条目 A 面/翻译册新增条目 B 面
 - 判据: 新资产登记必填血肉——A 面 name_zh；B 面 name_zh+plain_zh 双全非模板
 - 豁免: 存量不追溯；翻译册损坏 fail-open
-- 处方: add_module_translation.py 一条命令（同 TRANSLATION-COVERAGE）
+- 处方: 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（同 TRANSLATION-COVERAGE）
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py`
 
 ### HOT-FILE-BASE-FRESHNESS
@@ -770,7 +770,7 @@ doc_type: policy
 - 处方: git log -p 区间核对上游改动；已含则 release 后重 claim（锚刷新）再提交；claim_snapshots 删快照刷锚配方在案
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -789,7 +789,7 @@ doc_type: policy
 1. frontmatter ttl 按区：config/ 永久区=permanent；docs/_working 下 .yaml/.yml 一律 task_bound（FILE-PLACEMENT-TTL 拦错区）
 1. 表名走 TableRegistry；词表值走加载器禁硬编码
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -1070,7 +1070,7 @@ doc_type: policy
 - 处方: .ps1 注释写英文；全仓 LF；中文内容只进 UTF-8 文本格式
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/encoding_gate.py`
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -1089,7 +1089,7 @@ doc_type: policy
 1. ttl 义务同在（TTL-METADATA 格式面含 .json/.sh/.mmd）：永久区 frontmatter ttl permanent，临时区 task_bound
 1. 目录契约扩展名面：docs/_working 只许 .csv/.html/.md/.yaml——.json 落别处或改 .meta.yaml
 
-### CREATE-GUARD
+### CREATE-GUARD ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged 新增 7 格式（.py/.yaml/.md/.sh/.ps1/.mmd/.json）∩本 session own-scope；rules/ .yaml 命名检查含 rename 面
@@ -1143,7 +1143,7 @@ doc_type: policy
 - 处方: 写码前 capability_lookup.find()（留审计）；纯机械批用白名单 reason 词；requeue 不改 message——死因是 message 类必须新 enqueue
 - 判据源: `src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py`
 
-### REGISTRY-YAML-PARSE
+### REGISTRY-YAML-PARSE ⚠️待重蒸馏(判据源已漂移)
 
 - 强度: 硬阻断
 - 触发面: staged capability_canonical_file_registry.yaml / data_asset_registry.yaml
@@ -1244,7 +1244,7 @@ doc_type: policy
 - 症状: TRANSLATION-COVERAGE 新模块无大白话简介
 - 关联门禁: TRANSLATION-COVERAGE
 - 机制: 新增 .py 未登记翻译册（或 plain_zh 模板话 CJK<8）
-- 处方: python scripts/governance/d3_metadata/add_module_translation.py --path <f> --domain <D_*> --name-zh <中文> --plain-zh <人话>
+- 处方: 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）
 - 实测成本: P50 7.5min/封，9 封
 - 证据: emoreplay-0002
 
@@ -1464,7 +1464,7 @@ doc_type: policy
 | RULE-FOUR-WAY-ALIGN | block | staged 规则文件或 rule_catalog_registry | 改 YAML 后同步 catalog/disk/code 引用 |
 | RULING-COMMIT-VERIFIED | block | ruling 文档/架构登记册新增行声明已完成 commit hash | 核对 hash 拼写与是否已合并 |
 | R5-DIGIT-SUFFIX | block | 文件路径任意父级目录名匹配数字后缀（新引入才拦，历史不追溯） | 用语义名目录（e2e_20260924 违规、e2e_integration 合法 |
-| TRANSLATION-COVERAGE | block | 新增 .py（src/zephyr/ 或 scripts/ 下） | python scripts/governance/d3_metadata/add_module_translation.py --path <file> -- |
+| TRANSLATION-COVERAGE | block | 新增 .py（src/zephyr/ 或 scripts/ 下） | 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_pro |
 | TDM-MOUNT-COVERAGE | block | staged 新增 blueprint.md（docs/03_modules/**）+新增 .py（src/zephyr | 挂图（图+模块同批合法）或豁免册收编或 [not-trading:<理由>] 标记 |
 | ENCODING-SAFETY | block | .py/.md/.yaml/.yml/.json/.toml/.ps1 | .ps1 注释写英文 |
 | SSOT-REDEFINITION | block | staged .py 新增 class 或赋值且符号在 SSoT 清单 | 采用阻断消息内给出的 from <canonical_module> import <符号> 语句（处方直给） |
@@ -1539,7 +1539,7 @@ doc_type: policy
 | HOT-FILE-BASE-FRESHNESS | block | 热文件（注册表/宪法/tracker）+有 claim_head 锚点 | git log -p 区间核对上游改动 |
 | STATE-VOCAB-REGISTRY | warn | .py 新定义状态枚举类（类名含 state/phase/regime/emotion/mode） | 词表登记或 noqa |
 | TAG-VOCAB | warn | catalogs/ yaml 的 tags 列表 | 改标准词或先收编 library_tag_vocabulary.yaml |
-| BLOOD-FLESH | warn | 新增 .py 翻译条目 A 面/翻译册新增条目 B 面 | add_module_translation.py 一条命令（同 TRANSLATION-COVERAGE） |
+| BLOOD-FLESH | warn | 新增 .py 翻译条目 A 面/翻译册新增条目 B 面 | 经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_pro |
 | FRONTEND-TRUTH-SOURCE | warn | dashboard/web/ .js（豁免 api.js/loader.js 等） | 接 services/api.js 真源通道 |
 | BUSINESS-REGISTRY | block | staged 命中业务资产库（口径真源=registry_alignment.REGISTRY_SPECS 元组，现 2 | 先 apply_depgraph 登记 blueprint 再入库 |
 | REGISTRY-MASS-DELETION | block | staged YAML 命中 _registry/catalogs/ 或 ROOR | 批量补登走 scripts/governance/registry_batch_edit.py 纯插入 |
@@ -1562,7 +1562,7 @@ doc_type: policy
 
 ## APPENDIX-C — 判据源新鲜度快照
 
-- 漂移待重蒸馏: 0 台
+- 漂移待重蒸馏: 5 台：CREATE-GUARD, REGISTRY-YAML-PARSE, CONSTITUTION-LINE-LIMIT, REAL-KEY-REFERENCE-SCAN, TASK-ORDER-DOCS-LOCK
 - 未记录哈希: 0 台
 - 已停用 enabled:false: 8 台：BLUEPRINT-FORMAT, BLUEPRINT-HEADER, DOC-REF-BROKEN, EXEMPT-ZONE-FM, FILE-PLACEMENT-TTL, MODULE-ID-CONSISTENCY, SCRIPTS-IMPORT-INTEGRITY, TTL-METADATA
 - 在册覆盖: 106/106

@@ -43,7 +43,7 @@ file_types:
     steps:
       - "token 先行：batch_creation_tokens.py --prefix <模块目录> 登记（--merge-evaluation 带四判据一句话）；token 与内容同批原子或 token 批先落（队列 gate 读 HEAD，倒序必死）"
       - "文件头 30 行 14 字段标注（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]；__init__.py 最低 3 字段）"
-      - "翻译登记：add_module_translation.py --name-zh --plain-zh（大白话 ≥8 汉字禁模板话）"
+      - "翻译登记：经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）（大白话 ≥8 汉字禁模板话）"
       - "新类名全仓唯一（同名加 # class-name-alias: <理由> 豁免）；禁纯 shim；禁 governance/ 根新增"
       - "模块级可变容器写 Final（__all__: Final = [...]）；异常消息 ASCII 无句号、敏感值走 details"
       - "时间一律 now_utc()/datetime.now(UTC)；subprocess 带 CREATE_NO_WINDOW（走 process_pool）；CH 查询走 ch_reader；SQL 提 _SQL_ 常量走 DatabaseService"
@@ -54,7 +54,7 @@ file_types:
         prescription: "先登记 token 再写文件；登记时带 --merge-evaluation"
       - case: "翻译缺失/模板话（'提供包入口和模块加载功能'）"
         gate: TRANSLATION-COVERAGE
-        prescription: "add_module_translation.py 一条命令；plain_zh 写人话 ≥8 汉字"
+        prescription: "经意图 API 登记（api.register REG-MODULE-TRANSLATION-001→publish_snapshot→registry_projection_generator --render；直写轨已随物化改道结构性失效——账本册袋内字节退出物化，直写必被 PG render 顶掉；A2 专用薄壳建设中）；plain_zh 写人话 ≥8 汉字"
       - case: "文件搬运+同批改引用被 ORPHAN/IMPORT 轮番拦死"
         gate: ORPHAN-MODULE
         prescription: "三方（文件+import+名册）同批原子；或迁移延后另案（k4-0007 三连死实证）"
