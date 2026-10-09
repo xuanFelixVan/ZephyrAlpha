@@ -10214,6 +10214,11 @@ creation_tokens:
   token: btfix-p1p2--extensions--init---20260915
   capability: btfix_p1p2
   created_by: st-btfix-p15-20260915
+- file: docs/03_modules/_domain_factor/algo_flow/indicator_reader.yaml
+  token: dexp-algo-flow-indicator-reader-20261009
+  capability: ti_pit_indicator_reader
+  created_by: st-dexp-20261009
+  merge_evaluation: "新对象=指标读层 ALGO_FLOW 机器块出仓件（§4.16 external 锚真源）；同目录他块对应各自模块算法面，零重叠；不引入新能力"
 - file: docs/03_modules/_domain_factor/algo_flow/abs001_gate.yaml
   token: btfix-p1p2-abs001-gate-20260915
   capability: btfix_p1p2

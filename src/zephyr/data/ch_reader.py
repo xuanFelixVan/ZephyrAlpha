@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.backfill_checker; zephyr.backtest.core.data_handler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 对 ReplacingMergeTree 表自动注入 FINAL 关键字; 不执行写入操作; 纯读取层; 严格读通道（query_rows/count_strict/inject_final_strict）失败必抛且仅允许只读语句
+# [INVARIANTS] 对 ReplacingMergeTree 表自动注入 FINAL 关键字（引擎未知时：inject_final 保守不注入但必发 GATE-P0-ENGINE-PROBE 告警；inject_final_strict/query_rows/count_strict 则直接抛，2026-10-09 治本）; 不执行写入操作; 纯读取层; 严格读通道（query_rows/count_strict/inject_final_strict）失败必抛且仅允许只读语句
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -95,10 +95,21 @@ def inject_final(sql: str) -> str:
         if table.startswith("system."):
             return match.group(0)
         try:
-            if ch_writer.is_replacing_engine(table):
-                return f"FROM {table} FINAL"
+            engine = ch_writer.get_table_engine(table)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            pass  # 引擎查询失败则不注入
+            log.warning("inject_final: 引擎探测异常 table=%s（本次不注入 FINAL，非静默：见本行告警）", table)
+            return match.group(0)
+        if not engine:
+            # P0 治本（2026-10-09）：引擎"未知"必须响亮，不能与"确证非 Replacing"混为一谈。
+            # 不注入是保守选择（对 View/ExternalTable 加 FINAL 会报错），但降级要留痕。
+            log.warning(
+                "GATE-P0-ENGINE-PROBE: inject_final 引擎未知 table=%s ⇒ 本次不注入 FINAL，"
+                "ReplacingMergeTree 读数可能含未合并重复版本（判据类读数请改走 query_rows）。",
+                table,
+            )
+            return match.group(0)
+        if "Replacing" in engine:
+            return f"FROM {table} FINAL"
         return match.group(0)
 
     return _FROM_PATTERN.sub(_replace, sql)
@@ -128,6 +139,21 @@ def query(sql: str, timeout: int = ch_writer._DEFAULT_TIMEOUT) -> str:
     return ch_writer.query(sql, timeout=timeout)
 
 
+def _note_unknown_engine(api: str, table: str) -> None:
+    """存量读接口的"引擎未知"留痕：计数＋告警各一处，两个调用点共用（不复制第二份判据）。
+
+    只报响，不改返回值——存量消费者的既有语义由批复⑤-c 的普查迁移逐批替换，不在此一步大爆炸。
+    """
+    ch_writer.engine_probe_failures[table] = ch_writer.engine_probe_failures.get(table, 0) + 1
+    log.warning(
+        "GATE-P0-ENGINE-PROBE: %s 引擎未知（table=%s，累计失败 %d 次）⇒ 本次不注入 FINAL，"
+        "返回按未去重口径；判据类读数请改走 count_strict()/query_rows()",
+        api,
+        table,
+        ch_writer.engine_probe_failures[table],
+    )
+
+
 def count(table: str, where: str = "", timeout: int = 30) -> int:
     """计数查询，自动注入 FINAL。
 
@@ -144,13 +170,17 @@ def count(table: str, where: str = "", timeout: int = 30) -> int:
 
     ⚠ 高危契约（W-180.1）：失败态＝0 与"真 0 行"不可分 ⇒ 判据类计数（空壳表清单/
       新鲜度尺/对账表/呈裁证据）禁用本函数，改走 `count_strict()`（失败必抛）。
+
+    响亮化（2026-10-09 批复⑤-b，b+c 组合的第①步）：引擎未知（探测失败/空返回）时**返回值
+    与旧行为完全一致**（不加 FINAL、失败仍返 0），但必打 GATE-P0-ENGINE-PROBE 告警并计入
+    `ch_writer.engine_probe_failures`——消解"静默"而不改存量契约。
     """
     final = ""
-    try:
-        if ch_writer.is_replacing_engine(table):
-            final = " FINAL"
-    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        pass
+    engine = ch_writer.get_table_engine(table)
+    if not engine:
+        _note_unknown_engine("count()", table)
+    elif "Replacing" in engine:
+        final = " FINAL"
     sql = _SQL_COUNT.format(table=table, final=final)
     if where:
         sql += f" WHERE {where}"
@@ -182,13 +212,15 @@ def query_table(
 
     Returns:
         TSV 格式字符串
+
+    响亮化同 `count()`（批复⑤-b）：引擎未知时返回值不变，但必告警＋计入失败数。
     """
     final = ""
-    try:
-        if ch_writer.is_replacing_engine(table):
-            final = " FINAL"
-    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        pass
+    engine = ch_writer.get_table_engine(table)
+    if not engine:
+        _note_unknown_engine("query_table()", table)
+    elif "Replacing" in engine:
+        final = " FINAL"
     sql = _SQL_SELECT.format(columns=columns, table=table, final=final)
     if where:
         sql += f" WHERE {where}"
@@ -210,12 +242,20 @@ ClickHouseQueryError = ch_writer.ClickHouseQueryError
 
 
 def _final_suffix_strict(table: str) -> str:
-    """引擎探测 + FINAL 后缀；探测失败必抛（FINAL 缺失会让 ReplacingMergeTree 计数虚高）。"""
+    """引擎探测 + FINAL 后缀；探测失败必抛（FINAL 缺失会让 ReplacingMergeTree 计数虚高）。
+
+    P0 治本（2026-10-09）：旧实现走 `is_replacing_engine()`，该函数对
+    **"引擎未知"与"确证非 Replacing"一律返回 False** ⇒ 严格通道拿到 False 就安静地
+    不加 FINAL，必抛契约形同虚设（且曾被进程级缓存污染放大成永久）。
+    现走 `get_table_engine_strict()`：空返回＝未知＝抛。
+    """
     try:
-        replacing = ch_writer.is_replacing_engine(table)
+        engine = ch_writer.get_table_engine_strict(table)
+    except ch_writer.ClickHouseQueryError:
+        raise
     except Exception as e:  # noqa: BLE001 — 契约要求转严格异常
         raise ClickHouseQueryError(f"<engine-probe {table}>", [("engine_probe", f"{type(e).__name__}: {e}")]) from e
-    return " FINAL" if replacing else ""
+    return " FINAL" if "Replacing" in engine else ""
 
 
 def inject_final_strict(sql: str) -> str:
