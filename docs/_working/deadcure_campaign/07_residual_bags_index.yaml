@@ -1,0 +1,1566 @@
+# 死信清偿专案 · dead/ 残余袋索引（F-1b 消费后本专案二次裁定的输入面；生成器产出）
+generated_at: '2026-10-09T06:55:47+08:00'
+residual_bags: 1340
+clusters: 223
+clusters_list:
+  - id: chief_revive_additive_new/None
+    bags: 89
+    disposition: revive_additive_new
+    families: ["chaos2-st-06", "st-closeout-basereq-20261006", "st-cmd-20260924", "st-cure-p01-20261006", "st-cure-p02-20261006", "st-cure-p05-20261006"]
+    flags: {"P0_tests_hole": 6}
+    adjudication: "bag only adds brand-new paths (no HEAD line destroyed), but new files need creation_token/translation/14-field headers b"
+    qids: ["q-20260927-st-pqmine-20260927-0003", "q-20261005-st-tests-chief-20261004-0018", "q-20261006-st-wt-clean-w2-20261006-0001", "q-20261006-st-cure-p01-20261006-0029", "q-20261007-st-cure-p01-20261006-0066", "q-20261007-st-cure-p01-20261006-0084", "q-20261007-st-cure-p01-20261006-0094", "q-20261007-st-cure-p01-20261006-0145", "q-20261007-st-cure-p01-20261006-0088", "q-20261007-st-cure-p01-20261006-0090", "q-20261006-st-cure-p01-20261006-0027", "q-20260924-st-pipeline-final-20260924-0022", "q-20260924-st-pipeline-final-20260924-0023", "q-20261006-st-workingchief-20261006-0002", "q-20261006-st-workingchief-20261006-0008", "q-20261006-st-closeout-basereq-20261006-0099", "q-20261006-st-closeout-basereq-20261006-0194", "q-20261006-st-closeout-basereq-20261006-0107", "q-20261006-st-closeout-basereq-20261006-0202", "q-20260929-st-nightsweep-sw1-20260929-0003", "q-20261006-st-closeout-basereq-20261006-0242", "q-20260923-st-regfix-lane0b-20260923-0017", "q-20261005-st-fig13-bone-20261004-0009", "q-20261006-st-f15-frombag-20261005-0025", "q-20261006-st-f15-frombag-20261005-0028", "q-20261006-st-f15-frombag-20261005-0035", "q-20261006-st-f15-frombag-20261005-0087", "q-20261006-st-f15-frombag-20261005-0107", "q-20261006-st-f15-frombag-20261005-0136", "q-20261006-st-f15-frombag-20261005-0181", "q-20261006-st-f15-frombag-20261005-0192", "q-20261007-st-govfix-g6-20261007-0002", "q-20261008-st-fr-resurrect-0006", "q-20261008-st-fr-resurrect-0007", "q-20261008-st-fr-resurrect-0008", "q-20260923-st-deepclean-20260923-0001", "q-20261006-st-f14-final-sweep-20261005-0098", "q-20261006-st-f15-frombag-20261005-0048", "q-20261006-st-f15-frombag-20261005-0062", "q-20261006-st-f15-frombag-20261005-0076", "q-20261006-st-f15-frombag-20261005-0111", "q-20261006-st-f15-frombag-20261005-0180", "q-20261001-st-ffchief-20261001-0013", "q-20261001-st-ffchief-20261001-0064", "q-20261001-st-ffchief-20261001-0088", "q-20261001-st-ffchief-20261001-0098", "q-20261001-st-ffchief-20261001-0104", "q-20261001-st-ffchief-20261001-0113", "q-20261005-st-sP-bottleneck-20261005-0054", "q-20261007-st-cure-p12b-20261006-0033", "q-20261007-st-cure-p12b-20261006-0034", "q-20261007-st-cure-p12b-20261006-0035", "q-20261005-st-sP-bottleneck-20261005-0039", "q-20261005-st-sP-bottleneck-20261005-0071", "q-20261005-st-sP-bottleneck-20261005-0088", "q-20261005-st-sP-bottleneck-20261005-0070", "q-20261006-st-cure-p10-20261006-0004", "q-20261007-st-cure-p10-20261006-0020", "q-20261005-st-sP-bottleneck-20261005-0077", "q-20261005-st-sP-bottleneck-20261005-0099", "q-20261007-st-cure-p12a-20261006-0041", "q-20261006-st-cure-p12a-20261006-0021", "q-20261007-st-cure-p12a-20261006-0051", "q-20261006-st-cure-p12b-20261006-0004", "q-20261006-st-cure-p12b-20261006-0017", "q-20261002-chaos2-st-06-0001", "q-20261005-st-sP-bottleneck-20261005-0018", "q-20261005-st-sP-bottleneck-20261005-0080", "q-20261006-st-cure-p12a-20261006-0007", "q-20261006-st-cure-p12a-20261006-0022", "q-20261006-st-cure-p12a-20261006-0030", "q-20260925-st-cmd-20260924-0038", "q-20260925-st-cmd-20260924-0047", "q-20260925-st-cmd-20260924-0052", "q-20260925-st-cmd-20260924-0123", "q-20261004-st-sJ-doctorb2-20261004-0039", "q-20261006-st-cure-p06-20261006-0008", "q-20261006-st-cure-p06-20261006-0009", "q-20261006-st-cure-p06-20261006-0013", "q-20261004-st-sJ-doctorb2-20261004-0001", "q-20261006-st-cure-p02-20261006-0003", "q-20261006-st-cure-p06-20261006-0001", "q-20261006-st-cure-p06-20261006-0003", "q-20261006-st-cure-p06-20261006-0014", "q-20261007-st-cure-p05-20261006-0006", "q-20261007-st-cure-p05-20261006-0011", "q-20261007-st-cure-p05-20261006-0031", "q-20261004-st-sJ-doctorb2-20261004-0008", "q-20261007-st-mastertc-mini-0003"]
+  - id: lane1/l1-tests_01
+    bags: 76
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 76, "P0_tests_hole": 75}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261004-st-tests-chief-20261004-0002", "q-20261005-st-tests-chief-20261004-0019", "q-20261005-st-tests-chief-20261004-0020", "q-20261005-st-tests-chief-20261004-0031", "q-20261005-st-tests-chief-20261004-0032", "q-20261005-st-tests-chief-20261004-0048", "q-20261005-st-tests-chief-20261004-0049", "q-20261005-st-tests-chief-20261004-0066", "q-20261005-st-tests-chief-20261004-0067", "q-20261005-st-tests-chief-20261004-0081", "q-20261005-st-tests-chief-20261004-0082", "q-20261005-st-tests-chief-20261004-0102", "q-20261005-st-tests-chief-20261004-0103", "q-20261006-st-tests-chief-20261004-0120", "q-20261006-st-tests-chief-20261004-0135", "q-20261006-st-tests-chief-20261004-0136", "q-20261006-st-tests-chief-20261004-0137", "q-20261006-st-tests-chief-20261004-0138", "q-20261006-st-tests-chief-20261004-0139", "q-20261006-st-tests-chief-20261004-0140", "q-20261006-st-tests-chief-20261004-0141", "q-20261006-st-tests-chief-20261004-0143", "q-20261006-st-tests-chief-20261004-0144", "q-20261006-st-tests-chief-20261004-0145", "q-20261006-st-tests-chief-20261004-0146", "q-20261006-st-tests-chief-20261004-0147", "q-20261006-st-tests-chief-20261004-0148", "q-20261006-st-tests-chief-20261004-0149", "q-20261006-st-tests-chief-20261004-0150", "q-20261006-st-tests-chief-20261004-0151", "q-20261006-st-tests-chief-20261004-0152", "q-20261006-st-tests-chief-20261004-0153", "q-20261006-st-tests-chief-20261004-0154", "q-20261006-st-tests-chief-20261004-0155", "q-20261006-st-tests-chief-20261004-0156", "q-20261006-st-tests-chief-20261004-0157", "q-20261006-st-tests-chief-20261004-0158", "q-20261006-st-tests-chief-20261004-0159", "q-20261006-st-tests-chief-20261004-0160", "q-20261006-st-tests-chief-20261004-0161", "q-20261006-st-tests-chief-20261004-0162", "q-20261006-st-tests-chief-20261004-0163", "q-20261006-st-tests-chief-20261004-0164", "q-20261006-st-tests-chief-20261004-0165", "q-20261006-st-tests-chief-20261004-0166", "q-20261006-st-tests-chief-20261004-0167", "q-20261006-st-tests-chief-20261004-0168", "q-20261006-st-tests-chief-20261004-0169", "q-20261006-st-tests-chief-20261004-0170", "q-20261006-st-tests-chief-20261004-0171", "q-20261006-st-tests-chief-20261004-0172", "q-20261006-st-tests-chief-20261004-0173", "q-20261006-st-tests-chief-20261004-0174", "q-20261006-st-tests-chief-20261004-0175", "q-20261006-st-tests-chief-20261004-0176", "q-20261006-st-tests-chief-20261004-0177", "q-20261006-st-tests-chief-20261004-0178", "q-20261006-st-tests-chief-20261004-0179", "q-20261006-st-tests-chief-20261004-0180", "q-20261006-st-tests-chief-20261004-0181", "q-20261006-st-tests-chief-20261004-0182", "q-20261006-st-tests-chief-20261004-0183", "q-20261006-st-tests-chief-20261004-0184", "q-20261006-st-tests-chief-20261004-0185", "q-20261006-st-tests-chief-20261004-0186", "q-20261006-st-tests-chief-20261004-0187", "q-20261006-st-tests-chief-20261004-0188", "q-20261006-st-tests-chief-20261004-0189", "q-20261006-st-tests-chief-20261004-0190", "q-20261006-st-tests-chief-20261004-0191", "q-20261006-st-tests-chief-20261004-0192", "q-20261006-st-tests-chief-20261004-0202", "q-20261006-st-tests-chief-20261004-0203", "q-20261006-st-tests-chief-20261004-0204", "q-20261006-st-tests-chief-20261004-0205", "q-20261008-st-tests-chief-20261004-0206"]
+  - id: lane6/l6-c01
+    bags: 54
+    disposition: revive_with_ticket
+    families: ["st-cure-p08b-20261006"]
+    flags: {"P0_tests_hole": 54}
+    adjudication: "重投班会话自己先死：存活闸按属主 heartbeat 判活，st-cure-p08b 等 exited→一律拒（裁定#459）。非内容坏，属设施性可修因致死，同签名上一轮已误伤 124 袋。"
+    qids: ["q-20261006-st-cure-p08b-20261006-0002", "q-20261006-st-cure-p08b-20261006-0003", "q-20261006-st-cure-p08b-20261006-0004", "q-20261006-st-cure-p08b-20261006-0005", "q-20261006-st-cure-p08b-20261006-0007", "q-20261006-st-cure-p08b-20261006-0008", "q-20261006-st-cure-p08b-20261006-0009", "q-20261006-st-cure-p08b-20261006-0010", "q-20261006-st-cure-p08b-20261006-0011", "q-20261006-st-cure-p08b-20261006-0012", "q-20261006-st-cure-p08b-20261006-0013", "q-20261006-st-cure-p08b-20261006-0014", "q-20261006-st-cure-p08b-20261006-0015", "q-20261006-st-cure-p08b-20261006-0016", "q-20261006-st-cure-p08b-20261006-0017", "q-20261006-st-cure-p08b-20261006-0018", "q-20261006-st-cure-p08b-20261006-0019", "q-20261006-st-cure-p08b-20261006-0020", "q-20261006-st-cure-p08b-20261006-0021", "q-20261006-st-cure-p08b-20261006-0022", "q-20261006-st-cure-p08b-20261006-0023", "q-20261006-st-cure-p08b-20261006-0024", "q-20261006-st-cure-p08b-20261006-0025", "q-20261006-st-cure-p08b-20261006-0026", "q-20261006-st-cure-p08b-20261006-0027", "q-20261006-st-cure-p08b-20261006-0028", "q-20261006-st-cure-p08b-20261006-0029", "q-20261006-st-cure-p08b-20261006-0030", "q-20261006-st-cure-p08b-20261006-0031", "q-20261006-st-cure-p08b-20261006-0032", "q-20261006-st-cure-p08b-20261006-0033", "q-20261006-st-cure-p08b-20261006-0034", "q-20261006-st-cure-p08b-20261006-0035", "q-20261006-st-cure-p08b-20261006-0036", "q-20261006-st-cure-p08b-20261006-0037", "q-20261006-st-cure-p08b-20261006-0038", "q-20261006-st-cure-p08b-20261006-0039", "q-20261006-st-cure-p08b-20261006-0040", "q-20261006-st-cure-p08b-20261006-0041", "q-20261006-st-cure-p08b-20261006-0042", "q-20261006-st-cure-p08b-20261006-0043", "q-20261006-st-cure-p08b-20261006-0044", "q-20261006-st-cure-p08b-20261006-0045", "q-20261006-st-cure-p08b-20261006-0046", "q-20261006-st-cure-p08b-20261006-0047", "q-20261006-st-cure-p08b-20261006-0048", "q-20261006-st-cure-p08b-20261006-0049", "q-20261006-st-cure-p08b-20261006-0050", "q-20261006-st-cure-p08b-20261006-0051", "q-20261006-st-cure-p08b-20261006-0052", "q-20261006-st-cure-p08b-20261006-0053", "q-20261006-st-cure-p08b-20261006-0054", "q-20261006-st-cure-p08b-20261006-0055", "q-20261006-st-cure-p08b-20261006-0056"]
+  - id: chief_pending_owner/None
+    bags: 39
+    disposition: pending_owner
+    families: ["st-closeout-basereq-20261006", "st-cmd-20260924", "st-cure-p01-20261006", "st-cure-p10-20261006", "st-cure-p12b-20261006", "st-datasop-20260930"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "unique content in business-asset area (数据/因子/策略/指标) — Owner 门位禁代裁"
+    qids: ["q-20261008-st-map9-chief-20261008-0002", "q-20261008-st-map9-chief-20261008-0006", "q-20261008-st-map9-chief-20261008-0009", "q-20260924-st-t0-matrix-20260924-0007", "q-20260924-st-t0-matrix-20260924-0008", "q-20261006-st-cure-p01-20261006-0016", "q-20261006-st-cure-p01-20261006-0038", "q-20261007-st-cure-p01-20261006-0110", "q-20261007-st-cure-p01-20261006-0070", "q-20261004-st-map9-f4-20261003-0007", "q-20261004-st-map9-f4-20261003-0008", "q-20261004-st-map9-f4-20261003-0009", "q-20261004-st-map9-f4-20261003-0010", "q-20260924-st-pipeline-final-20260924-0029", "q-20261008-st-tclose-rootcure-20261006-0002", "q-20261006-st-closeout-basereq-20261006-0080", "q-20261006-st-closeout-basereq-20261006-0122", "q-20261006-st-closeout-basereq-20261006-0175", "q-20261006-st-closeout-basereq-20261006-0216", "q-20261005-st-map9-chief-20261004-0001", "q-20261005-st-map9-chief-20261004-0003", "q-20261006-st-f15-frombag-20261005-0036", "q-20261006-st-f15-frombag-20261005-0176", "q-20261008-st-gomap-b-20261006-0006", "q-20261008-st-gomap-b-20261006-0007", "q-20261006-st-f15-frombag-20261005-0054", "q-20261008-st-gomap-chief-20261004-0034", "q-20261008-st-gomap-chief-20261004-0035", "q-20261005-st-map9-chief-20261005-0001", "q-20261005-st-map9-f7-20261005-0001", "q-20260929-st-nightsweep-sw6-20260929-0005", "q-20261005-st-sP-bottleneck-20261005-0137", "q-20261006-st-cure-p10-20261006-0005", "q-20261006-st-cure-p12b-20261006-0007", "q-20260925-st-cmd-20260924-0022", "q-20260925-st-cmd-20260924-0051", "q-20260925-st-cmd-20260924-0067", "q-20261004-st-datasop-20260930-0010", "q-20260927-st-fms-chief-20260927-0003"]
+  - id: lane4/l4-01
+    bags: 37
+    disposition: revive_with_ticket
+    families: ["st-f15-frombag-20261005"]
+    flags: {"lane_claim_overridden": 37, "P0_tests_hole": 12}
+    adjudication: "重投班 st-f15 死于重投机制本身（cascade_stale 基底重校验不适用 / 快照基底与 dev 冲突 / 三向合并失败）。44 袋 1248 件：HEAD 全缺 100（路径今不在 HEAD 98、他径亦无同名件 42）、"
+    qids: ["q-20261006-st-f15-frombag-20261005-0011", "q-20261006-st-f15-frombag-20261005-0012", "q-20261006-st-f15-frombag-20261005-0015", "q-20261006-st-f15-frombag-20261005-0018", "q-20261006-st-f15-frombag-20261005-0019", "q-20261006-st-f15-frombag-20261005-0023", "q-20261006-st-f15-frombag-20261005-0027", "q-20261006-st-f15-frombag-20261005-0032", "q-20261006-st-f15-frombag-20261005-0037", "q-20261006-st-f15-frombag-20261005-0038", "q-20261006-st-f15-frombag-20261005-0039", "q-20261006-st-f15-frombag-20261005-0040", "q-20261006-st-f15-frombag-20261005-0041", "q-20261006-st-f15-frombag-20261005-0043", "q-20261006-st-f15-frombag-20261005-0044", "q-20261006-st-f15-frombag-20261005-0045", "q-20261006-st-f15-frombag-20261005-0046", "q-20261006-st-f15-frombag-20261005-0053", "q-20261006-st-f15-frombag-20261005-0056", "q-20261006-st-f15-frombag-20261005-0080", "q-20261006-st-f15-frombag-20261005-0086", "q-20261006-st-f15-frombag-20261005-0092", "q-20261006-st-f15-frombag-20261005-0105", "q-20261006-st-f15-frombag-20261005-0106", "q-20261006-st-f15-frombag-20261005-0108", "q-20261006-st-f15-frombag-20261005-0110", "q-20261006-st-f15-frombag-20261005-0112", "q-20261006-st-f15-frombag-20261005-0131", "q-20261006-st-f15-frombag-20261005-0138", "q-20261006-st-f15-frombag-20261005-0143", "q-20261006-st-f15-frombag-20261005-0144", "q-20261006-st-f15-frombag-20261005-0145", "q-20261006-st-f15-frombag-20261005-0150", "q-20261006-st-f15-frombag-20261005-0151", "q-20261006-st-f15-frombag-20261005-0152", "q-20261006-st-f15-frombag-20261005-0157", "q-20261006-st-f15-frombag-20261005-0203"]
+  - id: lane7/l7-c16
+    bags: 36
+    disposition: revive_with_ticket
+    families: ["st-cmd-20260924", "st-cure-p02-20261006", "st-cure-p03-20261006", "st-cure-p06-20261006", "st-f11-requeue-20261005", "st-final-build-20260926"]
+    flags: {"P0_tests_hole": 8}
+    adjudication: "regression_risk（rule R-4）：HEAD 已演进过快照，盲重投会删掉最多 max_only_head 条更新行——只能行级摘取（line-level cherry pick），禁 requeue --from-bag；未"
+    qids: ["q-20260925-st-cmd-20260924-0033", "q-20260927-st-final-build-20260926-0012", "q-20260927-st-final-build-20260926-0015", "q-20260927-st-final-build-20260926-0022", "q-20260927-st-final-build-20260926-0027", "q-20260927-st-final-build-20260926-0029", "q-20260927-st-final-build-20260926-0032", "q-20260928-st-zcloseout-20260928-0027", "q-20260929-st-tailwork8-20260928-0001", "q-20261004-st-final-build-20260926-0053", "q-20261004-st-sD-liquidation-20261004-0006", "q-20261004-st-sD-liquidation-20261004-0009", "q-20261004-st-sD-liquidation-20261004-0021", "q-20261004-st-sJ-doctorb2-20261004-0016", "q-20261004-st-sJ-doctorb2-20261004-0020", "q-20261004-st-sJ-doctorb2-20261004-0024", "q-20261004-st-sJ-doctorb2-20261004-0025", "q-20261004-st-sJ-doctorb2-20261004-0026", "q-20261004-st-sJ-doctorb2-20261004-0029", "q-20261004-st-sJ-doctorb2-20261004-0031", "q-20261005-st-f11-requeue-20261005-0019", "q-20261006-st-cure-p02-20261006-0004", "q-20261006-st-cure-p03-20261006-0003", "q-20261006-st-cure-p03-20261006-0004", "q-20261006-st-cure-p06-20261006-0004", "q-20261006-st-cure-p06-20261006-0015", "q-20261006-st-cure-p06-20261006-0016", "q-20261006-st-cure-p06-20261006-0017", "q-20261006-st-cure-p06-20261006-0018", "q-20261006-st-cure-p06-20261006-0019", "q-20261006-st-cure-p06-20261006-0020", "q-20261006-st-cure-p06-20261006-0021", "q-20261006-st-cure-p06-20261006-0022", "q-20261006-st-cure-p06-20261006-0023", "q-20261006-st-cure-p06-20261006-0024", "q-20261007-st-matrix-20261006-0051"]
+  - id: lane6/l6-c02
+    bags: 33
+    disposition: revive_with_ticket
+    families: ["st-cure-p12a-20261006", "st-cure-p12b-20261006"]
+    flags: {"P0_tests_hole": 11}
+    adjudication: "袋侧与 dev 侧同文件皆改，落地侧整文件三方判真冲突→按设计死信回人工。欠账真实存在（多数件仍在树），只能逐行判侧。"
+    qids: ["q-20261006-st-cure-p12a-20261006-0005", "q-20261006-st-cure-p12a-20261006-0009", "q-20261006-st-cure-p12a-20261006-0011", "q-20261006-st-cure-p12a-20261006-0012", "q-20261006-st-cure-p12a-20261006-0013", "q-20261006-st-cure-p12a-20261006-0014", "q-20261006-st-cure-p12a-20261006-0017", "q-20261006-st-cure-p12a-20261006-0018", "q-20261006-st-cure-p12a-20261006-0019", "q-20261006-st-cure-p12a-20261006-0027", "q-20261006-st-cure-p12a-20261006-0028", "q-20261006-st-cure-p12a-20261006-0029", "q-20261006-st-cure-p12a-20261006-0031", "q-20261006-st-cure-p12a-20261006-0032", "q-20261006-st-cure-p12a-20261006-0034", "q-20261006-st-cure-p12b-20261006-0009", "q-20261006-st-cure-p12b-20261006-0011", "q-20261006-st-cure-p12b-20261006-0018", "q-20261006-st-cure-p12b-20261006-0020", "q-20261006-st-cure-p12b-20261006-0022", "q-20261006-st-cure-p12b-20261006-0024", "q-20261006-st-cure-p12b-20261006-0025", "q-20261006-st-cure-p12b-20261006-0028", "q-20261007-st-cure-p12a-20261006-0038", "q-20261007-st-cure-p12a-20261006-0039", "q-20261007-st-cure-p12a-20261006-0040", "q-20261007-st-cure-p12a-20261006-0042", "q-20261007-st-cure-p12a-20261006-0043", "q-20261007-st-cure-p12a-20261006-0044", "q-20261007-st-cure-p12a-20261006-0045", "q-20261007-st-cure-p12a-20261006-0046", "q-20261007-st-cure-p12b-20261006-0036", "q-20261007-st-cure-p12b-20261006-0039"]
+  - id: lane7/l7-c11
+    bags: 30
+    disposition: revive_with_ticket
+    families: ["st-cmd-20260924", "st-cure-p03-20261006", "st-cure-p05-20261006", "st-datasop-20260930", "st-f11-requeue-20261005", "st-final-build-20260926"]
+    flags: {"P0_tests_hole": 5}
+    adjudication: "hot-registry 整档快照（rule R-3）：盲 requeue --from-bag 会蒸发他队已落地条目（capability 册 62k 行事故在案），禁重投；未落地 delta 走正道（PG token/翻译 API + "
+    qids: ["q-20260924-st-cmd-20260924-0016", "q-20260926-st-final-build-20260926-0002", "q-20260926-st-final-build-20260926-0003", "q-20260926-st-final-build-20260926-0004", "q-20260926-st-final-build-20260926-0007", "q-20260926-st-final-build-20260926-0010", "q-20260928-st-zcloseout-20260928-0050", "q-20261004-st-sJ-doctorb2-20261004-0033", "q-20261005-st-datasop-20260930-0016", "q-20261005-st-datasop-20260930-0019", "q-20261005-st-f11-requeue-20261005-0010", "q-20261005-st-f11-requeue-20261005-0012", "q-20261005-st-f11-requeue-20261005-0056", "q-20261005-st-f11-requeue-20261005-0057", "q-20261005-st-f11-requeue-20261005-0058", "q-20261005-st-f11-requeue-20261005-0059", "q-20261005-st-f11-requeue-20261005-0060", "q-20261005-st-f11-requeue-20261005-0074", "q-20261005-st-f11-requeue-20261005-0090", "q-20261005-st-sentinel-census-20261005-0004", "q-20261007-st-cure-p05-20261006-0012", "q-20261007-st-cure-p05-20261006-0033", "q-20261008-st-cure-p03-20261006-0031", "q-20261008-st-govfix-g4-20261007-0004", "q-20261008-st-govfix-g4-20261007-0005", "q-20261008-st-mx07-L11-0001", "q-20261008-st-mx07-L11-0002", "q-20261008-st-mx07-L12-0001", "q-20261008-st-mx07-W6-0005", "q-20261008-st-mx07-W6-0006"]
+  - id: lane2/l2-c17
+    bags: 24
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 5}
+    adjudication: "F123 迁移通道三件套里只有台账册 REG-SCHEMA-MIG-001 落了 HEAD，runner/CLI/DatabaseService.migrate() 代码面全仓零命中（工作树亦无）⇒ 通道真没落、仍要；死因是基底漂移…"
+    qids: ["q-20261006-st-cure-p01-20261006-0006", "q-20261006-st-cure-p01-20261006-0007", "q-20261006-st-cure-p01-20261006-0015", "q-20261006-st-cure-p01-20261006-0024", "q-20261006-st-cure-p01-20261006-0034", "q-20261006-st-cure-p01-20261006-0039", "q-20261006-st-cure-p01-20261006-0040", "q-20261007-st-cure-p01-20261006-0043", "q-20261007-st-cure-p01-20261006-0044", "q-20261007-st-cure-p01-20261006-0047", "q-20261007-st-cure-p01-20261006-0048", "q-20261007-st-cure-p01-20261006-0052", "q-20261007-st-cure-p01-20261006-0055", "q-20261007-st-cure-p01-20261006-0056", "q-20261007-st-cure-p01-20261006-0058", "q-20261007-st-cure-p01-20261006-0059", "q-20261007-st-cure-p01-20261006-0064", "q-20261007-st-cure-p01-20261006-0069", "q-20261007-st-cure-p01-20261006-0099", "q-20261007-st-cure-p01-20261006-0111", "q-20261007-st-cure-p01-20261006-0135", "q-20261007-st-cure-p01-20261006-0144", "q-20261007-st-cure-p01-20261006-0148", "q-20261007-st-cure-p01-20261006-0149"]
+  - id: lane7/l7-c12
+    bags: 24
+    disposition: revive_with_ticket
+    families: ["st-cure-p06-20261006", "st-datasop-20260930", "st-f11-requeue-20261005", "st-final-build-20260926", "st-govfix-g4-20261007", "st-mastertc-l7"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "hot-registry 整档快照（rule R-3）：盲 requeue --from-bag 会蒸发他队已落地条目（capability 册 62k 行事故在案），禁重投；未落地 delta 走正道（PG token/翻译 API + "
+    qids: ["q-20260926-st-final-build-20260926-0008", "q-20260926-st-final-build-20260926-0009", "q-20260927-st-final-build-20260926-0014", "q-20260927-st-final-build-20260926-0019", "q-20260929-st-tailwork-20260928-0001", "q-20261004-st-sJ-doctorb2-20261004-0032", "q-20261004-st-sJ-doctorb2-20261004-0037", "q-20261005-st-datasop-20260930-0018", "q-20261005-st-f11-requeue-20261005-0016", "q-20261005-st-f11-requeue-20261005-0017", "q-20261005-st-f11-requeue-20261005-0018", "q-20261005-st-f11-requeue-20261005-0080", "q-20261006-st-cure-p06-20261006-0025", "q-20261006-st-cure-p06-20261006-0027", "q-20261007-st-mastertc-l7-0003", "q-20261007-st-matrix-20261006-0026", "q-20261007-st-matrix-20261006-0028", "q-20261007-st-matrix-20261006-0030", "q-20261007-st-matrix-20261006-0031", "q-20261007-st-matrix-20261006-0033", "q-20261007-st-matrix-20261006-0037", "q-20261007-st-matrix-20261006-0041", "q-20261008-st-govfix-g4-20261007-0002", "q-20261008-st-govfix-g4-20261007-0003"]
+  - id: lane5/l5-c01
+    bags: 23
+    disposition: revive_with_ticket
+    families: ["st-chief7-20260928"]
+    flags: {"lane_claim_overridden": 23, "P0_tests_hole": 23}
+    adjudication: "38 袋=同批治理生成器的反复重投快照。本体全部在 HEAD，行差源于 10-01 总包按 CLONEGUARD 单源化合并重构=被取代；真缺只剩 4 把证尺，走行级摘取。"
+    qids: ["q-20260928-st-chief7-20260928-0095", "q-20260929-st-chief7-20260928-0173", "q-20260929-st-chief7-20260928-0253", "q-20260929-st-chief7-20260928-0329", "q-20260929-st-chief7-20260928-0405", "q-20260929-st-chief7-20260928-0453", "q-20260929-st-chief7-20260928-0563", "q-20260929-st-chief7-20260928-0687", "q-20260929-st-chief7-20260928-0767", "q-20260929-st-chief7-20260928-1030", "q-20260930-st-chief7-20260928-1210", "q-20260930-st-chief7-20260928-1246", "q-20260930-st-chief7-20260928-1434", "q-20260930-st-chief7-20260928-1597", "q-20260930-st-chief7-20260928-1627", "q-20260930-st-chief7-20260928-1713", "q-20261001-st-chief7-20260928-1865", "q-20261001-st-chief7-20260928-1894", "q-20261001-st-chief7-20260928-1951", "q-20261001-st-chief7-20260928-1982", "q-20261001-st-chief7-20260928-2010", "q-20261001-st-chief7-20260928-2011", "q-20261001-st-chief7-20260928-2012"]
+  - id: lane6/l6-c03
+    bags: 22
+    disposition: revive_with_ticket
+    families: ["st-cure-p08b-20261006", "st-cure-p10-20261006", "st-cure-p12b-20261006", "st-sP-bottleneck-20261005"]
+    flags: {"P0_tests_hole": 18}
+    adjudication: "own-scope 临时索引重跑 pre-commit hook（ruff/ruff-format/gate-naming）拦本袋文件。搬家与陈旧快照把存量违规当新增行二次拦——同签名必复发。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0116", "q-20261006-st-cure-p08b-20261006-0001", "q-20261006-st-cure-p10-20261006-0003", "q-20261006-st-cure-p10-20261006-0010", "q-20261006-st-cure-p10-20261006-0012", "q-20261006-st-cure-p12b-20261006-0006", "q-20261006-st-cure-p12b-20261006-0014", "q-20261007-st-cure-p10-20261006-0016", "q-20261007-st-cure-p10-20261006-0019", "q-20261007-st-cure-p10-20261006-0023", "q-20261007-st-cure-p10-20261006-0029", "q-20261007-st-cure-p10-20261006-0030", "q-20261007-st-cure-p10-20261006-0032", "q-20261007-st-cure-p10-20261006-0033", "q-20261007-st-cure-p10-20261006-0035", "q-20261007-st-cure-p10-20261006-0037", "q-20261007-st-cure-p10-20261006-0038", "q-20261007-st-cure-p10-20261006-0039", "q-20261007-st-cure-p10-20261006-0041", "q-20261007-st-cure-p10-20261006-0042", "q-20261007-st-cure-p10-20261006-0044", "q-20261007-st-cure-p10-20261006-0045"]
+  - id: lane2/l2-c24
+    bags: 20
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "缺面逐件复查：8 件已按新家落位（tests 八域归位），15 件同名同父目录零命中=真没落（reuse_scan.yaml、lane_alive.md、apply_meta_question_ddl.py）⇒ 主体②归档，仅对真失…"
+    qids: ["q-20261006-st-cure-p01-20261006-0004", "q-20261006-st-cure-p01-20261006-0005", "q-20261006-st-cure-p01-20261006-0008", "q-20261006-st-cure-p01-20261006-0011", "q-20261006-st-cure-p01-20261006-0022", "q-20261006-st-cure-p01-20261006-0025", "q-20261006-st-cure-p01-20261006-0032", "q-20261006-st-cure-p01-20261006-0035", "q-20261006-st-cure-p01-20261006-0036", "q-20261006-st-cure-p01-20261006-0037", "q-20261007-st-cure-p01-20261006-0046", "q-20261007-st-cure-p01-20261006-0075", "q-20261007-st-cure-p01-20261006-0080", "q-20261007-st-cure-p01-20261006-0082", "q-20261007-st-cure-p01-20261006-0091", "q-20261007-st-cure-p01-20261006-0093", "q-20261007-st-cure-p01-20261006-0114", "q-20261007-st-cure-p01-20261006-0125", "q-20261007-st-cure-p01-20261006-0128", "q-20261007-st-cure-p01-20261006-0129"]
+  - id: lane3/l3-c00
+    bags: 20
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-combine-20260923"]
+    flags: {"P0_tests_hole": 18}
+    adjudication: "组合层接电批部分已由他道落地（082d4591e79 的 L9 就绪度闸接线），但本批核心面——REGIME_TO_SEGMENT SSOT 下移、config/pf_alloc.yaml、tests/pf_alloc 两套测试——实测从未"
+    qids: ["q-20260923-st-combine-20260923-0001", "q-20260923-st-combine-20260923-0002", "q-20260923-st-combine-20260923-0003", "q-20260923-st-combine-20260923-0004", "q-20260923-st-combine-20260923-0005", "q-20260923-st-combine-20260923-0006", "q-20260923-st-combine-20260923-0007", "q-20260923-st-combine-20260923-0008", "q-20260923-st-combine-20260923-0009", "q-20260923-st-combine-20260923-0010", "q-20260923-st-combine-20260923-0011", "q-20260923-st-combine-20260923-0012", "q-20260923-st-combine-20260923-0013", "q-20261006-st-closeout-basereq-20261006-0123", "q-20261006-st-closeout-basereq-20261006-0217", "q-20260923-st-combine-20260923-0014", "q-20260923-st-combine-20260923-0015", "q-20260923-st-combine-20260923-0016", "q-20260923-st-combine-20260923-0017", "q-20260923-st-combine-20260923-0018"]
+  - id: lane2/l2-c25
+    bags: 19
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "缺面逐件复查：7 件已按新家落位（tests 八域归位），14 件同名同父目录零命中=真没落（data_supply_chain_map_gate.yaml、dead_letter_surgery_ledger.md、index.m…"
+    qids: ["q-20261006-st-cure-p01-20261006-0001", "q-20261006-st-cure-p01-20261006-0010", "q-20261006-st-cure-p01-20261006-0012", "q-20261006-st-cure-p01-20261006-0013", "q-20261006-st-cure-p01-20261006-0026", "q-20261006-st-cure-p01-20261006-0028", "q-20261006-st-cure-p01-20261006-0033", "q-20261007-st-cure-p01-20261006-0081", "q-20261007-st-cure-p01-20261006-0085", "q-20261007-st-cure-p01-20261006-0103", "q-20261007-st-cure-p01-20261006-0104", "q-20261007-st-cure-p01-20261006-0105", "q-20261007-st-cure-p01-20261006-0106", "q-20261007-st-cure-p01-20261006-0112", "q-20261007-st-cure-p01-20261006-0118", "q-20261007-st-cure-p01-20261006-0119", "q-20261007-st-cure-p01-20261006-0120", "q-20261007-st-cure-p01-20261006-0121", "q-20261007-st-cure-p01-20261006-0127"]
+  - id: lane1/l1-tests_02
+    bags: 17
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 17, "P0_tests_hole": 17}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0014", "q-20261005-st-tests-chief-20261004-0016", "q-20261005-st-tests-chief-20261004-0033", "q-20261005-st-tests-chief-20261004-0034", "q-20261005-st-tests-chief-20261004-0036", "q-20261005-st-tests-chief-20261004-0052", "q-20261005-st-tests-chief-20261004-0054", "q-20261005-st-tests-chief-20261004-0069", "q-20261005-st-tests-chief-20261004-0070", "q-20261005-st-tests-chief-20261004-0072", "q-20261005-st-tests-chief-20261004-0085", "q-20261005-st-tests-chief-20261004-0087", "q-20261005-st-tests-chief-20261004-0105", "q-20261005-st-tests-chief-20261004-0106", "q-20261005-st-tests-chief-20261004-0108", "q-20261006-st-tests-chief-20261004-0123", "q-20261006-st-tests-chief-20261004-0125"]
+  - id: lane2/l2-c26
+    bags: 17
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 5}
+    adjudication: "缺面逐件复查：2 件已按新家落位（tests 八域归位），15 件同名同父目录零命中=真没落（P1_resume_files_v1.txt、P1_resume_files_v2.txt、LEDGER.md）⇒ 主体②归档，仅对真失踪…"
+    qids: ["q-20261006-st-cure-p01-20261006-0020", "q-20261006-st-cure-p01-20261006-0031", "q-20261007-st-cure-p01-20261006-0061", "q-20261007-st-cure-p01-20261006-0063", "q-20261007-st-cure-p01-20261006-0068", "q-20261007-st-cure-p01-20261006-0071", "q-20261007-st-cure-p01-20261006-0072", "q-20261007-st-cure-p01-20261006-0073", "q-20261007-st-cure-p01-20261006-0077", "q-20261007-st-cure-p01-20261006-0078", "q-20261007-st-cure-p01-20261006-0079", "q-20261007-st-cure-p01-20261006-0095", "q-20261007-st-cure-p01-20261006-0096", "q-20261007-st-cure-p01-20261006-0097", "q-20261007-st-cure-p01-20261006-0098", "q-20261007-st-cure-p01-20261006-0100", "q-20261007-st-cure-p01-20261006-0130"]
+  - id: lane7/l7-c20
+    bags: 17
+    disposition: revive_with_ticket
+    families: ["st-cure-p05-20261006", "st-cure-p09-20261006"]
+    flags: {"P0_tests_hole": 14}
+    adjudication: "tests 域搬家批未落地快照（rule R-5）：重投旧 tests 树违反 tests 新家权威（docs/_working/tests_cure_campaign/99_delivery.md 8 域切法），重建归施工队，本专案仅归档"
+    qids: ["q-20261007-st-cure-p05-20261006-0005", "q-20261007-st-cure-p05-20261006-0030", "q-20261007-st-cure-p05-20261006-0034", "q-20261007-st-cure-p05-20261006-0037", "q-20261007-st-cure-p05-20261006-0040", "q-20261007-st-cure-p05-20261006-0042", "q-20261007-st-cure-p05-20261006-0043", "q-20261007-st-cure-p05-20261006-0044", "q-20261007-st-cure-p09-20261006-0001", "q-20261007-st-cure-p09-20261006-0002", "q-20261007-st-cure-p09-20261006-0017", "q-20261007-st-cure-p09-20261006-0020", "q-20261007-st-cure-p09-20261006-0021", "q-20261007-st-cure-p09-20261006-0022", "q-20261007-st-cure-p09-20261006-0023", "q-20261007-st-cure-p09-20261006-0038", "q-20261007-st-cure-p09-20261006-0039"]
+  - id: lane4/l4-02
+    bags: 16
+    disposition: revive_with_ticket
+    families: ["st-f15-frombag-20261005", "st-fr-resurrect", "st-menu-w3h-20260930", "st-qmine-20260925"]
+    flags: {"lane_claim_overridden": 16, "P0_tests_hole": 3}
+    adjudication: "module_translation_registry.yaml（68098 行热册）整档快照袋。39 袋 357 件：HEAD 全缺 45（路径今不在 HEAD 31、他径亦无同名件 6）、行级漂移 143。判据[all-landed"
+    qids: ["q-20260926-st-qmine-20260925-0042", "q-20260926-st-qmine-20260925-0043", "q-20260926-st-qmine-20260925-0044", "q-20261001-st-menu-w3h-20260930-0003", "q-20261001-st-menu-w3h-20260930-0011", "q-20261006-st-f15-frombag-20261005-0005", "q-20261006-st-f15-frombag-20261005-0007", "q-20261006-st-f15-frombag-20261005-0008", "q-20261006-st-f15-frombag-20261005-0009", "q-20261006-st-f15-frombag-20261005-0049", "q-20261006-st-f15-frombag-20261005-0118", "q-20261006-st-f15-frombag-20261005-0160", "q-20261006-st-f15-frombag-20261005-0219", "q-20261006-st-f15-frombag-20261005-0220", "q-20261006-st-f15-frombag-20261005-0221", "q-20261008-st-fr-resurrect-0005"]
+  - id: lane6/l6-c04
+    bags: 16
+    disposition: revive_with_ticket
+    families: ["st-cure-p12a-20261006", "st-sP-bottleneck-20261005"]
+    flags: {"lane_claim_overridden": 16, "P0_tests_hole": 5}
+    adjudication: "袋被后继袋顶替（reason 内 stale_by=q-… 点名）或基底重校验不适用：同波内容已由后继袋携带，本袋属结构性陈袋——归档零丢失，复活责任在 successor 袋所属车道。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0013", "q-20261005-st-sP-bottleneck-20261005-0024", "q-20261005-st-sP-bottleneck-20261005-0027", "q-20261005-st-sP-bottleneck-20261005-0044", "q-20261005-st-sP-bottleneck-20261005-0076", "q-20261005-st-sP-bottleneck-20261005-0107", "q-20261005-st-sP-bottleneck-20261005-0109", "q-20261005-st-sP-bottleneck-20261005-0138", "q-20261005-st-sP-bottleneck-20261005-0139", "q-20261005-st-sP-bottleneck-20261005-0141", "q-20261005-st-sP-bottleneck-20261005-0142", "q-20261005-st-sP-bottleneck-20261005-0144", "q-20261006-st-cure-p12a-20261006-0002", "q-20261006-st-cure-p12a-20261006-0003", "q-20261006-st-cure-p12a-20261006-0004", "q-20261006-st-cure-p12a-20261006-0006"]
+  - id: lane7/l7-c17
+    bags: 16
+    disposition: revive_with_ticket
+    families: ["st-cure-p05-20261006", "st-cure-p09-20261006", "st-f11-requeue-20261005", "st-sJ-doctorb2-20261004"]
+    flags: {"P0_tests_hole": 13}
+    adjudication: "regression_risk（rule R-4）：HEAD 已演进过快照，盲重投会删掉最多 max_only_head 条更新行——只能行级摘取（line-level cherry pick），禁 requeue --from-bag；未"
+    qids: ["q-20261004-st-sJ-doctorb2-20261004-0017", "q-20261005-st-f11-requeue-20261005-0079", "q-20261007-st-cure-p05-20261006-0014", "q-20261007-st-cure-p05-20261006-0015", "q-20261007-st-cure-p05-20261006-0017", "q-20261007-st-cure-p05-20261006-0022", "q-20261007-st-cure-p05-20261006-0023", "q-20261007-st-cure-p05-20261006-0024", "q-20261007-st-cure-p05-20261006-0035", "q-20261007-st-cure-p05-20261006-0041", "q-20261007-st-cure-p09-20261006-0005", "q-20261007-st-cure-p09-20261006-0008", "q-20261007-st-cure-p09-20261006-0011", "q-20261007-st-cure-p09-20261006-0013", "q-20261007-st-cure-p09-20261006-0024", "q-20261007-st-cure-p09-20261006-0031"]
+  - id: lane7/l7-c18
+    bags: 15
+    disposition: revive_with_ticket
+    families: ["st-ailayer-final-20260924", "st-cmd-20260924", "st-cure-p03-20261006", "st-f11-requeue-20261005", "st-final-build-20260926", "st-sD-liquidation-20261004"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "regression_risk（rule R-4）：HEAD 已演进过快照，盲重投会删掉最多 max_only_head 条更新行——只能行级摘取（line-level cherry pick），禁 requeue --from-bag；未"
+    qids: ["q-20260924-st-ailayer-final-20260924-0001", "q-20260925-st-cmd-20260924-0040", "q-20260925-st-cmd-20260924-0068", "q-20260925-st-cmd-20260924-0079", "q-20260925-st-cmd-20260924-0089", "q-20260925-st-cmd-20260924-0102", "q-20260925-st-cmd-20260924-0111", "q-20260925-st-cmd-20260924-0114", "q-20260926-st-ailayer-final-20260924-0016", "q-20260926-st-final-build-20260926-0011", "q-20261004-st-sD-liquidation-20261004-0003", "q-20261005-st-f11-requeue-20261005-0035", "q-20261006-st-cure-p03-20261006-0001", "q-20261008-st-cure-p03-20261006-0032", "q-20261008-st-cure-p03-20261006-0048"]
+  - id: lane1/l1-tests_03
+    bags: 14
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 14, "P0_tests_hole": 14}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261005-st-tests-chief-20261004-0015", "q-20261005-st-tests-chief-20261004-0017", "q-20261005-st-tests-chief-20261004-0035", "q-20261005-st-tests-chief-20261004-0037", "q-20261005-st-tests-chief-20261004-0053", "q-20261005-st-tests-chief-20261004-0055", "q-20261005-st-tests-chief-20261004-0071", "q-20261005-st-tests-chief-20261004-0073", "q-20261005-st-tests-chief-20261004-0086", "q-20261005-st-tests-chief-20261004-0088", "q-20261005-st-tests-chief-20261004-0107", "q-20261005-st-tests-chief-20261004-0109", "q-20261006-st-tests-chief-20261004-0124", "q-20261006-st-tests-chief-20261004-0126"]
+  - id: chief_revive_requeue/None
+    bags: 14
+    disposition: revive_requeue
+    families: ["st-cure-p12b-20261006", "st-docs-e13-20261009", "st-mastertc-l0", "st-mastertc-l7", "st-mastertc-mini", "st-sK-orphanarch-20261004"]
+    flags: {}
+    adjudication: "replay adds lines only, destroys none (lines_only_in_head=0) — mechanical requeue --from-bag"
+    qids: ["q-20261006-st-wt-clean-w2-20261006-0002", "q-20261004-st-sK-orphanarch-20261004-0001", "q-20261008-st-tclose-20261004-0005", "q-20261008-st-wm1-wave0-20260924-0045", "q-20261008-st-wm1-wave0-20260924-0046", "q-20261007-st-mastertc-l0-0003", "q-20261009-st-docs-e13-20261009-0001", "q-20261006-st-cure-p12b-20261006-0010", "q-20261007-st-mastertc-l7-0005", "q-20261007-st-mastertc-l7-0007", "q-20261007-st-mastertc-l7-0008", "q-20261007-st-mastertc-l7-0009", "q-20261007-st-mastertc-l7-0010", "q-20261007-st-mastertc-mini-0002"]
+  - id: lane2/l2-c08
+    bags: 14
+    disposition: revive_with_ticket
+    families: ["st-chainpile-20260922"]
+    flags: {"lane_claim_overridden": 14}
+    adjudication: "死袋主体=meta_question 基建四件套；HEAD 实测同一能力以改名姿势在树（meta_question_registry.py 含 register() API、snapshot.py/exam_ops.py/exam_…"
+    qids: ["q-20260922-st-chainpile-20260922-0031", "q-20260923-st-chainpile-20260922-0055", "q-20260923-st-chainpile-20260922-0058", "q-20260923-st-chainpile-20260922-0059", "q-20260923-st-chainpile-20260922-0060", "q-20260923-st-chainpile-20260922-0061", "q-20260923-st-chainpile-20260922-0062", "q-20260923-st-chainpile-20260922-0065", "q-20260923-st-chainpile-20260922-0067", "q-20260923-st-chainpile-20260922-0069", "q-20260923-st-chainpile-20260922-0070", "q-20260924-st-chainpile-20260922-0072", "q-20260924-st-chainpile-20260922-0074", "q-20260924-st-chainpile-20260922-0076"]
+  - id: lane5/l5-c10
+    bags: 14
+    disposition: revive_with_ticket
+    families: ["st-ffchief-20261001"]
+    flags: {}
+    adjudication: "14 袋挟两份热册整档快照（差 7649/2944 行），重投必蒸发他队条目→册面只能归档走 token 正道；但 F128 脱敏 wiring 三件+策略册+CNS-01 daily_job 从未入库而 token 在册=真缺口须摘取。"
+    qids: ["q-20261001-st-ffchief-20261001-0003", "q-20261001-st-ffchief-20261001-0006", "q-20261001-st-ffchief-20261001-0034", "q-20261001-st-ffchief-20261001-0040", "q-20261001-st-ffchief-20261001-0076", "q-20261001-st-ffchief-20261001-0114", "q-20261002-st-ffchief-20261001-0122", "q-20261002-st-ffchief-20261001-0123", "q-20261002-st-ffchief-20261001-0124", "q-20261002-st-ffchief-20261001-0127", "q-20261002-st-ffchief-20261001-0131", "q-20261002-st-ffchief-20261001-0134", "q-20261002-st-ffchief-20261001-0136", "q-20261004-st-ffchief-20261001-0144"]
+  - id: lane7/l7-c13
+    bags: 14
+    disposition: revive_with_ticket
+    families: ["st-circ-a2-20260930", "st-f11-requeue-20261005", "st-mastertc-l5b", "st-mastertc-l6", "st-sD-liquidation-20261004", "st-sJ-doctorb2-20261004"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "hot-registry 整档快照（rule R-3）：盲 requeue --from-bag 会蒸发他队已落地条目（capability 册 62k 行事故在案），禁重投；未落地 delta 走正道（PG token/翻译 API + "
+    qids: ["q-20260923-st-wm1-buildA-20260923-0001", "q-20261001-st-circ-a2-20260930-0008", "q-20261001-st-circ-a2-20260930-0010", "q-20261004-st-sD-liquidation-20261004-0015", "q-20261004-st-sJ-doctorb2-20261004-0003", "q-20261004-st-sJ-doctorb2-20261004-0027", "q-20261004-st-sJ-doctorb2-20261004-0030", "q-20261005-st-f11-requeue-20261005-0067", "q-20261007-st-mastertc-l5b-0001", "q-20261007-st-mastertc-l5b-0002", "q-20261007-st-mastertc-l5b-0003", "q-20261007-st-mastertc-l5b-0004", "q-20261007-st-mastertc-l5b-0005", "q-20261007-st-mastertc-l6-0004"]
+  - id: lane6/l6-c05
+    bags: 13
+    disposition: revive_with_ticket
+    families: ["st-sP-bottleneck-20261005"]
+    flags: {"P0_tests_hole": 5}
+    adjudication: "快照基底之后 dev 又推进并触及同路径=基底漂移死信；多数件已在树，剩未落余量需以新基底重做，盲重投必删现役。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0006", "q-20261005-st-sP-bottleneck-20261005-0032", "q-20261005-st-sP-bottleneck-20261005-0033", "q-20261005-st-sP-bottleneck-20261005-0035", "q-20261005-st-sP-bottleneck-20261005-0041", "q-20261005-st-sP-bottleneck-20261005-0060", "q-20261005-st-sP-bottleneck-20261005-0068", "q-20261005-st-sP-bottleneck-20261005-0079", "q-20261005-st-sP-bottleneck-20261005-0087", "q-20261005-st-sP-bottleneck-20261005-0097", "q-20261005-st-sP-bottleneck-20261005-0111", "q-20261005-st-sP-bottleneck-20261005-0112", "q-20261005-st-sP-bottleneck-20261005-0113"]
+  - id: chief_returned_to_owner/None
+    bags: 12
+    disposition: returned_to_owner
+    families: ["st-chiefc-20261009", "st-fullflow2-20261008"]
+    flags: {}
+    adjudication: "owner session alive (heartbeat <24h), 属主自行处置 (宪法 §3.4 不代修)"
+    qids: ["q-20261009-st-chiefc-20261009-0002", "q-20261009-st-chiefc-20261009-0003", "q-20261008-st-fullflow2-20261008-0004", "q-20261008-st-fullflow2-20261008-0005", "q-20261008-st-fullflow2-20261008-0007", "q-20261008-st-fullflow2-20261008-0009", "q-20261008-st-fullflow2-20261008-0010", "q-20261008-st-fullflow2-20261008-0012", "q-20261008-st-fullflow2-20261008-0013", "q-20261008-st-fullflow2-20261008-0014", "q-20261009-st-fullflow2-20261008-0015", "q-20261009-st-fullflow2-20261008-0016"]
+  - id: lane5/l5-c07
+    bags: 12
+    disposition: revive_with_ticket
+    families: ["st-ffchief-20261001"]
+    flags: {"lane_claim_overridden": 12, "P0_tests_hole": 12}
+    adjudication: "16 袋 backtest 重投：reexam 本体在 HEAD，t0 族尺随搬家改名入库，sim_daily 仅 116 行差；真缺 2 把尺走行级摘取。战役已自出终报收口。"
+    qids: ["q-20261001-st-ffchief-20261001-0062", "q-20261001-st-ffchief-20261001-0077", "q-20261001-st-ffchief-20261001-0082", "q-20261001-st-ffchief-20261001-0090", "q-20261001-st-ffchief-20261001-0093", "q-20261001-st-ffchief-20261001-0101", "q-20261001-st-ffchief-20261001-0108", "q-20261001-st-ffchief-20261001-0118", "q-20261004-st-ffchief-20261001-0145", "q-20261004-st-ffchief-20261001-0147", "q-20261004-st-ffchief-20261001-0148", "q-20261004-st-ffchief-20261001-0150"]
+  - id: lane7/l7-c19
+    bags: 12
+    disposition: revive_with_ticket
+    families: ["st-cmd-20260924", "st-gpu-conv4-20260928", "st-mastertc-l6", "st-matrix-20261006", "st-poscap-fix-20261008", "st-sD-liquidation-20261004"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "regression_risk（rule R-4）：HEAD 已演进过快照，盲重投会删掉最多 max_only_head 条更新行——只能行级摘取（line-level cherry pick），禁 requeue --from-bag；未"
+    qids: ["q-20260925-st-cmd-20260924-0145", "q-20260925-st-cmd-20260924-0149", "q-20260928-st-zcloseout-20260928-0029", "q-20260929-st-gpu-conv4-20260928-0001", "q-20261004-st-sD-liquidation-20261004-0012", "q-20261004-st-sJ-doctorb2-20261004-0004", "q-20261004-st-sJ-doctorb2-20261004-0028", "q-20261007-st-mastertc-l6-0001", "q-20261007-st-matrix-20261006-0044", "q-20261007-st-matrix-20261006-0047", "q-20261007-st-matrix-20261006-0048", "q-20261008-st-poscap-fix-20261008-0001"]
+  - id: lane2/l2-c27
+    bags: 11
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "缺面逐件复查：4 件已按新家落位（tests 八域归位），6 件同名同父目录零命中=真没落（lane_b_ledger_reconcile.py、test_f06_e5_synergy_wiring.py、test_lane_b_l…"
+    qids: ["q-20261006-st-cure-p01-20261006-0014", "q-20261006-st-cure-p01-20261006-0017", "q-20261006-st-cure-p01-20261006-0018", "q-20261006-st-cure-p01-20261006-0021", "q-20261007-st-cure-p01-20261006-0083", "q-20261007-st-cure-p01-20261006-0086", "q-20261007-st-cure-p01-20261006-0087", "q-20261007-st-cure-p01-20261006-0115", "q-20261007-st-cure-p01-20261006-0116", "q-20261007-st-cure-p01-20261006-0153", "q-20261007-st-cure-p01-20261006-0154"]
+  - id: lane3/l3-c01
+    bags: 11
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-tclose-integ-20261004"]
+    flags: {}
+    adjudication: "门册在册、测试在树、实现文件不在 HEAD：STRATEGY-CARD-LIFECYCLE-MAP 属空转门（真缺口仍要）。袋同时带 panorama/map_family 面已被后续班推进，禁整档重投，只摘该门实现与其挂图条目。"
+    qids: ["q-20261004-st-tclose-integ-20261004-0005", "q-20261004-st-tclose-integ-20261004-0007", "q-20261004-st-tclose-integ-20261004-0010", "q-20261004-st-tclose-integ-20261004-0011", "q-20261004-st-tclose-integ-20261004-0003", "q-20261006-st-closeout-basereq-20261006-0138", "q-20261006-st-closeout-basereq-20261006-0232", "q-20261004-st-tclose-integ-20261004-0014", "q-20261005-st-tclose-integ-20261004-0015", "q-20261004-st-tclose-integ-20261004-0013", "q-20261005-st-tclose-integ-20261004-0016"]
+  - id: lane4/l4-08
+    bags: 11
+    disposition: revive_with_ticket
+    families: ["st-cure-p05b-20261006", "st-f14-final-sweep-20261005", "st-f15-frombag-20261005"]
+    flags: {"P0_tests_hole": 11}
+    adjudication: "死于 GATE-PRECOMMIT-RUN：reason 自述 staged 面检出未解决冲突标记/gate-naming 违规。11 袋 2844 件：HEAD 全缺 1470（路径今不在 HEAD 1470、他径亦无同名件 1443"
+    qids: ["q-20261006-st-cure-p05b-20261006-0001", "q-20261006-st-cure-p05b-20261006-0005", "q-20261006-st-f14-final-sweep-20261005-0047", "q-20261006-st-f15-frombag-20261005-0205", "q-20261007-st-cure-p05b-20261006-0009", "q-20261007-st-cure-p05b-20261006-0015", "q-20261007-st-cure-p05b-20261006-0018", "q-20261007-st-cure-p05b-20261006-0019", "q-20261007-st-cure-p05b-20261006-0021", "q-20261007-st-cure-p05b-20261006-0022", "q-20261007-st-cure-p05b-20261006-0024"]
+  - id: lane1/l1-tests_04
+    bags: 10
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 10, "P0_tests_hole": 10}
+    adjudication: "tests 搬家快照;99_delivery+收官 commit 证 8域切法已落 HEAD(差集清零),死袋=被后续落地取代"
+    qids: ["q-20261006-st-tests-chief-20261004-0132", "q-20261006-st-tests-chief-20261004-0133", "q-20261006-st-tests-chief-20261004-0134", "q-20261006-st-tests-chief-20261004-0142", "q-20261006-st-tests-chief-20261004-0193", "q-20261006-st-tests-chief-20261004-0194", "q-20261006-st-tests-chief-20261004-0195", "q-20261006-st-tests-chief-20261004-0196", "q-20261006-st-tests-chief-20261004-0197", "q-20261006-st-tests-chief-20261004-0201"]
+  - id: lane1/l1-tests_05
+    bags: 9
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 9, "P0_tests_hole": 9}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0023", "q-20261005-st-tests-chief-20261004-0024", "q-20261005-st-tests-chief-20261004-0042", "q-20261005-st-tests-chief-20261004-0043", "q-20261005-st-tests-chief-20261004-0078", "q-20261005-st-tests-chief-20261004-0079", "q-20261005-st-tests-chief-20261004-0092", "q-20261005-st-tests-chief-20261004-0093", "q-20261005-st-tests-chief-20261004-0094"]
+  - id: lane4/l4-09
+    bags: 9
+    disposition: revive_with_ticket
+    families: ["st-cure-p05b-20261006", "st-f15-frombag-20261005"]
+    flags: {"P0_tests_hole": 8}
+    adjudication: "死于业务对齐闸（MAP-ALIGNMENT/TABLE-NAME-REGISTRY/ALGO-FLOW-LINK/TEST-SOURCE-CONSISTENCY 等）。9 袋 2200 件：HEAD 全缺 1427（路径今不在 HEAD"
+    qids: ["q-20261006-st-cure-p05b-20261006-0003", "q-20261006-st-cure-p05b-20261006-0004", "q-20261006-st-f15-frombag-20261005-0082", "q-20261006-st-f15-frombag-20261005-0206", "q-20261006-st-f15-frombag-20261005-0207", "q-20261007-st-cure-p05b-20261006-0008", "q-20261007-st-cure-p05b-20261006-0010", "q-20261007-st-cure-p05b-20261006-0014", "q-20261007-st-cure-p05b-20261006-0017"]
+  - id: lane2/l2-c53
+    bags: 8
+    disposition: revive_with_ticket
+    families: ["st-map9-f4-20261003"]
+    flags: {"lane_claim_overridden": 8}
+    adjudication: "重投链父子实测：本簇 1/8 袋的 requeue 后继已 done（qid q-20261004-st-map9-f4-20261003-0020）——同一批字节随后继袋落进 dev；簇内各袋 open_paths 签名完全一致，…"
+    qids: ["q-20261004-st-map9-f4-20261003-0011", "q-20261004-st-map9-f4-20261003-0013", "q-20261004-st-map9-f4-20261003-0014", "q-20261004-st-map9-f4-20261003-0015", "q-20261004-st-map9-f4-20261003-0017", "q-20261004-st-map9-f4-20261003-0018", "q-20261004-st-map9-f4-20261003-0019", "q-20261004-st-map9-f4-20261003-0020"]
+  - id: lane4/l4-10
+    bags: 8
+    disposition: revive_with_ticket
+    families: ["st-c9-f4647", "st-f15-frombag-20261005", "st-tdm-mountgate-20261005"]
+    flags: {}
+    adjudication: "module_translation_registry.yaml（68098 行热册）整档快照袋。8 袋 74 件：HEAD 全缺 39（路径今不在 HEAD 39、他径亦无同名件 37）、行级漂移 27。判据[materially-m"
+    qids: ["q-20260929-st-c9-f4647-0002", "q-20261005-st-tdm-mountgate-20261005-0016", "q-20261005-st-tdm-mountgate-20261005-0032", "q-20261005-st-tdm-mountgate-20261005-0033", "q-20261005-st-tdm-mountgate-20261005-0034", "q-20261006-st-f15-frombag-20261005-0030", "q-20261006-st-f15-frombag-20261005-0187", "q-20261006-st-f15-frombag-20261005-0222"]
+  - id: lane4/l4-11
+    bags: 8
+    disposition: revive_with_ticket
+    families: ["st-f15-frombag-20261005"]
+    flags: {"P0_tests_hole": 6}
+    adjudication: "重投班 st-f15 死于重投机制本身（cascade_stale 基底重校验不适用 / 快照基底与 dev 冲突 / 三向合并失败）。8 袋 597 件：HEAD 全缺 317（路径今不在 HEAD 317、他径亦无同名件 313）、"
+    qids: ["q-20261006-st-f15-frombag-20261005-0006", "q-20261006-st-f15-frombag-20261005-0010", "q-20261006-st-f15-frombag-20261005-0042", "q-20261006-st-f15-frombag-20261005-0085", "q-20261006-st-f15-frombag-20261005-0095", "q-20261006-st-f15-frombag-20261005-0158", "q-20261006-st-f15-frombag-20261005-0209", "q-20261006-st-f15-frombag-20261005-0214"]
+  - id: lane7/l7-c23
+    bags: 8
+    disposition: revive_with_ticket
+    families: ["st-cure-p05-20261006", "st-cure-p09-20261006"]
+    flags: {"P0_tests_hole": 8}
+    adjudication: "F-1 十二把回归尺清单件（rule R-7）：本专案只归档不重建，让给施工总队车道F 按尺规格重建；本簇只出源材料指路（袋内 blob_sha + 死信 qid），禁自行复活。｜clone_guard 尺（tests/gov/clone_"
+    qids: ["q-20261007-st-cure-p05-20261006-0016", "q-20261007-st-cure-p05-20261006-0020", "q-20261007-st-cure-p05-20261006-0021", "q-20261007-st-cure-p05-20261006-0036", "q-20261007-st-cure-p05-20261006-0038", "q-20261007-st-cure-p05-20261006-0039", "q-20261007-st-cure-p09-20261006-0036", "q-20261007-st-cure-p09-20261006-0037"]
+  - id: lane1/l1-tests_06
+    bags: 7
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 7, "P0_tests_hole": 7}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0022", "q-20261005-st-tests-chief-20261004-0040", "q-20261005-st-tests-chief-20261004-0041", "q-20261005-st-tests-chief-20261004-0076", "q-20261005-st-tests-chief-20261004-0077", "q-20261005-st-tests-chief-20261004-0091", "q-20261005-st-tests-chief-20261004-0112"]
+  - id: lane3/l3-c05
+    bags: 7
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 7, "P0_tests_hole": 6}
+    adjudication: "tests 搬家袋：8 域归位已由 st-tests-chief-20261004 主批落地（129 目录中 116 归位），袋内旧路径在 HEAD 判 relocated/演进→②归档；gov 域残余见姊妹簇工单。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0134", "q-20261006-st-closeout-basereq-20261006-0228", "q-20261006-st-closeout-basereq-20261006-0239", "q-20261006-st-closeout-basereq-20261006-0238", "q-20261006-st-closeout-basereq-20261006-0260", "q-20261006-st-closeout-basereq-20261006-0261", "q-20261006-st-closeout-basereq-20261006-0247"]
+  - id: lane4/l4-05
+    bags: 7
+    disposition: revive_with_ticket
+    families: ["st-commitmap-chief-20261003", "st-f15-frombag-20261005", "st-fig13-bone-20261004"]
+    flags: {"lane_claim_overridden": 7, "P0_tests_hole": 1}
+    adjudication: "死于业务对齐闸（MAP-ALIGNMENT/TABLE-NAME-REGISTRY/ALGO-FLOW-LINK/TEST-SOURCE-CONSISTENCY 等）。16 袋 134 件：HEAD 全缺 8（路径今不在 HEAD 6、"
+    qids: ["q-20261004-st-fig13-bone-20261004-0001", "q-20261004-st-fig13-bone-20261004-0004", "q-20261005-st-commitmap-chief-20261003-0030", "q-20261005-st-fig13-bone-20261004-0005", "q-20261005-st-fig13-bone-20261004-0014", "q-20261005-st-fig13-bone-20261004-0015", "q-20261006-st-f15-frombag-20261005-0166"]
+  - id: lane5/l5-c06
+    bags: 7
+    disposition: revive_with_ticket
+    families: ["st-chief7-20260928"]
+    flags: {"P0_tests_hole": 5}
+    adjudication: "7 袋只搬 3 件 wave3 测试：dual_source_guard 已入新家，另两件全库零命中。被测本体已由收官手术落地=缺尺不缺能力，交 tests 施工队补位。"
+    qids: ["q-20261002-st-chief7-20260928-2081", "q-20261002-st-chief7-20260928-2128", "q-20261002-st-chief7-20260928-2129", "q-20261002-st-chief7-20260928-2130", "q-20261002-st-chief7-20260928-2147", "q-20261002-st-chief7-20260928-2148", "q-20261002-st-chief7-20260928-2149"]
+  - id: lane5/l5-c08
+    bags: 7
+    disposition: revive_with_ticket
+    families: ["st-ffchief-20261001"]
+    flags: {"lane_claim_overridden": 7}
+    adjudication: "18 袋 src 代码重投：27 路径仅 1 件缺席且为旧家测试，其余皆已落后演化差。终报明载 13 车道施工落地——判被取代。"
+    qids: ["q-20261001-st-ffchief-20261001-0020", "q-20261001-st-ffchief-20261001-0033", "q-20261001-st-ffchief-20261001-0041", "q-20261001-st-ffchief-20261001-0049", "q-20261001-st-ffchief-20261001-0065", "q-20261001-st-ffchief-20261001-0089", "q-20261001-st-ffchief-20261001-0099"]
+  - id: lane1/l1-st-map01
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-map9-chief-20261008", "st-mapbuild-20260924"]
+    flags: {"lane_claim_overridden": 6, "P0_tests_hole": 2}
+    adjudication: "st-map9-chief-20261008 施工快照:主件已在 HEAD 存在且演进(或改名入新路径),盲投毁新行=不可重投;内容被后续战役取代,归档②"
+    qids: ["q-20261008-st-map9-chief-20261008-0001", "q-20261008-st-map9-chief-20261008-0003", "q-20261008-st-map9-chief-20261008-0007", "q-20261008-st-map9-chief-20261008-0008", "q-20260924-st-mapbuild-20260924-0007", "q-20260924-st-mapbuild-20260924-0012"]
+  - id: lane2/l2-c18
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {}
+    adjudication: "缺面逐件复查：1 件已按新家落位（tests 八域归位），5 件同名同父目录零命中=真没落（lost_file_recovery_channels.md、offrepo_secret_inventory.md、test_fideli…"
+    qids: ["q-20261006-st-cure-p01-20261006-0019", "q-20261006-st-cure-p01-20261006-0023", "q-20261007-st-cure-p01-20261006-0126", "q-20261007-st-cure-p01-20261006-0131", "q-20261007-st-cure-p01-20261006-0134", "q-20261007-st-cure-p01-20261006-0136"]
+  - id: lane3/l3-c02
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 6, "P0_tests_hole": 2}
+    adjudication: "本批治理脚本主件（d8_doc_sync 反向孤儿对账器、meta/enforcement_surface_reconcile、wave1a/cross_session_view、data_supply 尺件）逐件 git cat-file"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0011", "q-20261006-st-closeout-basereq-20261006-0066", "q-20261006-st-closeout-basereq-20261006-0146", "q-20261006-st-closeout-basereq-20261006-0162", "q-20261006-st-closeout-basereq-20261006-0113", "q-20261006-st-closeout-basereq-20261006-0207"]
+  - id: lane3/l3-c03
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-deadletter-cure-20261003"]
+    flags: {"lane_claim_overridden": 6, "P0_tests_hole": 6}
+    adjudication: "本专案工具链自身的历史袋：dead_letter_doctor.py 已由 2b28c6fbf1 落地、又被 st-govfix-g2-20261007 的 895b535843 继续改进→②归档；唯其自家测试件从未进 HEAD（残口另开工"
+    qids: ["q-20261003-st-deadletter-cure-20261003-0004", "q-20261003-st-deadletter-cure-20261003-0005", "q-20261003-st-deadletter-cure-20261003-0006", "q-20261003-st-deadletter-cure-20261003-0007", "q-20261003-st-deadletter-cure-20261003-0008", "q-20261003-st-deadletter-cure-20261003-0009"]
+  - id: lane3/l3-c06
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "热册整档禁盲重投，且册外仍有件确实不在 HEAD（真缺口）→①复活走行级摘取+正道补登，开工单。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0130", "q-20261006-st-closeout-basereq-20261006-0131", "q-20261006-st-closeout-basereq-20261006-0132", "q-20261006-st-closeout-basereq-20261006-0224", "q-20261006-st-closeout-basereq-20261006-0225", "q-20261006-st-closeout-basereq-20261006-0226"]
+  - id: lane5/l5-c02
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-chief7-20260928"]
+    flags: {"lane_claim_overridden": 6, "P0_tests_hole": 6}
+    adjudication: "30 袋同 data_supply 供给件重投。本体经总包 L07批A/收官手术两度落地并做过克隆合并，HEAD 已更新；残余 7 把尺是真缺，但只能摘取不可重投。"
+    qids: ["q-20260928-st-chief7-20260928-0029", "q-20260929-st-chief7-20260928-0603", "q-20260930-st-chief7-20260928-1331", "q-20261001-st-chief7-20260928-1927", "q-20261001-st-chief7-20260928-2047", "q-20261002-st-chief7-20260928-2096"]
+  - id: lane5/l5-c23
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-mastertc-l1", "st-mastertc-recover"]
+    flags: {}
+    adjudication: "6 袋 17 路径 8 已落、残余仅 76 行，但 check_registry_field_legality 门本体全库零命中而其尺已入库（有尺无体）；报文引 Owner #488 批建，裁定册未见专条→授权面待核。真缺口须补建。"
+    qids: ["q-20261007-st-mastertc-l1-0004", "q-20261007-st-mastertc-l1-0006", "q-20261007-st-mastertc-recover-0002", "q-20261007-st-mastertc-recover-0003", "q-20261007-st-mastertc-recover-0004", "q-20261007-st-mastertc-recover-0005"]
+  - id: lane6/l6-c06
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-cure-p12a-20261006", "st-sP-bottleneck-20261005"]
+    flags: {"lane_claim_overridden": 6}
+    adjudication: "袋被后继袋顶替（reason 内 stale_by=q-… 点名）或基底重校验不适用：同波内容已由后继袋携带，本袋属结构性陈袋——归档零丢失，复活责任在 successor 袋所属车道。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0007", "q-20261005-st-sP-bottleneck-20261005-0016", "q-20261005-st-sP-bottleneck-20261005-0017", "q-20261005-st-sP-bottleneck-20261005-0022", "q-20261005-st-sP-bottleneck-20261005-0108", "q-20261006-st-cure-p12a-20261006-0008"]
+  - id: lane6/l6-c07
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-cure-p12a-20261006", "st-cure-p12b-20261006"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 51.6% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261006-st-cure-p12a-20261006-0001", "q-20261006-st-cure-p12a-20261006-0015", "q-20261006-st-cure-p12a-20261006-0016", "q-20261006-st-cure-p12b-20261006-0015", "q-20261006-st-cure-p12b-20261006-0030", "q-20261007-st-cure-p12b-20261006-0038"]
+  - id: lane6/l6-c08
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-cure-p12a-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "袋搬的正是 dev 已删/已搬走的旧路径：基底有、dev 已删→拒陈旧快照整文件写回。tests/ 件也被称注册表族，因合并仲裁面 Owner 终裁已扩至全路径。"
+    qids: ["q-20261006-st-cure-p12a-20261006-0010", "q-20261006-st-cure-p12a-20261006-0020", "q-20261006-st-cure-p12a-20261006-0024", "q-20261006-st-cure-p12a-20261006-0025", "q-20261006-st-cure-p12a-20261006-0026", "q-20261006-st-cure-p12a-20261006-0033"]
+  - id: lane6/l6-c09
+    bags: 6
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {"P0_tests_hole": 6}
+    adjudication: "tests/ 搬家批 6 袋：新家权威=99_delivery.md:12（8 域切法 7/8 域已落，116/129 目录归位）+§七:61（gov 批7=唯一未完成环）。陈旧整树快照禁重投；实测本簇 75.9% 路径已在 HEAD。"
+    qids: ["q-20261007-st-cure-p12b-20261006-0041", "q-20261007-st-cure-p12b-20261006-0042", "q-20261007-st-cure-p12b-20261006-0043", "q-20261007-st-cure-p12b-20261006-0044", "q-20261007-st-cure-p12b-20261006-0045", "q-20261007-st-cure-p12b-20261006-0046"]
+  - id: lane1/l1-tests_07
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 5, "P0_tests_hole": 5}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0038", "q-20261005-st-tests-chief-20261004-0074", "q-20261005-st-tests-chief-20261004-0089", "q-20261005-st-tests-chief-20261004-0110", "q-20261006-st-tests-chief-20261004-0127"]
+  - id: lane3/l3-c08
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-audit-fix-20260924", "st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "热册整档禁盲重投，且册外仍有件确实不在 HEAD（真缺口）→①复活走行级摘取+正道补登，开工单。"
+    qids: ["q-20260925-st-audit-fix-20260924-0034", "q-20260925-st-audit-fix-20260924-0038", "q-20260925-st-audit-fix-20260924-0039", "q-20261006-st-closeout-basereq-20261006-0083", "q-20261006-st-closeout-basereq-20261006-0178"]
+  - id: lane3/l3-c09
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "热册整档禁盲重投，且册外仍有件确实不在 HEAD（真缺口）→①复活走行级摘取+正道补登，开工单。"
+    qids: ["q-20261007-st-closeout-basereq-20261006-0265", "q-20261007-st-closeout-basereq-20261006-0267", "q-20261006-st-closeout-basereq-20261006-0089", "q-20261006-st-closeout-basereq-20261006-0184", "q-20261007-st-closeout-basereq-20261006-0264"]
+  - id: lane3/l3-c10
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-nightfix-20260923"]
+    flags: {"lane_claim_overridden": 5, "P0_tests_hole": 3}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20260923-st-nightfix-20260923-0006", "q-20260923-st-nightfix-20260923-0007", "q-20260923-st-nightfix-20260923-0008", "q-20261006-st-closeout-basereq-20261006-0124", "q-20261006-st-closeout-basereq-20261006-0218"]
+  - id: lane3/l3-c11
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "tests/gov 面确有缺口：HEAD 实测 tests/gov/governance/commit_gates 仅 4 件，袋内 import_direction/import_integrity/long_param_list 等门测"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0135", "q-20261006-st-closeout-basereq-20261006-0229", "q-20261006-st-closeout-basereq-20261006-0243", "q-20261006-st-closeout-basereq-20261006-0133", "q-20261006-st-closeout-basereq-20261006-0227"]
+  - id: lane3/l3-c12
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-wm1-wave0-20260924"]
+    flags: {"P0_tests_hole": 4}
+    adjudication: "registry_ledger 子系统（identity.py/schema.py/台账测试）三件全不在 HEAD，而案卷 docs/_working/registry_migration/LEDGER_wave0.md 已在册=活干到一半"
+    qids: ["q-20260924-st-wm1-wave0-20260924-0004", "q-20260924-st-wm1-wave0-20260924-0005", "q-20260925-st-wm1-wave0-20260924-0018", "q-20260925-st-wm1-wave0-20260924-0027", "q-20260925-st-wm1-wave0-20260924-0031"]
+  - id: lane4/l4-13
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-cure-p05b-20261006", "st-f14-final-sweep-20261005", "st-f15-frombag-20261005"]
+    flags: {"P0_tests_hole": 5}
+    adjudication: "F-1 回归尺（tests/gov clone_guard·escalation 等）源材料袋，禁重建，只指路给车道F。5 袋 1210 件：HEAD 全缺 1139（路径今不在 HEAD 1139、他径亦无同名件 1124）、行级漂移"
+    qids: ["q-20261006-st-cure-p05b-20261006-0002", "q-20261006-st-f14-final-sweep-20261005-0052", "q-20261006-st-f15-frombag-20261005-0208", "q-20261007-st-cure-p05b-20261006-0012", "q-20261007-st-cure-p05b-20261006-0023"]
+  - id: lane5/l5-c19
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-joinchk-20261004"]
+    flags: {"lane_claim_overridden": 5}
+    adjudication: "5 袋 7 路径零真缺：唯一缺席尺已按新家 tests/gov/ 入库，归因分析册也搬家；残余 616 行含 545 行热册快照——判被取代。"
+    qids: ["q-20261004-st-joinchk-20261004-0013", "q-20261004-st-joinchk-20261004-0014", "q-20261004-st-joinchk-20261004-0015", "q-20261004-st-joinchk-20261004-0016", "q-20261004-st-joinchk-20261004-0021"]
+  - id: lane6/l6-c10
+    bags: 5
+    disposition: revive_with_ticket
+    families: ["st-cure-p10-20261006", "st-gpu-conv3-20260928", "st-sP-bottleneck-20261005"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "文档/蓝图头不合规（BLUEPRINT module_id 格式，裁定#214 Phase 0 防蔓延）＝内容级欠账：不改头重投必撞同一门（上一轮终报 12 败主项即此类）。"
+    qids: ["q-20260929-st-gpu-conv3-20260928-0001", "q-20261005-st-sP-bottleneck-20261005-0065", "q-20261005-st-sP-bottleneck-20261005-0067", "q-20261005-st-sP-bottleneck-20261005-0072", "q-20261007-st-cure-p10-20261006-0031"]
+  - id: lane1/l1-tests_08
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 4}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0044", "q-20261005-st-tests-chief-20261004-0080", "q-20261005-st-tests-chief-20261004-0095", "q-20261005-st-tests-chief-20261004-0114"]
+  - id: lane2/l2-c19
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "缺面逐件复查：5 件已按新家落位（tests 八域归位），15 件同名同父目录零命中=真没落（00_campaign_brief.md、01_skeleton_environments.md、02_gap_ledger.md）⇒ 主…"
+    qids: ["q-20261006-st-cure-p01-20261006-0030", "q-20261007-st-cure-p01-20261006-0092", "q-20261007-st-cure-p01-20261006-0143", "q-20261007-st-cure-p01-20261006-0152"]
+  - id: lane2/l2-c20
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {}
+    adjudication: "缺面逐件复查：1 件已按新家落位（tests 八域归位），3 件同名同父目录零命中=真没落（audit_news_publish_time.py、audit_technical_indicator_columns.py、kline_…"
+    qids: ["q-20261007-st-cure-p01-20261006-0041", "q-20261007-st-cure-p01-20261006-0042", "q-20261007-st-cure-p01-20261006-0123", "q-20261007-st-cure-p01-20261006-0138"]
+  - id: lane2/l2-c28
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 4}
+    adjudication: "缺面逐件复查：1 件已按新家落位（tests 八域归位），13 件同名同父目录零命中=真没落（test_ai_comment_veracity.py、test_ai_construction_detectors.py、test_ai…"
+    qids: ["q-20261007-st-cure-p01-20261006-0050", "q-20261007-st-cure-p01-20261006-0053", "q-20261007-st-cure-p01-20261006-0132", "q-20261007-st-cure-p01-20261006-0146"]
+  - id: lane2/l2-c59
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-menu-t1b1-20260930"]
+    flags: {"lane_claim_overridden": 4}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（1 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20261001-st-menu-t1b1-20260930-0001", "q-20261001-st-menu-t1b1-20260930-0003", "q-20261001-st-menu-t1b1-20260930-0006", "q-20261001-st-menu-t1b1-20260930-0009"]
+  - id: lane2/l2-c60
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-pipeline-final-20260924"]
+    flags: {"lane_claim_overridden": 4}
+    adjudication: "死袋主体=meta_question 基建四件套；HEAD 实测同一能力以改名姿势在树（meta_question_registry.py 含 register() API、snapshot.py/exam_ops.py/exam_…"
+    qids: ["q-20260924-st-pipeline-final-20260924-0003", "q-20260924-st-pipeline-final-20260924-0007", "q-20260924-st-pipeline-final-20260924-0008", "q-20260924-st-pipeline-final-20260924-0012"]
+  - id: lane3/l3-c14
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-audit-fix-20260924"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "审计修复案的 d11_compliance/gate_replay_selfproof.py 与其测试不在 HEAD（门自证面缺口），同批热册/案卷件已在树→行级摘取重落，勿碰册面。"
+    qids: ["q-20260924-st-audit-fix-20260924-0007", "q-20260924-st-audit-fix-20260924-0017", "q-20260925-st-audit-fix-20260924-0036", "q-20260925-st-audit-fix-20260924-0037"]
+  - id: lane3/l3-c15
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "热册整档禁盲重投，且册外仍有件确实不在 HEAD（真缺口）→①复活走行级摘取+正道补登，开工单。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0128", "q-20261006-st-closeout-basereq-20261006-0222", "q-20261006-st-closeout-basereq-20261006-0077", "q-20261006-st-closeout-basereq-20261006-0172"]
+  - id: lane3/l3-c17
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-metaq-20260923"]
+    flags: {}
+    adjudication: "meta_question 只落了 __init__/exam_loop（HEAD 实测），registry.py/vocab_loader.py/apply_meta_question_ddl.py 全缺=题录闭环断在翻译与 DDL 登记"
+    qids: ["q-20260924-st-metaq-20260923-0002", "q-20260924-st-metaq-20260923-0003", "q-20261006-st-closeout-basereq-20261006-0062", "q-20261006-st-closeout-basereq-20261006-0159"]
+  - id: lane3/l3-c18
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "scripts/data 审计件不在 HEAD；HEAD 另有同域后继件 audit_technical_indicator_coverage.py，是否已被其取代需二判，故只开指路工单不判废。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0126", "q-20261006-st-closeout-basereq-20261006-0127", "q-20261006-st-closeout-basereq-20261006-0220", "q-20261006-st-closeout-basereq-20261006-0221"]
+  - id: lane3/l3-c19
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "registry_projection/generator.py 实测不在 HEAD（投影生成器缺体），同批主册件在树且已被他队推进→①复活走行级摘取，册面经生成器 render 回写，禁重投。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0063", "q-20261006-st-closeout-basereq-20261006-0118", "q-20261006-st-closeout-basereq-20261006-0160", "q-20261006-st-closeout-basereq-20261006-0212"]
+  - id: lane3/l3-c20
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "回测脚本面 lane_b_ledger_reconcile.py 与 hypothesis/cpcv 复验测试不在 HEAD（同批 harness 主件在树）→行级摘取补件，禁整批重投。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0085", "q-20261006-st-closeout-basereq-20261006-0180", "q-20261006-st-closeout-basereq-20261006-0075", "q-20261006-st-closeout-basereq-20261006-0170"]
+  - id: lane3/l3-c21
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-e2e-20260924"]
+    flags: {}
+    adjudication: "E2E 集成案的 cost_qualified_list_reexam yaml 不在 HEAD，exam_cost_gate 代码与其余案卷在树→残口一处，行级补。"
+    qids: ["q-20260923-st-e2e-20260924-0008", "q-20261004-st-e2e-20260924-0009", "q-20261006-st-closeout-basereq-20261006-0052", "q-20261006-st-closeout-basereq-20261006-0151"]
+  - id: lane3/l3-c22
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-metaq-20260923"]
+    flags: {}
+    adjudication: "题录治理链的 DDL/registry 件缺位（apply_meta_question_ddl.py 实测 NOT-IN-HEAD），死因 COMPLEXITY/翻译门属施工欠账，非判死。"
+    qids: ["q-20260924-st-metaq-20260923-0004", "q-20260924-st-metaq-20260923-0011", "q-20260924-st-metaq-20260923-0016", "q-20260924-st-metaq-20260923-0020"]
+  - id: lane4/l4-03
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-f14-final-sweep-20261005", "st-f15-frombag-20261005", "st-mastertc-l5c", "st-tailwork5-20260928"]
+    flags: {"lane_claim_overridden": 4, "P0_tests_hole": 2}
+    adjudication: "纯文书缺票被拦（CREATE-GUARD/TRANSLATION-COVERAGE/DOC-HEADER-SUITE），无毁 HEAD 行。22 袋 640 件：HEAD 全缺 48（路径今不在 HEAD 27、他径亦无同名件 13）、"
+    qids: ["q-20260929-st-tailwork5-20260928-0001", "q-20261006-st-f14-final-sweep-20261005-0057", "q-20261006-st-f15-frombag-20261005-0216", "q-20261007-st-mastertc-l5c-0001"]
+  - id: lane4/l4-06
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-chief-mount-20261003", "st-ff-chfail-20260926", "st-regfix-lane0b-20260923", "st-storageswap-20260930"]
+    flags: {"lane_claim_overridden": 4, "P0_tests_hole": 2}
+    adjudication: "capability_canonical_file_registry.yaml（64506 行热册）整档快照袋。14 袋 68 件：HEAD 全缺 7（路径今不在 HEAD 7、他径亦无同名件 2）、行级漂移 37。判据[all-lan"
+    qids: ["q-20260923-st-regfix-lane0b-20260923-0015", "q-20260926-st-ff-chfail-20260926-0002", "q-20261001-st-storageswap-20260930-0013", "q-20261003-st-chief-mount-20261003-0002"]
+  - id: lane4/l4-07
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-f15-frombag-20261005", "st-tdm-mountgate-20261005"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "纯文书缺票被拦（CREATE-GUARD/TRANSLATION-COVERAGE/DOC-HEADER-SUITE），无毁 HEAD 行。11 袋 869 件：HEAD 全缺 830（路径今不在 HEAD 830、他径亦无同名件 81"
+    qids: ["q-20261005-st-tdm-mountgate-20261005-0015", "q-20261006-st-f15-frombag-20261005-0210", "q-20261006-st-f15-frombag-20261005-0211", "q-20261006-st-f15-frombag-20261005-0212"]
+  - id: lane4/l4-14
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["chiefzc-surgeon-20260928", "st-f15-frombag-20261005"]
+    flags: {"lane_claim_overridden": 4, "P0_tests_hole": 1}
+    adjudication: "docs/_working 战役台账册快照袋（非注册表本体）。4 袋 159 件：HEAD 全缺 36（路径今不在 HEAD 35、他径亦无同名件 31）、行级漂移 21。判据[registered-since×4]→②归档(super"
+    qids: ["q-20260928-chiefzc-surgeon-20260928-0002", "q-20260928-chiefzc-surgeon-20260928-0004", "q-20261006-st-f15-frombag-20261005-0029", "q-20261006-st-f15-frombag-20261005-0182"]
+  - id: lane4/l4-15
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-f15-frombag-20261005", "st-nightsweep-sw14-20260929", "st-nightsweep2-nf2-20260930"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "capability_canonical_file_registry.yaml（64506 行热册）整档快照袋。4 袋 21 件：HEAD 全缺 10（路径今不在 HEAD 10、他径亦无同名件 10）、行级漂移 11。判据[mater"
+    qids: ["q-20260929-st-nightsweep-sw14-20260929-0004", "q-20260930-st-nightsweep2-nf2-20260930-0006", "q-20261006-st-f15-frombag-20261005-0003", "q-20261006-st-f15-frombag-20261005-0004"]
+  - id: lane4/l4-16
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-chief-mount-20261003", "st-f15-frombag-20261005", "st-fig13-bone-20261004", "st-mastertc-l0"]
+    flags: {"lane_claim_overridden": 4}
+    adjudication: "死于 GATE-PRECOMMIT-RUN：reason 自述 staged 面检出未解决冲突标记/gate-naming 违规。4 袋 119 件：HEAD 全缺 5（路径今不在 HEAD 3、他径亦无同名件 0）、行级漂移 12。判"
+    qids: ["q-20261004-st-fig13-bone-20261004-0002", "q-20261005-st-chief-mount-20261003-0008", "q-20261006-st-f15-frombag-20261005-0218", "q-20261007-st-mastertc-l0-0002"]
+  - id: lane4/l4-17
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-f14-final-sweep-20261005", "st-f15-frombag-20261005"]
+    flags: {"P0_tests_hole": 4}
+    adjudication: "docs/_working 战役台账册快照袋（非注册表本体）。4 袋 1165 件：HEAD 全缺 827（路径今不在 HEAD 825、他径亦无同名件 799）、行级漂移 50。判据[materially-missing×4]→①仍要"
+    qids: ["q-20261006-st-f14-final-sweep-20261005-0054", "q-20261006-st-f14-final-sweep-20261005-0099", "q-20261006-st-f15-frombag-20261005-0159", "q-20261006-st-f15-frombag-20261005-0213"]
+  - id: lane5/l5-c04
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-chief7-20260928"]
+    flags: {"lane_claim_overridden": 4, "P0_tests_hole": 4}
+    adjudication: "8 袋跨波次治理脚本重投，HEAD 均有同名本体；10 件缺席路径全是旧家测试，已按 tests 8 域新家入库=搬家非丢失。"
+    qids: ["q-20260929-st-chief7-20260928-0861", "q-20260929-st-chief7-20260928-0932", "q-20260930-st-chief7-20260928-1416", "q-20261002-st-chief7-20260928-2086"]
+  - id: lane6/l6-c12
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006", "st-sP-bottleneck-20261005"]
+    flags: {}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 40.5% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0057", "q-20261005-st-sP-bottleneck-20261005-0133", "q-20261005-st-sP-bottleneck-20261005-0143", "q-20261007-st-cure-p12b-20261006-0031"]
+  - id: lane6/l6-c13
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-sP-bottleneck-20261005"]
+    flags: {}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 80.0% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0140", "q-20261005-st-sP-bottleneck-20261005-0148", "q-20261005-st-sP-bottleneck-20261005-0149", "q-20261005-st-sP-bottleneck-20261005-0150"]
+  - id: lane6/l6-c14
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-cure-p10-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "tests/ 搬家批 4 袋：新家权威=99_delivery.md:12（8 域切法 7/8 域已落，116/129 目录归位）+§七:61（gov 批7=唯一未完成环）。陈旧整树快照禁重投；实测本簇 52.1% 路径已在 HEAD。"
+    qids: ["q-20261006-st-cure-p10-20261006-0009", "q-20261006-st-cure-p10-20261006-0013", "q-20261006-st-cure-p10-20261006-0015", "q-20261007-st-cure-p10-20261006-0026"]
+  - id: lane7/l7-c14
+    bags: 4
+    disposition: revive_with_ticket
+    families: ["st-cure-p05-20261006", "st-f11-requeue-20261005", "st-mastertc-l7"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "hot-registry 整档快照（rule R-3）：盲 requeue --from-bag 会蒸发他队已落地条目（capability 册 62k 行事故在案），禁重投；未落地 delta 走正道（PG token/翻译 API + "
+    qids: ["q-20261005-st-f11-requeue-20261005-0075", "q-20261007-st-cure-p05-20261006-0004", "q-20261007-st-cure-p05-20261006-0029", "q-20261007-st-mastertc-l7-0004"]
+  - id: lane1/l1-st-c9-01
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-c9-f43"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20260929-st-c9-f43-0002", "q-20260930-st-c9-f43-0001", "q-20260930-st-c9-f43-0002"]
+  - id: lane1/l1-tests_09
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 3, "P0_tests_hole": 3}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0050", "q-20261005-st-tests-chief-20261004-0068", "q-20261005-st-tests-chief-20261004-0083"]
+  - id: lane1/l1-tests_10
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 3, "P0_tests_hole": 3}
+    adjudication: "F-1 十二把回归尺件,让给施工总队车道F重建(本专案只归档不重建);指路=路径+死袋 qid(blobs/ 快照据此定位)"
+    qids: ["q-20261005-st-tests-chief-20261004-0051", "q-20261005-st-tests-chief-20261004-0084", "q-20261006-st-tests-chief-20261004-0122"]
+  - id: lane1/l1-st-map03
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-map9-chief-20261008", "st-mapbuild-20260924"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "六图战役(mapbuild)施工快照:三图生成器/config 图在 HEAD 演进;map 校验门被后继战役改名迁入 map_family/ 目录落地,袋快照=被取代,归档②"
+    qids: ["q-20260924-st-mapbuild-20260924-0009", "q-20260924-st-mapbuild-20260924-0014", "q-20261008-st-map9-chief-20261008-0005"]
+  - id: lane2/l2-c57
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-matrix-final-20260930"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "死袋投的是 commit_gates/ 平铺独立 gate 文件；HEAD 实测三门以 map_family/ 聚合台子台在树且 gate_registry 三条 status: active（algo_flow 外源首行点名真源=…"
+    qids: ["q-20261001-st-matrix-final-20260930-0021", "q-20261001-st-matrix-final-20260930-0024", "q-20261001-st-matrix-final-20260930-0026"]
+  - id: lane2/l2-c72
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-tdm-chief-20261004"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（1 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20261005-st-tdm-chief-20261004-0012", "q-20261006-st-tdm-chief-20261004-0014", "q-20261007-st-tdm-chief-20261004-0015"]
+  - id: lane2/l2-c74
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-workingchief-20261006"]
+    flags: {}
+    adjudication: "docs/_working/chief_fullchain_20261006/ 在 HEAD 零命中=整战役区文档真没落；死因 R5-DIGIT-SUFFIX 目录命名门禁⇒ 仍要但必须先改目录名去数字后缀，属施工动作，不可盲重投。"
+    qids: ["q-20261006-st-workingchief-20261006-0006", "q-20261006-st-workingchief-20261006-0007", "q-20261008-st-workingchief-20261006-0010"]
+  - id: lane3/l3-c25
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-nightfix-20260923"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "registry_incident_20260922 夜诊案卷不在 HEAD，死因是 R5 数字后缀目录禁令（路径本身非法）+战役早已收官：判③留痕；若 Owner 仍要留存，按 TRAE-028 改名后行级重落。"
+    qids: ["q-20260923-st-nightfix-20260923-0009", "q-20261006-st-closeout-basereq-20261006-0101", "q-20261006-st-closeout-basereq-20261006-0196"]
+  - id: lane3/l3-c26
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006", "st-tclose-integ-20261004"]
+    flags: {}
+    adjudication: "与 c01 同族（缺体门 strategy_card_lifecycle_map_gate + 挂图测试旧路径），门册在册而实现不在树=真缺口仍要；并入 c01 工单排队。"
+    qids: ["q-20261004-st-tclose-integ-20261004-0012", "q-20261006-st-closeout-basereq-20261006-0116", "q-20261006-st-closeout-basereq-20261006-0210"]
+  - id: lane3/l3-c27
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-bcure-20261008"]
+    flags: {}
+    adjudication: "bcure（2026-10-08 新袋）数据链主件已在 HEAD，唯 tests/legacy_zephyr 交易日历内建测试不在树；残口小，随 tests 新家一批处理。"
+    qids: ["q-20261008-st-bcure-20261008-0002", "q-20261008-st-bcure-20261008-0003", "q-20261008-st-bcure-20261008-0004"]
+  - id: lane4/l4-19
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-cure-p05b-20261006", "st-f14-final-sweep-20261005", "st-f15-frombag-20261005"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "tests 搬家批（新家=tests_cure_campaign 8 域切法），未落地面归施工队排队。3 袋 568 件：HEAD 全缺 554（路径今不在 HEAD 554、他径亦无同名件 536）、行级漂移 0。判据[materia"
+    qids: ["q-20261006-st-f14-final-sweep-20261005-0058", "q-20261006-st-f15-frombag-20261005-0204", "q-20261007-st-cure-p05b-20261006-0013"]
+  - id: lane4/l4-20
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-f14-final-sweep-20261005"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "死于存活闸（裁定#459）：属主会话 heartbeat=exited，自动重投被拒。3 袋 824 件：HEAD 全缺 576（路径今不在 HEAD 576、他径亦无同名件 565）、行级漂移 59。判据[materially-mis"
+    qids: ["q-20261006-st-f14-final-sweep-20261005-0086", "q-20261006-st-f14-final-sweep-20261005-0120", "q-20261006-st-f14-final-sweep-20261005-0121"]
+  - id: lane5/l5-c05
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-chief7-20260928"]
+    flags: {"lane_claim_overridden": 3, "P0_tests_hole": 3}
+    adjudication: "4 袋代码件：validator/generator 本体在 HEAD，n_trial_ledger 尺改名入库；其余旧家测试缺席属搬家批，判被取代。"
+    qids: ["q-20260929-st-chief7-20260928-0901", "q-20260930-st-chief7-20260928-1800", "q-20261002-st-chief7-20260928-2076"]
+  - id: lane5/l5-c11
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-ffchief-20261001"]
+    flags: {}
+    adjudication: "3 袋残余 11926 行里热册占 10593（禁重投），真缺仅 f06 协同尺与健康探针尺 2 件——出工单，置信度低待复核。"
+    qids: ["q-20261001-st-ffchief-20261001-0019", "q-20261001-st-ffchief-20261001-0048", "q-20261002-st-ffchief-20261001-0132"]
+  - id: lane5/l5-c20
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-align-dirty-20260924"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "3 袋仅 3 路径：LEDGER.md 改名落为 align_dirty_ledger.md、R2 交付件直接入库，剩 2921 行是 capability 册整档差（禁重投）。内容全在=归档。"
+    qids: ["q-20260924-st-align-dirty-20260924-0041", "q-20260924-st-align-dirty-20260924-0045", "q-20260924-st-align-dirty-20260924-0048"]
+  - id: lane5/l5-c24
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-chief3b-20260926"]
+    flags: {}
+    adjudication: "3 袋 14 路径全未落（已落 0、缺席 5）：仓外明文登记、回收通道、merger 案卷三件 HEAD 与 worktree 双零命中。报文自称 Owner 令但裁定册查无→授权面 pending_owner，内容面按未落地补捞。"
+    qids: ["q-20260927-st-chief3b-20260926-0007", "q-20260927-st-chief3b-20260926-0008", "q-20260927-st-chief3b-20260926-0010"]
+  - id: lane5/l5-c27
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-nightsweep-sw10-20260929", "st-nightsweep-sw17-20260929"]
+    flags: {}
+    adjudication: "3 袋 13 路径仅 1 已落、缺席 7：回补消耗登记器与 tech_indicator IC 评价尺两件本体+两把尺全库零命中，两篇夜战册未落且后继报告不承接一波——真缺口须摘取重建。"
+    qids: ["q-20260929-st-nightsweep-sw10-20260929-0001", "q-20260929-st-nightsweep-sw10-20260929-0002", "q-20260929-st-nightsweep-sw17-20260929-0001"]
+  - id: lane5/l5-c28
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-sI-identity-20261004"]
+    flags: {"lane_claim_overridden": 3}
+    adjudication: "3 袋 16 路径 8 已落：治本本体 registry_ledger/baseline.py 在 HEAD，残余 9110 行里热册占 8213（禁重投），唯一真缺是保真门尺——能力已被他道完成=归档+尺件工单。"
+    qids: ["q-20261004-st-sI-identity-20261004-0001", "q-20261004-st-sI-identity-20261004-0002", "q-20261004-st-sI-identity-20261004-0003"]
+  - id: lane6/l6-c18
+    bags: 3
+    disposition: revive_with_ticket
+    families: ["st-cure-p10-20261006"]
+    flags: {"P0_tests_hole": 3}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 0.0% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261006-st-cure-p10-20261006-0011", "q-20261006-st-cure-p10-20261006-0014", "q-20261007-st-cure-p10-20261006-0024"]
+  - id: lane1/l1-st-gov01
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-govfix-g3-20261007"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261008-st-govfix-g3-20261007-0001", "q-20261008-st-govfix-g3-20261007-0002"]
+  - id: lane1/l1-st-map02
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-mapbuild-20260924"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "六图战役(mapbuild)施工快照:三图生成器/config 图在 HEAD 演进;map 校验门被后继战役改名迁入 map_family/ 目录落地,袋快照=被取代,归档②"
+    qids: ["q-20260924-st-mapbuild-20260924-0008", "q-20260924-st-mapbuild-20260924-0013"]
+  - id: lane1/l1-st-map04
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-mapbuild-20260924"]
+    flags: {"lane_claim_overridden": 2, "P0_tests_hole": 2}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20260924-st-mapbuild-20260924-0018", "q-20260924-st-mapbuild-20260924-0022"]
+  - id: lane1/l1-st-map05
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-mapbuild-20260924"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "六图战役(mapbuild)施工快照:三图生成器/config 图在 HEAD 演进;map 校验门被后继战役改名迁入 map_family/ 目录落地,袋快照=被取代,归档②"
+    qids: ["q-20260926-st-mapbuild-20260924-0030", "q-20260926-st-mapbuild-20260924-0037"]
+  - id: lane1/l1-st-map06
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-mapbuild-20260924"]
+    flags: {"lane_claim_overridden": 2, "P0_tests_hole": 2}
+    adjudication: "六图战役(mapbuild)施工快照:三图生成器/config 图在 HEAD 演进;map 校验门被后继战役改名迁入 map_family/ 目录落地,袋快照=被取代,归档②"
+    qids: ["q-20260926-st-mapbuild-20260924-0031", "q-20260926-st-mapbuild-20260924-0038"]
+  - id: lane1/l1-st-cir01
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-circ-a8-20260930"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261001-st-circ-a8-20260930-0001", "q-20261001-st-circ-a8-20260930-0003"]
+  - id: lane1/l1-tests_11
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 2, "P0_tests_hole": 2}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261004-st-tests-chief-20261004-0001", "q-20261005-st-tests-chief-20261004-0030"]
+  - id: lane1/l1-tests_12
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 2, "P0_tests_hole": 2}
+    adjudication: "tests 搬家快照;99_delivery+收官 commit 证 8域切法已落 HEAD(差集清零),死袋=被后续落地取代"
+    qids: ["q-20261005-st-tests-chief-20261004-0104", "q-20261006-st-tests-chief-20261004-0121"]
+  - id: lane1/l1-st-tai01
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-tailwork2-20260928", "st-tailwork9-20260928"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "st-tailwork2-20260928 施工快照:主件已在 HEAD 存在且演进(或改名入新路径),盲投毁新行=不可重投;内容被后续战役取代,归档②"
+    qids: ["q-20260929-st-tailwork2-20260928-0001", "q-20260929-st-tailwork9-20260928-0001"]
+  - id: lane2/l2-c06
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-c7-f56-20260927"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（2 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20260927-st-c7-f56-20260927-0001", "q-20260928-st-c7-f56-20260927-0004"]
+  - id: lane2/l2-c21
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "整档快照型热册袋（capability/gate/translation/registry 册）——重投=蒸发他队条目（62k 行并发写损坏事故在案）且 HEAD 已演进（max_only_head 最高 59 行）⇒ 袋档走②归档…"
+    qids: ["q-20261007-st-cure-p01-20261006-0049", "q-20261007-st-cure-p01-20261006-0051"]
+  - id: lane2/l2-c22
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {}
+    adjudication: "整档快照型热册袋（capability/gate/translation/registry 册）——重投=蒸发他队条目（62k 行并发写损坏事故在案）且 HEAD 已演进（max_only_head 最高 5010 行）⇒ 袋档走②…"
+    qids: ["q-20261007-st-cure-p01-20261006-0067", "q-20261007-st-cure-p01-20261006-0122"]
+  - id: lane2/l2-c29
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 12 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_…"
+    qids: ["q-20261007-st-cure-p01-20261006-0054", "q-20261007-st-cure-p01-20261006-0133"]
+  - id: lane2/l2-c30
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 3 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_pass。"
+    qids: ["q-20261007-st-cure-p01-20261006-0057", "q-20261007-st-cure-p01-20261006-0076"]
+  - id: lane2/l2-c31
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "缺面逐件复查：2 件已按新家落位（tests 八域归位），1 件同名同父目录零命中=真没落（test_resource_schedule_regen_check.py）⇒ 主体②归档，仅对真失踪件挂新建工单；整袋不复活（袋带已演进主…"
+    qids: ["q-20261007-st-cure-p01-20261006-0101", "q-20261007-st-cure-p01-20261006-0124"]
+  - id: lane2/l2-c44
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-emoreplay-20260923"]
+    flags: {}
+    adjudication: "缺面逐件复查：1 件已按新家落位（tests 八域归位），2 件同名同父目录零命中=真没落（gpu_emotion_condition_matrix_v1.meta.json、index.md）⇒ 主体②归档，仅对真失踪件挂新建工单…"
+    qids: ["q-20260923-st-emoreplay-20260923-0001", "q-20260923-st-emoreplay-20260923-0002"]
+  - id: lane2/l2-c51
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-fullscore-20260930"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（1 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20261001-st-fullscore-20260930-0020", "q-20261001-st-fullscore-20260930-0023"]
+  - id: lane2/l2-c55
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-matrix-final-20260930"]
+    flags: {}
+    adjudication: "缺面逐件复查：1 件已按新家落位（tests 八域归位），1 件同名同父目录零命中=真没落（identifier_masking.py）⇒ 主体②归档，仅对真失踪件挂新建工单；整袋不复活（袋带已演进主件与热册快照）。"
+    qids: ["q-20261001-st-matrix-final-20260930-0023", "q-20261001-st-matrix-final-20260930-0027"]
+  - id: lane2/l2-c56
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-matrix-final-20260930"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "死袋投的是 commit_gates/ 平铺独立 gate 文件；HEAD 实测三门以 map_family/ 聚合台子台在树且 gate_registry 三条 status: active（algo_flow 外源首行点名真源=…"
+    qids: ["q-20261001-st-matrix-final-20260930-0028", "q-20261001-st-matrix-final-20260930-0029"]
+  - id: lane3/l3-c07
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-audit-fix-20260924"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口只在 docs/_working/ 战役案卷（ttl=task_bound，收官未 promote、无在册消费方），代码与主册件均在 HEAD→③判废留痕；若 Owner 判仍要，按 TRAE-028 改名后行级重落。"
+    qids: ["q-20260924-st-audit-fix-20260924-0018", "q-20260928-st-audit-fix-20260924-0049"]
+  - id: lane3/l3-c32
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "schema_migrations 三件（src infrastructure / scripts apply / 测试）实测全 NOT-IN-HEAD=数据库迁移正门缺位，属仍要；与热册 hea 演进无关，禁重投。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0058", "q-20261006-st-closeout-basereq-20261006-0157"]
+  - id: lane3/l3-c33
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "提交提速战役的 MASTER_PLAN/HANDOFF 未 promote，而同题已由后班以更优姿势落地（7e737d7af6 commitmap-cure P0 治本三向合并扩面、895b535843 G2 队列基建三修）→②归档。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0125", "q-20261006-st-closeout-basereq-20261006-0219"]
+  - id: lane3/l3-c34
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0091", "q-20261006-st-closeout-basereq-20261006-0186"]
+  - id: lane3/l3-c36
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-sC-surgery-20261003"]
+    flags: {}
+    adjudication: "热册整档禁盲重投，且册外仍有件确实不在 HEAD（真缺口）→①复活走行级摘取+正道补登，开工单。"
+    qids: ["q-20261004-st-sC-surgery-20261003-0014", "q-20261004-st-sC-surgery-20261003-0015"]
+  - id: lane3/l3-c38
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "night_totalflow_20261001/99_delivery.md 不在 HEAD：本批实际死因是收官会话 ghost 闸（裁定#459），且数字后缀路径族受 R5-DIGIT-SUFFIX 禁令；案卷 ttl=task_bou"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0108", "q-20261006-st-closeout-basereq-20261006-0203"]
+  - id: lane3/l3-c40
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-audit-fix-20260924"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "确有件不在 HEAD（真实缺口），且同批热册/在树件已被他队推进→①复活走行级摘取，开工单排队。"
+    qids: ["q-20260924-st-audit-fix-20260924-0016", "q-20261004-st-audit-fix-20260924-0052"]
+  - id: lane3/l3-c41
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0096", "q-20261006-st-closeout-basereq-20261006-0191"]
+  - id: lane3/l3-c42
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0084", "q-20261006-st-closeout-basereq-20261006-0179"]
+  - id: lane3/l3-c43
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0067", "q-20261006-st-closeout-basereq-20261006-0163"]
+  - id: lane3/l3-c44
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0081", "q-20261006-st-closeout-basereq-20261006-0176"]
+  - id: lane3/l3-c45
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0087", "q-20261006-st-closeout-basereq-20261006-0182"]
+  - id: lane3/l3-c46
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "确有件不在 HEAD（真实缺口），且同批热册/在树件已被他队推进→①复活走行级摘取，开工单排队。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0117", "q-20261006-st-closeout-basereq-20261006-0211"]
+  - id: lane3/l3-c48
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "件在 HEAD 但袋侧仍有大批独有行未吸收（能力欠账在行级不在文件级）→只能行级摘取，开工单。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0082", "q-20261006-st-closeout-basereq-20261006-0177"]
+  - id: lane3/l3-c49
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口只在 docs/_working/ 战役案卷（ttl=task_bound，收官未 promote、无在册消费方），代码与主册件均在 HEAD→③判废留痕；若 Owner 判仍要，按 TRAE-028 改名后行级重落。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0109", "q-20261006-st-closeout-basereq-20261006-0204"]
+  - id: lane3/l3-c50
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "union_priority_ruler.py 与 flag_read_state.py 实测不在 HEAD 且全仓 grep 零命中=无后继同能力件；若属 F-1 十二把回归尺家族，让给施工总队车道F，本车道只指路（袋 q 与 blob_"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0054", "q-20261006-st-closeout-basereq-20261006-0153"]
+  - id: lane3/l3-c51
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "确有件不在 HEAD（真实缺口），且同批热册/在树件已被他队推进→①复活走行级摘取，开工单排队。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0098", "q-20261006-st-closeout-basereq-20261006-0193"]
+  - id: lane3/l3-c53
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-k4-20260923"]
+    flags: {"lane_claim_overridden": 2, "P0_tests_hole": 1}
+    adjudication: "袋要的 registry_family/registry_mass_deletion_gate.py 在 HEAD 以平路径在册（registry_family 目录 HEAD 实测为空）=同件改道落地→②归档。"
+    qids: ["q-20260923-st-k4-20260923-0006", "q-20260923-st-k4-20260923-0007"]
+  - id: lane3/l3-c54
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {}
+    adjudication: "与 c17/c22 同族：题录 registry/snapshot/DDL 缺体，__init__ 与 exam_loop 在树→行级摘取补件，勿重投热册。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0111", "q-20261006-st-closeout-basereq-20261006-0206"]
+  - id: lane3/l3-c56
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0106", "q-20261006-st-closeout-basereq-20261006-0201"]
+  - id: lane3/l3-c57
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-closeout-basereq-20261006"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261006-st-closeout-basereq-20261006-0070", "q-20261006-st-closeout-basereq-20261006-0165"]
+  - id: lane4/l4-18
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-storageswap-20260930"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "快照路径被 .gitignore 判为再生产物区，prestage 依法拒收——产物本就不该入 git。3 袋 23 件：HEAD 全缺 2（路径今不在 HEAD 2、他径亦无同名件 0）、行级漂移 10。判据[path-exists-"
+    qids: ["q-20261001-st-storageswap-20260930-0003", "q-20261001-st-storageswap-20260930-0005"]
+  - id: lane4/l4-21
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-f14-final-sweep-20261005"]
+    flags: {"lane_claim_overridden": 2, "P0_tests_hole": 1}
+    adjudication: "死于存活闸（裁定#459）：属主会话 heartbeat=exited，自动重投被拒。3 袋 493 件：HEAD 全缺 5（路径今不在 HEAD 5、他径亦无同名件 4）、行级漂移 59。判据[mostly-landed×1, pat"
+    qids: ["q-20261006-st-f14-final-sweep-20261005-0087", "q-20261006-st-f14-final-sweep-20261005-0103"]
+  - id: lane5/l5-c26
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-xhs-full-20260922"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "2 袋 16 文件：期权日线统计品类整链未落——同族 greeks/iv/kline 都在库唯 daily_stats 无，回补件与 E4 考试件零命中。确属缺口，但袋挟热册又是 16 文件混批，只能摘取重建。"
+    qids: ["q-20260923-st-xhs-full-20260922-0043", "q-20260923-st-xhs-full-20260922-0053"]
+  - id: lane5/l5-c30
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-mx07-chief"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "4 袋仅 3 路径且全部已由他道入库（L8 verdict 证据 archive+经典指标疑点调查 v1 双命中），残余 164 行含热册 36 行。证据抢救目的已达成——纯归档。"
+    qids: ["q-20261008-st-mx07-chief-0002", "q-20261008-st-mx07-chief-0006"]
+  - id: lane5/l5-c34
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-tailwork10-20260928", "st-tailwork6-20260928"]
+    flags: {"lane_claim_overridden": 2}
+    adjudication: "2 袋 v14/v18 长链重投：三张地图门『缺席』实为整族迁入 commit_gates/map_family/ 子包（逐件核到同名本体在库），尺随 tests 新家、gate_registry 9 条在册。结构性搬家非缺失=归档。"
+    qids: ["q-20260929-st-tailwork6-20260928-0001", "q-20260930-st-tailwork10-20260928-0001"]
+  - id: lane6/l6-c20
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-p1b-libr", "st-sP-bottleneck-20261005"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 21.4% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20260926-st-p1b-libr-0001", "q-20261005-st-sP-bottleneck-20261005-0069"]
+  - id: lane6/l6-c21
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-sP-bottleneck-20261005", "st-tailwork7-20260928"]
+    flags: {}
+    adjudication: "袋内新建件缺 creation_token：token 是一次性账本物，陈袋重投时已失效/册面已变→必复发（热册损坏期曾全系 fail-closed）。"
+    qids: ["q-20260929-st-tailwork7-20260928-0001", "q-20261005-st-sP-bottleneck-20261005-0008"]
+  - id: lane6/l6-c22
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006", "st-sP-bottleneck-20261005"]
+    flags: {"P0_tests_hole": 2}
+    adjudication: "陈旧测试快照 import 的符号在 HEAD 源码已改名/删除（§5.178 测试-源码漂移）＝内容级漂移；实测本簇 head_pct 极低，测试件确未落。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0066", "q-20261007-st-cure-p12b-20261006-0037"]
+  - id: lane6/l6-c24
+    bags: 2
+    disposition: revive_with_ticket
+    families: ["st-cure-p12a-20261006", "st-cure-p12b-20261006"]
+    flags: {}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 62.5% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261006-st-cure-p12a-20261006-0023", "q-20261006-st-cure-p12b-20261006-0021"]
+  - id: lane1/l1-st-wm101
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-wm1-buildB-20260923"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20260923-st-wm1-buildB-20260923-0001"]
+  - id: lane1/l1-st-mas01
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-mastermap-20261004"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261004-st-mastermap-20261004-0006"]
+  - id: lane1/l1-st-sH-02
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-sH-f8family-20261004"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "st-sH-f8family-20261004 施工快照:主件已在 HEAD 存在且演进(或改名入新路径),盲投毁新行=不可重投;内容被后续战役取代,归档②"
+    qids: ["q-20261004-st-sH-f8family-20261004-0006"]
+  - id: lane1/l1-tests_13
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "tests 搬家快照;99_delivery+收官 commit 证 8域切法已落 HEAD(差集清零),死袋=被后续落地取代"
+    qids: ["q-20261004-st-tests-chief-20261004-0003"]
+  - id: lane1/l1-tests_14
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261004-st-tests-chief-20261004-0004"]
+  - id: lane1/l1-tests_15
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "tests 治理战役施工快照,战役已直连收官(129目录对HEAD差集清零)+P09按 sha256 补投 missing 件,内容已在 HEAD"
+    qids: ["q-20261005-st-tests-chief-20261004-0013"]
+  - id: lane1/l1-st-cur01
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p11-20261006"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261006-st-cure-p11-20261006-0002"]
+  - id: lane1/l1-tests_18
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tests-chief-20261004"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "tests 搬家快照;99_delivery+收官 commit 证 8域切法已落 HEAD(差集清零),死袋=被后续落地取代"
+    qids: ["q-20261006-st-tests-chief-20261004-0131"]
+  - id: lane1/l1-st-acu01
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-acure-e1"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261008-st-acure-e1-0001"]
+  - id: lane1/l1-st-acu03
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-acure-r1"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "st-acure-r1 施工快照:主件已在 HEAD 存在且演进(或改名入新路径),盲投毁新行=不可重投;内容被后续战役取代,归档②"
+    qids: ["q-20261008-st-acure-r1-0004"]
+  - id: lane1/l1-st-gov03
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-govfix-g3-20261007"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "热册整档快照袋:禁盲投(重投蒸发他队条目,capability 册 62k 行事故在案);死袋本身归档②,未落条目走正道(账本 token+持窗者 render 投影)由工单补,禁 requeue"
+    qids: ["q-20261008-st-govfix-g3-20261007-0009"]
+  - id: lane2/l2-c04
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-bt-fast-w5-20261006"]
+    flags: {}
+    adjudication: "整档快照型热册袋（capability/gate/translation/registry 册）——重投=蒸发他队条目（62k 行并发写损坏事故在案）且 HEAD 已演进（max_only_head 最高 821 行）⇒ 袋档走②归…"
+    qids: ["q-20261007-st-bt-fast-w5-20261006-0002"]
+  - id: lane2/l2-c05
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-bt-fast-w5-20261006"]
+    flags: {}
+    adjudication: "整档快照型热册袋（capability/gate/translation/registry 册）——重投=蒸发他队条目（62k 行并发写损坏事故在案）且 HEAD 已演进（max_only_head 最高 821 行）⇒ 袋档走②归…"
+    qids: ["q-20261007-st-bt-fast-w5-20261006-0003"]
+  - id: lane2/l2-c07
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-c8-s4"]
+    flags: {}
+    adjudication: "缺面逐件复查：2 件已按新家落位（tests 八域归位），2 件同名同父目录零命中=真没落（lane_b_ledger_reconcile.py、test_lane_b_ledger_reconcile.py）⇒ 主体②归档，仅对真…"
+    qids: ["q-20260928-st-c8-s4-0001"]
+  - id: lane2/l2-c09
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-commitspeed-tbl-20260924"]
+    flags: {}
+    adjudication: "战役卷宗/案卷首册在 HEAD 实测零命中（如 00_HANDOFF.md、00_MASTER_PLAN.md、reaudit_20261007.md），同战役其余册页已在树 ⇒ 内容没落且仍要（“落库防蒸发”就是本袋使命）；纯 d…"
+    qids: ["q-20260924-st-commitspeed-tbl-20260924-0002"]
+  - id: lane2/l2-c10
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-commitspeed-tbl-20260924"]
+    flags: {}
+    adjudication: "战役卷宗/案卷首册在 HEAD 实测零命中（如 00_HANDOFF.md、00_MASTER_PLAN.md、reaudit_20261007.md），同战役其余册页已在树 ⇒ 内容没落且仍要（“落库防蒸发”就是本袋使命）；纯 d…"
+    qids: ["q-20260924-st-commitspeed-tbl-20260924-0006"]
+  - id: lane2/l2-c11
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-commitspeed-tbl-20260924"]
+    flags: {}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 1 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_pass。"
+    qids: ["q-20260925-st-commitspeed-tbl-20260924-0120"]
+  - id: lane2/l2-c12
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-construct-20261002"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "袋内文件全部已在 HEAD 树，差异=落地后又被别道演进（本簇 max_only_head 最高 4771 行）；死因是基底冲突/漂移（final_closeout §5③：重投后仍漂，属人工清偿域，机器重投已到极限）⇒ ②归档，禁盲重投。"
+    qids: ["q-20261002-st-construct-20261002-0002"]
+  - id: lane2/l2-c23
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "tests 治理战役 8 域切法经收官册实测已落 7/8 域，本簇是 blob 恢复后的 280 文件复投袋⇒ 搬家批未落地=施工队欠账（任务书 §1 明判归施工队不归本车道），本车道只指路+挂单，不建议 requeue。"
+    qids: ["q-20261007-st-cure-p01-20261006-0107"]
+  - id: lane2/l2-c32
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 1 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_pass。"
+    qids: ["q-20261006-st-cure-p01-20261006-0003"]
+  - id: lane2/l2-c33
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 7 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_pass。"
+    qids: ["q-20261007-st-cure-p01-20261006-0045"]
+  - id: lane2/l2-c34
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 5 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_pass。"
+    qids: ["q-20261007-st-cure-p01-20261006-0060"]
+  - id: lane2/l2-c35
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "缺件确在 HEAD 零命中（真失踪 1 件），但同簇混跨战役欠账、死因以基底冲突为主（final_closeout §5③：重投后仍漂=人工清偿域）⇒ 不复活整袋，按行级摘取建单；本簇未逐件补实证据，标 needs_second_pass。"
+    qids: ["q-20261007-st-cure-p01-20261006-0065"]
+  - id: lane2/l2-c36
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "死袋投的是 commit_gates/ 平铺独立 gate 文件；HEAD 实测三门以 map_family/ 聚合台子台在树且 gate_registry 三条 status: active（algo_flow 外源首行点名真源=…"
+    qids: ["q-20261007-st-cure-p01-20261006-0102"]
+  - id: lane2/l2-c37
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p01-20261006"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（1 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20261007-st-cure-p01-20261006-0140"]
+  - id: lane2/l2-c47
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-finaldel-clean-20260930"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "袋内容是 .runtime/tmp 本战役临时产物的清理台账与 tmp 证据清单（三件 HEAD 零命中）。根宪法 §9.4 生命周期隔离：临时区产物不作永久交付，战役已终局无消费方 ⇒ ③判废留痕（不复活、不留悬账）。"
+    qids: ["q-20260930-st-finaldel-clean-20260930-0001"]
+  - id: lane2/l2-c50
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-fullscore-20260930"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（1 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20261001-st-fullscore-20260930-0009"]
+  - id: lane2/l2-c58
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-matrix-final-20260930"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺面逐件按“同名+同父目录”复查 HEAD：全部命中新家（tests 八域归位/模块改名落位），零件真失踪（1 件全命中）⇒ 内容被别处取代，②归档；按旧路径复活=造双真源，禁。"
+    qids: ["q-20261001-st-matrix-final-20260930-0018"]
+  - id: lane2/l2-c66
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tailwork3-20260928"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "死袋投的是 commit_gates/ 平铺独立 gate 文件；HEAD 实测三门以 map_family/ 聚合台子台在树且 gate_registry 三条 status: active（algo_flow 外源首行点名真源=…"
+    qids: ["q-20260929-st-tailwork3-20260928-0001"]
+  - id: lane2/l2-c67
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tclose-20261004"]
+    flags: {}
+    adjudication: "战役卷宗/案卷首册在 HEAD 实测零命中（如 00_HANDOFF.md、00_MASTER_PLAN.md、reaudit_20261007.md），同战役其余册页已在树 ⇒ 内容没落且仍要（“落库防蒸发”就是本袋使命）；纯 d…"
+    qids: ["q-20261008-st-tclose-20261004-0006"]
+  - id: lane2/l2-c69
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tclose-covledger-20261005"]
+    flags: {}
+    adjudication: "整档快照型热册袋（capability/gate/translation/registry 册）——重投=蒸发他队条目（62k 行并发写损坏事故在案）且 HEAD 已演进（max_only_head 最高 308 行）⇒ 袋档走②归…"
+    qids: ["q-20261006-st-tclose-covledger-20261005-0001"]
+  - id: lane3/l3-c04
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-sC-surgery-20261003"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "车道C 手术件（register_asset/reuse_scan/lock_files/session_worktree）已由 28907940e5『裁定#480 C-2/D 三件套落地』收编，后续 87dae28b83 又把 token"
+    qids: ["q-20261003-st-sC-surgery-20261003-0005"]
+  - id: lane3/l3-c37
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-sG-mapwrite-20261004"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261004-st-sG-mapwrite-20261004-0002"]
+  - id: lane3/l3-c65
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-fg-srcline1-20261005"]
+    flags: {}
+    adjudication: "信号原料线两件判『不在 HEAD』但内容并没蒸发：主区 index 实测 A 态（kline_momentum/fundamental_pricing_lag/source_line __init__ 已 staged）。正道=对 stag"
+    qids: ["q-20261005-st-fg-srcline1-20261005-0001"]
+  - id: lane3/l3-c66
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-fg-srcline1-20261005"]
+    flags: {}
+    adjudication: "与 c65 同族同因（原料线判据件缺体，主区有在途面）：并入 c65 工单，按 classify_workspace_wip 判读后走网关提交，禁袋重投。"
+    qids: ["q-20261005-st-fg-srcline1-20261005-0004"]
+  - id: lane3/l3-c67
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-gpu-conv-20260928"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20260928-st-gpu-conv-20260928-0001"]
+  - id: lane3/l3-c68
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-menu-t1b2-20260930"]
+    flags: {}
+    adjudication: "data_security/wiring 三件（audit_sink/lsg_masking_front/data_exit_guard）不在 HEAD，但盘面实测 ?? 未跟踪=内容活在主区，非蒸发。正道=claim+creation_t"
+    qids: ["q-20260930-st-menu-t1b2-20260930-0001"]
+  - id: lane3/l3-c69
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-sC-surgery-20261003"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "热册整档禁盲重投，且册外仍有件确实不在 HEAD（真缺口）→①复活走行级摘取+正道补登，开工单。"
+    qids: ["q-20261003-st-sC-surgery-20261003-0002"]
+  - id: lane3/l3-c70
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-vm12e-20261004"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20261004-st-vm12e-20261004-0001"]
+  - id: lane3/l3-c72
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-zmaster2-20260926"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "消费普查件 consumption_census.py/_reconciler.py 实测已在 HEAD（后续班落地），袋内热册快照行差不值得重投→②归档+条目正道补登。"
+    qids: ["q-20260927-st-zmaster2-20260926-0014"]
+  - id: lane3/l3-c74
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-mastertc-final"]
+    flags: {}
+    adjudication: "确有件不在 HEAD（真实缺口），且同批热册/在树件已被他队推进→①复活走行级摘取，开工单排队。"
+    qids: ["q-20261007-st-mastertc-final-0001"]
+  - id: lane3/l3-c76
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-tailwork4-20260928"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "缺口全是旧路径：同名件已在册于新家（git ls-files 实测逐件命中），属改道/搬家非蒸发→②归档，内容以新家现面为准。"
+    qids: ["q-20260929-st-tailwork4-20260928-0001"]
+  - id: lane3/l3-c77
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-zmaster2-20260926"]
+    flags: {}
+    adjudication: "确有件不在 HEAD（真实缺口），且同批热册/在树件已被他队推进→①复活走行级摘取，开工单排队。"
+    qids: ["q-20260927-st-zmaster2-20260926-0012"]
+  - id: lane4/l4-22
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-f15-frombag-20261005"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "gate_registry 热册整档快照袋（禁整档重投）。2 袋 20 件：HEAD 全缺 4（路径今不在 HEAD 4、他径亦无同名件 2）、行级漂移 3。判据[all-landed×1, registered-since×1]→②归"
+    qids: ["q-20261006-st-f15-frombag-20261005-0183"]
+  - id: lane5/l5-c03
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-chief7-20260928"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "15 袋重投快照，meta 本体全在 HEAD；20 路径里 18 件仅行差（共 1170 行）且差源是合并重构，无能力缺口——判被取代。"
+    qids: ["q-20260930-st-chief7-20260928-1809"]
+  - id: lane5/l5-c12
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-ffchief-20261001"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "4 袋 22 路径 8 已落、零真缺代码；残余 11512 行中热册两册占 10574（禁重投面）。唯一缺席是本战役自己的 wave4d 过程日志，而其终报已入库取代——判归档。"
+    qids: ["q-20261001-st-ffchief-20261001-0055"]
+  - id: lane5/l5-c16
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-gpu-conv2-20260928"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "4 袋 v8-v12 重投序列：6 路径 2 已落零缺席，残余 197 行（gpu_core 17 行）为演化差；GPU 本体与对拍尺均已入库——判被取代。"
+    qids: ["q-20260929-st-gpu-conv2-20260928-0001"]
+  - id: lane5/l5-c25
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-ffchief-20261002"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "3 袋 13 路径：接管台账与门本体均在 HEAD，唯一缺席的 branches_ledger 已改名落在 branch_zero_takeover/，残余 10859 行里热册占 10605。能力全落地=归档。"
+    qids: ["q-20261002-st-ffchief-20261002-0001"]
+  - id: lane5/l5-c31
+    bags: 1
+    disposition: pending_owner
+    families: ["st-map9-chief-20261005"]
+    flags: {}
+    adjudication: "3 袋中 2 袋触 strategy_production_map（Owner 保留面）不改判；第 3 袋系原袋被并发队列手术物理销毁后的三重真源复原批，两篇 fac9 工单册全库零命中。整簇待 Owner 开窗再定姿势。"
+    qids: ["q-20261005-st-map9-chief-20261005-0002"]
+  - id: lane5/l5-c32
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-nightdata-20260923"]
+    flags: {}
+    adjudication: "1 袋 2 路径：死因是 scripts/data/ 被 .gitignore 拒（再生产物区）非内容问题；CLI 本体全库零命中而工单册在册、dry-run 实测缺格 88,273 bar。移位即可即时复活=最低成本真缺口。"
+    qids: ["q-20260923-st-nightdata-20260923-0001"]
+  - id: lane5/l5-c33
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-ff-j-20260926"]
+    flags: {"lane_claim_overridden": 1, "P0_tests_hole": 1}
+    adjudication: "1 袋 J 队接管批：commit_belt_daemon 本体与 algo_flow 蓝图均在库，缺席只剩两把尺+一篇 lane_alive 过程册，残余 3130 行里热册占 2930。能力已被他道完成=归档+尺件工单。"
+    qids: ["q-20260926-st-ff-j-20260926-0003"]
+  - id: lane6/l6-c28
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-sL-entry-20261004"]
+    flags: {}
+    adjudication: "永久系统触发方式违规（禁 cron/Timer/sleep-loop，reconciler 必须事件触发）＝红线级内容违规。"
+    qids: ["q-20261005-st-sL-entry-20261004-0001"]
+  - id: lane6/l6-c32
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-sP-bottleneck-20261005"]
+    flags: {}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 42.9% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261005-st-sP-bottleneck-20261005-0110"]
+  - id: lane6/l6-c35
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p08b-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "tests/ 搬家批 1 袋：新家权威=99_delivery.md:12（8 域切法 7/8 域已落，116/129 目录归位）+§七:61（gov 批7=唯一未完成环）。陈旧整树快照禁重投；实测本簇 0.0% 路径已在 HEAD。"
+    qids: ["q-20261006-st-cure-p08b-20261006-0006"]
+  - id: lane6/l6-c42
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "落地前自证读回拒绝假成功：合并结果与 dev 零变化、袋内增量未被携带（内容被合并器吞没）。袋内容多已在 HEAD，属重复携带件。实测 100.0% 路径已在 HEAD（别道/后继袋已落）→归档原袋零损失，无需复活。"
+    qids: ["q-20261006-st-cure-p12b-20261006-0012"]
+  - id: lane6/l6-c43
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 75.0% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261006-st-cure-p12b-20261006-0013"]
+  - id: lane6/l6-c44
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {}
+    adjudication: "ALGO-FLOW 锚/卡片链接断裂（external 锚指向 yaml 必须实存可解析）＝内容级接线欠账，重投不接线必复发。"
+    qids: ["q-20261006-st-cure-p12b-20261006-0019"]
+  - id: lane6/l6-c45
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "noqa 登记不闭环（内容级）；实测本簇路径全不在 HEAD＝真欠账。"
+    qids: ["q-20261006-st-cure-p12b-20261006-0023"]
+  - id: lane6/l6-c46
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p10-20261006"]
+    flags: {"lane_claim_overridden": 1}
+    adjudication: "tests/ 搬家批 1 袋：新家权威=99_delivery.md:12（8 域切法 7/8 域已落，116/129 目录归位）+§七:61（gov 批7=唯一未完成环）。陈旧整树快照禁重投实测 100.0% 路径已在 HEAD（别道/后"
+    qids: ["q-20261007-st-cure-p10-20261006-0025"]
+  - id: lane6/l6-c47
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p10-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "Windows MAX_PATH 环境终态（WinError 206 文件名过长），非物品违规；裁定#280 已把瞬态环境失败划归退 pending，但 206 属不可重试环境墙。"
+    qids: ["q-20261007-st-cure-p10-20261006-0028"]
+  - id: lane6/l6-c50
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 33.3% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261007-st-cure-p12b-20261006-0032"]
+  - id: lane6/l6-c51
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-cure-p12b-20261006"]
+    flags: {"P0_tests_hole": 1}
+    adjudication: "热册袋带整档快照：重投会蒸发他队条目（capability 册 62k 行损坏事故在案，终报 §3.1），禁重投。实测 5.0% 在 HEAD，余量走条目级册正道。"
+    qids: ["q-20261007-st-cure-p12b-20261006-0040"]
+  - id: lane7/l7-c15
+    bags: 1
+    disposition: revive_with_ticket
+    families: ["st-vm12surg-20261003"]
+    flags: {}
+    adjudication: "hot-registry 整档快照（rule R-3）：盲 requeue --from-bag 会蒸发他队已落地条目（capability 册 62k 行事故在案），禁重投；未落地 delta 走正道（PG token/翻译 API + "
+    qids: ["q-20261003-st-vm12surg-20261003-0001"]

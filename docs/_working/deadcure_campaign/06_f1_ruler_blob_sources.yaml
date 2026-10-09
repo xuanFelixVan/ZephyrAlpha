@@ -1,0 +1,117 @@
+# 死信清偿专案 → 施工总队车道F 交割：F-1 十二把回归尺的死信 blob 源材料指路（本专案只归档不重建）
+generated_at: '2026-10-09T06:55:47+08:00'
+anchor_head: 'e48349275d76b20289689793d15c6f3837a777b9'
+rulers:
+  - ruler: batch_replay
+    entries: 50
+    sources:
+      - {path: tests/gov/gov_enforcement/create_guard_batch_replay.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/7427832894a7bd085015ac12f888681700fb1a1a142c374eacafbb9e62015f4b, sha256: 7427832894a7bd085015ac12f888681700fb1a1a142c374eacafbb9e62015f4b}
+      - {path: tests/gov/gov_enforcement/create_guard_batch_replay_evidence.json, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/c1d3e2dda3f8bed190ce6bc48eafdf7abcf092923c0eb80bb3b3d1a973234a81, sha256: c1d3e2dda3f8bed190ce6bc48eafdf7abcf092923c0eb80bb3b3d1a973234a81}
+      - {path: tests/gov_enforcement/create_guard_batch_replay.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov_enforcement/create_guard_batch_replay_evidence.json, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/gov_enforcement/create_guard_batch_replay.py, state: absent_in_head, bag: q-20261006-st-cure-p05b-20261006-0002, blob_ref: blobs/c9798b543c9b790c60823bacf3c700c08436167ce254b035f4c33044ab30d7eb, sha256: c9798b543c9b790c60823bacf3c700c08436167ce254b035f4c33044ab30d7eb}
+  - ruler: create_guard_keyword_overlap_canary
+    entries: 25
+    sources:
+      - {path: tests/gov/gov_enforcement/test_create_guard_keyword_overlap_canary.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/b5d59e9c2f05530310dcbdd3e31782726866697fb318d9b1590694eea6e95c7d, sha256: b5d59e9c2f05530310dcbdd3e31782726866697fb318d9b1590694eea6e95c7d}
+      - {path: tests/gov_enforcement/test_create_guard_keyword_overlap_canary.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/gov_enforcement/test_create_guard_keyword_overlap_canary.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0052, blob_ref: blobs/8ca7be2c4746e241dd2904ea46f57a395c2a4a2e300e159c222720640ab31770, sha256: 8ca7be2c4746e241dd2904ea46f57a395c2a4a2e300e159c222720640ab31770}
+      - {path: tests/gov/gov_enforcement/test_create_guard_keyword_overlap_canary.py, state: absent_in_head, bag: q-20261006-st-cure-p05b-20261006-0002, blob_ref: blobs/c10ea626bb02a1b1b005693f61578824f92fc8559bc5d369dac707be9706353b, sha256: c10ea626bb02a1b1b005693f61578824f92fc8559bc5d369dac707be9706353b}
+  - ruler: test_check_mirror_tree
+    entries: 22
+    sources:
+      - {path: tests/gov/governance/d1_structure/test_check_mirror_tree.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/9595bce341c88e650bd96e1ca5fef51d34551594d6a279184f828ec5263ea957, sha256: 9595bce341c88e650bd96e1ca5fef51d34551594d6a279184f828ec5263ea957}
+      - {path: tests/governance/d1_structure/test_check_mirror_tree.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+  - ruler: test_commit_queue_base_head
+    entries: 35
+    sources:
+      - {path: tests/governance/test_commit_queue_base_head.py, state: landed_then_evolved, bag: q-20260924-st-audit-fix-20260924-0007, blob_ref: blobs/127ac10f99da4d143a6ab73f6a22cae753dc08a3ff5be69d4455178629479c6e, sha256: 127ac10f99da4d143a6ab73f6a22cae753dc08a3ff5be69d4455178629479c6e}
+      - {path: tests/governance/test_commit_queue_base_head.py, state: absent_in_head, bag: q-20260924-st-audit-fix-20260924-0016, blob_ref: blobs/bf020c792ea8529d950dd3f16f2a66783df66a5924c7305427f1668a64ee7213, sha256: bf020c792ea8529d950dd3f16f2a66783df66a5924c7305427f1668a64ee7213}
+      - {path: tests/governance/test_commit_queue_base_head.py, state: landed_then_evolved, bag: q-20260924-st-audit-fix-20260924-0018, blob_ref: blobs/aec852466f6dc396a5715803f89ea46f94f250cbc62224862167020736e23b7f, sha256: aec852466f6dc396a5715803f89ea46f94f250cbc62224862167020736e23b7f}
+      - {path: tests/gov/governance/test_commit_queue_base_head.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/bbefee32ec1358bae52470a162fb711e47e17c2f6c529a5ef3dddfe94499103a, sha256: bbefee32ec1358bae52470a162fb711e47e17c2f6c529a5ef3dddfe94499103a}
+      - {path: tests/governance/test_commit_queue_base_head.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+  - ruler: test_consumption_census_redproof
+    entries: 23
+    sources:
+      - {path: tests/governance/test_consumption_census_redproof.py, state: absent_in_head, bag: q-20260927-st-zmaster2-20260926-0014, blob_ref: blobs/835ccc1064e34edfc8b7bb893e1d95a07207f5c4b07c3b78935a4b30fcfc2755, sha256: 835ccc1064e34edfc8b7bb893e1d95a07207f5c4b07c3b78935a4b30fcfc2755}
+      - {path: tests/gov/governance/test_consumption_census_redproof.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/eb239a1892fc090d25baa9cdd9e98fb33e50d28b9cf0ca88d995101e7dbf1efe, sha256: eb239a1892fc090d25baa9cdd9e98fb33e50d28b9cf0ca88d995101e7dbf1efe}
+      - {path: tests/governance/test_consumption_census_redproof.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/governance/test_consumption_census_redproof.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0054, blob_ref: blobs/f51b0535c6cc489862316a57343cfd6523eb40674a454264b860c09663c63cbf, sha256: f51b0535c6cc489862316a57343cfd6523eb40674a454264b860c09663c63cbf}
+  - ruler: test_externalize_algo_flow
+    entries: 66
+    sources:
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_mirror.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/b3ce2bf5c84532ec31f3e1761e02058bf6f8d3b71218cab43b143b4ca784f0fc, sha256: b3ce2bf5c84532ec31f3e1761e02058bf6f8d3b71218cab43b143b4ca784f0fc}
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_redblue.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/5b161526e41ea296e57759f18a77602998b482e4933f48801cdbb954481118b5, sha256: 5b161526e41ea296e57759f18a77602998b482e4933f48801cdbb954481118b5}
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_remap.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/68246b59017f543d4e12b91d3152a7e3421647e920c1a69f138cad14bac4083c, sha256: 68246b59017f543d4e12b91d3152a7e3421647e920c1a69f138cad14bac4083c}
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_mirror.py, state: absent_in_head, bag: q-20261005-st-f11-requeue-20261005-0075, blob_ref: blobs/f75a4389ee81c1761bf066fce5efc43b67769e1b1281b894c422fc6805b4be7d, sha256: f75a4389ee81c1761bf066fce5efc43b67769e1b1281b894c422fc6805b4be7d}
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_redblue.py, state: absent_in_head, bag: q-20261005-st-f11-requeue-20261005-0075, blob_ref: blobs/4fc3bf389433b63d200c269e3a80a4b45eee80fe146bb2ed00f7615c737c8fbb, sha256: 4fc3bf389433b63d200c269e3a80a4b45eee80fe146bb2ed00f7615c737c8fbb}
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_remap.py, state: absent_in_head, bag: q-20261005-st-f11-requeue-20261005-0075, blob_ref: blobs/b913b330494f0a50f5abbb442077e98260deabd2a196a9bf26076195534e1f1e, sha256: b913b330494f0a50f5abbb442077e98260deabd2a196a9bf26076195534e1f1e}
+      - {path: tests/governance/generators/test_externalize_algo_flow_mirror.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/governance/generators/test_externalize_algo_flow_redblue.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/governance/generators/test_externalize_algo_flow_remap.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_mirror.py, state: absent_in_head, bag: q-20261006-st-tests-chief-20261004-0124, blob_ref: blobs/6389edbf8b74be9314f4d12c74eec8dbdf011e4b99996f1177f5bfddbf9a6fcb, sha256: 6389edbf8b74be9314f4d12c74eec8dbdf011e4b99996f1177f5bfddbf9a6fcb}
+      - {path: tests/gov/governance/generators/test_externalize_algo_flow_redblue.py, state: absent_in_head, bag: q-20261006-st-tests-chief-20261004-0124, blob_ref: blobs/41cee14fe3cb99df6f6616f357f6f24563b7d434b7d74bc29a90526179299b21, sha256: 41cee14fe3cb99df6f6616f357f6f24563b7d434b7d74bc29a90526179299b21}
+  - ruler: test_f62_honest_gate_baseline
+    entries: 18
+    sources:
+      - {path: tests/gov/compliance/test_f62_honest_gate_baseline.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/5e2be879af89a644077d13f48c3a4bada642f9d7268193985c143a8c0e623181, sha256: 5e2be879af89a644077d13f48c3a4bada642f9d7268193985c143a8c0e623181}
+      - {path: tests/gov/compliance/test_f62_honest_gate_baseline.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0051, blob_ref: blobs/27be97f671142c9ea814dc0c072dd9f9ec67d0ed750f75554a2a2e0e4982d35c, sha256: 27be97f671142c9ea814dc0c072dd9f9ec67d0ed750f75554a2a2e0e4982d35c}
+  - ruler: test_fms_hygiene_gate
+    entries: 25
+    sources:
+      - {path: tests/gov/gov_enforcement/read_side/test_fms_hygiene_gate.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/b49f48d7a8d112d67fc91592e999cdafa7b95037704a0637d8dca701f3c42776, sha256: b49f48d7a8d112d67fc91592e999cdafa7b95037704a0637d8dca701f3c42776}
+      - {path: tests/gov_enforcement/read_side/test_fms_hygiene_gate.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/gov_enforcement/read_side/test_fms_hygiene_gate.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0052, blob_ref: blobs/bf8b83e4582d4969fb105a7901a4facd76ead7353433d2a928cd9b711a78f8c1, sha256: bf8b83e4582d4969fb105a7901a4facd76ead7353433d2a928cd9b711a78f8c1}
+      - {path: tests/gov/gov_enforcement/read_side/test_fms_hygiene_gate.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0070, blob_ref: blobs/3abab8570b72c2af4ec26c89c37e149a5ac686ab66cb42e19d6b4fcdb05cc198, sha256: 3abab8570b72c2af4ec26c89c37e149a5ac686ab66cb42e19d6b4fcdb05cc198}
+      - {path: tests/gov/gov_enforcement/read_side/test_fms_hygiene_gate.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0085, blob_ref: blobs/6da4f9a04c78520a0e955e37f723e01b63bd2d2c642305e5858cecd39acb1a82, sha256: 6da4f9a04c78520a0e955e37f723e01b63bd2d2c642305e5858cecd39acb1a82}
+  - ruler: test_library_reconcilers_red_blue
+    entries: 24
+    sources:
+      - {path: tests/governance/test_library_reconcilers_red_blue.py, state: absent_in_head, bag: q-20260926-st-p1b-libr-0001, blob_ref: blobs/29e40229b99e952374de5d03faa9a595cb9b868809cf6081ad0897efc4db1466, sha256: 29e40229b99e952374de5d03faa9a595cb9b868809cf6081ad0897efc4db1466}
+      - {path: tests/governance/test_library_reconcilers_red_blue.py, state: absent_in_head, bag: q-20260927-st-zmaster2-20260926-0014, blob_ref: blobs/188735c3de9a1827ca67d1093b7c6694386751f1336d69c3915df276d4cef2cd, sha256: 188735c3de9a1827ca67d1093b7c6694386751f1336d69c3915df276d4cef2cd}
+      - {path: tests/gov/governance/test_library_reconcilers_red_blue.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/a6eaddae30ed27d3cde52744bfe2f4c8b3205c3eadf73e274b216981433b4dd5, sha256: a6eaddae30ed27d3cde52744bfe2f4c8b3205c3eadf73e274b216981433b4dd5}
+      - {path: tests/governance/test_library_reconcilers_red_blue.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/governance/test_library_reconcilers_red_blue.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0054, blob_ref: blobs/db40690c76d036fb9b3f621427eaa9b8d44cc784d57790fe7ed0ad6870aaa2c1, sha256: db40690c76d036fb9b3f621427eaa9b8d44cc784d57790fe7ed0ad6870aaa2c1}
+      - {path: tests/gov/governance/test_library_reconcilers_red_blue.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0072, blob_ref: blobs/223b075caa989efafbd715e8b6e684e1bc7be4a01c8e5d18df301b0af39dd963, sha256: 223b075caa989efafbd715e8b6e684e1bc7be4a01c8e5d18df301b0af39dd963}
+  - ruler: test_next_ruling_id
+    entries: 22
+    sources:
+      - {path: tests/governance/test_next_ruling_id.py, state: absent_in_head, bag: q-20260926-st-mapbuild-20260924-0031, blob_ref: blobs/373ae262ffd337f85aee3228a7f78db41c30162633c830418480346096fe6eaa, sha256: 373ae262ffd337f85aee3228a7f78db41c30162633c830418480346096fe6eaa}
+      - {path: tests/gov/governance/test_next_ruling_id.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/0d188611ae38b48516ec310b7c43bf363917454ed302cddf1bce1f7bb0ecb153, sha256: 0d188611ae38b48516ec310b7c43bf363917454ed302cddf1bce1f7bb0ecb153}
+      - {path: tests/governance/test_next_ruling_id.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/governance/test_next_ruling_id.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0054, blob_ref: blobs/634159dd237bda545709a008d2225e57afb78a7e55a6a5f2ff2911c34178a57e, sha256: 634159dd237bda545709a008d2225e57afb78a7e55a6a5f2ff2911c34178a57e}
+  - ruler: test_promotion_advisory
+    entries: 29
+    sources:
+      - {path: tests/infra/frontend/test_promotion_advisory_api.py, state: content_diff, bag: q-20261004-st-tests-chief-20261004-0001, blob_ref: blobs/36f0e1a7f862735188e661636bef53b13d593096f0f55d1cd568934e9d3a3625, sha256: 36f0e1a7f862735188e661636bef53b13d593096f0f55d1cd568934e9d3a3625}
+      - {path: tests/research/strategy_pipeline/test_promotion_advisory.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0002, blob_ref: blobs/9d315630dccb5a7ce016fd6cbb5c7176a9c9bd41fbdadf5e03b0df743554af8c, sha256: 9d315630dccb5a7ce016fd6cbb5c7176a9c9bd41fbdadf5e03b0df743554af8c}
+      - {path: tests/frontend/test_promotion_advisory_api.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/infra/frontend/test_promotion_advisory_api.py, state: content_diff, bag: q-20261005-st-tests-chief-20261004-0074, blob_ref: blobs/1ec4690df00ffaf67a0a94841520ea1722cd61760df4207e749a7e916d8e7cd3, sha256: 1ec4690df00ffaf67a0a94841520ea1722cd61760df4207e749a7e916d8e7cd3}
+      - {path: tests/research/strategy_pipeline/test_promotion_advisory.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0079, blob_ref: blobs/0f38f10db7e9eacc90b2563c3ad5b3c7057001d209fd2ffae6f07f51bb0fe7d8, sha256: 0f38f10db7e9eacc90b2563c3ad5b3c7057001d209fd2ffae6f07f51bb0fe7d8}
+      - {path: tests/infra/frontend/test_promotion_advisory_api.py, state: exact_in_head, bag: q-20261006-st-cure-p10-20261006-0014, blob_ref: blobs/69d39f225c10140e5e3ce5a830bb8d8a54ca8a04cdebd5bff86a568fbd9e0bc4, sha256: 69d39f225c10140e5e3ce5a830bb8d8a54ca8a04cdebd5bff86a568fbd9e0bc4}
+      - {path: tests/research/strategy_pipeline/test_promotion_advisory.py, state: absent_in_head, bag: q-20261007-st-cure-p05-20261006-0020, blob_ref: blobs/41c48ec6500a17c1e24287300e31d1ddf443a91b099e9996bd994f513569081f, sha256: 41c48ec6500a17c1e24287300e31d1ddf443a91b099e9996bd994f513569081f}
+      - {path: tests/infra/frontend/test_promotion_advisory_api.py, state: exact_in_head, bag: q-20261007-st-cure-p10-20261006-0034, blob_ref: , sha256: }
+  - ruler: test_promotion_combo_gate
+    entries: 8
+    sources:
+      - {path: tests/research/backtest/test_promotion_combo_gate.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0002, blob_ref: blobs/12cc9c8e39f845123ca3aea892893e914c08b5de520d44f2bdea391dab44ebf9, sha256: 12cc9c8e39f845123ca3aea892893e914c08b5de520d44f2bdea391dab44ebf9}
+      - {path: tests/research/backtest/test_promotion_combo_gate.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0077, blob_ref: blobs/014f78e57b324d3ec2cfa4a6eeae905651030b01e86bec9b88c7dc3aca276cab, sha256: 014f78e57b324d3ec2cfa4a6eeae905651030b01e86bec9b88c7dc3aca276cab}
+  - ruler: test_redblue_governance
+    entries: 20
+    sources:
+      - {path: docs/_working/total_command_closeout/wave1b/rescued/versions/test_redblue_governance_py.md, state: content_diff, bag: q-20260929-st-nightsweep-sw6-20260929-0005, blob_ref: blobs/ef8d73be18fe649489401617961e0b63ef237b9444e9d8d4408be42da10c13eb, sha256: ef8d73be18fe649489401617961e0b63ef237b9444e9d8d4408be42da10c13eb}
+      - {path: tests/gov/governance/test_redblue_governance.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/8e83ceb37290422952c3de050c73077e8ef3fc783f7ac29d7ac51ee92fec5ea1, sha256: 8e83ceb37290422952c3de050c73077e8ef3fc783f7ac29d7ac51ee92fec5ea1}
+      - {path: tests/governance/test_redblue_governance.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/governance/test_redblue_governance.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0054, blob_ref: blobs/f7037c4a24d5e3fd124f4566e068d6db79013998eba0105d5b095d3cbf110c9f, sha256: f7037c4a24d5e3fd124f4566e068d6db79013998eba0105d5b095d3cbf110c9f}
+  - ruler: test_redblue_robust
+    entries: 19
+    sources:
+      - {path: tests/gov/governance/test_redblue_robust.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0004, blob_ref: blobs/fe2e370601deee5ec1dc24297cb6cdc863145c09e643756cde6bcadff580f3f4, sha256: fe2e370601deee5ec1dc24297cb6cdc863145c09e643756cde6bcadff580f3f4}
+      - {path: tests/governance/test_redblue_robust.py, state: delete_req_head_absent, bag: q-20261005-st-tests-chief-20261004-0046, blob_ref: , sha256: }
+      - {path: tests/gov/governance/test_redblue_robust.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0054, blob_ref: blobs/b97470546f15f71d7ed295e6709cb77b8a3ca3e02df76fbc8691894edcec68e8, sha256: b97470546f15f71d7ed295e6709cb77b8a3ca3e02df76fbc8691894edcec68e8}
+      - {path: tests/gov/governance/test_redblue_robust.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0087, blob_ref: blobs/62f81fa1b1e38d95ef10d1be7053ded8e15c5940e63709bcc7324ab6e7519642, sha256: 62f81fa1b1e38d95ef10d1be7053ded8e15c5940e63709bcc7324ab6e7519642}
+  - ruler: test_t1_t2_handover
+    entries: 8
+    sources:
+      - {path: tests/research/backtest/test_t1_t2_handover.py, state: absent_in_head, bag: q-20261004-st-tests-chief-20261004-0002, blob_ref: blobs/2b93256289bea1c7e83679821ecc401c126ff7f91d33b839664b90d4559bf55e, sha256: 2b93256289bea1c7e83679821ecc401c126ff7f91d33b839664b90d4559bf55e}
+      - {path: tests/research/backtest/test_t1_t2_handover.py, state: absent_in_head, bag: q-20261005-st-tests-chief-20261004-0077, blob_ref: blobs/51328d2088fcb9ac0cffec87d5895f8945de786e84c0b2964dbadc4fae11bd16, sha256: 51328d2088fcb9ac0cffec87d5895f8945de786e84c0b2964dbadc4fae11bd16}
